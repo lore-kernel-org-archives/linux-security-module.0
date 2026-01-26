@@ -1,181 +1,196 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28FB234D910;
-	Mon, 26 Jan 2026 18:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F7723183C
+	for <linux-security-module@vger.kernel.org>; Mon, 26 Jan 2026 18:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769451246; cv=none; b=ED8BaevKStI7OGKlrrw8+ovt7RT9DaiESycXWFqZry9stBFpD8ePuVLD1g4RFO+otFIikkfiQKjKt+isgbQgwUh7bTJFvoeIOg09a0M/mw8vAttk6NdHM1dxFwtfhh/ZmiAPRRIDLQ3SAvQgzQC9WFZ6OjAMYZejH3MABIxjafU=
+	t=1769452546; cv=none; b=ifupqsuDWiYjxux47zXZY3WqpGFVU82/dvdmrmA+Tt4p090ZnJPWurakK2NY+FCNTrfC2WVFYQ3+GiLfeBdgCpLbxEbVeWM3S1L0bqRLTiq4xBVt0mm4ctSn8AKcwteaALy1bwWAOJsp7ivO1M1/RC3UKFpnHhd7SNzgUEkofws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769451246; c=relaxed/simple;
-	bh=jhr9a6cgDBi4L/Y/fqNnkSWD4mZrTD0Td1Kjc0FE7d4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bXin7mABzqZwt6gsvO80zr9Wdd0f2kJoPUUE2h6N8CtsnVVQ3JW+7rQcOPbdMriM4SgwuBUhEXn2Z0+o02liFkFTwnVpKMV6nhUtRkDmHIhut488uVLGo0Y4xlxqDLo/AYlBcK0lGChXCNDqldiUgHXvV1Z4e5PTFXeMODGTNao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nVgoIJgT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769452546; c=relaxed/simple;
+	bh=3akyaakir9OAMjeT8WvM8HDWBZfX+8duXF5SLqJafO4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=idWgLVk1+xJF+tUPoTUw+56u2fyIHqksAZXT906f0RV4Ndzz3v8bBZY6xwuNH83d0pBndl5V3Lzz9z7pOgJB57UNV79O3krsmMxOEi38O8l+MZj/1YvvwRhTjhqnkRgddGIgdzBFvvCRBANnxePrNX1mVC51hfckdwHJUmB69S4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wvJJT80O; arc=none smtp.client-ip=209.85.221.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nVgoIJgT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78E27C116C6;
-	Mon, 26 Jan 2026 18:13:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769451245;
-	bh=jhr9a6cgDBi4L/Y/fqNnkSWD4mZrTD0Td1Kjc0FE7d4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nVgoIJgTaMtZXe7vJx91AIult5bczODnhPAwNvlhgpWv9/zxDR9iqiytQ/4FLN947
-	 pwwrkH5t65DpbcC2Ndjsc3y8aLEOhS0YcPTP/zE9t8jPah+veeX4QBoyt1kmvAWrY+
-	 zRwMXcdzKZtNmnovqWUmBKzDbk9OAYTgK+9DolDd9fVf3ecNbeyx+YBmZX/4TxAWSB
-	 wqRZlkumamMI/9hdPN88aJwNDn2vHU20e79cjnY/MZArxLERLAkk/9E4ucbO4XBing
-	 XS9aPsA9kPCFc1v/sOkFQgZ7s+hN5AxNLT2q9/XSNFJhI7WnNpPfb4LEcMYEAXUTHV
-	 2++X9k5uMy7nA==
-Message-ID: <4e673f7f-c49c-46b0-85b4-bae6e4efcb3a@kernel.org>
-Date: Mon, 26 Jan 2026 19:13:50 +0100
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wvJJT80O"
+Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-4327790c4e9so3130197f8f.2
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Jan 2026 10:35:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1769452542; x=1770057342; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4wtupvaEvwne0Vq+SODEHB1y4+FGimHGUXOjd7XL3Zo=;
+        b=wvJJT80OLvni3EYE47w8AnsZMY8snhAhLXWOMn6pvJxMZBpzm0usVVgJ29KSDqdKV7
+         2vqDe7fyCrTaHkpNYup+/jabmU/g1j29n6fCqxDlWrCnJjCpT28McsS5DZBFECIDU/Y9
+         cSQl+o9tfvdygSKhtk+122URO1O5VKatL85F0Ki8fC/RFDY76MDCU9WezatXoDVkEKc3
+         wSq6fdWnSfERLbsV1XiaqCtgA1kCvy56c6ZM2mGvbVqxM1tkuC6jZM/COWWfvSmAAxYC
+         SrtjkKVhyeVLiTussvucj7klXvIOmwuXoBsa9J9+ac7v16OFAS+oyICYhb3NVGQOFc9j
+         WS8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769452542; x=1770057342;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=4wtupvaEvwne0Vq+SODEHB1y4+FGimHGUXOjd7XL3Zo=;
+        b=A0oeHuNxDfWhoSK/2aA4j6VehGWKEWOHXqwQ5PKk+jVXGCypHj4wPtEr2QRkmG5G19
+         yCRZlTP70OCVhYDCPtovX2z8vsWG8Pfp3DhxTXAxc4VXglTl782iuqDWcv8rmbjWu3ef
+         hAih5VM1WbB4QLD0rSdAtnVngaEWB/YB88rLWTPqkp7oouG1I0NKmTDu/FW4gy5Xa6P7
+         jJdCmNn71Tq04+wrwYoNbonDyuTlX/8+hvQTAPz16pvvPuGZ6z4ZE2BvfqfsKqifrGBN
+         Rm7nL2JTf+PQmHKtbgFpoqHhv2cob1X+VzGES4yfqQ0eJsB+nN5l7jaQAgj/lX6nP/7W
+         JGTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPceG70kArtjrRvzuBNKQFy+RNvInYKa6lZlNX72jPMocc7wNJ1wkG8gr2eCK1cWQL7R18auNEpiv7VKmnYV8e/odVS5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFOFlROvPn6R9i6aTwVBFu/NY1iEUnNbZMG7CEufIglBmcbgcr
+	WvaeeND06nINLKxwYhk1zgD84sckjkk9ZH5ezVuDlWEjaWBQWNIkvLR5nHcqW+CGMg==
+X-Gm-Gg: AZuq6aJZJDAnPwtVD7C3irMiPaE02aePZIlpjKG/b1m6UkTAlPvE3hBjFZ9kBCRIisf
+	FPUaqzz2qMK0xXTmuQvvYijtpAM1rhSck7lKIUQz8/VNXCgqVRkHwkwvFgAyCU+/AGfPJAfiD7V
+	nThVExh7/819Rm0yA+ImuPjlcG+y9uPuFDHi/feVJSfkw1JwwHoi2isCIF7/BCa7xq0a32YJ+md
+	ISuZ0oNpkZSyqAxZyxFpCD8VwORsPsESZLwAQEgvbIRR4TDu2Q+DVXvpmgBTo1N2QRNPAxd84oR
+	Puvp57DnoCVCslEb7QGwXbuqgW1yvyG/wU94jJeTFm+W57bXCmkkRLQkMRzQQPB3HZbxFpoIzq/
+	KBv+iggRUntpi7edrF/82t+3R4/Qbnkc5nV0Y/0GNdPKAz9RGltYwF4b70a1fyj2Dex48xjspRW
+	6gwDwveZ6v0vXcoI+b5XwoZrdK8wCU8guGmUYxjZj9nmlIpavfyhUsTIeHHJw=
+X-Received: by 2002:a5d:5d06:0:b0:429:c14f:5f7d with SMTP id ffacd0b85a97d-435ca18f3cbmr9441304f8f.29.1769452542172;
+        Mon, 26 Jan 2026 10:35:42 -0800 (PST)
+Received: from elver.google.com ([2a00:79e0:2834:9:c598:7cce:ca6b:8ab7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435b1b6e2besm32040119f8f.0.2026.01.26.10.35.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Jan 2026 10:35:41 -0800 (PST)
+Date: Mon, 26 Jan 2026 19:35:33 +0100
+From: Marco Elver <elver@google.com>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	Chris Li <sparse@chrisli.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Alexander Potapenko <glider@google.com>,
+	Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+	Kentaro Takeda <takedakn@nttdata.co.jp>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Waiman Long <longman@redhat.com>, kasan-dev@googlegroups.com,
+	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+	linux-sparse@vger.kernel.org, linux-wireless@vger.kernel.org,
+	llvm@lists.linux.dev, rcu@vger.kernel.org
+Subject: Re: [PATCH v5 15/36] srcu: Support Clang's context analysis
+Message-ID: <aXez9fSxdfu5-Boo@elver.google.com>
+References: <20251219154418.3592607-1-elver@google.com>
+ <20251219154418.3592607-16-elver@google.com>
+ <dd65bb7b-0dac-437a-a370-38efeb4737ba@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 1/4] selftests: net: Move some UAPI header
- inclusions after libc ones
-Content-Language: en-GB, fr-BE
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-api@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
- linux-kselftest@vger.kernel.org, mptcp@lists.linux.dev,
- linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
- libc-alpha@sourceware.org, Carlos O'Donell <carlos@redhat.com>,
- Adhemerval Zanella <adhemerval.zanella@linaro.org>,
- Rich Felker <dalias@libc.org>, klibc@zytor.com,
- Florian Weimer <fweimer@redhat.com>, Eric Dumazet <edumazet@google.com>,
- Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Willem de Bruijn <willemb@google.com>, "David S. Miller"
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
- Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- Stanislav Fomichev <sdf@fomichev.me>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>
-References: <20260120-uapi-sockaddr-v2-0-63c319111cf6@linutronix.de>
- <20260120-uapi-sockaddr-v2-1-63c319111cf6@linutronix.de>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <20260120-uapi-sockaddr-v2-1-63c319111cf6@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dd65bb7b-0dac-437a-a370-38efeb4737ba@acm.org>
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-Hi Thomas,
-
-On 20/01/2026 15:10, Thomas Weißschuh wrote:
-> Interleaving inclusions of UAPI headers and libc headers is problematic.
-> Both sets of headers define conflicting symbols. To enable their
-> coexistence a compatibility-mechanism is in place.
+On Mon, Jan 26, 2026 at 09:31AM -0800, Bart Van Assche wrote:
+> On 12/19/25 7:40 AM, Marco Elver wrote:
+> > +/*
+> > + * No-op helper to denote that ssp must be held. Because SRCU-protected pointers
+> > + * should still be marked with __rcu_guarded, and we do not want to mark them
+> > + * with __guarded_by(ssp) as it would complicate annotations for writers, we
+> > + * choose the following strategy: srcu_dereference_check() calls this helper
+> > + * that checks that the passed ssp is held, and then fake-acquires 'RCU'.
+> > + */
+> > +static inline void __srcu_read_lock_must_hold(const struct srcu_struct *ssp) __must_hold_shared(ssp) { }
+> >   /**
+> >    * srcu_dereference_check - fetch SRCU-protected pointer for later dereferencing
+> > @@ -223,9 +233,15 @@ static inline int srcu_read_lock_held(const struct srcu_struct *ssp)
+> >    * to 1.  The @c argument will normally be a logical expression containing
+> >    * lockdep_is_held() calls.
+> >    */
+> > -#define srcu_dereference_check(p, ssp, c) \
+> > -	__rcu_dereference_check((p), __UNIQUE_ID(rcu), \
+> > -				(c) || srcu_read_lock_held(ssp), __rcu)
+> > +#define srcu_dereference_check(p, ssp, c)					\
+> > +({										\
+> > +	__srcu_read_lock_must_hold(ssp);					\
+> > +	__acquire_shared_ctx_lock(RCU);					\
+> > +	__auto_type __v = __rcu_dereference_check((p), __UNIQUE_ID(rcu),	\
+> > +				(c) || srcu_read_lock_held(ssp), __rcu);	\
+> > +	__release_shared_ctx_lock(RCU);					\
+> > +	__v;									\
+> > +})
 > 
-> An upcoming change will define 'struct sockaddr' from linux/socket.h.
-> However sys/socket.h from libc does not yet handle this case and a
-> symbol conflict will arise.
+> Hi Marco,
 > 
-> Furthermore libc-compat.h evaluates the state of the libc
-> inclusions only once, at the point it is included first. If another
-> problematic header from libc is included later, symbol conflicts arise.
-> This will trigger other duplicate definitions when linux/libc-compat.h
-> is added to linux/socket.h
-> 
-> Move the inclusion of UAPI headers after the inclusion of the glibc
-> ones, so the libc-compat.h continues to work correctly.
+> The above change is something I'm not happy about. The original
+> implementation of the srcu_dereference_check() macro shows that it is
+> sufficient to either hold an SRCU reader lock or the updater lock ('c').
+> The addition of "__srcu_read_lock_must_hold()" will cause compilation to
+> fail if the caller doesn't hold an SRCU reader lock. I'm concerned that
+> this will either lead to adding __no_context_analysis to SRCU updater
+> code that uses srcu_dereference_check() or to adding misleading
+> __assume_ctx_lock(ssp) annotations in SRCU updater code.
 
-Thank you for looking at this!
+Right, and it doesn't help 'c' is an arbitrary condition. But it's
+fundamentally difficult to say "hold either this or that lock".
 
-Here is my (late, sorry) review for the modifications related to MPTCP:
-> diff --git a/tools/testing/selftests/net/mptcp/mptcp_diag.c b/tools/testing/selftests/net/mptcp/mptcp_diag.c
-> index 8e0b1b8d84b6..af25ebfd2915 100644
-> --- a/tools/testing/selftests/net/mptcp/mptcp_diag.c
-> +++ b/tools/testing/selftests/net/mptcp/mptcp_diag.c
-> @@ -1,11 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0
->  /* Copyright (c) 2025, Kylin Software */
->  
-> -#include <linux/sock_diag.h>
-> -#include <linux/rtnetlink.h>
-> -#include <linux/inet_diag.h>
-> -#include <linux/netlink.h>
-> -#include <linux/compiler.h>
->  #include <sys/socket.h>
->  #include <netinet/in.h>
->  #include <linux/tcp.h>
+That being said, I don't think it's wrong to write e.g.:
 
-There is a remaining one (linux/tcp.h) here that you might want to move
-below too.
+	spin_lock(&updater_lock);
+	__acquire_shared(ssp);
+	...
+	// writes happen through rcu_assign_pointer()
+	// reads can happen through srcu_dereference_check()
+	...
+	__release_shared(ssp);
+	spin_unlock(&updater_lock);
 
-> @@ -17,6 +12,12 @@
->  #include <errno.h>
->  #include <stdio.h>
->  
-> +#include <linux/sock_diag.h>
-> +#include <linux/rtnetlink.h>
-> +#include <linux/inet_diag.h>
-> +#include <linux/netlink.h>
-> +#include <linux/compiler.h>
+, given holding the updater lock implies reader access.
 
-Note that I just noticed this is the only file from this directory where
-the "includes" are not sorted by type and alphabetical order, see
-pm_nl_ctl.c as an example. A bit of a detail, but if you plan to send a
-v2, do you mind doing that too here while at it, please?
+And given the analysis is opt-in (CONTEXT_ANALYSIS := y), I think
+it's a manageable problem.
 
-If not, I can look at that later, but better to avoid doing that in
-parallel.
+If you have a different idea how we can solve this, please let us know.
 
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
+One final note, usage of srcu_dereference_check() is rare enough:
 
+	arch/x86/kvm/hyperv.c:	irq_rt = srcu_dereference_check(kvm->irq_routing, &kvm->irq_srcu,
+	arch/x86/kvm/x86.c:	kvm_free_msr_filter(srcu_dereference_check(kvm->arch.msr_filter, &kvm->srcu, 1));
+	arch/x86/kvm/x86.c:	kfree(srcu_dereference_check(kvm->arch.pmu_event_filter, &kvm->srcu, 1));
+	drivers/gpio/gpiolib.c:	label = srcu_dereference_check(desc->label, &desc->gdev->desc_srcu,
+	drivers/hv/mshv_irq.c:	girq_tbl = srcu_dereference_check(partition->pt_girq_tbl,
+	drivers/hwtracing/stm/core.c:	link = srcu_dereference_check(src->link, &stm_source_srcu, 1);
+	drivers/infiniband/hw/hfi1/user_sdma.c:	pq = srcu_dereference_check(fd->pq, &fd->pq_srcu,
+	fs/quota/dquot.c:			struct dquot *dquot = srcu_dereference_check(
+	fs/quota/dquot.c:				struct dquot *dquot = srcu_dereference_check(
+	fs/quota/dquot.c:		put[cnt] = srcu_dereference_check(dquots[cnt], &dquot_srcu,
+	fs/quota/dquot.c:		transfer_from[cnt] = srcu_dereference_check(dquots[cnt],
+	include/linux/kvm_host.h:	return srcu_dereference_check(kvm->memslots[as_id], &kvm->srcu,
+	virt/kvm/irqchip.c:	irq_rt = srcu_dereference_check(kvm->irq_routing, &kvm->irq_srcu,
+
+, that I think it's easy enough to annotate these places with the above
+suggestions in case you're trying out global enablement.
