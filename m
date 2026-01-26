@@ -1,148 +1,184 @@
-Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com [74.125.82.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D525223336
-	for <linux-security-module@vger.kernel.org>; Mon, 26 Jan 2026 05:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.176
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769404101; cv=pass; b=NSGOxZUqUxHqx+S37D7jMUycpKH6/2JsKg0lMD1NKP1fZPUwSkyj/PZe7mJF9b9a2LS7sjD7LD+uHNPP5ztZdXSExXhn5SxAD+PV6wPKpRJDDh51pUCkbqsBi+6tgcRjvGB74vEQVNt/kciEOjM1H3Trot67TeoMVEv8lWG/iAc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769404101; c=relaxed/simple;
-	bh=ZBsVD6kxKzurT7H7DtCLfcoGufza6/gI7cdcVlj4q0M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FCMcHDxUuHya2oRNvS3gWURscMwGHN7+Zq7lHo8RNBwZotIKGSxq0LkC3zbEZblwZW90vkhQd3pUd1lQzUA9OCh1cQp1dRJUI1qydovtOIaxiskmwbrAiNGP3ZxYWq11mYbWClx6aaVIjYSI6lHMf2RYWqwlMnBf2yAhZW7pqAw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k9kfJBC+; arc=pass smtp.client-ip=74.125.82.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914B133123E;
+	Mon, 26 Jan 2026 11:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769425637; cv=none; b=FJDDeU31ctfT10mbqc4/9OCXkOlAhnQ+FjEVZHs0alcMUSdWmumCb62iEzSpmybK9rC3gIwbQ1yljxpCW8p5lIBldkHMs34W88tHdO0zyrR2PmdudDmFJVDHr82Ox1QxiMd0Hz7P6qzRTyJqdeqw2Ur/zZBjOuIaBH+qNVzpPho=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769425637; c=relaxed/simple;
+	bh=LXLrhUZxLUxTcyVYzqQUsHyRbc1axwLfFo5VxiFg8dY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l1v14u7DHotuEZG2VPUuw7mi+wNEy9+NNnHu6cGSPamo12rBbmS9h7k8s0+2YMxeZJgaEuFlKveVyiJx12i4fZ18erdXwWGxDz0LYbMGRB7BigFea5ZIVLBN5p0dTlcVdFqTD81OCXd3+s2NksAdiP1vpVZQsj+ulK1kP10bmDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RZOzUlq3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k9kfJBC+"
-Received: by mail-dy1-f176.google.com with SMTP id 5a478bee46e88-2b6a868ad45so434179eec.0
-        for <linux-security-module@vger.kernel.org>; Sun, 25 Jan 2026 21:08:19 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769404098; cv=none;
-        d=google.com; s=arc-20240605;
-        b=XCll1loJqN0EsCiWR8nEH/0nZGreR6iDUN+5KPzW17l1ozHaGpQXbh9/O04pg1FNYJ
-         Nn02Fu6ICga4Y4Agg2kehnwWjd3n3t83urhDA/cbZtKFSOsaF0PZglmFb4QKSL8EiAmM
-         qRpcq4j9yOPf14ZArCjt90AtGqoOjjHQPtdjLYwrEmgk3mLYAuwqrbJuxkq1YqxMVmGr
-         XSqvGsSR/JUlbMKpbHvDv4d4TUuO7+FLvtsqH5vD2gNxYWsb0L80goJUke/iM8ojZ6RE
-         2Q4VdAdSktQcVMW4CSymOHbAd4jNRjYkn+rAx3eoIxau0y//Xpb6ZatI0FViwyQurFP5
-         enLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=bsbA3S4vvXnWg6PVwhDAv4/t5NunrqZ0yk7Z9wsyNZU=;
-        fh=gWSsRD37vN3AaCcQEVTsDLaJsVTSMxAOBGw8oPTJvhs=;
-        b=lYiRD5StYF+7hm3owJYv93kzhU8QCOSrGAkbcPWvuHNX94KyO/0Rq0IBpNwA9YsT2K
-         oK4VLPT8PCrhQniW75bYW/tNf0Yw0bCVrit6KvNWwmoY2CuhxBjTSZf+hrB1iILwEDW1
-         lf83cQeyKAVVtfx/nXACgXkB9tY+0WGhihLP7GEsJ87dPZH9/DAG2wbhtvD4Oelmq1qm
-         4l5AFge8E4hVAV5hKk6al7V+Nqx1QD2iIU6jASNIcsljdgme33XmaXUh/XoHmXAcg0kh
-         mlOBeuZ/ewGVKWJ+SSM3CPjqCGKZn4hw8ZNjgOUHOItv3UpbF42DkZoKybaPzfdFHSLb
-         1x/w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769404098; x=1770008898; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bsbA3S4vvXnWg6PVwhDAv4/t5NunrqZ0yk7Z9wsyNZU=;
-        b=k9kfJBC+ldCHGEir2hpwOAhElO6egoRCIxzj0IKfTEqmro2/yY4nV/+ZWVpPnASaL2
-         +mKMYxEvPEWQ3mA0MifDdWsjJxAV9WDFd60bga1tQmEuwjCMbcYXGnmdKnOy0gkl2ch2
-         Mwj8Ks7ue/Tv0fi0t1I2FGHTzLLGzLT7EpWkOR1/bqd5u34W9Lgxxo6NypTHOKYsnB2Z
-         KCh6L7ducVKh/8PXfUb+iHCyyPnIdAB5ON83DnVEVnBfpqvtvEurIJrSHBLvIkSub/iU
-         dCIDy2cliqsDj+61/J2ss/bUZVs3zCGOy2Q26lc2sW5MOSWlOjMrzV8iWQUqiUi0YrGB
-         4lrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769404098; x=1770008898;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=bsbA3S4vvXnWg6PVwhDAv4/t5NunrqZ0yk7Z9wsyNZU=;
-        b=Qx7x4P6Az3e/N2qy8sdVnamq8bgo6YSgQ9fEH3sGmRqbQAjfpjl0PcRkPJ7UYMLx7i
-         hMaZxgRoqUHDPT19bc+89sd0UkOLDk+BJ2woZ9E3MDNGb4kMSvrbnJ7LUrYdMlGPBq5U
-         kCGaqGE4f/zeKyTsxvB3CurIx1zEM7JyCy1PD5HoCUgpqrJBsDpqkfnLeWgiQ9TpK9Wr
-         CAjB61gRIrV5RzqZiZ/LcjYWehFEF0a4G+/8hhADf2HgS1VFZCeGWPICX2tXWQrHIsfO
-         K3iWHps0avy57qXEmBy4jPSt9kAoTHLQH8qu0S8W2e7lAs2TwV9T2hExjRdHLhghraBo
-         xDCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWHbzkPyBf+4GnbCgAUp5CG3qSRmiCSts6ueFLFc5hbRxAF6kOiWvB4WsI86NXXqR3iFF/j15ml7vTouanPWocl9NMSNhk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9JG6P0/qibMVETUclupkMKNIw46tpCQKP7/+a8XcH/KHPXPcl
-	XZ7RKK1X6GCH6AAEowazuPFjw9txJxwGAqZ0lBMZ8cKWu+CdUCVZZjOnObHRZoVy3Y+kOCOFzJL
-	STcbLYkaVn47D3WhdJcMzvXU9v5gi+bE=
-X-Gm-Gg: AZuq6aLoru3TunQXFFAIaYbBxHfJqBHtblcEISTrt1pGo/m+6Glh1PFN4i9SC8dANoA
-	plfyCjSos94366WiROb0IlcKVsYBeN1yS2T0yYAPELh4loxEKmf7GGAPcRtO278cEXN7M4gUchS
-	AKa2s25c3h+g0PR41VN1jAK6oXPJa3mxm1VkG+qSPtMGc12q6DrqgEPM48JIWaV8wr80tacvti9
-	C3+sHbJ4TXPMPvZ3Cf5pYbv66OG+8tFecYRIx87GjAGyywukR4T/WIcdbGQ+JmRsyRJ2QCO6q1r
-	CiYl+eYQl329NJZSPfKuTohC0pAZKfPcKHX+Gpf2Ub3gd0gPW1Ca1vImQUIaBg99ag0AX76hbwV
-	UnaVV/HeyckZQ
-X-Received: by 2002:a05:7301:3d10:b0:2ae:5b8c:324a with SMTP id
- 5a478bee46e88-2b7644f41dbmr855051eec.4.1769404098278; Sun, 25 Jan 2026
- 21:08:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RZOzUlq3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02E8DC116C6;
+	Mon, 26 Jan 2026 11:07:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1769425637;
+	bh=LXLrhUZxLUxTcyVYzqQUsHyRbc1axwLfFo5VxiFg8dY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RZOzUlq32pSpghI7TdCPsXE6gW7nYNtoLHvKyeZg2gXpQuorjM1Dz0cRkU/sS+6r4
+	 N0FJUD3tvAA9ZaXAV8Bb1HTfuBPo5ygoT2wx0/s6G/uLBbLQkE7HIofeu48i3rLxNN
+	 PrBpIvycItiCcuZs/8Dfx3Tbbh9nTX4LWvV5PdoSze3AXxPU4QceqM+BJP3CRQxG0x
+	 3AzPvVjmbIwoKYnWWNRMWSRi8etAjw0wF/Y/KjTcUWTW7s1svHgPKYaQaI7gNJH6pH
+	 RdhKdtPlsxhj9bCXf1Em9WBkJYSOsbAVl+FFFuWnivDnHbu+lKcNu5yZ8zp+lBNOrP
+	 pfUcSOxDm+jRw==
+Date: Mon, 26 Jan 2026 13:07:12 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Steffen Klassert <steffen.klassert@secunet.com>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>,
+	Boris Pismenny <borisp@mellanox.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Florian Westphal <fw@strlen.de>,
+	Kristian Evensen <kristian.evensen@gmail.com>,
+	Raed Salem <raeds@mellanox.com>, Raed Salem <raeds@nvidia.com>,
+	Saeed Mahameed <saeedm@mellanox.com>,
+	Yossi Kuperman <yossiku@mellanox.com>,
+	Network Development <netdev@vger.kernel.org>,
+	Aviad Yehezkel <aviadye@nvidia.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH] xfrm: force flush upon NETDEV_UNREGISTER event
+Message-ID: <20260126110712.GJ13967@unreal>
+References: <924f9cf5-599a-48f0-b1e3-94cd971965b0@I-love.SAKURA.ne.jp>
+ <537343f7-c580-43b0-9ad2-691701b9fb8e@I-love.SAKURA.ne.jp>
+ <287edf7f-85fb-46c3-9c70-c8ec7014a0db@I-love.SAKURA.ne.jp>
+ <aXIGxmCB2QU86-iA@secunet.com>
+ <447378de-3cc9-44f5-872e-a1fc477f591e@I-love.SAKURA.ne.jp>
+ <aXIKwNJv59KnsnLw@secunet.com>
+ <5811ec38-907e-4788-8a0e-7758f12dc9d0@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260105-define-rust-helper-v2-0-51da5f454a67@google.com>
-In-Reply-To: <20260105-define-rust-helper-v2-0-51da5f454a67@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 26 Jan 2026 06:08:03 +0100
-X-Gm-Features: AZwV_QjC45jcqbNpvCzRgWaUDtcYZvulw1uksmCYv_NCU9WJD69mYzMDZ_yhpJo
-Message-ID: <CANiq72m4hBinKM4jRrkpZ5nM_wraQ8FMsYtjgKRkNDmK5sS8dw@mail.gmail.com>
-Subject: Re: [PATCH v2 00/27] Allow inlining C helpers into Rust when using LTO
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Peter Zijlstra <peterz@infradead.org>, Elle Rhumsaa <elle@weathered-steel.dev>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, linux-block@vger.kernel.org, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	Benno Lossin <lossin@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Paul Moore <paul@paul-moore.com>, 
-	Serge Hallyn <sergeh@kernel.org>, linux-security-module@vger.kernel.org, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ard Biesheuvel <ardb@kernel.org>, 
-	Andrew Ballance <andrewjballance@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, maple-tree@lists.infradead.org, 
-	linux-mm@kvack.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Uladzislau Rezki <urezki@gmail.com>, Vitaly Wool <vitaly.wool@konsulko.se>, 
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Michal Wilczynski <m.wilczynski@samsung.com>, 
-	linux-pwm@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org, 
-	Will Deacon <will@kernel.org>, Fiona Behrens <me@kloenk.dev>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, Ingo Molnar <mingo@redhat.com>, 
-	Waiman Long <longman@redhat.com>, Mitchell Levy <levymitchell0@gmail.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Lyude Paul <lyude@redhat.com>, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, John Stultz <jstultz@google.com>, linux-usb@vger.kernel.org, 
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, Tamir Duberstein <tamird@gmail.com>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5811ec38-907e-4788-8a0e-7758f12dc9d0@I-love.SAKURA.ne.jp>
 
-On Mon, Jan 5, 2026 at 1:42=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> wr=
-ote:
->
->       rust: bug: add __rust_helper to helpers
->       rust: err: add __rust_helper to helpers
->       rust: maple_tree: add __rust_helper to helpers
->       rust: mm: add __rust_helper to helpers
->       rust: of: add __rust_helper to helpers
->       rust: rbtree: add __rust_helper to helpers
->       rust: slab: add __rust_helper to helpers
->       rust: uaccess: add __rust_helper to helpers
->       rust: workqueue: add __rust_helper to helpers
+On Thu, Jan 22, 2026 at 10:07:46PM +0900, Tetsuo Handa wrote:
+> On 2026/01/22 20:32, Steffen Klassert wrote:
+> > On Thu, Jan 22, 2026 at 08:28:31PM +0900, Tetsuo Handa wrote:
+> >> On 2026/01/22 20:15, Steffen Klassert wrote:
+> >>> Hm, I'd say we should not try to offload to a device that does
+> >>> not support NETIF_F_HW_ESP.
+> >>
+> >> I was about to post the patch below, but you are suggesting that "do not allow calling
+> >> xfrm_dev_state_add()/xfrm_dev_policy_add() if (dev->features & NETIF_F_HW_ESP) == 0" ?
+> > 
+> > As said, I think this is the correct way to do it. But let's wait
+> > on opinions from the hardware people.
+> 
+> OK. I guess something like below.
+> 
+>  net/xfrm/xfrm_device.c |   10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/net/xfrm/xfrm_device.c b/net/xfrm/xfrm_device.c
+> index 52ae0e034d29..19aa61609d24 100644
+> --- a/net/xfrm/xfrm_device.c
+> +++ b/net/xfrm/xfrm_device.c
+> @@ -292,6 +292,13 @@ int xfrm_dev_state_add(struct net *net, struct xfrm_state *x,
+>  		dst_release(dst);
+>  	}
+>  
+> +	if (!(dev->features & NETIF_F_HW_ESP)) {
+> +		NL_SET_ERR_MSG(extack, "Device doesn't support offload");
+> +		xso->dev = NULL;
+> +		dev_put(dev);
+> +		return -EINVAL;
+> +	}
 
-Applied these to `rust-next` -- thanks everyone!
+Steffen, Tetsuo
 
-If someone did not intend for me to take it even if the Acked-by is
-there (e.g. perhaps Andrew wanted to pick those nevertheless?), then
-please shout.
+If by "HW people" you mean me, we always set NETIF_F_HW_ESP when adding
+the .xfrm_dev_*_add() callbacks.
 
-With this, and if I didn't miss any message (plus looking at
-linux-next where I see Greg picked usb), then only clk and jump_label
-remain (plus any new incoming one).
+  1334 void mlx5e_ipsec_build_netdev(struct mlx5e_priv *priv)
+  1335 {
+  1336         struct mlx5_core_dev *mdev = priv->mdev;
+  1337         struct net_device *netdev = priv->netdev;
+  1338
+  1339         if (!mlx5_ipsec_device_caps(mdev))
+  1340                 return;
+  1341
+  1342         mlx5_core_info(mdev,
+  1343                        "mlx5e: IPSec ESP acceleration enabled\n");
+  1344
+  1345         netdev->xfrmdev_ops = &mlx5e_ipsec_xfrmdev_ops;
+  1346         netdev->features |= NETIF_F_HW_ESP;
+  1347         netdev->hw_enc_features |= NETIF_F_HW_ESP;
 
-Let's see if we can get them done next cycle then.
+So we are left with two possibilities: either the device registered XFRM
+ops without setting NETIF_F_HW_ESP, or netdev->features was modified
+without clearing the xfrmdev_ops pointer.
 
-Cheers,
-Miguel
+Which device is triggering the syzcaller crash?
+
+Thanks
+
+> +
+>  	if (!dev->xfrmdev_ops || !dev->xfrmdev_ops->xdo_dev_state_add) {
+>  		xso->dev = NULL;
+>  		dev_put(dev);
+> @@ -367,7 +374,8 @@ int xfrm_dev_policy_add(struct net *net, struct xfrm_policy *xp,
+>  	if (!dev)
+>  		return -EINVAL;
+>  
+> -	if (!dev->xfrmdev_ops || !dev->xfrmdev_ops->xdo_dev_policy_add) {
+> +	if (!dev->xfrmdev_ops || !dev->xfrmdev_ops->xdo_dev_policy_add ||
+> +	    !(dev->features & NETIF_F_HW_ESP)) {
+>  		xdo->dev = NULL;
+>  		dev_put(dev);
+>  		NL_SET_ERR_MSG(extack, "Policy offload is not supported");
+> 
+> 
+> 
+> On 2026/01/22 20:15, Steffen Klassert wrote:
+> >> But I have a question regarding security_xfrm_state_delete()/security_xfrm_policy_delete().
+> >>
+> >> xfrm_dev_state_flush_secctx_check() calls security_xfrm_state_delete() which can make
+> >> xfrm_dev_state_flush() no-op by returning an error value.
+> >> xfrm_dev_policy_flush_secctx_check() calls security_xfrm_policy_delete() which can make
+> >> xfrm_dev_policy_flush() no-op by returning an error value.
+> >>
+> >> Since xfrm_dev_state_flush()/xfrm_dev_policy_flush() are called by NETDEV_UNREGISTER
+> >> event (which is a signal for releasing all resources that prevent "struct net_device"
+> >> references from dropping), making xfrm_dev_state_flush()/xfrm_dev_policy_flush() no-op (by
+> >> allowing security_xfrm_state_delete()/security_xfrm_policy_delete() to return an error) is
+> >> a denial-of-service bug.
+> > 
+> > This means that the calling task doesn't have the permission to delete the
+> > state, some LSM has a policy the does not grant this permission.
+> 
+> But NETDEV_UNREGISTER event can fire without explicit request from a user.
+> Roughly speaking, current behavior is that
+> 
+>   while (security_xfrm_state_delete() != 0) {
+>     schedule_timeout_uninterruptible(10 * HZ);
+>     pr_emerg("unregister_netdevice: waiting for %s to become free. Usage count = %d\n",
+>              dev->name, netdev_refcnt_read(dev));
+>   }
+>   while (security_xfrm_policy_delete() != 0) {
+>     schedule_timeout_uninterruptible(10 * HZ);
+>     pr_emerg("unregister_netdevice: waiting for %s to become free. Usage count = %d\n",
+>              dev->name, netdev_refcnt_read(dev));
+>   }
+> 
+> might be executed upon e.g. termination of a userspace process.
+> 
+> > 
+> >>
+> >> Therefore, I wonder what are security_xfrm_state_delete() and security_xfrm_policy_delete()
+> >> for. Can I kill xfrm_dev_state_flush_secctx_check() and xfrm_dev_policy_flush_secctx_check() ?
+> > 
+> > This might violate a LSM policy then.
+> 
+> But LSM policy that results in system hung upon automatic cleanup logic is so stupid.
+> I want to kill xfrm_dev_state_flush_secctx_check() and xfrm_dev_policy_flush_secctx_check()
+> in order to eliminate possibility of system hung.
+> 
