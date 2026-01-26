@@ -1,111 +1,128 @@
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD822777EA;
-	Mon, 26 Jan 2026 21:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769463381; cv=none; b=nDHjsjv2RNvPWvCFX1VjdAU2PrezOZ3FCBaLqxKAJp4xd1r88BY+/g8z06Z+aP3pH5SZ62xzFyoXJYg5ZVk0P3Vkk5p8+p1mvVRlVLJLy66kn/wiXWBhcPxHn/bOFw3jgIerL5e9d8H4idOzNFOydKXNj6j8ZC6HuR1QH/eEuq4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769463381; c=relaxed/simple;
-	bh=0RodAB8oLx7+8GpYTVBTyvE4SVADV1YdcMRUy25UdUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IpVQStJcjvkPiTl9I+u4znw56yrHjediztwr8JCSSKkV90g/Xjh4l2gT8Oe+BAEq4q+BPoLocrfGmvKLkQ09ZQWWAUe2mjEUbuVu6o98hGmY0xTvBhOZsTGwnqrJ6Q47qqOOZFnK/riaLibMnH6RQhHLldrrveXx8uCLWjuiQJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=J6iAAvmt; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458F23093A6
+	for <linux-security-module@vger.kernel.org>; Mon, 26 Jan 2026 22:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769466822; cv=pass; b=jSKFzv9owfofv8+i6blnQwz0KD5VUgPwcEnzh7vcj1Wqac3ivMzwR5fz6gWPReOP850Ck/HbyzpkwIEw/qSx5Di9iZMeWol6wbJ6mIT8jNBbT+UTm1CPjBVWbuPqhWhLPNBqYSWpurQM8bwwIxJjPxkrJPZE2xLb1yLAPqaS9ro=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769466822; c=relaxed/simple;
+	bh=lqktNIYdTMjsWu0O9cUIJZqK41TShWavVm6Qx5DAnug=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MjNGGQXRVVKCcUctcKqSJcburcdPF4OcX3SpcNKpfjzVlfY3x5CGmt//bfUqQqKQZF/1s6v7y7RojaZLNiOKGffODiOJXUljkRA1CxZBOQICcGRW/+TSeduFufOeotU9fh63xPI+yuxkRGygwQw70h7Onti2ApcufXKGT1PyNpY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=CHOrEIw4; arc=pass smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="J6iAAvmt"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=IDX9AjD0dwjrQefXov9k2MtCld60dtQxGUUAV2j1WjI=; b=J6iAAvmtrgFJs9ze2z/3mvNozn
-	PZeYeQkBMpOoy6bARHpR02WAfbtaa7iTf6HiFwZskZHm4oN6foztXD1WXqeuhwHMSXWyJAFJbhTD5
-	qQ1+R5XWwGM3j+QSkNI1Q+zMTANXKoioCJJ8PtGwpUGGIcze5nZNWEXu1YR5X4maU7pfNt0Anyji+
-	GXAcVEho74qSXcSeKj2Ko+V9+LTubj1o43do861nH82B/ld1Fn3lt07jwKJr3drbI6UK0q+LPwinM
-	WYBkEgblZCF12DZiFoTwjzgiGipNv2h33OJAsRML39oXnwDKn1Bq0tULsElknva+RF0gidO6QOh3u
-	4kZob4og==;
-Received: from 2001-1c00-8d85-5700-266e-96ff-fe07-7dcc.cable.dynamic.v6.ziggo.nl ([2001:1c00:8d85:5700:266e:96ff:fe07:7dcc] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vkUFZ-00000005tyU-07kL;
-	Mon, 26 Jan 2026 21:35:57 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 41718300756; Mon, 26 Jan 2026 22:35:56 +0100 (CET)
-Date: Mon, 26 Jan 2026 22:35:56 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Marco Elver <elver@google.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	Chris Li <sparse@chrisli.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	Kentaro Takeda <takedakn@nttdata.co.jp>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Waiman Long <longman@redhat.com>, kasan-dev@googlegroups.com,
-	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-	linux-sparse@vger.kernel.org, linux-wireless@vger.kernel.org,
-	llvm@lists.linux.dev, rcu@vger.kernel.org
-Subject: Re: [PATCH v5 15/36] srcu: Support Clang's context analysis
-Message-ID: <20260126213556.GQ171111@noisy.programming.kicks-ass.net>
-References: <20251219154418.3592607-1-elver@google.com>
- <20251219154418.3592607-16-elver@google.com>
- <dd65bb7b-0dac-437a-a370-38efeb4737ba@acm.org>
- <aXez9fSxdfu5-Boo@elver.google.com>
- <8c1bbab4-4615-4518-b773-a006d1402b8b@acm.org>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="CHOrEIw4"
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-35338b3dd31so2364883a91.2
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Jan 2026 14:33:41 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769466820; cv=none;
+        d=google.com; s=arc-20240605;
+        b=OwAG1O9iStGVzMmL31GIOesS7D25TK7DvG1egXWaA3b3fp3s5pIeCeahfY6wfolI17
+         kAtgl+ov7vGxmDU30LUot0rLoPJPaU1OuQ9uh9J8Gre8QsB8kAwJyYDei6+ZMjFD68OW
+         ZGpcmf1KQkWF6JkHpafS8etqdL6hAlpCZPLbnBjerSI1QuDmNu453wAagDoDoT++bPfq
+         2jaXRN2+IxhRbZCjV4estajZbsP3kbv313rlLwPPJhJ91Iv1NXWnKWcUQ8uLxjLj/GjQ
+         PMVX6S3kb01gZ2TuBs+Qlf0S7//33GEqbjHg04c8uIEJfp8ClJsaYLrFHizkLr0SEUjH
+         XP8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=Bqx+C+qIk11wWsgmR33KllavOZb/V+0+I/Nz1DadbxI=;
+        fh=J0vj6lov8kmi05Xl3XPa7NoUjUUqFTnhbgz6gAG2KH0=;
+        b=ZdWOA0VoREf5Tu14arxp7Hpco/BDVENXqOfa+3CVUI39Q8cl4qjC3NNgOMW4RrsSms
+         rG2NoE4m7l99CMKVMBsR9JdB4rK0AnYrWbiIq/4UObbUp8vuaKxgSIj5An8I7pYVga8b
+         7okggf+xGl87o0du+vC3SATjpwI/n05OD11mnRueCdP79Ycheu0xW+xro1c+bUiNXPhl
+         B7hVBllZO3n3AwDnGcFEu1NExB+jVMFBVeQ9VEY15LQTNRoNrXTkwwYpMQWzofSEV314
+         xhrm2Lw0nKfRpeYhGK/NY+xvQs0ttnqWOvy7IDFr14O5T3R7mFsRxFgPC2LQDIJo/CRS
+         u60Q==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1769466820; x=1770071620; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Bqx+C+qIk11wWsgmR33KllavOZb/V+0+I/Nz1DadbxI=;
+        b=CHOrEIw4Wv29h3+6QT4reb/wOWcq6qriGJfMqVdSfjJRC+v6NkbxIMw5b3jKUjBjSm
+         VePFbfH24Cbeq+NbnkQKYvW0h2W/X/Dvzk4jYiFACUD/R7fdmSeggpXVNdAUVCQfVUFp
+         z+Rxzq9LBV5Wvr+cAVtlfURKglgzHMq5v8tzXPkR9TzjCxBTdnG2Zo57sl3qCQWA6AIi
+         5Ja4UXnPoWqp5YEj51n3UaneqVwiavLJJiSqmYavlydzvDvPtXjZZI7EmUTON/cOvUtS
+         DLRsw9/zJRlnom7kcHOFhlyLeJuBAGZjI9vstGkW95qC/78WXB6Kd4d2m5ASosAfSk2e
+         Tftw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769466820; x=1770071620;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Bqx+C+qIk11wWsgmR33KllavOZb/V+0+I/Nz1DadbxI=;
+        b=TxpMy/HtxMqQL/5v/iYFO0oHUO8r1McMPt4jZ/A9lf0zDhNupC0EfGF3RbXtN4X3da
+         sOYJCgL78FxINLqHCObPvrsf+2eD9ydImel2l1QmcpwCZjrwYpRyvkD7s/3aPtQ4EQJY
+         fXw0ZklSiy1sVrFVIacJFqcnc+YD3PNL849XgNJD/Tg1VZjCgyVVyyadQARpbfLE99Xg
+         Q271abwtwwr5ARNwSbVV016lypWxF31vP+GzbNhHOULp1suVxUk1kyhacdDyLi0BOM0Y
+         a6626VZH5g4Tfjps3Ah2l+4raJmO0hxLNzMRTHQpG8LPZAoJ0agT2SJ/xMuKCvQSgLU1
+         J1jQ==
+X-Gm-Message-State: AOJu0YzX1W4mLA1mqb0sWOVc1VeDmw9tc6LTrOaRhHiw2XHM4J2GonK3
+	iC7VrplkuJiTIrsr6RJF2c3zQvBPcuiIjtUEvTrNvrv0W+x5u1UtTFnxLKgFZGH+F/xEMM0H/Jn
+	iTYDZo+TU1To7iruMz/vpbTTXS16r4jt7B9N0GMUO
+X-Gm-Gg: AZuq6aLMN67Xvh0m7E6/LYQ+9c11bNuhOnSBokzm+5JQ3nHekF3ofmyQukurvHlj6JT
+	rJgOelr6xCoYDh2USk4wKhmIEXDhg6304Hx9E34rXmxPTZQ9/5fYpbmIronD6qXCpwdIMDHzFU8
+	a5vYo+zJgeds6+QjGVoYQQXqkcUap5r4ZGZTiVyDztG9zip9WCml3S8qRE775bJC5/tmBFv4vUP
+	M/cx/IuyShgMd4qoa1lV+FnEOorLfDSY9stusga8nmuB99eFTEcsoYL75jAQ9Z7n78hTAs=
+X-Received: by 2002:a17:90b:1e06:b0:343:c3d1:8b9b with SMTP id
+ 98e67ed59e1d1-353c4178d54mr5402949a91.19.1769466820557; Mon, 26 Jan 2026
+ 14:33:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8c1bbab4-4615-4518-b773-a006d1402b8b@acm.org>
+References: <2ec9c137-79a5-4562-8587-43dd2633f116@I-love.SAKURA.ne.jp>
+In-Reply-To: <2ec9c137-79a5-4562-8587-43dd2633f116@I-love.SAKURA.ne.jp>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 26 Jan 2026 17:33:29 -0500
+X-Gm-Features: AZwV_QhFYoGZJWFWXPGpm6UGxOEvHZUszb6YUhYdp5bqZLkPloc1U3Ty7KU9dDQ
+Message-ID: <CAHC9VhQikhv+qCyQdnJguvy-qTkGXB+NU7=QZjw5d+WfyVxZhw@mail.gmail.com>
+Subject: Re: [PATCH] xfrm: kill xfrm_dev_{state,policy}_flush_secctx_check()
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>, 
+	SELinux <selinux@vger.kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Network Development <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 26, 2026 at 10:54:56AM -0800, Bart Van Assche wrote:
+On Fri, Jan 23, 2026 at 5:13=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> Since xfrm_dev_{state,policy}_flush() are called from only NETDEV_DOWN an=
+d
+> NETDEV_UNREGISTER events, making xfrm_dev_{state,policy}_flush() no-op by
+> returning an error value from xfrm_dev_{state,policy}_flush_secctx_check(=
+)
+> is pointless. Especially, if xfrm_dev_{state,policy}_flush_secctx_check()
+> returned an error value upon NETDEV_UNREGISTER event, the system will hun=
+g
+> up with
+>
+>   unregister_netdevice: waiting for $dev to become free. Usage count =3D =
+$count
+>
+> message because the reference to $dev acquired by
+> xfrm_dev_{state,policy}_add() cannot be released.
+>
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> ---
+>  net/xfrm/xfrm_policy.c | 35 -----------------------------------
+>  net/xfrm/xfrm_state.c  | 33 ---------------------------------
+>  2 files changed, 68 deletions(-)
 
-> Has it ever been considered to add support in the clang compiler for a
-> variant of __must_hold() that expresses that one of two capabilities
-> must be held by the caller? I think that would remove the need to
-> annotate SRCU update-side code with __acquire_shared(ssp) and
-> __release_shared(ssp).
+I didn't make it very far into reviewing this patch, because it looks
+like xfrm_dev_state_flush() is called by the bonding driver's
+notification handler, and I don't see that reflected in this patch?
 
-Right, I think I've asked for logical operators like that. Although I
-think it was in the __guarded_by() clause rather than the __must_hold().
-Both || and && would be nice to have ;-)
-
-Specifically, I think I asked for something like:
-
-        cpumask_t       cpus_allowed __guarded_by(pi_lock && rq->__lock)
-                                     __guarded_shared_by(pi_lock || rq->__lock);
-
-
-I think Marco's suggestion was to use 'fake' locks to mimic those
-semantics.
+--=20
+paul-moore.com
