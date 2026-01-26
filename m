@@ -1,124 +1,122 @@
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E1246BF
-	for <linux-security-module@vger.kernel.org>; Mon, 26 Jan 2026 22:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86B723D2A1
+	for <linux-security-module@vger.kernel.org>; Mon, 26 Jan 2026 22:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.182
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769467826; cv=pass; b=oxcVN/PECEgL2MQ7a9CkkEolChHcMYRd6LpKPPN16qUfp/fakrL/kKYr++RBu/72kQJenQO/CO8fY6ppYZ2J6g4vbuAHReylpVszM66xN50guh/7K0Ae1anVS9T53oso4BuvGO0EvWTTYEHgjTNLAeIljxSKTqV2HDnH/BHxCDw=
+	t=1769467937; cv=pass; b=YsW/kMyXuDST+xDbgv56tkQhMZX82BjV2wdpRv01lMaWmDsg5rmS2VgZn/mmMw6632vi5ZNfyDyUP8AK4sEk89QdN6GdEd+9M+0a1WPnXHwpDSDiPzaHMREtr//WxrcMZEP2tgj3gVSJGkzBUrPyk7f3hOlMv0ztbWAtcTKbEjk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769467826; c=relaxed/simple;
-	bh=46+a/iDHqPPQf3mwVZkJtqT/aUr/0rXY/N+3GsWaHPA=;
+	s=arc-20240116; t=1769467937; c=relaxed/simple;
+	bh=KLLQdANoINV1odBBaAJlZcMzDaqXaeKbQ8WV4WhXJ/I=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F236ILpTcAFjUck5YSYF0KH60KDL39YEI9EE8vwJC8VBpHDQwsIn1aN3/fLuJaUCIAqvBopufxitLNqAHD2lvgYfTMB99RLpws8yiPochXQdMMv7fH/IWlbt4OxGGLeY+jpa97ss32bLPFZT+ehierKJ5WD0eq4PQ6H+sbyv/c4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FhpCAHIS; arc=pass smtp.client-ip=209.85.210.173
+	 To:Cc:Content-Type; b=lxDktd0FGSfhPWkzg8yi+q8KdfbmG+JD0+W4XMYJnNSGrIoblBIiRzZYruGrhyzqbOFoEk29HMuYWTpt8pPCT1d9bHYtGdrwcGtNAdvAdnn9/zUZasuZ6J4GhSB1pm7TFqgAbWKOuly3M9ow9ZKctDu4ztiV1Y+XoabYazUWJno=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MzTc5uC2; arc=pass smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FhpCAHIS"
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-81e8a9d521dso3000650b3a.2
-        for <linux-security-module@vger.kernel.org>; Mon, 26 Jan 2026 14:50:24 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769467824; cv=none;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MzTc5uC2"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2a7d98c1879so27167295ad.3
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Jan 2026 14:52:15 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769467935; cv=none;
         d=google.com; s=arc-20240605;
-        b=LpSDq2vQNQhvs7DBhGoDYlR5zCmA99Lk34vgcSv8Sdk5wovAAfmvmv38PScoqKtJFD
-         TXkc80CYfwDBhyudcft58/RGSRl0IIk352zz/FwjjbL6L6D1MfIxi7u6IB2Wd8BxExkZ
-         BIiV/woZcLO0nwS1m1v28VGwWVChP8Jdd8fasz1yTMUef0DJVCweYGQyIT96ZWPmMFfP
-         upOvm8GBH4jTseoiEEuFSoW8IvQF7d3HUIKVlFuKNbwZviwgQTHiCmaBItmi0rAZrf6T
-         uhTqPp3U+CrYXVUXHzw/DFgA15FnbW7Y66o/nMMomq7mO0UUUCE6u9YJlBdvvGee1ozW
-         2Btw==
+        b=N+iv+na/SmgK2aDxyrFi8bql3FJrxQwWqe6Qn1TK5E2oOK2f+ueKxZmurjQ3HKg+vb
+         Piv/ByUm61Ibz1XccV3ElF0U5w2Fj2CKkzSHIrjbLCGePnWewd6jhi3+5LDLNexXsC2Q
+         hMrcXJsztZPQF8de+UsgWcFAmgZTYWFrwl3aZwTeH8bIPOF0L7SBl93gLim20F25jpYv
+         d3QmHQr3qfCRihIfhamIyDu08/VeAUPJhI41IkqWwL1tdVoG4YhkJyHd7vwDvg18tno6
+         Pe/NRCnm/6xESHiLpwAH+M0kA9TYS4Arua+G5E5J/NOZMqgz5iNksUj6dU36xAfUeQR9
+         Tkjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=IsU1GLIX0RR/n3pdl+FDNmWQXgtjeVq/SYufc3kBVeg=;
-        fh=Ad+QV6lwCbKgvm+JEcaVySdKnKG0wQFWFFQp34BVl0k=;
-        b=dZaZfR4NQ3pUPPpo/yOuOYwRxHfcy7aUwf7eM+amotn6mWB1EsZc4YITqsqzhBqnOk
-         4ufEJrbzR2eZAOGjPkmsEkKesDqWQho2/mxlEdd5ddFj9kWYnrRO+cPXWcwDItEt+5G2
-         eXnFNnnBAkAEaiL819ZCkCWMBs9hDHG+S2c6LCuxlFMy70rX0tIiCJ9hsEKeTYKx7Adz
-         QxR8mPVTCMYXneShZ9gl7qFCZZ7w1xNNhp81MCynZ6RemJINONy4MY5+Tz5CA86e2O+p
-         uekU876FxZVifmsmXUkauFODS9/vSabW4tTprwRIkaDQHraN6baKCNahrfvsTftrZjjv
-         u4SQ==;
+        bh=4gCQ0xkA7by7eZFmx/8B6OueuRxMv1D7GSRo725dNz0=;
+        fh=L9uebrW6iqIFPwJKFwRBEgV8Cs2BvjrJxhv0BaFxlXI=;
+        b=XC5Q7W2jHnIlYyHTyGZVWdsf+5u3g/zeui8Iw/+g5XMb00k4TfzkbY+RgzI5F++ZPt
+         Wl3EPy8SLR3JcZTyrGrs5rxgv8wTH6n4RYBAcosNHB+72g/92ULqHVvtKw5zxFvl/br4
+         iRq9fzRkzzysuq0vQ0RaqHiGRJj13vqsul9e8ToNn/P4RqWJIwXDTECUzW4KDxObTEcd
+         kO+LkmfHsEair+wjfGS1Q+7UyqKLWA+C6435cFEg7cJGc6Det4pkE+OCbTsZfE3p39oZ
+         8wPAV9EWpdeOgMfcorbDSatUmVK49ayfUrO72GeOiIel23QKk791SznfXDLTe7Etdfgh
+         /iIw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1769467824; x=1770072624; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1769467935; x=1770072735; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IsU1GLIX0RR/n3pdl+FDNmWQXgtjeVq/SYufc3kBVeg=;
-        b=FhpCAHISSahgiZKVbruJxGmsRcB2FYu8fEW6Uf3DZeOrEZGyjTxfCuaii1hqn7Y/7K
-         VenYJQu498UgVIVyzTazxOL+Ta+dBFG6wLByOMxflSyDHZrmhKKnsVe02PKfVjnZS7ua
-         PfqLl4qHSwLhZLhP4B3HdlNDxrN8R24/P2orlSzWglh+o3fczSuWcDmWh9aNc8OPySo4
-         +mLB4Q8gaPT2y9zCbq59mgSRxTYYPWKPKcbTStgIe9a9k+FbwP9YpZ5nMs/ZwiHfORyR
-         HGhFW/tyMOSMqXwTkxEEmDwG0jZTIPUye/p32XkO9UNloU4s52pdG7HjniIyJOlTRJtX
-         R16Q==
+        bh=4gCQ0xkA7by7eZFmx/8B6OueuRxMv1D7GSRo725dNz0=;
+        b=MzTc5uC2IdT/SNfysEhiNyxYz8WsIBFeddI+uCBPLdDSdnj9MokR76vPpGD86S05Dd
+         2xmc5smr9WxxRvD5+fbIZJ+PKJGChM6fY7KKi83alCM+BdSVlRh2mrdMGU5Chkt3aSzB
+         nmK2kCxp5fsJBhonNCWEbZ4IqRlQphh2zI/A2BaxriUJAAhq6aTPAhcRkPkKwOJFKB9q
+         FrXhdG91fe1unFPSwQhIQ6lo01JhrYTtwmmbu+11DJy3k97IF5Qwp4o+zZ707gmDGsiX
+         V+nftD/5MVV2rC2fg+7jJuee5zsKLN0VdT/qZVqKleMQtr8y8MFjdKZKLBBfmCIOjDRy
+         IZtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769467824; x=1770072624;
+        d=1e100.net; s=20230601; t=1769467935; x=1770072735;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=IsU1GLIX0RR/n3pdl+FDNmWQXgtjeVq/SYufc3kBVeg=;
-        b=vM3RVhs/GFGxFQ4dW5TyNbwDIcPmHmxV9lDyeu/MRPpJjjBPTLznZH5t7LpsDXUI1u
-         q6fwxkMxqA9v8x1kFPf8rQSwGrL8KttGxWiPJ0HoAJRc4nOojvizhaZvKDhpRP9QnsKL
-         pCoy3R2NUG+I3jhJLC9EsbkGLxP0/oGBP8PMLIPykhsOuLxG1pgucbaEs/qc5DoFWlh4
-         g+YWxy4zsk6/whCj1n+jtpEWjDhCDrkXEe6aduL6EtgrFXXDBiDYip54FBnJ0GKueUSU
-         RROCSiiXWKnpSwn/EsHuOfo4VgnSOiC7iDt5br8S1oOm8HWnz+ke+L82k6HcscjFn5hp
-         rAgA==
-X-Forwarded-Encrypted: i=1; AJvYcCVh9W+Yq3ZEaoBYrjSdZPBZs6WIgBRQDQj+39WG8g930qoT7/ejlIh8o590qbscEVCwcU7GoSH2gWua8KSWvIglYtf5AUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3vHAijxg5udAf3o1XsO5E6E2k+AQMmsnpB2S54jBDOtqvE9DK
-	SP5+AA9ATQ1423b0yQ1CZ5W+1DZ5+PYsftIh9nDL7YGCy6n/MIYPzHhoY579CejMKm7/3PBC1Tz
-	g5M+zwiP7UKbz/r7Ltag/pKGBAVIX87uSzYNeg+wQ
-X-Gm-Gg: AZuq6aKhx0FzlqZ/paJnw8hBMRAxN9FAKHuQgVFgKFDR67rGNjFOcfwIRttnPhJjl4d
-	7vifq11TJvuJ5+G0bcKW/ACAdto7af0GnYYDjzRDVhbPHDy1trNyCXflA9Igf+2Ar+NagjAK3Wj
-	uC8F7kvkofQgvIHz3OQITCmiGY2vh/WQzkvgMxI/obATvPUseAvban6XNtY/A0AbbeqC2F+2b2/
-	XW3TBA9sjIjp576b2O8LGuAJhGwVFKm6rSAOTLtPlJwyCOIQUffoJQ3ZuiioT9T9jgAj3Q=
-X-Received: by 2002:a05:6a20:6a26:b0:37e:43b7:5213 with SMTP id
- adf61e73a8af0-38e9f26c766mr5402650637.79.1769467824278; Mon, 26 Jan 2026
- 14:50:24 -0800 (PST)
+        bh=4gCQ0xkA7by7eZFmx/8B6OueuRxMv1D7GSRo725dNz0=;
+        b=nJXy2sqihMsSeMD7GKzLF1c076tNletaJhGGqT8zGS2TMoARlRS8WT8ltmMIHd/mH0
+         C+Y1ZTsnoOaUVU5fwvl1DIbr0iKK+oeQO6qzUyqPVgS6Ay37EMWXCO349EPdSPDk737T
+         9iJoaJP2h1NjPdoB9IZ09G7SVOzhNMQT+rWGuT14u28k/m1WgpmW80iuIVlgoWoBNU3q
+         8BCz2Xarom2fabi3+GqVlbSDNyPU27iy4ep+ErCobo+tBu3JeQo7kw7ZdJLRjy9LzCV6
+         +wtPZF3s56ZxA14IAUxkdZEtu8iUq64XPTmgNlTkgTs4NRm0x4Dj4cnfjZ2xJJOMqBTP
+         0e2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXL5AokiWMKe0oOYhgIw2d1W7N2bu0YZ5xW2JBnOgyWCCxb63XEmxbH+aSsA23XGohxXPXn1VJxSyh7lxLtOsGKoJkUl9c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwnAmRpDRfj8UyMRAms1qF526MNjoxKB+laUDGuNYum9quxnVM
+	8PAi8VQrZ4qLG8uWANpSmGj5Xc3H3nlLulWjIpq4ze4QGjthoNoiv+KIxnhDD19uYohA0DhX6Hd
+	zmYVobyrgt9pR1E+7uA+uD3b1qHzZT0XtU83FOiAE
+X-Gm-Gg: AZuq6aIOZ/BYcEYBe/Ca6GTf3lg8pTRF8PuLXHHFMy+tZYEowN0JXebo/KqzTPZ0/tL
+	Kq0sOlskes6RIEuZDLYXK+f7Kw0r2lL5W4od/9mqbkyEZ/kpxB/7pq9tjGGdgGFq/9+/vrBQpUY
+	Ql9YSpkVErabRn7/9GINV4NdS4OBNgWEdO0yH3LJMzoaL5bKBlJSActbLQn/4iAvgTXKJcPMkvK
+	Xo9bxExv4pU/A7cs//blEVR1Djchc7ut0NgzlY6ktZ/MEUaVN9LyM95OOaitkoNn4aHgAc=
+X-Received: by 2002:a17:903:3583:b0:2a7:9da7:d21d with SMTP id
+ d9443c01a7336-2a8453287d9mr54528365ad.56.1769467935279; Mon, 26 Jan 2026
+ 14:52:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260122141303.241133-1-omosnace@redhat.com>
-In-Reply-To: <20260122141303.241133-1-omosnace@redhat.com>
+References: <20260122140745.239428-1-omosnace@redhat.com>
+In-Reply-To: <20260122140745.239428-1-omosnace@redhat.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 26 Jan 2026 17:50:12 -0500
-X-Gm-Features: AZwV_QirH6WxkkEtxB_THz4KRLLy86A_qAkPoOWcP6X4SLKJhhu3sJBRiZUB9J0
-Message-ID: <CAHC9VhQYLJVweDgBkRo=0_kS1TAUQH_YfT+woSfBW0SjUO4nqg@mail.gmail.com>
-Subject: Re: [PATCH] ipc: don't audit capability check in ipc_permissions()
-To: Ondrej Mosnacek <omosnace@redhat.com>, Serge Hallyn <serge@hallyn.com>
+Date: Mon, 26 Jan 2026 17:52:03 -0500
+X-Gm-Features: AZwV_QhZWJJjIz5nrzYMHWCchd4vw4_Kq_gvEnZtehjGVzYkeu1Rp5h6APCx8-A
+Message-ID: <CAHC9VhSgbHx4NcMVjMMk0D332b0DTEQi6dD_wO1fvQne-JVisw@mail.gmail.com>
+Subject: Re: [PATCH] ucount: check for CAP_SYS_RESOURCE using ns_capable_noaudit()
+To: Ondrej Mosnacek <omosnace@redhat.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>, "Eric W . Biederman" <ebiederm@xmission.com>, 
-	Alexey Gladkov <legion@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 22, 2026 at 9:56=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.co=
+On Thu, Jan 22, 2026 at 9:25=E2=80=AFAM Ondrej Mosnacek <omosnace@redhat.co=
 m> wrote:
 >
-> The IPC sysctls implement the ctl_table_root::permissions hook and
-> they override the file access mode based on the CAP_CHECKPOINT_RESTORE
-> capability, which is being checked regardless of whether any access is
-> actually denied or not, so if an LSM denies the capability, an audit
-> record may be logged even when access is in fact granted.
+> The user.* sysctls implement the ctl_table_root::permissions hook and
+> they override the file access mode based on the CAP_SYS_RESOURCE
+> capability (at most rwx if capable, at most r-- if not). The capability
+> is being checked unconditionally, so if an LSM denies the capability, an
+> audit record may be logged even when access is in fact granted.
 >
-> It wouldn't be viable to restructure the sysctl permission logic to only
-> check the capability when the access would be actually denied if it's
-> not granted. Thus, do the same as in net_ctl_permissions()
-> (net/sysctl_net.c) - switch from ns_capable() to ns_capable_noaudit(),
-> so that the check never emits an audit record.
+> Given the logic in the set_permissions() function in kernel/ucount.c and
+> the unfortunate way the permission checking is implemented, it doesn't
+> seem viable to avoid false positive denials by deferring the capability
+> check. Thus, do the same as in net_ctl_permissions() (net/sysctl_net.c)
+> - switch from ns_capable() to ns_capable_noaudit(), so that the check
+> never logs an audit record.
 >
-> Fixes: 0889f44e2810 ("ipc: Check permissions for checkpoint_restart sysct=
-ls at open time")
+> Fixes: dbec28460a89 ("userns: Add per user namespace sysctls.")
 > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
 > ---
->  include/linux/capability.h | 6 ++++++
->  ipc/ipc_sysctl.c           | 2 +-
->  2 files changed, 7 insertions(+), 1 deletion(-)
+>  kernel/ucount.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-This change seems reasonable to me, but I would make sure Serge has a
-chance to review/ACK this patch as it has a capability impact.
+Reviewed-by: Paul Moore <paul@paul-moore.com>
 
 --=20
 paul-moore.com
