@@ -1,164 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922602C030E;
-	Tue, 27 Jan 2026 03:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CA11F9ECB;
+	Tue, 27 Jan 2026 03:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769483168; cv=none; b=StO2UsukjSLrEAONWWvtVb40RAg2Il4Yf2CUSkCfEitaWNUM/VRE1pLW/2K5lCH9y5kXyzI7fB5LH4k6q8kubtb1VsPxOzJ6Oy5Wcp+7jR/cShfE0PiPOh1UbpeimR5EowmDnkvgPWByCao2O509pm/T4OG9P90e+ClkkpKn0WU=
+	t=1769485919; cv=none; b=dy8xGlIenOgfs0uPuKBbFNJRAysVdIWFnneTguT5O+pF3oAaw9Yay4d5dAoV6VivFz5MzqYyLQ3MbRwASN/+Dm+WDoExsgE1ops9zDKHWlXWwA04HmYL8yPJWWLd616LKVyFT41ax8JSCHxbsQaww56ZuTBMvpI6YTWscTcXEUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769483168; c=relaxed/simple;
-	bh=MeCnz1aCV6Fh1ZznDw2OQ4yrDxptXIf27TrTE2OGsCY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=R9GSa0U4do3RIaaIUgBCwxzlQ8bUv2WjMSQLUVxTPRMmB16ApspxuRo8RZV9kSHda9wdXstGYibfihyLXtcTNcP6pk2RI9b9uqfcvfBRk0kb7nNqS9d7g7j922+xkTZYdMJYF6I3Wmcl9SEzyQPOSg7omIu3g2vTqLsmcWEWN90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G0sePrhs; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0sePrhs"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 34950C116C6;
-	Tue, 27 Jan 2026 03:06:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769483168;
-	bh=MeCnz1aCV6Fh1ZznDw2OQ4yrDxptXIf27TrTE2OGsCY=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=G0sePrhsKm7bFcun25J6yP4+MkwBLDx1ZbMW3kuG4mZJrBAli7q7yFiLwE1HtnmQJ
-	 OONyIcP0KRRyXqGV7XEXoaTwxJgv5PNvWx0orgwt3IwPltdk+Gj1/yI25x5FFDLdVA
-	 z+1wiFH/FS46aODIjKOi9y2ObTKwzOD3YKpo4ev8iOcS3gq1NJ7GXRW/BX4DLwPnPq
-	 5kO61v0ktbv8EdEaNrvD9kiiflBQV9dYwC7R/YKfELz7O7wYQatr8TS3jJxZYUwhHt
-	 a12RXw4zFVCUHDiFZmNDit1Dkm1i8uA/wJSvPe7k6zFqJrD59jEh5vaRV+wCV8Ygeh
-	 ws6FBz8jXy4LA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24E7CD25924;
-	Tue, 27 Jan 2026 03:06:08 +0000 (UTC)
-From: Dmitry Safonov via B4 Relay <devnull+dima.arista.com@kernel.org>
-Date: Tue, 27 Jan 2026 03:05:47 +0000
-Subject: [PATCH] ima_fs: Avoid creating measurement lists for unsupported
- hash algos
+	s=arc-20240116; t=1769485919; c=relaxed/simple;
+	bh=bRkobea5ohiwWDKJh9IQ7cjBDH3Erht57kFyuuUvxww=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GJiGvOxLxBYPPrR8joda7KY+HPLbjmQQxxfijyje8GzxEw8o/8J8aW+pZhHClcsXshraxVBQfsZQsQWsc9YkcXCfgEsaLJmfCgHOYnCyDt83v8MsVI8YT14WmP6NpYuj3J//DZqJjPyEJgsfje6U1+SDD1MJLutaU1eOaBikwhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 60R3pUI5089632;
+	Tue, 27 Jan 2026 12:51:30 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 60R3pT3q089629
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 27 Jan 2026 12:51:30 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <00ed59a3-a9c9-47c3-97da-5a8e3da1ea82@I-love.SAKURA.ne.jp>
+Date: Tue, 27 Jan 2026 12:51:29 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260127-ima-oob-v1-1-2d42f3418e57@arista.com>
-X-B4-Tracking: v=1; b=H4sIAIoreGkC/x3MQQqDQAyF4atI1gZ0lLHtVaSLjBNrFs6URIog3
- t2xyw/+9w4wVmGDV3WA8k9Mcipo6wqmhdKHUWIxuMb5pnUDykqYc8DnTI+OfNfHIUCpv8qz7P+
- n8V0cyBiDUpqWe7+SbaxwnhevFZN9cgAAAA==
-X-Change-ID: 20260127-ima-oob-9fa83a634d7b
-To: Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, 
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
- Silvia Sisinni <silvia.sisinni@polito.it>, 
- Enrico Bravi <enrico.bravi@polito.it>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Dmitry Safonov <0x7f454c46@gmail.com>, 
- Dmitry Safonov <dima@arista.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1769483167; l=3581;
- i=dima@arista.com; s=20250521; h=from:subject:message-id;
- bh=c+A1wVTblU3Pa0pnPVfuEEFYkjoaAOyomgx0XFJM0mw=;
- b=pSgR7v4OOF6hVP4J6eiaNzfI8UORA86wojK8puty4pIe0NC8rzcIo6Q3HUDBNlvDLQaavjIv1
- GcKOa6qXOS7A+NoSOy31MinrqTkD/FAPYeOlqJDqQe1gupg6xzm8wLH
-X-Developer-Key: i=dima@arista.com; a=ed25519;
- pk=/z94x2T59rICwjRqYvDsBe0MkpbkkdYrSW2J1G2gIcU=
-X-Endpoint-Received: by B4 Relay for dima@arista.com/20250521 with
- auth_id=405
-X-Original-From: Dmitry Safonov <dima@arista.com>
-Reply-To: dima@arista.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] xfrm: kill xfrm_dev_{state,policy}_flush_secctx_check()
+To: Paul Moore <paul@paul-moore.com>, SELinux <selinux@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+        Network Development <netdev@vger.kernel.org>
+References: <2ec9c137-79a5-4562-8587-43dd2633f116@I-love.SAKURA.ne.jp>
+ <CAHC9VhQikhv+qCyQdnJguvy-qTkGXB+NU7=QZjw5d+WfyVxZhw@mail.gmail.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHC9VhQikhv+qCyQdnJguvy-qTkGXB+NU7=QZjw5d+WfyVxZhw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav303.rs.sakura.ne.jp
 
-From: Dmitry Safonov <dima@arista.com>
+On 2026/01/27 7:33, Paul Moore wrote:
+> On Fri, Jan 23, 2026 at 5:13 AM Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>
+>> Since xfrm_dev_{state,policy}_flush() are called from only NETDEV_DOWN and
+>> NETDEV_UNREGISTER events, making xfrm_dev_{state,policy}_flush() no-op by
+>> returning an error value from xfrm_dev_{state,policy}_flush_secctx_check()
+>> is pointless. Especially, if xfrm_dev_{state,policy}_flush_secctx_check()
+>> returned an error value upon NETDEV_UNREGISTER event, the system will hung
+>> up with
+>>
+>>   unregister_netdevice: waiting for $dev to become free. Usage count = $count
+>>
+>> message because the reference to $dev acquired by
+>> xfrm_dev_{state,policy}_add() cannot be released.
+>>
+>> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>> ---
+>>  net/xfrm/xfrm_policy.c | 35 -----------------------------------
+>>  net/xfrm/xfrm_state.c  | 33 ---------------------------------
+>>  2 files changed, 68 deletions(-)
+> 
+> I didn't make it very far into reviewing this patch, because it looks
+> like xfrm_dev_state_flush() is called by the bonding driver's
+> notification handler, and I don't see that reflected in this patch?
 
-ima_init_crypto() skips initializing ima_algo_array[i] if the alogorithm
-from ima_tpm_chip->allocated_banks[i].crypto_id is not supported.
-It seems avoid adding the unsupported algorithm to ima_algo_array will
-break all the logic that relies on indexing by NR_BANKS(ima_tpm_chip).
+xfrm_dev_{state,policy}_flush() are called from only the bonding driver's NETDEV_UNREGISTER
+event notification handler and the xfrm module's NETDEV_DOWN event / NETDEV_UNREGISTER event
+notification handler ( https://elixir.bootlin.com/linux/v6.19-rc5/A/ident/xfrm_dev_state_flush ).
 
-Grepping HASH_ALGO__LAST in security/integrity/ima/ shows that is
-the check other logic relies on, so make
-create_securityfs_measurement_lists() ignore unknown algorithms.
+What this patch kills is not xfrm_dev_{state,policy}_flush() but
+xfrm_dev_{state,policy}_flush_secctx_check(). No need to touch the bonding driver.
 
-On 6.12.40 I observe the following read out-of-bounds in hash_algo_name:
+LSM hook for checking whether to allow deleting a file in tmpfs which is still mounted
+makes sense, LSM hook for checking whether to allow starting unmount of tmpfs makes sense,
+but LSM hook for checking whether to allow releasing memory in tmpfs while unmount operation
+is already in progress causes nothing but a resource leak / denial-of-service kernel bug.
 
-> ==================================================================
-> BUG: KASAN: global-out-of-bounds in create_securityfs_measurement_lists+0x396/0x440
-> Read of size 8 at addr ffffffff83e18138 by task swapper/0/1
->
-> CPU: 4 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.40 #3
-> Call Trace:
->  <TASK>
->  dump_stack_lvl+0x61/0x90
->  print_report+0xc4/0x580
->  ? kasan_addr_to_slab+0x26/0x80
->  ? create_securityfs_measurement_lists+0x396/0x440
->  kasan_report+0xc2/0x100
->  ? create_securityfs_measurement_lists+0x396/0x440
->  create_securityfs_measurement_lists+0x396/0x440
->  ima_fs_init+0xa3/0x300
->  ima_init+0x7d/0xd0
->  init_ima+0x28/0x100
->  do_one_initcall+0xa6/0x3e0
->  kernel_init_freeable+0x455/0x740
->  kernel_init+0x24/0x1d0
->  ret_from_fork+0x38/0x80
->  ret_from_fork_asm+0x11/0x20
->  </TASK>
->
-> The buggy address belongs to the variable:
->  hash_algo_name+0xb8/0x420
->
-> The buggy address belongs to the physical page:
-> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x107ce18
-> flags: 0x8000000000002000(reserved|zone=2)
-> raw: 8000000000002000 ffffea0041f38608 ffffea0041f38608 0000000000000000
-> raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->  ffffffff83e18000: 00 01 f9 f9 f9 f9 f9 f9 00 01 f9 f9 f9 f9 f9 f9
->  ffffffff83e18080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> >ffffffff83e18100: 00 00 00 00 00 00 00 f9 f9 f9 f9 f9 00 05 f9 f9
->                                         ^
->  ffffffff83e18180: f9 f9 f9 f9 00 00 00 00 00 00 00 04 f9 f9 f9 f9
->  ffffffff83e18200: 00 00 00 00 00 00 00 00 04 f9 f9 f9 f9 f9 f9 f9
-> ==================================================================
-
-Seems like the TPM chip supports sha3_256, which isn't yet in
-tpm_algorithms:
-> tpm tpm0: TPM with unsupported bank algorithm 0x0027
-
-Fixes: 9fa8e7625008 ("ima: add crypto agility support for template-hash algorithm")
-Signed-off-by: Dmitry Safonov <dima@arista.com>
-Cc: Enrico Bravi <enrico.bravi@polito.it>
-Cc: Silvia Sisinni <silvia.sisinni@polito.it>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>
----
- security/integrity/ima/ima_fs.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index 012a58959ff0..e9283229acea 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -404,6 +404,9 @@ static int __init create_securityfs_measurement_lists(void)
- 		char file_name[NAME_MAX + 1];
- 		struct dentry *dentry;
- 
-+		if (algo == HASH_ALGO__LAST)
-+			continue;
-+
- 		sprintf(file_name, "ascii_runtime_measurements_%s",
- 			hash_algo_name[algo]);
- 		dentry = securityfs_create_file(file_name, S_IRUSR | S_IRGRP,
-
----
-base-commit: 63804fed149a6750ffd28610c5c1c98cce6bd377
-change-id: 20260127-ima-oob-9fa83a634d7b
-
-Best regards,
--- 
-Dmitry Safonov <dima@arista.com>
-
+What xfrm_dev_{state,policy}_flush_secctx_check() are causing is something like
+"LSM policy is refusing release of memory used by a file in tmpfs which is already under
+unmount operation".
+xfrm_dev_{state,policy}_flush_secctx_check() are too late to make LSM policy decision.
+A must-not-fail operation has already started before LSM hooks are called.
 
