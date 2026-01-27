@@ -1,135 +1,187 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E3D2580EE
-	for <linux-security-module@vger.kernel.org>; Tue, 27 Jan 2026 08:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84AD2D6E55;
+	Tue, 27 Jan 2026 09:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769501131; cv=none; b=VjYgBT+ZgbuC6qzccvgE0+k6kGFkmIECyNp8bfdZ5CR2sZ3rDiTlXQfQZEZEzzUU6LsM/NPM+0MpluwhAIXUS418WGWl+gSB5P0rXx7oHdT8MioL6mQmRLLJQ38WLxy3I82UiGLoAFxEEn+Eh9Qx7PJ23gXHoUuo10VDP/txyKY=
+	t=1769505320; cv=none; b=bE53pVUB5tGvK8T5XEouKevtLvJnNypOm5GoXNwWe3mK53e9Bwp9pf8yfo8+WHetNCh2dfT4VvFCTY8eSuWTSxu7aM9EHrpjXyTQ0sYsNt1F3Eu1KKsFzovxM81H8YIIVm+CNjm4/OPiAkOSy2NGlC8b5bVsGyTEVgqOZJHcTxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769501131; c=relaxed/simple;
-	bh=G4lGxEVi8DaJdnFVFXySNwy7fmRjl5ytu108BNBK6LQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oMjo2APHH8FfyxZb5zkZviweqfIno6ezMBcfGc+vyyQY2sCbV590p8fNiTGE5m/83ympmdKVDmbTXaIG9+65fxT9qZkNK91aIr2UVkjbr7+RtA+xX7/H856e0C0IYdILeS4nVjMMTmJE3lghZXU3Yans/rc+643jj2qrZarKddQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eT4tQopT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eT4tQopT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1769501128;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yyBS2urlrz3YTfQuUYzzTwivIYXn3/eEJMd3wGNCydw=;
-	b=eT4tQopTY0ycx70+Qt1X0k7vz5wp3aLXzE8XsmL9bllJpne6VBVZeJHB0zNI95TIHidulf
-	dF1MsVztziYXInbSvNKHN4CTX4YOxZz9gnNnnfnkuDgQ7IvCyCXch8yDOa+rOvEpJ8iv4z
-	o/tzqpPIkiaVGzGfGKkDX0aENdxkLJY=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-81-L5LwKInsNXa9Wsejt2dtFA-1; Tue, 27 Jan 2026 03:05:19 -0500
-X-MC-Unique: L5LwKInsNXa9Wsejt2dtFA-1
-X-Mimecast-MFC-AGG-ID: L5LwKInsNXa9Wsejt2dtFA_1769501119
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-34ab459c051so10602245a91.0
-        for <linux-security-module@vger.kernel.org>; Tue, 27 Jan 2026 00:05:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769501119; x=1770105919;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=yyBS2urlrz3YTfQuUYzzTwivIYXn3/eEJMd3wGNCydw=;
-        b=DXQntXpPfPh3KbZMGkOm2vR/G5aP2kcLeQlGXneLO+YTt3m2brxdP2RpSqIbVbzsg5
-         yO1Nz/0iDp8ppIdHyCrIcJ2YH5b6O4J1u+4j1FxewsTAmkcoZ/H6LWLfNxuPmWzgA/ME
-         fIvoXRXFe8JWURbp8XKx/9nAeqfkKe484YTDj3JlKs0WZBBG0g3HThanv4dxAYHSCDMZ
-         u78qTiOvvc0VwP7kyRcp+BJsq6AlpzgQzwalGF0eomdhOTlJBKaOxGXjVgrja2ZHF0TU
-         QcRnX3he/RUnXXga9V2Fu+PMskm7PkxsGpvma+HzRLLC6LacDOmCTueQfxc+oQPyj4Df
-         lcqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXV39spP0kErJ59BKbBP4/bbui50oA5uuGwh+Gi1OuH79omkEzYoczTqo5u585akX4sQW/jHxY4CFUMsfYNyl2yBrA/5Iw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8Vj2suxn1wRm4vDjKHLAODVqdJgvPMtW1YZch9bsBUf577rxn
-	Sp7ow3QZif8Qu6VfxL/b9KR/CtxA0L9rHvNSUyZdmu9HaLyJuznaoKhPxpD8NdbUbJ5AyDgm+G7
-	b5oq+hcYShDI8CRB8qhAyxZcfYecGqOhSzDCLd4WeeT/kniDaRlvIE370Zx3DNpfVsTAlWApmVZ
-	ejRWUYam/Mqqz81UkJAxUCoOhtyx+W+4ure08bmih0G2yw71t/ZcBO
-X-Gm-Gg: AZuq6aI8H/nngtS4QoebPEREE1eaM3ACkFmqJcm3aK/gpKry3AGewE31XIlBvp/dnQC
-	zAlBkZtk9hu3Swa3HFcJdcKgHMKhbFI2c5IO/Flr3EXI4hl7adcOGlD9Re6cSitEqEq03UOOcGZ
-	KQrDQGx7V8cOhGEwwdZgDvxZI/i6wQqwmkqaUuozDjMgws0xpVqfoahu+YDu+yTVnLyg==
-X-Received: by 2002:a17:90b:528e:b0:33e:2d0f:479b with SMTP id 98e67ed59e1d1-353fecdcfbemr1169746a91.6.1769501118697;
-        Tue, 27 Jan 2026 00:05:18 -0800 (PST)
-X-Received: by 2002:a17:90b:528e:b0:33e:2d0f:479b with SMTP id
- 98e67ed59e1d1-353fecdcfbemr1169721a91.6.1769501118342; Tue, 27 Jan 2026
- 00:05:18 -0800 (PST)
+	s=arc-20240116; t=1769505320; c=relaxed/simple;
+	bh=8AKpzUsCakD51J6TH8RHf35RspQgGppypEY0UlXF7XA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nJHWUA0UM79GxIGvNFkPlerJTBHKe784hrPZBE0h7y4rCLL8LEDYvO75CrnDIgdMM2ji2Gn8AaxkglfIjxUkl1Lmq0D1t/qPP74oNbOJMkJZZNk0HZZDlv3uxERqWx6udYSzyo00Q0Y/KxFyv8dhsVCqtRKHsAQvvYL0YDk/xfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.196])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4f0fnG6Zmkz1HDP2;
+	Tue, 27 Jan 2026 17:12:34 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 34DDE4056A;
+	Tue, 27 Jan 2026 17:15:09 +0800 (CST)
+Received: from [10.204.63.22] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwAX4WsTgnhpNbC0Ag--.9631S2;
+	Tue, 27 Jan 2026 10:15:08 +0100 (CET)
+Message-ID: <b873ba2c8057aa749aa0d058002a30776d0a5248.camel@huaweicloud.com>
+Subject: Re: [PATCH] ima_fs: Avoid creating measurement lists for
+ unsupported hash algos
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: dima@arista.com, Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
+ <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>,  "Serge E. Hallyn" <serge@hallyn.com>,
+ Silvia Sisinni <silvia.sisinni@polito.it>, Enrico Bravi
+ <enrico.bravi@polito.it>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dmitry Safonov <0x7f454c46@gmail.com>
+Date: Tue, 27 Jan 2026 10:14:55 +0100
+In-Reply-To: <20260127-ima-oob-v1-1-2d42f3418e57@arista.com>
+References: <20260127-ima-oob-v1-1-2d42f3418e57@arista.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260122140745.239428-1-omosnace@redhat.com> <CAHC9VhSgbHx4NcMVjMMk0D332b0DTEQi6dD_wO1fvQne-JVisw@mail.gmail.com>
- <aXgZI1td0Hremulj@mail.hallyn.com>
-In-Reply-To: <aXgZI1td0Hremulj@mail.hallyn.com>
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Date: Tue, 27 Jan 2026 09:05:06 +0100
-X-Gm-Features: AZwV_QjIdWSNFQjfHOtFcjMZ9aCAgQ0MC7O6Wyqr_Wu_Rw0dFaUOh0s70eRf9-A
-Message-ID: <CAFqZXNve_7oKFWydUrskOcvsfbRZVKyWRmLvHKsTzBhG+RmEmQ@mail.gmail.com>
-Subject: Re: [PATCH] ucount: check for CAP_SYS_RESOURCE using ns_capable_noaudit()
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Paul Moore <paul@paul-moore.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Eric W . Biederman" <ebiederm@xmission.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: r5mS447V8JUDGtr1WbiTfM-dtGY5HUiZS0BwXqERtA4_1769501119
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID:GxC2BwAX4WsTgnhpNbC0Ag--.9631S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXF47Gry5Xry5tF1fCF18uFg_yoWrArWfpF
+	Z8WFyxCr4kJFy7GrnrAa43Gr4rJrWUC3WUJrn5Jr10y3W7G3WkXr1DCF1UCr98Wry5AF12
+	qwsrXr4Yyr4DJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAGBGl4LxwKcgAAsa
 
-On Tue, Jan 27, 2026 at 2:55=E2=80=AFAM Serge E. Hallyn <serge@hallyn.com> =
-wrote:
->
-> On Mon, Jan 26, 2026 at 05:52:03PM -0500, Paul Moore wrote:
-> > On Thu, Jan 22, 2026 at 9:25=E2=80=AFAM Ondrej Mosnacek <omosnace@redha=
-t.com> wrote:
-> > >
-> > > The user.* sysctls implement the ctl_table_root::permissions hook and
-> > > they override the file access mode based on the CAP_SYS_RESOURCE
-> > > capability (at most rwx if capable, at most r-- if not). The capabili=
-ty
-> > > is being checked unconditionally, so if an LSM denies the capability,=
- an
-> > > audit record may be logged even when access is in fact granted.
-> > >
-> > > Given the logic in the set_permissions() function in kernel/ucount.c =
-and
-> > > the unfortunate way the permission checking is implemented, it doesn'=
-t
-> > > seem viable to avoid false positive denials by deferring the capabili=
-ty
-> > > check. Thus, do the same as in net_ctl_permissions() (net/sysctl_net.=
-c)
-> > > - switch from ns_capable() to ns_capable_noaudit(), so that the check
-> > > never logs an audit record.
-> > >
-> > > Fixes: dbec28460a89 ("userns: Add per user namespace sysctls.")
-> > > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > > ---
-> > >  kernel/ucount.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > Reviewed-by: Paul Moore <paul@paul-moore.com>
->
-> Acked-by: Serge Hallyn <serge@hallyn.com>
->
-> Looks good to me.  What tree should this go through?  Network?
+On Tue, 2026-01-27 at 03:05 +0000, Dmitry Safonov via B4 Relay wrote:
+> From: Dmitry Safonov <dima@arista.com>
+>=20
+> ima_init_crypto() skips initializing ima_algo_array[i] if the alogorithm
 
-Andrew has already applied the two patches I posted into his
-mm-nonmm-unstable branch, so I assume they are set to go through his
-tree.
+Algorithm.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/log/?h=3Dmm-non=
-mm-unstable
+> from ima_tpm_chip->allocated_banks[i].crypto_id is not supported.
+> It seems avoid adding the unsupported algorithm to ima_algo_array will
+> break all the logic that relies on indexing by NR_BANKS(ima_tpm_chip).
+>=20
+> Grepping HASH_ALGO__LAST in security/integrity/ima/ shows that is
+> the check other logic relies on, so make
+> create_securityfs_measurement_lists() ignore unknown algorithms.
+>=20
+> On 6.12.40 I observe the following read out-of-bounds in hash_algo_name:
+>=20
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > BUG: KASAN: global-out-of-bounds in create_securityfs_measurement_lists=
++0x396/0x440
+> > Read of size 8 at addr ffffffff83e18138 by task swapper/0/1
+> >=20
+> > CPU: 4 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.40 #3
+> > Call Trace:
+> >  <TASK>
+> >  dump_stack_lvl+0x61/0x90
+> >  print_report+0xc4/0x580
+> >  ? kasan_addr_to_slab+0x26/0x80
+> >  ? create_securityfs_measurement_lists+0x396/0x440
+> >  kasan_report+0xc2/0x100
+> >  ? create_securityfs_measurement_lists+0x396/0x440
+> >  create_securityfs_measurement_lists+0x396/0x440
+> >  ima_fs_init+0xa3/0x300
+> >  ima_init+0x7d/0xd0
+> >  init_ima+0x28/0x100
+> >  do_one_initcall+0xa6/0x3e0
+> >  kernel_init_freeable+0x455/0x740
+> >  kernel_init+0x24/0x1d0
+> >  ret_from_fork+0x38/0x80
+> >  ret_from_fork_asm+0x11/0x20
+> >  </TASK>
+> >=20
+> > The buggy address belongs to the variable:
+> >  hash_algo_name+0xb8/0x420
+> >=20
+> > The buggy address belongs to the physical page:
+> > page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x10=
+7ce18
+> > flags: 0x8000000000002000(reserved|zone=3D2)
+> > raw: 8000000000002000 ffffea0041f38608 ffffea0041f38608 000000000000000=
+0
+> > raw: 0000000000000000 0000000000000000 00000001ffffffff 000000000000000=
+0
+> > page dumped because: kasan: bad access detected
+> >=20
+> > Memory state around the buggy address:
+> >  ffffffff83e18000: 00 01 f9 f9 f9 f9 f9 f9 00 01 f9 f9 f9 f9 f9 f9
+> >  ffffffff83e18080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > ffffffff83e18100: 00 00 00 00 00 00 00 f9 f9 f9 f9 f9 00 05 f9 f9
+> >                                         ^
+> >  ffffffff83e18180: f9 f9 f9 f9 00 00 00 00 00 00 00 04 f9 f9 f9 f9
+> >  ffffffff83e18200: 00 00 00 00 00 00 00 00 04 f9 f9 f9 f9 f9 f9 f9
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> Seems like the TPM chip supports sha3_256, which isn't yet in
+> tpm_algorithms:
+> > tpm tpm0: TPM with unsupported bank algorithm 0x0027
+>=20
+> Fixes: 9fa8e7625008 ("ima: add crypto agility support for template-hash a=
+lgorithm")
+> Signed-off-by: Dmitry Safonov <dima@arista.com>
+> Cc: Enrico Bravi <enrico.bravi@polito.it>
+> Cc: Silvia Sisinni <silvia.sisinni@polito.it>
+> Cc: Roberto Sassu <roberto.sassu@huawei.com>
+> Cc: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>  security/integrity/ima/ima_fs.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima=
+_fs.c
+> index 012a58959ff0..e9283229acea 100644
+> --- a/security/integrity/ima/ima_fs.c
+> +++ b/security/integrity/ima/ima_fs.c
+> @@ -404,6 +404,9 @@ static int __init create_securityfs_measurement_lists=
+(void)
+>  		char file_name[NAME_MAX + 1];
+>  		struct dentry *dentry;
+> =20
+> +		if (algo =3D=3D HASH_ALGO__LAST)
+> +			continue;
+> +
+>  		sprintf(file_name, "ascii_runtime_measurements_%s",
+>  			hash_algo_name[algo]);
 
---
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+Thanks, but I think we can also print the unsupported digests, since
+they are there. Since we don't have the algorithm name, we can make
+ours like tpm_<algo hex>.
+
+Once this is fixed, you can try to make SHA3_256 supported. Add the
+TPM_ALG_SHA3_256 definition in tpm.h and the mapping in tpm2-cmd.c
+(array tpm2_hash_map).
+
+Thanks
+
+Roberto
+
+>  		dentry =3D securityfs_create_file(file_name, S_IRUSR | S_IRGRP,
+>=20
+> ---
+> base-commit: 63804fed149a6750ffd28610c5c1c98cce6bd377
+> change-id: 20260127-ima-oob-9fa83a634d7b
+>=20
+> Best regards,
 
