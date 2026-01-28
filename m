@@ -1,108 +1,239 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20F72DF12F;
-	Wed, 28 Jan 2026 10:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D028B34C83C;
+	Wed, 28 Jan 2026 12:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769596118; cv=none; b=nidTrIorwcjAXPiUCur1Yl2O4AntHW43Xy4UXMb8kAWddh3XxlYtBoIzYqwlxhgm2yamv07O5wktF77lt1vocUOZ3VuPSbfi5vbugCcWzmJZ1KG5ZuC7WAhAlwGSffi+dCYGU3luolyxoAYRHU+9N71Q+VOMubLMrSibFatyOJY=
+	t=1769602376; cv=none; b=O9+BMWXt+aYRbdu96leKu/rv9Br5OFmlxd2mOJdKJiIk/QY/os6ISYgPQcRvK5feF5rSVBO9cSL4aC0F0qZfQy/b6eQwgSX0liYC3Sqv4JHrIKS18EdyuB+umnBYyj0aYQdxW4QcQAFnQNnfpVT6QJ1CdbRvbRnScHwxhVK2qXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769596118; c=relaxed/simple;
-	bh=pbVl0ODL9OzExgUwxrbIhZ3mNab1RLmbIY3owANW0Js=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n4TtWabm5/USR+plThN6a75NYYe5+A48fuRKsHerEiBp4ezQwfKtQYuEmyE/9+XQNP+BPFiOXgn9wugujRhd6XDYirxQ5ogOg38D2KxDop5vtKXtmD7D5VrnqS/ePEpzXazVvfcCKiOrZBk6f0TrWDSPl2eb3kYy312/0UowATo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 60SAS7W1005303;
-	Wed, 28 Jan 2026 19:28:07 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 60SAS78j005299
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 28 Jan 2026 19:28:07 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <1bb453af-3ef2-4ab6-a909-0705bd07c136@I-love.SAKURA.ne.jp>
-Date: Wed, 28 Jan 2026 19:28:05 +0900
+	s=arc-20240116; t=1769602376; c=relaxed/simple;
+	bh=brJyfqTrpOAwu9gN1Gk9OR3qAejoMh9naiSI6qk19dE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lxVuaFmuuUh0sDBV+NL9Y9SAgZOWd5nTawLoWFalr0nLGkx/PS6mAKegIfp3e2jYv3t7QJN7S12N7EcTtzYrn1Bql5+bP5dTzze2ymjuYIAvCC9K6ZlpwJ+dqDLxD76OEGp7UFrfab4GqrLFonPypAErm+6WDzdxFG9IbolxYig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=gTRY/WK5; arc=none smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="gTRY/WK5"
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60SB138M1478460;
+	Wed, 28 Jan 2026 04:12:23 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
+	 bh=Sd3tTNC9Qi1NraZ3FKZVjxKypYrlKrXHxdzsRn97YZE=; b=gTRY/WK5dlMJ
+	+w33bnXlRn1cCiq77T2CcMcXQkZLDeCgVL96iSn62FmkkrRxzBM9MIvA0/cb+Yqp
+	7K2voFCBRv+61xwztZqJKWxwspJ55PsOpC1EDOp9KTPbF6BIJWuk9ijNdT5ye3hN
+	2qFlu8Baf7zOiO2sS+AFcRFjCj8EIQBI+FWjL8w8MnzADaoEJNxQSdivlV6UW3he
+	/wb0Y/R32ZcnznUNp/NThA2xnL9bV+ILuQu5yUUX8YQKP21FSmcApEMpZ5O3AuC3
+	/zWNiD+9HEYCHz+k7PzzpBd2lBlTxy8vvfv8sVuLDoGyHUQax4GHXHh1oNeRoIln
+	Y1F/zIHK8w==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4bycg226fm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 28 Jan 2026 04:12:23 -0800 (PST)
+Received: from devbig003.atn7.facebook.com (2620:10d:c085:108::150d) by
+ mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.35; Wed, 28 Jan 2026 12:12:18 +0000
+From: Chris Mason <clm@meta.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+CC: Andrew Morton <akpm@linux-foundation.org>,
+        Jarkko Sakkinen
+	<jarkko@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas
+ Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov
+	<bp@alien8.de>, <x86@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, Arnd
+ Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma
+	<vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Jani Nikula
+	<jani.nikula@linux.intel.com>,
+        Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tvrtko Ursulin <tursulin@ursulin.net>,
+        Christian Koenig
+	<christian.koenig@amd.com>,
+        Huang Rui <ray.huang@amd.com>, Matthew Auld
+	<matthew.auld@intel.com>,
+        Matthew Brost <matthew.brost@intel.com>,
+        Alexander
+ Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>,
+        Benjamin LaHaise <bcrl@kvack.org>, Gao Xiang
+	<xiang@kernel.org>,
+        Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Sandeep Dhavale <dhavale@google.com>,
+        Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Muchun Song <muchun.song@linux.dev>,
+        Oscar Salvador <osalvador@suse.de>,
+        David Hildenbrand <david@kernel.org>,
+        Konstantin Komarov
+	<almaz.alexandrovich@paragon-software.com>,
+        Mike Marshall
+	<hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Tony Luck
+	<tony.luck@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Dave
+ Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
+        Babu Moger
+	<babu.moger@amd.com>, Carlos Maiolino <cem@kernel.org>,
+        Damien Le Moal
+	<dlemoal@kernel.org>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn
+	<jth@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Liam R . Howlett"
+	<Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport
+	<rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Michal Hocko
+	<mhocko@suse.com>, Hugh Dickins <hughd@google.com>,
+        Baolin Wang
+	<baolin.wang@linux.alibaba.com>, Zi Yan <ziy@nvidia.com>,
+        Nico Pache
+	<npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+        Dev Jain
+	<dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+        Lance Yang
+	<lance.yang@linux.dev>, Jann Horn <jannh@google.com>,
+        Pedro Falcato
+	<pfalcato@suse.de>, David Howells <dhowells@redhat.com>,
+        Paul Moore
+	<paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn"
+	<serge@hallyn.com>,
+        Yury Norov <yury.norov@gmail.com>,
+        Rasmus Villemoes
+	<linux@rasmusvillemoes.dk>,
+        <linux-sgx@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <nvdimm@lists.linux.dev>, <linux-cxl@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <intel-gfx@lists.freedesktop.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-aio@kvack.org>,
+        <linux-erofs@lists.ozlabs.org>, <linux-ext4@vger.kernel.org>,
+        <linux-mm@kvack.org>, <ntfs3@lists.linux.dev>,
+        <devel@lists.orangefs.org>, <linux-xfs@vger.kernel.org>,
+        <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+        Jason
+ Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH v2 07/13] mm: update secretmem to use VMA flags on mmap_prepare
+Date: Wed, 28 Jan 2026 04:08:36 -0800
+Message-ID: <20260128121200.283932-1-clm@meta.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <a243a09b0a5d0581e963d696de1735f61f5b2075.1769097829.git.lorenzo.stoakes@oracle.com>
+References: <cover.1769097829.git.lorenzo.stoakes@oracle.com> <a243a09b0a5d0581e963d696de1735f61f5b2075.1769097829.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xfrm: kill xfrm_dev_{state,policy}_flush_secctx_check()
-To: Paul Moore <paul@paul-moore.com>, SELinux <selinux@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-        Network Development <netdev@vger.kernel.org>
-References: <2ec9c137-79a5-4562-8587-43dd2633f116@I-love.SAKURA.ne.jp>
- <CAHC9VhQikhv+qCyQdnJguvy-qTkGXB+NU7=QZjw5d+WfyVxZhw@mail.gmail.com>
- <00ed59a3-a9c9-47c3-97da-5a8e3da1ea82@I-love.SAKURA.ne.jp>
- <CAHC9VhQq6jY63kYEQCp2t89Vv+_PDqv54RV6TO_TePDQyU6Vug@mail.gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAHC9VhQq6jY63kYEQCp2t89Vv+_PDqv54RV6TO_TePDQyU6Vug@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav203.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTI4MDA5OCBTYWx0ZWRfX/YMdvd0IEW+M
+ mfJ/bYR9k4eRvDbs9QGzO+ygu2VSotJCKMMxUusrpYkrvYdQaFJRWVvBv2EkD12mCpCYEvw+XB/
+ DwyN2M8BBbTeyqqZ9/i9fDyEPE0MOIwU1pNj8r3a1/SGXN38+xZGlcMtDVhwJA1iofmGT+NTjsa
+ 3wJFzmew6yuj81cYLEWiubhhxDZMBD6hVVMuqCOVg+bB7Gz9bEYCH56KvIcfJ13/7NnDlwWy1ay
+ rut+pW91VzKqtLFjeZDFQXQuymj3+pWlazUmuuQXtfS+yB5rh8eIrZb/ZGDSDilJLhwKOSnwEsm
+ tXIPQzyp+XE21UBIWU7JysVYMwhm9BUIbA4gV+4NNGJrteyEtklAhziLQl5fV0j0MzIV6sri7hz
+ h9QDQw7JEBl4y5dfKeMuesm0LqUNBE+g04KLVmq1Y9FiJcFdRQVCoCh0B4S6SthUPRAGT0RWyAc
+ Vh/HaT4eUcQ+KnB1bbQ==
+X-Proofpoint-GUID: 6cECoo2vZpz-_Y4sX-WfJbWu0BG9k_53
+X-Authority-Analysis: v=2.4 cv=Q63fIo2a c=1 sm=1 tr=0 ts=6979fd27 cx=c_pps
+ a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
+ a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
+ a=VZ3cX_PGfQEInpbj4y4A:9
+X-Proofpoint-ORIG-GUID: 6cECoo2vZpz-_Y4sX-WfJbWu0BG9k_53
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-01-28_02,2026-01-28_01,2025-10-01_01
 
-On 2026/01/28 6:59, Paul Moore wrote:
-> It sounds like we either need to confirm that
-> security_xfrm_{policy,state}_delete() is already present in all code
-> paths that result in SPD/SAD deletions (in a place that can safely
-> fail and return an error),
+Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+> This patch updates secretmem to use the new vma_flags_t type which will
+> soon supersede vm_flags_t altogether.
+> 
+> In order to make this change we also have to update mlock_future_ok(), we
+> replace the vm_flags_t parameter with a simple boolean is_vma_locked one,
+> which also simplifies the invocation here.
+> 
+> This is laying the groundwork for eliminating the vm_flags_t in
+> vm_area_desc and more broadly throughout the kernel.
+> 
 
-Yes.
+Hi everyone,
 
->                            or we need to place
-> xfrm_dev_{policy,state}_flush_secctx_check() in a location that can
-> safely fail.
+Running mm-new through AI review flagged this one:
 
-Did you mean xfrm_{policy,state}_flush_secctx_check() ?
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -225,12 +225,12 @@ static inline unsigned long round_hint_to_min(unsigned long hint)
+>  	return hint;
+>  }
+>
+> -bool mlock_future_ok(const struct mm_struct *mm, vm_flags_t vm_flags,
+> -			unsigned long bytes)
+> +bool mlock_future_ok(const struct mm_struct *mm, bool is_vma_locked,
+> +		     unsigned long bytes)
+>  {
+>  	unsigned long locked_pages, limit_pages;
+>
+> -	if (!(vm_flags & VM_LOCKED) || capable(CAP_IPC_LOCK))
+> +	if (!is_vma_locked || capable(CAP_IPC_LOCK))
+>  		return true;
 
-Regarding xfrm_policy_flush() as an example, we can observe that we are
-calling LSM hooks for must-not-fail callers. If the task_valid argument was
-meant to be interpreted as whether to call LSM hooks, xfrm_policy_flush() needs
-below change.
+[ ... ]
 
- int xfrm_policy_flush(struct net *net, u8 type, bool task_valid)
- {
- (...snipped...)
--	err = xfrm_policy_flush_secctx_check(net, type, task_valid);
-+	err = task_valid ? xfrm_policy_flush_secctx_check(net, type, task_valid) : 0;
- (...snipped...)
- }
+> @@ -416,7 +416,7 @@
+>  		if (!can_do_mlock())
+>  			return -EPERM;
+>
+> -	if (!mlock_future_ok(mm, vm_flags, len))
+> +	if (!mlock_future_ok(mm, vm_flags & VM_LOCKED, len))
+>  		return -EAGAIN;
 
->               The patch doesn't relocate
-> xfrm_dev_{policy,state}_flush_secctx_check() and I don't really see
-> any mention about security_xfrm_{policy,state}_delete() in the patch
-> or description;
->                 have you verified that the LSM xfrm hooks are still
-> being called to authorize the removals?
+This looks correct - do_mmap() now extracts the VM_LOCKED bit from
+vm_flags and passes that to mlock_future_ok().
 
-Please distinguish caller for "delete" and caller for "release".
-LSM xfrm hooks need to be called for "delete" callers, but
-LSM xfrm hooks need to be bypassed for "release" callers.
+However, it appears check_brk_limits() was not updated when
+mlock_future_ok() changed its signature. The function at mm/mmap.c:111
+still passes the raw def_flags value:
 
-Maybe task_valid == true is for "delete" callers and task_valid == false is
-for "release" callers; though it seems that some locations are passing wrong
-task_valid flag (e.g. xfrm_dev_down() is passing task_valid == true despite
-it is a "release" caller).
+    return mlock_future_ok(current->mm, current->mm->def_flags, len)
+        ? 0 : -EAGAIN;
 
-If 'task_valid == true is for "delete" callers and task_valid == false is for
-"release" callers' does not hold, we might need to add a "forced" flag
-(which is interpreted as whether LSM hooks must be bypassed) like
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit?h=next-20260123&id=fc0f090e41e652d158f946c616cdd82baed3c8f4
-does.
+When def_flags has any bit set, this converts to true, incorrectly
+triggering mlock limit checks even when VM_LOCKED is not set. Should
+this be passing (current->mm->def_flags & VM_LOCKED) instead?
 
-Anyway, this patch which kills xfrm_dev_{state,policy}_flush_secctx_check()
-can be applied as-is because all callers are "release" callers.
+[ ... ]
+
+Additionally, the test stub at tools/testing/vma/vma_internal.h:1627
+still has the old signature (mm, vm_flags_t vm_flags, bytes) while the
+production code now uses (mm, bool is_vma_locked, bytes). This could
+cause compilation issues or mask bugs in the test suite.
+
 
