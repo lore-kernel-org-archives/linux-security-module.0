@@ -1,191 +1,224 @@
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F28B33123C
-	for <linux-security-module@vger.kernel.org>; Thu, 29 Jan 2026 17:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240BE3446B6
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Jan 2026 17:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769706119; cv=none; b=MRgIRYDqC00Dtwj3M0CfPH5mFFvl0XGUbFn7LvtGG3OUdHMkl20jzTiKYEMYUFEe6wfOooCQ671qOrPuc40oclEqLABloQWy8pjGf5jYSNsOKyCsBHMfbQgPZloIts+F7umbWWDITneeM821mcIU6pCfb217qWx/yJlpZxMGp5Y=
+	t=1769706129; cv=none; b=uyM/Vc9s2wA+GH4nSTg7q+U6DeUPaY2O5bycEprwU7lqM6Q2XPJxqEmAGAf/UHhoRzIPVQspP/J1TpbzGyK6wnc5chcby1Mx26jSqH5/XHKHgecVq2hDYiOBDzL6fWu8nEaPCGNGk09V2JRANypsOUHcP8X1BOMlBF6aDUkuO2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769706119; c=relaxed/simple;
-	bh=U4WyCeQChFMuy41P5A2vLBuJ/eBgLNn4T6U8NfJimFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RAWB1RCdwKcJYvUDzGVTMSWlMgMoXtY1FKLTcFCcy15EzVVyoQJcJSgiBfzz7dweTNaxCJx8WjqfN7SUy2ZJtIdDSgIJPiGVdGf7Oduc4PhXK5kxvraoVbTrYGa8EL2IHl0KCVtjZ3V+OTGgzDxZKboKDE5b/YRh2HTiuuAhVEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=NEgcZU30; arc=none smtp.client-ip=185.125.25.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1769706129; c=relaxed/simple;
+	bh=GEZjXKJEgy344lsvhrLZfVPuhhuYqEtNua548PuIyGk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mV3Q3QJfWVAaLC24QAe/ygT00tV1G4bd69ZoKZ7xYcXgpkK1Caw5AgJQ18somRISucKo+u4JaE6f665Gxb+k1Nw5NXIWs+N7xppsawneNapyLqYmPnmbWtvqa3SSFx+t1IoRykP6FK0CZ8O6VuTbv0DnvfPXxn+4c10xE5Ci4Po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rVLG4EJ6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Vp/0RU4a; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hQKsUp5w; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kDHS7+eU; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="NEgcZU30"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4f24wv419Yz190g;
-	Thu, 29 Jan 2026 17:54:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1769705647;
-	bh=ERj3V1ipmVycRcOwGx7oB3Mac1lMmuWJmm29/NlaobM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NEgcZU3042Agzyt8YP1TjScK3IXWFYEnBPEIhVOL/ym826sS3zD9w4Sh+ab6U4IZq
-	 4/IO7X/RfuIEvqbHd2lsw7kivroKMjXl/AylOTjteHGbtQxddmmUkuzsB90G9puwb7
-	 3MdKas+chd55z0wYpZFS+KIEASAAdxdfsl0QgBHk=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4f24wt39SbzqlM;
-	Thu, 29 Jan 2026 17:54:06 +0100 (CET)
-Date: Thu, 29 Jan 2026 17:54:01 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Cc: linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>, 
-	Justin Suess <utilityemal77@gmail.com>, Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, 
-	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	konstantin.meskhidze@huawei.com, Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v2 3/3] landlock: transpose the layer masks data structure
-Message-ID: <20260129.xahm6Ue7raL3@digikod.net>
-References: <20260125195853.109967-1-gnoack3000@gmail.com>
- <20260125195853.109967-4-gnoack3000@gmail.com>
- <20260128.quaido7ia0Xu@digikod.net>
- <20260129.691d9b85a887@gnoack.org>
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rVLG4EJ6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Vp/0RU4a";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hQKsUp5w";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kDHS7+eU"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 00D4534214;
+	Thu, 29 Jan 2026 17:02:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1769706124; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2KLAb0gtngg0dMxjuY2YbPb4S1CnU/UGU9Et3A57DXE=;
+	b=rVLG4EJ6s8EwNDY8j3fLtYUPRlFcvgjhDpPIamRLTUBOAr4zb+fBE02HrBlCMzpNGqOmDJ
+	pAFjYPO/KYubhVY+MopuRl5nU8pBo73SCwoNRG3O0c1WBizNDrYWmRn9W+IxevUhH2J4nh
+	xwMIIQqC48BDquhRUwWewPRrbkPgDrE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1769706124;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2KLAb0gtngg0dMxjuY2YbPb4S1CnU/UGU9Et3A57DXE=;
+	b=Vp/0RU4am9As4tETfKn3lfMoRaSXfPE7fLrU2KIlAIafgGOhf4QF50hYvLlSIExwIxKjNm
+	2B09QdxfHJrLIBCg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=hQKsUp5w;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=kDHS7+eU
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1769706123; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2KLAb0gtngg0dMxjuY2YbPb4S1CnU/UGU9Et3A57DXE=;
+	b=hQKsUp5wd5hYClKgBdXf+zw7hxy3yix45gSVNFq6AYWYWHsJ5cUFdrlnRcJI3zGxudzL4T
+	fhD1DZ7FFdvJQuani0bOdtncr3Y2rBSaSPP41ROzJAxL4iewIyvrCnGn1rXYbqw+KwQxsh
+	DYhMIj7JLIWlTudrVBiU1MsVYvBglRs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1769706123;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2KLAb0gtngg0dMxjuY2YbPb4S1CnU/UGU9Et3A57DXE=;
+	b=kDHS7+eUKTtrOPTX1c3yX6HezXJHCBJVQh8eTyQFlsD3hv8D3li2P8N1dKE9sFjBA7v+Hy
+	YLHMf/bN3cSPNbAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C07DD3EA61;
+	Thu, 29 Jan 2026 17:02:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id C0eWLoiSe2lZOQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 29 Jan 2026 17:02:00 +0000
+Message-ID: <74286aca-a565-489f-ad2c-886c650ea2bc@suse.cz>
+Date: Thu, 29 Jan 2026 18:02:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260129.691d9b85a887@gnoack.org>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 10/11] lsm: consolidate all of the LSM framework
+ initcalls
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
+ selinux@vger.kernel.org, john.johansen@canonical.com, zohar@linux.ibm.com,
+ roberto.sassu@huawei.com, wufan@kernel.org, mic@digikod.net,
+ gnoack@google.com, kees@kernel.org, mortonm@chromium.org,
+ casey@schaufler-ca.com, penguin-kernel@i-love.sakura.ne.jp,
+ nicolas.bouchinet@oss.cyber.gouv.fr, xiujianfeng@huawei.com,
+ linux-mm <linux-mm@kvack.org>, David Hildenbrand <david@redhat.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Mike Rapoport
+ <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org
+References: <20251017202456.484010-36-paul@paul-moore.com>
+ <20251017204815.505363-12-paul@paul-moore.com>
+ <20251017204815.505363-21-paul@paul-moore.com>
+ <0146e385-935b-4f66-9e6d-51bb47ae4bdc@lucifer.local>
+ <14638978-b133-457a-ae9c-31ba54e3964c@lucifer.local>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJnyBr8BQka0IFQAAoJECJPp+fMgqZkqmMQ
+ AIbGN95ptUMUvo6aAdhxaOCHXp1DfIBuIOK/zpx8ylY4pOwu3GRe4dQ8u4XS9gaZ96Gj4bC+
+ jwWcSmn+TjtKW3rH1dRKopvC07tSJIGGVyw7ieV/5cbFffA8NL0ILowzVg8w1ipnz1VTkWDr
+ 2zcfslxJsJ6vhXw5/npcY0ldeC1E8f6UUoa4eyoskd70vO0wOAoGd02ZkJoox3F5ODM0kjHu
+ Y97VLOa3GG66lh+ZEelVZEujHfKceCw9G3PMvEzyLFbXvSOigZQMdKzQ8D/OChwqig8wFBmV
+ QCPS4yDdmZP3oeDHRjJ9jvMUKoYODiNKsl2F+xXwyRM2qoKRqFlhCn4usVd1+wmv9iLV8nPs
+ 2Db1ZIa49fJet3Sk3PN4bV1rAPuWvtbuTBN39Q/6MgkLTYHb84HyFKw14Rqe5YorrBLbF3rl
+ M51Dpf6Egu1yTJDHCTEwePWug4XI11FT8lK0LNnHNpbhTCYRjX73iWOnFraJNcURld1jL1nV
+ r/LRD+/e2gNtSTPK0Qkon6HcOBZnxRoqtazTU6YQRmGlT0v+rukj/cn5sToYibWLn+RoV1CE
+ Qj6tApOiHBkpEsCzHGu+iDQ1WT0Idtdynst738f/uCeCMkdRu4WMZjteQaqvARFwCy3P/jpK
+ uvzMtves5HvZw33ZwOtMCgbpce00DaET4y/UzsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
+ J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
+ /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
+ IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
+ X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
+ wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
+ PVAiT6fnzIKmZAUCZ8gcVAUJFhTonwAKCRAiT6fnzIKmZLY8D/9uo3Ut9yi2YCuASWxr7QQZ
+ lJCViArjymbxYB5NdOeC50/0gnhK4pgdHlE2MdwF6o34x7TPFGpjNFvycZqccSQPJ/gibwNA
+ zx3q9vJT4Vw+YbiyS53iSBLXMweeVV1Jd9IjAoL+EqB0cbxoFXvnjkvP1foiiF5r73jCd4PR
+ rD+GoX5BZ7AZmFYmuJYBm28STM2NA6LhT0X+2su16f/HtummENKcMwom0hNu3MBNPUOrujtW
+ khQrWcJNAAsy4yMoJ2Lw51T/5X5Hc7jQ9da9fyqu+phqlVtn70qpPvgWy4HRhr25fCAEXZDp
+ xG4RNmTm+pqorHOqhBkI7wA7P/nyPo7ZEc3L+ZkQ37u0nlOyrjbNUniPGxPxv1imVq8IyycG
+ AN5FaFxtiELK22gvudghLJaDiRBhn8/AhXc642/Z/yIpizE2xG4KU4AXzb6C+o7LX/WmmsWP
+ Ly6jamSg6tvrdo4/e87lUedEqCtrp2o1xpn5zongf6cQkaLZKQcBQnPmgHO5OG8+50u88D9I
+ rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
+ dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
+ m6M14QORSWTLRg==
+In-Reply-To: <14638978-b133-457a-ae9c-31ba54e3964c@lucifer.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[24];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Flag: NO
+X-Spam-Score: -4.51
+X-Rspamd-Queue-Id: 00D4534214
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spam-Level: 
 
-On Thu, Jan 29, 2026 at 08:56:37AM +0100, Günther Noack wrote:
-> On Wed, Jan 28, 2026 at 10:34:02PM +0100, Mickaël Salaün wrote:
-> > On Sun, Jan 25, 2026 at 08:58:53PM +0100, Günther Noack wrote:
-> > > Tradeoffs:
-> > > 
-> > > This change improves performance, at a slight size increase to the
-> > > layer masks data structure.
-> > > 
-> > > At the moment, for the filesystem access rights, the data structure
-> > > has the same size as before, but once we introduce the 17th filesystem
-> > > access right, it will double in size (from 32 to 64 bytes), as
-> > 
-> > ...for all access rights (e.g. even if there is no new network one)
+On 1/29/26 17:48, Lorenzo Stoakes wrote:
+> On Thu, Jan 29, 2026 at 04:31:16PM +0000, Lorenzo Stoakes wrote:
 > 
-> Added.
+> Sorry to clarify here I meant to say - if I set CONFIG_SECURITY but _not_
+> CONFIG_SECURITY_SELINUX the tunable does in fact still appear (and afaict
+> still work...)
 > 
-> > > --- a/security/landlock/audit.c
-> > > +++ b/security/landlock/audit.c
-> > > @@ -180,38 +180,21 @@ static void test_get_hierarchy(struct kunit *const test)
-> > >  
-> > >  #endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
-> > >  
-> > > +/* get_denied_layer - get the youngest layer that denied the access_request */
-> > 
-> > /* Get the youngest layer that denied the access_request. */
+> So LSM_MMAP_MIN_ADDR is really weird to require SECURITY_SELINUX, perhaps a
+> historic artifact where we wanted a different default or something like
+> this?
 > 
-> OK, done.  I also changed to non-docstring style for the
-> access_mask_subset() helper.
+> I know that we use that in preference to CONFIG_DEFAULT_MMAP_MIN_ADDR if
+> specified.
 > 
-> > 
-> > >  static size_t get_denied_layer(const struct landlock_ruleset *const domain,
-> > >  			       access_mask_t *const access_request,
-> > > -			       const layer_mask_t (*const layer_masks)[],
-> > > -			       const size_t layer_masks_size)
-> > > +			       const struct layer_access_masks *masks)
-> > >  {
-> > > -	const unsigned long access_req = *access_request;
-> > > -	unsigned long access_bit;
-> > > -	access_mask_t missing = 0;
-> > > -	long youngest_layer = -1;
-> > > -
-> > > -	for_each_set_bit(access_bit, &access_req, layer_masks_size) {
-> > > -		const layer_mask_t mask = (*layer_masks)[access_bit];
-> > > -		long layer;
-> > > -
-> > > -		if (!mask)
-> > > -			continue;
-> > > -
-> > > -		/* __fls(1) == 0 */
-> > > -		layer = __fls(mask);
-> > > -		if (layer > youngest_layer) {
-> > > -			youngest_layer = layer;
-> > > -			missing = BIT(access_bit);
-> > > -		} else if (layer == youngest_layer) {
-> > > -			missing |= BIT(access_bit);
-> > > +	for (int i = ARRAY_SIZE(masks->access) - 1; i >= 0; i--) {
-> > 
-> > size_t i
+> The description really probably needs updating.
 > 
-> This is one of the two places where this didn't work.
+> The key config here we should be looking at is DEFAULT_MMAP_MIN_ADDR which
+> emphatically does _not_ require CONFIG_SECURITY and also in its description
+> explicitly mentions the tunable:
 > 
-> The loop goes from top to bottom here, and the "i >= 0" check would
-> always be true for a size_t.
+> 	  This value can be changed after boot using the
+> 	  /proc/sys/vm/mmap_min_addr tunable.
 > 
-> If there is a more idiomatic way to write that loop, I can switch to
-> it, but would otherwise lean towards keeping it as it is?
-
-Indeed.  We can use ssize_t as in get_hierarchy().
-
+> The mmap_min_addr global value exposed in min_addr.c is referenced in
+> several places in mm and other parts of the kernel - fs/exec.c,
+> fs/userlandfd.c, kernel/sys.c, mm/mmap.c, mm/vma.c.
 > 
+> So this now silently going to zero everywhere and ignoring
+> CONFIG_DEFAULT_MMAP_MIN_ADDR is surely a userspace-breaking regression and
+> needs fixing in rc8?
 > 
-> > > +		if (masks->access[i] & *access_request) {
-> > > +			*access_request &= masks->access[i];
-> > > +			return i;
-> > >  		}
-> > >  	}
-> > >  
-> > > -	for_each_set_bit(access_bit, &access_opt, layer_masks_size) {
-> > > -		const layer_mask_t mask = (*layer_masks)[access_bit];
-> > > +	for (int i = ARRAY_SIZE(masks->access) - 1; i >= 0; i--) {
-> > 
-> > size_t i
+> Which means that... people can now mmap() at NULL everywhere despite setting
+> CONFIG_DEFAULT_MMAP_MIN_ADDR > 0? :)
 > 
-> Ditto, the loop goes from top to bottom here.
+> That seems like a _really bad idea_ (TM).
 > 
+> So this is emphatically not a report of a trivial self test break, but
+> rather of something more serious AFAICT.
 > 
-> > > +		const access_mask_t denied = masks->access[i] & optional_access;
-> > > +		const unsigned long newly_denied = denied & ~all_denied;
-> > >  
-> 
-> 
-> > > -static bool
-> > > -scope_to_request(const access_mask_t access_request,
-> > > -		 layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
-> > > +static bool scope_to_request(const access_mask_t access_request,
-> > > +			     struct layer_access_masks *masks)
-> > >  {
-> > > -	const unsigned long access_req = access_request;
-> > > -	unsigned long access_bit;
-> > > +	bool saw_unfulfilled_access = false;
-> > >  
-> > > -	if (WARN_ON_ONCE(!layer_masks))
-> > > +	if (WARN_ON_ONCE(!masks))
-> > >  		return true;
-> > >  
-> > > -	for_each_clear_bit(access_bit, &access_req, ARRAY_SIZE(*layer_masks))
-> > > -		(*layer_masks)[access_bit] = 0;
-> > > -
-> > > -	return is_layer_masks_allowed(layer_masks);
-> > > +	for (size_t i = 0; i < ARRAY_SIZE(masks->access); i++) {
-> > > +		masks->access[i] &= access_request;
-> > > +		if (masks->access[i])
-> > 
-> > {
-> > 
-> > > +			saw_unfulfilled_access = true;
-> > 
-> > break;
-> > }
-> 
-> Two lines above, this loop mutates masks->access[...]:
-> 
->   masks->access[i] &= access_request
-> 
-> If we break the loop early, we would not actually scope it down to the
-> request entirely?  Is this safe?
-
-You're right, don't add this break.  BTW, would a test catch it?
-
-> 
-> > > +	}
-> > > +	return !saw_unfulfilled_access;
-> > >  }
-> 
-> –Günther
-> 
+> So yeah I think this has to be reverted/fixed.
+Agreed, the mmap_min_addr should stay visible and applied unconditionally.
+AFAICS the only relation to SECURITY/LSM is whether CONFIG_LSM_MMAP_MIN_ADDR
+is used as an additional lower limit to both CONFIG_DEFAULT_MMAP_MIN_ADDR
+and the sysctl-written value?
