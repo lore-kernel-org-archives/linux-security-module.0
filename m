@@ -1,45 +1,77 @@
-Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D0126B77D
-	for <linux-security-module@vger.kernel.org>; Wed, 28 Jan 2026 22:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AC1371061
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Jan 2026 07:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769639217; cv=none; b=pdY0Tap+RopPEyg4cCyst61Ch2lYHmUrAdMy6YzfZgYOwF8XnXPB4gJau+T9w8ki5PADCmbmT0mVHTEf1w0ETWVqPwDrCicmxl6rcENLCRmSsmvOAup/SocH7tVcn6v5o443Fxst9sr8oyShM0B4ZvDuSPTIgN0rzEfWxTA+qek=
+	t=1769673406; cv=none; b=WCZ8eAMeeKiKQCcsKy6DfhGt/zy7qb1+DB4waU63Usmk/vwN+AgxKmrsCE2LC4p9BXsz6GnRIcjFsajBXSk2xV33SWI7YWa3tlU55vvbT7LD4TLTG2C7ROcsF3CvBRyHtQu1hjS5O64XDbMjKrlNFBlcszSy6sa7RTNtqkJ0SKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769639217; c=relaxed/simple;
-	bh=Ie+YMHMgCnXp0iY2XN0qsgq11Xn9zIrKebgr5YvdjTU=;
+	s=arc-20240116; t=1769673406; c=relaxed/simple;
+	bh=N1k5Pgsor/7m83SDkTM9dDzLaVd5tMo0jzbWQ+RTtqo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IJ6re66HUU90DNUZVnyYlECJSV4II7bj4qMm32Uxv/YrrnXzjTI9+kPq1bkcwwnGcLbpZD49OqWdTIoPSVQkasiocs4HHa8tudyyjHbNfT9geTuO5ao1+eBJSLWX8Us00WkNvHa3OB3LZ/jQUFpimeepDxCDp4ZZLOQY3hlRP/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=XM14gNrO; arc=none smtp.client-ip=84.16.66.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=FZ/CtWI+nJ78QfUBG9zSB94PypyXoCBtTXuWNhJun1MX3a7MD/YiKAha5/t2dCMZcnuv+CARPmTgVX4PPzk3zulL0XYYEAUgBawEq/WCQWQ6uVvIrYFL2lNEndEjQNqnk7CSNRsX8bOHACDQLnMXmIDs6VMt52ZCElSr2z9R3dI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Phee7q9+; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="XM14gNrO"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4f1b7K0VwKzdwZ;
-	Wed, 28 Jan 2026 22:31:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1769635884;
-	bh=SIZT6YdTrHBMCtrT4soi24cVGioAuB/bvCibfH4mQ+s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XM14gNrOh4yGFYwa/CsdrfGnnB1oTEj5d6RoqO7QBwGjK0RHNSANNYCPkhL3WouxR
-	 HEJCZqVgfYs7mvtE4NZbwxeoVJq1DzfdJlCG7GdAOaoFiX3QfJiMuC9s6HgHfnZ+ih
-	 0MJN5jJ9VqDJ2LlHtYJu7Z/CEa5R9SjbzzyJbelA=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4f1b7J3RqGzDF3;
-	Wed, 28 Jan 2026 22:31:24 +0100 (CET)
-Date: Wed, 28 Jan 2026 22:31:23 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Cc: linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>, 
-	Justin Suess <utilityemal77@gmail.com>, Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, 
-	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	konstantin.meskhidze@huawei.com, Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v2 1/3] selftests/landlock: Add filesystem access
- benchmark
-Message-ID: <20260128.eiJou3fiezai@digikod.net>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Phee7q9+"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-47f5c2283b6so5020105e9.1
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Jan 2026 23:56:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1769673403; x=1770278203; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=j178g8zVMYE+jI/MB2yCSraVRg88oiFctZr49sf8QO4=;
+        b=Phee7q9+NYP1Vxm1OuorV4r91JHuE4Km8Gw+BH7jXmzAj6ZEKMEB9li479mz5D0Tlg
+         ppMIZygzW50caSnmlBMV6oTS3AAlBuFrwRmpV59ECIO/vFA0EulhQJaVwhNIVPF0rXJU
+         Y7o9IJcmd/NTZoGFoacAzmxVMlUMfsZQx1+MDCdDGNtmyl4yXdvB/Uh8CzadgwYp7kKu
+         eNRDUFcPKt8gksnDmiD5TrIL2vHUNwh+VHWnKd7uDLtsTVJzE2KT7+WC64nvIhDhfy48
+         S7vG/bdVZsciibkFWBWnYIk6YELOkDIRqlYCAWqLAmNNBN5rPgrzRe63iJNO4DEPiXO/
+         Sq/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769673403; x=1770278203;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j178g8zVMYE+jI/MB2yCSraVRg88oiFctZr49sf8QO4=;
+        b=m3z39zcseJMj5K6w5g0HXQE0c+ySqWk02h3qihsadUFxdpoxWqEFqeNadqKkPx/nG1
+         Kps5hxHT73wBpkmQNYWpb3scDgy9g0AUEfUSgBL7DE6GMdBj+jWKbDjgVD7ewpRSh0iC
+         02eeWzaSqZzVYkafW7iVuSV3zHu73FUHeVMp2LsUCOOFNxCRXhrklsUU72NK1UeQ8pYU
+         0IrzxKrDqD/GSe2BWM0mA/G5DJc3ndqB7C0d9/TozDKMy9/+Qy9v4oHOI8dQhzdjl+DU
+         8nkKrF8E++0n0HCjQOP9PxS5ykBlJgf2AmPzTL/IYtZfjAY8ohXqWRSM+Ujg0U5UH2Mp
+         190Q==
+X-Gm-Message-State: AOJu0YyBOVSYiWdHd/xGmqIGyZeFYqOWF94Ikhqaq8YTZR7ZQFQONTvM
+	E1R3chXVPzdSMdlgp8nFvps92B4x2f+ShQYUw5lM+PHpH+I88Dehk38J
+X-Gm-Gg: AZuq6aLLH7Th6/v94/BtRAtyQOfccjVJcU3car1G2o9HrY5Q3HrkQOmHr7xiuPVWGoC
+	kiPdXWZIerfJswpYxao3wuOV8lC4C2cO2a/WEFCdsa2sCJpKKkelFO6t93JcDtuT1U0jHOhsvll
+	NFVQ3t94zvjZLy08DJTVNQRmfduKCX2VRDuo4F3Ly4nYQZOoeI3sRFh4sqDhxQsj1t7z840Fc1H
+	RVF+6d55sfV6HalrQTtaLSO4PnlLGExaGkYHGBhyqbGklopRte9dBXCRw91mr7aRAhz/xMRb0is
+	xMxWbyd6CGUypfCBPQCExL196R0CB28SAURaCARmxOxXgJOOP9Lr+xo9FYPFK/5mggKWlF8mDRo
+	bY+XGZxJDnQkO4+Ts7+QLtfbNcKaxLIRrbWJULoR9cum1yG0ROA2Zu2p1GHSGN5CA37Nld7EVCS
+	XCYZpCTuzTk8u+j5dBxrGinu06ZHoarX3v/wks
+X-Received: by 2002:a05:600c:4f95:b0:477:af8d:203a with SMTP id 5b1f17b1804b1-48069c66b3bmr95134225e9.27.1769673403097;
+        Wed, 28 Jan 2026 23:56:43 -0800 (PST)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435e132368csm11568529f8f.31.2026.01.28.23.56.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Jan 2026 23:56:42 -0800 (PST)
+Date: Thu, 29 Jan 2026 08:56:37 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>,
+	Justin Suess <utilityemal77@gmail.com>,
+	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
+	Matthieu Buffet <matthieu@buffet.re>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	konstantin.meskhidze@huawei.com,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v2 3/3] landlock: transpose the layer masks data structure
+Message-ID: <20260129.691d9b85a887@gnoack.org>
 References: <20260125195853.109967-1-gnoack3000@gmail.com>
- <20260125195853.109967-2-gnoack3000@gmail.com>
+ <20260125195853.109967-4-gnoack3000@gmail.com>
+ <20260128.quaido7ia0Xu@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -49,246 +81,133 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260125195853.109967-2-gnoack3000@gmail.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20260128.quaido7ia0Xu@digikod.net>
 
-On Sun, Jan 25, 2026 at 08:58:51PM +0100, Günther Noack wrote:
-> fs_bench benchmarks the performance of Landlock's path walk
-> by exercising it in a scenario that amplifies Landlock's overhead:
+On Wed, Jan 28, 2026 at 10:34:02PM +0100, Mickaël Salaün wrote:
+> On Sun, Jan 25, 2026 at 08:58:53PM +0100, Günther Noack wrote:
+> > Tradeoffs:
+> > 
+> > This change improves performance, at a slight size increase to the
+> > layer masks data structure.
+> > 
+> > At the moment, for the filesystem access rights, the data structure
+> > has the same size as before, but once we introduce the 17th filesystem
+> > access right, it will double in size (from 32 to 64 bytes), as
 > 
-> * Create a large number of nested directories
-> * Enforce a Landlock policy in which a rule is associated with each of
->   these subdirectories
-> * Benchmark openat() applied to the deepest directory,
->   forcing Landlock to walk the entire path.
+> ...for all access rights (e.g. even if there is no new network one)
+
+Added.
+
+> > --- a/security/landlock/audit.c
+> > +++ b/security/landlock/audit.c
+> > @@ -180,38 +180,21 @@ static void test_get_hierarchy(struct kunit *const test)
+> >  
+> >  #endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
+> >  
+> > +/* get_denied_layer - get the youngest layer that denied the access_request */
 > 
-> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> ---
->  tools/testing/selftests/landlock/.gitignore |   1 +
->  tools/testing/selftests/landlock/Makefile   |   1 +
->  tools/testing/selftests/landlock/fs_bench.c | 161 ++++++++++++++++++++
->  3 files changed, 163 insertions(+)
->  create mode 100644 tools/testing/selftests/landlock/fs_bench.c
+> /* Get the youngest layer that denied the access_request. */
+
+OK, done.  I also changed to non-docstring style for the
+access_mask_subset() helper.
+
 > 
-> diff --git a/tools/testing/selftests/landlock/.gitignore b/tools/testing/selftests/landlock/.gitignore
-> index a820329cae0d..1974e17a2611 100644
-> --- a/tools/testing/selftests/landlock/.gitignore
-> +++ b/tools/testing/selftests/landlock/.gitignore
-> @@ -1,4 +1,5 @@
->  /*_test
-> +/fs_bench
->  /sandbox-and-launch
->  /true
->  /wait-pipe
-> diff --git a/tools/testing/selftests/landlock/Makefile b/tools/testing/selftests/landlock/Makefile
-> index 044b83bde16e..fc43225d319a 100644
-> --- a/tools/testing/selftests/landlock/Makefile
-> +++ b/tools/testing/selftests/landlock/Makefile
-> @@ -9,6 +9,7 @@ LOCAL_HDRS += $(wildcard *.h)
->  src_test := $(wildcard *_test.c)
->  
->  TEST_GEN_PROGS := $(src_test:.c=)
-> +TEST_GEN_PROGS += fs_bench
->  
->  TEST_GEN_PROGS_EXTENDED := \
->  	true \
-> diff --git a/tools/testing/selftests/landlock/fs_bench.c b/tools/testing/selftests/landlock/fs_bench.c
-> new file mode 100644
-> index 000000000000..a3b686418bc5
-> --- /dev/null
-> +++ b/tools/testing/selftests/landlock/fs_bench.c
-> @@ -0,0 +1,161 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Landlock filesystem benchmark
-
-You might want to add some copyright.
-
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#include <err.h>
-> +#include <fcntl.h>
-> +#include <linux/landlock.h>
-> +#include <stdbool.h>
-> +#include <stdio.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <string.h>
-> +#include <sys/prctl.h>
-> +#include <sys/stat.h>
-> +#include <sys/syscall.h>
-> +#include <sys/times.h>
-> +#include <time.h>
-> +#include <unistd.h>
-> +
-> +void usage(const char *argv0)
-
-const
-
-> +{
-> +	printf("Usage:\n");
-> +	printf("  %s [OPTIONS]\n", argv0);
-> +	printf("\n");
-> +	printf("  Benchmark expensive Landlock checks for D nested dirs\n");
-> +	printf("\n");
-> +	printf("Options:\n");
-> +	printf("  -h	help\n");
-> +	printf("  -L	disable Landlock (as a baseline)\n");
-> +	printf("  -d D	set directory depth to D\n");
-> +	printf("  -n N	set number of benchmark iterations to N\n");
-> +}
-> +
-> +/*
-> + * Build a deep directory, enforce Landlock and return the FD to the
-> + * deepest dir.  On any failure, exit the process with an error.
-> + */
-> +int build_directory(size_t depth, bool use_landlock)
-
-const
-
-> +{
-> +	const char *path = "d"; /* directory name */
-> +	int abi, ruleset_fd, current, previous;
-> +
-> +	if (use_landlock) {
-> +		abi = syscall(SYS_landlock_create_ruleset, NULL, 0,
-> +			      LANDLOCK_CREATE_RULESET_VERSION);
-
-Please include wrappers.h and use the related syscall helpers.  One of
-the benefit is to use __NR_* constants defined by the installed kernel
-headers.
-
-> +		if (abi < 7)
-> +			err(1, "Landlock ABI too low: got %d, wanted 7+", abi);
-> +	}
-> +
-> +	ruleset_fd = -1;
-> +	if (use_landlock) {
-> +		struct landlock_ruleset_attr attr = {
-> +			.handled_access_fs =
-> +				0xffff, /* All FS access rights as of 2026-01 */
-> +		};
-> +		ruleset_fd = syscall(SYS_landlock_create_ruleset, &attr,
-> +				     sizeof(attr), 0U);
-> +		if (ruleset_fd < 0)
-> +			err(1, "landlock_create_ruleset");
-> +	}
-> +
-> +	current = open(".", O_PATH);
-> +	if (current < 0)
-> +		err(1, "open(.)");
-> +
-> +	while (depth--) {
-> +		if (use_landlock) {
-> +			struct landlock_path_beneath_attr attr = {
-> +				.allowed_access = LANDLOCK_ACCESS_FS_IOCTL_DEV,
-> +				.parent_fd = current,
-> +			};
-> +			if (syscall(SYS_landlock_add_rule, ruleset_fd,
-> +				    LANDLOCK_RULE_PATH_BENEATH, &attr, 0) < 0)
-> +				err(1, "landlock_add_rule");
-> +		}
-> +
-> +		if (mkdirat(current, path, 0700) < 0)
-> +			err(1, "mkdirat(%s)", path);
-
-We should have a loop to build the directories, then start the timer and
-have another loop to add Landlock rules.
-
-> +
-> +		previous = current;
-> +		current = openat(current, path, O_PATH);
-> +		if (current < 0)
-> +			err(1, "open(%s)", path);
-> +
-> +		close(previous);
-> +	}
-> +
-> +	if (use_landlock) {
-> +		if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) < 0)
-> +			err(1, "prctl");
-> +
-> +		if (syscall(SYS_landlock_restrict_self, ruleset_fd, 0) < 0)
-> +			err(1, "landlock_restrict_self");
-> +	}
-> +
-> +	close(ruleset_fd);
-> +	return current;
-> +}
-> +
-> +int main(int argc, char *argv[])
-> +{
-> +	bool use_landlock = true;
-> +	size_t num_iterations = 100000;
-> +	size_t num_subdirs = 10000;
-> +	int c, current, fd;
-> +	struct tms start_time, end_time;
-> +
-> +	setbuf(stdout, NULL);
-> +	while ((c = getopt(argc, argv, "hLd:n:")) != -1) {
-> +		switch (c) {
-> +		case 'h':
-> +			usage(argv[0]);
-> +			return EXIT_SUCCESS;
-> +		case 'L':
-> +			use_landlock = false;
-> +			break;
-> +		case 'd':
-> +			num_subdirs = atoi(optarg);
-> +			break;
-> +		case 'n':
-> +			num_iterations = atoi(optarg);
-> +			break;
-> +		default:
-> +			usage(argv[0]);
-> +			return EXIT_FAILURE;
-> +		}
-> +	}
-> +
-> +	printf("*** Benchmark ***\n");
-
-We should probably use ksft_*() helpers in main (see
-seccomp_benchmark.c).
-
-> +	printf("%zu dirs, %zu iterations, %s landlock\n", num_subdirs,
-> +	       num_iterations, use_landlock ? "with" : "without");
-> +
-> +	if (times(&start_time) == -1)
-> +		err(1, "times");
-> +
-> +	current = build_directory(num_subdirs, use_landlock);
-> +
-> +	for (int i = 0; i < num_iterations; i++) {
-> +		fd = openat(current, ".", O_DIRECTORY);
-
-We can use AT_EMPTY_PATH (with an empty path) instead of "."
-I guess the benchmark should not change, but better to check again.
-
-> +		if (fd != -1) {
-> +			if (use_landlock)
-> +				errx(1, "openat succeeded, expected error");
-> +
-> +			close(fd);
-> +		}
-> +	}
-> +
-> +	if (times(&end_time) == -1)
-> +		err(1, "times");
-
-The created directories should be removed here (setup and teardown).
-
-> +
-> +	printf("*** Benchmark concluded ***\n");
-> +	printf("System: %ld clocks\n",
-> +	       end_time.tms_stime - start_time.tms_stime);
-> +	printf("User  : %ld clocks\n",
-> +	       end_time.tms_utime - start_time.tms_utime);
-> +	printf("Clocks per second: %ld\n", CLOCKS_PER_SEC);
-> +
-> +	close(current);
-> +}
-> -- 
-> 2.52.0
+> >  static size_t get_denied_layer(const struct landlock_ruleset *const domain,
+> >  			       access_mask_t *const access_request,
+> > -			       const layer_mask_t (*const layer_masks)[],
+> > -			       const size_t layer_masks_size)
+> > +			       const struct layer_access_masks *masks)
+> >  {
+> > -	const unsigned long access_req = *access_request;
+> > -	unsigned long access_bit;
+> > -	access_mask_t missing = 0;
+> > -	long youngest_layer = -1;
+> > -
+> > -	for_each_set_bit(access_bit, &access_req, layer_masks_size) {
+> > -		const layer_mask_t mask = (*layer_masks)[access_bit];
+> > -		long layer;
+> > -
+> > -		if (!mask)
+> > -			continue;
+> > -
+> > -		/* __fls(1) == 0 */
+> > -		layer = __fls(mask);
+> > -		if (layer > youngest_layer) {
+> > -			youngest_layer = layer;
+> > -			missing = BIT(access_bit);
+> > -		} else if (layer == youngest_layer) {
+> > -			missing |= BIT(access_bit);
+> > +	for (int i = ARRAY_SIZE(masks->access) - 1; i >= 0; i--) {
 > 
+> size_t i
+
+This is one of the two places where this didn't work.
+
+The loop goes from top to bottom here, and the "i >= 0" check would
+always be true for a size_t.
+
+If there is a more idiomatic way to write that loop, I can switch to
+it, but would otherwise lean towards keeping it as it is?
+
+
+> > +		if (masks->access[i] & *access_request) {
+> > +			*access_request &= masks->access[i];
+> > +			return i;
+> >  		}
+> >  	}
+> >  
+> > -	for_each_set_bit(access_bit, &access_opt, layer_masks_size) {
+> > -		const layer_mask_t mask = (*layer_masks)[access_bit];
+> > +	for (int i = ARRAY_SIZE(masks->access) - 1; i >= 0; i--) {
 > 
+> size_t i
+
+Ditto, the loop goes from top to bottom here.
+
+
+> > +		const access_mask_t denied = masks->access[i] & optional_access;
+> > +		const unsigned long newly_denied = denied & ~all_denied;
+> >  
+
+
+> > -static bool
+> > -scope_to_request(const access_mask_t access_request,
+> > -		 layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
+> > +static bool scope_to_request(const access_mask_t access_request,
+> > +			     struct layer_access_masks *masks)
+> >  {
+> > -	const unsigned long access_req = access_request;
+> > -	unsigned long access_bit;
+> > +	bool saw_unfulfilled_access = false;
+> >  
+> > -	if (WARN_ON_ONCE(!layer_masks))
+> > +	if (WARN_ON_ONCE(!masks))
+> >  		return true;
+> >  
+> > -	for_each_clear_bit(access_bit, &access_req, ARRAY_SIZE(*layer_masks))
+> > -		(*layer_masks)[access_bit] = 0;
+> > -
+> > -	return is_layer_masks_allowed(layer_masks);
+> > +	for (size_t i = 0; i < ARRAY_SIZE(masks->access); i++) {
+> > +		masks->access[i] &= access_request;
+> > +		if (masks->access[i])
+> 
+> {
+> 
+> > +			saw_unfulfilled_access = true;
+> 
+> break;
+> }
+
+Two lines above, this loop mutates masks->access[...]:
+
+  masks->access[i] &= access_request
+
+If we break the loop early, we would not actually scope it down to the
+request entirely?  Is this safe?
+
+> > +	}
+> > +	return !saw_unfulfilled_access;
+> >  }
+
+–Günther
