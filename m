@@ -1,163 +1,133 @@
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F264436C0AC
-	for <linux-security-module@vger.kernel.org>; Thu, 29 Jan 2026 22:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769727100; cv=none; b=u8p2Tq+45y8hg/ZLmNhndGBEdhjkTLBnalkLwO4FV5+wC1ftOkHk2pJzLZEABQxt+kQiW2oF9V/fm4GqW6CIxQnFApKprAImbmL240yO73y5c2Wr1EJJooNyczTA1ggWlfs4fqT1HgGIBJCP99fgOi+RgiJqYLDTQo6YE6MtNzM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769727100; c=relaxed/simple;
-	bh=jNcQkI5lVA7LwC9/vCuDXRmjKKHFGdLPOmtZAer45UI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T8uZlkgQUH9wWNBs3LV8CW/NtJpgfBiFbmX8qhPb/U0g30FilkPLE+86GubJ3M9M4TBwgTI42/+9HC74wbf4ZiEVuXZkMqGOxo5l9AyRBqMX+zWIMYQvbUgjXt8Pkkuay0EKnM90H2rQO819dG2F1KNlXz7BOQ870p+JMCsGcH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QCmiEThG; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F063E2F5473
+	for <linux-security-module@vger.kernel.org>; Thu, 29 Jan 2026 23:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769728009; cv=pass; b=b8HDNsR0wiXR9eRN2/8Ac9/21fBJxAqthgJu0MBQiqruW4k4YrRWRbRmc4EikQr/9HcZJ+ZzdCEKboZ9T33ioxwtCUmH3s0snj515/0DjzuquaSBk1OgPdzmXyYe4WXN/87TXqg4YQtJdUudVxHZrEJAwdSVYdLhbOhxyGTQRqA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769728009; c=relaxed/simple;
+	bh=rjhov0GaazkCkB4BJQ8rdsawUcuL8ouqck5WKEqQ570=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EEkbqsq6reCZwnnT0ZljabwNyf2Mul4D/oLouSYxgHasJn7j9Yh/gWS1mYvMHhutTTMogTX/bivmmUVLrC05HsxiPESJ/E3nlEpqNYxNTvRyj/9JPHEQvQ7EGnMlvPG5I0ORVAMcmKoCz/ubxPS/A6eGO40ZAj979DRW7is6j/c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=NN3bmjiX; arc=pass smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QCmiEThG"
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-89461ccc46eso24594996d6.2
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Jan 2026 14:51:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="NN3bmjiX"
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-3543e57a229so32977a91.2
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Jan 2026 15:06:47 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769728007; cv=none;
+        d=google.com; s=arc-20240605;
+        b=TKHe2DhQ0DvwcgwwFIbh9uA/PGwZEMzzK4D3tonJJcAGkW5H15C1vAQV5e7jxbz0dK
+         0O7zhsPAhc3+xOJMz1ROFpPSMQtXgpD6ceaQGDTTAist2vvvMgIPXwP+zWO7zU/ym3PL
+         Wg1jLDsDwwZTFoFf7okClVocNxLpA3LxUbF4Og+Za0INo+hNO3tpsnKOeLi2bf5bVULq
+         R9weoC0WkF0UqXBafJ1Dgxz+yYZXS0r1+qH82yClQWYIM/0m0N8I3yNny1BojBkNEqh9
+         vjVQilVHQF0ynqT5qs/I9N5E7Ps7sDybpIMmP6bdyE33zhDVwiBxvIMAVa2BwM/8Cx8k
+         MdDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=2FgRhUI4ULyQ5DXrJKYAevPbTbBkxgDEbQDJd5wdBQ4=;
+        fh=MGkSAdBTI56ki9BBLupNkAh3PrGGXt/ejGGtbdTb7n8=;
+        b=FDWMiO/2XfZc53nMwHW+viNPTfokKK0MdI/t++ZtrABHe5esmYwJHrR4cDwvL9t8qx
+         BDOZUJy/nUYcOqLYhKVXLO658sYZynjlk2VJeaBVP3DZkrHhPmfPzPD9uODcPrd08op0
+         /Sey9PQ2AFqvIP+Ejxko9XDeqGaQIzyuN8YXtxeg0Eev16+kOA6dkkXakkJsnpcATT+9
+         mY1CXNYni9Nb4IbpSVhRNsv6K/9j1PUJwz03EW2UEjPm9rgWZhaHAqBHQYY6OeiB3g8y
+         c5UGxIO2NI19ne+gXeZ86y6eEBQF5PjCtc+Wcb7dkFJ5X6DmkSMiHMuWeJ+O3+NlBudM
+         q2fg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1769727097; x=1770331897; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uEP+gJiAzlwp00B1A4dOGcokvvRCbpgoelaDUUk+rQc=;
-        b=QCmiEThGUzwlPbsRUqJC4V4XZ+m0ZpymRa+57dfXcH+Rpz4gJdzXDPMTrPcuUi6eA8
-         M/FiBFkiTwMnDu6xJvMe0A1trefUcJW5wAX9ShxMiaNbAvo7d7IO384yEVg7aDRp9p00
-         5lHL8WoLHCr464kDS/lGukm65VjFpK60SQhh7x9UpHFqt91ZOgFadbq2BLqqqEOMwPiE
-         hFMIwxsO1IxgOfG0LJVvF74zuOPKuBOoVew9tK5BTGq/gZq+JZ66c5FBQbcZVHJ84BS7
-         EU6KtLmzevn/54ewPuhRaQMS8UKeYV79brqRIcjpl6i/hsQq3+sEfEPiewAHYkf/d3C6
-         UkYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769727097; x=1770331897;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1769728007; x=1770332807; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uEP+gJiAzlwp00B1A4dOGcokvvRCbpgoelaDUUk+rQc=;
-        b=fzVjpgpRqax8a4Q1ni3B3zmPO/CI2h54VUp8a8R58ADc3D8XovqI4uZsPVW1fqrxdb
-         O4wV1OsrveSrtuEEuDCSzL3HCoydibr1T3alSH6IGnwjmF6s6MvZTW4l5LwIGXxnaeXw
-         vjumoTGfbolzzfrHX9TjaNKzexccer7yj4XbBbutC2xbxooB9J7y1IaAsAcDe44TRarF
-         H2zgyt9XchclNJz3u3mf8LHWQleq3tPMlLBvghemBDLIki7OH4K4julTSY4QCNiKo936
-         B1mVHQt7e/PioQxeWqjffa1k6SwzNWshymd9t6cu33IPmYu9PHZ9/GNeaxsBjytHuXI/
-         pJVA==
-X-Gm-Message-State: AOJu0YzOYTLjZ70Lz/lT4DhcPzrGvhE92rZ5J48EDw33NFZ+C3u57rKS
-	X8JotipsVvlPB3nIujdJtoImSWrSZFFc2JE1qc9n0JpLKsc+EazS8+H9dqrriSWNgCfcGLybusU
-	eTyC9tg==
-X-Gm-Gg: AZuq6aLXdff4M+lraaDm6lyEETEttLC2FgyzBzNrAeEiWMMQ2e7YSDjvhmSzwsRXhe9
-	oNTLBFsKnHWUuRDXXbtCUSQv8uvyju/O4OWO+3q6+sDjJjYPFofOKGRc2Kr+HIC9r/wEobUSgHP
-	OFGvmoby9DKF8JIbAqqQYEhoajiw4ETc/6kICn2X/vGzw7nX3c113mZbnS3SXJJnDBPz9Se/fUP
-	ZEA6OX72c8rA8UzmZGwUdggTOgnAX6m1UGZ7fMAA68caYjXbUOIUKL513cqngDoDTRzc5ou4YUz
-	KINh7gLgDgQt1dnSndKvMLl3i8U+Nfw6njR3UewOLRdd4uIL2h0YI781E/z+HaKSKfxyhtDvNpz
-	ZdgyTv7pWbq4xYpLOUHDYckuNj7o6GFaJIPH3/eMgjDG9vqapGE5Wqn1T+m18EAIFyB/fZH8J2L
-	oGnoCGBpAEBzKPhIAMKPURTsnn2yWHELQgkYMJ9C8UUlDMyi1V/6RA/p0a
-X-Received: by 2002:a05:6214:29e2:b0:894:6c8e:ed10 with SMTP id 6a1803df08f44-894ea0618b5mr17277646d6.47.1769727097273;
-        Thu, 29 Jan 2026 14:51:37 -0800 (PST)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8c711d47f92sm493658085a.42.2026.01.29.14.51.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Jan 2026 14:51:36 -0800 (PST)
-From: Paul Moore <paul@paul-moore.com>
-To: linux-security-module@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com
-Subject: [PATCH] lsm: preserve /proc/sys/vm/mmap_min_addr when !CONFIG_SECURITY
-Date: Thu, 29 Jan 2026 17:51:33 -0500
-Message-ID: <20260129225132.420484-2-paul@paul-moore.com>
-X-Mailer: git-send-email 2.52.0
+        bh=2FgRhUI4ULyQ5DXrJKYAevPbTbBkxgDEbQDJd5wdBQ4=;
+        b=NN3bmjiXJ/1Rv0kUuYchAl9y4jCWJzaiPufbucyLnNUW5M9flMkq1Y1DGpUydxcAiI
+         qb6HH2WBAe5GVSiGL5+rUimTErvV1CP3qxe+Go3H23xqJJICSalnAqvHBc7JjTr+u//O
+         1RpmkBBfFBTyrAwGUFe3aSE5419JmQk7rD7CXkF9CaSsDciWjPMzSQSj+S8K/c/XJt/p
+         /WYk7AhwbQTQnjeRgtZ6Ikfewos9c47YuuuSV/cJ1MY7lt58nccSyPGHxdSy7lr9cEUz
+         szXTR1CA7xO+xvPYHUB6kIaVxcgDr3ixzFjfnEU+CYEpCILP8NcPI3MpmO7GnEJQDSgD
+         jkPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769728007; x=1770332807;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=2FgRhUI4ULyQ5DXrJKYAevPbTbBkxgDEbQDJd5wdBQ4=;
+        b=wU7bkbFquhrPZynEHFyg9oeQn/Ps+BB9PXc3Sj9k8UZaiXbAGgURp6uFi8Kz9PRQ/n
+         Q+q2uzuCwGdRE2B7uGt02AvuJy26Ws4T2s7kPYoyV55ZUzxoBEUL+YXGvNe8HtjJw+TI
+         SXXZa23Kr+eFCPZpBeAu3o66F0qejaHMFxFEk7kRY0BzXkiQXcTT3d5nMtSJ30X1gn74
+         2v2ERNOYZ9xAQ2XqxsXmUgFFztePcoEBcrM/Bt9AdephMnbM4oaEutTP+S/JqkKXtlTu
+         hNASPrQE78kxPKkLfZUcr3evhqqPVzr49j+2FvXdB0dSXclS+CWG9P9FxeZIusKG3vzK
+         HVyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVf5DkOnuu/K4w6UaGK0C70VgX/3Q8xI4kvBun59LgKMxubVcFXHo8lGoQvx8xVpVdH+lpbkSVtqLDE0nrdcVFaG3r6ZdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9bbfwMrEvCJ6hUDNDezqwr+i12BKymW8a6nbPdNQ7A6QOL04I
+	ZxWOA27bsmnSKVVNbDwmtaYgddc9zHIfogdzkTo44Xjpq8e+lRAwsVtXbxvhBou8xUY6b9BZvwR
+	PASawAM6jREN1MNUFqEpCVIT94qvc5sXL4EoSrdF0
+X-Gm-Gg: AZuq6aLynr4Y3IOa9OE5nbA3vMa9yTqwYN6bv5RV90eOlKDc37BSoZVJ3MzgCMloAcn
+	e9I41b3Pr/RFBSgCpMj3w8Ho9gJ5dzV4bV4pFo85zzppbc8KxGVrZXtnuHDKdtJu/9q+UD9Ahzw
+	DZha3b+thH1z+yvphbyC5eboBsedEKddSIU6co/EZB8qs6ljSv2joYo12aAZE2SoCaIvlr/gNml
+	+jyfDJhBSou0eNaml5pdcfYl3igo6iYxpsiB+T1DQfMJCrkzH5c61yUqgHqf+COhygIPmw=
+X-Received: by 2002:a17:90b:4a8b:b0:340:d578:f2a2 with SMTP id
+ 98e67ed59e1d1-3543b2ebe3fmr942700a91.6.1769728007348; Thu, 29 Jan 2026
+ 15:06:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2528; i=paul@paul-moore.com; h=from:subject; bh=jNcQkI5lVA7LwC9/vCuDXRmjKKHFGdLPOmtZAer45UI=; b=owEBbQKS/ZANAwAKAeog8tqXN4lzAcsmYgBpe+R0dStdMaTc8Lfm5qFDGpBQfKxtHEEtyER/O XUTmwfdj8GJAjMEAAEKAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCaXvkdAAKCRDqIPLalzeJ c9afD/9DxXkYDZT/uoxwuPoLhwd+ey5hAd8FJbSnOKPAf+CyWIKU7uUdeGuwRzpaCN9DhzmF2Oh pcac3xMhz0nLUewgQ2H0WNuQX2yYAiPqumoj3Ap9DfLNCT+CDGoyUYjJ7PmXHyc67DDlo35SRek /R5yDaed34LudFzTfc1XRX8Xkbb8tcKngy3snRd3RQTpLpikgZ8pqchNtSPJIt2ELQZKAK/pcgT UBkF0SCOjL38785FGqiFWPzcDtzoYOIoWJhDHGALcxJ5/C/WEy/mLRB2szX9+QeHatepYjnMIrd mKjt45TisSfPIXizI1F24dKnGHbrLPmm72bXT68ZC1sbHnK3RQvi7NDrW8VDhSxEXVFgd8sOTxX HzDiAZxaY7I2tb4IH4/8vha8r4pfklG7OtcNmbj4EdjwdUBcFjqCCbGbzfCY+xn+4I85l14404T M5kEJLyKzg+snlv5ew0PnfMtyXWM4Y/SJQw6PRohgNBq/GeFnllmevAJdE/lNtVQ16eqA/magEu Xvf6r9jSxp83obf/q/oiEBi6cIyhXEzRD/Kwhz9ad9Q8IDcKI+4Si6CmmuE4eZP59scaDzseW4k 0bu6Ai9AnBl8z6PmxPht9bwVBu++iQTKaqbDzIMBvP/L2f9m4ccSoQpYl3Hq4zt2OJuh34D6Z4G KOR7Gpa1ClfwcBA==
-X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
-Content-Transfer-Encoding: 8bit
+References: <20251017202456.484010-36-paul@paul-moore.com> <20251017204815.505363-12-paul@paul-moore.com>
+ <20251017204815.505363-21-paul@paul-moore.com> <0146e385-935b-4f66-9e6d-51bb47ae4bdc@lucifer.local>
+ <14638978-b133-457a-ae9c-31ba54e3964c@lucifer.local> <74286aca-a565-489f-ad2c-886c650ea2bc@suse.cz>
+ <01cb28cb-56b7-4862-bf27-07e4bf17115e@lucifer.local> <CAHC9VhS_y2gy2nAK7C-OpchME0pzS34-QN2bY9t5SRBXArz8Xw@mail.gmail.com>
+ <5392220f-c29e-4cbd-8dae-59fbea4c6491@lucifer.local>
+In-Reply-To: <5392220f-c29e-4cbd-8dae-59fbea4c6491@lucifer.local>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 29 Jan 2026 18:06:35 -0500
+X-Gm-Features: AZwV_QhVDVaLZs8JJVAmxYQR-vhXYvsk_Nd5ubbkE2VXzkBWSDq2lgRuz96U7i4
+Message-ID: <CAHC9VhSqpqVT4oFzvFpReJbh247mJnAz6U9ax-DS3oapHRnf=g@mail.gmail.com>
+Subject: Re: [PATCH v5 10/11] lsm: consolidate all of the LSM framework initcalls
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, linux-security-module@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, selinux@vger.kernel.org, 
+	john.johansen@canonical.com, zohar@linux.ibm.com, roberto.sassu@huawei.com, 
+	wufan@kernel.org, mic@digikod.net, gnoack@google.com, kees@kernel.org, 
+	mortonm@chromium.org, casey@schaufler-ca.com, 
+	penguin-kernel@i-love.sakura.ne.jp, nicolas.bouchinet@oss.cyber.gouv.fr, 
+	xiujianfeng@huawei.com, linux-mm <linux-mm@kvack.org>, 
+	David Hildenbrand <david@redhat.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-While reworking the LSM initialization code the
-/proc/sys/vm/mmap_min_addr handler was inadvertently caught up in the
-change and the procfs entry wasn't setup when CONFIG_SECURITY was not
-selected at kernel build time.  This patch restores the previous behavior
-and ensures that the procfs entry is setup regardless of the
-CONFIG_SECURITY state.
+On Thu, Jan 29, 2026 at 1:59=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+> On Thu, Jan 29, 2026 at 01:31:05PM -0500, Paul Moore wrote:
+> > On Thu, Jan 29, 2026 at 12:11=E2=80=AFPM Lorenzo Stoakes
+> > <lorenzo.stoakes@oracle.com> wrote:
+> > > On Thu, Jan 29, 2026 at 06:02:00PM +0100, Vlastimil Babka wrote:
 
-Future work will improve upon this, likely by moving the procfs handler
-into the mm subsystem, but this patch should resolve the immediate
-regression.
+...
 
-Fixes: 4ab5efcc2829 ("lsm: consolidate all of the LSM framework initcalls")
-Reported-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
----
- security/lsm.h      | 9 ---------
- security/lsm_init.c | 7 +------
- security/min_addr.c | 5 ++---
- 3 files changed, 3 insertions(+), 18 deletions(-)
+> > > But that's future work, for an -rc8 hotfix ...
+> >
+> > Expect a patch later today.
+>
+> Perfect thank you very much!
 
-diff --git a/security/lsm.h b/security/lsm.h
-index 81aadbc61685..db77cc83e158 100644
---- a/security/lsm.h
-+++ b/security/lsm.h
-@@ -37,15 +37,6 @@ int lsm_task_alloc(struct task_struct *task);
- 
- /* LSM framework initializers */
- 
--#ifdef CONFIG_MMU
--int min_addr_init(void);
--#else
--static inline int min_addr_init(void)
--{
--	return 0;
--}
--#endif /* CONFIG_MMU */
--
- #ifdef CONFIG_SECURITYFS
- int securityfs_init(void);
- #else
-diff --git a/security/lsm_init.c b/security/lsm_init.c
-index 05bd52e6b1f2..573e2a7250c4 100644
---- a/security/lsm_init.c
-+++ b/security/lsm_init.c
-@@ -489,12 +489,7 @@ int __init security_init(void)
-  */
- static int __init security_initcall_pure(void)
- {
--	int rc_adr, rc_lsm;
--
--	rc_adr = min_addr_init();
--	rc_lsm = lsm_initcall(pure);
--
--	return (rc_adr ? rc_adr : rc_lsm);
-+	return lsm_initcall(pure);
- }
- pure_initcall(security_initcall_pure);
- 
-diff --git a/security/min_addr.c b/security/min_addr.c
-index 0fde5ec9abc8..56e4f9d25929 100644
---- a/security/min_addr.c
-+++ b/security/min_addr.c
-@@ -5,8 +5,6 @@
- #include <linux/sysctl.h>
- #include <linux/minmax.h>
- 
--#include "lsm.h"
--
- /* amount of vm to protect from userspace access by both DAC and the LSM*/
- unsigned long mmap_min_addr;
- /* amount of vm to protect from userspace using CAP_SYS_RAWIO (DAC) */
-@@ -54,10 +52,11 @@ static const struct ctl_table min_addr_sysctl_table[] = {
- 	},
- };
- 
--int __init min_addr_init(void)
-+static int __init mmap_min_addr_init(void)
- {
- 	register_sysctl_init("vm", min_addr_sysctl_table);
- 	update_mmap_min_addr();
- 
- 	return 0;
- }
-+pure_initcall(mmap_min_addr_init);
--- 
-2.52.0
+A link to the patch is below.  Assuming I don't hear any negative
+comments, I'll plan to merge this into lsm/stable-6.19 tomorrow and
+send it up to Linus early next week; this should give us a day or two
+in linux-next and then most of the week in Linus' tree before the
+v6.19 release.
 
+https://lore.kernel.org/linux-security-module/20260129225132.420484-2-paul@=
+paul-moore.com
+
+--=20
+paul-moore.com
