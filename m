@@ -1,136 +1,228 @@
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77B5352C37
-	for <linux-security-module@vger.kernel.org>; Fri, 30 Jan 2026 21:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.171
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769810233; cv=pass; b=mSTMh61XZcCDDoVQHR+fV1UYT+n/4/3t7JwfQK0L2/s9PGhCe93yOlhw0A/2Hvt36DFqrVgZ3h2N7Z99MirhJc570vwk1jkvkE6IYtvJT7hXJ2pgjMmrpI9qWHBWrvLEz4/+/Ak+DZ8kQrc6DssKZmyKN9fxKrqWHRQzZYH7O2Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769810233; c=relaxed/simple;
-	bh=ZAzvDCKA3yoG4zdUql5TXmg3+xq7tSh0DpwLUCCv05M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CflBee7uUDgP+Pq3FXijMZV8gz2QvEzIKwl+9ehZWkbovfy7v+TSuuUg4e0bktfPeekpTpgvgmXco0WiTQ3ZNB2QeWfqbdLt1hO7kxAA7Q0Ovh8nipPUJwE7E4tuGH8kg9Oa0I8jdZwox1ugn+N85HsgJQ9qp8r7fqrCc1w5VdM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VpnxvS7I; arc=pass smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F34338A9A7
+	for <linux-security-module@vger.kernel.org>; Fri, 30 Jan 2026 22:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769812801; cv=none; b=TBF4wUuWO+N7SUlH15bS0ZQ1XY2GjbHdlkZRTvEb8fXtDaBR/34bphAuYGNEp4fAQ3bTFSfo5IJSgIOhZK5S76wB4s9Sda1L7ED7dBwKOjE7e0H1GUlIVCRgN4tr0Qr7F3nOxDuDY76dkZv4I0YS4pj4Qjmo+tldebO3Rw8CSFs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769812801; c=relaxed/simple;
+	bh=aLz0imPCdZ5/xhHXVEXnm6aMGct2xh+/QvnHHIV6ZGM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=abEgVLe8cFjLJL6aX9KoZQRL2lQf9ZL3q405BmPRJPGF9CHQ3FLEYaqJmN8WHjOFEf5q5+WYvWcV4zFDKPhJIwduvEVleZO17fywozO+yH/FXAiBZQoDLA5GHLM4TwwMFBSMaHF97irEJvgv1n4HtR1zUOhvCEwpnRztUD7Y+yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=Jq9a381o; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VpnxvS7I"
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-81e93c5961cso2134005b3a.0
-        for <linux-security-module@vger.kernel.org>; Fri, 30 Jan 2026 13:57:11 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769810231; cv=none;
-        d=google.com; s=arc-20240605;
-        b=MkDinzKKR01ydDORkJjACZj55JKy1GyBJHqiQ1ti/ALG7GVGLf/3fqbWAHeyb6IJtF
-         GIlUiQwxbbMS1RknuTOisYfF8wrXoL1EvrEH6a5TAiCKPYrPY+wKPcAFVV1j8hy3qlgF
-         T/kcY40ayfjR3SerRAZtZVSRsA+7/Lv58JRWV8aiYc63zsAwv6b81wIcRSqm/pfdCLzn
-         Msj5GntaGCxayVNTJc2Cecm42xepCyJMU+FYz4ldTfO0ARKSyubqo8jsJufCRWowhxSr
-         60J0nJtGbW0uhvlit4d33VZky+gC2g7sbNOETQRaARLS3CbkA0IFd8IjeIhlNr1RIHVP
-         rT0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=0f81vVRt9lYBgk3/zE7XZDsUfpQnZqBZcRRR2bNgTuI=;
-        fh=/HeIeto54BP1rJ4RNyXZpiLeFx9erQuHaWTVEsRlyAM=;
-        b=HSFG5+0f+buy6fSb4Rqd64A5/kLWgPu/2YlqJWcOPY/jkDmculAvsGWMTgObXZhAu8
-         cGOJRSDG5gRTUR321YeGVxOxwIsajbEKInaIee5CJkygBzwHRfT6eBW4F0ez8e2qIQif
-         ZXR97gYvz1VCdoUhwMT9FuXuxv4WHm/dJYrNZKKnUXiXhxVNOuAdOWG9JiCtsvlOmg3e
-         DTSS7UICBVqC6B/KRsux4CL7BZdTxvcsVOcLc1FeNaAQWeiA4shQJTnFaBe95XwEvFXy
-         O9bYGfQukN1hAVdCdi5vYbTQFLJXKZlIA+3BJWkLIrpE7ESlR1/ppb9+0IRdfNlf72cy
-         5LUQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="Jq9a381o"
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-45f126d47b8so1779552b6e.2
+        for <linux-security-module@vger.kernel.org>; Fri, 30 Jan 2026 14:39:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1769810231; x=1770415031; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0f81vVRt9lYBgk3/zE7XZDsUfpQnZqBZcRRR2bNgTuI=;
-        b=VpnxvS7IHTGPLMs2SEC80XwggxREItMuAM1sJ6KYKkMkMzcwvL+drAx8C7btlboKxi
-         Uln4MB0I2BqeiGXLpBaXLA3eEI3FL1k6/XS+LtXEgHQYSh++vFCwH2r0gPTbbJuKSfEJ
-         DhXk0ec+IN2sqWJR2VrqGh3wz+RDNs1dshIYqzrI57ysXyKyTtfahMnhHY6+PxgTfZvD
-         6rjr+VVy9r7auQ318sPUXShHQAMkD6Bi50k2fv9ORIZkARWfrhCJwsG8XzU4ucoRoOEI
-         C91VEe1//QfNPIinWW68n88bO+Ml8rdU9jJWNb+jzFujJIhG5SsTIwWA6Kf2ODunhLfO
-         eoiQ==
+        d=cloudflare.com; s=google09082023; t=1769812799; x=1770417599; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5JXQIpD9vtshlTXqhw48iqAmLq3K2vm+ya6rB2Yrxp4=;
+        b=Jq9a381ojltn9KLup+HmGYB0xBdCM+WYTSqlOG3KAvfRJayGcg0+SN/WmQcbdhrB2G
+         3kAUVl/0j8DxU1O5HCFgU9YYwFWi8NHPc+0SzBfQ/ihLGpohEQNzH5CeL1DVXFzsMXYZ
+         FSYVLxCR9iA9sTioQa+xOOIVAl1f68vrgN6fNzZP6ZYHH2hw9FeAckCjn51On7S0ZXXD
+         B1BP2VFFG4sspoc641YRxiQvwWTae9tHSGpommqLQNVRXJa3x6LGKS4XiTi0+HZ+VZrd
+         zMh1t6gfDK9KCot4xhRdGdJY4Ddun20hsyvH3TOID9c7YwI9Gy5+UxYqXV0ldotcaz4+
+         neoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769810231; x=1770415031;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=0f81vVRt9lYBgk3/zE7XZDsUfpQnZqBZcRRR2bNgTuI=;
-        b=o8FwNhRDN+0c6K4HZyFim+YTw1zRwGfGXzMIgslokxX1sKLHA+mt2H6ysFDm2oqNdM
-         bHCTOt13KT5qONUbBwbLeRb0ma62u/q/peXTftJTUxqdwbpLEZm6tnC2L4Xhw6fvf3Rr
-         V5Q+5ZND+PTL8gAILzDHi0EXJC2mSoUPMrEHpn39rJJJXKRK2RXkTbSU9fTOPcRlGi/n
-         EGJiJtDCSI7d7x16Z4d5Qevoy3KH5+YOCFf/wgqpgBbzUYEzv+MsmrZAewAitTHruocS
-         JmXFaN69SOw413o3KvSyXfEHYjXKuimQp6+YsdikDFRSblOH1sW1VMEBCFiRWV7MQ3Gy
-         IqVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXugQvoh6OFbnj3fyYaM4VJWHFc1od67xYtAMt4qMQvIyDvC16xw1xnANlqS8Ww5rao0CH6eJbKGH2jhgnFxt1vwsPkf8w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/XHIPzyLjPmwEt3dhLRN/jj/JrDlgiobSVt6O6w8c5fRCXz5N
-	wSkg6FbrRobLDUKz915KkUcMDLNB6gVBXQ9a9uo9Is9nAVTFDswIzEg5Qpm/oo4V9rt1uVVlsRm
-	JK7ZV9NbfyJxdgUF4Kz8k6viXgryI7k7h339+H3wz
-X-Gm-Gg: AZuq6aKTXETONL3SrAwyp2RxlnPRUBzHFxNMrzRIwWntKYxyuNky7/L/bjk6ekmaZ/M
-	CFZvrKtm4T9eDEnOMJ3NjcPMnhCz5tN70Op6VVDPecZ/IF/lBOv1NmSHHeG+4LMya0KSOWVhdPD
-	mW3VNc85WTEYbVkOPLDITKX3//TL2fAjoxU4HORlaSVlJHr3wniesRjprzcWn9ddOUu0dFPterz
-	SSF1ZSn6McASyZzj+1BNioYv4229oNFBKI2vIBkEK72FJcY4O93Ji1/F4ky22vSJaaR7JNxg6y3
-	4arVwQ==
-X-Received: by 2002:a05:6a21:6f88:b0:38b:e398:b9fd with SMTP id
- adf61e73a8af0-392e003c0a9mr4572431637.20.1769810231121; Fri, 30 Jan 2026
- 13:57:11 -0800 (PST)
+        d=1e100.net; s=20230601; t=1769812799; x=1770417599;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5JXQIpD9vtshlTXqhw48iqAmLq3K2vm+ya6rB2Yrxp4=;
+        b=J9lHjBh1gJKkK2JLJ1AZ8HIoXHFF9kyUYmME0abYFgVOEPukQsI59ISiz37yBi7V+N
+         e6dfwDT58QFNUVj8w2GukFrhubUQlg05oxMeOhJGgbL4Ovx0+WjV+zG1OnRPeZkkeFaA
+         mFLqlN6EKZOsNqCf/Qa3INEKB+rRyqevDrcYPbRqNc3A6WTZQPzekSfN0UfsPDckNRTH
+         pXXSbyCqYkTCUwAIR0W/sr3G546j0TlXSRskxrbW8pjgse9cBlyHAQd3cuuOFRgLZr//
+         1uImuGzos9764JJLOPgtsAmckJ37lKKu7uWJSW0xHg+3z8Ujb7NXWr9D4S+rBgkwMkgq
+         mTLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBLAvi52455IoW0ss2NBcO4mPcJCv5wh3JkDOA8xYgpErjNZLjs+SiFQfb0wrKpHkYxxfvGdVhH3pa8I7ABzK2qESvpYU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzx4esedse78DfbvmoVhDw0bvbAW6+sucP/CzETV5hi48MiXSkc
+	cXbNTOXOdvyoLEcEJl9ml9paqztLJo4vnff0HxgdMnfk4Fs5zgzKVtA5hlijh3wrYR8=
+X-Gm-Gg: AZuq6aL+3XYBl4HPrA30r2fQPpeEDZnwcWkV3TnPHHaXFeYcmxiadhqP9fpHOXbr8IM
+	h4yqqttzSZTUbggUKu2xTBaukgCOXWwjv1elLyFF+gBZcW8Tq+uTpzNBNn7CjqzJmq+TrO626OE
+	rhYaJpf2rizvhlUBtLP4onjfoHpTa/5lOxQPY4F/BlekXHdQJ5BNHs1eDCkIoAlg78mThwtH9Do
+	aNPyXh0CJiXYCDI0jZSsRzVPkXY11FK8fZvItwzcnc+hNaXZ0CX9jwlofQXr7+z2dQ520WcOi7L
+	2moaa5rDKZvJqSPYFwX80qMQEB49wlmuZSNaNS2xXx6ERmtUwrA93hrAqTOd0CbMGp+lOb8zwdx
+	OSnWbzIXmOOuaQCsIjznXJ6fNSqTOc2HkuDpU0LVM/bAhQsBxp0Qo3hdOI7vUr+1DYS0Bb9E=
+X-Received: by 2002:a05:6808:4702:b0:459:9961:5114 with SMTP id 5614622812f47-45f34bcc989mr2086789b6e.16.1769812798959;
+        Fri, 30 Jan 2026 14:39:58 -0800 (PST)
+Received: from [127.0.1.1] ([2a09:bac5:947d:4e6::7d:80])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-45f08f20e38sm5400250b6e.10.2026.01.30.14.39.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Jan 2026 14:39:58 -0800 (PST)
+From: Frederick Lawler <fred@cloudflare.com>
+Subject: [PATCH v5 0/3] ima: Detect changes to files via kstat changes
+ rather than i_version
+Date: Fri, 30 Jan 2026 16:39:53 -0600
+Message-Id: <20260130-xfs-ima-fixup-v5-0-57e84ea91712@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2ec9c137-79a5-4562-8587-43dd2633f116@I-love.SAKURA.ne.jp>
- <CAHC9VhQikhv+qCyQdnJguvy-qTkGXB+NU7=QZjw5d+WfyVxZhw@mail.gmail.com>
- <00ed59a3-a9c9-47c3-97da-5a8e3da1ea82@I-love.SAKURA.ne.jp>
- <CAHC9VhQq6jY63kYEQCp2t89Vv+_PDqv54RV6TO_TePDQyU6Vug@mail.gmail.com> <1bb453af-3ef2-4ab6-a909-0705bd07c136@I-love.SAKURA.ne.jp>
-In-Reply-To: <1bb453af-3ef2-4ab6-a909-0705bd07c136@I-love.SAKURA.ne.jp>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 30 Jan 2026 16:56:59 -0500
-X-Gm-Features: AZwV_Qj982ND7TJxgyw6A2KozmEAmOpS-qJ0nHC9KARsT_E53n9R8n-IFelzO3k
-Message-ID: <CAHC9VhQEKfxXzFgYShojESpQn10LES5zL6Ua0YV9b8seEKFqyA@mail.gmail.com>
-Subject: Re: [PATCH] xfrm: kill xfrm_dev_{state,policy}_flush_secctx_check()
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: SELinux <selinux@vger.kernel.org>, 
-	linux-security-module <linux-security-module@vger.kernel.org>, 
-	Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Network Development <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADkzfWkC/23QPU/DMBAG4L9SecbId5fYTicQCyMDG2LwJ7XUN
+ pVNo6Iq/x0nCKlKOp6t97lXd2Ul5BQK226uLIchldQf69A+bJjbmeNX4MnXmaHAFhCQX2Lh6WB
+ 4TJfziXcESgsj0aFjNXPKoX7M3gd7e35/eWWf9XmXyneff+YtA8yffyB2C3AADlwaBcp11EXln
+ ty+P/u4Nzk8uv4wLalRKWDVZY5qD2SlEECAy+jUZMD/7ZVAsSSwEpEIg/HaiobuEnRLrFpQJVA
+ QtUYbo0neJZpbYnWDZrqBtbrzUVlp1i3GcfwFtu64oLoBAAA=
+X-Change-ID: 20251212-xfs-ima-fixup-931780a62c2c
+To: Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, 
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+ "Darrick J. Wong" <djwong@kernel.org>, 
+ Christian Brauner <brauner@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
+ Jeff Layton <jlayton@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, kernel-team@cloudflare.com, 
+ Frederick Lawler <fred@cloudflare.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4621; i=fred@cloudflare.com;
+ h=from:subject:message-id; bh=aLz0imPCdZ5/xhHXVEXnm6aMGct2xh+/QvnHHIV6ZGM=;
+ b=owEBbQKS/ZANAwAKAasltHYDktNtAcsmYgBpfTM8Kp4GDHqdBKyd7DxYvWKvsa/OMUR83SHtV
+ RIkXtQQ+MmJAjMEAAEKAB0WIQTLNBqMVmu1PHvjOe2rJbR2A5LTbQUCaX0zPAAKCRCrJbR2A5LT
+ bXAVD/0TfJPV/Cj/+SY8aAa2AjzMlTk8gHHJRaQtHZJLln+be1Lm4p7q7l46X5AEWx5zIgfTTxY
+ Jr6fger804BwHhlTHD4ukoZCly0zb3FP2j/KOydPfgdBj5ckSHY3e39RKD0hJoiHcRqaKiX4USm
+ st3wMhCAINOneC+3JaUzo+8kh8HKB3C6jaeZ9UZ9loUIy+zX0hzWoyU9gX+3olIl1sOMg/cc3Zb
+ +BH01Cx4hbNFiNBup1l54n0aF9dg3fGhsohISS++YPSjQ4GoYvrR9xsnXDb+gFxz92BpyJtQv6U
+ 7bFuDH6fH+WF6VDBv/aTl9TkTJom5RvYYxsslq6NHvnktBbn3xg2jD06LPp1LIr02voTgdBJkin
+ V6TjRmb7xGTbtD+uQTqGazusvCoeDWel4o5tOKnpumQivatbltmhZV+x/ypNvpRyuwhoU44xNf7
+ V23ICL+ItKo/Fy9p6yRlknJIGDdAuLlX8LkoHBhaa361OwLSnS976yusHGCDoMx7dk77l/1MXK4
+ Gfnq/NPFgsqYEgjpw4vmGBhS+yhB268YrwPjKAqw25fjk4FUiTxeItujZUXrn0Mx0RX2uIJDwwG
+ u8bYyTCZDAhEzv8WTMbQ4vdbofJmPr3W5jF6JWA7SOZCt8E3Ccre8DYU8s+1MnqK1nHbNr2fJU/
+ f+m+LFc6dhJlj1Q==
+X-Developer-Key: i=fred@cloudflare.com; a=openpgp;
+ fpr=CB341A8C566BB53C7BE339EDAB25B4760392D36D
 
-On Wed, Jan 28, 2026 at 5:28=E2=80=AFAM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> On 2026/01/28 6:59, Paul Moore wrote:
-> > It sounds like we either need to confirm that
-> > security_xfrm_{policy,state}_delete() is already present in all code
-> > paths that result in SPD/SAD deletions (in a place that can safely
-> > fail and return an error),
->
-> Yes.
+We uncovered a case in kernels >= 6.13 where XFS is no longer updating
+struct kstat.change_cookie on i_op getattr() access calls. Instead, XFS is
+using multigrain ctime (as well as other file systems) for
+change detection in commit 1cf7e834a6fb ("xfs: switch to
+multigrain timestamps").
 
-To clarify, do you mean "yes, I agree", or "yes, I've already checked
-this and can confirm that the LSM hooks are already being called"?
+Because file systems may implement i_version as they see fit, IMA
+unnecessarily measures files in stacked file systems. This is due
+to the LOWER or UPPER FS not updating kstat.change_cookie to the
+recent i_version on request. Thus, for XFS, zero is being compared
+against the inode's i_version directly, and is always behind.
 
-> >                            or we need to place
-> > xfrm_dev_{policy,state}_flush_secctx_check() in a location that can
-> > safely fail.
->
-> Did you mean xfrm_{policy,state}_flush_secctx_check() ?
+We're proposing to compare against the kstat.change_cookie
+directly to the cached version, and fall back to a ctime comparison,
+if STATX_CHANGE_COOKIE is not supplied in the result mask.
 
-They both call into the security_xfrm_policy_delete() LSM hook which
-is what I care about as that hook is what authorizes the operation.
+EVM is largely left alone since there's no trivial way to query a file
+directly in the LSM call paths to obtain kstat.change_cookie &
+kstat.ctime to cache. Thus retains accessing i_version directly.
 
-> Regarding xfrm_policy_flush() as an example, we can observe that we are
-> calling LSM hooks for must-not-fail callers ...
+Regression tests will be added to the Linux Test Project instead of
+selftest to help catch future file system changes that may impact
+future evaluation of IMA.
 
-We need to make sure the LSM hooks are being called to authorize the
-removal of SPD and SAD entries.  If you are going to remove LSM hooks
-from the existing code, please document how that code path you are
-changing is still subject to authorization by the LSM hooks or explain
-in great detail how that authorization is not necessary.
+I'd like this to be backported to at least 6.18 if possible.
 
---=20
-paul-moore.com
+Patches 1 & 2 are preparation patches. Ideally patch 2 is squashed into
+3, though not strictly necessary.
+
+Below is a simplified test that demonstrates the issue such that
+there are multiple unnecessary measurements occurring for actions on
+a file in a stacked TMPFS on XFS, prior to the file moved over to TMPFS:
+
+_fragment.config_
+CONFIG_XFS_FS=y
+CONFIG_OVERLAY_FS=y
+CONFIG_IMA=y
+CONFIG_IMA_WRITE_POLICY=y
+CONFIG_IMA_READ_POLICY=y
+
+_./test.sh_
+
+IMA_POLICY="/sys/kernel/security/ima/policy"
+TEST_BIN="/bin/date"
+MNT_BASE="/tmp/ima_test_root"
+
+mkdir -p "$MNT_BASE"
+mount -t tmpfs tmpfs "$MNT_BASE"
+mkdir -p "$MNT_BASE"/{xfs_disk,upper,work,ovl}
+
+dd if=/dev/zero of="$MNT_BASE/xfs.img" bs=1M count=300
+mkfs.xfs -q "$MNT_BASE/xfs.img"
+mount "$MNT_BASE/xfs.img" "$MNT_BASE/xfs_disk"
+cp "$TEST_BIN" "$MNT_BASE/xfs_disk/test_prog"
+
+mount -t overlay overlay -o \
+"lowerdir=$MNT_BASE/xfs_disk,upperdir=$MNT_BASE/upper,workdir=$MNT_BASE/work" \
+"$MNT_BASE/ovl"
+
+echo "audit func=BPRM_CHECK uid=$(id -u nobody)" > "$IMA_POLICY"
+
+target_prog="$MNT_BASE/ovl/test_prog"
+setpriv --reuid nobody "$target_prog"
+setpriv --reuid nobody "$target_prog"
+setpriv --reuid nobody "$target_prog"
+
+audit_count=$(dmesg | grep -c "file=\"$target_prog\"")
+
+if [[ "$audit_count" -eq 1 ]]; then
+        echo "PASS: Found exactly 1 audit event."
+else
+        echo "FAIL: Expected 1 audit event, but found $audit_count."
+        exit 1
+fi
+
+Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+---
+Changes in v5:
+- Split into patch series. [Mimi]
+- Link to v4: https://lore.kernel.org/r/20260129-xfs-ima-fixup-v4-1-6bb89df7b6a3@cloudflare.com
+
+Changes in v4:
+- No functional changes.
+- Add Reviewed-by & Fixes tags.
+- Link to v3: https://lore.kernel.org/r/20260122-xfs-ima-fixup-v3-1-20335a8aa836@cloudflare.com
+
+Changes in v3:
+- Prefer timespec64_to_ns() to leverage attr.version. [Roberto]
+- s/TPMFS/TMPFS/ in description.
+- Link to v2: https://lore.kernel.org/r/20260120-xfs-ima-fixup-v2-1-f332ead8b043@cloudflare.com
+
+Changes in v2:
+- Updated commit description + message to clarify the problem.
+- compare struct timespec64 to avoid collision possibility [Roberto].
+- Don't check inode_attr_changed() in ima_check_last_writer()
+- Link to v1: https://lore.kernel.org/r/20260112-xfs-ima-fixup-v1-1-8d13b6001312@cloudflare.com
+
+Changes since RFC:
+- Remove calls to I_IS_VERSION()
+- Function documentation/comments
+- Abide IMA/EVM change detection fallback invariants
+- Combined ctime guard into version for attributes struct
+- Link to RFC: https://lore.kernel.org/r/20251229-xfs-ima-fixup-v1-1-6a717c939f7c@cloudflare.com
+
+---
+Frederick Lawler (3):
+      ima: Unify vfs_getattr_nosec() stat comparisons under helper function
+      ima: Make integrity_inode_attrs_changed() call into vfs
+      ima: Use kstat.ctime as a fallback change detection for stacked fs
+
+ include/linux/integrity.h         | 43 +++++++++++++++++++++++++++++++++++----
+ security/integrity/evm/evm_main.c |  5 ++---
+ security/integrity/ima/ima_api.c  | 11 +++++++---
+ security/integrity/ima/ima_main.c | 11 +++++-----
+ 4 files changed, 54 insertions(+), 16 deletions(-)
+---
+base-commit: 8f0b4cce4481fb22653697cced8d0d04027cb1e8
+change-id: 20251212-xfs-ima-fixup-931780a62c2c
+
+Best regards,
+-- 
+Frederick Lawler <fred@cloudflare.com>
+
