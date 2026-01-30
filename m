@@ -1,145 +1,279 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A7F188713
-	for <linux-security-module@vger.kernel.org>; Fri, 30 Jan 2026 01:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2195D2036E9;
+	Fri, 30 Jan 2026 02:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769736703; cv=none; b=h/2uxnkjOWKMwDa1sj5dFxfWeDDgYg7MCou7wGfgEDpzWG/OtmwW8e0XevvIyvNQRezo1Gj9Ge9Wjs8RINLU2Bn6PGZbpKi9B8z61pT1RujRYJCfmedwvx4otiqzYZewWDNCQ3n9sZUht7MVDy8DWr+BDEhmXdMX84MpqhJUwdA=
+	t=1769740371; cv=none; b=Uo5vuwh25krWnM022Ao1H8AUa3Z0AfoM9aJaWr4YCB06BvNFQExHGyY6fUXyMB4pAaKhdOfECdXB8f+tHR6jlkgURdHl+8qg8TMmvIETu01kaLFptI4LK7dfhcLSRbUceSan+x7HejcHHBGYPb/t39DTUn26KJ6I2+eBVTW/SoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769736703; c=relaxed/simple;
-	bh=8cKq9AUozNFDXxvISOg02yWkfQ7EXvQvA0V9S9ELwWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jFs/zS0FeOqfO87JoMfgQCZ4zaKsM+KebjufPwnyUo7nOKh1Br7N3iqMh5FUTJxgJixWdSJcVk+ntYf07t93Ktm7OgnG3G/9rCrcQh6Uo1NwCTtLpKHo5S7Pjfpzhqglhgn2J6ZCGoTc09OHNt4OrAgrwJL3/CyCcv6cI9iLm6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W8waZ2ss; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769740371; c=relaxed/simple;
+	bh=WDw7rcNTDL7tHtKIZICN9Bl/1o7hwHMBaDMW76RvDnY=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=A5QFZdxTIsI/bVAEvZhPStaPSowMXjBnNe2PZ4psvhZ/kQnZh2MVXCHxJTQnwhkd2Vd24r0lchYhSekzuzPqtMS+8A40/WCMAsfLA6RRtvJeI3ET0x+tzEIY+Jl9zz7IrVtLinAV220LNisaTQToDYcGtFlGgn7CDAO3KHohU5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=B2CLE9ai; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W8waZ2ss"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 254BCC4CEF7;
-	Fri, 30 Jan 2026 01:31:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769736703;
-	bh=8cKq9AUozNFDXxvISOg02yWkfQ7EXvQvA0V9S9ELwWA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W8waZ2ssLE2mo86qQyqJx1jIYseMIoKmqdeKhqgBjTisvD6JjmovazsvkCaQD3SPO
-	 Oyc4XHPvIrQQ5Rs3tAUaQEGu33G3lNKHlxwgUDCC4WIMgZd48CqUaKdjssr0kwOuHg
-	 xZ03Wx3Ulkb7KFqFYGg0QNf7tJjMX5685hWMHnDX5qItlpF/qngrddtN82JBiA3wcV
-	 pKAYnzDZxAth8PBVh+lIAiReXY2EBCC/HTmcXKJ5NJ8kg126eGgXE7YVHDKY1Us4wZ
-	 06piOKS8Asrw5pa1goM5lu8X4TyOlkhn4EG1O/f6VVT8HitALTO0PTOlDDCLP3gKBU
-	 3v8PvXzd2/3cQ==
-Date: Thu, 29 Jan 2026 17:31:42 -0800
-From: Kees Cook <kees@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com
-Subject: Re: [PATCH] lsm: preserve /proc/sys/vm/mmap_min_addr when
- !CONFIG_SECURITY
-Message-ID: <202601291730.45120C1A@keescook>
-References: <20260129225132.420484-2-paul@paul-moore.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="B2CLE9ai"
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 60TEKBX4022829;
+	Fri, 30 Jan 2026 02:32:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=2OIqzh
+	5ESxmNvzqg/wpLtxWi8GFv5+sJn6Gn6i5KMVg=; b=B2CLE9aiFti1rvjC4LnfFk
+	sPLontwqlWjVm2Zn6dlxE3Q7FGT97y7WvDCUX8dx7evF/bC2jrVqL/GOFJA9eI8q
+	T1soL0zx6vywPi1GXXbtudHSqjki+l6E0bd5/ev0aW/hc1IyEdLx95XBRpruPHhu
+	/hB5LuPt/S+5uHKadB5OKFrSvFLjvcpJUTxVzBjoS4RGHAF6OsSiRqRFmZHudEPa
+	lZb4hYMxXPw84oOSLoO43pJFCfyCWkq8fc0J9awf5ErKfiE2dTeU1kwXhineBOi6
+	9vCwsJXLjSahcnIFU87qRpL1vyn1vZv6qkFzqV13JyqNglD1KISN9Y/U7C6w8K6Q
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4bvkgn15dg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Jan 2026 02:32:22 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 60U2WL6G021639;
+	Fri, 30 Jan 2026 02:32:21 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4bvkgn15df-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Jan 2026 02:32:21 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 60U1Ajul018238;
+	Fri, 30 Jan 2026 02:32:20 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4bwb424a99-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Jan 2026 02:32:20 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 60U2WJGF62783812
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 30 Jan 2026 02:32:19 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 615D15805A;
+	Fri, 30 Jan 2026 02:32:19 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5350D5805E;
+	Fri, 30 Jan 2026 02:32:18 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.18.136])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 30 Jan 2026 02:32:18 +0000 (GMT)
+Message-ID: <42da6a2c72b1093b7aa5106cdce4d0efdbd785ee.camel@linux.ibm.com>
+Subject: Re: [PATCH v4] ima: Fallback to ctime check for FS without
+ kstat.change_cookie
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Frederick Lawler <fred@cloudflare.com>,
+        Roberto Sassu	
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"	 <serge@hallyn.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christian Brauner	
+ <brauner@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>, Jeff Layton	
+ <jlayton@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kernel-team@cloudflare.com
+In-Reply-To: <20260129-xfs-ima-fixup-v4-1-6bb89df7b6a3@cloudflare.com>
+References: <20260129-xfs-ima-fixup-v4-1-6bb89df7b6a3@cloudflare.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 29 Jan 2026 21:32:17 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260129225132.420484-2-paul@paul-moore.com>
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=Gr1PO01C c=1 sm=1 tr=0 ts=697c1836 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=EG7W4yiQAAAA:8 a=Nh1rTGwYjvPCPEUbleoA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: um94vgnG2Af_JZ72yUtGnbWEuTMce5B_
+X-Proofpoint-ORIG-GUID: XNXvJCX7-hRKC11F9nfWWGW6Vgdr7Q8I
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTMwMDAxNiBTYWx0ZWRfX8NhCMrkCZ4ZY
+ nwlgqUcZX24DCWJDmaa4lb1Q2NrJdUtAkhtO+FC1J36ZdcG4PAqLOinHVHnRA/p71NaCCqBpYYi
+ BCQv0UdMIa/Edd4trcQhb5dhiDGAMx7TXcFEAHN5OMR3ZKsiAjTQmIuj33jbQftQMus/NjYzyBF
+ B2I2+Wcj4TfVIFrj3lCNHo6ehUP4vR1Y0m8nnkq8ulI3qKnx/+TEXRHnb51JK0zAvvNIxG8g0Id
+ WXD4mH5IfSwOdtOcMzarcxc4uhFDWUYxhZ/rgcWvfvE1z0tE191Rv25U0VmxKlL2TkgfHqOBlIa
+ IWC30OZkFImsoge3sIaChBuMDheHL7btVjbE4FK++v6gAeJYUWlwV8F3cdPooQcpQOqqxus0FXB
+ Pqp/yp8+/sef2aWFYHoyL1rGhZQS1U2Xl54lZ8w1pDM5RbrgtGiGqJHTCHqpy7KE5mKsR6+RL09
+ bCDH/0m5L7egpm63TTA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-01-29_03,2026-01-29_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 clxscore=1015 lowpriorityscore=0 suspectscore=0
+ impostorscore=0 phishscore=0 malwarescore=0 adultscore=0 spamscore=0
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2601150000
+ definitions=main-2601300016
 
-On Thu, Jan 29, 2026 at 05:51:33PM -0500, Paul Moore wrote:
-> While reworking the LSM initialization code the
-> /proc/sys/vm/mmap_min_addr handler was inadvertently caught up in the
-> change and the procfs entry wasn't setup when CONFIG_SECURITY was not
-> selected at kernel build time.  This patch restores the previous behavior
-> and ensures that the procfs entry is setup regardless of the
-> CONFIG_SECURITY state.
-> 
-> Future work will improve upon this, likely by moving the procfs handler
-> into the mm subsystem, but this patch should resolve the immediate
-> regression.
-> 
-> Fixes: 4ab5efcc2829 ("lsm: consolidate all of the LSM framework initcalls")
-> Reported-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
+On Thu, 2026-01-29 at 12:07 -0600, Frederick Lawler wrote:
+> Commit 1cf7e834a6fb ("xfs: switch to multigrain timestamps")
+> introduced a means to track change detection for an inode
+> via ctime updates, opposed to setting kstat.change_cookie to
+> an i_version when calling into xfs_vn_getattr().
+>=20
+> This introduced a regression for IMA such that an action
+> performed on a LOWER inode on a stacked file systems always
+> requires a re-evaluation if the LOWER file system does not
+> leverage kstat.change_cookie to track inode i_version or lacks
+> i_version support all together.
 
-Good catch and fix!
+Please describe the change in behavior that needs to be fixed.  Are there t=
+oo
+many, too few measurements, or both?
 
-Reviewed-by: Kees Cook <kees@kernel.org>
+Examples are fine, but first describe the problem - not detecting file chan=
+ge on
+xfs.
 
--Kees
+>=20
+> In the case of stacking XFS on XFS, an action on either the LOWER or UPPE=
+R
+> will require re-evaluation. Stacking TMPFS on XFS for instance, once the
+> inode is UPPER is mutated, IMA resumes normal behavior because TMPFS
+> leverages generic_fillattr() to update the change cookie.
 
+This sounds like the same issue - not detecting file change on xfs.  The pr=
+oblem
+is simply manifesting itself on stacked filesystems.
+
+>=20
+> This is because IMA caches kstat.change_cookie to compare against an
+> inode's i_version directly in integrity_inode_attrs_changed(), and thus
+> could be out of date depending on how file systems set
+> kstat.change_cookie.
+>=20
+> To address this, require integrity_inode_attrs_changed() to query
+> vfs_getattr_nosec() to compare the cached version against
+> kstat.change_cookie directly. This ensures that when updates occur,
+> we're accessing the same changed inode version on changes, and fallback
+> to compare against kstat.ctime when STATX_CHANGE_COOKIE is missing from
+> result mask.
+>=20
+> Lastly, because EVM still relies on querying and caching a inode's
+> i_version directly, the integrity_inode_attrs_changed() falls back to the
+> original inode.i_version !=3D cached comparison.
+>=20
+> Link: https://lore.kernel.org/all/aTspr4_h9IU4EyrR@CMGLRV3
+> Fixes: 1cf7e834a6fb ("xfs: switch to multigrain timestamps")
+> Suggested-by: Jeff Layton <jlayton@kernel.org>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> Signed-off-by: Frederick Lawler <fred@cloudflare.com>
 > ---
->  security/lsm.h      | 9 ---------
->  security/lsm_init.c | 7 +------
->  security/min_addr.c | 5 ++---
->  3 files changed, 3 insertions(+), 18 deletions(-)
-> 
-> diff --git a/security/lsm.h b/security/lsm.h
-> index 81aadbc61685..db77cc83e158 100644
-> --- a/security/lsm.h
-> +++ b/security/lsm.h
-> @@ -37,15 +37,6 @@ int lsm_task_alloc(struct task_struct *task);
->  
->  /* LSM framework initializers */
->  
-> -#ifdef CONFIG_MMU
-> -int min_addr_init(void);
-> -#else
-> -static inline int min_addr_init(void)
-> -{
-> -	return 0;
-> -}
-> -#endif /* CONFIG_MMU */
-> -
->  #ifdef CONFIG_SECURITYFS
->  int securityfs_init(void);
->  #else
-> diff --git a/security/lsm_init.c b/security/lsm_init.c
-> index 05bd52e6b1f2..573e2a7250c4 100644
-> --- a/security/lsm_init.c
-> +++ b/security/lsm_init.c
-> @@ -489,12 +489,7 @@ int __init security_init(void)
+>  include/linux/integrity.h         | 35 +++++++++++++++++++++++++++++++--=
+--
+>  security/integrity/evm/evm_main.c |  5 ++---
+>  security/integrity/ima/ima_api.c  | 11 ++++++++---
+>  security/integrity/ima/ima_main.c | 17 ++++++++++-------
+>  4 files changed, 51 insertions(+), 17 deletions(-)
+>=20
+> diff --git a/include/linux/integrity.h b/include/linux/integrity.h
+> index f5842372359be5341b6870a43b92e695e8fc78af..034f0a1ed48ca8c19c764e302=
+bbfc555dad92cde 100644
+> --- a/include/linux/integrity.h
+> +++ b/include/linux/integrity.h
+> @@ -9,6 +9,8 @@
+> =20
+>  #include <linux/fs.h>
+>  #include <linux/iversion.h>
+> +#include <linux/kernel.h>
+> +#include <linux/time64.h>
+> =20
+>  enum integrity_status {
+>  	INTEGRITY_PASS =3D 0,
+> @@ -51,14 +53,39 @@ integrity_inode_attrs_store(struct integrity_inode_at=
+tributes *attrs,
+> =20
+>  /*
+>   * On stacked filesystems detect whether the inode or its content has ch=
+anged.
+> + *
+> + * Must be called in process context.
 >   */
->  static int __init security_initcall_pure(void)
+>  static inline bool
+>  integrity_inode_attrs_changed(const struct integrity_inode_attributes *a=
+ttrs,
+> -			      const struct inode *inode)
+> +			      struct file *file, struct inode *inode)
 >  {
-> -	int rc_adr, rc_lsm;
-> -
-> -	rc_adr = min_addr_init();
-> -	rc_lsm = lsm_initcall(pure);
-> -
-> -	return (rc_adr ? rc_adr : rc_lsm);
-> +	return lsm_initcall(pure);
+> -	return (inode->i_sb->s_dev !=3D attrs->dev ||
+> -		inode->i_ino !=3D attrs->ino ||
+> -		!inode_eq_iversion(inode, attrs->version));
+> +	struct kstat stat;
+> +
+> +	might_sleep();
+> +
+> +	if (inode->i_sb->s_dev !=3D attrs->dev || inode->i_ino !=3D attrs->ino)
+> +		return true;
+> +
+> +	/*
+> +	 * EVM currently relies on backing inode i_version. While IS_I_VERSION
+> +	 * is not a good indicator of i_version support, this still retains
+> +	 * the logic such that a re-evaluation should still occur for EVM, and
+> +	 * only for IMA if vfs_getattr_nosec() fails.
+> +	 */
+> +	if (!file || vfs_getattr_nosec(&file->f_path, &stat,
+> +				       STATX_CHANGE_COOKIE | STATX_CTIME,
+> +				       AT_STATX_SYNC_AS_STAT))
+> +		return !IS_I_VERSION(inode) ||
+> +			!inode_eq_iversion(inode, attrs->version);
+> +
+> +	if (stat.result_mask & STATX_CHANGE_COOKIE)
+> +		return stat.change_cookie !=3D attrs->version;
+> +
+> +	if (stat.result_mask & STATX_CTIME)
+> +		return timespec64_to_ns(&stat.ctime) !=3D (s64)attrs->version;
+> +
+> +	return true;
 >  }
->  pure_initcall(security_initcall_pure);
->  
-> diff --git a/security/min_addr.c b/security/min_addr.c
-> index 0fde5ec9abc8..56e4f9d25929 100644
-> --- a/security/min_addr.c
-> +++ b/security/min_addr.c
-> @@ -5,8 +5,6 @@
->  #include <linux/sysctl.h>
->  #include <linux/minmax.h>
->  
-> -#include "lsm.h"
-> -
->  /* amount of vm to protect from userspace access by both DAC and the LSM*/
->  unsigned long mmap_min_addr;
->  /* amount of vm to protect from userspace using CAP_SYS_RAWIO (DAC) */
-> @@ -54,10 +52,11 @@ static const struct ctl_table min_addr_sysctl_table[] = {
->  	},
->  };
->  
-> -int __init min_addr_init(void)
-> +static int __init mmap_min_addr_init(void)
->  {
->  	register_sysctl_init("vm", min_addr_sysctl_table);
->  	update_mmap_min_addr();
->  
->  	return 0;
->  }
-> +pure_initcall(mmap_min_addr_init);
-> -- 
-> 2.52.0
-> 
+> =20
+> =20
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/i=
+ma_main.c
+> index 5770cf691912aa912fc65280c59f5baac35dd725..8ac42b03740eb93bf23b15cb9=
+039af6cd32aa999 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -28,6 +28,7 @@
+>  #include <linux/iversion.h>
+>  #include <linux/evm.h>
+>  #include <linux/crash_dump.h>
+> +#include <linux/time64.h>
+> =20
+>  #include "ima.h"
+> =20
+> @@ -199,10 +200,13 @@ static void ima_check_last_writer(struct ima_iint_c=
+ache *iint,
+>  					    &iint->atomic_flags);
+>  		if ((iint->flags & IMA_NEW_FILE) ||
+>  		    vfs_getattr_nosec(&file->f_path, &stat,
+> -				      STATX_CHANGE_COOKIE,
+> -				      AT_STATX_SYNC_AS_STAT) ||
+> -		    !(stat.result_mask & STATX_CHANGE_COOKIE) ||
+> -		    stat.change_cookie !=3D iint->real_inode.version) {
+> +			    STATX_CHANGE_COOKIE | STATX_CTIME,
+> +			    AT_STATX_SYNC_AS_STAT) ||
+> +		    ((stat.result_mask & STATX_CHANGE_COOKIE) ?
+> +		      stat.change_cookie !=3D iint->real_inode.version :
+> +		      (!(stat.result_mask & STATX_CTIME) ||
+> +			timespec64_to_ns(&stat.ctime) !=3D
+> +			(s64)iint->real_inode.version))) {
+>  			iint->flags &=3D ~(IMA_DONE_MASK | IMA_NEW_FILE);
+>  			iint->measured_pcrs =3D 0;
+>  			if (update)
 
--- 
-Kees Cook
+The original i_version test was clear.  This code has become really hard to
+understand and needs to be cleaned up.  Defining a helper function, will al=
+so
+avoid code duplication.
+
+Mimi
