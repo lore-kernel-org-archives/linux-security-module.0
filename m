@@ -1,211 +1,295 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A100A378D6A
-	for <linux-security-module@vger.kernel.org>; Fri, 30 Jan 2026 11:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769771170; cv=pass; b=tEWE2S84ehZIqaYvY2e0BAckxn8JYWjey/782tnGrEZFpjr6qEtX5rE19BDYUUJAiBvppM1ap74i8Rk/7FHZ7irby+f/kLaRcY3TYS0q+JPY8omdfSjMvgqOBp9IWDNMS5E70gP/hhZCZMcieW1d86Iv2Y+OW40UpGpFJVO+3Lo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769771170; c=relaxed/simple;
-	bh=9/zpKffe7y3uB+Qn0SF95hcsB79LbAi7GedReWEKmVE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O+rdpkHkiFVNpEKN/ujO9N3wPchN74quRSZ02X4GOvs07+Pd/c/1YkBMzOxant4mdzfavN8K3+SaQLjvxVHXyiqf/9uo3T2ELpBYhthkw4QOhLPBc+kIFMGazQYYQAmzomIoxnimXrKdt+k3+0tVayxfJuX75BhewX2tBuwcq20=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hIPqm4+U; arc=pass smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2196127472;
+	Fri, 30 Jan 2026 13:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769778094; cv=none; b=tHORWeRHj+p/4NctTe1/rtjeRD5DZNXCGVy93fEUKw3trhYF1Eq0LsRb10SAehVrr8NDEzsoHKONYmab3/NJUFlhOm0EWkmVBKqZOBXYJl2DHpxaFJkF9yD7DGyG9C2CJaCc3p/tmOyY/dBbX8UsIJlTDU4YY9ykUJhscAks1jQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769778094; c=relaxed/simple;
+	bh=sonhc906lOyPA3Rivxyo7mMB8kPmlhOuDfn3QMT/OAI=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=XkDMG9NDYQxk+DYB93n3x1WEMfwG67taOYdfSR9u3lQMlrCDF6aSzwkGOB1TCWi8pRtOY13iRjxvecaDVu2x2cvov9huShXyh1W2w45hv4m3NS741fllgw4lig/I0bOkGglKZFQliEZbg0Uzv1fI6BTIZwdHkWekR5r3FJPOqog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=K+j+gtFg; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hIPqm4+U"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-64b7318f1b0so2692104a12.2
-        for <linux-security-module@vger.kernel.org>; Fri, 30 Jan 2026 03:06:08 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1769771167; cv=none;
-        d=google.com; s=arc-20240605;
-        b=EzaP/tSNNeZFaJE4qM/2sIuFCZ2U1TV6o4y89gj3EWoLntptj8mhXBErYrlPGMtYCM
-         YDk0Rforl4osVFq317fNimmF5p9ckiTjOx8vh5Bqntp1Fc8W2Oee9MeQalCLwF5HbDav
-         nHuy/QdiM+Bfh8EI7LMBnArO9/y+acd/QT+0JwlJbQ1bDlWEknSJmCxnv2lpyoBEUdqc
-         x41qm6Q4bmrITkWA0FE7oqJqR/mc9P/oRIGF9txgKrIW4rNMlPh0F45LFVyfpXsxAN1K
-         0qWUhhcxppQPNiw1Fl2kRAHHKPyB+tdvYTPPAgIOxhNp8fNI/X28prK26E5e9D42PoZF
-         J2qQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=KJi4aV/ZmRDHm0hyQsYhdJh23rHtSjaZzhOLa52dkXo=;
-        fh=KAcwRvP8x5wXvjEUYtmU7+QH+ZBNe0Cl/eY0mGDTFbE=;
-        b=dzPkTX8WpT/CfEeF0S2mFTKgn5RyEXoEgJbG0vwT9POyFuO0QnbKyd3qTWNF/IzS1a
-         X0jbvyHBlvjP1ZfWwTjOrAZN9Ps/B+7vqepKfs2lrSVss43ovaHr3spVOxz3LhdHWIX1
-         t//9Mu6gpmW1r2UBP05GLuHU9B4dT9pqZaw7spsn3kAmts2EzoGfEp8oYpYYxu1198TS
-         MzaTGC0PGeTLe0YB5Vw0v0EK9pjyVw8+D35W5brZyoc+swL3dgU3CSSftU2ZCIq3D04J
-         1OGVBLqdJS5YsKYV8BxU4xI4d5eqS9l1J2SzOHqr1dnoArZmlNWwczBJa58AclONJLRX
-         kkiA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769771167; x=1770375967; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KJi4aV/ZmRDHm0hyQsYhdJh23rHtSjaZzhOLa52dkXo=;
-        b=hIPqm4+U7OpUx4koc8RxObDAUkvZy6VqulOYO9UF7VmAqvuywLjIBne/1s2y5L2HSl
-         3NOn4JBHg4TW8CgfTcWdRF4fTU7Dzgj3zjxxux8m0FaIw4XhxHpKTw88+Se3e16dF3pe
-         i3KvNaXRk8wHAZ04vVaKk6BjxrpDuTvVVPqzba6D3tXrZIGMA+oQZgSwYKNRmeKdiNPR
-         LRo23su5YjT6ie/CZEpITLV2onC0bu5b6UFf7AUTV7s1dtxI7/6H/ED9C+97NiFlJVak
-         TAEIah49ALrBIzvxVT5Yk6E17Sqp5tSb8rsC2bIlt94bwfu82BR8LzjfR8eOJPzeMpqO
-         HA8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769771167; x=1770375967;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=KJi4aV/ZmRDHm0hyQsYhdJh23rHtSjaZzhOLa52dkXo=;
-        b=eOU+zJoUuLAE1CY+/M9X2p77chrtIKzaN/mpoT9D0n462ojW3QYuWzJfWzTqgamH7E
-         HJ0j3A8DvbPKLtvinmy2y661i1KCyjNEbfV8nqKS6sunrGy18qQjd+FEYrsQ4tbw1/3e
-         9cYY771kUHWfhnj8c8iK6//BB8yxgal1uPY2mhv7KHv5r1fZ/bQ5Uq7IAXLJYGjvMNKm
-         fQeELI6sOaV2jUjks5WQCeWaW5MF49wNWkNg3KdlWtItdMrL1ST4Bj2uORp1u1cvCPgd
-         u/ymM+tjGmuqz28La+NQlb8JBoBw12w9+43Fs/r7paV6/1amzK3Qqo9FJgJCGEO5voYx
-         XAdw==
-X-Gm-Message-State: AOJu0YxPoNlXTgwNGEKSdUQZ5WJ50ypyYe/mkXP4sW1okd0wd2Dle+AD
-	FTP5EgyX/zFitda1crpLqfROjXZ3eJTF0B19DIAc+N6KGzmKfKXT817vlE8lkawzIWyjzpO2H1x
-	hVH4Saxt9kYA11c+/QGcUV8MNKFL43sc=
-X-Gm-Gg: AZuq6aJNxX4EMJC9cLZsJSYzIGz9KDVP8aFoe+/HFVtd1B9b+WDpAOJSyDK7PXjgbe3
-	bTKisWNRMUBGXbO3ADPn3eTFhO95XDKMOXDjQnvl5GjlKH19wuWcddNutnqqE9KqqhLFMLuOHZC
-	tisMOGEon9uXgU08GGSf3I1mXhLJgvPQGrstDuJ9RR3d8dcYe9Mypxe431ARWl6r4+cRmACcryQ
-	RxsexCUpebbqw0M9t/03wIUAZv4nKJo0IwSyD+Fyu0jnsH5GmK9OolNqGIn+SkVl43vdFS1e/+h
-	0oxzJvOG4MweauCwp5xHkQ5WoMXV5w==
-X-Received: by 2002:a05:6402:144f:b0:64b:588b:4375 with SMTP id
- 4fb4d7f45d1cf-658de543897mr1599144a12.2.1769771166763; Fri, 30 Jan 2026
- 03:06:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="K+j+gtFg"
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 60U2eAdU024596;
+	Fri, 30 Jan 2026 13:00:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=s8EnGz
+	FZjcZZrR5BC19BtR7KfOn3CUwhlV7Zg8/z4eQ=; b=K+j+gtFgH5tv7xoWGKv/Yc
+	ZEzhWoiGgyes2XkDZL2gWi9wlDf7oEyfkGcU3xv02soiPk4SV5j/jreHIV3jnNzV
+	i5P4yA/pEMOyUhKgOx1T2QC3tPgX/QAfKSjqHFNcC9iWu7hQs3y5kl8u5lT/l1ac
+	JN5p8vG1X2kcEHeV7FRB2m+eDU9RidoVi6d5QWVB7YmjQVIhBC1RGVHrLNT0rlw1
+	Cu4eO7GTBfENE6I3MHdQU//gbuIsVu2D7R1TRVeGPIVrZmxfNh6VUK2EZ0hGQd4E
+	a3tF0aJwZvEWSkEZC9VWpx2FPJKc3ulMvKHBdzAyRo/pk9RX2imT7xprBeDPI66w
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4bvnrtwver-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Jan 2026 13:00:59 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 60UD0wZf026137;
+	Fri, 30 Jan 2026 13:00:58 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4bvnrtwvek-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Jan 2026 13:00:58 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 60UAvcSv006687;
+	Fri, 30 Jan 2026 13:00:57 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4bw8sypaj6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Jan 2026 13:00:57 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 60UD0uw415925784
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 30 Jan 2026 13:00:56 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3127E58064;
+	Fri, 30 Jan 2026 13:00:56 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9AE4058054;
+	Fri, 30 Jan 2026 13:00:54 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.15.157])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 30 Jan 2026 13:00:54 +0000 (GMT)
+Message-ID: <1da265acd3168a5c2b7390ddafc6a46d5e2d5613.camel@linux.ibm.com>
+Subject: Re: [PATCH v4] ima: Fallback to ctime check for FS without
+ kstat.change_cookie
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Frederick Lawler <fred@cloudflare.com>,
+        Roberto Sassu	
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"	 <serge@hallyn.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christian Brauner	
+ <brauner@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>, Jeff Layton	
+ <jlayton@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kernel-team@cloudflare.com
+In-Reply-To: <42da6a2c72b1093b7aa5106cdce4d0efdbd785ee.camel@linux.ibm.com>
+References: <20260129-xfs-ima-fixup-v4-1-6bb89df7b6a3@cloudflare.com>
+	 <42da6a2c72b1093b7aa5106cdce4d0efdbd785ee.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 30 Jan 2026 08:00:54 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260130001418.18414-1-wufan@kernel.org>
-In-Reply-To: <20260130001418.18414-1-wufan@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 30 Jan 2026 12:05:55 +0100
-X-Gm-Features: AZwV_QgghBBStBrPYhn9xu--KNUWAryBYerGvsUjHEDtz6N4ByrCAVmC06166_U
-Message-ID: <CAOQ4uxhf6EQKcoN055xzmi-RW2GPxRzz_ExsQawGQBSmoX2WYg@mail.gmail.com>
-Subject: Re: [PATCH] ipe: document AT_EXECVE_CHECK TOCTOU issue on OverlayFS
-To: wufan@kernel.org
-Cc: linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, corbet@lwn.net, mic@digikod.net, 
-	miklos@szeredi.hu, linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 3e9ipa-iXY0qYl6m_xYnyQ1Cfm2QZKDp
+X-Authority-Analysis: v=2.4 cv=Uptu9uwB c=1 sm=1 tr=0 ts=697cab8b cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=EG7W4yiQAAAA:8 a=X3O0K8v4pOr1HE7MqPgA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: UL6HhsACli3gxIz8CMq3jCFNLN7TTmSB
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTMwMDEwNCBTYWx0ZWRfX3mBCVrIl8Kf8
+ y9kUz7pFGPzx/ja71T8g2dJUI0YGTYyqrhkT+yTO+hayS7fBOJAbDXHViJDlBeyS63crTrnl2qg
+ 9dbB0FPKKj0maqXx0itfYgfeRyFUtCl3E7ftaNfYxsP//YI+Y9ch0oki2gmbhUoI2aUThqT5D/v
+ Hq8kIwN+MvY4lzqHFoQ5M809GWnzX8mwMQbV5YMGZUMR9cwJxLyi69Z1vqXWNmhrTXNCcqnS/nL
+ /3QKODt+h33mcQqut/Uq0+MLMb8vbQKowGM3oy1IYu2pdgkeYUOFaKB7hmK9BmeQX7HiZCnomN8
+ gBwCH9nsGDCIVsI8zuhDDQGh7d00qLIWSdfI3B9bkFTy5t0hvgd7y2o/MiRh1DqybOVPnE3iZ1z
+ nSvkFODas10WwJBBO+71NYwbrNghO3GAs2P1DEjODxVmWYihvEPpyNMdYNN+q540XLSJG4yniQh
+ LJo1LAqPvJMKV7XCGKw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-01-30_01,2026-01-29_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 priorityscore=1501 clxscore=1015 lowpriorityscore=0
+ phishscore=0 adultscore=0 impostorscore=0 bulkscore=0 spamscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2601150000
+ definitions=main-2601300104
 
-On Fri, Jan 30, 2026 at 1:14=E2=80=AFAM <wufan@kernel.org> wrote:
->
-> From: Fan Wu <wufan@kernel.org>
->
-> Document a known TOCTOU (time-of-check to time-of-use) issue when using
-> AT_EXECVE_CHECK with read() on OverlayFS.
+On Thu, 2026-01-29 at 21:32 -0500, Mimi Zohar wrote:
+> On Thu, 2026-01-29 at 12:07 -0600, Frederick Lawler wrote:
+> > Commit 1cf7e834a6fb ("xfs: switch to multigrain timestamps")
+> > introduced a means to track change detection for an inode
+> > via ctime updates, opposed to setting kstat.change_cookie to
+> > an i_version when calling into xfs_vn_getattr().
+> >=20
+> > This introduced a regression for IMA such that an action
+> > performed on a LOWER inode on a stacked file systems always
+> > requires a re-evaluation if the LOWER file system does not
+> > leverage kstat.change_cookie to track inode i_version or lacks
+> > i_version support all together.
+>=20
+> Please describe the change in behavior that needs to be fixed.  Are there=
+ too
+> many, too few measurements, or both?
+>=20
+> Examples are fine, but first describe the problem - not detecting file ch=
+ange on
+> xfs.
+>=20
+> >=20
+> > In the case of stacking XFS on XFS, an action on either the LOWER or UP=
+PER
+> > will require re-evaluation. Stacking TMPFS on XFS for instance, once th=
+e
+> > inode is UPPER is mutated, IMA resumes normal behavior because TMPFS
+> > leverages generic_fillattr() to update the change cookie.
+>=20
+> This sounds like the same issue - not detecting file change on xfs.  The =
+problem
+> is simply manifesting itself on stacked filesystems.
 
-Hi Fan Wu,
+Splitting this patch, so that the base XFS changes are in one patch and the
+stacked filesystem changes are in the other, would really help clarify what=
+ is
+needed and the reason why.
 
-TBH, I don't like the way that this problem is being framed.
-IIUC, the problem is using IPE on a non-read-only fs.
-Is that correct?
+Mimi
 
-That fact that IPE metadata is usually coupled with read-only fs
-is interesting for the understanding of the use case, but unless
-IPE feature mandates read-only fs, this is a generic problem.
-
-OverlayFS is just one private case, which happens to be common
-in Android or containers? IDK, you did not mention this.
-
-Please describe the problem as a generic problem and give
-overlayfs as an example, preferable with references to the
-real world use cases.
-
-If I misunderstood, please explain why this problem is exclusive
-to overlayfs.
-
-Thanks,
-Amir.
-
-> The deny_write_access()
-> protection is only held during the syscall, allowing a copy-up operation
-> to be triggered afterward, causing subsequent read() calls to return
-> content from the unprotected upper layer.
->
-> This is generally not a concern for typical IPE deployments since
-> dm-verity and fs-verity protected files are effectively read-only.
-> However, OverlayFS with a writable upper layer presents a special case.
->
-> Document mitigation strategies including mounting overlay as read-only
-> and using mmap() instead of read(). Note that the mmap() mitigation
-> relies on current OverlayFS implementation details and should not be
-> considered a security guarantee.
->
-> Signed-off-by: Fan Wu <wufan@kernel.org>
-> ---
->  Documentation/admin-guide/LSM/ipe.rst | 32 +++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
->
-> diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-=
-guide/LSM/ipe.rst
-> index a756d8158531..b621a98fe5e2 100644
-> --- a/Documentation/admin-guide/LSM/ipe.rst
-> +++ b/Documentation/admin-guide/LSM/ipe.rst
-> @@ -110,6 +110,34 @@ intercepts during the execution process, this mechan=
-ism needs the interpreter
->  to take the initiative, and existing interpreters won't be automatically
->  supported unless the signal call is added.
->
-> +.. WARNING::
-> +
-> +   There is a known TOCTOU (time-of-check to time-of-use) issue with
-> +   ``AT_EXECVE_CHECK`` when interpreters use ``read()`` to obtain script
-> +   contents after the check [#atacexecvecheck_toctou]_. The ``AT_EXECVE_=
-CHECK``
-> +   protection (via ``deny_write_access()``) is only held during the sysc=
-all.
-> +   After it returns, the file can be modified before the interpreter rea=
-ds it.
-> +
-> +   In typical IPE deployments, this is not a concern because files prote=
-cted
-> +   by dm-verity or fs-verity are effectively read-only and cannot be mod=
-ified.
-> +   However, OverlayFS presents a special case: when the lower layer is
-> +   dm-verity protected (read-only) but the upper layer is writable, an
-> +   attacker with write access can trigger a copy-up operation after the
-> +   ``AT_EXECVE_CHECK`` returns, causing subsequent ``read()`` calls to r=
-eturn
-> +   content from the unprotected upper layer instead of the verified lowe=
-r layer.
-> +
-> +   To mitigate this issue on OverlayFS:
-> +
-> +   -  Mount the overlay as read-only, or restrict write access to the up=
-per
-> +      layer.
-> +   -  Interpreters may use ``mmap()`` instead of ``read()`` to obtain sc=
-ript
-> +      contents. Currently, OverlayFS fixes the underlying real file refe=
-rence
-> +      at ``open()`` time for mmap operations, so mmap will continue to a=
-ccess
-> +      the original lower layer file even after a copy-up. However, this
-> +      behavior is an implementation detail of OverlayFS and is not guara=
-nteed
-> +      to remain stable across kernel versions. Do not rely on this as a
-> +      security guarantee.
-> +
->  Threat Model
->  ------------
->
-> @@ -833,3 +861,7 @@ A:
->                       kernel's fsverity support; IPE does not impose any
->                       restrictions on the digest algorithm itself;
->                       thus, this list may be out of date.
-> +
-> +.. [#atacexecvecheck_toctou] See the O_DENY_WRITE RFC discussion for det=
-ails on
-> +                             this TOCTOU issue:
-> +                             https://lore.kernel.org/all/20250822170800.=
-2116980-1-mic@digikod.net/
-> --
-> 2.52.0
->
+>=20
+> >=20
+> > This is because IMA caches kstat.change_cookie to compare against an
+> > inode's i_version directly in integrity_inode_attrs_changed(), and thus
+> > could be out of date depending on how file systems set
+> > kstat.change_cookie.
+> >=20
+> > To address this, require integrity_inode_attrs_changed() to query
+> > vfs_getattr_nosec() to compare the cached version against
+> > kstat.change_cookie directly. This ensures that when updates occur,
+> > we're accessing the same changed inode version on changes, and fallback
+> > to compare against kstat.ctime when STATX_CHANGE_COOKIE is missing from
+> > result mask.
+> >=20
+> > Lastly, because EVM still relies on querying and caching a inode's
+> > i_version directly, the integrity_inode_attrs_changed() falls back to t=
+he
+> > original inode.i_version !=3D cached comparison.
+> >=20
+> > Link: https://lore.kernel.org/all/aTspr4_h9IU4EyrR@CMGLRV3
+> > Fixes: 1cf7e834a6fb ("xfs: switch to multigrain timestamps")
+> > Suggested-by: Jeff Layton <jlayton@kernel.org>
+> > Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> > Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+> > ---
+> >  include/linux/integrity.h         | 35 +++++++++++++++++++++++++++++++=
+----
+> >  security/integrity/evm/evm_main.c |  5 ++---
+> >  security/integrity/ima/ima_api.c  | 11 ++++++++---
+> >  security/integrity/ima/ima_main.c | 17 ++++++++++-------
+> >  4 files changed, 51 insertions(+), 17 deletions(-)
+> >=20
+> > diff --git a/include/linux/integrity.h b/include/linux/integrity.h
+> > index f5842372359be5341b6870a43b92e695e8fc78af..034f0a1ed48ca8c19c764e3=
+02bbfc555dad92cde 100644
+> > --- a/include/linux/integrity.h
+> > +++ b/include/linux/integrity.h
+> > @@ -9,6 +9,8 @@
+> > =20
+> >  #include <linux/fs.h>
+> >  #include <linux/iversion.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/time64.h>
+> > =20
+> >  enum integrity_status {
+> >  	INTEGRITY_PASS =3D 0,
+> > @@ -51,14 +53,39 @@ integrity_inode_attrs_store(struct integrity_inode_=
+attributes *attrs,
+> > =20
+> >  /*
+> >   * On stacked filesystems detect whether the inode or its content has =
+changed.
+> > + *
+> > + * Must be called in process context.
+> >   */
+> >  static inline bool
+> >  integrity_inode_attrs_changed(const struct integrity_inode_attributes =
+*attrs,
+> > -			      const struct inode *inode)
+> > +			      struct file *file, struct inode *inode)
+> >  {
+> > -	return (inode->i_sb->s_dev !=3D attrs->dev ||
+> > -		inode->i_ino !=3D attrs->ino ||
+> > -		!inode_eq_iversion(inode, attrs->version));
+> > +	struct kstat stat;
+> > +
+> > +	might_sleep();
+> > +
+> > +	if (inode->i_sb->s_dev !=3D attrs->dev || inode->i_ino !=3D attrs->in=
+o)
+> > +		return true;
+> > +
+> > +	/*
+> > +	 * EVM currently relies on backing inode i_version. While IS_I_VERSIO=
+N
+> > +	 * is not a good indicator of i_version support, this still retains
+> > +	 * the logic such that a re-evaluation should still occur for EVM, an=
+d
+> > +	 * only for IMA if vfs_getattr_nosec() fails.
+> > +	 */
+> > +	if (!file || vfs_getattr_nosec(&file->f_path, &stat,
+> > +				       STATX_CHANGE_COOKIE | STATX_CTIME,
+> > +				       AT_STATX_SYNC_AS_STAT))
+> > +		return !IS_I_VERSION(inode) ||
+> > +			!inode_eq_iversion(inode, attrs->version);
+> > +
+> > +	if (stat.result_mask & STATX_CHANGE_COOKIE)
+> > +		return stat.change_cookie !=3D attrs->version;
+> > +
+> > +	if (stat.result_mask & STATX_CTIME)
+> > +		return timespec64_to_ns(&stat.ctime) !=3D (s64)attrs->version;
+> > +
+> > +	return true;
+> >  }
+> > =20
+> > =20
+> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima=
+/ima_main.c
+> > index 5770cf691912aa912fc65280c59f5baac35dd725..8ac42b03740eb93bf23b15c=
+b9039af6cd32aa999 100644
+> > --- a/security/integrity/ima/ima_main.c
+> > +++ b/security/integrity/ima/ima_main.c
+> > @@ -28,6 +28,7 @@
+> >  #include <linux/iversion.h>
+> >  #include <linux/evm.h>
+> >  #include <linux/crash_dump.h>
+> > +#include <linux/time64.h>
+> > =20
+> >  #include "ima.h"
+> > =20
+> > @@ -199,10 +200,13 @@ static void ima_check_last_writer(struct ima_iint=
+_cache *iint,
+> >  					    &iint->atomic_flags);
+> >  		if ((iint->flags & IMA_NEW_FILE) ||
+> >  		    vfs_getattr_nosec(&file->f_path, &stat,
+> > -				      STATX_CHANGE_COOKIE,
+> > -				      AT_STATX_SYNC_AS_STAT) ||
+> > -		    !(stat.result_mask & STATX_CHANGE_COOKIE) ||
+> > -		    stat.change_cookie !=3D iint->real_inode.version) {
+> > +			    STATX_CHANGE_COOKIE | STATX_CTIME,
+> > +			    AT_STATX_SYNC_AS_STAT) ||
+> > +		    ((stat.result_mask & STATX_CHANGE_COOKIE) ?
+> > +		      stat.change_cookie !=3D iint->real_inode.version :
+> > +		      (!(stat.result_mask & STATX_CTIME) ||
+> > +			timespec64_to_ns(&stat.ctime) !=3D
+> > +			(s64)iint->real_inode.version))) {
+> >  			iint->flags &=3D ~(IMA_DONE_MASK | IMA_NEW_FILE);
+> >  			iint->measured_pcrs =3D 0;
+> >  			if (update)
+>=20
+> The original i_version test was clear.  This code has become really hard =
+to
+> understand and needs to be cleaned up.  Defining a helper function, will =
+also
+> avoid code duplication.
+>=20
+> Mimi
