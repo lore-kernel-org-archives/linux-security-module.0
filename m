@@ -1,82 +1,137 @@
-Received: from mail-oa1-f72.google.com (mail-oa1-f72.google.com [209.85.160.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4C817BCA
-	for <linux-security-module@vger.kernel.org>; Fri, 30 Jan 2026 10:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FEE35C193;
+	Fri, 30 Jan 2026 10:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769767770; cv=none; b=jJnGih3Ozb0d0bsCkG1a37ih6IlKmHSqxOAVnhZCRjxSiNF78TSMlKbnMeKVhJ7mjLH6iJAoOv2KmzVheNk308CiOMmY2RxSKhGBbjgvJBJiCBUqEPBzSw/HW9IFY7PPBR9yoIOZuZMatyAHGd1TE5iGHxLJL6i0IDUB4I8Vpsc=
+	t=1769768544; cv=none; b=Ma/qliDGP9oGEsrf+EGzi4QUajjiyDssDRuX/f1Anh0RT4DZJAndhoRcAWKd1RFolCjy8O1hAv6+9DN+7FVZv/qaVbUaWnp0vR1GgY/sLh+BDW8rwMDZhXCBc0W1G/963HXrSBC47MyliRIxFjTTXj5XTz1QeMSxDAF16dO7L3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769767770; c=relaxed/simple;
-	bh=177B+jzGGl1kaLL0eUxzaDqtZKSCW4tlU/haEFCr5tc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uTzdeZM9TzNLAEhF7dNo8tMhY4y3wN0TUfFBLJ3aUjNJV/AC5u0tilhipXFNBdLvjuN2WYo8BVzSDDrXNSOvti9BRZm3A+a15aJqlNT7/IIfQ8NtW17JXnbHutKEkCdTDd7H66TlwrRMynXY4oE8Nw2kAGVfJu5pmHpRs9UnxFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.160.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oa1-f72.google.com with SMTP id 586e51a60fabf-4096f92cf50so3739317fac.3
-        for <linux-security-module@vger.kernel.org>; Fri, 30 Jan 2026 02:09:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769767767; x=1770372567;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l7jMfw3fNQ2ONby+e365vdKHNz0BEAeaRFpQcSuzANU=;
-        b=FWZXZooophmY/yx7eu7M8ytA3KPnNeCDILgfEMOJMVpSn8Br6+OYaEbaAcBOy3ZmeL
-         DOzDsv8WzkXxtryU+JxrDPWiuP3udXRRRWkfAf3wrEMRHC5BgW+U74RsQ4FJbO4CPUC1
-         WTDxCC6v94aT7V51wsHuDH/ywfZcVVu5N+mSiL/zc6yyu0hZOPLnl9+misyOcesOSNMs
-         J2mYMth30MZl79XgYd7/UV0ncvvxPBo/yqZ0vvvTUiswvxPtFrV6FHdQTm3OodCP3eLd
-         tgnrWfA0GiLPlbezkrrSaccypmWEpv+pVK9ChOR0jNWOXjDr5+F+hUyVoM7BnNzVUcTi
-         lSww==
-X-Forwarded-Encrypted: i=1; AJvYcCWMAbiBxV5nIlbUBiqihAdB1cwBDyoIMb0Rb/fko/u5hYJ7aatso2I5Dw+2C8b56AirtgkYgTcmXJTeH7WkWRyYXwkrvpo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt+xZ9mAHDU62+aOMSjpZ5F9806bipi2da+4wlGhldAahiNyAi
-	pC9fvSiY81r66T87u1/0uNIpno4vvNgKxGq0T4Ys+VIXi/zxeYICxhFLvrKFtncSeTkrAN9JOON
-	sJUJC0MBymuAiv5V2Bpfncw6mHoTjk86R09ZmQ3aS1wU8TiMg9QQ8bw1k/qg=
+	s=arc-20240116; t=1769768544; c=relaxed/simple;
+	bh=Eq2G7Xi3OimnQOM/OPf23yrh0oiEwbP1aeWoGbFDTqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k2pHs5JD4ViBns+UTLs2nNOIPHNR7wt0zghHZnUXmEZCnfNu9V0uu241GsTvnK2tmYkDtOrnmrr7wvDT/9iZ3wkvaRrOgruh2sGrxvIi0f94ci/EWSn108mbdf+UxduwjGo/A+BnNu2xXsnQ6ZP8CRZJFgj+9nXuveaZPFPpg+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i5nWeqU4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FHbe7Nps; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i5nWeqU4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FHbe7Nps"
+Date: Fri, 30 Jan 2026 11:22:18 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1769768540;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SfQHnA2BmBI6ftm9auzvWJDnwuKHz7JY0ERZmZ33OkI=;
+	b=i5nWeqU4DrtCSygkhNXk0clW9sdJeYUn+nu/Lp14hRLsdOkRPW/to9G74aQNkjj8/JTbn+
+	EVuWx+CmaVxnH53spKOTa7yTwq+7Tl5lbIaIOm6gfGtyYUgNE6YFmOkXoVoKgF7DIPCyUf
+	y1lAx0HgGSDiub5A9zPaedO1HVcaiXfp8sro3/sdIma6WQfHSaspq9hNO8iPB5ZcgcMbe7
+	NHxgCPJn4K4WRfNe8JCnTOItY+RoBL8mYl7doxD5VtpmDXKdPBP/9LsAR9z4WEYm+EfAXY
+	56WuhmuxkZV0tie3qdFvjlHPysRbMXP1CcsyWmgKLMDJcorskgLzg36usAwFSg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1769768540;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SfQHnA2BmBI6ftm9auzvWJDnwuKHz7JY0ERZmZ33OkI=;
+	b=FHbe7NpszOxXo2LOeb2aDyUedizHq4EKWZVTWJo3btpIoSScU03CQEk/9T3wpc7XZUEEHy
+	j7CSY3+NgBT2CcBA==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-api@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kselftest@vger.kernel.org, 
+	mptcp@lists.linux.dev, linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
+	libc-alpha@sourceware.org
+Subject: Re: [PATCH net-next v2 1/4] selftests: net: Move some UAPI header
+ inclusions after libc ones
+Message-ID: <20260130111949-4b4eb870-6df7-4026-a48c-730fa8660ad6@linutronix.de>
+References: <20260120-uapi-sockaddr-v2-0-63c319111cf6@linutronix.de>
+ <20260120-uapi-sockaddr-v2-1-63c319111cf6@linutronix.de>
+ <4e673f7f-c49c-46b0-85b4-bae6e4efcb3a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:1798:b0:662:ff03:c218 with SMTP id
- 006d021491bc7-6630f35606dmr976112eaf.33.1769767767643; Fri, 30 Jan 2026
- 02:09:27 -0800 (PST)
-Date: Fri, 30 Jan 2026 02:09:27 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <697c8357.a70a0220.9914.0483.GAE@google.com>
-Subject: [syzbot] Monthly lsm report (Jan 2026)
-From: syzbot <syzbot+list7b053e9b50655c707274@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4e673f7f-c49c-46b0-85b4-bae6e4efcb3a@kernel.org>
 
-Hello lsm maintainers/developers,
+(trimmed the recipient list)
 
-This is a 31-day syzbot report for the lsm subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/lsm
+Hi Matt,
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 5 issues are still open and 42 have already been fixed.
+On Mon, Jan 26, 2026 at 07:13:50PM +0100, Matthieu Baerts wrote:
+> On 20/01/2026 15:10, Thomas Weißschuh wrote:
+> > Interleaving inclusions of UAPI headers and libc headers is problematic.
+> > Both sets of headers define conflicting symbols. To enable their
+> > coexistence a compatibility-mechanism is in place.
+> > 
+> > An upcoming change will define 'struct sockaddr' from linux/socket.h.
+> > However sys/socket.h from libc does not yet handle this case and a
+> > symbol conflict will arise.
+> > 
+> > Furthermore libc-compat.h evaluates the state of the libc
+> > inclusions only once, at the point it is included first. If another
+> > problematic header from libc is included later, symbol conflicts arise.
+> > This will trigger other duplicate definitions when linux/libc-compat.h
+> > is added to linux/socket.h
+> > 
+> > Move the inclusion of UAPI headers after the inclusion of the glibc
+> > ones, so the libc-compat.h continues to work correctly.
+> 
+> Thank you for looking at this!
+> 
+> Here is my (late, sorry) review for the modifications related to MPTCP:
+> > diff --git a/tools/testing/selftests/net/mptcp/mptcp_diag.c b/tools/testing/selftests/net/mptcp/mptcp_diag.c
+> > index 8e0b1b8d84b6..af25ebfd2915 100644
+> > --- a/tools/testing/selftests/net/mptcp/mptcp_diag.c
+> > +++ b/tools/testing/selftests/net/mptcp/mptcp_diag.c
+> > @@ -1,11 +1,6 @@
+> >  // SPDX-License-Identifier: GPL-2.0
+> >  /* Copyright (c) 2025, Kylin Software */
+> >  
+> > -#include <linux/sock_diag.h>
+> > -#include <linux/rtnetlink.h>
+> > -#include <linux/inet_diag.h>
+> > -#include <linux/netlink.h>
+> > -#include <linux/compiler.h>
+> >  #include <sys/socket.h>
+> >  #include <netinet/in.h>
+> >  #include <linux/tcp.h>
+> 
+> There is a remaining one (linux/tcp.h) here that you might want to move
+> below too.
 
-Some of the still happening issues:
+Good point.
 
-Ref Crashes Repro Title
-<1> 65      Yes   INFO: task hung in process_measurement (3)
-                  https://syzkaller.appspot.com/bug?extid=cb9e66807bcb882cd0c5
-<2> 44      Yes   possible deadlock in keyring_clear (3)
-                  https://syzkaller.appspot.com/bug?extid=f55b043dacf43776b50c
-<3> 1       Yes   memory leak in prepare_creds (6)
-                  https://syzkaller.appspot.com/bug?extid=dd3b43aa0204089217ee
+> > @@ -17,6 +12,12 @@
+> >  #include <errno.h>
+> >  #include <stdio.h>
+> >  
+> > +#include <linux/sock_diag.h>
+> > +#include <linux/rtnetlink.h>
+> > +#include <linux/inet_diag.h>
+> > +#include <linux/netlink.h>
+> > +#include <linux/compiler.h>
+> 
+> Note that I just noticed this is the only file from this directory where
+> the "includes" are not sorted by type and alphabetical order, see
+> pm_nl_ctl.c as an example. A bit of a detail, but if you plan to send a
+> v2, do you mind doing that too here while at it, please?
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+I'll send a v3 during the next cycle.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+> If not, I can look at that later, but better to avoid doing that in
+> parallel.
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+If you want to fix this up already during this cycle,
+that would also be most welcome.
 
-You may send multiple commands in a single email message.
+
+Thomas
