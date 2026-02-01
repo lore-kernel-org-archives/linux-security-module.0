@@ -1,67 +1,80 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFB535898;
-	Sun,  1 Feb 2026 15:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B196A4A21;
+	Sun,  1 Feb 2026 16:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769959169; cv=none; b=mjKGi7TluxqvUwP59ylgcefLUrIUY/UF5rMpkoVXHJScAeQufNwF96iCjqF6cZVQk5t46b7wR1Bet3HfnA4ALAvXWSUdyHxobeAG5XAS6jI8OjwmllfczmewXBXnrVMNbArrOFEE/Yw34ggrA26X47mYs1iT/B5/ERH/CB1njv0=
+	t=1769962798; cv=none; b=aMzm8w76mF/kENyac08lU+cS9Oyd383HKnN0rDEhJFF/5y/EyJUWIhDPD5RooLPNXiuJH6v1wFrriMGXF7sR0oj2RslqHFqwzYjFwUHWw35nMujYSUO9Riy5Z9v36oFdmPZu9g8sXhnOECsbfenLOYDRPy2t1pNUT6R51VE/Mr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769959169; c=relaxed/simple;
-	bh=RijTn+Bmi+VoN6SDft34c4MHkDL3DCxxopFo5K3Z2CU=;
+	s=arc-20240116; t=1769962798; c=relaxed/simple;
+	bh=lJT+ugwHA9E/sdCXlPBU1DSQ3rcT8aR3CQB+0aKQQmw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YPdWA3MDD2RLwkPEXduje1BUVbWB9967hz7GjoQfCWSpO26/cUHcdoQGSYNCg4g3Hvf/EExf7Fqf1JvKLlLZn8YCAesGzyHZiWOYJYSYV+R2vGZi1bNUu2/TrzOr7cFi4PNCtMbeVTeYbg+YIoJpxtlkmYQu02qOWwDz6P5DfzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tTH3UqgT; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	 In-Reply-To:Content-Type; b=s96Pkgz4L7Hgv3E5myYdu120bbCo6890sSaSXZ/jYzuOnNqRkrBcEPlrMx8zr4TwLeKhBQI9ONRv+A9dz8IQM2MyuX2xLxBM5aJ6kprxAdt+1OxF+Uf54JZgls9qv58sYhjpfvuUijm573w95LbrQLUZugPcxIQZjB6hScZqi10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=h3z9DZDl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=E19Swjdt; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tTH3UqgT"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 6119smxb032511;
-	Sun, 1 Feb 2026 15:19:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=fC4JBE
-	apiy1PkXawkT01QKPuA+i/WW6/kWw92rp+mAQ=; b=tTH3UqgTMsXsq3CAi6qomO
-	tcilgRfncLgpvxuaA41qu6ZaGQBTRVX/JmmgQ88Haxi5Pocm/01Lf92ojaoZIYMv
-	RzkRJvin17VbxX5ksWCPZmxTr8yrI2vtSk50IpVFO/wSgvIuyXzIvHRXqW3qmE8e
-	HJC8+5ZebZ46e04M2ZEVj6NEPlhsaliXi1AwYZhFrD604kiLaPm+8H1GNcP/Es+n
-	C+y3XtikvmBLTWJ2TpeBlI+A2Y6sMK1DxxLYbEkczBHueiWTAdJxhrB5n5HaiZqy
-	9B5uuW/DwmgG1StsnNKr094BU3oF+f/1t/V/cGoBpRl+oNZaX1Aw+Qu5yLHXnwEA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4c175mm31d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 01 Feb 2026 15:19:10 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 611FJ9Gc027930;
-	Sun, 1 Feb 2026 15:19:09 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4c175mm31b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 01 Feb 2026 15:19:09 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 6119eBNT005996;
-	Sun, 1 Feb 2026 15:19:08 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4c1x9j1k5j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 01 Feb 2026 15:19:08 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 611FJ7hY56426782
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 1 Feb 2026 15:19:07 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0075758055;
-	Sun,  1 Feb 2026 15:19:07 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 987095804B;
-	Sun,  1 Feb 2026 15:19:02 +0000 (GMT)
-Received: from [9.39.20.75] (unknown [9.39.20.75])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Sun,  1 Feb 2026 15:19:02 +0000 (GMT)
-Message-ID: <19427059-aa89-44f6-af0f-19fa183aba32@linux.ibm.com>
-Date: Sun, 1 Feb 2026 20:49:00 +0530
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="h3z9DZDl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="E19Swjdt"
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfout.stl.internal (Postfix) with ESMTP id B986D1D0002E;
+	Sun,  1 Feb 2026 11:19:55 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Sun, 01 Feb 2026 11:19:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1769962795;
+	 x=1770049195; bh=tjDVnDrw5wXiMN4qhmJVUL2GTODL7265NtOI9O4QuXw=; b=
+	h3z9DZDlacWbGo9fsFoRLGL+LgsOeO3lF7Uu2rsbhR5m0X90/gVirpsxKd9n5tuv
+	Yv/yileQynIZVVNk6xMk8nD5hiGGIlJfToCGdj2/XO2s1u0ljQI4tuacw8cnIUSO
+	qmJvv9+OrHfjV5ygbj5ovk45axhGzeUg3BBCz9rpZfOBAAaz7RHmouM0HoFB5cUq
+	98r2YDvIBtnVoXgYCXdjXfoSm+0Ti8UrExDIQ8hyaj28IsR24vVSKkXuQn0CNEU9
+	480TLPKfy70qv+LZwkNlRRE3/MZp5qD8OIbcMDA5lLtJSMNaIpDcKM15bb4Hxh2z
+	TWQGrzBujXxQGoTtDd8R1g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1769962795; x=
+	1770049195; bh=tjDVnDrw5wXiMN4qhmJVUL2GTODL7265NtOI9O4QuXw=; b=E
+	19SwjdtWug+DWz7dihNYaIMmrSEBrYQFt2yNM2nfQf372OxNgp6uENFTRQNKa/sf
+	/v7DJp+93pqGcQE0GopsGkA+7Fo2c2ptbjvt73NdudpUrhcDzguGM01FW2Cyog1P
+	T/t8oteQCgiuGuq8xyKIH70Be6wn3tqn84anuaLDsFFd3UFIeNzJguN7x10d0oLg
+	u0R7mNpILlb4SuaNYiLPIaWboI+zJTd0n7+SuLfwibhb9TFJpcRFpqY73arLU26J
+	oM+C4I4ujxvEScKt7fkyeL2hwUDq5rLqe34tgAxx8pi0+DyZhV4uX3qJ7C6gs8XQ
+	0AYMbPCotDdWOJT/4f5HQ==
+X-ME-Sender: <xms:Kn1_abHjd53T1S-vU70CbI8q9d79gZpHdTzkvtI-LbL4asTfmgrQeA>
+    <xme:Kn1_aZBmeLYlpHkKB9df_EnQBXb64n6v_sWhs7K1N9xKl4UE8V4PFJfcqOuC9l2qA
+    bIwI945OMaORcV2U44QD23dC8ouHiwaZR9_KxK8iP7vaB23WtC7qg>
+X-ME-Received: <xmr:Kn1_abXf3ZGVyFBvcBeqcN3iwEy8YkE1AIuUBqOEfgWVIOg7MhbfCiTX90DqO0WD6Ko8b0yuh0Cy8HInwA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddujeehvdehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefvihhnghhm
+    rghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepfe
+    dvheeluedthfelgfevvdfgkeelgfelkeegtddvhedvgfdtfeeilefhudetgfdunecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhesmhgrohifth
+    hmrdhorhhgpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphht
+    thhopehmrghtthhhihgvuhessghufhhfvghtrdhrvgdprhgtphhtthhopehmihgtseguih
+    hgihhkohgurdhnvghtpdhrtghpthhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdp
+    rhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepihhvrghnohhvrdhmihhkhhgrihhludeshhhu
+    rgifvghiqdhprghrthhnvghrshdrtghomhdprhgtphhtthhopehkohhnshhtrghnthhinh
+    drmhgvshhkhhhiugiivgeshhhurgifvghirdgtohhmpdhrtghpthhtohepnhgvthguvghv
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:Kn1_ado9nvWKysJj4tluYCrOL_FIZ-3HyrfkkUrW5tp8ZkJwohjrBA>
+    <xmx:Kn1_aXSNxESocRX-NwAll31b6bdeI2cXa7iQ07QbdU3QvUERtVMmAQ>
+    <xmx:Kn1_aX1tH2z-o4N0SNX5Am_vEGxkH33eDSlU9VelwDBfG4Pb1CYCDg>
+    <xmx:Kn1_aTCqiC5qeUsViUpMglYnqxuBxScO93KYJ7p0XVW2pyJNGOXVQQ>
+    <xmx:K31_adgc9CKvPewWd7cdrTpOnVXx49xqniwdGIvwcgYmLpST66wzZKAV>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 1 Feb 2026 11:19:53 -0500 (EST)
+Message-ID: <e2e19f42-05f9-4857-9b18-29192b0a1926@maowtm.org>
+Date: Sun, 1 Feb 2026 16:19:51 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -69,155 +82,50 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/6] Extend "trusted" keys to support a new trust
- source named the PowerVM Key Wrapping Module (PKWM)
-To: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, James.Bottomley@HansenPartnership.com,
-        jarkko@kernel.org, zohar@linux.ibm.com, nayna@linux.ibm.com,
-        rnsastry@linux.ibm.com, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20260201135930.898721-1-ssrish@linux.ibm.com>
+Subject: Re: [RFC PATCH v3 6/8] selftests/landlock: Add tests for UDP sendmsg
+To: Matthieu Buffet <matthieu@buffet.re>
+Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ linux-security-module@vger.kernel.org,
+ Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+ konstantin.meskhidze@huawei.com, netdev@vger.kernel.org
+References: <20251212163704.142301-1-matthieu@buffet.re>
+ <20251212163704.142301-7-matthieu@buffet.re>
 Content-Language: en-US
-From: Srish Srinivasan <ssrish@linux.ibm.com>
-In-Reply-To: <20260201135930.898721-1-ssrish@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <20251212163704.142301-7-matthieu@buffet.re>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: fZP1mfwCu8JsOGoZFMTRSZNTf-fJLkiK
-X-Authority-Analysis: v=2.4 cv=VcX6/Vp9 c=1 sm=1 tr=0 ts=697f6eee cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22
- a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=7O0lCG0yHcpZzvEBGfYA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: XFFXzxzahiN6srMW5N7pZtxszOUQMN7m
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjAxMDEyOSBTYWx0ZWRfX6QiZBpYsGyN+
- 0zCePtMRroHcxse6FvdeX8KAOWI/nMxM9y5UFFteFSkajFqbjYp4H4FksgLGOx8WJitvXL2kjSY
- XWPH+bwuek6kE+/OjXdYLKl6uoAusmvTtthubtEFDQA7EqX/3tzX1blTqo6Mdj1v1oJfbxg4No3
- j2dMHeRDxJ0uUYVdcx/eTg9c/Z0Kh/PH4Lmz+EggD+85yl/OVOzA4nL2pjzjgadXxTW0Hsb/RM7
- Z/Q7f/nE5FWxpLPNxjKPEpSzbogWVCIC29SDBBE8peCocBEoCAU8Ui4hbxYeZD5v+YTccfQIf9K
- kBC8MHYADEjtgs40jnqknz/MuL/QzdqptMMe7Y7Pd/kpCMGz4WynuXRJ+MzejmYY+T6SiQc6vm3
- ojuhsiFAwo0J8wMtVtTljuTUEQ9ZT8dAx7s4+5ZMLfeSyKhrYm4kVH2rPJK8JQjiV6tsuE9adt3
- oVKs+4GPfaiFdrtIBBQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-01_05,2026-01-30_04,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 spamscore=0 adultscore=0
- bulkscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2601150000 definitions=main-2602010129
 
-Please ignore this series (v6).
+Hi Matthieu,
 
-thanks,
-Srish.
+I noticed in passing that
 
-On 2/1/26 7:29 PM, Srish Srinivasan wrote:
-> Power11 has introduced a feature called the PowerVM Key Wrapping Module
-> (PKWM), where PowerVM in combination with Power LPAR Platform KeyStore
-> (PLPKS) [1] supports a new feature called "Key Wrapping" [2] to protect
-> user secrets by wrapping them using a hypervisor generated wrapping key.
-> This wrapping key is an AES-GCM-256 symmetric key that is stored as an
-> object in the PLPKS. It has policy based protections that prevents it from
-> being read out or exposed to the user. This wrapping key can then be used
-> by the OS to wrap or unwrap secrets via hypervisor calls.
->
-> This patchset intends to add the PKWM, which is a combination of IBM
-> PowerVM and PLPKS, as a new trust source for trusted keys. The wrapping key
-> does not exist by default and its generation is requested by the kernel at
-> the time of PKWM initialization. This key is then persisted by the PKWM and
-> is used for wrapping any kernel provided key, and is never exposed to the
-> user. The kernel is aware of only the label to this wrapping key.
->
-> Along with the PKWM implementation, this patchset includes two preparatory
-> patches: one fixing the kernel-doc inconsistencies in the PLPKS code and
-> another reorganizing PLPKS config variables in the sysfs.
->
-> Changelog:
->
-> v6:
->
-> * Patch 1 to Patch 3:
->    - Add Nayna's Tested-by tag
-> * Patch 4
->    - Fix build error reported by kernel test robot <lkp@intel.com>
->    - Add Nayna's Tested-by tag
-> * Patch 5
->    - Add Nayna's Tested-by tag
->
-> v5:
->
-> * Patch 1 to Patch 3:
->    - Add Nayna's Reviewed-by tag
-> * Patch 4:
->    - Fix build error identified by chleroy@kernel.org
->    - Add Nayna's Reviewed-by tag
-> * Patch 5:
->    - Add Reviewed-by tags from Nayna and Jarkko
->
-> v4:
->
-> * Patch 5:
->    - Add a per-backend private data pointer in trusted_key_options
->      to store a pointer to the backend-specific options structure
->    - Minor clean-up
->
-> v3:
->
-> * Patch 2:
->    - Add Mimi's Reviewed-by tag
-> * Patch 4:
->    - Minor tweaks to some print statements
->    - Fix typos
-> * Patch 5:
->    - Fix typos
->    - Add Mimi's Reviewed-by tag
-> * Patch 6:
->    - Add Mimi's Reviewed-by tag
->
-> v2:
->
-> * Patch 2:
->    - Fix build warning detected by the kernel test bot
-> * Patch 5:
->    - Use pr_debug inside dump_options
->    - Replace policyhande with wrap_flags inside dump_options
->    - Provide meaningful error messages with error codes
->
-> Nayna Jain (1):
->    docs: trusted-encryped: add PKWM as a new trust source
->
-> Srish Srinivasan (5):
->    pseries/plpks: fix kernel-doc comment inconsistencies
->    powerpc/pseries: move the PLPKS config inside its own sysfs directory
->    pseries/plpks: expose PowerVM wrapping features via the sysfs
->    pseries/plpks: add HCALLs for PowerVM Key Wrapping Module
->    keys/trusted_keys: establish PKWM as a trusted source
->
->   .../ABI/testing/sysfs-firmware-plpks          |  58 ++
->   Documentation/ABI/testing/sysfs-secvar        |  65 --
->   .../admin-guide/kernel-parameters.txt         |   1 +
->   Documentation/arch/powerpc/papr_hcalls.rst    |  43 ++
->   .../security/keys/trusted-encrypted.rst       |  50 ++
->   MAINTAINERS                                   |   9 +
->   arch/powerpc/include/asm/hvcall.h             |   4 +-
->   arch/powerpc/include/asm/plpks.h              |  95 +--
->   arch/powerpc/include/asm/secvar.h             |   1 -
->   arch/powerpc/kernel/secvar-sysfs.c            |  21 +-
->   arch/powerpc/platforms/pseries/Makefile       |   2 +-
->   arch/powerpc/platforms/pseries/plpks-secvar.c |  29 -
->   arch/powerpc/platforms/pseries/plpks-sysfs.c  |  96 +++
->   arch/powerpc/platforms/pseries/plpks.c        | 688 +++++++++++++++++-
->   include/keys/trusted-type.h                   |   7 +-
->   include/keys/trusted_pkwm.h                   |  33 +
->   security/keys/trusted-keys/Kconfig            |   8 +
->   security/keys/trusted-keys/Makefile           |   2 +
->   security/keys/trusted-keys/trusted_core.c     |   6 +-
->   security/keys/trusted-keys/trusted_pkwm.c     | 190 +++++
->   20 files changed, 1207 insertions(+), 201 deletions(-)
->   create mode 100644 Documentation/ABI/testing/sysfs-firmware-plpks
->   create mode 100644 arch/powerpc/platforms/pseries/plpks-sysfs.c
->   create mode 100644 include/keys/trusted_pkwm.h
->   create mode 100644 security/keys/trusted-keys/trusted_pkwm.c
->
+On 12/12/25 16:37, Matthieu Buffet wrote:
+> [...]
+> +	EXPECT_EQ(-EACCES, sendto_variant(sock_fd, &self->srv0, "A", 1, 0));
+> +	EXPECT_EQ(0, matches_log_prot(self->audit_fd, "net.sendto_udp", "daddr",
+> +				      variant->addr, "dest"));
+
+net.sendto_udp should probably be net\.sendto_udp
+
+> +
+> +	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
+> +	EXPECT_EQ(0, records.access);
+> +	EXPECT_EQ(1, records.domain);
+> +
+> +	EXPECT_EQ(-EACCES, sendto_variant(sock_fd, &self->unspec_srv0, "B", 1, 0));
+> +	EXPECT_EQ(0, matches_log_prot(self->audit_fd, "net.sendto_udp", "daddr",
+> +				      NULL, "dest"));
+
+and same here
+
+> +
+> +	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
+> +	EXPECT_EQ(0, records.access);
+> +	EXPECT_EQ(0, records.domain);
+> +
+> +	EXPECT_EQ(0, close(sock_fd));
+> +}
+> +
+>  TEST_HARNESS_MAIN
