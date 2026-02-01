@@ -1,131 +1,108 @@
-Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B196A4A21;
-	Sun,  1 Feb 2026 16:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC511261B8F;
+	Sun,  1 Feb 2026 16:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769962798; cv=none; b=aMzm8w76mF/kENyac08lU+cS9Oyd383HKnN0rDEhJFF/5y/EyJUWIhDPD5RooLPNXiuJH6v1wFrriMGXF7sR0oj2RslqHFqwzYjFwUHWw35nMujYSUO9Riy5Z9v36oFdmPZu9g8sXhnOECsbfenLOYDRPy2t1pNUT6R51VE/Mr4=
+	t=1769962944; cv=none; b=WtrGi4yPv3bQaqLAL0d6U4yNWI+8xuiOgc/FeFhUABp/qVLVj5cxi31JtmhRwcxsy7j342RRCnLnin0UdnKTNAZUdXm5tpye82XTK+DbfCdHG5v8mMvu3PM4mtckwPxfIQlpk8eBjJV7aEGgg3SAfBri0TExBc/3kG8ngbTAzvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769962798; c=relaxed/simple;
-	bh=lJT+ugwHA9E/sdCXlPBU1DSQ3rcT8aR3CQB+0aKQQmw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s96Pkgz4L7Hgv3E5myYdu120bbCo6890sSaSXZ/jYzuOnNqRkrBcEPlrMx8zr4TwLeKhBQI9ONRv+A9dz8IQM2MyuX2xLxBM5aJ6kprxAdt+1OxF+Uf54JZgls9qv58sYhjpfvuUijm573w95LbrQLUZugPcxIQZjB6hScZqi10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=h3z9DZDl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=E19Swjdt; arc=none smtp.client-ip=202.12.124.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	s=arc-20240116; t=1769962944; c=relaxed/simple;
+	bh=xlStmTRMhWVPt3fGtyXwEEDK5QLc9ZLigiHpsUvTOrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QLHvyBQsrAQffTN7zZEXGg+NczdAqElK85oRg10p691IeqYUVqETZWC6gKQPCV0difis/p77bupvKeiE5n4V9jn4RARDzx3QFR6K4EIxgyqID9R6GHf/PBgzsUmN7gCYfgBEwCFe1189hNJk8jE0V98u12+Td13MKoYIzUv6JjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=bEfjssX6; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="h3z9DZDl";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="E19Swjdt"
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfout.stl.internal (Postfix) with ESMTP id B986D1D0002E;
-	Sun,  1 Feb 2026 11:19:55 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Sun, 01 Feb 2026 11:19:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1769962795;
-	 x=1770049195; bh=tjDVnDrw5wXiMN4qhmJVUL2GTODL7265NtOI9O4QuXw=; b=
-	h3z9DZDlacWbGo9fsFoRLGL+LgsOeO3lF7Uu2rsbhR5m0X90/gVirpsxKd9n5tuv
-	Yv/yileQynIZVVNk6xMk8nD5hiGGIlJfToCGdj2/XO2s1u0ljQI4tuacw8cnIUSO
-	qmJvv9+OrHfjV5ygbj5ovk45axhGzeUg3BBCz9rpZfOBAAaz7RHmouM0HoFB5cUq
-	98r2YDvIBtnVoXgYCXdjXfoSm+0Ti8UrExDIQ8hyaj28IsR24vVSKkXuQn0CNEU9
-	480TLPKfy70qv+LZwkNlRRE3/MZp5qD8OIbcMDA5lLtJSMNaIpDcKM15bb4Hxh2z
-	TWQGrzBujXxQGoTtDd8R1g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1769962795; x=
-	1770049195; bh=tjDVnDrw5wXiMN4qhmJVUL2GTODL7265NtOI9O4QuXw=; b=E
-	19SwjdtWug+DWz7dihNYaIMmrSEBrYQFt2yNM2nfQf372OxNgp6uENFTRQNKa/sf
-	/v7DJp+93pqGcQE0GopsGkA+7Fo2c2ptbjvt73NdudpUrhcDzguGM01FW2Cyog1P
-	T/t8oteQCgiuGuq8xyKIH70Be6wn3tqn84anuaLDsFFd3UFIeNzJguN7x10d0oLg
-	u0R7mNpILlb4SuaNYiLPIaWboI+zJTd0n7+SuLfwibhb9TFJpcRFpqY73arLU26J
-	oM+C4I4ujxvEScKt7fkyeL2hwUDq5rLqe34tgAxx8pi0+DyZhV4uX3qJ7C6gs8XQ
-	0AYMbPCotDdWOJT/4f5HQ==
-X-ME-Sender: <xms:Kn1_abHjd53T1S-vU70CbI8q9d79gZpHdTzkvtI-LbL4asTfmgrQeA>
-    <xme:Kn1_aZBmeLYlpHkKB9df_EnQBXb64n6v_sWhs7K1N9xKl4UE8V4PFJfcqOuC9l2qA
-    bIwI945OMaORcV2U44QD23dC8ouHiwaZR9_KxK8iP7vaB23WtC7qg>
-X-ME-Received: <xmr:Kn1_abXf3ZGVyFBvcBeqcN3iwEy8YkE1AIuUBqOEfgWVIOg7MhbfCiTX90DqO0WD6Ko8b0yuh0Cy8HInwA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddujeehvdehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefvihhnghhm
-    rghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepfe
-    dvheeluedthfelgfevvdfgkeelgfelkeegtddvhedvgfdtfeeilefhudetgfdunecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhesmhgrohifth
-    hmrdhorhhgpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphht
-    thhopehmrghtthhhihgvuhessghufhhfvghtrdhrvgdprhgtphhtthhopehmihgtseguih
-    hgihhkohgurdhnvghtpdhrtghpthhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdp
-    rhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepihhvrghnohhvrdhmihhkhhgrihhludeshhhu
-    rgifvghiqdhprghrthhnvghrshdrtghomhdprhgtphhtthhopehkohhnshhtrghnthhinh
-    drmhgvshhkhhhiugiivgeshhhurgifvghirdgtohhmpdhrtghpthhtohepnhgvthguvghv
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:Kn1_ado9nvWKysJj4tluYCrOL_FIZ-3HyrfkkUrW5tp8ZkJwohjrBA>
-    <xmx:Kn1_aXSNxESocRX-NwAll31b6bdeI2cXa7iQ07QbdU3QvUERtVMmAQ>
-    <xmx:Kn1_aX1tH2z-o4N0SNX5Am_vEGxkH33eDSlU9VelwDBfG4Pb1CYCDg>
-    <xmx:Kn1_aTCqiC5qeUsViUpMglYnqxuBxScO93KYJ7p0XVW2pyJNGOXVQQ>
-    <xmx:K31_adgc9CKvPewWd7cdrTpOnVXx49xqniwdGIvwcgYmLpST66wzZKAV>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 1 Feb 2026 11:19:53 -0500 (EST)
-Message-ID: <e2e19f42-05f9-4857-9b18-29192b0a1926@maowtm.org>
-Date: Sun, 1 Feb 2026 16:19:51 +0000
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="bEfjssX6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1769962934;
+	bh=xlStmTRMhWVPt3fGtyXwEEDK5QLc9ZLigiHpsUvTOrc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bEfjssX6nVvGGJYCjRv1Hgum2HvUXJPGA7CgYPlDg4pNFEnfuqh6BJNVd4xzoEnb/
+	 ZMmAJGEOHpCghTNwc5ybR5xqiScFWUgOJvwITdq0n0q7Kv6pPqNjU99FoLxmpQ1ILY
+	 /UCNvFIurX5sZ1rKb2ccqszu5PRz2lLOVB+DzJaQ=
+Date: Sun, 1 Feb 2026 17:22:12 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Mihai-Drosi =?utf-8?B?Q8OianU=?= <mcaju95@gmail.com>
+Cc: arnd@arndb.de, arnout@bzzt.net, atomlin@atomlin.com, 
+	bigeasy@linutronix.de, chleroy@kernel.org, christian@heusel.eu, corbet@lwn.net, 
+	coxu@redhat.com, da.gomez@kernel.org, da.gomez@samsung.com, 
+	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, f.gruenbichler@proxmox.com, 
+	jmorris@namei.org, kpcyrd@archlinux.org, linux-arch@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, lkp@intel.com, 
+	maddy@linux.ibm.com, mattia@mapreri.org, mcgrof@kernel.org, mpe@ellerman.id.au, 
+	nathan@kernel.org, naveen@kernel.org, nicolas.bouchinet@oss.cyber.gouv.fr, 
+	nicolas.schier@linux.dev, npiggin@gmail.com, nsc@kernel.org, paul@paul-moore.com, 
+	petr.pavlu@suse.com, roberto.sassu@huawei.com, samitolvanen@google.com, 
+	serge@hallyn.com, xiujianfeng@huawei.com, zohar@linux.ibm.com
+Subject: Re: [PATCH v4 00/17] module: Introduce hash-based integrity checking
+Message-ID: <1ff0f085-fe89-48b4-bae3-559777a56a0d@t-8ch.de>
+References: <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
+ <20260131073636.65494-1-mcaju95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 6/8] selftests/landlock: Add tests for UDP sendmsg
-To: Matthieu Buffet <matthieu@buffet.re>
-Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- linux-security-module@vger.kernel.org,
- Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
- konstantin.meskhidze@huawei.com, netdev@vger.kernel.org
-References: <20251212163704.142301-1-matthieu@buffet.re>
- <20251212163704.142301-7-matthieu@buffet.re>
-Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <20251212163704.142301-7-matthieu@buffet.re>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260131073636.65494-1-mcaju95@gmail.com>
 
-Hi Matthieu,
+Hi Mihai-Drosi,
 
-I noticed in passing that
+thanks for taking an interest into these patches!
 
-On 12/12/25 16:37, Matthieu Buffet wrote:
-> [...]
-> +	EXPECT_EQ(-EACCES, sendto_variant(sock_fd, &self->srv0, "A", 1, 0));
-> +	EXPECT_EQ(0, matches_log_prot(self->audit_fd, "net.sendto_udp", "daddr",
-> +				      variant->addr, "dest"));
+On 2026-01-31 09:36:36+0200, Mihai-Drosi Câju wrote:
+> > The current signature-based module integrity checking has some drawbacks
+> > in combination with reproducible builds. Either the module signing key
+> > is generated at build time, which makes the build unreproducible, or a
+> > static signing key is used, which precludes rebuilds by third parties
+> > and makes the whole build and packaging process much more complicated.
+> 
+> I think there is a middle ground where the module signing key is generated
+> using a key derivation function that has as an input a deterministic value
+> on the build host, such as /etc/machine-id . The problem with this approach
+> is that only hosts knowing the value will be able to reproduce the build.
 
-net.sendto_udp should probably be net\.sendto_udp
+The goal is to make the distro kernel packages rebuildable by the
+general public. Any involvement of secret values will break this goal.
 
-> +
-> +	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-> +	EXPECT_EQ(0, records.access);
-> +	EXPECT_EQ(1, records.domain);
-> +
-> +	EXPECT_EQ(-EACCES, sendto_variant(sock_fd, &self->unspec_srv0, "B", 1, 0));
-> +	EXPECT_EQ(0, matches_log_prot(self->audit_fd, "net.sendto_udp", "daddr",
-> +				      NULL, "dest"));
+> Maybe this is a solution to NixOS secret management? Introduce minimal
+> impurity as a cryptographic seed and derive the rest of the secrets using
+> something like Argon2(seed, key_uuid).
 
-and same here
+I am not familiar with NixOS and its secret management.
+This patchset serves a wider audience.
 
-> +
-> +	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-> +	EXPECT_EQ(0, records.access);
-> +	EXPECT_EQ(0, records.domain);
-> +
-> +	EXPECT_EQ(0, close(sock_fd));
-> +}
-> +
->  TEST_HARNESS_MAIN
+> There might be another approach to code integrity rather than step-by-step
+> reproducibility. One may exploit the very cryptographic primitives that make
+> reproducibility hard to ensure that reproducibility is most  likely valid.
+> 
+> For example, the module signing issue, the build host publishes four artifacts:
+> * The source-code
+> * The compiled and signed binary
+> * The build environment
+> * Its public key
+> 
+> Now, we don't need to sign with the private key to know that building the source
+> code using the specific build environment and signing the result with the private
+> key will result in the claimed binary. We can just compile and verify with the
+> public key.
+
+This could work if the goal is only to verify the reproducibility of a
+single, signed-en-bloc artifact. But we also need to handle vmlinux which
+contains the corresponding public key. It would need different handling.
+We can add some special logic to strip that public key before
+comparision. But then vmlinux might be compressed or wrapped in some
+other format. Another whole collection of special logic.
+
+(...)
+
+
+Thomas
