@@ -1,82 +1,87 @@
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from LO0P265CU003.outbound.protection.outlook.com (mail-uksouthazon11022098.outbound.protection.outlook.com [52.101.96.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B4F359705
-	for <linux-security-module@vger.kernel.org>; Mon,  2 Feb 2026 10:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E73719D093;
+	Mon,  2 Feb 2026 12:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.96.98
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770029619; cv=fail; b=uaET27MgK+dexaCblznncEPZiFmYEFOC4m9unFpWCuUv04JxiTDsHkTB33Ya5abZ/7q0JAXG6bCM4JNnjZgO5dGFMpWdeJDvrh9xMSAsVZPviAI9IW293F5/GzX+/rRXikqQHgFc3rbdiYu/kvoUq4WwyggLBkRk/B9t15x8/os=
+	t=1770035375; cv=fail; b=tzkPLLGI0IFILcCFTCsjPO9F9nPqyQaBONLdwmktLeFtrHm5u3yFvyWPnWpgI0LsiDLTN+3rrx5HlKc8+mJdHh/bnyAvDsW+txo9DYTFGdWS+wXDuRbqHhb85gRE2Q4bunaKDGM0K8zwtWqGT3Trjbp6w7XePP60PerdrIir/EU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770029619; c=relaxed/simple;
-	bh=U/tYwqAsFMbd0qomIjIlcEuAPoHFXA3uzdwne1Riq3c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=DtBN+6PVPQVnLKRc5II9JiybVNBEqYjCsYDNT+X51cwQYP2uevoQq4epeQk02SVnrWMG3Ggk+QVg6Tia/YMgrR0XcOfuM7xcOTsvtvwHUxXYaU0oPelFwAyA+nfKZ2v8BlIOZSN6w47jwiFrhJxxTwfTJUsq2bUvCXcbUR6JiYo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=P/6kvKN5; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=M4flwB/Y; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1770035375; c=relaxed/simple;
+	bh=p/OVEe4lOH7N2B8rcGP1UmTA5NWtxEDwzSJmBuCqBEQ=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=a9UfDE3sBWrDXgJFZ7Bg7HUe6dkv3nyOMF28BcRWPELzkMxKEno0M2PjATYgZi8vBWxwmPLqAwfkvqjdE/Tq1HKR7EBgJreTepq9aJqKSQkXouzCt2ia1erSBScicvzTUHnyvc/7SPk9qZkbv5T0XflOQboI5Heb5+e+fnVEppA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=0X0mbuQp; arc=fail smtp.client-ip=52.101.96.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="P/6kvKN5";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="M4flwB/Y"
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6128udGd1383463;
-	Mon, 2 Feb 2026 10:53:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=YEsUNx0ecuXxKD220W
-	6c5uxv7ydAOUwUvGp26zUXbCI=; b=P/6kvKN54dKbEkE++2xsU/WmQTmZWEyJd4
-	jvEHD9lso6vRpHgxzEywK6A2NG8kIPLc0P2gd6wMSFilffInn3/J2lb9dxlufwL9
-	MQ5jQlXdCnmTKD+WRrHh+ccIfi2Xt6n2LIgdN0jcUDEPWHOYsrli0wWSd9u3Qrrk
-	enGerHeOrrUH7XJKCYa5kWLn3LKGviosudramLt38gAZovbvHHM2eBALvYdP/Lbt
-	45aHGuYLIqd2QJ6aZ3WRZVWAT1ZZl0arv/aMSNhU5glA9yjwhPyuG+Y+vBkNaPDe
-	DcKZpEOxXTK88Pc858FB3o3vNHNGFhrTpDSDGBx6/UjNm4tBy3Jg==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4c1arhhy9j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 02 Feb 2026 10:53:32 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 612Aq6Pb002079;
-	Mon, 2 Feb 2026 10:53:31 GMT
-Received: from sa9pr02cu001.outbound.protection.outlook.com (mail-southcentralusazon11013017.outbound.protection.outlook.com [40.93.196.17])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4c186jrsay-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 02 Feb 2026 10:53:31 +0000
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="0X0mbuQp"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=prS7313JgBQh+HSfu6kc+cTsleGbQ/ZN60I9ZNCGUmHd1/r/R57D4OopQgHcK/nTWhL9B2bHK4Cr52G8KNNPLg0SP8fw4ejyQ9o6JsTEq1MQHTei5h91AKt8K8H3XDrZoZZUmhO5fqh8VKTOy+uHLmSDxyILX7izGQekWnBReDA8fzRPzowW2jcaEv+ji6CEVaZH60kOqcrguhtSw3H3VLMiSVEgetKVf72tcITaPS8hGmHFy7Yq1QbMOzpzh/EX0TcCvvy7GRzVR1fy3Y+kiIldGCUasPFGbzkT8fE0Llum2LsCHN0vy3Zr0nLoBKOPaIHlAYe5dL5OA7Cp/GtGcw==
+ b=yoiAxIvtVpLwLVHJmnZfyOPZTLwMInv/fgL41T7ui1oyJJGLMgSMSMMMxK5yk0PUbQVl3uvK5n9/drrTrGRMZlv2psSs9aKNxvUfJ8FqcelFPNWGhQRzC9H+WxmCxai8PVz46SpJsmjXOgWt6XiA7WtYimsFbaHoDjAFbL7+Zol1nfcg8PF7N7NxvDJR5zffh802DRsVHRK8BXQjigD63UAWVfBEWlnhTW/qkdQI43BYJ0KWMjoD9maJuipxvgthxWRHqhUKvoPcK0kCqV5adl+iFJ1RSNl35uIC4pfY5Pnrh+EICFqdxEvTF43NMCzn/n92wDbEfhFCJbjaluOKaQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YEsUNx0ecuXxKD220W6c5uxv7ydAOUwUvGp26zUXbCI=;
- b=i10t2g0OysCMwRRq1Wt5pRS0/IsDu3CROOdxoHLRNJKhOciaY69TkJQ2LEPPNcvfg/2eR5ULksdd4oZN3tUmXjxwiu2TErnbQGwaVXSq+9YObA2y58D0SXloE9QsxK2xofwOO1eZNRkD2eCGU+tUAfOd3Y/BWORK+VfWmN2FihQt/sX3L8+w89i2iDzF/VNj/trwQ1WtPFPx6wL/mIaWXLempi7XO1CsalazF60ioMJI84kIsNug46asO4s+gEkQotoPURZMZElxUFhZ4XeCobGx2VJAcF2mu/9/IlXabDdZv92jcQSPixDpflZACR47FntsSZPRs2n59hDAjRt0sA==
+ bh=rz/EY4KH3M+xF+iXiCZ6IRfUWPnwmZjwYsOm5pHELm4=;
+ b=Zy2aYlAgagm7mAQAlAyeH6vMCqhK6l7YU0uDvF8GTSojTVRyLayJAnM+xEBrkPwx1HwaxfPXFXrvuMNJ2boEYegSzfujL3fQ2VF8V+l9KWbiu/8T4WN6wMnFDhK9rVnYOvnfbrO2kT+Alb6B1X8dTQ6XoT7Q14ubhWxU5K9H8CIPyk9BVK6Law6ybks7VbbBD1bjVh+PDi6XdEwzMqHg+Aje56a9HKZG7DhU6JVLokmDqtM1gR0dm9MgdV8efW0jk2JWoIeMxGsg8QgRmRAMQyhbCpflsjHc2IZueEFZvfkYjCU/XoQTdvTjJHko07LRxQBzAUcy2iGh3BD6MNsvIQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YEsUNx0ecuXxKD220W6c5uxv7ydAOUwUvGp26zUXbCI=;
- b=M4flwB/YtCiQ0wjoIPp/BEZih4lKZEOKIODgsa1iH/TtrECc9IQyFXy1LHzSyo6nr1MFkvOa3gmEs7o5vN55x+L0CVcVPbid+UqSMwE3718IL0djvSU52iYZscmrulyrhKqCV3Jo8BNq9nyu46P0a7Ztq3El5QQxt8YyBPSGTjY=
-Received: from BL4PR10MB8229.namprd10.prod.outlook.com (2603:10b6:208:4e6::14)
- by DS7PR10MB7373.namprd10.prod.outlook.com (2603:10b6:8:ef::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9564.16; Mon, 2 Feb 2026 10:53:29 +0000
-Received: from BL4PR10MB8229.namprd10.prod.outlook.com
- ([fe80::552b:16d2:af:c582]) by BL4PR10MB8229.namprd10.prod.outlook.com
- ([fe80::552b:16d2:af:c582%6]) with mapi id 15.20.9520.005; Mon, 2 Feb 2026
- 10:53:29 +0000
-Date: Mon, 2 Feb 2026 10:53:28 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] lsm: preserve /proc/sys/vm/mmap_min_addr when
- !CONFIG_SECURITY
-Message-ID: <38c9c9bf-3912-4e16-b15e-60890390e8dc@lucifer.local>
-References: <20260129225132.420484-2-paul@paul-moore.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260129225132.420484-2-paul@paul-moore.com>
-X-ClientProxiedBy: LO6P123CA0051.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:310::7) To BL4PR10MB8229.namprd10.prod.outlook.com
- (2603:10b6:208:4e6::14)
+ bh=rz/EY4KH3M+xF+iXiCZ6IRfUWPnwmZjwYsOm5pHELm4=;
+ b=0X0mbuQp5WcQGVv033AWCHPqkGdJ0NC4SkWKh4S8xhVZFYZQ+/6x/Co0Od7p2V3xbNMBh6EbLEsPzI+qmxRBVwUEJoR6FMEkk5O8AfNQ6fytc1cuCHJezXTJHsZK3qbcJGz4DNlRVoEBhB16Um7SPkmJ9JxMRErMmQodXdZamb8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:488::16)
+ by LO2P265MB5469.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:25c::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9564.16; Mon, 2 Feb
+ 2026 12:29:29 +0000
+Received: from LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1c3:ceba:21b4:9986]) by LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1c3:ceba:21b4:9986%5]) with mapi id 15.20.9564.016; Mon, 2 Feb 2026
+ 12:29:29 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 02 Feb 2026 12:29:28 +0000
+Message-Id: <DG4H66NZ5ME0.3M9CQY1ER4Q0X@garyguo.net>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Benno Lossin"
+ <lossin@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Dave Ertman"
+ <david.m.ertman@intel.com>, "Ira Weiny" <ira.weiny@intel.com>, "Leon
+ Romanovsky" <leon@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Alexander
+ Viro" <viro@zeniv.linux.org.uk>, "Christian Brauner" <brauner@kernel.org>,
+ "Jan Kara" <jack@suse.cz>, "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, "Viresh Kumar"
+ <vireshk@kernel.org>, "Nishanth Menon" <nm@ti.com>, "Stephen Boyd"
+ <sboyd@kernel.org>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Paul
+ Moore" <paul@paul-moore.com>, "Serge Hallyn" <sergeh@kernel.org>, "Asahi
+ Lina" <lina+kernel@asahilina.net>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-mm@kvack.org>, <linux-pm@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>, <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v13 1/4] rust: types: Add Ownable/Owned types
+From: "Gary Guo" <gary@garyguo.net>
+To: "Andreas Hindborg" <a.hindborg@kernel.org>, "Gary Guo"
+ <gary@garyguo.net>, "Oliver Mangold" <oliver.mangold@pm.me>
+X-Mailer: aerc 0.21.0
+References: <20251117-unique-ref-v13-0-b5b243df1250@pm.me>
+ <20251117-unique-ref-v13-1-b5b243df1250@pm.me>
+ <20251201155135.2b9c4084.gary@garyguo.net>
+ <87343jqydo.fsf@t14s.mail-host-address-is-not-set>
+In-Reply-To: <87343jqydo.fsf@t14s.mail-host-address-is-not-set>
+X-ClientProxiedBy: LO4P265CA0040.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2ac::9) To LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:488::16)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -84,208 +89,486 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL4PR10MB8229:EE_|DS7PR10MB7373:EE_
-X-MS-Office365-Filtering-Correlation-Id: d963522c-6393-47a2-1c3a-08de62494ca3
+X-MS-TrafficTypeDiagnostic: LOVP265MB8871:EE_|LO2P265MB5469:EE_
+X-MS-Office365-Filtering-Correlation-Id: a65cfe18-98fe-417e-3147-08de6256b5f8
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|10070799003|7053199007|3122999021;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QnQtx9lH7thlaMNkTKZGoPfh9v5X8RAafMtROJ/nxX9T6VsLrhbsPnqn0al+?=
- =?us-ascii?Q?clX+SOnt/SgyrR/lQIuyW6/Jxt+qX/XCo1lXvmWyyVn+B7MDXTnNfOlU+d47?=
- =?us-ascii?Q?LdKPXOouWMjH4+P/g/SJaI7Ydf01MPPTtWHEKtxfBjbtCdl8JJ5ETbUV4RhE?=
- =?us-ascii?Q?I7WNWQFmg+Vg+ZMCJAmXJSr0JnlKFODTJOg63XbIBX/1A7fPrgFtYVQOEluh?=
- =?us-ascii?Q?pApgs7qJkae6YDjlZsq8jB9ZIU4eRXoUnYPMnxA4Q66cT01D56ktWu0V2Igs?=
- =?us-ascii?Q?HxLBtzn5sPoS8RU9PFlMlKGxPpUdBUJ3YIncV66XL4/JTCD4ns6UTzqhH2iX?=
- =?us-ascii?Q?fMC/wzqgjWSv5RhUL8D3gOaoLOkJ7DpEKmmjRpfCrWpjEGnd5UhVubNh8gva?=
- =?us-ascii?Q?njjWktbn7O8PUy6BIh4foHJ37HPwsw25EncPoRsrN8h1ufjZeb7bNZi3uT5U?=
- =?us-ascii?Q?hyC9mb/pYt4ZB8pr4jTMcFge6wy4dBkvnCAkaK6yAPAP4MlvpvjlaoPHMgNY?=
- =?us-ascii?Q?aHFOiuMi4iXfhSfgSKvSLetYQ1S5Md0WmDtYKqYgN0lLwMLxU2EuG/CC8AcN?=
- =?us-ascii?Q?XCRitR8N2gZ8Ff1jhRuvPpTyOubtO7qiyY8uigy4aPjzgDnNHOCdF4arMvMa?=
- =?us-ascii?Q?DzeAcMPtgERAThX0SlbeoeYkpMm+PoLVDC09qbBM+xY37JKREVeQ6KZnZkcJ?=
- =?us-ascii?Q?Nnbsc820Kv401Cl2f32Q0vwp92Sr34LEXAQ01d55mn0G6bOXGATOXWH1gLvs?=
- =?us-ascii?Q?NsjkaQ8G7eC1DTNSYfp3jyGiAJbLuw/VfQXhpIHpXfTggOkOtaSDbg6Mti/i?=
- =?us-ascii?Q?/OI20z4qJd6F4HUKznChSNb5cnpbHND6v5rlGTX3pDIMEpK29FGwYq9Z7Nm6?=
- =?us-ascii?Q?QAaAgcnazDCC+J+1EirjL/NlWgz0HJhGVSs38lT1RfEg+LIK4wq6JvG8CUD6?=
- =?us-ascii?Q?5+SJxm3iVuExun5zTHg8nIT1AUpfpEOXZL2gLwaq7oDlJxNPLZEt64V4GGsz?=
- =?us-ascii?Q?L62XR/OE0Is9Ela+sbqM0iez87OPASwi4c82umNk5n9rdnXROj+DxjXvIc8H?=
- =?us-ascii?Q?RLTq34N1HpDPiBIZvtlzrS8jtStN9IqbM566YxqVZlRfN+HJrtnORb/Lg0BQ?=
- =?us-ascii?Q?YtT1DXrtJRq/N6mfKEZ1O8i+60kM7bRjnutpbvcRzUHlBKuAOSEBeqFWEkLR?=
- =?us-ascii?Q?BaXyb4WXKc/Zg5U30bzLg1R4sJcSaX5QHWqKTxV5qhYzGWc+n6R+9/rY8Sz7?=
- =?us-ascii?Q?xGJIzT6ynu/BoQPMxcl1UC6PzRTMPhen7lEUa5yNZOJwd1pdMnNnoCCIupwl?=
- =?us-ascii?Q?RU7chV5DxIh2/0hcXP+1PWdYpznoSAOEMmGxRRZLrzp6ZmYE8uPl2JBZWkcQ?=
- =?us-ascii?Q?a0x0aZoS1ZkBXK4GMrz/AZdBLIWohe4EANDuGL31S3nmP/vmij9i4efXtYh/?=
- =?us-ascii?Q?j8Kq1aw0ff6XeTBQIppVqlqIMGoq7zHj/NWVNl8vdFKhrtYi2Cv/0cGNaao9?=
- =?us-ascii?Q?VzPjVOCK4SgJ6D4B9gUIz1BsC86hhVvkUGRXKmAaK4BasZ1PnBIITq4I/f19?=
- =?us-ascii?Q?JnXvGGBYRIuZfO7Rk6g=3D?=
+	=?utf-8?B?TWRwNTNadkJISktPRklVdWFlQVc1d0h1QWNkU0ZTSHFXREsyUmxsN3UyOGdm?=
+ =?utf-8?B?TmtDOUYvTkZndUFJMlFYREFZNmt2Tkt0UDc4VktPSGdNczMybkRpKzlSV2Vw?=
+ =?utf-8?B?NEp4U2wwWC9Rd200dlFDOGhWVDVsbm5qYkUyQTJuSWJnSEs3eTNMNTV1bDVL?=
+ =?utf-8?B?YldIeHNtUEFxQmtnQVFMNXpLTkZOdTIvdW9OTE9TKytpNUNWQ1pGYk9HN3FZ?=
+ =?utf-8?B?VmM3Q3orbkw5WUpPM3pMcHhCUVFZVGxoSllWVFh5N1RpUWdVY3ZWa2tLd3o1?=
+ =?utf-8?B?L2dXKy9YSTB1N1EvRDluNGw3d2JqUWRFQVRKU2I3Vi9DMlBNZHZpd3NkcFFk?=
+ =?utf-8?B?QnlhcU5WeUU4cjFXK3JrOG43ajJUSHZsRTFWakhmbllOcndYaGlPRE5ZVU9E?=
+ =?utf-8?B?T29tUHJJbFI4dEFNaDRldVFLRDZzOFUzS1p4WVI4YzhQdHNiK094T2J3Yk1o?=
+ =?utf-8?B?NnVoSEZWRVdvQlZycllVYzJGemRYb3VsbHVMdThzUys2ZTUvVGxJajgzMDRL?=
+ =?utf-8?B?eXBaRUZ2SXFhSGdGczhLTUNLSTFickdyd2lwTFcwaCtYNzBaK242ODNjWEg2?=
+ =?utf-8?B?cnJQRElKL0MvUFR3QzBJUnY5YjY5Y2JqZ2pGUTJhRUsvN3dIdUgzSXRmVm5Z?=
+ =?utf-8?B?OWVyVlB4d1NvWkRCRVdVSUkvVXRRYWNXNklxZFdTOGVDeEpWSFFMcEtGdXU2?=
+ =?utf-8?B?ajNTK052ckx5RnVkZFBId0RjSGgrQ1JuWkdFeVdJTEluaFczSnkzay9NcEUy?=
+ =?utf-8?B?T1lLbTkzQU1hSlV0REJoem52QVJvZDg5L2cyamgvdE1YOFlkVVdTSTBnK2ds?=
+ =?utf-8?B?VVArNTRGQ1RFUWp5ZEhpSXVIeWhTZTJVYTl5V2xQVGxIM2tyTTJJMGg1cXdz?=
+ =?utf-8?B?L2xnbWQwVzZXeE9tUHJ2MHJZWm43M2phaVg3QVJIaFNNUUF2Rng3U2JhOTBL?=
+ =?utf-8?B?SHlLeGxNMFF1RUFVQ244cGc3SlYyTzhqcXhxZDdPNE15dkYxblU1VE94OS9j?=
+ =?utf-8?B?RGhxNThMeDQ0bVBBYWhndjMxWkl6SkZlTWVvWWpvbFU5cVpaT0RDVDlyZ244?=
+ =?utf-8?B?S1J1WmlmMGM4cmhXVGhteGNqR2kxWHlxTDFzNGtIZkY4eUlNQzBTQ1hpdTVS?=
+ =?utf-8?B?ajJRQ011MnNsTkRRSmd5ZHJRaFhaaHQ2RG8xTjdTSnZrcVZmY1hIbVA4NGh6?=
+ =?utf-8?B?cmlGbW9ZQkN5TlVBTEU3VlRnZE9ON203eFpkZ0lXU216NzRVR1NkTEtUZFBI?=
+ =?utf-8?B?anFVWi9IaVJCcGdtKzdtdSszTW5neVZ5Mi9yUVNZckVVYmpDV2xzNHJTRkI1?=
+ =?utf-8?B?S0FlNGFCa1hlRS9XYk40SHJ4S04vbzZHUTBVUlQwelZQOTNNbjNWd2twNjNl?=
+ =?utf-8?B?L2NzSWNSbmVXTDZJV214Y2k1VW14dWhaSFl4SXZvNHJ4ZVB5Uyt3cERZZ2dq?=
+ =?utf-8?B?a3hublFYQ0ltTUFJcVB4cU44cUh2b1BSaUkwRWdIaE1OdDc5ekZuYVdvaXAx?=
+ =?utf-8?B?cDZWeFMvM29XZlo3YnprV2h5cjIwY2kvTy9lSmFVS3VUQUk4QXAyQnRxL0hu?=
+ =?utf-8?B?VEw1RFBERFZzS3FhS3NrdU5zMExDS0lBSkdvVldEdmpDTkZvS1MzR2l3eXBB?=
+ =?utf-8?B?emJYMmxwK042SjBZYzBJNHg4enZGYUhSQXQ1TjRnbW5JV2U1c1ZhV1laNUlC?=
+ =?utf-8?B?NFNVeTlHMWsxdmZJZ00rb25CejAyMUd5UHpDaEtYOEVjamhoVmVjWVVYQWY0?=
+ =?utf-8?B?OWFvL2djc0lHbTJLOFNUeE8rQk9EMmc4UGpPWWVRcG1adFc4QnoxODVJVnA1?=
+ =?utf-8?B?Q1Zta1AwaFZCZ2pYQUMrWXNhdEFMMk1uNFpMWTNzUmtMdzg3SFBNUDNKSW1G?=
+ =?utf-8?B?bUdTZ2I1Z2N0aENCMm1jWjQxRVA3b08xK1pMMlZiTlN0NXdMQ0hUQi95L0s1?=
+ =?utf-8?B?Nit4TDFkZncwbzNZOVNXckNudnBBeENMUFltSTkxZi8rTGwvYkZDdnhKb2tM?=
+ =?utf-8?B?bVBXVGR5UXR3cENLMC9DVDZkczFOUVA0ZlNWMFRDdWlacGVpYXNOVUd3VHZJ?=
+ =?utf-8?B?NE40aVV6d1BHNldxQ09iWXZrdG5IZ29ybFZoc0JhZTRkN3FBbVpvcGJ1WmtD?=
+ =?utf-8?Q?nObg=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR10MB8229.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(10070799003)(7053199007)(3122999021);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?MAyHSXXBKQm+w8lsD8lmG44Swr1jZKRYlKv+WYfkmXYA9blWZjcLgNDrNjNW?=
- =?us-ascii?Q?HLOi3JigH2TFk0n9ksMVUXTsHYDpiZJ7glDMh7wESEQ4GJzO31yC8MYK1nHy?=
- =?us-ascii?Q?2IYUzX7PAdBRHsRRveXr3jTSf8BTdv0iokuZf/wjQKA/u6o1fCYjfYybjKho?=
- =?us-ascii?Q?XRSCiQBD5x82gjzBznN+Mq/8n7WvlicrpAD18yGhoDG9XHxGTmG3SO81O1P7?=
- =?us-ascii?Q?5hvQzYSe4ALWWnuteR2i4OseO3OxDH4xp24aRuNwGKW6iAQQRCZDoQGCBM9a?=
- =?us-ascii?Q?lBs2HoTgWzvuvIh2M+xY6t4KsHP7TqxY3BYWqu5UCfYCm2uQ3WVRAfanEORM?=
- =?us-ascii?Q?aWzywh4Gb0UnuqClIXBTCm/9bKy0379u5JCD1LTvLuSWmP8clYWw+0qAQ3Mi?=
- =?us-ascii?Q?mVS0o68r1qbc33SWuTeOqMkSpHMMtb+/QHkyQZ9SfSUE8s2iRrhmDZMqfdml?=
- =?us-ascii?Q?/pS8XRFFq+y/ei3wClXp9P9daPX85qOUy4E1Y/Iuk82a6rUmbBLedi0+C7++?=
- =?us-ascii?Q?pDhiTSInbnvPkfjulHFcgJ3R2xPxHQnq5LggpuSKw96u8OIDaOWhXJM6Qc5a?=
- =?us-ascii?Q?skzunipImSVKGdtg0ioqwsIHnzD7mBs3Vtsj9Y5FSyQeKfvOpBMaVyP5QnUW?=
- =?us-ascii?Q?Mc1DRTj7bLmUao569xl71RpPA3WKnWSyEETuMQ2NZheeHGvo48XkafW4/8VB?=
- =?us-ascii?Q?KJqngEMc4LAIRYWVdAKPjV197XoEHUcsyMdKB/SRx8iyMhe9IcOfqasWGl3D?=
- =?us-ascii?Q?ukhlM21vMjrbIJdOD3IZ/LZsbE1n+Kp3UeubQhZ28Vbr8OgF1UU2SnRElzq/?=
- =?us-ascii?Q?pH7Ru0cuu+L2wrXVa73wIv/7ggJu6ISx580vyto5v5Tp94jNB0dq5qiWAjJZ?=
- =?us-ascii?Q?OQS/S9vN1mWzeiD17J5GEvD11sdWi7PiF8QtqsFy3rFpCBv4xGLR99KdBpZS?=
- =?us-ascii?Q?giOFXt/HQheY79UAZxM+TiIA24NiF07l8g/2Auh21zgjPfPOzpXWUJm3gp1W?=
- =?us-ascii?Q?DvVq3s8IL6VKiQcmw2i4PhnhUy98ey+PNjOKSdGASSTxcoic8ci5ErEyrg3l?=
- =?us-ascii?Q?VgnAxGBcj3zZfE0Eh04vh6OCFMElERU+UKeGH3cpBwEKP+wmz77BzAt7w4BV?=
- =?us-ascii?Q?hM5Hxbn0lAeu7Asie9KW47hKXv1AGDepHifzArdVGv3Bb4UrsXQtSa7E2jgK?=
- =?us-ascii?Q?vPFgHgefk0iUL+69fhsF1W4o/YOzg3KHXLTTFr4NQsaU2SVo29HTmQn0gCei?=
- =?us-ascii?Q?ziAR2UXEh9vDly89rmyMGAuE5iaUcH/n9s8Y71Tzibwv04gVbfWtpy2XsaVp?=
- =?us-ascii?Q?R2vuuqcu7eBUziIRBkHjW1ge1Lddmt05bsGiSl1RmX2+G6rOAvlPZLPEc7pS?=
- =?us-ascii?Q?iDF8uHImlGrdx9itqSxVUGWICvgJwPYGrEPCKXPgzYVIFopoP+0bl4vOW05c?=
- =?us-ascii?Q?we1ZLHs3860TIH0FMMf2bW/llWravuTMswyfNUm5VRFrwMPA+yLLW4CzVMGI?=
- =?us-ascii?Q?ZlKtPW+/kCcNjEToGWBtDwTK+etREpSW7DDhrsX3kO7aculKeVDxISaPTtgD?=
- =?us-ascii?Q?1+o5AU02OZ0srtzR7j9Xbzgp2XriZzhhqOn91UfSt4Tg60YZ8LM9xJJ4yn5Z?=
- =?us-ascii?Q?HRzskQSwyhtJfCs7kS3MD/uGyF0Y1vSEg0/2gzfmQWuu0ZkigfNF+etNrNUf?=
- =?us-ascii?Q?bopZwzFvBk0ljD+xXwTOLA3VmBNbarH8DO2WJ9wv/sm4im0CkcLPfz9Tm21P?=
- =?us-ascii?Q?tboBK1W2oKQ1ltskTeerlACVLhsFbl0=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	667DzA4LhCo4klEP5lw5lOtyfY3QNnya4zs+VLLC1sfzAF/WX8HbYvM33kuwVlflDJNjtRUYs9S/bRdApXrBe7ZeSalhmYXwlxYh/zDDQhGU0YWSn39IzEzqLJADwcaf7rVnJF6g5rh2DRpYhxuSs3uCrqymScBepNvgVmFL9HTXHxTlilLTz/ayf6fSE0JEaysT8Z4efc8WVfIgl1fQn/k8RMHt17OuyCdApYFcyR7XoBq+ad9Zsef+FvgpV7KlHEvvfGzTKQbytXS2Qp63KmaP8femiPX4jSQxLe6//Qnmu3fisKNyxmaWBedtmJpGiPu/YjA4JMoJ+oIweHVGNljUduo5YwN0ftNZCz/5geHFWaI/nYSMB87E56cpooOAf0a/sD2W59pfkHHl5OzOyDmNMkQzr1JJyENd+0VyTpCJra395d+rbvbY/1lNfKrd1CmSFbAavmJoHVUb/DqzyVpIltlcLUkPh+Krx/wzUlgitcRTU+sHpfRSk8qQ9/OFatExNdrCDsGyaMAdDQcsXdDso55dC30vei+fRUULHEXT5OO/laMJZ2agJzIbbb8fGswvD1DCskg2XNRF6SKv+Q8qAymhkHKt/HrroI0GpCs=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d963522c-6393-47a2-1c3a-08de62494ca3
-X-MS-Exchange-CrossTenant-AuthSource: BL4PR10MB8229.namprd10.prod.outlook.com
+	=?utf-8?B?Rkd4SDBuaGtPYm9reDdrTS8xdkJCRExQek5IaUFvQUlkUk95VEo3TXNyL3lQ?=
+ =?utf-8?B?ZFZGbkFxRjhTekhsbStkSmhDc09nYTRSeW1rN2pDNWE4UWVPNGRUdUhvVDgy?=
+ =?utf-8?B?OWxNUDJPTzQzVE0reEh2QzAvaWRhdWp0QStlaGk1VnFJdGFnemVOYTBVcnRs?=
+ =?utf-8?B?YWp2OGxoZUUzTHVUZk91Z1JMaFlGRVFWWW1kNG9CSGNKSVlaRWVIY2ZYQUNa?=
+ =?utf-8?B?eGM2bGN1R3d3UktPNDlwVWNOSlVsYzJ4NkZGQ1c2UWlVaWc1WDBkNjkxS3FL?=
+ =?utf-8?B?S1B3a0N3a1E1c3VsaDJCK1BUaWJvcHNwZXJDd3plK20vWTVjU09ZVldIa2Zt?=
+ =?utf-8?B?dGdZU3dIb2d6MGVYT0VxNXdXL1BCUXpTS3VtYTQ1QVBIb0Z2MHBXSGZrTGds?=
+ =?utf-8?B?WHAwY3h3OVRCaDlpbDV5Rjh0ZjR1c1BHSVgwMmRCNlE5S1hKY3RTTUt4aGxh?=
+ =?utf-8?B?Zks5aTZIVVUwalpXdWkwU0dlN3d1RzYzTXE3d3d4NGU3WHROVlIzNEl2UzJq?=
+ =?utf-8?B?N3Brek1uc1FUQzJQNGI5eEVaQ2xjYVE3emdVME5MSHZDSmxXUGxKNCtzM3Fx?=
+ =?utf-8?B?aHN3dmp5R25Ed1A2ZnNiQ0E3eElUVGlrSGQwand6NzVhSWpFR0hnVWNTN2dM?=
+ =?utf-8?B?ZnQ3VjZacTZhdXVoUnpKTVNvaDVqSHB3aEdNekxNNmpQeE81TFJ3QjZBWUNj?=
+ =?utf-8?B?L3NHMHdoS0dvVmFLVVY1NVJsZjVHSnZyTDE0eFYrcXhGWlBleXdYaXRoWlJW?=
+ =?utf-8?B?RUJFVWhWVHlNTHJraGd2S2dXQisvM0JIbW1DbVFZb0ZwbEp4Zzc1L0NNZk9K?=
+ =?utf-8?B?b0UwU1F1eEhRWlY3SDdqaTl2R0lMUWI0RjhDRDdOK0ZqNU9SVkc3WFIxMUxQ?=
+ =?utf-8?B?SWU4WXFkRjh6L1BZTHIyT3RscHpvRFFpSXIyRmtuSmJKSHZzSy93bkYzWnc3?=
+ =?utf-8?B?WjdxbG1qdWVVclE5VTVrV3BidlQ5Q1hnUXIyWTBNMkpzVldmczZEdXh5anVN?=
+ =?utf-8?B?Wm9zVXBha2xlWHVnOXl2bldrWG1IWEZsbHVHOG9YejdhUVZFMEMrb01oQzZp?=
+ =?utf-8?B?Nm9CNWtTNWVsLzBYdVExcENLVFkvbElHajVaS2hHcFU1elN2NTBaQ1NBNlM0?=
+ =?utf-8?B?TU9VRjVYNHV0UzI1U3poOGNDWVBYNWZmdHBTNjlGTnQrKzBaRS9vUkdCQ25W?=
+ =?utf-8?B?Um9oR3Z6Y3dWdysyeXByYWJCRmNXekFrTjFYVk04bHJIV1BqWGVQMzBhL0Q2?=
+ =?utf-8?B?elZ6ZlZLb2dKQXFYYXhkTnZ4VDBKMjdVWGk5M0FkQ2F6RDl1MlRFdVdsTmVr?=
+ =?utf-8?B?dDV3QzMzMDVWdUxiUm5sekFIamVrd2pna3RvZWJGVWFPSS9CRTREeXBJVU5Q?=
+ =?utf-8?B?NkVHS0ZpYmVraXdTcFpoMzZ6OHhSQ3VPWCtIaTFnWlpxRVQ5cGthSjZGN0p6?=
+ =?utf-8?B?TXNxZCtDUERJTzU0eEwwRWxuUy9qdHQzY3RQNlJZOGdraG5vcWJrS0NsR1lT?=
+ =?utf-8?B?M05yQ2piRHhDaEcwOGVCRVkxWXdGVlJVYVZLUjYwSWdVMUgrY3NsM1VqbE9l?=
+ =?utf-8?B?UUFqcngxVDhRUkRma25pc1Z1QTlQMnMyUUYxbXMvZE5sTGFVV2UwY3djcm9B?=
+ =?utf-8?B?TERGWGtEb2lXQndFVWpVRFNHOXB1aGRnOFVIVWF4ZnovL1ZoR0tybVZ2c0NZ?=
+ =?utf-8?B?YmNBTWFRVTVUcGM4S21YYWVTdzdrY1dIYUI1YmxrWi82bEx0Q2E2eG5rYkRz?=
+ =?utf-8?B?M3R1dHZGT3gwdjBVV0dFa3g1Q29nU2FrVS9vdjYzejBLeDVOUE1MalBWVVNM?=
+ =?utf-8?B?elQrZi9aYVBTR1hpR2lmdnNUOGR5ODNvWXJwc1lhd1BDdm0zR0ZBeDNEYWZa?=
+ =?utf-8?B?RTNRRzBGZG1SRWxoYUlrNHlvQ3dwMDFudXlVM3A0TzBHOG9UbFdReWJlVnlI?=
+ =?utf-8?B?eGJoTkNLaUdVeENpci94L3IzTHV3Qm10UjlMV25PNitKRnl6SC82eUMwL1R6?=
+ =?utf-8?B?K0k5cGw1Zno5UElsdE9nVGRjWjdmMFpmcFZQS2h0S0R6TUpFVXdGNW90clFM?=
+ =?utf-8?B?YllwUVRxNE11c3l3VkVOWkpOYUJnREp2dzlWam4yTVVKN2hzZFZETkRWUUVa?=
+ =?utf-8?B?eWo1MGhxUTkwTXAyOE0rcGpUQnFHNHFuSHh4dnRSbUg2ZDUwK3JjeWNLVVRI?=
+ =?utf-8?B?MnhzSHdTL2RMZGxsVUs4NytjSG1uaDlsMEkyWWloTEgvMWxYeUtiSzBncnly?=
+ =?utf-8?B?eGloWXd4M0JNU3RtWWhZNUtkWGdRQXYreWgvYUtEL3hoMTRFSkxzb0U0cURs?=
+ =?utf-8?B?T281RWFINmc1TFlRVUZYVFNUdFF1UE9OYU9iY2ZkWGg1OTNKdThvQT09?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: a65cfe18-98fe-417e-3147-08de6256b5f8
+X-MS-Exchange-CrossTenant-AuthSource: LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Feb 2026 10:53:29.3182
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Feb 2026 12:29:29.4701
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: i7XjV2Q0UUD0Q8HgXCmnbUSekw2JhyToyKAildEFIx0JvEOgUHovbZFNQE/r0/b77uhb/SyEKcAf8xpLINkN4G6vCuDGpXtSOxbE7xsd4R0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB7373
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-02_03,2026-01-30_04,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0
- malwarescore=0 mlxscore=0 adultscore=0 phishscore=0 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2601150000 definitions=main-2602020087
-X-Proofpoint-ORIG-GUID: al6XZq_0Kjx-A5E4AI4VZWx2lSX8g3vz
-X-Proofpoint-GUID: al6XZq_0Kjx-A5E4AI4VZWx2lSX8g3vz
-X-Authority-Analysis: v=2.4 cv=fdmgCkQF c=1 sm=1 tr=0 ts=6980822c b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=HzLeVaNsDn8A:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=yPCof4ZbAAAA:8 a=xVhDTqbCAAAA:8 a=6hJo0hV5HX86MnkomZAA:9 a=CjuIK1q_8ugA:10
- a=GrmWmAYt4dzCMttCBZOh:22 cc=ntf awl=host:12104
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjAyMDA4NyBTYWx0ZWRfX1CwlflrVda4i
- kzaQxIl1Hr/9z/wfJb8xjCjtZfVVRrSNHfylqAQUuJiOstCuIGf/hf5fHnuRlWWz6HMg7vbEEnP
- Tc5hdYYT1wmkMrq4j1TaBd9c6ZrZilwt7eg8sHp9Txu4mUkzKrPwMak2wJqKCMZ2LsoA0kipbIn
- 4NwcpV5AbGCCx2NFwh/Nm3x2BxcXzZ5JDD8MSneNNhQkcoA/5+58mI9Gikf0Zf12SdKpSG5nzyu
- W/0oJWDfeksSgWbjLrrQ8+ckoyd3wL8VyZ9ueMgTPXP8iHl+9GBiNQkgzYZsc1h5AgYkIVw4OGi
- GCI/+eCHK1k1lJfOvzGkmMgxSx8vzyAtIgeKErhbXYlivsWv7EYhkM+Enx7bKEoOafkhb8ybK9i
- 6JSH7fVl87n3D1KCd4HYH0Vus9P+SBaCVHpy2ZutZdKZLL2UhZmhfWy3G5AX33d63NexT0/7n7y
- gwf+CKP+s1IScWmd13Zkm+oSpJHpvSIdcL1VkKGY=
+X-MS-Exchange-CrossTenant-UserPrincipalName: gB7f8qgRlyBGh+RQx7Xbx1aFzlKPl+4erOte/9RDAQmyLmYs9r4lXW/4T+AOYSSwNEy9GVohdBbLpF68iTJ1wA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO2P265MB5469
 
-On Thu, Jan 29, 2026 at 05:51:33PM -0500, Paul Moore wrote:
-> While reworking the LSM initialization code the
-> /proc/sys/vm/mmap_min_addr handler was inadvertently caught up in the
-> change and the procfs entry wasn't setup when CONFIG_SECURITY was not
-> selected at kernel build time.  This patch restores the previous behavior
-> and ensures that the procfs entry is setup regardless of the
-> CONFIG_SECURITY state.
+On Mon Feb 2, 2026 at 9:37 AM GMT, Andreas Hindborg wrote:
+> Gary Guo <gary@garyguo.net> writes:
 >
-> Future work will improve upon this, likely by moving the procfs handler
-> into the mm subsystem, but this patch should resolve the immediate
-> regression.
+>> On Mon, 17 Nov 2025 10:07:40 +0000
+>> Oliver Mangold <oliver.mangold@pm.me> wrote:
+>>
+>>> From: Asahi Lina <lina+kernel@asahilina.net>
+>>>=20
+>>> By analogy to `AlwaysRefCounted` and `ARef`, an `Ownable` type is a
+>>> (typically C FFI) type that *may* be owned by Rust, but need not be. Un=
+like
+>>> `AlwaysRefCounted`, this mechanism expects the reference to be unique
+>>> within Rust, and does not allow cloning.
+>>>=20
+>>> Conceptually, this is similar to a `KBox<T>`, except that it delegates
+>>> resource management to the `T` instead of using a generic allocator.
+>>>=20
+>>> [ om:
+>>>   - Split code into separate file and `pub use` it from types.rs.
+>>>   - Make from_raw() and into_raw() public.
+>>>   - Remove OwnableMut, and make DerefMut dependent on Unpin instead.
+>>>   - Usage example/doctest for Ownable/Owned.
+>>>   - Fixes to documentation and commit message.
+>>> ]
+>>>=20
+>>> Link: https://lore.kernel.org/all/20250202-rust-page-v1-1-e3170d7fe55e@=
+asahilina.net/
+>>> Signed-off-by: Asahi Lina <lina+kernel@asahilina.net>
+>>> Co-developed-by: Oliver Mangold <oliver.mangold@pm.me>
+>>> Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
+>>> Co-developed-by: Andreas Hindborg <a.hindborg@kernel.org>
+>>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>>> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+>>> ---
+>>>  rust/kernel/lib.rs       |   1 +
+>>>  rust/kernel/owned.rs     | 195 +++++++++++++++++++++++++++++++++++++++=
+++++++++
+>>>  rust/kernel/sync/aref.rs |   5 ++
+>>>  rust/kernel/types.rs     |   2 +
+>>>  4 files changed, 203 insertions(+)
+>>>=20
+>>> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+>>> index 3dd7bebe7888..e0ee04330dd0 100644
+>>> --- a/rust/kernel/lib.rs
+>>> +++ b/rust/kernel/lib.rs
+>>> @@ -112,6 +112,7 @@
+>>>  pub mod of;
+>>>  #[cfg(CONFIG_PM_OPP)]
+>>>  pub mod opp;
+>>> +pub mod owned;
+>>>  pub mod page;
+>>>  #[cfg(CONFIG_PCI)]
+>>>  pub mod pci;
+>>> diff --git a/rust/kernel/owned.rs b/rust/kernel/owned.rs
+>>> new file mode 100644
+>>> index 000000000000..a2cdd2cb8a10
+>>> --- /dev/null
+>>> +++ b/rust/kernel/owned.rs
+>>> @@ -0,0 +1,195 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +
+>>> +//! Unique owned pointer types for objects with custom drop logic.
+>>> +//!
+>>> +//! These pointer types are useful for C-allocated objects which by AP=
+I-contract
+>>> +//! are owned by Rust, but need to be freed through the C API.
+>>> +
+>>> +use core::{
+>>> +    mem::ManuallyDrop,
+>>> +    ops::{Deref, DerefMut},
+>>> +    pin::Pin,
+>>> +    ptr::NonNull,
+>>> +};
+>>> +
+>>> +/// Type allocated and destroyed on the C side, but owned by Rust.
+>>
+>> The example given in the documentation below shows a valid way of
+>> defining a type that's handled on the Rust side, so I think this
+>> message is somewhat inaccurate.
+>>
+>> Perhaps something like
+>>
+>> 	Types that specify their own way of performing allocation and
+>> 	destruction. Typically, this trait is implemented on types from
+>> 	the C side.
 >
-> Fixes: 4ab5efcc2829 ("lsm: consolidate all of the LSM framework initcalls")
-> Reported-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> Thanks, I'll use this.
+>
+>>
+>> ?
+>>
+>>> +///
+>>> +/// Implementing this trait allows types to be referenced via the [`Ow=
+ned<Self>`] pointer type. This
+>>> +/// is useful when it is desirable to tie the lifetime of the referenc=
+e to an owned object, rather
+>>> +/// than pass around a bare reference. [`Ownable`] types can define cu=
+stom drop logic that is
+>>> +/// executed when the owned reference [`Owned<Self>`] pointing to the =
+object is dropped.
+>>> +///
+>>> +/// Note: The underlying object is not required to provide internal re=
+ference counting, because it
+>>> +/// represents a unique, owned reference. If reference counting (on th=
+e Rust side) is required,
+>>> +/// [`AlwaysRefCounted`](crate::types::AlwaysRefCounted) should be imp=
+lemented.
+>>> +///
+>>> +/// # Safety
+>>> +///
+>>> +/// Implementers must ensure that the [`release()`](Self::release) fun=
+ction frees the underlying
+>>> +/// object in the correct way for a valid, owned object of this type.
+>>> +///
+>>> +/// # Examples
+>>> +///
+>>> +/// A minimal example implementation of [`Ownable`] and its usage with=
+ [`Owned`] looks like this:
+>>> +///
+>>> +/// ```
+>>> +/// # #![expect(clippy::disallowed_names)]
+>>> +/// # use core::cell::Cell;
+>>> +/// # use core::ptr::NonNull;
+>>> +/// # use kernel::sync::global_lock;
+>>> +/// # use kernel::alloc::{flags, kbox::KBox, AllocError};
+>>> +/// # use kernel::types::{Owned, Ownable};
+>>> +///
+>>> +/// // Let's count the allocations to see if freeing works.
+>>> +/// kernel::sync::global_lock! {
+>>> +///     // SAFETY: we call `init()` right below, before doing anything=
+ else.
+>>> +///     unsafe(uninit) static FOO_ALLOC_COUNT: Mutex<usize> =3D 0;
+>>> +/// }
+>>> +/// // SAFETY: We call `init()` only once, here.
+>>> +/// unsafe { FOO_ALLOC_COUNT.init() };
+>>> +///
+>>> +/// struct Foo {
+>>> +/// }
+>>> +///
+>>> +/// impl Foo {
+>>> +///     fn new() -> Result<Owned<Self>, AllocError> {
+>>> +///         // We are just using a `KBox` here to handle the actual al=
+location, as our `Foo` is
+>>> +///         // not actually a C-allocated object.
+>>> +///         let result =3D KBox::new(
+>>> +///             Foo {},
+>>> +///             flags::GFP_KERNEL,
+>>> +///         )?;
+>>> +///         let result =3D NonNull::new(KBox::into_raw(result))
+>>> +///             .expect("Raw pointer to newly allocation KBox is null,=
+ this should never happen.");
+>>> +///         // Count new allocation
+>>> +///         *FOO_ALLOC_COUNT.lock() +=3D 1;
+>>> +///         // SAFETY: We just allocated the `Self`, thus it is valid =
+and there cannot be any other
+>>> +///         // Rust references. Calling `into_raw()` makes us responsi=
+ble for ownership and we won't
+>>> +///         // use the raw pointer anymore. Thus we can transfer owner=
+ship to the `Owned`.
+>>> +///         Ok(unsafe { Owned::from_raw(result) })
+>>> +///     }
+>>> +/// }
+>>> +///
+>>> +/// // SAFETY: What out `release()` function does is safe of any valid=
+ `Self`.
+>>
+>> I can't parse this sentence. Is "out" supposed to be a different word?
+>
+> I think it should be "our".
+>
+>>
+>>> +/// unsafe impl Ownable for Foo {
+>>> +///     unsafe fn release(this: NonNull<Self>) {
+>>> +///         // The `Foo` will be dropped when `KBox` goes out of scope=
+.
+>>
+>> I would just write `drop(unsafe { ... })` to make drop explicit instead
+>> of commenting about the implicit drop.
+>
+> Agree, that is easier to read.
+>
+>>
+>>> +///         // SAFETY: The [`KBox<Self>`] is still alive. We can pass =
+ownership to the [`KBox`], as
+>>> +///         // by requirement on calling this function, the `Self` wil=
+l no longer be used by the
+>>> +///         // caller.
+>>> +///         unsafe { KBox::from_raw(this.as_ptr()) };
+>>> +///         // Count released allocation
+>>> +///         *FOO_ALLOC_COUNT.lock() -=3D 1;
+>>> +///     }
+>>> +/// }
+>>> +///
+>>> +/// {
+>>> +///    let foo =3D Foo::new().expect("Failed to allocate a Foo. This s=
+houldn't happen");
+>>> +///    assert!(*FOO_ALLOC_COUNT.lock() =3D=3D 1);
+>>> +/// }
+>>> +/// // `foo` is out of scope now, so we expect no live allocations.
+>>> +/// assert!(*FOO_ALLOC_COUNT.lock() =3D=3D 0);
+>>> +/// ```
+>>> +pub unsafe trait Ownable {
+>>> +    /// Releases the object.
+>>> +    ///
+>>> +    /// # Safety
+>>> +    ///
+>>> +    /// Callers must ensure that:
+>>> +    /// - `this` points to a valid `Self`.
+>>> +    /// - `*this` is no longer used after this call.
+>>> +    unsafe fn release(this: NonNull<Self>);
+>>> +}
+>>> +
+>>> +/// An owned reference to an owned `T`.
+>>> +///
+>>> +/// The [`Ownable`] is automatically freed or released when an instanc=
+e of [`Owned`] is
+>>> +/// dropped.
+>>> +///
+>>> +/// # Invariants
+>>> +///
+>>> +/// - The [`Owned<T>`] has exclusive access to the instance of `T`.
+>>> +/// - The instance of `T` will stay alive at least as long as the [`Ow=
+ned<T>`] is alive.
+>>> +pub struct Owned<T: Ownable> {
+>>> +    ptr: NonNull<T>,
+>>> +}
+>>> +
+>>> +// SAFETY: It is safe to send an [`Owned<T>`] to another thread when t=
+he underlying `T` is [`Send`],
+>>> +// because of the ownership invariant. Sending an [`Owned<T>`] is equi=
+valent to sending the `T`.
+>>> +unsafe impl<T: Ownable + Send> Send for Owned<T> {}
+>>> +
+>>> +// SAFETY: It is safe to send [`&Owned<T>`] to another thread when the=
+ underlying `T` is [`Sync`],
+>>> +// because of the ownership invariant. Sending an [`&Owned<T>`] is equ=
+ivalent to sending the `&T`.
+>>> +unsafe impl<T: Ownable + Sync> Sync for Owned<T> {}
+>>> +
+>>> +impl<T: Ownable> Owned<T> {
+>>> +    /// Creates a new instance of [`Owned`].
+>>> +    ///
+>>> +    /// It takes over ownership of the underlying object.
+>>> +    ///
+>>> +    /// # Safety
+>>> +    ///
+>>> +    /// Callers must ensure that:
+>>> +    /// - `ptr` points to a valid instance of `T`.
+>>> +    /// - Ownership of the underlying `T` can be transferred to the `S=
+elf<T>` (i.e. operations
+>>> +    ///   which require ownership will be safe).
+>>> +    /// - No other Rust references to the underlying object exist. Thi=
+s implies that the underlying
+>>> +    ///   object is not accessed through `ptr` anymore after the funct=
+ion call (at least until the
+>>> +    ///   the `Self<T>` is dropped.
+>>
+>> Is this correct? If `Self<T>` is dropped then `T::release` is called so
+>> the pointer should also not be accessed further?
+>
+> I can't follow you point here. Are you saying that the requirement is
+> wrong because `T::release` will access the object by reference? If so,
+> that is part of `Owned<_>::drop`, which is explicitly mentioned in the
+> comment (until .. dropped).
 
-(Sorry was at fosdem from fri)
+I meant that the `Self<T>` is dropped, the object is destroyed so it should=
+ also
+not be accessed further. Perhaps just remove the "(at least ...)" part from
+comment.
 
-LGTM and tested locally confirming it works, thanks so much for the quick
-turnaround! Feel free to add:
+>
+>>
+>>> +    /// - The C code follows the usual shared reference requirements. =
+That is, the kernel will never
+>>> +    ///   mutate or free the underlying object (excluding interior mut=
+ability that follows the usual
+>>> +    ///   rules) while Rust owns it.
+>>
+>> The concept "interior mutability" doesn't really exist on the C side.
+>> Also, use of interior mutability (by UnsafeCell) would be incorrect if
+>> the type is implemented in the rust side (as this requires a
+>> UnsafePinned).
+>>
+>> Interior mutability means things can be mutated behind a shared
+>> reference -- however in this case, we have a mutable reference (either
+>> `Pin<&mut Self>` or `&mut Self`)!
+>>
+>> Perhaps together with the next line, they could be just phrased like
+>> this?
+>>
+>> - The underlying object must not be accessed (read or mutated) through
+>>   any pointer other than the created `Owned<T>`.
+>>   Opt-out is still possbile similar to a mutable reference (e.g. by
+>>   using p`Opaque`]).=20
+>>
+>> I think we should just tell the user "this is just a unique reference
+>> similar to &mut". They should be able to deduce that all the `!Unpin`
+>> that opts out from uniqueness of mutable reference applies here too.
+>
+> I agree. I would suggest updating the struct documentation:
+>
+>     @@ -108,7 +108,7 @@ pub unsafe trait Ownable {
+>         unsafe fn release(this: NonNull<Self>);
+>     }
+>
+>     -/// An owned reference to an owned `T`.
+>     +/// An mutable reference to an owned `T`.
+>     ///
+>     /// The [`Ownable`] is automatically freed or released when an instan=
+ce of [`Owned`] is
+>     /// dropped.
+>
+> And then the safety requirement as
+>
+>  An `Owned<T>` is a mutable reference to the underlying object. As such,
+>  the object must not be accessed (read or mutated) through any pointer
+>  other than the created `Owned<T>`. Opt-out is still possbile similar to
+>  a mutable reference (e.g. by using [`Opaque`]).
 
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Tested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Sounds good to me.
 
-Cheers, Lorenzo
+>
+>
+>>> +    /// - In case `T` implements [`Unpin`] the previous requirement is=
+ extended from shared to
+>>> +    ///   mutable reference requirements. That is, the kernel will not=
+ mutate or free the underlying
+>>> +    ///   object and is okay with it being modified by Rust code.
+>>
+>> - If `T` implements [`Unpin`], the structure must not be mutated for
+>>   the entire lifetime of `Owned<T>`.
+>
+> Would it be OK to just write "If `T: Unpin`, the ..."?
+>
+> Again, opt out is possible, right?
+>
 
-> ---
->  security/lsm.h      | 9 ---------
->  security/lsm_init.c | 7 +------
->  security/min_addr.c | 5 ++---
->  3 files changed, 3 insertions(+), 18 deletions(-)
+When the "mutable reference" framing above I think you can just drop this p=
+art.
+
+>>
+>>> +    pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
+>>
+>> This needs a (rather trivial) INVARIANT comment.
 >
-> diff --git a/security/lsm.h b/security/lsm.h
-> index 81aadbc61685..db77cc83e158 100644
-> --- a/security/lsm.h
-> +++ b/security/lsm.h
-> @@ -37,15 +37,6 @@ int lsm_task_alloc(struct task_struct *task);
+> OK.
 >
->  /* LSM framework initializers */
+>>
+>>> +        Self {
+>>> +            ptr,
+>>> +        }
+>>> +    }
+>>> +
+>>> +    /// Consumes the [`Owned`], returning a raw pointer.
+>>> +    ///
+>>> +    /// This function does not actually relinquish ownership of the ob=
+ject. After calling this
+>>
+>> Perhaps "relinquish" isn't the best word here? In my mental model
+>> this function is pretty much relinquishing ownership as `Owned<T>` no
+>> longer exists. It just doesn't release the object.
 >
-> -#ifdef CONFIG_MMU
-> -int min_addr_init(void);
-> -#else
-> -static inline int min_addr_init(void)
-> -{
-> -	return 0;
-> -}
-> -#endif /* CONFIG_MMU */
-> -
->  #ifdef CONFIG_SECURITYFS
->  int securityfs_init(void);
->  #else
-> diff --git a/security/lsm_init.c b/security/lsm_init.c
-> index 05bd52e6b1f2..573e2a7250c4 100644
-> --- a/security/lsm_init.c
-> +++ b/security/lsm_init.c
-> @@ -489,12 +489,7 @@ int __init security_init(void)
->   */
->  static int __init security_initcall_pure(void)
->  {
-> -	int rc_adr, rc_lsm;
-> -
-> -	rc_adr = min_addr_init();
-> -	rc_lsm = lsm_initcall(pure);
-> -
-> -	return (rc_adr ? rc_adr : rc_lsm);
-> +	return lsm_initcall(pure);
->  }
->  pure_initcall(security_initcall_pure);
+> How about this:
 >
-> diff --git a/security/min_addr.c b/security/min_addr.c
-> index 0fde5ec9abc8..56e4f9d25929 100644
-> --- a/security/min_addr.c
-> +++ b/security/min_addr.c
-> @@ -5,8 +5,6 @@
->  #include <linux/sysctl.h>
->  #include <linux/minmax.h>
 >
-> -#include "lsm.h"
-> -
->  /* amount of vm to protect from userspace access by both DAC and the LSM*/
->  unsigned long mmap_min_addr;
->  /* amount of vm to protect from userspace using CAP_SYS_RAWIO (DAC) */
-> @@ -54,10 +52,11 @@ static const struct ctl_table min_addr_sysctl_table[] = {
->  	},
->  };
+>     /// Consumes the [`Owned`], returning a raw pointer.
+>     ///
+>     /// This function does not drop the underlying `T`. When this functio=
+n returns, ownership of the
+>     /// underlying `T` is with the caller.
+
+SGTM.
+
 >
-> -int __init min_addr_init(void)
-> +static int __init mmap_min_addr_init(void)
->  {
->  	register_sysctl_init("vm", min_addr_sysctl_table);
->  	update_mmap_min_addr();
 >
->  	return 0;
->  }
-> +pure_initcall(mmap_min_addr_init);
-> --
-> 2.52.0
+> Thanks for the comments!
+
+Best,
+Gary
+
 >
+>
+> Best regards,
+> Andreas Hindborg
+
