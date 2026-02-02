@@ -1,243 +1,151 @@
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF3310F1
-	for <linux-security-module@vger.kernel.org>; Mon,  2 Feb 2026 00:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769990768; cv=none; b=uBpSyAQ2Vh4RnIFvG6slSmsCnx0UzsRaxa6/XZ2w3Iq7TaREFlUVLXG6fOv1eEMnRrs2Z41+NedWFWE/yr2Xp+OvKKm6/GSzjpgma07lsufPTVslpUz8U8UQG4GHaVorXJ/fvIXNzT8OZATvvkd54YqgB544zwGsWxTnSCNKp/A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769990768; c=relaxed/simple;
-	bh=WS/5U9GiIGu0GtpYgmtvpbI7uZHTpEOuJPnwIbm6W9M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sxevGpMFo8ch3f6dAFwq9Y+QnPFh+BKdXMPbBflT8hSzRwuPRsxYDS/hhkQKIolS1frEE/8WWL+wwYDiI1vQuRvfkdlShJEtVfkA0vWlIIUGQ12v1PqzE2HyjDzx9AZS82k4ZjFN616aGoFCegtGCds+52KWOqUjRYr/LP4NPSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=oi659Ywg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MLYLu88F; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C23527B352
+	for <linux-security-module@vger.kernel.org>; Mon,  2 Feb 2026 04:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.175
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770005284; cv=pass; b=QGVfqC0K11fZyO+ldj9y9uBo6xF7thazag5Hp7/wIJbOn4cnGF63I9NycqkhqRmRf+18icyA284GrZUa0sIHD9lMXRenqSDWRQQnfvUHDalELY/4zVgV+WusZ7dIIU3fjlzIi1lnLl0RfAD4RmpJJ5H01inzMpz4/4zbHt1Y0Vw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770005284; c=relaxed/simple;
+	bh=YOKr40N5NMnJSSsWi5gI3boLeIf3C3Tjpjo+QN3HJjg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qdfz9T3v2Fzp0hQ0nRipZPzZ5o3ceLbYqEYX3PQOSls19WqvuP2HQ3Bodzvb9GCUBSCx//XO7PviZ8dmA1mGMx5Qp3ZrDEXkhbnFZf5riEopzx3xfUHzkwAeuXAz+PYn40LUoVvgvfVnUnNgRa0bXgTwCPbXsWgMGzubaQGskzs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Z5AuyF1W; arc=pass smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="oi659Ywg";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MLYLu88F"
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 9742D1400059;
-	Sun,  1 Feb 2026 19:06:05 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Sun, 01 Feb 2026 19:06:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1769990765;
-	 x=1770077165; bh=vd/XanPcyhmkP7tg7wFWPAEKH536R4fLiAOfLsMkWww=; b=
-	oi659YwgTuQkzXqGVCCFR/Z0ezmEPo074S4TxkA+HqAbfjXVRnLgoKbjIfaTOLor
-	cadY4NP+YW93YK0xZla2JnJ6ymgxpMMvi88U4eVPYCDbKP/Q5bIR6Dx21d6mHvHt
-	J4da2WqbO3fG81EN7tML61zmDR29jc1hZiFUZf3qpsu48ZHdi8VBQE3Q2xGU3bX0
-	dd7XEtyoi+HZf2VFOfCYVEzAXqibehu1QxdMyz3jT4vaMI96Wpdi8KBzhykghHIF
-	1rbeOymbXNz6WY9hIycT6YfRghDD4W4neBY772G0txwZgjvZXOi+ggbOwWORlu+2
-	YRKE1yn8IIRDFgMGDhn6bw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1769990765; x=
-	1770077165; bh=vd/XanPcyhmkP7tg7wFWPAEKH536R4fLiAOfLsMkWww=; b=M
-	LYLu88FTsD0YuJ2TIIFXRmJyy63KX70NjcGEva0QgT2xrzbCEZzDW85vsGFkK3Zi
-	T6kBi0svju7HgyPW+xX59XNo+D+rcIIruVdsBEnglUeAm4ECdoA4sZs1+DLOituH
-	DQrlRCbV0PD3OvQ6XbbUVSiUJID/UHt3StBWXMCG25ox/3hpGfAX+MJIjnx+QjCg
-	hB4rJAIAabFDMx/6huHClDB6t/MrAB3jYw8fdacwTDkBACjUmLTXZkJCHd4wqnqH
-	24HqGxPTkd6FfWkgiM+em+rPO90/thxb2RjfEJkTEafbi7ADL6IocaIFhmm09e3c
-	Lxe8adusvoeoy96GfLwtw==
-X-ME-Sender: <xms:bep_aYO15Z_ShJMff5pgcRldJAT-2Q3hYEET7ytux6gfku301udJoA>
-    <xme:bep_aeD1DvNMll7WCeHDM6xMsUAAbLOParie43zElYf749RtiMBGv6_zSUy_d593-
-    rtgE62Q5DQ9HdoGgSayszJOm83i3-3k0K1rE33dLo-6gsWW6l1AcJM>
-X-ME-Received: <xmr:bep_aVeuUmxAG1zMkJBLcINaz_j_kW19PW-9K-wXHz36N5vwBYu6B3lU2iKUokFzeK9BbwnUqtrGRtBstg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddujeeiudekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefvihhnghhm
-    rghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepud
-    ekvefhgeevvdevieehvddvgefhgeelgfdugeeftedvkeeigfeltdehgeeghffgnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhesmhgrohifth
-    hmrdhorhhgpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphht
-    thhopehmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepghhnohgrtghksehgoh
-    hoghhlvgdrtghomhdprhgtphhtthhopeguvghmihhosggvnhhouhhrsehgmhgrihhlrdgt
-    ohhmpdhrtghpthhtohephhhisegrlhihshhsrgdrihhspdhrtghpthhtohepjhgrnhhnhh
-    esghhoohhglhgvrdgtohhmpdhrtghpthhtohepfhgrhhhimhhithgrhhgvrhgrsehgmhgr
-    ihhlrdgtohhmpdhrtghpthhtohepuhhtihhlihhthigvmhgrlhejjeesghhmrghilhdrtg
-    homhdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgv
-    rhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:bep_adOC8wad3uueel4wpPvslDs8zpCwTm5zlpCaKhSHtKq_sM1IjQ>
-    <xmx:bep_aVLU-nnISxYxGgZg0Y9wZvcj_Sf9S1JZXx_cVEqTAK2sPSlKYw>
-    <xmx:bep_adIQ3gJ5a4iIBOzPaX0MdzWqyvMQLd-P174ehWktuKeHmWO2GQ>
-    <xmx:bep_af4lBdw9ongX1LRE3Fpq9N27F7xU9A3OgeV7x6rrP_R2jUMG7g>
-    <xmx:bep_aRIhHmHICcZ9fXadX-oPelrtc7P0P1OfNB1TB4DnbqR5V-YoqoBD>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 1 Feb 2026 19:06:03 -0500 (EST)
-Message-ID: <fb80012e-a183-464e-a706-7d0f6c3b3132@maowtm.org>
-Date: Mon, 2 Feb 2026 00:06:02 +0000
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Z5AuyF1W"
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-c6541e35fc0so2326506a12.3
+        for <linux-security-module@vger.kernel.org>; Sun, 01 Feb 2026 20:08:03 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770005282; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Mvfa6sQ0hp88T+VU5wnhk/Vo7V7lj6vDSXBNQKlNVhBvzF9v2C/JOsPEEX0BaGlo08
+         dNFdcAxS+DQo5ljVsoz3jYGtFA5Q/RYIQQUQsmlSHXWAqYlwPQ5EDuDP1sGtMr9E1Nio
+         Hq7jLL1KFqyejxfI2yo3Osw3ZLiCDo4AK6wf8f1/ZebeWVcfstrpHkVuyfyyqAnKn4Xh
+         kwzahmkK625RKWGhGjy9mSQl1VWF7j8Na48SuS+clbgWBkGVQIgHekFtuFmQc3L5nyI8
+         FdEn0rjHJKKYezJKDtVQl0EE+Hoxd9unAvKGLAl1a7hUWkjUeIjww0MAPEOhGlvTieOO
+         lksw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=V0H+rWHAjETqi9RQMu+lWQENmuwh8JTpCpYCQS4X1u8=;
+        fh=3feCUqq7Rmc3YZIeVmm7hDkk/GukXzZLsi8R5HaWE4M=;
+        b=RjQjIXwmjj2iBJt65cmzLCpDbOaqAL+J669KxMjsMkcrqNcFjKC6eeoKQUz0akq27y
+         VYMqrKX+AbWiRO2YPhLHc1Wkh8Qgldkzv2G+dFWeyzb6f9zykC9HHoQHcbReOAAy/nzY
+         OBuUzn9Zbz45V8j3VxP+1nM0/h+KxXbyyb6kYyUAfzQ0cUtPWiIbh12f3AsBqfxwta4m
+         4x5IJR18DJSU6qPiWnbvNVml23iG8MtDVJwX5jNS2plxhh5Duoz08Ogg+dnpn+pTjhs/
+         ojqDgqwEoibha7l3LTgP6/xmgv94xYJXaH95Zfc3ahd4EO1NOkNI3lV0mahZ+h+L6WNE
+         qzNg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1770005282; x=1770610082; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V0H+rWHAjETqi9RQMu+lWQENmuwh8JTpCpYCQS4X1u8=;
+        b=Z5AuyF1W9uHwOuVfLhMpqNKLtetLBUPbBQWYpILdjYveYYkOdyIyGW9QYmOFt4Gq7s
+         0g9i4BivZ7UjZhwbzYEqVMYSDR8Jtsd1nXXGuZ+sL9hQCKjO92cUrvN6SQBvhHicNoHR
+         OPSzi8WxwfWu53RRcVttT+01EYe/613snG03dRTyYrqqcNp1n/2670gD5Rk0fGE8GcfG
+         SsbF2VzKUpwAmyLOmogFNEO7QQNxeoJYqzt8OMt5ubZLsoCJLB9kmh5u5M7IQnt209/e
+         rmXuLs+/hX+J9xheNgV1/5m33THNyS15j1PQYzs1/p0pBSDwqJRKGUy+y4OhIFly7SRG
+         Fy3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770005282; x=1770610082;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=V0H+rWHAjETqi9RQMu+lWQENmuwh8JTpCpYCQS4X1u8=;
+        b=r/Sce5KoyXivGUsiy0crJXCH1wVArwfooKDgtr1aC7nDg7xsaNSxVkTmCAs6yanxdn
+         DDFbbZcrjkzjtDmFBnfcTgAstASTDfceZ1bs5afFmVc1fXQG2wQTnNVbSoT/aymmRlWn
+         S4OI5q/wW0fXUsLK1RVDoJQzzPYTiZ+gdqJDJ2NdN0ecBTKKWmC+wsw/duSGedSHhq/v
+         B/9bhl9mwwMN7VsTF2SCO7hOx90zKvEEfXjtyOLnD7kvdA47Y3y4H5ccvsf0+I5sve/F
+         GCdvIZ1tcKjDee2ZiRHAXB/9UuBmWS3HaAOF+dcR783kWMkEbVhudcWgbOwb3OsWktlL
+         Lb5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVxDwITlbkw/MzBfYVBjj03mfoXrOQLqNy+nG6SxN/Ofe6MLzggwmLeC+/NKHrHQw4KvdbxU6JovQ4GAjmuETJBLcVkuEk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPdmN0oTAVBtFttqczmyx8RakhB6fgjNl20Vz2B3FDPZW7HhLT
+	vPuNwbCe2hMbNZOqKBsPqE6csfE7OyIxsvTnT48hwldKKlsRvKAiMWNdCEfkSVIL9xRKriAdB6c
+	KYYmkclVTg0ybyY2F/ZRCX9pYM/iqDUJkVAazo4bu
+X-Gm-Gg: AZuq6aI8gjHHq8UZ4KObS6g5JsKHp6pTSM6gqVNBCDQJCqAik8ZbBoQaWZ71JHqjVjI
+	b5tm+XY2d/g7HddJp00HhH/azxeDcHOlWNzrH3CY7zicggYiNRnAzh2DXUR82bByPProujmeHbz
+	Eq8qDea5eBJX09STJ7nyrDOJMPMMN2h4b2ZPjdjnl9aPcECAvNfgOeQbBx14/PGdmUFF8/eLDMw
+	FKBLC+7YQImcWZIcdoD8SSj3PP51pv+pHk59rPZLoDTD1I3O82GkjCnWjv8OVKyYqko44k=
+X-Received: by 2002:a17:90b:2e47:b0:34a:b8fc:f1d8 with SMTP id
+ 98e67ed59e1d1-3543b3e3a6amr10303423a91.37.1770005282654; Sun, 01 Feb 2026
+ 20:08:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] selftests/landlock: Repurpose
- scoped_abstract_unix_test.c for pathname sockets too.
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Demi Marie Obenour <demiobenour@gmail.com>, Alyssa Ross <hi@alyssa.is>,
- Jann Horn <jannh@google.com>, Tahera Fahimi <fahimitahera@gmail.com>,
- Justin Suess <utilityemal77@gmail.com>, linux-security-module@vger.kernel.org
-References: <cover.1767115163.git.m@maowtm.org>
- <53b9883648225d5a08e82d2636ab0b4fda003bc9.1767115163.git.m@maowtm.org>
- <20260129.ePhaehieJoh4@digikod.net>
-Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <20260129.ePhaehieJoh4@digikod.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <2ec9c137-79a5-4562-8587-43dd2633f116@I-love.SAKURA.ne.jp>
+ <CAHC9VhQikhv+qCyQdnJguvy-qTkGXB+NU7=QZjw5d+WfyVxZhw@mail.gmail.com>
+ <00ed59a3-a9c9-47c3-97da-5a8e3da1ea82@I-love.SAKURA.ne.jp>
+ <CAHC9VhQq6jY63kYEQCp2t89Vv+_PDqv54RV6TO_TePDQyU6Vug@mail.gmail.com>
+ <1bb453af-3ef2-4ab6-a909-0705bd07c136@I-love.SAKURA.ne.jp>
+ <CAHC9VhQEKfxXzFgYShojESpQn10LES5zL6Ua0YV9b8seEKFqyA@mail.gmail.com> <93d291db-4175-48c4-830c-e83bab373ae2@I-love.SAKURA.ne.jp>
+In-Reply-To: <93d291db-4175-48c4-830c-e83bab373ae2@I-love.SAKURA.ne.jp>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sun, 1 Feb 2026 23:07:51 -0500
+X-Gm-Features: AZwV_Qj0ZPr30GBIZpy2KTBmQCeMzIbAaQJB4ILIbQRznBk2H145kQkQiYyOBUA
+Message-ID: <CAHC9VhQPKU5DqG-ryZsiCV2vZeGGf_a-JStR_LVVCCn03C4usQ@mail.gmail.com>
+Subject: Re: [PATCH] xfrm: kill xfrm_dev_{state,policy}_flush_secctx_check()
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: SELinux <selinux@vger.kernel.org>, 
+	linux-security-module <linux-security-module@vger.kernel.org>, 
+	Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Network Development <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 1/29/26 21:28, Mickaël Salaün wrote:
-> [...]
-> On Tue, Dec 30, 2025 at 05:20:23PM +0000, Tingmao Wang wrote:
->> [...]
->> @@ -308,6 +413,12 @@ TEST_F(scoped_audit, connect_to_child)
->>  	char buf;
->>  	int dgram_client;
->>  	struct audit_records records;
->> +	struct service_fixture *const dgram_address =
->> +		variant->abstract_socket ? &self->dgram_address_abstract :
->> +					   &self->dgram_address_pathname;
->> +	size_t log_match_remaining = 500;
-> 
-> const
-> 
-> Why this number?  Could you please follow the same logic as in
-> matches_log_fs_extra()?
+On Sat, Jan 31, 2026 at 1:01=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2026/01/31 6:56, Paul Moore wrote:
+> > On Wed, Jan 28, 2026 at 5:28=E2=80=AFAM Tetsuo Handa
+> > <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> >> On 2026/01/28 6:59, Paul Moore wrote:
+> >>> It sounds like we either need to confirm that
+> >>> security_xfrm_{policy,state}_delete() is already present in all code
+> >>> paths that result in SPD/SAD deletions (in a place that can safely
+> >>> fail and return an error),
+> >>
+> >> Yes.
+> >
+> > To clarify, do you mean "yes, I agree", or "yes, I've already checked
+> > this and can confirm that the LSM hooks are already being called"?
+>
+> I mean "yes, I agree".
+>
+> >
+> >>>                            or we need to place
+> >>> xfrm_dev_{policy,state}_flush_secctx_check() in a location that can
+> >>> safely fail.
+> >>
+> >> Did you mean xfrm_{policy,state}_flush_secctx_check() ?
+> >
+> > They both call into the security_xfrm_policy_delete() LSM hook which
+> > is what I care about as that hook is what authorizes the operation.
+>
+> I can't understand what your authorization is.
 
-It's not a const since we decrement it below as we fill log_match with
-stpncpy().
+I'm asking you to verify that we have the LSM xfrm hooks in all of the
+necessary locations to ensure that we are safely and comprehensively
+gating all of the operations that result in removal of SPD and SAD
+entries.
 
-matches_log_fs_extra() uses 2*PATH_MAX + length of various fixed strings.
-I guess since the path is a resolved absolute path which can vary based on
-where this test is ran, it is safest to use a value based on PATH_MAX.  I
-will update.
+> No authorization can be placed during must-not-fail operation.
 
-> 
->> +	char log_match[log_match_remaining];
->> +	char *log_match_cursor = log_match;
->>  
->>  	/* Makes sure there is no superfluous logged records. */
->>  	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
->> @@ -330,8 +441,8 @@ TEST_F(scoped_audit, connect_to_child)
->>  
->>  		dgram_server = socket(AF_UNIX, SOCK_DGRAM, 0);
->>  		ASSERT_LE(0, dgram_server);
->> -		ASSERT_EQ(0, bind(dgram_server, &self->dgram_address.unix_addr,
->> -				  self->dgram_address.unix_addr_len));
->> +		ASSERT_EQ(0, bind(dgram_server, &dgram_address->unix_addr,
->> +				  dgram_address->unix_addr_len));
->>  
->>  		/* Signals to the parent that child is listening. */
->>  		ASSERT_EQ(1, write(pipe_child[1], ".", 1));
->> @@ -345,7 +456,9 @@ TEST_F(scoped_audit, connect_to_child)
->>  	EXPECT_EQ(0, close(pipe_child[1]));
->>  	EXPECT_EQ(0, close(pipe_parent[0]));
->>  
->> -	create_scoped_domain(_metadata, LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
->> +	create_scoped_domain(_metadata,
->> +			     LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
->> +				     LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET);
->>  
->>  	/* Signals that the parent is in a domain, if any. */
->>  	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
->> @@ -355,19 +468,62 @@ TEST_F(scoped_audit, connect_to_child)
->>  
->>  	/* Waits for the child to listen */
->>  	ASSERT_EQ(1, read(pipe_child[0], &buf, 1));
->> -	err_dgram = connect(dgram_client, &self->dgram_address.unix_addr,
->> -			    self->dgram_address.unix_addr_len);
->> +	err_dgram = connect(dgram_client, &dgram_address->unix_addr,
->> +			    dgram_address->unix_addr_len);
->>  	EXPECT_EQ(-1, err_dgram);
->>  	EXPECT_EQ(EPERM, errno);
->>  
->> -	EXPECT_EQ(
->> -		0,
->> -		audit_match_record(
->> -			self->audit_fd, AUDIT_LANDLOCK_ACCESS,
->> +	if (variant->abstract_socket) {
->> +		log_match_cursor = stpncpy(
->> +			log_match,
->>  			REGEX_LANDLOCK_PREFIX
->>  			" blockers=scope\\.abstract_unix_socket path=" ABSTRACT_SOCKET_PATH_PREFIX
->>  			"[0-9A-F]\\+$",
->> -			NULL));
->> +			log_match_remaining);
->> +		log_match_remaining =
->> +			sizeof(log_match) - (log_match_cursor - log_match);
->> +		ASSERT_NE(0, log_match_remaining);
->> +	} else {
->> +		/*
->> +		 * It is assumed that absolute_path does not contain control
->> +		 * characters nor spaces, see audit_string_contains_control().
->> +		 */
->> +		char *absolute_path =
-> 
-> const char *absolute_path
+Of course, but that means that we simply need to make sure we have the
+authorization hooks placed elsewhere to ensure that users can not
+remove SPD and SAD entries if they are not allowed.  I'm not arguing
+about if returning an error in a place that can not handle an error
+condition is correct or not, I'm arguing that you should audit the SPD
+and SAD removal code paths to ensure that they all have the proper LSM
+xfrm hook authorizations.
 
-Can't use const char * here since we free() it later:
-
-scoped_unix_test.c:513:22: warning: passing argument 1 of ‘free’ discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
-  513 |                 free(absolute_path);
-      |                      ^~~~~~~~~~~~~
-
-But I guess we can char *const.  Will update to:
-
-		char *const absolute_path =
-			realpath(dgram_address->unix_addr.sun_path, NULL);
-
-> 
->> +			realpath(dgram_address->unix_addr.sun_path, NULL);
->> +
->> +		EXPECT_NE(NULL, absolute_path)
->> +		{
->> +			TH_LOG("realpath() failed: %s", strerror(errno));
->> +			return;
->> +		}
->> +
->> +		log_match_cursor =
->> +			stpncpy(log_match,
->> +				REGEX_LANDLOCK_PREFIX
->> +				" blockers=scope\\.pathname_unix_socket path=\"",
->> +				log_match_remaining);
->> +		log_match_remaining =
->> +			sizeof(log_match) - (log_match_cursor - log_match);
->> +		ASSERT_NE(0, log_match_remaining);
->> +		log_match_cursor = regex_escape(absolute_path, log_match_cursor,
->> +						log_match_remaining);
->> +		free(absolute_path);
->> +		if (log_match_cursor < 0) {
->> +			TH_LOG("regex_escape() failed (buffer too small)");
->> +			return;
->> +		}
->> +		log_match_remaining =
->> +			sizeof(log_match) - (log_match_cursor - log_match);
->> +		ASSERT_NE(0, log_match_remaining);
->> +		log_match_cursor =
->> +			stpncpy(log_match_cursor, "\"$", log_match_remaining);
->> +		log_match_remaining =
->> +			sizeof(log_match) - (log_match_cursor - log_match);
->> +		ASSERT_NE(0, log_match_remaining);
->> +	}
->> +
->> +	EXPECT_EQ(0, audit_match_record(self->audit_fd, AUDIT_LANDLOCK_ACCESS,
->> +					log_match, NULL));
->>  
->>  	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
->>  	EXPECT_EQ(0, close(dgram_client));
->> -- 
->> 2.52.0
->>
->>
+--=20
+paul-moore.com
