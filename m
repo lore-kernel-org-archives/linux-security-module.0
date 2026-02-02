@@ -1,81 +1,114 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AFB2DF144;
-	Mon,  2 Feb 2026 18:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BE330EF84
+	for <linux-security-module@vger.kernel.org>; Mon,  2 Feb 2026 20:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770058049; cv=none; b=KgZOZCu1SKUifXtxhDCf9h9+mfQ4kzQ1G82bCVymLun/lU6oeSOejdl3zpVyXVN/URfGHS/fNLpxeoLVyxdpx1lDyuU/VmrdUNdbhApfCuAgRsBOQExO6UHzTnMTjejvh5FXWtlRm3pvKADF7d2RohVhXLMlAIxIJ62cv2cc8Io=
+	t=1770063264; cv=none; b=tF7qrvQj8MIUA1tWwc8KBI6Dnxsnzf4Q+w/Al6k7j6Sst/7aOFY2DcJdcOrN7kuXNZm0mBMklwvStu0gD0A4zIIcJOQmcQmwg1yfTAQPvT1XT+Ua8XxkKwj1+on5i2Q08uTySwDcVHyh+u5HBZPgtjKr9HGdqB0bPEdHQ0NtRg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770058049; c=relaxed/simple;
-	bh=b1c9hVroKYW8OCGypKuuUgArjCJp8gAKeo9XoSbuZKE=;
+	s=arc-20240116; t=1770063264; c=relaxed/simple;
+	bh=pHEp2wDZZm2XgfapiY5kf4TQlX/mBLuPjZFX6Njtvio=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PKsNAerSoVMc//1wRBsgH6qVdKTy5sxJZx2dW+smazWfhu8k7bXRkyR0fhp0Uv6SsM3N6WI+Yph+pryYj7SUj2kjckAimrwfoD6bnh2kQbIAi6y1v8DpoHUUOvcShq3e4PSg3qTbprSeIcVaqRH+E5RQZ46dbMy+T3MTpuFTpsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCKhW3mX; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=OT7TRFhETV/IrwfZGcvbHe2MnXXiGwkULPKTr63HQ9ljcxSXrW7pPq5zPR93Y+d77GJKpkFVeuDfU8PYfYkWoj48thW1p++A1/MScavZUzkLBvy9udCOPrqip5e/2FTf+ZAQj9LzvYqtDynIWDmwDt173oOiDzHd9wModsmfAsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=1f7ED7KK; arc=none smtp.client-ip=84.16.66.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCKhW3mX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F8E1C116C6;
-	Mon,  2 Feb 2026 18:47:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770058049;
-	bh=b1c9hVroKYW8OCGypKuuUgArjCJp8gAKeo9XoSbuZKE=;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="1f7ED7KK"
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4f4d9s5JzczlrY;
+	Mon,  2 Feb 2026 21:14:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1770063249;
+	bh=pGAimY3qVqjHvHRsBS1vObia0CwQLXnrUuR7raL6ZFc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aCKhW3mXh4GMY6S3gJZHpkUL/e079wkvIz4StZSSFnNiJpENS1vb009Nnw6/Gv1Ho
-	 O7IqLvlFBUcPPaHmemphyl8g5x/Xu1vGyLhXz2xHPJYq43Akq6PHjLNgr+KJ5RZ3OB
-	 jYfmikmo7u6XcZF1Y+aEaBpajLhG1o0HZca91/uZ12/t/3iGvhD3gTGbGV0Xpk4bzT
-	 7PvlHHVPEAx2QjM9YwOHrva2imznODhL/DXbiUI1JtwPimcHJQbP4HucTvqJN5r3am
-	 r+PSyekjnt8ryUK0OML++wPPKLWeKExnZA83OKQWgOm51T9t9rlSEUc/Xm3GptqwJC
-	 CajFQV8Axm+mw==
-Date: Mon, 2 Feb 2026 10:47:25 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: =?us-ascii?B?PT9VVEYtOD9xP01paGFpLURyb3NpPTIwQz1DMz1BMmp1Pz0=?= <mcaju95@gmail.com>,
-	linux@weissschuh.net, arnd@arndb.de, arnout@bzzt.net,
-	atomlin@atomlin.com, bigeasy@linutronix.de, chleroy@kernel.org,
-	christian@heusel.eu, corbet@lwn.net, coxu@redhat.com,
-	da.gomez@kernel.org, da.gomez@samsung.com,
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
-	f.gruenbichler@proxmox.com, jmorris@namei.org, kpcyrd@archlinux.org,
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-integrity@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, lkp@intel.com, maddy@linux.ibm.com,
-	mattia@mapreri.org, mcgrof@kernel.org, mpe@ellerman.id.au,
-	nathan@kernel.org, naveen@kernel.org,
-	nicolas.bouchinet@oss.cyber.gouv.fr, nicolas.schier@linux.dev,
-	npiggin@gmail.com, nsc@kernel.org, paul@paul-moore.com,
-	petr.pavlu@suse.com, roberto.sassu@huawei.com,
-	samitolvanen@google.com, serge@hallyn.com, xiujianfeng@huawei.com,
-	zohar@linux.ibm.com
-Subject: Re: [PATCH v4 00/17] module: Introduce hash-based integrity checking
-Message-ID: <20260202184725.GC2036@quark>
-References: <20260202183055.GB2036@quark>
- <20260201201218.GA15755@quark>
- <20260131073636.65494-1-mcaju95@gmail.com>
- <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
- <2316630.1769965788@warthog.procyon.org.uk>
- <2339369.1770024079@warthog.procyon.org.uk>
- <2513499.1770057531@warthog.procyon.org.uk>
+	b=1f7ED7KKwiV347yz4n2puCe5CbDx8PDLUpVERQ9U5mBzazQ3Heh9g0TKps7KjBfrS
+	 WNwHd7sCJsPlWasvfOsvEVOpbq4S9h7uIFpEoyu/ePf11tivUOWEukuxM13mPsvJnv
+	 t1jzJFGIEv3fYlrI8+Wvv8qIRrgl83dBLiMGk0eA=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4f4d9s00Yjzrws;
+	Mon,  2 Feb 2026 21:14:08 +0100 (CET)
+Date: Mon, 2 Feb 2026 21:14:04 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Demi Marie Obenour <demiobenour@gmail.com>, Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, Justin Suess <utilityemal77@gmail.com>, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 3/6] samples/landlock: Support
+ LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET
+Message-ID: <20260202.eeTh8aiwuhee@digikod.net>
+References: <cover.1767115163.git.m@maowtm.org>
+ <5e9ac4104e5f70cdf250a3dea9a553a65a36fff9.1767115163.git.m@maowtm.org>
+ <20260129.Hizei3ea8eew@digikod.net>
+ <5a2e3aad-0eaf-4964-9629-333b36a05ae6@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2513499.1770057531@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5a2e3aad-0eaf-4964-9629-333b36a05ae6@maowtm.org>
+X-Infomaniak-Routing: alpha
 
-On Mon, Feb 02, 2026 at 06:38:51PM +0000, David Howells wrote:
-> > Could you give more details on this use case and why it needs
-> > signatures, as opposed to e.g. loading an additional Merkle tree root
-> > into the kernel to add to the set of allowed modules?
+On Sat, Jan 31, 2026 at 05:48:24PM +0000, Tingmao Wang wrote:
+> On 1/29/26 21:27, Mickaël Salaün wrote:
+> > We should have a (potentially small) description of what this patch
+> > does, even if it's a bit redundant with the subject.
+> >
+> >
+> > On Tue, Dec 30, 2025 at 05:20:21PM +0000, Tingmao Wang wrote:
+> >> Signed-off-by: Tingmao Wang <m@maowtm.org>
+> >> ---
+> >>
+> >> I've decided to use "u" as the character to control this scope bit since
+> >> it stands for (normal) Unix sockets.  Imo using "p" or "n" would make it less
+> >> clear / memorable.  Open to suggestions.
+> >
+> > Looks good to me.
+> >
+> >>
+> >> Also, open to suggestion whether socket scoping (pathname and abstract)
+> >> should be enabled by default, if LL_SCOPED is not set.  This would break
+> >> backward compatibility, but maybe we shouldn't guarentee backward
+> >> compatibility of this sandboxer in the first place, and almost all cases
+> >> of Landlock usage would want socket scoping.
+> >
+> > I agree that this example could have better defaults, but this should be
+> > done with a standalone patch series.  An important point to keep in mind
+> > is that this example is used by developers (e.g. potential copy/paste),
+> > so we need to be careful to not encourage them to create code which is
+> > backward incompatible.  I think the best way to do it is to request a
+> > default behavior for a specific Landlock ABI version (e.g. with a new
+> > parameter).
 > 
-> Because we don't want to, for example, include all the nvidia drivers in our
-> kernel SRPM.
+> Just to make sure we're on the same page, I was only talking about whether
+> we keep the behavior of the sandboxer "backward compatible" (i.e. if
+> someone ran a program that relied on accessing UNIX sockets of more
+> privileged programs, if we make the sandboxer start enforcing socket
+> scoping by default, their program would stop working under this
+> sandboxer), I was not suggesting that we do something which will cause the
+> sandboxer itself to no longer work on older kernels.
 
-That doesn't answer my question.  Are you trying to say these modules
-need to be built later *and* signed using the original signing key?
+Yep, I extrapolated a bit.
 
-- Eric
+> 
+> But on second thought, the sandboxer is already not designed to be relied
+> upon to always behave the same way after an update, since the user don't
+> get to choose which handled access rights are added to the ruleset.  With
+> new bits added to either ACCESS_FS_ROUGHLY_READ or
+> ACCESS_FS_ROUGHLY_WRITE, the policy effectively gets more restrictive
+> automatically.  For example, once Günther's patch [1] that adds
+> LANDLOCK_ACCESS_FS_RESOLVE_UNIX is merged, the sandboxer will effectively
+> starts restricting pathname UNIX sockets "by default" anyway (under any
+> dirs not listed in LL_FS_RW).  So maybe we don't need to think too hard
+> about this.
+
+Indeed :)
+
+> 
+> [1]: https://lore.kernel.org/all/20260119203457.97676-6-gnoack3000@gmail.com/
+> 
