@@ -1,186 +1,243 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4960F226CF7;
-	Sun,  1 Feb 2026 22:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF3310F1
+	for <linux-security-module@vger.kernel.org>; Mon,  2 Feb 2026 00:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769984948; cv=none; b=RMnNrwDPNFYxbK8z1iOvwlj+xeJZuoQGr9jSM9scWpdFqltI1i2I8vErjflWd8h9DGQtfSOaPjv6mEiGcuaOBULhHrLW3GnrZSdC1pq7eatYDNWI2VN0EmW9cQJQHV4kiVWsI52vc/xLp/SAiL5JOx+Qt4LMufQ9iFPgf3L6WFQ=
+	t=1769990768; cv=none; b=uBpSyAQ2Vh4RnIFvG6slSmsCnx0UzsRaxa6/XZ2w3Iq7TaREFlUVLXG6fOv1eEMnRrs2Z41+NedWFWE/yr2Xp+OvKKm6/GSzjpgma07lsufPTVslpUz8U8UQG4GHaVorXJ/fvIXNzT8OZATvvkd54YqgB544zwGsWxTnSCNKp/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769984948; c=relaxed/simple;
-	bh=DxXTUd2sVNIlf9nm0i+s4NtR8Hl+nkM+Cwtr/R7+iTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R+TlyND6ByQ0dVID27E1QCjziAfv7KMWcOHbj7DPjn2SGV6c86NWZHec4edLjgh3odzg9jW+30SDEyXGrV4UD2e6m8DcdqvwYLI5rzcRs4+uPQGlQRnGoC1yyvzvPdGEKaa9WAx0jgfFzPOzpY9cJtydfbILuAj8y/WeACEKL74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YGPdnvNo; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1769990768; c=relaxed/simple;
+	bh=WS/5U9GiIGu0GtpYgmtvpbI7uZHTpEOuJPnwIbm6W9M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sxevGpMFo8ch3f6dAFwq9Y+QnPFh+BKdXMPbBflT8hSzRwuPRsxYDS/hhkQKIolS1frEE/8WWL+wwYDiI1vQuRvfkdlShJEtVfkA0vWlIIUGQ12v1PqzE2HyjDzx9AZS82k4ZjFN616aGoFCegtGCds+52KWOqUjRYr/LP4NPSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=oi659Ywg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MLYLu88F; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YGPdnvNo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 730B0C4CEF7;
-	Sun,  1 Feb 2026 22:29:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769984947;
-	bh=DxXTUd2sVNIlf9nm0i+s4NtR8Hl+nkM+Cwtr/R7+iTs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YGPdnvNokhVj+bbB6U2HTakzEQs77Eyc+70jNzgOcQSCdfQqtZVP2S13HH2JdSqvI
-	 iiJ1Y0MHxXi9fkxF1/sxXDH8OFXKQ9hIgGY+/T+AzAg2cSqD9g/Id231r+pE3GgolW
-	 oFBdb8DbL7XwUR5wpCundArK6kJ7sPkYNHhLvCrN9Bktw2ilWGCCe2gnbrDF4ioVGW
-	 7jjGdJgaanmc7+qN7t20BJs9TMTFY57dFq9FqN39kf6UAZsUc6xJRMxJXvFBr3IbQa
-	 kUO+0nawWrDdPzjg9Qu+zn49Bvg6iM5P9jbOOvi0vbHIFcZtM0xst3mPnDyM+KHCkY
-	 dk1PHcxOZWEsg==
-Date: Mon, 2 Feb 2026 00:29:04 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Srish Srinivasan <ssrish@linux.ibm.com>
-Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-	James.Bottomley@hansenpartnership.com, zohar@linux.ibm.com,
-	nayna@linux.ibm.com, rnsastry@linux.ibm.com,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v6 6/6] docs: trusted-encryped: add PKWM as a new trust
- source
-Message-ID: <aX_TsBNTMvvsM_bt@kernel.org>
-References: <20260201135930.898721-1-ssrish@linux.ibm.com>
- <20260201135930.898721-7-ssrish@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="oi659Ywg";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MLYLu88F"
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 9742D1400059;
+	Sun,  1 Feb 2026 19:06:05 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-12.internal (MEProxy); Sun, 01 Feb 2026 19:06:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1769990765;
+	 x=1770077165; bh=vd/XanPcyhmkP7tg7wFWPAEKH536R4fLiAOfLsMkWww=; b=
+	oi659YwgTuQkzXqGVCCFR/Z0ezmEPo074S4TxkA+HqAbfjXVRnLgoKbjIfaTOLor
+	cadY4NP+YW93YK0xZla2JnJ6ymgxpMMvi88U4eVPYCDbKP/Q5bIR6Dx21d6mHvHt
+	J4da2WqbO3fG81EN7tML61zmDR29jc1hZiFUZf3qpsu48ZHdi8VBQE3Q2xGU3bX0
+	dd7XEtyoi+HZf2VFOfCYVEzAXqibehu1QxdMyz3jT4vaMI96Wpdi8KBzhykghHIF
+	1rbeOymbXNz6WY9hIycT6YfRghDD4W4neBY772G0txwZgjvZXOi+ggbOwWORlu+2
+	YRKE1yn8IIRDFgMGDhn6bw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1769990765; x=
+	1770077165; bh=vd/XanPcyhmkP7tg7wFWPAEKH536R4fLiAOfLsMkWww=; b=M
+	LYLu88FTsD0YuJ2TIIFXRmJyy63KX70NjcGEva0QgT2xrzbCEZzDW85vsGFkK3Zi
+	T6kBi0svju7HgyPW+xX59XNo+D+rcIIruVdsBEnglUeAm4ECdoA4sZs1+DLOituH
+	DQrlRCbV0PD3OvQ6XbbUVSiUJID/UHt3StBWXMCG25ox/3hpGfAX+MJIjnx+QjCg
+	hB4rJAIAabFDMx/6huHClDB6t/MrAB3jYw8fdacwTDkBACjUmLTXZkJCHd4wqnqH
+	24HqGxPTkd6FfWkgiM+em+rPO90/thxb2RjfEJkTEafbi7ADL6IocaIFhmm09e3c
+	Lxe8adusvoeoy96GfLwtw==
+X-ME-Sender: <xms:bep_aYO15Z_ShJMff5pgcRldJAT-2Q3hYEET7ytux6gfku301udJoA>
+    <xme:bep_aeD1DvNMll7WCeHDM6xMsUAAbLOParie43zElYf749RtiMBGv6_zSUy_d593-
+    rtgE62Q5DQ9HdoGgSayszJOm83i3-3k0K1rE33dLo-6gsWW6l1AcJM>
+X-ME-Received: <xmr:bep_aVeuUmxAG1zMkJBLcINaz_j_kW19PW-9K-wXHz36N5vwBYu6B3lU2iKUokFzeK9BbwnUqtrGRtBstg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddujeeiudekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpefvihhnghhm
+    rghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepud
+    ekvefhgeevvdevieehvddvgefhgeelgfdugeeftedvkeeigfeltdehgeeghffgnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhesmhgrohifth
+    hmrdhorhhgpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphht
+    thhopehmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepghhnohgrtghksehgoh
+    hoghhlvgdrtghomhdprhgtphhtthhopeguvghmihhosggvnhhouhhrsehgmhgrihhlrdgt
+    ohhmpdhrtghpthhtohephhhisegrlhihshhsrgdrihhspdhrtghpthhtohepjhgrnhhnhh
+    esghhoohhglhgvrdgtohhmpdhrtghpthhtohepfhgrhhhimhhithgrhhgvrhgrsehgmhgr
+    ihhlrdgtohhmpdhrtghpthhtohepuhhtihhlihhthigvmhgrlhejjeesghhmrghilhdrtg
+    homhdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgv
+    rhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:bep_adOC8wad3uueel4wpPvslDs8zpCwTm5zlpCaKhSHtKq_sM1IjQ>
+    <xmx:bep_aVLU-nnISxYxGgZg0Y9wZvcj_Sf9S1JZXx_cVEqTAK2sPSlKYw>
+    <xmx:bep_adIQ3gJ5a4iIBOzPaX0MdzWqyvMQLd-P174ehWktuKeHmWO2GQ>
+    <xmx:bep_af4lBdw9ongX1LRE3Fpq9N27F7xU9A3OgeV7x6rrP_R2jUMG7g>
+    <xmx:bep_aRIhHmHICcZ9fXadX-oPelrtc7P0P1OfNB1TB4DnbqR5V-YoqoBD>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 1 Feb 2026 19:06:03 -0500 (EST)
+Message-ID: <fb80012e-a183-464e-a706-7d0f6c3b3132@maowtm.org>
+Date: Mon, 2 Feb 2026 00:06:02 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260201135930.898721-7-ssrish@linux.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/6] selftests/landlock: Repurpose
+ scoped_abstract_unix_test.c for pathname sockets too.
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Demi Marie Obenour <demiobenour@gmail.com>, Alyssa Ross <hi@alyssa.is>,
+ Jann Horn <jannh@google.com>, Tahera Fahimi <fahimitahera@gmail.com>,
+ Justin Suess <utilityemal77@gmail.com>, linux-security-module@vger.kernel.org
+References: <cover.1767115163.git.m@maowtm.org>
+ <53b9883648225d5a08e82d2636ab0b4fda003bc9.1767115163.git.m@maowtm.org>
+ <20260129.ePhaehieJoh4@digikod.net>
+Content-Language: en-US
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <20260129.ePhaehieJoh4@digikod.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, Feb 01, 2026 at 07:29:30PM +0530, Srish Srinivasan wrote:
-> From: Nayna Jain <nayna@linux.ibm.com>
+On 1/29/26 21:28, Mickaël Salaün wrote:
+> [...]
+> On Tue, Dec 30, 2025 at 05:20:23PM +0000, Tingmao Wang wrote:
+>> [...]
+>> @@ -308,6 +413,12 @@ TEST_F(scoped_audit, connect_to_child)
+>>  	char buf;
+>>  	int dgram_client;
+>>  	struct audit_records records;
+>> +	struct service_fixture *const dgram_address =
+>> +		variant->abstract_socket ? &self->dgram_address_abstract :
+>> +					   &self->dgram_address_pathname;
+>> +	size_t log_match_remaining = 500;
 > 
-> Update Documentation/security/keys/trusted-encrypted.rst and Documentation/
-> admin-guide/kernel-parameters.txt with PowerVM Key Wrapping Module (PKWM)
-> as a new trust source
+> const
 > 
-> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Why this number?  Could you please follow the same logic as in
+> matches_log_fs_extra()?
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+It's not a const since we decrement it below as we fill log_match with
+stpncpy().
 
-And you are free to take 5/6 and 6/6 to a pull request if you prefer
-that route.
+matches_log_fs_extra() uses 2*PATH_MAX + length of various fixed strings.
+I guess since the path is a resolved absolute path which can vary based on
+where this test is ran, it is safest to use a value based on PATH_MAX.  I
+will update.
 
-> ---
->  .../admin-guide/kernel-parameters.txt         |  1 +
->  .../security/keys/trusted-encrypted.rst       | 50 +++++++++++++++++++
->  2 files changed, 51 insertions(+)
 > 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 1058f2a6d6a8..aac15079b33d 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -7790,6 +7790,7 @@ Kernel parameters
->  			- "tee"
->  			- "caam"
->  			- "dcp"
-> +			- "pkwm"
->  			If not specified then it defaults to iterating through
->  			the trust source list starting with TPM and assigns the
->  			first trust source as a backend which is initialized
-> diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
-> index eae6a36b1c9a..ddff7c7c2582 100644
-> --- a/Documentation/security/keys/trusted-encrypted.rst
-> +++ b/Documentation/security/keys/trusted-encrypted.rst
-> @@ -81,6 +81,14 @@ safe.
->           and the UNIQUE key. Default is to use the UNIQUE key, but selecting
->           the OTP key can be done via a module parameter (dcp_use_otp_key).
->  
-> +     (5) PKWM (PowerVM Key Wrapping Module: IBM PowerVM + Platform KeyStore)
-> +
-> +         Rooted to a unique, per-LPAR key, which is derived from a system-wide,
-> +         randomly generated LPAR root key. Both the per-LPAR keys and the LPAR
-> +         root key are stored in hypervisor-owned secure memory at runtime,
-> +         and the LPAR root key is additionally persisted in secure locations
-> +         such as the processor SEEPROMs and encrypted NVRAM.
-> +
->    *  Execution isolation
->  
->       (1) TPM
-> @@ -102,6 +110,14 @@ safe.
->           environment. Only basic blob key encryption is executed there.
->           The actual key sealing/unsealing is done on main processor/kernel space.
->  
-> +     (5) PKWM (PowerVM Key Wrapping Module: IBM PowerVM + Platform KeyStore)
-> +
-> +         Fixed set of cryptographic operations done on on-chip hardware
-> +         cryptographic acceleration unit NX. Keys for wrapping and unwrapping
-> +         are managed by PowerVM Platform KeyStore, which stores keys in an
-> +         isolated in-memory copy in secure hypervisor memory, as well as in a
-> +         persistent copy in hypervisor-encrypted NVRAM.
-> +
->    * Optional binding to platform integrity state
->  
->       (1) TPM
-> @@ -129,6 +145,11 @@ safe.
->           Relies on Secure/Trusted boot process (called HAB by vendor) for
->           platform integrity.
->  
-> +     (5) PKWM (PowerVM Key Wrapping Module: IBM PowerVM + Platform KeyStore)
-> +
-> +         Relies on secure and trusted boot process of IBM Power systems for
-> +         platform integrity.
-> +
->    *  Interfaces and APIs
->  
->       (1) TPM
-> @@ -149,6 +170,11 @@ safe.
->           Vendor-specific API that is implemented as part of the DCP crypto driver in
->           ``drivers/crypto/mxs-dcp.c``.
->  
-> +     (5) PKWM (PowerVM Key Wrapping Module: IBM PowerVM + Platform KeyStore)
-> +
-> +         Platform Keystore has well documented interfaces in PAPR document.
-> +         Refer to ``Documentation/arch/powerpc/papr_hcalls.rst``
-> +
->    *  Threat model
->  
->       The strength and appropriateness of a particular trust source for a given
-> @@ -191,6 +217,10 @@ selected trust source:
->       a dedicated hardware RNG that is independent from DCP which can be enabled
->       to back the kernel RNG.
->  
-> +   * PKWM (PowerVM Key Wrapping Module: IBM PowerVM + Platform KeyStore)
-> +
-> +     The normal kernel random number generator is used to generate keys.
-> +
->  Users may override this by specifying ``trusted.rng=kernel`` on the kernel
->  command-line to override the used RNG with the kernel's random number pool.
->  
-> @@ -321,6 +351,26 @@ Usage::
->  specific to this DCP key-blob implementation.  The key length for new keys is
->  always in bytes. Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
->  
-> +Trusted Keys usage: PKWM
-> +------------------------
-> +
-> +Usage::
-> +
-> +    keyctl add trusted name "new keylen [options]" ring
-> +    keyctl add trusted name "load hex_blob" ring
-> +    keyctl print keyid
-> +
-> +    options:
-> +       wrap_flags=   ascii hex value of security policy requirement
-> +                       0x00: no secure boot requirement (default)
-> +                       0x01: require secure boot to be in either audit or
-> +                             enforced mode
-> +                       0x02: require secure boot to be in enforced mode
-> +
-> +"keyctl print" returns an ASCII hex copy of the sealed key, which is in format
-> +specific to PKWM key-blob implementation.  The key length for new keys is
-> +always in bytes. Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
-> +
->  Encrypted Keys usage
->  --------------------
->  
-> -- 
-> 2.47.3
+>> +	char log_match[log_match_remaining];
+>> +	char *log_match_cursor = log_match;
+>>  
+>>  	/* Makes sure there is no superfluous logged records. */
+>>  	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
+>> @@ -330,8 +441,8 @@ TEST_F(scoped_audit, connect_to_child)
+>>  
+>>  		dgram_server = socket(AF_UNIX, SOCK_DGRAM, 0);
+>>  		ASSERT_LE(0, dgram_server);
+>> -		ASSERT_EQ(0, bind(dgram_server, &self->dgram_address.unix_addr,
+>> -				  self->dgram_address.unix_addr_len));
+>> +		ASSERT_EQ(0, bind(dgram_server, &dgram_address->unix_addr,
+>> +				  dgram_address->unix_addr_len));
+>>  
+>>  		/* Signals to the parent that child is listening. */
+>>  		ASSERT_EQ(1, write(pipe_child[1], ".", 1));
+>> @@ -345,7 +456,9 @@ TEST_F(scoped_audit, connect_to_child)
+>>  	EXPECT_EQ(0, close(pipe_child[1]));
+>>  	EXPECT_EQ(0, close(pipe_parent[0]));
+>>  
+>> -	create_scoped_domain(_metadata, LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
+>> +	create_scoped_domain(_metadata,
+>> +			     LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
+>> +				     LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET);
+>>  
+>>  	/* Signals that the parent is in a domain, if any. */
+>>  	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
+>> @@ -355,19 +468,62 @@ TEST_F(scoped_audit, connect_to_child)
+>>  
+>>  	/* Waits for the child to listen */
+>>  	ASSERT_EQ(1, read(pipe_child[0], &buf, 1));
+>> -	err_dgram = connect(dgram_client, &self->dgram_address.unix_addr,
+>> -			    self->dgram_address.unix_addr_len);
+>> +	err_dgram = connect(dgram_client, &dgram_address->unix_addr,
+>> +			    dgram_address->unix_addr_len);
+>>  	EXPECT_EQ(-1, err_dgram);
+>>  	EXPECT_EQ(EPERM, errno);
+>>  
+>> -	EXPECT_EQ(
+>> -		0,
+>> -		audit_match_record(
+>> -			self->audit_fd, AUDIT_LANDLOCK_ACCESS,
+>> +	if (variant->abstract_socket) {
+>> +		log_match_cursor = stpncpy(
+>> +			log_match,
+>>  			REGEX_LANDLOCK_PREFIX
+>>  			" blockers=scope\\.abstract_unix_socket path=" ABSTRACT_SOCKET_PATH_PREFIX
+>>  			"[0-9A-F]\\+$",
+>> -			NULL));
+>> +			log_match_remaining);
+>> +		log_match_remaining =
+>> +			sizeof(log_match) - (log_match_cursor - log_match);
+>> +		ASSERT_NE(0, log_match_remaining);
+>> +	} else {
+>> +		/*
+>> +		 * It is assumed that absolute_path does not contain control
+>> +		 * characters nor spaces, see audit_string_contains_control().
+>> +		 */
+>> +		char *absolute_path =
 > 
+> const char *absolute_path
 
-BR, Jarkko
+Can't use const char * here since we free() it later:
+
+scoped_unix_test.c:513:22: warning: passing argument 1 of ‘free’ discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
+  513 |                 free(absolute_path);
+      |                      ^~~~~~~~~~~~~
+
+But I guess we can char *const.  Will update to:
+
+		char *const absolute_path =
+			realpath(dgram_address->unix_addr.sun_path, NULL);
+
+> 
+>> +			realpath(dgram_address->unix_addr.sun_path, NULL);
+>> +
+>> +		EXPECT_NE(NULL, absolute_path)
+>> +		{
+>> +			TH_LOG("realpath() failed: %s", strerror(errno));
+>> +			return;
+>> +		}
+>> +
+>> +		log_match_cursor =
+>> +			stpncpy(log_match,
+>> +				REGEX_LANDLOCK_PREFIX
+>> +				" blockers=scope\\.pathname_unix_socket path=\"",
+>> +				log_match_remaining);
+>> +		log_match_remaining =
+>> +			sizeof(log_match) - (log_match_cursor - log_match);
+>> +		ASSERT_NE(0, log_match_remaining);
+>> +		log_match_cursor = regex_escape(absolute_path, log_match_cursor,
+>> +						log_match_remaining);
+>> +		free(absolute_path);
+>> +		if (log_match_cursor < 0) {
+>> +			TH_LOG("regex_escape() failed (buffer too small)");
+>> +			return;
+>> +		}
+>> +		log_match_remaining =
+>> +			sizeof(log_match) - (log_match_cursor - log_match);
+>> +		ASSERT_NE(0, log_match_remaining);
+>> +		log_match_cursor =
+>> +			stpncpy(log_match_cursor, "\"$", log_match_remaining);
+>> +		log_match_remaining =
+>> +			sizeof(log_match) - (log_match_cursor - log_match);
+>> +		ASSERT_NE(0, log_match_remaining);
+>> +	}
+>> +
+>> +	EXPECT_EQ(0, audit_match_record(self->audit_fd, AUDIT_LANDLOCK_ACCESS,
+>> +					log_match, NULL));
+>>  
+>>  	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
+>>  	EXPECT_EQ(0, close(dgram_client));
+>> -- 
+>> 2.52.0
+>>
+>>
