@@ -1,97 +1,127 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232B2394495
-	for <linux-security-module@vger.kernel.org>; Tue,  3 Feb 2026 08:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDC232F75B;
+	Tue,  3 Feb 2026 11:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770107011; cv=none; b=ckDVjZneTt4YJvGfDsnsNBo1Xx3RVqe1lXGPQDXaux+H4+s/QgfIykwRtdaYCPT7ZfEQXeZZSRNRkf9sBWCUTQyuTaKbG3N/1xQz3dIk2JC3y3uypuUCBajPrlSS1B2ZuXeWb3aT3r8pph4mpbk0qMlGKiOw4zW6YDm4fkxS634=
+	t=1770118947; cv=none; b=u+3w7mj0eD+/qD9qvco0Nb3t5c/Hing72O/vImV8t0TjCWohVtzkjLwhujsyJV0YxvPAIY4gkrEHPZ9iTbSBtntuxyFrCE3DMZRI20Io+GmOlN6sblznsB12Ei4tGha4sVobEod5NG2O83qx+TXWLMJRQLflkJD3ntpUgPNp/IU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770107011; c=relaxed/simple;
-	bh=0vzqwSZoiSyyQwx0kNIc+hthOck63XO3L0c6JAyV00E=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=tPVpvh7uPm2pHSKPbECiy/rzEtmHyPYASuP3fQNAjun2zvZ2pBN+8CYHNbKp5Qg9c5vU2aCJsbLX4Myyy5JCtGIqiW1/l/aPYWfD0dGWurQ9lD3Ckdq/Bbj6oUkrH7GNisABUptYlZvDdZFcVWXoUTIJEGHOaizMmI4OlaaxhYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ggeRXtQy; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1770118947; c=relaxed/simple;
+	bh=f/4jPZjlH43hVd7djQf+N42+eV6nxJtc05EPg7iYKfI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d9xh8asrCGIzfjpQdYFzhSMPSOYu0DGaaGqMMSxIg3m36oZcpL8CghP0gj0QhmQogS3/8Qy3XlCwHDWTl+rx93hoBxZwAHAEKATgdlEtAq3JaUT7rEIX3OrgW5XsFkaUXh2ehhXzkn7Ybr3TWfS32NyUvrbelTFjToxcKlVOsqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Is5q8smq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kzcip55z; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ggeRXtQy"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1770107001;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Is5q8smq";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kzcip55z"
+Date: Tue, 3 Feb 2026 12:42:22 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1770118943;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vv0j3G+SzAoWpK+TUc6fyFah4RU5Ag6+PMWNgWTKGCI=;
-	b=ggeRXtQyrtSKweIqDSttlXbc2OJhOObR6QkNToq54gbnIZhUMLTvlf1rW0qrMjGQsjvVXU
-	WNOivlpLA5nLfG5zxez5TAUcJOj7uxVKiVkTjEqhRYMiF31W240N/4/BS0GC89i8LB5GgU
-	VwCpZw8ObclRkW7mJEjwV8ALYC+EV/4=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-605-t1AtFM9yMj2neNRwxj3iQQ-1; Tue,
- 03 Feb 2026 03:23:15 -0500
-X-MC-Unique: t1AtFM9yMj2neNRwxj3iQQ-1
-X-Mimecast-MFC-AGG-ID: t1AtFM9yMj2neNRwxj3iQQ_1770106990
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AB8FB18005B5;
-	Tue,  3 Feb 2026 08:23:08 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.44.33.164])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F302119560B2;
-	Tue,  3 Feb 2026 08:22:53 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <8b12f1d28d3859467c3b5f6bc352038ce7627e54.camel@HansenPartnership.com>
-References: <8b12f1d28d3859467c3b5f6bc352038ce7627e54.camel@HansenPartnership.com> <20260131073636.65494-1-mcaju95@gmail.com> <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net> <2316630.1769965788@warthog.procyon.org.uk>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: dhowells@redhat.com,
-    Mihai-Drosi =?utf-8?Q?C=C3=A2ju?= <mcaju95@gmail.com>,
-    linux@weissschuh.net, arnd@arndb.de, arnout@bzzt.net,
-    atomlin@atomlin.com, bigeasy@linutronix.de, chleroy@kernel.org,
-    christian@heusel.eu, corbet@lwn.net, coxu@redhat.com,
-    da.gomez@kernel.org, da.gomez@samsung.com, dmitry.kasatkin@gmail.com,
-    eric.snowberg@oracle.com, f.gruenbichler@proxmox.com,
-    jmorris@namei.org, kpcyrd@archlinux.org, linux-arch@vger.kernel.org,
-    linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
-    linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-    linux-modules@vger.kernel.org, linux-security-module@vger.kernel.org,
-    linuxppc-dev@lists.ozlabs.org, lkp@intel.com, maddy@linux.ibm.com,
-    mattia@mapreri.org, mcgrof@kernel.org, mpe@ellerman.id.au,
-    nathan@kernel.org, naveen@kernel.org,
-    nicolas.bouchinet@oss.cyber.gouv.fr, nicolas.schier@linux.dev,
-    npiggin@gmail.com, nsc@kernel.org, paul@paul-moore.com,
-    petr.pavlu@suse.com, roberto.sassu@huawei.com,
-    samitolvanen@google.com, serge@hallyn.com, xiujianfeng@huawei.com,
-    zohar@linux.ibm.com
-Subject: Re: [PATCH v4 00/17] module: Introduce hash-based integrity checking
+	bh=Okjru8snA57GtyYjXxOgEFvqQ11nIpWc1KWAif9Vb94=;
+	b=Is5q8smq+1zCbNi8BcIT2F9JYkNoW4I2f6h3IsAC9+TAHZAJA+ptGoNxcksmNb9TJO7ASM
+	GrBNDpYopQXBfgTY5M6dWw4bCJMOtSruU2w8tp2eZKjimAA7Ubd1/OALNQQKUG+MLkwnUd
+	QRxbn1zb/g1zvxcC0GPrJcXHA9tPI/baTjQBdtonqWrDpkipE2wNvACjNoyebH1Ydp8s50
+	A946N23gdg226yVCStxech6jmC/7kbE9izKiwBmJX4vSz09YNs35yZeWZTuvY25R9TIzTe
+	p6tIfDELXJ+D1UMNJYD9v/kqx9EK1ZaQ5UlQiuNoexqlLkUa4DGFCiYIuHFNLQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1770118943;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Okjru8snA57GtyYjXxOgEFvqQ11nIpWc1KWAif9Vb94=;
+	b=kzcip55zJZvPYHswIjpDmmP5Hv1N0sjB+RQRB7cIM929AaKZ+VGOUSayo7E5Sl+KS/jTXA
+	BYV4WQ5EQ7zRpvCA==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>, 
+	Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	Matthieu Baerts <matttbe@kernel.org>, Mat Martineau <martineau@kernel.org>, 
+	Geliang Tang <geliang@kernel.org>, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-api@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kselftest@vger.kernel.org, 
+	mptcp@lists.linux.dev, linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
+	libc-alpha@sourceware.org, Carlos O'Donell <carlos@redhat.com>, 
+	Adhemerval Zanella <adhemerval.zanella@linaro.org>, Rich Felker <dalias@libc.org>, klibc@zytor.com, 
+	Florian Weimer <fweimer@redhat.com>
+Subject: Re: [PATCH net-next v2 0/4] net: uapi: Provide an UAPI definition of
+ 'struct sockaddr'
+Message-ID: <20260203122715-eeb304f9-4b42-4fc6-a527-658182a92ba5@linutronix.de>
+References: <20260120-uapi-sockaddr-v2-0-63c319111cf6@linutronix.de>
+ <20260121192729.2095aa25@kernel.org>
+ <20260130112309-28f2645b-e756-4173-96da-cf5c59191520@linutronix.de>
+ <20260130081741.425a92e0@kernel.org>
+ <3c46fc49-b41b-44a2-b42a-669cc7e6bb02@linutronix.de>
+ <20260131092517.6639d84c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Date: Tue, 03 Feb 2026 08:22:52 +0000
-Message-ID: <2546011.1770106972@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260131092517.6639d84c@kernel.org>
 
-
-James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
-
-> > There is another issue too: If you have a static private key that you
-> > use to sign modules (and probably other things), someone will likely
-> > give you a GPL request to get it.
+On Sat, Jan 31, 2026 at 09:25:17AM -0800, Jakub Kicinski wrote:
+> On Sat, 31 Jan 2026 11:26:32 +0100 Thomas Weißschuh wrote:
+> > Jan 30, 2026 17:17:46 Jakub Kicinski <kuba@kernel.org>:
+> > 
+> > > On Fri, 30 Jan 2026 11:34:15 +0100 Thomas Weißschuh wrote:  
+> > >> Some of them get broken by the new 'struct sockaddr', but some others are
+> > >> already broken just by the new transitive inclusion of libc-compat.h.
+> > >> So any header starting to use the compatibility machinery may trigger breakage
+> > >> in code including UAPI headers before libc header, even for completely new type
+> > >> definitions which themselves would not conflict with libc.  
+> > >
+> > > Let's split the uAPI header changes from any selftest changes.
+> > > If you're saying the the selftests no longer build after the uAPI
+> > > header changes then of course we can't apply the patches.  
+> > 
+> > Yes, the selftests don't build anymore after the uAPI changes.
+> > 
+> > "can't apply" as in
+> > * "can't apply separately"
+> > * "are unacceptable in general"
 > 
-> The SFC just lost that exact point in the Vizio trial, so I think
-> you're wrong on this under US law at least.  There's no general ability
-> under GPLv2 to demand long lived signing keys.
+> this one
+> 
+> > * "are too late for this cycle"
+> > ?
+> > 
+> > None of this is urgent.
+> > We can do the selftests in one cycle and the uAPI in another one.
+> > Feel free to pick up the patches as you see fit.
+> > (The mptcp changes already go through their tree, so need to be dropped here)
+> > I can also resubmit the patches differently if preferred.
+> 
+> The selftests are just a canary in the coalmine. If we break a bunch of
+> selftests chances are we'll also break compilation of real applications
+> for people. Subjective, but I don't see a sufficient upside here to do
+> that.
 
-Cool :-).  I just know that I've been sent GPL requests for kernel keys.
+Okay. We'll have around this inconsistency then.
 
-David
+> FWIW the typelimits change broke compilation of ethtool, we'll see if
+> anyone "outside kernel community itself" complains.
 
+Can you point me to that breakage? I was unable to find it.
+
+
+Thomas
