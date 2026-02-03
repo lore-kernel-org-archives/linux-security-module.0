@@ -1,159 +1,97 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0DF322B83
-	for <linux-security-module@vger.kernel.org>; Tue,  3 Feb 2026 04:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E005D2DC336;
+	Tue,  3 Feb 2026 08:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770092097; cv=none; b=RqGYZ0i2rVtHftYkM0l8r9AyMW5wgQXeF0fBHzD5UGxTNCsEla9SjBXJQN5qi5wunQEdATbYXDXWxjVAxxGTOlRi2ZBJBVEeNDbdoN2JZyihYl9HymRM7+xI7KJEmJv26Cm8Z2CVzEhBh8pk7IxiwJU25ymq+eRfZhKQtgjGV1E=
+	t=1770106706; cv=none; b=jHAHIksqopkiMv85p3kk9b2KPEQZYYguxcjfFACEMEEjjLaa0a8mFzHhCcEYd6xN3ansut/2qETzQug7mH3xFb2x+8SSrAQ96Qh0kchURp8ycHfu3fckwnOUnn8k6PmYXFCvhBfOLVsoLwK/vm5Zzep+kJVbQ5lhbSylE3xjszE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770092097; c=relaxed/simple;
-	bh=sJHfecm+9PgAuBM+q5zub2xzR1ygcAgU4V485eo94bw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:content-type; b=m89LzNjXchVoLLZ5+j5svURn/66zzAnYOsKBOGEc6LggU3YHLEeLgqtxWDNQt3clpfDRpLsqVmrhflXmgzni61ru/O4jkEmNo344bNvu4Ke5lmjq2tMV2W4QpfNoXVr8lyGF39IdFOx3l3Han/AIaU2BGkl5tHzwJk7iq8V/5ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BrFpq7Wx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1770106706; c=relaxed/simple;
+	bh=5rqqjsLuw5JA2sTQ/3twqQMctI8v/ml7Q4w1kuVcdd4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qaZ9fDW77OPbPj2B6V2rwkOyraI8MyK3EB7LqXBfk0OzoUHKpHFP32CJw+lT33dfcw8dFl9kr0I4F1IAO3ky5dSrmFuGGXw7jJtyvCPxuXMLntFFnqx2dxW43RcEH+3kWjNZ5MdDVpxbyYNFnqbZexPJrp0TIZGaM9oliewnAcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=n/vfRxg6; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BrFpq7Wx"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1770092095;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6/dgoz1907GpWsw9tjXtaDcvG7jiC8B/ivCp+i6DkyU=;
-	b=BrFpq7WxfvH9B4WGaloS8+OfduCgp1eAUX3gAVmoefcIOsZ65Qogb6PVcM+ug8bkmm7/c+
-	lnWW8+fVOWnQk+H0dg802/qtHFORiTtgcS7lvyNRo3r+71OxqHAVqezQUVVSLFEFpSI9bu
-	qdiMrxEjWvcS0A95FiExyeGdNjEFIbs=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-295-t-J__O8uMTSV9PcML0eC7Q-1; Mon, 02 Feb 2026 23:14:54 -0500
-X-MC-Unique: t-J__O8uMTSV9PcML0eC7Q-1
-X-Mimecast-MFC-AGG-ID: t-J__O8uMTSV9PcML0eC7Q_1770092093
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2a79164b686so52790435ad.0
-        for <linux-security-module@vger.kernel.org>; Mon, 02 Feb 2026 20:14:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770092093; x=1770696893;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=6/dgoz1907GpWsw9tjXtaDcvG7jiC8B/ivCp+i6DkyU=;
-        b=bZQFwiVRWEipdYais2gbxnoFLLtbgKEZy5PKokZ/YrN4goX7CnxaqRduFvcwMB9Pii
-         znFUgMgJFN4dEgwIjKaTjOU/ylk9BB33ZUkns4VXHHGQ3NUs7EwrK7t/3FK4jRbxRJzb
-         AZxZyULzTEJT8q1viGT+g9CfmUH+x/jfgqoyl3jLQNHmshYLP55yH+d2P/dQbZFDqRjb
-         rek1Nht50xqUiKgSpQFzRS7zhg0/0lGPPLq0lKsXjLz3dzXfVcZQEVMO4nG+cldp/LuI
-         Ys3uwwr4Ccd7+w8DG1Y+J/ejyTA/XyAnMc7Dv9+5117CWRmWuPliwjCsV3lKFZBpASXx
-         g0bA==
-X-Forwarded-Encrypted: i=1; AJvYcCULkav52mVngAWmDMTXL0QJ3yBSKYke4wn5d0mnzdg806k7mDjXbHuw3BQEd+/v908ehUfQ4W9GIZkzWGSssXRetePNq+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxf04Q3P6WXrPBIA73odYAp+sV9pwKl1Ce4ddYWBN8RxA4O0SaH
-	MczAT+W2YDLzm4K/ekRFx16dAaJ89yH/BYOVAEJt4feMi37Za5538gHTGCUeAhtFRU+5GRJQNnC
-	dWosy0Fj72S2emsZyCZzlXNGA94T+F1MF3A7YRbvUMSj+7FaLN6fAo1u+/yyWGgT6L41roJjqqV
-	F2zQ==
-X-Gm-Gg: AZuq6aKCCDCkUIYoh7yGCpJ8ylFc2/XoSlMaXbrcv96hJx8PCXHpvwgmpgfNCE240mb
-	+xc9124USTZXRyUGkZs8hO6eLfIXP0cxmGTyZO2G7O77PE5Zc4pMCg8sEo9BsuwIUQr2CZuUcyU
-	MNXkZCa6RqAOQ2tmRegkcgBzTaO0KG7Fwuw24c28rWgUIvTLyoxil3siYp+nBq9uT/Ewzgr8mv/
-	txBSKn5jQW04YspS+DozcHI8jV7oxAWY4Gpu1XZC/g78ghFgzK28DoOlMQKMs0TlDM6nyuDVUF0
-	h0jp6HZSmp5z1Is/v0p7aZo4Dv8LhbYUyGfLJFtPrdyZewbxCNUqIoNDJ4RCbvlK85ISN83y4/m
-	o
-X-Received: by 2002:a17:903:46cb:b0:297:d764:9874 with SMTP id d9443c01a7336-2a8d96a7688mr136629905ad.21.1770092092972;
-        Mon, 02 Feb 2026 20:14:52 -0800 (PST)
-X-Received: by 2002:a17:903:46cb:b0:297:d764:9874 with SMTP id d9443c01a7336-2a8d96a7688mr136629755ad.21.1770092092472;
-        Mon, 02 Feb 2026 20:14:52 -0800 (PST)
-Received: from localhost ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a88b5d93cdsm157121635ad.70.2026.02.02.20.14.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Feb 2026 20:14:52 -0800 (PST)
-From: Coiby Xu <coxu@redhat.com>
-To: linux-integrity@vger.kernel.org
-Cc: Heiko Carstens <hca@linux.ibm.com>,
-	Alexander Egorenkov <egorenar@linux.ibm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 2/3] evm: Don't enable fix mode when secure boot is enabled
-Date: Tue,  3 Feb 2026 12:14:30 +0800
-Message-ID: <20260203041434.872784-3-coxu@redhat.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260203041434.872784-1-coxu@redhat.com>
-References: <20260203041434.872784-1-coxu@redhat.com>
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="n/vfRxg6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1770106696;
+	bh=5rqqjsLuw5JA2sTQ/3twqQMctI8v/ml7Q4w1kuVcdd4=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=n/vfRxg6Mx5/kpRzWSjV+TvC+W8NSHQJEUS/jKVzgxv6MW9uqbaBEj7SdXD6bINIY
+	 a2cT8EgsdnGD4uvVSlmp3OchX1UaNyCxsecs9F0V0WeT0cCPuturmPv7d6VYPZCPZj
+	 84hzM8xKoedT9KUlynJg5BXImWAwfOvukxNdWCFY=
+Received: from [10.10.7.5] (unknown [51.52.16.146])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 83D871C02EC;
+	Tue, 03 Feb 2026 03:18:11 -0500 (EST)
+Message-ID: <8b12f1d28d3859467c3b5f6bc352038ce7627e54.camel@HansenPartnership.com>
+Subject: Re: [PATCH v4 00/17] module: Introduce hash-based integrity checking
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: David Howells <dhowells@redhat.com>, Mihai-Drosi =?ISO-8859-1?Q?C=E2ju?=
+	 <mcaju95@gmail.com>
+Cc: linux@weissschuh.net, arnd@arndb.de, arnout@bzzt.net,
+ atomlin@atomlin.com,  bigeasy@linutronix.de, chleroy@kernel.org,
+ christian@heusel.eu, corbet@lwn.net,  coxu@redhat.com, da.gomez@kernel.org,
+ da.gomez@samsung.com,  dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+ f.gruenbichler@proxmox.com,  jmorris@namei.org, kpcyrd@archlinux.org,
+ linux-arch@vger.kernel.org,  linux-doc@vger.kernel.org,
+ linux-integrity@vger.kernel.org,  linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-modules@vger.kernel.org,
+ linux-security-module@vger.kernel.org,  linuxppc-dev@lists.ozlabs.org,
+ lkp@intel.com, maddy@linux.ibm.com,  mattia@mapreri.org, mcgrof@kernel.org,
+ mpe@ellerman.id.au, nathan@kernel.org,  naveen@kernel.org,
+ nicolas.bouchinet@oss.cyber.gouv.fr, nicolas.schier@linux.dev, 
+ npiggin@gmail.com, nsc@kernel.org, paul@paul-moore.com,
+ petr.pavlu@suse.com,  roberto.sassu@huawei.com, samitolvanen@google.com,
+ serge@hallyn.com,  xiujianfeng@huawei.com, zohar@linux.ibm.com
+Date: Tue, 03 Feb 2026 08:18:09 +0000
+In-Reply-To: <2316630.1769965788@warthog.procyon.org.uk>
+References: <20260131073636.65494-1-mcaju95@gmail.com>
+	 <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
+	 <2316630.1769965788@warthog.procyon.org.uk>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: PvIYMRb_bCW7ILUCm31OMCeYC7taPt8Hwco8ltp2ox0_1770092093
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
 
-Similar to IMA fix mode, forbid EVM fix mode when secure boot is
-enabled.
+On Sun, 2026-02-01 at 17:09 +0000, David Howells wrote:
+> Mihai-Drosi C=C3=A2ju <mcaju95@gmail.com> wrote:
+>=20
+> > > The current signature-based module integrity checking has some
+> > > drawbacks
+> > in combination with reproducible builds. Either the module signing
+> > key is generated at build time, which makes the build
+> > unreproducible, or a static signing key is used, which precludes
+> > rebuilds by third parties and makes the whole build and packaging
+> > process much more complicated.
+>=20
+> There is another issue too: If you have a static private key that you
+> use to sign modules (and probably other things), someone will likely
+> give you a GPL request to get it.
 
-Reported-and-suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-Suggested-by: Roberto Sassu <roberto.sassu@huawei.com>
-Signed-off-by: Coiby Xu <coxu@redhat.com>
----
- security/integrity/evm/evm_main.c | 24 +++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+The SFC just lost that exact point in the Vizio trial, so I think
+you're wrong on this under US law at least.  There's no general ability
+under GPLv2 to demand long lived signing keys.
 
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 73d500a375cb..a54cb73b51ee 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -72,17 +72,25 @@ static struct xattr_list evm_config_default_xattrnames[] = {
- 
- LIST_HEAD(evm_config_xattrnames);
- 
-+static char *evm_cmdline __initdata;
-+core_param(evm, evm_cmdline, charp, 0);
-+
- static int evm_fixmode __ro_after_init;
--static int __init evm_set_fixmode(char *str)
-+static void __init evm_set_fixmode(void)
- {
--	if (strncmp(str, "fix", 3) == 0)
--		evm_fixmode = 1;
--	else
--		pr_err("invalid \"%s\" mode", str);
-+	if (!evm_cmdline)
-+		return;
- 
--	return 1;
-+	if (strncmp(evm_cmdline, "fix", 3) == 0) {
-+		if (arch_get_secureboot()) {
-+			pr_info("Secure boot enabled: ignoring evm=fix");
-+			return;
-+		}
-+		evm_fixmode = 1;
-+	} else {
-+		pr_err("invalid \"%s\" mode", evm_cmdline);
-+	}
- }
--__setup("evm=", evm_set_fixmode);
- 
- static void __init evm_init_config(void)
- {
-@@ -1119,6 +1127,8 @@ static int __init init_evm(void)
- 
- 	evm_init_config();
- 
-+	evm_set_fixmode();
-+
- 	error = integrity_init_keyring(INTEGRITY_KEYRING_EVM);
- 	if (error)
- 		goto error;
--- 
-2.52.0
+Regards,
+
+James
 
