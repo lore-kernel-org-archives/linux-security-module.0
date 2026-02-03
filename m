@@ -1,55 +1,55 @@
 Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD91327AC45
-	for <linux-security-module@vger.kernel.org>; Tue,  3 Feb 2026 23:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B7432571A
+	for <linux-security-module@vger.kernel.org>; Tue,  3 Feb 2026 23:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770160397; cv=none; b=iP8+WYU+Tl7c35LWMPVjcboGjE5XCCD3QY0mFgBoFcERJENSNDW6leZgjIjj2WRTif+fRqk0E/rBSUqNEKvVx6i3UfS4fTmwSrLhw6ZQ5/dj/cIzfHxxDlVrk6Gjwgbj87zkzGyqLY5kRIuK8HfvvsquVM2r/BLTEJGXnkoezfY=
+	t=1770160398; cv=none; b=lGhVxfAKkokG5QytlhRUXzuasA4n8mrKUwZuY+a6YjLATlM16TstIMcYIN46ilqTdkEl759Z+fb0DxldGxxJP77/UsjcemYC6OMcOB7rmAWVfNVJ3KUfFlJ9uFOpB498OyLonjRDy0uL3O0GFlZVvdxf680ZPe9qzpgxYPStfi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770160397; c=relaxed/simple;
-	bh=UG+p8ucDSms9RIpNHryjWM/R7MdjI07ubZx1leS9gTE=;
+	s=arc-20240116; t=1770160398; c=relaxed/simple;
+	bh=8yKINERM/ugVZGeVqGkmyAyS2A7APJ8XFTMsqPySaZ4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VQcxfQaXJO1+v+NRWZBx80kJiNqProK0wO/NyAcUwUgMXxsDKSo6yQh0POEasKGg81ewMF+/iEBnbyM3Y1NjVRwIW/OToQTBRDUCVeEp/IXzxXM00aqSbeoQ4EIiwWkcIvg0l+HS9KTKhH3KDdDnEfqOWKZ5sBfbwfAh9nUDDPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=daBljE9I; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fKd90ab7; arc=none smtp.client-ip=103.168.172.158
+	 MIME-Version; b=ivdc/uFY7n56eB7aw/kkX5xyClLQZP1i3CN7WclEdVnfPuVEw1K0s9cmISScHbHpe5VKYeKYKT7wVbewk7nmYTegNCj2vfB6fEwoV5Hm6tt4vdo9cUCHoe16iDH1fmy0te9MK4pyo68oYhHq20DckIa/6fn3wQl4c0UeSlVdXzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=DDRauE6R; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=trWE3kJP; arc=none smtp.client-ip=103.168.172.158
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="daBljE9I";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fKd90ab7"
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 24ECF14000C9;
-	Tue,  3 Feb 2026 18:13:15 -0500 (EST)
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="DDRauE6R";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="trWE3kJP"
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 937A014000CE;
+	Tue,  3 Feb 2026 18:13:16 -0500 (EST)
 Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Tue, 03 Feb 2026 18:13:15 -0500
+  by phl-compute-02.internal (MEProxy); Tue, 03 Feb 2026 18:13:16 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
 	:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1770160395; x=
-	1770246795; bh=ZqQJQnAJd+PF8S1jvhPB6VOPmrx5r+uOrxA/vvV9/m0=; b=d
-	aBljE9IwX9ShbDtkVz6xDlVD7ReoTPZdOcYliJLD6YXHLRpoxag2Jr3LxMnYlQRV
-	y7zo/kV6VuUqlrGLC1/2hrN0J5HCJdej5cT4nCjQdjy2pd3ai/n7/AkMCFmPKbQt
-	VzD38T+aUe1VAXbqvpudUMJCEAU4uHUAlLHSDmkXjdYoR1CVk5mtpiB79xAZpBCB
-	5yMrlrxBhshBqOOHWJkaedH4jZD2g4OplrSmTtMI378X2nx1PEcX6ZwTPHsTYHxJ
-	4BzagcD9VXITipmY5liGH2QCufYik4HnP11ATIx9YOQMY5GN+gb/sWwxdcRorqf8
-	bJiPRacoKfKNGy/95M+3w==
+	:reply-to:subject:subject:to:to; s=fm3; t=1770160396; x=
+	1770246796; bh=DGOM1Tbs7ttLBVCMyjU5NOXGxleHzsrKuRJp2BF60Kc=; b=D
+	DRauE6R/XezwY6TjeKksCJ219PpFMCkoqu7o4XwACYLttOo6DHi8tnaeUvo/8+Fz
+	TCkT5/ayXPa0SNdrjwQ16MbMzGr2/BgMTKhS4IAnlhBK+P/scqavEHnuKeVx4pPn
+	SPeGB2olmlgvv9vPUMRWEf1tpdT2H7g4d9N5Lj6VEYyos2i2dbVG9UStEdpUObv1
+	KtapKmAXsdQwnXTZyFlrGdntFZ3/YDpjMCGB7dFKZupGTMCYiH351kUme5S6roNC
+	60tBIeCtMDPjdtHJkWtGaJXqoFUbZuBaxK99+Ra7a6zRlszpcSSNC5OodoZ6+t/2
+	S/jtrOkdIcV8/dOLXJ0Zw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1770160395; x=1770246795; bh=Z
-	qQJQnAJd+PF8S1jvhPB6VOPmrx5r+uOrxA/vvV9/m0=; b=fKd90ab7Ht4pyEcHb
-	2eWj7RSXImc96Plup6KCggqQRiNOmvzXUTW02E/vHECrFpRUqML5CfuN0tQRxQqF
-	hiWmS5hemHhK6e+7kNgvqJPamXMY6Vlkqo8GNC/s+ONjTDuuN1TywW+yAUaWQPqn
-	/VNTR6Yzt8w01yLvyGRiMY71ZKrwU/jQVWYsEawGnR+SIcMj9+u5W0aDe16Wd/KW
-	mM4tTYWKNuPK0bK+0atyMN7bDlKREJRgzBftCbo5xS7i3V2T7WvA4lpfpCJl5Yzj
-	qQjc1nZYu+4joHBq2bh0u+axkTAlO9TBx86IlyFkCm1h8q6lWpNlil7LQ7SmElGN
-	TZ5xQ==
-X-ME-Sender: <xms:C4GCaXYuwhDbLzu1erSBti9li94EOxsaIAF4ObOk-R72ookyFEsRag>
-    <xme:C4GCaY-s5_MR4ikvD5SzTLhjml3fE3V0QQA4vsmWa3Bn4VKx5uVXLnMzmd94IHVIr
-    RejBfdgf7bE_S-Mdr95mYcOPh-XQiiA22hqs0LtiZk8DdnipXnfhQzC>
-X-ME-Received: <xmr:C4GCadnHnpuMPmdwEcDNCkhLEVQ9aLW9ycwCB6-TuJ6XWycCeP0YAZ93SXBFwMtxZwDIDlaEdPwJq0r1tZ0VUIGSG-_A97S3oqUgf8F9yB0uZ7Y-DMe6joY>
+	:x-me-sender:x-sasl-enc; s=fm3; t=1770160396; x=1770246796; bh=D
+	GOM1Tbs7ttLBVCMyjU5NOXGxleHzsrKuRJp2BF60Kc=; b=trWE3kJPg+oGnWR1c
+	A9K4QNDwZpKI33PmpdmdCr6muT4R8PMR84E2FaGsazgRphFUFlfBZ/XVYlFJDdqT
+	iO9oOB1ZWuLSr26+02yTwfYkidaXPH4BH9DeNa1Fmqz5S967Wvvb7EjBI2uBrYT3
+	LN3vcb/IjOazMiuTccX8LZd856+jFVEKsvHXz6rdK+oYnPKWOKbFIoNSXy4hb11D
+	QpfOWKb9bSVdEpqpOAusqIn1Z8Zx+arUguglSIZJQXl8/Btjq69nFhPqg71i4N2C
+	olom+Py2tH/LcNDaJNDdZVSYtuSpgaCsvsp4PUdxtuyWMn3vDQHivKVbaUpt8+RC
+	tVk1w==
+X-ME-Sender: <xms:DIGCaQ7HMcyceCx5v4jZ5jkgm7868-CZWIWmTXvU4BfXdHynSP8Vdg>
+    <xme:DIGCaUc1pIH8KiuwrO_XLlLwYqxJmkqeNSy3VBGJBp4EDmWgkh45byqKQUNqpfPg4
+    jUVui6YPI5FWXmBf5IcDRAH4Oh7iKrN_odLExcAmHI074PrEWt5P5Cy>
+X-ME-Received: <xmr:DIGCaTFOWvFp0UUTEK580F_ztrFWlV1v7-oEdNqAjucdy0wkOClFG8rzMmCxprvBDbjE2zUB30an9FWhz5PaC-SkDzuyM5q03dkq5dCBHot2ZIcV05a010U>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukedufeefucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
@@ -65,14 +65,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukedufeefucetufdote
     thhopehfrghhihhmihhtrghhvghrrgesghhmrghilhdrtghomhdprhgtphhtthhopehuth
     hilhhithihvghmrghljeejsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidq
     shgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:C4GCadzCwGHkfEoKaT0_GqDFMfthFR0sik9URuviVOZwxhwttBUOVg>
-    <xmx:C4GCaX7PdLoVSI5yfCfbTiaRAzPfuGffxK_r1zwKyqUaqdUXXHyZMQ>
-    <xmx:C4GCadVC8fOLiL6aDtyqd-XbQAAQ3khNKqxyF79VQoFZ_V1WilRKvQ>
-    <xmx:C4GCafLOJ7ttGFKTwm9MGosOjVKj6XdRI4hv4W3unoJznZgvxs1bxw>
-    <xmx:C4GCabVmg_W6tYHc40Esmfp0PwoKPuCTqyIQrE5GgmsRLgLWQAMUCznr>
+X-ME-Proxy: <xmx:DIGCaVQGbIYxEdLYUPnBPSdYeZdRhTqQFZFSXHuUpGvWmUnvdTg7ZA>
+    <xmx:DIGCaZZZnni_h4zprLDzw50FvaWdRxiXWy0esRvcnKyjM8cKedCU8Q>
+    <xmx:DIGCaQ2f0luDbAeMwKd5XlqRAQVIAB1b21BFrKjn-CjFiluqaqTJPw>
+    <xmx:DIGCacpilgKTTt7fi7e98xVWdHMweY-JvsKtc8suSJTFONZwAELidQ>
+    <xmx:DIGCaS3-ZXWayETys0x1RxY48JA4nEpyFunVaIGe8yd-Rgbj5kugmL9e>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 3 Feb 2026 18:13:13 -0500 (EST)
+ 3 Feb 2026 18:13:15 -0500 (EST)
 From: Tingmao Wang <m@maowtm.org>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 Cc: Tingmao Wang <m@maowtm.org>,
@@ -83,9 +83,9 @@ Cc: Tingmao Wang <m@maowtm.org>,
 	Tahera Fahimi <fahimitahera@gmail.com>,
 	Justin Suess <utilityemal77@gmail.com>,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v3 3/6] samples/landlock: Support LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET
-Date: Tue,  3 Feb 2026 23:12:30 +0000
-Message-ID: <8a93c69db32889fb156a5293307a02aabc0c9617.1770160146.git.m@maowtm.org>
+Subject: [PATCH v3 4/6] selftests/landlock: Support pathname socket path in set_unix_address
+Date: Tue,  3 Feb 2026 23:12:31 +0000
+Message-ID: <2b09c6641c78746be497ff250ccc0dcb0524e60f.1770160146.git.m@maowtm.org>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1770160146.git.m@maowtm.org>
 References: <cover.1770160146.git.m@maowtm.org>
@@ -97,105 +97,184 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add support for this new scope bit to the sandboxer via LL_SCOPED=u
+To prepare for extending the socket tests to do non-abstract sockets too,
+extend set_unix_address() to also be able to populate a non-abstract
+socket path under TMP_DIR.  Also use snprintf for good measure.
+
+This also changes existing callers to pass true for the abstract argument.
 
 Signed-off-by: Tingmao Wang <m@maowtm.org>
 ---
+ tools/testing/selftests/landlock/common.h     | 33 +++++++++++++++----
+ tools/testing/selftests/landlock/net_test.c   |  2 +-
+ .../landlock/scoped_abstract_unix_test.c      | 30 ++++++++---------
+ .../selftests/landlock/scoped_signal_test.c   |  2 +-
+ 4 files changed, 44 insertions(+), 23 deletions(-)
 
-Changes in v3:
-- Add message
-
- samples/landlock/sandboxer.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
-
-diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-index e7af02f98208..2de14e1c787d 100644
---- a/samples/landlock/sandboxer.c
-+++ b/samples/landlock/sandboxer.c
-@@ -234,14 +234,16 @@ static bool check_ruleset_scope(const char *const env_var,
- 	bool error = false;
- 	bool abstract_scoping = false;
- 	bool signal_scoping = false;
-+	bool named_scoping = false;
- 
- 	/* Scoping is not supported by Landlock ABI */
- 	if (!(ruleset_attr->scoped &
--	      (LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET | LANDLOCK_SCOPE_SIGNAL)))
-+	      (LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET | LANDLOCK_SCOPE_SIGNAL |
-+	       LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET)))
- 		goto out_unset;
- 
- 	env_type_scope = getenv(env_var);
--	/* Scoping is not supported by the user */
-+	/* Scoping is not requested by the user */
- 	if (!env_type_scope || strcmp("", env_type_scope) == 0)
- 		goto out_unset;
- 
-@@ -254,6 +256,9 @@ static bool check_ruleset_scope(const char *const env_var,
- 		} else if (strcmp("s", ipc_scoping_name) == 0 &&
- 			   !signal_scoping) {
- 			signal_scoping = true;
-+		} else if (strcmp("u", ipc_scoping_name) == 0 &&
-+			   !named_scoping) {
-+			named_scoping = true;
- 		} else {
- 			fprintf(stderr, "Unknown or duplicate scope \"%s\"\n",
- 				ipc_scoping_name);
-@@ -270,6 +275,8 @@ static bool check_ruleset_scope(const char *const env_var,
- 		ruleset_attr->scoped &= ~LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET;
- 	if (!signal_scoping)
- 		ruleset_attr->scoped &= ~LANDLOCK_SCOPE_SIGNAL;
-+	if (!named_scoping)
-+		ruleset_attr->scoped &= ~LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET;
- 
- 	unsetenv(env_var);
- 	return error;
-@@ -299,7 +306,7 @@ static bool check_ruleset_scope(const char *const env_var,
- 
- /* clang-format on */
- 
--#define LANDLOCK_ABI_LAST 7
-+#define LANDLOCK_ABI_LAST 8
- 
- #define XSTR(s) #s
- #define STR(s) XSTR(s)
-@@ -325,6 +332,7 @@ static const char help[] =
- 	"* " ENV_SCOPED_NAME ": actions denied on the outside of the landlock domain\n"
- 	"  - \"a\" to restrict opening abstract unix sockets\n"
- 	"  - \"s\" to restrict sending signals\n"
-+	"  - \"u\" to restrict opening pathname (non-abstract) unix sockets\n"
- 	"\n"
- 	"A sandboxer should not log denied access requests to avoid spamming logs, "
- 	"but to test audit we can set " ENV_FORCE_LOG_NAME "=1\n"
-@@ -334,7 +342,7 @@ static const char help[] =
- 	ENV_FS_RW_NAME "=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
- 	ENV_TCP_BIND_NAME "=\"9418\" "
- 	ENV_TCP_CONNECT_NAME "=\"80:443\" "
--	ENV_SCOPED_NAME "=\"a:s\" "
-+	ENV_SCOPED_NAME "=\"a:s:u\" "
- 	"%1$s bash -i\n"
- 	"\n"
- 	"This sandboxer can use Landlock features up to ABI version "
-@@ -356,7 +364,8 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
- 				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
- 		.scoped = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
--			  LANDLOCK_SCOPE_SIGNAL,
-+			  LANDLOCK_SCOPE_SIGNAL |
-+			  LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET,
+diff --git a/tools/testing/selftests/landlock/common.h b/tools/testing/selftests/landlock/common.h
+index 90551650299c..c55c11434e27 100644
+--- a/tools/testing/selftests/landlock/common.h
++++ b/tools/testing/selftests/landlock/common.h
+@@ -241,13 +241,34 @@ struct service_fixture {
  	};
- 	int supported_restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON;
- 	int set_restrict_flags = 0;
-@@ -436,6 +445,10 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 		/* Removes LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON for ABI < 7 */
- 		supported_restrict_flags &=
- 			~LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON;
-+		__attribute__((fallthrough));
-+	case 7:
-+		/* Removes LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET for ABI < 8 */
-+		ruleset_attr.scoped &= ~LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET;
+ };
  
- 		/* Must be printed for any ABI < LANDLOCK_ABI_LAST. */
- 		fprintf(stderr,
++#define PATHNAME_UNIX_SOCK_DIR TMP_DIR
++
++/**
++ * set_unix_address - Set up srv->unix_addr and srv->unix_addr_len.
++ * @srv: Service fixture containing the socket address to initialize
++ * @index: Index to include in socket names
++ * @abstract: If true, creates an abstract socket address (sun_path[0] ==
++ *     '\0') with the given name.  If false, creates a pathname socket
++ *     address with the given path.
++ */
+ static void __maybe_unused set_unix_address(struct service_fixture *const srv,
+-					    const unsigned short index)
++					    const unsigned short index,
++					    const bool abstract)
+ {
+ 	srv->unix_addr.sun_family = AF_UNIX;
+-	sprintf(srv->unix_addr.sun_path,
+-		"_selftests-landlock-abstract-unix-tid%d-index%d", sys_gettid(),
+-		index);
+-	srv->unix_addr_len = SUN_LEN(&srv->unix_addr);
+-	srv->unix_addr.sun_path[0] = '\0';
++	if (abstract) {
++		snprintf(srv->unix_addr.sun_path,
++			 sizeof(srv->unix_addr.sun_path),
++			 "_selftests-landlock-abstract-unix-tid%d-index%d",
++			 sys_gettid(), index);
++		srv->unix_addr_len = SUN_LEN(&srv->unix_addr);
++		srv->unix_addr.sun_path[0] = '\0';
++	} else {
++		snprintf(srv->unix_addr.sun_path,
++			 sizeof(srv->unix_addr.sun_path),
++			 PATHNAME_UNIX_SOCK_DIR
++			 "/pathname-unix-tid%d-index%d.sock",
++			 sys_gettid(), index);
++		srv->unix_addr_len = sizeof(srv->unix_addr);
++	}
+ }
+diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
+index b34b139b3f89..fd3fe51ce92f 100644
+--- a/tools/testing/selftests/landlock/net_test.c
++++ b/tools/testing/selftests/landlock/net_test.c
+@@ -69,7 +69,7 @@ static int set_service(struct service_fixture *const srv,
+ 		return 0;
+ 
+ 	case AF_UNIX:
+-		set_unix_address(srv, index);
++		set_unix_address(srv, index, true);
+ 		return 0;
+ 	}
+ 	return 1;
+diff --git a/tools/testing/selftests/landlock/scoped_abstract_unix_test.c b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
+index 72f97648d4a7..4a790e2d387d 100644
+--- a/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
++++ b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
+@@ -58,8 +58,8 @@ FIXTURE_SETUP(scoped_domains)
+ 
+ 	memset(&self->stream_address, 0, sizeof(self->stream_address));
+ 	memset(&self->dgram_address, 0, sizeof(self->dgram_address));
+-	set_unix_address(&self->stream_address, 0);
+-	set_unix_address(&self->dgram_address, 1);
++	set_unix_address(&self->stream_address, 0, true);
++	set_unix_address(&self->dgram_address, 1, true);
+ }
+ 
+ FIXTURE_TEARDOWN(scoped_domains)
+@@ -280,7 +280,7 @@ FIXTURE_SETUP(scoped_audit)
+ 	disable_caps(_metadata);
+ 
+ 	memset(&self->dgram_address, 0, sizeof(self->dgram_address));
+-	set_unix_address(&self->dgram_address, 1);
++	set_unix_address(&self->dgram_address, 1, true);
+ 
+ 	set_cap(_metadata, CAP_AUDIT_CONTROL);
+ 	self->audit_fd = audit_init_with_exe_filter(&self->audit_filter);
+@@ -392,16 +392,16 @@ FIXTURE_SETUP(scoped_vs_unscoped)
+ 
+ 	memset(&self->parent_stream_address, 0,
+ 	       sizeof(self->parent_stream_address));
+-	set_unix_address(&self->parent_stream_address, 0);
++	set_unix_address(&self->parent_stream_address, 0, true);
+ 	memset(&self->parent_dgram_address, 0,
+ 	       sizeof(self->parent_dgram_address));
+-	set_unix_address(&self->parent_dgram_address, 1);
++	set_unix_address(&self->parent_dgram_address, 1, true);
+ 	memset(&self->child_stream_address, 0,
+ 	       sizeof(self->child_stream_address));
+-	set_unix_address(&self->child_stream_address, 2);
++	set_unix_address(&self->child_stream_address, 2, true);
+ 	memset(&self->child_dgram_address, 0,
+ 	       sizeof(self->child_dgram_address));
+-	set_unix_address(&self->child_dgram_address, 3);
++	set_unix_address(&self->child_dgram_address, 3, true);
+ }
+ 
+ FIXTURE_TEARDOWN(scoped_vs_unscoped)
+@@ -622,9 +622,9 @@ FIXTURE_SETUP(outside_socket)
+ 	drop_caps(_metadata);
+ 
+ 	memset(&self->transit_address, 0, sizeof(self->transit_address));
+-	set_unix_address(&self->transit_address, 0);
++	set_unix_address(&self->transit_address, 0, true);
+ 	memset(&self->address, 0, sizeof(self->address));
+-	set_unix_address(&self->address, 1);
++	set_unix_address(&self->address, 1, true);
+ }
+ 
+ FIXTURE_TEARDOWN(outside_socket)
+@@ -802,9 +802,9 @@ TEST_F(various_address_sockets, scoped_pathname_sockets)
+ 
+ 	/* Abstract address. */
+ 	memset(&stream_abstract_addr, 0, sizeof(stream_abstract_addr));
+-	set_unix_address(&stream_abstract_addr, 0);
++	set_unix_address(&stream_abstract_addr, 0, true);
+ 	memset(&dgram_abstract_addr, 0, sizeof(dgram_abstract_addr));
+-	set_unix_address(&dgram_abstract_addr, 1);
++	set_unix_address(&dgram_abstract_addr, 1, true);
+ 
+ 	/* Unnamed address for datagram socket. */
+ 	ASSERT_EQ(0, socketpair(AF_UNIX, SOCK_DGRAM, 0, unnamed_sockets));
+@@ -990,9 +990,9 @@ TEST(datagram_sockets)
+ 
+ 	drop_caps(_metadata);
+ 	memset(&connected_addr, 0, sizeof(connected_addr));
+-	set_unix_address(&connected_addr, 0);
++	set_unix_address(&connected_addr, 0, true);
+ 	memset(&non_connected_addr, 0, sizeof(non_connected_addr));
+-	set_unix_address(&non_connected_addr, 1);
++	set_unix_address(&non_connected_addr, 1, true);
+ 
+ 	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
+ 	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
+@@ -1090,9 +1090,9 @@ TEST(self_connect)
+ 
+ 	drop_caps(_metadata);
+ 	memset(&connected_addr, 0, sizeof(connected_addr));
+-	set_unix_address(&connected_addr, 0);
++	set_unix_address(&connected_addr, 0, true);
+ 	memset(&non_connected_addr, 0, sizeof(non_connected_addr));
+-	set_unix_address(&non_connected_addr, 1);
++	set_unix_address(&non_connected_addr, 1, true);
+ 
+ 	connected_socket = socket(AF_UNIX, SOCK_DGRAM, 0);
+ 	non_connected_socket = socket(AF_UNIX, SOCK_DGRAM, 0);
+diff --git a/tools/testing/selftests/landlock/scoped_signal_test.c b/tools/testing/selftests/landlock/scoped_signal_test.c
+index d8bf33417619..8d1e1dc89c43 100644
+--- a/tools/testing/selftests/landlock/scoped_signal_test.c
++++ b/tools/testing/selftests/landlock/scoped_signal_test.c
+@@ -463,7 +463,7 @@ TEST_F(fown, sigurg_socket)
+ 	pid_t child;
+ 
+ 	memset(&server_address, 0, sizeof(server_address));
+-	set_unix_address(&server_address, 0);
++	set_unix_address(&server_address, 0, true);
+ 
+ 	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
+ 	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
 -- 
 2.52.0
+
