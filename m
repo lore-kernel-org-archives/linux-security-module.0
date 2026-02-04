@@ -1,204 +1,147 @@
-Received: from flow-a6-smtp.messagingengine.com (flow-a6-smtp.messagingengine.com [103.168.172.141])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9733235503B;
-	Wed,  4 Feb 2026 05:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D405A350A00;
+	Wed,  4 Feb 2026 05:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770181788; cv=none; b=CjB0s7cfL9OvLGfgheDcMovh69Txv5i5QIuneFIc09tqQz/BI48W8KZG0upBxg0AmIVHpvIzdv/cMH2QJG1E6YHlxjiPsNlID5LlHipo/083ngST1Wm80ITxFPirLY8AyzT0xhc8su/1H1DKmzjb47e2zJqvGRkmPRrWCV7fHXI=
+	t=1770184311; cv=none; b=DfNGdCpErIqkxD8AnfDMSyt21id1UwKZc8+eCC3Y4kryu6MJdy5EqW7RYstnG1sfz/T4SCztuGaNWJbVQ0gKBsWkZcJ5MWczTTJRmLRxhw9RU6Jud0ebcK3Tq74DOIZw3cGk6aOw3/n8Bt3L3HhLZWrbuRkOHA1o9qL5i5/A5Rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770181788; c=relaxed/simple;
-	bh=EcuUci3NrafWHA9mqFebcPpgK+jW1TgeLPfYj6hWJgo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Cqd8zYgwRIS3Q7LC7HhU9SIc2FFLxrpaBZZiQOWY0cyLUL52JEf5gH49Bn2sKojAPICLIRUuN7UydqWDK0vn/G+RvXZnhlqTa2PPqStHdHtH8Svo+KjdVUA1T+Du1T2gYVMWViBoCnt/IkKuolMMPpXZirXAKjg55L2G8GE9rt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=IA/OH9nB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VvpC2+sx; arc=none smtp.client-ip=103.168.172.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+	s=arc-20240116; t=1770184311; c=relaxed/simple;
+	bh=WyeMu1AkwqKC5I7WTqh9UrxM26rqyj+dwIwTtP2n/uA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OyTpPnMVPJmVRzfW4eAZ1gmzg1ckR0JF4Z8Iia4QBQu/5JdxmUmwamOFdsfBH8xpaQE2OTh1234tVWiIhTB2ETgIpCb3aH2nX8uV7hjL++DtAj1cyzumAqUlugu72FNInSFquMTtomJT5A/WJqDyKr+g9blfFIFiZCXDPp71vlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mH1c+uNa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=d6ZMtz0u; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="IA/OH9nB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VvpC2+sx"
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailflow.phl.internal (Postfix) with ESMTP id C45231380795;
-	Wed,  4 Feb 2026 00:09:47 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Wed, 04 Feb 2026 00:09:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to; s=fm3; t=1770181787;
-	 x=1770188987; bh=FodiWxTGOrcO4kqPhH8V5J2d81hZRju7CaAdC0kBghU=; b=
-	IA/OH9nBkl0L/V4jFP0mIYu5PuKIWyyOkTV1eMHW4QZ7laA9FwSl+rvwQD8LUZIp
-	unDzrnaePoojghi7bR9bhXeZN06pX2dwTMqHCe9tI2g/fRs+DQIix/0+kn6nxe9T
-	hsMLoe0UHc3+8Vy+XcMCdLkvasUKBJ7HwwMkdy8dFVFW/QTWdqwOtPjAe32LnlbH
-	HQiWbqoxnPWmxAgTymOh89AME4UI3S9tm9r+x6bDau0zH6ZV8haZEJ0Xf2lZIOlU
-	Gyp9nLt58dFVVQMHoXoGcNmfvQagYknwlVX8k7P9hbOdpFiGdxL6JXqayrorAjmG
-	+L3C6kyZ83Yk/IpCvuiFGA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1770181787; x=1770188987; bh=F
-	odiWxTGOrcO4kqPhH8V5J2d81hZRju7CaAdC0kBghU=; b=VvpC2+sxldBw2tIOW
-	77AL6W0NTYq6ye2ZXiZ6qd6fJui28cxi+I6rws1ykZaKi8AO5OrEWElgFhEZrjW0
-	DNHvITXcnfTkgCsX6s6duFifX3jwG8J5XNp1iGHv0fFCAiLwqn3c7jmhrt+GhSZY
-	cmh4lZmKT0BIAZBJqjxaYyuf53nTkzqLtPRTbnmxMDndi6K3W7OU9B6eHmueuARz
-	7g5vX6ai8jIhDKtxb/CqwfxGxnNY2FNSxW0H0img3B+L8yvltu+hOkXcCHsIWzsI
-	PPDD37WzgTyV7h/3LSwqo+hU6AcUKoUNXOVsA2Hv9E6PXTzKf4e7DrjTfKRASpSy
-	NpyOg==
-X-ME-Sender: <xms:m9SCaReHppifkN_Cf5pTv_545vMDS_sv_yJ9eBTKCHZ1YTNCXkRCIw>
-    <xme:m9SCaazVi91ief2zLXDLLQWt7rXy2ZSNzJqjO4DnknaJU9H6B-uYqXxzL6ZYoJRue
-    d2ihvs9jQk0PwqTuKHRvYPN5oQAPii3NDr8dYRArtqGlE9I2A>
-X-ME-Received: <xmr:m9SCaageDee_ewTZdEfo4v5irqih55Q_MG6RsNlHJ4hIyo3audOAfLi9JZMEfZMB_hVGeOQApdLuRPyEuHvlgNNt9VgK56EXDH5euRUdiBYt>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukedukeeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhephffvvefufffkofgjfhhrggfgsedtkeertdertddtnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epveevkeffudeuvefhieeghffgudektdelkeejiedtjedugfeukedvkeffvdefvddunecu
-    vehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepvddupdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
-    hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhr
-    tghpthhtohepjhgrtghksehsuhhsvgdrtgii
-X-ME-Proxy: <xmx:m9SCaf7wUR-6rC9qxE37Pn-XLmXMIJbY-YfMMuv6gX6Hfc4oF7ghwA>
-    <xmx:m9SCafrgu7obCByNluMMGgzqCW9uKie2YIniIl8drQyqVYXq9fa8lA>
-    <xmx:m9SCaVU2Oo14aWIcBSdLi7nwxx2H6Jjh6w-fdwFVHtOG6gTrp4vHPg>
-    <xmx:m9SCaW7ZPddf_NbC6pITmfJZdwCMnXFE3qGdi2pLlgQhx_l0N3-XFQ>
-    <xmx:m9SCaYGk926uEosUz1L3DRfHiJX2djLrvwovEuCTy8dCgWLI-yIwGImH>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 4 Feb 2026 00:09:42 -0500 (EST)
-From: NeilBrown <neilb@ownmail.net>
-To: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	David Howells <dhowells@redhat.com>,
-	Jan Kara <jack@suse.cz>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-unionfs@vger.kernel.org,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org
-Subject: [PATCH 13/13] VFS: unexport lock_rename(), lock_rename_child(), unlock_rename()
-Date: Wed,  4 Feb 2026 15:57:57 +1100
-Message-ID: <20260204050726.177283-14-neilb@ownmail.net>
-X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
-In-Reply-To: <20260204050726.177283-1-neilb@ownmail.net>
-References: <20260204050726.177283-1-neilb@ownmail.net>
-Reply-To: NeilBrown <neil@brown.name>
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mH1c+uNa";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="d6ZMtz0u"
+Date: Wed, 4 Feb 2026 06:51:46 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1770184308;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sZHCk7fKGvf7QzEKyi64QeW2Liq4IP/rnnD/aBkMl5c=;
+	b=mH1c+uNacxWRUNxmS4+KhnW02S+ScCNg0PSMrRBV3jl5Y9gLNvMzn2wKTFE119EqwrHZVK
+	0Xs2BQCwy0xLs2a7+gdd8+UIN1NJkFxmfKrvCWu8BRowAICffN4IDMn7nvd5n8pRhGlOTI
+	/lcoeDTVwx4C/5arPqxl4Pr1DwVM/XXISPy+Ud/+o5dE+3KjyDGBJawYLfFhBLuzKlHeEe
+	Jjaaa07nXgXxFL74kUd+x+t5iZVGeWcu8qhM/QlOyI3o3mdtjH2S9THZPgLNdLZakBJJlE
+	ZR3GP0J25NhG4p4mppsRJ+sb9ftJwtMZWzQmpngxhxJY0va5sW06twgDzT0yog==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1770184308;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sZHCk7fKGvf7QzEKyi64QeW2Liq4IP/rnnD/aBkMl5c=;
+	b=d6ZMtz0uUl3VOFryIOVmf39EYhSjv1iRpyzj0W6e5d3GCAZeC1TF0aBjXeboj7tm1lJ6gw
+	gmXb8/M6hAEDp/DQ==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>, 
+	Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	Matthieu Baerts <matttbe@kernel.org>, Mat Martineau <martineau@kernel.org>, 
+	Geliang Tang <geliang@kernel.org>, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-api@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kselftest@vger.kernel.org, 
+	mptcp@lists.linux.dev, linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
+	libc-alpha@sourceware.org, Carlos O'Donell <carlos@redhat.com>, 
+	Adhemerval Zanella <adhemerval.zanella@linaro.org>, Rich Felker <dalias@libc.org>, klibc@zytor.com, 
+	Florian Weimer <fweimer@redhat.com>
+Subject: Re: [PATCH net-next v2 0/4] net: uapi: Provide an UAPI definition of
+ 'struct sockaddr'
+Message-ID: <20260204064248-d9c4ab78-f6d4-4ac6-8d55-e939bc1df6d2@linutronix.de>
+References: <20260120-uapi-sockaddr-v2-0-63c319111cf6@linutronix.de>
+ <20260121192729.2095aa25@kernel.org>
+ <20260130112309-28f2645b-e756-4173-96da-cf5c59191520@linutronix.de>
+ <20260130081741.425a92e0@kernel.org>
+ <3c46fc49-b41b-44a2-b42a-669cc7e6bb02@linutronix.de>
+ <20260131092517.6639d84c@kernel.org>
+ <20260203122715-eeb304f9-4b42-4fc6-a527-658182a92ba5@linutronix.de>
+ <20260203144011.32d5b223@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260203144011.32d5b223@kernel.org>
 
-From: NeilBrown <neil@brown.name>
+On Tue, Feb 03, 2026 at 02:40:11PM -0800, Jakub Kicinski wrote:
+> On Tue, 3 Feb 2026 12:42:22 +0100 Thomas Weißschuh wrote:
+> > > FWIW the typelimits change broke compilation of ethtool, we'll see if
+> > > anyone "outside kernel community itself" complains.  
+> > 
+> > Can you point me to that breakage? I was unable to find it.
+> 
+> Not reported on the ML, and it's kinda annoying to repro because 
+> the uAPI header sync script isn't committed :/ You have to check 
+> this out
+> 
+>  https://git.kernel.org/pub/scm/network/ethtool/ethtool.git/
+> 
+> and run a script like this to sync headers from the kernel (then build):
+> 
+> #!/bin/bash -e
+> 
+> sn="${0##*/}"
+> export ARCH="x86_64"
+> 
+> if [ ! -d "$LINUX_GIT" ]; then
+>     echo "${sn}: LINUX_GIT not set" >&2
+>     exit 1
+> fi
+> 
+> pushd "$LINUX_GIT"
+> if [ -n "$1" ]; then
+>     git checkout "$1"
+> fi
+> desc=$(git describe --exact-match 2>/dev/null \
+>        || git show -s --abbrev=12 --pretty='commit %h')
+> kobj=$(mktemp -d)
 
-These three function are now only used in namei.c, so they don't need to
-be exported.
+> make -j16 O="$kobj" allmodconfig
+> make -j16 O="$kobj" prepare
 
-Signed-off-by: NeilBrown <neil@brown.name>
----
- Documentation/filesystems/porting.rst | 7 +++++++
- fs/namei.c                            | 9 +++------
- include/linux/namei.h                 | 3 ---
- 3 files changed, 10 insertions(+), 9 deletions(-)
+These are not necessary.
+The UAPI generation does not need a kernel configuration.
 
-diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-index ed86c95d9d01..5f7008172f14 100644
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@ -1347,3 +1347,10 @@ implementation should set it to generic_setlease().
- 
- lookup_one_qstr_excl() is no longer exported - use start_creating() or
- similar.
-+---
-+
-+** mandatory**
-+
-+lock_rename(), lock_rename_child(), unlock_rename() are no
-+longer available.  Use start_renaming() or similar.
-+
-diff --git a/fs/namei.c b/fs/namei.c
-index 307b4d0866b8..0bc82bf90adc 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3713,7 +3713,7 @@ static struct dentry *lock_two_directories(struct dentry *p1, struct dentry *p2)
- /*
-  * p1 and p2 should be directories on the same fs.
-  */
--struct dentry *lock_rename(struct dentry *p1, struct dentry *p2)
-+static struct dentry *lock_rename(struct dentry *p1, struct dentry *p2)
- {
- 	if (p1 == p2) {
- 		inode_lock_nested(p1->d_inode, I_MUTEX_PARENT);
-@@ -3723,12 +3723,11 @@ struct dentry *lock_rename(struct dentry *p1, struct dentry *p2)
- 	mutex_lock(&p1->d_sb->s_vfs_rename_mutex);
- 	return lock_two_directories(p1, p2);
- }
--EXPORT_SYMBOL(lock_rename);
- 
- /*
-  * c1 and p2 should be on the same fs.
-  */
--struct dentry *lock_rename_child(struct dentry *c1, struct dentry *p2)
-+static struct dentry *lock_rename_child(struct dentry *c1, struct dentry *p2)
- {
- 	if (READ_ONCE(c1->d_parent) == p2) {
- 		/*
-@@ -3765,9 +3764,8 @@ struct dentry *lock_rename_child(struct dentry *c1, struct dentry *p2)
- 	mutex_unlock(&c1->d_sb->s_vfs_rename_mutex);
- 	return NULL;
- }
--EXPORT_SYMBOL(lock_rename_child);
- 
--void unlock_rename(struct dentry *p1, struct dentry *p2)
-+static void unlock_rename(struct dentry *p1, struct dentry *p2)
- {
- 	inode_unlock(p1->d_inode);
- 	if (p1 != p2) {
-@@ -3775,7 +3773,6 @@ void unlock_rename(struct dentry *p1, struct dentry *p2)
- 		mutex_unlock(&p1->d_sb->s_vfs_rename_mutex);
- 	}
- }
--EXPORT_SYMBOL(unlock_rename);
- 
- /**
-  * __start_renaming - lookup and lock names for rename
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index c7a7288cdd25..2ad6dd9987b9 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -165,9 +165,6 @@ extern int follow_down_one(struct path *);
- extern int follow_down(struct path *path, unsigned int flags);
- extern int follow_up(struct path *);
- 
--extern struct dentry *lock_rename(struct dentry *, struct dentry *);
--extern struct dentry *lock_rename_child(struct dentry *, struct dentry *);
--extern void unlock_rename(struct dentry *, struct dentry *);
- int start_renaming(struct renamedata *rd, int lookup_flags,
- 		   struct qstr *old_last, struct qstr *new_last);
- int start_renaming_dentry(struct renamedata *rd, int lookup_flags,
--- 
-2.50.0.107.gf914562f5916.dirty
+> make -j16 O="$kobj" INSTALL_HDR_PATH="${kobj}/hdr" headers_install
+> popd
+> 
+> pushd uapi
+> find . -type f -name '*.h' -exec cp -v "${kobj}/hdr/include/{}" {} \;
 
+Here only those headers which already exist in ethtool's uapi/ directory
+are copied. As linux/typelimits.h is new, it is now missing.
+Honestly, if a user fiddles with the internals of the UAPI headers like
+this, it is on them to update their code if the internal structure
+changes. In your case a simple 'touch uapi/linux/typelimits.h'
+before running the script will be enough. Also internal.h now requires
+an explicit inclusion of <limits.h>, as that is not satisfied by the
+UAPI anymore.
+
+> popd
+> rm -rf "$kobj"
+> 
+> git add uapi
+> git commit -s -F - <<EOT
+> update UAPI header copies
+> 
+> Update to kernel ${desc}.
+> 
+> EOT
