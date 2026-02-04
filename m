@@ -1,147 +1,173 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D405A350A00;
-	Wed,  4 Feb 2026 05:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD3F37D115
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Feb 2026 08:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770184311; cv=none; b=DfNGdCpErIqkxD8AnfDMSyt21id1UwKZc8+eCC3Y4kryu6MJdy5EqW7RYstnG1sfz/T4SCztuGaNWJbVQ0gKBsWkZcJ5MWczTTJRmLRxhw9RU6Jud0ebcK3Tq74DOIZw3cGk6aOw3/n8Bt3L3HhLZWrbuRkOHA1o9qL5i5/A5Rk=
+	t=1770193371; cv=none; b=S99ovkOZc/QThUALlkAEuIpwrZRbLFu0jL2ejr+I4zu+8h4oTibQpGnuSRV1n0ZG3TZkTUa1nzisz0aiuY94cu+46iC480ybfX1iA7vZxWYYBsCTL13rNbGLMMBTbNkKaMeuwDmkpDXk4HchyZJc2g3PoB0x3B2VmqkXrM6T6jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770184311; c=relaxed/simple;
-	bh=WyeMu1AkwqKC5I7WTqh9UrxM26rqyj+dwIwTtP2n/uA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OyTpPnMVPJmVRzfW4eAZ1gmzg1ckR0JF4Z8Iia4QBQu/5JdxmUmwamOFdsfBH8xpaQE2OTh1234tVWiIhTB2ETgIpCb3aH2nX8uV7hjL++DtAj1cyzumAqUlugu72FNInSFquMTtomJT5A/WJqDyKr+g9blfFIFiZCXDPp71vlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mH1c+uNa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=d6ZMtz0u; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1770193371; c=relaxed/simple;
+	bh=7PLu/ARa+qnD2Izzk+86I4H4QuHIV+/rL1Ij9XL1r6k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mIfAMttwUILc1KeQjGkYbFVukX2NxMeoW7zXP1oFEdV8lpIJlcsUF34KyJ5/e7hgsYlRhh9IZC2otOHp1vAoqsDMnFcy9lURvF4sVW557kLC37L3eMZz7iqzM2l+75Tbmjngl+sKchbX+jgQK2Frcn6XFAHW/3bXGOu+oOTTG+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=gosvyoxL; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mH1c+uNa";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="d6ZMtz0u"
-Date: Wed, 4 Feb 2026 06:51:46 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1770184308;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sZHCk7fKGvf7QzEKyi64QeW2Liq4IP/rnnD/aBkMl5c=;
-	b=mH1c+uNacxWRUNxmS4+KhnW02S+ScCNg0PSMrRBV3jl5Y9gLNvMzn2wKTFE119EqwrHZVK
-	0Xs2BQCwy0xLs2a7+gdd8+UIN1NJkFxmfKrvCWu8BRowAICffN4IDMn7nvd5n8pRhGlOTI
-	/lcoeDTVwx4C/5arPqxl4Pr1DwVM/XXISPy+Ud/+o5dE+3KjyDGBJawYLfFhBLuzKlHeEe
-	Jjaaa07nXgXxFL74kUd+x+t5iZVGeWcu8qhM/QlOyI3o3mdtjH2S9THZPgLNdLZakBJJlE
-	ZR3GP0J25NhG4p4mppsRJ+sb9ftJwtMZWzQmpngxhxJY0va5sW06twgDzT0yog==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1770184308;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sZHCk7fKGvf7QzEKyi64QeW2Liq4IP/rnnD/aBkMl5c=;
-	b=d6ZMtz0uUl3VOFryIOVmf39EYhSjv1iRpyzj0W6e5d3GCAZeC1TF0aBjXeboj7tm1lJ6gw
-	gmXb8/M6hAEDp/DQ==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Eric Dumazet <edumazet@google.com>, 
-	Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
-	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	Matthieu Baerts <matttbe@kernel.org>, Mat Martineau <martineau@kernel.org>, 
-	Geliang Tang <geliang@kernel.org>, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-api@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kselftest@vger.kernel.org, 
-	mptcp@lists.linux.dev, linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
-	libc-alpha@sourceware.org, Carlos O'Donell <carlos@redhat.com>, 
-	Adhemerval Zanella <adhemerval.zanella@linaro.org>, Rich Felker <dalias@libc.org>, klibc@zytor.com, 
-	Florian Weimer <fweimer@redhat.com>
-Subject: Re: [PATCH net-next v2 0/4] net: uapi: Provide an UAPI definition of
- 'struct sockaddr'
-Message-ID: <20260204064248-d9c4ab78-f6d4-4ac6-8d55-e939bc1df6d2@linutronix.de>
-References: <20260120-uapi-sockaddr-v2-0-63c319111cf6@linutronix.de>
- <20260121192729.2095aa25@kernel.org>
- <20260130112309-28f2645b-e756-4173-96da-cf5c59191520@linutronix.de>
- <20260130081741.425a92e0@kernel.org>
- <3c46fc49-b41b-44a2-b42a-669cc7e6bb02@linutronix.de>
- <20260131092517.6639d84c@kernel.org>
- <20260203122715-eeb304f9-4b42-4fc6-a527-658182a92ba5@linutronix.de>
- <20260203144011.32d5b223@kernel.org>
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="gosvyoxL"
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 79DC53F677
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Feb 2026 08:22:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20251003; t=1770193363;
+	bh=fnu5fidMh9uXV7OSySPR42Ndmsbyued3h42jFd0q6Wc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=gosvyoxLJuBHrmNytQERSUh40GJYj4w7DzX3X3Q5N8xpab1yowg1nenzoDS32EgNa
+	 CsHO+XOunyVSg7nXHg98IDVlpeBoTIXwLv8uy0n38hJd1hhLJyhTr+AHViuFWc0UPD
+	 iegeAcibd/bUSYxVjs8q+Y6kfcnYacgfVkF0qyX/oX8LPqWgaP1X4uHguAlgOn2ygu
+	 2mBLTn3zxn5sNec4RyW2FFLmJ/PM3Rd2d7kAqnPmbuuwMvFaLTHdbXpwRHlg18Pz33
+	 pQZy6/59j7+GK2Oz5qNh37WE4/HDFvWbX4K4UH0SUhiRs1wY3yO+RgmKZ8WjFWuekU
+	 xdiHeHfFucP+nHGk7t6MxRpVhKBfDERIihC9xu47xUYmZgRbSwmBVOnnnbZluQbqzc
+	 CDU0qYd2VHJ4XPxc6tZUujDN9OEOag07GRWdgV2qwfzOILdJyv1e8K1qZMhpbH0TTz
+	 nmJR7mQ4odU+e25vuV6WcQO81iKMKiBjiQpcjr2lgJYWIWuxfzW44QIWl/jYvSWuAb
+	 UYnMjNCvDvaTLPFft/cUNDmf0ZDSYD4D2lduQPAy3k5JNDvSK3+bIxatJ0Nwnc0uBi
+	 O0m4s3ip0tDyKtt3sFrV6+LqfKnUMS7NlnyCo8bUWbo6C+hNTZQh0No1U23zVLIbhz
+	 /tNsDPsxOTUujWYWLWsxYONc=
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-34c48a76e75so5859811a91.1
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Feb 2026 00:22:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770193362; x=1770798162;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fnu5fidMh9uXV7OSySPR42Ndmsbyued3h42jFd0q6Wc=;
+        b=H8plzlGdyIM9mahWF/xdXWyX/Qezk6O+E3ntbnvu9RahXOEtbvD6XtRCW5AsXa4HxE
+         Y5CXwz8M7j6ZLR7PMugbu3MOjLFAzDirQjt59nj6mSu2lNq2yGS0XLhbfj36jkD1FjUi
+         NplA24xlSx9svUjGCWZMYIobxC/XbrUAC41ybAvI84qAx2sGMIUJuxXgckA/2rmrOhdo
+         3b8cZgAAoeLjAfjFNOmxpoSmCVs5UK/CQgoxvav/YYh3epGNIr//TLF3+/jrfrG/V9Ib
+         Pjblq3ZcfH69zszGoYId4H2hhl2NndqX8ayrpdTxxMbxTM8oa1DyrAYZmrn+WpnQVjF2
+         zRPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVKHcQ7bMCAUyP59TKK2hwZSg0ymDrxCR5NasteBSdquNrsi8CZkMQZLK9a4LdO2F+4MTtZpzjR7fv6uzO4tTHdBZKIzrQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF7gPeMIog8rE6HbOIwaTIYS1JDJE2Mnu+d+v1DbyXMZEPJYle
+	9+pZl/8ebMXbwMkJRk250xVKKfPpng63fA78v4cF9lkvpl50P7HoyNnFmxfGRz9iMhVq54OVASD
+	UtzGivfPlw5MidvL1RtvP2oEoIwCXdjnMEgA5HxO/pJ85VbGBHOiZH9sVcU7rG7M168Xva5Aqqc
+	L65dMxXHEYSdF8IwWA7Q==
+X-Gm-Gg: AZuq6aL1YK0Xwypi5BlLhy+I1XyXcfFAXw+/n+WvpOhGHn25GC9URCOaq8tAPPUNE1T
+	hC7ZRyq1FBhwLiuUUjtOcmgKM4LPRhqRNf3dd5e26U4awcS8Mj3s8ODfIZaflH0ighsHa5KbI+v
+	M28qdvD7dMwJxUvbbQ2OEFJ8/z/Gsdcz+ax9HgHNPX02YSYe4vNR3GnMJAoXC8Gj8AO7QkE41W4
+	4KVZGKqlMF77TGtFcqta8ord4/SbpwHPiNhEv+Vxro0UYGggqmddbkd6qVsvkbGC+Lt7ULurLbq
+	3xDUFnF6IlkiFMDcO7ro1OjdC1J0drBwcccaEw9fpkDzRMVdG6zHu16MnzeaEMDMINS8ULpwHdf
+	I30H5hP2nGUPb8kbekz73V2dH
+X-Received: by 2002:a17:90b:1a89:b0:343:eb40:8dca with SMTP id 98e67ed59e1d1-35487190e1emr1958922a91.19.1770193362047;
+        Wed, 04 Feb 2026 00:22:42 -0800 (PST)
+X-Received: by 2002:a17:90b:1a89:b0:343:eb40:8dca with SMTP id 98e67ed59e1d1-35487190e1emr1958902a91.19.1770193361689;
+        Wed, 04 Feb 2026 00:22:41 -0800 (PST)
+Received: from [192.168.192.85] ([50.47.129.42])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-354862effa6sm1676639a91.9.2026.02.04.00.22.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Feb 2026 00:22:40 -0800 (PST)
+Message-ID: <68a53bd2-aaa1-4071-9ec7-87b11b935adb@canonical.com>
+Date: Wed, 4 Feb 2026 00:22:39 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260203144011.32d5b223@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] apparmor: Replace deprecated strcpy with memcpy in
+ gen_symlink_name
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251126165701.97158-2-thorsten.blum@linux.dev>
+ <1da23c89-dc2c-41cb-8260-098deb8ae917@canonical.com>
+ <D73FFEAA-F246-4777-8CA8-32807F378423@linux.dev>
+ <3CA1F386-2217-405B-AB6E-85195AD09CA8@linux.dev>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <3CA1F386-2217-405B-AB6E-85195AD09CA8@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 03, 2026 at 02:40:11PM -0800, Jakub Kicinski wrote:
-> On Tue, 3 Feb 2026 12:42:22 +0100 Thomas Weißschuh wrote:
-> > > FWIW the typelimits change broke compilation of ethtool, we'll see if
-> > > anyone "outside kernel community itself" complains.  
-> > 
-> > Can you point me to that breakage? I was unable to find it.
+On 2/1/26 04:42, Thorsten Blum wrote:
+> Hi John,
 > 
-> Not reported on the ML, and it's kinda annoying to repro because 
-> the uAPI header sync script isn't committed :/ You have to check 
-> this out
+> On 27. Nov 2025, at 11:18, Thorsten Blum wrote:
+>> On 27. Nov 2025, at 02:32, John Johansen wrote:
+>>> hey Thorsten,
+>>>
+>>> sorry I have actually pulled these in, and tested them. I didn't send out
+>>> the acks yet because I have another patch that I was waiting on a proper
+>>> signed-off-by: on.
+>>>
+>>> I am going to have to pull that one so I can push. I'll add acks now but
+>>> the push isn't going to happen for a few hours.
+>>>
+>>> Acked-by: John Johansen <john.johansen@canonical.com>
+>>
+>> Ah sorry for resending then, didn't know you looked at them already.
 > 
->  https://git.kernel.org/pub/scm/network/ethtool/ethtool.git/
+> Did you ever push the commits? I can't find them anywhere.
 > 
-> and run a script like this to sync headers from the kernel (then build):
-> 
-> #!/bin/bash -e
-> 
-> sn="${0##*/}"
-> export ARCH="x86_64"
-> 
-> if [ ! -d "$LINUX_GIT" ]; then
->     echo "${sn}: LINUX_GIT not set" >&2
->     exit 1
-> fi
-> 
-> pushd "$LINUX_GIT"
-> if [ -n "$1" ]; then
->     git checkout "$1"
-> fi
-> desc=$(git describe --exact-match 2>/dev/null \
->        || git show -s --abbrev=12 --pretty='commit %h')
-> kobj=$(mktemp -d)
+sorry I am having "fun" email issue atm
 
-> make -j16 O="$kobj" allmodconfig
-> make -j16 O="$kobj" prepare
+it should be in apparmor-next. I have been staging that through gitlab
 
-These are not necessary.
-The UAPI generation does not need a kernel configuration.
+https://gitlab.com/apparmor/apparmor-kernel
+and
+https://gitlab.com/jjohansen/apparmor-kernel
 
-> make -j16 O="$kobj" INSTALL_HDR_PATH="${kobj}/hdr" headers_install
-> popd
-> 
-> pushd uapi
-> find . -type f -name '*.h' -exec cp -v "${kobj}/hdr/include/{}" {} \;
+trying to get better CI integration with the userspace side. It was stuck
+again and I had to manually kick it last week.
 
-Here only those headers which already exist in ethtool's uapi/ directory
-are copied. As linux/typelimits.h is new, it is now missing.
-Honestly, if a user fiddles with the internals of the UAPI headers like
-this, it is on them to update their code if the internal structure
-changes. In your case a simple 'touch uapi/linux/typelimits.h'
-before running the script will be enough. Also internal.h now requires
-an explicit inclusion of <limits.h>, as that is not satisfied by the
-UAPI anymore.
-
-> popd
-> rm -rf "$kobj"
-> 
-> git add uapi
-> git commit -s -F - <<EOT
-> update UAPI header copies
-> 
-> Update to kernel ${desc}.
-> 
-> EOT
