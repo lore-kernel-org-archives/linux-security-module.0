@@ -1,294 +1,99 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5213D5223;
-	Wed,  4 Feb 2026 13:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989DA27A123;
+	Wed,  4 Feb 2026 13:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770210575; cv=none; b=hMjaeh0cceRXSmiYsL1HjCw6b5UO6DBja6VwoyZdCayzTS41DiaaFC8Ua8GwkzGiE52EH9e8YVs0ua3rvKxupqJEpAdnQvFWI07kwaYfMp4pRRDNRSKsVgPviMx91neZcaOcgAxbm9BwqiiUV+psxHJEDb968f78Amta9wsyqRA=
+	t=1770213477; cv=none; b=F/mkU2vW5l2RzSJlyx37ODpG5jkAiRdLEBvivRVLPoHL1g89RlwofIGBhbe+HXFDBnTccAxR94V9QtSznwDBHmL12Fdv7+/v+iVrsFq89mQF2wNjG1ohNVKGwGO2Sr0Rye3Z7XdhuROH5DGg6NliWbcEd5+hcFHlgBhmSzmTzuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770210575; c=relaxed/simple;
-	bh=QedXh/Z8LWUeFoC+cwUx3QkVa6ENN9IAYxpzg4ogkVQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uiwJZPg7DENjzGm9MoKNX2C4jmHEgwlcTIpdbI07m1ge1zrz4i03ZTku9EYUz8qeeRw4A1XsEbA6REsAfFXXkWlD8dh3lsbUM6iC50pwpyqlcCxdtiBQZrLfFiyycO6UlHHD4KdcE+xBFKRQjn/Bx6oBRdML5VaE9HxIkLepe6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.196])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4f5gB252WtzpV7X;
-	Wed,  4 Feb 2026 20:47:54 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 072EE40565;
-	Wed,  4 Feb 2026 20:50:41 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwCn4wWYQINp8ZM2Aw--.40514S2;
-	Wed, 04 Feb 2026 13:50:40 +0100 (CET)
-Message-ID: <d1d63c522a3842ccaf74c4462ee06bf82ce3b3f5.camel@huaweicloud.com>
-Subject: Re: [PATCH] evm: check return values of crypto_shash functions
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Daniel Hodges <hodgesd@meta.com>, zohar@linux.ibm.com, 
-	roberto.sassu@huawei.com
-Cc: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
- paul@paul-moore.com,  jmorris@namei.org, serge@hallyn.com,
- linux-integrity@vger.kernel.org,  linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Wed, 04 Feb 2026 13:50:29 +0100
-In-Reply-To: <20260131182233.2365157-1-hodgesd@meta.com>
-References: <20260131182233.2365157-1-hodgesd@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1770213477; c=relaxed/simple;
+	bh=1NY8xj1oVBOa9QdXJ3gXRwK8an5wtbxELhV+G98rDA8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=NXPjVqg9oROlxJBkqI4e1sL3GAJOA+L2iURbSnyWR/xcCrftoEmaFxH5UcwgofLEORMmC50pCsUBOqcE3Fo94JIx4stqJpC085Fm7juudMUMnkGzMsVt/BmzIHt6r4ZJkcNIOip2w/EdiByq+cKMdevpAt9eyL0Qc7QtA5gVCM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 614DvVf5022147;
+	Wed, 4 Feb 2026 22:57:31 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 614DvUCt022144
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 4 Feb 2026 22:57:30 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <7ef21dab-3805-4eae-80d7-9779aeff3f58@I-love.SAKURA.ne.jp>
+Date: Wed, 4 Feb 2026 22:57:30 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwCn4wWYQINp8ZM2Aw--.40514S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3ArW5CF43GFyDur1DWFy5XFb_yoWxtw1rpF
-	W5GayDKrn8JF4UGFZaya18Z34S9ay0yr17trWUu34FvFnrWr1IqrWIkw18uFyrCrWDJr1Y
-	qF4xKwnruw4aq3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOB
-	MKDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAOBGmCuxkM6wAAsl
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] xfrm: kill xfrm_dev_{state,policy}_flush_secctx_check()
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: Paul Moore <paul@paul-moore.com>, SELinux <selinux@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+        Network Development <netdev@vger.kernel.org>
+References: <2ec9c137-79a5-4562-8587-43dd2633f116@I-love.SAKURA.ne.jp>
+ <CAHC9VhQikhv+qCyQdnJguvy-qTkGXB+NU7=QZjw5d+WfyVxZhw@mail.gmail.com>
+ <00ed59a3-a9c9-47c3-97da-5a8e3da1ea82@I-love.SAKURA.ne.jp>
+ <CAHC9VhQq6jY63kYEQCp2t89Vv+_PDqv54RV6TO_TePDQyU6Vug@mail.gmail.com>
+ <1bb453af-3ef2-4ab6-a909-0705bd07c136@I-love.SAKURA.ne.jp>
+ <CAHC9VhQEKfxXzFgYShojESpQn10LES5zL6Ua0YV9b8seEKFqyA@mail.gmail.com>
+ <93d291db-4175-48c4-830c-e83bab373ae2@I-love.SAKURA.ne.jp>
+ <CAHC9VhQPKU5DqG-ryZsiCV2vZeGGf_a-JStR_LVVCCn03C4usQ@mail.gmail.com>
+ <f9b88268-03dc-4356-8b31-0bab73cc9b1e@I-love.SAKURA.ne.jp>
+ <CAHC9VhRzRAR+hhn4TFADnHWpzjOxjmh0S_Hg_HktkPkKQ35ycg@mail.gmail.com>
+ <74a70504-8ff8-4d97-b35f-774364779889@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+In-Reply-To: <74a70504-8ff8-4d97-b35f-774364779889@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav205.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Sat, 2026-01-31 at 10:22 -0800, Daniel Hodges wrote:
-> The crypto_shash_update() and crypto_shash_final() functions can fail
-> and return error codes, but their return values were being ignored in
-> several places in evm_crypto.c:
->=20
->   - hmac_add_misc(): ignores returns from crypto_shash_update() and
->     crypto_shash_final()
->   - evm_calc_hmac_or_hash(): ignores returns from crypto_shash_update()
->   - evm_init_hmac(): ignores returns from crypto_shash_update()
->=20
-> If these hash operations fail silently, the resulting HMAC could be
-> invalid or incomplete. This could potentially allow integrity
-> verification to pass with incorrect HMACs, weakening EVM's security
-> guarantees.
->=20
-> Fix this by:
->   - Changing hmac_add_misc() from void to int return type
->   - Checking and propagating error codes from all crypto_shash calls
->   - Updating all callers to check the return values
->=20
-> Fixes: 66dbc325afce ("evm: re-release")
-> Signed-off-by: Daniel Hodges <hodgesd@meta.com>
-> ---
->  security/integrity/evm/evm_crypto.c | 45 +++++++++++++++++++----------
->  1 file changed, 30 insertions(+), 15 deletions(-)
->=20
-> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm=
-/evm_crypto.c
-> index a5e730ffda57..286f23a1a26b 100644
-> --- a/security/integrity/evm/evm_crypto.c
-> +++ b/security/integrity/evm/evm_crypto.c
-> @@ -132,58 +132,65 @@ static struct shash_desc *init_desc(char type, uint=
-8_t hash_algo)
->  	}
->  	return desc;
->  }
-> =20
->  /* Protect against 'cutting & pasting' security.evm xattr, include inode
->   * specific info.
->   *
->   * (Additional directory/file metadata needs to be added for more comple=
-te
->   * protection.)
->   */
-> -static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
-> -			  char type, char *digest)
-> +static int hmac_add_misc(struct shash_desc *desc, struct inode *inode,
-> +			 char type, char *digest)
->  {
->  	struct h_misc {
->  		unsigned long ino;
->  		__u32 generation;
->  		uid_t uid;
->  		gid_t gid;
->  		umode_t mode;
->  	} hmac_misc;
-> +	int ret;
-> =20
->  	memset(&hmac_misc, 0, sizeof(hmac_misc));
->  	/* Don't include the inode or generation number in portable
->  	 * signatures
->  	 */
->  	if (type !=3D EVM_XATTR_PORTABLE_DIGSIG) {
->  		hmac_misc.ino =3D inode->i_ino;
->  		hmac_misc.generation =3D inode->i_generation;
->  	}
->  	/* The hmac uid and gid must be encoded in the initial user
->  	 * namespace (not the filesystems user namespace) as encoding
->  	 * them in the filesystems user namespace allows an attack
->  	 * where first they are written in an unprivileged fuse mount
->  	 * of a filesystem and then the system is tricked to mount the
->  	 * filesystem for real on next boot and trust it because
->  	 * everything is signed.
->  	 */
->  	hmac_misc.uid =3D from_kuid(&init_user_ns, inode->i_uid);
->  	hmac_misc.gid =3D from_kgid(&init_user_ns, inode->i_gid);
->  	hmac_misc.mode =3D inode->i_mode;
-> -	crypto_shash_update(desc, (const u8 *)&hmac_misc, sizeof(hmac_misc));
-> +	ret =3D crypto_shash_update(desc, (const u8 *)&hmac_misc, sizeof(hmac_m=
-isc));
-> +	if (ret)
-> +		return ret;
->  	if ((evm_hmac_attrs & EVM_ATTR_FSUUID) &&
-> -	    type !=3D EVM_XATTR_PORTABLE_DIGSIG)
-> -		crypto_shash_update(desc, (u8 *)&inode->i_sb->s_uuid, UUID_SIZE);
-> -	crypto_shash_final(desc, digest);
-> +	    type !=3D EVM_XATTR_PORTABLE_DIGSIG) {
-> +		ret =3D crypto_shash_update(desc, (u8 *)&inode->i_sb->s_uuid, UUID_SIZ=
-E);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +	ret =3D crypto_shash_final(desc, digest);
+On 2026/02/04 19:15, Tetsuo Handa wrote:
+> On 2026/02/04 7:40, Paul Moore wrote:
+>>         This is not an unusual request for such a proposed change, and
+>> is something that I would expect a LSM maintainer to do without much
+>> hesitation.  If you are unwilling to investigate this, can you explain
+>> why?
+> 
+> Because I'm not familiar with how XFRM works; I'm not a user of LSM XFRM hooks.
+> 
+> I can't judge whether the current code is COMPREHENSIVELY GATING;
+> I can't imagine what the state you call COMPREHENSIVELY GATING is.
 
-Maybe we should also indicate if an error occurred, with a separate
-error message, or adding the result in the message below.
+Steffen Klassert worried that killing xfrm_dev_state_flush_secctx_check() and
+xfrm_dev_policy_flush_secctx_check() might violate a LSM policy and you agreed
+( https://lkml.kernel.org/r/CAHC9VhQ54LRD7k_x6tUju2kPVBEHcdgBh46_hBN8btG0vhfy_w@mail.gmail.com ),
+but the reality is that nobody in the world has enforced an LSM policy for almost 9 years
+that makes xfrm_dev_{state,policy}_flush() no-op. That is, xfrm_dev_state_flush_secctx_check()
+and xfrm_dev_policy_flush_secctx_check() had been effectively unused.
 
-Thanks
+Killing xfrm_dev_state_flush_secctx_check() and xfrm_dev_policy_flush_secctx_check()
+increases "system's stability" without sacrificing "authorization".
 
-Roberto
-=20
->  	pr_debug("hmac_misc: (%zu) [%*phN]\n", sizeof(struct h_misc),
->  		 (int)sizeof(struct h_misc), &hmac_misc);
-> +	return ret;
->  }
-> =20
->  /*
->   * Dump large security xattr values as a continuous ascii hexadecimal st=
-ring.
->   * (pr_debug is limited to 64 bytes.)
->   */
->  static void dump_security_xattr_l(const char *prefix, const void *src,
->  				  size_t count)
->  {
->  #if defined(DEBUG) || defined(CONFIG_DYNAMIC_DEBUG)
-> @@ -253,23 +260,24 @@ static int evm_calc_hmac_or_hash(struct dentry *den=
-try,
-> =20
->  		/*
->  		 * Skip non-enabled xattrs for locally calculated
->  		 * signatures/HMACs.
->  		 */
->  		if (type !=3D EVM_XATTR_PORTABLE_DIGSIG && !xattr->enabled)
->  			continue;
-> =20
->  		if ((req_xattr_name && req_xattr_value)
->  		    && !strcmp(xattr->name, req_xattr_name)) {
-> -			error =3D 0;
-> -			crypto_shash_update(desc, (const u8 *)req_xattr_value,
-> -					     req_xattr_value_len);
-> +			error =3D crypto_shash_update(desc, (const u8 *)req_xattr_value,
-> +						    req_xattr_value_len);
-> +			if (error)
-> +				goto out;
->  			if (is_ima)
->  				ima_present =3D true;
-> =20
->  			dump_security_xattr(req_xattr_name,
->  					    req_xattr_value,
->  					    req_xattr_value_len);
->  			continue;
->  		}
->  		size =3D vfs_getxattr_alloc(&nop_mnt_idmap, dentry, xattr->name,
->  					  &xattr_value, xattr_size, GFP_NOFS);
-> @@ -279,29 +287,32 @@ static int evm_calc_hmac_or_hash(struct dentry *den=
-try,
->  		}
->  		if (size < 0)
->  			continue;
-> =20
->  		user_space_size =3D vfs_getxattr(&nop_mnt_idmap, dentry,
->  					       xattr->name, NULL, 0);
->  		if (user_space_size !=3D size)
->  			pr_debug("file %s: xattr %s size mismatch (kernel: %d, user: %d)\n",
->  				 dentry->d_name.name, xattr->name, size,
->  				 user_space_size);
-> -		error =3D 0;
->  		xattr_size =3D size;
-> -		crypto_shash_update(desc, (const u8 *)xattr_value, xattr_size);
-> +		error =3D crypto_shash_update(desc, (const u8 *)xattr_value, xattr_siz=
-e);
-> +		if (error)
-> +			goto out;
->  		if (is_ima)
->  			ima_present =3D true;
-> =20
->  		dump_security_xattr(xattr->name, xattr_value, xattr_size);
->  	}
-> -	hmac_add_misc(desc, inode, type, data->digest);
-> +	error =3D hmac_add_misc(desc, inode, type, data->digest);
-> +	if (error)
-> +		goto out;
-> =20
->  	if (inode !=3D d_backing_inode(dentry) && iint) {
->  		if (IS_I_VERSION(inode))
->  			i_version =3D inode_query_iversion(inode);
->  		integrity_inode_attrs_store(&iint->metadata_inode, i_version,
->  					    inode);
->  	}
-> =20
->  	/* Portable EVM signatures must include an IMA hash */
->  	if (type =3D=3D EVM_XATTR_PORTABLE_DIGSIG && !ima_present)
-> @@ -394,37 +405,41 @@ int evm_update_evmxattr(struct dentry *dentry, cons=
-t char *xattr_name,
->  		rc =3D __vfs_removexattr(&nop_mnt_idmap, dentry, XATTR_NAME_EVM);
->  	}
->  	return rc;
->  }
-> =20
->  int evm_init_hmac(struct inode *inode, const struct xattr *xattrs,
->  		  char *hmac_val)
->  {
->  	struct shash_desc *desc;
->  	const struct xattr *xattr;
-> +	int ret;
-> =20
->  	desc =3D init_desc(EVM_XATTR_HMAC, HASH_ALGO_SHA1);
->  	if (IS_ERR(desc)) {
->  		pr_info("init_desc failed\n");
->  		return PTR_ERR(desc);
->  	}
-> =20
->  	for (xattr =3D xattrs; xattr->name; xattr++) {
->  		if (!evm_protected_xattr(xattr->name))
->  			continue;
-> =20
-> -		crypto_shash_update(desc, xattr->value, xattr->value_len);
-> +		ret =3D crypto_shash_update(desc, xattr->value, xattr->value_len);
-> +		if (ret)
-> +			goto out;
->  	}
-> =20
-> -	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
-> +	ret =3D hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
-> +out:
->  	kfree(desc);
-> -	return 0;
-> +	return ret;
->  }
-> =20
->  /*
->   * Get the key from the TPM for the SHA1-HMAC
->   */
->  int evm_init_key(void)
->  {
->  	struct key *evm_key;
->  	struct encrypted_key_payload *ekp;
->  	int rc;
+It is up to SELinux developers to discuss what actions to take as a compensation for
+killing xfrm_dev_state_flush_secctx_check() and xfrm_dev_policy_flush_secctx_check().
+The compensation might be to add LSM hooks to immediately before the point of no return.
+But I wonder why you want to authorize deleting resources which are going to be "deleted by
+cascade" due to deleting a dependent resource...
+
+> 
+> 
+> 
+> P.S. For your investigation, I attach a new report that syzbot found today, and
+> I'll drop "xfrm: always fail xfrm_dev_{state,policy}_flush_secctx_check()"
+> because these three reports will be sufficient for people to understand that
+> we need to kill xfrm_dev_{state,policy}_flush_secctx_check() calls.
 
