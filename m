@@ -1,45 +1,40 @@
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C69319C566;
-	Wed,  4 Feb 2026 12:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5213D5223;
+	Wed,  4 Feb 2026 13:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770209378; cv=none; b=NWPKbraQDM/831xfxcFfS+AolPGh/WYgehawWHYSrM8XGNXvShqbZSZq26+iVoktGh7aXh4v1m/xIm/ci3XVMMVLobzQGP9hCYwVzLInBrV5hdz+odD7oWdbSPyLQVtgGRBlaJ9PQ7cwP61PHNzr6Yq6YBpA1Oo3VgrgCx1dasw=
+	t=1770210575; cv=none; b=hMjaeh0cceRXSmiYsL1HjCw6b5UO6DBja6VwoyZdCayzTS41DiaaFC8Ua8GwkzGiE52EH9e8YVs0ua3rvKxupqJEpAdnQvFWI07kwaYfMp4pRRDNRSKsVgPviMx91neZcaOcgAxbm9BwqiiUV+psxHJEDb968f78Amta9wsyqRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770209378; c=relaxed/simple;
-	bh=g1vaSMymo8FLy7olTHFi1KE86zDIniJbzr4OSyLwiUY=;
+	s=arc-20240116; t=1770210575; c=relaxed/simple;
+	bh=QedXh/Z8LWUeFoC+cwUx3QkVa6ENN9IAYxpzg4ogkVQ=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KIFC2M9uAmL5MfU88i6mx2m+h8YAMSdiVJUWRW+oQvVGWvPZg9TRS+pdFg+an6s9Aqw3xwGQVn7Xda2AtSBOdUQR0yNL3ZwSzHdmRHJUaYOba6+BafrRzO2kKKYqP4uo2wwF3Ou9PhR1Rf3mb9EVdG1sRqg8a3HOJIHv09UVNqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+	 Content-Type:MIME-Version; b=uiwJZPg7DENjzGm9MoKNX2C4jmHEgwlcTIpdbI07m1ge1zrz4i03ZTku9EYUz8qeeRw4A1XsEbA6REsAfFXXkWlD8dh3lsbUM6iC50pwpyqlcCxdtiBQZrLfFiyycO6UlHHD4KdcE+xBFKRQjn/Bx6oBRdML5VaE9HxIkLepe6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.18.224.196])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4f5fqG1QFGz1HCfm;
-	Wed,  4 Feb 2026 20:31:38 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 82DEF40565;
-	Wed,  4 Feb 2026 20:34:22 +0800 (CST)
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4f5gB252WtzpV7X;
+	Wed,  4 Feb 2026 20:47:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 072EE40565;
+	Wed,  4 Feb 2026 20:50:41 +0800 (CST)
 Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwAn8WvDPINpdiUyAw--.20311S2;
-	Wed, 04 Feb 2026 13:34:21 +0100 (CET)
-Message-ID: <9c25c201f384d7320fd83e648d61a0086016ee36.camel@huaweicloud.com>
-Subject: Re: [PATCH v5 2/3] ima: Make integrity_inode_attrs_changed() call
- into vfs
+	by APP1 (Coremail) with SMTP id LxC2BwCn4wWYQINp8ZM2Aw--.40514S2;
+	Wed, 04 Feb 2026 13:50:40 +0100 (CET)
+Message-ID: <d1d63c522a3842ccaf74c4462ee06bf82ce3b3f5.camel@huaweicloud.com>
+Subject: Re: [PATCH] evm: check return values of crypto_shash functions
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Frederick Lawler <fred@cloudflare.com>, Mimi Zohar
- <zohar@linux.ibm.com>,  Roberto Sassu <roberto.sassu@huawei.com>, Dmitry
- Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg
- <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "Darrick J.
- Wong" <djwong@kernel.org>, Christian Brauner <brauner@kernel.org>, Josef
- Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@cloudflare.com
-Date: Wed, 04 Feb 2026 13:34:09 +0100
-In-Reply-To: <20260130-xfs-ima-fixup-v5-2-57e84ea91712@cloudflare.com>
-References: <20260130-xfs-ima-fixup-v5-0-57e84ea91712@cloudflare.com>
-	 <20260130-xfs-ima-fixup-v5-2-57e84ea91712@cloudflare.com>
+To: Daniel Hodges <hodgesd@meta.com>, zohar@linux.ibm.com, 
+	roberto.sassu@huawei.com
+Cc: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+ paul@paul-moore.com,  jmorris@namei.org, serge@hallyn.com,
+ linux-integrity@vger.kernel.org,  linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Wed, 04 Feb 2026 13:50:29 +0100
+In-Reply-To: <20260131182233.2365157-1-hodgesd@meta.com>
+References: <20260131182233.2365157-1-hodgesd@meta.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.52.3-0ubuntu1 
@@ -49,146 +44,251 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwAn8WvDPINpdiUyAw--.20311S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGrykJr15Zw1DXr48XrWUurg_yoWrAw18pF
-	9FkFy8Gw18JFyIkF1vy3W7Za1rKa40g3y0g3W5Cw1FyFnrZrnFqr98Cry5CF1rGrZ0kw42
-	qan0yry5ua1qy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+X-CM-TRANSID:LxC2BwCn4wWYQINp8ZM2Aw--.40514S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3ArW5CF43GFyDur1DWFy5XFb_yoWxtw1rpF
+	W5GayDKrn8JF4UGFZaya18Z34S9ay0yr17trWUu34FvFnrWr1IqrWIkw18uFyrCrWDJr1Y
+	qF4xKwnruw4aq3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
 	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
 	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
 	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
 	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
 	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
 	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
 	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFk
-	u4UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAOBGmCux4MWgAAsQ
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOB
+	MKDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAOBGmCuxkM6wAAsl
 
-On Fri, 2026-01-30 at 16:39 -0600, Frederick Lawler wrote:
-> Align integrity_inode_attrs_changed() to ima_check_last_writer()'s
-> semantics when detecting changes.
+On Sat, 2026-01-31 at 10:22 -0800, Daniel Hodges wrote:
+> The crypto_shash_update() and crypto_shash_final() functions can fail
+> and return error codes, but their return values were being ignored in
+> several places in evm_crypto.c:
 >=20
-> For IMA, stacked file systems that do not set kstat.change_cookie,
-> integrity_inode_attrs_changed() will compare zero to zero, thus no
+>   - hmac_add_misc(): ignores returns from crypto_shash_update() and
+>     crypto_shash_final()
+>   - evm_calc_hmac_or_hash(): ignores returns from crypto_shash_update()
+>   - evm_init_hmac(): ignores returns from crypto_shash_update()
+>=20
+> If these hash operations fail silently, the resulting HMAC could be
+> invalid or incomplete. This could potentially allow integrity
+> verification to pass with incorrect HMACs, weakening EVM's security
+> guarantees.
+>=20
+> Fix this by:
+>   - Changing hmac_add_misc() from void to int return type
+>   - Checking and propagating error codes from all crypto_shash calls
+>   - Updating all callers to check the return values
+>=20
+> Fixes: 66dbc325afce ("evm: re-release")
+> Signed-off-by: Daniel Hodges <hodgesd@meta.com>
+> ---
+>  security/integrity/evm/evm_crypto.c | 45 +++++++++++++++++++----------
+>  1 file changed, 30 insertions(+), 15 deletions(-)
+>=20
+> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm=
+/evm_crypto.c
+> index a5e730ffda57..286f23a1a26b 100644
+> --- a/security/integrity/evm/evm_crypto.c
+> +++ b/security/integrity/evm/evm_crypto.c
+> @@ -132,58 +132,65 @@ static struct shash_desc *init_desc(char type, uint=
+8_t hash_algo)
+>  	}
+>  	return desc;
+>  }
+> =20
+>  /* Protect against 'cutting & pasting' security.evm xattr, include inode
+>   * specific info.
+>   *
+>   * (Additional directory/file metadata needs to be added for more comple=
+te
+>   * protection.)
+>   */
+> -static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
+> -			  char type, char *digest)
+> +static int hmac_add_misc(struct shash_desc *desc, struct inode *inode,
+> +			 char type, char *digest)
+>  {
+>  	struct h_misc {
+>  		unsigned long ino;
+>  		__u32 generation;
+>  		uid_t uid;
+>  		gid_t gid;
+>  		umode_t mode;
+>  	} hmac_misc;
+> +	int ret;
+> =20
+>  	memset(&hmac_misc, 0, sizeof(hmac_misc));
+>  	/* Don't include the inode or generation number in portable
+>  	 * signatures
+>  	 */
+>  	if (type !=3D EVM_XATTR_PORTABLE_DIGSIG) {
+>  		hmac_misc.ino =3D inode->i_ino;
+>  		hmac_misc.generation =3D inode->i_generation;
+>  	}
+>  	/* The hmac uid and gid must be encoded in the initial user
+>  	 * namespace (not the filesystems user namespace) as encoding
+>  	 * them in the filesystems user namespace allows an attack
+>  	 * where first they are written in an unprivileged fuse mount
+>  	 * of a filesystem and then the system is tricked to mount the
+>  	 * filesystem for real on next boot and trust it because
+>  	 * everything is signed.
+>  	 */
+>  	hmac_misc.uid =3D from_kuid(&init_user_ns, inode->i_uid);
+>  	hmac_misc.gid =3D from_kgid(&init_user_ns, inode->i_gid);
+>  	hmac_misc.mode =3D inode->i_mode;
+> -	crypto_shash_update(desc, (const u8 *)&hmac_misc, sizeof(hmac_misc));
+> +	ret =3D crypto_shash_update(desc, (const u8 *)&hmac_misc, sizeof(hmac_m=
+isc));
+> +	if (ret)
+> +		return ret;
+>  	if ((evm_hmac_attrs & EVM_ATTR_FSUUID) &&
+> -	    type !=3D EVM_XATTR_PORTABLE_DIGSIG)
+> -		crypto_shash_update(desc, (u8 *)&inode->i_sb->s_uuid, UUID_SIZE);
+> -	crypto_shash_final(desc, digest);
+> +	    type !=3D EVM_XATTR_PORTABLE_DIGSIG) {
+> +		ret =3D crypto_shash_update(desc, (u8 *)&inode->i_sb->s_uuid, UUID_SIZ=
+E);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +	ret =3D crypto_shash_final(desc, digest);
 
-I setup overlay with two xfs filesystems, kept the file I want to be
-audited in the lower filesystem.
-
-Without this patch set, if I modify the lower file, changes are
-detected, because actually the i_version is incremented.
-
-In which situation there is a comparison zero to zero?
+Maybe we should also indicate if an error occurred, with a separate
+error message, or adding the result in the message below.
 
 Thanks
 
 Roberto
-
-> change detected. This is not dissimilar to what
-> ima_check_last_writer() does.
->=20
-> No logical change intended for EVM.
->=20
-> Signed-off-by: Frederick Lawler <fred@cloudflare.com>
-> ---
->  include/linux/integrity.h         | 28 ++++++++++++++++++++++++----
->  security/integrity/evm/evm_main.c |  5 ++---
->  security/integrity/ima/ima_main.c |  5 ++---
->  3 files changed, 28 insertions(+), 10 deletions(-)
->=20
-> diff --git a/include/linux/integrity.h b/include/linux/integrity.h
-> index beb9ab19fa6257e79266b58bcb5f55b0c5445828..382c783f0fa3ae4a938cdf955=
-9291ba1903a378e 100644
-> --- a/include/linux/integrity.h
-> +++ b/include/linux/integrity.h
-> @@ -9,6 +9,7 @@
-> =20
->  #include <linux/fs.h>
->  #include <linux/iversion.h>
-> +#include <linux/kernel.h>
-> =20
->  enum integrity_status {
->  	INTEGRITY_PASS =3D 0,
-> @@ -62,14 +63,33 @@ integrity_inode_attrs_stat_changed
-> =20
->  /*
->   * On stacked filesystems detect whether the inode or its content has ch=
-anged.
-> + *
-> + * Must be called in process context.
->   */
->  static inline bool
->  integrity_inode_attrs_changed(const struct integrity_inode_attributes *a=
-ttrs,
-> -			      const struct inode *inode)
-> +			      struct file *file, struct inode *inode)
->  {
-> -	return (inode->i_sb->s_dev !=3D attrs->dev ||
-> -		inode->i_ino !=3D attrs->ino ||
-> -		!inode_eq_iversion(inode, attrs->version));
-> +	struct kstat stat;
-> +
-> +	might_sleep();
-> +
-> +	if (inode->i_sb->s_dev !=3D attrs->dev || inode->i_ino !=3D attrs->ino)
-> +		return true;
-> +
-> +	/*
-> +	 * EVM currently relies on backing inode i_version. While IS_I_VERSION
-> +	 * is not a good indicator of i_version support, this still retains
-> +	 * the logic such that a re-evaluation should still occur for EVM, and
-> +	 * only for IMA if vfs_getattr_nosec() fails.
-> +	 */
-> +	if (!file || vfs_getattr_nosec(&file->f_path, &stat,
-> +				       STATX_CHANGE_COOKIE,
-> +				       AT_STATX_SYNC_AS_STAT))
-> +		return !IS_I_VERSION(inode) ||
-> +		       !inode_eq_iversion(inode, attrs->version);
-> +
-> +	return integrity_inode_attrs_stat_changed(attrs, &stat);
+=20
+>  	pr_debug("hmac_misc: (%zu) [%*phN]\n", sizeof(struct h_misc),
+>  		 (int)sizeof(struct h_misc), &hmac_misc);
+> +	return ret;
 >  }
 > =20
+>  /*
+>   * Dump large security xattr values as a continuous ascii hexadecimal st=
+ring.
+>   * (pr_debug is limited to 64 bytes.)
+>   */
+>  static void dump_security_xattr_l(const char *prefix, const void *src,
+>  				  size_t count)
+>  {
+>  #if defined(DEBUG) || defined(CONFIG_DYNAMIC_DEBUG)
+> @@ -253,23 +260,24 @@ static int evm_calc_hmac_or_hash(struct dentry *den=
+try,
 > =20
-> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/e=
-vm_main.c
-> index 73d500a375cb37a54f295b0e1e93fd6e5d9ecddc..6a4e0e246005246d5700b1db5=
-90c1759242b9cb6 100644
-> --- a/security/integrity/evm/evm_main.c
-> +++ b/security/integrity/evm/evm_main.c
-> @@ -752,9 +752,8 @@ bool evm_metadata_changed(struct inode *inode, struct=
- inode *metadata_inode)
->  	bool ret =3D false;
+>  		/*
+>  		 * Skip non-enabled xattrs for locally calculated
+>  		 * signatures/HMACs.
+>  		 */
+>  		if (type !=3D EVM_XATTR_PORTABLE_DIGSIG && !xattr->enabled)
+>  			continue;
 > =20
->  	if (iint) {
-> -		ret =3D (!IS_I_VERSION(metadata_inode) ||
-> -		       integrity_inode_attrs_changed(&iint->metadata_inode,
-> -						     metadata_inode));
-> +		ret =3D integrity_inode_attrs_changed(&iint->metadata_inode,
-> +						    NULL, metadata_inode);
->  		if (ret)
->  			iint->evm_status =3D INTEGRITY_UNKNOWN;
->  	}
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/i=
-ma_main.c
-> index 6570ad10887b9ea1172c78274cf62482350e87ff..8cb17c9d446caaa5a98f5ec8f=
-027c17ba7babca8 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -328,9 +328,8 @@ static int process_measurement(struct file *file, con=
-st struct cred *cred,
->  	real_inode =3D d_real_inode(file_dentry(file));
->  	if (real_inode !=3D inode &&
->  	    (action & IMA_DO_MASK) && (iint->flags & IMA_DONE_MASK)) {
-> -		if (!IS_I_VERSION(real_inode) ||
-> -		    integrity_inode_attrs_changed(&iint->real_inode,
-> -						  real_inode)) {
-> +		if (integrity_inode_attrs_changed(&iint->real_inode,
-> +						  file, real_inode)) {
->  			iint->flags &=3D ~IMA_DONE_MASK;
->  			iint->measured_pcrs =3D 0;
+>  		if ((req_xattr_name && req_xattr_value)
+>  		    && !strcmp(xattr->name, req_xattr_name)) {
+> -			error =3D 0;
+> -			crypto_shash_update(desc, (const u8 *)req_xattr_value,
+> -					     req_xattr_value_len);
+> +			error =3D crypto_shash_update(desc, (const u8 *)req_xattr_value,
+> +						    req_xattr_value_len);
+> +			if (error)
+> +				goto out;
+>  			if (is_ima)
+>  				ima_present =3D true;
+> =20
+>  			dump_security_xattr(req_xattr_name,
+>  					    req_xattr_value,
+>  					    req_xattr_value_len);
+>  			continue;
 >  		}
->=20
+>  		size =3D vfs_getxattr_alloc(&nop_mnt_idmap, dentry, xattr->name,
+>  					  &xattr_value, xattr_size, GFP_NOFS);
+> @@ -279,29 +287,32 @@ static int evm_calc_hmac_or_hash(struct dentry *den=
+try,
+>  		}
+>  		if (size < 0)
+>  			continue;
+> =20
+>  		user_space_size =3D vfs_getxattr(&nop_mnt_idmap, dentry,
+>  					       xattr->name, NULL, 0);
+>  		if (user_space_size !=3D size)
+>  			pr_debug("file %s: xattr %s size mismatch (kernel: %d, user: %d)\n",
+>  				 dentry->d_name.name, xattr->name, size,
+>  				 user_space_size);
+> -		error =3D 0;
+>  		xattr_size =3D size;
+> -		crypto_shash_update(desc, (const u8 *)xattr_value, xattr_size);
+> +		error =3D crypto_shash_update(desc, (const u8 *)xattr_value, xattr_siz=
+e);
+> +		if (error)
+> +			goto out;
+>  		if (is_ima)
+>  			ima_present =3D true;
+> =20
+>  		dump_security_xattr(xattr->name, xattr_value, xattr_size);
+>  	}
+> -	hmac_add_misc(desc, inode, type, data->digest);
+> +	error =3D hmac_add_misc(desc, inode, type, data->digest);
+> +	if (error)
+> +		goto out;
+> =20
+>  	if (inode !=3D d_backing_inode(dentry) && iint) {
+>  		if (IS_I_VERSION(inode))
+>  			i_version =3D inode_query_iversion(inode);
+>  		integrity_inode_attrs_store(&iint->metadata_inode, i_version,
+>  					    inode);
+>  	}
+> =20
+>  	/* Portable EVM signatures must include an IMA hash */
+>  	if (type =3D=3D EVM_XATTR_PORTABLE_DIGSIG && !ima_present)
+> @@ -394,37 +405,41 @@ int evm_update_evmxattr(struct dentry *dentry, cons=
+t char *xattr_name,
+>  		rc =3D __vfs_removexattr(&nop_mnt_idmap, dentry, XATTR_NAME_EVM);
+>  	}
+>  	return rc;
+>  }
+> =20
+>  int evm_init_hmac(struct inode *inode, const struct xattr *xattrs,
+>  		  char *hmac_val)
+>  {
+>  	struct shash_desc *desc;
+>  	const struct xattr *xattr;
+> +	int ret;
+> =20
+>  	desc =3D init_desc(EVM_XATTR_HMAC, HASH_ALGO_SHA1);
+>  	if (IS_ERR(desc)) {
+>  		pr_info("init_desc failed\n");
+>  		return PTR_ERR(desc);
+>  	}
+> =20
+>  	for (xattr =3D xattrs; xattr->name; xattr++) {
+>  		if (!evm_protected_xattr(xattr->name))
+>  			continue;
+> =20
+> -		crypto_shash_update(desc, xattr->value, xattr->value_len);
+> +		ret =3D crypto_shash_update(desc, xattr->value, xattr->value_len);
+> +		if (ret)
+> +			goto out;
+>  	}
+> =20
+> -	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
+> +	ret =3D hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
+> +out:
+>  	kfree(desc);
+> -	return 0;
+> +	return ret;
+>  }
+> =20
+>  /*
+>   * Get the key from the TPM for the SHA1-HMAC
+>   */
+>  int evm_init_key(void)
+>  {
+>  	struct key *evm_key;
+>  	struct encrypted_key_payload *ekp;
+>  	int rc;
 
