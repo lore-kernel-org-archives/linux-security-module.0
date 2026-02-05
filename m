@@ -1,33 +1,40 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com [113.46.200.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD9170810;
-	Thu,  5 Feb 2026 11:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3845F3ACEF9;
+	Thu,  5 Feb 2026 11:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770291793; cv=none; b=gcO7X90mwpEfvoYS6mOWj0mDO59K3vlPA1KmPluCwoZ5i8TFqXSQK4IOhBpJnLoJzZUbvdKe1PY0VgDuuV9Y72bipeRgdvUeILVg2AUifcXCcRJGrbFxldxagfzGoLWmorJ/S07SXNvAkWRKpG5kkJCvHriRdNz3Oef/Uif1uM4=
+	t=1770292087; cv=none; b=bX52Pzmote+11WvqJhrkwNch7c0SPVcTH+mZyFoFBp8D+XkO74ZTBbJP5qBZfv5K6zEOWjDRLB56dEXRz1jJjHr9NBLibKGpwTo4CahpLF2BWnmrccBXYDQuciPEJGVHCQ+DXvxVdxYqB3VICifnM0lb6AY8dj7xREBR+fLD1sM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770291793; c=relaxed/simple;
-	bh=SLa9MCFdnRWjJyhu+WPJ0tBsB0AWSHQoPqTMdCSiiTI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PtnWL6wFyYdLKtsnaIXOrutJnehWNgmsPotEW233R4Tq6lUmXeGYaRkRuaDMaDMseEzXquxmCbKopflW7Q7qrBY2XXFgPvTP7GmF+ZzNrs2Lw+lngMA3c9n1mrz9/RuY0rhvLmQ48Ys9J1XPZzxUBuXBu4osb6eYLvGkT9h0a/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YREsyiQm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770292087; c=relaxed/simple;
+	bh=R8ouFOvIM3YEyVU3FyhmSkSI84Ktl1xT8Ezkm5sftRU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cNVMR1c0J5dPGF4zARsaVPBWHlQKEQwubgUzCJUsPIVxNt0YjZVIhGtJGxT+XGmyp6r+MUtkjP+hg9Pk6sjDGzSyg/s78lV5mnGV1p+wFgdgnJNaQfHaT3j3wAQJRIJzOIiNBp+WoX5CRtvevPMRBTc9sNKHV3xTCVzJaV+6yTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=HORYpC/o; arc=none smtp.client-ip=113.46.200.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YREsyiQm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E944FC4CEF7;
-	Thu,  5 Feb 2026 11:43:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770291793;
-	bh=SLa9MCFdnRWjJyhu+WPJ0tBsB0AWSHQoPqTMdCSiiTI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YREsyiQmEFsy3JMHQi78a3njdasjladiYlKxyb0n/bUUgs8SVhhx1R1VAvVF/MMO9
-	 GA9bVq6DmgKlrmP++NugWkAC5nRMRMY0Or2IBLpNxmcfDnCDgUExzb3ef5nDZSMm73
-	 XVKE/E8tkj8ClHCR/yx1wfC3JVN0rBnSbZREVanz8COMNSa7KOD9VkPu1XCMTmw7/N
-	 NfWLd/9WaUzobP477xfSTUUNu0QyRSHvyscq1k+eKgfNDWn1JvRI0EXz+zZ5meU7Ms
-	 B2gJQntUd9tW/3uqPmBDhQ9YRQL0CWaq23IrN9UnlFkgZaeIN9w2K7zANipw9Q0911
-	 /T3zbV7nKMkqA==
-Message-ID: <21d90844-1cb1-46ab-a2bb-62f2478b7dfb@kernel.org>
-Date: Thu, 5 Feb 2026 12:43:03 +0100
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="HORYpC/o"
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=cGgOyeoTNoxsN6zJ2XO4mcwfb4d8rRz67JRHDhtG3aA=;
+	b=HORYpC/oBlWO1M/4fN1DXnfKvdA5U0gMFJyn25nzbATYWtOnkjXQoWRtVAngeXlZhvLJX1QyN
+	xvqhY0AGe9o9fk2gy9GUHyi6u8EJRnaYprhHsX5FWrhlU9fLIUEhMPtwvdXZ1AeHbfMyEcZ++T4
+	v4HgmPHInBpUpaNtY5wNW6Y=
+Received: from mail.maildlp.com (unknown [172.19.163.104])
+	by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4f6Fk54Fkzz12LDg;
+	Thu,  5 Feb 2026 19:44:13 +0800 (CST)
+Received: from kwepemj100004.china.huawei.com (unknown [7.202.195.249])
+	by mail.maildlp.com (Postfix) with ESMTPS id 22450404AD;
+	Thu,  5 Feb 2026 19:48:03 +0800 (CST)
+Received: from [10.34.206.51] (10.34.206.51) by kwepemj100004.china.huawei.com
+ (7.202.195.249) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Thu, 5 Feb
+ 2026 19:48:02 +0800
+Message-ID: <aa62e24c-537e-4141-9507-37cd0af19dfc@huawei.com>
+Date: Thu, 5 Feb 2026 19:48:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -35,334 +42,55 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] mm: export zap_page_range_single and list_lru_add/del
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Carlos Llamas <cmllamas@google.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Andrew Morton <akpm@linux-foundation.org>, Dave Chinner
- <david@fromorbit.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>, kernel-team@android.com,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-mm@kvack.org,
- rust-for-linux@vger.kernel.org
-References: <20260205-binder-tristate-v1-0-dfc947c35d35@google.com>
- <20260205-binder-tristate-v1-3-dfc947c35d35@google.com>
- <02801464-f4cb-4e38-8269-f8b9cf0a5965@lucifer.local>
-From: "David Hildenbrand (arm)" <david@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=david@kernel.org; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzS5EYXZpZCBIaWxk
- ZW5icmFuZCAoQ3VycmVudCkgPGRhdmlkQGtlcm5lbC5vcmc+wsGQBBMBCAA6AhsDBQkmWAik
- AgsJBBUKCQgCFgICHgUCF4AWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaYJt/AIZAQAKCRBN
- 3hD3AP+DWriiD/9BLGEKG+N8L2AXhikJg6YmXom9ytRwPqDgpHpVg2xdhopoWdMRXjzOrIKD
- g4LSnFaKneQD0hZhoArEeamG5tyo32xoRsPwkbpIzL0OKSZ8G6mVbFGpjmyDLQCAxteXCLXz
- ZI0VbsuJKelYnKcXWOIndOrNRvE5eoOfTt2XfBnAapxMYY2IsV+qaUXlO63GgfIOg8RBaj7x
- 3NxkI3rV0SHhI4GU9K6jCvGghxeS1QX6L/XI9mfAYaIwGy5B68kF26piAVYv/QZDEVIpo3t7
- /fjSpxKT8plJH6rhhR0epy8dWRHk3qT5tk2P85twasdloWtkMZ7FsCJRKWscm1BLpsDn6EQ4
- jeMHECiY9kGKKi8dQpv3FRyo2QApZ49NNDbwcR0ZndK0XFo15iH708H5Qja/8TuXCwnPWAcJ
- DQoNIDFyaxe26Rx3ZwUkRALa3iPcVjE0//TrQ4KnFf+lMBSrS33xDDBfevW9+Dk6IISmDH1R
- HFq2jpkN+FX/PE8eVhV68B2DsAPZ5rUwyCKUXPTJ/irrCCmAAb5Jpv11S7hUSpqtM/6oVESC
- 3z/7CzrVtRODzLtNgV4r5EI+wAv/3PgJLlMwgJM90Fb3CB2IgbxhjvmB1WNdvXACVydx55V7
- LPPKodSTF29rlnQAf9HLgCphuuSrrPn5VQDaYZl4N/7zc2wcWM7BTQRVy5+RARAA59fefSDR
- 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
- VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
- /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
- iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
- 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
- zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
- azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
- FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
- sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
- 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
- EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
- IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
- 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
- Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
- sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
- yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
- 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
- r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
- 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
- CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
- qIws/H2t
-In-Reply-To: <02801464-f4cb-4e38-8269-f8b9cf0a5965@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH] man/man7/kernel_lockdown.7: remove Secure Boot untruth
+To: Alyssa Ross <hi@alyssa.is>, Alejandro Colomar <alx@kernel.org>
+CC: Heinrich Schuchardt <xypron.glpk@gmx.de>, David Howells
+	<dhowells@redhat.com>, Nicolas Bouchinet
+	<nicolas.bouchinet@oss.cyber.gouv.fr>,
+	<linux-security-module@vger.kernel.org>, <linux-man@vger.kernel.org>
+References: <20260203195001.20131-1-hi@alyssa.is>
+From: Xiu Jianfeng <xiujianfeng@huawei.com>
+In-Reply-To: <20260203195001.20131-1-hi@alyssa.is>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemj100004.china.huawei.com (7.202.195.249)
 
-On 2/5/26 12:29, Lorenzo Stoakes wrote:
-> On Thu, Feb 05, 2026 at 10:51:28AM +0000, Alice Ryhl wrote:
->> These are the functions needed by Binder's shrinker.
->>
->> Binder uses zap_page_range_single in the shrinker path to remove an
->> unused page from the mmap'd region. Note that pages are only removed
->> from the mmap'd region lazily when shrinker asks for it.
->>
->> Binder uses list_lru_add/del to keep track of the shrinker lru list, and
->> it can't use _obj because the list head is not stored inline in the page
->> actually being lru freed, so page_to_nid(virt_to_page(item)) on the list
->> head computes the nid of the wrong page.
->>
->> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->> ---
->>   mm/list_lru.c | 2 ++
->>   mm/memory.c   | 1 +
->>   2 files changed, 3 insertions(+)
->>
->> diff --git a/mm/list_lru.c b/mm/list_lru.c
->> index ec48b5dadf519a5296ac14cda035c067f9e448f8..bf95d73c9815548a19db6345f856cee9baad22e3 100644
->> --- a/mm/list_lru.c
->> +++ b/mm/list_lru.c
->> @@ -179,6 +179,7 @@ bool list_lru_add(struct list_lru *lru, struct list_head *item, int nid,
->>   	unlock_list_lru(l, false);
->>   	return false;
->>   }
->> +EXPORT_SYMBOL_GPL(list_lru_add);
->>
->>   bool list_lru_add_obj(struct list_lru *lru, struct list_head *item)
->>   {
->> @@ -216,6 +217,7 @@ bool list_lru_del(struct list_lru *lru, struct list_head *item, int nid,
->>   	unlock_list_lru(l, false);
->>   	return false;
->>   }
->> +EXPORT_SYMBOL_GPL(list_lru_del);
+On 2/4/2026 3:50 AM, Alyssa Ross wrote:
+> This is true for Fedora, where this page was sourced from, but I don't
+> believe it has ever been true for the mainline kernel, because Linus
+> rejected it.
+
+Yeah, I also found this issue not long ago, but I haven't had time to 
+submit a fix patch yet.
+
 > 
-> Same point as before about exporting symbols, but given the _obj variants are
-> exported already this one is more valid.
+> Link: https://bbs.archlinux.org/viewtopic.php?pid=2088704#p2088704
+> Link: https://lore.kernel.org/lkml/CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqOzzMufBoovXVnfPw@mail.gmail.com/
+> Fixes: bb509e6fc ("kernel_lockdown.7: New page documenting the Kernel Lockdown feature")
+> Signed-off-by: Alyssa Ross <hi@alyssa.is>
+
+I am not sure if appropriate to add my ACK here, if needed, feel free to 
+add:
+
+Acked-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+
+> ---
+>   man/man7/kernel_lockdown.7 | 3 ---
+>   1 file changed, 3 deletions(-)
 > 
->>
->>   bool list_lru_del_obj(struct list_lru *lru, struct list_head *item)
->>   {
->> diff --git a/mm/memory.c b/mm/memory.c
->> index da360a6eb8a48e29293430d0c577fb4b6ec58099..64083ace239a2caf58e1645dd5d91a41d61492c4 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -2168,6 +2168,7 @@ void zap_page_range_single(struct vm_area_struct *vma, unsigned long address,
->>   	zap_page_range_single_batched(&tlb, vma, address, size, details);
->>   	tlb_finish_mmu(&tlb);
->>   }
->> +EXPORT_SYMBOL(zap_page_range_single);
-> 
-> Sorry but I don't want this exported at all.
-> 
-> This is an internal implementation detail which allows fine-grained control of
-> behaviour via struct zap_details (which binder doesn't use, of course :)
+> diff --git a/man/man7/kernel_lockdown.7 b/man/man7/kernel_lockdown.7
+> index 5090484ea..5986c8f01 100644
+> --- a/man/man7/kernel_lockdown.7
+> +++ b/man/man7/kernel_lockdown.7
+> @@ -23,9 +23,6 @@ Lockdown: X: Y is restricted, see man kernel_lockdown.7
+>   .in
+>   .P
+>   where X indicates the process name and Y indicates what is restricted.
+> -.P
+> -On an EFI-enabled x86 or arm64 machine, lockdown will be automatically enabled
+> -if the system boots in EFI Secure Boot mode.
+>   .\"
+>   .SS Coverage
+>   When lockdown is in effect, a number of features are disabled or have their
 
-I don't expect anybody to set zap_details, but yeah, it could be abused.
-It could be abused right now from anywhere else in the kernel
-where we don't build as a module :)
-
-Apparently we export a similar function in rust where we just removed the last parameter.
-
-I think zap_page_range_single() is only called with non-NULL from mm/memory.c.
-
-So the following makes likely sense even outside of the context of this series:
-
- From d2a2d20994456b9a66008b7fef12e379e76fc9f8 Mon Sep 17 00:00:00 2001
-From: "David Hildenbrand (arm)" <david@kernel.org>
-Date: Thu, 5 Feb 2026 12:42:09 +0100
-Subject: [PATCH] tmp
-
-Signed-off-by: David Hildenbrand (arm) <david@kernel.org>
----
-  arch/s390/mm/gmap_helpers.c    |  2 +-
-  drivers/android/binder_alloc.c |  2 +-
-  include/linux/mm.h             |  4 ++--
-  kernel/bpf/arena.c             |  3 +--
-  kernel/events/core.c           |  2 +-
-  mm/memory.c                    | 15 +++++++++------
-  net/ipv4/tcp.c                 |  5 ++---
-  rust/kernel/mm/virt.rs         |  2 +-
-  8 files changed, 18 insertions(+), 17 deletions(-)
-
-diff --git a/arch/s390/mm/gmap_helpers.c b/arch/s390/mm/gmap_helpers.c
-index d41b19925a5a..859f5570c3dc 100644
---- a/arch/s390/mm/gmap_helpers.c
-+++ b/arch/s390/mm/gmap_helpers.c
-@@ -102,7 +102,7 @@ void gmap_helper_discard(struct mm_struct *mm, unsigned long vmaddr, unsigned lo
-  		if (!vma)
-  			return;
-  		if (!is_vm_hugetlb_page(vma))
--			zap_page_range_single(vma, vmaddr, min(end, vma->vm_end) - vmaddr, NULL);
-+			zap_page_range_single(vma, vmaddr, min(end, vma->vm_end) - vmaddr);
-  		vmaddr = vma->vm_end;
-  	}
-  }
-diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-index 979c96b74cad..b0201bc6893a 100644
---- a/drivers/android/binder_alloc.c
-+++ b/drivers/android/binder_alloc.c
-@@ -1186,7 +1186,7 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
-  	if (vma) {
-  		trace_binder_unmap_user_start(alloc, index);
-  
--		zap_page_range_single(vma, page_addr, PAGE_SIZE, NULL);
-+		zap_page_range_single(vma, page_addr, PAGE_SIZE);
-  
-  		trace_binder_unmap_user_end(alloc, index);
-  	}
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index f0d5be9dc736..b7cc6ef49917 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2621,11 +2621,11 @@ struct page *vm_normal_page_pud(struct vm_area_struct *vma, unsigned long addr,
-  void zap_vma_ptes(struct vm_area_struct *vma, unsigned long address,
-  		  unsigned long size);
-  void zap_page_range_single(struct vm_area_struct *vma, unsigned long address,
--			   unsigned long size, struct zap_details *details);
-+			   unsigned long size);
-  static inline void zap_vma_pages(struct vm_area_struct *vma)
-  {
-  	zap_page_range_single(vma, vma->vm_start,
--			      vma->vm_end - vma->vm_start, NULL);
-+			      vma->vm_end - vma->vm_start);
-  }
-  void unmap_vmas(struct mmu_gather *tlb, struct ma_state *mas,
-  		struct vm_area_struct *start_vma, unsigned long start,
-diff --git a/kernel/bpf/arena.c b/kernel/bpf/arena.c
-index 872dc0e41c65..242c931d3740 100644
---- a/kernel/bpf/arena.c
-+++ b/kernel/bpf/arena.c
-@@ -503,8 +503,7 @@ static void zap_pages(struct bpf_arena *arena, long uaddr, long page_cnt)
-  	struct vma_list *vml;
-  
-  	list_for_each_entry(vml, &arena->vma_list, head)
--		zap_page_range_single(vml->vma, uaddr,
--				      PAGE_SIZE * page_cnt, NULL);
-+		zap_page_range_single(vml->vma, uaddr, PAGE_SIZE * page_cnt);
-  }
-  
-  static void arena_free_pages(struct bpf_arena *arena, long uaddr, long page_cnt)
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 8cca80094624..1dfb33c39c2f 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -6926,7 +6926,7 @@ static int map_range(struct perf_buffer *rb, struct vm_area_struct *vma)
-  #ifdef CONFIG_MMU
-  	/* Clear any partial mappings on error. */
-  	if (err)
--		zap_page_range_single(vma, vma->vm_start, nr_pages * PAGE_SIZE, NULL);
-+		zap_page_range_single(vma, vma->vm_start, nr_pages * PAGE_SIZE);
-  #endif
-  
-  	return err;
-diff --git a/mm/memory.c b/mm/memory.c
-index da360a6eb8a4..4f8dcdcd20f3 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -2155,17 +2155,16 @@ void zap_page_range_single_batched(struct mmu_gather *tlb,
-   * @vma: vm_area_struct holding the applicable pages
-   * @address: starting address of pages to zap
-   * @size: number of bytes to zap
-- * @details: details of shared cache invalidation
-   *
-   * The range must fit into one VMA.
-   */
-  void zap_page_range_single(struct vm_area_struct *vma, unsigned long address,
--		unsigned long size, struct zap_details *details)
-+		unsigned long size)
-  {
-  	struct mmu_gather tlb;
-  
-  	tlb_gather_mmu(&tlb, vma->vm_mm);
--	zap_page_range_single_batched(&tlb, vma, address, size, details);
-+	zap_page_range_single_batched(&tlb, vma, address, size, NULL);
-  	tlb_finish_mmu(&tlb);
-  }
-  
-@@ -2187,7 +2186,7 @@ void zap_vma_ptes(struct vm_area_struct *vma, unsigned long address,
-  	    		!(vma->vm_flags & VM_PFNMAP))
-  		return;
-  
--	zap_page_range_single(vma, address, size, NULL);
-+	zap_page_range_single(vma, address, size);
-  }
-  EXPORT_SYMBOL_GPL(zap_vma_ptes);
-  
-@@ -2963,7 +2962,7 @@ static int remap_pfn_range_notrack(struct vm_area_struct *vma, unsigned long add
-  	 * maintain page reference counts, and callers may free
-  	 * pages due to the error. So zap it early.
-  	 */
--	zap_page_range_single(vma, addr, size, NULL);
-+	zap_page_range_single(vma, addr, size);
-  	return error;
-  }
-  
-@@ -4187,7 +4186,11 @@ static void unmap_mapping_range_vma(struct vm_area_struct *vma,
-  		unsigned long start_addr, unsigned long end_addr,
-  		struct zap_details *details)
-  {
--	zap_page_range_single(vma, start_addr, end_addr - start_addr, details);
-+	struct mmu_gather tlb;
-+
-+	tlb_gather_mmu(&tlb, vma->vm_mm);
-+	zap_page_range_single_batched(&tlb, vma, address, size, details);
-+	tlb_finish_mmu(&tlb);
-  }
-  
-  static inline void unmap_mapping_range_tree(struct rb_root_cached *root,
-diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index d5319ebe2452..9e92c71389f3 100644
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -2052,7 +2052,7 @@ static int tcp_zerocopy_vm_insert_batch_error(struct vm_area_struct *vma,
-  		maybe_zap_len = total_bytes_to_map -  /* All bytes to map */
-  				*length + /* Mapped or pending */
-  				(pages_remaining * PAGE_SIZE); /* Failed map. */
--		zap_page_range_single(vma, *address, maybe_zap_len, NULL);
-+		zap_page_range_single(vma, *address, maybe_zap_len);
-  		err = 0;
-  	}
-  
-@@ -2217,8 +2217,7 @@ static int tcp_zerocopy_receive(struct sock *sk,
-  	total_bytes_to_map = avail_len & ~(PAGE_SIZE - 1);
-  	if (total_bytes_to_map) {
-  		if (!(zc->flags & TCP_RECEIVE_ZEROCOPY_FLAG_TLB_CLEAN_HINT))
--			zap_page_range_single(vma, address, total_bytes_to_map,
--					      NULL);
-+			zap_page_range_single(vma, address, total_bytes_to_map);
-  		zc->length = total_bytes_to_map;
-  		zc->recv_skip_hint = 0;
-  	} else {
-diff --git a/rust/kernel/mm/virt.rs b/rust/kernel/mm/virt.rs
-index da21d65ccd20..b8e59e4420f3 100644
---- a/rust/kernel/mm/virt.rs
-+++ b/rust/kernel/mm/virt.rs
-@@ -124,7 +124,7 @@ pub fn zap_page_range_single(&self, address: usize, size: usize) {
-          // sufficient for this method call. This method has no requirements on the vma flags. The
-          // address range is checked to be within the vma.
-          unsafe {
--            bindings::zap_page_range_single(self.as_ptr(), address, size, core::ptr::null_mut())
-+            bindings::zap_page_range_single(self.as_ptr(), address, size)
-          };
-      }
-  
--- 
-2.43.0
-
-
--- 
-Cheers,
-
-David
