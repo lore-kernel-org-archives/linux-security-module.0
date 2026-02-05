@@ -1,142 +1,180 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3045F1C860B;
-	Thu,  5 Feb 2026 04:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D5933EAF8
+	for <linux-security-module@vger.kernel.org>; Thu,  5 Feb 2026 07:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770265624; cv=none; b=BOiRwAob+xmOHNGKdi0Vq05I3q6XXcALe5Wc/T4umaxoxeJQXu58LWRv1W+7SQm+yC+c7RQANdYBQ8hYYy/XX7dHCSGJRO7vUfAHBYekfVWobzaTzaykvrzHRZNpQtDanuZh5X3qVZP9f+3QG2HYCnxwbG5eoKjs1FO+65iHU3g=
+	t=1770277281; cv=none; b=ovwTwS3NuY2Hybanh+mgIwTknI0V9KykZvDr7fFEF2AVbdN/o4le04lFEyKulEiAVY96iZVK9vzcdOFZaD3VO6KHbP6aKAXAp+b7bgzp0ycIQ46s1MkIJwIR96UrWSZD0zAvsWHznyCa926BsY7c1OEJSqg16/DWPiKCXg9xfBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770265624; c=relaxed/simple;
-	bh=RP4IfRqUPu9X41sG6CrMhkiScQA7dWvhTYysPcQngLY=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=hNPOrJYFl9KwMXAYTcl9KAiOt5ZULJx4DkIP90IPce/SO4/IP6sqXVK7mKtxUyJULwByfhR0ZUQAQ+fwJwf3fLPE2O95VIsGoFp7qjey7ZgolI/AXXwxnhYM6in1BdRc4Ks0yyZOpJE2Xq2GpOUua+IAlAILD4e2IVDTd1cjvnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QD5IDolM; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1770277281; c=relaxed/simple;
+	bh=LxXmRzkWUI5sU+b/EoQqlLiqRK7pr3PQCF6h2eMkRb4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jptU8kfLGF10WSeWimNZqw98vs9C2k5N0nNdnjXPqRGiSd0MMXXB/gymUkINhqhLIoGFQ3XjKhkFz/mxX0t5L/iijLiWWzwB6yLAAL0brhmidNEOb0Z+E7C+cm0wro0qJlDYtp9PmBLrQOEAHuVbNfyowOE6jzuMhD28QRV8nm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=ZEgGfJku; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QD5IDolM"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 6151KDFe027389;
-	Thu, 5 Feb 2026 04:26:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=RP4IfR
-	qUPu9X41sG6CrMhkiScQA7dWvhTYysPcQngLY=; b=QD5IDolMNdcYP2bXqqMOvj
-	2dUVFKE5DXWhn1eJzddXKj70EWgIiKOelDrSuGhW33WNb1GXF09yYmFBSdJf5mTY
-	98DZTbtnWtcp0j2r79bQBZxXuDkFLHsuWP7u4Pr9XiYJDd+eTDGJK/Y5fS9u/vwc
-	H6oo1MT9qnc+8zabmVaB8n46QrC4odAbsf8WpfdAzNRBFtumtmaPZh4h33ZMvNoL
-	awE5WFruCTLH5CQuKL98PbGXilwVYNMZIctf1YhjCtqxURlRjSklKUKV11HEasAn
-	axNKVTe+4c7bkUBe8dga3UaXSogUBgGYu0gBhmXd3Ijclj62t6NtlPjn+Nvv4P0Q
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4c175n2hb6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Feb 2026 04:26:32 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 6154QVMS029415;
-	Thu, 5 Feb 2026 04:26:31 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4c175n2hb3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Feb 2026 04:26:31 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 6150YV1u015800;
-	Thu, 5 Feb 2026 04:26:31 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4c4gsgrkvd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Feb 2026 04:26:31 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6154QUmZ15794796
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 5 Feb 2026 04:26:30 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 299EB5805B;
-	Thu,  5 Feb 2026 04:26:30 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 823A058058;
-	Thu,  5 Feb 2026 04:26:28 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.93.65])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  5 Feb 2026 04:26:28 +0000 (GMT)
-Message-ID: <6f82d5dc6b499ecd03c985d6de20de94fea04cfe.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 3/3] ima: Use kstat.ctime as a fallback change
- detection for stacked fs
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Frederick Lawler <fred@cloudflare.com>,
-        Roberto Sassu
-	 <roberto.sassu@huaweicloud.com>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin	
- <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul
- Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E.
- Hallyn"	 <serge@hallyn.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christian Brauner	 <brauner@kernel.org>,
-        Josef Bacik
- <josef@toxicpanda.com>, Jeff Layton	 <jlayton@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kernel-team@cloudflare.com
-In-Reply-To: <aYO4fj0Uw0aUWXOX@CMGLRV3>
-References: <20260130-xfs-ima-fixup-v5-0-57e84ea91712@cloudflare.com>
-	 <20260130-xfs-ima-fixup-v5-3-57e84ea91712@cloudflare.com>
-	 <c449523aef301a6b199e06d4c3fbf7587d1218c5.camel@huaweicloud.com>
-	 <aYO4fj0Uw0aUWXOX@CMGLRV3>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 04 Feb 2026 23:26:27 -0500
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="ZEgGfJku"
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 0CA6D3F787
+	for <linux-security-module@vger.kernel.org>; Thu,  5 Feb 2026 07:41:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20251003; t=1770277279;
+	bh=zxCZUzd2xfkMizEOYKRbaOGQsI1X2IZR0QVgIaFzVaA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=ZEgGfJku8lLHH2UimQ+yHYAMrObB65G6SoQ/NF7R53egv37sJw3Xbw8CLjFcCmq0j
+	 DYyRGSyt08spxlS6RbAZ/ZeONmup7Lb5sLtOcwi6iEdP94i/+wf2BdD1zvyxb7D5xx
+	 chxG311vmlk/dGwhKBKkwRe6u89pUxpagTvd7fNkS73Ml3tD7Hxu5h5xQ+hIWEK4lr
+	 XTu9Z+TN5On+B/qxs8MRceEukhrv3XOucUJFAH2p4EJP68EQKyL2+DKP6Z24ooK6cr
+	 z+N3SRlR/6XeG3erT1u5wH2mckixP6eCi05MzHBtZTzt6gG1meyuxFhe8Nt1XIAnXt
+	 Rxejw59iMh5i9fp3QGDwHevx2SFixMtQHH7fqQjXcZcCsTMQzsmpMRgpTnzldRvFZB
+	 O6TWWoOBB/qmlY3OD1LZG9X366epVvQMwIPcM/kpP5Z2wG+Il38Z5s9MvDq42S7q4G
+	 JUI0J3IGIAzhGifgaom8RQ4kmjWYwqZjlPYg51aVRYeXG7ITe8lUrOXS8krWRWUSqA
+	 Tgv1vfmGoSfUTaCQxK+nI8uY0iRyWA5OHaNEqKQvdZv6r8o7kvN6HBBZ83vv/m2+Vz
+	 7dfHU0YP7lkuHFriCqwXWAQwvRuGH84/I5ApD3FMmpVJXvRHTwiNoObZdJAhrdvOVV
+	 UtyeNTXDQwL2UlSJ9IXRW6KE=
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-34ab8693a2cso1569387a91.0
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Feb 2026 23:41:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770277277; x=1770882077;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zxCZUzd2xfkMizEOYKRbaOGQsI1X2IZR0QVgIaFzVaA=;
+        b=gM9nO0pa6Y5J87W15K9lNKzPiudJEbYuXr/Qts8kzMJjaarxnBZ4nPS4kf/QBg21eR
+         I1JI7gCVePxkIyyjn58QjJxxq5Icdb2JSTkmXSnCNPoCirglWxW1NbVmTUKvDmpE9Dpd
+         rgtaeAcHnwNyfV5wBW6+m5HcQFS1sZhSVe7XpLnT+V5ogsZKqqxwoB8xsB/UpFoHQTuI
+         qJvfqrh8Ag6UfG5qdKwEgMjEwOejikbMmcUgArtghqEDgAxC8qn7dgsUlXEO9CAb7JGa
+         WO1Pk4735vOJPjj424QyxLlWNloeCnZmhGhkHjgnSjO1eoIqUt+GqeUu3oBO1WkkV1H0
+         cu+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUril8LrFwQWMTaTng2OT1RFph2GWkhEA+CD4TDRUPrSKo0S+/mOWEwF7SnPOlT/sURHb/iShevz+kEcEyckOLwmMwaVCc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywz3Bp/qlBX35NVKSIYb0YUwIomE47M3MJlRT/5vh6o0vTKctqH
+	3v3OxZC0lmf66CUshQioxxEFpNlajo+2FV6v9oo31lxzb/iT4X51hcX69mXl3U9zUVqRbhhOst3
+	dIxCgHPTIMcGhvLjIHq2RVmCchJqLpF8RRzGa3GJbZBkSwkG2Huug571HHZ6kvsIJnpsBJblSDD
+	5FExGblwBieigGuQW9Yg==
+X-Gm-Gg: AZuq6aKFA//zgp6g0AesYrao/ZeuttaTIlVINUHjZxlPKNowcP3mAD7RrlgOBW5bLMv
+	gRcaAkWO3WN30pA3XeKlGoE0OErVZIfVtp28NfClW/jcEIWB2BM0Fe5HHMhOwCi0+AZA0b224X+
+	z5taDxmnT0NXgEMhOUUgBQ3FTeOX7fPvIYAzMQ1/P/qnFAIC4F8zY2DH4tGt3M8LbwqJrS7iuqN
+	CacH48zoLeVCYwF7kMu+soxvwTcRz2INNQtsr+YA8dNxHmUfPkn76LUNhZMRekB9+hh7Ba0Bf3C
+	lImy0HtlgqN8LM51Bno2eLZmD+d2JFcHUjtO+CrABkcHUKlzZNC5WgNJbIMN26cy9dA6bI/eK2r
+	pMv853d/NHXxjSFJM21BDSvAZ
+X-Received: by 2002:a17:90b:3c49:b0:353:356c:6840 with SMTP id 98e67ed59e1d1-354870e76abmr4514900a91.14.1770277277742;
+        Wed, 04 Feb 2026 23:41:17 -0800 (PST)
+X-Received: by 2002:a17:90b:3c49:b0:353:356c:6840 with SMTP id 98e67ed59e1d1-354870e76abmr4514884a91.14.1770277277365;
+        Wed, 04 Feb 2026 23:41:17 -0800 (PST)
+Received: from [192.168.192.85] ([50.47.129.42])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-3549c28204esm1621107a91.10.2026.02.04.23.41.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Feb 2026 23:41:16 -0800 (PST)
+Message-ID: <1695a9cc-0d50-48f3-8c44-c84f3424924f@canonical.com>
+Date: Wed, 4 Feb 2026 23:41:15 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: isB5NKNz9U_iFU1lLWLg7WY9YxRtM4db
-X-Authority-Analysis: v=2.4 cv=VcX6/Vp9 c=1 sm=1 tr=0 ts=69841bf8 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RobKdUFHg6JuvS5dcHMA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: ZnH4SyeQhBDME7XvwUD8PyCjWpuOZnnL
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjA1MDAyNyBTYWx0ZWRfXzo6jxa4pO7Vu
- JIchXLuNAFTu1HXj9YCRR58m0H3qWnmshmHdBYp9Ov1BhGoAxG0ygNIBse54jGGxVb28ikGEPeO
- tzWbbovSIUvJ7Tq+nVusS/HDoMGWDlOVnFkHZwBeNz3bEwk3nmWYEFdAREwSEHqpaONdQAdWZQU
- BR0wKuyOjf2BQVtrDob2vU2mIO1DfU8hMctVZHR6jw+3vake0edezrsHRAI4ReWa8o0Ilx6oFla
- qxPZZ1Kdfwsji3k5pWEYhhFtnZ1SGxUwEEBHjk8MJfoFI5gXUsvVjRRkb7aE8Yk8g0JTDJU4k8A
- A/06ndAb7JfFeu6t+VNwYGQlAHJNkJtUR84z3zynm0CBE3V6FABsY0BtoOyTUvD+qNaFBizWI0v
- 3gYW6R2ZyKzNd8TT82a8jQt4mYIChyItPbu4Oe5FvTlIi9ONDbNFn4y06jqv+nZ5jD7KTcZmopZ
- MZ3UqHe6R0IqiS7aBjw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-04_08,2026-02-04_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 spamscore=0 adultscore=0
- bulkscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2601150000 definitions=main-2602050027
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] apparmor: add .kunitconfig
+To: Ryota Sakamoto <sakamo.ryota@gmail.com>, Paul Moore
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org
+References: <20260125-add-apparmor-kunitconfig-v1-1-e815cec415df@gmail.com>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20260125-add-apparmor-kunitconfig-v1-1-e815cec415df@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2026-02-04 at 15:22 -0600, Frederick Lawler wrote:
-> That said, I think Mimi pointed out in an email [2] where multi-grain
-> file systems are impacted regardless of stacked fs or not due to the last
-> writer check.
->=20
-> I don't recall coming across that in my tests, but perhaps I did that
-> specific test wrong? To be sure, I created the C program, and on the VM,
-> created a XFS disk, mounted it on loopback, ran the rdwr program on
-> "somefile" multiple times, and only got 1 audit log for it, until I
-> mutated it with touch, and only got 2 hits: original + after mutation
-> after running the program multiple times.=20
->=20
-> I'm not sure what's going on there, so I'll look into that a bit more,
-> but so far the impact is stacked file systems & multigrain ctime AFAIK.
+On 1/25/26 02:05, Ryota Sakamoto wrote:
+> Add .kunitconfig file to the AppArmor directory to enable easy execution of
+> KUnit tests.
+> 
+> AppArmor tests (CONFIG_SECURITY_APPARMOR_KUNIT_TEST) depend on
+> CONFIG_SECURITY_APPARMOR which also depends on CONFIG_SECURITY and
+> CONFIG_NET. Without explicitly enabling these configs in the .kunitconfig,
+> developers will need to specify config manually.
+> 
+> With the .kunitconfig, developers can run the tests:
+>    $ ./tools/testing/kunit/kunit.py run --kunitconfig security/apparmor
+> 
+> Signed-off-by: Ryota Sakamoto <sakamo.ryota@gmail.com>
 
-Make sure you're testing without your patch set applied or at least the las=
-t
-patch.
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-Mimi
+sorry, for the delay I actually pulled this in a while ago, but the initial reply seems
+to have gone into the void.
+
+> ---
+>   security/apparmor/.kunitconfig | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/security/apparmor/.kunitconfig b/security/apparmor/.kunitconfig
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..aa842a0266e9d33c3333ec2ea180206187b0eb4c
+> --- /dev/null
+> +++ b/security/apparmor/.kunitconfig
+> @@ -0,0 +1,5 @@
+> +CONFIG_KUNIT=y
+> +CONFIG_NET=y
+> +CONFIG_SECURITY=y
+> +CONFIG_SECURITY_APPARMOR=y
+> +CONFIG_SECURITY_APPARMOR_KUNIT_TEST=y
+> 
+> ---
+> base-commit: d91a46d6805af41e7f2286e0fc22d498f45a682b
+> change-id: 20260125-add-apparmor-kunitconfig-28aba43c1580
+> 
+> Best regards,
+
