@@ -1,264 +1,146 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDF13D522A
-	for <linux-security-module@vger.kernel.org>; Thu,  5 Feb 2026 13:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770296696; cv=pass; b=Zd0d3X1Y5MlCXK8fJCE+++larMwZfDEv38ZDeOQCXP1mqYr/YmMHtlA5C4+n9YnM2UomeaayxdFftx+G/X47XN+jVV3I+bMsVDLJ6oOKdOKKSbf7XAoPjAf2X95+YjbyBzOO1EqqOJpQ57IfUblXYuWLtQz1SNeqNn9nBfPDVmc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770296696; c=relaxed/simple;
-	bh=N2c1RM0b4ERNHu8Wc50fN3R9BsKRWCfa11p9n8FFco4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Eok5C+7ffALHn+vK+LUNGzMJRcGbFUsSdo8UJSz/5WlLjcetqaE39uZ2E8AjMbOUSW36BYagf0Tp7/ckuc6BjOTKz9NnXc4kpJJ36qwDziz0PgMXD8f6DPkaWCTdiYDU3u4dlsRRg+M6hksM/7RcLsV7WhE3FujonheQYhSOjSo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eFj/Wgov; arc=pass smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D40B86353;
+	Thu,  5 Feb 2026 13:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770297056; cv=none; b=BRbaSJt1PQI9weXPZOONXpvwkMAJCYqbbeBL9UnjnF6XdQx4AuWiM6s6FuvvEwofWv76wyVpn+hb67Onc99eeDjvkCvCBZwiAUHhIuAW2mPqZFdOUqpiZdAqXUJ4DYHIPrKUBs74IqE+/EuaF+fAxSqg6K0GWfZe5zd03OZTE9A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770297056; c=relaxed/simple;
+	bh=+uE4os4EY9QzUvt+CqJtvN1JM0aEwqWttuAQZpJZBQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R6aoocNbriKJ5Fr0TqNyGUz0xIvAXT2Ry3be8vF7oNhG7xodpXtn4gyDCcxZ/YEruBNDLpcKjbZu2NtM2FE+neA/OCPQaujYOQODHFZDrzhArvyyOJKYIlSUzgEqCmod/k+Z5IjyHfo+D1EoJhKZnaK+EMcz9zDeURC3gxF9wMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MxvrlsdE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eFj/Wgov"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-432d2c96215so755458f8f.3
-        for <linux-security-module@vger.kernel.org>; Thu, 05 Feb 2026 05:04:55 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770296694; cv=none;
-        d=google.com; s=arc-20240605;
-        b=RXhoI14wtN4dO9utFYU4aSrj7k6x100sxybF3nOrsawkgYRK7S2wvSciJwgKsCq8gD
-         6PoxIH2Wt9D3PWnmaclYdWzZpiijHaFd115zZnOOUvZsGhhEne2RdUw8r0HM8x8220e6
-         6CTGi3Fkf47QuGYHWWGDcVqHLD/JUwE7OfTnIYksOItKlpcYW3YJiSPsFJvFBjwV8k0B
-         CcQxOWCb+4+07T6pfxcmm/n+4OXkDgzE+AbyeUgmKAeWB9ZG/4/HkDzt7/XYXZ37gaWh
-         0ElIyEKD01JmT8veXVbI3z5pCJ+ABM5E/5EeZzfCscqst/pu/O5az99cHVrZEL0OgTNU
-         7i0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=5QIFMxkl9qDrU626LjrUWWxNqKmOaBddIPVVlA8pXoo=;
-        fh=2eYpO5z5rXrRiwLC42C3m+KkpX25Z/HHlf3jxm8RWmo=;
-        b=NuJMfPaZhgy0QP04GxmMoUL9k9xWu/r9zbexRSQVURRlhdj3VaP15kf0cVuwyJfZNx
-         IvzLU0ZpbllEXacWFxH4yalwjf7JSSKirJr+vTkeo3tW+Y8aDGh2rrcAMCJIYMQgYZbW
-         u5CPC16fM6aSZDa4OMXQs3s+rFgJAMs+rAxrJSaIXImyLKjq5/LwWe6joXViSyaXc6Uy
-         84Wxgi8u7r5rzryi+qFggYNp0zmHoRcAOpY3MTOGrEmQdbvctm4fiuRCORZ3E37+iyC/
-         b2A0TqMV1LsKuPCWu07vhh005hlGigWCxR6lsFwVrY6I9e/sDRM7P9X9s+QqMqQKNNfO
-         ETuQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770296694; x=1770901494; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5QIFMxkl9qDrU626LjrUWWxNqKmOaBddIPVVlA8pXoo=;
-        b=eFj/Wgovw5nx28AuntEcmYhTLWrcShD+FEPlxv8t7bORKwNp4fZgpa1A8jYpx19B7V
-         zpkQAXJ4K4F1Rv7pM72BhwnMUSRonxs65fpBhDO4SGuX0qAlWPM8t4D5sePSeStUIeFr
-         q/hMmt72lMyU9ipFKtciig6U6q4SzUh9UN7CUoRKLW2gH8q1i1KthFAMEUcimBVmwnkX
-         fbv53HjAq8YAWe/nohi9dOQlYvBcBwPjRxIto8GV/ST/gaM13N9HphSRgAZAg+w0Rq6K
-         YgOePfLA4Z3vgrxDj4Z5paCLoAaxyEGqvGJgUxqAYNThBSY9LBmewV+08tHdpfqS5uF6
-         B8fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770296694; x=1770901494;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=5QIFMxkl9qDrU626LjrUWWxNqKmOaBddIPVVlA8pXoo=;
-        b=MmbVLbORiAbG7gB/vOrvq2dY3O4Fmx6rhwMJgjsiXa6P9an3Nb6Qx+7Tg3hAwBwEqw
-         /2SbGqvgpYKqVL5gBsEaMzSIzjUa9DbxpbGNBqomoTDqXpTQyfBiCgsmTFHePbIyvNdz
-         L6a8oWZ+L+GWbfEm0V4VSaiMcI3TyL5/CulOqrcKmpdOkQuWYD0qEHmByjlZ3PrS5LT3
-         qpIyhFx5o2/FfRUQqPLjxxmoJXU5Eo3wNbUaqCS7QVXyC0en1A2lw+H18HWwvyrhZhnj
-         TxZ7Bzpl2yk+kr3VoMTnXXlYwwkOnAvHThHy0arNT0COArMUoLfWmAvTHxkwP8fBQmfh
-         cQlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVXdFWTQXBH9/sonu7zK168rhhywFYaZAKJ9Ip3QckX9Js47jkfDWMa3IBFwqEOB4/ToyHOavs/YGO9N3FnPZrfu4dDZgQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyv3wh+ttFFsA1cSG6DomUYNSe2LUak2Gp9LuJ6taimBAMwoscU
-	6zsvyjZyz6c9IJ1tpzt2apVKcvs38rswipvN7gbSQtrloz3FcSi1pa5vwlm/Wf2gAXY46KRFgir
-	7KDC5VSPg+J5dR3xZYXgeU+zLmm+jD+c=
-X-Gm-Gg: AZuq6aLG9760At45DkbLMBct5Um708sYw5IsQlRklI9W8mFK7Pj8ImTr3O1fsuQnPww
-	1X3QMWnWi84/66G8o/766Gcw4G5qtsT/zokCWahGt1TSluSvqdXLszz+ShybdcTn+4c+M71oYTK
-	4R7ykTVxHGRUjgyI1vDD5HNg1pu8OA2M37FJRN/wTW6CfyrWjuSWf0psQgnOIqskxf6VkSQxNG8
-	n3nQG7q/Z10013rgf7vgHp3xaiAu4SgGJLfqzbVY1gbgK7WT9XF03r35LOeyChnSzILsiLMoyUt
-	n5KPhbeAmZBlIZVEv9kzvVmXfsZjXA==
-X-Received: by 2002:a05:6000:1acb:b0:432:5bac:3915 with SMTP id
- ffacd0b85a97d-43618053bc4mr9962281f8f.39.1770296693827; Thu, 05 Feb 2026
- 05:04:53 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MxvrlsdE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E16A7C4CEF7;
+	Thu,  5 Feb 2026 13:10:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770297056;
+	bh=+uE4os4EY9QzUvt+CqJtvN1JM0aEwqWttuAQZpJZBQ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MxvrlsdEw4dfO0biiJWl4i/0OBwi4ssmn529J2V2OWqjNBa/HxN7rlIpw89jIQN8r
+	 Pn+ZHWat77Cz2GrgxMt4F2352HqjCVjZ2v7yoP+lWNQ1g/ae+EU8mSIKV7jO5IroKO
+	 /r9LmEnBztiqU6sk41ugL5nEDKPl/J1w9PL64MYErDlpgkyyg1vWpmSB3oiJH6MuTf
+	 yO9HO6T5aI2rm/uT6Xa7jWbVMuEdifzdGcHobK2OXaYTunJrroQfIFUzcFwVwrSxRl
+	 frtgmjWUin6uFk90GSK8Q9TYsDUN+KhUZAPE8zVxNTA2k2jXszdLFub7nlYWrgYU8+
+	 XC6RrRj0N7HTg==
+Date: Thu, 5 Feb 2026 14:10:52 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: Xiu Jianfeng <xiujianfeng@huawei.com>
+Cc: Alyssa Ross <hi@alyssa.is>, Heinrich Schuchardt <xypron.glpk@gmx.de>, 
+	David Howells <dhowells@redhat.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
+	linux-security-module@vger.kernel.org, linux-man@vger.kernel.org
+Subject: Re: [PATCH] man/man7/kernel_lockdown.7: remove Secure Boot untruth
+Message-ID: <aYSWoVUBkPA52fqS@devuan>
+References: <20260203195001.20131-1-hi@alyssa.is>
+ <aa62e24c-537e-4141-9507-37cd0af19dfc@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260204050726.177283-1-neilb@ownmail.net> <20260204050726.177283-9-neilb@ownmail.net>
- <5d273a008fc51a2fded785efbe30e5bd2a89b985.camel@kernel.org>
-In-Reply-To: <5d273a008fc51a2fded785efbe30e5bd2a89b985.camel@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 5 Feb 2026 14:04:42 +0100
-X-Gm-Features: AZwV_QhEkTNuUX-zP-udJB3TTtiGdaNYEr11QFKjoqWXaHOUCtxdu5bQUZv0f1A
-Message-ID: <CAOQ4uxh_Ugyy9=Vx_XOzWMTdhqVx6kAu43q+F+afhNF_Zv_9TA@mail.gmail.com>
-Subject: Re: [PATCH 08/13] ovl: Simplify ovl_lookup_real_one()
-To: Jeff Layton <jlayton@kernel.org>
-Cc: NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>, 
-	Chuck Lever <chuck.lever@oracle.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	John Johansen <john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, linux-kernel@vger.kernel.org, 
-	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yhe57fagq2cmnxat"
+Content-Disposition: inline
+In-Reply-To: <aa62e24c-537e-4141-9507-37cd0af19dfc@huawei.com>
+
+
+--yhe57fagq2cmnxat
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Xiu Jianfeng <xiujianfeng@huawei.com>
+Cc: Alyssa Ross <hi@alyssa.is>, Heinrich Schuchardt <xypron.glpk@gmx.de>, 
+	David Howells <dhowells@redhat.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
+	linux-security-module@vger.kernel.org, linux-man@vger.kernel.org
+Subject: Re: [PATCH] man/man7/kernel_lockdown.7: remove Secure Boot untruth
+Message-ID: <aYSWoVUBkPA52fqS@devuan>
+References: <20260203195001.20131-1-hi@alyssa.is>
+ <aa62e24c-537e-4141-9507-37cd0af19dfc@huawei.com>
+MIME-Version: 1.0
+In-Reply-To: <aa62e24c-537e-4141-9507-37cd0af19dfc@huawei.com>
 
-On Thu, Feb 5, 2026 at 1:38=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wro=
-te:
->
-> On Wed, 2026-02-04 at 15:57 +1100, NeilBrown wrote:
-> > From: NeilBrown <neil@brown.name>
-> >
-> > The primary purpose of this patch is to remove the locking from
-> > ovl_lookup_real_one() as part of centralising all locking of directorie=
-s
-> > for name operations.
-> >
-> > The locking here isn't needed.  By performing consistency tests after
-> > the lookup we can be sure that the result of the lookup was valid at
-> > least for a moment, which is all the original code promised.
-> >
-> > lookup_noperm_unlocked() is used for the lookup and it will take the
-> > lock if needed only where it is needed.
-> >
-> > Also:
-> >  - don't take a reference to real->d_parent.  The parent is
-> >    only use for a pointer comparison, and no reference is needed for
-> >    that.
-> >  - Several "if" statements have a "goto" followed by "else" - the
-> >    else isn't needed: the following statement can directly follow
-> >    the "if" as a new statement
-> >  - Use a consistent pattern of setting "err" before performing a test
-> >    and possibly going to "fail".
-> >  - remove the "out" label (now that we don't need to dput(parent) or
-> >    unlock) and simply return from fail:.
-> >
-> > Signed-off-by: NeilBrown <neil@brown.name>
+Hi Xiu,
+
+On 2026-02-05T19:48:02+0800, Xiu Jianfeng wrote:
+> On 2/4/2026 3:50 AM, Alyssa Ross wrote:
+> > This is true for Fedora, where this page was sourced from, but I don't
+> > believe it has ever been true for the mainline kernel, because Linus
+> > rejected it.
+>=20
+> Yeah, I also found this issue not long ago, but I haven't had time to sub=
+mit
+> a fix patch yet.
+>=20
+> >=20
+> > Link: https://bbs.archlinux.org/viewtopic.php?pid=3D2088704#p2088704
+> > Link: https://lore.kernel.org/lkml/CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByqO=
+zzMufBoovXVnfPw@mail.gmail.com/
+> > Fixes: bb509e6fc ("kernel_lockdown.7: New page documenting the Kernel L=
+ockdown feature")
+> > Signed-off-by: Alyssa Ross <hi@alyssa.is>
+>=20
+> I am not sure if appropriate to add my ACK here, if needed, feel free to
+> add:
+>=20
+> Acked-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+
+It's appropriate.  Thanks!
+
+
+Have a lovely day!
+Alex
+
+>=20
 > > ---
-> >  fs/overlayfs/export.c | 61 ++++++++++++++++++-------------------------
-> >  1 file changed, 26 insertions(+), 35 deletions(-)
-> >
-> > diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
-> > index 83f80fdb1567..dcd28ffc4705 100644
-> > --- a/fs/overlayfs/export.c
-> > +++ b/fs/overlayfs/export.c
-> > @@ -359,59 +359,50 @@ static struct dentry *ovl_lookup_real_one(struct =
-dentry *connected,
-> >                                         struct dentry *real,
-> >                                         const struct ovl_layer *layer)
-> >  {
-> > -     struct inode *dir =3D d_inode(connected);
-> > -     struct dentry *this, *parent =3D NULL;
-> > +     struct dentry *this;
-> >       struct name_snapshot name;
-> >       int err;
-> >
-> >       /*
-> > -      * Lookup child overlay dentry by real name. The dir mutex protec=
-ts us
-> > -      * from racing with overlay rename. If the overlay dentry that is=
- above
-> > -      * real has already been moved to a parent that is not under the
-> > -      * connected overlay dir, we return -ECHILD and restart the looku=
-p of
-> > -      * connected real path from the top.
-> > +      * @connected is a directory in the overlay and @real is an objec=
-t
-> > +      * on @layer which is expected to be a child of @connected.
-> > +      * The goal is to return a dentry from the overlay which correspo=
-nds
+> >   man/man7/kernel_lockdown.7 | 3 ---
+> >   1 file changed, 3 deletions(-)
+> >=20
+> > diff --git a/man/man7/kernel_lockdown.7 b/man/man7/kernel_lockdown.7
+> > index 5090484ea..5986c8f01 100644
+> > --- a/man/man7/kernel_lockdown.7
+> > +++ b/man/man7/kernel_lockdown.7
+> > @@ -23,9 +23,6 @@ Lockdown: X: Y is restricted, see man kernel_lockdown=
+=2E7
+> >   .in
+> >   .P
+> >   where X indicates the process name and Y indicates what is restricted.
+> > -.P
+> > -On an EFI-enabled x86 or arm64 machine, lockdown will be automatically=
+ enabled
+> > -if the system boots in EFI Secure Boot mode.
+> >   .\"
+> >   .SS Coverage
+> >   When lockdown is in effect, a number of features are disabled or have=
+ their
+>=20
+>=20
 
-As the header comment already says:
-"...return a connected overlay dentry whose real dentry is @real"
+--=20
+<https://www.alejandro-colomar.es>
 
-The wording "corresponds to @real" reduces clarity IMO.
+--yhe57fagq2cmnxat
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> > +      * to @real.  This is done by looking up the name from @real in
-> > +      * @connected and checking that the result meets expectations.
-> > +      *
-> > +      * Return %-ECHILD if the parent of @real no-longer corresponds t=
-o
-> > +      * @connected, and %-ESTALE if the dentry found by lookup doesn't
-> > +      * correspond to @real.
-> >        */
+-----BEGIN PGP SIGNATURE-----
 
-I dislike kernel-doc inside code comments.
-I think this is actively discouraged and I haven't found a single example
-of this style in fs code.
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmmEltQACgkQ64mZXMKQ
+wqkxBQ//R9kPXo6B0sLs5avEPdlNYp1Kij/ZyGXk/ZGyH+Jom6r0c0z1L4rrp9YZ
+6vgmpFgLXPsZRRFuDPHakjqeEd05IwjH5novgmLQcDEwY3XyawHDC8cxWlCwrgqM
+JOK4Os/QvS3EXG+UxS6Bh++fqRCyRNiCJ8ytes4qDK2SiA/gatGfCKD6yqhlawmO
+e3GMVgxTNcWrUfkE13YPkBrEuSpvwIautcm6bEKnXb8eLWtf5fkYTANaUa26xQlb
+8tH2i+54xE8BVmuGyJvCXi4d7pmVecUcEL7LMUiyuSQ56BaWp7Kxvd+X/C4WeYYe
+LENFyeqzx2lD+Sk8NaLnBSaOvW/f631cVn+Y6ZX3tUo/8yrJIYS+uCbXacO6hU4e
+EEg9r8KPTGDK5+cowUTa/Jh+q7cizzVHyPjJ2Gr1ZT3hWUv9APDy1Wnngpp8mgJ+
+AgeUHOHO8NsxzFuYPNddnZfvq7X+xKY02IG7zsOV7+tn0FNRyFku19lGiGgku3/e
+N1D3uUgXiY/z7QYcAk+p9MxCi1YTZ+KjJbrxEVBI8bmskUsuB0hik7r8rJ/9uh+a
+HxfqL8etbhI9we5Bc7Naa0EVyDx6bAI08DGp/0+aCdzWlP2sZO1tZQo1DKDaU96c
+aekhlZDfiOWFvTB3tfXBJMJCqsgh0Zhi7Z0W9p0d4vL/4B8i2Zs=
+=SEQH
+-----END PGP SIGNATURE-----
 
-If you want to keep this format, please lift the comment to function
-header comment - it is anyway a very generic comment that explains the
-function in general.
-
-> > -     inode_lock_nested(dir, I_MUTEX_PARENT);
-> > -     err =3D -ECHILD;
-> > -     parent =3D dget_parent(real);
-> > -     if (ovl_dentry_real_at(connected, layer->idx) !=3D parent)
-> > -             goto fail;
-> >
-> > -     /*
-> > -      * We also need to take a snapshot of real dentry name to protect=
- us
-> > -      * from racing with underlying layer rename. In this case, we don=
-'t
-> > -      * care about returning ESTALE, only from dereferencing a free na=
-me
-> > -      * pointer because we hold no lock on the real dentry.
-> > -      */
-> >       take_dentry_name_snapshot(&name, real);
-> > -     /*
-> > -      * No idmap handling here: it's an internal lookup.
-> > -      */
-> > -     this =3D lookup_noperm(&name.name, connected);
-> > +     this =3D lookup_noperm_unlocked(&name.name, connected);
-> >       release_dentry_name_snapshot(&name);
-> > +
-> > +     err =3D -ECHILD;
-> > +     if (ovl_dentry_real_at(connected, layer->idx) !=3D real->d_parent=
-)
-> > +             goto fail;
-> > +
-> >       err =3D PTR_ERR(this);
-> > -     if (IS_ERR(this)) {
-> > +     if (IS_ERR(this))
-> >               goto fail;
-> > -     } else if (!this || !this->d_inode) {
-> > -             dput(this);
-> > -             err =3D -ENOENT;
-> > +
-> > +     err =3D -ENOENT;
-> > +     if (!this || !this->d_inode)
-> >               goto fail;
-> > -     } else if (ovl_dentry_real_at(this, layer->idx) !=3D real) {
-> > -             dput(this);
-> > -             err =3D -ESTALE;
-> > +
-> > +     err =3D -ESTALE;
-> > +     if (ovl_dentry_real_at(this, layer->idx) !=3D real)
-> >               goto fail;
-> > -     }
-> >
-> > -out:
-> > -     dput(parent);
-> > -     inode_unlock(dir);
-> >       return this;
-> >
-> >  fail:
-> >       pr_warn_ratelimited("failed to lookup one by real (%pd2, layer=3D=
-%d, connected=3D%pd2, err=3D%i)\n",
-> >                           real, layer->idx, connected, err);
-> > -     this =3D ERR_PTR(err);
-> > -     goto out;
-> > +     if (!IS_ERR(this))
-> > +             dput(this);
-> > +     return ERR_PTR(err);
-> >  }
-> >
-> >  static struct dentry *ovl_lookup_real(struct super_block *sb,
->
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-
-Otherwise, it looks fine.
-
-Thanks,
-Amir.
+--yhe57fagq2cmnxat--
