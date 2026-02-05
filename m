@@ -1,125 +1,135 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355E739E6CA
-	for <linux-security-module@vger.kernel.org>; Thu,  5 Feb 2026 09:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770284753; cv=pass; b=WrM2N5nzcNfmj1TU425fD3Qzx+KWMkTOjoZfJ+cYpQMGw8mSQbzJ4/E/4+W2fvGThkG/Y/NJD/oMpsgrBgRPh/cthmmtWx++S0C/ldfuTp6XaPJeNw4+U+QEsB0ILgiwwmPwjVqsLeL0fr5GoKRFMPr6WUnMZcOGrW3Z8fB9Onk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770284753; c=relaxed/simple;
-	bh=gTHjRNg48uqIhlFUjNVy6w29gFOiVNhUd1etS9WljNU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NFsENoh4XI4q5jBQB3HDvxKMotvDVBnRiGnS1zUobp1DuSCw0VvclCKrtNQfvKhPqum2EBHzL61M40Tcz3spUbMPAlgLnmQmrB3RFlrWyRW+vggM7oiuz2w9BRARRDxaotMcHAizqeb0Ib1D5O8YcpWJOSJx0yCHIzT/bdkidu4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7wZYF6o; arc=pass smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B601F3A1E7C
+	for <linux-security-module@vger.kernel.org>; Thu,  5 Feb 2026 09:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770285286; cv=none; b=I4N1UGkMR63iHQ8IXogE/NG3QBfk/FVjTyAuIe6z5MGcamKkMlG7tw12RD42hHQnFFaJrAHcRN4KUVDnvOoyQTTi2NiOJFYoUwVclzV3Eb38puA9OfNQs1Cecw0CW1Knl+fJv8bDvGHwlPmqccT/ivFhLYN7acvMGUFWlLyp+lQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770285286; c=relaxed/simple;
+	bh=+gH07T7gJ7+X3xesrNA2+Bs3sMLJhA4gaSIsoseJoFk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f08utrXbOV3zGb/QOzOSeYY4bD43dkB82J08MqdvrOuqxohRkC+1c0qpPVx9bN1pyItTNsPIJcYLA4OCFyPFVzwoGOaBuVWx99ssAMRtWYwIjrdXCtR6q0tNXwh052kKwbv18aPSDGzl9VT1vapw2qQMmQVSfmWM8lulcgEAwek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OIztZXVg; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7wZYF6o"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-65807298140so1132787a12.2
-        for <linux-security-module@vger.kernel.org>; Thu, 05 Feb 2026 01:45:53 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770284751; cv=none;
-        d=google.com; s=arc-20240605;
-        b=F+krnOvs+sbprhlu1k1+Bn0qrRCwOUaM9GO4x7zyEb9saRA9PFW2KauFDnMqLPCIa4
-         7yOfhBRChOq9BQld0exmqU9s+ZHMB9Y88lxmwZ7noXkGPVdmQkGGfDXUVfw8cHuuT3F5
-         wmSYZi3EaH6jEmooA4kqhfa1ThlImPVcXlD7pK86Dq+K1DqTfwhOxjDyBFrEN17VTBAk
-         D7w8qvMDS3KdcEePrllOrBu9Ec2dNbMUPMUngUXy0peerhEFSjQVk4XVOsDoaUgHPwRN
-         J2JD0FW9+mxpGDt37PI9WcEtof/uhriYiR0yH5vFDlER247aq4Dh2r9d+tSAGa1FZlhS
-         TMHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=gTHjRNg48uqIhlFUjNVy6w29gFOiVNhUd1etS9WljNU=;
-        fh=wfYQEe//H/ZOyNjeJ/KhfnYyChv2t98lDe6s8b/VmoE=;
-        b=IFlEApVaTAYSqwRWrx2jo6xVizMlBOj3ayhRPda9U6/FTIgIxUhWiwwU8VrHAbSbVw
-         ydUfSX6jyxCmeKy/Rt5gfyrKCUD1cqNLbpuI5/ULpuSIGAHZj8LhxhaJ/tSjxyOHdWF3
-         LJI7lAEkER0N8vxp04JRFC3Yt58hjp6HUe8yG4L3FW4sDXvDVjlHDdn77nM9oZbBF5be
-         4/O8Dh91iSoIxeNpgL4rlHXVh7i+iDSf7+BvsHW+bTL13YsOUo8w1PppEXBsFXurEJ8k
-         FpR2S2tVQa6xdSsllyEMvXa1R6WjS8qxUWUUdxK8ylrgQeV+SOWBmeEHGoADj5Kh9O3j
-         LfQw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OIztZXVg"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-34c868b197eso484663a91.2
+        for <linux-security-module@vger.kernel.org>; Thu, 05 Feb 2026 01:54:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770284751; x=1770889551; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gTHjRNg48uqIhlFUjNVy6w29gFOiVNhUd1etS9WljNU=;
-        b=X7wZYF6oGkxVE+gLTBtcX28o4eYBAX3e3P5/p1DkotCtFvnSm+dNdGmggiKQnap9HF
-         uJoR8Y/7jQwtGKgtwXZNQtMOcaDouskzI9DbFRdinBwM2G8kpSDc+wVOPd9ayKvPaZtX
-         qDZsWavmVfL8txVAZaxKDRyNO2gl3nDKYj6Y08WRzZFoXlLH4OBDdd4dCHPmAv9LaYhV
-         aYyqyMoVjKFMXFsylm9qYTAL0LLdTNasCpSpfzLfkc3XzkPNORx9OBQJnvhWeWVvJgyV
-         IFPElSh1GAM0WngNDgAYeJbIEwtbP3kxmdE1hnqP1mOoFVug/wkO0WrOFsaHCyIytL65
-         aJVQ==
+        d=linaro.org; s=google; t=1770285286; x=1770890086; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9xBIY0mav+3IAaN2sDOZsKW4O0cnUlRHLSnJJ3/BuhM=;
+        b=OIztZXVg1hLazuEkmqd8LlclnaLE4rA0fxlphw3KvArdlCYxrvdQZyDtKojtlalHtG
+         1a66CHSgueLHo3e7wgPFL5SSykTdE+DP/Wqo/IzjGPPDm4GcyVlPjTjvAduAfl8knaW9
+         NrADuUlm153qtL+TZOZwB02E5FIxQEvXf8VcuyXxGRlrop4XdAcCjNyZpmvoKpOXaqx5
+         iTqPuOKTZ61EEAXWEtUzcfKjsOfoqd6olMTXQbZ52wRe3LltSc6K1bAuQ04//rTzOU9I
+         efFMVyoMMVC/Y1sfaoxEqpR0CYhnFWHReEGc2mHEIYgZfGzJCicUald9h2trI26NPIf1
+         gaXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770284751; x=1770889551;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=gTHjRNg48uqIhlFUjNVy6w29gFOiVNhUd1etS9WljNU=;
-        b=iU5bmCpyAFFm/oqIkNVEp7Ku/moVR9VY9nn/oXcvekvX+tQVKja9rNxpUT/6qsKMmA
-         qq218B+S/kbbdNR6O+ynMpKF+vH7zTWkCPS9M4ZqneAy3cwssTDSXFH54AemcOmDLVOp
-         8MKFfFv4mpipTzl1DCV3niQp+IRjOiURTJgaz5eY7jDWBmEdIpoiPoThbm3RKEJiqRaU
-         ZZkeYaTrWBrZgQenPLWxn9UJYzqyePGLA+ORXdijFHUA2IsCkM8qm8osUV6M5mfYQie/
-         p7wFgOco8f97ptKmOQSo0wchxzufQfeUriIxfPQroXnxapH00ObqihcwiiUsNjEUDi0q
-         Ro+g==
-X-Forwarded-Encrypted: i=1; AJvYcCV6xQz0w+0FiWd8JnNn96qBPIynMNWrwltMvvcVeSmIV+p04ZHMsEj2pBrLjYaFPaXkmhVBZVtKnhbX94PbVO6k8iVIBKo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKWBVGA9qKWi6MyOyECpbQpx2dtT2huv73wAGsci0hdzk3LXQo
-	n+VnknZL/8MWiQLscsMieoZETwwsrhikrCch8GAvJiuegsITkOosyUOPsZqoV+3GW1wKLwxhy/P
-	D6imxpzQDdGxUAEfhJ5uDCQz0Z1KL/Qg=
-X-Gm-Gg: AZuq6aIsPwKiKsS/GGUJhufLzs+FK7NxY36r55EHL9ZkgoYrPM/7F6ig2MX277rekkC
-	ZNI4wngs72pP7PXz3HUhIqp8Y3LOIIX/hqZdQAFIQYClLwl/YZErOs/TbQJqbnA/diD44StD7aI
-	F/LYNyoUzWfEIgxETUxUyl9KHwWXAmqbHo+ageP3xfNebtZOvKnMjWE/meZKvmRoXp8MC0ppBye
-	qYwnxEnA95MXjQnesFUYNfdwI3lzQX0SU078qeQiuCxeX+86hLBtrdtKOXgnXf0UW52qnDSctz1
-	CIyXWMUanhmnL6UhmYXg7H0wXen0Ew==
-X-Received: by 2002:a17:907:7f92:b0:b87:31d1:4131 with SMTP id
- a640c23a62f3a-b8e9f64603cmr435430866b.60.1770284751163; Thu, 05 Feb 2026
- 01:45:51 -0800 (PST)
+        d=1e100.net; s=20230601; t=1770285286; x=1770890086;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9xBIY0mav+3IAaN2sDOZsKW4O0cnUlRHLSnJJ3/BuhM=;
+        b=Hm1CIBsBZaElBC49WnNzY1yqHgRyvS71j4pCNyN9XYQ7ViTSwk9JFaQL7i/ICxX9U6
+         GInIN5hfk/KvnERFMeXXNRJbWYcOZEcudTAu4Py/v0ueJCfbEqhrcPhwOuvNtkalod2P
+         SeeQxkFH64caSVFQ4TXvRBfWkf3iP8pKrrIiwQXieLHNust0pWRjiuUu7xPsOP9NVVzv
+         pcaJuIEu18DRAuoyuGSaqI1qGoO0o9qaoOCgBGQG/Ai6Kbb1ebI80NzQbVVi+kVi4M0p
+         vSOp3KlRRa3tJT4rg0qb/lmPAtQUBjB8Ri0qzKc5c5mSp1p+srw74DouOqH4YtTfwI3u
+         kpIw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/3gh5TCbdHlzlU68IapuhoXA4+whf3M34AUBb4wVQe/24VYyhb6dBvFBr5+UYcaefPBnvwOhTEWe8Spc0GqrFUvq3+14=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBx56iJLTRnJaxykvxHKQccwIz+l7CEiC/1JKpgWdTVRqj6WM+
+	6QjmY0mzWi6PUcOUvgzUBvdF7g6yAGfbAxN+FtHf4Guv3k9o11b8vfNePCjoHVwCddc=
+X-Gm-Gg: AZuq6aJzoJxvEonWq1Km1B2spBJgxmSge550+vT4BkvmQ8KHZz3/L1wwgXDvQs5GRz2
+	Wahp1TxPj+XWnePKPY6tL7E4KGo4LDXL8LQMgYEzDchQhSx/XeqBNNOOI4XaPgu6zhIpUg3erCG
+	nYLAGB2HAW6dUTe4R9LfGGupSfKXwmRL/2Fmx/SpJL51l3fGn6vkUYSxafwJMsdetxGpmx1N1Z8
+	r4F6jEr9f+9OJINyKnMsE2mpVNWuV3GaUdRO10fjs+8plni4onSVpxSRp0Kqxjed0dItTW7X+GQ
+	5mqouFmB1axaclyn7cCjiwdy4Lc0O3/tkaI6yNE5ZQuacNDQtNEQkgWkH2oYOlBs+b+cGFyBej6
+	yRRty+T+gZDO4Z6H/hVU8tnnV6XvECv2L97va0uQDgzfgTWixZQmcUWQI3TRVDVCZdBorYUmeH/
+	mfaPDXqmueCvc=
+X-Received: by 2002:a17:90a:c110:b0:354:a05d:9dc2 with SMTP id 98e67ed59e1d1-354a05da864mr1522955a91.9.1770285285886;
+        Thu, 05 Feb 2026 01:54:45 -0800 (PST)
+Received: from localhost ([122.172.80.63])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-354894533dbsm2000361a91.7.2026.02.05.01.54.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Feb 2026 01:54:45 -0800 (PST)
+Date: Thu, 5 Feb 2026 15:24:42 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, 
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Igor Korotin <igor.korotin.linux@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, 
+	Oliver Mangold <oliver.mangold@pm.me>
+Subject: Re: [PATCH v14 2/9] rust: rename `AlwaysRefCounted` to `RefCounted`.
+Message-ID: <xh3iuwlz4wapmgzojg4v3sen4oezfua4vsedskvrqhc7ryyclj@jggikwra6dmj>
+References: <20260204-unique-ref-v14-0-17cb29ebacbb@kernel.org>
+ <20260204-unique-ref-v14-2-17cb29ebacbb@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260204050726.177283-1-neilb@ownmail.net> <20260204050726.177283-13-neilb@ownmail.net>
-In-Reply-To: <20260204050726.177283-13-neilb@ownmail.net>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 5 Feb 2026 10:45:38 +0100
-X-Gm-Features: AZwV_Qg7CM-kXxjB2Qin-euJkaOUd7ni190R_n_ZLhun34eHr5T-i9uF6CbqXdo
-Message-ID: <CAOQ4uxi3bNYq1b4=qL-JLi19hRwurntfLZXhUMVL003NarBdGg@mail.gmail.com>
-Subject: Re: [PATCH 12/13] ovl: remove ovl_lock_rename_workdir()
-To: NeilBrown <neil@brown.name>
-Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
-	Jeff Layton <jlayton@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, 
-	John Johansen <john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, linux-kernel@vger.kernel.org, 
-	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260204-unique-ref-v14-2-17cb29ebacbb@kernel.org>
 
-On Wed, Feb 4, 2026 at 6:09=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote:
->
-> From: NeilBrown <neil@brown.name>
->
-> This function is unused.
->
+On 04-02-26, 12:56, Andreas Hindborg wrote:
+> diff --git a/rust/kernel/opp.rs b/rust/kernel/opp.rs
+> index a760fac287655..06fe2ca776a4f 100644
+> --- a/rust/kernel/opp.rs
+> +++ b/rust/kernel/opp.rs
+> @@ -16,8 +16,8 @@
+>      ffi::{c_char, c_ulong},
+>      prelude::*,
+>      str::CString,
+> -    sync::aref::{ARef, AlwaysRefCounted},
+> -    types::Opaque,
+> +    sync::aref::RefCounted,
+> +    types::{ARef, AlwaysRefCounted, Opaque},
+>  };
+>  
+>  #[cfg(CONFIG_CPU_FREQ)]
+> @@ -1041,7 +1041,7 @@ unsafe impl Send for OPP {}
+>  unsafe impl Sync for OPP {}
+>  
+>  /// SAFETY: The type invariants guarantee that [`OPP`] is always refcounted.
+> -unsafe impl AlwaysRefCounted for OPP {
+> +unsafe impl RefCounted for OPP {
+>      fn inc_ref(&self) {
+>          // SAFETY: The existence of a shared reference means that the refcount is nonzero.
+>          unsafe { bindings::dev_pm_opp_get(self.0.get()) };
+> @@ -1053,6 +1053,10 @@ unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
+>      }
+>  }
+>  
+> +// SAFETY: We do not implement `Ownable`, thus it is okay to obtain an `ARef<OPP>` from an
+> +// `&OPP`.
+> +unsafe impl AlwaysRefCounted for OPP {}
+> +
+>  impl OPP {
+>      /// Creates an owned reference to a [`OPP`] from a valid pointer.
+>      ///
 
-I am confused.
-What was this "fix" fixing an unused function:
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-e9c70084a64e5 ovl: fail ovl_lock_rename_workdir() if either target is unhas=
-hed
-
-What am I missing?
-
-Otherwise, feel free to add:
-
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-
-Thanks,
-Amir.
+-- 
+viresh
