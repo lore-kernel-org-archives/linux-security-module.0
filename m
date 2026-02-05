@@ -1,462 +1,310 @@
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6167729C339
-	for <linux-security-module@vger.kernel.org>; Thu,  5 Feb 2026 15:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB92308F3D
+	for <linux-security-module@vger.kernel.org>; Thu,  5 Feb 2026 18:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770304974; cv=none; b=ffNsmh9QxsY6wOZV4ltIZBdoDzYOUpWaOgWmefz7kY2TnfgPJzRK0rgVWNtucTld7o3Gd7jS4i5WZGWqs8HU+UxwR/HGzjGnkc9djOaZWuHuhe2bVj4mpNYiCUFmKaEUrok8kwF2SXsMbtCSgeYYD4P78YNyFge3txXFAOJg3Xw=
+	t=1770317638; cv=none; b=P0k3xcpTLZnni0L9K281CKf1rUOW4k2w/gV7sP0z+VMxZn8VRWSdssRbhBWTX1uhjhzo65MC8on09pUUszPViVhez1wZufrsU1MTTEvaMUQdxLiMqaa/s440l0DLOJsF24+U7xPqo9YfVLRNacZ84T/BJR6c2eWmcMpe0FBBuTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770304974; c=relaxed/simple;
-	bh=jtYAr+amyJouHCXMVAL6sPglP5zbrtUbh7jICRMXP+M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HBmwec9o+CQA8pymj8QtnR+QpFZbv5Ocj8SziLHVcKATLSpzWqc1kknAbdmPebJzvR0WOVIJVLkJopygmNBVYD7KtpoewMt/PCQthajcpuWELNOM6X9I1iSESJqAP3u6Mj1+yqOLrW5vDKpcj9EBm1pLPyLxhO+RkWPaPE9UL1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mSCT9GKm; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1770317638; c=relaxed/simple;
+	bh=PCPy7nfBFM+ESfCwGiVCjVcnQkGbRDEFvcCsY0LBIKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PKRJN2YTBcMIod0t72m6ImHj0rlp1cddHj+VKqKEj6xoo2SN55BU74sKUEhn45d/p6CpVK2zycUrxOnnfwlOoVIBty30f5KioN1M5Zh9AxLOj2IQn+xQ+bRP3DDbVXSii6K8v0AmQGozCtVbXvu5+pffOOrPpza+PDYmU8zxLmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=h3+9yxxs; arc=none smtp.client-ip=84.16.66.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSCT9GKm"
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-79518cc2bb4so7984247b3.0
-        for <linux-security-module@vger.kernel.org>; Thu, 05 Feb 2026 07:22:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770304973; x=1770909773; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nzVSTvsJXBwT/LJnbmpFKOc0ty8i/0TRQSIXuI9UPh8=;
-        b=mSCT9GKmhUhvQVMXuGoJGd92hfFKSjaKuYATn4rh5OyiN8dCZHIV9Fz1bT9ueAJLBI
-         uiLzIRbk9FOYQSC+E04qXrUwRYHsfp6DYmvVkAjNLXZeM23IVE0iU+dcsjxNtO0BZEC/
-         JpL3Y4oPwOfpqI4Qd6ZJVawd1NbiwPI9lTHkVuB9bct0wBqUj5C32YGyvR/8lcQsIpqQ
-         yH8CVmlRqpc9FrsgMXl6mMa9JoL+Xswso9KjIK3b7UOs5LTwEQGToovi9EPkOWdHdHhR
-         qwaya1AfhVHD4yqfEKzPeD6s3pyZaudBucVI9JIOfclKzW5J4wM7lOc68Z0PIo2CH7bd
-         fhEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770304973; x=1770909773;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=nzVSTvsJXBwT/LJnbmpFKOc0ty8i/0TRQSIXuI9UPh8=;
-        b=iaHkoFEL1dih1mshlHfwPuDGON4fEnyFVjXCxK/FGe6+haOPY1L+89Gwz9DYOHqYFc
-         hQJ8N+ULv5QLCjU7QzRfsNzlMy4DOC8zeuEjHUctR/m086w1a9vy0Eft/xf0wYwaCAoU
-         fajt351aRNqqnJSj+rZ8WwULeT84IsukTZ3v3tvyWqTwzt0cPtm7hkS7yFa4Rai36NYi
-         ive4s3ZlXgq7RBq0RG+fMXO+WheRJFiQl/UNqwtzGOU5ZT1a/+7+da7fytLD+fR+9tla
-         8EtcOR4v9ze9HlmeEz6CSACCrLuBYGKBbAg/+OcjGGGqJ9Gpj9HQNYDe0NCzlB2ai7BI
-         YkJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXVR1jivjiYsp6RN3pRVb0Ei1sdJWbbEC44y2H/xJa6uzURm14H80zbKHCGmx5OJldY1//cSoH76r6ZOdvn2mBtfThefp8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmoPvz8pRURvZCO5aK0ioLZKiWjpLpuA7dw2IZieIOOi7tyIT1
-	KQMY8vTMEbuiS6zCBDAMZqj1yvSHuN2xkYLacgg/8xkGnUZTQgQ0qDIc
-X-Gm-Gg: AZuq6aI62ByC8JyjAp1vHh9MtLF0iW10ErGklhsyphuSxuns8EVdwIKaOamWyj+jpt7
-	qCkI2J9RvRdoIc0uv5Ml7f0Ez7xhFXWTviL9aWBG23R2x+IOLgGQepauOsOV2Ny5yC7twRovCM3
-	U65wbw0Y1/byCLH7plJVgW9hdvCh5JJouqyaCLA9t7CTSAr8GttRGFieUP/ZUCTXdjoUrViE94o
-	fECg6CbwCv2a65UpJkZeAEYyOB53W78VQL5NewSwOsxH5pixtM5hz7LoMuC7Jk1IbpWht5canLZ
-	w4RwDA7EAad94xLSGAS6vJANSY8Z610vcRX9VQH3dWtoIO4c9yJvYli3dYo3vhZzU95Ll8EdQcW
-	A1XqzbOOmKY0dvza2+8oABtqwcyU1i2Px4TzP1p2tf3WpINrOB1fR5dDcMMDq4lFL/60CkBHQOG
-	NtSjZvHJ9LvXQoO6ceBs0Xm40OMHwGlbKUcXPV2JQj15lLOnt6BlYrXmrMFArI
-X-Received: by 2002:a05:690c:2505:b0:794:ede8:16a with SMTP id 00721157ae682-794fe6ca8ffmr67818477b3.13.1770304973001;
-        Thu, 05 Feb 2026 07:22:53 -0800 (PST)
-Received: from zenbox (71-132-185-69.lightspeed.tukrga.sbcglobal.net. [71.132.185.69])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-794feea8236sm47874817b3.17.2026.02.05.07.22.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Feb 2026 07:22:52 -0800 (PST)
-From: Justin Suess <utilityemal77@gmail.com>
-To: mic@digikod.net
-Cc: demiobenour@gmail.com,
-	fahimitahera@gmail.com,
-	gnoack3000@gmail.com,
-	gnoack@google.com,
-	hi@alyssa.is,
-	jannh@google.com,
-	linux-security-module@vger.kernel.org,
-	m@maowtm.org,
-	matthieu@buffet.re,
-	utilityemal77@gmail.com
-Subject: Re: [PATCH v2 0/6] Landlock: Implement scope control for pathname Unix sockets
-Date: Thu,  5 Feb 2026 10:22:50 -0500
-Message-ID: <20260205152251.2947451-1-utilityemal77@gmail.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260204.vug7Osheiwou@digikod.net>
-References: <20260204.vug7Osheiwou@digikod.net>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="h3+9yxxs"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4f6RFl5PNtzwQp;
+	Thu,  5 Feb 2026 19:53:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1770317627;
+	bh=Bzwm9AsJ+FYPgpbvINdbpAvR19ZuavRlhPjm6rJ88ek=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h3+9yxxsWn/A04dwedzMyTnpRqJs9eUD0aZHVkaop60ismjoSoDu/1tnO0fxM8gae
+	 sYxBfKyc1WuPWY/4Lzif9w+0iJva2fTbZRqDus+9ft0mYjcOmWuYfrgFCg/cy2h2EV
+	 mPQVtNQuTcuWBk9douQKLwlaqn5DOLJeAS/vOoe8=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4f6RFl0HNQzr6C;
+	Thu,  5 Feb 2026 19:53:46 +0100 (CET)
+Date: Thu, 5 Feb 2026 19:53:41 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, Jann Horn <jannh@google.com>, 
+	Serge Hallyn <sergeh@kernel.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Tingmao Wang <m@maowtm.org>, Matthieu Buffet <matthieu@buffet.re>
+Subject: Re: [PATCH v3 0/3] Landlock multithreaded enforcement
+Message-ID: <20260205.phu7Bo2ieMih@digikod.net>
+References: <20251127115136.3064948-1-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251127115136.3064948-1-gnoack@google.com>
+X-Infomaniak-Routing: alpha
 
-On 2/4/26 13:28, Mickaël Salaün wrote:
+Good job for writing this complex mechanic (and the related doc), this
+patch series is great!  It's been in linux-next for a few weeks and I'll
+take it for Linux 7.0
 
->> [...]
->> Tingmao:
->>
->> For connecting a pathname unix socket, the order of the hooks landlock sees is something like:
->>
->> 1.  security_unix_find. (to look up the paths)
->>
->> 2. security_unix_may_send, security_unix_stream_connect (after the path is looked up)
->>
->> Which for is called in DGRAM:
->>
->>  unix_dgram_connect OR  unix_dgram_sendmsg 
->>
->> and for STREAM:
->>
->>  unix_stream_connect
->>
->> IIRC, the path lookup only occurs in this order always, so in the logic as you have it the domain_is_scoped()
->> would be called twice, once from the security_unix_find when you call it in step two, and once from the
->> domain scope hooks. (If access was allowed from security_unix_find)
->>
->> There are a couple of things to consider.
->>
->> ---
->>
->> Audit blockers need special handling:
->>
->> Here's an example:
->>
->> 1. Program A enforces a ruleset with RESOLVE_UNIX and the unix pathname scope bit, with no rules with that
->> access bit (deny all for RESOLVE_UNIX).
->>
->> 2. Program A connects to /tmp/mysock.sock ran by program B, which is outside the domain.
->>
->> 2. security_unix_find is hit to lookup the path, and the RESOLVE_UNIX code doesn't grant access to
->> /tmp/mysock.sock, so it calls domain_is_scoped
->>
->> 3. domain_is_scoped denies it as well, so now we must log an audit record.
->>
->> When logging the denial, we have to include both blockers "scope.unix_socket"  and "fs.resolve_unix" for the
->> denial, because it is the absence of both that caused the denial. I think the refer right has similar cases for auditing, so there is precedent for this (multiple blockers for an audit message).
-> That's a good point, and it would give more informations to diagnose
-> issues.  However, being able to identify if both accesses are denied
-> would require to check both, whereas the first is enough to know that
-> Landlock denies the access.  So, if we can return both records without
-> continuing the security checks, that's good, otherwise we should stop
-> ASAP and return the error.
+I did some cosmetic changes though, you'll find them in my commits.
+Some more tests are needed but I'll take this series for now.
 
-Maybe I'm missing something, but if the flags interact in an "OR" manner
-wouldn't we need to check both? In your proposal where RESOLVE_UNIX
-implies the scoped flag, if a program connects to a unix socket that is within
-the domain but does not have an explicit RESOLVE_UNIX exception, we must
-still check for the case that the access is scoped.
+Thanks!
 
----
-
-(Given LANDLOCK_ACCESS_FS_RESOLVE_UNIX and LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET
-are set)
-
-case 1: access to socket within domain and no RESOLVE_UNIX rule covers the access
-
-We check first in security_unix_find hook and find there is no rule allowing the access.
-After the check fails, because LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET is set
-we then check is_domain_scoped, the check allows the access.
-
-case 2: access to socket outside domain but RESOLVE_UNIX rule covers the access
-
-We check first in security_unix_find hook and find there is a rule allowing the access.
-We can allow the access early (short-circuit eval) without calling is_domain_scoped.
-
-case 4: access to socket inside domain and RESOLVE_UNIX covers the access
-
-We check first in security_unix_find hook and find there is a rule allowing the access.
-We can allow the access early (short-circuit eval) without calling is_domain_scoped. (same as case 2)
-
-
-case 4: access to socket outside domain and no RESOLVE_UNIX covers the access
-
-We check first in security_unix_find hook and find there is no rule allowing the access.
-After the check fails, because LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET is set
-we then check is_domain_scoped, the check does not allow the access. (it is the combination
-of the two checks failing that denied the access).
-
----
-
-Case 4 is what I'm specifically considering would need to have both blockers listed in a denial audit.
-We can't short circuit in that case because we have to check the scoping before denying.
-Let me know if I'm misunderstanding this.
-
-(PS: IIRC the hooks used by the LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET
-will never be hit if the check in security_unix_find fails. So some logic to check this
-access in security_unix_find will be needed).
-
-> Anyway, that might not be needed if we end up with my latest proposal
-> about always setting scope.unix_socket when fs.resolve_unix is set.
->
->> ---
->>
->> Dual lookup for domain_is_scoped. Consider this case:
->>
->> 1. Program A enforces a ruleset with RESOLVE_UNIX and the unix pathname scope bit, with no rules with that
->> access bit (deny all for RESOLVE_UNIX).
->>
->> 2. Program A connects to Program C's /tmp/foo.sock, which for the purposes of this example is in the domain of program A.
->>
->> 3.  security_unix_find is hit to lookup the path, and the RESOLVE_UNIX code doesn't grant access to
->> /tmp/mysock.sock, so it calls domain_is_scoped. Access is granted, and continues. (LSM hook complete)
->>
->> 4.  The connection proceeds past the path lookup stage, and now security_unix_may_send, or security_unix_stream_connect gets called. This requires ANOTHER domain_is_scoped access check.
->>
->> While I don't THINK this introduces a TOCTOU, it is a little confusing.
->>
->> This does mean that we look up the domain twice, if this is implemented naively. I think we can then just
->> skip the task credential checks then for security_unix_may_send and security_unix_stream_connect **for
->> connecting to pathname sockets**, since the domain_is_scoped will already have been called in landlock's
->> security_unix_find hook, eliminating the need for handling pathname socket domain checks layer on.
->>
->>>> I definitely agree that it is tricky, but making same-scope access be
->>>> allowed (i.e. the suggested idea above) would only get rid of step 1,
->>>> which I think is the "simpler" bit.  The extra logic in step 2 is still
->>>> needed. 
->>>>
->>>> I definitely agree with pro1 tho.
->>> Yes, you are describing the logic for the variant where
->>> LANDLOCK_ACCESS_FS_RESOLVE_UNIX does not implicitly permit access from
->>> within the same scope.  In that variant, there can be situations where
->>> the first hook can deny the action immediately.
->>>
->>> In the variant where LANDLOCK_ACCESS_FS_RESOLVE_UNIX *does* implicitly
->>> allow access from within the same scope, that shortcutting is not
->>> possible.  On the upside however, there is no need to distinguish
->>> whether the scope flag is set when we are in the security_unix_find()
->>> hook, because access from within the same scope is always permitted.
->>> (That is the simplification I meant.)
->>>
->>>
->>>>> AGAINST:
->>>>>
->>>>> (con1) It would work differently than the other scoped access rights
->>>>>        that we already have.
->>>>>
->>>>>        A speculative feature that could potentially be built with the
->>>>>        scoped access rights is that we could add a rule to permit IPC
->>>>>        to other Landlock scopes, e.g. introducing a new rule type
->>>>>
->>>>>          struct landlock_scope_attr {
->>>>>            __u64 allowed_access;  /* for "scoped" bits */
->>>>>            /* some way to identify domains */
->>>>>          }
->>>>>
->>>>>        so that we could make IPC access to other Landlock domains
->>>>>        configurable.
->>>>>
->>>>>        If the scoped bit and the FS RESOLVE_UNIX bit were both
->>>>>        conflated in RESOLVE_UNIX, it would not be possible to make
->>>>>        UNIX connections configurable in such a way.
->>>> This exact API would no longer work, but if we give up the equivalence
->>>> between scope bits and the landlock_scope_attr struct, then we can do
->>>> something like:
->>>>
->>>> struct landlock_scope_attr {
->>>>     __u64 ptrace:1;  /* Note that this is not a (user controllable) scope bit! */
->>>>     __u64 abstract_unix_socket:1;
->>>>     __u64 pathname_unix_socket:1;
->>>>     /* ... */
->>>>
->>>>     __u64 allowed_signals;
->>>>
->>>>     /*
->>>>      * some way to identify domains, maybe we could use the audit domain
->>>>      * ID, with 0 denoting "allow access to non-Landlocked processes?
->>>>      */
->>>> }
->>> Yes, it would be possible to use such a struct for that scenario where
->>> IPC access gets allowed for other Landlock scopes.  It would mean that
->>> we would not need to introduce a scoped flag for the pathname UNIX
->>> socket connections.  But the relationship between that struct
->>> landlock_scope_attr and the flags and access rights in struct
->>> landlock_ruleset_attr would become less clear, which is a slight
->>> downside, and maybe error prone for users to work with.
->>>
->>> If we introduced an additional scoped flag, it would also be
->>> consistent though.
->>>
->>> (con1) was written under the assumption that we do not have an
->>> additional scoped flag.  If that is lacking, it is not possible to
->>> express UNIX connect() access to other Landlock domains with that
->>> struct.  But as outlined in the proposal below, if we *do* (later)
->>> introduce the additional scoped flag *in addition* to the FS access
->>> right, this *both* stays consistent in semantics with the signal and
->>> abstract UNIX support, *and* it starts working in a world where ICP
->>> access can be allowed to talk to other Landlock domains.
->>>
->>>>> (con2) Consistent behaviour between scoped flags and their
->>>>>        interactions with other access rights:
->>>>>
->>>>>        The existing scoped access rights (signal, abstract sockets)
->>>>>        could hypothetically be extended with a related access right of
->>>>>        another type. For instance, there could be an access right type
->>>>>
->>>>>          __u64 handled_signal_number;
->>>>>
->>>>>        and then you could add a rule to permit the use of certain
->>>>>        signal numbers.  The interaction between the scoped flags and
->>>>>        other access rights should work the same.
->>>>>
->>>>>
->>>>> Constructive Proposal for consideration: Why not both?
->>>>> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>>> I will think about the following a bit more but I'm afraid that I feel
->>>> like it might get slightly confusing.  With this, the only reason for
->>>> having LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET is for API consistency when we
->>>> later enable allowing access to other domains (if I understood correctly),
->>>> in which case I personally feel like the suggestion on landlock_scope_attr
->>>> above, where we essentially accept that it is decoupled with the scope
->>>> bits in the ruleset, might be simpler...?
->>> Mickaël expressed the opinion to me that he would like to APIs to stay
->>> consistent between signals, abstract UNIX sockets, named UNIX sockets
->>> and other future "scoped" operations, in scenarios where:
->>>
->>> * the "scoped" (IPC) operations can be configured to give access to
->>>   other Landlock domains (and that should work for UNIX connections too)
->>> * the existing "scoped" operations also start having matching access rights
->>>
->>> I think with the way I proposed, that would be consistent.
->>>
->>>
->>>>> Why not do both what Tingmao proposed in [1] **and** reserve the
->>>>> option to add the matching "scoped flag" later?
->>>>>
->>>>>   * Introduce LANDLOCK_ACCESS_FS_RESOLVE_UNIX.
->>>>>
->>>>>     If it is handled, UNIX connections are allowed either:
->>>>>
->>>>>     (1) if the connection is to a service in the same scope, or
->>>>>     (2) if the path was allow-listed with a "path beneath" rule.
->>>>>
->>>>>   * Add LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET later, if needed.
->>>>>
->>>>>
->>>>> Let's go through the arguments again:
->>>>>
->>>>> We have observed that it is harmless to allow connections to services
->>>>> in the same scope (1), and that if users absolutely don't want that,
->>>>> they can actually prohibit it through LANDLOCK_ACCESS_FS_MAKE_SOCK
->>>>> (pro1).
->>>>>
->>>>> (con1): Can we still implement the feature idea where we poke a hole
->>>>>         to get UNIX-connect() access to other Landlock domains?
->>>>>
->>>>>   I think the answer is yes.  The implementation strategy is:
->>>>>
->>>>>     * Add the scoped bit LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET
->>>>>     * The scoped bit can now be used to allow-list connections to
->>>>>       other Landlock domains.
->>>>>
->>>>>   For users, just setting the scoped bit on its own does the same as
->>>>>   handling LANDLOCK_ACCESS_FS_RESOLVE_UNIX.  That way, the kernel-side
->>>>>   implementation can also stay simple.  The only reason why the scoped
->>>>>   bit is needed is because it makes it possible to allow-list
->>>>>   connections to other Landlock domains, but at the same time, it is
->>>>>   safe if libraries set the scoped bit once it exists, as it does not
->>>>>   have any bad runtime impact either.
->>>>>
->>>>> (con2): Consistency: Do all the scoped flags interact with their
->>>>>         corresponding access rights in the same way?
->>>>>
->>>>>   The other scope flags do not have corresponding access rights, so
->>>>>   far.
->>>>>
->>>>>   If we were to add corresponding access rights for the other scope
->>>>>   flags, I would argue that we could apply a consistent logic there,
->>>>>   because IPC access within the same scope is always safe:
->>>>>
->>>>>   - A hypothetical access right type for "signal numbers" would only
->>>>>     restrict signals that go beyond the current scope.
->>>>>
->>>>>   - A hypothetical access right type for "abstract UNIX domain socket
->>>>>     names" would only restrict connections to abstract UNIX domain
->>>>>     servers that go beyond the current scope.
->>>>>
->>>>>   I can not come up with a scenario where this doesn't work.
->> Gunther / Tingmao / Mickaël:
->>
->> I have a potential idea to make this concept cleaner.
->>
->> The docs for landlock currently say:
->>
->>
->>        IPC scoping does not support exceptions via landlock_add_rule(2).
->>        If an operation is scoped within a domain, no rules can be added
->>        to allow access to resources or processes outside of the scope.
-> This part might indeed be confusing.  The idea was to explain the
-> difference between scoped rights and handled access rights (which may
-> have rules).
->
->> So if we go with the solution where we are now saying IPC scoping DOES support exceptions
->> we will need to update the documentation, to say scoping for pathname unix sockets is an exception,
->> and have to have the "exemptible scopes" (like this one) alongside "non-exemptible" scopes
->> (ie the existing ones). This creates some friction for users.
-> The documentation will definitely require some updates.  I think it can
-> be explained in a simple way.
->
->> If we foresee other "exempt-able scopes" (which are scopes that also support creating exemptions w/ corresponding access rights) in the future, maybe we should consider separating the two in the ruleset
->> attributes (I used scoped_fs as an example for the attribute name):
->>
->> structlandlock_ruleset_attrruleset_attr={
->> .handled_access_fs=
->> LANDLOCK_ACCESS_FS_EXECUTE|
->> LANDLOCK_ACCESS_FS_WRITE_FILE|
->> LANDLOCK_ACCESS_FS_READ_FILE|
->> LANDLOCK_ACCESS_FS_READ_DIR|
->> LANDLOCK_ACCESS_FS_REMOVE_DIR|
->> LANDLOCK_ACCESS_FS_REMOVE_FILE|
->> LANDLOCK_ACCESS_FS_MAKE_CHAR|
->> LANDLOCK_ACCESS_FS_MAKE_DIR|
->> LANDLOCK_ACCESS_FS_MAKE_REG|
->> LANDLOCK_ACCESS_FS_MAKE_SOCK|
->> LANDLOCK_ACCESS_FS_MAKE_FIFO|
->> LANDLOCK_ACCESS_FS_MAKE_BLOCK|
->> LANDLOCK_ACCESS_FS_MAKE_SYM|
->> LANDLOCK_ACCESS_FS_REFER|
->> LANDLOCK_ACCESS_FS_TRUNCATE|
->> LANDLOCK_ACCESS_FS_IOCTL_DEV,
->> .handled_access_net=
->> LANDLOCK_ACCESS_NET_BIND_TCP|
->> LANDLOCK_ACCESS_NET_CONNECT_TCP,
->> .scoped=
->> LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET|
->> LANDLOCK_SCOPE_SIGNAL,
->>     .scoped_fs = 
->> 	LANDLOCK_SCOPE_FS_PATHNAME_UNIX_SOCKET
->> };
->>
->> This more clearly distinguishes between scopes that have exceptions/corresponding fs rights,
->> and ones that don't. Later we could add scoped_net, if needed. I feel like this would be more
->> intuitive and better categorize future scoping rights. An obvious con is increasing the size of
->> the ruleset attributes.
-> I see your point but I don't think it would be worth it to add
-> sub-scoped fields.  Each field has a clear semantic, and the scoped one
-> is related to the domain wrt other domains.
-As long as it's documented clearly, and future IPCs have similar behavior
-I agree that a separate field probably isn't needed.
->> Of course this separation is only worth it if there are other "exempt-able" rights in the future.
->> I can think of a few potential future rights which COULD be scoped and have corresponding rights
->> (binder, sysv-ipc, pipes, tcp/udp between two local programs). 
-> Yes, it would definitely be useful to add exception for other kind of
-> IPCs.  The idea would be to be able to describe the peer, either with a
-> file path, or PID, or cgroups, or a Landlock domain...  The inet case
-> is an interesting idea but that might be a challenging task to
-> implement, if even possible.
-
->>>>> In conclusion, I think the approach has significant upsides:
->>>>>
->>>>>   * Simpler UAPI: Users only have one access bit to deal with, in the
->>>>>     near future.  Once we do add a scope flag for UNIX connections, it
->>>>>     does not interact in a surprising way with the corresponding FS
->>>>>     access right, because with either of these, scoped access is
->>>>>     allowed.
->>>>>
->>>>>     If users absolutely need to restrict scoped access, they can
->>>>>     restrict LANDLOCK_ACCESS_FS_MAKE_SOCK.  It is a slightly obscure
->>>>>     API, but in line with the "make easy things easy, make hard things
->>>>>     possible" API philosophy.  And needing this should be the
->>>>>     exception rather than the norm, after all.
->>>>>
->>>>>   * Consistent behaviour between scoped flags and regular access
->>>>>     rights, also for speculative access rights affecting the existing
->>>>>     scoped flags for signals and abstract UNIX domain sockets.
->>>>>
->>>>> [1] https://lore.kernel.org/all/f07fe41a-96c5-4d3a-9966-35b30b3a71f1@maowtm.org/
->>> —Günther
-
+On Thu, Nov 27, 2025 at 12:51:33PM +0100, Günther Noack wrote:
+> This patch set adds the LANDLOCK_RESTRICT_SELF_TSYNC flag to
+> landlock_restrict_self().  With this flag, the passed Landlock ruleset
+> will not only be applied to the calling thread, but to all threads
+> which belong to the same process.
+> 
+> Motivation
+> ==========
+> 
+> TL;DR: The libpsx/nptl(7) signal hack which we use in user space for
+> multi-threaded Landlock enforcement is incompatible with Landlock's
+> signal scoping support.  Landlock can restrict the use of signals
+> across Landlock domains, but we need signals ourselves in user space
+> in ways that are not permitted any more under these restrictions.
+> 
+> Enabling Landlock proves to be difficult in processes that are already
+> multi-threaded at the time of enforcement:
+> 
+> * Enforcement in only one thread is usually a mistake because threads
+>   do not normally have proper security boundaries between them.
+> 
+> * Also, multithreading is unavoidable in some circumstances, such as
+>   when using Landlock from a Go program.  Go programs are already
+>   multithreaded by the time that they enter the "func main()".
+> 
+> So far, the approach in Go[1] was to use libpsx[2].  This library
+> implements the mechanism described in nptl(7) [3]: It keeps track of
+> all threads with a linker hack and then makes all threads do the same
+> syscall by registering a signal handler for them and invoking it.
+> 
+> With commit 54a6e6bbf3be ("landlock: Add signal scoping"), Landlock
+> gained the ability to restrict the use of signals across different
+> Landlock domains.
+> 
+> Landlock's signal scoping support is incompatible with the libpsx
+> approach of enabling Landlock:
+> 
+> (1) With libpsx, although all threads enforce the same ruleset object,
+>     they technically do the operation separately and end up in
+>     distinct Landlock domains.  This breaks signaling across threads
+>     when using LANDLOCK_SCOPE_SIGNAL.
+> 
+> (2) Cross-thread Signals are themselves needed to enforce further
+>     nested Landlock domains across multiple threads.  So nested
+>     Landlock policies become impossible there.
+> 
+> In addition to Landlock itself, cross-thread signals are also needed
+> for other seemingly-harmless API calls like the setuid(2) [4] and for
+> the use of libcap (co-developed with libpsx), which have the same
+> problem where the underlying syscall only applies to the calling
+> thread.
+> 
+> Implementation details
+> ======================
+> 
+> Enforcement prerequisites
+> -------------------------
+> 
+> Normally, the prerequisite for enforcing a Landlock policy is to
+> either have CAP_SYS_ADMIN or the no_new_privs flag.  With
+> LANDLOCK_RESTRICT_SELF_TSYNC, the no_new_privs flag will automatically
+> be applied for sibling threads if the caller had it.
+> 
+> These prerequisites and the "TSYNC" behavior work the same as for
+> Seccomp and its SECCOMP_FILTER_FLAG_TSYNC flag.
+> 
+> Pseudo-signals
+> --------------
+> 
+> Landlock domains are stored in struct cred, and a task's struct cred
+> can only be modified by the task itself [6].
+> 
+> To make that work, we use task_work_add() to register a pseudo-signal
+> for each of the affected threads.  At signal execution time, these
+> tasks will coordinate to switch out their Landlock policy in lockstep
+> with each other, guaranteeing all-or-nothing semantics.
+> 
+> This implementation can be thought of as a kernel-side implementation
+> of the userspace hack that glibc/NPTL use for setuid(2) [3] [4], and
+> which libpsx implements for libcap [2].
+> 
+> Finding all sibling threads
+> ---------------------------
+> 
+> In order to avoid grabbing the global task_list_lock, we employ the
+> scheme proposed by Jann Horn in [7]:
+> 
+> 1. Loop through the list of sibling threads
+> 2. Schedule a pseudo-signal for each and make each thread wait in the
+>    pseudo-signal
+> 3. Go back to 1. and look for more sibling thread that we have not
+>    seen yet
+> 
+> Do this until no more new threads are found.  As all threads were
+> waiting in their pseudo-signals, they can not spawn additional threads
+> and we found them all.
+> 
+> Coordination between tasks
+> --------------------------
+> 
+> As tasks run their pseudo-signal task work, they coordinate through
+> the following completions:
+> 
+>  - all_prepared (with counter num_preparing)
+>  
+>    When done, all new sibling threads in the inner loop(!) of finding
+>    new threads are now in their pseudo-signal handlers and have
+>    prepared the struct cred object to commit (or written an error into
+>    the shared "preparation_error").
+> 
+>    The lifetime of all_prepared is only the inner loop of finding new
+>    threads.
+> 
+>  - ready_to_commit
+> 
+>    When done, the outer loop of finding new threads is done and all
+>    sibling threads have prepared their struct cred object.  Marked
+>    completed by the calling thread.
+> 
+>  - all_finished
+> 
+>    When done, all sibling threads are done executing their
+>    pseudo-signal handlers.
+> 
+> Use of credentials API
+> ----------------------
+> 
+> Under normal circumstances, sibling threads share the same struct cred
+> object.  To avoid unnecessary duplication, if we find that a thread
+> uses the same struct cred as the calling thread, we side-step the
+> normal use of the credentials API [6] and place a pointer to that
+> existing struct cred instead of creating a new one using
+> prepare_creds() in the sibling thread.
+> 
+> Noteworthy discussion points
+> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> * We are side-stepping the normal credentials API [6], by re-wiring an
+>   existing struct cred object instead of calling prepare_creds().
+> 
+>   We can technically avoid it, but it would create unnecessary
+>   duplicate struct cred objects in multithreaded scenarios.
+> 
+> Change Log
+> ==========
+> 
+> v3:
+>  - bigger organizational changes
+>    - move tsync logic into own file
+>    - tsync: extract count_additional_threads() and
+>      schedule_task_work()
+>  - code style
+>    - restrict_one_thread, syscalls.c: use err instead of res (mic)
+>    - restrict_one_thread: inline current_cred variable
+>    - restrict_one_thread: add comment to shortcut logic (mic)
+>    - rsync_works helpers: use size_t i for loop vars
+>    - landlock_cred_copy: skip redundant NULL checks
+>    - function name: s,tsync_works_free,tsync_works_release, (mic)
+>    - tsync_works_grow_by: kzalloc into a temporary variable for
+>      clarity (mic)
+>    - tsync_works_contains_task: make struct task_works const
+>  - bugs
+>    - handle kmalloc family failures correctly (jannh)
+>    - tsync_works_release: check task NULL ptr before put
+>    - s/put_task_struct_rcu_user/put_task_struct/ (jannh)
+>  - concurrency bugs
+>    - schedule_task_work: do not return error when encountering exiting
+>      tasks This can happen during normal operation, we should not
+>      error due to it (jannh)
+>    - landlock_restrict_sibling_threads: make current hold the
+>      num_unfinished/all_finished barrier (more robust, jannh)
+>    - un-wedge the deadlock using wait_for_completion_interruptible
+>      (jannh) See "testing" below and discussion in
+>      https://lore.kernel.org/all/CAG48ez1oS9kANZBq1bt+D76MX03DPHAFp76GJt7z5yx-Na1VLQ@mail.gmail.com/
+>  - logic
+>    - tsync_works_grow_by(): grow to size+n, not capacity+n
+>    - tsync_works_grow_by(): add overflow check for capacity increase
+>    - landlock_restrict_self(): make TSYNC and LOG flags work together
+>    - set no_new_privs in the same way as seccomp,
+>      whenever the calling thread had it
+>  - testing
+>    - add test where multiple threads call landlock_restrict_self()
+>      concurrently
+>    - test that no_new_privs is implicitly enabled for sibling threads
+>  - bump ABI version to v8
+>  - documentation improvements
+>    - document ABI v8
+>    - move flag documentation into the landlock.h header
+>    - comment: Explain why we do not need sighand->siglock or
+>      cred_guard_mutex
+>    - various comment improvements
+>    - reminder above struct landlock_cred_security about updating
+>      landlock_cred_copy on changes
+> 
+> v2:
+>  - https://lore.kernel.org/all/20250221184417.27954-2-gnoack3000@gmail.com/
+>  - Semantics:
+>    - Threads implicitly set NO_NEW_PRIVS unless they have
+>      CAP_SYS_ADMIN, to fulfill Landlock policy enforcement
+>      prerequisites
+>    - Landlock policy gets unconditionally overridden even if the
+>      previously established Landlock domains in sibling threads were
+>      diverging.
+>  - Restructure discovery of all sibling threads, with the algorithm
+>    proposed by Jann Horn [7]: Loop through threads multiple times, and
+>    get them all stuck in the pseudo signal (task work), until no new
+>    sibling threads show up.
+>  - Use RCU lock when iterating over sibling threads.
+>  - Override existing Landlock domains of other threads,
+>    instead of applying a new Landlock policy on top
+>  - Directly re-wire the struct cred for sibling threads,
+>    instread of creating a new one with prepare_creds().
+>  - Tests:
+>    - Remove multi_threaded_failure test
+>      (The only remaining failure case is ENOMEM,
+>      there is no good way to provoke that in a selftest)
+>    - Add test for success despite diverging Landlock domains.
+> 
+> [1] https://github.com/landlock-lsm/go-landlock
+> [2] https://sites.google.com/site/fullycapable/who-ordered-libpsx
+> [3] https://man.gnoack.org/7/nptl
+> [4] https://man.gnoack.org/2/setuid#VERSIONS
+> [5] https://lore.kernel.org/all/20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com/
+> [6] https://www.kernel.org/doc/html/latest/security/credentials.html
+> [7] https://lore.kernel.org/all/CAG48ez0pWg3OTABfCKRk5sWrURM-HdJhQMcWedEppc_z1rrVJw@mail.gmail.com/
+> 
+> Günther Noack (3):
+>   landlock: Multithreading support for landlock_restrict_self()
+>   landlock: selftests for LANDLOCK_RESTRICT_SELF_TSYNC
+>   landlock: Document LANDLOCK_RESTRICT_SELF_TSYNC
+> 
+>  Documentation/userspace-api/landlock.rst      |   8 +
+>  include/uapi/linux/landlock.h                 |  13 +
+>  security/landlock/Makefile                    |   2 +-
+>  security/landlock/cred.h                      |  12 +
+>  security/landlock/limits.h                    |   2 +-
+>  security/landlock/syscalls.c                  |  66 ++-
+>  security/landlock/tsync.c                     | 555 ++++++++++++++++++
+>  security/landlock/tsync.h                     |  16 +
+>  tools/testing/selftests/landlock/base_test.c  |   8 +-
+>  tools/testing/selftests/landlock/tsync_test.c | 161 +++++
+>  10 files changed, 810 insertions(+), 33 deletions(-)
+>  create mode 100644 security/landlock/tsync.c
+>  create mode 100644 security/landlock/tsync.h
+>  create mode 100644 tools/testing/selftests/landlock/tsync_test.c
+> 
+> -- 
+> 2.52.0.177.g9f829587af-goog
+> 
+> 
