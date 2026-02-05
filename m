@@ -1,94 +1,142 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058EA1A23B1;
-	Thu,  5 Feb 2026 01:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3045F1C860B;
+	Thu,  5 Feb 2026 04:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770256519; cv=none; b=tSO5MsOha7JXKG5RdDCkQ0/xFNsyt3DV8Ta3z74K94zkz0ystYrzXAiMKhespL1KjFwbrvht9scOO/Bs62Mb3Wgh0+jvBwBZ8CddXzHEwJO2NyjfPVFxh2qRR6Cl2aBH+Z7ivpnsG1342zdmMyhXHaohUzXuNXj0SHjNausgO6w=
+	t=1770265624; cv=none; b=BOiRwAob+xmOHNGKdi0Vq05I3q6XXcALe5Wc/T4umaxoxeJQXu58LWRv1W+7SQm+yC+c7RQANdYBQ8hYYy/XX7dHCSGJRO7vUfAHBYekfVWobzaTzaykvrzHRZNpQtDanuZh5X3qVZP9f+3QG2HYCnxwbG5eoKjs1FO+65iHU3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770256519; c=relaxed/simple;
-	bh=DqFzxfYKPrIKrr839txO83upVWq6NyZCqghWeivv+sM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Jm90W8NQMcsFR/Vk2jwF1k/DHh2WDma+pE7GhtZoUfll6FJP/bpEjvIaLI82jlayqKyw2TOS9+tTDFZWPtnonasVl8R+9qLEpdvadjqA2t7UwOXQxJwN2fdrjhP731MoNyloojvA52it+brw2mqaIJopq0VP68KnLjXgRws3/28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u4MTjYBz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770265624; c=relaxed/simple;
+	bh=RP4IfRqUPu9X41sG6CrMhkiScQA7dWvhTYysPcQngLY=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=hNPOrJYFl9KwMXAYTcl9KAiOt5ZULJx4DkIP90IPce/SO4/IP6sqXVK7mKtxUyJULwByfhR0ZUQAQ+fwJwf3fLPE2O95VIsGoFp7qjey7ZgolI/AXXwxnhYM6in1BdRc4Ks0yyZOpJE2Xq2GpOUua+IAlAILD4e2IVDTd1cjvnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QD5IDolM; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u4MTjYBz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFC52C4CEF7;
-	Thu,  5 Feb 2026 01:55:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770256518;
-	bh=DqFzxfYKPrIKrr839txO83upVWq6NyZCqghWeivv+sM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=u4MTjYBzUC00Jp6Rz0XqqegSaclwupRA1DEMrwtQ8N9rHkJRVDInSW3JHT9UX1xMo
-	 XxUiteY99zUGZ0zTEf39+is5Wg8dyRyqTNGS238N7RoGf5Jdup1jsgdY8I0Ehg9FFH
-	 MLSys+JKlvQpuUIXImWIDq49UH+JCB0BZmr0vZMCt61jtrMcwCvnXLhrOKdE+yrauu
-	 YPnRXW2gnG0n16PqCFnx/jNdV/IzB9kKyuNjAo+SCKVt+LUwoe+xQXdqrk+Eylimt5
-	 oIRggQV7kkEatTNb9LArL2uuxwGFpla+txIj6KCQ7vPCwmlYOxVMIDrEIM+G0ASFON
-	 iVZ8s7AXcPCZg==
-Date: Wed, 4 Feb 2026 17:55:16 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?= <thomas.weissschuh@linutronix.de>
-Cc: Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima
- <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn
- <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, Simon Horman
- <horms@kernel.org>, Shuah Khan <shuah@kernel.org>, Matthieu Baerts
- <matttbe@kernel.org>, Mat Martineau <martineau@kernel.org>, Geliang Tang
- <geliang@kernel.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?=
- <mic@digikod.net>, =?UTF-8?B?R8O8bnRoZXI=?= Noack <gnoack@google.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
- Fastabend <john.fastabend@gmail.com>, Stanislav Fomichev <sdf@fomichev.me>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
- <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh
- <kpsingh@kernel.org>, Hao Luo <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-api@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
- linux-kselftest@vger.kernel.org, mptcp@lists.linux.dev,
- linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
- libc-alpha@sourceware.org, Carlos O'Donell <carlos@redhat.com>, Adhemerval
- Zanella <adhemerval.zanella@linaro.org>, Rich Felker <dalias@libc.org>,
- klibc@zytor.com, Florian Weimer <fweimer@redhat.com>
-Subject: Re: [PATCH net-next v2 0/4] net: uapi: Provide an UAPI definition
- of 'struct sockaddr'
-Message-ID: <20260204175516.4fb11966@kernel.org>
-In-Reply-To: <20260204064248-d9c4ab78-f6d4-4ac6-8d55-e939bc1df6d2@linutronix.de>
-References: <20260120-uapi-sockaddr-v2-0-63c319111cf6@linutronix.de>
-	<20260121192729.2095aa25@kernel.org>
-	<20260130112309-28f2645b-e756-4173-96da-cf5c59191520@linutronix.de>
-	<20260130081741.425a92e0@kernel.org>
-	<3c46fc49-b41b-44a2-b42a-669cc7e6bb02@linutronix.de>
-	<20260131092517.6639d84c@kernel.org>
-	<20260203122715-eeb304f9-4b42-4fc6-a527-658182a92ba5@linutronix.de>
-	<20260203144011.32d5b223@kernel.org>
-	<20260204064248-d9c4ab78-f6d4-4ac6-8d55-e939bc1df6d2@linutronix.de>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QD5IDolM"
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 6151KDFe027389;
+	Thu, 5 Feb 2026 04:26:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=RP4IfR
+	qUPu9X41sG6CrMhkiScQA7dWvhTYysPcQngLY=; b=QD5IDolMNdcYP2bXqqMOvj
+	2dUVFKE5DXWhn1eJzddXKj70EWgIiKOelDrSuGhW33WNb1GXF09yYmFBSdJf5mTY
+	98DZTbtnWtcp0j2r79bQBZxXuDkFLHsuWP7u4Pr9XiYJDd+eTDGJK/Y5fS9u/vwc
+	H6oo1MT9qnc+8zabmVaB8n46QrC4odAbsf8WpfdAzNRBFtumtmaPZh4h33ZMvNoL
+	awE5WFruCTLH5CQuKL98PbGXilwVYNMZIctf1YhjCtqxURlRjSklKUKV11HEasAn
+	axNKVTe+4c7bkUBe8dga3UaXSogUBgGYu0gBhmXd3Ijclj62t6NtlPjn+Nvv4P0Q
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4c175n2hb6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Feb 2026 04:26:32 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 6154QVMS029415;
+	Thu, 5 Feb 2026 04:26:31 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4c175n2hb3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Feb 2026 04:26:31 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 6150YV1u015800;
+	Thu, 5 Feb 2026 04:26:31 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4c4gsgrkvd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Feb 2026 04:26:31 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6154QUmZ15794796
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 5 Feb 2026 04:26:30 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 299EB5805B;
+	Thu,  5 Feb 2026 04:26:30 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 823A058058;
+	Thu,  5 Feb 2026 04:26:28 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.93.65])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  5 Feb 2026 04:26:28 +0000 (GMT)
+Message-ID: <6f82d5dc6b499ecd03c985d6de20de94fea04cfe.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 3/3] ima: Use kstat.ctime as a fallback change
+ detection for stacked fs
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Frederick Lawler <fred@cloudflare.com>,
+        Roberto Sassu
+	 <roberto.sassu@huaweicloud.com>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin	
+ <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul
+ Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E.
+ Hallyn"	 <serge@hallyn.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christian Brauner	 <brauner@kernel.org>,
+        Josef Bacik
+ <josef@toxicpanda.com>, Jeff Layton	 <jlayton@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kernel-team@cloudflare.com
+In-Reply-To: <aYO4fj0Uw0aUWXOX@CMGLRV3>
+References: <20260130-xfs-ima-fixup-v5-0-57e84ea91712@cloudflare.com>
+	 <20260130-xfs-ima-fixup-v5-3-57e84ea91712@cloudflare.com>
+	 <c449523aef301a6b199e06d4c3fbf7587d1218c5.camel@huaweicloud.com>
+	 <aYO4fj0Uw0aUWXOX@CMGLRV3>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 04 Feb 2026 23:26:27 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: isB5NKNz9U_iFU1lLWLg7WY9YxRtM4db
+X-Authority-Analysis: v=2.4 cv=VcX6/Vp9 c=1 sm=1 tr=0 ts=69841bf8 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RobKdUFHg6JuvS5dcHMA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: ZnH4SyeQhBDME7XvwUD8PyCjWpuOZnnL
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjA1MDAyNyBTYWx0ZWRfXzo6jxa4pO7Vu
+ JIchXLuNAFTu1HXj9YCRR58m0H3qWnmshmHdBYp9Ov1BhGoAxG0ygNIBse54jGGxVb28ikGEPeO
+ tzWbbovSIUvJ7Tq+nVusS/HDoMGWDlOVnFkHZwBeNz3bEwk3nmWYEFdAREwSEHqpaONdQAdWZQU
+ BR0wKuyOjf2BQVtrDob2vU2mIO1DfU8hMctVZHR6jw+3vake0edezrsHRAI4ReWa8o0Ilx6oFla
+ qxPZZ1Kdfwsji3k5pWEYhhFtnZ1SGxUwEEBHjk8MJfoFI5gXUsvVjRRkb7aE8Yk8g0JTDJU4k8A
+ A/06ndAb7JfFeu6t+VNwYGQlAHJNkJtUR84z3zynm0CBE3V6FABsY0BtoOyTUvD+qNaFBizWI0v
+ 3gYW6R2ZyKzNd8TT82a8jQt4mYIChyItPbu4Oe5FvTlIi9ONDbNFn4y06jqv+nZ5jD7KTcZmopZ
+ MZ3UqHe6R0IqiS7aBjw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-04_08,2026-02-04_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 spamscore=0 adultscore=0
+ bulkscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2601150000 definitions=main-2602050027
 
-On Wed, 4 Feb 2026 06:51:46 +0100 Thomas Wei=C3=9Fschuh wrote:
-> > make -j16 O=3D"$kobj" INSTALL_HDR_PATH=3D"${kobj}/hdr" headers_install
-> > popd
-> >=20
-> > pushd uapi
-> > find . -type f -name '*.h' -exec cp -v "${kobj}/hdr/include/{}" {} \; =
-=20
+On Wed, 2026-02-04 at 15:22 -0600, Frederick Lawler wrote:
+> That said, I think Mimi pointed out in an email [2] where multi-grain
+> file systems are impacted regardless of stacked fs or not due to the last
+> writer check.
 >=20
-> Here only those headers which already exist in ethtool's uapi/ directory
-> are copied. As linux/typelimits.h is new, it is now missing.
-> Honestly, if a user fiddles with the internals of the UAPI headers like
-> this, it is on them to update their code if the internal structure
-> changes. In your case a simple 'touch uapi/linux/typelimits.h'
-> before running the script will be enough. Also internal.h now requires
-> an explicit inclusion of <limits.h>, as that is not satisfied by the
-> UAPI anymore.
+> I don't recall coming across that in my tests, but perhaps I did that
+> specific test wrong? To be sure, I created the C program, and on the VM,
+> created a XFS disk, mounted it on loopback, ran the rdwr program on
+> "somefile" multiple times, and only got 1 audit log for it, until I
+> mutated it with touch, and only got 2 hits: original + after mutation
+> after running the program multiple times.=20
+>=20
+> I'm not sure what's going on there, so I'll look into that a bit more,
+> but so far the impact is stacked file systems & multigrain ctime AFAIK.
 
-Hopefully you understand that while due to uapi header copy this is not
-a huge issue for ethtool itself, but it is a proof that your changes
-can break normal user space applications which do not vendor in uapi.
+Make sure you're testing without your patch set applied or at least the las=
+t
+patch.
+
+Mimi
