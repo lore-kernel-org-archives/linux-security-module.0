@@ -1,125 +1,117 @@
-Received: from mail-qt1-f193.google.com (mail-qt1-f193.google.com [209.85.160.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC574218AC
-	for <linux-security-module@vger.kernel.org>; Fri,  6 Feb 2026 18:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59F42F7440;
+	Fri,  6 Feb 2026 19:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770401065; cv=none; b=Ouh1LmhVqOp/YBY/42eWqoyvyZR9ubxEzl2dLGhXuEzor8cNG9XkEX8HHKJFXhAY+e6iji8u+Zh0LKSbxumk8SuL0b3LAxn4Iy/fW+rsATrkGA3uEGyAJntwZVG9XrH+GLyyn4eSP53OkqBodc6mLVmzkyyrAut4FWYSnVxuIbE=
+	t=1770406318; cv=none; b=OyMitjvO2kQ8DJYG4ARW2vsdOOgNzjJTFC/Ii6IOu1oj7462kJsqNPyMFP0SillOP2u35PcUI2NKKRLdu/d6Ondxx7pmUPOfpvZOAbJjpVxseLvIxI0g05HrHQVfGUjOrsvBO48qvIyG84w7niAnO0eao103TzsMOoAlJmocKLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770401065; c=relaxed/simple;
-	bh=7j57Kb9zrP0CR0LLOCCTX071fm5XUGcku1K0dLPTMBY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GxGjs2h91j0qI7bdbvv/XcxXfHIU0gQxFLQHRaBC44DGssm0vr7B5+RN4wmwJplTwK5igaMf7UEbGMfkFGfwRruhMu3CCEGTC5qqp0utOnbzOOJzJclAxmPCC7tLhtxypX3LV2TvkG+fNI8mXX8HiCnK/QjpaH/4LgRFBtS7qO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AolOWp+J; arc=none smtp.client-ip=209.85.160.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1770406318; c=relaxed/simple;
+	bh=sFmOLogLTpCWkUOE9qlbNa3u0BVXHcuyge59i+fnUfg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=FHhuCkNtDe0Q5kJWYxlSCmlwfTZePwYnXZV/F4JBUxIK/P+B6yuwoVTO+0ev/RVHhJi4rvDPxlgkeB6XAjZSL8Pyz/nZGEEwFhxBMj0YjR2knZsz4UvT75QpdsAGXtyyrmrl5donob6z0NqXl1oPig79CkZl91zRIf5AOjC/i1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=P0//Ycw7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AolOWp+J"
-Received: by mail-qt1-f193.google.com with SMTP id d75a77b69052e-5062fc5d86aso18014171cf.1
-        for <linux-security-module@vger.kernel.org>; Fri, 06 Feb 2026 10:04:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770401064; x=1771005864; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=T13Zuh8ax2XAoP2rJy96BUiZCKe9bDTomtxx5ZB6o1U=;
-        b=AolOWp+JClR2cNZ6FAgL8x73pi73MvtpXYZeivWEA5kTo3C+SDLebUJLHTXvTaaWdI
-         g8C2G0vSSdqwFfNmGL3dgrcW48zZxGmYuvkTg8Bm5vpdRoub6eZ6xOyyFhhbPNm0EcW/
-         rW8TOTYkbbArJlAYqVNRjxXVoMNnQ829SlFaZ5NfJY+Jm0pPm9luESCkcMNPzYhFp/Lb
-         h+pQqrX+rCUqtpJSUfcc0IKGRSxFTEBEiKuD7V5Tk7BDnd6S+LiGXsHDusnvUpXrNgpQ
-         bdXcpV+bF5nHJYOI5AjnDht42SM6Vb60QIGlR7HvyB3Bkht8Xjq4QGnnhRJTY4l3d4DL
-         MnlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770401064; x=1771005864;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T13Zuh8ax2XAoP2rJy96BUiZCKe9bDTomtxx5ZB6o1U=;
-        b=GZed9nSQ1BC05DQQ4zyDqzhLOuEnHQh5AT3NBEroUgDxQKWhKBd1X1dhgRcG0DUbZ3
-         bEGUiE5chc/7HJK84gqKshJkZ3ozSc/XSNYEiWCFt6BD8IzGiZEQD3jDD3+Lp63q3lkQ
-         XP8jb0fRJ6O89B3OvM/FFpnBsHOCDrMUBphSKyCZKOrWNH+Ll1D67EGXpuRtY6MfE/4w
-         mSPhF9z8r0wvqKLF4Wf9KjFTCMvsTrEgEtB/UZags0+sU7JL54eGcHtAtYLtL6HhK3uu
-         CVuIYC6jo9PbJn+DjOnVKZQDEAHAScJ++Ob8fMXW0aY/0u0ENoAkPbfnxOrc+iI5uwZP
-         AA3A==
-X-Forwarded-Encrypted: i=1; AJvYcCULt0bAJ7dFlijxK95hrDR2Sl42F6AZHmmQWeuuGJ5NP4ssw28vMoPaLCX1lbu0tSagNHY2jOAk0LKWZjbDDaACFhENm+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW9V3gCkowlrvWovO3vIRP4B6epMb+detB8mM+a6/UPauJU8EB
-	oSD+gd/NNSuNnqc7O1s64ufPqg9XgQSFAJcb4J1KhmFho+6dFTS/xHUc5oG+xYCo
-X-Gm-Gg: AZuq6aKTnXSALJ5gCltyQ+KU7KTYa1LuSecN3WctKBk6k2nN6T8PBhU/Jsd+PIWsnaJ
-	CxPaxH6EWXmYJG/UY7rj7jmDITXAPDTSmSSUliZ89koz8DT1jKnRHztmE8UEoxWvvD3Eg6GT8DZ
-	XNJgDo4FU2kzgTkUh1TEuJFY3iXqMqCHWrh25G6l8/eL7/0HLNzbwEhQ+kd/5aa27ofQitR9ikf
-	JMnD933Lfm5s15Omzs8P7x4NfRL+e2C/vNA4tEYmQpz83R9KYDkpqfnhU5BlfunoeeHjAWZdyqk
-	q4DZle/gyjClBogYACIs2WTuH3zh9HMLCbLXQX/ZM3YAfckA4biYOnGva2adrzeEhzofpmPb0e5
-	G8CrlI7Rp2HITe//BtLa971osp1UP2wxAYYFuD+y18y6z+7Lm0UZld+4W8R+H9WsJZeZ3mjP9wK
-	bgc1JpC/I3hrE2W5Qza0gHORD6Bw42DhWOK8xrC4nb8GNe9o6qtI2LuDnT1iuJxh71nce6yoJaZ
-	z+jR9ocwlS7G929
-X-Received: by 2002:ac8:5993:0:b0:4ee:197a:e809 with SMTP id d75a77b69052e-50639a1f418mr41640841cf.75.1770401064059;
-        Fri, 06 Feb 2026 10:04:24 -0800 (PST)
-Received: from localhost (ec2-52-70-167-183.compute-1.amazonaws.com. [52.70.167.183])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8953bf3814csm21631946d6.2.2026.02.06.10.04.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Feb 2026 10:04:23 -0800 (PST)
-From: danieldurning.work@gmail.com
-To: linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	paul@paul-moore.com,
-	stephen.smalley.work@gmail.com,
-	omosnace@redhat.com
-Subject: [RFC PATCH] fs/pidfs: Add permission check to pidfd_info()
-Date: Fri,  6 Feb 2026 18:02:48 +0000
-Message-ID: <20260206180248.12418-1-danieldurning.work@gmail.com>
-X-Mailer: git-send-email 2.52.0
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="P0//Ycw7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E60FC116C6;
+	Fri,  6 Feb 2026 19:31:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1770406317;
+	bh=sFmOLogLTpCWkUOE9qlbNa3u0BVXHcuyge59i+fnUfg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=P0//Ycw7MamL01hmVUxrX954cfCW9uQM9dRODdcU5KIQuuE0qEyY1JS9AxdM8F96v
+	 5DofCLn88Bu4sHg6rPYalTvwkPcSbj6PjOltDumckh7j2RRU87blAz/W8ZmpRFjy+T
+	 5AbBbYyJ/4/G1l/2aQ5CJCldkjuxifDVAKZKSGfM=
+Date: Fri, 6 Feb 2026 11:31:53 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Pedro Falcato <pfalcato@suse.de>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Jarkko Sakkinen
+ <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, Thomas
+ Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+ <bp@alien8.de>, x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, Arnd
+ Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dan Williams <dan.j.williams@intel.com>, Vishal Verma
+ <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, Christian Koenig
+ <christian.koenig@amd.com>, Huang Rui <ray.huang@amd.com>, Matthew Auld
+ <matthew.auld@intel.com>, Matthew Brost <matthew.brost@intel.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Benjamin LaHaise
+ <bcrl@kvack.org>, Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+ Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
+ Sandeep Dhavale <dhavale@google.com>, Hongbo Li <lihongbo22@huawei.com>,
+ Chunhai Guo <guochunhai@vivo.com>, Theodore Ts'o <tytso@mit.edu>, Andreas
+ Dilger <adilger.kernel@dilger.ca>, Muchun Song <muchun.song@linux.dev>,
+ Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@kernel.org>,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Mike
+ Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>,
+ Tony Luck <tony.luck@intel.com>, Reinette Chatre
+ <reinette.chatre@intel.com>, Dave Martin <Dave.Martin@arm.com>, James Morse
+ <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, Carlos Maiolino
+ <cem@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, Naohiro Aota
+ <naohiro.aota@wdc.com>, Johannes Thumshirn <jth@kernel.org>, Matthew Wilcox
+ <willy@infradead.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren
+ Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Hugh
+ Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Zi
+ Yan <ziy@nvidia.com>, Nico Pache <npache@redhat.com>, Ryan Roberts
+ <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song
+ <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, Jann Horn
+ <jannh@google.com>, David Howells <dhowells@redhat.com>, Paul Moore
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn"
+ <serge@hallyn.com>, Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes
+ <linux@rasmusvillemoes.dk>, linux-sgx@vger.kernel.org,
+ linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
+ linux-aio@kvack.org, linux-erofs@lists.ozlabs.org,
+ linux-ext4@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev,
+ devel@lists.orangefs.org, linux-xfs@vger.kernel.org,
+ keyrings@vger.kernel.org, linux-security-module@vger.kernel.org, Jason
+ Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH v2 09/13] mm: update all remaining mmap_prepare users to
+ use vma_flags_t
+Message-Id: <20260206113153.c443545459474cdef6dfd7ea@linux-foundation.org>
+In-Reply-To: <hmc2or77xnhrdlncfzjsljljwljnp6zztqsvmgxspfilmzkyty@czxpjpdm66ov>
+References: <cover.1769097829.git.lorenzo.stoakes@oracle.com>
+	<fb1f55323799f09fe6a36865b31550c9ec67c225.1769097829.git.lorenzo.stoakes@oracle.com>
+	<hmc2or77xnhrdlncfzjsljljwljnp6zztqsvmgxspfilmzkyty@czxpjpdm66ov>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Daniel Durning <danieldurning.work@gmail.com>
+On Fri, 6 Feb 2026 17:46:36 +0000 Pedro Falcato <pfalcato@suse.de> wrote:
 
-Added a permission check to pidfd_info(). Originally, process info
-could be retrieved with a pidfd even if proc was mounted with hidepid
-enabled, allowing pidfds to be used to bypass those protections. We
-now call ptrace_may_access() to perform some DAC checking as well
-as call the appropriate LSM hook.
+> > -#define VM_REMAP_FLAGS (VM_IO | VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP)
+> > +#define VMA_REMAP_FLAGS mk_vma_flags(VMA_IO_BIT, VMA_PFNMAP_BIT,	\
+> > +				     VMA_DONTEXPAND_BIT, VMA_DONTDUMP_BIT)
+> 
+> as a sidenote, these flags are no longer constant expressions and thus
+> 
+> static vma_flags_t flags = VMA_REMAP_FLAGS;
+> 
+> can't compile.
 
-The downside to this approach is that there are now more restrictions
-on accessing this info from a pidfd than when just using proc (without
-hidepid). I am open to suggestions if anyone can think of a better way
-to handle this.
+Yup, that isn't nice.  An all-caps thing with no () is a compile-time
+constant.
 
-I have also noticed that it is possible to use pidfds to poll on any
-process regardless of whether the process is a child of the caller,
-has a different UID, or has a different security context. Is this
-also worth addressing? If so, what exactly should the DAC checks be?
+It looks like we can make this a nice inlined (commented!) lower-cased
+C function as a little low-priority cleanup.
 
-Signed-off-by: Daniel Durning <danieldurning.work@gmail.com>
----
- fs/pidfs.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+> Rest LGTM though.
+> 
+> Acked-by: Pedro Falcato <pfalcato@suse.de>
 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index dba703d4ce4a..058a7d798bca 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -365,6 +365,13 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
- 		goto copy_out;
- 	}
- 
-+	/*
-+	 * Do a filesystem cred ptrace check to verify access
-+	 * to the task's info.
-+	 */
-+	if (!ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS))
-+		return -EACCES;
-+
- 	c = get_task_cred(task);
- 	if (!c)
- 		return -ESRCH;
--- 
-2.52.0
-
+Great, thanks.
