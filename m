@@ -1,184 +1,171 @@
-Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0CE2DBF40
-	for <linux-security-module@vger.kernel.org>; Fri,  6 Feb 2026 17:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2627C364023
+	for <linux-security-module@vger.kernel.org>; Fri,  6 Feb 2026 17:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770397409; cv=none; b=Ev2r612/jsz37EzRwG0r8X7DGKtoE73VebtEESc2aAlaVAjNkxGsKZzl8RRmXoV2wwalIa0280sf1u3ffhBKZNq6PDMktdCL3eZdfYdPjmrcnW2gTAaZzKQBIa/OG43J3RjrV7hfzSzbLMstzD/C+nbFlI1pZOKIeU2QEwwHXSc=
+	t=1770397497; cv=none; b=pdm4jVnANtvAn3SXA2MSu36nDTfSatSVqH2d2FH2seAnBralhWYtd9+Yd9kpZnefdrz+XhOMrrcLtCUzfxErn6+2a7z8OMDFQWTyBYoMuauCe7e1MoaDS0eyxeiv2zICKTJ6ngPgnS5Cz7mvYR7FAhEGUmHP+3NOpL5oVFcIrw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770397409; c=relaxed/simple;
-	bh=s4i39zmpznOFsd/h9i8q0hjw4Gxu8VYcpJJK/OrOy1k=;
+	s=arc-20240116; t=1770397497; c=relaxed/simple;
+	bh=rGv3R4ik0QtN7lo8rc8uoQkrpbC9RXM4IWgcVNb3sUg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LLMl5+lF4oXbiwOgy9SQADpZm8g3b2Jjx7luCW2H2REje26qsiFM1jyUvLUf5AqgzuLycx1Cn8Abgtn0sxp0Fkphgn3NYXvVKBQCKt0z0znNV1QWopDtjWcafIAeAGH76kaUiSzrRPQTbIfenTt677teG4yjqM2LAAKJ+5oUP1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=xr20gU+F; arc=none smtp.client-ip=185.125.25.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=tod4MR77WaXtD9b/MZmiUugEX97ZsereOApE6wGliGXcgQcq9AHeEj7h/3KVBG1udz5jVeshTpTAACVyw14f9hevIr0OcNR7NdGsoMGsj5uPT0fb3Lw27VTMcA7Bpv/Ri0/vZ/aA3wbi4+DTWqYmVQTTbWaR4AHO2zpPi7sMSxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=c0m+A8Cb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9dogZ3on; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=c0m+A8Cb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9dogZ3on; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="xr20gU+F"
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4f70lx548gzBVW;
-	Fri,  6 Feb 2026 18:03:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1770397405;
-	bh=UaUDmzKGfbz/LjjPgG9GB67h7HbdPWOkL4dVZ5KeUjk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xr20gU+FOBgdx/U8hN/r5kNMQgo02ctH31KZoLL7SrO05kbbJ8K+Hg75A9n5BtGC/
-	 PUgxF8iEBzqm6Nw3FMW7JEO8xVLKNK7MLa3g6+BtFsIdiv0LHwmH6QLlc12sUcdb47
-	 W0Pc2xpG0uvrfTyAjWE8Loux+o6IJToCmLn58+5o=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4f70lw3mV1z6tq;
-	Fri,  6 Feb 2026 18:03:24 +0100 (CET)
-Date: Fri, 6 Feb 2026 18:03:18 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Cc: linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>, 
-	Justin Suess <utilityemal77@gmail.com>, Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, 
-	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	konstantin.meskhidze@huawei.com, Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v3 0/3] landlock: Refactor layer masks
-Message-ID: <20260206.taa2IeS8au2w@digikod.net>
-References: <20260206151154.97915-2-gnoack3000@gmail.com>
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="c0m+A8Cb";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9dogZ3on";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="c0m+A8Cb";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9dogZ3on"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8F01B5BCC5;
+	Fri,  6 Feb 2026 17:04:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1770397495; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3g+CeqAHKY80QYlzK7Q90kGJJbcwGzuOMv3DI6coiUI=;
+	b=c0m+A8Cbf+rLZ3szeGwqR0keK2N4x1OkUaeOPTkf3sMJNCpTeUBur5IDP+DKAQ2eQgejrS
+	zIEXRT0ObUT+WOhQz/vocMcAjoOtK+Zb3qEnwu8Gthjmkgjq2Xsl8B20qlBNlf2GpU40xr
+	mQI9AS7BtgLrI9P4+fMTgCEFkGS9Q6I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1770397495;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3g+CeqAHKY80QYlzK7Q90kGJJbcwGzuOMv3DI6coiUI=;
+	b=9dogZ3on7nsX+Y0Jpn32RxODAdydoZXUQ8/EzP5Y+0myTaTkASY5FCgVI2NW4EsJx7Wp53
+	E9r9FSnoaQE1aJBA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1770397495; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3g+CeqAHKY80QYlzK7Q90kGJJbcwGzuOMv3DI6coiUI=;
+	b=c0m+A8Cbf+rLZ3szeGwqR0keK2N4x1OkUaeOPTkf3sMJNCpTeUBur5IDP+DKAQ2eQgejrS
+	zIEXRT0ObUT+WOhQz/vocMcAjoOtK+Zb3qEnwu8Gthjmkgjq2Xsl8B20qlBNlf2GpU40xr
+	mQI9AS7BtgLrI9P4+fMTgCEFkGS9Q6I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1770397495;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3g+CeqAHKY80QYlzK7Q90kGJJbcwGzuOMv3DI6coiUI=;
+	b=9dogZ3on7nsX+Y0Jpn32RxODAdydoZXUQ8/EzP5Y+0myTaTkASY5FCgVI2NW4EsJx7Wp53
+	E9r9FSnoaQE1aJBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 517453EA63;
+	Fri,  6 Feb 2026 17:04:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cV+8EDIfhml0FwAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Fri, 06 Feb 2026 17:04:50 +0000
+Date: Fri, 6 Feb 2026 17:04:44 +0000
+From: Pedro Falcato <pfalcato@suse.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, Christian Koenig <christian.koenig@amd.com>, 
+	Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>, 
+	Matthew Brost <matthew.brost@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Benjamin LaHaise <bcrl@kvack.org>, 
+	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>, 
+	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>, 
+	Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Andreas Dilger <adilger.kernel@dilger.ca>, Muchun Song <muchun.song@linux.dev>, 
+	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@kernel.org>, 
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Mike Marshall <hubcap@omnibond.com>, 
+	Martin Brandenburg <martin@omnibond.com>, Tony Luck <tony.luck@intel.com>, 
+	Reinette Chatre <reinette.chatre@intel.com>, Dave Martin <Dave.Martin@arm.com>, 
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, 
+	Carlos Maiolino <cem@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, 
+	Naohiro Aota <naohiro.aota@wdc.com>, Johannes Thumshirn <jth@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Zi Yan <ziy@nvidia.com>, Nico Pache <npache@redhat.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+	Lance Yang <lance.yang@linux.dev>, Jann Horn <jannh@google.com>, 
+	David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
+	linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
+	linux-fsdevel@vger.kernel.org, linux-aio@kvack.org, linux-erofs@lists.ozlabs.org, 
+	linux-ext4@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev, 
+	devel@lists.orangefs.org, linux-xfs@vger.kernel.org, keyrings@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH v2 02/13] mm: rename vma_flag_test/set_atomic() to
+ vma_test/set_atomic_flag()
+Message-ID: <5pqsv3quguk6mwxywdqpvkcxhmqjoupqq44pserucrlelnyvnc@tkwpixdhcw5i>
+References: <cover.1769097829.git.lorenzo.stoakes@oracle.com>
+ <033dcf12e819dee5064582bced9b12ea346d1607.1769097829.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260206151154.97915-2-gnoack3000@gmail.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <033dcf12e819dee5064582bced9b12ea346d1607.1769097829.git.lorenzo.stoakes@oracle.com>
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,kernel.org,linux.intel.com,redhat.com,alien8.de,zytor.com,arndb.de,linuxfoundation.org,intel.com,suse.de,gmail.com,ffwll.ch,ursulin.net,amd.com,zeniv.linux.org.uk,suse.cz,kvack.org,linux.alibaba.com,google.com,huawei.com,vivo.com,mit.edu,dilger.ca,linux.dev,paragon-software.com,omnibond.com,arm.com,wdc.com,infradead.org,oracle.com,suse.com,nvidia.com,paul-moore.com,namei.org,hallyn.com,rasmusvillemoes.dk,vger.kernel.org,lists.linux.dev,lists.freedesktop.org,lists.ozlabs.org,lists.orangefs.org];
+	R_RATELIMIT(0.00)[to_ip_from(RLkbg1q7eokc4zfw9e5dipwr46)];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[93];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -2.30
+X-Spam-Level: 
 
-Looks good, thanks these last improvements!
+On Thu, Jan 22, 2026 at 04:06:11PM +0000, Lorenzo Stoakes wrote:
+> In order to stay consistent between functions which manipulate a vm_flags_t
+> argument of the form of vma_flags_...() and those which manipulate a
+> VMA (in this case the flags field of a VMA), rename
+> vma_flag_[test/set]_atomic() to vma_[test/set]_atomic_flag().
+> 
+> This lays the groundwork for adding VMA flag manipulation functions in a
+> subsequent commit.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-On Fri, Feb 06, 2026 at 04:11:52PM +0100, Günther Noack wrote:
-> Hello!
-> 
-> This patch set "transposes" the layer masks matrix, which was
-> previously modeled as a access-max-sized array of layer masks, and
-> changes it to be a layer-max-sized array of access masks instead.
-> (It is a pure refactoring, there are no user-visible changes.)
-> 
-> This unlocks a few code simplifications and in multiple places it
-> removes the need for loops and branches that deal with individual
-> bits.  Instead, the changed data structure now lends itself for more
-> bitwise operations.  The underlying hypothesis for me was that by
-> using more bitwise operations and fewer branches, we would get an
-> overall speedup even when the data structure size increases slightly
-> in some cases.
-> 
-> Benchmark results with and without this patch set show that the
-> hypothesis holds true.  The benchmark I used exercises a "worst case"
-> scenario that attempts to be bottlenecked on the affected code: It
-> constructs a large number of nested directories, with one "path
-> beneath" rule each and then tries to open the innermost directory many
-> times.  The benchmark is intentionally unrealistic to amplify the
-> amount of time used for the path walk logic and forces Landlock to
-> walk the full path (eventually failing the open syscall).  (I'll send
-> the benchmark program in a reply to this mail for full transparency.)
-> 
-> Measured with the benchmark program, the patch set results in a
-> speedup of about -7%.  The benchmark results are only approximate and
-> have been produced in Qemu:
-> 
-> With the patch, the benchmark runs in 6007 clocks (measured with
-> times(3)):
-> 
-> *** Benchmark ***
-> 10000 dirs, 100000 iterations, with landlock
-> *** Benchmark concluded ***
-> System: 6007 clocks
-> User  : 1 clocks
-> Clocks per second: 1000000
-> 
-> Without the patch, we get 6506 clocks, which is 8% more
-> 
-> *** Benchmark ***
-> 10000 dirs, 100000 iterations, with landlock
-> *** Benchmark concluded ***
-> System: 6506 clocks
-> User  : 1 clocks
-> Clocks per second: 1000000
-> 
-> The base revision used for benchmarking was
-> commit b7ff7151e653 ("Merge tag 'hwmon-for-v6.19-final' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging").
-> 
-> In real-life scenarios, the speed improvement from this patch set will
-> be less pronounced than in the artificial benchmark, as people do not
-> usually stack directories that deeply and attach so many rules to
-> them, and the EACCES error should also be the exception rather than
-> the norm.
-> 
-> I am looking forward to your feedback.
-> 
-> ---
-> 
-> Changes since previous versions:
-> 
-> V3: (This patch set) 
-> 
-> * Benchmark:
->   * Document what it does (and doesn't) do
->   * Const, use wrappers.h, add copyright line
->   * Delete the directory hierarchy after the run
->   * Use different Landlock policy for benchmark so that deletion works
-> * access_mask_subset() helper:
->   * Docstring corrections suggested by Randy Dunlap (thanks!)
->     https://lore.kernel.org/all/7b7b8fd5-7e1f-4572-a342-11a0fd24b0ac@infradead.org/
->   * Change argument names to "subset" and "superset"
->   * Use it from one more place
-> * Various
->   * Do not use docstring commenting style for non-docstrings
->   * Use ssize_t for downwards iterations from N-1 to 0
->   * Slightly reword deny_mask documentation
-> 
-> V2:
-> 
-> https://lore.kernel.org/all/20260125195853.109967-1-gnoack3000@gmail.com/
-> 
-> * Remove the refactoring around the deny_mask_t type,
->   it is better to send that as a separate patch (mic review)
-> * Added the benchmark program to the selftests
-> * Fix unused variable report for "access_dom":
->   https://lore.kernel.org/all/202601200900.wonk9M0m-lkp@intel.com/
-> * Use size_t and ARRAY_SIZE to loop over the layers (mic review)
-> * Documentation
->   * Fixing up and adding back documentaiton (mic review)
->   * Documented landlock_unmask_layers()
->   * Fixed up kernel docs in a place where it was improperly updated
->     (Spotted by Randy Dunlap
->     https://lore.kernel.org/all/20260123025121.3713403-1-rdunlap@infradead.org/)
-> * Minor
->   * Const, some newlines (mic review)
-> 
-> V1: (Initial version)
-> 
-> https://lore.kernel.org/all/20251230103917.10549-3-gnoack3000@gmail.com/
-> 
-> 
-> Günther Noack (3):
->   selftests/landlock: Add filesystem access benchmark
->   landlock: access_mask_subset() helper
->   landlock: transpose the layer masks data structure
-> 
->  security/landlock/access.h                  |  22 +-
->  security/landlock/audit.c                   |  81 ++---
->  security/landlock/audit.h                   |   3 +-
->  security/landlock/domain.c                  |  45 +--
->  security/landlock/domain.h                  |   4 +-
->  security/landlock/fs.c                      | 352 +++++++++-----------
->  security/landlock/net.c                     |   9 +-
->  security/landlock/ruleset.c                 |  89 ++---
->  security/landlock/ruleset.h                 |  21 +-
->  tools/testing/selftests/landlock/.gitignore |   1 +
->  tools/testing/selftests/landlock/Makefile   |   1 +
->  tools/testing/selftests/landlock/fs_bench.c | 214 ++++++++++++
->  12 files changed, 499 insertions(+), 343 deletions(-)
->  create mode 100644 tools/testing/selftests/landlock/fs_bench.c
-> 
-> -- 
-> 2.52.0
-> 
-> 
+Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+
+-- 
+Pedro
