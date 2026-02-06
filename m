@@ -1,116 +1,230 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D39B2C3255;
-	Thu,  5 Feb 2026 23:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from flow-a7-smtp.messagingengine.com (flow-a7-smtp.messagingengine.com [103.168.172.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6271E3DE5;
+	Fri,  6 Feb 2026 00:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770335945; cv=none; b=GoxpD+uMXyk7JtqgpNTcDzsC24FcZiNCVGRV08TGLUSFxmFHw7dYxg63lcxrca+j02WXS5JYxeXeQkd3OKMDfWEyMy4XpS6YSTFv0jJMlGYMsfHR9US9LZCYvitRdduMzUzg1TpATV8k05abOYGvK0zmeoHfA64jlLlJEuqkoIw=
+	t=1770337282; cv=none; b=OrNGoTS9SvA8k5WRcSuj9Kr2TislL5K/aW9iV+48OwDT2zIq16amwDcwuISXXe+CjGDl84VNEEvwLk5sfbcP5fKS0lZPlrGCKpprKejPv8Kl61tXJ5kYsLUgDwTAks/7fs5wDnT/A9GZKHVsK7BNMzq8YeXRQMn9UadHSEn2pCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770335945; c=relaxed/simple;
-	bh=Qoo20fLVB5hL7SiezW/J5kKKcaNVQMPbLJ207X/e/S0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bQVqymgdL12bD5ouWhotjgLXqBi3AtLh2TKimxVsEBosv0bvWlmnyYgmLFdw3hUdBLtTRKD0Nh/wfbEj5WZVBpFGuwYW80/ifqmCHfJDXE66qX9uDKCt0bS+OX/hrYnwDQe8ghLsJ/+x4KwAwLKFXTCAFX0yBlIBTm9mCZDHGaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=YY+56P16; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1770337282; c=relaxed/simple;
+	bh=VS688kmTOerW5kLLzHeK6bUW9BpPShhuYIroSr7p9jo=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=Fpghwre9LS3UfF0NqC2a8LLag/4nAwh2qEZfOnQ4d1do+BH8flJYg6G6I7mPydx3zj6EcwItDAKOgCZKQAtwcgbU2ZwNBBcZUSwdk83aWQ+ptfv7i523nae0cTWSRgp9drozyNAteSlzqqiHfrPOfVyuBhi4bJ+lJ7bRwFj2bOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=Toy3OUKz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mG6CPkhW; arc=none smtp.client-ip=103.168.172.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="YY+56P16"
-Received: from chenste-Virtual-Machine.mshome.net (unknown [131.107.1.186])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 3512F20B716D;
-	Thu,  5 Feb 2026 15:59:04 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3512F20B716D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1770335944;
-	bh=hSq2uVGwQwQK28jR9rsi7Mp9gy+zPDYhUdE3iqYWgE4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YY+56P16WkvfJlIDiyqvoHg2EALS/UwSV4N1eFgZF+hI1XLH9aDJJ+rR/2uidfS7P
-	 EoLUAV5qVqyWfjrT6Up7IqCz9S/MHhKSQ7f5LD+ShgVVwCGLFXdtu+U3yEfvhYhSzW
-	 vmuwyP9gAcS14YOkvv1hAwst1S2jpeMV4V5FhI8U=
-From: steven chen <chenste@linux.microsoft.com>
-To: linux-integrity@vger.kernel.org
-Cc: zohar@linux.ibm.com,
-	roberto.sassu@huawei.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	corbet@lwn.net,
-	serge@hallyn.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	linux-security-module@vger.kernel.org,
-	anirudhve@linux.microsoft.com,
-	chenste@linux.microsoft.com,
-	gregorylumen@linux.microsoft.com,
-	nramas@linux.microsoft.com,
-	sushring@linux.microsoft.com,
-	linux-doc@vger.kernel.org
-Subject: [PATCH v4 3/3] ima: add new critical data record to measure log trim
-Date: Thu,  5 Feb 2026 15:58:48 -0800
-Message-ID: <20260205235849.7086-4-chenste@linux.microsoft.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260205235849.7086-1-chenste@linux.microsoft.com>
-References: <20260205235849.7086-1-chenste@linux.microsoft.com>
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="Toy3OUKz";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mG6CPkhW"
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailflow.phl.internal (Postfix) with ESMTP id 068041380420;
+	Thu,  5 Feb 2026 19:21:21 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Thu, 05 Feb 2026 19:21:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
+	1770337280; x=1770344480; bh=DmksmkpWEFjDfVOkfeg8VRIAIhqDjvEflXp
+	Cuv+Zy1k=; b=Toy3OUKzFZ/MXYhK4rOI5A0BLeaMjnJ4CZNKeHk564BSavXVzS4
+	qfKdNrxakQxclMIlJ5ClebrV25619IF1gJCgtLFLxy2tGhMMqpe+SNOrzaRSt1iN
+	2L1jczM6EYyQld7yKh4PmXvmp48M3kWTnxzgJgQ4NgY56CgqF9faU/xNQNFdzWAg
+	oa3g/TDlIE/RQeOJX2av7+ohxCHh+vPRuXgoC+V+mXOXVFYRvLn93QYb3ZmJdv9g
+	1TXzMch7sMk1bdRcCGMuqIVeVxlZRoAOiArwyX31PVdtnu/2HXiSTEMdgK5GtTRL
+	oSxi8xkNenxfehm+xxq28ydhr8BONYZn/nw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1770337280; x=
+	1770344480; bh=DmksmkpWEFjDfVOkfeg8VRIAIhqDjvEflXpCuv+Zy1k=; b=m
+	G6CPkhWw3EZsOe4CLqXD23vIBrQbqnahY2jgRN/UZ7ltoMPUR9ebgYLBHG02oafq
+	7yOTC7Nc5l3zva1NTUnjKJ/VBuQG9nR4vWRhJoyO7gg6BKc9+nYsS7rBEPQSXv82
+	uKaywbbv+QCoViLK9H/DOwLc9Zvr2FrhfvNFhVbFu3wHYN3qU85RjZRbWuGolAuN
+	jKxmK30WImx4rXv7aZJ1yA0PUHdMOnyMntp+WMqiOBMD+0htLpQqBfFLCD2MaPEl
+	w6H6JJkKrlBBDgqtDpjWBQlQszHSwKRB+EnnpccQqFRAp4A2U7Psqb9PXfzGmNxv
+	qcuCNdOx1FeEyi7Y60LAA==
+X-ME-Sender: <xms:_zOFaTGg81dJa15ymcfPdPu9aEr8hepsSeCXNF76WiHLuVzS1TkRXQ>
+    <xme:_zOFab7h5EUA_NOI5TxJbnaWmYm_hvto0Q3xtongwU43ODdCqcuS6riEiEAObt8j_
+    bnMDR_SBdNU8RDrxgyIlhVoRFJUs0o-Pa43FOVG8Zl4umIW5Q>
+X-ME-Received: <xmr:_zOFaVJuZxIdc6BE__hhv0-qjiCqA245jU3C5IeZZQbXf6d69lH476A1ArFMffisI8PQ73tfmqtTGCwPFhuNJOahrqo8lUUY2ioFZeKLJzRz>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddukeeijedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepvddupdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
+    hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhr
+    tghpthhtohepjhgrtghksehsuhhsvgdrtgii
+X-ME-Proxy: <xmx:_zOFaWCYEJXkjaLebHvyJmDQINpOi3ipHwHwXfxkqxX5hdtfyusVew>
+    <xmx:_zOFabQxo3Fa2K8iVOJctyPkt9nfGPjcj38BzwgujnxC3gjOLdTAlQ>
+    <xmx:_zOFaYextvdPZR5y49EMZ0kfIqh7dOBJCGFKTJdTSP8wqz5XrCnBpQ>
+    <xmx:_zOFabg5BfPKeRr-0Xa6rJqWY1PtnzM_R0UOGA8wFbJriDagCmEVkw>
+    <xmx:ADSFadNlJldg85dJB9Ejs3OXt0OEUMuvbIWGhn08pJ85rcZBZ5KBTxh3>
+Feedback-ID: i9d664b8f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 5 Feb 2026 19:21:13 -0500 (EST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: NeilBrown <neilb@ownmail.net>
+To: "Jeff Layton" <jlayton@kernel.org>
+Cc: "Christian Brauner" <brauner@kernel.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "David Howells" <dhowells@redhat.com>, "Jan Kara" <jack@suse.cz>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Miklos Szeredi" <miklos@szeredi.hu>,
+ "Amir Goldstein" <amir73il@gmail.com>,
+ "John Johansen" <john.johansen@canonical.com>,
+ "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ "Stephen Smalley" <stephen.smalley.work@gmail.com>,
+ linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH 04/13] Apparmor: Use simple_start_creating() /
+ simple_done_creating()
+In-reply-to: <7fbfbeb0d57484172304b727bd888d1a1105f96d.camel@kernel.org>
+References: <20260204050726.177283-1-neilb@ownmail.net>,
+ <20260204050726.177283-5-neilb@ownmail.net>,
+ <7fbfbeb0d57484172304b727bd888d1a1105f96d.camel@kernel.org>
+Date: Fri, 06 Feb 2026 11:21:09 +1100
+Message-id: <177033726944.16766.14495020155654514261@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-Add a new critical data record to measure the trimming event when
-ima event records are deleted since system boot up.
+On Thu, 05 Feb 2026, Jeff Layton wrote:
+> On Wed, 2026-02-04 at 15:57 +1100, NeilBrown wrote:
+> > From: NeilBrown <neil@brown.name>
+> >=20
+> > Instead of explicitly locking the parent and performing a look up in
+> > apparmor, use simple_start_creating(), and then simple_done_creating()
+> > to unlock and drop the dentry.
+> >=20
+> > This removes the need to check for an existing entry (as
+> > simple_start_creating() acts like an exclusive create and can return
+> > -EEXIST), simplifies error paths, and keeps dir locking code
+> > centralised.
+> >=20
+> > Signed-off-by: NeilBrown <neil@brown.name>
+> > ---
+> >  security/apparmor/apparmorfs.c | 38 ++++++++--------------------------
+> >  1 file changed, 9 insertions(+), 29 deletions(-)
+> >=20
+> > diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorf=
+s.c
+> > index 907bd2667e28..7f78c36e6e50 100644
+> > --- a/security/apparmor/apparmorfs.c
+> > +++ b/security/apparmor/apparmorfs.c
+> > @@ -282,32 +282,19 @@ static struct dentry *aafs_create(const char *name,=
+ umode_t mode,
+> > =20
+> >  	dir =3D d_inode(parent);
+> > =20
+> > -	inode_lock(dir);
+> > -	dentry =3D lookup_noperm(&QSTR(name), parent);
+> > +	dentry =3D simple_start_creating(parent, name);
+> >  	if (IS_ERR(dentry)) {
+> >  		error =3D PTR_ERR(dentry);
+> > -		goto fail_lock;
+> > -	}
+> > -
+> > -	if (d_really_is_positive(dentry)) {
+> > -		error =3D -EEXIST;
+> > -		goto fail_dentry;
+> > +		goto fail;
+> >  	}
+> > =20
+> >  	error =3D __aafs_setup_d_inode(dir, dentry, mode, data, link, fops, iop=
+s);
+> > +	simple_done_creating(dentry);
+> >  	if (error)
+> > -		goto fail_dentry;
+> > -	inode_unlock(dir);
+> > -
+> > -	return dentry;
+> > -
+> > -fail_dentry:
+> > -	dput(dentry);
+> > -
+> > -fail_lock:
+> > -	inode_unlock(dir);
+> > +		goto fail;
+> > +	return 0;
+>=20
+> As KTR points out, this should be "return NULL;"
 
-If all IMA event logs are saved in the userspace, use this log to get total
-numbers of records deleted since system boot up at that point.
+Actually it should be "return dentry;" which is what the original code
+did.
+I've no idea how it became 0...
+Callers of aafs_create() will silently treat NULL as failure.
 
-Signed-off-by: steven chen <chenste@linux.microsoft.com>
----
- security/integrity/ima/ima_fs.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+>=20
+> > +fail:
+> >  	simple_release_fs(&aafs_mnt, &aafs_count);
+> > -
+> >  	return ERR_PTR(error);
+> >  }
+> > =20
+> > @@ -2572,8 +2559,7 @@ static int aa_mk_null_file(struct dentry *parent)
+> >  	if (error)
+> >  		return error;
+> > =20
+> > -	inode_lock(d_inode(parent));
+> > -	dentry =3D lookup_noperm(&QSTR(NULL_FILE_NAME), parent);
+> > +	dentry =3D simple_start_creating(parent, NULL_FILE_NAME);
+> >  	if (IS_ERR(dentry)) {
+> >  		error =3D PTR_ERR(dentry);
+> >  		goto out;
+> > @@ -2581,7 +2567,7 @@ static int aa_mk_null_file(struct dentry *parent)
+> >  	inode =3D new_inode(parent->d_inode->i_sb);
+> >  	if (!inode) {
+> >  		error =3D -ENOMEM;
+> > -		goto out1;
+> > +		goto out;
+> >  	}
+> > =20
+> >  	inode->i_ino =3D get_next_ino();
+> > @@ -2593,18 +2579,12 @@ static int aa_mk_null_file(struct dentry *parent)
+> >  	aa_null.dentry =3D dget(dentry);
+> >  	aa_null.mnt =3D mntget(mount);
+> > =20
+> > -	error =3D 0;
+> > -
+> > -out1:
+> > -	dput(dentry);
+> >  out:
+> > -	inode_unlock(d_inode(parent));
+> > +	simple_done_creating(dentry);
+> >  	simple_release_fs(&mount, &count);
+> >  	return error;
+> >  }
+> > =20
+> > -
+> > -
+> >  static const char *policy_get_link(struct dentry *dentry,
+> >  				   struct inode *inode,
+> >  				   struct delayed_call *done)
+>=20
+> Assuming you fix the minor problem above.
+>=20
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+>=20
 
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index 7f805ab62f6c..1d6befa51044 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -43,6 +43,7 @@ static int valid_policy = 1;
- 
- #define IMA_LOG_TRIM_REQ_NUM_LENGTH 15
- #define IMA_LOG_TRIM_REQ_TOTAL_LENGTH 32
-+#define IMA_LOG_TRIM_EVENT_LEN 256
- 
- static long trimcount;
- /* mutex protects atomicity of trimming measurement list
-@@ -364,6 +365,22 @@ static const struct file_operations ima_ascii_measurements_ops = {
- 	.release = ima_measurements_release,
- };
- 
-+static void ima_measure_trim_event(void)
-+{
-+	char ima_log_trim_event[IMA_LOG_TRIM_EVENT_LEN];
-+	struct timespec64 ts;
-+	u64 time_ns;
-+	int n;
-+
-+	ktime_get_real_ts64(&ts);
-+	time_ns = (u64)ts.tv_sec * 1000000000ULL + ts.tv_nsec;
-+	n = scnprintf(ima_log_trim_event, IMA_LOG_TRIM_EVENT_LEN,
-+		      "time= %llu; number= %lu;", time_ns, trimcount);
-+
-+	ima_measure_critical_data("ima_log_trim", "trim ima event logs",
-+				  ima_log_trim_event, n, false, NULL, 0);
-+}
-+
- static int ima_log_trim_open(struct inode *inode, struct file *file)
- {
- 	bool write = !!(file->f_mode & FMODE_WRITE);
-@@ -438,6 +455,8 @@ static ssize_t ima_log_trim_write(struct file *file,
- 		goto out;
- 
- 	trimcount += ret;
-+	if (ret > 0)
-+		ima_measure_trim_event();
- 
- 	ret = datalen;
- out:
--- 
-2.43.0
-
+Thanks,
+NeilBrown
