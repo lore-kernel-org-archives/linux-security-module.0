@@ -1,252 +1,111 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C412F5B5AB
-	for <linux-security-module@vger.kernel.org>; Fri,  6 Feb 2026 13:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770384939; cv=pass; b=pfhpfna1h3liTuxlST2S91CPbJMh+aGNc4NYzAGCX7VpqqK0O/inbfFvA1/N5k7BYkIK6OtORc3ehs8HhE1NXAwWK3KQRdaJh9uFOuCCloaCE/I7foU176hiu6A+Fd/g5bYrnpR2BN1LxM99Sl8gPlXlHG2RagxK5humH15ZSPI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770384939; c=relaxed/simple;
-	bh=RxTY2ZddbzZaifKXYPGFFlp4mavJ0NrEEi4EM4pjmj8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OEHzs/ge3WV0KoA+tjh8gWh5Od6sMCsJYXXPf47eCf7rYiRM8gPLNm80oqB8pOm7of7r7gcgDQNEC8ypSBTufqJGPE1MLRq3Uz5OX9/jqWRCy+gpGq4JEfG4EfH+Eis4hBWFVhRp7DIQcEXMTEnp0Xhp0X8pbAF8hndnBv7F1+A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G8ekIMW4; arc=pass smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375CC280329
+	for <linux-security-module@vger.kernel.org>; Fri,  6 Feb 2026 15:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770390351; cv=none; b=mELO2jgJdk88cmKrc+b5QkNNFQGIpPBpBuv9/2im9tjNnD95rUxnHFvR7bd/KWGTAPQb0JbGaiyFl059zs3mRzWSB67Lr4c5Q/S7n76j70yo6EVYX17UWNhDxLE+e7JYa7Zx9liOPqzDpvcxeoIMYicxbD8VMtALUnrzUiAXD/k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770390351; c=relaxed/simple;
+	bh=3viOC1jQ5M6s8UgvvrTdLLKV6IqlstfTgujlxqBKJus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c+evfZ+Xa5gvhjyMTu01eMRVMU4zm4irtWV4RuU287VwKJqQKHT9fk1SN+hd/PwqVbTpxycMsV1dNYOPsrHt8e7EnXPbn+3Bg/FfK/QEipE9L/GubEXBXu3x0mULS5iX2xtWkU1Kh6QeH6IoeQaDMI7x+yOFbtdVnLCLuJeDipo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lxspG6q8; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G8ekIMW4"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-658034ce0e3so3543479a12.3
-        for <linux-security-module@vger.kernel.org>; Fri, 06 Feb 2026 05:35:38 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770384937; cv=none;
-        d=google.com; s=arc-20240605;
-        b=PiAbT5uHKDv7mpM0Zo2GO7U/YYCN3rAdJ9Ql49SAvup+OauwARJb2sldXvKft+T4tK
-         SIMIiVoF+ySW+M9IC/AlK0BQoohJiStsPy8Fqv3dSa8kM2+BL2V7XL12AxhkfWVCh6Ve
-         p0k61lFmSNeGUcCOIm0nAqhRkujDY9Ly4Nc/eALW1zrYLKvUlbDS5YoaX24hdRzc+kYA
-         suS5PMy9UEBG2iOAtedRbTHjy+qjafRvAuwNfx3l4CV0w4SIyuZKCJiisrBySPGDc9cX
-         1ijLXf2l9ZUwVTkwFmRswwRwLqZJRNyyoJSRXaaW+6MMmYwYfMYuTvRNnthBdI1oOobO
-         LSQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=EpmWnKuQAvcxfN2n9Aws3fxLD/5TLycZ+iQI8ZhYj4E=;
-        fh=JvBrSpSGlDvp/xAgF75JzL9i8kza/OBmE7fSxyRqWaE=;
-        b=PQiLHX+dpbIAQ/H2Ot26FzDa1slLfrdS0FReT6+QFnV8d4hsckP+ZDNouZRHm+6Nj9
-         1LfTI3PYBiP4h3o+mmuFeYMLrEjMuRRMAqOlkqmf3Bd9hCVnSSb2LZgabotiUq1XUz6O
-         2LKdOQtT0leZrgimHrn3RsozxIzyk4OZd2Y8PnzEKD25kAHRIDi6pCbw+dtguv/q8C0g
-         W6IN5O4SXH234TLW7C9J9j2Km/ypGjrUrFx3W0+9hI6bbXBAF6RZqmZJXi9C8fjJS9GY
-         R1G8zKdP558LXLh7a4mhAYXegoYdRBhVB+knnVFGvbA5J147thE6hHsdUeFIHwBEGoYj
-         lrxA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lxspG6q8"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-482f454be5bso27117065e9.0
+        for <linux-security-module@vger.kernel.org>; Fri, 06 Feb 2026 07:05:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770384937; x=1770989737; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EpmWnKuQAvcxfN2n9Aws3fxLD/5TLycZ+iQI8ZhYj4E=;
-        b=G8ekIMW4Rdfti92YPZTjnFCLgDeLQsQHUoyr2TCfEQZQCVb2c5M0+6TtOw0kY1Q8Dq
-         Zwsgc5IHRrC4+tiEcyZfpbeNxRSa8S1XeY4M0IEFpO5u3HYsFfPtY2Iyf6Y4cFvl3bBW
-         0WaeRK9TSDIMbSsRkVPrveGXRINO7LkR7MPN++bwTK5jQPOcRvKW6XAo4YpEpefzRchr
-         CHKCNtKhjFPRXMgwINs7cqLC+ctgxPTkv5XV/dQUt9LQywZGXWp7GRq1iOy4FEmJ/2Sn
-         S00BW1/MFWgFOOGOg4hTQ4zHqu8AM64BwotbYNzlMqPYxDoJyE44thsYEvydDdRMfZDl
-         pCcg==
+        d=gmail.com; s=20230601; t=1770390349; x=1770995149; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Vh1+QCwU/Th4Bv5wKQ+RAnb2cUbXXFldcPPS1LJmBRs=;
+        b=lxspG6q8XQXp6cUsnmM1MCgSOGA0oy333u7R2GYXOVlSqgKP6jBtvYqxOqDHj3p1Fa
+         vxKE2TgaUc8lMUI4WLnS4a2xGWIgEJkZFSInD35CvicI0KsLU7lhkrO5fl5KRrylm5e3
+         ao+SdFGXKxw2MWuhO0JQIXBOE7PLb8Nj1GyNihGohVfP3WPJTDnRV7UgXf/jr4UCDFIX
+         akpFBRtrxpn28+FGDLx9K9bTJnwod/fERMVnMwQHAEMN7m53+edahLzVws0qR41vjtE0
+         SMri2kN7luIA4ukE+kMW8pkSZmK9ra8vZ6iva2Puqxx7mnXCgSIsTA7hiFRfFQx5gk4P
+         n51w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770384937; x=1770989737;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=EpmWnKuQAvcxfN2n9Aws3fxLD/5TLycZ+iQI8ZhYj4E=;
-        b=IpqNATfdyeTXY6o6rTD4tsoKE4x5CMdcGthoAx/w2O6hsQG7xjaE2M1zajdlYLBbha
-         v2a8qXKilccVofFJGvDILVyYa5ESnK1YggmZJpQmFT3LLwQ1Nd/mKS8ce+hFPCsBPme5
-         ZqbKHmY2drot+vb53GkaLZPCijmr8WZI7AxQjkqRYr/szczDxq/LEIqIfU2cUNk8SQUr
-         yD+uBiNaDcEddA13THJq2TgOS+xjN+UehHBH/7HJ7P13LYVci+2s5qARAmLPlni6wlU0
-         AVZesnc4e6sJ3k0e8KdCM8VZUhcnxb6Zay3qvajpfP8+5gPYwnK9TdKwS/mRJAWYccTq
-         rpYg==
-X-Forwarded-Encrypted: i=1; AJvYcCXVcLpi9slut690lo1mMYfCaShowHEE46wZG4+oiMWrPY13mCkhNsErXl4Za+m0hO/+GAPEg0C8ZSW0dq+Yf/UNs1pqGoM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDfsvFEBVq/JjdSxkeH8oAD1YOfLOjSr1JbsLZ/7UmLr9Lono0
-	l8/v5subIMNOR7yjHGuhloJ8Wz3ZP9jKCVygV2WZC27/H3/gLhbIW0OFati9Lj4h3+i+OFXBZD3
-	8unhNOXWTPjz3po1LkSx/EHX3xBFAPp4=
-X-Gm-Gg: AZuq6aJiIJztk2qBZ8lJUrgMX8QD5h73dPo+lERMvlsNRfS0CmqHwP8eMaKfZlHOuQ5
-	WtXBOxMFexL5HP0yhkUt6DWk9TY9ECDRNvhaMPMIe09WKJEBMd1YrhGkR7hTirGjcwVGukvVCe+
-	OX2VhaSouse3aCm8YPfJjoerwA6GewBAmAptUgYTUMyystB93hawP9EVKgNqBZRFGz1kulzVBTh
-	voaQtsEMbhzXapMaqRaaAKAAGlIVjGD+EaJQzkqgAFrtcoZAjzMe7jWr9ovjqUfzMt/CR3v6SPh
-	tBvmi5hP2tCPCaJOfzllm+9n8V6J+argoGoKeuGA
-X-Received: by 2002:a05:6402:518f:b0:658:bd60:43e2 with SMTP id
- 4fb4d7f45d1cf-659841692cdmr1419837a12.17.1770384937041; Fri, 06 Feb 2026
- 05:35:37 -0800 (PST)
+        d=1e100.net; s=20230601; t=1770390349; x=1770995149;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vh1+QCwU/Th4Bv5wKQ+RAnb2cUbXXFldcPPS1LJmBRs=;
+        b=hsIvYtdqxH/7s8ZAMcIHChgzyyH0HEsaCKSxJ6RLW/aRmoOgDhCis3rUOaLIv2UaHn
+         9zanbwtLp59YScBJQDp60lS57y1Hde83A+uE/jywGykca+XwYDupqaIs3q/Lcv77/YET
+         TmwRUgHjwRxlnaJYqKt2wcBDm45Loacesy/8+r8BtmnrdzIOFdzwO2EQpGpFy1HHmfYP
+         P3ZBYhvushViI5mbiBnKeuYpkr1Zc8ILJ3E20wbbYQynmD9dfqL14tNLZYpB3D0Fd8sS
+         2geZmSy35V8wVl5uHXnTvMqwLti7ygMuD/CN02oGKEbLHoIeJ3SZ1vyzv842l55jmvGf
+         OMvQ==
+X-Gm-Message-State: AOJu0YzP9f83JLhnOxswGvQEy/2PbIIeewtTH0BiyfOsE6IBk9Q00I3g
+	w61yycRapLZG8F8c0JaU4M5clBm1hMlgYnRcCqcFIE22mvwlr1H8m2NG
+X-Gm-Gg: AZuq6aIOc03QnTJWxdkh+lVHVwDM5KG6/ue4+umflf2alxxG2oKgyHuFWTuw2v2HIHS
+	nAegbcoFDtZvm7RuubJBzaTwGlQa8Eta7WIG9pbmMNIlEsiX+9OGShB/ZA/H4VCxnckUAtDBJA7
+	P+ajKQqZaY9AcVJkrnnxCSEV2N1ZUucQVj4yJ+YTZ9KzPLTRx4MNoP+gG4hsODf6XM5Odvs61yp
+	BUJujihhEdbiVBvAs3YIGgKRDBsJaa3e2WtOO/YwnIlfe4ycZ/BUMClZx+CHZLtcyB926ftoPFH
+	PkYqPsaVP6aLyaXn2oAakf+1hTdCZMWQ2tVxtDgRVc836qZ5TuuIkjC7Ksd2P2R6seaHLYK5cTx
+	R7Z0DtzJtyO/boHpeUw6u90zulJqhadn4MLK9ZfYrEUK3o4Rvi4y+FOhXEvxDuXxXBaf8gZ7eWr
+	xFJNGzvwSgAsQOuTAOu9rvNDPhscL4V9H2J0N1
+X-Received: by 2002:a05:600c:6d11:b0:477:a53c:8ca1 with SMTP id 5b1f17b1804b1-483179218d2mr72575335e9.14.1770390349401;
+        Fri, 06 Feb 2026 07:05:49 -0800 (PST)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48317d33f5fsm138517975e9.5.2026.02.06.07.05.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Feb 2026 07:05:49 -0800 (PST)
+Date: Fri, 6 Feb 2026 16:05:31 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>,
+	Justin Suess <utilityemal77@gmail.com>,
+	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
+	Matthieu Buffet <matthieu@buffet.re>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	konstantin.meskhidze@huawei.com,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v2 1/3] selftests/landlock: Add filesystem access
+ benchmark
+Message-ID: <20260206.50e4ed89b670@gnoack.org>
+References: <20260125195853.109967-1-gnoack3000@gmail.com>
+ <20260125195853.109967-2-gnoack3000@gmail.com>
+ <20260128.eiJou3fiezai@digikod.net>
+ <20260206.e69a9f79acac@gnoack.org>
+ <20260206.ietoh7AeR7Ei@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260204050726.177283-1-neilb@ownmail.net> <20260204050726.177283-11-neilb@ownmail.net>
- <CAOQ4uxh-MLgwZCstwr6HyPXHVRmtj2F_=xS8pE3FN6Ex-wex4w@mail.gmail.com> <177034031005.16766.246184445940612287@noble.neil.brown.name>
-In-Reply-To: <177034031005.16766.246184445940612287@noble.neil.brown.name>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 6 Feb 2026 14:35:25 +0100
-X-Gm-Features: AZwV_QjjYiogfyc5arz_rTitKV8bnytIdEM4CjRfI_5mGtvMvwFYoZk4un_zak4
-Message-ID: <CAOQ4uxiWE5eVTrL-2EWVHGQEpEX7HSstj_+kEp-b7xZrnfoXMA@mail.gmail.com>
-Subject: Re: [PATCH 10/13] ovl: change ovl_create_real() to get a new lock
- when re-opening created file.
-To: NeilBrown <neil@brown.name>
-Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
-	Jeff Layton <jlayton@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, 
-	John Johansen <john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, linux-kernel@vger.kernel.org, 
-	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260206.ietoh7AeR7Ei@digikod.net>
 
-On Fri, Feb 6, 2026 at 2:11=E2=80=AFAM NeilBrown <neilb@ownmail.net> wrote:
->
-> On Thu, 05 Feb 2026, Amir Goldstein wrote:
-> > On Wed, Feb 4, 2026 at 6:09=E2=80=AFAM NeilBrown <neilb@ownmail.net> wr=
-ote:
-> > >
-> > > From: NeilBrown <neil@brown.name>
-> > >
-> > > When ovl_create_real() is used to create a file on the upper filesyst=
-em
-> > > it needs to return the resulting dentry - positive and hashed.
-> > > It is usually the case the that dentry passed to the create function
-> > > (e.g.  vfs_create()) will be suitable but this is not guaranteed.  Th=
-e
-> > > filesystem may unhash that dentry forcing a repeat lookup next time t=
-he
-> > > name is wanted.
-> > >
-> > > So ovl_create_real() must be (and is) aware of this and prepared to
-> > > perform that lookup to get a hash positive dentry.
-> > >
-> > > This is currently done under that same directory lock that provided
-> > > exclusion for the create.  Proposed changes to locking will make this
-> > > not possible - as the name, rather than the directory, will be locked=
-.
-> > > The new APIs provided for lookup and locking do not and cannot suppor=
-t
-> > > this pattern.
-> > >
-> > > The lock isn't needed.  ovl_create_real() can drop the lock and then =
-get
-> > > a new lock for the lookup - then check that the lookup returned the
-> > > correct inode.  In a well-behaved configuration where the upper
-> > > filesystem is not being modified by a third party, this will always w=
-ork
-> > > reliably, and if there are separate modification it will fail cleanly=
-.
-> > >
-> > > So change ovl_create_real() to drop the lock and call
-> > > ovl_start_creating_upper() to find the correct dentry.  Note that
-> > > start_creating doesn't fail if the name already exists.
-> > >
-> > > This removes the only remaining use of ovl_lookup_upper, so it is
-> > > removed.
-> > >
-> > > Signed-off-by: NeilBrown <neil@brown.name>
-> > > ---
-> > >  fs/overlayfs/dir.c       | 24 ++++++++++++++++++------
-> > >  fs/overlayfs/overlayfs.h |  7 -------
-> > >  2 files changed, 18 insertions(+), 13 deletions(-)
-> > >
-> > > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> > > index ff3dbd1ca61f..ec08904d084d 100644
-> > > --- a/fs/overlayfs/dir.c
-> > > +++ b/fs/overlayfs/dir.c
-> > > @@ -219,21 +219,33 @@ struct dentry *ovl_create_real(struct ovl_fs *o=
-fs, struct dentry *parent,
-> > >                 err =3D -EIO;
-> > >         } else if (d_unhashed(newdentry)) {
-> > >                 struct dentry *d;
-> > > +               struct name_snapshot name;
-> > >                 /*
-> > >                  * Some filesystems (i.e. casefolded) may return an u=
-nhashed
-> > > -                * negative dentry from the ovl_lookup_upper() call b=
-efore
-> > > +                * negative dentry from the ovl_start_creating_upper(=
-) call before
-> > >                  * ovl_create_real().
-> >
-> >
-> > According to the new locking rules, if the hashed dentry itself is
-> > the synchronization object, is it going to be allowed to
-> > filesystem to unhash the dentry while the dentry still in the
-> > "creating" scope? It is hard for me to wrap my head around this.
->
-> It can be confusing....
->
-> It will be important for the name the remain locked (and hashed) until
-> the operation (create, remove, rename) either succeeds or fails.  So
-> leaving a dentry unhashed will be OK providing a subsequent lookup will
-> also succeed or fail in the same way.  The caller must be able to use
-> the dentry to access the object (i.e.  the inode) on success, but they
-> is nothing in POSIX that requires that the object still has any
-> particular name.
->
-> >
-> > Or do we need this here because some filesystems (casefold in
-> > particular) are not going to support parallel creations?
->
-> There is no reason that a casefolding filesystem would not support parall=
-el
-> ops. And it isn't just casefolding that acts like this.  At least one of
-> the special filesystems (tracefs maybe) always unhashes on create.  You
-> only ever get a hashed positive dentry as a result of lookup.
-> (overlayfs would never see this case of course).
->
-> >
-> > >                  * In that case, lookup again after making the newden=
-try
-> > >                  * positive, so ovl_create_upper() always returns a h=
-ashed
-> > >                  * positive dentry.
-> > > +                * As we have to drop the lock before the lookup a ra=
-ce
-> > > +                * could result in a lookup failure.  In that case we=
- return
-> > > +                * an error.
-> > >                  */
-> > > -               d =3D ovl_lookup_upper(ofs, newdentry->d_name.name, p=
-arent,
-> > > -                                    newdentry->d_name.len);
-> > > -               dput(newdentry);
-> > > -               if (IS_ERR_OR_NULL(d))
-> > > +               take_dentry_name_snapshot(&name, newdentry);
-> > > +               end_creating_keep(newdentry);
-> > > +               d =3D ovl_start_creating_upper(ofs, parent, &name.nam=
-e);
-> > > +               release_dentry_name_snapshot(&name);
-> >
-> > OK. not saying no to this (yet) but I have to admit that it is pretty
-> > ugly that the callers of ovl_create_real() want to create a specific
-> > stable name, which is could be passed in as const char *name
-> > and yet we end up doing this weird dance here just to keep the name
-> > from newdentry.
->
-> There are three callers of ovl_create_real()
->
-> ovl_lookup_or_create() does have a "const char *name".
-> ovl_create_upper() has a stable dentry from which it can copy a QSTR
-> ovl_create_temp() would need some sort of dance to keep hold of the
-> temporary name that was allocated.
->
-> If it weren't for ovl_create_temp() I would agree with you.
->
-> Though we could have the three callers of ovl_start_creating_temp() pass =
-a
-> "char name[OVL_TEMPNAME_SIZE]" in, then ovl_create_temp() would have
-> easy access.
-> I could do that if you like.
+On Fri, Feb 06, 2026 at 01:59:41PM +0100, Mickaël Salaün wrote:
+> On Fri, Feb 06, 2026 at 01:24:02PM +0100, Günther Noack wrote:
+> > On Wed, Jan 28, 2026 at 10:31:23PM +0100, Mickaël Salaün wrote:
+> > > We should have a loop to build the directories, then start the timer and
+> > > have another loop to add Landlock rules.
+> > 
+> > I have to politely push back on this; the granularity of time
+> > measurement is not high enough and the measurement below only works
+> > because we repeat it 100000 times.  This is not the case when we
+> > construct a Landlock ruleset, and it would IMHO be weird to build the
+> > ruleset multiple times as well.  It feels like this would better be
+> > measured in a separate benchmark.
+> > 
+> > Adding a rule is an operation whose runtime does not depend on the
+> > depth of the nested directories, so such a separate benchmark would
+> > then also be simpler and wouldn't need to construct such a deeply
+> > nested hierarchy.
+> 
+> OK.  Please add this explanation in a comment.
 
-Yes, considering that two of the callers are from the same function
-(ovl_whiteout()) I think that would end up looking nicer.
+Done.
 
-Thanks,
-Amir.
+–Günther
