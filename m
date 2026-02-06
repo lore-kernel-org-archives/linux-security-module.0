@@ -1,165 +1,110 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1061E2C234B
-	for <linux-security-module@vger.kernel.org>; Fri,  6 Feb 2026 08:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7A134889A
+	for <linux-security-module@vger.kernel.org>; Fri,  6 Feb 2026 08:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770364970; cv=none; b=QhchtjD8fzjvjUulN0Iq2z0lOe5/HCmgUNGmPWkpc5x8vXDFarG2IQ5h04n9PUz3c30We5JGxNJ0EDY+DaR6a8gXvDb3zt/03AHPMHrVORfJh6MxdeT8Og9ceMAhECrJ2QOTO4YaycRV5O0TbLz5uwRgn9XJRzFOSMXrHQrMYIo=
+	t=1770365961; cv=none; b=tamIMrw0C8dVZ+MrPBaRvXfSc1WnykJAUJ5zIU/6gN2qqeziJpIZGJtPjhufPBVkPSqQ15NPNqwedYQB+HiXib61kkFBnSazaZPnshZq4Ab0oHTYZfsH6iIc41yBjkzb/qap5B0RiJJSHXMsMn3Jwqg1KHLnNUcajLev8hbfNsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770364970; c=relaxed/simple;
-	bh=4pTYnlr+BC0SlVm5sB+EHAQiXmZUGFMKCSo0MeLjA8c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GgNaCYXtNLOR5w2IWTeRBIAogL0Ue7JS/6bRWuVcc5Os45I6lTRA3cUg6Wc7GaLA3NlbxovvVS1gelu9VhtPbf+FihC6IwygrsD4GaCSylLqbUGVbHAVPsbR+VRyVsptMWmbO/OoyVf5hqrHikH9nTQ4ySlvpfGzLev8Lq7vgb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RF+SHdxW; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1770365961; c=relaxed/simple;
+	bh=bCriBhlazS/0HXIrSjYBexp6X65YIc7sYJB9i7mUNXQ=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:Date:
+	 Message-ID:Content-Type; b=iMkKNmJeJlg7C+SLjzDtS3REQFwkLpQZ/ju0MdlBNISZlZcVYD5RPJ+h3j4yt1FKaicQTuB9C1EDg57AT/hqbSttUhvl5DwGZ7kLzC5gFNOafAdslKAzr7LXako4YI1TaX1vUhwhVqBa8YZdodwq4SK82DDlY06kTWh44oSr2Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MMru0GWA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RF+SHdxW"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4801c2fae63so13727395e9.2
-        for <linux-security-module@vger.kernel.org>; Fri, 06 Feb 2026 00:02:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770364968; x=1770969768; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=AYm7UlmVFr29gGkQcRu4cYH67yKXqYEHrfHZmd2GZmw=;
-        b=RF+SHdxWxg+1HJeWeLEw6rwqSEWqsXGhZKOo3tpOWaJBApO30hexQSYJhSYlgW0D9h
-         mx+b1kjFPx9iOCJjQCt+KaS47KGUrODIAz3zze87whPE92qLZLTk76sifo6xxQdXM2t2
-         V9LSi6mPB4hCpMuWZ+gfNl5MJ85eiEpgaIBAUJ9Ch0GS+YAr7Pb4fGVYsBHWzkcRUoWV
-         GEI74cEGRalaCu1h3aMmD5f9R3CFbqee4kNT41OEgX/nQ/T7QAJOJmg5byI+88fhRB5d
-         69sLsb/ZBmX54HvACT9dkxPsnCSTsIhv7lWAdPhqJ776BCfGVHIad7ptAw6Ehr+tNyQT
-         fIcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770364968; x=1770969768;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AYm7UlmVFr29gGkQcRu4cYH67yKXqYEHrfHZmd2GZmw=;
-        b=ZGdc7slzgJBrUfIynCd4/adOPxYWWaaZ/SAcoYpDDaDNw+pdH0UJBYoFq6gXuuuJiq
-         9FfdwzhwChbXnrnUpeLs2JKJu9wgL7vN86Ng54850UpgD59HoYTRTHd+aOjf1jbiaT7r
-         EemgtFlv7/gYkA9wdEL9nUhLwoChpn4WgrEk3yi54VmfvFetaD5Lxj/6wh0OOux4zc3l
-         J4DRCMu581xPT03crEYw6HNvirxp381ZD+VnKk34vqYHFZPiaaJZ+PUTtYoxHJJZ0MY3
-         rsxN71tnsS+gGHyGHWh6Ak4uM0GUMx7lyuMnNF6E9xzgiiUKGYJJwmrTy+krRJ5p6b5g
-         Zf4A==
-X-Gm-Message-State: AOJu0Yw3mE6UNtVCPNg5I3DQXeyLBChEDp2ddEhatF1VMB4cUgaLgRsw
-	nIUAQFbHeSgHl7Ky7j2nWKHgvK0/si3FvAJ2HIAo9zStkaDAleKRGlN3
-X-Gm-Gg: AZuq6aLPvGaIRhl1rJl4zSdXpPISQ/xBfXBRYpQF0/pybVNNeMtdsTP0f6hX39kadXV
-	X0MvrbQzodT1QfgchV8Pe4jfM4hZVSktW/aC8a0gMUUE6p3LL7ycZMmJAX7KxAIk5D8Ls+KTI9x
-	KJxFb5zXtWjFv/UWV257qh/i7TS02WSgVfjDpeRy3epHamU4FbRVV78f2yyNP923ppYsaQ7rYuc
-	Fa1WgCa0LTJXsR9KVUn81kzk1ClSntRAPgufzH/glK8y8QJsw0gmhvsEoWycIyhcJZ64QmDqE1Z
-	pADn+RbE9Du7m231LZEzIIdE1W15xYkSFq6lmpCQddmil9Z7lO5c8FyUXGO7Q6JwZ6vv1RLfOeX
-	ZoKzQmknQHxYPAoWfngLBq3hLJgpOZ2J2s7lyYUzNWpKB+YK8uBXmfeFto1O74OD1Ezo9AAtUez
-	zRazoV5+GNWv2noHVC2fV6+eg0o9mqrCpyKdLL
-X-Received: by 2002:a05:600c:3509:b0:47e:e8de:7420 with SMTP id 5b1f17b1804b1-48320214662mr22420965e9.22.1770364968245;
-        Fri, 06 Feb 2026 00:02:48 -0800 (PST)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483209e0c4fsm12031345e9.18.2026.02.06.00.02.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Feb 2026 00:02:47 -0800 (PST)
-Date: Fri, 6 Feb 2026 09:02:46 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>,
-	Justin Suess <utilityemal77@gmail.com>,
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	konstantin.meskhidze@huawei.com,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v2 3/3] landlock: transpose the layer masks data structure
-Message-ID: <20260206.4b383e82c131@gnoack.org>
-References: <20260125195853.109967-1-gnoack3000@gmail.com>
- <20260125195853.109967-4-gnoack3000@gmail.com>
- <20260128.quaido7ia0Xu@digikod.net>
- <20260129.691d9b85a887@gnoack.org>
- <20260129.xahm6Ue7raL3@digikod.net>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MMru0GWA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1770365960;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bCriBhlazS/0HXIrSjYBexp6X65YIc7sYJB9i7mUNXQ=;
+	b=MMru0GWAvu9Gl97FT3OXGt2ItDWYwSN1yIAUomlrG1G5eLKCgkWcLUuuHO57ZtU0xZerWs
+	q90DTZPOZIpCFY8WVFt3kD3Izjw+GqcF4XHAR/VTtkMQ9b9Gb2nSc926sAHJaV881h229e
+	HRzpdvF0Adgsy40UeesoePkA0fHgjRc=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-516--zY-X-rwO-qBHh21bdBLDA-1; Fri,
+ 06 Feb 2026 03:19:15 -0500
+X-MC-Unique: -zY-X-rwO-qBHh21bdBLDA-1
+X-Mimecast-MFC-AGG-ID: -zY-X-rwO-qBHh21bdBLDA_1770365951
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ABCD01956095;
+	Fri,  6 Feb 2026 08:19:08 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.44.33.164])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C245A3000707;
+	Fri,  6 Feb 2026 08:18:54 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20260113-module-hashes-v4-5-0b932db9b56b@weissschuh.net>
+References: <20260113-module-hashes-v4-5-0b932db9b56b@weissschuh.net> <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
+To: =?us-ascii?Q?=3D=3Futf-8=3Fq=3FThomas=5FWei=3DC3=3D9Fschuh=3F=3D?= <linux@weissschuh.net>
+Cc: dhowells@redhat.com, Nathan Chancellor <nathan@kernel.org>,
+    Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
+    Petr Pavlu <petr.pavlu@suse.com>,
+    Sami Tolvanen <samitolvanen@google.com>,
+    Daniel Gomez <da.gomez@samsung.com>,
+    Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+    "Serge E.
+ Hallyn" <serge@hallyn.com>,
+    Jonathan Corbet <corbet@lwn.net>,
+    Madhavan Srinivasan <maddy@linux.ibm.com>,
+    Michael Ellerman <mpe@ellerman.id.au>,
+    Nicholas Piggin <npiggin@gmail.com>,
+    Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
+    Roberto Sassu <roberto.sassu@huawei.com>,
+    Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+    Eric Snowberg <eric.snowberg@oracle.com>,
+    Nicolas Schier <nicolas.schier@linux.dev>,
+    Daniel Gomez <da.gomez@kernel.org>,
+    Aaron Tomlin <atomlin@atomlin.com>,
+    "Christophe
+ Leroy (CS GROUP)" <chleroy@kernel.org>,
+    Nicolas Schier <nsc@kernel.org>,
+    Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
+    Xiu Jianfeng <xiujianfeng@huawei.com>,
+    Fabian =?utf-8?Q?Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>,
+    Arnout Engelen <arnout@bzzt.net>,
+    Mattia Rizzolo <mattia@mapreri.org>, kpcyrd <kpcyrd@archlinux.org>,
+    Christian Heusel <christian@heusel.eu>,
+    =?utf-8?Q?C=C3=A2ju?= Mihai-Drosi <mcaju95@gmail.com>,
+    Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+    linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+    linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+    linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+    linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v4 05/17] module: Switch load_info::len to size_t
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Fri, 06 Feb 2026 08:18:53 +0000
+Message-ID: <2919071.1770365933@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Mimecast-MFC-PROC-ID: BZ9FADDYvnn4RffnIoT-ZqBA9KsxHPqe2L9_08Pxj38_1770365951
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260129.xahm6Ue7raL3@digikod.net>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 29, 2026 at 05:54:01PM +0100, Mickaël Salaün wrote:
-> On Thu, Jan 29, 2026 at 08:56:37AM +0100, Günther Noack wrote:
-> > On Wed, Jan 28, 2026 at 10:34:02PM +0100, Mickaël Salaün wrote:
-> > > > +	for (int i = ARRAY_SIZE(masks->access) - 1; i >= 0; i--) {
-> > > 
-> > > size_t i
-> > 
-> > This is one of the two places where this didn't work.
-> > 
-> > The loop goes from top to bottom here, and the "i >= 0" check would
-> > always be true for a size_t.
-> > 
-> > If there is a more idiomatic way to write that loop, I can switch to
-> > it, but would otherwise lean towards keeping it as it is?
-> 
-> Indeed.  We can use ssize_t as in get_hierarchy().
+Thomas Wei=C3=9Fschuh <linux@weissschuh.net> wrote:
 
-Good point, done.
+> As both 'size_t' and 'unsigned int' are always the same size, this
+> should be risk-free.
 
+Did you mean 'unsigned long'?
 
-> > > > -static bool
-> > > > -scope_to_request(const access_mask_t access_request,
-> > > > -		 layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
-> > > > +static bool scope_to_request(const access_mask_t access_request,
-> > > > +			     struct layer_access_masks *masks)
-> > > >  {
-> > > > -	const unsigned long access_req = access_request;
-> > > > -	unsigned long access_bit;
-> > > > +	bool saw_unfulfilled_access = false;
-> > > >  
-> > > > -	if (WARN_ON_ONCE(!layer_masks))
-> > > > +	if (WARN_ON_ONCE(!masks))
-> > > >  		return true;
-> > > >  
-> > > > -	for_each_clear_bit(access_bit, &access_req, ARRAY_SIZE(*layer_masks))
-> > > > -		(*layer_masks)[access_bit] = 0;
-> > > > -
-> > > > -	return is_layer_masks_allowed(layer_masks);
-> > > > +	for (size_t i = 0; i < ARRAY_SIZE(masks->access); i++) {
-> > > > +		masks->access[i] &= access_request;
-> > > > +		if (masks->access[i])
-> > > 
-> > > {
-> > > 
-> > > > +			saw_unfulfilled_access = true;
-> > > 
-> > > break;
-> > > }
-> > 
-> > Two lines above, this loop mutates masks->access[...]:
-> > 
-> >   masks->access[i] &= access_request
-> > 
-> > If we break the loop early, we would not actually scope it down to the
-> > request entirely?  Is this safe?
-> 
-> You're right, don't add this break.  BTW, would a test catch it?
+David
 
-Yes, the existing tests already catch that; this happens when we break early:
-
-[08:53:12] ================= landlock_fs (7 subtests) =================
-[08:53:12] [PASSED] test_no_more_access
-[08:53:12] [PASSED] test_scope_to_request_with_exec_none
-[08:53:12] # test_scope_to_request_with_exec_some: EXPECTATION FAILED at security/landlock/fs.c:616
-[08:53:12] Expected 0 == masks.access[1], but
-[08:53:12]     masks.access[1] == 2 (0x2)
-[08:53:12] [FAILED] test_scope_to_request_with_exec_some
-[08:53:12] [PASSED] test_scope_to_request_without_access
-[08:53:12] [PASSED] test_is_eacces_with_none
-[08:53:12] [PASSED] test_is_eacces_with_refer
-[08:53:12] [PASSED] test_is_eacces_with_write
-[08:53:12]     # module: landlock
-[08:53:12] # landlock_fs: pass:6 fail:1 skip:0 total:7
-[08:53:12] # Totals: pass:6 fail:1 skip:0 total:7
-
-Good coverage!
-
-–Günther
