@@ -1,55 +1,46 @@
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD88359716;
-	Fri,  6 Feb 2026 09:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B674819CD1B
+	for <linux-security-module@vger.kernel.org>; Fri,  6 Feb 2026 11:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770369485; cv=none; b=ZbfPtNabXW0FcuVLoXAHTIjsVD4GmhgoTcAAgU9dhvzBrI7JO9U8I8+riBoQ1Bu2NgRJCsqNSfE3moRE0M/vRuJkbcasdIe9pFlMXx3TOZLIDZqIIGk5tNTvmNBbpfam7QqmbgXF9Osqoo54vRY8UC5MfGOj2uJz+KuvzZWedZI=
+	t=1770377059; cv=none; b=PRazq/ZXVW1pgscpB1FGPVbRxwVZEop2Fx2kl/JNBrtkZy391+40HJDVH7QBVq+3ZrXw39zJ4h1823MItFuTQ+ElDbCGobneculzeMDLt7LfCzW1T7eh5Zn9OTu4Qd8dh4bT/K3B1vz9EHDE5DbhwGg+H8RBK1XXx1dJihs9bJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770369485; c=relaxed/simple;
-	bh=3lh+T18IbYxtb3gtqLTD6cEKkxOYPIXP9FgcFXhcwNo=;
+	s=arc-20240116; t=1770377059; c=relaxed/simple;
+	bh=JY2AwxryEGd/U9OVuc6VsRChvE/nzt9LT9i0ZhZSHeo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XDkWAQxycB2vcqKjZGGLsSXJihGxSXn+CCdsA49BETk6I95JWB/cTVB9xGj0AZA4ksd3O+Wq3t0dLf/aDwpxkA0Bp5T6rVmdvqLRZewb0A01pHk1sMCVOOif4wYs79RcXQY6rjRa7lNMHvyifuiF+0Cc1G3OZLE5xDlvT2JfMoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=P8I512GQ; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=FbPWsex9eCb8BA2xGStX7ApUZ6hoX6/wnovl1izo/rd+EJ8e0EcQJLlG62eViNEH+yMyUXJQE/LUulxvT5ws/up65cr1vOwNPHst43eatJ/8hgRZ/lpf8btL2TYNuoPOCrywEQPZj7nwxeKMec3BAD/I7QVZRxJ5oAKKmCBN7VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=OT+AVdCF; arc=none smtp.client-ip=83.166.143.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="P8I512GQ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1770369482;
-	bh=3lh+T18IbYxtb3gtqLTD6cEKkxOYPIXP9FgcFXhcwNo=;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="OT+AVdCF"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4f6sDV43wQzjZx;
+	Fri,  6 Feb 2026 12:24:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1770377050;
+	bh=P3LKOorLE6x+2arn4OCzcEUVXskV+Hg2eU1/uNtg/n0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P8I512GQdTuSnyyG/lrd0tY92NCxg6hbOdKWE5uC9rEk0Af5xUuBzfxkYiQYnDT74
-	 tZLXGVTtusLO1jNFYwYOYKJdJtCfChhFdJR7MQR+p9C9W/0oAljzpiG/Pc1bKJ4KRG
-	 +L7bhP0R6enz+BHXvbGpLSUPi81SWL48atg2FHZc=
-Date: Fri, 6 Feb 2026 10:18:02 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, Daniel Gomez <da.gomez@kernel.org>, 
-	Aaron Tomlin <atomlin@atomlin.com>, Nicolas Schier <nsc@kernel.org>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Xiu Jianfeng <xiujianfeng@huawei.com>, 
-	Fabian =?utf-8?Q?Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>, Arnout Engelen <arnout@bzzt.net>, 
-	Mattia Rizzolo <mattia@mapreri.org>, kpcyrd <kpcyrd@archlinux.org>, 
-	Christian Heusel <christian@heusel.eu>, =?utf-8?B?Q8OianU=?= Mihai-Drosi <mcaju95@gmail.com>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v4 05/17] module: Switch load_info::len to size_t
-Message-ID: <08d258a3-1710-4d2f-815d-3d16a3dc928b@t-8ch.de>
-References: <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
- <20260113-module-hashes-v4-5-0b932db9b56b@weissschuh.net>
- <ffdafd21-fe7a-44a2-86ec-0e0c2ad4238c@kernel.org>
+	b=OT+AVdCFpKXD8uVpiwMPEtKz1vxLjq7gEf726g+W/Zb9oaAIYaBfc0uG3OV7SQZb0
+	 Aya+rFSvct4Qx+j/VvKw8ZymUVy7u2F/spOLdP3HqLOmkk1vzk47tp21lbB8aJngPw
+	 949uVPfZFVTDY7UbDvpf6r0Al6O+9QbgAEfPZd6Q=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4f6sDT06L0zG7t;
+	Fri,  6 Feb 2026 12:24:08 +0100 (CET)
+Date: Fri, 6 Feb 2026 12:24:07 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>, 
+	Justin Suess <utilityemal77@gmail.com>, Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, 
+	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	konstantin.meskhidze@huawei.com, Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v2 0/3] landlock: Refactor layer masks
+Message-ID: <20260206.OoguTe7ha9so@digikod.net>
+References: <20260125195853.109967-1-gnoack3000@gmail.com>
+ <20260128.jiethoh2Zeem@digikod.net>
+ <20260206.9509420815f5@gnoack.org>
+ <20260206.a8bf33606ef0@gnoack.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -59,26 +50,40 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ffdafd21-fe7a-44a2-86ec-0e0c2ad4238c@kernel.org>
+In-Reply-To: <20260206.a8bf33606ef0@gnoack.org>
+X-Infomaniak-Routing: alpha
 
-On 2026-02-06 10:09:12+0100, Christophe Leroy (CS GROUP) wrote:
-> 
-> 
-> Le 13/01/2026 à 13:28, Thomas Weißschuh a écrit :
-> > Switching the types will make some later changes cleaner.
-> > size_t is also the semantically correct type for this field.
+On Fri, Feb 06, 2026 at 08:49:39AM +0100, Günther Noack wrote:
+> On Fri, Feb 06, 2026 at 08:32:06AM +0100, Günther Noack wrote:
+> > On Wed, Jan 28, 2026 at 10:31:07PM +0100, Mickaël Salaün wrote:
+> > > On Sun, Jan 25, 2026 at 08:58:50PM +0100, Günther Noack wrote:
+> > > > P.S.: I am open to suggestions on what the "layer masks" variables
+> > > > should be called, because the name "layer masks" might be less
+> > > > appropriate after this change.  I have not fixed up the name
+> > > > everywhere because fixing up the code took priority for now.
+> > > 
+> > > Could you please clarify your thoughts and explain why this name might
+> > > not be appropriate anymore?  Any list of name proposals?
+> > > 
+> > > If we rename the variables, this should be done in the same refactoring
+> > > patch.
 > > 
-> > As both 'size_t' and 'unsigned int' are always the same size, this
-> > should be risk-free.
+> > When this was an array of layer_mask_t, the name layer_masks was a
+> > description of that underlying data type.  Now that we have removed
+> > the layer_mask_t datatype, it is not as obviously true any more.
+> > 
+> > When trying to name these variables after the "role" that they have in
+> > their declaration context, I think of them as "unfulfilled per-layer
+> > access requests", but that strikes me as a bit long.
+> > 
+> > For the upcoming patch set, I'm leaning towards naming these variables
+> > just "masks", to keep it short.
+> 
+> OK, staring at the code a bit longer, I realize that since the type is
+> now named "struct layer_access_masks", "layer_masks" is actually still
+> a reasonable shorthand.  I have abbreviated that to "masks" in some
+> places where it is anyway clear from the context that those are the
+> layer access masks, but left it as "layer_masks" in places where we
+> also use other access masks, for disambiguation.
 
-> Are you sure ?
-
-As mentioned before by David [0], this should have been 'unsigned long'
-instead of 'unsigned int'. Which is also what the diff shows.
-
-> Some architectures have size_t as 'unsigned int', some have 'unsigned long',
-> some have 'unsigned long long'
-
-(...)
-
-[0] https://lore.kernel.org/lkml/2919071.1770365933@warthog.procyon.org.uk/
+Looks good
