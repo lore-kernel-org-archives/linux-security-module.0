@@ -1,192 +1,215 @@
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894B42F6184
-	for <linux-security-module@vger.kernel.org>; Fri,  6 Feb 2026 20:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA49D29B8DB
+	for <linux-security-module@vger.kernel.org>; Sat,  7 Feb 2026 10:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770408421; cv=none; b=GI+//SXNFnClvdmkJwowLAYSpnvhjLh5Klez3TWdSpQn2S34+3ThtSWxBfr0nR5Re9h7xaYEfolPF7AfphmZv+TWTr7MzCKNoVuz1HwWdlJ4ZPE4FmnW5UGJPXeIMOfH5fs+5eujMMt2ntdArGxb4M9JFazT0V/qLSD/iTvQXuE=
+	t=1770459470; cv=none; b=MUvUdw/9N5xDQS5dC2R94b1zOl1ryk86UiK66hL/uWSzMReWsbL1AfDv07zhat7k9Yixy20ToIWjrH1hcBjekArg1nOj9o+dZGC8f/2o7myU5jjjOqx2DuHOh+ZafxBbluH1vT/0ArmCX8Q+TLeSQQEa/cWnR1z0JN1zEyi54tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770408421; c=relaxed/simple;
-	bh=J9VSf4GFSRnCeM/zRTTO3OcekKEgf2VSDADW3OuMymE=;
+	s=arc-20240116; t=1770459470; c=relaxed/simple;
+	bh=mdLl1QAXilenY7HrELp/mxeeSEAagIBnvVb0bYXdJRo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OoSRZbPz9MwuxS8EWA8tBHwK/h/9BAodE8fOzLfRz8NO81HiC77z2qQ/l8c2pE1Apieq8kPx9avMty0Zha4Wg6jt5aDOeKoBZS1k3OK5O3yqHWCqRbx6uEiGUYvHtUUOZft9jq9yyPhDeTNDUjzF6jlpgQTorIVMiANudnDjdI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=T60VaSKU; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=khTXMgim3AYfhsLb2F14ox3hJg6m4GDsmI/eNRP+2piWLGTiL3R4LCl/UMs/uRdPtAqLT4KY14sor/jvHfdLgxhUe/8yVriFmm2dX7hO6CKU3Nr+DVDiC7pnjX+uCwxbwIz1Cp7+OOrLferLtyA62CAigLW3CCrWmkDZ0DD14Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=famEz9J6; arc=none smtp.client-ip=84.16.66.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="T60VaSKU"
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7d195166b2cso1929313a34.3
-        for <linux-security-module@vger.kernel.org>; Fri, 06 Feb 2026 12:07:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1770408420; x=1771013220; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u3wE/nOGLvc3QkX9UGDprKILAWky/nGcYsK1Fu7jX+4=;
-        b=T60VaSKUIsAO9mkrJBLF5+7rAumRBGzDL/ZOfvAFJzzAnw7DWHKRCmiScn+gxyBlUA
-         nyJWvwW+PrD4scXR7zmwXOT4f0daQMnxXtMqmG3gqaVVp9tYJ23xDjat13C8ia48qeQe
-         M4/B/2eSeiahhOVjKMjvDtQuu4jIhhYBB3H7wvBOs3YuS0hyRkP3jecTk9Cro0m8LCeG
-         2vhM20XT7MtzFxTz/g3B3EfY3JZ1NC71LgwaYVo/KhfOh9+ZfUPPRFCqRHrZ1VFwV5Cw
-         C7sy4FuFd4YwIkAq5o2cPrBAuudVNsR3BiTyo+SwovRIVd8qf8LaslTt6rKhqeyCxCzk
-         yf3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770408420; x=1771013220;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u3wE/nOGLvc3QkX9UGDprKILAWky/nGcYsK1Fu7jX+4=;
-        b=ggxolHs05UlWyzjZ0xEnAarybO3cg1eH9mMUdsceguKsx3t3g9m8fGgQQ82Q0ofN88
-         aeSCSE+3kmDAQMmOnB+4DtkUTtmFNIpKdUxxN8oZOr0mm0RVFBgHhje5NwRuV3BhW1c8
-         x7bziUIRFLlo+L9DGbzFPGP8h1enY2LeGrsxpaUIPHNKi+MlWLkRcGZp6VfryL3NPCIJ
-         EzJ1f9KQkIUJp+oRnjzuHPZ5NoQEir4FqzGVx3sajT34nXpPezC0L0/PNxFwTeAP/bSQ
-         RoX3vRgj960aM+PKleLxpbejrphlDW5abpQdfC9UkBurS5K+R3LwU2CsXTdk6Wi/ZAee
-         twvA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1+Va7Wahp3qLmd25DzkEardSv4Dvb1l4seicgKuzspvL/uDvmqkblah9npXm8mBFLUBxLjQTHybr91uNp6m1cMxzZprA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd6GzNJJz2DBvA/tzZsXeCXfmFw2An/D8Bkfn2XY3B2rvULmct
-	7CvS4poeR1GqRBXn26D0SNsWs9Y8X86g+cq7YHkjkEoJyXwIoix9pvSDq4SjZjgb48Q=
-X-Gm-Gg: AZuq6aLi1+yzVj0zUDKGDLO3XJ9x0xrtKatqwwRFxx8pCPnBYVn+MTLUUSIS0UsF9A4
-	kinncNJBUkYt7hrI1gvDOVZu3VRTlhkZcq+vxwacKDcsmCFk0aUsXzI8m0c/i97b77LRqcJdkXf
-	Hvgf6MWsGBdgOZ2/GsLxCAwlVtXaZmamstQ3CDO2X1pxhBcpX9/HWFRqrXxhcUod4yOCGTH75o7
-	iPDzemNC3syQ9UixRsTvZE+OKv/StbUlUG39rX7AEogmcVOW3035GRA6sH3S024dH7xFFMk75IL
-	nd+mMneoQpvLPConRNpkesWA63o/fRP5YTiJAYHNeF3mvsXuzIm+Hjno3P5oYwwoCB7R5AYTQMa
-	we0qdbwV8iGuvEN4F69IN8s1MppaD4VmUgWgfdc8EwalPpF9D4+mZ1m7Ymva/BR4LUA==
-X-Received: by 2002:a05:6830:6f47:b0:7c7:6043:dd87 with SMTP id 46e09a7af769-7d4643ebfb8mr2045525a34.6.1770408420345;
-        Fri, 06 Feb 2026 12:07:00 -0800 (PST)
-Received: from CMGLRV3 ([2a09:bac5:947d:4e6::7d:6a])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d46470da04sm2246603a34.7.2026.02.06.12.06.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Feb 2026 12:06:59 -0800 (PST)
-Date: Fri, 6 Feb 2026 14:06:57 -0600
-From: Frederick Lawler <fred@cloudflare.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org, kernel-team@cloudflare.com
-Subject: Re: [PATCH v5 3/3] ima: Use kstat.ctime as a fallback change
- detection for stacked fs
-Message-ID: <aYZJ4Y33oRRk5Drs@CMGLRV3>
-References: <20260130-xfs-ima-fixup-v5-0-57e84ea91712@cloudflare.com>
- <20260130-xfs-ima-fixup-v5-3-57e84ea91712@cloudflare.com>
- <c449523aef301a6b199e06d4c3fbf7587d1218c5.camel@huaweicloud.com>
- <aYO4fj0Uw0aUWXOX@CMGLRV3>
- <6f82d5dc6b499ecd03c985d6de20de94fea04cfe.camel@linux.ibm.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="famEz9J6"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4f7RjJ43y1z5D1;
+	Sat,  7 Feb 2026 11:17:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1770459460;
+	bh=RgORwdt/dQ1+eRjwA7IiLaKL19T+WUec98i5vYhqbrY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=famEz9J6X15mqYQmKY/cTi2XyvpduFHGzQW2VFE0NWWTf38poStt2oU9J1BPV8Prb
+	 pHdVwAaj5iWh5Mhf/ROdQQwFZ53lEVU7KcFe5njF10lpNiqB3KTjrwHw2vNjqgWErj
+	 Ts/H2afGFkGwN4mycALCIOxNH/CjB5BfYCZ7N20M=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4f7RjH4k88zksx;
+	Sat,  7 Feb 2026 11:17:39 +0100 (CET)
+Date: Sat, 7 Feb 2026 11:17:34 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>, 
+	Justin Suess <utilityemal77@gmail.com>, Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, 
+	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	konstantin.meskhidze@huawei.com, Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v3 3/3] landlock: transpose the layer masks data structure
+Message-ID: <20260207.zolaiy1ail8H@digikod.net>
+References: <20260206151154.97915-2-gnoack3000@gmail.com>
+ <20260206151154.97915-5-gnoack3000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <6f82d5dc6b499ecd03c985d6de20de94fea04cfe.camel@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260206151154.97915-5-gnoack3000@gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Wed, Feb 04, 2026 at 11:26:27PM -0500, Mimi Zohar wrote:
-> On Wed, 2026-02-04 at 15:22 -0600, Frederick Lawler wrote:
-> > That said, I think Mimi pointed out in an email [2] where multi-grain
-> > file systems are impacted regardless of stacked fs or not due to the last
-> > writer check.
-> > 
-> > I don't recall coming across that in my tests, but perhaps I did that
-> > specific test wrong? To be sure, I created the C program, and on the VM,
-> > created a XFS disk, mounted it on loopback, ran the rdwr program on
-> > "somefile" multiple times, and only got 1 audit log for it, until I
-> > mutated it with touch, and only got 2 hits: original + after mutation
-> > after running the program multiple times. 
-> > 
-> > I'm not sure what's going on there, so I'll look into that a bit more,
-> > but so far the impact is stacked file systems & multigrain ctime AFAIK.
+On Fri, Feb 06, 2026 at 04:11:55PM +0100, Günther Noack wrote:
+> The layer masks data structure tracks the requested but unfulfilled
+> access rights during an operation's security check.  It stores one bit
+> for each combination of access right and layer index.  If the bit is
+> set, that access right is not granted (yet) in the given layer and we
+> have to traverse the path further upwards to grant it.
 > 
-> Make sure you're testing without your patch set applied or at least the last
-> patch.
+> Previously, the layer masks were stored as arrays mapping from access
+> right indices to layer_mask_t.  The layer_mask_t value then indicates
+> all layers in which the given access right is still (tentatively)
+> denied.
 > 
+> This patch introduces struct layer_access_masks instead: This struct
+> contains an array with the access_mask_t of each (tentatively) denied
+> access right in that layer.
+> 
+> The hypothesis of this patch is that this simplifies the code enough
+> so that the resulting code will run faster:
+> 
+> * We can use bitwise operations in multiple places where we previously
+>   looped over bits individually with macros.  (Should require less
+>   branch speculation and lends itself to better loop unrolling.)
+> 
+> * Code is ~75 lines smaller.
+> 
+> Other noteworthy changes:
+> 
+> * In no_more_access(), call a new helper function may_refer(), which
+>   only solves the asymmetric case.  Previously, the code interleaved
+>   the checks for the two symmetric cases in RENAME_EXCHANGE.  It feels
+>   that the code is clearer when renames without RENAME_EXCHANGE are
+>   more obviously the normal case.
+> 
+> Tradeoffs:
+> 
+> This change improves performance, at a slight size increase to the
+> layer masks data structure.
+> 
+> This fixes the size of the data structure at 32 bytes for all types of
+> access rights. (64, once we introduce a 17th filesystem access right).
+> 
+> For filesystem access rights, at the moment, the data structure has
+> the same size as before, but once we introduce the 17th filesystem
+> access right, it will double in size (from 32 to 64 bytes), as
+> access_mask_t grows from 16 to 32 bit. [1]
+> 
+> Link: https://lore.kernel.org/all/20260120.haeCh4li9Vae@digikod.net/ [1]
+> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> ---
+>  security/landlock/access.h  |  15 +-
+>  security/landlock/audit.c   |  81 +++------
+>  security/landlock/audit.h   |   3 +-
+>  security/landlock/domain.c  |  45 ++---
+>  security/landlock/domain.h  |   4 +-
+>  security/landlock/fs.c      | 348 ++++++++++++++++--------------------
+>  security/landlock/net.c     |   9 +-
+>  security/landlock/ruleset.c |  89 ++++-----
+>  security/landlock/ruleset.h |  21 ++-
+>  9 files changed, 274 insertions(+), 341 deletions(-)
+> 
+> diff --git a/security/landlock/access.h b/security/landlock/access.h
+> index bab403470a6c..f0a9afeb4a2a 100644
+> --- a/security/landlock/access.h
+> +++ b/security/landlock/access.h
+> @@ -61,14 +61,15 @@ union access_masks_all {
+>  static_assert(sizeof(typeof_member(union access_masks_all, masks)) ==
+>  	      sizeof(typeof_member(union access_masks_all, all)));
+>  
+> -typedef u16 layer_mask_t;
+> -
+> -/* Makes sure all layers can be checked. */
+> -static_assert(BITS_PER_TYPE(layer_mask_t) >= LANDLOCK_MAX_NUM_LAYERS);
+> -
+>  /*
+> - * Tracks domains responsible of a denied access.  This is required to avoid
+> - * storing in each object the full layer_masks[] required by update_request().
+> + * Tracks domains responsible of a denied access.  This avoids storing in each
+> + * object the full matrix of per-layer unfulfilled access rights, which is
+> + * required by update_request().
+> + *
+> + * Each nibble represents the layer index of the newest layer which denied a
+> + * certain access right.  For file system access rights, the upper four bits are
+> + * the index of the layer which denies LANDLOCK_ACCESS_FS_IOCTL_DEV and the
+> + * lower nibble represents LANDLOCK_ACCESS_FS_TRUNCATE.
+>   */
+>  typedef u8 deny_masks_t;
+>  
 
-I'm still not sure what went wrong with my test suite, but spinning up a
-VM similar to Mimi's, I was able to reproduce the last writer issue. I
-used patch 1 as a baseline because that's noop from base 6.19, and used
-that function as a convenient trace point.
+> diff --git a/security/landlock/domain.c b/security/landlock/domain.c
+> index a647b68e8d06..d2a4354feeb4 100644
+> --- a/security/landlock/domain.c
+> +++ b/security/landlock/domain.c
+> @@ -7,6 +7,7 @@
+>   * Copyright © 2024-2025 Microsoft Corporation
+>   */
+>  
+> +#include "ruleset.h"
 
-And, then running the attached example test for stacked FS works as
-expected on both patches 1 (multiple log messages) & 3 (just one log
-message).
+To avoid this new include (which makes a dependency on ruleset
+definitions for domain-specific definitions), I moved the struct
+layer_access_masks definition to access.h, which makes more sense
+anyway.
 
-I left out the dump_stack() in integrity_inode_attrs_stat_change()
-for readability in these results. For Mimi's test, we just see
-calls into ima_check_last_writer(), and for the attached sample
-in 0/0, we get the calls straight from process_measurement() for
-stacked fs. Running Mimi's and then attached in that order, I get
-double the logs because the FILE_CHECK is hitting the last writer,
-and we get the process_measurement() for the binary run.
 
-Based on all of this, I can drop the stacked FS wording in the patch
-descriptions, and keep it all focused that the change_cookie semantics
-have been changed for multigrain file systems.
+>  #include <kunit/test.h>
+>  #include <linux/bitops.h>
+>  #include <linux/bits.h>
 
-Results:
+> diff --git a/security/landlock/domain.h b/security/landlock/domain.h
+> index 621f054c9a2b..227066d667f7 100644
+> --- a/security/landlock/domain.h
+> +++ b/security/landlock/domain.h
+> @@ -10,6 +10,7 @@
+>  #ifndef _SECURITY_LANDLOCK_DOMAIN_H
+>  #define _SECURITY_LANDLOCK_DOMAIN_H
+>  
+> +#include "ruleset.h"
+>  #include <linux/limits.h>
+>  #include <linux/mm.h>
+>  #include <linux/path.h>
 
-PATCH 1/3
-
-[root@localhost ~]# ./mimi.sh
-filename: /usr/bin/date-20260206140427
-filename: /usr/bin/date-20260206140427
-filename: /usr/bin/date-20260206140427
-FAIL: Expected 1 audit event, but found 3.
-
-[   26.033572] fred: integrity_inode_attrs_stat_changed result_mask=0 (change cookie) version=0 change_cookie=0
-[   26.034372] ima: fred: ima_check_last_writer: must measure file: "/usr/bin/date-20260206140427"
-[   26.037453] fred: integrity_inode_attrs_stat_changed result_mask=0 (change cookie) version=0 change_cookie=0
-[   26.038425] ima: fred: ima_check_last_writer: must measure file: "/usr/bin/date-20260206140427"
-[   26.039821] fred: integrity_inode_attrs_stat_changed result_mask=0 (change cookie) version=0 change_cookie=0
-[   26.041383] ima: fred: ima_check_last_writer: must measure file: "/usr/bin/date-20260206140427"
-
-[root@localhost fred-tests]# ./simple-fedora.sh
-314572800 bytes (315 MB, 300 MiB) copied, 0.132908 s, 2.4 GB/s
-Fri Feb  6 14:56:18 EST 2026
-Fri Feb  6 14:56:18 EST 2026
-Fri Feb  6 14:56:18 EST 2026
-Fri Feb  6 14:56:18 EST 2026
-FAIL: Expected 1 audit event, but found 4.
-
-Note: Does not have dmesg output because this patch didn't put the trace
-function into integrity_inode_attrs_changed().
-
-PATCH 3/3
-[root@localhost ~]# ./mimi.sh
-filename: /usr/bin/date-20260206140141
-filename: /usr/bin/date-20260206140141
-filename: /usr/bin/date-20260206140141
-PASS: Found exactly 1 audit event.
-
-[   17.191235] fred: integrity_inode_attrs_stat_changed result_mask=0 (change cookie) version=1770404501462431821 change_cookie=0
-[   17.192213] fred: integrity_inode_attrs_stat_changed result_mask=128 (ctime) version=1770404501462431821 ctime=1770404501462431821
-[   17.196325] fred: integrity_inode_attrs_stat_changed result_mask=0 (change cookie) version=1770404501462431821 change_cookie=0
-[   17.197380] fred: integrity_inode_attrs_stat_changed result_mask=128 (ctime) version=1770404501462431821 ctime=1770404501462431821
-[   17.199750] fred: integrity_inode_attrs_stat_changed result_mask=0 (change cookie) version=1770404501462431821 change_cookie=0
-[   17.200682] fred: integrity_inode_attrs_stat_changed result_mask=128 (ctime) version=1770404501462431821 ctime=1770404501462431821
-
-[root@localhost fred-tests]# ./simple-fedora.sh
-Fri Feb  6 14:53:30 EST 2026
-Fri Feb  6 14:53:30 EST 2026
-Fri Feb  6 14:53:30 EST 2026
-Fri Feb  6 14:53:30 EST 2026
-PASS: Found exactly 1 audit event.
-
-[   23.315358] fred: integrity_inode_attrs_stat_changed result_mask=0 (change cookie) version=1770407920086616962 change_cookie=0
-[   23.328978] fred: integrity_inode_attrs_stat_changed result_mask=128 (ctime) version=1770407920086616962 ctime=1770407920086616962
-[   23.332122] fred: integrity_inode_attrs_stat_changed result_mask=0 (change cookie) version=1770407920086616962 change_cookie=0
-[   23.347162] fred: integrity_inode_attrs_stat_changed result_mask=128 (ctime) version=1770407920086616962 ctime=1770407920086616962
-[   23.352931] fred: integrity_inode_attrs_stat_changed result_mask=0 (change cookie) version=1770407920086616962 change_cookie=0
-[   23.368026] fred: integrity_inode_attrs_stat_changed result_mask=128 (ctime) version=1770407920086616962 ctime=1770407920086616962
-
-Note that the in stacked FS case, process_measurement() skipped the check
-for attrs changed, and skipped to measuring. Subsequent calls into
-process_measurement() hits the integrity_inode_attrs_stat_changed().
-
+> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+> index 1a78cba662b2..1ceb5fd674c9 100644
+> --- a/security/landlock/ruleset.h
+> +++ b/security/landlock/ruleset.h
+> @@ -301,15 +301,28 @@ landlock_get_scope_mask(const struct landlock_ruleset *const ruleset,
+>  	return ruleset->access_masks[layer_level].scope;
+>  }
+>  
+> +/**
+> + * struct layer_access_masks - A boolean matrix of layers and access rights
+> + *
+> + * This has a bit for each combination of layer numbers and access rights.
+> + * During access checks, it is used to represent the access rights for each
+> + * layer which still need to be fulfilled.  When all bits are 0, the access
+> + * request is considered to be fulfilled.
+> + */
+> +struct layer_access_masks {
+> +	/**
+> +	 * @access: The unfulfilled access rights for each layer.
+> +	 */
+> +	access_mask_t access[LANDLOCK_MAX_NUM_LAYERS];
+> +};
+> +
+>  bool landlock_unmask_layers(const struct landlock_rule *const rule,
+> -			    const access_mask_t access_request,
+> -			    layer_mask_t (*const layer_masks)[],
+> -			    const size_t masks_array_size);
+> +			    struct layer_access_masks *masks);
+>  
+>  access_mask_t
+>  landlock_init_layer_masks(const struct landlock_ruleset *const domain,
+>  			  const access_mask_t access_request,
+> -			  layer_mask_t (*const layer_masks)[],
+> +			  struct layer_access_masks *masks,
+>  			  const enum landlock_key_type key_type);
+>  
+>  #endif /* _SECURITY_LANDLOCK_RULESET_H */
+> -- 
+> 2.52.0
+> 
+> 
