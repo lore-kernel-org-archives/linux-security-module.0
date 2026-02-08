@@ -1,70 +1,70 @@
-Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com [209.85.128.66])
+Received: from mail-wr1-f65.google.com (mail-wr1-f65.google.com [209.85.221.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EA41CBEB9
-	for <linux-security-module@vger.kernel.org>; Sun,  8 Feb 2026 23:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF123816EF
+	for <linux-security-module@vger.kernel.org>; Sun,  8 Feb 2026 23:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770592289; cv=none; b=NGjNEjVC317uaJkhTn03U4vEgXt7M5ODvwoMprtkQDXVqMF5aUMER7XaO9obAFBKSNaTPxSjm2dybBZaRfhu+Rq8U9r/VOOCrbsmyaWz97zxcx4bG/PriqthNK5Hk9kyCbAAx5s5mOY3uTRR4RPzR8NNdARwbayZ3lqvqFZsWRY=
+	t=1770592291; cv=none; b=TEfYh5kP9b+f+gcr8Q+5pkZpn8H83W5GO7X6z5ypeh2G9QqlKnmYCwCvww/dQ8gJS0dp1KSaiO7w9nU7TH5cGBcyeyg6ja3/mogR845IuDa3dGGybJnspf9krimKiX9REZts6R8n0C52ocdpZkgFtdfpV69OTldXPXAv7ReaWwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770592289; c=relaxed/simple;
-	bh=ZbVK+8pBr5xeYnZaIo3CQyYa8Q3kgiyu/MsamnZItIw=;
+	s=arc-20240116; t=1770592291; c=relaxed/simple;
+	bh=H95up0PdF0wT3xiTVLsjcbw/FTqiwcIzLRTN7EvNT9U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UWBSvCmjTPZ5je0VgqeBBTGb7QHWFla7qpB9TWskbcVyq21Hlj0XkesY2leHpVwHeRFT7yEkbl1JIB/2u6+CIBQhtZm0RtUtO/a0Z58y0aG2d6fFCC3X713qxZar8JoRzxr0T0D3DW7izuA4NGoAEVbPtyJjjuoNES03WFybvUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g5JL5m4/; arc=none smtp.client-ip=209.85.128.66
+	 MIME-Version:Content-Type; b=AlXmFGtQRYK90dUxcaPcb7rLpNJ3t8A+eY82oEnRNNVLNCBgHo1LnozLs3T0kBJNornj86Z8c/6efRKG9rqF2FHS2RXrAKsEI/VECkHajVXA9aDzEkCcNWHjoJWFP/iOnwK8TuR0BglSVF8hBH0/0a7idA2mhaxYO8Qpe8oqk0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TEeIQe+j; arc=none smtp.client-ip=209.85.221.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g5JL5m4/"
-Received: by mail-wm1-f66.google.com with SMTP id 5b1f17b1804b1-47fedb7c68dso40961865e9.2
-        for <linux-security-module@vger.kernel.org>; Sun, 08 Feb 2026 15:11:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TEeIQe+j"
+Received: by mail-wr1-f65.google.com with SMTP id ffacd0b85a97d-436e87589e8so747118f8f.3
+        for <linux-security-module@vger.kernel.org>; Sun, 08 Feb 2026 15:11:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770592288; x=1771197088; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1770592290; x=1771197090; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yGWhWsCxMYkvicF33836VUAINQXBaIg696pKAr594Pc=;
-        b=g5JL5m4/PXc/3XFtZyO3UKWIIIU3xu99yORLbl64QgZ5Fj0FGDLjFwXF57EXN1p2An
-         MoZ6lMDsIEKjZM+czrdOOZHi7DglCQxG0YEFh1HMGdoPAwvDWWv9Q6dCcS2owtrlIMV1
-         dhmKzNWvfrTnoc0ShuJW9dU/Ci8U14WFxW89i7z6dE4KMLU3d4BErEqDjFd6wog1PuSs
-         mvBddzaPOPypxJ3zscofJD1OeSj91FAl8oCJwWjIVJoW1f8RCDgiEHBiXXDxopv4e1uA
-         IU5gCPFaDJoXH+DSMMN5PkkWGjgJ2XJxO4e+FZrWByvrHf9yNTjJ8KLmL/G/7/MbE7Tl
-         hBHg==
+        bh=uuQwtV+v7wYKCTQx1ckWEl3T2al+gSB4N7kOmT9I2y8=;
+        b=TEeIQe+jlZ2GisBKfYc+OsoeYk/eiusbCIZLhh70oFHPaoHxsieET8b7u49ciKwM2P
+         txbLMaKhIqvv857oHIA31ICeBckPA7JppqGUOlYdnY+A7HciWFZXJDg/Vjx0O5hWd2eI
+         VzUfsu1FLZFzX3FT9pjquyflu/dWzy6fMoV2if0+j12g/wfaMS2skUy16US0+W/06Rga
+         okLgIHpZpNfaltF8BPV69bQNZ6stcICH594Vz4DwQr+694inzdkEBfi71jlTdutE8Z8b
+         c+pY4RgCxh57fHpRk5r6vmZlxleAlWmkp1e1eNP+J20Aj8HHIpe3G8GldnsvTIy1XnWC
+         hj8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770592288; x=1771197088;
+        d=1e100.net; s=20230601; t=1770592290; x=1771197090;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=yGWhWsCxMYkvicF33836VUAINQXBaIg696pKAr594Pc=;
-        b=trjJxuSGwvotk9RdYWQ8v9zKwG2tYvmWlw9X9N5xrJzTwFq6pE4PSAK89DBzpSmexb
-         EuQwkOPHGw2lA9CGVP5hjVRU3jf8fdQUdLwqdbjaeYxHvznk8q/EtbfvsvWqbNboZb6O
-         S8sscHIjuXuLER38PVutHYDWUT5N2SASI2BnE41XWB8tXMomzOdeVyU5JkylEG7YP8oT
-         +QaSUujnPlSGBHXpOOaPmnOIg8IDsNJaOVr44XNSeYReUswD+hEz4tdjpEI8yS2p9UAD
-         RoVVA3Tr2MXiIillfWLS1ZkjPeFjW305GVz4pX7OA7O5lupcXFAXGOXPrHLfc/yB74uw
-         fQ8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWSGqOaJkANarBYxRSSUEHpt+cJS8XOAh235CCOh6HvhBP3kk7/VwxdVLWE87x4cdrbYZv+6Ch/m62mT2XiixukfHOxYCs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh6TCZMvzfCIrzFzjDn5aXSjrK0o1Wy4W6fGx8JTZJx9SbTIMG
-	er9Mwpu6vLyav4tIB1N9+SRTzNr7Y5BbcEZh7V4uojZ+bEVWJ3Q5lWRG
-X-Gm-Gg: AZuq6aIXLgJb9bCLGaDcpH8B76JVgFsuHN1z509cQh5hqqIkNKNioIGhtm803oZ7WBA
-	NpmSItZJdH5aAgG9zr0fEV4pGDLVw+j2Ul/UQYqNEvvVbWxMAlk/Txl2dqPgy7Ws31eOAx+X6FD
-	Ig7pDAlHGeov+veIVmu7Vl0PU1VbR65e4iDSbI1z34X3V1yqEAjO/s8A9gQb1Wy/u5ofLkkdauN
-	o6hMO7EfwH5wqRZd4KO72ZbP6o4PxNNHth1M9Khe6kAc2ilMAs00jBkgWujaWqtfyyzAAZkWvGs
-	SrY1liemQEO414n2fQmshUSuDOjD5FdTASGqg4TpCacJUbqhufEmDKaUzOpoQybJqkZQX6Ky7bq
-	4xMhQ51d8VQRp+izv+tm6lXPCJQRQbt3frLLG1HPaiwvA4KXkQKOenqOCe/Z+OoRZKo3TcGSV8W
-	NhCcg4lRDQJ7aeG8vmAE5wqji5DUMbE70XHXc58tBuSxaxsJ4=
-X-Received: by 2002:a05:600c:608e:b0:477:7f4a:44b4 with SMTP id 5b1f17b1804b1-48320928ff6mr128958445e9.1.1770592287820;
-        Sun, 08 Feb 2026 15:11:27 -0800 (PST)
+        bh=uuQwtV+v7wYKCTQx1ckWEl3T2al+gSB4N7kOmT9I2y8=;
+        b=wEYT0XZ1OiashKbjakXmZ+kNO6ZnWczseUub5spXGAkiudI3vi1mfupWr+h9mT1bSh
+         1LdJA4MdK4orlIZ4E2sCftfD1weUIf8WoiDRYdc3rdztcIgPAtMSZ4RCrEm4DypIOwfx
+         nG4DjGzBjP/cDtLdkhqXJa7x6MnqO29fldnaBrlro0GTeEikRAFsw3KUp6/t7RTwmrg9
+         M4MCIRc8Q55GjrjJ7Gxr8WZ4cGNlRpD4lwm4yRs71hRnwlxdBzNcdC0DRlL62ubjos5Y
+         e4t67YpYiiiRM3REyFkGYPDc2z9FomJyHEiN9/ghfNYe2C6LJaUfOwfnMB5FDmw4m+5C
+         /XzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9B8Ic86yjggQJXplhwqccCm16jt6W8W12PXoh/FycUFTqCXilijm3MmO5Xxz7/gIqwtknZr98V00Pep6SDL/M0zAfHp8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbQJGOjBUmOd8rThoJK2CSRZFcjR/UxI1Wvs9WtkuAnEn/XGP7
+	ZGMlTB2zR/riQQKamaJeKQxyNLZ/ybMPqnsZ93NE7wjjIq9itgLColRV
+X-Gm-Gg: AZuq6aKs+Bxvpemuwx0gnOO/3BEE2+fz7ZDP4wyt4Sc5ZmShjf7cyaoMUUxtLJDC9Zc
+	DHjRmIVjJufsPo8KnuQ5lSZ068RQAk1vlQiTWdx/sHeHgCydS9dpkxEaaRjVPrmXPgH5/Ck9bMj
+	wfdU7tcakwT2eiLn4uMFRPkcZchLtqtzaNwxjTi1VlvSOEdDFvEWD0Q2VXG5gjR7g1yZVBH5USx
+	garzETwtVww5s8FUw3dSFZQV+32syv2wUwP8aiBWsDSR8hDT+x5Cch1crulv05Tez3xVhG8ZsX1
+	6ouwLeJhq6bCJKAZFdAqTAzGB+7pUqH6WUJFE+9+SpEhy0vuOgjkhvvRBTmKoVNDOSjbs8fPnGV
+	swWya8y55LDkz7V3u6h6n/CzL1NQuLXtAzXVlcNo2Ys0dZsVrto893x4HHeKdywJ6Hwrey0VgPX
+	mtHrhQsTo6F5UUDQAw7yk+uVfgX0EDJknQRUvw
+X-Received: by 2002:a5d:6304:0:b0:436:3155:86da with SMTP id ffacd0b85a97d-4363155874emr7726318f8f.27.1770592289694;
+        Sun, 08 Feb 2026 15:11:29 -0800 (PST)
 Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483203e126dsm148086675e9.2.2026.02.08.15.11.27
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-436297462a8sm20369524f8f.30.2026.02.08.15.11.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Feb 2026 15:11:27 -0800 (PST)
+        Sun, 08 Feb 2026 15:11:29 -0800 (PST)
 From: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	"John Johansen" <john.johansen@canonical.com>
 Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
-	Justin Suess <utilityemal77@gmail.com>,
 	linux-security-module@vger.kernel.org,
 	"Tingmao Wang" <m@maowtm.org>,
+	"Justin Suess" <utilityemal77@gmail.com>,
 	"Samasth Norway Ananda" <samasth.norway.ananda@oracle.com>,
 	"Matthieu Buffet" <matthieu@buffet.re>,
 	"Mikhail Ivanov" <ivanov.mikhail1@huawei-partners.com>,
@@ -73,9 +73,9 @@ Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
 	"Alyssa Ross" <hi@alyssa.is>,
 	"Jann Horn" <jannh@google.com>,
 	"Tahera Fahimi" <fahimitahera@gmail.com>
-Subject: [PATCH v4 5/6] landlock: Document FS access right for pathname UNIX sockets
-Date: Mon,  9 Feb 2026 00:10:15 +0100
-Message-ID: <20260208231017.114343-6-gnoack3000@gmail.com>
+Subject: [PATCH v4 6/6] landlock: Document design rationale for scoped access rights
+Date: Mon,  9 Feb 2026 00:10:16 +0100
+Message-ID: <20260208231017.114343-7-gnoack3000@gmail.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260208231017.114343-1-gnoack3000@gmail.com>
 References: <20260208231017.114343-1-gnoack3000@gmail.com>
@@ -88,54 +88,65 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Cc: Justin Suess <utilityemal77@gmail.com>
-Cc: Mickaël Salaün <mic@digikod.net>
+Document the (possible future) interaction between scoped flags and
+other access rights in struct landlock_ruleset_attr, and summarize the
+rationale, as discussed in code review leading up to [1].
+
+Link[1]: https://lore.kernel.org/all/20260205.8531e4005118@gnoack.org/
 Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 ---
- Documentation/userspace-api/landlock.rst | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ Documentation/security/landlock.rst | 38 +++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index 13134bccdd39..3ba73afcbc4b 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -77,7 +77,8 @@ to be explicit about the denied-by-default access rights.
-             LANDLOCK_ACCESS_FS_MAKE_SYM |
-             LANDLOCK_ACCESS_FS_REFER |
-             LANDLOCK_ACCESS_FS_TRUNCATE |
--            LANDLOCK_ACCESS_FS_IOCTL_DEV,
-+            LANDLOCK_ACCESS_FS_IOCTL_DEV |
-+            LANDLOCK_ACCESS_FS_RESOLVE_UNIX,
-         .handled_access_net =
-             LANDLOCK_ACCESS_NET_BIND_TCP |
-             LANDLOCK_ACCESS_NET_CONNECT_TCP,
-@@ -127,6 +128,12 @@ version, and only use the available subset of access rights:
-         /* Removes LANDLOCK_SCOPE_* for ABI < 6 */
-         ruleset_attr.scoped &= ~(LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
-                                  LANDLOCK_SCOPE_SIGNAL);
-+        __attribute__((fallthrough));
-+    case 7:
-+        __attribute__((fallthrough));
-+    case 8:
-+        /* Removes LANDLOCK_ACCESS_FS_RESOLVE_UNIX for ABI < 8 */
-+        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_RESOLVE_UNIX;
-     }
+diff --git a/Documentation/security/landlock.rst b/Documentation/security/landlock.rst
+index 3e4d4d04cfae..49ef02d5e272 100644
+--- a/Documentation/security/landlock.rst
++++ b/Documentation/security/landlock.rst
+@@ -89,6 +89,44 @@ this is required to keep access controls consistent over the whole system, and
+ this avoids unattended bypasses through file descriptor passing (i.e. confused
+ deputy attack).
  
- This enables the creation of an inclusive ruleset that will contain our rules.
-@@ -685,6 +692,13 @@ enforce Landlock rulesets across all threads of the calling process
- using the ``LANDLOCK_RESTRICT_SELF_TSYNC`` flag passed to
- sys_landlock_restrict_self().
- 
-+Pathname UNIX sockets (ABI < 9)
-+-------------------------------
++Interaction between scoped flags and other access rights
++--------------------------------------------------------
 +
-+Starting with the Landlock ABI version 9, it is possible to restrict
-+connections to pathname UNIX domain sockets (:manpage:`unix(7)`) using
-+the new ``LANDLOCK_ACCESS_FS_RESOLVE_UNIX`` right.
++The ``scoped`` flags in ``struct landlock_ruleset_attr`` restrict the
++use of *outgoing* IPC from the created Landlock domain, while they
++permit reaching out to IPC endpoints *within* the created Landlock
++domain.
 +
- .. _kernel_support:
++In the future, scoped flags *may* interact with other access rights,
++e.g. so that abstract UNIX sockets can be allow-listed by name, or so
++that signals can be allow-listed by signal number or target process.
++
++When introducing ``LANDLOCK_ACCESS_FS_RESOLVE_UNIX``, we defined it to
++implicitly have the same scoping semantics as a
++``LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET`` flag would have: connecting to
++UNIX sockets within the same domain (where
++``LANDLOCK_ACCESS_FS_RESOLVE_UNIX`` is used) is unconditionally
++allowed.
++
++The reasoning is:
++
++* Like other IPC mechanisms, connecting to named UNIX sockets in the
++  same domain should be expected and harmless.  (If needed, users can
++  further refine their Landlock policies with nested domains or by
++  restricting ``LANDLOCK_ACCESS_FS_MAKE_SOCK``.)
++* We reserve the option to still introduce
++  ``LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET`` in the future.  (This would
++  be useful if we wanted to have a Landlock rule to permit IPC access
++  to other Landlock domains.)
++* But we can postpone the point in time when users have to deal with
++  two interacting flags visible in the userspace API.  (In particular,
++  it is possible that it won't be needed in practice, in which case we
++  can avoid the second flag altogether.)
++* If we *do* introduce ``LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET`` in the
++  future, setting this scoped flag in a ruleset does *not reduce* the
++  restrictions, because access within the same scope is already
++  allowed based on ``LANDLOCK_ACCESS_FS_RESOLVE_UNIX``.
++
+ Tests
+ =====
  
- Kernel support
 -- 
 2.52.0
 
