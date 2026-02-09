@@ -1,486 +1,150 @@
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F59138759B
-	for <linux-security-module@vger.kernel.org>; Mon,  9 Feb 2026 19:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770665666; cv=fail; b=skD+OzVmxKVObp1I7UheBkTPfiP9ZlQkdw+oLK/kaPQpIyWWYby+NeBSCc8HogyvgaJcVkc5gz/2t/SytoOLbyKk7w+XPWXdM+iHLgSe2I0nHFOf6F0hmJn9UDBo5Zv7r6fpfrwuk/fDZMIe4N69knrMibtmg9Zp+y4DgQBkpqU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770665666; c=relaxed/simple;
-	bh=AePakR4o5mnGBkNZBNva9xstFl4Z7QKEAdLc7H8j8pA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=LYG1NgJpelc1/NP2cJVCcnCmbjDUTpepk7svRNwUigH6q3q0cin4GtCM+JPDtOroXuzcfaIgFNKlnS37BwLs63MCV6e3t0EpBc8Ux10Tek0MMufIQDNM+eIRrjqPnTkwkOzpiIvIC2RkewRxOZqbcmvq9CnMYFpQj/UBY2G1IWs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=j9Ny8gdH; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=PMAl0Xf4; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737D638757A;
+	Mon,  9 Feb 2026 19:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770666822; cv=none; b=lzlYg0bfLx7q3f8Sz2N/6oH+PV3oW0TP6rbDoXW8xyv7vavw2SwDmkCJ3iRjH8IFqD0H8XSH9VDmziB+cfablfcKySU7kdY+WN/3aJOFkkgNJrs98q1U9ipNyDef3igQuWVVrxpTQta05hbLvhqJHBvXaAywak5VkYcCp4U14Ek=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770666822; c=relaxed/simple;
+	bh=h0N4hKt/oOVF1pCBswxft03HCIK4S5TWf26g5vT6F9o=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=HaXZ3tt2mPtcBfr7nm8uBWHulSdWALQNgF/fTy1/47m1cdD8xyLqCjvjliBEGMHXRAcc/C2zLh8P6L7MhaeKycBQqcKB6Dn8TiSYPlTopeSHO8lNwOh5Z4uoQNxOKsBh4OljZMqmAD48p5OJwbAurUm1z3FhFFvF8sik61TTASM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=OMd92If2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=rZ5VLX4j; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="j9Ny8gdH";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="PMAl0Xf4"
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 619ECauv2924656;
-	Mon, 9 Feb 2026 19:33:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=IKmr/kWHgu6MoC30Ij
-	xLGIQVphVlYFMT/wSyOrKMfGk=; b=j9Ny8gdH9d5OOgAKt+icoy4Qq0XPydCQ+Z
-	gwtDe1IUeKHPrCuHIXickqk1Od2oqB4IRrWjQExZA6mW8Eo2AlnhrjwM0uk2z4ru
-	iNjgJg+8GjO8AnDRJ01Ln58jDy6oEITW6zWsm0JMqba+20x9S0wJ7XvMgXxB1I1u
-	T2sXu8BTq3i5XsKCk3jpp5bp+tGPxraJgcldWbhlZkcMFs+eXo5MxeKK597sLSNj
-	NsEFJSHth6dizqK8qgkluz6O+v80KWs6YDZ+7slEEAboxJ/atcEdlhBCnh2JA1Hc
-	GjZD86vaHkcgzH4xje15BfJfuj39bgddVG7ZgmMsyAEze3DurYTQ==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4c5xf3tmqf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 09 Feb 2026 19:33:38 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 619HgrBA035379;
-	Mon, 9 Feb 2026 19:33:38 GMT
-Received: from ph7pr06cu001.outbound.protection.outlook.com (mail-westus3azon11010044.outbound.protection.outlook.com [52.101.201.44])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4c5uu9fw0c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 09 Feb 2026 19:33:37 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Dmi0IG5hEMJwjWp6ABxQpnLqImhHSoPW1iYAd+0oqMmGWYBa9TlK3NaNvdM7B/xxGpEATDzY2t83Lg8eDxtngPTjdFJTTwsY6V5gsPqroIbCcNrJ3lOudBcabQEaLRlTrNo8eoAiXCxMtiaA0ZEMsD1E9gYki65BiRK2Wll/LNb/H9cDb8NY2t8ED6FlQQ9nQ7HttHen8/iZhcgEJ+BRO0tUy7hAmvWiMBy2d5lqY6hg88I8WHCSJuIQCSh4o+qlpVgW9GQ6Pl4gEalgJ7nSCk9Ynx23IbpO32w+ANfrQUDqx4ZuD0JHlvtUvFO/gu9ybZ1gpur6h4CSNp6ulzuF3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IKmr/kWHgu6MoC30IjxLGIQVphVlYFMT/wSyOrKMfGk=;
- b=qmTJ8Eb6UpaxKod3sJbe1ki2hFxOxuSOjsqidSizcNI+W6HhEz3A3tnFVUK/1nGhz3ps8QodtXzfGVdLPTpjPQOIEoUT/hHrW6xTCSJnUK+2pDP/y/pP+II8xA2x7K6bSkaDWJbOqIvrhLRKLEIVYrqsvkwOxb6gtSmrigvOptTQ2runH3gvifGRPwKqYGgVsHpuSeov4lcrjPqNmLKXCXX0//1qYE9VWtMeaMCSDY+SjdcijVbQBte8ozWMScG7B4zPeKpGfFtbEgo/TNacpOYOdT05TTTV4zs6DSusn1uFNcXS/UY3J04QgaZKpae498Z8S+pOrbQlAfr9ceTdEA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IKmr/kWHgu6MoC30IjxLGIQVphVlYFMT/wSyOrKMfGk=;
- b=PMAl0Xf4uCC4irCyG+76h8Xjw84NRjESXMk1sIo4KkAVBaE+ddu6zQ3tWk3rNzupVcfcwdmFuTfHyhF8xmYF4/KEmLagsqeYYL8O6jVhWrlOrNjEfioqso3kHNx5G+o1oc76byN5pGadpTNDPCgmZSa8VJVn0/tqYwinLgFZFfs=
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
- by CH0PR10MB4905.namprd10.prod.outlook.com (2603:10b6:610:ca::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.18; Mon, 9 Feb
- 2026 19:33:06 +0000
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::4b84:e58d:c708:c8ce]) by PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::4b84:e58d:c708:c8ce%4]) with mapi id 15.20.9587.017; Mon, 9 Feb 2026
- 19:33:06 +0000
-Date: Mon, 9 Feb 2026 19:32:55 +0000
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tvrtko Ursulin <tursulin@ursulin.net>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>,
-        Matthew Brost <matthew.brost@intel.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Benjamin LaHaise <bcrl@kvack.org>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Sandeep Dhavale <dhavale@google.com>,
-        Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Muchun Song <muchun.song@linux.dev>,
-        Oscar Salvador <osalvador@suse.de>,
-        David Hildenbrand <david@kernel.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
-        Babu Moger <babu.moger@amd.com>, Carlos Maiolino <cem@kernel.org>,
-        Damien Le Moal <dlemoal@kernel.org>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <jth@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
-        Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Hugh Dickins <hughd@google.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>, Zi Yan <ziy@nvidia.com>,
-        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-        Lance Yang <lance.yang@linux.dev>, Jann Horn <jannh@google.com>,
-        Pedro Falcato <pfalcato@suse.de>, David Howells <dhowells@redhat.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Yury Norov <yury.norov@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org, linux-erofs@lists.ozlabs.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev,
-        devel@lists.orangefs.org, linux-xfs@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH v2 10/13] mm: make vm_area_desc utilise vma_flags_t only
-Message-ID: <ty6kli66kwas3hhzfbbux3mavl6dvi4us5c4bjhvp3m3ziwqxd@kn4sfnkc32iy>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, Christian Koenig <christian.koenig@amd.com>, 
-	Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>, 
-	Matthew Brost <matthew.brost@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Benjamin LaHaise <bcrl@kvack.org>, 
-	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>, 
-	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>, 
-	Hongbo Li <lihongbo22@huawei.com>, Chunhai Guo <guochunhai@vivo.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Andreas Dilger <adilger.kernel@dilger.ca>, Muchun Song <muchun.song@linux.dev>, 
-	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@kernel.org>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Mike Marshall <hubcap@omnibond.com>, 
-	Martin Brandenburg <martin@omnibond.com>, Tony Luck <tony.luck@intel.com>, 
-	Reinette Chatre <reinette.chatre@intel.com>, Dave Martin <Dave.Martin@arm.com>, 
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, 
-	Carlos Maiolino <cem@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, 
-	Naohiro Aota <naohiro.aota@wdc.com>, Johannes Thumshirn <jth@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Zi Yan <ziy@nvidia.com>, Nico Pache <npache@redhat.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
-	Lance Yang <lance.yang@linux.dev>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
-	David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
-	linux-fsdevel@vger.kernel.org, linux-aio@kvack.org, linux-erofs@lists.ozlabs.org, 
-	linux-ext4@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev, 
-	devel@lists.orangefs.org, linux-xfs@vger.kernel.org, keyrings@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>
-References: <cover.1769097829.git.lorenzo.stoakes@oracle.com>
- <fd2a2938b246b4505321954062b1caba7acfc77a.1769097829.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fd2a2938b246b4505321954062b1caba7acfc77a.1769097829.git.lorenzo.stoakes@oracle.com>
-User-Agent: NeoMutt/20250510
-X-ClientProxiedBy: YT3PR01CA0098.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:85::9) To PH0PR10MB5777.namprd10.prod.outlook.com
- (2603:10b6:510:128::16)
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="OMd92If2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rZ5VLX4j"
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id B19EEEC054C;
+	Mon,  9 Feb 2026 14:53:40 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Mon, 09 Feb 2026 14:53:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1770666820;
+	 x=1770753220; bh=fEmrFeYzPmAoJMA6RFUhUAHKfR6T4W1zM+BFUQbcxIs=; b=
+	OMd92If2qRnr0LO/tvlzEbxnvQOJ8JruHRFCvt1GxEPHY5gavgAh/+O+x+MrWKAR
+	12m4dXFuhLrI7pS81JX9boSGNbVmRBJaxeg+0qXWcjSxYnaBkHRsS7mZaF10jWlF
+	XCWailBJneCFalSnZZ4bxZBrT3zpS6yFU3GTdEBBhKJyXKftEm8UUaKfTPH9bYQ0
+	taKWO/pdPcfpKm1SY2sdJV9SzhV4kpPSWz92M0W07GgBvZBTEOsi+oA5FXCvsuL8
+	ne6xN07CNY/OXKpy3ba/YbvI6pNouKezMS9Geho31zRr3tCieocn3CNpuT3YkYOU
+	Y6OXDMGHkditBSrhpZ9UhA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1770666820; x=
+	1770753220; bh=fEmrFeYzPmAoJMA6RFUhUAHKfR6T4W1zM+BFUQbcxIs=; b=r
+	Z5VLX4jwyy032OsrOXnSQWDdt4ytbx7mqyAYugiwYaDEwJVzqiBTfoLlz6pRTOsu
+	M5w52BDh+l6tx6Kp3rDM5SJzGJljQLhTa5sklbZU07eNGmJWq1jO9YVBSnefLjcS
+	TSeCvjMj8OZ2pFh47Efr6UDNY/4JvmQX+7o04pmdFHKb6hepVbMK5sI7XXCghvWA
+	5v6pPtA5cxZf0dNgnIW+qyMNaTAM3YtMlIe738Dzg4zOXppSR4nXZeOb/ZHWoybc
+	+jvG8th+YQMKXElYnQOfx4/fcy117sWjEKeo0YEYDGqYDsuH9m0H87yaH5cod+dm
+	6cnB9C8aXRta0UVF5ToFQ==
+X-ME-Sender: <xms:QjuKaRFKgQDxxwMbj-6vONoU_CIy24Felqf4spWJn8zEjaebPX5YZA>
+    <xme:QjuKaSMeR0Hk_hx6lRlbe79Avr_LSydz_3LBavok_Koqu2sMpCkYvdkTciwuQJBVd
+    4qRUVusUkIw4XHUCYeV060J73O8R8i_39yn4aAVlUrUCRG499hdKjQ>
+X-ME-Received: <xmr:QjuKaeots9vkKpff7kCAkoznvR87iFWa5HmzbMtuvbGmgzt53L_YXE4oMYa0YWj0AG7g7yIzin0FxdXt9A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdduleejjedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffhvfevfhgjtgfgsehtkeertddtvdejnecuhfhrohhmpefvihhnghhm
+    rghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepue
+    ekveehtdetleduieeuhfdufffgtefhffetteehieeiheejtdeigeetjedtledunecuffho
+    mhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhrghdpnhgspghrtghpthhtohep
+    vddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihgtseguihhgihhkohgurd
+    hnvghtpdhrtghpthhtohepuhhtihhlihhthigvmhgrlhejjeesghhmrghilhdrtghomhdp
+    rhgtphhtthhopehgnhhorggtkheftddttdesghhmrghilhdrtghomhdprhgtphhtthhope
+    hjohhhnhdrjhhohhgrnhhsvghnsegtrghnohhnihgtrghlrdgtohhmpdhrtghpthhtohep
+    phgruhhlsehprghulhdqmhhoohhrvgdrtghomhdprhgtphhtthhopehjmhhorhhrihhsse
+    hnrghmvghirdhorhhgpdhrtghpthhtohepshgvrhhgvgeshhgrlhhlhihnrdgtohhmpdhr
+    tghpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehsrghmrghsthhhrdhnohhrfigrhidrrghnrghn
+    uggrsehorhgrtghlvgdrtghomh
+X-ME-Proxy: <xmx:QjuKabCytRn5O1ITBbmrVXKqwpKOIPKasWuSttzil27JMyPQZf2nrQ>
+    <xmx:QzuKafPtkgZ0gazMjsOYmwZsSYUhqRrSNdztnmDu949wjpkLqLLm1w>
+    <xmx:QzuKaRA5t6S9nBEOOLAY2y2QH1fDTHQ8ya7-_ID_QfWb_hn-VcF3jA>
+    <xmx:QzuKaV_N0UPK8CtSaWk8uv4vevoAeXCVTKA9Q0aCSwNhZ8Li3N41rg>
+    <xmx:RDuKaffrLCPALmjzwSf3XT_Lu67oliAqzYJ7KnTBczr9WLLU9knU9fy9>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 9 Feb 2026 14:53:36 -0500 (EST)
+Message-ID: <aefadd4b-0a72-4125-af3c-a3454d535ad7@maowtm.org>
+Date: Mon, 9 Feb 2026 19:53:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|CH0PR10MB4905:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2e869cfe-424c-42c9-f355-08de68120c55
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?LNwxEEzndWMepF8XLtLJqB56suqCrq9ZwBx9jh+otYrRfPqwxnVpIJkIDasu?=
- =?us-ascii?Q?HQVNM/qZpL6QM1cb/m46+lkm386//MxvcE1cjhGYIIp3bhBgxdZgOt1g01OZ?=
- =?us-ascii?Q?qhRXN4J4pdIDAisl+c2CsPLF4dC1VlilVH157IgvpTGxtUCFw5xP7htedkCz?=
- =?us-ascii?Q?w3z/3XqiK1zgFZWhnmAAXOoWSBXlWSZZJ4Bt8VYsbKbr96k35I6R8Qx7YMMi?=
- =?us-ascii?Q?AvlR7KjX0Wsgzz4fsiz4gm/QJaEHXhFqBlmj9vyZqtF6SXqmuf6SNwL1pzv7?=
- =?us-ascii?Q?JFoy2olbd2rRZeYYM83fyAQm8Hx+ZFpBeoWssr5NpNraiJfTDBonu+v2oR4E?=
- =?us-ascii?Q?KTs7ThzAwYDMbr8wDCsWKuCXSggqLFlDcLyLsdmTI4FYYetPs+ttsNJfPXtO?=
- =?us-ascii?Q?2+e/gX3kcZNPvHxIcSOvgHL6afsSmn5E78JXGyNuxZes0eqajH+FCl8tkn9k?=
- =?us-ascii?Q?PzUK07QhCsYcpvoFvm3I384qoxVz8uIp0NCrms/K37RJ/awacXaY+8r4Hnrm?=
- =?us-ascii?Q?fNZmmVPM5eISqut+Yn9zxbY6FAOvbnnVUrYdCPLAf2oDGG0wrI8zvwxI1JlR?=
- =?us-ascii?Q?kxVJLEjRvmXHsWJNFXDLAciYPxHomIRknwM4Q8bsPz7fpR2jjfB3kkhQRkbc?=
- =?us-ascii?Q?vYvmnnTBW9mcuXk5o6VHLBc4qZaVmiGyseyLd39GHeO4LMvnAwhkGVLlZ8O/?=
- =?us-ascii?Q?hzq6xjYSMCDRczAYpP4BJzoOtO3kvf7hS0LYeHEzlEzF+PRt9BG1IpROP64W?=
- =?us-ascii?Q?FTo7NvjXzl7oIS74l+5FG7Cn9C8gMB/Mkvk6rl1wUQvE6Lc1Xb0cxrX+gSCT?=
- =?us-ascii?Q?VBZMOjR6JR0bWGuZkjWMHXcyCYKUuM1tuw7md9l7yhQwC90vnaL5hMNpsKt8?=
- =?us-ascii?Q?YqGCeSpuYp+WkTV3aScoJc16lvyHJ389uGPyb8avwR5DCNYXx3BZrT4Vvlu+?=
- =?us-ascii?Q?ya2aPmq3cDZXnt3vYaavzsV4aM7ZMzzys1SiYtCOnSXA2h5vgMczoaGyeVVn?=
- =?us-ascii?Q?OyfwH3I2NSMTCqprOTOANkeM8Ut+8MN7PFQzngGZbg6lpYnJHPg36492Y8H3?=
- =?us-ascii?Q?Jv8qOe/ZZbsRhjoD/HBZ1ETxbhArgInD1WJTT6l/dkUMoAwdaBFqWBvYPWU+?=
- =?us-ascii?Q?LTY/niUNDYC+KfUYTeuj8HhYn7DSo0B0S35OQkFj1DquwSk4i3K+UVt204Ua?=
- =?us-ascii?Q?/hqL4rRnyj0+GJmCbC5kP6co5kVaov93YmzHtdIPssfe4HC3XwdxH6o7SRlD?=
- =?us-ascii?Q?XfFX8H5gZDzlgj17Y8/EcfbgDCKIOGeP4jL+TUOf+gqb1fl81eYA6qyEYTOg?=
- =?us-ascii?Q?zwWN+tNa5ViznSf1qqaMvO6QoXI5D0E/pV1ojp+POoBpjyMBnH+8qImUkwfE?=
- =?us-ascii?Q?O3yPikmlvNJ58PRNmY1A5jQV3W66tBEn7IcrvEyGeoKqAGRFXBlprooe1exR?=
- =?us-ascii?Q?u9ZfvP5RL1GQbnz0Au8l56VCIgJO8Rt/Dw1MqsdGBGSXKORPAgKbAlWtPnzS?=
- =?us-ascii?Q?S4TDWdQqBec7gOOXgYuHZY+fMGVAUtWPYMTh0euAKd2bgK4nxOIkTQEUmwpC?=
- =?us-ascii?Q?ZMM0OnJ8czpGUE/1r0E=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?O45GnaDLc71TtDt61X5NqE/E/YRSMJoCyF8wxP/bPjPPUR4nfPRmdUxqAo7f?=
- =?us-ascii?Q?0Zp01ZscaD2F/1qVQFy9lB5l9EWBny688r5WE2e7TWvSvQiU9DuxbHAQEJP+?=
- =?us-ascii?Q?46UEbvxg9jLRnpXSVkUfvxkKiyhCLARs6IsBl4FBAqkjN+ysWrKGNgCaH88O?=
- =?us-ascii?Q?dfHOqwFcNkiTW8MbjkX8gfcECmQpP9VZJO9UVJ2mlGLXjDkEVYBPakAX2yYX?=
- =?us-ascii?Q?xVYw5vibZbEXE8D2lrTF9GXB59ran+ZVu+BCd/kwJhHojuhvKdmLmtqfReEs?=
- =?us-ascii?Q?wtxW+NCDm3Fwzzn1Q/pOMjvx2v1SGgaH3m8vjbMmspChwxSooyv7UStRS3lN?=
- =?us-ascii?Q?C9WK+f9qp1Ve8Nx9pXjrKE1TtQYIVjge5Ye4uhl+ln0WR0KnoMFFZyyJnih6?=
- =?us-ascii?Q?gkqK7PWO371ocQHZk54MB1TdrAtXjhpR/33G0bYT1oDnyi7kk0Fv58Xxg0ic?=
- =?us-ascii?Q?wjNgn5VSgYExn3NcHlJnyfgPF42E8ndjde2IlQXRHAwtD5nvjsztwc2CkFqp?=
- =?us-ascii?Q?52uYOPeD9DXoXiPqdgPrVkWBLYzSEkPFm2NRbgghCytd1k2kHd4NBQ/bDKEW?=
- =?us-ascii?Q?KeESBcElp4gnhq0ZUdM9fAkmrKf09C3mda2FpPfIvDvQK3uEHF5otADaFB3x?=
- =?us-ascii?Q?8/eO1St6wbaiqPQIPcS6uga/KdLfYHDfF+zNJll8gSoCjJXqjA3YwX3Zlm3O?=
- =?us-ascii?Q?N4/zmtPPrdIrn7zwsEXjUhx2OsgxTx5Sri6on+vUmyK7/kpJLg1+i+cY3xnS?=
- =?us-ascii?Q?JfwW/zeJ5FPluvMEhwyGHwdUkSm/mMu547CmjFolhtAkrIUH1Px0H8U+2hoF?=
- =?us-ascii?Q?X6x6YWA/N+/fbxjBOmDJsdRV16KbAvCcn7I53pj/dvhjyO8D10Ou9j/ysSqu?=
- =?us-ascii?Q?HCLg2SrYF7Gr5LlJFbZOuKdQbwShqyYW6sHQexZp2LrKbUNDGzJ/niHQooP/?=
- =?us-ascii?Q?BqDOfCBrIo6g338r6d582eJOO3ybgfYupQ9kYSwCy19/byGODGwVNIpConkw?=
- =?us-ascii?Q?RZLFgJzxQ8PxqGjp+AKIb13KWHT6L2Sq1ALu8QdRFOF0qiLS64GyMYpUznm+?=
- =?us-ascii?Q?07F/BQ7uDlLSwxaNx5wIbwhB4PrVI+ITHdkeALs9/DC1Z7mJ3F9fkeJ31ic0?=
- =?us-ascii?Q?tUNK3gKiGLFDIlvBhh547AxFaS2GJ33gYgREm/+w7CouIgKgR11nbJjS9jWf?=
- =?us-ascii?Q?UsKJ9rBzI4YTPjINPVGYMgfIeNjIWeXOwkxdX5dFNCni29qaihfHb+qqqKi3?=
- =?us-ascii?Q?voTrePGZcj146ESlNzDD31cgjBukWzkITRjROf9422UHrfHK/HmtmeK/TcJO?=
- =?us-ascii?Q?QUZZYh2dNsJWRqsxuFnseueOu2JD54ZR9gU9otJVqgMuTO1rtMyGnhAd4FsQ?=
- =?us-ascii?Q?uO6vyniT0P+CQxcICE3IxNWF+RoucRVygFlmBw7hBlfiaZGP9+IypEIhis54?=
- =?us-ascii?Q?GXfvHjKQd9rZjfBza43ab6ITzLSnlRIZ0W3EIIHICpL6GlPth6xfPJH3EN7P?=
- =?us-ascii?Q?VniEKUCh/jr/2rzEKsGjQ/+95kIn04y8pKKLFtE/6XRnly7rqZ/E4IaxBoGJ?=
- =?us-ascii?Q?rnQLNJO5OvTmdHNxmA2Y/nYtd4dAQxYv5wHOutEU0Y8PJFtBMowlvnDR41a/?=
- =?us-ascii?Q?4S7prHVjxoooR0F9CXjPJlOjVLW5FQ8WhANTksrTmVNYGCJZngEFb+UcX6ut?=
- =?us-ascii?Q?W3nWikzHrl5EdIYof15qf5d0ZPhm3w06ZRkcqZjaVdDdIjMxu+sLZF2e8i3K?=
- =?us-ascii?Q?7mn4/p86uQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	XYC+8blRA9DVbNka5cMNDhZ2b9zhTQcmFDCmC4D0DZIsHwT5HvVZSUorGqHOL7mXx+J8DATrW/BS2aTal2blGvujKHQa0blWtA9nM4RPjX6bSjCqVN8xTnMiaQscTQWgYXDe/KWOUa/QdYTkD68tcPtS9xO+OQgZUbxF3KPM8dSzJjqtyGeJQVf1t3KUQ0qhYh7dOB6WgWfRbrsjES8ar0BO357NUPm9S/2M8URXe1FFNTSCZZ1nx+LqolnWFM1Pgu/s4Tt1D8uFDk8vQVQkCS3yRxLAk7fCyBT2CUYuJfDj0USvdnq6l7bnxAUyGVthgeerO0+C2aBQzWf1E/KJOGBEetBfWP7vZf3+DCeS9LjEO/iYc4h8MFk8TsOsLgz+Vz+g7N7CUMkNNbwlzHm65Vlr4Mu5MwIiGj3nsROWcPqIhZiNCxIBqKWnM4+djQwaxZ23MMnhAUzFMb9qARenDba9+T5jmR97V4BoGOPShEETZEMiGjot3tU2ixcJ4ln+F43d2xQeBsCXKW2ktC39yCO+EnA7pgxqJpOrv9+0HvBnqN0/Yb+iBbaJEESHlpnQoxy5XL5WPv1PP9zMhp7thyn4Audq9vjz7WEFvy6CHgw=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2e869cfe-424c-42c9-f355-08de68120c55
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Feb 2026 19:33:06.1039
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oymhgjfRbzAehacAm9gq8kbHH6giuoZ0Ozobv8N085+v9q6U6aNeNBTGZW61FAt9ZYow6pOi1x2ACTYgQEShVQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB4905
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-09_01,2026-02-09_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0
- malwarescore=0 phishscore=0 mlxscore=0 mlxlogscore=999 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2601150000 definitions=main-2602090165
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjA5MDE2NCBTYWx0ZWRfX+TJhdUcePi1J
- FL+aes4X5sJnZlmnem7/NDK8Wk78q7nEglb1LbTqTFMS0yilzRI1wVKUFpvAOV5ApvSWMymXdxb
- trKiGJDkTtkE7vJZ5CgCaHtPs9tj2AM9zUAA25P2wezcjs+nlEVw9TZtXZn/Tg86/7SyRfKWIUM
- ge9b4cB2wf7fK+pm2izlYmvbTS4Q0PXXsRJBZnAGC+WorYMMmU/a0oYZNhquNaPDr8YXWYaKC4K
- dlauPj46/hE3ARd4zzfqxh4yo/shci7AZAytYBNWIWvXEc4rOR4VOgshHK/fl7cvjRXPJ2NO2/q
- kc4cpjgf97/k2Xcrky3zxlOuLzV8aE+XjvB3sNYJjDnq76K0JsC/sQ2HbJY2KZPvtl9C7znFR9c
- qzkZc7p3bzjgsS4aeCATrCA6DBpAlUh0z6dmbDtjVBJAdccxINOb5GDt7+oK9z+LqcDWWMMLLAq
- NtCaCE5UElThCZvDuZQ==
-X-Proofpoint-GUID: tpVoO8aT7uIXfRk8VNdTtpNk-zWrVAmf
-X-Proofpoint-ORIG-GUID: tpVoO8aT7uIXfRk8VNdTtpNk-zWrVAmf
-X-Authority-Analysis: v=2.4 cv=KLNXzVFo c=1 sm=1 tr=0 ts=698a3693 b=1 cx=c_pps
- a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=HzLeVaNsDn8A:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22 a=yPCof4ZbAAAA:8
- a=MgI1wqV417GTJutfrhsA:9 a=CjuIK1q_8ugA:10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/6] lsm: Add LSM hook security_unix_find
+From: Tingmao Wang <m@maowtm.org>
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ Justin Suess <utilityemal77@gmail.com>, =?UTF-8?Q?G=C3=BCnther_Noack?=
+ <gnoack3000@gmail.com>
+Cc: John Johansen <john.johansen@canonical.com>,
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E . Hallyn" <serge@hallyn.com>,
+ linux-security-module@vger.kernel.org,
+ Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
+ Matthieu Buffet <matthieu@buffet.re>,
+ Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+ konstantin.meskhidze@huawei.com, Demi Marie Obenour <demiobenour@gmail.com>,
+ Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>,
+ Tahera Fahimi <fahimitahera@gmail.com>, Simon Horman <horms@kernel.org>,
+ netdev@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>
+References: <20260208231017.114343-1-gnoack3000@gmail.com>
+ <20260208231017.114343-2-gnoack3000@gmail.com>
+ <20260209.yeeh3ieDuz9u@digikod.net>
+ <a0ae82d6-8c9f-4b6d-9f7b-a6d38efbf80f@maowtm.org>
+Content-Language: en-US
+In-Reply-To: <a0ae82d6-8c9f-4b6d-9f7b-a6d38efbf80f@maowtm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-* Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [260122 16:06]:
-> Now we have eliminated all uses of vm_area_desc->vm_flags, eliminate this
-> field, and have mmap_prepare users utilise the vma_flags_t
-> vm_area_desc->vma_flags field only.
+On 2/9/26 18:33, Tingmao Wang wrote:
+> On 2/9/26 17:51, Mickaël Salaün wrote:
+>> On Mon, Feb 09, 2026 at 12:10:11AM +0100, Günther Noack wrote:
+>>> [...]
+>>> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+>>> index d0511225799b..db9d279b3883 100644
+>>> --- a/net/unix/af_unix.c
+>>> +++ b/net/unix/af_unix.c
+>>> @@ -1226,10 +1226,19 @@ static struct sock *unix_find_bsd(struct sockaddr_un *sunaddr, int addr_len,
+>>>  	if (!S_ISSOCK(inode->i_mode))
+>>>  		goto path_put;
+>>>  
+>>> +	err = -ECONNREFUSED;
+>>
+>> We don't see it in this patch but err is already set to -ECONNREFUSED.
+>> This line might be confusing, and unrelated to the goal of this patch,
+>> so we should remove it.
 > 
-> As part of this change we alter is_shared_maywrite() to accept a
-> vma_flags_t parameter, and introduce is_shared_maywrite_vm_flags() for use
-> with legacy vm_flags_t flags.
+> I will confess that in a side conversation with Justin previously I
+> suggested that for blocks like these it might be better to always assign
+> to err, and let the compiler optimize it away, so that when this block is
+> moved there is less chances of mistake.  (This was relevant in the
+> previous context where a move of this hook caused err to be reset,
+> resulting in a NULL deference from syzbot)
 > 
-> We also update struct mmap_state to add a union between vma_flags and
-> vm_flags temporarily until the mmap logic is also converted to using
-> vma_flags_t.
+> But of course if the convention in this file is to not do it, or if I have
+> missed some reason against doing this, then that's also fine (even though,
+> IMHO, personally I think this is better).
 > 
-> Also update the VMA userland tests to reflect this change.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+Actually, looking at this more carefully, Mickaël is right that this
+single line addition doesn't have anything to do with the patch itself
+(unlike in the diff in the other thread [1] where it is part of a moved
+block), so I guess it makes sense to not add this in this patch.
 
-> ---
->  include/linux/mm.h               |  9 +++++++--
->  include/linux/mm_types.h         |  5 +----
->  mm/filemap.c                     |  2 +-
->  mm/util.c                        |  2 +-
->  mm/vma.c                         | 11 +++++++----
->  mm/vma.h                         |  3 +--
->  tools/testing/vma/vma_internal.h |  9 +++++++--
->  7 files changed, 25 insertions(+), 16 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index e31f72a021ef..37e215de3343 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1290,15 +1290,20 @@ static inline bool vma_is_accessible(const struct vm_area_struct *vma)
->  	return vma->vm_flags & VM_ACCESS_FLAGS;
->  }
->  
-> -static inline bool is_shared_maywrite(vm_flags_t vm_flags)
-> +static inline bool is_shared_maywrite_vm_flags(vm_flags_t vm_flags)
->  {
->  	return (vm_flags & (VM_SHARED | VM_MAYWRITE)) ==
->  		(VM_SHARED | VM_MAYWRITE);
->  }
->  
-> +static inline bool is_shared_maywrite(const vma_flags_t *flags)
-> +{
-> +	return vma_flags_test_all(flags, VMA_SHARED_BIT, VMA_MAYWRITE_BIT);
-> +}
-> +
+Apologies for any conversation derailment caused here :)
 
-Confusing git diff here, but looks okay.
-
->  static inline bool vma_is_shared_maywrite(const struct vm_area_struct *vma)
->  {
-> -	return is_shared_maywrite(vma->vm_flags);
-> +	return is_shared_maywrite(&vma->flags);
->  }
->  
->  static inline
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index cdac328b46dc..6d98ff6bc2e5 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -887,10 +887,7 @@ struct vm_area_desc {
->  	/* Mutable fields. Populated with initial state. */
->  	pgoff_t pgoff;
->  	struct file *vm_file;
-> -	union {
-> -		vm_flags_t vm_flags;
-> -		vma_flags_t vma_flags;
-> -	};
-> +	vma_flags_t vma_flags;
->  	pgprot_t page_prot;
->  
->  	/* Write-only fields. */
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index ebd75684cb0a..6cd7974d4ada 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -4012,7 +4012,7 @@ int generic_file_readonly_mmap(struct file *file, struct vm_area_struct *vma)
->  
->  int generic_file_readonly_mmap_prepare(struct vm_area_desc *desc)
->  {
-> -	if (is_shared_maywrite(desc->vm_flags))
-> +	if (is_shared_maywrite(&desc->vma_flags))
->  		return -EINVAL;
->  	return generic_file_mmap_prepare(desc);
->  }
-> diff --git a/mm/util.c b/mm/util.c
-> index 97cae40c0209..b05ab6f97e11 100644
-> --- a/mm/util.c
-> +++ b/mm/util.c
-> @@ -1154,7 +1154,7 @@ int __compat_vma_mmap(const struct file_operations *f_op,
->  
->  		.pgoff = vma->vm_pgoff,
->  		.vm_file = vma->vm_file,
-> -		.vm_flags = vma->vm_flags,
-> +		.vma_flags = vma->flags,
->  		.page_prot = vma->vm_page_prot,
->  
->  		.action.type = MMAP_NOTHING, /* Default */
-> diff --git a/mm/vma.c b/mm/vma.c
-> index 39dcd9ddd4ba..be64f781a3aa 100644
-> --- a/mm/vma.c
-> +++ b/mm/vma.c
-> @@ -15,7 +15,10 @@ struct mmap_state {
->  	unsigned long end;
->  	pgoff_t pgoff;
->  	unsigned long pglen;
-> -	vm_flags_t vm_flags;
-> +	union {
-> +		vm_flags_t vm_flags;
-> +		vma_flags_t vma_flags;
-> +	};
->  	struct file *file;
->  	pgprot_t page_prot;
->  
-> @@ -2369,7 +2372,7 @@ static void set_desc_from_map(struct vm_area_desc *desc,
->  
->  	desc->pgoff = map->pgoff;
->  	desc->vm_file = map->file;
-> -	desc->vm_flags = map->vm_flags;
-> +	desc->vma_flags = map->vma_flags;
->  	desc->page_prot = map->page_prot;
->  }
->  
-> @@ -2650,7 +2653,7 @@ static int call_mmap_prepare(struct mmap_state *map,
->  		map->file_doesnt_need_get = true;
->  		map->file = desc->vm_file;
->  	}
-> -	map->vm_flags = desc->vm_flags;
-> +	map->vma_flags = desc->vma_flags;
->  	map->page_prot = desc->page_prot;
->  	/* User-defined fields. */
->  	map->vm_ops = desc->vm_ops;
-> @@ -2823,7 +2826,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
->  		return -EINVAL;
->  
->  	/* Map writable and ensure this isn't a sealed memfd. */
-> -	if (file && is_shared_maywrite(vm_flags)) {
-> +	if (file && is_shared_maywrite_vm_flags(vm_flags)) {
->  		int error = mapping_map_writable(file->f_mapping);
->  
->  		if (error)
-> diff --git a/mm/vma.h b/mm/vma.h
-> index bb7fa5d2bde2..062672df8a65 100644
-> --- a/mm/vma.h
-> +++ b/mm/vma.h
-> @@ -286,8 +286,7 @@ static inline void set_vma_from_desc(struct vm_area_struct *vma,
->  	vma->vm_pgoff = desc->pgoff;
->  	if (desc->vm_file != vma->vm_file)
->  		vma_set_file(vma, desc->vm_file);
-> -	if (desc->vm_flags != vma->vm_flags)
-> -		vm_flags_set(vma, desc->vm_flags);
-> +	vma->flags = desc->vma_flags;
->  	vma->vm_page_prot = desc->page_prot;
->  
->  	/* User-defined fields. */
-> diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_internal.h
-> index 2b01794cbd61..2743f12ecf32 100644
-> --- a/tools/testing/vma/vma_internal.h
-> +++ b/tools/testing/vma/vma_internal.h
-> @@ -1009,15 +1009,20 @@ static inline void vma_desc_clear_flags_mask(struct vm_area_desc *desc,
->  #define vma_desc_clear_flags(desc, ...) \
->  	vma_desc_clear_flags_mask(desc, mk_vma_flags(__VA_ARGS__))
->  
-> -static inline bool is_shared_maywrite(vm_flags_t vm_flags)
-> +static inline bool is_shared_maywrite_vm_flags(vm_flags_t vm_flags)
->  {
->  	return (vm_flags & (VM_SHARED | VM_MAYWRITE)) ==
->  		(VM_SHARED | VM_MAYWRITE);
->  }
->  
-> +static inline bool is_shared_maywrite(const vma_flags_t *flags)
-> +{
-> +	return vma_flags_test_all(flags, VMA_SHARED_BIT, VMA_MAYWRITE_BIT);
-> +}
-> +
->  static inline bool vma_is_shared_maywrite(struct vm_area_struct *vma)
->  {
-> -	return is_shared_maywrite(vma->vm_flags);
-> +	return is_shared_maywrite(&vma->flags);
->  }
->  
->  static inline struct vm_area_struct *vma_next(struct vma_iterator *vmi)
-> -- 
-> 2.52.0
-> 
+[1]: https://lore.kernel.org/all/e6b6b069-384c-4c45-a56b-fa54b26bc72a@maowtm.org/
