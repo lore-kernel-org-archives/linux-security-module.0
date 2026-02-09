@@ -1,209 +1,115 @@
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7644630F7E9
-	for <linux-security-module@vger.kernel.org>; Mon,  9 Feb 2026 21:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E1F30F93A
+	for <linux-security-module@vger.kernel.org>; Mon,  9 Feb 2026 21:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770672121; cv=none; b=r6IDYtyfYizqz2NtB37iauA375RLVPL46/B9TEOtA8K4Cm9vgQMvQg8zFBmKTrPT7s8ojW0d8ObD/ygrHqK89ZF25nteErLPtZA9e7nCI68v8u/Ab+gh4Qh8uDnl2WLM4gUBxJeGUDII+5o9/N2CgMRIdYl5+cZsPdFgalct1w4=
+	t=1770673533; cv=none; b=iIymfLBS7FMECeStWnioRTikZ9h/iDl/SLDQUjC//upPMg+wO0FaoKHNLzH13UIh3rfLowLSxxbifuoZd7YKlE2SQE0U46I06AZrNZwdXgLPo6eCHPTY5S11XSi+jK73fc/GlfkOzFyk4P4FaQbEKiz+db+Z9VCCfZvfMLt6oSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770672121; c=relaxed/simple;
-	bh=ztNZlDveaPUFY/UJADcT7rgx3Ng5Aaxpnl+M/Z3Ef+Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GSnZl+FfR8BGMAKGTasxmWJmZ8LN9Kb+MIP03LArM5ijQGKJFA9Ee8dUsBjAv+CnDS1fa7cHNIH19rHrMeeQPoruxeZq0F2cGph2kJO0W4lCrGU1GUgpW8heKojXJtHpeXA4C6ZbQz4655g79tbEMxeoDbY8bMPg67ktSLoTREk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=AdkOuKxV; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	s=arc-20240116; t=1770673533; c=relaxed/simple;
+	bh=GcmdybO0Jing3L0zpEkoP3KH3BMy5JxR2YEE7hU4y8g=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type:
+	 References; b=KNTrtY57QelpY0wvgMeM/k0g0FLn7QZVKJkey9B9r8fIWRNnrcGKjmttg/GKUGoypdmz8xa7nhZgjAtPpLf8EPtNBUav0+zSsPOtaL/sGPXcrPwaL7+1spDi+rDCqDt1wGel5JTlGI2Z7R7CNdkMkF7g6VaUeC3aV1YA2O5H+C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=pD6R3ufE; arc=none smtp.client-ip=66.163.187.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="AdkOuKxV"
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-4044854464fso3031667fac.3
-        for <linux-security-module@vger.kernel.org>; Mon, 09 Feb 2026 13:21:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1770672116; x=1771276916; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EEOdTViLab98einqbzjv+bLBxVlmu1ZicZOYO4doJ/M=;
-        b=AdkOuKxV/l1Cmjz1/n3r/3oBXUiNUVTkh6X8ih1Pop6/Tsq/w+gl6jvZ3Kw/35S6Xg
-         a2IcnySyTuFFoo5VIXn8W4umLNPePWhmpIlXD8SP5YnU+Y2L29nlWJuUg5VCPGHl8PhM
-         kPuUJMCqmIXvz/BvDAtrk+smBfGNVuP4KnDgZB7Yuzx6aeVGzX8XHDGdM1uQrtweBhnA
-         hXn1mqQIL0c0M81zb3WPzSknt+5GHJv1Bap65LiM/8UYL4ULmNqQy5NtgvHvmTkxfF5Y
-         7gimRU7WepRoQxMRiU/cpuebB+P8xudaUetb3FDIVQZEEoKRJXk4scbprhv8E/vdtK6b
-         2LuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770672116; x=1771276916;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EEOdTViLab98einqbzjv+bLBxVlmu1ZicZOYO4doJ/M=;
-        b=nHzhbHhSTddWkX0CmduvYLQfLpCFgU2TKGwlOnQXxCI4r6Falioi6tOcJxePpv21up
-         FnQ+jslcvvIUjhe493F9WdwGDW+pQN0Tet4qAlNRBuToKroSp/r2YvId3KfjCatrB3bp
-         ZRqzWVo0vbYzdqPXQjEmhnHfkPyMNKXHILNc1PiBevavWgUzv7OyVlPfsGDSYLIB4jjC
-         /R0qo+a8Zm+z2bEGZB/FRZxGARaZhwNiXqKXI3bKU1DJ7PhHE5LeNz0DdU5nTCw087fJ
-         ATyoEcA8VzU7KSDuxQcNZSk+opv/IRE8i+kv5NfFCOiQV2ITxw9a5PhYuTdVoVnbX66U
-         8zdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVoczlARyfVFzA7wbn7QhRZDEq+w8Mdfbv4HZbw1UO+jC++nHJ72NVgaJVvDk5hgQ5lHzOUt4xsTpmlYvE6RSl4gmBbxpc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOzA1dxNOW6RWOGw/NlqLnn40Vj6tmsytt/hPBe25C0RoQ7WqZ
-	VFlDBTlzTxIAVqJfHtxrhJiSDdDMLhTHLsKq67wdbkf3DbUckXyMc79K4M1EZuuQL6A=
-X-Gm-Gg: AZuq6aI4mtTk91Cn7jBYFTVM/SNCPQGEUXk0fYb1abv2SBGjNd/0DpQAs9oJntK8FCi
-	zAcdTIz7emcyW2x3HlbVcFv0ZJeXI7Moktw7CnPJQJHKV+sXWdgHA4haZVh30S765+77/Cj7dKA
-	ibbJ8LQ6HG4WJSWkAeHdMWvsqRutnz5yO2ub8JI5j4CAvahSMpQu79kUQOt5zf0DEna3CHveeOW
-	avx8gZvEU5f9pA8iVWzzIJEIIgk+qlCXBebTyRPV0Dg3sYJYU3BTgQktF94UL6eCENvu1mjyuT+
-	rxxz1h7sKMuCmJSe6JI5LELxH0bAj8/Iot7KmcVqkztT9xZY/YsBbzvRkRdceLV3gavZ3TT+mqp
-	lRhPFDyJwo/5Jd/kw5gk7B2GFl/Eczo9FNixUupeiRbR1asNZ7rqExxM2CCMShpJvEgVTtmi5Jg
-	==
-X-Received: by 2002:a05:6820:1689:b0:66e:d9c5:ad53 with SMTP id 006d021491bc7-66ed9c5b0b7mr3532440eaf.34.1770672116144;
-        Mon, 09 Feb 2026 13:21:56 -0800 (PST)
-Received: from [127.0.1.1] ([2a09:bac5:947d:1b37::2b6:46])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-66d390b935asm6591730eaf.5.2026.02.09.13.21.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Feb 2026 13:21:55 -0800 (PST)
-From: Frederick Lawler <fred@cloudflare.com>
-Date: Mon, 09 Feb 2026 15:21:50 -0600
-Subject: [PATCH v6 3/3] ima: Use kstat.ctime as a fallback for change
- detection
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="pD6R3ufE"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1770673528; bh=9D0DZb3VA4R2DIkRbb1/klD4uT/vz2/8iSPdu1LA3WU=; h=Date:To:Cc:From:Subject:References:From:Subject:Reply-To; b=pD6R3ufE+bWueIRBRF2r2v37pKMBSS5yduTxhqyUjZBoICmfxEYiRRSHM42bs41nZAx3CczBxXc4lDcm8WP8XUwIIk4qvXTm6zEfC/944kgEYLKCcIGkFdFt2WBp25loNC+G5BZsE177H311Z0QPVUhObEmldp5VDKppeYsrbJPzrgWP8GOGx+Kjhy8wKQoekXmh8DiHD764qBAMHVlkeVQoxQPP/Y/Ysi4YBA1yKaAMn+0YnbH5+eUhhBKXnXS3EhrfNVXqXwruU8vOI00DXKlkIO3dVy0HCOqprWkE3UkytIjbNFn/Ei53hU6hx+e9fZE2GzwRsdKgLRSQq+W8rA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1770673528; bh=gYmkZwc0Swb0mKVSmEGNcNzm9Bc+68pNMcV6inPdhSy=; h=X-Sonic-MF:Date:To:From:Subject:From:Subject; b=Mt8aHYQyN0ndYtJ5uUwFKyBeLvfLadG6QUdUKqMI9+g6Je0atLcrHXIaQRJsgtI1D4jGod5LO4HnFScv67UUdS+jxqwfdjqpvb2w+cCHWRdcnYbhBjnSKuKOBGNVWo+OPeJrmnDqZ1/GHv5MU4A0eTNiNLurzjcd/KZQPE+XrNRdJ9mAXf+louZRmea2PSGbCOI7H7GB2IhTL2Wdk53NJpTMn7qz7rrbQVfROElXRBXNWGM295pS4NbQJhQ1Sga74yMOpIezRG0mxiajHCuMu7nkeyrHuRvFSz5FW6iCwvy+0Y9bctiGaoF7JOMo4pefu5zDN0qe4pCKhijj5NVGiQ==
+X-YMail-OSG: gu_.Ia0VM1nIxG9dYCc2SPRPmeal69JrJpFKCLJXiw4P6sqVrPbXxGAduJwcw9o
+ fXQLqrjExJPH4RzgNuSWPul46EXTvZp2rhGzPeI6MOaOLeHJmnjiy_i6bfNw_ToSsnWDGJWT1nqf
+ .UGBMptXXFw9YL1sCAVjYQd54tT6ej6ocN20zkAnmnSTe7EwofB8kQMb0UrPWwMblZqJuI2xoZk4
+ VomLnmq9jEz2s6h._jfEuBcMVFU6txc.7nNVWEA9E9KUxjfZrGEEAuOXeRsPg2AthArMWC9ru507
+ U9sDk467c1pD.Nr1T95fHXN7QQf3Ylp8W3R7M0Ymf5BoBVUDhe3D6EzFqFan85jAemUNBOpM0vc1
+ BV61CRRRGadDAdckEnf2wf8VDN6blrVa4qHclP4xDeOjZ190kknITd1WKt1sM_AgAsGVocbZnHN1
+ 5M4b_rgrCp81wC0cA7P9vlaHFCofWmFlv5C3MAl8IZbaYGJbcb4NlE9zriNHKJJJUXRYJGQMVRfn
+ JO4Nx9qYLjm4ctD10CmVhWXZxKTnIoqf1jOQ6a2Jk.Mk9jTxQQ.KLIPyqnEQy8Jd5sXLX_uh0TC5
+ f9i7RF0HjCvRa.xGCcDOEdBoL3mjQmGkM1i9RNemRpClEq0YgQAXg3FIuB4c.7ZDik_cjU9Wk4Wq
+ WGzbWQ_cWSJtpenXotMroLupzHLWhDE2IhOAh4POEZHGtK5rrKQRY0RaECjtiX9FyffpwjtekwnC
+ C0.pQKEvgPAi1u8yTkKFBBmhs0oRG9_JT5OHwbQ_vzy7fgdQP7AMk6vCoAN82H78Ny9KOr6sosvN
+ 0.KYBqnZEQ9Jh.V2hE.JfpULjiVIVlIG62wzqBe26KuzS0G6b1bmhDKk1dPlYou.A90qg4DRl8St
+ V6ZopmLk5P5MPKH52xZYz1YRimgfHWKcQOzoozj2npvgS6JUzAAjHOkZlMcbmPZ6D5WJDmYzpe4w
+ VEDl5sk.IESIiJ.TzYIMf5Z0RxH_TUcp86mKAyFjkLtAiMvedbevb10gkMFBGgeRu68OoVU5fH5f
+ 1txQKlrIl20IeacTxbgSIp5dmDaCPB3wiMsX6D0KWSemLzg7VaH4KlkoO4VmebIBRwHXZNZe_4x0
+ b4QvQOOnGFylqt58JyiH.myZEYPZO6KbDzSOL4pZ3S8Og2O8UvtaiwbEBDD3LACMomJv4e0mz2W0
+ htU.BiO3_UQQ65p6P5GnyfidPyU4hIgkl5GiAXY9NSKIvUzQWo8LbuGajKIHlamekjzBvG4qBFJ9
+ PnPV6bXydSASejc2YdStbVpN4bF7666rlO0R2TPIkobhrnpXfq94XDtMkOyo9g7PrxVVvFtvvIb_
+ DVfLm3pe4gFSWy.kWmgzsmBR6_mHzZ.1Uk8vQHyQOeiq3lNeFHEUVWrpRBVueGoe3z1vBoB_gPqm
+ dlE8DL_VJaJNqAS51.AJOPXvbcnf9B3p4gNa_6B9pV_WH2qpaJDN6rdeti0aOtL2S0dZpAwID9Vr
+ kgPhg3K2osd.zSKSXrHEQ_eGjfJ_prjqXQiiEuuyu7xVeR.DqLqUtUp0hgwy90aVzZkjGsAH.gwA
+ t.pdMFtX8DEieZVWBviiI8ztRbd2AvDov4tBRyzP086vu_o6wPR8rXdJFLJyUsSUSo9Cs2KsOr.E
+ fFMkHGDCxs6RHdcWtSWLePK_AhiExFPPPG5IW983m4OZWshGT42qoFwWxY5bSf76Sjc0WcZzqFhy
+ KKzOegczfrlG81c4fb3I2q_j6f7wmaF1VuE7uN3cYtUpMHYbIEieYi4wOZ33L.kQ3wbf2hzz0En9
+ pZ8yZr2VNCxV.eJJ.wmiNGYldW.SyDzC1Fggyn0if7HW5De2O.MIXwe8IlTcySygjA_EDAIS70kD
+ 3GJyxhaLnvs5zbHcB.3CB9HldTSr.lclHtB3Ul1hdahptmSZdSsviGxPKooBNxeX6_EYQpZhZupw
+ ZJRk_HgHcIFNIA8ZyUc.u_sF2vhFb92JuKa2Aw2KOC2aEs64ZwsUU_r0Elos_9zHTV9grm7ZfDKA
+ rcbVv6mRa7FLHA2KZJCF5AY2NZJ420rIgYSN9lhjOW1GOQjPFeNqgWP0hqUqaTgDuDFEfu21M4Uv
+ CzSoItZ7EivLUYUFlgJK43TdHatNjUNC13BCl6SDiuc9WLBOlBumb8YhheuSxWyr29M6Uff.BkML
+ .dzExOIOOvnCVfgqhso0_wuB1Famd34G4RTMnzNtyE.faavq6PuayfnY3XJQsQPpLlbSJEFg5YRP
+ ybmF4AFVo.cGyOTB6E.VpONvlyw6ZrKRtK61vMp6Hmtgr6c664cojx_OjYzurW2vK6yyRKeGvwvI
+ nKOgjyHTgwMmghYlnCaNF65U-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: a9ed23c0-2c0b-4acd-868b-8376c2995044
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Mon, 9 Feb 2026 21:45:28 +0000
+Received: by hermes--production-gq1-86969b76cd-f7q7z (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d4a7a8fb6e72cdf9e3ce5a8c7b38cd51;
+          Mon, 09 Feb 2026 21:15:02 +0000 (UTC)
+Message-ID: <28dea16f-18c3-4a2f-821c-e85b660125ed@schaufler-ca.com>
+Date: Mon, 9 Feb 2026 13:15:00 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LSM List <linux-security-module@vger.kernel.org>,
+ Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+ Konstantin Andreev <andreev@swemel.ru>,
+ Taimoor Zaeem <taimoorzaeem@gmail.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Subject: [GIT PULL] Smack patches for 7.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260209-xfs-ima-fixup-v6-3-72f576f90e67@cloudflare.com>
-References: <20260209-xfs-ima-fixup-v6-0-72f576f90e67@cloudflare.com>
-In-Reply-To: <20260209-xfs-ima-fixup-v6-0-72f576f90e67@cloudflare.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, 
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
- "Darrick J. Wong" <djwong@kernel.org>, 
- Christian Brauner <brauner@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
- Jeff Layton <jlayton@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
- linux-security-module@vger.kernel.org, kernel-team@cloudflare.com, 
- Frederick Lawler <fred@cloudflare.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4301; i=fred@cloudflare.com;
- h=from:subject:message-id; bh=ztNZlDveaPUFY/UJADcT7rgx3Ng5Aaxpnl+M/Z3Ef+Q=;
- b=owEBbQKS/ZANAwAKAasltHYDktNtAcsmYgBpik/uqKQQioRcbHzyxd0bXzo3VM3vGk+7dbzuj
- N2KQ20tVoiJAjMEAAEKAB0WIQTLNBqMVmu1PHvjOe2rJbR2A5LTbQUCaYpP7gAKCRCrJbR2A5LT
- bdGoEADcOZn+QasfYluvP2C6autDQWR7y9dc4cDhBWt32bXHpyJE+6zt7qEk1qi8wunHSwImqOp
- cPfEAfzrZPvnY/6+himefudeSXKSR71TzZn1MbxL1FLxbnpxlYQpTCvKbWHzjz8Mo72wsVVbCYW
- OxTA5yU2K3v3Op4z7hRDfH+w1dBYF9lAtPTxX/1nr14Uqt1s5/7narziUiJb4enRb+xF0yM5VFz
- TheiRBJAJkdf8F/5gNPkQHYNteAQSJitZ1KziY9hQ1zHskQLpb1b1RBkIgMWs1UA9cePCgDfiXV
- 58g+Wv6aLuPkBQRARiWez5Rh7itkw1LSxW+8PAKVesMwWKMb6CQEYgDCjmI5dsUQ7BnTwWEpfUC
- wCa33F9VO4cFOn4dNS6Qtxc9/wpUCN3KYkId8XzXybAY3SYYj40By5w3noEPU+8rfHMvpMorApM
- RiDWXhQgTAbCpNrympaLOliuYUFrwwrgw1e5Uv3Dxn2ejjhgtILGrJKJ7wAsSUOKAsck2X1fYUD
- iyDG3gB3GpAXF4StVHmuA3rqeG4zaweq3Ir+al7LqzgLdicdK00NiQCALTHXYc+zJ7fqy/njV1b
- m2BWzyrqmNb83Bors9j0fl9KpcrECKm67FkcDfJnoObOYJ0tR2g++IkWwypLjAdYL9x+8fIaxT5
- PinBdX15AGcqMYQ==
-X-Developer-Key: i=fred@cloudflare.com; a=openpgp;
- fpr=CB341A8C566BB53C7BE339EDAB25B4760392D36D
+References: <28dea16f-18c3-4a2f-821c-e85b660125ed.ref@schaufler-ca.com>
+X-Mailer: WebService/1.1.25178 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-IMA performs unnecessary measurements on files in file systems
-that do not set STATX_CHANGE_COOKIE in the vfs_getattr_nosec()'s
-result mask.
+Hello Linus,
 
-Commit 1cf7e834a6fb ("xfs: switch to multigrain timestamps") introduced
-multigrain timestamps to XFS, and this made XFS no longer report an
-inode's i_version used by ima_collect_measurement() for change detection.
+Here is the Smack pull request for v7.0.
 
-Additionally, ima_check_last_writer() & integrity_inode_attributes_change()
-think there's a change for a file, when there may have not been.
+There's nothing exciting. Two improvements to the code for setting
+the CIPSO Domain Of Interpretation (DOI), a seldom used feature,
+and a formatting change. All tested and included in next for some time.
 
-Most file systems already use ctime for change detection, therefore, make
-IMA fall back to compare against ctime when a file system does not report
-an i_version to the kstat.change_cookie.
+The following changes since commit f8f9c1f4d0c7a64600e2ca312dec824a0bc2f1da:
 
-If neither fields are reported by vfs_getattr_nosec(), assume the file
-changed.
+  Linux 6.19-rc3 (2025-12-28 13:24:26 -0800)
 
-timespec64_to_ns() is chosen to avoid adding extra storage to
-integrity_inode_attributes by leveraging the existing version field.
+are available in the Git repository at:
 
-XFS is just one example. There may be more file systems that adopt
-multigrain timestamps in the future.
+  https://github.com/cschaufler/smack-next tags/Smack-for-7.0
 
-Link: https://lore.kernel.org/all/aTspr4_h9IU4EyrR@CMGLRV3
-Fixes: 1cf7e834a6fb ("xfs: switch to multigrain timestamps")
-Suggested-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Frederick Lawler <fred@cloudflare.com>
----
- include/linux/integrity.h         |  6 +++++-
- security/integrity/ima/ima_api.c  | 11 ++++++++---
- security/integrity/ima/ima_main.c |  2 +-
- 3 files changed, 14 insertions(+), 5 deletions(-)
+for you to fetch changes up to 33d589ed60ae433b483761987b85e0d24e54584e:
 
-diff --git a/include/linux/integrity.h b/include/linux/integrity.h
-index 382c783f0fa3ae4a938cdf9559291ba1903a378e..ec2c94907f417c4a71ecce29ac79edac9bc2c6f8 100644
---- a/include/linux/integrity.h
-+++ b/include/linux/integrity.h
-@@ -10,6 +10,7 @@
- #include <linux/fs.h>
- #include <linux/iversion.h>
- #include <linux/kernel.h>
-+#include <linux/time64.h>
- 
- enum integrity_status {
- 	INTEGRITY_PASS = 0,
-@@ -58,6 +59,9 @@ integrity_inode_attrs_stat_changed
- 	if (stat->result_mask & STATX_CHANGE_COOKIE)
- 		return stat->change_cookie != attrs->version;
- 
-+	if (stat->result_mask & STATX_CTIME)
-+		return timespec64_to_ns(&stat->ctime) != (s64)attrs->version;
-+
- 	return true;
- }
- 
-@@ -84,7 +88,7 @@ integrity_inode_attrs_changed(const struct integrity_inode_attributes *attrs,
- 	 * only for IMA if vfs_getattr_nosec() fails.
- 	 */
- 	if (!file || vfs_getattr_nosec(&file->f_path, &stat,
--				       STATX_CHANGE_COOKIE,
-+				       STATX_CHANGE_COOKIE | STATX_CTIME,
- 				       AT_STATX_SYNC_AS_STAT))
- 		return !IS_I_VERSION(inode) ||
- 		       !inode_eq_iversion(inode, attrs->version);
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index c35ea613c9f8d404ba4886e3b736c3bab29d1668..e47d6281febc15a0ac1bd2ea1d28fea4d0cd5c58 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -272,10 +272,15 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
- 	 * to an initial measurement/appraisal/audit, but was modified to
- 	 * assume the file changed.
- 	 */
--	result = vfs_getattr_nosec(&file->f_path, &stat, STATX_CHANGE_COOKIE,
-+	result = vfs_getattr_nosec(&file->f_path, &stat,
-+				   STATX_CHANGE_COOKIE | STATX_CTIME,
- 				   AT_STATX_SYNC_AS_STAT);
--	if (!result && (stat.result_mask & STATX_CHANGE_COOKIE))
--		i_version = stat.change_cookie;
-+	if (!result) {
-+		if (stat.result_mask & STATX_CHANGE_COOKIE)
-+			i_version = stat.change_cookie;
-+		else if (stat.result_mask & STATX_CTIME)
-+			i_version = timespec64_to_ns(&stat.ctime);
-+	}
- 	hash.hdr.algo = algo;
- 	hash.hdr.length = hash_digest_size[algo];
- 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 8cb17c9d446caaa5a98f5ec8f027c17ba7babca8..776db158b0bd8a0d053729ac0cc15af8b6020a98 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -199,7 +199,7 @@ static void ima_check_last_writer(struct ima_iint_cache *iint,
- 					    &iint->atomic_flags);
- 		if ((iint->flags & IMA_NEW_FILE) ||
- 		    vfs_getattr_nosec(&file->f_path, &stat,
--				      STATX_CHANGE_COOKIE,
-+				      STATX_CHANGE_COOKIE | STATX_CTIME,
- 				      AT_STATX_SYNC_AS_STAT) ||
- 		    integrity_inode_attrs_stat_changed(&iint->real_inode,
- 						       &stat)) {
+  smack: /smack/doi: accept previously used values (2025-12-30 12:17:15 -0800)
 
--- 
-2.43.0
+----------------------------------------------------------------
+Smack fixes for DOI specification.
+
+----------------------------------------------------------------
+Konstantin Andreev (2):
+      smack: /smack/doi must be > 0
+      smack: /smack/doi: accept previously used values
+
+Taimoor Zaeem (1):
+      security: smack: fix indentation in smack_access.c
+
+ security/smack/smack_access.c |  2 +-
+ security/smack/smackfs.c      | 79 +++++++++++++++++++++++++++----------------
+ 2 files changed, 51 insertions(+), 30 deletions(-)
 
