@@ -1,113 +1,118 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3276244665;
-	Mon,  9 Feb 2026 13:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A4C22B8BD;
+	Mon,  9 Feb 2026 14:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770644054; cv=none; b=fDKucmtPTsnP0aTXnIVn5aSNofGt8UocUDWSWGb+XWZ0ifxbq3wRkaJuxmimou0ek17NLq3TjUbYjA00N+P6/Qh/EqB5es/ecX7sdM+tRDP+qWtsGaZ+GMIr1F8IZz2npDky3C78k0WgS6zWA2cuISLdjThJRjmhH3hRtq86ufo=
+	t=1770645686; cv=none; b=rHeud/xV2aq0FVx8npXqUKx0wXPWzN3gKOlHbkXHiFiwfEcRxoBGbiv8S81Hp5QFsxuxTbnIS2Xs54okjDO4RiHYd2Lsy+ppFg8MS50K4mlwZkpGxskAOZCZBcS9J8pZXzjdvYxBDwLh5lWbITH1GHR99HvgQznupzycPsR1E0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770644054; c=relaxed/simple;
-	bh=IOCckDQmO3bCx6vIbKsdQfr+uc3RnkYrCh6Yh98UfAA=;
+	s=arc-20240116; t=1770645686; c=relaxed/simple;
+	bh=okR+EAtZhjqHaf6qo/7UrQbLty7TTHO1yWpP4wFCTMU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HXQoA2Dzz1AmrArXrWzIEOb5EUX+t9h/5Y866oJGh5pyAHEp2N4I8GCIVM5hV3HJFNqboc+Y9qqENpTG9bzCuLhACh6cI3pFPKvMbjkE+n5rzsPJvSO0h8ND6F4T954HXATHNoT1Ea0VMeJd8X9bhdfPzW22COSE7wMtHdY+8H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YlR9bj5Z; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1J7rxPcV; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ektc+xEXwultlHhwdBvfUzxsZNIYmMJlOPRBOc7uiqlAr+ghXJyIpBVIYd1Gdc37xuGx/ywKcFt835TIdDDrkw2scWC9rOeehKdM/pVLkDdBNpIZ5B5BtfBw/Y2yO6l4X75iD7eVbWo29zmlYR4SQceEf7XJW3l/hVDvYxgwErs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p5JHx7Pg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YlR9bj5Z";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1J7rxPcV"
-Date: Mon, 9 Feb 2026 14:34:09 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1770644051;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=60PQiy2iBpgFewxiruovzAslbmJSAAtPFOFOOiKjjPA=;
-	b=YlR9bj5ZIrN5Hl5gkUFTHUhbBNirduv8CgJZeENp11uU3U6thi6j/OtC/KQPAKc9QoY16b
-	iqhuyzi/b0ZQ7M7VUfUOm6xDjdKBiVAcL0NDslJlAhb3BeoAwDRRtJnPjGMbf1mFXVv7bt
-	NMrFeatDijOgXhtd0UkwblQQRQ31qH8+8sJoew6J5Wkmb20RAzlLTsuX1HheIftYOGQ2/H
-	DD0vYw+2DrYDfmR/vW+TfUOUQruDrKryktRtVAgS4glEN42/iCi7e94OG0AE7SlxspDuCq
-	Or+Gco28APE0lsa0wk71wKJNamcmGRe8DaKywyoaJhATqU9E7ZWe6UypX84Xbg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1770644051;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=60PQiy2iBpgFewxiruovzAslbmJSAAtPFOFOOiKjjPA=;
-	b=1J7rxPcVC/2n9mif2u5PsOumsh3UqugEaRYJHku7wMkXPEW7VFN4X8Fwwg9s/kVlJ7j0qj
-	wEPG5ci9hZIbMODg==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Eric Dumazet <edumazet@google.com>, 
-	Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
-	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	Matthieu Baerts <matttbe@kernel.org>, Mat Martineau <martineau@kernel.org>, 
-	Geliang Tang <geliang@kernel.org>, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-api@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-kselftest@vger.kernel.org, 
-	mptcp@lists.linux.dev, linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
-	libc-alpha@sourceware.org, Carlos O'Donell <carlos@redhat.com>, 
-	Adhemerval Zanella <adhemerval.zanella@linaro.org>, Rich Felker <dalias@libc.org>, klibc@zytor.com, 
-	Florian Weimer <fweimer@redhat.com>
-Subject: Re: [PATCH net-next v2 0/4] net: uapi: Provide an UAPI definition of
- 'struct sockaddr'
-Message-ID: <20260209143003-80d3cb63-38c6-4280-a319-ee6879eeab11@linutronix.de>
-References: <20260120-uapi-sockaddr-v2-0-63c319111cf6@linutronix.de>
- <20260121192729.2095aa25@kernel.org>
- <20260130112309-28f2645b-e756-4173-96da-cf5c59191520@linutronix.de>
- <20260130081741.425a92e0@kernel.org>
- <3c46fc49-b41b-44a2-b42a-669cc7e6bb02@linutronix.de>
- <20260131092517.6639d84c@kernel.org>
- <20260203122715-eeb304f9-4b42-4fc6-a527-658182a92ba5@linutronix.de>
- <20260203144011.32d5b223@kernel.org>
- <20260204064248-d9c4ab78-f6d4-4ac6-8d55-e939bc1df6d2@linutronix.de>
- <20260204175516.4fb11966@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p5JHx7Pg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AEC7C116C6;
+	Mon,  9 Feb 2026 14:01:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770645685;
+	bh=okR+EAtZhjqHaf6qo/7UrQbLty7TTHO1yWpP4wFCTMU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p5JHx7Pglta9XrUEaylUygInEiRiWXmfPPLfeI2KtvQbPYTnk4Ro1akxcHmoMu4xu
+	 a3rPUUA06pM1HLn+V8WQmnrtQB3P/O/mPbO7svaVwr5hwKY91nd8iaoeZcKL0PSYvB
+	 ut9T4TmWe70bsxgxDMg1lC3+qiXmrWOT8+pcw35qxrX2NW3EMRbCFe3XN0iH833rRv
+	 xDj19Jt4Du8LUu5kMl2q2uMOa7u+B42cNl0palnEv8OpSkyp8BO3Bqg7TfHnVeK8Xf
+	 ZCY4/xPIoJbBLVieSTAXEiUcphSRlerLDo70TWnv+PIZ+a8heIljkD/SQF3Dx85r+v
+	 uJaMv5Xr/qy/A==
+Date: Mon, 9 Feb 2026 15:01:20 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: danieldurning.work@gmail.com
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, paul@paul-moore.com, 
+	stephen.smalley.work@gmail.com, omosnace@redhat.com, Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [RFC PATCH] fs/pidfs: Add permission check to pidfd_info()
+Message-ID: <20260209-spanplatten-zerrt-73851db30f18@brauner>
+References: <20260206180248.12418-1-danieldurning.work@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260204175516.4fb11966@kernel.org>
+In-Reply-To: <20260206180248.12418-1-danieldurning.work@gmail.com>
 
-On Wed, Feb 04, 2026 at 05:55:16PM -0800, Jakub Kicinski wrote:
-> On Wed, 4 Feb 2026 06:51:46 +0100 Thomas Weißschuh wrote:
-> > > make -j16 O="$kobj" INSTALL_HDR_PATH="${kobj}/hdr" headers_install
-> > > popd
-> > > 
-> > > pushd uapi
-> > > find . -type f -name '*.h' -exec cp -v "${kobj}/hdr/include/{}" {} \;  
-> > 
-> > Here only those headers which already exist in ethtool's uapi/ directory
-> > are copied. As linux/typelimits.h is new, it is now missing.
-> > Honestly, if a user fiddles with the internals of the UAPI headers like
-> > this, it is on them to update their code if the internal structure
-> > changes. In your case a simple 'touch uapi/linux/typelimits.h'
-> > before running the script will be enough. Also internal.h now requires
-> > an explicit inclusion of <limits.h>, as that is not satisfied by the
-> > UAPI anymore.
+On Fri, Feb 06, 2026 at 06:02:48PM +0000, danieldurning.work@gmail.com wrote:
+> From: Daniel Durning <danieldurning.work@gmail.com>
 > 
-> Hopefully you understand that while due to uapi header copy this is not
-> a huge issue for ethtool itself, but it is a proof that your changes
-> can break normal user space applications which do not vendor in uapi.
+> Added a permission check to pidfd_info(). Originally, process info
+> could be retrieved with a pidfd even if proc was mounted with hidepid
+> enabled, allowing pidfds to be used to bypass those protections. We
+> now call ptrace_may_access() to perform some DAC checking as well
+> as call the appropriate LSM hook.
+> 
+> The downside to this approach is that there are now more restrictions
+> on accessing this info from a pidfd than when just using proc (without
+> hidepid). I am open to suggestions if anyone can think of a better way
+> to handle this.
 
-A regular application which uses a full UAPI headers tree will get
-access to the new header automatically.
-If the application uses symbols from <limits.h> without including <limits.h>
-on its own, it is broken.
+This isn't really workable since this would regress userspace quite a
+bit. I think we need a different approach. I've given it some thought
+and everything's kinda ugly but this might work.
 
+In struct pid_namespace record whether anyone ever mounted a procfs
+with hidepid turned on for this pidns. In pidfd_info() we check whether
+hidepid was ever turned on. If it wasn't we're done and can just return
+the info. This will be the common case. If hidepid was ever turned on
+use kern_path("/proc") to lookup procfs. If not found check
+ptrace_may_access() to decide whether to return the info or not. If
+/proc is found check it's hidepid settings and make a decision based on
+that.
 
-Thomas
+You can probably reorder this to call ptrace_may_access() first and then
+do the procfs lookup dance. Thoughts?
+
+> I have also noticed that it is possible to use pidfds to poll on any
+> process regardless of whether the process is a child of the caller,
+> has a different UID, or has a different security context. Is this
+> also worth addressing? If so, what exactly should the DAC checks be?
+
+Oleg and I had discusses this and decided that such polling isn't
+sensitive information so by default this should just work and it's
+relied upon in Android and in a bunch of other workloads. An LSM can of
+course restrict access via security_file_ioctl().
+
+Fwiw, pidfds now support persistent trusted extended attributes so if
+the LSM folks wanted we can add security.* extended attribute support
+and they can mark pidfds with persistent security labels - persistent as
+in for the lifetime of the task.
+
+> Signed-off-by: Daniel Durning <danieldurning.work@gmail.com>
+> ---
+>  fs/pidfs.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/fs/pidfs.c b/fs/pidfs.c
+> index dba703d4ce4a..058a7d798bca 100644
+> --- a/fs/pidfs.c
+> +++ b/fs/pidfs.c
+> @@ -365,6 +365,13 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
+>  		goto copy_out;
+>  	}
+>  
+> +	/*
+> +	 * Do a filesystem cred ptrace check to verify access
+> +	 * to the task's info.
+> +	 */
+> +	if (!ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS))
+> +		return -EACCES;
+> +
+>  	c = get_task_cred(task);
+>  	if (!c)
+>  		return -ESRCH;
+> -- 
+> 2.52.0
+> 
