@@ -1,91 +1,133 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5121366541;
-	Mon,  9 Feb 2026 10:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D7336657E
+	for <linux-security-module@vger.kernel.org>; Mon,  9 Feb 2026 10:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770631413; cv=none; b=KTy+0V7q1pl83F5MtYReYmiV1uBMNt1IAvMb4m9fEKf52hxE5i1+XaWSc+q4vWnwEAjAYsA0sQ0356auB4NtdxsyhF++onPwkiCA+NviogXgrIMI6nJuM7b3QTw/4R6uP+kGyzkC681BaQFh4MK2GdvaotcJHlt59KkwK5Q0dDI=
+	t=1770632528; cv=none; b=FN0Fkphs4nisheIs9Hofwlj9/Q7rOJ01GrNDNPm1eol5yiWV3cP3ux8TFJboH2u2BjgCUNlxb8zuuQJ+1mYOybWLa42/24UxShSCdVItWYHOHfo/LOA4r0eXG+o8VcEJmKzzZ5VG16CQKvwb51/WTmXzzByDIIAleskzSv6tSlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770631413; c=relaxed/simple;
-	bh=WjbpcBJrTCw2VxKXHrEc6wUoh07yU+yuSD46xsD9lLs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cIJ653M6qxWs1l+2ItFRVQ9qqFN4QzU5Z8BIqK8UEM10Qx5W9Z+sUhNpi50DfrzQe4GlcKwQ60AOFk3t6jvnUjBaOE7mb2784caI4ZaCTvZlE4xcI6YiLTAkL4qrNRDjvao1jcNoXG4UI0oSPRVG6U5eAUEpNQhzv7PKpyRJqvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 619A2tgd071551;
-	Mon, 9 Feb 2026 19:02:55 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 619A2l00071490
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 9 Feb 2026 19:02:55 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <85546d35-c7bd-49bf-b0c3-9677bde25859@I-love.SAKURA.ne.jp>
-Date: Mon, 9 Feb 2026 19:02:47 +0900
+	s=arc-20240116; t=1770632528; c=relaxed/simple;
+	bh=N/IJ2YhBVRuUBX2vGlG8H7nT9U7UFqA3Y0xSF4QOEa8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zyw6EDoFEc4eSKTYQrAakIDQwdOEKSFSTZ3aAveqX0MUTY1+Wrw1ACObhxjYRkwTHCgf5EFNkphH/SIY5JTaFrKZhKjDxnPQVMUlmJTU1JGP20LD3aR8kYlXthn/O7Bv3G3y8XXrjbEc3EfZorIeFuoGBFgu3YTquE7ZwR2muy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b0XEbI47; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b0XEbI47"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-483487335c2so961045e9.2
+        for <linux-security-module@vger.kernel.org>; Mon, 09 Feb 2026 02:22:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1770632526; x=1771237326; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8s8+jDHB5/f0Kr0A+HA1lYqLhHagDgFiiZqavCArg+M=;
+        b=b0XEbI47itrWfbtN72ZiykXIRvllOZPYcYKRp5HY9cuMYGDmOhFnYvCHqYdrG8xC46
+         gZNuyUTLNyAKdx6an7McXsgjfQEU+Yn5QW26H8DxeP+017SxPGGCpMnKabyb/22z8C6d
+         ND1mNWbhcGtMZb+sADiJamYGhtx8sNgy6C9A+JW9JOq9H5TjRMHMvblFrjqZzywEb/3h
+         FNR296G/2yv22EQR0mNKS5bpnkRhYxYlbnJ8zRPLEv2XoS87gSINfLu2OA/GXaqT2a4t
+         kWceENacSBe7zfNzORJqAJHulilCfvEMs+LkONy5UL9nKZaoOjmm+AXUL6GPnNVMJebR
+         K+zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770632526; x=1771237326;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8s8+jDHB5/f0Kr0A+HA1lYqLhHagDgFiiZqavCArg+M=;
+        b=VswMakJltxd+j4+oHiMUJfdytCp5ZKjmfoDA5pNqB5TNvjSPB8/gkTPAoE9W3BjB4E
+         3KZmtgdCF4ypkcbhu5IEHwXIMgYe0ETm3vSr/vQ934ZwAFdQgii4i1Jzo1RYuEtGYpTf
+         V9gPx5ywHZDdTivUPCWATYfo8BlFt9ENtgWCLeRXgp8JLV3+1nckU1zuVVkpNrCOw2E4
+         B2MbGln8RiSkM1pPcbArlul62dVTNJROTkkDLyj0BlMHd5EAS5DlO/hCQPmrZxEGFaX9
+         niPw2kwX3Ypb/oKW2A2F1bRIVaTs3c6BbgvTmM82kAERkKYJC/nauxZkQJrqDvH0IYfs
+         v4hg==
+X-Forwarded-Encrypted: i=1; AJvYcCX83RL1Y4y+LJ8sKs10suD5BIsrPBjA5sv/qcw5KOgkSL8zRHSxgQSkZY0clstw0I8eiefQ1+oRXgN6XtExfwbh+P55wIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMZUqVOYIURqoKFaaZg5GRU9tCJVQe30OUTfTXDyEZj4NBZFgD
+	90EmgyVcr8gzCMNgR4g7HCQMYQOQh3FWUhTHfu+E9hK2YvTndGIiEKsJXdPIadi6rg==
+X-Gm-Gg: AZuq6aIHjFoVz54VW3NFEjbzawvTRDuKqbICv/wIJOuWW7Sp/2zYJqAYAi49fXwxRK0
+	UmrOnRv8wtw//epIyvB9rMJUjYTFHGPoyquvlJXTqldNlK+S4zI2L9nLmoTnUN5r4gtmBmHrQnQ
+	hYNF5cAzt6FfQcY8rLUBAUQ4ibirWS/WOTUqCLOQlt0z/FBxewZUH7oMRPEhcTqWxfs5mB5t3RS
+	sG5mjvPFj3EQ2DPnQgG8ZAA9sorQqHl3eua/quLuttEwJ4wvDXPdf+XlakvpCkFSyJiffAoHZDc
+	W42y/svVOE144/qg4gk6zLXtDk7JtywAlydzKBUyA9VSwYQAlzIa9oLmzApIT1MnCw28Yvg0EJK
+	7s/j+jYsFj6Vo69y57Urt3tdQ1lAW2CRfzTcBt/uQ6EQluMuGkoIP6ECxIziV9o7l+kM7pXVbwX
+	Ze/EoPIVM3UHQjDcjncWynBFAMBO9lzLBT5s2FTkwU
+X-Received: by 2002:a05:600c:8207:b0:480:4d39:84b3 with SMTP id 5b1f17b1804b1-48320928e6emr139665015e9.6.1770632525984;
+        Mon, 09 Feb 2026 02:22:05 -0800 (PST)
+Received: from google.com ([2a00:79e0:288a:8:4691:a1a:ffd3:5695])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4376accfc0bsm11101819f8f.32.2026.02.09.02.22.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Feb 2026 02:22:05 -0800 (PST)
+Date: Mon, 9 Feb 2026 11:21:57 +0100
+From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	John Johansen <john.johansen@canonical.com>,
+	Tingmao Wang <m@maowtm.org>, Justin Suess <utilityemal77@gmail.com>,
+	Jann Horn <jannh@google.com>, linux-security-module@vger.kernel.org,
+	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
+	Matthieu Buffet <matthieu@buffet.re>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	konstantin.meskhidze@huawei.com,
+	Demi Marie Obenour <demiobenour@gmail.com>,
+	Alyssa Ross <hi@alyssa.is>, Tahera Fahimi <fahimitahera@gmail.com>
+Subject: Re: [PATCH v4 2/6] landlock: Control pathname UNIX domain socket
+ resolution by path
+Message-ID: <aYm1RWtV6Af-zEHf@google.com>
+References: <20260208231017.114343-1-gnoack3000@gmail.com>
+ <20260208231017.114343-3-gnoack3000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xfrm: kill xfrm_dev_{state,policy}_flush_secctx_check()
-To: Steffen Klassert <steffen.klassert@secunet.com>,
-        Paul Moore <paul@paul-moore.com>, SELinux <selinux@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-        Network Development <netdev@vger.kernel.org>
-References: <00ed59a3-a9c9-47c3-97da-5a8e3da1ea82@I-love.SAKURA.ne.jp>
- <CAHC9VhQq6jY63kYEQCp2t89Vv+_PDqv54RV6TO_TePDQyU6Vug@mail.gmail.com>
- <1bb453af-3ef2-4ab6-a909-0705bd07c136@I-love.SAKURA.ne.jp>
- <CAHC9VhQEKfxXzFgYShojESpQn10LES5zL6Ua0YV9b8seEKFqyA@mail.gmail.com>
- <93d291db-4175-48c4-830c-e83bab373ae2@I-love.SAKURA.ne.jp>
- <CAHC9VhQPKU5DqG-ryZsiCV2vZeGGf_a-JStR_LVVCCn03C4usQ@mail.gmail.com>
- <f9b88268-03dc-4356-8b31-0bab73cc9b1e@I-love.SAKURA.ne.jp>
- <CAHC9VhRzRAR+hhn4TFADnHWpzjOxjmh0S_Hg_HktkPkKQ35ycg@mail.gmail.com>
- <74a70504-8ff8-4d97-b35f-774364779889@I-love.SAKURA.ne.jp>
- <7ef21dab-3805-4eae-80d7-9779aeff3f58@I-love.SAKURA.ne.jp>
- <aYmoDwO-YXrc4W1c@secunet.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <aYmoDwO-YXrc4W1c@secunet.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav304.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260208231017.114343-3-gnoack3000@gmail.com>
 
-On 2026/02/09 18:25, Steffen Klassert wrote:
-> The problem is that, with adding IPsec offloads to netdevices, security
-> critical resources came into the netdevices. Someone who has no
-> capabilities to delete xfrm states or xfrm policies should not be able
-> to unregister the netdevice if xfrm states or xfrm policies are
-> offloaded. Unfortunately, unregistering can't be canceled at this stage
-> anymore. So I think we need some netdevice unregistration hook for
-> the LSM subsystem so it can check for xfrm states or xfrm policies
-> and refuse the unregistration before we actually start to remove
-> the device.
+On Mon, Feb 09, 2026 at 12:10:12AM +0100, Günther Noack wrote:
+> +static int hook_unix_find(const struct path *const path, struct sock *other,
+> +			  int flags)
+> +{
+> +	const struct landlock_ruleset *dom_other;
+> +	const struct landlock_cred_security *subject;
+> +	struct layer_access_masks layer_masks;
+> +	struct landlock_request request = {};
+> +	static const struct access_masks fs_resolve_unix = {
+> +		.fs = LANDLOCK_ACCESS_FS_RESOLVE_UNIX,
+> +	};
+> +	int type = other->sk_type;
+> +
+> +	/* Lookup for the purpose of saving coredumps is OK. */
+> +	if (flags & SOCK_COREDUMP)
+> +		return 0;
+> +
+> +	/* Only stream, dgram and seqpacket sockets are restricted. */
+> +	if (type != SOCK_STREAM && type != SOCK_DGRAM && type != SOCK_SEQPACKET)
+> +		return 0;
 
-Unfortunately, unregistering is not always triggered by a user's request. ;-)
+FYI: This is a (highly speculative) safeguard, because these three
+socket types are the only ones that exist in AF_UNIX (compare unix(7),
+2nd paragraph).
 
-For example, we don't check permission for unmount when a mount is deleted
-due to teardown of a mount namespace. I wonder why you want to check permission
-for unregistering a net_device when triggered by a teardown path.
+In the (highly unlikely) case that someone adds a fourth AF_UNIX
+socket type, this means that Landlock will start permitting
+connections to these sockets unconditionally.
 
-> 
-> The same happened btw. when xfrm was made per network namespace.
-> Here we just leak the xfrm states and xfrm policies if some
-> LSM refuses to remove them.
-> 
-> I guess we need a solution for both cases.
+I am unsure whether the safeguard is useful, or whether we should
+rather group that (highly unlikely) future socket type together with
+the existing ones.  *If you have opinions, I'd be interested.*
 
-Is replacing the NETDEV_UNREGISTER net_device with the blackhole_netdev applicable
-( https://elixir.bootlin.com/linux/v6.19-rc5/source/net/xfrm/xfrm_policy.c#L3948 ) ?
-If no, there is no choice but break SELinux's expectation.
+The fact that these are the only existing AF_UNIX socket types is also
+the reason why it does not matter that we are now (in v4) taking the
+type value from the server-side sk instead of the client socket.  The
+check will either way always pass as long as only these three types
+are the only ones.
 
+For now (and probably for another few decades :)), as long as these
+are the only AF_UNIX types, it does not make a difference though
+whether the check is there or not.
+
+—Günther
