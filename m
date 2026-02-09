@@ -1,99 +1,91 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC85628B4E2
-	for <linux-security-module@vger.kernel.org>; Mon,  9 Feb 2026 09:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5121366541;
+	Mon,  9 Feb 2026 10:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770630481; cv=none; b=qcVkI1kt8uQDbuY6esN93Z13yomcK6ro9f1KJVb8HbdtV3wjSAv2vSwqCIPMUqdik0E8N2J17OoxMEG39JeAFeakvnJVfinb3oOk+uP3dr6COKmC782ZJZ4P5Dm4KyUu9l9yFW/1xxEtjq07MPCXjaO2SVlIQEOeupPZjbX4dwg=
+	t=1770631413; cv=none; b=KTy+0V7q1pl83F5MtYReYmiV1uBMNt1IAvMb4m9fEKf52hxE5i1+XaWSc+q4vWnwEAjAYsA0sQ0356auB4NtdxsyhF++onPwkiCA+NviogXgrIMI6nJuM7b3QTw/4R6uP+kGyzkC681BaQFh4MK2GdvaotcJHlt59KkwK5Q0dDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770630481; c=relaxed/simple;
-	bh=fpPZz7nXNtaA4yT1Wp1apXuthf8RXpr5RMHJiJT5B0Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YTwDY0xsultAbXwtbTclVpWztO3JMW/PTUQA1ZqVPQn+wIBcne2RPckR/0KQ6NK3U5+E9uv9Ps/3j2XqiCgNyE0HvBbRiZlEOpiQeSjAk6fyX6R4/w+gfISbXCAFgLp33hE0zTGlHKm//JQHtxlsIvQSiEMB7VKYcPssenDH5BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0NIsXqT9; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0NIsXqT9"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-48334ee0aeaso10547155e9.1
-        for <linux-security-module@vger.kernel.org>; Mon, 09 Feb 2026 01:48:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1770630479; x=1771235279; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SVb3ihhQrL0ye7IASHBk+YcT/LYft5g2Zpw+ktRPLGI=;
-        b=0NIsXqT9tDoTLOKHxdO6j8oYu8RGFu8GxmrLMdxxaqUZdQLkp179ZHNMqTqUMbz1b4
-         R/xG76T2Ef3BCF48zn2BPDwqnU8TWzL30Ov78RvyKI2DEFRKwdVVtfYoq1snfTakrJ7I
-         aUeqXpLqbf6dwnPM/SOAmkk8Vnm4t6htB8Aex65U6fYy8GxgGKzbfbHI1J2+YZ2qsQUw
-         wNL8gWxbaPfir2IOtTt9IarYKyrF4gJjVMI61dre4Wk/511PpaZVUa17kEQ6XM6JlxiJ
-         lkciYrKJMjonk41zEuCjl6clweUDDSDJZm8jO2Ft+6VDFdLFomJ51D4Ok1ID/VD2vB/i
-         H3NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770630479; x=1771235279;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SVb3ihhQrL0ye7IASHBk+YcT/LYft5g2Zpw+ktRPLGI=;
-        b=GTmyPe29onY6bd9QhSeQ3P8BdU/8gKu8w2dGgdVQI66bhIbEeWH5VEdM5Zim8Kq//c
-         +P9zShMlZqtl4N3bcKWFI66PXCUSYXORTWaACiMdkBKNWIErJ0Xv6150ikL8tBvmTHMo
-         Q58DjbfrYw1mjpCedBrvkM17d6Kc3Dxd3ZiJ5vfJ1fmlN0QfB2s6PVGdfKFxpDUUW56j
-         Bx4gvdE9nQYiQNwxqgQ7xxlV+drD/0SRUSv/t09oBFpds57e2UJkE2LbyyM0aDWIY2ZQ
-         F1mqErEBsDnn2DidftI+7dV1mJ7BeJ4s1WQPvAQAYstYy+6IW3qhH75Xd1HFdy4pFdxK
-         BOEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWhfe5Wo2mVDP/ipbAysJsRX7TLRSMTXFnGUTa7iVrkjTq5r7Wa674eGhDjv2z63V0pPHUrzlgNJ+XCcUmPCCv8vW+XDkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/cCKrPkF7ib0Tvgk+SXnM9a461vTa7PDhf5iurhWrHqfG+L4p
-	dgsFRxuHWDkOpDm3ZjVIGNW6THiSlBNhnbEZoY6uvSRomyF3Sl04MB9t4+p5WUX8tS0WkxGzKsY
-	9V5Z9QBMi
-X-Gm-Gg: AZuq6aLdLWSM+rz4cKhpy/Qeh3Tem/kflhTWdktHs9CUwNmRb/sanh3fiwxUEA+4OR7
-	5lyo5bee6kW3KWUsG0OHGLtPkhtLZITHcb9fBVHoCluqzKv1p7+kXOWGA1ldMRdsf2C47jVGqhg
-	9eXAbb83wPzbfJ4eR4Ovc2tfc+D+YN8mMk3/GNs7xiBe80ud04FNjwOIRPlWaQzeQ78gMOHAdrN
-	uLZoTpn9mt/6JbOe9ZQnvpc58qgQmWYaqTTv2TyklEkSIBbPmOtwXmtjBVgV5iw0cZvuC4+phn4
-	2H9tnfam6k4lbmWSnCLy7PmAXyT1HqxbA5akLQCslA7sCYZRTL6+U84qBdsoKj5X1A6KXH06jkt
-	P0bRgpkS6xUbBEcMuJH4eox14y/XfkW1umzfEZ6x3aOLzSko5jyMPRvx1D0mJmbqbZ4Gl1fLr3t
-	qKkuqXzvsMHFsb/za1hIIUtBU6yV1pvt14c+iM+OfF
-X-Received: by 2002:a05:600c:3e18:b0:47e:e952:86ca with SMTP id 5b1f17b1804b1-483381e473dmr61917825e9.2.1770630478937;
-        Mon, 09 Feb 2026 01:47:58 -0800 (PST)
-Received: from google.com ([2a00:79e0:288a:8:4691:a1a:ffd3:5695])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-436296b25d5sm26361145f8f.2.2026.02.09.01.47.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Feb 2026 01:47:58 -0800 (PST)
-Date: Mon, 9 Feb 2026 10:47:52 +0100
-From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: Tingmao Wang <m@maowtm.org>
-Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] landlock: Add counted_by and fix comment in
- landlock_ruleset
-Message-ID: <aYmtSHwoCdcek4Ev@google.com>
-References: <20260208235449.1124354-1-m@maowtm.org>
+	s=arc-20240116; t=1770631413; c=relaxed/simple;
+	bh=WjbpcBJrTCw2VxKXHrEc6wUoh07yU+yuSD46xsD9lLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cIJ653M6qxWs1l+2ItFRVQ9qqFN4QzU5Z8BIqK8UEM10Qx5W9Z+sUhNpi50DfrzQe4GlcKwQ60AOFk3t6jvnUjBaOE7mb2784caI4ZaCTvZlE4xcI6YiLTAkL4qrNRDjvao1jcNoXG4UI0oSPRVG6U5eAUEpNQhzv7PKpyRJqvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 619A2tgd071551;
+	Mon, 9 Feb 2026 19:02:55 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 619A2l00071490
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 9 Feb 2026 19:02:55 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <85546d35-c7bd-49bf-b0c3-9677bde25859@I-love.SAKURA.ne.jp>
+Date: Mon, 9 Feb 2026 19:02:47 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260208235449.1124354-1-m@maowtm.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] xfrm: kill xfrm_dev_{state,policy}_flush_secctx_check()
+To: Steffen Klassert <steffen.klassert@secunet.com>,
+        Paul Moore <paul@paul-moore.com>, SELinux <selinux@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+        Network Development <netdev@vger.kernel.org>
+References: <00ed59a3-a9c9-47c3-97da-5a8e3da1ea82@I-love.SAKURA.ne.jp>
+ <CAHC9VhQq6jY63kYEQCp2t89Vv+_PDqv54RV6TO_TePDQyU6Vug@mail.gmail.com>
+ <1bb453af-3ef2-4ab6-a909-0705bd07c136@I-love.SAKURA.ne.jp>
+ <CAHC9VhQEKfxXzFgYShojESpQn10LES5zL6Ua0YV9b8seEKFqyA@mail.gmail.com>
+ <93d291db-4175-48c4-830c-e83bab373ae2@I-love.SAKURA.ne.jp>
+ <CAHC9VhQPKU5DqG-ryZsiCV2vZeGGf_a-JStR_LVVCCn03C4usQ@mail.gmail.com>
+ <f9b88268-03dc-4356-8b31-0bab73cc9b1e@I-love.SAKURA.ne.jp>
+ <CAHC9VhRzRAR+hhn4TFADnHWpzjOxjmh0S_Hg_HktkPkKQ35ycg@mail.gmail.com>
+ <74a70504-8ff8-4d97-b35f-774364779889@I-love.SAKURA.ne.jp>
+ <7ef21dab-3805-4eae-80d7-9779aeff3f58@I-love.SAKURA.ne.jp>
+ <aYmoDwO-YXrc4W1c@secunet.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <aYmoDwO-YXrc4W1c@secunet.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav304.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Sun, Feb 08, 2026 at 11:54:48PM +0000, Tingmao Wang wrote:
-> For a domain, this array stores the access masks for each layer (of
-> which there are num_layers of them).  For an unmerged ruleset, we have
-> one "layer", and one element in this array.  This annotation serves as
-> useful documentation.
+On 2026/02/09 18:25, Steffen Klassert wrote:
+> The problem is that, with adding IPsec offloads to netdevices, security
+> critical resources came into the netdevices. Someone who has no
+> capabilities to delete xfrm states or xfrm policies should not be able
+> to unregister the netdevice if xfrm states or xfrm policies are
+> offloaded. Unfortunately, unregistering can't be canceled at this stage
+> anymore. So I think we need some netdevice unregistration hook for
+> the LSM subsystem so it can check for xfrm states or xfrm policies
+> and refuse the unregistration before we actually start to remove
+> the device.
+
+Unfortunately, unregistering is not always triggered by a user's request. ;-)
+
+For example, we don't check permission for unmount when a mount is deleted
+due to teardown of a mount namespace. I wonder why you want to check permission
+for unregistering a net_device when triggered by a teardown path.
+
 > 
-> This also removes a comment saying that num_layers = 0 for unmerged
-> rulesets, which is incorrect (it is 1).
+> The same happened btw. when xfrm was made per network namespace.
+> Here we just leak the xfrm states and xfrm policies if some
+> LSM refuses to remove them.
 > 
-> Signed-off-by: Tingmao Wang <m@maowtm.org>
+> I guess we need a solution for both cases.
 
-Reviewed-by: Günther Noack <gnoack@google.com>
+Is replacing the NETDEV_UNREGISTER net_device with the blackhole_netdev applicable
+( https://elixir.bootlin.com/linux/v6.19-rc5/source/net/xfrm/xfrm_policy.c#L3948 ) ?
+If no, there is no choice but break SELinux's expectation.
 
-Thank you for fixing this! We should use these bounds check macros
-wherever we can, IMHO.  Removing the remark about num_layers=0 is also
-correct.
-
-—Günther
