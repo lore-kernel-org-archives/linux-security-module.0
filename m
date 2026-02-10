@@ -1,76 +1,71 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769F0327BFB
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Feb 2026 17:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518AF264617
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Feb 2026 17:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770743777; cv=none; b=VnaXeZjEqOtNi1ru99pPY+4xiJisxdPjUa/L2XUyrkoGcW6v/73UqpYjichicKH9euLLG0aYL/1An0qQnFx02QyInQXjRTBPLb6OQgB83PYRSu3SeSpX+50CsKWczbZEAfhgd0WDciSeC0AfHJ7wodRPYNl8mIj0gwQiKUogTew=
+	t=1770744130; cv=none; b=CyP7VWzbtKOSbYAAVyfmLQKaHq5LTfp8k3aQLziDiA2AanxcADgp1TP8cjsHinLAVz3xtkgsX0fy3We12bdez+6UUWo5ZEAC/VVt5v1sDJ1ZovnN6IBlsruQrexMVYzkyH+GmwDg9yMwLcUlxqKLBZI1zCJzLPp/gNC1Fkp5PXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770743777; c=relaxed/simple;
-	bh=nUcnFETHII0E5rlg2qpCCtkxf6FnxvfXs8nFpP50wMY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kkg0UOji/f4GnOuXB3r9mIn+0JPMsK2GF7ygULvaBydDkhHf97durmdeoZrJvb9PDP+lJ04+kx3E4Sc+hsvdgk/FXnLjCuokdN2TuqClZiw9isWCAEpiL7vRQqWohu8g+CypWQ98k/HjwfHdB/spu+R5jSdvVnXGesoWTUJMg6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h2jqyD92; arc=none smtp.client-ip=209.85.221.47
+	s=arc-20240116; t=1770744130; c=relaxed/simple;
+	bh=gWT4iOROf15CZJ5Sk6yDjnw+ATYS+WUDC3ZRm1W2sjM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eUVCBZ/Q/IzElWUZnFRZRu0spL79GShAADmM8OvfBtvXFWXmPSibUcNoEkz+RFC68SHp4kSAJ3FC578vrBVLrUE420yhYbzn+/LVOfRtHSI8feUVMESJkdzOIRvQrTb1IZwMLZLhfBXj40Pks/VsosmieQexMyirU7CTwzyDcx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G4DukseK; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h2jqyD92"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4359228b7c6so2886603f8f.2
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Feb 2026 09:16:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G4DukseK"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47ee07570deso40126175e9.1
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Feb 2026 09:22:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770743775; x=1771348575; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AMHj8ip2bDcru9Om4PYAVrUfxZXZ6ZycN6CABi5KwTU=;
-        b=h2jqyD92Ra8faD6auyClFadlmMNYFfuYKbq3/CbTPhkEeMXeRlL9/poPeuIN4RGD7n
-         NGrBjYelTgon6c/R9rWQ1eKu8vCAcTtg4/eTOOgclzdHoO3wV68wlIqD1R9SFyOmOyqW
-         LaGT58+pvFCxte/UP5deMmDvb0FF7veVIZh6PhoiIcwnqPGy4C6e1fkY/MccnrY/MELY
-         iqczI9zmHq3zp9+iJVfW3ZtNG53YvdxtSu3eDWxPy/kM4Ycva6W9G6mWxo+r1eUiL4G9
-         RJZZGUhS3+AB9LmEe1e7T7LrwFkXVJzw2oVlF7r07E6gP6w0/Yxx4AqGeDDmHPKqmBwJ
-         dpCA==
+        d=gmail.com; s=20230601; t=1770744128; x=1771348928; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SmyYHYkCf6isXqHI8LRLyQfyBIoea8jRfojSGa+OYoI=;
+        b=G4DukseKKQ6QqWqv8roY1RbtfXE7We4sVMR4l1nnQqrFchfj5U+v/Kg1ThvLdhZkVT
+         zRpR0L5N78iBNl5+S9asKc0I4ixvU9jvjHw/CVOBZWT+2jdssLYMdSdF8JISoruKcC9H
+         G507c+78sn6HXvxYl78pH6o5YWe6beS/PzxKMO8o0P5MoGcg3+wCCOA39q69AF8RPedG
+         4QOUHmgpYWrLifnCjCAVG1qwUwykUjgIhJtQwnWlf3UtihmyK1gyjNBSSqgeaZQNTcY1
+         rURk1bvQhcf3XV1RpTXAwgONhotsL6vHwkCvDjwzial08L3LGn5n/yn8E/e2TVndUa3j
+         ja+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770743775; x=1771348575;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=AMHj8ip2bDcru9Om4PYAVrUfxZXZ6ZycN6CABi5KwTU=;
-        b=c/j++2UcIkcRAJ0peiqSV8bKB3lq9Ya71OzXN8XqUQkA5AsI6/pvuRPkkna2ZX+6hx
-         X6uvSZrMLK8B+PjkMZMyA+f01TgUKmrx4A9vhfmMkLVK+kpjXmFJ8u/IOj/BPbKf+YIX
-         3hw6Dbbp4EX0yWZh9uUzOVYVpyiqamrEml3XrtR1lxmTATeA7/+VTHlP/Bck8gJU0Kjn
-         /W50akOlqmIyNEKRTktxzo1KuGn4CoOQTnHNx8PjVv4l7Bnjj2jGrM6ivm2Il5ayRn1H
-         ExWa52wKtFVkSDylM+ipNsw8FJTHl02Y82kIc8EXjKKD01gqzroN1lUrFRd+ROWQS1zS
-         LL9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVESvU0F6kHcRqtlx6RV689v1MIl/+ykbQOivmxmP9h4c0JuerfSa8QkSl/KzFPep7lXFLlKDPqaCbrKEMubCjafKs4z7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHpxTZ+JPMx0unKXtB66v1PWTwJl1G+76VDZh7o15pNjWUICDc
-	iir+8DzIzzrjYh46Do1IAHUd3XUnI4KrhUC592EoDb0BBa68I4XkkcoY
-X-Gm-Gg: AZuq6aJXinEpAUasMCzUyED6ZOFqZYstKtHEFzEDnGtSk8l/zs6M60tXkJgsqOxhkmw
-	DvIcb2cTQX6Qt6AQ/1u0mfdBzEVG1haFooPT/ZYXLdnz/+2aQY8YGPoAZ+/XTFTGE6LvaSQeRLH
-	Ix1mM5IkgeeZIOk/1ViD3cIcpXsnMxhmhokuko4IxyqsaFzHDdLSEZ7a21weQFe/CtGj2bnjAzZ
-	y3L+Uomnyw2QxSfnowNjerhOtaEuJaJTLYYHBbMtkZIOODnrp99kZZlhWGWA9ZhHUkdCIbs46WO
-	NtoahMt3a3BRVZvfTlJr2cQs/nzetF6T8VFqI+Pg0rqalg98CgftfAOHDuag3/R2zve2Hhck9xZ
-	ueMLmbMgXPn/pMGAYcZcTq09LdzfxHJbvNJrDvViF5J+muIH2dbMfjvr39XstBRmsA2kbDmrWzA
-	SfWBh6ZT+IQ6zHulrgqBDzBbhrV0jgB36/BRYxE0ITpHOZ/+JB+dTThRjh3h4Gtw==
-X-Received: by 2002:a05:600c:6290:b0:47e:e78a:c834 with SMTP id 5b1f17b1804b1-48320226676mr252050135e9.34.1770743774563;
-        Tue, 10 Feb 2026 09:16:14 -0800 (PST)
+        d=1e100.net; s=20230601; t=1770744128; x=1771348928;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SmyYHYkCf6isXqHI8LRLyQfyBIoea8jRfojSGa+OYoI=;
+        b=Rq7eCjUWsqAZ+UjWi+dW7D2ArcYP9PLSQXUPle7RBdETXaYn8dGSJebg4YNCokis8b
+         4+kt+5d7GGPENzjNY66h15SQLpxOYfbe1FdPw/KS/F7YzUxyqVU1/MqznqvlaGDf7hgS
+         oDUCStLGR5OnqfTGCTJwzHB+0ymC9ZmE4T/ELIpYE5f/xRX9NMjMKOrdyAjL/5eKZTSk
+         rG5GU07+LMQnneGsjSjITs2SA9x2BKgWOZSyDum3ifElckKqaV7RweUBgjpz/9uBmxRa
+         wMqwq5iS89QhG43JBN5iV1BE0slQRUPywzKXbmRFPAmANlFkkysPrIQJ1/uJaGytDI+5
+         /KJg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXU14D3pvMaz1K2ZMFILGWMAf8JdoDEZQT7Q4w7Dt1XkaXJSTM3hS1vmi6L+0vUgpDqJQmmg4YhPllooC/vvDk7f7vCeQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLl1laxDvlfLQZUt2rOwX0IHeeNH9dtxfb156opRGl/LtvO6cg
+	v3HmbowYx8Z6DcLNjhwTgsYY1fiHra7FQheQJMzmPYRHNC8Gxz+RH/tO
+X-Gm-Gg: AZuq6aJGLA0VE6zTB2oasxF4LjvYn/uLjrkDDP8My4VsSbfOEKgT/8IRiRKs+M28kxo
+	fUvGDlBSZvjzMxeez0a/kr2gsis6X83nzEDNsbHSq8gUwzxuX9wLdRlTzH/vpWwljjSznPc56GH
+	XbXQYWsomvHdlhWC11bcwSyS4AE9FyZGRZlU7Gn/hpPpY3aDcn47yU7P5obTk83LRW/f4T7lOKL
+	j5U9wqsdqGDOcgoncGAjnM8NqPM4eZu9bA1maTu371sZHBxXpyIBek8VfuJYn+sTQlXAwImGW8q
+	sDgs7NKBB+ccpDj6QAxcFA42Q8A3lvbWh6IZObWhwjA4hBEAn8RUElA3Omz8tfw3G3c+bIgPs/f
+	qCz8kk+2Mw+Q6kfKbvOxEMu9I7JiuaF9555ITj8h/0UR/mNZHNI4JGkNrLCugNdVHmhYsma8M9G
+	KSwFk2AuKlWGl2khiYOi45EYITb24F+YTigBh+zYo2XIlaJxx/oR142ERpPfpcNg==
+X-Received: by 2002:a05:600c:8116:b0:480:1c10:5633 with SMTP id 5b1f17b1804b1-4832021c74cmr239650605e9.26.1770744127455;
+        Tue, 10 Feb 2026 09:22:07 -0800 (PST)
 Received: from geekom-a8 (net-93-66-82-32.cust.vodafonedsl.it. [93.66.82.32])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4834d7f1e4fsm97562565e9.15.2026.02.10.09.16.14
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4834d480530sm118237175e9.0.2026.02.10.09.22.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Feb 2026 09:16:14 -0800 (PST)
+        Tue, 10 Feb 2026 09:22:07 -0800 (PST)
 From: Massimiliano Pellizzer <mpellizzer.dev@gmail.com>
 To: john.johansen@canonical.com
 Cc: apparmor@lists.ubuntu.com,
 	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	dan.carpenter@linaro.org,
 	Massimiliano Pellizzer <mpellizzer.dev@gmail.com>
-Subject: [apparmor][PATCH] apparmor: fix signedness bug in unpack_tags()
-Date: Tue, 10 Feb 2026 18:15:38 +0100
-Message-ID: <20260210171538.534950-1-mpellizzer.dev@gmail.com>
+Subject: [apparmor][PATCH] apparmor: fix incorrect success return value in unpack_tag_headers()
+Date: Tue, 10 Feb 2026 18:21:24 +0100
+Message-ID: <20260210172159.535137-1-mpellizzer.dev@gmail.com>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <aYmsYRgv3VClpkjX@stanley.mountain>
-References: <aYmsYRgv3VClpkjX@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -79,39 +74,33 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Smatch static checker warning:
-    security/apparmor/policy_unpack.c:966 unpack_pdb()
-    warn: unsigned 'unpack_tags(e, &pdb->tags, info)' is never less than zero.
+unpack_tag_headers() returns `true` (1) on success instead of 0.
+Since it's caller unpack_tags() checks the return value with
+`if (error)`, a non-zero success value is incorrectly treated as
+a failure, causing tag header unpacking to always even if the data
+is well-formed.
 
-unpack_tags() is declared with return type size_t (unsigned) but returns
-negative errno values on failure. The caller in unpack_pdb() tests the
-return with `< 0`, which is always false for an unsigned type, making
-error handling dead code. Malformed tag data would be silently accepted
-instead of causing a load failure.
-
-Change return type of unpack_tags() from size_t to int to match the
-functions's actual semantic.
+Change the success return in unpack_tag_headers() from `true` to 0.
 
 Fixes: 3d28e2397af7 ("apparmor: add support loading per permission tagging")
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
 Signed-off-by: Massimiliano Pellizzer <mpellizzer.dev@gmail.com>
 ---
  security/apparmor/policy_unpack.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-index e68adf39771f..dc908e1f5a88 100644
+index dc908e1f5a88..221208788025 100644
 --- a/security/apparmor/policy_unpack.c
 +++ b/security/apparmor/policy_unpack.c
-@@ -835,7 +835,7 @@ static int unpack_tag_headers(struct aa_ext *e, struct aa_tags_struct *tags)
- }
+@@ -825,7 +825,7 @@ static int unpack_tag_headers(struct aa_ext *e, struct aa_tags_struct *tags)
+ 	tags->hdrs.size = size;
+ 	tags->hdrs.table = hdrs;
+ 	AA_DEBUG(DEBUG_UNPACK, "headers %ld size %d", (long) hdrs, size);
+-	return true;
++	return 0;
  
- 
--static size_t unpack_tags(struct aa_ext *e, struct aa_tags_struct *tags,
-+static int unpack_tags(struct aa_ext *e, struct aa_tags_struct *tags,
- 	const char **info)
- {
- 	int error = -EPROTO;
+ fail:
+ 	kfree_sensitive(hdrs);
 -- 
 2.51.0
 
