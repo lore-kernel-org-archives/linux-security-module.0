@@ -1,174 +1,116 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78814329E5E;
-	Tue, 10 Feb 2026 22:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099702288CB
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Feb 2026 23:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770761219; cv=none; b=VkivzxSeD/FBY7uy7+tSI9oBUhXd0aquTPlvAKWyn2j5N84MMQ7nRW7UDLT8xV/WCjbJ6WXqF97VztbbTsLY4iv2S5ASRLCZd+XoYebm4qXKuHW7MipPAo/e6hIwd9BoksAyQLADrWWelb+7ZBVLdVzYu5RpC+reuo0aAWqf1OU=
+	t=1770764658; cv=none; b=pXDrdEAnx88ilJbb9T1zjsrqCfJbnMWOA6WUyWxuRMkU1MCLdt3LTAqt/Nkd88BwCz7EVtPQeygZmwqj6ndGbzeeoOTP5TiPLrGmLM3hOkm3EPYJYcswNgxcwlCqlRwrd2JDap1w3MyhAv6FCCkJ8pCWeDZ8CXlBNL0pgbVcWEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770761219; c=relaxed/simple;
-	bh=GHjBK14iI14LKxd0WXRzuEG6VOkqTcV6Qap9Mnri8Wo=;
+	s=arc-20240116; t=1770764658; c=relaxed/simple;
+	bh=3/GZ9NBzTd5IHqG7cl0sPpOFpf06ERzklsy67cpYPvI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fXwhy+YQeY5LvC1kfHmrdZuOPzQ23kS9UxwxTZ6j0AGvUMvbhgW2KX5Vh3vP84FfG2NLkjNHIRP+uZtLhoLA7qTStw2tIyP0A5fxzQ8hklbd+TBilsDDd2Mr7+Ty51v671VLdnoZ6dBFUN+8oBmgLaLh/RT7071hF3WBSLr2VsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pyhWRwyX; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZWQfSQ2unNgT4XZ3oda8UpTI8GstngFFcMSWlxGM6288v2jJi9dfZkTGuAyY9TF+WeLEPFbYAtFKRmbO48qTECBr3CGRBsUP6I92+xSQBjTZ01MOdBOas/OQVnHYxwCKCFNitz93JHGM2HBgivZBJY/qfqXOcCZbPVRxtkeilEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nBhR2Tyo; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pyhWRwyX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFC61C116C6;
-	Tue, 10 Feb 2026 22:06:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770761219;
-	bh=GHjBK14iI14LKxd0WXRzuEG6VOkqTcV6Qap9Mnri8Wo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pyhWRwyXyDGrNQoAP4gxP0oS3EbDgUPSuFLEXp7uV2z9D3FnJm6c362Y0iygQGCBJ
-	 vI4wvCnU5i0FNNYKHwOEsE+x+nk6nkV+2SFTHuZBEijMdNoNVfBiNSMkUbs9Zmgfy4
-	 bAhjsqmtqtEcbvNuc12/nl+0QE2/Rz+3w4kDl+TVrZKPfDh85Qpd2tIVE/HS0fSC4p
-	 /SGcsxc5kBV/rZH9lJiTuVgR0XMEMWv0LPJYjZqJmjL6+SrHbTWgbcP03IGm3+f5h9
-	 4hvBGbSuT/6TcSI2ogcPOSiYGhmlwsQKYLgKxVg2xTHYuf99VITFOb6AC3BVd8QPNJ
-	 6bRzBxVYfcQ6Q==
-Date: Tue, 10 Feb 2026 23:06:55 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-Cc: Xiu Jianfeng <xiujianfeng@huawei.com>, Alyssa Ross <hi@alyssa.is>, 
-	Heinrich Schuchardt <xypron.glpk@gmx.de>, David Howells <dhowells@redhat.com>, 
-	linux-security-module@vger.kernel.org, linux-man@vger.kernel.org
-Subject: Re: [PATCH] man/man7/kernel_lockdown.7: remove Secure Boot untruth
-Message-ID: <aYurp8P0HLVdpIir@devuan>
-References: <20260203195001.20131-1-hi@alyssa.is>
- <aa62e24c-537e-4141-9507-37cd0af19dfc@huawei.com>
- <aYYP23WUyydsMGyx@archlinux>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nBhR2Tyo"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47ff94b46afso3171615e9.1
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Feb 2026 15:04:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770764655; x=1771369455; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+PWTFGKfCLdKtEfJkYntBGZoHOl0ouI8SBj5Paa8dlU=;
+        b=nBhR2TyoT7p9iOdn765sNe1Mowdjtm0uI/m7outSzHq/yajYbMaK81daibdKJm8toq
+         z66Fm0tbWXmT3z/ByJ0aSI2n31dpLe/Ev/q3FNc/dO53E80lvgV1W2wgCCz9H1iAQSFM
+         DeJ02JP4IrEULijXcYcB5p/kO+KBE1w2rtlCtaiFJg+KNiZMrLdYfkD2MSykFT6OmIJv
+         91YoTqxuR6msCKX57cbnEO2jHjrL+vWy4FdTaJKKsjCSjV2Uls2reaJUHy20VajRSV8R
+         0lxbeiaeGLXwFJJ2X0bYZ0TH7gtGtV1NycIV6Z/E7AbjYjgkXWQUo1pNg2xKYWlNx6J4
+         BKgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770764655; x=1771369455;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+PWTFGKfCLdKtEfJkYntBGZoHOl0ouI8SBj5Paa8dlU=;
+        b=E7DW+cZgoyB1bcW3AWFnluucZdSCaU8ysUXCpYXC3AYQaDzi+alXLVSOauINPctPma
+         9/lpaZrSLIprxJhKp7kLHDNpeRwSaUYyGnLll0Hje1FnsxmVDooB/uCsKoYImqglY3H/
+         fr24ZaAPzW3Zb/xJyWeq5YMFKEzMDeoJ4JFEUG5a/sRjuW064dE5uIeBaNtLcL90HJWC
+         Jr0V/mihiBjCOt+cvfWlE90t5s+fmS5qMfHoVKEgNT6xrYKKk2135AkS33pUiwtkZqlV
+         sF6fBQb+M5giy4rW7KEvECBrP+wivzgetAfkE83g0f55/vRXIh0sSF65M9eEQJlSinw7
+         YzGg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAPKvSr5taKkM6/mg73jn4JAPFxjpMHV/BCNuMhGsn6SO0qgXQC3gjCugSNoTP9BFQ+LPabiSxUjB194jDrjrla966vio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIvSWaYZ0KQwwhgdaQ6jNkDZQtKeDW+ihZhvO9iha2/NXDxfVQ
+	gQXlo97sn0HPKhmI4qFNaYBscYlulCFkP+4Ku4owQJA0bGCIyk0/ET8x
+X-Gm-Gg: AZuq6aIF479JFMiFDXthn7stw4GN/5YydRE/SbgyRd0EJqse1wKe4VeazWGqDtAVxdb
+	7+yM+9aOr30MrnRyRIplGPFkrE3bCje0jVHnQ+ACnasWJGjfbwMYHHROk5q0M9Nv1Foav3L9aox
+	YSHkyut3o2pjp7gIjlBjXh4Keg9eq6NW5YHh5bw21KWXW694+YNCrOHUzjO0SWxTgB/lZ1ZjFEy
+	JX+2V9vDokEvXOrRwx8o4Z9zEab4QKTQZeFGh4eBxpPkC1qXyUp1KSzvQP6dKs4gJAOUiNAgQCn
+	jqEC70+vgpc5V1XjeGdVbz5IJSaC38nWv5zTNvOj6RgJZxMcV4VIDCP7ZZbcHTgBtOlH2XK58oo
+	Ig+iX37ccq1CM5q+3lwlLTjEDo/p12U0OfLzwpVm+YL3+1iWfVDNjc06UrfbPAi15uNBlA4QE50
+	+sIbGHfaLgDN2zRf3O08Za4wM9S9PcF/QDyWXybUOVX0HSaspR
+X-Received: by 2002:a05:600c:548f:b0:475:ddad:c3a9 with SMTP id 5b1f17b1804b1-483505451c0mr55269645e9.13.1770764655050;
+        Tue, 10 Feb 2026 15:04:15 -0800 (PST)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4834d5d8f2csm140814575e9.1.2026.02.10.15.04.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Feb 2026 15:04:14 -0800 (PST)
+Date: Wed, 11 Feb 2026 00:04:13 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: Justin Suess <utilityemal77@gmail.com>
+Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	John Johansen <john.johansen@canonical.com>,
+	Tingmao Wang <m@maowtm.org>, Jann Horn <jannh@google.com>,
+	linux-security-module@vger.kernel.org,
+	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
+	Matthieu Buffet <matthieu@buffet.re>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	konstantin.meskhidze@huawei.com,
+	Demi Marie Obenour <demiobenour@gmail.com>,
+	Alyssa Ross <hi@alyssa.is>, Tahera Fahimi <fahimitahera@gmail.com>
+Subject: Re: [PATCH v4 2/6] landlock: Control pathname UNIX domain socket
+ resolution by path
+Message-ID: <20260210.9d416a5f954e@gnoack.org>
+References: <20260208231017.114343-1-gnoack3000@gmail.com>
+ <20260208231017.114343-3-gnoack3000@gmail.com>
+ <aYm1RWtV6Af-zEHf@google.com>
+ <c060c613-146e-49eb-b9d8-da28cbb680f7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vystg5wpjhghqurs"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aYYP23WUyydsMGyx@archlinux>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c060c613-146e-49eb-b9d8-da28cbb680f7@gmail.com>
+
+On Mon, Feb 09, 2026 at 08:11:18AM -0500, Justin Suess wrote:
+> On 2/9/26 05:21, Günther Noack wrote:
+> > On Mon, Feb 09, 2026 at 12:10:12AM +0100, Günther Noack wrote:
+> >> +	/* Lookup for the purpose of saving coredumps is OK. */
+> >> +	if (flags & SOCK_COREDUMP)
+> >> +		return 0;
+> if (unlikely(flags & SOCK_COREDUMP))
+>     return 0;
+
+Done.
 
 
---vystg5wpjhghqurs
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-Cc: Xiu Jianfeng <xiujianfeng@huawei.com>, Alyssa Ross <hi@alyssa.is>, 
-	Heinrich Schuchardt <xypron.glpk@gmx.de>, David Howells <dhowells@redhat.com>, 
-	linux-security-module@vger.kernel.org, linux-man@vger.kernel.org
-Subject: Re: [PATCH] man/man7/kernel_lockdown.7: remove Secure Boot untruth
-Message-ID: <aYurp8P0HLVdpIir@devuan>
-References: <20260203195001.20131-1-hi@alyssa.is>
- <aa62e24c-537e-4141-9507-37cd0af19dfc@huawei.com>
- <aYYP23WUyydsMGyx@archlinux>
-MIME-Version: 1.0
-In-Reply-To: <aYYP23WUyydsMGyx@archlinux>
+> >> +
+> >> +	/* Only stream, dgram and seqpacket sockets are restricted. */
+> >> +	if (type != SOCK_STREAM && type != SOCK_DGRAM && type != SOCK_SEQPACKET)
+> >> +		return 0;
+> if (unlikely(type != SOCK_STREAM && type != SOCK_DGRAM && type != SOCK_SEQPACKET))
+>     return 0;
 
-Hi all,
+Not applicable any more, as I dropped the check per Mickaël's review
+in the adjacent mail (I do not think it makes a big difference either
+way, TBH.)
 
-On 2026-02-06T17:08:35+0100, Nicolas Bouchinet wrote:
-> On Thu, Feb 05, 2026 at 07:48:02PM +0800, Xiu Jianfeng wrote:
-> > On 2/4/2026 3:50 AM, Alyssa Ross wrote:
-> > > This is true for Fedora, where this page was sourced from, but I don't
-> > > believe it has ever been true for the mainline kernel, because Linus
-> > > rejected it.
-> >=20
-> > Yeah, I also found this issue not long ago, but I haven't had time to s=
-ubmit
-> > a fix patch yet.
-> >=20
-> > >=20
-> > > Link: https://bbs.archlinux.org/viewtopic.php?pid=3D2088704#p2088704
-> > > Link: https://lore.kernel.org/lkml/CA+55aFzYbpRAdma0PvqE+9ygySuKzNKBy=
-qOzzMufBoovXVnfPw@mail.gmail.com/
-> > > Fixes: bb509e6fc ("kernel_lockdown.7: New page documenting the Kernel=
- Lockdown feature")
-> > > Signed-off-by: Alyssa Ross <hi@alyssa.is>
-> >=20
-> > I am not sure if appropriate to add my ACK here, if needed, feel free to
-> > add:
-> >=20
-> > Acked-by: Xiu Jianfeng <xiujianfeng@huawei.com>
-> >=20
->=20
-> You can also add mine too :
->=20
-> Acked-by: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-
-Thanks!  I've applied the patch.
-
-    Link: <https://bbs.archlinux.org/viewtopic.php?pid=3D2088704#p2088704>
-    Link: <https://lore.kernel.org/lkml/CA+55aFzYbpRAdma0PvqE+9ygySuKzNKByq=
-OzzMufBoovXVnfPw@mail.gmail.com/>
-    Fixes: bb509e6fcbae (2020-10-16; "kernel_lockdown.7: New page documenti=
-ng the Kernel Lockdown feature")
-    Signed-off-by: Alyssa Ross <hi@alyssa.is>
-    Message-ID: <20260203195001.20131-1-hi@alyssa.is>
-    Acked-by: Xiu Jianfeng <xiujianfeng@huawei.com>
-    Message-ID: <aa62e24c-537e-4141-9507-37cd0af19dfc@huawei.com>
-    Acked-by: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-    Message-ID: <aYYP23WUyydsMGyx@archlinux>
-    Cc: Heinrich Schuchardt <xypron.glpk@gmx.de>
-    Cc: David Howells <dhowells@redhat.com>
-    Cc: <linux-security-module@vger.kernel.org>
-    Signed-off-by: Alejandro Colomar <alx@kernel.org>
-
-
-Have a lovely night!
-Alex
-
->=20
-> Thank you in advance,
->=20
-> Nicolas
->=20
-> > > ---
-> > >   man/man7/kernel_lockdown.7 | 3 ---
-> > >   1 file changed, 3 deletions(-)
-> > >=20
-> > > diff --git a/man/man7/kernel_lockdown.7 b/man/man7/kernel_lockdown.7
-> > > index 5090484ea..5986c8f01 100644
-> > > --- a/man/man7/kernel_lockdown.7
-> > > +++ b/man/man7/kernel_lockdown.7
-> > > @@ -23,9 +23,6 @@ Lockdown: X: Y is restricted, see man kernel_lockdo=
-wn.7
-> > >   .in
-> > >   .P
-> > >   where X indicates the process name and Y indicates what is restrict=
-ed.
-> > > -.P
-> > > -On an EFI-enabled x86 or arm64 machine, lockdown will be automatical=
-ly enabled
-> > > -if the system boots in EFI Secure Boot mode.
-> > >   .\"
-> > >   .SS Coverage
-> > >   When lockdown is in effect, a number of features are disabled or ha=
-ve their
-> >=20
-
---=20
-<https://www.alejandro-colomar.es>
-
---vystg5wpjhghqurs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmmLq/8ACgkQ64mZXMKQ
-wqmHDQ/9FJ2VM6HSh6nZI5Wpnd55w5GkrmHYTSsfGiZNw965agbMfqA8SrGYm6Io
-DjcIvwuzY7tO2h9ixJShfMi+nKYzJisIQVv3JeDQWvPfxKr7OhMVEaGIKCKkGXRZ
-LYlTBtgGF6oWRwlZjxfb3Y5jwNu3zYRzeYtG3nUKgPC0U7zFo9vQQZ8GpuZWNnG2
-C1WlWU3c1616zNH2jGljQDI037jOzCY1Q70ecz1odETKK+MJCV11sLeRKW6OhVE7
-/xq+P7lst2Zbg6d20NfAGd+calKLMIT4apbZhSSh3XGbJLPn81isZ7BqsvYWZuiY
-jOY4bxQhD8v9Yd2P3BV1nyirW0hzI7bfb8qS5nXKwmLOPc67MwQJ13k65jJHaAoq
-2PnkiaPsNMkzD9C8roxdEplimkK61IMxEK8a4Fh8HPc+HPuDeGgJEvP9Ggm5Q2tF
-jKps973W52ZOkX5S5qgTOo7Tb4pSOmZQRXxVH1Amdj0bV4sB+opacPwBnD9w0kgZ
-9rc3zBVUjnxvdCFHoz6iL6CWkcbOduAWAeqEATGU5oehkhitG+wV7p/oQiNJz0Re
-USHiMqJBp4zHqX6/CwzDCQttUKCnvHwNLeVKhskBQ2yBo4+CFWx5jSTwfPqSgPcp
-2hMZ+5xhjEbSC+G5aKIbzCo8XQCpT7yEAPw63bdM5Jd+U++CiRg=
-=o7f4
------END PGP SIGNATURE-----
-
---vystg5wpjhghqurs--
+–Günther
