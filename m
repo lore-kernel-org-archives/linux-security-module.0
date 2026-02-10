@@ -1,159 +1,117 @@
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA0C31E0FB
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Feb 2026 16:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769F0327BFB
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Feb 2026 17:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770742619; cv=none; b=PP3w/pSG5c6Ne1EI0dCinw3OzGB40qevrhZV1WcFpNmjvWACoMUXT/P8ZLkczo//uMRYeNDaI7dqWA2pQn9ga6AQ3VK8nsay63nzgjIf9jQhV316R/5rx2LTCf3kAzOzORNy/Sob8Fc2+B5u+4RmfxqHcCencMZLDWwCE+8j8Cg=
+	t=1770743777; cv=none; b=VnaXeZjEqOtNi1ru99pPY+4xiJisxdPjUa/L2XUyrkoGcW6v/73UqpYjichicKH9euLLG0aYL/1An0qQnFx02QyInQXjRTBPLb6OQgB83PYRSu3SeSpX+50CsKWczbZEAfhgd0WDciSeC0AfHJ7wodRPYNl8mIj0gwQiKUogTew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770742619; c=relaxed/simple;
-	bh=NSzbOUr9xtt5NwzfN1OfCZV7DFKLs6Qxq4vNnW4eE3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P3x77X0hocCMloY7iCowbIoTvWejgmYWhqXVcJ5sB7cXuqVCKVRVtbH2hBDpHWbeDk7qWnZe22kjOAuFHPXwbiNHYBqpNaCmKi1pWray0Biv61g4mREAJSVE8ksyjzvVchRO4gdGUAAv7XKLtCZDyRCBKN2s8tGvjpqLmOFw1wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Z3iJycOn; arc=none smtp.client-ip=45.157.188.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1770743777; c=relaxed/simple;
+	bh=nUcnFETHII0E5rlg2qpCCtkxf6FnxvfXs8nFpP50wMY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kkg0UOji/f4GnOuXB3r9mIn+0JPMsK2GF7ygULvaBydDkhHf97durmdeoZrJvb9PDP+lJ04+kx3E4Sc+hsvdgk/FXnLjCuokdN2TuqClZiw9isWCAEpiL7vRQqWohu8g+CypWQ98k/HjwfHdB/spu+R5jSdvVnXGesoWTUJMg6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h2jqyD92; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Z3iJycOn"
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4f9Qmd1TGrzxS6;
-	Tue, 10 Feb 2026 16:42:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1770738145;
-	bh=6GHP5l6RVtAax54a6C7bNMqmOavngK1t2BlUrukwKjw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z3iJycOndpJxPvu+L3sk6ppjXDgb2+ARplv79w+xcvtU6ACNUmILsWzaprutM0h0h
-	 a9N6W3UBkxwKemSX9x2iKpKJp/tfcCbIMptaDJBEJ4mlVHZ2PmKuAyzQ1rUyv1AYLN
-	 uS62/SFBHi3bhoNveDvBWl5lNmotcRbDYjsWT1Qo=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4f9Qmb16ZBzJW;
-	Tue, 10 Feb 2026 16:42:23 +0100 (CET)
-Date: Tue, 10 Feb 2026 16:42:18 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Cc: linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>, 
-	Justin Suess <utilityemal77@gmail.com>, Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, 
-	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	konstantin.meskhidze@huawei.com, Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v3 1/3] selftests/landlock: Add filesystem access
- benchmark
-Message-ID: <20260210.eid3pie9eiJi@digikod.net>
-References: <20260206151154.97915-2-gnoack3000@gmail.com>
- <20260206151154.97915-3-gnoack3000@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h2jqyD92"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4359228b7c6so2886603f8f.2
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Feb 2026 09:16:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770743775; x=1771348575; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AMHj8ip2bDcru9Om4PYAVrUfxZXZ6ZycN6CABi5KwTU=;
+        b=h2jqyD92Ra8faD6auyClFadlmMNYFfuYKbq3/CbTPhkEeMXeRlL9/poPeuIN4RGD7n
+         NGrBjYelTgon6c/R9rWQ1eKu8vCAcTtg4/eTOOgclzdHoO3wV68wlIqD1R9SFyOmOyqW
+         LaGT58+pvFCxte/UP5deMmDvb0FF7veVIZh6PhoiIcwnqPGy4C6e1fkY/MccnrY/MELY
+         iqczI9zmHq3zp9+iJVfW3ZtNG53YvdxtSu3eDWxPy/kM4Ycva6W9G6mWxo+r1eUiL4G9
+         RJZZGUhS3+AB9LmEe1e7T7LrwFkXVJzw2oVlF7r07E6gP6w0/Yxx4AqGeDDmHPKqmBwJ
+         dpCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770743775; x=1771348575;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=AMHj8ip2bDcru9Om4PYAVrUfxZXZ6ZycN6CABi5KwTU=;
+        b=c/j++2UcIkcRAJ0peiqSV8bKB3lq9Ya71OzXN8XqUQkA5AsI6/pvuRPkkna2ZX+6hx
+         X6uvSZrMLK8B+PjkMZMyA+f01TgUKmrx4A9vhfmMkLVK+kpjXmFJ8u/IOj/BPbKf+YIX
+         3hw6Dbbp4EX0yWZh9uUzOVYVpyiqamrEml3XrtR1lxmTATeA7/+VTHlP/Bck8gJU0Kjn
+         /W50akOlqmIyNEKRTktxzo1KuGn4CoOQTnHNx8PjVv4l7Bnjj2jGrM6ivm2Il5ayRn1H
+         ExWa52wKtFVkSDylM+ipNsw8FJTHl02Y82kIc8EXjKKD01gqzroN1lUrFRd+ROWQS1zS
+         LL9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVESvU0F6kHcRqtlx6RV689v1MIl/+ykbQOivmxmP9h4c0JuerfSa8QkSl/KzFPep7lXFLlKDPqaCbrKEMubCjafKs4z7k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHpxTZ+JPMx0unKXtB66v1PWTwJl1G+76VDZh7o15pNjWUICDc
+	iir+8DzIzzrjYh46Do1IAHUd3XUnI4KrhUC592EoDb0BBa68I4XkkcoY
+X-Gm-Gg: AZuq6aJXinEpAUasMCzUyED6ZOFqZYstKtHEFzEDnGtSk8l/zs6M60tXkJgsqOxhkmw
+	DvIcb2cTQX6Qt6AQ/1u0mfdBzEVG1haFooPT/ZYXLdnz/+2aQY8YGPoAZ+/XTFTGE6LvaSQeRLH
+	Ix1mM5IkgeeZIOk/1ViD3cIcpXsnMxhmhokuko4IxyqsaFzHDdLSEZ7a21weQFe/CtGj2bnjAzZ
+	y3L+Uomnyw2QxSfnowNjerhOtaEuJaJTLYYHBbMtkZIOODnrp99kZZlhWGWA9ZhHUkdCIbs46WO
+	NtoahMt3a3BRVZvfTlJr2cQs/nzetF6T8VFqI+Pg0rqalg98CgftfAOHDuag3/R2zve2Hhck9xZ
+	ueMLmbMgXPn/pMGAYcZcTq09LdzfxHJbvNJrDvViF5J+muIH2dbMfjvr39XstBRmsA2kbDmrWzA
+	SfWBh6ZT+IQ6zHulrgqBDzBbhrV0jgB36/BRYxE0ITpHOZ/+JB+dTThRjh3h4Gtw==
+X-Received: by 2002:a05:600c:6290:b0:47e:e78a:c834 with SMTP id 5b1f17b1804b1-48320226676mr252050135e9.34.1770743774563;
+        Tue, 10 Feb 2026 09:16:14 -0800 (PST)
+Received: from geekom-a8 (net-93-66-82-32.cust.vodafonedsl.it. [93.66.82.32])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4834d7f1e4fsm97562565e9.15.2026.02.10.09.16.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Feb 2026 09:16:14 -0800 (PST)
+From: Massimiliano Pellizzer <mpellizzer.dev@gmail.com>
+To: john.johansen@canonical.com
+Cc: apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dan.carpenter@linaro.org,
+	Massimiliano Pellizzer <mpellizzer.dev@gmail.com>
+Subject: [apparmor][PATCH] apparmor: fix signedness bug in unpack_tags()
+Date: Tue, 10 Feb 2026 18:15:38 +0100
+Message-ID: <20260210171538.534950-1-mpellizzer.dev@gmail.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <aYmsYRgv3VClpkjX@stanley.mountain>
+References: <aYmsYRgv3VClpkjX@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260206151154.97915-3-gnoack3000@gmail.com>
-X-Infomaniak-Routing: alpha
 
-On Fri, Feb 06, 2026 at 04:11:53PM +0100, Günther Noack wrote:
-> fs_bench benchmarks the performance of Landlock's path walk
-> by exercising it in a scenario that amplifies Landlock's overhead:
-> 
-> * Create a large number of nested directories
-> * Enforce a Landlock policy in which a rule is associated with each of
->   these subdirectories
-> * Benchmark openat() applied to the deepest directory,
->   forcing Landlock to walk the entire path.
-> 
-> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> ---
->  tools/testing/selftests/landlock/.gitignore |   1 +
->  tools/testing/selftests/landlock/Makefile   |   1 +
->  tools/testing/selftests/landlock/fs_bench.c | 214 ++++++++++++++++++++
->  3 files changed, 216 insertions(+)
->  create mode 100644 tools/testing/selftests/landlock/fs_bench.c
-> 
-> diff --git a/tools/testing/selftests/landlock/.gitignore b/tools/testing/selftests/landlock/.gitignore
-> index a820329cae0d..1974e17a2611 100644
-> --- a/tools/testing/selftests/landlock/.gitignore
-> +++ b/tools/testing/selftests/landlock/.gitignore
-> @@ -1,4 +1,5 @@
->  /*_test
-> +/fs_bench
->  /sandbox-and-launch
->  /true
->  /wait-pipe
-> diff --git a/tools/testing/selftests/landlock/Makefile b/tools/testing/selftests/landlock/Makefile
-> index 044b83bde16e..fc43225d319a 100644
-> --- a/tools/testing/selftests/landlock/Makefile
-> +++ b/tools/testing/selftests/landlock/Makefile
+Smatch static checker warning:
+    security/apparmor/policy_unpack.c:966 unpack_pdb()
+    warn: unsigned 'unpack_tags(e, &pdb->tags, info)' is never less than zero.
 
-> +int main(int argc, char *argv[])
-> +{
-> +	bool use_landlock = true;
-> +	size_t num_iterations = 100000;
-> +	size_t num_subdirs = 10000;
-> +	int c, curr, fd;
-> +	struct tms start_time, end_time;
-> +
-> +	setbuf(stdout, NULL);
-> +	while ((c = getopt(argc, argv, "hLd:n:")) != -1) {
-> +		switch (c) {
-> +		case 'h':
-> +			usage(argv[0]);
-> +			return EXIT_SUCCESS;
-> +		case 'L':
-> +			use_landlock = false;
-> +			break;
-> +		case 'd':
-> +			num_subdirs = atoi(optarg);
-> +			break;
-> +		case 'n':
-> +			num_iterations = atoi(optarg);
-> +			break;
-> +		default:
-> +			usage(argv[0]);
-> +			return EXIT_FAILURE;
-> +		}
-> +	}
-> +
-> +	printf("*** Benchmark ***\n");
-> +	printf("%zu dirs, %zu iterations, %s landlock\n", num_subdirs,
-> +	       num_iterations, use_landlock ? "with" : "without");
-> +
-> +	if (times(&start_time) == -1)
-> +		err(1, "times");
-> +
-> +	curr = build_directory(num_subdirs, use_landlock);
-> +
-> +	for (int i = 0; i < num_iterations; i++) {
-> +		fd = openat(curr, "file.txt", O_CREAT | O_TRUNC | O_WRONLY);
+unpack_tags() is declared with return type size_t (unsigned) but returns
+negative errno values on failure. The caller in unpack_pdb() tests the
+return with `< 0`, which is always false for an unsigned type, making
+error handling dead code. Malformed tag data would be silently accepted
+instead of causing a load failure.
 
-Some build environments complain that O_CREAT requires the fourth
-openat argument to be set.  I set the mode to 0600.
+Change return type of unpack_tags() from size_t to int to match the
+functions's actual semantic.
 
-> +		if (use_landlock) {
-> +			if (fd == 0)
-> +				errx(1, "openat succeeded, expected EACCES");
-> +			if (errno != EACCES)
-> +				err(1, "openat expected EACCES, but got");
-> +		}
-> +		if (fd != -1)
-> +			close(fd);
-> +	}
-> +
-> +	if (times(&end_time) == -1)
-> +		err(1, "times");
-> +
-> +	printf("*** Benchmark concluded ***\n");
-> +	printf("System: %ld clocks\n",
-> +	       end_time.tms_stime - start_time.tms_stime);
-> +	printf("User  : %ld clocks\n",
-> +	       end_time.tms_utime - start_time.tms_utime);
-> +	printf("Clocks per second: %ld\n", CLOCKS_PER_SEC);
-> +
-> +	close(curr);
-> +
-> +	remove_recursively(num_subdirs);
-> +}
-> -- 
-> 2.52.0
-> 
-> 
+Fixes: 3d28e2397af7 ("apparmor: add support loading per permission tagging")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Massimiliano Pellizzer <mpellizzer.dev@gmail.com>
+---
+ security/apparmor/policy_unpack.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+index e68adf39771f..dc908e1f5a88 100644
+--- a/security/apparmor/policy_unpack.c
++++ b/security/apparmor/policy_unpack.c
+@@ -835,7 +835,7 @@ static int unpack_tag_headers(struct aa_ext *e, struct aa_tags_struct *tags)
+ }
+ 
+ 
+-static size_t unpack_tags(struct aa_ext *e, struct aa_tags_struct *tags,
++static int unpack_tags(struct aa_ext *e, struct aa_tags_struct *tags,
+ 	const char **info)
+ {
+ 	int error = -EPROTO;
+-- 
+2.51.0
+
