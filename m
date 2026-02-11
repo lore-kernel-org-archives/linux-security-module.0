@@ -1,140 +1,247 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE45D2288CB
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Feb 2026 23:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F08A3C465;
+	Wed, 11 Feb 2026 00:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770764994; cv=none; b=jV7GVVQkXHM8Jktx0p6aJ/a/1E3nLCKDnGnTwg+9NajBwXbxezZMtSwUCVsEtoyM9wRPfxdIEapEsYZhruIoFEc1+dzjgLPtVCdY/HdN4gto2ZSmtw+0WjO6jjQNW1OCTpX+k5d3t/b5c5/RRrdYGu3+c6xJ21Sj3aKIvm2tp8Q=
+	t=1770768571; cv=none; b=SCUELKP5niMSc2Jzvy163z8VvLKFUY2nLghF1sDa39wZZ/VhZg0yQZIYWLQIHL6ZLEznF421YbH7ZZzpsLe+6JWI23X5a617FnUnBQiMI3cs6Vb42H1e16qm/YHLOmh6VdjfPE6cR8EzTDco583/aQgkYVVCBEymyQUunslpr/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770764994; c=relaxed/simple;
-	bh=0wmQoR1QzyB7MIxd+0TeB82pi5/269FRU4xmbAb3RyQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y2mh8nOhG2Kb0oF2aVbzpl7SngBVa5I6TJ5C+tuBU9FVLJ09Rnf2THqIsZkX1unxmFTNUdQAbc2t4Ee70+qciBG0cMkHXYoRCaLQBNukLy+Y7mhV8Au8jbHxdzYGDdeJmli2wb2ObM9xdLeCSMCjKqGlHrDDYWTBn6mL4sGKnKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=am7D+k39; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1770768571; c=relaxed/simple;
+	bh=PGSjreK4laPXnFm1B/0xauo/R+rULx+muFKhDH1hA7E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FB01CsrRl1qx8iVKeAYcxsC7rJhSgVAoRBTV2DxgzOy+FTSqkM4I5WzHaHdZ86ZTy+ng/U/hJnnfT395SxasfiRzsYDbKlipoAlcEsLuujd5iXdJujz95uKQPZkc+BbKsZAFXUbkhq0WyMSUicLPkXQ46D246vdbgUYCx8hKjQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=aey7S7E6; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="am7D+k39"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-48327b8350dso39774735e9.1
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Feb 2026 15:09:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770764991; x=1771369791; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=dq16FYZW+aWHRcwtq+Ad9IUgFjneG2Jlvs8geC49Ubo=;
-        b=am7D+k39bkd4g2VJ30BzaB97kXWP7lTTW5jAWCijC8WEJe82PHNLXh2ulxoUH1Fnrl
-         9I5nDizqvHpGjzkp1Au2Ig5/9mZFmtDV9IdT/g05MFK0dXM+o7WWpbBUGrE78rjg1xVS
-         GGBmvYSvYeySU3S3smVjMq2T7HIGkMITW48LeUcbaqUBU62CxEsjQieNHB4iygH9EAPE
-         4i1NsBXdZIRB9Z05uSyuOqXkecL/zwf34jKZ7qIZQzCgB9Y91l6hHs3IEQSJemaBAGx4
-         rJ8dN+bfewVo14fz4Ii8HQ0I+cevx6ioyb8wje5QivMXSUK+sslN9UZlB+8p+r6DsVKs
-         sB0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770764991; x=1771369791;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dq16FYZW+aWHRcwtq+Ad9IUgFjneG2Jlvs8geC49Ubo=;
-        b=eJmgBzGxYkp8xAVVW0U5oYi6xpqSdbmLgwTHfWwS/JqGyANK0iEhkaLUi7sqqcrKrj
-         ZTqrEBKk+8HcBFBxrzffkWQN5dky4fAYaycipovBdZ1HXHv35mWqXLoQA1rxIlG8yPYi
-         2JbG6FV6Js2cjmPjwnTgwCoR7ZNhSVOTibygLTcWuqJtT9g7aluQTzzkghiG0G+xzAMm
-         V7wEZjvdl5c0u3RVwxMl7Rb+Mbov3WD8g6x/wgA46eSbNDr5z6lkEhRhrSuxk5F5Vq6v
-         XDseDjY8LjSVbeXUbxdxE4VFqpyxv0mTL+66hVys9rZ9s+3stv1bBxjORVFWqhOITvdp
-         597g==
-X-Forwarded-Encrypted: i=1; AJvYcCUq83V7lfSvMjl87cOamslRr2OqaIC0gHWfbXZ/rJSnZXhbzpma5aSkJo75eeUUjubD7iz29ZKxcBiX45o3r1NEoYaIt9s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUfs74DhcVHQ6tlB7akygMTkSyrY4nGzrifhGhXuIBdOQHl6Xp
-	OU+J8lSm8/D9lVhokHJgHhJTelRK1jpaWOpN/G51E8+ASbW1PpJtmqGi
-X-Gm-Gg: AZuq6aJXpe1XATptvckkyCuM3MWKUpQ1ZWL7ShcQnpI8JcLwABswwPcm58k0l3UU2Gt
-	q/XbjvIH8UZEc0K7kq+E+nPaS8FWLHshTYOQ1mnYCk6w6ePguup1pOaSwKaGJiI6JBkmuX/353x
-	g67pTDAWoptBuqiCuAUD3iVSxT1gfrVtwMKrHwU4F/Ccs3WmLx42XCqMr9KoknP3Qa/AfmB8XHI
-	4E16yi/+aeyA7mty0LMbRtGAJTlwSe04/8eXl9R+pemuF6xTs3n18u96Z0Etb2iy1dYC+zHxS17
-	bUqizH8WPhyzjuVi/Jc7RV3YBDERK7/790INq5FHA/2Km1/0KEJFEyMrwAyHYwRSGzSLeMKJ01m
-	7BIwaKLcapIbXfqzW+8B8fg90tl45ordVvZNo7Wowx2zUNYr+Y2ZFB5WGW6mJQBa0xmmAoLaZv3
-	o/BQZw2TEYbDeE74NayVZ+/3wv8bfMDKn9FojtqnMqavpzjWoE
-X-Received: by 2002:a05:600c:34d5:b0:480:426e:9d38 with SMTP id 5b1f17b1804b1-4835b938984mr7691475e9.27.1770764990863;
-        Tue, 10 Feb 2026 15:09:50 -0800 (PST)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4834d82a4afsm182128555e9.11.2026.02.10.15.09.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Feb 2026 15:09:50 -0800 (PST)
-Date: Wed, 11 Feb 2026 00:09:49 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	John Johansen <john.johansen@canonical.com>,
-	Tingmao Wang <m@maowtm.org>, Justin Suess <utilityemal77@gmail.com>,
-	Jann Horn <jannh@google.com>, linux-security-module@vger.kernel.org,
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	konstantin.meskhidze@huawei.com,
-	Demi Marie Obenour <demiobenour@gmail.com>,
-	Alyssa Ross <hi@alyssa.is>, Tahera Fahimi <fahimitahera@gmail.com>
-Subject: Re: [PATCH v4 2/6] landlock: Control pathname UNIX domain socket
- resolution by path
-Message-ID: <20260210.859f9d2dc55e@gnoack.org>
-References: <20260208231017.114343-1-gnoack3000@gmail.com>
- <20260208231017.114343-3-gnoack3000@gmail.com>
- <aYm1RWtV6Af-zEHf@google.com>
- <20260209.IWeigh1theik@digikod.net>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="aey7S7E6"
+Received: from [10.14.34.58] (unknown [131.107.1.186])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 2A37720B7167;
+	Tue, 10 Feb 2026 16:09:24 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2A37720B7167
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1770768564;
+	bh=qdq0OTS1cnyJKI0m4amY0YNcRP9yyMsIbRMtck1kkLs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aey7S7E6dFJfF+SJpKGBWtuIRPLT/O0a8+T2rjo65cSHz4GHhH/CJHbfTToD7zroC
+	 U9+DsNiigCfytfwSvSIzgXn+m8CuKEzNCdbdSu497y+8xjrtVpS/hiPZGdMP/865pC
+	 dnbN1IYzcBY2G3Q8bLJTvPC7LSkrjd2UnXWXc8ck=
+Message-ID: <8db7000e-56ef-43cb-b5f6-bd55c1da0237@linux.microsoft.com>
+Date: Tue, 10 Feb 2026 16:09:22 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH v2] ima: Add support for staging measurements for
+ deletion and trimming
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
+ zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+ paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+ gregorylumen@linux.microsoft.com, nramas@linux.microsoft.com,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ steven chen <chenste@linux.microsoft.com>
+References: <20251212171932.316676-1-roberto.sassu@huaweicloud.com>
+ <6b36d6b3-34e8-4bdc-bd68-d71ddf44eba8@linux.microsoft.com>
+ <52069703-98fc-4667-8c29-446ea73249cb@huaweicloud.com>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <52069703-98fc-4667-8c29-446ea73249cb@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260209.IWeigh1theik@digikod.net>
 
-On Mon, Feb 09, 2026 at 06:28:24PM +0100, Mickaël Salaün wrote:
-> On Mon, Feb 09, 2026 at 11:21:57AM +0100, Günther Noack wrote:
-> > On Mon, Feb 09, 2026 at 12:10:12AM +0100, Günther Noack wrote:
-> > > +static int hook_unix_find(const struct path *const path, struct sock *other,
-> > > +			  int flags)
-> > > +{
-> > > +	const struct landlock_ruleset *dom_other;
-> > > +	const struct landlock_cred_security *subject;
-> > > +	struct layer_access_masks layer_masks;
-> > > +	struct landlock_request request = {};
-> > > +	static const struct access_masks fs_resolve_unix = {
-> > > +		.fs = LANDLOCK_ACCESS_FS_RESOLVE_UNIX,
-> > > +	};
-> > > +	int type = other->sk_type;
-> > > +
-> > > +	/* Lookup for the purpose of saving coredumps is OK. */
-> > > +	if (flags & SOCK_COREDUMP)
-> > > +		return 0;
-> > > +
-> > > +	/* Only stream, dgram and seqpacket sockets are restricted. */
-> > > +	if (type != SOCK_STREAM && type != SOCK_DGRAM && type != SOCK_SEQPACKET)
-> > > +		return 0;
-> >
-> > [...]
+On 1/29/2026 12:20 AM, Roberto Sassu wrote:
+> On 1/28/2026 10:30 PM, steven chen wrote:
+>> On 12/12/2025 9:19 AM, Roberto Sassu wrote:
+>>> From: Roberto Sassu <roberto.sassu@huawei.com>
+>>>
+>>> Introduce the ability of staging the entire (or a portion of the) IMA
+>>> measurement list for deletion. Staging means moving the current 
+>>> content of
+>>> the measurement list to a separate location, and allowing users to 
+>>> read and
+>>> delete it. This causes the measurement list to be atomically truncated
+>>> before new measurements can be added. Staging can be done only once 
+>>> at a
+>>> time. In the event of kexec(), staging is reverted and staged 
+>>> entries will
+>>> be carried over to the new kernel.
+>>>
+>>> User space is responsible to concatenate the staged IMA measurements 
+>>> list
+>>> portions following the temporal order in which the operations were 
+>>> done,
+>>> together with the current measurement list. Then, it can send the 
+>>> collected
+>>> data to the remote verifiers.
+>>>
+>>> Also introduce the ability of trimming N measurements entries from 
+>>> the IMA
+>>> measurements list, provided that user space has already read them. 
+>>> Trimming
+>>> combines staging and deletion in one operation.
+>>>
+>>> The benefit of these solutions is the ability to free precious kernel
+>>> memory, in exchange of delegating user space to reconstruct the full
+>>> measurement list from the chunks. No trust needs to be given to user 
+>>> space,
+>>> since the integrity of the measurement list is protected by the TPM.
+>>>
+>>> By default, staging/trimming the measurements list does not alter 
+>>> the hash
+>>> table. When staging/trimming are done, IMA is still able to detect
+>>> collisions on the staged and later deleted measurement entries, by 
+>>> keeping
+>>> the entry digests (only template data are freed).
+>>>
+>>> However, since during the measurements list serialization only the SHA1
+>>> digest is passed, and since there are no template data to 
+>>> recalculate the
+>>> other digests from, the hash table is currently not populated with 
+>>> digests
+>>> from staged/deleted entries after kexec().
+>>>
+>>> Introduce the new kernel option ima_flush_htable to decide whether 
+>>> or not
+>>> the digests of staged measurement entries are flushed from the hash 
+>>> table.
+>>>
+>>> Then, introduce ascii_runtime_measurements_staged_<algo> and
+>>> binary_runtime_measurement_staged_<algo> interfaces to 
+>>> stage/trim/delete
+>>> the measurements. Use 'echo A > <IMA interface>' and
+>>> 'echo D > <IMA interface>' to respectively stage and delete the entire
+>>> measurements list. Use 'echo N > <IMA interface>', with N between 1 and
+>>> LONG_MAX, to stage the selected portion of the measurements list, and
+>>> 'echo -N > <IMA interface>' to trim N measurements entries.
+>>>
+>>> The ima_measure_users counter (protected by the ima_measure_lock 
+>>> mutex) has
+>>> been introduced to protect access to the measurements list and the 
+>>> staged
+>>> part. The open method of all the measurement interfaces has been 
+>>> extended
+>>> to allow only one writer at a time or, in alternative, multiple 
+>>> readers.
+>>> The write permission is used to stage/trim/delete the measurements, the
+>>> read permission to read them. Write requires also the CAP_SYS_ADMIN
+>>> capability.
+>>>
+>>> Finally, introduce and maintain dedicate counters for the number of
+>>> measurement entries and binary size, for the current measurements list
+>>> (BINARY_SIZE), for the current measurements list plus staged entries
+>>> (BINARY_SIZE_STAGED) useful for kexec() segment allocation, and for the
+>>> entire measurement list without staging/trimming (BINARY_SIZE_FULL) 
+>>> useful
+>>> for the kexec-related critical data records.
+>> Is the following possible race condition for staged list:
+>>
+>> Agent A: create staged list            Staged list A1
+>>           new measurement added    Measurement list M1
+>>           Two lists in kernel: A1 and M1
+>>
+>> Agent B: read staged list (A1) to do verification
+>>           new measurement added    Measurement list M2
+>>           Two lists in kernel: A1 and M2
+>>
+>> Agent A: verified and remove staged list (A1)
+>>           new measurement added    Measurement list M3
+>>           One list in kernel: M3
+>>
+>> Agent C: create staged list            Staged list C1
+>>           new measurement added    Measurement list M4
+>>           Two lists in kernel: C1 and M4
+>>
+>> Agent B: remove staged list (?), C1 removed ---this will cause problem
+>>           new measurement added    Measurement list M5
+>>           One list in kernel: M5
+>>
+>> Agent C: try to remove staged list(?)
 >
-> You can remove these type checks.  We're building Landlock access
-> control wrt to the (moving) current state of Linux, and the goal is to
-> cover most/useful access types that currently make sense.  Once access
-> type is implemented, it should handle (by default) future features
-> related to the kernel object to make sure a sandbox is well covered.
-> This LANDLOCK_ACCESS_FS_RESOLVE_UNIX right is really about UNIX sockets
-> that can be resolved through the filesystem, so this should handle
-> current and potential future UNIX sockets as well.
-> 
-> If a new named UNIX socket type is created, Landlock should handle that
-> with this access right, unless there is a specific semantic (e.g.
-> coredump), in which case we'll update the access right, and potentially
-> add a new one if it makes sense.
-> 
-> I was thinking about calling WARN_ON_ONCE() but this is not worth it.
+> If you remember the patch, we added a read-write protection to the 
+> measurements interfaces. As long as you keep the interface open for 
+> write no one else can make change on the staging. Sure, you can drop 
+> the write, and reopen for read, but then you should expect someone 
+> else to operate on the interface.
+>
+> If you want to be sure no one else changes the staged measurements, 
+> just keep the interface open for write, read the staged measurements 
+> and delete them.
+>
+> Roberto
+>
+For different use cases, we can compare lock time for both staged method 
+and trim N method:
 
-Sounds good, removed the check for the next version.
+t1: user space measurement list lock time
+t2: kernel measurement list lock time
 
-The possibility of a new UNIX socket type seems anyway pretty
-theoretical, and even if an additional type were added, it's not
-entirely unthinkable that we would actually want to have it covered
-under the same access right.
+     Stage approach use case 1:
+               1. read PCR quote
+               2. read list
+               3. attestation
+               4. get N from attestation response
+---          5. hold the list in the user space
+  ^   ---    6. hold the measurement list
+        ^     7. stage the list
+t1    t2   8. trim N
+        v     9. put the rest of stage back to measurement list
+  v   ---    10. release the measurement list
+---          11. release the list in the user space
+  For this case, agent race condition may happen
 
-–Günther
+   Stage approach use case 2:
+               1. read PCR quote
+---          2. hold the list in the user space
+  ^           3. stage the list
+               4. read list
+               5. attestation
+t1    ---  6. hold the measurement list
+          ^   7. get N from attestation response
+          t2  8. trim N
+          v    9. put the rest of stage back to measurement list
+  v    ---   10. release the measurement list
+---          11. release the list in the user space
+  For this case, no agent race condition happen
+
+the following use case for trim N method
+
+    Trim N approach use case:
+              1. read total trimmed T
+              2. read PCR quote
+              3. read list,
+              4. attestation
+              5. get N from attestation response
+---         6. hold the list in the user space
+  ^   ---   7. hold the measurement list
+        ^
+t1   t2   8. trim with format T:N, update T
+        v
+  v   ---    9 . release the measurement list
+---          10. release the list in the user space
+     no agent race condition happen
+
+For all use cases, I think for both t1 and t2, trim N method has better 
+result.
+
+Steven
+
+>> Possible solution?
+>>    Save the total number trimmed T or tag
+>>
+>>    Trim request sync this parameter to trim the staged list
+>>
+>> Regards,
+>>
+>> Steven
+>>
+>>> Note: This code derives from the Alt-IMA Huawei project, and is being
+>>>        released under the dual license model (GPL-2.0 OR MIT).
+>>>
+>>> Link: https://github.com/linux-integrity/linux/issues/1
+>>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>>> --- 
+
