@@ -1,79 +1,87 @@
-Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF0231A07B;
-	Wed, 11 Feb 2026 06:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB92D350A00
+	for <linux-security-module@vger.kernel.org>; Wed, 11 Feb 2026 08:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770790930; cv=none; b=Vgks2yXZCdWfb4glU3LNXxUsTF/8fDZk0AtqwIgneO/7gDdyAd+4kcQiT2WcwwfR4+ILTfvRaY16/3Qs45qeJUZHVZZKXor7m4RgBuJcd+r2QMIFOt5M50t+OQmgIoOhp9JSQaM1IDrXRztvIGuw1gv9ufk+1r84p/sXozd1bRs=
+	t=1770798440; cv=none; b=TCD4qmnN4OSL4+y69MNuBbuxbv6G5T4eoDm0E6a4QaM8wieb64hzLCjjTnPQUqxnoga2Co5NCo6X9LgSPSVKMqJyc5LxNU2nQHJ9G9hDvpntCC/9C6OfJJZPmnLD9/D5BuCyZzWGhaom4dgxNrJ3BQri23ZSaa3C6TXxqG4LpDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770790930; c=relaxed/simple;
-	bh=hoQGoRtOTClqVvAKmOCwgjf1WeJvo/dSejIuk7I6Bxc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Nt8FgCxPfeBtULbjLLzQ4twJC57/Ix6HbNzwISQA+GLv4UTQWCQ6E/GrUKNLVEkAQKQjn9Xlax1lbHry4g9hn9wPxNZFsO4cyB1qs++sVoiQacmM0XFlNWbrVdHPl48a/kIwiFsvXx/Q0XSTup2Ls1GI7jsqcZEKwPvk+LakdvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowACHGw8HIIxp3b0KCA--.48696S2;
-	Wed, 11 Feb 2026 14:21:59 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: mic@digikod.net
-Cc: gnoack@google.com,
-	shuah@kernel.org,
+	s=arc-20240116; t=1770798440; c=relaxed/simple;
+	bh=wauK2dZHL/Swu0Aa78B2CWtSK0cPu04/2gZCSFMWTl8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vD5QSackcj31K6vD7XfOxgSSRN6maPmbupkVl/YGaY3awIIHXWggtPAlTwFMxQmR7Jxk0e0d1YnyHgZrma85IDKFn+iwM+WUO9gAzvqX0SIAiLtMtw0TV93x3BVLtYbJWzmLl4mTL2g7pPpmKTwROcndHgeEXTgARRR3AJf6V4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d4/p2mOa; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d4/p2mOa"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4806dffc64cso56261245e9.1
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Feb 2026 00:27:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770798437; x=1771403237; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=wauK2dZHL/Swu0Aa78B2CWtSK0cPu04/2gZCSFMWTl8=;
+        b=d4/p2mOaS8LXWyP6DYymEjdAiQdkcF84551CY5hu+c7i4drttavdF2v78g78OdAcXG
+         5W7Lh3ZDURXMwWpUIQQM2v0s6cRmJHpmOrAE2v9B4TyF3rItQ5aXKsu3eEP4pWDHZUiQ
+         NaLG2SpDuEBNR6LKqoeO2bO8US0qj2snDeiHFa0ulC+JdcPwwXoh2/qxy3yyqGMe1TwM
+         ykoQFNyGa0gqCSBgHIH1/gdyB4EEMlGZ1NR+snNDAm1iuUQe2p5bRYsKjKj9/68FHxzq
+         vmSyn3mQ+jURLClcmbU5YvZsUeqZyjFLGyml4myQL2V2MsxoioxBEui6mZ4JW8vOlT64
+         IbFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770798437; x=1771403237;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wauK2dZHL/Swu0Aa78B2CWtSK0cPu04/2gZCSFMWTl8=;
+        b=sk1AeCsxlveydWQ66NoQr/9devlYQNBqL+eJTPU6ITiypmmw7KKEVtqmjvF2cY94br
+         w8h4k+fBbhMQrCPKr3rYz4dm/IBS2CYeojqybwjEd1bYnqt90/EOvY6KEFMtImsR79Tf
+         CwPWUMYNOtMg9xUrPvPnTXj2JnejscqDR+RaOJYYzP8Dznpo0FaYztQsIHf6dVg93P17
+         bkrgWuwizHLk1zLEfGh6qB8sPNPxNMhR0KHGGpX/YgJmWVO2I7lesyAi5Wr2a93E5UcG
+         XiDw8r2VLtzTd//lbh/oVupqeVLcsS+0ykSjpm8ZO15EMuZqtLZqxUX6k/MkeZhYxjTx
+         QXyA==
+X-Forwarded-Encrypted: i=1; AJvYcCX6T89l9eSa8GVwgTtSWXT6y0LtjvgB0FPHM7Qnhf7nzz4MTPphkADvEPD7jOMF7718ClOWDw0PagvPKILuN5ln+LKofMQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCiLLbqK8YHfj8kuI8/Gxn5CoQA1ZQ8KG2mnQwoHhUo5+rg4me
+	vvjsJAGZLTwVrMXOi9WqreiL++uDMWPNlGaw8GVrLIuaghgyl0mFT2ug
+X-Gm-Gg: AZuq6aJrm5gGAojzlXZDw5yvvA5bDrzEkNlrlK/8hbiHE/8i74rzBGKyBfrr6EP6ps0
+	dQNNaeX4zbD6LbdENJteL4HZGePD04yPIZmHHkD1H9SSUN9/8TZWN8Lp8ff26Km2fRMHt0mcQPu
+	ZsytQ8hhhDNmTD1YpKJ38r1avkzRDUSGcmq2tAnG01dcPuEsSxzvcq0xBeJfS0XC/jdcPAC/qPx
+	6o8ck1U6rVwg2lRk5BhHvIhTShsZVVTerL2hDy2PZudg/KwXSHqj/u5BshL8bmUG+S1c6K0yBwJ
+	i7Q8iWCknSIixooD5WRFzYKdNwrCSmz2aauAjK7UoZbMrzDJQdgYiJziUd8aL60qUw1q2WMUTby
+	mRbHUJBQK1w2KPesS4t9LQR3o464yWInNnLP33l8Qeg3km+o2+gShAi4GFgUnEX0SIA+0tJo8Id
+	T7wPqi366wMHb1I/xLLG3nnxC0YRnfsRNVAPd34p9enVg5hzS8Po0hFlrIWL8=
+X-Received: by 2002:a05:600c:3f16:b0:47d:92bb:2723 with SMTP id 5b1f17b1804b1-4835ebecc4cmr10013935e9.3.1770798436993;
+        Wed, 11 Feb 2026 00:27:16 -0800 (PST)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4835ba69160sm12599365e9.8.2026.02.11.00.27.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Feb 2026 00:27:16 -0800 (PST)
+Date: Wed, 11 Feb 2026 09:27:04 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: mic@digikod.net, gnoack@google.com, shuah@kernel.org,
 	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] selftests/landlock: Remove duplicate include of stdio.h
-Date: Wed, 11 Feb 2026 14:21:22 +0800
-Message-Id: <20260211062122.2975127-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/landlock: Remove duplicate include of stdio.h
+Message-ID: <20260211.71676f77cada@gnoack.org>
+References: <20260211062122.2975127-1-nichen@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowACHGw8HIIxp3b0KCA--.48696S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw48Kry7Wr1fZw18Zr1UJrb_yoWxZFgEyw
-	4I9rW7GF98AFy7AF4rX3ZxAF4Skw1UGrs7ZF1YgwnxtF9rAF45Ga1DAF15CF1Yg39xCa43
-	XF1UJFZxGr9xKjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbsxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r12
-	6r1DMxkIecxEwVAFwVW8AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
-	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
-	wI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
-	v20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
-	jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0x
-	ZFpf9x0JU4uWJUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+In-Reply-To: <20260211062122.2975127-1-nichen@iscas.ac.cn>
 
-Remove duplicate inclusion of stdio.h in fs_bench.c to clean up
-redundant code.
+On Wed, Feb 11, 2026 at 02:21:22PM +0800, Chen Ni wrote:
+> Remove duplicate inclusion of stdio.h in fs_bench.c to clean up
+> redundant code.
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- tools/testing/selftests/landlock/fs_bench.c | 1 -
- 1 file changed, 1 deletion(-)
+Thanks, well spotted!
 
-diff --git a/tools/testing/selftests/landlock/fs_bench.c b/tools/testing/selftests/landlock/fs_bench.c
-index 733c1264e5fd..551cb615ad93 100644
---- a/tools/testing/selftests/landlock/fs_bench.c
-+++ b/tools/testing/selftests/landlock/fs_bench.c
-@@ -26,7 +26,6 @@
- #include <linux/prctl.h>
- #include <stdbool.h>
- #include <stdio.h>
--#include <stdio.h>
- #include <errno.h>
- #include <stdlib.h>
- #include <string.h>
--- 
-2.25.1
-
+Reviewed-by: Günther Noack <gnoack3000@gmail.com>
