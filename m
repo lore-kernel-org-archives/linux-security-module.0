@@ -1,142 +1,316 @@
-Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
+Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9D8126C03
-	for <linux-security-module@vger.kernel.org>; Wed, 11 Feb 2026 14:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEED158535
+	for <linux-security-module@vger.kernel.org>; Wed, 11 Feb 2026 14:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770819207; cv=none; b=WjcEYxL+B9w6iaYgqL3QvPRoD5Stk5+tVaUGKcCzXfFebNXQwnzQQTUeBX4wGuATtVF3qXqxZ9Lxk/zXYpNBA+AEDInTv8ABWSZHPD94fIbHZOBGRQ/OSgjIvabTe+VYaq9rydL5ZWP6BJzqM/VKqSWgCQ8eJ6aTWqfTRJ4CN1c=
+	t=1770821718; cv=none; b=Asr7XyI/2KTjwD6AzDdfoalZ8tqVLBvuCTLpjQOWyyXRTuoAtwm60u/ScuRefAd3bxi8c34db4phKk7P9ou/rZsgiBu1rBIOcuLfx12bbePRdE1+VJp636nqLplhljO6nTAJzfSsMOshmSK1k3HwMMHflcopG/HF+XdjAWPva5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770819207; c=relaxed/simple;
-	bh=Ex+umAHai4rt8ubdZ+khUZt/UlRKPuVEmhpc84HbAuQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JH5yge/A8CQqQNpX71pDQYlEp/Iu0jO09JK4l1s7/v5L88WiNZr9orpxgX9I9WHBHiRJrKBV7ywCts7HzikDAw6qK0g1/Or+ioZwt4TMebuTbdE6eFUIiLVagMy1w0goVvJKNnluHH5xva7c/o6eJ6F30qrG80uzJ1sGB+PDnbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ODp7a8nP; arc=none smtp.client-ip=45.157.188.12
+	s=arc-20240116; t=1770821718; c=relaxed/simple;
+	bh=xKBIckyX17+7a4jPA+J90Fb9D1xcxmZd/MhQD1iEK2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VZ6rz7+/EXRuTd+xTafoBMDJ36pf0Aov20g+hhPrJC9eGhL/zpEhCR2L/kBGf9XIWCUWRnP8tNV5QNfWn1Ia17nmWw5I8q23UjZteCakdbckywQDwLiz+hoR4kn08+drmsmfacsVG9zsXnAbPL+tkGAgAHKtV3TGFNNj3zG/sB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=xGRWFAA1; arc=none smtp.client-ip=185.125.25.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ODp7a8nP"
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fB0lQ1J9yzLf6;
-	Wed, 11 Feb 2026 15:13:22 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="xGRWFAA1"
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fB1gj29qZzRx1;
+	Wed, 11 Feb 2026 15:55:13 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1770819202;
-	bh=5QPNjSea1myxZ7eNGOLCE9AteNt/YdI3KAGkzfpjGg4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ODp7a8nPdF25D2OSiBbaY05h9enNdrMSOFYqC9Ahe6u05Jgd3VDKeh6KylQw5lzXv
-	 3KWzh78YCtEaolOHgY35odDNuQg4o4ggU2G6suORzmcP8vN2FhydnB43C2TJT3A4yA
-	 3eCd5U/sMnIPJiOO9jE8bSYbEneWPDDkC7i7LWlE=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4fB0lP2wPdzCgx;
-	Wed, 11 Feb 2026 15:13:21 +0100 (CET)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [GIT PULL] Landlock update for v7.0-rc1
-Date: Wed, 11 Feb 2026 15:13:02 +0100
-Message-ID: <20260211141302.1134092-1-mic@digikod.net>
+	s=20191114; t=1770821713;
+	bh=+fDLGJqN5XHZOmw9Xlyli16QBEujOaNGf9i0FLaPMAQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=xGRWFAA1XaUmqDH0V11W0Wj3v3gvhUPeFWZ8OCzF7rG4Y5zr8ns4QDOApDhH0BiZd
+	 gAS1YDGL5LL3O1dM9ddWV5T3BECYLSUgwGMe/hgLY8O1ZUGqgPVFK+xFfx8gfkCoDK
+	 AoRkE0VnYzPQG2ktZpiWfi/R8JbvISPqoVsseAVo=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fB1gh3KPZzdQK;
+	Wed, 11 Feb 2026 15:55:12 +0100 (CET)
+Date: Wed, 11 Feb 2026 15:55:07 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, Jann Horn <jannh@google.com>, 
+	Serge Hallyn <sergeh@kernel.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Tingmao Wang <m@maowtm.org>, Matthieu Buffet <matthieu@buffet.re>
+Subject: Re: [PATCH v3 0/3] Landlock multithreaded enforcement
+Message-ID: <20260211.ahid9Ob3raic@digikod.net>
+References: <20251127115136.3064948-1-gnoack@google.com>
+ <20260205.phu7Bo2ieMih@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260205.phu7Bo2ieMih@digikod.net>
 X-Infomaniak-Routing: alpha
 
-Hi,
+FYI, syzkaller now supports this new flag, and it has been fuzzed for a
+few months (before being merged):
+https://github.com/google/syzkaller/commit/e5e258750ba4cad4408ac45a26c0aafff51d45b1
 
-These changes extend Landlock to enforce restrictions on a whole
-process, similarly to the seccomp's TSYNC flag.  Data structure
-refactoring simplifies code and improves performance.  Documentation is
-extended to cover missing parts.
-
-Please pull these changes for v7.0-rc1 .  These commits merge cleanly
-with your master branch.  The kernel changes have been tested in the
-latest linux-next releases for some weeks, but I rebased the last
-commits to fix a kselftest build issue on old distros, and to add a
-review tag.
-
-Test coverage for security/landlock is 91.4% of 2093 lines according to
-LLVM 21, and it was 91.9% of 1933 lines before this PR.
-
-Regards,
- Mickaël
-
-
-PS: I recently updated my PGP key:
-    https://lore.kernel.org/keys/20260206.waiCh9iex3ai@digikod.net/
-
---
-The following changes since commit 24d479d26b25bce5faea3ddd9fa8f3a6c3129ea7:
-
-  Linux 6.19-rc6 (2026-01-18 15:42:45 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-7.0-rc1
-
-for you to fetch changes up to e265b330b93e3a3f9ff5256451d4f09b5f89b239:
-
-  mailmap: Add entry for Mickaël Salaün (2026-02-11 12:03:44 +0100)
-
-----------------------------------------------------------------
-Landlock update for v7.0-rc1
-
-----------------------------------------------------------------
-Günther Noack (6):
-      landlock: Multithreading support for landlock_restrict_self()
-      selftests/landlock: Add LANDLOCK_RESTRICT_SELF_TSYNC tests
-      landlock: Document LANDLOCK_RESTRICT_SELF_TSYNC
-      selftests/landlock: Add filesystem access benchmark
-      landlock: Add access_mask_subset() helper
-      landlock: Transpose the layer masks data structure
-
-Matthieu Buffet (2):
-      landlock: Minor reword of docs for TCP access rights
-      landlock: Refactor TCP socket type check
-
-Mickaël Salaün (1):
-      mailmap: Add entry for Mickaël Salaün
-
-Samasth Norway Ananda (3):
-      landlock: Add backwards compatibility for restrict flags
-      landlock: Add errata documentation section
-      landlock: Document audit blocker field format
-
- .mailmap                                      |   1 +
- Documentation/admin-guide/LSM/landlock.rst    |  35 +-
- Documentation/userspace-api/landlock.rst      | 105 ++++-
- include/uapi/linux/landlock.h                 |  30 +-
- security/landlock/Makefile                    |  11 +-
- security/landlock/access.h                    |  35 +-
- security/landlock/audit.c                     |  81 ++--
- security/landlock/audit.h                     |   3 +-
- security/landlock/cred.h                      |  12 +
- security/landlock/domain.c                    |  44 +-
- security/landlock/domain.h                    |   3 +-
- security/landlock/errata/abi-1.h              |   8 +
- security/landlock/errata/abi-4.h              |   7 +
- security/landlock/errata/abi-6.h              |  10 +
- security/landlock/fs.c                        | 352 ++++++++--------
- security/landlock/limits.h                    |   2 +-
- security/landlock/net.c                       |  30 +-
- security/landlock/ruleset.c                   |  91 ++---
- security/landlock/ruleset.h                   |   6 +-
- security/landlock/syscalls.c                  |  65 +--
- security/landlock/tsync.c                     | 561 ++++++++++++++++++++++++++
- security/landlock/tsync.h                     |  16 +
- tools/testing/selftests/landlock/.gitignore   |   1 +
- tools/testing/selftests/landlock/Makefile     |   1 +
- tools/testing/selftests/landlock/base_test.c  |   8 +-
- tools/testing/selftests/landlock/fs_bench.c   | 214 ++++++++++
- tools/testing/selftests/landlock/tsync_test.c | 161 ++++++++
- 27 files changed, 1490 insertions(+), 403 deletions(-)
- create mode 100644 security/landlock/tsync.c
- create mode 100644 security/landlock/tsync.h
- create mode 100644 tools/testing/selftests/landlock/fs_bench.c
- create mode 100644 tools/testing/selftests/landlock/tsync_test.c
+On Thu, Feb 05, 2026 at 07:53:47PM +0100, Mickaël Salaün wrote:
+> Good job for writing this complex mechanic (and the related doc), this
+> patch series is great!  It's been in linux-next for a few weeks and I'll
+> take it for Linux 7.0
+> 
+> I did some cosmetic changes though, you'll find them in my commits.
+> Some more tests are needed but I'll take this series for now.
+> 
+> Thanks!
+> 
+> On Thu, Nov 27, 2025 at 12:51:33PM +0100, Günther Noack wrote:
+> > This patch set adds the LANDLOCK_RESTRICT_SELF_TSYNC flag to
+> > landlock_restrict_self().  With this flag, the passed Landlock ruleset
+> > will not only be applied to the calling thread, but to all threads
+> > which belong to the same process.
+> > 
+> > Motivation
+> > ==========
+> > 
+> > TL;DR: The libpsx/nptl(7) signal hack which we use in user space for
+> > multi-threaded Landlock enforcement is incompatible with Landlock's
+> > signal scoping support.  Landlock can restrict the use of signals
+> > across Landlock domains, but we need signals ourselves in user space
+> > in ways that are not permitted any more under these restrictions.
+> > 
+> > Enabling Landlock proves to be difficult in processes that are already
+> > multi-threaded at the time of enforcement:
+> > 
+> > * Enforcement in only one thread is usually a mistake because threads
+> >   do not normally have proper security boundaries between them.
+> > 
+> > * Also, multithreading is unavoidable in some circumstances, such as
+> >   when using Landlock from a Go program.  Go programs are already
+> >   multithreaded by the time that they enter the "func main()".
+> > 
+> > So far, the approach in Go[1] was to use libpsx[2].  This library
+> > implements the mechanism described in nptl(7) [3]: It keeps track of
+> > all threads with a linker hack and then makes all threads do the same
+> > syscall by registering a signal handler for them and invoking it.
+> > 
+> > With commit 54a6e6bbf3be ("landlock: Add signal scoping"), Landlock
+> > gained the ability to restrict the use of signals across different
+> > Landlock domains.
+> > 
+> > Landlock's signal scoping support is incompatible with the libpsx
+> > approach of enabling Landlock:
+> > 
+> > (1) With libpsx, although all threads enforce the same ruleset object,
+> >     they technically do the operation separately and end up in
+> >     distinct Landlock domains.  This breaks signaling across threads
+> >     when using LANDLOCK_SCOPE_SIGNAL.
+> > 
+> > (2) Cross-thread Signals are themselves needed to enforce further
+> >     nested Landlock domains across multiple threads.  So nested
+> >     Landlock policies become impossible there.
+> > 
+> > In addition to Landlock itself, cross-thread signals are also needed
+> > for other seemingly-harmless API calls like the setuid(2) [4] and for
+> > the use of libcap (co-developed with libpsx), which have the same
+> > problem where the underlying syscall only applies to the calling
+> > thread.
+> > 
+> > Implementation details
+> > ======================
+> > 
+> > Enforcement prerequisites
+> > -------------------------
+> > 
+> > Normally, the prerequisite for enforcing a Landlock policy is to
+> > either have CAP_SYS_ADMIN or the no_new_privs flag.  With
+> > LANDLOCK_RESTRICT_SELF_TSYNC, the no_new_privs flag will automatically
+> > be applied for sibling threads if the caller had it.
+> > 
+> > These prerequisites and the "TSYNC" behavior work the same as for
+> > Seccomp and its SECCOMP_FILTER_FLAG_TSYNC flag.
+> > 
+> > Pseudo-signals
+> > --------------
+> > 
+> > Landlock domains are stored in struct cred, and a task's struct cred
+> > can only be modified by the task itself [6].
+> > 
+> > To make that work, we use task_work_add() to register a pseudo-signal
+> > for each of the affected threads.  At signal execution time, these
+> > tasks will coordinate to switch out their Landlock policy in lockstep
+> > with each other, guaranteeing all-or-nothing semantics.
+> > 
+> > This implementation can be thought of as a kernel-side implementation
+> > of the userspace hack that glibc/NPTL use for setuid(2) [3] [4], and
+> > which libpsx implements for libcap [2].
+> > 
+> > Finding all sibling threads
+> > ---------------------------
+> > 
+> > In order to avoid grabbing the global task_list_lock, we employ the
+> > scheme proposed by Jann Horn in [7]:
+> > 
+> > 1. Loop through the list of sibling threads
+> > 2. Schedule a pseudo-signal for each and make each thread wait in the
+> >    pseudo-signal
+> > 3. Go back to 1. and look for more sibling thread that we have not
+> >    seen yet
+> > 
+> > Do this until no more new threads are found.  As all threads were
+> > waiting in their pseudo-signals, they can not spawn additional threads
+> > and we found them all.
+> > 
+> > Coordination between tasks
+> > --------------------------
+> > 
+> > As tasks run their pseudo-signal task work, they coordinate through
+> > the following completions:
+> > 
+> >  - all_prepared (with counter num_preparing)
+> >  
+> >    When done, all new sibling threads in the inner loop(!) of finding
+> >    new threads are now in their pseudo-signal handlers and have
+> >    prepared the struct cred object to commit (or written an error into
+> >    the shared "preparation_error").
+> > 
+> >    The lifetime of all_prepared is only the inner loop of finding new
+> >    threads.
+> > 
+> >  - ready_to_commit
+> > 
+> >    When done, the outer loop of finding new threads is done and all
+> >    sibling threads have prepared their struct cred object.  Marked
+> >    completed by the calling thread.
+> > 
+> >  - all_finished
+> > 
+> >    When done, all sibling threads are done executing their
+> >    pseudo-signal handlers.
+> > 
+> > Use of credentials API
+> > ----------------------
+> > 
+> > Under normal circumstances, sibling threads share the same struct cred
+> > object.  To avoid unnecessary duplication, if we find that a thread
+> > uses the same struct cred as the calling thread, we side-step the
+> > normal use of the credentials API [6] and place a pointer to that
+> > existing struct cred instead of creating a new one using
+> > prepare_creds() in the sibling thread.
+> > 
+> > Noteworthy discussion points
+> > ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > 
+> > * We are side-stepping the normal credentials API [6], by re-wiring an
+> >   existing struct cred object instead of calling prepare_creds().
+> > 
+> >   We can technically avoid it, but it would create unnecessary
+> >   duplicate struct cred objects in multithreaded scenarios.
+> > 
+> > Change Log
+> > ==========
+> > 
+> > v3:
+> >  - bigger organizational changes
+> >    - move tsync logic into own file
+> >    - tsync: extract count_additional_threads() and
+> >      schedule_task_work()
+> >  - code style
+> >    - restrict_one_thread, syscalls.c: use err instead of res (mic)
+> >    - restrict_one_thread: inline current_cred variable
+> >    - restrict_one_thread: add comment to shortcut logic (mic)
+> >    - rsync_works helpers: use size_t i for loop vars
+> >    - landlock_cred_copy: skip redundant NULL checks
+> >    - function name: s,tsync_works_free,tsync_works_release, (mic)
+> >    - tsync_works_grow_by: kzalloc into a temporary variable for
+> >      clarity (mic)
+> >    - tsync_works_contains_task: make struct task_works const
+> >  - bugs
+> >    - handle kmalloc family failures correctly (jannh)
+> >    - tsync_works_release: check task NULL ptr before put
+> >    - s/put_task_struct_rcu_user/put_task_struct/ (jannh)
+> >  - concurrency bugs
+> >    - schedule_task_work: do not return error when encountering exiting
+> >      tasks This can happen during normal operation, we should not
+> >      error due to it (jannh)
+> >    - landlock_restrict_sibling_threads: make current hold the
+> >      num_unfinished/all_finished barrier (more robust, jannh)
+> >    - un-wedge the deadlock using wait_for_completion_interruptible
+> >      (jannh) See "testing" below and discussion in
+> >      https://lore.kernel.org/all/CAG48ez1oS9kANZBq1bt+D76MX03DPHAFp76GJt7z5yx-Na1VLQ@mail.gmail.com/
+> >  - logic
+> >    - tsync_works_grow_by(): grow to size+n, not capacity+n
+> >    - tsync_works_grow_by(): add overflow check for capacity increase
+> >    - landlock_restrict_self(): make TSYNC and LOG flags work together
+> >    - set no_new_privs in the same way as seccomp,
+> >      whenever the calling thread had it
+> >  - testing
+> >    - add test where multiple threads call landlock_restrict_self()
+> >      concurrently
+> >    - test that no_new_privs is implicitly enabled for sibling threads
+> >  - bump ABI version to v8
+> >  - documentation improvements
+> >    - document ABI v8
+> >    - move flag documentation into the landlock.h header
+> >    - comment: Explain why we do not need sighand->siglock or
+> >      cred_guard_mutex
+> >    - various comment improvements
+> >    - reminder above struct landlock_cred_security about updating
+> >      landlock_cred_copy on changes
+> > 
+> > v2:
+> >  - https://lore.kernel.org/all/20250221184417.27954-2-gnoack3000@gmail.com/
+> >  - Semantics:
+> >    - Threads implicitly set NO_NEW_PRIVS unless they have
+> >      CAP_SYS_ADMIN, to fulfill Landlock policy enforcement
+> >      prerequisites
+> >    - Landlock policy gets unconditionally overridden even if the
+> >      previously established Landlock domains in sibling threads were
+> >      diverging.
+> >  - Restructure discovery of all sibling threads, with the algorithm
+> >    proposed by Jann Horn [7]: Loop through threads multiple times, and
+> >    get them all stuck in the pseudo signal (task work), until no new
+> >    sibling threads show up.
+> >  - Use RCU lock when iterating over sibling threads.
+> >  - Override existing Landlock domains of other threads,
+> >    instead of applying a new Landlock policy on top
+> >  - Directly re-wire the struct cred for sibling threads,
+> >    instread of creating a new one with prepare_creds().
+> >  - Tests:
+> >    - Remove multi_threaded_failure test
+> >      (The only remaining failure case is ENOMEM,
+> >      there is no good way to provoke that in a selftest)
+> >    - Add test for success despite diverging Landlock domains.
+> > 
+> > [1] https://github.com/landlock-lsm/go-landlock
+> > [2] https://sites.google.com/site/fullycapable/who-ordered-libpsx
+> > [3] https://man.gnoack.org/7/nptl
+> > [4] https://man.gnoack.org/2/setuid#VERSIONS
+> > [5] https://lore.kernel.org/all/20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com/
+> > [6] https://www.kernel.org/doc/html/latest/security/credentials.html
+> > [7] https://lore.kernel.org/all/CAG48ez0pWg3OTABfCKRk5sWrURM-HdJhQMcWedEppc_z1rrVJw@mail.gmail.com/
+> > 
+> > Günther Noack (3):
+> >   landlock: Multithreading support for landlock_restrict_self()
+> >   landlock: selftests for LANDLOCK_RESTRICT_SELF_TSYNC
+> >   landlock: Document LANDLOCK_RESTRICT_SELF_TSYNC
+> > 
+> >  Documentation/userspace-api/landlock.rst      |   8 +
+> >  include/uapi/linux/landlock.h                 |  13 +
+> >  security/landlock/Makefile                    |   2 +-
+> >  security/landlock/cred.h                      |  12 +
+> >  security/landlock/limits.h                    |   2 +-
+> >  security/landlock/syscalls.c                  |  66 ++-
+> >  security/landlock/tsync.c                     | 555 ++++++++++++++++++
+> >  security/landlock/tsync.h                     |  16 +
+> >  tools/testing/selftests/landlock/base_test.c  |   8 +-
+> >  tools/testing/selftests/landlock/tsync_test.c | 161 +++++
+> >  10 files changed, 810 insertions(+), 33 deletions(-)
+> >  create mode 100644 security/landlock/tsync.c
+> >  create mode 100644 security/landlock/tsync.h
+> >  create mode 100644 tools/testing/selftests/landlock/tsync_test.c
+> > 
+> > -- 
+> > 2.52.0.177.g9f829587af-goog
+> > 
+> > 
