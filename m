@@ -1,316 +1,183 @@
-Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f67.google.com (mail-vs1-f67.google.com [209.85.217.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEED158535
-	for <linux-security-module@vger.kernel.org>; Wed, 11 Feb 2026 14:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770821718; cv=none; b=Asr7XyI/2KTjwD6AzDdfoalZ8tqVLBvuCTLpjQOWyyXRTuoAtwm60u/ScuRefAd3bxi8c34db4phKk7P9ou/rZsgiBu1rBIOcuLfx12bbePRdE1+VJp636nqLplhljO6nTAJzfSsMOshmSK1k3HwMMHflcopG/HF+XdjAWPva5M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770821718; c=relaxed/simple;
-	bh=xKBIckyX17+7a4jPA+J90Fb9D1xcxmZd/MhQD1iEK2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VZ6rz7+/EXRuTd+xTafoBMDJ36pf0Aov20g+hhPrJC9eGhL/zpEhCR2L/kBGf9XIWCUWRnP8tNV5QNfWn1Ia17nmWw5I8q23UjZteCakdbckywQDwLiz+hoR4kn08+drmsmfacsVG9zsXnAbPL+tkGAgAHKtV3TGFNNj3zG/sB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=xGRWFAA1; arc=none smtp.client-ip=185.125.25.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CCC3542E1
+	for <linux-security-module@vger.kernel.org>; Wed, 11 Feb 2026 19:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.217.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770839015; cv=pass; b=ld0DZyXRhb7z4U7SQbGbYHgjlnBE6WaC6sytonWeiSPLP7muAyFZtBitzBjXEPexBPTdVzv/cJK1rinAlBXRlQbSL/vbPYGudK7SQzpJWelO2B8hS3ruGw//SGBh+A4W3jgociQshNlKoVOHRjk80dasDr/WIH0Xjrq+vGnliiA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770839015; c=relaxed/simple;
+	bh=oXQ1XB8B3wClH1fLqpgOnCS78LK40SPPGujDt6bxq94=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DQ6roegRJ36SLFQaRDFkCaM/XCfqRL/NL+A8N/xgtgmHm5JVdQh2O3SFi9LErMRcObHl+eG4kOZ+FTIJ7ltGEdRhqbRjCPiZ6/BiFrBoY2hhQyFKVQqtkeUR0NX+tlOaDmUYTPc+akWefhQJxQQ8GYnNV4JdQsGXM+nHQL9/NOU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PowYvJbT; arc=pass smtp.client-ip=209.85.217.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="xGRWFAA1"
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fB1gj29qZzRx1;
-	Wed, 11 Feb 2026 15:55:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1770821713;
-	bh=+fDLGJqN5XHZOmw9Xlyli16QBEujOaNGf9i0FLaPMAQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xGRWFAA1XaUmqDH0V11W0Wj3v3gvhUPeFWZ8OCzF7rG4Y5zr8ns4QDOApDhH0BiZd
-	 gAS1YDGL5LL3O1dM9ddWV5T3BECYLSUgwGMe/hgLY8O1ZUGqgPVFK+xFfx8gfkCoDK
-	 AoRkE0VnYzPQG2ktZpiWfi/R8JbvISPqoVsseAVo=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fB1gh3KPZzdQK;
-	Wed, 11 Feb 2026 15:55:12 +0100 (CET)
-Date: Wed, 11 Feb 2026 15:55:07 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: linux-security-module@vger.kernel.org, Jann Horn <jannh@google.com>, 
-	Serge Hallyn <sergeh@kernel.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
-	Tingmao Wang <m@maowtm.org>, Matthieu Buffet <matthieu@buffet.re>
-Subject: Re: [PATCH v3 0/3] Landlock multithreaded enforcement
-Message-ID: <20260211.ahid9Ob3raic@digikod.net>
-References: <20251127115136.3064948-1-gnoack@google.com>
- <20260205.phu7Bo2ieMih@digikod.net>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PowYvJbT"
+Received: by mail-vs1-f67.google.com with SMTP id ada2fe7eead31-5fdf3735e14so430395137.2
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Feb 2026 11:43:33 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770839013; cv=none;
+        d=google.com; s=arc-20240605;
+        b=RyFEL0c+zFOso4XeWuwAXNCAEViyxM+da0XN6NUUdIbR0BxLBjDkxBujfzuzK++By6
+         6RcgCZVrzIfMoA2U9hRUn6DVh1l5dlu1Xske8dlR0aAw7IFBvU2hKHzBY3ojAy8y4quD
+         n5T1DOWxUgr+q66kGBOnjdpgSa1DbhM+9GbAzxWOq7Lf615Kmc5c6eEhqKieTdSyKQFx
+         XTG5yYHo2a+b4q1SWXOmtrTaihVWzQu/rT9q7c/n9TwupF+3rb+VN0aAmoG6qlwwDbjl
+         O7eLOH5HosGQqq40Qb+l5vwmcrBiBOwgb2WybTY5brXWXSGUxnH/Lh5/t6kx5l2a0xFs
+         jffw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=gHntEFiFJWWh+7XoaBNqKXQpADrwgSFaOdTDNIvp++o=;
+        fh=mh97L2PU8wqQsTh0bzlxlCuK8YlaL2oTf8jDEHMFtaw=;
+        b=FPivtwVt08pzQX6gAPwljfb5LbtMebfox0SFyG0pBNje9IEKsIY2ZP2Kfc0++HNZWY
+         aMXqnhNfZfGoWoF3WdJpKWvMNTWI6IN7H+at4uhI6vxvc+WZxcNfwX/FlnmcDT4WL/KR
+         1yfnITCPlQ9VrAGrVHMk6f+2bI924Rg5YjReJ4brQACndABFlrt7J1B6Bjju/7u7K4aD
+         iMgR+ItoktE47Ll9nTRLy8FiLSvEXGYzMbHZJMdkDKLSAb42oVQjU3EByEZRDso8ssNU
+         lAWLtPgtnOGcCMunlisdLKwomAdKc8pzbftOeIZ0dk5aoKSDF/veb63SeNir0RkdTc+p
+         Ve3Q==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770839013; x=1771443813; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gHntEFiFJWWh+7XoaBNqKXQpADrwgSFaOdTDNIvp++o=;
+        b=PowYvJbTJPD5aOP9KtNXgpElGAHlayOJtccZi17gLCiV7NklgomQwPWvFL+tS/F06+
+         a4IHJWMKWcQOCMuG0V5Y1S7C3NMpWRRazWJSMGJ/+lW0n8XplZ7g7PHPZvoIPWr7ddC6
+         kBURI9c6WeteHacV61ibMk9mDDzli28UvAOwlslzqHBLPbUBqJzca/m0c5JolC7p1VcV
+         qs5+NNIx3MrvmcDaY/OsicJhdP7sZwy9m5emE/013J9SvcxjRvFzxDsyfLjLcjyYInMY
+         HBHhumq6HhVkgF0CZKb1GWABndE+59YlInwq0nEKWZ3tZaa6o+GwTjhAB8RDB0zcOK4h
+         ee1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770839013; x=1771443813;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=gHntEFiFJWWh+7XoaBNqKXQpADrwgSFaOdTDNIvp++o=;
+        b=PgjeQsRsy5YSzShjqwMeyK8FA4SfnSyh6EQDGLKVpX4gG9oTRQcNad34xVezCMFYJP
+         4+TW3UjFQPizaffejr70+tAk7M9cJWQCI95qE5jAm8AwGI9MNZmIFovaO8cOUNlyJnf7
+         KHLN4HaqaUpgFST5lY0ChLlKAfTzkIEVGRyJQYS5l8aln7TBIMvzlDY6p+0a+Fkf6Ew5
+         85aiHxpFPet90bBC1VKiD2dl12BYMs6kKy23jBzS3ZCG1xSRax7ZgA1o/7ighRneT4Z8
+         jbf8FoXMgrGWCjnazoq97gPXlcei7VC6EdMeWnXUUOMRSC8JvdWuujauEqhxAYzUAJcJ
+         5vbg==
+X-Forwarded-Encrypted: i=1; AJvYcCWtzqHMZPmBtk+n3gZdRpvBoqH4HRQQ7LGpk9YLS0J6ULD9CL91XMiDaz/RGFveb2t9xZHXKrQzoyDv8E2Ln7pMAyExbtA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEFmz+UPpKBO3MDb35YTKe4jlVo3Rt16aFRmhrfbVRY1eKmq/V
+	wJbL2+O58/3j4mj620aRJQEmT9d8Uzyy7QMZahXVXLJUSLvSUd3YgInpd9I3pfjS1wPBHKvrCJt
+	q2vHfomhpS8YL4+CYbJ5ZRmDv0lWOKxw=
+X-Gm-Gg: AZuq6aKEahVOD4uF0wasFMveakUx04G4T7TQlPkKki6MF4MEJupFn8BDwwkB9qe1V7Z
+	8f9juSeIuoRMqUQs0DzOie0OCmb3InLPUHu6OqWYThR9sOALsq5wqts5C6sBZ+ZdLcAQ3CqZCOj
+	lPU8egWwVXwO4AOauYN0D1IdbWnUgQnzk+kBxmmNiQcy4Ovy8RSjUyNnL6Q4XIxIe7FB8RjLyE9
+	yGWBsf7j+NtP8V8jZz0xJkAAP2ZW0iRVDBqxxyPdfQSZcJaJZd5j6fLZvJISnV70mk7hbtFgn39
+	N5oykRo=
+X-Received: by 2002:a05:6102:b03:b0:5fd:faf5:bc7a with SMTP id
+ ada2fe7eead31-5fdfbe41f38mr144483137.41.1770839012601; Wed, 11 Feb 2026
+ 11:43:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260205.phu7Bo2ieMih@digikod.net>
-X-Infomaniak-Routing: alpha
+References: <20260206180248.12418-1-danieldurning.work@gmail.com> <20260209-spanplatten-zerrt-73851db30f18@brauner>
+In-Reply-To: <20260209-spanplatten-zerrt-73851db30f18@brauner>
+From: Daniel Durning <danieldurning.work@gmail.com>
+Date: Wed, 11 Feb 2026 14:43:21 -0500
+X-Gm-Features: AZwV_Qhs3SxVp8P05lu1S3k0H4-gjDRINJd9WaPk3va07O3EBGHdjmRA3KZwHck
+Message-ID: <CAKrb_fEXR0uQnX5iK-ACH=amKMQ8qBSPGXmJb=1PgvEq8qsDEQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] fs/pidfs: Add permission check to pidfd_info()
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	paul@paul-moore.com, stephen.smalley.work@gmail.com, omosnace@redhat.com, 
+	Oleg Nesterov <oleg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-FYI, syzkaller now supports this new flag, and it has been fuzzed for a
-few months (before being merged):
-https://github.com/google/syzkaller/commit/e5e258750ba4cad4408ac45a26c0aafff51d45b1
+On Mon, Feb 9, 2026 at 9:01=E2=80=AFAM Christian Brauner <brauner@kernel.or=
+g> wrote:
+>
+> On Fri, Feb 06, 2026 at 06:02:48PM +0000, danieldurning.work@gmail.com wr=
+ote:
+> > From: Daniel Durning <danieldurning.work@gmail.com>
+> >
+> > Added a permission check to pidfd_info(). Originally, process info
+> > could be retrieved with a pidfd even if proc was mounted with hidepid
+> > enabled, allowing pidfds to be used to bypass those protections. We
+> > now call ptrace_may_access() to perform some DAC checking as well
+> > as call the appropriate LSM hook.
+> >
+> > The downside to this approach is that there are now more restrictions
+> > on accessing this info from a pidfd than when just using proc (without
+> > hidepid). I am open to suggestions if anyone can think of a better way
+> > to handle this.
+>
+> This isn't really workable since this would regress userspace quite a
+> bit. I think we need a different approach. I've given it some thought
+> and everything's kinda ugly but this might work.
+>
+> In struct pid_namespace record whether anyone ever mounted a procfs
+> with hidepid turned on for this pidns. In pidfd_info() we check whether
+> hidepid was ever turned on. If it wasn't we're done and can just return
+> the info. This will be the common case. If hidepid was ever turned on
+> use kern_path("/proc") to lookup procfs. If not found check
+> ptrace_may_access() to decide whether to return the info or not. If
+> /proc is found check it's hidepid settings and make a decision based on
+> that.
+>
+> You can probably reorder this to call ptrace_may_access() first and then
+> do the procfs lookup dance. Thoughts?
 
-On Thu, Feb 05, 2026 at 07:53:47PM +0100, Mickaël Salaün wrote:
-> Good job for writing this complex mechanic (and the related doc), this
-> patch series is great!  It's been in linux-next for a few weeks and I'll
-> take it for Linux 7.0
-> 
-> I did some cosmetic changes though, you'll find them in my commits.
-> Some more tests are needed but I'll take this series for now.
-> 
-> Thanks!
-> 
-> On Thu, Nov 27, 2025 at 12:51:33PM +0100, Günther Noack wrote:
-> > This patch set adds the LANDLOCK_RESTRICT_SELF_TSYNC flag to
-> > landlock_restrict_self().  With this flag, the passed Landlock ruleset
-> > will not only be applied to the calling thread, but to all threads
-> > which belong to the same process.
-> > 
-> > Motivation
-> > ==========
-> > 
-> > TL;DR: The libpsx/nptl(7) signal hack which we use in user space for
-> > multi-threaded Landlock enforcement is incompatible with Landlock's
-> > signal scoping support.  Landlock can restrict the use of signals
-> > across Landlock domains, but we need signals ourselves in user space
-> > in ways that are not permitted any more under these restrictions.
-> > 
-> > Enabling Landlock proves to be difficult in processes that are already
-> > multi-threaded at the time of enforcement:
-> > 
-> > * Enforcement in only one thread is usually a mistake because threads
-> >   do not normally have proper security boundaries between them.
-> > 
-> > * Also, multithreading is unavoidable in some circumstances, such as
-> >   when using Landlock from a Go program.  Go programs are already
-> >   multithreaded by the time that they enter the "func main()".
-> > 
-> > So far, the approach in Go[1] was to use libpsx[2].  This library
-> > implements the mechanism described in nptl(7) [3]: It keeps track of
-> > all threads with a linker hack and then makes all threads do the same
-> > syscall by registering a signal handler for them and invoking it.
-> > 
-> > With commit 54a6e6bbf3be ("landlock: Add signal scoping"), Landlock
-> > gained the ability to restrict the use of signals across different
-> > Landlock domains.
-> > 
-> > Landlock's signal scoping support is incompatible with the libpsx
-> > approach of enabling Landlock:
-> > 
-> > (1) With libpsx, although all threads enforce the same ruleset object,
-> >     they technically do the operation separately and end up in
-> >     distinct Landlock domains.  This breaks signaling across threads
-> >     when using LANDLOCK_SCOPE_SIGNAL.
-> > 
-> > (2) Cross-thread Signals are themselves needed to enforce further
-> >     nested Landlock domains across multiple threads.  So nested
-> >     Landlock policies become impossible there.
-> > 
-> > In addition to Landlock itself, cross-thread signals are also needed
-> > for other seemingly-harmless API calls like the setuid(2) [4] and for
-> > the use of libcap (co-developed with libpsx), which have the same
-> > problem where the underlying syscall only applies to the calling
-> > thread.
-> > 
-> > Implementation details
-> > ======================
-> > 
-> > Enforcement prerequisites
-> > -------------------------
-> > 
-> > Normally, the prerequisite for enforcing a Landlock policy is to
-> > either have CAP_SYS_ADMIN or the no_new_privs flag.  With
-> > LANDLOCK_RESTRICT_SELF_TSYNC, the no_new_privs flag will automatically
-> > be applied for sibling threads if the caller had it.
-> > 
-> > These prerequisites and the "TSYNC" behavior work the same as for
-> > Seccomp and its SECCOMP_FILTER_FLAG_TSYNC flag.
-> > 
-> > Pseudo-signals
-> > --------------
-> > 
-> > Landlock domains are stored in struct cred, and a task's struct cred
-> > can only be modified by the task itself [6].
-> > 
-> > To make that work, we use task_work_add() to register a pseudo-signal
-> > for each of the affected threads.  At signal execution time, these
-> > tasks will coordinate to switch out their Landlock policy in lockstep
-> > with each other, guaranteeing all-or-nothing semantics.
-> > 
-> > This implementation can be thought of as a kernel-side implementation
-> > of the userspace hack that glibc/NPTL use for setuid(2) [3] [4], and
-> > which libpsx implements for libcap [2].
-> > 
-> > Finding all sibling threads
-> > ---------------------------
-> > 
-> > In order to avoid grabbing the global task_list_lock, we employ the
-> > scheme proposed by Jann Horn in [7]:
-> > 
-> > 1. Loop through the list of sibling threads
-> > 2. Schedule a pseudo-signal for each and make each thread wait in the
-> >    pseudo-signal
-> > 3. Go back to 1. and look for more sibling thread that we have not
-> >    seen yet
-> > 
-> > Do this until no more new threads are found.  As all threads were
-> > waiting in their pseudo-signals, they can not spawn additional threads
-> > and we found them all.
-> > 
-> > Coordination between tasks
-> > --------------------------
-> > 
-> > As tasks run their pseudo-signal task work, they coordinate through
-> > the following completions:
-> > 
-> >  - all_prepared (with counter num_preparing)
-> >  
-> >    When done, all new sibling threads in the inner loop(!) of finding
-> >    new threads are now in their pseudo-signal handlers and have
-> >    prepared the struct cred object to commit (or written an error into
-> >    the shared "preparation_error").
-> > 
-> >    The lifetime of all_prepared is only the inner loop of finding new
-> >    threads.
-> > 
-> >  - ready_to_commit
-> > 
-> >    When done, the outer loop of finding new threads is done and all
-> >    sibling threads have prepared their struct cred object.  Marked
-> >    completed by the calling thread.
-> > 
-> >  - all_finished
-> > 
-> >    When done, all sibling threads are done executing their
-> >    pseudo-signal handlers.
-> > 
-> > Use of credentials API
-> > ----------------------
-> > 
-> > Under normal circumstances, sibling threads share the same struct cred
-> > object.  To avoid unnecessary duplication, if we find that a thread
-> > uses the same struct cred as the calling thread, we side-step the
-> > normal use of the credentials API [6] and place a pointer to that
-> > existing struct cred instead of creating a new one using
-> > prepare_creds() in the sibling thread.
-> > 
-> > Noteworthy discussion points
-> > ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > 
-> > * We are side-stepping the normal credentials API [6], by re-wiring an
-> >   existing struct cred object instead of calling prepare_creds().
-> > 
-> >   We can technically avoid it, but it would create unnecessary
-> >   duplicate struct cred objects in multithreaded scenarios.
-> > 
-> > Change Log
-> > ==========
-> > 
-> > v3:
-> >  - bigger organizational changes
-> >    - move tsync logic into own file
-> >    - tsync: extract count_additional_threads() and
-> >      schedule_task_work()
-> >  - code style
-> >    - restrict_one_thread, syscalls.c: use err instead of res (mic)
-> >    - restrict_one_thread: inline current_cred variable
-> >    - restrict_one_thread: add comment to shortcut logic (mic)
-> >    - rsync_works helpers: use size_t i for loop vars
-> >    - landlock_cred_copy: skip redundant NULL checks
-> >    - function name: s,tsync_works_free,tsync_works_release, (mic)
-> >    - tsync_works_grow_by: kzalloc into a temporary variable for
-> >      clarity (mic)
-> >    - tsync_works_contains_task: make struct task_works const
-> >  - bugs
-> >    - handle kmalloc family failures correctly (jannh)
-> >    - tsync_works_release: check task NULL ptr before put
-> >    - s/put_task_struct_rcu_user/put_task_struct/ (jannh)
-> >  - concurrency bugs
-> >    - schedule_task_work: do not return error when encountering exiting
-> >      tasks This can happen during normal operation, we should not
-> >      error due to it (jannh)
-> >    - landlock_restrict_sibling_threads: make current hold the
-> >      num_unfinished/all_finished barrier (more robust, jannh)
-> >    - un-wedge the deadlock using wait_for_completion_interruptible
-> >      (jannh) See "testing" below and discussion in
-> >      https://lore.kernel.org/all/CAG48ez1oS9kANZBq1bt+D76MX03DPHAFp76GJt7z5yx-Na1VLQ@mail.gmail.com/
-> >  - logic
-> >    - tsync_works_grow_by(): grow to size+n, not capacity+n
-> >    - tsync_works_grow_by(): add overflow check for capacity increase
-> >    - landlock_restrict_self(): make TSYNC and LOG flags work together
-> >    - set no_new_privs in the same way as seccomp,
-> >      whenever the calling thread had it
-> >  - testing
-> >    - add test where multiple threads call landlock_restrict_self()
-> >      concurrently
-> >    - test that no_new_privs is implicitly enabled for sibling threads
-> >  - bump ABI version to v8
-> >  - documentation improvements
-> >    - document ABI v8
-> >    - move flag documentation into the landlock.h header
-> >    - comment: Explain why we do not need sighand->siglock or
-> >      cred_guard_mutex
-> >    - various comment improvements
-> >    - reminder above struct landlock_cred_security about updating
-> >      landlock_cred_copy on changes
-> > 
-> > v2:
-> >  - https://lore.kernel.org/all/20250221184417.27954-2-gnoack3000@gmail.com/
-> >  - Semantics:
-> >    - Threads implicitly set NO_NEW_PRIVS unless they have
-> >      CAP_SYS_ADMIN, to fulfill Landlock policy enforcement
-> >      prerequisites
-> >    - Landlock policy gets unconditionally overridden even if the
-> >      previously established Landlock domains in sibling threads were
-> >      diverging.
-> >  - Restructure discovery of all sibling threads, with the algorithm
-> >    proposed by Jann Horn [7]: Loop through threads multiple times, and
-> >    get them all stuck in the pseudo signal (task work), until no new
-> >    sibling threads show up.
-> >  - Use RCU lock when iterating over sibling threads.
-> >  - Override existing Landlock domains of other threads,
-> >    instead of applying a new Landlock policy on top
-> >  - Directly re-wire the struct cred for sibling threads,
-> >    instread of creating a new one with prepare_creds().
-> >  - Tests:
-> >    - Remove multi_threaded_failure test
-> >      (The only remaining failure case is ENOMEM,
-> >      there is no good way to provoke that in a selftest)
-> >    - Add test for success despite diverging Landlock domains.
-> > 
-> > [1] https://github.com/landlock-lsm/go-landlock
-> > [2] https://sites.google.com/site/fullycapable/who-ordered-libpsx
-> > [3] https://man.gnoack.org/7/nptl
-> > [4] https://man.gnoack.org/2/setuid#VERSIONS
-> > [5] https://lore.kernel.org/all/20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com/
-> > [6] https://www.kernel.org/doc/html/latest/security/credentials.html
-> > [7] https://lore.kernel.org/all/CAG48ez0pWg3OTABfCKRk5sWrURM-HdJhQMcWedEppc_z1rrVJw@mail.gmail.com/
-> > 
-> > Günther Noack (3):
-> >   landlock: Multithreading support for landlock_restrict_self()
-> >   landlock: selftests for LANDLOCK_RESTRICT_SELF_TSYNC
-> >   landlock: Document LANDLOCK_RESTRICT_SELF_TSYNC
-> > 
-> >  Documentation/userspace-api/landlock.rst      |   8 +
-> >  include/uapi/linux/landlock.h                 |  13 +
-> >  security/landlock/Makefile                    |   2 +-
-> >  security/landlock/cred.h                      |  12 +
-> >  security/landlock/limits.h                    |   2 +-
-> >  security/landlock/syscalls.c                  |  66 ++-
-> >  security/landlock/tsync.c                     | 555 ++++++++++++++++++
-> >  security/landlock/tsync.h                     |  16 +
-> >  tools/testing/selftests/landlock/base_test.c  |   8 +-
-> >  tools/testing/selftests/landlock/tsync_test.c | 161 +++++
-> >  10 files changed, 810 insertions(+), 33 deletions(-)
-> >  create mode 100644 security/landlock/tsync.c
-> >  create mode 100644 security/landlock/tsync.h
-> >  create mode 100644 tools/testing/selftests/landlock/tsync_test.c
-> > 
-> > -- 
-> > 2.52.0.177.g9f829587af-goog
-> > 
-> > 
+Thanks for the feedback. I think your solution makes sense.
+
+Unfortunately, it seems like systemd mounts procfs with hidepid enabled on
+boot for services with the ProtectProc option enabled. This means that
+procfs will always have been mounted with hidepid in the init pid namespace=
+.
+Do you think it would be viable to record whether or not procfs was mounted
+with hidepid enabled in the mount namespace instead?
+
+> > I have also noticed that it is possible to use pidfds to poll on any
+> > process regardless of whether the process is a child of the caller,
+> > has a different UID, or has a different security context. Is this
+> > also worth addressing? If so, what exactly should the DAC checks be?
+>
+> Oleg and I had discusses this and decided that such polling isn't
+> sensitive information so by default this should just work and it's
+> relied upon in Android and in a bunch of other workloads. An LSM can of
+> course restrict access via security_file_ioctl().
+>
+> Fwiw, pidfds now support persistent trusted extended attributes so if
+> the LSM folks wanted we can add security.* extended attribute support
+> and they can mark pidfds with persistent security labels - persistent as
+> in for the lifetime of the task.
+>
+> > Signed-off-by: Daniel Durning <danieldurning.work@gmail.com>
+> > ---
+> >  fs/pidfs.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/fs/pidfs.c b/fs/pidfs.c
+> > index dba703d4ce4a..058a7d798bca 100644
+> > --- a/fs/pidfs.c
+> > +++ b/fs/pidfs.c
+> > @@ -365,6 +365,13 @@ static long pidfd_info(struct file *file, unsigned=
+ int cmd, unsigned long arg)
+> >               goto copy_out;
+> >       }
+> >
+> > +     /*
+> > +      * Do a filesystem cred ptrace check to verify access
+> > +      * to the task's info.
+> > +      */
+> > +     if (!ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS))
+> > +             return -EACCES;
+> > +
+> >       c =3D get_task_cred(task);
+> >       if (!c)
+> >               return -ESRCH;
+> > --
+> > 2.52.0
+> >
