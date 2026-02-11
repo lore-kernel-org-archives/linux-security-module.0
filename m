@@ -1,247 +1,79 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F08A3C465;
-	Wed, 11 Feb 2026 00:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF0231A07B;
+	Wed, 11 Feb 2026 06:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770768571; cv=none; b=SCUELKP5niMSc2Jzvy163z8VvLKFUY2nLghF1sDa39wZZ/VhZg0yQZIYWLQIHL6ZLEznF421YbH7ZZzpsLe+6JWI23X5a617FnUnBQiMI3cs6Vb42H1e16qm/YHLOmh6VdjfPE6cR8EzTDco583/aQgkYVVCBEymyQUunslpr/A=
+	t=1770790930; cv=none; b=Vgks2yXZCdWfb4glU3LNXxUsTF/8fDZk0AtqwIgneO/7gDdyAd+4kcQiT2WcwwfR4+ILTfvRaY16/3Qs45qeJUZHVZZKXor7m4RgBuJcd+r2QMIFOt5M50t+OQmgIoOhp9JSQaM1IDrXRztvIGuw1gv9ufk+1r84p/sXozd1bRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770768571; c=relaxed/simple;
-	bh=PGSjreK4laPXnFm1B/0xauo/R+rULx+muFKhDH1hA7E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FB01CsrRl1qx8iVKeAYcxsC7rJhSgVAoRBTV2DxgzOy+FTSqkM4I5WzHaHdZ86ZTy+ng/U/hJnnfT395SxasfiRzsYDbKlipoAlcEsLuujd5iXdJujz95uKQPZkc+BbKsZAFXUbkhq0WyMSUicLPkXQ46D246vdbgUYCx8hKjQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=aey7S7E6; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="aey7S7E6"
-Received: from [10.14.34.58] (unknown [131.107.1.186])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 2A37720B7167;
-	Tue, 10 Feb 2026 16:09:24 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2A37720B7167
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1770768564;
-	bh=qdq0OTS1cnyJKI0m4amY0YNcRP9yyMsIbRMtck1kkLs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aey7S7E6dFJfF+SJpKGBWtuIRPLT/O0a8+T2rjo65cSHz4GHhH/CJHbfTToD7zroC
-	 U9+DsNiigCfytfwSvSIzgXn+m8CuKEzNCdbdSu497y+8xjrtVpS/hiPZGdMP/865pC
-	 dnbN1IYzcBY2G3Q8bLJTvPC7LSkrjd2UnXWXc8ck=
-Message-ID: <8db7000e-56ef-43cb-b5f6-bd55c1da0237@linux.microsoft.com>
-Date: Tue, 10 Feb 2026 16:09:22 -0800
+	s=arc-20240116; t=1770790930; c=relaxed/simple;
+	bh=hoQGoRtOTClqVvAKmOCwgjf1WeJvo/dSejIuk7I6Bxc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Nt8FgCxPfeBtULbjLLzQ4twJC57/Ix6HbNzwISQA+GLv4UTQWCQ6E/GrUKNLVEkAQKQjn9Xlax1lbHry4g9hn9wPxNZFsO4cyB1qs++sVoiQacmM0XFlNWbrVdHPl48a/kIwiFsvXx/Q0XSTup2Ls1GI7jsqcZEKwPvk+LakdvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowACHGw8HIIxp3b0KCA--.48696S2;
+	Wed, 11 Feb 2026 14:21:59 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: mic@digikod.net
+Cc: gnoack@google.com,
+	shuah@kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] selftests/landlock: Remove duplicate include of stdio.h
+Date: Wed, 11 Feb 2026 14:21:22 +0800
+Message-Id: <20260211062122.2975127-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH v2] ima: Add support for staging measurements for
- deletion and trimming
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
- zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
- paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
- gregorylumen@linux.microsoft.com, nramas@linux.microsoft.com,
- Roberto Sassu <roberto.sassu@huawei.com>,
- steven chen <chenste@linux.microsoft.com>
-References: <20251212171932.316676-1-roberto.sassu@huaweicloud.com>
- <6b36d6b3-34e8-4bdc-bd68-d71ddf44eba8@linux.microsoft.com>
- <52069703-98fc-4667-8c29-446ea73249cb@huaweicloud.com>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <52069703-98fc-4667-8c29-446ea73249cb@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowACHGw8HIIxp3b0KCA--.48696S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw48Kry7Wr1fZw18Zr1UJrb_yoWxZFgEyw
+	4I9rW7GF98AFy7AF4rX3ZxAF4Skw1UGrs7ZF1YgwnxtF9rAF45Ga1DAF15CF1Yg39xCa43
+	XF1UJFZxGr9xKjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbsxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r12
+	6r1DMxkIecxEwVAFwVW8AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+	wI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+	v20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
+	jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0x
+	ZFpf9x0JU4uWJUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On 1/29/2026 12:20 AM, Roberto Sassu wrote:
-> On 1/28/2026 10:30 PM, steven chen wrote:
->> On 12/12/2025 9:19 AM, Roberto Sassu wrote:
->>> From: Roberto Sassu <roberto.sassu@huawei.com>
->>>
->>> Introduce the ability of staging the entire (or a portion of the) IMA
->>> measurement list for deletion. Staging means moving the current 
->>> content of
->>> the measurement list to a separate location, and allowing users to 
->>> read and
->>> delete it. This causes the measurement list to be atomically truncated
->>> before new measurements can be added. Staging can be done only once 
->>> at a
->>> time. In the event of kexec(), staging is reverted and staged 
->>> entries will
->>> be carried over to the new kernel.
->>>
->>> User space is responsible to concatenate the staged IMA measurements 
->>> list
->>> portions following the temporal order in which the operations were 
->>> done,
->>> together with the current measurement list. Then, it can send the 
->>> collected
->>> data to the remote verifiers.
->>>
->>> Also introduce the ability of trimming N measurements entries from 
->>> the IMA
->>> measurements list, provided that user space has already read them. 
->>> Trimming
->>> combines staging and deletion in one operation.
->>>
->>> The benefit of these solutions is the ability to free precious kernel
->>> memory, in exchange of delegating user space to reconstruct the full
->>> measurement list from the chunks. No trust needs to be given to user 
->>> space,
->>> since the integrity of the measurement list is protected by the TPM.
->>>
->>> By default, staging/trimming the measurements list does not alter 
->>> the hash
->>> table. When staging/trimming are done, IMA is still able to detect
->>> collisions on the staged and later deleted measurement entries, by 
->>> keeping
->>> the entry digests (only template data are freed).
->>>
->>> However, since during the measurements list serialization only the SHA1
->>> digest is passed, and since there are no template data to 
->>> recalculate the
->>> other digests from, the hash table is currently not populated with 
->>> digests
->>> from staged/deleted entries after kexec().
->>>
->>> Introduce the new kernel option ima_flush_htable to decide whether 
->>> or not
->>> the digests of staged measurement entries are flushed from the hash 
->>> table.
->>>
->>> Then, introduce ascii_runtime_measurements_staged_<algo> and
->>> binary_runtime_measurement_staged_<algo> interfaces to 
->>> stage/trim/delete
->>> the measurements. Use 'echo A > <IMA interface>' and
->>> 'echo D > <IMA interface>' to respectively stage and delete the entire
->>> measurements list. Use 'echo N > <IMA interface>', with N between 1 and
->>> LONG_MAX, to stage the selected portion of the measurements list, and
->>> 'echo -N > <IMA interface>' to trim N measurements entries.
->>>
->>> The ima_measure_users counter (protected by the ima_measure_lock 
->>> mutex) has
->>> been introduced to protect access to the measurements list and the 
->>> staged
->>> part. The open method of all the measurement interfaces has been 
->>> extended
->>> to allow only one writer at a time or, in alternative, multiple 
->>> readers.
->>> The write permission is used to stage/trim/delete the measurements, the
->>> read permission to read them. Write requires also the CAP_SYS_ADMIN
->>> capability.
->>>
->>> Finally, introduce and maintain dedicate counters for the number of
->>> measurement entries and binary size, for the current measurements list
->>> (BINARY_SIZE), for the current measurements list plus staged entries
->>> (BINARY_SIZE_STAGED) useful for kexec() segment allocation, and for the
->>> entire measurement list without staging/trimming (BINARY_SIZE_FULL) 
->>> useful
->>> for the kexec-related critical data records.
->> Is the following possible race condition for staged list:
->>
->> Agent A: create staged list            Staged list A1
->>           new measurement added    Measurement list M1
->>           Two lists in kernel: A1 and M1
->>
->> Agent B: read staged list (A1) to do verification
->>           new measurement added    Measurement list M2
->>           Two lists in kernel: A1 and M2
->>
->> Agent A: verified and remove staged list (A1)
->>           new measurement added    Measurement list M3
->>           One list in kernel: M3
->>
->> Agent C: create staged list            Staged list C1
->>           new measurement added    Measurement list M4
->>           Two lists in kernel: C1 and M4
->>
->> Agent B: remove staged list (?), C1 removed ---this will cause problem
->>           new measurement added    Measurement list M5
->>           One list in kernel: M5
->>
->> Agent C: try to remove staged list(?)
->
-> If you remember the patch, we added a read-write protection to the 
-> measurements interfaces. As long as you keep the interface open for 
-> write no one else can make change on the staging. Sure, you can drop 
-> the write, and reopen for read, but then you should expect someone 
-> else to operate on the interface.
->
-> If you want to be sure no one else changes the staged measurements, 
-> just keep the interface open for write, read the staged measurements 
-> and delete them.
->
-> Roberto
->
-For different use cases, we can compare lock time for both staged method 
-and trim N method:
+Remove duplicate inclusion of stdio.h in fs_bench.c to clean up
+redundant code.
 
-t1: user space measurement list lock time
-t2: kernel measurement list lock time
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ tools/testing/selftests/landlock/fs_bench.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-     Stage approach use case 1:
-               1. read PCR quote
-               2. read list
-               3. attestation
-               4. get N from attestation response
----          5. hold the list in the user space
-  ^   ---    6. hold the measurement list
-        ^     7. stage the list
-t1    t2   8. trim N
-        v     9. put the rest of stage back to measurement list
-  v   ---    10. release the measurement list
----          11. release the list in the user space
-  For this case, agent race condition may happen
-
-   Stage approach use case 2:
-               1. read PCR quote
----          2. hold the list in the user space
-  ^           3. stage the list
-               4. read list
-               5. attestation
-t1    ---  6. hold the measurement list
-          ^   7. get N from attestation response
-          t2  8. trim N
-          v    9. put the rest of stage back to measurement list
-  v    ---   10. release the measurement list
----          11. release the list in the user space
-  For this case, no agent race condition happen
-
-the following use case for trim N method
-
-    Trim N approach use case:
-              1. read total trimmed T
-              2. read PCR quote
-              3. read list,
-              4. attestation
-              5. get N from attestation response
----         6. hold the list in the user space
-  ^   ---   7. hold the measurement list
-        ^
-t1   t2   8. trim with format T:N, update T
-        v
-  v   ---    9 . release the measurement list
----          10. release the list in the user space
-     no agent race condition happen
-
-For all use cases, I think for both t1 and t2, trim N method has better 
-result.
-
-Steven
-
->> Possible solution?
->>    Save the total number trimmed T or tag
->>
->>    Trim request sync this parameter to trim the staged list
->>
->> Regards,
->>
->> Steven
->>
->>> Note: This code derives from the Alt-IMA Huawei project, and is being
->>>        released under the dual license model (GPL-2.0 OR MIT).
->>>
->>> Link: https://github.com/linux-integrity/linux/issues/1
->>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->>> --- 
+diff --git a/tools/testing/selftests/landlock/fs_bench.c b/tools/testing/selftests/landlock/fs_bench.c
+index 733c1264e5fd..551cb615ad93 100644
+--- a/tools/testing/selftests/landlock/fs_bench.c
++++ b/tools/testing/selftests/landlock/fs_bench.c
+@@ -26,7 +26,6 @@
+ #include <linux/prctl.h>
+ #include <stdbool.h>
+ #include <stdio.h>
+-#include <stdio.h>
+ #include <errno.h>
+ #include <stdlib.h>
+ #include <string.h>
+-- 
+2.25.1
 
