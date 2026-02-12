@@ -1,166 +1,142 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017CE2A1BA
-	for <linux-security-module@vger.kernel.org>; Thu, 12 Feb 2026 01:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34532D061D;
+	Thu, 12 Feb 2026 19:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770859831; cv=none; b=MimtmTNJnOO9Kwt8+DPX/MaK9rzuvF/n6+jj+8ICEJg7SBzwfO5zt4Lln1vwZKLTV9TxreKKh9jRk3lX6C8YReE6OqG2bkgGphOksQMpZkE2LmWPoAy1IMCl3LjxQbPrdkekVzq24htkX7wr0X9AP8/UNi4IhSqNA6e0SZFdLvM=
+	t=1770925597; cv=none; b=t4gM3DlXn+72xzDbyiGN+CD6nMPrJgMRq+xJmwd90GcspTRQmLyYKJBC0sk+ZzxklN82R6TGshRyKNev940oIi6qkpItcMlWWEVUNj4sKduzChpUc3ZrKf7/Lz3yvzwLmUNVYjoEde5O+JJtPqY6xRX/W34BkIUFr/pobWInRcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770859831; c=relaxed/simple;
-	bh=KgiA3wWySdtu27emmfFx9TmT091bq+yUVCdDCtZD06E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 In-Reply-To:Content-Type:Content-Disposition; b=dfC8CgDiii6Zm8Zs2P28nu0PABN6iX3fUQnrPOH8dZZnXIU5EKPYEIqU3XP1jdIOY/9MtHla/3WA2o+9B9j3uVzdu57IZRdCpmO+BYi6v8G9kUw0mlmd7cehHvBgrXPSsujrwRaqcl+wrRb8qizKxojYmqlByrcHPgKQSUuKcTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AstQJRbp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1770925597; c=relaxed/simple;
+	bh=pTG234008tRbkTBxx3ORJfpeN7UA2onmfbaOSaaNS7U=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=ewctuCOmxFaiUAVq8R6kTKuGPSSAwrIF7QEvS4PnatuQKCe7S0EpMnwiH0YllxaUYHS+zoTIPhYMiyMwNiOgL/2eRe1WKq67VrVlMj9eB8vkiqI4rCZAvFU5TcAM2+kb5XYkrLvTmCztsUMO5buDi5C4ob9dedz5AniLMhds7/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RNa8Hvjv; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AstQJRbp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1770859828;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bY4z6uuO6pRuPz5GN5A8CgMrwxk/puAYj4i3AjMGr9s=;
-	b=AstQJRbpgZMBDfedPSvIG3Xnm5M2B//WLIDQk+TQjtOT3E6HivpB5auxwSEoGzSe4NadKB
-	4VX0yKUdUPfE+Bo5cB8Zvun30ncCADH3u1Nmka9q4M8pdlDxKVaJGgVOJpoBiAOn5fAxAe
-	d9b0KsQkGsIPO7slZKuV4rPPHflHXtk=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-547-vhi-yRu2N2CWmXx8ae6H-g-1; Wed, 11 Feb 2026 20:30:26 -0500
-X-MC-Unique: vhi-yRu2N2CWmXx8ae6H-g-1
-X-Mimecast-MFC-AGG-ID: vhi-yRu2N2CWmXx8ae6H-g_1770859826
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2ab0b2e804cso28508425ad.3
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Feb 2026 17:30:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770859825; x=1771464625;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bY4z6uuO6pRuPz5GN5A8CgMrwxk/puAYj4i3AjMGr9s=;
-        b=UJpHBCAngF5Cto3eOfqJk33It4rKaLH5J5u7NNaglT5V4Q2CZ7CoKwD2oCbaTMbx9R
-         XoFmBzQx0q2pwaS6wsc6WooQiByBPyZwOfAB0Ls4DOfS98TrCOt+PAJodVA+3w5ti+Am
-         p5yqTcZXfGmu0BtS4bJPm7ApLAgYYqh54c6seslmRqtAev1qNYj5/z54ICYhxiXpv0R3
-         PUWRhIVcr+paI6QPdECb0g1XIlT8Vd3+5OeVo+DdTv4bpa9MJVP5d4aCaPXaUYLJSvn6
-         lRjn+kUtlh2MtF3NAUBUwcjUXdydKep832AwBCC0IV2lYvfR2mHPaXnEkouMYOZwrG2E
-         vKDw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1hh2hC9HnZtPXsDHg7uZn+vdjFwUwwM4TQ/16u4xKSTtcAtFAHePejfP9EqVmVjNUzQexjXibee922vFuwAL8vuA42c0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN06J4CHbIZ0kvq5DspQ1EqBRS/Ok1WqT2seB+cujYQYqW7o7k
-	4+L3ILCUMqnlZI4WO+3d69yYVlWgIhDc+swEmSiy2nj/dqNKX53AIFGdWHGBk4lTxaq0gsh+anL
-	Q/ybt3xubsvduDBQLz1yKw67OitvbYvfwAGUOgc01VKrjxjFxg7AMm+wXv8J5YLbi+S+5N33qMp
-	wN4A==
-X-Gm-Gg: AZuq6aLonOryZJXeUq0RxnltLKXmpVB1d8PQ9Wc9h2GWSUrVRh1qqAkAstViDJaN+F2
-	PRJmyMBE46Jk1sjBxtOkOnM0nErh7dOGYgopbp7r6PSRbpmIeAnlxOUMYsriMcuxdfRIITpbqEG
-	IbDqlilauWrqiWdClKjspMde2HcJl4+l1JkLXeVmdZTanSTgl9gVG36dncOw6L2G7/igT0iLAfH
-	mw+y8p1w1yR1rwwqSJK3ZX8fzF8o7j7edYi/9B/t2iM9GCRZt0lpgoLa97QiUSBOmp866fHFQvz
-	3pxwvGJFCGJf9R1ui1ZVOzn7DNYNa8KTVin0ikYNMGeEAPbSZVDNfGz+JiRHHH4tZkXim15tC67
-	DQ/W0WxfF3UUF
-X-Received: by 2002:a05:6a20:e20d:b0:38d:fc34:c88d with SMTP id adf61e73a8af0-3944887601cmr937844637.55.1770859825453;
-        Wed, 11 Feb 2026 17:30:25 -0800 (PST)
-X-Received: by 2002:a05:6a20:e20d:b0:38d:fc34:c88d with SMTP id adf61e73a8af0-3944887601cmr937804637.55.1770859824883;
-        Wed, 11 Feb 2026 17:30:24 -0800 (PST)
-Received: from localhost ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c6e197f7e0bsm3248413a12.27.2026.02.11.17.30.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Feb 2026 17:30:24 -0800 (PST)
-Date: Thu, 12 Feb 2026 09:28:43 +0800
-From: Coiby Xu <coxu@redhat.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: linux-integrity@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>, 
-	Alexander Egorenkov <egorenar@linux.ibm.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	Dave Hansen <dave.hansen@intel.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, 
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" <linuxppc-dev@lists.ozlabs.org>, "open list:S390 ARCHITECTURE" <linux-s390@vger.kernel.org>, 
-	"open list:EXTENSIBLE FIRMWARE INTERFACE (EFI)" <linux-efi@vger.kernel.org>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, "open list:KEYS/KEYRINGS_INTEGRITY" <keyrings@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] integrity: Make arch_ima_get_secureboot
- integrity-wide
-Message-ID: <aY0rZp9ROwfjPgD8@Rk>
-References: <20260203041434.872784-1-coxu@redhat.com>
- <20260203041434.872784-2-coxu@redhat.com>
- <66f9d13875e81a965984e2a661e992a3fe43c516.camel@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RNa8Hvjv"
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61CIimjA397449;
+	Thu, 12 Feb 2026 19:46:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=SSYnjC
+	riNfH4sLLJojOS+mFuvtcCUNULF/0jTmqFPLU=; b=RNa8HvjvMVRQlWHq5e+kmU
+	gMi+xvDAvU+aI2QdEBtcvTKlDnQiBhmvBweQDCP8m37XkyKN8usevxWI2iBHtguy
+	1EqOIXBwGQhxWSPEG+RHxUZ0MomChSlSNKeDaiuTwwFYjMuaS+NAtshHvsjJ6hoD
+	vYAyTpsWcPJYYEn3x28EUb9nQ8KRs9yX6mVKrYip+xXtNlXmv4qTWLsD6fIFvbc/
+	54ewjogy3dhNUFBxa/mN+x09AtJYxQEs5Ce6b7N4P/UmYOkaer6rsrI/sXWsSwKi
+	Ro80QccvFlEiXyumcUgDdc6KK0M1DYtRqJSoxCINqWWOjZ4aSd8X91vRhIc9zooA
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4c696wfx49-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Feb 2026 19:46:02 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 61CI7fJq001840;
+	Thu, 12 Feb 2026 19:46:01 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4c6je2bq17-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Feb 2026 19:46:01 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 61CJk0bw10486378
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 12 Feb 2026 19:46:00 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8C13A5805A;
+	Thu, 12 Feb 2026 19:46:00 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0A3D358054;
+	Thu, 12 Feb 2026 19:45:59 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.21.193])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 12 Feb 2026 19:45:58 +0000 (GMT)
+Message-ID: <50c5e00a8c336e8ab393457af009c26902114688.camel@linux.ibm.com>
+Subject: Re: [PATCH v6 0/3] ima: Detect changes to files via kstat changes
+ rather than i_version
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Frederick Lawler <fred@cloudflare.com>,
+        Roberto Sassu	
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"	 <serge@hallyn.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christian Brauner	
+ <brauner@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>, Jeff Layton	
+ <jlayton@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kernel-team@cloudflare.com
+In-Reply-To: <20260209-xfs-ima-fixup-v6-0-72f576f90e67@cloudflare.com>
+References: <20260209-xfs-ima-fixup-v6-0-72f576f90e67@cloudflare.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 12 Feb 2026 14:45:58 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <66f9d13875e81a965984e2a661e992a3fe43c516.camel@linux.ibm.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: gDGjcqDZLZjCTMGbk7kb-ETEbIx5My-Mg7EdZ7IOA2Q_1770859826
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Authority-Analysis: v=2.4 cv=YeCwJgRf c=1 sm=1 tr=0 ts=698e2dfa cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=ylXcmsPOALl7ZWSU:21 a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22
+ a=_yJuncMy9niaL0El4z4A:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: bsN-HBLmkWsRPLeKV2NtS_-6MPKAxi7s
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjEyMDE0OSBTYWx0ZWRfX/ipuTDKZNfif
+ PZL1byCYEoAFaNetmO7RDSnlYv2zQFOc5YPeQbnQy08dWtQFB3j84iY5TiXrP5wLrxoz+AZPQb3
+ +hgVTXeEF7QtTMxbZzjZGthwubJC6OVxsqm+MsxS8hWcd7azIMikm3YscnSjD3M9u+Cu0g07sp3
+ bXkywOdVityXVsvWlNjnKFF+H9XXbVjNM/YqHQMNoNZSFvfzGeoWheWv16zyUvcp+aE9PaRr+p/
+ cArPxB69nzgG0yLaWYDIvul3yn/JDNWl/xIZxfvajSD79+xcVLBEAEPrEiDj0e29sHj8bvYIlxJ
+ 1I7q/sioBFccRy3L7fkt8+Lg8stAUhPatTUWyBt3PQSlvtYqWAKQqqErH9BgloXR6gREsQw0O7C
+ 7fy0OmMofXU7ZVA6CUpQPojFv7/MeS9M4gA2xo7+vNgVK+gCFHCDJfISjebGrx/tb6xtYqMzlGK
+ zFvfxfHwlIOrWBUfedg==
+X-Proofpoint-ORIG-GUID: Ut358nOCft74tA6DE2R2NWjsszAsu0Da
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-12_05,2026-02-12_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 adultscore=0 bulkscore=0 malwarescore=0 phishscore=0
+ priorityscore=1501 lowpriorityscore=0 clxscore=1015 impostorscore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2601150000
+ definitions=main-2602120149
 
-On Mon, Feb 09, 2026 at 03:43:08PM -0500, Mimi Zohar wrote:
->On Tue, 2026-02-03 at 12:14 +0800, Coiby Xu wrote:
->> EVM and other LSMs need the ability to query the secure boot status of
->> the system, without directly calling the IMA arch_ima_get_secureboot
->> function. Refactor the secure boot status check into a general function
->> named arch_get_secureboot.
->>
->> Reported-and-suggested-by: Mimi Zohar <zohar@linux.ibm.com>
->> Suggested-by: Roberto Sassu <roberto.sassu@huawei.com>
->> Signed-off-by: Coiby Xu <coxu@redhat.com>
->
->Thanks, Coiby.  Other than unnecessarily splitting a line, the patch set looks
->good.  As soon as the open window closes, I'll queue these patches for linux-
->next.
+On Mon, 2026-02-09 at 15:21 -0600, Frederick Lawler wrote:
+> We uncovered a case in kernels >=3D 6.13 where XFS is no longer updating
+> struct kstat.change_cookie on i_op getattr() access calls. Instead, XFS i=
+s
+> using multigrain ctime (as well as other file systems) for
+> change detection in commit 1cf7e834a6fb ("xfs: switch to
+> multigrain timestamps").
+>=20
+> Because file systems may implement i_version as they see fit, IMA
+> unnecessarily measures files.
 
-Hi Mimi, thanks for reviewing the patch set! Would you like me to send a
-new version with the line splitting issue fixed?
+Statements like this are wrong and certainly unnecessary. Refer to commit
+db1d1e8b9867 ("IMA: use vfs_getattr_nosec to get the i_version").  Directly
+accessing the i_version still worked on local filesystems.
 
->
->> diff --git a/security/integrity/ima/ima_efi.c b/security/integrity/ima/ima_efi.c
->> index 138029bfcce1..27521d665d33 100644
->> --- a/security/integrity/ima/ima_efi.c
->> +++ b/security/integrity/ima/ima_efi.c
-[...]
->>  {
->> -	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
->> +	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) &&
->> +	    arch_get_secureboot()) {
->
->No need to split the line here or below.
->
->
->>  		if (IS_ENABLED(CONFIG_MODULE_SIG))
->>  			set_module_sig_enforced();
->>  		if (IS_ENABLED(CONFIG_KEXEC_SIG))
->> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
->> index 5770cf691912..6d093ac82a45 100644
->> --- a/security/integrity/ima/ima_main.c
->> +++ b/security/integrity/ima/ima_main.c
->> @@ -949,8 +949,8 @@ static int ima_load_data(enum kernel_load_data_id id, bool contents)
->>
->>  	switch (id) {
->>  	case LOADING_KEXEC_IMAGE:
->> -		if (IS_ENABLED(CONFIG_KEXEC_SIG)
->> -		    && arch_ima_get_secureboot()) {
->> +		if (IS_ENABLED(CONFIG_KEXEC_SIG) &&
->> +		    arch_get_secureboot()) {
->
->===>
->
->Mimi
->
->>  			pr_err("impossible to appraise a kernel image without a file descriptor; try using kexec_file_load syscall.\n");
->>  			return -EACCES;
->>  		}
->
+I'll be posting a patch shortly that falls back to directly reading the
+i_version, when STATX_CHANGE_COOKIE is not supported.  It cleans up the fil=
+e
+change detection code, making it more readable and should simplify adding t=
+he
+ctime file change detection.
 
--- 
-Best regards,
-Coiby
+> We're proposing to compare against the kstat.change_cookie
+> directly to the cached version, and fall back to a ctime comparison,
+> if STATX_CHANGE_COOKIE is not supplied by vfs_getattr_nosec()'s result
+> mask.
 
+Please rebase your proposed change on this patch.
+
+Mimi
