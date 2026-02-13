@@ -1,159 +1,197 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mx1.secunet.com (mx1.secunet.com [62.96.220.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55B62288E3
-	for <linux-security-module@vger.kernel.org>; Fri, 13 Feb 2026 01:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BC9329C48;
+	Fri, 13 Feb 2026 10:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770946150; cv=none; b=RdUpe2PhKs8+WbjUIM4Zk4PAyinKKBuvcd3PXDC6KInkOrNA89f0hHgntXzqHbaq9vEGLF6w/hRv05XomRnZZu76oesSeU+AOAM1U7wwu9oySM3Q6MlvjsAbzmOKEHdAD/HJCCIpv2y11wsjpAoak/HTI5Uzdn4ev+2RRBZ5nWc=
+	t=1770977988; cv=none; b=ije6kt0DhVWW0BkoFqjITTVLPDT1Z74SqOdd8p4cDilj3hfOYijEtWYtTFzQqczXNef8DRVfWsd+KYjbCenDWGva7G+ImXcT4pFgOTdo8Jd4mTa5IzpsBEe9FgEcUPox2uf16aruWsuc119OWMSj31679gMA8bvtB8F23K3yChI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770946150; c=relaxed/simple;
-	bh=+1Q2uF6WKVSZBZvU8j4Tlp8gBEODqavEONgkrktkcB4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:content-type; b=B/u3n8ZZqGg2V7EI3VGJgg7FYxKOyr+fqU2za2rrwE9cuCtizgXy3/ueRVHOrJeJkG91R+k2aJauaYza0yUn5GmHu6dG2AriPJ39NZfXottnWZylePYf6xv79C5xWI7/36E4V5+gL+h/jBwqkNrIvzEHvolSxdILp/QVzCF52Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JiXKyJpq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1770977988; c=relaxed/simple;
+	bh=vCg2LakybupL1p6dSOlwsPr4WWiWS1mA94XqrkwlrRI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S0TdKVgvwVUVYQXxqgK1Z/JM7CSU/xP2SCtAah8M5w8e301TMOMkYhOL0Dq/lNxWKdxV301FxFD/2bzWeTXWf0ClLuOxNJy8dzVHylVh+1fkP47eVnED0cHzL2W1JqaIx3S5iULeYkxPignjJ/pCfPcRHA2UsyCYvvihidCtgjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=qxE6V3zV; arc=none smtp.client-ip=62.96.220.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=secunet.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JiXKyJpq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1770946148;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jxtKY2oW1YBZo5vKqUoQFLmHY/8Z8JRSUUM8/7xMXv4=;
-	b=JiXKyJpq6NqL8xkReYvxWfjk2Wv9chZMYvoC7HPVqR0j9E4UHUNW1uUrPHbtS8h6TMpsfI
-	md7ZqSZ1OLw0SkhaKxzwO5uj2Xl2SOw4k9sza4SFR4JEqzG8jBwRauCQqBEYCeRJexzz4P
-	iegXxhMHSj0/hRokjdb9EcZHK+oTmTE=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-102-IWCyEsxdOzeb9xHWD4UJEw-1; Thu, 12 Feb 2026 20:29:07 -0500
-X-MC-Unique: IWCyEsxdOzeb9xHWD4UJEw-1
-X-Mimecast-MFC-AGG-ID: IWCyEsxdOzeb9xHWD4UJEw_1770946146
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2a79164b686so5003255ad.0
-        for <linux-security-module@vger.kernel.org>; Thu, 12 Feb 2026 17:29:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770946146; x=1771550946;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=jxtKY2oW1YBZo5vKqUoQFLmHY/8Z8JRSUUM8/7xMXv4=;
-        b=GOb8vzO/WIMSyyEc8c9I1kEMCgnXZiZyFdY7sow3N2XOn4chSz8FuCrSnF8A+C+CFx
-         rn4GhBAR5YPX0EnYinCY4Tl5ByN3rpnYS2aJSjbRlvUl5fAcgXgoXKu+pqGUx02PmiIq
-         xjsqLYWemhyaKy4xKQ0z/CF+ZvOcls0MzxqaskuEhAMGUAWV2xdh/B4A47CvuMgUzGtC
-         v+RIS11wdVDu+qijvgsSbRRUQLsApILZ3k9OqJvUs04Djzh33X56fqvQ1jRg3k1qJVNM
-         HDWvcaPcjHftS0bHC0sdOZctISCEwZiBOWcnfrajqpV4wwFsaAia7rfGy7u9I2ghm5N+
-         YJwA==
-X-Forwarded-Encrypted: i=1; AJvYcCWUR+97TLlNei9a+cCFGMdo1SUosj5L9QHwfEpbcKexUo+50HsKJvDQM6uET45DjPrYDjsGWKWb/tm3ywqOpPckPVu4PqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4KlLJp8sFwbDbIZIYogWfIrhtuUdhbAgKjqVTyBD9Fnri3LLt
-	01osyorD2eF50v2eM0myBYlmmq6CkVHMIEZeW2LwT9PgNWJvDD1g1j0Qu+QveNzVyoeZQIbyxUg
-	H3Wkom/mxM9JbzvDsI1e1r1lPKqkdeuutUEMY/wbrnu6RHYr/UkZtZgxTZuv9OjQXigE2nDYMAg
-	WL3w==
-X-Gm-Gg: AZuq6aJBOSm54nikpH79NwRtpavTbjOgso6gb5AF0LnX/kPzuiRvJVSfnw7gSoC4O4O
-	HXDroFWuuyoUY5w6GF890N+Ws66m5JoDK8Cdp+9krdELev4PcYzHyj6hqHbsCv6FJdJpMd2riNE
-	xSpa3gqWdP29afE0/EgQBm7Qi16pFI2HoRwBAWdHC3tQnoDwO1G3msLMQ67rhhnvKJZeI1P8B9x
-	fzHCTjDbAIecNYEMh7JB81QlvNQqSlgCRlilYONR0IWyvS36mEW9W4Ya9NEe7hysI2wS7uB6s8i
-	CYK23xrBWozpNfAJXFiD/bVxv8thWAl4bLFqrJdpNZZO75egaRiJuKl0VgaR+2T6cfvxB72XOFA
-	Y0BdwYuqqwNcy
-X-Received: by 2002:a17:902:fc4c:b0:2aa:d5e5:b12d with SMTP id d9443c01a7336-2ab5053ea30mr2483095ad.27.1770946146234;
-        Thu, 12 Feb 2026 17:29:06 -0800 (PST)
-X-Received: by 2002:a17:902:fc4c:b0:2aa:d5e5:b12d with SMTP id d9443c01a7336-2ab5053ea30mr2482775ad.27.1770946145756;
-        Thu, 12 Feb 2026 17:29:05 -0800 (PST)
-Received: from localhost ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ab2999879dsm65059095ad.80.2026.02.12.17.29.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Feb 2026 17:29:05 -0800 (PST)
-From: Coiby Xu <coxu@redhat.com>
-To: linux-integrity@vger.kernel.org
-Cc: Heiko Carstens <hca@linux.ibm.com>,
-	Alexander Egorenkov <egorenar@linux.ibm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 2/3] evm: Don't enable fix mode when secure boot is enabled
-Date: Fri, 13 Feb 2026 09:28:47 +0800
-Message-ID: <20260213012851.2532722-3-coxu@redhat.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260213012851.2532722-1-coxu@redhat.com>
-References: <20260213012851.2532722-1-coxu@redhat.com>
+	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="qxE6V3zV"
+Received: from localhost (localhost [127.0.0.1])
+	by mx1.secunet.com (Postfix) with ESMTP id A50A8207C1;
+	Fri, 13 Feb 2026 11:19:37 +0100 (CET)
+X-Virus-Scanned: by secunet
+Received: from mx1.secunet.com ([127.0.0.1])
+ by localhost (mx1.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id wsU87H5HLerd; Fri, 13 Feb 2026 11:19:36 +0100 (CET)
+Received: from EXCH-01.secunet.de (rl1.secunet.de [10.32.0.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.secunet.com (Postfix) with ESMTPS id 8D84A20660;
+	Fri, 13 Feb 2026 11:19:36 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.secunet.com 8D84A20660
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
+	s=202301; t=1770977976;
+	bh=u23SGGFLS4yZzOc7p3Nk64gmtl+CbSo42vHCOowkYgY=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To:From;
+	b=qxE6V3zVH61L2X55p0s8aK94VAaWzqQWzgFUorlfShxuRZri5fl1L3VESemjDHzPU
+	 08wa+OLc5TmWJBdw0lNTNUAxgOuKjt4qTEyaOEQpPC3JfqfVVvNFKnG13DOAEIXWgg
+	 rQhrDdRbgQYhtF1J3KH353kbOAhZzSEgqzR5XyaC9ln9hajv7acFagv118eYvYzYUz
+	 JsBGfSaSGF/1M2WUOjp10P0eswlNI582tBnlHsj9zIdoWVNcojz9X/0EGscP/CrYXy
+	 K8QWt0bSKqzO0KC3Po82MJfXHMzg8s3BnQBs0+draK75q1S39suBjjWXsIYTD6jtx+
+	 FGPW4J86/l1nQ==
+Received: from secunet.com (10.182.7.193) by EXCH-01.secunet.de (10.32.0.171)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 13 Feb
+ 2026 11:19:35 +0100
+Received: (nullmailer pid 1819279 invoked by uid 1000);
+	Fri, 13 Feb 2026 10:19:35 -0000
+Date: Fri, 13 Feb 2026 11:19:35 +0100
+From: Steffen Klassert <steffen.klassert@secunet.com>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+CC: Paul Moore <paul@paul-moore.com>, SELinux <selinux@vger.kernel.org>,
+	linux-security-module <linux-security-module@vger.kernel.org>, Herbert Xu
+	<herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Network Development
+	<netdev@vger.kernel.org>
+Subject: Re: [PATCH] xfrm: kill xfrm_dev_{state,policy}_flush_secctx_check()
+Message-ID: <aY76t_xYCHmLq6Ur@secunet.com>
+References: <93d291db-4175-48c4-830c-e83bab373ae2@I-love.SAKURA.ne.jp>
+ <CAHC9VhQPKU5DqG-ryZsiCV2vZeGGf_a-JStR_LVVCCn03C4usQ@mail.gmail.com>
+ <f9b88268-03dc-4356-8b31-0bab73cc9b1e@I-love.SAKURA.ne.jp>
+ <CAHC9VhRzRAR+hhn4TFADnHWpzjOxjmh0S_Hg_HktkPkKQ35ycg@mail.gmail.com>
+ <74a70504-8ff8-4d97-b35f-774364779889@I-love.SAKURA.ne.jp>
+ <7ef21dab-3805-4eae-80d7-9779aeff3f58@I-love.SAKURA.ne.jp>
+ <aYmoDwO-YXrc4W1c@secunet.com>
+ <85546d35-c7bd-49bf-b0c3-9677bde25859@I-love.SAKURA.ne.jp>
+ <aYnDWbxo-jAzR4ca@secunet.com>
+ <7c17884d-dbf1-4c2c-9813-0c5369cfdcc9@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: v8ITnG8F5R7CYZBZbGwudo4fAeqMdb9BjU4xTEIStLU_1770946146
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <7c17884d-dbf1-4c2c-9813-0c5369cfdcc9@I-love.SAKURA.ne.jp>
+X-ClientProxiedBy: EXCH-02.secunet.de (10.32.0.172) To EXCH-01.secunet.de
+ (10.32.0.171)
 
-Similar to IMA fix mode, forbid EVM fix mode when secure boot is
-enabled.
+On Mon, Feb 09, 2026 at 11:26:14PM +0900, Tetsuo Handa wrote:
+> On 2026/02/09 20:22, Steffen Klassert wrote:
+> > On Mon, Feb 09, 2026 at 07:02:47PM +0900, Tetsuo Handa wrote:
+> >> On 2026/02/09 18:25, Steffen Klassert wrote:
+> >>> The problem is that, with adding IPsec offloads to netdevices, security
+> >>> critical resources came into the netdevices. Someone who has no
+> >>> capabilities to delete xfrm states or xfrm policies should not be able
+> >>> to unregister the netdevice if xfrm states or xfrm policies are
+> >>> offloaded. Unfortunately, unregistering can't be canceled at this stage
+> >>> anymore. So I think we need some netdevice unregistration hook for
+> >>> the LSM subsystem so it can check for xfrm states or xfrm policies
+> >>> and refuse the unregistration before we actually start to remove
+> >>> the device.
+> >>
+> >> Unfortunately, unregistering is not always triggered by a user's request. ;-)
+> > 
+> > As far as I remember, a security context is not always tied to a
+> > user request. It can also be attached to system tasks or objects.
+> 
+> That is not what I wanted to say. There are at least three routes (listed below)
+> that can trigger xfrm_dev_unregister() path. You could insert LSM hooks into the
+> netlink_sendmsg() route and the del_device_store() route, but the cleanup_net()
+> route is a result of tear-down action which is too late to insert LSM hooks.
 
-Reported-and-suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-Suggested-by: Roberto Sassu <roberto.sassu@huawei.com>
-Signed-off-by: Coiby Xu <coxu@redhat.com>
----
- security/integrity/evm/evm_main.c | 24 +++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+Yes, I know that.
 
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 73d500a375cb..a54cb73b51ee 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -72,17 +72,25 @@ static struct xattr_list evm_config_default_xattrnames[] = {
+> The NETDEV_UNREGISTER path can be triggered by just doing "unshare -n ip addr show"
+> (i.e. implicit cleanup of a network namespace due to termination of init process in
+> that namespace). We are not allowed to reject the cleanup_net() route.
+
+And here we come to the other problem I mentioned. When a LSM policy
+rejects to flush the xfrm states and policies on network namespace
+exit, we leak all the xfrm states and policies in that namespace.
+Here we have no other option, we must flush the xfrm states and
+policies regardless of any LSM policy. This can be fixed with
+something like that:
+
+diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
+index 72678053bd69..8a4b2cbba0e0 100644
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -1822,9 +1822,11 @@ int xfrm_policy_flush(struct net *net, u8 type, bool task_valid)
  
- LIST_HEAD(evm_config_xattrnames);
+ 	spin_lock_bh(&net->xfrm.xfrm_policy_lock);
  
-+static char *evm_cmdline __initdata;
-+core_param(evm, evm_cmdline, charp, 0);
-+
- static int evm_fixmode __ro_after_init;
--static int __init evm_set_fixmode(char *str)
-+static void __init evm_set_fixmode(void)
- {
--	if (strncmp(str, "fix", 3) == 0)
--		evm_fixmode = 1;
--	else
--		pr_err("invalid \"%s\" mode", str);
-+	if (!evm_cmdline)
-+		return;
- 
--	return 1;
-+	if (strncmp(evm_cmdline, "fix", 3) == 0) {
-+		if (arch_get_secureboot()) {
-+			pr_info("Secure boot enabled: ignoring evm=fix");
-+			return;
-+		}
-+		evm_fixmode = 1;
-+	} else {
-+		pr_err("invalid \"%s\" mode", evm_cmdline);
+-	err = xfrm_policy_flush_secctx_check(net, type, task_valid);
+-	if (err)
+-		goto out;
++	if (task_valid) {
++		err = xfrm_policy_flush_secctx_check(net, type, task_valid);
++		if (err)
++			goto out;
 +	}
- }
--__setup("evm=", evm_set_fixmode);
  
- static void __init evm_init_config(void)
- {
-@@ -1119,6 +1127,8 @@ static int __init init_evm(void)
+ again:
+ 	list_for_each_entry(pol, &net->xfrm.policy_all, walk.all) {
+diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+index f2aef404b583..fd00f2d20425 100644
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -923,9 +923,11 @@ int xfrm_state_flush(struct net *net, u8 proto, bool task_valid)
+ 	int i, err = 0, cnt = 0;
  
- 	evm_init_config();
+ 	spin_lock_bh(&net->xfrm.xfrm_state_lock);
+-	err = xfrm_state_flush_secctx_check(net, proto, task_valid);
+-	if (err)
+-		goto out;
++	if (task_valid) {
++		err = xfrm_state_flush_secctx_check(net, proto, task_valid);
++		if (err)
++			goto out;
++	}
  
-+	evm_set_fixmode();
-+
- 	error = integrity_init_keyring(INTEGRITY_KEYRING_EVM);
- 	if (error)
- 		goto error;
--- 
-2.53.0
+ 	err = -ESRCH;
+ 	for (i = 0; i <= net->xfrm.state_hmask; i++) {
+
+> > 
+> >> For example, we don't check permission for unmount when a mount is deleted
+> >> due to teardown of a mount namespace. I wonder why you want to check permission
+> >> for unregistering a net_device when triggered by a teardown path.
+> > 
+> > I just try to find out what's the right thing to do here.
+> > If a policy goes away, packets that match this policy will
+> > find another path through the network stack. As best, they
+> > are dropped somewhere, but they can also leave on some other
+> > device without encryption. A LSM that implements xfrm hooks
+> > must be able to check the permission to delete the xfrm policy
+> > or state.
+> 
+> Do you mean that calling xfrm_dev_down()/xfrm_dev_unregister() might
+> result in network traffic to be sent in cleartext ?
+
+Yes this can happen, but it is known. You can either install
+a global block policy with low priority or use a LSM to
+prevent this. The latter does not work unfortunately.
+
+> 
+> If yes, we need to consider updating the other patch at
+> https://lkml.kernel.org/r/20260202123655.GK34749@unreal to replace
+> the NETDEV_UNREGISTER net_device with the blackhole_netdev. (That is,
+> xfrm_dev_{state,policy}_flush() does not actually delete a state/policy
+> but instead updates that state/policy to behave as a blackhole. Then,
+> we won't need to call LSM hooks because we no longer delete).
+
+I think there is a clean way to fix this. We could just unlink
+policy and state from the device. Then we could do the same as
+we do when a state becomes unavailable due to expiration. We mark
+the state as invalid with a flag. On expiration we do this with
+XFRM_STATE_EXPIRED. We can add a new flag and do the same as
+xfrm_state_check_expire() does on a hard expire. I.e. fire
+a timer that notifies the userspace key manager that this
+path is not avalable anymore and return an error. This way
+userspace is informed about that and all packets matching
+the policy are dropped.
+
+This is of course a bit more work and requires testing.
 
