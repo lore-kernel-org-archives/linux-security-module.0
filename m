@@ -1,70 +1,70 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B689421B9F5
-	for <linux-security-module@vger.kernel.org>; Fri, 13 Feb 2026 01:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55B62288E3
+	for <linux-security-module@vger.kernel.org>; Fri, 13 Feb 2026 01:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770946148; cv=none; b=FM7FAcjYpcIbxJ5LVy7rFR01bI8C9+nXyZtDD8PYYvgWi62+XoGH5GfO+zrHyZnxG1t/DCXe1iW4tshArw1aTkIcGagMBldMFQSZf0FuIGyWGSE9d9dAaPryH3Sn5dUCiQ4pcxg0jFMoy7xzB8+gI5zrReKLGp7CEJERjUqL6pw=
+	t=1770946150; cv=none; b=RdUpe2PhKs8+WbjUIM4Zk4PAyinKKBuvcd3PXDC6KInkOrNA89f0hHgntXzqHbaq9vEGLF6w/hRv05XomRnZZu76oesSeU+AOAM1U7wwu9oySM3Q6MlvjsAbzmOKEHdAD/HJCCIpv2y11wsjpAoak/HTI5Uzdn4ev+2RRBZ5nWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770946148; c=relaxed/simple;
-	bh=UStr48gqasgHy6EwPUlqO43cRKL5oD62/UrbLUyhRMs=;
+	s=arc-20240116; t=1770946150; c=relaxed/simple;
+	bh=+1Q2uF6WKVSZBZvU8j4Tlp8gBEODqavEONgkrktkcB4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:content-type; b=t5iEcUm8QE6PxYYCzLoQKyHc9SzTFm2KneYyNk4psX2hrC9LIoCmaGxW7hQDVcy+mwIPVXKX+m0McirKpiPzB/n3Q2XajD6KRbfgXFS/IqEsI5tkURWMFShQUtwthpaPmrOVFoFCcqKpSpWdH5ocNmulhxLbvrkBhDXlTJe0Rg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=axNahTAg; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version:content-type; b=B/u3n8ZZqGg2V7EI3VGJgg7FYxKOyr+fqU2za2rrwE9cuCtizgXy3/ueRVHOrJeJkG91R+k2aJauaYza0yUn5GmHu6dG2AriPJ39NZfXottnWZylePYf6xv79C5xWI7/36E4V5+gL+h/jBwqkNrIvzEHvolSxdILp/QVzCF52Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JiXKyJpq; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="axNahTAg"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JiXKyJpq"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1770946145;
+	s=mimecast20190719; t=1770946148;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=mEAaO36zyPmsyKqKL7e+8BHcnGxbMJMT7wzopiULDAA=;
-	b=axNahTAgzfNlWXJ6cZP6iwoETrUjiueODcgk9KNyaw7ZegZ4M8Weby1dg9C+z8m4F1dfLX
-	4cvPskL5jQO4ZEJoakp2B4nTUwgYrq/MjcCfMUDp+FPjXcw5xEBeftM+H0hplvQvE0KLL3
-	O++wou4psZF7vjMfgw4fuwIU52zRUWo=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=jxtKY2oW1YBZo5vKqUoQFLmHY/8Z8JRSUUM8/7xMXv4=;
+	b=JiXKyJpq6NqL8xkReYvxWfjk2Wv9chZMYvoC7HPVqR0j9E4UHUNW1uUrPHbtS8h6TMpsfI
+	md7ZqSZ1OLw0SkhaKxzwO5uj2Xl2SOw4k9sza4SFR4JEqzG8jBwRauCQqBEYCeRJexzz4P
+	iegXxhMHSj0/hRokjdb9EcZHK+oTmTE=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-279-ZYa_eOB-NiWzz_Dcp-3aWQ-1; Thu, 12 Feb 2026 20:29:04 -0500
-X-MC-Unique: ZYa_eOB-NiWzz_Dcp-3aWQ-1
-X-Mimecast-MFC-AGG-ID: ZYa_eOB-NiWzz_Dcp-3aWQ_1770946143
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2a8c273332cso17924265ad.1
-        for <linux-security-module@vger.kernel.org>; Thu, 12 Feb 2026 17:29:04 -0800 (PST)
+ us-mta-102-IWCyEsxdOzeb9xHWD4UJEw-1; Thu, 12 Feb 2026 20:29:07 -0500
+X-MC-Unique: IWCyEsxdOzeb9xHWD4UJEw-1
+X-Mimecast-MFC-AGG-ID: IWCyEsxdOzeb9xHWD4UJEw_1770946146
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2a79164b686so5003255ad.0
+        for <linux-security-module@vger.kernel.org>; Thu, 12 Feb 2026 17:29:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770946142; x=1771550942;
+        d=1e100.net; s=20230601; t=1770946146; x=1771550946;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=mEAaO36zyPmsyKqKL7e+8BHcnGxbMJMT7wzopiULDAA=;
-        b=h/ozaDqT6+K7knYPl6nMjjqPUds+A9eWD5PG8Ur7/5PeOqBlm6m1IWOTP5rg7fkPYx
-         fi7N61X4wgO7Jy5NeR6kU6SJcRVip90vu1C4JpfIdyJFsOPsnt+xF5u+/eGoWUMoE3qm
-         xYUEaD5eRUy72g6FU/x5Hl5iZHjbtIr8gfz5qUhmfI7HYMltb+rPP0sY5SLgiK7/iS9O
-         i2F7ANMd5iqBd5DtLSczO9gh94vnArPgHC4zOXpFCbHZI0CSwvQa5FUuX2FcziOn5JJl
-         x7l95TjRLzLx3e7Y1vN6DWGXCv9x3s17YGaA+NK5vOmBBzSxgX1h2pf2Qdl7DVieXQqo
-         UeHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxXTo7tMy5/fT4rqln/rCaIrZr5OaYff0fvpd+CsMWMlnfCxVSlIN0l/7TTcoGo5xcMWGOTK80LopdwWfIxMNn4Ub7hRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfN2Nr7xFGCO5Zk9FWUz/I0bEL6nHCL4vFP04Tx7FBYXrdH9Da
-	FuYjJ7i3XhPPO+M8eCQSm7+49eJZJ9c7o3K5LIdFvbEb4kCNXfhRH4HHAjgH4AyJnAqlk4lZUQ4
-	wL+7gn1DVpoLQYnzCBBmbNtM0jS49T+qjcilzQ2hFnUG9bJkdR+hVoS9sPhuluvpMVpGBUGUgmz
-	XcmA==
-X-Gm-Gg: AZuq6aIisYkBkQRAOf2gTk6RkTU4mEUIUsk/tKLjGjSUyW2VTwXN6TzwBwekltcALDb
-	1bB8yfuW211p4ebiwAp/GzUAWLygeLMPkfIIR0PmFDNK+Ca9o14okHtYVDJ/MopX1Y4LEmx0R8i
-	O9tqqb2KfYQcQ7g3JkWR61c1UtavffXt6QEZk96ltRd6AdHhRym/p/tOqUvmlOsfSTCyc2osWJd
-	IyEkL6rzcwRIr4O8LrOXU9q7GywD+VCzBppuls7pri2H/Z+1xjhyRK6Dd7AqsGhf2GoIWLb1mST
-	a5hSz1/2REJcivTPG8LvlwxuiufJ6o1X7Bti3TcQPM2yUrmwpqbREtP7rOrn+tMEz3v470hMYGq
-	BzncA8w+UM0xc
-X-Received: by 2002:a17:902:f688:b0:2aa:f9d7:68af with SMTP id d9443c01a7336-2ab5051a134mr2098265ad.4.1770946142058;
-        Thu, 12 Feb 2026 17:29:02 -0800 (PST)
-X-Received: by 2002:a17:902:f688:b0:2aa:f9d7:68af with SMTP id d9443c01a7336-2ab5051a134mr2097885ad.4.1770946141482;
-        Thu, 12 Feb 2026 17:29:01 -0800 (PST)
+        bh=jxtKY2oW1YBZo5vKqUoQFLmHY/8Z8JRSUUM8/7xMXv4=;
+        b=GOb8vzO/WIMSyyEc8c9I1kEMCgnXZiZyFdY7sow3N2XOn4chSz8FuCrSnF8A+C+CFx
+         rn4GhBAR5YPX0EnYinCY4Tl5ByN3rpnYS2aJSjbRlvUl5fAcgXgoXKu+pqGUx02PmiIq
+         xjsqLYWemhyaKy4xKQ0z/CF+ZvOcls0MzxqaskuEhAMGUAWV2xdh/B4A47CvuMgUzGtC
+         v+RIS11wdVDu+qijvgsSbRRUQLsApILZ3k9OqJvUs04Djzh33X56fqvQ1jRg3k1qJVNM
+         HDWvcaPcjHftS0bHC0sdOZctISCEwZiBOWcnfrajqpV4wwFsaAia7rfGy7u9I2ghm5N+
+         YJwA==
+X-Forwarded-Encrypted: i=1; AJvYcCWUR+97TLlNei9a+cCFGMdo1SUosj5L9QHwfEpbcKexUo+50HsKJvDQM6uET45DjPrYDjsGWKWb/tm3ywqOpPckPVu4PqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4KlLJp8sFwbDbIZIYogWfIrhtuUdhbAgKjqVTyBD9Fnri3LLt
+	01osyorD2eF50v2eM0myBYlmmq6CkVHMIEZeW2LwT9PgNWJvDD1g1j0Qu+QveNzVyoeZQIbyxUg
+	H3Wkom/mxM9JbzvDsI1e1r1lPKqkdeuutUEMY/wbrnu6RHYr/UkZtZgxTZuv9OjQXigE2nDYMAg
+	WL3w==
+X-Gm-Gg: AZuq6aJBOSm54nikpH79NwRtpavTbjOgso6gb5AF0LnX/kPzuiRvJVSfnw7gSoC4O4O
+	HXDroFWuuyoUY5w6GF890N+Ws66m5JoDK8Cdp+9krdELev4PcYzHyj6hqHbsCv6FJdJpMd2riNE
+	xSpa3gqWdP29afE0/EgQBm7Qi16pFI2HoRwBAWdHC3tQnoDwO1G3msLMQ67rhhnvKJZeI1P8B9x
+	fzHCTjDbAIecNYEMh7JB81QlvNQqSlgCRlilYONR0IWyvS36mEW9W4Ya9NEe7hysI2wS7uB6s8i
+	CYK23xrBWozpNfAJXFiD/bVxv8thWAl4bLFqrJdpNZZO75egaRiJuKl0VgaR+2T6cfvxB72XOFA
+	Y0BdwYuqqwNcy
+X-Received: by 2002:a17:902:fc4c:b0:2aa:d5e5:b12d with SMTP id d9443c01a7336-2ab5053ea30mr2483095ad.27.1770946146234;
+        Thu, 12 Feb 2026 17:29:06 -0800 (PST)
+X-Received: by 2002:a17:902:fc4c:b0:2aa:d5e5:b12d with SMTP id d9443c01a7336-2ab5053ea30mr2482775ad.27.1770946145756;
+        Thu, 12 Feb 2026 17:29:05 -0800 (PST)
 Received: from localhost ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3567e9da8a2sm6282862a91.5.2026.02.12.17.28.59
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ab2999879dsm65059095ad.80.2026.02.12.17.29.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Feb 2026 17:29:00 -0800 (PST)
+        Thu, 12 Feb 2026 17:29:05 -0800 (PST)
 From: Coiby Xu <coxu@redhat.com>
 To: linux-integrity@vger.kernel.org
 Cc: Heiko Carstens <hca@linux.ibm.com>,
@@ -73,35 +73,16 @@ Cc: Heiko Carstens <hca@linux.ibm.com>,
 	Dave Hansen <dave.hansen@intel.com>,
 	Mimi Zohar <zohar@linux.ibm.com>,
 	Roberto Sassu <roberto.sassu@huawei.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-	"H. Peter Anvin" <hpa@zytor.com>,
 	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
 	Eric Snowberg <eric.snowberg@oracle.com>,
 	Paul Moore <paul@paul-moore.com>,
 	James Morris <jmorris@namei.org>,
 	"Serge E. Hallyn" <serge@hallyn.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	linux-kernel@vger.kernel.org (open list),
-	linuxppc-dev@lists.ozlabs.org (open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)),
-	linux-s390@vger.kernel.org (open list:S390 ARCHITECTURE),
-	linux-efi@vger.kernel.org (open list:EXTENSIBLE FIRMWARE INTERFACE (EFI)),
 	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-	keyrings@vger.kernel.org (open list:KEYS/KEYRINGS_INTEGRITY)
-Subject: [PATCH v3 1/3] integrity: Make arch_ima_get_secureboot integrity-wide
-Date: Fri, 13 Feb 2026 09:28:46 +0800
-Message-ID: <20260213012851.2532722-2-coxu@redhat.com>
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 2/3] evm: Don't enable fix mode when secure boot is enabled
+Date: Fri, 13 Feb 2026 09:28:47 +0800
+Message-ID: <20260213012851.2532722-3-coxu@redhat.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260213012851.2532722-1-coxu@redhat.com>
 References: <20260213012851.2532722-1-coxu@redhat.com>
@@ -112,432 +93,67 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 7xY3HracUXAe75XFsgaT3NmDSPWKqz5V19BKfuIo8SI_1770946143
+X-Mimecast-MFC-PROC-ID: v8ITnG8F5R7CYZBZbGwudo4fAeqMdb9BjU4xTEIStLU_1770946146
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
 
-EVM and other LSMs need the ability to query the secure boot status of
-the system, without directly calling the IMA arch_ima_get_secureboot
-function. Refactor the secure boot status check into a general function
-named arch_get_secureboot.
+Similar to IMA fix mode, forbid EVM fix mode when secure boot is
+enabled.
 
 Reported-and-suggested-by: Mimi Zohar <zohar@linux.ibm.com>
 Suggested-by: Roberto Sassu <roberto.sassu@huawei.com>
 Signed-off-by: Coiby Xu <coxu@redhat.com>
 ---
- MAINTAINERS                                   |  1 +
- arch/powerpc/kernel/ima_arch.c                |  5 --
- arch/powerpc/kernel/secure_boot.c             |  6 ++
- arch/s390/kernel/ima_arch.c                   |  6 --
- arch/s390/kernel/ipl.c                        |  5 ++
- arch/x86/include/asm/efi.h                    |  4 +-
- arch/x86/platform/efi/efi.c                   |  2 +-
- include/linux/ima.h                           |  7 +--
- include/linux/secure_boot.h                   | 19 +++++++
- security/integrity/Makefile                   |  3 +-
- security/integrity/efi_secureboot.c           | 56 +++++++++++++++++++
- security/integrity/ima/ima_appraise.c         |  2 +-
- security/integrity/ima/ima_efi.c              | 47 +---------------
- security/integrity/ima/ima_main.c             |  3 +-
- security/integrity/integrity.h                |  1 +
- security/integrity/platform_certs/load_uefi.c |  2 +-
- security/integrity/secure_boot.c              | 16 ++++++
- 17 files changed, 115 insertions(+), 70 deletions(-)
- create mode 100644 include/linux/secure_boot.h
- create mode 100644 security/integrity/efi_secureboot.c
- create mode 100644 security/integrity/secure_boot.c
+ security/integrity/evm/evm_main.c | 24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 149deedafe2c..56242d78e4a6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12550,6 +12550,7 @@ R:	Eric Snowberg <eric.snowberg@oracle.com>
- L:	linux-integrity@vger.kernel.org
- S:	Supported
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
-+F:	include/linux/secure_boot.h
- F:	security/integrity/
- F:	security/integrity/ima/
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 73d500a375cb..a54cb73b51ee 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -72,17 +72,25 @@ static struct xattr_list evm_config_default_xattrnames[] = {
  
-diff --git a/arch/powerpc/kernel/ima_arch.c b/arch/powerpc/kernel/ima_arch.c
-index b7029beed847..0d8892a03526 100644
---- a/arch/powerpc/kernel/ima_arch.c
-+++ b/arch/powerpc/kernel/ima_arch.c
-@@ -7,11 +7,6 @@
- #include <linux/ima.h>
- #include <asm/secure_boot.h>
+ LIST_HEAD(evm_config_xattrnames);
  
--bool arch_ima_get_secureboot(void)
--{
--	return is_ppc_secureboot_enabled();
--}
--
- /*
-  * The "secure_rules" are enabled only on "secureboot" enabled systems.
-  * These rules verify the file signatures against known good values.
-diff --git a/arch/powerpc/kernel/secure_boot.c b/arch/powerpc/kernel/secure_boot.c
-index 3a28795b4ed8..28436c1599e0 100644
---- a/arch/powerpc/kernel/secure_boot.c
-+++ b/arch/powerpc/kernel/secure_boot.c
-@@ -5,6 +5,7 @@
-  */
- #include <linux/types.h>
- #include <linux/of.h>
-+#include <linux/secure_boot.h>
- #include <linux/string_choices.h>
- #include <asm/secure_boot.h>
- 
-@@ -44,6 +45,11 @@ bool is_ppc_secureboot_enabled(void)
- 	return enabled;
- }
- 
-+bool arch_get_secureboot(void)
-+{
-+	return is_ppc_secureboot_enabled();
-+}
++static char *evm_cmdline __initdata;
++core_param(evm, evm_cmdline, charp, 0);
 +
- bool is_ppc_trustedboot_enabled(void)
+ static int evm_fixmode __ro_after_init;
+-static int __init evm_set_fixmode(char *str)
++static void __init evm_set_fixmode(void)
  {
- 	struct device_node *node;
-diff --git a/arch/s390/kernel/ima_arch.c b/arch/s390/kernel/ima_arch.c
-index f3c3e6e1c5d3..6ccbe34ce408 100644
---- a/arch/s390/kernel/ima_arch.c
-+++ b/arch/s390/kernel/ima_arch.c
-@@ -1,12 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- 
- #include <linux/ima.h>
--#include <asm/boot_data.h>
--
--bool arch_ima_get_secureboot(void)
--{
--	return ipl_secure_flag;
--}
- 
- const char * const *arch_get_ima_policy(void)
- {
-diff --git a/arch/s390/kernel/ipl.c b/arch/s390/kernel/ipl.c
-index dcdc7e274848..781deb588557 100644
---- a/arch/s390/kernel/ipl.c
-+++ b/arch/s390/kernel/ipl.c
-@@ -2504,6 +2504,11 @@ void *ipl_report_finish(struct ipl_report *report)
- 	return buf;
- }
- 
-+bool arch_get_secureboot(void)
-+{
-+	return ipl_secure_flag;
-+}
-+
- int ipl_report_free(struct ipl_report *report)
- {
- 	struct ipl_report_component *comp, *ncomp;
-diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
-index f227a70ac91f..ee382b56dd7b 100644
---- a/arch/x86/include/asm/efi.h
-+++ b/arch/x86/include/asm/efi.h
-@@ -401,9 +401,9 @@ extern int __init efi_memmap_split_count(efi_memory_desc_t *md,
- extern void __init efi_memmap_insert(struct efi_memory_map *old_memmap,
- 				     void *buf, struct efi_mem_range *mem);
- 
--extern enum efi_secureboot_mode __x86_ima_efi_boot_mode(void);
-+enum efi_secureboot_mode __x86_efi_boot_mode(void);
- 
--#define arch_ima_efi_boot_mode	__x86_ima_efi_boot_mode()
-+#define arch_efi_boot_mode __x86_efi_boot_mode()
- 
- #ifdef CONFIG_EFI_RUNTIME_MAP
- int efi_get_runtime_map_size(void);
-diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
-index d00c6de7f3b7..74032f3ab9b0 100644
---- a/arch/x86/platform/efi/efi.c
-+++ b/arch/x86/platform/efi/efi.c
-@@ -920,7 +920,7 @@ umode_t efi_attr_is_visible(struct kobject *kobj, struct attribute *attr, int n)
- 	return attr->mode;
- }
- 
--enum efi_secureboot_mode __x86_ima_efi_boot_mode(void)
-+enum efi_secureboot_mode __x86_efi_boot_mode(void)
- {
- 	return boot_params.secure_boot;
- }
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 8e29cb4e6a01..b3927b795a60 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -11,6 +11,7 @@
- #include <linux/fs.h>
- #include <linux/security.h>
- #include <linux/kexec.h>
-+#include <linux/secure_boot.h>
- #include <crypto/hash_info.h>
- struct linux_binprm;
- 
-@@ -72,14 +73,8 @@ int __init ima_get_kexec_buffer(void **addr, size_t *size);
- #endif
- 
- #ifdef CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT
--extern bool arch_ima_get_secureboot(void);
- extern const char * const *arch_get_ima_policy(void);
- #else
--static inline bool arch_ima_get_secureboot(void)
--{
--	return false;
--}
--
- static inline const char * const *arch_get_ima_policy(void)
- {
- 	return NULL;
-diff --git a/include/linux/secure_boot.h b/include/linux/secure_boot.h
-new file mode 100644
-index 000000000000..3ded3f03655c
---- /dev/null
-+++ b/include/linux/secure_boot.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2026 Red Hat, Inc. All Rights Reserved.
-+ *
-+ * Author: Coiby Xu <coxu@redhat.com>
-+ */
-+
-+#ifndef _LINUX_SECURE_BOOT_H
-+#define _LINUX_SECURE_BOOT_H
-+
-+#include <linux/types.h>
-+
-+/*
-+ * Returns true if the platform secure boot is enabled.
-+ * Returns false if disabled or not supported.
-+ */
-+bool arch_get_secureboot(void);
-+
-+#endif /* _LINUX_SECURE_BOOT_H */
-diff --git a/security/integrity/Makefile b/security/integrity/Makefile
-index 92b63039c654..548665e2b702 100644
---- a/security/integrity/Makefile
-+++ b/security/integrity/Makefile
-@@ -5,7 +5,7 @@
- 
- obj-$(CONFIG_INTEGRITY) += integrity.o
- 
--integrity-y := iint.o
-+integrity-y := iint.o secure_boot.o
- integrity-$(CONFIG_INTEGRITY_AUDIT) += integrity_audit.o
- integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
- integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
-@@ -18,6 +18,7 @@ integrity-$(CONFIG_LOAD_IPL_KEYS) += platform_certs/load_ipl_s390.o
- integrity-$(CONFIG_LOAD_PPC_KEYS) += platform_certs/efi_parser.o \
-                                      platform_certs/load_powerpc.o \
-                                      platform_certs/keyring_handler.o
-+integrity-$(CONFIG_EFI) += efi_secureboot.o
- # The relative order of the 'ima' and 'evm' LSMs depends on the order below.
- obj-$(CONFIG_IMA)			+= ima/
- obj-$(CONFIG_EVM)			+= evm/
-diff --git a/security/integrity/efi_secureboot.c b/security/integrity/efi_secureboot.c
-new file mode 100644
-index 000000000000..bfd4260a83a3
---- /dev/null
-+++ b/security/integrity/efi_secureboot.c
-@@ -0,0 +1,56 @@
-+// SPDX-License-Identifier: GPL-1.0+
-+/*
-+ * Copyright (C) 2018 IBM Corporation
-+ */
-+#include <linux/efi.h>
-+#include <linux/secure_boot.h>
-+#include <asm/efi.h>
-+
-+#ifndef arch_efi_boot_mode
-+#define arch_efi_boot_mode efi_secureboot_mode_unset
-+#endif
-+
-+static enum efi_secureboot_mode get_sb_mode(void)
-+{
-+	enum efi_secureboot_mode mode;
-+
-+	if (!efi_rt_services_supported(EFI_RT_SUPPORTED_GET_VARIABLE)) {
-+		pr_info("integrity: secureboot mode unknown, no efi\n");
-+		return efi_secureboot_mode_unknown;
-+	}
-+
-+	mode = efi_get_secureboot_mode(efi.get_variable);
-+	if (mode == efi_secureboot_mode_disabled)
-+		pr_info("integrity: secureboot mode disabled\n");
-+	else if (mode == efi_secureboot_mode_unknown)
-+		pr_info("integrity: secureboot mode unknown\n");
-+	else
-+		pr_info("integrity: secureboot mode enabled\n");
-+	return mode;
-+}
-+
-+/*
-+ * Query secure boot status
-+ *
-+ * Note don't call this function too early e.g. in __setup hook otherwise the
-+ * kernel may hang when calling efi_get_secureboot_mode.
-+ *
-+ */
-+bool arch_get_secureboot(void)
-+{
-+	static enum efi_secureboot_mode sb_mode;
-+	static bool initialized;
-+
-+	if (!initialized && efi_enabled(EFI_BOOT)) {
-+		sb_mode = arch_efi_boot_mode;
-+
-+		if (sb_mode == efi_secureboot_mode_unset)
-+			sb_mode = get_sb_mode();
-+		initialized = true;
-+	}
-+
-+	if (sb_mode == efi_secureboot_mode_enabled)
-+		return true;
-+	else
-+		return false;
-+}
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 5149ff4fd50d..9737bf76ce17 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -27,7 +27,7 @@ core_param(ima_appraise, ima_appraise_cmdline_default, charp, 0);
- void __init ima_appraise_parse_cmdline(void)
- {
- 	const char *str = ima_appraise_cmdline_default;
--	bool sb_state = arch_ima_get_secureboot();
-+	bool sb_state = arch_get_secureboot();
- 	int appraisal_state = ima_appraise;
- 
- 	if (!str)
-diff --git a/security/integrity/ima/ima_efi.c b/security/integrity/ima/ima_efi.c
-index 138029bfcce1..78191879dd98 100644
---- a/security/integrity/ima/ima_efi.c
-+++ b/security/integrity/ima/ima_efi.c
-@@ -2,52 +2,9 @@
- /*
-  * Copyright (C) 2018 IBM Corporation
-  */
--#include <linux/efi.h>
- #include <linux/module.h>
- #include <linux/ima.h>
--#include <asm/efi.h>
--
--#ifndef arch_ima_efi_boot_mode
--#define arch_ima_efi_boot_mode efi_secureboot_mode_unset
--#endif
--
--static enum efi_secureboot_mode get_sb_mode(void)
--{
--	enum efi_secureboot_mode mode;
--
--	if (!efi_rt_services_supported(EFI_RT_SUPPORTED_GET_VARIABLE)) {
--		pr_info("ima: secureboot mode unknown, no efi\n");
--		return efi_secureboot_mode_unknown;
--	}
--
--	mode = efi_get_secureboot_mode(efi.get_variable);
--	if (mode == efi_secureboot_mode_disabled)
--		pr_info("ima: secureboot mode disabled\n");
--	else if (mode == efi_secureboot_mode_unknown)
--		pr_info("ima: secureboot mode unknown\n");
+-	if (strncmp(str, "fix", 3) == 0)
+-		evm_fixmode = 1;
 -	else
--		pr_info("ima: secureboot mode enabled\n");
--	return mode;
--}
--
--bool arch_ima_get_secureboot(void)
--{
--	static enum efi_secureboot_mode sb_mode;
--	static bool initialized;
--
--	if (!initialized && efi_enabled(EFI_BOOT)) {
--		sb_mode = arch_ima_efi_boot_mode;
--
--		if (sb_mode == efi_secureboot_mode_unset)
--			sb_mode = get_sb_mode();
--		initialized = true;
--	}
--
--	if (sb_mode == efi_secureboot_mode_enabled)
--		return true;
--	else
--		return false;
--}
-+#include <linux/secure_boot.h>
+-		pr_err("invalid \"%s\" mode", str);
++	if (!evm_cmdline)
++		return;
  
- /* secureboot arch rules */
- static const char * const sb_arch_rules[] = {
-@@ -67,7 +24,7 @@ static const char * const sb_arch_rules[] = {
+-	return 1;
++	if (strncmp(evm_cmdline, "fix", 3) == 0) {
++		if (arch_get_secureboot()) {
++			pr_info("Secure boot enabled: ignoring evm=fix");
++			return;
++		}
++		evm_fixmode = 1;
++	} else {
++		pr_err("invalid \"%s\" mode", evm_cmdline);
++	}
+ }
+-__setup("evm=", evm_set_fixmode);
  
- const char * const *arch_get_ima_policy(void)
+ static void __init evm_init_config(void)
  {
--	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
-+	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_get_secureboot()) {
- 		if (IS_ENABLED(CONFIG_MODULE_SIG))
- 			set_module_sig_enforced();
- 		if (IS_ENABLED(CONFIG_KEXEC_SIG))
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 5770cf691912..4aa8f0a20950 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -949,8 +949,7 @@ static int ima_load_data(enum kernel_load_data_id id, bool contents)
+@@ -1119,6 +1127,8 @@ static int __init init_evm(void)
  
- 	switch (id) {
- 	case LOADING_KEXEC_IMAGE:
--		if (IS_ENABLED(CONFIG_KEXEC_SIG)
--		    && arch_ima_get_secureboot()) {
-+		if (IS_ENABLED(CONFIG_KEXEC_SIG) && arch_get_secureboot()) {
- 			pr_err("impossible to appraise a kernel image without a file descriptor; try using kexec_file_load syscall.\n");
- 			return -EACCES;
- 		}
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 7b388b66cf80..4636629533af 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -14,6 +14,7 @@
+ 	evm_init_config();
  
- #include <linux/types.h>
- #include <linux/integrity.h>
-+#include <linux/secure_boot.h>
- #include <crypto/sha1.h>
- #include <crypto/hash.h>
- #include <linux/key.h>
-diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-index d1fdd113450a..c0d6948446c3 100644
---- a/security/integrity/platform_certs/load_uefi.c
-+++ b/security/integrity/platform_certs/load_uefi.c
-@@ -212,7 +212,7 @@ static int __init load_uefi_certs(void)
- 	}
- 
- 	/* the MOK/MOKx can not be trusted when secure boot is disabled */
--	if (!arch_ima_get_secureboot())
-+	if (!arch_get_secureboot())
- 		return 0;
- 
- 	mokx = get_cert_list(L"MokListXRT", &mok_var, &mokxsize, &status);
-diff --git a/security/integrity/secure_boot.c b/security/integrity/secure_boot.c
-new file mode 100644
-index 000000000000..fc2693c286f8
---- /dev/null
-+++ b/security/integrity/secure_boot.c
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2026 Red Hat, Inc. All Rights Reserved.
-+ *
-+ * Author: Coiby Xu <coxu@redhat.com>
-+ */
-+#include <linux/secure_boot.h>
++	evm_set_fixmode();
 +
-+/*
-+ * Default weak implementation.
-+ * Architectures that support secure boot must override this.
-+ */
-+__weak bool arch_get_secureboot(void)
-+{
-+	return false;
-+}
+ 	error = integrity_init_keyring(INTEGRITY_KEYRING_EVM);
+ 	if (error)
+ 		goto error;
 -- 
 2.53.0
 
