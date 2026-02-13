@@ -1,83 +1,124 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C021684BE;
-	Fri, 13 Feb 2026 13:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44A22E6CB8;
+	Fri, 13 Feb 2026 16:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770991199; cv=none; b=XeieFXyb/pg3oxVumzvv2Q8I5Qhsq+PzV/io4XgQ36rfMsoQ74ssUX1lO28WrjgG2uHAx5wG2emnR9wZygZJ8M3wv+JHewCFDdXezF9eabrzdceqvD5A41fIa+WtvN+e/A0GswGj+kErab19t3Mcy/n8YH9yKQuw7f9dUI40b+M=
+	t=1771000126; cv=none; b=YIHIMnp9hbXHYjuFE3q543m+dlPKbsCj2fBau7W2B45SCB9m6YqllnaMXNbh1otBWkV47vo4Wu2u02EcmcsNoSw/QnVNU4SHSDO2m/XXfZpLum/SdXQ4Rl78FCMXzc4MZ6zjvxkTM7W6ZPOxQDVr0j1DZvBulNjO2qzJZ35Yz+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770991199; c=relaxed/simple;
-	bh=oIITJHToT3jgpyMYTOKivfMG2iGdep9oSi1Q7sfvBzI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nmXFAOsZsFWhD+9m2mYRC/FQzerOR/vkML9iXi8vgm9h2aOnh8Qm9cu6esSnTBXIDf0izxDuRnZYlxDDcg2ymZupNu51G9zI7Wd1RCxHfM/ECYPQZsgPLUGisGlxzZW5ocEY31ktC88DR5CNcj/y+jmhnFvA7ESoFZuRQY4A21Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 61DDxGKm000148;
-	Fri, 13 Feb 2026 22:59:16 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 61DDxGgJ000145
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 13 Feb 2026 22:59:16 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <d20f1b63-714f-48ba-9bee-cd074205404f@I-love.SAKURA.ne.jp>
-Date: Fri, 13 Feb 2026 22:59:15 +0900
+	s=arc-20240116; t=1771000126; c=relaxed/simple;
+	bh=1fzPsvpz3zBlz/HKxjoMGBiAr5SavJd0WmfYKo7UbVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Us/razOP6HZdl0VqaE9k4/F+RBG8zHKIgLtIy5/nM2B39CaQH7LvNp4ySLvtX2Xh65y0URUmywEYCdNgzHE9Uk/tf10ErntrxhbU394UuNsev0yaxSUPUAH7BL4PYDdRw/1VOpYokC11fakEkTT3rosVbBxgG2ozygYV1GEsR64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X/GZ7oSe; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X/GZ7oSe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBC3FC116C6;
+	Fri, 13 Feb 2026 16:28:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771000126;
+	bh=1fzPsvpz3zBlz/HKxjoMGBiAr5SavJd0WmfYKo7UbVw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X/GZ7oSeIm81oBp0EFVVKVX3NqyM5TA+otjfeY5LjfGWHvJP1GO9t+J5HY2ZonXnI
+	 m9xbZhOtuLzKAmOC2GYdcCYGa4Lp4UNigCk0e3NLwLfmkn0uTGo1XVl7gHImtTD2d3
+	 D2J4UDLzhf8fMlwIJH1eGVdIvXPhFWaAVh+2jh1lxjthGI1efko/fh/0DAMCkTdYSY
+	 X7ZXh5JIWDVxNEat7r1IunJ4zKpoFeWA3t88+JdkTJXNf3gNneTQGBdf4H/QgV2BYT
+	 xRDJ9pn5UJIu0TVJcx9208exMj42cxMvGkePYFNYmy5cpJ3I+PLYlWY2EkMSjqyk+q
+	 MxCr6YM/tAswg==
+Date: Fri, 13 Feb 2026 16:09:48 +0100
+From: Nicolas Schier <nsc@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Daniel Gomez <da.gomez@kernel.org>,
+	Aaron Tomlin <atomlin@atomlin.com>,
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
+	Xiu Jianfeng <xiujianfeng@huawei.com>,
+	Fabian =?iso-8859-1?Q?Gr=FCnbichler?= <f.gruenbichler@proxmox.com>,
+	Arnout Engelen <arnout@bzzt.net>,
+	Mattia Rizzolo <mattia@mapreri.org>, kpcyrd <kpcyrd@archlinux.org>,
+	Christian Heusel <christian@heusel.eu>,
+	=?iso-8859-1?Q?C=E2ju?= Mihai-Drosi <mcaju95@gmail.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v4 10/17] module: Move integrity checks into dedicated
+ function
+Message-ID: <aY8-vICrltcCtP51@derry.ads.avm.de>
+Mail-Followup-To: Nicolas Schier <nsc@kernel.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Daniel Gomez <da.gomez@kernel.org>,
+	Aaron Tomlin <atomlin@atomlin.com>,
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
+	Xiu Jianfeng <xiujianfeng@huawei.com>,
+	Fabian =?iso-8859-1?Q?Gr=FCnbichler?= <f.gruenbichler@proxmox.com>,
+	Arnout Engelen <arnout@bzzt.net>,
+	Mattia Rizzolo <mattia@mapreri.org>, kpcyrd <kpcyrd@archlinux.org>,
+	Christian Heusel <christian@heusel.eu>,
+	=?iso-8859-1?Q?C=E2ju?= Mihai-Drosi <mcaju95@gmail.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
+References: <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
+ <20260113-module-hashes-v4-10-0b932db9b56b@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xfrm: kill xfrm_dev_{state,policy}_flush_secctx_check()
-To: Steffen Klassert <steffen.klassert@secunet.com>,
-        Paul Moore <paul@paul-moore.com>, SELinux <selinux@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-        Network Development <netdev@vger.kernel.org>
-References: <93d291db-4175-48c4-830c-e83bab373ae2@I-love.SAKURA.ne.jp>
- <CAHC9VhQPKU5DqG-ryZsiCV2vZeGGf_a-JStR_LVVCCn03C4usQ@mail.gmail.com>
- <f9b88268-03dc-4356-8b31-0bab73cc9b1e@I-love.SAKURA.ne.jp>
- <CAHC9VhRzRAR+hhn4TFADnHWpzjOxjmh0S_Hg_HktkPkKQ35ycg@mail.gmail.com>
- <74a70504-8ff8-4d97-b35f-774364779889@I-love.SAKURA.ne.jp>
- <7ef21dab-3805-4eae-80d7-9779aeff3f58@I-love.SAKURA.ne.jp>
- <aYmoDwO-YXrc4W1c@secunet.com>
- <85546d35-c7bd-49bf-b0c3-9677bde25859@I-love.SAKURA.ne.jp>
- <aYnDWbxo-jAzR4ca@secunet.com>
- <7c17884d-dbf1-4c2c-9813-0c5369cfdcc9@I-love.SAKURA.ne.jp>
- <aY76t_xYCHmLq6Ur@secunet.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <aY76t_xYCHmLq6Ur@secunet.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav101.rs.sakura.ne.jp
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260113-module-hashes-v4-10-0b932db9b56b@weissschuh.net>
 
-On 2026/02/13 19:19, Steffen Klassert wrote:
-On 2026/02/13 19:19, Steffen Klassert wrote:
->> The NETDEV_UNREGISTER path can be triggered by just doing "unshare -n ip addr show"
->> (i.e. implicit cleanup of a network namespace due to termination of init process in
->> that namespace). We are not allowed to reject the cleanup_net() route.
+On Tue, Jan 13, 2026 at 01:28:54PM +0100, Thomas Weiﬂschuh wrote:
+> With the addition of hash-based integrity checking, the configuration
+> matrix is easier to represent in a dedicated function and with explicit
+> usage of IS_ENABLED().
 > 
-> And here we come to the other problem I mentioned. When a LSM policy
-> rejects to flush the xfrm states and policies on network namespace
-> exit, we leak all the xfrm states and policies in that namespace.
-> Here we have no other option, we must flush the xfrm states and
-> policies regardless of any LSM policy. This can be fixed with
-> something like that:
+> Drop the now unnecessary stub for module_sig_check().
+> 
+> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+> ---
+>  kernel/module/internal.h |  7 -------
+>  kernel/module/main.c     | 18 ++++++++++++++----
+>  2 files changed, 14 insertions(+), 11 deletions(-)
+> 
 
-This something is what I explained at
-https://lkml.kernel.org/r/1bb453af-3ef2-4ab6-a909-0705bd07c136@I-love.SAKURA.ne.jp .
-The "task_valid" argument does not always reflect whether LSM policy can reject or not.
-
-Anyway, the patch to add xfrm_dev_unregister(dev) seems OK if we do like
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit?h=next-20260123&id=fc0f090e41e652d158f946c616cdd82baed3c8f4 ?
-
+Reviewed-by: Nicolas Schier <nsc@kernel.org>
