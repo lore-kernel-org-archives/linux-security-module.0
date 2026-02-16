@@ -1,142 +1,185 @@
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EFB2E3387
-	for <linux-security-module@vger.kernel.org>; Mon, 16 Feb 2026 18:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EB6236A73
+	for <linux-security-module@vger.kernel.org>; Mon, 16 Feb 2026 19:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771268000; cv=none; b=BRAfXE7BwDBPgeS/SSEtgJlcgc+i157DXZ4KoX6D3uutpSl4gyfOZcZnHy6uUYnnn5nbD7zpu27RgEZhNSB24j7/vnIo6/d+ZaIEFvibC4c2DAufSHR72O1pAO4rFOawdx/2cXDPbbOGZJ/t/PmkwenAb9wnVDJXQwDlQrn+OKM=
+	t=1771270394; cv=none; b=tV/Z+V+1DMPLV06E9wmc6tPHcYOU/jqQOJJ+cOJepP/10TEnEVe6aIZJT2v82fsr3vXigpq4rKSX5DXAnkC3UrEDJTxxxv13nn4wtaD+eIPehgFXzglMjJ8/Yw1gYOc/eva8Wi25HQkAIsGzp68O2P9/ABzIg4h/Gw7kZ20QhVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771268000; c=relaxed/simple;
-	bh=z9lAxhqAOWJK3aphGz/9Vo1vFjVyDgEXn3dJEE5GF1Y=;
-	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=o7QFgl+T1lXgmxX4d6y0PrjhHHxfL6lIxQZaj0LQSR3KgUCq2RrBHCrIYc+jO7iGk3PbwXLrNQchi+MkNqBSOSooO7VKyd7ofz2oc6hoV+SjH6JNa1fljMVbK4oN16GkG4cNCkqBRFnEAklOBqw0tbZWwzr86T74w3RNhy33u1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VwXMj77Q; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1771270394; c=relaxed/simple;
+	bh=aFwHoUa/xXlynGsv5bhb74fy3BMSKJ7XnElPfvxsyD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ihg5NHWudOITtGaCtOydyAqaT9pMSbaZCch53jB8jZ5pi8jbg4NdTVl+w8/Sg7jJuxgt2wXclC2NH0hrV/bf/iwgh0Xesjsulu/uyBtb85TLPfAr/qnFhW/B5w7WtHRcyCBc+DRzR6XdXldEt5Y6qJHDdbAEjsXQMSy4OrPppNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g6KdEQIp; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VwXMj77Q"
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-506c00df428so16933261cf.3
-        for <linux-security-module@vger.kernel.org>; Mon, 16 Feb 2026 10:53:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g6KdEQIp"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-43626796202so3253623f8f.3
+        for <linux-security-module@vger.kernel.org>; Mon, 16 Feb 2026 11:33:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1771267997; x=1771872797; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=agZzr/J+RDM+D3SvvYA7saHpdOrKQ4jtNNKUE6kjFHU=;
-        b=VwXMj77QZGbt2ce0+4DkN/ZxxPEJYeuEEgUhM9twT/NnFze3id/Kr/EzbyKXyc1fAw
-         zoV2NVMboXHPJgKW9bm1KGcUlm4WM29Qb+neCzQSwS3yEy7BSnJOCyI1gXPIeTAK2poP
-         +krUklWqSVnDtXgNYRnCxYqJhiYLPJ6KdIQYuthTKUSgj5TCiGjUl185xYYlQE6AhKqs
-         XBU1d80NqY6lmjMNqglDyz037KdE2vj/38hJ0Yi6xpAirELeUqDsFuvnq0IBVdjnUa1Y
-         sC6ifj7OZhFBZWWaiyaVdAJV1Dm4OmeoQnKKUSBuhlx0gO5w4UvTb/1j10NHCrB+QyVK
-         +GxQ==
+        d=gmail.com; s=20230601; t=1771270391; x=1771875191; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=A2RE9+nHzCQCP4uSlt2Lg6OP9K9Ee/j2pRwAIiZltKY=;
+        b=g6KdEQIpIXFr24HgAS4LLjelwNjsE8oQx0QsZmrG33Tu50svlExxvmDDwGK3Ll23il
+         qbOQiaaV10b4nR2WCjc3ix7zJtpKMKtZklXcuXzQ7sVL9c/VVWUkwj4gFSMB0ZIFT3OO
+         MTQuawiErh63EftF+qIZGQUCzuV7QTX9qpzDu+IRfiLsgweHLTLMgEZZBks/mWQmlkv3
+         /xpVDVGh5cLGM5djJF5lFiff50wnFGYyhHIHaOXVb0Fzp+Ynw1xSjSouAb/cwWo5T6H4
+         tsZSpIyXRs6IZqT1wiXIEpDlH1CnKHiNvyASNjpp/RCpK6K484pSO31B2t6RVS8Bjw25
+         ln0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771267997; x=1771872797;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:x-gm-gg
+        d=1e100.net; s=20230601; t=1771270391; x=1771875191;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=agZzr/J+RDM+D3SvvYA7saHpdOrKQ4jtNNKUE6kjFHU=;
-        b=pe97dqdaWozCOUiHN57Elvv9OyEUE5335FYUSyudhaaJdRlX8KuNb0v/fk1bik1lIH
-         aKYfwYDVU/cyn6t749VnpVF+fsX9+gtIeRnaKqtlY0E+i5akIO3zEkubIysIDu7Hei4I
-         Eyn6HnndzKm7dblNqG7bXxgML38IpJI70dNaMfiA6Q9ej7BMiSbYLFBULlC29Zp7A2UR
-         LP6nfocGbMAlKgKX3WSGJX7YAJH6b6ZOoHP6580anB6He9Pa2BJfUpNN4CUBaMhtn8sP
-         txRbaDIxN3mW+rONX924/xOplF+EGXZpa1xGahDJaa6RkTq0Z0Ltd0lBzw5XB4GYo88a
-         eYIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVtOLB47C7QyvdjBv10aO9sqCfHTeOtBwrGiYU7VE9eu1xMgJCWgvSUx2Wd4PZeyWi6c1hJALsMrQGGOS4uN4SnChgdSPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuRUCOkai4jrz7aSWCBIwnwwEgbo0oMvwyVlEyqyIzINFuq/FT
-	ElT32SBsfHGGxtIuPrzzBL7HHI5QkYsU7UGv55SMaJbJ0QJ3/KICS3kpBrfLfGSyhQ==
-X-Gm-Gg: AZuq6aJe3ECxRedhTENb5TkQ6FhCDoPAjRQjb1iZ8oTETGYGVXiSlSTpugzR4wrnQxP
-	StyTQjfYIkUemMpjrZ9Uwb3JwcAO6qZBHAd2xW0h3l5CRJDDnwWpKrbFiaHiJf9/uhxaGWS83V/
-	yl2R7HcQ1QvyI9e+rm2oADBgw0urAf6BMby+d7bKlwe6pj/7q5gLD4Q9TLVSggGpIbM0sD2Ij3J
-	/sk7w+eA6/8Kvycx9ST86dK1Vj+l0FJ+CqOp/L/hfi+yQ0L9Ju2/FpbKyAZKPTVBMUUeO21l4yM
-	L/+xncvK/z2OMWtE1YuaU3s07wFBM/t+82zB5SSHuKjOThxDgh7n5orsNbJY/M0NiTQFBYmxRrl
-	4bUD5SgJS0uYby3H2a9EBBz2np68s7DFaybYDfi6OIkIWMH3q8nXMINoiDFdAtSM+kklPCmCuhX
-	B9z1ga+vKLwJpzxhj6W9nbxT+I
-X-Received: by 2002:a05:622a:1787:b0:501:3df2:fd60 with SMTP id d75a77b69052e-506a8271d63mr139358561cf.12.1771267997128;
-        Mon, 16 Feb 2026 10:53:17 -0800 (PST)
-Received: from [10.116.167.119] ([166.196.57.81])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-50684b6b576sm149233871cf.21.2026.02.16.10.53.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Feb 2026 10:53:16 -0800 (PST)
-From: Paul Moore <paul@paul-moore.com>
-To: Christian Brauner <brauner@kernel.org>
-CC: James Morris <jmorris@namei.org>, <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Date: Mon, 16 Feb 2026 19:53:11 +0100
-Message-ID: <19c67cca5d8.2843.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-In-Reply-To: <20260216-work-security-namespace-v1-1-075c28758e1f@kernel.org>
-References: <20260216-work-security-namespace-v1-1-075c28758e1f@kernel.org>
-User-Agent: AquaMail/1.57.1 (build: 105701604)
-Subject: Re: [PATCH RFC] security: add LSM blob and hooks for namespaces
+        bh=A2RE9+nHzCQCP4uSlt2Lg6OP9K9Ee/j2pRwAIiZltKY=;
+        b=CTZgmASK0pq0FOfdeMJk/VZhcvIFJN2t6DsHY8MAZahX4TUcZkHnXOgHr6BPa5Hn7K
+         mCSEmfoVAv7MXq1apn17vlqIR2J7iUu4OhBeqZmfAKegvl3CPATfT0R9HFG7S5Nv0f8e
+         lXz09kMUjeWe6/tnofrdXCftyDC0i0qz/E83o17tw6y5ziQYfgTFA3RhtkW2Vyb3dMcR
+         qMPwYwc2ax43p5PrdCUGzuBOvemaUpwj6xKus5U/tM7eAoyWkvtZsy3EYHnD0wRRYKmh
+         /x7L4Pnf1ujy5MOqfS5qxxesnlPNUlqXwyyIzj2s2cIKy8s+2OOhKmUERoPxc3ca9Dgi
+         HL8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUGG/kemCFAJ06ISdkInqnsKQvk+YcU9vwW8LZ/5rzIkdpmzQ0/6iv7aEFbp76FQG+1/ol7YvU/EVid+TkXEYrYBZdXMmQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJrYutmxfmhuVLNIbzskPSc7Z6LlnjmN9aVj52qpkb1iu3iHma
+	h7g1XwlFmDHcWkNG6bp/DbZZpK5dL/ZBUJWmVS1EVUGUonqGDL15+xnz
+X-Gm-Gg: AZuq6aJaPH7T/S8GMo2y6h17hvA1Uup0O2VewilaBS2uR1Rjjk6VcoVE4gjLgB1fc0L
+	+uTiubNl9qT/rXUGTabYYpsp5hq0mnXicd/ZATJijmPDSczc4Df5G7wK37P3lG2x1ZIuW4wO7TY
+	H45Xs9i/cNyEotMGvkD1uz0qBUAUxK3F8+SaMRks66wkWWA/kubSgnLdr9JyG7zk0axmkkNGT2t
+	Vzkf6MYm5PUj5Z1z/WVMbaj/XJ1NHSNYmplcNIsqhDB5/gHM2QGMgoaPAgM7+uM5wYENpCQ+Zot
+	I2sja7Rd/0+q5FtCV//ZcOm6emPXkGScX1u2H6SzZIAt/+06/Y7N2CQIJgQ6ER+tr87RPYMkaY+
+	RWTkLpkOfLCmjEENVq6cCZLwUzZ9x6l/UihZMUoCYEqJnmUdmTFPdCBvjWz/gqarQc2EOqU13hC
+	4fs1kADkh2JxWrcPr2wUnCvdIv0aoszgZK2B0YNyeO1DL8iVA3
+X-Received: by 2002:a05:6000:26cf:b0:437:a49:137d with SMTP id ffacd0b85a97d-437978e1929mr18833367f8f.21.1771270390988;
+        Mon, 16 Feb 2026 11:33:10 -0800 (PST)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43796ac800esm30839539f8f.27.2026.02.16.11.33.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Feb 2026 11:33:10 -0800 (PST)
+Date: Mon, 16 Feb 2026 20:33:05 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	linux-security-module@vger.kernel.org, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v1 1/2] landlock: Fully release unused TSYNC work entries
+Message-ID: <20260216.b2c8aaab9a80@gnoack.org>
+References: <20260216142641.2100407-1-mic@digikod.net>
+ <aZM3Ab6QJ8WR84J1@google.com>
+ <20260216.iep2jei5Dees@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260216.iep2jei5Dees@digikod.net>
 
-On February 16, 2026 2:52:34 PM Christian Brauner <brauner@kernel.org> wrote:
-> All namespace types now share the same ns_common infrastructure. Extend
-> this to include a security blob so LSMs can start managing namespaces
-> uniformly without having to add one-off hooks or security fields to
-> every individual namespace type.
->
-> Add a ns_security pointer to ns_common and the corresponding lbs_ns
-> blob size to lsm_blob_sizes. Allocation and freeing hooks are called
-> from the common __ns_common_init() and __ns_common_free() paths so
-> every namespace type gets covered in one go. All information about the
-> namespace type and the appropriate casting helpers to get at the
-> containing namespace are available via ns_common making it
-> straightforward for LSMs to differentiate when they need to.
->
-> A namespace_install hook is called from validate_ns() during setns(2)
-> giving LSMs a chance to enforce policy on namespace transitions.
->
-> Individual namespace types can still have their own specialized security
-> hooks when needed. This is just the common baseline that makes it easy
-> to track and manage namespaces from the security side without requiring
-> every namespace type to reinvent the wheel.
->
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
-> include/linux/lsm_hook_defs.h      |  3 ++
-> include/linux/lsm_hooks.h          |  1 +
-> include/linux/ns/ns_common_types.h |  3 ++
-> include/linux/security.h           | 20 ++++++++++
-> kernel/nscommon.c                  | 12 ++++++
-> kernel/nsproxy.c                   |  8 +++-
-> security/lsm_init.c                |  2 +
-> security/security.c                | 76 ++++++++++++++++++++++++++++++++++++++
-> 8 files changed, 124 insertions(+), 1 deletion(-)
+On Mon, Feb 16, 2026 at 06:43:25PM +0100, Mickaël Salaün wrote:
+> On Mon, Feb 16, 2026 at 04:25:53PM +0100, Günther Noack wrote:
+> > On Mon, Feb 16, 2026 at 03:26:38PM +0100, Mickaël Salaün wrote:
+> > >  	for (i = 0; i < s->size; i++) {
+> > > -		if (!s->works[i]->task)
+> > > +		if (WARN_ON_ONCE(!s->works[i]->task))
+> > 
+> > Is this a condition we should warn on?  It is very unlikely, but it
+> > can technically happen that a thread exits at the same time as TSYNC
+> > and happens to hit that narrow race condition window.  As long as it
+> > happens only sporadically, I don't think there is anything wrong (and
+> > in particular, it's not actionable for the user - I don't think there
+> > is a way to fix it if that warning appears?)
+> 
+> WARN() should definitely not be called if the condition can legitimately
+> be true.
+> 
+> "task" is only set by tsync_works_provide(), so only by the caller
+> thread.  How could "task" be NULL (within the works->size range)?
 
-I still have limited network access for a few more days, but a couple of 
-quick comments in no particular order ...
-
-Generally speaking we don't add things to the LSM interface without a user, 
-and I can't think of a good reason why we would want to do things 
-differently here.  This means that when you propose something like this you 
-should also propose an addition to one of the in-tree LSMs to make use of 
-it. While the guidance doc linked below (also linked in the LSM MAINTAINERS 
-entry) doesn't have any guidance for the LSM blobs as they are generally a 
-byproduct of the hooks, if you are looking for some general info I think 
-the bits on adding a new LSM hook would be very close to what we would 
-expect for blob additions.
-
-https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
-
-Getting to the specifics of namespace related APIs, we've had a lot of 
-discussions about namespacing and my current opinion is that we need to 
-sort out if we want a userspace API at the LSM framework layer, or if we 
-want to do that at the individual LSM layer; there is a lot of nuance there 
-and while one option may seem like an obvious choice, we need some more 
-discussion and I need a chance to get caught up on the threads. Once we 
-have an API decision then we can start sorting out the implementation 
-details like the LSM blobs.
-
---
-paul-moore.com
->
+Ah, you are right.  This could have become NULL before, but now it
+can't become NULL any more.  Please ignore my remark.
 
 
+> > >  			continue;
+> > >  
+> > >  		put_task_struct(s->works[i]->task);
+> > > @@ -389,6 +389,15 @@ static bool schedule_task_work(struct tsync_works *works,
+> > >  			 */
+> > >  			put_task_struct(ctx->task);
+> > >  			ctx->task = NULL;
+> > > +			ctx->shared_ctx = NULL;
+> > > +
+> > > +			/*
+> > > +			 * Cancel the tsync_works_provide() change to recycle the reserved
+> > > +			 * memory for the next thread, if any.  This also ensures that
+> > > +			 * cancel_tsync_works() and tsync_works_release() do not see any
+> > > +			 * NULL task pointers.
+> > > +			 */
+> > > +			works->size--;
+> > 
+> > Looks good.
+> > 
+> > [Optional code arrangement remarks:
+> > 
+> > I would recommend to put that logic in a helper function
+> > "tsync_works_return(struct tsync_works *s, struct tsync_work *)", to
+> > be in line with the existing implementation where the manipulation of
+> > struct tsync_works is encapsulated in the "tsync_*" helper functions.
+> > 
+> > The scope of that function would be to do the inverse of
+> > "tsync_works_provide()" -- putting the task_struct, decreasing
+> > works->size, and then, to be safe, also clearing the contents of the
+> > tsync_work struct (although that is strictly speaking not required if
+> > we decrease the size, I think).
+> 
+> Should we move the atomic_inc() to tsync_works_provide() and the
+> atomic_dec() to this new helper?
 
+No, I would keep the atomic_inc() and atomic_dec() calls in the
+functions where they are now.  
+
+The atomic counters belong logically to the synchronization scheme
+between the different threads, and I think it's clearer if we keep
+that synchronization code outside of the struct task_works
+abstraction.
+
+I see the struct tsync_works and its operations (functions starting
+with "tsync_works_") as logically belonging together in an
+OO/encapsulation sense, and I think it's useful to have a clear
+boundary of responsibilities.  These functions are only in the
+business of managing the direct values stored in the "struct
+tsync_works", and in the business of allocating the memory for that
+data structure and incrementing refcounts to the struct task_struct.
+(The latter is mostly useful to have in tsync_works_provide() because
+the inverse put_task_struct() is useful to have in
+tsync_works_release(), and then it is symmetric.)
+
+
+> > The only unusual thing about the tsync_works_return() function would
+> > be that it is only OK to return the very last tsync_work struct which
+> > was returned from tsync_works_provide().
+> 
+> What about renaming tsync_works_provide() to tsync_works_push() and this
+> new one to tsync_works_pop()?
+
+I think I would find that naming slightly confusing: When a function
+is called "push", I would normally expect to pass a value to it, but
+we're getting one from it.  And when a method is called "pop" I would
+expect to get a value from it.  But the inverse is true here.  With
+the names "provide" and "return" it feel that the directionality of
+argument passing would be clearer.
+
+
+> > It's an improvement either way though; If you want to prioritize
+> > fixing this and don't want to extract the extra function now, we can
+> > also look into it in a follow-up.  From a functional standpoint, I
+> > think your code works as well.
+> 
+> It's a small refactoring, so better to do it now.
+
+Sounds good. 👍
+
+–Günther
