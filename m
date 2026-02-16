@@ -1,181 +1,193 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A66F328B40
-	for <linux-security-module@vger.kernel.org>; Mon, 16 Feb 2026 15:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771255545; cv=pass; b=OR+Qp9aCe9te/RTZpWN/ScEOjFMlJXMUx0mUgyNlxd5j6XIYR6x7YuyL39/RdA19SrJ6WX7BORZGn87sNLsxFzh7ujdQ6DNILbVr/MYGWyIfuJqAY5d6FqXfsJsqpgvZfr4IjbObJDUPUNZ7cyUlJve3z55PoMGMZotnh7/iJJo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771255545; c=relaxed/simple;
-	bh=0WdtWYEHI09V+05DDbCwX5t6QJHUAd3cuf9OggMni3M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q665FbFc/U7RJD2Hgp1LlMYAVsQQoPtCnUQk49NKBL8Cia+OnxQdtf2cTINw7RpJ3txr/amrXXBDn/AQ6QXemcJPK5UEwmBrz0OdZ4+l+NTUVHq6RxFB4Q5ViJBlkHrzpM9+KP0XNfrXjv1nuxPPQuXPj9U4jSuWcdy7zvzt+vk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CsNuEOh5; arc=pass smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF248329C40
+	for <linux-security-module@vger.kernel.org>; Mon, 16 Feb 2026 15:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771255562; cv=none; b=Oxr9pmMju27OAWLau1yKht7WxQr3xO/3jmmMyI8vYA9IZwYe4u2WPYw005ymectG/God4xDtcHUBSyZmALnHcwAh0ipOsEZNJ/zFDvY1gTYRxeSaIhXLHpHhCnee0JLp6MJdpRHhsNU5Y/fG/hye5cS8fAuYUL8MrVp8JAdMNm8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771255562; c=relaxed/simple;
+	bh=CIo9WUxHwNE3PlYFwQ1oxVeXiPfL9ol0I7yTul7xTlY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fcX8tllIuP1OzM5rZIRB713La20yaQrWyWv+trm6ZFVwdL2xHuTydhk+QAUcGlE57cF0JflmKdqf8AUSkYIyULpiGwix8l01Vg68L+Bf4fMimGCSQZJPGzqd7Gqy4z4YlsrfrOu3gn9KRseK26shtxe8EDNA6LVDAe3Jl9jFIi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SHK352to; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CsNuEOh5"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-65a36583ef9so5582495a12.0
-        for <linux-security-module@vger.kernel.org>; Mon, 16 Feb 2026 07:25:44 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771255543; cv=none;
-        d=google.com; s=arc-20240605;
-        b=kwJs7fKcqPL04m0d2mriNLkAX9GVmaxNKaHfZEV3qP8egKALO90nbVoKU9k8WD7DF/
-         r0EvKzU2YSxwqv/JvtEBuxfManVW0pzH9az2tDSP5GTHvGeNCu7WT9ZsnZ4/T6HcWG9e
-         WgxltS3GabpN/CzmvAN3JDBQ1heJWnYvzq5wY4s5SZLzGqnhwOSxiTlT0KXN88u7OLHv
-         4VaM7Q+l4yAkO7K6WQa99IQpyUgQCNYJ1+BIQSKBpJbTGX/cXzxhy9Dj78MeQU+NckOb
-         d7F0XtehDeeswVEh8ZnJ20Mf7DIu3VcCtCeJ1cvDXvfwDJx2VxOD/mzRxFjg2WLatVZK
-         iWEQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=a8y53YFMQ+PYRig6TGH6tdnzevZp9DGRe/1ufZbEm3k=;
-        fh=tWUsfz70/o+OKHhn/ph7E7fHIru7OA/C2lYaIgNNhUo=;
-        b=VvCo3vIfC5Hu0ClGReQI/TuYyDCP9ZwsTavFu3M72y6Ww/UMtqR3vdiOqiiTBIqdEs
-         2Q/6NxEnHp8nDn2dEhF+J1oiQOr4fuRgGwYBxYRGtJeRf6qdZHL0J5iyT8Is68ZpqGEn
-         xKOk3NUutlQMYFCAmJ3GXxCTb0f2Z/tQT9Cqp7Gp/8Tx1wVgGleGKIW5/v2tWOb7uEFN
-         feh9Yr7wK/qHD2vWdjHUv36Ns+MgJ/06Bsy9BGDi99pYfDAV9rPS7lY6FZqz99jxuIFd
-         4BJZaTmqEpYFecs9zKv3H+KmACEcuOZoYTt7DqqU3JtaDUGV5hxoV4sqe2ISNWIklZZ1
-         Y/PA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SHK352to"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4834826e555so34043485e9.2
+        for <linux-security-module@vger.kernel.org>; Mon, 16 Feb 2026 07:26:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771255543; x=1771860343; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a8y53YFMQ+PYRig6TGH6tdnzevZp9DGRe/1ufZbEm3k=;
-        b=CsNuEOh52WRAGxSHidc+/x9Gnktz/c9FVE5FB1EcKq1X9mrZrVMnqgwwh21NcidTTu
-         lMVJvD7djqUYMQcasW0KFtKnh3U152DI28pgBxdTM3ooGNF0khPKIzo0XUutevw6XX+J
-         5EBgE0bASqwwrydhQcfX8kR9hcRhqXZIAIzz3OfDcSuV1ElT2PMuIOohhVP+h8QKzz6b
-         HmZ3n4Rk941Y9SSVKdnENzPcwkqYa/g64gU35Kz4JAOJlzDIIu/HtDyyUTFHGzICPd8u
-         cjwt/VbtSgStIRPj0BC7+/bJlAk/tuijL3J8AOH5jeNug1XPnxkQJSs1hRYea9EL38Xn
-         GT3g==
+        d=google.com; s=20230601; t=1771255559; x=1771860359; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3Wxk+YLdn5hS9/9d84VjZHRWwHM0FMb9w89U7kdeqMw=;
+        b=SHK352to6ed1brV7JKMghVc7LWPmwpXtjDU1dBRgBkASx5WzeO35UEdrHdY/iizWtt
+         Dc55Mou3BAOG6+vhOSaiu+J1Jr8Hm/IBbTCop/wjXv+jLprn8yEqczrz1/YOp8fHiGLd
+         8oLQI/3n2/ZEqJtL9NI05dY9lQF9MyRh/Dm/4oyU8u0W8NGwSI9fI03vAO5kb2lzdNm0
+         oHve8ksorYRQgSU6FSp8KXHAmnsUd3meSufuATxN0msa28gU0QgKjqm0zfTtBoX5YdVx
+         g12NYsKH1nY55T/0ttvbaDpj8/arPh20pDwXmkw4RtAO7fAw74w6RbthenqNVy/gC+Lr
+         mftw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771255543; x=1771860343;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=a8y53YFMQ+PYRig6TGH6tdnzevZp9DGRe/1ufZbEm3k=;
-        b=f3kHkcCuApAPRngZwVsNAj0PHJC0GEZAnuRYA7Mc7FlnozCDKWIV/ZtLJ/vLIm3/v8
-         KEcw9XnXcl2aGGbxjKlKuR5r99lz00ZnLsQvYAlmpw1r/8ivy8yBzn30/v8YN5ZuGX7M
-         fwQLiFcn6TIxZT5NiWHo76DZk5SeJNHyb2V9imtxM+HgaXjlnW78R3j0He158y5Cvx9p
-         f3z4Fx+eK7aaUAL7QO3D41ziCg5Zv3xCsa9vXXhlrzBWf9ELQ+UyRX48vGN1zEWe+XSK
-         42+Wr8BG8TLJcBA6Mvqac9Nle0mV0tPiRNMZ+uWBJ7R9YqFv2e6I+LTN8vfGmviV3E+s
-         +L6g==
-X-Forwarded-Encrypted: i=1; AJvYcCU95tszW5DTtXHWx0uWIl9f9ygWJdtLUEf8iON5JI7rbuYBjOcnKaWpKOWwuIzjs/MEzqqDOjMOIul1ufTRBdg0eQuNtWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTrH0Uj1UGYMfgUStRdaMpmlcoKWbaxZQasn7ufmrOP4lah543
-	E4aiOaS670qLvUKxK5dKpGZ+ky2kr0mn4a+V030YlkxUJkbR8xKJKxpLqYYd4oDNk6wv6F87lAs
-	sqJZCDaT2Baih1Zqzlq6GYvRA3L1C+ko=
-X-Gm-Gg: AZuq6aJ6jMe7Zpw6W+joyAmn0gkLmx9PuAl/MV5HLntUNACVcPoyyE9/E+2GtfHbn2Q
-	b6WFGyn4ZpT6Qs+iQD9D4NpgAEf6y8IWE0VPGywfj2yGi75sCIspsVagZbkz0H0v9bGKzCbR1Tl
-	ZhOD3JtfnUNKolj435SPI9LNC8L0snWLhr+yrlEmBsp3n5Y1Nkdn6Xs1l33X3kouMe1qUWsXy8e
-	6/0CgDTMqBeOMq1vUqYru0VNAt6ueF8QuKYybUIasrDlPz5O2Sb8ff2XXqChyqF/vlDwxRRnRDN
-	DsKYmsxU
-X-Received: by 2002:a17:907:2684:b0:b88:1e2:ed49 with SMTP id
- a640c23a62f3a-b8fc053d4a8mr461131666b.8.1771255542306; Mon, 16 Feb 2026
- 07:25:42 -0800 (PST)
+        d=1e100.net; s=20230601; t=1771255559; x=1771860359;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Wxk+YLdn5hS9/9d84VjZHRWwHM0FMb9w89U7kdeqMw=;
+        b=kIddqxy+ybqX/HE4/qZqJLaxCGCgG2qQTRxX5wFPVXG0QEVTCo4NSwd6gxL1Shzhpf
+         b1MeMsz+fa518i2OTQ/IKIzPN58nuWJY0obzykARVanwIZyvg/d2RRsNZDmuw5Fjo0DD
+         QL57FwZvvZO6L6M0kGg0GKsSyIuyL8uHuo1eNAwLE22XjHVi1pAOQo9OedB4KwUl6sCF
+         2r0YSsy6jxHu37hvfEEQ9tuerLAYx2DINUEhPGPGClkmEd2L0CcBBTUwM0m9c/9aHUoe
+         5VQu+iIW/m/8paYf52Q1rlIi4984qO60KrMN8bWdhurPKZoIDTbgvJKzEJurvyqKiKFt
+         0oMg==
+X-Gm-Message-State: AOJu0YxSEmlD8ZoqbBjfiAxSnAXlPGki8qVnckvZ1G5Y+y9NQb0w3jbD
+	sV+mkcg1FUWkddugx6McfYR6yD+oDTS8IPxAoNf7PJi/AaABDFOeBSrJ50h3D8GG/Q==
+X-Gm-Gg: AZuq6aKk1zoScY7tTxexsw8ABdkMEo5wl/oh5kxXpNZsZKklmrNhf2evGl/Y5iQY51I
+	UwoyIdsLsW8Ko2wvce35aVCIKYfrLlMlnr4mDwJv5o5iTVJ1NqGxabLtfbfl9xBIkZhPGI8I0js
+	9CNB5ywdmCySABStOt7hCVEhAU25Uh/V4pcA3E2T0dOdmCkBTLxPhVrEhluCZsnbHG/QOwL59T3
+	8LfmlJXLhB379tuydOzxvifSpMIn0zNcbrY615H78I3ENRqkA8a+PgH3fTL9w656pCCN3bHkDup
+	xqxmnz6s+8wam9fgw1LG5NHQhgqoEF7XDKg8NpV5iK4SnGJpbQW5l1Uh+oRRK7dMMlPBDxOL6Xg
+	clnwy+AJU3no+JT3jkXRYsFQAnhDzpfbeoRnZFzNh4sm6DdkvnjI9b4sHLtQr7NrGJ/Y7PmyuRv
+	YRa1tirw0OrLaUc1PoqBzaiY3AlzIYaSsL/YaXX5NmomwxZCmZiyhpEg==
+X-Received: by 2002:a05:600c:4f16:b0:47b:de05:aa28 with SMTP id 5b1f17b1804b1-48379b939d7mr137309165e9.2.1771255558673;
+        Mon, 16 Feb 2026 07:25:58 -0800 (PST)
+Received: from google.com ([2a00:79e0:288a:8:3652:d409:188c:c0b2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4835dcfb28dsm403840405e9.11.2026.02.16.07.25.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Feb 2026 07:25:58 -0800 (PST)
+Date: Mon, 16 Feb 2026 16:25:53 +0100
+From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v1 1/2] landlock: Fully release unused TSYNC work entries
+Message-ID: <aZM3Ab6QJ8WR84J1@google.com>
+References: <20260216142641.2100407-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260216150625.793013-1-omosnace@redhat.com> <20260216150625.793013-2-omosnace@redhat.com>
-In-Reply-To: <20260216150625.793013-2-omosnace@redhat.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 16 Feb 2026 16:25:31 +0100
-X-Gm-Features: AaiRm509zvV_5nztV_clDc8zDOEZuzPTyg08_yWfQUzaOuSbDQzEo3YOHZWR_N4
-Message-ID: <CAOQ4uxiggWbj6p4giuXgKkjdV1aOB5SO-4grEW_H7FCE6iw1=w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fanotify: avoid/silence premature LSM capability checks
-To: Ondrej Mosnacek <omosnace@redhat.com>
-Cc: Jan Kara <jack@suse.cz>, Matthew Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260216142641.2100407-1-mic@digikod.net>
 
-On Mon, Feb 16, 2026 at 5:06=E2=80=AFPM Ondrej Mosnacek <omosnace@redhat.co=
-m> wrote:
->
-> Make sure calling capable()/ns_capable() actually leads to access denied
-> when false is returned, because these functions emit an audit record
-> when a Linux Security Module denies the capability, which makes it
-> difficult to avoid allowing/silencing unnecessary permissions in
-> security policies (namely with SELinux).
->
-> Where the return value just used to set a flag, use the non-auditing
-> ns_capable_noaudit() instead.
->
-> Fixes: 7cea2a3c505e ("fanotify: support limited functionality for unprivi=
-leged users")
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+Hello!
+
+On Mon, Feb 16, 2026 at 03:26:38PM +0100, Mickaël Salaün wrote:
+> If task_work_add() failed, ctx->task is put but the tsync_works struct
+> is not reset to its previous state.  The first consequence is that the
+> kernel allocates memory for dying threads, which could lead to
+> user-accounted memory exhaustion (not very useful nor specific to this
+> case).  The second consequence is that task_work_cancel(), called by
+> cancel_tsync_works(), can dereference a NULL task pointer.
+
+I think it is very difficult to get into this situation, but this is
+obviously not an excuse - if we already do the error handling, we
+should do it right. 👍
+
+> 
+> Fix this issues by keeping a consistent works->size wrt the added task
+> work.  For completeness, clean up ctx->shared_ctx dangling pointer as
+> well.
+> 
+> As a safeguard, add a pointer check to cancel_tsync_works() and update
+> tsync_works_release() accordingly.
+> 
+> Cc: Günther Noack <gnoack@google.com>
+> Cc: Jann Horn <jannh@google.com>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
 > ---
->  fs/notify/fanotify/fanotify_user.c | 25 +++++++++++++------------
->  1 file changed, 13 insertions(+), 12 deletions(-)
->
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fano=
-tify_user.c
-> index d0b9b984002fe..9c9fca2976d2b 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -1615,17 +1615,18 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flag=
-s, unsigned int, event_f_flags)
->         pr_debug("%s: flags=3D%x event_f_flags=3D%x\n",
->                  __func__, flags, event_f_flags);
->
-> -       if (!capable(CAP_SYS_ADMIN)) {
-> -               /*
-> -                * An unprivileged user can setup an fanotify group with
-> -                * limited functionality - an unprivileged group is limit=
-ed to
-> -                * notification events with file handles or mount ids and=
- it
-> -                * cannot use unlimited queue/marks.
-> -                */
-> -               if ((flags & FANOTIFY_ADMIN_INIT_FLAGS) ||
-> -                   !(flags & (FANOTIFY_FID_BITS | FAN_REPORT_MNT)))
-> -                       return -EPERM;
-> +       /*
-> +        * An unprivileged user can setup an fanotify group with
-> +        * limited functionality - an unprivileged group is limited to
-> +        * notification events with file handles or mount ids and it
-> +        * cannot use unlimited queue/marks.
+>  security/landlock/tsync.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
+> index 0d2b9c646030..8e9b8ed7d53c 100644
+> --- a/security/landlock/tsync.c
+> +++ b/security/landlock/tsync.c
+> @@ -276,7 +276,7 @@ static void tsync_works_release(struct tsync_works *s)
+>  	size_t i;
+>  
+>  	for (i = 0; i < s->size; i++) {
+> -		if (!s->works[i]->task)
+> +		if (WARN_ON_ONCE(!s->works[i]->task))
 
-Please extend line breaks to 80 chars
+Is this a condition we should warn on?  It is very unlikely, but it
+can technically happen that a thread exits at the same time as TSYNC
+and happens to hit that narrow race condition window.  As long as it
+happens only sporadically, I don't think there is anything wrong (and
+in particular, it's not actionable for the user - I don't think there
+is a way to fix it if that warning appears?)
 
-> +        */
-> +       if (((flags & FANOTIFY_ADMIN_INIT_FLAGS) ||
-> +            !(flags & (FANOTIFY_FID_BITS | FAN_REPORT_MNT))) &&
-> +           !capable(CAP_SYS_ADMIN))
-> +               return -EPERM;
->
-> +       if (!ns_capable_noaudit(&init_user_ns, CAP_SYS_ADMIN)) {
 
-Not super pretty, but I don't have a better idea, so with line breaks fix
-feel free to add:
+>  			continue;
+>  
+>  		put_task_struct(s->works[i]->task);
+> @@ -389,6 +389,15 @@ static bool schedule_task_work(struct tsync_works *works,
+>  			 */
+>  			put_task_struct(ctx->task);
+>  			ctx->task = NULL;
+> +			ctx->shared_ctx = NULL;
+> +
+> +			/*
+> +			 * Cancel the tsync_works_provide() change to recycle the reserved
+> +			 * memory for the next thread, if any.  This also ensures that
+> +			 * cancel_tsync_works() and tsync_works_release() do not see any
+> +			 * NULL task pointers.
+> +			 */
+> +			works->size--;
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+Looks good.
 
-Thanks,
-Amir.
+[Optional code arrangement remarks:
 
->                 /*
->                  * Setting the internal flag FANOTIFY_UNPRIV on the group
->                  * prevents setting mount/filesystem marks on this group =
-and
-> @@ -1990,8 +1991,8 @@ static int do_fanotify_mark(int fanotify_fd, unsign=
-ed int flags, __u64 mask,
->          * A user is allowed to setup sb/mount/mntns marks only if it is
->          * capable in the user ns where the group was created.
->          */
-> -       if (!ns_capable(group->user_ns, CAP_SYS_ADMIN) &&
-> -           mark_type !=3D FAN_MARK_INODE)
-> +       if (mark_type !=3D FAN_MARK_INODE &&
-> +           !ns_capable(group->user_ns, CAP_SYS_ADMIN))
->                 return -EPERM;
->
->         /*
-> --
+I would recommend to put that logic in a helper function
+"tsync_works_return(struct tsync_works *s, struct tsync_work *)", to
+be in line with the existing implementation where the manipulation of
+struct tsync_works is encapsulated in the "tsync_*" helper functions.
+
+The scope of that function would be to do the inverse of
+"tsync_works_provide()" -- putting the task_struct, decreasing
+works->size, and then, to be safe, also clearing the contents of the
+tsync_work struct (although that is strictly speaking not required if
+we decrease the size, I think).
+
+The only unusual thing about the tsync_works_return() function would
+be that it is only OK to return the very last tsync_work struct which
+was returned from tsync_works_provide().
+
+]
+
+It's an improvement either way though; If you want to prioritize
+fixing this and don't want to extract the extra function now, we can
+also look into it in a follow-up.  From a functional standpoint, I
+think your code works as well.
+
+>  
+>  			atomic_dec(&shared_ctx->num_preparing);
+>  			atomic_dec(&shared_ctx->num_unfinished);
+> @@ -412,6 +421,9 @@ static void cancel_tsync_works(struct tsync_works *works,
+>  	int i;
+>  
+>  	for (i = 0; i < works->size; i++) {
+> +		if (WARN_ON_ONCE(!works->works[i]->task))
+> +			continue;
+> +
+
+Well spotted!
+
+>  		if (!task_work_cancel(works->works[i]->task,
+>  				      &works->works[i]->work))
+>  			continue;
+> -- 
 > 2.53.0
->
+> 
+
+Reviewed-by: Günther Noack <gnoack@google.com>
+
+Thanks for having another closer look at this!
+
+—Günther
