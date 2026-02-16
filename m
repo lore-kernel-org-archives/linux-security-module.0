@@ -1,546 +1,189 @@
-Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118615B21A
-	for <linux-security-module@vger.kernel.org>; Mon, 16 Feb 2026 21:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D325617993
+	for <linux-security-module@vger.kernel.org>; Mon, 16 Feb 2026 21:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771277313; cv=none; b=tTDoz1UR7gWTM2EL3exy1vYcejpOFniLwzcqH4dgd+7J1+zbCeY0Q5YLWYWmQr79QGhyuUQ7zczu05Ati6ZIx1u2oHkimaIh/iO9PEiynzWCPpGo7lM4X2rWv4P9c+3BQk/AuycE78CNrWt0OAJQ8yNnpjLP5Pt2nfE2OFyvt6g=
+	t=1771278178; cv=none; b=bZNWUKqE9s1P3Hhu+GyJlOhXhiBAmBqQBqlc90SyfITfM5Io1UmxVHpRIxiHILScdv05YpyOKhM3yriLQB6mQgIUJxB1Tj8kAkrkMBUQdWgSDV2N0bTp0iSmRbexv8mnRP3puYiYkIhlR0YhXiO0kTs/eL86SHWbHY7bqKsUQ70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771277313; c=relaxed/simple;
-	bh=75R47OVUQlSR8Ba9yeoGGUqUmo5+0gHNXFnNwS9kbnk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EZcCj/lp/UY6566wbyKp2ABaVBJctnhPQ77LdZlA5wSAFcQ4FDRAMRU7F80rhUEF/ynLFb86kboEoVuN4UgpgJPCR/f32dPG9QMPor0o0232wvkz+BvysPvRBkgShCwquzgQtmtfy3mSK6rUD8bkmBDJTY1mOpOoNQnbspYGVKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dgdIoye+; arc=none smtp.client-ip=74.125.224.53
+	s=arc-20240116; t=1771278178; c=relaxed/simple;
+	bh=7sAFABGkVO8ARn4V+VHcmNZWaVJr/6QpbB26KsczG1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u4rrH8TLXvFILcdiaIxM6+RuYTpGwE8nlCnrEduvudZ8BYV8399iuWnQ/lOdCaL1ECMRD/ct9MftdMoz2u7gAEbz2KJVJwTWdUP1bLkQB4KIaZN1XR+WH+y47bIDpEBa/XvCh0MGOF0nHddfKffIJPbadgyOP+qeXDEXGEWii4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W5J85f44; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dgdIoye+"
-Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-64c31ca77b4so1454455d50.2
-        for <linux-security-module@vger.kernel.org>; Mon, 16 Feb 2026 13:28:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W5J85f44"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-483487335c2so34068455e9.2
+        for <linux-security-module@vger.kernel.org>; Mon, 16 Feb 2026 13:42:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771277310; x=1771882110; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dC24BrCGC/P7NNhq0vj02AxLk/Sl0MXjikxqnDCpZ2Y=;
-        b=dgdIoye+oc+owZoAA6kXFBV1Dv88RSawtQRMWedmuMDSHRJFFdiwQw5365eazavi4T
-         NlVX+HkA/KbAuf2H8Xu3zGena7H9DW3Cv6V0SkGtw+hMAGWVBa/qIXUsV5lya/0/MXoy
-         7U/myPWcjzzkeuIyhMpMjhvMMGJ9NA2qk5Mx8x3p370n5fnjkd38+DABowS/wogcKi0l
-         IYFRa2cTXytQtpxkPSCIgAn+9325dAaWOLzwqvByBMUDrNjaGbMc4DkoXigwfNywJ7XC
-         4QpDyJVTcSzNkTKiPtcrVg2qc7Gb75z3JihyGL/6+ny1jjsIUEhJpW8rM66pDHdrq3ry
-         fI0g==
+        d=gmail.com; s=20230601; t=1771278175; x=1771882975; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=v3ej/G/JArOiKhfqCd2T4yNs2SXb3xqfhOBsqU4PgoU=;
+        b=W5J85f44iSk+xZqSt8fuyIJjJI1R8VXPqbV0wSc2EStRHhTi69tC3aADojOuyFyu9/
+         f+CleZ5XOkuozB94WxV+v2IfJdPbTRcqLOMhqxFMsAvDiKB1zvesb6Ofbz3ycQjyPCZi
+         /jQhvg76w8R0XubpEU3JL7QkIl1HzC19PmXpEX2Zt2nl4RKIvj0+IiuVaYZ8u6dYk8EH
+         x2qSDB8qO4qAcBkcyQ/Js5wcbI3PFBtGRBeZHQWy/Gkfxz7da+342A6MB4FZ+XtTOPTc
+         1pCcknHQBVnVwCxrIvTDYrhxnbt+fPU015EVdQ76zGW1cvB4T4qDp/KVvAj2V0wr0bnP
+         pb7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771277310; x=1771882110;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=dC24BrCGC/P7NNhq0vj02AxLk/Sl0MXjikxqnDCpZ2Y=;
-        b=RIPTo3OYrLo6N81oG7PcbVQY1x0VxOSAw6zaXfhP3s4B6RrHracQ8NQtra4M+IVwTA
-         iF0M9OX2P5gyexa46Wc1GtrVIX8buZtQ/3m8bOx8/xfqjwfTfXySpsaup/J8K1EWGkn9
-         Uj1t+1L1msx15OA5GWPOnSBkwipE0w2zEPPpn5VOgYv6BS3me6e2LkVe7XrESGmEHiLF
-         mgUWcTyeHxnop5epcCKoSqGT8HkOwIpAGyvPCPTnUSi07ftQsIvS3hjVSP5E3Ln82dBZ
-         sDkTeVGSkCk/094DzsUdHO57GhCbxCKdVO1zP9HjMazfeHyA1wTw1PTYfMRS8MNeVIBh
-         TW/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUaRBS/T7cjsaqGILocVxc4qqCKPWkGAtsx/1MIZczGBCdLHnIRfjAiCJDtVmEDp9ifLN77O0yxMS4CAYtqsTesrSUVE0k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKH3sNhoy0qPFY9lX5YlQxHdmQ3O/Z5ZgQaAkOh27oF6WVRj3K
-	gcIdatkqYdQe6Snk/2DUf4WMDDigGzFIQSaKkerwB1Yf4t7H4z0yb84u
-X-Gm-Gg: AZuq6aLeg6DdRHJaa7W/IsePxl3uznaIvhnFfcdtYw7eXO72DkQ4Da0vrWA2m5wnQQ4
-	ymXnXNFgddppTF4wapuDNqzhaVu7C8BM2WXbSLMRSJ0gKprTOzgwG62rUIzOMPKWs/+0PSbEW32
-	RnOBtgyZqUqv/qi+hrkDfbLHEW03zXlJBnB6OJRhaGGYA5tgcslw07Zd32Nv+6mBCjytN48W3Q1
-	yxW/t/XJrzfMEIjYfA3m0S6v7YXjugjADN1Y5Vi5oy+eRPbCn6Yh6lx44htL4OEaT8Nk3I/rPfT
-	NpGRTtE8uNahya2h/KiCRZVr2OPP79gt1IDkIPcnd34TBShhwxVnjTK8fbd5EF9mAhhA16Crr9q
-	lXbZRPFLKgiCWh6WBqRHiFY9Rh855x0arAAPrVmG1dhcwidwtu14ZF0YXAt3s7VfksTZZG1CkCF
-	aJviuiFpbNNoF4iafs5Frpmj7gYRAU27h5PCqCzf17s+/kDsc3Nflclx1ELaA6+ykd74aXuV4B
-X-Received: by 2002:a05:690e:e8c:b0:64a:de2a:e6e9 with SMTP id 956f58d0204a3-64c21a96f6amr7682975d50.24.1771277309487;
-        Mon, 16 Feb 2026 13:28:29 -0800 (PST)
-Received: from zenbox (71-132-185-69.lightspeed.tukrga.sbcglobal.net. [71.132.185.69])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-64c22e6ef3esm3992194d50.1.2026.02.16.13.28.28
+        d=1e100.net; s=20230601; t=1771278175; x=1771882975;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v3ej/G/JArOiKhfqCd2T4yNs2SXb3xqfhOBsqU4PgoU=;
+        b=apn80IZdEr/lZS8Gd+q3YkPXlO3Wdk+L3jQ0ln3xgCAzqmeo9udGMyEiVmk3LLuLoI
+         xpIjduPfoQXak10ZYBnPBSH3rAkpAq1nAit7QHwJsWd4hRwtfCECKGI1OvYQBpzc9ox5
+         V2yKidG/Khil+bZOB6v/vIq3qHNobpuJ6W8sGd9KoJnrSEjNbgrH4DohmhC/1u2s+3B1
+         RxWvE6aLlL4x5oiSvVgYJvI7m8u/plMXK65RLGyiLLAGSOqg87Gb6M7nNFSKJ9UGx5nJ
+         aW4QztlKlcVZu0T3dPBq7z6Z3LufcMDVdJmkYwL5T2w1R3/TAYV+cxIVku9GWTC0FQEH
+         gJzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWZVuqgJKo3rW6fkDQHQAafF8Ni3IA7qubVD97mlX+wmXW4fi3rSDdCJpc8o3Yta7tFarupHe5/5+dgjpnYQwZqz+IVHZ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMUZDyX4KChX5ogTx/kyq9fcFpVB3LdS1qEjn/NFNYFXqGssJo
+	1GIgHxHRpT+fplzgu/elrEDvYXd44qdi79dK8HxPPrbfalJ5PWB+KdRtfE8uTsq1
+X-Gm-Gg: AZuq6aLpgmPgxGQ6PCa9qGQLDQ1Pyj62yPsRn2kDC3pmHTB0zOqEiLNIrS8oEHjCdWz
+	ExDZNBfA7eez/yRgumQBXptamyp5JXGg6kVMJvOwgkuhGcg5dwEXlEYakjj0ecWF4TDUeqpK6r3
+	MwKlzznUet0SRWPlx52Hnl/dt/Vf2tZqjDsuNvNcfCS2AySFeVgYUnOjHQsHCABXpioKZhjY0fZ
+	Vp5aiBYcGD321r6AkHyJzEo1lDlO0+KYE5VaQqM2aJRH2GBKW92uSoza7xdo4rm5KA/oYBYE9Di
+	L+E43gwav2H5K1MMBIZ1I0bsDS8LbppQ/x2B7L95dDyxW71ou03Ldhl7Poc2Ew1CHnRNWZ5LNWj
+	BTZZjiv0rkvVWwIhLjRbLm9nYEx5fn6u2UipaoYG67xNV/UZ0fY2qOVMYpUDMeJ8IDx2DLvS2Eb
+	WN8APYqX907852KegyJKGgIqj7qrvWWRt5DhgyATg9Vp3zV5qA
+X-Received: by 2002:a05:600c:5294:b0:483:8062:b2f with SMTP id 5b1f17b1804b1-48380620cf2mr115387645e9.6.1771278175020;
+        Mon, 16 Feb 2026 13:42:55 -0800 (PST)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43796a5b07fsm28888356f8f.2.2026.02.16.13.42.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Feb 2026 13:28:28 -0800 (PST)
-From: Justin Suess <utilityemal77@gmail.com>
-To: utilityemal77@gmail.com
-Cc: amir73il@gmail.com,
-	gnoack@google.com,
-	jack@suse.cz,
-	jannh@google.com,
-	linux-security-module@vger.kernel.org,
-	m@maowtm.org,
-	mic@digikod.net,
-	penguin-kernel@I-love.SAKURA.ne.jp,
-	song@kernel.org
-Subject: Re: [RFC] Landlock: mutable domains (and supervisor notification uAPI options)
-Date: Mon, 16 Feb 2026 16:27:51 -0500
-Message-ID: <20260216212753.4159224-1-utilityemal77@gmail.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260215212353.3549464-1-utilityemal77@gmail.com>
-References: <20260215212353.3549464-1-utilityemal77@gmail.com>
+        Mon, 16 Feb 2026 13:42:54 -0800 (PST)
+Date: Mon, 16 Feb 2026 22:42:49 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	linux-security-module@vger.kernel.org, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v1 1/2] landlock: Fully release unused TSYNC work entries
+Message-ID: <20260216.515c8c861819@gnoack.org>
+References: <20260216142641.2100407-1-mic@digikod.net>
+ <aZM3Ab6QJ8WR84J1@google.com>
+ <20260216.iep2jei5Dees@digikod.net>
+ <20260216.b2c8aaab9a80@gnoack.org>
+ <20260216.deiM1cuphohZ@digikod.net>
+ <20260216.chunooXu4ahl@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260216.chunooXu4ahl@digikod.net>
 
-On Sun, Feb 15, 2026 at 02:54:08AM +0000, Tingmao Wang wrote:
-> [...]
-> Background
-> ----------
+On Mon, Feb 16, 2026 at 09:10:59PM +0100, Mickaël Salaün wrote:
+> On Mon, Feb 16, 2026 at 08:57:34PM +0100, Mickaël Salaün wrote:
+> > On Mon, Feb 16, 2026 at 08:33:05PM +0100, Günther Noack wrote:
+> > > On Mon, Feb 16, 2026 at 06:43:25PM +0100, Mickaël Salaün wrote:
+> > > > On Mon, Feb 16, 2026 at 04:25:53PM +0100, Günther Noack wrote:
+> > > > > On Mon, Feb 16, 2026 at 03:26:38PM +0100, Mickaël Salaün wrote:
 > 
-> A while ago I sent a "Landlock supervise" RFC patch series [1], in which I
-> proposed to extend Landlock with additional functionality to support
-> "interactive" rule enforcement.  In discussion with Mickaël, we decided to
-> split this work into 3 stages:  quiet flag, mutable domains, and finally
-> supervisor notification.  Relevant discussions are at [4] and in replies
-> to [1].
+> > > > > > @@ -389,6 +389,15 @@ static bool schedule_task_work(struct tsync_works *works,
+> > > > > >  			 */
+> > > > > >  			put_task_struct(ctx->task);
+> > > > > >  			ctx->task = NULL;
+> > > > > > +			ctx->shared_ctx = NULL;
+> > > > > > +
+> > > > > > +			/*
+> > > > > > +			 * Cancel the tsync_works_provide() change to recycle the reserved
+> > > > > > +			 * memory for the next thread, if any.  This also ensures that
+> > > > > > +			 * cancel_tsync_works() and tsync_works_release() do not see any
+> > > > > > +			 * NULL task pointers.
+> > > > > > +			 */
+> > > > > > +			works->size--;
+> > > > > 
+> > > > > Looks good.
+> > > > > 
+> > > > > [Optional code arrangement remarks:
+> > > > > 
+> > > > > I would recommend to put that logic in a helper function
+> > > > > "tsync_works_return(struct tsync_works *s, struct tsync_work *)", to
+> > > > > be in line with the existing implementation where the manipulation of
+> > > > > struct tsync_works is encapsulated in the "tsync_*" helper functions.
+> > > > > 
+> > > > > The scope of that function would be to do the inverse of
+> > > > > "tsync_works_provide()" -- putting the task_struct, decreasing
+> > > > > works->size, and then, to be safe, also clearing the contents of the
+> > > > > tsync_work struct (although that is strictly speaking not required if
+> > > > > we decrease the size, I think).
+> > > > 
+> > > > Should we move the atomic_inc() to tsync_works_provide() and the
+> > > > atomic_dec() to this new helper?
+> > > 
+> > > No, I would keep the atomic_inc() and atomic_dec() calls in the
+> > > functions where they are now.  
+> > > 
+> > > The atomic counters belong logically to the synchronization scheme
+> > > between the different threads, and I think it's clearer if we keep
+> > > that synchronization code outside of the struct task_works
+> > > abstraction.
+> > > 
+> > > I see the struct tsync_works and its operations (functions starting
+> > > with "tsync_works_") as logically belonging together in an
+> > > OO/encapsulation sense, and I think it's useful to have a clear
+> > > boundary of responsibilities.  These functions are only in the
+> > > business of managing the direct values stored in the "struct
+> > > tsync_works", and in the business of allocating the memory for that
+> > > data structure and incrementing refcounts to the struct task_struct.
+> > > (The latter is mostly useful to have in tsync_works_provide() because
+> > > the inverse put_task_struct() is useful to have in
+> > > tsync_works_release(), and then it is symmetric.)
+> > 
+> > This makes sense.
+> > 
+> > > 
+> > > 
+> > > > > The only unusual thing about the tsync_works_return() function would
+> > > > > be that it is only OK to return the very last tsync_work struct which
+> > > > > was returned from tsync_works_provide().
+> > > > 
+> > > > What about renaming tsync_works_provide() to tsync_works_push() and this
+> > > > new one to tsync_works_pop()?
+> > > 
+> > > I think I would find that naming slightly confusing: When a function
+> > > is called "push", I would normally expect to pass a value to it, but
+> > > we're getting one from it.
+> > 
+> > Well, it pushes the thread and returns the wrapped object.
+> > 
+> > > And when a method is called "pop" I would
+> > > expect to get a value from it.  But the inverse is true here.
+> > 
+> > Fair
+> > 
+> > > With
+> > > the names "provide" and "return" it feel that the directionality of
+> > > argument passing would be clearer.
+> > 
+> > I don't understand the logic with "return": this tsync_works_return()
+> > would not return anything.
+> > 
+> > What about something like tsync_works_shrink()?
 > 
-> The patch for quiet flag [5] has gone through multiple review iterations
-> already.  It is useful on its own, but it was also motivated by the
-> eventual use in controlling supervisor notification.
-> 
-> The next stage is to introduce "mutable domains".  The motivation for this
-> is two fold:
-> 
-> 1. This allows the supervisor to allow access to (large) file hierarchies
->    without needing to be woken up again for each access.
-> 2. Because we cannot block within security_path_mknod and other
->    directory-modification related hooks [6], the proposal was to return
->    immediately from those hooks after queuing the supervisor notification,
->    then wait in a separate task_work.  This however means that we cannot
->    directly "allow" access (and even if we can, it may introduce TOCTOU
->    problems).  In order to allow access to requested files, the supervisor
->    has to add additional rules to the (now mutable) domain which will
->    allow the required access.
+> tsync_works_trim() may be better.
 
-Is blocking during connect(2) allowed either if the socket is non-blocking?
+The idea with "return" is that we are returning the previously
+provided tsync_work item back into the struct tsync_works.  But I can
+see that it can be confused with C's "return" statement.
+tsync_works_shrink() or tsync_works_trim() is also OK.
 
-This may be another example case that needs to be handled differently than calls
-we can block in safely.
+Other options, btw, include "reclaim()" or "recycle()", if you like
+that better (these LLMs are useful as thesaurus... 8-)).
 
-> [...]
-> Why require a commit operation?
-> -------------------------------
-> 
-> This is not a strictly necessary requirement with an rbtree based
-> implementation - it can be made thread-safe with RCU while still allowing
-> lockless access checks without too much overhead (although the code is
-> indeed more tricky to write).  However, there is a possibility that the
-> domain lookup might become a hashtable with some future enhancement [8],
-> at which point it would be better to have an explicit commit operation to
-> avoid rebuilding the hashtable for every landlock_add_rule().  Having a
-> commit operation will likely also make some atomicity properties easier to
-> achieve, depending on the supervisor's needs.
-> 
-> I've actually previously implemented hashtable domains [9], but after
-> benchmarking it I did not find a very significant performance improvement
-> (2.2% with 10 dir depth and 10 rules, 8.6% with 29 depth and 1000 rules) [10]
-> especially considering the complexity of the changes required.  After
-> discussion with Mickaël I've decided to not pursue it for now, but I'm
-> open to suggestions.  If Mickaël and Günther are open to taking it, I can
-> revive the patch.
-> 
-> [8]:  https://github.com/landlock-lsm/linux/issues/1
-> [9]:  https://lore.kernel.org/all/cover.1751814658.git.m@maowtm.org/
->       Note that the benchmark posted here was inaccurate, due to the
->       relatively high cost of kfunc probes compared to the work required
->       to handle one openat().  For a more proper benchmark, refer to the
->       comment below:
-> [10]: https://github.com/landlock-lsm/landlock-test-tools/pull/17#issuecomment-3594121269
->       See specifically the collapsed section "parse-microbench.py
->       base-vm.log arraydomain-vm.log"
-> 
-> 
-> Proposed implementation
-> -----------------------
-> 
-> In order to store additional data and locks for the supervisor, we create
-> a new `struct landlock_supervisor`.  Both the supervisor and supervisee
-> rulesets, and the landlock_hierarchy of each layer, will point to this
-> struct.  (A future revision may optimize on this to reduce pointer chasing
-> when needing to check supervisor rulesets of parent layers.)
-> 
-> One of the main tricky areas of this work is the implementation of
-> LANDLOCK_ADD_RULE_COMMIT_SUPERVISOR and the access checks.  We want:
-> 
-> - atomic commit: the supervised program should not "experience" any rule
->   changes until they are committed, and once it is committed it should see
->   all the changes together
-> 
-> - lockless access checks (even when the supervisee ruleset does not allow
->   the access, necessitating checking the supervisor rulesets, this should
->   still not involve any locks)
-> 
-> - atomic access checks: an access check should either be completely based
->   on the "old" rules or the "new" rules, even if a commit happens in the
->   middle of a path walk.  This prevents incorrect denials when a commit
->   moves a rule from /a to /a/b when we've just finished checking /a/b and
->   about to check /a.
-> 
-> In order to achieve atomic commit, the supervisor fd cannot actually point
-> to (and thus allow editing) the "live" ruleset.  Instead, when a
-> `LANDLOCK_ADD_RULE_COMMIT_SUPERVISOR` is requested, a new `struct
-> landlock_ruleset` is created, the rules are copied over from the existing
-> supervisor ruleset, and the pointer in the landlock_supervisor is swapped.
-> 
-> In order to keep access checks lockless (as it is currently), the live
-> ruleset pointer needs to be RCU-protected.  To reduce complexity, this
-> initial implementation uses synchronize_rcu() directly in the calling
-> thread of `LANDLOCK_ADD_RULE_COMMIT_SUPERVISOR`, and frees the old
-> supervisor ruleset afterwards, but this can be rewritten to use call_rcu()
-> in a future iteration if necessary (which will allow quicker commits,
-> which can be quite impactful if we use this to auto-generate rulesets).
-> 
-> During access checks, for each step of the path walk, after
-> landlock_unmask_layers()-ing the supervisee rule, if the access is not
-> already allowed, we check for rules in the supervisor ruleset and
-> effectively does landlock_unmask_layers() on them too.
-> 
-> In order to have atomic access checks, we need to pre-capture the
-> supervisor committed ruleset pointers for all layers at the start of the
-> path walk (in `is_access_to_paths_allowed`).  Storing this on the stack,
-> this takes the space of 16 pointers, hence 128 bytes on 64-bit (I'm keen
-> to hear suggestions on how best to mitigate this).  Another effect of this
-> "caching" is that in order to be able to release rcu in the path walk
-> (which is required for the path_put()), we actually need to take refcount
-> on the committed ruleset (and free it at the end of
-> is_access_to_paths_allowed).
-> 
-> 
-> Optional accesses
-> -----------------
-> 
-> Optional access (truncate and ioctl) handling is also tricky.  There are
-> two possible alternatives:
-> 
-> - The allowed optional actions are still entirely determined at file open
->   time.  This likely works in the majority of cases, where truncate (and
->   maybe also ioctl) are given or taken away together with write access.
->   However, this may mean that we need to send an access request
->   notification immediately at open() time if e.g. write access is given
->   but truncate (or ioctl) is not, even if truncate (or ioctl) is not
->   attempted yet, since the supervisor would not be able to allow it later.
->   (or alternatively we can choose to not send this notification, and the
->   supervisor will just have to "know" to add truncate/ioctl rights if
->   required, in advance.)
-> 
-> - The allowed optional actions are considered to be determined at
->   operation time (even though for a static ruleset it is cached).  This
->   means that for supervised layers, we will always have to re-check their
->   supervisor rulesets, whether or not the access was initially allowed,
->   which will involve doing a path walk.  This does however means that the
->   supervisor can be notified "in the moment" when a truncate (or more
->   likely to be relevant - ioctl) is attempted.
-> 
-> The PoC partially implements the second one (but has bugs), but I'm not
-> sure which is best.  The second one is most flexible and makes more sense
-> to me from a user perspective, but does come with performance
-> implications.
-> 
-> 
-> (Disallowing) self-supervision
-> ------------------------------
-> 
-> We should figure out a way to ensure that a process cannot call
-> landlock_restrict_self() with a ruleset that has a supervisor for which it
-> has access to (i.e. via a supervisor ruleset fd).  This prevents
-> accidental misuse, and also prevents deadlocks as discussed in [11].  I'm
-> not sure if this will be easy to implement, however.
+I'm fine with either name, as long as the function still puts the
+task_struct of the returned task_work item.  (That would be good to
+keep doing, for symmetry with the _provide() and _release()
+functions.)
 
-This seems like a graph acyclicity problem.
-
-Here are a couple cases to consider:
-
-1. LANDLOCK_RESTRICT_SELF_TSYNC misuse:
-
-In the case where a user wants to use this supervisor to supervise other
-threads within the same process, a user could naively call
-LANDLOCK_RESTRICT_SELF_TSYNC (merged into 7.0) when enforcing the
-supervisee_fd. This would enforce the same policy on the thread running
-the supervisor and the supervisee.
-
-2. Transfer of the supervisee_fd (SCM_RIGHTS)
-
-It's possible to transfer file descriptors over unix domain sockets. If
-we had a supervisor daemon that used this form of IPC to send precooked
-supervisee_fds to other threads, and one of those ended up in a parent
-process of the supervisor, we could inadvertently end up with problems.
-
-3. Blocking in other LSMs (pointed out in your source [11])
-
-The hardest case to deal with, other LSMs like TOMOYO can also block and
-cause dependency cycles.
-
----
-
-This gets tricky, and I don't know  if just checking parent / child
-relationships would work. Because the supervisor and supervisee rulesets
-are just file descriptors, and there are potentially unlimited number of
-ways these FDs could be transfered or instantiated.
-
-I think the best way to deal with this is constraining the problem space:
-
-An idea (binding supervisors/supervisees to domains on first use)
-
-Whenever landlock_restrict_self(supervisee_fd,...) is called, check the
-current domain credentials and verify that the domain is a *proper
-subset* of the supervisors domain. Then permanently close the
-supervisee_fd and never allow reenforcement. Similarly, once a
-supervisor_fd is created, never allow commiting from a context with
-"current landlock domain != original landlock domain at creation"
-
-This prevents post-enforcement usage of the supervisee_fd by a parent
-domain, and post-commit usage of a supervisee_fd by any subdomain.
-
-I'm not sure if it's possible to check whether one domain is a
-proper subset of another (ie supervisor domain includes but *doesn't equal*
-supervisee domain), but I think that's one way do do it.
-
-This idea would help, but doesn't address case 3 above.
-
-> 
-> [11]: https://lore.kernel.org/all/cc3e131f-f9a3-417b-9267-907b45083dc3@maowtm.org/
-> 
-> 
-> Supervisor notification
-> -----------------------
-> 
-> The above RFC only covers mutable domains.  The natural next stage of this
-> work is to send notification to the supervisor on access denials, so that
-> it can decide whether to allow the access or not.  For that, there are
-> also lots of questions at this stage:
-> 
-> 
-> - Should we in fact implement that first, before mutable domains?  This
->   means that the supervisor would only be able to find out about denials,
->   but not allow them without a sandbox restart.  We still eventually want
->   the mutable domains, since that makes this a lot more useful, but I can
->   see some use cases for just the notification part (e.g. island denial
->   log), and I can't see a likely use case for just mutable domains, aside
->   from live reload of landlock-config (maybe that _is_ useful on its own,
->   considering that you can also find out about denials from the kernel
->   audit log, and add missing rules based on that).
-> 
-> 
-> - Earlier when implementing the Landlock supervise v1 RFC, I basically
->   came up with an ad-hoc uAPI for the notification [12], and the PoC code
->   linked to above also uses this uAPI.  There are of course many problems
->   with this as it stands, e.g. it only having one destname, which means
->   that for rename, the fd1 needs to be the child being moved, which does
->   not align with the vfs semantic and how Landlock treat it (i.e. the
->   thing being updated here is the parent directory, not the child itself).
->   Same for delete, which currently sends the child as fd1.
-> 
->   But also, in discussion with Mickaël last year, he mentioned that we
->   could reuse the fsnotify infrastructure, and perhaps additionally, use
->   fanotify to deliver these notifications.  I do think there is some
->   potential here, as fanotify already implements an event header, a
->   mechanism for receiving and replying to events, etc.  We could possibly
->   extend it to send Landlock specific notifications via a new kind of mark
->   (FAN_MARK_LANDLOCK_DOMAIN ??) and add one or more new corresponding
->   event types.  Mickaël mentioned mount notifications [13] as an example
->   of using fanotify to send notifications other than file/dir
->   modifications.
-> 
->   I'm not sure if directly extending the fanotify uAPI is a good idea tho,
->   considering that Landlock is not a feature specific to the filesystem -
->   we will also have denial events for net_port rules, and perhaps more in
->   the future.  However, Mickaël mentioned that there might be some
->   internal infrastructure which we can re-use (even if we have our own
->   notification uAPI).
-I think that a new FAN_MARK would be required to use fanotify uAPI.
-
-There are a couple questions I have with this: (if we extend fanotify)
-
-1. What FAN_CLASS_* would notifications use?
-
-FAN_CLASS_* specifies the type of notification, when the notification is
-triggered.
-
-See [1] for the current classes.
-
-If we want interactive, pre-access blocking, that would correspond to
-FAN_CLASS_PRE_CONTENT or FAN_CLASS_CONTENT. Both of which currently
-require CAP_SYS_ADMIN regardless of FAN_MARK. Which requiring that
-would require that supervisors have CAP_SYS_ADMIN, if the current
-CAP_SYS_ADMIN requirements remain in place.
-
-(If we don't have interactive blocking denials, we could just use
-FAN_CLASS_NOTIF)
-
-2. How would fanotify events be encoded?
-
-Events in fanotify use this structure for event data (one or more of the
-following must be recieved in a notification) [2]
-
-           struct fanotify_event_metadata {
-               __u32 event_len;
-               __u8 vers;
-               __u8 reserved;
-               __u16 metadata_len;
-               __aligned_u64 mask;
-               __s32 fd;
-               __s32 pid;
-           };
-
-There are access classes landlock restricts that might not have an fd at
-all, like abstract unix sockets, tcp ports, signals etc.
-
-Good news is fanotify supports multiple types of additional information
-records, and we could potentially extend fanotify to support new ones as
-you alluded to.
-
-For examples of this, see struct fanotify_event_info_mnt,
-fanotify_event_info_pidfd.
-
-These records get attached to the event so they could be used to pass
-landlock access data.
-
-3. If we support interactive permission decisions (even for a
-subset of landlock access rights only), do we use the response code? 
-(question might be moot if we don't do blocking/responses at all)
-
-From [2]:
-
-       For permission events, the application must write(2) a structure
-       of the following form to the fanotify file descriptor:
-
-           struct fanotify_response {
-               __s32 fd;
-               __u32 response;
-           };
-
-
-response is a FAN_ALLOW or FAN_DENY. This is used by fanotify as a
-one-time access decision. Would this be used to do one-off exceptions to
-policy, or would we require policy decisions to go through the
-supervisor_fd and ignore the response code?
-
-4. How would we reconcile the disparity between fanotify access rights
-and landlock access rights?
-
-There's no clean 1:1 mapping between fanotify access rights and landlock
-access rights as Mickaël pointed out. [2] [3]
-
-Many fs rights (creation, deletion, rename, linking) are not handled or
-implemented, (not even considering network/unix/signal scoping), so we'd
-be adding all these landlock specific rights.
-
-We could make a "catch-all" FAN_LANDLOCK_ACCESS or similar and ignore
-all the existing rights, and put the actual access data in the event
-record. It's awkward either way.
----
-
-In conclusion, I think extending fanotify is more viable than seccomp,
-from a purely technical standpoint. because it seems extensible,
-and because it runs post-lsm hooks.
-
-That being said, it's awkward, requires large extensions to the API, and
-definition of permissions that are specific to landlock.
-
-Whether or not landlock makes sense in fanotify from a semantic point of
-view is an entirely different question. There's no precedent for
-non-filesystem access controls in fanotify, so it's a little... out-of-place
-for an LSM to expose features on a filesystem access notification api?
-
-Curious on what people think.
-
-[1]: https://man7.org/linux/man-pages/man2/fanotify_init.2.html
-[2]: https://man7.org/linux/man-pages/man7/fanotify.7.html
-[3]: https://lore.kernel.org/all/20250304.Choo7foe2eoj@digikod.net/
-> 
-> 
-> - The other uAPI alternative which I have been thinking of is to extend
->   seccomp-unotify.  For example, a Landlock denial could result in the
->   syscall being trapped and a `struct seccomp_notif` being sent to the
->   seccomp supervisor (via the existing mechanism), with additional
->   information (mostly, the file(s) / net ports being accessed and access
->   rights requested) attached to the notification _somehow_.  Then the
->   supervisor can use the same kind of responses one would use for
->   seccomp-unotify to cause the syscall to either be retried (possibly via
->   `SECCOMP_USER_NOTIF_FLAG_CONTINUE`) or return with an error code of its
->   choice (or alternatively, carry out the operation on behalf of the
->   child, and pretend that the syscall succeed, which might be useful to
->   implement an "allow file creation but only this file" / "allow `mktemp
->   -d` but not arbitrary create on anything under /tmp").
-> 
->   Looking at `struct seccomp_notif` and `struct seccomp_data` however, I'm
->   not sure how feasible / doable this extension would be.  Also,
->   seccomp-unotify is supposed to trigger before a syscall is actually
->   executed, whereas if we use it this way, we will want it to trigger
->   after we're already midway through the syscall (in the LSM hook).  This
->   might make it hard to implement (and also twists a bit the uAPI
->   semantics of seccomp-unotify).
->
-
-(Some of the stuff discussed with seccomp below is derived from a side
-conversation with Tingmao over this proposal)
-
-There are some problems with extending seccomp unotify. Passing the
-full context needed through this api to the supervisor is problematic.
-seccomp unotify notifications look like this [4]:
-
-           struct seccomp_notif {
-               __u64  id;              /* Cookie */
-               __u32  pid;             /* TID of target thread */
-               __u32  flags;           /* Currently unused (0) */
-               struct seccomp_data data;   /* See seccomp(2) */
-           };
-
-And struct seccomp_data [5]:
-
-           struct seccomp_data {
-               int   nr;                   /* System call number */
-               __u32 arch;                 /* AUDIT_ARCH_* value
-                                              (see <linux/audit.h>) */
-               __u64 instruction_pointer;  /* CPU instruction pointer */
-               __u64 args[6];              /* Up to 6 system call arguments */
-           };
-
-Even if we pass the syscall data, for the userspace to actually decode
-the arguments to figure out what the access is doing we have two
-critical problems (1,2) and one annoyance (3):
-
-1. The syscall itself doesn't necessarily contain the full context of the access.
-
-2. We cannot decode the pointer-based arguments from userspace for a syscall
-in seccomp without TOCTOU. It also requires reaching into userspace
-memory. [6]
-
-3. Decoding the syscall number is an arch-specific operation that we now have
-to expect userspace to deal with.
-
-So unless there's something I'm missing extending seccomp unotify doesn't really make
-sense. It's not as much of an extensible API like fanotify.
-
-Unless we artificially trigger some notification after the fact, and figure out how
-to jam the relevant access information into the notification or pass it through
-a side channel, it's gonna be a difficult path forward to use seccomp directly.
-
-[4]: https://man7.org/linux/man-pages/man2/seccomp_unotify.2.html
-[5]: https://man7.org/linux/man-pages/man2/seccomp.2.html
-[6]: https://blog.skepticfx.com/post/seccomp-pointers/
-> 
-> Are there any immediate reasons, from Landlock's perspective, to rule out
-> either of them?  (I will probably wait for at least a first review from
-
-I think direct extensions to seccomp are awkward at best, and it's
-difficult to reason about an extension that would make sense.
-
-fanotify seems more viable, but would require heavy extensions
-(new record types, permission types) and adding landlock to it would be
-inconsistent with the existing implementation semantically. (landlock is
-not VFS specific).
-
-I think the most viable path forward if this is to be done is a
-dedicated uAPI. That being said, I think what Mickaël said about reusing
-the internals is viable.
-
-> the Landlock side before directing this explicitly to the fanotify and/or
-> seccomp-unotify maintainers, in case the plan significantly changes, but
-> if somehow a maintainer/reviewer from either of those areas are already
-> reading this, firstly thanks, and feedback would be very valuable :D )
-> 
-> [12]: https://lore.kernel.org/all/cde6bbf0b52710b33170f2787fdcb11538e40813.1741047969.git.m@maowtm.org/#iZ31include:uapi:linux:landlock.h
-> [13]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v6.15-rc1&id=fd101da676362aaa051b4f5d8a941bd308603041
+–Günther
