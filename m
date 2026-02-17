@@ -1,99 +1,116 @@
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+Received: from sonic307-8.consmr.mail.bf2.yahoo.com (sonic307-8.consmr.mail.bf2.yahoo.com [74.6.134.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0ABA36EAAE
-	for <linux-security-module@vger.kernel.org>; Tue, 17 Feb 2026 16:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDA336EA96
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Feb 2026 17:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.134.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771346141; cv=none; b=iagXR2QbwaAfJf2zh7IjfJbowyOccBcr1P8ua6nKfpf5Pv7B5SVed17ELqhkNbp6RQK7TjypZRZVmyiDBDS5iJ1b/u71MPg5r+3mWqm4KlQKn+WWxtsD3PdZGq2Pbo8h23f8rIftdhrqKKbxp/3MTVcNLwkTA05w8gt5aNneg24=
+	t=1771349974; cv=none; b=UZWn8HV4SAU4cm78VMdgtcVyoQ9yy9NQgtinfnCsG472heQKM/s07c7Yg+Pcgkcmxkazz398WF0M9oHm+w4Ql4I2l1kFfVsFii6DYolUGszTrwAWnEb4cRHP4nJj3B0VB/0KBi+gIxIK4wdoQB7PEC4E1iGFR1UiF4q/SFIzwHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771346141; c=relaxed/simple;
-	bh=v5RdTRwAlMvDnw2mSvvzlyobMMhvsDSGCpnqcjOhXck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QEJswU19HsgUVb6l6EYRAxpfKAQNyaxe3XJAngZh6VFSludQJOfc35rPYmApgSJKxxDy+jOucABZ+x/J958eeT2xqv0zH4C5elJV9WaFANHQwtsAxZTdtm6d9GWjI0Jai5qz9xsRCqDwHyiDg3GC0ETLVSZWFT98PxVkvG85ul4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rak7XTDu; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1771349974; c=relaxed/simple;
+	bh=LXAaA6UfhsfUCQ8ySjuTNnwtOh6Kdjuq+P9PBoM2Eos=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sFKo1J+L/bLqG4SMn/pi0hM/eX0DILKPLscxlMGD01wH1mOrNJHIZWq2k44XoviSEn9C/Xj9RahhA8Fb6nu2Rlz64b6RClXKqEVCvHuXk53O2/S3TijCnUXBw7WRdee7OBGPJtdvfmAYEDp81Yc2xEOQatbG5yptAyN3bSBPsWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=UfUScA5e; arc=none smtp.client-ip=74.6.134.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rak7XTDu"
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-59e6491f1a2so6014e87.0
-        for <linux-security-module@vger.kernel.org>; Tue, 17 Feb 2026 08:35:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1771346138; x=1771950938; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yYgWYhiD0n2mEyfYNVfYa0kPXvg9Tft0kDTAVckiQpI=;
-        b=rak7XTDuIfOiUWvvSJ0xBo44n0FI5cGT910SJHi+17bvygQxbiFOb79kvIx+pE+bYp
-         hYA0QG+6i2nEfs0pYXnOb87dq/ydxEj/APlR7vb2v5Q2COpeGTX4iZXHQ7IZd55L7SzX
-         z2qd784G7x2nIxQIJXZ/F42wpmXcfSeJ5L/2LwRo/qLXYV1JZvxH8Mlyv7R7QTPHvqNw
-         N4qUaWmZEmkttsGpyqe5slUw4u4G09Uw1xjh8rnlGrq0i/RBWU6oRaf11o51Ij+new/O
-         mlUrs/ltzoDUn9+FskPR9fOjUovJilXh959gOyM2pSRShUTQeSkv0rxPZTDwPpW6xOwY
-         N1CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771346138; x=1771950938;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yYgWYhiD0n2mEyfYNVfYa0kPXvg9Tft0kDTAVckiQpI=;
-        b=UHH0QLq3d0eiCwgQeY0mm7WjVdOWVw/V9ReKWxJXccPTf11g7RrENa2+V5KoLF/UZp
-         Hpzkf0P2Sj/ysJ4auwAHcRh6pWTqRn4Lil+Xi/6pmNTS8LS7Wkyea8bHH4vUWMt4YbEd
-         GizpOCip1YB7TOJywyqANSpIbx6rqhTDFnlG/NR1zTAr3u5gOvn3KkUR/1/qEwU0RDJq
-         MtrrzdQ+fFdRj/49IMhB+um3NKEzpu0qUJYT9jI1/3RTMjN2G28ZsvkuBuN21vDZbk63
-         ieoNq46jaVn+wBdqmUR9do3Pdtkyz2TADfBoKXwnUxmB0DYWHjXOEnvURleYB4af9SVl
-         zdLQ==
-X-Gm-Message-State: AOJu0Yy2bpG16yKsvFR0209pUNijUdPDmnF8aHbL8bDj+iWaHOy5f5tb
-	zw8RoD/VvCmamBzf4YMejJNKp+8cWFbCK4tRzE95bv7eT7BeBnBJ1GkDsyQR8+Tovj+JL7Y4QWH
-	w4PzzfQ==
-X-Gm-Gg: AZuq6aLTAOZdNnVvQ/YbqBoGAVSOdjf1D1SpP86O1MOcSK1BYN1REAdxnvmcEEUTadm
-	VMtOG5aqBhMvoHpOSIwSxbrqPvAPAt/0Gxff8gS2BBYPeMtjLwbef/xl9WKaejJaB0vg7Te5map
-	suf9+Xh2xiXOBfnOL6yj1sD6SDH2vcznPZc3zYfkE7f37WNCVQ45mN5v9fSG5LAwEYMs7BuLdyJ
-	XCKc4eCVzmLUWZ17IwspLa63qaulq/t9U6+47mmvpWlv/3yfZklcWKAQpWw/fB8yLXZQo+AvQ2O
-	1Z/ZVUXa59vUQk2UlIOV7yYMM/VLoYRdYNWQGmH28pcgJsZzl87d+N8F+qCV2BcPQ9Fcs+XlAZn
-	xOn9UEG8miJJzWs/faDxm2hyWq6SR2ZUSkPqRjNros8IUT9Xb1KkoaFrj+DfExFlX2z/tqjvClF
-	ewYKF3M4W01WG3yTN7dHCEEal9y3M/crf+P70Xa6dKyAmfn/maoRIJ1w==
-X-Received: by 2002:ac2:5684:0:b0:59f:7b5f:6b49 with SMTP id 2adb3069b0e04-59f7b5f6c99mr1890888e87.17.1771346137708;
-        Tue, 17 Feb 2026 08:35:37 -0800 (PST)
-Received: from google.com ([2a00:79e0:288a:8:8d29:f905:4a47:1dbf])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59e5f5636b3sm3853181e87.14.2026.02.17.08.35.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Feb 2026 08:35:36 -0800 (PST)
-Date: Tue, 17 Feb 2026 17:35:31 +0100
-From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: linux-security-module@vger.kernel.org, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v2 1/2] landlock: Fully release unused TSYNC work entries
-Message-ID: <aZSY06XckK9HvYlS@google.com>
-References: <20260217122341.2359582-1-mic@digikod.net>
- <aZRh52TIPAmMPJxc@google.com>
- <20260217.cheoghae8Ahh@digikod.net>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="UfUScA5e"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1771349972; bh=EK9AHzFKgwkJiODkk798f35egRzjNc9C4yeF5yhWtdI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=UfUScA5elxs2p/HJHXFHHxc99wxNPqJs5ibR/+zCOWitfhBuiWVoKST2z4l/+yfUwlc/KTSGqugTl3K+Rb5YziYRKLgCtRmA37bHuBOYROUirtki4ljZ1uzbsqkjLZmlUPFAQdgFKLDtvmKEpLuB4RR15pZeTe58bUzvp834LG9cW3jImShgmmEtRh59VxTT0hU6LVnA6OGVjhMVnLwhSdVjFQAS8qZcZvLmoD+vKBAbtlAk3Sgmozv7ghlIzv4UocKIoNafBOd/YXWqQ3Wpj//mgW6nq99CnFtNzm8HjlZjC7Q3lJMDaFzYCm+L4qXM6svdCFEAGz86ReVmrBM8sA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1771349972; bh=dGYJOtW1/WpwpwF4DiJnph9PUtT12bRDZcEQ0eKtXOs=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=c9CV0ySFmHiVOg9VGt6bZiN6/v3SlCPlX9rcU+rBl8ZM1BgHbUk4Hw13swgY0j1F/vkeBkyCCNLzl8fGIb1HaGiFm5CsPsiX1fzubIgDPxw2r/bHaJq3ZX/3m23dBHq+3wHe19TpMtO3oOWNrBb8So6JaoKybB5yZ2hnl0+tGqakxcLUr82xYG/qsjn9/ydECv5/fMmqWTneShVSUiEIxAKHWXAii/yw1+7MHiqM6vlRZGbcK2dkHuKuapanmnPj+0qz6M960WbGkww+QFd6WsXjYtBMXkpgFf/ko6++/8VfP0lJdp3w5VULJyTAu7oyjVmSf8zZLeN2JDDhl+/iRQ==
+X-YMail-OSG: v4Jt16MVM1msjb1OgM5OZPHixaZPDazpUHJMK0bb.iUzj1koMDII6s25ufBOVBN
+ VtzXpf.BaBimH.1Nwy6gRVt1swqlaA3DBarmpKLnihPBOX9jYt_4SguUZ.llwwlUxWaSMKISN8YL
+ 50RiK2zXDC9sUQDU2nOJzG0emn0y4E_8lXKuv43yCJS_jusx6fz02EeyPZpckK97.oubbqO0ggoq
+ lRcm7LRTcyXNFVGBkymE71cMmv2zh6dTCWKgyYTNuE7NrIYIupWZIk1i5.z1Adu.DD20EgdYYkCj
+ a7eSmNyl5NlOrY_zjfVkImCmbcy2bUxpfvmVNvtopdaE7sUzniV.VS0.UnWhU4k3Aqzkl_PfVYz7
+ dZhsDUbi8RbKFod82sGy5p4hx438k5oQn7WwmRGfy8y.CuJoOLKXZwbOKfeHf_kAy71KzmHzA28C
+ Vur1Q8uO.4GHbQ59B6l9lROqDvV3kj1ke20ecMf5y9Qjp41YPBzTn97xE5H8NTaKzDH1Vj.AHWj.
+ OzVWRHOla8ah6.I7URukdLmQdfch03SJxo9QrWCwuU1z0IgHSiq3pWAsDKUsj9zrHUK7o2utntIb
+ ogb1iTVGyqvuF4NOvYRkI.xzJdkrscLbTwm5yjX_VxR4KuT1zvM75tXzNp4AHx.LWjd869ahvrXS
+ 4hc3DQ9lnC3WRgReTeS6g9ln3HzzaQ0HK_GWjeBDEe4P0pOZLWxUfkbRZQcs32D_KhwyZSSOJZkq
+ LDEAbpbP1GnoCA9uCQoJviEdbpct0wDA6VfHHXyla3x9v0I1YJG.Kq04RltDdRbol_kEfbPDkKE6
+ ffw0QTQmSltOfYgGXjrRP2fsAfJPgV06KUBFYrc2SPlIB6Swo1bNIgTo5E5B6R_uEMCFWcmo0WOD
+ 2na2PF30MSxjRbW0AtPtEKTgQOqEv.Ft6uswOFNS4r08uBSQ6WIkfhFHPwq2dgvJq5v0RHkVvsZ6
+ _iVA7gRhJTfQp9N5l8mpU292kf_yFUN.WiIzd0ZVlDbh9ApnIlyWIr9Vi9l.oWu7WOqZGP4SM7ga
+ g3.wJjMLBv8FfuRp3QJZaRmLiLVRg1SvlO_Bv.IA9yw2e4lT8Pso63F4stlskFmlKRkZw7VO2mSC
+ f0kgBNnsYX3JNuDBO5TGcBoa3CXdBz72bvdhTB3I9_eYyY0W5R_Jnm5.kPzGWgshX2gYNGKCytgk
+ UxG0IwbxlFmeyYLGVFA4c6tSNYmTNNiVlb5288r2QgFOaedEdFvZihrwqpeACXiE2CSMi0_XtCjH
+ L5u2CA4ucxPPArZeFm7y9LxLrIUBlH4HPerNJnl0d_4VwjAv440QWrWGyQyvZsV8zYeMtGe3ztJP
+ yjdh55LgODcMhDXJT9rZ2VL.IFtvhvk8KKV4IGNfUWKUO_s7OGPk6hjBgxaO7CPRsOMCxkQdrLXq
+ DRZGIimPtFlC0.jb._BpvRzToR6PuOpcqK1cyNoJxktpplobZNPTTAU1a18Xqm7zp16Ko8odEHqd
+ 8vY3.b8N9WIWf.T_tQxJklwPvF1AVG4_Bay3FKo7VjY1ApzDe0BZaxJmz9OH86w.Pj9CeBo_Q4Yu
+ lHlxeMItl2nmlBvE.JEXDPDH92HMn9bi.6nF4GmAT3LfXscENbJhmm.Mxs8cx9jIblzwV_YvyMoc
+ 63sntHOiCL9QXW1JdMFQfhcGRUu5c1mH2S0ifWl7CDgT6WQ8Ny2GIcpDTV3i1rA72df8M4Xe5IQw
+ o3Mp5K5lYekGhFoq_ZawgV62GPWLaUkbNR8Zc43q.IaSd5O8XQKuB0158TGQOHXIeixuW1ezw_fZ
+ R9n3hZgx.xtXB5IAmGepM2up6HgVvmKKqejFcydB41e6UnY_.TZ2DGC6OzhTxcCuwQs9c9RAaKRJ
+ hX62HGkOekf7djsM5zkLcXXWxu5xcqbTHZ1fHOgiJGXSY9KBw7AnbdBFzK.taqLw_5nglIwU2lhh
+ Td6b3nAls9_ZlgJkQDSiSQ25tlPObFzzg95YV12vk_iv6eLnqHomwjhC9O485TtMl5L5MK8E5wI_
+ e_phPHjZnntKhfNkKBAqKqKtIak8OZoUHkctKWXmc_D9bRRPu8WW2z2YR0FEzyUVjj2uvfFt5kpd
+ yPi9zRvMSc2aj.Eg3XLNBrWxNAC0sAH0H62bxJZrtvJEYlU.IPreerHvofEv7_bd_1w6obEST..u
+ JdrfpCMdxXVyOZ2rGGqSRpexL55lVMizIL_F_BQO77POkcvJSyAYeNgcx70KW_tkt2uj7V2A8zoA
+ ueTJCdgS5zCU59lWIwK2XYrdT0VVrE.dj1y1nlJRoSVL9Cfy0TKJ8x_Xdg_GuuHWNahNAlToromC
+ mkRY-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 4108eaf2-1edd-45bf-b6b4-7dac18693e9e
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.bf2.yahoo.com with HTTP; Tue, 17 Feb 2026 17:39:32 +0000
+Received: by hermes--production-gq1-6dfcf9f8b-xs62w (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e2fe6b038456c66677c514cbe68907e1;
+          Tue, 17 Feb 2026 17:29:21 +0000 (UTC)
+Message-ID: <efe72275-085b-4059-aa3e-cc902dbd9b45@schaufler-ca.com>
+Date: Tue, 17 Feb 2026 09:29:19 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260217.cheoghae8Ahh@digikod.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] security: add LSM blob and hooks for namespaces
+To: Christian Brauner <brauner@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20260216-work-security-namespace-v1-1-075c28758e1f@kernel.org>
+ <fb40e938-f6b2-45cf-b8ab-246cd6939582@schaufler-ca.com>
+ <20260217-glasur-hinnimmt-ac72b3e67661@brauner>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20260217-glasur-hinnimmt-ac72b3e67661@brauner>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.25198 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Tue, Feb 17, 2026 at 02:52:46PM +0100, Mickaël Salaün wrote:
-> On Tue, Feb 17, 2026 at 01:41:11PM +0100, Günther Noack wrote:
-> > On Tue, Feb 17, 2026 at 01:23:39PM +0100, Mickaël Salaün wrote:
-> > > +	memset(ctx, 0, sizeof(*ctx));
-> > 
-> > Minor (and highly optional) remark, this is the same as
-> > 
-> >   *ctx = (struct tsync_work){};
-> 
-> What about:
-> 
-> *ctx = (typeof(*ctx)){};
+On 2/17/2026 1:38 AM, Christian Brauner wrote:
+> On Mon, Feb 16, 2026 at 09:34:57AM -0800, Casey Schaufler wrote:
+>> On 2/16/2026 5:52 AM, Christian Brauner wrote:
+>>> All namespace types now share the same ns_common infrastructure. Extend
+>>> this to include a security blob so LSMs can start managing namespaces
+>>> uniformly without having to add one-off hooks or security fields to
+>>> every individual namespace type.
+>> The implementation appears sound.
+>>
+>> I have to question whether having LSM controls on namespaces is reasonable.
+> This is already in active use today but only in a very limited capacity.
+> This generalizes it.
+>
+>> I suppose that you could have a system where (for example) SELinux runs
+>> in permissive mode except within a specific user namespace, where it would
+>> enforce policy. Do you have a use case in mind?
+> We will use it in systemd services and containers to monitor and
+> supervise namespaces.
 
-I find that harder to read, because it is less commonly seen and the typeof() is
-an indirection that makes me think as a reader.  But at this point, this is only
-a vague opinion and I don't feel strongly about it.  Please submit either one of
-these three options :)
+While I am not among them, many people have objected strongly to making
+containers an identified entity in the kernel. If these hooks were available
+implementing a container scheme completely within the kernel would be
+reasonably strait forward. I might consider tackling it myself.
 
-—Günther
+I am also reminded of the kdbus effort of a decade ago:
+
+	https://www.linuxfoundation.org/blog/blog/kdbus-details
+
+Are we ready for ksystemd? UNIX systems of the 1980's suffered greatly from
+an excessive enthusiasm for pushing user space functionality (e.g. STREAMS)
+into the kernel. Systemd is a fine scheme, but so was inittab, in a very
+different way. Adding kernel facilities to support particular application
+schemes is very tempting, but often leads to dead code and interfaces that
+require maintenance long after the user space scheme has moved on.
+
