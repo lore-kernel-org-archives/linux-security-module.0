@@ -1,92 +1,130 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B5C32C33D;
-	Tue, 17 Feb 2026 12:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 000C43396E8
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Feb 2026 12:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771329697; cv=none; b=eYc6IJn7PSswlf6bBd9lZyg3iXWPXReEq7SgPpUxzkSOs+AoX4rMqr9eXmMr1pFFJveRibTHbw6ztoCVqcvN5WEvlViC+jZwGmNM1ajrsbekJE18Ebfkdz8puGihM2ryHmsJFIzWCgp0NV+KKRtAkTPtXGlRmq76tC7Jnr5xlok=
+	t=1771331050; cv=none; b=CrQvoKEQp+8LM83jwRzzlsaVjW+IcGbbzzzuSl+RX5/c7ap7WsghGpa7JUiSSxW9B65Dv8qblJOAEPpS+FsctDIvTY/Wb3MyUs7O5HkKaAIOeSiqdwILxKE39iPtjhNC7zVnh5MLYLpfSS9TCMNNMXAg06NSnD530mi7ciu7brQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771329697; c=relaxed/simple;
-	bh=87110GAXLqxdBCfG4XAbyUPM+jV4Yr/SrlSTRgKoWfA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RZ0si+hht5Y0dHKxX8pduvq7jb67DWUOBBQ4q3K5Eke+OEtnoyZJlyvJ+BLDPqX2WNliXqAV7AfvnN9pzKq0QpplTiYtCBUeB2ICCFSIGJyNR5vwD0UOqrvHItvwKlq4eakeCpm+df3RGpPJew7/brWCzC0pIH5SzWpKvFCmepw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HSF4Dk0o; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771331050; c=relaxed/simple;
+	bh=dJdNEL/rXIkh0T6k/muZm/9jbWjLHMJXIxuaEfvU7TI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rL1pOv0AD4g8KAhhXAgldABvhddW94wwaN8HuaR4qWKAUYGpwuoYrl7k1eHA9aH56hqR2IyJTPmdR8SnpJz6HkxhFNq8EO6DYr2Vt0lC2T/Vw+t+uC+OmdUWOX/7oX+6OP23ttwKDA0Z9LWtu018crtHE6Zt4s1j68AcVF1no+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ImvKomHy; arc=none smtp.client-ip=185.125.25.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HSF4Dk0o"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FBF1C4CEF7;
-	Tue, 17 Feb 2026 12:01:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771329696;
-	bh=87110GAXLqxdBCfG4XAbyUPM+jV4Yr/SrlSTRgKoWfA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HSF4Dk0ouulB3cq0WIY+q9T9iqcGGzYebmI8MIRNB2OGqzK5YZm7DwqCxatf9JXrz
-	 B2ev5fDIrI7xEDQvmHxbCHSL1juJ4xIk769kkcmXvJjMlxbUu+4eN991G+RF9W2CFF
-	 ES5ItpPvf90w5K9ogzdXnEkRBPx3UEgm/9U11C3mtJouO5P0pATiEXkGlgUZ2vj5/K
-	 416KGlIX5BQxc/DUlv61Ze25otA2I6m4WP4wDYthPC13977XfhJbZqnEBtf0e+GoNw
-	 6Tjpcce+stT2IBHiwfu24s78mXpUREB2PyJTGYgfzzTRYtfiXhKf8oZb+F+QA/LYCm
-	 o9M8lz/SWOhoA==
-Date: Tue, 17 Feb 2026 13:01:32 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Daniel Durning <danieldurning.work@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, paul@paul-moore.com, 
-	stephen.smalley.work@gmail.com, omosnace@redhat.com, Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [RFC PATCH] fs/pidfs: Add permission check to pidfd_info()
-Message-ID: <20260217-abgedankt-eilte-2386c98b3ef7@brauner>
-References: <20260206180248.12418-1-danieldurning.work@gmail.com>
- <20260209-spanplatten-zerrt-73851db30f18@brauner>
- <CAKrb_fEXR0uQnX5iK-ACH=amKMQ8qBSPGXmJb=1PgvEq8qsDEQ@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ImvKomHy"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fFf2P0S2Zz80q;
+	Tue, 17 Feb 2026 13:23:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1771331036;
+	bh=J3zSHk146ig3XRJjeWqh7P+HcWD4qnmd7iN9+SsGh5A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ImvKomHyOadJsJXrwyN0lE4LNcpQ+ENg1n4lYhUKhchI8DKi9y43qnnKRw2s1Fa2c
+	 0X6LgvKZu3tcKXQMUlDha3tRfUNxwo0tmTM3HYJkN0anot/vCPKnSnEEyVQSGFstv+
+	 TB1tHZWazGHiLr936mo8kH8de88z9gOxfEHGTadM=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4fFf2N3wNJz8j0;
+	Tue, 17 Feb 2026 13:23:56 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org,
+	Jann Horn <jannh@google.com>
+Subject: [PATCH v2 2/2] landlock: Improve TSYNC types
+Date: Tue, 17 Feb 2026 13:23:40 +0100
+Message-ID: <20260217122341.2359582-2-mic@digikod.net>
+In-Reply-To: <20260217122341.2359582-1-mic@digikod.net>
+References: <20260217122341.2359582-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKrb_fEXR0uQnX5iK-ACH=amKMQ8qBSPGXmJb=1PgvEq8qsDEQ@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Wed, Feb 11, 2026 at 02:43:21PM -0500, Daniel Durning wrote:
-> On Mon, Feb 9, 2026 at 9:01 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Fri, Feb 06, 2026 at 06:02:48PM +0000, danieldurning.work@gmail.com wrote:
-> > > From: Daniel Durning <danieldurning.work@gmail.com>
-> > >
-> > > Added a permission check to pidfd_info(). Originally, process info
-> > > could be retrieved with a pidfd even if proc was mounted with hidepid
-> > > enabled, allowing pidfds to be used to bypass those protections. We
-> > > now call ptrace_may_access() to perform some DAC checking as well
-> > > as call the appropriate LSM hook.
-> > >
-> > > The downside to this approach is that there are now more restrictions
-> > > on accessing this info from a pidfd than when just using proc (without
-> > > hidepid). I am open to suggestions if anyone can think of a better way
-> > > to handle this.
-> >
-> > This isn't really workable since this would regress userspace quite a
-> > bit. I think we need a different approach. I've given it some thought
-> > and everything's kinda ugly but this might work.
-> >
-> > In struct pid_namespace record whether anyone ever mounted a procfs
-> > with hidepid turned on for this pidns. In pidfd_info() we check whether
-> > hidepid was ever turned on. If it wasn't we're done and can just return
-> > the info. This will be the common case. If hidepid was ever turned on
-> > use kern_path("/proc") to lookup procfs. If not found check
-> > ptrace_may_access() to decide whether to return the info or not. If
-> > /proc is found check it's hidepid settings and make a decision based on
-> > that.
-> >
-> > You can probably reorder this to call ptrace_may_access() first and then
-> > do the procfs lookup dance. Thoughts?
-> 
-> Thanks for the feedback. I think your solution makes sense.
-> 
-> Unfortunately, it seems like systemd mounts procfs with hidepid enabled on
-> boot for services with the ProtectProc option enabled. This means that
-> procfs will always have been mounted with hidepid in the init pid namespace.
-> Do you think it would be viable to record whether or not procfs was mounted
-> with hidepid enabled in the mount namespace instead?
+Constify pointers when it makes sense.
 
-I guess we can see what it looks like.
+Consistently use size_t for loops, especially to match works->size type.
+
+Add new lines to improve readability.
+
+Cc: Jann Horn <jannh@google.com>
+Reviewed-by: Günther Noack <gnoack@google.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+
+Changes since v1:
+- Added Reviewed-by Günther.
+---
+ security/landlock/tsync.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
+index 42cc0ef0c704..c588cdd111d3 100644
+--- a/security/landlock/tsync.c
++++ b/security/landlock/tsync.c
+@@ -290,13 +290,14 @@ static int tsync_works_grow_by(struct tsync_works *s, size_t n, gfp_t flags)
+  * tsync_works_contains - checks for presence of task in s
+  */
+ static bool tsync_works_contains_task(const struct tsync_works *s,
+-				      struct task_struct *task)
++				      const struct task_struct *task)
+ {
+ 	size_t i;
+ 
+ 	for (i = 0; i < s->size; i++)
+ 		if (s->works[i]->task == task)
+ 			return true;
++
+ 	return false;
+ }
+ 
+@@ -318,6 +319,7 @@ static void tsync_works_release(struct tsync_works *s)
+ 
+ 	for (i = 0; i < s->capacity; i++)
+ 		kfree(s->works[i]);
++
+ 	kfree(s->works);
+ 	s->works = NULL;
+ 	s->size = 0;
+@@ -329,7 +331,7 @@ static void tsync_works_release(struct tsync_works *s)
+  */
+ static size_t count_additional_threads(const struct tsync_works *works)
+ {
+-	struct task_struct *thread, *caller;
++	const struct task_struct *caller, *thread;
+ 	size_t n = 0;
+ 
+ 	caller = current;
+@@ -368,7 +370,8 @@ static bool schedule_task_work(struct tsync_works *works,
+ 			       struct tsync_shared_context *shared_ctx)
+ {
+ 	int err;
+-	struct task_struct *thread, *caller;
++	const struct task_struct *caller;
++	struct task_struct *thread;
+ 	struct tsync_work *ctx;
+ 	bool found_more_threads = false;
+ 
+@@ -438,10 +441,10 @@ static bool schedule_task_work(struct tsync_works *works,
+  * shared_ctx->num_preparing and shared_ctx->num_unfished and mark the two
+  * completions if needed, as if the task was never scheduled.
+  */
+-static void cancel_tsync_works(struct tsync_works *works,
++static void cancel_tsync_works(const struct tsync_works *works,
+ 			       struct tsync_shared_context *shared_ctx)
+ {
+-	int i;
++	size_t i;
+ 
+ 	for (i = 0; i < works->size; i++) {
+ 		if (WARN_ON_ONCE(!works->works[i]->task))
+-- 
+2.53.0
+
