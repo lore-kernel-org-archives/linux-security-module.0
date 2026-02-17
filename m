@@ -1,156 +1,92 @@
-Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24A932F77B
-	for <linux-security-module@vger.kernel.org>; Tue, 17 Feb 2026 11:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B5C32C33D;
+	Tue, 17 Feb 2026 12:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771328021; cv=none; b=JvBtMvCSfUTuclfvW9FEDjLGGH1mSuFPS8SyBJTsXIIF+ZxiLaezyqSkgzf071Iuu97VTtrS2f4JDKOZOh3qRsDkrrxfghCycULsDVm/QYkKUkPYZSP+TeVtNjqybF38jpAiySRvhgG0Y4exFntH+a5ePCQG5kH5WfhapdvDwDY=
+	t=1771329697; cv=none; b=eYc6IJn7PSswlf6bBd9lZyg3iXWPXReEq7SgPpUxzkSOs+AoX4rMqr9eXmMr1pFFJveRibTHbw6ztoCVqcvN5WEvlViC+jZwGmNM1ajrsbekJE18Ebfkdz8puGihM2ryHmsJFIzWCgp0NV+KKRtAkTPtXGlRmq76tC7Jnr5xlok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771328021; c=relaxed/simple;
-	bh=LCWkprODDHcLHDlO1sccq2mb01PMEJemVBWCtCogBIE=;
-	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=EcBaPm/b+jX+FAcXcPE5aZ79JzrNVC1xqNK5cEPsBF+uJGip8jFON5wqf2/2KNkAJ3ftuYXGDh1y0/36nG7q8T1GRUYa1ii3fSd3Zqfi1ZFyQNEG4t14UUx+KWsnNIvLIJowTwdOfibRn3T70sXfZ2GIF6R/ZWvKlLDgPL6Zkxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KjpeFaGU; arc=none smtp.client-ip=74.125.82.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1771329697; c=relaxed/simple;
+	bh=87110GAXLqxdBCfG4XAbyUPM+jV4Yr/SrlSTRgKoWfA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RZ0si+hht5Y0dHKxX8pduvq7jb67DWUOBBQ4q3K5Eke+OEtnoyZJlyvJ+BLDPqX2WNliXqAV7AfvnN9pzKq0QpplTiYtCBUeB2ICCFSIGJyNR5vwD0UOqrvHItvwKlq4eakeCpm+df3RGpPJew7/brWCzC0pIH5SzWpKvFCmepw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HSF4Dk0o; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KjpeFaGU"
-Received: by mail-dl1-f50.google.com with SMTP id a92af1059eb24-126ea4e9694so1354058c88.1
-        for <linux-security-module@vger.kernel.org>; Tue, 17 Feb 2026 03:33:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1771328019; x=1771932819; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1saam8bI4x8eSRZNX5XiEocUPcHbRPLqKTAYYrB5K8Y=;
-        b=KjpeFaGUw1iNBuy/5JJU94GN4UL3pzvD8EYyglfMEmRDpX/hc1NtphDyV7SlH16DFa
-         v9hTKXtUXXiaBpdBW3duUWLd46ya4xbnn0f96Aifusg2aCu2bBKiM3VSlvC89JT1azDa
-         4V4cTIQr8n3kSHcrmuXMlZwe0ytSopgtme3HzwQbScnPiZhfs9If3KKJeimpqzx3PbPt
-         otp+Ei9OXdv/uXNYxjwc+z/+D5J1/S3h9QYRy97gA6Y82rx/ws3ECqrWUXWA3+4xwC1O
-         xMw4l3IV3HkQBPxKRUVOXAgrB+ML/tjPjRb+VgvtSoQaopLh3MXG+5xUUK22aAH29Hvc
-         qaZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771328019; x=1771932819;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1saam8bI4x8eSRZNX5XiEocUPcHbRPLqKTAYYrB5K8Y=;
-        b=XA/0VtpC6gUz4a5kFLjC2fLq5JJxvfl8i41RlPZpEZPqPDoPI3kzAElgfh+UAtAtt6
-         RW770s0dSGni3FJk0wT9vCSHB7CzWKQK/jY9Jo+r6CuVpimtLhiBECc4uLE57EB1pPe0
-         gDvRN9MnCcpfibG6EHWGW3yA/zGAUVFJlhTKVsQ5Ob08FJgOda7TANohFp8f7m9u0IJQ
-         rtiZgmsISAQWFBeULSHEbn/X3DfFl0OBaep++A9nagROVPsOKTUYhT3d1AOrrAKOVdUx
-         YcBd1ZiqjoJwrEY8h21UUQzRJzq4E76vX2zDaY4zHR7kshOkhscFWZ2FBt6jSbHEvt3N
-         /Plg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqWOCxJymoW4TuwYCAbE6Nc/28xit8xm6u9QoyQE0heO8qtqBdv4Hd6vXYG4krsx7nA+5JoSRAhUFi2CeN/qqe9Wu5cv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG9KJ5jwxnb40l9QR6y+ATGWlBROrogHCqj7itkGToMAFBJ6xV
-	0EEw/GeQstKwJ4tDWug2MND3IiDKoeXVj48vudlJkhTUnefCGqzJDp4CVzh8SrqwcF37Ip9iv5f
-	B1WM=
-X-Gm-Gg: AZuq6aL4m+TE1nI583PWmH2ZOUcs5GjFjl3KBzMTTS2VRBMsPfdDwDzx6vpomHHoPfb
-	SaP04OKC8dGaJLuyilZu5wosacH4qroHU9nYB5kca1uCaH5vFBLgrsDFj6bx9/MTVgetQhuCkBr
-	mOBpevcfPRXbkhw5wya6HgsbSYgcnlLZN/IJY/QWraIDsdv6iUCZhSY/q8oGl2t3VtQS4v64t1t
-	sJp2jh7687SGGcPFS52+8n8mLIPlqtIOwOTDhYdlSWygFzY2ZdHiraBZZWcg9dYyGzw7AFpW1Bd
-	i9eXexTfPylHwBDd7ZViognRrJp+wMsOUmU7hX8+Q4j+4Rk4zZQeKI91czkkqUm4QS2tIZJTOvN
-	ZH6zKpKFHlXq6iwJmqTRUZRYrKrvGO4cnaBmfkfExiggnfh5zR63D4YQ6XYxhcSGZI8XNK4Xolc
-	VeebLZCpwsbKClsBvaelHUdtcaj4MqxU5vW8k=
-X-Received: by 2002:a05:7022:a91:b0:11b:9386:8260 with SMTP id a92af1059eb24-1273ae8133fmr6281319c88.45.1771328018825;
-        Tue, 17 Feb 2026 03:33:38 -0800 (PST)
-Received: from [172.19.249.226] ([205.220.129.19])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-12742cc9376sm15800764c88.16.2026.02.17.03.33.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Feb 2026 03:33:38 -0800 (PST)
-From: Paul Moore <paul@paul-moore.com>
-To: Christian Brauner <brauner@kernel.org>
-CC: James Morris <jmorris@namei.org>, <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Date: Tue, 17 Feb 2026 12:33:28 +0100
-Message-ID: <19c6b606f40.2843.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-In-Reply-To: <20260217-armer-wegfielen-ffb2cdc60283@brauner>
-References: <20260216-work-security-namespace-v1-1-075c28758e1f@kernel.org>
- <19c67cca5d8.2843.85c95baa4474aabc7814e68940a78392@paul-moore.com>
- <20260217-armer-wegfielen-ffb2cdc60283@brauner>
-User-Agent: AquaMail/1.57.1 (build: 105701604)
-Subject: Re: [PATCH RFC] security: add LSM blob and hooks for namespaces
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HSF4Dk0o"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FBF1C4CEF7;
+	Tue, 17 Feb 2026 12:01:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771329696;
+	bh=87110GAXLqxdBCfG4XAbyUPM+jV4Yr/SrlSTRgKoWfA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HSF4Dk0ouulB3cq0WIY+q9T9iqcGGzYebmI8MIRNB2OGqzK5YZm7DwqCxatf9JXrz
+	 B2ev5fDIrI7xEDQvmHxbCHSL1juJ4xIk769kkcmXvJjMlxbUu+4eN991G+RF9W2CFF
+	 ES5ItpPvf90w5K9ogzdXnEkRBPx3UEgm/9U11C3mtJouO5P0pATiEXkGlgUZ2vj5/K
+	 416KGlIX5BQxc/DUlv61Ze25otA2I6m4WP4wDYthPC13977XfhJbZqnEBtf0e+GoNw
+	 6Tjpcce+stT2IBHiwfu24s78mXpUREB2PyJTGYgfzzTRYtfiXhKf8oZb+F+QA/LYCm
+	 o9M8lz/SWOhoA==
+Date: Tue, 17 Feb 2026 13:01:32 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Daniel Durning <danieldurning.work@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, paul@paul-moore.com, 
+	stephen.smalley.work@gmail.com, omosnace@redhat.com, Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [RFC PATCH] fs/pidfs: Add permission check to pidfd_info()
+Message-ID: <20260217-abgedankt-eilte-2386c98b3ef7@brauner>
+References: <20260206180248.12418-1-danieldurning.work@gmail.com>
+ <20260209-spanplatten-zerrt-73851db30f18@brauner>
+ <CAKrb_fEXR0uQnX5iK-ACH=amKMQ8qBSPGXmJb=1PgvEq8qsDEQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKrb_fEXR0uQnX5iK-ACH=amKMQ8qBSPGXmJb=1PgvEq8qsDEQ@mail.gmail.com>
 
-On February 17, 2026 9:54:42 AM Christian Brauner <brauner@kernel.org> wrote:
-> On Mon, Feb 16, 2026 at 07:53:11PM +0100, Paul Moore wrote:
->> On February 16, 2026 2:52:34 PM Christian Brauner <brauner@kernel.org> wrote:
->>> All namespace types now share the same ns_common infrastructure. Extend
->>> this to include a security blob so LSMs can start managing namespaces
->>> uniformly without having to add one-off hooks or security fields to
->>> every individual namespace type.
->>>
->>> Add a ns_security pointer to ns_common and the corresponding lbs_ns
->>> blob size to lsm_blob_sizes. Allocation and freeing hooks are called
->>> from the common __ns_common_init() and __ns_common_free() paths so
->>> every namespace type gets covered in one go. All information about the
->>> namespace type and the appropriate casting helpers to get at the
->>> containing namespace are available via ns_common making it
->>> straightforward for LSMs to differentiate when they need to.
->>>
->>> A namespace_install hook is called from validate_ns() during setns(2)
->>> giving LSMs a chance to enforce policy on namespace transitions.
->>>
->>> Individual namespace types can still have their own specialized security
->>> hooks when needed. This is just the common baseline that makes it easy
->>> to track and manage namespaces from the security side without requiring
->>> every namespace type to reinvent the wheel.
->>>
->>> Signed-off-by: Christian Brauner <brauner@kernel.org>
->>> ---
->>> include/linux/lsm_hook_defs.h      |  3 ++
->>> include/linux/lsm_hooks.h          |  1 +
->>> include/linux/ns/ns_common_types.h |  3 ++
->>> include/linux/security.h           | 20 ++++++++++
->>> kernel/nscommon.c                  | 12 ++++++
->>> kernel/nsproxy.c                   |  8 +++-
->>> security/lsm_init.c                |  2 +
->>> security/security.c                | 76 ++++++++++++++++++++++++++++++++++++++
->>> 8 files changed, 124 insertions(+), 1 deletion(-)
->>
->> I still have limited network access for a few more days, but a couple of
->> quick comments in no particular order ...
->>
->> Generally speaking we don't add things to the LSM interface without a user,
->> and I can't think of a good reason why we would want to do things
->> differently here.  This means that when you propose something like this you
->> should also propose an addition to one of the in-tree LSMs to make use of
->> it. While the guidance doc linked below (also linked in the LSM MAINTAINERS
->> entry) doesn't have any guidance for the LSM blobs as they are generally a
->> byproduct of the hooks, if you are looking for some general info I think the
->> bits on adding a new LSM hook would be very close to what we would expect
->> for blob additions.
->>
->> https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
->>
->> Getting to the specifics of namespace related APIs, we've had a lot of
->> discussions about namespacing and my current opinion is that we need to sort
->> out if we want a userspace API at the LSM framework layer, or if we want to
->> do that at the individual LSM layer; there is a lot of nuance there and
->> while one option may seem like an obvious choice, we need some more
->> discussion and I need a chance to get caught up on the threads. Once we have
->> an API decision then we can start sorting out the implementation details
->> like the LSM blobs.
->
-> I might be misunderstanding you but what you are talking about seems
-> namespacing the LSM layer itself.
->
-> But I cannot stress enough this is not at all what this patchset is
-> doing. :)
+On Wed, Feb 11, 2026 at 02:43:21PM -0500, Daniel Durning wrote:
+> On Mon, Feb 9, 2026 at 9:01 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Fri, Feb 06, 2026 at 06:02:48PM +0000, danieldurning.work@gmail.com wrote:
+> > > From: Daniel Durning <danieldurning.work@gmail.com>
+> > >
+> > > Added a permission check to pidfd_info(). Originally, process info
+> > > could be retrieved with a pidfd even if proc was mounted with hidepid
+> > > enabled, allowing pidfds to be used to bypass those protections. We
+> > > now call ptrace_may_access() to perform some DAC checking as well
+> > > as call the appropriate LSM hook.
+> > >
+> > > The downside to this approach is that there are now more restrictions
+> > > on accessing this info from a pidfd than when just using proc (without
+> > > hidepid). I am open to suggestions if anyone can think of a better way
+> > > to handle this.
+> >
+> > This isn't really workable since this would regress userspace quite a
+> > bit. I think we need a different approach. I've given it some thought
+> > and everything's kinda ugly but this might work.
+> >
+> > In struct pid_namespace record whether anyone ever mounted a procfs
+> > with hidepid turned on for this pidns. In pidfd_info() we check whether
+> > hidepid was ever turned on. If it wasn't we're done and can just return
+> > the info. This will be the common case. If hidepid was ever turned on
+> > use kern_path("/proc") to lookup procfs. If not found check
+> > ptrace_may_access() to decide whether to return the info or not. If
+> > /proc is found check it's hidepid settings and make a decision based on
+> > that.
+> >
+> > You can probably reorder this to call ptrace_may_access() first and then
+> > do the procfs lookup dance. Thoughts?
+> 
+> Thanks for the feedback. I think your solution makes sense.
+> 
+> Unfortunately, it seems like systemd mounts procfs with hidepid enabled on
+> boot for services with the ProtectProc option enabled. This means that
+> procfs will always have been mounted with hidepid in the init pid namespace.
+> Do you think it would be viable to record whether or not procfs was mounted
+> with hidepid enabled in the mount namespace instead?
 
-Likely also a misunderstanding on my end as I triage email/patches via phone.
-
-Regardless, the guidance in the doc I linked regarding the addition of new 
-LSM hooks would appear to apply here.
-
---
-paul-moore.com
-
-
+I guess we can see what it looks like.
