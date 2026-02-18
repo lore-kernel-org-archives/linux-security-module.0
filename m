@@ -1,71 +1,71 @@
-Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com [74.125.224.42])
+Received: from mail-yx1-f45.google.com (mail-yx1-f45.google.com [74.125.224.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5DE349AEA
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Feb 2026 20:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A262FC881
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Feb 2026 20:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771445947; cv=none; b=UZ9EEwFMZrdDXUV57LcsnYT8ALCvVo0M4IDcHEqjKjXYlwfkjlDz35s8AlRJXp2zlJFSN0N9+PvxRK4+K3vimj8Im9pT22uan/DBhE0syklVHHmzS0fivEdyZp7aM58sHhxtf62su2EzfbHkhL6Or8yrDo17qpC0GNnysWHeuQc=
+	t=1771445950; cv=none; b=OUJAL4sXo2mapeHE3sF3xBteIuJhh75QKbZTOJE8Pqb9icIjn8I3wAtcZ5ufWeyaQOpC0RD+RbYxaVc9f5bA0cDSuHM+kkPeaMpd43QYzEIZNKcbRDUmI5+W5lgS9Iado+cddEqtQ93+55gArNneo/e2yl/PhM9MRs3v8PQYFIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771445947; c=relaxed/simple;
-	bh=7wN7OuBkHYOSYg6Jfl1jOB6JXNBA9FAlsRUXFBO3i70=;
+	s=arc-20240116; t=1771445950; c=relaxed/simple;
+	bh=pLKxkZy5zNy6RFWYsynPORLyBh2yVbtAtB+pKNSREH4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=B5jgKXLJDNzVTxFIMg0iOqjW4GTkjJ7yONO6R61NHLOSeCcJosPIZA/KYXH747M4RL77ZpD9UDEinof6rcoTKhxNKLAt2QtjzduLCpp5IB6pvd7Lm+Xt8cQmwtAton2e3egaSh1yxFmnsAvNA7HzIsA7iMP2fw0DuAozyfWH44I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OUViXsdH; arc=none smtp.client-ip=74.125.224.42
+	 MIME-Version; b=lTi28TLS/SZHJZ9Z8XWdMfS2IvifxKIXXWQ5n82KzI5y7jMwPP/fQZPZtJ8v0znP7N29zYUrK4hZd09AvfG0t9bSsLcPDZTqcqwD1ORUbEoOuVpbvizwWg7XrvhBUDW2lz8Wv0OkIOV3CHxOijTSaNIDNTTuyvWvlODyiYADPno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OzsnyLS0; arc=none smtp.client-ip=74.125.224.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OUViXsdH"
-Received: by mail-yx1-f42.google.com with SMTP id 956f58d0204a3-649dbff9727so168961d50.3
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Feb 2026 12:19:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OzsnyLS0"
+Received: by mail-yx1-f45.google.com with SMTP id 956f58d0204a3-649278a69c5so249457d50.3
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Feb 2026 12:19:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771445945; x=1772050745; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1771445948; x=1772050748; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MacgwvjKYKrNTPJUo6/WD4wLvSSrgLbQ+6nhfudTUEo=;
-        b=OUViXsdHyeyyeTkwM+UoGpbYSwCzPg9lPMg8UfADegu71RdaZiPBlvXo/7sUM3+BPI
-         Gf+GVnCziDMUlYI7QhVTGkrQi73M7N6Uo2xWRoyWD1kzTFZw3sh8L0LERKkd76NzgekN
-         wyrhi6wfbvkHVUFyd1+/cyPZgS8uNK5z1/Cawx7fIY1LzQ6TgVLxABWz316mgKhYEuv2
-         +ps/v86mmiBwCKCkyuP4+apEOwkxemLHup+Gx0/qbPYUT7U7w4f/HImL09IG/DYIm6rl
-         T2qM9RIYvrGftaocAGfVIWrTQfeCRlKP9cSifb3T+4c66keqEhYlYehGnT6tK835CQpP
-         6TNA==
+        bh=4inZGsnaBOg0R9ze/+RmZ41FU8rNZ6Tg07KoCMlDDxA=;
+        b=OzsnyLS0WjO//cSrdobnUo1ShW7KqzQMBcxLkqD0Ax8kKuzwMW4HQHySFCUXjM1mZn
+         cyYag0SKOtHws6Grsl4DVarFGCDjeXioAf30WYc1C8htM20wx+BiVYLE3S/fzRHOTLry
+         wXJqOqyMBGsxR79yKZFTviPeDi6YKtw3TDwHUIKNo3j2p6EPL15ftOD4HNibdpdXE0x6
+         KHxs8pInoSoFlGb/U/QTnZA4jxlCRdzq+PHdUl599sEzH3pDZHws8HQSV5zuBPKnyuVz
+         M+ZiE753fY7O2LVMcYiwXf+EGYssV5A76WlCnmKQA48w76UNciR3kBxPEVPWJj/m2zm7
+         J+zA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771445945; x=1772050745;
+        d=1e100.net; s=20230601; t=1771445948; x=1772050748;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=MacgwvjKYKrNTPJUo6/WD4wLvSSrgLbQ+6nhfudTUEo=;
-        b=cTqAPxYvOML6urOOGQxHMHlswGslr1hmc3/CZe9eFbrIjvyc5h6/YgEBEjEwjLGFOz
-         XhrWXzmDV+r6rcyc6Pl7Dp3eVc2pNEWijlGaBXdYCUCjzyYgXNM9HvX8DKx/RIwTj452
-         pjNZ+qpktVT6GX+wfuwGDrRsFApp2vhSIkkalphTbXto/S66QvDvTmXn8ql+2IRU+BW/
-         VuUnzgIfi3AMM22RcP90SOF1mPqUYHxoMgnD++anyCAqzxMvNR6abtFUTB4sSYML+pih
-         3sf9DDEPdU3+yr+wD7jd0CVNm++LWVvVw6SadFfmXjNDLgByeBlT4y3xzMEKs2lhSd6P
-         ZpiA==
-X-Gm-Message-State: AOJu0Yyb4EkGDK8lvR1DDjY4tZZD8qzf9sHZQR0iRAaQ9NEaudK8m7/6
-	X3BNV/yUfgf09Y+iAHswzVVN9Zd4VOgd5VUyrK50vKp3HStWBpKu/PyDlhZsMg==
-X-Gm-Gg: AZuq6aKUOKqZztVadCXrcKOpGu4/wlhf2ku3HpqWY+zlVOXkytZDm21HEll1lq4HgqT
-	oqSLJYiNkRHsJK24olSrku8RzuDKefjZT6inK2hlgqOeWk2YhI762TdMBBww1XoMSizkxmaYuYb
-	krCI133M6ctVsjHKzowBydOGEUlcJdp4PORjdFf78x3hlxHNGyI6n/CRBxF+ChhScHs5aCm6gzH
-	Zt9JoEpp/zz1tODap6/wWmbfd63l3I3EgPx1JaAaYInmRgsAyRWpo4cWeeDJjRisjxu/l3OZOuv
-	3JAWbdxyXKmDT92286tMf21lCR4BN3Y5HiBPXumnyBfCoAHDAKuLHhiRNXtOrEubSmqd/E1acPI
-	3N57EYLUGW4NWAP5E88z2Fs+sG9ZRBnDhCxAlP8x7GzczhsjY+uDB5Y7k8XL9HlFhNkZTwrzoUM
-	gcARQBwuv3q/rBVXF/t4rH4p++iRB3H/jZobzMCxva2562YMewRovQyMuO2iakOtvBzus7UXbv
-X-Received: by 2002:a05:690e:13c8:b0:649:b6d1:d589 with SMTP id 956f58d0204a3-64c21a41184mr12658255d50.19.1771445945286;
-        Wed, 18 Feb 2026 12:19:05 -0800 (PST)
+        bh=4inZGsnaBOg0R9ze/+RmZ41FU8rNZ6Tg07KoCMlDDxA=;
+        b=q4rRkZfD2gAR4cXQzj6g0Q1lTPQ0Zud1WUp1bFvLbmtvgYSPkEZysAboUYzUXJn5xC
+         DlTNSDxZsfaoOGt+Hr29IjCF2th9agm7y4vm2RbWZJVRZtLjZPO//OwpeSNKWbwVwHDA
+         wETf6l/EnloAhQKygGKZNJuyVMI7k2QCC1Y0k/9B6st+cLlFZiI44MKgvWQ/HCHPUiSC
+         dOjZpRSOmZf77RaclEGuaXGtnQZDiV6/GVznqe0PmVJ0UQhjv9NEyXT4SrwNj63i1Nc8
+         TqhttFqGBFWEg8uquIkfXDp/DXQMmDxoBuB6zyrQhsAuxDs3Y/hf20bad8Oim8uTGQGN
+         5NEg==
+X-Gm-Message-State: AOJu0YxYP2vtPkB3lPajeVRIwTGB++IfNw2Q3LCYDnFM+CKigaGkriOX
+	MO1i+c1AaEPg3h0NutHHnmoq7HNSWkyhIgK/8PXATL4jVYSLax5Qey6bqwpmbA==
+X-Gm-Gg: AZuq6aKgOe6JlZf8JNcpT1GNpOGi5z8jE6lpIxZVrRC0OfwQSHf1wagoRXmMIKnKGvJ
+	SieZdTuB8QdbGF44BrG4P7Q9p3Xvn46t7VGzec2QuGl5G7paLyJCnbeH6Q0GJefG1DAvQMzfGN2
+	ysfdBY7qI1mtIWSXEzbmK7faqpFnuHphVA7xQ4gV6shuI/Pec+t9/bSqzwcrhSpDBWbtvfqjvJL
+	qNEZ+OiEip4o8kDKz6+iz4Tacjlmgjsh8/nkAwaft89nyE8NnDMZGrmwS35HmvH083tKP6GoeMW
+	xQeQ//P2BKBpiN0zcEMyTcYbY9JuhI/Z+KELygEiZufCqlhqtc5lncWvCJXMy+xysUbYBGI+AYV
+	/NoRDWzgHjznSJiVX/R4N7g1tPsKzBIMwUls76rFPMUOJCUj2i+ZFyJApg0xrSyoYmHjBRjwRTW
+	3E9IpjElDa1QExRTaR2d7K4G+8qxSwaCThqkAFBNscmCYIdbXkE+9yNGhr+P3v5XVqeiaXcBbX
+X-Received: by 2002:a53:add1:0:b0:649:b943:2cc3 with SMTP id 956f58d0204a3-64c14ac2b75mr12000640d50.15.1771445947578;
+        Wed, 18 Feb 2026 12:19:07 -0800 (PST)
 Received: from zenbox (71-132-185-69.lightspeed.tukrga.sbcglobal.net. [71.132.185.69])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-64c22e936a7sm6249560d50.6.2026.02.18.12.19.04
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-64c22e936a7sm6249560d50.6.2026.02.18.12.19.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Feb 2026 12:19:05 -0800 (PST)
+        Wed, 18 Feb 2026 12:19:07 -0800 (PST)
 From: Justin Suess <utilityemal77@gmail.com>
 To: linux-security-module@vger.kernel.org,
 	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
 	Tingmao Wang <m@maowtm.org>,
 	Justin Suess <utilityemal77@gmail.com>
-Subject: [PATCH 1/2] landlock: Add path walk helper
-Date: Wed, 18 Feb 2026 15:18:56 -0500
-Message-ID: <20260218201857.1194667-2-utilityemal77@gmail.com>
+Subject: [PATCH 2/2] landlock: Remove collect_domain_accesses
+Date: Wed, 18 Feb 2026 15:18:57 -0500
+Message-ID: <20260218201857.1194667-3-utilityemal77@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260218201857.1194667-1-utilityemal77@gmail.com>
 References: <20260218201857.1194667-1-utilityemal77@gmail.com>
@@ -77,127 +77,179 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a new helper function landlock_walk_path_up, which takes a pointer
-to the current path in the walk, and returns an enum
-landlock_walk_result corresponding to whether the current position in
-the walk is a mountpoint, the real root, or neither.
+Remove collect_domain_accesses and replace with inline logic using the
+new path walk helper in the check_current_refer_path.
 
 Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 ---
- security/landlock/fs.c | 92 ++++++++++++++++++++++++------------------
- 1 file changed, 52 insertions(+), 40 deletions(-)
+ security/landlock/fs.c | 128 +++++++++++++++--------------------------
+ 1 file changed, 46 insertions(+), 82 deletions(-)
 
 diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index e764470f588c..c6ff686c9cde 100644
+index c6ff686c9cde..efc65dc41c0d 100644
 --- a/security/landlock/fs.c
 +++ b/security/landlock/fs.c
-@@ -317,6 +317,38 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
- 	LANDLOCK_ACCESS_FS_IOCTL_DEV)
- /* clang-format on */
+@@ -1013,77 +1013,6 @@ static access_mask_t maybe_remove(const struct dentry *const dentry)
+ 				  LANDLOCK_ACCESS_FS_REMOVE_FILE;
+ }
  
-+/**
-+ * enum landlock_walk_result - Result codes for landlock_walk_path_up()
-+ * @LANDLOCK_WALK_CONTINUE: Path is now neither the real root nor an internal mount point.
-+ * @LANDLOCK_WALK_STOP_REAL_ROOT: Path has reached the real VFS root.
-+ * @LANDLOCK_WALK_INTERNAL: Path has reached an internal mount point.
-+ */
-+enum landlock_walk_result {
-+	LANDLOCK_WALK_CONTINUE,
-+	LANDLOCK_WALK_STOP_REAL_ROOT,
-+	LANDLOCK_WALK_INTERNAL,
-+};
-+
-+static enum landlock_walk_result landlock_walk_path_up(struct path *const path)
-+{
-+	struct dentry *old;
-+
-+	while (path->dentry == path->mnt->mnt_root) {
-+		if (!follow_up(path))
-+			return LANDLOCK_WALK_STOP_REAL_ROOT;
-+	}
-+	old = path->dentry;
-+	if (unlikely(IS_ROOT(old))) {
-+		if (likely(path->mnt->mnt_flags & MNT_INTERNAL))
-+			return LANDLOCK_WALK_INTERNAL;
-+		path->dentry = dget(path->mnt->mnt_root);
-+	} else {
-+		path->dentry = dget_parent(old);
-+	}
-+	dput(old);
-+	return LANDLOCK_WALK_CONTINUE;
-+}
-+
- /*
-  * @path: Should have been checked by get_path_from_fd().
-  */
-@@ -874,47 +906,27 @@ is_access_to_paths_allowed(const struct landlock_ruleset *const domain,
- 		/* Stops when a rule from each layer grants access. */
- 		if (allowed_parent1 && allowed_parent2)
- 			break;
+-/**
+- * collect_domain_accesses - Walk through a file path and collect accesses
+- *
+- * @domain: Domain to check against.
+- * @mnt_root: Last directory to check.
+- * @dir: Directory to start the walk from.
+- * @layer_masks_dom: Where to store the collected accesses.
+- *
+- * This helper is useful to begin a path walk from the @dir directory to a
+- * @mnt_root directory used as a mount point.  This mount point is the common
+- * ancestor between the source and the destination of a renamed and linked
+- * file.  While walking from @dir to @mnt_root, we record all the domain's
+- * allowed accesses in @layer_masks_dom.
+- *
+- * Because of disconnected directories, this walk may not reach @mnt_dir.  In
+- * this case, the walk will continue to @mnt_dir after this call.
+- *
+- * This is similar to is_access_to_paths_allowed() but much simpler because it
+- * only handles walking on the same mount point and only checks one set of
+- * accesses.
+- *
+- * Returns:
+- * - true if all the domain access rights are allowed for @dir;
+- * - false if the walk reached @mnt_root.
+- */
+-static bool collect_domain_accesses(const struct landlock_ruleset *const domain,
+-				    const struct dentry *const mnt_root,
+-				    struct dentry *dir,
+-				    struct layer_access_masks *layer_masks_dom)
+-{
+-	bool ret = false;
 -
--jump_up:
--		if (walker_path.dentry == walker_path.mnt->mnt_root) {
--			if (follow_up(&walker_path)) {
--				/* Ignores hidden mount points. */
--				goto jump_up;
--			} else {
--				/*
--				 * Stops at the real root.  Denies access
--				 * because not all layers have granted access.
--				 */
--				break;
--			}
+-	if (WARN_ON_ONCE(!domain || !mnt_root || !dir || !layer_masks_dom))
+-		return true;
+-	if (is_nouser_or_private(dir))
+-		return true;
+-
+-	if (!landlock_init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
+-				       layer_masks_dom, LANDLOCK_KEY_INODE))
+-		return true;
+-
+-	dget(dir);
+-	while (true) {
+-		struct dentry *parent_dentry;
+-
+-		/* Gets all layers allowing all domain accesses. */
+-		if (landlock_unmask_layers(find_rule(domain, dir),
+-					   layer_masks_dom)) {
+-			/*
+-			 * Stops when all handled accesses are allowed by at
+-			 * least one rule in each layer.
+-			 */
+-			ret = true;
+-			break;
 -		}
 -
--		if (unlikely(IS_ROOT(walker_path.dentry))) {
--			if (likely(walker_path.mnt->mnt_flags & MNT_INTERNAL)) {
--				/*
--				 * Stops and allows access when reaching disconnected root
--				 * directories that are part of internal filesystems (e.g. nsfs,
--				 * which is reachable through /proc/<pid>/ns/<namespace>).
--				 */
--				allowed_parent1 = true;
--				allowed_parent2 = true;
--				break;
--			}
+-		/*
+-		 * Stops at the mount point or the filesystem root for a disconnected
+-		 * directory.
+-		 */
+-		if (dir == mnt_root || unlikely(IS_ROOT(dir)))
+-			break;
 -
--			/*
--			 * We reached a disconnected root directory from a bind mount.
--			 * Let's continue the walk with the mount point we missed.
--			 */
--			dput(walker_path.dentry);
--			walker_path.dentry = walker_path.mnt->mnt_root;
--			dget(walker_path.dentry);
--		} else {
--			struct dentry *const parent_dentry =
--				dget_parent(walker_path.dentry);
+-		parent_dentry = dget_parent(dir);
+-		dput(dir);
+-		dir = parent_dentry;
+-	}
+-	dput(dir);
+-	return ret;
+-}
 -
--			dput(walker_path.dentry);
--			walker_path.dentry = parent_dentry;
-+		/* Otherwise, keep walking up to the root. */
-+		switch (landlock_walk_path_up(&walker_path)) {
-+		/*
-+		 * Stops and allows access when reaching disconnected root
-+		 * directories that are part of internal filesystems (e.g. nsfs,
-+		 * which is reachable through /proc/<pid>/ns/<namespace>).
-+		 */
-+		case LANDLOCK_WALK_INTERNAL:
-+			allowed_parent1 = true;
-+			allowed_parent2 = true;
-+			break;
-+		/*
-+		 * Stops at the real root.  Denies access
-+		 * because not all layers have granted access
-+		 */
-+		case LANDLOCK_WALK_STOP_REAL_ROOT:
-+			break;
-+		case LANDLOCK_WALK_CONTINUE:
-+			continue;
- 		}
-+		break;
- 	}
- 	path_put(&walker_path);
+ /**
+  * current_check_refer_path - Check if a rename or link action is allowed
+  *
+@@ -1147,7 +1076,7 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+ 	bool allow_parent1, allow_parent2;
+ 	access_mask_t access_request_parent1, access_request_parent2;
+ 	struct path mnt_dir;
+-	struct dentry *old_parent;
++	struct path old_parent_path;
+ 	struct layer_access_masks layer_masks_parent1 = {},
+ 				  layer_masks_parent2 = {};
+ 	struct landlock_request request1 = {}, request2 = {};
+@@ -1202,20 +1131,55 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+ 	/*
+ 	 * old_dentry may be the root of the common mount point and
+ 	 * !IS_ROOT(old_dentry) at the same time (e.g. with open_tree() and
+-	 * OPEN_TREE_CLONE).  We do not need to call dget(old_parent) because
++	 * OPEN_TREE_CLONE).  We do not need to path_get(old_parent_path) because
+ 	 * we keep a reference to old_dentry.
+ 	 */
+-	old_parent = (old_dentry == mnt_dir.dentry) ? old_dentry :
+-						      old_dentry->d_parent;
++	old_parent_path.mnt = mnt_dir.mnt;
++	old_parent_path.dentry = unlikely(old_dentry == mnt_dir.dentry) ?
++					 old_dentry :
++					 old_dentry->d_parent;
  
+ 	/* new_dir->dentry is equal to new_dentry->d_parent */
+-	allow_parent1 = collect_domain_accesses(subject->domain, mnt_dir.dentry,
+-						old_parent,
+-						&layer_masks_parent1);
+-	allow_parent2 = collect_domain_accesses(subject->domain, mnt_dir.dentry,
+-						new_dir->dentry,
+-						&layer_masks_parent2);
++	allow_parent1 = false;
++	allow_parent2 = false;
++	for (size_t i = 0; i < 2; i++) {
++		const struct path *const parent_path = i ? new_dir :
++							   &old_parent_path;
++		struct layer_access_masks *const layer_masks =
++			i ? &layer_masks_parent2 : &layer_masks_parent1;
++		bool *const allow_parent = i ? &allow_parent2 : &allow_parent1;
++
++		if (is_nouser_or_private(parent_path->dentry) ||
++		    !landlock_init_layer_masks(
++			    subject->domain, LANDLOCK_MASK_ACCESS_FS,
++			    layer_masks, LANDLOCK_KEY_INODE)) {
++			*allow_parent = true;
++			continue;
++		}
+ 
++		{
++			struct path walker = *parent_path;
++
++			path_get(&walker);
++			do {
++				/* Gets all layers allowing all domain accesses. */
++				if (landlock_unmask_layers(
++					    find_rule(subject->domain,
++						      walker.dentry),
++					    layer_masks)) {
++					/*
++					 * Stops when all handled accesses are
++					 * allowed by at least one rule in each
++					 * layer.
++					 */
++					*allow_parent = true;
++					break;
++				}
++			} while (landlock_walk_path_up(&walker) ==
++				 LANDLOCK_WALK_CONTINUE);
++			path_put(&walker);
++		}
++	}
+ 	if (allow_parent1 && allow_parent2)
+ 		return 0;
+ 
+@@ -1233,7 +1197,7 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+ 		return 0;
+ 
+ 	if (request1.access) {
+-		request1.audit.u.path.dentry = old_parent;
++		request1.audit.u.path.dentry = old_parent_path.dentry;
+ 		landlock_log_denial(subject, &request1);
+ 	}
+ 	if (request2.access) {
 -- 
 2.51.0
 
