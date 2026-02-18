@@ -1,136 +1,111 @@
-Received: from wind.enjellic.com (wind.enjellic.com [67.230.224.160])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B425A2EAB8E;
-	Wed, 18 Feb 2026 11:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.230.224.160
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F9E30F7FA
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Feb 2026 12:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771414739; cv=none; b=sUiFyyVqAPkLabAyJBeDJU93UEkLiU8poh1kSWOcQPa8fJ6eMz7mCVb4IbtfhROP7Aibet6iwm7PB0F0Kk6GEiRqqVFqcTQaqTsR02YWXJtp6tAz4u6iJBy8G9Sl8+U90OdyUWllKzzcWnSLQjpiOyxJ2c40IKjhBSmGON3Vm+c=
+	t=1771418195; cv=none; b=ueYXLX+x/hq2JFjdsC54eRprSuaU7lnPQmAYJY6M9wIU8wzGoWVOGxTVBwzOBlSiwJJS5RiItoOD6TpHwIkj8tcC0H/15n52qO1K+QrCNmeg7o5bUpX3Kwh3Oamo5zCXZDmZ02g+IaMuMni4XvMS9aSW80oLeo3VGMyOt/1h1NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771414739; c=relaxed/simple;
-	bh=ESF0rDEaW+rFYEcLws1XSz/wLvZKHkMgWRzlrIQhZ+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BA+Gna+Z/Vj91INvddIBNtTbIy7ucXQU/JiR7D94iBfWqnGD8sYojaZmTceSCbHRvhOQGJw8u5sOC3WNtPIHViPq/HQLsldOvxFPP+LhbspCCnSiai+CZ1rmOAKZPgIYy0NPvY4l5TVsUhWnCKXMKArHOdSbhu4uLNsT754PYkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=67.230.224.160
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 61IBF6K8031019;
-	Wed, 18 Feb 2026 05:15:06 -0600
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 61IBF4eZ031018;
-	Wed, 18 Feb 2026 05:15:04 -0600
-Date: Wed, 18 Feb 2026 05:15:04 -0600
-From: "Dr. Greg" <greg@enjellic.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] security: add LSM blob and hooks for namespaces
-Message-ID: <20260218111504.GA30219@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20260216-work-security-namespace-v1-1-075c28758e1f@kernel.org> <fb40e938-f6b2-45cf-b8ab-246cd6939582@schaufler-ca.com> <20260217-glasur-hinnimmt-ac72b3e67661@brauner>
+	s=arc-20240116; t=1771418195; c=relaxed/simple;
+	bh=0fG8sI+zWvMFlOr7IghYSSJ1KnweFDqAywl+kGXxNz4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o6r63gpNQGsf6Gj5Hn9LULMbw8qujsE6gzWhN5ZK5gH5Q0IIx8Fsc6uGAvzheVzuy+Y+dF+btQw+KYufYo7wVjskVsyWld5zobV+VNulICEKnwZ4zwi39Hu+RsWDs+zcgsxMWL3louqQJf3bfTzJEQdWjCrdyY2bTqpQD2U8jho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R3dIbMAd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R3dIbMAd"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1771418193;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/lUydylowWncnRbTO/OJoTPHGFixcaTcELf8O4xesYA=;
+	b=R3dIbMAdE1WDrVuzn8p7w4oEVLiUat2W5aWGrBr59Aa+aEK9/DIe3HoeOVVDLKrWC/rufG
+	L0zr6XAzzq9N+XPVplX8QxlTHZShIFaYF6/R6r8r9C+vzOeipaKyq+FTEMrHhCoVzNoLpv
+	OCrEyu3cEV8pn5VjI3bJ5sSLv1Pzn1w=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-692-jaj5voZwOd-5vq7DrDph7A-1; Wed, 18 Feb 2026 07:36:32 -0500
+X-MC-Unique: jaj5voZwOd-5vq7DrDph7A-1
+X-Mimecast-MFC-AGG-ID: jaj5voZwOd-5vq7DrDph7A_1771418191
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2a7d7b87977so61694785ad.0
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Feb 2026 04:36:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771418191; x=1772022991;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=/lUydylowWncnRbTO/OJoTPHGFixcaTcELf8O4xesYA=;
+        b=La1h8gosebzV0FtgsY+qLrsZHPYOGi7ywJl5vlw89b5+uUv02lhwSNKcA/U4aS/hOF
+         NeRr1s+wnmH5lvMr+KoNZ5N5mNYzf/c1ZtNpKOA+zfMcSq2201MRxa3ph0UuWFrtqeBU
+         UdMiECyltvukS7IFKpNFFFsQn8EyKflqz5ARrvGjnaq2vMkh7t9gkmIl5GW/lGf9pKHN
+         /wmLFWiZhcU5kM+wlX53bFAIqDMOJoKafsTGlT6nu7CiDnCBHD3eH2DFfi5Lz53GtBPe
+         OuwlKaO/wqXClGG/h64XZ3iectcriyvGQqXeg2SB8FEzmuaf3XfiDCcMpH/MP1UDaC0F
+         GoUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWcGM+iDGIf32dqtV9eM2yp3nunTut2r+/g2MM0X1o8G5644uCqLBddNAePhBNkVz9sjEreddpT8fgpEvkWu309exhWkhY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4vGi5LKyz2tDEn6ROwEQFox3WEWe3QjkvnBJ8hV2QFSUJqBFX
+	AvhHrNLgAORtcDModVw8vkFmajwfvljXK1rvu5m89WY6FUdaJab465SkkCHyC+EhwBEUK5KyOVi
+	kfgFfHiU/jlnB6qzdDsLUnTKf+21LN5keWMvR0cugMGQz4guW4sXJGtFWioLWB/5UD/B8BnvunN
+	NXcK9ihHbDIT3nGaihbMhU8l+buadyk54zTFE2j6RlXyq1T85btCdV
+X-Gm-Gg: AZuq6aJSQZL1E1Bha9Cx1LudIFE4rQ2UAmnhuAwjWEuWN51i5LWCAhrISFSR6UuirZP
+	ZQZ9hLDxEULsjd1Xyl3AwQ+0uFy5YT4/5ZJtbig5K1FocsrysOETk1VpUDIiS3uLICaFAq8/gnc
+	VVnaWS6XZvKSawrL0+rS3PyVze99OG4/NaQo1WFEF6xRvDLEerdzjkGJ5MDON/OyKF8eAEilNuT
+	Hdr
+X-Received: by 2002:a17:903:1a10:b0:29d:a26c:34b6 with SMTP id d9443c01a7336-2ad50fbc316mr16329895ad.50.1771418191214;
+        Wed, 18 Feb 2026 04:36:31 -0800 (PST)
+X-Received: by 2002:a17:903:1a10:b0:29d:a26c:34b6 with SMTP id
+ d9443c01a7336-2ad50fbc316mr16329765ad.50.1771418190809; Wed, 18 Feb 2026
+ 04:36:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260217-glasur-hinnimmt-ac72b3e67661@brauner>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 18 Feb 2026 05:15:06 -0600 (CST)
+MIME-Version: 1.0
+References: <20260216150625.793013-1-omosnace@redhat.com> <yk2qcux2ee7afr24xw6p7wp4t3islu64ttfsrheac2zwr6odnw@kmagnqbldb3f>
+In-Reply-To: <yk2qcux2ee7afr24xw6p7wp4t3islu64ttfsrheac2zwr6odnw@kmagnqbldb3f>
+From: Ondrej Mosnacek <omosnace@redhat.com>
+Date: Wed, 18 Feb 2026 13:36:18 +0100
+X-Gm-Features: AaiRm51HYWR6w0-EcsphJc410XncNKnjGKv9rOIgL6E3XvZhdcve7uAr9h1HcsM
+Message-ID: <CAFqZXNswp_bKq_78PgVpToK1Zm36ZL4atqiid2Lstaqa0sKnBA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] fanotify: avid some premature LSM checks
+To: Jan Kara <jack@suse.cz>
+Cc: Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: pe9D73LFxi1_JDtB5nIEBe3lXJhH876ZD7_1MnBG0zs_1771418191
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 17, 2026 at 10:38:33AM +0100, Christian Brauner wrote:
+On Tue, Feb 17, 2026 at 12:09=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Mon 16-02-26 16:06:23, Ondrej Mosnacek wrote:
+> > Restructure some of the validity and security checks in
+> > fs/notify/fanotify/fanotify_user.c to avoid generating LSM access
+> > denials in the audit log where hey shouldn't be.
+> >
+> > Ondrej Mosnacek (2):
+> >   fanotify: avoid/silence premature LSM capability checks
+> >   fanotify: call fanotify_events_supported() before path_permission()
+> >     and security_path_notify()
+> >
+> >  fs/notify/fanotify/fanotify_user.c | 50 ++++++++++++++----------------
+> >  1 file changed, 23 insertions(+), 27 deletions(-)
+>
+> The series looks good to me as well. Thanks! I'll commit the series to my
+> tree once the merge window closes and fixup the comment formatting on
+> commit. No need to resend.
 
-Good morning, I hope the week is going well for everyone.
+Great, thanks!
 
-> On Mon, Feb 16, 2026 at 09:34:57AM -0800, Casey Schaufler wrote:
-> > On 2/16/2026 5:52 AM, Christian Brauner wrote:
-> > > All namespace types now share the same ns_common infrastructure. Extend
-> > > this to include a security blob so LSMs can start managing namespaces
-> > > uniformly without having to add one-off hooks or security fields to
-> > > every individual namespace type.
-> > 
-> > The implementation appears sound.
-> > 
-> > I have to question whether having LSM controls on namespaces is reasonable.
-
-> This is already in active use today but only in a very limited capacity.
-> This generalizes it.
-
-This seems to be a tacid indication of the need for namespace specific
-LSM policies and/or controls, and further acknowledgement, that such
-controls are in active use out in the wild.
-
-More below on the implications of this.
-
-> > I suppose that you could have a system where (for example) SELinux runs
-> > in permissive mode except within a specific user namespace, where it would
-> > enforce policy. Do you have a use case in mind?
-
-> We will use it in systemd services and containers to monitor and
-> supervise namespaces.
-
-Christian, you are no doubt not familiar with our work, but over the
-last six years our team has developed and have in production the most
-sophisticated implementation of LSM namespacing that has been done.
-With the caveat, of course, of implementations that have been made
-public.
-
-That work has been driven by what is the clear and apparent need to
-have namespace specific and orthogonal security controls and policies,
-something your patch and comments seems to clearly acknowledge.  This
-need is particularily important with respect to the advancements that
-are needed for AI based security modeling and interdiction.
-
-So our comments are driven by having done a bit of this before.
-
-There has been some dialogue and debate as to whether and how LSM
-namespacing should be implemented.  The essential ingredient is the
-need to have a task specific context of data, which can be inherited
-by subordinate processes, that can be used to evaluate the LSM
-security events/hooks that are executed by tasks having access to
-that context of data.
-
-Unless we misinterpret the implementation, your patch provides such
-context for any process that wishes to unshare any namespace that it
-is participating in.
-
-This in turn implies that your patch is a fundamental step forward in
-LSM namespacing.  This isn't a criticism, just an observation.
-
-The reason we can feel pretty strongly about this is that we initially
-used the same strategy that you are using in a very early
-implementation of TSEM.  We abandoned that approach, since the
-dynamics/politics of Linux kernel development, particularily in
-security, tends to disfavor having to touch core kernel
-infrastructure, so we implemented the equivalent of your approach
-entirely in the context of our LSM.
-
-To widen the scope of the impact of this, your patch also lays the
-framework for implementing LSM specific security policy with kernel
-modules.  Again, not a criticism, just an observation, because we
-implement the same capability with TSEM.
-
-For those reading along at home.  The reason that this is safe with a
-classic namespace approach and not with previous 'loadable LSM'
-strategies is that a process can verify that a policy module is loaded
-and prepared to handle requests to interpret the events, before the
-namespace installation/activation that would drive use of the module
-actually takes effect.
-
-Your approach is quite generic, which is positive. The open question
-is whether or not the strategy is generic enough to handle LSM's that
-may have very dynamic and varied requirements with respect to how to
-configure the policy that will be implemented for the namespace.
-
-Hopefully all of this will enable further discussions on this issue.
-
-Best wishes for a productive remainder of the week.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
+--=20
+Ondrej Mosnacek
+Senior Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
 
