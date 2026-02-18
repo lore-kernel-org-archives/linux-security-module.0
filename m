@@ -1,121 +1,136 @@
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D829633E37C
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Feb 2026 09:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
+Received: from wind.enjellic.com (wind.enjellic.com [67.230.224.160])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B425A2EAB8E;
+	Wed, 18 Feb 2026 11:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.230.224.160
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771408624; cv=none; b=KPfC1dLbg19QSvhMpjAH73oNvXlhMjAKpRpYdu+IqW7IwnndylN0bqpgd6N1MTXylPkAuCW1SANIr7Umrxf1uVGmScqz1gxv7i0DgpP/ltZJ0m6F7Cea95riU+edAvTT4DJhJUZZOmlTAXksOjn5+RXXiW5610jYM4kPM6yvldg=
+	t=1771414739; cv=none; b=sUiFyyVqAPkLabAyJBeDJU93UEkLiU8poh1kSWOcQPa8fJ6eMz7mCVb4IbtfhROP7Aibet6iwm7PB0F0Kk6GEiRqqVFqcTQaqTsR02YWXJtp6tAz4u6iJBy8G9Sl8+U90OdyUWllKzzcWnSLQjpiOyxJ2c40IKjhBSmGON3Vm+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771408624; c=relaxed/simple;
-	bh=50pHd/Lyq7OL4aRqEA1dp7XqbXwMb9YRIsuFE/XQ5Us=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d7QJeADwdL+OikHtvL5NakQigeXjEwKKNVuWV1MIztEc8DCB4b8AUqABwP7CuKQ0y3SqeuJ7WYsOLODgzN28XeAWCBhEuBNmdBDfcWJ6/dHAOPuBzn8CBIX4UByUa3m8WORuU2fz/bA+FSLQxZzP8khd94Tj2uxVKEGJET8Cz5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=LMBurl8v; arc=none smtp.client-ip=45.157.188.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="LMBurl8v"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fGBHx24NkzDkd;
-	Wed, 18 Feb 2026 10:37:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1771407453;
-	bh=CWV9OZrJ9t2I3kN8783d0Xc/+Vl63CdGgUSEr/mMOEQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LMBurl8vQJRMYiw2XjhN7W+3/wZiBeHpi8dzFjk9+ozidnQ9mjJ4VJ8E/ivcWlund
-	 ew2jTIUOhDLS2O1ZvSPlxgWZFCyAqxN7KYw6OMb14bCxzfqJOtimXL490ngA4EscPl
-	 FJasSLunQoAB7+wSmkUTy1E46Rj2nAUTrVTY6GZc=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4fGBHw5Hr5zlqN;
-	Wed, 18 Feb 2026 10:37:32 +0100 (CET)
-Date: Wed, 18 Feb 2026 10:37:31 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Cc: John Johansen <john.johansen@canonical.com>, 
-	Justin Suess <utilityemal77@gmail.com>, linux-security-module@vger.kernel.org, 
-	Tingmao Wang <m@maowtm.org>, Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, 
-	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	konstantin.meskhidze@huawei.com, Demi Marie Obenour <demiobenour@gmail.com>, 
-	Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>, 
-	Tahera Fahimi <fahimitahera@gmail.com>
-Subject: Re: [PATCH v5 3/9] samples/landlock: Add support for named UNIX
- domain socket restrictions
-Message-ID: <20260218.ufao5Vaefa2u@digikod.net>
-References: <20260215105158.28132-1-gnoack3000@gmail.com>
- <20260215105158.28132-4-gnoack3000@gmail.com>
+	s=arc-20240116; t=1771414739; c=relaxed/simple;
+	bh=ESF0rDEaW+rFYEcLws1XSz/wLvZKHkMgWRzlrIQhZ+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BA+Gna+Z/Vj91INvddIBNtTbIy7ucXQU/JiR7D94iBfWqnGD8sYojaZmTceSCbHRvhOQGJw8u5sOC3WNtPIHViPq/HQLsldOvxFPP+LhbspCCnSiai+CZ1rmOAKZPgIYy0NPvY4l5TVsUhWnCKXMKArHOdSbhu4uLNsT754PYkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=67.230.224.160
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 61IBF6K8031019;
+	Wed, 18 Feb 2026 05:15:06 -0600
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 61IBF4eZ031018;
+	Wed, 18 Feb 2026 05:15:04 -0600
+Date: Wed, 18 Feb 2026 05:15:04 -0600
+From: "Dr. Greg" <greg@enjellic.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] security: add LSM blob and hooks for namespaces
+Message-ID: <20260218111504.GA30219@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20260216-work-security-namespace-v1-1-075c28758e1f@kernel.org> <fb40e938-f6b2-45cf-b8ab-246cd6939582@schaufler-ca.com> <20260217-glasur-hinnimmt-ac72b3e67661@brauner>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260215105158.28132-4-gnoack3000@gmail.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20260217-glasur-hinnimmt-ac72b3e67661@brauner>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 18 Feb 2026 05:15:06 -0600 (CST)
 
-On Sun, Feb 15, 2026 at 11:51:51AM +0100, Günther Noack wrote:
-> The access right for UNIX domain socket lookups is grouped with the
-> read-write rights in the sample tool.  Rationale: In the general case,
-> any operations are possible through a UNIX domain socket, including
-> data-mutating operations.
-> 
-> Cc: Justin Suess <utilityemal77@gmail.com>
-> Cc: Mickaël Salaün <mic@digikod.net>
-> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> ---
->  samples/landlock/sandboxer.c | 15 ++++++++++++---
->  1 file changed, 12 insertions(+), 3 deletions(-)
-> 
-> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-> index e7af02f98208..0bbbc5c9ead6 100644
-> --- a/samples/landlock/sandboxer.c
-> +++ b/samples/landlock/sandboxer.c
-> @@ -111,7 +111,8 @@ static int parse_path(char *env_path, const char ***const path_list)
->  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
->  	LANDLOCK_ACCESS_FS_READ_FILE | \
->  	LANDLOCK_ACCESS_FS_TRUNCATE | \
-> -	LANDLOCK_ACCESS_FS_IOCTL_DEV)
-> +	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
-> +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX)
->  
->  /* clang-format on */
->  
-> @@ -295,11 +296,12 @@ static bool check_ruleset_scope(const char *const env_var,
->  	LANDLOCK_ACCESS_FS_MAKE_SYM | \
->  	LANDLOCK_ACCESS_FS_REFER | \
->  	LANDLOCK_ACCESS_FS_TRUNCATE | \
-> -	LANDLOCK_ACCESS_FS_IOCTL_DEV)
-> +	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
-> +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX)
->  
->  /* clang-format on */
->  
-> -#define LANDLOCK_ABI_LAST 7
-> +#define LANDLOCK_ABI_LAST 9
->  
->  #define XSTR(s) #s
->  #define STR(s) XSTR(s)
-> @@ -444,6 +446,13 @@ int main(const int argc, char *const argv[], char *const *const envp)
->  			"provided by ABI version %d (instead of %d).\n",
->  			LANDLOCK_ABI_LAST, abi);
->  		__attribute__((fallthrough));
-> +	case 7:
-> +		__attribute__((fallthrough));
+On Tue, Feb 17, 2026 at 10:38:33AM +0100, Christian Brauner wrote:
 
-The current code should print the hint when ABI <= 7.  Please send a
-dedicated patch to fix the TSYNC-related changes.
+Good morning, I hope the week is going well for everyone.
 
-> +	case 8:
-> +		/* Removes LANDLOCK_ACCESS_FS_RESOLVE_UNIX for ABI < 9 */
-> +		ruleset_attr.handled_access_fs &=
-> +			~LANDLOCK_ACCESS_FS_RESOLVE_UNIX;
-> +		__attribute__((fallthrough));
->  	case LANDLOCK_ABI_LAST:
->  		break;
->  	default:
-> -- 
-> 2.52.0
-> 
-> 
+> On Mon, Feb 16, 2026 at 09:34:57AM -0800, Casey Schaufler wrote:
+> > On 2/16/2026 5:52 AM, Christian Brauner wrote:
+> > > All namespace types now share the same ns_common infrastructure. Extend
+> > > this to include a security blob so LSMs can start managing namespaces
+> > > uniformly without having to add one-off hooks or security fields to
+> > > every individual namespace type.
+> > 
+> > The implementation appears sound.
+> > 
+> > I have to question whether having LSM controls on namespaces is reasonable.
+
+> This is already in active use today but only in a very limited capacity.
+> This generalizes it.
+
+This seems to be a tacid indication of the need for namespace specific
+LSM policies and/or controls, and further acknowledgement, that such
+controls are in active use out in the wild.
+
+More below on the implications of this.
+
+> > I suppose that you could have a system where (for example) SELinux runs
+> > in permissive mode except within a specific user namespace, where it would
+> > enforce policy. Do you have a use case in mind?
+
+> We will use it in systemd services and containers to monitor and
+> supervise namespaces.
+
+Christian, you are no doubt not familiar with our work, but over the
+last six years our team has developed and have in production the most
+sophisticated implementation of LSM namespacing that has been done.
+With the caveat, of course, of implementations that have been made
+public.
+
+That work has been driven by what is the clear and apparent need to
+have namespace specific and orthogonal security controls and policies,
+something your patch and comments seems to clearly acknowledge.  This
+need is particularily important with respect to the advancements that
+are needed for AI based security modeling and interdiction.
+
+So our comments are driven by having done a bit of this before.
+
+There has been some dialogue and debate as to whether and how LSM
+namespacing should be implemented.  The essential ingredient is the
+need to have a task specific context of data, which can be inherited
+by subordinate processes, that can be used to evaluate the LSM
+security events/hooks that are executed by tasks having access to
+that context of data.
+
+Unless we misinterpret the implementation, your patch provides such
+context for any process that wishes to unshare any namespace that it
+is participating in.
+
+This in turn implies that your patch is a fundamental step forward in
+LSM namespacing.  This isn't a criticism, just an observation.
+
+The reason we can feel pretty strongly about this is that we initially
+used the same strategy that you are using in a very early
+implementation of TSEM.  We abandoned that approach, since the
+dynamics/politics of Linux kernel development, particularily in
+security, tends to disfavor having to touch core kernel
+infrastructure, so we implemented the equivalent of your approach
+entirely in the context of our LSM.
+
+To widen the scope of the impact of this, your patch also lays the
+framework for implementing LSM specific security policy with kernel
+modules.  Again, not a criticism, just an observation, because we
+implement the same capability with TSEM.
+
+For those reading along at home.  The reason that this is safe with a
+classic namespace approach and not with previous 'loadable LSM'
+strategies is that a process can verify that a policy module is loaded
+and prepared to handle requests to interpret the events, before the
+namespace installation/activation that would drive use of the module
+actually takes effect.
+
+Your approach is quite generic, which is positive. The open question
+is whether or not the strategy is generic enough to handle LSM's that
+may have very dynamic and varied requirements with respect to how to
+configure the policy that will be implemented for the namespace.
+
+Hopefully all of this will enable further discussions on this issue.
+
+Best wishes for a productive remainder of the week.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
+
