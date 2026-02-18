@@ -1,111 +1,127 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F9E30F7FA
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Feb 2026 12:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99245346FDA
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Feb 2026 19:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771418195; cv=none; b=ueYXLX+x/hq2JFjdsC54eRprSuaU7lnPQmAYJY6M9wIU8wzGoWVOGxTVBwzOBlSiwJJS5RiItoOD6TpHwIkj8tcC0H/15n52qO1K+QrCNmeg7o5bUpX3Kwh3Oamo5zCXZDmZ02g+IaMuMni4XvMS9aSW80oLeo3VGMyOt/1h1NU=
+	t=1771442291; cv=none; b=RNfbXD/AaEEaJ8WwgMrCrzSBfjJHoUNraME0hTqLamsqgSxVLJiONBI0hVvfbhfBpkfl/KBJ3lr2m9pAw9+ijkvICFFFqOoBMsmTw2VG8azBkI78F2CQfQl1V/rvV4R+Kt6+hnqCLw/rJlSyQONDjUzzzH1/KlvSKEArCQ4QMyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771418195; c=relaxed/simple;
-	bh=0fG8sI+zWvMFlOr7IghYSSJ1KnweFDqAywl+kGXxNz4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o6r63gpNQGsf6Gj5Hn9LULMbw8qujsE6gzWhN5ZK5gH5Q0IIx8Fsc6uGAvzheVzuy+Y+dF+btQw+KYufYo7wVjskVsyWld5zobV+VNulICEKnwZ4zwi39Hu+RsWDs+zcgsxMWL3louqQJf3bfTzJEQdWjCrdyY2bTqpQD2U8jho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R3dIbMAd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1771442291; c=relaxed/simple;
+	bh=AeQ7xjqyJGeQQZlLVQNj29NYcXNrH+CBHOEHyvHRNi4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZDYwQAbEHKny52mcLErgcTO6E5QMgEYbypFhhsekJE/B84JE8vKiSDjC24LmYioHucq8c0kkYoP41dTFy5XV7atZ2+U635PtnN/fokRNRzXg4PnGYS8hPd+Lvo1jxAk9fG4VC77viXwlG9KPeOC40792++AXHa7DzZ2MMOqPf4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Eo/inXc5; arc=none smtp.client-ip=45.157.188.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R3dIbMAd"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1771418193;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/lUydylowWncnRbTO/OJoTPHGFixcaTcELf8O4xesYA=;
-	b=R3dIbMAdE1WDrVuzn8p7w4oEVLiUat2W5aWGrBr59Aa+aEK9/DIe3HoeOVVDLKrWC/rufG
-	L0zr6XAzzq9N+XPVplX8QxlTHZShIFaYF6/R6r8r9C+vzOeipaKyq+FTEMrHhCoVzNoLpv
-	OCrEyu3cEV8pn5VjI3bJ5sSLv1Pzn1w=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-692-jaj5voZwOd-5vq7DrDph7A-1; Wed, 18 Feb 2026 07:36:32 -0500
-X-MC-Unique: jaj5voZwOd-5vq7DrDph7A-1
-X-Mimecast-MFC-AGG-ID: jaj5voZwOd-5vq7DrDph7A_1771418191
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2a7d7b87977so61694785ad.0
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Feb 2026 04:36:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771418191; x=1772022991;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=/lUydylowWncnRbTO/OJoTPHGFixcaTcELf8O4xesYA=;
-        b=La1h8gosebzV0FtgsY+qLrsZHPYOGi7ywJl5vlw89b5+uUv02lhwSNKcA/U4aS/hOF
-         NeRr1s+wnmH5lvMr+KoNZ5N5mNYzf/c1ZtNpKOA+zfMcSq2201MRxa3ph0UuWFrtqeBU
-         UdMiECyltvukS7IFKpNFFFsQn8EyKflqz5ARrvGjnaq2vMkh7t9gkmIl5GW/lGf9pKHN
-         /wmLFWiZhcU5kM+wlX53bFAIqDMOJoKafsTGlT6nu7CiDnCBHD3eH2DFfi5Lz53GtBPe
-         OuwlKaO/wqXClGG/h64XZ3iectcriyvGQqXeg2SB8FEzmuaf3XfiDCcMpH/MP1UDaC0F
-         GoUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWcGM+iDGIf32dqtV9eM2yp3nunTut2r+/g2MM0X1o8G5644uCqLBddNAePhBNkVz9sjEreddpT8fgpEvkWu309exhWkhY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4vGi5LKyz2tDEn6ROwEQFox3WEWe3QjkvnBJ8hV2QFSUJqBFX
-	AvhHrNLgAORtcDModVw8vkFmajwfvljXK1rvu5m89WY6FUdaJab465SkkCHyC+EhwBEUK5KyOVi
-	kfgFfHiU/jlnB6qzdDsLUnTKf+21LN5keWMvR0cugMGQz4guW4sXJGtFWioLWB/5UD/B8BnvunN
-	NXcK9ihHbDIT3nGaihbMhU8l+buadyk54zTFE2j6RlXyq1T85btCdV
-X-Gm-Gg: AZuq6aJSQZL1E1Bha9Cx1LudIFE4rQ2UAmnhuAwjWEuWN51i5LWCAhrISFSR6UuirZP
-	ZQZ9hLDxEULsjd1Xyl3AwQ+0uFy5YT4/5ZJtbig5K1FocsrysOETk1VpUDIiS3uLICaFAq8/gnc
-	VVnaWS6XZvKSawrL0+rS3PyVze99OG4/NaQo1WFEF6xRvDLEerdzjkGJ5MDON/OyKF8eAEilNuT
-	Hdr
-X-Received: by 2002:a17:903:1a10:b0:29d:a26c:34b6 with SMTP id d9443c01a7336-2ad50fbc316mr16329895ad.50.1771418191214;
-        Wed, 18 Feb 2026 04:36:31 -0800 (PST)
-X-Received: by 2002:a17:903:1a10:b0:29d:a26c:34b6 with SMTP id
- d9443c01a7336-2ad50fbc316mr16329765ad.50.1771418190809; Wed, 18 Feb 2026
- 04:36:30 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Eo/inXc5"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fGR2C2PnrzQ4n;
+	Wed, 18 Feb 2026 20:11:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1771441891;
+	bh=79+aj51njAfDV0RlYlLFoDxORntODlEA62DIupvkb/8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Eo/inXc558PRMqODzq+uGdo6F6ucd815BkW5ClvwczTXtryj+e/CQkI3BO9oupuzB
+	 pNwU7a+zG1bg+6BeHZM7NOoS5S+w4ucXh2l7XAvahcvd+/v/XCs907o87GDp68TU+R
+	 Qy+fBFWgkyUdnhjkxX4GlJSFJiqSkdNJwe3cYVaA=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fGR2B1FF6zNQg;
+	Wed, 18 Feb 2026 20:11:30 +0100 (CET)
+Date: Wed, 18 Feb 2026 20:11:26 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: John Johansen <john.johansen@canonical.com>, 
+	Justin Suess <utilityemal77@gmail.com>, Tingmao Wang <m@maowtm.org>, 
+	linux-security-module@vger.kernel.org, Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, 
+	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	konstantin.meskhidze@huawei.com, Demi Marie Obenour <demiobenour@gmail.com>, 
+	Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>, 
+	Tahera Fahimi <fahimitahera@gmail.com>
+Subject: Re: [PATCH v5 4/9] landlock/selftests: Test
+ LANDLOCK_ACCESS_FS_RESOLVE_UNIX
+Message-ID: <20260218.aser1cu7Aewi@digikod.net>
+References: <20260215105158.28132-1-gnoack3000@gmail.com>
+ <20260215105158.28132-5-gnoack3000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260216150625.793013-1-omosnace@redhat.com> <yk2qcux2ee7afr24xw6p7wp4t3islu64ttfsrheac2zwr6odnw@kmagnqbldb3f>
-In-Reply-To: <yk2qcux2ee7afr24xw6p7wp4t3islu64ttfsrheac2zwr6odnw@kmagnqbldb3f>
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Date: Wed, 18 Feb 2026 13:36:18 +0100
-X-Gm-Features: AaiRm51HYWR6w0-EcsphJc410XncNKnjGKv9rOIgL6E3XvZhdcve7uAr9h1HcsM
-Message-ID: <CAFqZXNswp_bKq_78PgVpToK1Zm36ZL4atqiid2Lstaqa0sKnBA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] fanotify: avid some premature LSM checks
-To: Jan Kara <jack@suse.cz>
-Cc: Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: pe9D73LFxi1_JDtB5nIEBe3lXJhH876ZD7_1MnBG0zs_1771418191
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260215105158.28132-5-gnoack3000@gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Tue, Feb 17, 2026 at 12:09=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Mon 16-02-26 16:06:23, Ondrej Mosnacek wrote:
-> > Restructure some of the validity and security checks in
-> > fs/notify/fanotify/fanotify_user.c to avoid generating LSM access
-> > denials in the audit log where hey shouldn't be.
-> >
-> > Ondrej Mosnacek (2):
-> >   fanotify: avoid/silence premature LSM capability checks
-> >   fanotify: call fanotify_events_supported() before path_permission()
-> >     and security_path_notify()
-> >
-> >  fs/notify/fanotify/fanotify_user.c | 50 ++++++++++++++----------------
-> >  1 file changed, 23 insertions(+), 27 deletions(-)
->
-> The series looks good to me as well. Thanks! I'll commit the series to my
-> tree once the merge window closes and fixup the comment formatting on
-> commit. No need to resend.
+On Sun, Feb 15, 2026 at 11:51:52AM +0100, Günther Noack wrote:
+> * Extract common helpers from an existing IOCTL test that
+>   also uses pathname unix(7) sockets.
+> * These tests use the common scoped domains fixture which is also used
+>   in other Landlock scoping tests and which was used in Tingmao Wang's
+>   earlier patch set in [1].
+> 
+> These tests exercise the cross product of the following scenarios:
+> 
+> * Stream connect(), Datagram connect(), Datagram sendmsg() and
+>   Seqpacket connect().
+> * Child-to-parent and parent-to-child communication
+> * The Landlock policy configuration as listed in the scoped_domains
+>   fixture.
+>   * In the default variant, Landlock domains are only placed where
+>     prescribed in the fixture.
+>   * In the "ALL_DOMAINS" variant, Landlock domains are also placed in
+>     the places where the fixture says to omit them, but with a
+>     LANDLOCK_RULE_PATH_BENEATH that allows connection.
+> 
+> Cc: Justin Suess <utilityemal77@gmail.com>
+> Cc: Tingmao Wang <m@maowtm.org>
+> Cc: Mickaël Salaün <mic@digikod.net>
+> Link[1]: https://lore.kernel.org/all/53b9883648225d5a08e82d2636ab0b4fda003bc9.1767115163.git.m@maowtm.org/
+> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> ---
+>  tools/testing/selftests/landlock/fs_test.c | 384 ++++++++++++++++++++-
+>  1 file changed, 368 insertions(+), 16 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index b318627e7561..bdeff2e0e029 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -4358,30 +4358,61 @@ TEST_F_FORK(layout1, named_pipe_ioctl)
+>  	ASSERT_EQ(child_pid, waitpid(child_pid, NULL, 0));
+>  }
+>  
+> +/*
+> + * set_up_named_unix_server - Create a pathname unix socket
+> + *
+> + * If the socket type is not SOCK_DGRAM, also invoke listen(2).
+> + *
+> + * Return: The listening FD - it is the caller responsibility to close it.
+> + */
+> +static int set_up_named_unix_server(struct __test_metadata *const _metadata,
+> +				    int type, const char *const path)
+> +{
+> +	int fd;
+> +	struct sockaddr_un addr = {
+> +		.sun_family = AF_UNIX,
+> +	};
+> +
+> +	fd = socket(AF_UNIX, type, 0);
+> +	ASSERT_LE(0, fd);
+> +
+> +	strncpy(addr.sun_path, path, sizeof(addr.sun_path));
 
-Great, thanks!
+fs_test.c: In function ‘set_up_named_unix_server’:
+fs_test.c:4125:9: error: ‘strncpy’ specified bound 108 equals destination size [-Werror=stringop-truncation]
+ 4125 |         strncpy(addr.sun_path, path, sizeof(addr.sun_path));
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
---=20
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+We should also ASSERT the result to make sure path's length is not too big.
 
+> +	ASSERT_EQ(0, bind(fd, (struct sockaddr *)&addr, sizeof(addr)));
+> +
+> +	if (type != SOCK_DGRAM)
+> +		ASSERT_EQ(0, listen(fd, 10 /* qlen */));
+> +	return fd;
+> +}
