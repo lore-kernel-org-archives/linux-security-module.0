@@ -1,48 +1,49 @@
-Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B637314B8C
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Feb 2026 09:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FED2DC33B
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Feb 2026 09:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771407575; cv=none; b=Y/6tGbxHsrgEbugoXk27ch4ETBjbEcG0/hnJvaWhpOcDcbraTlfzDD2TrkA9T/vUq27+8dd6ENNbz+KwBCemMKfs0iN3qzsoC46OkYeNYFCwHFfzvGWQJv66wzZz8Om9G+x5PFqlSVraZQ8itaKupK+UJtJhZOhrNySCBHiAkGM=
+	t=1771407789; cv=none; b=oxv6B3Y50++kuodesZj22JrC/VUDC9qSre7yN/m/HfoNZyOelDUhIz0wwiAaL5HDt4wA9lAIwdqXqXwxba+UlM/RuRru5agRhxXKL9/7IDkYI3M+R3HgpWA/OGRYXd4VZzeKsIw27+gUNRsEfHxMwov0FDVx10r186a+hMNZGUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771407575; c=relaxed/simple;
-	bh=D1ur1fV0iVQk5k2KOpSLszfZor7lFIJrz6vU6DGqPKY=;
+	s=arc-20240116; t=1771407789; c=relaxed/simple;
+	bh=J9Uxe4ZEAWj20zBZzQJyfXD6ju3mDOe3vYTEKgmZwTU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nrRwHcGl6WQWtajX9cn4PHWMDudclNzw/mJc5VVKjgxJOr5S6HOtlzYR4WiurA2NvA9g7bPaWrlUER236RPYmhI2kCNfvMxggI5x2dJB8hDJulQ7PJOeRUSqF6I5tmTeu/vbsydDxzJaYGukoQz/wCekzqjC/nrMebiUsaiqJ+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=oCVgaW7t; arc=none smtp.client-ip=84.16.66.174
+	 Content-Type:Content-Disposition:In-Reply-To; b=K6Uc0584QEB58woCuopA8L20YXZaKDzl/b2tiX2jcpPnmdCZFRZfzDJUEQ2Y2MDF40LudBeSd7nSMZblf+nJxDCoYSOo+khloEfAsY+1RAGqlnBgHKRxV1+WtcDiQAMtJLwFmjbEOK/hAN0EWBZhIhcsdX6ELUvQnBgxDlKhZeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=2Encfo+X; arc=none smtp.client-ip=84.16.66.168
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="oCVgaW7t"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="2Encfo+X"
 Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fGBL52GlNzvPs;
-	Wed, 18 Feb 2026 10:39:25 +0100 (CET)
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fGBH31RQnzqpc;
+	Wed, 18 Feb 2026 10:36:47 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1771407565;
-	bh=xHqrmQWiY0MlW87rO/PgVKhs4XIXziZ44UfytakahCU=;
+	s=20191114; t=1771407407;
+	bh=ffntIhV2m6xC97D+pEZgKwQ6ddwWIQFpxfoE0JG7tfw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oCVgaW7tX1/Oxv5DUv7iAVbJv5ZA/732sAb1SFm1KwvsZhdJELEbAA3C3LVcKPAJo
-	 5bp2dgHZamxF6IJ679uRyKH9ShPiNmFEaUm7fWYfpXODW/FmbkYYwRVS6Yu0T6A2xZ
-	 cfFxs44EBbB6x283bf8HsuXTFuR0/j27NsPTdgs8=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fGBL45BzPz4tC;
-	Wed, 18 Feb 2026 10:39:24 +0100 (CET)
-Date: Wed, 18 Feb 2026 10:39:23 +0100
+	b=2Encfo+X/baZ2m1VBAgiRsUSMTGNzMcMAaicEiW0RYddGxHGEbherxuDtrOGldquH
+	 bEYIF1ZKpQ0UAeLfNT0YF0P5a8dU2rubVY2u/xGObzeIPdqJFeU+2auMZAYA/pdp3j
+	 oL/HEqhd7nEV0zHDsX9J4ea0IeUp2CYomld4z02g=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fGBH06q50z5rJ;
+	Wed, 18 Feb 2026 10:36:44 +0100 (CET)
+Date: Wed, 18 Feb 2026 10:36:37 +0100
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
 Cc: John Johansen <john.johansen@canonical.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Tingmao Wang <m@maowtm.org>, 
 	Justin Suess <utilityemal77@gmail.com>, linux-security-module@vger.kernel.org, 
-	Tingmao Wang <m@maowtm.org>, Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, 
-	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	konstantin.meskhidze@huawei.com, Demi Marie Obenour <demiobenour@gmail.com>, 
-	Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>, 
-	Tahera Fahimi <fahimitahera@gmail.com>
-Subject: Re: [PATCH v5 8/9] landlock: Document FS access right for pathname
- UNIX sockets
-Message-ID: <20260218.AXoosuwo8aen@digikod.net>
+	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, Matthieu Buffet <matthieu@buffet.re>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, konstantin.meskhidze@huawei.com, 
+	Demi Marie Obenour <demiobenour@gmail.com>, Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v5 1/9] lsm: Add LSM hook security_unix_find
+Message-ID: <20260217.Nei3Aeg8bo6h@digikod.net>
 References: <20260215105158.28132-1-gnoack3000@gmail.com>
- <20260215105158.28132-9-gnoack3000@gmail.com>
+ <20260215105158.28132-2-gnoack3000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -52,65 +53,134 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260215105158.28132-9-gnoack3000@gmail.com>
+In-Reply-To: <20260215105158.28132-2-gnoack3000@gmail.com>
 X-Infomaniak-Routing: alpha
 
-On Sun, Feb 15, 2026 at 11:51:56AM +0100, Günther Noack wrote:
-> Cc: Justin Suess <utilityemal77@gmail.com>
-> Cc: Mickaël Salaün <mic@digikod.net>
-> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> ---
->  Documentation/userspace-api/landlock.rst | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
+On Sun, Feb 15, 2026 at 11:51:49AM +0100, Günther Noack wrote:
+> From: Justin Suess <utilityemal77@gmail.com>
 > 
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index 13134bccdd39..3ba73afcbc4b 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
-> @@ -77,7 +77,8 @@ to be explicit about the denied-by-default access rights.
->              LANDLOCK_ACCESS_FS_MAKE_SYM |
->              LANDLOCK_ACCESS_FS_REFER |
->              LANDLOCK_ACCESS_FS_TRUNCATE |
-> -            LANDLOCK_ACCESS_FS_IOCTL_DEV,
-> +            LANDLOCK_ACCESS_FS_IOCTL_DEV |
-> +            LANDLOCK_ACCESS_FS_RESOLVE_UNIX,
->          .handled_access_net =
->              LANDLOCK_ACCESS_NET_BIND_TCP |
->              LANDLOCK_ACCESS_NET_CONNECT_TCP,
-> @@ -127,6 +128,12 @@ version, and only use the available subset of access rights:
->          /* Removes LANDLOCK_SCOPE_* for ABI < 6 */
->          ruleset_attr.scoped &= ~(LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
->                                   LANDLOCK_SCOPE_SIGNAL);
-> +        __attribute__((fallthrough));
-> +    case 7:
-> +        __attribute__((fallthrough));
-
-I don't think the fallthrough attribute is needed here.  Same for the
-sample.
-
-> +    case 8:
-> +        /* Removes LANDLOCK_ACCESS_FS_RESOLVE_UNIX for ABI < 8 */
-
-ABI < 9
-
-> +        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_RESOLVE_UNIX;
->      }
+> Add a LSM hook security_unix_find.
+> 
+> This hook is called to check the path of a named unix socket before a
+> connection is initiated. The peer socket may be inspected as well.
+> 
+> Why existing hooks are unsuitable:
+> 
+> Existing socket hooks, security_unix_stream_connect(),
+> security_unix_may_send(), and security_socket_connect() don't provide
+> TOCTOU-free / namespace independent access to the paths of sockets.
+> 
+> (1) We cannot resolve the path from the struct sockaddr in existing hooks.
+> This requires another path lookup. A change in the path between the
+> two lookups will cause a TOCTOU bug.
+> 
+> (2) We cannot use the struct path from the listening socket, because it
+> may be bound to a path in a different namespace than the caller,
+> resulting in a path that cannot be referenced at policy creation time.
+> 
+> Cc: Günther Noack <gnoack3000@gmail.com>
+> Cc: Tingmao Wang <m@maowtm.org>
+> Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+> ---
+>  include/linux/lsm_hook_defs.h |  5 +++++
+>  include/linux/security.h      | 11 +++++++++++
+>  net/unix/af_unix.c            |  8 ++++++++
+>  security/security.c           | 20 ++++++++++++++++++++
+>  4 files changed, 44 insertions(+)
+> 
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index 8c42b4bde09c..7a0fd3dbfa29 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -317,6 +317,11 @@ LSM_HOOK(int, 0, post_notification, const struct cred *w_cred,
+>  LSM_HOOK(int, 0, watch_key, struct key *key)
+>  #endif /* CONFIG_SECURITY && CONFIG_KEY_NOTIFICATIONS */
 >  
->  This enables the creation of an inclusive ruleset that will contain our rules.
-> @@ -685,6 +692,13 @@ enforce Landlock rulesets across all threads of the calling process
->  using the ``LANDLOCK_RESTRICT_SELF_TSYNC`` flag passed to
->  sys_landlock_restrict_self().
->  
-> +Pathname UNIX sockets (ABI < 9)
-> +-------------------------------
+> +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
+> +LSM_HOOK(int, 0, unix_find, const struct path *path, struct sock *other,
+> +	 int flags)
+> +#endif /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
 > +
-> +Starting with the Landlock ABI version 9, it is possible to restrict
-> +connections to pathname UNIX domain sockets (:manpage:`unix(7)`) using
-> +the new ``LANDLOCK_ACCESS_FS_RESOLVE_UNIX`` right.
-> +
->  .. _kernel_support:
+>  #ifdef CONFIG_SECURITY_NETWORK
+>  LSM_HOOK(int, 0, unix_stream_connect, struct sock *sock, struct sock *other,
+>  	 struct sock *newsk)
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 83a646d72f6f..99a33d8eb28d 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -1931,6 +1931,17 @@ static inline int security_mptcp_add_subflow(struct sock *sk, struct sock *ssk)
+>  }
+>  #endif	/* CONFIG_SECURITY_NETWORK */
 >  
->  Kernel support
+> +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
+> +
+> +int security_unix_find(const struct path *path, struct sock *other, int flags);
+> +
+> +#else /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
+> +static inline int security_unix_find(const struct path *path, struct sock *other, int flags)
+> +{
+> +	return 0;
+> +}
+> +#endif /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
+> +
+>  #ifdef CONFIG_SECURITY_INFINIBAND
+>  int security_ib_pkey_access(void *sec, u64 subnet_prefix, u16 pkey);
+>  int security_ib_endport_manage_subnet(void *sec, const char *name, u8 port_num);
+> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+> index d0511225799b..369812b79dd8 100644
+> --- a/net/unix/af_unix.c
+> +++ b/net/unix/af_unix.c
+> @@ -1230,6 +1230,14 @@ static struct sock *unix_find_bsd(struct sockaddr_un *sunaddr, int addr_len,
+>  	if (!sk)
+>  		goto path_put;
+>  
+> +	/*
+> +	 * We call the hook because we know that the inode is a socket and we
+> +	 * hold a valid reference to it via the path.
+> +	 */
+> +	err = security_unix_find(&path, sk, flags);
+> +	if (err)
+> +		goto sock_put;
+> +
+>  	err = -EPROTOTYPE;
+>  	if (sk->sk_type == type)
+
+I think this hook call should be moved here, just before the
+touch_atime() call for consistency with the socket type check, and to
+avoid doing useless check in the hook.
+
+>  		touch_atime(&path);
+> diff --git a/security/security.c b/security/security.c
+> index 67af9228c4e9..c73196b8db4b 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -4731,6 +4731,26 @@ int security_mptcp_add_subflow(struct sock *sk, struct sock *ssk)
+>  
+>  #endif	/* CONFIG_SECURITY_NETWORK */
+>  
+> +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
+> +/**
+> + * security_unix_find() - Check if a named AF_UNIX socket can connect
+> + * @path: path of the socket being connected to
+> + * @other: peer sock
+> + * @flags: flags associated with the socket
+> + *
+> + * This hook is called to check permissions before connecting to a named
+> + * AF_UNIX socket.
+> + *
+> + * Return: Returns 0 if permission is granted.
+> + */
+> +int security_unix_find(const struct path *path, struct sock *other, int flags)
+> +{
+> +	return call_int_hook(unix_find, path, other, flags);
+> +}
+> +EXPORT_SYMBOL(security_unix_find);
+> +
+> +#endif	/* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
+> +
+>  #ifdef CONFIG_SECURITY_INFINIBAND
+>  /**
+>   * security_ib_pkey_access() - Check if access to an IB pkey is allowed
 > -- 
 > 2.52.0
 > 
