@@ -1,340 +1,169 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491E231AA96
-	for <linux-security-module@vger.kernel.org>; Thu, 19 Feb 2026 13:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591903271F0
+	for <linux-security-module@vger.kernel.org>; Thu, 19 Feb 2026 14:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771509589; cv=none; b=qml8PnTw4ODQGFr2Z+I0s+T2hmU3v7a5y5kxDpdc/Mr4RRQA2goRhF23Hi9jL7nPGhRJIuWeZPiKAC+Sb6/l+APuLgl3Xps5EctlUUdEludlhiMQl0MrV2w+nWjMNZr/s+WB4O29EUYKIffBQPjkjvfmLPordReKOt7t5yORmtI=
+	t=1771511240; cv=none; b=rwRZH9pH0vSiRAfqu7D7Lo3Yau6ejYRg9P0hg6SECNAth14Nc7wqatmnblp+NYmdh8f5R9/aWfkmfiuZac4AP4P1yqBUCVdTF/03E1GiV4h/SVlVP/ZYj35UCmreHBs206fF46u0S2cftmfd9lMmg3clqPcS1s1xeAoUKBS8Y2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771509589; c=relaxed/simple;
-	bh=G9tZURGwqOcLLZUILQ/FrmbLTRlxHR6kmtzolzjxs80=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iM7eYAU5bZncd/bPsA6kJbbi0WmhSw3YHNbJfqL3l6tZM15CKp7bcE6oZb5yF9Z6rRWR5qpdTTceMzpZEruhVp7SG2zp5QMHnCbBZPpa3gVBrskuZppz3VyJQkJJWnVT8buZisR3eM/GADgP5xISols4OPYg/ljff9GB+rhAolg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R7yw1YzX; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1771511240; c=relaxed/simple;
+	bh=fFFjkseekXvGYoGHHkDvbbj+CFQfCypI5+YXQEHeZys=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jas4zSZsR2SmP8A4ZRwNKVYf+gaW6yKh0wjMsVdt6oniXQkZ0n4g4N3TaGanWUv5YEuije4hvQUwAA82QTCYvEcDsbRekUkYjcgsfrfOA/qTlcgB2deT+p8m784w0DGmUmtqyaCcWacm4kgvMYsxUMAarwuK3k5kL4+RWBhnUG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mTKJYUCu; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R7yw1YzX"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-483a233819aso4850865e9.3
-        for <linux-security-module@vger.kernel.org>; Thu, 19 Feb 2026 05:59:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mTKJYUCu"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2aae146b604so6679385ad.3
+        for <linux-security-module@vger.kernel.org>; Thu, 19 Feb 2026 06:27:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1771509585; x=1772114385; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5DNJXbpyy98Ciqpm4Jp65JfKwTAixl7tFMnkVNHQjBw=;
-        b=R7yw1YzXl9LkLoIprzsBQyU3tQnlY66GyRf3Ooq96PlFU1E85zA+jWrW4y+doYfiht
-         S7sY6rKJjUWNTKq+OVgyIjctghu5fvsAi2ypNBiptiL3fQdhe3BWq3UKwUKm+oPYZJaX
-         jDLWXl0HZK7SOy67sXRzyzTwnjE4vm5ovlJNMNDA8znGLPidRCbri75fbCk+7P7NX46R
-         d5pO3c6E8dUZcT+0fVdwLrvdgJSYCTQeNUR0j+6OZ1ZbPdNBBinrYkDRTuoMw+ow9Lnn
-         rAjvflwKlKHNrpYWSPJuehY1hW9JoOKQlrDwQOcFFP8oNjB9rbEBakEfB2kgF9fTXk4A
-         cIzw==
+        d=gmail.com; s=20230601; t=1771511239; x=1772116039; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QUt8gjFDI6W7zJiz3u2Nn1UdNatjAJ3oKKX8MoonuYU=;
+        b=mTKJYUCugpcn5L5mDXdK+YRi2UNxKjfLhPZDzkq9uL2gWuXt5GfBk+YRqBoCvSizv7
+         T0ZzF0FqkaNIbu43klTvaVMV32XKzclXitql0gtOptcBXs7XggysZRWE62OR1VtS9c+D
+         xsKr/L+2M9oz/lxvYf6HHScQb9piufGqG8lHKyHiyVzFJXoCb8+WB7WY5fLWtR6pwE3G
+         feGKgcVqrcwm7tL7NSSjf8r7myNfNU8hsp3WIwSWe2h0GfZ8PuHW9Fy3rs9A/DrYYEUs
+         fY3UwTUZzkJLE4GUZFgbWwlF3dYd1dEsKPy2DoyMUan8pYYIKR9r1uE0ARa/zVxECMyv
+         +SjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771509585; x=1772114385;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5DNJXbpyy98Ciqpm4Jp65JfKwTAixl7tFMnkVNHQjBw=;
-        b=UxF2RTeRxLhBd0C1XthaLOV2hX5W9C4hUmat4M/DJANPoFJiX54S+nqXZWm5a2YUfG
-         sytx+c1HupenimRysdkNNKiG+NC8qfjOJA2nwpRC0+8QBmR1TNo6JsYRb1tdTqDJF75i
-         TGxuJclI1xU17J3q6iJUla8CU+qZCbZFn4MAQkqHa5VoMZ3i66lsD4IUK7r+Dn8YJkoo
-         mc/gm1YadmoBJqRyL2/edu/9Ouj/aDogGLj4KhHEI3jKf4hnsWx8AzzZuAaSf67bLgOn
-         vmZNbuJEg+jeCK4cSvfYBuJCC5jXXMq96GPo5Do0OnUDd6jKn6bORDEDKW4BzJI7dBx4
-         N0IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfl9SxfXW+ZqVcElBS+7BgoucDAULcWLMgNrlM0LRnNa1FyChZWDMxyixNBesTPPmKEqmzvYWLNnHuKPCW3AhP3uCk/hA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4VEWA1t7AApk619u3Mlt9g+oKYCXnv9biD5Ibqikg0HMqxXzu
-	t7wcirgoFGzCan9zaPp5pKA5JpjYzHXsRms6EmGO4sM+6R0ln3X1p3KewycySmcPmw==
-X-Gm-Gg: AZuq6aLclUlMD6xIh79rRSDr9qGwtUmTucgZr+0vTfU//rO+FDWGTlsJELvJ5VXY5vH
-	CtIAO16/SSpv2+Sq1QiogiHWHjRgKn+1vMeE8KaCVsi9E3uOCEzwMPJyd/GssJZWyDLszQOW/Hs
-	I5MFySHg2pz08kbkMV+2GKf8Wf1gQrKJMjZStaE71xHMUJRWcRsDoGW7RakyoChcoghpFIg1CNj
-	mubgiPpK9gMD6x0kGpjuaMdQLsb06o08bRNOusYGzeJLMVoxXBfrEduySyqM4xIw4yGL28hKg3o
-	NbKRXAWoVGCLhBWP6sYOaRkJ62nAcADrh1ExR2jPtTtTyo/dzneiqIAAC2NbyoDa/zLXoce6x4V
-	OgGqMTSo9Qg7bM6qKOt04qeNFf4F1DZCYApXNaWFTsI3v3aFJKoFeEY8w9ONTVrTT42CD9Qz+Ij
-	nv0DLzMu6t9hog8wopWLT6FJyHNFqBizuiH6VxrU1Xo1vyw8PWZ8FWEg==
-X-Received: by 2002:a05:600c:3542:b0:477:54cd:200e with SMTP id 5b1f17b1804b1-48398a678cfmr97192065e9.1.1771509584897;
-        Thu, 19 Feb 2026 05:59:44 -0800 (PST)
-Received: from google.com ([2a00:79e0:288a:8:846b:b058:f015:d4d5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483a31ba9easm5510345e9.4.2026.02.19.05.59.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Feb 2026 05:59:44 -0800 (PST)
-Date: Thu, 19 Feb 2026 14:59:38 +0100
-From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>,
-	John Johansen <john.johansen@canonical.com>,
-	Tingmao Wang <m@maowtm.org>, Justin Suess <utilityemal77@gmail.com>,
-	Jann Horn <jannh@google.com>, linux-security-module@vger.kernel.org,
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	konstantin.meskhidze@huawei.com,
-	Demi Marie Obenour <demiobenour@gmail.com>,
-	Alyssa Ross <hi@alyssa.is>, Tahera Fahimi <fahimitahera@gmail.com>
-Subject: Re: [PATCH v5 2/9] landlock: Control pathname UNIX domain socket
- resolution by path
-Message-ID: <aZcXSmhZRVcRCvum@google.com>
-References: <20260215105158.28132-1-gnoack3000@gmail.com>
- <20260215105158.28132-3-gnoack3000@gmail.com>
- <20260217.lievaS8eeng8@digikod.net>
- <20260219.IF4zee3Quo3j@digikod.net>
+        d=1e100.net; s=20230601; t=1771511239; x=1772116039;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QUt8gjFDI6W7zJiz3u2Nn1UdNatjAJ3oKKX8MoonuYU=;
+        b=FzudI18Pb7OIHJDcw93rxbgRMgTCxuqY4sHS1Xz1gi4GDDOtKgGnsNFgVc1EWP4NoE
+         hK13u0yN7Y8z4xTkwAP8OjNvV46uz51MpT3duBohxocEAY0UhuCKPjXYhshduNuBWGWN
+         WETws5rG/RUJ825ciPuccY1fbPec6FPNhCWqKwz0xCkB2ZZCpfLb3nT+K6w0OQEiaJQd
+         3oft8Bc5KZYqkB4Imup1dyfbrZg77l7Lk61Hvc00srzPZLDJfkIGrUXkrKSfliiLWj6T
+         /HrY3zMWjMFR1THJijYkMvtbQeOXvNMUb/U/UUb7dQGfcgs1idCPAl9rrXgMs7vbnOGU
+         oGkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVgEWMW9Nw294MpZNquFSGwOlaud5xHhMEJhn30LxYpDkuNU+x8Um5YE5jGOzmWUkUV3k4i4mJcMSkyk7oCHbN/XMf4sA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCbIQoYKVvOdaQdJmi0ghDLL/N1DDE+dYtFwnI/62nHc4+JSTm
+	fabZszRZdlKzjP4x5wq8+94drht07dgog3/UUwYjj7soZz7ReG3tP8a+
+X-Gm-Gg: AZuq6aL/DGO8XtZU3h//lpUL/19nCdjUV7C7q8G4oO3sGUD3FxH4uPTNbnIwxWo1799
+	6nuWyvRxZW0DDUGWtX9xD1wYQTtUhe3efDnUlug+q0qBPTngktaVwud+YEbNBNQB/jLbJwo9TZj
+	FESwI+CdohPh7RfffvgJI91lS1/YE2J6a938NaUKuvbBzsW4zVlS7a9qC0oWxyaW3osbkEOZxKB
+	KcKGjZ/hfrodkZccpeuABqAGQk+YrOqEqtvAzpEuDqpq4BTmYpt8MNnG+6wEvfBytjre22J1MXe
+	7TImycgvBTahu++Ck5aMvngK5NXk5iFYXNDVANwOh1P1T8Zzt1Hgdz5NUzq2V41nqosdUvU7PQy
+	CJMW+O2PE2fsERvlNQ7Elh+SpJsCFdwYF382Xdl8r54hvhIkkP2wfXFs5DIFJqj6PNr6RqDhnNL
+	c6Q7azi7wmou3XBXcH8qi3NbCDgOlNzXpvkAa6hEnYzSgfWmjE5bn/aAEB0txmTnAt
+X-Received: by 2002:a17:903:388c:b0:2a0:d636:71e7 with SMTP id d9443c01a7336-2ab4cf7c628mr180445875ad.13.1771511238647;
+        Thu, 19 Feb 2026 06:27:18 -0800 (PST)
+Received: from ?IPV6:240e:38a:19d2:ad01:4c90:983:b066:e0db? ([240e:38a:19d2:ad01:4c90:983:b066:e0db])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ad1a9d5c4csm166275275ad.53.2026.02.19.06.27.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Feb 2026 06:27:18 -0800 (PST)
+Message-ID: <c2b65a8f-b0cc-4bba-8ef9-7a079314d52d@gmail.com>
+Date: Thu, 19 Feb 2026 22:27:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] task: delete task_euid()
+To: Alice Ryhl <aliceryhl@google.com>, Paul Moore <paul@paul-moore.com>,
+ Serge Hallyn <sergeh@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Shuah Khan <skhan@linuxfoundation.org>, Alex Shi <alexs@kernel.org>,
+ Yanteng Si <si.yanteng@linux.dev>, Dongliang Mu <dzm91@hust.edu.cn>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>, linux-security-module@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, Jann Horn <jannh@google.com>
+References: <20260219-remove-task-euid-v1-1-904060826e07@google.com>
+Content-Language: en-US
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <20260219-remove-task-euid-v1-1-904060826e07@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260219.IF4zee3Quo3j@digikod.net>
 
-On Thu, Feb 19, 2026 at 10:45:44AM +0100, Mickaël Salaün wrote:
-> On Wed, Feb 18, 2026 at 10:37:16AM +0100, Mickaël Salaün wrote:
-> > On Sun, Feb 15, 2026 at 11:51:50AM +0100, Günther Noack wrote:
-> > > * Add a new access right LANDLOCK_ACCESS_FS_RESOLVE_UNIX, which
-> > >   controls the look up operations for named UNIX domain sockets.  The
-> > >   resolution happens during connect() and sendmsg() (depending on
-> > >   socket type).
-> > > * Hook into the path lookup in unix_find_bsd() in af_unix.c, using a
-> > >   LSM hook.  Make policy decisions based on the new access rights
-> > > * Increment the Landlock ABI version.
-> > > * Minor test adaptions to keep the tests working.
-> > > 
-> > > With this access right, access is granted if either of the following
-> > > conditions is met:
-> > > 
-> > > * The target socket's filesystem path was allow-listed using a
-> > >   LANDLOCK_RULE_PATH_BENEATH rule, *or*:
-> > > * The target socket was created in the same Landlock domain in which
-> > >   LANDLOCK_ACCESS_FS_RESOLVE_UNIX was restricted.
-> > > 
-> > > In case of a denial, connect() and sendmsg() return EACCES, which is
-> > > the same error as it is returned if the user does not have the write
-> > > bit in the traditional Unix file system permissions of that file.
-> > > 
-> > > This feature was created with substantial discussion and input from
-> > > Justin Suess, Tingmao Wang and Mickaël Salaün.
-> > > 
-> > > Cc: Tingmao Wang <m@maowtm.org>
-> > > Cc: Justin Suess <utilityemal77@gmail.com>
-> > > Cc: Mickaël Salaün <mic@digikod.net>
-> > > Suggested-by: Jann Horn <jannh@google.com>
-> > > Link: https://github.com/landlock-lsm/linux/issues/36
-> > > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> > > ---
-> > >  include/uapi/linux/landlock.h                |  10 ++
-> > >  security/landlock/access.h                   |  11 +-
-> > >  security/landlock/audit.c                    |   1 +
-> > >  security/landlock/fs.c                       | 102 ++++++++++++++++++-
-> > >  security/landlock/limits.h                   |   2 +-
-> > >  security/landlock/syscalls.c                 |   2 +-
-> > >  tools/testing/selftests/landlock/base_test.c |   2 +-
-> > >  tools/testing/selftests/landlock/fs_test.c   |   5 +-
-> > >  8 files changed, 128 insertions(+), 7 deletions(-)
+
+
+On 2026/2/19 20:14, Alice Ryhl wrote:
+> task_euid() is a very weird operation. You can see how weird it is by
+> grepping for task_euid() - binder is its only user. task_euid() obtains
+> the objective effective UID - it looks at the credentials of the task
+> for purposes of acting on it as an object, but then accesses the
+> effective UID (which the credentials.7 man page describes as "[...] used
+> by the kernel to determine the permissions that the process will have
+> when accessing shared resources [...]").
 > 
-> > > index 60ff217ab95b..8d0edf94037d 100644
-> > > --- a/security/landlock/audit.c
-> > > +++ b/security/landlock/audit.c
-> > > @@ -37,6 +37,7 @@ static const char *const fs_access_strings[] = {
-> > >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_REFER)] = "fs.refer",
-> > >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_TRUNCATE)] = "fs.truncate",
-> > >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_IOCTL_DEV)] = "fs.ioctl_dev",
-> > > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_RESOLVE_UNIX)] = "fs.resolve_unix",
-> > >  };
-> > >  
-> > >  static_assert(ARRAY_SIZE(fs_access_strings) == LANDLOCK_NUM_ACCESS_FS);
-> > > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> > > index e764470f588c..76035c6f2bf1 100644
-> > > --- a/security/landlock/fs.c
-> > > +++ b/security/landlock/fs.c
-> > > @@ -27,6 +27,7 @@
-> > >  #include <linux/lsm_hooks.h>
-> > >  #include <linux/mount.h>
-> > >  #include <linux/namei.h>
-> > > +#include <linux/net.h>
-> > >  #include <linux/path.h>
-> > >  #include <linux/pid.h>
-> > >  #include <linux/rcupdate.h>
-> > > @@ -314,7 +315,8 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
-> > >  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
-> > >  	LANDLOCK_ACCESS_FS_READ_FILE | \
-> > >  	LANDLOCK_ACCESS_FS_TRUNCATE | \
-> > > -	LANDLOCK_ACCESS_FS_IOCTL_DEV)
-> > > +	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
-> > > +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX)
-> > >  /* clang-format on */
-> > >  
-> > >  /*
-> > > @@ -1561,6 +1563,103 @@ static int hook_path_truncate(const struct path *const path)
-> > >  	return current_check_access_path(path, LANDLOCK_ACCESS_FS_TRUNCATE);
-> > >  }
-> > >  
-> > > +/**
-> > > + * unmask_scoped_access - Remove access right bits in @masks in all layers
-> > > + *                        where @client and @server have the same domain
-> > > + *
-> > > + * This does the same as domain_is_scoped(), but unmasks bits in @masks.
-> > > + * It can not return early as domain_is_scoped() does.
+> Since usage in Binder has now been removed, get rid of the resulting
+> dead code.
 > 
-> Why can't we use the same logic as for other scopes?
-
-The other scopes, for which this is implemented in domain_is_scoped(),
-do not need to do this layer-by-layer.
-
-I have to admit, in my initial implementation, I was using
-domain_is_scoped() directly, and the logic at the end of the hook was
-roughly:
-
-   --- BUGGY CODE START ---
-       // ...
-       
-       if (!domain_is_scoped(..., ..., LANDLOCK_ACCESS_FS_RESOLVE_UNIX))
-           return 0;  /* permitted */
-
-       return current_check_access_path(path, LANDLOCK_ACCESS_FS_RESOLVE_UNIX)
-   }
-   --- BUGGY CODE END ---
-
-Unfortunately, that is a logic error though -- it implements the formula
-
-   Access granted if:
-   (FOR-ALL l ∈ layers scoped-access-ok(l)) OR (FOR-ALL l ∈ layers path-access-ok(l))     (WRONG!)
-
-but the formula we want is:
-
-   Access granted if:
-   FOR-ALL l ∈ layers (scoped-access-ok(l) OR path-access-ok(l))     (CORRECT!)
-
-This makes a difference in the case where (pseudocode):
-
-   1. landlock_restrict_self(RESOLVE_UNIX)  // d1
-   2. create_unix_server("./sock")
-   3. landlock_restrict_self(RESOLVE_UNIX, rule=Allow(".", RESOLVE_UNIX))  // d2
-   4. connect_unix("./sock")
-
-   ,------------------------------------------------d1--,
-   |                                                    |
-   |    ./sock server                                   |
-   |       ^                                            |
-   |       |                                            |
-   |  ,------------------------------------------d2--,  |
-   |  |    |                                         |  |
-   |  |  client                                      |  |
-   |  |                                              |  |
-   |  '----------------------------------------------'  |
-   |                                                    |
-   '----------------------------------------------------'
-
-(BTW, this scenario is covered in the selftests, that is why there is
-a variant of these selftests where instead of applying "no domain", we
-apply a domain with an exception rule like in step 3 in the pseudocode
-above.  Applying that domain should behave the same as applying no
-domain at all.)
-
-Intuitively, it is clear that the access should be granted:
-
-  - d1 does not restrict access to the server,
-    because the socket was created within d1 itself.
-  - d2 does not restrict access to the server,
-    because it has a rule to allow it
-
-But the "buggy code" logic above comes to a different conclusion:
-
-  - the domain_is_scoped() check denies the access, because the server
-    is in a more privileged domain relative to the client domain.
-  - the current_check_access_path() check denies the access as well,
-    because the socket's path is not allow-listed in d1.
-
-In the 'intuitive' reasoning above, we are checking d1 and d2
-independently of each other.  While Landlock is not implemented like
-that internally, we need to stay consistent with it so that domains
-compose correctly.  The way to do that is to track is access check
-results on a per-layer basis again, and that is why
-unmask_scoped_access() uses a layer mask for tracking.  The original
-domain_is_scoped() does not use a layer mask, but that also means that
-it can return early in some scenarios -- if for any of the relevant
-layer depths, the client and server domains are not the same, it exits
-early with failure because it's overall not fulfillable any more.  In
-the RESOLVE_UNIX case though, we need to remember in which layers we
-failed (both high an low ones), because these layers can still be
-fulfilled with a PATH_BENEATH rule later.
-
-Summary:
-
-Option 1: We *can* unify this if you want.  It just might come at a
-small performance penalty for domain_is_scoped(), which now uses the
-larger layer mask data structure and can't do the same early returns
-any more as before.
-
-Option 2: Alternatively, if we move the two functions into the same
-module, we can keep them separate but still test them against each
-other to make sure they are in-line:
-
-This invocation should return true...
-
-  domain_is_scoped(cli, srv, access)
-
-...in the exactly the same situations where this invocation leaves any
-bits set in layer_masks:
-
-  landlock_init_layer_masks(dom, access, &layer_masks, LL_KEY_INODE);
-  unmask_scoped_access(cli, srv, &layer_masks, access);
-
-What do you prefer?
-
-
-> > > + *
-> > > + * @client: Client domain
-> > > + * @server: Server domain
-> > > + * @masks: Layer access masks to unmask
-> > > + * @access: Access bit that controls scoping
-> > > + */
-> > > +static void unmask_scoped_access(const struct landlock_ruleset *const client,
-> > > +				 const struct landlock_ruleset *const server,
-> > > +				 struct layer_access_masks *const masks,
-> > > +				 const access_mask_t access)
-> > 
-> > This helper should be moved to task.c and factored out with
-> > domain_is_scoped().  This should be a dedicated patch.
+> Changes to the zh_CN translation was carried out with the help of
+> Gemini and Google Translate.
 > 
-> Well, if domain_is_scoped() can be refactored and made generic, it would
-> make more sense to move it to domain.c
+> Suggested-by: Jann Horn<jannh@google.com>
+> Signed-off-by: Alice Ryhl<aliceryhl@google.com>
+> ---
+> Depends on these two changes:
+> https://lore.kernel.org/all/20260212-rust-uid-v1-1-deff4214c766@google.com/
+> https://lore.kernel.org/all/20260213-binder-uid- 
+> v1-0-7b795ae05523@google.com/
+> ---
+>   Documentation/security/credentials.rst                    |  6 ++----
+>   Documentation/translations/zh_CN/security/credentials.rst |  6 ++----
+>   include/linux/cred.h                                      |  1 -
+>   rust/helpers/task.c                                       |  5 -----
+>   rust/kernel/task.rs                                       | 10 ----------
+>   5 files changed, 4 insertions(+), 24 deletions(-)
 > 
-> > 
-> > > +{
-> > > +	int client_layer, server_layer;
-> > > +	const struct landlock_hierarchy *client_walker, *server_walker;
-> > > +
-> > > +	if (WARN_ON_ONCE(!client))
-> > > +		return; /* should not happen */
-> > > +
-> > > +	if (!server)
-> > > +		return; /* server has no Landlock domain; nothing to clear */
-> > > +
-> > > +	client_layer = client->num_layers - 1;
-> > > +	client_walker = client->hierarchy;
-> > > +	server_layer = server->num_layers - 1;
-> > > +	server_walker = server->hierarchy;
-> > > +
-> > > +	/*
-> > > +	 * Clears the access bits at all layers where the client domain is the
-> > > +	 * same as the server domain.  We start the walk at min(client_layer,
-> > > +	 * server_layer).  The layer bits until there can not be cleared because
-> > > +	 * either the client or the server domain is missing.
-> > > +	 */
-> > > +	for (; client_layer > server_layer; client_layer--)
-> > > +		client_walker = client_walker->parent;
-> > > +
-> > > +	for (; server_layer > client_layer; server_layer--)
-> > > +		server_walker = server_walker->parent;
-> > > +
-> > > +	for (; client_layer >= 0; client_layer--) {
-> > > +		if (masks->access[client_layer] & access &&
-> > > +		    client_walker == server_walker)
-> > > +			masks->access[client_layer] &= ~access;
-> > > +
-> > > +		client_walker = client_walker->parent;
-> > > +		server_walker = server_walker->parent;
-> > > +	}
-> > > +}
+> diff --git a/Documentation/security/credentials.rst b/Documentation/security/credentials.rst
+> index d0191c8b8060edb7b272402c019cff941ec22743..81d3b5737d85bde9b77bff94dfb93ed8037b2302 100644
+> --- a/Documentation/security/credentials.rst
+> +++ b/Documentation/security/credentials.rst
+> @@ -393,16 +393,14 @@ the credentials so obtained when they're finished with.
+>      The result of ``__task_cred()`` should not be passed directly to
+>      ``get_cred()`` as this may race with ``commit_cred()``.
+>   
+> -There are a couple of convenience functions to access bits of another task's
+> -credentials, hiding the RCU magic from the caller::
+> +There is a convenience function to access bits of another task's credentials,
+> +hiding the RCU magic from the caller::
+>   
+>   	uid_t task_uid(task)		Task's real UID
+> -	uid_t task_euid(task)		Task's effective UID
+>   
+>   If the caller is holding the RCU read lock at the time anyway, then::
+>   
+>   	__task_cred(task)->uid
+> -	__task_cred(task)->euid
+>   
+>   should be used instead.  Similarly, if multiple aspects of a task's credentials
+>   need to be accessed, RCU read lock should be used, ``__task_cred()`` called,
+> diff --git a/Documentation/translations/zh_CN/security/credentials.rst b/Documentation/translations/zh_CN/security/credentials.rst
+> index 88fcd9152ffe91d79fc10bfc7b2a37d301b4938a..f0b2efec342438b81be415dc513622c961bb7e59 100644
+> --- a/Documentation/translations/zh_CN/security/credentials.rst
+> +++ b/Documentation/translations/zh_CN/security/credentials.rst
+> @@ -337,15 +337,13 @@ const指针上操作，因此不需要进行类型转换，但需要临时放弃
+>      ``__task_cred()`` 的结果不应直接传递给 ``get_cred()`` ，
+>      因为这可能与 ``commit_cred()`` 发生竞争条件。
+>   
+> -还有一些方便的函数可以访问另一个任务凭据的特定部分，将RCU操作对调用方隐藏起来::
+> +有一个方便的函数可用于访问另一个任务凭据的特定部分，从而对调用方隐藏RCU机制::
+
+LGTM.
+
+>   
+>   	uid_t task_uid(task)		Task's real UID
+> -	uid_t task_euid(task)		Task's effective UID
+>   
+> -如果调用方在此时已经持有RCU读锁，则应使用::
+> +如果调用方在此时已经持有RCU读锁，则应改为使用::
+
+Please keep the old version. the new one is a bit ambiguous.
+
+Thanks
+Alex
