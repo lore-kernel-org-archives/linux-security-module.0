@@ -1,239 +1,201 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773AB31AA96;
-	Thu, 19 Feb 2026 09:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DFB18A6A8
+	for <linux-security-module@vger.kernel.org>; Thu, 19 Feb 2026 09:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771494228; cv=none; b=EYm5gb5Ocf3Kb2wh9pfCSGHnkBj+AIp8/yTiTSLlHMXUDQCTh2udt3UZ3fyb5H6YGb16IM0GZducB/w4hk0C7Mq3npBdRt9vgszpH9enmVxFiJ7wLiKVkM1xWFvaaKiU5W8OCFASVB8wIbsBelTH1Ys5DWMFSuy/paii+Z+EBPM=
+	t=1771494366; cv=none; b=szGVjoeIbo4T0ajJg+h2onP1IsMjF+iXyvpMQhuTWMzUXtMlchZlMPKixzglymySIgBri0+j5CHtM6gINBENeRfVtRqtIM7EQuCylvSjNROs6v0pibgN+wVb36929xkFCnoHG2336Io8/BN30fQU+klsezBKeEILyUh7mfNMJlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771494228; c=relaxed/simple;
-	bh=5Kcto6AIU9mpMc8kIi5u4AbxNEjcqCzjVbfYEcEIOa0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oI+2f6R3694itomIKYHsOxXbsTpmHVldbRniWJJI7x1g7FdFTB7zOg7g14C4k18Vj/OT80l/xsvRYzl/uLsoOa2E7Ke7TaqVgGbalvq18b0wzLF7PFc7mNtqg3zUwCRHw7la+bhTa3bUn9OxFMH3fiFZpEOU4xIxC//KRxtCMt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.235])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4fGnxM5TSczpV1t;
-	Thu, 19 Feb 2026 17:23:35 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 5CC4E40570;
-	Thu, 19 Feb 2026 17:26:40 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwDHUANH15Zp8FYbBA--.26910S2;
-	Thu, 19 Feb 2026 10:26:39 +0100 (CET)
-Message-ID: <6ce273a26b396232f3ee64a980575562e766c501.camel@huaweicloud.com>
-Subject: Re: [PATCH v2 v2] evm: check return values of crypto_shash functions
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Daniel Hodges <git@danielhodges.dev>
-Cc: zohar@linux.ibm.com, roberto.sassu@huawei.com,
- dmitry.kasatkin@gmail.com,  eric.snowberg@oracle.com, paul@paul-moore.com,
- jmorris@namei.org, serge@hallyn.com,  linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org
-Date: Thu, 19 Feb 2026 10:26:29 +0100
-In-Reply-To: <20260206024240.19059-1-git@danielhodges.dev>
-References: <aYNprpzxppKE0Gf2@fb.com>
-	 <20260206024240.19059-1-git@danielhodges.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1771494366; c=relaxed/simple;
+	bh=x5uhtNJ5K5eoFpRL/NeFexqCc0hHLGqVnq1Q+KEJcg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hKRXeqwIsAOVONeHMfshXbtOIT7RwJkCzBi7vu1spkoPz+f4nzCFW3DotU9ahVTo+Gr64iROHKWj1CCTxXlKdPjI9aZxXRRApYbGbQMPihCgtQGkSFGVVHg78vawJ2S7gu2XZRmotrBHUPCRdOgg0YQROHPzKzbrCC4+2sTrD5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=kqQaMHRK; arc=none smtp.client-ip=83.166.143.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="kqQaMHRK"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fGpR356N7zKKh;
+	Thu, 19 Feb 2026 10:45:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1771494351;
+	bh=PS7hqY+KK+FSmhQSCrdJQffLZpXbUaa5qCTHyJi2DaY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kqQaMHRKNByTxjCUMZM0NuTU2caT2yFXy3+Y9eU7g2KpM4KNb7duSjHBEx6WlTRd+
+	 ltP2Ynnzo6CUcQlaJ7MUqg8eLh2Q8q3xY0ndjA6zNRxrGKzmyN+gTcd+ZsThlmQZlK
+	 riKmu1OXtdD9Bdy7xAX2nKhf36Y0R4vOJT51RfWM=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fGpR23VNHzjyR;
+	Thu, 19 Feb 2026 10:45:50 +0100 (CET)
+Date: Thu, 19 Feb 2026 10:45:44 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: John Johansen <john.johansen@canonical.com>, 
+	Tingmao Wang <m@maowtm.org>, Justin Suess <utilityemal77@gmail.com>, 
+	Jann Horn <jannh@google.com>, linux-security-module@vger.kernel.org, 
+	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, Matthieu Buffet <matthieu@buffet.re>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, konstantin.meskhidze@huawei.com, 
+	Demi Marie Obenour <demiobenour@gmail.com>, Alyssa Ross <hi@alyssa.is>, 
+	Tahera Fahimi <fahimitahera@gmail.com>
+Subject: Re: [PATCH v5 2/9] landlock: Control pathname UNIX domain socket
+ resolution by path
+Message-ID: <20260219.IF4zee3Quo3j@digikod.net>
+References: <20260215105158.28132-1-gnoack3000@gmail.com>
+ <20260215105158.28132-3-gnoack3000@gmail.com>
+ <20260217.lievaS8eeng8@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwDHUANH15Zp8FYbBA--.26910S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxKr1rZr1rGrykAryDCr1xZrb_yoW7uFy8pF
-	W5WayDKrWDJF4UWF9ayan5Z34F9ay0yF42kry8W34IyFn7Xr1IqF4Ikw18uF98Gr1DJw1Y
-	qa1I9w1Duw4aq3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAJBGmWgZ8GEAAAs4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260217.lievaS8eeng8@digikod.net>
+X-Infomaniak-Routing: alpha
 
-On Thu, 2026-02-05 at 21:42 -0500, Daniel Hodges wrote:
-> The crypto_shash_update() and crypto_shash_final() functions can fail
-> and return error codes, but their return values were not being checked
-> in several places in security/integrity/evm/evm_crypto.c:
->=20
-> - hmac_add_misc() ignored returns from crypto_shash_update() and
->   crypto_shash_final()
-> - evm_calc_hmac_or_hash() ignored returns from crypto_shash_update()
-> - evm_init_hmac() ignored returns from crypto_shash_update()
->=20
-> If these hash operations fail silently, the resulting HMAC could be
-> invalid or incomplete, which could weaken the integrity verification
-> security that EVM provides.
->=20
-> This patch converts hmac_add_misc() from void to int return type and
-> adds proper error checking and propagation for all crypto_shash_*
-> function calls. All callers are updated to handle the new return values.
-> Additionally, error messages are logged when cryptographic operations
-> fail to provide visibility into the failure rather than silently
-> returning error codes.
->=20
-> Fixes: 66dbc325afce ("evm: re-release")
-> Signed-off-by: Daniel Hodges <git@danielhodges.dev>
+On Wed, Feb 18, 2026 at 10:37:16AM +0100, Mickaël Salaün wrote:
+> On Sun, Feb 15, 2026 at 11:51:50AM +0100, Günther Noack wrote:
+> > * Add a new access right LANDLOCK_ACCESS_FS_RESOLVE_UNIX, which
+> >   controls the look up operations for named UNIX domain sockets.  The
+> >   resolution happens during connect() and sendmsg() (depending on
+> >   socket type).
+> > * Hook into the path lookup in unix_find_bsd() in af_unix.c, using a
+> >   LSM hook.  Make policy decisions based on the new access rights
+> > * Increment the Landlock ABI version.
+> > * Minor test adaptions to keep the tests working.
+> > 
+> > With this access right, access is granted if either of the following
+> > conditions is met:
+> > 
+> > * The target socket's filesystem path was allow-listed using a
+> >   LANDLOCK_RULE_PATH_BENEATH rule, *or*:
+> > * The target socket was created in the same Landlock domain in which
+> >   LANDLOCK_ACCESS_FS_RESOLVE_UNIX was restricted.
+> > 
+> > In case of a denial, connect() and sendmsg() return EACCES, which is
+> > the same error as it is returned if the user does not have the write
+> > bit in the traditional Unix file system permissions of that file.
+> > 
+> > This feature was created with substantial discussion and input from
+> > Justin Suess, Tingmao Wang and Mickaël Salaün.
+> > 
+> > Cc: Tingmao Wang <m@maowtm.org>
+> > Cc: Justin Suess <utilityemal77@gmail.com>
+> > Cc: Mickaël Salaün <mic@digikod.net>
+> > Suggested-by: Jann Horn <jannh@google.com>
+> > Link: https://github.com/landlock-lsm/linux/issues/36
+> > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> > ---
+> >  include/uapi/linux/landlock.h                |  10 ++
+> >  security/landlock/access.h                   |  11 +-
+> >  security/landlock/audit.c                    |   1 +
+> >  security/landlock/fs.c                       | 102 ++++++++++++++++++-
+> >  security/landlock/limits.h                   |   2 +-
+> >  security/landlock/syscalls.c                 |   2 +-
+> >  tools/testing/selftests/landlock/base_test.c |   2 +-
+> >  tools/testing/selftests/landlock/fs_test.c   |   5 +-
+> >  8 files changed, 128 insertions(+), 7 deletions(-)
 
-After fixing the minor issue below:
+> > index 60ff217ab95b..8d0edf94037d 100644
+> > --- a/security/landlock/audit.c
+> > +++ b/security/landlock/audit.c
+> > @@ -37,6 +37,7 @@ static const char *const fs_access_strings[] = {
+> >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_REFER)] = "fs.refer",
+> >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_TRUNCATE)] = "fs.truncate",
+> >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_IOCTL_DEV)] = "fs.ioctl_dev",
+> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_RESOLVE_UNIX)] = "fs.resolve_unix",
+> >  };
+> >  
+> >  static_assert(ARRAY_SIZE(fs_access_strings) == LANDLOCK_NUM_ACCESS_FS);
+> > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> > index e764470f588c..76035c6f2bf1 100644
+> > --- a/security/landlock/fs.c
+> > +++ b/security/landlock/fs.c
+> > @@ -27,6 +27,7 @@
+> >  #include <linux/lsm_hooks.h>
+> >  #include <linux/mount.h>
+> >  #include <linux/namei.h>
+> > +#include <linux/net.h>
+> >  #include <linux/path.h>
+> >  #include <linux/pid.h>
+> >  #include <linux/rcupdate.h>
+> > @@ -314,7 +315,8 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
+> >  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+> >  	LANDLOCK_ACCESS_FS_READ_FILE | \
+> >  	LANDLOCK_ACCESS_FS_TRUNCATE | \
+> > -	LANDLOCK_ACCESS_FS_IOCTL_DEV)
+> > +	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
+> > +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX)
+> >  /* clang-format on */
+> >  
+> >  /*
+> > @@ -1561,6 +1563,103 @@ static int hook_path_truncate(const struct path *const path)
+> >  	return current_check_access_path(path, LANDLOCK_ACCESS_FS_TRUNCATE);
+> >  }
+> >  
+> > +/**
+> > + * unmask_scoped_access - Remove access right bits in @masks in all layers
+> > + *                        where @client and @server have the same domain
+> > + *
+> > + * This does the same as domain_is_scoped(), but unmasks bits in @masks.
+> > + * It can not return early as domain_is_scoped() does.
 
-Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+Why can't we use the same logic as for other scopes?
 
-> ---
->  security/integrity/evm/evm_crypto.c | 55 ++++++++++++++++++++++-------
->  1 file changed, 42 insertions(+), 13 deletions(-)
->=20
-> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm=
-/evm_crypto.c
-> index a5e730ffda57..402eb1ca64ce 100644
-> --- a/security/integrity/evm/evm_crypto.c
-> +++ b/security/integrity/evm/evm_crypto.c
-> @@ -139,7 +139,7 @@ static struct shash_desc *init_desc(char type, uint8_=
-t hash_algo)
->   * (Additional directory/file metadata needs to be added for more comple=
-te
->   * protection.)
->   */
-> -static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
-> +static int hmac_add_misc(struct shash_desc *desc, struct inode *inode,
->  			  char type, char *digest)
->  {
->  	struct h_misc {
-> @@ -149,6 +149,7 @@ static void hmac_add_misc(struct shash_desc *desc, st=
-ruct inode *inode,
->  		gid_t gid;
->  		umode_t mode;
->  	} hmac_misc;
-> +	int error;
-> =20
->  	memset(&hmac_misc, 0, sizeof(hmac_misc));
->  	/* Don't include the inode or generation number in portable
-> @@ -169,14 +170,28 @@ static void hmac_add_misc(struct shash_desc *desc, =
-struct inode *inode,
->  	hmac_misc.uid =3D from_kuid(&init_user_ns, inode->i_uid);
->  	hmac_misc.gid =3D from_kgid(&init_user_ns, inode->i_gid);
->  	hmac_misc.mode =3D inode->i_mode;
-> -	crypto_shash_update(desc, (const u8 *)&hmac_misc, sizeof(hmac_misc));
-> +	error =3D crypto_shash_update(desc, (const u8 *)&hmac_misc, sizeof(hmac=
-_misc));
-> +	if (error) {
-> +		pr_err("crypto_shash_update() failed: %d\n", error);
-> +		return error;
-> +	}
->  	if ((evm_hmac_attrs & EVM_ATTR_FSUUID) &&
-> -	    type !=3D EVM_XATTR_PORTABLE_DIGSIG)
-> -		crypto_shash_update(desc, (u8 *)&inode->i_sb->s_uuid, UUID_SIZE);
-> -	crypto_shash_final(desc, digest);
-> +	    type !=3D EVM_XATTR_PORTABLE_DIGSIG) {
-> +		error =3D crypto_shash_update(desc, (u8 *)&inode->i_sb->s_uuid, UUID_S=
-IZE);
-> +		if (error) {
-> +			pr_err("crypto_shash_update() failed: %d\n", error);
-> +			return error;
-> +		}
-> +	}
-> +	error =3D crypto_shash_final(desc, digest);
-> +	if (error) {
-> +		pr_err("crypto_shash_final() failed: %d\n", error);
-> +		return error;
-> +	}
-> =20
->  	pr_debug("hmac_misc: (%zu) [%*phN]\n", sizeof(struct h_misc),
->  		 (int)sizeof(struct h_misc), &hmac_misc);
-> +	return 0;
->  }
-> =20
->  /*
-> @@ -260,9 +275,12 @@ static int evm_calc_hmac_or_hash(struct dentry *dent=
-ry,
-> =20
->  		if ((req_xattr_name && req_xattr_value)
->  		    && !strcmp(xattr->name, req_xattr_name)) {
-> -			error =3D 0;
-> -			crypto_shash_update(desc, (const u8 *)req_xattr_value,
-> +			error =3D crypto_shash_update(desc, (const u8 *)req_xattr_value,
->  					     req_xattr_value_len);
+> > + *
+> > + * @client: Client domain
+> > + * @server: Server domain
+> > + * @masks: Layer access masks to unmask
+> > + * @access: Access bit that controls scoping
+> > + */
+> > +static void unmask_scoped_access(const struct landlock_ruleset *const client,
+> > +				 const struct landlock_ruleset *const server,
+> > +				 struct layer_access_masks *const masks,
+> > +				 const access_mask_t access)
+> 
+> This helper should be moved to task.c and factored out with
+> domain_is_scoped().  This should be a dedicated patch.
 
-Please align this.
+Well, if domain_is_scoped() can be refactored and made generic, it would
+make more sense to move it to domain.c
 
-Thanks
-
-Roberto
-
-> +			if (error) {
-> +				pr_err("crypto_shash_update() failed: %d\n", error);
-> +				goto out;
-> +			}
->  			if (is_ima)
->  				ima_present =3D true;
-> =20
-> @@ -286,15 +304,20 @@ static int evm_calc_hmac_or_hash(struct dentry *den=
-try,
->  			pr_debug("file %s: xattr %s size mismatch (kernel: %d, user: %d)\n",
->  				 dentry->d_name.name, xattr->name, size,
->  				 user_space_size);
-> -		error =3D 0;
->  		xattr_size =3D size;
-> -		crypto_shash_update(desc, (const u8 *)xattr_value, xattr_size);
-> +		error =3D crypto_shash_update(desc, (const u8 *)xattr_value, xattr_siz=
-e);
-> +		if (error) {
-> +			pr_err("crypto_shash_update() failed: %d\n", error);
-> +			goto out;
-> +		}
->  		if (is_ima)
->  			ima_present =3D true;
-> =20
->  		dump_security_xattr(xattr->name, xattr_value, xattr_size);
->  	}
-> -	hmac_add_misc(desc, inode, type, data->digest);
-> +	error =3D hmac_add_misc(desc, inode, type, data->digest);
-> +	if (error)
-> +		goto out;
-> =20
->  	if (inode !=3D d_backing_inode(dentry) && iint) {
->  		if (IS_I_VERSION(inode))
-> @@ -401,6 +424,7 @@ int evm_init_hmac(struct inode *inode, const struct x=
-attr *xattrs,
->  {
->  	struct shash_desc *desc;
->  	const struct xattr *xattr;
-> +	int error;
-> =20
->  	desc =3D init_desc(EVM_XATTR_HMAC, HASH_ALGO_SHA1);
->  	if (IS_ERR(desc)) {
-> @@ -412,12 +436,17 @@ int evm_init_hmac(struct inode *inode, const struct=
- xattr *xattrs,
->  		if (!evm_protected_xattr(xattr->name))
->  			continue;
-> =20
-> -		crypto_shash_update(desc, xattr->value, xattr->value_len);
-> +		error =3D crypto_shash_update(desc, xattr->value, xattr->value_len);
-> +		if (error) {
-> +			pr_err("crypto_shash_update() failed: %d\n", error);
-> +			goto out;
-> +		}
->  	}
-> =20
-> -	hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
-> +	error =3D hmac_add_misc(desc, inode, EVM_XATTR_HMAC, hmac_val);
-> +out:
->  	kfree(desc);
-> -	return 0;
-> +	return error;
->  }
-> =20
->  /*
-
+> 
+> > +{
+> > +	int client_layer, server_layer;
+> > +	const struct landlock_hierarchy *client_walker, *server_walker;
+> > +
+> > +	if (WARN_ON_ONCE(!client))
+> > +		return; /* should not happen */
+> > +
+> > +	if (!server)
+> > +		return; /* server has no Landlock domain; nothing to clear */
+> > +
+> > +	client_layer = client->num_layers - 1;
+> > +	client_walker = client->hierarchy;
+> > +	server_layer = server->num_layers - 1;
+> > +	server_walker = server->hierarchy;
+> > +
+> > +	/*
+> > +	 * Clears the access bits at all layers where the client domain is the
+> > +	 * same as the server domain.  We start the walk at min(client_layer,
+> > +	 * server_layer).  The layer bits until there can not be cleared because
+> > +	 * either the client or the server domain is missing.
+> > +	 */
+> > +	for (; client_layer > server_layer; client_layer--)
+> > +		client_walker = client_walker->parent;
+> > +
+> > +	for (; server_layer > client_layer; server_layer--)
+> > +		server_walker = server_walker->parent;
+> > +
+> > +	for (; client_layer >= 0; client_layer--) {
+> > +		if (masks->access[client_layer] & access &&
+> > +		    client_walker == server_walker)
+> > +			masks->access[client_layer] &= ~access;
+> > +
+> > +		client_walker = client_walker->parent;
+> > +		server_walker = server_walker->parent;
+> > +	}
+> > +}
