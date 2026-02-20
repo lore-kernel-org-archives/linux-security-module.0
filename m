@@ -1,123 +1,120 @@
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A38F32E138
-	for <linux-security-module@vger.kernel.org>; Fri, 20 Feb 2026 00:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771545618; cv=pass; b=D+WZd/O+MwtuOeGfg4CpBjffyu1eN21vCNWpcWvcXzfo7GFEjx8zq23grru1U8P63tXuUA1YYQaYOUGQ3dQfZutxuyZY1RmZ64g3R0Uop32kTZEb7qtd7MstOja0hvJUb9kpxI1GVL9szhHqjk/g7/aY1v7jQQe6RE9clZBl+T8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771545618; c=relaxed/simple;
-	bh=d21yEhqfzh8zMrqUE1edOExxeM5FU/XoUziSunkEo6Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uymFEm95fecQEjyiafntF+R9fRQe04eqy/wRX0fI53rObjsvfDd/OeGK1pU7B9d61m6yMhhXvbPwXh8fmXDtVgtobztnB3kSWrs1A8FrxoAycbeKzOs63t2XhRn8sEPh/znHWYNoC7Q2EAq6xWa3sQBbTjY++h5FXrayEKx/wz4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=R88Y0q8z; arc=pass smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="R88Y0q8z"
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3567e2b4159so772941a91.0
-        for <linux-security-module@vger.kernel.org>; Thu, 19 Feb 2026 16:00:16 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771545616; cv=none;
-        d=google.com; s=arc-20240605;
-        b=i3ldBJmEjdhtHZTapJuH+ubtM66om0GjD0OztGB8sjgej5tZj2CP0Km92+LdYXD1Yq
-         J4KrFauiyYmVAr8pbsOF++Ma/uZo2orfqgCwv+Hi0rgFpZV2a8UMCsSBL1R677W59BcR
-         jRJV31eSmR1qmb0ajkaG7g0DzRXtq7sqOcTZ2Ml95WFg5L2cFSwuimDL1qmrWOiQpDwZ
-         OoS+YdhmONBLBqbZAusf5eQqbBCqP8iVYnRSu1fvUzJITir8yBazW9X7wHWclbJ5tGQK
-         85hxcUgL04SvtzhSl4A176cWRn31QbnKzht0sByKuQ0FYaWRAZzIQPzxOAJ9HQPJFhtT
-         C7zw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=o36/diJ36lG8KI3DZxLKNWURpWjbyhgAwYq0XhyOvXQ=;
-        fh=+Zr9s0P4CC/tBFwnTlXWYsna82JC0zqpx/NDhy7a1Fg=;
-        b=FyVCONZExU/wiYZZfkQP5vKPy5JOYi64IeebyvsTT9TGwe0htsw61FrnwQySKOQ9TW
-         g3NVUsp9AEvFTz1qlA9QZd5+wQ3plXl0Fe44WdA2mkRUnZnBDE3lISe7KBpxcqCjoNsZ
-         KQfOWJMDgsyLmrezSWd02be3KTq4f5cwfmUuFO9eUoDmoHUCSF0G4urrPxw1He9wpp+K
-         ORJogfKX3QZZe0FQzeEh14EFGSJhIK5xbpoJLDkufxwtGZktLVrO+fC1ArHz3cb7QhyH
-         xKU0m4inL5wj7ji/gxFf7OFp8kBjoZyu8h27roLXE6dfwh14rlmfElIBJbsR6duObN8o
-         K+IQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1771545616; x=1772150416; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o36/diJ36lG8KI3DZxLKNWURpWjbyhgAwYq0XhyOvXQ=;
-        b=R88Y0q8z0dHcUQAjhtFOXxB0v/Ng+vorKWHgapGefvZBQgIj80kHHJYEmz/Hu8cj5g
-         1FkoZxpF3jwLYVz+/VSa1BVR9U5lSfdUF/yFHRAKfo7AkW/L7KE44y7q6dM01iq7WuXx
-         x03Fa8zC8rsZLVBFG0l1WDwScTLw4vEVAcfZAIi1HvWuXiKXCGNZb4gMqwuOJrbi0BGY
-         UuE/iV553N4Ph3As94swqTEcdGTKLNmwnD6S0//kuBCoWkjRSnZETJKEgc2/hDFVnpRF
-         3XMjdq013lH7ZuTpXRbuiXHRj3pyOSrgmLLJT0x9pPSK0f/Fgb7qrppNT7++zXnWboeP
-         896A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771545616; x=1772150416;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=o36/diJ36lG8KI3DZxLKNWURpWjbyhgAwYq0XhyOvXQ=;
-        b=ANwvsZev6q9eVB8YR39OHQMloTisNZm/0zQEN9DyPyLkLb8TfIwQ8KWeJHoHRzP9Ub
-         5dTeDjQaQRV2TALbfeutTQ+QS5bOzU3W9cf4g+ZxQRzqppp+dLejLni5LxfsIhb05zFO
-         YZYSNPM4iE452ld0NZ46gx33kTL35Mhv1VGz59KiCfUctl5LAFNzBQvOwy4iTAsq16K2
-         XBgp68iBoDiANCQv79TQJ9L2Z0weyBD4a8JvHF1QFwXGoaG/2cd2WpMw3z/gsqhYZkQx
-         hdpZhexRJFe/S+3i/Bxq7qPyypT5nJCYVTSHZXXsrBep2om8b1vPDb6+96xiQWUdHsAO
-         WQ8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVxQpS9nVGoY5rURPv9PT/Oj0CYZzBiqAPqKd0lMNOXA9hRDhqrTaevOqTt/MmpZvA4ZU7ytx8KqyQ+WmM4n7kSQLM0geA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhOiMBsssxKPqX3JUPrtFSAOQ0eM/YuY2ph07K4761+dNgD3T2
-	ReQ2d1twYsNCrmdBG8e1HjQWadFpNcRE0ykRXen+AZcT5evjVdG3Iye729PhKCqmg+KQfBfKOp0
-	NK172uWWV7HiMkEE585VQii78o6KI3P1ouMXgcbv/
-X-Gm-Gg: AZuq6aLCEhUhg0ZbDwmOw0NvcVuE7YAwGQ92Z7SVuCxI5ygdsDk4PiACjbUoSq0SehU
-	wP9DykIqpeSCqxslZeRLTFi3nBEZtTzVFc/Jy6Wa7OPT5CL7KsDLyi4XNHFrkSr3w5vcVlObIQV
-	lSm36Jz6ToTXmREubVyGuVxJVzPW9o+OJcMWRM+Ih3c4eC5cbWLZWKSjYo9ZsrpmPRKMP8r4bk0
-	DybafKZp8YMWCXm4H2jCgbegvAcmY8rINGVHCUeJZrSsoT6G52rz1Gx1QAXDN5jxCUFvjLSBOw5
-	3I103uk=
-X-Received: by 2002:a17:90a:d890:b0:340:be44:dd11 with SMTP id
- 98e67ed59e1d1-3588916c4d3mr5800139a91.27.1771545616313; Thu, 19 Feb 2026
- 16:00:16 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59B815ADB4;
+	Fri, 20 Feb 2026 09:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771578386; cv=none; b=mVS/ogUkCjabcNIfPr1Evg7CqyOH0r54sV2uPWu0TBPeomtjxxlTBkRWmsM1cmBq4caJenmIv0HRpX7Fjy3fx/5EperwyRPmYeTg2oUIyj3+gVfRD2968BWBDeHOG+8LG6Vna7dp18G/oWeLWMw5rpEGvD7N70IlB+ScTrmjjoE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771578386; c=relaxed/simple;
+	bh=16sVxko9HV9n5CWc4iDY+WQSvl6MzmmdZ/Z1oXWYF7Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=D1PRucN4REKlBeUfiOVc3ZrEgbL0qVeu5yhEY8QSwxZRbxyDKV1ePhcmmNTibPsRsGTOTur7+xir27b6eaRJqY6QPRLifqnGMC85oAnrx4NhC8NsVqQS0QixC7gzDvy/YDNEzbX3Zd2uO/WLlqSdgWWU+EJ2GAUfwGQ6mpPhgHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.235])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4fHPRN3Yk5z1HC9x;
+	Fri, 20 Feb 2026 17:03:12 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 65E134056B;
+	Fri, 20 Feb 2026 17:06:16 +0800 (CST)
+Received: from [10.204.63.22] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwBnMm3_I5hp05YlBA--.42095S2;
+	Fri, 20 Feb 2026 10:06:15 +0100 (CET)
+Message-ID: <c35775ef24edb89f2ec2c658c6255ac07bb708b3.camel@huaweicloud.com>
+Subject: Re: [PATCH v2 v2] evm: check return values of crypto_shash functions
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Daniel Hodges <daniel@danielhodges.dev>
+Cc: Daniel Hodges <git@danielhodges.dev>, zohar@linux.ibm.com, 
+ roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com,  paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com,  linux-integrity@vger.kernel.org,
+ linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org
+Date: Fri, 20 Feb 2026 10:06:04 +0100
+In-Reply-To: <lj2loy57pavtihqeuywpc2aev7zy3k3poop346dtmelmocp75q@lbejeufrrxwr>
+References: <aYNprpzxppKE0Gf2@fb.com>
+	 <20260206024240.19059-1-git@danielhodges.dev>
+	 <6ce273a26b396232f3ee64a980575562e766c501.camel@huaweicloud.com>
+	 <cfbd9e3c63e03500279198ec7a80ba009dfccc63.camel@huaweicloud.com>
+	 <lj2loy57pavtihqeuywpc2aev7zy3k3poop346dtmelmocp75q@lbejeufrrxwr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260205-binder-tristate-v1-0-dfc947c35d35@google.com> <20260205-binder-tristate-v1-2-dfc947c35d35@google.com>
-In-Reply-To: <20260205-binder-tristate-v1-2-dfc947c35d35@google.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 19 Feb 2026 19:00:05 -0500
-X-Gm-Features: AaiRm506Y2kfbsAw5yuSy39Cc7BbQ8GnxyExl_UwkT36VTmOrXmenuVrilx1Qck
-Message-ID: <CAHC9VhQP3jz-RbdZczp=FVHphu55ddojEmjkh+U5m02AdPiDJw@mail.gmail.com>
-Subject: Re: [PATCH 2/5] security: export binder symbols
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Carlos Llamas <cmllamas@google.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, 
-	Qi Zheng <zhengqi.arch@bytedance.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, David Hildenbrand <david@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, kernel-team@android.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-mm@kvack.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID:GxC2BwBnMm3_I5hp05YlBA--.42095S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Aw1UJrWkXw1UKryxXw48Crg_yoW8Cr1DpF
+	WrGayqkrWDtFyUArnxt3WrXr10yrWFkw15Xr1kGryFvasIvFn2qr4xC3W0ga4DCr15Gr1j
+	vr4ftr9xuw1jyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAKBGmX0yAHWgAAsc
 
-On Thu, Feb 5, 2026 at 5:51=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> wr=
-ote:
->
-> To enable building Binder as a module, export these symbols.
->
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  security/security.c | 4 ++++
->  1 file changed, 4 insertions(+)
+On Thu, 2026-02-19 at 10:01 -0500, Daniel Hodges wrote:
+> On Thu, Feb 19, 2026 at 01:36:39PM +0100, Roberto Sassu wrote:
+> > On Thu, 2026-02-19 at 10:26 +0100, Roberto Sassu wrote:
+> > > On Thu, 2026-02-05 at 21:42 -0500, Daniel Hodges wrote:
+> > > > The crypto_shash_update() and crypto_shash_final() functions can fa=
+il
+> > > > and return error codes, but their return values were not being chec=
+ked
+> > > > in several places in security/integrity/evm/evm_crypto.c:
+> > > >=20
+> > > > - hmac_add_misc() ignored returns from crypto_shash_update() and
+> > > >   crypto_shash_final()
+> > > > - evm_calc_hmac_or_hash() ignored returns from crypto_shash_update(=
+)
+> > > > - evm_init_hmac() ignored returns from crypto_shash_update()
+> > > >=20
+> > > > If these hash operations fail silently, the resulting HMAC could be
+> > > > invalid or incomplete, which could weaken the integrity verificatio=
+n
+> > > > security that EVM provides.
+> > > >=20
+> > > > This patch converts hmac_add_misc() from void to int return type an=
+d
+> > > > adds proper error checking and propagation for all crypto_shash_*
+> > > > function calls. All callers are updated to handle the new return va=
+lues.
+> > > > Additionally, error messages are logged when cryptographic operatio=
+ns
+> > > > fail to provide visibility into the failure rather than silently
+> > > > returning error codes.
+> > > >=20
+> > > > Fixes: 66dbc325afce ("evm: re-release")
+> > > > Signed-off-by: Daniel Hodges <git@danielhodges.dev>
+> > >=20
+> > > After fixing the minor issue below:
+> >=20
+> > Already did it. The patch is here (after fixing a conflict with
+> > 0496fc9cdc38 "evm: Use ordered xattrs list to calculate HMAC in
+> > evm_init_hmac()"):
+> >=20
+> > https://github.com/robertosassu/linux/commit/d5aba42198b602c6de002ef02a=
+4e6cc1d75652d7
+> >=20
+> > Roberto
+>=20
+> Nice, thanks for handling that!
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+Welcome!
 
---=20
-paul-moore.com
+Roberto
+
