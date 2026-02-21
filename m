@@ -1,107 +1,156 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from flow-b2-smtp.messagingengine.com (flow-b2-smtp.messagingengine.com [202.12.124.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA811A0712;
-	Sat, 21 Feb 2026 22:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD37F246BC5;
+	Sat, 21 Feb 2026 22:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771711992; cv=none; b=n4JrpaapJOPJ8EGo2vWUnlmfjKy5cud1yBgGKv8Gsu/3ptb36704KQYWkFhGNTLXHnBLXpFabXq+O2BGKSPb/PpL99t4dRtcTpe7WrYNHqnyCxT2gTnO4a2GlYOxR/v+pPBXXlonj13bgP9vJecHQrsHy8Y8ae4nceRjU3pVEd8=
+	t=1771712936; cv=none; b=qf0eCFyHas/GE0db9raGDfoNPkGROS6ymYTqIePwYed/JZSvaYLfB2R37eC2VcTabzZEjB6LEEHhI8+kEoOlNCuZJWP6VPb8299xdY31nTbT5WGrlwkYETblOc0YuUdCmhZtE8+5l3KQ+wEEGATYrmtWG0nQWsYCkycmU9cEq1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771711992; c=relaxed/simple;
-	bh=cMmXvpFAhHfIemH7wcF//uPahP2enBmohiXvmiFzJAk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Ay74wggnsMQWGP+MVY00LyjGwRKeEl/SaQzMb8J4Z5/n7+MCPmIUrjvGTL9WfSFXtmZL0dt+iEypvqATZoKOQ7/iMBrWjfPT+hK2i8MyftNqwds7FW3ECBR60C0zpDW7PXAE4gJ4IeThurr3MipCGw65PJkg/AMkk8oZHAXTd5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=n0toose.net; spf=pass smtp.mailfrom=n0toose.net; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=n0toose.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=n0toose.net
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4fJLwD18XHz9v9n;
-	Sat, 21 Feb 2026 23:13:00 +0100 (CET)
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of git@n0toose.net designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=git@n0toose.net
-From: "Panagiotis \"Ivory\" Vasilopoulos" <git@n0toose.net>
-Date: Sat, 21 Feb 2026 23:12:25 +0100
-Subject: [PATCH v2] landlock: Expand restrict flags example for ABI version
- 8
+	s=arc-20240116; t=1771712936; c=relaxed/simple;
+	bh=VmoxDVAEk5VXcBT9Zk5C9BENYgHbrkKa+9YXbPNT3FQ=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=aQ2RMkg/c7FSLrvLwqB7lOHYAphN4w1rZMF2hwyzOaeCZWHh6MMaNkauaPDz0iW+RqRkOdiipi55gMZoDFYpB7f5M/2syASwH5beL1EQznSFuy2RIoig/dwUDYNhpn8h750cWBoQDBWLzUElAkPwKMaR0vXYzFWn9sczSZ6SmEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=dXKMwkzg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MW+TZctE; arc=none smtp.client-ip=202.12.124.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="dXKMwkzg";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MW+TZctE"
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailflow.stl.internal (Postfix) with ESMTP id 3048B1300B3C;
+	Sat, 21 Feb 2026 17:28:51 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Sat, 21 Feb 2026 17:28:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
+	1771712930; x=1771720130; bh=u3IlZMQ9LJJjVeIG+OSF9uldPDxrJqlL/6T
+	gOp7A6+M=; b=dXKMwkzgQvxdsO2+qDRd6JurM9O9n4YdVnuSxRcxiuHonOiWZku
+	FN7bhs97x56nqC9Y/S+8JqD/7Z8hlvaZXOyYgCHOcFyqug+rIFqmetWCflqclEBX
+	U3HKWGPO5h32qy3xhXThzfQv5Qmvjk6sqQ+l2bYFmOzkaHZseVOmMnA9GUYHvI5u
+	dyLtpcEDbuy4rYC6EVLJUsFP6wKBC/unpIOYnIm809wqjJaMeOlBNZQ7ZLdyeXSJ
+	zJVmPn4At3FpSqhrlnTbNumO+HI91+IPb8Ui65SSUPz4XAXz3srUrhFyIFXkftjB
+	V13ML1s5ViszfmYutdJ3cdB/gMvqPZHi1+g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1771712930; x=
+	1771720130; bh=u3IlZMQ9LJJjVeIG+OSF9uldPDxrJqlL/6TgOp7A6+M=; b=M
+	W+TZctEkN64dRsKnUJ2lljeCcZA4454y4+Irt1eRk/5VOjqCZsAHyuTLGuN0j4oz
+	RcWblC+Ipj0ocCW/fTrtDQe6nq3uxKn87vMUc0K0sQm3zyJQJb2srNnidc29149z
+	1PsDnHmx1yay8c+cAf1zDvPxQfH1qO0Dxl4lIxeW5silcgAuDwW5ap/V/MhJmgtk
+	LL8Q7nWAYhFOEPjoV9/eRAdNg2q/FCLoc5qdawWaTj0gr/Ju48lXLuOtgF3e0WCl
+	yXzRsJnqT7BKx5Gclt/4NAYlR2bMeFWL+d0Qxfgugrv2cxEhOfXqleO/AYs8PoIA
+	V5QD5ACw97tmr+ygXvQoQ==
+X-ME-Sender: <xms:oTGaafTZIgFHrwcqEwX0OWhBiyLoiJ7dh8xpTjlhz4aVlN8Lifs3gw>
+    <xme:oTGaacWrqRZ151uqCE_3yKT7CzRx7-cpPPsr0nje5pxFMek-3d3N1u3UCJR2JXj5Z
+    VqoJaAKyhmwGiy2Qw_yOJCKxytL1944pcSZQPcOYlPLanr7lw>
+X-ME-Received: <xmr:oTGaaU29JxR2PccULCpDzVvNImiuBdIko2ImjSRi3u1tEZkku4wBZzbrg6PUMXFkWs2eoVfDh9PrXfG2LUhKU37w2GZxxzKchJJERpDvIc4y>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvfedvheelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtkeertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epvdfhgfehkeekiedtleefhefhkeevvdegfffhgfduffeiveelffehlefhfeehveetnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepvddupdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
+    hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhr
+    tghpthhtohepjhgrtghksehsuhhsvgdrtgii
+X-ME-Proxy: <xmx:oTGaaT-7S5TVfbgkA8pNolMe7t1LSNSmFnMs810TBs_8phCNTbtsfg>
+    <xmx:oTGaaadkucZtu9j60AveUDWw1P1FsB1XpKkjA4cAbMhsgWu1zJ8hPg>
+    <xmx:oTGaaf609NUb58_R29zQiJvEZktz-GpoZRxvyTKJ7AZOdVpdq9KhQQ>
+    <xmx:oTGaaWOdPa7ew4My6ZRBV7ztWMi1j-Vg8G-HHDF9COUMqv_h8H1j6g>
+    <xmx:ojGaaZZXxAWMUvbEvJlBxCZvbsP49ApNcz7t6xV9_SRXC0fKsuJNSiW3>
+Feedback-ID: i9d664b8f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 21 Feb 2026 17:28:43 -0500 (EST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260221-landlock-docs-add-tsync-example-v2-1-60990986bba5@n0toose.net>
-X-B4-Tracking: v=1; b=H4sIAMgtmmkC/42NQQ6DIBAAv2L23G0ALcGe/EfjgcJaSS0YIEZj/
- HupL+hx5jCzQ6LoKMG92iHS4pILvoC4VGBG7V+EzhYGwYRkQnCctLdTMG+0wSTU1mJOmzdIq/7
- MEyGpwd6MbHQtJZTKHGlw63l49IVHl3KI2zlc+M/+3144chxUW6tasZaeTedZDiHR1VOG/jiOL
- 37/g5zQAAAA
-X-Change-ID: 20260221-landlock-docs-add-tsync-example-e8fd5c64a366
-To: =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
- =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>
-Cc: linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1771711977; l=2080;
- i=git@n0toose.net; s=20260221; h=from:subject:message-id;
- bh=cMmXvpFAhHfIemH7wcF//uPahP2enBmohiXvmiFzJAk=;
- b=D91MSFoajzqsXbAOGkPV9V3lI/AlfDUxwLKicUVeJgEpGJD4goySheQKhi/kAY4hLRVr5D3Ua
- M8he65MnsHkAhr18g9/p3w9JuzPm9Hb+w35MuqC8OULH9V51N0aRA26
-X-Developer-Key: i=git@n0toose.net; a=ed25519;
- pk=Tis+3ti1x0lr71vFYBVrYAzcO2UpGQijF0kXwupcsXE=
-X-Rspamd-Queue-Id: 4fJLwD18XHz9v9n
+From: NeilBrown <neilb@ownmail.net>
+To: "Paul Moore" <paul@paul-moore.com>
+Cc: "Christian Brauner" <brauner@kernel.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "David Howells" <dhowells@redhat.com>, "Jan Kara" <jack@suse.cz>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Miklos Szeredi" <miklos@szeredi.hu>, "Amir Goldstein" <amir73il@gmail.com>,
+ "John Johansen" <john.johansen@canonical.com>,
+ "James Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ "Stephen Smalley" <stephen.smalley.work@gmail.com>,
+ linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH 05/13] selinux: Use simple_start_creating() /
+ simple_done_creating()
+In-reply-to:
+ <CAHC9VhThChVk1Dk+f-KANGj7Tu7zzHCiA==taeQ+=nQaH6a7sg@mail.gmail.com>
+References: <20260204050726.177283-1-neilb@ownmail.net>,
+ <20260204050726.177283-6-neilb@ownmail.net>,
+ <CAHC9VhThChVk1Dk+f-KANGj7Tu7zzHCiA==taeQ+=nQaH6a7sg@mail.gmail.com>
+Date: Sun, 22 Feb 2026 09:28:41 +1100
+Message-id: <177171292163.8396.10671162503209732019@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-Add LANDLOCK_RESTRICT_SELF_TSYNC to the backwards compatibility example
-for restrict flags. This introduces completeness, similar to that of
-the ruleset attributes example.
+On Sat, 21 Feb 2026, Paul Moore wrote:
+> On Wed, Feb 4, 2026 at 12:08 AM NeilBrown <neilb@ownmail.net> wrote:
+> >
+> > From: NeilBrown <neil@brown.name>
+> >
+> > Instead of explicitly locking the parent and performing a lookup in
+> > selinux, use simple_start_creating(), and then use
+> > simple_done_creating() to unlock.
+> >
+> > This extends the region that the directory is locked for, and also
+> > performs a lookup.
+> > The lock extension is of no real consequence.
+> > The lookup uses simple_lookup() and so always succeeds.  Thus when
+> > d_make_persistent() is called the dentry will already be hashed.
+> > d_make_persistent() handles this case.
+> >
+> > Signed-off-by: NeilBrown <neil@brown.name>
+> > ---
+> >  security/selinux/selinuxfs.c | 15 +++++++--------
+> >  1 file changed, 7 insertions(+), 8 deletions(-)
+> 
+> Unless I'm missing something, there is no reason why I couldn't take
+> just this patch into the SELinux tree once the merge window closes,
+> yes?
 
-Additionally, I modified the two comments of the example to make them
-more consistent with the ruleset attributes example's.
+Yes - but ...
 
-Signed-off-by: Panagiotis 'Ivory' Vasilopoulos <git@n0toose.net>
----
-Changes in v2:
-- Fix formatting error.
-- Link to v1: https://lore.kernel.org/r/20260221-landlock-docs-add-tsync-example-v1-1-f89383809eb4@n0toose.net
----
- Documentation/userspace-api/landlock.rst | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+Once this series lands (hopefully soon - I will resend after -rc1 is
+out) I have another batch which depends on the new start_creating etc
+API being used everywhere.  So for Christian to be able to apply that,
+he will need to pull in this patch from the SELinux tree.
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index 13134bccdd39d78ddce3daf454f32dda162ce91b..0affe1c953d61a4b32aca700cd262c49cee6304a 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -197,12 +197,18 @@ similar backwards compatibility check is needed for the restrict flags
- 
- .. code-block:: c
- 
--    __u32 restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON;
--    if (abi < 7) {
--        /* Clear logging flags unsupported before ABI 7. */
-+    __u32 restrict_flags =
-+        LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON |
-+        LANDLOCK_RESTRICT_SELF_TSYNC;
-+    switch (abi) {
-+    case 1 ... 6:
-+        /* Clear logging flags unsupported for ABI < 7 */
-         restrict_flags &= ~(LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF |
-                             LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON |
-                             LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF);
-+    case 7:
-+        /* Removes multithread flag unsupported for ABI < 8 */
-+        restrict_flags &= ~LANDLOCK_RESTRICT_SELF_TSYNC;
-     }
- 
- The next step is to restrict the current thread from gaining more privileges
+So if you could apply just this patch to some branch and merge that
+branch with your other work however works best for you, and make the
+branch available, then I think Christian will be happy to merge that
+with whatever vfs branch he includes my work in, and all should be good.
 
----
-base-commit: ceb977bfe9e8715e6cd3a4785c7aab8ea5cd2b77
-change-id: 20260221-landlock-docs-add-tsync-example-e8fd5c64a366
+Thanks
+NeilBrown
 
-Best regards,
--- 
-Panagiotis "Ivory" Vasilopoulos <git@n0toose.net>
+
+> 
+> -- 
+> paul-moore.com
+> 
 
