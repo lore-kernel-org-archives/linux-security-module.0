@@ -1,75 +1,79 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE53A3BB40
-	for <linux-security-module@vger.kernel.org>; Sat, 21 Feb 2026 13:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC013BB40
+	for <linux-security-module@vger.kernel.org>; Sat, 21 Feb 2026 13:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771679999; cv=none; b=eJiKl6mw5VWAECe8Sv0QCb75vKd5u0CYOGB8QYVH3Sg01lkWc9ztZ+dWJs1EViTIasAJ77fC2tGemhmV6L7SnZzUqyY1mtEf6Y6l3ahizPEEbi4dKCX8xOmnhSrosj4OA/4gbaAx45kPurytI5M2Axvgx8kt5+dvGYNf6zvbYoE=
+	t=1771680170; cv=none; b=eyPgMwue3sc9mE/Afu1zitMcRR2KtnzOZiQS/w5fXpfUpeuRyS3h9YYQFndamy6m9EdjejB4FztIq/sibp2g1/vM1Kby/VCFHQanJvS7/srdP5shcesxVrjf5TSMLDFrGsmYsVeDEhYbpvkLIW6CTJxhnOTP9y6/y/jh+QLx52g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771679999; c=relaxed/simple;
-	bh=+/to1bAV0gd6j69nr3mC0w24jMcJ0rvEYd4G3GruVbE=;
+	s=arc-20240116; t=1771680170; c=relaxed/simple;
+	bh=kkD64j1Ze9TLb9mL9k7K+jgJKoeDRZli3oOug/OCQAQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W6E7g0oMMKxhltDMCqrLVw4YrNd7wbf204qh8eXHFZX5y7RQiQS3P4D9TYNZNcyAWBjYJyG5QuxPL9p97vEeomB6RJYaPfRLw6334rB8HdNrZnTuF8cRTuTzJd3mB0Qm/Tdxjzji0p54vINRuTWllcJFqA0nYObet/igXUyi6ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l0HkJ081; arc=none smtp.client-ip=209.85.221.54
+	 Content-Type:Content-Disposition:In-Reply-To; b=AzkeVG0Bhm7lg8tZyK8jxfF4y4sTvWd/zLvB1/DN/aiGvBc6P2r/GXMq8I5FFKTxjbjQyPHxjuTbafKXzB/0kDNt540ADzRf0nqrzVDvcQB5+duh45BYOgXlEvSWbXpSKvVZFoxk/PWgk7jUXrRZIb26aOb6S7i9WsQqk5z0iK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QIz4qWhW; arc=none smtp.client-ip=74.125.224.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l0HkJ081"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-436317c80f7so2628701f8f.1
-        for <linux-security-module@vger.kernel.org>; Sat, 21 Feb 2026 05:19:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QIz4qWhW"
+Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-64a28af2f4cso4030861d50.1
+        for <linux-security-module@vger.kernel.org>; Sat, 21 Feb 2026 05:22:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771679996; x=1772284796; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1771680168; x=1772284968; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=AYPDwJD6U6knslsVaPs+nIxh4MMHD5DI34InEK2BjNQ=;
-        b=l0HkJ081SThccIRiI795GA3UAsDhdu/3xHJZ7iNj+GE/7ViTkb+BYbQUBCoMAkBf87
-         ask173xh0wTfijiO0WU/GnF+WPPpAQyTdyoezUEiQFBH6QpGo/GMBCmx3aJFNtLdIkaP
-         RxzF8p6L/blfD0cir7UelTE8NGYzxh1yxNLxsvDrHoHGMPkV/8g14mAOetc0D9u5uFYo
-         hWNdyJmTpvZRzgkFBOjABTPylzL8g9YB5iDkEZFvvRnoYQOQpZzogo4Y1imAB9ieC7xs
-         YWvJOyh/avjKjXnK4r8EsgNEWFmhj2KPv6eWtar5PyW4Ks9AEizURWQwE+RgvB0tMHOp
-         RNFg==
+        bh=JBYOI2hLxGyTLDTkFkEs+Byq38GU994GDh4zrO+b5no=;
+        b=QIz4qWhWfmROriPaHjVPQRmQi6DNK1kb9V50ctfID3j7wEurvcWUPj/hdd3b+XKLF4
+         h+PRUfGBccuQjBD0eUGelFBIQxg9eWecElmaa4sEwbtFxZktTx0+4a8yxuw+gMbmEOxd
+         /mHRF4ws9pHaDd7u61tJl9YQHerCDPeIgpWDYGdo3HCehsbjnCt5wf+ebcaNSOK7IDwH
+         WlKL6n0QsjOB4gUZayUj8Cgm7Ny7FQnD3a4kN8p+6MuKoQf/Nd+HWRTU3vzt49LPAa15
+         i/mVW/i75Kh3kIdFqikpllZOOhbJF9QMWh1eeNRHgag7Y3HGFR03hgTLFiHKuOwDUCgC
+         SwfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771679996; x=1772284796;
+        d=1e100.net; s=20230601; t=1771680168; x=1772284968;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AYPDwJD6U6knslsVaPs+nIxh4MMHD5DI34InEK2BjNQ=;
-        b=peQR/raujeleo22G6EZZzYyWM2bK63Yy7KvJNrS5cpC7kmr7A5Z3i5VGNP3Hcbi0YP
-         yJC0pyDM9j8B4NOY3VOxeh9jKaeJZoALeHpGGGnvPu+P0Kqr7SD68ZFF7P+NbCQjJS3K
-         fjjcYZ8Xyk0oG6M3LahbYCnP2ZBAuvTlQRtV2ul/hCbaCPFSZhOGr6Nbqf3Ip27ht324
-         K63vAH9MguDmI+P/spWNpg7qO/xeov8allq4wnSIop4SMJkzza4CauYdKxlcC8g4HEiO
-         LZyVxK8eyh8lMGLKrLSd3YYpCh0U8Y7eNeeDrRIbXSpHBjD00kIS7l6dTGfTsn+7GY14
-         7aag==
-X-Forwarded-Encrypted: i=1; AJvYcCUHChgwNCfRZcZSUW9ZmeNN4TeusjAeN7JKXj9Vs7i/334nGcALiSlWutBsw0W+Wonxe4kRvX/Kez/gbi7WCgHX/f8lVbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxyw4DnYrEcpKRRrsc2dtgDUyksx5wweanfR3w4fgntejooeSKx
-	6vNXntt52cDgCKL4VnldfY0Xu/c/ju5ksMF3EhNCd7ZMJzMeu8npwvZc
-X-Gm-Gg: AZuq6aIEWUHQz3z/19Kdl68yUfmkVsh9FzbKXN5OUg2sUPKpuPhzc1as28JiF613cJV
-	SGVIBYJgj0b2ZDJEThOxyVSfbfS1z6R+N8RMqf8xHa+fIFSDwDlQZ3MSMYHYxoljuvMIKGEhRZn
-	VD+iZN4b2n7FHFavdl+DXbBO3euM3hEctnGoEe+cmWpoUVMwl9/aPgKkh0nqIjSqPXX6uP+c8Jh
-	VpWKHQ2/dSdr6z1HPU06QeAPgRTlRgnrMau3HqwsHuQTwh+/rSmYTUBGqTemAyhBoclMZRVlt6E
-	yArSUpIOsPIJFiItuXmLUdFKGnXJSptUTK2bU0D59sSZ0lsG0mQ0Y7mQxCrW04ZPCS0gOwBbnMD
-	RzgMl2zuiFAn+Zh2hRaC2Q2mrgz9LuV0Ak6gZ2MscKXlHmM1ZJO0izwyQpnXKHwrZk1SLsDf3H4
-	ssJgmBDzWH4YwgVC1HQXy1B0zDp4mjRDI62Cc5mMN/P+6tJHIp
-X-Received: by 2002:a5d:4e10:0:b0:435:96a1:ee4d with SMTP id ffacd0b85a97d-4396ffc46a8mr4284128f8f.14.1771679995824;
-        Sat, 21 Feb 2026 05:19:55 -0800 (PST)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43970d5463dsm5204302f8f.34.2026.02.21.05.19.55
+        bh=JBYOI2hLxGyTLDTkFkEs+Byq38GU994GDh4zrO+b5no=;
+        b=CWdo+9rx82hvc6FY3tz6zH+Xiz5PEgsOwcUxAWLsb8Pf1c04lOIwH6UiQHYpWhi0HG
+         pt/qyiACj+DyrPHFhNsvmY+8QAk1kfM8RU90Bfn7x0nk/SVWpRZDD10PJkhM66UIj8DK
+         mo7tFqdnWHaHgyYyh6P3lzgW4f5eecbRi9Qjd3Q9HHbr9fCi/iO+x75UN9T8wHIx1MiC
+         FhELjNGRcMC+uU8vs+mITsBpXJMUpVlkkNOsMFsSIbvYezJ40oKSlqChLmTcRQj9OGTc
+         D78TbLar0+JJDqAiMaTnbOhA47JbQEcEqV7cy0uUevgLAQENum9au9zU3URuIroV8CBh
+         Lc5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCULnAUPYtNiFlktIY4/ypBMVcHagobUe6ojGGOsqMX3erhiWRznWbdKkE1zVnwKk++lH9FUhC6wZVapw0rx87GYgtVMk6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG9RrO9bJbpG5VnnNDbZY0buQ2VuU8ZwcdE1v0DTUDbYY/dmEu
+	WfCO3DQXHHkgiMQx4H+ozruw9/p49c1mz/wGfQkiSUWod3e0Q8OdhZOf
+X-Gm-Gg: AZuq6aJT1dpHCn3WG+2ClZ9vNL2J/yBmeyq2isOz2ZQydmehHSYVMCSMU9IKFndgOYR
+	wud34tYl83vB0gW7t85egXdxZXYwClfD21MS9dLsBEUNxDe15xFvzdn6D69bdgAAHBzFp5DeuHL
+	bZE3832N0GM7RqENpWRWSPFb1j3Y/VPBCsiIFZENCWljQLzBXHUHYAwGuX8YRBzfZc827rZAnhR
+	ZztSFnUNHZ2+kIqBnna42IR2pjbM8ujtGnr5pqAN2nTlNj5IJaQUbSlIR2cskGxmERN1BKVYniE
+	mW3vUiHrekdzuPIzmNSnshTdega1Kd5N3Qu++zSiOq74g2t7S/dX/1cxhlwrjVxokEkBmzf2Xie
+	NHuo0CNlQF2aVqPkV5/M4TVang1/Hi2HUL/+xHGoHP5qN0fjNmJxP/lmwOu97DaKbHAl/P0BPRe
+	4LBtvlmC8OkSgo2ITDYqaGnrY0Q3reug==
+X-Received: by 2002:a05:690e:b8d:b0:644:59ed:dba3 with SMTP id 956f58d0204a3-64c64191808mr6545217d50.30.1771680168233;
+        Sat, 21 Feb 2026 05:22:48 -0800 (PST)
+Received: from suesslenovo ([129.222.254.139])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-64c7a279421sm999192d50.6.2026.02.21.05.22.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Feb 2026 05:19:55 -0800 (PST)
-Date: Sat, 21 Feb 2026 14:19:53 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: Ding Yihan <dingyihan@uniontech.com>
-Cc: syzbot <syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	linux-security-module@vger.kernel.org, Jann Horn <jannh@google.com>
-Subject: Re: [syzbot] [kernel?] INFO: task hung in
- restrict_one_thread_callback
-Message-ID: <20260221.3ff0e30e4010@gnoack.org>
-References: <69995a88.050a0220.340abe.0d25.GAE@google.com>
- <00A9E53EDC82309F+7b1dfc69-95f8-4ffc-a67c-967de0e2dfee@uniontech.com>
- <20260221.5d8a306bcaf1@gnoack.org>
+        Sat, 21 Feb 2026 05:22:47 -0800 (PST)
+Date: Sat, 21 Feb 2026 08:22:46 -0500
+From: Justin Suess <utilityemal77@gmail.com>
+To: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+Cc: brauner@kernel.org, demiobenour@gmail.com, fahimitahera@gmail.com,
+	hi@alyssa.is, horms@kernel.org, ivanov.mikhail1@huawei-partners.com,
+	jannh@google.com, jmorris@namei.org, john.johansen@canonical.com,
+	konstantin.meskhidze@huawei.com,
+	linux-security-module@vger.kernel.org, m@maowtm.org,
+	matthieu@buffet.re, mic@digikod.net, netdev@vger.kernel.org,
+	paul@paul-moore.com, samasth.norway.ananda@oracle.com,
+	serge@hallyn.com, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v6] lsm: Add LSM hook security_unix_find
+Message-ID: <aZmxpoy1oxSl5yGq@suesslenovo>
+References: <aZcPd3OKqxwCZV-5@suesslenovo>
+ <20260219200459.1474232-1-utilityemal77@gmail.com>
+ <20260220.70d0460d1309@gnoack.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -79,101 +83,45 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260221.5d8a306bcaf1@gnoack.org>
+In-Reply-To: <20260220.70d0460d1309@gnoack.org>
 
-On Sat, Feb 21, 2026 at 01:00:03PM +0100, Günther Noack wrote:
-> (Very) tentative investigation:
+On Fri, Feb 20, 2026 at 04:49:34PM +0100, Günther Noack wrote:
+> Hello!
 > 
-> In the Syzkaller report [2], it seems that the reproducer [2.1] is
-> creating two rulesets and then enforcing them in parallel, a scenario
-> which we are exercising in the TEST(competing_enablement) in
-> tools/testing/selftests/landlock/tsync_test.c already, but which has
-> not failed in my own selftest runs.
+> On Thu, Feb 19, 2026 at 03:04:59PM -0500, Justin Suess wrote:
+> > diff --git a/security/security.c b/security/security.c
+> > index 67af9228c4e9..c73196b8db4b 100644
+> > --- a/security/security.c
+> > +++ b/security/security.c
+> > @@ -4731,6 +4731,26 @@ int security_mptcp_add_subflow(struct sock *sk, struct sock *ssk)
+> >  
+> >  #endif	/* CONFIG_SECURITY_NETWORK */
+> >  
+> > +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
+> > +/**
+> > + * security_unix_find() - Check if a named AF_UNIX socket can connect
+> > + * @path: path of the socket being connected to
+> > + * @other: peer sock
+> > + * @flags: flags associated with the socket
+> > + *
+> > + * This hook is called to check permissions before connecting to a named
+> > + * AF_UNIX socket.
 > 
-> In the crash report, there are four threads in total:
+> Nit: Could we please insert a sentence about locking here?
 > 
-> * Two are stuck in the line
->   wait_for_completion(&ctx->ready_to_commit);
->   in the per-thread task work (line 128 [4.1])
-> * Two are stuck in the line
->   wait_for_completion(&shared_ctx.all_prepared)
->   in the calling thread's coordination logic (line 539 [4.2])
+> Something like:
 > 
-> In line 539, we are already on the code path where we detected that we
-> are getting interrupted by another thread and where we are attempting
-> to deal with the scenario where two landlock_restrict_self() calls
-> compete.  This is detected on line 523 when
-> wait_for_completion_interruptible() is true.  The approach to handle
-> this is to set the overall -ERESTARTNOINTR error and cancel the work
-> that has been ongoing so far, by canceling the task works that did not
-> start running yet and waiting for the ones that did start running
-> (that is the step where we are blocked!).  The reasoning there was
-> that these task works will all hit the "all_prepared" stage now, but
-> as we can see in the stack trace, the task works that are actively
-> running are already on line 128 and have passed the "all_prepared"
-> stage).
+>   The caller holds no locks on @other.
 > 
-> Differences I can see between syzkaller and our own test:
+> (Originally brought up by Mickaël in
+> https://lore.kernel.org/all/20260217.lievaS8eeng8@digikod.net/)
 > 
-> * The reproducer also calls openat() and then twice socketpair().
->   These syscalls should be unrelated, but it's possible that the
->   "async" invocation of socketpair() contributes to adding more
->   threads. (Assuming that "async" means "in new thread" in syzkaller)
-> * Syzkaller gives it more attempts. ([2.2])
-> 
-> I do not understand yet what went wrong in our scheme and need to look
-> deeper.
+> Thanks,
+> –Günther
+Sounds good. Would a "Link:" to the mentioned thread be appropriate in the commit
+message?
 
-OK, I think I understand now.  Our existing recovery code for this
-conflict is this:
+I feel like the reasoning for this is subtle but important for hook
+consumers.
 
-/*
- * Decrement num_preparing for current, to undo that we initialized it
- * to 1 a few lines above.
- */
-if (atomic_dec_return(&shared_ctx.num_preparing) > 0) {
-	if (wait_for_completion_interruptible(
-		    &shared_ctx.all_prepared)) {
-		/* In case of interruption, we need to retry the system call. */
-		atomic_set(&shared_ctx.preparation_error,
-			   -ERESTARTNOINTR);
-
-		/*
-		 * Cancel task works for tasks that did not start running yet,
-		 * and decrement all_prepared and num_unfinished accordingly.
-		 */
-		cancel_tsync_works(&works, &shared_ctx);
-
-		/*
-		 * The remaining task works have started running, so waiting for
-		 * their completion will finish.
-		 */
-		wait_for_completion(&shared_ctx.all_prepared);
-	}
-}
-
-When I wrote this, I assumed, as the last comment states, that the
-task works which we could not cancel, are already running.
-
-I was wrong there, because I had misunderstood task_work_run().  When
-the task works get run there, it first *atomically dequeues the entire
-queue of scheduled task works*, and then runs them sequentially.
-
-That is why, if we have one task work that belongs to the first
-landlock_restrict_self() call and one which belongs to the other, the
-task work which is scheduled later can (a) not be dequeued with
-cancel_tsync_works() any more, and (b) also has not started running
-yet.
-
-Now the only thing that is necessary to produce the deadlock is that
-we have a pair of threads where the task works for the restriction
-calls have been scheduled in different order.  When the two
-landlock_restrict_self() calls end up in the recovery path quoted
-above, they will wait for one of their task works to run which is
-blocked from running by another task work that is scheduled before and
-does not finish either.
-
-(Just pasting a brain dump here to save you some time hunting for the
-root cause. I don't know the best solution yet either.)
-
-–Günther
+Justin
