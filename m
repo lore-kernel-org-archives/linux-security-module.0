@@ -1,350 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E14A1EA7F4;
-	Sat, 21 Feb 2026 21:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC72D3D76;
+	Sat, 21 Feb 2026 22:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771709923; cv=none; b=FzIFG6chbEw1B36TMZMorLGRY4L9gz0XFzyS2ffDjcLHKkO/9Nvl35Or7keNqBdgvq7h6X7f/ESrq5XZ4R7SeX3hk0BwJaMA8nyaH9tuSQT6RRiPnrPWFL2oJ4bcq6/06HfKgvrXS3Xbly9FozmOmP3CRR7Rd3uZ8vGf5Py1j+Q=
+	t=1771711519; cv=none; b=KFhiI28VL3s7C5CMBMb7gxnV06E2w//u40N6VAI0PdIw8HjK7/CXtprWg2ZQAEuKpyqedpZEOPQ9yxOKLdwA0OxVyj2Lsema3M4GLecM/qWB7VgXlOpPVKCX7KBhqEOVwadxUTEEM0U/omRC2HBe9hRBAFMMLfNuRhT4P4rLOeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771709923; c=relaxed/simple;
-	bh=6f/BlOCaBHYHn12tHM4Bu5uqu60c5HeyFZykyfi11cE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n/xA0e5gnMlJW2RyAOeV5YEU4Rv+w5HMPhQARfoM6zKP9OnpCJ+8ve/5PV+VgvIvMFPD4uaWkDxfzsrqcjDz+aAqc8lZgkDCYvrG/+fgn46tOvxCLpzJsjufxYqp+YaExwV0OTYhTgOngaOosjh+XICu4bgilmFgX6CYa6V5tGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RpvIeLgC; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RpvIeLgC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F1BAC4CEF7;
-	Sat, 21 Feb 2026 21:38:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771709923;
-	bh=6f/BlOCaBHYHn12tHM4Bu5uqu60c5HeyFZykyfi11cE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RpvIeLgCkECuxu/6gXgTQN2VJvSNRxp9H8NYfUdN96cKwgGi5TbrmXVpqRCoCmv0U
-	 8OmVb/vAvTcOeCQNkRiA6vTqRcn92yFQi7lxqql889K9VGxhBd2S3Lrj2uruF0W3N1
-	 q3LW64Hu0Jzi9dPzsRlC27O5F+KqMpmiiRlL3h9J6chn3swUA+7qCqSMMa9Du9alRE
-	 n1uxljy0MYxcWwo+BPYiNoKWc70PEpCrYmTd15UI34v+JYgQMoWBOrCxOrEnrqaV3n
-	 FPWWMoa5bu7H3KoDUUcK3RIt06OjrYY/5chzuNfvAD15oxT3h127uPEAVN2/0On/Hr
-	 JnQUEuIrWpOoA==
-Date: Sat, 21 Feb 2026 22:38:29 +0100
-From: Nicolas Schier <nsc@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Aaron Tomlin <atomlin@atomlin.com>,
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
-	Xiu Jianfeng <xiujianfeng@huawei.com>,
-	Fabian =?iso-8859-1?Q?Gr=FCnbichler?= <f.gruenbichler@proxmox.com>,
-	Arnout Engelen <arnout@bzzt.net>,
-	Mattia Rizzolo <mattia@mapreri.org>, kpcyrd <kpcyrd@archlinux.org>,
-	Christian Heusel <christian@heusel.eu>,
-	=?iso-8859-1?Q?C=E2ju?= Mihai-Drosi <mcaju95@gmail.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v4 15/17] module: Introduce hash-based integrity checking
-Message-ID: <aZol1Rsa2tX-WNaZ@derry.ads.avm.de>
-References: <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
- <20260113-module-hashes-v4-15-0b932db9b56b@weissschuh.net>
+	s=arc-20240116; t=1771711519; c=relaxed/simple;
+	bh=p3udrPM5R8Ck6nPBvksu+g9CLXhrmSJHInoMvl7/xk0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jG6S6gW4EC3J/zoNic16F5A3IwCnsv+zHeW4CPVUQXoh2/w27vEFvw9SfGGZh+Q+dz8/I49J1BYQtwopeqFVidf3+eBj5tsQjUWcjqjGKEgGr18F+L+vRLsTVOvQXA/O7HC3QBZlMvzeZRymG+ngUtnar0yU01urzptjdyfO46c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=n0toose.net; spf=pass smtp.mailfrom=n0toose.net; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=n0toose.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=n0toose.net
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4fJLlH4WSGz9tWh;
+	Sat, 21 Feb 2026 23:05:15 +0100 (CET)
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of git@n0toose.net designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=git@n0toose.net
+From: "Panagiotis \"Ivory\" Vasilopoulos" <git@n0toose.net>
+Date: Sat, 21 Feb 2026 23:05:06 +0100
+Subject: [PATCH] landlock: Expand restrict flags example for ABI version 8
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260113-module-hashes-v4-15-0b932db9b56b@weissschuh.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260221-landlock-docs-add-tsync-example-v1-1-f89383809eb4@n0toose.net>
+X-B4-Tracking: v=1; b=H4sIABEsmmkC/x3NwQrCMAyA4VcZORvY6iziq4iHkGQarO1ohkzG3
+ t2y43f5/w1cq6nDrdug6tfcSm4YTh3wi/JT0aQZQh9iH8KAibKkwm+Uwo4kgov/MqOu9JmTol4
+ nuXAc6RwjtMpcdbL1ONwf+/4HOy5Pa3EAAAA=
+X-Change-ID: 20260221-landlock-docs-add-tsync-example-e8fd5c64a366
+To: =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+ =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>
+Cc: linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1771711511; l=1919;
+ i=git@n0toose.net; s=20260221; h=from:subject:message-id;
+ bh=p3udrPM5R8Ck6nPBvksu+g9CLXhrmSJHInoMvl7/xk0=;
+ b=S81kAbjaX2nYCmB+rfWfopKcWgKLpeSM90t9j+4t2IpbiebX7svx7+JBI1n40DfnoDVV7tbwG
+ XviYHAVHnHSBrAXpfjJTLZLApiBTHh3+rTPXMISNYG+USnZq4+OauNn
+X-Developer-Key: i=git@n0toose.net; a=ed25519;
+ pk=Tis+3ti1x0lr71vFYBVrYAzcO2UpGQijF0kXwupcsXE=
+X-Rspamd-Queue-Id: 4fJLlH4WSGz9tWh
 
-Hi Thomas,
+Add LANDLOCK_RESTRICT_SELF_TSYNC to the backwards compatibility example
+for restrict flags. This introduces completeness, similar to that of
+the ruleset attributes example.
 
-On Tue, Jan 13, 2026 at 01:28:59PM +0100, Thomas Weiﬂschuh wrote:
-> The current signature-based module integrity checking has some drawbacks
-> in combination with reproducible builds. Either the module signing key
-> is generated at build time, which makes the build unreproducible, or a
-> static signing key is used, which precludes rebuilds by third parties
-> and makes the whole build and packaging process much more complicated.
-> 
-> The goal is to reach bit-for-bit reproducibility. Excluding certain
-> parts of the build output from the reproducibility analysis would be
-> error-prone and force each downstream consumer to introduce new tooling.
-> 
-> Introduce a new mechanism to ensure only well-known modules are loaded
-> by embedding a merkle tree root of all modules built as part of the full
-> kernel build into vmlinux.
-> 
-> Non-builtin modules can be validated as before through signatures.
-> 
-> Normally the .ko module files depend on a fully built vmlinux to be
-> available for modpost validation and BTF generation. With
-> CONFIG_MODULE_HASHES, vmlinux now depends on the modules
-> to build a merkle tree. This introduces a dependency cycle which is
-> impossible to satisfy. Work around this by building the modules during
-> link-vmlinux.sh, after vmlinux is complete enough for modpost and BTF
-> but before the final module hashes are
-> 
-> The PKCS7 format which is used for regular module signatures can not
-> represent Merkle proofs, so a new kind of module signature is
-> introduced. As this signature type is only ever used for builtin
-> modules, no compatibility issues can arise.
-> 
-> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
-> ---
->  .gitignore                                   |   1 +
->  Documentation/kbuild/reproducible-builds.rst |   5 +-
->  Makefile                                     |   8 +-
->  include/asm-generic/vmlinux.lds.h            |  11 +
->  include/linux/module_hashes.h                |  25 ++
->  include/linux/module_signature.h             |   1 +
->  kernel/module/Kconfig                        |  21 +-
->  kernel/module/Makefile                       |   1 +
->  kernel/module/hashes.c                       |  92 ++++++
->  kernel/module/hashes_root.c                  |   6 +
->  kernel/module/internal.h                     |   1 +
->  kernel/module/main.c                         |   4 +-
->  scripts/.gitignore                           |   1 +
->  scripts/Makefile                             |   3 +
->  scripts/Makefile.modfinal                    |  11 +
->  scripts/Makefile.modinst                     |  13 +
->  scripts/Makefile.vmlinux                     |   5 +
->  scripts/link-vmlinux.sh                      |  14 +-
->  scripts/modules-merkle-tree.c                | 467 +++++++++++++++++++++++++++
->  security/lockdown/Kconfig                    |   2 +-
->  20 files changed, 685 insertions(+), 7 deletions(-)
-> 
-[...]
+Additionally, I modified the two comments of the example to make them
+more consistent with the ruleset attributes example's.
 
-> diff --git a/kernel/module/hashes_root.c b/kernel/module/hashes_root.c
-> new file mode 100644
-> index 000000000000..1abfcd3aa679
-> --- /dev/null
-> +++ b/kernel/module/hashes_root.c
-> @@ -0,0 +1,6 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +
-> +#include <linux/module_hashes.h>
-> +
-> +/* Blank dummy data. Will be overridden by link-vmlinux.sh */
-> +const struct module_hashes_root module_hashes_root __module_hashes_section = {};
-> diff --git a/kernel/module/internal.h b/kernel/module/internal.h
-> index e2d49122c2a1..e22837d3ac76 100644
-> --- a/kernel/module/internal.h
-> +++ b/kernel/module/internal.h
-> @@ -338,6 +338,7 @@ void module_mark_ro_after_init(const Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
->  			       const char *secstrings);
->  
->  int module_sig_check(struct load_info *info, const u8 *sig, size_t sig_len);
-> +int module_hash_check(struct load_info *info, const u8 *sig, size_t sig_len);
->  
->  #ifdef CONFIG_DEBUG_KMEMLEAK
->  void kmemleak_load_module(const struct module *mod, const struct load_info *info);
-> diff --git a/kernel/module/main.c b/kernel/module/main.c
-> index 2a28a0ece809..fa30b6387936 100644
-> --- a/kernel/module/main.c
-> +++ b/kernel/module/main.c
-> @@ -3362,8 +3362,10 @@ static int module_integrity_check(struct load_info *info, int flags)
->  
->  	if (IS_ENABLED(CONFIG_MODULE_SIG) && sig_type == PKEY_ID_PKCS7) {
->  		err = module_sig_check(info, sig, sig_len);
-> +	} else if (IS_ENABLED(CONFIG_MODULE_HASHES) && sig_type == PKEY_ID_MERKLE) {
-> +		err = module_hash_check(info, sig, sig_len);
->  	} else {
-> -		pr_err("module: not signed with expected PKCS#7 message\n");
-> +		pr_err("module: not signed with signature mechanism\n");
->  		err = -ENOPKG;
+Signed-off-by: Panagiotis 'Ivory' Vasilopoulos <git@n0toose.net>
+---
+ Documentation/userspace-api/landlock.rst | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-To prevent others from running into the same issue:
+diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+index 13134bccdd39d78ddce3daf454f32dda162ce91b..d972af20791a722d4665bd2ac287b05c5e97248c 100644
+--- a/Documentation/userspace-api/landlock.rst
++++ b/Documentation/userspace-api/landlock.rst
+@@ -197,12 +197,18 @@ similar backwards compatibility check is needed for the restrict flags
+ 
+ .. code-block:: c
+ 
+-    __u32 restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON;
+-    if (abi < 7) {
+-        /* Clear logging flags unsupported before ABI 7. */
++    __u32 restrict_flags =
++        LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON |
++        LANDLOCK_RESTRICT_SELF_TSYNC;
++    switch (abi) {
++    case 1 ... 6:
++        /* Clear logging flags unsupported for ABI < 7 */
+         restrict_flags &= ~(LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF |
+                             LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON |
+                             LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF);
++    case 7:
++        /* Removes multithread flag unsupported for ABI < 8 */
++    	restrict_flags &= ~LANDLOCK_RESTRICT_SELF_TSYNC;
+     }
+ 
+ The next step is to restrict the current thread from gaining more privileges
 
-My first test got stuck here, as I tested with virtme-ng, which symlinks
-modules from build tree to /lib/modules/$(uname -r)/..., resulting in
+---
+base-commit: ceb977bfe9e8715e6cd3a4785c7aab8ea5cd2b77
+change-id: 20260221-landlock-docs-add-tsync-example-e8fd5c64a366
 
-    [   15.956855] module: not signed with signature mechanism
-    modprobe: ERROR: could not insert 'efivarfs': Package not installed
-
-As the modules_install step was missing, modules were not being signed.
-
-
-[...]
-> diff --git a/scripts/modules-merkle-tree.c b/scripts/modules-merkle-tree.c
-> new file mode 100644
-> index 000000000000..a6ec0e21213b
-> --- /dev/null
-> +++ b/scripts/modules-merkle-tree.c
-> @@ -0,0 +1,467 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Compute hashes for modules files and build a merkle tree.
-> + *
-> + * Copyright (C) 2025 Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
-> + * Copyright (C) 2025 Thomas Weiﬂschuh <linux@weissschuh.net>
-> + *
-> + */
-> +#define _GNU_SOURCE 1
-> +#include <arpa/inet.h>
-> +#include <err.h>
-> +#include <unistd.h>
-> +#include <fcntl.h>
-> +#include <stdarg.h>
-> +#include <stdio.h>
-> +#include <string.h>
-> +#include <stdbool.h>
-> +#include <stdlib.h>
-> +
-> +#include <sys/stat.h>
-> +#include <sys/mman.h>
-> +
-> +#include <openssl/evp.h>
-> +#include <openssl/err.h>
-> +
-> +#include "ssl-common.h"
-> +
-> +static int hash_size;
-> +static EVP_MD_CTX *ctx;
-> +
-> +struct module_signature {
-> +	uint8_t		algo;		/* Public-key crypto algorithm [0] */
-> +	uint8_t		hash;		/* Digest algorithm [0] */
-> +	uint8_t		id_type;	/* Key identifier type [PKEY_ID_PKCS7] */
-> +	uint8_t		signer_len;	/* Length of signer's name [0] */
-> +	uint8_t		key_id_len;	/* Length of key identifier [0] */
-> +	uint8_t		__pad[3];
-> +	uint32_t	sig_len;	/* Length of signature data */
-> +};
-> +
-> +#define PKEY_ID_MERKLE 3
-> +
-> +static const char magic_number[] = "~Module signature appended~\n";
-
-This here will be the forth definition of struct module_signature,
-increasing the risk of unwanted diversion.  I second Petr's suggestion
-to reuse a _common_ definition instead.
-
-(Here, even include/linux/module_signature.h could be included itself.)
-
-> +
-> +struct file_entry {
-> +	char *name;
-> +	unsigned int pos;
-> +	unsigned char hash[EVP_MAX_MD_SIZE];
-> +};
-> +
-> +static struct file_entry *fh_list;
-> +static size_t num_files;
-> +
-> +struct leaf_hash {
-> +	unsigned char hash[EVP_MAX_MD_SIZE];
-> +};
-> +
-> +struct mtree {
-> +	struct leaf_hash **l;
-> +	unsigned int *entries;
-> +	unsigned int levels;
-> +};
-> +
-> +static inline void *xcalloc(size_t n, size_t size)
-> +{
-> +	void *p;
-> +
-> +	p = calloc(n, size);
-> +	if (!p)
-> +		errx(1, "Memory allocation failed");
-> +
-> +	return p;
-> +}
-> +
-> +static void *xmalloc(size_t size)
-> +{
-> +	void *p;
-> +
-> +	p = malloc(size);
-> +	if (!p)
-> +		errx(1, "Memory allocation failed");
-> +
-> +	return p;
-> +}
-> +
-> +static inline void *xreallocarray(void *oldp, size_t n, size_t size)
-> +{
-> +	void *p;
-> +
-> +	p = reallocarray(oldp, n, size);
-> +	if (!p)
-> +		errx(1, "Memory allocation failed");
-> +
-> +	return p;
-> +}
-> +
-> +static inline char *xasprintf(const char *fmt, ...)
-> +{
-> +	va_list ap;
-> +	char *strp;
-> +	int ret;
-> +
-> +	va_start(ap, fmt);
-> +	ret = vasprintf(&strp, fmt, ap);
-> +	va_end(ap);
-> +	if (ret == -1)
-> +		err(1, "Memory allocation failed");
-> +
-> +	return strp;
-> +}
-
-Please consider moving these x* functions into scripts/include/xalloc.h
-for reuse.  (I am sure someone else wrote this already, but I can't find
-it...)
-
-> 
-> 
-
-thanks for all your efforts for reproducibility!
-
-As I have no clue about that:  Is the patent for merkle trees [1] a
-problem when integrating that here?
-
-Can you verify if I get the mechanics roughly correct?
-
-  * Modules are merkle tree leaves.  Modules are built and logically
-    paired by the order from modules.order; a single left-over module is
-    paired with itself.
-
-  * Hashes of paired modules are hashed again (branch node hash);
-    hashes of pairs of branch nodes' hashes are hashed again;
-    repeat until we reach the single merkle tree root hash
-
-  * The final merkle tree root hash (and the count of tree levels) is
-    included in vmlinux
-
-
-'make && find . -name '*.ko' -exec rm {} \; && make' does not rebuild
-the in-tree modules.  Shifting the module-hashes support from
-scripts/link-vmlinux.sh to scripts/Makefile.vmlinux might (make it
-easier) to fix this again.
-
-Kind regards,
-Nicolas
-
-
-
-[1]: https://worldwide.espacenet.com/patent/search/family/022107098/publication/US4309569A?q=pn%3DUS4309569
-
-
+Best regards,
 -- 
-Nicolas
+Panagiotis "Ivory" Vasilopoulos <git@n0toose.net>
+
