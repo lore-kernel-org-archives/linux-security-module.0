@@ -1,278 +1,145 @@
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+Received: from flow-a3-smtp.messagingengine.com (flow-a3-smtp.messagingengine.com [103.168.172.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5A437881C;
-	Mon, 23 Feb 2026 21:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135B136BCFD;
+	Mon, 23 Feb 2026 22:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771883015; cv=none; b=E2nMgB4w8hch24c6olU98JA5Z7yiYIBxokDuOygNfT3Ka184xSOR8CsUheA3EfKW39c7i2J8GzAZPN6e0bY0K1VAC8Ovl5g+vOsX+zs0TVQGVc1HDzpbndreX6BhQ9H+s7iivWqO7cVQeHh3nIaOLaTVS99oGdJGIjvfdp3l0mI=
+	t=1771884282; cv=none; b=PFNxKgmcarWkf0zqVFJqnDCQd8DBpzccSsvgDOJjTLbb5Q/7o6osOX2M1xkCfNlBk62bAiSPE/JctfX/xduSssh+lke5fHo0cT0Ls60bocVs4qceZf4fxddZtyjp5UQtnxtoQi3Z7Gqiomi/g7A8cYGFl/p/zik9t9tyXp0YgOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771883015; c=relaxed/simple;
-	bh=f/RGyyEjxiTV1HAvGsXVhUhx0QauEA+D4aTLJ9rlFUY=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eRrsUiW8FOeSFiwNooKAceXfJyKZ3mfpxO97Xf3Dba1qZ7m6LHmB64kFfnfOTQH+HX0R54taKipg7aBaaGi8Jn9gMmX+d77Wd32inYY9ZBn3yq/1elk0desqj/JfJLRQqkPU+E6p/RUS4q7kgE/jZ5YNLpLY9X6SHsT6arrcNNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=DtNafl26; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+	s=arc-20240116; t=1771884282; c=relaxed/simple;
+	bh=b8ebazC08m5tcyqPoSGgh7JjSJ9g1Sz97a83jABjm2g=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=cXpEl0TDc4IMleNFkGw89iZW3YT3VX5E1v3uqxZ1UAjUYOjs+GSqqd4vUZ92nNHHohY0CYXRoo5LLQ213guMYYF+ncKUizu3binolqjNPazIniF5kcvyma+3YeiMdkiLZTZ7N6yWINlu+Ry6W1ugk8+YMlvGrJrsT0b505LMS3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=Ws9UlC4r; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gSfvEOQL; arc=none smtp.client-ip=103.168.172.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="DtNafl26"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1771883011;
-	bh=f/RGyyEjxiTV1HAvGsXVhUhx0QauEA+D4aTLJ9rlFUY=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=DtNafl26QWwqrEhxfMVJt7qi0VOQ+517xajhYFHcF+PGQBS3hyDAm0AZBdaYhEIV0
-	 BPTveOVyjJh7AzZ2ede0B0Zo9hAemmvCqhanqT/ftLkbYfKvroulfGOCMEty+YjZ/s
-	 N4rhaBsvNOn/4HeDhUervVSBgCJam9Inr6UpFbdI=
-Date: Mon, 23 Feb 2026 22:43:30 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Nicolas Schier <nsc@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Daniel Gomez <da.gomez@samsung.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, Daniel Gomez <da.gomez@kernel.org>, 
-	Aaron Tomlin <atomlin@atomlin.com>, "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Xiu Jianfeng <xiujianfeng@huawei.com>, 
-	Fabian =?utf-8?Q?Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>, Arnout Engelen <arnout@bzzt.net>, 
-	Mattia Rizzolo <mattia@mapreri.org>, kpcyrd <kpcyrd@archlinux.org>, 
-	Christian Heusel <christian@heusel.eu>, =?utf-8?B?Q8OianU=?= Mihai-Drosi <mcaju95@gmail.com>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v4 15/17] module: Introduce hash-based integrity checking
-Message-ID: <06054e9a-2b7a-4063-98b8-7d6c539e543f@t-8ch.de>
-References: <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
- <20260113-module-hashes-v4-15-0b932db9b56b@weissschuh.net>
- <aZol1Rsa2tX-WNaZ@derry.ads.avm.de>
- <0d70db8d-702b-46ec-a010-298fe6515aab@t-8ch.de>
- <aZyfcDCWOBJJztQ2@levanger>
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="Ws9UlC4r";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gSfvEOQL"
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailflow.phl.internal (Postfix) with ESMTP id 321D11380B23;
+	Mon, 23 Feb 2026 17:04:40 -0500 (EST)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Mon, 23 Feb 2026 17:04:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
+	1771884280; x=1771891480; bh=irJDLVX2qQd7f5zlPhvRXNbNOW59zFnQ/W/
+	IgkKi5wQ=; b=Ws9UlC4rdriRa58ciza8b/c8892GSffjK4vkvwK954POlcz2OLd
+	VocxQMBMIDIuYSfHzGqq1u5KvY1ucluTa8LIMX0UGJUqfwEePKk83cHtYriVfunu
+	hDcEejJZw0ihKjkBsQifj50+BH2BTncg1WYH53Sa4hXmmgw+tvUfbL62iD5CIbLM
+	e+bGRRQxJxafgNPvlM52xGDBrGl3uBBnwTRlbpJdBEycTqioZhsoEJobcQeWg/8b
+	9+KNyq6UcQ/ckMD6PHGquMFUrOuo5l7JnPCdf4YKbzQ6Z1YWnnN0+AyDt/FQgf37
+	V3RHM7FhB4x1u7gi8ODZn1J8lxdpWQ2Dwbg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1771884280; x=
+	1771891480; bh=irJDLVX2qQd7f5zlPhvRXNbNOW59zFnQ/W/IgkKi5wQ=; b=g
+	SfvEOQLw03OJS55vANdkI8ZK0mDTjV4rbPiMQP5hk6tPdiUTcgzHORJVzlnh5yhW
+	MhpnHbAVh3lvmU1AOT+1Q4s4jALw3pvSXLsufb4tq8KacyUcoBx2R5WCgFxr4J+f
+	LIs8YnOBRBhlbxePazNlKj4WmdTLL89NDXcQFYuYEA2O7XioXR6xuqEkAMnk8hXM
+	+LEVTJAUGamZd6PHdG2P1yxTMEdJLbtMzbHLDNj0wOmIZ0WwBcw8jGxhAbpjVpgX
+	9Tp5bK3mSBrg4VKtftuNK4jj9oz8BdO7KI6/Yp/0Y+w2KEttE+RiTcBS9oEr1xXs
+	P/rN2/vGT8nSvuCIgPRIw==
+X-ME-Sender: <xms:9s6caajI56O9imISxyOkzDSC_MpwrChoCCPHEQJo0aQxIfr3tWOa6w>
+    <xme:9s6caXKOeQt2WKMFpfvQ0M6rtsLaOeE6RUgFu7T32IgxFtnf8nXYHcFqhYmtOvHR1
+    O2GGx91cKWKeMEZxzbbl1myQDCyLQiY8X13fNZTGLITpedG8w>
+X-ME-Received: <xmr:9s6cad5eHm4bz9KWixR0h9Yx4lOHceVBloWp1EP5PO2FzM3jijsihFMEheV0EkxjYQqbo-mPF6h1P8WQ8NOY6VIdP8n1_0ww6BJoDU_OgeVC>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvfeekfeelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepvdefpdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
+    hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhr
+    tghpthhtohepjhgrtghksehsuhhsvgdrtgii
+X-ME-Proxy: <xmx:9s6caclzLrgKfeDhlox16fw51GXG-3HrDff5GauOyjg85bKiL4YmNg>
+    <xmx:9s6caX6TGDCjSAAqAFbyiuqfkVrSrwQwMHwy5d8W07K53q3z5lNFXw>
+    <xmx:9s6caV_2kCQ1Lik20KddbFxgbSwKSj3rN2G2aUmuymGiRuDLfloUBA>
+    <xmx:9s6caXidElUn8Kg0ersqdtpRNxuaxlxy_QnaPAYc7wp0BUi5SC4-8Q>
+    <xmx:-M6caRagjaoVbqBcqtcqEGXNSfbjV9m04SvT9GVJMVNOcNe_crWGDOHL>
+Feedback-ID: i9d664b8f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 23 Feb 2026 17:04:32 -0500 (EST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aZyfcDCWOBJJztQ2@levanger>
+From: NeilBrown <neilb@ownmail.net>
+To: "Chris Mason" <clm@meta.com>
+Cc: "Christian Brauner" <brauner@kernel.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "David Howells" <dhowells@redhat.com>, "Jan Kara" <jack@suse.cz>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Miklos Szeredi" <miklos@szeredi.hu>, "Amir Goldstein" <amir73il@gmail.com>,
+ "John Johansen" <john.johansen@canonical.com>,
+ "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ "Stephen Smalley" <stephen.smalley.work@gmail.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org,
+ netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+ apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ selinux@vger.kernel.org
+Subject: Re: [PATCH v2 01/15] VFS: note error returns is documentation for
+ various lookup functions
+In-reply-to: <20260223135517.1229434-1-clm@meta.com>
+References: <20260223011210.3853517-1-neilb@ownmail.net>,
+ <20260223011210.3853517-2-neilb@ownmail.net>,
+ <20260223135517.1229434-1-clm@meta.com>
+Date: Tue, 24 Feb 2026 09:04:27 +1100
+Message-id: <177188426768.8396.6205782771317375008@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-On 2026-02-23 19:41:52+0100, Nicolas Schier wrote:
-> On Mon, Feb 23, 2026 at 08:53:29AM +0100, Thomas Weißschuh wrote:
-> > On 2026-02-21 22:38:29+0100, Nicolas Schier wrote:
-> > > On Tue, Jan 13, 2026 at 01:28:59PM +0100, Thomas Weißschuh wrote:
-> > > > The current signature-based module integrity checking has some drawbacks
-> > > > in combination with reproducible builds. Either the module signing key
-> > > > is generated at build time, which makes the build unreproducible, or a
-> > > > static signing key is used, which precludes rebuilds by third parties
-> > > > and makes the whole build and packaging process much more complicated.
-> > > > 
-> > > > The goal is to reach bit-for-bit reproducibility. Excluding certain
-> > > > parts of the build output from the reproducibility analysis would be
-> > > > error-prone and force each downstream consumer to introduce new tooling.
-> > > > 
-> > > > Introduce a new mechanism to ensure only well-known modules are loaded
-> > > > by embedding a merkle tree root of all modules built as part of the full
-> > > > kernel build into vmlinux.
-> > > > 
-> > > > Non-builtin modules can be validated as before through signatures.
-> > > > 
-> > > > Normally the .ko module files depend on a fully built vmlinux to be
-> > > > available for modpost validation and BTF generation. With
-> > > > CONFIG_MODULE_HASHES, vmlinux now depends on the modules
-> > > > to build a merkle tree. This introduces a dependency cycle which is
-> > > > impossible to satisfy. Work around this by building the modules during
-> > > > link-vmlinux.sh, after vmlinux is complete enough for modpost and BTF
-> > > > but before the final module hashes are
-> > > > 
-> > > > The PKCS7 format which is used for regular module signatures can not
-> > > > represent Merkle proofs, so a new kind of module signature is
-> > > > introduced. As this signature type is only ever used for builtin
-> > > > modules, no compatibility issues can arise.
-> > > > 
-> > > > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > > > ---
-> > > >  .gitignore                                   |   1 +
-> > > >  Documentation/kbuild/reproducible-builds.rst |   5 +-
-> > > >  Makefile                                     |   8 +-
-> > > >  include/asm-generic/vmlinux.lds.h            |  11 +
-> > > >  include/linux/module_hashes.h                |  25 ++
-> > > >  include/linux/module_signature.h             |   1 +
-> > > >  kernel/module/Kconfig                        |  21 +-
-> > > >  kernel/module/Makefile                       |   1 +
-> > > >  kernel/module/hashes.c                       |  92 ++++++
-> > > >  kernel/module/hashes_root.c                  |   6 +
-> > > >  kernel/module/internal.h                     |   1 +
-> > > >  kernel/module/main.c                         |   4 +-
-> > > >  scripts/.gitignore                           |   1 +
-> > > >  scripts/Makefile                             |   3 +
-> > > >  scripts/Makefile.modfinal                    |  11 +
-> > > >  scripts/Makefile.modinst                     |  13 +
-> > > >  scripts/Makefile.vmlinux                     |   5 +
-> > > >  scripts/link-vmlinux.sh                      |  14 +-
-> > > >  scripts/modules-merkle-tree.c                | 467 +++++++++++++++++++++++++++
-> > > >  security/lockdown/Kconfig                    |   2 +-
-> > > >  20 files changed, 685 insertions(+), 7 deletions(-)
-> > > > 
-> > > [...]
-> > > 
-> > > > diff --git a/kernel/module/hashes_root.c b/kernel/module/hashes_root.c
-> > > > new file mode 100644
-> > > > index 000000000000..1abfcd3aa679
-> > > > --- /dev/null
-> > > > +++ b/kernel/module/hashes_root.c
-> > > > @@ -0,0 +1,6 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > > > +
-> > > > +#include <linux/module_hashes.h>
-> > > > +
-> > > > +/* Blank dummy data. Will be overridden by link-vmlinux.sh */
-> > > > +const struct module_hashes_root module_hashes_root __module_hashes_section = {};
-> > > > diff --git a/kernel/module/internal.h b/kernel/module/internal.h
-> > > > index e2d49122c2a1..e22837d3ac76 100644
-> > > > --- a/kernel/module/internal.h
-> > > > +++ b/kernel/module/internal.h
-> > > > @@ -338,6 +338,7 @@ void module_mark_ro_after_init(const Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
-> > > >  			       const char *secstrings);
-> > > >  
-> > > >  int module_sig_check(struct load_info *info, const u8 *sig, size_t sig_len);
-> > > > +int module_hash_check(struct load_info *info, const u8 *sig, size_t sig_len);
-> > > >  
-> > > >  #ifdef CONFIG_DEBUG_KMEMLEAK
-> > > >  void kmemleak_load_module(const struct module *mod, const struct load_info *info);
-> > > > diff --git a/kernel/module/main.c b/kernel/module/main.c
-> > > > index 2a28a0ece809..fa30b6387936 100644
-> > > > --- a/kernel/module/main.c
-> > > > +++ b/kernel/module/main.c
-> > > > @@ -3362,8 +3362,10 @@ static int module_integrity_check(struct load_info *info, int flags)
-> > > >  
-> > > >  	if (IS_ENABLED(CONFIG_MODULE_SIG) && sig_type == PKEY_ID_PKCS7) {
-> > > >  		err = module_sig_check(info, sig, sig_len);
-> > > > +	} else if (IS_ENABLED(CONFIG_MODULE_HASHES) && sig_type == PKEY_ID_MERKLE) {
-> > > > +		err = module_hash_check(info, sig, sig_len);
-> > > >  	} else {
-> > > > -		pr_err("module: not signed with expected PKCS#7 message\n");
-> > > > +		pr_err("module: not signed with signature mechanism\n");
-> > > >  		err = -ENOPKG;
-> > > 
-> > > To prevent others from running into the same issue:
-> > > 
-> > > My first test got stuck here, as I tested with virtme-ng, which symlinks
-> > > modules from build tree to /lib/modules/$(uname -r)/..., resulting in
-> > > 
-> > >     [   15.956855] module: not signed with signature mechanism
-> > >     modprobe: ERROR: could not insert 'efivarfs': Package not installed
-> > > 
-> > > As the modules_install step was missing, modules were not being signed.
-> > 
-> > Currently the signing is deferred to installation time to keep in sync
-> > with regular module signing and to keep the logic simpler by not having
-> > to gracefully handle previously-signed files.
-> > But this could be changed.
-> 
-> I did not want to suggest changing the behaviour, that would make things
-> more complicated to prevent needless rebuilds.  I just wanted to mention
-> it here to prevent others from burning time.
+On Tue, 24 Feb 2026, Chris Mason wrote:
+> NeilBrown <neilb@ownmail.net> wrote:
+> > From: NeilBrown <neil@brown.name>
+> >=20
+> > Darrick recently noted that try_lookup_noperm() is documented as
+> > "Look up a dentry by name in the dcache, returning NULL if it does not
+> > currently exist." but it can in fact return an error.
+> >=20
+> > So update the documentation for that and related function.
+> >
+>=20
+> Hi everyone,
+>=20
+> I don't normally forward the typos, but since this is a documentation-y pat=
+ch:
 
-Understood.
+I'm certainly happy to receive them.  Thanks for these and the others
 
-> > > [...]
-> > > > diff --git a/scripts/modules-merkle-tree.c b/scripts/modules-merkle-tree.c
-> > > > new file mode 100644
-> > > > index 000000000000..a6ec0e21213b
-> > > > --- /dev/null
-> > > > +++ b/scripts/modules-merkle-tree.c
-> > > > @@ -0,0 +1,467 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > > > +/*
-> > > > + * Compute hashes for modules files and build a merkle tree.
-> > > > + *
-> > > > + * Copyright (C) 2025 Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
-> > > > + * Copyright (C) 2025 Thomas Weißschuh <linux@weissschuh.net>
-> > > > + *
-> > > > + */
-> > > > +#define _GNU_SOURCE 1
-> > > > +#include <arpa/inet.h>
-> > > > +#include <err.h>
-> > > > +#include <unistd.h>
-> > > > +#include <fcntl.h>
-> > > > +#include <stdarg.h>
-> > > > +#include <stdio.h>
-> > > > +#include <string.h>
-> > > > +#include <stdbool.h>
-> > > > +#include <stdlib.h>
-> > > > +
-> > > > +#include <sys/stat.h>
-> > > > +#include <sys/mman.h>
-> > > > +
-> > > > +#include <openssl/evp.h>
-> > > > +#include <openssl/err.h>
-> > > > +
-> > > > +#include "ssl-common.h"
-> > > > +
-> > > > +static int hash_size;
-> > > > +static EVP_MD_CTX *ctx;
-> > > > +
-> > > > +struct module_signature {
-> > > > +	uint8_t		algo;		/* Public-key crypto algorithm [0] */
-> > > > +	uint8_t		hash;		/* Digest algorithm [0] */
-> > > > +	uint8_t		id_type;	/* Key identifier type [PKEY_ID_PKCS7] */
-> > > > +	uint8_t		signer_len;	/* Length of signer's name [0] */
-> > > > +	uint8_t		key_id_len;	/* Length of key identifier [0] */
-> > > > +	uint8_t		__pad[3];
-> > > > +	uint32_t	sig_len;	/* Length of signature data */
-> > > > +};
-> > > > +
-> > > > +#define PKEY_ID_MERKLE 3
-> > > > +
-> > > > +static const char magic_number[] = "~Module signature appended~\n";
-> > > 
-> > > This here will be the forth definition of struct module_signature,
-> > > increasing the risk of unwanted diversion.  I second Petr's suggestion
-> > > to reuse a _common_ definition instead.
-> > 
-> > Ack.
-> > 
-> > > (Here, even include/linux/module_signature.h could be included itself.)
-> > 
-> > I'd like to avoid including internal headers from other components.
-> > We could move it to an UAPI header. Various other subsystems use those
-> > for not-really-UAPI but still ABI definitions.
-> 
-> Yeah, ack.
+I also found ....
+>=20
+> commit 0254b9b974f23889898562aa94f6428bf30eb6b5
+> Author: NeilBrown <neil@brown.name>
+>=20
+> VFS: note error returns is documentation for various lookup functions
+>                        ^^^^^ in?
+>=20
+> Darrick recently noted that try_lookup_noperm() is documented as
+> "Look up a dentry by name in the dcache, returning NULL if it does not
+> currently exist." but it can in fact return an error. So update the
+> documentation for that and related function.
+                                     ^^functions=20
 
-What exactly is the 'ack' for?
-* Avoiding to include internal headers?
-* Moving the definition to UAPI headers?
-
-(...)
-
-> > > Can you verify if I get the mechanics roughly correct?
-> > > 
-> > >   * Modules are merkle tree leaves.  Modules are built and logically
-> > >     paired by the order from modules.order; a single left-over module is
-> > >     paired with itself.
-> > > 
-> > >   * Hashes of paired modules are hashed again (branch node hash);
-> > >     hashes of pairs of branch nodes' hashes are hashed again;
-> > >     repeat until we reach the single merkle tree root hash
-> > > 
-> > >   * The final merkle tree root hash (and the count of tree levels) is
-> > >     included in vmlinux
-> > 
-> > The merkle tree code was written by Sebastian so he will have the best
-> > knowledge about it. But this is also my understanding.
-> 
-> I'd like to see some (rough) description in Documentation or in a commit
-> message at least, otherwise future me will have to ask that again.
-
-Ack in general. I'd prefer to document it in a source code comment,
-though. That feels like the best fit to me.
-
-
-Thomas
+Thanks,
+NeilBrown
