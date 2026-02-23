@@ -1,93 +1,153 @@
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+Received: from flow-a1-smtp.messagingengine.com (flow-a1-smtp.messagingengine.com [103.168.172.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B653A13959D
-	for <linux-security-module@vger.kernel.org>; Sun, 22 Feb 2026 21:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E1A26C385;
+	Mon, 23 Feb 2026 00:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771796486; cv=none; b=mylkSMQJNe4VsbKYo4XxDA0XI3D5w+Ea8Ml8vIJY70M1qMTY2Ae0S0jkz7rTjQPwaCjQ60rJekyhnSNnnrNHAJOeWUUiKfM4IYrmOYL2DbyX9u5Rsw82vqE3np1bLDwu9knoJkZX6VphmWZpLKm1AuxNSGf/YZVt58r3blwEgMg=
+	t=1771808319; cv=none; b=BMow0rEE18O2xLaVo/2twiNVtmYCY6jgeWfAmmpSg9SFD72bq1IxrTeQWCPhhoiZrti2ANihUWmyTEWl3+oY3g/9IwsVgXe/2SU3X93MnvNEARswgxxl9voL9g/DsRa+TfXfOalrJKy5gCG5w3A8ouz1nnkcJeRhBTYXmjZjVB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771796486; c=relaxed/simple;
-	bh=QsI4XWyfbNPl2TR7zuCFAW8X0hg37Pap+xh0XUV+nhM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ItvoYHBvb7cjXjvigOULHiGRw4YlAjvLFJ51ThCheYQyCsGmVGj9iyooYj2h7D93BhqsqdkSusQlnVqFYYUhyZFq+5NRYc18WiHyTc4M4bo5p26EJhvB6rr3qYyyZd1Py8qXZt1DsgkmZ4+AZpsPkoqh7AU16suxA9T27XXurZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oOMtkEVs; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1771808319; c=relaxed/simple;
+	bh=VnIDXUeiqvEUVdn8NpXa5Ku9jPLSZoxCCB4i6Y+z0Fw=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=JdlexesLDrcijc6c1s3Ptw8bjzzZ3vUIMfuYMDjMpwTg0Fyp8bucpZJp8N+sC2qp1WaJDpIDld1nfcJ+xguPThO4jzOLVawGGdfAME/wWP6U1jtAmhPaesU0NRdKdNfxqAyCdd+ROqHgUz+eax80be/sOAelqSsrneYHwZaWIT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=WS36JgZL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YemWHJ7X; arc=none smtp.client-ip=103.168.172.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oOMtkEVs"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1771796482;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ftjcldOq8ddwZ7u0CmQgCS1W91p4gLDwJoYZUDG8ITU=;
-	b=oOMtkEVs08Z2ME3ibo3IqIHxxpKZzP18QxoQbM/mfGYB2X2JFCb5eCEQD9Wx5sX11FKCvo
-	stD66XiktANh0AXmr2Y26SmJ/4hKK6XF7EWrOIcBjN74QbTVDbKGnqjvAI9Y4JfpWxgO56
-	yU6AUwQ18Ki5RLG2vcVfBrI0nOVRnWA=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] apparmor: Use sysfs_emit in param_get_{audit,mode}
-Date: Sun, 22 Feb 2026 22:40:38 +0100
-Message-ID: <20260222214038.287814-1-thorsten.blum@linux.dev>
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="WS36JgZL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YemWHJ7X"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailflow.phl.internal (Postfix) with ESMTP id D387C138079F;
+	Sun, 22 Feb 2026 19:58:36 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Sun, 22 Feb 2026 19:58:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
+	1771808316; x=1771815516; bh=DklJ7QaNzY60ouXBE3vQgD59/j0C7qR0HGo
+	OpNRhNRE=; b=WS36JgZLzCNCvf7u83w8D1akUAwRHAGGPZOPYLwmAZtetVSEavh
+	/M8aA+bnpsZY3MbOFx8Qk5u1xQW+1yTsGXfBEKmrLRLH7f44vPC5vuhAkwtLxWLd
+	ViECmvy6XA+2YpMaEIWyIBI00/zRX1X0+4fqINg0ILv+ZLW4BPPAy7gOBT63f8kk
+	vFUwZ33xzHDc9t+iBbt/IVLp9cYJ8hz3ux69CqjJD551O81BEB44sXpDf6fYZPRf
+	C7+/KaZHPsZYkb7buH6/xLG61Bf2DfMo+ZM0A8XMGSzpYGyxeI9qdEn3W/AHOfiM
+	XAoPgJ4BwUxA8xm5n0JfFaw+LIIdQaNST9g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1771808316; x=
+	1771815516; bh=DklJ7QaNzY60ouXBE3vQgD59/j0C7qR0HGoOpNRhNRE=; b=Y
+	emWHJ7X4KG9K7xx4srB5xchCIFGHRAKQswO67rUymDVKOY9IKyx0v+LnZXNSMER0
+	j7iNxVaXpR/KLl1G1b4CCsUmBbghyYjBCAveRRz+qghTzfKL1VA5Oov7I7Xop/7n
+	PweHe/k6XO1hS8xOnYMe2RcbZqorao//4m6zemr7Ik+mfLRaLt4Lajl0cdE6YKmS
+	IDyoDz7a18U5Pf6jijhrpmAELV8HbFiHqX4cAsx9o1qO3rQZanDLhrlK6d3feWO3
+	lGO7alOYhyqdifL71CIa6FJ/e+WROUJW827+jVrTjd1uGkmRT+Rx7QjtaC10uAXl
+	RQ/m74qWowKUroX3xz6jA==
+X-ME-Sender: <xms:OqabaQs3xGjeOu7AXcUNleF5_Y8iRBzijPW_ZaeUkYQqeg9Emhqolw>
+    <xme:OqabaZD4NPOosHvf41NHVUW3Z3awp9auUwVA_XupvQ5p3vVninFP4qmPAMXIiDS58
+    TLwJuL0gQcRPfbjhsZaAlRwRFZzUkQHJJl0Rtvser53x7FoRw>
+X-ME-Received: <xmr:OqababzRmffLRzqdvW2p80u8-uEnrmftH0zXIK9cBSm0y9V4lswgcCUqslNuPjtI5T84LYpY1RfNF9WhgYlJ6BbqKcNswQO5ogy4UiWsiGAy>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvfeehkeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtkeertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epvdfhgfehkeekiedtleefhefhkeevvdegfffhgfduffeiveelffehlefhfeehveetnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepvddupdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
+    hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhr
+    tghpthhtohepjhgrtghksehsuhhsvgdrtgii
+X-ME-Proxy: <xmx:OqabaYIojgLIp2j8qPFkfsns7llliXUf95aJkPdy-HRC_hWJtOfffw>
+    <xmx:O6abaS4c8DrJ0klm8azSCh0JAdPfi6zGgDwVJTJgUElF-nSPAf4FrA>
+    <xmx:O6abaXkjmLxkwBpheH-MiJTvcuS5e8O8wfGIHRHvVW80qHpe6ZgQXQ>
+    <xmx:O6abacIpejrj6FmGLnsy0_hswmNu0CibhEG46r9c4nUZCK0MVZXjhA>
+    <xmx:PKabaVUBny8QxSSIbfK1LvZkUX2fxVVzGlpN_ICcTX_0cB6WcVMy3PoG>
+Feedback-ID: i9d664b8f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 22 Feb 2026 19:58:29 -0500 (EST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+From: NeilBrown <neilb@ownmail.net>
+To: "Paul Moore" <paul@paul-moore.com>
+Cc: "Christian Brauner" <brauner@kernel.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "David Howells" <dhowells@redhat.com>, "Jan Kara" <jack@suse.cz>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Miklos Szeredi" <miklos@szeredi.hu>, "Amir Goldstein" <amir73il@gmail.com>,
+ "John Johansen" <john.johansen@canonical.com>,
+ "James Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ "Stephen Smalley" <stephen.smalley.work@gmail.com>,
+ linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH 05/13] selinux: Use simple_start_creating() /
+ simple_done_creating()
+In-reply-to:
+ <CAHC9VhTv+K44q7+5d17jS8h9fJY_JfQVUw5NPNvPzjkHDpqp=g@mail.gmail.com>
+References: <20260204050726.177283-1-neilb@ownmail.net>,
+ <20260204050726.177283-6-neilb@ownmail.net>,
+ <CAHC9VhThChVk1Dk+f-KANGj7Tu7zzHCiA==taeQ+=nQaH6a7sg@mail.gmail.com>,
+ <177171292163.8396.10671162503209732019@noble.neil.brown.name>,
+ <CAHC9VhTv+K44q7+5d17jS8h9fJY_JfQVUw5NPNvPzjkHDpqp=g@mail.gmail.com>
+Date: Mon, 23 Feb 2026 11:58:26 +1100
+Message-id: <177180830631.8396.10805264856218061422@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-Replace sprintf() with sysfs_emit() in param_get_audit() and
-param_get_mode(). sysfs_emit() is preferred for formatting sysfs output
-because it provides safer bounds checking.  Add terminating newlines as
-suggested by checkpatch.
+On Mon, 23 Feb 2026, Paul Moore wrote:
+> On Sat, Feb 21, 2026 at 5:28 PM NeilBrown <neilb@ownmail.net> wrote:
+> > On Sat, 21 Feb 2026, Paul Moore wrote:
+> > > On Wed, Feb 4, 2026 at 12:08 AM NeilBrown <neilb@ownmail.net> wrote:
+> > > >
+> > > > From: NeilBrown <neil@brown.name>
+> > > >
+> > > > Instead of explicitly locking the parent and performing a lookup in
+> > > > selinux, use simple_start_creating(), and then use
+> > > > simple_done_creating() to unlock.
+> > > >
+> > > > This extends the region that the directory is locked for, and also
+> > > > performs a lookup.
+> > > > The lock extension is of no real consequence.
+> > > > The lookup uses simple_lookup() and so always succeeds.  Thus when
+> > > > d_make_persistent() is called the dentry will already be hashed.
+> > > > d_make_persistent() handles this case.
+> > > >
+> > > > Signed-off-by: NeilBrown <neil@brown.name>
+> > > > ---
+> > > >  security/selinux/selinuxfs.c | 15 +++++++--------
+> > > >  1 file changed, 7 insertions(+), 8 deletions(-)
+> > >
+> > > Unless I'm missing something, there is no reason why I couldn't take
+> > > just this patch into the SELinux tree once the merge window closes,
+> > > yes?
+> >
+> > Yes - but ...
+> >
+> > Once this series lands (hopefully soon - I will resend after -rc1 is
+> > out) I have another batch which depends on the new start_creating etc
+> > API being used everywhere ...
+> 
+> Okay, thanks for letting me know.  I was curious about something like
+> that based on the cover letter, but the timing wasn't clear.
+> 
+> Acked-by: Paul Moore <paul@paul-moore.com>
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- security/apparmor/lsm.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Thank!
 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index a87cd60ed206..1250192f7b12 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -17,6 +17,7 @@
- #include <linux/ptrace.h>
- #include <linux/ctype.h>
- #include <linux/sysctl.h>
-+#include <linux/sysfs.h>
- #include <linux/audit.h>
- #include <linux/user_namespace.h>
- #include <linux/netfilter_ipv4.h>
-@@ -2081,7 +2082,7 @@ static int param_get_audit(char *buffer, const struct kernel_param *kp)
- 		return -EINVAL;
- 	if (apparmor_initialized && !aa_current_policy_view_capable(NULL))
- 		return -EPERM;
--	return sprintf(buffer, "%s", audit_mode_names[aa_g_audit]);
-+	return sysfs_emit(buffer, "%s\n", audit_mode_names[aa_g_audit]);
- }
- 
- static int param_set_audit(const char *val, const struct kernel_param *kp)
-@@ -2109,8 +2110,7 @@ static int param_get_mode(char *buffer, const struct kernel_param *kp)
- 		return -EINVAL;
- 	if (apparmor_initialized && !aa_current_policy_view_capable(NULL))
- 		return -EPERM;
--
--	return sprintf(buffer, "%s", aa_profile_mode_names[aa_g_profile_mode]);
-+	return sysfs_emit(buffer, "%s\n", aa_profile_mode_names[aa_g_profile_mode]);
- }
- 
- static int param_set_mode(const char *val, const struct kernel_param *kp)
--- 
-Thorsten Blum <thorsten.blum@linux.dev>
-GPG: 1D60 735E 8AEF 3BE4 73B6  9D84 7336 78FD 8DFE EAD4
-
+NeilBrown
