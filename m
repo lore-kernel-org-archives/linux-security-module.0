@@ -1,315 +1,303 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D362246BC5;
-	Mon, 23 Feb 2026 13:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771854018; cv=none; b=ZxJFDCn6jr9/+wYK0KNLWx7QKe/04fShi9/2i74F77WD7JWk7DznGMtbZypcUwwCH+HNl82HtgUwYWinbwcaWoPhRzDaFSg4n5IOOi3Zq+62tjCX6MvUNFHrZo2xAm6hcSA/72d8RY+UndXMzw5L36cCZKaQ7mmYVIhZGF08ZzU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771854018; c=relaxed/simple;
-	bh=iZ0XcCxmBBYH6KpAWY4sREAqUKNfN0e39tteAnfrA+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qwIDOZZk7FPSpUeQVv6RnSDsXxkVDkBi1nzHFS2bJDl+cISmUhfN9zDfYUZCVGbCCAZFW1jiXNYnjZvi7GjC560Gmpc/0nLPNqXzw8ckUbkCNTH3xUm8Cx2a/YZlZu2sz6j6NkqlM3vQdNcRzRYTiV0BhJTT2o73XYDiIcA254Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eJIXAFPq; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D4623C51D
+	for <linux-security-module@vger.kernel.org>; Mon, 23 Feb 2026 13:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771854156; cv=pass; b=UBGGahsvLPu0cLBGAC9LOu9g89CQjQSVW6pJ3YenyVi6ZVWRPfile0iiAWk1swOLllbkBMFCv+mb/gx5aSYnPJmSOF4rr5L0aPQ12DilvDFVLZtmHOyJ25dB1o0/kkTuoY5yldjCCVcIgA3X0va4iaYv28EGJW3+Z8274jWxQao=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771854156; c=relaxed/simple;
+	bh=3vshmxc5tGDcDwufTtgEK5XIRPq/zCoj7NLZuvL2OUM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dEW5ot0cO2bluG6UPVVu/keRdGhhqhp1HD3VvQVnZyCmxZKPBUVRsrB4uzYiY2L/gVtZjYNV8uUYAluHCAZU5TE8X+d9wGnzpayXDAyLX7Y0CRf/dIg7YPLJckfNZ8KmHRSklYhryk7i91VwrtPYQOJsEwE9xmZO5IHaWcBzcL0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CxwDdZG9; arc=pass smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eJIXAFPq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D912EC116C6;
-	Mon, 23 Feb 2026 13:40:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771854018;
-	bh=iZ0XcCxmBBYH6KpAWY4sREAqUKNfN0e39tteAnfrA+w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eJIXAFPqZn9O0pN4rWKorOweIL99L2YBIN377oG3v9wlSu+5Ud5UWz8fIOSv+rVRK
-	 jLOTfdGd1yIVxcfy/XYOG1kYgFLjo2o6aBt31uTbX6/N9+zmbbOF0LmNn8swVZf8MI
-	 Vk25e1cMBrl49+31G5xBBW49DXCjyWRSGs14pukGExk1C6IC9qmaksPrbf6HEfTNvp
-	 B4wkwjOkP1dD4/QdU0wkSRoRib6xxiTqwp9mJxaZT5HPNCiiPPjdrEsM8zQh+Rn55H
-	 3ixbwj41FXqbBcsg7R0RgqXCsunez2gpYjGhXHK0kZLNi3jcHo/DGLT2Ya15rfpQ+g
-	 1CNTLmFI+PwMw==
-Date: Mon, 23 Feb 2026 14:40:15 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: syzbot <syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org
-Cc: anna-maria@linutronix.de, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, tglx@kernel.org
-Subject: Re: [syzbot] [kernel?] INFO: task hung in
- restrict_one_thread_callback
-Message-ID: <aZxYv7MxxExj9fjM@localhost.localdomain>
-References: <69984159.050a0220.21cd75.01bb.GAE@google.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CxwDdZG9"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b904e1cd038so616524666b.1
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Feb 2026 05:42:33 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771854152; cv=none;
+        d=google.com; s=arc-20240605;
+        b=irLmawh5yJM5NR5w1XtXdLP4FESwlmTKeX4Acrq3C3D9GUBHNBtyTpQKuBCbZRZvZv
+         I6B8FVhhaN5Yav/kmk2WB3NOruW9q7qrUBcxMm+9axuuIXbdiIR5a7pQEqwumGYDo3q0
+         3UjXc1K5vXRRG7tXAJmBYz/0YHgXREwr5L1yvvnm12q1AzG46tkHJbWOD2RWqo989GIl
+         TxUhTB5mTp/A3J4SwalnrkUzAGB2VQi6RdiLuP3fQ93W8sU/2a3/NmfhW8/eJjcjV38H
+         FvWGVryNZAWEJX6UYOVZ6BTHVJxaesgYiT0MHJD4IwwZD5Mn3//JyrBVlJuUY89cz2bz
+         T8Zw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=RYqIR5a+IIRIL9B6CcCBN1lSzoy1pmPgI7+7PRVLxeU=;
+        fh=gfESTIqk0Nl2h749bIwz9sMk/t8X8nwLx2MDh0PDe28=;
+        b=i28CGWIg5GCVT4eUqC7vK8Jsi9nltAKPdzX7kXR5SPhApcd4vNip6f/DG0SyguSBfP
+         qHfFUq7i9siPQ9VNYl7BWeNsSaOK5fSRt6aaQNprDHVuN+QD5mN3WJMAmxiC4U0d3x0L
+         1yOiTqpNR4gzFXDOrNiqMh+zlvVE0TKWarzRFN/E4aYtrALRSqHN/ZtdIhJp7FVKkT1S
+         gAS4oJ7oii7tbHfawkOV8Hv6mhUBKRTj1UOX1KISPBWlHWhbjH6i5UWw+Si2YR3mPZ46
+         oYDKbQede7py+InNMD6zuMe7FnmyDlbWTNKqZLiolMxvE/fgN2nTOblfyzbLOXgggNYv
+         2zJg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1771854152; x=1772458952; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RYqIR5a+IIRIL9B6CcCBN1lSzoy1pmPgI7+7PRVLxeU=;
+        b=CxwDdZG99TeHt4hb/Q2hzUmmbmTVOYWOhNE6JJzF0mo5xDoqFbKL5ZYz5NmdRdVu9+
+         qPAj41/mjRug2h3KECWrNunHtWcQZlZS0qOJxJWFQ2QKiopt63u05CX62G1EfwckGNQN
+         CFbzH27gDeTt94JPBHpnrfo5DVhKhonYnavaQSih0rlU2Cq+RW6TVBHdCIPU4Bg3P5WG
+         BnNWYeexue9dLsQ3jxINWnDCOig18smScRk3UEFzEUV5rppYBoZK6Tj2ABsREUtZ39Uh
+         I/b3943DJwf7bQb3EUppdtXLMhJ3vHB5gA5WJIh27VJFfsQ2bw643y+aKnXEPZfX1PkM
+         wWfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771854152; x=1772458952;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=RYqIR5a+IIRIL9B6CcCBN1lSzoy1pmPgI7+7PRVLxeU=;
+        b=XkQYFJqXjpoc57d9ZgvsSUc09zBY47YePN0+LJDbgPvyuwYG9YjfklUJLxwdUoJ62m
+         jaCa8aBCUbUhekBwm2YExRKZ2efGs9LzmrAVW8sLpx/MNv8uNhO7YapfpKkebCeZVtG5
+         hS2DzgBk4WHXzkOVRX/zKDwgx/+apBB8Py1iVpmPJX50tKGqi0/Hvrj11P/iTx4OR4KW
+         qTvBor94WGmXAP4QNIqh5LJkK1jm2NsQZXpEzruNX0m5Yw9oq3o2QLwhpkZxw3TxiE7e
+         a0LJl9gq/tVfaEpi4If4ETcEKV/5mRKO22FZC+QLp26a8Wqs7ILjnWaIc93ubk/xTy5W
+         UICQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUpE5ER1ioxDYfLN9q/IVjnETlq40D8O3hYDWw+cDCY5xWahsmbKansogeWxEtTaeXMs2SXuVUPsOw6Dd79sQ+ys1fKRsU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSHnMyKyrhKyylZJPrzv1gg4N7woa/K1fi/OrFEzTBkk9EfjY9
+	dDxrQZEE5Hxx2xoTzC9a9H9A9opF541yJQx+Bx7CVilRkAbscYooiw9hqxJ3W0fSdxqWHfIKUyN
+	1byG7urfyjWqlNHktebrK7gyg4TXIk+A=
+X-Gm-Gg: AZuq6aLob+FD9QfyOROJGk9Etbob5SCgGB/lUMTzuGeHgHPx1Q3qZOsyfne5w4coLtj
+	Yt4HaUO1a2eKr/X+x1//NEi16LEpZeb3kN4Y0ZbgZ4BKK5jYKGcgDIZj+fXDG9Yi4vLKiqgGw+8
+	iSj/Y6vt/RDTTgwPJ8SCM3x+gg/mZmmXUuXJZuBB79IoBLD9a7f7tCKCkN3ItleUKE9FfMxPXoB
+	zWhQBsqFo1sTrUTcZZVitk/fxspcnAd+gldBDkHWwHnxHQ6apzm8ABRgP12PQksdsN1qApWWjik
+	6swY9CQhpOfcT7v0yIGE7FAdPXk0jQas0JZsgHG5YQ==
+X-Received: by 2002:a17:907:84b:b0:b90:bc06:2acc with SMTP id
+ a640c23a62f3a-b90bc063e40mr41246666b.5.1771854151460; Mon, 23 Feb 2026
+ 05:42:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <69984159.050a0220.21cd75.01bb.GAE@google.com>
+References: <20260223011210.3853517-1-neilb@ownmail.net> <20260223011210.3853517-10-neilb@ownmail.net>
+ <20260223132027.4165509-1-clm@meta.com>
+In-Reply-To: <20260223132027.4165509-1-clm@meta.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 23 Feb 2026 15:42:19 +0200
+X-Gm-Features: AaiRm52WUoDV9vuNNf_TRYKkff03CBHKSKX_6G_n5O_M7CVzPVA-lit5gSUxti8
+Message-ID: <CAOQ4uxirM8dW9rOw4SvGtfH-s0Eg9LGuFk1aZooMvEDc=2tbyA@mail.gmail.com>
+Subject: Re: [PATCH v2 09/15] ovl: Simplify ovl_lookup_real_one()
+To: Chris Mason <clm@meta.com>
+Cc: NeilBrown <neil@brown.name>, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>, 
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
+	Miklos Szeredi <miklos@szeredi.hu>, John Johansen <john.johansen@canonical.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le Fri, Feb 20, 2026 at 03:11:21AM -0800, syzbot a écrit :
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    635c467cc14e Add linux-next specific files for 20260213
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1452f6e6580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=61690c38d1398936
-> dashboard link: https://syzkaller.appspot.com/bug?extid=7ea2f5e9dfd468201817
-> compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16e41c02580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15813652580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/78b3d15ca8e6/disk-635c467c.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/a95f3d108ef4/vmlinux-635c467c.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/e58086838b24/bzImage-635c467c.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com
-> 
-> INFO: task syz.0.2812:14643 blocked for more than 143 seconds.
->       Not tainted syzkaller #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz.0.2812      state:D stack:25600 pid:14643 tgid:14643 ppid:13375  task_flags:0x400040 flags:0x00080002
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5295 [inline]
->  __schedule+0x1585/0x5340 kernel/sched/core.c:6907
->  __schedule_loop kernel/sched/core.c:6989 [inline]
->  schedule+0x164/0x360 kernel/sched/core.c:7004
->  schedule_timeout+0xc3/0x2c0 kernel/time/sleep_timeout.c:75
->  do_wait_for_common kernel/sched/completion.c:100 [inline]
->  __wait_for_common kernel/sched/completion.c:121 [inline]
->  wait_for_common kernel/sched/completion.c:132 [inline]
->  wait_for_completion+0x2cc/0x5e0 kernel/sched/completion.c:153
->  restrict_one_thread security/landlock/tsync.c:128 [inline]
->  restrict_one_thread_callback+0x320/0x570 security/landlock/tsync.c:162
+On Mon, Feb 23, 2026 at 2:20=E2=80=AFPM Chris Mason <clm@meta.com> wrote:
+>
+> NeilBrown <neilb@ownmail.net> wrote:
+> > From: NeilBrown <neil@brown.name>
+> >
+> > The primary purpose of this patch is to remove the locking from
+> > ovl_lookup_real_one() as part of centralising all locking of directorie=
+s
+> > for name operations.
+> >
+> > The locking here isn't needed.  By performing consistency tests after
+> > the lookup we can be sure that the result of the lookup was valid at
+> > least for a moment, which is all the original code promised.
+> >
+> > lookup_noperm_unlocked() is used for the lookup and it will take the
+> > lock if needed only where it is needed.
+> >
+> > Also:
+> >  - don't take a reference to real->d_parent.  The parent is
+> >    only use for a pointer comparison, and no reference is needed for
+> >    that.
+> >  - Several "if" statements have a "goto" followed by "else" - the
+> >    else isn't needed: the following statement can directly follow
+> >    the "if" as a new statement
+> >  - Use a consistent pattern of setting "err" before performing a test
+> >    and possibly going to "fail".
+> >  - remove the "out" label (now that we don't need to dput(parent) or
+> >    unlock) and simply return from fail:.
+>
+> Hi everyone,
+>
+> Amir asked me to run these through, and this commit was flagged.  I recen=
+tly
+> changed the prompts to include some vfs knowledge:
 
-Seems to be related to landlock security module.
-Cc'ing maintainers for awareness.
+Thanks Chris!
 
-Thanks.
+>
+> https://github.com/masoncl/review-prompts/blob/main/kernel/subsystem/vfs.=
+md
+>
+> And I also put in some words to make it prefer reporting problems that mi=
+ght
+> not be bugs, but that do violate some rule in the .md files.  This might
+> be a false positive from that new shift toward blindly trusting the guide=
+s,
+> but I'll let everyone here decide:
+>
+> commit d1bfcef048896cdc9e4c57e3249b6ad344d64c02
+> Author: NeilBrown <neil@brown.name>
+>
+> ovl: Simplify ovl_lookup_real_one()
+>
+> This patch removes locking from ovl_lookup_real_one() and reorganizes the
+> control flow. The function now uses lookup_noperm_unlocked() instead of
+> lookup_noperm() and performs consistency validation after the lookup rath=
+er
+> than holding a lock during the operation.
+>
+> > diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
+> > index 83f80fdb15674..b448fc9424b64 100644
+> > --- a/fs/overlayfs/export.c
+> > +++ b/fs/overlayfs/export.c
+> > @@ -349,69 +349,64 @@ static struct dentry *ovl_dentry_real_at(struct d=
+entry *dentry, int idx)
+> >       return NULL;
+> >  }
+> >
+> > -/*
+> > - * Lookup a child overlay dentry to get a connected overlay dentry who=
+se real
+> > - * dentry is @real. If @real is on upper layer, we lookup a child over=
+lay
+> > - * dentry with the same name as the real dentry. Otherwise, we need to=
+ consult
+> > - * index for lookup.
+> > +/**
+> > + * ovl_lookup_real_one -  Lookup a child overlay dentry to get an over=
+lay dentry whose real dentry is given
+> > + * @connected: parent overlay dentry
+> > + * @real: given child real dentry
+> > + * @layer: layer in which @real exists
+> > + *
+> > + *
+> > + * Lookup a child overlay dentry in @connected with the same name as t=
+he @real
+> > + * dentry.  Then check that the parent of the result is the real dentr=
+y for
+> > + * @connected, and @real is the real dentry for the result.
+> > + *
+> > + * Returns:
+> > + *   %-ECHILD if the parent of @real is no longer the real dentry for =
+@connected.
+> > + *   %-ESTALE if @real is no the real dentry of the found dentry.
+>                                        ^^
+> There's a typo here: "is no the" should be "is not the".
+>
+> > + *   Otherwise the found dentry is returned.
+> >   */
+> >  static struct dentry *ovl_lookup_real_one(struct dentry *connected,
+> >                                         struct dentry *real,
+> >                                         const struct ovl_layer *layer)
+> >  {
+> > -     struct inode *dir =3D d_inode(connected);
+> > -     struct dentry *this, *parent =3D NULL;
+> > +     struct dentry *this;
+> >       struct name_snapshot name;
+> >       int err;
+> >
+> >       /*
+> > -      * Lookup child overlay dentry by real name. The dir mutex protec=
+ts us
+> > -      * from racing with overlay rename. If the overlay dentry that is=
+ above
+> > -      * real has already been moved to a parent that is not under the
+> > -      * connected overlay dir, we return -ECHILD and restart the looku=
+p of
+> > -      * connected real path from the top.
+> > -      */
+> > -     inode_lock_nested(dir, I_MUTEX_PARENT);
+> > -     err =3D -ECHILD;
+> > -     parent =3D dget_parent(real);
+> > -     if (ovl_dentry_real_at(connected, layer->idx) !=3D parent)
+> > -             goto fail;
+> > -
+> > -     /*
+> > -      * We also need to take a snapshot of real dentry name to protect=
+ us
+> > +      * We need to take a snapshot of real dentry name to protect us
+> >        * from racing with underlying layer rename. In this case, we don=
+'t
+> >        * care about returning ESTALE, only from dereferencing a free na=
+me
+> >        * pointer because we hold no lock on the real dentry.
+> >        */
+> >       take_dentry_name_snapshot(&name, real);
+> > -     /*
+> > -      * No idmap handling here: it's an internal lookup.
+> > -      */
+> > -     this =3D lookup_noperm(&name.name, connected);
+> > +     this =3D lookup_noperm_unlocked(&name.name, connected);
+> >       release_dentry_name_snapshot(&name);
+> > +
+> > +     err =3D -ECHILD;
+> > +     if (ovl_dentry_real_at(connected, layer->idx) !=3D real->d_parent=
+)
+> > +             goto fail;
+> > +
+>
+> A subsystem pattern flags this as potentially concerning: the VFS subsyst=
+em
+> guide indicates that TOCTOU validation checking d_parent should also chec=
+k
+> d_unhashed() because a dentry can be unhashed (removed from dcache by
+> concurrent operations) while its d_parent pointer remains unchanged.
+>
+> The old code held inode_lock_nested(dir, I_MUTEX_PARENT) during the entir=
+e
+> lookup and validation, which serialized with operations that could unhash=
+ the
+> dentry. The new lockless pattern creates a window where:
+>
+> 1. lookup_noperm_unlocked() completes and returns dentry `this`
+> 2. A concurrent unlink/remove operation unhashes `this`
+> 3. The d_parent validation passes (parent pointer unchanged)
+> 4. The function returns an unhashed dentry
+>
+> Other overlayfs code uses the complete pattern. For example, in
+> ovl_lock_rename_workdir() at fs/overlayfs/util.c:
+>
+>     if (work->d_parent !=3D workdir || d_unhashed(work)) {
+>         ...
+>     }
+>
+> Could this validation miss a race where the dentry is unhashed but d_pare=
+nt
+> still matches? The subsequent checks (!this->d_inode for -ENOENT,
+> wrong real dentry for -ESTALE) might catch some cases, but is that
+> sufficient for all the scenarios where an unhashed dentry could cause
+> problems?
+>
 
->  task_work_run+0x1d9/0x270 kernel/task_work.c:233
->  get_signal+0x11eb/0x1330 kernel/signal.c:2807
->  arch_do_signal_or_restart+0xbc/0x830 arch/x86/kernel/signal.c:337
->  __exit_to_user_mode_loop kernel/entry/common.c:64 [inline]
->  exit_to_user_mode_loop+0x86/0x480 kernel/entry/common.c:98
->  __exit_to_user_mode_prepare include/linux/irq-entry-common.h:226 [inline]
->  syscall_exit_to_user_mode_prepare include/linux/irq-entry-common.h:256 [inline]
->  syscall_exit_to_user_mode include/linux/entry-common.h:325 [inline]
->  do_syscall_64+0x32d/0xf80 arch/x86/entry/syscall_64.c:100
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f8d7f19bf79
-> RSP: 002b:00007ffe0b192a38 EFLAGS: 00000246 ORIG_RAX: 00000000000000db
-> RAX: fffffffffffffdfc RBX: 00000000000389f1 RCX: 00007f8d7f19bf79
-> RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f8d7f41618c
-> RBP: 0000000000000032 R08: 3fffffffffffffff R09: 0000000000000000
-> R10: 00007ffe0b192b40 R11: 0000000000000246 R12: 00007ffe0b192b60
-> R13: 00007f8d7f41618c R14: 0000000000038a23 R15: 00007ffe0b192b40
->  </TASK>
-> INFO: task syz.0.2812:14644 blocked for more than 143 seconds.
->       Not tainted syzkaller #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz.0.2812      state:D stack:28216 pid:14644 tgid:14643 ppid:13375  task_flags:0x400040 flags:0x00080002
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5295 [inline]
->  __schedule+0x1585/0x5340 kernel/sched/core.c:6907
->  __schedule_loop kernel/sched/core.c:6989 [inline]
->  schedule+0x164/0x360 kernel/sched/core.c:7004
->  schedule_timeout+0xc3/0x2c0 kernel/time/sleep_timeout.c:75
->  do_wait_for_common kernel/sched/completion.c:100 [inline]
->  __wait_for_common kernel/sched/completion.c:121 [inline]
->  wait_for_common kernel/sched/completion.c:132 [inline]
->  wait_for_completion+0x2cc/0x5e0 kernel/sched/completion.c:153
->  restrict_one_thread security/landlock/tsync.c:128 [inline]
->  restrict_one_thread_callback+0x320/0x570 security/landlock/tsync.c:162
->  task_work_run+0x1d9/0x270 kernel/task_work.c:233
->  get_signal+0x11eb/0x1330 kernel/signal.c:2807
->  arch_do_signal_or_restart+0xbc/0x830 arch/x86/kernel/signal.c:337
->  __exit_to_user_mode_loop kernel/entry/common.c:64 [inline]
->  exit_to_user_mode_loop+0x86/0x480 kernel/entry/common.c:98
->  __exit_to_user_mode_prepare include/linux/irq-entry-common.h:226 [inline]
->  syscall_exit_to_user_mode_prepare include/linux/irq-entry-common.h:256 [inline]
->  syscall_exit_to_user_mode include/linux/entry-common.h:325 [inline]
->  do_syscall_64+0x32d/0xf80 arch/x86/entry/syscall_64.c:100
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f8d7f19bf79
-> RSP: 002b:00007f8d8007c0e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-> RAX: fffffffffffffe00 RBX: 00007f8d7f415fa8 RCX: 00007f8d7f19bf79
-> RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f8d7f415fa8
-> RBP: 00007f8d7f415fa0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007f8d7f416038 R14: 00007ffe0b1927f0 R15: 00007ffe0b1928d8
->  </TASK>
-> INFO: task syz.0.2812:14645 blocked for more than 143 seconds.
->       Not tainted syzkaller #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz.0.2812      state:D stack:28648 pid:14645 tgid:14643 ppid:13375  task_flags:0x400140 flags:0x00080006
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5295 [inline]
->  __schedule+0x1585/0x5340 kernel/sched/core.c:6907
->  __schedule_loop kernel/sched/core.c:6989 [inline]
->  schedule+0x164/0x360 kernel/sched/core.c:7004
->  schedule_timeout+0xc3/0x2c0 kernel/time/sleep_timeout.c:75
->  do_wait_for_common kernel/sched/completion.c:100 [inline]
->  __wait_for_common kernel/sched/completion.c:121 [inline]
->  wait_for_common kernel/sched/completion.c:132 [inline]
->  wait_for_completion+0x2cc/0x5e0 kernel/sched/completion.c:153
->  landlock_restrict_sibling_threads+0xe9c/0x11f0 security/landlock/tsync.c:539
->  __do_sys_landlock_restrict_self security/landlock/syscalls.c:574 [inline]
->  __se_sys_landlock_restrict_self+0x540/0x810 security/landlock/syscalls.c:482
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f8d7f19bf79
-> RSP: 002b:00007f8d8005b028 EFLAGS: 00000246 ORIG_RAX: 00000000000001be
-> RAX: ffffffffffffffda RBX: 00007f8d7f416090 RCX: 00007f8d7f19bf79
-> RDX: 0000000000000000 RSI: 000000000000000e RDI: 0000000000000003
-> RBP: 00007f8d7f2327e0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007f8d7f416128 R14: 00007f8d7f416090 R15: 00007ffe0b1928d8
->  </TASK>
-> INFO: task syz.0.2812:14646 blocked for more than 144 seconds.
->       Not tainted syzkaller #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz.0.2812      state:D stack:28832 pid:14646 tgid:14643 ppid:13375  task_flags:0x400140 flags:0x00080006
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5295 [inline]
->  __schedule+0x1585/0x5340 kernel/sched/core.c:6907
->  __schedule_loop kernel/sched/core.c:6989 [inline]
->  schedule+0x164/0x360 kernel/sched/core.c:7004
->  schedule_timeout+0xc3/0x2c0 kernel/time/sleep_timeout.c:75
->  do_wait_for_common kernel/sched/completion.c:100 [inline]
->  __wait_for_common kernel/sched/completion.c:121 [inline]
->  wait_for_common kernel/sched/completion.c:132 [inline]
->  wait_for_completion+0x2cc/0x5e0 kernel/sched/completion.c:153
->  landlock_restrict_sibling_threads+0xe9c/0x11f0 security/landlock/tsync.c:539
->  __do_sys_landlock_restrict_self security/landlock/syscalls.c:574 [inline]
->  __se_sys_landlock_restrict_self+0x540/0x810 security/landlock/syscalls.c:482
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f8d7f19bf79
-> RSP: 002b:00007f8d8003a028 EFLAGS: 00000246 ORIG_RAX: 00000000000001be
-> RAX: ffffffffffffffda RBX: 00007f8d7f416180 RCX: 00007f8d7f19bf79
-> RDX: 0000000000000000 RSI: 000000000000000e RDI: 0000000000000003
-> RBP: 00007f8d7f2327e0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007f8d7f416218 R14: 00007f8d7f416180 R15: 00007ffe0b1928d8
->  </TASK>
-> 
-> Showing all locks held in the system:
-> 1 lock held by khungtaskd/31:
->  #0: ffffffff8e9602e0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:312 [inline]
->  #0: ffffffff8e9602e0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:850 [inline]
->  #0: ffffffff8e9602e0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6775
-> 2 locks held by getty/5581:
->  #0: ffff8880328890a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
->  #1: ffffc9000332b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x45c/0x13c0 drivers/tty/n_tty.c:2211
-> 
-> =============================================
-> 
-> NMI backtrace for cpu 0
-> CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT(full) 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2026
-> Call Trace:
->  <TASK>
->  dump_stack_lvl+0xe8/0x150 lib/dump_stack.c:120
->  nmi_cpu_backtrace+0x274/0x2d0 lib/nmi_backtrace.c:113
->  nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
->  trigger_all_cpu_backtrace include/linux/nmi.h:161 [inline]
->  __sys_info lib/sys_info.c:157 [inline]
->  sys_info+0x135/0x170 lib/sys_info.c:165
->  check_hung_uninterruptible_tasks kernel/hung_task.c:346 [inline]
->  watchdog+0xfd9/0x1030 kernel/hung_task.c:515
->  kthread+0x388/0x470 kernel/kthread.c:467
->  ret_from_fork+0x51e/0xb90 arch/x86/kernel/process.c:158
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->  </TASK>
-> Sending NMI from CPU 0 to CPUs 1:
-> NMI backtrace for cpu 1
-> CPU: 1 UID: 0 PID: 86 Comm: kworker/u8:5 Not tainted syzkaller #0 PREEMPT(full) 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2026
-> Workqueue: events_unbound nsim_dev_trap_report_work
-> RIP: 0010:native_save_fl arch/x86/include/asm/irqflags.h:26 [inline]
-> RIP: 0010:arch_local_save_flags arch/x86/include/asm/irqflags.h:109 [inline]
-> RIP: 0010:arch_local_irq_save arch/x86/include/asm/irqflags.h:127 [inline]
-> RIP: 0010:lock_acquire+0xab/0x2e0 kernel/locking/lockdep.c:5864
-> Code: 84 c1 00 00 00 65 8b 05 73 b8 9f 11 85 c0 0f 85 b2 00 00 00 65 48 8b 05 bb 72 9f 11 83 b8 14 0b 00 00 00 0f 85 9d 00 00 00 9c <5b> fa 48 c7 c7 8f a1 02 8e e8 57 40 17 0a 65 ff 05 40 b8 9f 11 45
-> RSP: 0018:ffffc9000260f498 EFLAGS: 00000246
-> RAX: ffff88801df81e40 RBX: ffffffff818f9166 RCX: 0000000080000002
-> RDX: 0000000000000000 RSI: ffffffff8176da62 RDI: 1ffffffff1d2c05c
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> R10: ffffc9000260f638 R11: ffffffff81b11580 R12: 0000000000000002
-> R13: ffffffff8e9602e0 R14: 0000000000000000 R15: 0000000000000000
-> FS:  0000000000000000(0000) GS:ffff88812510b000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fe09b2c1ff8 CR3: 000000000e74c000 CR4: 00000000003526f0
-> Call Trace:
->  <TASK>
->  rcu_lock_acquire include/linux/rcupdate.h:312 [inline]
->  rcu_read_lock include/linux/rcupdate.h:850 [inline]
->  class_rcu_constructor include/linux/rcupdate.h:1193 [inline]
->  unwind_next_frame+0xc2/0x23c0 arch/x86/kernel/unwind_orc.c:495
->  arch_stack_walk+0x11b/0x150 arch/x86/kernel/stacktrace.c:25
->  stack_trace_save+0xa9/0x100 kernel/stacktrace.c:122
->  kasan_save_stack mm/kasan/common.c:57 [inline]
->  kasan_save_track+0x3e/0x80 mm/kasan/common.c:78
->  unpoison_slab_object mm/kasan/common.c:340 [inline]
->  __kasan_slab_alloc+0x6c/0x80 mm/kasan/common.c:366
->  kasan_slab_alloc include/linux/kasan.h:253 [inline]
->  slab_post_alloc_hook mm/slub.c:4501 [inline]
->  slab_alloc_node mm/slub.c:4830 [inline]
->  kmem_cache_alloc_node_noprof+0x384/0x690 mm/slub.c:4882
->  __alloc_skb+0x1d0/0x7d0 net/core/skbuff.c:702
->  alloc_skb include/linux/skbuff.h:1383 [inline]
->  nsim_dev_trap_skb_build drivers/net/netdevsim/dev.c:819 [inline]
->  nsim_dev_trap_report drivers/net/netdevsim/dev.c:876 [inline]
->  nsim_dev_trap_report_work+0x29a/0xb80 drivers/net/netdevsim/dev.c:922
->  process_one_work+0x949/0x1650 kernel/workqueue.c:3279
->  process_scheduled_works kernel/workqueue.c:3362 [inline]
->  worker_thread+0xb46/0x1140 kernel/workqueue.c:3443
->  kthread+0x388/0x470 kernel/kthread.c:467
->  ret_from_fork+0x51e/0xb90 arch/x86/kernel/process.c:158
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->  </TASK>
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
+It's a very good comment and very important rule to check, since
+we have at least 3 fix commits on breaking this rule, but as this
+code is utterly confusing to most human I do not blame LLM for getting
+confused here.
 
--- 
-Frederic Weisbecker
-SUSE Labs
+The lock not taken on 'dir' which is the overlayfs inode and the checked
+'real' dentry is on the underlying fs.
+
+Therefore, the check of real->d_parent was not protected in old code as
+well as in new code - it is a mere best effort sanity check, so I think
+there is no added risk here.
+
+Neil, do you agree?
+
+Thanks,
+Amir.
