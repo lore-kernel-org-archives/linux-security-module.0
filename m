@@ -1,206 +1,296 @@
-Received: from flow-a1-smtp.messagingengine.com (flow-a1-smtp.messagingengine.com [103.168.172.136])
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF88720B80B;
-	Mon, 23 Feb 2026 01:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C3734B669;
+	Mon, 23 Feb 2026 07:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771809285; cv=none; b=d+B1yAe4NYN5Z69WatWuPdkE5AiKM0dW4jswynGO3M7fgFZLabpwGvHUqB6XZqTPwRPvnFfXgvc1PhiY2IX9ymXa6dkoHomSmo3kb+7W08TIf17I2hrlCTYfQ8dIHTQl3Cxyh+G8yphNOrSU0WkxhOOJedd6w8Zlq2CQ7TB37Mk=
+	t=1771833214; cv=none; b=r0rYKA1ySAR2Hmvs6XoaJxBe3HCGdOL4VU7udVVBEZdnW/g8d570uFjGu/e0bL79cPaqBkBO/qU9VLEFc0ZghY0M5nBJli97SdnNBOchuOXY0I2PgQ5Xa/V6PKmXksZNE7mwai7ONkg7ZMx0hIo8YQvQ1xhSefCgp7bpjzD4f2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771809285; c=relaxed/simple;
-	bh=pigC+YhXx91fsgFDb3eu05KS5NlfXiF14Ef/VbbdAsE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AHjFP/3Ls42XvMrAiZq3avJMTX9iNYOGefi1hsD9NwpJt5BbIAePXMaT7EC7TwfGjS3XVs2OE+kcLSq3SZhKQsdCs+PmXgD+nlcbhZtgy1JwmpINmhaPc6HovxW9lZwVTTu9/WN9D3o2R7Vy3p7w/82CMnCSOvH2y0St3XicFik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=UznpjAVp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=w1SGuZn0; arc=none smtp.client-ip=103.168.172.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+	s=arc-20240116; t=1771833214; c=relaxed/simple;
+	bh=nYV9JeJzQ3cvBQGeC5/lhY69NNQylLWUFgiVvFPfShg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JYzGIks1ANjKJYpW10zUfQpeCln/a0CXSeC+A5AoKvd3AADBQHgVyoNdIR+uChAMpIBqoNroJX3pwyN4bHyFNQhKXtG884aA/mBrDPgM6vAroFGhXBm9n3BQx5MbK9ly1on4WKEIVCeqOeF7I9KrQA/OLBokbUaNMzANgB2ermE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=UBLlbx6r; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="UznpjAVp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="w1SGuZn0"
-Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
-	by mailflow.phl.internal (Postfix) with ESMTP id 6A41013807AC;
-	Sun, 22 Feb 2026 20:14:43 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-08.internal (MEProxy); Sun, 22 Feb 2026 20:14:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to; s=fm3; t=1771809283;
-	 x=1771816483; bh=9JVzNxT6kiATvBNU36XHsusPIDRZh6GsFbpCz+D3u+w=; b=
-	UznpjAVpOBZUSAox2zQH5APdkCm0TKU7fptBaatjmXKVi4DDnyQXw6ckxpy01sYI
-	6QOeZ5MXohvtwUYK8B9YIGLFscXZnBBS/DSyQ4LP7pxWCkGZRN6Tf3mfyFDFg1FE
-	fli/A0VPEi8BoKJyVzWgmwo8BCVSMdtW5Bnhis5fOG4gIc2wkwzi/4Iql7OCj2GP
-	LEPclS9LECSzzit3R7ZFB9zq6q4geSm5sZJEZOUPt6VpHgPKbaxMKe7z0vHjXlHK
-	Rren+sFpH1dmHGX9qw2ctN/8ppnI7rR8sr9B3cRF9S5NsPtEeMHZZSP+syQoOMkP
-	xSeHvZ2PI3uueIdX79WnsQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1771809283; x=1771816483; bh=9
-	JVzNxT6kiATvBNU36XHsusPIDRZh6GsFbpCz+D3u+w=; b=w1SGuZn0605fv1q3w
-	yzpxKUkn4RNdPtlCwSmBYUUdJ45429x3KTsk+NV5pw+CWfKxX5q0YJ9hVv4JXZAI
-	g5ZndlNJnAWD3YscJxttt7chx42J2Z7qW098iXuMw+gthKAK3YF7WZxl6Gx8b2RF
-	EOJY3OlbqFwuvb1OvXCmFPJT9P0LTAB8GdSraCdKWNImgZa0blrVKnj53iEZCoEb
-	Odq6lGNRYBu/Q/Ng3NOfZLseagnGgpZTbJxjP5Trc5E/eiyVc4mM34qcgVkMVXvP
-	XV5+0vQUpaeABFG/uPM+QvbGmpqtOluIaGxXAiKOMcEONxk+FNm975k9az/Dlims
-	7Hfkw==
-X-ME-Sender: <xms:A6qbaUrYDi95LMuWiaQg1tfpPHmfCvCsNXCNVnwSXLJpwKjsN1g3_w>
-    <xme:A6qbaenaBr5j4V9G7hirkM8x4tJQ_FE-Ys9t5TZoT6_jmUeV_Kztl11cUEQ-R5VMi
-    EcyhCG2vPfNELHhD36jqWy-rLuitXN5xNcUCtCAhXDQhJvO>
-X-ME-Received: <xmr:A6qbaRvLITdZNH6tzTSmMq2BszNl0qYxjNt7OLuFVETOuuu3GDvIUvkk1JMu8RHWh3Zr0QxlLIdoUsZFetr23tKakiu8LVtPZ4bjgtESaBtf>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvfeehkeehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhephffvvefufffkofgjfhhrggfgsedtkeertdertddtnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epveevkeffudeuvefhieeghffgudektdelkeejiedtjedugfeukedvkeffvdefvddunecu
-    vehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepvddvpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
-    hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhr
-    tghpthhtohepjhgrtghksehsuhhsvgdrtgii
-X-ME-Proxy: <xmx:A6qbaVfNne5kz3F0bBBSsUjpvfLGHE8Vodz2-5pSZWTyN4RURgTPVw>
-    <xmx:A6qbabbqqOwYPeE7IYjfe8PRxGhz1s0ec8Tj2n_726AIQtc0FKfYpA>
-    <xmx:A6qbaV2F3LkKoqFvjsmfPYQ43q0XHWVVXvRVJVlGm16S4iBvr_myPg>
-    <xmx:A6qbacp8YyrjOajri9zoaE-AfzAk-TdLPbxUqNvOrDd3eZTBn4mRGA>
-    <xmx:A6qbaQi-rpxiaLayoUEtGSqnfltMKKZ0h1_81yuOIkYVc8X2W4_VMRkH>
-Feedback-ID: i9d664b8f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 22 Feb 2026 20:14:37 -0500 (EST)
-From: NeilBrown <neilb@ownmail.net>
-To: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	David Howells <dhowells@redhat.com>,
-	Jan Kara <jack@suse.cz>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	"Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-unionfs@vger.kernel.org,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org
-Subject: [PATCH v2 15/15] VFS: unexport lock_rename(), lock_rename_child(), unlock_rename()
-Date: Mon, 23 Feb 2026 12:06:30 +1100
-Message-ID: <20260223011210.3853517-16-neilb@ownmail.net>
-X-Mailer: git-send-email 2.50.0.107.gf914562f5916.dirty
-In-Reply-To: <20260223011210.3853517-1-neilb@ownmail.net>
-References: <20260223011210.3853517-1-neilb@ownmail.net>
-Reply-To: NeilBrown <neil@brown.name>
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="UBLlbx6r"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1771833210;
+	bh=nYV9JeJzQ3cvBQGeC5/lhY69NNQylLWUFgiVvFPfShg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UBLlbx6rGRzhB0lc8jmUhiwdOSlc22ZND7JHZWW4sRNkp+NBvBnncnMPS1yVQbgOV
+	 DymrASfqtlntMVz/GvTCjMNRdBah/OWyHZRmpdBJ/j56Uf6K1XZArBL2sV3NTKngvN
+	 Lufi5ad54jpSd2BodXC8KOcnZyRYF4fvDZt5qkc4=
+Date: Mon, 23 Feb 2026 08:53:29 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Nicolas Schier <nsc@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
+	Daniel Gomez <da.gomez@kernel.org>, Aaron Tomlin <atomlin@atomlin.com>, 
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
+	Xiu Jianfeng <xiujianfeng@huawei.com>, Fabian =?utf-8?Q?Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>, 
+	Arnout Engelen <arnout@bzzt.net>, Mattia Rizzolo <mattia@mapreri.org>, 
+	kpcyrd <kpcyrd@archlinux.org>, Christian Heusel <christian@heusel.eu>, 
+	=?utf-8?B?Q8OianU=?= Mihai-Drosi <mcaju95@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v4 15/17] module: Introduce hash-based integrity checking
+Message-ID: <0d70db8d-702b-46ec-a010-298fe6515aab@t-8ch.de>
+References: <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
+ <20260113-module-hashes-v4-15-0b932db9b56b@weissschuh.net>
+ <aZol1Rsa2tX-WNaZ@derry.ads.avm.de>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aZol1Rsa2tX-WNaZ@derry.ads.avm.de>
 
-From: NeilBrown <neil@brown.name>
+On 2026-02-21 22:38:29+0100, Nicolas Schier wrote:
+> On Tue, Jan 13, 2026 at 01:28:59PM +0100, Thomas Weißschuh wrote:
+> > The current signature-based module integrity checking has some drawbacks
+> > in combination with reproducible builds. Either the module signing key
+> > is generated at build time, which makes the build unreproducible, or a
+> > static signing key is used, which precludes rebuilds by third parties
+> > and makes the whole build and packaging process much more complicated.
+> > 
+> > The goal is to reach bit-for-bit reproducibility. Excluding certain
+> > parts of the build output from the reproducibility analysis would be
+> > error-prone and force each downstream consumer to introduce new tooling.
+> > 
+> > Introduce a new mechanism to ensure only well-known modules are loaded
+> > by embedding a merkle tree root of all modules built as part of the full
+> > kernel build into vmlinux.
+> > 
+> > Non-builtin modules can be validated as before through signatures.
+> > 
+> > Normally the .ko module files depend on a fully built vmlinux to be
+> > available for modpost validation and BTF generation. With
+> > CONFIG_MODULE_HASHES, vmlinux now depends on the modules
+> > to build a merkle tree. This introduces a dependency cycle which is
+> > impossible to satisfy. Work around this by building the modules during
+> > link-vmlinux.sh, after vmlinux is complete enough for modpost and BTF
+> > but before the final module hashes are
+> > 
+> > The PKCS7 format which is used for regular module signatures can not
+> > represent Merkle proofs, so a new kind of module signature is
+> > introduced. As this signature type is only ever used for builtin
+> > modules, no compatibility issues can arise.
+> > 
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > ---
+> >  .gitignore                                   |   1 +
+> >  Documentation/kbuild/reproducible-builds.rst |   5 +-
+> >  Makefile                                     |   8 +-
+> >  include/asm-generic/vmlinux.lds.h            |  11 +
+> >  include/linux/module_hashes.h                |  25 ++
+> >  include/linux/module_signature.h             |   1 +
+> >  kernel/module/Kconfig                        |  21 +-
+> >  kernel/module/Makefile                       |   1 +
+> >  kernel/module/hashes.c                       |  92 ++++++
+> >  kernel/module/hashes_root.c                  |   6 +
+> >  kernel/module/internal.h                     |   1 +
+> >  kernel/module/main.c                         |   4 +-
+> >  scripts/.gitignore                           |   1 +
+> >  scripts/Makefile                             |   3 +
+> >  scripts/Makefile.modfinal                    |  11 +
+> >  scripts/Makefile.modinst                     |  13 +
+> >  scripts/Makefile.vmlinux                     |   5 +
+> >  scripts/link-vmlinux.sh                      |  14 +-
+> >  scripts/modules-merkle-tree.c                | 467 +++++++++++++++++++++++++++
+> >  security/lockdown/Kconfig                    |   2 +-
+> >  20 files changed, 685 insertions(+), 7 deletions(-)
+> > 
+> [...]
+> 
+> > diff --git a/kernel/module/hashes_root.c b/kernel/module/hashes_root.c
+> > new file mode 100644
+> > index 000000000000..1abfcd3aa679
+> > --- /dev/null
+> > +++ b/kernel/module/hashes_root.c
+> > @@ -0,0 +1,6 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +
+> > +#include <linux/module_hashes.h>
+> > +
+> > +/* Blank dummy data. Will be overridden by link-vmlinux.sh */
+> > +const struct module_hashes_root module_hashes_root __module_hashes_section = {};
+> > diff --git a/kernel/module/internal.h b/kernel/module/internal.h
+> > index e2d49122c2a1..e22837d3ac76 100644
+> > --- a/kernel/module/internal.h
+> > +++ b/kernel/module/internal.h
+> > @@ -338,6 +338,7 @@ void module_mark_ro_after_init(const Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+> >  			       const char *secstrings);
+> >  
+> >  int module_sig_check(struct load_info *info, const u8 *sig, size_t sig_len);
+> > +int module_hash_check(struct load_info *info, const u8 *sig, size_t sig_len);
+> >  
+> >  #ifdef CONFIG_DEBUG_KMEMLEAK
+> >  void kmemleak_load_module(const struct module *mod, const struct load_info *info);
+> > diff --git a/kernel/module/main.c b/kernel/module/main.c
+> > index 2a28a0ece809..fa30b6387936 100644
+> > --- a/kernel/module/main.c
+> > +++ b/kernel/module/main.c
+> > @@ -3362,8 +3362,10 @@ static int module_integrity_check(struct load_info *info, int flags)
+> >  
+> >  	if (IS_ENABLED(CONFIG_MODULE_SIG) && sig_type == PKEY_ID_PKCS7) {
+> >  		err = module_sig_check(info, sig, sig_len);
+> > +	} else if (IS_ENABLED(CONFIG_MODULE_HASHES) && sig_type == PKEY_ID_MERKLE) {
+> > +		err = module_hash_check(info, sig, sig_len);
+> >  	} else {
+> > -		pr_err("module: not signed with expected PKCS#7 message\n");
+> > +		pr_err("module: not signed with signature mechanism\n");
+> >  		err = -ENOPKG;
+> 
+> To prevent others from running into the same issue:
+> 
+> My first test got stuck here, as I tested with virtme-ng, which symlinks
+> modules from build tree to /lib/modules/$(uname -r)/..., resulting in
+> 
+>     [   15.956855] module: not signed with signature mechanism
+>     modprobe: ERROR: could not insert 'efivarfs': Package not installed
+> 
+> As the modules_install step was missing, modules were not being signed.
 
-These three function are now only used in namei.c, so they don't need to
-be exported.
+Currently the signing is deferred to installation time to keep in sync
+with regular module signing and to keep the logic simpler by not having
+to gracefully handle previously-signed files.
+But this could be changed.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: NeilBrown <neil@brown.name>
----
- Documentation/filesystems/porting.rst | 7 +++++++
- fs/namei.c                            | 9 +++------
- include/linux/namei.h                 | 3 ---
- 3 files changed, 10 insertions(+), 9 deletions(-)
+> [...]
+> > diff --git a/scripts/modules-merkle-tree.c b/scripts/modules-merkle-tree.c
+> > new file mode 100644
+> > index 000000000000..a6ec0e21213b
+> > --- /dev/null
+> > +++ b/scripts/modules-merkle-tree.c
+> > @@ -0,0 +1,467 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +/*
+> > + * Compute hashes for modules files and build a merkle tree.
+> > + *
+> > + * Copyright (C) 2025 Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+> > + * Copyright (C) 2025 Thomas Weißschuh <linux@weissschuh.net>
+> > + *
+> > + */
+> > +#define _GNU_SOURCE 1
+> > +#include <arpa/inet.h>
+> > +#include <err.h>
+> > +#include <unistd.h>
+> > +#include <fcntl.h>
+> > +#include <stdarg.h>
+> > +#include <stdio.h>
+> > +#include <string.h>
+> > +#include <stdbool.h>
+> > +#include <stdlib.h>
+> > +
+> > +#include <sys/stat.h>
+> > +#include <sys/mman.h>
+> > +
+> > +#include <openssl/evp.h>
+> > +#include <openssl/err.h>
+> > +
+> > +#include "ssl-common.h"
+> > +
+> > +static int hash_size;
+> > +static EVP_MD_CTX *ctx;
+> > +
+> > +struct module_signature {
+> > +	uint8_t		algo;		/* Public-key crypto algorithm [0] */
+> > +	uint8_t		hash;		/* Digest algorithm [0] */
+> > +	uint8_t		id_type;	/* Key identifier type [PKEY_ID_PKCS7] */
+> > +	uint8_t		signer_len;	/* Length of signer's name [0] */
+> > +	uint8_t		key_id_len;	/* Length of key identifier [0] */
+> > +	uint8_t		__pad[3];
+> > +	uint32_t	sig_len;	/* Length of signature data */
+> > +};
+> > +
+> > +#define PKEY_ID_MERKLE 3
+> > +
+> > +static const char magic_number[] = "~Module signature appended~\n";
+> 
+> This here will be the forth definition of struct module_signature,
+> increasing the risk of unwanted diversion.  I second Petr's suggestion
+> to reuse a _common_ definition instead.
 
-diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-index 1dd31ab417a2..d02aa57e4477 100644
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@ -1368,3 +1368,10 @@ lifetime, consider using inode_set_cached_link() instead.
- 
- lookup_one_qstr_excl() is no longer exported - use start_creating() or
- similar.
-+---
-+
-+** mandatory**
-+
-+lock_rename(), lock_rename_child(), unlock_rename() are no
-+longer available.  Use start_renaming() or similar.
-+
-diff --git a/fs/namei.c b/fs/namei.c
-index e6a3717d7065..3547a2a1bfd1 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3775,7 +3775,7 @@ static struct dentry *lock_two_directories(struct dentry *p1, struct dentry *p2)
- /*
-  * p1 and p2 should be directories on the same fs.
-  */
--struct dentry *lock_rename(struct dentry *p1, struct dentry *p2)
-+static struct dentry *lock_rename(struct dentry *p1, struct dentry *p2)
- {
- 	if (p1 == p2) {
- 		inode_lock_nested(p1->d_inode, I_MUTEX_PARENT);
-@@ -3785,12 +3785,11 @@ struct dentry *lock_rename(struct dentry *p1, struct dentry *p2)
- 	mutex_lock(&p1->d_sb->s_vfs_rename_mutex);
- 	return lock_two_directories(p1, p2);
- }
--EXPORT_SYMBOL(lock_rename);
- 
- /*
-  * c1 and p2 should be on the same fs.
-  */
--struct dentry *lock_rename_child(struct dentry *c1, struct dentry *p2)
-+static struct dentry *lock_rename_child(struct dentry *c1, struct dentry *p2)
- {
- 	if (READ_ONCE(c1->d_parent) == p2) {
- 		/*
-@@ -3827,9 +3826,8 @@ struct dentry *lock_rename_child(struct dentry *c1, struct dentry *p2)
- 	mutex_unlock(&c1->d_sb->s_vfs_rename_mutex);
- 	return NULL;
- }
--EXPORT_SYMBOL(lock_rename_child);
- 
--void unlock_rename(struct dentry *p1, struct dentry *p2)
-+static void unlock_rename(struct dentry *p1, struct dentry *p2)
- {
- 	inode_unlock(p1->d_inode);
- 	if (p1 != p2) {
-@@ -3837,7 +3835,6 @@ void unlock_rename(struct dentry *p1, struct dentry *p2)
- 		mutex_unlock(&p1->d_sb->s_vfs_rename_mutex);
- 	}
- }
--EXPORT_SYMBOL(unlock_rename);
- 
- /**
-  * __start_renaming - lookup and lock names for rename
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index c7a7288cdd25..2ad6dd9987b9 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -165,9 +165,6 @@ extern int follow_down_one(struct path *);
- extern int follow_down(struct path *path, unsigned int flags);
- extern int follow_up(struct path *);
- 
--extern struct dentry *lock_rename(struct dentry *, struct dentry *);
--extern struct dentry *lock_rename_child(struct dentry *, struct dentry *);
--extern void unlock_rename(struct dentry *, struct dentry *);
- int start_renaming(struct renamedata *rd, int lookup_flags,
- 		   struct qstr *old_last, struct qstr *new_last);
- int start_renaming_dentry(struct renamedata *rd, int lookup_flags,
--- 
-2.50.0.107.gf914562f5916.dirty
+Ack.
 
+> (Here, even include/linux/module_signature.h could be included itself.)
+
+I'd like to avoid including internal headers from other components.
+We could move it to an UAPI header. Various other subsystems use those
+for not-really-UAPI but still ABI definitions.
+
+(...)
+
+> > +static inline char *xasprintf(const char *fmt, ...)
+> > +{
+> > +	va_list ap;
+> > +	char *strp;
+> > +	int ret;
+> > +
+> > +	va_start(ap, fmt);
+> > +	ret = vasprintf(&strp, fmt, ap);
+> > +	va_end(ap);
+> > +	if (ret == -1)
+> > +		err(1, "Memory allocation failed");
+> > +
+> > +	return strp;
+> > +}
+> 
+> Please consider moving these x* functions into scripts/include/xalloc.h
+> for reuse.  (I am sure someone else wrote this already, but I can't find
+> it...)
+
+Petr suggested it somewhere, it is done for the next revision.
+
+> thanks for all your efforts for reproducibility!
+> 
+> As I have no clue about that:  Is the patent for merkle trees [1] a
+> problem when integrating that here?
+
+That should have expired a long time ago [2].
+And fs-verity is also using merkle trees.
+
+> Can you verify if I get the mechanics roughly correct?
+> 
+>   * Modules are merkle tree leaves.  Modules are built and logically
+>     paired by the order from modules.order; a single left-over module is
+>     paired with itself.
+> 
+>   * Hashes of paired modules are hashed again (branch node hash);
+>     hashes of pairs of branch nodes' hashes are hashed again;
+>     repeat until we reach the single merkle tree root hash
+> 
+>   * The final merkle tree root hash (and the count of tree levels) is
+>     included in vmlinux
+
+The merkle tree code was written by Sebastian so he will have the best
+knowledge about it. But this is also my understanding.
+
+> 'make && find . -name '*.ko' -exec rm {} \; && make' does not rebuild
+> the in-tree modules.  Shifting the module-hashes support from
+> scripts/link-vmlinux.sh to scripts/Makefile.vmlinux might (make it
+> easier) to fix this again.
+
+I'll take a look at it.
+
+> [1]: https://worldwide.espacenet.com/patent/search/family/022107098/publication/US4309569A?q=pn%3DUS4309569
+
+[2] https://patents.stackexchange.com/questions/17901/validity-of-patent-on-merkle-trees
+
+
+Thomas
