@@ -1,330 +1,282 @@
-Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.154.197.177])
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA5F353EE3
-	for <linux-security-module@vger.kernel.org>; Mon, 23 Feb 2026 11:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.154.197.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB0D1E5714;
+	Mon, 23 Feb 2026 13:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771846276; cv=none; b=tYSo+frJKhH5VwXRYMaMXB7681j0+DnJ2eQGCKhHx30OTKa7v9Il1FWctEO5PJekplz1PNFix0vubvOHgoLN5ozvV0M6oKSNbu0JisMK4YoJtHd6lxbyk/cqZ7JY1NN4EMyW1MEGVwloJkQrt5o5DpNqwiX1BnzCLSu9sGpcoAQ=
+	t=1771852880; cv=none; b=ujhLqwB7uf9yTiqnt/Rr0HEwMI3iprfdw/IH0MysiGcIri9mOvKMf7YJ1vRAfq6D+2yLG/3cW4gxW1UAIofVMT7Krc5mEWiK0aer3Zprbb2nIOE14K6KW3JYZrgnvQh57NYGUigZdfvW0yDfLuxPbMtnGh1MLimIfB0dgbajP3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771846276; c=relaxed/simple;
-	bh=6Yeg9YFUIZ9jFXNfrhMekSOWUEWMIBkJz4guVHgTZp0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mLX9iKzvagQth/rHOi/U6BxvFKmE8uDhGHJ+BPJ6E7l3/nlM7Ydka1Ar4Kvda50RXJuOKva91nvnbc72tr9UjGVABjtqd/KpRuthS6YA2jj66lU8amZ4yHTLzROhRz7dscmyfLCvTI6ykI3lWdPY5nnsv8I0N0F5Zg9hMdM4uEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=f4hJcgtF; arc=none smtp.client-ip=43.154.197.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+	s=arc-20240116; t=1771852880; c=relaxed/simple;
+	bh=iWgTsjCk89uebRcrjCX70k5LZkhHzAYydV7uu88NyCg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TWvPthM66Z0AqWBwFdV0YA6wWb9kC2jJSrNvTqW0li3SGnEIka7XDyebKHSQtlcHbE3DfHJ3A1oT1Ch2cjQQAddg4At+ZwBPuBaPd3vqGrmUI5zjdoKT8hibcZvPH5f0Kxkq7rGrikzM/XW80pTdTi4555ce4iLu0RPLLrC22NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=uQ3peFVp; arc=none smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="f4hJcgtF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1771846206;
-	bh=9gU8gHxfnXWwTv2qYErx4M0UIXIbxOYCTRj0cBM6btI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=f4hJcgtFfVdxavmqBleeBX/ujQUhM/kUjPsfxb+xAui8Cl4uJX/Zhet2RJHfF1Raj
-	 ko5gh099ofjlMXWwOA74H+kgD+mPsJhsFysPqgRv9Bav0MNAvRuaU/LXViMaGeuxUN
-	 ADkPWexZ6yLlHU8MaqtffJrWQUEaTo22Lmy/oRPo=
-X-QQ-mid: esmtpsz19t1771846198t59eace30
-X-QQ-Originating-IP: 1ljOQunEE0aFFz1BZ6pPf4Nuuq0KhmPaU2+uHs6WCdY=
-Received: from [10.10.74.107] ( [123.114.60.34])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 23 Feb 2026 19:29:57 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 3567115187674417676
-Message-ID: <32095877A7CB47CB+bb9e1be8-59c2-46d9-b1ef-f22d2d8c386e@uniontech.com>
-Date: Mon, 23 Feb 2026 19:29:56 +0800
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="uQ3peFVp"
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61N7LjTw1689366;
+	Mon, 23 Feb 2026 05:20:44 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
+	 bh=+jj35zgXKhtaxe8slFh2KjLza6PRHJYalc4EKFRj1xk=; b=uQ3peFVpfrPv
+	P1eNTCmO7sZzHHxSMqkZfrVpKFA1ZEnJiWX/K6a64owsi6ZEvoptl9inCEq4kFSR
+	Su3fW5cc6nGdrgVNPCMEUHbdk304q1HIsAN5FKV59LzaXWQZsFEs71Pf7qXlwkbr
+	F1H13bcXnIobrOpdVfZtgIPQN5ydQKhi0m9N/GEp8DNUUNu5Rob+j0mAtAx1MUoS
+	73kX4wyXHXprW//vO0Qp4cgTVmqpvdF/05FYmEpkjjsqM2FdjNLFT7GqCHFxTynJ
+	bR/pXaaD35diR2KJiYAqPbwXBM2QqHLdbXRSVrAGsxgdiHxWZRHZZjVcXqa4V3D4
+	puHFLDf/GA==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4cgjehhvnu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 23 Feb 2026 05:20:44 -0800 (PST)
+Received: from devbig003.atn7.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.35; Mon, 23 Feb 2026 13:20:42 +0000
+From: Chris Mason <clm@meta.com>
+To: NeilBrown <neil@brown.name>
+CC: Christian Brauner <brauner@kernel.org>,
+        Alexander Viro
+	<viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>, Jan Kara
+	<jack@suse.cz>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Jeff Layton
+	<jlayton@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein
+	<amir73il@gmail.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore
+	<paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"
+	<serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        "Darrick J. Wong" <djwong@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <netfs@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+        <linux-nfs@vger.kernel.org>, <linux-unionfs@vger.kernel.org>,
+        <apparmor@lists.ubuntu.com>, <linux-security-module@vger.kernel.org>,
+        <selinux@vger.kernel.org>
+Subject: Re: [PATCH v2 09/15] ovl: Simplify ovl_lookup_real_one()
+Date: Mon, 23 Feb 2026 05:13:37 -0800
+Message-ID: <20260223132027.4165509-1-clm@meta.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260223011210.3853517-10-neilb@ownmail.net>
+References: <20260223011210.3853517-1-neilb@ownmail.net> <20260223011210.3853517-10-neilb@ownmail.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [kernel?] INFO: task hung in
- restrict_one_thread_callback
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
-Cc: syzbot <syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com>,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- linux-security-module@vger.kernel.org, Jann Horn <jannh@google.com>,
- Paul Moore <paul@paul-moore.com>
-References: <69995a88.050a0220.340abe.0d25.GAE@google.com>
- <00A9E53EDC82309F+7b1dfc69-95f8-4ffc-a67c-967de0e2dfee@uniontech.com>
- <20260221.5d8a306bcaf1@gnoack.org> <20260221.3ff0e30e4010@gnoack.org>
- <20260223.52c45aed20f8@gnoack.org>
-From: Ding Yihan <dingyihan@uniontech.com>
-In-Reply-To: <20260223.52c45aed20f8@gnoack.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:uniontech.com:qybglogicsvrsz:qybglogicsvrsz4b-0
-X-QQ-XMAILINFO: OetTBC9nymcUKgV9ckbEYkr295ozrNC1Wjmisd2OC2xJJY7P8YnroKDw
-	159BKMbdDesz+D51bJaY3+sNxh9b67K4ZMdLed/4LvXtrt6XL+sG4JsIfv/QmaQuTNA1vFu
-	VtPyLf8SvZF2z1cA6S21vrvMv+rXmAwOwgjqMci2osHguzYzadHfd7cWj25HfGIbk5eVK99
-	y/GFM2mNu5Nftweemy1LP8ysZTArcBYas9IOn6sYXphAlmwrZxl2J2BfpiiHZzLB0/3SdD8
-	/OwCIIOIyNX21RVAx/9W2m+wKzWr+k4ZFRfwPoiT9qTLLpVUeHgnqe/GaLFPYt3g5BAgI3N
-	kH1xmo9ewa6lLo0voJP5BPyu4uYfKr+x5xcKllNHoJUgDwZI4IPl8jCHkbTgXOGnZ0Dl3vf
-	WoU5RJRRfEN16ROQM7mp0g8af7zyYSldZg/Jol6lJThwrt6mnEgD3IDvMb8KND8IRZuwzQR
-	Ea+HV1rA6R/NrUNdcoRa6r9FnaFLSnoM5PlGpQ7L/N3ShhrqSku9+kklXO0hceYAPdyZuQU
-	FfpZ2A4GBJV/FoHXEmpumY9BfDmR/78xe3Wz+yidBvL5DMYx9Sawn0sM+MVhRUVtE/W9dGo
-	igMKJYUOuW+dC3OMo2sJLcVbSwTKqzw7Y7piGOjJ8ZMUPeT7qp/qkMvvkjYZxVbIbPodoNF
-	oa/lyg0u2TM1PpTJZihPebzrusRE+IVuDgTGoGxNm/mP6+uhmENtG2uMmR45z2rW5aXK+lg
-	vnPxCpA+RhS3P800dLRK43ZkGxz6M3WvJy5Rwh04/MJdULkdsmeRx3AYwZAHhpYPkTB5E8N
-	vOyuMpSgqp77OnvDwTWR9PaeqFQAetLTDMVfN5Lr5BftC8AOvIfcCBOxo2OaekNYZ8iDQZX
-	kXbcOKJ5MPqy4hAhBYUxd8AmQX8pylb5Hb5anIll93nuOTA+GB7KuUiBQVwPKWjCEByR04W
-	+Jch1HBQ/Ck/CWojTHoS6ANzrQ+GCP/plsMROWLuYiTfr8scAu75NNRGThIqv4KUmxuKiuH
-	zPp500Jw==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ykba08/jSGAxUhV/n68F+PQ==
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjIzMDExNCBTYWx0ZWRfX+kME6KZmr89V
+ FuKP+HbtK6Ll3Q33VPnvmu6dSF4itJ8mVYWVnJ7GZz07InfaInBIu5fTcVWC3E0zX9IPFY3omT/
+ NFDzwO5fxPFfsJlAau4AJFE+l9AIU3wjNX4G3ORzecBxHBbJ8oF+WaRyFx+8A/R3s1DZchoPfZn
+ BibQx0Mjpw9jKbymWVR73+564ZbtEGwqzDPmsW7IOuY/8Obw6csoIk2hJfyMafNi5SrOz8czyFJ
+ uJ70XH74dPoeTLXMkqjRRdbf1qWlwih5nYz3Hg/ux3VdEAVnTH6MFH+Puak3DUvyCgsTd+5B5ZN
+ rWHWmiL/tZIpuwkvGsKU1fAPjFfWQNcucF5wuE/C/bPPnyiF4xRWJPNDkDJWCTjma7twh5jrIJ4
+ J19KZBZpHaCGFAR0Vi8F67Zew8QnYtdM0FhaOWXjdsvx/vRaCJFcBkpGw5CiMVv0w84749y9QKq
+ 0TDcj6dO/tU+Kqu3s2Q==
+X-Proofpoint-GUID: Fa5SgpH4NiF5_GiC7hGWmJ-OFXDNqwP8
+X-Proofpoint-ORIG-GUID: Fa5SgpH4NiF5_GiC7hGWmJ-OFXDNqwP8
+X-Authority-Analysis: v=2.4 cv=cK/tc1eN c=1 sm=1 tr=0 ts=699c542c cx=c_pps
+ a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
+ a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22
+ a=GgsMoib0sEa3-_RKJdDe:22 a=e8O0uTMVAAAA:20 a=I-1mG6jRAAAA:8
+ a=jAaqfGSQgQmH2hLIMWsA:9 a=vAntc5lzOlbkVmf1VcWC:22 a=bA3UWDv6hWIuX7UZL3qL:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-23_02,2026-02-23_02,2025-10-01_01
 
-Hi Günther,
-﻿
-Thank you for the detailed analysis and the clear breakdown. 
-Apologies for the delayed response. I spent the last couple of days
-thoroughly reading through the previous mailing list discussions. I
-was trying hard to see if there was any viable pure lockless design
-that could solve this concurrency issue while preserving the original
-architecture. 
-﻿
-However, after looking at the complexities you outlined, I completely
-agree with your conclusion: serializing the TSYNC operations is indeed
-the most robust and reasonable path forward to prevent the deadlock.
-﻿
-Regarding the lock choice, since 'cred_guard_mutex' is explicitly
-marked as deprecated for new code in the kernel,maybe we can use its
-modern replacement: 'exec_update_lock' (using down_write_trylock /
-up_write on current->signal). This aligns with the current subsystem
-standards and was also briefly touched upon by Jann in the older
-discussions.
-﻿
-I fully understand the requirement for the two-part patch series:
-1. Cleaning up the cancellation logic and comments.
-2. Introducing the serialization lock for TSYNC.
-﻿
-I will take some time to draft and test this patch series properly. 
-I also plan to discuss this with my kernel colleagues here at 
-UnionTech to see if they have any additional suggestions on the 
-implementation details before I submit it.
-﻿
-I will send out the v1 patch series to the list as soon as it is
-ready. Thanks again for your guidance and the great discussion!
-﻿
-Best regards,
-Yihan Ding
+NeilBrown <neilb@ownmail.net> wrote:
+> From: NeilBrown <neil@brown.name>
+> 
+> The primary purpose of this patch is to remove the locking from
+> ovl_lookup_real_one() as part of centralising all locking of directories
+> for name operations.
+> 
+> The locking here isn't needed.  By performing consistency tests after
+> the lookup we can be sure that the result of the lookup was valid at
+> least for a moment, which is all the original code promised.
+> 
+> lookup_noperm_unlocked() is used for the lookup and it will take the
+> lock if needed only where it is needed.
+> 
+> Also:
+>  - don't take a reference to real->d_parent.  The parent is
+>    only use for a pointer comparison, and no reference is needed for
+>    that.
+>  - Several "if" statements have a "goto" followed by "else" - the
+>    else isn't needed: the following statement can directly follow
+>    the "if" as a new statement
+>  - Use a consistent pattern of setting "err" before performing a test
+>    and possibly going to "fail".
+>  - remove the "out" label (now that we don't need to dput(parent) or
+>    unlock) and simply return from fail:.
 
-在 2026/2/23 17:42, Günther Noack 写道:
-> On Sat, Feb 21, 2026 at 02:19:53PM +0100, Günther Noack wrote:
->> OK, I think I understand now.  Our existing recovery code for this
->> conflict is this:
->>
->> /*
->>  * Decrement num_preparing for current, to undo that we initialized it
->>  * to 1 a few lines above.
->>  */
->> if (atomic_dec_return(&shared_ctx.num_preparing) > 0) {
->> 	if (wait_for_completion_interruptible(
->> 		    &shared_ctx.all_prepared)) {
->> 		/* In case of interruption, we need to retry the system call. */
->> 		atomic_set(&shared_ctx.preparation_error,
->> 			   -ERESTARTNOINTR);
->>
->> 		/*
->> 		 * Cancel task works for tasks that did not start running yet,
->> 		 * and decrement all_prepared and num_unfinished accordingly.
->> 		 */
->> 		cancel_tsync_works(&works, &shared_ctx);
->>
->> 		/*
->> 		 * The remaining task works have started running, so waiting for
->> 		 * their completion will finish.
->> 		 */
->> 		wait_for_completion(&shared_ctx.all_prepared);
->> 	}
->> }
->>
->> When I wrote this, I assumed, as the last comment states, that the
->> task works which we could not cancel, are already running.
->>
->> I was wrong there, because I had misunderstood task_work_run().  When
->> the task works get run there, it first *atomically dequeues the entire
->> queue of scheduled task works*, and then runs them sequentially.
->>
->> That is why, if we have one task work that belongs to the first
->> landlock_restrict_self() call and one which belongs to the other, the
->> task work which is scheduled later can (a) not be dequeued with
->> cancel_tsync_works() any more, and (b) also has not started running
->> yet.
->>
->> Now the only thing that is necessary to produce the deadlock is that
->> we have a pair of threads where the task works for the restriction
->> calls have been scheduled in different order.  When the two
->> landlock_restrict_self() calls end up in the recovery path quoted
->> above, they will wait for one of their task works to run which is
->> blocked from running by another task work that is scheduled before and
->> does not finish either.
->>
->> (Just pasting a brain dump here to save you some time hunting for the
->> root cause. I don't know the best solution yet either.)
-> 
-> Let me propose the following fixes:
-> 
-> 1. Immediate fix for that specific issue
-> ----------------------------------------
-> 
-> Proposal:
-> * Remove the wait_for_completion(&shared_ctx.all_prepared)
->   call in the code snippet above.
-> * Rewrite surrounding comments: Be clear about the fact that
->   cancel_tsync_works() is an opportunistic improvement, but we don't
->   have a guarantee at all that it cancels any of the enqueued task
->   works (because task_work_run might already have popped them off).
-> 
-> This removes the hold-and-wait dependency circle between the threads,
-> which produces the observed deadlock.  The way that we shut down now
-> is that we exit the main loop (happens already without it, but we
-> might also "break" to be explicit).
-> 
-> I think that this fix or an equivalent one is needed here, because in
-> either way, our assumptions in the quoted code above were wrong.
-> 
-> 
-> 2. Can we reason constructively about correctness?
-> --------------------------------------------------
-> 
-> The remaining question: If on the shutdown path, we can not actually
-> remove all the enqueued task works, under what circumstances are we
-> even able to interrupt and return from the landlock_restrict_self()
-> system call?
-> 
-> 2.1 For n competing restrict_self calls, n-1 of them need to get interrupted
-> ----------------------------------------------------------------------------
-> 
-> To answer this, consider a multithreaded process with threads named
-> "red", "green" and "blue" and many additional threads: When "red",
-> "green" and "blue" enforce landlock_restrict_self() concurrently, due
-> to differing iteration order, we might end up enqueueing the task
-> works on other threads in all of the following combinations:
-> 
->   t0:  R G B  <- front of queue
->   t1:  R B G
->   t2:  G R B
->   t3:  G B R
->   t4:  B R G
->   t5:  B G R
-> 
-> In this configuration, for any of the landlock_restrict_self() system
-> calls to even return (successfully or unsuccessfully), at least two
-> threads must receive an interrupt and therefore remove their enqueued
-> task works from the front of the queue.  Assuming those are green and
-> blue, we get:
-> 
->   t0:  R      <- front of queue
->   t1:  R
->   t2:  G R
->   t3:  G B R
->   t4:  B R
->   t5:  B G R
-> 
-> (This works because after the patch above, all of the enqueued G and B
-> works finish even if there are remaining G and B works that are still
-> blocked by an "R" entry.)
-> 
-> Now, "R" is in the front of the queue, and the
-> landlock_restrict_self() call for the red thread can finish normally,
-> even without it being interrupted.
-> 
-> Once the "R" task works are done as well, the remaining G and B works
-> can run and finish as well.
-> 
-> This scheme generalizes: If we have n competing
-> landlock_restrict_self() calls, then in worst case, at least n-1 of
-> these system calls need to be interrupted so that they can all
-> terminate.
-> 
-> 2.2 Can we guarantee that two system calls get interrupted?
-> -----------------------------------------------------------
-> 
-> In case of competing landlock_restrict_self() calls, I think it is
-> possible that not all relevant system calls get seen.  The scenario is
-> one where we have a "red" and "green" thread calling
-> landlock_restrict_self().
-> 
->   (a set of additional threads)
->   t0: task_works: R G
->   t1: task_works: G R
->   tR: red thread
->   tG: green thread
-> 
-> In the red thread, the following happens:
->  * Under RCU, count the number of total threads => get a low number
->  * Allocate space for that number of task_works
->  * Under RCU
->    * Enqueue "R" into t0 and t1
->    * Enqueue "R" for some of the "additional threads"
->    * But we do not have enough pre-allocated space to enqueue "R" for
->      the green thread tG.
-> 
-> The same thing happens in the green thread as well.
-> 
-> The result is that we still have a deadlock between t0 and t1, but
-> neither the red nor the green thread get interrupted so that they can
-> resolve it.
-> 
-> (FWIW, you could resolve it from the outside by sending a signal to
-> the red or green thread manually, but it is not guaranteed to happen
-> on its own.)
-> 
-> Caveat: I am making pessimistic assumptions about the iteration order
-> of the task list here, and I am assuming that the number of
-> "additional threads" is swinging up and down during the competing
-> enforcement, so that the enforcing threads are mis-approximating the
-> required space for memory pre-allocation.
-> 
-> 2.3 Possible resolutions
-> ------------------------
-> 
-> * We could try to interrupt all sibling threads during the teardown,
->   to fix the issue discussed in 2.2. (Downside: Complicated, more
->   expensive)
-> * The reason why landlock_restrict_self() can't return is because it
->   needs to wait until all task works are done before it can free the
->   memory.  Alternatively, we could make the task works take ownership
->   of these memory structures (refcounting the shared_ctx).  (Downside:
->   The used memory is not linear to the number of threads any more.)
-> 
-> Side remark: In testing, I had the impression that the
-> landlock_restrict_self() calls can go into a retry loop for a while
-> where all competing threads get interrupted all the time; in a debug
-> build, when the Syzkaller test prints out a line for each attempt,
-> sometimes it was hanging for seconds and *then* resolving itself
-> again.
-> 
-> 3 Conclusion
-> ---------------
-> 
-> I would prefer if the final solution would not require deadlock
-> reasoning at that level and we could do it in simpler way.  I
-> therefore propose to do what Ding Yihan suggested, and what we had
-> also discussed previously in the code review:
-> 
-> * Let's serialize the landlock_restrict_self()-with-TSYNC operations
->   through the cred_guard_mutex.
-> 
-> This will resolve the issue where competing landlock_restrict_self()
-> calls with TSYNC can deadlock.  It will also remove the jittery
-> behavior for that worst case where the conflict is resolved through
-> retry.
-> 
-> 
-> So in my mind, we need both patches:
-> 
->  * The fix to the cleanup path from 1. above, to make interruption
->    work more reliably and to correct the misunderstandings in the
->    comments.
->  * cred_guard_mutex to serialize the TSYNC invocations.
-> 
-> Please let me know what you think.
-> 
-> Thanks,
-> –Günther
-> 
+Hi everyone,
+
+Amir asked me to run these through, and this commit was flagged.  I recently
+changed the prompts to include some vfs knowledge:
+
+https://github.com/masoncl/review-prompts/blob/main/kernel/subsystem/vfs.md
+
+And I also put in some words to make it prefer reporting problems that might
+not be bugs, but that do violate some rule in the .md files.  This might
+be a false positive from that new shift toward blindly trusting the guides,
+but I'll let everyone here decide:
+
+commit d1bfcef048896cdc9e4c57e3249b6ad344d64c02
+Author: NeilBrown <neil@brown.name>
+
+ovl: Simplify ovl_lookup_real_one()
+
+This patch removes locking from ovl_lookup_real_one() and reorganizes the
+control flow. The function now uses lookup_noperm_unlocked() instead of
+lookup_noperm() and performs consistency validation after the lookup rather
+than holding a lock during the operation.
+
+> diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
+> index 83f80fdb15674..b448fc9424b64 100644
+> --- a/fs/overlayfs/export.c
+> +++ b/fs/overlayfs/export.c
+> @@ -349,69 +349,64 @@ static struct dentry *ovl_dentry_real_at(struct dentry *dentry, int idx)
+>  	return NULL;
+>  }
+>
+> -/*
+> - * Lookup a child overlay dentry to get a connected overlay dentry whose real
+> - * dentry is @real. If @real is on upper layer, we lookup a child overlay
+> - * dentry with the same name as the real dentry. Otherwise, we need to consult
+> - * index for lookup.
+> +/**
+> + * ovl_lookup_real_one -  Lookup a child overlay dentry to get an overlay dentry whose real dentry is given
+> + * @connected: parent overlay dentry
+> + * @real: given child real dentry
+> + * @layer: layer in which @real exists
+> + *
+> + *
+> + * Lookup a child overlay dentry in @connected with the same name as the @real
+> + * dentry.  Then check that the parent of the result is the real dentry for
+> + * @connected, and @real is the real dentry for the result.
+> + *
+> + * Returns:
+> + *   %-ECHILD if the parent of @real is no longer the real dentry for @connected.
+> + *   %-ESTALE if @real is no the real dentry of the found dentry.
+                                       ^^
+There's a typo here: "is no the" should be "is not the".
+
+> + *   Otherwise the found dentry is returned.
+>   */
+>  static struct dentry *ovl_lookup_real_one(struct dentry *connected,
+>  					  struct dentry *real,
+>  					  const struct ovl_layer *layer)
+>  {
+> -	struct inode *dir = d_inode(connected);
+> -	struct dentry *this, *parent = NULL;
+> +	struct dentry *this;
+>  	struct name_snapshot name;
+>  	int err;
+>
+>  	/*
+> -	 * Lookup child overlay dentry by real name. The dir mutex protects us
+> -	 * from racing with overlay rename. If the overlay dentry that is above
+> -	 * real has already been moved to a parent that is not under the
+> -	 * connected overlay dir, we return -ECHILD and restart the lookup of
+> -	 * connected real path from the top.
+> -	 */
+> -	inode_lock_nested(dir, I_MUTEX_PARENT);
+> -	err = -ECHILD;
+> -	parent = dget_parent(real);
+> -	if (ovl_dentry_real_at(connected, layer->idx) != parent)
+> -		goto fail;
+> -
+> -	/*
+> -	 * We also need to take a snapshot of real dentry name to protect us
+> +	 * We need to take a snapshot of real dentry name to protect us
+>  	 * from racing with underlying layer rename. In this case, we don't
+>  	 * care about returning ESTALE, only from dereferencing a free name
+>  	 * pointer because we hold no lock on the real dentry.
+>  	 */
+>  	take_dentry_name_snapshot(&name, real);
+> -	/*
+> -	 * No idmap handling here: it's an internal lookup.
+> -	 */
+> -	this = lookup_noperm(&name.name, connected);
+> +	this = lookup_noperm_unlocked(&name.name, connected);
+>  	release_dentry_name_snapshot(&name);
+> +
+> +	err = -ECHILD;
+> +	if (ovl_dentry_real_at(connected, layer->idx) != real->d_parent)
+> +		goto fail;
+> +
+
+A subsystem pattern flags this as potentially concerning: the VFS subsystem
+guide indicates that TOCTOU validation checking d_parent should also check
+d_unhashed() because a dentry can be unhashed (removed from dcache by
+concurrent operations) while its d_parent pointer remains unchanged.
+
+The old code held inode_lock_nested(dir, I_MUTEX_PARENT) during the entire
+lookup and validation, which serialized with operations that could unhash the
+dentry. The new lockless pattern creates a window where:
+
+1. lookup_noperm_unlocked() completes and returns dentry `this`
+2. A concurrent unlink/remove operation unhashes `this`
+3. The d_parent validation passes (parent pointer unchanged)
+4. The function returns an unhashed dentry
+
+Other overlayfs code uses the complete pattern. For example, in
+ovl_lock_rename_workdir() at fs/overlayfs/util.c:
+
+    if (work->d_parent != workdir || d_unhashed(work)) {
+        ...
+    }
+
+Could this validation miss a race where the dentry is unhashed but d_parent
+still matches? The subsequent checks (!this->d_inode for -ENOENT,
+wrong real dentry for -ESTALE) might catch some cases, but is that
+sufficient for all the scenarios where an unhashed dentry could cause
+problems?
+
+>  	err = PTR_ERR(this);
+> -	if (IS_ERR(this)) {
+> +	if (IS_ERR(this))
+>  		goto fail;
+> -	} else if (!this || !this->d_inode) {
+> -		dput(this);
+> -		err = -ENOENT;
+> +
+> +	err = -ENOENT;
+> +	if (!this || !this->d_inode)
+>  		goto fail;
+> -	} else if (ovl_dentry_real_at(this, layer->idx) != real) {
+> -		dput(this);
+> -		err = -ESTALE;
+> +
+> +	err = -ESTALE;
+> +	if (ovl_dentry_real_at(this, layer->idx) != real)
+>  		goto fail;
+> -	}
+>
+> -out:
+> -	dput(parent);
+> -	inode_unlock(dir);
+>  	return this;
+>
+>  fail:
+>  	pr_warn_ratelimited("failed to lookup one by real (%pd2, layer=%d, connected=%pd2, err=%i)\n",
+>  			    real, layer->idx, connected, err);
+> -	this = ERR_PTR(err);
+> -	goto out;
+> +	if (!IS_ERR(this))
+> +		dput(this);
+> +	return ERR_PTR(err);
+>  }
+>
+>  static struct dentry *ovl_lookup_real(struct super_block *sb,
 
