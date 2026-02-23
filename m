@@ -1,191 +1,269 @@
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEC526CE11;
-	Mon, 23 Feb 2026 13:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5FF27144B;
+	Mon, 23 Feb 2026 14:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771854957; cv=none; b=LqzaL+yIwlxAkHEwBraBUqa6WqoKFGk6vUKiVy4WmdtqdEJHl6bxhUdP3YEW+dYIl1zUKIqw+/0WBmcPEUhs9BURwiuHqSSuZLluhMzE/glQt/FDAh1JqYJ0049JuqYCf4IPkcWfChcL12zmtzam6Hz+zat8i0MH15EDd74Q8BU=
+	t=1771858626; cv=none; b=tx69CbjcrLF2Rn3dHdMArBkXU9HdNvW89CEMPzeA2kgmpKnBf25v0Co/J5tY73G3syrVa8mw1Up2cUDUDiuBZZ5Js7i+bwltoU8gx6aFb4rqpxmALUloUWbASpqLsvYfLrkxToPUhmgdRuw0hU/j29ySnZS36d5G0gZZWod3kkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771854957; c=relaxed/simple;
-	bh=cob0C8Ov+h8656u06111mqzKR1cDutR4IPFn7vbdlZU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MZSMdRVRYG7AVxwc40Ks8BNMA0fLQ//sgwM5Tq/t0FXrkPuQedfj98ppS43/3BARLJHUAYxEIEfmaYkTYYOuxmrhNu14dejponDVY3E3BfbIhfrp4KgnD3exL68Q0ewgwNcrUSdQ9rMhJQmFvCxScyRs2O7fYyFxj2yNQHwQB+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=O7iWbrkM; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+	s=arc-20240116; t=1771858626; c=relaxed/simple;
+	bh=0QkG7IXYCVY7+kXNdqi/xvny/8zHAyZSF7ImhneqUvM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WgwiEydSqRJBtAA8qY0XN0oAZLJZeOjdYZHP4OLcqEhMHVjxI5vhN7nOvDrSDws9bhCamQ9KfTfKzYWYUyKmiAzpnYViZKZHpXdqFxvEY9pOGFSxUmxyx6qOyCv3TQy1iNALURrN39eF7RWbyQwkgr8sE4i3s2IgaDt9rgFJ2qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AMjFkSTk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="O7iWbrkM"
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61N2DCME2422251;
-	Mon, 23 Feb 2026 05:55:32 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
-	 bh=c1zYe2uBv30hniiOy2AATcivJzhRYWxq08QkgSI+OoM=; b=O7iWbrkMm4tk
-	2RCH4QP+2zBMZMAmVpCkKZQjHJ+WY5txycbt9tSHFy+hA61bQuo5oehU/EdTgFvr
-	+0T3mOOhe41mRHOqRi6lWvNMOSOb5wjFWYjPe60+r4whTji2axdtE6vmNySdHQjM
-	LiUjhTnnGsPjtwxvO+fbtKG9Y3wnDhxjkdWU89BVtlylMYk1ro1GlETET2Vm/q2A
-	6eLrsBfuo3df+n8adNnQBdnPIiYiI34MRsUwYgBazfJw4rxXVEPl6QBRmvZf1AcB
-	A98EzEen20WvcDY0ZSjCXINVFey9aQXJSy538qpkeiQQ/7XBrtYbOfhnLBh7cXid
-	vmAF2XS4GA==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4cgdwwk975-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 23 Feb 2026 05:55:32 -0800 (PST)
-Received: from devbig003.atn7.facebook.com (2620:10d:c085:208::7cb7) by
- mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.35; Mon, 23 Feb 2026 13:55:30 +0000
-From: Chris Mason <clm@meta.com>
-To: NeilBrown <neil@brown.name>
-CC: Christian Brauner <brauner@kernel.org>,
-        Alexander Viro
-	<viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>, Jan Kara
-	<jack@suse.cz>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Jeff Layton
-	<jlayton@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>,
-        Amir Goldstein
-	<amir73il@gmail.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore
-	<paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"
-	<serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <netfs@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-        <linux-nfs@vger.kernel.org>, <linux-unionfs@vger.kernel.org>,
-        <apparmor@lists.ubuntu.com>, <linux-security-module@vger.kernel.org>,
-        <selinux@vger.kernel.org>
-Subject: Re: [PATCH v2 01/15] VFS: note error returns is documentation for various lookup functions
-Date: Mon, 23 Feb 2026 05:52:10 -0800
-Message-ID: <20260223135517.1229434-1-clm@meta.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260223011210.3853517-2-neilb@ownmail.net>
-References: <20260223011210.3853517-1-neilb@ownmail.net> <20260223011210.3853517-2-neilb@ownmail.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AMjFkSTk"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 43863C116C6;
+	Mon, 23 Feb 2026 14:57:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771858626;
+	bh=0QkG7IXYCVY7+kXNdqi/xvny/8zHAyZSF7ImhneqUvM=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=AMjFkSTkrSanhesNmQ7LN96u9B4gaJtWkbpgjNowXVJOGM2L5qYuL3kqvBTeqozZd
+	 aaMiNGugn4+Le2W0LAAeWuEPdcM/69jjWyOCoAuAwW79yaUN8eD37UpJzoZ9aYJ33z
+	 dAkX3Ot2BMJKchYfxtLNGWtOSWKuwXbJJAHKnRUUuWX1Le3qvzVHMpvBRqrx37r7aN
+	 I2KuBRgDAbJzTBmj/gmvpgaJaqD+Xuon29y9jNzEr0Hlv33D1Ka4znRK1AnX6S5RgW
+	 fqXr+RfXe16T3rO1M0+U94cDAyaIwTxYUOVtiBqQy18AKKltYYjHJY0K6Sl8pOCilm
+	 jdMtYvMZGnGmA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F47CEA4FCE;
+	Mon, 23 Feb 2026 14:57:06 +0000 (UTC)
+From: Dmitry Safonov via B4 Relay <devnull+dima.arista.com@kernel.org>
+Date: Mon, 23 Feb 2026 14:56:57 +0000
+Subject: [PATCH v5] ima_fs: Avoid creating measurement lists for
+ unsupported hash algos
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: 3VAPDQqQA9urDNWnBOCbuGLWeYoMbRO9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjIzMDExNyBTYWx0ZWRfX4S3buN7Z5VJc
- jXcVuMMKhmmICPL4fOCNdNF5o0+DIGSGFsoIz1K+XpE2dIMgRWbAvMafxzvEE5SgN900SEU6sNj
- 0lY5IZUXE4bxGELXRUVaByAVy1poJLTGWq8UzKyS7IKeggwbf3BxhbDyg1oQlzgrkkDwz9/54f9
- O/qnxxrLH/kZvyWp2RiaZxfyrQk0zv6Msk2AyLdEjr7wklkEHwOQvOv+YjIFJUdlKXgfzp5Pzuk
- poaBSL7OVrIxXyGH9sNOtfatZJJ3RAhts+F89zflYZ7NnVNPhf+pPrONOzZILTH6GaoBbAMcG8p
- FwesOaPe+X6to4yiJxCdtGBzPIQZKrC2kKC+V699bCJaWNdf/Ayh0imZi7ADN7vU4BDKEn5aYUI
- 70aIqZ4cW/fuHpz9Osi9qNgEWi4W++qzJg8J3KSWERnITEpdG94I2yBA0ohjn/Jqp9LTvIQBSpw
- kfEXyFbrjHMEtRtYGmA==
-X-Proofpoint-GUID: 3VAPDQqQA9urDNWnBOCbuGLWeYoMbRO9
-X-Authority-Analysis: v=2.4 cv=a+49NESF c=1 sm=1 tr=0 ts=699c5c54 cx=c_pps
- a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
- a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22
- a=GgsMoib0sEa3-_RKJdDe:22 a=VwQbUJbxAAAA:8 a=I-1mG6jRAAAA:8
- a=v_1R9vC89HT8ZXP7cqwA:9 a=vAntc5lzOlbkVmf1VcWC:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-23_03,2026-02-23_02,2025-10-01_01
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260223-ima-oob-v5-1-91cc1064e767@arista.com>
+X-B4-Tracking: v=1; b=H4sIALhqnGkC/3XNSw6CMBgE4KuQrq3pCyiuvIdx8fclXUBNSxoN4
+ e627AxhOcl8MytKNnqb0K1ZUbTZJx/mEtpLg/QI88tib0pGjLCOUNZjPwEOQeHBgeTQcWF6hUr
+ 7Ha3zn33p8SxZQbJYRZj1WP0EabGxFkeflhC/+2OmtX4czxRTzIxgjgsqbdvfIRYGVx0mVNczO
+ 4GsQMclUKllS7Q7QH4CeYHUGDI4oRl0cIDiBIoClSPa9G5Qwog/uG3bD4rTvItjAQAA
+X-Change-ID: 20260127-ima-oob-9fa83a634d7b
+To: Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, 
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+ Silvia Sisinni <silvia.sisinni@polito.it>, 
+ Enrico Bravi <enrico.bravi@polito.it>
+Cc: Jonathan McDowell <noodles@earth.li>, linux-integrity@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Dmitry Safonov <0x7f454c46@gmail.com>, 
+ Dmitry Safonov <dima@arista.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1771858625; l=7264;
+ i=dima@arista.com; s=20250521; h=from:subject:message-id;
+ bh=1zfQNwMpVQJJaErTAqhxb6R+h8DyzMNUh2coTShYYwI=;
+ b=nhQathIFcET8SfpfXIav3K2AOzBW6ism7bQXCJsUkL79MmyGOx2g3SREXbaG8SA6L98h6xupL
+ DYdLNLtOFVNAWW9by0sqNAxU3d/NPNweGe3GN8KQ8zKG/pLhT8WPQuH
+X-Developer-Key: i=dima@arista.com; a=ed25519;
+ pk=/z94x2T59rICwjRqYvDsBe0MkpbkkdYrSW2J1G2gIcU=
+X-Endpoint-Received: by B4 Relay for dima@arista.com/20250521 with
+ auth_id=405
+X-Original-From: Dmitry Safonov <dima@arista.com>
+Reply-To: dima@arista.com
 
-NeilBrown <neilb@ownmail.net> wrote:
-> From: NeilBrown <neil@brown.name>
-> 
-> Darrick recently noted that try_lookup_noperm() is documented as
-> "Look up a dentry by name in the dcache, returning NULL if it does not
-> currently exist." but it can in fact return an error.
-> 
-> So update the documentation for that and related function.
->
+From: Dmitry Safonov <dima@arista.com>
 
-Hi everyone,
+ima_tpm_chip->allocated_banks[i].crypto_id is initialized to
+HASH_ALGO__LAST if the TPM algorithm is not supported. However there
+are places relying on the algorithm to be valid because it is accessed
+by hash_algo_name[].
 
-I don't normally forward the typos, but since this is a documentation-y patch:
+On 6.12.40 I observe the following read out-of-bounds in hash_algo_name:
+  ==================================================================
+  BUG: KASAN: global-out-of-bounds in create_securityfs_measurement_lists+0x396/0x440
+  Read of size 8 at addr ffffffff83e18138 by task swapper/0/1
 
-commit 0254b9b974f23889898562aa94f6428bf30eb6b5
-Author: NeilBrown <neil@brown.name>
+  CPU: 4 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.40 #3
+  Call Trace:
+   <TASK>
+   dump_stack_lvl+0x61/0x90
+   print_report+0xc4/0x580
+   ? kasan_addr_to_slab+0x26/0x80
+   ? create_securityfs_measurement_lists+0x396/0x440
+   kasan_report+0xc2/0x100
+   ? create_securityfs_measurement_lists+0x396/0x440
+   create_securityfs_measurement_lists+0x396/0x440
+   ima_fs_init+0xa3/0x300
+   ima_init+0x7d/0xd0
+   init_ima+0x28/0x100
+   do_one_initcall+0xa6/0x3e0
+   kernel_init_freeable+0x455/0x740
+   kernel_init+0x24/0x1d0
+   ret_from_fork+0x38/0x80
+   ret_from_fork_asm+0x11/0x20
+   </TASK>
 
-VFS: note error returns is documentation for various lookup functions
-                       ^^^^^ in?
+  The buggy address belongs to the variable:
+   hash_algo_name+0xb8/0x420
 
-Darrick recently noted that try_lookup_noperm() is documented as
-"Look up a dentry by name in the dcache, returning NULL if it does not
-currently exist." but it can in fact return an error. So update the
-documentation for that and related function.
+  Memory state around the buggy address:
+   ffffffff83e18000: 00 01 f9 f9 f9 f9 f9 f9 00 01 f9 f9 f9 f9 f9 f9
+   ffffffff83e18080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  >ffffffff83e18100: 00 00 00 00 00 00 00 f9 f9 f9 f9 f9 00 05 f9 f9
+                                          ^
+   ffffffff83e18180: f9 f9 f9 f9 00 00 00 00 00 00 00 04 f9 f9 f9 f9
+   ffffffff83e18200: 00 00 00 00 00 00 00 00 04 f9 f9 f9 f9 f9 f9 f9
+  ==================================================================
 
-Link: https://lore.kernel.org/all/20260218234917.GA6490@frogsfrogsfrogs/
+Seems like the TPM chip supports sha3_256, which isn't yet in
+tpm_algorithms:
+  tpm tpm0: TPM with unsupported bank algorithm 0x0027
 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 58f715f7657e2..e4ac07a4090e7 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3124,7 +3124,8 @@ static int lookup_one_common(struct mnt_idmap *idmap,
->   * @base:	base directory to lookup from
->   *
->   * Look up a dentry by name in the dcache, returning NULL if it does not
-> - * currently exist.  The function does not try to create a dentry and if one
-> + * currently exist or an error is there is a problem with the name.
-                                       ^^
+Thus solve the problem by creating a file name with "_tpm_alg_<ID>"
+postfix if the crypto algorithm isn't initialized.
 
-There's a grammar error: "is there is" should be "if there is".
+This is how it looks on the test machine (patch ported to v6.12 release):
+  # ls -1 /sys/kernel/security/ima/
+  ascii_runtime_measurements
+  ascii_runtime_measurements_tpm_alg_27
+  ascii_runtime_measurements_sha1
+  ascii_runtime_measurements_sha256
+  binary_runtime_measurements
+  binary_runtime_measurements_tpm_alg_27
+  binary_runtime_measurements_sha1
+  binary_runtime_measurements_sha256
+  policy
+  runtime_measurements_count
+  violations
 
-> + * The function does not try to create a dentry and if one
->   * is found it doesn't try to revalidate it.
->   *
->   * Note that this routine is purely a helper for filesystem usage and should
-> @@ -3132,6 +3133,11 @@ static int lookup_one_common(struct mnt_idmap *idmap,
->   *
->   * No locks need be held - only a counted reference to @base is needed.
->   *
-> + * Returns:
-> + *   - ref-counted dentry on success, or
-> + *   - %NULL if name could not be found, or
-> + *   - ERR_PTR(-EACCES) if name is dot or dotdot or contains a slash or nul, or
-> + *   - ERR_PTR() if fs provide ->d_hash, and this returned an error.
->   */
->  struct dentry *try_lookup_noperm(struct qstr *name, struct dentry *base)
->  {
+Fixes: 9fa8e7625008 ("ima: add crypto agility support for template-hash algorithm")
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+Cc: Enrico Bravi <enrico.bravi@polito.it>
+Cc: Silvia Sisinni <silvia.sisinni@polito.it>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+---
+Changes in v5:
+- Use lower-case for sysfs file name (as suggested-by Jonathan and Roberto)
+- Don't use email quotes for patch description (Roberto)
+- Re-word the patch description (suggested-by Roberto)
+- Link to v4: https://lore.kernel.org/r/20260127-ima-oob-v4-1-bf0cd7f9b4d4@arista.com
 
-[ ... ]
+Changes in v4:
+- Use ima_tpm_chip->allocated_banks[algo_idx].digest_size instead of hash_digest_size[algo]
+  (Roberto Sassu)
+- Link to v3: https://lore.kernel.org/r/20260127-ima-oob-v3-1-1dd09f4c2a6a@arista.com
+Testing note: I test it on v6.12.40 kernel backport, which slightly differs as
+lookup_template_data_hash_algo() was yet present.
 
-> @@ -3208,6 +3214,11 @@ EXPORT_SYMBOL(lookup_one);
->   *
->   * Unlike lookup_one, it should be called without the parent
->   * i_rwsem held, and will take the i_rwsem itself if necessary.
-> + *
-> + * Returns:= A dentry, possibly negative, or
-           ^^^
+Changes in v3:
+- Now fix the spelling *for real* (sorry, messed it up in v2)
+- Link to v2: https://lore.kernel.org/r/20260127-ima-oob-v2-1-f38a18c850cf@arista.com
 
-There's a typo: "Returns:=" should be "Returns:".
+Changes in v2:
+- Instead of skipping unknown algorithms, add files under their TPM_ALG_ID (Roberto Sassu)
+- Fix spelling (Roberto Sassu)
+- Copy @stable on the fix
+- Link to v1: https://lore.kernel.org/r/20260127-ima-oob-v1-1-2d42f3418e57@arista.com
+---
+ security/integrity/ima/ima_fs.c | 34 ++++++++++++++++++----------------
+ 1 file changed, 18 insertions(+), 16 deletions(-)
 
-> + *	   - same errors as try_lookup_noperm() or
-> + *	   - ERR_PTR(-ENOENT) if parent has been removed, or
-> + *	   - ERR_PTR(-EACCES) if parent directory is not searchable.
->   */
->  struct dentry *lookup_one_unlocked(struct mnt_idmap *idmap, struct qstr *name,
->  				   struct dentry *base)
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index 012a58959ff0..3d9996ed486d 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -132,16 +132,12 @@ int ima_measurements_show(struct seq_file *m, void *v)
+ 	char *template_name;
+ 	u32 pcr, namelen, template_data_len; /* temporary fields */
+ 	bool is_ima_template = false;
+-	enum hash_algo algo;
+ 	int i, algo_idx;
+ 
+ 	algo_idx = ima_sha1_idx;
+-	algo = HASH_ALGO_SHA1;
+ 
+-	if (m->file != NULL) {
++	if (m->file != NULL)
+ 		algo_idx = (unsigned long)file_inode(m->file)->i_private;
+-		algo = ima_algo_array[algo_idx].algo;
+-	}
+ 
+ 	/* get entry */
+ 	e = qe->entry;
+@@ -160,7 +156,8 @@ int ima_measurements_show(struct seq_file *m, void *v)
+ 	ima_putc(m, &pcr, sizeof(e->pcr));
+ 
+ 	/* 2nd: template digest */
+-	ima_putc(m, e->digests[algo_idx].digest, hash_digest_size[algo]);
++	ima_putc(m, e->digests[algo_idx].digest,
++		 ima_tpm_chip->allocated_banks[algo_idx].digest_size);
+ 
+ 	/* 3rd: template name size */
+ 	namelen = !ima_canonical_fmt ? strlen(template_name) :
+@@ -229,16 +226,12 @@ static int ima_ascii_measurements_show(struct seq_file *m, void *v)
+ 	struct ima_queue_entry *qe = v;
+ 	struct ima_template_entry *e;
+ 	char *template_name;
+-	enum hash_algo algo;
+ 	int i, algo_idx;
+ 
+ 	algo_idx = ima_sha1_idx;
+-	algo = HASH_ALGO_SHA1;
+ 
+-	if (m->file != NULL) {
++	if (m->file != NULL)
+ 		algo_idx = (unsigned long)file_inode(m->file)->i_private;
+-		algo = ima_algo_array[algo_idx].algo;
+-	}
+ 
+ 	/* get entry */
+ 	e = qe->entry;
+@@ -252,7 +245,8 @@ static int ima_ascii_measurements_show(struct seq_file *m, void *v)
+ 	seq_printf(m, "%2d ", e->pcr);
+ 
+ 	/* 2nd: template hash */
+-	ima_print_digest(m, e->digests[algo_idx].digest, hash_digest_size[algo]);
++	ima_print_digest(m, e->digests[algo_idx].digest,
++			 ima_tpm_chip->allocated_banks[algo_idx].digest_size);
+ 
+ 	/* 3th:  template name */
+ 	seq_printf(m, " %s", template_name);
+@@ -404,16 +398,24 @@ static int __init create_securityfs_measurement_lists(void)
+ 		char file_name[NAME_MAX + 1];
+ 		struct dentry *dentry;
+ 
+-		sprintf(file_name, "ascii_runtime_measurements_%s",
+-			hash_algo_name[algo]);
++		if (algo == HASH_ALGO__LAST)
++			sprintf(file_name, "ascii_runtime_measurements_tpm_alg_%x",
++				ima_tpm_chip->allocated_banks[i].alg_id);
++		else
++			sprintf(file_name, "ascii_runtime_measurements_%s",
++				hash_algo_name[algo]);
+ 		dentry = securityfs_create_file(file_name, S_IRUSR | S_IRGRP,
+ 						ima_dir, (void *)(uintptr_t)i,
+ 						&ima_ascii_measurements_ops);
+ 		if (IS_ERR(dentry))
+ 			return PTR_ERR(dentry);
+ 
+-		sprintf(file_name, "binary_runtime_measurements_%s",
+-			hash_algo_name[algo]);
++		if (algo == HASH_ALGO__LAST)
++			sprintf(file_name, "binary_runtime_measurements_tpm_alg_%x",
++				ima_tpm_chip->allocated_banks[i].alg_id);
++		else
++			sprintf(file_name, "binary_runtime_measurements_%s",
++				hash_algo_name[algo]);
+ 		dentry = securityfs_create_file(file_name, S_IRUSR | S_IRGRP,
+ 						ima_dir, (void *)(uintptr_t)i,
+ 						&ima_measurements_ops);
 
-[ ... ]
+---
+base-commit: 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f
+change-id: 20260127-ima-oob-9fa83a634d7b
 
-> @@ -3244,6 +3255,10 @@ EXPORT_SYMBOL(lookup_one_unlocked);
->   * It should be called without the parent i_rwsem held, and will take
->   * the i_rwsem itself if necessary.  If a fatal signal is pending or
->   * delivered, it will return %-EINTR if the lock is needed.
-> + *
-> + * Returns: A dentry, possibly negative, or
-> + *	   - same errors as lookup_one_unlocked() or
-> + *	   - ERR_PTR(-EINTR) is a fatal signal is pending.
-                             ^^
+Best regards,
+-- 
+Dmitry Safonov <dima@arista.com>
 
-There's a grammar error: "is a fatal signal is pending" should be "if a
-fatal signal is pending".
-
-> + */
->  struct dentry *lookup_one_positive_killable(struct mnt_idmap *idmap,
->  					    struct qstr *name,
 
