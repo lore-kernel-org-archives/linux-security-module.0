@@ -1,96 +1,135 @@
-Received: from sonic313-15.consmr.mail.ne1.yahoo.com (sonic313-15.consmr.mail.ne1.yahoo.com [66.163.185.38])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3113AA1A9
-	for <linux-security-module@vger.kernel.org>; Tue, 24 Feb 2026 18:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.38
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771958508; cv=none; b=EFUUUqgQb4Tg4h8QDW5FTeCX5IE6Ao0n082Fh3TgPrLVD+2i4NrD3RMY3ZMvOgbE9pdVZIjUQBfSo2PaV/s2glx7k9Se2ymk0YvK9OY7BS3pETb0nAgzkoUnMmsisAcCU9MrV9Ksfsd+HXwtQs8OBAP97qO/7Z963MMmaoYxrVg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771958508; c=relaxed/simple;
-	bh=tHqO38mclNDHgKmErN6AOKgzGd8ZLgfsUQTIhn7+/B4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rvw2oQul06UVHSwd61Z75TvPsIRccHrOgLVExU/aLuROzKjXuAqZNV29vAxH32SSqa1Q+QgvK8YBv+UhVstBkshB7C50YATQf2cBUkMMMRj9+n5G3Dh9ZyL6YyQRJ9cseGjGvt5WULc0FCUN36+YCQQVb/LF9MO1gXNdEe6S7UY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=PuBjT73n; arc=none smtp.client-ip=66.163.185.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49902FF144
+	for <linux-security-module@vger.kernel.org>; Tue, 24 Feb 2026 19:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.175
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771960372; cv=pass; b=N6gPPgt8bUn6A5UCfXTiUaUs7SrgU6fqlB5ZRqp0WYexAB3CPyKD8DaGRKUCTkxDIM3mvbbFE8XH7sHTyhnBIawZzhhQ+T0G9N7XV4AFhUfapoGgtpj406kLU3yXrwX3bdauAfsxjRiufp39eE8dtPAndrwrzJd3lRoAXcBIIBA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771960372; c=relaxed/simple;
+	bh=Mx7EWvPLyqSJRzwqUTOqp6F3rZbh1xURjor89wXlRdI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AA5c5VTR8e571lVvrTE+CFNVP1QqD9EC7oitZGgbY2y3VKaNRMlPZa7XRFGCHtUIyI3ikGXWIJi9xUyEgLl0paABX4uyZw9GfSxdOVbSHyxzdBu3HSKWKZZIAcQe/+4jQ46gvn3B/HWf2xz8aDoOTLfY+YBtVli9Aq+F/qiuRKQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KhhbuuKj; arc=pass smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="PuBjT73n"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1771958506; bh=WaEhfhlC+YLyS63jwcPikkHdTx/qWoNdCwif7OiK3sI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=PuBjT73norqtwzHfEUd396KA7IltNK1cEk0FruizYnBkGJYx4oviIBtTHa8YDx0wXMA6eWG8FOfY0VFTRpujRhuIfsdyAo7nPfS0Nd0B1yaNcSX66FQq9BljaYukpeFd9jbwFlWcUbFTIMEpteHfsRuBW2XwNJDQCW6EaG3n42habepyWVzkEVD3udelczdg2FvJC3shYr2Dh+h1uDEUlj0nx/ff6BkKbbYH4oU5UjGFy5sU3UfTyXNKmD5x4pf+E+6LHme8U0R5CSGs0Npsrmr5TY0RUxMr5pgx1Bpi9fXE3D4vRnp2PlfS7pJ4gs9+R6PCHRgv5YmYIDYGK5Qv/A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1771958506; bh=ULyJDultg8cMK4ebLbfvs80pnJyLjCE6RYjKP7aPEfw=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=q9vD/JW3igQbwNWyaJuscaRHF/hvTcVualjg9+6tHwjgXu7tq2ubS8pm5iVkqPpI3yfGpjXE5+mCUEIbQUQNRyyFDwcXzMDALciFiUaVGiajFybIhdNvykQXTyyE0LAxmx/kbtzxz2S0V2zrDqhvQ/wxn5h69f/dBoni7zhNhbBa3yFrHdHl4di3l+VmpxuwgHporNGuGNqwGo26vNLr1Fkkr0B3SpXixjN6vmQCTrTbzB1oZrPy6IKB5q2d5jHlhjp5UxenjkE4I2VaVliIAkQvUlo29VxGEHThpOdv7ZqwiY+CdduWx81NAwp/I0WbUmkuWbJxHhFx+InPDg8z4Q==
-X-YMail-OSG: o1aE7fcVM1kzBUgU0EdgJQUTLPcDYOMbFa4GCIfjvvSNIItrdJ_zOMPvmmDd64b
- Vnxfywgs3grOkRH2qStYWb7v8v.sOnodEUa_zV9rj5YBsgm1NbLS89bolTjuqOH_aOVsMIWP5FuW
- eQzLuRIyKPlrKuV7IweUO.wkTpT1uvJxxD8mvAyRl3jVaDoHJfl3f0m8Xyu4CYeUb5fVUJq6ksq7
- 68WKewIqBZO7KvVhTPYSM0ZGfVMm1VutffObomM5ozcfsbelYkXou4GaYdLT05reM.mOl5WwdU.q
- rY5yODnK4Mq6vRKn5Mb0bj20rnaArJv9tqzy_7hev0C6X9Dmq6ihGwNyPtx341dJr1FLV5S7b.UJ
- dfEfGKuEECTbvACxZ_LfUGvTAsoOOeLhd5VbOc6QDoSZXbCjYC20RQ_zXOTbyuIgBeJwLcm41BYy
- ux8Id6q.HjZwrOS1r60lMOZa6FCZe_rim1glUu8W_o_YwALGVrxD1TipLd5.1WOe.mdEvJ7b17r4
- HSYcoYZr7r7pOb2p17b3nnZSioH_9d4m8lm8u4ZHc3wH3rnebfjfVrGDtD70PMe7DAQOZIaWeCRX
- 0e4kUhR2tuPmX9YheiWd6wt3_UjZF6n3I7VUVmYE2aO0gMUh_.wcCtKWKI6W8Q6qJSNf9V2t5LtJ
- gf2ghewjNMdMh.gA06lVZhrU2Dm27xrNzX5CwdvOn_QrJyFEVtdfXRqSWvkeaiLGw5UUTrxhflEu
- OiLqKCsCOyAhm3jxaTgA06XDgqf0eqV6EhQ_h1LdnLaYUBW3XVp69Yl7uR6RJTj7OY3vDDq4CFGj
- OOOUfvrv.0iDlp2_2shPKzYzuIm1rM9i9F76hD.S346TiuBwoaaiUKAVOlGMlHrPDpSlb_iH4nR7
- k34OEEvh1dkiR.GqJQI26OWlhSGKo2sODU5xwc8Vh1ZXg80By68_uuUSTbAcDI52dRY6Mgtr1L3J
- vSi.42a72GD.xqt60_FfigV_YMTqPTHcwP73wd_fAjqr24G_uU7ZDSd.WXv6TeTmRzzOfoMTAp3R
- hznGu_VzHAf00Yha0_q4s3jSuPL0H7st3R_Zc9GZ5bdZwIMxP8RTkool0WoiqaT7uim7reMTaU_6
- _v_LmGd6oQC__84IgLAaD3Q9T1ALeVKz1Z_0BGuYghcdprs5aUn9SSyH6W4KuPDm77rO8PvNvzYV
- GjgXBHky4sIkUnWXbqYDXelYMdMvo34vcvepWfuozzya43x4hM1R6wxZ1a1tXxe.mE4cIB74Keqr
- 6c.RSM8ACC.lQ6b8.8DIk7woRgu0hM6FoedXWGg99rkEIzlaABck0d3fc11.9PzEh.wf6bJ5JC2d
- wZz8UE_5c1i5PfONzvnMWkkile7DD24m._ghHvwZA5yAZbn1RNL8To9wxtf25ExWm3neMbqF8h6s
- vOnNEkxHgKyHH19HtTOpkKJq.04UvCCpJtImfkAYX5uBRq03N8FoIVb91FAJsf_eCwTToOJkUw_L
- 5D0wfVFBqJpGpPee3CVRpdgzpUd7wTuy6SmPd9XYlX_7YUcWkgj28tN25oeUtrhWR80ZRUvO4raf
- QvMrnGPbNBzsUtR6XzwXbqOMgDNUTHexFcfdcWEoWtut88YuSmUkRqx.2Way5kZSX04I10LdV2Qx
- ijWNLVEiv5xt05DePq.H4gUPqqaxQmV2JRgPSs5WGBllvDmm83_.suPSUWDbOUguqZxrXpn8l3IU
- SKkdRFFdJ98JHo.9LZGpDeZVE.cR4JxhvlcbI389TzHftTEFz
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 86232e4d-228a-4d05-bbea-91a52606ac22
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Tue, 24 Feb 2026 18:41:46 +0000
-Received: by hermes--production-gq1-6dfcf9f8b-xs62w (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 28346b8124a6cca8105105787af4a92b;
-          Tue, 24 Feb 2026 18:21:28 +0000 (UTC)
-Message-ID: <2422cafc-af49-43ff-99ae-999dea92f79a@schaufler-ca.com>
-Date: Tue, 24 Feb 2026 10:21:25 -0800
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KhhbuuKj"
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2aaf59c4f7cso27118945ad.1
+        for <linux-security-module@vger.kernel.org>; Tue, 24 Feb 2026 11:12:50 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771960370; cv=none;
+        d=google.com; s=arc-20240605;
+        b=RHMMDZvzr6bxIFwIUAzRyN+/sHbim8Bdu8nXR1b80Q3a9HY8QcD3tckMuM6epFA4CA
+         n1iRdSzP8btFGlVnDGTkHGdmegH/w7MNAbX4jkHZZkouXVHZhHUON7MM61AzGwYoyxbw
+         cn2wwH06JbpS0DY2jxVnEa3Ve228py9sSPo3ovT1uxyTCm1z2JBmyon/jk7BoDdIfGe6
+         ypMZhBY/RzzajTKrKzkI9/bkr00qE1zAwYCnCUFB/heJKq5S1mh7ycEDqu6QKLLHS1Ic
+         MJh9P2Z0k0jvLpMO+HczB4ee8yQDq6bsZDANAUb5a27Xc+qFtpHH2liD8pRYRHtyorxM
+         a55w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=Dyx0e+eGptURv94NFLlxLMfCeHkSe565dVokgpHON3E=;
+        fh=Mqw/l8T2gKgQtLQS4hWTdwC5RNkGzFqg+dO+cNJQi3A=;
+        b=E7qOAnd++DT+3/9MBWC90NjkBHdNl+jtfQplK8IFIj6lvgXxww2CQLbPn4bkkPZDwr
+         kivLuscGH9/p9k7nZ1f6Y4rcuXSAzRgxIPL8nA/QY8DlD0fdpPSe7ibP48ztI0atbZst
+         qZU/oLsLazigMZFMDingqRPbvXoxjAJ2NfpPPEO0hPSgB8g0LS0Vtm6flMacihZB+qrQ
+         5y0sWlfAuu6MkAABXXYc+A11PVQAipXtmErGtYyZ4WLaEBHOdovdtK3Gr6jU8gZKzh0s
+         Kq8aZCLcTxpsiXTgZrSGcPj3u8lrszMWEaG6BCrER2uRF+jPDhF/z/o3pLm/HBx/moPt
+         eIkQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1771960370; x=1772565170; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dyx0e+eGptURv94NFLlxLMfCeHkSe565dVokgpHON3E=;
+        b=KhhbuuKjR2JZaDvUwlguZ7AuuMNvsmzE4zIPHLqtgm2iz89AuXVcj8Hm/uzUNYTJpc
+         4kDewaiBV/FCaeIN++4HzE1v45Gx3PptJ2DCUFJtfGrFGipyl9O9u/msqwZsFDmSbRh+
+         Yyi+W8+d/Qgzh1UKgo6+hLF1RrGHLQ8HGiPvsc66YIGxomqKrxgLCXTY9BwWzeH9GlKS
+         Oeqh5fBzOB99TnDnZf1EowhWVBj6VUmkQmmprTAbcZHN+gZRle9uH1aKwY+pZBPkssTQ
+         V4LgTNhI3mYkzL3NWPU9S5pvZBSE/9gMjl1wL3BM5r6x3Aon9H3s1fl3dZxbCO2ioL/c
+         vpsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771960370; x=1772565170;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Dyx0e+eGptURv94NFLlxLMfCeHkSe565dVokgpHON3E=;
+        b=Ja3n1DWiEJojTrNtvyP+QXgcTo1+5nfcJ5+qvGllsgzPWGTTgOzHkURNNfp5fMHIYv
+         k289tx5Go4PsKNV20mxZCSMRvQryrSwBqFL2nO+Z8bgR74qIcAzyav6daBzFbBG1pQ+F
+         2kSE2etWhPStetfkonQbAZMLxaZmKp4oXJbsZWM3Y6TLbwSRW5IIFe4nrv9XDHkPKKYf
+         iYJLGecQNz4S9oikX1c6owp94wIfGdfhly3NkzQK71VVgg5KZfqwCwyEGGsab181USuO
+         ef5bFEpKod4ZEQ6m4Fw77FX9uircexeHZ1TVwOa2TjFfTU/PkP2LxxhjeZpE1b/lmKQM
+         6mbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0xiKFcz16zXJP9pVfyO0RVUE7u0zF3YAPy1hXUivhVo/0lzOdHuGON8+1yHQE4w8kZnyQeNRoxOkRdzKu8dekw+cnII0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYxxwG2wEUASBzIl2PsQa8lvzK54z2FTROIPVY0Xk7gOHnRdDZ
+	AwCqWq4vnaW+MzyjfSVpXlf22WtEt+WZDtpIKn5aIJcS789VKC4u+RbiXNE/16cRNCY/Gi+TGpC
+	LYNndyCvDH7W1rR6YwsLYnL1rm1WjrQWwtnVi960V
+X-Gm-Gg: ATEYQzxYmryNDgeu3UtOUO689kAORwYKYqKgWAhMG9dCcq+tTh9Ua6DivsIQJ2C9jeT
+	YXq9U2XZgCwUT1UsvD3mmBoZ27rnCnPKn67/FKSsZqdRnU8NwTggzYInP7PnvUrZs/3+45CWQYs
+	BMR+gAKKKXQ6RT+beePTEK1MLeUMnE59GAXIkup8jxEX61k7oKcvBxLgeB4Ec88Y7SYmgn+BTNF
+	HQ1yciR4VK/VgbyIgHml9a6vvhjjIPWK98zFWRUKaatsnGEaotamwSd11SyyPjic73TxOfQkOrh
+	BIROJUs=
+X-Received: by 2002:a17:903:3850:b0:2ad:3e57:91b7 with SMTP id
+ d9443c01a7336-2ad74447156mr109545555ad.16.1771960370108; Tue, 24 Feb 2026
+ 11:12:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lsm: move inode IS_PRIVATE checks to individual LSMs
-To: Stephen Smalley <stephen.smalley.work@gmail.com>,
- Paul Moore <paul@paul-moore.com>
-Cc: danieldurning.work@gmail.com, linux-security-module@vger.kernel.org,
- selinux@vger.kernel.org, linux-integrity@vger.kernel.org, jmorris@namei.org,
- serge@hallyn.com, john.johansen@canonical.com, zohar@linux.ibm.com,
- roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, mic@digikod.net,
- takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp,
- Casey Schaufler <casey@schaufler-ca.com>
 References: <20260220195405.30612-1-danieldurning.work@gmail.com>
- <9229d70d-aa7a-459f-b005-695e99888783@schaufler-ca.com>
- <CAHC9VhSp+X8YNocS7sDz+UyhdJh2yY8CRoi6dwV1eOGdCu9f9w@mail.gmail.com>
+ <9229d70d-aa7a-459f-b005-695e99888783@schaufler-ca.com> <CAHC9VhSp+X8YNocS7sDz+UyhdJh2yY8CRoi6dwV1eOGdCu9f9w@mail.gmail.com>
  <CAEjxPJ79V7hM=VnbB1dVA96jjr1yeN9qsLjXb4ALv1VmcRfJ-A@mail.gmail.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
 In-Reply-To: <CAEjxPJ79V7hM=VnbB1dVA96jjr1yeN9qsLjXb4ALv1VmcRfJ-A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.25198 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 24 Feb 2026 14:12:38 -0500
+X-Gm-Features: AaiRm503rW9ZOS4V4zxiebdUBzdo3Pfwr2D3jQYLmSqJvm2WIFtI559N_YW2Cig
+Message-ID: <CAHC9VhRmAH+mymmoEivKKNgGScUHyD-2t8t-ed+=r_mNzT5wzQ@mail.gmail.com>
+Subject: Re: [PATCH] lsm: move inode IS_PRIVATE checks to individual LSMs
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, danieldurning.work@gmail.com, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
+	john.johansen@canonical.com, zohar@linux.ibm.com, roberto.sassu@huawei.com, 
+	dmitry.kasatkin@gmail.com, mic@digikod.net, takedakn@nttdata.co.jp, 
+	penguin-kernel@i-love.sakura.ne.jp
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/24/2026 6:44 AM, Stephen Smalley wrote:
-> On Mon, Feb 23, 2026 at 5:21 PM Paul Moore <paul@paul-moore.com> wrote:
->> I'm not going to argue with that, and perhaps that is a good next
->> step: send a quick RFC patch to the VFS folks, with the LSM list CC'd,
->> that drops setting the S_PRIVATE flag to see if they complain too
->> loudly.  Based on other threads, Christian is aware that we are
->> starting to look at better/proper handling of pidfds/pidfs so he may
->> be open to dropping S_PRIVATE since it doesn't really have much impact
->> outside of the LSM, but who knows; the VFS folks have been growing a
->> bit more anti-LSM as of late.
-> Adding S_PRIVATE to pidfs inodes was originally motivated by this bug report:
-> https://lore.kernel.org/linux-fsdevel/20240222190334.GA412503@dev-arch.thelio-3990X/
+On Tue, Feb 24, 2026 at 9:44=E2=80=AFAM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+> On Mon, Feb 23, 2026 at 5:21=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> > I'm not going to argue with that, and perhaps that is a good next
+> > step: send a quick RFC patch to the VFS folks, with the LSM list CC'd,
+> > that drops setting the S_PRIVATE flag to see if they complain too
+> > loudly.  Based on other threads, Christian is aware that we are
+> > starting to look at better/proper handling of pidfds/pidfs so he may
+> > be open to dropping S_PRIVATE since it doesn't really have much impact
+> > outside of the LSM, but who knows; the VFS folks have been growing a
+> > bit more anti-LSM as of late.
+>
+> Adding S_PRIVATE to pidfs inodes was originally motivated by this bug rep=
+ort:
+> https://lore.kernel.org/linux-fsdevel/20240222190334.GA412503@dev-arch.th=
+elio-3990X/
 > when pidfs was first introduced as its own distinct filesystem type.
 > Otherwise, Fedora (and likely any other system enforcing SELinux)
 > stopped working.
+> So we can't unconditionally remove S_PRIVATE from pidfs inodes without br=
+eaking
+> existing userspace/policy. If we want to introduce controls over pidfs
+> inodes and do so in a
+> backward-compatible manner, we have to either move the S_PRIVATE
+> handling into the
+> individual LSMs ...
 
-Woof. Not a hill I'm willing to receive even minor injuries on. Carry on.
+... just like was originally proposed.  Just do that and be done with
+it; back-n-forth like this just wastes time and energy.
 
+--=20
+paul-moore.com
