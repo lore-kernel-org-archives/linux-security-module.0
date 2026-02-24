@@ -1,208 +1,236 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com [209.85.161.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F8D368274
-	for <linux-security-module@vger.kernel.org>; Tue, 24 Feb 2026 08:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BF4368262
+	for <linux-security-module@vger.kernel.org>; Tue, 24 Feb 2026 08:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771922895; cv=none; b=SPT2l6l6kzko5/rz/e5EptP5RVejF1uqXTGZN0zBNb8z8o//Lu0Fbbj6+I50tRI4xFP7hyA5fywYAoRoyrofIySRW13VUx06YH+uuPgVWLwFZIcI9Yu+w6uWPm5H/fs8ONIwLNvpeqwKNq6M44V9E9/JT1d1jbuCFvBpS1NUwj8=
+	t=1771923027; cv=none; b=Gn3Si6RqC3MBIFTyDjLelB497zLcjoWOATMNBWaXa0El5NoktsbXDGxK5VFYTpbKHm4hUI9vfD1CEYi5bv4horBffEHnbfdlNxP6Qtv3NAbUAYikukmvHIIYL66KNBGvmseYBvHw54SIBEIuUnRTKDvFmU3chkfI25xH4jKbd+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771922895; c=relaxed/simple;
-	bh=tmdcMFy2Tcq00WsY4kH2FLoVQfXCbswk6h1DNAiZGzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pK6sSuoW4c03E7ZInAb5Nc+rVngRzc/tI7sKj19UDISHEXCaL7bvHHsx845c08I65NsjFIHRiza/pULZN+EGzkjL0Pcp26aLQ02xN/1SSk+XwYvUC2dW2w6vgR9e9e+86v8BNqEDIAfwutHXi85TmHVvugx7h1wrBmGBgmBbrBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EVoUWYkQ; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EVoUWYkQ"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4836f363d0dso44920405e9.3
-        for <linux-security-module@vger.kernel.org>; Tue, 24 Feb 2026 00:48:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1771922892; x=1772527692; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KY5ZU4BUIJvQfJTP6W63cIfAdt+Ibsp8oBpmIRSvuWw=;
-        b=EVoUWYkQBHI880YvKAtl2ZaTszwjO4zsilwcvtbABmK/7NMw4sq2/5R13ZF0DxRJml
-         9DblQehmHe9v6GXVcSxfbTv1TgU4m602Qs477Xils+peB+ZZqY2kLR+kZ9XGHhgWXeHN
-         zcl9v0GcBDAmVonlklIYAKO+ezPbOeXHVZ49ONhht/ApOI49Yu9XsWE9dZA0jVwfEQpA
-         gjtRiN11MWRnHPCZo4FP556hJpII5CWNMP4zklIC55bM/kU9e38myXBgoF5T9UoIRjFs
-         HoisI8u3w/NMFY+blHrXbTUa8pB27PkY6lEa5YI+FWXBDCp3UCn9nVicdkMo2hs74xo6
-         5qXQ==
+	s=arc-20240116; t=1771923027; c=relaxed/simple;
+	bh=bH5fyWpndAQmO0GqbfKC/2FRD8semd94FLj2YPECnP8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ilNMMZtj1IVWKeWYg6IgRP9GmC7iIdUxxDVXAy5zhvSodU55jMwlPrtlE3IqQoR7jyE5ohNc4X/mXBxeCPnGPUtXyuQfi86MOIGBvIJmUhXnN/HFOwdyQLmM9KW93lGCjl3l14qAzE2/6x334r4uQA+SiKSCu3Rm0RJ1Od5V9SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-679a47a1febso69012985eaf.3
+        for <linux-security-module@vger.kernel.org>; Tue, 24 Feb 2026 00:50:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771922892; x=1772527692;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KY5ZU4BUIJvQfJTP6W63cIfAdt+Ibsp8oBpmIRSvuWw=;
-        b=gWU2ewyIiLvTcbQcerEdje8hP3i2/V1zPQKnTACBrP9Uga03n633toe6Aa+9wECHGG
-         VFG0WE+kFQxbx/BpCldPuuReEW1fuR64MeVa9wD9Tg5Vd9zS9eM1PdObw65aa2Wr7Ak9
-         XteUsa7j0gVz6M7h+WHnCusrBpqG6YgwrFj66UnijcjIus/UbntfaeBfDqO0TZGnMdbE
-         zFjKDYtZgDm4EonbzP7vq8ioEvhM9rpAoT4qMihTkY+1My4b+f31J8H83+QlHiGUxBGF
-         R+r8RxU0Wdc6OL52gYNTZfh7c1amxbdQp7gaETiVRNvuY1GY3CSI5TOv8wQ3tCFBwEEB
-         YrrA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNccft2Y0kdc+4eHNgIOmFfJhX07rZH57objZ77KIQvrc76UMOV3T77OnWUwbWY+3u5mZR/omxRcwa5RDMrZKxUpgJ32o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8qZ82+2IckeTOj8j4dkHH95l7EXEekY/e6muLh+6WbQC4LgRf
-	9Gzg2AIAlRfGel7Wvs5uRdSzDuzHI9EwDzxffnOMBLERT4aDA024Z9wJ
-X-Gm-Gg: AZuq6aK8TWDJxqxtzfM4l/erivdbZc4Vm0OafUoKK1vU5XFKLNzJa8PbWW1Lyk6oRwz
-	qMq8Ve04pvaIsI3SNVV/MlM1/3Om+dClhEwurn/T57UOfMLC00uIbcOcuM7T3hsfKeORbtbUHgK
-	1P+LFisF2oKoi+ItNNeAvTJMP6UWEdmw0umZ7qaleHowr3uI6EFZcmvUO9NOYfuL5pPgww6Vmg+
-	Wvhb0RRgk5FcHyYQ5XvieogFC8OfSNVOv/7Vij2ca9NMvb+2kkhSowCq/dbJDs+meMSpJ0oc9q7
-	k4MBCWMMsd7IlP90H/BO6n1RsSkivmJ1iD2b+Zw1bdyqYq+L+LO8AHbNSAabE87rFrGxNF6Lium
-	oAupAC7Gji+oPDvbOL4oWVQiMGxCANEAaSUwokTX9fmo8pUXjsfGe2bnQK4S0i2MDO4t7jmBlWk
-	l1TrIZD63uC6lI0yzRGsZzB6MWLl9IJjsX45TjWbxEY73GRvkE
-X-Received: by 2002:a05:600c:3d87:b0:45d:f81d:eae7 with SMTP id 5b1f17b1804b1-483a9635c34mr161283275e9.28.1771922891426;
-        Tue, 24 Feb 2026 00:48:11 -0800 (PST)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483b8195f50sm21851215e9.0.2026.02.24.00.48.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Feb 2026 00:48:11 -0800 (PST)
-Date: Tue, 24 Feb 2026 09:48:06 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: Yihan Ding <dingyihan@uniontech.com>
-Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Paul Moore <paul@paul-moore.com>, Jann Horn <jannh@google.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com
-Subject: Re: [PATCH] landlock: Fix deadlock in restrict_one_thread_callback
-Message-ID: <20260224.7f9a753fc788@gnoack.org>
-References: <20260223.52c45aed20f8@gnoack.org>
- <20260224062729.2908692-1-dingyihan@uniontech.com>
+        d=1e100.net; s=20230601; t=1771923025; x=1772527825;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tU4KeK3bukLdkToVFUU/DYEl43X5BYkLi3LM0va+rMg=;
+        b=hMBXSjlplRiuXc9U2Fj4L3COwcaJiZmeNsKOYB1IRhGFn6xOAFiqnAZEx2/gh3eNfL
+         AbIOlsA7QGyOi/efI9RVa7b5tFHHY4dPdxuRGedFnYazEDxn2eGAe1xveV9xvO2L9nZK
+         35GzUJ4iIZHFbgpwbH7VaH2v4C8lpE5csuMHsHwujTOKK/tunrXioQJqgcorAObrhUok
+         itfWPoXxJstI7QP9ZygeW8QcxU12S+4dAoGJiOzU6dc2yYcXdEycM/LP+Jfeq7ax+zi7
+         z+2OHfSgODc5o1Iq6E3TiLxT/oVdyE2dF2mX//5p6C3Ge/yUwRWPejhgSJNyjXcZLa6+
+         q9Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCXaZIUpleaK6ERQ8/4tm+cncbSNKmUCddz/HVzeTd92p4AOD1SL4BHh7X/Pbd4F4YPrpIHwXQKGb2HKwj2gtxoqA5RL2I4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywiw8v+6AAUN/I0/1gDS4lBhq/ZrjHa9yldjoWZZlHbDXOpH2c4
+	wOK868HDWpyL2aPZ/WwL6HhUsir8CrrU1813XxX1S9qMhES8lwbVkmk2kR++zgOzmWnP8QWthnL
+	wCKuxRNpSFD8CEuH7imM5D9AEB4AImMNylsFHwVFQRW0lyP3fUm/wVFd57R4=
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260224062729.2908692-1-dingyihan@uniontech.com>
+X-Received: by 2002:a05:6820:4b0f:b0:662:f91f:4a85 with SMTP id
+ 006d021491bc7-679c461d225mr6375070eaf.54.1771923025154; Tue, 24 Feb 2026
+ 00:50:25 -0800 (PST)
+Date: Tue, 24 Feb 2026 00:50:25 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <699d6651.050a0220.247d23.03d2.GAE@google.com>
+Subject: [syzbot] [mm?] INFO: rcu detected stall in sys_rename (8)
+From: syzbot <syzbot+1e663068a97140bb66f3@syzkaller.appspotmail.com>
+To: jmorris@namei.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
+	penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp
+Content-Type: text/plain; charset="UTF-8"
 
-Hello!
+Hello,
 
-Thanks for sending the patch!
+syzbot found the following issue on:
 
-On Tue, Feb 24, 2026 at 02:27:29PM +0800, Yihan Ding wrote:
-> syzbot found a deadlock in landlock_restrict_sibling_threads().
-> When multiple threads concurrently call landlock_restrict_self() with
-> sibling thread restriction enabled, they can deadlock by mutually
-> queueing task_works on each other and then blocking in kernel space
-> (waiting for the other to finish).
-> 
-> Fix this by serializing the TSYNC operations within the same process
-> using the exec_update_lock. This prevents concurrent invocations
-> from deadlocking.
-> 
-> Additionally, update the comments in the interrupt recovery path to
-> clarify that cancel_tsync_works() is an opportunistic cleanup, and
-> waiting for completion is strictly necessary to prevent a Use-After-Free
-> of the stack-allocated shared_ctx.
-> 
-> Fixes: 42fc7e6543f6 ("landlock: Multithreading support for landlock_restrict_self()")
-> Reported-by: syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=7ea2f5e9dfd468201817
-> Signed-off-by: Yihan Ding <dingyihan@uniontech.com>
-> ---
->  security/landlock/tsync.c | 19 +++++++++++++++----
->  1 file changed, 15 insertions(+), 4 deletions(-)
-> 
-> diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
-> index de01aa899751..4e91af271f3b 100644
-> --- a/security/landlock/tsync.c
-> +++ b/security/landlock/tsync.c
-> @@ -447,6 +447,12 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
->  	shared_ctx.new_cred = new_cred;
->  	shared_ctx.set_no_new_privs = task_no_new_privs(current);
->  
-> +	/*
-> +	 * Serialize concurrent TSYNC operations to prevent deadlocks
-> +	 * when multiple threads call landlock_restrict_self() simultaneously.
-> +	 */
-> +	down_write(&current->signal->exec_update_lock);
+HEAD commit:    44982d352c33 Add linux-next specific files for 20260219
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=10ef3c02580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=51f859f3211496bc
+dashboard link: https://syzkaller.appspot.com/bug?extid=1e663068a97140bb66f3
+compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1177fe52580000
 
-Should we use the *_killable variant of this lock acquisition?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/173e988354ac/disk-44982d35.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/69062373098e/vmlinux-44982d35.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3dd3887dc600/bzImage-44982d35.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1e663068a97140bb66f3@syzkaller.appspotmail.com
+
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P1034/2:b..l P5873/1:b..l
+rcu: 	(detected by 1, t=10504 jiffies, g=14085, q=669 ncpus=2)
+task:udevd           state:R  running task     stack:23784 pid:5873  tgid:5873  ppid:5200   task_flags:0x400140 flags:0x00080800
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5295 [inline]
+ __schedule+0x1585/0x5340 kernel/sched/core.c:6907
+ preempt_schedule_irq+0x4d/0xa0 kernel/sched/core.c:7234
+ irqentry_exit+0x599/0x620 kernel/entry/common.c:239
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:697
+RIP: 0010:lock_acquire+0x20b/0x2e0 kernel/locking/lockdep.c:5872
+Code: e9 30 ff ff ff e8 c5 f3 18 0a f7 c3 00 02 00 00 0f 84 38 ff ff ff 65 48 8b 05 41 01 a0 11 48 3b 44 24 30 75 33 fb 48 83 c4 38 <5b> 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc cc 48 8d 3d fe 3b 95
+RSP: 0018:ffffc90003f073d8 EFLAGS: 00000286
+RAX: a296ff60d4053400 RBX: 0000000000000246 RCX: 0000000000000046
+RDX: 00000000112c4056 RSI: ffffffff8e287ccb RDI: ffffffff8c2a0a00
+RBP: 0000000000000000 R08: ffffffff8176da45 R09: ffffffff8e9602e0
+R10: ffffc90003f07538 R11: ffffffff81b115b0 R12: 0000000000000002
+R13: ffffffff8e9602e0 R14: 0000000000000000 R15: 0000000000000000
+ rcu_lock_acquire include/linux/rcupdate.h:312 [inline]
+ rcu_read_lock include/linux/rcupdate.h:850 [inline]
+ class_rcu_constructor include/linux/rcupdate.h:1193 [inline]
+ unwind_next_frame+0xc2/0x23c0 arch/x86/kernel/unwind_orc.c:495
+ arch_stack_walk+0x11b/0x150 arch/x86/kernel/stacktrace.c:25
+ stack_trace_save+0xa9/0x100 kernel/stacktrace.c:122
+ kasan_save_stack mm/kasan/common.c:57 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:78
+ poison_kmalloc_redzone mm/kasan/common.c:398 [inline]
+ __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:415
+ kasan_kmalloc include/linux/kasan.h:263 [inline]
+ __do_kmalloc_node mm/slub.c:5219 [inline]
+ __kmalloc_noprof+0x35c/0x760 mm/slub.c:5231
+ kmalloc_noprof include/linux/slab.h:966 [inline]
+ tomoyo_realpath_from_path+0xe3/0x5d0 security/tomoyo/realpath.c:251
+ tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+ tomoyo_path2_perm+0x2c5/0x760 security/tomoyo/file.c:927
+ tomoyo_path_rename+0x14e/0x1b0 security/tomoyo/tomoyo.c:300
+ security_path_rename+0x248/0x460 security/security.c:1518
+ filename_renameat2+0x4c1/0x9c0 fs/namei.c:6139
+ __do_sys_rename fs/namei.c:6188 [inline]
+ __se_sys_rename+0x55/0x2c0 fs/namei.c:6184
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6cd687acc7
+RSP: 002b:00007ffec20235f8 EFLAGS: 00000202 ORIG_RAX: 0000000000000052
+RAX: ffffffffffffffda RBX: 000055db72eaa280 RCX: 00007f6cd687acc7
+RDX: 000055db72ea2010 RSI: 00007ffec2023610 RDI: 00007ffec2023a10
+RBP: 000055db72ebff10 R08: 00000000000001e0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000202 R12: 00007ffec2023610
+R13: 00007ffec2023a10 R14: 0000000000000000 R15: 000055db6bd089dd
+ </TASK>
+task:kworker/u8:7    state:R  running task     stack:24416 pid:1034  tgid:1034  ppid:2      task_flags:0x4208060 flags:0x00080000
+Workqueue: ipv6_addrconf addrconf_dad_work
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5295 [inline]
+ __schedule+0x1585/0x5340 kernel/sched/core.c:6907
+ preempt_schedule_common+0x82/0xd0 kernel/sched/core.c:7091
+ preempt_schedule_thunk+0x16/0x30 arch/x86/entry/thunk.S:12
+ __local_bh_enable_ip+0xe1/0x130 kernel/softirq.c:457
+ local_bh_enable include/linux/bottom_half.h:33 [inline]
+ rcu_read_unlock_bh include/linux/rcupdate.h:924 [inline]
+ __dev_queue_xmit+0x1e6c/0x38a0 net/core/dev.c:4864
+ NF_HOOK_COND include/linux/netfilter.h:307 [inline]
+ ip6_output+0x340/0x550 net/ipv6/ip6_output.c:246
+ NF_HOOK include/linux/netfilter.h:318 [inline]
+ ndisc_send_skb+0xbaa/0x14e0 net/ipv6/ndisc.c:512
+ ndisc_send_ns+0xd7/0x160 net/ipv6/ndisc.c:670
+ addrconf_dad_work+0xac4/0x14c0 net/ipv6/addrconf.c:4287
+ process_one_work+0x949/0x1650 kernel/workqueue.c:3279
+ process_scheduled_works kernel/workqueue.c:3362 [inline]
+ worker_thread+0xb46/0x1140 kernel/workqueue.c:3443
+ kthread+0x388/0x470 kernel/kthread.c:467
+ ret_from_fork+0x51e/0xb90 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+rcu: rcu_preempt kthread starved for 10573 jiffies! g14085 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
+rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
+rcu: RCU grace-period kthread stack dump:
+task:rcu_preempt     state:R  running task     stack:27616 pid:16    tgid:16    ppid:2      task_flags:0x208040 flags:0x00080000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5295 [inline]
+ __schedule+0x1585/0x5340 kernel/sched/core.c:6907
+ __schedule_loop kernel/sched/core.c:6989 [inline]
+ schedule+0x164/0x360 kernel/sched/core.c:7004
+ schedule_timeout+0x158/0x2c0 kernel/time/sleep_timeout.c:99
+ rcu_gp_fqs_loop+0x312/0x11d0 kernel/rcu/tree.c:2095
+ rcu_gp_kthread+0x9e/0x2b0 kernel/rcu/tree.c:2297
+ kthread+0x388/0x470 kernel/kthread.c:467
+ ret_from_fork+0x51e/0xb90 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+rcu: Stack dump where RCU GP kthread last ran:
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 6085 Comm: syz.0.27 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2026
+RIP: 0010:check_kcov_mode kernel/kcov.c:194 [inline]
+RIP: 0010:write_comp_data kernel/kcov.c:246 [inline]
+RIP: 0010:__sanitizer_cov_trace_const_cmp4+0x36/0x90 kernel/kcov.c:314
+Code: 28 e9 7b 11 65 8b 0d 49 e9 7b 11 81 e1 00 01 ff 00 74 11 81 f9 00 01 00 00 75 5b 83 ba 54 16 00 00 00 74 52 8b 8a 30 16 00 00 <83> f9 03 75 47 48 8b 8a 38 16 00 00 44 8b 8a 34 16 00 00 49 c1 e1
+RSP: 0018:ffffc900025e7a88 EFLAGS: 00000046
+RAX: ffffffff81b67144 RBX: ffff8880b8423e40 RCX: 0000000000000000
+RDX: ffff88802df49e40 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff81b32095 R09: ffffffff9a518508
+R10: 0000000000000003 R11: ffffffff81742750 R12: 00000000100006b5
+R13: dffffc0000000000 R14: 00000000000001ed R15: 0000000000000020
+FS:  00007f9fec4f96c0(0000) GS:ffff888125002000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000000058 CR3: 0000000075658000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ clockevents_program_event+0x1d4/0x350 kernel/time/clockevents.c:336
+ hrtimer_start_range_ns+0x1687/0x1ff0 kernel/time/hrtimer.c:1331
+ __posixtimer_deliver_signal kernel/time/posix-timers.c:314 [inline]
+ posixtimer_deliver_signal+0x1ce/0x410 kernel/time/posix-timers.c:340
+ dequeue_signal+0x249/0x370 kernel/signal.c:660
+ get_signal+0x55d/0x1330 kernel/signal.c:2914
+ arch_do_signal_or_restart+0xbc/0x830 arch/x86/kernel/signal.c:337
+ __exit_to_user_mode_loop kernel/entry/common.c:64 [inline]
+ exit_to_user_mode_loop+0x86/0x480 kernel/entry/common.c:98
+ __exit_to_user_mode_prepare include/linux/irq-entry-common.h:226 [inline]
+ syscall_exit_to_user_mode_prepare include/linux/irq-entry-common.h:256 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:325 [inline]
+ do_syscall_64+0x32d/0xf80 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9feb59c629
+Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f9fec4f90e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 00007f9feb815fa8 RCX: 00007f9feb59c629
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f9feb815fa8
+RBP: 00007f9feb815fa0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f9feb816038 R14: 00007ffda92b66d0 R15: 00007ffda92b67b8
+ </TASK>
 
 
->  	/*
->  	 * We schedule a pseudo-signal task_work for each of the calling task's
->  	 * sibling threads.  In the task work, each thread:
-> @@ -527,14 +533,17 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
->  					   -ERESTARTNOINTR);
->  
->  				/*
-> -				 * Cancel task works for tasks that did not start running yet,
-> -				 * and decrement all_prepared and num_unfinished accordingly.
-> +				 * Opportunistic improvement: try to cancel task works
-> +				 * for tasks that did not start running yet. We do not
-> +				 * have a guarantee that it cancels any of the enqueued
-> +				 * task works (because task_work_run() might already have
-> +				 * dequeued them).
->  				 */
->  				cancel_tsync_works(&works, &shared_ctx);
->  
->  				/*
-> -				 * The remaining task works have started running, so waiting for
-> -				 * their completion will finish.
-> +				 * We must wait for the remaining task works to finish to
-> +				 * prevent a use-after-free of the local shared_ctx.
->  				 */
->  				wait_for_completion(&shared_ctx.all_prepared);
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-I do not think that we must wait for all_prepared here, as your
-updated comment says: The landlock_restrict_sibling_threads() function
-still waits for all of these task works to finish at the bottom where
-it waits for "all_finished", so there is no UAF on the local shared
-context?
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-I would recommend replacing the
-wait_for_completion(&shared_ctx.all_prepared) call and its comment
-with an explicit "break":
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-/*
- * Break the loop with error.  The cleanup code after the loop
- * unblocks the remaining task_works.
- */
-break;
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-Please also update the comment above the complete_all(ready_to_commit):
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-  We now have either (a) all sibling threads blocking and in
-  "prepared" state in the task work, or (b) the preparation error is
-  set.  Ask all threads to commit (or abort).
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-Then it is a bit more explicit about the error handling variant of this.
-
-
-(FYI, I have tested the patch variant where I only removed the
-wait_for_completion(all_prepared) call, and where I did *not* add the
-additional lock at the top.  In this configuration, I was unable to
-get it to hang any more, even with added mdelays.  But as discussed in
-section 2.2 of [1], there are still difficult to reproduce scenarios
-where this can theoretically fail, and it is better to use the lock at
-the top.)
-
-[1] https://lore.kernel.org/all/20260223.52c45aed20f8@gnoack.org/
-
-Please also feel free to split up the change into a part that adds the
-exec_guard_lock and a part that changes the path where the calling
-thread gets interrupted.  Strictly speaking, the part where we change
-the interruption logic is only a nicety once we have the
-exec_guard_lock in place.
-
->  			}
-> @@ -557,5 +566,7 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
->  
->  	tsync_works_release(&works);
->  
-> +	up_write(&current->signal->exec_update_lock);
-> +
->  	return atomic_read(&shared_ctx.preparation_error);
->  }
-> -- 
-> 2.51.0
-> 
-
-Thanks,
-–Günther
+If you want to undo deduplication, reply with:
+#syz undup
