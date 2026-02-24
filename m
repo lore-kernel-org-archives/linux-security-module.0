@@ -1,177 +1,130 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4327A378D8D;
-	Tue, 24 Feb 2026 10:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA46137BE91;
+	Tue, 24 Feb 2026 11:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771929741; cv=none; b=T8vY59VbCBAaIxVwFZBX7UhmbdWc8ypiaw4M9GNcvPyKw8wtkEf74ttFct5+v0wCbdwLPwvP3nc/EKZ3+7Anxw0rPG1zOYIksmqhpri2rGF3m2XQ3R2Dic+pw2jzee6TocttOVew1U6XIGlotzBtz20QUh4Yqw7itcEvUPnbFAc=
+	t=1771931936; cv=none; b=Ldl3Iq5xQJ5pc55x5JMuVhJ5bhp7oDGHXZvDED4pPscpgAt9JJhNSD2W+iQrz9utC8vndy+N7Q9y32EKv2aoigXY3myLQIj4Qccd1xhzNDTKGp4TsXoh6TprJLGoc0YjqkiSJvBGrdpqwy4O/OTM+XYeEoTkipsLbOwrFRd43z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771929741; c=relaxed/simple;
-	bh=EdYMSneYGYWOu2MY/gnpVM4ln8olb1RiXGDKI2avrXU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FSthP+NnFq7VbL49MUl8+sx8aA8HHXdF9zCaO5LinPf30IjPb9l/QN8QfAeHwwrcksaE468/gnLBf4bwy/BRXD84TBXqWOgPnonKFJyMV3KY46ymy6cHop84LrL5H/ne1bUQQgUjqu8KFE3gTNI5+UL8aJ0H8NsXmULbJ+wwlUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAU2pdQX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771931936; c=relaxed/simple;
+	bh=CATKDKa2uGpd7sHZMSNUih88RUZlznJauHdO/GUeTF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WjWew3+v3xljY8KSLFkqd3i6TazsdCwMefn3Pws/rRjkbKaNDXt1224rrhkWTGB4hYGRRxshDgi3rJUz73UiFT6a5PmoeEx4N3xoNKXNIsDfg1AB3oXTmgUG0HeLIEtgFvGhYELUfcGeu730HOnhBP/Sb+7PoPnl9RSkqGy5Z6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wxf1lCXl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAU2pdQX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 158D2C116D0;
-	Tue, 24 Feb 2026 10:42:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wxf1lCXl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98C26C19424;
+	Tue, 24 Feb 2026 11:18:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771929740;
-	bh=EdYMSneYGYWOu2MY/gnpVM4ln8olb1RiXGDKI2avrXU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=GAU2pdQXeucHDr93YOJlBQA+9WyQyiqX3XUv0GPdy5+63ewH++MkxyrNYQumwLA4W
-	 YPvSJkU9bCvwg0PQISCbL7pQ53LDJwxCiV6mlupfv3XGnYbITTh1piGzZ+A4mlBMuk
-	 4BLlREPZdKFZhle5va0yKY3MgMD1Ru8Hzm9tCf+z8+JaypVhehj82iMeu/g36i61cS
-	 LOK6GF96u2rd6HmI4kigzcpkbtJ/Mu3uUKlP3KL6U4B3ccmjM1712HCHbTYCUdiqco
-	 kxP5N90jQc3VZcobz2Hi+vK6uI3CzGRjwp0bzDuDcBOAuwMIDp5V4VWUl94VWRudG1
-	 gdUVkzkXXqWYQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: aliceryhl@google.com
-Cc: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn?= Roy
- Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Trevor
- Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Dave
- Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, Leon
- Romanovsky <leon@kernel.org>, Paul Moore <paul@paul-moore.com>, Serge
- Hallyn <sergeh@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Alexander
- Viro <viro@zeniv.linux.org.uk>, Christian
- Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Igor Korotin
- <igor.korotin.linux@gmail.com>, Daniel Almeida
- <daniel.almeida@collabora.com>, Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen
- Boyd <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Krzysztof
- =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Boqun
- Feng <boqun@kernel.org>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-block@vger.kernel.org,
- linux-security-module@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, Asahi Lina
- <lina+kernel@asahilina.net>, Oliver Mangold <oliver.mangold@pm.me>
-Subject: Re: [PATCH v15 1/9] rust: types: Add Ownable/Owned types
-In-Reply-To: <aZ1VQmtapuoerpVo@google.com>
-References: <20260220-unique-ref-v15-0-893ed86b06cc@kernel.org>
- <20260220-unique-ref-v15-1-893ed86b06cc@kernel.org>
- <aZg44EmMWKK-z5KP@google.com>
- <87wm0333qt.fsf@t14s.mail-host-address-is-not-set>
- <IFU05rWmgywK-tzaInc7eF2Kmy1zf-BDkCrQZfRI_2JN6E0-p3zFaUMu3V6T1YTeQG9xC1hHzXThLCORJqpoWA==@protonmail.internalid>
- <aZ1VQmtapuoerpVo@google.com>
-Date: Tue, 24 Feb 2026 11:41:45 +0100
-Message-ID: <87a4wy2zkm.fsf@t14s.mail-host-address-is-not-set>
+	s=k20201202; t=1771931936;
+	bh=CATKDKa2uGpd7sHZMSNUih88RUZlznJauHdO/GUeTF4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Wxf1lCXl+lJ0Co7kXivrfwAqGXijzoffhjR9eZU+NmPDftcplF9o3Qsw5NFAiBIhR
+	 0kIMnNjSYLlwFUxNvP9VY0YhI0gn06UvM2j05Z5DYQeDJJfkYTrB0xoAin3gEKBNeJ
+	 UvoI7s+Rvujr5r/TOT9tKA5/v+VslFKJXjdQCzobvuGAfg1Ggw9ezB1Z8/ZICGQAFd
+	 bwhMnOqnAK7amG7auTuDHZ6m+D4WfEgI54SYKfP1d3mCn6NYw4EmvNnIqmdjKDulx2
+	 4QpTGbSOdVsr8mHI3+zrBbM4Yar3zCS2W5f0rTEfJwIS+YZjalFEh+7IZo/2drV9HZ
+	 UiaoNkcmBtyEA==
+Date: Tue, 24 Feb 2026 12:18:51 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Daniel Durning <danieldurning.work@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, paul@paul-moore.com, 
+	stephen.smalley.work@gmail.com, omosnace@redhat.com, Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [RFC PATCH] fs/pidfs: Add permission check to pidfd_info()
+Message-ID: <20260224-wohle-abarbeiten-25effeed0479@brauner>
+References: <20260206180248.12418-1-danieldurning.work@gmail.com>
+ <20260209-spanplatten-zerrt-73851db30f18@brauner>
+ <CAKrb_fEXR0uQnX5iK-ACH=amKMQ8qBSPGXmJb=1PgvEq8qsDEQ@mail.gmail.com>
+ <20260217-abgedankt-eilte-2386c98b3ef7@brauner>
+ <CAKrb_fFEvf5VzY_-zcc800wjVGOFbiGrpzC7S6Ghy9qhYJrZ1w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKrb_fFEvf5VzY_-zcc800wjVGOFbiGrpzC7S6Ghy9qhYJrZ1w@mail.gmail.com>
 
-<aliceryhl@google.com> writes:
+On Fri, Feb 20, 2026 at 03:45:00PM -0500, Daniel Durning wrote:
+> On Tue, Feb 17, 2026 at 7:01 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Wed, Feb 11, 2026 at 02:43:21PM -0500, Daniel Durning wrote:
+> > > On Mon, Feb 9, 2026 at 9:01 AM Christian Brauner <brauner@kernel.org> wrote:
+> > > >
+> > > > On Fri, Feb 06, 2026 at 06:02:48PM +0000, danieldurning.work@gmail.com wrote:
+> > > > > From: Daniel Durning <danieldurning.work@gmail.com>
+> > > > >
+> > > > > Added a permission check to pidfd_info(). Originally, process info
+> > > > > could be retrieved with a pidfd even if proc was mounted with hidepid
+> > > > > enabled, allowing pidfds to be used to bypass those protections. We
+> > > > > now call ptrace_may_access() to perform some DAC checking as well
+> > > > > as call the appropriate LSM hook.
+> > > > >
+> > > > > The downside to this approach is that there are now more restrictions
+> > > > > on accessing this info from a pidfd than when just using proc (without
+> > > > > hidepid). I am open to suggestions if anyone can think of a better way
+> > > > > to handle this.
+> > > >
+> > > > This isn't really workable since this would regress userspace quite a
+> > > > bit. I think we need a different approach. I've given it some thought
+> > > > and everything's kinda ugly but this might work.
+> > > >
+> > > > In struct pid_namespace record whether anyone ever mounted a procfs
+> > > > with hidepid turned on for this pidns. In pidfd_info() we check whether
+> > > > hidepid was ever turned on. If it wasn't we're done and can just return
+> > > > the info. This will be the common case. If hidepid was ever turned on
+> > > > use kern_path("/proc") to lookup procfs. If not found check
+> > > > ptrace_may_access() to decide whether to return the info or not. If
+> > > > /proc is found check it's hidepid settings and make a decision based on
+> > > > that.
+> > > >
+> > > > You can probably reorder this to call ptrace_may_access() first and then
+> > > > do the procfs lookup dance. Thoughts?
+> > >
+> > > Thanks for the feedback. I think your solution makes sense.
+> > >
+> > > Unfortunately, it seems like systemd mounts procfs with hidepid enabled on
+> > > boot for services with the ProtectProc option enabled. This means that
+> > > procfs will always have been mounted with hidepid in the init pid namespace.
+> > > Do you think it would be viable to record whether or not procfs was mounted
+> > > with hidepid enabled in the mount namespace instead?
+> >
+> > I guess we can see what it looks like.
+> 
+> Having looked into this some more I am not sure if the mount
+> namespace is viable either since a single proc instance could be in
+> multiple mount namespaces. In addition the mount namespace
+> does not seem to be easily accessible in the function where proc
+> mount options are applied. I also considered adding an option
+> similar to hidepid to pidfs, but since pidfs is not userspace-mounted
+> I do not think that is possible without some significant changes.
+> 
+> Doing a proc lookup with kern_path() does work, but it does not seem
+> practical in terms of performance unless we had some other way to
+> skip it in the common case.
+> 
+> Curious if anyone else has any ideas or suggestions on how this
+> could be implemented.
 
-> On Mon, Feb 23, 2026 at 03:59:22PM +0100, Andreas Hindborg wrote:
->> Alice Ryhl <aliceryhl@google.com> writes:
->>
->> > On Fri, Feb 20, 2026 at 10:51:10AM +0100, Andreas Hindborg wrote:
->> >> From: Asahi Lina <lina+kernel@asahilina.net>
->> >>
->> >> By analogy to `AlwaysRefCounted` and `ARef`, an `Ownable` type is a
->> >> (typically C FFI) type that *may* be owned by Rust, but need not be. Unlike
->> >> `AlwaysRefCounted`, this mechanism expects the reference to be unique
->> >> within Rust, and does not allow cloning.
->> >>
->> >> Conceptually, this is similar to a `KBox<T>`, except that it delegates
->> >> resource management to the `T` instead of using a generic allocator.
->> >>
->> >> [ om:
->> >>   - Split code into separate file and `pub use` it from types.rs.
->> >>   - Make from_raw() and into_raw() public.
->> >>   - Remove OwnableMut, and make DerefMut dependent on Unpin instead.
->> >>   - Usage example/doctest for Ownable/Owned.
->> >>   - Fixes to documentation and commit message.
->> >> ]
->> >>
->> >> Link: https://lore.kernel.org/all/20250202-rust-page-v1-1-e3170d7fe55e@asahilina.net/
->> >> Signed-off-by: Asahi Lina <lina+kernel@asahilina.net>
->> >> Co-developed-by: Oliver Mangold <oliver.mangold@pm.me>
->> >> Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
->> >> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
->> >> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
->> >> [ Andreas: Updated documentation, examples, and formatting ]
->> >> Reviewed-by: Gary Guo <gary@garyguo.net>
->> >> Co-developed-by: Andreas Hindborg <a.hindborg@kernel.org>
->> >> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->> >
->> >> +///         let result = NonNull::new(KBox::into_raw(result))
->> >> +///             .expect("Raw pointer to newly allocation KBox is null, this should never happen.");
->> >
->> > KBox should probably have an into_raw_nonnull().
->>
->> I can add that.
->>
->> >
->> >> +///    let foo = Foo::new().expect("Failed to allocate a Foo. This shouldn't happen");
->> >> +///    assert!(*FOO_ALLOC_COUNT.lock() == 1);
->> >
->> > Use ? here.
->>
->> Ok.
->>
->> >
->> >> +/// }
->> >> +/// // `foo` is out of scope now, so we expect no live allocations.
->> >> +/// assert!(*FOO_ALLOC_COUNT.lock() == 0);
->> >> +/// ```
->> >> +pub unsafe trait Ownable {
->> >> +    /// Releases the object.
->> >> +    ///
->> >> +    /// # Safety
->> >> +    ///
->> >> +    /// Callers must ensure that:
->> >> +    /// - `this` points to a valid `Self`.
->> >> +    /// - `*this` is no longer used after this call.
->> >> +    unsafe fn release(this: NonNull<Self>);
->> >
->> > Honestly, not using it after this call may be too strong. I can imagine
->> > wanting a value where I have both an ARef<_> and Owned<_> reference to
->> > something similar to the existing Arc<_>/ListArc<_> pattern, and in that
->> > case the value may in fact be accessed after this call if you still have
->> > an ARef<_>.
->>
->> I do not understand your use case.
->>
->> You are not supposed to have both an `ARef` and an `Owned` at the same
->> time. The `Owned` is to `ARef` what `UniqueArc` is to `Arc`. It is
->> supposed to be unique and no `ARef` can be live while the `Owned` is
->> live.
->>
->> A `ListArc` is "at most one per list link" and it takes a refcount on
->> the object by owning an `Arc`. As far as I recall, it does not provide
->> mutable access to anything but the list link. To me, that is a very
->> different situation.
->
-> I mean, even Page is kind of an example like that.
->
-> Pages are refcounted, but when you have a higher-order page, the
-> __free_pages() call does something special beyond what put_page(). For
-> example, if you have an order-2 page, which consists of 4 pages, then
-> the refcount only keeps the first page alive, and __free_pages() frees
-> the 3 extra pages right away even if refcount is still non-zero. The
-> first page then stays alive until the last put_page() is called.
+Ok, so there's another series that adds support for allowing to mount
+procfs with subset=pid. That series currently uses an arcane mechanism
+where it walks all mounts in the caller mounts namespace to find procfs
+mounts and check its mount options (mount_too_revealing()). To get away
+from this barbaric hack I proposed recording all fully visible procfs
+mounts in a separate list on struct mnt_namespace that it can walk
+whenever a new procfs mount gets plugged in. Once we've done that work
+we effectively track whenever a procfs mount comes and goes from a given
+mount namespace. When we plug in that mount we simply remember the
+option used for the least restrictive procfs mount in that namespace in
+a per-mntns "proc_visiblity" field or something.
 
-I see. We currently only support order 0 pages. I think we can handle
-this situation later, if we need to handle higher order pages.
+Then in pidfs we simply do a:
 
-In that case, we could hand out `Owned<Page>` for the head page and then
-provide some way of getting a `&Page` for the tail pages. Obtaining
-`Owned<Page>` for a tail page does not make sense.
+visibility_restricted = READ_ONCE(current->ns_proxy->mnt_ns);
 
-More likely we will build an abstraction for `struct folio`. We can
-still hand some kind of page reference for tail pages from an `Owned<Folio>`.
-
-Best regards,
-Andreas Hindborg
-
-
+and be done with it. No locks, no lookup, no perf hit. Thoughts?
