@@ -1,118 +1,79 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA95E2D6E6F;
-	Tue, 24 Feb 2026 11:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7AC38BF60
+	for <linux-security-module@vger.kernel.org>; Tue, 24 Feb 2026 14:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771932043; cv=none; b=Ct1P7UQa6ZPqeRNb0r6QYxcS4MWU2f9RodNsE/+Ku9+YIWM0vNuRcZb21BrLVwmgsiR+8DjUUAtnQ9xK3Le6q0C6y5AqdShfZscxFURMGXU4t2rS6Kj+AqTNT3A0nH75AH2PdIJ7zXGml0mxNfJyWNjRwTK+Xwwxtk7KUE1Ocd0=
+	t=1771944217; cv=none; b=sMUG4mb18LtQfDGzhoDFWT328RYQ75W4qeefsoreOaOxJUhFvqqSvhlZhPj7MkJRWTlz6DgxcDY/mvd8Nu0yFmOzWghL6zG9RSePnsRMM0lPDXITfSQdOXrxImObPuPnctoGH96+KiaLbsKUgEsrhb9JacLJHHNQC+erKjJVMwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771932043; c=relaxed/simple;
-	bh=jLcwJmCU6NuD58W2dvDRqr7xKpNKXDGKLW9pDqZ3mBg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=COfBpdq5jhItWAO4F7BjY6RXEVp4L7Vs+AZnCEs4gA3PlKMgl+cllL2ZFwWicMGnj7oURi2DvI3aTunEE5D4hW5HTbd5WJPAUYGFDqBIGQYTrhg67HCtpYNJZo0/WtlRiKGFMBEG2TynKbj+v0es2tcKGhvQjLVwLCRoe2marg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FnD6iV9K; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771944217; c=relaxed/simple;
+	bh=49VT7mN4XyjuEankpsfUwF5ENUVjd8PIzkNyE8/ZPOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RX4dgxnc/MLt/IW5TP7q+lwA4+6KJVj2j5diXHMmEfIvf/W6iZW/4nRCI1YTTuWJ8aT8/SdW4wGrnLfYjHKuqUi6ju5otkwQuK6t+tE/Uh2ROcuADvte8UMVs3XkKOhmPH0dvRMEe8EsU9ngFvWmpjI8v6tUjbAYj34+UordM30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LVYFb3/2; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FnD6iV9K"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8595C2BC86;
-	Tue, 24 Feb 2026 11:20:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771932043;
-	bh=jLcwJmCU6NuD58W2dvDRqr7xKpNKXDGKLW9pDqZ3mBg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=FnD6iV9K9NZ7mJJSAL00XOjIPTg6UsieDGlm3jaXgSc4Rc9rMU8mCbbe0Ub0QU04s
-	 j+XA7mBrzuVEuqRfQI92KsNlua/cpKJgCXIE8vr6AZo0jhnoNhVLUoWlWaAfplH4CX
-	 T5sAiTOh3WoLzwRvaEg5Hlr+AzFOgVnxNtBg8DyOwJeF38TDShZKCUIt4HUXRybDpW
-	 R/l7zwbU3DLkv6fDnzGUcBYSBRH3Eu5wt2beNLcG/kisJ4dWaJfnvuLRpJeRdFTgfv
-	 ylStit7gCo0yNJCiejtjQZi34htmpdrmCKcOiapJ3ywb88WPPGD50uHtZIJnTb+Acb
-	 HTH87pF60sZqQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Tue, 24 Feb 2026 12:17:56 +0100
-Subject: [PATCH v16 01/10] rust: alloc: add `KBox::into_nonnull`
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LVYFb3/2"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4833115090dso54262285e9.3
+        for <linux-security-module@vger.kernel.org>; Tue, 24 Feb 2026 06:43:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1771944215; x=1772549015; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=49VT7mN4XyjuEankpsfUwF5ENUVjd8PIzkNyE8/ZPOE=;
+        b=LVYFb3/24rMXuG8pwlnJDjWA9xHY4WupMqX4dWK9plmJ2pMvaKCLlxuQRLD9LgZ5IQ
+         vZOAC6FFzSj8rWkOSltQtBkdL8MCbr4Kj+wa9LEudx+F/NyQZzxpmakOqp9Bd2IeDVS0
+         qGL/km2sdVXdMSLizSwbCmAiY/aWjEi3xpZO8rHJ6bO3WxK3dYloJYA5rSL1gR8/8yqj
+         /R6skGairTb0N3ks4HtYAHFHkz8MKSUx/lh78pBVfMqeIOkICBmPXFYJtUCKh/J4ywZ4
+         gkxrosYqJ64MuPQNRodoICIrAODMeVvDHXEenju6uMSZ0W3H0TgbWs4TdCweTE7WbB2Z
+         49jA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771944215; x=1772549015;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=49VT7mN4XyjuEankpsfUwF5ENUVjd8PIzkNyE8/ZPOE=;
+        b=q4l4JKZk7SPP/KjUjvS3Ymn3prRAxpXB6UXLVPZnlBOTzC9qk1NvibCQjOgfdSgVZZ
+         o6mhsKJmlLuSaqCD9kOmz6D9m3iDYkhBgQTv2zZvvZ8LQRdfGBGkABvo7GdoeBt3/lWA
+         pOY0akaF2mZGIastK4upS7T4qFkBlGiaJN09DmxcUA5AbhbL9FNdzpXolJAbso5cQWOF
+         9LkBHWVc5kGVUS0Ae54jut8nFwGx162i2ecaHZqwd3t/xSv9oTV3S3QAcJuFtvQLjnCB
+         w5MJBRFLSfT0KIfXeH4X4+07JFKIaYQ7gr+GcWgtsHUyhsEYrKHKbNkmS5qRNPHTr8C+
+         xM8g==
+X-Gm-Message-State: AOJu0YwcBYk6KG2pdVWYKN2fad83Q+ewCCy72Uq/NN2dGkqId3Fm5hKo
+	JjqCjQddZPn/wY3sWqoTnpwbQSQgxjbx2dXdc0LejjVHqc5gLnE/1oDsDo9xdzl7NZQwJxBM2pv
+	6DPKunw==
+X-Gm-Gg: AZuq6aLIiC4cPRvQ+an1twRjlqhVQ+n+rmlicKvFy/c36VLNSZ4uE3leWPubWLlbF+Y
+	jYCYhN8hXpIhSCjNgU0j8YdgrDL6fXmc1z75MJLrjvlryQQsLzFbbzrChRCFXd5HYftsGJKSA5y
+	JwRe0EYZKJdfSPyuski0jo5vgx5pD9HPCcpXYBV4KDDKWeUoEXU67SZYN90tISI3Ylk9UiOjtH4
+	65o1CqDrZCkFVQ2jzpvx5WEXAxBI1MdOXMJ0Is3XCpdsxt1Srya4JUKSA588J8l0T3Xvpog+hFD
+	fr+Jtmjp9paMcWQyxnGzfxI16ayVeCKnILDaaHe+3m7WFbd1+022KEWtJXZmRBa5vCdfCeK1U/F
+	0QNiMJNegxY0EZCj1VN8FIH1PLhgmeVDU85TzoVFSd+USxBtijXp8Wsr8bL5Aa2kvaNnFybpToR
+	CfCNI0CPR32W8QnBjirQYx+OfYJB+WX574TLjUGYrW5ak2bRS19ejJ/w==
+X-Received: by 2002:a05:600c:6206:b0:465:a51d:d4 with SMTP id 5b1f17b1804b1-483a95b6debmr196639815e9.6.1771944214417;
+        Tue, 24 Feb 2026 06:43:34 -0800 (PST)
+Received: from google.com ([2a00:79e0:288a:8:6a64:ac1e:3081:9ccd])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bd72bd66sm3181155e9.11.2026.02.24.06.43.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Feb 2026 06:43:33 -0800 (PST)
+Date: Tue, 24 Feb 2026 15:43:29 +0100
+From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+To: syzbot <syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com>
+Cc: linux-security-module@vger.kernel.org
+Subject: Re: [syzbot] [kernel?] INFO: task hung in
+ restrict_one_thread_callback
+Message-ID: <aZ25EThvPMUptRlY@google.com>
+References: <69995a88.050a0220.340abe.0d25.GAE@google.com>
+ <00A9E53EDC82309F+7b1dfc69-95f8-4ffc-a67c-967de0e2dfee@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260224-unique-ref-v16-1-c21afcb118d3@kernel.org>
-References: <20260224-unique-ref-v16-0-c21afcb118d3@kernel.org>
-In-Reply-To: <20260224-unique-ref-v16-0-c21afcb118d3@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
- Leon Romanovsky <leon@kernel.org>, Paul Moore <paul@paul-moore.com>, 
- Serge Hallyn <sergeh@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Igor Korotin <igor.korotin.linux@gmail.com>, 
- Daniel Almeida <daniel.almeida@collabora.com>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
- Stephen Boyd <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Boqun Feng <boqun@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
- Uladzislau Rezki <urezki@gmail.com>, Boqun Feng <boqun@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- linux-block@vger.kernel.org, linux-security-module@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, 
- linux-mm@kvack.org, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, 
- Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1062; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=jLcwJmCU6NuD58W2dvDRqr7xKpNKXDGKLW9pDqZ3mBg=;
- b=owEBbQKS/ZANAwAKAeG4Gj55KGN3AcsmYgBpnYj0TV4DAv2lVFJSr3recsWpK7mpdMvf0fOO4
- GsqOYqcl7SJAjMEAAEKAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaZ2I9AAKCRDhuBo+eShj
- dxXvD/4uTFSqjCY3iWHRTIEAh2NylxI+XqsaQVjNHfa55ZJJLgTNfYUvcse4RyQozv7pvyVWd9X
- RTV+xLwmBnbBtZhV/uwmF8F2kvjU113KJpO3sMatO2yNc358Ve7JZhap3nzmvf689b+moR9KW8U
- 8ifp9shwqd9GxSnUqYmJQww4ytW7n6vmrS9fdCG0VpncaoHbclEqKrb8kHlDpPWubp6c+Qu+ywV
- ZSm0AOEF5voLr6yFpDRkglqwU7L54LiXgfITkIb6UbNJrDRXOO57QGjUnybgV9oIPGKKkwQwRZQ
- uZX42y2zKXJNwE7e0PtSQh/G9iJSeO6OlIl3XlsH9/nwxhmAe99bikE2XWCyvXsybp6xdn8BHKc
- r54RW+VeOtJ8HA3/xoWs07B2k0WCCDEs5APzVEAOAAzVtB0PabBsu+U6ama860OueMRxHOILlcZ
- +Xf+pOsN30kSX9dsaxnpoC6hcm2hPWPJL/HaytSlHURknmIo6ZknstZlgrOJ6sPfuOgZPJ9KatI
- nzNP0Z3U5LkY0BatvObNNaHXd8Ke66SruMP3igQJaaJm0DeDpUNWuOdkv9+3giycXGQXpdPIHCt
- lQVZzP3lDsyullj2okwbZRVi01SEBePzKduMTuRLyTs6JjpW7tCsxzzCAC0M5H7le096T5lOwCQ
- cYxZVgcHcuck6nQ==
-X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
- fpr=3108C10F46872E248D1FB221376EB100563EF7A7
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <00A9E53EDC82309F+7b1dfc69-95f8-4ffc-a67c-967de0e2dfee@uniontech.com>
 
-Add a method to consume a `Box<T, A>` and return a `NonNull<T>`. This
-is a convenience wrapper around `Self::into_raw` for callers that need
-a `NonNull` pointer rather than a raw pointer.
-
-Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
----
- rust/kernel/alloc/kbox.rs | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
-index 622b3529edfcb..e6efdd572aeea 100644
---- a/rust/kernel/alloc/kbox.rs
-+++ b/rust/kernel/alloc/kbox.rs
-@@ -213,6 +213,14 @@ pub fn leak<'a>(b: Self) -> &'a mut T {
-         // which points to an initialized instance of `T`.
-         unsafe { &mut *Box::into_raw(b) }
-     }
-+
-+    /// Consumes the `Box<T,A>` and returns a `NonNull<T>`.
-+    ///
-+    /// Like [`Self::into_raw`], but returns a `NonNull`.
-+    pub fn into_nonnull(b: Self) -> NonNull<T> {
-+        // SAFETY: `KBox::into_raw` returns a valid pointer.
-+        unsafe { NonNull::new_unchecked(Self::into_raw(b)) }
-+    }
- }
- 
- impl<T, A> Box<MaybeUninit<T>, A>
-
--- 
-2.51.2
-
-
+#syz set subsystems: lsm, kernel
