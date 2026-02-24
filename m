@@ -1,130 +1,129 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA46137BE91;
-	Tue, 24 Feb 2026 11:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCC737BE83;
+	Tue, 24 Feb 2026 11:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771931936; cv=none; b=Ldl3Iq5xQJ5pc55x5JMuVhJ5bhp7oDGHXZvDED4pPscpgAt9JJhNSD2W+iQrz9utC8vndy+N7Q9y32EKv2aoigXY3myLQIj4Qccd1xhzNDTKGp4TsXoh6TprJLGoc0YjqkiSJvBGrdpqwy4O/OTM+XYeEoTkipsLbOwrFRd43z8=
+	t=1771931941; cv=none; b=t5o8OaIDKMXLEBCMp1wNSkRy6kzU11k4Xg8hL8gpeYAlowMjfmfk1DZYiA6RsFiHrBkgTj8Ly4AANeKNG77YKQ0kes2CjNdrz2vIqNEEHZjQHiOsVAWDSQ1lGihpO0uZ8IpxThapQ3BaP34iN07CZMtbU2AMBMDA4Gxu6Op3H3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771931936; c=relaxed/simple;
-	bh=CATKDKa2uGpd7sHZMSNUih88RUZlznJauHdO/GUeTF4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WjWew3+v3xljY8KSLFkqd3i6TazsdCwMefn3Pws/rRjkbKaNDXt1224rrhkWTGB4hYGRRxshDgi3rJUz73UiFT6a5PmoeEx4N3xoNKXNIsDfg1AB3oXTmgUG0HeLIEtgFvGhYELUfcGeu730HOnhBP/Sb+7PoPnl9RSkqGy5Z6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wxf1lCXl; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771931941; c=relaxed/simple;
+	bh=TzCUGpEDUTKD6tcoKokHDlQAGVLw4XXksTwjbV99rHQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=SC4xSsnQLuZhNraIQxkolHaQLFuNCzjK462fNet7Fck8P6tBY6Q9uOzOh26IlOss5jBtGbI7O3n0/LXCdDiPVS9m/FXSQKMveSuggMofcN1kOdq/qtC8os+11cmG0O1Y9cbMIi9vlewaJdWJBpetGnDvPu4UxkCF30y8ndgfPsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MOu8qMmm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wxf1lCXl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98C26C19424;
-	Tue, 24 Feb 2026 11:18:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MOu8qMmm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB733C116D0;
+	Tue, 24 Feb 2026 11:18:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771931936;
-	bh=CATKDKa2uGpd7sHZMSNUih88RUZlznJauHdO/GUeTF4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wxf1lCXl+lJ0Co7kXivrfwAqGXijzoffhjR9eZU+NmPDftcplF9o3Qsw5NFAiBIhR
-	 0kIMnNjSYLlwFUxNvP9VY0YhI0gn06UvM2j05Z5DYQeDJJfkYTrB0xoAin3gEKBNeJ
-	 UvoI7s+Rvujr5r/TOT9tKA5/v+VslFKJXjdQCzobvuGAfg1Ggw9ezB1Z8/ZICGQAFd
-	 bwhMnOqnAK7amG7auTuDHZ6m+D4WfEgI54SYKfP1d3mCn6NYw4EmvNnIqmdjKDulx2
-	 4QpTGbSOdVsr8mHI3+zrBbM4Yar3zCS2W5f0rTEfJwIS+YZjalFEh+7IZo/2drV9HZ
-	 UiaoNkcmBtyEA==
-Date: Tue, 24 Feb 2026 12:18:51 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Daniel Durning <danieldurning.work@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, paul@paul-moore.com, 
-	stephen.smalley.work@gmail.com, omosnace@redhat.com, Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [RFC PATCH] fs/pidfs: Add permission check to pidfd_info()
-Message-ID: <20260224-wohle-abarbeiten-25effeed0479@brauner>
-References: <20260206180248.12418-1-danieldurning.work@gmail.com>
- <20260209-spanplatten-zerrt-73851db30f18@brauner>
- <CAKrb_fEXR0uQnX5iK-ACH=amKMQ8qBSPGXmJb=1PgvEq8qsDEQ@mail.gmail.com>
- <20260217-abgedankt-eilte-2386c98b3ef7@brauner>
- <CAKrb_fFEvf5VzY_-zcc800wjVGOFbiGrpzC7S6Ghy9qhYJrZ1w@mail.gmail.com>
+	s=k20201202; t=1771931941;
+	bh=TzCUGpEDUTKD6tcoKokHDlQAGVLw4XXksTwjbV99rHQ=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=MOu8qMmmrykyBB4CVhwqsAo8Gs8bS7U6AafB15auu2pLImpGtcvmUXOPslyfKs2el
+	 cA6Tgr0KiCNDlclglU7X5nBYMurMj/c4b5jgIPllHvoz8I5zv55L8nL/QYuioiqNz0
+	 bFHwNBCzqEwNzza99Dotcw3hy2WSMt1k4v0Nu1ObFnuzzPCJTaZJR09VKnQPVNu0Ie
+	 YiaCR0DXwqb5L1MTAH33VJOtane4KNMsI/15XTFxxb0XWg50vHeumHbafF+RW87C0o
+	 zS7G0Yc9SFTSe1i5chVbdD//SENR7XS47MSpwMtFs06smyoMu66VTyAuEoDPiztBuc
+	 FG8EIBIcIDBog==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+Date: Tue, 24 Feb 2026 12:18:02 +0100
+Subject: [PATCH v16 07/10] rust: page: update formatting of `use`
+ statements
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKrb_fFEvf5VzY_-zcc800wjVGOFbiGrpzC7S6Ghy9qhYJrZ1w@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260224-unique-ref-v16-7-c21afcb118d3@kernel.org>
+References: <20260224-unique-ref-v16-0-c21afcb118d3@kernel.org>
+In-Reply-To: <20260224-unique-ref-v16-0-c21afcb118d3@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+ Leon Romanovsky <leon@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+ Serge Hallyn <sergeh@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Igor Korotin <igor.korotin.linux@gmail.com>, 
+ Daniel Almeida <daniel.almeida@collabora.com>, 
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Boqun Feng <boqun@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
+ Uladzislau Rezki <urezki@gmail.com>, Boqun Feng <boqun@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ linux-block@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, 
+ linux-mm@kvack.org, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, 
+ Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=910; i=a.hindborg@kernel.org;
+ h=from:subject:message-id; bh=TzCUGpEDUTKD6tcoKokHDlQAGVLw4XXksTwjbV99rHQ=;
+ b=owEBbQKS/ZANAwAKAeG4Gj55KGN3AcsmYgBpnYj5ytywbjKxCmfhmUDrIuCRIXch3CamTuuGv
+ j824oj6dJyJAjMEAAEKAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCaZ2I+QAKCRDhuBo+eShj
+ d33LD/4tIWyZ+fNIywG0iGTvb2DorpPWbOHBNN9ywRijqdgN4kCYPMclfyWq5jb0IYw6fO5XvGS
+ n3w8ZMsfLfCWPUxLJdLXezRidEemIyeulj0g1sXIMUJtJCTE5KGLt1cF2TlmAqfIGDb1Hxva9+n
+ a17hvt6TxHT6vtxd6YhnJcIRECoOoIi6t163hqhNU+3Hy46/GrL+c+nTkA/ZlnfxLgaXP1+VGB7
+ I5d4mn9T5xF6HdI3RAI44jmR25J4E5AypWhSJtFg83rD1WbnwAcDa+Ow11Emd7UpvLdl7IYKorJ
+ VNJ5BCcmWvA7Uv5SbU6NqZ46lpaYD0303kqPl4SzHPc9ZgGpj1itJTcAZZg+7N11zMJ6N5UNtgL
+ 55lUMrNsD4c2ho5ywzGrZm+g8TjNVjqpCx+CcfiRj100RVyVJxpUoJsKKhElKn7CNCCvKJQk37C
+ ckI1Utyd486+FYBxr0xjySMGhSl+kuUkGVSs7o4WGXtaGlBup26dnSeAkV0hwb7PIJTnVEqhNG9
+ kkzffHhBC7rgSMVm/7JPpUvyMDnshDU2+oBO08eew7B5Exm7GXhrbIxkwxtnS8isIL6D8vMXvdR
+ 1M7UgSTMkNpZejv8PvjASBdsv1PFNoFB4h/GbJw5gpvV2ud0ebXXQu7h+wVO6KP4Jt9TmyvfoVj
+ JnTkk1uh31vgExw==
+X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
+ fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-On Fri, Feb 20, 2026 at 03:45:00PM -0500, Daniel Durning wrote:
-> On Tue, Feb 17, 2026 at 7:01 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Wed, Feb 11, 2026 at 02:43:21PM -0500, Daniel Durning wrote:
-> > > On Mon, Feb 9, 2026 at 9:01 AM Christian Brauner <brauner@kernel.org> wrote:
-> > > >
-> > > > On Fri, Feb 06, 2026 at 06:02:48PM +0000, danieldurning.work@gmail.com wrote:
-> > > > > From: Daniel Durning <danieldurning.work@gmail.com>
-> > > > >
-> > > > > Added a permission check to pidfd_info(). Originally, process info
-> > > > > could be retrieved with a pidfd even if proc was mounted with hidepid
-> > > > > enabled, allowing pidfds to be used to bypass those protections. We
-> > > > > now call ptrace_may_access() to perform some DAC checking as well
-> > > > > as call the appropriate LSM hook.
-> > > > >
-> > > > > The downside to this approach is that there are now more restrictions
-> > > > > on accessing this info from a pidfd than when just using proc (without
-> > > > > hidepid). I am open to suggestions if anyone can think of a better way
-> > > > > to handle this.
-> > > >
-> > > > This isn't really workable since this would regress userspace quite a
-> > > > bit. I think we need a different approach. I've given it some thought
-> > > > and everything's kinda ugly but this might work.
-> > > >
-> > > > In struct pid_namespace record whether anyone ever mounted a procfs
-> > > > with hidepid turned on for this pidns. In pidfd_info() we check whether
-> > > > hidepid was ever turned on. If it wasn't we're done and can just return
-> > > > the info. This will be the common case. If hidepid was ever turned on
-> > > > use kern_path("/proc") to lookup procfs. If not found check
-> > > > ptrace_may_access() to decide whether to return the info or not. If
-> > > > /proc is found check it's hidepid settings and make a decision based on
-> > > > that.
-> > > >
-> > > > You can probably reorder this to call ptrace_may_access() first and then
-> > > > do the procfs lookup dance. Thoughts?
-> > >
-> > > Thanks for the feedback. I think your solution makes sense.
-> > >
-> > > Unfortunately, it seems like systemd mounts procfs with hidepid enabled on
-> > > boot for services with the ProtectProc option enabled. This means that
-> > > procfs will always have been mounted with hidepid in the init pid namespace.
-> > > Do you think it would be viable to record whether or not procfs was mounted
-> > > with hidepid enabled in the mount namespace instead?
-> >
-> > I guess we can see what it looks like.
-> 
-> Having looked into this some more I am not sure if the mount
-> namespace is viable either since a single proc instance could be in
-> multiple mount namespaces. In addition the mount namespace
-> does not seem to be easily accessible in the function where proc
-> mount options are applied. I also considered adding an option
-> similar to hidepid to pidfs, but since pidfs is not userspace-mounted
-> I do not think that is possible without some significant changes.
-> 
-> Doing a proc lookup with kern_path() does work, but it does not seem
-> practical in terms of performance unless we had some other way to
-> skip it in the common case.
-> 
-> Curious if anyone else has any ideas or suggestions on how this
-> could be implemented.
+Update formatting in preparation for next patch
 
-Ok, so there's another series that adds support for allowing to mount
-procfs with subset=pid. That series currently uses an arcane mechanism
-where it walks all mounts in the caller mounts namespace to find procfs
-mounts and check its mount options (mount_too_revealing()). To get away
-from this barbaric hack I proposed recording all fully visible procfs
-mounts in a separate list on struct mnt_namespace that it can walk
-whenever a new procfs mount gets plugged in. Once we've done that work
-we effectively track whenever a procfs mount comes and goes from a given
-mount namespace. When we plug in that mount we simply remember the
-option used for the least restrictive procfs mount in that namespace in
-a per-mntns "proc_visiblity" field or something.
+Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+---
+ rust/kernel/page.rs | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-Then in pidfs we simply do a:
+diff --git a/rust/kernel/page.rs b/rust/kernel/page.rs
+index 432fc0297d4a8..bf3bed7e2d3fe 100644
+--- a/rust/kernel/page.rs
++++ b/rust/kernel/page.rs
+@@ -3,17 +3,23 @@
+ //! Kernel page allocation and management.
+ 
+ use crate::{
+-    alloc::{AllocError, Flags},
++    alloc::{
++        AllocError,
++        Flags, //
++    },
+     bindings,
+     error::code::*,
+     error::Result,
+-    uaccess::UserSliceReader,
++    uaccess::UserSliceReader, //
+ };
+ use core::{
+     marker::PhantomData,
+     mem::ManuallyDrop,
+     ops::Deref,
+-    ptr::{self, NonNull},
++    ptr::{
++        self,
++        NonNull, //
++    }, //
+ };
+ 
+ /// A bitwise shift for the page size.
 
-visibility_restricted = READ_ONCE(current->ns_proxy->mnt_ns);
+-- 
+2.51.2
 
-and be done with it. No locks, no lookup, no perf hit. Thoughts?
+
