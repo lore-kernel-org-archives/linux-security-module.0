@@ -1,135 +1,133 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33F32D7DE1
-	for <linux-security-module@vger.kernel.org>; Wed, 25 Feb 2026 18:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.176
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772042450; cv=pass; b=qqwJ1QwCznAFh7GCTmIWr0+bnrDRswX0jpHsI1hvOS8+ZRVarFy4PWh5HhHI3obm4O2ffJQB4+z/d8fJybJdK8D/DVBbI8jk0VzxTQHglNEgcDXfvNkZ7793E3DjwpgtyExZsSZKFjbwnxZuuXmWqvHwOIRM22+P+cmyOgEXfkA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772042450; c=relaxed/simple;
-	bh=ezrs28hh800Wrad6rqosq13WMeXBTafZNVMfGZxxrPQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IfbTtpgXxs1LBKfxNI3tKZxScW/VoqbiEcZimChX2mw3AZ3jXVhp6aARfSvL/m7PLivrwv4e8+jJzojaybEzyff9HI/QRsQNu3bdUbMf5oAnhCLPfF9uXW1ex9AUHIbyvMoincnY/OTtFlvCl5LjtdvVBdWdZPr1/XXph4l5P5E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com; spf=pass smtp.mailfrom=arista.com; dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b=NFDbDlxS; arc=pass smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C233ECBEB;
+	Wed, 25 Feb 2026 18:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772044669; cv=none; b=jpANJ9/fCtN5CUVyjtpgEqoWOLHXw2G2gGho5dx664kRuJCNbltnft5vjiqZNTZLErAD7ae/UzNDc+zJsUXM3if+KNlsVM17ddKD2gKBDp4ltiSAXpwmBNqUoCEG9AAu0I8MfW7nuKhoUrX4UhmnaZm+LRm1e6LuXxNscs5Ew8Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772044669; c=relaxed/simple;
+	bh=kgIkXix+021RYRrLeJUOdyBzFareGvYKJaQYHo+PH6g=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=BoUkJPZFljtWfGmjNShVYEm0op+NzK+jmP1vYEX4eL0LW84PeGSh2pVMjZrOc+LFnklT8j/HQUBURDsy5TmV3cKP9LkKsGzBMTSie69bdgFGI6k2Ed27Dud9WU3oTOEcCkC1O89lzvpM3TD+pszmhztAInceZnDpfhgJmYxPN0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=n0ogOCAn; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="NFDbDlxS"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2adec255754so2362975ad.3
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Feb 2026 10:00:45 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772042445; cv=none;
-        d=google.com; s=arc-20240605;
-        b=OqsVgOjoEuXB7aXgcYB6O7xRg6K+eVvioXo9RrR3uQ9L7EJqNBctbWXl8MJYFPoYCg
-         KqzMjboviiVvXY+EeHcvqDjMtqRxGc/mj/dvEw28/Yv3tMAXQFNvIrQ05sb7pCR0Vlr0
-         bpVuwmra6tGJJKocP6QpiqWMLMIt2IV0CZuflInl8ewTRcW9RMSDJdl33XzUZMxONBE/
-         iQmuVvgHGD0s5twoO8Pb+kWc2+2ijsVE11dkR9HzC4A8dmyLjbG8gmN4QE9lqXKIka7d
-         K/6PN2zxXfWwF1AI6ZWdoJVX4l8d3WmNQvSmpwpxJS4cZsIipTNLDW+hEqYYj56fZMCJ
-         uwMQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=bMRnj3JHAXVYN9zdN33x2FI+URGfW6audXAgRVy6efg=;
-        fh=j29apCo6HOO3ghX8sNjS9rVDT+lN6UCCKvJD1ir2sWM=;
-        b=EMDOcUXSJymFfwiOGDQO6N244jDNwea326Nz38sWa5on8mLtEdx7LGCeXrpxBSYFlG
-         BGUhhOjixzEy34q+rxE3T2bN4QxEcfqu382bXS5pugFrINo350EqbnjH4hkyN2M/beLf
-         mQkAM+eX+rWRXzKxSmsR0d/xo/YvVAOwmnYim4ofAmyGpKwfa0QE/rd6G2zKMyZ96RHc
-         JD77/VGF8jTRasd8GyC4bYpgIRwcyG76hJao4AsTv7dfEgxMy8akCLk+g0g6oZ0m+wJf
-         KMuf+3Xm8pYCheGaqvtl4kTrOrFWD5K/pdansTb64L5BDGn5is2taSUJ3uemr7srB/1y
-         50hA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=google; t=1772042445; x=1772647245; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bMRnj3JHAXVYN9zdN33x2FI+URGfW6audXAgRVy6efg=;
-        b=NFDbDlxSchreCFA4REu5sfMZ42uB0CaSJZwym2B2f50pfwhGNXTkGUb4PqUXjK23km
-         55rxRAMwMD/NQ9xEmOADEXNr+1otfMj353teENNrKaC9NxPJuJbh9mGCZRRJX7tx/uYU
-         IcfrP4gI+j10pyNC2u6KuhjzLjXpU8jtcZofjpsemTJkJF45bwWyHeIq+rX4HJp/VgMJ
-         Khnzz2oDTHvYevWSNGZh5krarObAwnMIp5FhNBlnAe+D5WuFU4J2j+btYH76tvy/RNtm
-         KqEhrCM63QjjRt+guPxF3m4fSWvlCat1gG/AjDmspcNfBuR5m8u+krLmPvVbeGn1WpET
-         ZC+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772042445; x=1772647245;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=bMRnj3JHAXVYN9zdN33x2FI+URGfW6audXAgRVy6efg=;
-        b=aqG14TDZK6FKZPSTzszo5SdUSMmMjzjM0NSWyoOiqeTZQg32i6nlTOZa4rzetii4OX
-         8+ButnQq/euOo7Dyp1JKfl7/tzn+Dq5WhrDFUS7nAPHdHQC/I/d9XZE0phIRXGAoZyP8
-         BqNxp3yPB+CSUwfSj8Ds8IoZVHzxXDJaRhpacMVZiGFVEI7FlbxxPCTZvwqxVMfU3oiO
-         IpkRl+Yh2q5H1KPM6v2d+kRfhVMQb9wRL9b4SrjzeT+IuFkf0mbFcAQ0PDIRzh/OOmf2
-         RR2InzcdbZJYPCr+Wg6juQ0UlDkEYOCTe/7hFwq27hPD9QJnIfxZiz3nn2tKD7zBWBfm
-         7S0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX6jmXmVmoLMOlz2yq90vpugIN6YIZ+SmLapQSh/tZZhxHxhMB/6HqH0mIkhQjyc46zKZn0j2iLf9Abq3WX8cmoBxxrFcQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQceCVE/OPazHe8oTSadvYanSl/JqWqZk+hMb9yf+Nf0PW5Zxt
-	HRS/0EXPshe04x6krLo6clDT2/EmQzjYWedpVK6x5NKnabls+paPBwjQTIcGKY/Y+7KION8j14e
-	ogQ86s7yCbck0zce1AikiFRqYdh99sa6Fj2JpOdG4
-X-Gm-Gg: ATEYQzye75hwxq4z7FoO4gWlZGZmwPLtk7+T6MI5N0OPUecCAGJRQf9bbby0xgmCpi0
-	LAHpy8xThQRfQc8SvcIbn+C9x/kl+l6kXiot5P1NZrhcYxEDgzsM6uebYuEr9NCdYQUATfKJTX+
-	ooquwKl2Do1hX5J2Qzu/nMCFI2wl1H77T9I9FF+QAb51o8+FWM/CE9dxC+skQpLxvn94I3drg6D
-	GtzFH8jy4rUFo+gsFkj5Xwp0I04awvxN0iX/fVGBzxIEf1hFnCSJcvbWNNuIddWeX9Vt1D/kho0
-	E867BsJFO9I0nPhTDdZadL6TGiLF3VZzHBH2ljp4xg6AinNTRRkPzXwJyvzR5ZpB8GLpG1JFLZQ
-	sB86XmbeuohcBrF/LuHCuYghx8znt/US2
-X-Received: by 2002:a17:903:1b6e:b0:2a9:6165:6e88 with SMTP id
- d9443c01a7336-2ad742b4ddemr145518575ad.0.1772042444923; Wed, 25 Feb 2026
- 10:00:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="n0ogOCAn"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61PC9XtD2848171;
+	Wed, 25 Feb 2026 18:37:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=RiHjwy
+	IPIvAoJ2r0lQKIdeqSOPa/hMEPaI6bsLMadBg=; b=n0ogOCAn/zbHMIXJcds4Yb
+	T7/DOIUNknhuVIRbadd2jPnX8m9aC7jtnWJ65BuSvbWCYWWGGKX25rSZeKNeTAko
+	VWZoFngIFczwL5uCFXBTxyqo+zhI0vIMkkQRap41PO9YhQexHLScrW7NK4tNd8g7
+	ZUAuFGfRkRi6t7eg5VWB9TO3PxKvxREr7EPQjgCBHQQCJaNLPeg0f/KhOvG0U7mV
+	/Zm6yC1i2ECn/eagqYDY59RvlczLSnoHtwmnmAe+g/c1Nzp89R4Aw2mh0nhjta2Z
+	O6AM33lg9kqQ4/F2cH9Wkt5cR7wAy1qvi9uqljWs14MwacNcPFufSQ0LuRH8A4zw
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4cf34c93wt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Feb 2026 18:37:17 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 61PGVJxq013478;
+	Wed, 25 Feb 2026 18:37:16 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4cfqdy6tsh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Feb 2026 18:37:16 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 61PIbGGD40698490
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 25 Feb 2026 18:37:16 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 217385804B;
+	Wed, 25 Feb 2026 18:37:16 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 11AE058055;
+	Wed, 25 Feb 2026 18:37:15 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.41.157])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 25 Feb 2026 18:37:14 +0000 (GMT)
+Message-ID: <55905382b88f00de0d7a82aff0605b6d0d9a1e8c.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: Add digest_size field to ima_algo_desc structure
+ and use to show meas.
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, dmitry.kasatkin@gmail.com,
+        eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devnull+dima.arista.com@kernel.org,
+        Roberto
+ Sassu	 <roberto.sassu@huawei.com>
+In-Reply-To: <20260225125301.87996-1-roberto.sassu@huaweicloud.com>
+References: <20260225125301.87996-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 25 Feb 2026 13:37:14 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260223-ima-oob-v5-1-91cc1064e767@arista.com> <5579780966d26d2fd0e3756d404d2156bd55a06b.camel@huaweicloud.com>
-In-Reply-To: <5579780966d26d2fd0e3756d404d2156bd55a06b.camel@huaweicloud.com>
-From: Dmitry Safonov <dima@arista.com>
-Date: Wed, 25 Feb 2026 18:00:33 +0000
-X-Gm-Features: AaiRm50Ofcel8xIk3XALa1jfjwmSOSuMPTyZWqkq20mhBhxlK5tUNoc9kdl48mw
-Message-ID: <CAGrbwDQC_jp0iYtpW5JUMqEkJPZ01O4iL6zhyMgWQxXcfrc-nA@mail.gmail.com>
-Subject: Re: [PATCH v5] ima_fs: Avoid creating measurement lists for
- unsupported hash algos
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Silvia Sisinni <silvia.sisinni@polito.it>, 
-	Enrico Bravi <enrico.bravi@polito.it>, Jonathan McDowell <noodles@earth.li>, 
-	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Dmitry Safonov <0x7f454c46@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjI1MDE3NCBTYWx0ZWRfX4r1hrnhENpKK
+ kwvTqyD8u/z+zo7cP7GF6LT7ZUIvB/hXUXAyjCN3zDKEbXSQd4CzG51xOXMnFTjVJ6Sgdyg+Dqd
+ KPDu20mmb8wzrKS6JWL9R1fHJRR9Yg3nBiV7dsIJjXn9UnWJlSs3R6TS6EspFwK7e5tPY8wEU9c
+ 2B1sndc8Z5ja9RMwYj2xVIH8gqLqUWvDUQSFzPppT8KTUV2qTY1xFDLiNZGZMk2AQUUo2UmYTEm
+ CYJuG9+RGF1txoDGrlVxnrkzG6cxOSo2i8KKt3s7bqMuGQGBjisrqBXn3VNIRvn+74dPwBBuQWC
+ UrmHQXKG2chDFHH+aYxgP6c9oBixAMMNVKn8NmBGc5Kk5LTqinURYbJy5cC08CjcaqpcWMmZ4C4
+ XoFU4dKnUZRD+/YtuooDabIq/V9W2xl88COT4oUWhHOTvRpWJYu+hwlYMpvmgCfN/kZ3iGolW4V
+ if4OdHPVGlaY2MhlBxQ==
+X-Proofpoint-ORIG-GUID: RWhNM91VIvj2Oh4IluWsOS_z1H_WvNsX
+X-Authority-Analysis: v=2.4 cv=F9lat6hN c=1 sm=1 tr=0 ts=699f415d cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22 a=i0EeH86SAAAA:8
+ a=tQDo6FG_H1oQSaztVPsA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: Tayon7_p2jOMt5eU-ZNxJNvFYxqiki7M
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-25_02,2026-02-25_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 bulkscore=0 adultscore=0 spamscore=0
+ clxscore=1011 suspectscore=0 malwarescore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2601150000
+ definitions=main-2602250174
 
-On Wed, Feb 25, 2026 at 1:20=E2=80=AFPM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
->
-> On Mon, 2026-02-23 at 14:56 +0000, Dmitry Safonov via B4 Relay wrote:
-[..]
-> > @@ -252,7 +245,8 @@ static int ima_ascii_measurements_show(struct seq_f=
-ile *m, void *v)
-> >       seq_printf(m, "%2d ", e->pcr);
-> >
-> >       /* 2nd: template hash */
-> > -     ima_print_digest(m, e->digests[algo_idx].digest, hash_digest_size=
-[algo]);
-> > +     ima_print_digest(m, e->digests[algo_idx].digest,
-> > +                      ima_tpm_chip->allocated_banks[algo_idx].digest_s=
-ize);
->
-> Sorry, I realized that this does not work if SHA1 or the default hash
-> algorithm are not among allocated PCR banks.
->
-> I just sent a patch to correctly determine the digest size:
->
-> https://marc.info/?l=3Dlinux-integrity&m=3D177202677128752&w=3D2
->
-> and applied yours on top of that (if it is fine for you):
->
-> https://github.com/linux-integrity/linux/commit/6efbd2b38b102ecbadc350228=
-cc30fd67666a089
->
+On Wed, 2026-02-25 at 13:53 +0100, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>=20
+> Add the digest_size field to the ima_algo_desc structure to determine the
+> digest size from the correct source.
+>=20
+> If the hash algorithm is among allocated PCR banks, take the value from t=
+he
+> TPM bank info; if the hash algorithm is SHA1, use the predefined value; i=
+f
+> the hash algorithm is the default one but not among the PCR banks, take t=
+he
+> digest size from the crypto subsystem (the default hash algorithm is
+> checked when parsing the ima_hash=3D command line option).
+>=20
+> Finally, use the new information to correctly show the template digest in
+> ima_measurements_show() and ima_ascii_measurements_show().
+>=20
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-Thanks!
-            Dmitry
+Thanks, Roberto.  The patch looks fine, other than the patch title.  Could =
+it be
+renamed as "ima: define and use a digest_size field in the ima_algo_desc
+structure"?
+
+thanks,
+
+Mimi
