@@ -1,64 +1,64 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C9F310636
-	for <linux-security-module@vger.kernel.org>; Wed, 25 Feb 2026 12:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23914393DE4
+	for <linux-security-module@vger.kernel.org>; Wed, 25 Feb 2026 12:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772021257; cv=none; b=Iu0ailr6nJn3+/bSmWty502EAlkzNxVXcHW/2dahuw0f8GDNpkJwFPn4vXo7bXfUGzGT6jCzj3XziVtck4HKMDLnrOwsVrQlN1cT1OqUmyi56QY1223YLrAAu0EOrkDvs9Afced3PgOxSCPx3/Ez4tgv0w3VLf+wP+XVMPvW6IU=
+	t=1772021379; cv=none; b=PhqnLnke0pf1+Gq9KIajXg7kKap9m+Byc+P6wr6yheopd5jwoPyoL9YwmmCyyb14jPA+o6cZ+LGUlhBr65CupxeTQuf41ZbM/8dCRyY9VrdLUpt0/B5le8Kc4R7LKhb7sEsovH/H0Y8LuvQsFnuNRPaK9AN6eVg++oZuruuZEeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772021257; c=relaxed/simple;
-	bh=k5AyMm38axpCnNUZMKhOaaUCpu5/4L5dhb8UvkyUQsk=;
+	s=arc-20240116; t=1772021379; c=relaxed/simple;
+	bh=qFajCPbZ0QIi5lPiftQyrjRCq28wnTwMEvFiSvEXmM0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KN5X6UMtyj2hghMws/oVjSkx/LQXsO+LVhplna/qdXdH+4L9Pbfa4sSp8Givd+XUhWgtehha5jlk55dsjlU38UdA/fcWDSvoJVKpXK6pkX9BEFfx5771rCHsYphrJzvHj5PYiiUO5oTA8hi3m0dwg6yIwVLLSrhJ7V9WLSsn8k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VvwIjWAi; arc=none smtp.client-ip=209.85.128.50
+	 Content-Type:Content-Disposition:In-Reply-To; b=YduPcBPCy6nz6m2tpfU0RCOjnX98lUePTXRlyHrYOg2uJB1aTNp0vulBR6OiC5YyGG5vhGnfG/VCmogeH+w8kElnNup6sF2W1BYOM3JwyNC7dC32kVO637lhP2Hk0WKcVQXTlFbq9xPlYVOZPIJzB6iE28+aXStGJ4GP4W7Fzn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QGHEsZOB; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VvwIjWAi"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-48371bb515eso82931125e9.1
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Feb 2026 04:07:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QGHEsZOB"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-483a233819aso65078535e9.3
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Feb 2026 04:09:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1772021254; x=1772626054; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1772021376; x=1772626176; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=hP3eP7lQUeBanoY3mNDaFgqzxq5QqafounHzIr8KfRU=;
-        b=VvwIjWAiTv8QN//0TIgBWS46JzOL8IVPamvbbeRD6S6TvQsU7bM3m2OB6Q/igWxqxM
-         1C/gLxJX8OyFxNDzgvNnNnSzbVYf8JhVeOZhnZ03ecaXY6P37wyJbK5XwYpwL7POM1yi
-         TflbFZqU9hrj9zhHLLH9v47uT8BVR4J2DsMB5cyqMOGqapLQPnkDtrgxVCW6raDITXPI
-         jRyNcJ2h7UzX+djG9JmGOwVFnAh58Ag3dDYkFj2crSpvQWLP4MGWvziGT7Mw9jxYXTfz
-         k/EwAXB/5W7itgVOgc8tK89k4XekKeiZBzLZPwKPtj333AwSCtr91bNdGtS7Aym92vmW
-         YUXg==
+        bh=DJ5P/C1rpIkuLy8IwHUQqCJbrc4Dun+fV8l4FFB9SII=;
+        b=QGHEsZOBIZ1X+2t+10fvXO9aZw40CaxjrwFUmmn/M+0cQYMW8H5ouMT5UwP+/aAQe8
+         LU1H8zOL+33P+7kfXquLBGKnuYrMtAtI2wy3sQmybZxmrRfj5+wUJS32Jm+Ig6YYGxsn
+         zFdNIPqwUJ8ESMui6uB7lSYvaX5UQ5Q9WGTojW8FOdvBgXeSy5/BBzU0GYxyilhsEHOq
+         A9g+K8bl46PjW1+RmrNGBRlGr/ca8YU1dmgahWNVVKWPB+8TCuSjCGUAIvTBlY6n4pjI
+         cAjHl2QzXbxirFMuGGuA6IDhdwlzCQji2rP33yplHgrSFhRcbTUNbdl+Mz2HtkNWfJ2n
+         QmlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772021254; x=1772626054;
+        d=1e100.net; s=20230601; t=1772021376; x=1772626176;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hP3eP7lQUeBanoY3mNDaFgqzxq5QqafounHzIr8KfRU=;
-        b=TutaUbEWfaBijw1gSjtQt1139wrJGcyGp9IcghksDdBN6VOjzKEcCJjVH+Fy5EnGzs
-         4J4Ivdmu4Fxo2iKuEIkwGmQ73QQ2b4J//mwjIhakc+3HcquXUDqoXVs1b/RDwrz8Kazr
-         6PHLO4LeWnqM6BpdXF3vkrth+baG4O1KICpR3Ttxv2qfXGtP2NYtr1qkcmJYDI+op7Wj
-         9ynHzd/GcIS5sZc7so3/6xx/4eU6wa0kOk/7ychPOHVbLdzLejngaaLlrDxQYxt0QggA
-         R663pAGi7B9bXikAgU3ANXol8ToGME/f0ur6oIs/iveMarT2PtxptkO+R5NMDimuXx1D
-         nWAg==
-X-Forwarded-Encrypted: i=1; AJvYcCV/HSdMhyxUznAntOcoOlTlamCg2zuZt9P8OxtE8wlRfJrEU/giNUlOq6OKV5q2MiOe5W1LsNcnfAA8WJzz0miDz3lD6OE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymN9X8yhQXjmyo/NT7HMNtgSHncpnrN2g07spdtY7RYn61xGdh
-	agK1N00fAEcSpTh+KGYvRRpR9ociEMxkOZ6sD9BfvmvNSSO6P4hTgAUfSM8p3CJYnQ==
-X-Gm-Gg: ATEYQzxd8iypyGdOmDcDddSGe+YUqkM5AbZ90fksPSDhkOCm1lNpSQ3wchTXNl/5E2H
-	AEgLy8SaBRCnQzOlGnEEe/YjUH/Qq2qwi0Jsbn7YYTZe2/dfMo6jFdNCUshxRsxBAORma7meZBP
-	4t0OARvPyhugyftBqBxQLAB6ZowtpY1EO+u8SreYKDAmICG9ON63hm0aUyTAOXzsZ5XJfVb6twJ
-	OcvlrstvyUOlW73JHFzl5jJDHZrE3J7ikp/Aafij6LuOPhEyJ6q6uoenZi1I+IpBg8KzCUcwR+V
-	L9kOBuqtYnQ5HjapBDGQka1hIzsyjhMrGbl5jIoQeWFH59ep3VPVynBQ2CXnkUlWxGWQRz7NuXk
-	lMfI24PpGVMUkwOwjzV3jbWDzN3L4CBCq7mbM1ESxfgWYaCNCikIvpsaUBzH43774MXBehXp0Z2
-	WPGODoRjEd+OBIBSTRgRsx6u15o+LHDznmcfKNwhiDv+YVWYPwqIhkGw==
-X-Received: by 2002:a05:600c:64ce:b0:483:498f:7953 with SMTP id 5b1f17b1804b1-483a9637a6cmr239087565e9.28.1772021253116;
-        Wed, 25 Feb 2026 04:07:33 -0800 (PST)
+        bh=DJ5P/C1rpIkuLy8IwHUQqCJbrc4Dun+fV8l4FFB9SII=;
+        b=adsZbZOGtBLVd90fd8/NsDi0QpTPljdzc3UTIgLY6YSiZaSTbqe3iLCZrrcwC32Afy
+         pcB5qN4LlILb5BO7KBIppb8aigunCdbTjH3q1QWkVClKokWEtR+bR23VvoPrNNjsK+Kq
+         PU+LeK01hAOMOoBvu04G9BcjvqvUW01aRubhFAzGQ6pwp9PWo0qj/VRIWEd+boOgH2KL
+         oeYHOrNKSDMCZcZy4gt9yeWSApAj9Uc+jT1+C48RL47kIj7ycLKOvesa55fRjrnw0IhJ
+         lOjqC3Sxd9W82Y53o4+LE2P0LNLBHo4sLS9p4i7dp1SYnqboVGpfLSqlNbQ3lLR53wJl
+         ER6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWkCtCMA4aDgA1zGQYezudmA1A359wvogPBqTSK9RBRANFUjoGRouEPE9YDR1FSZ+P5Eh7egZ0/D82NU4VcfI8ugeHZGbo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPoNuepUA7KIcWIMsUVCQ8T4BBg4/z09AaKJy+RxX3dYbjuL5I
+	oTajRswfgj8WiZtuuYKfOpMq098w6kJhTMIdbMDTQAtX43uTQ/HyXn1WzjQvilEIUQ==
+X-Gm-Gg: ATEYQzwlHG+MvyrIC3V91GjDxAQpnS9JSdnNN5j8U5SO0vEF7vnKcqjfB8rYvur0ZgJ
+	3MCqHRnY+AM00llVuzWbcR/soQRIS0pUw/kKxkn8WdlYH9yWU+EBYUdxnLkkCduW4/GCWthF5i6
+	BRWE/EWk2vydUHZh5hXTYRBoEBi5RjRO0kLC2MlQHSI/h5OrFGOowyVqOGuhSgt9Res5rn7Mr+L
+	yuN2Iyh5q7QegFU73QxS82BbLUmhmUTVx8mL7dnuiQdFx03w5TcBjw9e8Pbun479k9nGgB7Aii5
+	IzBQr3K3WdKfhRy9eMzMSRB+nIDgLLTDVND1KDdGumKSJ3ZtAm33K2DTXzISpS5RS9ipMXrNUrD
+	xCTYTiQwYW/5I54tJgp2ElrJWg9Nm2412A7Jmw8LdQkRg8Tb2OF6TpKDGTUkqJZbAz67wPmISfH
+	zRJGL1qjO2KINfj8Wv5MBKhooSKrFkcb8x4qPRRgbIyRUyHitFAOLMfw==
+X-Received: by 2002:a05:600c:8b48:b0:483:c12b:fe4a with SMTP id 5b1f17b1804b1-483c12c0071mr13749565e9.11.1772021376047;
+        Wed, 25 Feb 2026 04:09:36 -0800 (PST)
 Received: from google.com ([2a00:79e0:288a:8:dd44:5fa0:1b9a:d7c9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bd7141e4sm70330895e9.7.2026.02.25.04.07.31
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43970c00d95sm32212120f8f.13.2026.02.25.04.09.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Feb 2026 04:07:32 -0800 (PST)
-Date: Wed, 25 Feb 2026 13:07:26 +0100
+        Wed, 25 Feb 2026 04:09:35 -0800 (PST)
+Date: Wed, 25 Feb 2026 13:09:30 +0100
 From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
 To: Yihan Ding <dingyihan@uniontech.com>
 Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
@@ -66,10 +66,11 @@ Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
 	Paul Moore <paul@paul-moore.com>, Jann Horn <jannh@google.com>,
 	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
 	syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2 1/2] landlock: Serialize TSYNC thread restriction
-Message-ID: <aZ7l6jU7XJ1BYbN-@google.com>
+Subject: Re: [PATCH v2 2/2] landlock: Clean up interrupted thread logic in
+ TSYNC
+Message-ID: <aZ7melfSZGsPWvXD@google.com>
 References: <20260225024734.3024732-1-dingyihan@uniontech.com>
- <20260225024734.3024732-2-dingyihan@uniontech.com>
+ <20260225024734.3024732-3-dingyihan@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -79,57 +80,78 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260225024734.3024732-2-dingyihan@uniontech.com>
+In-Reply-To: <20260225024734.3024732-3-dingyihan@uniontech.com>
 
-On Wed, Feb 25, 2026 at 10:47:33AM +0800, Yihan Ding wrote:
-> syzbot found a deadlock in landlock_restrict_sibling_threads().
-> When multiple threads concurrently call landlock_restrict_self() with
-> sibling thread restriction enabled, they can deadlock by mutually
-> queueing task_works on each other and then blocking in kernel space
-> (waiting for the other to finish).
+On Wed, Feb 25, 2026 at 10:47:34AM +0800, Yihan Ding wrote:
+> In landlock_restrict_sibling_threads(), when the calling thread is
+> interrupted while waiting for sibling threads to prepare, it executes
+> a recovery path.
 > 
-> Fix this by serializing the TSYNC operations within the same process
-> using the exec_update_lock. This prevents concurrent invocations
-> from deadlocking. We use down_write_killable() to ensure the thread
-> remains responsive to fatal signals while waiting for the lock.
+> Previously, this path included a wait_for_completion() call on
+> all_prepared to prevent a Use-After-Free of the local shared_ctx.
+> However, this wait is redundant. Exiting the main do-while loop
+> already leads to a bottom cleanup section that unconditionally waits
+> for all_finished. Therefore, replacing the wait with a simple break
+> is safe, prevents UAF, and correctly unblocks the remaining task_works.
 > 
-> Fixes: 42fc7e6543f6 ("landlock: Multithreading support for landlock_restrict_self()")
-> Reported-by: syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=7ea2f5e9dfd468201817
+> Clean up the error path by breaking the loop and updating the
+> surrounding comments to accurately reflect the state machine.
+> 
 > Suggested-by: Günther Noack <gnoack3000@gmail.com>
 > Signed-off-by: Yihan Ding <dingyihan@uniontech.com>
 > ---
->  security/landlock/tsync.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> Changes in v2:
+> - Replaced wait_for_completion(&shared_ctx.all_prepared) with a break
+>   statement based on the realization that the bottom wait for 'all_finished'
+>   already guards against UAF.
+> - Updated comments for clarity.
+> ---
+>  security/landlock/tsync.c | 18 +++++++++++-------
+>  1 file changed, 11 insertions(+), 7 deletions(-)
 > 
 > diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
-> index de01aa899751..420fcfc2fe9a 100644
+> index 420fcfc2fe9a..9731ec7f329a 100644
 > --- a/security/landlock/tsync.c
 > +++ b/security/landlock/tsync.c
-> @@ -447,6 +447,13 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
->  	shared_ctx.new_cred = new_cred;
->  	shared_ctx.set_no_new_privs = task_no_new_privs(current);
+> @@ -534,24 +534,28 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+>  					   -ERESTARTNOINTR);
 >  
-> +	/*
-> +	 * Serialize concurrent TSYNC operations to prevent deadlocks
-> +	 * when multiple threads call landlock_restrict_self() simultaneously.
-> +	 */
-> +	if (down_write_killable(&current->signal->exec_update_lock))
-> +		return -EINTR;
-> +
+>  				/*
+> -				 * Cancel task works for tasks that did not start running yet,
+> -				 * and decrement all_prepared and num_unfinished accordingly.
+> +				 * Opportunistic improvement: try to cancel task works
+> +				 * for tasks that did not start running yet. We do not
+> +				 * have a guarantee that it cancels any of the enqueued
+> +				 * task works (because task_work_run() might already have
+> +				 * dequeued them).
+>  				 */
+>  				cancel_tsync_works(&works, &shared_ctx);
+>  
+>  				/*
+> -				 * The remaining task works have started running, so waiting for
+> -				 * their completion will finish.
+> +				 * Break the loop with error. The cleanup code after the loop
+> +				 * unblocks the remaining task_works.
+>  				 */
+> -				wait_for_completion(&shared_ctx.all_prepared);
+> +				break;
+>  			}
+>  		}
+>  	} while (found_more_threads &&
+>  		 !atomic_read(&shared_ctx.preparation_error));
+>  
 >  	/*
->  	 * We schedule a pseudo-signal task_work for each of the calling task's
->  	 * sibling threads.  In the task work, each thread:
-> @@ -556,6 +563,7 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
->  		wait_for_completion(&shared_ctx.all_finished);
+> -	 * We now have all sibling threads blocking and in "prepared" state in the
+> -	 * task work. Ask all threads to commit.
+> +	 * We now have either (a) all sibling threads blocking and in
+> +	 * "prepared" state in the task work, or (b) the preparation error is
+> +	 * set. Ask all threads to commit (or abort).
+>  	 */
+>  	complete_all(&shared_ctx.ready_to_commit);
 >  
->  	tsync_works_release(&works);
-> +	up_write(&current->signal->exec_update_lock);
->  
->  	return atomic_read(&shared_ctx.preparation_error);
->  }
 > -- 
 > 2.51.0
+> 
 > 
 
 Thank you!
