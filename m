@@ -1,140 +1,139 @@
-Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
+Received: from sonic314-27.consmr.mail.ne1.yahoo.com (sonic314-27.consmr.mail.ne1.yahoo.com [66.163.189.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B4C31326B
-	for <linux-security-module@vger.kernel.org>; Wed, 25 Feb 2026 18:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF31A30F534
+	for <linux-security-module@vger.kernel.org>; Wed, 25 Feb 2026 19:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772045645; cv=none; b=tJICwjLSonxlKkQtJNBcav8jepV7fW9xyhp4AQd0X8dYHuvAw9HIwTgSenD4A2VtCT6Zi5MN4yna+MoiU9E8PknIZrq+MW9hyjZ0X6qp3Tz4eQ1dskhrSA0g2TGCH4e7yNMLdLjPfoG7WnBHytkIy6pFot3U2EU+tNIBIYp0e9E=
+	t=1772047327; cv=none; b=mWuuUtW7qZp5hx8XjTctb2Qz/HmH3YWlp6Q1NOeYiRSBsGxJXegehFqC+s58iQVhbjcWV6WiuoJol8sg+KnWHyPdvqpTq+Ny3YS92vFK9Ix+JFWKzsF0fkNzro0sVPmoz6DRXWbEse3I3sOO8/0WyrDX3LeaLP2z+FIG00SjE+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772045645; c=relaxed/simple;
-	bh=IYfNgJtBQ6RbPAHveRA9XcmzjH3CHVpWjJuPVOZDjb4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hykbgnh8XN5yolhlyY7yXI56MO3jYO11xB5zm/XU2pducNO85Q/YeADjDqAojPHSC5qwpnGCfdSdSQ3/QBfR9SaSH0i5uZyntkjlBnrm+TGt6CqRAS3r6TDw/vwTE1vCnxjpVLmnVT2XfUqLAXDi1otmULr9o/kA1P6ISa1nmRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XM3F5sqB; arc=none smtp.client-ip=209.85.128.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1772047327; c=relaxed/simple;
+	bh=tDeECAnZDCsz/EVtrhSLX7+oN8xJtFO2aX6TE6ILUtU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=nYJvBWnR3r2/qyLVqgA7btZpY7XSVD40SGAJ6OEgPvVYfpOoHLvwqgb9NpyizMmLDdt1GcHm++NyfXu6qYK/tUofHZUOfR8sdqWBD5bRiaaxXbKmo919Xwir3jo3S6V3BvuvHijmQw6BsiKyx+hOlwUiEf4sYXMmuRpCLXoQgpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=QxB4EflO; arc=none smtp.client-ip=66.163.189.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XM3F5sqB"
-Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-48334ee0aeaso780225e9.1
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Feb 2026 10:54:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772045641; x=1772650441; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=m0v9eecdrDlKKkRsI8AJc9LWKKGXVn/oxr4SUBFzAKY=;
-        b=XM3F5sqBj50+0X5mw+JusqQTCwHKXeJFBn/xTlz+o+F+mAmprSAJxoIlo/fMqYMEml
-         wcL/r/crRzJnH0E5V4tZAXWpODV9KCTTJ3BxM4wmyfrE3BvJb42EHuyhSh7Ho4DnFTkW
-         xJocbFNoRvhYuzGMGWQob5jokv8Muue1XhROJjPYPh3OkGyGzxjNHb1V2g8cDlulspVS
-         YWJ1trXhV9TAlCZXtdhE6RkHXXUkzTJqw9B/8XBH7pwbq2JeEh5S9oXJjbjzu+qCHfgS
-         s9hTaVIrRHLM4NhQOKnJ7T6vOUxmOayegXMZdEpGxK0/lUWwBN1VIpfDznNTwG3HR5Sr
-         UVfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772045641; x=1772650441;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m0v9eecdrDlKKkRsI8AJc9LWKKGXVn/oxr4SUBFzAKY=;
-        b=sH9ZMEO/jmA/NSwAoM92A3h+Qkm1guV7j5hFuMlgjyrk5u3fs93fiW7bPYC9MCPiy+
-         xGVqtJ3PvghpK/8HqJoR3pSzUik2F/VYZfwSxjlrDYSzTau2VYfQRLQhR5bkcc30HYH5
-         Ov+kB5hLyenB1x+b3M1qmEg4LFUEdqe8dUKSCpacOz6gzbjqSJqB5H1MF+oIFMlW52Qu
-         Ukx189sQkAF1FfbnK1ikeGRchVqEjMfUsIFi5K7w8Oz43x3hS04D8t1N5bLjp4et/it3
-         psE9Zq3GSjBrwCtrjkFTZ8rBqy+/yROf5eoos/DmBpVEVbT4tDxYKE92gxi1vzK1tH5M
-         QXTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVC0uhg5N8pSmWx1CN/EMKmfgYCWTc26YMykWrWVnPSnZpowyjaRL2aKW2Jkch4wsz7jSY5MewEzXhhI6jSYAWVL/Gfoxs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxe/oCOQ2+tFDtJLGJYrd58JNxy8M00b+nQSWWu/oA0zgPQaU82
-	RsIXPuet/0NkkvRdQnAKmfKKqYZjnByLKgNuNgx+zTNagRK/s/2jg8Qh
-X-Gm-Gg: ATEYQzwJd9qJ90P3rVjtBdBrt2+cnmLm7HhtxbESrDd/TKLpmtlFI4VNHqyMVFix5xq
-	mEFGGPHQHH9lJ3woczXYdikorN0nWVBzZ26RGogRh5DDgGdS3zlpP57ufkEXKSRPa7/WMnwlLwg
-	p4QEYTHF+tCHcAnGf/y4EX/KHdkWRMyb7F194tiHa5DVImuGDWqdyRi/8BvSQ91/adFGXFMxtR/
-	Uf4dy4dFicF5Su0cgLA8A3+1K8FOO99B+/e5jD4/B1QKhGSAgxUCHE84Uw2Es8N1xt2hhPcXTAU
-	DOmZ4aB4pinTOgQS5wuprWTmJlkq6k+pudioTqEUAsG3cZdaRu3XYUsEQt3qYPLXgaA5AfCRnaM
-	X8D+z8C5ZfQJQvTA0X6NOzhiEYW5d9XNc4+yaqX+Kll/ZQyUg8zbvRxcDJStSKyU8LK9fDVjqJ9
-	fCDX/UuXjXKlR5YvalvSwiP8vx7bpHkG1hFVmH58QW/fya9nyc
-X-Received: by 2002:a05:600c:c4a5:b0:483:7783:5382 with SMTP id 5b1f17b1804b1-483a95e6b64mr263650605e9.27.1772045640610;
-        Wed, 25 Feb 2026 10:54:00 -0800 (PST)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bd702e7bsm99932735e9.5.2026.02.25.10.54.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Feb 2026 10:54:00 -0800 (PST)
-Date: Wed, 25 Feb 2026 19:53:52 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: "Panagiotis \"Ivory\" Vasilopoulos" <git@n0toose.net>
-Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] landlock: Expand restrict flags example for ABI
- version 8
-Message-ID: <20260225.617b52a2bef0@gnoack.org>
-References: <20260221-landlock-docs-add-tsync-example-v2-1-60990986bba5@n0toose.net>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="QxB4EflO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1772047318; bh=lSPHsauT1ycwbir1DbCPdGELh+oopUjlisBIdxSM7Yk=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=QxB4EflO7RGUhEURLwKQTzPOehMhHzZVlCGqjxy/DOJ3XfQaEH2LILxdeCi7dUGkM28cp6rlOnro0Nr1QqZgrcL/4/bhT76EmgaIfBoKQsSLclDg+B2PQtKgXl0N/U6YhKnUrZOm9JukohSb4bwQ+gyPHzuI9SOC7yEOtrYeW5Ywea/OltSrS7Kfa6iROCtoom77s5k0tiXcVuWXA+8KetlhjjtUXQWAE0f4klDBFnMcWcPpo/e/nHoizw56U8BdWW7XROAoBnewL5NdXOkDsGc3DBVZWcywPRhyihIAM4pohX+R5DFPhk4p5kcVPv+QVmJ9T8cnEdd4UFxOYQQOgg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1772047318; bh=8QYlcuznWtZvv+qTR8kZM+Yc7/kzM1JpiB8vHTHvdAt=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=GxUebsOtmI3MetelYoM6qpLG0Wz8mvjv75TjPySfYnAdfE+4iIBqA96e+iOkUGRCsaNPz6OoBrdg80RmrqvITaGVkXo0wQOtwILpJ8sMMmPGEC5IeGfRuVLGM4mUiBPEJOsLNDhd5/ZF4lCnY6jDCZEozpWyuBJaQ93jX5NO6KElZZK4iovq+/C3SfSfrepZ3cSrYEXTATo8X92TWPTGlmTBubpevNcn5d6MQf+AamFansHoxYMVMki26Q2CeySWXiecDWFnaoly9s5+zndxrvD45x2u/mmhMLsWvLEOZSi2tyBoyAaiHlYeCJ/hcYHgCgqjzEsvN+3UMt/CW+8tKA==
+X-YMail-OSG: BDRl1coVM1mZyyDSwlI20eBDMAViXyGZc6AtuFgXBBSwqaayiA4TqeU1HuQtuRc
+ F7XqLMy.RPi44uINebzuWdhLejXQ4NZLrpsPEQ_5_Jg53ug99GFjo6dJgmrJO1gRlJFdA_5DrPyZ
+ FR1BAIN9dGEudbrdBWGsOoOfsPsn0DUZmnAOlWKK5TrFswxRr6o7NyDt_IwbRbsOZfC.qVbg.tVM
+ vOmyjz4H3OfHcIcebIyy5atKJZkKv_djDXPFKi8scUI9wDDZBkeNj2UNg2biuZA6hD3ze5_K4cWf
+ 3qF8qu7EaBpAF8fNOFDTj4tANNN1U1wpAip2ydPnITuwM2QTe1zA9w2n4YMHOXg4axerugvNvH5J
+ 8CsPgHLp3Z13xQa3C_HHS_Pd2_5fL6Xl5KD6gQraCCP0Kgcmf2RA.uxUF561NybglVt1nWOSUNio
+ _Y4OWM1sEYk7qS2EaqWB70Bj3FnIsJrP_XdgxGySGX.pgSC7UchZU39y12A0I5MuNIv7kdCfll2m
+ Tm0PIFOAxggjJrrry5GSSJsTZU7VFaxK0Wicqqx31SVbjhDDCD2QiSgDjwBczjO37.gzbTxXk0IM
+ 6X5JOidAoZTQ1DAGOpqUvlVfAE9esrOAkbqY9qBCnekstbZH.mJdhSdBEuJdd_FDsoVFqaAi_sut
+ Xi6awwaDJmXTPwhxLXkRCfRtsvdvGb4on5_lWyrX6Wg8Pr5ctLpC4aGY74lsUdHuzwUrC2Jz_GhM
+ affGUxtMH9lUBsTo7pyLqJpER2VxjuSwyNO7sjR._4X1dxRyedAp7oyuIZl6mwNRNVzvW2xjzdeM
+ BM1I1OPFKoWSVjX1atvijhqxaS7uNMKRigaKw.uST3VEQCA.fumNm6Tt__YUM9qiNVl_VNat24bV
+ U7TTmnmcUrpQpOgqbsO79k1B6f9K47Id5JIzhY5t_YAQ9XJX23rehl05A0I7NvcuTIOcYbVh35G2
+ V4we3Lgh7p5g2qbiJTXWKO.W79ldilsoaksBQRxKiBGpdV4D3CF3RDLGFnRBp432RxpQo6_tLFF5
+ TTpQt4n6KpPZFanQX.g6xNhIYstnq3yIOSUGktPTLV3XTeap0U9O.4j.6ySPgPVWf10.NcyEXHgU
+ H__421_yWKyJB9Ajr_sX4_3r.qttrQgycafLyvdCwdJMjS9LjD9soDSm8hWG8wBJah2NMPSTicjq
+ dCCoZup08mGaX9loMKx42FdzgS0isxNhODWQ_Etbn1_ubk2vKY2Po2sUoMoPxZ8cFpK_FAuYHxsI
+ VYbHACeEv.U0g4rRTtN6hAuk3OnXZPke1b1Ax8d6Xk7Y_TprXs5Xmdok6t1ZvnqI2vWWupeawh_8
+ mSwsmJUw8knHdK_rjlWbino5AnCw79pfKX0f3lCQsz66ljVy0Sbaya3Zk9MpC4J6KBptqbyPJSlF
+ 1HW3TIcysD1LKZ0HHsNgKOfDXZd0qB_VikYmDn5jzQiDEgFOkqCOgF8PcrYymIojIqocbwtrw5CL
+ zqladD_k9Hlwy3Bz.EGVBddUvDln1jiCmwfVmwtSfI.pNJAeyPiBchrzCiUYvtErTuzYX.6sb.uf
+ klv6yA.HUrh9fjuCOnZ_J6CPCh6L_WpkwJfPSWifFfInKKVVXM_Bap1hAhch_tsVrTtivTFEBpyZ
+ 8BQmkY0HT57x4L53e6FeF_jcBq2G7lqFr8Q2scS6ErblIjN0xTxdt5dXNiMuv2IR.gZ52e.K0A8Y
+ ewbm5XrANV.wSH8HiNrDBXWQkcdbEqsL7jj0RkZbTOLpqj265p43eDy6SsoAYb6zzAklMpNL4aUP
+ uaNz_VqKtRu2IEWZ9yZlJ9OlnpSXbI_dsbLfefGD4rB04WDd32rJlXGvGcOq5pShwz6Aqh51M42N
+ Cob5brDJUHVWy6QwRqV70mgINA0gaAVfTDOZEz4zbjjxxFgqnM3r2rNdQDwe1vloV8re3AVnUKaf
+ KkiTxa1.tQnVxoomNQ3q_LNB2t5JoWQ2pR4VTwj786DeqBkA_tw0.g.xoJnqSX6LMCsQ0z1ra4vg
+ cyF0eqX7cRrir2jZZ8RwPsy4ritAieU97GS9K9qQIl3Zrt4CZEeSVSxhPEplxMnpFOBktGr0_oVY
+ ObCQSQEc5GWat8gn0fdYd2u8.lS1tqWBScFRkvwCVIfIsPTK.KyMvBrGaXH5rSRAUQ38.uhUACAF
+ hyQupoMkLruPBLHKVQaG_caJFPFDVehbCYldu93pQiSnFH4NLJioT00DM1YQfVfG6dA3S_qq_TKt
+ DaJxy_irdkQLM2YBiSqsfBR_..HTTSVl3nIbTSoh7vnSw49IdDzJH0PiroptsOSVw4jRFY1OEh6s
+ wTassHrLQDiJNvA--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 7cd15d2b-39c7-42af-b4be-440b2c5bc1e5
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Wed, 25 Feb 2026 19:21:58 +0000
+Received: by hermes--production-gq1-6dfcf9f8b-5skm9 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 34de27226d18fbed2fa1781e81910440;
+          Wed, 25 Feb 2026 19:21:55 +0000 (UTC)
+From: Casey Schaufler <casey@schaufler-ca.com>
+To: casey@schaufler-ca.com,
+	paul@paul-moore.com,
+	linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org,
+	serge@hallyn.com,
+	keescook@chromium.org,
+	john.johansen@canonical.com,
+	penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com,
+	selinux@vger.kernel.org
+Subject: [RFC PATCH 0/3] LSM: Hook registration exculsivity
+Date: Wed, 25 Feb 2026 11:21:40 -0800
+Message-ID: <20260225192143.14448-1-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260221-landlock-docs-add-tsync-example-v2-1-60990986bba5@n0toose.net>
+References: <20260225192143.14448-1-casey.ref@schaufler-ca.com>
 
-On Sat, Feb 21, 2026 at 11:12:25PM +0100, Panagiotis "Ivory" Vasilopoulos wrote:
-> Add LANDLOCK_RESTRICT_SELF_TSYNC to the backwards compatibility example
-> for restrict flags. This introduces completeness, similar to that of
-> the ruleset attributes example.
-> 
-> Additionally, I modified the two comments of the example to make them
-> more consistent with the ruleset attributes example's.
-> 
-> Signed-off-by: Panagiotis 'Ivory' Vasilopoulos <git@n0toose.net>
-> ---
-> Changes in v2:
-> - Fix formatting error.
-> - Link to v1: https://lore.kernel.org/r/20260221-landlock-docs-add-tsync-example-v1-1-f89383809eb4@n0toose.net
-> ---
->  Documentation/userspace-api/landlock.rst | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index 13134bccdd39d78ddce3daf454f32dda162ce91b..0affe1c953d61a4b32aca700cd262c49cee6304a 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
-> @@ -197,12 +197,18 @@ similar backwards compatibility check is needed for the restrict flags
->  
->  .. code-block:: c
->  
-> -    __u32 restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON;
-> -    if (abi < 7) {
-> -        /* Clear logging flags unsupported before ABI 7. */
-> +    __u32 restrict_flags =
-> +        LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON |
-> +        LANDLOCK_RESTRICT_SELF_TSYNC;
-> +    switch (abi) {
-> +    case 1 ... 6:
-> +        /* Clear logging flags unsupported for ABI < 7 */
->          restrict_flags &= ~(LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF |
->                              LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON |
->                              LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF);
-> +    case 7:
-> +        /* Removes multithread flag unsupported for ABI < 8 */
-> +        restrict_flags &= ~LANDLOCK_RESTRICT_SELF_TSYNC;
->      }
+This patch set represents a reasonably radical change to the LSM
+stacking model. The notion of an "exclusive" LSM begins to give
+way to exclusive LSM hooks. Instead of disallowing more than one
+exclusive LSM, individual hooks are marked as exclusive and only
+one is allowed to be registered. Subsequent LSMs that attempt to
+register these hooks are denied them. This can have consequences.
+The hooks relative to secmarks have been used here to demonstrate
+that the scheme can work, and that it isn't always as clean as
+one might like.
 
-Thanks Panagiotis, this makes sense.  We overlooked this.
+Please comment fully. Quite a bit of tinkering went into devising
+this approach, which is intended to address a number of concerns.
 
-I'm slightly worried that people will copy-paste this example blindly
-if it does not have a big warning in it.  Unlike the other "backwards
-compatibility" example code that we have, this one actually changes
-how the enforcement works.  (The other flags change logging, but audit
-logging makes no difference to the process that sandboxes itself.)
+Add a flags field to the LSM hook definition.
 
-Could you please add wording to the comment to state more explicitly
-that below ABI v8, the enforced Landlock policy only applies to the
-current thread?
+The first LSM that requests a hook with the LSM_FLAG_EXCLUSIVE flag
+will be the only LSM that can register any hook thus marked.
+Attempts by other LSMs to register such hooks are ignored.
 
-Thanks,
-–Günther
+Direct access to skb->secmark within LSMs are wrapped with a
+helper function lsm_secmark_from_skb(). This function checks to see
+if the secmark related LSM hooks, which are marked LSM_FLAG_EXCLUSIVE,
+are registered by the calling LSM. If they are, the secmark value is
+returned. Otherwise, the invalid secmark value 0 is returned.
+
+Future implementations of lsm_secmark_from_skb() could use some
+form of secmark encoding that would allow more than one LSM to
+use secmarks at the same time.
+
+The LSMs that currently support use of secmarks are taught how to
+identify if they are allowed use of the secmark. Each sets secmark values
+differently. At initialization the LSMs have the opportunity to
+take steps to ensure correct behavior if they don't have secmark access.
+
+https://github.com/cschaufler/lsm-stacking#secmark-6.19-rc8-v1
+
+Casey Schaufler (3):
+  LSM: add a flags field to the LSM hook definitions
+  LSM: Enforce exclusive hooks
+  LSM: Reserve use of secmarks
+
+ include/linux/bpf_lsm.h          |   2 +-
+ include/linux/lsm_hook_defs.h    | 614 ++++++++++++++++---------------
+ include/linux/lsm_hooks.h        |   4 +-
+ include/linux/security.h         |   3 +
+ kernel/bpf/bpf_lsm.c             |  10 +-
+ security/apparmor/lsm.c          |  24 +-
+ security/bpf/hooks.c             |   2 +-
+ security/lsm_init.c              |  66 ++++
+ security/security.c              |  21 +-
+ security/selinux/hooks.c         |  35 +-
+ security/selinux/ss/services.c   |   3 +
+ security/smack/smack_lsm.c       |   6 +-
+ security/smack/smack_netfilter.c |   6 +
+ 13 files changed, 473 insertions(+), 323 deletions(-)
+
+-- 
+2.52.0
+
