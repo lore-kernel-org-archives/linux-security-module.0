@@ -1,164 +1,170 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03D530CDAE;
-	Wed, 25 Feb 2026 20:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6810E33C182
+	for <linux-security-module@vger.kernel.org>; Wed, 25 Feb 2026 22:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772051787; cv=none; b=eH4lg9b7ct7rRAV/wNdV/m/fISaP03gCc6vcD27wwZ2KcZ3vQmVxwpA9DCSZ5CplpnTtzH4o5+xoY7LqAzeFKByUJlLO/Qls/8Mq7qXoM5LKO+aUKGyebkPZW/iyE8z+VEYC4HHBYECGiUMUCFHrdELjCacV912K/Yq5ExQRur0=
+	t=1772058837; cv=none; b=BR4+XpI9ZYMdEaJwBh5xQwYJ5zWteOcCgtoiUpOg3J/9pzeEFxIBye7r9YnZCQwBlj1l1al5rOVVeUmr79V2/7Vfa50r8wZ/rjOWDJ7Ywy6/8e20WwngS6T2FBj2YqpubcmwAeJcPocTYRi157l6rGofYsp+PGJhP91Ypft5Ut4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772051787; c=relaxed/simple;
-	bh=g5qIzCT0nTBgc6/TC3fQQrdqfgIhrq8T+JFySa0v8bY=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=aFs/94Tlv4dRN0yVKbk7/8lZPBcm6WTRUuMZSHVuKT5ce2GNFKxCRE53+KBak9au+M1k24PstRVlNeupVHpXXOVWDRomTKoQfoKAH6Q+YcG6EuFbxFsjA3ySliHwJhtUAVxMpCF/jUDkQrRslO/VEjgJKn9hH3HR0MjYs4CK83o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KDGNuREf; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1772058837; c=relaxed/simple;
+	bh=B6+N1rlexK/378DaQUsJAd95CBZhwRfjwprFPzY/f+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mP6KZJplJZFPrhBgm/Xrt9ADY2xHZ7j057N/ZIWKlU79Kup5z3QTGnzmuoLCI4kxqz0r1iN26dYqcAuTkoyd+8lh1+OOzpAAv7OreUUqP4BU3aUOSfhKpkCwiirO/NSL5lFPp3TWhIgl5P0jNUaRtBEL4NhcWNibHaZ2pybr9/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D/5Hpqvs; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KDGNuREf"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61PGoNVa3239518;
-	Wed, 25 Feb 2026 20:36:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=5Rkeog
-	Psv6m/db4y7KsAK+AE4fu8iZX5Wp37u0no3/s=; b=KDGNuREfFUVlWSex93E838
-	kL1I3K3cgJKdkxE7f52TRiMqjYPNH/MNizJNbngJX0IJ5DKa9SMgMzoTWNovMlEA
-	QI6Wmz9x/huVsieWlUC4AarmJs8Yvn5EfBUlDavvrnwuDdryMzBHSEvAHeH9fgmY
-	E+aMJqmYLP0ZEwfd7nhLeZdXqu7Keoxy5fOmm4ss6gF8sCD7u6uxahNppFiI2Pbq
-	UeWlcIpERwZiqc0DYZv8Jsf6UtiwvO8KEZxykkMAxV0jsuN7YrnLoh89BOMA2F/4
-	P1egGbYPtLP8zzSkW2DTCIE+C26/KSDr4CsbT67pbzNfN0HCQ3uQ+reF3IW+lW2w
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4cf24ghvjr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Feb 2026 20:36:07 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 61PJiRq5001678;
-	Wed, 25 Feb 2026 20:36:06 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4cfr1n7ay3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Feb 2026 20:36:06 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 61PKa5in31523490
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 25 Feb 2026 20:36:05 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 91C8E58063;
-	Wed, 25 Feb 2026 20:36:05 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EF2F758055;
-	Wed, 25 Feb 2026 20:36:03 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.41.157])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 25 Feb 2026 20:36:03 +0000 (GMT)
-Message-ID: <6808b1a8fcb014e6c7c18241d39155f5c12edc31.camel@linux.ibm.com>
-Subject: Re: [PATCH v5] ima_fs: Avoid creating measurement lists for
- unsupported hash algos
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: dima@arista.com, Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry
- Kasatkin	 <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg
- <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>,
-        "Serge E. Hallyn"	 <serge@hallyn.com>,
-        Silvia Sisinni
- <silvia.sisinni@polito.it>,
-        Enrico Bravi	 <enrico.bravi@polito.it>
-Cc: Jonathan McDowell <noodles@earth.li>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Dmitry Safonov <0x7f454c46@gmail.com>
-In-Reply-To: <20260223-ima-oob-v5-1-91cc1064e767@arista.com>
-References: <20260223-ima-oob-v5-1-91cc1064e767@arista.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 25 Feb 2026 15:36:03 -0500
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D/5Hpqvs"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-48336a6e932so1427215e9.3
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Feb 2026 14:33:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772058834; x=1772663634; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YLqsjFGaTAomOM6oIdhV2ENKyEdrq9mkRamWZMAgaKQ=;
+        b=D/5Hpqvs7Bh+FlhQReQQucDWufgJygjm0sRWxayA8K58/eQIkXKd1YUMVm8U1SrWzl
+         odF0xInAzY6sOgFvU/gx/RegeclehulLV1l6nLvi0jiI+T/GTzEV2ANELp1JiPwe2C9P
+         f+ZQuASaWiCgZ920insuN3m+tmE0vKLCvyGNeqBPm40BPbUrS4bDD6GMzMIROMRz2Pnj
+         Po8ElkXs897XBuzYe9LSx37CDXW5khyTEIU4BZOK30Jfy+FUt9xBlZS9knzEDgajHcXf
+         gJ/KgNhXT6QbQ1iVZgtSeRD/Yi1TAwZsI7OKDwXtu2wOfKNUUXjdn96oADzwpr1hnrj4
+         RFrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772058834; x=1772663634;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YLqsjFGaTAomOM6oIdhV2ENKyEdrq9mkRamWZMAgaKQ=;
+        b=tteQ7zGf5Q70eyu63QZOY8VN72k1s96NXa5xHmoA8pgJudGI9DYqCbBDuZm+FxJ9N4
+         PsICBEiXBJMmeJ+tzl1Y34cBqQpwvrGvdgLT9fX/yLZufOBUHSMUZPBKV8ZxNGRr16Uz
+         lTJXl4+fauDsOlbSdyYwnFojaeABiUr2YVP6cIZTyGrgR6PDOFlSMVc24KWKny7m/KTB
+         eL1BhArj11I327YUbzUE33+guIFlaQqDsNXBpVZKZb9v8+qMV9j7A3KeMmiaA9bWMrJv
+         gSpsVWzl3niobxl2CBff5/XX2vGD+OuB5ixhsDq0FtCTsyFoJBLZzBqWTZZnyAiE0dWL
+         pktg==
+X-Forwarded-Encrypted: i=1; AJvYcCXMElsXnn42uSJ8x/GHVQ+Lc2WnL+IofGO6PKaUG5fFhwWAnBNHfTh2P0MW7xUFLfpPCqgX23ZnThpQ8d6aanH3D4982pg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCvMP16Uq0ZrejpobQ+yio/XJQXcAhPCgBnkYLvefC0XpIFUkO
+	sWLG98BhP9vj5/eE2U47nNLPkZ1NdSGiBKmp8bUVnjxALVRPnySlBydI
+X-Gm-Gg: ATEYQzyNZI81VnCy5lx83PRi0RzOYgGkvo04DCuBjrSn1JXGuWjKZ0znGsMqQsTVvhj
+	TdwD52oWEZ+9axBxVxGpD9S2EBP9ONWhcjuT2fEakfRKFdeE4cZT8WQ68j1CMebq/HALKq+S5y4
+	sl421rC+DS8453D7gShPkCb5Do78LU2pR2RVDgAsME80LmMCS2b1Q1M0cbGcO/SADBQQSthYS2v
+	10XLbP3OOWPA/QDSPGMcoiUnGVyq2GLQ0DRc+v1kRsiLzH/zTO4FjvtOCGmT5oJxNZ9Q8dt0EsE
+	fBwMWFl0EaylfzX4ACUdO2KJMPKwTesHDGzTBclUD99eDz+GgnBA/leIxuN6LHUE/qZAIKb9wxT
+	dCR2bO25BkeMs4fpcnEc+9Nqqq0/MEbHRQqrDR2BIz96cuyVsySK5Pn1HwBENK69mBzLhHuNiV9
+	rLbRQLztE0k57hey+i8ESJDiRfWXZxIT8Bkv5GaTrBojB1oivNozLGctRLn0I=
+X-Received: by 2002:a05:600c:a086:b0:47d:3ffa:5f03 with SMTP id 5b1f17b1804b1-483c219b648mr35738415e9.21.1772058833615;
+        Wed, 25 Feb 2026 14:33:53 -0800 (PST)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bfcb4f8bsm54181545e9.4.2026.02.25.14.33.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Feb 2026 14:33:53 -0800 (PST)
+Date: Wed, 25 Feb 2026 23:33:39 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
+Cc: Yihan Ding <dingyihan@uniontech.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Paul Moore <paul@paul-moore.com>, Jann Horn <jannh@google.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2 1/2] landlock: Serialize TSYNC thread restriction
+Message-ID: <20260225.42330125301c@gnoack.org>
+References: <20260225024734.3024732-1-dingyihan@uniontech.com>
+ <20260225024734.3024732-2-dingyihan@uniontech.com>
+ <aZ7l6jU7XJ1BYbN-@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Authority-Analysis: v=2.4 cv=TNRIilla c=1 sm=1 tr=0 ts=699f5d37 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22
- a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22 a=n2GhSfulAAAA:8
- a=mQ_sVfgH6UvzEiHddsUA:9 a=QEXdDO2ut3YA:10 a=9NqWk_7B-uqI6kdQTXIl:22
-X-Proofpoint-GUID: uLhEVVQezr7ZCgiJujoy43ZwOcPqTjQ5
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjI1MDE5MyBTYWx0ZWRfX/m9ElrMkkStT
- VCe5dhSag/tZriaTltrNFRVeRt/qtj4xwF+wTy4p0SY7NgUpJCnyID8n1QEV9XqvShxYpwWyjmW
- i9Xn56ufo7v3XMrwNGFssQB/x1OUL3IJYu22V/qNxayuBGcskyZp1g/rGvoUrCzdQzXQnU3KJkF
- RoFHMf7wdpexr/qBRfvejGNvswGpDgxSnahtMaK9Nto5Sm/2qrlY9iGNoSSJOLG/CGM2b0TJ1pO
- tr73rFaWBKQRkB7KeewlSAKytQRrp4h9AD4zBrKQDbA97wJVwUQMHCYhLgeh0PBqJu8vVj+QdaU
- mm1jzE8awSoaM27IK1QAr03JLr3/f36TeVMtROObfzgCgFeWvd8GBTqChJxfDurjzxEjI/wdHBS
- 706uIDhKf/Sq7xG45PQuMpcvCeWNTGz5x+0rnH8pwWETt9qKFMg+qXudWreumtbtmD3hCA6Ypp8
- vahTij9fQsyhZEHV6LQ==
-X-Proofpoint-ORIG-GUID: 8yDyPnYboAuMDzKrEdV0Kry9ZVWk7Opj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-25_03,2026-02-25_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 adultscore=0 priorityscore=1501 impostorscore=0
- spamscore=0 clxscore=1015 bulkscore=0 lowpriorityscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2602250193
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aZ7l6jU7XJ1BYbN-@google.com>
 
-On Mon, 2026-02-23 at 14:56 +0000, Dmitry Safonov via B4 Relay wrote:
-> From: Dmitry Safonov <dima@arista.com>
->=20
-> ima_tpm_chip->allocated_banks[i].crypto_id is initialized to
-> HASH_ALGO__LAST if the TPM algorithm is not supported. However there
-> are places relying on the algorithm to be valid because it is accessed
-> by hash_algo_name[].
+On Wed, Feb 25, 2026 at 01:07:26PM +0100, Günther Noack wrote:
+> On Wed, Feb 25, 2026 at 10:47:33AM +0800, Yihan Ding wrote:
+> > syzbot found a deadlock in landlock_restrict_sibling_threads().
+> > When multiple threads concurrently call landlock_restrict_self() with
+> > sibling thread restriction enabled, they can deadlock by mutually
+> > queueing task_works on each other and then blocking in kernel space
+> > (waiting for the other to finish).
+> > 
+> > Fix this by serializing the TSYNC operations within the same process
+> > using the exec_update_lock. This prevents concurrent invocations
+> > from deadlocking. We use down_write_killable() to ensure the thread
+> > remains responsive to fatal signals while waiting for the lock.
+> > 
+> > Fixes: 42fc7e6543f6 ("landlock: Multithreading support for landlock_restrict_self()")
+> > Reported-by: syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=7ea2f5e9dfd468201817
+> > Suggested-by: Günther Noack <gnoack3000@gmail.com>
+> > Signed-off-by: Yihan Ding <dingyihan@uniontech.com>
+> > ---
+> >  security/landlock/tsync.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> > 
+> > diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
+> > index de01aa899751..420fcfc2fe9a 100644
+> > --- a/security/landlock/tsync.c
+> > +++ b/security/landlock/tsync.c
+> > @@ -447,6 +447,13 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+> >  	shared_ctx.new_cred = new_cred;
+> >  	shared_ctx.set_no_new_privs = task_no_new_privs(current);
+> >  
+> > +	/*
+> > +	 * Serialize concurrent TSYNC operations to prevent deadlocks
+> > +	 * when multiple threads call landlock_restrict_self() simultaneously.
+> > +	 */
+> > +	if (down_write_killable(&current->signal->exec_update_lock))
+> > +		return -EINTR;
+> > +
+> >  	/*
+> >  	 * We schedule a pseudo-signal task_work for each of the calling task's
+> >  	 * sibling threads.  In the task work, each thread:
+> > @@ -556,6 +563,7 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+> >  		wait_for_completion(&shared_ctx.all_finished);
+> >  
+> >  	tsync_works_release(&works);
+> > +	up_write(&current->signal->exec_update_lock);
+> >  
+> >  	return atomic_read(&shared_ctx.preparation_error);
+> >  }
+> > -- 
+> > 2.51.0
+> > 
+> 
+> Thank you!
+> 
+> Reviewed-by: Günther Noack <gnoack@google.com>
 
-If the TPM algorithm is not supported by whom? the kernel?  HASH_ALGO__LAST=
- is
-defined in linux/hash_info.h.  If the crypto algorithm is not supported by =
-the
-kernel, then the kernel won't be able to calculate the hash to extend the T=
-PM.
+Hello Yihan Ding!
 
-> @@ -404,16 +398,24 @@ static int __init create_securityfs_measurement_lis=
-ts(void)
->  		char file_name[NAME_MAX + 1];
->  		struct dentry *dentry;
-> =20
-> -		sprintf(file_name, "ascii_runtime_measurements_%s",
-> -			hash_algo_name[algo]);
-> +		if (algo =3D=3D HASH_ALGO__LAST)
-> +			sprintf(file_name, "ascii_runtime_measurements_tpm_alg_%x",
-> +				ima_tpm_chip->allocated_banks[i].alg_id);
-> +		else
-> +			sprintf(file_name, "ascii_runtime_measurements_%s",
-> +				hash_algo_name[algo]);
->  		dentry =3D securityfs_create_file(file_name, S_IRUSR | S_IRGRP,
->  						ima_dir, (void *)(uintptr_t)i,
->  						&ima_ascii_measurements_ops);
->  		if (IS_ERR(dentry))
->  			return PTR_ERR(dentry);
-> =20
-> -		sprintf(file_name, "binary_runtime_measurements_%s",
-> -			hash_algo_name[algo]);
-> +		if (algo =3D=3D HASH_ALGO__LAST)
-> +			sprintf(file_name, "binary_runtime_measurements_tpm_alg_%x",
-> +				ima_tpm_chip->allocated_banks[i].alg_id);
+Apologies, I have to take this back -- applying the patch in this form
+would be a mistake.  When I tried this out with the Syzkaller test
+case, I noticed that the tests started taking multiple seconds per
+run.  The way I reproduced it was by running the Syzkaller reproducer
+under Qemu and looking for the frequency of the "executing program"
+lines that it prints for each test run.
 
-There's no point in creating either of the securityfs files if the kernel
-doesn't support the hash algorithm.
+When I looked deeper, what was happening was actually that we got
+ourselves into a deadlock again, which, in hindsight should have been
+obvious: When two threads call landlock_restrict_self() roughly at the
+same time, then the one that grabs the lock first will (a) keep the
+other (killably) blocked on the lock acquisition, and (b) later ask
+the other thread to run a task work.  But in order to run a task work,
+the blocked thread must first return from the syscall.  However,
+down_write_killable() only returns when either the lock is available
+or when the thread was killed.
 
-Mimi
+To resolve this, we need to actually use a lock acquisition that
+respects other ways of interruption as well; we can either use a
+down_write_trylock() and return -ERESTARTNOINTR, or we can use
+down_write_interruptible().
 
+Sorry for the poor advice to use the _killable variant earlier.  Could
+I ask you to please send another revision using _trylock() or
+_interruptible()?
 
-> +		else
-> +			sprintf(file_name, "binary_runtime_measurements_%s",
-> +				hash_algo_name[algo]);
->  		dentry =3D securityfs_create_file(file_name, S_IRUSR | S_IRGRP,
->  						ima_dir, (void *)(uintptr_t)i,
->  						&ima_measurements_ops);
-
+Thanks,
+–Günther
