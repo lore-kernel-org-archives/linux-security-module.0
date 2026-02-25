@@ -1,159 +1,200 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23914393DE4
-	for <linux-security-module@vger.kernel.org>; Wed, 25 Feb 2026 12:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A622B225390;
+	Wed, 25 Feb 2026 12:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772021379; cv=none; b=PhqnLnke0pf1+Gq9KIajXg7kKap9m+Byc+P6wr6yheopd5jwoPyoL9YwmmCyyb14jPA+o6cZ+LGUlhBr65CupxeTQuf41ZbM/8dCRyY9VrdLUpt0/B5le8Kc4R7LKhb7sEsovH/H0Y8LuvQsFnuNRPaK9AN6eVg++oZuruuZEeM=
+	t=1772024047; cv=none; b=d4XuS6sVZdScveh8k17AmzxO8eTxLWBEFZ4YBiOTWH41d8Xe6vxwTXkHwn/sU+reu9OorD6oPNZBePe5U+GKOOaEWugVJ1qbfi2ysZfJgh6siCEStZd/iebQB66c/9tmeoxMg931k2Nu189BuyJmbZUr3khglv9TGXCzpa65wHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772021379; c=relaxed/simple;
-	bh=qFajCPbZ0QIi5lPiftQyrjRCq28wnTwMEvFiSvEXmM0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YduPcBPCy6nz6m2tpfU0RCOjnX98lUePTXRlyHrYOg2uJB1aTNp0vulBR6OiC5YyGG5vhGnfG/VCmogeH+w8kElnNup6sF2W1BYOM3JwyNC7dC32kVO637lhP2Hk0WKcVQXTlFbq9xPlYVOZPIJzB6iE28+aXStGJ4GP4W7Fzn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QGHEsZOB; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QGHEsZOB"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-483a233819aso65078535e9.3
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Feb 2026 04:09:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1772021376; x=1772626176; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=DJ5P/C1rpIkuLy8IwHUQqCJbrc4Dun+fV8l4FFB9SII=;
-        b=QGHEsZOBIZ1X+2t+10fvXO9aZw40CaxjrwFUmmn/M+0cQYMW8H5ouMT5UwP+/aAQe8
-         LU1H8zOL+33P+7kfXquLBGKnuYrMtAtI2wy3sQmybZxmrRfj5+wUJS32Jm+Ig6YYGxsn
-         zFdNIPqwUJ8ESMui6uB7lSYvaX5UQ5Q9WGTojW8FOdvBgXeSy5/BBzU0GYxyilhsEHOq
-         A9g+K8bl46PjW1+RmrNGBRlGr/ca8YU1dmgahWNVVKWPB+8TCuSjCGUAIvTBlY6n4pjI
-         cAjHl2QzXbxirFMuGGuA6IDhdwlzCQji2rP33yplHgrSFhRcbTUNbdl+Mz2HtkNWfJ2n
-         QmlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772021376; x=1772626176;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DJ5P/C1rpIkuLy8IwHUQqCJbrc4Dun+fV8l4FFB9SII=;
-        b=adsZbZOGtBLVd90fd8/NsDi0QpTPljdzc3UTIgLY6YSiZaSTbqe3iLCZrrcwC32Afy
-         pcB5qN4LlILb5BO7KBIppb8aigunCdbTjH3q1QWkVClKokWEtR+bR23VvoPrNNjsK+Kq
-         PU+LeK01hAOMOoBvu04G9BcjvqvUW01aRubhFAzGQ6pwp9PWo0qj/VRIWEd+boOgH2KL
-         oeYHOrNKSDMCZcZy4gt9yeWSApAj9Uc+jT1+C48RL47kIj7ycLKOvesa55fRjrnw0IhJ
-         lOjqC3Sxd9W82Y53o4+LE2P0LNLBHo4sLS9p4i7dp1SYnqboVGpfLSqlNbQ3lLR53wJl
-         ER6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWkCtCMA4aDgA1zGQYezudmA1A359wvogPBqTSK9RBRANFUjoGRouEPE9YDR1FSZ+P5Eh7egZ0/D82NU4VcfI8ugeHZGbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPoNuepUA7KIcWIMsUVCQ8T4BBg4/z09AaKJy+RxX3dYbjuL5I
-	oTajRswfgj8WiZtuuYKfOpMq098w6kJhTMIdbMDTQAtX43uTQ/HyXn1WzjQvilEIUQ==
-X-Gm-Gg: ATEYQzwlHG+MvyrIC3V91GjDxAQpnS9JSdnNN5j8U5SO0vEF7vnKcqjfB8rYvur0ZgJ
-	3MCqHRnY+AM00llVuzWbcR/soQRIS0pUw/kKxkn8WdlYH9yWU+EBYUdxnLkkCduW4/GCWthF5i6
-	BRWE/EWk2vydUHZh5hXTYRBoEBi5RjRO0kLC2MlQHSI/h5OrFGOowyVqOGuhSgt9Res5rn7Mr+L
-	yuN2Iyh5q7QegFU73QxS82BbLUmhmUTVx8mL7dnuiQdFx03w5TcBjw9e8Pbun479k9nGgB7Aii5
-	IzBQr3K3WdKfhRy9eMzMSRB+nIDgLLTDVND1KDdGumKSJ3ZtAm33K2DTXzISpS5RS9ipMXrNUrD
-	xCTYTiQwYW/5I54tJgp2ElrJWg9Nm2412A7Jmw8LdQkRg8Tb2OF6TpKDGTUkqJZbAz67wPmISfH
-	zRJGL1qjO2KINfj8Wv5MBKhooSKrFkcb8x4qPRRgbIyRUyHitFAOLMfw==
-X-Received: by 2002:a05:600c:8b48:b0:483:c12b:fe4a with SMTP id 5b1f17b1804b1-483c12c0071mr13749565e9.11.1772021376047;
-        Wed, 25 Feb 2026 04:09:36 -0800 (PST)
-Received: from google.com ([2a00:79e0:288a:8:dd44:5fa0:1b9a:d7c9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43970c00d95sm32212120f8f.13.2026.02.25.04.09.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Feb 2026 04:09:35 -0800 (PST)
-Date: Wed, 25 Feb 2026 13:09:30 +0100
-From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: Yihan Ding <dingyihan@uniontech.com>
-Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>,
-	Paul Moore <paul@paul-moore.com>, Jann Horn <jannh@google.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2 2/2] landlock: Clean up interrupted thread logic in
- TSYNC
-Message-ID: <aZ7melfSZGsPWvXD@google.com>
-References: <20260225024734.3024732-1-dingyihan@uniontech.com>
- <20260225024734.3024732-3-dingyihan@uniontech.com>
+	s=arc-20240116; t=1772024047; c=relaxed/simple;
+	bh=Mo97FHpQWwCjDKtGkv7cV+Szm089ioixlt0f+mpCv8E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C8eMcVXOS0BkiknXl7Cp+fst931O/0D3IzU9dih7YvyVnJZR0Qv7Hh51r2LY1mwJPWeMYX6wXyY3ynNZPFO/QH6ZEc9eYKY0UGIUD121vfU8XsPqRXJDo2DwD5MEYdg6k6sLgRR6p+CbHkn1wetWTlQrVFh82Z1ziJM9xx+BP+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.196])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4fLZFd2KrmzpTZg;
+	Wed, 25 Feb 2026 20:50:45 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 7E84040568;
+	Wed, 25 Feb 2026 20:53:57 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwC38gTd8J5pyL96BA--.35098S2;
+	Wed, 25 Feb 2026 13:53:56 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: zohar@linux.ibm.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devnull+dima.arista.com@kernel.org,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH] ima: Add digest_size field to ima_algo_desc structure and use to show meas.
+Date: Wed, 25 Feb 2026 13:53:01 +0100
+Message-ID: <20260225125301.87996-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260225024734.3024732-3-dingyihan@uniontech.com>
+X-CM-TRANSID:LxC2BwC38gTd8J5pyL96BA--.35098S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXrW3uFy7Xw1Dtw1xJFyDtrb_yoWrtw18p3
+	Z5GF1FkF1kAFy2kr93CasxCFWagrWY9Fy7Wws5J34vyFnxXr1UGwn3CryFkrWrWrW5JFyx
+	trWqqr45Cw1DtaDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
+	w2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xU4NB_UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAPBGmeaqAMDgAAs2
 
-On Wed, Feb 25, 2026 at 10:47:34AM +0800, Yihan Ding wrote:
-> In landlock_restrict_sibling_threads(), when the calling thread is
-> interrupted while waiting for sibling threads to prepare, it executes
-> a recovery path.
-> 
-> Previously, this path included a wait_for_completion() call on
-> all_prepared to prevent a Use-After-Free of the local shared_ctx.
-> However, this wait is redundant. Exiting the main do-while loop
-> already leads to a bottom cleanup section that unconditionally waits
-> for all_finished. Therefore, replacing the wait with a simple break
-> is safe, prevents UAF, and correctly unblocks the remaining task_works.
-> 
-> Clean up the error path by breaking the loop and updating the
-> surrounding comments to accurately reflect the state machine.
-> 
-> Suggested-by: Günther Noack <gnoack3000@gmail.com>
-> Signed-off-by: Yihan Ding <dingyihan@uniontech.com>
-> ---
-> Changes in v2:
-> - Replaced wait_for_completion(&shared_ctx.all_prepared) with a break
->   statement based on the realization that the bottom wait for 'all_finished'
->   already guards against UAF.
-> - Updated comments for clarity.
-> ---
->  security/landlock/tsync.c | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
-> 
-> diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
-> index 420fcfc2fe9a..9731ec7f329a 100644
-> --- a/security/landlock/tsync.c
-> +++ b/security/landlock/tsync.c
-> @@ -534,24 +534,28 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
->  					   -ERESTARTNOINTR);
->  
->  				/*
-> -				 * Cancel task works for tasks that did not start running yet,
-> -				 * and decrement all_prepared and num_unfinished accordingly.
-> +				 * Opportunistic improvement: try to cancel task works
-> +				 * for tasks that did not start running yet. We do not
-> +				 * have a guarantee that it cancels any of the enqueued
-> +				 * task works (because task_work_run() might already have
-> +				 * dequeued them).
->  				 */
->  				cancel_tsync_works(&works, &shared_ctx);
->  
->  				/*
-> -				 * The remaining task works have started running, so waiting for
-> -				 * their completion will finish.
-> +				 * Break the loop with error. The cleanup code after the loop
-> +				 * unblocks the remaining task_works.
->  				 */
-> -				wait_for_completion(&shared_ctx.all_prepared);
-> +				break;
->  			}
->  		}
->  	} while (found_more_threads &&
->  		 !atomic_read(&shared_ctx.preparation_error));
->  
->  	/*
-> -	 * We now have all sibling threads blocking and in "prepared" state in the
-> -	 * task work. Ask all threads to commit.
-> +	 * We now have either (a) all sibling threads blocking and in
-> +	 * "prepared" state in the task work, or (b) the preparation error is
-> +	 * set. Ask all threads to commit (or abort).
->  	 */
->  	complete_all(&shared_ctx.ready_to_commit);
->  
-> -- 
-> 2.51.0
-> 
-> 
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Thank you!
+Add the digest_size field to the ima_algo_desc structure to determine the
+digest size from the correct source.
 
-Reviewed-by: Günther Noack <gnoack@google.com>
+If the hash algorithm is among allocated PCR banks, take the value from the
+TPM bank info; if the hash algorithm is SHA1, use the predefined value; if
+the hash algorithm is the default one but not among the PCR banks, take the
+digest size from the crypto subsystem (the default hash algorithm is
+checked when parsing the ima_hash= command line option).
+
+Finally, use the new information to correctly show the template digest in
+ima_measurements_show() and ima_ascii_measurements_show().
+
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/ima/ima.h        |  1 +
+ security/integrity/ima/ima_crypto.c |  6 ++++++
+ security/integrity/ima/ima_fs.c     | 18 ++++++------------
+ 3 files changed, 13 insertions(+), 12 deletions(-)
+
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 89ebe98ffc5e..c38a9eb945b6 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -53,6 +53,7 @@ extern atomic_t ima_setxattr_allowed_hash_algorithms;
+ struct ima_algo_desc {
+ 	struct crypto_shash *tfm;
+ 	enum hash_algo algo;
++	unsigned int digest_size;
+ };
+ 
+ /* set during initialization */
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index 8ae7821a65c2..c2a859710d20 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -109,6 +109,7 @@ static struct crypto_shash *ima_alloc_tfm(enum hash_algo algo)
+ 
+ int __init ima_init_crypto(void)
+ {
++	unsigned int digest_size;
+ 	enum hash_algo algo;
+ 	long rc;
+ 	int i;
+@@ -147,7 +148,9 @@ int __init ima_init_crypto(void)
+ 
+ 	for (i = 0; i < NR_BANKS(ima_tpm_chip); i++) {
+ 		algo = ima_tpm_chip->allocated_banks[i].crypto_id;
++		digest_size = ima_tpm_chip->allocated_banks[i].digest_size;
+ 		ima_algo_array[i].algo = algo;
++		ima_algo_array[i].digest_size = digest_size;
+ 
+ 		/* unknown TPM algorithm */
+ 		if (algo == HASH_ALGO__LAST)
+@@ -183,12 +186,15 @@ int __init ima_init_crypto(void)
+ 		}
+ 
+ 		ima_algo_array[ima_sha1_idx].algo = HASH_ALGO_SHA1;
++		ima_algo_array[ima_sha1_idx].digest_size = SHA1_DIGEST_SIZE;
+ 	}
+ 
+ 	if (ima_hash_algo_idx >= NR_BANKS(ima_tpm_chip) &&
+ 	    ima_hash_algo_idx != ima_sha1_idx) {
++		digest_size = hash_digest_size[ima_hash_algo];
+ 		ima_algo_array[ima_hash_algo_idx].tfm = ima_shash_tfm;
+ 		ima_algo_array[ima_hash_algo_idx].algo = ima_hash_algo;
++		ima_algo_array[ima_hash_algo_idx].digest_size = digest_size;
+ 	}
+ 
+ 	return 0;
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index 012a58959ff0..23d3a14b8ce3 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -132,16 +132,12 @@ int ima_measurements_show(struct seq_file *m, void *v)
+ 	char *template_name;
+ 	u32 pcr, namelen, template_data_len; /* temporary fields */
+ 	bool is_ima_template = false;
+-	enum hash_algo algo;
+ 	int i, algo_idx;
+ 
+ 	algo_idx = ima_sha1_idx;
+-	algo = HASH_ALGO_SHA1;
+ 
+-	if (m->file != NULL) {
++	if (m->file != NULL)
+ 		algo_idx = (unsigned long)file_inode(m->file)->i_private;
+-		algo = ima_algo_array[algo_idx].algo;
+-	}
+ 
+ 	/* get entry */
+ 	e = qe->entry;
+@@ -160,7 +156,8 @@ int ima_measurements_show(struct seq_file *m, void *v)
+ 	ima_putc(m, &pcr, sizeof(e->pcr));
+ 
+ 	/* 2nd: template digest */
+-	ima_putc(m, e->digests[algo_idx].digest, hash_digest_size[algo]);
++	ima_putc(m, e->digests[algo_idx].digest,
++		 ima_algo_array[algo_idx].digest_size);
+ 
+ 	/* 3rd: template name size */
+ 	namelen = !ima_canonical_fmt ? strlen(template_name) :
+@@ -229,16 +226,12 @@ static int ima_ascii_measurements_show(struct seq_file *m, void *v)
+ 	struct ima_queue_entry *qe = v;
+ 	struct ima_template_entry *e;
+ 	char *template_name;
+-	enum hash_algo algo;
+ 	int i, algo_idx;
+ 
+ 	algo_idx = ima_sha1_idx;
+-	algo = HASH_ALGO_SHA1;
+ 
+-	if (m->file != NULL) {
++	if (m->file != NULL)
+ 		algo_idx = (unsigned long)file_inode(m->file)->i_private;
+-		algo = ima_algo_array[algo_idx].algo;
+-	}
+ 
+ 	/* get entry */
+ 	e = qe->entry;
+@@ -252,7 +245,8 @@ static int ima_ascii_measurements_show(struct seq_file *m, void *v)
+ 	seq_printf(m, "%2d ", e->pcr);
+ 
+ 	/* 2nd: template hash */
+-	ima_print_digest(m, e->digests[algo_idx].digest, hash_digest_size[algo]);
++	ima_print_digest(m, e->digests[algo_idx].digest,
++			 ima_algo_array[algo_idx].digest_size);
+ 
+ 	/* 3th:  template name */
+ 	seq_printf(m, " %s", template_name);
+-- 
+2.43.0
+
