@@ -1,204 +1,113 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B82A4A0C;
-	Wed, 25 Feb 2026 00:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB4B22B5AD;
+	Wed, 25 Feb 2026 02:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771977863; cv=none; b=uAYtS9XKNc+wSiF9YCoG8MK9I0RekUwo1iXkENKJSgAkGg+uth5cGIzbsauvYJP+MLzDbOq1FziXzJtPz7vSuGzNjOev9hHK2rUlwq97cSIiljAnyMN2y0kZ1npCmBhnoivHXtubTGCD+nuySyqnXBxc/qGMOFqamukxBg73IEw=
+	t=1771987757; cv=none; b=kheICqfmY663T5S+ffinNls4mGXmkSnvLsrQGqfwGA03c6x3YFCaSW5w8Kx4APRD0Y+/Lt7EWEEKTAl8FjqX/xtCTSiSsMSGqsvOdxhgomcef4goydZZpC1U/S+B7DKsZFkoIf1iPqCGo4JdU+XUvEAHXc/+UkExkN3yUQ2Mi2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771977863; c=relaxed/simple;
-	bh=k5W8VL5lwkNu+ahLTvERTa+BjYNi4GO4VhNBxytZTFs=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=uNL/HpShtn0trq40z97S0DRwKoCoXJKEQGlL2WuKb9d1CHLsHcPRp7TUT9ORQ/NqHGnnHMBeCS3NLgaU1THv1NCuK1B7KIaCpYCAkfOYel0GeS++x5c/RbcxDWXjWFYS+wvwCg+qZ7oJDxdQ3rL/Hr4tCXnBjkyS+Ynq5DXv0To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TDPeo8v/; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1771987757; c=relaxed/simple;
+	bh=cYWS0cez5qX9vQMLoC5zNCFi6I+BYRcuNiKGeI7IwQY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=RQHZM1126bnQJNiiBDnia/VRQCT4CJ2phQwFnk+MX7RzPPd5XiWdnj/lBDDEkxGBHCv4NaXbyjBp9d9ZM/4aA+LtxXomdosmEICO+0HHy43kkVKBTNQx1YUE6uQ6xiq9yL5O8mioVxOKAv/gA9WkCjSO/a64y6qzmwi8m7Vuisw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=cgJPfAYg; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TDPeo8v/"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61OKo3mo2894740;
-	Wed, 25 Feb 2026 00:03:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=cFbFxI
-	Lw8z/WHEBjoq2ZMztetevIFEwE8orbafe4X+g=; b=TDPeo8v/2+wirzhVbwsQUy
-	hYpVYSVAc0lg1TDb8j+bjbT6nU7ETrG+IW1bV3dwqFTJ6ryXa/vazci9dAxEZTNG
-	za6txZ0VpMGiiTyrUkYkGSynN5Ugck33b3VltjtkuYTBAXc2QR0FcN2P2Jgs9bPx
-	33pfHCbLbYKsuq2iKQ4mZMaPcoeJcGDnQZdFaoTQPUpF6waYgUBh2mw1Xmyj4WfK
-	jmg+Q3C2q+Q8FFiQtMa7+TqiQdMIpB2/iOqevicTdezsXzN5wVOQkBIzazGpnvp9
-	ZrPaq3cjiJH4QOKOjUUkRtj0uNcvGJ+LBM3BOZgkZvNY8O2h1gvNk7hddd9AbgWQ
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4cf471x2sa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Feb 2026 00:03:15 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 61OLXORR030259;
-	Wed, 25 Feb 2026 00:03:14 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4cfrhkb1gd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Feb 2026 00:03:14 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 61P03DrN32375318
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 25 Feb 2026 00:03:13 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1E5865805A;
-	Wed, 25 Feb 2026 00:03:13 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D3A8E5805C;
-	Wed, 25 Feb 2026 00:03:10 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.83.151])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 25 Feb 2026 00:03:10 +0000 (GMT)
-Message-ID: <ad471c33eeb9e21c49ac81032dc64555a2fb816f.camel@linux.ibm.com>
-Subject: Re: [PATCH 1/3] integrity: Make arch_ima_get_secureboot
- integrity-wide
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Coiby Xu <coxu@redhat.com>, Dave Hansen <dave.hansen@intel.com>,
-        linux-integrity@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
-        Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        Catalin Marinas
- <catalin.marinas@arm.com>,
-        Will Deacon	 <will@kernel.org>,
-        Madhavan
- Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman	 <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Christophe Leroy (CS GROUP)"
- <chleroy@kernel.org>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev	
- <agordeev@linux.ibm.com>,
-        Christian Borntraeger
- <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav
- Petkov	 <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)"	 <x86@kernel.org>,
-        "H.
- Peter Anvin" <hpa@zytor.com>,
-        Roberto Sassu	 <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg
- <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>,
-        "Serge E. Hallyn"	 <serge@hallyn.com>,
-        Jarkko
- Sakkinen <jarkko@kernel.org>,
-        "moderated list:ARM64 PORT (AARCH64
- ARCHITECTURE)"	 <linux-arm-kernel@lists.infradead.org>,
-        open list
- <linux-kernel@vger.kernel.org>,
-        "open list:LINUX FOR POWERPC (32-BIT AND
- 64-BIT)"	 <linuxppc-dev@lists.ozlabs.org>,
-        "open list:S390 ARCHITECTURE"	
- <linux-s390@vger.kernel.org>,
-        "open list:EXTENSIBLE FIRMWARE INTERFACE
- (EFI)"	 <linux-efi@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM"	
- <linux-security-module@vger.kernel.org>,
-        "open
- list:KEYS/KEYRINGS_INTEGRITY"	 <keyrings@vger.kernel.org>
-In-Reply-To: <CAMj1kXFBMSEdRL8FotASbQO3dcfNG0bpp9Vnm5JPn-yjyDr=GA@mail.gmail.com>
-References: <20260115004328.194142-1-coxu@redhat.com>
-	 <20260115004328.194142-2-coxu@redhat.com>
-	 <CAMj1kXFXNo1-pMbo-VZrjQ3TYe1tufebrLr_avL12A0nHMSGnA@mail.gmail.com>
-	 <8bfa859ed3a4f1cf0db0ab64d8c1c3b24684582a.camel@linux.ibm.com>
-	 <CAMj1kXHsJNZoUEnbD1y=v4Ftuv9d2c08VckRV7ru4k4P83vZbQ@mail.gmail.com>
-	 <97b69bc79a5d9246f7a399510908c7b95b2e95e7.camel@linux.ibm.com>
-	 <CAMj1kXGx4ebaK87W7k0SNUNQnO9+=z1nmYxXC7retmp3OqRRFg@mail.gmail.com>
-	 <ac5e5e45c12e9b0bda19807e60b06057d74be0b3.camel@linux.ibm.com>
-	 <aW2i3yacr5TvWU-m@Rk>
-	 <1a0b6e5601a673a81f8823de0815f92b7afbeb60.camel@linux.ibm.com>
-	 <CAMj1kXFBMSEdRL8FotASbQO3dcfNG0bpp9Vnm5JPn-yjyDr=GA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 24 Feb 2026 19:03:10 -0500
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="cgJPfAYg"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1771987714;
+	bh=TzO2h+BWcVvZdPIrZukjMQ+4hix25SKZi0ryFAMoPy4=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=cgJPfAYgYUi/YTSMVLPaovrCwnVzYhwi5Ro4lFvn6g/nMBu7GK1UFpP+GCqTwH7ED
+	 Az3uDT77Qh3SSHk+/IHk6PEPwRQu2ZHqV+QwYXiNKZMpvGg1iEnFwQ6hySfmpTbwp7
+	 KoWiUy06yKHI227qrNHZTZjXf8N7wSXYdYm02zuY=
+X-QQ-mid: zesmtpgz8t1771987697t639461a6
+X-QQ-Originating-IP: qVUvUPl/mQn+6iYSa95PYXXGwoVpIT3RPtF42AgcGS0=
+Received: from localhost.localdomain ( [123.114.60.34])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 25 Feb 2026 10:47:59 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 12339813733210593435
+EX-QQ-RecipientCnt: 8
+From: Yihan Ding <dingyihan@uniontech.com>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>,
+	Jann Horn <jannh@google.com>,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com,
+	Yihan Ding <dingyihan@uniontech.com>
+Subject: [PATCH v2 0/2] landlock: Fix TSYNC deadlock and clean up error path
+Date: Wed, 25 Feb 2026 10:47:32 +0800
+Message-Id: <20260225024734.3024732-1-dingyihan@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Proofpoint-ORIG-GUID: KmeUE4GQkjFCEA-onCkjAzUZBg2oc_Jk
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjI0MDIwOSBTYWx0ZWRfX2xjh5sVgzhOS
- dnNMnaiYXxvEopWHavbqXkdT3qDid/FcKrZW6PmQdfwrcST/ZX7r1DIOCK79NPeBkmvn5ZHnYe9
- iQCAUuGXNwIfntSmXBmb3sUwGlIdjaEKqZi1yYK+izhn6dUmiu/Nzuts6JG8Ag64IbvlsCzY9HR
- y1IRHwNmX0lY22905adj132keU3lKlbxSTaMIzXpdbD2idW7uvTZCuaRnWcSmyCenN1pvMDPDtz
- Ojr2imkhf9l9gWYtYrhl9C6I4J8BD8+fWsWgo8o8r/qtjNfpI8oxVuSL/ZlJTwW4+zm6hRkbkoN
- 4lqBW+WzVRY5+AOS30Msdg/NZ8hJlFIKGLqUHVrs0oDlu2icF3c2sOI3QWj0LDoJJ5HzB/Elg74
- cnpm/637Zl1QbABBe956sXpIE+1HpOurd+ceDGYdkaBpuRjH9KncE0ga2Ag7Qpm+1XRIU3zjk+0
- 9ddSy/sJJwN86SA5NEA==
-X-Authority-Analysis: v=2.4 cv=R7wO2NRX c=1 sm=1 tr=0 ts=699e3c44 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22
- a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22 a=VwQbUJbxAAAA:8
- a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8 a=qGODes0vNXlHMsmaWvgA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: 2x_WgBn-lXEWRE-KKGAySI2MMRU7Qajr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-24_03,2026-02-23_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 clxscore=1015 impostorscore=0 phishscore=0 spamscore=0
- suspectscore=0 malwarescore=0 bulkscore=0 adultscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2602240209
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:uniontech.com:qybglogicsvrsz:qybglogicsvrsz4b-0
+X-QQ-XMAILINFO: MdNGkMEzaP5wX7rRdkqVjJebqENI8vEqAbHM7xpYNKmLq7FQQiOjgG97
+	gHIqBpZMIQDSwUEJ8UjDXzbrmekRRcHVAUB4wprmfRwjfvgb1G20t49E2+EiOgkUCh1/s1C
+	Ly+xroleN0lpViFMS7xnXoTTOh8tPofW3XdxmrozPDuCJ4XGB7zwAb3QwQZb0kopidylTV+
+	Qi2PaIZwkoAFyaBlmh7KgVzrLTxRlK1vtLWH8RX+T1qkg2lf1rVdogAUZuyXtRxGpkvacvN
+	hUhaj7QItHfh+d8rJTNJjc8QmskCD/Idyh5k/FuWtlR7Re9WuaOBqP9yFLv1HsOwBdmTSAr
+	xZUpaHPYLTCRUxMekKwHSb/5sg5fcWz18sVZYwiOkODTTXnYtXIQvG04qcQnrBobswc/khN
+	eipUsZz6fsaJubBpMoZckZb/YnBDy5LLqoEqdrKj2V10YOSgisgf0RRW2+1exJZ+PJxE2J8
+	znr58bR0tneevR2tyv5rY64RKRHOTFwMuvN0d0YmQb/4O0+01kdV4dw9+QOJjZC5BNYp4OT
+	nYZ94oi5SqxwJE8Oqad1u0lZNc+o0F0wjomecs+mZxMyOsQscNAIoQrLhW+cmgX0PX67oW8
+	VUiHCEwj37gN1WdDMSDrM7potpgq9pixIJfLLhb3t0qACvigHb/GgAVII8O9BcXFN/FEsJ6
+	eUNNXvF5DTqjmqXuRofZRcMWP1STcsYibxeBQewRuHySPDzICFMwINNQTkbGg4ZVZWmlT6q
+	OsUyb3+KgPAEmiKYL2vPYy9mlB5tNY8lqSb7fZbJuaTuO1TUDLkBw046ouT4cFzuANBjnkn
+	Qv7rJNR8QVAjHVOKXXXVIcN6czaZyylzOn10rISA+ArfXeIePIL0tSsQprS+YFhyVk5Zuz1
+	qTkh0ycuQGUUHZMRMEQvos0VHdDY4B83WLee0PECcfVmMUT24y7h9beR7g3XSmjTiWdOS5n
+	MCXIW7fXn0aJ4Bq52rppYLtvg3m1MeOVsjjzscElJdW7E2InW0ZMyWzAm/jIbPbaMPih4jB
+	2UDxfQE7FxgGx1GkcV5LDzwyBQFDo=
+X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
+X-QQ-RECHKSPAM: 0
 
-On Wed, 2026-01-21 at 17:25 +0100, Ard Biesheuvel wrote:
-> On Wed, 21 Jan 2026 at 16:41, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >=20
-> > On Mon, 2026-01-19 at 12:04 +0800, Coiby Xu wrote:
-> >=20
-> > > diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/=
-Kconfig
-> > > index 976e75f9b9ba..5dce572192d6 100644
-> > > --- a/security/integrity/ima/Kconfig
-> > > +++ b/security/integrity/ima/Kconfig
-> > > @@ -311,6 +311,7 @@ config IMA_QUEUE_EARLY_BOOT_KEYS
-> > >   config IMA_SECURE_AND_OR_TRUSTED_BOOT
-> > >          bool
-> > >          depends on IMA_ARCH_POLICY
-> > > +       depends on INTEGRITY_SECURE_BOOT
-> > >=20
-> > >=20
-> > > Another idea is make a tree-wide arch_get_secureboot i.e. to move
-> > > current arch_ima_get_secureboot code to arch-specific secure boot
-> > > implementation. By this way, there will no need for a new Kconfig opt=
-ion
-> > > INTEGRITY_SECURE_BOOT. But I'm not sure if there is any unforeseen
-> > > concern.
-> >=20
-> > Originally basing IMA policy on the secure boot mode was an exception. =
- As long
-> > as making it public isn't an issue any longer, this sounds to me.  Ard,=
- Dave, do
-> > you have any issues with replacing arch_ima_get_secureboot() with
-> > arch_get_secureboot()?
->=20
-> I don't see an issue with that. If there is a legitimate need to
-> determine this even if IMA is not enabled, then this makes sense.
+Hello,
 
-Ard, Dave -
+This patch series fixes a deadlock in the Landlock TSYNC multithreading 
+support, originally reported by syzbot, and cleans up the associated 
+interrupt recovery path.
 
-FYI, Coiby posted v3 of this patch set[1], which is queued in the next-
-integrity-testing branch[2].
+The deadlock occurs when multiple threads concurrently call 
+landlock_restrict_self() with sibling thread restriction enabled, 
+causing them to mutually queue task_works on each other and block 
+indefinitely.
 
-[1]
-https://lore.kernel.org/linux-integrity/20260213012851.2532722-1-coxu@redha=
-t.com/
+* Patch 1 fixes the root cause by serializing the TSYNC operations 
+  within the same process using the exec_update_lock.
+* Patch 2 cleans up the interrupt recovery path by replacing an 
+  unnecessary wait_for_completion() with a straightforward loop break, 
+  avoiding Use-After-Free while unblocking remaining task_works.
 
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.g=
-it/
+Changes in v2:
+- Split the changes into a 2-patch series for clearer logical separation.
+- Patch 1: Adopted down_write_killable() instead of down_write() to 
+  ensure responsiveness to fatal signals (suggested by Günther Noack).
+- Patch 2: Removed wait_for_completion(&shared_ctx.all_prepared) and 
+  replaced it with a `break`. The function's bottom wait for 
+  'all_finished' already provides the necessary UAF protection 
+  (suggested by Günther Noack).
 
-Mimi
+Link to v1: https://lore.kernel.org/all/20260224062729.2908692-1-dingyihan@uniontech.com/
+
+Yihan Ding (2):
+  landlock: Serialize TSYNC thread restriction
+  landlock: Clean up interrupted thread logic in TSYNC
+
+ security/landlock/tsync.c | 26 +++++++++++++++++++-------
+ 1 file changed, 19 insertions(+), 7 deletions(-)
+
+-- 
+2.51.0
+
