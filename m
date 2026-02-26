@@ -1,158 +1,101 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EA338B7C2
-	for <linux-security-module@vger.kernel.org>; Thu, 26 Feb 2026 07:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 342443081D7;
+	Thu, 26 Feb 2026 09:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772090635; cv=none; b=QuC6903mBXtOGUT9duKTXh3w9X0amlsuTGHiOELsiU0PXJeDNKTkhmKtktTjUbM2TdpZ5fq1xLuXpkWmEHoPm1Lv0orROO/JO+vYb4Z0FFEbvFLjQcVSanyMnTyYlcRHjVgrDVndT0o1S/jX+wIKa5fWW+O7TnZmhoCMlKGuFU4=
+	t=1772096468; cv=none; b=nrnfvLgTcgBVtUumt18fI6XZgTRL4Nv+MG4VeZBougkiFxp/FacHe572oarbrCdsRazszGlP2pAQ+uUOgrOXabc0zp8mOegmEVgsSixUAYaKqQcMqhVYPaZ/uDidr/qEdyx0pzhs1TMGnDTpBYOA7+UCzsPQ9ZgD6zeZHLlH55w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772090635; c=relaxed/simple;
-	bh=VXn9sFpHwfH0BR15DwxHz5D8lM6BYgFnUK7JmfJBq3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fD90/7tIEq+Depde8CJp3BerPwZQuCJuIZoq4LjHAcjz3pgl4j/czquPlV1S04U7V0qHLCivjP5MxB2ip3PQbTxWRUJPhFbb6N+U1bEPa4tdNmmUB2aoOpQ3R36zbhiqtm05ftD7OynPRmaxyNq6SO/mmivw2MWn4Q8/sWGv7hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gLQ13vK9; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gLQ13vK9"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-483a2338616so3501415e9.0
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Feb 2026 23:23:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772090632; x=1772695432; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XDBpg16h+HHqzlsU5v34rJbFohd9+zl+xOp/DXEiK2M=;
-        b=gLQ13vK9RyCM13w4mSZQArWFDomgjpvg0tHgK41FN5R/RGoC3iMcUuqyG1YpBueUGo
-         mgOXtI/f6Exx03yRklekTPeo/gyleCarQs4atOF4iSb5sPYf2n8zMHSIOJw6mAcqH1cQ
-         dZSaOB8rzhf7zw27Rx3Z92gmN7LA8TuohrkPFIABXumsHC/pytyJY95eJ2V4cBlRxj3w
-         rIKVs4sOvCUhRU31Mn19OJ2t1hA50+8Ry6OEVA0S+h2Upa77irm5zK5zYbs5Uq7Zqxqs
-         U4PgMGvPIligt9sqrPP9M3mpwG7E2tuWUTQ2vG/AM7PlDyehTrpNTS50zQNU3vZ5clAP
-         h8TA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772090632; x=1772695432;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XDBpg16h+HHqzlsU5v34rJbFohd9+zl+xOp/DXEiK2M=;
-        b=ip3lGR8RbiDJag9KQxQ7FlDZ0G+dqLvkpAJ+YbHLeEYJWAhN/5itceBbQbBcgTgjOc
-         G5S1M14esh2+KZuWq6jTI31N891JHjCMjmzIAkDx7LOEiLONhMfpLFwynwfu9R2shC+q
-         yupddJ2G58EDdaIWYzFzbJHrVCqOeojfS8xHMJyvO1WbBHkHzwimhW2DgZWfzRQt7HBs
-         F7ETkYPc6+b5ln0h3ZVj7WR1XWkauaDQpfPBv4pXVvxZaUzuJ/bRjUlNCWt90EkEN84w
-         Cx6hFAQr0SzLIW/O7oFRFiJ708KzD8Zk5C0khEPVKSXozsxHezuN7mpy8mJUdoP519g1
-         nTTA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKVvNNkg2tESp+JAQXvmXGGzCCCSPhr2lvK/FXgeKM9SFxDw4AnaKYoCxPg1+obb6JNC7623fyjalqXpE9oD9RMYlBaIY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLpr47XlNmjzSPPNCqGqxjFWJmaA4A0INM4vMdw6NaklbQlEeu
-	HxpL15Iiq8iMdLuyvhOpTyx8lb/FF+iwM/5l2M3pn6TWzOvBcBCSx/OL
-X-Gm-Gg: ATEYQzxZlzIUvRlD4Y6sHOtskq5Dvx6ESzL8YeR639x60HoMAsv9dpPGaukRXVWcRZR
-	IrB/X50yO0RLUl6iokQ8C/YxbQ3NxCxe/NxTBKDYDD9oNp5uc4m3SJheVCqKNsskqFn6knlgKRb
-	tXRY//1bzfWPF/Gmp3R9Xw6EkRaFgj+Qm2SDGLTKy+vfH/vba/q9kB9qHyuUHAl4C7uEH6xAaAz
-	1t9uuh4pCTMYVYEKU45fOJKn3eP/2so4zXjGFW6DtnZ+JuRxYh1etxRiwRgBohAzbWFhEcp+xnS
-	JpowS/tmbSFmk9alfEhWHEqS66dilbxcJ1WHqHRqbnv4qvrK3+CnNbRQqOYqnIKEA79HU8ig6t2
-	xoe2e8+r9k6sUK7dRWFbQDPdm1ZdAeLD4ONjFhmivFpuruzgsC1bp+Dm53Fo5sAIMSKdYzZtaYv
-	W9LoCzPLosYUwHSUdipgy0ul6l96q9nlhdn95QSGbVZRnGEdWM
-X-Received: by 2002:a05:600c:46cd:b0:477:9eb8:97d2 with SMTP id 5b1f17b1804b1-483c3dbb412mr16522625e9.8.1772090632089;
-        Wed, 25 Feb 2026 23:23:52 -0800 (PST)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bd6f26d7sm132961235e9.3.2026.02.25.23.23.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Feb 2026 23:23:51 -0800 (PST)
-Date: Thu, 26 Feb 2026 08:23:50 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: Yihan Ding <dingyihan@uniontech.com>
-Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Paul Moore <paul@paul-moore.com>, Jann Horn <jannh@google.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com
-Subject: Re: [PATCH v3 2/2] landlock: Clean up interrupted thread logic in
- TSYNC
-Message-ID: <20260226.08cc999172f9@gnoack.org>
-References: <20260226015903.3158620-1-dingyihan@uniontech.com>
- <20260226015903.3158620-3-dingyihan@uniontech.com>
+	s=arc-20240116; t=1772096468; c=relaxed/simple;
+	bh=iTWeqEAEZ0QP67jxSEfBBq/rELVHvd9z80WYyil6sjo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tGk+zPZEwjTC2D7jd5xk7l9SC8GHAj9H9WOYjyisN2e6XrBGhD6b4tcgMhSKzCNpyCCft5dmLcNdjkFf5ZpDyHtX1bt7OBqz6P2ne50sIqcZfX5rRdmX0XZLpA4wpfmXktGRJpvnKP+h7p56x1DcKDzWYT/nYYKii0NWcFquYQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.235])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4fM52K2mGzz1HCSp;
+	Thu, 26 Feb 2026 16:57:45 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id BB16440569;
+	Thu, 26 Feb 2026 17:00:56 +0800 (CST)
+Received: from [10.204.63.22] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwC3z2q+C6BpgliCBA--.50931S2;
+	Thu, 26 Feb 2026 10:00:56 +0100 (CET)
+Message-ID: <dec58b13c7c2f5d46aad3640719c123920dfa388.camel@huaweicloud.com>
+Subject: Re: [PATCH] ima: Add digest_size field to ima_algo_desc structure
+ and use to show meas.
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Mimi Zohar <zohar@linux.ibm.com>, dmitry.kasatkin@gmail.com, 
+ eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devnull+dima.arista.com@kernel.org, Roberto
+ Sassu <roberto.sassu@huawei.com>
+Date: Thu, 26 Feb 2026 10:00:43 +0100
+In-Reply-To: <55905382b88f00de0d7a82aff0605b6d0d9a1e8c.camel@linux.ibm.com>
+References: <20260225125301.87996-1-roberto.sassu@huaweicloud.com>
+	 <55905382b88f00de0d7a82aff0605b6d0d9a1e8c.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260226015903.3158620-3-dingyihan@uniontech.com>
+X-CM-TRANSID:GxC2BwC3z2q+C6BpgliCBA--.50931S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jr43tryfuw1DWF18AFyrJFb_yoWkXFcEkw
+	40vr9rGw4UuF4xWa92kryjgFZ2ganrtrn5Jw15W342yay8J3Z7tayfu3yFvw4xJr4kAF97
+	Wr90qFy3J3429jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbx8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r1j6r4UM28EF7xvwVC2z280aVCY1x0267
+	AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AK
+	xVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAwI
+	DUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAQBGmfvCAF6gABsS
 
-On Thu, Feb 26, 2026 at 09:59:03AM +0800, Yihan Ding wrote:
-> In landlock_restrict_sibling_threads(), when the calling thread is
-> interrupted while waiting for sibling threads to prepare, it executes
-> a recovery path.
-> 
-> Previously, this path included a wait_for_completion() call on
-> all_prepared to prevent a Use-After-Free of the local shared_ctx.
-> However, this wait is redundant. Exiting the main do-while loop
-> already leads to a bottom cleanup section that unconditionally waits
-> for all_finished. Therefore, replacing the wait with a simple break
-> is safe, prevents UAF, and correctly unblocks the remaining task_works.
-> 
-> Clean up the error path by breaking the loop and updating the
-> surrounding comments to accurately reflect the state machine.
-> 
-> Suggested-by: Günther Noack <gnoack3000@gmail.com>
-> Signed-off-by: Yihan Ding <dingyihan@uniontech.com>
-> ---
-> Change in v3:
-> -No change in v3
-> 
-> Changes in v2:
-> - Replaced wait_for_completion(&shared_ctx.all_prepared) with a break
->   statement based on the realization that the bottom wait for 'all_finished'
->   already guards against UAF.
-> - Updated comments for clarity.
-> ---
->  security/landlock/tsync.c | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
-> 
-> diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
-> index 420fcfc2fe9a..9731ec7f329a 100644
-> --- a/security/landlock/tsync.c
-> +++ b/security/landlock/tsync.c
-> @@ -534,24 +534,28 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
->  					   -ERESTARTNOINTR);
->  
->  				/*
-> -				 * Cancel task works for tasks that did not start running yet,
-> -				 * and decrement all_prepared and num_unfinished accordingly.
-> +				 * Opportunistic improvement: try to cancel task works
-> +				 * for tasks that did not start running yet. We do not
-> +				 * have a guarantee that it cancels any of the enqueued
-> +				 * task works (because task_work_run() might already have
-> +				 * dequeued them).
->  				 */
->  				cancel_tsync_works(&works, &shared_ctx);
->  
->  				/*
-> -				 * The remaining task works have started running, so waiting for
-> -				 * their completion will finish.
-> +				 * Break the loop with error. The cleanup code after the loop
-> +				 * unblocks the remaining task_works.
->  				 */
-> -				wait_for_completion(&shared_ctx.all_prepared);
-> +				break;
->  			}
->  		}
->  	} while (found_more_threads &&
->  		 !atomic_read(&shared_ctx.preparation_error));
->  
->  	/*
-> -	 * We now have all sibling threads blocking and in "prepared" state in the
-> -	 * task work. Ask all threads to commit.
-> +	 * We now have either (a) all sibling threads blocking and in
-> +	 * "prepared" state in the task work, or (b) the preparation error is
-> +	 * set. Ask all threads to commit (or abort).
->  	 */
->  	complete_all(&shared_ctx.ready_to_commit);
->  
-> -- 
-> 2.51.0
-> 
+On Wed, 2026-02-25 at 13:37 -0500, Mimi Zohar wrote:
+> On Wed, 2026-02-25 at 13:53 +0100, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> >=20
+> > Add the digest_size field to the ima_algo_desc structure to determine t=
+he
+> > digest size from the correct source.
+> >=20
+> > If the hash algorithm is among allocated PCR banks, take the value from=
+ the
+> > TPM bank info; if the hash algorithm is SHA1, use the predefined value;=
+ if
+> > the hash algorithm is the default one but not among the PCR banks, take=
+ the
+> > digest size from the crypto subsystem (the default hash algorithm is
+> > checked when parsing the ima_hash=3D command line option).
+> >=20
+> > Finally, use the new information to correctly show the template digest =
+in
+> > ima_measurements_show() and ima_ascii_measurements_show().
+> >=20
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>=20
+> Thanks, Roberto.  The patch looks fine, other than the patch title.  Coul=
+d it be
+> renamed as "ima: define and use a digest_size field in the ima_algo_desc
+> structure"?
 
-Reviewed-by: Günther Noack <gnoack3000@gmail.com>
+Sure, will do this and add a comment about the TPM digest size.
+
+Thanks
+
+Roberto
+
