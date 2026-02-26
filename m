@@ -1,170 +1,193 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6810E33C182
-	for <linux-security-module@vger.kernel.org>; Wed, 25 Feb 2026 22:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772058837; cv=none; b=BR4+XpI9ZYMdEaJwBh5xQwYJ5zWteOcCgtoiUpOg3J/9pzeEFxIBye7r9YnZCQwBlj1l1al5rOVVeUmr79V2/7Vfa50r8wZ/rjOWDJ7Ywy6/8e20WwngS6T2FBj2YqpubcmwAeJcPocTYRi157l6rGofYsp+PGJhP91Ypft5Ut4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772058837; c=relaxed/simple;
-	bh=B6+N1rlexK/378DaQUsJAd95CBZhwRfjwprFPzY/f+c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mP6KZJplJZFPrhBgm/Xrt9ADY2xHZ7j057N/ZIWKlU79Kup5z3QTGnzmuoLCI4kxqz0r1iN26dYqcAuTkoyd+8lh1+OOzpAAv7OreUUqP4BU3aUOSfhKpkCwiirO/NSL5lFPp3TWhIgl5P0jNUaRtBEL4NhcWNibHaZ2pybr9/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D/5Hpqvs; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D9715E8B
+	for <linux-security-module@vger.kernel.org>; Thu, 26 Feb 2026 00:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772064315; cv=pass; b=abWCbAtX9kKGa+qvpn8T9bce1sMTGuDuuW1NfNigGJUxEbUNppRL22VL+D5kK/20vY+r3LFoREk+ywtcA6N6fsW/d0pyioAgbFccxrHbs3iYJM94yupZwUasO/qH60PmF+lMr/IEwjnfIQNHcaV2ZRuDP/TqortiHxXTtRE19M8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772064315; c=relaxed/simple;
+	bh=be7FPiPWe1/11EBo1DumJ14D6YL2yIf6xGwLC8NbK1E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m3w64Y/i2+yx/HfH8Nt7oUPmjEQi32m7uC3X3W/stwaydcTeCVUq8rSL8pyy6rBzT2ASZcOrXg68Z6+GfsaqEHhjm6w3LQhzXupQiPjRP8DxtNlG5humlo51UdPauah8207B3Err6K1ooy6O2MEd4HSvjFplEAKptXktQ3pREo4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Ywoj3TGD; arc=pass smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D/5Hpqvs"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-48336a6e932so1427215e9.3
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Feb 2026 14:33:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Ywoj3TGD"
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3566af9900eso53814a91.2
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Feb 2026 16:05:14 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772064312; cv=none;
+        d=google.com; s=arc-20240605;
+        b=d/i9IkAhC9EbZ9TUHQdla0x8//NWFCKZ8n1kTVTefH3/2wdY4MitNvHjELZiLqzx8i
+         /tPUHURTRHiLkTDUShxF1Twgbv4gX18nEQznzKIepxFSa1RAqQEt5FOXaY7VLcieVuJw
+         7vI5FCgME+X+ZuCpDJM+iOpxClRPNedAST8AdLvbRSyDOuAB48+smWf9/pAVMTXbQA0o
+         a+x43sLIsje3agl88GYjM2L9EkHch0zCR9Cnk1vPlXt6nbpjRT19Z3s8aS/mVC6PNzm1
+         A+5ZA6cobCUTcJvHMXPTxveZTQxytlNvR3XWnPc6kYCO4HCPDFNr8FT1chqSn+8+qg4e
+         bbUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=fSqoYbYsLK/wCGwHLYUJNGeDrLmFi7g+s8IszrO9hvs=;
+        fh=mXHLjsYMhefv2yVZDLdz+LWnW1ecjUJO8T5wx753O8Q=;
+        b=lbv3M0UCxkMQWaKyGmP38O4/6wFY2Ryu/eb3c/2JlaByKAZiGESpO2FtuhgaROj5UF
+         1hri4Kg0zriUgNDC3catp4QpLQFGFGPmWO2Fw8PJ55XYH1BviblI8e6Y1j0xVCsZqkLe
+         OViwYgQIricDD74DVd9j0M9+n0gzyiOD9KOi1hGPVQVoCZ7DKekgiT063x/vZvNavxIi
+         hBbGEs9ZUBOSD34pH6k7XHTWjYnUH9HU+kE0PH3BUrv0ep93nJVN8LXVIjev2wWHIEUS
+         y9koSmMTOLSo8knGPu3K3Cx3fwvjitrCX7kktU6ZF+NxKYKQT8U7QgA/5rCw4wONj3XV
+         t5kg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772058834; x=1772663634; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YLqsjFGaTAomOM6oIdhV2ENKyEdrq9mkRamWZMAgaKQ=;
-        b=D/5Hpqvs7Bh+FlhQReQQucDWufgJygjm0sRWxayA8K58/eQIkXKd1YUMVm8U1SrWzl
-         odF0xInAzY6sOgFvU/gx/RegeclehulLV1l6nLvi0jiI+T/GTzEV2ANELp1JiPwe2C9P
-         f+ZQuASaWiCgZ920insuN3m+tmE0vKLCvyGNeqBPm40BPbUrS4bDD6GMzMIROMRz2Pnj
-         Po8ElkXs897XBuzYe9LSx37CDXW5khyTEIU4BZOK30Jfy+FUt9xBlZS9knzEDgajHcXf
-         gJ/KgNhXT6QbQ1iVZgtSeRD/Yi1TAwZsI7OKDwXtu2wOfKNUUXjdn96oADzwpr1hnrj4
-         RFrg==
+        d=paul-moore.com; s=google; t=1772064312; x=1772669112; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fSqoYbYsLK/wCGwHLYUJNGeDrLmFi7g+s8IszrO9hvs=;
+        b=Ywoj3TGDpqLyuiOjvkC7+ZjN8a9xQZ3e8MIVgsAofq69tc0acw6Cs5/6I92WL2bLeQ
+         etGejhj4+g3HiSMhmnQVMSWGp3CRj5ipsrnR1NcNOdwNekVGS22IEjwrPO362Nwyy9YL
+         tEt9TYw+mgu1svp8KkxmiEXfm4Zp+Kl/eOqo/b6Vj2/okz1B9URW3XnBnvEHAfj2YKUD
+         MiZ5nedzuDGjRTcjVzuDXicXdzsdtIpZD0zLfHb/Kr4CB7+A+FAR+gkO4PTdncyqCZXX
+         kOKi61967uk7fsO0B7n1BvS5i0N3G9++cv4Vph/5achC4RteAE/13JBE8usjFvr1xVug
+         AEpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772058834; x=1772663634;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YLqsjFGaTAomOM6oIdhV2ENKyEdrq9mkRamWZMAgaKQ=;
-        b=tteQ7zGf5Q70eyu63QZOY8VN72k1s96NXa5xHmoA8pgJudGI9DYqCbBDuZm+FxJ9N4
-         PsICBEiXBJMmeJ+tzl1Y34cBqQpwvrGvdgLT9fX/yLZufOBUHSMUZPBKV8ZxNGRr16Uz
-         lTJXl4+fauDsOlbSdyYwnFojaeABiUr2YVP6cIZTyGrgR6PDOFlSMVc24KWKny7m/KTB
-         eL1BhArj11I327YUbzUE33+guIFlaQqDsNXBpVZKZb9v8+qMV9j7A3KeMmiaA9bWMrJv
-         gSpsVWzl3niobxl2CBff5/XX2vGD+OuB5ixhsDq0FtCTsyFoJBLZzBqWTZZnyAiE0dWL
-         pktg==
-X-Forwarded-Encrypted: i=1; AJvYcCXMElsXnn42uSJ8x/GHVQ+Lc2WnL+IofGO6PKaUG5fFhwWAnBNHfTh2P0MW7xUFLfpPCqgX23ZnThpQ8d6aanH3D4982pg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCvMP16Uq0ZrejpobQ+yio/XJQXcAhPCgBnkYLvefC0XpIFUkO
-	sWLG98BhP9vj5/eE2U47nNLPkZ1NdSGiBKmp8bUVnjxALVRPnySlBydI
-X-Gm-Gg: ATEYQzyNZI81VnCy5lx83PRi0RzOYgGkvo04DCuBjrSn1JXGuWjKZ0znGsMqQsTVvhj
-	TdwD52oWEZ+9axBxVxGpD9S2EBP9ONWhcjuT2fEakfRKFdeE4cZT8WQ68j1CMebq/HALKq+S5y4
-	sl421rC+DS8453D7gShPkCb5Do78LU2pR2RVDgAsME80LmMCS2b1Q1M0cbGcO/SADBQQSthYS2v
-	10XLbP3OOWPA/QDSPGMcoiUnGVyq2GLQ0DRc+v1kRsiLzH/zTO4FjvtOCGmT5oJxNZ9Q8dt0EsE
-	fBwMWFl0EaylfzX4ACUdO2KJMPKwTesHDGzTBclUD99eDz+GgnBA/leIxuN6LHUE/qZAIKb9wxT
-	dCR2bO25BkeMs4fpcnEc+9Nqqq0/MEbHRQqrDR2BIz96cuyVsySK5Pn1HwBENK69mBzLhHuNiV9
-	rLbRQLztE0k57hey+i8ESJDiRfWXZxIT8Bkv5GaTrBojB1oivNozLGctRLn0I=
-X-Received: by 2002:a05:600c:a086:b0:47d:3ffa:5f03 with SMTP id 5b1f17b1804b1-483c219b648mr35738415e9.21.1772058833615;
-        Wed, 25 Feb 2026 14:33:53 -0800 (PST)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bfcb4f8bsm54181545e9.4.2026.02.25.14.33.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Feb 2026 14:33:53 -0800 (PST)
-Date: Wed, 25 Feb 2026 23:33:39 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
-Cc: Yihan Ding <dingyihan@uniontech.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Paul Moore <paul@paul-moore.com>, Jann Horn <jannh@google.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2 1/2] landlock: Serialize TSYNC thread restriction
-Message-ID: <20260225.42330125301c@gnoack.org>
-References: <20260225024734.3024732-1-dingyihan@uniontech.com>
- <20260225024734.3024732-2-dingyihan@uniontech.com>
- <aZ7l6jU7XJ1BYbN-@google.com>
+        d=1e100.net; s=20230601; t=1772064312; x=1772669112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=fSqoYbYsLK/wCGwHLYUJNGeDrLmFi7g+s8IszrO9hvs=;
+        b=L5acancwzeFxiJVDT7/mYiYCAMbDDRSfctr+eGfIcBSU/NDmNTWd9cmJE8T5VvY3Fd
+         1lmUcGs/kF2jsE0mAqcOY7Jhj62hT0T1pNBT+VJr+PoV3UO5/c+NC10Gf/h7ZEeGmvUt
+         PZzxDfmtFkCAC8c4AT388+CQXHqH3YiPMpNgRgWCFSmPaX/rYI7xcAstT8u1Bil79K9c
+         2sJK8D4MH3VA7LCfAuxMSryf4ebmWu03p0OCVpfTrQlK21v5TLbZsABNknsNYs78QHjW
+         L2Zuc6LEsEISPhfbgEUqtUAY8JO9VrH66gPzmXNZYKS2HLcy/ErniMmb2PLIita8Wa2t
+         ELrw==
+X-Gm-Message-State: AOJu0YyP2Xnfp/rGSF9ldUvgqOnBnfn07rYk9DWx2VRhUrnPabsam5IN
+	FSN8VkNkP2hXWUcw6WVjrEfbVQmvAj6RSoLTJ3PuSkq0M7HmjbiKE32e/4ykcHpA+6Wih8WSaDt
+	1CPm6tSoHvFxIcxI/kjIJdUfBywlTqfIYxJMizOfHO6dDE3m60iE+SA==
+X-Gm-Gg: ATEYQzxu+a6WeYG57d16V+44SS2ImqtFkmmGARUtTcLeaCsWb4RzD4vw+5A9maZj3GL
+	9+afrfPsGbkPgL6C0Zu/JgE9aoulQyfr4jqrBC8W+LVP8f+l1k0nBW0Sj1jAMJ89ixGlNgq5GIb
+	A30yrGzGkqRhZYQ4DP8AhpkmZXjm654sZmb4tj0BTbzdTb3rdzCkEmbGZGytaySfr4ziq/bssoZ
+	iKFcT/AszVrKBDYcPUooDOYof8oLCjZFimTJ9h6LFmgMunj/5oJQ8aYFIANZ79D9IiWFfpXkevn
+	3cpi0oM=
+X-Received: by 2002:a17:90b:4a05:b0:354:bf10:e6a4 with SMTP id
+ 98e67ed59e1d1-3593dadfe0emr390882a91.9.1772064312452; Wed, 25 Feb 2026
+ 16:05:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aZ7l6jU7XJ1BYbN-@google.com>
+References: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 25 Feb 2026 19:05:00 -0500
+X-Gm-Features: AaiRm514ql28YykxQ8HO37LZr8RwO7Lk9Xi6HuiY0qbXHJIk_QejzgpYvk-NvTo
+Message-ID: <CAHC9VhTeVs7kS9hzukukZRfGu6CC6=Dq4KP69tpEtiFpBJ+jOQ@mail.gmail.com>
+Subject: Re: LSM namespacing API
+To: linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Cc: John Johansen <john.johansen@canonical.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 25, 2026 at 01:07:26PM +0100, Günther Noack wrote:
-> On Wed, Feb 25, 2026 at 10:47:33AM +0800, Yihan Ding wrote:
-> > syzbot found a deadlock in landlock_restrict_sibling_threads().
-> > When multiple threads concurrently call landlock_restrict_self() with
-> > sibling thread restriction enabled, they can deadlock by mutually
-> > queueing task_works on each other and then blocking in kernel space
-> > (waiting for the other to finish).
-> > 
-> > Fix this by serializing the TSYNC operations within the same process
-> > using the exec_update_lock. This prevents concurrent invocations
-> > from deadlocking. We use down_write_killable() to ensure the thread
-> > remains responsive to fatal signals while waiting for the lock.
-> > 
-> > Fixes: 42fc7e6543f6 ("landlock: Multithreading support for landlock_restrict_self()")
-> > Reported-by: syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=7ea2f5e9dfd468201817
-> > Suggested-by: Günther Noack <gnoack3000@gmail.com>
-> > Signed-off-by: Yihan Ding <dingyihan@uniontech.com>
-> > ---
-> >  security/landlock/tsync.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> > 
-> > diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
-> > index de01aa899751..420fcfc2fe9a 100644
-> > --- a/security/landlock/tsync.c
-> > +++ b/security/landlock/tsync.c
-> > @@ -447,6 +447,13 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
-> >  	shared_ctx.new_cred = new_cred;
-> >  	shared_ctx.set_no_new_privs = task_no_new_privs(current);
-> >  
-> > +	/*
-> > +	 * Serialize concurrent TSYNC operations to prevent deadlocks
-> > +	 * when multiple threads call landlock_restrict_self() simultaneously.
-> > +	 */
-> > +	if (down_write_killable(&current->signal->exec_update_lock))
-> > +		return -EINTR;
-> > +
-> >  	/*
-> >  	 * We schedule a pseudo-signal task_work for each of the calling task's
-> >  	 * sibling threads.  In the task work, each thread:
-> > @@ -556,6 +563,7 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
-> >  		wait_for_completion(&shared_ctx.all_finished);
-> >  
-> >  	tsync_works_release(&works);
-> > +	up_write(&current->signal->exec_update_lock);
-> >  
-> >  	return atomic_read(&shared_ctx.preparation_error);
-> >  }
-> > -- 
-> > 2.51.0
-> > 
-> 
-> Thank you!
-> 
-> Reviewed-by: Günther Noack <gnoack@google.com>
+On Tue, Aug 19, 2025 at 10:56=E2=80=AFAM Paul Moore <paul@paul-moore.com> w=
+rote:
+>
+> Hello all,
+>
+> As most of you are likely aware, Stephen Smalley has been working on
+> adding namespace support to SELinux, and the work has now progressed
+> to the point where a serious discussion on the API is warranted ...
 
-Hello Yihan Ding!
+I spent a few hours this afternoon re-reading this thread and tweaking
+the original proposal to address everything discussed.  The revised
+proposal is below, with a bit more detail than before, please take a
+look and let us all know what you think ...
 
-Apologies, I have to take this back -- applying the patch in this form
-would be a mistake.  When I tried this out with the Syzkaller test
-case, I noticed that the tests started taking multiple seconds per
-run.  The way I reproduced it was by running the Syzkaller reproducer
-under Qemu and looking for the frequency of the "executing program"
-lines that it prints for each test run.
+* lsm_set_self_attr(LSM_ATTR_CLONE_NEWLSM) and clone(CLONE_NEWLSM)
 
-When I looked deeper, what was happening was actually that we got
-ourselves into a deadlock again, which, in hindsight should have been
-obvious: When two threads call landlock_restrict_self() roughly at the
-same time, then the one that grabs the lock first will (a) keep the
-other (killably) blocked on the lock acquisition, and (b) later ask
-the other thread to run a task work.  But in order to run a task work,
-the blocked thread must first return from the syscall.  However,
-down_write_killable() only returns when either the lock is available
-or when the thread was killed.
+We would define a new LSM_ATTR flag, LSM_ATTR_CLONE_NEWLSM, which
+could be used with lsm_set_self_attr() to request that an individual
+LSM create a new LSM specific namespace on the next
+clone(CLONE_NEWLSM) call.  LSMs may choose to perform various sanity
+and authorization checks at lsm_set_self_attr() time, but they must
+refrain from creating a new LSM namespace until clone() is called.
+LSMs may also want to ensure that any state associated with an
+lsm_set_self_attr(LSM_ATTR_CLONE_NEWLSM) request is not carried across
+an exec() boundary, however, that decision is left to the individual
+LSMs.
 
-To resolve this, we need to actually use a lock acquisition that
-respects other ways of interruption as well; we can either use a
-down_write_trylock() and return -ERESTARTNOINTR, or we can use
-down_write_interruptible().
+We would define a new clone() flag, CLONE_NEWLSM, which would trigger
+a call into the LSM framework to invoke LSM specific callbacks to
+perform namespace actions specified either by the LSM's policy or an
+explicit lsm_set_self_attr(LSM_ATTR_CLONE_NEWLSM) request.
 
-Sorry for the poor advice to use the _killable variant earlier.  Could
-I ask you to please send another revision using _trylock() or
-_interruptible()?
+As with the existing LSM_ATTR support, this is strictly an opt-in
+mechanism and individual LSMs are left to handle this request as they
+see fit.
 
-Thanks,
-–Günther
+The lsm_get_self_attr() syscall could be used to get the
+LSM_ATTR_CLONE_NEWLSM value(s) for the current process just like any
+other LSM_ATTR flag.
+
+* lsm_set_self_attr(LSM_ATTR_UNSHARE_NEWLSM) and unshare(CLONE_NEWLSM)
+
+This would behave similarly to LSM_ATTR_CLONE_NEWLSM, but the LSM
+namespace changes would take place during an unshare() call as opposed
+to a clone() call.  This is kept separate from the
+LSM_ATTR_CLONE_NEWLSM flag because the behaviors are quite different:
+one creates a process with a new LSM namespace set, while the other
+changes the LSM namespace set of a running process.
+
+LSMs are free to implement support for either LSM_ATTR flag, both, or
+none at all.
+
+* /proc/pid/ns/lsm and setns(CLONE_NEWLSM)
+
+The /proc/pid/ns/lsm file serves as a link/handle to the specific LSM
+namespace set in use for the given process.  A process wishing to move
+into the same LSM namespace set as another process can use this
+link/handle (or a pidfd) and setns(CLONE_NEWLSM) to change its own LSM
+namespace set.  It is important to note that using setns() it should
+not be possible to change the individual LSMs that are part of the LSM
+namespace set, the calling process' LSM namespace is set to the exact
+same LSM namespace set as the specified process.
+
+Affected LSMs may choose to enforce access controls on the
+setns(CLONE_NEWLSM) operation according to their own policy.
+
+* Policy considerations
+
+The mechanisms above provide for three different scenarios: a new
+process creating a new LSM namespace set (the clone case), an existing
+process creating a new LSM namespace set (the unshare case), and an
+existing process joining an existing LSM namespace set (the setns
+case).
+
+In the clone case a new LSM namespace set will be created when the
+process itself is created.  It is up to the individual LSMs to
+properly initialize their own namespaces and load any required
+policies.  Since the new LSM namespaces are created at clone() time
+and before exec(), the calling process, or another trusted process
+using a new yet-to-be-finalized API, should be able to configure the
+newly created LSM namespace before exec().
+
+The unshare case is similar to clone because a new LSM namespace set
+is created, but it is a bit more challenging because unshare()
+modifies the calling process's LSM namespace set, not a newly created
+child process'.  For simpler LSMs this might not pose a problem, but
+for more complex LSMs, developing meaningful applications that use
+unshare(CLONE_NEWLSM) and properly initialize/setup the new LSM
+namespace set may prove challenging. Developing applications that use
+clone(CLONE_NEWLSM) will likely be much easier.
+
+In the setns case the process joins a properly configured LSM
+namespace set with all necessary LSM policies loaded, there shouldn't
+be any additional LSM setup required (although the work to change the
+individual LSM namespaces on a running process may prove difficult).
+
+--=20
+paul-moore.com
