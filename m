@@ -1,170 +1,143 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F4D3A641E;
-	Thu, 26 Feb 2026 10:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3F33D6470
+	for <linux-security-module@vger.kernel.org>; Thu, 26 Feb 2026 14:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772101450; cv=none; b=A+6eXLo5cIpTSi9jS2e5j0sHOsGNsRYZ9Ltq694LjsYT6wlG9ZfQzXnjMbtEm93F6wqY5hr3ebz4w8AeCUvk3jLGCJZdtKR52syw2YCoe1ZG0xqgCOcnm1WuEa+Kfl4M0fCYq6c1zOQCjX2iRXWvaJ/Nkz/6SW1Ylcj7vk/c/DU=
+	t=1772115549; cv=none; b=kPAJzh3XTVLlLuzXPy5j+BDI1uPDcoQah0mUPyug6lRLQy20a8ZIazs9nU/Ol5fJMf2a8EmZOdwkSqE9FBGka5WyANj9YamLT+r1WOtMd1dJMKYK0iMwuG3LUMQRessQG4BiZDYFEHD4Dr3NC3LP+ZPFoDP4e3HRHTG1BJcYgq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772101450; c=relaxed/simple;
-	bh=P8zq4XL1vIHvWaTfBf9OJPokXFV2/Uw/qIckm/L5wQg=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=CH9kMJSuPJi/PULwhlY5FShUk4S/ddVxWVgl9C8C2YbL1RGNxZaZ4//q5hSxuuK1Vz8kbWbJfdc37Mz3tVX1P0X67Aqtv9+frFfTKbW2Y+Tg87bRuKgG5VVX/8jiof5c7RxiM4Fcy4wYjUpg7onaDmMLcdTgtQnFuIhzNuIecf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CqBSIZl/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772115549; c=relaxed/simple;
+	bh=odV80GJtq0mUHGhjvkQKoV2oxNxteHCidYJb/iPhJvU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MLHU5lAZogCdoT0YacWXyLPzXTfeEjhB1mqWQAyhJVdk3Ot2ITd5XN61yQtEflmATbDQAE5PyFR10t+YDp9otVTeI+KrFeP/Zl53n4qJxGqo1/mY9u1XG48dtb46qD3WY5UoV+CwUwdznYgo9KnJZiMAWolzF97CgfW7nJJEB1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lhHyLkXX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wZklsiWW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lhHyLkXX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wZklsiWW; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CqBSIZl/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AAECC19422;
-	Thu, 26 Feb 2026 10:24:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772101450;
-	bh=P8zq4XL1vIHvWaTfBf9OJPokXFV2/Uw/qIckm/L5wQg=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=CqBSIZl/P5R11a+PbbwP8EJIEnape46aReEtYeFPGKuQwo6JuYPMOhUf/ivT/NGkB
-	 eXMFnYLPc0Qug2v3GAlm2hfMo3AEhaOEyi3ZyF45CWN+wmg1Ytanhv9lAvK+0xMHh2
-	 fkBzkKxMEF1f73kx0BbvlVzVwD2esgJecthJePIYctOyCgv1N+vOc4FeretrL+9dwl
-	 yPVn11PrBJc5BXMOfxAd+eGXEmJnTZin8RXBEGmytdYJFgR2oDdrICNNK+pUzag+LJ
-	 xPKXbyJ9ovIhvsM3RRZ/6Mf5FMQVv2aEgMpd/+fp7PW1VuyAdwBpXIwS3ii8jK7yQ3
-	 rJt1fkAYF2yIg==
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfauth.phl.internal (Postfix) with ESMTP id DD5D3F4006A;
-	Thu, 26 Feb 2026 05:24:07 -0500 (EST)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-01.internal (MEProxy); Thu, 26 Feb 2026 05:24:07 -0500
-X-ME-Sender: <xms:Rx-gaXkDrx5pnznR-SNMQS1tYTFTDjDVzc2UVuufzpa3L83PXaWj2A>
-    <xme:Rx-gaVoEvkp6raOOwqQWPDa0cH-Ob-gPQix5xIzkuQVQm6h-NQbdzrS1pMcsoN3Ia
-    -kZBU3FrMUKRHOIg7YnLpvy204Tr5tobrq5gruzze2vMtko18K1InM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvgeehjeekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrugcu
-    uehivghshhgvuhhvvghlfdcuoegrrhgusgeskhgvrhhnvghlrdhorhhgqeenucggtffrrg
-    htthgvrhhnpeekvdffkefhgfegveekfedtieffhfelgeetiedvieffhfekfeeikeetueeg
-    teetteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghrugdomhgvshhmthhprghuthhhphgv
-    rhhsohhnrghlihhthidqudeijedthedttdejledqfeefvdduieegudehqdgrrhgusgeppe
-    hkvghrnhgvlhdrohhrghesfihorhhkohhfrghrugdrtghomhdpnhgspghrtghpthhtohep
-    feeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvg
-    dprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrghssegrrhhmrdgtohhmpdhrtghp
-    thhtohepmhhpvgesvghllhgvrhhmrghnrdhiugdrrghupdhrtghpthhtohepughmihhtrh
-    ihrdhkrghsrghtkhhinhesghhmrghilhdrtghomhdprhgtphhtthhopehnphhighhgihhn
-    sehgmhgrihhlrdgtohhmpdhrtghpthhtohepshgvrhhgvgeshhgrlhhlhihnrdgtohhmpd
-    hrtghpthhtoheprhhosggvrhhtohdrshgrshhsuheshhhurgifvghirdgtohhmpdhrtghp
-    thhtoheprhhosggvrhhtohdrshgrshhsuheshhhurgifvghitghlohhuugdrtghomhdprh
-    gtphhtthhopegurghvvgdrhhgrnhhsvghnsehinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:Rx-gaceSkD7L3hUQ-QIntX5c8SF2UJvuNnlnCMg5x0km8JqIId1NUw>
-    <xmx:Rx-gaXnaIY1-tJR3H2eKYjQqxgSwsae5h1FvMCQzz1XTnwkXn4A87w>
-    <xmx:Rx-gaWo6YeaJZds-Per8yiexkNYiocIFKlSdVrZEta5R-DmtVqRepA>
-    <xmx:Rx-gaU9JdnIBR33acIHa5vRJ_FAVN8423onO6PDBDHqIfNIXMgTbhw>
-    <xmx:Rx-gaS0UmRYHqy-FoG7gumIna3Ay9Z737XOXqgkPGLVVt4wqDB4deV7_>
-Feedback-ID: ice86485a:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id AE587700065; Thu, 26 Feb 2026 05:24:07 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lhHyLkXX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wZklsiWW";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lhHyLkXX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wZklsiWW"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3ABE83F8B5;
+	Thu, 26 Feb 2026 14:19:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1772115546; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2uG/loOzTdMLJ0wlLRCp/zIvxQSU407W5RWykMyDcWc=;
+	b=lhHyLkXXlPnfPXiAdePNd0Lm4Ih3UW3RjPqXrj5XXn5HEFae1GsVqGRnITccjsr4fOZmF4
+	j0Ht/6Vp2o/tWQ7Fg1st+YXTqVT7Z1vD0M7NYPH5p5V9XlPgZ8Rq3c556sgGyMr1x8EWXd
+	W8Iu7X2N+vm1trLnxZjLm+jPYe1hMAk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1772115546;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2uG/loOzTdMLJ0wlLRCp/zIvxQSU407W5RWykMyDcWc=;
+	b=wZklsiWWmnIkI/vz0pwmLKflEayo9HqbOPbxcGRS9pasbZQoPwx4KokCWOo7KksLO7GyEj
+	jwrBEETJEFiU/DDA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1772115546; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2uG/loOzTdMLJ0wlLRCp/zIvxQSU407W5RWykMyDcWc=;
+	b=lhHyLkXXlPnfPXiAdePNd0Lm4Ih3UW3RjPqXrj5XXn5HEFae1GsVqGRnITccjsr4fOZmF4
+	j0Ht/6Vp2o/tWQ7Fg1st+YXTqVT7Z1vD0M7NYPH5p5V9XlPgZ8Rq3c556sgGyMr1x8EWXd
+	W8Iu7X2N+vm1trLnxZjLm+jPYe1hMAk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1772115546;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2uG/loOzTdMLJ0wlLRCp/zIvxQSU407W5RWykMyDcWc=;
+	b=wZklsiWWmnIkI/vz0pwmLKflEayo9HqbOPbxcGRS9pasbZQoPwx4KokCWOo7KksLO7GyEj
+	jwrBEETJEFiU/DDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 304A93EA62;
+	Thu, 26 Feb 2026 14:19:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id KqTDC1pWoGnpEAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 26 Feb 2026 14:19:06 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id E5C9BA0A27; Thu, 26 Feb 2026 15:19:05 +0100 (CET)
+Date: Thu, 26 Feb 2026 15:19:05 +0100
+From: Jan Kara <jack@suse.cz>
+To: Ondrej Mosnacek <omosnace@redhat.com>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
+	Matthew Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] fanotify: avid some premature LSM checks
+Message-ID: <hein42plwi3lhonfdvox7a267ycy3o6677ciofirpfy6vh6atz@xkltgcdlncpg>
+References: <20260216150625.793013-1-omosnace@redhat.com>
+ <yk2qcux2ee7afr24xw6p7wp4t3islu64ttfsrheac2zwr6odnw@kmagnqbldb3f>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: A6OHCiXwHjx-
-Date: Thu, 26 Feb 2026 11:23:47 +0100
-From: "Ard Biesheuvel" <ardb@kernel.org>
-To: "Mimi Zohar" <zohar@linux.ibm.com>
-Cc: "Coiby Xu" <coxu@redhat.com>, "Dave Hansen" <dave.hansen@intel.com>,
- linux-integrity@vger.kernel.org, "Heiko Carstens" <hca@linux.ibm.com>,
- "Roberto Sassu" <roberto.sassu@huaweicloud.com>,
- "Catalin Marinas" <catalin.marinas@arm.com>,
- "Will Deacon" <will@kernel.org>,
- "Madhavan Srinivasan" <maddy@linux.ibm.com>,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nicholas Piggin" <npiggin@gmail.com>,
- "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
- "Vasily Gorbik" <gor@linux.ibm.com>,
- "Alexander Gordeev" <agordeev@linux.ibm.com>,
- "Christian Borntraeger" <borntraeger@linux.ibm.com>,
- "Sven Schnelle" <svens@linux.ibm.com>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
- "H . Peter Anvin" <hpa@zytor.com>,
- "Roberto Sassu" <roberto.sassu@huawei.com>,
- "Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>,
- "Eric Snowberg" <eric.snowberg@oracle.com>,
- "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- "Jarkko Sakkinen" <jarkko@kernel.org>,
- "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
- <linux-arm-kernel@lists.infradead.org>,
- "open list" <linux-kernel@vger.kernel.org>,
- "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)"
- <linuxppc-dev@lists.ozlabs.org>,
- "open list:S390 ARCHITECTURE" <linux-s390@vger.kernel.org>,
- "open list:EXTENSIBLE FIRMWARE INTERFACE (EFI)"
- <linux-efi@vger.kernel.org>,
- "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
- "open list:KEYS/KEYRINGS_INTEGRITY" <keyrings@vger.kernel.org>
-Message-Id: <2115ea47-9a9f-4718-8531-4a9c2067899b@app.fastmail.com>
-In-Reply-To: <ad471c33eeb9e21c49ac81032dc64555a2fb816f.camel@linux.ibm.com>
-References: <20260115004328.194142-1-coxu@redhat.com>
- <20260115004328.194142-2-coxu@redhat.com>
- <CAMj1kXFXNo1-pMbo-VZrjQ3TYe1tufebrLr_avL12A0nHMSGnA@mail.gmail.com>
- <8bfa859ed3a4f1cf0db0ab64d8c1c3b24684582a.camel@linux.ibm.com>
- <CAMj1kXHsJNZoUEnbD1y=v4Ftuv9d2c08VckRV7ru4k4P83vZbQ@mail.gmail.com>
- <97b69bc79a5d9246f7a399510908c7b95b2e95e7.camel@linux.ibm.com>
- <CAMj1kXGx4ebaK87W7k0SNUNQnO9+=z1nmYxXC7retmp3OqRRFg@mail.gmail.com>
- <ac5e5e45c12e9b0bda19807e60b06057d74be0b3.camel@linux.ibm.com>
- <aW2i3yacr5TvWU-m@Rk>
- <1a0b6e5601a673a81f8823de0815f92b7afbeb60.camel@linux.ibm.com>
- <CAMj1kXFBMSEdRL8FotASbQO3dcfNG0bpp9Vnm5JPn-yjyDr=GA@mail.gmail.com>
- <ad471c33eeb9e21c49ac81032dc64555a2fb816f.camel@linux.ibm.com>
-Subject: Re: [PATCH 1/3] integrity: Make arch_ima_get_secureboot integrity-wide
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yk2qcux2ee7afr24xw6p7wp4t3islu64ttfsrheac2zwr6odnw@kmagnqbldb3f>
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[suse.cz,gmail.com,google.com,vger.kernel.org];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
 
+On Tue 17-02-26 12:09:34, Jan Kara wrote:
+> On Mon 16-02-26 16:06:23, Ondrej Mosnacek wrote:
+> > Restructure some of the validity and security checks in
+> > fs/notify/fanotify/fanotify_user.c to avoid generating LSM access
+> > denials in the audit log where hey shouldn't be.
+> > 
+> > Ondrej Mosnacek (2):
+> >   fanotify: avoid/silence premature LSM capability checks
+> >   fanotify: call fanotify_events_supported() before path_permission()
+> >     and security_path_notify()
+> > 
+> >  fs/notify/fanotify/fanotify_user.c | 50 ++++++++++++++----------------
+> >  1 file changed, 23 insertions(+), 27 deletions(-)
+> 
+> The series looks good to me as well. Thanks! I'll commit the series to my
+> tree once the merge window closes and fixup the comment formatting on
+> commit. No need to resend.
 
-On Wed, 25 Feb 2026, at 01:03, Mimi Zohar wrote:
-> On Wed, 2026-01-21 at 17:25 +0100, Ard Biesheuvel wrote:
->> On Wed, 21 Jan 2026 at 16:41, Mimi Zohar <zohar@linux.ibm.com> wrote:
->> > 
->> > On Mon, 2026-01-19 at 12:04 +0800, Coiby Xu wrote:
->> > 
->> > > diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
->> > > index 976e75f9b9ba..5dce572192d6 100644
->> > > --- a/security/integrity/ima/Kconfig
->> > > +++ b/security/integrity/ima/Kconfig
->> > > @@ -311,6 +311,7 @@ config IMA_QUEUE_EARLY_BOOT_KEYS
->> > >   config IMA_SECURE_AND_OR_TRUSTED_BOOT
->> > >          bool
->> > >          depends on IMA_ARCH_POLICY
->> > > +       depends on INTEGRITY_SECURE_BOOT
->> > > 
->> > > 
->> > > Another idea is make a tree-wide arch_get_secureboot i.e. to move
->> > > current arch_ima_get_secureboot code to arch-specific secure boot
->> > > implementation. By this way, there will no need for a new Kconfig option
->> > > INTEGRITY_SECURE_BOOT. But I'm not sure if there is any unforeseen
->> > > concern.
->> > 
->> > Originally basing IMA policy on the secure boot mode was an exception.  As long
->> > as making it public isn't an issue any longer, this sounds to me.  Ard, Dave, do
->> > you have any issues with replacing arch_ima_get_secureboot() with
->> > arch_get_secureboot()?
->> 
->> I don't see an issue with that. If there is a legitimate need to
->> determine this even if IMA is not enabled, then this makes sense.
->
-> Ard, Dave -
->
-> FYI, Coiby posted v3 of this patch set[1], which is queued in the next-
-> integrity-testing branch[2].
->
-> [1]
-> https://lore.kernel.org/linux-integrity/20260213012851.2532722-1-coxu@redhat.com/
->
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git/
->
+Pushed the series to my tree now.
 
-Ack. Looks fine to me.
+								Honza
 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
