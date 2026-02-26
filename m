@@ -1,36 +1,36 @@
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.67.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CAE217A2EA;
-	Thu, 26 Feb 2026 02:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE8F17A2EA;
+	Thu, 26 Feb 2026 02:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.67.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772071219; cv=none; b=uCsQCPtgUrmd9Iw6A2vUbYvCcM/TB2V2MRVcs7cJZc6jrO4FT7RWbsfGAOJloe/zRM5QEjYIySSMQHQf4dawlE6hhuy8ulZkiIpjB9OLRNjvq7F2SP2ygBdUvgZ1AlbiOt+9uto5i2C1ZjcmT6Ql9CYgQ4+VYYdXgowuFiImiPo=
+	t=1772071240; cv=none; b=ItvpIPsM9BNNMoI9/LRqz65GyZWPAONI/1QF9Ry/kR3sbezUkqHBzpp42XPxO/T1wWZvkBTI+onIdIDusg7BTidijwsy3xg1Wn8cWKIYqnb87Wgii1BNeh3YCL+sM6x5MGn/n6HRp6pnb90O7xJ3dDA17t/m/N383lWS5vm6G9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772071219; c=relaxed/simple;
-	bh=z2shwl/36XqPrciv+644gOwiwOQE5nwBi4vxfSyrFug=;
+	s=arc-20240116; t=1772071240; c=relaxed/simple;
+	bh=VWCcVP0bFtCwTr/zL6R2wbnPAoIRNzWKKeyKEW0sphA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Km+UiEKV6Vzs1ft0wZ/XvRVx7BI9Eg9rRX5XuaWMkKTPMWfkxlWrnsY63AmPzY1lQ8sXpEKdR7oibKPLupxYLqYe3m6tcVNzDULNg6gD0dXfEQaAIcasenqqeXDsaSwlfV7cbbWCf+R+uT2DDI2ELOgVaMenbVTXcm+Dvk42GhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=O22Bi4cI; arc=none smtp.client-ip=54.204.34.130
+	 MIME-Version:Content-Type; b=Rq5v2xkFUYBTbPOm42xOgZr1GM2HnR6pqLAoome9jBuRcYmk0e2sGTxwwkcNp+SkJn4ZurePyiS/PFGw7PF6MkeyiFcF720+NhrYCPIZHGeoekgLPi3ujt3Sv4xSKPq/+gdu0IvzTO/AA4g2FJ3F4DRk2SYS+DgqnsrQ+HfY7aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=K/dmU9pP; arc=none smtp.client-ip=114.132.67.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="O22Bi4cI"
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="K/dmU9pP"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1772071182;
-	bh=hqeiiQSibDnPSeM8goNnMtJt3VgUQjfxUXKZENPXUqo=;
+	s=onoh2408; t=1772071178;
+	bh=g6Gax2GkxNxBm8UMC3q+9IbEHTMf9yW7D3HyhQCot6E=;
 	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=O22Bi4cI6GnvTyaKbya1hZHBJfV5O9yFHQlsETFw/UE7KAyfJqRuTfWn3W3AYonMi
-	 RR7qL9U9HPPpSQgjRfh+xnpDJPIeS9q6Eom/AzQs1drONF7+0ygPCW9wGB032v61SO
-	 5Oxh+r3UIxBisLDLGEHhgOMtyStH4hqgWuTl2N94=
-X-QQ-mid: esmtpgz13t1772071166ta66bd646
-X-QQ-Originating-IP: ELxuA8gLkrBQqTufhKHDK8Rw0c1w/RxOyFlz5yqlgjQ=
+	b=K/dmU9pP49IRJYTBRlBGByYQa369ZQGu3eGENzXlfsseMkdY5uYt75JjAUnm32GCI
+	 /+ZqjcQxI9gQYKfOgNNXdYNUUZXMigaUeD/06GUY/04HM+OVmeHGNsbXhFNFGvtW6e
+	 QPky7P8V/K5okXH/h1M9S8JlNNdWnHM+XOeTOnNA=
+X-QQ-mid: esmtpgz13t1772071162tfe91df3b
+X-QQ-Originating-IP: g2gLZYG8S9sd9DL9x5IeSITYFQ4aevB0XCRRtj7QHfM=
 Received: from localhost.localdomain ( [123.114.60.34])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 26 Feb 2026 09:59:24 +0800 (CST)
+	id ; Thu, 26 Feb 2026 09:59:11 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 1850426630943409006
+X-BIZMAIL-ID: 9016088695343040984
 EX-QQ-RecipientCnt: 8
 From: Yihan Ding <dingyihan@uniontech.com>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
@@ -41,9 +41,9 @@ Cc: Paul Moore <paul@paul-moore.com>,
 	linux-kernel@vger.kernel.org,
 	syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com,
 	Yihan Ding <dingyihan@uniontech.com>
-Subject: [PATCH v3 2/2] landlock: Clean up interrupted thread logic in TSYNC
-Date: Thu, 26 Feb 2026 09:59:03 +0800
-Message-Id: <20260226015903.3158620-3-dingyihan@uniontech.com>
+Subject: [PATCH v3 1/2] landlock: Serialize TSYNC thread restriction
+Date: Thu, 26 Feb 2026 09:59:02 +0800
+Message-Id: <20260226015903.3158620-2-dingyihan@uniontech.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20260226015903.3158620-1-dingyihan@uniontech.com>
 References: <20260226015903.3158620-1-dingyihan@uniontech.com>
@@ -57,94 +57,85 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpgz:uniontech.com:qybglogicsvrsz:qybglogicsvrsz4b-0
-X-QQ-XMAILINFO: OafsCT7BOK1+JMiP6Gk//JNN3SGdiQz4grVSsnbJhz4eSGC3oVjg7DiW
-	v7QYPQQoGs+MAl6liSD0pp0j9Sttq21sbqU8cTR5e79dZHljCmbJFxTRT2li1MjSLTZl4qS
-	gCYivVqVB9UhjYwkuct8KFaldHF+o+XzZPwKzewh0xjJJ6Ozb+uq0ZrqLclDpYvVry8lbDg
-	2iORZp79Wb4zPpkON8/OQmG+PArq+leeRIeW+H6vR3cD86fPjlA8AvGuehwP3AZNWZa4cK3
-	7I1vX+lK5FY3sfafo1wBMYf9R8B/rNMrnnlwzu7TYjy9gtWwIODQtdtQTm6Wm6nuvVzduBy
-	2BItmiQL+hm1g8fVzNhnFPvQxMBTlmTSrkRtKoz54AWrxKxRbp+A6xPX1HyCtDHHcvmwOsJ
-	sHXnHsgsUR7R5Oy+Llhx+GW843qUoJVWskmu4hTZnhkhsYQyXV/lV2JIvp0UvT1btQbZc44
-	TzTnWdTYVNVB9VPwbl1Qu89YdiCa+rYtuoSatSwN+75mMZMsAdXbrnv5Aa1fFFad0B2tdFY
-	lN/blh5DxEoRk40ZRfmqIyQW2NBcKbDl2D6IsXQWT64ZfBVNpT66Y6fLm61GHz5KZbTReVn
-	xuw9r8BTVtb3MLa5xGpHJBzhbANRn4UUapEjo0Ba7+HDz8cJrflgSglPTaH+jUBVn91ExoX
-	h7eleqIhnMyrqwTnVXqKeexU3v5nKR/cmYCNijjvngModfhZKyJJR8IcuclW1tRrRVkhIe4
-	2B5CU0swGI1UBoET/txmnaweifbM9Mz6tMpbTqZSeRT9ENTCkt6b+A/f0OVAaZyV8Z3hkOA
-	85eLe0oi48UvRcWzkBwqjD/x9inL0ydL+EBLna8uXSwI1Pmffgb/hEzU8VI8fhPeGk1y6k5
-	c9hYGfrZ261avWksjeF9nH8uNl3CBZnyry1X0SJFsouyTqq11shU4Xso4Ix0DftAYYQdxIp
-	zBu7FdrRTcxi0Z+ihRMPrzi2wOUsasX6L4KZML1HkbhnqHlErK94sj/7w4Gf9cUjTQytXno
-	En8k0xU4CEtanQKHf5aR6jlB2F/hO/G0LStXoGeA==
-X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
+X-QQ-XMAILINFO: OMQrLjQu6P6m+XZHISugKMR5DIJezTgUzYaCMlp5fIJ9+PyzYkp9077C
+	FSUBfGeGFq+gJ+ky7HYRAzL1Ar3hpw9p5fZcQ64JZegyjP9znyIK3st0X5ybWgjoqCxBl+n
+	KKs+ncxozdhvgHokNgwiOgnlzsEBd99ziH4GW9K2E9oWLBCT8IUPqAmBGz7c4bLd0R19C96
+	+j8YPD+yHGvlont4FmEx+tZNP2/GiKzwUxZ1RdX6+ruXSyqkc1rs0018AJa/B7Mx3SEfdo2
+	FZJpCopVy1otRnCN2aPGH+3tLUlWdgBRBFYo0u4l/DlzKufWhyjAJCe4PmcEpiK9n9kFafp
+	tqBWtmkVXk47L996iUKbIZVqruX0giuWyOE0hmA0OfKJd/eprFrn98oxf23Hl3NpstWzaWR
+	85x1QPfF6MnkSUGGgjLXUJf4hbc1epAm8gpWnYQ3WBr7o9G4ZOb6OAcXw07JP3vbYOn5xWN
+	jlIhFM93JOEHMkxPjaSSC5c9XehCe7dDJPDp/zusaDN9KlP3Rn6xrANBznS2KpZNj6pyp3w
+	rCAOSfx9QGO+WwxSjogUrp0RVlX4q7asJS4V/Qlqjwa/PCIe+rHP34EoMaP1urWdr94IV6y
+	OOmiF9YK5ilqzgl5h38Sxi+WCTF7b+37eolFfdhDNXXbIdTGw+UC324Fopr6D0vrkCAmqHd
+	sKMwq9Mqi/dEOiKlGlCDpO41gcd8050DHOLYi7I1sNgQopixJXJ+BAT/nlRpoQPVg98raLA
+	PEX2UUUH/dZbBKTar+XBBe2gMI/0yjdsh+OWoT+PbJkVnXezIg0kC9LlaX3B8BHYuH3L8s/
+	IW4VwUYCbFv23gAs5Nb6YNSkDQMvpxNqdIEDB1b/8pn7DKxpJ2voll/5NxM2qdN3WqdjUBj
+	XO/fsH4AZV9yIXOxPnu7zERdaTE/0ZwamgB27yGUYgXRtNiev2BbWi5aVRoqHZ2anqa2t1o
+	qMeXnlHjD4M1RGdv6lMFWENQBrUiknBrMk3xdTGGzTOQDoHfSuuupsW2tDn94xBUibpdQjB
+	gBTH+NyEbqZBncH8wHFtI/ki5C6UHgE5J/fvV/e/gXwzDo66i8tORkd3HZGso=
+X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
 X-QQ-RECHKSPAM: 0
 
-In landlock_restrict_sibling_threads(), when the calling thread is
-interrupted while waiting for sibling threads to prepare, it executes
-a recovery path.
+syzbot found a deadlock in landlock_restrict_sibling_threads().
+When multiple threads concurrently call landlock_restrict_self() with
+sibling thread restriction enabled, they can deadlock by mutually
+queueing task_works on each other and then blocking in kernel space
+(waiting for the other to finish).
 
-Previously, this path included a wait_for_completion() call on
-all_prepared to prevent a Use-After-Free of the local shared_ctx.
-However, this wait is redundant. Exiting the main do-while loop
-already leads to a bottom cleanup section that unconditionally waits
-for all_finished. Therefore, replacing the wait with a simple break
-is safe, prevents UAF, and correctly unblocks the remaining task_works.
+Fix this by serializing the TSYNC operations within the same process
+using the exec_update_lock. This prevents concurrent invocations
+from deadlocking. 
 
-Clean up the error path by breaking the loop and updating the
-surrounding comments to accurately reflect the state machine.
+We use down_write_trylock() and return -ERESTARTNOINTR if the lock
+cannot be acquired immediately. This ensures that if a thread fails
+to get the lock, it will return to userspace, allowing it to process
+any pending TSYNC task_works from the lock holder, and then
+transparently restart the syscall.
 
+Fixes: 42fc7e6543f6 ("landlock: Multithreading support for landlock_restrict_self()")
+Reported-by: syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=7ea2f5e9dfd468201817
 Suggested-by: Günther Noack <gnoack3000@gmail.com>
 Signed-off-by: Yihan Ding <dingyihan@uniontech.com>
 ---
-Change in v3:
--No change in v3
+Changes in v3:
+- Replaced down_write_killable() with down_write_trylock() and 
+  returned -ERESTARTNOINTR to avoid a secondary deadlock caused by 
+  blocking the execution of task_works. (Caught by Günther Noack).
 
 Changes in v2:
-- Replaced wait_for_completion(&shared_ctx.all_prepared) with a break
-  statement based on the realization that the bottom wait for 'all_finished'
-  already guards against UAF.
-- Updated comments for clarity.
+- Use down_write_killable() instead of down_write().
+- Split the interrupt path cleanup into a separate patch.
 ---
- security/landlock/tsync.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ security/landlock/tsync.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
-index 420fcfc2fe9a..9731ec7f329a 100644
+index de01aa899751..xxxxxxxxxxxx 100644
 --- a/security/landlock/tsync.c
 +++ b/security/landlock/tsync.c
-@@ -534,24 +534,28 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
- 					   -ERESTARTNOINTR);
+@@ -447,6 +447,13 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+ 	shared_ctx.new_cred = new_cred;
+ 	shared_ctx.set_no_new_privs = task_no_new_privs(current);
  
- 				/*
--				 * Cancel task works for tasks that did not start running yet,
--				 * and decrement all_prepared and num_unfinished accordingly.
-+				 * Opportunistic improvement: try to cancel task works
-+				 * for tasks that did not start running yet. We do not
-+				 * have a guarantee that it cancels any of the enqueued
-+				 * task works (because task_work_run() might already have
-+				 * dequeued them).
- 				 */
- 				cancel_tsync_works(&works, &shared_ctx);
- 
- 				/*
--				 * The remaining task works have started running, so waiting for
--				 * their completion will finish.
-+				 * Break the loop with error. The cleanup code after the loop
-+				 * unblocks the remaining task_works.
- 				 */
--				wait_for_completion(&shared_ctx.all_prepared);
-+				break;
- 			}
- 		}
- 	} while (found_more_threads &&
- 		 !atomic_read(&shared_ctx.preparation_error));
- 
++	/*
++	 * Serialize concurrent TSYNC operations to prevent deadlocks
++	 * when multiple threads call landlock_restrict_self() simultaneously.
++	 */
++	if (!down_write_trylock(&current->signal->exec_update_lock))
++		return -ERESTARTNOINTR;
++
  	/*
--	 * We now have all sibling threads blocking and in "prepared" state in the
--	 * task work. Ask all threads to commit.
-+	 * We now have either (a) all sibling threads blocking and in
-+	 * "prepared" state in the task work, or (b) the preparation error is
-+	 * set. Ask all threads to commit (or abort).
- 	 */
- 	complete_all(&shared_ctx.ready_to_commit);
+ 	 * We schedule a pseudo-signal task_work for each of the calling task's
+ 	 * sibling threads.  In the task work, each thread:
+@@ -556,6 +563,7 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+ 		wait_for_completion(&shared_ctx.all_finished);
  
+ 	tsync_works_release(&works);
++	up_write(&current->signal->exec_update_lock);
+ 
+ 	return atomic_read(&shared_ctx.preparation_error);
+ }
 -- 
 2.51.0
 
