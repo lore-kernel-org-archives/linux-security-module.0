@@ -1,226 +1,181 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A4B264A97
-	for <linux-security-module@vger.kernel.org>; Fri, 27 Feb 2026 01:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B846E258CE7
+	for <linux-security-module@vger.kernel.org>; Fri, 27 Feb 2026 02:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.179
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772154897; cv=pass; b=GAZz3+o7mmgXnvol1kgI4QhUlUZzNlO4D9vQo67fUome04Hnq1mIPQALV/aHPWK4W+NW2c7S1nXx8cLNje69qNGDsi/86tRE59atOfvvJ60JiVX2FNh6PnFYGElLdRfFb2hUfo/RkgMTX0fD21r8wnfkDxvnoA7/BAMEwhfXvgc=
+	t=1772158723; cv=pass; b=MKhUZfaakjXhhe6yJE2rQPsh8yOcxUDDpxBUsTSWO8VoCfa5gZqIgVRSBAez4td26oHCf9AIVyXX/j7B+/5yxVbi7EP8+Rx0B8vJ+1zft4xA0YAjGrU7IFLkVTciyUU8Rg9z9jBHuNYGN1qVRyqZujKGbXKGf9Mv0JBAibrXxiU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772154897; c=relaxed/simple;
-	bh=AFxEP4SVCc1CPd/QViXf8u7kAv9Bo53ydmyQL2ZQjQY=;
+	s=arc-20240116; t=1772158723; c=relaxed/simple;
+	bh=7+T0QT8CrbFsXxd6NbWTB0AZHVLKdAcByNSQNl+1lec=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bRMEwnYWnX7bMeDv2nBaKtvYw7TZ111YuuWIMEWzHDC2A0MIitgfC+AaQI+2fMn+NTIOf6H4kcgfnBx9APK08DKHWwKJvnFF0cjWXQ6wDyddylgxdWmsbhM/0UjKg3a2G/qve//fA8/6/dPe45QU5xFi+UOYcrPoi3cM/MRnij8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=U9/JjTBl; arc=pass smtp.client-ip=209.85.216.50
+	 To:Cc:Content-Type; b=ayw0RgpcqzPEMO1U/8ocbi919lGKounsiRlwUimMbDDDl4l0ujG+UHmg3TDQh99VU7HV/TjUKaXh0Qr/EkAV7XqNTTkCtS0VzKWyrs81CkUIhIYDjLamT1tOCrJJVsL4sK/Vw6tIAXXrz+ECVqTM4ii/lBgKFF4ucgs+wnn6Q4c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZZiYtVam; arc=pass smtp.client-ip=209.85.215.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="U9/JjTBl"
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-358ed67cd4bso557561a91.0
-        for <linux-security-module@vger.kernel.org>; Thu, 26 Feb 2026 17:14:56 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772154895; cv=none;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZZiYtVam"
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-c6e77ace76aso606295a12.3
+        for <linux-security-module@vger.kernel.org>; Thu, 26 Feb 2026 18:18:41 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772158721; cv=none;
         d=google.com; s=arc-20240605;
-        b=inCnuPQQihGxTm6eVNgbVKZUQ2Kd6zySjsQSwFIZ+/o176JDhpqJLpwA2EYPXwgjTs
-         njCq9S7semLCGmIkWvyc13g0NJ/XekuAzikGNWJDDxV8pvjd1rmLY1Ji2NRDvTp2Wy5w
-         nXftAIsIM6mdAOu22cNMCzUj94/rjvHTtXbXfGoaBRXT9w5pHx1km765avY3LIplp9Kw
-         To8GltHhN2EnCxR2sJ4xP2YjbfYUaV+PP7ism1WuJaagLHcDHQZ4saTRS6o1VXwfaWy7
-         y4JSiqq18oz/DuiSijysFS39NP9Ph/haLoOgdlPVR8T/30+mKuZ+gMzr7rT43ZRd6BKT
-         NdHQ==
+        b=Ae2yW8VrQh69Rp0UBh06ybrVf59jusitkjR/GbP6n16GCAhSFqnABRq9coKjAsD9xN
+         lTmC4/jlGdt1XuR/1TfUKmw6lY+bCngbCSRP9CmnzjaG3M6aLbLWgdnZnX0RxQKuzBQq
+         unpfSlkf0lPuYFPflTaC6EY9UWiEyol1yWO2rUP5WnQTuNKoCovKsQXDdKuFeTQthJBB
+         jFCKzrmsDH0oFbbpzdZZVvUEQRaKOTfUQgz+Rkw+lLKPU7IdV0d7KsSflHHIIP2T1keQ
+         j1W4XvX13ij126dY5eJtHwvjn5p/86XEAE/jNQ3ggN7zaRJu/4BMCSoeQYGt3o5jQO+o
+         qxmQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=OQqUVN9Jj0ur5CDgtlNPFsrMXqiRpbvuG+RpeE9RNCs=;
-        fh=1OD4JTb9xzyUQr1amRS8/yG+TyPEjF3GP+NOsFJzjTU=;
-        b=JNZE1K0fIkNFkpgZbikhUSEHKTZinxztVXZ80LribxUJ8AfsSARl33Dl0gVLpWSPkh
-         b/aHQmlEBwxbhbmmNh/TIZlF2GNO++ckFX+UpnRHlQb3MRLiOksZImVEX3fSDXCI3xMU
-         61Q4s1RksLITLEkBfoacOw7WTHAnAw/h/ebjrAq3BbDbjdoA8TdIjqUf8S+81x0dnmBb
-         a6SGnA512vgKwV36Vt5I7cgrIoWyucCGUDTcSvuf+3dPu9ieK5pyL79K60YiH+F0ecqu
-         0we6uymPrTcMHYUSw7kEeUqSUNFLg4Q+sGgr2P4321/eXPTI9U6ZRyJV9uyK7XjmR1R6
-         nGuw==;
+        bh=BR8KYqHbAXGX8+yqIay8WrPwdW9BrA2BmWljrO40nUM=;
+        fh=KTeZXUJ7qPyU+to1EYY6+vyhs85Do8qY4VSfD+BWy8A=;
+        b=PRLVvoQ+0h0I5hN+0MUkY+lsAZ719TQskHVJm+zp0UyPyPlq2bR6l8IKtSR8SimJQ8
+         tKGFr5OuhhvLCei15xISMsPWq2ByBXFbsM4SRJ84VD9NTfFvwmpWx4Ix+sTMSmreyDMW
+         lELSu8XGovK5GN+aKk43QzFQu5oCaamgl5Lr9vZh+orGqQWhXj3SXoCUX8a9EaELllxs
+         ip7LqH0+j22jowTH/b8MY8iEJPyoetSG7Kryy5gIYdo0WA727sb1xFsB0c29Oniv7Zqd
+         PqBhoPevG/dpuL4Ai3x4D5DK2eKtjkHP+79ZhDdS9YPEOkfcPls1rWlteTOeUSLacj5q
+         2C2Q==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1772154895; x=1772759695; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1772158721; x=1772763521; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OQqUVN9Jj0ur5CDgtlNPFsrMXqiRpbvuG+RpeE9RNCs=;
-        b=U9/JjTBlnXUCb5bT+gPaB/6RoLQSwkluV0LnilvZSz8hFnRPy9U4G3zXt692hqnWU4
-         aZ8AXHzEwkVvm+ExE1/Gck7CSbwyZUJpHaf2WAlt0BAvm4IhttqriMbMT7kprL4yvCuB
-         hpAjYHuSXXtd3it6hUXirUiV2GpnvRShJ4+UX+ORqyTO2JIYctr8C+0Y7Gt1bXO0p9UA
-         o8EAGjK04H5swdMXwP+lpE37+dIDSSPR2BWh74RRZ2TtidJvHxM8FrbZJDeQkLL5LYOo
-         3TCy2FPI+F5NNsqr+xqTO+FrFqxOatWAjdq08zlrzNB+sXZwgGrrLBANij8A7w10+WB/
-         nH6g==
+        bh=BR8KYqHbAXGX8+yqIay8WrPwdW9BrA2BmWljrO40nUM=;
+        b=ZZiYtVamPBuA3hYbSVKiTR7tgadXU/joGliWBRxf9Lb3ABmlnMmL6QDjvvWWfitU5A
+         +lQdO92OLdnA9hLQv9ixs0NYeRJT7bAyF2sS1x9o5cTjFLE3ODPhpd4qe09sKq0wjb+I
+         Xaq5xpesxK3vWy91SEaZlzL/ZwiVLMxG10ZMvTDhYufh5KaRQyxARLE9FBS5OcOWY7sB
+         ZjUgkTXBmsW61ZOWnCSQCM4FvAqwoVqRsP0DOAu8ftq48cnlmxjaH8t+WbUi9xTpzZWr
+         JKxpu3312/OE9EapB0NA+kLBuExbcmbz8FRFHDU2KCvAZFKxLxvPssNZcMFgUKR6Y+BQ
+         cCQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772154895; x=1772759695;
+        d=1e100.net; s=20230601; t=1772158721; x=1772763521;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=OQqUVN9Jj0ur5CDgtlNPFsrMXqiRpbvuG+RpeE9RNCs=;
-        b=JKbcNhK1oHf1Hcb/ZVxcA+ICIGYpOJsKXoAKmnOW7AfUGQLQwor2aZYqdv+KFffEyc
-         UJzRh25A57cmXurfRDxfsFHfdo+mjxlvgUicxmQG5q8E953mLeXeX4uCagcmc9QXx/1+
-         aB/r3I9MI797ke+z/ffX+/pIIjwWv10EHxk3WvZBNXd0j0x+nYzHrKY0/H65ICgcDQoU
-         OJS+IW+mcP6yfdHijPwiFI+K5gUWuo8VUlvCwrEubv+YTqXrR2EUEH7FXXQuBVEdKrER
-         r0sMnHBMXkXdE0RS2XR8XSh1JXINoFWtO+kNFLcjCsDtE98Zmu+Ix+ZrL4FzPJ8exU5u
-         Byrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWAQLCPPeSuhQ80dqKXpmdNBuG8SgoT2JMtdN337O6VV1yWCUufBuKGmx+nrlfbbSSvlQaQ8wcek+DX/yhQZOGkCS1lZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS+iSchc/CFFcQp0x99+oVBlpE5fAvdR8cXJ99fUxZ6R1doXFe
-	45EKTpf/mlelaWhnpI31yUCDa8CnhLRqg/uXJ2AhvbmgO8McRVpWiX1caxl5/4uieZXYrlsrHwy
-	f+eQrPCjEFpp5dAnjp87eE/pR2m9Sqn2IQQXFpaEQ
-X-Gm-Gg: ATEYQzzR3AbmN247IJyPPFW9P5/2Jy2vaOg5bie0srzpFx47mcuuhTNs35ZVPk7X94k
-	6gbwb1yxGe1YQTfAJwAmavhiwCsEhxvhEzRHAf212E53JwK8k8acSSW/g0EC5aWbAkTM7xtdRyW
-	F5S07qfExD5F3qlY7fXrAIn1zstIt7WkWnBCla3gI0Pa7wdx9UJKYIk+dkTKocUoWIL6M2KziDE
-	u+6ICHOWG2r81e7YASGM+W68YPvaRBlKdU5ygdsD7fm05ddPUfAvLZKobbvX+DVKLmuQAVsXpbG
-	ZHhAems=
-X-Received: by 2002:a17:90b:544b:b0:352:ece8:1f6c with SMTP id
- 98e67ed59e1d1-3593862e0f3mr3813116a91.8.1772154895448; Thu, 26 Feb 2026
- 17:14:55 -0800 (PST)
+        bh=BR8KYqHbAXGX8+yqIay8WrPwdW9BrA2BmWljrO40nUM=;
+        b=K/rsLkENe+orTytYrZk3bySOlKOgTFgKBu8Fidx/SHuON+iLgJ//ltSnqwcEEd3jJ5
+         Iut5kQ+e73XXkeamTYMi3msuKrGzjUDGpbcQapUPAkr515DOZa3EgMHpKWN6t1Dcy+OB
+         k5b5hAoEEpztioxh/XfdeEMg0Oa5Id6iMcEoJ1vdSd6f+wfi6ymAjclFh1+TYFs4YFyg
+         1Z+rDM/Ld9pTVlDdLaU/0MEPUMfXUyv6syNbe6MRw8gGEC/WR6HIgsjjkrQ6Tza0Jm5a
+         sTaE5yZfbG/iNY4G6JDWPhHfODjzCQ5aqeVPOqneDJcIoLXvc7eU0u0tfZOkfJHPF1ZY
+         S08g==
+X-Forwarded-Encrypted: i=1; AJvYcCV3bN6IrTFTgKS/e+/KJ5MXqmeOsSqscFnKq5Os9Xq6OiSQnI5DekDkK8AXJ9geUMcUqcjWxbjAaG2WF4ZUdfLyqwP3EUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuEeP+uMh8oVd/5V09jXOL+9it8v+bRJghcMuUBWGyA8YaTW3m
+	fw9vzp8HT69NYYmPDp215yQ09IR7tiO4Gaq40RoJPLF0GooLxk9G2fWr+Opb8Hiu/iB4dQIHuOU
+	ogzbUsQITypDEWkUafCceY8ceT/l/urFv0iLTDrWy
+X-Gm-Gg: ATEYQzxNeWG7oaAO/Qt5z8WfzWmZXw8Kfd4kOZGmmU0Je4rantvp+9m8b4AJ8mvwxT9
+	zonW7+H64Ak0ZI6RUohv4f50mzLOKselfAj0drCH0LeTTqA16tnc8gFw1tE2kUa4HzA5oifTfrD
+	kWHCtVTi29ky7svDjVbPRzWLRKaHjqqUNOLbtHRkGRg5UF0lRegIL9jGNuO88lEi1Ap7dqdHoFB
+	yCeBdt93mtcxr/n1i8++rIaywypMoy/iRpY6YWubSc4tydrGRNEM76cFUHjQaElSCTNxrggQcFx
+	3G0DLFk=
+X-Received: by 2002:a05:6a20:b787:b0:394:3001:8b59 with SMTP id
+ adf61e73a8af0-395c3b3da44mr1289545637.53.1772158720942; Thu, 26 Feb 2026
+ 18:18:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <93d291db-4175-48c4-830c-e83bab373ae2@I-love.SAKURA.ne.jp>
- <CAHC9VhQPKU5DqG-ryZsiCV2vZeGGf_a-JStR_LVVCCn03C4usQ@mail.gmail.com>
- <f9b88268-03dc-4356-8b31-0bab73cc9b1e@I-love.SAKURA.ne.jp>
- <CAHC9VhRzRAR+hhn4TFADnHWpzjOxjmh0S_Hg_HktkPkKQ35ycg@mail.gmail.com>
- <74a70504-8ff8-4d97-b35f-774364779889@I-love.SAKURA.ne.jp>
- <7ef21dab-3805-4eae-80d7-9779aeff3f58@I-love.SAKURA.ne.jp>
- <aYmoDwO-YXrc4W1c@secunet.com> <85546d35-c7bd-49bf-b0c3-9677bde25859@I-love.SAKURA.ne.jp>
- <aYnDWbxo-jAzR4ca@secunet.com> <7c17884d-dbf1-4c2c-9813-0c5369cfdcc9@I-love.SAKURA.ne.jp>
- <aY76t_xYCHmLq6Ur@secunet.com>
-In-Reply-To: <aY76t_xYCHmLq6Ur@secunet.com>
+References: <20260220091941.1520313-1-aliceryhl@google.com>
+In-Reply-To: <20260220091941.1520313-1-aliceryhl@google.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 26 Feb 2026 20:14:43 -0500
-X-Gm-Features: AaiRm51x621_XfCY40Hc8f8iSKC879LJQZ171MjucCMdOkNtdcj3-nihadK0SaY
-Message-ID: <CAHC9VhRvw+YCkxkdLr2smK+dXRTXSZY8zD=md-1CD02rRJbALg@mail.gmail.com>
-Subject: Re: [PATCH] xfrm: kill xfrm_dev_{state,policy}_flush_secctx_check()
-To: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, SELinux <selinux@vger.kernel.org>, 
-	linux-security-module <linux-security-module@vger.kernel.org>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, Network Development <netdev@vger.kernel.org>
+Date: Thu, 26 Feb 2026 21:18:29 -0500
+X-Gm-Features: AaiRm503VNspKoFL9GRricgpKufCruC3UjwEoekgp11URjwD_eLxz3lfXP-kW-c
+Message-ID: <CAHC9VhTwJbuXrdUFxWLVWfgk45hLScPgaC9Xb+R2NH6NGdaMZQ@mail.gmail.com>
+Subject: Re: [PATCH] cred: clarify usage of get_cred_rcu()
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Serge Hallyn <sergeh@kernel.org>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 13, 2026 at 5:19=E2=80=AFAM Steffen Klassert
-<steffen.klassert@secunet.com> wrote:
-> On Mon, Feb 09, 2026 at 11:26:14PM +0900, Tetsuo Handa wrote:
-> > On 2026/02/09 20:22, Steffen Klassert wrote:
-> > > On Mon, Feb 09, 2026 at 07:02:47PM +0900, Tetsuo Handa wrote:
-> > >> On 2026/02/09 18:25, Steffen Klassert wrote:
+On Fri, Feb 20, 2026 at 4:19=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> After being confused by looking at get_cred() and get_cred_rcu(), I
+> figured out what's going on. Thus, add some comments to clarify how
+> get_cred_rcu() works for the benefit of others looking in the future.
+>
+> Note that in principle we could add an assertion that non_rcu is zero in
+> the failure path of atomic_long_inc_not_zero().
+
+That would be interesting to add a WARN_ON() there and see what
+happens.  Hopefully nothing, but one never knows ;)  Have you tried
+this?
+
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  include/linux/cred.h | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
 
 ...
 
-> And here we come to the other problem I mentioned. When a LSM policy
-> rejects to flush the xfrm states and policies on network namespace
-> exit, we leak all the xfrm states and policies in that namespace.
-> Here we have no other option, we must flush the xfrm states and
-> policies regardless of any LSM policy. This can be fixed with
-> something like that:
->
-> diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
-> index 72678053bd69..8a4b2cbba0e0 100644
-> --- a/net/xfrm/xfrm_policy.c
-> +++ b/net/xfrm/xfrm_policy.c
-> @@ -1822,9 +1822,11 @@ int xfrm_policy_flush(struct net *net, u8 type, bo=
-ol task_valid)
->
->         spin_lock_bh(&net->xfrm.xfrm_policy_lock);
->
-> -       err =3D xfrm_policy_flush_secctx_check(net, type, task_valid);
-> -       if (err)
-> -               goto out;
-> +       if (task_valid) {
-> +               err =3D xfrm_policy_flush_secctx_check(net, type, task_va=
-lid);
-> +               if (err)
-> +                       goto out;
-> +       }
->
->  again:
->         list_for_each_entry(pol, &net->xfrm.policy_all, walk.all) {
-> diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-> index f2aef404b583..fd00f2d20425 100644
-> --- a/net/xfrm/xfrm_state.c
-> +++ b/net/xfrm/xfrm_state.c
-> @@ -923,9 +923,11 @@ int xfrm_state_flush(struct net *net, u8 proto, bool=
- task_valid)
->         int i, err =3D 0, cnt =3D 0;
->
->         spin_lock_bh(&net->xfrm.xfrm_state_lock);
-> -       err =3D xfrm_state_flush_secctx_check(net, proto, task_valid);
-> -       if (err)
-> -               goto out;
-> +       if (task_valid) {
-> +               err =3D xfrm_state_flush_secctx_check(net, proto, task_va=
-lid);
-> +               if (err)
-> +                       goto out;
-> +       }
->
->         err =3D -ESRCH;
->         for (i =3D 0; i <=3D net->xfrm.state_hmask; i++) {
+> +/*
+> + * get_cred_rcu - Get a reference on a set of credentials under rcu
 
-This seems reasonable to me, and please correct me if I'm wrong, but
-if the network namespace is gone at this point, we don't really have
-to worry about traffic from any applications because there should no
-longer be any processes in that namespace, yes?  I suppose there is
-still a chance we'll see inbound traffic for endpoints in that
-namespace, but I imagine the initns stack will reject it.
+I agree this is a bit pedantic, but it looks like the bulk of the file
+capitalizes RCU and technically that is correct as it is an acronym.
 
-> > >> For example, we don't check permission for unmount when a mount is d=
-eleted
-> > >> due to teardown of a mount namespace. I wonder why you want to check=
- permission
-> > >> for unregistering a net_device when triggered by a teardown path.
-> > >
-> > > I just try to find out what's the right thing to do here.
-> > > If a policy goes away, packets that match this policy will
-> > > find another path through the network stack. As best, they
-> > > are dropped somewhere, but they can also leave on some other
-> > > device without encryption. A LSM that implements xfrm hooks
-> > > must be able to check the permission to delete the xfrm policy
-> > > or state.
-> >
-> > Do you mean that calling xfrm_dev_down()/xfrm_dev_unregister() might
-> > result in network traffic to be sent in cleartext ?
->
-> Yes this can happen, but it is known. You can either install
-> a global block policy with low priority or use a LSM to
-> prevent this. The latter does not work unfortunately.
+> + * @cred: The credentials to reference
+> + *
+> + * Get a reference on the specified set of credentials, or %NULL if the =
+last
+> + * refcount has already been put.
+> + *
+> + * This is used to obtain a reference under an rcu read lock.
 
-If I understand you correctly, the proposal below would address this
-last part, yes?
+I would suggest a different description:
 
-> > If yes, we need to consider updating the other patch at
-> > https://lkml.kernel.org/r/20260202123655.GK34749@unreal to replace
-> > the NETDEV_UNREGISTER net_device with the blackhole_netdev. (That is,
-> > xfrm_dev_{state,policy}_flush() does not actually delete a state/policy
-> > but instead updates that state/policy to behave as a blackhole. Then,
-> > we won't need to call LSM hooks because we no longer delete).
->
-> I think there is a clean way to fix this. We could just unlink
-> policy and state from the device. Then we could do the same as
-> we do when a state becomes unavailable due to expiration. We mark
-> the state as invalid with a flag. On expiration we do this with
-> XFRM_STATE_EXPIRED. We can add a new flag and do the same as
-> xfrm_state_check_expire() does on a hard expire. I.e. fire
-> a timer that notifies the userspace key manager that this
-> path is not avalable anymore and return an error. This way
-> userspace is informed about that and all packets matching
-> the policy are dropped.
+"Get a reference to the specified set of credentials and return a
+pointer to the cred struct, or %NULL if it is not possible to obtain a
+new reference.  After successfully taking a new reference to the
+specified credentials, the cred struct will be marked for free'ing via
+RCU."
 
-This looks interesting.  The traffic would be dropped, and presumably
-userspace could then cleanup the old state and establish any new
-policy as required, yes?
+> + */
+>  static inline const struct cred *get_cred_rcu(const struct cred *cred)
+>  {
+>         struct cred *nonconst_cred =3D (struct cred *) cred;
+>         if (!cred)
+>                 return NULL;
+>         if (!atomic_long_inc_not_zero(&nonconst_cred->usage))
+>                 return NULL;
+> +       /*
+> +        * If non_rcu is not already zero, then this call to get_cred_rcu=
+() is
+> +        * probably wrong because if 'usage' goes to zero prior to this c=
+all,
+> +        * then get_cred_rcu() assumes it is freed with rcu.
+> +        *
+> +        * However, an exception to this is using get_cred_rcu() in cases=
+ where
+> +        * get_cred() would have been okay. To support that case, we do n=
+ot
+> +        * check non_rcu and set it to zero regardless.
+> +        */
 
-> This is of course a bit more work and requires testing.
+This is surely a matter of perspective, but the above seems a bit
+wordy, and doesn't address what I believe is the important part:
+setting non_rcu to zero means this credential will be freed
+asynchronously via RCU.  Both get_cred_rcu() and get_cred() set
+non_rcu to 0/false ... although get_cred() doesn't do the non-zero
+check before bumping the refcount.
 
-Tetsuo, Steffen, any chance one of the two of you would be able to
-work on some patches for this?
+I suppose we could consider adding the zero check in the get_cred()
+case, but even if we ignore the KCSAN barrier, it looks like the arch
+support for the inc_not_zero() case isn't nearly as good, likely
+resulting in more code to execute.
+
+>         nonconst_cred->non_rcu =3D 0;
+>         return cred;
+>  }
+> --
+> 2.53.0.345.g96ddfc5eaa-goog
 
 --=20
 paul-moore.com
