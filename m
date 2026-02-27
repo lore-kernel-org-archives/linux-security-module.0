@@ -1,86 +1,83 @@
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287DE348445;
-	Fri, 27 Feb 2026 18:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76DCE37BE9B;
+	Fri, 27 Feb 2026 18:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772216559; cv=none; b=i5qV+ZCBvdEcRRTszDgKEbPPROwdFWNr3D5J0fsCw7XBn949oKR7+uoosOUYv2j0kZHGwcTuC8KKp0Ox9qBujxyGyxuUFHiBjO6wSx4XKn3jagM/g0Omsv1hYTjKd8otuqrtXi4ExROhzC106SAl6bCve2sh5bEc1jtsLYi2qVE=
+	t=1772218020; cv=none; b=tf3t0WlNpuuY0K2a4ogNHLkADvZjfpLMFHv5sDkQVENIZV5tcAryjXyDsouHnDCPCjlfw19UDbSlm85ID0sojGIyx+xwDNe6Ozu1jSyY3dKkcV1YcxIPs6/U1OmUaIXruQfwxopS0RF+y13nUdYZ6ZUgYEq+bHA7wEBxtk/bWR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772216559; c=relaxed/simple;
-	bh=jSW8xqvkSFWHqY7xXinynFM0z+oqvAK+4mvTfQzvAwU=;
+	s=arc-20240116; t=1772218020; c=relaxed/simple;
+	bh=l5FLOa8OoBz6WlZAnlSDLhYDFS0I1GI+IauNHm9Rwz8=;
 	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=BUaf5wuBrpdhREZvMNisGHEX0wwzVCa2Zhpc3BkaN+9wOecvsXOY2m4zBostXBq6MsQtBUiXEGDKpskeSExIcw2nTyTg0ziZcNWk2SoAyNjs19NkJV6hW/CofwcvXUETHYCZ1fOwgLs3ZAJmZwHto8xSU+Ps1XmPrBbCBXEcRII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=W/J9uZLp; arc=none smtp.client-ip=148.163.156.1
+	 Date:MIME-Version; b=jSMtax5x4DGFAP3+LPLx+/M6r6feVuz6zTxaTfIJd4B9UVCWYIuNIEu4GF1SMgWTAnHuKKYjxXDtRIOlKMOklp56argyN7HrNcoI0a06jY2DJ+1qbhJBpadSu+89mGUSVDUdo2eLCcbzNsbeAvGaO+8851CTNSSMD1Zci1zS+eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=O2b/IYYl; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="W/J9uZLp"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61R9UfYW3273855;
-	Fri, 27 Feb 2026 18:22:02 GMT
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="O2b/IYYl"
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61RGFkei2346005;
+	Fri, 27 Feb 2026 18:46:37 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=NDkVbv
-	XOLq/UuXTo/484ujl50Ey1letRdpgIS+1Py0k=; b=W/J9uZLp0P1qVk4fPMFeB6
-	L+ICq3PWRlcgvAIUbaFqw8XfQzHz+JDEo+AC0tQm/1Dr2T5XJvsF1TDeNUAHYfbV
-	Fq5lfAWj1XKLb6PrZJukyIeya5czSxqZv3jhjAszjYMbbb9XwrV7R3dKHoBq/OGE
-	NYUzqTiDDfCInd8jovuwQoSfpKoTOONhf/FwW5HG4/DuUK2sJEfoTUIJ4bHtdVhs
-	keNjoRA8rTpSczOFl7boZMbvQnp/Mov3E+ritGQ2QtpXturhY5qmZZXBs6rljq2C
-	NLGURupu8utN+qZvBVKGTNBCxRRicdaF/LOU2crfSBgXmPCWgDQTM29YmmwEV2hw
+	:message-id:mime-version:references:subject:to; s=pp1; bh=xESYnA
+	wH+wG85a8XL7co7q9y7OKCMGEvMH95ZhSfjuw=; b=O2b/IYYlyjAqYZaNLoKGaI
+	nR7DsDhb5STIB/Yo2PK9vSeUUSma65gp+DhSIcZSQSm9wXs8Ofr3JKOQSMrLWhMc
+	p6j5gkovJXh0Rm/5ds4vE8LmIu2Clk8KTJexN20fs0DzJ3F2cp4H9uBNMdN9/7Bh
+	s5S2JikIwMjvd0aUbcP4AkyuH6YyurVGCcZ+fWnhjFGcL9GlHVlpZPFxi2kiv+XG
+	xGnc5YmLLO/tEniuqPFjDxlPV8uMl3rwfCpdRMd2aRrEAQzpJuRcKtjXTeCxv9id
+	zs1fo5s6qd6p4TcruAA0sH5FTVOLNBrK8SQRLLsgLfoybossZXWZVNQbBzThblXA
 	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4cf472e6e3-1
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4ch8593k5g-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Feb 2026 18:22:01 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 61RHt9Ov013478;
-	Fri, 27 Feb 2026 18:22:00 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4cfqdykn14-1
+	Fri, 27 Feb 2026 18:46:36 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 61RFtm7O003397;
+	Fri, 27 Feb 2026 18:46:35 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4cfs8kbda9-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Feb 2026 18:21:59 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 61RILxAq15532556
+	Fri, 27 Feb 2026 18:46:35 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 61RIkYe128836470
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 27 Feb 2026 18:21:59 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 87CF35805C;
-	Fri, 27 Feb 2026 18:21:59 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C110758058;
-	Fri, 27 Feb 2026 18:21:57 +0000 (GMT)
+	Fri, 27 Feb 2026 18:46:35 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D717A5804E;
+	Fri, 27 Feb 2026 18:46:34 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 541AC5803F;
+	Fri, 27 Feb 2026 18:46:33 +0000 (GMT)
 Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.86.1])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 27 Feb 2026 18:21:57 +0000 (GMT)
-Message-ID: <180f9f992ce862837058e7db943b117f2cc8a4ca.camel@linux.ibm.com>
-Subject: Re: [PATCH 1/2] ima: efi: Drop unnecessary check for
- CONFIG_MODULE_SIG/CONFIG_KEXEC_SIG
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 27 Feb 2026 18:46:33 +0000 (GMT)
+Message-ID: <dee902ad4fcbc60ed2051cb0d165232ad27c45b1.camel@linux.ibm.com>
+Subject: Re: [PATCH v5] ima_fs: Avoid creating measurement lists for
+ unsupported hash algos
 From: Mimi Zohar <zohar@linux.ibm.com>
-To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, dima@arista.com,
         Roberto
- Sassu	 <roberto.sassu@huawei.com>,
+ Sassu <roberto.sassu@huawei.com>,
         Dmitry Kasatkin
  <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        Eric Snowberg	 <eric.snowberg@oracle.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris	 <jmorris@namei.org>,
         "Serge
- E. Hallyn"	 <serge@hallyn.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman	 <mpe@ellerman.id.au>,
-        Nicholas Piggin
- <npiggin@gmail.com>,
-        "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Aaron Tomlin	
- <atomlin@atomlin.com>, Nicolas Schier <nsc@kernel.org>
-In-Reply-To: <20260226-ima-ifdef-v1-1-8b9613edbbdb@weissschuh.net>
-References: <20260226-ima-ifdef-v1-0-8b9613edbbdb@weissschuh.net>
-	 <20260226-ima-ifdef-v1-1-8b9613edbbdb@weissschuh.net>
+ E. Hallyn" <serge@hallyn.com>,
+        Silvia Sisinni	 <silvia.sisinni@polito.it>,
+        Enrico Bravi <enrico.bravi@polito.it>
+Cc: Jonathan McDowell <noodles@earth.li>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Dmitry Safonov <0x7f454c46@gmail.com>
+In-Reply-To: <0fde824faace320c6d3ef6137bf50cee0289c6c0.camel@huaweicloud.com>
+References: <20260223-ima-oob-v5-1-91cc1064e767@arista.com>
+		 <6808b1a8fcb014e6c7c18241d39155f5c12edc31.camel@linux.ibm.com>
+	 <0fde824faace320c6d3ef6137bf50cee0289c6c0.camel@huaweicloud.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 27 Feb 2026 13:21:57 -0500
+Date: Fri, 27 Feb 2026 13:46:32 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -90,67 +87,74 @@ MIME-Version: 1.0
 User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 X-TM-AS-GCONF: 00
 X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Proofpoint-ORIG-GUID: pFfTqbmMglxjGmMQbh6ifL8AVyznQOeB
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjI3MDE2MSBTYWx0ZWRfX8RjHmLPn9Sxy
- 4I/RxNiX35lk4eFc4bbJm6PQRDE2mq09dc/szklGe7CNHj7sSszun3qWY/PejlkQP1FggxmTdQF
- lLySu8Ak1NxB+3CibRjTB7jcyjVTQ/eAIyc//4whOuL8MV1NQ5Ghi0h60XXKjbcCfmIIMEEZ2IZ
- bfqFivQmZEwpz/ubKgsGaeoMP3eInNSJiGZOK3+n6Pxv5J34YhV24OW651C9fR+uYfVv1bZBqYP
- H7BjOEAINMojziHR/mThcTI4rgdEupNd7j232CUV+aNO6G3MJWBnKHxwTU9NRsDMyORPBFrgImb
- yWGIxGJa9A8ryAN8y7N7jCfukFmRJCT7YtP3mxd3ETLbDyJx409GEGGB1a3ZxI6QKAt8crtDq/C
- oafpedlpfPWHrQeP7xpiuXRrzknOz83IxYYYtPCe/2G7LhUTWWbYVYqiXsDQLi1Wy3IFi4e6Z8C
- wexYaoSXHDNdvnCzRiQ==
-X-Authority-Analysis: v=2.4 cv=R7wO2NRX c=1 sm=1 tr=0 ts=69a1e0c9 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjI3MDE2NCBTYWx0ZWRfX4ikwkWiOr3fo
+ hpqqs/f4JxcIUyNSDJs1RzIc5LW8Z3FlwFpkvcEfX6HM95YQtinMlqJlukIs+LWzp9umfKA1E/q
+ uLwXHimTzsRWFRN8jpsUOSC/3hFBUOlqJtkrn5oEL21c3iYEwTMY5C0P8yo3FZZoWJCQUU8XnGx
+ ITyS/24JkId3LHIXNP3gQXP8XnVX4LNs9DZUJj5mbQRkkdKm94K5V0cXH93aEBs8XOwwt9lqkGs
+ lUjRfmbxFlGMHW9FPSnOVNy8lOTwRpBD3scOWzoVZpODdtl+DRr4F+reVwcKC+bHpz000C0NkEZ
+ pvWaH2Q/u/1mv34TYNGLPEY2u5I9Tt2OhyNfOjni7aTyrU3BTe/F+fElgPI2P+PvlWY6pI+ze/7
+ 74iXfKOap0o2EPPrIX/9wiXChGgkfciFBA8A/5tUbHd5IrOTUN2W82XvecTt4mBl3oxsMmrywsA
+ cix4pUeBS2lAdrTkxmw==
+X-Proofpoint-GUID: z9aNJUq5O6kg8zV9KGrsBKHK2KOghGe_
+X-Authority-Analysis: v=2.4 cv=S4HUAYsP c=1 sm=1 tr=0 ts=69a1e68c cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
  a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22
- a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22 a=VTue-mJiAAAA:8
- a=VnNF1IyMAAAA:8 a=j-LfP5YGAAAA:8 a=VwQbUJbxAAAA:8 a=Kxd9cklhb0fStvzIxPUA:9
- a=QEXdDO2ut3YA:10 a=S9YjYK_EKPFYWS37g-LV:22 a=pci6KG57UX3UzFLC8IW4:22
-X-Proofpoint-GUID: eRNUudb7ia1erSVYZK7al1Uq3mtQQXYL
+ a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22 a=f3jowhlJtBf6sRR6YjgA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: CsXVBNFM2kpkLJjWF4jEexV7Pk31WOaY
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-02-27_03,2026-02-27_03,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 clxscore=1011 impostorscore=0 phishscore=0 spamscore=0
- suspectscore=0 malwarescore=0 bulkscore=0 adultscore=0 lowpriorityscore=0
+ suspectscore=0 clxscore=1015 impostorscore=0 malwarescore=0 bulkscore=0
+ phishscore=0 adultscore=0 lowpriorityscore=0 spamscore=0 priorityscore=1501
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2602270161
+ reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2602270164
 
-On Thu, 2026-02-26 at 08:20 +0100, Thomas Wei=C3=9Fschuh wrote:
-> When configuration settings are disabled the guarded functions are
-> defined as empty stubs, so the check is unnecessary.
+
+> > > @@ -404,16 +398,24 @@ static int __init create_securityfs_measurement=
+_lists(void)
+> > >  		char file_name[NAME_MAX + 1];
+> > >  		struct dentry *dentry;
+> > > =20
+> > > -		sprintf(file_name, "ascii_runtime_measurements_%s",
+> > > -			hash_algo_name[algo]);
+> > > +		if (algo =3D=3D HASH_ALGO__LAST)
+> > > +			sprintf(file_name, "ascii_runtime_measurements_tpm_alg_%x",
+> > > +				ima_tpm_chip->allocated_banks[i].alg_id);
+> > > +		else
+> > > +			sprintf(file_name, "ascii_runtime_measurements_%s",
+> > > +				hash_algo_name[algo]);
+> > >  		dentry =3D securityfs_create_file(file_name, S_IRUSR | S_IRGRP,
+> > >  						ima_dir, (void *)(uintptr_t)i,
+> > >  						&ima_ascii_measurements_ops);
+> > >  		if (IS_ERR(dentry))
+> > >  			return PTR_ERR(dentry);
+> > > =20
+> > > -		sprintf(file_name, "binary_runtime_measurements_%s",
+> > > -			hash_algo_name[algo]);
+> > > +		if (algo =3D=3D HASH_ALGO__LAST)
+> > > +			sprintf(file_name, "binary_runtime_measurements_tpm_alg_%x",
+> > > +				ima_tpm_chip->allocated_banks[i].alg_id);
+> >=20
+> > There's no point in creating either of the securityfs files if the kern=
+el
+> > doesn't support the hash algorithm.
 >=20
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> Reviewed-by: Aaron Tomlin <atomlin@atomlin.com>
-> Reviewed-by: Nicolas Schier <nsc@kernel.org>
-> ---
->  security/integrity/ima/ima_efi.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->=20
-> diff --git a/security/integrity/ima/ima_efi.c b/security/integrity/ima/im=
-a_efi.c
-> index 138029bfcce1..a35dd166ad47 100644
-> --- a/security/integrity/ima/ima_efi.c
-> +++ b/security/integrity/ima/ima_efi.c
-> @@ -68,10 +68,8 @@ static const char * const sb_arch_rules[] =3D {
->  const char * const *arch_get_ima_policy(void)
->  {
->  	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
-> -		if (IS_ENABLED(CONFIG_MODULE_SIG))
-> -			set_module_sig_enforced();
-> -		if (IS_ENABLED(CONFIG_KEXEC_SIG))
-> -			set_kexec_sig_enforced();
-> +		set_module_sig_enforced();
-> +		set_kexec_sig_enforced();
->  		return sb_arch_rules;
->  	}
->  	return NULL;
+> It is not useful per se, but since it is an information that it is
+> produced and maintained by IMA, we can print it. And second, it will
+> expose the fact that there is an unsupported algorithm (in the case of
+> SHA3-256, the fix is add to the TPM - crypto subsystem mapping in tpm2-
+> cmd.c).
 
-Thanks, Thomas.
+Yes, agreed.
 
-With commit 63e8a44395a4 ("integrity: Make arch_ima_get_secureboot integrit=
-y-
-wide"), there was a merge conflict.  After fixing the merge conflict, your
-patches are now queued in next-integrity.
+Dmitry, the Subject line implies the measurement lists aren't being created=
+, yet
+you're actually creating them.  Please update the patch description before =
+re-
+posting.
+
+thanks,
 
 Mimi
