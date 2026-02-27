@@ -1,181 +1,168 @@
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B846E258CE7
-	for <linux-security-module@vger.kernel.org>; Fri, 27 Feb 2026 02:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.179
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772158723; cv=pass; b=MKhUZfaakjXhhe6yJE2rQPsh8yOcxUDDpxBUsTSWO8VoCfa5gZqIgVRSBAez4td26oHCf9AIVyXX/j7B+/5yxVbi7EP8+Rx0B8vJ+1zft4xA0YAjGrU7IFLkVTciyUU8Rg9z9jBHuNYGN1qVRyqZujKGbXKGf9Mv0JBAibrXxiU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772158723; c=relaxed/simple;
-	bh=7+T0QT8CrbFsXxd6NbWTB0AZHVLKdAcByNSQNl+1lec=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ayw0RgpcqzPEMO1U/8ocbi919lGKounsiRlwUimMbDDDl4l0ujG+UHmg3TDQh99VU7HV/TjUKaXh0Qr/EkAV7XqNTTkCtS0VzKWyrs81CkUIhIYDjLamT1tOCrJJVsL4sK/Vw6tIAXXrz+ECVqTM4ii/lBgKFF4ucgs+wnn6Q4c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZZiYtVam; arc=pass smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CEC3290CA;
+	Fri, 27 Feb 2026 07:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772178682; cv=none; b=c1Pjt0xXwBnT0cxFH2fXSdGwmnkhs4QNh2W9A+eWpNj3f4oHnRr0GIBe9FYs5zlOW/0PrE5kW4Ih7TirIg+OM9Ccz77QwsnMWXksqG/ck/K7IvxsleQM0uHabunMA5k9SdZ11Cd0KmR6nrBlrTT5QhGa3qVHv4FmKhwOI5QVa8Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772178682; c=relaxed/simple;
+	bh=FuwJ4dFEMoOWUXSsbBn5R1/MzLKf04Ey3jVnqdyvQaA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e7yylkQ2GiR1jEkq+bViMTGK21XFPpUUeci58F7IUa72C76AlVdkc1LJl7MUQGU0hR4I6yryjnkBJ5NXlSZxEgrL4pytD1Mje9GuJGKycHAJndFCyOnn2Un/BDlVq61yqfe5tgrVogfa2wC0tMVXZ/85MS/GUT+iDlP8vJ8v57w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mnJR1Ri0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZZiYtVam"
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-c6e77ace76aso606295a12.3
-        for <linux-security-module@vger.kernel.org>; Thu, 26 Feb 2026 18:18:41 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772158721; cv=none;
-        d=google.com; s=arc-20240605;
-        b=Ae2yW8VrQh69Rp0UBh06ybrVf59jusitkjR/GbP6n16GCAhSFqnABRq9coKjAsD9xN
-         lTmC4/jlGdt1XuR/1TfUKmw6lY+bCngbCSRP9CmnzjaG3M6aLbLWgdnZnX0RxQKuzBQq
-         unpfSlkf0lPuYFPflTaC6EY9UWiEyol1yWO2rUP5WnQTuNKoCovKsQXDdKuFeTQthJBB
-         jFCKzrmsDH0oFbbpzdZZVvUEQRaKOTfUQgz+Rkw+lLKPU7IdV0d7KsSflHHIIP2T1keQ
-         j1W4XvX13ij126dY5eJtHwvjn5p/86XEAE/jNQ3ggN7zaRJu/4BMCSoeQYGt3o5jQO+o
-         qxmQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=BR8KYqHbAXGX8+yqIay8WrPwdW9BrA2BmWljrO40nUM=;
-        fh=KTeZXUJ7qPyU+to1EYY6+vyhs85Do8qY4VSfD+BWy8A=;
-        b=PRLVvoQ+0h0I5hN+0MUkY+lsAZ719TQskHVJm+zp0UyPyPlq2bR6l8IKtSR8SimJQ8
-         tKGFr5OuhhvLCei15xISMsPWq2ByBXFbsM4SRJ84VD9NTfFvwmpWx4Ix+sTMSmreyDMW
-         lELSu8XGovK5GN+aKk43QzFQu5oCaamgl5Lr9vZh+orGqQWhXj3SXoCUX8a9EaELllxs
-         ip7LqH0+j22jowTH/b8MY8iEJPyoetSG7Kryy5gIYdo0WA727sb1xFsB0c29Oniv7Zqd
-         PqBhoPevG/dpuL4Ai3x4D5DK2eKtjkHP+79ZhDdS9YPEOkfcPls1rWlteTOeUSLacj5q
-         2C2Q==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1772158721; x=1772763521; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BR8KYqHbAXGX8+yqIay8WrPwdW9BrA2BmWljrO40nUM=;
-        b=ZZiYtVamPBuA3hYbSVKiTR7tgadXU/joGliWBRxf9Lb3ABmlnMmL6QDjvvWWfitU5A
-         +lQdO92OLdnA9hLQv9ixs0NYeRJT7bAyF2sS1x9o5cTjFLE3ODPhpd4qe09sKq0wjb+I
-         Xaq5xpesxK3vWy91SEaZlzL/ZwiVLMxG10ZMvTDhYufh5KaRQyxARLE9FBS5OcOWY7sB
-         ZjUgkTXBmsW61ZOWnCSQCM4FvAqwoVqRsP0DOAu8ftq48cnlmxjaH8t+WbUi9xTpzZWr
-         JKxpu3312/OE9EapB0NA+kLBuExbcmbz8FRFHDU2KCvAZFKxLxvPssNZcMFgUKR6Y+BQ
-         cCQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772158721; x=1772763521;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=BR8KYqHbAXGX8+yqIay8WrPwdW9BrA2BmWljrO40nUM=;
-        b=K/rsLkENe+orTytYrZk3bySOlKOgTFgKBu8Fidx/SHuON+iLgJ//ltSnqwcEEd3jJ5
-         Iut5kQ+e73XXkeamTYMi3msuKrGzjUDGpbcQapUPAkr515DOZa3EgMHpKWN6t1Dcy+OB
-         k5b5hAoEEpztioxh/XfdeEMg0Oa5Id6iMcEoJ1vdSd6f+wfi6ymAjclFh1+TYFs4YFyg
-         1Z+rDM/Ld9pTVlDdLaU/0MEPUMfXUyv6syNbe6MRw8gGEC/WR6HIgsjjkrQ6Tza0Jm5a
-         sTaE5yZfbG/iNY4G6JDWPhHfODjzCQ5aqeVPOqneDJcIoLXvc7eU0u0tfZOkfJHPF1ZY
-         S08g==
-X-Forwarded-Encrypted: i=1; AJvYcCV3bN6IrTFTgKS/e+/KJ5MXqmeOsSqscFnKq5Os9Xq6OiSQnI5DekDkK8AXJ9geUMcUqcjWxbjAaG2WF4ZUdfLyqwP3EUQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuEeP+uMh8oVd/5V09jXOL+9it8v+bRJghcMuUBWGyA8YaTW3m
-	fw9vzp8HT69NYYmPDp215yQ09IR7tiO4Gaq40RoJPLF0GooLxk9G2fWr+Opb8Hiu/iB4dQIHuOU
-	ogzbUsQITypDEWkUafCceY8ceT/l/urFv0iLTDrWy
-X-Gm-Gg: ATEYQzxNeWG7oaAO/Qt5z8WfzWmZXw8Kfd4kOZGmmU0Je4rantvp+9m8b4AJ8mvwxT9
-	zonW7+H64Ak0ZI6RUohv4f50mzLOKselfAj0drCH0LeTTqA16tnc8gFw1tE2kUa4HzA5oifTfrD
-	kWHCtVTi29ky7svDjVbPRzWLRKaHjqqUNOLbtHRkGRg5UF0lRegIL9jGNuO88lEi1Ap7dqdHoFB
-	yCeBdt93mtcxr/n1i8++rIaywypMoy/iRpY6YWubSc4tydrGRNEM76cFUHjQaElSCTNxrggQcFx
-	3G0DLFk=
-X-Received: by 2002:a05:6a20:b787:b0:394:3001:8b59 with SMTP id
- adf61e73a8af0-395c3b3da44mr1289545637.53.1772158720942; Thu, 26 Feb 2026
- 18:18:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mnJR1Ri0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A0F4C116C6;
+	Fri, 27 Feb 2026 07:51:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772178681;
+	bh=FuwJ4dFEMoOWUXSsbBn5R1/MzLKf04Ey3jVnqdyvQaA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mnJR1Ri0HlkV4Dai35gEyErjrdRIBpO4AcgWYMZ32L/4AGLK5MBEWxqmkTaZ318N5
+	 pB7otq2jdQRQV1+qztqAs9fehuvEo9GgL0FoEw2Cht9wEXi2gUbi/U54aeB3C9nMad
+	 5az7xMleO+ONHOEwNTW90zNb9vJ5fkCtOleepZjN96Irept03ErO8dGTgSAdNbDrc+
+	 QSUyNhDg4W7+2/GL4RJ9jdI9N5xbD3YM7wKB9d4r26aDN1fyzsjE1eV1tEcQyHPIs3
+	 mNOilMCYGlXI3qJ6g4zThYMdKBtv1LA7MZauVX1rewLA+k2y8mhK/0LXxGpxfmxuWw
+	 juPlTGhSjEPCg==
+Message-ID: <31dfcf7a-5b3d-406d-bdd4-c8b09f7eb1f0@kernel.org>
+Date: Fri, 27 Feb 2026 08:51:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260220091941.1520313-1-aliceryhl@google.com>
-In-Reply-To: <20260220091941.1520313-1-aliceryhl@google.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 26 Feb 2026 21:18:29 -0500
-X-Gm-Features: AaiRm503VNspKoFL9GRricgpKufCruC3UjwEoekgp11URjwD_eLxz3lfXP-kW-c
-Message-ID: <CAHC9VhTwJbuXrdUFxWLVWfgk45hLScPgaC9Xb+R2NH6NGdaMZQ@mail.gmail.com>
-Subject: Re: [PATCH] cred: clarify usage of get_cred_rcu()
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Serge Hallyn <sergeh@kernel.org>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/6] Extend "trusted" keys to support a new trust
+ source named the PowerVM Key Wrapping Module (PKWM)
+To: Srish Srinivasan <ssrish@linux.ibm.com>, linux-integrity@vger.kernel.org,
+ keyrings@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+ James.Bottomley@HansenPartnership.com, jarkko@kernel.org,
+ zohar@linux.ibm.com, nayna@linux.ibm.com, rnsastry@linux.ibm.com,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20260201135930.898721-1-ssrish@linux.ibm.com>
+Content-Language: fr-FR
+From: "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
+In-Reply-To: <20260201135930.898721-1-ssrish@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 20, 2026 at 4:19=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> After being confused by looking at get_cred() and get_cred_rcu(), I
-> figured out what's going on. Thus, add some comments to clarify how
-> get_cred_rcu() works for the benefit of others looking in the future.
->
-> Note that in principle we could add an assertion that non_rcu is zero in
-> the failure path of atomic_long_inc_not_zero().
 
-That would be interesting to add a WARN_ON() there and see what
-happens.  Hopefully nothing, but one never knows ;)  Have you tried
-this?
 
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  include/linux/cred.h | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
+Le 01/02/2026 à 14:59, Srish Srinivasan a écrit :
+> Power11 has introduced a feature called the PowerVM Key Wrapping Module
+> (PKWM), where PowerVM in combination with Power LPAR Platform KeyStore
+> (PLPKS) [1] supports a new feature called "Key Wrapping" [2] to protect
+> user secrets by wrapping them using a hypervisor generated wrapping key.
+> This wrapping key is an AES-GCM-256 symmetric key that is stored as an
+> object in the PLPKS. It has policy based protections that prevents it from
+> being read out or exposed to the user. This wrapping key can then be used
+> by the OS to wrap or unwrap secrets via hypervisor calls.
+> 
+> This patchset intends to add the PKWM, which is a combination of IBM
+> PowerVM and PLPKS, as a new trust source for trusted keys. The wrapping key
+> does not exist by default and its generation is requested by the kernel at
+> the time of PKWM initialization. This key is then persisted by the PKWM and
+> is used for wrapping any kernel provided key, and is never exposed to the
+> user. The kernel is aware of only the label to this wrapping key.
+> 
+> Along with the PKWM implementation, this patchset includes two preparatory
+> patches: one fixing the kernel-doc inconsistencies in the PLPKS code and
+> another reorganizing PLPKS config variables in the sysfs.
+> 
+> Changelog:
+> 
+> v6:
 
-...
+Seems like v5 was applied, if needed can you send followup patch ?
 
-> +/*
-> + * get_cred_rcu - Get a reference on a set of credentials under rcu
+Christophe
 
-I agree this is a bit pedantic, but it looks like the bulk of the file
-capitalizes RCU and technically that is correct as it is an acronym.
+> 
+> * Patch 1 to Patch 3:
+>    - Add Nayna's Tested-by tag
+> * Patch 4
+>    - Fix build error reported by kernel test robot <lkp@intel.com>
+>    - Add Nayna's Tested-by tag
+> * Patch 5
+>    - Add Nayna's Tested-by tag
+> 
+> v5:
+> 
+> * Patch 1 to Patch 3:
+>    - Add Nayna's Reviewed-by tag
+> * Patch 4:
+>    - Fix build error identified by chleroy@kernel.org
+>    - Add Nayna's Reviewed-by tag
+> * Patch 5:
+>    - Add Reviewed-by tags from Nayna and Jarkko
+> 
+> v4:
+> 
+> * Patch 5:
+>    - Add a per-backend private data pointer in trusted_key_options
+>      to store a pointer to the backend-specific options structure
+>    - Minor clean-up
+> 
+> v3:
+> 
+> * Patch 2:
+>    - Add Mimi's Reviewed-by tag
+> * Patch 4:
+>    - Minor tweaks to some print statements
+>    - Fix typos
+> * Patch 5:
+>    - Fix typos
+>    - Add Mimi's Reviewed-by tag
+> * Patch 6:
+>    - Add Mimi's Reviewed-by tag
+> 
+> v2:
+> 
+> * Patch 2:
+>    - Fix build warning detected by the kernel test bot
+> * Patch 5:
+>    - Use pr_debug inside dump_options
+>    - Replace policyhande with wrap_flags inside dump_options
+>    - Provide meaningful error messages with error codes
+> 
+> Nayna Jain (1):
+>    docs: trusted-encryped: add PKWM as a new trust source
+> 
+> Srish Srinivasan (5):
+>    pseries/plpks: fix kernel-doc comment inconsistencies
+>    powerpc/pseries: move the PLPKS config inside its own sysfs directory
+>    pseries/plpks: expose PowerVM wrapping features via the sysfs
+>    pseries/plpks: add HCALLs for PowerVM Key Wrapping Module
+>    keys/trusted_keys: establish PKWM as a trusted source
+> 
+>   .../ABI/testing/sysfs-firmware-plpks          |  58 ++
+>   Documentation/ABI/testing/sysfs-secvar        |  65 --
+>   .../admin-guide/kernel-parameters.txt         |   1 +
+>   Documentation/arch/powerpc/papr_hcalls.rst    |  43 ++
+>   .../security/keys/trusted-encrypted.rst       |  50 ++
+>   MAINTAINERS                                   |   9 +
+>   arch/powerpc/include/asm/hvcall.h             |   4 +-
+>   arch/powerpc/include/asm/plpks.h              |  95 +--
+>   arch/powerpc/include/asm/secvar.h             |   1 -
+>   arch/powerpc/kernel/secvar-sysfs.c            |  21 +-
+>   arch/powerpc/platforms/pseries/Makefile       |   2 +-
+>   arch/powerpc/platforms/pseries/plpks-secvar.c |  29 -
+>   arch/powerpc/platforms/pseries/plpks-sysfs.c  |  96 +++
+>   arch/powerpc/platforms/pseries/plpks.c        | 688 +++++++++++++++++-
+>   include/keys/trusted-type.h                   |   7 +-
+>   include/keys/trusted_pkwm.h                   |  33 +
+>   security/keys/trusted-keys/Kconfig            |   8 +
+>   security/keys/trusted-keys/Makefile           |   2 +
+>   security/keys/trusted-keys/trusted_core.c     |   6 +-
+>   security/keys/trusted-keys/trusted_pkwm.c     | 190 +++++
+>   20 files changed, 1207 insertions(+), 201 deletions(-)
+>   create mode 100644 Documentation/ABI/testing/sysfs-firmware-plpks
+>   create mode 100644 arch/powerpc/platforms/pseries/plpks-sysfs.c
+>   create mode 100644 include/keys/trusted_pkwm.h
+>   create mode 100644 security/keys/trusted-keys/trusted_pkwm.c
+> 
 
-> + * @cred: The credentials to reference
-> + *
-> + * Get a reference on the specified set of credentials, or %NULL if the =
-last
-> + * refcount has already been put.
-> + *
-> + * This is used to obtain a reference under an rcu read lock.
-
-I would suggest a different description:
-
-"Get a reference to the specified set of credentials and return a
-pointer to the cred struct, or %NULL if it is not possible to obtain a
-new reference.  After successfully taking a new reference to the
-specified credentials, the cred struct will be marked for free'ing via
-RCU."
-
-> + */
->  static inline const struct cred *get_cred_rcu(const struct cred *cred)
->  {
->         struct cred *nonconst_cred =3D (struct cred *) cred;
->         if (!cred)
->                 return NULL;
->         if (!atomic_long_inc_not_zero(&nonconst_cred->usage))
->                 return NULL;
-> +       /*
-> +        * If non_rcu is not already zero, then this call to get_cred_rcu=
-() is
-> +        * probably wrong because if 'usage' goes to zero prior to this c=
-all,
-> +        * then get_cred_rcu() assumes it is freed with rcu.
-> +        *
-> +        * However, an exception to this is using get_cred_rcu() in cases=
- where
-> +        * get_cred() would have been okay. To support that case, we do n=
-ot
-> +        * check non_rcu and set it to zero regardless.
-> +        */
-
-This is surely a matter of perspective, but the above seems a bit
-wordy, and doesn't address what I believe is the important part:
-setting non_rcu to zero means this credential will be freed
-asynchronously via RCU.  Both get_cred_rcu() and get_cred() set
-non_rcu to 0/false ... although get_cred() doesn't do the non-zero
-check before bumping the refcount.
-
-I suppose we could consider adding the zero check in the get_cred()
-case, but even if we ignore the KCSAN barrier, it looks like the arch
-support for the inc_not_zero() case isn't nearly as good, likely
-resulting in more code to execute.
-
->         nonconst_cred->non_rcu =3D 0;
->         return cred;
->  }
-> --
-> 2.53.0.345.g96ddfc5eaa-goog
-
---=20
-paul-moore.com
