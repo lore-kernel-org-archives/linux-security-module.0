@@ -1,30 +1,30 @@
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6892B47B413;
-	Fri, 27 Feb 2026 23:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7203E95AD;
+	Fri, 27 Feb 2026 23:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772235606; cv=none; b=eLUJT5QVDuIYDVjT3hc6SPwo6hcv7+tVqQdIB857YjkU+H+rUGNZtb6THCN+hmR/o2K+K0ZbQ3rSZxAS0kNAxoYQbDHk6+JODOOQMNTenukaykeTvp7Cy0X0rbpB3/AY1kl3tbtreKnvAvy8TD5jW/iJD83DWJOv0NkuAkuJOwU=
+	t=1772235607; cv=none; b=bCGNrh2A1Nmu47kjCQ2LyCQlHRpbhrsUZQK7yGoT7AyvjS6NIlSID4NAKZ7N79A8LLaT2Y5M6Ud5Re/1zY0G2+Ogp2skoCP3aq6wCSPGoAmC2IEWSaJRFUXHenG1gP4edcHzVfFRZF1+4nh4oOt4g3WAWgwWKlGym9lfluo/OZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772235606; c=relaxed/simple;
-	bh=+BMgEghhmLZxyhLWMqAslCSi/KRH4Z8wRyogS3JwoRM=;
+	s=arc-20240116; t=1772235607; c=relaxed/simple;
+	bh=FCSz4JmYeI47a0qPI/iOpBthZR/hTXr9Qy3qNEEWEdQ=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Qo3+ST0h5OhDExyOiHc4rkonJtHZLgXHKth1Vg6bPV/EHudnpjrT9xd8FOWzVtHyu/YsDuQRIdxuPgaziIRdq1LA/u6yV5DoSSbkugNqzRdzXee6AUKrX6aNXQI7AfG6EtVWx1J/mBzhrhAm1SuRI/S2g44QN04M+b/4b0jKNTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=UnFjPttG; arc=none smtp.client-ip=13.77.154.182
+	 MIME-Version; b=NY1zrw/FLpL9lFB4fmNmdJex1133LNRUEdVTSVEugL1Evl+ALOwrVFM8F7ueD0Vsk97JErTWkfN67xsMgkK8CH6BE14K7lqQSLxVNLafihTn0gixTRAezAbbBymXuBw7F0IbedlvS4Nv/FsACVuTRtODVdF842JrtFD6UA3woUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=LZaVvUrL; arc=none smtp.client-ip=13.77.154.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="UnFjPttG"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="LZaVvUrL"
 Received: from narnia.corp.microsoft.com (unknown [40.86.183.173])
-	by linux.microsoft.com (Postfix) with ESMTPSA id D67B120B6F0A;
-	Fri, 27 Feb 2026 15:39:50 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D67B120B6F0A
+	by linux.microsoft.com (Postfix) with ESMTPSA id 3B04220B6F05;
+	Fri, 27 Feb 2026 15:40:02 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3B04220B6F05
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1772235592;
-	bh=0VAiPXkzm4mcht4Y8ZrJotec/9MpVCGRTSLZj5v0JqM=;
+	s=default; t=1772235605;
+	bh=zwavUBQq7pklRef1PggkLK7yE3m4QZq2PNfPVrS/blw=;
 	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=UnFjPttGZSFkM2vznJwpqMs2G5osq6+ZdFSQYnMt2KFF3M/pB/9E9GsyvlifDz+xE
-	 SFordTsfcl50nD3oZa0emc+CDSw1Lk0RmPLnQvfm3mixMIlySFfP9BhCrSAB0SFWK2
-	 Y+cGk/6O5bTx2zZiF2Tr+aiOueeCvt0oDfUVZoMA=
+	b=LZaVvUrLS98WQ7H275vWX8kp3+ZAI0tSCu07txrPwUy23nds4lGfNFRTnxD+x+KLW
+	 2sZvOOCBeQ+sprUa2Dpe9rJIuZ9znb+yuq/5xhoQqbRqvtqX3/QB1Uowtcc6Tv8vdk
+	 /G+SKeXg1MnlX8CjTaCpe51FcVXhltw/SfufgKnE=
 From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
 	Jonathan Corbet <corbet@lwn.net>,
@@ -43,9 +43,9 @@ To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	bpf@vger.kernel.org
-Subject: [PATCH v2 05/10] crypto: pkcs7: add tests for pkcs7_get_authattr
-Date: Fri, 27 Feb 2026 15:38:34 -0800
-Message-ID: <20260227233930.2418522-6-bboscaccy@linux.microsoft.com>
+Subject: [PATCH v2 10/10] selftests/hornet: Add a selftest for the Hornet LSM
+Date: Fri, 27 Feb 2026 15:38:39 -0800
+Message-ID: <20260227233930.2418522-11-bboscaccy@linux.microsoft.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260227233930.2418522-1-bboscaccy@linux.microsoft.com>
 References: <20260227233930.2418522-1-bboscaccy@linux.microsoft.com>
@@ -57,86 +57,167 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
+This selftest contains a testcase that utilizes light skeleton eBPF
+loaders and exercises hornet's map validation.
 
-Add example code to the test module pkcs7_key_type.c that verifies a
-message and then pulls out a known authenticated attribute.
-
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-Acked-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 ---
- crypto/asymmetric_keys/pkcs7_key_type.c | 42 ++++++++++++++++++++++++-
- 1 file changed, 41 insertions(+), 1 deletion(-)
+ tools/testing/selftests/Makefile             |  1 +
+ tools/testing/selftests/hornet/Makefile      | 63 ++++++++++++++++++++
+ tools/testing/selftests/hornet/loader.c      | 21 +++++++
+ tools/testing/selftests/hornet/trivial.bpf.c | 33 ++++++++++
+ 4 files changed, 118 insertions(+)
+ create mode 100644 tools/testing/selftests/hornet/Makefile
+ create mode 100644 tools/testing/selftests/hornet/loader.c
+ create mode 100644 tools/testing/selftests/hornet/trivial.bpf.c
 
-diff --git a/crypto/asymmetric_keys/pkcs7_key_type.c b/crypto/asymmetric_keys/pkcs7_key_type.c
-index b930d3bbf1af..5a1ecb5501b2 100644
---- a/crypto/asymmetric_keys/pkcs7_key_type.c
-+++ b/crypto/asymmetric_keys/pkcs7_key_type.c
-@@ -12,6 +12,7 @@
- #include <linux/verification.h>
- #include <linux/key-type.h>
- #include <keys/user-type.h>
-+#include <crypto/pkcs7.h>
- 
- MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("PKCS#7 testing key type");
-@@ -51,16 +52,55 @@ static int pkcs7_view_content(void *ctx, const void *data, size_t len,
- static int pkcs7_preparse(struct key_preparsed_payload *prep)
- {
- 	enum key_being_used_for usage = pkcs7_usage;
-+	int ret;
-+	struct pkcs7_message *pkcs7;
-+	const void *data;
-+	size_t len;
- 
- 	if (usage >= NR__KEY_BEING_USED_FOR) {
- 		pr_err("Invalid usage type %d\n", usage);
- 		return -EINVAL;
- 	}
- 
--	return verify_pkcs7_signature(NULL, 0,
-+	ret = verify_pkcs7_signature(NULL, 0,
- 				      prep->data, prep->datalen,
- 				      VERIFY_USE_SECONDARY_KEYRING, usage,
- 				      pkcs7_view_content, prep);
-+	if (ret)
-+		return ret;
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index 450f13ba4cca..4e2d1cd88c82 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -44,6 +44,7 @@ TARGETS += ftrace
+ TARGETS += futex
+ TARGETS += gpio
+ TARGETS += hid
++TARGETS += hornet
+ TARGETS += intel_pstate
+ TARGETS += iommu
+ TARGETS += ipc
+diff --git a/tools/testing/selftests/hornet/Makefile b/tools/testing/selftests/hornet/Makefile
+new file mode 100644
+index 000000000000..432bce59f54e
+--- /dev/null
++++ b/tools/testing/selftests/hornet/Makefile
+@@ -0,0 +1,63 @@
++# SPDX-License-Identifier: GPL-2.0
++include ../../../build/Build.include
++include ../../../scripts/Makefile.arch
++include ../../../scripts/Makefile.include
 +
-+	pkcs7 = pkcs7_parse_message(prep->data, prep->datalen);
-+	if (IS_ERR(pkcs7)) {
-+		pr_err("pkcs7 parse error\n");
-+		return PTR_ERR(pkcs7);
-+	}
++CLANG ?= clang
++CFLAGS := -g -O2 -Wall
++BPFTOOL ?= $(TOOLSDIR)/bpf/bpftool/bpftool
++SCRIPTSDIR := $(abspath ../../../../scripts/hornet)
++TOOLSDIR := $(abspath ../../..)
++LIBDIR := $(TOOLSDIR)/lib
++BPFDIR := $(LIBDIR)/bpf
++TOOLSINCDIR := $(TOOLSDIR)/include
++APIDIR := $(TOOLSINCDIR)/uapi
++CERTDIR := $(abspath ../../../../certs)
++PKG_CONFIG ?= $(CROSS_COMPILE)pkg-config
 +
-+	/*
-+	 * the parsed message has no trusted signer, so nothing should
-+	 * be returned here
-+	 */
-+	ret = pkcs7_get_authattr(pkcs7, OID_messageDigest, &data, &len);
-+	if (ret == 0) {
-+		pr_err("OID returned when no trust in signer\n");
-+		goto out;
-+	}
-+	/* add trust and check again */
-+	ret = validate_pkcs7_trust(pkcs7, VERIFY_USE_SECONDARY_KEYRING);
-+	if (ret) {
-+		pr_err("validate_pkcs7_trust failed!!\n");
-+		goto out;
-+	}
-+	/* now we should find the OID */
-+	ret = pkcs7_get_authattr(pkcs7, OID_messageDigest, &data, &len);
-+	if (ret) {
-+		pr_err("Failed to get message digest\n");
-+		goto out;
-+	}
-+	pr_info("Correctly Got message hash, size=%ld\n", len);
++TEST_GEN_PROGS := loader
++TEST_GEN_FILES := vmlinux.h loader.h trivial.bpf.o map.bin sig.bin insn.bin signed_loader.h
++$(TEST_GEN_PROGS): LDLIBS += -lbpf
++$(TEST_GEN_PROGS): $(TEST_GEN_FILES)
 +
-+ out:
-+	pkcs7_free_message(pkcs7);
++include ../lib.mk
++
++BPF_CFLAGS := -target bpf \
++	-D__TARGET_ARCH_$(ARCH) \
++	-I/usr/include/$(shell uname -m)-linux-gnu \
++	$(KHDR_INCLUDES)
++
++vmlinux.h:
++	$(BPFTOOL) btf dump file /sys/kernel/btf/vmlinux format c > vmlinux.h
++
++trivial.bpf.o: trivial.bpf.c vmlinux.h
++	$(CLANG) $(CFLAGS) $(BPF_CFLAGS) -c $< -o $@
++
++loader.h: trivial.bpf.o
++	$(BPFTOOL) gen skeleton -S -k $(CERTDIR)/signing_key.pem -i $(CERTDIR)/signing_key.x509 \
++		-L $< name trivial > $@
++
++insn.bin: loader.h
++	$(SCRIPTSDIR)/extract-insn.sh $< > $@
++
++map.bin: loader.h
++	$(SCRIPTSDIR)/extract-map.sh $< > $@
++
++$(OUTPUT)/gen_sig: ../../../../scripts/hornet/gen_sig.c
++	$(call msg,GEN_SIG,,$@)
++	$(Q)$(CC) $(shell $(PKG_CONFIG) --cflags libcrypto 2> /dev/null) \
++		  $< -o $@ \
++		  $(shell $(PKG_CONFIG) --libs libcrypto 2> /dev/null || echo -lcrypto)
++
++sig.bin: insn.bin map.bin $(OUTPUT)/gen_sig
++	$(OUTPUT)/gen_sig --key $(CERTDIR)/signing_key.pem --cert $(CERTDIR)/signing_key.x509 \
++		--data insn.bin --add map.bin:0 --out sig.bin
++
++signed_loader.h: sig.bin
++	$(SCRIPTSDIR)/write-sig.sh loader.h sig.bin > $@
++
++loader: loader.c signed_loader.h
++	$(CC) $(CFLAGS) -I$(LIBDIR) -I$(APIDIR) $< -o $@ -lbpf
++
++
++EXTRA_CLEAN = $(OUTPUT)/gen_sig
+diff --git a/tools/testing/selftests/hornet/loader.c b/tools/testing/selftests/hornet/loader.c
+new file mode 100644
+index 000000000000..f27580c7262b
+--- /dev/null
++++ b/tools/testing/selftests/hornet/loader.c
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
++
++#include <stdio.h>
++#include <unistd.h>
++#include <stddef.h>
++#include <sys/resource.h>
++#include <bpf/libbpf.h>
++#include <errno.h>
++#include  "signed_loader.h"
++
++int main(int argc, char **argv)
++{
++	struct trivial *skel;
++
++	skel = trivial__open_and_load();
++	if (!skel)
++		return -1;
++
++	trivial__destroy(skel);
 +	return 0;
- }
- 
- /*
++}
+diff --git a/tools/testing/selftests/hornet/trivial.bpf.c b/tools/testing/selftests/hornet/trivial.bpf.c
+new file mode 100644
+index 000000000000..d38c5b53ff93
+--- /dev/null
++++ b/tools/testing/selftests/hornet/trivial.bpf.c
+@@ -0,0 +1,33 @@
++// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
++
++#include "vmlinux.h"
++
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
++#include <bpf/bpf_core_read.h>
++
++char LICENSE[] SEC("license") = "Dual BSD/GPL";
++
++int monitored_pid = 0;
++
++SEC("tracepoint/syscalls/sys_enter_unlinkat")
++int handle_enter_unlink(struct trace_event_raw_sys_enter *ctx)
++{
++	char filename[128] = { 0 };
++	struct task_struct *task;
++	unsigned long start_time = 0;
++	int pid = bpf_get_current_pid_tgid() >> 32;
++	char *pathname_ptr = (char *) BPF_CORE_READ(ctx, args[1]);
++
++	bpf_probe_read_str(filename, sizeof(filename), pathname_ptr);
++	task = (struct task_struct *)bpf_get_current_task();
++	start_time = BPF_CORE_READ(task, start_time);
++
++	bpf_printk("BPF triggered unlinkat by PID: %d, start_time %ld. pathname = %s",
++		   pid, start_time, filename);
++
++	if (monitored_pid == pid)
++		bpf_printk("target pid found");
++
++	return 0;
++}
 -- 
 2.52.0
 
