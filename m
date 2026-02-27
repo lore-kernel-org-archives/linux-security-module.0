@@ -1,30 +1,29 @@
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B725843DA3E;
-	Fri, 27 Feb 2026 23:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2BD3ED136;
+	Fri, 27 Feb 2026 23:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772235591; cv=none; b=i4GAbowHk22GpQRhYsSpgfzcX5d7/lJ5K3JSI1hdJijpCj/0KvaDEA0X633oIIZUSXoOLlEH86xuv9btursgNTs1ECvp+ekz/z6MnRHn8z+Jai6Ta7S7WK8tPPg2d1bDi7+QKTFRPXjp9HWDoLBksS/6dJKyiSOvYREJpot96iU=
+	t=1772235593; cv=none; b=X2ett2Aly1E6aEijsy3nN67oFHoBmHMdlk5AINSoIaKEFgAoPusMDtXetsdpKCqFrd0FJTLwjf72ImJRoYZV4T/HHReMeyjKksJPYR/peD1qdsEX/uv/LrTDM8dxt4/aUOA+nqc6hNdj18mE328mVBs53QioTY6o03lU1yEePvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772235591; c=relaxed/simple;
-	bh=efWQ3uwQ9TRgjJI5J0dzhCvyJQL1oXnhm6feNoZ+vhY=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ka2tRozAuQiY62rMxPdw1Vj1yAdDQ+lX/BehUp2c6QHOhAtzorlVP39beg4HAr8pKl1uSKAKK4vNInlttXuPmLwkWt5oATTYasbRen9MNKQVf7mrT0aAi+CwpikQNuGHHya0BHAHqJ3gRE3ik1ESVUKCeS8/iIccL6F99AcNsv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=VCj9Gs34; arc=none smtp.client-ip=13.77.154.182
+	s=arc-20240116; t=1772235593; c=relaxed/simple;
+	bh=KcCnfgg5ecC2YzqLATrMKcgJK3gVvJSMWX7/uo0T2B4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VNuciO24XRCBKu+y+LaFiaiaHiHdLHV9cF/oYBxVRS2iH5SwvEyrGcbB6TfQyUVbtNbGnCZPLNOSvbGKqR1Lj5gD5ihkC5qJ8awagEHjQD4hfw3HYQZbDeBQlveUU8o2VxU773cmIY+Z8iyy7jCMhsuVtbScEqqZg0fPkmAgP6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=r42pYxoQ; arc=none smtp.client-ip=13.77.154.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VCj9Gs34"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="r42pYxoQ"
 Received: from narnia.corp.microsoft.com (unknown [40.86.183.173])
-	by linux.microsoft.com (Postfix) with ESMTPSA id E383A20B6F04;
-	Fri, 27 Feb 2026 15:39:46 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E383A20B6F04
+	by linux.microsoft.com (Postfix) with ESMTPSA id 5E00120B6F02;
+	Fri, 27 Feb 2026 15:39:40 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5E00120B6F02
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1772235588;
-	bh=Vcnjy1FVFqEfr+gPqq1dmSGVbAmjZA9nCoYY+v0aeg0=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=VCj9Gs34T0bB7bJtJ23NdA7nq7gG0imNSRd+XsI4mqLoGo/ufJjThxibOZFwHrAwf
-	 cBcIClNN+Goc7DFd6VksExyzjgPl4hpQiXZ2Bb1dSXYBaLk5EfgyeAGWzau4IsZnnF
-	 yMZsO0EhMU6Pi0UPb3s0YOLxTGTyGnNhHmdkKu+Y=
+	s=default; t=1772235582;
+	bh=mGqDcC+nxviHSDAD2OTZ9M1DnTHcdp0y9/j6ZnFeKqw=;
+	h=From:To:Subject:Date:From;
+	b=r42pYxoQxkEB78yU7Izo6mEqiyXPP5CXlhkscwpG0ywKdk0LrxA5YkOhXPyjmsFaX
+	 TXB+RRuE9tawXkkV+Q1ARrOFUBvSRE/UGDx84k3J/sTDyt0TIVD6Yh3PWiOvwKDz+b
+	 8Qi+9pWHFAPOswFN7uah2nAwrKeNHX4cRlDYvi48=
 From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
 	Jonathan Corbet <corbet@lwn.net>,
@@ -43,108 +42,147 @@ To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	bpf@vger.kernel.org
-Subject: [PATCH v2 03/10] crypto: pkcs7: allow pkcs7_digest() to be called from pkcs7_trust
-Date: Fri, 27 Feb 2026 15:38:32 -0800
-Message-ID: <20260227233930.2418522-4-bboscaccy@linux.microsoft.com>
+Subject: [PATCH v2 00/10] Reintrodce Hornet LSM
+Date: Fri, 27 Feb 2026 15:38:29 -0800
+Message-ID: <20260227233930.2418522-1-bboscaccy@linux.microsoft.com>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260227233930.2418522-1-bboscaccy@linux.microsoft.com>
-References: <20260227233930.2418522-1-bboscaccy@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
+This patch series introduces the next iteration of the Hornet LSM.
+Hornet’s goal is to provide a secure and extensible in-kernel
+signature verification mechanism for eBPF programs.
 
-Trying to run pkcs7_validate_trust() on something that parsed
-correctly but is not verified doesn't work because the signature
-digest hasn't been calculated.  Fix this by adding a digest calclation
-in to pkcs7_validate_one().  This is almost a nop if the digest exists.
+Hornet addresses concerns from users who require strict audit trails and
+verification guarantees for eBPF programs, especially in
+security-sensitive environments. Many production systems need assurance
+that only authorized, unmodified eBPF programs are loaded into the
+kernel. Hornet provides this assurance through cryptographic signature
+verification.
 
-Additionally, the trust validation doesn't know the data payload, so
-adjust the digest calculator to skip checking the data digest if
-pkcs7->data is NULL.  A check is added in pkcs7_verify() for
-pkcs7->data being null (returning -EBADMSG) to guard against someone
-forgetting to supply data and getting an invalid success return.
+The currently accepted loader-plus-map signature verification scheme,
+mandated by Alexei and KP, is simple to implement and generally
+acceptable if users and administrators are satisfied with it. However,
+verifying both the loader and the maps offers additional benefits
+beyond verifying the loader alone:
 
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
----
- crypto/asymmetric_keys/pkcs7_parser.h |  3 +++
- crypto/asymmetric_keys/pkcs7_trust.c  |  8 ++++++++
- crypto/asymmetric_keys/pkcs7_verify.c | 13 +++++++++----
- 3 files changed, 20 insertions(+), 4 deletions(-)
+1. Security and Audit Integrity
 
-diff --git a/crypto/asymmetric_keys/pkcs7_parser.h b/crypto/asymmetric_keys/pkcs7_parser.h
-index 203062a33def..cbe823aeac06 100644
---- a/crypto/asymmetric_keys/pkcs7_parser.h
-+++ b/crypto/asymmetric_keys/pkcs7_parser.h
-@@ -66,3 +66,6 @@ struct pkcs7_message {
- 	size_t		data_hdrlen;	/* Length of Data ASN.1 header */
- 	const void	*data;		/* Content Data (or 0) */
- };
-+
-+int pkcs7_digest(struct pkcs7_message *pkcs7,
-+		 struct pkcs7_signed_info *sinfo);
-diff --git a/crypto/asymmetric_keys/pkcs7_trust.c b/crypto/asymmetric_keys/pkcs7_trust.c
-index 78ebfb6373b6..7cb0a6bc7b32 100644
---- a/crypto/asymmetric_keys/pkcs7_trust.c
-+++ b/crypto/asymmetric_keys/pkcs7_trust.c
-@@ -30,6 +30,14 @@ static int pkcs7_validate_trust_one(struct pkcs7_message *pkcs7,
- 
- 	kenter(",%u,", sinfo->index);
- 
-+	/*
-+	 * if we're being called immediately after parse, the
-+	 * signature won't have a calculated digest yet, so calculate
-+	 * one.  This function returns immediately if a digest has
-+	 * already been calculated
-+	 */
-+	pkcs7_digest(pkcs7, sinfo);
-+
- 	if (sinfo->unsupported_crypto) {
- 		kleave(" = -ENOPKG [cached]");
- 		return -ENOPKG;
-diff --git a/crypto/asymmetric_keys/pkcs7_verify.c b/crypto/asymmetric_keys/pkcs7_verify.c
-index 474e2c1ae21b..3080f0ec52e0 100644
---- a/crypto/asymmetric_keys/pkcs7_verify.c
-+++ b/crypto/asymmetric_keys/pkcs7_verify.c
-@@ -19,8 +19,8 @@
- /*
-  * Digest the relevant parts of the PKCS#7 data
-  */
--static int pkcs7_digest(struct pkcs7_message *pkcs7,
--			struct pkcs7_signed_info *sinfo)
-+int pkcs7_digest(struct pkcs7_message *pkcs7,
-+		 struct pkcs7_signed_info *sinfo)
- {
- 	struct public_key_signature *sig = sinfo->sig;
- 	struct crypto_shash *tfm;
-@@ -93,8 +93,8 @@ static int pkcs7_digest(struct pkcs7_message *pkcs7,
- 			goto error;
- 		}
- 
--		if (memcmp(sig->m, sinfo->msgdigest,
--			   sinfo->msgdigest_len) != 0) {
-+		if (pkcs7->data && memcmp(sig->m, sinfo->msgdigest,
-+					  sinfo->msgdigest_len) != 0) {
- 			pr_warn("Sig %u: Message digest doesn't match\n",
- 				sinfo->index);
- 			ret = -EKEYREJECTED;
-@@ -463,6 +463,11 @@ int pkcs7_verify(struct pkcs7_message *pkcs7,
- 		return -EINVAL;
- 	}
- 
-+	if (!pkcs7->data) {
-+		pr_warn("Data not supplied to verify operation\n");
-+		return -EBADMSG;
-+	}
-+
- 	for (sinfo = pkcs7->signed_infos; sinfo; sinfo = sinfo->next) {
- 		ret = pkcs7_verify_one(pkcs7, sinfo);
- 		if (sinfo->blacklisted) {
+A key advantage is that the LSM hook for authorizing BPF program loads
+can operate after signature verification. This ensures:
+
+* Access control decisions are based on verified signature status.
+* Accurate system state measurement and logging.
+* Log entries claiming a verified signature are truthful, avoiding
+  misleading records where only the loader was verified while the actual
+  BPF program verification occurs later without logging.
+
+2. TOCTOU Attack Prevention
+
+The current map hash implementation may be vulnerable to a TOCTOU
+attack because it allows unfrozen maps to cache a previously
+calculated hash. The accepted “trusted loader” scheme cannot detect
+this and may permit loading altered maps.
+
+3. Supply Chain Integrity
+
+Verify that eBPF programs and their associated map data have not been
+modified since they were built and signed, in the kernel proper, may
+aid in protecting against supply chain attacks.
+
+This approach addresses concerns from users who require strict audit
+trails and verification guarantees, especially in security-sensitive
+environments. Map hashes for extended verification are passed via the
+existing PKCS#7 UAPI and verified by the crypto subsystem. Hornet then
+calculates the program’s verification state.  Hornet itself does not
+enforce a policy on whether unsigned or partially signed programs
+should be rejected. It delegates that decision to downstream LSMs
+hook, making it a composable building block in a larger security
+architecture.
+
+
+Changes in V2:
+- Addressed possible TocTou races in hash verification
+- Improved documentation and tooling
+- Added Alexie's nack
+
+Link to RFC: https://lore.kernel.org/linux-security-module/20251211021257.1208712-1-bboscaccy@linux.microsoft.com/
+
+
+Blaise Boscaccy (4):
+  security: Hornet LSM
+  hornet: Introduce gen_sig
+  hornet: Add a light skeleton data extractor scripts
+  selftests/hornet: Add a selftest for the Hornet LSM
+
+James Bottomley (5):
+  certs: break out pkcs7 check into its own function
+  crypto: pkcs7: add flag for validated trust on a signed info block
+  crypto: pkcs7: allow pkcs7_digest() to be called from pkcs7_trust
+  crypto: pkcs7: add ability to extract signed attributes by OID
+  crypto: pkcs7: add tests for pkcs7_get_authattr
+
+Paul Moore (1):
+  lsm: framework for BPF integrity verification
+
+ Documentation/admin-guide/LSM/Hornet.rst     | 310 +++++++++++++++
+ Documentation/admin-guide/LSM/index.rst      |   1 +
+ MAINTAINERS                                  |   9 +
+ certs/system_keyring.c                       |  76 ++--
+ crypto/asymmetric_keys/Makefile              |   4 +-
+ crypto/asymmetric_keys/pkcs7_aa.asn1         |  18 +
+ crypto/asymmetric_keys/pkcs7_key_type.c      |  42 +-
+ crypto/asymmetric_keys/pkcs7_parser.c        |  81 ++++
+ crypto/asymmetric_keys/pkcs7_parser.h        |   4 +
+ crypto/asymmetric_keys/pkcs7_trust.c         |   9 +
+ crypto/asymmetric_keys/pkcs7_verify.c        |  13 +-
+ include/crypto/pkcs7.h                       |   4 +
+ include/linux/lsm_hook_defs.h                |   5 +
+ include/linux/oid_registry.h                 |   3 +
+ include/linux/security.h                     |  25 ++
+ include/linux/verification.h                 |   2 +
+ include/uapi/linux/lsm.h                     |   1 +
+ scripts/Makefile                             |   1 +
+ scripts/hornet/Makefile                      |   5 +
+ scripts/hornet/extract-insn.sh               |  27 ++
+ scripts/hornet/extract-map.sh                |  27 ++
+ scripts/hornet/extract-skel.sh               |  27 ++
+ scripts/hornet/gen_sig.c                     | 392 +++++++++++++++++++
+ scripts/hornet/write-sig.sh                  |  27 ++
+ security/Kconfig                             |   3 +-
+ security/Makefile                            |   1 +
+ security/hornet/Kconfig                      |  11 +
+ security/hornet/Makefile                     |   7 +
+ security/hornet/hornet.asn1                  |  13 +
+ security/hornet/hornet_lsm.c                 | 323 +++++++++++++++
+ security/security.c                          |  75 +++-
+ tools/testing/selftests/Makefile             |   1 +
+ tools/testing/selftests/hornet/Makefile      |  63 +++
+ tools/testing/selftests/hornet/loader.c      |  21 +
+ tools/testing/selftests/hornet/trivial.bpf.c |  33 ++
+ 35 files changed, 1623 insertions(+), 41 deletions(-)
+ create mode 100644 Documentation/admin-guide/LSM/Hornet.rst
+ create mode 100644 crypto/asymmetric_keys/pkcs7_aa.asn1
+ create mode 100644 scripts/hornet/Makefile
+ create mode 100755 scripts/hornet/extract-insn.sh
+ create mode 100755 scripts/hornet/extract-map.sh
+ create mode 100755 scripts/hornet/extract-skel.sh
+ create mode 100644 scripts/hornet/gen_sig.c
+ create mode 100755 scripts/hornet/write-sig.sh
+ create mode 100644 security/hornet/Kconfig
+ create mode 100644 security/hornet/Makefile
+ create mode 100644 security/hornet/hornet.asn1
+ create mode 100644 security/hornet/hornet_lsm.c
+ create mode 100644 tools/testing/selftests/hornet/Makefile
+ create mode 100644 tools/testing/selftests/hornet/loader.c
+ create mode 100644 tools/testing/selftests/hornet/trivial.bpf.c
+
 -- 
 2.52.0
 
