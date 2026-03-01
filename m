@@ -1,30 +1,30 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070BEC8F0;
-	Sun,  1 Mar 2026 01:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A50029D270;
+	Sun,  1 Mar 2026 01:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772328241; cv=none; b=mYEYo2YqcHMQ6CS40AH9MYfmDlGJ47Y0HUO8U6+v23sDHTE1xsLP+TQA71B9SLr98p86hfjrqPFtXf4FCn/CaGR56FV1Rk1wr7JdGVX1r2VTHkP9S/6fz4XHM9jihSbtE+S3leZnu3UDJ+wTFKoxKcDP358EzOfzRTNBjoqytUw=
+	t=1772328902; cv=none; b=acr65VErh2G4UZr5tB5rpsifv7zw8GqfNfa612v/1idRA1XpQv4AU/xGCiKktg83CXmRG/X3I2eMAfpCPmfEijpJAfsO+Ag73EBLRTgyind/LgfDunFgMhzhE6lYV5JokyNY3CknnTIHTCT/r2j/+Gck9NW+9ZYUNOyCfKqGrVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772328241; c=relaxed/simple;
-	bh=7qaihQOXZ9FH5m2EEOA64KRdqrfSqRP4skGs4ldz/fU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SOXHpu2vFxdq44lIIJE9qpltpC/RJmPykkYvYhwbwO9MtNjCXxg418Si5o+UKIw9CcIqhJb2VUxiZy/T/JXRdpa3rpj7vmVKiyyKFvY5HpRNVYJ2ZAeAgBVYcvcUqaufvCf41ndTjZC0qOmaGJAwMgXoFN9OHUa1ChwQjzP4/zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WIITpSjq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772328902; c=relaxed/simple;
+	bh=b9w8recNid+acJTcf7jLVEtTeYKu+683o36tHpeaZ9A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uM1Kdmp8RHpfqDS+nNye4AhST+iVB3vzlpu7Kjg5w8sqEZBwLbKH42kAbSKwTyNcbECdXkD1Ad61tgqumutYCQ2oeD7aCH4K/NORcWtN8qLwQbOfmpkTt0h/hy1wzoQ6BDlYuiMOb/Ibr9elF/28lkw/62V0+EvaGMwiNeubL60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9jK/JGc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WIITpSjq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8772FC19421;
-	Sun,  1 Mar 2026 01:23:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9jK/JGc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DABB7C19421;
+	Sun,  1 Mar 2026 01:34:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772328240;
-	bh=7qaihQOXZ9FH5m2EEOA64KRdqrfSqRP4skGs4ldz/fU=;
+	s=k20201202; t=1772328902;
+	bh=b9w8recNid+acJTcf7jLVEtTeYKu+683o36tHpeaZ9A=;
 	h=From:To:Cc:Subject:Date:From;
-	b=WIITpSjqhSY/Whd7ObeYKQjAlPHpqPlPzeY/q/VC3jwFRQkLxYXmDU3o7ZVGx6HzM
-	 zHZKtjaxqqH3F1pwueRp1BXOl20mhOIkpBrkK7TA+CSzLbnWdY9GIZkZ36bA3CJLtG
-	 Bcx8NfOnppc4fp947i/BQPpfGZ/dOKDhu7XsGZ3W5Rj2Pex6Z3qlP/U8TrymSLfUhJ
-	 6DLv/6h+PA6tqZ4fgAbkJPG0OXw2zgxp/Cwi8YcAx7vHjnKYVuPE7mauRZp80W1S10
-	 IsIyrND9Uahsv7jFGtH2zi/YCh8PubaReeGOsFAkGtuyhgH7N5T8PPdfagb7c+SQ1b
-	 6J46mq5d5YiMQ==
+	b=b9jK/JGcXb7fonOnGRK94rq4bBEOhWW9fuWmR0E2BtxbH9Yh0W79oB3EKKPqYXOnr
+	 F0sSo7/VUm9SJbhZPk4VqXUGQr7lTxykeNJLuGxepncQpf6PMWN+khxjVBewh0npR2
+	 wtXsujhvYkKzLqMzE6ZuN4TnDfJP2FZaOHC1jBNI66pBUNYBbtAF514cvjZSkZhZ9h
+	 w8WDKIcSFzmuLLBRModQrwvO9+FJFmQZ//mSaPji3WoYz97qQQZsd1NXqPVkSd9PTp
+	 0XJp8BOpPjtxuswmf4tyvENaI7JmFBBMSlnZrxG8Rmta20UDd+rzi97IN561mvtz0r
+	 qIcuBt7f8tb9g==
 From: Sasha Levin <sashal@kernel.org>
 To: stable@vger.kernel.org,
 	harshit.m.mogalapalli@oracle.com
@@ -49,9 +49,9 @@ Cc: Mimi Zohar <zohar@linux.ibm.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	linux-integrity@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: FAILED: Patch "ima: verify the previous kernel's IMA buffer lies in addressable RAM" failed to apply to 6.12-stable tree
-Date: Sat, 28 Feb 2026 20:23:57 -0500
-Message-ID: <20260301012357.1680724-1-sashal@kernel.org>
+Subject: FAILED: Patch "ima: verify the previous kernel's IMA buffer lies in addressable RAM" failed to apply to 6.6-stable tree
+Date: Sat, 28 Feb 2026 20:34:58 -0500
+Message-ID: <20260301013458.1694571-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -63,7 +63,7 @@ X-Patchwork-Hint: ignore
 X-stable: review
 Content-Transfer-Encoding: 8bit
 
-The patch below does not apply to the 6.12-stable tree.
+The patch below does not apply to the 6.6-stable tree.
 If someone wants it applied there, or to any other stable or longterm
 tree, then please email the backport, including the original git commit
 id to <stable@vger.kernel.org>.
