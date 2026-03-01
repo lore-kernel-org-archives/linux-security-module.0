@@ -1,209 +1,194 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from LO3P265CU004.outbound.protection.outlook.com (mail-uksouthazon11020087.outbound.protection.outlook.com [52.101.196.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2B62FFDD5;
-	Sun,  1 Mar 2026 02:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772330613; cv=none; b=HOJ91CxxplekZ7G70ZirQKBWnjLq8HnKCMkeBWWTsmn3KuLU3yzljh2OkoLqd6ZvaOwZZ2Mhx/ZszlKwZ90eQRU+UP8HD9P6/kowsvbW5VICMD9xAhIFDYmLUtno1KaiL6lnGlzZv3+pnR3EhEfTBU5fe1+U/MXSCVBv9YLvn5M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772330613; c=relaxed/simple;
-	bh=KZzP/JecF27xHHiJFhTWIUfU3XREE4PimgnFsthN5/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oNyKQOv6JLITYukvGLri9OydTFEd+LNlkJVmOfERG0h63Fp9dYUBumaZDMIWEvZGAMGu7O6MaiQTMG7T8MK/j14aKC4PZPcgwyj89XrsQSl261VE6p8zWICqQ2UYVIqtKRlDspXZoe4ugmdPSkdbIXi5LnVgigpCiFHrXeM6U/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RxjXn8St; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7431327C08;
+	Sun,  1 Mar 2026 13:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.196.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772371582; cv=fail; b=UMwFC0mH7u480dXCk/+DWz0DqvnUXhnZ1rPUXs7Hc3vtFFvDooa9gRI2dKsTrV2iC6cK+8Odr8az+D8dEkkmScV7Kg7JtN/28hhcgoxwQCFTKeysHefKZZ8u55AAwuBMVm11bPsTSIXpvCRqV6hCB/9vg6BGkHl2LIiKxXWM1X4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772371582; c=relaxed/simple;
+	bh=SabPlY97MDTqwed4UL9138Wiz9nWMG0T+S9M9FXSUfU=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=CNWWVbg7sQl777fehl5u3KFA6hkfbx4Fo6vWO622ydYOcWFJ62hLjQIz7NKxBJrVm/7pxqgT8KbJ6motmERBZo/NYbZLuxZdqFOyqmMIJiMYtnNp/UK9UUwo5gubhUnBOquq4SgXkwO7/emvVie7vtuxwHoI7p+NvigqqWloVnk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=Se1ukJx+; arc=fail smtp.client-ip=52.101.196.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RxjXn8St"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1772330611; x=1803866611;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KZzP/JecF27xHHiJFhTWIUfU3XREE4PimgnFsthN5/A=;
-  b=RxjXn8StrLonnm/3sngiG5MPJlLdX2lJFO2M8ldJkjvSiuMVGpUq2MSl
-   eh0VbHisBIa25X8qUxhUwIpK3QG6+v+ekHLrfXCae2Zi3MhiP/9KyNmAB
-   JyHlGP3osH1ycR54Wb9Hq3e27gOzgFrR2NEXWUn4dQ8T2zdmQVdyUlCmK
-   /dHgB3YPPFvNv2gzdVprv/WrjbsdwrUYzvUqWPqknNo6CpvHWG83DE53S
-   BUHSNzmeej2FCmnJnAoQrx3ODT4ruaEbH4gnarLRoFWw8OCha4v5G8bil
-   hSXvLqwaZMvEsBugJcTLvhrsoPZ2MPSFSe/9ugFzD/q8iqpnHZaJOSmVE
-   w==;
-X-CSE-ConnectionGUID: 2myQ6w4NRAOi2xSmH9U79g==
-X-CSE-MsgGUID: IlC7v/yNQ7us+e3Bjb7bBA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11715"; a="84012019"
-X-IronPort-AV: E=Sophos;i="6.21,317,1763452800"; 
-   d="scan'208";a="84012019"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2026 18:03:30 -0800
-X-CSE-ConnectionGUID: 2F9CqOx2TE6GYuD7zyqyCQ==
-X-CSE-MsgGUID: MU1ccFKrRu6sm8nt7mKVxw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,317,1763452800"; 
-   d="scan'208";a="220438890"
-Received: from lkp-server01.sh.intel.com (HELO 59784f1c7b2a) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 28 Feb 2026 18:03:26 -0800
-Received: from kbuild by 59784f1c7b2a with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vwW9S-000000000rZ-2a4w;
-	Sun, 01 Mar 2026 02:03:22 +0000
-Date: Sun, 1 Mar 2026 10:02:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
-	Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	James.Bottomley@hansenpartnership.com, dhowells@redhat.com,
-	Fan Wu <wufan@kernel.org>, Ryan Foster <foster.ryan.r@gmail.com>,
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: Re: [PATCH v2 07/10] security: Hornet LSM
-Message-ID: <202603010957.7JUXdjTd-lkp@intel.com>
-References: <20260227233930.2418522-8-bboscaccy@linux.microsoft.com>
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="Se1ukJx+"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Az72xLEE1mi1Yj3AyQQTEtLaJLa080h2nKM9DWz6/MsqtuOQpdAGOfzZOpYPvPGSTfsaNHYbHRCCKrgmnFUxjaOx/8HGfRgVUNBORgS1LT50oRmXwoYWomngBlU2FNx8rnFS5oO3M6r6IkE7CGk+PrvecGTmZPe325LF9+TZWx49m2+MJbHAsqW9a1e35+f1zt79gs+SfYeDToR317UiSxEi5gwjGk0/oR51qw0uCxzyYf/QSO3IAmyAajxsvz8X+fdYtQS2YBip9wahY12klW2boWXrEVt5TME7oALkqut1hsUtsDHXLJnipHgn+Iry9jDOmj168URXfHyX1ABHEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+g/lR3Xw+DDAZVO+yaZkupin8NEPozqTdB7sa1zk22o=;
+ b=RXX28GDABlICIVLb/gQRRaLk9bzTZAzGyeLsE+s5Nzf38fBs4lvCMvbVwzWNvydoL5347MfTmLWr4EUKKypFc/wS05HcPW/sj5wYQQwuapvTuOgUANQH8ezP7c3Cp772GnpBfZB7ju1aXtv2MQTcbDkiLtZ1B5c5W+PdIXLKlHMAFGvD0/tyieEbBjpYnyUCnoNf5Okpko0IVSwn1YaXBLb5pD1RXL6ZmIFPACNpPIXYwSv7oT0FrcXbO3ftAVZu5d/PiKtoKk5/izek8bYWqzN3QxICpU7BB47ZAYon7E37UwKI2nRml+pVPbZqWSgLBQuNxgTDIdnp5EnmFaRWqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+g/lR3Xw+DDAZVO+yaZkupin8NEPozqTdB7sa1zk22o=;
+ b=Se1ukJx+SnZ6383OleWh1YOxUyT20flP5coJ7KnwOMfJA2FWYg8gqKhtsZ0UOxhRAbfYeQNI7u8cX00qTC5VNWpIX28RRol92tV0ikjdnSQODmJhJipv7uZbRdLEFqaXL15NZgppoP0ySbVlZYZCiuDv0dAPolBO2THA7DtNoOw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:488::16)
+ by LO4P265MB3647.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:1bf::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.20; Sun, 1 Mar
+ 2026 13:26:19 +0000
+Received: from LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1c3:ceba:21b4:9986]) by LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1c3:ceba:21b4:9986%5]) with mapi id 15.20.9654.015; Sun, 1 Mar 2026
+ 13:26:19 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 01 Mar 2026 13:26:18 +0000
+Message-Id: <DGRHAEM7OFBD.27RUUCHCRHI6K@garyguo.net>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-block@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-mm@kvack.org>, <linux-pm@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v16 01/10] rust: alloc: add `KBox::into_nonnull`
+From: "Gary Guo" <gary@garyguo.net>
+To: "Andreas Hindborg" <a.hindborg@kernel.org>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross"
+ <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Dave Ertman"
+ <david.m.ertman@intel.com>, "Ira Weiny" <ira.weiny@intel.com>, "Leon
+ Romanovsky" <leon@kernel.org>, "Paul Moore" <paul@paul-moore.com>, "Serge
+ Hallyn" <sergeh@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>, "Christian Brauner"
+ <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>, "Igor Korotin"
+ <igor.korotin.linux@gmail.com>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Viresh Kumar" <vireshk@kernel.org>, "Nishanth Menon" <nm@ti.com>, "Stephen
+ Boyd" <sboyd@kernel.org>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Boqun
+ Feng" <boqun@kernel.org>, "Vlastimil Babka" <vbabka@suse.cz>, "Uladzislau
+ Rezki" <urezki@gmail.com>
+X-Mailer: aerc 0.21.0
+References: <20260224-unique-ref-v16-0-c21afcb118d3@kernel.org>
+ <20260224-unique-ref-v16-1-c21afcb118d3@kernel.org>
+In-Reply-To: <20260224-unique-ref-v16-1-c21afcb118d3@kernel.org>
+X-ClientProxiedBy: LO4P123CA0480.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a8::17) To LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:488::16)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260227233930.2418522-8-bboscaccy@linux.microsoft.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LOVP265MB8871:EE_|LO4P265MB3647:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3d8fb033-a2c8-41cb-d0fa-08de77961f76
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|10070799003|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	GFWpL0xljursFFSK8xcXUJ2sfAMA7oOgG1HLu+Y9yQ75CSpN3sglPzNhOWKJFQhZIAfyGiiQNnfbKngNKutvH7lV+iJBKftqjpl995oa/yUYkWnhcT45IOEKgFooy+10+885xQwXr4HPDigRDjsRtzP31CsTtDJt7E9TCr/TyVpIsqZj7G6OJ6LMxIpbLT8+gyon7g8i7aw8s+Wd91QRvH2QIvtEYUevmAMfauYAYIAAJ/Br82alsghHrsp3fMmsyHfyr7mvfKIEAU+qnCq+TxgfUrMipRf5/Yp3f0S4NDK9lOXFSluxTpSu3wFIjVK6sH2T41wkJ7l0WVm2SHz30PZmHH4IC7RFP7vKqkKna0YPs22pgipCoyRdwConIsPjHtR/PCcCuf1t04WqLFFwYEbu+b7GdPsPuLE99YHpXbfXK15HGzUafp/nDja53rZhmf+QNY+FI9G4stFPVgFfzYlQEFf9IFlRCkWicCgXg4SHmzHT4bvcL53htScU2Jp4Nl9SrCW957rYVek2+ilN1QTJ46iIjRxV6XVrN4/sgOBeO9USn644c8SmmRJBmFF/5dvoxtf2x+HLOBdg/RQdhA5zrK35hoSqCew+wr9T9It9yKUve+vFgyfRVbr+3GwDobZDdo2Jhbea9MrxAeyKMWAXBJmhdUDdwP2lisS2HMFj5dUEb2+ECSX/oKE8I6yfFhwOdiFn3BUBVLpWBS/uhmpstCv8y8ERb+g19Ib2ucnnjWgTxYmosJQYk5J9hHVQKluvh05HtaeF7djTal8C/g==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(10070799003)(921020)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MWpndU5VZ3hEZXN3eVp0S0RsaU1EcldlLzJxS0JoMnBSWFdZd1A3b1M3ODUz?=
+ =?utf-8?B?NnliNjd1NElrOEZBak5ra1hYVUtVelhKRGwzaS9YejJROVkwS25UUzhEcVRF?=
+ =?utf-8?B?TThoMXV6Z2FhVURycG92QVU2QTJsR0ZXNDZkTnZGUVNwbHdneGIwMXdMQzhQ?=
+ =?utf-8?B?dDgvWm4wLzduRUQ3Smo0aVpLZ2d6c0xJNTQvdW1BL1NtUHNreVBONG9SbmFM?=
+ =?utf-8?B?OUZFd0dSR2hkWm5zMDhmNFZwc1BBVUg0QUZ5TmFpUlprM2xBSFFydUNrV3Nt?=
+ =?utf-8?B?TmpSYjk0Y21PK1FFQUgxVHcvbWtWdzVOb2MvUFJERkFFK1dtZHF1RGgxSVRl?=
+ =?utf-8?B?OUx2MU9ZN1VoVHgzbGYwRll4OERRMEhxZUlYVzBkV3NMTFRKUk05TVlLdEZ6?=
+ =?utf-8?B?ZUE3ajAydzVkVEFZcGp4bXQ3TzhpSDhGS0U2UGZSZklVeFExVlRta2NjOFlD?=
+ =?utf-8?B?ZnROVGRZUlpHSHUzcTQ0NkFOSG9WVi9Fc2tScDlEUFlINWR2cDBoejJNQnBB?=
+ =?utf-8?B?TnVnYURMQm5jM2hraDNNUXQ1dkFaakJGTS9hZ0Roanp6U3dMczFzeDd2OFQ3?=
+ =?utf-8?B?dllUcFdBWXVvNXFSYzJJQXZPOUd5U21icU5CZTkyN2lnTHFDeGRwVEFnZHhJ?=
+ =?utf-8?B?Qk1KTWlhenJCbmJjWFUvd1c3UFVvYTRvSXVOR3E5VW5MYkE1THlVZ0UvVlNu?=
+ =?utf-8?B?Z1VUaDJRQngzU1BUeS8yUDZ4ZUJrZkN6UUY0SnQ0eVJjUXpwcU0zTG9NN2tU?=
+ =?utf-8?B?TURZRVJ0M24zSFdDNW5PWWF5Ry8yUk1LZXZVbHVuTkNjQmlEQWRNdFl4Z3Qz?=
+ =?utf-8?B?QmI0TXdPMFpoaXJoWEFxNkIxZzZrbWtLQnkxZXRldi96cm4rU0xQaHNXNnZa?=
+ =?utf-8?B?aDdkeWVGR3RFdGpMUytvd21pbStiUmN1TDU4T2FBR0dveHN1aSswQUo4NEtK?=
+ =?utf-8?B?cXhabllXNmNubnpmV1Y1VWkrc1JJOVU1OEFlbVQxclU5YTQ4YkV1dG0ybjlG?=
+ =?utf-8?B?YmQveGhCZDRjMjVqckdIbUQyMmVOV1dpT1RId3BoM1NwbmJpLzRrR0k5RmdK?=
+ =?utf-8?B?MituNklHMVE4d251S3ZuSmo1NFJSRDI1RWVnZHRTeHlud1NzZCtoWTYzd1hR?=
+ =?utf-8?B?blg0Qzg2NGJQakgyK2w3ZmtUaFBzVUNCMENMZzVkSENzYm9KV3ZyWmxDMlla?=
+ =?utf-8?B?SzlvZUJOaENPNHpENkdtREFlZjNiaGtmWXdCVHd0MDhRZUd1SGZOQU12ajZJ?=
+ =?utf-8?B?OW5STjY2aW16ZWNKM2pqTHpoeXB2U3RFRU04aVBMTFhnUCs1NlRpTlVNMXJs?=
+ =?utf-8?B?dU1rWEZLR0J0UU9wcldPMkpCTTVINk5Zbm1HdTFxTUZvN3pxcTlxOWlKRHVV?=
+ =?utf-8?B?ZHozSnpnWWY2eEtDSXNVUHlEWEYrU0tHS3RNdSsvcSs5eFRsZFZaVjJkTWJ0?=
+ =?utf-8?B?U3pNY2habTJoNFFzUjdDZkYzMHo2aVk4ejd4Z2kwNGltUTdaK2RFeXBzSktw?=
+ =?utf-8?B?RE9Icko3eUlZaWY2WEptazVjeEFqWUdWdlBudW15YzlZckFTV2hpK2dVRUxh?=
+ =?utf-8?B?a0ZHOTc5dUFxSm9mMVZBK1A3N1FoaFM5RFdWajRFN05uZ29KaEIvdGNKMWZL?=
+ =?utf-8?B?OHFhNy9JdTlHRVZmSTFXVGM0WVl6eGlIRnlrcWx6QU1paFdHcU8rZkxsbVlY?=
+ =?utf-8?B?UmZ0Y3Z0Q0JRaHhuNzlxemJrWUt2cFhsZ3BzRS9QelFaV05rZGtFWXlZbk41?=
+ =?utf-8?B?NVFOLzd6ek95cjU4aVVMTmJmUjNhOWVxYW1hQ0M2MjhEOHo2VjdXUSt2ZzRB?=
+ =?utf-8?B?dmFxcXBaV3VDY0V0bWNYVjhQTzRudklNSjlPaFp6cFpIVWZuQklHMCtwOENJ?=
+ =?utf-8?B?RXN5bHhORlNMZ0Fxcy9BSVpVNUJQSUhucHpuT0ZsY3lHb2RMU1llNlpRaUZz?=
+ =?utf-8?B?T2c3ODladWVDd003cTBmVFVZTlhTL094d0xocmZlSFFZaTl4SXFxekFoRUth?=
+ =?utf-8?B?cGk4a0d3TFdDUGpWZ2YyWEJZcWVScW1lOXNWUHllSjNFWXdzeVJHaEpDeGtn?=
+ =?utf-8?B?TTd4ZjlBTVBQeUYzOWlEV05DeUJpK05hM2JFRFRzcEVvcmQrTWdqd291empo?=
+ =?utf-8?B?d1dGWTlBVGk1d0wvM1Zvb3RzNHBHODVZTWYyRGpGVWp1M3hwNy9kTXlVb1lY?=
+ =?utf-8?B?V2RnM1RHNDUzOXNMVVVoMzZNR016d3NTUDZwenJBSy9NM2E1blh1ZUo1cUpp?=
+ =?utf-8?B?RWNvU090OXpzRkZzZ2E3Qi8xQ2dOTnlRS3NWaE8ydVZxSnRBdExWVm1zRWdw?=
+ =?utf-8?B?anh3R296SFVJdXdnQ2tzY2tnSDlJUTNRZUI1ZDAyRk9obkVjc1Y2UT09?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d8fb033-a2c8-41cb-d0fa-08de77961f76
+X-MS-Exchange-CrossTenant-AuthSource: LOVP265MB8871.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Mar 2026 13:26:19.0582
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TsjA09eLwLNYItAwdRFrk5Hgzs8cZIN2JCPna+hBPlvajL7oa5/fFN1+v1TKkAp53esO/yksqbVs6ymGcS6SfQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO4P265MB3647
 
-Hi Blaise,
+On Tue Feb 24, 2026 at 11:17 AM GMT, Andreas Hindborg wrote:
+> Add a method to consume a `Box<T, A>` and return a `NonNull<T>`. This
+> is a convenience wrapper around `Self::into_raw` for callers that need
+> a `NonNull` pointer rather than a raw pointer.
+>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> ---
+>  rust/kernel/alloc/kbox.rs | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
+> index 622b3529edfcb..e6efdd572aeea 100644
+> --- a/rust/kernel/alloc/kbox.rs
+> +++ b/rust/kernel/alloc/kbox.rs
+> @@ -213,6 +213,14 @@ pub fn leak<'a>(b: Self) -> &'a mut T {
+>          // which points to an initialized instance of `T`.
+>          unsafe { &mut *Box::into_raw(b) }
+>      }
+> +
+> +    /// Consumes the `Box<T,A>` and returns a `NonNull<T>`.
+> +    ///
+> +    /// Like [`Self::into_raw`], but returns a `NonNull`.
+> +    pub fn into_nonnull(b: Self) -> NonNull<T> {
+> +        // SAFETY: `KBox::into_raw` returns a valid pointer.
+> +        unsafe { NonNull::new_unchecked(Self::into_raw(b)) }
+> +    }
 
-kernel test robot noticed the following build errors:
+Hi Andreas,
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v7.0-rc1 next-20260227]
-[cannot apply to herbert-cryptodev-2.6/master herbert-crypto-2.6/master shuah-kselftest/next shuah-kselftest/fixes]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+It looks like this patch and many others in the series are missing `#[inlin=
+e]`
+for quite a few very simple functions. Could you go through the series and =
+mark
+small functions as such?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Blaise-Boscaccy/certs-break-out-pkcs7-check-into-its-own-function/20260228-074528
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20260227233930.2418522-8-bboscaccy%40linux.microsoft.com
-patch subject: [PATCH v2 07/10] security: Hornet LSM
-config: um-randconfig-r133-20260228 (https://download.01.org/0day-ci/archive/20260301/202603010957.7JUXdjTd-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260301/202603010957.7JUXdjTd-lkp@intel.com/reproduce)
+Thanks,
+Gary
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202603010957.7JUXdjTd-lkp@intel.com/
+>  }
+> =20
+>  impl<T, A> Box<MaybeUninit<T>, A>
 
-All errors (new ones prefixed by >>):
-
-   In file included from security/hornet/hornet_lsm.c:10:
-   In file included from include/linux/lsm_hooks.h:29:
-   In file included from include/linux/security.h:35:
-   In file included from include/linux/bpf.h:32:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:27:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:24:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:12:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:1209:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-    1209 |         return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
-         |                                                   ~~~~~~~~~~ ^
->> security/hornet/hornet_lsm.c:183:8: error: call to undeclared function 'verify_pkcs7_signature'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     183 |         err = verify_pkcs7_signature(prog->insnsi, prog->len * sizeof(struct bpf_insn),
-         |               ^
-   security/hornet/hornet_lsm.c:183:8: note: did you mean 'bpf_verify_pkcs7_signature'?
-   include/linux/bpf.h:3624:5: note: 'bpf_verify_pkcs7_signature' declared here
-    3624 | int bpf_verify_pkcs7_signature(struct bpf_dynptr *data_p,
-         |     ^
->> security/hornet/hornet_lsm.c:197:6: error: call to undeclared function 'validate_pkcs7_trust'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     197 |         if (validate_pkcs7_trust(msg, VERIFY_USE_SECONDARY_KEYRING)) {
-         |             ^
-   1 warning and 2 errors generated.
-
-
-vim +/verify_pkcs7_signature +183 security/hornet/hornet_lsm.c
-
-   153	
-   154	static int hornet_check_program(struct bpf_prog *prog, union bpf_attr *attr,
-   155					struct bpf_token *token, bool is_kernel)
-   156	{
-   157		struct hornet_maps maps = {0};
-   158		bpfptr_t usig = make_bpfptr(attr->signature, is_kernel);
-   159		struct pkcs7_message *msg;
-   160		struct hornet_parse_context *ctx;
-   161		void *sig;
-   162		int err;
-   163		const void *authattrs;
-   164		size_t authattrs_len;
-   165	
-   166		if (!attr->signature)
-   167			return LSM_INT_VERDICT_UNSIGNED;
-   168	
-   169		ctx = kzalloc(sizeof(struct hornet_parse_context), GFP_KERNEL);
-   170		if (!ctx)
-   171			return -ENOMEM;
-   172	
-   173		maps.fd_array = make_bpfptr(attr->fd_array, is_kernel);
-   174		sig = kzalloc(attr->signature_size, GFP_KERNEL);
-   175		if (!sig) {
-   176			err = -ENOMEM;
-   177			goto out;
-   178		}
-   179		err = copy_from_bpfptr(sig, usig, attr->signature_size);
-   180		if (err != 0)
-   181			goto cleanup_sig;
-   182	
- > 183		err = verify_pkcs7_signature(prog->insnsi, prog->len * sizeof(struct bpf_insn),
-   184					     sig, attr->signature_size, VERIFY_USE_SECONDARY_KEYRING,
-   185					     VERIFYING_BPF_SIGNATURE, NULL, NULL);
-   186		if (err < 0) {
-   187			err = LSM_INT_VERDICT_BADSIG;
-   188			goto cleanup_sig;
-   189		}
-   190	
-   191		msg = pkcs7_parse_message(sig, attr->signature_size);
-   192		if (IS_ERR(msg)) {
-   193			err = LSM_INT_VERDICT_BADSIG;
-   194			goto cleanup_sig;
-   195		}
-   196	
- > 197		if (validate_pkcs7_trust(msg, VERIFY_USE_SECONDARY_KEYRING)) {
-   198			err = LSM_INT_VERDICT_PARTIALSIG;
-   199			goto cleanup_msg;
-   200		}
-   201		if (pkcs7_get_authattr(msg, OID_hornet_data,
-   202				       &authattrs, &authattrs_len) == -ENODATA) {
-   203			err = LSM_INT_VERDICT_PARTIALSIG;
-   204			goto cleanup_msg;
-   205		}
-   206	
-   207		err = asn1_ber_decoder(&hornet_decoder, ctx, authattrs, authattrs_len);
-   208		if (err < 0 || authattrs == NULL) {
-   209			err = LSM_INT_VERDICT_PARTIALSIG;
-   210			goto cleanup_msg;
-   211		}
-   212		err = hornet_verify_hashes(&maps, ctx, prog);
-   213	
-   214	cleanup_msg:
-   215		pkcs7_free_message(msg);
-   216	cleanup_sig:
-   217		kfree(sig);
-   218	out:
-   219		kfree(ctx);
-   220		return err;
-   221	}
-   222	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
