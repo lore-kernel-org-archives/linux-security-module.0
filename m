@@ -1,108 +1,76 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E501D0DEE;
-	Mon,  2 Mar 2026 07:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8F4336ECC
+	for <linux-security-module@vger.kernel.org>; Mon,  2 Mar 2026 11:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772435943; cv=none; b=FSpihM9W3L0zhZNpk4UicboUqYGQJzQm2hMR8ENjmw16t1hdo/wq28OmSzCcm6CbEjgNzYrLm+UGS8BvyjnKYsnsgptVefU1ZrHMaLCn/KVU4mmj5Ag9qWJRKQ9xowjR6Xx5yX6xe9ziLN0JJ3XFsppdj2+d1eQ/HAgJi44uTl4=
+	t=1772450051; cv=none; b=c82bX0+2wbZTigkcFZhJvKTEUVKd+ZVgyZdihlk8MsfFXoxVKY/uq/gza/g45eDdgt/GIhO4Gw9v8ml4tceeBf6aMib8qI2/VFj9G6+PgKgdkqFJU9YpMU7Q8ZoP+e48QVRlhwiVXD3c7awqDMsZYN05VZzvidpDgNdJyaDhXhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772435943; c=relaxed/simple;
-	bh=IWFUYHylqRFZaRm5r8RrLRDa3YLgSmjWVVLiN7LHGy4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=k5b/g0CzCTvCFTaHqUrg3lyz6k0fGNA3sK3tLcVfj7t3oXVdAg1MWxOlk91xsC4Cl6sX7fr/GHhnA0beONPhLYzs5PTieyRkvJueYTHR3hjYqZYpJ5Ui5OwtijYoaqGfoo0bFxHgeYG80WLRjes2Bnhnz4cxInFFy+lv4TSxxGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l9ZaeF4a; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772450051; c=relaxed/simple;
+	bh=+WEC8vLIaaBu4jRcRDa/Q2GRe9zxcjW5PMMWhfsd128=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aEihGz7MHqcq46j63p8ZvrTU0JKWB3tGGQb22xXseaaRY0a5zJOrOcK1qHoAFbOtm6zDjWudPR0DJrD8DlKs/24JuTzE2f2Vz9LVaOGufPXli1KCvWIT8TfmptaYiNQB7BRsSBP+E0IW78TYVgRuTqJC0sIuevef+absPe6RAwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Xa5dDV0d; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l9ZaeF4a"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42D3EC19423;
-	Mon,  2 Mar 2026 07:18:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772435943;
-	bh=IWFUYHylqRFZaRm5r8RrLRDa3YLgSmjWVVLiN7LHGy4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=l9ZaeF4aPU2R5rFFz1KzYT2AzZwYDAcXSFOWGleyGX4IJCSYh3ey9X9MFaec25Jvt
-	 R41n5ogriJLHLbTnbAhRUlTENuE8zHqJZ4hmXfIoI14lQa1CZ833Zh2NufwlrmebRa
-	 uRquDMiQ7euErjNofmy94n80bTQAgtr9fYExYWtiCa7u6OSqVRwgJZtiI9fbt0Id5d
-	 X42If6KFdaneLbuS8GYtRtOBZ+FwIRmVTq7yyXCkl7+v+oM/ByWo3UXqtNZIjzLubr
-	 CxI1q1dwT1MHjvxnZsz6xERpo7UqyUz5qw5zjzCMpgHhrhI/5JG2NlqgMLZulaFmBF
-	 wrN8cEwrndjoQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Gary Guo <gary@garyguo.net>, Benno Lossin <lossin@kernel.org>, Gary Guo
- <gary@garyguo.net>, Miguel Ojeda <ojeda@kernel.org>, =?utf-8?Q?Bj=C3=B6rn?=
- Roy Baron
- <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor
- Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman
- <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, Leon
- Romanovsky <leon@kernel.org>, Paul Moore <paul@paul-moore.com>, Serge
- Hallyn <sergeh@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Alexander
- Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Igor Korotin <igor.korotin.linux@gmail.com>,
- Daniel Almeida <daniel.almeida@collabora.com>, Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen
- Boyd <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Krzysztof
- =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Boqun
- Feng <boqun@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, Uladzislau
- Rezki <urezki@gmail.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v16 01/10] rust: alloc: add `KBox::into_nonnull`
-In-Reply-To: <DGRQNTVD3N23.33347CYLKMKEH@garyguo.net>
-References: <20260224-unique-ref-v16-0-c21afcb118d3@kernel.org>
- <20260224-unique-ref-v16-1-c21afcb118d3@kernel.org>
- <eeDADnWQGSX9PG7jNOEyh9Z-iXlTEy6eK8CZ-KE7UWlWo-TJy15t_R1SkLj-Zway00qMRKkb0xBdxADLH766dA==@protonmail.internalid>
- <DGRHAEM7OFBD.27RUUCHCRHI6K@garyguo.net>
- <87ldgbbjal.fsf@t14s.mail-host-address-is-not-set>
- <DGROXQD756OU.T2CRAPKA2HCB@garyguo.net>
- <DGRPNLWTEQJG.27A17T7HREAF4@kernel.org>
- <p7rsBPaYxHKSMFCYVUFY5hdI1H6jxHK0s7lxLQkqH4rylM6yS03Yt52SCjiTO5qBVUmc41ZHZ7XZ0_3w_U-O0g==@protonmail.internalid>
- <DGRQNTVD3N23.33347CYLKMKEH@garyguo.net>
-Date: Mon, 02 Mar 2026 08:18:47 +0100
-Message-ID: <87ikbebsx4.fsf@t14s.mail-host-address-is-not-set>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Xa5dDV0d"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1772450048;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=4L7492MiqYQDrnPN0WkcKH0FrZ/kIDJ3QODz609KDV0=;
+	b=Xa5dDV0dQzOqnNoXHEM1OttefGZe+yp/hvpWslhbtT+ODZY3SkKHL3WuQxt10RegiBMyk2
+	ZgliWBUuECtAtu1S9g67oZjRajvovkTGC1P41jUIZeZjnvh7xvp/GkIMKBkPlMkHZs1nvJ
+	103T16+DxMGNcC7j9KhWvP9P86mYOOs=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-hardening@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] keys: Use kmalloc_flex() to improve user_preparse()
+Date: Mon,  2 Mar 2026 12:13:11 +0100
+Message-ID: <20260302111309.937726-3-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-"Gary Guo" <gary@garyguo.net> writes:
+Use kmalloc_flex() when allocating a new 'struct user_key_payload' in
+user_preparse() to replace the open-coded size arithmetic and to keep
+the size type-safe.
 
-> On Sun Mar 1, 2026 at 7:59 PM GMT, Benno Lossin wrote:
->> On Sun Mar 1, 2026 at 8:25 PM CET, Gary Guo wrote:
->>> `#[inline]` is a hint to make it more likely for compilers to inline. Without
->>> them, you're relying on compiler heurstics only. There're cases (especially with
->>> abstractions) where the function may look complex as it contains lots of
->>> function calls (so compiler heurstics avoid inlining them), but they're all
->>> zero-cost abstractions so eventually things get optimized away.
->>>
->>> For non-generic functions, there is additional issue where only very small
->>> functions get automatically inlined, otherwise a single copy is generated at the
->>> defining crate and compiler run on a dependant crate has no chance to even peek
->>> what's in the function.
->>>
->>> If you know a function should be inlined, it's better to just mark them as such,
->>> so there're no surprises.
->>
->> Should we set clippy::missing_inline_in_public_items [1] to "warn"?
->>
->> [1]: https://rust-lang.github.io/rust-clippy/master/index.html?search=missing_inline_in_public_items
->
-> That requires *all* public items to be `#[inline]` regardless the size, which is
-> excessive.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ security/keys/user_defined.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I was thinking something similar, in clippy or checkpatch.pl. If we
-should always have this attribute for small functions, we need to have a
-check.
-
-
-Best regards,
-Andreas Hindborg
-
-
+diff --git a/security/keys/user_defined.c b/security/keys/user_defined.c
+index 686d56e4cc85..6f88b507f927 100644
+--- a/security/keys/user_defined.c
++++ b/security/keys/user_defined.c
+@@ -64,7 +64,7 @@ int user_preparse(struct key_preparsed_payload *prep)
+ 	if (datalen == 0 || datalen > 32767 || !prep->data)
+ 		return -EINVAL;
+ 
+-	upayload = kmalloc(sizeof(*upayload) + datalen, GFP_KERNEL);
++	upayload = kmalloc_flex(*upayload, data, datalen);
+ 	if (!upayload)
+ 		return -ENOMEM;
+ 
+-- 
+Thorsten Blum <thorsten.blum@linux.dev>
+GPG: 1D60 735E 8AEF 3BE4 73B6  9D84 7336 78FD 8DFE EAD4
 
