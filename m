@@ -1,71 +1,77 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EE5381AE0
-	for <linux-security-module@vger.kernel.org>; Tue,  3 Mar 2026 18:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E544370D65
+	for <linux-security-module@vger.kernel.org>; Tue,  3 Mar 2026 18:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772561398; cv=none; b=W0KzkfrPQ3aR//MJSNkN3EafFJwoVNeppvQkcH0vlEA+Mm3/bhVEIih00rN09aI2EAQu3q77JDIaHJDpT6D4uJfi5FdYok/R9BoZBbA9ZB159nI9fT2encK7nqRGwsOFw6WxaMSM/0W7/YZelx2yj+zJJGKmg4hs/jldy9BYT/o=
+	t=1772561603; cv=none; b=Ge8qjeV3ca9NiVzIuGIwFIdFJVxTidDtXiWBQggR1tjTD35tydxCpxNnXJRiu4GuCRgxzcpxmVHlYp4IcyW7fZ8HkKloLZFkxjSTvfr4ofdmLX/Q3WcQqI7FVIwdS3o9I/U4Lafwf72Tsauf2gJ/L9LTtwnk234mtR2wclDFdas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772561398; c=relaxed/simple;
-	bh=bTlVoUFASzxzQOoqEL434Bvdcu0BWUwPP+dzvuDRPlw=;
+	s=arc-20240116; t=1772561603; c=relaxed/simple;
+	bh=WMKmwEccfv+9Ou96ZSfBBzYTzXCskhHWU8Bf1NJTA/Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ETNkxEblvzC1mr3GTA2AcOwMhnDJ9IdgNButvmuAMKs4D2cObQPlxy+iULaBa9p0nPhU+Y3o/5x/WPf2FBGU+BexXMoxo2OVjQRfOj5wmCHlrv1pjzrINvZ3aB/MnPhO2mq6ccZ8M/UM2bIlKDRWm1IYsjYKy01VIQDphZe0wYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fBWblSA6; arc=none smtp.client-ip=209.85.128.45
+	 Content-Type:Content-Disposition:In-Reply-To; b=uESZ7o8fP7v8tkmIf7K5SE8ewC03a+T8+EHHiJIsQX4KZMB+V0fzL93tOJNVwU1LqMIzJRX7VRtsAUuXVeMLtByd9KjL23ajU93V+cHoBaOWe6Sts57AjkEXDZgYperdstImfxeGhdHNn+qBczJkSdk036nYaOkPe/D7Aae70co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHnQuFIM; arc=none smtp.client-ip=209.85.128.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fBWblSA6"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4836f363d0dso53143515e9.3
-        for <linux-security-module@vger.kernel.org>; Tue, 03 Mar 2026 10:09:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHnQuFIM"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-797ab169454so58386927b3.3
+        for <linux-security-module@vger.kernel.org>; Tue, 03 Mar 2026 10:13:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772561395; x=1773166195; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1772561600; x=1773166400; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=5r8A6bO48R5z8dhrhRLGMY+vxIfFF0NvmBiDfOUr4EM=;
-        b=fBWblSA6IazgRDL+uHmqZFTu5ApNjcf3v/hDwKgvJPgxBmdBe/BgJy5XKhD9rb1N5z
-         y2JXxX2deouFNxn3UIfGuVxTgQrwXiRF1HAP9l3ARVB28nUPApkt/egiiR9dvQR1L4qG
-         Y0W97ZvD3G2NdkViCD3nnRtSgjyKkUMvyX1E6U/Eud/8/RmXAx6PNZcVAFvMY/mCvSqx
-         b9HOXEYQAPd9H9wDQX6wjyb2ylq0NvzMRRBGZjlSqtgJw05H9/reXmhyDf3Z2qQX1qvq
-         aE3wMco7nIpcDQ0iH4sHXZJnEpBEfk2v9cfITOFtn/lYHOen/ZubjHSNTLLTdJNsQKVs
-         vWuA==
+        bh=8h8/HyPUe+6pyzot1oP2GoxWQob4BkCfeosynleWUkQ=;
+        b=RHnQuFIMD9zMLfOuWdKcJY8Di1D5hH3cn+Qfs+QqTkR/DaGrYF/0uLRlKCInl7u6R8
+         FBGQQYbiw0bCB1v/4Hb709ThMrim13CHK+5e9sVrGN24JHSyXUfw0Gz5teZeF/6CJfOA
+         y8CHslkWymfy6DJW1NxOj6hqpbJ6k6vYpsT6xAYwwmC2f6JECMp0VxUboaAkyMnpBZuz
+         cBZshZ9CFQDrk+zrPNMEVNbHU4p7BS01DRYkdcTfNdNb3y8cjIOPSf/+7szuFGXzsvM0
+         l5ZYswOoBVX28w2mRHajIrBgZI7xWjeqElWLxyvJUU0ltF8phtN7yeHc71ffqN2SFDA2
+         Oi+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772561395; x=1773166195;
+        d=1e100.net; s=20230601; t=1772561600; x=1773166400;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5r8A6bO48R5z8dhrhRLGMY+vxIfFF0NvmBiDfOUr4EM=;
-        b=I+VBiVAe8uT80dDkjVoXN8pQddYySZ+JUuhNp4k+S9BIawHwREil+7a9gJlB3VRG5B
-         /noBJHu4S58McfhesiTtjdsom5vr+WMk4SAjVPMpTuIsHw5/7bB/3XIPH6LOU5cISf76
-         RBWlUvSaiwOHCew2NYG+6SK6lrtSIG5ljVeWyzNWj4OwNMMhhfdT1NSf4cAqC1RlQDqg
-         H471w+djaUikZbhXCmdPmSIkNJzMgVZ7VNBv7Kd5AMmadnMHCkPSKbs5Im833ZufTz+i
-         jEJeG3hWOqcWzLGNsLkG8o3dpxyavsxRD11Omk5CQdtUINWYsuCVxpgSAsqBfgUR7EHO
-         T6wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkJyYxvzPTPdSd6tbbG58TxP5wEoKT2I1u3ii1vM2SGH4qrvH+OXU1NZV1NzjJ/Mr0xczVZl/RXvgVnc/I/5riExcZCIo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjiPoT+guKKue9CpmLXglKI0JwDXhWXqQ7x8ps1leYh+00AN5u
-	2JnzKzEVk48oTgnGo/Kxr4zvej9K+BYFtauVx7HZokCwZN2BUyNpPIYV
-X-Gm-Gg: ATEYQzwEUwJGdeKBTprKP0cU0D+DpamPpE8ZAxMOpPVOCsvh0T5W1oB1oPOLjzSyjS5
-	fsXAUWloQ+nvQ2MgKoWnkqzmie3VZwEmpN/nE5Gyfb7S9kYeLH4W1eDrQoalvsRQUfnb5ywi1op
-	y2hIkwXJ5UDwA636MIQptw4A5cVJffBtYzk5XxUi+V2QuS1TqdM4Ei55GCd9TV1IVJMJ4lE5GTZ
-	m9n3+U9/FYt6NFA30wPrnLHeSYOgseBBBXQVNrgPjnMRbWZtBdYAyeeUbCd41/jck6dbDoxukms
-	i5bOiWQtxNgdj1cNWVPKHwTeYCVw/7OfyR+M6QbqMkox8xgHu33aujNp3ZWgjTb8rWjqyHJ+0pX
-	eLKWHKjrBRyy/Xw5Itocmc7doHB/JYM/+XQdmkb3IUd/rBUH+cm88HWxDYQ8kvUcYY7BpRmz4Jj
-	yw5kdoBGHRO3n4itkyLlOYJ7fotK5zZJAmi3HLaqV/CfI5WVeT
-X-Received: by 2002:a05:600c:4f07:b0:47e:e20e:bbb0 with SMTP id 5b1f17b1804b1-483c9bb1d2cmr255634085e9.6.1772561395026;
-        Tue, 03 Mar 2026 10:09:55 -0800 (PST)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-485135d52f6sm20919355e9.31.2026.03.03.10.09.54
+        bh=8h8/HyPUe+6pyzot1oP2GoxWQob4BkCfeosynleWUkQ=;
+        b=McXnSExixtuPKKU4/y225lG60uv2ujTX9UvmLT29d3jiwWQRRL99mGzKGgSFov6/Ed
+         7B3087dRR/LZA4WfVDtXcVETqi9h8UX/wDXH61By9zW1ri/lVZVQLkMdEKya5z4PJ+9u
+         pAXdRt4SaSJiKyp+D10Gc05cLCyhWFaTLJqjQbRsjzxQbcOddcG3LDx2WxWL2d7G5JI4
+         jGZJ3VtweO+tHGC63EoMFrvKgHZzjBMt1gEismmFT3/WvxGsSHHyhNWvJ7+16U9COfvY
+         Bi1vzuCgJkx2Df8gqHAJ7+obGHMNIR6tYFI0i9dllPULOmb+XezWk0LFA9NIjGZBWRQM
+         /YUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdWuSmaUxOlTPQDSLgj47YdNJm9/FUR2hRpoxWIMCkww7Ia3UakVtjPhCCwKv197U36zh1TRdD5O1IboDz8wguypdSHm0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyPfizaNNk26zOMpoqUuIPF3ijhkUgBgKACpjS5FazM6F5lJ4C
+	Eml1NNbJciXGdWXjAc+HddH8MCUDpKZ5laWquZByH8MO4moVdcr9sBgL
+X-Gm-Gg: ATEYQzyjkYBb/Fj1UqXJG7yIh7Ki0Apn8r7PFQF051VMFuA6bJAsTvZlah3nsXQzvHb
+	PqdqfElCgv8zO1Gno3QuKKAotJYpDEfWqi9wof4JMWDrPuZlsX40bcPOcw83h4lcUT/8jvpXlxR
+	pN3w8JQwOG3pbaWeinVzaasZ5XtmSIqpxgLv7zbMzOAyMNP1VExLceTQHE/a4JQ+rEH+Q2r9Fp9
+	x0L5gneeEDA3+D+65KGfCOtQLMhTxfG3S+gRA+IEZrp24RUa4nYb/vMNHOAWk8Ryr1MaMNB1V4q
+	62En4XWOs7luwM0QvQ33HCxoVAecANdWKy+Kk3LzthFBPWwXf2rPNj5TBZUZoCh8vGelMZJBCt9
+	4E7JbKCeze4NP4/snwBcJXrcauCPyfbFCL8IvbMz/aBdvyDt8LG5h79khEYWRvNtkLqnp0oHicH
+	LUnitnMOaRWrZJcT4IYkUk9xCxOFH41USnoWcGR5LP
+X-Received: by 2002:a05:690c:2604:b0:798:36:e110 with SMTP id 00721157ae682-7988564ceccmr158027517b3.62.1772561599751;
+        Tue, 03 Mar 2026 10:13:19 -0800 (PST)
+Received: from suesslenovo ([129.222.254.128])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-79876c53644sm66329827b3.39.2026.03.03.10.13.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2026 10:09:54 -0800 (PST)
-Date: Tue, 3 Mar 2026 19:09:40 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+        Tue, 03 Mar 2026 10:13:19 -0800 (PST)
+Date: Tue, 3 Mar 2026 13:13:17 -0500
+From: Justin Suess <utilityemal77@gmail.com>
 To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	linux-security-module@vger.kernel.org, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v1] landlock: Fix formatting
-Message-ID: <20260303.55923ece9536@gnoack.org>
-References: <20260303173632.88040-1-mic@digikod.net>
+Cc: Yihan Ding <dingyihan@uniontech.com>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>,
+	Paul Moore <paul@paul-moore.com>, Jann Horn <jannh@google.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com
+Subject: Re: [PATCH v3 1/2] landlock: Serialize TSYNC thread restriction
+Message-ID: <aackvfZN1JD4yq2S@suesslenovo>
+References: <20260226015903.3158620-1-dingyihan@uniontech.com>
+ <20260226015903.3158620-2-dingyihan@uniontech.com>
+ <aacKOr1wywSSOAVv@suesslenovo>
+ <20260303.kuSho2nooFie@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -75,65 +81,168 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260303173632.88040-1-mic@digikod.net>
+In-Reply-To: <20260303.kuSho2nooFie@digikod.net>
 
-On Tue, Mar 03, 2026 at 06:36:31PM +0100, Mickaël Salaün wrote:
-> Auto-format with clang-format -i security/landlock/*.[ch]
+On Tue, Mar 03, 2026 at 06:47:30PM +0100, Mickaël Salaün wrote:
+> On Tue, Mar 03, 2026 at 11:20:10AM -0500, Justin Suess wrote:
+> > On Thu, Feb 26, 2026 at 09:59:02AM +0800, Yihan Ding wrote:
+> > > syzbot found a deadlock in landlock_restrict_sibling_threads().
+> > > When multiple threads concurrently call landlock_restrict_self() with
+> > > sibling thread restriction enabled, they can deadlock by mutually
+> > > queueing task_works on each other and then blocking in kernel space
+> > > (waiting for the other to finish).
+> > > 
+> > > Fix this by serializing the TSYNC operations within the same process
+> > > using the exec_update_lock. This prevents concurrent invocations
+> > > from deadlocking. 
+> > > 
+> > > We use down_write_trylock() and return -ERESTARTNOINTR if the lock
+> > > cannot be acquired immediately. This ensures that if a thread fails
+> > > to get the lock, it will return to userspace, allowing it to process
+> > > any pending TSYNC task_works from the lock holder, and then
+> > > transparently restart the syscall.
+> > > 
+> > > Fixes: 42fc7e6543f6 ("landlock: Multithreading support for landlock_restrict_self()")
+> > > Reported-by: syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com
+> > > Closes: https://syzkaller.appspot.com/bug?extid=7ea2f5e9dfd468201817
+> > > Suggested-by: Günther Noack <gnoack3000@gmail.com>
+> > > Signed-off-by: Yihan Ding <dingyihan@uniontech.com>
+> > > ---
+> > > Changes in v3:
+> > > - Replaced down_write_killable() with down_write_trylock() and 
+> > >   returned -ERESTARTNOINTR to avoid a secondary deadlock caused by 
+> > >   blocking the execution of task_works. (Caught by Günther Noack).
+> > > 
+> > > Changes in v2:
+> > > - Use down_write_killable() instead of down_write().
+> > > - Split the interrupt path cleanup into a separate patch.
+> > > ---
+> > >  security/landlock/tsync.c | 8 ++++++++
+> > >  1 file changed, 8 insertions(+)
+> > > 
+> > > diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
+> > > index de01aa899751..xxxxxxxxxxxx 100644
+> > > --- a/security/landlock/tsync.c
+> > > +++ b/security/landlock/tsync.c
+> > > @@ -447,6 +447,13 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+> > >  	shared_ctx.new_cred = new_cred;
+> > >  	shared_ctx.set_no_new_privs = task_no_new_privs(current);
+> > >  
+> > > +	/*
+> > > +	 * Serialize concurrent TSYNC operations to prevent deadlocks
+> > > +	 * when multiple threads call landlock_restrict_self() simultaneously.
+> > > +	 */
+> > > +	if (!down_write_trylock(&current->signal->exec_update_lock))
+> > > +		return -ERESTARTNOINTR;
+> > These two lines above introduced a test failure in tsync_test
+> > completing_enablement.
+> > 
+> > The commit that introduced the bug is 3d6327c306b3e1356ab868bf27a0854669295a4f
+> > (this patch) and is currently in the mic/next branch.
+> > 
+> > I noticed the test failure while testing an unrelated patch.
+> > 
+> > The bug is because this code never actually yields or restarts the syscall.
+> > 
+> > This is the test output I observed:
+> > 
+> >   [+] Running tsync_test:
+> >   TAP version 13
+> >   1..4
+> >   # Starting 4 tests from 1 test cases.
+> >   #  RUN           global.single_threaded_success ...
+> >   #            OK  global.single_threaded_success
+> >   ok 1 global.single_threaded_success
+> >   #  RUN           global.multi_threaded_success ...
+> >   #            OK  global.multi_threaded_success
+> >   ok 2 global.multi_threaded_success
+> >   #  RUN           global.multi_threaded_success_despite_diverging_domains ...
+> >   #            OK  global.multi_threaded_success_despite_diverging_domains
+> >   ok 3 global.multi_threaded_success_despite_diverging_domains
+> >   #  RUN           global.competing_enablement ...
+> >   # tsync_test.c:156:competing_enablement:Expected 0 (0) == d[1].result (-1)
+> >   # competing_enablement: Test failed
+> >   #          FAIL  global.competing_enablement
+> >   not ok 4 global.competing_enablement
+> >   # FAILED: 3 / 4 tests passed.
+> > 
+> > 
+> > Brief investigation and the additions of these pr_warn lines:
+> > 
+> > 
+> > diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> > index 0d66a68677b7..84909232b220 100644
+> > --- a/security/landlock/syscalls.c
+> > +++ b/security/landlock/syscalls.c
+> > @@ -574,6 +574,9 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+> >  		const int err = landlock_restrict_sibling_threads(
+> >  			current_cred(), new_cred);
+> >  		if (err) {
+> > +			pr_warn("landlock: restrict_self tsync err pid=%d tgid=%d err=%d flags=0x%x ruleset_fd=%d\n",
+> > +				task_pid_nr(current), task_tgid_nr(current), err,
+> > +				flags, ruleset_fd);
+> >  			abort_creds(new_cred);
+> >  			return err;
+> >  		}
+> > diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
+> > index 5afc5d639b8f..deb0f0b1f081 100644
+> > --- a/security/landlock/tsync.c
+> > +++ b/security/landlock/tsync.c
+> > @@ -489,8 +489,11 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+> >  	 * Serialize concurrent TSYNC operations to prevent deadlocks when multiple
+> >  	 * threads call landlock_restrict_self() simultaneously.
+> >  	 */
+> > -	if (!down_write_trylock(&current->signal->exec_update_lock))
+> > +	if (!down_write_trylock(&current->signal->exec_update_lock)) {
+> > +		pr_warn("landlock: tsync trylock busy pid=%d tgid=%d\n",
+> > +			task_pid_nr(current), task_tgid_nr(current));
+> >  		return -ERESTARTNOINTR;
+> > +	}
+> >  
+> >  	/*
+> >  	 * We schedule a pseudo-signal task_work for each of the calling task's
+> > @@ -602,6 +605,10 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+> >  
+> >  	tsync_works_release(&works);
+> >  	up_write(&current->signal->exec_update_lock);
+> > +	if (atomic_read(&shared_ctx.preparation_error))
+> > +		pr_warn("landlock: tsync preparation_error pid=%d tgid=%d err=%d\n",
+> > +			task_pid_nr(current), task_tgid_nr(current),
+> > +			atomic_read(&shared_ctx.preparation_error));
+> >  
+> >  	return atomic_read(&shared_ctx.preparation_error);
+> >  }
+> > 
+> > Resulted in the following output:
+> > 
+> >   landlock: tsync trylock busy pid=1263 tgid=1261
+> >   landlock: landlock: restrict_self tsync err pid=1263 tgid=1261 err=-513 flags=0x8 ruleset_fd=6
+> >   # tsync_test.c:156:competing_enablement:Expected 0 (0) == d[1].result (-1)
+> >   # competing_enablement: Test failed
+> >   #          FAIL  global.competing_enablement
+> >   not ok 4 global.competing_enablement
 > 
-> Cc: Günther Noack <gnoack@google.com>
-> Cc: Kees Cook <kees@kernel.org>
-> Fixes: 69050f8d6d07 ("treewide: Replace kmalloc with kmalloc_obj for non-scalar types")
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> ---
->  security/landlock/domain.c  | 3 +--
->  security/landlock/ruleset.c | 9 ++++-----
->  2 files changed, 5 insertions(+), 7 deletions(-)
+> You're right, I have the same issue, not sure how I missed it last time.
 > 
-> diff --git a/security/landlock/domain.c b/security/landlock/domain.c
-> index f5b78d4766cd..f0d83f43afa1 100644
-> --- a/security/landlock/domain.c
-> +++ b/security/landlock/domain.c
-> @@ -94,8 +94,7 @@ static struct landlock_details *get_current_details(void)
->  	 * allocate with GFP_KERNEL_ACCOUNT because it is independent from the
->  	 * caller.
->  	 */
-> -	details =
-> -		kzalloc_flex(*details, exe_path, path_size);
-> +	details = kzalloc_flex(*details, exe_path, path_size);
->  	if (!details)
->  		return ERR_PTR(-ENOMEM);
->  
-> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-> index 319873586385..73018dc8d6c7 100644
-> --- a/security/landlock/ruleset.c
-> +++ b/security/landlock/ruleset.c
-> @@ -32,9 +32,8 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
->  {
->  	struct landlock_ruleset *new_ruleset;
->  
-> -	new_ruleset =
-> -		kzalloc_flex(*new_ruleset, access_masks, num_layers,
-> -			     GFP_KERNEL_ACCOUNT);
-> +	new_ruleset = kzalloc_flex(*new_ruleset, access_masks, num_layers,
-> +				   GFP_KERNEL_ACCOUNT);
->  	if (!new_ruleset)
->  		return ERR_PTR(-ENOMEM);
->  	refcount_set(&new_ruleset->usage, 1);
-> @@ -559,8 +558,8 @@ landlock_merge_ruleset(struct landlock_ruleset *const parent,
->  	if (IS_ERR(new_dom))
->  		return new_dom;
->  
-> -	new_dom->hierarchy = kzalloc_obj(*new_dom->hierarchy,
-> -					 GFP_KERNEL_ACCOUNT);
-> +	new_dom->hierarchy =
-> +		kzalloc_obj(*new_dom->hierarchy, GFP_KERNEL_ACCOUNT);
->  	if (!new_dom->hierarchy)
->  		return ERR_PTR(-ENOMEM);
->  
-> -- 
-> 2.53.0
+> > 
+> > I have a fix that I will send as a patch.
 > 
+> I'll need to squash your fix to this fix to only have one non-buggy
+> patch.  So, either you send a new patch and I'll squash it with
+> Co-developed-by, or Yihan takes your patch and send a new version with
+> your contribution (I'll prefer the later to make it easier to follow
+> this series).
+>
+Agreed.
 
-Reviewed-by: Günther Noack <gnoack3000@gmail.com>
+The latter option is probably better. Yihan, are you ok to squash / apply
+my patch [1] yourself to your next version of this series?
 
-Thanks!
+Feel free to do whatever you think is best. (or submit your own fix if
+you think mine isn't a good fit)
+
+[1]: https://lore.kernel.org/linux-security-module/20260303174354.1839461-1-utilityemal77@gmail.com/
+> > 
+> > Kind Regards,
+> > Justin Suess
+> > 
