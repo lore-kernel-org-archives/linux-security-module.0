@@ -1,236 +1,134 @@
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0296F183CC3;
-	Tue,  3 Mar 2026 17:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759AE35B646
+	for <linux-security-module@vger.kernel.org>; Tue,  3 Mar 2026 17:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772558399; cv=none; b=ekt/cX3B2w7to1gVz8JshD1eK1rXumHZMeOqt03TBoNVtJ/iBLHSLfOc6m/AMnyfV/dIkGCVRAg5NJqSkn6h0dw7gYXqD2AD3S/l+lfvoqLqI1fVX2ZK6UjRhqbEBVzxxRI/5E/p6srCysp9z81lQ8tCsolpuyBm0qz1KcuNeYQ=
+	t=1772559860; cv=none; b=ezp1PalekwOLkQPswtN1hILOiqO2OqYQIDzj/AdS9M9tTe+F1L2+AMSEidWwQTB5owi1MImRfkZEjvF8fvTvGeJavvsE2DeWkTa1Xw3Uv0tOVd0YyraDaY2f0JHqoKNA9MctfKl+dxx+jnH++hwimXrllkeWpblozMNBp8A435U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772558399; c=relaxed/simple;
-	bh=zqFmimCwr8ga6Oi8betk9+WgAjdJVqsFjZR3BnaMo9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FJU8ArEJePyNj+In/zTSMkguXn8P07VS/hU7wdxw6MlQMyc9QfsgtJuqIW20UmcaoIGDRaAuR50r5mSTAK4KFGZIVSUriaI6iZLNafZ7c+NIgxX2ltwSRhDBUxGjSa1ADJ6qzmojwjvVHtaDsPXeh6bfBEa96ACTFGlg5sg5JyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Dwtx7drr; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1772559860; c=relaxed/simple;
+	bh=2bTN1ME3/2EldBpMKBpdmdtzeEHMVMfOhPFMipUaxb4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s6llwvE3KvXKwaUJLF2hM1jw63NXxt2PJxXDwxr8qDp/kr25b/9MfGQAkxaUeK4O6KJNCedq/8l5CqgDdWrAmWL4tVlJtTWOpJKBHTkzed3k9bdSsl9i315Ar+x6M954hzx07BDF7P04p5G8Su2dLyUzQflKpGZxLIh2iJd2JMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MPK1Iz6F; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Dwtx7drr"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Tao3d1V6YUWjQGbciieZF7tZIWM4RPJQYZqAieQGxVw=; b=Dwtx7drrLMoXnL7AZ4mDDb+Dr1
-	pHpHIG972dhLGyxzFcAQx+NudbFIcurMxKVq97sQTr1lhz5PGW3hew2GVT9QoeCbheZzl/O82STLK
-	vg8zfOueGsejINU32tZqwfKdGcdQbjZuH93Vwz2pTaPZIsUFcvRc5p4xprv+YZmZa41AUiirVclTo
-	qxIIHl6PoQ8QMH4z3vU3H3gUflIy+NEXbLJEmvYHKdxOjT+/NqRvilsvA6ZnM/G8lcC5UPT2gBhSW
-	z8jZyRc6CCB7fazc1OBmrw5oOtDAXe2WSm0mby/ncmsCi8bS24bckEVTfiMaEfIq2JCGnv34ZS2p+
-	wh5wZg3A==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vxTOA-0000000BrGK-29fG;
-	Tue, 03 Mar 2026 17:18:30 +0000
-Date: Tue, 3 Mar 2026 17:18:30 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	"Darrick J. Wong" <djwong@kernel.org>, Theodore Tso <tytso@mit.edu>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	David Hildenbrand <david@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	Steve French <sfrench@samba.org>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Bharath SM <bharathsm@microsoft.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	David Sterba <dsterba@suse.com>,
-	Marc Dionne <marc.dionne@auristor.com>, Ian Kent <raven@themaw.net>,
-	Luis de Bethencourt <luisbg@kernel.org>,
-	Salah Triki <salah.triki@gmail.com>,
-	"Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Alex Markuze <amarkuze@redhat.com>,
-	Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-	Nicolas Pitre <nico@fluxnic.net>, Tyler Hicks <code@tyhicks.com>,
-	Amir Goldstein <amir73il@gmail.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Yangtao Li <frank.li@vivo.com>,
-	Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Dave Kleikamp <shaggy@kernel.org>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Mike Marshall <hubcap@omnibond.com>,
-	Martin Brandenburg <martin@omnibond.com>,
-	Miklos Szeredi <miklos@szeredi.hu>, Anders Larsen <al@alarsen.net>,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Naohiro Aota <naohiro.aota@wdc.com>,
-	Johannes Thumshirn <jth@kernel.org>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Willem de Bruijn <willemb@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Martin Schiller <ms@dev.tdt.de>, Eric Paris <eparis@redhat.com>,
-	Joerg Reuter <jreuter@yaina.de>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Oliver Hartkopp <socketcan@hartkopp.net>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	David Ahern <dsahern@kernel.org>,
-	Neal Cardwell <ncardwell@google.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Remi Denis-Courmont <courmisch@gmail.com>,
-	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-	Xin Long <lucien.xin@gmail.com>,
-	Magnus Karlsson <magnus.karlsson@intel.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
-	fsverity@lists.linux.dev, linux-mm@kvack.org, netfs@lists.linux.dev,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org, linux-nilfs@vger.kernel.org,
-	v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-	autofs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	codalist@telemann.coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-	linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net,
-	ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
-	devel@lists.orangefs.org, linux-unionfs@vger.kernel.org,
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-	linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-	netdev@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-fscrypt@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-hams@vger.kernel.org, linux-x25@vger.kernel.org,
-	audit@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-	linux-can@vger.kernel.org, linux-sctp@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH v2 001/110] vfs: introduce kino_t typedef and PRIino
- format macro
-Message-ID: <aacX5metux-C_xBw@casper.infradead.org>
-References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
- <20260302-iino-u64-v2-1-e5388800dae0@kernel.org>
- <20260303012556.GA6520@macsyma-wired.lan>
- <20260303042546.GF13868@frogsfrogsfrogs>
- <33228005140684201de2ca0c157441d3b6a06413.camel@kernel.org>
- <aabkBadGzo7IZpSU@infradead.org>
- <19e4e79a59dcfc4c61c8cf263af345d0d7026fc8.camel@kernel.org>
- <aabpPQxCTweoTp8Z@infradead.org>
- <1310fc5c09cce52ec00344b936275fe584c88dea.camel@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MPK1Iz6F"
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-79881805788so56545347b3.0
+        for <linux-security-module@vger.kernel.org>; Tue, 03 Mar 2026 09:44:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772559858; x=1773164658; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oy5X8hlJD2fK1wCFDd+uVtTVs3mQ0C0IdGo1DpdHR6s=;
+        b=MPK1Iz6FBkgSqYNt3XR25PuIO9AnnXsZz7HKZnGpaZlOyBBl1LhvJ8yXWrfNiDkj96
+         /usbZwZwsDx+bf/YvyxnTY455HnqxLdxGUL59u0ck4DZcF6gH00St4CVWOEdzaMr5Adm
+         NgZGbL/uABcIWMQY2fXs4snUcMOEb5M+KHMaUI/5ziKB5WVFBB+VBYzCuPo5uOi77yYQ
+         nXd8Uigf1ijW7OtE5uVP67rIBDnQCmDwL/b6DIjBK/u91y5YqxSR8jneL9me0Wm531W8
+         Ez0TyIlZX3L8QL54Vs4pfV4zdb3nxHm9BGKD6ybGwgc+vw/DAOkL6Oum1XFJN7/zG1UK
+         4q3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772559858; x=1773164658;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oy5X8hlJD2fK1wCFDd+uVtTVs3mQ0C0IdGo1DpdHR6s=;
+        b=iarnc10tchjijIb4Tx4jd57kiSim5odLD+T+HrKqVvAzVJMRlYuDJMAj6FXzfx3ZoG
+         CwudP4JUoxvypjAZIosHY8kyN4VOv7Ce0hOlT1HfEj0MvDoO9KtxkdQ8We8/U2KA3L1k
+         ADD5dFX6TGg7GBgnOnHGO887ZDkzp+3Dp4r883QWrSSbLumME4u9piYSlyZixTErsGZm
+         sOP7NlHkOlJBRHVoYPfEbl5jRLCXfRv/nGXp5Q/4QBBRJC6hDphxAGmPAZDBq0P3UbQX
+         GwNLLJY7m04J0eLeWB8vQqWXCljEwz7BuxzfyLjDnzVMJTZjCag0Msy/DPEuXzcjiWFH
+         MIcg==
+X-Gm-Message-State: AOJu0YyHaxFHsyQQgpuo1FwdVs44smeIGt9jg33OnwAjpCqsNCsJaZ/6
+	XqTEPKUQmNxNbf3PmdEyL0tZFrSn50EKHt6JyvxSAoUTXDg8dKEv7FDyxgyNfA==
+X-Gm-Gg: ATEYQzzLcy2tM7bFW5ofnbBVZWOM6wjYfjJrhM31PS3yFZocrnDvZTkptBg3nJ/L7gf
+	erZ/lQINEAXYSzsigyhybTMPVxkXgc+px7DAhmgVphEGrp7/H8oewbQAy4fR+g7qAhP16VVOeKZ
+	uRkzPyXxGZNa+5qucBNDDVpj90vpfK5MKENuactbHji8LLIYt62leLgH3FK1Drn+1nYGga7+zGc
+	LIyRpw0TWYgAel12/4TqvkU42HLm/P+mvJeWp2bwNFap2cIUQqQJ6XY9vBqtGlQUNWLGt7YRdNU
+	aF9SsDlJjGX+IlYKeEgsHg4VCUVQNwo0ARVi79Fr+kK8FXn0D4gjdJ3R91SdN3eQLZ2CWt2TcaQ
+	62PSm0UBOShtW47hR85tZD1NJKnfxjFD7gTsIV5u2PFeIjbGb4QnZLVxWwgDCqANrVNJKlVkgJz
+	E+fi9Dgygz5Agsw1KRQQUV/llKYgnAcbc=
+X-Received: by 2002:a05:690c:3610:b0:796:210b:f31b with SMTP id 00721157ae682-79885605c14mr150415907b3.59.1772559858234;
+        Tue, 03 Mar 2026 09:44:18 -0800 (PST)
+Received: from zenbox ([71.132.185.69])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-79876a8db33sm66047507b3.4.2026.03.03.09.44.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2026 09:44:17 -0800 (PST)
+From: Justin Suess <utilityemal77@gmail.com>
+To: linux-security-module@vger.kernel.org,
+	Yihan Ding <dingyihan@uniontech.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Tingmao Wang <m@maowtm.org>,
+	Justin Suess <utilityemal77@gmail.com>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+Subject: [PATCH] landlock: Yield if unable to acquire exec_update_lock
+Date: Tue,  3 Mar 2026 12:43:54 -0500
+Message-ID: <20260303174354.1839461-1-utilityemal77@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1310fc5c09cce52ec00344b936275fe584c88dea.camel@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 03, 2026 at 09:19:42AM -0500, Jeff Layton wrote:
-> There are really only three options here:
-> 
-> 1/ Do (almost) all of the changes in one giant patch
-> 
-> 2/ Accept that the build may break during the interim stages
-> 
-> 3/ This series: using a typedef and macro to work around the breakage
-> until the type can be changed, at the expense of some extra churn in
-> the codebase
+Instead of returning -ERESTARTNOINTR when there is no pending
+signal, run the pending tasks in the current thread and yield
+until the exec_update_lock can be acquired.
 
-4/ Don't do anything, drop the patch series (I'm not in favour of this,
-but it is an option)
+This allows other tasks to run and allows the lock contention
+to resolve in the kernel's task scheduler.
 
-5/ Do the conversion(s) _once_ per filesystem.  Here's one way to do
-it:
+Cc: Yihan Ding <dingyihan@uniontech.com>
+Cc: Günther Noack <gnoack3000@gmail.com>
+Fixes: 3d6327c306b3 ("landlock: Serialize TSYNC thread restriction")
+Closes: https://lore.kernel.org/linux-security-module/aacKOr1wywSSOAVv@suesslenovo/
+Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+---
 
--	unsigned long           i_ino;
-+	union {
-+		u64 i_ino64;
-+		struct {
-+#if defined(CONFIG_64BIT)
-+			unsigned long i_ino;
-+#elif defined(CONFIG_CPU_BIG_ENDIAN)
-+			unsigned long i_ino;
-+			unsigned long i_ino_pad;
-+#else
-+			unsigned long i_ino_pad;
-+			unsigned long i_ino;
-+#endif
-+		};
-+	};
+Notes:
+    This fixes the failure in tsync_test.competing_enablement:
+    
+      landlock: tsync trylock busy pid=1263 tgid=1261
+      landlock: landlock: restrict_self tsync err pid=1263 tgid=1261 err=-513 flags=0x8 ruleset_fd=6
+      # tsync_test.c:156:competing_enablement:Expected 0 (0) == d[1].result (-1)
+      # competing_enablement: Test failed
+      #          FAIL  global.competing_enablement
+      not ok 4 global.competing_enablement
+    
+    The test passes after applying this patch.
 
-[...]
-#define i_ino(inode)	(inode)->i_ino64
+ security/landlock/tsync.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-So that's patch one.  All plain references to i_ino access the lower
-bits of i_ino64, so everything will continue to work as it does today.
+diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
+index 956a64cb6945..83938849620f 100644
+--- a/security/landlock/tsync.c
++++ b/security/landlock/tsync.c
+@@ -487,10 +487,14 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+ 
+ 	/*
+ 	 * Serialize concurrent TSYNC operations to prevent deadlocks when multiple
+-	 * threads call landlock_restrict_self() simultaneously.
++	 * threads call landlock_restrict_self() simultaneously. If we are unable to
++	 * acquire the lock, we yield nicely and retry.
+ 	 */
+-	if (!down_write_trylock(&current->signal->exec_update_lock))
+-		return -ERESTARTNOINTR;
++	while (!down_write_trylock(&current->signal->exec_update_lock)) {
++		if (task_work_pending(current))
++			task_work_run();
++		cond_resched();
++	}
+ 
+ 	/*
+ 	 * We schedule a pseudo-signal task_work for each of the calling task's
 
-Once you've got the VFS core in shape, you can convert filesystems one
-at a time to use i_ino(inode).  Once you're done you can delete the
-scaffolding from the core and go back to calling i_ino64 just i_ino.
-You could delete the i_ino() uses from filesystems at that point, but
-why bother?
+base-commit: 8ff74a72b8af3672beca7f6b6b72557a9db94382
+-- 
+2.51.0
 
-I'm sure there are other ways to do it, this is just the one I came up
-with.  But for the love of god stop spamming hundreds of people on the
-cc of this patchset.  In fact, take me off for next time -- I get each
-one of these fucking patches four times.
