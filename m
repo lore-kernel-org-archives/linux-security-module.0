@@ -1,248 +1,224 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882EF4D2ECC
-	for <linux-security-module@vger.kernel.org>; Tue,  3 Mar 2026 16:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.176
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772554672; cv=pass; b=nRMD1lL2nP5PFe43Hm8dW/Tsmnpge17OTZ908XNQvDcHWl6xDPExohazjRa2zmHDcc9BXCj90H9l5mKEl/jEnqnQfCmORClZPkw1ePD/WX8GrkQKHpdNq/8ulMnBHnD7KWhqggMd3mDaR+KZNetH/POMBsQ+uaHPMUN0iJAUi20=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772554672; c=relaxed/simple;
-	bh=D31bfjZSP/L0HElgbPJEOIXXw9PZR2MgXoaqrLT9Rqo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hv4BdbRlEIrdQhxnBM20ng61vphLPqVcuLR2vDWB8y1V9YgY1ZRl9zCQcYJzAFxThuX8MJHPrvOqxac7lbiV4+T8T6cmMz9/GEzo/olqXCb6i06JzjK3GEKZhvYEiXnlElHte6T4L/R4xYbsnHL/iu1dWErEGCMeqYNSDkFz5Nc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AwjiNWln; arc=pass smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4A14D8D83
+	for <linux-security-module@vger.kernel.org>; Tue,  3 Mar 2026 16:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772554815; cv=none; b=mEtb5MNVltR8TIqs7Y2B3Y/5lRxCxomK01v2pWFzkDTACsji11nKJ9G1DrDFPy+QMUW4lvRHTS6ws5/nvd/tr5N9dASr5e7ydALxCw8KP3DKWiUH9VLoXHDLFYpOoCd0CmrHJtdyIIbLs4hECQaU6NdOZfYVeKHfeeCx9HPU4cI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772554815; c=relaxed/simple;
+	bh=pRWVtA0NPBuRlebAWpqWGdY4rkxOs6wGjx/Hbb76f4Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V+0z0yivoT3km9GTcWPLTopWlogH5XnngZXzOkMm+KDV1C0xNPSAbw3lqpiJ01pWtTpl3uU4jNXDosLSV0w3r5CXTNDot74qNTDbfSPFOKVBnV/WX6luMp8zroPc904ZNDjq9X6l6L4F1zp2iNG8/YnndNykd1xB26qdy6M6tV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WSJe0M9f; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AwjiNWln"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-82747396358so2949339b3a.0
-        for <linux-security-module@vger.kernel.org>; Tue, 03 Mar 2026 08:17:48 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772554668; cv=none;
-        d=google.com; s=arc-20240605;
-        b=ZTIGL1cOtJDIGCiwo6bAdrPxGR2n+EEySjBI8qG7iG5lmjOKrXLqEuqiAqhF7zBwiM
-         5ictIR8q1CKb/98BnfzjTb9HrnAyRyU2QQwXsA7fZGT2ujSDOqPrgSBlVIRfOrRaEsCc
-         nSDy7m99zYaq4x5j9O+x+5tY2blOtDYMrj20jf5+AWOAn2bCryxv4XUEEfxurYJNGD8U
-         4WOmLCRL734jeztGCrtAEQNplbVRT25ORi1ysxhVpPnLVF5GUYNpxWm7lmnXTt9YRzAU
-         bjf26D6M36hE+XRTUgrnhdYporGPm8frpddRV+QLVg5R3DylSsqi2EP3yjqmwZZ8pFGm
-         0HyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=vlM0HTuT+/Lu8GovscjfA3KZuqms5GnXWRMciKBvDhQ=;
-        fh=P+kU6a4dO9dD7gDQMjyVf0ORq6hyq8Gc2ny6RkVTpv4=;
-        b=jf32WXvf7Ljj20HTgkbx9/FGatQcEobm9s71xVKDVnHbhPlfarUTZfNcSjXREJBH7R
-         Pobu8Xfz40F9b0J1qCd2xFm+QPQQwWa6TwIZcmmdbpwbwVp5S7j4dbVUNfcIldXnLHiH
-         UzuonvhNO4HHvdXe3Z0qXkP03E1vwtzhhsabMVKs239cH4TmeDW0kGVPwv3BBJw+XMYY
-         ZacrFYHcBpnvq3E0NXocMiiiiAiCAVVCwIgi6WoyRGyFcrlD4Y+ov7X5eR32m5vVP5Ug
-         aG/qrbfY3AM6fZ59YZsBjbREuy3jghOK6/+hQpKMD7tfTtIBl0TvelnI+L+a0Gxu+pG2
-         Eacg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WSJe0M9f"
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-7927261a3acso50185127b3.0
+        for <linux-security-module@vger.kernel.org>; Tue, 03 Mar 2026 08:20:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1772554668; x=1773159468; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vlM0HTuT+/Lu8GovscjfA3KZuqms5GnXWRMciKBvDhQ=;
-        b=AwjiNWln5JR6BxSrUTDTHA+0IzNH6y/wDyQd8wA8GmdtuWg0T7RL0eJsZE/3cD7JTN
-         J+fLhSw6cPUycqgFu+Q+/ajM7Sji9fBJ6gnOrRT/Q+DNeGveICu3p2iA2h+bvcTk+GxF
-         /XoXg8WhQpUAUJIVoH0tjyBT4Mi8qy90ohn7q6lOW9FLjyXLXB0q6aBZ6q0wprJV1GPR
-         l4JDkYfvmZkRb++O8RFLWEKuhno69fazyKkVXzVUU6RSzmGNni/ji6h3OTvSd+Jw9IhG
-         AjnormoIAmc8F7TR4h6EwKoARQfPCyOSvgMgqLHIlMLTs/a79zkB4RSFwd61MxtDZzz9
-         yJXA==
+        d=gmail.com; s=20230601; t=1772554813; x=1773159613; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=o834rxCETENfWBz/+3Of3O+oNKGzA/VUJ8iJDGGROqo=;
+        b=WSJe0M9f6srdsuyYUPjFWYa7uouZDVRVXCEjpbYlU0Xx9tlGWn1cX4+2Xqr5HgObXW
+         K1rjwG16PHIU2SPUAhR3iciAmESCjFqnPrHjgWF/5/IU0TXlSG42nkDe8x8CwPrGWo3I
+         vtxINb2qnmnVccpiv2T4cDWW6InEhcdE53Lk+1K/1GxpJmLWKpHr6pogN9zo/DUjj1Gb
+         ziO0BH66TyPlesZuJyh+Qv/JIH/p3h/9QsPqogZATlYF5sMCf0Kiz2t7lMO9RhGjUn5O
+         qgdLab8G+lh2pnI4ukswaaa9tanDWbspJ6JHEfZmsUcltNBNj4mKE99MMLkNo70IMu+h
+         KCFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772554668; x=1773159468;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=vlM0HTuT+/Lu8GovscjfA3KZuqms5GnXWRMciKBvDhQ=;
-        b=A0s9zy4rxI7IB52pd5KC0dFop+wBdMn65+N1xb2x8sN1yWijt/d2e1TMx2WEOGh/Td
-         ViE3qp+5g7+cA12FEyrveVeCTh7RbcatXS3zZ3bPoBZRxwx95d2zrzBr5BFSzWnhYA+Q
-         WohT/ZivODGF9NMnuEhvzAGgOAsJdh8xlzXKk7YZbWGvW856SWcO2cC7vnSHPaoxJZVa
-         RGehtZ52aK/Ad4Uqnr1cnbXG4J7cdt7WuUQBcgMc6rKE50VZ12t72wZeKKCALmxSiNXs
-         XMJnlnEqIox+3/56W6fXKT3gxwRNrCBzg7pnZ4cGSCWOUINyEW5FVQzIETagLOtAbgd7
-         6eyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWy26aK4A2f/7pM/sCyT0PsfHed7Ou6bLdYDgJEarG57upB+BZNH842XnW3Q0wlosBzeFDhpcXOkEwwAxiq5mlOMQ2JAwQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzANrkL4mqyIJGBdjCkqKeJb2KhSWQBNMGlI0cf0uIr/ScOSzKp
-	hLBUwPJh/tu1/axh0HFjSiFcTMlkFE0Kx7O1L7qwUS4ZIhSbAGXmprUMIUyYeD8+A1VQU0XmuTe
-	xhRNEXVNI2uTqqernCJNyi5RKFmivcWlQv+nmx1Nr
-X-Gm-Gg: ATEYQzzc3BFPNhgOsv7q38obHpPL+22ZyfBuJiYOPSCQYxydyoWxWbKMpQQ4uIsVu/6
-	ThpG237aDHD0utxWLW/NL/8ANaKsdRYP9wPIU4dOB2pHlLmhwHRDFk0+fEMTxIKL6OZbRKXFryC
-	uDi271GEzF+iNId4MPGYmJkpMsT5aqHaLceZhQeZjzfxWQr8lMtJKBI3+42Asthyo+ZTNVn9yOG
-	AFaDf0yfpej9rVjGPlpxZPWwrb3kS+U8hnQ3ZAhB9SiB3WK/vbgKVGE2DxwqKM1gjixdZxeCPum
-	BKjwlCE=
-X-Received: by 2002:a17:90b:4c12:b0:359:8d70:c4e6 with SMTP id
- 98e67ed59e1d1-3598d70c5admr5344309a91.1.1772554667658; Tue, 03 Mar 2026
- 08:17:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1772554813; x=1773159613;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o834rxCETENfWBz/+3Of3O+oNKGzA/VUJ8iJDGGROqo=;
+        b=OrUzFl1xMGeW9VX3RAEza8K448Krsr3rFUWSh7Rm8r/zSBndE2eUoCoqfJor5K7UGk
+         roYNv7DSkXfq/8ZgJTyxYKeOjVVN4MRNCXsURTOZRu5AvSd9iKAv7FLwFa4+cgz46HzX
+         5ue524jTkrKzG9h/r8uphVIPiMUbDALANJApRAbitJ1nbNp9V1iy3+GUIikOYVLsGgAl
+         fyoZ0xhGfz/xzCxOOSb9gFan6dVuZIa7e3NiQYVQUFoqWG+8ccPpVnnbRBYlgR0Fh9UT
+         sJb77FAU1z8yiNnSt5l7e+BdpRm+LYXfL/a5i6t5tgxR88c7WzauhFVe6XqPnMVvMf6G
+         PC6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUYv9sicVDstGXHZ2msT6cgKZxTd3uIoW+9KDAPVsm/zFf0uwsoJMS5Q9Umdh6AvJWNdCN3bsfULQ5YFalmpZHqDkbpU6s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi1CYzMIfNOAo33KC4v6cPSZVGHGA2FZ/eJcAzYugJFgSKzHPT
+	FsoB189HIU6ixaVXTfGEPQ61INj82QnzrPnSRhsqwIutHsEsXZbq3HWk
+X-Gm-Gg: ATEYQzx1k8aFY0WcDApGsckOTsV7yiyEg/gfpB48zNdGIZB2Y8eTkJODDFi7sQCfeNW
+	GfzsbdwfW0MQydArqUk1XDKKdVnmiguBp/34I3075fu9SESNSAEtrdQk1/ABQncp6O610UMvjBN
+	8Y9hb1CbxCvb5k0XEr3il/wdy8qBqROoPVhSLn9AQDz85FKOZ+3uBTOvdTa67nv/EoGOubo5oHC
+	n44KIn9LellvymgtqLZKa8LTNKwW47cNB/YH7Wqg3cuLRYHIHS5W5ShsMIgtw52LBnHj+EEIz/O
+	JjX3FxZJEabiqBTEPPZymUdOULZ1iCJxOXc4Rb9OG8e0qHKUI3dhU3KRFBGCnBf8zfBTFcVZgA9
+	0TbYaUOuSVLO7oOeb4qj6UFS+LPh+AcF2X0VSSQZK16i1IMcnETfqyydXhKmnsn7v6n5INiKg/f
+	HB50b6Y0m2J5u+/D5jAI8NreUjCkdcyg==
+X-Received: by 2002:a05:690c:650a:b0:795:1d73:4d7d with SMTP id 00721157ae682-7988544b709mr153197667b3.12.1772554813155;
+        Tue, 03 Mar 2026 08:20:13 -0800 (PST)
+Received: from suesslenovo ([129.222.254.128])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-79876c7fa3fsm65285537b3.45.2026.03.03.08.20.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2026 08:20:12 -0800 (PST)
+Date: Tue, 3 Mar 2026 11:20:10 -0500
+From: Justin Suess <utilityemal77@gmail.com>
+To: Yihan Ding <dingyihan@uniontech.com>
+Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>,
+	Paul Moore <paul@paul-moore.com>, Jann Horn <jannh@google.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com
+Subject: Re: [PATCH v3 1/2] landlock: Serialize TSYNC thread restriction
+Message-ID: <aacKOr1wywSSOAVv@suesslenovo>
+References: <20260226015903.3158620-1-dingyihan@uniontech.com>
+ <20260226015903.3158620-2-dingyihan@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
- <20260302-iino-u64-v2-3-e5388800dae0@kernel.org> <CAHC9VhRnmBuXEKkUPQhJ_LDzcksjoAJL-ne6mFoJdR1hnDdzsg@mail.gmail.com>
- <7a0165fe39e82a1effd8cce5c2c4e82d6a42cb3a.camel@kernel.org>
- <CAHC9VhTyhnG7-ojnTnVdh_m1x=rKxw9YEH9g7Xp9m4F78aA5cA@mail.gmail.com> <add39953250a4a1b2fe2b09deb3373c2a7482b88.camel@kernel.org>
-In-Reply-To: <add39953250a4a1b2fe2b09deb3373c2a7482b88.camel@kernel.org>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 3 Mar 2026 11:17:34 -0500
-X-Gm-Features: AaiRm503AvilRZsmzje3hsLVwZQN2UeIDoaYrT0wwtgoCj-_LcRzyWRvZdGrFAo
-Message-ID: <CAHC9VhSb3nAsJBxhqitDVQw=J8hX1CJDe1xqL-JMjOA5J4tUkw@mail.gmail.com>
-Subject: Re: [PATCH v2 003/110] audit: widen ino fields to u64
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Eric Biggers <ebiggers@kernel.org>, 
-	"Theodore Y. Ts'o" <tytso@mit.edu>, Muchun Song <muchun.song@linux.dev>, 
-	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@kernel.org>, 
-	David Howells <dhowells@redhat.com>, Paulo Alcantara <pc@manguebit.org>, 
-	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>, 
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, 
-	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
-	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
-	Steve French <sfrench@samba.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
-	Shyam Prasad N <sprasad@microsoft.com>, Bharath SM <bharathsm@microsoft.com>, 
-	Alexander Aring <alex.aring@gmail.com>, Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
-	Viacheslav Dubeyko <slava@dubeyko.com>, Eric Van Hensbergen <ericvh@kernel.org>, 
-	Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Christian Schoenebeck <linux_oss@crudebyte.com>, David Sterba <dsterba@suse.com>, 
-	Marc Dionne <marc.dionne@auristor.com>, Ian Kent <raven@themaw.net>, 
-	Luis de Bethencourt <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>, 
-	"Tigran A. Aivazian" <aivazian.tigran@gmail.com>, Ilya Dryomov <idryomov@gmail.com>, 
-	Alex Markuze <amarkuze@redhat.com>, Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu, 
-	Nicolas Pitre <nico@fluxnic.net>, Tyler Hicks <code@tyhicks.com>, Amir Goldstein <amir73il@gmail.com>, 
-	Christoph Hellwig <hch@infradead.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Yangtao Li <frank.li@vivo.com>, 
-	Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, David Woodhouse <dwmw2@infradead.org>, 
-	Richard Weinberger <richard@nod.at>, Dave Kleikamp <shaggy@kernel.org>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Mark Fasheh <mark@fasheh.com>, 
-	Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, 
-	Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Anders Larsen <al@alarsen.net>, 
-	Zhihao Cheng <chengzhihao1@huawei.com>, Damien Le Moal <dlemoal@kernel.org>, 
-	Naohiro Aota <naohiro.aota@wdc.com>, Johannes Thumshirn <jth@kernel.org>, 
-	John Johansen <john.johansen@canonical.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Eric Dumazet <edumazet@google.com>, 
-	Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	James Clark <james.clark@linaro.org>, "Darrick J. Wong" <djwong@kernel.org>, 
-	Martin Schiller <ms@dev.tdt.de>, Eric Paris <eparis@redhat.com>, Joerg Reuter <jreuter@yaina.de>, 
-	Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Oliver Hartkopp <socketcan@hartkopp.net>, 
-	Marc Kleine-Budde <mkl@pengutronix.de>, David Ahern <dsahern@kernel.org>, 
-	Neal Cardwell <ncardwell@google.com>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Remi Denis-Courmont <courmisch@gmail.com>, 
-	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>, Xin Long <lucien.xin@gmail.com>, 
-	Magnus Karlsson <magnus.karlsson@intel.com>, 
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
-	fsverity@lists.linux.dev, linux-mm@kvack.org, netfs@lists.linux.dev, 
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
-	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, linux-nilfs@vger.kernel.org, 
-	v9fs@lists.linux.dev, linux-afs@lists.infradead.org, autofs@vger.kernel.org, 
-	ceph-devel@vger.kernel.org, codalist@coda.cs.cmu.edu, 
-	ecryptfs@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	jfs-discussion@lists.sourceforge.net, ntfs3@lists.linux.dev, 
-	ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org, 
-	linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	selinux@vger.kernel.org, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
-	linaro-mm-sig@lists.linaro.org, netdev@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-fscrypt@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-hams@vger.kernel.org, 
-	linux-x25@vger.kernel.org, audit@vger.kernel.org, 
-	linux-bluetooth@vger.kernel.org, linux-can@vger.kernel.org, 
-	linux-sctp@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260226015903.3158620-2-dingyihan@uniontech.com>
 
-On Tue, Mar 3, 2026 at 11:12=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
-ote:
-> On Tue, 2026-03-03 at 11:03 -0500, Paul Moore wrote:
-> > On Tue, Mar 3, 2026 at 6:05=E2=80=AFAM Jeff Layton <jlayton@kernel.org>=
- wrote:
-> > > On Mon, 2026-03-02 at 18:44 -0500, Paul Moore wrote:
-> > > > On Mon, Mar 2, 2026 at 3:25=E2=80=AFPM Jeff Layton <jlayton@kernel.=
-org> wrote:
-> > > > >
-> > > > > inode->i_ino is being widened from unsigned long to u64. The audi=
-t
-> > > > > subsystem uses unsigned long ino in struct fields, function param=
-eters,
-> > > > > and local variables that store inode numbers from arbitrary files=
-ystems.
-> > > > > On 32-bit platforms this truncates inode numbers that exceed 32 b=
-its,
-> > > > > which will cause incorrect audit log entries and broken watch/mar=
-k
-> > > > > comparisons.
-> > > > >
-> > > > > Widen all audit ino fields, parameters, and locals to u64, and up=
-date
-> > > > > the inode format string from %lu to %llu to match.
-> > > > >
-> > > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > > ---
-> > > > >  include/linux/audit.h   | 2 +-
-> > > > >  kernel/audit.h          | 9 ++++-----
-> > > > >  kernel/audit_fsnotify.c | 4 ++--
-> > > > >  kernel/audit_watch.c    | 8 ++++----
-> > > > >  kernel/auditsc.c        | 2 +-
-> > > > >  5 files changed, 12 insertions(+), 13 deletions(-)
-> > > >
-> > > > We should also update audit_hash_ino() in kernel/audit.h.  It is a
-> > > > *very* basic hash function, so I think leaving the function as-is a=
-nd
-> > > > just changing the inode parameter from u32 to u64 should be fine.
-> >
-> > ...
-> >
-> > > It doesn't look like changing the argument type will make any materia=
-l
-> > > difference. Given that it should still work without that change, can =
-we
-> > > leave this cleanup for you to do in a follow-on patchset?
-> >
-> > I would prefer if you made the change as part of the patch, mainly to
-> > keep a patch record of this being related.
->
-> Ok, I'll see about factoring that in.
+On Thu, Feb 26, 2026 at 09:59:02AM +0800, Yihan Ding wrote:
+> syzbot found a deadlock in landlock_restrict_sibling_threads().
+> When multiple threads concurrently call landlock_restrict_self() with
+> sibling thread restriction enabled, they can deadlock by mutually
+> queueing task_works on each other and then blocking in kernel space
+> (waiting for the other to finish).
+> 
+> Fix this by serializing the TSYNC operations within the same process
+> using the exec_update_lock. This prevents concurrent invocations
+> from deadlocking. 
+> 
+> We use down_write_trylock() and return -ERESTARTNOINTR if the lock
+> cannot be acquired immediately. This ensures that if a thread fails
+> to get the lock, it will return to userspace, allowing it to process
+> any pending TSYNC task_works from the lock holder, and then
+> transparently restart the syscall.
+> 
+> Fixes: 42fc7e6543f6 ("landlock: Multithreading support for landlock_restrict_self()")
+> Reported-by: syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=7ea2f5e9dfd468201817
+> Suggested-by: Günther Noack <gnoack3000@gmail.com>
+> Signed-off-by: Yihan Ding <dingyihan@uniontech.com>
+> ---
+> Changes in v3:
+> - Replaced down_write_killable() with down_write_trylock() and 
+>   returned -ERESTARTNOINTR to avoid a secondary deadlock caused by 
+>   blocking the execution of task_works. (Caught by Günther Noack).
+> 
+> Changes in v2:
+> - Use down_write_killable() instead of down_write().
+> - Split the interrupt path cleanup into a separate patch.
+> ---
+>  security/landlock/tsync.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
+> index de01aa899751..xxxxxxxxxxxx 100644
+> --- a/security/landlock/tsync.c
+> +++ b/security/landlock/tsync.c
+> @@ -447,6 +447,13 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+>  	shared_ctx.new_cred = new_cred;
+>  	shared_ctx.set_no_new_privs = task_no_new_privs(current);
+>  
+> +	/*
+> +	 * Serialize concurrent TSYNC operations to prevent deadlocks
+> +	 * when multiple threads call landlock_restrict_self() simultaneously.
+> +	 */
+> +	if (!down_write_trylock(&current->signal->exec_update_lock))
+> +		return -ERESTARTNOINTR;
+These two lines above introduced a test failure in tsync_test
+completing_enablement.
 
-Thanks.
+The commit that introduced the bug is 3d6327c306b3e1356ab868bf27a0854669295a4f
+(this patch) and is currently in the mic/next branch.
 
-> > Ideally I'd really like to see kino_t used in the audit code instead
-> > of u64, but perhaps that is done in a later patch that I didn't see.
->
-> I think I didn't make this clear enough in the cover letter, but kino_t
-> is removed at the end of the series. It's just there to support the
-> change during the interim.
+I noticed the test failure while testing an unrelated patch.
 
-Ah, gotcha, thanks for the education :)
+The bug is because this code never actually yields or restarts the syscall.
 
-> If HCH gets his way to do the changes as one big patch, it'll go away
-> entirely.
+This is the test output I observed:
 
---=20
-paul-moore.com
+  [+] Running tsync_test:
+  TAP version 13
+  1..4
+  # Starting 4 tests from 1 test cases.
+  #  RUN           global.single_threaded_success ...
+  #            OK  global.single_threaded_success
+  ok 1 global.single_threaded_success
+  #  RUN           global.multi_threaded_success ...
+  #            OK  global.multi_threaded_success
+  ok 2 global.multi_threaded_success
+  #  RUN           global.multi_threaded_success_despite_diverging_domains ...
+  #            OK  global.multi_threaded_success_despite_diverging_domains
+  ok 3 global.multi_threaded_success_despite_diverging_domains
+  #  RUN           global.competing_enablement ...
+  # tsync_test.c:156:competing_enablement:Expected 0 (0) == d[1].result (-1)
+  # competing_enablement: Test failed
+  #          FAIL  global.competing_enablement
+  not ok 4 global.competing_enablement
+  # FAILED: 3 / 4 tests passed.
+
+
+Brief investigation and the additions of these pr_warn lines:
+
+
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 0d66a68677b7..84909232b220 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -574,6 +574,9 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+ 		const int err = landlock_restrict_sibling_threads(
+ 			current_cred(), new_cred);
+ 		if (err) {
++			pr_warn("landlock: restrict_self tsync err pid=%d tgid=%d err=%d flags=0x%x ruleset_fd=%d\n",
++				task_pid_nr(current), task_tgid_nr(current), err,
++				flags, ruleset_fd);
+ 			abort_creds(new_cred);
+ 			return err;
+ 		}
+diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
+index 5afc5d639b8f..deb0f0b1f081 100644
+--- a/security/landlock/tsync.c
++++ b/security/landlock/tsync.c
+@@ -489,8 +489,11 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+ 	 * Serialize concurrent TSYNC operations to prevent deadlocks when multiple
+ 	 * threads call landlock_restrict_self() simultaneously.
+ 	 */
+-	if (!down_write_trylock(&current->signal->exec_update_lock))
++	if (!down_write_trylock(&current->signal->exec_update_lock)) {
++		pr_warn("landlock: tsync trylock busy pid=%d tgid=%d\n",
++			task_pid_nr(current), task_tgid_nr(current));
+ 		return -ERESTARTNOINTR;
++	}
+ 
+ 	/*
+ 	 * We schedule a pseudo-signal task_work for each of the calling task's
+@@ -602,6 +605,10 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+ 
+ 	tsync_works_release(&works);
+ 	up_write(&current->signal->exec_update_lock);
++	if (atomic_read(&shared_ctx.preparation_error))
++		pr_warn("landlock: tsync preparation_error pid=%d tgid=%d err=%d\n",
++			task_pid_nr(current), task_tgid_nr(current),
++			atomic_read(&shared_ctx.preparation_error));
+ 
+ 	return atomic_read(&shared_ctx.preparation_error);
+ }
+
+Resulted in the following output:
+
+  landlock: tsync trylock busy pid=1263 tgid=1261
+  landlock: landlock: restrict_self tsync err pid=1263 tgid=1261 err=-513 flags=0x8 ruleset_fd=6
+  # tsync_test.c:156:competing_enablement:Expected 0 (0) == d[1].result (-1)
+  # competing_enablement: Test failed
+  #          FAIL  global.competing_enablement
+  not ok 4 global.competing_enablement
+
+I have a fix that I will send as a patch.
+
+Kind Regards,
+Justin Suess
