@@ -1,144 +1,185 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A8A34F48C
-	for <linux-security-module@vger.kernel.org>; Tue,  3 Mar 2026 09:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13E438C427
+	for <linux-security-module@vger.kernel.org>; Tue,  3 Mar 2026 10:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772528897; cv=none; b=UMVI5U9XsDDbTFg/kUKiQJylCeF6z0fSItOOBcDT90UrTzOAq3+ceecFwmtzQ8lGzL5AdPbzEG4obbpVXAzXYVW2OYdnjINlNrxgbjjrueLlSNOheGBzXSVyuLeGfmf44vC7lS2fFk7hyL+RZpEEB8BqhPM6rLEkpU5E58usfuc=
+	t=1772532250; cv=none; b=s6LdTZGKI1vdkhfGpFDGQvIhqz9qahdMmoRyOaqWbhbWTMRlq7AaeNdw6HOLK0dcBmu+iPCVgkUtaTV1UYU8F6oFazHiNdjwmejv6iJwvYIUMLkUUlsItjWf0RnF0hTpWKmdmuA5xCm0x/8zJ1JVGAZjsb56ypOs9i7NEhhk65A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772528897; c=relaxed/simple;
-	bh=jH3a5WvSl4hsNVqvGQHSPUcAxKpQELeoMlBc1iNZgoE=;
+	s=arc-20240116; t=1772532250; c=relaxed/simple;
+	bh=KGFR6GPIehO6zIdn2CFtuE4synSr/5rzwVcLZPCowm8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QYbdNUF5lO3qhP2J9yRsFzV0LqcWqV20ilIPSY2+fDie3B53J+6E8kdaOy2BDie4qJSL3JHhE+qPnhU/rFpzkoFZM3KXvfPj/tgUYsGt/PgrnqKqZ6fTxZrZoMOKaG7VeddxF/TwNaWllOGJYYal79N29VFmBzW11O3dKf5/rS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IWo9rSby; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IWo9rSby"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-483770e0b25so46007475e9.0
-        for <linux-security-module@vger.kernel.org>; Tue, 03 Mar 2026 01:08:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772528895; x=1773133695; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=phEiBdG5ZIERY6yJr+I2LBbcsXFa1y6p3ngiHNYKF5Q=;
-        b=IWo9rSbykMmGKJ5+zb+hpN+8JAYMBfFE3YDDSmCUlirTW7hr2dSl7Pk9LlOxwUEhxC
-         yBsGw0/9SAALxn5GDF82m3jEYThxPfRVoiNNeizRg489gWad8iJNwRAA7Vv0gFLQxcR1
-         ZsgQJj84VoDvSc9+BZwK7bCLC20xm7jzRGcrhu2UQho0VWEuEO5cjxNjIfAq/5m/BQDs
-         eW9m5ArivDapLdiLPPlHNSYkvjszlUv+IlfJMgJMKjFj09t6wgG5WhUHYQTqcSYnhqzl
-         Qk4Osx5+pDE/GZTadtQK6cJC6C3UiXnRlq1xijezURTZsuJlfijwp23biaNulCnyYOMx
-         DPJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772528895; x=1773133695;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=phEiBdG5ZIERY6yJr+I2LBbcsXFa1y6p3ngiHNYKF5Q=;
-        b=ahQC7KHl7KB8Cis8hOLjOWgjwdmQgpEhBgrO7aSEgneRPZvgFMTsIZkZbsvWQzojxr
-         /ymrIZT0U8K8UdPSxaSyRLpJCEfiPSfASawMB/ABKR17kHKXLaUFLwnODgmDqh+yNrBY
-         EZUJmG0FyQ8h/vfm+2Yny5GHq96udQvqnXKEamz/SUCvYaYzqah2eUQpIHjBZ1eZDIYj
-         4pURRIWQHqEh3tdjszEheHP+dULplJ3mEU3zo9NebAKsSqkEfNQb/EvYaWmw+DcXSOBh
-         mQ6mmexfnkeN4H8HBf1JdX0oaejL4dhPdNm7JbmxVFNdZKH+Qbhdpr0sZLdk0UTv42Hp
-         0YKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVfsF+QBWdKTUxaAPEJhkPbRPhUJWNlU+YYOU4858JmyFtpErgE81pSOYOgaCWqcqrfN5EhEfmRIzI3PZRnEEl7wo2LRVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE/olkW6ngPPynoMvufRm0wbmGjx8uLLlHK1dedDLRCnhuI3yx
-	j5Irh3Z7iaLu2KwrvZnBXSdp+aJpOTDRK94G2Yx0OmirZhjoEvr29Svn
-X-Gm-Gg: ATEYQzzS1ipi7D0ffKWCgfcnLei3FZn4B8CSM2Fn2fdBuoRXElVEYZ58YMj9wIz25D9
-	ZnBs2qYHXKp4eNK343zUhNb3hSTHPK0zgBVCSy219Ccnlx3OK02uXtONa1cVtKGi685Dd5ODUtW
-	lBWMzsxRGf49Z2xzzO3+ukjC5TOk0j39CTujV8aVdAzDhxbYNxda/ZGDIJfpyoqFjOV8VA47u4/
-	5zKoyK+GaRfunx+W2ijTYwdgjOw5Pc7aPa0zPFVbDw2NCmN59EaqYUEfKOJUlnBRC51/7XqhID2
-	5Xe6mtSUTkEJI9t+HonADB0Gt+Dr5buOFZg70p+cjSR5U6txbFAmgW6ecyL4pkPPfJ+QT9fycXW
-	tL6gDqMOW5U1Vc7hxdhuoohVD8RqoNR6/UN/5elBGruBVLtuDIZt5A3tHBrjuV27tQjWTAAkE0d
-	6X9SECx2v1emJnd5whhdVQI09r2jSL9XJinnzx7iopXgwqMTha
-X-Received: by 2002:a05:600d:13:b0:485:110f:5b7f with SMTP id 5b1f17b1804b1-485110f5be6mr54843725e9.19.1772528894586;
-        Tue, 03 Mar 2026 01:08:14 -0800 (PST)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483c3b841absm376589785e9.13.2026.03.03.01.08.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2026 01:08:14 -0800 (PST)
-Date: Tue, 3 Mar 2026 10:08:07 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: "Panagiotis \"Ivory\" Vasilopoulos" <git@n0toose.net>
-Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Dan Cojocaru <dan@dcdev.ro>
-Subject: Re: [PATCH v3] landlock: Expand restrict flags example for ABI
- version 8
-Message-ID: <20260303.13455f40d0c5@gnoack.org>
-References: <20260228-landlock-docs-add-tsync-example-v3-1-140ab50f0524@n0toose.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fX3lX2VKGh+boCE8F0KYF3WToadv8urCUyPnLvKEzeOFqoq9aAS/nOGxJKkdu93ACrbqqIVMtW0gGPgGErJxrRdxrzXURAZ740PzmL9O22CaFFKXAF5Nk5sGil+CDY508IqztrMg6MNnXDrB6kswP2WBrB+ul00oo8OsFsU45/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vxMbR-0007dp-7S; Tue, 03 Mar 2026 11:03:45 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vxMbP-003WdD-12;
+	Tue, 03 Mar 2026 11:03:44 +0100
+Received: from pengutronix.de (p4ffb2dc6.dip0.t-ipconnect.de [79.251.45.198])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 23B2F4F64B1;
+	Tue, 03 Mar 2026 10:03:43 +0000 (UTC)
+Date: Tue, 3 Mar 2026 11:03:42 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>, 
+	Eric Biggers <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>, 
+	Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
+	David Hildenbrand <david@kernel.org>, David Howells <dhowells@redhat.com>, 
+	Paulo Alcantara <pc@manguebit.org>, Andreas Dilger <adilger.kernel@dilger.ca>, 
+	Jan Kara <jack@suse.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
+	Steve French <sfrench@samba.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+	Shyam Prasad N <sprasad@microsoft.com>, Bharath SM <bharathsm@microsoft.com>, 
+	Alexander Aring <alex.aring@gmail.com>, Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
+	Viacheslav Dubeyko <slava@dubeyko.com>, Eric Van Hensbergen <ericvh@kernel.org>, 
+	Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>, 
+	Christian Schoenebeck <linux_oss@crudebyte.com>, David Sterba <dsterba@suse.com>, 
+	Marc Dionne <marc.dionne@auristor.com>, Ian Kent <raven@themaw.net>, 
+	Luis de Bethencourt <luisbg@kernel.org>, Salah Triki <salah.triki@gmail.com>, 
+	"Tigran A. Aivazian" <aivazian.tigran@gmail.com>, Ilya Dryomov <idryomov@gmail.com>, 
+	Alex Markuze <amarkuze@redhat.com>, Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu, 
+	Nicolas Pitre <nico@fluxnic.net>, Tyler Hicks <code@tyhicks.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Yangtao Li <frank.li@vivo.com>, 
+	Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, David Woodhouse <dwmw2@infradead.org>, 
+	Richard Weinberger <richard@nod.at>, Dave Kleikamp <shaggy@kernel.org>, 
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
+	Joseph Qi <joseph.qi@linux.alibaba.com>, Mike Marshall <hubcap@omnibond.com>, 
+	Martin Brandenburg <martin@omnibond.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Anders Larsen <al@alarsen.net>, Zhihao Cheng <chengzhihao1@huawei.com>, 
+	Damien Le Moal <dlemoal@kernel.org>, Naohiro Aota <naohiro.aota@wdc.com>, 
+	Johannes Thumshirn <jth@kernel.org>, John Johansen <john.johansen@canonical.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+	Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Simon Horman <horms@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Martin Schiller <ms@dev.tdt.de>, Eric Paris <eparis@redhat.com>, 
+	Joerg Reuter <jreuter@yaina.de>, Marcel Holtmann <marcel@holtmann.org>, 
+	Johan Hedberg <johan.hedberg@gmail.com>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+	Oliver Hartkopp <socketcan@hartkopp.net>, David Ahern <dsahern@kernel.org>, 
+	Neal Cardwell <ncardwell@google.com>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Remi Denis-Courmont <courmisch@gmail.com>, 
+	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>, Xin Long <lucien.xin@gmail.com>, 
+	Magnus Karlsson <magnus.karlsson@intel.com>, Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, nvdimm@lists.linux.dev, fsverity@lists.linux.dev, 
+	linux-mm@kvack.org, netfs@lists.linux.dev, linux-ext4@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org, linux-nilfs@vger.kernel.org, v9fs@lists.linux.dev, 
+	linux-afs@lists.infradead.org, autofs@vger.kernel.org, ceph-devel@vger.kernel.org, 
+	codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org, linux-mtd@lists.infradead.org, 
+	jfs-discussion@lists.sourceforge.net, ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev, 
+	devel@lists.orangefs.org, linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, selinux@vger.kernel.org, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
+	linaro-mm-sig@lists.linaro.org, netdev@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	linux-fscrypt@vger.kernel.org, linux-xfs@vger.kernel.org, linux-hams@vger.kernel.org, 
+	linux-x25@vger.kernel.org, audit@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
+	linux-can@vger.kernel.org, linux-sctp@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v2 004/110] net: change sock.sk_ino and sock_i_ino() to
+ u64
+Message-ID: <20260303-tall-fictional-tench-7c5f66-mkl@pengutronix.de>
+X-AI: stop_reason: "refusal"
+References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
+ <20260302-iino-u64-v2-4-e5388800dae0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="w7xntzjnabubqe7a"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260228-landlock-docs-add-tsync-example-v3-1-140ab50f0524@n0toose.net>
+In-Reply-To: <20260302-iino-u64-v2-4-e5388800dae0@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 
-On Sat, Feb 28, 2026 at 10:36:59PM +0100, Panagiotis "Ivory" Vasilopoulos wrote:
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index 13134bccdd39d78ddce3daf454f32dda162ce91b..b71ac7aa308260b8141e5d35248fb68cec6dcba9 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
-> @@ -196,13 +196,33 @@ similar backwards compatibility check is needed for the restrict flags
->  (see sys_landlock_restrict_self() documentation for available flags):
->  
->  .. code-block:: c
-> -
-> -    __u32 restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON;
-> -    if (abi < 7) {
-> -        /* Clear logging flags unsupported before ABI 7. */
-> +    __u32 restrict_flags =
-> +        LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON |
-> +        LANDLOCK_RESTRICT_SELF_TSYNC;
-> +    switch (abi) {
-> +    case 1 ... 6:
-> +        /* Clear logging flags unsupported for ABI < 7 */
->          restrict_flags &= ~(LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF |
->                              LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON |
->                              LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF);
-> +        __attribute__((fallthrough));
-> +    case 7:
-> +        /* Removes multithreaded enforcement flag unsupported for ABI < 8 */
-> +        /*
-> +         * WARNING!
-> +         * Don't copy-paste this just yet! This example impacts enforcement
-> +         * and can potentially decrease protection if misused.
-> +         *
-> +         * Below ABI v8, a Landlock policy can only be enforced for the calling
-> +         * thread and its children. This behavior remains a default for ABI v8,
-> +         * but the flag ``LANDLOCK_RESTRICT_SELF_TSYNC`` can now be used to
-> +         * enforce policies across all threads of the calling process. If an
-> +         * application's Landlock integration was designed under the assumption
-> +         * that the flag is used (such as when children threads are responsible
-> +         * for enforcing and/or overriding policies of parents and siblings),
-> +         * removing said flag can decrease protection for older Linux versions.
-> +         */
-> +        restrict_flags &= ~LANDLOCK_RESTRICT_SELF_TSYNC;
->      }
 
-Hello!
+--w7xntzjnabubqe7a
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 004/110] net: change sock.sk_ino and sock_i_ino() to
+ u64
+MIME-Version: 1.0
 
-Sorry for nit-picking even further here;
+On 02.03.2026 15:23:48, Jeff Layton wrote:
+> inode->i_ino is being converted to a u64. sock.sk_ino (which caches the
+> inode number) must also be widened to avoid truncation on 32-bit
+> architectures where unsigned long is only 32 bits.
+>
+> Change sk_ino from unsigned long to u64, and update the return type
+> of sock_i_ino() to match. Fix all format strings that print the
+> result of sock_i_ino() (%lu -> %llu), and widen the intermediate
+> variables and function parameters in the diag modules that were
+> using int to hold the inode number.
+>
+> Note that the UAPI socket diag structures (inet_diag_msg.idiag_inode,
+> unix_diag_msg.udiag_ino, etc.) are all __u32 and cannot be changed
+> without breaking the ABI. The assignments to those fields will
+> silently truncate, which is the existing behavior.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  net/can/bcm.c                | 2 +-
 
-* You have two immediately adjacent comments here which should be
-  merged into one.
-* It is enough to use a more terse warning here;
-  would suggest something like:
+Acked-by: Marc Kleine-Budde <mkl@pengutronix.de> # for net/can
 
-/*
- * Removes multithreaded enforcement flag unsupported for ABI < 8.
- *
- * WARNING: Calling landlock_restrict_self(2) without this flag
- * is only equivalent if the calling process is single-threaded.
- */
+regards,
+Marc
 
-Thanks,
-–Günther
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--w7xntzjnabubqe7a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSl+MghEFFAdY3pYJLMOmT6rpmt0gUCaaax+QAKCRDMOmT6rpmt
+0hl7AQCzPgPTWe6ol8KwtKBDfHnqkx4Ku1cIiwlQY4Hnx5jz1wD5ASVd5abGOb50
+lF4hQNIazRvyjJwKRF+va5JwX/SN2go=
+=y8vr
+-----END PGP SIGNATURE-----
+
+--w7xntzjnabubqe7a--
