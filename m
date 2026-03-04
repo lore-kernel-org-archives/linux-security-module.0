@@ -1,186 +1,216 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7DBBA21;
-	Wed,  4 Mar 2026 01:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3340352C5B;
+	Wed,  4 Mar 2026 02:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772586771; cv=none; b=FJ5oxib+iMUZMn/h0EDI9NwfHXLTVP98P6ekCJ2e2R4xLh95kZoZXdOVEBv2xUlsoiMcF6eVeiaNeEDL09eiQHlDGKtjKTiVpXW2mxvh202a2juJ3IrwJ0D0GAK97O69Zcld6YtyfegExB7f2Cyy1QuNRuT71boqhOmIsqNNgCs=
+	t=1772592464; cv=none; b=o0ncl9LQoZ1NvoM6CLViSZ6zZE7pV9TPzK3oF4Gm9QLOmS24fS4rCse+trFV1uQ8w/XgCBrdi7ZCsheklb0HebhDox4gyDGdWSgqVu/jJtDQaGW0eluGCr7/uCZ/vWnAyu5rxI3OaI176WD229BwU4PLssFjGSfutzXvLRxmRHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772586771; c=relaxed/simple;
-	bh=GFMrZQJwS7/We+LO7SGzzxn2lFIugPuzG0DMG56Js2Y=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=FOveOG2TCR43Cu4l15Xs8uudLCORKU0jvm/lNs67JB2g1Fdnguzid5cc01D5H0mSBvka/MVmFAv8+QrpbcUddkzceXJC4YSoZu7zw/H13wA7FQ034GDwrjUEgYm0Iw+/wS3gKkpRk6a4JfJTJW0NEDSdC5RKTeYVNU6ziQ6/zYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WgCKlAsk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772592464; c=relaxed/simple;
+	bh=F1l8tk2PIf7hDlW+ZqklgZZgn2kNYa3aC+wAzXlGD2Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KkcAYbjw0IeFGPpBwrtrCUb6+oeMbUoV0d0RJeD0wvYFFeCuWoS02ZGXLNphPv4N+bOkcAnUbkpIlMWyvqwRFSQetNeGxNk/3JybtZIqOjRzxg/yldjrmCipEYFlDc33WGgj6wp0zYc6yqCRIzxFdCNb7+vq9aNXMfITvIPfXkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=ppt4ZsVP; arc=none smtp.client-ip=15.184.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgCKlAsk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC630C116C6;
-	Wed,  4 Mar 2026 01:12:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772586770;
-	bh=GFMrZQJwS7/We+LO7SGzzxn2lFIugPuzG0DMG56Js2Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WgCKlAsk3bXb+r/1s8b+OdlG4mX+icJAS45Uq+KKMNYvC49iKTzsvQ1tAfDcKjOHO
-	 pKVaQRChw5HLqCsmNleVgIcsLZe/mxOdeaALYcjfevERMGUkXjesPWWweCyhou7fQl
-	 VQ4Mb37EKNYYDJ4P3igTTUB/rwlUKWDzyHL6MaEPUYg4GKRNARAdOpQi37TER+bijy
-	 ujXwk/T7EtjhMi3TyZMPQ0jsSUIHCkGDCCDxAdqRqWs1EQh9//lrZ/RlcnBRfnGFFQ
-	 Jo6qgWMK/+GUePLR79A6WJNPJzwq2R2bZgMbaePiL9CPpPo5lJ+0GFE54ESH67v3gD
-	 aYrfgbEpOhAMQ==
-Date: Wed, 4 Mar 2026 10:12:29 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven Rostedt
- <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
- <willy@infradead.org>, Eric Biggers <ebiggers@kernel.org>,
- "Theodore Y. Ts'o" <tytso@mit.edu>, Muchun Song <muchun.song@linux.dev>,
- Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@kernel.org>,
- David Howells <dhowells@redhat.com>, Paulo Alcantara <pc@manguebit.org>,
- Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>,
- Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, Trond
- Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, Chuck
- Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, Olga
- Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom
- Talpey <tom@talpey.com>, Steve French <sfrench@samba.org>, Ronnie Sahlberg
- <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, Bharath
- SM <bharathsm@microsoft.com>, Alexander Aring <alex.aring@gmail.com>,
- Ryusuke Konishi <konishi.ryusuke@gmail.com>, Viacheslav Dubeyko
- <slava@dubeyko.com>, Eric Van Hensbergen <ericvh@kernel.org>, Latchesar
- Ionkov <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>,
- Christian Schoenebeck <linux_oss@crudebyte.com>, David Sterba
- <dsterba@suse.com>, Marc Dionne <marc.dionne@auristor.com>, Ian Kent
- <raven@themaw.net>, Luis de Bethencourt <luisbg@kernel.org>, Salah Triki
- <salah.triki@gmail.com>, "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
- Ilya Dryomov <idryomov@gmail.com>, Alex Markuze <amarkuze@redhat.com>, Jan
- Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu, Nicolas Pitre
- <nico@fluxnic.net>, Tyler Hicks <code@tyhicks.com>, Amir Goldstein
- <amir73il@gmail.com>, Christoph Hellwig <hch@infradead.org>, John Paul
- Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Yangtao Li
- <frank.li@vivo.com>, Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
- David Woodhouse <dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>,
- Dave Kleikamp <shaggy@kernel.org>, Konstantin Komarov
- <almaz.alexandrovich@paragon-software.com>, Mark Fasheh <mark@fasheh.com>,
- Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>,
- Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg
- <martin@omnibond.com>, Miklos Szeredi <miklos@szeredi.hu>, Anders Larsen
- <al@alarsen.net>, Zhihao Cheng <chengzhihao1@huawei.com>, Damien Le Moal
- <dlemoal@kernel.org>, Naohiro Aota <naohiro.aota@wdc.com>, Johannes
- Thumshirn <jth@kernel.org>, John Johansen <john.johansen@canonical.com>,
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>,
- Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, Fan
- Wu <wufan@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>, Casey Schaufler
- <casey@schaufler-ca.com>, Alex Deucher <alexander.deucher@amd.com>,
- Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
- <sumit.semwal@linaro.org>, Eric Dumazet <edumazet@google.com>, Kuniyuki
- Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>, Willem de
- Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, Jakub
- Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, Oleg Nesterov
- <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
- <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung
- Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexander
- Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
- <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter
- <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>,
- "Darrick J. Wong" <djwong@kernel.org>, Martin Schiller <ms@dev.tdt.de>,
- Eric Paris <eparis@redhat.com>, Joerg Reuter <jreuter@yaina.de>, Marcel
- Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Oliver Hartkopp
- <socketcan@hartkopp.net>, Marc Kleine-Budde <mkl@pengutronix.de>, David
- Ahern <dsahern@kernel.org>, Neal Cardwell <ncardwell@google.com>, Steffen
- Klassert <steffen.klassert@secunet.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, Remi Denis-Courmont <courmisch@gmail.com>,
- Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>, Xin Long
- <lucien.xin@gmail.com>, Magnus Karlsson <magnus.karlsson@intel.com>, Maciej
- Fijalkowski <maciej.fijalkowski@intel.com>, Stanislav Fomichev
- <sdf@fomichev.me>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
- Fastabend <john.fastabend@gmail.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- nvdimm@lists.linux.dev, fsverity@lists.linux.dev, linux-mm@kvack.org,
- netfs@lists.linux.dev, linux-ext4@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-nfs@vger.kernel.org,
- linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
- linux-nilfs@vger.kernel.org, v9fs@lists.linux.dev,
- linux-afs@lists.infradead.org, autofs@vger.kernel.org,
- ceph-devel@vger.kernel.org, codalist@coda.cs.cmu.edu,
- ecryptfs@vger.kernel.org, linux-mtd@lists.infradead.org,
- jfs-discussion@lists.sourceforge.net, ntfs3@lists.linux.dev,
- ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org,
- linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
- selinux@vger.kernel.org, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org, netdev@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-fscrypt@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-hams@vger.kernel.org,
- linux-x25@vger.kernel.org, audit@vger.kernel.org,
- linux-bluetooth@vger.kernel.org, linux-can@vger.kernel.org,
- linux-sctp@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v2 053/110] uprobes: use PRIino format for i_ino
-Message-Id: <20260304101229.bc9fba5fcb816b7325fdf57d@kernel.org>
-In-Reply-To: <20260302-iino-u64-v2-53-e5388800dae0@kernel.org>
-References: <20260302-iino-u64-v2-0-e5388800dae0@kernel.org>
-	<20260302-iino-u64-v2-53-e5388800dae0@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="ppt4ZsVP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1772592412;
+	bh=yNogZjh8R25rWXICvL/Vv0D83HCOCVjY9r9wo4TFOGE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=ppt4ZsVPhyTw+qsq4RQ21SUocDA5nQF96Kc1Scax+GSGvhj5vU96R9Nj7W9iMY2L8
+	 tbhJGHhDtA1CUdm8s3O3Ti+K+MrJVm4qFQgXf+z9hx2HDicvrYZg7DQ8GUWGct2BiZ
+	 Z8S22NiO343q4YHnKu0F74CofFctbR5uGTqKvSHU=
+X-QQ-mid: zesmtpsz4t1772592403t8b21b79f
+X-QQ-Originating-IP: 9I8NfFU45lP2p8YG5Z7gLbQbUlxK/BvAmjUVkl3OLpU=
+Received: from [10.10.74.107] ( [123.114.60.34])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 04 Mar 2026 10:46:40 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 589727514512561061
+Message-ID: <D31C8311F753F56D+d07bcc15-ede7-4a04-829d-d80f69abda83@uniontech.com>
+Date: Wed, 4 Mar 2026 10:46:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] landlock: Serialize TSYNC thread restriction
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
+ Tingmao Wang <m@maowtm.org>
+Cc: Justin Suess <utilityemal77@gmail.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?=
+ =?UTF-8?Q?n?= <mic@digikod.net>, Paul Moore <paul@paul-moore.com>,
+ Jann Horn <jannh@google.com>, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com
+References: <20260226015903.3158620-1-dingyihan@uniontech.com>
+ <20260226015903.3158620-2-dingyihan@uniontech.com>
+ <aacKOr1wywSSOAVv@suesslenovo> <20260303.2e4c89f9fdfe@gnoack.org>
+ <c482a8bb-d8c5-4008-9c8d-704d6a880022@maowtm.org>
+ <20260303.94e335a9bdaa@gnoack.org>
+From: Ding Yihan <dingyihan@uniontech.com>
+In-Reply-To: <20260303.94e335a9bdaa@gnoack.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:uniontech.com:qybglogicsvrsz:qybglogicsvrsz4b-0
+X-QQ-XMAILINFO: NWujniBqiFoN3RkhC4qpPmhMqCN1YOLuTQajhAzcKwAv0lWNvBLhkD9q
+	yy69UjGKGzoScJoLiadzbKTO8yHsmtlRjhhPiTXqHx3S6dwXb2feoBLBWokLtSAMSoD7XDm
+	+nSK09M3qkehANjc232/hMZef4uoqkomIJXIGi3yyqfzSZoKkmwDPmMnqLmQxJa/juR2qJ2
+	ESmiwbAFNrccJbH7ZPJs9u8RoB2/Ax2pxn1Ne9mHvYxutjgfWBuRP0D5/Cpm4jsQj4bCBE7
+	uZ0C73AqZCdYgED/BH9estxFkttgrOXNCpQCTvihcjAXqoinm0nSLlZfo0A0dqehT0hkWmD
+	KpfcdWyUjpy3h8mP2JHdK+sLdYKIs3dULTJ1lM+w4yNeiuXuxhFc1OBnMdfUUB8qAMMU/6m
+	P1jmkSnUvPGq8bKoe7ObpvIOAhdjo5QMmJOzJK4ISHTHO3zDM3kqZaoHZHqqz7K5C0OBXWm
+	ws+BTe2HRKxnsRPrgkED7vqHOJzt9d0l6Vk13uL6yFNX0zHm9M+ZEfn39TixRuJNjRCKgH+
+	4Dygn8SJkz6QxKjEzUEo6QrelIAnD6kvAWQrFIh2B1tS6HQpMKLogm3DsBVkVXa3Uf1EMLW
+	h5adxx1W3oUTBOU5l1swIPAnJIPtZ7mfc+M8qru2Rz1WZfUgRHj0qp3rGxrqojZLPrTvk+L
+	wj+w2MYcbFAd3N7IE4560/fQ6mmlDMkJt3a0S1Ya+bRes8fsLdnpzZoeyl9zQdDSjV4/z17
+	2XJyZ/2drRuxkh26RrP8vl5KrxbrPmPsAH+7R54L7KELzJYHXnbcNrs6za3FVVRI91kBLD7
+	3Hk58u+zt5BAO8HNr1eFyUbB0t+gRirRuV49deY8xDpdu/gRaynb7Ob4u6Pza49T2/QRdXs
+	SkY95DfhF/VyGHxu/l949O1Qq6Jl11JE6ziuGDBSw0gqsUJyLD4KOnT/fZBKKKBdyIc7bwF
+	kjUUdtqjmgm6DHauaGhfmSAOhWscHy6my2uhKRYQJKp2+6HEDBU/20QgXCblSlNG68IyU7Q
+	INwu99ex9cRtFgGNzH
+X-QQ-XMRINFO: NS+P29fieYNwPngkqxogtd7TSCvM0pZABg==
+X-QQ-RECHKSPAM: 0
 
-On Mon, 02 Mar 2026 15:24:37 -0500
-Jeff Layton <jlayton@kernel.org> wrote:
+Hi all,
+﻿
+Thank you Justin for catching the test failure and the thorough
+investigation! And thanks Günther and Tingmao for diving into the
+syscall restart mechanics.
+﻿
+I've evaluated both the `while` loop approach with `task_work_run()`
+and the `restart_syscall()` approach. I strongly lean towards using
+`restart_syscall()` as suggested by Tingmao. 
+﻿
+As Günther pointed out earlier, executing `task_work_run()` directly
+deep inside the syscall context can be risky. Task works often assume
+they are running at the kernel-user boundary with a specific state.
+Using `restart_syscall()` safely bounces us to that boundary, processes
+the works cleanly, and restarts the syscall via standard mechanisms.
+﻿
+After some selftests,I will prepare the v4 patch series using `restart_syscall()`.
+I will also ensure all comments are properly wrapped to 80 columns as requested
+by Mickaël, and make sure to include the proper Reported-by and
+Suggested-by tags for everyone's excellent input here.
+﻿
+Expect the v4 series shortly. Thanks again for the great collaboration!
+﻿
+﻿
+Best regards,
+Yihan Ding
 
-> Convert uprobes i_ino format strings to use the PRIino format
-> macro in preparation for the widening of i_ino via kino_t.
+在 2026/3/4 05:19, Günther Noack 写道:
+> On Tue, Mar 03, 2026 at 08:38:13PM +0000, Tingmao Wang wrote:
+>> On 3/3/26 19:50, Günther Noack wrote:
+>>> [...]
+>>> On Tue, Mar 03, 2026 at 11:20:10AM -0500, Justin Suess wrote:
+>>>> On Thu, Feb 26, 2026 at 09:59:02AM +0800, Yihan Ding wrote:
+>>>>> [...]
+>>>>> diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
+>>>>> index de01aa899751..xxxxxxxxxxxx 100644
+>>>>> --- a/security/landlock/tsync.c
+>>>>> +++ b/security/landlock/tsync.c
+>>>>> @@ -447,6 +447,13 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+>>>>>  	shared_ctx.new_cred = new_cred;
+>>>>>  	shared_ctx.set_no_new_privs = task_no_new_privs(current);
+>>>>>  
+>>>>> +	/*
+>>>>> +	 * Serialize concurrent TSYNC operations to prevent deadlocks
+>>>>> +	 * when multiple threads call landlock_restrict_self() simultaneously.
+>>>>> +	 */
+>>>>> +	if (!down_write_trylock(&current->signal->exec_update_lock))
+>>>>> +		return -ERESTARTNOINTR;
+>>>> These two lines above introduced a test failure in tsync_test
+>>>> completing_enablement.
+>>>>
+>>>> The commit that introduced the bug is 3d6327c306b3e1356ab868bf27a0854669295a4f
+>>>> (this patch) and is currently in the mic/next branch.
+>>>>
+>>>> I noticed the test failure while testing an unrelated patch.
+>>>>
+>>>> The bug is because this code never actually yields or restarts the syscall.
+>>>>
+>>>> This is the test output I observed:
+>>>>
+>>>>   [+] Running tsync_test:
+>>>>   TAP version 13
+>>>>   1..4
+>>>>   # Starting 4 tests from 1 test cases.
+>>>>   #  RUN           global.single_threaded_success ...
+>>>>   #            OK  global.single_threaded_success
+>>>>   ok 1 global.single_threaded_success
+>>>>   #  RUN           global.multi_threaded_success ...
+>>>>   #            OK  global.multi_threaded_success
+>>>>   ok 2 global.multi_threaded_success
+>>>>   #  RUN           global.multi_threaded_success_despite_diverging_domains ...
+>>>>   #            OK  global.multi_threaded_success_despite_diverging_domains
+>>>>   ok 3 global.multi_threaded_success_despite_diverging_domains
+>>>>   #  RUN           global.competing_enablement ...
+>>>>   # tsync_test.c:156:competing_enablement:Expected 0 (0) == d[1].result (-1)
+>>>
+>>> The interesting part here is when you print out the errno that is
+>>> returned from the syscall -- it is 513, the value of ERESTARTNOINTR!
+>>>
+>>> My understanding so far: Poking around in kernel/entry/common.c, it
+>>> seems that __exit_to_user_mode_loop() calls
+>>> arch_do_signal_or_restart() only when there is a pending signal
+>>> (_TIF_SIGPENDING or _TIF_NOTIFY_SIGNAL).  So it was possible that the
+>>> system call returns with the (normally internal) error code
+>>> ERESTARTNOINTR, in the case where the trylock fails, but where current
+>>> has not received a signal from the other competing TSYNC thread yet.
+>>>
+>>> So with that in mind, would it work to do this?
+>>>
+>>>   while (try-to-acquire-the-lock) {
+>>>     if (current-has-task-works-pending)
+>>>       return -ERESTARTNOINTR;
+>>>
+>>>     cond_resched();
+>>>   }
+>>>
+>>> Then we could avoid calling task_work_run() directly; (I find it
+>>> difficult to reason about the implications of calling taks_work_run()
+>>> directly, because these task works may make assumptions about the
+>>> context in which they are running.)
+>>
+>> I've not caught up with the full discussion so might be missing some context on why RESTARTNOINTR was used here,
+>> but wouldn't
+>>
+>> diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
+>> index 950b63d23729..f695fe44e2f1 100644
+>> --- a/security/landlock/tsync.c
+>> +++ b/security/landlock/tsync.c
+>> @@ -490,7 +490,7 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+>>  	 * when multiple threads call landlock_restrict_self() simultaneously.
+>>  	 */
+>>  	if (!down_write_trylock(&current->signal->exec_update_lock))
+>> -		return -ERESTARTNOINTR;
+>> +		return restart_syscall();
+>>  
+>>  	/*
+>>  	 * We schedule a pseudo-signal task_work for each of the calling task's
+>>
+>> achieve what the original patch intended?
 > 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-
-Looks good to me.
-
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thanks,
-
-> ---
->  kernel/events/uprobes.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Thanks, that's an excellent point!
 > 
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index 923b24b321cc0fbdecaf016645cdac0457a74463..d5bf51565851223730c63b50436c493c0c05eafd 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -344,7 +344,7 @@ __update_ref_ctr(struct mm_struct *mm, unsigned long vaddr, short d)
->  static void update_ref_ctr_warn(struct uprobe *uprobe,
->  				struct mm_struct *mm, short d)
->  {
-> -	pr_warn("ref_ctr %s failed for inode: 0x%lx offset: "
-> +	pr_warn("ref_ctr %s failed for inode: 0x%" PRIino "x offset: "
->  		"0x%llx ref_ctr_offset: 0x%llx of mm: 0x%p\n",
->  		d > 0 ? "increment" : "decrement", uprobe->inode->i_ino,
->  		(unsigned long long) uprobe->offset,
-> @@ -982,7 +982,7 @@ static struct uprobe *insert_uprobe(struct uprobe *uprobe)
->  static void
->  ref_ctr_mismatch_warn(struct uprobe *cur_uprobe, struct uprobe *uprobe)
->  {
-> -	pr_warn("ref_ctr_offset mismatch. inode: 0x%lx offset: 0x%llx "
-> +	pr_warn("ref_ctr_offset mismatch. inode: 0x%" PRIino "x offset: 0x%llx "
->  		"ref_ctr_offset(old): 0x%llx ref_ctr_offset(new): 0x%llx\n",
->  		uprobe->inode->i_ino, (unsigned long long) uprobe->offset,
->  		(unsigned long long) cur_uprobe->ref_ctr_offset,
+> restart_syscall() (a) sets TIF_SIGPENDING and then (b) returns
+> -ERESTARTNOINTR.  (a) was the part that we have been missing for the
+> restart to work (see discussion above).  Together, (a) and (b) cause
+> __exit_to_user_mode_loop() to restart the syscall.  Given that this is
+> offered in signal.h, this seems like a clean and more "official" way
+> to do this than using the task works APIs.
 > 
-> -- 
-> 2.53.0
+> It also fixes the previously failing selftest (I tried).
+> 
+> Yihan, Justin: Does that seem reasonable to you as well?
+> 
+> –Günther
 > 
 
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
