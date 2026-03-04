@@ -1,127 +1,130 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF1837F8D3
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Mar 2026 07:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B01339023D
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Mar 2026 07:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772610305; cv=none; b=n7az6i3qNOTrJPyPX0aeQh8mreude/XPjzLppJQrVdsesO9nI2uE3f4xEMVyqnOPRiOGNhl4aBJBE4mItm7BKU0yxtILp+BXFnEJz3O1iuUh9GGKclJAsPDNOmP+e1GIQwqdFPz0Da0B26yFbNUF+2G9xWJBnbNtcbOn683MM/o=
+	t=1772610754; cv=none; b=jWAtuRcB5JdtKtleVD+jbza0v5us+Z8MNl19XtVVWo0nId17Eb6NPoL7Sa2hiL7gVZhM2N4djYrQbBv+1Yro3RZgudBPv5Nwfl327hPkqOhUwp9JPHmY3Mz/9N9iR9ovwbjgtEUk4Rl8RgW5E9Zb4sHTr594vNnnjDt3WsfVocU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772610305; c=relaxed/simple;
-	bh=Bl7YSDtmmKcJFmJ3E29bRrcaVds7w3c5c0tPYWcUazU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N1xY7EA+8VYtzB9U6W73ALhn78UqX1qqTFfirQ3paRwi4zltXcoETR/C9u1TvCwX07jw7CzD5yJq5ExLBUrFdsNx4LjVgUGHxNHh3ZQOkfPx6ZAlXVKl88oQaBqfVHMWyGHTdF1ySSQEFv/vOb2BVCfHhf236s8GXyRIyT3F5RQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hwfDiiTs; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1772610754; c=relaxed/simple;
+	bh=EcLDMvBjjbTD/cKF5y1BkO7ob6e6OBIu3jcREkFicZE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a+cXLbap6rZc8eKYPHwlzeekGPx66dlpZ709VAV86Q9yOGfjwZaZVhbtQqE3IA6+a0+gGVGF16BxT6N2AdYDaeSlkCh73RONyk+Cp3RqOvt5VAvKgn1PGmQC5/+s8Kmy2w6aGaWq6999wybryWfkbCq8fL5JkM0kJaasQPcN4Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FNnTPrmD; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hwfDiiTs"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-439b790af67so1756298f8f.0
-        for <linux-security-module@vger.kernel.org>; Tue, 03 Mar 2026 23:45:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FNnTPrmD"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-439c9bdc1eeso235871f8f.3
+        for <linux-security-module@vger.kernel.org>; Tue, 03 Mar 2026 23:52:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772610302; x=1773215102; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=y6R4KpRzY0pdh8BZXIGvyv7ewrhWYqro8EcQRduV4G0=;
-        b=hwfDiiTsQLm5HzfXfnC5F0WpM7NDxTzhA6fNLc1iWFOFuqAUwZ42GKmoNJuDNBuVXw
-         ZyxyOUTSXAUznnGZiogm71ACNvD+UznnIpRoyO9TTmIDLlED3wsyfoVL92dxRCxtgPpo
-         Wo0BEIuAoqfpFS+wgcrQc3OPX/bimciTb+TpRxUOGFF6GzdO51pMUpMOsw0eQg10wDje
-         LwPGDhKEsRrQ6kQ73Z/e4nQx06VB6c/Xqqj1tFuIHtes2kce9EgMtVFWitYqWFkPUsnB
-         KJ+Ge3ZUoKWSunuI/eTkfo+Q/Z4BvAOvrGVc+d5qEyDnUEHupeu4ZGHVd+FUwKNLUsm9
-         0BUw==
+        d=suse.com; s=google; t=1772610748; x=1773215548; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iaji8MiSwOMoEhpHJ9TfGIIdRoqWhERpR7BNI+IYVW8=;
+        b=FNnTPrmDvPeJsl7KgOkZBHjigGbAfeWKOyNkXPj/ux+4SYrQn4MTPSHMrouYmSgqIa
+         YuFUNmIKbBGjpl8HC4GdNNkeY3ChhyRlnRpH4V0ri52oDep3hlSTOoliQedMT0Q80eJ/
+         u74NOjzU2/l3poPflXJgxfZbtt5Jd1H9iW1nzjA/GbFpj7Don+kWtej1SpQqfk5AYi09
+         Eb9dLae/TK4h5q3fJZKI1g95C/udZxLAoLe0Upb2/LygfKo5T5+smDUdi37tfQZDsldY
+         1va/Z7NSVaRop+Elt1Nxco58Kr4VF80cTnrvUk2M/x5YabCEcP0q7FV2F+ubPjbxO5dH
+         6ovw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772610302; x=1773215102;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y6R4KpRzY0pdh8BZXIGvyv7ewrhWYqro8EcQRduV4G0=;
-        b=rB6zwFM7q9hDRD25h57lYmGS7gKAHuCP1+X1oVfeaobi+TBBY6Yi2a9nYxt7PO9tAx
-         5KgmR8FI74G3t6ipeg4HDRauxVO92QLzyo3Br/O8OugvRfIdaWCWXz1FcO4OLhJ8Wrgu
-         sQsgT3o2mme6gcrfgIv4cAeOI3laIas4CGBAqj0AnYuBBo2WJ3NNZrIxBrWZTO9xM5vf
-         u9gXvsO6LJVDqsdRflIByJ5wz1mqS9io4JFrBILhZK7Nz43kJg4wDsIh2V3Gyds+WgD6
-         snS/Hnfg+h5SaK0CShajqOYD5BeS00NP0txcdp5Ns+fq6sFalSVUXitpboPUxfWbhx1B
-         mq2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWzzlRx0cv6hSdwvaq0RFfZ8NyKpkFW31HjGl4wHGPfcKzcpS4MKwWf4tioCOgOIe/c0cVIc7AL26CCrt68UHQnZ5sGQ/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx80rx5HpgF259tih7+rYUsZInDiy37NTPqZYFamB6R4AA6OPfJ
-	ikcl6km2xb6GLxTMqWavzpU96tE3jV9yY1rGOe3aW65Yq2SaCdLa4JVh
-X-Gm-Gg: ATEYQzwWJqqJDkFdnAwG3JaJlBM0VEMNBFSz109Tdm705hs6SstCcHZ5vymZPaHY3p8
-	kDkK1hUffzNvD2tYRKtDqg9OsE9BBPEFq3ilipbSJocfsfFQjjYYADGVNk7QW3rGSoJ93IDs2Uy
-	tDb2Y8PlRBWY9ogXAW2il2a3gGfEbtG1NZKUjJcEU6nfn0tG62TD66tr60LlX8kNejyVRuqAWMx
-	RUT5D5vfHlS4+4JXFwxGSx8MueUSMWN080ZB5CeHog4FaSMFgJiTEdMkMJPWGNhzju9yuIlRjRE
-	I6VG4Gjvbvlz0RtrV8gCp9qR1Csb2gatchTZwA98e/Ibw3u5j5FzVuV0bAEsfBQQeRhTneBDuWL
-	hlPxIAVJZC6CyiCAj8FyRU9kbAhknoA6fLyv4nIK1Y9L+hOGtayJioudaqIk0CS9alB/PLRezj9
-	sfPewktOtyfVwihxx5g+uVKS6antiuyznqTq57o07ygIVCZTS0
-X-Received: by 2002:a05:6000:200d:b0:439:8c72:1d8f with SMTP id ffacd0b85a97d-439c8a3d018mr1602542f8f.2.1772610302355;
-        Tue, 03 Mar 2026 23:45:02 -0800 (PST)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439c2f8c0e7sm8157690f8f.29.2026.03.03.23.45.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2026 23:45:01 -0800 (PST)
-Date: Wed, 4 Mar 2026 08:44:57 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: Ding Yihan <dingyihan@uniontech.com>
-Cc: Tingmao Wang <m@maowtm.org>, Justin Suess <utilityemal77@gmail.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Paul Moore <paul@paul-moore.com>, Jann Horn <jannh@google.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzbot+7ea2f5e9dfd468201817@syzkaller.appspotmail.com
-Subject: Re: [PATCH v3 1/2] landlock: Serialize TSYNC thread restriction
-Message-ID: <20260304.c0c2ccadbde6@gnoack.org>
-References: <20260226015903.3158620-1-dingyihan@uniontech.com>
- <20260226015903.3158620-2-dingyihan@uniontech.com>
- <aacKOr1wywSSOAVv@suesslenovo>
- <20260303.2e4c89f9fdfe@gnoack.org>
- <c482a8bb-d8c5-4008-9c8d-704d6a880022@maowtm.org>
- <20260303.94e335a9bdaa@gnoack.org>
- <D31C8311F753F56D+d07bcc15-ede7-4a04-829d-d80f69abda83@uniontech.com>
+        d=1e100.net; s=20230601; t=1772610748; x=1773215548;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iaji8MiSwOMoEhpHJ9TfGIIdRoqWhERpR7BNI+IYVW8=;
+        b=bC8k4iGko+CM4OGSY8eKKEwZAFYBr5j1sbOVwHyy0S5bxL7bllrI2c6pz5ctfMZfVb
+         U6temM2349q7746Y4Akbva3m33sd3wUPFxk/KaS7i4T5GBBjeBTFIbF/+N/m9vzFu95B
+         Q9+XCm40RGEpEm8NQi8vxMnSRb/RnYxgh3Hc7LgHNJxzbmgI/QcmUcGNXqyxJLBYjsL0
+         Vg3DS2ReX55CQrUmxbiGxV8mq1tFuxb27lZAnmOdyrDbw+txbv+dKdjgrJ20edKfg9R0
+         THfkLmyENORV5HvD18IvP3hg3QWShDDG7nOagPPCgxo8LW2CiertGl7gMhdOSvKxQxkI
+         Wdxg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5uzJcLJkdY+YELU9r7SAGcfTn22LzYjgBsZyQxslDBY3cLTIOyQQlCTtWxfsg2pF9zSMJr9sqF9UD6Xhp/fFG//6AiuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBi+zSgGqUooZg1Ml3oDbBMXfqUP0ziKniHo2k7U70G7bZl42G
+	snQ35jzb31eBWjBklcVQ3IBRihFUhgX0OJ7gE2DBJI5FfFDmAPnt13KczYRg9eQA4aA=
+X-Gm-Gg: ATEYQzwoMw1XGN+zeiLpzdkqpF1tVjnquEVMxGxgnH7UR+krlPNQHSi6OLwKWvVe6gN
+	rNMakCZUg5AdOyw/5PcOWlYlVm+XowLYZdPFyLqif5Zk/8Ee0Ys1FEvNisnKZ0vDLsS6OjvZf2Z
+	UHZ06qOjm0q87rDvEuAjDk/amiyJakxOvX7ETeKysX4IpWmKx7860VWfj7vOZ+5GSeXxWBQ3foR
+	zeEdWZDAbCrQfjpfQWmluwJGy56AKGsTBCwv/NYRcN4ADsNTXp4lLcu3Si7X/RKjNP2iuEX46zn
+	dwcMHUknKH8tTl1ECuTcv8oXYptjcYcswYoGB7ykUIVMQUmZULgQw+mO8MMi3bsGdnPHOoRGTJe
+	2zRB070Qe6UypAl4aHvLj+T3gBF3x5zQeCyUdaCSwTU53j5WozUQZJr6DmGTQQSWsbIDcbuKd7G
+	eQNeeIQKWk6jjpvkHBRJsbXYQEYoX5PJXbSyVQi5M2EQppgWYm6mjzOABHDnxjwVSFFJiZF/dic
+	kiqRnFrY57fyI/H/axYrS30CPwaPMOUGQ7oj3u4uT7uvmcbvv8rrdjnsrQP+GHZAqLHk6RcPtxB
+	A+pP
+X-Received: by 2002:a05:6000:4301:b0:439:b886:20d3 with SMTP id ffacd0b85a97d-439c7f7e5b7mr2101563f8f.15.1772610748337;
+        Tue, 03 Mar 2026 23:52:28 -0800 (PST)
+Received: from ?IPV6:2a00:1028:838d:271e:8e3b:4aff:fe4c:a100? (dynamic-2a00-1028-838d-271e-8e3b-4aff-fe4c-a100.ipv6.o2.cz. [2a00:1028:838d:271e:8e3b:4aff:fe4c:a100])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4399c60f764sm42229774f8f.3.2026.03.03.23.52.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Mar 2026 23:52:27 -0800 (PST)
+Message-ID: <97a56169-b71c-4ad0-8992-c6e2d381ff02@suse.com>
+Date: Wed, 4 Mar 2026 08:52:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/8] modules: Move 'struct module_signature' to UAPI
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: David Howells <dhowells@redhat.com>, David Woodhouse
+ <dwmw2@infradead.org>, Luis Chamberlain <mcgrof@kernel.org>,
+ Daniel Gomez <da.gomez@kernel.org>, Sami Tolvanen <samitolvanen@google.com>,
+ Aaron Tomlin <atomlin@atomlin.com>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Mimi Zohar <zohar@linux.ibm.com>,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org, linux-s390@vger.kernel.org,
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20260302-module-signature-uapi-v1-0-207d955e0d69@linutronix.de>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20260302-module-signature-uapi-v1-0-207d955e0d69@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <D31C8311F753F56D+d07bcc15-ede7-4a04-829d-d80f69abda83@uniontech.com>
 
-On Wed, Mar 04, 2026 at 10:46:39AM +0800, Ding Yihan wrote:
-> Hi all,
-> ﻿
-> Thank you Justin for catching the test failure and the thorough
-> investigation! And thanks Günther and Tingmao for diving into the
-> syscall restart mechanics.
-> ﻿
-> I've evaluated both the `while` loop approach with `task_work_run()`
-> and the `restart_syscall()` approach. I strongly lean towards using
-> `restart_syscall()` as suggested by Tingmao. 
-> ﻿
-> As Günther pointed out earlier, executing `task_work_run()` directly
-> deep inside the syscall context can be risky. Task works often assume
-> they are running at the kernel-user boundary with a specific state.
-> Using `restart_syscall()` safely bounces us to that boundary, processes
-> the works cleanly, and restarts the syscall via standard mechanisms.
+On 3/2/26 1:42 PM, Thomas Weißschuh wrote:
+> This structure definition is used outside the kernel proper.
+> For example in kmod and the kernel build environment.
+> 
+> To allow reuse, move it to a new UAPI header.
+> 
+> While it is not a true UAPI, it is a common practice to have
+> non-UAPI interface definitions in the kernel's UAPI headers.
+> 
+> This came up as part of my CONFIG_MODULE_HASHES series [0].
+> But it is useful on its own and so we get it out of the way.
+> 
+> [0] https://lore.kernel.org/lkml/aZ3OfJJSJgfOb0rJ@levanger/
+> 
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
-Agreed.  I also like the restart_syscall() solution for its simplicity
-and use of a standard mechanism.
+This looks reasonable from my side and reduces code duplication. With
+the removal of MODULE_SIGNATURE_TYPE_MERKLE in patch 6, as reported by
+the AI, the changes seem ok to me. Feel free to add:
 
-(This code path is very unlikely (and probably unintended by the
-userspace programmer), so we need to protect against deadlock, but
-it's not a performance critical path by far.  By using the more
-standard restart_syscall(), we have to worry about fewer corner cases
-(e.g. what assumptions are made by task_works about the context they
-get executed in).  I think this robustness trumps performance tuning
-in this case.)
+Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
 
-
-> After some selftests,I will prepare the v4 patch series using `restart_syscall()`.
-> I will also ensure all comments are properly wrapped to 80 columns as requested
-> by Mickaël, and make sure to include the proper Reported-by and
-> Suggested-by tags for everyone's excellent input here.
-> ﻿
-> Expect the v4 series shortly. Thanks again for the great collaboration!
-
-Thanks, I'm looking forward to the revised patch. I agree with this plan. :)
-
-–Günther
+-- 
+Thanks,
+Petr
