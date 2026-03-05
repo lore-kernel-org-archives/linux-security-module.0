@@ -1,201 +1,130 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1233CA485;
-	Thu,  5 Mar 2026 15:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F0B3E0C41
+	for <linux-security-module@vger.kernel.org>; Thu,  5 Mar 2026 17:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772725059; cv=none; b=qCZsA4XYkWVMzGbq0i8LpMTsV28XV1eR8q12jSlrwJIfTaNTxfnW9uVGt+Th8NJm+Tc5W3C1HDhHay5NGHujnT1y6q0AmLTpcF3VzzLdAOIviNA1iQT+q7o+yA9GmoiO6LhBjjHmOd9q5RLY0zlYpCKzCwByI3UAVsCzT3hTB40=
+	t=1772730545; cv=none; b=QvO0NMR7dAVxyYS671OB/+5PBzhMFxgmWTAxBygY5RABPjY2pIpJIU2qWGQlo1S2Q4fquf+odV3xvmHawKsbYFR8A1rAETWtBUlqlbMn7qP6FK6mQLF63XvFpeNzGRoz/y4hUGWrMQvSDf0E2mMjlky6ECCq0H33ieVMPlaVh5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772725059; c=relaxed/simple;
-	bh=jK1nSuevZdf0RKkYstE3VQvVjnthz0rex+B4wX8/qiE=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=nwLqKXicgTssbGnR92/qGVaSABPUt+A0cxcSgkV2U0qDAPEyKrDPIIxuqzGxqjEMZjL4yxq/yrcSDOF2T0uVVEYBqjv0OAoflX0VBVPrF3vcv0YzDRqIpr5ak2GesSKq/TdxqBDLsY58C8l5B2AV+lnoayMKXdxsSF+NsH0oCpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FqL5Py8Q; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1772730545; c=relaxed/simple;
+	bh=WicKWTXtBDYjOUd/R2/CWWN64WSplHTWnfjTydxsBRM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e43U44lynnE2exkyWHpkYBACwfK4FCJ+gnlNXbE6K4h3ZwXGoWXY/ZLB9qrdYI6g/fGthNjnp+a/tr0Mnl//RlCRlRlbOK2E29hXt0iqeSos8wolQozOlgBY7iovg67rX3lyu2wTCYVi6rWPO+S9i9SOiNDiMwEJwOTujfgL5sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=eH8YCyaY; arc=none smtp.client-ip=66.163.188.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FqL5Py8Q"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6259YA8T674109;
-	Thu, 5 Mar 2026 15:37:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=n0HweB
-	/9FvorYvScvAYglLgAWuWNSf0Q2i8umhzaLaw=; b=FqL5Py8QYKpqdjLJLcM6In
-	ahlPSpvqGhiZ87Gzg0gr8f/0O46x1C7zm9IXyV8Jo3eMFzsXf9AtuhbIGFagJLNI
-	dxVXI4XJkJzQn3PWZiH50zSXe88XglFBXWku/8TGtLzlhc8hGFaFzoKoKxHkT+DE
-	BRQEesV53xlohQGiiohbP7j/5fQitffoDpeqtJQMBNONBXn4K0DBsErgvjuUiuIT
-	ma0zmaMjNMVFt27jBxKzKxFSlzGlC/K2oIhGW47G3AEw4fq16+90DZB6++SCE7W8
-	mtVJ0ZQMlVu+xtCUdQBgxxTZMxluyCBFv/GeiVej5PQJosAZsEnqf7MEZOQ/G9Vg
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4cksrjcdmh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Mar 2026 15:37:11 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 625DbExd029016;
-	Thu, 5 Mar 2026 15:37:10 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4cmapsc0vh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 05 Mar 2026 15:37:10 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 625FbAEL28312202
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 5 Mar 2026 15:37:10 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 187D75805A;
-	Thu,  5 Mar 2026 15:37:10 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9E32A5805D;
-	Thu,  5 Mar 2026 15:37:08 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.185.249])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  5 Mar 2026 15:37:08 +0000 (GMT)
-Message-ID: <dca994cd0ed11a262d4022c4984984460ba06a78.camel@linux.ibm.com>
-Subject: Re: [PATCH v9 01/11] KEYS: trusted: Use get_random-fallback for TPM
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, Chris Fenner <cfenn@google.com>
-Cc: linux-integrity@vger.kernel.org, Jonathan McDowell <noodles@earth.li>,
-        Eric Biggers <ebiggers@kernel.org>,
-        James Bottomley
- <James.Bottomley@hansenpartnership.com>,
-        David Howells	
- <dhowells@redhat.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris	
- <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "open
- list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        "open list:SECURITY
- SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-        open list
- <linux-kernel@vger.kernel.org>,
-        Roberto Sassu
- <roberto.sassu@huaweicloud.com>
-In-Reply-To: <aadTgsbzDDkCg1Pr@kernel.org>
-References: <20260125192526.782202-1-jarkko@kernel.org>
-	 <20260125192526.782202-2-jarkko@kernel.org>
-	 <06a08cbbe47111a1795e5dcd42fb8cc4be643a72.camel@linux.ibm.com>
-	 <CAMigqh1H1NKP9gddjhf4M1v-aM=+EpW9O4KJmu=UysOWhn4ryA@mail.gmail.com>
-	 <aadTgsbzDDkCg1Pr@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 05 Mar 2026 10:37:08 -0500
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="eH8YCyaY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1772730537; bh=80Z7B8uDAmt79h8yXL8xjNd6uSj+eKjWfFvR9JtAjg4=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=eH8YCyaYo9Bf/5EaT9fFKpu/0H77lZP8/dS02c8d7kJnL18mYQZx5xU10KFVqtZa4mJMdWEMb7U9GyvSLJz+PWnX6o+zSk2yQu5U0RaEfQxQprC+RH3cNAkkugyxz/a0QuabxjSJ5XKiEMiNA0135QYAJIt3nUP/gVFIMooVgG0TzgAfX4aQk8C34M2ctu2rITJTD3GcQaGQatsOtPld9FiFO+Hu5qyhZcUzKE1EclK8fRaFWH8NgRx0SJHa5v/KQ5ygI+uIo1kllBzXYkDutoN11/T62CTzfIaSbmHzJgUG2vld+yaw5k3u5yURd//YD8+vmZSkuBuDZwytXFNRFQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1772730537; bh=wU8vKE9prUqjFew4X+uefKJys+HtrEyhdWSJRWSsi34=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=j4G/COvED2A2ZjEOMqvZnP6KVkM8G6si2W/ZpmSVNtTWYHv5Bztmag5fICppuoN2iZ3lGl2N/K7Ig+LnKXFoYM6kopzHsbOGpa8sTjp8KyZp5vltykPf+ymnU0k2yvKsq9xzwys2iPrnpQvQcTGzSSOQ5eMVd2zQgIXAXTRBGoOP6TE1fPJLuHAEf9UM44ebxnlFiA4jzRvZXwqlGA+oiWlo17ROyyto25Tedbm/4dIgtglKlV18S+oI6bQKZcEH703GvL1PZ9tE1g7E7beP9y6yo2RW+/GlwIW0r/GlCmpWnh0pqohAbtn2on/bXqXClHW45Qa83JBdqZsQomyp9A==
+X-YMail-OSG: 58zR03cVM1mhiFOtwGiz3EYeHLl.c.enYHUsDym.4QSxSgv0TQOZyd58FLaQe0X
+ BZ1bjzfD7svfuQ1mm0W1tRv1BwvPYQtBqsvlCvatqlKSOG6nDtqWVa9dyy1CgJ5E3DUBhl.84k2p
+ 5M6a.bu.QC7u4maxYla9tOneYi7Qe7e7C9w8lB8lVuYPe6sQtxiR_U26FZoWkLEzZAqHQ1JT2QCK
+ hKecjgAGhpqPUkYHF0SIEvh3CpOAVQI5PFrHYoy4SrtZjrl6UsuhnqV4YmBPLCNMQJUnQUZo1O73
+ D1SWxMhYeROrDXLiwM3l390mkV6HEDKGGBrEMFpUZO.rASrIRSDP_beeTSnP.gEUK71PHutN6Vh3
+ TAsd9NB4r8UvUg4h0M06Q9iICSqM9VDb42EaacYm9sMyTGwZAQzL3j4fXZ7iHnKWrX8stxTOXURT
+ GvCG38vzvhkHkU_qj25yyCoxCWMkZ7voBRpZslOQHlB.nAdcwRNhIKwA2NbCrKXGROiV_SDVSCeT
+ .iCV0dOeWX7N5N77WOAcwWrVWt1oE1FcDhXrjMNub6yIHlcMDAvumGKoc5Ly9Od1gsww52LZoQxf
+ 82h6.TEvnNUIvGJ_dKfMyeWZiDqxY0HV3ou.zUIcTweeLz4.a_IIvPfamMWTwGoXKzjaZcqS_WAi
+ k6hrJqOr9lNKspvaBchjJINK15n1wuBvS..3mqi2YSrYFAj8X7v1Y_z5GILu03MrtgOhosOc..Cu
+ hNfUwlM4.BQxjJZcMNuaEOmQWjx0yn205lMErHXvkzU2oGpn4leEO215Or2gQgra583Hng_mRFBC
+ LhN3F7Ix5imGXHR6vTSnBt._8_Rdz6vkGYZNK2MRlQI0.V2.IrXVBEsK8lJoHS8vfjHYFh7lbF2P
+ CXqqRoA_gnQroakiq2_BB0PEvDPc6ah6GkDIcO0V22KkJBeNpN3FmDOnj.46Bo9K6qivbEWwK8wv
+ 9_wEJF5pZwR1.S0volPiDReHb7Wmvvrj_07b2DxQys._R5Bs1QADus5yOqWJ.FCIuD9cCfSBOjGF
+ Fl.ZQMrDvarRDa7e_whv7lhFMI1OeJ_vSE7hcBFv4mem23J.oPjQJJfqZmEZtJDZbKXZFIb9rrDz
+ ygu._hUxWfzQxjJZ84FBKJZqGnh28XqltAD9bZcRhh_FCXFIVKkc1YSox8xSIdRQSdc0q3k3WFVq
+ EutdRoQUi.HfVyqy_0bM31AB7NqUHKRtupXmPFsejnJd73LG_0RMemVe8h3UFBQRFisBw_rQDH3U
+ 5NMGgIhtHNvpVx8y6_NxnLfYo4ZsMsh4URZ0mxCFq43vQkigVKmVeiysZjEJxv9o_ytq.7o3QrAZ
+ gkQGFlV1Jv_lauvTQ84I8ZBjbpw419Y1bPJTXSYyOC7DaVu5yS1DbPdYkfNwHazbozTGeWNPmhfa
+ wKoS1m2bCWQkF9sGcVxis6uERm0zKyuTsgD3JuASktFPCMqbUM9ZXZgB8RvOvD26bCPSrbUSryip
+ PiBKOZSjtJJPNPHHZcgs.fNfQg5WTIbkh_B2T2VQITz4YZfkIGi4tLBQ2OX1MMkCoFKUmv9xLvBz
+ PIPQUGSKnKp0Y9YYslgSyakx5R0KbCiuLVJQ4jpvATsec5cC8sP6ITKkJ6D_n8LVNaQMozdIpO6Y
+ D9zW._dEQKp97cxExeVddQ4ubD9jB00Z71xsiMfoX55mQmlMOMvacCf1YMS9s9zbIbDnJfEejqNp
+ YoIAQhsHV37HSoqp8x7V5RcNrf70ZcBD_P4mz5.5vpH98hI8.G3HeLmx6Mh6zIHKy3w.cBa01IP6
+ .JLdBbFV6Y.F8pslbEUkQ5WLSE.HJepXl8rS6HBGWBtOWCV5vr6ngF1tNkNfFv2PGO_8k06meepf
+ 3mbRWjAntU2JM9nsMRW5EaQKvJJh8opySOq970kwy2VvHSenDw3heEagCWirIAbFFY3J7cFJKjWt
+ c1KP1QEcKk2GTfYC9eZEEdfuXZuQEZKh0yYU0c2rqlTXFD0et12z00_YqhSoQkkkarYTFr136VBv
+ MiMXciSAMBZT.V9kDvf_IUi_JmkpeFZJE3hNMcWYKLp66XAPunC6OlsVK7Lm9KuLRhdoDgjyZkuD
+ QblWCVWSP775fKKFxxWW0gq8VtL0VynsOVdQcGSxDsfrfF2DUEjKhYMWG9WnW8AOi9xXGigJM6Ax
+ B.dUV7I2klO4b4ow6IQgQRcMvXiX4955KH08752fKjdXfvFdSoNF8LYt_H34onAWshH.E7XuQFZg
+ N.6U42yDnvRLO8dKKa3vi.0emWz8xgkozf4hEEkeywSCtNL7IpriOuBFSpwTpa9KfgjbHIcEY8HM
+ cUHXly2A9TM0qK6M-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 47e21ffe-a30f-4249-aaa2-8dbbfa7300a8
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Thu, 5 Mar 2026 17:08:57 +0000
+Received: by hermes--production-gq1-6dfcf9f8b-gxljn (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8c0ce0e2307669a8df6950dc02d52ef1;
+          Thu, 05 Mar 2026 17:08:51 +0000 (UTC)
+Message-ID: <5cdf6bdb-1387-4d31-9dc1-b84a210b5902@schaufler-ca.com>
+Date: Thu, 5 Mar 2026 09:08:49 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Authority-Analysis: v=2.4 cv=Rp/I7SmK c=1 sm=1 tr=0 ts=69a9a328 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=iQ6ETzBq9ecOQQE5vZCe:22 a=KxeoQpAgAAAA:8
- a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8 a=oeA2Qd-FWMGMNsobgtoA:9
- a=QEXdDO2ut3YA:10 a=dJtPqE9Y5jwXgJ6xlkAX:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA1MDEyMSBTYWx0ZWRfX7JxhQknPyZhF
- p4wRSHH6i0Hl5NmaLQWXsO3k/0fyiH51/sj8KhsK3Cw5yUDEC9vCWLmZF5nFT1uJZgARd5zpBoX
- O2Zjf9xVPWasIyT1/R97J/w3q1MpwvDDj9PE/jCCmHCWVbz0vX30MFOMGl1U5FtjwkH3srTmaZU
- dB7g1zjWcAZQxoHZqt/YQj3y9YFuvUXJtK/TsopeT0pxisPkQhBYJSsEsKYCQKg+Ymygn0+oia5
- gkPhvottKNL/wvd39Nj37E79FcvuCvx1GDKXInrqDkABxPqTPE0jfwIjxUmXi1k7C2G8OiF1aJi
- i+VYbBU6jS+6BE2eLRGJ8QpthPsXzL9KWaCuamZ5yajk+noZsLdIfwzo/DcOyLNiySOKDZuT8IF
- eQYFl/PfFar5hvSFtMleRupQELVWsArr2Z/7A/r2PApsCVvOyoOg7dVZwhRS7zGFc6u7xBxJEOH
- V6uxqamcUy85SlaYvsQ==
-X-Proofpoint-GUID: _C-N74wG_CIJsefjIirPc9Hfg-6Ra2uZ
-X-Proofpoint-ORIG-GUID: 5kKQxuakx7GGh-cnWs7XsBKZx4ecLpXD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-05_04,2026-03-04_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 priorityscore=1501 spamscore=0 phishscore=0 adultscore=0
- bulkscore=0 clxscore=1015 impostorscore=0 malwarescore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603050121
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 net-next 06/15] smack: Remove IPPROTO_UDPLITE support
+ in security_sock_rcv_skb().
+To: Kuniyuki Iwashima <kuniyu@google.com>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ David Ahern <dsahern@kernel.org>, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Simon Horman <horms@kernel.org>, Kuniyuki Iwashima <kuni1840@gmail.com>,
+ netdev@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ linux-security-module@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20260304193034.1870586-1-kuniyu@google.com>
+ <20260304193034.1870586-7-kuniyu@google.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20260304193034.1870586-7-kuniyu@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.25198 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Tue, 2026-03-03 at 23:32 +0200, Jarkko Sakkinen wrote:
-> On Fri, Feb 20, 2026 at 10:30:26AM -0800, Chris Fenner wrote:
-> > My conclusion about TCG_TPM2_HMAC after [1] and [2] was that
-> > TPM2_TCG_HMAC doesn't (or didn't at the time) actually solve the
-> > threat model it claims to (active interposer adversaries), while
-> > dramatically increasing the cost of many kernel TPM activities beyond
-> > the amount that would have been required to just solve for
-> > passive/bus-sniffer interposer adversaries. The added symmetric crypto
-> > required to secure a TPM transaction is almost not noticeable; the big
-> > performance problem is the re-bootstrapping of the session with ECDH
-> > for every command.
-> >=20
-> > My primary concern at that time was, essentially, that TCG_TPM2_HMAC
-> > punts on checking that the key that was used to secure the session was
-> > actually resident in a real TPM and not just an interposer adversary.
-> > I wrote up my understanding at
-> > https://www.dlp.rip/decorative-cryptography, for anyone who wants a
-> > long-form opinionated take :).
-> >=20
-> > Unless I'm wrong, or TCG_TPM2_HMAC has changed dramatically since
-> > August, I don't think "TPM2_TCG_HMAC makes this too costly" is a
-> > compelling reason to make a security decision. (There could be other
-> > reasons to make choices about whether to use the TPM as a source of
-> > randomness in the kernel! This just isn't one IMHO.)
-> >=20
-> > The version of TCG_TPM2_HMAC that I'd like to see someday would be one
-> > that fully admits that its threat model is only passive interposers,
-> > and sets up one session upon startup and ContextSaves/ContextLoads it
-> > back into the TPM as needed in order to secure parameter encryption
-> > for e.g., GetRandom() and Unseal() calls.
->=20
-> Neither agreeing nor disagreeing but this patch set clearly does not
-> move forward and I spent already enough energy for this. For better
-> ideas the patches are available in queue branch.
+On 3/4/2026 11:28 AM, Kuniyuki Iwashima wrote:
+> smack_socket_sock_rcv_skb() is registered as socket_sock_rcv_skb,
+> which is called as security_sock_rcv_skb() in sk_filter_trim_cap().
+>
+> Now that UDP-Lite is gone, let's remove the IPPROTO_UDPLITE support
+> in smack_socket_sock_rcv_skb().
+>
+> Signed-off-by: Kuniyuki Iwashima <kuniyu@google.com>
 
-Jarkko, you totally ignored my comments below.  I object to your removing t=
-he
-TPM trusted-keys RNG support.
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 
-Mimi
-
->=20
-> High-level takes don't move anything forward (or backward), sorry.
->=20
-> >=20
-> > [1]: https://lore.kernel.org/linux-integrity/CAMigqh2nwuRRxaLyOJ+QaTJ+X=
-GmkQj=3DrMj5K9GP1bCcXp2OsBQ@mail.gmail.com/
-> > [2]: https://lore.kernel.org/linux-integrity/20250825203223.629515-1-ja=
-rkko@kernel.org/
-> >=20
-> > Thanks
-> > Chris
-> >=20
-> > On Fri, Feb 20, 2026 at 10:04=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.co=
-m> wrote:
-> > >=20
-> > > [Cc: Chris Fenner, Jonathan McDowell, Roberto]
-> > >=20
-> > > On Sun, 2026-01-25 at 21:25 +0200, Jarkko Sakkinen wrote:
-> > > > 1. tpm2_get_random() is costly when TCG_TPM2_HMAC is enabled and th=
-us its
-> > > >    use should be pooled rather than directly used. This both reduce=
-s
-> > > >    latency and improves its predictability.
-> > >=20
-> > > If the concern is the latency of encrypting the bus session, please r=
-emember
-> > > that:
-> > >=20
-> > > - Not all environments expose the TPM bus to sniffing.
-> > > - The current TPM trusted keys design is based on TPM RNG, but alread=
-y allows it
-> > > to be replaced with the kernel RNG via the "trusted_rng=3Dkernel" boo=
-t command
-> > > line option.
-> > > - The proposed patch removes that possibility for no reason.
-> > >=20
-> > > Mimi & Elaine
-> > >=20
-> > >=20
->=20
-> BR, Jarkko
+> ---
+> Cc: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: linux-security-module@vger.kernel.org
+> ---
+>  security/smack/smack_lsm.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 98af9d7b9434..e581d6465946 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -4176,7 +4176,6 @@ static int smk_skb_to_addr_ipv6(struct sk_buff *skb, struct sockaddr_in6 *sip)
+>  			sip->sin6_port = th->source;
+>  		break;
+>  	case IPPROTO_UDP:
+> -	case IPPROTO_UDPLITE:
+>  		uh = skb_header_pointer(skb, offset, sizeof(_udph), &_udph);
+>  		if (uh != NULL)
+>  			sip->sin6_port = uh->source;
+> @@ -4301,8 +4300,7 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+>  #if IS_ENABLED(CONFIG_IPV6)
+>  	case PF_INET6:
+>  		proto = smk_skb_to_addr_ipv6(skb, &sadd);
+> -		if (proto != IPPROTO_UDP && proto != IPPROTO_UDPLITE &&
+> -		    proto != IPPROTO_TCP)
+> +		if (proto != IPPROTO_UDP && proto != IPPROTO_TCP)
+>  			break;
+>  #ifdef SMACK_IPV6_SECMARK_LABELING
+>  		skp = smack_from_skb(skb);
