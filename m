@@ -1,110 +1,201 @@
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15213BED2C
-	for <linux-security-module@vger.kernel.org>; Thu,  5 Mar 2026 15:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1233CA485;
+	Thu,  5 Mar 2026 15:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772723727; cv=none; b=sLqUZrPPJfPXjmBNj8CQxn3KMTIdHdxrOXeVTnzuW8oO4S4RRIULs8f4qe4YgE4X5fKNOaAjo3MKMiZP1QJu0Y8c0ionkmcAp+WD2oxD8Hn4JvDwvUKMDZlsxQ+WqOwNgEscnye6CMNFKdPI/le5kPP4UXJ4jzCv/9Sj9EJPElw=
+	t=1772725059; cv=none; b=qCZsA4XYkWVMzGbq0i8LpMTsV28XV1eR8q12jSlrwJIfTaNTxfnW9uVGt+Th8NJm+Tc5W3C1HDhHay5NGHujnT1y6q0AmLTpcF3VzzLdAOIviNA1iQT+q7o+yA9GmoiO6LhBjjHmOd9q5RLY0zlYpCKzCwByI3UAVsCzT3hTB40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772723727; c=relaxed/simple;
-	bh=meSuvHU5VgYyQ6+0rfWSzMRfNWXJkQjM+eYMNcqKoOc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FWt36y02CE29q8S8ljNO9QIcmYH4ENPbf0R6PyMGoynmVbhJaoi413Kh1H/ziqG+23g5hHBt4mKxQ8ULkrnmsPZaNwu1T5ey3k49zf01Qbe1owi5phnyeBBR81GUqqCllwrjKq7Su/qJAz8HsSZINX7BmIWISduJsu7Fc39hDuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uf6ZqYj/; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1772725059; c=relaxed/simple;
+	bh=jK1nSuevZdf0RKkYstE3VQvVjnthz0rex+B4wX8/qiE=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=nwLqKXicgTssbGnR92/qGVaSABPUt+A0cxcSgkV2U0qDAPEyKrDPIIxuqzGxqjEMZjL4yxq/yrcSDOF2T0uVVEYBqjv0OAoflX0VBVPrF3vcv0YzDRqIpr5ak2GesSKq/TdxqBDLsY58C8l5B2AV+lnoayMKXdxsSF+NsH0oCpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FqL5Py8Q; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uf6ZqYj/"
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-79898953985so40679677b3.1
-        for <linux-security-module@vger.kernel.org>; Thu, 05 Mar 2026 07:15:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772723725; x=1773328525; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ufc85M4NN7/rM7t2+qayj7cI6+eXovKQmBlSGxXUsiY=;
-        b=Uf6ZqYj/cymZJA6g/SjorIvdXl3c2Lvs3RCeX5CdzW2ZbUC6XUDDrTv9BnFsSZMOcL
-         NCL/+6BMvvqrrHkEJYDwQFFGfyQMYjLvXzUo9bVwfiiAh30gZ5syN3N7il57DEV+49AT
-         RouTqfFdZhHqRNw8LleZ1BqctehUmstBrhpnHA513TBx0NOoVSzRdNe4BTVIBEO83B/f
-         2zPq7PxTQXO7QXAEVl2UZ2JSh8KrAlJDzTUg0Q1dshJpb/K9WHfJkbvMAWxhc7EqR+pP
-         r/cUTmOBus4SLGyyUOW0vjpndr5Zi1ggUZLGqUailc0adLCOGwMpuu893S3KMt1n34jr
-         eDgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772723725; x=1773328525;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ufc85M4NN7/rM7t2+qayj7cI6+eXovKQmBlSGxXUsiY=;
-        b=XwWYHig4/Hb4OOfLk8L0Ouf/tWALBW+U8L+gw/aoW3EANg/+ggZwPrWlvRhHTFZznV
-         y1O7UiUHRoS+Nlim9xcmLjLKs37LYWmBUPguD3rj2VH8IrAXG1JpoCIljKFu7jnMA9XM
-         lv3BFQAC5A7SvrHV/NrYF6U3NGkF/ZCc18NHl3S3kN3earGt0Qnjmvg/goijNti+dfa4
-         gBTnR23aP3Xuqvmu2NHiht1oxoosR4nDRsPcwlTS2UaolBfEB87wApYvIwEcfB/c5uLe
-         EFQ1kNA4x7RlmqJZhbVEb2YK3ZeQntsZvtUGB3Hyuleze9MDLsGkJBKClpcBKAdcjZis
-         tydw==
-X-Gm-Message-State: AOJu0Ywel6hXhoYbROwVfL537XC7WpRkK20R7040aO4wPx1PSNP1RUEx
-	+cLGCKERPJAtuHRAMQfylfrNrLM864Ct+2UXQrYvSD7JewpetJzg0m6nhIuyLQ==
-X-Gm-Gg: ATEYQzyKEg/htfLp7oZwQ1B87OPELAFc85fadpGchFXkXb7bpJqzFtk4+WooWI7sFw3
-	WqWrYfVeBbF7CSSSodySrLdUNZKbQl48dKv0PbexI1HSL53VphyPzoNzMpODxoSLQ3uDGrylSl6
-	pr6/njr9wBAa2srgbFTWlJD+/vXcuSqaZ2+lU8woJ+T+OFK81jcbqSYfVxD00P6g8Q9hb3+C6Yd
-	bvORaK32Da7KpmQ+WNhqGruhQ+NNuK/G0FRjgOoHnmt4c6DBPz7Nm1F1SnkD2efTGsKFp1h7dYT
-	l2CqSm9DXdJAjcIGFBu2d1tDyXpscGsArGyjPVTajGLRnIlax52WqNC5e0dtHarKFw9AOxrz0/s
-	GskE/62uI5opdrizhZd/WA5LtnSOP5lFId761YUi1pYp7Um7alJ3QqSbVrOwdpUFCB6oq720fEL
-	svmfRpGq2qXgwbqN8rJHkya8JLtvhtCro=
-X-Received: by 2002:a05:690c:60c6:b0:796:4f04:bbc3 with SMTP id 00721157ae682-798da4cee76mr1309757b3.35.1772723724497;
-        Thu, 05 Mar 2026 07:15:24 -0800 (PST)
-Received: from zenbox ([71.132.185.69])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-64cf585d540sm2410672d50.3.2026.03.05.07.15.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Mar 2026 07:15:24 -0800 (PST)
-From: Justin Suess <utilityemal77@gmail.com>
-To: linux-security-module@vger.kernel.org,
-	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Justin Suess <utilityemal77@gmail.com>
-Subject: [PATCH] landlock: Clarify LANDLOCK_RULE_PATH_BENEATH properties in documentation
-Date: Thu,  5 Mar 2026 10:15:07 -0500
-Message-ID: <20260305151507.2563776-1-utilityemal77@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FqL5Py8Q"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6259YA8T674109;
+	Thu, 5 Mar 2026 15:37:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=n0HweB
+	/9FvorYvScvAYglLgAWuWNSf0Q2i8umhzaLaw=; b=FqL5Py8QYKpqdjLJLcM6In
+	ahlPSpvqGhiZ87Gzg0gr8f/0O46x1C7zm9IXyV8Jo3eMFzsXf9AtuhbIGFagJLNI
+	dxVXI4XJkJzQn3PWZiH50zSXe88XglFBXWku/8TGtLzlhc8hGFaFzoKoKxHkT+DE
+	BRQEesV53xlohQGiiohbP7j/5fQitffoDpeqtJQMBNONBXn4K0DBsErgvjuUiuIT
+	ma0zmaMjNMVFt27jBxKzKxFSlzGlC/K2oIhGW47G3AEw4fq16+90DZB6++SCE7W8
+	mtVJ0ZQMlVu+xtCUdQBgxxTZMxluyCBFv/GeiVej5PQJosAZsEnqf7MEZOQ/G9Vg
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4cksrjcdmh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Mar 2026 15:37:11 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 625DbExd029016;
+	Thu, 5 Mar 2026 15:37:10 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4cmapsc0vh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Mar 2026 15:37:10 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 625FbAEL28312202
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 5 Mar 2026 15:37:10 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 187D75805A;
+	Thu,  5 Mar 2026 15:37:10 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9E32A5805D;
+	Thu,  5 Mar 2026 15:37:08 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.185.249])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  5 Mar 2026 15:37:08 +0000 (GMT)
+Message-ID: <dca994cd0ed11a262d4022c4984984460ba06a78.camel@linux.ibm.com>
+Subject: Re: [PATCH v9 01/11] KEYS: trusted: Use get_random-fallback for TPM
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>, Chris Fenner <cfenn@google.com>
+Cc: linux-integrity@vger.kernel.org, Jonathan McDowell <noodles@earth.li>,
+        Eric Biggers <ebiggers@kernel.org>,
+        James Bottomley
+ <James.Bottomley@hansenpartnership.com>,
+        David Howells	
+ <dhowells@redhat.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris	
+ <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "open
+ list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
+        "open list:SECURITY
+ SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+        open list
+ <linux-kernel@vger.kernel.org>,
+        Roberto Sassu
+ <roberto.sassu@huaweicloud.com>
+In-Reply-To: <aadTgsbzDDkCg1Pr@kernel.org>
+References: <20260125192526.782202-1-jarkko@kernel.org>
+	 <20260125192526.782202-2-jarkko@kernel.org>
+	 <06a08cbbe47111a1795e5dcd42fb8cc4be643a72.camel@linux.ibm.com>
+	 <CAMigqh1H1NKP9gddjhf4M1v-aM=+EpW9O4KJmu=UysOWhn4ryA@mail.gmail.com>
+	 <aadTgsbzDDkCg1Pr@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 05 Mar 2026 10:37:08 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Authority-Analysis: v=2.4 cv=Rp/I7SmK c=1 sm=1 tr=0 ts=69a9a328 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=iQ6ETzBq9ecOQQE5vZCe:22 a=KxeoQpAgAAAA:8
+ a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8 a=oeA2Qd-FWMGMNsobgtoA:9
+ a=QEXdDO2ut3YA:10 a=dJtPqE9Y5jwXgJ6xlkAX:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA1MDEyMSBTYWx0ZWRfX7JxhQknPyZhF
+ p4wRSHH6i0Hl5NmaLQWXsO3k/0fyiH51/sj8KhsK3Cw5yUDEC9vCWLmZF5nFT1uJZgARd5zpBoX
+ O2Zjf9xVPWasIyT1/R97J/w3q1MpwvDDj9PE/jCCmHCWVbz0vX30MFOMGl1U5FtjwkH3srTmaZU
+ dB7g1zjWcAZQxoHZqt/YQj3y9YFuvUXJtK/TsopeT0pxisPkQhBYJSsEsKYCQKg+Ymygn0+oia5
+ gkPhvottKNL/wvd39Nj37E79FcvuCvx1GDKXInrqDkABxPqTPE0jfwIjxUmXi1k7C2G8OiF1aJi
+ i+VYbBU6jS+6BE2eLRGJ8QpthPsXzL9KWaCuamZ5yajk+noZsLdIfwzo/DcOyLNiySOKDZuT8IF
+ eQYFl/PfFar5hvSFtMleRupQELVWsArr2Z/7A/r2PApsCVvOyoOg7dVZwhRS7zGFc6u7xBxJEOH
+ V6uxqamcUy85SlaYvsQ==
+X-Proofpoint-GUID: _C-N74wG_CIJsefjIirPc9Hfg-6Ra2uZ
+X-Proofpoint-ORIG-GUID: 5kKQxuakx7GGh-cnWs7XsBKZx4ecLpXD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-05_04,2026-03-04_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 priorityscore=1501 spamscore=0 phishscore=0 adultscore=0
+ bulkscore=0 clxscore=1015 impostorscore=0 malwarescore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603050121
 
-Add paragraph to Landlock userspace documentation clarifying the strictly
-cumulative property of access rights with respect to the file hierarchy.
+On Tue, 2026-03-03 at 23:32 +0200, Jarkko Sakkinen wrote:
+> On Fri, Feb 20, 2026 at 10:30:26AM -0800, Chris Fenner wrote:
+> > My conclusion about TCG_TPM2_HMAC after [1] and [2] was that
+> > TPM2_TCG_HMAC doesn't (or didn't at the time) actually solve the
+> > threat model it claims to (active interposer adversaries), while
+> > dramatically increasing the cost of many kernel TPM activities beyond
+> > the amount that would have been required to just solve for
+> > passive/bus-sniffer interposer adversaries. The added symmetric crypto
+> > required to secure a TPM transaction is almost not noticeable; the big
+> > performance problem is the re-bootstrapping of the session with ECDH
+> > for every command.
+> >=20
+> > My primary concern at that time was, essentially, that TCG_TPM2_HMAC
+> > punts on checking that the key that was used to secure the session was
+> > actually resident in a real TPM and not just an interposer adversary.
+> > I wrote up my understanding at
+> > https://www.dlp.rip/decorative-cryptography, for anyone who wants a
+> > long-form opinionated take :).
+> >=20
+> > Unless I'm wrong, or TCG_TPM2_HMAC has changed dramatically since
+> > August, I don't think "TPM2_TCG_HMAC makes this too costly" is a
+> > compelling reason to make a security decision. (There could be other
+> > reasons to make choices about whether to use the TPM as a source of
+> > randomness in the kernel! This just isn't one IMHO.)
+> >=20
+> > The version of TCG_TPM2_HMAC that I'd like to see someday would be one
+> > that fully admits that its threat model is only passive interposers,
+> > and sets up one session upon startup and ContextSaves/ContextLoads it
+> > back into the TPM as needed in order to secure parameter encryption
+> > for e.g., GetRandom() and Unseal() calls.
+>=20
+> Neither agreeing nor disagreeing but this patch set clearly does not
+> move forward and I spent already enough energy for this. For better
+> ideas the patches are available in queue branch.
 
-Signed-off-by: Justin Suess <utilityemal77@gmail.com>
----
- Documentation/userspace-api/landlock.rst | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Jarkko, you totally ignored my comments below.  I object to your removing t=
+he
+TPM trusted-keys RNG support.
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index 13134bccdd39..d02036bb2893 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -173,6 +173,17 @@ this file descriptor.
-         return 1;
-     }
- 
-+The effective access rights for a path are the union of the access rights on
-+the path and all its parents.  For instance, in this example, ``/usr/bin/grep``
-+inherits rights granted on ``/usr``, in addition to any rights we choose to
-+grant on ``/usr/bin`` and ``/usr/bin/grep``.  Because
-+``LANDLOCK_RULE_PATH_BENEATH`` rights are cumulative, they can only increase
-+down the file hierarchy. Therefore, child paths cannot have fewer effective
-+access rights than their parents. This cumulative behavior is a key property of
-+``LANDLOCK_RULE_PATH_BENEATH`` and requires careful ruleset design to minimize
-+granted accesses.  Please see the :ref:`Good practices` section for more
-+details.
-+
- It may also be required to create rules following the same logic as explained
- for the ruleset creation, by filtering access rights according to the Landlock
- ABI version.  In this example, this is not required because all of the requested
+Mimi
 
-base-commit: f300a1c3a8ae4abca60913b4d26c405a905e4702
-prerequisite-patch-id: 2b17c4f0b741a703f61294989a53677de0b1a54d
--- 
-2.51.0
-
+>=20
+> High-level takes don't move anything forward (or backward), sorry.
+>=20
+> >=20
+> > [1]: https://lore.kernel.org/linux-integrity/CAMigqh2nwuRRxaLyOJ+QaTJ+X=
+GmkQj=3DrMj5K9GP1bCcXp2OsBQ@mail.gmail.com/
+> > [2]: https://lore.kernel.org/linux-integrity/20250825203223.629515-1-ja=
+rkko@kernel.org/
+> >=20
+> > Thanks
+> > Chris
+> >=20
+> > On Fri, Feb 20, 2026 at 10:04=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.co=
+m> wrote:
+> > >=20
+> > > [Cc: Chris Fenner, Jonathan McDowell, Roberto]
+> > >=20
+> > > On Sun, 2026-01-25 at 21:25 +0200, Jarkko Sakkinen wrote:
+> > > > 1. tpm2_get_random() is costly when TCG_TPM2_HMAC is enabled and th=
+us its
+> > > >    use should be pooled rather than directly used. This both reduce=
+s
+> > > >    latency and improves its predictability.
+> > >=20
+> > > If the concern is the latency of encrypting the bus session, please r=
+emember
+> > > that:
+> > >=20
+> > > - Not all environments expose the TPM bus to sniffing.
+> > > - The current TPM trusted keys design is based on TPM RNG, but alread=
+y allows it
+> > > to be replaced with the kernel RNG via the "trusted_rng=3Dkernel" boo=
+t command
+> > > line option.
+> > > - The proposed patch removes that possibility for no reason.
+> > >=20
+> > > Mimi & Elaine
+> > >=20
+> > >=20
+>=20
+> BR, Jarkko
