@@ -1,130 +1,190 @@
-Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F0B3E0C41
-	for <linux-security-module@vger.kernel.org>; Thu,  5 Mar 2026 17:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24931FBCA7;
+	Thu,  5 Mar 2026 17:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772730545; cv=none; b=QvO0NMR7dAVxyYS671OB/+5PBzhMFxgmWTAxBygY5RABPjY2pIpJIU2qWGQlo1S2Q4fquf+odV3xvmHawKsbYFR8A1rAETWtBUlqlbMn7qP6FK6mQLF63XvFpeNzGRoz/y4hUGWrMQvSDf0E2mMjlky6ECCq0H33ieVMPlaVh5Q=
+	t=1772731597; cv=none; b=dVpHcTHtl7sNzMHmv5R4We3lHKKRgdyJCTIUeeH6S/qfIv1/pOhDD6xf20bam8SwjDLWdm4Bp56kDJa1MT8Ao79CgtuDBQa4Agy6u0kjOE5rjWZQ0kcq1SrbouE6bp7THLUDZqAB1gziNrXlutcSt5AUHnBM4W1FpEbgu38ySEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772730545; c=relaxed/simple;
-	bh=WicKWTXtBDYjOUd/R2/CWWN64WSplHTWnfjTydxsBRM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e43U44lynnE2exkyWHpkYBACwfK4FCJ+gnlNXbE6K4h3ZwXGoWXY/ZLB9qrdYI6g/fGthNjnp+a/tr0Mnl//RlCRlRlbOK2E29hXt0iqeSos8wolQozOlgBY7iovg67rX3lyu2wTCYVi6rWPO+S9i9SOiNDiMwEJwOTujfgL5sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=eH8YCyaY; arc=none smtp.client-ip=66.163.188.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1772731597; c=relaxed/simple;
+	bh=+MuY8pawrgi2FwNb6rRlOW9g7zPesgMFXQ7H4DyrZcQ=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=bMOU+admFMdY47ynBatHaKybIYLOtltslRB0XrWwUJkLTcgEINA9A0JFQP1PHx2uCrUw7wTQ/LVczo0Pmbm11vrDhXd/I2IV/lhmOzDxI9R83sPmz7lMuwNCWOvlVgsgkhUV4swXcSl6cpaBJoYO4WwvBPwbUxnhKPTGmDp8jas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=f5HhaZL2; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="eH8YCyaY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1772730537; bh=80Z7B8uDAmt79h8yXL8xjNd6uSj+eKjWfFvR9JtAjg4=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=eH8YCyaYo9Bf/5EaT9fFKpu/0H77lZP8/dS02c8d7kJnL18mYQZx5xU10KFVqtZa4mJMdWEMb7U9GyvSLJz+PWnX6o+zSk2yQu5U0RaEfQxQprC+RH3cNAkkugyxz/a0QuabxjSJ5XKiEMiNA0135QYAJIt3nUP/gVFIMooVgG0TzgAfX4aQk8C34M2ctu2rITJTD3GcQaGQatsOtPld9FiFO+Hu5qyhZcUzKE1EclK8fRaFWH8NgRx0SJHa5v/KQ5ygI+uIo1kllBzXYkDutoN11/T62CTzfIaSbmHzJgUG2vld+yaw5k3u5yURd//YD8+vmZSkuBuDZwytXFNRFQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1772730537; bh=wU8vKE9prUqjFew4X+uefKJys+HtrEyhdWSJRWSsi34=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=j4G/COvED2A2ZjEOMqvZnP6KVkM8G6si2W/ZpmSVNtTWYHv5Bztmag5fICppuoN2iZ3lGl2N/K7Ig+LnKXFoYM6kopzHsbOGpa8sTjp8KyZp5vltykPf+ymnU0k2yvKsq9xzwys2iPrnpQvQcTGzSSOQ5eMVd2zQgIXAXTRBGoOP6TE1fPJLuHAEf9UM44ebxnlFiA4jzRvZXwqlGA+oiWlo17ROyyto25Tedbm/4dIgtglKlV18S+oI6bQKZcEH703GvL1PZ9tE1g7E7beP9y6yo2RW+/GlwIW0r/GlCmpWnh0pqohAbtn2on/bXqXClHW45Qa83JBdqZsQomyp9A==
-X-YMail-OSG: 58zR03cVM1mhiFOtwGiz3EYeHLl.c.enYHUsDym.4QSxSgv0TQOZyd58FLaQe0X
- BZ1bjzfD7svfuQ1mm0W1tRv1BwvPYQtBqsvlCvatqlKSOG6nDtqWVa9dyy1CgJ5E3DUBhl.84k2p
- 5M6a.bu.QC7u4maxYla9tOneYi7Qe7e7C9w8lB8lVuYPe6sQtxiR_U26FZoWkLEzZAqHQ1JT2QCK
- hKecjgAGhpqPUkYHF0SIEvh3CpOAVQI5PFrHYoy4SrtZjrl6UsuhnqV4YmBPLCNMQJUnQUZo1O73
- D1SWxMhYeROrDXLiwM3l390mkV6HEDKGGBrEMFpUZO.rASrIRSDP_beeTSnP.gEUK71PHutN6Vh3
- TAsd9NB4r8UvUg4h0M06Q9iICSqM9VDb42EaacYm9sMyTGwZAQzL3j4fXZ7iHnKWrX8stxTOXURT
- GvCG38vzvhkHkU_qj25yyCoxCWMkZ7voBRpZslOQHlB.nAdcwRNhIKwA2NbCrKXGROiV_SDVSCeT
- .iCV0dOeWX7N5N77WOAcwWrVWt1oE1FcDhXrjMNub6yIHlcMDAvumGKoc5Ly9Od1gsww52LZoQxf
- 82h6.TEvnNUIvGJ_dKfMyeWZiDqxY0HV3ou.zUIcTweeLz4.a_IIvPfamMWTwGoXKzjaZcqS_WAi
- k6hrJqOr9lNKspvaBchjJINK15n1wuBvS..3mqi2YSrYFAj8X7v1Y_z5GILu03MrtgOhosOc..Cu
- hNfUwlM4.BQxjJZcMNuaEOmQWjx0yn205lMErHXvkzU2oGpn4leEO215Or2gQgra583Hng_mRFBC
- LhN3F7Ix5imGXHR6vTSnBt._8_Rdz6vkGYZNK2MRlQI0.V2.IrXVBEsK8lJoHS8vfjHYFh7lbF2P
- CXqqRoA_gnQroakiq2_BB0PEvDPc6ah6GkDIcO0V22KkJBeNpN3FmDOnj.46Bo9K6qivbEWwK8wv
- 9_wEJF5pZwR1.S0volPiDReHb7Wmvvrj_07b2DxQys._R5Bs1QADus5yOqWJ.FCIuD9cCfSBOjGF
- Fl.ZQMrDvarRDa7e_whv7lhFMI1OeJ_vSE7hcBFv4mem23J.oPjQJJfqZmEZtJDZbKXZFIb9rrDz
- ygu._hUxWfzQxjJZ84FBKJZqGnh28XqltAD9bZcRhh_FCXFIVKkc1YSox8xSIdRQSdc0q3k3WFVq
- EutdRoQUi.HfVyqy_0bM31AB7NqUHKRtupXmPFsejnJd73LG_0RMemVe8h3UFBQRFisBw_rQDH3U
- 5NMGgIhtHNvpVx8y6_NxnLfYo4ZsMsh4URZ0mxCFq43vQkigVKmVeiysZjEJxv9o_ytq.7o3QrAZ
- gkQGFlV1Jv_lauvTQ84I8ZBjbpw419Y1bPJTXSYyOC7DaVu5yS1DbPdYkfNwHazbozTGeWNPmhfa
- wKoS1m2bCWQkF9sGcVxis6uERm0zKyuTsgD3JuASktFPCMqbUM9ZXZgB8RvOvD26bCPSrbUSryip
- PiBKOZSjtJJPNPHHZcgs.fNfQg5WTIbkh_B2T2VQITz4YZfkIGi4tLBQ2OX1MMkCoFKUmv9xLvBz
- PIPQUGSKnKp0Y9YYslgSyakx5R0KbCiuLVJQ4jpvATsec5cC8sP6ITKkJ6D_n8LVNaQMozdIpO6Y
- D9zW._dEQKp97cxExeVddQ4ubD9jB00Z71xsiMfoX55mQmlMOMvacCf1YMS9s9zbIbDnJfEejqNp
- YoIAQhsHV37HSoqp8x7V5RcNrf70ZcBD_P4mz5.5vpH98hI8.G3HeLmx6Mh6zIHKy3w.cBa01IP6
- .JLdBbFV6Y.F8pslbEUkQ5WLSE.HJepXl8rS6HBGWBtOWCV5vr6ngF1tNkNfFv2PGO_8k06meepf
- 3mbRWjAntU2JM9nsMRW5EaQKvJJh8opySOq970kwy2VvHSenDw3heEagCWirIAbFFY3J7cFJKjWt
- c1KP1QEcKk2GTfYC9eZEEdfuXZuQEZKh0yYU0c2rqlTXFD0et12z00_YqhSoQkkkarYTFr136VBv
- MiMXciSAMBZT.V9kDvf_IUi_JmkpeFZJE3hNMcWYKLp66XAPunC6OlsVK7Lm9KuLRhdoDgjyZkuD
- QblWCVWSP775fKKFxxWW0gq8VtL0VynsOVdQcGSxDsfrfF2DUEjKhYMWG9WnW8AOi9xXGigJM6Ax
- B.dUV7I2klO4b4ow6IQgQRcMvXiX4955KH08752fKjdXfvFdSoNF8LYt_H34onAWshH.E7XuQFZg
- N.6U42yDnvRLO8dKKa3vi.0emWz8xgkozf4hEEkeywSCtNL7IpriOuBFSpwTpa9KfgjbHIcEY8HM
- cUHXly2A9TM0qK6M-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 47e21ffe-a30f-4249-aaa2-8dbbfa7300a8
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Thu, 5 Mar 2026 17:08:57 +0000
-Received: by hermes--production-gq1-6dfcf9f8b-gxljn (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8c0ce0e2307669a8df6950dc02d52ef1;
-          Thu, 05 Mar 2026 17:08:51 +0000 (UTC)
-Message-ID: <5cdf6bdb-1387-4d31-9dc1-b84a210b5902@schaufler-ca.com>
-Date: Thu, 5 Mar 2026 09:08:49 -0800
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="f5HhaZL2"
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6256XhaF2358989;
+	Thu, 5 Mar 2026 17:25:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=pKEoPg
+	CndWCLrBzB+ANvkugEGsbEG9dKmNVe+ux6b/I=; b=f5HhaZL2YLiPpyCKTkbu9J
+	IGDq/HdnHKBMZigcHjg/Cd8VlwblJsE5+TR6lvbkI5Itkm2FCCPoXMXxxGzkVVvN
+	bkMVpn/KPZJI92/LSPO0lr5t3nk74fy+h6B7QHwtK66PgaHvIhzoBAIVFUVNx7es
+	hquql/vPTH9LvLzyoPvW3uKrBwLMuJiaoyB4zSQFiKMgm+Z214WiMZhbLKDnsQB9
+	U5nt7kT7cFoq0J8dv4iysXNG/Lx8rndllpDctzwLpxo/qsWhw/+udsiCIS98ggBq
+	yb3XfU9eksHCf7WGOG0KxVZb3P+eJYk7eIXLSYGp91e+yU344EWER5UygGXcPBww
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4cksk44ce4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Mar 2026 17:25:46 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 625FQouo027658;
+	Thu, 5 Mar 2026 17:25:45 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4cmcwjm17q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Mar 2026 17:25:45 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 625HPips8979076
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 5 Mar 2026 17:25:44 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5A49858056;
+	Thu,  5 Mar 2026 17:25:44 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6FC9F5805D;
+	Thu,  5 Mar 2026 17:25:42 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.185.249])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  5 Mar 2026 17:25:42 +0000 (GMT)
+Message-ID: <b33086b5f20a635a86d935fef3f4c429c723f6ac.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 1/3] integrity: Make arch_ima_get_secureboot
+ integrity-wide
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Vasily Gorbik <gor@linux.ibm.com>
+Cc: linux-integrity@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
+        Alexander Egorenkov <egorenar@linux.ibm.com>,
+        Ard Biesheuvel
+ <ardb@kernel.org>, Dave Hansen <dave.hansen@intel.com>,
+        Coiby Xu
+ <coxu@redhat.com>, Roberto Sassu <roberto.sassu@huawei.com>,
+        Madhavan
+ Srinivasan	 <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin	 <npiggin@gmail.com>,
+        "Christophe Leroy (CS GROUP)"
+ <chleroy@kernel.org>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle	
+ <svens@linux.ibm.com>,
+        Thomas Gleixner <tglx@kernel.org>, Ingo Molnar	
+ <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen	
+ <dave.hansen@linux.intel.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND
+ 64-BIT)" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dmitry
+ Kasatkin	 <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg
+ <eric.snowberg@oracle.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris
+ <jmorris@namei.org>,
+        "Serge E. Hallyn"	 <serge@hallyn.com>,
+        Jarkko Sakkinen
+ <jarkko@kernel.org>,
+        open list	 <linux-kernel@vger.kernel.org>,
+        "open
+ list:LINUX FOR POWERPC (32-BIT AND 64-BIT)"
+ <linuxppc-dev@lists.ozlabs.org>,
+        "open list:S390 ARCHITECTURE"
+ <linux-s390@vger.kernel.org>,
+        "open list:EXTENSIBLE FIRMWARE INTERFACE
+ (EFI)"	 <linux-efi@vger.kernel.org>,
+        "open list:SECURITY SUBSYSTEM"	
+ <linux-security-module@vger.kernel.org>,
+        "open
+ list:KEYS/KEYRINGS_INTEGRITY"	 <keyrings@vger.kernel.org>
+In-Reply-To: <c00-01.ttbfdx5@ub.hpns>
+References: <20260213012851.2532722-2-coxu@redhat.com>
+	 <c00-01.ttbfdx5@ub.hpns>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 05 Mar 2026 12:25:42 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 net-next 06/15] smack: Remove IPPROTO_UDPLITE support
- in security_sock_rcv_skb().
-To: Kuniyuki Iwashima <kuniyu@google.com>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- David Ahern <dsahern@kernel.org>, "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: Simon Horman <horms@kernel.org>, Kuniyuki Iwashima <kuni1840@gmail.com>,
- netdev@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- linux-security-module@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20260304193034.1870586-1-kuniyu@google.com>
- <20260304193034.1870586-7-kuniyu@google.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20260304193034.1870586-7-kuniyu@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.25198 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-ORIG-GUID: n5u3KvkqHsHSG1MPOf93GcHhdfPo5Ydn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA1MDE0MCBTYWx0ZWRfX2GwyKh4RC1hO
+ 8e835PXQ73sAhRTjc5hcUXNuRa16LUmjeYrKhRTH8uumRPD6u6AHpv+R1U4wbUNUKtaVD4BCTwU
+ Gs+8eec+4MXi+5GADfbifXChrow3C7bOocLltn0fEKw6L/ghXKT3D9c7AQEND5Uxazf8QO/as6O
+ J5n+fKJXv/TUTDvqUiyiZIgw51FJfJVs8F857zTKeHXbBMmRDNcvSlDk8Xig0Ffwjxv6t2OSjLR
+ H1mzlFXc6/oBzQqofGITH/P1rzOap9r9zEpCq7G6PvzEKhDJtotff/HlT1iz6uiuttTQhZblak4
+ 7lPagrK2S28ATugKW7HODfQ1dDd7pFes418ioZ7o7ZU73J8mwDENhGclmBn91xk0SlzKfvnVbi7
+ 5YqF7xT68eY0VP3tD7JPON8zHDmEngH2dZZrq5VbC3H+w0alPrWtihSo4X35W0+8XOvAzN7Lv2h
+ Ah50ca8+F56uPHOCZ7w==
+X-Authority-Analysis: v=2.4 cv=csCWUl4i c=1 sm=1 tr=0 ts=69a9bc9a cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=VnNF1IyMAAAA:8
+ a=i0EeH86SAAAA:8 a=20KFwNOVAAAA:8 a=FlYQV3jgbqAUZRz1eTYA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: 1tcHdgBiVXli_g0ESprzx_tD6GHaaEJp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-05_05,2026-03-04_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 suspectscore=0 malwarescore=0 adultscore=0
+ clxscore=1015 bulkscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603050140
 
-On 3/4/2026 11:28 AM, Kuniyuki Iwashima wrote:
-> smack_socket_sock_rcv_skb() is registered as socket_sock_rcv_skb,
-> which is called as security_sock_rcv_skb() in sk_filter_trim_cap().
->
-> Now that UDP-Lite is gone, let's remove the IPPROTO_UDPLITE support
-> in smack_socket_sock_rcv_skb().
->
-> Signed-off-by: Kuniyuki Iwashima <kuniyu@google.com>
+On Thu, 2026-03-05 at 13:55 +0100, Vasily Gorbik wrote:
+> On Fri, Feb 13, 2026 at 09:28:46AM +0800, Coiby Xu wrote:
+> > EVM and other LSMs need the ability to query the secure boot status of
+> > the system, without directly calling the IMA arch_ima_get_secureboot
+> > function. Refactor the secure boot status check into a general function
+> > named arch_get_secureboot.
+> >=20
+> > Reported-and-suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+> > Suggested-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > Signed-off-by: Coiby Xu <coxu@redhat.com>
+> > ---
+> >  MAINTAINERS                                   |  1 +
+> >  arch/powerpc/kernel/ima_arch.c                |  5 --
+> >  arch/powerpc/kernel/secure_boot.c             |  6 ++
+> >  arch/s390/kernel/ima_arch.c                   |  6 --
+> >  arch/s390/kernel/ipl.c                        |  5 ++
+> >  arch/x86/include/asm/efi.h                    |  4 +-
+> >  arch/x86/platform/efi/efi.c                   |  2 +-
+> >  include/linux/ima.h                           |  7 +--
+> >  include/linux/secure_boot.h                   | 19 +++++++
+> >  security/integrity/Makefile                   |  3 +-
+> >  security/integrity/efi_secureboot.c           | 56 +++++++++++++++++++
+> >  security/integrity/ima/ima_appraise.c         |  2 +-
+> >  security/integrity/ima/ima_efi.c              | 47 +---------------
+> >  security/integrity/ima/ima_main.c             |  3 +-
+> >  security/integrity/integrity.h                |  1 +
+> >  security/integrity/platform_certs/load_uefi.c |  2 +-
+> >  security/integrity/secure_boot.c              | 16 ++++++
+> >  17 files changed, 115 insertions(+), 70 deletions(-)
+> >  create mode 100644 include/linux/secure_boot.h
+> >  create mode 100644 security/integrity/efi_secureboot.c
+> >  create mode 100644 security/integrity/secure_boot.c
+>=20
+> This triggers a warning on s390:
+>=20
+> arch/s390/kernel/ipl.c:2507:6: warning: no previous prototype for =E2=80=
+=98arch_get_secureboot=E2=80=99 [-Wmissing-prototypes]
+>  2507 | bool arch_get_secureboot(void)
+>       |      ^~~~~~~~~~~~~~~~~~~
+>=20
+> @Mimi: could you please squash this fixup into the offending commit,
+> or pick it up separately?
 
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+Thanks, Vasily.  It's now squashed.
 
-> ---
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: linux-security-module@vger.kernel.org
-> ---
->  security/smack/smack_lsm.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 98af9d7b9434..e581d6465946 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -4176,7 +4176,6 @@ static int smk_skb_to_addr_ipv6(struct sk_buff *skb, struct sockaddr_in6 *sip)
->  			sip->sin6_port = th->source;
->  		break;
->  	case IPPROTO_UDP:
-> -	case IPPROTO_UDPLITE:
->  		uh = skb_header_pointer(skb, offset, sizeof(_udph), &_udph);
->  		if (uh != NULL)
->  			sip->sin6_port = uh->source;
-> @@ -4301,8 +4300,7 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
->  #if IS_ENABLED(CONFIG_IPV6)
->  	case PF_INET6:
->  		proto = smk_skb_to_addr_ipv6(skb, &sadd);
-> -		if (proto != IPPROTO_UDP && proto != IPPROTO_UDPLITE &&
-> -		    proto != IPPROTO_TCP)
-> +		if (proto != IPPROTO_UDP && proto != IPPROTO_TCP)
->  			break;
->  #ifdef SMACK_IPV6_SECMARK_LABELING
->  		skp = smack_from_skb(skb);
+Mimi
