@@ -1,181 +1,141 @@
-Received: from flow-a7-smtp.messagingengine.com (flow-a7-smtp.messagingengine.com [103.168.172.142])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF1516A395;
-	Thu,  5 Mar 2026 01:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511B23101B2;
+	Thu,  5 Mar 2026 07:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772673892; cv=none; b=HUNGic+pbZouFe+KSkUfL2tW5TQ8+Ml8khUJ+epidq2oiLEcDvFmZ7Vsl4NqmT6FHCEv09ZJah5DE0kWHQYmU+9o+VGdDbZkdGV7PT616behYBbc4Mr3OhNNuGwYTPC1mNFFLNjrlVw3osIIYYZQzX0b4vh6bPfgTI7C1AzR8Bk=
+	t=1772694717; cv=none; b=AzRUoufifUZPE+Tfw/U40Ib8UDlpuU0jwMpb0cm0gCz/1oZb283gZl+FNGtizV0KfZxT2YVn14Ox2S/4mVneLJyyqsNxMbtToMfuQvcQe2qdRu26hoQbibwVPEZdU5CTc5scmB/o6vgu2eb7lDjCeqdF0QSnwm+7iLRI0XkNor8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772673892; c=relaxed/simple;
-	bh=PMX6JyRSnu2E5Zy7NOXER9HT8+AOuMaqShL4u2efzKc=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=QLmUCPH9PaXLPZ637KqL69LpR+Qt0Ad+xDWrQ+UlT7uYVuQezD+sPGUP2Tbo73hzo13uwZrfqK2LmqeDJnO+4omLu8Qwnrt7OwyCBnT/fPJLQYWpb4Zi820rPIJlrHWQBPPg0zMxXRktZ4aYtq51fV5iqmrCB3FCJO6rcBxlhRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=fS1CK1OA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=zUZbV8qF; arc=none smtp.client-ip=103.168.172.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+	s=arc-20240116; t=1772694717; c=relaxed/simple;
+	bh=CdxA/lDoNCeJgiVSZNMfVTLoyKfuC5y8bX2gqNZcV84=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rgHkRBTGu6KADXwb7yS/gzFultGsQDv12uiMkVyPYnoilqg+60OKFXt0UdkNfxVm9gjg44wocEtJnOwicYzqlzacRRvFpftbD3t5tRCVEaEtihdZsTlKooFcNeq1UbCwCedx4gGGHxUQTdQfLXFh/t2UhrxkYUhKHgc/jQdeXcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n0fkJZFN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5Rkjhwne; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="fS1CK1OA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="zUZbV8qF"
-Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
-	by mailflow.phl.internal (Postfix) with ESMTP id 0F5ED1380E14;
-	Wed,  4 Mar 2026 20:24:49 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-08.internal (MEProxy); Wed, 04 Mar 2026 20:24:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm1; t=
-	1772673889; x=1772681089; bh=pHow27CTfPDvgGL29iyDc6nQ4fjpzyYL5lv
-	mt+hLriQ=; b=fS1CK1OAQhIegJ19aVS0NBBw14oXk8mzezIRJvAKaXQt6wZk1QN
-	QyLs07K4449ND+SR7dhuFNaz+DkpMCENe9edX65fMOZE8vNIETM4ctq15oQJ1xAj
-	IASPRLB3GuikAUa+P85jb1NzwDHQVSJaLr3PiCo5pjUpXgZMT6tUnaKsZPUpMoTB
-	q4MuZ1PkwcVP0wuHrDCy1sq1os7WCw2al7Ao5rBGZjtk4WImMh25cAcGYH7IzMYt
-	qUGQwsG1Gl/qRF+/hfqX5Go7tCF6J2Eg4mWLzByuGIWjbhm60CkTkyu3nsAFg5gh
-	QsB62PwimFCALvZrNF8SuGoR2RASKF+9N9A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1772673889; x=
-	1772681089; bh=pHow27CTfPDvgGL29iyDc6nQ4fjpzyYL5lvmt+hLriQ=; b=z
-	UZbV8qF1pUA4oX+oEhgbjXEd6Qz84vUCLWVNrmELGTAt7XsjDqlWTNaFfPpHE3bJ
-	kMNZTY8rLo9r5EDXJxEyZ3A1QJS87loj+JnftGi9XEKIpAJQVpo11yA5L0nVKBbb
-	1UyY7juYTNfIaFa7hWHhHDfDhoXGb4g6P1eBDBFXNOWDwoTu5tDWOsMK+UfDlsJ3
-	8BXfwlGl8fvuqlXSD6JbeESKC/r2tbA+X5Ib8Ao6050Wenr8ysEYn6SF1uPhd7m3
-	oM4l2EDbDeEQoQmu734V1MTKW1dg57hrCOO9MPgWK0xcwEz5ZsIsMSk0rPkOz1nl
-	C08mNGz1OuRmU4Mnj/mOQ==
-X-ME-Sender: <xms:X9uoaZyO8jjwzvZMObvAu_oGj1IqHp_V3PfAvAnBAuUZkRw8xP3l4Q>
-    <xme:X9uoadMnYbkMLjUd7fzbzl4AMAvZQ8WNnha6k3Czu0U52hyQQonXEZLS12MaLKN2C
-    MfhzvgweCg0JiTEgSIDO8Vk741TqUiGR_ieVtepTGiwddvfEQ>
-X-ME-Received: <xmr:X9uoab3GZjHMqCmmD6HykudsWGTS1J0FNhd6kvBf8XStgOYIntA2X2d8AdRjB-PjdvYSry1kxymqO-MTcopwZgHWFz-z3NynmgT-IKGCm4BC>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvieehtdeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepvddvpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
-    hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhr
-    tghpthhtohepjhgrtghksehsuhhsvgdrtgii
-X-ME-Proxy: <xmx:X9uoaVF9aO2rFJfMo9ZYL-rjkjx-_hWBa1Y12rAj2w8CayyWtOGBWw>
-    <xmx:X9uoaSh0iIkn877feRTUOzlbn3ySdhcr3gz3o8Kxm7eMSJUmXq0DRg>
-    <xmx:X9uoaed2nuv1cxb9PBp9Rv7ou0Gkx-R2lM9ok6f10GCTojgs9qF02A>
-    <xmx:X9uoaYxQMfDOzeYFQ4QFTCd42scQ48clntS8IR4tMTF1ZFP2AxKpCA>
-    <xmx:YduoaeI_V-Uu4J5ku4xeQFzYsT6m2VzogBuSJbtMi1at18Dh4rQfWEYV>
-Feedback-ID: i9d664b8f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 4 Mar 2026 20:24:41 -0500 (EST)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n0fkJZFN";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5Rkjhwne"
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1772694714;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=o9Rv/g2sSOXoBx4YOHT+TvErcM7jjAJLr2hFIDRxUAc=;
+	b=n0fkJZFNW9Pzw4/56jcf0S5vOQJDa4Ty4URhhRjrX8F5sYZpH6cZ5BpEEmcePdxaE/u7Ae
+	+mJNbwc6AKN5nC4tkXCeMmpjMPeAuwRRTp/yTQTd7OOWRugAt3TZllguLzalIIlp67Bm5O
+	tC8tF94VTEdCOX6qESaJyXQzGhZ2P6P3rZ4qYm8V5k3sfx5qy2KbmOJ6Gy6mXEuakK4dD+
+	lVqWir9+OtHBQFPoB0vdx6u00GK/BNuM/0fR5eyK0RPZFGmnvQn7gXFXpDh44vy2OcqjXf
+	7zhSfRI/3FMngkovpr/Tx92cxp8dqerymRABoDMkc+2PMiqlvkOlYVTtjcnC0g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1772694714;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=o9Rv/g2sSOXoBx4YOHT+TvErcM7jjAJLr2hFIDRxUAc=;
+	b=5RkjhwnejcuSRS2fW76R3LD3peZJAHQGav+2GwR+SMZX3QiQtepiZ0c5iQ4unK5hFIvrHV
+	gFBh1TRGSQY2f/CQ==
+Subject: [PATCH v2 0/8] module: Move 'struct module_signature' to UAPI
+Date: Thu, 05 Mar 2026 08:11:50 +0100
+Message-Id: <20260305-module-signature-uapi-v2-0-dc4d81129dee@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Christian Brauner" <brauner@kernel.org>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "David Howells" <dhowells@redhat.com>, "Jan Kara" <jack@suse.cz>,
- "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
- "Miklos Szeredi" <miklos@szeredi.hu>, "Amir Goldstein" <amir73il@gmail.com>,
- "John Johansen" <john.johansen@canonical.com>,
- "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- "Stephen Smalley" <stephen.smalley.work@gmail.com>,
- "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
- linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject:
- Re: [PATCH v3 00/15] Further centralising of directory locking for name ops.
-In-reply-to: <20260224222542.3458677-1-neilb@ownmail.net>
-References: <20260224222542.3458677-1-neilb@ownmail.net>
-Date: Thu, 05 Mar 2026 12:24:38 +1100
-Message-id: <177267387855.7472.13497219877141601891@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/4WNQQ6CMBBFr0Jm7ZhpDSiuvIdhUewAk2BLWkowh
+ LtbuYDL95L//gaRg3CEe7FB4EWieJdBnwp4Dcb1jGIzgyZd0YU0vr1NI2OU3pk5BcZkJsFKdeZ
+ GrWLdtpC3U+BO1qP7bDIPEmcfPsfNon72X3FRSKjpauuyZLJV/RjFpTl4J+vZMjT7vn8B5pSBk
+ r4AAAA=
+X-Change-ID: 20260302-module-signature-uapi-61fa80b1e2bb
+To: David Howells <dhowells@redhat.com>, 
+ David Woodhouse <dwmw2@infradead.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+ Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@kernel.org>, 
+ Sami Tolvanen <samitolvanen@google.com>, Aaron Tomlin <atomlin@atomlin.com>, 
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, 
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-modules@vger.kernel.org, linux-s390@vger.kernel.org, 
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ linux-kbuild@vger.kernel.org, bpf@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1772694712; l=2332;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=CdxA/lDoNCeJgiVSZNMfVTLoyKfuC5y8bX2gqNZcV84=;
+ b=9FyUClW24ZP0BNLsGOQjp6Vf1xA2ehbLzgQTtF4tcedOtFKzNXBx/elbEs7tPtDMI9KUk6nJ1
+ zhyau38au1oAgqN/zKFdzdfil5CGff4Dh8k5PxwgrozQcMJX8JFuSop
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
+This structure definition is used outside the kernel proper.
+For example in kmod and the kernel build environment.
 
-Hi Christian,
- do you have thoughts about this series?  Any idea when you might have
- time to review and (hopefully) apply them?
+To allow reuse, move it to a new UAPI header.
 
-Thanks,
-NeilBrown
+While it is not a true UAPI, it is a common practice to have
+non-UAPI interface definitions in the kernel's UAPI headers.
 
+This came up as part of my CONFIG_MODULE_HASHES series [0].
+But it is useful on its own and so we get it out of the way.
 
-On Wed, 25 Feb 2026, NeilBrown wrote:
-> Following Chris Mason's tool-based review, here is v3 with some fixes.
-> Particularly 06/15 mistakenly tested the result of start_creating for NULL
-> and 09/15 had some really messed up flow in error handling.
-> Also human-language typos fixed.
->=20
-> This code is in=20
->   github.com:neilbrown/linux.git
->   branch pdirops
->=20
-> For anyone interested, my next batch is in branch pdirops-next
->=20
-> Original patch description below.
->=20
-> Thanks,
-> NeilBrown
->=20
-> I am working towards changing the locking rules for name-operations: locking
-> the name rather than the whole directory.
->=20
-> The current part of this process is centralising all the locking so that
-> it can be changed in one place.
->=20
-> Recently "start_creating", "start_removing", "start_renaming" and related
-> interaces were added which combine the locking and the lookup.  At that time
-> many callers were changed to use the new interfaces.  However there are sti=
-ll
-> an assortment of places out side of fs/namei.c where the directory is locked
-> explictly, whether with inode_lock() or lock_rename() or similar.  These we=
-re
-> missed in the first pass for an assortment of uninteresting reasons.
->=20
-> This series addresses the remaining places where explicit locking is
-> used, and changes them to use the new interfaces, or otherwise removes
-> the explicit locking.
->=20
-> The biggest changes are in overlayfs.  The other changes are quite
-> simple, though maybe the cachefiles changes is the least simple of those.
->=20
-> I'm running the --overlay tests in xfstests and nothing has popped yet.
-> I'll continue with this and run some NFS tests too.
->=20
-> Thanks for your review of these patches!
->=20
-> NeilBrown
->=20
->  [PATCH v3 01/15] VFS: note error returns in documentation for various
->  [PATCH v3 02/15] fs/proc: Don't lock root inode when creating "self"
->  [PATCH v3 03/15] VFS: move the start_dirop() kerndoc comment to
->  [PATCH v3 04/15] libfs: change simple_done_creating() to use
->  [PATCH v3 05/15] Apparmor: Use simple_start_creating() /
->  [PATCH v3 06/15] selinux: Use simple_start_creating() /
->  [PATCH v3 07/15] nfsd: switch purge_old() to use
->  [PATCH v3 08/15] VFS: make lookup_one_qstr_excl() static.
->  [PATCH v3 09/15] ovl: Simplify ovl_lookup_real_one()
->  [PATCH v3 10/15] cachefiles: change cachefiles_bury_object to use
->  [PATCH v3 11/15] ovl: pass name buffer to ovl_start_creating_temp()
->  [PATCH v3 12/15] ovl: change ovl_create_real() to get a new lock when
->  [PATCH v3 13/15] ovl: use is_subdir() for testing if one thing is a
->  [PATCH v3 14/15] ovl: remove ovl_lock_rename_workdir()
->  [PATCH v3 15/15] VFS: unexport lock_rename(), lock_rename_child(),
->=20
->=20
+[0] https://lore.kernel.org/lkml/aZ3OfJJSJgfOb0rJ@levanger/
+
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Changes in v2:
+- Drop spurious definition of MODULE_SIGNATURE_TYPE_MERKLE.
+- s/modules/module/ in two patch subjects.
+- Pick up review tags.
+- Link to v1: https://lore.kernel.org/r/20260302-module-signature-uapi-v1-0-207d955e0d69@linutronix.de
+
+---
+Thomas Weißschuh (8):
+      extract-cert: drop unused definition of PKEY_ID_PKCS7
+      module: Drop unused signature types
+      module: Give 'enum pkey_id_type' a more specific name
+      module: Give MODULE_SIG_STRING a more descriptive name
+      module: Move 'struct module_signature' to UAPI
+      tools uapi headers: add linux/module_signature.h
+      sign-file: use 'struct module_signature' from the UAPI headers
+      selftests/bpf: verify_pkcs7_sig: Use 'struct module_signature' from the UAPI headers
+
+ arch/s390/kernel/machine_kexec_file.c              |  6 ++--
+ certs/extract-cert.c                               |  2 --
+ include/linux/module_signature.h                   | 30 +---------------
+ include/uapi/linux/module_signature.h              | 41 ++++++++++++++++++++++
+ kernel/module/signing.c                            |  4 +--
+ kernel/module_signature.c                          |  2 +-
+ scripts/Makefile                                   |  1 +
+ scripts/sign-file.c                                | 19 +++-------
+ security/integrity/ima/ima_modsig.c                |  6 ++--
+ tools/include/uapi/linux/module_signature.h        | 41 ++++++++++++++++++++++
+ .../selftests/bpf/prog_tests/verify_pkcs7_sig.c    | 28 ++-------------
+ 11 files changed, 100 insertions(+), 80 deletions(-)
+---
+base-commit: 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f
+change-id: 20260302-module-signature-uapi-61fa80b1e2bb
+
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
