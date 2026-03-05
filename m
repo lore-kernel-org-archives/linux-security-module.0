@@ -1,186 +1,110 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260483A7F6E;
-	Thu,  5 Mar 2026 14:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15213BED2C
+	for <linux-security-module@vger.kernel.org>; Thu,  5 Mar 2026 15:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772720745; cv=none; b=MQ3cv50hn6gfs+15TGW6UGE6A8zpIQgU02th+qKYo+eOzbqEFTjmDmx5yGGl5j1p3nJ26JdVAJ+CGliUtCKcqoiEbxG5eecja27IebdUQwrpsKFIVz6lsDueojzf0mFD0QqzSlTzlUApSl+8xQ7qiFVBOMdqsp8i3Md2MMaELTk=
+	t=1772723727; cv=none; b=sLqUZrPPJfPXjmBNj8CQxn3KMTIdHdxrOXeVTnzuW8oO4S4RRIULs8f4qe4YgE4X5fKNOaAjo3MKMiZP1QJu0Y8c0ionkmcAp+WD2oxD8Hn4JvDwvUKMDZlsxQ+WqOwNgEscnye6CMNFKdPI/le5kPP4UXJ4jzCv/9Sj9EJPElw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772720745; c=relaxed/simple;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AoWs93sJMlT32P4cjGOVTGkLesR/bxcqDAF5tY7h6QI2nP9Tx9gu5+LPBNk9lhesm3EspHj4Bs9qtOKTGjwZzTHauEy7UBXjTxzb8GU1r/K4Fith8Q5i4BLMBEPPxZmlYhyuAt747/eKCHXs+/24uJ/7QtY10R9mD4Lkd1j0gVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=N/OnFzWa; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+	s=arc-20240116; t=1772723727; c=relaxed/simple;
+	bh=meSuvHU5VgYyQ6+0rfWSzMRfNWXJkQjM+eYMNcqKoOc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FWt36y02CE29q8S8ljNO9QIcmYH4ENPbf0R6PyMGoynmVbhJaoi413Kh1H/ziqG+23g5hHBt4mKxQ8ULkrnmsPZaNwu1T5ey3k49zf01Qbe1owi5phnyeBBR81GUqqCllwrjKq7Su/qJAz8HsSZINX7BmIWISduJsu7Fc39hDuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uf6ZqYj/; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="N/OnFzWa"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=N/OnFzWa9k33Gb8WoaORaZf8/1
-	omQzMxzv7AKB0iGBOiFBTlfDd8cv/SFY2cN/xlhCF9LD4axDr458b3KkJDHIqY9jaYSeX0Iuke/ea
-	ruLhr6C+ymLhOMKavxBklyL56gQe5kOFHaR9GqikFPQ4+YspElC14XRfWh6kM52omEOHgMpsSREro
-	y5uto1k++Slfwuo7nq2YzlvQFOIu0vNsS5w8AUmDYAa3V8L257/vRobIemRsPwt43jEH4dMBKvjE9
-	qvJU8j7WutreciL7iwRXCEmJf59WsaeHF8hGB2PcyqrdNOf6OBCyjpqgu7qzQ+34Omj2U+HU1z4kP
-	lBT6VZKQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vy9dP-00000001z65-3qix;
-	Thu, 05 Mar 2026 14:25:03 +0000
-Date: Thu, 5 Mar 2026 06:25:03 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	"Theodore Y. Ts'o" <tytso@mit.edu>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	David Hildenbrand <david@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	Steve French <sfrench@samba.org>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Bharath SM <bharathsm@microsoft.com>,
-	Alexander Aring <alex.aring@gmail.com>,
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	David Sterba <dsterba@suse.com>,
-	Marc Dionne <marc.dionne@auristor.com>, Ian Kent <raven@themaw.net>,
-	Luis de Bethencourt <luisbg@kernel.org>,
-	Salah Triki <salah.triki@gmail.com>,
-	"Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Alex Markuze <amarkuze@redhat.com>,
-	Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-	Nicolas Pitre <nico@fluxnic.net>, Tyler Hicks <code@tyhicks.com>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Yangtao Li <frank.li@vivo.com>,
-	Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Dave Kleikamp <shaggy@kernel.org>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Mike Marshall <hubcap@omnibond.com>,
-	Martin Brandenburg <martin@omnibond.com>,
-	Miklos Szeredi <miklos@szeredi.hu>, Anders Larsen <al@alarsen.net>,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Naohiro Aota <naohiro.aota@wdc.com>,
-	Johannes Thumshirn <jth@kernel.org>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Willem de Bruijn <willemb@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	James Clark <james.clark@linaro.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Martin Schiller <ms@dev.tdt.de>, Eric Paris <eparis@redhat.com>,
-	Joerg Reuter <jreuter@yaina.de>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Oliver Hartkopp <socketcan@hartkopp.net>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	David Ahern <dsahern@kernel.org>,
-	Neal Cardwell <ncardwell@google.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Remi Denis-Courmont <courmisch@gmail.com>,
-	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-	Xin Long <lucien.xin@gmail.com>,
-	Magnus Karlsson <magnus.karlsson@intel.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
-	fsverity@lists.linux.dev, linux-mm@kvack.org, netfs@lists.linux.dev,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org, linux-nilfs@vger.kernel.org,
-	v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-	autofs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-	linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net,
-	ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
-	devel@lists.orangefs.org, linux-unionfs@vger.kernel.org,
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-	linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-	netdev@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-fscrypt@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-hams@vger.kernel.org, linux-x25@vger.kernel.org,
-	audit@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-	linux-can@vger.kernel.org, linux-sctp@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH v3 12/12] treewide: change inode->i_ino from unsigned
- long to u64
-Message-ID: <aamSP0KKicK3dvIf@infradead.org>
-References: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
- <20260304-iino-u64-v3-12-2257ad83d372@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uf6ZqYj/"
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-79898953985so40679677b3.1
+        for <linux-security-module@vger.kernel.org>; Thu, 05 Mar 2026 07:15:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772723725; x=1773328525; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ufc85M4NN7/rM7t2+qayj7cI6+eXovKQmBlSGxXUsiY=;
+        b=Uf6ZqYj/cymZJA6g/SjorIvdXl3c2Lvs3RCeX5CdzW2ZbUC6XUDDrTv9BnFsSZMOcL
+         NCL/+6BMvvqrrHkEJYDwQFFGfyQMYjLvXzUo9bVwfiiAh30gZ5syN3N7il57DEV+49AT
+         RouTqfFdZhHqRNw8LleZ1BqctehUmstBrhpnHA513TBx0NOoVSzRdNe4BTVIBEO83B/f
+         2zPq7PxTQXO7QXAEVl2UZ2JSh8KrAlJDzTUg0Q1dshJpb/K9WHfJkbvMAWxhc7EqR+pP
+         r/cUTmOBus4SLGyyUOW0vjpndr5Zi1ggUZLGqUailc0adLCOGwMpuu893S3KMt1n34jr
+         eDgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772723725; x=1773328525;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ufc85M4NN7/rM7t2+qayj7cI6+eXovKQmBlSGxXUsiY=;
+        b=XwWYHig4/Hb4OOfLk8L0Ouf/tWALBW+U8L+gw/aoW3EANg/+ggZwPrWlvRhHTFZznV
+         y1O7UiUHRoS+Nlim9xcmLjLKs37LYWmBUPguD3rj2VH8IrAXG1JpoCIljKFu7jnMA9XM
+         lv3BFQAC5A7SvrHV/NrYF6U3NGkF/ZCc18NHl3S3kN3earGt0Qnjmvg/goijNti+dfa4
+         gBTnR23aP3Xuqvmu2NHiht1oxoosR4nDRsPcwlTS2UaolBfEB87wApYvIwEcfB/c5uLe
+         EFQ1kNA4x7RlmqJZhbVEb2YK3ZeQntsZvtUGB3Hyuleze9MDLsGkJBKClpcBKAdcjZis
+         tydw==
+X-Gm-Message-State: AOJu0Ywel6hXhoYbROwVfL537XC7WpRkK20R7040aO4wPx1PSNP1RUEx
+	+cLGCKERPJAtuHRAMQfylfrNrLM864Ct+2UXQrYvSD7JewpetJzg0m6nhIuyLQ==
+X-Gm-Gg: ATEYQzyKEg/htfLp7oZwQ1B87OPELAFc85fadpGchFXkXb7bpJqzFtk4+WooWI7sFw3
+	WqWrYfVeBbF7CSSSodySrLdUNZKbQl48dKv0PbexI1HSL53VphyPzoNzMpODxoSLQ3uDGrylSl6
+	pr6/njr9wBAa2srgbFTWlJD+/vXcuSqaZ2+lU8woJ+T+OFK81jcbqSYfVxD00P6g8Q9hb3+C6Yd
+	bvORaK32Da7KpmQ+WNhqGruhQ+NNuK/G0FRjgOoHnmt4c6DBPz7Nm1F1SnkD2efTGsKFp1h7dYT
+	l2CqSm9DXdJAjcIGFBu2d1tDyXpscGsArGyjPVTajGLRnIlax52WqNC5e0dtHarKFw9AOxrz0/s
+	GskE/62uI5opdrizhZd/WA5LtnSOP5lFId761YUi1pYp7Um7alJ3QqSbVrOwdpUFCB6oq720fEL
+	svmfRpGq2qXgwbqN8rJHkya8JLtvhtCro=
+X-Received: by 2002:a05:690c:60c6:b0:796:4f04:bbc3 with SMTP id 00721157ae682-798da4cee76mr1309757b3.35.1772723724497;
+        Thu, 05 Mar 2026 07:15:24 -0800 (PST)
+Received: from zenbox ([71.132.185.69])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-64cf585d540sm2410672d50.3.2026.03.05.07.15.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2026 07:15:24 -0800 (PST)
+From: Justin Suess <utilityemal77@gmail.com>
+To: linux-security-module@vger.kernel.org,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Justin Suess <utilityemal77@gmail.com>
+Subject: [PATCH] landlock: Clarify LANDLOCK_RULE_PATH_BENEATH properties in documentation
+Date: Thu,  5 Mar 2026 10:15:07 -0500
+Message-ID: <20260305151507.2563776-1-utilityemal77@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260304-iino-u64-v3-12-2257ad83d372@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-Looks good:
+Add paragraph to Landlock userspace documentation clarifying the strictly
+cumulative property of access rights with respect to the file hierarchy.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+---
+ Documentation/userspace-api/landlock.rst | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+index 13134bccdd39..d02036bb2893 100644
+--- a/Documentation/userspace-api/landlock.rst
++++ b/Documentation/userspace-api/landlock.rst
+@@ -173,6 +173,17 @@ this file descriptor.
+         return 1;
+     }
+ 
++The effective access rights for a path are the union of the access rights on
++the path and all its parents.  For instance, in this example, ``/usr/bin/grep``
++inherits rights granted on ``/usr``, in addition to any rights we choose to
++grant on ``/usr/bin`` and ``/usr/bin/grep``.  Because
++``LANDLOCK_RULE_PATH_BENEATH`` rights are cumulative, they can only increase
++down the file hierarchy. Therefore, child paths cannot have fewer effective
++access rights than their parents. This cumulative behavior is a key property of
++``LANDLOCK_RULE_PATH_BENEATH`` and requires careful ruleset design to minimize
++granted accesses.  Please see the :ref:`Good practices` section for more
++details.
++
+ It may also be required to create rules following the same logic as explained
+ for the ruleset creation, by filtering access rights according to the Landlock
+ ABI version.  In this example, this is not required because all of the requested
+
+base-commit: f300a1c3a8ae4abca60913b4d26c405a905e4702
+prerequisite-patch-id: 2b17c4f0b741a703f61294989a53677de0b1a54d
+-- 
+2.51.0
 
