@@ -1,284 +1,180 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8F33AE1A5;
-	Fri,  6 Mar 2026 15:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from wind.enjellic.com (wind.enjellic.com [67.230.224.160])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13E234B662;
+	Fri,  6 Mar 2026 18:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.230.224.160
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772809471; cv=none; b=Op0oCCLsF8Z8ctny1vV0/kqo+fHO74t4T08x3eq1YQ8RTzJTOt255/FkmPzr/qTKnogMaKWF8s/B4P4qFelqMY/6JdzqSZuMbuVj4MU0W1ucvxb3rN36WybN29cKmSjAiJ5qcQZC+gpBBACnaloC+upZhmOODf9HrnShcXMf5zg=
+	t=1772820539; cv=none; b=tasmeYJmbEtZXUqP9qdSja7P6ZU8zEtk0jxxqoTRE9C4VQ1Dyj8RuRjNf4i6oeS2yUssMPdgwxBreWp0o27F6HOdArvJAlosyQJmPHQxVpfw8Co0FtlzkQx7mkoiCZmzYHEVDkxnfV3e7paR6Rj5kfjPW4nwc29MJcDIJnYBEIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772809471; c=relaxed/simple;
-	bh=25CPe4EGSUbqlSDNHofrLGG8PR/WzU7sNEADToXqfos=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QbkRlYC9YA5e/aZwWrJSIW3Enogz5yBcpzz5yTIgtq4bKxafm9YwK9akO0pZcVBUs5oioZEdwZlnvcxmyY0nVQF16QLlDQwjxPqHo5cZTr9pHxwo45K1xgLvkfFnOhq3K4lR5I7VXoy6B4d2Nv2WnUxwgomEE+emADQN0LfVuOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l00mYyAe; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l00mYyAe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF2D7C4CEF7;
-	Fri,  6 Mar 2026 15:04:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772809471;
-	bh=25CPe4EGSUbqlSDNHofrLGG8PR/WzU7sNEADToXqfos=;
-	h=From:To:Cc:Subject:Date:From;
-	b=l00mYyAeVzZNhOkHGoBqNdxgrGLiNdHhVl3kHwWYeL1Y9cFWXVlXooc68wEuF7L0Q
-	 OF2NVmz98U+4tMbNLueBvXb1fQq7cXDImpDKIGf4tKnWW++vZxu/EY+wexkETnxwFD
-	 MWqyCam4Ic8JyGq5WqejMJe9U3A1XlNrnepTU7jea0jQaiV8DaUy+MCEWae68Risxu
-	 qkBXP3twWnqgmthNNhGJ5AZYReddCWjdC3dgnUrpIrec7ooGju9tx+THX/KeuImLH8
-	 yhx06aMwr48pfMFdKNoEE3NgYZYj6wC+11wNOWM+t5CSAxsd0lxY8gLOiIilbMEZIm
-	 dZ/eso6rn5L2w==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Coiby Xu <coxu@redhat.com>
-Cc: Nicholas Piggin <npiggin@gmail.com>,
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andrew Donnellan <ajd@linux.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH] integrity: avoid using __weak functions
-Date: Fri,  6 Mar 2026 16:03:24 +0100
-Message-Id: <20260306150421.270124-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1772820539; c=relaxed/simple;
+	bh=PoW2Hmsa3XJr2dYEOm5XJGVqWQqGKLvCDFKjYYNzGWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FtSwdhU2M+vgleuT6w8EI0RRwoA5SKsNlaHxxjxh9+sxon8y8bS3+txCknMJZrArH4nmjSrECbG0UwPuafG2EaQDRJ7tArJgmGfP0l6ohjE4HEiZUcbpDR15OWBGvaVlemOUXyKqeSpijQErj1GvUr5nSG1mDAkBrsMJcy1NzME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=67.230.224.160
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 626HmJCB010007;
+	Fri, 6 Mar 2026 11:48:19 -0600
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 626HmFf3010004;
+	Fri, 6 Mar 2026 11:48:15 -0600
+Date: Fri, 6 Mar 2026 11:48:15 -0600
+From: "Dr. Greg" <greg@enjellic.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>
+Subject: Re: LSM namespacing API
+Message-ID: <20260306174815.GA9953@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com> <CAHC9VhTeVs7kS9hzukukZRfGu6CC6=Dq4KP69tpEtiFpBJ+jOQ@mail.gmail.com> <CAEjxPJ4urh7mUbDJEi-DbdiAifMM_uDH3m35tLeTdx6z+qhPyg@mail.gmail.com> <CAHC9VhTGruOPJ+NWZT8vw1bjXzkB4DSPFmWd1pC=J2jTYHP5BA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhTGruOPJ+NWZT8vw1bjXzkB4DSPFmWd1pC=J2jTYHP5BA@mail.gmail.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Fri, 06 Mar 2026 11:48:19 -0600 (CST)
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Tue, Mar 03, 2026 at 11:46:53AM -0500, Paul Moore wrote:
 
-The security/integrity/secure_boot.c file containing only a __weak function
-leads to a build failure with clang:
+Good morning, I hope the week is winding down well for everyone.
 
-Cannot find symbol for section 2: .text.
-security/integrity/secure_boot.o: failed
+> On Tue, Mar 3, 2026 at 8:30???AM Stephen Smalley
+> > I think my only caveat here is that your proposal is quite a bit more
+> > complex than what I implemented here:
+> > [1] https://lore.kernel.org/selinux/20251003190959.3288-2-stephen.smalley.work@gmail.com/
+> > [2] https://lore.kernel.org/selinux/20251003191328.3605-1-stephen.smalley.work@gmail.com/
+> > and I'm not sure the extra complexity is worth it.
+> >
+> > In particular:
+> > 1. Immediately unsharing the namespace upon lsm_set_self_attr() allows
+> > the caller to immediately and unambiguously know if the operation is
+> > supported and allowed ...
 
-Moving the function into another file that has at least one non-__weak
-symbol would solve this, but this is always fragile.
+> Performing the unshare operation immediately looks much less like a
+> LSM attribute and more like its own syscall.  That isn't a problem
+> in my eyes, it just means if this is the direction we want to go we
+> should implement a lsm_unshare(2) API, or something similar.
 
-Avoid __weak definitions entirely and instead move the stub helper into
-an asm-generic header that gets used by default on architectures that
-do not provide their own version. This is consistent with how a lot
-of other architecture specific functionality works, and is more reliable.
+Stephen's take on this is correct, the least complicated path forward
+is a simple call, presumably lsm_unshare(2), that instructs the LSM(s)
+to carry out whatever is needed to create a new security namespace.
 
-Fixes: a0f87ede3bf4 ("integrity: Make arch_ima_get_secureboot integrity-wide")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-This is a larger change than I had hoped for.
+There are only two public implementations of what can be referred to
+as major security namespacing efforts; Stephen's work with SeLinux and
+our TSEM implementation.  Given that both initiatives, which are
+significantly different, independently settled on the same approach
+seems to suggest it is a mechanism that enjoys successful field
+experience.
 
-If you prefer a different way to address the build failure, please
-treat this as a Reported-by when you apply your own fix
----
- arch/powerpc/include/asm/secure_boot.h        |  6 +++
- arch/powerpc/kernel/secure_boot.c             |  1 -
- arch/s390/include/asm/secure_boot.h           |  9 +++++
- include/asm-generic/Kbuild                    |  1 +
- include/asm-generic/secure_boot.h             | 37 +++++++++++++++++++
- include/linux/secure_boot.h                   |  8 +---
- security/integrity/Makefile                   |  2 +-
- .../integrity/platform_certs/load_powerpc.c   |  2 +-
- security/integrity/secure_boot.c              | 16 --------
- 9 files changed, 56 insertions(+), 26 deletions(-)
- create mode 100644 arch/s390/include/asm/secure_boot.h
- create mode 100644 include/asm-generic/secure_boot.h
- delete mode 100644 security/integrity/secure_boot.c
+The larger and more important question would seem to be what type of
+common namespace infrastructure actions would be amortizable across
+all the different types of security models that are supported by the
+LSM infrastructure.
 
-diff --git a/arch/powerpc/include/asm/secure_boot.h b/arch/powerpc/include/asm/secure_boot.h
-index a2ff556916c6..db72dcdf5bb3 100644
---- a/arch/powerpc/include/asm/secure_boot.h
-+++ b/arch/powerpc/include/asm/secure_boot.h
-@@ -10,11 +10,17 @@
- 
- #ifdef CONFIG_PPC_SECURE_BOOT
- 
-+bool arch_get_secureboot(void);
- bool is_ppc_secureboot_enabled(void);
- bool is_ppc_trustedboot_enabled(void);
- 
- #else
- 
-+static inline bool arch_get_secureboot(void)
-+{
-+	return false;
-+}
-+
- static inline bool is_ppc_secureboot_enabled(void)
- {
- 	return false;
-diff --git a/arch/powerpc/kernel/secure_boot.c b/arch/powerpc/kernel/secure_boot.c
-index 28436c1599e0..e3ea46124180 100644
---- a/arch/powerpc/kernel/secure_boot.c
-+++ b/arch/powerpc/kernel/secure_boot.c
-@@ -7,7 +7,6 @@
- #include <linux/of.h>
- #include <linux/secure_boot.h>
- #include <linux/string_choices.h>
--#include <asm/secure_boot.h>
- 
- static struct device_node *get_ppc_fw_sb_node(void)
- {
-diff --git a/arch/s390/include/asm/secure_boot.h b/arch/s390/include/asm/secure_boot.h
-new file mode 100644
-index 000000000000..4086fdfb9e5c
---- /dev/null
-+++ b/arch/s390/include/asm/secure_boot.h
-@@ -0,0 +1,9 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_S390_SECURE_BOOT_H
-+#define _ASM_S390_SECURE_BOOT_H
-+
-+#include <linux/types.h
-+
-+bool arch_get_secureboot(void);
-+
-+#endif
-diff --git a/include/asm-generic/Kbuild b/include/asm-generic/Kbuild
-index 0f97f7b594c3..8c0a499141fb 100644
---- a/include/asm-generic/Kbuild
-+++ b/include/asm-generic/Kbuild
-@@ -51,6 +51,7 @@ mandatory-y += rqspinlock.h
- mandatory-y += runtime-const.h
- mandatory-y += rwonce.h
- mandatory-y += sections.h
-+mandatory-y += secure_boot.h
- mandatory-y += serial.h
- mandatory-y += shmparam.h
- mandatory-y += simd.h
-diff --git a/include/asm-generic/secure_boot.h b/include/asm-generic/secure_boot.h
-new file mode 100644
-index 000000000000..08d8e294576c
---- /dev/null
-+++ b/include/asm-generic/secure_boot.h
-@@ -0,0 +1,37 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2026 Red Hat, Inc. All Rights Reserved.
-+ *
-+ * Author: Coiby Xu <coxu@redhat.com>
-+ */
-+#ifndef _ASM_SECURE_BOOT_H
-+#define _ASM_SECURE_BOOT_H
-+
-+
-+#include <linux/types.h>
-+
-+#ifdef CONFIG_EFI
-+
-+/*
-+ * Default implementation.
-+ * Architectures that support secure boot must override this.
-+ *
-+ * Returns true if the platform secure boot is enabled.
-+ * Returns false if disabled or not supported.
-+ */
-+bool arch_get_secureboot(void);
-+
-+#else
-+
-+/*
-+ * Default implementation.
-+ * Architectures that support secure boot must override this.
-+ */
-+static inline bool arch_get_secureboot(void)
-+{
-+	return false;
-+}
-+
-+#endif
-+
-+#endif
-diff --git a/include/linux/secure_boot.h b/include/linux/secure_boot.h
-index 3ded3f03655c..9ddfbe109b1d 100644
---- a/include/linux/secure_boot.h
-+++ b/include/linux/secure_boot.h
-@@ -8,12 +8,6 @@
- #ifndef _LINUX_SECURE_BOOT_H
- #define _LINUX_SECURE_BOOT_H
- 
--#include <linux/types.h>
--
--/*
-- * Returns true if the platform secure boot is enabled.
-- * Returns false if disabled or not supported.
-- */
--bool arch_get_secureboot(void);
-+#include <asm/secure_boot.h>
- 
- #endif /* _LINUX_SECURE_BOOT_H */
-diff --git a/security/integrity/Makefile b/security/integrity/Makefile
-index 548665e2b702..45dfdedbdad4 100644
---- a/security/integrity/Makefile
-+++ b/security/integrity/Makefile
-@@ -5,7 +5,7 @@
- 
- obj-$(CONFIG_INTEGRITY) += integrity.o
- 
--integrity-y := iint.o secure_boot.o
-+integrity-y := iint.o
- integrity-$(CONFIG_INTEGRITY_AUDIT) += integrity_audit.o
- integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
- integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
-diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
-index 714c961a00f5..ab74e947a8bc 100644
---- a/security/integrity/platform_certs/load_powerpc.c
-+++ b/security/integrity/platform_certs/load_powerpc.c
-@@ -10,7 +10,7 @@
- #include <linux/cred.h>
- #include <linux/err.h>
- #include <linux/slab.h>
--#include <asm/secure_boot.h>
-+#include <linux/secure_boot.h>
- #include <asm/secvar.h>
- #include "keyring_handler.h"
- #include "../integrity.h"
-diff --git a/security/integrity/secure_boot.c b/security/integrity/secure_boot.c
-deleted file mode 100644
-index fc2693c286f8..000000000000
---- a/security/integrity/secure_boot.c
-+++ /dev/null
-@@ -1,16 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * Copyright (C) 2026 Red Hat, Inc. All Rights Reserved.
-- *
-- * Author: Coiby Xu <coxu@redhat.com>
-- */
--#include <linux/secure_boot.h>
--
--/*
-- * Default weak implementation.
-- * Architectures that support secure boot must override this.
-- */
--__weak bool arch_get_secureboot(void)
--{
--	return false;
--}
--- 
-2.39.5
+We haven't seen any further comments or patches out of what Christian
+and Lennart are attempting to implement with respect to the concept of
+a security namespace in order to support their Amutable initiative.
+It seems reasonable that one of the common pieces of infrastructure
+would be the allocation of a security namespace specific context of
+data, i.e. an LSM security blob, that Christian had proposed patches
+for.
 
+Given the potential security implications of creating a security
+namespace, we assume that the 'unshare' operation would call an LSM
+hook that interrogated the current LSM stack for permission to do so.
+
+For example, it would seem reasonable that the Lockdown LSM would want
+the ability to block attempts to create alternate security namespaces.
+
+> > 3. We don't need to introduce a new CLONE_* flag at all or introduce
+> > new or changed LSM hooks to clone/unshare,
+> 
+> While I think we could get away with a new lsm_unshare(2) syscall, I
+> have zero interest in an lsm_clone(2) syscall.  If we do away with the
+> namespace related LSM attributes and rely entirely on a lsm_unshare(2)
+> syscall, would everyone be okay with that?
+
+We assume that there is agreement on the fact that an orchestrator
+needs to have the ability to specify attributes or policy for the new
+namespace that is being created.
+
+Given that, there will be a need to be able specify the
+characteristics that configure the new namespace which will go into
+effect, atomically, at the time the proposed lsm_unshare(s) system
+call executes.
+
+For example, now that IMA is an LSM, it would be reasonable to assume
+that the cryptographic hash function used for the integrity
+measurements could be specified as part of the namespace setup call
+for a new IMA namespace.
+
+> (I think we would still want/need the procfs API)
+
+That is only needed if there is a desire to support the ability of a
+process to enter a security namespace that it is not part of.
+
+That is potentially a useful feature, suffice it to say however, there
+are a host of issues involved with this.  We've had significant field
+experience with this concept and its implications, we don't get the
+sense that the mainline LSM's have had the opportunity to understand
+the implications of what this would mean.
+
+> > All that said, I'm willing to wire up the SELinux namespaces
+> > implementation to the proposed interface if someone implements the
+> > necessary plumbing, but I'm not sure it's better.
+
+> I'd really like to hear from some of the other LSMs before we start
+> diving into the code.  It may sound funny, but from my perspective
+> doing the work to get the API definition "right" is far more
+> important than implementing it.
+
+It isn't funny, it is pragmatic, particularily in this case.
+
+The primary challenge will be the tension that exists between the fact
+that there is no practical field experience with security namespacing,
+particularily with respect to its security implications, in the
+mainline kernel and the Linux userspace guarantee policy, that once an
+API/ABI becomes visible to userspace it cannot be changed.
+
+At this point in time the most basic and common security namespace
+infrastructure to get right and lay down would seem to be three fold:
+
+1.) A security check for whether or not namespace creation should be
+allowed.
+
+2.) The ability to specify characteristics of a new security namespace
+and to invoke those atomically when a process requests that a new
+security namespace be created.
+
+3.) Allocation of an LSM namespace 'blob' of memory that can be used
+to implement the security context for the new namespace.
+
+TSEM obviously isn't in the kernel, so understandably, our perspective
+may not hold much value in these quarters.
+
+It is, however, the most significant security namespace implementation
+that has been done for Linux, with respect to its scope and
+capabilities.  Perhaps most importantly, we have had ten years of
+experience dealing with all of these issues and their implications,
+particularly from a security perspective.
+
+Given that, we would be happy to test fire TSEM against any proposed
+infrastructure changes that focus on the generic needs of security
+namespacing.
+
+> paul-moore.com
+
+Have a good weekend.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
