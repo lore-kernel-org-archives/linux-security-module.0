@@ -1,146 +1,187 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A574396D23;
-	Fri,  6 Mar 2026 13:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59C12F9998
+	for <linux-security-module@vger.kernel.org>; Fri,  6 Mar 2026 13:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772803779; cv=none; b=bHVQ+V5PTK0pYwGFyQJlb5nMQ2j8qNrFiQZ3GpRzUauHXuVGalWyO0kyfKMvVRjw7xEMWviWzbioqD49yn25vH0cHikd11Q5Ge/TN/Y4K3dnXwV8LDcIp2iZo4xhQXeGuh8UWE88MDs3nvfFY5rDFtenD1y6w/EpEByDXK/bIH8=
+	t=1772804391; cv=none; b=rSPvdG/EB24vQH+Ij5JGevTpDs4AOr+08sszb56C7maRL4itgfyHuECTj+VOfk6kruX47K/dzxQ0Hw5zAWhbUT5V26hu9xc3DagkOmSV2NgzxiKHYMFOOTNHfhHloqYICPoiTwc4LqunspTHk9/T0t5KyBQNEAIJDo5Sarp97tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772803779; c=relaxed/simple;
-	bh=1ukMkvLDsKaYNY9i0ldkaZ4BWaGkqbXWQ5bDJd35Ruo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O8ECYL/mlkEN5X6SL+0/TK3d66hXWVCkmg0O2HHuDVZn+bsj2/k8LR6uM9UTUpyZKawpZFqopyAsD2d09VY7cJJAUkSHdnQ8NTKxdRtNV0B9LFyQziJ6nxME3qCUh31Xxo0x27oJI1hZqmvM1cbr1lV8ORBBfb3q9146+tAVWMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hc2G5bkz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772804391; c=relaxed/simple;
+	bh=dSPN6JYf8aXz88RxLJ+1KaYKy1cI2VeWPv7fY79Wix8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Mktu6Bz8cZkmaAeNeF6FqKHcBkd2UHvecIvH8n0ywm6MD2kxF+JuLbaxhrgTF+lpla9Rj61f3jWxXiXIGB7kNeacizWXuiLEZC1e+R0sOW/7u1StShd/F+YZuw64rB5lqMr2s1b6Erd1+oCCxmXNX+J1frtRvUsOhih3m1hX5zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bsuZ053C; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hc2G5bkz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B1A5C4CEF7;
-	Fri,  6 Mar 2026 13:29:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772803778;
-	bh=1ukMkvLDsKaYNY9i0ldkaZ4BWaGkqbXWQ5bDJd35Ruo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hc2G5bkzknQkHbaZAs4y3XyfPC7tq6CC483Y2FuPeJaJ/Ep5xih+Tc66Fpb+BwZ7W
-	 Bez8ORwfCmhbe6g0HU6oZVMi4gDWQhsfbyaFq+cVejhoWgnukuID/RZMSHViAcCVrw
-	 MjS/lDOASjuhPRZUMZ9AR3PHB2ay8/WfzKkLOdl1k1HLi42nbvUUTkPfv/+Yy3fjTm
-	 K+K4W0dOPAbSzctZ86TetwW6UIj7CcluN5pzHcCZKjAogO4Aasoss2NuBYwUN+09zw
-	 d8oApzr6/okXUUx7r5/Swj0z04/dBdcsRq0mcjW6ZaOab7H/RmnzywDdyIqKNlOri8
-	 PH0xKh9i2soEQ==
-Date: Fri, 6 Mar 2026 14:28:59 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Dan Williams <dan.j.williams@intel.com>, Eric Biggers <ebiggers@kernel.org>, 
-	"Theodore Y. Ts'o" <tytso@mit.edu>, Muchun Song <muchun.song@linux.dev>, 
-	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@kernel.org>, 
-	David Howells <dhowells@redhat.com>, Paulo Alcantara <pc@manguebit.org>, 
-	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>, Jaegeuk Kim <jaegeuk@kernel.org>, 
-	Chao Yu <chao@kernel.org>, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, 
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, Steve French <sfrench@samba.org>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Bharath SM <bharathsm@microsoft.com>, Alexander Aring <alex.aring@gmail.com>, 
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>, Viacheslav Dubeyko <slava@dubeyko.com>, 
-	Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Christian Schoenebeck <linux_oss@crudebyte.com>, 
-	David Sterba <dsterba@suse.com>, Marc Dionne <marc.dionne@auristor.com>, 
-	Ian Kent <raven@themaw.net>, Luis de Bethencourt <luisbg@kernel.org>, 
-	Salah Triki <salah.triki@gmail.com>, "Tigran A. Aivazian" <aivazian.tigran@gmail.com>, 
-	Ilya Dryomov <idryomov@gmail.com>, Alex Markuze <amarkuze@redhat.com>, 
-	Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu, Nicolas Pitre <nico@fluxnic.net>, 
-	Tyler Hicks <code@tyhicks.com>, Amir Goldstein <amir73il@gmail.com>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Yangtao Li <frank.li@vivo.com>, 
-	Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, David Woodhouse <dwmw2@infradead.org>, 
-	Richard Weinberger <richard@nod.at>, Dave Kleikamp <shaggy@kernel.org>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
-	Joseph Qi <joseph.qi@linux.alibaba.com>, Mike Marshall <hubcap@omnibond.com>, 
-	Martin Brandenburg <martin@omnibond.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Anders Larsen <al@alarsen.net>, Zhihao Cheng <chengzhihao1@huawei.com>, 
-	Damien Le Moal <dlemoal@kernel.org>, Naohiro Aota <naohiro.aota@wdc.com>, 
-	Johannes Thumshirn <jth@kernel.org>, John Johansen <john.johansen@canonical.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, Fan Wu <wufan@kernel.org>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>, 
-	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Simon Horman <horms@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Martin Schiller <ms@dev.tdt.de>, Eric Paris <eparis@redhat.com>, 
-	Joerg Reuter <jreuter@yaina.de>, Marcel Holtmann <marcel@holtmann.org>, 
-	Johan Hedberg <johan.hedberg@gmail.com>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-	Oliver Hartkopp <socketcan@hartkopp.net>, Marc Kleine-Budde <mkl@pengutronix.de>, 
-	David Ahern <dsahern@kernel.org>, Neal Cardwell <ncardwell@google.com>, 
-	Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Remi Denis-Courmont <courmisch@gmail.com>, Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>, 
-	Xin Long <lucien.xin@gmail.com>, Magnus Karlsson <magnus.karlsson@intel.com>, 
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	nvdimm@lists.linux.dev, fsverity@lists.linux.dev, linux-mm@kvack.org, 
-	netfs@lists.linux.dev, linux-ext4@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, linux-nilfs@vger.kernel.org, v9fs@lists.linux.dev, 
-	linux-afs@lists.infradead.org, autofs@vger.kernel.org, ceph-devel@vger.kernel.org, 
-	codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	jfs-discussion@lists.sourceforge.net, ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev, 
-	devel@lists.orangefs.org, linux-unionfs@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, selinux@vger.kernel.org, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
-	linaro-mm-sig@lists.linaro.org, netdev@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-fscrypt@vger.kernel.org, linux-xfs@vger.kernel.org, linux-hams@vger.kernel.org, 
-	linux-x25@vger.kernel.org, audit@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
-	linux-can@vger.kernel.org, linux-sctp@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v3 01/12] vfs: widen inode hash/lookup functions to u64
-Message-ID: <20260306-klauen-aufruf-3f79ec9cd4cb@brauner>
-References: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
- <20260304-iino-u64-v3-1-2257ad83d372@kernel.org>
- <aamSFgXhrORAJLBC@infradead.org>
- <c1845a4b8d35d367953ac6cbfcf91ac36958ba51.camel@kernel.org>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bsuZ053C"
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4806b12ad3fso80742865e9.0
+        for <linux-security-module@vger.kernel.org>; Fri, 06 Mar 2026 05:39:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1772804388; x=1773409188; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rl98ha3JHx+qGRqBBjXoaGncNHMrS0OxF0sNmP/5fHU=;
+        b=bsuZ053Cj4T48xvjiCaq3R42KyzmYrMQzWevIC/3Y1jGlt1QtS5WPLN4vkRM4iSGOr
+         7cGyDomPAvizCVWRPiQFWZgUvo/XVi2suRnOw0AAfE6Nvz3aWY1M9mzEGdu8djF8h2Z0
+         Tf1SoKNagqzSN0SrNucql8Q/15/ebDdv0BLmnYixWA9NF0JcBlUgjtNOIKAMdBjFs1Je
+         C2TS6lIADgpr2k+xZO6arRQWvCEJ0oa6bTLgSpSjgBOzO9RCMRUUxaJfFljxhqEoq1Rp
+         nFmdP52jrEk1X3znI1N423fsIsLDfQRwbbfrBDt02P+YNTySuCJsIM4xUaqjQA/YOpRg
+         y8gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772804388; x=1773409188;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Rl98ha3JHx+qGRqBBjXoaGncNHMrS0OxF0sNmP/5fHU=;
+        b=wGmEaPXAgYXFJafE9mNaLYIX3hXcJJcAycdfBwXfD4aXgMzi1pCre1hgWZVyxMM8LX
+         2IbAQMIE8UUML/lXaCjTc3XT+vMpJUvXSfgmdPsxJdRPEN5VHqr3FsT8pt2opTr8+GCy
+         lwg7mv88xBNj+3aij5Cpbxmwa2gn8NuZtdg78ChWC6Gh2jc5fjOC5IMjKJ2tZoGIw2Ct
+         F8vABi44cYobTXDo4woGZNG615h2tSAkO8BVxOm7p5VUpGxC8WQ141l42MYUCgStQIyS
+         OW6uoRvAxYZ0YL8mrRZzvOCTX2M+Kd+YrpE0ezC0NZOD0LsaESVDvBYR9gbDxVHRa+5C
+         7hNQ==
+X-Gm-Message-State: AOJu0YxFgAmpDVF62KbURGBGeKTkoykON4C2AvVic6epBQbGQHbbOhRa
+	C71baGSUy5Aymu0RRBtT5KupLDn8tOVTA/LHEUTNhtzzCqqEHYbrX19Ml+SHJxLpB/ORV39hPj1
+	MjYNMrQ==
+X-Received: from wmo8.prod.google.com ([2002:a05:600c:2308:b0:483:7039:5733])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:1e2a:b0:483:c771:10e
+ with SMTP id 5b1f17b1804b1-48526957d6cmr31843815e9.20.1772804387837; Fri, 06
+ Mar 2026 05:39:47 -0800 (PST)
+Date: Fri, 6 Mar 2026 14:39:45 +0100
+In-Reply-To: <20260306092214.63179-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c1845a4b8d35d367953ac6cbfcf91ac36958ba51.camel@kernel.org>
+Mime-Version: 1.0
+References: <20260306092214.63179-1-jiayuan.chen@linux.dev>
+Message-ID: <aarYeYrXnp3PmrFy@google.com>
+Subject: Re: [PATCH v1] landlock/tsync: fix null-ptr-deref in cancel_tsync_works()
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Jiayuan Chen <jiayuan.chen@linux.dev>
+Cc: linux-security-module@vger.kernel.org, 
+	syzbot+911d99dc200feac03ea6@syzkaller.appspotmail.com, 
+	"=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 06, 2026 at 07:03:15AM -0500, Jeff Layton wrote:
-> On Thu, 2026-03-05 at 06:24 -0800, Christoph Hellwig wrote:
-> > >  extern struct inode *ilookup5_nowait(struct super_block *sb,
-> > > -		unsigned long hashval, int (*test)(struct inode *, void *),
-> > > +		u64 hashval, int (*test)(struct inode *, void *),
-> > >  		void *data, bool *isnew);
-> > > -extern struct inode *ilookup5(struct super_block *sb, unsigned long hashval,
-> > > +extern struct inode *ilookup5(struct super_block *sb, u64 hashval,
-> > >  		int (*test)(struct inode *, void *), void *data);
-> > 
-> > ...
-> > 
-> > Can you please drop all these pointless externs while you're at it?
-> > 
-> 
-> I was planning to do that, but then Christian merged it!
-> 
-> I'll do a patch on top of this that does this in the range of fs.h that
-> the patch touches. Christian can throw it on top of the series, and
-> that shouldn't be too bad for backports.
+On Fri, Mar 06, 2026 at 05:22:13PM +0800, Jiayuan Chen wrote:
+> cancel_tsync_works() iterates over works->works[0..size-1] and calls
+> task_work_cancel() on each entry.  task_work_cancel() leads to
+> task_work_pending(), which dereferences task->task_works.  If
+> works->works[i]->task is NULL, this causes a null-ptr-deref:
+>=20
+> KASAN: null-ptr-deref in range [0x00000000000009a0-0x00000000000009a7]
+> RIP: 0010:task_work_pending include/linux/task_work.h:26 [inline]
+> RIP: 0010:task_work_cancel_match+0x86/0x250 kernel/task_work.c:124
+> RSP: 0018:ffffc90003597ba0 EFLAGS: 00010202
+> RAX: 0000000000000134 RBX: 0000000000000000 RCX: ffffc900106b1000
+> RDX: 0000000000080000 RSI: ffffffff81d13236 RDI: 0000000000000000
+> RBP: 1ffff920006b2f77 R08: 0000000000000007 R09: 0000000000000000
+> R10: 0000000000000002 R11: 0000000000000000 R12: ffffffff81d12dd0
+> R13: ffff88802c045100 R14: dffffc0000000000 R15: 00000000000009a0
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000000110c3ea90c CR3: 0000000037f63000 CR4: 00000000003526f0
+> DR0: 0000000000000003 DR1: 00000000000001f8 DR2: 000000000000008e
+> DR3: 000000000000057a DR6: 00000000ffff0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  task_work_cancel+0x23/0x30 kernel/task_work.c:187
+>  cancel_tsync_works security/landlock/tsync.c:415 [inline]
+>  landlock_restrict_sibling_threads+0xafe/0x1280 security/landlock/tsync.c=
+:533
+>  __do_sys_landlock_restrict_self+0x5c9/0x9e0 security/landlock/syscalls.c=
+:574
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0x106/0xf80 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f859b39c629
+> RSP: 002b:00007f85991b2028 EFLAGS: 00000246 ORIG_RAX: 00000000000001be
+> RAX: ffffffffffffffda RBX: 00007f859b616270 RCX: 00007f859b39c629
+> RDX: 0000000000000000 RSI: 000000000000000a RDI: 0000000000000003
+> RBP: 00007f859b432b39 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007f859b616308 R14: 00007f859b616270 R15: 00007ffcff084488
+>=20
+> The root cause is a race in schedule_task_work().  tsync_works_provide()
+> increments works->size and stores the task reference in ctx->task *before=
+*
+> task_work_add() is called.  A thread can race to call do_exit() in the
+> window between the PF_EXITING check and task_work_add(), causing
+> task_work_add() to return -ESRCH.  The error path then drops the task
+> reference and sets ctx->task =3D NULL, but works->size remains incremente=
+d.
+> A subsequent call to cancel_tsync_works() iterates up to the stale size
+> and passes the NULL task pointer to task_work_cancel().
+>=20
+> Fix this by decrementing works->size in the task_work_add() error path,
+> so the failed slot is rolled back and cancel_tsync_works() never iterates
+> over it.  The slot is naturally reused in subsequent iterations since
+> tsync_works_provide() always picks works->works[works->size].
+>=20
+> As a defensive measure, also add a WARN_ONCE() guard in cancel_tsync_work=
+s()
+> to catch any future NULL task pointer before dereferencing it.
+>=20
+> Fixes: 42fc7e6543f6 ("landlock: Multithreading support for landlock_restr=
+ict_self()")
+> Reported-by: syzbot+911d99dc200feac03ea6@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3D911d99dc200feac03ea6
+> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+> ---
+>  security/landlock/tsync.c | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
+> index 0d2b9c646030..e6d742529484 100644
+> --- a/security/landlock/tsync.c
+> +++ b/security/landlock/tsync.c
+> @@ -381,14 +381,14 @@ static bool schedule_task_work(struct tsync_works *=
+works,
+>  		err =3D task_work_add(thread, &ctx->work, TWA_SIGNAL);
+>  		if (err) {
+>  			/*
+> -			 * task_work_add() only fails if the task is about to exit.  We
+> -			 * checked that earlier, but it can happen as a race.  Resume
+> -			 * without setting an error, as the task is probably gone in the
+> -			 * next loop iteration.  For consistency, remove the task from ctx
+> -			 * so that it does not look like we handed it a task_work.
+> +			 * task_work_add() only fails if the task is about to exit.
+> +			 * We checked PF_EXITING earlier, but the thread can race to
+> +			 * exit between that check and task_work_add().  Roll back the
+> +			 * slot so cancel_tsync_works() never sees a NULL task pointer.
+>  			 */
+>  			put_task_struct(ctx->task);
+>  			ctx->task =3D NULL;
+> +			works->size--;
+> =20
+>  			atomic_dec(&shared_ctx->num_preparing);
+>  			atomic_dec(&shared_ctx->num_unfinished);
+> @@ -412,6 +412,11 @@ static void cancel_tsync_works(struct tsync_works *w=
+orks,
+>  	int i;
+> =20
+>  	for (i =3D 0; i < works->size; i++) {
+> +		if (WARN_ONCE(!works->works[i]->task,
+> +			      "landlock: unexpected NULL task in tsync slot %d\n",
+> +			      i))
+> +			continue;
+> +
+>  		if (!task_work_cancel(works->works[i]->task,
+>  				      &works->works[i]->work))
+>  			continue;
+> --=20
+> 2.43.0
+>=20
 
-I can easily drop those so no need to resend for stuff like this as per
-the usual protocol.
+Thanks for the patch!
+
+This bug is already fixed on Micka=C3=ABl's "next" branch.
+The code review has happened in
+https://lore.kernel.org/all/20260217122341.2359582-1-mic@digikod.net/
+
+=E2=80=94G=C3=BCnther
