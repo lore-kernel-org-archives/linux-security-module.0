@@ -1,187 +1,284 @@
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59C12F9998
-	for <linux-security-module@vger.kernel.org>; Fri,  6 Mar 2026 13:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8F33AE1A5;
+	Fri,  6 Mar 2026 15:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772804391; cv=none; b=rSPvdG/EB24vQH+Ij5JGevTpDs4AOr+08sszb56C7maRL4itgfyHuECTj+VOfk6kruX47K/dzxQ0Hw5zAWhbUT5V26hu9xc3DagkOmSV2NgzxiKHYMFOOTNHfhHloqYICPoiTwc4LqunspTHk9/T0t5KyBQNEAIJDo5Sarp97tc=
+	t=1772809471; cv=none; b=Op0oCCLsF8Z8ctny1vV0/kqo+fHO74t4T08x3eq1YQ8RTzJTOt255/FkmPzr/qTKnogMaKWF8s/B4P4qFelqMY/6JdzqSZuMbuVj4MU0W1ucvxb3rN36WybN29cKmSjAiJ5qcQZC+gpBBACnaloC+upZhmOODf9HrnShcXMf5zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772804391; c=relaxed/simple;
-	bh=dSPN6JYf8aXz88RxLJ+1KaYKy1cI2VeWPv7fY79Wix8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Mktu6Bz8cZkmaAeNeF6FqKHcBkd2UHvecIvH8n0ywm6MD2kxF+JuLbaxhrgTF+lpla9Rj61f3jWxXiXIGB7kNeacizWXuiLEZC1e+R0sOW/7u1StShd/F+YZuw64rB5lqMr2s1b6Erd1+oCCxmXNX+J1frtRvUsOhih3m1hX5zE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bsuZ053C; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1772809471; c=relaxed/simple;
+	bh=25CPe4EGSUbqlSDNHofrLGG8PR/WzU7sNEADToXqfos=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QbkRlYC9YA5e/aZwWrJSIW3Enogz5yBcpzz5yTIgtq4bKxafm9YwK9akO0pZcVBUs5oioZEdwZlnvcxmyY0nVQF16QLlDQwjxPqHo5cZTr9pHxwo45K1xgLvkfFnOhq3K4lR5I7VXoy6B4d2Nv2WnUxwgomEE+emADQN0LfVuOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l00mYyAe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bsuZ053C"
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4806b12ad3fso80742865e9.0
-        for <linux-security-module@vger.kernel.org>; Fri, 06 Mar 2026 05:39:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1772804388; x=1773409188; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Rl98ha3JHx+qGRqBBjXoaGncNHMrS0OxF0sNmP/5fHU=;
-        b=bsuZ053Cj4T48xvjiCaq3R42KyzmYrMQzWevIC/3Y1jGlt1QtS5WPLN4vkRM4iSGOr
-         7cGyDomPAvizCVWRPiQFWZgUvo/XVi2suRnOw0AAfE6Nvz3aWY1M9mzEGdu8djF8h2Z0
-         Tf1SoKNagqzSN0SrNucql8Q/15/ebDdv0BLmnYixWA9NF0JcBlUgjtNOIKAMdBjFs1Je
-         C2TS6lIADgpr2k+xZO6arRQWvCEJ0oa6bTLgSpSjgBOzO9RCMRUUxaJfFljxhqEoq1Rp
-         nFmdP52jrEk1X3znI1N423fsIsLDfQRwbbfrBDt02P+YNTySuCJsIM4xUaqjQA/YOpRg
-         y8gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772804388; x=1773409188;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Rl98ha3JHx+qGRqBBjXoaGncNHMrS0OxF0sNmP/5fHU=;
-        b=wGmEaPXAgYXFJafE9mNaLYIX3hXcJJcAycdfBwXfD4aXgMzi1pCre1hgWZVyxMM8LX
-         2IbAQMIE8UUML/lXaCjTc3XT+vMpJUvXSfgmdPsxJdRPEN5VHqr3FsT8pt2opTr8+GCy
-         lwg7mv88xBNj+3aij5Cpbxmwa2gn8NuZtdg78ChWC6Gh2jc5fjOC5IMjKJ2tZoGIw2Ct
-         F8vABi44cYobTXDo4woGZNG615h2tSAkO8BVxOm7p5VUpGxC8WQ141l42MYUCgStQIyS
-         OW6uoRvAxYZ0YL8mrRZzvOCTX2M+Kd+YrpE0ezC0NZOD0LsaESVDvBYR9gbDxVHRa+5C
-         7hNQ==
-X-Gm-Message-State: AOJu0YxFgAmpDVF62KbURGBGeKTkoykON4C2AvVic6epBQbGQHbbOhRa
-	C71baGSUy5Aymu0RRBtT5KupLDn8tOVTA/LHEUTNhtzzCqqEHYbrX19Ml+SHJxLpB/ORV39hPj1
-	MjYNMrQ==
-X-Received: from wmo8.prod.google.com ([2002:a05:600c:2308:b0:483:7039:5733])
- (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:1e2a:b0:483:c771:10e
- with SMTP id 5b1f17b1804b1-48526957d6cmr31843815e9.20.1772804387837; Fri, 06
- Mar 2026 05:39:47 -0800 (PST)
-Date: Fri, 6 Mar 2026 14:39:45 +0100
-In-Reply-To: <20260306092214.63179-1-jiayuan.chen@linux.dev>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l00mYyAe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF2D7C4CEF7;
+	Fri,  6 Mar 2026 15:04:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772809471;
+	bh=25CPe4EGSUbqlSDNHofrLGG8PR/WzU7sNEADToXqfos=;
+	h=From:To:Cc:Subject:Date:From;
+	b=l00mYyAeVzZNhOkHGoBqNdxgrGLiNdHhVl3kHwWYeL1Y9cFWXVlXooc68wEuF7L0Q
+	 OF2NVmz98U+4tMbNLueBvXb1fQq7cXDImpDKIGf4tKnWW++vZxu/EY+wexkETnxwFD
+	 MWqyCam4Ic8JyGq5WqejMJe9U3A1XlNrnepTU7jea0jQaiV8DaUy+MCEWae68Risxu
+	 qkBXP3twWnqgmthNNhGJ5AZYReddCWjdC3dgnUrpIrec7ooGju9tx+THX/KeuImLH8
+	 yhx06aMwr48pfMFdKNoEE3NgYZYj6wC+11wNOWM+t5CSAxsd0lxY8gLOiIilbMEZIm
+	 dZ/eso6rn5L2w==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Coiby Xu <coxu@redhat.com>
+Cc: Nicholas Piggin <npiggin@gmail.com>,
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Andrew Donnellan <ajd@linux.ibm.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH] integrity: avoid using __weak functions
+Date: Fri,  6 Mar 2026 16:03:24 +0100
+Message-Id: <20260306150421.270124-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20260306092214.63179-1-jiayuan.chen@linux.dev>
-Message-ID: <aarYeYrXnp3PmrFy@google.com>
-Subject: Re: [PATCH v1] landlock/tsync: fix null-ptr-deref in cancel_tsync_works()
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: Jiayuan Chen <jiayuan.chen@linux.dev>
-Cc: linux-security-module@vger.kernel.org, 
-	syzbot+911d99dc200feac03ea6@syzkaller.appspotmail.com, 
-	"=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 06, 2026 at 05:22:13PM +0800, Jiayuan Chen wrote:
-> cancel_tsync_works() iterates over works->works[0..size-1] and calls
-> task_work_cancel() on each entry.  task_work_cancel() leads to
-> task_work_pending(), which dereferences task->task_works.  If
-> works->works[i]->task is NULL, this causes a null-ptr-deref:
->=20
-> KASAN: null-ptr-deref in range [0x00000000000009a0-0x00000000000009a7]
-> RIP: 0010:task_work_pending include/linux/task_work.h:26 [inline]
-> RIP: 0010:task_work_cancel_match+0x86/0x250 kernel/task_work.c:124
-> RSP: 0018:ffffc90003597ba0 EFLAGS: 00010202
-> RAX: 0000000000000134 RBX: 0000000000000000 RCX: ffffc900106b1000
-> RDX: 0000000000080000 RSI: ffffffff81d13236 RDI: 0000000000000000
-> RBP: 1ffff920006b2f77 R08: 0000000000000007 R09: 0000000000000000
-> R10: 0000000000000002 R11: 0000000000000000 R12: ffffffff81d12dd0
-> R13: ffff88802c045100 R14: dffffc0000000000 R15: 00000000000009a0
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000000110c3ea90c CR3: 0000000037f63000 CR4: 00000000003526f0
-> DR0: 0000000000000003 DR1: 00000000000001f8 DR2: 000000000000008e
-> DR3: 000000000000057a DR6: 00000000ffff0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  task_work_cancel+0x23/0x30 kernel/task_work.c:187
->  cancel_tsync_works security/landlock/tsync.c:415 [inline]
->  landlock_restrict_sibling_threads+0xafe/0x1280 security/landlock/tsync.c=
-:533
->  __do_sys_landlock_restrict_self+0x5c9/0x9e0 security/landlock/syscalls.c=
-:574
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0x106/0xf80 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f859b39c629
-> RSP: 002b:00007f85991b2028 EFLAGS: 00000246 ORIG_RAX: 00000000000001be
-> RAX: ffffffffffffffda RBX: 00007f859b616270 RCX: 00007f859b39c629
-> RDX: 0000000000000000 RSI: 000000000000000a RDI: 0000000000000003
-> RBP: 00007f859b432b39 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007f859b616308 R14: 00007f859b616270 R15: 00007ffcff084488
->=20
-> The root cause is a race in schedule_task_work().  tsync_works_provide()
-> increments works->size and stores the task reference in ctx->task *before=
-*
-> task_work_add() is called.  A thread can race to call do_exit() in the
-> window between the PF_EXITING check and task_work_add(), causing
-> task_work_add() to return -ESRCH.  The error path then drops the task
-> reference and sets ctx->task =3D NULL, but works->size remains incremente=
-d.
-> A subsequent call to cancel_tsync_works() iterates up to the stale size
-> and passes the NULL task pointer to task_work_cancel().
->=20
-> Fix this by decrementing works->size in the task_work_add() error path,
-> so the failed slot is rolled back and cancel_tsync_works() never iterates
-> over it.  The slot is naturally reused in subsequent iterations since
-> tsync_works_provide() always picks works->works[works->size].
->=20
-> As a defensive measure, also add a WARN_ONCE() guard in cancel_tsync_work=
-s()
-> to catch any future NULL task pointer before dereferencing it.
->=20
-> Fixes: 42fc7e6543f6 ("landlock: Multithreading support for landlock_restr=
-ict_self()")
-> Reported-by: syzbot+911d99dc200feac03ea6@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D911d99dc200feac03ea6
-> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
-> ---
->  security/landlock/tsync.c | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
->=20
-> diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
-> index 0d2b9c646030..e6d742529484 100644
-> --- a/security/landlock/tsync.c
-> +++ b/security/landlock/tsync.c
-> @@ -381,14 +381,14 @@ static bool schedule_task_work(struct tsync_works *=
-works,
->  		err =3D task_work_add(thread, &ctx->work, TWA_SIGNAL);
->  		if (err) {
->  			/*
-> -			 * task_work_add() only fails if the task is about to exit.  We
-> -			 * checked that earlier, but it can happen as a race.  Resume
-> -			 * without setting an error, as the task is probably gone in the
-> -			 * next loop iteration.  For consistency, remove the task from ctx
-> -			 * so that it does not look like we handed it a task_work.
-> +			 * task_work_add() only fails if the task is about to exit.
-> +			 * We checked PF_EXITING earlier, but the thread can race to
-> +			 * exit between that check and task_work_add().  Roll back the
-> +			 * slot so cancel_tsync_works() never sees a NULL task pointer.
->  			 */
->  			put_task_struct(ctx->task);
->  			ctx->task =3D NULL;
-> +			works->size--;
-> =20
->  			atomic_dec(&shared_ctx->num_preparing);
->  			atomic_dec(&shared_ctx->num_unfinished);
-> @@ -412,6 +412,11 @@ static void cancel_tsync_works(struct tsync_works *w=
-orks,
->  	int i;
-> =20
->  	for (i =3D 0; i < works->size; i++) {
-> +		if (WARN_ONCE(!works->works[i]->task,
-> +			      "landlock: unexpected NULL task in tsync slot %d\n",
-> +			      i))
-> +			continue;
-> +
->  		if (!task_work_cancel(works->works[i]->task,
->  				      &works->works[i]->work))
->  			continue;
-> --=20
-> 2.43.0
->=20
+From: Arnd Bergmann <arnd@arndb.de>
 
-Thanks for the patch!
+The security/integrity/secure_boot.c file containing only a __weak function
+leads to a build failure with clang:
 
-This bug is already fixed on Micka=C3=ABl's "next" branch.
-The code review has happened in
-https://lore.kernel.org/all/20260217122341.2359582-1-mic@digikod.net/
+Cannot find symbol for section 2: .text.
+security/integrity/secure_boot.o: failed
 
-=E2=80=94G=C3=BCnther
+Moving the function into another file that has at least one non-__weak
+symbol would solve this, but this is always fragile.
+
+Avoid __weak definitions entirely and instead move the stub helper into
+an asm-generic header that gets used by default on architectures that
+do not provide their own version. This is consistent with how a lot
+of other architecture specific functionality works, and is more reliable.
+
+Fixes: a0f87ede3bf4 ("integrity: Make arch_ima_get_secureboot integrity-wide")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+This is a larger change than I had hoped for.
+
+If you prefer a different way to address the build failure, please
+treat this as a Reported-by when you apply your own fix
+---
+ arch/powerpc/include/asm/secure_boot.h        |  6 +++
+ arch/powerpc/kernel/secure_boot.c             |  1 -
+ arch/s390/include/asm/secure_boot.h           |  9 +++++
+ include/asm-generic/Kbuild                    |  1 +
+ include/asm-generic/secure_boot.h             | 37 +++++++++++++++++++
+ include/linux/secure_boot.h                   |  8 +---
+ security/integrity/Makefile                   |  2 +-
+ .../integrity/platform_certs/load_powerpc.c   |  2 +-
+ security/integrity/secure_boot.c              | 16 --------
+ 9 files changed, 56 insertions(+), 26 deletions(-)
+ create mode 100644 arch/s390/include/asm/secure_boot.h
+ create mode 100644 include/asm-generic/secure_boot.h
+ delete mode 100644 security/integrity/secure_boot.c
+
+diff --git a/arch/powerpc/include/asm/secure_boot.h b/arch/powerpc/include/asm/secure_boot.h
+index a2ff556916c6..db72dcdf5bb3 100644
+--- a/arch/powerpc/include/asm/secure_boot.h
++++ b/arch/powerpc/include/asm/secure_boot.h
+@@ -10,11 +10,17 @@
+ 
+ #ifdef CONFIG_PPC_SECURE_BOOT
+ 
++bool arch_get_secureboot(void);
+ bool is_ppc_secureboot_enabled(void);
+ bool is_ppc_trustedboot_enabled(void);
+ 
+ #else
+ 
++static inline bool arch_get_secureboot(void)
++{
++	return false;
++}
++
+ static inline bool is_ppc_secureboot_enabled(void)
+ {
+ 	return false;
+diff --git a/arch/powerpc/kernel/secure_boot.c b/arch/powerpc/kernel/secure_boot.c
+index 28436c1599e0..e3ea46124180 100644
+--- a/arch/powerpc/kernel/secure_boot.c
++++ b/arch/powerpc/kernel/secure_boot.c
+@@ -7,7 +7,6 @@
+ #include <linux/of.h>
+ #include <linux/secure_boot.h>
+ #include <linux/string_choices.h>
+-#include <asm/secure_boot.h>
+ 
+ static struct device_node *get_ppc_fw_sb_node(void)
+ {
+diff --git a/arch/s390/include/asm/secure_boot.h b/arch/s390/include/asm/secure_boot.h
+new file mode 100644
+index 000000000000..4086fdfb9e5c
+--- /dev/null
++++ b/arch/s390/include/asm/secure_boot.h
+@@ -0,0 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_S390_SECURE_BOOT_H
++#define _ASM_S390_SECURE_BOOT_H
++
++#include <linux/types.h
++
++bool arch_get_secureboot(void);
++
++#endif
+diff --git a/include/asm-generic/Kbuild b/include/asm-generic/Kbuild
+index 0f97f7b594c3..8c0a499141fb 100644
+--- a/include/asm-generic/Kbuild
++++ b/include/asm-generic/Kbuild
+@@ -51,6 +51,7 @@ mandatory-y += rqspinlock.h
+ mandatory-y += runtime-const.h
+ mandatory-y += rwonce.h
+ mandatory-y += sections.h
++mandatory-y += secure_boot.h
+ mandatory-y += serial.h
+ mandatory-y += shmparam.h
+ mandatory-y += simd.h
+diff --git a/include/asm-generic/secure_boot.h b/include/asm-generic/secure_boot.h
+new file mode 100644
+index 000000000000..08d8e294576c
+--- /dev/null
++++ b/include/asm-generic/secure_boot.h
+@@ -0,0 +1,37 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2026 Red Hat, Inc. All Rights Reserved.
++ *
++ * Author: Coiby Xu <coxu@redhat.com>
++ */
++#ifndef _ASM_SECURE_BOOT_H
++#define _ASM_SECURE_BOOT_H
++
++
++#include <linux/types.h>
++
++#ifdef CONFIG_EFI
++
++/*
++ * Default implementation.
++ * Architectures that support secure boot must override this.
++ *
++ * Returns true if the platform secure boot is enabled.
++ * Returns false if disabled or not supported.
++ */
++bool arch_get_secureboot(void);
++
++#else
++
++/*
++ * Default implementation.
++ * Architectures that support secure boot must override this.
++ */
++static inline bool arch_get_secureboot(void)
++{
++	return false;
++}
++
++#endif
++
++#endif
+diff --git a/include/linux/secure_boot.h b/include/linux/secure_boot.h
+index 3ded3f03655c..9ddfbe109b1d 100644
+--- a/include/linux/secure_boot.h
++++ b/include/linux/secure_boot.h
+@@ -8,12 +8,6 @@
+ #ifndef _LINUX_SECURE_BOOT_H
+ #define _LINUX_SECURE_BOOT_H
+ 
+-#include <linux/types.h>
+-
+-/*
+- * Returns true if the platform secure boot is enabled.
+- * Returns false if disabled or not supported.
+- */
+-bool arch_get_secureboot(void);
++#include <asm/secure_boot.h>
+ 
+ #endif /* _LINUX_SECURE_BOOT_H */
+diff --git a/security/integrity/Makefile b/security/integrity/Makefile
+index 548665e2b702..45dfdedbdad4 100644
+--- a/security/integrity/Makefile
++++ b/security/integrity/Makefile
+@@ -5,7 +5,7 @@
+ 
+ obj-$(CONFIG_INTEGRITY) += integrity.o
+ 
+-integrity-y := iint.o secure_boot.o
++integrity-y := iint.o
+ integrity-$(CONFIG_INTEGRITY_AUDIT) += integrity_audit.o
+ integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
+ integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
+diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
+index 714c961a00f5..ab74e947a8bc 100644
+--- a/security/integrity/platform_certs/load_powerpc.c
++++ b/security/integrity/platform_certs/load_powerpc.c
+@@ -10,7 +10,7 @@
+ #include <linux/cred.h>
+ #include <linux/err.h>
+ #include <linux/slab.h>
+-#include <asm/secure_boot.h>
++#include <linux/secure_boot.h>
+ #include <asm/secvar.h>
+ #include "keyring_handler.h"
+ #include "../integrity.h"
+diff --git a/security/integrity/secure_boot.c b/security/integrity/secure_boot.c
+deleted file mode 100644
+index fc2693c286f8..000000000000
+--- a/security/integrity/secure_boot.c
++++ /dev/null
+@@ -1,16 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * Copyright (C) 2026 Red Hat, Inc. All Rights Reserved.
+- *
+- * Author: Coiby Xu <coxu@redhat.com>
+- */
+-#include <linux/secure_boot.h>
+-
+-/*
+- * Default weak implementation.
+- * Architectures that support secure boot must override this.
+- */
+-__weak bool arch_get_secureboot(void)
+-{
+-	return false;
+-}
+-- 
+2.39.5
+
