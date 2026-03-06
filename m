@@ -1,124 +1,238 @@
-Received: from flow-a5-smtp.messagingengine.com (flow-a5-smtp.messagingengine.com [103.168.172.140])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FFD41FF7B3;
-	Fri,  6 Mar 2026 21:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92CC35F17D;
+	Fri,  6 Mar 2026 22:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772831785; cv=none; b=j5N1aU1JXZGRI10hRE+xSfpQ1Sd7LIJ5F4kE5l7bmYzxUhfLLbD4Wkg8AndmeL1MpCKrD3Z6ZqEYs1/CTP10KLnq9/c2HXm8ZuG4HgLf9031mpwT9yIvnpzHRzh+NzAc5RvK7b4wnB+r5C3FGgH1tTC5Ul7L7zaNscZSTQewmKE=
+	t=1772837816; cv=none; b=oi2fIBCPm7NU9r01mK8a9Obge4ckV4xRwrOOHaYeJsPflgxbyAlve1vkIIBrBRMZX+iCHlxIO/bVHdRWKif/+u5lEmaOPGEjLD+N+QzCYe53Yk3OG08x2Nw5mBPF3uv9gzhU/CZ4yzCRrd8lGCxS2xaNeyABsCdj4+M0UYrzVw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772831785; c=relaxed/simple;
-	bh=p8V4FHrQC4m8637OVnfjLNcJnocBX1xyNi6aeXzGHlI=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=sM29lII4JGX1mG/QMSmSxvHcldmdHqc/7PTXsUWFQrBqKjeJ01phGpw7Hrt/UBK5Rm9oymWoni+oNCUpo63ITZ1YEqKeKgjmrMD62HuidL1P+3OY6fspP3TmbpRrfYFt38LppgjCWer/vBQXiHcKYc9HfD+WLRI6qTvTJz5qroc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=UVAQhacP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Vy0WAoWA; arc=none smtp.client-ip=103.168.172.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+	s=arc-20240116; t=1772837816; c=relaxed/simple;
+	bh=Z22ghlULx44oqzYfZ0VFpWlMBSswAPSxWRRAMOClw4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KDaR0NENsM9ZUVE7RYThNXI3hxQCK3/SMdznnlmYEx3b760RWXfvzLY4NKGqOqz7Z0nxi/neSJ0Xo0+UOXVlrmw0eNpx9ft1PYz12h23KxAgO+YutRusUew1OMkRwimpvuxlrYdVZ6FdHsnDG8ZAOMM9Mug3q9TZzxG0u2EkKcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ctqwQye5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="UVAQhacP";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Vy0WAoWA"
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailflow.phl.internal (Postfix) with ESMTP id 7C033138098B;
-	Fri,  6 Mar 2026 16:16:23 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Fri, 06 Mar 2026 16:16:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm1; t=
-	1772831783; x=1772838983; bh=Ab8MrdB2xn5ObAHYuc8S2EbzsQbqvnFcs2E
-	SbOGqQKc=; b=UVAQhacPc5XIYM9fEieLMrbbP4mz7xOBtKxVB+jA3mYd94wd+dF
-	jEXzQY3ONA0MGR3X5WwGY4b7q3XwxeFX3wq2coJUKuMI96TEIRRqFJ+/qNdjDNWv
-	Gd5FHc2PbfPSrd9O+gW0JjxQfKgvbV98ORq6w0G9LV4Wz418LzdeNcly0jWOCgqw
-	DJh1DbmjKcx/mEMpsLNvubkQonu2mWGxmt2mgSnuAgo9fz2MXyLLO/W6MXEP0/at
-	ESNsMh7IlfoSXol1+A5Ex7PhnyysuWIqn1IOSLvDFQwWeCeRU3haz3CvAr9+ifa0
-	23GiQZwCsMsd8eZnEJQjDWRuPrUvZsAxEyg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1772831783; x=
-	1772838983; bh=Ab8MrdB2xn5ObAHYuc8S2EbzsQbqvnFcs2ESbOGqQKc=; b=V
-	y0WAoWAK7T67vqma/jdF1OOgiymtNP7nJANg1VtrdE5A9t5fjGaHY1G5WZWPw9LC
-	UiAKagfYVdA4frDZhs56+nrazJiwuxj32lU8pX1X9X8raFvHJcQA7VqpX9L1pPph
-	NOk+XxSIeFJoj45+mUB9k4hl0A8dUFhMCEQpyvoNqSMl9wvELeh4PROXQ4y1vYP9
-	t1sB23ze6OXSU0MomtZcUvcbNSAvI4nnZPa1UJNUBS+lc/dIJpOw9jUyJfLvHm9t
-	TigJFbwN5k6U8BlRsbrrI7VJetauC4ewDNo/1G+5NqaJHVPNM4jcFUnnhMbeWtpM
-	vSfsxGoaLrqC+Bk1bDwLA==
-X-ME-Sender: <xms:JkSrafQhLITjPiq0amdhmpkUbxlxXCSbJ5MOMQyZYLD3hDiEgFk-Wg>
-    <xme:JkSraUv0ZaCvsdoVLliqEx6OVARx3ampkfHw1dOYOSfQlp_cM2YYaswN8z9nHJG-6
-    -wfvgocjC0P4YJaX0MLF8jyeqJjMQwnCjlNrvVA8VWKA0BF6g>
-X-ME-Received: <xmr:JkSradWlxWyX1LDdEVNr_gqJIbQypMFQscxHyziJ5Y-602V3lU_PrZTKVRqTO72vRywD61jqdDZ4QyBqx02GFPQKvWWviVoq1djZkcQ1hR-A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvjedtfeehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtjeertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epudetfefhudevhedvfeeufedvffekveekgfdtfefggfekheejgefhteeihffggfelnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepvddvpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpd
-    hrtghpthhtohepshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhr
-    tghpthhtohepjhgrtghksehsuhhsvgdrtgii
-X-ME-Proxy: <xmx:JkSraYkKXev7nWHoUUKReSkmUFpmphxn6OD05b8LjrKgcrxUQ9_7JQ>
-    <xmx:JkSraQDlKCGfhubivZyvPvLT40RSy0qS6U3eQy-tWOT86jED3JoiVQ>
-    <xmx:JkSrad-ScPeN4sl-OA9v-z2Mxc4yIE6WEbDzhlshfakRoInVDU8fkQ>
-    <xmx:JkSraSQJaJb6gkiuPjPftwxA1nSbRkeSmCnEylob_GFzeruPj3JPVA>
-    <xmx:J0SraZprheB4umpetfSLW72QN1aB3Al_WZnhyU5Cvq7SVszou5SM_T0h>
-Feedback-ID: i9d664b8f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 6 Mar 2026 16:16:16 -0500 (EST)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ctqwQye5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B463DC4CEF7;
+	Fri,  6 Mar 2026 22:56:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772837816;
+	bh=Z22ghlULx44oqzYfZ0VFpWlMBSswAPSxWRRAMOClw4k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ctqwQye5tirMLMlcZHWP/msUzGRRcYMTOoMXTj300K9pQMQIBT+yINiB7xXl179o3
+	 /iMofptHLhehAjXDzL6/d18ATABHM17bI+2aLpZslxIUR50vxUDcNmLkGwcU/s9Rzf
+	 VgDfE6LI3aRz93CaakBU8wyz0/gY3mOFpY5Xcu1cVd2Hnot7lXwzo/0YyGkZebWJFf
+	 zo3KLreu2aKEhid9DfKNkZ7DdiZU9MXVDkYaK3H57jYXnUGYqu+EwyM8te85nRWV1H
+	 a05oZxPyxETLpeu7hw5P+FpmjTxRuNt4wG/dmp/v1hE1XDXSXyT89NRC2z3ZTOc7Rb
+	 wYLvB7Ti8IdMg==
+Date: Fri, 6 Mar 2026 15:56:48 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>, Coiby Xu <coxu@redhat.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Andrew Donnellan <ajd@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH] integrity: avoid using __weak functions
+Message-ID: <20260306225648.GC2746259@ax162>
+References: <20260306150421.270124-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Christian Brauner" <brauner@kernel.org>
-Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "David Howells" <dhowells@redhat.com>, "Jan Kara" <jack@suse.cz>,
- "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
- "Miklos Szeredi" <miklos@szeredi.hu>, "Amir Goldstein" <amir73il@gmail.com>,
- "John Johansen" <john.johansen@canonical.com>,
- "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- "Stephen Smalley" <stephen.smalley.work@gmail.com>,
- "Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org,
- netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
- apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
- selinux@vger.kernel.org
-Subject:
- Re: [PATCH v3 00/15] Further centralising of directory locking for name ops.
-In-reply-to: <20260306-wildfremd-wildfremd-43848a9e91cd@brauner>
-References: <20260224222542.3458677-1-neilb@ownmail.net>,
- <177267387855.7472.13497219877141601891@noble.neil.brown.name>,
- <20260306-wildfremd-wildfremd-43848a9e91cd@brauner>
-Date: Sat, 07 Mar 2026 08:16:14 +1100
-Message-id: <177283177498.7472.3648884661239054468@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260306150421.270124-1-arnd@kernel.org>
 
-On Fri, 06 Mar 2026, Christian Brauner wrote:
-> On Thu, Mar 05, 2026 at 12:24:38PM +1100, NeilBrown wrote:
-> > 
-> > Hi Christian,
-> >  do you have thoughts about this series?  Any idea when you might have
-> >  time to review and (hopefully) apply them?
+On Fri, Mar 06, 2026 at 04:03:24PM +0100, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Sorry, for the delay I picked it up but have two minor comments.
+> The security/integrity/secure_boot.c file containing only a __weak function
+> leads to a build failure with clang:
 > 
+> Cannot find symbol for section 2: .text.
+> security/integrity/secure_boot.o: failed
+> 
+> Moving the function into another file that has at least one non-__weak
+> symbol would solve this, but this is always fragile.
+> 
+> Avoid __weak definitions entirely and instead move the stub helper into
+> an asm-generic header that gets used by default on architectures that
+> do not provide their own version. This is consistent with how a lot
+> of other architecture specific functionality works, and is more reliable.
+> 
+> Fixes: a0f87ede3bf4 ("integrity: Make arch_ima_get_secureboot integrity-wide")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> This is a larger change than I had hoped for.
+> 
+> If you prefer a different way to address the build failure, please
+> treat this as a Reported-by when you apply your own fix
+> ---
+>  arch/powerpc/include/asm/secure_boot.h        |  6 +++
+>  arch/powerpc/kernel/secure_boot.c             |  1 -
+>  arch/s390/include/asm/secure_boot.h           |  9 +++++
+>  include/asm-generic/Kbuild                    |  1 +
+>  include/asm-generic/secure_boot.h             | 37 +++++++++++++++++++
+>  include/linux/secure_boot.h                   |  8 +---
+>  security/integrity/Makefile                   |  2 +-
+>  .../integrity/platform_certs/load_powerpc.c   |  2 +-
+>  security/integrity/secure_boot.c              | 16 --------
+>  9 files changed, 56 insertions(+), 26 deletions(-)
+>  create mode 100644 arch/s390/include/asm/secure_boot.h
+>  create mode 100644 include/asm-generic/secure_boot.h
+>  delete mode 100644 security/integrity/secure_boot.c
 
-Thanks!  I'll take a little while to examine the cachefiles code.
-Thanks for the thorough review!
+Thanks, I noticed this as well. The version I came up with and have been
+locally testing is the following, which is a little bit more compact.
 
-NeilBrown
+ arch/Kconfig                     |  3 +++
+ arch/powerpc/Kconfig             |  1 +
+ arch/s390/Kconfig                |  1 +
+ arch/s390/kernel/ipl.c           | 10 +++++-----
+ include/linux/secure_boot.h      |  4 ++++
+ security/integrity/Makefile      |  2 +-
+ security/integrity/secure_boot.c | 16 ----------------
+ 7 files changed, 15 insertions(+), 22 deletions(-)
+
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 102ddbd4298e..a6d1c8cc1d64 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -1841,4 +1841,7 @@ config ARCH_WANTS_PRE_LINK_VMLINUX
+ config ARCH_HAS_CPU_ATTACK_VECTORS
+ 	bool
+ 
++config HAVE_ARCH_GET_SECUREBOOT
++	def_bool EFI
++
+ endmenu
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index c28776660246..e76d6cf0c403 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -1062,6 +1062,7 @@ config PPC_SECURE_BOOT
+ 	depends on IMA_ARCH_POLICY
+ 	imply IMA_SECURE_AND_OR_TRUSTED_BOOT
+ 	select PSERIES_PLPKS if PPC_PSERIES
++	select HAVE_ARCH_GET_SECUREBOOT
+ 	help
+ 	  Systems with firmware secure boot enabled need to define security
+ 	  policies to extend secure boot to the OS. This config allows a user
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index 24695ea29d5b..76f191dd208b 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -181,6 +181,7 @@ config S390
+ 	select GENERIC_IOREMAP if PCI
+ 	select HAVE_ALIGNED_STRUCT_PAGE
+ 	select HAVE_ARCH_AUDITSYSCALL
++	select HAVE_ARCH_GET_SECUREBOOT
+ 	select HAVE_ARCH_JUMP_LABEL
+ 	select HAVE_ARCH_JUMP_LABEL_RELATIVE
+ 	select HAVE_ARCH_KASAN
+diff --git a/arch/s390/kernel/ipl.c b/arch/s390/kernel/ipl.c
+index 2d01a1713938..3c346b02ceb9 100644
+--- a/arch/s390/kernel/ipl.c
++++ b/arch/s390/kernel/ipl.c
+@@ -2388,6 +2388,11 @@ void __no_stack_protector s390_reset_system(void)
+ 	diag_amode31_ops.diag308_reset();
+ }
+ 
++bool arch_get_secureboot(void)
++{
++	return ipl_secure_flag;
++}
++
+ #ifdef CONFIG_KEXEC_FILE
+ 
+ int ipl_report_add_component(struct ipl_report *report, struct kexec_buf *kbuf,
+@@ -2505,11 +2510,6 @@ void *ipl_report_finish(struct ipl_report *report)
+ 	return buf;
+ }
+ 
+-bool arch_get_secureboot(void)
+-{
+-	return ipl_secure_flag;
+-}
+-
+ int ipl_report_free(struct ipl_report *report)
+ {
+ 	struct ipl_report_component *comp, *ncomp;
+diff --git a/include/linux/secure_boot.h b/include/linux/secure_boot.h
+index 3ded3f03655c..d17e92351567 100644
+--- a/include/linux/secure_boot.h
++++ b/include/linux/secure_boot.h
+@@ -10,10 +10,14 @@
+ 
+ #include <linux/types.h>
+ 
++#ifdef CONFIG_HAVE_ARCH_GET_SECUREBOOT
+ /*
+  * Returns true if the platform secure boot is enabled.
+  * Returns false if disabled or not supported.
+  */
+ bool arch_get_secureboot(void);
++#else
++static inline bool arch_get_secureboot(void) { return false; }
++#endif
+ 
+ #endif /* _LINUX_SECURE_BOOT_H */
+diff --git a/security/integrity/Makefile b/security/integrity/Makefile
+index 548665e2b702..45dfdedbdad4 100644
+--- a/security/integrity/Makefile
++++ b/security/integrity/Makefile
+@@ -5,7 +5,7 @@
+ 
+ obj-$(CONFIG_INTEGRITY) += integrity.o
+ 
+-integrity-y := iint.o secure_boot.o
++integrity-y := iint.o
+ integrity-$(CONFIG_INTEGRITY_AUDIT) += integrity_audit.o
+ integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
+ integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
+diff --git a/security/integrity/secure_boot.c b/security/integrity/secure_boot.c
+deleted file mode 100644
+index fc2693c286f8..000000000000
+--- a/security/integrity/secure_boot.c
++++ /dev/null
+@@ -1,16 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * Copyright (C) 2026 Red Hat, Inc. All Rights Reserved.
+- *
+- * Author: Coiby Xu <coxu@redhat.com>
+- */
+-#include <linux/secure_boot.h>
+-
+-/*
+- * Default weak implementation.
+- * Architectures that support secure boot must override this.
+- */
+-__weak bool arch_get_secureboot(void)
+-{
+-	return false;
+-}
