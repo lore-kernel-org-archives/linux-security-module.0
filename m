@@ -1,138 +1,82 @@
-Received: from flow-a6-smtp.messagingengine.com (flow-a6-smtp.messagingengine.com [103.168.172.141])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20937375F93;
-	Fri,  6 Mar 2026 23:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB8B2D3725
+	for <linux-security-module@vger.kernel.org>; Sat,  7 Mar 2026 05:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772839758; cv=none; b=PrBZRYsXzU8uWL1wWeghyHPVLxj2OplLJJnAt23bgwtSoUX372gUgKe7+61mdHef8ytGzhO+W3p51wZdUg6JRsAR+eycKacAPHTIBYI/KQC0firFYlsxoUNao3tQZd/XbuAfTPqJNQ0DUEXicloTYV578l+VvVuULquHVz7kGlI=
+	t=1772860910; cv=none; b=HqoePrma2bEdLi8xyyGbkpqMjCYkqQpQjQ/JZRlacaf+sSn3iuxLv5EDEAH/IpIv+rpAgg25LNHSbK/gpu9Adh7acI2+oGzzKhowePOQ+l76/AlcYk4cWKCT/Iio7IlVHzMVrMdXV/bAnHkbB4i403M2i34JH8cWhaEwhiy++C4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772839758; c=relaxed/simple;
-	bh=cY2s7/qEuxqwfkrFpJGX5cmRmBLdKB08nhmezUnAbEk=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=HR7XvDBx0mCTqRwt7Wf0fDfpBjUO0jT2uMjkE7feMR7+PxN70GV/lnRsfrR4ULUDZqCbWOgGorTrZnDxPvhdUGgNdxCt0B+f5GG3yj8rlT3QfqKdgZ3VpwexCCJwogNsiktJpNqhZC55HNPpEWdP6WCnCBOIbk7yJnsMMz8LsHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=DZLtQeEa; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wseMXmnJ; arc=none smtp.client-ip=103.168.172.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="DZLtQeEa";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wseMXmnJ"
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailflow.phl.internal (Postfix) with ESMTP id 468D31380B55;
-	Fri,  6 Mar 2026 18:29:08 -0500 (EST)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-04.internal (MEProxy); Fri, 06 Mar 2026 18:29:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1772839748;
-	 x=1772846948; bh=GETdZGM4YA8yA694WxEZkZM09wEgzGQFz172whB4Qxk=; b=
-	DZLtQeEaE1Dg/BQ7D4AeSS6PstNxPQGzBfjmzElVIT2ViU5ATfpUTqv7ybEr9Ht1
-	oNWpbiqL2pq7dtr+d/nQeWQrsgtFOolMVDDHLGag5CqmqYuNkKJu2fV6pYT4kFal
-	VDcmU/ygQtSSYNKAlWfynduCxhSfxMxJ/q6eqKV67R8jo3kpmDwFf+3Ik4ZFpRP+
-	kvRibMs1AygZJ5Mt/9LmTVRSM1O1u1satUPynemVwMfrv1RBET+4vzB1y5wKEJxP
-	mNV8qPxnb6oCZhF7tZuLWePLcH4p1BgF4X0Dl+jJZpUQtYR5ZhLhvmsR+wjOQQGx
-	O2oXve4Du80lwmuLrMWrCQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1772839748; x=
-	1772846948; bh=GETdZGM4YA8yA694WxEZkZM09wEgzGQFz172whB4Qxk=; b=w
-	seMXmnJeT7pXctEfb0cuHkhDGFIved/RrLP41GOYSHJZIudzgjXdkCaMKc3/fuOc
-	VZSiKq/sFK46Wv0P1yfi6XTTGcjVcOF4t16lFjNAn0khkeQexoCxqlKk20jAOh5Z
-	3FXnJc/w+W/aHe8VwOhDWyYQlwq2ziIThwloozu1G1am3J/+FA4JrhkVlv382NxA
-	OLKtCAKtzSbyQfVzIG1J+C+7UP4aLUuKtIeM+0s/AdlXgqDkeRlkd44mZXcj+fa3
-	w3JdHa4D+s/qlnJKWqICmb+3+32uBHUCjfdPoY02ErP23mAM8KZErJQaJiORqdAK
-	1b4FEirgnOfR6NSecGlLA==
-X-ME-Sender: <xms:QmOraWsyLvlZyKLelmZchVJg1xBgRira818lH5Wjars5zRp85n6CQw>
-    <xme:QmOraWRtKrrRDmlCNZGOpBg7hN286NecEsEM-hXsK-CEU4Kvci-J_B3E_EW-_GbjF
-    PGKco_Wq02UUw_hQh5BDkaiv8zqs7AnWCU8vkT9nPcakQV0ANylFxQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvjedtiedvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepfeefpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehmphgvsegvlhhlvghrmhgrnhdrihgurdgruhdprhgtphhtthhope
-    gumhhithhrhidrkhgrshgrthhkihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhhi
-    tghkrdguvghsrghulhhnihgvrhhsodhlkhhmlhesghhmrghilhdrtghomhdprhgtphhtth
-    hopehnphhighhgihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhhushhtihhnshht
-    ihhtthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepmhhorhgsohesghhoohhglhgvrd
-    gtohhmpdhrtghpthhtohepshgvrhhgvgeshhgrlhhlhihnrdgtohhmpdhrtghpthhtohep
-    rhhosggvrhhtohdrshgrshhsuheshhhurgifvghirdgtohhmpdhrtghpthhtoheprghrug
-    gssehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:QmOraRrSb10jiymrzAb9WoZsi2Tz-RWq3EgTbOMgthiE6ddf2js5fg>
-    <xmx:QmOraV59nHhEl8HgbMxhoT5o00wgqHOBxJi98jSFMQacjFhPKo6bVA>
-    <xmx:QmOraeTzKignEiBCyYkH7DDUy6V7Tt_Ly1cVrUvLgxoPLAb5URLvJA>
-    <xmx:QmOraV22SWxKf9dNjfi4R5SgY50umdOU57z7mmavyGXn0CHg06wlMA>
-    <xmx:RGOraemTV6W3wcgRW43rhHE9NEY71V2JSNopp6mLKexfMh9JtslQFcRw>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 629A3700065; Fri,  6 Mar 2026 18:29:06 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1772860910; c=relaxed/simple;
+	bh=ciRyFEAQO3d0mSiMgCyhBqPXkntgIHcfp1N7Szng84w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=mr+Ge+7jzgzpHN1Fy9E6WQ7+v9WaBymGyfCdvd1UJ7fXHsZJUbdbKuMiqiygZA554xMlcjJ8UZz//WFnjznoNEGWvTeh/aBHNVc3ssE9PzbVbRByg4Oqy6XB8fRFKi5yJktUjtVQCrS8yXPC+fpuXNCJ8Vui+MKALRS/Ivp0Sd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 6275LWPc007847;
+	Sat, 7 Mar 2026 14:21:32 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.2] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 6275LVd1007844
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 7 Mar 2026 14:21:32 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <a96efa12-003b-46ed-9444-40b69d84fa05@I-love.SAKURA.ne.jp>
+Date: Sat, 7 Mar 2026 14:21:32 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AYSH_HmCkp7N
-Date: Sat, 07 Mar 2026 00:28:27 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Nathan Chancellor" <nathan@kernel.org>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Madhavan Srinivasan" <maddy@linux.ibm.com>,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Heiko Carstens" <hca@linux.ibm.com>,
- "Vasily Gorbik" <gor@linux.ibm.com>,
- "Alexander Gordeev" <agordeev@linux.ibm.com>,
- "Mimi Zohar" <zohar@linux.ibm.com>,
- "Roberto Sassu" <roberto.sassu@huawei.com>,
- "Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>,
- "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- "Jarkko Sakkinen" <jarkko@kernel.org>,
- "Ard Biesheuvel" <ardb@kernel.org>, "Coiby Xu" <coxu@redhat.com>,
- "Nicholas Piggin" <npiggin@gmail.com>,
- "Christophe Leroy" <chleroy@kernel.org>,
- "Christian Borntraeger" <borntraeger@linux.ibm.com>,
- "Sven Schnelle" <svens@linux.ibm.com>,
- "Eric Snowberg" <eric.snowberg@oracle.com>,
- "Nick Desaulniers" <nick.desaulniers+lkml@gmail.com>,
- "Bill Wendling" <morbo@google.com>,
- "Justin Stitt" <justinstitt@google.com>,
- "Andrew Donnellan" <ajd@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
- llvm@lists.linux.dev
-Message-Id: <e16f0912-c928-4f25-94f8-18b260416ce3@app.fastmail.com>
-In-Reply-To: <20260306225648.GC2746259@ax162>
-References: <20260306150421.270124-1-arnd@kernel.org>
- <20260306225648.GC2746259@ax162>
-Subject: Re: [PATCH] integrity: avoid using __weak functions
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH] landlock: add missing task != NULL check in
+ cancel_tsync_works()
+To: linux-security-module <linux-security-module@vger.kernel.org>,
+        =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
+References: <69abb4e3.050a0220.13f275.003d.GAE@google.com>
+Content-Language: en-US
+Cc: syzkaller-bugs@googlegroups.com,
+        syzbot <syzbot+741e2278ef71fef03a10@syzkaller.appspotmail.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <69abb4e3.050a0220.13f275.003d.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav101.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Fri, Mar 6, 2026, at 23:56, Nathan Chancellor wrote:
-> On Fri, Mar 06, 2026 at 04:03:24PM +0100, Arnd Bergmann wrote:
->
-> Thanks, I noticed this as well. The version I came up with and have been
-> locally testing is the following, which is a little bit more compact.
->
->  arch/Kconfig                     |  3 +++
->  arch/powerpc/Kconfig             |  1 +
->  arch/s390/Kconfig                |  1 +
->  arch/s390/kernel/ipl.c           | 10 +++++-----
->  include/linux/secure_boot.h      |  4 ++++
->  security/integrity/Makefile      |  2 +-
->  security/integrity/secure_boot.c | 16 ----------------
->  7 files changed, 15 insertions(+), 22 deletions(-)
->
+syzbot is reporting NULL pointer dereference at cancel_tsync_works(), for
+tsync_works_release() checks for works->works[i]->task != NULL but
+cancel_tsync_works() does not.
 
-Right, your version looks good to me as well.
+works->works[i]->task becomes NULL when tsync_works_provide() incremented
+works->size and then task_work_add() returned an error. Therefore,
+cancel_tsync_works() needs to check for works->works[i]->task != NULL.
 
-       Arnd
+Reported-by: syzbot <syzbot+741e2278ef71fef03a10@syzkaller.appspotmail.com>
+Closes: https://syzkaller.appspot.com/bug?extid=741e2278ef71fef03a10
+Fixes: 42fc7e6543f6 ("landlock: Multithreading support for landlock_restrict_self()")
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ security/landlock/tsync.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
+index de01aa899751..8925acbef8a5 100644
+--- a/security/landlock/tsync.c
++++ b/security/landlock/tsync.c
+@@ -412,6 +412,8 @@ static void cancel_tsync_works(struct tsync_works *works,
+ 	int i;
+ 
+ 	for (i = 0; i < works->size; i++) {
++		if (!works->works[i]->task)
++			continue;
+ 		if (!task_work_cancel(works->works[i]->task,
+ 				      &works->works[i]->work))
+ 			continue;
+-- 
+2.53.0
+
