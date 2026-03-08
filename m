@@ -1,337 +1,135 @@
-Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B24F2459DC
-	for <linux-security-module@vger.kernel.org>; Sun,  8 Mar 2026 11:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65A015624B
+	for <linux-security-module@vger.kernel.org>; Sun,  8 Mar 2026 18:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772970617; cv=none; b=q6glFPPPQ1WmTF2T4fIXUgp8PtkoV4TmowXKDYsM/r0NVI0jFYkWEkIzS9eX1UsGioI9X1cR8NVJJmR4bXywZhIh3aarg1CGwETa1jEDw6qBl3P1XcMdJKcW9OL8O3QGxBy8EKC4ZYc2cZsp4YEAskWiKQOzDRbUWkenqLydfUU=
+	t=1772993399; cv=none; b=qchpifd1FgV3jeA3S5KNNeVitqGwD8VcSlhSi+KMLyAo4V0v8r4d6XUFStAC4K+tnzsB8+iw95cxBx1S8a3rQ/ogUsl/jwSmwZpKlX3TEtUq9rPxu3pEGka9+wqpYPo0GzD7roc6203SBlatJd1c3tkcwy8EA/bmTefMcDqiDKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772970617; c=relaxed/simple;
-	bh=wTyeXVWDNhYS0nMlprMcFDIIGEYZ1LbglAyYP/IocH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bW5g/ND4PQVDHb44NoCJCsNhnOJu3Y0Pgeq84gRnTbs6vLHMx5uepvyXaeCz1y3r5/WI8i3VTq7KT8Wh5SeFstaFBPkvkkjDinf6e/I22lzA03Mtj9EQHCsjqSt8YQEXBzj5oY3JEmNYy27qLTnsRm8+jZ/dVxvm6q+B0s9NF+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=s7U9Bnao; arc=none smtp.client-ip=45.157.188.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1772993399; c=relaxed/simple;
+	bh=XmsYEmCoXNT/C2GWn7qZw2zbifEAERePDgg8h4oumeg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CYVJ1S46WFnjB82SRLdoclAZTjjMfdIyVU9kz+uLOxCiqKywE16qJPPwckq7AbbILfZgMQ4tTRtwhj0wDnZfHIXXY92cGz2LYczZrNlrthzpVwpaMhD5QxrPLWUiP5EOzcsdB3+iwy+GQMU7tc4/Mj/4zIHUNExA9UV82I9k6aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtDHfvUJ; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="s7U9Bnao"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fTJNg55BxztY7;
-	Sun,  8 Mar 2026 12:50:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1772970611;
-	bh=705PrSallxlC5zZc1BbtUx1uaJN7YQ+hTxMAbM4j5A0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s7U9Bnaoa/Nzy9zJlvjprQvps8iLm3oMevmC+oSBIQKI+HMAO/Rv9jv9Uu9eilHoE
-	 FoKDEiuMzjeuvSRzf9b8gg3OSIs0SeNK3yTXcgOiYRoHaDPBflCX3HVSqwjZwAsTeU
-	 U35dfGvx998T/0HKFgg02sbenJwWmBp8A8MyR7QI=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4fTJNf3jV7z7TN;
-	Sun,  8 Mar 2026 12:50:10 +0100 (CET)
-Date: Sun, 8 Mar 2026 12:50:06 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>, 
-	John Johansen <john.johansen@canonical.com>, Tingmao Wang <m@maowtm.org>, 
-	Justin Suess <utilityemal77@gmail.com>, Jann Horn <jannh@google.com>, 
-	linux-security-module@vger.kernel.org, Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, 
-	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	konstantin.meskhidze@huawei.com, Demi Marie Obenour <demiobenour@gmail.com>, 
-	Alyssa Ross <hi@alyssa.is>, Tahera Fahimi <fahimitahera@gmail.com>
-Subject: Re: [PATCH v5 2/9] landlock: Control pathname UNIX domain socket
- resolution by path
-Message-ID: <20260308.IexeiQuae7ee@digikod.net>
-References: <20260215105158.28132-1-gnoack3000@gmail.com>
- <20260215105158.28132-3-gnoack3000@gmail.com>
- <20260217.lievaS8eeng8@digikod.net>
- <20260219.IF4zee3Quo3j@digikod.net>
- <aZcXSmhZRVcRCvum@google.com>
- <20260307.aeth4weik2Ah@digikod.net>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtDHfvUJ"
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-89a0ece9f14so83498006d6.3
+        for <linux-security-module@vger.kernel.org>; Sun, 08 Mar 2026 11:09:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772993396; x=1773598196; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Iqw/4Eli0nG5osMBUIJSgBSBQi9kdXgUAruDyKaARRE=;
+        b=dtDHfvUJ1WFF2sTZDvvFrFtg6D81PCInwoXsetZzb5DpU5b3C46gcNb79o5Bru/Q2e
+         t82TkAz8NFOBBK8c4sWkeDrJhq/shnd6ZHBo5stpeKkGZ86evX39vddEBS4WyH3Erskk
+         HW3yyKcL6vGKkd8tptIHDEFdMnF6QS6AEXs8XqbgHWgAIRkvgkvHOUzKRJxt9e8VzEBx
+         LvwqFoA0NIsM9J1/VyEVYgsblRNp5ES6seqgiDcZ99Zalj+RSMVTVSjGB8mnJ7vWhGby
+         S8lNiRDdpGqNLr0GEKLz9Wv8hgOi/6BNMfPkiJRt2jauNJJmnQW3BKcaPTujmSyaDQ5R
+         oA9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772993396; x=1773598196;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Iqw/4Eli0nG5osMBUIJSgBSBQi9kdXgUAruDyKaARRE=;
+        b=Bjs8yk7wrufc8Pq3obO6wZgrO/EyM6KDuhBh6f/bBcQDSL5r2CC9faKO6FNWLVTnaS
+         XE4/Qp/sucxXO98CnBRVvclGAfzLb00M4X674CxZ2evRB+I+wqEUDFoiy7cIVzMNxP5f
+         3JJE8fP5eIWDRCpHxn2jzzotOoovE770H78sN1Y7IgjZO/kWlV8YA/H324nSg9Cxq4pz
+         EVxD6pkmw0NDU8XhuqCS555JdTnFV6lwLpl0G9Nvo+Ei5wSrwjvlCsKVxLWmHaiMM+vF
+         nTQRKz9qWwfXu03VBdag2qnMyxQfXOoBeNyp18cWwhDNgdmWDUf6DnquMiMbJinLZoPG
+         M1LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9+HZhZshKr5sK5BaqfZxwAo0z4aXmrJMhoHHEf0JNNPdH/CUWfgI2/QL0mwRd01938HEy4bVFLwyQBCuCaSGLtLDgC3M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAhcheiTRQ77oEFMeQrVqyh5KOd/zgGtlKgIfUnM3kkguup71p
+	P6xIfaIfVsBBQbf3UwoZJMOFVoUOG3OcM/ZwHNJOVjJ4RGdOilvtTV1fnP+MHpmoXsk=
+X-Gm-Gg: ATEYQzy/sYTzp/CmZRda5p+93KPefCk57Vg23a1fdt7TWuG6We4Rlvg5be4BBXEHM2h
+	wvL7ltvECZNG7KMDN1+ioS3NeafZ9EvnyE1JYs0AgBD/4hCv8R5VelftMfW6wQxEkmx8FkFbLjp
+	k1CQ6O2UyuFPf9c19pFdDfW7NvCSYSD0A33fehXCgOvusd1s2GGxjVD0t3ZiSWPMNw69fAf8GAy
+	y+b1LN4lNhktbR1ZABzVGRJlxha2IDasg51sMDCLVP7N3SunOHeUe2ZvCkygrVYUBgRz7kj1SNY
+	B16+EOvzTI0RNbMcGOawExak+J7OCTcP4FfXSKAMk0nBzLHe7Ygn7UMrKs0fiJa9jm6O+YBLDgW
+	MoxHNBif5fZpJjwgONPJIC1ULiLbgugXviYAvyCHsi+jDuzPM6vEdP+QWMcT5aM1n4c31hobtgP
+	xpQMDzY3uj1QMliMIlHKypwq9+S70eDQL7WnegmuQhnJCcyNmSFK7NkgAQxpqg7TLfWw==
+X-Received: by 2002:a05:6214:c2a:b0:89a:1536:2529 with SMTP id 6a1803df08f44-89a30a31b87mr120367666d6.15.1772993395869;
+        Sun, 08 Mar 2026 11:09:55 -0700 (PDT)
+Received: from Ecomp.localdomain ([163.252.225.68])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89a31719574sm63773696d6.48.2026.03.08.11.09.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Mar 2026 11:09:55 -0700 (PDT)
+From: Evan Ducas <evan.j.ducas@gmail.com>
+To: wufan@kernel.org,
+	corbet@lwn.net,
+	skhan@linuxfoundation.org
+Cc: rdunlap@infradead.org,
+	bagasdotme@gmail.com,
+	linux-security-module@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Evan Ducas <evan.j.ducas@gmail.com>
+Subject: [PATCH v2] docs: security: ipe: fix typos and grammar
+Date: Sun,  8 Mar 2026 14:07:34 -0400
+Message-ID: <20260308180734.5792-1-evan.j.ducas@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260307.aeth4weik2Ah@digikod.net>
-X-Infomaniak-Routing: alpha
 
-On Sun, Mar 08, 2026 at 10:09:52AM +0100, Mickaël Salaün wrote:
-> On Thu, Feb 19, 2026 at 02:59:38PM +0100, Günther Noack wrote:
-> > On Thu, Feb 19, 2026 at 10:45:44AM +0100, Mickaël Salaün wrote:
-> > > On Wed, Feb 18, 2026 at 10:37:16AM +0100, Mickaël Salaün wrote:
-> > > > On Sun, Feb 15, 2026 at 11:51:50AM +0100, Günther Noack wrote:
-> > > > > * Add a new access right LANDLOCK_ACCESS_FS_RESOLVE_UNIX, which
-> > > > >   controls the look up operations for named UNIX domain sockets.  The
-> > > > >   resolution happens during connect() and sendmsg() (depending on
-> > > > >   socket type).
-> > > > > * Hook into the path lookup in unix_find_bsd() in af_unix.c, using a
-> > > > >   LSM hook.  Make policy decisions based on the new access rights
-> > > > > * Increment the Landlock ABI version.
-> > > > > * Minor test adaptions to keep the tests working.
-> > > > > 
-> > > > > With this access right, access is granted if either of the following
-> > > > > conditions is met:
-> > > > > 
-> > > > > * The target socket's filesystem path was allow-listed using a
-> > > > >   LANDLOCK_RULE_PATH_BENEATH rule, *or*:
-> > > > > * The target socket was created in the same Landlock domain in which
-> > > > >   LANDLOCK_ACCESS_FS_RESOLVE_UNIX was restricted.
-> > > > > 
-> > > > > In case of a denial, connect() and sendmsg() return EACCES, which is
-> > > > > the same error as it is returned if the user does not have the write
-> > > > > bit in the traditional Unix file system permissions of that file.
-> > > > > 
-> > > > > This feature was created with substantial discussion and input from
-> > > > > Justin Suess, Tingmao Wang and Mickaël Salaün.
-> > > > > 
-> > > > > Cc: Tingmao Wang <m@maowtm.org>
-> > > > > Cc: Justin Suess <utilityemal77@gmail.com>
-> > > > > Cc: Mickaël Salaün <mic@digikod.net>
-> > > > > Suggested-by: Jann Horn <jannh@google.com>
-> > > > > Link: https://github.com/landlock-lsm/linux/issues/36
-> > > > > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> > > > > ---
-> > > > >  include/uapi/linux/landlock.h                |  10 ++
-> > > > >  security/landlock/access.h                   |  11 +-
-> > > > >  security/landlock/audit.c                    |   1 +
-> > > > >  security/landlock/fs.c                       | 102 ++++++++++++++++++-
-> > > > >  security/landlock/limits.h                   |   2 +-
-> > > > >  security/landlock/syscalls.c                 |   2 +-
-> > > > >  tools/testing/selftests/landlock/base_test.c |   2 +-
-> > > > >  tools/testing/selftests/landlock/fs_test.c   |   5 +-
-> > > > >  8 files changed, 128 insertions(+), 7 deletions(-)
-> > > 
-> > > > > index 60ff217ab95b..8d0edf94037d 100644
-> > > > > --- a/security/landlock/audit.c
-> > > > > +++ b/security/landlock/audit.c
-> > > > > @@ -37,6 +37,7 @@ static const char *const fs_access_strings[] = {
-> > > > >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_REFER)] = "fs.refer",
-> > > > >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_TRUNCATE)] = "fs.truncate",
-> > > > >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_IOCTL_DEV)] = "fs.ioctl_dev",
-> > > > > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_RESOLVE_UNIX)] = "fs.resolve_unix",
-> > > > >  };
-> > > > >  
-> > > > >  static_assert(ARRAY_SIZE(fs_access_strings) == LANDLOCK_NUM_ACCESS_FS);
-> > > > > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> > > > > index e764470f588c..76035c6f2bf1 100644
-> > > > > --- a/security/landlock/fs.c
-> > > > > +++ b/security/landlock/fs.c
-> > > > > @@ -27,6 +27,7 @@
-> > > > >  #include <linux/lsm_hooks.h>
-> > > > >  #include <linux/mount.h>
-> > > > >  #include <linux/namei.h>
-> > > > > +#include <linux/net.h>
-> > > > >  #include <linux/path.h>
-> > > > >  #include <linux/pid.h>
-> > > > >  #include <linux/rcupdate.h>
-> > > > > @@ -314,7 +315,8 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
-> > > > >  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
-> > > > >  	LANDLOCK_ACCESS_FS_READ_FILE | \
-> > > > >  	LANDLOCK_ACCESS_FS_TRUNCATE | \
-> > > > > -	LANDLOCK_ACCESS_FS_IOCTL_DEV)
-> > > > > +	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
-> > > > > +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX)
-> > > > >  /* clang-format on */
-> > > > >  
-> > > > >  /*
-> > > > > @@ -1561,6 +1563,103 @@ static int hook_path_truncate(const struct path *const path)
-> > > > >  	return current_check_access_path(path, LANDLOCK_ACCESS_FS_TRUNCATE);
-> > > > >  }
-> > > > >  
-> > > > > +/**
-> > > > > + * unmask_scoped_access - Remove access right bits in @masks in all layers
-> > > > > + *                        where @client and @server have the same domain
-> > > > > + *
-> > > > > + * This does the same as domain_is_scoped(), but unmasks bits in @masks.
-> > > > > + * It can not return early as domain_is_scoped() does.
-> > > 
-> > > Why can't we use the same logic as for other scopes?
-> > 
-> > The other scopes, for which this is implemented in domain_is_scoped(),
-> > do not need to do this layer-by-layer.
-> > 
-> > I have to admit, in my initial implementation, I was using
-> > domain_is_scoped() directly, and the logic at the end of the hook was
-> > roughly:
-> > 
-> >    --- BUGGY CODE START ---
-> >        // ...
-> >        
-> >        if (!domain_is_scoped(..., ..., LANDLOCK_ACCESS_FS_RESOLVE_UNIX))
-> >            return 0;  /* permitted */
-> > 
-> >        return current_check_access_path(path, LANDLOCK_ACCESS_FS_RESOLVE_UNIX)
-> >    }
-> >    --- BUGGY CODE END ---
-> > 
-> > Unfortunately, that is a logic error though -- it implements the formula
-> > 
-> >    Access granted if:
-> >    (FOR-ALL l ∈ layers scoped-access-ok(l)) OR (FOR-ALL l ∈ layers path-access-ok(l))     (WRONG!)
-> > 
-> > but the formula we want is:
-> > 
-> >    Access granted if:
-> >    FOR-ALL l ∈ layers (scoped-access-ok(l) OR path-access-ok(l))     (CORRECT!)
-> 
-> It is worth it to add this explanation to the unmask_scoped_access()
-> description, also pointing to the test that check this case.
-> 
-> > 
-> > This makes a difference in the case where (pseudocode):
-> > 
-> >    1. landlock_restrict_self(RESOLVE_UNIX)  // d1
-> >    2. create_unix_server("./sock")
-> >    3. landlock_restrict_self(RESOLVE_UNIX, rule=Allow(".", RESOLVE_UNIX))  // d2
-> >    4. connect_unix("./sock")
-> > 
-> >    ,------------------------------------------------d1--,
-> >    |                                                    |
-> >    |    ./sock server                                   |
-> >    |       ^                                            |
-> >    |       |                                            |
-> >    |  ,------------------------------------------d2--,  |
-> >    |  |    |                                         |  |
-> >    |  |  client                                      |  |
-> >    |  |                                              |  |
-> >    |  '----------------------------------------------'  |
-> >    |                                                    |
-> >    '----------------------------------------------------'
-> > 
-> > (BTW, this scenario is covered in the selftests, that is why there is
-> > a variant of these selftests where instead of applying "no domain", we
-> > apply a domain with an exception rule like in step 3 in the pseudocode
-> > above.  Applying that domain should behave the same as applying no
-> > domain at all.)
-> > 
-> > Intuitively, it is clear that the access should be granted:
-> > 
-> >   - d1 does not restrict access to the server,
-> >     because the socket was created within d1 itself.
-> >   - d2 does not restrict access to the server,
-> >     because it has a rule to allow it
-> > 
-> > But the "buggy code" logic above comes to a different conclusion:
-> > 
-> >   - the domain_is_scoped() check denies the access, because the server
-> >     is in a more privileged domain relative to the client domain.
-> >   - the current_check_access_path() check denies the access as well,
-> >     because the socket's path is not allow-listed in d1.
-> > 
-> > In the 'intuitive' reasoning above, we are checking d1 and d2
-> > independently of each other.  While Landlock is not implemented like
-> > that internally, we need to stay consistent with it so that domains
-> > compose correctly.  The way to do that is to track is access check
-> > results on a per-layer basis again, and that is why
-> > unmask_scoped_access() uses a layer mask for tracking.  The original
-> > domain_is_scoped() does not use a layer mask, but that also means that
-> > it can return early in some scenarios -- if for any of the relevant
-> > layer depths, the client and server domains are not the same, it exits
-> > early with failure because it's overall not fulfillable any more.  In
-> > the RESOLVE_UNIX case though, we need to remember in which layers we
-> > failed (both high an low ones), because these layers can still be
-> > fulfilled with a PATH_BENEATH rule later.
-> > 
-> > Summary:
-> > 
-> > Option 1: We *can* unify this if you want.  It just might come at a
-> > small performance penalty for domain_is_scoped(), which now uses the
-> > larger layer mask data structure and can't do the same early returns
-> > any more as before.
-> > 
-> > Option 2: Alternatively, if we move the two functions into the same
-> > module, we can keep them separate but still test them against each
-> > other to make sure they are in-line:
-> > 
-> > This invocation should return true...
-> > 
-> >   domain_is_scoped(cli, srv, access)
-> > 
-> > ...in the exactly the same situations where this invocation leaves any
-> > bits set in layer_masks:
-> > 
-> >   landlock_init_layer_masks(dom, access, &layer_masks, LL_KEY_INODE);
-> >   unmask_scoped_access(cli, srv, &layer_masks, access);
-> > 
-> > What do you prefer?
-> 
-> I was thinking about factoring out domain_is_scoped() with
-> unmask_scoped_access() but, after some tests, it is not worth it.  Your
-> approach is simple and good.
-> 
-> > 
-> > 
-> > > > > + *
-> > > > > + * @client: Client domain
-> > > > > + * @server: Server domain
-> > > > > + * @masks: Layer access masks to unmask
-> > > > > + * @access: Access bit that controls scoping
-> > > > > + */
-> > > > > +static void unmask_scoped_access(const struct landlock_ruleset *const client,
-> > > > > +				 const struct landlock_ruleset *const server,
-> > > > > +				 struct layer_access_masks *const masks,
-> > > > > +				 const access_mask_t access)
-> > > > 
-> > > > This helper should be moved to task.c and factored out with
-> > > > domain_is_scoped().  This should be a dedicated patch.
-> > > 
-> > > Well, if domain_is_scoped() can be refactored and made generic, it would
-> > > make more sense to move it to domain.c
-> > > 
-> > > > 
-> > > > > +{
-> > > > > +	int client_layer, server_layer;
-> > > > > +	const struct landlock_hierarchy *client_walker, *server_walker;
-> > > > > +
-> > > > > +	if (WARN_ON_ONCE(!client))
-> > > > > +		return; /* should not happen */
-> 
-> Please no comment after ";"
-> 
-> > > > > +
-> > > > > +	if (!server)
-> > > > > +		return; /* server has no Landlock domain; nothing to clear */
-> > > > > +
-> > > > > +	client_layer = client->num_layers - 1;
-> > > > > +	client_walker = client->hierarchy;
-> > > > > +	server_layer = server->num_layers - 1;
-> > > > > +	server_walker = server->hierarchy;
-> > > > > +
-> > > > > +	/*
-> > > > > +	 * Clears the access bits at all layers where the client domain is the
-> > > > > +	 * same as the server domain.  We start the walk at min(client_layer,
-> > > > > +	 * server_layer).  The layer bits until there can not be cleared because
-> > > > > +	 * either the client or the server domain is missing.
-> > > > > +	 */
-> > > > > +	for (; client_layer > server_layer; client_layer--)
-> > > > > +		client_walker = client_walker->parent;
-> > > > > +
-> > > > > +	for (; server_layer > client_layer; server_layer--)
-> > > > > +		server_walker = server_walker->parent;
-> > > > > +
-> > > > > +	for (; client_layer >= 0; client_layer--) {
-> > > > > +		if (masks->access[client_layer] & access &&
-> > > > > +		    client_walker == server_walker)
-> 
-> I'd prefer to first check client_walker == server_walker and then the
-> access.  My main concern is that only one bit of access matching
-> masks->access[client_layer] clear all the access request bits.  In
-> practice there is only one, for now, but this code should be more strict
-> by following a defensive approach.
+Fix several spelling and grammar mistakes in the IPE
+documentation.
 
-> 
-> > > > > +			masks->access[client_layer] &= ~access;
+No functional change.
 
-Actually, why not removing the access argument and just reset
-masks->access[client_layer]?  The doc would need some updates.
+Signed-off-by: Evan Ducas <evan.j.ducas@gmail.com>
+---
+ Documentation/security/ipe.rst | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-> > > > > +
-> > > > > +		client_walker = client_walker->parent;
-> > > > > +		server_walker = server_walker->parent;
-> > > > > +	}
-> > > > > +}
-> > 
+diff --git a/Documentation/security/ipe.rst b/Documentation/security/ipe.rst
+index 4a7d953abcdc..5eb3e6265fbd 100644
+--- a/Documentation/security/ipe.rst
++++ b/Documentation/security/ipe.rst
+@@ -18,7 +18,7 @@ strong integrity guarantees over both the executable code, and specific
+ *data files* on the system, that were critical to its function. These
+ specific data files would not be readable unless they passed integrity
+ policy. A mandatory access control system would be present, and
+-as a result, xattrs would have to be protected. This lead to a selection
++as a result, xattrs would have to be protected. This led to a selection
+ of what would provide the integrity claims. At the time, there were two
+ main mechanisms considered that could guarantee integrity for the system
+ with these requirements:
+@@ -195,7 +195,7 @@ of the policy to apply the minute usermode starts. Generally, that storage
+ can be handled in one of three ways:
+ 
+   1. The policy file(s) live on disk and the kernel loads the policy prior
+-     to an code path that would result in an enforcement decision.
++     to a code path that would result in an enforcement decision.
+   2. The policy file(s) are passed by the bootloader to the kernel, who
+      parses the policy.
+   3. There is a policy file that is compiled into the kernel that is
+@@ -235,8 +235,8 @@ Updatable, Rebootless Policy
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ As requirements change over time (vulnerabilities are found in previously
+-trusted applications, keys roll, etcetera). Updating a kernel to change the
+-meet those security goals is not always a suitable option, as updates are not
++trusted applications, keys roll, etcetera), updating a kernel to meet
++those security goals is not always a suitable option, as updates are not
+ always risk-free, and blocking a security update leaves systems vulnerable.
+ This means IPE requires a policy that can be completely updated (allowing
+ revocations of existing policy) from a source external to the kernel (allowing
+@@ -370,7 +370,7 @@ Simplified Policy:
+ Finally, IPE's policy is designed for sysadmins, not kernel developers. Instead
+ of covering individual LSM hooks (or syscalls), IPE covers operations. This means
+ instead of sysadmins needing to know that the syscalls ``mmap``, ``mprotect``,
+-``execve``, and ``uselib`` must have rules protecting them, they must simple know
++``execve``, and ``uselib`` must have rules protecting them, they must simply know
+ that they want to restrict code execution. This limits the amount of bypasses that
+ could occur due to a lack of knowledge of the underlying system; whereas the
+ maintainers of IPE, being kernel developers can make the correct choice to determine
+-- 
+2.43.0
+
