@@ -1,115 +1,171 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC9D2727F3;
-	Sun,  8 Mar 2026 19:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAA22DC76A;
+	Sun,  8 Mar 2026 20:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772998891; cv=none; b=lYbdhOvnFD4x45o9iW6BBxgrkfsK1cCXqjBZwRrfgZxEwKOcrGVFHfz3ai1nSCBzJcRfq6YdW3TtgLgc/uzuDOHnI3+PSKTMOlJswmkv0+tkFwNx1N2scBoIfQo39VZPlVB/mXmkAHCEBzBcdwHYT/75AFhcTby/nUsAeMxWK5A=
+	t=1773003493; cv=none; b=B297i3ac83a5LtfAnTu3QFoAx73NrDezv0WPCCdQDnNvZRRpKusj/PbsUypdprXyGYdwpq1rPQn+2EJM0tVq6GE6s+JcLapx1t7ZGNqeZFNMtElaPXZ/ZoTgvoQjgDVX3O1H5lFmDvTHelvofJDHjyWz5aHhtUmAYkiNOywHR8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772998891; c=relaxed/simple;
-	bh=sLY/dzS+Uruwmsh+umiW9j40z6XTbubJak4DCA0zzUQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V6ooe+rgFuuS2GhLat7UtRQxIG2U1eJF//a4H77BlfSZ/wyApSzc1/Gou8NnLHXZV00u+GeqWqY8p2KlZckGUHz1jURrTyKuFs9DNGWxjc7VcOY/FYvuQY/Mwky4npFldsvFIgfdst4VSu11IFr4II0JR2/fTHof3wglrPGRzFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ts3dhgUc; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1773003493; c=relaxed/simple;
+	bh=YvwnwHgyC3oEQa0I1j525crmDtzyCfGyFwtXdz585BU=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=JGIWJJs+q6wT81end9ZjfD6AqjuQ9n0tTyTG0nSJUtrnZ5xYp3HPxcYa5qYbDfuAo1+c067qa6AH9vbBSM1vfagItGITJjlWtnMdCZMnFx3vt09TEHahhYTFXJFZ17emeQj8GRz7WcMpAUa3YvQoL73sV65tfvajw6D2LRhFrhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=Nyy1fGep; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GHGSibMw; arc=none smtp.client-ip=103.168.172.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ts3dhgUc"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=Ciuj3SCC4PTq68olyTMdKKA/KQ8KJfZL5HLloa626DQ=; b=Ts3dhgUct+eS2Felvb/ow0uC91
-	c0KUkRri1hDjiQysHoTmZaZhXk7+eVjF1ryerNKnDi9iSNMFNQCeiZwxrWZcytimrUb7Gril9q2BP
-	rFR3rVncAOOXEmud6vOpvILGsUpSp1N583FGni4bqYrDI+zufgXHGfAgfMi1j2+ToTEXxjeuAMSgw
-	WRWSttPP4G4oettWAPyyBCZc1cj38IUHF13lpvcmyGdKQQosV5S9whpkYwHvuvf+F4ykOL6oKA+Tc
-	dxu0mp/lpM6ZWjNc4P9RWEVecFRdj3Wm5Cppi1TZm+b9v2EGY3lXu7JoAAFq5cQFkpOET6ZamLWbC
-	17qlt/JQ==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vzK06-00000006JEm-2JKW;
-	Sun, 08 Mar 2026 19:41:18 +0000
-Message-ID: <134fc611-a662-4d94-a922-6831f50895b3@infradead.org>
-Date: Sun, 8 Mar 2026 12:41:16 -0700
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="Nyy1fGep";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GHGSibMw"
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailflow.phl.internal (Postfix) with ESMTP id E5D3B13808ED;
+	Sun,  8 Mar 2026 16:58:09 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Sun, 08 Mar 2026 16:58:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm1; t=
+	1773003489; x=1773010689; bh=+iypvS0zaTSKL0sJFSGnV+90rJ7NwnakODh
+	88UBVbxc=; b=Nyy1fGep1NAOdoC4ys0fihQQOAa4IL42zfq0IvtSw9HwYJLZAur
+	Ps92XTBfup1MiJY2jk4/AQz2th5KZLEBqfMaYNhvwb99g0LBwKnM8xUEEKXdgKTn
+	iEZgi2XRPUc5mOsju+U1SsZ0XuTk97e1G+TvaUs0UgEWuCEpGvKxHub7Fr8NzePQ
+	F6jc70Xi+GLzG48D6AKuJRyzr/qNVEz6PSACk6zG7NyURmA+z9W+GYGQUz9Sequ0
+	MDP8DWX9s7NcXZnQ17acBLw3uNCm42d4dV4qgFTfdT/1lWc1ZOIsJxzbxZXjIvWM
+	uVaaeebTvdn1kw4vaeRvQyoQY4+vkAqWiiQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773003489; x=
+	1773010689; bh=+iypvS0zaTSKL0sJFSGnV+90rJ7NwnakODh88UBVbxc=; b=G
+	HGSibMweZXfcFPVEa8qTAg1920mH8b3M5plTJQ4y5f96lM0ypf27HM4c/UAySBmm
+	DZNhGy5ImsPGICRiTdhRP+TGXvBFmWPZY17dh7fXetsdhXCks4IMB/rP6iNp1iaU
+	LK91YfzxM0GOGNH9+s3glVWI7DpuSJrqrRuxGMPR04EVCO/4tRv4OyVYYCSthsLo
+	hVCdX/pAxOcMFN6CQkYecarwAp2sSGJQEDC2Nu+eqjJ5ZgA6455m7flLIqp54XFo
+	jil7fvItfzmz1OnLWw0UW+svzSwXlPLSAQBfEev4w8rFBaDivkzKy7ULy0nxmm+M
+	KgkBFxXdL2RO4I2Y5xVNQ==
+X-ME-Sender: <xms:3-KtaSVctBSQ0SV_4hXsjWRkglm51vBgsco7eLnJzRkXOELG71FzoQ>
+    <xme:3-KtaSjB2rGOr7OFkyfnq7Dp2t1nYH99sV9ZG2WLPsYFsLSdpnH6BKGWxcSwcl7o1
+    oNTwtE7rLcKtqp-tzupFwXpCKt77cRv4Z4yxSfn4e5V4MeQvxs>
+X-ME-Received: <xmr:3-Ktae5tS02XwBv-i39mfEyQVpaoQ-u3VFqQO8y4dRUul7KOwa5yqttp3ypt5BxZU3mf45hpnrzPGzLEU1_5oKoiZkHPceyr5LfUBLIaf1ix>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvjeeivddvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epffetfedvgeevjeelhffhkefgffejvddtvefftdegueeiveffjeeukeffkeefkefhnecu
+    ffhomhgrihhnpehmshhgihgurdhlihhnkhenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehnvghilhgssehofihnmhgrihhlrdhnvghtpdhnsggp
+    rhgtphhtthhopedvvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepvhhirhhose
+    iivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehsvghlihhnuhigsehv
+    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidquhhnihhonhhfsh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvggtuhhr
+    ihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
+    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
+    hnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    mhhikhhlohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehjrggtkhesshhushgvrd
+    gtii
+X-ME-Proxy: <xmx:3-KtaS6zJduiAbAHq99KcsXa77lpCopPadKmwp3x8ZIfGmkzNTCohA>
+    <xmx:3-KtaUHxOA8u3U6E4eLAbRpC0yb57cCfAxRA4ha_pVtvmLiUgg9e7w>
+    <xmx:3-KtaYwwNGnKGgahf3vu9ylTclTI_dSyC-frB-eGtBIC_WzxhkiWWA>
+    <xmx:3-Ktac2Z1yfOcKeBZZnd8l7Su01udxDrDDt7_G5Nnt_T2jF2UNTW8g>
+    <xmx:4eKtaa8I7VALp6o1nHvBb2BSlMCJyvLkZlfOMwwpOLNHk0sla81lLmFr>
+Feedback-ID: i9d664b8f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 8 Mar 2026 16:58:01 -0400 (EDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] docs: security: ipe: fix typos and grammar
-To: Evan Ducas <evan.j.ducas@gmail.com>, wufan@kernel.org, corbet@lwn.net,
- skhan@linuxfoundation.org
-Cc: bagasdotme@gmail.com, linux-security-module@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260308180734.5792-1-evan.j.ducas@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20260308180734.5792-1-evan.j.ducas@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: NeilBrown <neilb@ownmail.net>
+To: "Christian Brauner" <brauner@kernel.org>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "David Howells" <dhowells@redhat.com>, "Jan Kara" <jack@suse.cz>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Miklos Szeredi" <miklos@szeredi.hu>, "Amir Goldstein" <amir73il@gmail.com>,
+ "John Johansen" <john.johansen@canonical.com>,
+ "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ "Stephen Smalley" <stephen.smalley.work@gmail.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org,
+ netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+ apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ selinux@vger.kernel.org
+Subject: [PATCH] FIXUP: cachefiles: change cachefiles_bury_object to use
+ start_renaming_dentry()
+In-reply-to: <20260306-stolz-verzichten-2ee626da4503@brauner>
+References: <20260224222542.3458677-1-neilb@ownmail.net>,
+ <20260224222542.3458677-11-neilb@ownmail.net>,
+ <20260306-stolz-verzichten-2ee626da4503@brauner>
+Date: Mon, 09 Mar 2026 07:57:58 +1100
+Message-id: <177300347820.5556.314358492166337403@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
 
+From: NeilBrown <neil@brown.name>
 
-On 3/8/26 11:07 AM, Evan Ducas wrote:
-> Fix several spelling and grammar mistakes in the IPE
-> documentation.
-> 
-> No functional change.
-> 
-> Signed-off-by: Evan Ducas <evan.j.ducas@gmail.com>
+[[This fixup for f242581e611e in vfs/vfs-7.1.directory provides a new
+commit description has preserves the error returns and log message, and
+importantly calls cachefiles_io_error() in exactly the same
+circumstances as the original - thanks]]
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Thanks.
+Rather then using lock_rename() and lookup_one() etc we can use
+the new start_renaming_dentry().  This is part of centralising dir
+locking and lookup so that locking rules can be changed.
 
-> ---
->  Documentation/security/ipe.rst | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/security/ipe.rst b/Documentation/security/ipe.rst
-> index 4a7d953abcdc..5eb3e6265fbd 100644
-> --- a/Documentation/security/ipe.rst
-> +++ b/Documentation/security/ipe.rst
-> @@ -18,7 +18,7 @@ strong integrity guarantees over both the executable code, and specific
->  *data files* on the system, that were critical to its function. These
->  specific data files would not be readable unless they passed integrity
->  policy. A mandatory access control system would be present, and
-> -as a result, xattrs would have to be protected. This lead to a selection
-> +as a result, xattrs would have to be protected. This led to a selection
->  of what would provide the integrity claims. At the time, there were two
->  main mechanisms considered that could guarantee integrity for the system
->  with these requirements:
-> @@ -195,7 +195,7 @@ of the policy to apply the minute usermode starts. Generally, that storage
->  can be handled in one of three ways:
->  
->    1. The policy file(s) live on disk and the kernel loads the policy prior
-> -     to an code path that would result in an enforcement decision.
-> +     to a code path that would result in an enforcement decision.
->    2. The policy file(s) are passed by the bootloader to the kernel, who
->       parses the policy.
->    3. There is a policy file that is compiled into the kernel that is
-> @@ -235,8 +235,8 @@ Updatable, Rebootless Policy
->  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->  
->  As requirements change over time (vulnerabilities are found in previously
-> -trusted applications, keys roll, etcetera). Updating a kernel to change the
-> -meet those security goals is not always a suitable option, as updates are not
-> +trusted applications, keys roll, etcetera), updating a kernel to meet
-> +those security goals is not always a suitable option, as updates are not
->  always risk-free, and blocking a security update leaves systems vulnerable.
->  This means IPE requires a policy that can be completely updated (allowing
->  revocations of existing policy) from a source external to the kernel (allowing
-> @@ -370,7 +370,7 @@ Simplified Policy:
->  Finally, IPE's policy is designed for sysadmins, not kernel developers. Instead
->  of covering individual LSM hooks (or syscalls), IPE covers operations. This means
->  instead of sysadmins needing to know that the syscalls ``mmap``, ``mprotect``,
-> -``execve``, and ``uselib`` must have rules protecting them, they must simple know
-> +``execve``, and ``uselib`` must have rules protecting them, they must simply know
->  that they want to restrict code execution. This limits the amount of bypasses that
->  could occur due to a lack of knowledge of the underlying system; whereas the
->  maintainers of IPE, being kernel developers can make the correct choice to determine
+Some error conditions are checked in start_renaming_dentry() but need to
+be re-checked when an error is reported to ensure correct handling.
+The check that ->graveyard is still d_can_lookup() is dropped as this
+was checked when ->graveyard was assigned, and it cannot be changed.
 
--- 
-~Randy
+Signed-off-by: NeilBrown <neil@brown.name>
+Link: https://patch.msgid.link/20260224222542.3458677-11-neilb@ownmail.net
+---
+ fs/cachefiles/namei.c | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+index 3af42ec78411..c464c72a51cb 100644
+--- a/fs/cachefiles/namei.c
++++ b/fs/cachefiles/namei.c
+@@ -309,7 +309,26 @@ int cachefiles_bury_object(struct cachefiles_cache *cach=
+e,
+ 	rd.flags =3D 0;
+ 	ret =3D start_renaming_dentry(&rd, 0, rep, &QSTR(nbuffer));
+ 	if (ret) {
+-		cachefiles_io_error(cache, "Cannot lock/lookup in graveyard");
++		/* Some errors aren't fatal */
++		if (ret =3D=3D -EXDEV)
++			/* double-lock failed */
++			return ret;
++		if (d_unhashed(rep) || rep->d_parent !=3D dir || IS_DEADDIR(d_inode(rep)))=
+ {
++			/* the entry was probably culled when we dropped the parent dir
++			 * lock */
++			_leave(" =3D 0 [culled?]");
++			return 0;
++		}
++		if (ret =3D=3D -EINVAL || ret =3D=3D -ENOTEMPTY) {
++			cachefiles_io_error(cache, "May not make directory loop");
++			return -EIO;
++		}
++		if (ret =3D=3D -ENOMEM) {
++			_leave(" =3D -ENOMEM");
++			return -ENOMEM;
++		}
++
++		cachefiles_io_error(cache, "Lookup error %d", ret);
+ 		return -EIO;
+ 	}
+=20
+--=20
+2.50.0.107.gf914562f5916.dirty
+
