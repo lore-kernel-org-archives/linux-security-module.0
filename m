@@ -1,53 +1,52 @@
-Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
+Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A2B25771;
-	Sun,  8 Mar 2026 09:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B24F2459DC
+	for <linux-security-module@vger.kernel.org>; Sun,  8 Mar 2026 11:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772961498; cv=none; b=Hz9jO0CLQxNcaPCWXjM6UyqA7WWbUb1uaNPt5b67rslrY48JhXgKsBgpSYdo8DrXpmCSholm3qLCTiTt66jQbPIwy1ZMnhymXutb8XXcZsRloF+KRFw0tGSf+pvYzfnhD09R3x4WVq6QQyV1iKfVJ6YFT02sCKTVj+F05ntlPJ0=
+	t=1772970617; cv=none; b=q6glFPPPQ1WmTF2T4fIXUgp8PtkoV4TmowXKDYsM/r0NVI0jFYkWEkIzS9eX1UsGioI9X1cR8NVJJmR4bXywZhIh3aarg1CGwETa1jEDw6qBl3P1XcMdJKcW9OL8O3QGxBy8EKC4ZYc2cZsp4YEAskWiKQOzDRbUWkenqLydfUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772961498; c=relaxed/simple;
-	bh=kVITkmu73zuBt8lAq/wExXmZyk2stvr6lP384AKd/38=;
+	s=arc-20240116; t=1772970617; c=relaxed/simple;
+	bh=wTyeXVWDNhYS0nMlprMcFDIIGEYZ1LbglAyYP/IocH0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bPk9acYGfW8nkHZaWm1DoUNQPc0qu05RLq9uFgQ89xUO6kPmqdoLlt96xMd13aR4kHDNj5STr3oQSm4sCrnN2gcWRkLw7Ntj0oY3qhMqo/fFrO5a2kewla9pcpxuWKL5Kp4/GUW7HAVKFB2kFv0plvXBiizurhr3niMjfpJyOMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=11j/Qpgu; arc=none smtp.client-ip=45.157.188.12
+	 Content-Type:Content-Disposition:In-Reply-To; b=bW5g/ND4PQVDHb44NoCJCsNhnOJu3Y0Pgeq84gRnTbs6vLHMx5uepvyXaeCz1y3r5/WI8i3VTq7KT8Wh5SeFstaFBPkvkkjDinf6e/I22lzA03Mtj9EQHCsjqSt8YQEXBzj5oY3JEmNYy27qLTnsRm8+jZ/dVxvm6q+B0s9NF+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=s7U9Bnao; arc=none smtp.client-ip=45.157.188.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="11j/Qpgu"
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fTF1D4h5CzDW6;
-	Sun,  8 Mar 2026 10:18:08 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="s7U9Bnao"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fTJNg55BxztY7;
+	Sun,  8 Mar 2026 12:50:11 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1772961488;
-	bh=m3bY+fg21cYB5Zj66R09EdmA2pmMqEpsA8Gd0HDjBns=;
+	s=20191114; t=1772970611;
+	bh=705PrSallxlC5zZc1BbtUx1uaJN7YQ+hTxMAbM4j5A0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=11j/Qpgu6MBFqiKMqGao0sejf2iX/yzq7R8Rcznz1IOLLIGZ4cNtrxIF3GC5gsBrK
-	 X2JzyzMd7F09ifZbffDYJ9mt7I0aIi0ZsEX6Uj1Va5+sCrxjmgI9sITYZyE2nCRMmf
-	 A6LnZGX+os+XX7dxLKInRXCgn3BTwOdcF5mQ6Uss=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fTF1C3bH0zBdD;
-	Sun,  8 Mar 2026 10:18:07 +0100 (CET)
-Date: Sun, 8 Mar 2026 10:18:04 +0100
+	b=s7U9Bnaoa/Nzy9zJlvjprQvps8iLm3oMevmC+oSBIQKI+HMAO/Rv9jv9Uu9eilHoE
+	 FoKDEiuMzjeuvSRzf9b8gg3OSIs0SeNK3yTXcgOiYRoHaDPBflCX3HVSqwjZwAsTeU
+	 U35dfGvx998T/0HKFgg02sbenJwWmBp8A8MyR7QI=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4fTJNf3jV7z7TN;
+	Sun,  8 Mar 2026 12:50:10 +0100 (CET)
+Date: Sun, 8 Mar 2026 12:50:06 +0100
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>, 
-	Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Jason Xing <kerneljasonxing@gmail.com>
-Cc: John Johansen <john.johansen@canonical.com>, 
-	Tingmao Wang <m@maowtm.org>, Justin Suess <utilityemal77@gmail.com>, 
-	Jann Horn <jannh@google.com>, linux-security-module@vger.kernel.org, 
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, Matthieu Buffet <matthieu@buffet.re>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, konstantin.meskhidze@huawei.com, 
-	Demi Marie Obenour <demiobenour@gmail.com>, Alyssa Ross <hi@alyssa.is>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, netdev@vger.kernel.org
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>, 
+	John Johansen <john.johansen@canonical.com>, Tingmao Wang <m@maowtm.org>, 
+	Justin Suess <utilityemal77@gmail.com>, Jann Horn <jannh@google.com>, 
+	linux-security-module@vger.kernel.org, Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, 
+	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	konstantin.meskhidze@huawei.com, Demi Marie Obenour <demiobenour@gmail.com>, 
+	Alyssa Ross <hi@alyssa.is>, Tahera Fahimi <fahimitahera@gmail.com>
 Subject: Re: [PATCH v5 2/9] landlock: Control pathname UNIX domain socket
  resolution by path
-Message-ID: <20260308.AiYoh5KooBei@digikod.net>
+Message-ID: <20260308.IexeiQuae7ee@digikod.net>
 References: <20260215105158.28132-1-gnoack3000@gmail.com>
  <20260215105158.28132-3-gnoack3000@gmail.com>
  <20260217.lievaS8eeng8@digikod.net>
- <20260220.82a8adda6f95@gnoack.org>
+ <20260219.IF4zee3Quo3j@digikod.net>
+ <aZcXSmhZRVcRCvum@google.com>
+ <20260307.aeth4weik2Ah@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -57,202 +56,282 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260220.82a8adda6f95@gnoack.org>
+In-Reply-To: <20260307.aeth4weik2Ah@digikod.net>
 X-Infomaniak-Routing: alpha
 
-On Fri, Feb 20, 2026 at 03:33:28PM +0100, Günther Noack wrote:
-> +netdev, we could use some advice on the locking approach in af_unix (see below)
-> 
-> On Wed, Feb 18, 2026 at 10:37:14AM +0100, Mickaël Salaün wrote:
-> > On Sun, Feb 15, 2026 at 11:51:50AM +0100, Günther Noack wrote:
-> > > diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> > > index f88fa1f68b77..3a8fc3af0d64 100644
-> > > --- a/include/uapi/linux/landlock.h
-> > > +++ b/include/uapi/linux/landlock.h
-> > > @@ -248,6 +248,15 @@ struct landlock_net_port_attr {
-> > >   *
-> > >   *   This access right is available since the fifth version of the Landlock
-> > >   *   ABI.
-> > > + * - %LANDLOCK_ACCESS_FS_RESOLVE_UNIX: Look up pathname UNIX domain sockets
-> > > + *   (:manpage:`unix(7)`).  On UNIX domain sockets, this restricts both calls to
-> > > + *   :manpage:`connect(2)` as well as calls to :manpage:`sendmsg(2)` with an
-> > > + *   explicit recipient address.
-> > > + *
-> > > + *   This access right only applies to connections to UNIX server sockets which
-> > > + *   were created outside of the newly created Landlock domain (e.g. from within
-> > > + *   a parent domain or from an unrestricted process).  Newly created UNIX
-> > > + *   servers within the same Landlock domain continue to be accessible.
+On Sun, Mar 08, 2026 at 10:09:52AM +0100, Mickaël Salaün wrote:
+> On Thu, Feb 19, 2026 at 02:59:38PM +0100, Günther Noack wrote:
+> > On Thu, Feb 19, 2026 at 10:45:44AM +0100, Mickaël Salaün wrote:
+> > > On Wed, Feb 18, 2026 at 10:37:16AM +0100, Mickaël Salaün wrote:
+> > > > On Sun, Feb 15, 2026 at 11:51:50AM +0100, Günther Noack wrote:
+> > > > > * Add a new access right LANDLOCK_ACCESS_FS_RESOLVE_UNIX, which
+> > > > >   controls the look up operations for named UNIX domain sockets.  The
+> > > > >   resolution happens during connect() and sendmsg() (depending on
+> > > > >   socket type).
+> > > > > * Hook into the path lookup in unix_find_bsd() in af_unix.c, using a
+> > > > >   LSM hook.  Make policy decisions based on the new access rights
+> > > > > * Increment the Landlock ABI version.
+> > > > > * Minor test adaptions to keep the tests working.
+> > > > > 
+> > > > > With this access right, access is granted if either of the following
+> > > > > conditions is met:
+> > > > > 
+> > > > > * The target socket's filesystem path was allow-listed using a
+> > > > >   LANDLOCK_RULE_PATH_BENEATH rule, *or*:
+> > > > > * The target socket was created in the same Landlock domain in which
+> > > > >   LANDLOCK_ACCESS_FS_RESOLVE_UNIX was restricted.
+> > > > > 
+> > > > > In case of a denial, connect() and sendmsg() return EACCES, which is
+> > > > > the same error as it is returned if the user does not have the write
+> > > > > bit in the traditional Unix file system permissions of that file.
+> > > > > 
+> > > > > This feature was created with substantial discussion and input from
+> > > > > Justin Suess, Tingmao Wang and Mickaël Salaün.
+> > > > > 
+> > > > > Cc: Tingmao Wang <m@maowtm.org>
+> > > > > Cc: Justin Suess <utilityemal77@gmail.com>
+> > > > > Cc: Mickaël Salaün <mic@digikod.net>
+> > > > > Suggested-by: Jann Horn <jannh@google.com>
+> > > > > Link: https://github.com/landlock-lsm/linux/issues/36
+> > > > > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> > > > > ---
+> > > > >  include/uapi/linux/landlock.h                |  10 ++
+> > > > >  security/landlock/access.h                   |  11 +-
+> > > > >  security/landlock/audit.c                    |   1 +
+> > > > >  security/landlock/fs.c                       | 102 ++++++++++++++++++-
+> > > > >  security/landlock/limits.h                   |   2 +-
+> > > > >  security/landlock/syscalls.c                 |   2 +-
+> > > > >  tools/testing/selftests/landlock/base_test.c |   2 +-
+> > > > >  tools/testing/selftests/landlock/fs_test.c   |   5 +-
+> > > > >  8 files changed, 128 insertions(+), 7 deletions(-)
+> > > 
+> > > > > index 60ff217ab95b..8d0edf94037d 100644
+> > > > > --- a/security/landlock/audit.c
+> > > > > +++ b/security/landlock/audit.c
+> > > > > @@ -37,6 +37,7 @@ static const char *const fs_access_strings[] = {
+> > > > >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_REFER)] = "fs.refer",
+> > > > >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_TRUNCATE)] = "fs.truncate",
+> > > > >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_IOCTL_DEV)] = "fs.ioctl_dev",
+> > > > > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_RESOLVE_UNIX)] = "fs.resolve_unix",
+> > > > >  };
+> > > > >  
+> > > > >  static_assert(ARRAY_SIZE(fs_access_strings) == LANDLOCK_NUM_ACCESS_FS);
+> > > > > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> > > > > index e764470f588c..76035c6f2bf1 100644
+> > > > > --- a/security/landlock/fs.c
+> > > > > +++ b/security/landlock/fs.c
+> > > > > @@ -27,6 +27,7 @@
+> > > > >  #include <linux/lsm_hooks.h>
+> > > > >  #include <linux/mount.h>
+> > > > >  #include <linux/namei.h>
+> > > > > +#include <linux/net.h>
+> > > > >  #include <linux/path.h>
+> > > > >  #include <linux/pid.h>
+> > > > >  #include <linux/rcupdate.h>
+> > > > > @@ -314,7 +315,8 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
+> > > > >  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+> > > > >  	LANDLOCK_ACCESS_FS_READ_FILE | \
+> > > > >  	LANDLOCK_ACCESS_FS_TRUNCATE | \
+> > > > > -	LANDLOCK_ACCESS_FS_IOCTL_DEV)
+> > > > > +	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
+> > > > > +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX)
+> > > > >  /* clang-format on */
+> > > > >  
+> > > > >  /*
+> > > > > @@ -1561,6 +1563,103 @@ static int hook_path_truncate(const struct path *const path)
+> > > > >  	return current_check_access_path(path, LANDLOCK_ACCESS_FS_TRUNCATE);
+> > > > >  }
+> > > > >  
+> > > > > +/**
+> > > > > + * unmask_scoped_access - Remove access right bits in @masks in all layers
+> > > > > + *                        where @client and @server have the same domain
+> > > > > + *
+> > > > > + * This does the same as domain_is_scoped(), but unmasks bits in @masks.
+> > > > > + * It can not return early as domain_is_scoped() does.
+> > > 
+> > > Why can't we use the same logic as for other scopes?
 > > 
-> > It might help to add a reference to the explicit scope mechanism.
+> > The other scopes, for which this is implemented in domain_is_scoped(),
+> > do not need to do this layer-by-layer.
 > > 
-> > Please squash patch 9/9 into this one and also add a reference here to
-> > the rationale described in security/landlock.rst
-> 
-> Sounds good, will do.
-> 
-> 
-> > > +static void unmask_scoped_access(const struct landlock_ruleset *const client,
-> > > +				 const struct landlock_ruleset *const server,
-> > > +				 struct layer_access_masks *const masks,
-> > > +				 const access_mask_t access)
+> > I have to admit, in my initial implementation, I was using
+> > domain_is_scoped() directly, and the logic at the end of the hook was
+> > roughly:
 > > 
-> > This helper should be moved to task.c and factored out with
-> > domain_is_scoped().  This should be a dedicated patch.
-> 
-> (already discussed in another follow-up mail)
-> 
-> 
-> > > +static int hook_unix_find(const struct path *const path, struct sock *other,
-> > > +			  int flags)
-> > > +{
-> > > +	const struct landlock_ruleset *dom_other;
-> > > +	const struct landlock_cred_security *subject;
-> > > +	struct layer_access_masks layer_masks;
-> > > +	struct landlock_request request = {};
-> > > +	static const struct access_masks fs_resolve_unix = {
-> > > +		.fs = LANDLOCK_ACCESS_FS_RESOLVE_UNIX,
-> > > +	};
-> > > +
-> > > +	/* Lookup for the purpose of saving coredumps is OK. */
-> > > +	if (unlikely(flags & SOCK_COREDUMP))
-> > > +		return 0;
-> > > +
-> > > +	/* Access to the same (or a lower) domain is always allowed. */
-> > > +	subject = landlock_get_applicable_subject(current_cred(),
-> > > +						  fs_resolve_unix, NULL);
-> > > +
-> > > +	if (!subject)
-> > > +		return 0;
-> > > +
-> > > +	if (!landlock_init_layer_masks(subject->domain, fs_resolve_unix.fs,
-> > > +				       &layer_masks, LANDLOCK_KEY_INODE))
-> > > +		return 0;
-> > > +
-> > > +	/* Checks the layers in which we are connecting within the same domain. */
-> > > +	dom_other = landlock_cred(other->sk_socket->file->f_cred)->domain;
+> >    --- BUGGY CODE START ---
+> >        // ...
+> >        
+> >        if (!domain_is_scoped(..., ..., LANDLOCK_ACCESS_FS_RESOLVE_UNIX))
+> >            return 0;  /* permitted */
 > > 
-> > We need to call unix_state_lock(other) before reading it, and check for
-> > SOCK_DEAD, and check sk_socket before dereferencing it.  Indeed,
-> > the socket can be make orphan (see unix_dgram_sendmsg and
-> > unix_stream_connect).  I *think* a socket cannot be "resurrected" or
-> > recycled once dead, so we may assume there is no race condition wrt
-> > dom_other, but please double check.  This lockless call should be made
-> > clear in the LSM hook.  It's OK to not lock the socket before
-> > security_unix_find() (1) because no LSM might implement and (2) they
-> > might not need to lock the socket (e.g. if the caller is not sandboxed).
+> >        return current_check_access_path(path, LANDLOCK_ACCESS_FS_RESOLVE_UNIX)
+> >    }
+> >    --- BUGGY CODE END ---
 > > 
-> > The updated code should look something like this:
+> > Unfortunately, that is a logic error though -- it implements the formula
 > > 
-> > unix_state_unlock(other);
-
-unix_state_lock(other) of course...
-
-> > if (unlikely(sock_flag(other, SOCK_DEAD) || !other->sk_socket)) {
-> > 	unix_state_unlock(other);
-> > 	return 0;
-> > }
+> >    Access granted if:
+> >    (FOR-ALL l ∈ layers scoped-access-ok(l)) OR (FOR-ALL l ∈ layers path-access-ok(l))     (WRONG!)
 > > 
-> > dom_other = landlock_cred(other->sk_socket->file->f_cred)->domain;
-> > unix_state_unlock(other);
+> > but the formula we want is:
+> > 
+> >    Access granted if:
+> >    FOR-ALL l ∈ layers (scoped-access-ok(l) OR path-access-ok(l))     (CORRECT!)
 > 
-> Thank you for spotting the locking concern!
+> It is worth it to add this explanation to the unmask_scoped_access()
+> description, also pointing to the test that check this case.
 > 
-> @anyone from netdev, could you please advise on the correct locking
-> approach here?
+> > 
+> > This makes a difference in the case where (pseudocode):
+> > 
+> >    1. landlock_restrict_self(RESOLVE_UNIX)  // d1
+> >    2. create_unix_server("./sock")
+> >    3. landlock_restrict_self(RESOLVE_UNIX, rule=Allow(".", RESOLVE_UNIX))  // d2
+> >    4. connect_unix("./sock")
+> > 
+> >    ,------------------------------------------------d1--,
+> >    |                                                    |
+> >    |    ./sock server                                   |
+> >    |       ^                                            |
+> >    |       |                                            |
+> >    |  ,------------------------------------------d2--,  |
+> >    |  |    |                                         |  |
+> >    |  |  client                                      |  |
+> >    |  |                                              |  |
+> >    |  '----------------------------------------------'  |
+> >    |                                                    |
+> >    '----------------------------------------------------'
+> > 
+> > (BTW, this scenario is covered in the selftests, that is why there is
+> > a variant of these selftests where instead of applying "no domain", we
+> > apply a domain with an exception rule like in step 3 in the pseudocode
+> > above.  Applying that domain should behave the same as applying no
+> > domain at all.)
+> > 
+> > Intuitively, it is clear that the access should be granted:
+> > 
+> >   - d1 does not restrict access to the server,
+> >     because the socket was created within d1 itself.
+> >   - d2 does not restrict access to the server,
+> >     because it has a rule to allow it
+> > 
+> > But the "buggy code" logic above comes to a different conclusion:
+> > 
+> >   - the domain_is_scoped() check denies the access, because the server
+> >     is in a more privileged domain relative to the client domain.
+> >   - the current_check_access_path() check denies the access as well,
+> >     because the socket's path is not allow-listed in d1.
+> > 
+> > In the 'intuitive' reasoning above, we are checking d1 and d2
+> > independently of each other.  While Landlock is not implemented like
+> > that internally, we need to stay consistent with it so that domains
+> > compose correctly.  The way to do that is to track is access check
+> > results on a per-layer basis again, and that is why
+> > unmask_scoped_access() uses a layer mask for tracking.  The original
+> > domain_is_scoped() does not use a layer mask, but that also means that
+> > it can return early in some scenarios -- if for any of the relevant
+> > layer depths, the client and server domains are not the same, it exits
+> > early with failure because it's overall not fulfillable any more.  In
+> > the RESOLVE_UNIX case though, we need to remember in which layers we
+> > failed (both high an low ones), because these layers can still be
+> > fulfilled with a PATH_BENEATH rule later.
+> > 
+> > Summary:
+> > 
+> > Option 1: We *can* unify this if you want.  It just might come at a
+> > small performance penalty for domain_is_scoped(), which now uses the
+> > larger layer mask data structure and can't do the same early returns
+> > any more as before.
+> > 
+> > Option 2: Alternatively, if we move the two functions into the same
+> > module, we can keep them separate but still test them against each
+> > other to make sure they are in-line:
+> > 
+> > This invocation should return true...
+> > 
+> >   domain_is_scoped(cli, srv, access)
+> > 
+> > ...in the exactly the same situations where this invocation leaves any
+> > bits set in layer_masks:
+> > 
+> >   landlock_init_layer_masks(dom, access, &layer_masks, LL_KEY_INODE);
+> >   unmask_scoped_access(cli, srv, &layer_masks, access);
+> > 
+> > What do you prefer?
 > 
-> * Do we need ot check SOCK_DEAD?
+> I was thinking about factoring out domain_is_scoped() with
+> unmask_scoped_access() but, after some tests, it is not worth it.  Your
+> approach is simple and good.
 > 
->   You are saying that we need to do that, but it's not clear to me
->   why.
+> > 
+> > 
+> > > > > + *
+> > > > > + * @client: Client domain
+> > > > > + * @server: Server domain
+> > > > > + * @masks: Layer access masks to unmask
+> > > > > + * @access: Access bit that controls scoping
+> > > > > + */
+> > > > > +static void unmask_scoped_access(const struct landlock_ruleset *const client,
+> > > > > +				 const struct landlock_ruleset *const server,
+> > > > > +				 struct layer_access_masks *const masks,
+> > > > > +				 const access_mask_t access)
+> > > > 
+> > > > This helper should be moved to task.c and factored out with
+> > > > domain_is_scoped().  This should be a dedicated patch.
+> > > 
+> > > Well, if domain_is_scoped() can be refactored and made generic, it would
+> > > make more sense to move it to domain.c
+> > > 
+> > > > 
+> > > > > +{
+> > > > > +	int client_layer, server_layer;
+> > > > > +	const struct landlock_hierarchy *client_walker, *server_walker;
+> > > > > +
+> > > > > +	if (WARN_ON_ONCE(!client))
+> > > > > +		return; /* should not happen */
 > 
->   If you look at the places where unix_find_other() is called in
->   af_unix.c, then you'll find that all of them check for SOCK_DEAD and
->   then restart from unix_find_other() if they do actually discover
->   that the socket is dead.  I think that this is catching this race
->   condition scenario:
+> Please no comment after ";"
 > 
->   * a server socket exists and is alive
->   * A client connects: af_unix.c's unix_stream_connect() calls
->     unix_find_other() and finds the server socket...
->   * (Concurrently): The server closes the socket and enters
->     unix_release_sock().  This function:
->     1. disassociates the server sock from the named socket inode
->        number in the hash table (=> future unix_find_other() calls
->        will fail).
->     2. calls sock_orphan(), which sets SOCK_DEAD.
->   * ...(client connection resuming): unix_stream_connect() continues,
->     grabs the unix_state_lock(), which apparently protects everything
->     here, checks that the socket is not dead - and discovers that it
->     IS suddenly dead.  This was not supposed to happen.  The code
->     recovers from that by retrying everything starting with the
->     unix_find_other() call.  From unix_release_sock(), we know that
->     the inode is not associated with the sock any more -- so the
->     unix_find_socket_by_inode() call should be failing on the next
->     attempt.
+> > > > > +
+> > > > > +	if (!server)
+> > > > > +		return; /* server has no Landlock domain; nothing to clear */
+> > > > > +
+> > > > > +	client_layer = client->num_layers - 1;
+> > > > > +	client_walker = client->hierarchy;
+> > > > > +	server_layer = server->num_layers - 1;
+> > > > > +	server_walker = server->hierarchy;
+> > > > > +
+> > > > > +	/*
+> > > > > +	 * Clears the access bits at all layers where the client domain is the
+> > > > > +	 * same as the server domain.  We start the walk at min(client_layer,
+> > > > > +	 * server_layer).  The layer bits until there can not be cleared because
+> > > > > +	 * either the client or the server domain is missing.
+> > > > > +	 */
+> > > > > +	for (; client_layer > server_layer; client_layer--)
+> > > > > +		client_walker = client_walker->parent;
+> > > > > +
+> > > > > +	for (; server_layer > client_layer; server_layer--)
+> > > > > +		server_walker = server_walker->parent;
+> > > > > +
+> > > > > +	for (; client_layer >= 0; client_layer--) {
+> > > > > +		if (masks->access[client_layer] & access &&
+> > > > > +		    client_walker == server_walker)
 > 
->   (This works with unix_dgram_connect() and unix_dgram_sendmsg() as
->   well.)
-> 
->   The comments next to the SOCK_DEAD checks are also suggesting this.
-> 
-> * What lock to use
-> 
->   I am having trouble reasoning about what lock is used for what in
->   this code.
+> I'd prefer to first check client_walker == server_walker and then the
+> access.  My main concern is that only one bit of access matching
+> masks->access[client_layer] clear all the access request bits.  In
+> practice there is only one, for now, but this code should be more strict
+> by following a defensive approach.
 
-It's not clear to me neither, and it looks like it's not consistent
-across protocols.
+> 
+> > > > > +			masks->access[client_layer] &= ~access;
 
->   
->   Is it possible that the lock protecting ->sk_socket is the
->   ->sk_callback_lock, not the unix_state_lock()?  The only callers to
->   sk_set_socket are either sock_orphan/sock_graft (both grabbing
->   sk_callback_lock), or they are creating new struct sock objects that
->   they own exclusively, and don't need locks yet.
-> 
->   Admittedly, in af_unix.c, sock_orphan() and sock_graft() only get
->   called in contexts where the unix_state_lock() is held, so it would
->   probably work as well to lock that, but it is maybe a more
->   fine-grained approach to use sk_callback_lock?
-> 
-> 
-> So... how about a scheme where we only check for ->sk_socket not being
-> NULL:
-> 
-> read_lock_bh(&other->sk_callback_lock);
-> struct sock *other_sk = other->sk_socket;
-> if (!other_sk) {
-> 	read_unlock_bh(&other->sk_callback_lock);
-> 	return 0;
-> }
-> /* XXX double check whether we need a lock here too */
-> struct file *file = other_sk->file;
-> if (!other_file) {
-> 	read_unlock_bh(&other->sk_callback_lock);
-> 	return 0;
-> }
-> read_unlock_bh(&other->sk_callback_lock);
-> 
-> If this fails, that would in my understanding also be because the
-> socket has died after the path lookup.  We'd then return 0 (success),
-> because we know that the surrounding SOCK_DEAD logic will repeat
-> everything starting from the path lookup operation (this time likely
-> failing with ECONNREFUSED, but maybe also with a success, if another
-> server process was quick enough).
-> 
-> Does this sound reasonable?
+Actually, why not removing the access argument and just reset
+masks->access[client_layer]?  The doc would need some updates.
 
-Actually, since commit 983512f3a87f ("net: Drop the lock in
-skb_may_tx_timestamp()"), we can just use RCU + READ_ONCE(sk_socket) +
-READ_ONCE(file).  The socket and file should only be freed after the RCU
-grace periode.  As a safeguard, this commit should be a Depends-on.
-
-However, it is safer to return -ECONNREFULED when sk_socket or file are
-NULL.
-
-I would be good to hear from netdev folks though.
-
-TIL, there is an LSM hook for sock_graft().
-
-> –Günther
-> 
+> > > > > +
+> > > > > +		client_walker = client_walker->parent;
+> > > > > +		server_walker = server_walker->parent;
+> > > > > +	}
+> > > > > +}
+> > 
