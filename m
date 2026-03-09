@@ -1,314 +1,176 @@
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49B52367B5
-	for <linux-security-module@vger.kernel.org>; Mon,  9 Mar 2026 17:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EEF17A2F6;
+	Mon,  9 Mar 2026 17:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773078083; cv=none; b=HiostgyGLrf552zJufyguD6LaQqnppPwPX59ZToIMUHiKd2LTNox8DBkXvfyhVWS+znzQlldpcN5FbwX3rsAPHTDNRuMZhxKkp7DdyZP5DMNqnsP+vshRnPh8yc5i6aBsfXIi6kFeQVYg/0Yi1XoWAB4kZJ6XNs8OgHq/Wgoj8Y=
+	t=1773078473; cv=none; b=CF9VK1oaAMIbaWiuSnS9hQgMQzv8hT438J91V3anP0ECFrx2agd/pEzffGJUuF6EgCE5YSrjuBwkYg/q2/eoiYRS98hRv+wR4OPBXkzcWJjcQY6Rm6a+lK1YtJtuCgHAxiyeSp6TzMMf6MFaVuAHfsHyTMtDl3RSOQAwLbRNoME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773078083; c=relaxed/simple;
-	bh=vvnhLC4v60DGIVE4hzcQutnZiSAO4gCwZEuDKVxOIbc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DwP/J3xSNzkZ5GIkP/g7cmZlhBWeLtLW+HooTIyLepPeXvd5EVd/F+hBIqNTcTxmEBnw4VSppPy9/I6OfK9nQ+0si3w2NfW/Zum/hW4iUq8XDn/flM+iu6bp/cOvGQ3PFXIC4mscpBJng/dwin1P8iesvV15FLA6mIbX4s+x/RY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=YAEJWQKc; arc=none smtp.client-ip=185.125.25.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1773078473; c=relaxed/simple;
+	bh=lgfykUqPjgDxE5127M/CRcYsCPDM1g1nEUgEbLyv9aM=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=n+oWdhN4zbY+/S7BMvOE1YbnH6HnEPGCZBzMVUYb1D3aK5roxJOn2dplf/BUwbOaUX55fxzzKNp5FlTabaaUKtJcw8LZXJ54yw+tVMborGfcdvVEYWqTYbucLStTBRXhhCggc5T3WI27PQuJuO3vEf8GIOZAe+wVNJDx9/DV2nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=O46FAzGv; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="YAEJWQKc"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fV40J3R2qzCTK;
-	Mon,  9 Mar 2026 18:35:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1773077712;
-	bh=y5OX+9i3BOttrCeyJOOG2nIvNZNXt9kGM/gn72Ng6Is=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YAEJWQKcfxynqTjw7m5v7jxQI8wNPh1YikK1F8uakg1EeZRSxUndoxxzRZaQMhJmL
-	 qxlGpI5oTw0sMMqnAaQcN2165Gr4S9pDuhXEzh2eKn3QtZSymkYCwxCkQuciTRB81r
-	 rc9EamYPpiAHPD0qjYcro+ZJMT8nCaV+2lP1mfJ4=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4fV40J0S2SzTN4;
-	Mon,  9 Mar 2026 18:35:12 +0100 (CET)
-Date: Mon, 9 Mar 2026 18:35:10 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v1 4/4] landlock: Fix formatting in tsync.c
-Message-ID: <20260309.oXoob3Eghuyo@digikod.net>
-References: <20260304193134.250495-1-mic@digikod.net>
- <20260304193134.250495-4-mic@digikod.net>
- <20260306.73159b8566b4@gnoack.org>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="O46FAzGv"
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 629F7to91275175;
+	Mon, 9 Mar 2026 17:47:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=k/HLlQ
+	fqfXVQs+Pamcq/LePEaOpgjPTSxe75E2LQHmw=; b=O46FAzGvsE2YmZ6439UqTH
+	f//oqGS2NuJoB8xY2lcg12hMD2aNtQ4ID9XxubauhUUNB5XWruUCNbrIED9U/sy2
+	gQV+VyjgSVjVmAG4Kam45dqeg/cEF7wexHdqP7q6amhZ86wA+YW4+a7JvMwqNGHX
+	K+CR1szr/+ThnSfgYQtyXM8JHrNaKlVVJxj2UpO9B9nfw7GY0lpUaQgYj3FXUBhW
+	hCYFfYxjosdklAtClo/CAOyDK0Kz8Ak4d419uQhCeU81c/npAiEGpAq1IaGDP95R
+	6czGdohxtpKDTNPNp0U2JdVL6ApX0w6YBruEMYsSerjEZYuw8x9syT1jr4FLueng
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4crcvr7huu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Mar 2026 17:47:15 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 629FqYI5015725;
+	Mon, 9 Mar 2026 17:47:14 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4cs121wp59-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Mar 2026 17:47:14 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 629HlDVJ60162522
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 9 Mar 2026 17:47:13 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5E5775805A;
+	Mon,  9 Mar 2026 17:47:13 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4442758054;
+	Mon,  9 Mar 2026 17:47:09 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.72.80])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  9 Mar 2026 17:47:09 +0000 (GMT)
+Message-ID: <05b5d55c49b5a1bbc43a5315e3c84872e7e634b3.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 00/12] vfs: change inode->i_ino from unsigned long
+ to u64
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+        fsverity@lists.linux.dev, linux-mm@kvack.org, netfs@lists.linux.dev,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-nilfs@vger.kernel.org,
+        v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+        autofs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+        linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+        devel@lists.orangefs.org, linux-unionfs@vger.kernel.org,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        netdev@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-hams@vger.kernel.org, linux-x25@vger.kernel.org,
+        audit@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-can@vger.kernel.org, linux-sctp@vger.kernel.org,
+        bpf@vger.kernel.org
+In-Reply-To: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
+References: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 09 Mar 2026 13:47:08 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260306.73159b8566b4@gnoack.org>
-X-Infomaniak-Routing: alpha
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA5MDE1OCBTYWx0ZWRfX4MWriKER56jj
+ FHMwPduc6Ya80ytljBjcJCflJZJQpLHypO90MyIljV3F+YGnUEWqD2zkjjI4tBlT1Isyk88nQqD
+ Bxsi6y6lZ0wNsui73O82C4s92lOeLYZxoPRW/EZDUOjQSMymQTWQJKaIWTXxL4ETx9VAdofRsxH
+ 1pntH+n6NhQwxXW3M12fPcKiL5ADcuXldDKiDw4m+7ix+qwvBlo3nspOLghaJ2LE6mxrOiKA5Lh
+ GMTERNprgwZauxVcqC/p8dLI9p6C/LOkJmscaf6mdPih3AOPO2LV5vS62FSOrim10LguG5ezUsF
+ rdAkmDzMNpwcB3l0gkLlsufFyGUR7bS4yrPNzNHAbiSDJiUdpsUzX7AZ0qjMDEeQhvmbO0coQJz
+ 4Dc1QnM6RvCUkwZGaB0uRcWv6crLl/+68sTOTDKRYLJY7AFXUTAN+lczmFotg9pSQAz65D+NPWn
+ mWAaXfwB8yIBs0IZagQ==
+X-Proofpoint-GUID: k-5kS7gQwSwb7EbHSrKEnUBgm0EngagK
+X-Proofpoint-ORIG-GUID: k-5kS7gQwSwb7EbHSrKEnUBgm0EngagK
+X-Authority-Analysis: v=2.4 cv=QoFTHFyd c=1 sm=1 tr=0 ts=69af07a3 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=RzCfie-kr_QcCd8fBx8p:22 a=VwQbUJbxAAAA:8
+ a=x61hcHDQ_TxU8J0rBBAA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-09_04,2026-03-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 spamscore=0 priorityscore=1501 phishscore=0
+ lowpriorityscore=0 adultscore=0 clxscore=1011 malwarescore=0 suspectscore=0
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2602130000
+ definitions=main-2603090158
 
-On Fri, Mar 06, 2026 at 08:13:59AM +0100, Günther Noack wrote:
-> On Wed, Mar 04, 2026 at 08:31:27PM +0100, Mickaël Salaün wrote:
-> > Fix comment formatting in tsync.c to fit in 80 columns.
-> > 
-> > Cc: Günther Noack <gnoack@google.com>
-> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > ---
-> > 
-> > My previous squashed fix was wrong.
-> > ---
-> >  security/landlock/tsync.c | 121 +++++++++++++++++++++-----------------
-> >  1 file changed, 66 insertions(+), 55 deletions(-)
-> > 
-> > diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
-> > index 359aecbb1e4b..50445ae167dd 100644
-> > --- a/security/landlock/tsync.c
-> > +++ b/security/landlock/tsync.c
-> > @@ -85,12 +85,14 @@ static void restrict_one_thread(struct tsync_shared_context *ctx)
-> >  		/*
-> >  		 * Switch out old_cred with new_cred, if possible.
-> >  		 *
-> > -		 * In the common case, where all threads initially point to the same
-> > -		 * struct cred, this optimization avoids creating separate redundant
-> > -		 * credentials objects for each, which would all have the same contents.
-> > +		 * In the common case, where all threads initially point to the
-> > +		 * same struct cred, this optimization avoids creating separate
-> > +		 * redundant credentials objects for each, which would all have
-> > +		 * the same contents.
-> >  		 *
-> > -		 * Note: We are intentionally dropping the const qualifier here, because
-> > -		 * it is required by commit_creds() and abort_creds().
-> > +		 * Note: We are intentionally dropping the const qualifier
-> > +		 * here, because it is required by commit_creds() and
-> > +		 * abort_creds().
-> >  		 */
-> >  		cred = (struct cred *)get_cred(ctx->new_cred);
-> >  	} else {
-> > @@ -101,8 +103,8 @@ static void restrict_one_thread(struct tsync_shared_context *ctx)
-> >  			atomic_set(&ctx->preparation_error, -ENOMEM);
-> >  
-> >  			/*
-> > -			 * Even on error, we need to adhere to the protocol and coordinate
-> > -			 * with concurrently running invocations.
-> > +			 * Even on error, we need to adhere to the protocol and
-> > +			 * coordinate with concurrently running invocations.
-> >  			 */
-> >  			if (atomic_dec_return(&ctx->num_preparing) == 0)
-> >  				complete_all(&ctx->all_prepared);
-> > @@ -135,9 +137,9 @@ static void restrict_one_thread(struct tsync_shared_context *ctx)
-> >  	}
-> >  
-> >  	/*
-> > -	 * Make sure that all sibling tasks fulfill the no_new_privs prerequisite.
-> > -	 * (This is in line with Seccomp's SECCOMP_FILTER_FLAG_TSYNC logic in
-> > -	 * kernel/seccomp.c)
-> > +	 * Make sure that all sibling tasks fulfill the no_new_privs
-> > +	 * prerequisite.  (This is in line with Seccomp's
-> > +	 * SECCOMP_FILTER_FLAG_TSYNC logic in kernel/seccomp.c)
-> >  	 */
-> >  	if (ctx->set_no_new_privs)
-> >  		task_set_no_new_privs(current);
-> > @@ -221,16 +223,17 @@ static void tsync_works_trim(struct tsync_works *s)
-> >  	ctx = s->works[s->size - 1];
-> >  
-> >  	/*
-> > -	 * For consistency, remove the task from ctx so that it does not look like
-> > -	 * we handed it a task_work.
-> > +	 * For consistency, remove the task from ctx so that it does not look
-> > +	 * like we handed it a task_work.
-> >  	 */
-> >  	put_task_struct(ctx->task);
-> >  	*ctx = (typeof(*ctx)){};
-> >  
-> >  	/*
-> > -	 * Cancel the tsync_works_provide() change to recycle the reserved memory
-> > -	 * for the next thread, if any.  This also ensures that cancel_tsync_works()
-> > -	 * and tsync_works_release() do not see any NULL task pointers.
-> > +	 * Cancel the tsync_works_provide() change to recycle the reserved
-> > +	 * memory for the next thread, if any.  This also ensures that
-> > +	 * cancel_tsync_works() and tsync_works_release() do not see any NULL
-> > +	 * task pointers.
-> >  	 */
-> >  	s->size--;
-> >  }
-> > @@ -388,17 +391,17 @@ static bool schedule_task_work(struct tsync_works *works,
-> >  			continue;
-> >  
-> >  		/*
-> > -		 * We found a sibling thread that is not doing its task_work yet, and
-> > -		 * which might spawn new threads before our task work runs, so we need
-> > -		 * at least one more round in the outer loop.
-> > +		 * We found a sibling thread that is not doing its task_work
-> > +		 * yet, and which might spawn new threads before our task work
-> > +		 * runs, so we need at least one more round in the outer loop.
-> >  		 */
-> >  		found_more_threads = true;
-> >  
-> >  		ctx = tsync_works_provide(works, thread);
-> >  		if (!ctx) {
-> >  			/*
-> > -			 * We ran out of preallocated contexts -- we need to try again with
-> > -			 * this thread at a later time!
-> > +			 * We ran out of preallocated contexts -- we need to
-> > +			 * try again with this thread at a later time!
-> >  			 * found_more_threads is already true at this point.
-> >  			 */
-> >  			break;
-> > @@ -413,10 +416,10 @@ static bool schedule_task_work(struct tsync_works *works,
-> >  		err = task_work_add(thread, &ctx->work, TWA_SIGNAL);
-> >  		if (unlikely(err)) {
-> >  			/*
-> > -			 * task_work_add() only fails if the task is about to exit.  We
-> > -			 * checked that earlier, but it can happen as a race.  Resume
-> > -			 * without setting an error, as the task is probably gone in the
-> > -			 * next loop iteration.
-> > +			 * task_work_add() only fails if the task is about to
-> > +			 * exit.  We checked that earlier, but it can happen as
-> > +			 * a race.  Resume without setting an error, as the
-> > +			 * task is probably gone in the next loop iteration.
-> >  			 */
-> >  			tsync_works_trim(works);
-> >  
-> > @@ -497,24 +500,25 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
-> >  	 *    After this barrier is reached, it's safe to read
-> >  	 *    shared_ctx.preparation_error.
-> >  	 *
-> > -	 * 4) reads shared_ctx.preparation_error and then either does commit_creds()
-> > -	 *    or abort_creds().
-> > +	 * 4) reads shared_ctx.preparation_error and then either does
-> > +	 *    commit_creds() or abort_creds().
-> >  	 *
-> >  	 * 5) signals that it's done altogether (barrier synchronization
-> >  	 *    "all_finished")
-> >  	 *
-> > -	 * Unlike seccomp, which modifies sibling tasks directly, we do not need to
-> > -	 * acquire the cred_guard_mutex and sighand->siglock:
-> > +	 * Unlike seccomp, which modifies sibling tasks directly, we do not
-> > +	 * need to acquire the cred_guard_mutex and sighand->siglock:
-> >  	 *
-> > -	 * - As in our case, all threads are themselves exchanging their own struct
-> > -	 *   cred through the credentials API, no locks are needed for that.
-> > +	 * - As in our case, all threads are themselves exchanging their own
-> > +	 *   struct cred through the credentials API, no locks are needed for
-> > +	 *   that.
-> >  	 * - Our for_each_thread() loops are protected by RCU.
-> > -	 * - We do not acquire a lock to keep the list of sibling threads stable
-> > -	 *   between our for_each_thread loops.  If the list of available sibling
-> > -	 *   threads changes between these for_each_thread loops, we make up for
-> > -	 *   that by continuing to look for threads until they are all discovered
-> > -	 *   and have entered their task_work, where they are unable to spawn new
-> > -	 *   threads.
-> > +	 * - We do not acquire a lock to keep the list of sibling threads
-> > +	 *   stable between our for_each_thread loops.  If the list of
-> > +	 *   available sibling threads changes between these for_each_thread
-> > +	 *   loops, we make up for that by continuing to look for threads until
-> > +	 *   they are all discovered and have entered their task_work, where
-> > +	 *   they are unable to spawn new threads.
-> >  	 */
-> >  	do {
-> >  		/* In RCU read-lock, count the threads we need. */
-> > @@ -531,43 +535,50 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
-> >  		}
-> >  
-> >  		/*
-> > -		 * The "all_prepared" barrier is used locally to the loop body, this use
-> > -		 * of for_each_thread().  We can reset it on each loop iteration because
-> > -		 * all previous loop iterations are done with it already.
-> > +		 * The "all_prepared" barrier is used locally to the loop body,
-> > +		 * this use of for_each_thread().  We can reset it on each loop
-> > +		 * iteration because all previous loop iterations are done with
-> > +		 * it already.
-> >  		 *
-> > -		 * num_preparing is initialized to 1 so that the counter can not go to 0
-> > -		 * and mark the completion as done before all task works are registered.
-> > -		 * We decrement it at the end of the loop body.
-> > +		 * num_preparing is initialized to 1 so that the counter can
-> > +		 * not go to 0 and mark the completion as done before all task
-> > +		 * works are registered.  We decrement it at the end of the
-> > +		 * loop body.
-> >  		 */
-> >  		atomic_set(&shared_ctx.num_preparing, 1);
-> >  		reinit_completion(&shared_ctx.all_prepared);
-> >  
-> >  		/*
-> > -		 * In RCU read-lock, schedule task work on newly discovered sibling
-> > -		 * tasks.
-> > +		 * In RCU read-lock, schedule task work on newly discovered
-> > +		 * sibling tasks.
-> >  		 */
-> >  		found_more_threads = schedule_task_work(&works, &shared_ctx);
-> >  
-> >  		/*
-> > -		 * Decrement num_preparing for current, to undo that we initialized it
-> > -		 * to 1 a few lines above.
-> > +		 * Decrement num_preparing for current, to undo that we
-> > +		 * initialized it to 1 a few lines above.
-> >  		 */
-> >  		if (atomic_dec_return(&shared_ctx.num_preparing) > 0) {
-> >  			if (wait_for_completion_interruptible(
-> >  				    &shared_ctx.all_prepared)) {
-> > -				/* In case of interruption, we need to retry the system call. */
-> > +				/*
-> > +				 * In case of interruption, we need to retry
-> > +				 * the system call.
-> > +				 */
-> >  				atomic_set(&shared_ctx.preparation_error,
-> >  					   -ERESTARTNOINTR);
-> >  
-> >  				/*
-> > -				 * Cancel task works for tasks that did not start running yet,
-> > -				 * and decrement all_prepared and num_unfinished accordingly.
-> > +				 * Cancel task works for tasks that did not
-> > +				 * start running yet, and decrement
-> > +				 * all_prepared and num_unfinished accordingly.
-> >  				 */
-> >  				cancel_tsync_works(&works, &shared_ctx);
-> >  
-> >  				/*
-> > -				 * The remaining task works have started running, so waiting for
-> > -				 * their completion will finish.
-> > +				 * The remaining task works have started
-> > +				 * running, so waiting for their completion
-> > +				 * will finish.
-> >  				 */
-> >  				wait_for_completion(&shared_ctx.all_prepared);
-> >  			}
-> > @@ -576,14 +587,14 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
-> >  		 !atomic_read(&shared_ctx.preparation_error));
-> >  
-> >  	/*
-> > -	 * We now have all sibling threads blocking and in "prepared" state in the
-> > -	 * task work. Ask all threads to commit.
-> > +	 * We now have all sibling threads blocking and in "prepared" state in
-> > +	 * the task work. Ask all threads to commit.
-> >  	 */
-> >  	complete_all(&shared_ctx.ready_to_commit);
-> >  
-> >  	/*
-> > -	 * Decrement num_unfinished for current, to undo that we initialized it to 1
-> > -	 * at the beginning.
-> > +	 * Decrement num_unfinished for current, to undo that we initialized it
-> > +	 * to 1 at the beginning.
-> >  	 */
-> >  	if (atomic_dec_return(&shared_ctx.num_unfinished) > 0)
-> >  		wait_for_completion(&shared_ctx.all_finished);
-> > -- 
-> > 2.53.0
-> > 
-> 
-> Reviewed-by: Günther Noack <gnoack3000@gmail.com>
-> 
-> Thanks!  (It's irritating that the default clang-format configuration
-> does not fix these.  Do you use a special tool for this?)
+[ I/O socket time out.  Trimming the To list.]
 
-I mostly use vim's colorcolumn but I should update check-linux.sh with
-such check.
+On Wed, 2026-03-04 at 10:32 -0500, Jeff Layton wrote:
+> This version squashes all of the format-string changes and the i_ino
+> type change into the same patch. This results in a giant 600+ line patch
+> at the end of the series, but it does remain bisectable.  Because the
+> patchset was reorganized (again) some of the R-b's and A-b's have been
+> dropped.
+>=20
+> The entire pile is in the "iino-u64" branch of my tree, if anyone is
+> interested in testing this.
+>=20
+>     https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git/
+>=20
+> Original cover letter follows:
+>=20
+> ----------------------8<-----------------------
+>=20
+> Christian said [1] to "just do it" when I proposed this, so here we are!
+>=20
+> For historical reasons, the inode->i_ino field is an unsigned long,
+> which means that it's 32 bits on 32 bit architectures. This has caused a
+> number of filesystems to implement hacks to hash a 64-bit identifier
+> into a 32-bit field, and deprives us of a universal identifier field for
+> an inode.
+>=20
+> This patchset changes the inode->i_ino field from an unsigned long to a
+> u64. This shouldn't make any material difference on 64-bit hosts, but
+> 32-bit hosts will see struct inode grow by at least 4 bytes. This could
+> have effects on slabcache sizes and field alignment.
+>=20
+> The bulk of the changes are to format strings and tracepoints, since the
+> kernel itself doesn't care that much about the i_ino field. The first
+> patch changes some vfs function arguments, so check that one out
+> carefully.
+>=20
+> With this change, we may be able to shrink some inode structures. For
+> instance, struct nfs_inode has a fileid field that holds the 64-bit
+> inode number. With this set of changes, that field could be eliminated.
+> I'd rather leave that sort of cleanups for later just to keep this
+> simple.
+>=20
+> Much of this set was generated by LLM, but I attributed it to myself
+> since I consider this to be in the "menial tasks" category of LLM usage.
+>=20
+> [1]: https://lore.kernel.org/linux-fsdevel/20260219-portrait-winkt-959070=
+cee42f@brauner/
+>=20
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-I guess you're also OK with the first patch?
+Jeff, missing from this patch set is EVM.  In hmac_add_misc() EVM copies th=
+e
+i_ino and calculates either an HMAC or file meta-data hash, which is then
+signed.=20
 
-> 
-> –Günther
-> 
+Mimi
