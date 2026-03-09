@@ -1,217 +1,300 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11693CD8AF;
-	Mon,  9 Mar 2026 17:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B76233BBB5
+	for <linux-security-module@vger.kernel.org>; Mon,  9 Mar 2026 17:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773075610; cv=none; b=tJcbmervEHw6dIrJBvJedye3GUI7F8UfNUMHWbJznYha+6uMdY43ideNnNxL0jlm4ySFhnRYMTT3VOT5Vzv7xzrO02QVHGGuCEjOt3zU5Wa2VZlPvoGb5EyUzoCQZoBj8kjDUyOmHujY+fcax8yj8bUDmPULhN01Ile6GyrYK1g=
+	t=1773077709; cv=none; b=ubMCVLjcSYqHb0tf2pfZpMgV/VMNuJJEXD9WapAsH8Ft/p0YX74w+be6/l3eCEvZDgo9tdtYbdKiOwXaDzvDZ5WXk+9upNPdUBTff2jYHK2FeZ8oNwe4ogpskUWwz+/RLTgzKiTt3YqOxhmagRIrS7CAgC4RBOUCxJa2hwriQkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773075610; c=relaxed/simple;
-	bh=j0mnp/PMNkOZ2R+g+hxot9obaXusml6Kmx0B/uVeea0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k1D3uDIpvKCuRHuMtx+oj7r1LCSIrbmztZsib9FM46lBNBULoER43GupSKoxW9URxMIIxyzGYCrmx1mASBFUzyp5xW8lfqdGga8mdaumgduq/3mMAAtKiwXTyqlsL+QrJlrY2gDpy3OPUpmZcYAf6rDkjr4GNPRHXk9lRVAQHsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=meQEx7oW; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1773077709; c=relaxed/simple;
+	bh=YetviyS5mkSpW39xNQ6sIc0K206vIoOPCEbSXKgsrVE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qw3R1L7ondVCBNV41oOQRZ38WgGzApjpBqoKJcEg9ov7faZ8Zn8K7n0Lg7vlgNXlyPbD271aqEpWibheuiURZphqqd7Ah95AS5SkZGrxfBh5Eb7/GV8N8n6HFiisHfj5tDozrvEEhmDZ2MfWcsF0t2wWGTFWj/kIA8fo5uPkm0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=kEo1XE9I; arc=none smtp.client-ip=83.166.143.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="meQEx7oW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1773075608; x=1804611608;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=j0mnp/PMNkOZ2R+g+hxot9obaXusml6Kmx0B/uVeea0=;
-  b=meQEx7oWoMo0AcnyHb2XVD4FQYadLXPLJVDp/n8QVbzpBCCf2R4RdR8h
-   05BR2kbcK0qWBjnTvy0w0sVH5toIud7CqVPKF4cCDHn5YEpaw1wyG7S8p
-   oLkLRCA980nS31GW2RM1OLXPbYx7k5FSP5fXOl+9sYJEvj2S/oibn55wL
-   vMxKObyiMum6z3CfobX34bojxcSoFzB2uGJ7W49LuCCpQyn/NeQO0Dj9F
-   RrL9reTGXfPNu6mxLywGztyhUCg/yiga2GVjat7ogWD3kN4n4vnG8vJ7F
-   ZtFnJbLscwOHC1dnyUvHAbgniUF6iPfSWxJevz4d4JwIAVMFZYpNSQYp1
-   g==;
-X-CSE-ConnectionGUID: DnhhoqjrRSKE4NcP7/MJMQ==
-X-CSE-MsgGUID: Brted+83QbK10gw/GtbDfw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11724"; a="77986255"
-X-IronPort-AV: E=Sophos;i="6.23,109,1770624000"; 
-   d="scan'208";a="77986255"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2026 10:00:08 -0700
-X-CSE-ConnectionGUID: XZayLEE+Q8eKxVv457kkcQ==
-X-CSE-MsgGUID: lKa7YV9SSKSGVTiMd8kCJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,109,1770624000"; 
-   d="scan'208";a="224750150"
-Received: from dwoodwor-mobl2.amr.corp.intel.com (HELO [10.125.109.205]) ([10.125.109.205])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2026 10:00:07 -0700
-Message-ID: <d2788a2a-dd1c-479e-980d-42e6c2e9facb@intel.com>
-Date: Mon, 9 Mar 2026 10:00:05 -0700
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="kEo1XE9I"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fV4002StyzDRM;
+	Mon,  9 Mar 2026 18:34:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1773077696;
+	bh=qMAo1orC+Pjafm5h68M9pX88Owx1WUsoMhbJ0KiBti4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kEo1XE9IlpTJ7CZusW8GlOrUzaUkgldo5k/vEC/kFbNz4TRimmoQ0Veuvqfw9Mlkv
+	 rbgB56yhA4x1DTsWql3GX/tMVh5U9XzbroiiNUExPjHMprVfH+DxFqe6PZ59671mpy
+	 OwpXxUJZ5V5BEXd6ct9wKnFB3ZZ4U+8WG2K7PYNU=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fV3zz6LKfzcc8;
+	Mon,  9 Mar 2026 18:34:55 +0100 (CET)
+Date: Mon, 9 Mar 2026 18:34:50 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v1 3/4] landlock: Improve kernel-doc "Return:" section
+ consistency
+Message-ID: <20260309.sheath2xiFai@digikod.net>
+References: <20260304193134.250495-1-mic@digikod.net>
+ <20260304193134.250495-3-mic@digikod.net>
+ <20260306.b502a795f389@gnoack.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] lsm: add hook for firmware command validation
-To: Leon Romanovsky <leon@kernel.org>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Saeed Mahameed <saeedm@nvidia.com>,
- Itay Avraham <itayavr@nvidia.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>,
- Maher Sanalla <msanalla@nvidia.com>, Edward Srouji <edwards@nvidia.com>
-References: <20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com>
- <20260309-fw-lsm-hook-v1-1-4a6422e63725@nvidia.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20260309-fw-lsm-hook-v1-1-4a6422e63725@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260306.b502a795f389@gnoack.org>
+X-Infomaniak-Routing: alpha
 
+On Fri, Mar 06, 2026 at 08:30:29AM +0100, Günther Noack wrote:
+> Just a few comment phrasing nits below
+> 
+> On Wed, Mar 04, 2026 at 08:31:26PM +0100, Mickaël Salaün wrote:
+> > The canonical kernel-doc form is "Return:" (singular, without trailing
+> > "s").  Normalize all existing "Returns:" occurrences across the Landlock
+> > source tree to the canonical form.
+> > 
+> > Also fix capitalization for consistency.  Balance descriptions to
+> > describe all possible returned values.
+> > 
+> > Consolidate bullet-point return descriptions into inline text for
+> > functions with simple two-value or three-value returns for consistency.
+> > 
+> > Cc: Günther Noack <gnoack@google.com>
+> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > ---
+> >  security/landlock/cred.h    |  2 +-
+> >  security/landlock/domain.c  |  4 ++--
+> >  security/landlock/fs.c      | 26 +++++++++++---------------
+> >  security/landlock/id.c      |  2 +-
+> >  security/landlock/ruleset.c |  2 +-
+> >  security/landlock/ruleset.h |  2 +-
+> >  security/landlock/task.c    |  4 ++--
+> >  security/landlock/tsync.c   | 17 ++++++-----------
+> >  8 files changed, 25 insertions(+), 34 deletions(-)
+> > 
+> > diff --git a/security/landlock/cred.h b/security/landlock/cred.h
+> > index c10a06727eb1..f287c56b5fd4 100644
+> > --- a/security/landlock/cred.h
+> > +++ b/security/landlock/cred.h
+> > @@ -115,7 +115,7 @@ static inline bool landlocked(const struct task_struct *const task)
+> >   * @handle_layer: returned youngest layer handling a subset of @masks.  Not set
+> >   *                if the function returns NULL.
+> >   *
+> > - * Returns: landlock_cred(@cred) if any access rights specified in @masks is
+> > + * Return: landlock_cred(@cred) if any access rights specified in @masks is
+> >   * handled, or NULL otherwise.
+> >   */
+> >  static inline const struct landlock_cred_security *
+> > diff --git a/security/landlock/domain.c b/security/landlock/domain.c
+> > index 343a1aabaac6..8b9939005aa8 100644
+> > --- a/security/landlock/domain.c
+> > +++ b/security/landlock/domain.c
+> > @@ -34,7 +34,7 @@
+> >   * @exe_size: Returned size of @exe_str (including the trailing null
+> >   *            character), if any.
+> >   *
+> > - * Returns: A pointer to an allocated buffer where @exe_str point to, %NULL if
+> > + * Return: A pointer to an allocated buffer where @exe_str point to, %NULL if
+> >   * there is no executable path, or an error otherwise.
+> >   */
+> >  static const void *get_current_exe(const char **const exe_str,
+> > @@ -73,7 +73,7 @@ static const void *get_current_exe(const char **const exe_str,
+> >  }
+> >  
+> >  /*
+> > - * Returns: A newly allocated object describing a domain, or an error
+> > + * Return: A newly allocated object describing a domain, or an error
+> >   * otherwise.
+> >   */
+> >  static struct landlock_details *get_current_details(void)
+> > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> > index cfe69075bf4e..a03ec664c78e 100644
+> > --- a/security/landlock/fs.c
+> > +++ b/security/landlock/fs.c
+> > @@ -119,8 +119,8 @@ static const struct landlock_object_underops landlock_fs_underops = {
+> >   * Any new IOCTL commands that are implemented in fs/ioctl.c's do_vfs_ioctl()
+> >   * should be considered for inclusion here.
+> >   *
+> > - * Returns: true if the IOCTL @cmd can not be restricted with Landlock for
+> > - * device files.
+> > + * Return: True if the IOCTL @cmd can not be restricted with Landlock for
+> > + * device files, false otherwise.
+> >   */
+> >  static __attribute_const__ bool is_masked_device_ioctl(const unsigned int cmd)
+> >  {
+> > @@ -428,10 +428,10 @@ static bool may_refer(const struct layer_access_masks *const src_parent,
+> >   * Check that a destination file hierarchy has more restrictions than a source
+> >   * file hierarchy.  This is only used for link and rename actions.
+> >   *
+> > - * Returns: true if child1 may be moved from parent1 to parent2 without
+> > - * increasing its access rights.  If child2 is set, an additional condition is
+> > + * Return: True if child1 may be moved from parent1 to parent2 without
+> > + * increasing its access rights (if child2 is set, an additional condition is
+> >   * that child2 may be used from parent2 to parent1 without increasing its access
+> > - * rights.
+> > + * rights), false otherwise.
+> >   */
+> >  static bool no_more_access(const struct layer_access_masks *const parent1,
+> >  			   const struct layer_access_masks *const child1,
+> > @@ -734,9 +734,7 @@ static void test_is_eacces_with_write(struct kunit *const test)
+> >   * checks that the collected accesses and the remaining ones are enough to
+> >   * allow the request.
+> >   *
+> > - * Returns:
+> > - * - true if the access request is granted;
+> > - * - false otherwise.
+> > + * Return: True if the access request is granted, false otherwise.
+> >   */
+> >  static bool
+> >  is_access_to_paths_allowed(const struct landlock_ruleset *const domain,
+> > @@ -1022,9 +1020,8 @@ static access_mask_t maybe_remove(const struct dentry *const dentry)
+> >   * only handles walking on the same mount point and only checks one set of
+> >   * accesses.
+> >   *
+> > - * Returns:
+> > - * - true if all the domain access rights are allowed for @dir;
+> > - * - false if the walk reached @mnt_root.
+> > + * Return: True if all the domain access rights are allowed for @dir, false if
+> > + * the walk reached @mnt_root.
+> >   */
+> >  static bool collect_domain_accesses(const struct landlock_ruleset *const domain,
+> >  				    const struct dentry *const mnt_root,
+> > @@ -1120,10 +1117,9 @@ static bool collect_domain_accesses(const struct landlock_ruleset *const domain,
+> >   * ephemeral matrices take some space on the stack, which limits the number of
+> >   * layers to a deemed reasonable number: 16.
+> >   *
+> > - * Returns:
+> > - * - 0 if access is allowed;
+> > - * - -EXDEV if @old_dentry would inherit new access rights from @new_dir;
+> > - * - -EACCES if file removal or creation is denied.
+> > + * Return: 0 if access is allowed, -EXDEV if @old_dentry would inherit new
+> > + * access rights from @new_dir, or -EACCES if file removal or creation is
+> > + * denied.
+> >   */
+> >  static int current_check_refer_path(struct dentry *const old_dentry,
+> >  				    const struct path *const new_dir,
+> > diff --git a/security/landlock/id.c b/security/landlock/id.c
+> > index 838c3ed7bb82..6c8769777fdc 100644
+> > --- a/security/landlock/id.c
+> > +++ b/security/landlock/id.c
+> > @@ -258,7 +258,7 @@ static void test_range2_rand16(struct kunit *const test)
+> >   *
+> >   * @number_of_ids: Number of IDs to hold.  Must be greater than one.
+> >   *
+> > - * Returns: The first ID in the range.
+> > + * Return: The first ID in the range.
+> >   */
+> >  u64 landlock_get_id_range(size_t number_of_ids)
+> >  {
+> > diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+> > index de8386af2f30..52e48ffcc3aa 100644
+> > --- a/security/landlock/ruleset.c
+> > +++ b/security/landlock/ruleset.c
+> > @@ -675,7 +675,7 @@ get_access_mask_t(const struct landlock_ruleset *const ruleset,
+> >   * @masks: Layer access masks to populate.
+> >   * @key_type: The key type to switch between access masks of different types.
+> >   *
+> > - * Returns: An access mask where each access right bit is set which is handled
+> > + * Return: An access mask where each access right bit is set which is handled
+> >   * in any of the active layers in @domain.
+> >   */
+> >  access_mask_t
+> > diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+> > index 87d52031fb5a..5e63f78f7e1a 100644
+> > --- a/security/landlock/ruleset.h
+> > +++ b/security/landlock/ruleset.h
+> > @@ -232,7 +232,7 @@ static inline void landlock_get_ruleset(struct landlock_ruleset *const ruleset)
+> >   *
+> >   * @domain: Landlock ruleset (used as a domain)
+> >   *
+> > - * Returns: an access_masks result of the OR of all the domain's access masks.
+> > + * Return: An access_masks result of the OR of all the domain's access masks.
+> >   */
+> >  static inline struct access_masks
+> >  landlock_union_access_masks(const struct landlock_ruleset *const domain)
+> > diff --git a/security/landlock/task.c b/security/landlock/task.c
+> > index bf7c3db7ce46..f2dbdebf2770 100644
+> > --- a/security/landlock/task.c
+> > +++ b/security/landlock/task.c
+> > @@ -174,8 +174,8 @@ static int hook_ptrace_traceme(struct task_struct *const parent)
+> >   * @server: IPC receiver domain.
+> >   * @scope: The scope restriction criteria.
+> >   *
+> > - * Returns: True if @server is in a different domain from @client, and @client
+> > - * is scoped to access @server (i.e. access should be denied).
+> > + * Return: True if @server is in a different domain from @client and @client
+> > + * is scoped to access @server (i.e. access should be denied), false otherwise.
+> >   */
+> >  static bool domain_is_scoped(const struct landlock_ruleset *const client,
+> >  			     const struct landlock_ruleset *const server,
+> > diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
+> > index b06a0fa4cedb..359aecbb1e4b 100644
+> > --- a/security/landlock/tsync.c
+> > +++ b/security/landlock/tsync.c
+> > @@ -183,10 +183,8 @@ struct tsync_works {
+> >   * capacity.  This can legitimately happen if new threads get started after we
+> >   * grew the capacity.
+> >   *
+> > - * Returns:
+> > - *   A pointer to the preallocated context struct, with task filled in.
+> > - *
+> > - *   NULL, if we ran out of preallocated context structs.
+> > + * Return: A pointer to the preallocated context struct with task filled in, or
+> > + * NULL if preallocated context structs ran out.
+> >   */
+> >  static struct tsync_work *tsync_works_provide(struct tsync_works *s,
+> >  					      struct task_struct *task)
+> > @@ -243,11 +241,8 @@ static void tsync_works_trim(struct tsync_works *s)
+> >   * On a successful return, the subsequent n calls to tsync_works_provide() are
+> >   * guaranteed to succeed.  (size + n <= capacity)
+> >   *
+> > - * Returns:
+> > - *   -ENOMEM if the (re)allocation fails
+> > -
+> > - *   0       if the allocation succeeds, partially succeeds, or no reallocation
+> > - *           was needed
+> > + * Return: 0 on success or partial success, -ENOMEM if the (re)allocation
+> > + * fails.
+> 
+> tsync_works_grow_by:
+> 
+> I don't know what I meant when I wrote "partially succeeds" here in
+> the original patch.  Would suggest this phrasing:
+> 
+>   Return: 0 if sufficient space for n more elements could be provided,
+>   -ENOMEM on allocation errors, -EOVERFLOW in case of integer
+>   overflow.
+> 
+> With this function, the success criterium is that it can establish
+> that invariant.  We also don't return a success if we only could
+> allocate space for fewer elements.
 
+Good, I'll fold this in the commit.
 
-On 3/9/26 4:15 AM, Leon Romanovsky wrote:
-> From: Chiara Meiohas <cmeiohas@nvidia.com>
 > 
-> Drivers typically communicate with device firmware either via
-> register-based commands (writing parameters into device registers)
-> or by passing a command buffer using shared-memory mechanisms.
+> >   */
+> >  static int tsync_works_grow_by(struct tsync_works *s, size_t n, gfp_t flags)
+> >  {
+> > @@ -363,8 +358,8 @@ static size_t count_additional_threads(const struct tsync_works *works)
+> >   * For each added task_work, atomically increments shared_ctx->num_preparing and
+> >   * shared_ctx->num_unfinished.
+> >   *
+> > - * Returns:
+> > - *     true, if at least one eligible sibling thread was found
+> > + * Return: True if at least one eligible sibling thread was found, false
+> > + * otherwise.
+> >   */
+> >  static bool schedule_task_work(struct tsync_works *works,
+> >  			       struct tsync_shared_context *shared_ctx)
+> > -- 
+> > 2.53.0
+> > 
 > 
-> This hook targets the command buffer mechanism, which is commonly
-> used on modern, complex devices.
+> Reviewed-by: Günther Noack <gnoack3000@gmail.com>
 > 
-> Add the LSM hook fw_validate_cmd. This hook allows inspecting
-> firmware command buffers before they are sent to the device.
-> The hook receives the command buffer, device, command class, and a
-> class-specific id:
->   - class_id (enum fw_cmd_class) allows security modules to
->     differentiate between classes of firmware commands.
->     In this series, class_id distinguishes between commands from the
->     RDMA uverbs interface and from fwctl.
->   - id is a class-specific device identifier. For uverbs, id is the
->     RDMA driver identifier (enum rdma_driver_id). For fwctl, id is the
->     device type (enum fwctl_device_type).
-> 
-> Signed-off-by: Chiara Meiohas <cmeiohas@nvidia.com>
-> Reviewed-by: Maher Sanalla <msanalla@nvidia.com>
-> Signed-off-by: Edward Srouji <edwards@nvidia.com>
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-
-> ---
->  include/linux/lsm_hook_defs.h |  2 ++
->  include/linux/security.h      | 25 +++++++++++++++++++++++++
->  security/security.c           | 26 ++++++++++++++++++++++++++
->  3 files changed, 53 insertions(+)
-> 
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index 8c42b4bde09c0..93da090384ea1 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -445,6 +445,8 @@ LSM_HOOK(int, 0, bpf_token_capable, const struct bpf_token *token, int cap)
->  #endif /* CONFIG_BPF_SYSCALL */
->  
->  LSM_HOOK(int, 0, locked_down, enum lockdown_reason what)
-> +LSM_HOOK(int, 0, fw_validate_cmd, const void *in, size_t in_len,
-> +	 const struct device *dev, enum fw_cmd_class class_id, u32 id)
->  
->  #ifdef CONFIG_PERF_EVENTS
->  LSM_HOOK(int, 0, perf_event_open, int type)
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 83a646d72f6f8..64786d013207a 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -67,6 +67,7 @@ enum fs_value_type;
->  struct watch;
->  struct watch_notification;
->  struct lsm_ctx;
-> +struct device;
->  
->  /* Default (no) options for the capable function */
->  #define CAP_OPT_NONE 0x0
-> @@ -157,6 +158,21 @@ enum lockdown_reason {
->  	LOCKDOWN_CONFIDENTIALITY_MAX,
->  };
->  
-> +/*
-> + * enum fw_cmd_class - Class of the firmware command passed to
-> + * security_fw_validate_cmd.
-> + * This allows security modules to distinguish between different command
-> + * classes.
-> + *
-> + * @FW_CMD_CLASS_UVERBS: Command originated from the RDMA uverbs interface
-> + * @FW_CMD_CLASS_FWCTL: Command originated from the fwctl interface
-> + */
-> +enum fw_cmd_class {
-> +	FW_CMD_CLASS_UVERBS,
-> +	FW_CMD_CLASS_FWCTL,
-> +	FW_CMD_CLASS_MAX,
-> +};
-> +
->  /*
->   * Data exported by the security modules
->   */
-> @@ -575,6 +591,9 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
->  int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
->  int security_inode_getsecctx(struct inode *inode, struct lsm_context *cp);
->  int security_locked_down(enum lockdown_reason what);
-> +int security_fw_validate_cmd(const void *in, size_t in_len,
-> +			     const struct device *dev,
-> +			     enum fw_cmd_class class_id, u32 id);
->  int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u32 *uctx_len,
->  		      void *val, size_t val_len, u64 id, u64 flags);
->  int security_bdev_alloc(struct block_device *bdev);
-> @@ -1589,6 +1608,12 @@ static inline int security_locked_down(enum lockdown_reason what)
->  {
->  	return 0;
->  }
-> +static inline int security_fw_validate_cmd(const void *in, size_t in_len,
-> +					   const struct device *dev,
-> +					   enum fw_cmd_class class_id, u32 id)
-> +{
-> +	return 0;
-> +}
->  static inline int lsm_fill_user_ctx(struct lsm_ctx __user *uctx,
->  				    u32 *uctx_len, void *val, size_t val_len,
->  				    u64 id, u64 flags)
-> diff --git a/security/security.c b/security/security.c
-> index 67af9228c4e94..d05941fe89a48 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -5373,6 +5373,32 @@ int security_locked_down(enum lockdown_reason what)
->  }
->  EXPORT_SYMBOL(security_locked_down);
->  
-> +/**
-> + * security_fw_validate_cmd() - Validate a firmware command
-> + * @in: pointer to the firmware command input buffer
-> + * @in_len: length of the firmware command input buffer
-> + * @dev: device associated with the command
-> + * @class_id: class of the firmware command
-> + * @id: device identifier, specific to the command @class_id
-> + *
-> + * Check permissions before sending a firmware command generated by
-> + * userspace to the device.
-> + *
-> + * Return: Returns 0 if permission is granted.
-> + */
-> +int security_fw_validate_cmd(const void *in, size_t in_len,
-> +			     const struct device *dev,
-> +			     enum fw_cmd_class class_id,
-> +			     u32 id)
-> +{
-> +	if (class_id >= FW_CMD_CLASS_MAX)
-> +		return -EINVAL;
-> +
-> +	return call_int_hook(fw_validate_cmd, in, in_len,
-> +			     dev, class_id, id);
-> +}
-> +EXPORT_SYMBOL_GPL(security_fw_validate_cmd);
-> +
->  /**
->   * security_bdev_alloc() - Allocate a block device LSM blob
->   * @bdev: block device
-> 
-
