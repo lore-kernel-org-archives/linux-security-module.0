@@ -1,199 +1,123 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169A63D4100;
-	Mon,  9 Mar 2026 15:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3924CB5B;
+	Mon,  9 Mar 2026 15:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773068581; cv=none; b=Kmp5pL6W8Y9rpQzaxPHNw+wfqm/WTXf14FmyOrIgqKF3p6h79whtGheThO5kwxbse+xDFnTge/A2HfRQOxdKl0rcqFJoN5CtQRPKpzEfcrJQF2RR69tD2jxqcKXr5T3d6s1F5/MfaB6tUug6e3gxBZPVgk48IrhowMhV3YM8M4g=
+	t=1773068627; cv=none; b=cuEIUdPB7dQ/yLhCcBugSDXGo0Wb0XGz9JpL1O/QexzQL+bEGR3v9mXhATs9TPGHi+K7gbu4pphCsfx4HuB4F0/nY48jCgTl5Y4CogwFzleea5bv/u1a88pSfKTFL3jrWJEqcycp3EsAnP0U6rkXjGSsmczcAWC9Cq33iAF8Cew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773068581; c=relaxed/simple;
-	bh=4k0q3HMVGWxliH2NAbp3+md6xy64qAKLeLd5PUR17FM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=urQPLE8yk6PTm4qGb9NBlvxDOI7SZ24CoACMuqaKModQO/7whx49NNdiDLGbidAK8zQ7mfwG1yty7wMJmrOyfEOFita6i+470YisSpf6E0i91zRNyzJIoEffpD+Up3smYLAL7scenWMTCn2HyecLm/J3AiGXpbzN5pY1Mny1tto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.224.150])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fV0cW56jrzHnGkY;
-	Mon,  9 Mar 2026 23:02:51 +0800 (CST)
-Received: from dubpeml500005.china.huawei.com (unknown [7.214.145.207])
-	by mail.maildlp.com (Postfix) with ESMTPS id A0D164056E;
-	Mon,  9 Mar 2026 23:02:55 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml500005.china.huawei.com
- (7.214.145.207) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 9 Mar
- 2026 15:02:54 +0000
-Date: Mon, 9 Mar 2026 15:02:53 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Leon Romanovsky <leon@kernel.org>
-CC: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge
- E. Hallyn" <serge@hallyn.com>, Jason Gunthorpe <jgg@ziepe.ca>, "Saeed
- Mahameed" <saeedm@nvidia.com>, Itay Avraham <itayavr@nvidia.com>, Dave Jiang
-	<dave.jiang@intel.com>, <linux-security-module@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-rdma@vger.kernel.org>, Chiara Meiohas
-	<cmeiohas@nvidia.com>, Maher Sanalla <msanalla@nvidia.com>, Edward Srouji
-	<edwards@nvidia.com>
-Subject: Re: [PATCH 1/3] lsm: add hook for firmware command validation
-Message-ID: <20260309150253.00001ec7@huawei.com>
-In-Reply-To: <20260309-fw-lsm-hook-v1-1-4a6422e63725@nvidia.com>
-References: <20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com>
-	<20260309-fw-lsm-hook-v1-1-4a6422e63725@nvidia.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1773068627; c=relaxed/simple;
+	bh=v3V5rCmeVn3IzbzYe5qev136OY/Euq/d1vMjniSvgxw=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=mn90gzBgdBeOtduataBw2oja3kqXde8WLIwzeh1pnw09T75SxontOd6mG3MYPGQ5BsAf/+zafZgnFtPIc5clXQ+T84sPawJltj7uvlF9Yo1LWuvyGvvVtIF0ARn/SsON89eW4kdcSlx/svUK8ic0mNT8twyRK2hbBR5dwEw6uFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AsHjFMOo; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AsHjFMOo"
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 629F2mEw1388081;
+	Mon, 9 Mar 2026 15:03:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ZNJKlr
+	VlSko0ol3nwVaI7Fijz9Jj4uWjP1XI5hq2znw=; b=AsHjFMOoiYu75wC1viORnE
+	SuK8wt3HXVSB7sNg65NqRfOLiznPf/fKteBsN40EWjt4iikjh8sN9JHmrabTIyGD
+	TrSAoHEbk50+ThjrAUTw2szfzuoC9g4VTW/s1k1IFk9WgCx/Oeka2XNS7MVkn9V1
+	fJwUa/4jvha50VcmwbmXg9WShQezKoOJvVppg6neQH4/pexx9AQ5buf8i1+9AE2w
+	9qtDwKFfOYKSNjTRuuKs70N45MqX0TVx19dfm2WaqjfMGXNZTSP3VqgRDGZS46ZS
+	rOKCNWN6bzy2080VouuFTHoi+LhtixvNZ/LSiz0S+l+uAKpUMDO+vHAIyl1NUakw
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4crcun6vdu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Mar 2026 15:03:19 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 629DNmDd021181;
+	Mon, 9 Mar 2026 15:03:18 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4crxbsnj9u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Mar 2026 15:03:18 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 629F3IpJ12124890
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 9 Mar 2026 15:03:18 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2AD4A58054;
+	Mon,  9 Mar 2026 15:03:18 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0CC9C5804E;
+	Mon,  9 Mar 2026 15:03:17 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.73.138])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  9 Mar 2026 15:03:16 +0000 (GMT)
+Message-ID: <1430cdbe141e490a2bc3807217b2b3fc6ff75c11.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: check return value of crypto_shash_final() in
+ boot aggregate
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Daniel Hodges <hodgesd@meta.com>,
+        Roberto Sassu
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E .
+ Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20260201024015.2862236-1-hodgesd@meta.com>
+References: <20260201024015.2862236-1-hodgesd@meta.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 09 Mar 2026 11:03:16 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
- dubpeml500005.china.huawei.com (7.214.145.207)
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-GUID: jgpcYFsNAgklDGB-hODIojkY6KELP7Bx
+X-Authority-Analysis: v=2.4 cv=Hp172kTS c=1 sm=1 tr=0 ts=69aee138 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=VabnemYjAAAA:8
+ a=8Ma1dfE5B6paNGL1HSAA:9 a=QEXdDO2ut3YA:10 a=gKebqoRLp9LExxC7YDUY:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA5MDEzNiBTYWx0ZWRfXwsOqiLQMx6R5
+ 98x0BtCjshPYdjEOEdNBSNPPKhfZSdzr1FeM71IJl+Uvkh6BCSQyRS6qgsMGY1ipnGiflRtXWwu
+ pp8yTXBjS/R9HESt9ALf2QYfCgIg2SVzw4JixOH3fuO8eSY3OQY3PFaTpLIh81PouvvjyDxfQ7f
+ uDItceHi7mynvYvrEE/MFKPjijnt7VWCldfoqzrSflCtX7DOBwUlfXjN7xbIeSqR6f6osFVIzZk
+ MT99cUhR82MLdsiai0pLqhBBwbgpgIpLSuUHpMNToFIBo/42aBYQTZCDT6PXjXEQA4dabhA1xKy
+ 532aNxRv8EuskeYekspyZt/xdX6BuXr5pElHn3l/jyji6egKJc7hRUgVNgur/cvt12TFPJYA0dP
+ yJjeJy4RJm7fIjwGEnej9YvUAiuGoIAG9QmrQiQZW7XMKRlGgY1TsBENh619IBjpr/ljED0NBGI
+ jmFUMsvG6UDe7LxflHQ==
+X-Proofpoint-ORIG-GUID: fxLlFURkkCQWe4mGgSF0T4yMjrnmRlP0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-09_04,2026-03-09_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 malwarescore=0 impostorscore=0 suspectscore=0
+ spamscore=0 phishscore=0 clxscore=1011 priorityscore=1501 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603090136
 
-On Mon,  9 Mar 2026 13:15:18 +0200
-Leon Romanovsky <leon@kernel.org> wrote:
+On Sat, 2026-01-31 at 18:40 -0800, Daniel Hodges wrote:
+> The return value of crypto_shash_final() is not checked in
+> ima_calc_boot_aggregate_tfm(). If the hash finalization fails, the
+> function returns success and a corrupted boot aggregate digest could
+> be used for IMA measurements.
+>=20
+> Capture the return value and propagate any error to the caller.
+>=20
+> Fixes: 76bb28f6126f ("ima: use new crypto_shash API instead of old crypto=
+_hash")
+> Signed-off-by: Daniel Hodges <hodgesd@meta.com>
 
-> From: Chiara Meiohas <cmeiohas@nvidia.com>
-> 
-> Drivers typically communicate with device firmware either via
-> register-based commands (writing parameters into device registers)
-> or by passing a command buffer using shared-memory mechanisms.
-> 
-> This hook targets the command buffer mechanism, which is commonly
-> used on modern, complex devices.
-> 
-> Add the LSM hook fw_validate_cmd. This hook allows inspecting
-> firmware command buffers before they are sent to the device.
-> The hook receives the command buffer, device, command class, and a
-> class-specific id:
->   - class_id (enum fw_cmd_class) allows security modules to
->     differentiate between classes of firmware commands.
->     In this series, class_id distinguishes between commands from the
->     RDMA uverbs interface and from fwctl.
->   - id is a class-specific device identifier. For uverbs, id is the
->     RDMA driver identifier (enum rdma_driver_id). For fwctl, id is the
->     device type (enum fwctl_device_type).
-> 
-> Signed-off-by: Chiara Meiohas <cmeiohas@nvidia.com>
-> Reviewed-by: Maher Sanalla <msanalla@nvidia.com>
-> Signed-off-by: Edward Srouji <edwards@nvidia.com>
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-Hi Leon,
+Thanks, Daniel.  The patch is now queueud.
 
-To me this seems sensible, but LSM isn't an area I know that much about.
-
-With that in mind:
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-
-A few formatting related comments inline.
-
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 83a646d72f6f8..64786d013207a 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -67,6 +67,7 @@ enum fs_value_type;
->  struct watch;
->  struct watch_notification;
->  struct lsm_ctx;
-> +struct device;
->  
->  /* Default (no) options for the capable function */
->  #define CAP_OPT_NONE 0x0
-> @@ -157,6 +158,21 @@ enum lockdown_reason {
->  	LOCKDOWN_CONFIDENTIALITY_MAX,
->  };
->  
-> +/*
-Could add the MAX entry and making this /**
-The file is a bit inconsistent on that.
-
-> + * enum fw_cmd_class - Class of the firmware command passed to
-> + * security_fw_validate_cmd.
-> + * This allows security modules to distinguish between different command
-> + * classes.
-> + *
-> + * @FW_CMD_CLASS_UVERBS: Command originated from the RDMA uverbs interface
-> + * @FW_CMD_CLASS_FWCTL: Command originated from the fwctl interface
-> + */
-> +enum fw_cmd_class {
-> +	FW_CMD_CLASS_UVERBS,
-> +	FW_CMD_CLASS_FWCTL,
-> +	FW_CMD_CLASS_MAX,
-Nitpick. Drop the trailing comma to make it a tiny bit more obvious if
-someone accidentally adds anything after this counting entry.
-
-> +};
-> +
->  /*
->   * Data exported by the security modules
->   */
-> @@ -575,6 +591,9 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
->  int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
->  int security_inode_getsecctx(struct inode *inode, struct lsm_context *cp);
->  int security_locked_down(enum lockdown_reason what);
-> +int security_fw_validate_cmd(const void *in, size_t in_len,
-> +			     const struct device *dev,
-> +			     enum fw_cmd_class class_id, u32 id);
->  int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u32 *uctx_len,
->  		      void *val, size_t val_len, u64 id, u64 flags);
->  int security_bdev_alloc(struct block_device *bdev);
-> @@ -1589,6 +1608,12 @@ static inline int security_locked_down(enum lockdown_reason what)
->  {
->  	return 0;
->  }
-> +static inline int security_fw_validate_cmd(const void *in, size_t in_len,
-> +					   const struct device *dev,
-> +					   enum fw_cmd_class class_id, u32 id)
-> +{
-> +	return 0;
-> +}
->  static inline int lsm_fill_user_ctx(struct lsm_ctx __user *uctx,
->  				    u32 *uctx_len, void *val, size_t val_len,
->  				    u64 id, u64 flags)
-> diff --git a/security/security.c b/security/security.c
-> index 67af9228c4e94..d05941fe89a48 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -5373,6 +5373,32 @@ int security_locked_down(enum lockdown_reason what)
->  }
->  EXPORT_SYMBOL(security_locked_down);
->  
-> +/**
-> + * security_fw_validate_cmd() - Validate a firmware command
-> + * @in: pointer to the firmware command input buffer
-> + * @in_len: length of the firmware command input buffer
-> + * @dev: device associated with the command
-> + * @class_id: class of the firmware command
-> + * @id: device identifier, specific to the command @class_id
-> + *
-> + * Check permissions before sending a firmware command generated by
-> + * userspace to the device.
-> + *
-> + * Return: Returns 0 if permission is granted.
-> + */
-> +int security_fw_validate_cmd(const void *in, size_t in_len,
-> +			     const struct device *dev,
-> +			     enum fw_cmd_class class_id,
-> +			     u32 id)
-
-I'd follow the wrapping you have in the header and have id on the line
-above.
-
-> +{
-> +	if (class_id >= FW_CMD_CLASS_MAX)
-> +		return -EINVAL;
-> +
-> +	return call_int_hook(fw_validate_cmd, in, in_len,
-> +			     dev, class_id, id);
-
-Fits on one line < 80 chars.
-
-> +}
-> +EXPORT_SYMBOL_GPL(security_fw_validate_cmd);
-> +
->  /**
->   * security_bdev_alloc() - Allocate a block device LSM blob
->   * @bdev: block device
-> 
-
+Mimi
