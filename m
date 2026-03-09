@@ -1,144 +1,150 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE9233EAEB
-	for <linux-security-module@vger.kernel.org>; Mon,  9 Mar 2026 18:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044CF33D6DD
+	for <linux-security-module@vger.kernel.org>; Mon,  9 Mar 2026 18:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.170
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773080167; cv=pass; b=WVV5hDK3HxlQfN3ymc4csbdqlZwoI0K8Ph59HDsHdEiD+COoohbwrvZgmWsOdrdaBS62ZpIaSLovNVBRMLPg9tXHCjgmwwF+2JYkR2jfzmB9bVjnlRb5U4MAM1ZHHrJ1FmhfpvB8hMFf+Mz52ANHrPk/HnU+IytoCCmdRAK4Q8Y=
+	t=1773081173; cv=pass; b=Zo9zFGZlgWrzPgdcIAoepfajH3QIAz/RZMpLx+QfhaZRBhd2xUkin/p7F0hRwsy5NhUz7SNZ5z+9uQ7LyTXzqza3qPzcB+fwl02jqFxLxbycVXkQY3RQbvINy1QEGpatQyHTn5Egdra7w+YnZBZs72uZ/mwmPSCU1NX6Tzz/Kek=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773080167; c=relaxed/simple;
-	bh=biMW06izqHwC/weF6dlF7kNuElYeXGJotcHh9VHQtgI=;
+	s=arc-20240116; t=1773081173; c=relaxed/simple;
+	bh=5pfbX7IgfKNQp2WRG7sxyMmlo2J+X5YrF7BKB81kNxE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gAYjbJlw9PxB3PxSZL6isUi8YyMTzjzK50SJYH2wltzlLoH1MeeDTLtlQdl8QhovnXEzdeCsFbVrYPWKMvEI8Jwd/Zfhru/0oe56B0Z/7lcvdi7dxPb7UJj+OAJBQ4k+3VcU9jdBjvX5ZWfM1GIDzqo0IBvV+kn7Hx6AzLg0kJo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ih6p8PbZ; arc=pass smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=EpPCw/dj3AfwuuRxEup4FMSxTFkTv1mBbdDnO2Y0m0HYGJqXLR7O6YCaC7LD60HeGpAWTuKb7fUrOt0P9xVQ4Re11o+BEDyE005y3lGQbNge9wFr7R/rhRAmZfFzzh5avqPpbWOaf1JezHwKjAsEv1/oH2nnQeVCPeIy+XEF+pI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=OKmBdzXM; arc=pass smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ih6p8PbZ"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2a9296b3926so91868765ad.1
-        for <linux-security-module@vger.kernel.org>; Mon, 09 Mar 2026 11:16:06 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773080166; cv=none;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="OKmBdzXM"
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2ae4d919f9bso51870765ad.0
+        for <linux-security-module@vger.kernel.org>; Mon, 09 Mar 2026 11:32:51 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773081171; cv=none;
         d=google.com; s=arc-20240605;
-        b=Kce2rUIAemsXwy1bRWGNIx+t14Zx/Kh22yWGrE9rgC/zRHFa/zOq2AHwowXDiPqxJ/
-         7oaJJyv9+61gPu+sKiyUpk/6B0mT6LWBqG2xGHhzu8j0UJnmz3xvKKk701ds2PQrgZFJ
-         E6Pkyub0khqNjDwIugrxx2LGvyO990gpz3uc+tcRcth5aE7ajvKPqz6hrXl4IDSoe+SO
-         DideggNm2W4aWmyC7c1B9lMq1Rk9VxvuGGqthe0zRJgUk/PXdOEoKQKW5chJT/aEGKWC
-         Ekyyc9+iNNMntniGUaJuJNBxT1bGeBYSEtfN/mRGdBfuNSpESgn6tlgGre9X5FGQD1Np
-         I0Wg==
+        b=G+gKT+vA/r0Sd0iSqSjSv85yHgU8Ahe9wZUqu1YUTHWNNFnEEnawRkmD8MgP7n3ohW
+         2jPJE7Mcib5OeOFa3UdNXkwXJPc3g9Sl/gaKwtlk+hbclK33WZp1+D6HkF2yKfsDWXbQ
+         Wxp4O3acuq4X4KUAvnqKWkdpRM8YL3YMMcoJfyo2jZWEYt06YD+ESzuQ1MACbS1r6xlS
+         yJWJ767lXgUkFoeQMFavTWhVYQLE/2hIC0ykotqQJ5O8bymmPwoHpZk6wJnj0A1nTSrm
+         TEV14XA8IkGuTFwWX7HaIi2PbjSVJYb/fN6hXS8i7Ox+Z6Gc3ik6N8Zmm9uEi1esWwNL
+         FX2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=RsTb1dXByGvvHOMrPfAupkKkViEWmxwYD54CiX/bfHY=;
-        fh=46UGOt+L5yCbgEGNmx/LHtLJfkMybOZGFSdwC+XRES4=;
-        b=aZSDEImk5IKgSuCxrdypn5mfpGinLnhufu3fJzn/qEpRYvYBnEVXX6210ZL4meTSxM
-         dEV/B113mddVM4zGYajoKAT5VbsLS1OxKpFFuBOTsx+Iw91HfNtpCx9B0CD81QgBIkXJ
-         aYYrX/FRDdCta/aQzvxqkoXU9JxPWdqj5KvU9gqrcKWsgaGPKI2kb2sdI0TPPsSnfznp
-         akQs/e/HvJ1Lk6QIeCNJXlYoCZQe9tuH3caWa21s7zKM6xXQaNOET+e0PBUVtAvWlZec
-         6OQgeO7ROzpBPsbUIoYXGyzQOLWupGGLGQ9OdOnh8k4nC9glySSs5dR13zPG+WUxFFzN
-         OEXA==;
+        bh=5pfbX7IgfKNQp2WRG7sxyMmlo2J+X5YrF7BKB81kNxE=;
+        fh=vD00dgu+cuAZ/FdS+IMaU4c3krlyG8tga6fiPR7X8sg=;
+        b=DSzCOErNWO7xY8pSUGz8LBOVHYpJyre0y0aap6Itp/eKJWYT4MpVYA0+l1v3QWb/mn
+         FUi1GrW+CIu5Quxx32ONSfpnOHtPQ0V9jlArvXq6Vxm9kuCJPi8kgsQqcc/tRi3rEvza
+         ioyeqiN6C/oSfEZjpl7EAiqcj+OpPs0g4vVb7NdMNU6hkkveWFLLurVTuDj2sRTXCUCJ
+         w5bIBWWwklgKSPt6s8x1/EYBMyZGlzyq3eCRUhFUWyIop7I03G6a+M3FORVDKstDMe7O
+         AEVDJPm+0psBfneVX9gzptxjgoSL8BDt1dHZg2VkBKRuWAjp7yPuw+jkLCCAcn92lhl3
+         bJHw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773080166; x=1773684966; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1773081171; x=1773685971; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RsTb1dXByGvvHOMrPfAupkKkViEWmxwYD54CiX/bfHY=;
-        b=ih6p8PbZULf3J/K+pLKPkiEfn6wGge0Dp3WQysJIJ6xHt8h8CXd/qVnFS+jMOt0LSM
-         d4OBQ2PiT2FZsHCFOXQau+2tKsTJiRHhmvuwSGlsNUrumChZy5zrwxtB+WE41CSGG8XY
-         By3wJesxy027IE0oI72lzSPG0f27Mev8+BRfzRYDJhJlUiBDeT36Zw5dn3Hvcd/QJFBy
-         ePbkLky9Mxx8qGhdDB4zQjTfz7aGrxqGCatMlhP/Ncy+7OANoxK01lIvIEq8Ll7IPunz
-         CLXLAtwfav+Nd2DCWTy2tf2yH3s80q+l1S8Rp+NM3WPtmdbPJkEwMTAM96t24mRgemR4
-         c0lQ==
+        bh=5pfbX7IgfKNQp2WRG7sxyMmlo2J+X5YrF7BKB81kNxE=;
+        b=OKmBdzXMZs6SZgPLUjsPOaiO+XmfmTXOFzyKs1YgdM4mgLEF4F+FrC/D/erbDUCir+
+         O4L16W2VSgn3XDXFaqnhZAcWQvxI1L3Sy5VnkTi4zVFx2eDN0GfuHDUq4qe8KwcKoJRC
+         RObbgArgN6CuQ9LKBsw2x+GQ2mZH9HRMjMHiRYfp7vexmkytgvmMNvnaanWPssC4Ihei
+         +LWD/aa6uLA15eFEqMJUKF9CLMsJPydHdahIGPWyq56vsbsXUzcx2EfIDYtCKyt2QD7P
+         /aiF/DPKcisdax9mxmZ/iANKtESmGm9u7VjDopZxWaQM7gpsN1kYK2dheUeKb7A9JBLq
+         /V0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773080166; x=1773684966;
+        d=1e100.net; s=20230601; t=1773081171; x=1773685971;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=RsTb1dXByGvvHOMrPfAupkKkViEWmxwYD54CiX/bfHY=;
-        b=frYVGxMgKDqEjiRz0c6QkShUGclXWt01XOY08cf3eMln0tI/ELVjHM38bFpnw2vwpq
-         Nt+ks7GwNrq4B5uPU8RcrtqOflV+PGgp2iVroGZsOqLsXbD51Wyf+ZnLAukIrdgXaBms
-         +pSdgWVVMDuopGE7SMHmGZW1SDuICvOcMr1ZsgtGOHBLNUrADkQNbSSD0Py63tQeImbX
-         NzJGQ854I2AUYtCktwBjaK8RzteQgtoF4EWwF154OoEcqDXF7efc1C8+RoU8FzX0qk01
-         SS8sl7OREYU0AolwyVjgAKV6borh2ZGawHnvYPLYNJIeMkTPY0boadBA8g/6/mayUDra
-         G1hg==
-X-Forwarded-Encrypted: i=1; AJvYcCXlQtiAGEXD9BxQw4KU6uVJ4+Cit+rECUUDcuUNX+m2naLie43V2Y2ScSkJSimfaI08vlN0OfYIuqiogEhZ03iOliuTUQA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAtHrH3mtaa9MvUOez6jk+wY8tJy2udEzYLeC98EIlpkcEBqZg
-	Vwa6QGg+y8D3E0AbMkgTvtDnN3UK4abPRH1eGyguQe3DT52Hx/Hhsgp8J2RKKDct1ZL1zjU+noa
-	h/3A1vdRXXJdTJPoZ00d2fAAYJvHw44U=
-X-Gm-Gg: ATEYQzzS1rdBVywmJ+Ee3pwNm2ajhlmLLIgenjybWLtbLSVGf4A5OwawUYbv025L7lX
-	dCgLlghpptI9BoVDzoaolNcAV/Xm7cuRjk5NRSJNLI2mfhEwJvT2xEXuRwl7ozY5e5t8nypU4FC
-	hGYPSMydd28Q5ufwQjRaOx55PUqcfz5IDTPZGQOcY2UG2QX12nUuslfzyHpqzPabFUzwJFz7tmg
-	lDPsyTTt83VY5+PUCgBSRJNijdk5Uw/J/bI753AHnUdzHC1HZVOGu9xtYScffxlTMN8xO2u+WOP
-	3nkSYvw=
-X-Received: by 2002:a17:902:cec4:b0:2ae:5275:4d52 with SMTP id
- d9443c01a7336-2ae8255cfe2mr123792365ad.53.1773080165933; Mon, 09 Mar 2026
- 11:16:05 -0700 (PDT)
+        bh=5pfbX7IgfKNQp2WRG7sxyMmlo2J+X5YrF7BKB81kNxE=;
+        b=TMjUrubxxLlNvcmMUHjBMPWgzDb9TG0B69Bpl/a30sEPCqbYW3UU7XiMVSKaeBqH1j
+         Fvo9ELcm8/LVyyYc6atH5M+gY/1HIiDlFBtWlEg+ENi58SPYBQszS59chBAnPFbPqjoq
+         6PzmVmebZW4x3hQFJpFFEmAYtgksmOp1SDt1PoT8KV5SDPxT6eHtePHDatr3qs60Urmo
+         zqDjkNU7oPpxNODi97Z+EefrcAF2Y+RXwC3vaI6/Qf3KyHze2UAQ/fUAJHO2XVBMRo82
+         TtH2WCATIg4zyrBhZ7F3U5B424oEbbrGM23LVaROgXzGMeNLq9RhwddpSA/nuyuK6DuS
+         8Bng==
+X-Forwarded-Encrypted: i=1; AJvYcCUHROGweaR6bhdSq/1NBTBCbnAh0uSJIrHG44gcxBizpc0dndgJXEZWXdGK5Fyr5qo+KXuKh29qlIctv31ZgRHNih4Fljk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEwxxsI36sgZOrTZbqA6SMVukERW+sZFBMbdf6deJ8R22qOL40
+	lt4dKOjCU4QpeI9L/VMax1wSOiy/RMhkr6irQpVptWrDXioe4o5sCBHwB3lRDhBSnvz2QIdrmYt
+	ijaOPf1mT0yRgu3zKFdzhzYDnQ0GpRf3EJ5BizJAy
+X-Gm-Gg: ATEYQzyoYyj1FVgrsV51ZM1FBG3soNAuIzeyOEqxcdDErVcmclIJIjgeF/XIfRPfpoe
+	QCCksD2rHedEQ7ZrkqBM7KDbnG5zvxVDsRot4Q/LbQHa6Oeyx02xbohZHpv32EV/yt5sLfs9ROy
+	e25ss/f8yeux9m8BzeXWojxbZbUA4TmaKmgdS7bg2D2TvqKB46N8xcANz16/zQFNfl4PEHKMDn/
+	GIVfRLgxC7SIhOFd2th8GHKtoWqIEo5yJ0fBZ65fIciEUSpeteXtaj0yuAovyx33HDTJBVcvfRV
+	NZ7Tjm0=
+X-Received: by 2002:a17:903:1988:b0:2ae:5ec4:2f78 with SMTP id
+ d9443c01a7336-2ae8242cf9emr130948555ad.33.1773081171206; Mon, 09 Mar 2026
+ 11:32:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
- <CAHC9VhTeVs7kS9hzukukZRfGu6CC6=Dq4KP69tpEtiFpBJ+jOQ@mail.gmail.com>
- <CAEjxPJ4urh7mUbDJEi-DbdiAifMM_uDH3m35tLeTdx6z+qhPyg@mail.gmail.com>
- <CAHC9VhTGruOPJ+NWZT8vw1bjXzkB4DSPFmWd1pC=J2jTYHP5BA@mail.gmail.com>
- <20260306174815.GA9953@wind.enjellic.com> <ae5e9c1b-d0cd-476b-87d2-70c0bc8ba09c@schaufler-ca.com>
-In-Reply-To: <ae5e9c1b-d0cd-476b-87d2-70c0bc8ba09c@schaufler-ca.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Mon, 9 Mar 2026 14:15:54 -0400
-X-Gm-Features: AaiRm52n-DeisXreA1xmhL7j8kFFiI-ZDWYWVOQBkYYMQj742vSU-nsyvi7JKCI
-Message-ID: <CAEjxPJ7yuJ6sAZ-ViqT04M5WPC9O39m5UUGw2f3+GDR87tvbsA@mail.gmail.com>
-Subject: Re: LSM namespacing API
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: "Dr. Greg" <greg@enjellic.com>, Paul Moore <paul@paul-moore.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, John Johansen <john.johansen@canonical.com>
+References: <20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com>
+In-Reply-To: <20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 9 Mar 2026 14:32:39 -0400
+X-Gm-Features: AaiRm51Nyf3eubsZF_AS8QuxcFS2-w70i5MYcT-OKhQqne3jHp6zEq8Kbc0-IAo
+Message-ID: <CAHC9VhTR9CsBgxRCAHXm5T2NZ5tr+XfmA--zkt=udmk9hPRuZQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Firmware LSM hook
+To: Leon Romanovsky <leon@kernel.org>
+Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Itay Avraham <itayavr@nvidia.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>, 
+	Maher Sanalla <msanalla@nvidia.com>, Edward Srouji <edwards@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 6, 2026 at 4:01=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
-com> wrote:
+On Mon, Mar 9, 2026 at 7:15=E2=80=AFAM Leon Romanovsky <leon@kernel.org> wr=
+ote:
 >
-> On 3/6/2026 9:48 AM, Dr. Greg wrote:
-> > On Tue, Mar 03, 2026 at 11:46:53AM -0500, Paul Moore wrote:
-> >
-> > Good morning, I hope the week is winding down well for everyone.
-> >
-> >> On Tue, Mar 3, 2026 at 8:30???AM Stephen Smalley
-> >>> I think my only caveat here is that your proposal is quite a bit more
-> >>> complex than what I implemented here:
-> >>> [1] https://lore.kernel.org/selinux/20251003190959.3288-2-stephen.sma=
-lley.work@gmail.com/
-> >>> [2] https://lore.kernel.org/selinux/20251003191328.3605-1-stephen.sma=
-lley.work@gmail.com/
-> >>> and I'm not sure the extra complexity is worth it.
-> >>>
-> >>> In particular:
-> >>> 1. Immediately unsharing the namespace upon lsm_set_self_attr() allow=
-s
-> >>> the caller to immediately and unambiguously know if the operation is
-> >>> supported and allowed ...
-> >> Performing the unshare operation immediately looks much less like a
-> >> LSM attribute and more like its own syscall.  That isn't a problem
-> >> in my eyes, it just means if this is the direction we want to go we
-> >> should implement a lsm_unshare(2) API, or something similar.
-> > Stephen's take on this is correct, the least complicated path forward
-> > is a simple call, presumably lsm_unshare(2), that instructs the LSM(s)
-> > to carry out whatever is needed to create a new security namespace.
-> >
-> > There are only two public implementations of what can be referred to
-> > as major security namespacing efforts; Stephen's work with SeLinux and
-> > our TSEM implementation.
+> From Chiara:
 >
-> Please be just a tiny bit careful before you make this sort of assertion:
+> This patch set introduces a new LSM hook to validate firmware commands
+> triggered by userspace before they are submitted to the device. The hook
+> runs after the command buffer is constructed, right before it is sent
+> to firmware.
 >
->         https://lwn.net/Articles/645403/
+> The goal is to allow a security module to allow or deny a given command
+> before it is submitted to firmware. BPF LSM can attach to this hook
+> to implement such policies. This allows fine-grained policies for differe=
+nt
+> firmware commands.
+>
+> In this series, the new hook is called from RDMA uverbs and from the fwct=
+l
+> subsystem. Both the uverbs and fwctl interfaces use ioctl, so an obvious
+> candidate would seem to be the file_ioctl hook. However, the userspace
+> attributes used to build the firmware command buffer are copied from
+> userspace (copy_from_user()) deep in the driver, depending on various
+> conditions. As a result, file_ioctl does not have the information require=
+d
+> to make a policy decision.
+>
+> This newly introduced hook provides the command buffer together with rele=
+vant
+> metadata (device, command class, and a class-specific device identifier),=
+ so
+> security modules can distinguish between different command classes and de=
+vices.
+>
+> The hook can be used by other drivers that submit firmware commands via a=
+ command
+> buffer.
 
-I believe both AppArmor and TOMOYO also have namespacing
-implementations already upstream, so SELinux is certainly not the only
-one. Looks like the Smack implementation you cited above was based on
-extending user namespaces rather than purely Smack-internal like the
-others; is that why it wasn't ultimately merged?
+Hi Leon,
+
+At the link below, you'll find guidance on submitting new LSM hooks.
+Please take a look and let me know if you have any questions.
+
+https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#new-lsm-h=
+ooks
+
+(If you lose the link, or simply for future reference, you can find it
+in the "SECURITY SUBSYSTEM" MAINTAINERS entry.)
+
+--=20
+paul-moore.com
