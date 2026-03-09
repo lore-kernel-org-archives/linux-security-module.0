@@ -1,220 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B962339B49B;
-	Mon,  9 Mar 2026 11:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C59B33711D
+	for <linux-security-module@vger.kernel.org>; Mon,  9 Mar 2026 12:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773054938; cv=none; b=mV2RxSo8T0JKaQ8whSxnAkD4FCwgPGElHwmUjr9wRfJHSujW9eNesiCnXxk5CVyoonBmDufEHJyWFjISGEz2Z4I1gZ7wuQJNUMaqjscrk3ZFho0nqFRCu/0xxDj5EkTGfsQnfs9uq0An9f/L8SL0eMFX45SjMzWrJRLH3rCL/rA=
+	t=1773058520; cv=none; b=JdFSF9qdwMarBvIdfF+qaL+B0pzOltx8442vcLASj1M6bmYsFowr8XhJ2KBO2LkzxXvGNPzMvydxm7+6InUCvEvkwpzxT3ALhH+2wat99rQkTtkX3KFGbpqjiUFCsVWZQJr5L+jePjWA+IMPceEmxD/ttwYhC0oHfEzgcBEBBN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773054938; c=relaxed/simple;
-	bh=S9SXkqh0jZ7DCmptgsdJJmECrldsV8hZlxHrOWU+6z4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ruMzdpjI4D7K9FWMYmYwswO0i8WvMpeInDivLdNeYkNnooZf/PV1VcMfHQ+l5HS9pDLu+B7FrL2nWIZtgOFAACPNgmEf6vGk7GXh4hQPiyyCSIlJWQVZ/QH2/ZbYYRkregxXiXlIIJREy+FzCKrhJc05gntuEQfHEVlRQ1Vfe/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cd4Qu2Qq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773058520; c=relaxed/simple;
+	bh=HPiSJ93sUzqz5SidOlMS933Yx3yWvCUQ5wbilVvU0I0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=luHelD5Ktm507OA1dS7oqTxLMRSlPlgtFy1Zb2Mp1U71DNnvMnq+N+lBXlxV5QGYDR21JtEbeK0PhmcmFLKkajtf9ZZgT5gX4GhA3qMn3lpOTabYqdO1uFs2eke13GNad6qIPCsQ6RuzhkyHYCU+XgYlVheWg1/f0azPy13RJjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VbpQ0agn; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cd4Qu2Qq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33B29C2BC9E;
-	Mon,  9 Mar 2026 11:15:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773054938;
-	bh=S9SXkqh0jZ7DCmptgsdJJmECrldsV8hZlxHrOWU+6z4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Cd4Qu2QqjEqBHUxJwEfd4MdQNLC916btCHsFgwudmCHTwOhxr7WM2kbIW9CHHb7Pf
-	 8y6IuTYcP5J6f6F9sT5ZPzqfyhUZ5ZLsOMML00bJSHkFcbIRzXamIs87K3o1cBf43Y
-	 D8NUmZ+4H4p046FUix3j90wLBQUAbdwuS1TsLPf1MmKXekjZJ6Vie6htBDgGTBgtRl
-	 OsX+y5jep5QB7IOUPorCfVCCwCuIO7/RB1XIggsjVJCxl28VxoFOrDzU1dMVbebVj7
-	 7ENNt+j/+0/N7faguaNaPHBORK19rAOS0/hVgO/SidOlbvfuJ569yJU9Ks7wYjM1nz
-	 RvpkDSd+YDhYw==
-From: Leon Romanovsky <leon@kernel.org>
-To: Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Itay Avraham <itayavr@nvidia.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	Chiara Meiohas <cmeiohas@nvidia.com>,
-	Maher Sanalla <msanalla@nvidia.com>,
-	Edward Srouji <edwards@nvidia.com>
-Subject: [PATCH 2/3] RDMA/mlx5: Invoke fw_validate_cmd LSM hook for DEVX commands
-Date: Mon,  9 Mar 2026 13:15:19 +0200
-Message-ID: <20260309-fw-lsm-hook-v1-2-4a6422e63725@nvidia.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com>
-References: <20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VbpQ0agn"
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-35994d84c6dso3226331a91.2
+        for <linux-security-module@vger.kernel.org>; Mon, 09 Mar 2026 05:15:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773058519; x=1773663319; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HPiSJ93sUzqz5SidOlMS933Yx3yWvCUQ5wbilVvU0I0=;
+        b=VbpQ0agnypTOPPjI8m/21HBhHNH5aAc7ANzcsMeyyTush88NDbcEKIDU/0FNDrmpe2
+         AKFJJIPXU4fyZtFDdF8bTYLCxjX1aOuVenPZRcUp2sjiUJF5NaOBayfLhruDiqVWKr4X
+         3UblMgyuSQyfM/GkJaqo4Cs+4AHZ/lcpwpxJIv2Kaa7h+03sncESZSkM2HsRsKqlvbZ4
+         tTGc0gsFE6YiZVYxmkP2kGFnsO4NfIhc1X0y06Th3ssZBxSIMeuN1pJyOm+t5Il5z0wr
+         l/VhxyPwH3xy6Gu4Q6KAL7q8BevPFztCYMh7PILLF3ownniEyDtSwVFOwFrNXvOrM7UR
+         ga2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773058519; x=1773663319;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HPiSJ93sUzqz5SidOlMS933Yx3yWvCUQ5wbilVvU0I0=;
+        b=BEbFVsh+NJT4epuOzexvXBUnacoNYTSWqU1998WvJM1FtyAlpobXXnXGXMwUOcvGkq
+         MnkVZgJ1Pd+jCgcMwPSz8btv3J+ZY6vTG3d8GwFAHRxTVoefGl0rJmPM/2IAErP4wTAW
+         RZtDA/1DLX0S8mHoYLoZGtwtl/S2E4w/ChNRLo76IqcsQLnpZNcicpYxmDR5d2EgQ1x2
+         GJgHHWqXlHIYBz1Q5CfRrBabH2tNECilWH09qtSq8q9NSvhtVwx78eDUqt+/wApg98eh
+         V/WmeGmL1pZxefoRZH0e/L2oPBwZXIYGx22xQm/hqn+A31Mrs6xLesBoyvSUsc6Em/91
+         fryQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWrZzgs6RmcSb8xnkAy6KIjgvn1q6p1LeSKoBToI01jfRqrWHRz0bW4DAllBrUrK8qzqguZy2Po4EBrBrbJyuGGsC8h3EQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWtNGCANJN0S6T8Vq+5OhCR3BI6Kw7xacXdW6U0QXkAe2/M8Gv
+	9CKnaMzLgEgdI2OqJdBOaujSzQTX1w+ftJnN4X9nK5135S8KgK6f+NMA
+X-Gm-Gg: ATEYQzzFwoKAJ3mkPLCnB60ZE4bvcpqaoM+wY6HXxIMDJb41SVNXpioS/DeLsGyMaby
+	ITUUo7qYywGmlk0V0Et2cENUUcz7D2vTwXBj7CvvrCH2NWH100omfMKbItKqUoHKcgAz4WCbXTg
+	sElK17dVTjJMW/CWUlY/RBBXO0uD+NxZZLd692KcrUb0VeANy9PbljShGJJAZbbLs1eRq6dPDFl
+	3EbFFHC+Qy5B+pWuugH8b7vKQ9+/lX5mReljOjPuksHQUKnwLBfvsh2Si1Ox4cCKBPfhYpsYwMm
+	Jdkt2dPaxwK5Ubuolt6Cj+OkfuJryOPqNaKWZmBaB5/UtMgONvQNIiSNndnmVBzwqd7Nw6+yGOR
+	ssuoYlzFt1H4aBfkuapzflFYtLd8LbupITZ9c+VGmN1F+CzdCb6p4JAnCNx3x6LJXcF3jXNL0uE
+	t++AAPF4PQ8zcW1YLcqxU=
+X-Received: by 2002:a17:90b:4ac7:b0:359:7fe6:7de with SMTP id 98e67ed59e1d1-359be3736e7mr9726794a91.23.1773058514021;
+        Mon, 09 Mar 2026 05:15:14 -0700 (PDT)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-359c0154a09sm10902291a91.12.2026.03.09.05.15.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Mar 2026 05:15:12 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 3278B4208F41; Mon, 09 Mar 2026 19:15:09 +0700 (WIB)
+Date: Mon, 9 Mar 2026 19:15:08 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Evan Ducas <evan.j.ducas@gmail.com>, wufan@kernel.org, corbet@lwn.net,
+	skhan@linuxfoundation.org
+Cc: rdunlap@infradead.org, linux-security-module@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] docs: security: ipe: fix typos and grammar
+Message-ID: <aa65zOqsFLKzgL1P@archie.me>
+References: <20260308180734.5792-1-evan.j.ducas@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.15-dev-18f8f
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="WlQl3PTVy40ZKrDC"
+Content-Disposition: inline
+In-Reply-To: <20260308180734.5792-1-evan.j.ducas@gmail.com>
 
-From: Chiara Meiohas <cmeiohas@nvidia.com>
 
-DEVX is an RDMA uverbs extension that allows userspace to submit
-firmware command buffers. The driver inspects the command and then
-passes the buffer through for firmware execution.
+--WlQl3PTVy40ZKrDC
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Call security_fw_validate_cmd() before dispatching firmware commands
-through DEVX.
+On Sun, Mar 08, 2026 at 02:07:34PM -0400, Evan Ducas wrote:
+> Fix several spelling and grammar mistakes in the IPE
+> documentation.
 
-This allows security modules to implement custom policies and
-enforce per-command security policy on user-triggered firmware
-commands. For example, a BPF LSM program could restrict specific
-firmware operations to privileged users.
+Acked-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
-Signed-off-by: Chiara Meiohas <cmeiohas@nvidia.com>
-Reviewed-by: Maher Sanalla <msanalla@nvidia.com>
-Signed-off-by: Edward Srouji <edwards@nvidia.com>
-Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
----
- drivers/infiniband/hw/mlx5/devx.c | 52 ++++++++++++++++++++++++++++++---------
- 1 file changed, 40 insertions(+), 12 deletions(-)
+--=20
+An old man doll... just what I always wanted! - Clara
 
-diff --git a/drivers/infiniband/hw/mlx5/devx.c b/drivers/infiniband/hw/mlx5/devx.c
-index 0066b2738ac89..48a2c4b4ad4eb 100644
---- a/drivers/infiniband/hw/mlx5/devx.c
-+++ b/drivers/infiniband/hw/mlx5/devx.c
-@@ -18,6 +18,7 @@
- #include "devx.h"
- #include "qp.h"
- #include <linux/xarray.h>
-+#include <linux/security.h>
- 
- #define UVERBS_MODULE_NAME mlx5_ib
- #include <rdma/uverbs_named_ioctl.h>
-@@ -1111,6 +1112,8 @@ static int UVERBS_HANDLER(MLX5_IB_METHOD_DEVX_OTHER)(
- 	struct mlx5_ib_dev *dev;
- 	void *cmd_in = uverbs_attr_get_alloced_ptr(
- 		attrs, MLX5_IB_ATTR_DEVX_OTHER_CMD_IN);
-+	int cmd_in_len = uverbs_attr_get_len(attrs,
-+					MLX5_IB_ATTR_DEVX_OTHER_CMD_IN);
- 	int cmd_out_len = uverbs_attr_get_len(attrs,
- 					MLX5_IB_ATTR_DEVX_OTHER_CMD_OUT);
- 	void *cmd_out;
-@@ -1135,9 +1138,12 @@ static int UVERBS_HANDLER(MLX5_IB_METHOD_DEVX_OTHER)(
- 		return PTR_ERR(cmd_out);
- 
- 	MLX5_SET(general_obj_in_cmd_hdr, cmd_in, uid, uid);
--	err = mlx5_cmd_do(dev->mdev, cmd_in,
--			  uverbs_attr_get_len(attrs, MLX5_IB_ATTR_DEVX_OTHER_CMD_IN),
--			  cmd_out, cmd_out_len);
-+	err = security_fw_validate_cmd(cmd_in, cmd_in_len, &dev->ib_dev.dev,
-+				       FW_CMD_CLASS_UVERBS, RDMA_DRIVER_MLX5);
-+	if (err)
-+		return err;
-+
-+	err = mlx5_cmd_do(dev->mdev, cmd_in, cmd_in_len, cmd_out, cmd_out_len);
- 	if (err && err != -EREMOTEIO)
- 		return err;
- 
-@@ -1570,6 +1576,12 @@ static int UVERBS_HANDLER(MLX5_IB_METHOD_DEVX_OBJ_CREATE)(
- 		devx_set_umem_valid(cmd_in);
- 	}
- 
-+	err = security_fw_validate_cmd(cmd_in, cmd_in_len,
-+				       &dev->ib_dev.dev,
-+				       FW_CMD_CLASS_UVERBS, RDMA_DRIVER_MLX5);
-+	if (err)
-+		goto obj_free;
-+
- 	if (opcode == MLX5_CMD_OP_CREATE_DCT) {
- 		obj->flags |= DEVX_OBJ_FLAGS_DCT;
- 		err = mlx5_core_create_dct(dev, &obj->core_dct, cmd_in,
-@@ -1582,8 +1594,8 @@ static int UVERBS_HANDLER(MLX5_IB_METHOD_DEVX_OBJ_CREATE)(
- 				     cmd_in, cmd_in_len, cmd_out,
- 				     cmd_out_len);
- 	} else {
--		err = mlx5_cmd_do(dev->mdev, cmd_in, cmd_in_len,
--				  cmd_out, cmd_out_len);
-+		err = mlx5_cmd_do(dev->mdev, cmd_in, cmd_in_len, cmd_out,
-+				  cmd_out_len);
- 	}
- 
- 	if (err == -EREMOTEIO)
-@@ -1646,6 +1658,8 @@ static int UVERBS_HANDLER(MLX5_IB_METHOD_DEVX_OBJ_MODIFY)(
- 	struct uverbs_attr_bundle *attrs)
- {
- 	void *cmd_in = uverbs_attr_get_alloced_ptr(attrs, MLX5_IB_ATTR_DEVX_OBJ_MODIFY_CMD_IN);
-+	int cmd_in_len = uverbs_attr_get_len(attrs,
-+					MLX5_IB_ATTR_DEVX_OBJ_MODIFY_CMD_IN);
- 	int cmd_out_len = uverbs_attr_get_len(attrs,
- 					MLX5_IB_ATTR_DEVX_OBJ_MODIFY_CMD_OUT);
- 	struct ib_uobject *uobj = uverbs_attr_get_uobject(attrs,
-@@ -1676,9 +1690,12 @@ static int UVERBS_HANDLER(MLX5_IB_METHOD_DEVX_OBJ_MODIFY)(
- 
- 	MLX5_SET(general_obj_in_cmd_hdr, cmd_in, uid, uid);
- 	devx_set_umem_valid(cmd_in);
-+	err = security_fw_validate_cmd(cmd_in, cmd_in_len, &mdev->ib_dev.dev,
-+				       FW_CMD_CLASS_UVERBS, RDMA_DRIVER_MLX5);
-+	if (err)
-+		return err;
- 
--	err = mlx5_cmd_do(mdev->mdev, cmd_in,
--			  uverbs_attr_get_len(attrs, MLX5_IB_ATTR_DEVX_OBJ_MODIFY_CMD_IN),
-+	err = mlx5_cmd_do(mdev->mdev, cmd_in, cmd_in_len,
- 			  cmd_out, cmd_out_len);
- 	if (err && err != -EREMOTEIO)
- 		return err;
-@@ -1693,6 +1710,8 @@ static int UVERBS_HANDLER(MLX5_IB_METHOD_DEVX_OBJ_QUERY)(
- 	struct uverbs_attr_bundle *attrs)
- {
- 	void *cmd_in = uverbs_attr_get_alloced_ptr(attrs, MLX5_IB_ATTR_DEVX_OBJ_QUERY_CMD_IN);
-+	int cmd_in_len = uverbs_attr_get_len(attrs,
-+					     MLX5_IB_ATTR_DEVX_OBJ_QUERY_CMD_IN);
- 	int cmd_out_len = uverbs_attr_get_len(attrs,
- 					      MLX5_IB_ATTR_DEVX_OBJ_QUERY_CMD_OUT);
- 	struct ib_uobject *uobj = uverbs_attr_get_uobject(attrs,
-@@ -1722,8 +1741,12 @@ static int UVERBS_HANDLER(MLX5_IB_METHOD_DEVX_OBJ_QUERY)(
- 		return PTR_ERR(cmd_out);
- 
- 	MLX5_SET(general_obj_in_cmd_hdr, cmd_in, uid, uid);
--	err = mlx5_cmd_do(mdev->mdev, cmd_in,
--			  uverbs_attr_get_len(attrs, MLX5_IB_ATTR_DEVX_OBJ_QUERY_CMD_IN),
-+	err = security_fw_validate_cmd(cmd_in, cmd_in_len, &mdev->ib_dev.dev,
-+				       FW_CMD_CLASS_UVERBS, RDMA_DRIVER_MLX5);
-+	if (err)
-+		return err;
-+
-+	err = mlx5_cmd_do(mdev->mdev, cmd_in, cmd_in_len,
- 			  cmd_out, cmd_out_len);
- 	if (err && err != -EREMOTEIO)
- 		return err;
-@@ -1832,6 +1855,8 @@ static int UVERBS_HANDLER(MLX5_IB_METHOD_DEVX_OBJ_ASYNC_QUERY)(
- {
- 	void *cmd_in = uverbs_attr_get_alloced_ptr(attrs,
- 				MLX5_IB_ATTR_DEVX_OBJ_QUERY_ASYNC_CMD_IN);
-+	int cmd_in_len = uverbs_attr_get_len(attrs,
-+				MLX5_IB_ATTR_DEVX_OBJ_QUERY_ASYNC_CMD_IN);
- 	struct ib_uobject *uobj = uverbs_attr_get_uobject(
- 				attrs,
- 				MLX5_IB_ATTR_DEVX_OBJ_QUERY_ASYNC_HANDLE);
-@@ -1894,9 +1919,12 @@ static int UVERBS_HANDLER(MLX5_IB_METHOD_DEVX_OBJ_ASYNC_QUERY)(
- 	async_data->ev_file = ev_file;
- 
- 	MLX5_SET(general_obj_in_cmd_hdr, cmd_in, uid, uid);
--	err = mlx5_cmd_exec_cb(&ev_file->async_ctx, cmd_in,
--		    uverbs_attr_get_len(attrs,
--				MLX5_IB_ATTR_DEVX_OBJ_QUERY_ASYNC_CMD_IN),
-+	err = security_fw_validate_cmd(cmd_in, cmd_in_len, &mdev->ib_dev.dev,
-+				       FW_CMD_CLASS_UVERBS, RDMA_DRIVER_MLX5);
-+	if (err)
-+		goto free_async;
-+
-+	err = mlx5_cmd_exec_cb(&ev_file->async_ctx, cmd_in, cmd_in_len,
- 		    async_data->hdr.out_data,
- 		    async_data->cmd_out_len,
- 		    devx_query_callback, &async_data->cb_work);
+--WlQl3PTVy40ZKrDC
+Content-Type: application/pgp-signature; name=signature.asc
 
--- 
-2.53.0
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaa65xwAKCRD2uYlJVVFO
+o/D6AQCQz/ijZESqN6jyW5u4EgkfCM8QCoDE3QAGxp1yQFRSDQD9H0AwrEQ/Omij
+xMlXzOiUS1xLbjwmeV9LMLCBiJSd+wE=
+=SsgC
+-----END PGP SIGNATURE-----
+
+--WlQl3PTVy40ZKrDC--
