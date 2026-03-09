@@ -1,150 +1,235 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044CF33D6DD
-	for <linux-security-module@vger.kernel.org>; Mon,  9 Mar 2026 18:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.170
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773081173; cv=pass; b=Zo9zFGZlgWrzPgdcIAoepfajH3QIAz/RZMpLx+QfhaZRBhd2xUkin/p7F0hRwsy5NhUz7SNZ5z+9uQ7LyTXzqza3qPzcB+fwl02jqFxLxbycVXkQY3RQbvINy1QEGpatQyHTn5Egdra7w+YnZBZs72uZ/mwmPSCU1NX6Tzz/Kek=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773081173; c=relaxed/simple;
-	bh=5pfbX7IgfKNQp2WRG7sxyMmlo2J+X5YrF7BKB81kNxE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EpPCw/dj3AfwuuRxEup4FMSxTFkTv1mBbdDnO2Y0m0HYGJqXLR7O6YCaC7LD60HeGpAWTuKb7fUrOt0P9xVQ4Re11o+BEDyE005y3lGQbNge9wFr7R/rhRAmZfFzzh5avqPpbWOaf1JezHwKjAsEv1/oH2nnQeVCPeIy+XEF+pI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=OKmBdzXM; arc=pass smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E006114A4CC;
+	Mon,  9 Mar 2026 19:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773082873; cv=none; b=aZqu906/3H8AZ1W0bOaFhhO3F1b1/f3wkfFQswIL/BTwx2Q9H3xqD2j+QlLBPm1OHEyz66wrqF5yXGEkoRhW06tJWAZ1UZM9tg2IRIDCKu/AoIrpduOw8rxyEGmgZ+aspxn+D5zoNMsthOks5PwDsdNlnFMXxxCKrJRUoAwXHrA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773082873; c=relaxed/simple;
+	bh=zuZybXxG4NWtCCamlMtgm4GPhCUwWs75GokKHhfMbyA=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=QCmBAwOLqWrnXR8eva6gXElo4OqrkXzQuB5QYgU3FvYWtoDJC7B85wjJTWwGoLp5rzxGkemZmw0E57Jvh2Atm6KSaM5c86CDvWQ/ujg1lSONgiypvYEUN/lpO0DGycqC65/yg5OSCt0zXJJXHxjsbOWwPU75UcJZPDJlQBPVqhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=d2IgH4d2; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="OKmBdzXM"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2ae4d919f9bso51870765ad.0
-        for <linux-security-module@vger.kernel.org>; Mon, 09 Mar 2026 11:32:51 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773081171; cv=none;
-        d=google.com; s=arc-20240605;
-        b=G+gKT+vA/r0Sd0iSqSjSv85yHgU8Ahe9wZUqu1YUTHWNNFnEEnawRkmD8MgP7n3ohW
-         2jPJE7Mcib5OeOFa3UdNXkwXJPc3g9Sl/gaKwtlk+hbclK33WZp1+D6HkF2yKfsDWXbQ
-         Wxp4O3acuq4X4KUAvnqKWkdpRM8YL3YMMcoJfyo2jZWEYt06YD+ESzuQ1MACbS1r6xlS
-         yJWJ767lXgUkFoeQMFavTWhVYQLE/2hIC0ykotqQJ5O8bymmPwoHpZk6wJnj0A1nTSrm
-         TEV14XA8IkGuTFwWX7HaIi2PbjSVJYb/fN6hXS8i7Ox+Z6Gc3ik6N8Zmm9uEi1esWwNL
-         FX2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=5pfbX7IgfKNQp2WRG7sxyMmlo2J+X5YrF7BKB81kNxE=;
-        fh=vD00dgu+cuAZ/FdS+IMaU4c3krlyG8tga6fiPR7X8sg=;
-        b=DSzCOErNWO7xY8pSUGz8LBOVHYpJyre0y0aap6Itp/eKJWYT4MpVYA0+l1v3QWb/mn
-         FUi1GrW+CIu5Quxx32ONSfpnOHtPQ0V9jlArvXq6Vxm9kuCJPi8kgsQqcc/tRi3rEvza
-         ioyeqiN6C/oSfEZjpl7EAiqcj+OpPs0g4vVb7NdMNU6hkkveWFLLurVTuDj2sRTXCUCJ
-         w5bIBWWwklgKSPt6s8x1/EYBMyZGlzyq3eCRUhFUWyIop7I03G6a+M3FORVDKstDMe7O
-         AEVDJPm+0psBfneVX9gzptxjgoSL8BDt1dHZg2VkBKRuWAjp7yPuw+jkLCCAcn92lhl3
-         bJHw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1773081171; x=1773685971; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5pfbX7IgfKNQp2WRG7sxyMmlo2J+X5YrF7BKB81kNxE=;
-        b=OKmBdzXMZs6SZgPLUjsPOaiO+XmfmTXOFzyKs1YgdM4mgLEF4F+FrC/D/erbDUCir+
-         O4L16W2VSgn3XDXFaqnhZAcWQvxI1L3Sy5VnkTi4zVFx2eDN0GfuHDUq4qe8KwcKoJRC
-         RObbgArgN6CuQ9LKBsw2x+GQ2mZH9HRMjMHiRYfp7vexmkytgvmMNvnaanWPssC4Ihei
-         +LWD/aa6uLA15eFEqMJUKF9CLMsJPydHdahIGPWyq56vsbsXUzcx2EfIDYtCKyt2QD7P
-         /aiF/DPKcisdax9mxmZ/iANKtESmGm9u7VjDopZxWaQM7gpsN1kYK2dheUeKb7A9JBLq
-         /V0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773081171; x=1773685971;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=5pfbX7IgfKNQp2WRG7sxyMmlo2J+X5YrF7BKB81kNxE=;
-        b=TMjUrubxxLlNvcmMUHjBMPWgzDb9TG0B69Bpl/a30sEPCqbYW3UU7XiMVSKaeBqH1j
-         Fvo9ELcm8/LVyyYc6atH5M+gY/1HIiDlFBtWlEg+ENi58SPYBQszS59chBAnPFbPqjoq
-         6PzmVmebZW4x3hQFJpFFEmAYtgksmOp1SDt1PoT8KV5SDPxT6eHtePHDatr3qs60Urmo
-         zqDjkNU7oPpxNODi97Z+EefrcAF2Y+RXwC3vaI6/Qf3KyHze2UAQ/fUAJHO2XVBMRo82
-         TtH2WCATIg4zyrBhZ7F3U5B424oEbbrGM23LVaROgXzGMeNLq9RhwddpSA/nuyuK6DuS
-         8Bng==
-X-Forwarded-Encrypted: i=1; AJvYcCUHROGweaR6bhdSq/1NBTBCbnAh0uSJIrHG44gcxBizpc0dndgJXEZWXdGK5Fyr5qo+KXuKh29qlIctv31ZgRHNih4Fljk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEwxxsI36sgZOrTZbqA6SMVukERW+sZFBMbdf6deJ8R22qOL40
-	lt4dKOjCU4QpeI9L/VMax1wSOiy/RMhkr6irQpVptWrDXioe4o5sCBHwB3lRDhBSnvz2QIdrmYt
-	ijaOPf1mT0yRgu3zKFdzhzYDnQ0GpRf3EJ5BizJAy
-X-Gm-Gg: ATEYQzyoYyj1FVgrsV51ZM1FBG3soNAuIzeyOEqxcdDErVcmclIJIjgeF/XIfRPfpoe
-	QCCksD2rHedEQ7ZrkqBM7KDbnG5zvxVDsRot4Q/LbQHa6Oeyx02xbohZHpv32EV/yt5sLfs9ROy
-	e25ss/f8yeux9m8BzeXWojxbZbUA4TmaKmgdS7bg2D2TvqKB46N8xcANz16/zQFNfl4PEHKMDn/
-	GIVfRLgxC7SIhOFd2th8GHKtoWqIEo5yJ0fBZ65fIciEUSpeteXtaj0yuAovyx33HDTJBVcvfRV
-	NZ7Tjm0=
-X-Received: by 2002:a17:903:1988:b0:2ae:5ec4:2f78 with SMTP id
- d9443c01a7336-2ae8242cf9emr130948555ad.33.1773081171206; Mon, 09 Mar 2026
- 11:32:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="d2IgH4d2"
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 629BiYp9402979;
+	Mon, 9 Mar 2026 19:00:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=5swsN0
+	rUxxavDq9zMYnPJS2Jv47BUk07HnZRz0pbh40=; b=d2IgH4d2cI76xjXosS08+5
+	z7p4cmRM3+vsUQToHiG2nB8DP/joMF596z7727f61cqMRXeNJJpaPHxOajT8sUoA
+	4hdB+fd4u1HsuNVMFr3OsadtAG1CKvM35tVtsMpgaqqCM2ZBMMXJkpG++BlAdorh
+	a25OzV7jJWb6oFmtakhiLNn+qzaAmqYeRhvuloIidiB6X0BgKDL71O4yfuzN3RUh
+	AoqpvZ653XjMWMMwrSPrZbVK8uRNsl6RplSUCc6nWvYsnXyDf2A2VF2Up7qZowSZ
+	aJlNA2A77/MP8caSRZkmC6D9PsUx9bOXT5BvUfyuxzfxj3qWmymQF0ir3jH77L1w
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4crcun7rdb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Mar 2026 19:00:09 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 629FvaW1015771;
+	Mon, 9 Mar 2026 19:00:08 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4cs121ww0t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Mar 2026 19:00:08 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 629J079s4915810
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 9 Mar 2026 19:00:08 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B444C58064;
+	Mon,  9 Mar 2026 19:00:07 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E09F35805A;
+	Mon,  9 Mar 2026 19:00:04 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.72.80])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  9 Mar 2026 19:00:04 +0000 (GMT)
+Message-ID: <c9500adc562665d44feaca9206f23a5ba07432c1.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 00/12] vfs: change inode->i_ino from unsigned long
+ to u64
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+        fsverity@lists.linux.dev, linux-mm@kvack.org, netfs@lists.linux.dev,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-nilfs@vger.kernel.org,
+        v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+        autofs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+        linux-mtd@lists.infradead.org, jfs-discussion@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+        devel@lists.orangefs.org, linux-unionfs@vger.kernel.org,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        netdev@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-hams@vger.kernel.org, linux-x25@vger.kernel.org,
+        audit@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-can@vger.kernel.org, linux-sctp@vger.kernel.org,
+        bpf@vger.kernel.org
+In-Reply-To: <f22758116dabd3c135a833bcb5cfcd2ea4f6ecf4.camel@kernel.org>
+References: <20260304-iino-u64-v3-0-2257ad83d372@kernel.org>
+		 <05b5d55c49b5a1bbc43a5315e3c84872e7e634b3.camel@linux.ibm.com>
+	 <f22758116dabd3c135a833bcb5cfcd2ea4f6ecf4.camel@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 09 Mar 2026 15:00:04 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com>
-In-Reply-To: <20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 9 Mar 2026 14:32:39 -0400
-X-Gm-Features: AaiRm51Nyf3eubsZF_AS8QuxcFS2-w70i5MYcT-OKhQqne3jHp6zEq8Kbc0-IAo
-Message-ID: <CAHC9VhTR9CsBgxRCAHXm5T2NZ5tr+XfmA--zkt=udmk9hPRuZQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Firmware LSM hook
-To: Leon Romanovsky <leon@kernel.org>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Saeed Mahameed <saeedm@nvidia.com>, Itay Avraham <itayavr@nvidia.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>, 
-	Maher Sanalla <msanalla@nvidia.com>, Edward Srouji <edwards@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: IXXixi4WEaMt5ZLipHNyYmLY2v6HWLsd
+X-Authority-Analysis: v=2.4 cv=Hp172kTS c=1 sm=1 tr=0 ts=69af18ba cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=VwQbUJbxAAAA:8
+ a=o9bg_TheAfZNAX0b3qsA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA5MDE2NSBTYWx0ZWRfX6z/xa1oiKPHE
+ y5EqU++9e+D9gbPsThEA40KAIQaMNONuQFv6rphXC4UXK9hbuizpabscJIBcCstT+gR2HtuKysP
+ juuUkxGaMl7wxMTZHQleqdpaj1BApzfJEmhJlxbY5TY+zaAhKCE7FmRzIMEIOEQTi0cM+UreNNn
+ frwDdmfnFwh4sJREHHlQDdGWVECyjZbYar7Sfrv1WmeMPxeeCh8/LcWzrRHQxRnw2tvA2a4D8NR
+ c7ma8KolSpfVjNgJ0OleioMQBwEZGtoJr7jBKqVpvCDiflI9IHYr2EnI/OMDVmsDQcjOAtzHE2E
+ Cqs2ZZL0dk00OuX7g/sw5bXFEAXaWjWvfls2vJrY4HNOaz6u97184uDaehJuW5B2dmjBv87lTJU
+ mdY20MyhE/Ql/CExB+A/Xcl6KkN3u1kmsdTu44KKD0LP1RVDdsR5dGWPIvWKEchoHvJnuy6WqMG
+ FGu2ZyF+vBxNE+HNtfg==
+X-Proofpoint-ORIG-GUID: IXXixi4WEaMt5ZLipHNyYmLY2v6HWLsd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-09_05,2026-03-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 malwarescore=0 impostorscore=0 suspectscore=0
+ spamscore=0 phishscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603090165
 
-On Mon, Mar 9, 2026 at 7:15=E2=80=AFAM Leon Romanovsky <leon@kernel.org> wr=
-ote:
->
-> From Chiara:
->
-> This patch set introduces a new LSM hook to validate firmware commands
-> triggered by userspace before they are submitted to the device. The hook
-> runs after the command buffer is constructed, right before it is sent
-> to firmware.
->
-> The goal is to allow a security module to allow or deny a given command
-> before it is submitted to firmware. BPF LSM can attach to this hook
-> to implement such policies. This allows fine-grained policies for differe=
-nt
-> firmware commands.
->
-> In this series, the new hook is called from RDMA uverbs and from the fwct=
-l
-> subsystem. Both the uverbs and fwctl interfaces use ioctl, so an obvious
-> candidate would seem to be the file_ioctl hook. However, the userspace
-> attributes used to build the firmware command buffer are copied from
-> userspace (copy_from_user()) deep in the driver, depending on various
-> conditions. As a result, file_ioctl does not have the information require=
-d
-> to make a policy decision.
->
-> This newly introduced hook provides the command buffer together with rele=
-vant
-> metadata (device, command class, and a class-specific device identifier),=
- so
-> security modules can distinguish between different command classes and de=
-vices.
->
-> The hook can be used by other drivers that submit firmware commands via a=
- command
-> buffer.
+On Mon, 2026-03-09 at 13:59 -0400, Jeff Layton wrote:
+> On Mon, 2026-03-09 at 13:47 -0400, Mimi Zohar wrote:
+> > [ I/O socket time out.  Trimming the To list.]
+> >=20
+> > On Wed, 2026-03-04 at 10:32 -0500, Jeff Layton wrote:
+> > > This version squashes all of the format-string changes and the i_ino
+> > > type change into the same patch. This results in a giant 600+ line pa=
+tch
+> > > at the end of the series, but it does remain bisectable.  Because the
+> > > patchset was reorganized (again) some of the R-b's and A-b's have bee=
+n
+> > > dropped.
+> > >=20
+> > > The entire pile is in the "iino-u64" branch of my tree, if anyone is
+> > > interested in testing this.
+> > >=20
+> > >     https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git=
+/
+> > >=20
+> > > Original cover letter follows:
+> > >=20
+> > > ----------------------8<-----------------------
+> > >=20
+> > > Christian said [1] to "just do it" when I proposed this, so here we a=
+re!
+> > >=20
+> > > For historical reasons, the inode->i_ino field is an unsigned long,
+> > > which means that it's 32 bits on 32 bit architectures. This has cause=
+d a
+> > > number of filesystems to implement hacks to hash a 64-bit identifier
+> > > into a 32-bit field, and deprives us of a universal identifier field =
+for
+> > > an inode.
+> > >=20
+> > > This patchset changes the inode->i_ino field from an unsigned long to=
+ a
+> > > u64. This shouldn't make any material difference on 64-bit hosts, but
+> > > 32-bit hosts will see struct inode grow by at least 4 bytes. This cou=
+ld
+> > > have effects on slabcache sizes and field alignment.
+> > >=20
+> > > The bulk of the changes are to format strings and tracepoints, since =
+the
+> > > kernel itself doesn't care that much about the i_ino field. The first
+> > > patch changes some vfs function arguments, so check that one out
+> > > carefully.
+> > >=20
+> > > With this change, we may be able to shrink some inode structures. For
+> > > instance, struct nfs_inode has a fileid field that holds the 64-bit
+> > > inode number. With this set of changes, that field could be eliminate=
+d.
+> > > I'd rather leave that sort of cleanups for later just to keep this
+> > > simple.
+> > >=20
+> > > Much of this set was generated by LLM, but I attributed it to myself
+> > > since I consider this to be in the "menial tasks" category of LLM usa=
+ge.
+> > >=20
+> > > [1]: https://lore.kernel.org/linux-fsdevel/20260219-portrait-winkt-95=
+9070cee42f@brauner/
+> > >=20
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> >=20
+> > Jeff, missing from this patch set is EVM.  In hmac_add_misc() EVM copie=
+s the
+> > i_ino and calculates either an HMAC or file meta-data hash, which is th=
+en
+> > signed.=20
+> >=20
+> >=20
+>=20
+> Thanks Mimi, good catch.
+>=20
+> It looks like we should just be able to change the ino field to a u64
+> alongside everything else. Something like this:
+>=20
+> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm=
+/evm_crypto.c
+> index c0ca4eedb0fe..77b6c2fa345e 100644
+> --- a/security/integrity/evm/evm_crypto.c
+> +++ b/security/integrity/evm/evm_crypto.c
+> @@ -144,7 +144,7 @@ static void hmac_add_misc(struct shash_desc *desc, st=
+ruct inode *inode,
+>                           char type, char *digest)
+>  {
+>         struct h_misc {
+> -               unsigned long ino;
+> +               u64 ino;
+>                 __u32 generation;
+>                 uid_t uid;
+>                 gid_t gid;
+>=20
 
-Hi Leon,
+Agreed.
 
-At the link below, you'll find guidance on submitting new LSM hooks.
-Please take a look and let me know if you have any questions.
+>=20
+> That should make no material difference on 64-bit hosts. What's the
+> effect on 32-bit? Will they just need to remeasure everything or would
+> the consequences be more dire? Do we have any clue whether anyone is
+> using EVM in 32-bit environments?
 
-https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#new-lsm-h=
-ooks
+All good questions. Unfortunately I don't know the answer to most of them. =
+What
+we do know: changing the size of the i_ino field would affect EVM file meta=
+data
+verification and would require relabeling the filesystem.  Even packages
+containing EVM portable signatures, which don't include or verify the i_ino
+number, would be affected.
 
-(If you lose the link, or simply for future reference, you can find it
-in the "SECURITY SUBSYSTEM" MAINTAINERS entry.)
+Mimi
 
---=20
-paul-moore.com
+
+
+
