@@ -1,104 +1,98 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8803B8D65
-	for <linux-security-module@vger.kernel.org>; Mon,  9 Mar 2026 15:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390153D9059;
+	Mon,  9 Mar 2026 15:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773069207; cv=none; b=H0m8+qWDHUZ6Hfn62d0iR3jhrMOc1m2c24B/kZ+2PFepcQGIHx+yalvt0iA0HUyG/YzgONANMdK0y+8n4Lw5rJKzNfo1+QdPoVhRe8Y75+5pBAI5IviLhbAh2QTO/JXe7ZxBcC2l89aaKOyA2O7+loEFvAAb5/nSyjJA57qKaNU=
+	t=1773069939; cv=none; b=HsosmeQJ0vffhp1nJ1qSrb/Z/DSZFM/jG22AgYnv6fbpVN2vZxzT9fl37kKWksb04wP1QKTSHBwSbt3Fqj9jQ1MMS0rP3czEIh1tw/dRFK95LRcVONFS60r8yYXH2yCksVInFtpQtLaKhGU7HpgRXsMO+4VDL8lipGFpzG9+nFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773069207; c=relaxed/simple;
-	bh=49TKuQN03cuR/ixziMwo/sxdG8QTob0zJtdfZ1Zxyhg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MBsj5mGCLfvN3z9U2l+nJhLHnTGaO803ZhYABGeUh7Vs4XUH9sN2aXr+fIexQi17RiSGQ+t6+dEkBUrmIwJMswB/b41uVcqaN8WMX7aW+UTkjeMU+L3+1rc1aR0IziTVNtPAYICM8ER9L4kaWoMvRHUn7NmRo5mywgRYGwrt5yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BgaylCIf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773069939; c=relaxed/simple;
+	bh=+3gB+EKre5DN7odYujKBBsbV40NgRajx+jcsCeWsbG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lbp/DAPtTl24Ey9AYY8eSiSgLKkbmaDefgqKDjvSpY1aIv1ON6f6qfeLl54GAtSCtTGr9RhRSqiwCaJdaTko+WZrx9a1Pw6fWdqiQUjqAVOQ+vLXoHatWR8B5u/tbYQ8p+WY+Q1InCkfInROG3pCa0IWUC/NEZYH+Vwa1U46RvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HCV5crke; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgaylCIf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9451CC2BC86
-	for <linux-security-module@vger.kernel.org>; Mon,  9 Mar 2026 15:13:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCV5crke"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 633E4C4CEF7;
+	Mon,  9 Mar 2026 15:25:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773069207;
-	bh=49TKuQN03cuR/ixziMwo/sxdG8QTob0zJtdfZ1Zxyhg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BgaylCIftD+1hDKX/l70pfD2cw0W5O4oaRHTY3vbVJb0UF0T3LP0J2VWHRym3sVJG
-	 5fLwu9RMavfaS63HI4f4J3jHia6ZStE5S2WXxFBmm6m/Hzvp8LeFrFxT2n9XWPaiE8
-	 1hynobNLbmSyK9zI2lHFkVooXMpShtWhXN5VZGhqYq6CRzFqpzmUH7ZxS2ZHYmvBqX
-	 IP1tlCd/+kALR55SsOVwAjAjHyhlH4XOwk4QdLw1p8ZPvYD0TFjMXNm00kth5Sa9wb
-	 oN0Rz6joXqhGloG5DcyqFWdIQ5zltxvhqdyoip2x5dNzyal3TbJp1jXZXezVIAwdio
-	 lJrp3DSLTGgpg==
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-67bac077116so639851eaf.1
-        for <linux-security-module@vger.kernel.org>; Mon, 09 Mar 2026 08:13:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUdj3fojOhQr1XJx/vwUnB63wkGK3opWASCmQOQOIqz4d/IxGtmFl2znt1GyBeCb4FXWgxtDoRGk8IDf4wwP10rXzFulew=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNVGE+wv3+gEyhi9VVlOPrJ/ARJOj0LfWsQMoYFKojcEv+8R0o
-	x6QcoMi8FSAkE8eN51e3yoGuKWzRk8lcTmoSQvKb7DXTVTwZRKEiQi/3Lzkrp9I89rKfu7qxfv1
-	Nu9+qkt55IzvAnhy6hm0RZkfXVPWYS3c=
-X-Received: by 2002:a4a:e846:0:b0:679:97ac:2cc3 with SMTP id
- 006d021491bc7-67b9bc976eemr6571668eaf.22.1773069206748; Mon, 09 Mar 2026
- 08:13:26 -0700 (PDT)
+	s=k20201202; t=1773069938;
+	bh=+3gB+EKre5DN7odYujKBBsbV40NgRajx+jcsCeWsbG4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HCV5crke2AZzv++bgjrbQAQz9FXlqWPeGt2Ii5/JvphAwRNpTYQcXl17rPy3w0z3V
+	 oPke+SSwo3PN6meSM3BriEccNUMLqblr4x/kXUFtYTVMnfK7yVMY6km9G1qXSjIQt4
+	 93ZjoZnmYPdn2JeqwDTH6ZE4rfm4vRqSeV3Pl1rJ43HWU3HHFgfjMXem4NL6XW/GWO
+	 nP21cCikOJkXLHPJgPL8CtHT4YN3NirT1VGNUNDn2MDuy+X5HmHxy1JAShAX9H/OnN
+	 eLCrKVNKox5WJyavABbPwWe/Pi620VNTB+keSjUPnkGoMkPHke8S84/Pu3tGXv8Oz+
+	 euY+1VJNmY+Zg==
+Date: Mon, 9 Mar 2026 17:25:34 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Saeed Mahameed <saeedm@nvidia.com>,
+	Itay Avraham <itayavr@nvidia.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>,
+	Maher Sanalla <msanalla@nvidia.com>,
+	Edward Srouji <edwards@nvidia.com>
+Subject: Re: [PATCH 1/3] lsm: add hook for firmware command validation
+Message-ID: <20260309152534.GY12611@unreal>
+References: <20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com>
+ <20260309-fw-lsm-hook-v1-1-4a6422e63725@nvidia.com>
+ <20260309150253.00001ec7@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2780abfc-39d1-4441-833c-65e66f747054@gmx.com>
-In-Reply-To: <2780abfc-39d1-4441-833c-65e66f747054@gmx.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 9 Mar 2026 16:13:15 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hokpC_2E77nrm2KHeOdhhH6qvYsg3wCQpTEG=PCim=ww@mail.gmail.com>
-X-Gm-Features: AaiRm53DlYhLR-k2-DVzEs7axQUuHxUb-bjFYTFjCi_T-97qxkViYvYsZ70y4I4
-Message-ID: <CAJZ5v0hokpC_2E77nrm2KHeOdhhH6qvYsg3wCQpTEG=PCim=ww@mail.gmail.com>
-Subject: Re: Subject: x86/msr + lockdown: allow access to **documented**
- RAPL/TCC controls under Secure Boot
-To: "Artem S. Tashkinov" <aros@gmx.com>
-Cc: x86@kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, 
-	linux-efi@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, "Zhang, Rui" <rui.zhang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260309150253.00001ec7@huawei.com>
 
-On Mon, Mar 9, 2026 at 1:24=E2=80=AFPM Artem S. Tashkinov <aros@gmx.com> wr=
-ote:
->
-> Hello,
->
-> When Secure Boot is enabled and kernel lockdown is active, the x86 MSR
-> driver blocks all raw MSR access from user space via `/dev/cpu/*/msr`.
-> This effectively prevents legitimate use of documented CPU power and
-> thermal management interfaces such as RAPL power limits (PL1/PL2) and
-> the TCC/TjOffset control. These registers are part of Intel=E2=80=99s
-> **publicly** documented architectural interface and have been stable
-> across many generations of processors.
+On Mon, Mar 09, 2026 at 03:02:53PM +0000, Jonathan Cameron wrote:
+> On Mon,  9 Mar 2026 13:15:18 +0200
+> Leon Romanovsky <leon@kernel.org> wrote:
+> 
+> > From: Chiara Meiohas <cmeiohas@nvidia.com>
+> > 
+> > Drivers typically communicate with device firmware either via
+> > register-based commands (writing parameters into device registers)
+> > or by passing a command buffer using shared-memory mechanisms.
+> > 
+> > This hook targets the command buffer mechanism, which is commonly
+> > used on modern, complex devices.
+> > 
+> > Add the LSM hook fw_validate_cmd. This hook allows inspecting
+> > firmware command buffers before they are sent to the device.
+> > The hook receives the command buffer, device, command class, and a
+> > class-specific id:
+> >   - class_id (enum fw_cmd_class) allows security modules to
+> >     differentiate between classes of firmware commands.
+> >     In this series, class_id distinguishes between commands from the
+> >     RDMA uverbs interface and from fwctl.
+> >   - id is a class-specific device identifier. For uverbs, id is the
+> >     RDMA driver identifier (enum rdma_driver_id). For fwctl, id is the
+> >     device type (enum fwctl_device_type).
+> > 
+> > Signed-off-by: Chiara Meiohas <cmeiohas@nvidia.com>
+> > Reviewed-by: Maher Sanalla <msanalla@nvidia.com>
+> > Signed-off-by: Edward Srouji <edwards@nvidia.com>
+> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> Hi Leon,
+> 
+> To me this seems sensible, but LSM isn't an area I know that much about.
+> 
+> With that in mind:
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> 
+> A few formatting related comments inline.
 
-There is a power capping RAPL driver.  What's the problem with it with
-Secure Boot enabled?
+Thanks for the feedback. I’ve addressed all comments and will send a new
+revision within the next few days.
 
-> As a result, under Secure Boot Linux users lose the ability to read or
-> adjust **standard** power-management controls that remain available
-> through equivalent tooling on other operating systems.
-
-The power capping RAPL driver is there, please use it.  It is documented ev=
-en.
-
-There is also a driver for TCC/TjOffset control, it is called intel_tcc_coo=
-ling.
-
-And there are utilities in user space (for example, Intel thermald)
-that use those interfaces.
-
-> The current all-or-nothing restriction appears broader than necessary
-> for the stated goal of protecting kernel integrity. MSRs associated with
-> power limits and TCC offset are not privileged debugging or microcode
-> interfaces but standard hardware configuration knobs intended for
-> platform power and thermal management.
->
-> It would be useful if the kernel either allowed access to a small
-> whitelist of such documented registers under lockdown or exposed a
-> mediated kernel interface for adjusting them. Without such a mechanism,
-> Secure Boot effectively disables legitimate and widely used
-> power/thermal tuning functionality on modern Intel laptops.
->
-> Most (if not all) Intel laptops don't expose or allow to configure
-> PL1/PL2 limits in BIOS/EFI either.
-
-Because it is not necessary to do so.
+Thanks
