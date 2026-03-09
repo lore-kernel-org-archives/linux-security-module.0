@@ -1,98 +1,139 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390153D9059;
-	Mon,  9 Mar 2026 15:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53AD83E9F7D;
+	Mon,  9 Mar 2026 16:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773069939; cv=none; b=HsosmeQJ0vffhp1nJ1qSrb/Z/DSZFM/jG22AgYnv6fbpVN2vZxzT9fl37kKWksb04wP1QKTSHBwSbt3Fqj9jQ1MMS0rP3czEIh1tw/dRFK95LRcVONFS60r8yYXH2yCksVInFtpQtLaKhGU7HpgRXsMO+4VDL8lipGFpzG9+nFY=
+	t=1773075474; cv=none; b=O0WMVPcwhmMgWumO2kzKCYO3ypUu5NXOFTnwMZXj34DWvvWe0GVRerhVRAl9DXrH4UCrpTV6QztZWMhedlbTjyU3I+M2x+9tcDFV81pMqo8U7YNsKZQQaxHQlOK3dxaz0nB3A6Sgd5+Gpl9sF017cAKGkwmre9Q7Sc8JRYWNK7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773069939; c=relaxed/simple;
-	bh=+3gB+EKre5DN7odYujKBBsbV40NgRajx+jcsCeWsbG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lbp/DAPtTl24Ey9AYY8eSiSgLKkbmaDefgqKDjvSpY1aIv1ON6f6qfeLl54GAtSCtTGr9RhRSqiwCaJdaTko+WZrx9a1Pw6fWdqiQUjqAVOQ+vLXoHatWR8B5u/tbYQ8p+WY+Q1InCkfInROG3pCa0IWUC/NEZYH+Vwa1U46RvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HCV5crke; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773075474; c=relaxed/simple;
+	bh=ps3y+kUNP2JF2i84nV4uDamQeGpDbEKzAbhSVqOfT3A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a6eCaGZcPelIjXXHxTP2LAVbqxDJfLCtMgnKvvAd88lo4sRhnPS84JM4JrYWdRW3kid5eWNAw3BnEhcGGe4PubGO2Vxm42hnBniE6uC8boL6bWK06cymzD7/9feaMVgIkmFvmjrNsgiFokE8bAAX0s9WaQuzOkt085ouCiA4rmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IsdZLno/; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCV5crke"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 633E4C4CEF7;
-	Mon,  9 Mar 2026 15:25:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773069938;
-	bh=+3gB+EKre5DN7odYujKBBsbV40NgRajx+jcsCeWsbG4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HCV5crke2AZzv++bgjrbQAQz9FXlqWPeGt2Ii5/JvphAwRNpTYQcXl17rPy3w0z3V
-	 oPke+SSwo3PN6meSM3BriEccNUMLqblr4x/kXUFtYTVMnfK7yVMY6km9G1qXSjIQt4
-	 93ZjoZnmYPdn2JeqwDTH6ZE4rfm4vRqSeV3Pl1rJ43HWU3HHFgfjMXem4NL6XW/GWO
-	 nP21cCikOJkXLHPJgPL8CtHT4YN3NirT1VGNUNDn2MDuy+X5HmHxy1JAShAX9H/OnN
-	 eLCrKVNKox5WJyavABbPwWe/Pi620VNTB+keSjUPnkGoMkPHke8S84/Pu3tGXv8Oz+
-	 euY+1VJNmY+Zg==
-Date: Mon, 9 Mar 2026 17:25:34 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Saeed Mahameed <saeedm@nvidia.com>,
-	Itay Avraham <itayavr@nvidia.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>,
-	Maher Sanalla <msanalla@nvidia.com>,
-	Edward Srouji <edwards@nvidia.com>
-Subject: Re: [PATCH 1/3] lsm: add hook for firmware command validation
-Message-ID: <20260309152534.GY12611@unreal>
-References: <20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com>
- <20260309-fw-lsm-hook-v1-1-4a6422e63725@nvidia.com>
- <20260309150253.00001ec7@huawei.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IsdZLno/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1773075471; x=1804611471;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ps3y+kUNP2JF2i84nV4uDamQeGpDbEKzAbhSVqOfT3A=;
+  b=IsdZLno/up02DCbAgGV30tczdrH+G/iha+VN+MABHENJsEeVE3TE0f2O
+   BtVZ+t3hGcFcUd6Z8yqNYNsMi1iaOytvcbqmZiE/bhE2C3lsm/y2WgzAa
+   IyA1mmgy4hGWiAubVixyOmMVKz4Fs7RCQ5EVdDH4+cS+3BoAmoi5gr7yu
+   GzUYag+I7juWbnozGjqK7/hLalhcPb5J1Fm/31xUQVC5e/BUd1jwRoA7T
+   UID2aBc4BCunom8+VQUO5ACDgIsW0Tk9/qWoVqbxu3ibHJsQDla2iEHmW
+   9ql7ImhlUyD4V/RMWD2mWCUMawydFfKKaJs1mv5KV2DR+ihZR3apeAvkz
+   g==;
+X-CSE-ConnectionGUID: ukKc/rJ8RfysrGAVCkas2w==
+X-CSE-MsgGUID: FQMQM+NbTfC719BvhtzGFg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11724"; a="73305177"
+X-IronPort-AV: E=Sophos;i="6.23,109,1770624000"; 
+   d="scan'208";a="73305177"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2026 09:57:51 -0700
+X-CSE-ConnectionGUID: sBvzkeA2TFyAJTVL8Kau8Q==
+X-CSE-MsgGUID: 2Lu0ykwsTtaIfsHP2vI/ng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,109,1770624000"; 
+   d="scan'208";a="224261367"
+Received: from dwoodwor-mobl2.amr.corp.intel.com (HELO [10.125.109.205]) ([10.125.109.205])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2026 09:57:50 -0700
+Message-ID: <48980e31-bbde-463e-a7d2-e2faa983b5a1@intel.com>
+Date: Mon, 9 Mar 2026 09:57:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260309150253.00001ec7@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] fwctl/mlx5: Invoke fw_validate_cmd LSM hook for fwctl
+ commands
+To: Leon Romanovsky <leon@kernel.org>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Saeed Mahameed <saeedm@nvidia.com>,
+ Itay Avraham <itayavr@nvidia.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>,
+ Maher Sanalla <msanalla@nvidia.com>, Edward Srouji <edwards@nvidia.com>
+References: <20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com>
+ <20260309-fw-lsm-hook-v1-3-4a6422e63725@nvidia.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20260309-fw-lsm-hook-v1-3-4a6422e63725@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 09, 2026 at 03:02:53PM +0000, Jonathan Cameron wrote:
-> On Mon,  9 Mar 2026 13:15:18 +0200
-> Leon Romanovsky <leon@kernel.org> wrote:
-> 
-> > From: Chiara Meiohas <cmeiohas@nvidia.com>
-> > 
-> > Drivers typically communicate with device firmware either via
-> > register-based commands (writing parameters into device registers)
-> > or by passing a command buffer using shared-memory mechanisms.
-> > 
-> > This hook targets the command buffer mechanism, which is commonly
-> > used on modern, complex devices.
-> > 
-> > Add the LSM hook fw_validate_cmd. This hook allows inspecting
-> > firmware command buffers before they are sent to the device.
-> > The hook receives the command buffer, device, command class, and a
-> > class-specific id:
-> >   - class_id (enum fw_cmd_class) allows security modules to
-> >     differentiate between classes of firmware commands.
-> >     In this series, class_id distinguishes between commands from the
-> >     RDMA uverbs interface and from fwctl.
-> >   - id is a class-specific device identifier. For uverbs, id is the
-> >     RDMA driver identifier (enum rdma_driver_id). For fwctl, id is the
-> >     device type (enum fwctl_device_type).
-> > 
-> > Signed-off-by: Chiara Meiohas <cmeiohas@nvidia.com>
-> > Reviewed-by: Maher Sanalla <msanalla@nvidia.com>
-> > Signed-off-by: Edward Srouji <edwards@nvidia.com>
-> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> Hi Leon,
-> 
-> To me this seems sensible, but LSM isn't an area I know that much about.
-> 
-> With that in mind:
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> 
-> A few formatting related comments inline.
 
-Thanks for the feedback. I’ve addressed all comments and will send a new
-revision within the next few days.
 
-Thanks
+On 3/9/26 4:15 AM, Leon Romanovsky wrote:
+> From: Chiara Meiohas <cmeiohas@nvidia.com>
+> 
+> fwctl is subsystem which exposes a firmware interface directly to
+> userspace: it allows userspace to send device specific command
+> buffers to firmware.
+> 
+> Call security_fw_validate_cmd() before dispatching the user-provided
+> firmware command.
+> 
+> This allows security modules to implement custom policies and
+> enforce per-command security policy on user-triggered firmware
+> commands. For example, a BPF LSM program could filter firmware
+> commands based on their opcode.
+> 
+> Signed-off-by: Chiara Meiohas <cmeiohas@nvidia.com>
+> Reviewed-by: Maher Sanalla <msanalla@nvidia.com>
+> Signed-off-by: Edward Srouji <edwards@nvidia.com>
+> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
+> ---
+>  drivers/fwctl/mlx5/main.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/fwctl/mlx5/main.c b/drivers/fwctl/mlx5/main.c
+> index e86ab703c767a..8ed17aaf48f1f 100644
+> --- a/drivers/fwctl/mlx5/main.c
+> +++ b/drivers/fwctl/mlx5/main.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/mlx5/device.h>
+>  #include <linux/mlx5/driver.h>
+>  #include <uapi/fwctl/mlx5.h>
+> +#include <linux/security.h>
+>  
+>  #define mlx5ctl_err(mcdev, format, ...) \
+>  	dev_err(&mcdev->fwctl.dev, format, ##__VA_ARGS__)
+> @@ -324,6 +325,15 @@ static void *mlx5ctl_fw_rpc(struct fwctl_uctx *uctx, enum fwctl_rpc_scope scope,
+>  	if (!mlx5ctl_validate_rpc(rpc_in, scope))
+>  		return ERR_PTR(-EBADMSG);
+>  
+> +	/* Enforce the user context for the command */
+> +	MLX5_SET(mbox_in_hdr, rpc_in, uid, mfd->uctx_uid);
+> +
+> +	ret = security_fw_validate_cmd(rpc_in, in_len, &mcdev->fwctl.dev,
+> +				       FW_CMD_CLASS_FWCTL,
+> +				       FWCTL_DEVICE_TYPE_MLX5);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+>  	/*
+>  	 * mlx5_cmd_do() copies the input message to its own buffer before
+>  	 * executing it, so we can reuse the allocation for the output.
+> @@ -336,8 +346,6 @@ static void *mlx5ctl_fw_rpc(struct fwctl_uctx *uctx, enum fwctl_rpc_scope scope,
+>  			return ERR_PTR(-ENOMEM);
+>  	}
+>  
+> -	/* Enforce the user context for the command */
+> -	MLX5_SET(mbox_in_hdr, rpc_in, uid, mfd->uctx_uid);
+>  	ret = mlx5_cmd_do(mcdev->mdev, rpc_in, in_len, rpc_out, *out_len);
+>  
+>  	mlx5ctl_dbg(mcdev,
+> 
+
