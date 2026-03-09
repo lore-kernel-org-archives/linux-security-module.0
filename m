@@ -1,78 +1,104 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F703A961A;
-	Mon,  9 Mar 2026 15:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8803B8D65
+	for <linux-security-module@vger.kernel.org>; Mon,  9 Mar 2026 15:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773069169; cv=none; b=SwCCFpoJv9VEGCvrzYBP99N5lt/wX7cnXME5yKVybatvg4dal3nyJZejzSLyEITx+mSBzNZm0epSEclhHeKp8+3D9EXTPoJyPPax3J8AKTwoMRt6QmZRUq9o1iwOJDN3SHaWD1zNbDvX+MpU+Ri5CArphGeQXEY0X0Grsjoej/0=
+	t=1773069207; cv=none; b=H0m8+qWDHUZ6Hfn62d0iR3jhrMOc1m2c24B/kZ+2PFepcQGIHx+yalvt0iA0HUyG/YzgONANMdK0y+8n4Lw5rJKzNfo1+QdPoVhRe8Y75+5pBAI5IviLhbAh2QTO/JXe7ZxBcC2l89aaKOyA2O7+loEFvAAb5/nSyjJA57qKaNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773069169; c=relaxed/simple;
-	bh=swUfh0NQhhVfY93QVLa+1FDKUQiFHhqSTKP70PRQwJU=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f1zwojIdnY4zCSB+/y5uWYoTB1O6a6kTVrznedHPg/2NNjfzJNKl7pK03kzJvu2310GpwtuYwRxejL2HojJhaZUV07YpRrEv3b3zoAyCZSZTokoioPp6VpxRBu2xTV+AbPRAG1IA/Mw0rio2G4QsfDkyrgjKNH2jRSpLqKzZwKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.224.107])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fV0qt3m4yzHnH6v;
-	Mon,  9 Mar 2026 23:12:42 +0800 (CST)
-Received: from dubpeml500005.china.huawei.com (unknown [7.214.145.207])
-	by mail.maildlp.com (Postfix) with ESMTPS id 73EBA40585;
-	Mon,  9 Mar 2026 23:12:46 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml500005.china.huawei.com
- (7.214.145.207) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 9 Mar
- 2026 15:12:45 +0000
-Date: Mon, 9 Mar 2026 15:12:44 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Leon Romanovsky <leon@kernel.org>
-CC: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge
- E. Hallyn" <serge@hallyn.com>, Jason Gunthorpe <jgg@ziepe.ca>, "Saeed
- Mahameed" <saeedm@nvidia.com>, Itay Avraham <itayavr@nvidia.com>, Dave Jiang
-	<dave.jiang@intel.com>, <linux-security-module@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-rdma@vger.kernel.org>, Chiara Meiohas
-	<cmeiohas@nvidia.com>, Maher Sanalla <msanalla@nvidia.com>, Edward Srouji
-	<edwards@nvidia.com>
-Subject: Re: [PATCH 3/3] fwctl/mlx5: Invoke fw_validate_cmd LSM hook for
- fwctl commands
-Message-ID: <20260309151244.000022c1@huawei.com>
-In-Reply-To: <20260309-fw-lsm-hook-v1-3-4a6422e63725@nvidia.com>
-References: <20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com>
-	<20260309-fw-lsm-hook-v1-3-4a6422e63725@nvidia.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1773069207; c=relaxed/simple;
+	bh=49TKuQN03cuR/ixziMwo/sxdG8QTob0zJtdfZ1Zxyhg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MBsj5mGCLfvN3z9U2l+nJhLHnTGaO803ZhYABGeUh7Vs4XUH9sN2aXr+fIexQi17RiSGQ+t6+dEkBUrmIwJMswB/b41uVcqaN8WMX7aW+UTkjeMU+L3+1rc1aR0IziTVNtPAYICM8ER9L4kaWoMvRHUn7NmRo5mywgRYGwrt5yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BgaylCIf; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgaylCIf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9451CC2BC86
+	for <linux-security-module@vger.kernel.org>; Mon,  9 Mar 2026 15:13:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773069207;
+	bh=49TKuQN03cuR/ixziMwo/sxdG8QTob0zJtdfZ1Zxyhg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BgaylCIftD+1hDKX/l70pfD2cw0W5O4oaRHTY3vbVJb0UF0T3LP0J2VWHRym3sVJG
+	 5fLwu9RMavfaS63HI4f4J3jHia6ZStE5S2WXxFBmm6m/Hzvp8LeFrFxT2n9XWPaiE8
+	 1hynobNLbmSyK9zI2lHFkVooXMpShtWhXN5VZGhqYq6CRzFqpzmUH7ZxS2ZHYmvBqX
+	 IP1tlCd/+kALR55SsOVwAjAjHyhlH4XOwk4QdLw1p8ZPvYD0TFjMXNm00kth5Sa9wb
+	 oN0Rz6joXqhGloG5DcyqFWdIQ5zltxvhqdyoip2x5dNzyal3TbJp1jXZXezVIAwdio
+	 lJrp3DSLTGgpg==
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-67bac077116so639851eaf.1
+        for <linux-security-module@vger.kernel.org>; Mon, 09 Mar 2026 08:13:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUdj3fojOhQr1XJx/vwUnB63wkGK3opWASCmQOQOIqz4d/IxGtmFl2znt1GyBeCb4FXWgxtDoRGk8IDf4wwP10rXzFulew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNVGE+wv3+gEyhi9VVlOPrJ/ARJOj0LfWsQMoYFKojcEv+8R0o
+	x6QcoMi8FSAkE8eN51e3yoGuKWzRk8lcTmoSQvKb7DXTVTwZRKEiQi/3Lzkrp9I89rKfu7qxfv1
+	Nu9+qkt55IzvAnhy6hm0RZkfXVPWYS3c=
+X-Received: by 2002:a4a:e846:0:b0:679:97ac:2cc3 with SMTP id
+ 006d021491bc7-67b9bc976eemr6571668eaf.22.1773069206748; Mon, 09 Mar 2026
+ 08:13:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
- dubpeml500005.china.huawei.com (7.214.145.207)
+References: <2780abfc-39d1-4441-833c-65e66f747054@gmx.com>
+In-Reply-To: <2780abfc-39d1-4441-833c-65e66f747054@gmx.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 9 Mar 2026 16:13:15 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hokpC_2E77nrm2KHeOdhhH6qvYsg3wCQpTEG=PCim=ww@mail.gmail.com>
+X-Gm-Features: AaiRm53DlYhLR-k2-DVzEs7axQUuHxUb-bjFYTFjCi_T-97qxkViYvYsZ70y4I4
+Message-ID: <CAJZ5v0hokpC_2E77nrm2KHeOdhhH6qvYsg3wCQpTEG=PCim=ww@mail.gmail.com>
+Subject: Re: Subject: x86/msr + lockdown: allow access to **documented**
+ RAPL/TCC controls under Secure Boot
+To: "Artem S. Tashkinov" <aros@gmx.com>
+Cc: x86@kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, "Zhang, Rui" <rui.zhang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon,  9 Mar 2026 13:15:20 +0200
-Leon Romanovsky <leon@kernel.org> wrote:
+On Mon, Mar 9, 2026 at 1:24=E2=80=AFPM Artem S. Tashkinov <aros@gmx.com> wr=
+ote:
+>
+> Hello,
+>
+> When Secure Boot is enabled and kernel lockdown is active, the x86 MSR
+> driver blocks all raw MSR access from user space via `/dev/cpu/*/msr`.
+> This effectively prevents legitimate use of documented CPU power and
+> thermal management interfaces such as RAPL power limits (PL1/PL2) and
+> the TCC/TjOffset control. These registers are part of Intel=E2=80=99s
+> **publicly** documented architectural interface and have been stable
+> across many generations of processors.
 
-> From: Chiara Meiohas <cmeiohas@nvidia.com>
-> 
-> fwctl is subsystem which exposes a firmware interface directly to
-> userspace: it allows userspace to send device specific command
-> buffers to firmware.
-> 
-> Call security_fw_validate_cmd() before dispatching the user-provided
-> firmware command.
-> 
-> This allows security modules to implement custom policies and
-> enforce per-command security policy on user-triggered firmware
-> commands. For example, a BPF LSM program could filter firmware
-> commands based on their opcode.
-> 
-> Signed-off-by: Chiara Meiohas <cmeiohas@nvidia.com>
-> Reviewed-by: Maher Sanalla <msanalla@nvidia.com>
-> Signed-off-by: Edward Srouji <edwards@nvidia.com>
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-LGTM
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+There is a power capping RAPL driver.  What's the problem with it with
+Secure Boot enabled?
 
+> As a result, under Secure Boot Linux users lose the ability to read or
+> adjust **standard** power-management controls that remain available
+> through equivalent tooling on other operating systems.
+
+The power capping RAPL driver is there, please use it.  It is documented ev=
+en.
+
+There is also a driver for TCC/TjOffset control, it is called intel_tcc_coo=
+ling.
+
+And there are utilities in user space (for example, Intel thermald)
+that use those interfaces.
+
+> The current all-or-nothing restriction appears broader than necessary
+> for the stated goal of protecting kernel integrity. MSRs associated with
+> power limits and TCC offset are not privileged debugging or microcode
+> interfaces but standard hardware configuration knobs intended for
+> platform power and thermal management.
+>
+> It would be useful if the kernel either allowed access to a small
+> whitelist of such documented registers under lockdown or exposed a
+> mediated kernel interface for adjusting them. Without such a mechanism,
+> Secure Boot effectively disables legitimate and widely used
+> power/thermal tuning functionality on modern Intel laptops.
+>
+> Most (if not all) Intel laptops don't expose or allow to configure
+> PL1/PL2 limits in BIOS/EFI either.
+
+Because it is not necessary to do so.
