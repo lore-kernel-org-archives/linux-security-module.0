@@ -1,73 +1,75 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361F43AC0E8
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 13:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6835F391E66
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 13:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773147608; cv=none; b=okb8nIJxM8hrMO4WXZSStk+fAt2VtIZaP4SIW+q/KlXBzUQ4BczloaJWJQDgxW4W78rmoQVyp/sqykCWEu88s4bI/3QSBuClaxha8L3E9hwCiYbQy/xN7abSenlTfdB45R+7/3z8DWDPCh4m3v4qBnaSbOlZVcCIV6+n0wc8vOs=
+	t=1773147658; cv=none; b=kMTLnvBGZSB9HJz35rm8DwEQ5i1FvmL5o5tS2f8pk/lA2iyy72XhwYo07ovqAoo+sHC89+Hae+LopdShVeFWLFgkgrI2xpo6xMJGHc29Vf7Yxzbl224TUujdxSTEcHsiOU4/B3L2x2OC8qw9WSMqJzJ7dv+dBugqQLlB8gGIdmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773147608; c=relaxed/simple;
-	bh=3Zd9egazAreKVbw3CgBV1Ekque51lAHc6BdIaLDdWR4=;
+	s=arc-20240116; t=1773147658; c=relaxed/simple;
+	bh=KiqEIvJC2XxaOt4+odDse+yl5KBjrbJEyiiL2mgH6fA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iWxO8Ak3gpiNlBCNP2SIfo6qYKNC/C6UQb9SGbIH/kL3s+T7EBKjYY77upDdpsXqKdekDJ//0nWhI8pv52YXIPSC9J0XQ9E5gom7KgjcVEUuu+azumkf/Teea9LTJMGlRU5VyDj+fTLc30ihJcYwoiY/AkRTBwb1l/m7PYsSxyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dzzvztif; arc=none smtp.client-ip=209.85.128.45
+	 Content-Type:Content-Disposition:In-Reply-To; b=grV3Zu9KaOu1pUZz0d6tadAvoivgzxM1L9FRQB+iGD8JyTffhqMLQ5hzveaskdKFK7OTvH6lXjJXMifewR1Qk2zqkR5+6573HkZi2//yqrgP0h9CX+gicTxYG4kWt3zml1+ZYm7LcmS2tRgvTKda0F882IpUR3K4CjDdOlxuYHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AUHCnirJ; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dzzvztif"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-48538c5956bso23949675e9.0
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 06:00:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AUHCnirJ"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-48334ee0aeaso104602145e9.1
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 06:00:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1773147606; x=1773752406; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=W/9QICG0i6N0qMKANYrMNVd6a11sIuDIs7effYlII2s=;
-        b=dzzvztifKsYt1LzidFrfOwVN4Xw4Cz0ah54SZfXZgDzaId/8wQ2AP05YYcABDIDctI
-         c421aU4GUIdG9Spt9ax/KKdQnkD5kgXr4M3hrTbuq+nEX0yzmUWNcuGna3xs2nODmWXT
-         LTe892Y7Tt9S+wahCXLye+n6AtVlH5YZ9crYqg2sEJLuorrwPYd6Mn946qkZ8QRq5BLV
-         VwQefk5zBySdKfeakvxZzBJbd5u3DQA6PGY/s2cywsgAvSVOsOH36xpxNvaKC+2Qpiry
-         KgAlFsGe8v47GYf6EYo6BT3HFccZYywEwBK/ONUb3vRhmYEk/VmLYSw/KoA6lp3iOxTY
-         2fNg==
+        d=google.com; s=20230601; t=1773147656; x=1773752456; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3EoP276khAoPelDBterGyQsswyPNkZdGPT+DJMFh/sQ=;
+        b=AUHCnirJvW1SbsB/77I+9FswMHjDrRP7bAaQoggSJjVA1m/dVvH+eN8oRL+I/IVTvP
+         UEXQO7pmpYYZOAUEHxyGYVY0Bm2T0NkiI8t+XZeMo68/8WZLNCm3oytMpIPDe4YoohF9
+         sNVKkrNgdvYyMzhsLXEPkUlekbBYGTg6CrtY0NIqIHknEH3iAgx4QDDGAvsP/TaKJkJj
+         0XrGoFnB7eqmdug6qXMd4Zxiy7dwIRLTVvgvA3UaoOchZ6jzzKbz4WFH+fRVBvX5godk
+         HO16s49kXUztCH6FDTOPAqiOUXOLM3VOmCa/E9EmTnZI38SVcRVbRjdixwwXBhWygQwn
+         kVrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773147606; x=1773752406;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W/9QICG0i6N0qMKANYrMNVd6a11sIuDIs7effYlII2s=;
-        b=G4VTCqXf4DEHikuJDi5MyOwidaM7W++V9T78uiyBPfh+UaehYqQWx9slXCE2MXvm3t
-         k1TTJVikbYZOih6aFmhosr7dTmij8Wx/1PBSwsomfwqqFhLBTPHpp64ZClUZuvI7+tmo
-         In+84MQdL3xQ0UckDFxPO8ftVaAwKluwFt5Cu4tKACqsVEfmaNearYFfsPFb7Lj4q/hk
-         dyxZG1fw8FAeArxkOYnrTnk41X/PDUi1OHSFQarVB2gn4mMS1ZydAEabiPT/GI4a4rwD
-         Nq/sNxXvK2/Jvf9q4l6z9sQMNX8gTTyPsLnJOy+eamYTzff+ANTTRX9+2NpSfgzBKZE/
-         7I9w==
-X-Forwarded-Encrypted: i=1; AJvYcCXHEl6j8pbLXgzvgDEqoyEgitqrTMNBBPb5vMOMs8sNsd822F9A4vI7b8U0hkc4sLujuzIfcYGFLE1ZYcfiBjC+e6r5HNA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6TjnNuM7+9yzBdm7ZU3LG2Yq7J33PENFuEKb0orkpExYzUd+8
-	jhOle8xLTJ3uuTeGjC54JOgL64zrd588Q0TDupVHmjkksQy6CwpTzm4jQQKjHFDoSg==
-X-Gm-Gg: ATEYQzyV3pWmc+ae5RlHsjDb3BMcQHdeHzzX/xbO0/zHr82J22CbPQsdaO+a89LHAyt
-	ydIYulpbsCC3/cwCL2J1qvIrdTbxJmfKA64ULbzOJIJdi/OM+cQd3dMTfwDT6hw/78jjMx/jXp/
-	lzahWirAxlaGDAV0a8hQwd7ZVjf0u7Lh332VY1AYsGKVO+8vbAYnLmo2fCfTyNHEw/HHdypBFtJ
-	EnU1xhKVcdiQRhUyYw+Hx10XVtkdHRzzXy0qU9nfq7vX0dCGAFALy+Zfee3aU8HUTsdwccH8Dl2
-	aT5ok5oNfQDSUByUGVB7ES/fANcSQIpACdKuayhHfL4r+ZPxutOB1r4yBiiSkWguFaDPebonjwF
-	SM0kRDBQ3M2HzLPkS6I/zLXxBcsVnY+7D9rskCTkhiUI3xUrTY+kHp29NpIPdayGV1qSoCh4IiR
-	Tcmv5ENTr4sbqhlmObKV2w41MsB5J9VfQMFq/dXm5ASe+nL+yho7CfZg==
-X-Received: by 2002:a05:600c:138e:b0:485:3e00:944a with SMTP id 5b1f17b1804b1-485419d759amr56148725e9.9.1773147604978;
-        Tue, 10 Mar 2026 06:00:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1773147656; x=1773752456;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3EoP276khAoPelDBterGyQsswyPNkZdGPT+DJMFh/sQ=;
+        b=SkwoFOCXo3y8jkeXRABWY2rTysr4vdtDg6Y8Ds7YwkdkWzqrUb5sFso9jdumzesPgD
+         MjVF/OfNaIKokpPXLvqwa1xKacu2fJePZbVI/Qt2ABuF4vu2j6iK5t/nKdP3SfYyKBjq
+         VVjygGBTu0f9TtKEDuuHMIJIx2f5/38Qp6G8sSvMG3BPJdmsUVh6zYryuXFxAnFTPKvb
+         wD5FvY+Ys0jwHLJdkKTt9jcTAZc0szhebiQt8eDB84sAIwSp33tFe/y52BD50BSik8J8
+         HnNtfqMPUGdCouEXJqPh52GbCmuBTo1ODPQ39q3alOl8Jp5W9XCbSqHJb5hvemOTPSzb
+         pj0w==
+X-Gm-Message-State: AOJu0YyqW7ZQLat6aUGp7wybUAhjfRdnoGyJuNfprh6nl73GkFoBXRNW
+	fsqom1oxzrHK3xaYpgs4x9iBuO8yvZrKyQqbyzj7cbmslunU/zpR8muw/n/zWf8G9A==
+X-Gm-Gg: ATEYQzy8aZ8cRpEgQMvfGvWZsEljquOYIocRpVcxOyqRuSG817NdOTwji/+C/EkjUGy
+	A43HWNlV4fYTJteE39hkS1VlELt6Cp2lGMI+6U3Z9Dd1mNU3HLbGtc79k0bl6uWy0LsTpkuy44a
+	lCEMvFAnu4hXQf/c6++pEDbLNoR2snuZ66Q61VJqMUCMczZ+c5X94cEfS+w3MR1S2cDnKtEagwJ
+	QPdowtQ6IDwHmj32rNAESisxYBcee8XMs3pQ46GnJlO5YcAK1UmlTmjIyW03P1rYz/7FyH4Q8Jy
+	JJVGmhNglLVQyb6tHSJRWlfU4tqkM8kWmkI8nn2voAiz9pMgKNnFBMXD64MVzLJUE1NXJdxCGGd
+	3NFRy6/8n+fVGwj+8gdoJbtkOeibRo27eNu0erOJCbi8L0ywdWOMmTAU/XBzQsNgarkCie/KtiY
+	dPbQytrJubZhlcZ2oZ5EOM/8auvPmWJNjUfleAljV+8HgO0PFC54pLrQ==
+X-Received: by 2002:a05:600c:3b92:b0:485:3b00:f939 with SMTP id 5b1f17b1804b1-4853b00fa43mr136361525e9.8.1773147655234;
+        Tue, 10 Mar 2026 06:00:55 -0700 (PDT)
 Received: from google.com ([2a00:79e0:288a:8:43dd:a0ed:65ba:bc74])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48541a6bc3bsm82523515e9.2.2026.03.10.06.00.03
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439dae3a20fsm35346168f8f.28.2026.03.10.06.00.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2026 06:00:04 -0700 (PDT)
-Date: Tue, 10 Mar 2026 13:59:59 +0100
+        Tue, 10 Mar 2026 06:00:54 -0700 (PDT)
+Date: Tue, 10 Mar 2026 14:00:49 +0100
 From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: syzbot <syzbot+741e2278ef71fef03a10@syzkaller.appspotmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, mic@digikod.net,
-	miklos@szeredi.hu, penguin-kernel@i-love.sakura.ne.jp,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [fuse?] general protection fault in task_work_cancel
-Message-ID: <abAVz4YsnCkGT2_H@google.com>
-References: <69abb4e3.050a0220.13f275.003d.GAE@google.com>
- <69acf111.050a0220.310d8.0003.GAE@google.com>
+To: Jiayuan Chen <jiayuan.chen@linux.dev>
+Cc: linux-security-module@vger.kernel.org,
+	syzbot+911d99dc200feac03ea6@syzkaller.appspotmail.com,
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] landlock/tsync: fix null-ptr-deref in
+ cancel_tsync_works()
+Message-ID: <abAWAauogoaaa4kN@google.com>
+References: <20260306092214.63179-1-jiayuan.chen@linux.dev>
+ <aarYeYrXnp3PmrFy@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -76,102 +78,118 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <69acf111.050a0220.310d8.0003.GAE@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aarYeYrXnp3PmrFy@google.com>
 
-On Sat, Mar 07, 2026 at 07:46:25PM -0800, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
+On Fri, Mar 06, 2026 at 02:39:45PM +0100, Günther Noack wrote:
+> On Fri, Mar 06, 2026 at 05:22:13PM +0800, Jiayuan Chen wrote:
+> > cancel_tsync_works() iterates over works->works[0..size-1] and calls
+> > task_work_cancel() on each entry.  task_work_cancel() leads to
+> > task_work_pending(), which dereferences task->task_works.  If
+> > works->works[i]->task is NULL, this causes a null-ptr-deref:
+> > 
+> > KASAN: null-ptr-deref in range [0x00000000000009a0-0x00000000000009a7]
+> > RIP: 0010:task_work_pending include/linux/task_work.h:26 [inline]
+> > RIP: 0010:task_work_cancel_match+0x86/0x250 kernel/task_work.c:124
+> > RSP: 0018:ffffc90003597ba0 EFLAGS: 00010202
+> > RAX: 0000000000000134 RBX: 0000000000000000 RCX: ffffc900106b1000
+> > RDX: 0000000000080000 RSI: ffffffff81d13236 RDI: 0000000000000000
+> > RBP: 1ffff920006b2f77 R08: 0000000000000007 R09: 0000000000000000
+> > R10: 0000000000000002 R11: 0000000000000000 R12: ffffffff81d12dd0
+> > R13: ffff88802c045100 R14: dffffc0000000000 R15: 00000000000009a0
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 000000110c3ea90c CR3: 0000000037f63000 CR4: 00000000003526f0
+> > DR0: 0000000000000003 DR1: 00000000000001f8 DR2: 000000000000008e
+> > DR3: 000000000000057a DR6: 00000000ffff0ff0 DR7: 0000000000000400
+> > Call Trace:
+> >  <TASK>
+> >  task_work_cancel+0x23/0x30 kernel/task_work.c:187
+> >  cancel_tsync_works security/landlock/tsync.c:415 [inline]
+> >  landlock_restrict_sibling_threads+0xafe/0x1280 security/landlock/tsync.c:533
+> >  __do_sys_landlock_restrict_self+0x5c9/0x9e0 security/landlock/syscalls.c:574
+> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+> >  do_syscall_64+0x106/0xf80 arch/x86/entry/syscall_64.c:94
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > RIP: 0033:0x7f859b39c629
+> > RSP: 002b:00007f85991b2028 EFLAGS: 00000246 ORIG_RAX: 00000000000001be
+> > RAX: ffffffffffffffda RBX: 00007f859b616270 RCX: 00007f859b39c629
+> > RDX: 0000000000000000 RSI: 000000000000000a RDI: 0000000000000003
+> > RBP: 00007f859b432b39 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> > R13: 00007f859b616308 R14: 00007f859b616270 R15: 00007ffcff084488
+> > 
+> > The root cause is a race in schedule_task_work().  tsync_works_provide()
+> > increments works->size and stores the task reference in ctx->task *before*
+> > task_work_add() is called.  A thread can race to call do_exit() in the
+> > window between the PF_EXITING check and task_work_add(), causing
+> > task_work_add() to return -ESRCH.  The error path then drops the task
+> > reference and sets ctx->task = NULL, but works->size remains incremented.
+> > A subsequent call to cancel_tsync_works() iterates up to the stale size
+> > and passes the NULL task pointer to task_work_cancel().
+> > 
+> > Fix this by decrementing works->size in the task_work_add() error path,
+> > so the failed slot is rolled back and cancel_tsync_works() never iterates
+> > over it.  The slot is naturally reused in subsequent iterations since
+> > tsync_works_provide() always picks works->works[works->size].
+> > 
+> > As a defensive measure, also add a WARN_ONCE() guard in cancel_tsync_works()
+> > to catch any future NULL task pointer before dereferencing it.
+> > 
+> > Fixes: 42fc7e6543f6 ("landlock: Multithreading support for landlock_restrict_self()")
+> > Reported-by: syzbot+911d99dc200feac03ea6@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=911d99dc200feac03ea6
+> > Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+> > ---
+> >  security/landlock/tsync.c | 15 ++++++++++-----
+> >  1 file changed, 10 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
+> > index 0d2b9c646030..e6d742529484 100644
+> > --- a/security/landlock/tsync.c
+> > +++ b/security/landlock/tsync.c
+> > @@ -381,14 +381,14 @@ static bool schedule_task_work(struct tsync_works *works,
+> >  		err = task_work_add(thread, &ctx->work, TWA_SIGNAL);
+> >  		if (err) {
+> >  			/*
+> > -			 * task_work_add() only fails if the task is about to exit.  We
+> > -			 * checked that earlier, but it can happen as a race.  Resume
+> > -			 * without setting an error, as the task is probably gone in the
+> > -			 * next loop iteration.  For consistency, remove the task from ctx
+> > -			 * so that it does not look like we handed it a task_work.
+> > +			 * task_work_add() only fails if the task is about to exit.
+> > +			 * We checked PF_EXITING earlier, but the thread can race to
+> > +			 * exit between that check and task_work_add().  Roll back the
+> > +			 * slot so cancel_tsync_works() never sees a NULL task pointer.
+> >  			 */
+> >  			put_task_struct(ctx->task);
+> >  			ctx->task = NULL;
+> > +			works->size--;
+> >  
+> >  			atomic_dec(&shared_ctx->num_preparing);
+> >  			atomic_dec(&shared_ctx->num_unfinished);
+> > @@ -412,6 +412,11 @@ static void cancel_tsync_works(struct tsync_works *works,
+> >  	int i;
+> >  
+> >  	for (i = 0; i < works->size; i++) {
+> > +		if (WARN_ONCE(!works->works[i]->task,
+> > +			      "landlock: unexpected NULL task in tsync slot %d\n",
+> > +			      i))
+> > +			continue;
+> > +
+> >  		if (!task_work_cancel(works->works[i]->task,
+> >  				      &works->works[i]->work))
+> >  			continue;
+> > -- 
+> > 2.43.0
+> > 
 > 
-> HEAD commit:    4ae12d8bd9a8 Merge tag 'kbuild-fixes-7.0-2' of git://git.k..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17dc475a580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=779072223d02a312
-> dashboard link: https://syzkaller.appspot.com/bug?extid=741e2278ef71fef03a10
-> compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=130b075a580000
+> Thanks for the patch!
 > 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/010ac4052aed/disk-4ae12d8b.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/2aad8bef9031/vmlinux-4ae12d8b.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/fd350ec4896a/bzImage-4ae12d8b.xz
+> This bug is already fixed on Mickaël's "next" branch.
+> The code review has happened in
+> https://lore.kernel.org/all/20260217122341.2359582-1-mic@digikod.net/
 > 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+741e2278ef71fef03a10@syzkaller.appspotmail.com
-> 
-> Oops: general protection fault, probably for non-canonical address 0xdffffc000000013c: 0000 [#1] SMP KASAN NOPTI
-> KASAN: null-ptr-deref in range [0x00000000000009e0-0x00000000000009e7]
-> CPU: 1 UID: 0 PID: 13249 Comm: syz.1.1775 Not tainted syzkaller #0 PREEMPT(full) 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2026
-> RIP: 0010:task_work_pending include/linux/task_work.h:26 [inline]
-> RIP: 0010:task_work_cancel_match kernel/task_work.c:124 [inline]
-> RIP: 0010:task_work_cancel+0x8a/0x220 kernel/task_work.c:187
-> Code: b8 f1 f1 f1 f1 f8 f3 f3 f3 4b 89 44 25 00 e8 ad b9 35 00 43 c6 44 25 04 00 49 89 de 48 81 c3 e0 09 00 00 49 89 df 49 c1 ef 03 <43> 80 3c 27 00 74 08 48 89 df e8 17 fe 9f 00 48 83 3b 00 75 51 e8
-> RSP: 0018:ffffc9000ddffb20 EFLAGS: 00010216
-> RAX: ffffffff818fdfc3 RBX: 00000000000009e0 RCX: ffff88805d5c3d00
-> RDX: 0000000000000000 RSI: ffff888032f5c540 RDI: 0000000000000000
-> RBP: ffffc9000ddffbd0 R08: ffffc9000ddffc97 R09: 1ffff92001bbff92
-> R10: dffffc0000000000 R11: fffff52001bbff93 R12: dffffc0000000000
-> R13: 1ffff92001bbff68 R14: 0000000000000000 R15: 000000000000013c
-> FS:  00007f9c8a1cb6c0(0000) GS:ffff888125561000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000200000010000 CR3: 0000000059bf0000 CR4: 0000000000350ef0
-> Call Trace:
->  <TASK>
->  cancel_tsync_works security/landlock/tsync.c:415 [inline]
->  landlock_restrict_sibling_threads+0xdc4/0x11f0 security/landlock/tsync.c:533
->  __do_sys_landlock_restrict_self security/landlock/syscalls.c:574 [inline]
->  __se_sys_landlock_restrict_self+0x540/0x810 security/landlock/syscalls.c:482
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0x14d/0xf80 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f9c8939c799
-> Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f9c8a1cb028 EFLAGS: 00000246 ORIG_RAX: 00000000000001be
-> RAX: ffffffffffffffda RBX: 00007f9c89616180 RCX: 00007f9c8939c799
-> RDX: 0000000000000000 RSI: 0000000000000008 RDI: 0000000000000003
-> RBP: 00007f9c89432bd9 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007f9c89616218 R14: 00007f9c89616180 R15: 00007ffee5d65d48
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:task_work_pending include/linux/task_work.h:26 [inline]
-> RIP: 0010:task_work_cancel_match kernel/task_work.c:124 [inline]
-> RIP: 0010:task_work_cancel+0x8a/0x220 kernel/task_work.c:187
-> Code: b8 f1 f1 f1 f1 f8 f3 f3 f3 4b 89 44 25 00 e8 ad b9 35 00 43 c6 44 25 04 00 49 89 de 48 81 c3 e0 09 00 00 49 89 df 49 c1 ef 03 <43> 80 3c 27 00 74 08 48 89 df e8 17 fe 9f 00 48 83 3b 00 75 51 e8
-> RSP: 0018:ffffc9000ddffb20 EFLAGS: 00010216
-> RAX: ffffffff818fdfc3 RBX: 00000000000009e0 RCX: ffff88805d5c3d00
-> RDX: 0000000000000000 RSI: ffff888032f5c540 RDI: 0000000000000000
-> RBP: ffffc9000ddffbd0 R08: ffffc9000ddffc97 R09: 1ffff92001bbff92
-> R10: dffffc0000000000 R11: fffff52001bbff93 R12: dffffc0000000000
-> R13: 1ffff92001bbff68 R14: 0000000000000000 R15: 000000000000013c
-> FS:  00007f9c8a1cb6c0(0000) GS:ffff888125561000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f810d34da08 CR3: 0000000059bf0000 CR4: 0000000000350ef0
-> ----------------
-> Code disassembly (best guess):
->    0:	b8 f1 f1 f1 f1       	mov    $0xf1f1f1f1,%eax
->    5:	f8                   	clc
->    6:	f3 f3 f3 4b 89 44 25 	repz repz xrelease mov %rax,0x0(%r13,%r12,1)
->    d:	00
->    e:	e8 ad b9 35 00       	call   0x35b9c0
->   13:	43 c6 44 25 04 00    	movb   $0x0,0x4(%r13,%r12,1)
->   19:	49 89 de             	mov    %rbx,%r14
->   1c:	48 81 c3 e0 09 00 00 	add    $0x9e0,%rbx
->   23:	49 89 df             	mov    %rbx,%r15
->   26:	49 c1 ef 03          	shr    $0x3,%r15
-> * 2a:	43 80 3c 27 00       	cmpb   $0x0,(%r15,%r12,1) <-- trapping instruction
->   2f:	74 08                	je     0x39
->   31:	48 89 df             	mov    %rbx,%rdi
->   34:	e8 17 fe 9f 00       	call   0x9ffe50
->   39:	48 83 3b 00          	cmpq   $0x0,(%rbx)
->   3d:	75 51                	jne    0x90
->   3f:	e8                   	.byte 0xe8
-> 
-> 
-> ---
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
+> —Günther
 
 #syz fix: landlock: Fully release unused TSYNC work entries
 
