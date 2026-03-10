@@ -1,39 +1,38 @@
-Received: from mail.avm.de (mail.avm.de [212.42.244.120])
+Received: from mail.avm.de (mail.avm.de [212.42.244.94])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F8D47DD76;
-	Tue, 10 Mar 2026 11:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB93481A9C;
+	Tue, 10 Mar 2026 11:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.94
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773143756; cv=none; b=As98RuYw2GVT/FtJn16bXob9jGO/yDi7VJ73ctidrFQVx+Z4kbS+iwWfMCGVnD+vtSykhO+QR9fgDgcLemGUja2/He3hbcT6mehVyWr0E68caMzmuAm1FXwDFMQG8gkj9pt8IY184N2sEfLTdZhmM1ecKmKSwvFu9b8MRp37GIU=
+	t=1773143759; cv=none; b=XYGi4/q8B56AB4RaSXahiHp9KjTJgIb0ZyyypZMKYWKm5upAA6z3yE/RkBORYQK1iEi4TcNQ1avqF/Yuyb+BIzPoGGD2HFGjSkOM6MrgqH9XiPPY5Z0ZkY35mTsCWGh/Yh7wQED48g9OJo1olNn/DC7NJuVwDEOS3HSQI+MlvbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773143756; c=relaxed/simple;
-	bh=g4FFdRUzUDur+rKeacaiCQZ+hQh7tI9Z6NjRyFnQc8w=;
+	s=arc-20240116; t=1773143759; c=relaxed/simple;
+	bh=5jNhYM960jMlYUrL3T2we+u9wPA7QX8xb/YhMa8cGzI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bXyX9XHy/reQZA8RbcXRToNuqdIhrugXAa1jm46IPv1ezn7/bmHJVT+0wqy4FURG/rNC6yAYCgHiIWuUZNWHzkAx252b57HxPryWvo2kTMEA+vo0rgAU04R2qbwPypzfFoAA4SpkSA+TNRAkP1yop9UQuznmgmuYcmo8Drh5nG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=UCMWvXE6; arc=none smtp.client-ip=212.42.244.120
+	 In-Reply-To:To:Cc; b=h7xQAP5bfZQARJpHVVMFGFU4tfwVERq8wUTFFOF8nBhTK41dv+CaQ36DuUci7kPm3+l3yMPCjn6eoCKZPJPl32orLtEjfc6blpjs4pTgvtC2hm3RP9b69UOz+7mOoj9xPrXnUP7THGJubNTTepOHrUjQL5iJdCcR7d+IunhF40c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=M5sopbNY; arc=none smtp.client-ip=212.42.244.94
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="UCMWvXE6"
+	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="M5sopbNY"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
-	t=1773143725; bh=g4FFdRUzUDur+rKeacaiCQZ+hQh7tI9Z6NjRyFnQc8w=;
+	t=1773143727; bh=5jNhYM960jMlYUrL3T2we+u9wPA7QX8xb/YhMa8cGzI=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=UCMWvXE67aPIM+fX4liuXeb4hJZhBTYpleFd+1C/lQAbjdrnnFDoxVLHh8U2V8oyq
-	 3AIvxS+XdHYi9CjybHvqLFlsq1ZQzoCEMgZqU/2/fKHijCwpsr6Pg3RamHTi37to6f
-	 nga3v5uWIaYYJL+oBJVlQhau2vhODvWr/pJGZZjE=
-Received: from [212.42.244.71] (helo=mail.avm.de)
+	b=M5sopbNY66qmWa+2q+MLa+uKDQnYhARDVpHPBaPhnBAWxbQH6mILrzFzXoehD/OnN
+	 XfkL39v7DGJAyVHbunl2dtyoz4/s+HQp68/tCQVMA+YzssNFiXbaAEz8Yvn1XdtigU
+	 NmV3lEhKYunB5kPsVmat/OQepTdLQIWCI8jH5Ufw=
+Received: from [2001:bf0:244:244::71] (helo=mail.avm.de)
 	by mail.avm.de with ESMTP (eXpurgate 4.55.2)
 	(envelope-from <phahn-oss@avm.de>)
-	id 69b006ad-b734-7f0000032729-7f000001c098-1
-	for <multiple-recipients>; Tue, 10 Mar 2026 12:55:25 +0100
-Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
+	id 69b006af-e21d-7f0000032729-7f000001ba7e-1
+	for <multiple-recipients>; Tue, 10 Mar 2026 12:55:27 +0100
+Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [IPv6:2001:bf0:244:244::71])
 	by mail.avm.de (Postfix) with ESMTPS;
-	Tue, 10 Mar 2026 12:55:25 +0100 (CET)
+	Tue, 10 Mar 2026 12:55:27 +0100 (CET)
 From: Philipp Hahn <phahn-oss@avm.de>
-Date: Tue, 10 Mar 2026 12:49:05 +0100
-Subject: [PATCH 39/61] irqchip: Prefer IS_ERR_OR_NULL over manual NULL
- check
+Date: Tue, 10 Mar 2026 12:49:10 +0100
+Subject: [PATCH 44/61] target: Prefer IS_ERR_OR_NULL over manual NULL check
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -42,7 +41,7 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260310-b4-is_err_or_null-v1-39-bd63b656022d@avm.de>
+Message-Id: <20260310-b4-is_err_or_null-v1-44-bd63b656022d@avm.de>
 References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
 In-Reply-To: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
 To: amd-gfx@lists.freedesktop.org, apparmor@lists.ubuntu.com, 
@@ -72,23 +71,21 @@ To: amd-gfx@lists.freedesktop.org, apparmor@lists.ubuntu.com,
  sched-ext@lists.linux.dev, target-devel@vger.kernel.org, 
  tipc-discussion@lists.sourceforge.net, v9fs@lists.linux.dev, 
  Philipp Hahn <phahn-oss@avm.de>
-Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
- Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1797; i=phahn-oss@avm.de;
- h=from:subject:message-id; bh=g4FFdRUzUDur+rKeacaiCQZ+hQh7tI9Z6NjRyFnQc8w=;
- b=owEBbQGS/pANAwAKATQtBlPRrKzbAcsmYgBpsAZajgCYubaE210ybXd9Qufza8n+eFtBCfTFO
- oQVV6kxanqJATMEAAEKAB0WIQQ5bPBtrWDUcDQCppg0LQZT0ays2wUCabAGWgAKCRA0LQZT0ays
- 28ISB/9piM+RbVSziEng1t7dun6orhPWKQV9naYfNjFW3SarwsnzmnBDz0nuaGgkwHFCge92/YT
- C6PE2tX58vKdugSVIB0D9NRq5gq4thjVq3D0H2GAQlza/oKxurc4wdXC5dXInbYl5OUB2w09WQy
- fMKAkwG0m3WFPKRgizEtCKM6l/9q3B4q2rnnpcRKQx0iNvhf+dUkY5BUPSwCcfQvJK7+4PoC/ZE
- ddAoJcpror4/MCI0j47/BVNaHIB5K9WykFVMhov3BZvNavqXT9C64hKXxD2btf1UcwShvWKloSd
- PxNXkra2HopfIdMjPOY9w4hG57NjkAcqg0vkRHvvtwjYvgsZ
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1611; i=phahn-oss@avm.de;
+ h=from:subject:message-id; bh=5jNhYM960jMlYUrL3T2we+u9wPA7QX8xb/YhMa8cGzI=;
+ b=owEBbQGS/pANAwAKATQtBlPRrKzbAcsmYgBpsAZrwlPF0cTtka85RKXa/jq01klA6219EkbVF
+ sAxzvkaF5OJATMEAAEKAB0WIQQ5bPBtrWDUcDQCppg0LQZT0ays2wUCabAGawAKCRA0LQZT0ays
+ 26c3B/97YbFOVY+7aU+X20/OGHSJFO2zRY48bbypRSoZTJJvUVhT9k9LgthUke6q7t50KfcaKxO
+ +ji7TT6hO8Cm4OsGah0c5lQCV8UQAJc4iRbI/bt93UQwIqQrpJeR9mDiRtZ63zuk53hAKMaouvF
+ y6MARoN+FEiA3sHGmWk/DuFGtzf6I3rn5UIuUm1ckeIx7XgHZwxEQLChAjM+0RUA9PFCwYu/qm6
+ 9IpeMJ2V/nIZwaOJH7XMvW452VksCcG4pysYBM4gaKPDiw/aj9RS8erUS771tOWY6ZGy4Wx4+7y
+ JX63QRv+rPmmYyTOxZi58eVjXbcoNvE3qP8qFHWJHKPRXuOf
 X-Developer-Key: i=phahn-oss@avm.de; a=openpgp;
  fpr=58AF7C2E007CDBE62C59E078F50EFDCF8AD04B1A
-X-purgate-ID: 149429::1773143725-ECDCCA3D-6BB2484D/0/0
+X-purgate-ID: 149429::1773143727-8B66AF2F-B220D537/0/0
 X-purgate-type: clean
-X-purgate-size: 1799
+X-purgate-size: 1613
 X-purgate-Ad: Categorized by eleven eXpurgate (R) https://www.eleven.de
 X-purgate: This mail is considered clean (visit https://www.eleven.de for further information)
 X-purgate: clean
@@ -98,45 +95,46 @@ check.
 
 Change generated with coccinelle.
 
-To: Marc Zyngier <maz@kernel.org>
-To: Thomas Gleixner <tglx@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>
-To: Gregory Clement <gregory.clement@bootlin.com>
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org
+Cc: target-devel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Philipp Hahn <phahn-oss@avm.de>
 ---
- drivers/irqchip/irq-gic-v3.c     | 2 +-
- drivers/irqchip/irq-mvebu-odmi.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/target/target_core_fabric_configfs.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index 20f13b686ab22faf722dd2b24faf96af636a4bbd..6dc9827357a21ae05dd838fb717871c73f3c7562 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -2252,7 +2252,7 @@ static int __init gic_of_init(struct device_node *node, struct device_node *pare
- 
- out_unmap_rdist:
- 	for (i = 0; i < nr_redist_regions; i++)
--		if (rdist_regs[i].redist_base && !IS_ERR(rdist_regs[i].redist_base))
-+		if (!IS_ERR_OR_NULL(rdist_regs[i].redist_base))
- 			iounmap(rdist_regs[i].redist_base);
- 	kfree(rdist_regs);
- out_unmap_dist:
-diff --git a/drivers/irqchip/irq-mvebu-odmi.c b/drivers/irqchip/irq-mvebu-odmi.c
-index b99ab9dcc14b3ba982876cf5525499d02bc1c997..94e7eda46e81833cfe0479b6fabba715bf4ef6b8 100644
---- a/drivers/irqchip/irq-mvebu-odmi.c
-+++ b/drivers/irqchip/irq-mvebu-odmi.c
-@@ -217,7 +217,7 @@ static int __init mvebu_odmi_init(struct device_node *node,
- 	for (i = 0; i < odmis_count; i++) {
- 		struct odmi_data *odmi = &odmis[i];
- 
--		if (odmi->base && !IS_ERR(odmi->base))
-+		if (!IS_ERR_OR_NULL(odmi->base))
- 			iounmap(odmis[i].base);
+diff --git a/drivers/target/target_core_fabric_configfs.c b/drivers/target/target_core_fabric_configfs.c
+index 331689b30f8540c8e78de3eae32c1f8cd4906213..20d57d766ada6ba24cbd2d44d0107cdff9483a68 100644
+--- a/drivers/target/target_core_fabric_configfs.c
++++ b/drivers/target/target_core_fabric_configfs.c
+@@ -479,7 +479,7 @@ static struct config_group *target_fabric_make_np(
  	}
- 	bitmap_free(odmis_bm);
+ 
+ 	se_tpg_np = tf->tf_ops->fabric_make_np(se_tpg, group, name);
+-	if (!se_tpg_np || IS_ERR(se_tpg_np))
++	if (IS_ERR_OR_NULL(se_tpg_np))
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	se_tpg_np->tpg_np_parent = se_tpg;
+@@ -937,7 +937,7 @@ static struct config_group *target_fabric_make_tpg(
+ 	}
+ 
+ 	se_tpg = tf->tf_ops->fabric_make_tpg(wwn, name);
+-	if (!se_tpg || IS_ERR(se_tpg))
++	if (IS_ERR_OR_NULL(se_tpg))
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	config_group_init_type_name(&se_tpg->tpg_group, name,
+@@ -1112,7 +1112,7 @@ static struct config_group *target_fabric_make_wwn(
+ 	}
+ 
+ 	wwn = tf->tf_ops->fabric_make_wwn(tf, group, name);
+-	if (!wwn || IS_ERR(wwn))
++	if (IS_ERR_OR_NULL(wwn))
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	wwn->cmd_compl_affinity = SE_COMPL_AFFINITY_CPUID;
 
 -- 
 2.43.0
