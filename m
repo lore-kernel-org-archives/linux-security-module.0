@@ -1,72 +1,182 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1AAF3B584B
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 04:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A513C3BF9;
+	Tue, 10 Mar 2026 09:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773118052; cv=none; b=W9iCJpXUIQiZR8v1F/dFbrsGsyuSkc/Rit+FHxsKE6ACVLwKUQqgVm7FOS38F5zSCQo2up/tY6dxY0zwk7LQ8KmZ7tP71m1+7waLuenwZNMmWE6NzHx+LUCl6gqdnCwRMKinNOqFoB74f65QoZfMa7Mh7tVxckqXueo6PJjTGJA=
+	t=1773133658; cv=none; b=WCaQR4fK3w4x/sCfUqgzgr7XowXe47F4iVTXx3q/Pvid2gJ5iI+Z3AZ0JkPK6ic84eQYygHvhYeREaUZ/QeHuaEeDW+W8pgriXnDxjsiMO54wdOIgvDdnc/EiTmC5wDhvjcqxmcZtC6c9I149mRddl7LjJSBoaDvFpj5je8cjIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773118052; c=relaxed/simple;
-	bh=RqKqnpTcfCZI3hFTmKFbeJPUk2jsyCxOq5Hii3rlEWo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R10DDp8WNrE7Amgpbmly1eaZI53Obk+YWiew8IDKjDFmwGNcgDrd/Og2YAe6bpCnFfreQD5QyatiV7xgLdFksukKa1AEu2lAxWrf9YpBLJrj8BB3EA+NtPIU5QmNB7V0dxrIwqc+KYfWMhGMhOh23UwWtgNOsDfgBBoeFR8koTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ubzN8uNf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773133658; c=relaxed/simple;
+	bh=tKgVoXuW1Tq5xZXw+M+691E3NQ1lD8UVb3M83asaN/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XJI50fPev3WNd/NL28a6/Zm0uEVYWfyOkjeixkG0ZN+S61gQYwGtjgCaVapnYfvtefUDL72MvlK/kSrd7rieejddzm4HGAFteUSn5vBKRoGL3VTDVDyl+GC2KBLVL/jJGpWCx1CtQgF8V2/qgqQqDn8rPh022rUvEyEpxPDhh5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s6+Cn7gA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ubzN8uNf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65512C2BC9E
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 04:47:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s6+Cn7gA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 527AEC2BC86;
+	Tue, 10 Mar 2026 09:07:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773118051;
-	bh=RqKqnpTcfCZI3hFTmKFbeJPUk2jsyCxOq5Hii3rlEWo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ubzN8uNfufxX6KIDipsjLcZc1QGTqzMznJ0fg7PTaJQaOlJABMOIcN32NE7TQFxEM
-	 de4WIrOdl6Tr4Lil9IYnl6KX7qIgILUhUAq78Ps2gixnVh9zDRzz7XkBqGI859rFgq
-	 wpai/85n5rJbiCm9bkyISlnFNFvCreFzUhiw6gShnQ+DS8wgV1YJuGTHJdbWi3LtdW
-	 IWkVyt7PKYhTkx+MH7E9ARKCjYkG84nCeqWMDWZPszfI8E5D2HDFc5ZmxpF3ikHrcq
-	 QB9UiQbSeJ9U+OV0sm0RHbJRqsZ6Moo3k3X/jDeHo2Wyg66hyAVViBEFK2tggSzZFN
-	 uXvI06L4dFESA==
-Received: by mail-dl1-f45.google.com with SMTP id a92af1059eb24-12776bebe9fso440895c88.1
-        for <linux-security-module@vger.kernel.org>; Mon, 09 Mar 2026 21:47:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXFLiHXeG4R0euWgReYnKIz+xMoVh7q6KaKrXqs2RmaZR9vnKeHHyIEVoJIlLN7IM4ZtOQk3SDLo47KVGs+SyZar8M7irQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0pH7ua+ywAnpRQz+ykRmNClqVwjyNOaOPRotyRttfZeV307fI
-	Bt5wtmSTBCclDTuYiKeCEKWDUAmn6reVsNbnK9MGFoU6LWCrpMg5aLr/RVMc50/nXCRm5HLqaFy
-	z9AF+6SIlkPA4YZevPerDg2cRjefttUk=
-X-Received: by 2002:a05:7022:698b:b0:128:d967:4674 with SMTP id
- a92af1059eb24-128d9674d0bmr2199641c88.19.1773118050845; Mon, 09 Mar 2026
- 21:47:30 -0700 (PDT)
+	s=k20201202; t=1773133658;
+	bh=tKgVoXuW1Tq5xZXw+M+691E3NQ1lD8UVb3M83asaN/M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s6+Cn7gAC1nLXcR+T8W1h7NIEsW0+HUnlmMtZQD7jVQpXq2ww89DPdrqDGWbXBk7Z
+	 e7IDxqpjjN+OCgYe4yf+P6cMjIxjzwuMgpIKKdMmDqmv2DuVpFBkPwz+fZu/5D/JBX
+	 Rs4aGP9H9Ck2XcSJ9qG987/DuCdlUV4kfA80BRzAvb7+W1pGPaXdLKpWJc7s31qB/e
+	 kWj8sKLcmIGBjVnCYRiz7ybsJyI4YlZukfWZ17C/xRwPP07MWEIeOlng50y95cKa/O
+	 wrEqHiKBbDgUO4tRAV0DwsBB4hh3Vwv1lGpfaY2d7v8AN23GC7fdQ+mjv9CXa1ZCep
+	 Dr37CrJ+T8yog==
+Date: Tue, 10 Mar 2026 11:07:33 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Saeed Mahameed <saeedm@nvidia.com>,
+	Itay Avraham <itayavr@nvidia.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>,
+	Maher Sanalla <msanalla@nvidia.com>,
+	Edward Srouji <edwards@nvidia.com>
+Subject: Re: [PATCH 0/3] Firmware LSM hook
+Message-ID: <20260310090733.GA12611@unreal>
+References: <20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com>
+ <CAHC9VhTR9CsBgxRCAHXm5T2NZ5tr+XfmA--zkt=udmk9hPRuZQ@mail.gmail.com>
+ <20260309193743.GZ12611@unreal>
+ <CAHC9VhSRt_QEJKJFBDBySNQCiPpcawd5A76xmoRNtppRKGaCog@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260308180734.5792-1-evan.j.ducas@gmail.com>
-In-Reply-To: <20260308180734.5792-1-evan.j.ducas@gmail.com>
-From: Fan Wu <wufan@kernel.org>
-Date: Mon, 9 Mar 2026 21:48:09 -0700
-X-Gmail-Original-Message-ID: <CAKtyLkExDU8=ovSBA8NLhzTBy393A8KZYZ=36VjkwKOj6FMTAw@mail.gmail.com>
-X-Gm-Features: AaiRm520XhD3p6NGuquRd2scdyWe0zt3ypb5BgKWqlcD7X1YAnLqms7wWEn9lH4
-Message-ID: <CAKtyLkExDU8=ovSBA8NLhzTBy393A8KZYZ=36VjkwKOj6FMTAw@mail.gmail.com>
-Subject: Re: [PATCH v2] docs: security: ipe: fix typos and grammar
-To: Evan Ducas <evan.j.ducas@gmail.com>
-Cc: wufan@kernel.org, corbet@lwn.net, skhan@linuxfoundation.org, 
-	rdunlap@infradead.org, bagasdotme@gmail.com, 
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhSRt_QEJKJFBDBySNQCiPpcawd5A76xmoRNtppRKGaCog@mail.gmail.com>
 
-On Sun, Mar 8, 2026 at 11:09=E2=80=AFAM Evan Ducas <evan.j.ducas@gmail.com>=
- wrote:
->
-> Fix several spelling and grammar mistakes in the IPE
-> documentation.
->
-> No functional change.
->
-> Signed-off-by: Evan Ducas <evan.j.ducas@gmail.com>
-> ---
-Applied to ipe/next. Thanks.
+On Mon, Mar 09, 2026 at 07:10:25PM -0400, Paul Moore wrote:
+> On Mon, Mar 9, 2026 at 3:37 PM Leon Romanovsky <leon@kernel.org> wrote:
+> > On Mon, Mar 09, 2026 at 02:32:39PM -0400, Paul Moore wrote:
+> > > On Mon, Mar 9, 2026 at 7:15 AM Leon Romanovsky <leon@kernel.org> wrote:
+> > > >
+> > > > From Chiara:
+> > > >
+> > > > This patch set introduces a new LSM hook to validate firmware commands
+> > > > triggered by userspace before they are submitted to the device. The hook
+> > > > runs after the command buffer is constructed, right before it is sent
+> > > > to firmware.
+> > > >
+> > > > The goal is to allow a security module to allow or deny a given command
+> > > > before it is submitted to firmware. BPF LSM can attach to this hook
+> > > > to implement such policies. This allows fine-grained policies for different
+> > > > firmware commands.
+> > > >
+> > > > In this series, the new hook is called from RDMA uverbs and from the fwctl
+> > > > subsystem. Both the uverbs and fwctl interfaces use ioctl, so an obvious
+> > > > candidate would seem to be the file_ioctl hook. However, the userspace
+> > > > attributes used to build the firmware command buffer are copied from
+> > > > userspace (copy_from_user()) deep in the driver, depending on various
+> > > > conditions. As a result, file_ioctl does not have the information required
+> > > > to make a policy decision.
+> > > >
+> > > > This newly introduced hook provides the command buffer together with relevant
+> > > > metadata (device, command class, and a class-specific device identifier), so
+> > > > security modules can distinguish between different command classes and devices.
+> > > >
+> > > > The hook can be used by other drivers that submit firmware commands via a command
+> > > > buffer.
+> > >
+> > > Hi Leon,
+> > >
+> > > At the link below, you'll find guidance on submitting new LSM hooks.
+> > > Please take a look and let me know if you have any questions.
+> > >
+> > > https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#new-lsm-hooks
+> >
+> > I assume that you are referring to this part:
+> 
+> I'm referring to all of the guidance, but yes, at the very least that
+> is something that I think we need to see in a future revision of this
+> patchset.
+> 
+> >  * New LSM hooks must demonstrate their usefulness by providing a meaningful
+> >    implementation for at least one in-kernel LSM. The goal is to demonstrate
+> >    the purpose and expected semantics of the hooks. Out of tree kernel code,
+> >    and pass through implementations, such as the BPF LSM, are not eligible
+> >    for LSM hook reference implementations.
+> >
+> > The point is that we are not inspecting a kernel call, but the FW mailbox,
+> > which has very little meaning to the kernel. From the kernel's perspective,
+> > all relevant checks have already been performed, but the existing capability
+> > granularity does not allow us to distinguish between FW_CMD1 and FW_CMD2.
+> 
+> It might help if you could phrase this differently, as I'm not
+> entirely clear on your argument.  LSMs are not limited to enforcing
+> access controls on requests the kernel understands (see the SELinux
+> userspace object manager concept), and the idea of access controls
+> with greater granularity than capabilities is one of the main reasons
+> people look to LSMs for access control (SELinux, AppArmor, Smack,
+> etc.).
 
--Fan
+I should note that my understanding of LSM is limited, so some parts of my
+answers may be inaccurate.
+
+What I am referring to is a different level of granularity — specifically,
+the internals of the firmware commands. In the proposed approach, BPF
+programs would make decisions based on data passed through the mailbox.
+That mailbox format varies across vendors, and may even differ between
+firmware versions from the same vendor.
+
+> 
+> > Here we propose a generic interface that can be applied to all FWCTL
+> > devices without out-of-tree kernel code at all.
+> 
+> I expected to see a patch implementing some meaningful support for
+> access controls using these hooks in one of the existing LSMs, I did
+> not see that in this patchset.
+
+In some cases, the mailbox is forwarded from user space unchanged, but
+in others the kernel modifies it before submitting it to the FW.
+
+For example, at line 1140 we update the UID field, which indicates the
+process to which the request belongs. This field is managed by the
+kernel to ensure that user processes cannot access FW internals of other
+processes.
+
+1108 static int UVERBS_HANDLER(MLX5_IB_METHOD_DEVX_OTHER)( 
+1109         struct uverbs_attr_bundle *attrs)            
+1110 {                                                   
+1111         struct mlx5_ib_ucontext *c;                
+1112         struct mlx5_ib_dev *dev;                  
+1113         void *cmd_in = uverbs_attr_get_alloced_ptr( 
+1114                 attrs, MLX5_IB_ATTR_DEVX_OTHER_CMD_IN);
+
+<...>
+
+1121         int uid; 
+
+<...>
+
+1128         uid = devx_get_uid(c, cmd_in); 
+1129         if (uid < 0)
+1130                 return uid;                                                                                                                                                                              
+
+<...>
+
+1140         MLX5_SET(general_obj_in_cmd_hdr, cmd_in, uid, uid); 
+1141         err = security_fw_validate_cmd(cmd_in, cmd_in_len, &dev->ib_dev.dev, 
+1142                                        FW_CMD_CLASS_UVERBS, RDMA_DRIVER_MLX5);
+1143         if (err)
+1144                 return err; 
+1145                            
+1146         err = mlx5_cmd_do(dev->mdev, cmd_in, cmd_in_len, cmd_out, cmd_out_len);      
+
+Could you point me to the LSM that would be best suited for performing  
+checks of this kind?
+
+Thanks
+
+> 
+> --
+> paul-moore.com
