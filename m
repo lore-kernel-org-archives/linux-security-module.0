@@ -1,35 +1,39 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail.avm.de (mail.avm.de [212.42.244.120])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60DA38A739;
-	Tue, 10 Mar 2026 11:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D8342188A;
+	Tue, 10 Mar 2026 11:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773143054; cv=none; b=nGuniT60fllSENlQsLQHwgFy1lo1lEKtjwKD04POFYhGIgS8ed+DNZKT87+5OAuT6ibDKkNb0emkdodfa3xdz7t0QZRaaDtWxQz9j7mipSevIUpnSh16ORbspxKMfuATRHbI/dXh+YIB8YOQIkRBCPaOcq6v265Ea/A/3idSihY=
+	t=1773143736; cv=none; b=JyjpjDNBamRX/d/0cBxhn8krCQOjexJ2vrQdxL9etQTgsSveWfmqAXU9Utungvjhf1ymk2tyTygW3eFbj9ceo2rBjCRHZq3BBsZECgAl7/pH+x9OcO6hwaUjZ7EqkgDRsUFouXu1RhYhXogSD8c1uEUyZLhZ0zSpr9skyUkgM2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773143054; c=relaxed/simple;
-	bh=tZVxDFpeo5B1O27Dnnln/LLZR+hDKidvFRk+FhjVuRg=;
+	s=arc-20240116; t=1773143736; c=relaxed/simple;
+	bh=5P0DiWaZEPF/d3SPdMB+rZQJk1DY1mVuY8d9xffySsA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qOORFI4OWDHujk4vq0B1SfzCTD04XQjNz03k3oavvHxka27qvlNbmh81kGJDwAW0MYHXJdh4Ut86V7gJ/nT4ge4nnmwohjeNB8//+9p0HciIRzSF/OAVliRHYsSgBy/Tr4aTr/1RVAe4Guw9zrgjRWsVCxS9U4kVhJqq0XS7wL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n2eNYlin; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=Y14YQFuhCN3Kna4n1bwdJLy6NiH7PsoBM7Us66PzPbSe668DAzp4tTo4cuQaqKhLnGId48d7VcOl3YdYa4gX896kymcYC+OJsptk56QFk5wYX8Gajg4MTVHJ9JF9m3oSlGutdRSt3+thWos4pR/PlY2QtSRm5Z/QKNjYzOak55w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=E8nt1Igf; arc=none smtp.client-ip=212.42.244.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n2eNYlin"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 485A9C2BCB1;
-	Tue, 10 Mar 2026 11:44:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773143054;
-	bh=tZVxDFpeo5B1O27Dnnln/LLZR+hDKidvFRk+FhjVuRg=;
+	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="E8nt1Igf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
+	t=1773143723; bh=5P0DiWaZEPF/d3SPdMB+rZQJk1DY1mVuY8d9xffySsA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=n2eNYlinmdaBFFcGcyoW1xfxp7kD5BHjVVQM70/mGjtyaM/pVpaT/rcHU3O49wkIq
-	 GlYDlZlUlB9RjZJj68uJZKhNugrhIYrt/7LjfrPCkegXSWgWGiIgigntXlp680EWyp
-	 GpF5DPuYJ1p7H+aitKYEUsndmjRL8GuVOXoRU7wsvCheTtiEaTwiS5nk5kpMEGUPQX
-	 xvYzH3YZTzngwGPlz6KchhzbIQIGWq3cH1wyQwC9yUaN1fqz7IhgNpueZFEE1Jkvqs
-	 /spLBCyZrL3Ys+NTUGTEEeVmnznJcBAsBXKayD9ZKjIPsHMokipqTg0RtcuIIUWXm2
-	 DnS1M4tdywCzg==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Tue, 10 Mar 2026 07:43:45 -0400
-Subject: [PATCH 2/2] EVM: add comment describing why ino field is still
- unsigned long
+	b=E8nt1Igfikzg1UTgOGISAzAMiKswf2ND49bi7Kfi9UIZL/Ebzc+UJJz79rFMcVayH
+	 w+/EzW9fK7u4Bg5GlsqH3X/nHnzFmDjyW7AnMKYXmhb+RvNdMihtj8ZP/p/a51PpAe
+	 gPrdgwP6uGn176nZZmhXnabbuO0mAOF/przWQZhQ=
+Received: from [212.42.244.71] (helo=mail.avm.de)
+	by mail.avm.de with ESMTP (eXpurgate 4.55.2)
+	(envelope-from <phahn-oss@avm.de>)
+	id 69b006ab-b734-7f0000032729-7f000001bfd2-1
+	for <multiple-recipients>; Tue, 10 Mar 2026 12:55:23 +0100
+Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
+	by mail.avm.de (Postfix) with ESMTPS;
+	Tue, 10 Mar 2026 12:55:23 +0100 (CET)
+From: Philipp Hahn <phahn-oss@avm.de>
+Date: Tue, 10 Mar 2026 12:48:39 +0100
+Subject: [PATCH 13/61] squashfs: Prefer IS_ERR_OR_NULL over manual NULL
+ check
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -38,72 +42,81 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260310-iino-u64-v1-2-18422a053b04@kernel.org>
-References: <20260310-iino-u64-v1-0-18422a053b04@kernel.org>
-In-Reply-To: <20260310-iino-u64-v1-0-18422a053b04@kernel.org>
-To: Christian Brauner <brauner@kernel.org>, 
- Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
- Viacheslav Dubeyko <slava@dubeyko.com>, Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, 
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1377; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=tZVxDFpeo5B1O27Dnnln/LLZR+hDKidvFRk+FhjVuRg=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpsAQJKgg3bpI0BXAN8rJeGN8lqpoaWsEpZdBh5
- uozuV+wgzSJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCabAECQAKCRAADmhBGVaC
- FSKID/4yFNE+m3iMmXf6FmFqbDDj9Sz/SPjGkeJCAoC04DIxPRuZJR2rv9s8qqU6aGkiZKWnPIc
- bBTL3fB7nh52DsdPCdY7mtGNG2johRxnpSRRZmxbfsVmZWXFi9kI8cm4XX1UHE/6m6RA7xrHI8e
- I8+9pW3u2/cL2laQWnuCKR0TJKvPWi/5YRnz+vRxWpeAhb5Y1RuBcgn8Cx2eCBP3IZ4tnDcJ4Xw
- cMXCEaIZcJuePxE3p69F4q5aBKEg/C/inq3diRgNvJhynhTW3PLntwQJr/svzgWo7Zlg39kJ6Ti
- W8aQS5liieqGxNbGhk4cF39pMzKLyhzkkMtyvoqzwFaQYegwqWvkHiVzS4LaSLZ/pPnYyKOWu1D
- rC7dIMnAVoczOaBuW2VjeIMDG+2lHG2+tyOkdEH1ixenWvDJt0Ck/MFxBNbGHeLqmTbgxZFM89n
- /OeykLVQSme9Bv/Lu2yNHzT+zzeoeb7gb0jHammIgeOQH4VIPh+etnBKS4zDZM0U17JkhlWKIFb
- Wy0nMknbmBf5IE9cN6ca37fPDDO5RYFM7QcbT+xudgYCIeDMzXz/DDLq0hugBo9g25UV07nLdnD
- nu2MJFCwNHUzPetpp8feRGNu7tBq+B+FPDO+Ph/aB6rmTJ/2Z6NW3cNTIDvAmza4AOPhmD8Q9Ep
- zOHzZldsVPj8p9g==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Message-Id: <20260310-b4-is_err_or_null-v1-13-bd63b656022d@avm.de>
+References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
+In-Reply-To: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
+To: amd-gfx@lists.freedesktop.org, apparmor@lists.ubuntu.com, 
+ bpf@vger.kernel.org, ceph-devel@vger.kernel.org, cocci@inria.fr, 
+ dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org, 
+ gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org, 
+ intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev, 
+ kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
+ linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-erofs@lists.ozlabs.org, 
+ linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-leds@vger.kernel.org, linux-media@vger.kernel.org, 
+ linux-mips@vger.kernel.org, linux-mm@kvack.org, 
+ linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org, 
+ linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org, 
+ linux-phy@lists.infradead.org, linux-pm@vger.kernel.org, 
+ linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org, 
+ linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org, 
+ linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+ linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+ linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+ ntfs3@lists.linux.dev, samba-technical@lists.samba.org, 
+ sched-ext@lists.linux.dev, target-devel@vger.kernel.org, 
+ tipc-discussion@lists.sourceforge.net, v9fs@lists.linux.dev, 
+ Philipp Hahn <phahn-oss@avm.de>
+Cc: Phillip Lougher <phillip@squashfs.org.uk>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=775; i=phahn-oss@avm.de;
+ h=from:subject:message-id; bh=5P0DiWaZEPF/d3SPdMB+rZQJk1DY1mVuY8d9xffySsA=;
+ b=owEBbQGS/pANAwAKATQtBlPRrKzbAcsmYgBpsAYCOfXcw6nKYZXjZ+DBieT/hiu2NsAfQUre0
+ jlVRw6aXW2JATMEAAEKAB0WIQQ5bPBtrWDUcDQCppg0LQZT0ays2wUCabAGAgAKCRA0LQZT0ays
+ 213oB/sHjZoOpAMz20yPf5W58oaVS3VDOW1zZjyOZfXyKihmnOb8lV99cBPQClALjvBUcqLXemg
+ tpELfmCMWmmS2DLDh38s8m7H4SkSFm3iB+qUl+u8a8NGrDjTz2g0nlLXJ2i4mzmAqWbDldfEhAp
+ ePslhLAf6MqAOAwxF9goTetOQ472ZWbOa7vI5fCqcvwcF/q5QIEUmGs+z5b0yUklyrSflqQlQo4
+ adffOC5kl3ETGEGqBgVXEIg3h8JiDkJe6MaBbDmB/JG3IQRjeJ8YfJc6t+cVg+eXVpCRQOreMFS
+ jG7NgF/eCJBIlcELmHlOCy2pst+P0hiPrthj4RBlPC3hRS93
+X-Developer-Key: i=phahn-oss@avm.de; a=openpgp;
+ fpr=58AF7C2E007CDBE62C59E078F50EFDCF8AD04B1A
+X-purgate-ID: 149429::1773143723-265C1A3D-EB4B679C/0/0
+X-purgate-type: clean
+X-purgate-size: 777
+X-purgate-Ad: Categorized by eleven eXpurgate (R) https://www.eleven.de
+X-purgate: This mail is considered clean (visit https://www.eleven.de for further information)
+X-purgate: clean
 
-Mimi pointed out that we didn't widen the inode number field in struct
-h_misc alongside the inode->i_ino widening. While we could make an
-equivalent change there, that would force EVM remeasurement on all
-32-bit hosts.
+Prefer using IS_ERR_OR_NULL() over using IS_ERR() and a manual NULL
+check.
 
-Instead, leave the field as an unsigned long. This should have no effect
-on 64-bit hosts, and allow things to continue working on 32-bit hosts in
-the cases where the i_ino fits in 32-bits.
+Change generated with coccinelle.
 
-Add a comment explaining why it's being left as unsigned long.
-
-Cc: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+To: Phillip Lougher <phillip@squashfs.org.uk>
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Philipp Hahn <phahn-oss@avm.de>
 ---
- security/integrity/evm/evm_crypto.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/squashfs/cache.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index c0ca4eedb0fe5d5c30f45f515a4bc90248ec64ea..3445f4c2097f7e8af61de6299b721fc4a1d8afb4 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -144,6 +144,12 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
- 			  char type, char *digest)
+diff --git a/fs/squashfs/cache.c b/fs/squashfs/cache.c
+index 67abd4dff222235e75d8c2b10d5e9b811d6e38d8..8888cc02966e2e33210c872c733205d4c581ecc9 100644
+--- a/fs/squashfs/cache.c
++++ b/fs/squashfs/cache.c
+@@ -198,7 +198,7 @@ void squashfs_cache_delete(struct squashfs_cache *cache)
  {
- 	struct h_misc {
-+		/*
-+		 * Although inode->i_ino is now u64, this field remains
-+		 * unsigned long to allow existing hashes from 32-bit hosts
-+		 * to continue working when i_ino hasn't changed and fitsxi
-+		 * in a u32.
-+		 */
- 		unsigned long ino;
- 		__u32 generation;
- 		uid_t uid;
+ 	int i, j;
+ 
+-	if (IS_ERR(cache) || cache == NULL)
++	if (IS_ERR_OR_NULL(cache))
+ 		return;
+ 
+ 	for (i = 0; i < cache->entries; i++) {
 
 -- 
-2.53.0
+2.43.0
 
