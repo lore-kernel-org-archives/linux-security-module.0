@@ -1,133 +1,193 @@
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FD33C6602
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 16:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773160196; cv=pass; b=b2reO2ewPnYwj4ReZvk1T1pqFB+TJKB4jStbR5fzLpvMOUiOZXorq6V+xDoL0DNCu7N8I3XjtgZRj5VXAvztrFzNnoEitY2s71X7gwBbIyBlfCcGpdpLc4suR4eA3+VVTOGvdqyZEHYAhyRyzE9uWX0pOqpoK5Rkzd3LBhn6710=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773160196; c=relaxed/simple;
-	bh=GtmCMbObKbjmmDRT3XldbNlZvhgkpoXsfeQtLnlwBSs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D9C+vGEZycpMdvbvKitUHOItSbcttbvjGTZKkaiPJWQUTL8JVk64wgyaXFVeJtt8HPywidlgDoMuNUCMpoPdMmRfEWv7LaAUuaVmN2WVTIc5moeZCArLar0gj6S1tuKXlXUJopNjg67e19hLUszAXKmkIpUXJ0ua132vVN6x46U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aIi3EUj+; arc=pass smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3DF399008
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 16:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773161673; cv=none; b=LLXE/RKt+wvjn0QTa1fiLwwE5aHp2w2Fq7PWe+1AY/329or7i1CRn8p76TxlDik6XRxelA3oGdMg264g+UglU3JKEA5N1GtIWYRegllDdN/sTU50K16ygondpJw9hJDTJXBaySKogRSCGYfPQfwF69RGAsgxyjTQC58LND8l9og=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773161673; c=relaxed/simple;
+	bh=bBAFu2yyXdiAsw4cmI2FgxwowRwabRXcNMDJDRQqsGE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=V2Dzy+LrkFN1bzTqNAU//X9GCQAmOkTjDAKJUbLiw34iBDPc+Hdof+b/hZb/0hroOVnqK0wm9sV+53Q7J9wnq0mmEnVs5hbBoH/3J08jnyxSdKfMpc4yHtPq3jhLZhvramUnh0qhE0PXuLZMc6jvYso2WcmYXnZQ9m97iqJp1Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=p53jRwu/; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aIi3EUj+"
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7d749f99691so1276915a34.3
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 09:29:53 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773160192; cv=none;
-        d=google.com; s=arc-20240605;
-        b=YfdxBrGvJ+fXVaiUArW3TxAL7SugNhZ2ZpYQ7NYjnO/z8SONowJFatxdFyoQFiZfOo
-         k9srWeeTn3mgeByxS4J6XmBE0+Zs2BEGNPoU2yC676lSTu+fA/qEzZ8M9luFjMd1A5NE
-         GM6Lc51f2Hh9S/KYjlj7LYvgonEC5f84oSul/3FzC2RP38jQUlZ+i+zPHwnkAZCE95Ob
-         9JIiWZ7vWZJkkXGD0xGR1O6M6GNWdlDzGO+Rs7f9258+8bwAHCHE+mp4IdZ13rKUvHSo
-         Z8/hCJysniudAzwtR0eVVSwYxs9hc8VpJro8WIZ0HPUWh6+JTNZQ6NHjjqZjW+ewwMj/
-         sZ4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=vO7Rn9CkKo7xlP7yq6/bQIjIhq0HvuTasre/UqKYfjw=;
-        fh=sKq8BTU/61SDGWOpB80Qix48I+waPUvsymQB58Hu19g=;
-        b=XJiSWPSDbNnL7D4e54aX8bl1oTCqU4qVtOFG6/L0MkWlXkOwNUf+IprrzTjK5m5MiY
-         7hT6FxAAs9+U3wWPjJ90iKnvSYnle5WsppoisgQFo44TJy2XEbLrG9T98NHqRpPUsjpo
-         ord/9wuY40B7MhMeMZIcbxcainoNwlA88xTDbXFjc0y5gfOJ0ZdqZp3GucWZ2B595nvb
-         E0C/nSOVc5N6XZ0P4I/03Uc4hW5gikydJdFCEZJ3quRWlF/HyWF9mOJgcrThs2neAgGh
-         rD8DBmz0nmMgSDz7HyWpKh8rLREdNjsZPROlsOqs1rT5TcBRQ0R3wD59/DwxiTiTM3Br
-         5UFg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="p53jRwu/"
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7d55b97f358so9406706a34.3
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 09:54:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773160192; x=1773764992; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vO7Rn9CkKo7xlP7yq6/bQIjIhq0HvuTasre/UqKYfjw=;
-        b=aIi3EUj+F3utEyf1EUmD6JJtBYGzA8+LUk70HHFXsOiLpcNTACiRuR+YwM37at+lkD
-         lpOP7xxNfmS+zh6Jmf5aaI4WkxBOJCYc+id7acNZzu7xD/bHzGcgn+q+t2hQsc4FFvho
-         qzvhyzdVWsDd/7JtY3YOtlhO240WWp+RBng4iWfWEgaFL/+qmNNohdjkL5s0oBUzwntr
-         0BJDkxz+HoZqEDr+uwnnDxiS2yaQf286uymt/Z9lCIUnWYvfa0wtk9RAXkteBqXMVljF
-         a72IyrKVYOdB9Lthg9biBFnYkLgX1PNmznuT0IwFGcP3k9xTt8nRMx9B8NxAi2+yIUCa
-         sO/w==
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1773161670; x=1773766470; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+koyysHEgwYLGjTMWchPnqVqiDSFwULCAON7pQbpaUo=;
+        b=p53jRwu/2CvEv86F797S2VjC3TrR4NwvcN+JIoso/yqEcGtDKA4G98Kgqa4DX3rK1J
+         PSNPxc4w8VRrNQliGBTA2N+LQtKWpcUaTKGbRPzOOn2IiIVtdZPB8YshB5fZSlEdXt+T
+         ALKHgcdI3UyBdrlcathOwFCC8mExAYzq2X89tyMLepfHVGkLWSIK7a5SM9372RnKYJWd
+         086gu/4c/80HWPIG+qBY3qaSsvFz59VLMGsukC12YTs/LLrar01LjlyGNiCvs818xDHF
+         SEcsHCDTnxNEjSuR8wnwjjRimjmALLgFfUn4m48BOiXFF9AATMKbr4oa6JA9Tl4c81ei
+         srXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773160192; x=1773764992;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=vO7Rn9CkKo7xlP7yq6/bQIjIhq0HvuTasre/UqKYfjw=;
-        b=f/D7pE7icMBPD9TQp1g4mYRGKue+imGuoeyzRhNnHEOTTVKc6jFkrwwQSbxJ58VfId
-         tosajyCdy+9yUXf7FpDBuL3w5AF/AtJRltjfPg/Ndc9gYQlt6HVbK2PULj1/l47lUR3A
-         6Ixu1f+KZSiyesXVj8q5bYzoLucO/rXa8AyrasFlIPofsCzPIxaNKKvI4QYaAVplLQ5L
-         ZOvBIEbGVQfwjkFYv8IXcd/vhMWIJ0jcMVA399VG6gYuCbXkv8XGFqNfDhxe6UtaaBZE
-         gSlxL+RKUIXvcMZ/cQjOyg5Z/94J6XJv91cz46sGB/44C2iN398D3j8M2k+tMP79Ah4i
-         GyRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFWtgNLk/+0yUkmqo6uWayRxcT/B/AOpE+GDRMphE29oBu+DUFTKm6j04xLA80MzlEKtP4AFZhnJABTyVAIhQVJmXc/GQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDPiVCgiAs53bmdKj3KZ32kUVp0f4bCLjrx86huAomypY+jkbE
-	CdJWkJQg7U+/kW0b6gxqSmCmBjET5ojks5yMMR5xHmOv0P4nqe8Q12vwYasYfHacT1nG6Lg60Do
-	xY2Lf3rxiV7G9B/BwTgxxeY+511bXuDA=
-X-Gm-Gg: ATEYQzzxsk1lYrXRZnKkVjF4SPfhXON9XmlBQ7mJT4haMS4xGVhPEXxRmhXiXhz0ANd
-	xPqhw33iP3zAEXVi87/1xNhaMPb5GVVk7MR9Yu11YcllQvDMNfun259ERimrh6G0lUXAk0AIPai
-	CWuuI1ArVXTLdZO3LxujW7/MoDlmPp/FXJceL6a+u33OqofWlQku6pybYqCBgL9wr4hnMziIF+/
-	DjerwGvNG7/QjipO6LztmbwcZzWp1Ffk3PQmxvwZU6a9rgr8Ze8Njs4Fa4r70e/jWsyq3xPuj99
-	RwUKQxI=
-X-Received: by 2002:a05:6820:f028:b0:67b:c122:d2b4 with SMTP id
- 006d021491bc7-67bc122d8d7mr1047833eaf.62.1773160192035; Tue, 10 Mar 2026
- 09:29:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1773161670; x=1773766470;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+koyysHEgwYLGjTMWchPnqVqiDSFwULCAON7pQbpaUo=;
+        b=hAFz7Zkuh+7VWZqY2FSxCMcZ00kFE02tHSz1QPV4RoRuv995PRX4bTGe7oC1HroINy
+         tB0+NV2XD9sELNezdTX9+w0DzyTwyCvE4PbavjwlbqSWse8TVRGsV46wRp/E/JS3q+2U
+         UXrRy5RthTZLOeK225bPKJzCnfX7rBdlnf/sAaYOXdVZiA/qLBhnM+Xm0zX9qu6vH7Nu
+         8MQlQd6E4vRvkwcQaQWqL1yH0qN+Y+KRPJ2WQyxfKfigPzduknTBosIPHuBh8R407flC
+         tJ/6qaLAXlSlvuZ8LlwZ8smCjuQBInosHdDrHUuejFZRL5vwmZkSijG/TThMcMyjtSA/
+         /oCw==
+X-Forwarded-Encrypted: i=1; AJvYcCXWnd2n+zVPijGGUfPBXuY14GWwftfe3yRn5zaUxXJ+N6s26ZvsXws+O2jljz8ZaD7DAmtJcRbIQZ3a4fbNzZawy0mrkso=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhgGk6Ac5y55deebv3pBeWbrKamHarr/bWyJRpIMUngW9DF9eQ
+	YorsoA2raM0+5Mz+PdBYDG+W0LhS8RD/FxLKPPaPckB3ofurTcyyyJ/pUEMuuYFtOzg=
+X-Gm-Gg: ATEYQzwOLYE0f4geC3I9BBMzJhA4QOkybhJWcHkgl/KizoHNmlm7NXmhUI/XOq093G5
+	RAkIvhJbsr7m15thxH7rNuc+0gl1hEztsvF83bfUwnwTVqJjmqQnk7VijNkZ+uC+IryjcLCKHNV
+	jTcQYByjEjYjdf16dILv1M88Ziu6cN07dY36oi6Z1HnDVpTFYrU/PjIiZUJnTw8+G27IfbWdVy8
+	I7sG6LO4UtmMZbQFKLoG1CygpVd5EtrUY9N2fL7cfkDMzp/eSiHQoHkLNGl0k+PWRUES2itW5G3
+	oG5FFzDd2zxWJSJ2AtPCqM8fLBlqWedcyHtQEEIaj/KJZRuOzGAKYYaGP4hk5evqrq0aaZDQiFZ
+	1v/eF37BvNkbzFgs3+r6M3++OUN5FcE9QUGqAz7BAmSUsvZTv2ErsGKZ/rzM1ecRiIJfkvL3kVM
+	+oK9+qVXuKtt7SRlx5AMr7u6DgZyQ6YID+3H4m03yX3AMDZB83TZKVOeajBEtwaYNk/RNkRT1lE
+	HIafrtvQLEfdbK8Bmw0BhnXviGCT/VroL5bNcagai9BFznn5kIJPqMByw==
+X-Received: by 2002:a05:6830:6887:b0:7c7:6043:dd8f with SMTP id 46e09a7af769-7d726f631bdmr10091186a34.15.1773161669861;
+        Tue, 10 Mar 2026 09:54:29 -0700 (PDT)
+Received: from ?IPv6:2600:1700:6476:1430:a85:69a0:8fa8:d652? ([2600:1700:6476:1430:a85:69a0:8fa8:d652])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d745cac199sm5377746a34.9.2026.03.10.09.54.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2026 09:54:29 -0700 (PDT)
+Message-ID: <b0225cff966425a16213e2dae7cd30ba438e5af7.camel@dubeyko.com>
+Subject: Re: [PATCH 1/2] nilfs2: fix 64-bit division operations in
+ nilfs_bmap_find_target_in_group()
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: Jeff Layton <jlayton@kernel.org>, Christian Brauner
+ <brauner@kernel.org>,  Ryusuke Konishi <konishi.ryusuke@gmail.com>, Mimi
+ Zohar <zohar@linux.ibm.com>, Roberto Sassu	 <roberto.sassu@huawei.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,  Eric Snowberg
+ <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James Morris
+ <jmorris@namei.org>,  "Serge E. Hallyn"	 <serge@hallyn.com>
+Cc: linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ kernel test robot
+	 <lkp@intel.com>
+Date: Tue, 10 Mar 2026 09:54:26 -0700
+In-Reply-To: <20260310-iino-u64-v1-1-18422a053b04@kernel.org>
+References: <20260310-iino-u64-v1-0-18422a053b04@kernel.org>
+	 <20260310-iino-u64-v1-1-18422a053b04@kernel.org>
+Autocrypt: addr=slava@dubeyko.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com>
- <CAHC9VhTR9CsBgxRCAHXm5T2NZ5tr+XfmA--zkt=udmk9hPRuZQ@mail.gmail.com>
- <20260309193743.GZ12611@unreal> <CAHC9VhSRt_QEJKJFBDBySNQCiPpcawd5A76xmoRNtppRKGaCog@mail.gmail.com>
- <20260310090733.GA12611@unreal>
-In-Reply-To: <20260310090733.GA12611@unreal>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Tue, 10 Mar 2026 12:29:40 -0400
-X-Gm-Features: AaiRm53wKn-Z9Bfyll-JSQgHDW7M1uOer1Mv0lXwG0F25zaRxhNKjMHX5FTwCwE
-Message-ID: <CAEjxPJ4nTmovpgkzC+3=Oh7EAhpi1vHLwJfjezu-vzX_Q2OCug@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Firmware LSM hook
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Jason Gunthorpe <jgg@ziepe.ca>, Saeed Mahameed <saeedm@nvidia.com>, 
-	Itay Avraham <itayavr@nvidia.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	Chiara Meiohas <cmeiohas@nvidia.com>, Maher Sanalla <msanalla@nvidia.com>, 
-	Edward Srouji <edwards@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 10, 2026 at 5:14=E2=80=AFAM Leon Romanovsky <leon@kernel.org> w=
-rote:
-> 1140         MLX5_SET(general_obj_in_cmd_hdr, cmd_in, uid, uid);
-> 1141         err =3D security_fw_validate_cmd(cmd_in, cmd_in_len, &dev->i=
-b_dev.dev,
-> 1142                                        FW_CMD_CLASS_UVERBS, RDMA_DRI=
-VER_MLX5);
-> 1143         if (err)
-> 1144                 return err;
-> 1145
-> 1146         err =3D mlx5_cmd_do(dev->mdev, cmd_in, cmd_in_len, cmd_out, =
-cmd_out_len);
->
-> Could you point me to the LSM that would be best suited for performing
-> checks of this kind?
+On Tue, 2026-03-10 at 07:43 -0400, Jeff Layton wrote:
+> With the change to make inode->i_ino a u64, the build started failing
+> on
+> 32-bit ARM with:
+>=20
+> =C2=A0=C2=A0=C2=A0 ERROR: modpost: "__aeabi_uldivmod" [fs/nilfs2/nilfs2.k=
+o]
+> undefined!
+>=20
+> Fix this by using the 64-bit division interfaces in
+> nilfs_bmap_find_target_in_group().
+>=20
+> Fixes: 998a59d371c2 ("treewide: fix missed i_ino format specifier
+> conversions")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes:
+> https://lore.kernel.org/oe-kbuild-all/202603100602.KPxiClIO-lkp@intel.com=
+/
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+> =C2=A0fs/nilfs2/bmap.c | 9 ++++++---
+> =C2=A01 file changed, 6 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/fs/nilfs2/bmap.c b/fs/nilfs2/bmap.c
+> index
+> 824f2bd91c167965ec3a660202b6e6c5f1fe007e..4ce9a93149a5af13bc215cc1877
+> a757e2c6cf49b 100644
+> --- a/fs/nilfs2/bmap.c
+> +++ b/fs/nilfs2/bmap.c
+> @@ -455,11 +455,14 @@ __u64 nilfs_bmap_find_target_in_group(const
+> struct nilfs_bmap *bmap)
+> =C2=A0{
+> =C2=A0	struct inode *dat =3D nilfs_bmap_get_dat(bmap);
+> =C2=A0	unsigned long entries_per_group =3D
+> nilfs_palloc_entries_per_group(dat);
+> -	unsigned long group =3D bmap->b_inode->i_ino /
+> entries_per_group;
+> +	unsigned long group;
+> +	u32 rem;
+> +
+> +	group =3D div_u64(bmap->b_inode->i_ino, entries_per_group);
+> +	div_u64_rem(bmap->b_inode->i_ino, NILFS_BMAP_GROUP_DIV,
+> &rem);
+> =C2=A0
+> =C2=A0	return group * entries_per_group +
+> -		(bmap->b_inode->i_ino % NILFS_BMAP_GROUP_DIV) *
+> -		(entries_per_group / NILFS_BMAP_GROUP_DIV);
+> +	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rem * (entries_per_group / NILFS_B=
+MAP_GROUP_DIV);
+> =C2=A0}
+> =C2=A0
+> =C2=A0static struct lock_class_key nilfs_bmap_dat_lock_key;
 
-If you just want to filter on opcodes, then the SELinux extended
-permissions (xperms) support may suffice, see:
-https://blog.siphos.be/2017/11/selinux-and-extended-permissions/
-https://kernsec.org/files/lss2015/vanderstoep.pdf
-https://github.com/SELinuxProject/selinux-notebook/blob/main/src/xperm_rule=
-s.md
+Makes sense. :) Maybe, rem is not very good variable name, but the
+whole logic looks good.
 
-This was originally added to SELinux to support filtering ioctl
-commands and later extended to netlink as well.
+Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
 
-If you truly need/want filtering of arbitrary variable-length command
-buffers, then I'm not sure any LSM does that today.
-Might be best suited to Landlock but not sure even of that one.
+Thanks,
+Slava.
