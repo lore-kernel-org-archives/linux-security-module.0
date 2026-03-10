@@ -1,133 +1,95 @@
-Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com [74.125.82.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381893314D2
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 10:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.182
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773140196; cv=pass; b=VNLCbNHb+l8lI7tTo1mgrE5CqJO+aGfsDO9dAoGnLZ6maK/tqiXYVyVlsxdGKrCgqSM7lR6940QHhXJ/C2qqH6lAXNuvus3gPa0LeT6JlM37tLu4Hm2sKBTMNLll7gGO2SF83Fb/LwkbrGFZCp6dqbppylzhUQsELKIVub/0g5w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773140196; c=relaxed/simple;
-	bh=nL8Tve9qxXBojU4CG3EUAlYMJTfM1E+ZMJp6NeH7Zns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nzGjjgJttBBQMYUFotb8oqAIzUqRmn7FtaUCJ3bF8EEgLqswXqro7qzdf8X2arrzSQaT2x+6q+UTU7+AYryRoSLJncqtDYHMmP33FEra2Ot3IWPoBUaZN6XhUKjIR2rL6YhmGtn1Btf1QMrhBwCGDSR1JRtKACGED0+W8pNcf38=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MBbGtEBR; arc=pass smtp.client-ip=74.125.82.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C632E389E1D;
+	Tue, 10 Mar 2026 11:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773143051; cv=none; b=OIyCehuGI4m+9yiLcMpZcnJYk7FiqKu4HvmavU/KDO6C0IlpaZkFKjEDTAY1ASVDOnO78VWupVXfItMNnWnt/MybIWxoqvUqh5IE3p8IeL9vsbztQX3Irg+Ju+u6I9jQkrRu2YjUwh9H3Qv48Nz8qmVLO6fERrx+k5Hz/0eh7Gk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773143051; c=relaxed/simple;
+	bh=sGoyfhJXaG3l97G0c5w+wareb8CwaOtWbLOdJuvcSW0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qDgYL+ijSq1iofCA9ZpevWt498jl/69BcMleoXG8rUnfebbWmZFnZZsoSj0o9VIgUJcr3crmS26hkeAIXzqIWKUdXiOW8koacsVd8oIpVc+5p5p1FRWzgZWWRTkRDx5bk71dqd8n1PMPXOcsxpbbLwvYNUMM2abg0pAokK8T148=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=alvrUb1R; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MBbGtEBR"
-Received: by mail-dy1-f182.google.com with SMTP id 5a478bee46e88-2be2ce5b538so648261eec.1
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 03:56:35 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773140194; cv=none;
-        d=google.com; s=arc-20240605;
-        b=kw+PgdCFzH+VdxL3S3TRMKBes9AOsaxGFthwqqk+TfwYO2Fxwm75f91T5P8z9PecxT
-         Z2I5HocHs8L9vQDRIq9WjMPIUIqbSN6aFa1TVk8A17iyqF/Ipy35EJSuXlOSVo4ksvhG
-         00jQE6LjhSzAE+CYAy1wrsCaSrz+w6/vU83QljWe2/arY2DtGTO9+EIYQ4BnmrXGMDlA
-         j/M5oIdr+/lTJkR97otfg4icA3WCk4JbYFpgaPNCJVHfve9Sbu8XbzmllWlwmkeBH1fq
-         xf8/qRLpUZesxdOLWJXLtk98jC8Ss/Yuk+hIcPzwm107H5oSjUVMNo36ri8FoLhC7DWc
-         4CLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=4qBpWaqAk74juZmeca9VRmKlmVoYIHqDYNOH37dt7g0=;
-        fh=Dd85NWiz1QY9ztD7wGBmCK7Q59mu8LgGctzwhZ6KPmw=;
-        b=OtD7T8E8SciLyS1HIDw0uficXNe3vJ8Mf5mfBO+lmSlTVkbDhg6pFdqSnxTkBJH9ST
-         ElN9qtJ2P5Mh5+JL9/NsXN7CdaEbwvWxvHsl2dz4LVlBlaWDvpOdvcvJ8CYuSvouFWDw
-         Ox9OVJIoqhZWFLn2jXfon3fr3ZKkErJv82ailx7DelLydoNBz14l84LhV62vEB+yISL8
-         +NLT6UQWrV36dqrGWQKWP7mje+vqiK1s8pKIxm9zxv+mA5TxP7iUU00DP4kbwbAb0Peg
-         6ERN2g5ICYs4yqt8OkaQ+6CIuu2obmQQcLreRZnZyqQe1UycC1TKJTfm+PrOIZU7Uvey
-         lK1w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773140194; x=1773744994; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4qBpWaqAk74juZmeca9VRmKlmVoYIHqDYNOH37dt7g0=;
-        b=MBbGtEBRBoxPubDO7aR6dBNxnj1NeX5HfI/2iP8Lzp9seSiN+tybz+fCRUtGLW5x5H
-         Dk4DqYa2NIr6W29OV7/5WrHN0FEJ0+ScFhbkZQJ4OBIDWeIUWzj5869zWBkvAx1laXES
-         Udu4UtFP+aCcp5tqTGuMUR8kxmr0FTGzsSlplMqaY0hCenwPTPwkdVVfNjLo+2nmkSeb
-         ZLZA0ovPwmjNnfImTXGvS4gMKe4x5tYPKrZqYjvhXgCHtOZOaqyl0J7nwehmYLSwCQiN
-         4RvcjhTehRXfc9XMyLghddQw5UZF09s2CvUvSITa7ja7/9lOwh6jaZeNRFPG6ODik9Ho
-         PR+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773140194; x=1773744994;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4qBpWaqAk74juZmeca9VRmKlmVoYIHqDYNOH37dt7g0=;
-        b=hKnxUUQvLNYL9xEkRBrDR3D2EcBIUebfKfe0xAbopg+IldbaCFu7Slky9SdguA1zDJ
-         DEtv3QZ3eCJzL/CqNged3VeRjES0jm3t4YBJdMckVVSunnPgL/nV4d659GGN4bpdKAWF
-         fJ2sVcbJvHxSWv/uHCYnVsqqaLjigLtcMExm9L+EIBWDHUFhwO9MI2b8S4PqXkr5IEsz
-         VVsnON5HhWlMWsOBJqqxlPyNaNSEhfxn9ZpxBQrWvauOQmoWOX7wnUjXE18EntD53zal
-         xVMJnJLKd0MEtilKbJe+2NTeDBhqpioPHO7+BUbbwJYl/GiDSZYfiprNwN8TZ50KTMRL
-         Wbgw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxr3E4pRV5mfkE76PoVm1vGux2NsFO+gJov2MJT+lxVjMC0i913yfSzINJM9D2wjlqXp/6/8atffyMFrcZAFXLGlUTe/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRAlz+QEfcb1twxHRKA3+2zJp1YfuuLw1e3si4KkG2tEzbS0RV
-	EA7go8upHjSK4Q/NZlrjn3IuJeD/BMzTQY024VVSE1xuPQeU8FL1p+joTWwZIm7NrqaE0SFQWQX
-	pGvKbZozHfn0+j3fIPHMmXJ/d4+2oKCg=
-X-Gm-Gg: ATEYQzwslcICgQBHXkwwTUUNQK4knkEj98J/4zGx1AvAwYxRVLGSZhi2HGV8BmPXePb
-	/9M3qXcOpf3j2aH/aZWXvGNxHMIxwEGeZsoxS3r3azhFaKXEcsR5Ck/tZ7dZE2lOaa3JsmZEv1a
-	4hieYrbko2MXfwiZaiEwemZ9YoY/79WRpymbXhRME8OaxTgYzwhmYXSKjSpb2nWXlDDiJujQZ4G
-	oisj1IlpZ5Fz1flM+8b3uP+lUgOH9HAHmeEDGtCyXCGfEGXTPxRkkoEarabpadVunvV5xdKuYTu
-	Gs1FMP4GMw3cmwwX5FC54mHsc7PYexF5TY3Njo7N5rnILFb4aqb7D+4DblXBQq2Rv2Z1IctqqGV
-	xfWVXPp9sqySdBs4t7RtfFdk=
-X-Received: by 2002:a05:7300:ef97:b0:2bd:bc33:ca32 with SMTP id
- 5a478bee46e88-2be4e09ebfdmr2731651eec.4.1773140194353; Tue, 10 Mar 2026
- 03:56:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="alvrUb1R"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 146A6C2BC9E;
+	Tue, 10 Mar 2026 11:44:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773143051;
+	bh=sGoyfhJXaG3l97G0c5w+wareb8CwaOtWbLOdJuvcSW0=;
+	h=From:Subject:Date:To:Cc:From;
+	b=alvrUb1RUJEhtu16Vv+3D49jxAOqxKhKgmOPWtPirUHXK4WMSlnon6zrL2aBtjDCS
+	 D5F9TulnwBdlvO7D2HngldYgnwwtlfB/HbeJOfZ67403EDTEqQHE0WBou6fYrIUO0l
+	 JNKqaqyoW04qByvVMBpUo+R7T0+ji9G9JrddTkkVRP9k39MH4tjpIwCgg2CgyZWze1
+	 iizTBuN3+aRVZWX92SakiMPiiePH5qOqGRIp0KZfbpA7V2B3p3Wf9/ET4tLQlvvKxx
+	 B01yxJQdwFL+6ErAxhF1IVSwKaMagNnZ7O8G919RmRYaGcGqIaiUiOjqm5GitaL2Cj
+	 lvxg6ssuSEnog==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH 0/2] vfs: follow-on fixes for i_ino widening
+Date: Tue, 10 Mar 2026 07:43:43 -0400
+Message-Id: <20260310-iino-u64-v1-0-18422a053b04@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260105-define-rust-helper-v2-0-51da5f454a67@google.com>
-In-Reply-To: <20260105-define-rust-helper-v2-0-51da5f454a67@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 10 Mar 2026 11:56:22 +0100
-X-Gm-Features: AaiRm523FMnYeZ1Cbp2n7uyCKjNSK8gDXCio5_BkegPeyUfSKYibfT47XJIo0_0
-Message-ID: <CANiq72mT2-8m71NtnodVXVBRkhUSiK3Byq5OkBntEQpW9hbU6w@mail.gmail.com>
-Subject: Re: [PATCH v2 00/27] Allow inlining C helpers into Rust when using LTO
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Peter Zijlstra <peterz@infradead.org>, Elle Rhumsaa <elle@weathered-steel.dev>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, linux-block@vger.kernel.org, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	Benno Lossin <lossin@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Paul Moore <paul@paul-moore.com>, 
-	Serge Hallyn <sergeh@kernel.org>, linux-security-module@vger.kernel.org, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ard Biesheuvel <ardb@kernel.org>, 
-	Andrew Ballance <andrewjballance@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, maple-tree@lists.infradead.org, 
-	linux-mm@kvack.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Uladzislau Rezki <urezki@gmail.com>, Vitaly Wool <vitaly.wool@konsulko.se>, 
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Michal Wilczynski <m.wilczynski@samsung.com>, 
-	linux-pwm@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org, 
-	Will Deacon <will@kernel.org>, Fiona Behrens <me@kloenk.dev>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, Ingo Molnar <mingo@redhat.com>, 
-	Waiman Long <longman@redhat.com>, Mitchell Levy <levymitchell0@gmail.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Lyude Paul <lyude@redhat.com>, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, John Stultz <jstultz@google.com>, linux-usb@vger.kernel.org, 
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, Tamir Duberstein <tamird@gmail.com>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDY0MD3czMvHzdUjMTXRMjk7REU3ODFAtTAyWg8oKi1LTMCrBR0bG1tQC
+ OjaovWgAAAA==
+X-Change-ID: 20260310-iino-u64-424fa570d850
+To: Christian Brauner <brauner@kernel.org>, 
+ Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
+ Viacheslav Dubeyko <slava@dubeyko.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, 
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>, kernel test robot <lkp@intel.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=729; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=sGoyfhJXaG3l97G0c5w+wareb8CwaOtWbLOdJuvcSW0=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpsAQESYZlN6VQX/WLeVeCxxpqK4vMsdfAikVas
+ k8WgHWsII+JAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCabAEBAAKCRAADmhBGVaC
+ FR3+EACxCohDUCAjxY/X1tMH3yX/WBoCddrQAePlwpH4Uj/A9QWIIWr4oUzf0ki0Nz+xUlRYy5N
+ omtC4nWSf/1EgaoKHiVYm5w7SsY8gA1mk33hNzCeQG+qMv9iP/+AHqVmbLmUwNwgbwfQo2sZ4ta
+ 4WNZAEoGpHwe0lpenXxRinG2VxiCqSjt9OAWVyLbzy4tiTneRfYqoOvHoAOp8OwwAAHIPk2JgWX
+ vIdYe89w0oC/Fc2GUklJhwGxbjD6ZwIskJD2+ekE9Dwp0a6S6mS4tGdftJJDRcNFyXvMwvCXImo
+ LS9ocEk92gcQFD1atU9NG9g9rWsBBuEglsq1q1epTifiSaKJxfe/0l2pwK1RJ9NumNZX1rP2P0c
+ 8rXtJkD45jOMgW62oJ0DiQ5uGPjKTk/KG8FrZjCSqFDhhc/0zkv7Zb3QWi+0R6oJ34ISYNqCrtA
+ ext9zY9qzpcejkK4KwfMECTm8sErLpWql34m9BERk6uqoZpsmeMGOiNAFXyW6tw98kdPkA2CIYg
+ Zu580tMeD+nO8eFl4UscUzZ+gNoERgdHDqn/dVswq8pvqkOhA2hAPuBuStRR8Hn6MpqV/7fHEUu
+ O/qQA1hWQsW0Jr9yrpyYgVI7PtFkhi61okb+ZhUwf9teDYRtsSibyuoQYWeM572VH0psnIuiC5s
+ umLVsDFAt9Ab8KQ==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Mon, Jan 5, 2026 at 1:42=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> wr=
-ote:
->
->       rust: clk: add __rust_helper to helpers
->       rust: jump_label: add __rust_helper to helpers
+Just some patches to fix follow-on issues reported after the
+inode->i_ino widening series. Christian, please toss these onto
+vfs-7.1.kino, assuming they pass review.
 
-Applied these to `rust-next` -- thanks everyone!
+Thanks,
+Jeff
 
-With these, the series is complete.
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Jeff Layton (2):
+      nilfs2: fix 64-bit division operations in nilfs_bmap_find_target_in_group()
+      EVM: add comment describing why ino field is still unsigned long
 
-Cheers,
-Miguel
+ fs/nilfs2/bmap.c                    | 9 ++++++---
+ security/integrity/evm/evm_crypto.c | 6 ++++++
+ 2 files changed, 12 insertions(+), 3 deletions(-)
+---
+base-commit: 9840bb66e7e5dffd72b03201318f154a10b06b4a
+change-id: 20260310-iino-u64-424fa570d850
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
