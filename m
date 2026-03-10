@@ -1,139 +1,201 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191473B5305
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 18:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A7B33E347
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 19:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773168054; cv=none; b=txzI+biRm3K9tpvKyxt2vB94SPg+RElZ+fCbTIP1iRn0orHQc/nX8ehFBFtH2n4tonyO8ikkR4G46LFYmVz16+YRDDZEY9owO4dgHMVSNV020wuUcL43WCfnL4ktABmwNmCtLHjwtqqkXQdqIicreasCPjcVjToraMfyXnBEvW4=
+	t=1773169467; cv=none; b=aaRuXHLoHmndUX9SWRt+fprJAmrZCZHaIXP0D5GvxsfnYcGYGOsuMQz1jUPqsV2JUQrz8q8mC5q8l1x715eDhbkXQ1jn1YN8KgQiwepYbwNw/rP+6bGSsVm02YNvQqimTBszYouIWq0pBxsYdi1IUz4miqxjq3YPsDDaUKsHVTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773168054; c=relaxed/simple;
-	bh=67BO0RZg8rxb/E50RmGcBJlsPR5Ae9xmCy+Q7v8QtDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V5YkjUUJBV1v9w6glWVAc19NSmabp+/ufD6M3HIg7xIQ9tPUgJy5EgsyEzePD9HAxwSAXlI3eLb5TtexFnzIjf2AJs2lzJaIT0uPKg/uCAG2KZDFXWryFngDUs8lQ09bBAFlW5M5qn2MOoXMuWCBdUu35regdlVW0rkKDJfSb04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kH0xiiWz; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1773169467; c=relaxed/simple;
+	bh=Aa7W3QOBouqXVTwND5bDbqTgD3mKOl1TSyzQDTDs1Qc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IX2fjrk+YdX1pIYaa8YxnE2gOr2pGW8tmb3SF6r7MytFcC9Bwhd1VfEBOYv1Z/uqW+0t/GAKZvjDjj7Jipa4oCnAySprWejOqYHQa05jATpQyCl20y69/GMEjJIGHrR/p9NolJhkw6Cs+CnL5PEBaWEkEvU+XP9WksJZGxlseGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=bU6cBmu7; arc=none smtp.client-ip=84.16.66.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kH0xiiWz"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2ae82df847bso30023705ad.2
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 11:40:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773168050; x=1773772850; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bjFZ9oZWWc3RZ4UdO5rq+AZbr7uPDX73K58gh1+yuH0=;
-        b=kH0xiiWz4KeHg8qM+UQYFRGEoaB5YhGQ1/l342lI48vVjCWqHFWSBUDJtSv8g6YdEb
-         WUvbLXs80bxV+xnMTu2IxnxqQ1WawTtw06PwWKuvZNeHk5D3euuYdO1/s0++E4FpGP2z
-         +c3ttwFV6WwPOQpNHM7WUIHZNaqG5koiMMCxTax1rBk+j7pB0850FJbGseMzgmcav/Sc
-         D4sAVnEuBVkUt07E/ANMW8DM/NJ+n/hx2N6JUcXYsLZYrFMsnwCK7vKttbH8x8ketzgA
-         AEJgLDRmf5idGKEt1ix0VwO4x51qzzz9/bjh5SLZJM6RE+ISqePxLY2ZYvsw4O/i3F73
-         NyLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773168050; x=1773772850;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bjFZ9oZWWc3RZ4UdO5rq+AZbr7uPDX73K58gh1+yuH0=;
-        b=O6igsZFNyLPTsz/98z38g/yxQN6zGAYzSksWE9FfXag/6InpNUe9+q+xCvaI8TriTN
-         dZZ/6/Yaoz+k21WTR/1MwVlVXHB0mF3f1jFkmYD8YcR2JOaGRBbPmyCBMkkCRhF0+Kyv
-         eqykfYGV5ZmA1QWrTyvbXrhAlWf5ash6yGOkD6Gguw/MO1W6+Eh3TvCP9q+AlnP5Rsx+
-         aZTwtw75MFa9n9ox4jqQFRLBc3xo9x6+3s03APSZjK00wsbha7Z93DiFVygOVKHGGgq5
-         SzpKLvwUHme7I0k2DteDk6wA9Qizpg6KXgztRrwn6a6SvXYLpGz+PR3uFc+WUiPM/JnJ
-         M/CQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVtlutAZaEh5BXTExfMNpU2LQ6iE8946NrehdjWQrWQ17ERK/jH4PECPVtsyXWwU1nCV25seA9jOUC1TVfopbjult/QVU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf7Ap51BgjoC+oHwF+IUX9LKlRN0YeYjnw6mVUmAvr5bCfxnBW
-	luRnnKryQaHtl6SE55YOjRqYe4QPhY/+Eg+ElZg24SiRdmOXG5DAMbqV
-X-Gm-Gg: ATEYQzzhTd70UdzjCmzttG1yBPKQ5JoDzFMU2T2alOp8uTG6xhI4FRAHG83ERgiZ9oo
-	ulEcqE3oPdKp4wqaVu/s+eXKRrDYGdmZF7JUe4dsZJsnYuf2tkjKT8F/PyR8uf6I/jwfg4XVb7N
-	UoQbrJBcq8xEgJVaWMGWAw/xdQlslwPHeAqDr+8Hcnj+tyX5ipKUdyP+rh/uyBIz9g2l5AcS5Sh
-	qIisMZ+NIf+Wn6sbmc9w0QncGaSVrCWT+T2IOfGpRlYkiblw+Q5i+1U0lCIBKRncYA5Wh14Q31P
-	Jc8lqLnmkFwbtYzC6dNZcULd+V/6slusD62CfqZTCK9OHQuF4c9vugTNgf3JKvvfFJ4C3SoCujF
-	o7ECiIBGWOEU7tov1e2jweSXfgcz3Jb2dyZWUrVd/YstI74Y4AfJ5oE8SdizF99EtlMBdgm1fbf
-	o8dJIRrUk4cphpYK11a04Mx5Fa9fKVedaw8Xi+Epec6gALKA==
-X-Received: by 2002:a17:903:28c8:b0:2ae:5671:7071 with SMTP id d9443c01a7336-2ae8252cf0fmr96662285ad.43.1773168050081;
-        Tue, 10 Mar 2026 11:40:50 -0700 (PDT)
-Received: from google.com ([2402:7500:a44:85b:2953:97d3:b283:95c3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ae83e58592sm220535625ad.14.2026.03.10.11.40.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2026 11:40:49 -0700 (PDT)
-Date: Wed, 11 Mar 2026 02:40:36 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Philipp Hahn <phahn-oss@avm.de>
-Cc: amd-gfx@lists.freedesktop.org, apparmor@lists.ubuntu.com,
-	bpf@vger.kernel.org, ceph-devel@vger.kernel.org, cocci@inria.fr,
-	dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org,
-	intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev,
-	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-	ntfs3@lists.linux.dev, samba-technical@lists.samba.org,
-	sched-ext@lists.linux.dev, target-devel@vger.kernel.org,
-	tipc-discussion@lists.sourceforge.net, v9fs@lists.linux.dev
-Subject: Re: [PATCH 00/61] treewide: Use IS_ERR_OR_NULL over manual NULL
- check - refactor
-Message-ID: <abBlpGKO842B3yl9@google.com>
-References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="bU6cBmu7"
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fVjwk32gRzL9N;
+	Tue, 10 Mar 2026 20:04:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1773169462;
+	bh=+sVNWeB6M2XJvG6NHQw1uSCkMxkwZH2lS8LXOGSP6v8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bU6cBmu7MGa15oBrhFPGhKZAoOl0Bqm83wynsYqlzJbIICSNp1HeAWrdkbnP/0S9h
+	 YzIpgpaPTbUgipEnm0ssyG2G9AtQFglSRuDGEYRkmuNJmuNUn3gu8nk18H1clPvVLs
+	 efnVNx/mf4FBYNzieUfhgA9Dai99TeUo3BEC4dBU=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fVjwj4qk7z4qm;
+	Tue, 10 Mar 2026 20:04:21 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org,
+	Justin Suess <utilityemal77@gmail.com>,
+	Tingmao Wang <m@maowtm.org>,
+	Yihan Ding <dingyihan@uniontech.com>
+Subject: [PATCH v1] selftests/landlock: Test tsync interruption and cancellation paths
+Date: Tue, 10 Mar 2026 20:04:15 +0100
+Message-ID: <20260310190416.1913908-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-Hi Philipp,
+Add tsync_interrupt test to exercise the signal interruption path in
+landlock_restrict_sibling_threads().  When a signal interrupts
+wait_for_completion_interruptible() while the calling thread waits for
+sibling threads to finish credential preparation, the kernel:
 
-On Tue, Mar 10, 2026 at 12:48:26PM +0100, Philipp Hahn wrote:
-> While doing some static code analysis I stumbled over a common pattern,
-> where IS_ERR() is combined with a NULL check. For that there is
-> IS_ERR_OR_NULL().
-> 
-> I've written a Coccinelle patch to find and patch those instances.
-> The patches follow grouped by subsystem.
-> 
-> Patches 55-58 may be dropped as they have a (minor?) semantic change:
-> They use WARN_ON() or WARN_ON_ONCE(), but only in the IS_ERR() path, not
-> for the NULL check. Iff it is okay to print the warning also for NULL,
-> then the patches can be applied.
-> 
-> While generating the patch set `checkpatch` complained about mixing
-> [un]likely() with IS_ERR_OR_NULL(), which already uses likely()
-> internally. I found and fixed several locations, where that combination
-> has been used.
+1. Sets ERESTARTNOINTR to request a transparent syscall restart.
+2. Calls cancel_tsync_works() to opportunistically dequeue task works
+   that have not started running yet.
+3. Breaks out of the preparation loop, then unblocks remaining
+   task works via complete_all() and waits for them to finish.
+4. Returns the error, causing abort_creds() in the syscall handler.
 
-Thanks for the patchset. However, I think we need a explanation for why
-switching to IS_ERR_OR_NULL() is an improvement over the existing code.
+Specifically, cancel_tsync_works() in its entirety, the ERESTARTNOINTR
+error branch in landlock_restrict_sibling_threads(), and the
+abort_creds() error branch in the landlock_restrict_self() syscall
+handler are timing-dependent and not exercised by the existing tsync
+tests, making code coverage measurements non-deterministic.
 
-IMHO, the necessity of IS_ERR_OR_NULL() often highlights a confusing or
-flawed API design. It usually implies that the caller is unsure whether
-a failure results in an error pointer or a NULL pointer. Rather than
-doing a treewide conversion of this pattern, I believe it would be much
-more meaningful to review these instances case-by-case and fix the
-underlying APIs or caller logic instead.
+The test spawns a signaler thread that rapidly sends SIGUSR1 to the
+calling thread while it performs landlock_restrict_self() with
+LANDLOCK_RESTRICT_SELF_TSYNC.  Since ERESTARTNOINTR causes a
+transparent restart, userspace always sees the syscall succeed.
 
-Additionally, a treewide refactoring like this has the practical
-drawback of creating unnecessary merge conflicts when backporting to
-stable trees.
+This is a best-effort coverage test: the interruption path is exercised
+when the signal lands during the preparation wait, which depends on
+thread scheduling.  The test creates enough idle sibling threads (200)
+to ensure multiple serialized waves of credential preparation even on
+machines with many cores (e.g., 64), widening the window for the
+signaler.  Deterministic coverage would require wrapping the wait call
+with ALLOW_ERROR_INJECTION() and using CONFIG_FAIL_FUNCTION.
 
-Regards,
-Kuan-Wei
+Cc: Günther Noack <gnoack@google.com>
+Cc: Justin Suess <utilityemal77@gmail.com>
+Cc: Tingmao Wang <m@maowtm.org>
+Cc: Yihan Ding <dingyihan@uniontech.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+ tools/testing/selftests/landlock/tsync_test.c | 91 ++++++++++++++++++-
+ 1 file changed, 90 insertions(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/landlock/tsync_test.c b/tools/testing/selftests/landlock/tsync_test.c
+index 37ef0d2270db..2b9ad4f154f4 100644
+--- a/tools/testing/selftests/landlock/tsync_test.c
++++ b/tools/testing/selftests/landlock/tsync_test.c
+@@ -6,9 +6,10 @@
+  */
+ 
+ #define _GNU_SOURCE
++#include <linux/landlock.h>
+ #include <pthread.h>
++#include <signal.h>
+ #include <sys/prctl.h>
+-#include <linux/landlock.h>
+ 
+ #include "common.h"
+ 
+@@ -158,4 +159,92 @@ TEST(competing_enablement)
+ 	EXPECT_EQ(0, close(ruleset_fd));
+ }
+ 
++static void signal_nop_handler(int sig)
++{
++}
++
++struct signaler_data {
++	pthread_t target;
++	volatile bool stop;
++};
++
++static void *signaler_thread(void *data)
++{
++	struct signaler_data *sd = data;
++
++	while (!sd->stop)
++		pthread_kill(sd->target, SIGUSR1);
++
++	return NULL;
++}
++
++/*
++ * Number of idle sibling threads.  This must be large enough that even on
++ * machines with many cores, the sibling threads cannot all complete their
++ * credential preparation in a single parallel wave, otherwise the signaler
++ * thread has no window to interrupt wait_for_completion_interruptible().
++ * 200 threads on a 64-core machine yields ~3 serialized waves, giving the
++ * tight signal loop enough time to land an interruption.
++ */
++#define NUM_IDLE_THREADS 200
++
++/*
++ * Exercises the tsync interruption and cancellation paths in tsync.c.
++ *
++ * When a signal interrupts the calling thread while it waits for sibling
++ * threads to finish their credential preparation
++ * (wait_for_completion_interruptible in landlock_restrict_sibling_threads),
++ * the kernel sets ERESTARTNOINTR, cancels queued task works that have not
++ * started yet (cancel_tsync_works), then waits for the remaining works to
++ * finish.  On the error return, syscalls.c aborts the prepared credentials.
++ * The kernel automatically restarts the syscall, so userspace sees success.
++ */
++TEST(tsync_interrupt)
++{
++	size_t i;
++	pthread_t threads[NUM_IDLE_THREADS];
++	pthread_t signaler;
++	struct signaler_data sd;
++	struct sigaction sa = {};
++	const int ruleset_fd = create_ruleset(_metadata);
++
++	disable_caps(_metadata);
++
++	/* Install a no-op SIGUSR1 handler so the signal does not kill us. */
++	sa.sa_handler = signal_nop_handler;
++	sigemptyset(&sa.sa_mask);
++	ASSERT_EQ(0, sigaction(SIGUSR1, &sa, NULL));
++
++	ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
++
++	for (i = 0; i < NUM_IDLE_THREADS; i++)
++		ASSERT_EQ(0, pthread_create(&threads[i], NULL, idle, NULL));
++
++	/*
++	 * Start a signaler thread that continuously sends SIGUSR1 to the
++	 * calling thread.  This maximizes the chance of interrupting
++	 * wait_for_completion_interruptible() in the kernel's tsync path.
++	 */
++	sd.target = pthread_self();
++	sd.stop = false;
++	ASSERT_EQ(0, pthread_create(&signaler, NULL, signaler_thread, &sd));
++
++	/*
++	 * The syscall may be interrupted and transparently restarted by the
++	 * kernel (ERESTARTNOINTR).  From userspace, it should always succeed.
++	 */
++	EXPECT_EQ(0, landlock_restrict_self(ruleset_fd,
++					    LANDLOCK_RESTRICT_SELF_TSYNC));
++
++	sd.stop = true;
++	ASSERT_EQ(0, pthread_join(signaler, NULL));
++
++	for (i = 0; i < NUM_IDLE_THREADS; i++) {
++		ASSERT_EQ(0, pthread_cancel(threads[i]));
++		ASSERT_EQ(0, pthread_join(threads[i], NULL));
++	}
++
++	EXPECT_EQ(0, close(ruleset_fd));
++}
++
+ TEST_HARNESS_MAIN
+-- 
+2.53.0
+
