@@ -1,158 +1,206 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f44.google.com (mail-dl1-f44.google.com [74.125.82.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBB338BF94;
-	Tue, 10 Mar 2026 16:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773158746; cv=none; b=rgLs0UAiwcVQuPLfN9l56oA2I9j/PQaL+D+AFkWraVbAqsbSs8lgKlTajY3fM2M0iIzerU06j3v56ZuQm2BKYWMmyP1KHVd4wYdyzd+rpnjwIRkzjgSenh0E4UDprMLNCp7VEEs0GglUrSXLuejIkj070zVFqXE46Z+IYvX5AGg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773158746; c=relaxed/simple;
-	bh=QjmXv3J82aNpVvxsT/+P2fPbW9qzk6DDf510Ul/2zYM=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=Rilyk967LzaJ9/XxGJOFBcK1Iubqu5BrU5eZ8hCbMhTGBKIn48p7DNQMUYfWfoya9oBkXsEI5K5H7UpUdlwKWy78seTeo4j5iCjYr+BJWCseZ66zHF/7zo4PFBmurCDmqsHRR1KNI+knXHO7ssTxQtUWUrAbck+vdxEIDjDiaag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mEyspq3U; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F3A2D8DCA
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 16:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773159436; cv=pass; b=hQrJq020rejjH9xasCoVnrnrNQRapAQmQ2WKbSS11rnUvngBOXMg5b8cTYCd8K3W5zWnh0QMOdyqKImNjcCqWbYCZtx3zyTDsElT+Ed9TBVA2A92n1aZazGNpZZFWuxoXrQS5PaRsU4j+odQ+XMhtXNebK9WUW+IAYSIGPUIkuM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773159436; c=relaxed/simple;
+	bh=jA6rZpVYq5bMHBbyJsUtaFneg2H8srjFU0y02ik2O58=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Thm/kNbpctXQ78YETj+PKPIvwKiuSytx7e79S1NdKF1vhgyIwU4KqbXZa315CcpCBIykIrlnGn7oTo6Jc+xLiKKUPTop/VT3p0bZEbxqagdMnDHYUwc3aIoNQky6ltGJKPWTg71ovTkWwFXDjb3acjz8zwlSreRw5UqsHpAT3xk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nt6MuXzr; arc=pass smtp.client-ip=74.125.82.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mEyspq3U"
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62A9JfCg1455623;
-	Tue, 10 Mar 2026 16:05:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=cWnPbA
-	Lr4v7J4i6+UyjhgVFwJufozAm4abfHYh9aPE8=; b=mEyspq3Ue7i9i+oZlvSgRj
-	wqiWSvltjpT/A/iEAUDZJ6YfVBbTUGJ1aaEwKkvZjMrA/KnvmaC5gkZ7mOiBE/v/
-	epgfKXPHAVG7P3hHXfX9u4KXXIl7ukMQGipHzgwoB3tZ5fwyffniZWVXFYNdvM/v
-	a6LmwI1JuB5UAEQHI6mba/JqONdaK+i4xdFaBprA2UCUtqCfXrtJ15TRxrqUrUJQ
-	iyHbhz1B7veM79DdjMmIdu+N6UErZfLGCAJX09k8Qr3EpmqH7ce4tHMwe0VBdwbw
-	A9IilKaOT8EtPb4tIaZc6RBii0x1a6o+PY2m556sTBKZN4F6qD0zvC6MNE+mfMpA
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4crcuybq24-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Mar 2026 16:05:17 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62AFsJsG021521;
-	Tue, 10 Mar 2026 16:05:16 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4crxbssx72-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Mar 2026 16:05:16 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 62AG5FEK63504758
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Mar 2026 16:05:15 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3BF9658067;
-	Tue, 10 Mar 2026 16:05:15 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3F6B15805A;
-	Tue, 10 Mar 2026 16:05:14 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.8.247])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 10 Mar 2026 16:05:14 +0000 (GMT)
-Message-ID: <93bdbda8ff7d732baccc6b2ccfc28d1e2f25d731.camel@linux.ibm.com>
-Subject: Re: [PATCH 2/2] EVM: add comment describing why ino field is still
- unsigned long
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Jeff Layton <jlayton@kernel.org>, Christian Brauner
- <brauner@kernel.org>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        Viacheslav Dubeyko <slava@dubeyko.com>,
-        Roberto Sassu	
- <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"	 <serge@hallyn.com>
-Cc: linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
-In-Reply-To: <20260310-iino-u64-v1-2-18422a053b04@kernel.org>
-References: <20260310-iino-u64-v1-0-18422a053b04@kernel.org>
-	 <20260310-iino-u64-v1-2-18422a053b04@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 10 Mar 2026 12:05:13 -0400
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nt6MuXzr"
+Received: by mail-dl1-f44.google.com with SMTP id a92af1059eb24-12732e6a123so158693c88.1
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 09:17:13 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773159433; cv=none;
+        d=google.com; s=arc-20240605;
+        b=NfTtYP9s0AMrlWE5X3/Jz+ukk0qqzoZMiNoIyP0AhajY2iT4Ff2OF74L+9YAbkxTat
+         A7Vb39o2yGP9y4P/+olWYgjcZiwk73fWzgBfX6M7zyr+pxEIXZ1AQa9pM3IzlhvAZnK6
+         dv6T8e5eU0cVxOKWh2YZHmL7wxyHURYbEch7cqIrs+/KoIUZQ/0ScZvi9OdaRFfmsVvt
+         nSVP9+FYgLD66ciN/TEUtUe5U1RtnJxHkXlt2+7Doc6UgC6Y0lUsWcH/H75KSIuAtCD0
+         gTimkUbDSJZ9YhnBzWyTZg7LpEJy39lcY97gI+5LSKaWqq1JjB0qpdkYtW5EZ7xUZV72
+         W1ow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=xBoK0ILVDset3KJAMLm9VclkZQJwqYX+/JNYcMjkA+0=;
+        fh=fiuxtQBy5PuGhShyegWd0As8aZF0Lmdi1gtkWPSFplk=;
+        b=LikvD3NhkJwxI3W5btQdwVpoYxPCbGpwWfm3VsJTKtnUu6zeypPB4VVx80kHJh6y8R
+         kdNwAd8JlAhHD3K6mPWB1qgAnhqmyu7pB/ThHx2ZbgTVJyThpaWxVZDpG3pyNDbXQTjR
+         H1EqY5fCERlQjcawdCGDbIEX30SYMnRdC7YXd78jyxoAL7zlLI+JnatULheZKVSU1l2x
+         2k575dsL7oO5/BHZIIoAmzdHD29gTdMg6oCMJ/HsEB6/BdMJtpoy5CJitKQ2ny2YhkEm
+         3/XNJexF81+km/RUMkgVFyszGWhlCcQrBncJo0L5NWf+rEDHdbo+l2VwznZ3/Dx3VPGI
+         NNZA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1773159433; x=1773764233; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xBoK0ILVDset3KJAMLm9VclkZQJwqYX+/JNYcMjkA+0=;
+        b=nt6MuXzr286FIiSrIMGxLGbt7guPQk7TSxPDrNJksGZ6CeCoBowNH63Ns1pxmVr0T0
+         F5dp3EqsapITnuZlj6wycFDGBOD/NCIDFrKuLxU6UStdvVH43+k7tGsqr2ci57508Xid
+         qNhd/sqcAhAgbr+rzJ7n3yjiiIvqi0LBDhTeJZPXj/gVMdYP+KgrHc9Giq9M9JwTeBRT
+         FgdNWHnXIME7KmgGCafArEdd7Nw27JVaUstvMoUgJhbulMtdS2EC5LSMtsd3s+73GG51
+         DAsHTega9VjVSs086SNzot86R5VLg8QXy6fWoQ7vmP7StoUB2JrKD7/ly8vbdIzP9EyU
+         nfWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773159433; x=1773764233;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xBoK0ILVDset3KJAMLm9VclkZQJwqYX+/JNYcMjkA+0=;
+        b=HYVnky3B4L8KUS9DC3ZlEPDaVGebqjahyKPRYb/LXEV0UcFrn8cXbl/v+GTKLnXue3
+         ivZJV5WwuLxEBxZPLZ2urDdKZrwXv0numGd+le8JbTcyR6yTvEFvkn3xg0ReCjDFp1ee
+         4Tagcr8gkcZIaQj+iuXq89d5SNn+RrPyYdVHDR/NxKvOK3ih9L2M3kMdcqYgn9XMAuTp
+         6sY+QsBuJndT5Z6ITvQ7XTdcQ04Tl1B0V1uZwj6Iw6tT8iupE6r6r4RB3kaLZQ6nr1WS
+         A3ZnlJRCMvPnjhG5Pk8CxVJi6bp8HVtX9Xd+MnIBB5htfzYrQyy9t6jBh0PTWZrxYGo4
+         kCNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVg8YBRMV/ep1R3P/MAk7D/fJVQvD2E1a2AYse0tUWMyqBtrWEQnyC8vcdxN4L5lr2b187TC+o0MjyoN11m1P1ktYvuJkE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzaMTsw5zCmcKRRlisIESah0FJEmQmXU2gLyovR7TCWI6qZaw4
+	qrSWyQakvuTqx+7apllCJUS62/j8YVCSioarczKeF6Ixfox51DuK5aQi70rbDEXZt2ubBo38Dw2
+	BVns237O6zls1TafOydzMJPW+Vp3b0O5d/Nu/TlK1
+X-Gm-Gg: ATEYQzxRq9eLj/BqM7AHQH/n7nOojAu2QCTqvB9C9gvLRwZvXLxEPZjdRa5uDsiES9K
+	K7TZPw70iKvMel4nLudF9L6Xym8EV2uNzwyPeq6PetABPAhCxc+CaNmipaMFpoRJyynXs+EQlTH
+	DoMRTgZxgbZmU6Ac/x0xUb6fkEzsnHmKlf1gvcOGwdlwXoA+l7yuBl8i35ZRHnMnQc+t4MljJ5d
+	/XbrKN+EeOZEOf0ba13RIQW7TEhrYjBM5j8vItZQT9eYMZA2EiZ/yAknD5Iim0R/x2Vuow1PyqU
+	ev7nlnwVjfIDjXXQ3TlPkY2kt649RbCj4KKuwsJzZR22HB2s6fjlQpPut6Aij8G3+c2b44E=
+X-Received: by 2002:a05:7022:217:b0:119:e569:fbb4 with SMTP id
+ a92af1059eb24-128c2ec2f69mr7177147c88.35.1773159432496; Tue, 10 Mar 2026
+ 09:17:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Authority-Analysis: v=2.4 cv=EK4LElZC c=1 sm=1 tr=0 ts=69b0413d cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=uAbxVGIbfxUO_5tXvNgY:22 a=VnNF1IyMAAAA:8
- a=VwQbUJbxAAAA:8 a=lgndsluPPLUQNjNvJxsA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzEwMDEzOSBTYWx0ZWRfX7AfBZa7SBzJt
- rgrndk7Bjmgqakq2EUmANRrO52qlOeuNSsn2Pa0x5dZ5oS/F1UX1LdflCsAsqphIpaigdNuffOX
- iPoMZaSocQpo4N2x+2PuWyDHY4+y5A7TZO0EDaSJHbHsCFdKIqdSLBnWT/j3puqtO3n1nsiawxW
- fBVE5ej+2eeKXX96ClVOg+Q6Y2Uql8oYMxb7eeAgu2F52NC4uW9Zll/wrWWsqZMhhX5IsPqT0Al
- nqBJ/ADZ9SGhM7/tXIuiIrmgWBDJ6aEwxqtYWJmxEKh51pJnc5bpd4kiBgX7ok1KvvuaOMVKPhD
- 0wtbaRmjGypif2GUjXRi7m4ucD5ApPH0T9FL1hdL8pXWNz/1AHuTspLIH4Hj+iLpdSYIspBwPdA
- K5lsJjqAHADWJF+G1VFW0e5AAv7Ao0AxFajPzCZwojfEfue9byUNP0TBUamCKLMu0CQi9Opt/55
- 0Qxc3TU+zeFnNc71oYQ==
-X-Proofpoint-GUID: E-t0rJBRUI1-ZiXIQ2YHBUAuMgBw3s1q
-X-Proofpoint-ORIG-GUID: A-FOOk-YvSOo99TgQ_TIFUetByEWl4mX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-10_03,2026-03-09_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 spamscore=0 suspectscore=0 clxscore=1011
- bulkscore=0 impostorscore=0 priorityscore=1501 malwarescore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603100139
+References: <20260305215013.2984628-8-kuniyu@google.com> <20260310102555.147680-1-pabeni@redhat.com>
+In-Reply-To: <20260310102555.147680-1-pabeni@redhat.com>
+From: Kuniyuki Iwashima <kuniyu@google.com>
+Date: Tue, 10 Mar 2026 09:17:01 -0700
+X-Gm-Features: AaiRm52tVbsRFsnhdR1wCpfFj-wF1scdUVu4b0pjKpsyTNEAQqRKS-aRJ3EETZM
+Message-ID: <CAAVpQUB-pC_LLJhMR2iNevZtkhf1V3xFD9ycthW2bqKQ0TF9fw@mail.gmail.com>
+Subject: Re: [v2,net-next,07/15] udp: Remove partial csum code in RX.
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: willemb@google.com, serge@hallyn.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, dsahern@kernel.org, 
+	jmorris@namei.org, casey@schaufler-ca.com, paul@paul-moore.com, 
+	kuni1840@gmail.com, fw@strlen.de, horms@kernel.org, 
+	willemdebruijn.kernel@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2026-03-10 at 07:43 -0400, Jeff Layton wrote:
-> Mimi pointed out that we didn't widen the inode number field in struct
-> h_misc alongside the inode->i_ino widening. While we could make an
-> equivalent change there, that would force EVM remeasurement on all
-> 32-bit hosts.
-
-Instead of saying "force EVM remeasurement" say, "require EVM resigning".
-
->=20
-> Instead, leave the field as an unsigned long. This should have no effect
-> on 64-bit hosts, and allow things to continue working on 32-bit hosts in
-> the cases where the i_ino fits in 32-bits.
->=20
-> Add a comment explaining why it's being left as unsigned long.
->=20
-> Cc: Mimi Zohar <zohar@linux.ibm.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+On Tue, Mar 10, 2026 at 3:26=E2=80=AFAM Paolo Abeni <pabeni@redhat.com> wro=
+te:
+>
+> This is an AI-generated review of your patch. The human sending this
+> email has considered the AI review valid, or at least plausible.
+>
+> For local reproduction steps see https://netdev-ai.bots.linux.dev/ai-loca=
+l.html
 > ---
->  security/integrity/evm/evm_crypto.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm=
-/evm_crypto.c
-> index c0ca4eedb0fe5d5c30f45f515a4bc90248ec64ea..3445f4c2097f7e8af61de6299=
-b721fc4a1d8afb4 100644
-> --- a/security/integrity/evm/evm_crypto.c
-> +++ b/security/integrity/evm/evm_crypto.c
-> @@ -144,6 +144,12 @@ static void hmac_add_misc(struct shash_desc *desc, s=
-truct inode *inode,
->  			  char type, char *digest)
->  {
->  	struct h_misc {
-> +		/*
-> +		 * Although inode->i_ino is now u64, this field remains
-> +		 * unsigned long to allow existing hashes from 32-bit hosts
-> +		 * to continue working when i_ino hasn't changed and fitsxi
-> +		 * in a u32.
+> udp: Remove partial csum code in RX.
+>
+> This commit removes UDP-Lite specific partial checksum handling from UDP
+> receive paths, including removal of UDP_SKB_CB fields, simplification of
+> checksum initialization functions, and elimination of UDP-Lite guards.
+>
+> Link: https://lore.kernel.org/netdev/20260305215013.2984628-8-kuniyu@goog=
+le.com/
+>
+> > diff --git a/include/net/udp.h b/include/net/udp.h
+> > --- a/include/net/udp.h
+> > +++ b/include/net/udp.h
+>
+> [ ... ]
+>
+> > diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
+> > --- a/net/ipv4/udp.c
+> > +++ b/net/ipv4/udp.c
+>
+> [ ... ]
+>
+> > @@ -2703,14 +2647,15 @@ static int __udp4_lib_rcv(struct sk_buff *skb, =
+struct udp_table *udptable,
+> >       if (ulen > skb->len)
+> >               goto short_packet;
+> >
+> > -     if (proto =3D=3D IPPROTO_UDP) {
+> > -             /* UDP validates ulen. */
+> > -             if (ulen < sizeof(*uh) || pskb_trim_rcsum(skb, ulen))
+> > +     /* UDP validates ulen. */
+> > +     if (ulen < sizeof(*uh)) {
+> > +             if (pskb_trim_rcsum(skb, ulen))
+> >                       goto short_packet;
+> > +
+> >               uh =3D udp_hdr(skb);
+> >       }
+> >
+> > -     if (udp4_csum_init(skb, uh, proto))
+> > +     if (udp4_csum_init(skb, uh))
+> >               goto csum_error;
+> >
+>
+> Does this refactoring introduce two bugs?
+>
+> The old code checked both conditions with short-circuit OR:
+>   if (ulen < sizeof(*uh) || pskb_trim_rcsum(skb, ulen))
+>       goto short_packet;
+>
+> This correctly (1) rejected packets where ulen < 8, and (2) trimmed the
+> SKB to the declared UDP length when ulen < skb->len.
+>
+> The new code changes the logic structure:
+>   if (ulen < sizeof(*uh)) {
+>       if (pskb_trim_rcsum(skb, ulen))
+>           goto short_packet;
+>       uh =3D udp_hdr(skb);
+>   }
+>
+> First potential bug: When sizeof(*uh) <=3D ulen < skb->len, the entire bl=
+ock
+> is skipped. This means pskb_trim_rcsum() is never called, so the SKB
+> retains trailing data beyond the declared UDP length. Won't this cause
+> checksum calculations to include extraneous bytes, leading to valid packe=
+ts
+> being incorrectly rejected?
+>
+> This scenario occurs when UDP length < IP payload length, which can happe=
+n
+> with malformed or crafted packets.
+>
+> Second potential bug: When ulen < sizeof(*uh), the old code would
+> immediately goto short_packet via the || short-circuit. The new code ente=
+rs
+> the block and tries to trim the SKB to a sub-header-size length. If
+> pskb_trim_rcsum() succeeds, processing continues with skb->len <
+> sizeof(struct udphdr). Is this safe?
+>
+> Looking at the IPv6 counterpart __udp6_lib_rcv(), it handles this
+> differently:
+>
+>   if (ulen < sizeof(*uh))
+>       goto short_packet;
+>
+>   if (ulen < skb->len) {
+>       if (pskb_trim_rcsum(skb, ulen))
+>           goto short_packet;
+>       saddr =3D &ipv6_hdr(skb)->saddr;
+>       daddr =3D &ipv6_hdr(skb)->daddr;
+>       uh =3D udp_hdr(skb);
+>   }
+>
+> Should the IPv4 code follow the same pattern, or should it preserve the
+> original short-circuit logic:
 
-security.evm contains either an HMAC or signature.  Change "hashes" -> HMAC=
- and
-signatures"
+Indeed, I'll follow the IPv6 pattern there.
 
-Mimi
-
-> +		 */
->  		unsigned long ino;
->  		__u32 generation;
->  		uid_t uid;
+Thanks !
