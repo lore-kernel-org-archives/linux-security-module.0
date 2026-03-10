@@ -1,176 +1,133 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com [74.125.82.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357D244D01E
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 10:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773138376; cv=none; b=gZpLSpY2NP9pLxHsYA+JDW+8oc5kE/79I7lNx3HKR+Q9Tzw6Q4pairQXeDaRDLi/xcQyzQB8qi8BsfvG57iu6vBmN/6992uqjxEgpKN7quhyLzHFc5E0uGEqW8hqPQNHI0FNCnS/pv60giY6Qz4FQHaRlAV/XaGbWETNfxPiGms=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773138376; c=relaxed/simple;
-	bh=GRDbizvGMpNke/p0WUm/41qICMJyjoWyNcAmFCgdDAc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:content-type; b=GREQdZXy0mjAug6PZZYJ0RUWBU4IncUxyU8b2Cek5Ax3vkoPdV5ZJGf2EUDg6tgn3H1IDb92kEpG3bb7IL882QHdnNR3/AWz7p8fH0SoIQU3uSl/UgkJwV8TWxqGg5N2+V2aByIA7djMoncmgUpn1EyseMKj/ySFQMQRzpU+Cco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UJarnKwU; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381893314D2
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 10:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.182
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773140196; cv=pass; b=VNLCbNHb+l8lI7tTo1mgrE5CqJO+aGfsDO9dAoGnLZ6maK/tqiXYVyVlsxdGKrCgqSM7lR6940QHhXJ/C2qqH6lAXNuvus3gPa0LeT6JlM37tLu4Hm2sKBTMNLll7gGO2SF83Fb/LwkbrGFZCp6dqbppylzhUQsELKIVub/0g5w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773140196; c=relaxed/simple;
+	bh=nL8Tve9qxXBojU4CG3EUAlYMJTfM1E+ZMJp6NeH7Zns=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nzGjjgJttBBQMYUFotb8oqAIzUqRmn7FtaUCJ3bF8EEgLqswXqro7qzdf8X2arrzSQaT2x+6q+UTU7+AYryRoSLJncqtDYHMmP33FEra2Ot3IWPoBUaZN6XhUKjIR2rL6YhmGtn1Btf1QMrhBwCGDSR1JRtKACGED0+W8pNcf38=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MBbGtEBR; arc=pass smtp.client-ip=74.125.82.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UJarnKwU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1773138374;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XtVLt2ML1J1ffuBphSH/gYIYlcPTeexrkhKaWI0sd/g=;
-	b=UJarnKwUhgh++QjwQlf9RzsATr5hxllVT8PELawr7k1SGC8P8APQoC2HPg6Sq6zmNSJH9u
-	wZ8bHke1TaARXWyWp9B9DJpzQPNh710hN4/GJjP0SOp7e+dT6xkIytyUFV5pVdtMRWGwA0
-	L7IQ8QELOMc2YInUmg4m8enm821vKVw=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-308-8_4XBOMhNSWhs261kyTL4A-1; Tue,
- 10 Mar 2026 06:26:09 -0400
-X-MC-Unique: 8_4XBOMhNSWhs261kyTL4A-1
-X-Mimecast-MFC-AGG-ID: 8_4XBOMhNSWhs261kyTL4A_1773138366
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D728E19560B7;
-	Tue, 10 Mar 2026 10:26:05 +0000 (UTC)
-Received: from gerbillo.redhat.com (unknown [10.45.225.133])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2CCAF19560A6;
-	Tue, 10 Mar 2026 10:25:59 +0000 (UTC)
-From: Paolo Abeni <pabeni@redhat.com>
-To: kuniyu@google.com
-Cc: willemb@google.com,
-	serge@hallyn.com,
-	linux-security-module@vger.kernel.org,
-	netdev@vger.kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	dsahern@kernel.org,
-	jmorris@namei.org,
-	casey@schaufler-ca.com,
-	paul@paul-moore.com,
-	kuni1840@gmail.com,
-	fw@strlen.de,
-	horms@kernel.org,
-	willemdebruijn.kernel@gmail.com
-Subject: Re: [v2,net-next,07/15] udp: Remove partial csum code in RX.
-Date: Tue, 10 Mar 2026 11:25:55 +0100
-Message-ID: <20260310102555.147680-1-pabeni@redhat.com>
-In-Reply-To: <20260305215013.2984628-8-kuniyu@google.com>
-References: <20260305215013.2984628-8-kuniyu@google.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MBbGtEBR"
+Received: by mail-dy1-f182.google.com with SMTP id 5a478bee46e88-2be2ce5b538so648261eec.1
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 03:56:35 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773140194; cv=none;
+        d=google.com; s=arc-20240605;
+        b=kw+PgdCFzH+VdxL3S3TRMKBes9AOsaxGFthwqqk+TfwYO2Fxwm75f91T5P8z9PecxT
+         Z2I5HocHs8L9vQDRIq9WjMPIUIqbSN6aFa1TVk8A17iyqF/Ipy35EJSuXlOSVo4ksvhG
+         00jQE6LjhSzAE+CYAy1wrsCaSrz+w6/vU83QljWe2/arY2DtGTO9+EIYQ4BnmrXGMDlA
+         j/M5oIdr+/lTJkR97otfg4icA3WCk4JbYFpgaPNCJVHfve9Sbu8XbzmllWlwmkeBH1fq
+         xf8/qRLpUZesxdOLWJXLtk98jC8Ss/Yuk+hIcPzwm107H5oSjUVMNo36ri8FoLhC7DWc
+         4CLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=4qBpWaqAk74juZmeca9VRmKlmVoYIHqDYNOH37dt7g0=;
+        fh=Dd85NWiz1QY9ztD7wGBmCK7Q59mu8LgGctzwhZ6KPmw=;
+        b=OtD7T8E8SciLyS1HIDw0uficXNe3vJ8Mf5mfBO+lmSlTVkbDhg6pFdqSnxTkBJH9ST
+         ElN9qtJ2P5Mh5+JL9/NsXN7CdaEbwvWxvHsl2dz4LVlBlaWDvpOdvcvJ8CYuSvouFWDw
+         Ox9OVJIoqhZWFLn2jXfon3fr3ZKkErJv82ailx7DelLydoNBz14l84LhV62vEB+yISL8
+         +NLT6UQWrV36dqrGWQKWP7mje+vqiK1s8pKIxm9zxv+mA5TxP7iUU00DP4kbwbAb0Peg
+         6ERN2g5ICYs4yqt8OkaQ+6CIuu2obmQQcLreRZnZyqQe1UycC1TKJTfm+PrOIZU7Uvey
+         lK1w==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773140194; x=1773744994; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4qBpWaqAk74juZmeca9VRmKlmVoYIHqDYNOH37dt7g0=;
+        b=MBbGtEBRBoxPubDO7aR6dBNxnj1NeX5HfI/2iP8Lzp9seSiN+tybz+fCRUtGLW5x5H
+         Dk4DqYa2NIr6W29OV7/5WrHN0FEJ0+ScFhbkZQJ4OBIDWeIUWzj5869zWBkvAx1laXES
+         Udu4UtFP+aCcp5tqTGuMUR8kxmr0FTGzsSlplMqaY0hCenwPTPwkdVVfNjLo+2nmkSeb
+         ZLZA0ovPwmjNnfImTXGvS4gMKe4x5tYPKrZqYjvhXgCHtOZOaqyl0J7nwehmYLSwCQiN
+         4RvcjhTehRXfc9XMyLghddQw5UZF09s2CvUvSITa7ja7/9lOwh6jaZeNRFPG6ODik9Ho
+         PR+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773140194; x=1773744994;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=4qBpWaqAk74juZmeca9VRmKlmVoYIHqDYNOH37dt7g0=;
+        b=hKnxUUQvLNYL9xEkRBrDR3D2EcBIUebfKfe0xAbopg+IldbaCFu7Slky9SdguA1zDJ
+         DEtv3QZ3eCJzL/CqNged3VeRjES0jm3t4YBJdMckVVSunnPgL/nV4d659GGN4bpdKAWF
+         fJ2sVcbJvHxSWv/uHCYnVsqqaLjigLtcMExm9L+EIBWDHUFhwO9MI2b8S4PqXkr5IEsz
+         VVsnON5HhWlMWsOBJqqxlPyNaNSEhfxn9ZpxBQrWvauOQmoWOX7wnUjXE18EntD53zal
+         xVMJnJLKd0MEtilKbJe+2NTeDBhqpioPHO7+BUbbwJYl/GiDSZYfiprNwN8TZ50KTMRL
+         Wbgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxr3E4pRV5mfkE76PoVm1vGux2NsFO+gJov2MJT+lxVjMC0i913yfSzINJM9D2wjlqXp/6/8atffyMFrcZAFXLGlUTe/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRAlz+QEfcb1twxHRKA3+2zJp1YfuuLw1e3si4KkG2tEzbS0RV
+	EA7go8upHjSK4Q/NZlrjn3IuJeD/BMzTQY024VVSE1xuPQeU8FL1p+joTWwZIm7NrqaE0SFQWQX
+	pGvKbZozHfn0+j3fIPHMmXJ/d4+2oKCg=
+X-Gm-Gg: ATEYQzwslcICgQBHXkwwTUUNQK4knkEj98J/4zGx1AvAwYxRVLGSZhi2HGV8BmPXePb
+	/9M3qXcOpf3j2aH/aZWXvGNxHMIxwEGeZsoxS3r3azhFaKXEcsR5Ck/tZ7dZE2lOaa3JsmZEv1a
+	4hieYrbko2MXfwiZaiEwemZ9YoY/79WRpymbXhRME8OaxTgYzwhmYXSKjSpb2nWXlDDiJujQZ4G
+	oisj1IlpZ5Fz1flM+8b3uP+lUgOH9HAHmeEDGtCyXCGfEGXTPxRkkoEarabpadVunvV5xdKuYTu
+	Gs1FMP4GMw3cmwwX5FC54mHsc7PYexF5TY3Njo7N5rnILFb4aqb7D+4DblXBQq2Rv2Z1IctqqGV
+	xfWVXPp9sqySdBs4t7RtfFdk=
+X-Received: by 2002:a05:7300:ef97:b0:2bd:bc33:ca32 with SMTP id
+ 5a478bee46e88-2be4e09ebfdmr2731651eec.4.1773140194353; Tue, 10 Mar 2026
+ 03:56:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
-X-Mimecast-MFC-PROC-ID: h1zGgr-dzoPaUEtJK6j1-B3Zk0th90oLy5xssyDbdIw_1773138366
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+References: <20260105-define-rust-helper-v2-0-51da5f454a67@google.com>
+In-Reply-To: <20260105-define-rust-helper-v2-0-51da5f454a67@google.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 10 Mar 2026 11:56:22 +0100
+X-Gm-Features: AaiRm523FMnYeZ1Cbp2n7uyCKjNSK8gDXCio5_BkegPeyUfSKYibfT47XJIo0_0
+Message-ID: <CANiq72mT2-8m71NtnodVXVBRkhUSiK3Byq5OkBntEQpW9hbU6w@mail.gmail.com>
+Subject: Re: [PATCH v2 00/27] Allow inlining C helpers into Rust when using LTO
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Peter Zijlstra <peterz@infradead.org>, Elle Rhumsaa <elle@weathered-steel.dev>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, linux-block@vger.kernel.org, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
+	Benno Lossin <lossin@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <sergeh@kernel.org>, linux-security-module@vger.kernel.org, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	Andrew Ballance <andrewjballance@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, maple-tree@lists.infradead.org, 
+	linux-mm@kvack.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Uladzislau Rezki <urezki@gmail.com>, Vitaly Wool <vitaly.wool@konsulko.se>, 
+	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Michal Wilczynski <m.wilczynski@samsung.com>, 
+	linux-pwm@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org, 
+	Will Deacon <will@kernel.org>, Fiona Behrens <me@kloenk.dev>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, Ingo Molnar <mingo@redhat.com>, 
+	Waiman Long <longman@redhat.com>, Mitchell Levy <levymitchell0@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Lyude Paul <lyude@redhat.com>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, John Stultz <jstultz@google.com>, linux-usb@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, Tamir Duberstein <tamird@gmail.com>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This is an AI-generated review of your patch. The human sending this
-email has considered the AI review valid, or at least plausible.
-
-For local reproduction steps see https://netdev-ai.bots.linux.dev/ai-local.html
----
-udp: Remove partial csum code in RX.
-
-This commit removes UDP-Lite specific partial checksum handling from UDP
-receive paths, including removal of UDP_SKB_CB fields, simplification of
-checksum initialization functions, and elimination of UDP-Lite guards.
-
-Link: https://lore.kernel.org/netdev/20260305215013.2984628-8-kuniyu@google.com/
-
-> diff --git a/include/net/udp.h b/include/net/udp.h
-> --- a/include/net/udp.h
-> +++ b/include/net/udp.h
-
-[ ... ]
-
-> diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
-> --- a/net/ipv4/udp.c
-> +++ b/net/ipv4/udp.c
-
-[ ... ]
-
-> @@ -2703,14 +2647,15 @@ static int __udp4_lib_rcv(struct sk_buff *skb, struct udp_table *udptable,
->  	if (ulen > skb->len)
->  		goto short_packet;
+On Mon, Jan 5, 2026 at 1:42=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> wr=
+ote:
 >
-> -	if (proto == IPPROTO_UDP) {
-> -		/* UDP validates ulen. */
-> -		if (ulen < sizeof(*uh) || pskb_trim_rcsum(skb, ulen))
-> +	/* UDP validates ulen. */
-> +	if (ulen < sizeof(*uh)) {
-> +		if (pskb_trim_rcsum(skb, ulen))
->  			goto short_packet;
-> +
->  		uh = udp_hdr(skb);
->  	}
->
-> -	if (udp4_csum_init(skb, uh, proto))
-> +	if (udp4_csum_init(skb, uh))
->  		goto csum_error;
->
+>       rust: clk: add __rust_helper to helpers
+>       rust: jump_label: add __rust_helper to helpers
 
-Does this refactoring introduce two bugs?
+Applied these to `rust-next` -- thanks everyone!
 
-The old code checked both conditions with short-circuit OR:
-  if (ulen < sizeof(*uh) || pskb_trim_rcsum(skb, ulen))
-      goto short_packet;
+With these, the series is complete.
 
-This correctly (1) rejected packets where ulen < 8, and (2) trimmed the
-SKB to the declared UDP length when ulen < skb->len.
-
-The new code changes the logic structure:
-  if (ulen < sizeof(*uh)) {
-      if (pskb_trim_rcsum(skb, ulen))
-          goto short_packet;
-      uh = udp_hdr(skb);
-  }
-
-First potential bug: When sizeof(*uh) <= ulen < skb->len, the entire block
-is skipped. This means pskb_trim_rcsum() is never called, so the SKB
-retains trailing data beyond the declared UDP length. Won't this cause
-checksum calculations to include extraneous bytes, leading to valid packets
-being incorrectly rejected?
-
-This scenario occurs when UDP length < IP payload length, which can happen
-with malformed or crafted packets.
-
-Second potential bug: When ulen < sizeof(*uh), the old code would
-immediately goto short_packet via the || short-circuit. The new code enters
-the block and tries to trim the SKB to a sub-header-size length. If
-pskb_trim_rcsum() succeeds, processing continues with skb->len <
-sizeof(struct udphdr). Is this safe?
-
-Looking at the IPv6 counterpart __udp6_lib_rcv(), it handles this
-differently:
-
-  if (ulen < sizeof(*uh))
-      goto short_packet;
-
-  if (ulen < skb->len) {
-      if (pskb_trim_rcsum(skb, ulen))
-          goto short_packet;
-      saddr = &ipv6_hdr(skb)->saddr;
-      daddr = &ipv6_hdr(skb)->daddr;
-      uh = udp_hdr(skb);
-  }
-
-Should the IPv4 code follow the same pattern, or should it preserve the
-original short-circuit logic:
-
-  if (ulen < sizeof(*uh) || pskb_trim_rcsum(skb, ulen))
-      goto short_packet;
-  uh = udp_hdr(skb);
-
+Cheers,
+Miguel
