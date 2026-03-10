@@ -1,95 +1,101 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12FC03E1D18
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 12:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFD038B13B
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 12:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773146678; cv=none; b=bvkx/tGe+JjhLO8wo7CD4iJIYnJvIIprH/oj3X0f99K+RllQRIg7v0AEXqOim/MyjAMwMAcGlW6Pj7KHuV6g+2DLZnGAeUuiX3bv4U9XqUR2SCvv6FWSUodQqef54/s0S2CWPnefwADJVh4dGL4dQma2CHQ+1phKjs8hfbD7/to=
+	t=1773147102; cv=none; b=hVEvaQpzZ7EPq/eDt0C3JjJ5TGXesTdj/IlIUssEJTr6PdM8ba4K8cGhmeMtzqf/NFPEbA+Mjo4U2Pm3kG6KkAPUsRjOh/L5G6OYn7RZB3VtPhmN1w4+UyBGRSIlkXoFgTgBAEtOfeuIP/h7THUhl9Baey5qQE35OaOrbPHaYrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773146678; c=relaxed/simple;
-	bh=9nwSoyBFb/J+scDlmZ8YZ+1mFs6NH+0TsiNWJNlzMqA=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pqVTxIvOuOzkPsgKxVTQeFDmPhwVkuJe0OJAdSZ1htOAT2fD7RTNiig96c9G0hwqZY5o/Fg/d1grWV/iCA8zZXSwaJG3u/2juijKilcgx1uhGhxuoBpI7G6w62V73nctCyBNOTuycDKcCAE5UFGzLweYHqHPgxKx2cj187eBA2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vzwQv-0006Oq-0m; Tue, 10 Mar 2026 13:43:33 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vzwQr-004hMj-0z;
-	Tue, 10 Mar 2026 13:43:30 +0100
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vzwQs-0000000081v-2556;
-	Tue, 10 Mar 2026 13:43:30 +0100
-Message-ID: <ddaacda48df23fb2c009a8727518300ed2b82cb2.camel@pengutronix.de>
-Subject: Re: [PATCH 57/61] reset: Prefer IS_ERR_OR_NULL over manual NULL
- check
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Philipp Hahn <phahn-oss@avm.de>, amd-gfx@lists.freedesktop.org, 
-	apparmor@lists.ubuntu.com, bpf@vger.kernel.org, ceph-devel@vger.kernel.org,
- 	cocci@inria.fr, dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org,
- 	gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org, 
-	intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev,
- kvm@vger.kernel.org, 	linux-arm-kernel@lists.infradead.org,
- linux-block@vger.kernel.org, 	linux-bluetooth@vger.kernel.org,
- linux-btrfs@vger.kernel.org, 	linux-cifs@vger.kernel.org,
- linux-clk@vger.kernel.org, 	linux-erofs@lists.ozlabs.org,
- linux-ext4@vger.kernel.org, 	linux-fsdevel@vger.kernel.org,
- linux-gpio@vger.kernel.org, 	linux-hyperv@vger.kernel.org,
- linux-input@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, 	linux-media@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- ntfs3@lists.linux.dev, 	samba-technical@lists.samba.org,
- sched-ext@lists.linux.dev, 	target-devel@vger.kernel.org,
- tipc-discussion@lists.sourceforge.net, 	v9fs@lists.linux.dev
-Date: Tue, 10 Mar 2026 13:43:30 +0100
-In-Reply-To: <20260310-b4-is_err_or_null-v1-57-bd63b656022d@avm.de>
-References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
-	 <20260310-b4-is_err_or_null-v1-57-bd63b656022d@avm.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	s=arc-20240116; t=1773147102; c=relaxed/simple;
+	bh=Hi00dQS7Xoc6m5aJOnPBBwSWvC+Fe+QdENhRjcQI6+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BsCHr1ZfbT29t0qmveTIpm0ovxR4C8mdOMLDfDKdB4CbwijadFN7x3iTV3ePdqTBDXOL850DUPhTi7GkViiOenmbWE7PeSnhV14fvzvWmnDqeqTkdgfzSFVXkR3MonIPPqXa20bykZ5WVQlkVgBetbOxsYgwsoNG3bv9mgmhZvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lZqqqgs/; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lZqqqgs/"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-485410a0a8aso12633825e9.2
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 05:51:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1773147099; x=1773751899; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gxYLALGt+hvoOXwoZbS+8lgx0al1f8BirDazUyVeoq0=;
+        b=lZqqqgs/fjI5ZYNu1UDaZpqOLkRkS0jE6mVq2nzPKVSuLnI+9edcmfnSZJ3fE/2rrd
+         au/3wIYdweEOh4dGBYsprarpWVhZZreyTGwqeZ0bpcaGfjUOHSQqQo/cTl9ys8Cspusw
+         DsHpiVwQmFpJQf/lcyjfksUlM3GxYiTCwWyUhlJCwTYqkx9tXVZBFnpgmSnN0ix/JqHy
+         cNqKQ6hyzKSbaVOuWeG9AYpABw0sBuzfo7KyuRexxhIMYV41EOLvU8NfQkPb43r3l+U+
+         ItrynjZKkrdNJdcPbd4pvTZyDEjWJlYDcdcpL7jmAWfYTVp4fi4UEYNlXHltjJDg0LX0
+         56RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773147099; x=1773751899;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gxYLALGt+hvoOXwoZbS+8lgx0al1f8BirDazUyVeoq0=;
+        b=wNB0A8JLSykFxg7HW0SD8l8y10c1Opulu95paOCdU0l0qvCFct5CpiZ34Zjs0IiSZm
+         JAn/UNgMKSVk3je+3n3yeFTXRer2IHj3uJpdi2vzUv4/e+xBQCQOyRWWdsUNjLyiBTEf
+         cwmFRVvfUJGqHiLaqwMv+oQK3ICyye8AizLimDNnXMIU6c6gyiDP2hJSq5wiCJJFrYxq
+         AIx4A4S1c1lkzpZ/aPX+BQi0iL0HJXpF4LCy+TKiPhC6lV3pqgr2AK6SYrP4bU2+LT+d
+         mKSnNYjDXvfBQmr4qtv3jbWFl04eW77ysWqD/qgMMvUsfelISB1pYPewQyt7mS+B6vXx
+         DVMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVoRlZk/sHsZHQP+DfAa4FbfXPmHQ6xz3VeKsBoC1JVNbw9JFuDu6JHKad68vjyjkepQP8ud+3gToFzvyWJuZ3YZHkzhO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHhqL5w+JLYIz6wpzfy3ZrN4fgL9PXVzIFNK3EPCZJ9wX7bhka
+	jejfOAxd5W7RqA/Gx4X3jo4U//5ccHPlaxEQHvrs3QJtNHaSXvHgQF0ydPh5CV1CHQ==
+X-Gm-Gg: ATEYQzxbIKfgNtXbh2jNlGpm12hqxBuHmNY9hAZXZ+xMiJ3aG+sxlq9PZZBAXsFZU+q
+	30KmfiP5dpRbreBdcS7BKXGMdcptUUMceHtM89fRwKev+5wsTZ5YUulUxjysaGn5NbCXuASZCI6
+	HTTU8I1OCjcLo6NUDlUtUX/QsUntEP1Elro3ltp5gPE7wPynZsUx8Y7ChTcZJI65Gntpb12pe23
+	o2v/B3N/8HVdAzplYsxrRN29b5vgh/J4tkhms+iaeKYaJGGJyh5PopzrqiNPtDNtW4sq9LxJg5a
+	qzMERER+iUtH1ZbuvaXf42+Qy+HRfGsv5jbtnOT3QynbJAPNfSwRcs/UnyVUjjoOALojd2gdRJG
+	n2V5P9+IT3MvRD4PIIz0HUO8dSpG1fVH1Yq4cJlKAs9gekaS7nG31M6ECiFCDxGMWkCxH6mjYtm
+	6+BoPboPKuUs+Uc7L0/gUpCJyZXQxDBf2dIYlI1pR5ubjc36w95Oqmch9Ru+2KGFUM
+X-Received: by 2002:a05:600c:4591:b0:483:6d4a:7e6d with SMTP id 5b1f17b1804b1-48526978644mr225780075e9.30.1773147099081;
+        Tue, 10 Mar 2026 05:51:39 -0700 (PDT)
+Received: from google.com ([2a00:79e0:288a:8:43dd:a0ed:65ba:bc74])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439dad8d95dsm39194254f8f.7.2026.03.10.05.51.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2026 05:51:38 -0700 (PDT)
+Date: Tue, 10 Mar 2026 13:51:30 +0100
+From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+To: syzbot <syzbot+741e2278ef71fef03a10@syzkaller.appspotmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, mic@digikod.net,
+	miklos@szeredi.hu, penguin-kernel@i-love.sakura.ne.jp,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [fuse?] general protection fault in task_work_cancel
+Message-ID: <abAT0q5bMfFYGT6V@google.com>
+References: <69abb4e3.050a0220.13f275.003d.GAE@google.com>
+ <69acf111.050a0220.310d8.0003.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <69acf111.050a0220.310d8.0003.GAE@google.com>
 
-Hi Philipp,
+On Sat, Mar 07, 2026 at 07:46:25PM -0800, syzbot wrote:
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    4ae12d8bd9a8 Merge tag 'kbuild-fixes-7.0-2' of git://git.k..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17dc475a580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=779072223d02a312
+> dashboard link: https://syzkaller.appspot.com/bug?extid=741e2278ef71fef03a10
+> compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=130b075a580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/010ac4052aed/disk-4ae12d8b.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/2aad8bef9031/vmlinux-4ae12d8b.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/fd350ec4896a/bzImage-4ae12d8b.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+741e2278ef71fef03a10@syzkaller.appspotmail.com
 
-On Di, 2026-03-10 at 12:49 +0100, Philipp Hahn wrote:
-> Prefer using IS_ERR_OR_NULL() over using IS_ERR() and a manual NULL
-> check.
->
-> Semantich change: Previously the code only printed the warning on error,
-> but not when the pointer was NULL. Now the warning is printed in both
-> cases!
-
-No, rstc =3D=3D NULL is valid (for optional reset controls) and must not
-throw a warning.
-
-
-regards
-Philipp
+#syz dup: general protection fault in task_work_cancel_match
+#syz set subsystems: lsm
