@@ -1,226 +1,91 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75FE4314D08;
-	Tue, 10 Mar 2026 17:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21253292B2E;
+	Tue, 10 Mar 2026 17:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773164457; cv=none; b=dy22hqZkYIzg/iTX97QAZ61DVwQWid66vL4IHUHCjnZ3oLGjKNNzjd/XbQPvVGPWDl7kLZdkfG5OB9/Srmtcffwm3ULdd28zUIIzCShiAz7SaYGis466YZAtXCGY7DHQfgsjJhp9Abq5hx56TM9zBB7WoycB2m2wrJbYcb2cgo4=
+	t=1773165484; cv=none; b=dGSrvREQABoMQy61aHbsUxd2sOvXb49NMjJCSHi481761h2Q3qvoOHK7r5RKgZxmtsJpztuK7Sng9q8HkIzTwy7Yosasq+Ouo9H0tNK50ZsHG8O5VHBhBB9dPngWofSZhdeEDh4phpI3R5hX214vwsvyG13/uBnB7oSM0Yj+kwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773164457; c=relaxed/simple;
-	bh=Vh+dv7G9JYYz79ZKRs5UBfA3zrs7LB5npwqEsYHYRpc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NbiA5rVe0PS3ilMqQ54DIXWrFT1qWkDj3emDJ9pl5xPNovZ0Om1AEE3jVb0UyYrF7ivK1trW6QJSP+LrB8/WAQr1CVJG/hsaf5xsEBRjBr8GyTctJ6Jth8nsKKWRjC7Y/FbLEQpTS5NMBVuP6ssPUu5qqUhrpAz2INouSGs9as0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aBYs+kuw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773165484; c=relaxed/simple;
+	bh=9H+COjDFYd25DqcGlBZTvFi1KfvZMB8xWPxprb0yqkE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UtDTZFldyXzg1y6KIX5boYEGkLsMsYcP0I1xhLTqixZwOm7fD8Za0c1dS1rV5PgwoqN0Lg3vpDrHJBL92CeM/8NjN/KRrXhYg/BWV0LBRJfCur6KwtC40BVqz58oWb0m73YzPz3wwm/LLYAfZfV49dT/EIKpKebLze3QjcVlYhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6z1Z5Sy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aBYs+kuw"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 559C3C19425;
-	Tue, 10 Mar 2026 17:40:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6z1Z5Sy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4070AC19423;
+	Tue, 10 Mar 2026 17:58:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773164457;
-	bh=Vh+dv7G9JYYz79ZKRs5UBfA3zrs7LB5npwqEsYHYRpc=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=aBYs+kuwKvZ0aYvGTXyvc+fuvvQ6XpGehugZpXagGcjSotftPXN7YLlTmaOBg4USw
-	 0nhGG7bqIqbXBktvddTiEMWctddAZOVmbpaA5aEVnMUiJbNea6wZ97/+RaOEsaUvbz
-	 gQFdoRYpalCTwwazDiLHhC4xKL88Gr5hmiAZuqZBculktceFQcqD9SdFLbo5SvTEbc
-	 ieNlum6zxusZ3qyjJkO9ZI76lquOzMedGCncJV2PBN0ZntyOduUe5xPcB909w8C1N9
-	 mIyXKCWZj+FWzlXTFwM3msgK3mLXvM9ifENLitcxAAP5PuUJBrhVxWhMN2lD24NJwW
-	 HcYxI1gTTCxCg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C52FD4F0F;
-	Tue, 10 Mar 2026 17:40:57 +0000 (UTC)
-From: Dmitry Safonov via B4 Relay <devnull+dima.arista.com@kernel.org>
-Date: Tue, 10 Mar 2026 17:40:39 +0000
-Subject: [PATCH v6] ima_fs: Correctly create securityfs files for
- unsupported hash algos
+	s=k20201202; t=1773165483;
+	bh=9H+COjDFYd25DqcGlBZTvFi1KfvZMB8xWPxprb0yqkE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R6z1Z5Sy2ONUcvt/esaL4cfMvnCnz+4WQK9rersFXhEMOXIbcz2hY89OitB+uxloh
+	 XfbM5sNkh990asp+zh4GFiaz3D1Npib5FIHQLRT7vRKJssXCHm103H9GH0l895nKRU
+	 sG5Yr1DrnH08JQ1T0zNjFnU4oEYfDlbMv7YYOiaJpxXkP6YLaaCUlDPEaksjFz9ren
+	 BpVy3QyVJ+R9a0NJdGjTXLW9uuGWkg7qKZMYs0zNeOiGO9BJzrdJVK6mBfnIqEIlcY
+	 Zlowom/kUzVzoyqTgQHo7VLQGGkdE4synuGRF+QFfIQy+4JGSBHY1ePzd7/tLhSngP
+	 LdosCRUWeRD+Q==
+Date: Tue, 10 Mar 2026 19:57:59 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Saeed Mahameed <saeedm@nvidia.com>,
+	Itay Avraham <itayavr@nvidia.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>,
+	Maher Sanalla <msanalla@nvidia.com>,
+	Edward Srouji <edwards@nvidia.com>
+Subject: Re: [PATCH 0/3] Firmware LSM hook
+Message-ID: <20260310175759.GD12611@unreal>
+References: <20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com>
+ <CAHC9VhTR9CsBgxRCAHXm5T2NZ5tr+XfmA--zkt=udmk9hPRuZQ@mail.gmail.com>
+ <20260309193743.GZ12611@unreal>
+ <CAHC9VhSRt_QEJKJFBDBySNQCiPpcawd5A76xmoRNtppRKGaCog@mail.gmail.com>
+ <20260310090733.GA12611@unreal>
+ <CAEjxPJ4nTmovpgkzC+3=Oh7EAhpi1vHLwJfjezu-vzX_Q2OCug@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260310-ima-oob-v6-1-dc111c846ff4@arista.com>
-X-B4-Tracking: v=1; b=H4sIAJZXsGkC/3XPzWrEIBQF4FcZXNdWr0aTrvoeQxfXv0ZotGgaM
- gx595rZDCVkeeB+53DvpPoSfSXvlzspfok15tSCerkQO2L68jS6lgkwUIyDpnFCmrOhQ8BeoBL
- SaUPa9U/xIa6Pputnywarp6ZgsuPuv2P6XWny6/w2YZ192c0Y65zL7TG+8F0edxZOOQUnIQjJe
- 9/pDyyN4avNE9mHFjiB0GAQPfLe9h2z4QDFCRQNcufYEKQFVHiA8gTKBk1g1ukwGOnkAXZPCCC
- esGtw4NZypqTX6v+P27b9AZ+1ApqnAQAA
-X-Change-ID: 20260127-ima-oob-9fa83a634d7b
-To: Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, 
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
- Silvia Sisinni <silvia.sisinni@polito.it>, 
- Enrico Bravi <enrico.bravi@polito.it>
-Cc: Jonathan McDowell <noodles@earth.li>, linux-integrity@vger.kernel.org, 
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Dmitry Safonov <0x7f454c46@gmail.com>, 
- Dmitry Safonov <dima@arista.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1773164456; l=6024;
- i=dima@arista.com; s=20250521; h=from:subject:message-id;
- bh=aq1ttERu1XDpBBqiZqrxKRBcfhL+biDFjN6ZxrU3vP8=;
- b=o30ye5QpjVsbTScv873hURw3Nubq8cWd8rhurtiSKi+Od3xBv+9DMJuhs5e6Eit8c6zphrtSk
- XL5EKGrXQhqBkeEwOzBcBHhJgB+oCZgA5FNkXQUVv4Vtg0RyNt/JDEg
-X-Developer-Key: i=dima@arista.com; a=ed25519;
- pk=/z94x2T59rICwjRqYvDsBe0MkpbkkdYrSW2J1G2gIcU=
-X-Endpoint-Received: by B4 Relay for dima@arista.com/20250521 with
- auth_id=405
-X-Original-From: Dmitry Safonov <dima@arista.com>
-Reply-To: dima@arista.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEjxPJ4nTmovpgkzC+3=Oh7EAhpi1vHLwJfjezu-vzX_Q2OCug@mail.gmail.com>
 
-From: Dmitry Safonov <dima@arista.com>
+On Tue, Mar 10, 2026 at 12:29:40PM -0400, Stephen Smalley wrote:
+> On Tue, Mar 10, 2026 at 5:14 AM Leon Romanovsky <leon@kernel.org> wrote:
+> > 1140         MLX5_SET(general_obj_in_cmd_hdr, cmd_in, uid, uid);
+> > 1141         err = security_fw_validate_cmd(cmd_in, cmd_in_len, &dev->ib_dev.dev,
+> > 1142                                        FW_CMD_CLASS_UVERBS, RDMA_DRIVER_MLX5);
+> > 1143         if (err)
+> > 1144                 return err;
+> > 1145
+> > 1146         err = mlx5_cmd_do(dev->mdev, cmd_in, cmd_in_len, cmd_out, cmd_out_len);
+> >
+> > Could you point me to the LSM that would be best suited for performing
+> > checks of this kind?
+> 
+> If you just want to filter on opcodes, then the SELinux extended
+> permissions (xperms) support may suffice, see:
+> https://blog.siphos.be/2017/11/selinux-and-extended-permissions/
+> https://kernsec.org/files/lss2015/vanderstoep.pdf
+> https://github.com/SELinuxProject/selinux-notebook/blob/main/src/xperm_rules.md
+> 
+> This was originally added to SELinux to support filtering ioctl
+> commands and later extended to netlink as well.
+> 
+> If you truly need/want filtering of arbitrary variable-length command
+> buffers.
 
-ima_tpm_chip->allocated_banks[i].crypto_id is initialized to
-HASH_ALGO__LAST if the TPM algorithm is not supported. However there
-are places relying on the algorithm to be valid because it is accessed
-by hash_algo_name[].
+Yes. The opcode alone is not sufficient for any real‑world use.  
+It is not reliable because different firmware versions place different  
+parameters into the same mailbox entry under the same opcode.  
+Without inspecting the mailbox contents, you cannot properly filter them.
 
-On 6.12.40 I observe the following read out-of-bounds in hash_algo_name:
-  ==================================================================
-  BUG: KASAN: global-out-of-bounds in create_securityfs_measurement_lists+0x396/0x440
-  Read of size 8 at addr ffffffff83e18138 by task swapper/0/1
-
-  CPU: 4 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.40 #3
-  Call Trace:
-   <TASK>
-   dump_stack_lvl+0x61/0x90
-   print_report+0xc4/0x580
-   ? kasan_addr_to_slab+0x26/0x80
-   ? create_securityfs_measurement_lists+0x396/0x440
-   kasan_report+0xc2/0x100
-   ? create_securityfs_measurement_lists+0x396/0x440
-   create_securityfs_measurement_lists+0x396/0x440
-   ima_fs_init+0xa3/0x300
-   ima_init+0x7d/0xd0
-   init_ima+0x28/0x100
-   do_one_initcall+0xa6/0x3e0
-   kernel_init_freeable+0x455/0x740
-   kernel_init+0x24/0x1d0
-   ret_from_fork+0x38/0x80
-   ret_from_fork_asm+0x11/0x20
-   </TASK>
-
-  The buggy address belongs to the variable:
-   hash_algo_name+0xb8/0x420
-
-  Memory state around the buggy address:
-   ffffffff83e18000: 00 01 f9 f9 f9 f9 f9 f9 00 01 f9 f9 f9 f9 f9 f9
-   ffffffff83e18080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  >ffffffff83e18100: 00 00 00 00 00 00 00 f9 f9 f9 f9 f9 00 05 f9 f9
-                                          ^
-   ffffffff83e18180: f9 f9 f9 f9 00 00 00 00 00 00 00 04 f9 f9 f9 f9
-   ffffffff83e18200: 00 00 00 00 00 00 00 00 04 f9 f9 f9 f9 f9 f9 f9
-  ==================================================================
-
-Seems like the TPM chip supports sha3_256, which isn't yet in
-tpm_algorithms:
-  tpm tpm0: TPM with unsupported bank algorithm 0x0027
-
-That's TPM_ALG_SHA3_256 == 0x0027 from "Trusted Platform Module 2.0
-Library Part 2: Structures", page 51 [1].
-See also the related U-Boot algorithms update [2].
-
-Thus solve the problem by creating a file name with "_tpm_alg_<ID>"
-postfix if the crypto algorithm isn't initialized.
-
-This is how it looks on the test machine (patch ported to v6.12 release):
-  # ls -1 /sys/kernel/security/ima/
-  ascii_runtime_measurements
-  ascii_runtime_measurements_tpm_alg_27
-  ascii_runtime_measurements_sha1
-  ascii_runtime_measurements_sha256
-  binary_runtime_measurements
-  binary_runtime_measurements_tpm_alg_27
-  binary_runtime_measurements_sha1
-  binary_runtime_measurements_sha256
-  policy
-  runtime_measurements_count
-  violations
-
-[1]: https://trustedcomputinggroup.org/wp-content/uploads/Trusted-Platform-Module-2.0-Library-Part-2-Version-184_pub.pdf
-[2]: https://lists.denx.de/pipermail/u-boot/2024-July/558835.html
-
-Fixes: 9fa8e7625008 ("ima: add crypto agility support for template-hash algorithm")
-Signed-off-by: Dmitry Safonov <dima@arista.com>
-Cc: Enrico Bravi <enrico.bravi@polito.it>
-Cc: Silvia Sisinni <silvia.sisinni@polito.it>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>
----
-Changes in v6:
-- Change subject now that securityfs files are created (Mimi Zohar)
-- Added a link to TCG document and the related U-Boot changes
-- Link to v5: https://lore.kernel.org/r/20260223-ima-oob-v5-1-91cc1064e767@arista.com
-
-Changes in v5:
-- Use lower-case for sysfs file name (as suggested-by Jonathan and Roberto)
-- Don't use email quotes for patch description (Roberto)
-- Re-word the patch description (suggested-by Roberto)
-- Link to v4: https://lore.kernel.org/r/20260127-ima-oob-v4-1-bf0cd7f9b4d4@arista.com
-
-Changes in v4:
-- Use ima_tpm_chip->allocated_banks[algo_idx].digest_size instead of hash_digest_size[algo]
-  (Roberto Sassu)
-- Link to v3: https://lore.kernel.org/r/20260127-ima-oob-v3-1-1dd09f4c2a6a@arista.com
-Testing note: I test it on v6.12.40 kernel backport, which slightly differs as
-lookup_template_data_hash_algo() was yet present.
-
-Changes in v3:
-- Now fix the spelling *for real* (sorry, messed it up in v2)
-- Link to v2: https://lore.kernel.org/r/20260127-ima-oob-v2-1-f38a18c850cf@arista.com
-
-Changes in v2:
-- Instead of skipping unknown algorithms, add files under their TPM_ALG_ID (Roberto Sassu)
-- Fix spelling (Roberto Sassu)
-- Copy @stable on the fix
-- Link to v1: https://lore.kernel.org/r/20260127-ima-oob-v1-1-2d42f3418e57@arista.com
----
- security/integrity/ima/ima_fs.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
-
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index 23d3a14b8ce3..ca4931a95098 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -398,16 +398,24 @@ static int __init create_securityfs_measurement_lists(void)
- 		char file_name[NAME_MAX + 1];
- 		struct dentry *dentry;
- 
--		sprintf(file_name, "ascii_runtime_measurements_%s",
--			hash_algo_name[algo]);
-+		if (algo == HASH_ALGO__LAST)
-+			sprintf(file_name, "ascii_runtime_measurements_tpm_alg_%x",
-+				ima_tpm_chip->allocated_banks[i].alg_id);
-+		else
-+			sprintf(file_name, "ascii_runtime_measurements_%s",
-+				hash_algo_name[algo]);
- 		dentry = securityfs_create_file(file_name, S_IRUSR | S_IRGRP,
- 						ima_dir, (void *)(uintptr_t)i,
- 						&ima_ascii_measurements_ops);
- 		if (IS_ERR(dentry))
- 			return PTR_ERR(dentry);
- 
--		sprintf(file_name, "binary_runtime_measurements_%s",
--			hash_algo_name[algo]);
-+		if (algo == HASH_ALGO__LAST)
-+			sprintf(file_name, "binary_runtime_measurements_tpm_alg_%x",
-+				ima_tpm_chip->allocated_banks[i].alg_id);
-+		else
-+			sprintf(file_name, "binary_runtime_measurements_%s",
-+				hash_algo_name[algo]);
- 		dentry = securityfs_create_file(file_name, S_IRUSR | S_IRGRP,
- 						ima_dir, (void *)(uintptr_t)i,
- 						&ima_measurements_ops);
-
----
-base-commit: 343f51842f4ed7143872f3aa116a214a5619a4b9
-change-id: 20260127-ima-oob-9fa83a634d7b
-
-Best regards,
--- 
-Dmitry Safonov <dima@arista.com>
-
-
+Thanks
