@@ -1,164 +1,93 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283902E7F25;
-	Tue, 10 Mar 2026 19:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2273A3802;
+	Tue, 10 Mar 2026 21:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773171006; cv=none; b=LboX4ZZfqj0QsnjozGeE27scAGRkf5NqVz2QejzvUc1XqCaJ8LWTuIV5UpEDY4kBqTk8L4UAQVr5g7FczBjduwW56G8ti0pwa139jSHpeNCUHZCtLjXkt6/SN/J9+I0bGQT6sJTYBjguUqPEFVXjaFl+AePF/umqNk0fj1nbkHM=
+	t=1773177070; cv=none; b=YDdWS7wfkRpxyvj40GAVUl2t4XA8OC8hoIwiRS6BfV0pibpcAPu79KX4htl+7fshiQxXqFfvFc18/JgJCFkBnf5l/4RSVQRYZXFE9xjmlkCPZiRSnAvT2lzs5DaqTa/JjBU1TihNYz8gXea6cpYB64PB+ulxP0dAHitMIBVW4Dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773171006; c=relaxed/simple;
-	bh=1rNJGeotDfkPm9FA4fSdXs8VDn9nF7Ay2FwGOPrTdBA=;
+	s=arc-20240116; t=1773177070; c=relaxed/simple;
+	bh=yyzdGp+0sPRPTiABz81aZRloIPxSgjyHr2YQUr/A+N8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Prt4dk8zQVrbeejoT7++4BRyYhM0DZ87rpakJy9hJ5umMdnEUlABsKS4bD+zkO7/zoUuI6qE2i3rbkWFo24pQa/VIT0uqVm4uPQJ4o9gftruLJYAJob+TNjQYg1PzPrhKAxTW44ZV/pJxLtKILyrHa5lTRDWnDeBaZECSYC1z0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=malU8zKj; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=WU+jP/yzwI215TxeFGYdWePmDYqzCfC/22QBIL2AIQaBAAgksJP8v1x56Gnw98g+9wCmjFaR+kGNd/QoONG2Fw/0Wlas8dgbBqUezdtCg0sbYuM5DTgBKJJlECxJO/YS2JKvuFmlR4ARAqvNVe16s73KnF2FPzKHBW3TE/AuL4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFYD1ByL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="malU8zKj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 428C9C19423;
-	Tue, 10 Mar 2026 19:30:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFYD1ByL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E792DC19423;
+	Tue, 10 Mar 2026 21:11:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773171005;
-	bh=1rNJGeotDfkPm9FA4fSdXs8VDn9nF7Ay2FwGOPrTdBA=;
+	s=k20201202; t=1773177069;
+	bh=yyzdGp+0sPRPTiABz81aZRloIPxSgjyHr2YQUr/A+N8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=malU8zKj6bNvBoVBiQmXuwMqt8VJO4k3BBu5oGctT4fTSW8kt4FMuG1mdKtG43zKB
-	 Box6YVJrsOIWnUKOuxV2pvq1XvgIwd1UXhZVrZTH1WtQ9SLEZjBBXUfWbqiJQUXlKa
-	 WWJbELCc0u+6Zx9js47hHos3RZ8fZqw04D4fOcaE+r1aFMxOckDhKa0kC1IPvof/oT
-	 nZupciFJs5G/qKdiCGERlFp8LSSDf9xa/e9FnHpL73fL/Vl3JEpyaSWF9/QKHXk3Ku
-	 ZYdyxRtWYSadcfdvJcs6qXHRsiRe+QLioCt5i55K6Y6Kq39Ytjd2JGeqrtqfn9tJMF
-	 xGbgWcNCSKpEA==
-Date: Tue, 10 Mar 2026 21:30:00 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Saeed Mahameed <saeedm@nvidia.com>,
-	Itay Avraham <itayavr@nvidia.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>,
-	Maher Sanalla <msanalla@nvidia.com>,
-	Edward Srouji <edwards@nvidia.com>
-Subject: Re: [PATCH 0/3] Firmware LSM hook
-Message-ID: <20260310193000.GM12611@unreal>
-References: <20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com>
- <CAHC9VhTR9CsBgxRCAHXm5T2NZ5tr+XfmA--zkt=udmk9hPRuZQ@mail.gmail.com>
- <20260309193743.GZ12611@unreal>
- <CAHC9VhSRt_QEJKJFBDBySNQCiPpcawd5A76xmoRNtppRKGaCog@mail.gmail.com>
- <20260310090733.GA12611@unreal>
- <CAHC9VhTKsOYrs8Wh-O548=2gE7N_gkBy+q05+atcR=D+30uQ=w@mail.gmail.com>
+	b=dFYD1ByLLsnPqMH8HvpxcPSYDZmiTMH9uIgAC5+zFHLZxBhpolkrX+vcWCFVr8dmj
+	 29js3lSD3EP6jNZyT+AW/TyMOyiweLB8zLOj+u1rKJO+Yk5G4k4INqFDRribqkQwYG
+	 PU5Sqe0GLid9VxVNNxx6J7CXuJfFQ3+3PM3bfGXpngtw1jEkAz3zyt3foM96dA+4PA
+	 gNPBVPESP3sZ2w5NQjwiuGdGIuRenZrAmo8N1lZ2ElCPuIwn9/4e2+Fy9uJ3qTwYGb
+	 FUBKESjL6+R7Ljy++ot4ShKUaVNg5AnAT+CWS1XDngm6viJftDOM2Y43c8qq4sW242
+	 w6uDBPIYTGkYQ==
+Date: Tue, 10 Mar 2026 14:11:06 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Daniel Gomez <da.gomez@kernel.org>,
+	Aaron Tomlin <atomlin@atomlin.com>,
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+	Nicolas Schier <nsc@kernel.org>,
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
+	Xiu Jianfeng <xiujianfeng@huawei.com>,
+	Fabian =?iso-8859-1?Q?Gr=FCnbichler?= <f.gruenbichler@proxmox.com>,
+	Arnout Engelen <arnout@bzzt.net>,
+	Mattia Rizzolo <mattia@mapreri.org>, kpcyrd <kpcyrd@archlinux.org>,
+	Christian Heusel <christian@heusel.eu>,
+	=?iso-8859-1?Q?C=E2ju?= Mihai-Drosi <mcaju95@gmail.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v4 02/17] powerpc/ima: Drop unnecessary check for
+ CONFIG_MODULE_SIG
+Message-ID: <20260310211106.GA120274@quark>
+References: <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
+ <20260113-module-hashes-v4-2-0b932db9b56b@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhTKsOYrs8Wh-O548=2gE7N_gkBy+q05+atcR=D+30uQ=w@mail.gmail.com>
+In-Reply-To: <20260113-module-hashes-v4-2-0b932db9b56b@weissschuh.net>
 
-On Tue, Mar 10, 2026 at 02:24:40PM -0400, Paul Moore wrote:
-> On Tue, Mar 10, 2026 at 5:07 AM Leon Romanovsky <leon@kernel.org> wrote:
-> > On Mon, Mar 09, 2026 at 07:10:25PM -0400, Paul Moore wrote:
-> > > On Mon, Mar 9, 2026 at 3:37 PM Leon Romanovsky <leon@kernel.org> wrote:
-> > > > On Mon, Mar 09, 2026 at 02:32:39PM -0400, Paul Moore wrote:
-> > > > > On Mon, Mar 9, 2026 at 7:15 AM Leon Romanovsky <leon@kernel.org> wrote:
+On Tue, Jan 13, 2026 at 01:28:46PM +0100, Thomas Wei�schuh wrote:
+> When CONFIG_MODULE_SIG is disabled set_module_sig_enforced() is defined
+> as an empty stub, so the check is unnecessary.
+> The specific configuration option for set_module_sig_enforced() is
+> about to change and removing the check avoids some later churn.
 > 
-> ...
-> 
-> > > > > Hi Leon,
-> > > > >
-> > > > > At the link below, you'll find guidance on submitting new LSM hooks.
-> > > > > Please take a look and let me know if you have any questions.
-> > > > >
-> > > > > https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#new-lsm-hooks
-> > > >
-> > > > I assume that you are referring to this part:
-> > >
-> > > I'm referring to all of the guidance, but yes, at the very least that
-> > > is something that I think we need to see in a future revision of this
-> > > patchset.
-> > >
-> > > >  * New LSM hooks must demonstrate their usefulness by providing a meaningful
-> > > >    implementation for at least one in-kernel LSM. The goal is to demonstrate
-> > > >    the purpose and expected semantics of the hooks. Out of tree kernel code,
-> > > >    and pass through implementations, such as the BPF LSM, are not eligible
-> > > >    for LSM hook reference implementations.
-> > > >
-> > > > The point is that we are not inspecting a kernel call, but the FW mailbox,
-> > > > which has very little meaning to the kernel. From the kernel's perspective,
-> > > > all relevant checks have already been performed, but the existing capability
-> > > > granularity does not allow us to distinguish between FW_CMD1 and FW_CMD2.
-> > >
-> > > It might help if you could phrase this differently, as I'm not
-> > > entirely clear on your argument.  LSMs are not limited to enforcing
-> > > access controls on requests the kernel understands (see the SELinux
-> > > userspace object manager concept), and the idea of access controls
-> > > with greater granularity than capabilities is one of the main reasons
-> > > people look to LSMs for access control (SELinux, AppArmor, Smack,
-> > > etc.).
-> >
-> > I should note that my understanding of LSM is limited, so some parts of my
-> > answers may be inaccurate.
-> >
-> > What I am referring to is a different level of granularity — specifically,
-> > the internals of the firmware commands. In the proposed approach, BPF
-> > programs would make decisions based on data passed through the mailbox.
-> > That mailbox format varies across vendors, and may even differ between
-> > firmware versions from the same vendor.
-> 
-> That helps, thank you.
-> 
-> > > > Here we propose a generic interface that can be applied to all FWCTL
-> > > > devices without out-of-tree kernel code at all.
-> > >
-> > > I expected to see a patch implementing some meaningful support for
-> > > access controls using these hooks in one of the existing LSMs, I did
-> > > not see that in this patchset.
-> >
-> > In some cases, the mailbox is forwarded from user space unchanged, but
-> > in others the kernel modifies it before submitting it to the FW.
-> 
-> Without a standard format, opcode definitions, etc. I suspect
-> integrating this into an LSM will present a number of challenges.
+> Signed-off-by: Thomas Wei�schuh <linux@weissschuh.net>
+> ---
+>  arch/powerpc/kernel/ima_arch.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-The opcode is relatively easy to extract from the mailbox and pass to the LSM.
-All drivers implement some variant of mlx5ctl_validate_rpc()/devx_is_general_cmd()
-to validate the opcode. The problem is that this check alone is not sufficient.
+Reviewed-by: Eric Biggers <ebiggers@kernel.org>
 
-> Instead of performing an LSM access control check before submitting
-> the firmware command, it might be easier from an LSM perspective to
-> have the firmware call into the kernel/LSM for an access control
-> decision before performing a security-relevant action.
-
-Ultimately, the LSM must make a decision for each executed firmware  
-command. This will need to be handled one way or another, and will  
-likely require parsing the mailbox again.
-
-> This removes the challenge of parsing/interpreting the arbitrary firmware commands,
-> but it does add some additional complexity of having to generically
-> represent the security relevant actions the firmware might request
-
-The difference here is that the proposed LSM hook is intended to disable
-certain functionality provided by the firmware, effectively depending on
-the operator’s preferences.
-
-This is not a security‑sensitive operation that requires strict
-restriction.
-
-> (this is somewhat similar to how the LSM framework doesn't necessarily
-> hook the syscalls, but the actions the syscalls perform).  Yes, one
-> does have to trust the firmware in this approach, but given the
-> relationship between the firmware and associated hardware, I think
-> users are implicitly required to trust their firmware in the vast
-> majority of cases.
-
-They trust the firmware and the kernel, but they do not trust the actual  
-non‑privileged users of that firmware.
-
-Thanks
-
-> 
-> -- 
-> paul-moore.com
-> 
+- Eric
