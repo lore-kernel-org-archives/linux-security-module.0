@@ -1,131 +1,246 @@
-Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D817C36EA82
-	for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2026 16:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A382FBDFD;
+	Wed, 11 Mar 2026 17:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773247044; cv=none; b=sbrvl+bQ1ONglVo8ZKfVV3JOkopHPtMpI0SW8CCvZhmTc2ieRmHKaF8U0x5NC9X1Jvsco+3wKSJLVM1tcuLpe7+FsPKZY6LFlGpvkBHPNimtUigjQoB2coYWPwl8f7Kqhc3T9Rha/eLCgCDZqA+zwEmX95k7Vu81Sdug6Wo5GeI=
+	t=1773249624; cv=none; b=Xj/19RmoVJrgCqam94eycYvhFok7jT3UUh1d38Dh49ZrGBczrNIGYqQ5rA5IjWD5eB3T7qzk5vDNWvHMBGC6G/hIUTkL6iQPyKg0AyBeZ4ayrdtRn5wpTte2rT+u21z3mX1M5vOOIMTpwKGnPUi0H9RclsKeSw0wetWUM2692gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773247044; c=relaxed/simple;
-	bh=y5xcwD5HSLcsAkYDhlJFluKvVgMmP8d2ny8wSpR1ago=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CzdCIh9lyZaBmzBPIHVTdIAsQtvNmcHnSIHN2CmTnTgEf6A8D0EeTPtX3oQN03NhM/YLybxSr/OEPH7ObYmM7GaH3+ICFUYUocooaWtqWFsSWJSEtYiR68UzdUzUUkUXNypuvtDJ7Cqif0OjVn6U5m7FnQDUUYiLqPhVg1retj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=CGMGFlqV; arc=none smtp.client-ip=66.163.188.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="CGMGFlqV"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1773247036; bh=JZul/JdSQ6BogT6yJzGrSadZ4bqvsCuLBuJ14sn8TgM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=CGMGFlqVhQomt6L84QkqknsGU+LQofKjigDQJeHL9VMCahR2HRJEOnTDVQeKy/WAUOaKW8HW6EAXdbZjU7cYCcl39jvbXI5JeCEGtAAO3tI4I1Mm73Q1CO8QUqf1eQ+UryFJ/2Erg8Xbf5UHDnygFakm215V39u0M4TpAsjQYC7wmGYvx/BB/2yYiKv//Ey84qs5iyeL/f1yHGGgL7WJ+udH3CLp+kcGcfr2Q6gaSSgMnKHEEFH26YSZDAQW5tUNgW0jESwv4q2A7DJGHRIUEWSPmYUhjFWFr4kmo9iN41ZboynaxCamK3HPPxHNmfX3EBpfwjXjVefH5e1q85aGCw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1773247036; bh=hSVufePW+YtcauRSeVZI5MT+lI7ZSWiKwIj0zMSJ1KZ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ulQiNQAfseVkTZtc7DBzjg2TLHo16V4C3VCBgjmjLOC96Ly2hpN0EXhr2u5mKwjEevQRm/Q/H833+ej0znI190dmRENLhFxuJSuNNTojP56Xn3bZCgP4xp2Dw5PUrBHxzjhRZ0bnxGyEuI1Q7ZaWdF9h8HYbhC3yEVmKy/zwYMwcQgWFJ6UYFNtV1lpLG7erCNw8kCmgz5gBkAD4RxRUg5plIGkKY92FMI+cxWSwroqBOaTszMpO22AC7InJqnE2d67zeBqV5ZypyaUsPBRmZSnUbp9Zh045a/XPsIXeQoBUw10OfaxPkwt6Hqs/Wmf9wGrX2q5maLUx7J7EADj5aw==
-X-YMail-OSG: IWPzEmcVM1muBLVPcWpznxJ2erh9bvvVoIfeWYtPSiW_jxQcLfHpnuq0GLIZJEa
- GZ9WZAMmCZzy7kkZWBzS1ADYU2ekrQBzbSMCihTzHK2wOu8EZmnGNCo1OsPW73G.5Q9mDu2MaQPk
- AXCO0qLotUfWpu0Zgw0HCckfiX9hqQ26nCCFKFCUoFjWt_lq1XLSwnpnit14EFeEUZf7evZ4F3H8
- kyV39nZlJrNEmZ9mAlxIHV3nM655C.TfPhvZyfucsc9H.oW8CehG3sihXA_dpXm4sH_tGMjtiO3E
- QnwyaahTHmDf0VbJJ6IsW9_Zs4nf.jfxRsLIpM1lCODuc6yQuEsoDWAM4wbR7DWvclZsrU1yXfp0
- .iEYP5n7htgfnweVffKjujw4uBpWkYFqvDqIzsp4j4vhz75KemYRq_K_aZGPc.hwoPNPW8qm8Mpx
- AQhFqoQXOus7VkmAA6cDnf_3vSjWn7l40QtZTR1ga3aFX0zwp8VG_hancfk2KOEz8Qdm5RpSVoq3
- zwtDZMwld0.SZtHmNfAgZ7.q6joUr5.e4WfJ2nUJElIOLWHemPj0hAhHDrYelbSnv.B2TB8NvVrX
- 3Ve.tUf1o7pkToaugwiyaVwqMNg8LL4xiGUsouEtcTvIEmJoPnHQue1QBzUJrDte0AKmMv0I.ZVi
- DL70MyzJAmcowhX8kbwa0ri4phcec5sQioxkKT.BTNfF4ngJSf7oxZisx0XpMhkpMD0dTY2WqzAa
- HEccKQU_fr2EHRI3oFIUTy4Exb3CN0Gh0NfsIQnIRHW_gt6PeLZ6J9OTqteLwhVqJQ_mrFJB3X5z
- VLzRL4xStN1K6EX3Ja8r52lo.gi19mkuo9QdmDPvbbqLe8kk8436_N85PL8mFEoIPpM1AqD5MXlk
- LOyh2qoOdAaKLKz5nDqd0xpVC2Zw78qx8z5kOq47RapZN2rlHJTNmwMCvp.MgLfA6JJh8CrHsIwx
- LUryftUrlzzVgYoNWcim_LJtSB2BoiY9lkKahcop5o0ulaTHSzfFlRYFyw_hSynCIVVY5qSwP89e
- yJ5iv0LXmBz2Gt9fSfpuvN6xzEI4aCcEBmzUloW8DQVMOigoMph5m8o3kner7m9VLDl26jqns2mM
- kN7SLvzrCZlJtysQ7mujZU.LpBsROp52q79Iu_qiVEnSC_a07SFQGggWZbwrI2acefUvOvh_eBt9
- bCT7E5ol.45glgm_EcY.6K732p98yD0pc4LZcYQYsezVab5Y50NJT5y8xek8bqh5yjx8n2snlHvF
- 6ZnKxNnjTEuqsNzROz2rCvmaQkhNDDfMfFOwIP72NfNzjA1suv9iFdIBEr4Q37J3unN5YlI1nXtp
- ma7DYcxjTF.dujLmv8P2h9M0j5VdP5QnyY9dmNaLaLQqowydUE_5sAFrG3d3ilCOHhptPeLjvsO2
- AGenv5RB1T4oQZugUNB.VevLm8ByFrNNLSa8iYyDaBO0B4CgkEHBXw1Zm37StsHkojFhhwJlaKqF
- 6s8gvqdN6WgBk061xgJfnSva7TZbee3mR.BcwnZ4ZA.EuyFp.NiM0ULFLbt4iXdXii5t.wNMiz.j
- .Cs.02Sld2ayIwPzfYZfrRNwEFGUVQDtYvipgp9IcgHxfZLB60Hxd8yBf3aDViNI41DcNpIdVcUC
- ZGc1cWdCun_0fuD8RyPFjtAA4UzjSQcTYKk5fZ0uO2enhWUay7V5i7Ns3Fn7mJSxsv6VAcQ3gRFw
- NiOdHy4y1k2sQMugknjqf1QSaeZgrHuu6RobIl425XxuTHjKaXRbHVe9ctgBh2y8pnvG3we1Ew69
- m_GnkUVonuBwEvwW8cD3WM.WMQBE3f4UJrfuGGAWQOOV0n7C.ZRIpziudHDsx_v0wQyLQkvSG57w
- pT2LRkbnntm8U3a_kVC6dYHIrxusBqvGYNJt9igbm7qKc6cdx709Lyv84eO.EXsEVj4I.wKhkEyz
- XUlXIt6aTxkCYaenrSypsj8a18yT6yGiSEUcX44GtZScpUzgUOJ4nAMVuvgapq3A6a3naPSHKspW
- Tt7zq0TzowXLn0Ywk9jGvE6QlaIe0qGgRFKjMuBucdCsXiLst.ZbyPdS7N0QLTiJfo6NifTognyO
- Jnc06HiytbzYpwbUBmd7GwAKHv_usMg9WAXEcVFQUWbtsjE0qFfB_fYpQBlawd6v7DXH4fh6Q6yn
- VKgQBXWWjt9qxNO7TbrjxXCMb7ac1eqZGXJkcjX9BecjsV25IJ6J8Le9JDbHBTo5k.KzMR9QHc6Y
- HCdf0FoH5RTuV3F88oJylCWSbXkCp7QuY3JyjzUorQem4XLw8CfzcWEIKTlMmUQCshds1ztIyJDL
- tKrtk5ba9Sw--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: eb61c581-cb5b-4937-8354-363a1c0a7ab0
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Wed, 11 Mar 2026 16:37:16 +0000
-Received: by hermes--production-gq1-6dfcf9f8b-xs62w (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 24648e7493ca04f0df50e0e0751218f5;
-          Wed, 11 Mar 2026 16:37:15 +0000 (UTC)
-Message-ID: <39aab889-8534-485b-a4c3-b6bcb3889721@schaufler-ca.com>
-Date: Wed, 11 Mar 2026 09:37:12 -0700
+	s=arc-20240116; t=1773249624; c=relaxed/simple;
+	bh=maHFBWQSmOJpclqZTwpZRE1Savvccu2Zhn8tf05eg3g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SSkD/qY3xnxNwXddBYGOCZuQeg6Ko3xGvNHpUzxJOEDLWPlUTbXWgyk+KOyaF7XG1TB8JGRlm/ECjXRywa5WQVJaE6NSD2Bljn+d22lh92v1J5I+qBetogv0DvmNpORvWMbpYybmMzVU62PMprJgwoloYjV4kaBtoGgsld1iMLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.196])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4fWHV94gPhzpVH5;
+	Thu, 12 Mar 2026 01:16:49 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 5235440567;
+	Thu, 12 Mar 2026 01:20:19 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwDXp4RIpLFpppJGAA--.17394S2;
+	Wed, 11 Mar 2026 18:20:18 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: corbet@lwn.net,
+	skhan@linuxfoundation.org,
+	zohar@linux.ibm.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	gregorylumen@linux.microsoft.com,
+	chenste@linux.microsoft.com,
+	nramas@linux.microsoft.com,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v3 1/3] ima: Remove ima_h_table structure
+Date: Wed, 11 Mar 2026 18:19:54 +0100
+Message-ID: <20260311171956.2317781-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: LSM namespacing API
-To: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: "Dr. Greg" <greg@enjellic.com>, Paul Moore <paul@paul-moore.com>,
- Ondrej Mosnacek <omosnace@redhat.com>,
- linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
- John Johansen <john.johansen@canonical.com>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
- <CAHC9VhTeVs7kS9hzukukZRfGu6CC6=Dq4KP69tpEtiFpBJ+jOQ@mail.gmail.com>
- <CAEjxPJ4urh7mUbDJEi-DbdiAifMM_uDH3m35tLeTdx6z+qhPyg@mail.gmail.com>
- <CAHC9VhTGruOPJ+NWZT8vw1bjXzkB4DSPFmWd1pC=J2jTYHP5BA@mail.gmail.com>
- <20260306174815.GA9953@wind.enjellic.com>
- <ae5e9c1b-d0cd-476b-87d2-70c0bc8ba09c@schaufler-ca.com>
- <CAEjxPJ7yuJ6sAZ-ViqT04M5WPC9O39m5UUGw2f3+GDR87tvbsA@mail.gmail.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAEjxPJ7yuJ6sAZ-ViqT04M5WPC9O39m5UUGw2f3+GDR87tvbsA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.25198 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-CM-TRANSID:GxC2BwDXp4RIpLFpppJGAA--.17394S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3WrW5CrWUJry3KFW3ZFWxtFb_yoWxZrWkpa
+	nFga4IkF48XFyI9ryDAayqk3yrG3yUKr17Wws8Gw1Yk3ZxXr12gF15CFy2kFyrGrZYyF1I
+	qrs0qr4YkanYyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
+	w2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xUFku4UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAJBGmw1qwJZQAAsA
 
-On 3/9/2026 11:15 AM, Stephen Smalley wrote:
-> On Fri, Mar 6, 2026 at 4:01 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 3/6/2026 9:48 AM, Dr. Greg wrote:
->>> On Tue, Mar 03, 2026 at 11:46:53AM -0500, Paul Moore wrote:
->>>
->>> Good morning, I hope the week is winding down well for everyone.
->>>
->>>> On Tue, Mar 3, 2026 at 8:30???AM Stephen Smalley
->>>>> I think my only caveat here is that your proposal is quite a bit more
->>>>> complex than what I implemented here:
->>>>> [1] https://lore.kernel.org/selinux/20251003190959.3288-2-stephen.smalley.work@gmail.com/
->>>>> [2] https://lore.kernel.org/selinux/20251003191328.3605-1-stephen.smalley.work@gmail.com/
->>>>> and I'm not sure the extra complexity is worth it.
->>>>>
->>>>> In particular:
->>>>> 1. Immediately unsharing the namespace upon lsm_set_self_attr() allows
->>>>> the caller to immediately and unambiguously know if the operation is
->>>>> supported and allowed ...
->>>> Performing the unshare operation immediately looks much less like a
->>>> LSM attribute and more like its own syscall.  That isn't a problem
->>>> in my eyes, it just means if this is the direction we want to go we
->>>> should implement a lsm_unshare(2) API, or something similar.
->>> Stephen's take on this is correct, the least complicated path forward
->>> is a simple call, presumably lsm_unshare(2), that instructs the LSM(s)
->>> to carry out whatever is needed to create a new security namespace.
->>>
->>> There are only two public implementations of what can be referred to
->>> as major security namespacing efforts; Stephen's work with SeLinux and
->>> our TSEM implementation.
->> Please be just a tiny bit careful before you make this sort of assertion:
->>
->>         https://lwn.net/Articles/645403/
-> I believe both AppArmor and TOMOYO also have namespacing
-> implementations already upstream, so SELinux is certainly not the only
-> one. Looks like the Smack implementation you cited above was based on
-> extending user namespaces rather than purely Smack-internal like the
-> others; is that why it wasn't ultimately merged?
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Less sophisticated solutions to the problem Smack namespaces were
-intended to address became available. The effort stalled for lack of
-a use case that required it. Much of what you want a namespace for
-can be accomplished using process specific rules.
+With the upcoming change of dynamically allocating and replacing the hash
+table, we would need to keep the counters for number of measurements
+entries and violations.
 
+Since anyway, those counters don't belong there, remove the ima_h_table
+structure instead and move the counters and the hash table as a separate
+variables.
+
+Link: https://github.com/linux-integrity/linux/issues/1
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+Changelog:
+v2:
+ - Not present in this version
+
+v1:
+ - Not present in this version
+---
+ security/integrity/ima/ima.h       |  9 +++------
+ security/integrity/ima/ima_api.c   |  2 +-
+ security/integrity/ima/ima_fs.c    | 19 +++++++++----------
+ security/integrity/ima/ima_kexec.c |  2 +-
+ security/integrity/ima/ima_queue.c | 17 ++++++++++-------
+ 5 files changed, 24 insertions(+), 25 deletions(-)
+
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index c38a9eb945b6..1f2c81ec0fba 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -298,12 +298,9 @@ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
+  */
+ extern spinlock_t ima_queue_lock;
+ 
+-struct ima_h_table {
+-	atomic_long_t len;	/* number of stored measurements in the list */
+-	atomic_long_t violations;
+-	struct hlist_head queue[IMA_MEASURE_HTABLE_SIZE];
+-};
+-extern struct ima_h_table ima_htable;
++extern atomic_long_t ima_num_entries;
++extern atomic_long_t ima_num_violations;
++extern struct hlist_head ima_htable[IMA_MEASURE_HTABLE_SIZE];
+ 
+ static inline unsigned int ima_hash_key(u8 *digest)
+ {
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index 0916f24f005f..122d127e108d 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -146,7 +146,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+ 	int result;
+ 
+ 	/* can overflow, only indicator */
+-	atomic_long_inc(&ima_htable.violations);
++	atomic_long_inc(&ima_num_violations);
+ 
+ 	result = ima_alloc_init_template(&event_data, &entry, NULL);
+ 	if (result < 0) {
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index ca4931a95098..aaa460d70ff7 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -38,8 +38,8 @@ __setup("ima_canonical_fmt", default_canonical_fmt_setup);
+ 
+ static int valid_policy = 1;
+ 
+-static ssize_t ima_show_htable_value(char __user *buf, size_t count,
+-				     loff_t *ppos, atomic_long_t *val)
++static ssize_t ima_show_counter(char __user *buf, size_t count, loff_t *ppos,
++				atomic_long_t *val)
+ {
+ 	char tmpbuf[32];	/* greater than largest 'long' string value */
+ 	ssize_t len;
+@@ -48,15 +48,14 @@ static ssize_t ima_show_htable_value(char __user *buf, size_t count,
+ 	return simple_read_from_buffer(buf, count, ppos, tmpbuf, len);
+ }
+ 
+-static ssize_t ima_show_htable_violations(struct file *filp,
+-					  char __user *buf,
+-					  size_t count, loff_t *ppos)
++static ssize_t ima_show_num_violations(struct file *filp, char __user *buf,
++				       size_t count, loff_t *ppos)
+ {
+-	return ima_show_htable_value(buf, count, ppos, &ima_htable.violations);
++	return ima_show_counter(buf, count, ppos, &ima_num_violations);
+ }
+ 
+-static const struct file_operations ima_htable_violations_ops = {
+-	.read = ima_show_htable_violations,
++static const struct file_operations ima_num_violations_ops = {
++	.read = ima_show_num_violations,
+ 	.llseek = generic_file_llseek,
+ };
+ 
+@@ -64,7 +63,7 @@ static ssize_t ima_show_measurements_count(struct file *filp,
+ 					   char __user *buf,
+ 					   size_t count, loff_t *ppos)
+ {
+-	return ima_show_htable_value(buf, count, ppos, &ima_htable.len);
++	return ima_show_counter(buf, count, ppos, &ima_num_entries);
+ 
+ }
+ 
+@@ -545,7 +544,7 @@ int __init ima_fs_init(void)
+ 	}
+ 
+ 	dentry = securityfs_create_file("violations", S_IRUSR | S_IRGRP,
+-				   ima_dir, NULL, &ima_htable_violations_ops);
++				   ima_dir, NULL, &ima_num_violations_ops);
+ 	if (IS_ERR(dentry)) {
+ 		ret = PTR_ERR(dentry);
+ 		goto out;
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 36a34c54de58..5801649fbbef 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -43,7 +43,7 @@ void ima_measure_kexec_event(const char *event_name)
+ 	int n;
+ 
+ 	buf_size = ima_get_binary_runtime_size();
+-	len = atomic_long_read(&ima_htable.len);
++	len = atomic_long_read(&ima_num_entries);
+ 
+ 	n = scnprintf(ima_kexec_event, IMA_KEXEC_EVENT_LEN,
+ 		      "kexec_segment_size=%lu;ima_binary_runtime_size=%lu;"
+diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+index 319522450854..4837fc6d9ada 100644
+--- a/security/integrity/ima/ima_queue.c
++++ b/security/integrity/ima/ima_queue.c
+@@ -32,11 +32,14 @@ static unsigned long binary_runtime_size;
+ static unsigned long binary_runtime_size = ULONG_MAX;
+ #endif
+ 
++/* num of stored meas. in the list */
++atomic_long_t ima_num_entries = ATOMIC_LONG_INIT(0);
++/* num of violations in the list */
++atomic_long_t ima_num_violations = ATOMIC_LONG_INIT(0);
++
+ /* key: inode (before secure-hashing a file) */
+-struct ima_h_table ima_htable = {
+-	.len = ATOMIC_LONG_INIT(0),
+-	.violations = ATOMIC_LONG_INIT(0),
+-	.queue[0 ... IMA_MEASURE_HTABLE_SIZE - 1] = HLIST_HEAD_INIT
++struct hlist_head ima_htable[IMA_MEASURE_HTABLE_SIZE] = {
++	[0 ... IMA_MEASURE_HTABLE_SIZE - 1] = HLIST_HEAD_INIT
+ };
+ 
+ /* mutex protects atomicity of extending measurement list
+@@ -61,7 +64,7 @@ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
+ 
+ 	key = ima_hash_key(digest_value);
+ 	rcu_read_lock();
+-	hlist_for_each_entry_rcu(qe, &ima_htable.queue[key], hnext) {
++	hlist_for_each_entry_rcu(qe, &ima_htable[key], hnext) {
+ 		rc = memcmp(qe->entry->digests[ima_hash_algo_idx].digest,
+ 			    digest_value, hash_digest_size[ima_hash_algo]);
+ 		if ((rc == 0) && (qe->entry->pcr == pcr)) {
+@@ -113,10 +116,10 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
+ 	INIT_LIST_HEAD(&qe->later);
+ 	list_add_tail_rcu(&qe->later, &ima_measurements);
+ 
+-	atomic_long_inc(&ima_htable.len);
++	atomic_long_inc(&ima_num_entries);
+ 	if (update_htable) {
+ 		key = ima_hash_key(entry->digests[ima_hash_algo_idx].digest);
+-		hlist_add_head_rcu(&qe->hnext, &ima_htable.queue[key]);
++		hlist_add_head_rcu(&qe->hnext, &ima_htable[key]);
+ 	}
+ 
+ 	if (binary_runtime_size != ULONG_MAX) {
+-- 
+2.43.0
 
