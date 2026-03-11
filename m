@@ -1,53 +1,81 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33320358360;
-	Wed, 11 Mar 2026 08:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4543B7775;
+	Wed, 11 Mar 2026 08:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773217200; cv=none; b=TrhsUW04nhAUnfsQ/O23oQicNd8C0lXqJtTxejwc7jF2i7ycXfdSYgt7ISopt9kCCDGhm7jZ30fsVkHNoVXNlY5XvJnNANR80o/fLCBf1uHM2H/VwhXHwQcG305LncgYkUYoThc1u67Xp0as4Dycpjzde/JUusoNZaXUfqtSb58=
+	t=1773219018; cv=none; b=A5ZRB4C9p5ir5+pLHK4JjV6oaJsiNxZGtPWdvOBzPx0XIoYVHqJLk3QtEbJs0UgXCHXaqu2hroz6GAykHA8Iy408cbuW8LGz1qO931dUbjCAriLyFGPRF+tC6rD8DOvkbUv93UipnaFgDd3rCoPMTRD76PwXbhSM+gDyzcxY62g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773217200; c=relaxed/simple;
-	bh=wIlfCxEWTnTMirM0Hzxi5elWcq+7xLnpDh8qwCD9JLI=;
+	s=arc-20240116; t=1773219018; c=relaxed/simple;
+	bh=ZjFxYEjK8aozfmve4JoaBaV+xJQhTcTGAjUyYSMn6lQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hwKvpby4CgTSv/ZUhloO+PDZtJCnPN3qX/xM6XJlx3yf5y/JF+2dedD5GTyoVhY1AWtA+qP5MwwqHvcOJiVOGVvb9/sk6k+yXLoFW+aRmgrc4u3c5owQsoa7burBsYd05ljGrzVLhna2tZnB7oRUMLD6qhu7b8/v2557wlIBeZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZUXCHBaj; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=dkknLweiGRXZL0r0X9Aw7ULotf1kxciKseOAE0aUhy2ZsH2mOf/qpaLACyISXnyrR+vOFLV8EUkR967oU25kjN/LlyWJFVsrZr6VZEyM6BMqBNCIwm7ycQan5LFr3EIjA+LMpkE0staIdLHbCMi+wIxenVqy+A/N9xxucfZn7ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=o4tcifl1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LMTIauJ8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZUXCHBaj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6852BC4CEF7;
-	Wed, 11 Mar 2026 08:19:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773217199;
-	bh=wIlfCxEWTnTMirM0Hzxi5elWcq+7xLnpDh8qwCD9JLI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZUXCHBajKBoLR7t7ubx+Hfm/n0FO2ifumFy6UnHn/zBbFx6c8NVFnxZBx+lSmHgZi
-	 zugXPfz3/IuJFDpUcniwCQPv2T4ao8/nRB9xfW0d73QPLBs/bHAwGQgNwJ2xOyVzit
-	 ToFO7M/fP81vXMEbLM13G0AC+ozjMpTBsOAnfywK8n3Sf4F9GAEkyYM/Ejcnr6ZM5w
-	 050j24PsscMkgWbDlgHPg0LLeazxyMCXD0ftt7Dy0+Jw3m8svMlffluXMm3OUx4Reb
-	 2PnrP6k6e6VaymhQVUQ0qBt7FJUXLzFuE9i+oM67j78oNxgCslZk/iJv19MBZxyJom
-	 HOxTlRDHB6b+Q==
-Date: Wed, 11 Mar 2026 10:19:55 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Saeed Mahameed <saeedm@nvidia.com>,
-	Itay Avraham <itayavr@nvidia.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>,
-	Maher Sanalla <msanalla@nvidia.com>,
-	Edward Srouji <edwards@nvidia.com>
-Subject: Re: [PATCH 0/3] Firmware LSM hook
-Message-ID: <20260311081955.GS12611@unreal>
-References: <20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com>
- <CAHC9VhTR9CsBgxRCAHXm5T2NZ5tr+XfmA--zkt=udmk9hPRuZQ@mail.gmail.com>
- <20260309193743.GZ12611@unreal>
- <CAHC9VhSRt_QEJKJFBDBySNQCiPpcawd5A76xmoRNtppRKGaCog@mail.gmail.com>
- <20260310090733.GA12611@unreal>
- <CAHC9VhTKsOYrs8Wh-O548=2gE7N_gkBy+q05+atcR=D+30uQ=w@mail.gmail.com>
- <20260310193000.GM12611@unreal>
- <CAHC9VhSh8A+yGHT_+BqFGaLNqsZDcaz_cuqf9A+neRQQ3PMY4A@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="o4tcifl1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LMTIauJ8"
+Date: Wed, 11 Mar 2026 09:50:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1773219010;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Dh2u910Dr9v3m0hVo537X6ofb5vKqJBESKL7gfq66iU=;
+	b=o4tcifl1o8jywgLPdg/s+WX7sDPzz+eCAnhiMj3T66TG/Q1htV1GOGeOOud7SVVEX+GX92
+	OVl1a0sAtFbXIhn6q8VAYV3nbRQ8ydhQIs0OB6MXRRv1VFkebNYQxNtC6ZpsNfMUc2HPJe
+	my1FYPw0ldYH8kKSZm/D/y2nEimFEJIe4djKU6CH2C6et4c58of1WcZakycG05pAwk+5+R
+	vRjsqZMlne+14maN+9VGVI5qg7hbBIk6aqyB10RpJcYkoRJbGh9dKeD1rxtrSKP3zP2jcK
+	nzJWn+wPTcYCVcLlRx9uC67R6D4rj8jJI+lZcpjDoC0/26vEYJrmilrpcNilQg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1773219010;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Dh2u910Dr9v3m0hVo537X6ofb5vKqJBESKL7gfq66iU=;
+	b=LMTIauJ88fFcgqN/jXiJPCLOHnYrJyLVhh0TJD/NNsp9hdkMfEbyqHXmdDHdxxwf8KEeF3
+	WVtUAKnV6l5hwHDQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Daniel Gomez <da.gomez@kernel.org>,
+	Aaron Tomlin <atomlin@atomlin.com>,
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+	Nicolas Schier <nsc@kernel.org>,
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
+	Xiu Jianfeng <xiujianfeng@huawei.com>,
+	Fabian =?utf-8?Q?Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>,
+	Arnout Engelen <arnout@bzzt.net>,
+	Mattia Rizzolo <mattia@mapreri.org>, kpcyrd <kpcyrd@archlinux.org>,
+	Christian Heusel <christian@heusel.eu>,
+	=?utf-8?B?Q8OianU=?= Mihai-Drosi <mcaju95@gmail.com>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v4 15/17] module: Introduce hash-based integrity checking
+Message-ID: <20260311085008.TSnh3YR1@linutronix.de>
+References: <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
+ <20260113-module-hashes-v4-15-0b932db9b56b@weissschuh.net>
+ <20260311011218.GA212983@quark>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -56,130 +84,64 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhSh8A+yGHT_+BqFGaLNqsZDcaz_cuqf9A+neRQQ3PMY4A@mail.gmail.com>
+In-Reply-To: <20260311011218.GA212983@quark>
 
-On Tue, Mar 10, 2026 at 05:40:02PM -0400, Paul Moore wrote:
-> On Tue, Mar 10, 2026 at 3:30 PM Leon Romanovsky <leon@kernel.org> wrote:
-> > On Tue, Mar 10, 2026 at 02:24:40PM -0400, Paul Moore wrote:
-> > > On Tue, Mar 10, 2026 at 5:07 AM Leon Romanovsky <leon@kernel.org> wrote:
-> > > > On Mon, Mar 09, 2026 at 07:10:25PM -0400, Paul Moore wrote:
-> > > > > On Mon, Mar 9, 2026 at 3:37 PM Leon Romanovsky <leon@kernel.org> wrote:
-> > > > > > On Mon, Mar 09, 2026 at 02:32:39PM -0400, Paul Moore wrote:
-> > > > > > > On Mon, Mar 9, 2026 at 7:15 AM Leon Romanovsky <leon@kernel.org> wrote:
-> > >
-> > > ...
-> > >
-> > > > > > > Hi Leon,
-> > > > > > >
-> > > > > > > At the link below, you'll find guidance on submitting new LSM hooks.
-> > > > > > > Please take a look and let me know if you have any questions.
-> > > > > > >
-> > > > > > > https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#new-lsm-hooks
-> > > > > >
-> > > > > > I assume that you are referring to this part:
-> > > > >
-> > > > > I'm referring to all of the guidance, but yes, at the very least that
-> > > > > is something that I think we need to see in a future revision of this
-> > > > > patchset.
-> > > > >
-> > > > > >  * New LSM hooks must demonstrate their usefulness by providing a meaningful
-> > > > > >    implementation for at least one in-kernel LSM. The goal is to demonstrate
-> > > > > >    the purpose and expected semantics of the hooks. Out of tree kernel code,
-> > > > > >    and pass through implementations, such as the BPF LSM, are not eligible
-> > > > > >    for LSM hook reference implementations.
-> > > > > >
-> > > > > > The point is that we are not inspecting a kernel call, but the FW mailbox,
-> > > > > > which has very little meaning to the kernel. From the kernel's perspective,
-> > > > > > all relevant checks have already been performed, but the existing capability
-> > > > > > granularity does not allow us to distinguish between FW_CMD1 and FW_CMD2.
-> > > > >
-> > > > > It might help if you could phrase this differently, as I'm not
-> > > > > entirely clear on your argument.  LSMs are not limited to enforcing
-> > > > > access controls on requests the kernel understands (see the SELinux
-> > > > > userspace object manager concept), and the idea of access controls
-> > > > > with greater granularity than capabilities is one of the main reasons
-> > > > > people look to LSMs for access control (SELinux, AppArmor, Smack,
-> > > > > etc.).
-> > > >
-> > > > I should note that my understanding of LSM is limited, so some parts of my
-> > > > answers may be inaccurate.
-> > > >
-> > > > What I am referring to is a different level of granularity — specifically,
-> > > > the internals of the firmware commands. In the proposed approach, BPF
-> > > > programs would make decisions based on data passed through the mailbox.
-> > > > That mailbox format varies across vendors, and may even differ between
-> > > > firmware versions from the same vendor.
-> > >
-> > > That helps, thank you.
-> > >
-> > > > > > Here we propose a generic interface that can be applied to all FWCTL
-> > > > > > devices without out-of-tree kernel code at all.
-> > > > >
-> > > > > I expected to see a patch implementing some meaningful support for
-> > > > > access controls using these hooks in one of the existing LSMs, I did
-> > > > > not see that in this patchset.
-> > > >
-> > > > In some cases, the mailbox is forwarded from user space unchanged, but
-> > > > in others the kernel modifies it before submitting it to the FW.
-> > >
-> > > Without a standard format, opcode definitions, etc. I suspect
-> > > integrating this into an LSM will present a number of challenges.
-> >
-> > The opcode is relatively easy to extract from the mailbox and pass to the LSM.
-> > All drivers implement some variant of mlx5ctl_validate_rpc()/devx_is_general_cmd()
-> > to validate the opcode. The problem is that this check alone is not sufficient.
-> >
-> > > Instead of performing an LSM access control check before submitting
-> > > the firmware command, it might be easier from an LSM perspective to
-> > > have the firmware call into the kernel/LSM for an access control
-> > > decision before performing a security-relevant action.
-> >
-> > Ultimately, the LSM must make a decision for each executed firmware
-> > command. This will need to be handled one way or another, and will
-> > likely require parsing the mailbox again.
+On 2026-03-10 18:12:18 [-0700], Eric Biggers wrote:
+> > diff --git a/scripts/modules-merkle-tree.c b/scripts/modules-merkle-tree.c
+> [...]
 > 
-> As it's unlikely that parsing the mailbox is something that a LSM will
-> want to handle,
-
-I believe this approach offers the cleanest and most natural way to support
-all mailbox‑based devices.
-
-> my suggestion was to leverage the existing mailbox parsing in the firmware
-> and require the firmware to call into the LSM when authorization is needed.
+> > +struct file_entry {
+> > +	char *name;
+> > +	unsigned int pos;
+> > +	unsigned char hash[EVP_MAX_MD_SIZE];
 > 
-> > > This removes the challenge of parsing/interpreting the arbitrary firmware commands,
-> > > but it does add some additional complexity of having to generically
-> > > represent the security relevant actions the firmware might request
-> >
-> > The difference here is that the proposed LSM hook is intended to disable
-> > certain functionality provided by the firmware, effectively depending on
-> > the operator’s preferences.
+> Considering that the hash algorithm is fixed, EVP_MAX_MD_SIZE can be
+> replaced with a tighter local definition:
 > 
-> My suggestion would also allow a LSM hook to disable certain firmware
-> functionality; however, the firmware itself would need to call the LSM
-> to check if the functionality is authorized.
-
-This suggestion adds an extra call from the FW to the LSM for every command, even
-for systems which don't have LSM at all. The FW must pass the already parsed data
-back to the LSM; otherwise, the LSM   has no basis to decide whether to accept or
-reject the request.
-
-For example, consider the MLX5_CMD_OP_QUERY_DCT command handled in  
-mlx5ctl_validate_rpc(). DCT in RDMA refers to Dynamically Connected  
-Transport, a Mellanox-specific extension that effectively introduces a new  
-QP‑type family on top of the standard RC/UC/UD transports. This type does not  
-exist for other vendors, each of whom provides its own vendor‑specific  
-extensions. All parameters here are tightly coupled to those specific  
-commands.
-
-It is unrealistic to expect different firmware implementations to supply  
-their data in a common format that would allow the LSM to make a generic  
-decision.
-
-Thanks
-
+>     #define MAX_HASH_SIZE 32
 > 
-> -- 
-> paul-moore.com
+> > +static struct file_entry *fh_list;
+> > +static size_t num_files;
+> > +
+> > +struct leaf_hash {
+> > +	unsigned char hash[EVP_MAX_MD_SIZE];
+> > +};
+> > +
+> > +struct mtree {
+> > +	struct leaf_hash **l;
+> > +	unsigned int *entries;
+> > +	unsigned int levels;
+> > +};
 > 
+> 'struct leaf_hash' is confusing because it's actually used for the
+> hashes of internal nodes, not leaf nodes.
+
+You could still consider the internal nodes as leafs.
+
+> Maybe rename it to 'struct hash' and use it for both the hashes and leaf
+> nodes and internal nodes.
+> 
+> Also, clearer naming would improve readability, e.g.:
+> 
+>     struct merkle_tree {
+>             struct hash **level_hashes;
+>             unsigned int level_size;
+>             unsigned int num_levels;
+>     };
+
+but this could improve it, indeed.
+
+> > +	hash_evp = EVP_get_digestbyname("sha256");
+> 
+> EVP_sha256()
+
+I would suggest to use EVP_MD_fetch() instead.
+
+> > +	hash_size = EVP_MD_get_size(hash_evp);
+> 
+> The old name 'EVP_MD_size()' would have wider compatibility.
+
+EVP_MD_fetch() and EVP_MD_get_size() are openssl 3.0.0+ and nothing
+below 3.0.0 is considered supported (while 3.0.0 is EOL 07 Sep 2026).
+
+Sebastian
