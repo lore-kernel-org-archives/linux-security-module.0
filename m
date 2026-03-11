@@ -1,189 +1,131 @@
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F333E0C45
-	for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2026 16:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773245340; cv=pass; b=BP+VjQK1XH8H7HweKKZX1Uph8oD2U+sceZAUw86IYOzwRuDiA6qeU74Fj897r+ETQVkshtHXfQKT3RgQMGmKUUseH+XxLny+13zeyrm6Ee0UhygMP6mmTZ6qCtCggo6gAUrADB9T6KWY3d9Svgg6tHSmQ56MGXhwbHzUoTnJEH4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773245340; c=relaxed/simple;
-	bh=owVe3Qfob2UO8yuqdH2PqAC+rPmSIbbd71zfyNJWtfE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tmgdbhs7s7mDrYhgvSBBfUF1gh8xodzdpvTI5Csjv7uL9M9LTAwj1TXBLolJbtpGIcWkax2pkW0lJh2UjZqkPuNDHiltW6DK8zEdSsgJ0uiyuC8cLF2gfEkGHo8l1xCUv3oQtskRlNinb/JJFGwnSrS1Y8NTPJFm6cgSBmPmUQY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=e6c+ElXV; arc=pass smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D817C36EA82
+	for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2026 16:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.211
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773247044; cv=none; b=sbrvl+bQ1ONglVo8ZKfVV3JOkopHPtMpI0SW8CCvZhmTc2ieRmHKaF8U0x5NC9X1Jvsco+3wKSJLVM1tcuLpe7+FsPKZY6LFlGpvkBHPNimtUigjQoB2coYWPwl8f7Kqhc3T9Rha/eLCgCDZqA+zwEmX95k7Vu81Sdug6Wo5GeI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773247044; c=relaxed/simple;
+	bh=y5xcwD5HSLcsAkYDhlJFluKvVgMmP8d2ny8wSpR1ago=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CzdCIh9lyZaBmzBPIHVTdIAsQtvNmcHnSIHN2CmTnTgEf6A8D0EeTPtX3oQN03NhM/YLybxSr/OEPH7ObYmM7GaH3+ICFUYUocooaWtqWFsSWJSEtYiR68UzdUzUUkUXNypuvtDJ7Cqif0OjVn6U5m7FnQDUUYiLqPhVg1retj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=CGMGFlqV; arc=none smtp.client-ip=66.163.188.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="e6c+ElXV"
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3599019ae92so6164730a91.0
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2026 09:08:57 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773245337; cv=none;
-        d=google.com; s=arc-20240605;
-        b=PSTroBTzCKlk/YuItrvAyh1kpz2satruxZ0rZJKfgmsnB6Nj0Sl+BeGMgH8sDsB8G9
-         bxQajUP9/94UAF5dt3HxF7yH7vFQQBRoqYjuRnp6u4P2ptnJ9fzCaoxk9OjZDuRG2uvQ
-         LMuyiZSnCS8H5r6VY+u8JgaRezJ7LCiZyt/0HBKG3M13AZFhL4jA4F/6kiZKu2Fjv5b+
-         l8kg+iJrje0+JJo31PgyHDbEyQcl+aEgDneb0wSaob2vuAwoGYt+bOgt60WvTwOK7BaE
-         6N+p3a8yTQwIRYZnD+BS7DGMiO/jsnQPkeg6g2r3BcqOsWIu/TWA6TcXt6aMdeaZdNiP
-         2bBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=JZDNJFGDP5amVq7p/dFv6sOGOZTvq599aR4YcZO7qtw=;
-        fh=cS8MtpM9nhZMjOphG8mcstQkVy0AyA7Kf205RPHW5aY=;
-        b=ay6diC5nPdC0PEjAoCZ3el+0TB+3N9llmuLJXPlynJTLZmAwrvQ7dArZDGEvvlDzGX
-         ivysDhzwKq6u73zm+YdxfELiRjmIDl5JrFEb/DV47BeE+zOx8cU9KxHu2PN2jXxEPMGj
-         5CqRptrtHdOHL+5Cds/5JLF+q3fVeGt14pImAQorsrv9FuJ5ZE47xk6v52lf4YH0oDf/
-         peP1VRReUamKvNEgvibYvFI6AwxIJgYwxnB05+ElM6iMgfJekZxzshjJDVaYtErM4siY
-         mzGP8hgZN64gee0yWBk88Ez4Cm6O97sfunDUZIdGPp995qZQpZe5JGs8eFimARleYr9x
-         MHkg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1773245337; x=1773850137; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JZDNJFGDP5amVq7p/dFv6sOGOZTvq599aR4YcZO7qtw=;
-        b=e6c+ElXV9/S8dBAt4s3Y0Qdq9+tZ8d5cWILHAnHHImVT5PIIkJUyCZiacq7jRwg0wO
-         3Cebb97OPazwIb6fjRP+vY3CtMSNoYR2RIKBrDAwtxeicH+/z2rbTPh7Os6MuY5k4bsk
-         ma028J0ookNSr0KijANIvgZg9rIgryyaHdtXthB65JBFV5watPKOGnOo8nJM04Fvkhcu
-         1sUQwoIi9bTkdmnd5BJfx1eZGuBrZjPCVZAWLHDskfYdbIiO+mBd3Ciep3WaOeYu4bZ3
-         AOcYAN3ypG4b0iCneKQdTkcp00UtTnkzuS2zWuf4D3tjbFYHt0mKsjvS4pJXtGlYQIpi
-         h/Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773245337; x=1773850137;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=JZDNJFGDP5amVq7p/dFv6sOGOZTvq599aR4YcZO7qtw=;
-        b=Wk4E8mAg4c4Vv4wMzT3bUWraUB9/HJmPfQ40bg9/zad6b6+ZF30QLBK0Z7kHWn4tMB
-         wd7I7bUJIuSkDr3MKdMgnNHiSlINaaoIn2cM6WQ4GyDL7UyEtjG3dp2572Yd2TI6zslV
-         7W4Gq0uOg9EwVk8neox68gFyYRy4uN9wqNZh3OgqOLn4T2MnAP0MmaoIXyRPdDkwY4ZE
-         uTfG8CHEIJO2/RZxw194PVqDDgKDbCU4njv25+VuZ+yIirxXKkU0O7ooSu7hqOZFVCHd
-         wVNWvvlz0Nnl8AwFvfNVPittYcNvxDIpjGFO4V/S2+GdF1OzaofpRqUACKwy8zij/aEU
-         PkZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWHOkQzALXOhKU/5VouIyeWxDi+ygxYgfCOKnsQ2Ne/z8JranTbh0uE6LAb4yHUaRP5UU8UwgWC7gqXnE6IMyyyl75MdjM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5p9BAEGAfwOZoUPDlEEnFghp/LQb1Nqix6yjG7f4GPHJXMZ+C
-	dxSw/TyKCmQQa3ry5nLhIQHFSBtHj0fPsrD9mkB/tOz7ff6nF3fDCYWwShhqraSTyDGFg7cjXFt
-	eK9e4ycBXiwRVD2qgVuCkaaWnOJ9/0i3hT6Pohgst
-X-Gm-Gg: ATEYQzxGIgPuMaTyVmHL1D6cjsCGPWXlvq+bnXoTj5wnRZdjCTpGN5y93nSq4eKNb2T
-	HTQ3kwmz14ECF/iu3liVVn6GuEKrg0hb/8BuKJBSbhH6k2wFNml67+OP+c4fbZyRHjDk85WZN30
-	2RqAm6q0KP0CHkiZ/lI1Yu4bz4RwNNwNzNXjOMQS7hMKiPsZzREJ5DUqDkxZlW5kGZccSxGOqxh
-	4/cIUa73CorFH21uWapN9FPk8jclNRUinQSFNGl1Rw8+M+KHwqNG5cromXL8Bb1xewgksNCf/3w
-	HUUc7dc=
-X-Received: by 2002:a17:903:3d05:b0:2ae:3d7d:d905 with SMTP id
- d9443c01a7336-2aeae81490amr32213615ad.23.1773245337226; Wed, 11 Mar 2026
- 09:08:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="CGMGFlqV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1773247036; bh=JZul/JdSQ6BogT6yJzGrSadZ4bqvsCuLBuJ14sn8TgM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=CGMGFlqVhQomt6L84QkqknsGU+LQofKjigDQJeHL9VMCahR2HRJEOnTDVQeKy/WAUOaKW8HW6EAXdbZjU7cYCcl39jvbXI5JeCEGtAAO3tI4I1Mm73Q1CO8QUqf1eQ+UryFJ/2Erg8Xbf5UHDnygFakm215V39u0M4TpAsjQYC7wmGYvx/BB/2yYiKv//Ey84qs5iyeL/f1yHGGgL7WJ+udH3CLp+kcGcfr2Q6gaSSgMnKHEEFH26YSZDAQW5tUNgW0jESwv4q2A7DJGHRIUEWSPmYUhjFWFr4kmo9iN41ZboynaxCamK3HPPxHNmfX3EBpfwjXjVefH5e1q85aGCw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1773247036; bh=hSVufePW+YtcauRSeVZI5MT+lI7ZSWiKwIj0zMSJ1KZ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ulQiNQAfseVkTZtc7DBzjg2TLHo16V4C3VCBgjmjLOC96Ly2hpN0EXhr2u5mKwjEevQRm/Q/H833+ej0znI190dmRENLhFxuJSuNNTojP56Xn3bZCgP4xp2Dw5PUrBHxzjhRZ0bnxGyEuI1Q7ZaWdF9h8HYbhC3yEVmKy/zwYMwcQgWFJ6UYFNtV1lpLG7erCNw8kCmgz5gBkAD4RxRUg5plIGkKY92FMI+cxWSwroqBOaTszMpO22AC7InJqnE2d67zeBqV5ZypyaUsPBRmZSnUbp9Zh045a/XPsIXeQoBUw10OfaxPkwt6Hqs/Wmf9wGrX2q5maLUx7J7EADj5aw==
+X-YMail-OSG: IWPzEmcVM1muBLVPcWpznxJ2erh9bvvVoIfeWYtPSiW_jxQcLfHpnuq0GLIZJEa
+ GZ9WZAMmCZzy7kkZWBzS1ADYU2ekrQBzbSMCihTzHK2wOu8EZmnGNCo1OsPW73G.5Q9mDu2MaQPk
+ AXCO0qLotUfWpu0Zgw0HCckfiX9hqQ26nCCFKFCUoFjWt_lq1XLSwnpnit14EFeEUZf7evZ4F3H8
+ kyV39nZlJrNEmZ9mAlxIHV3nM655C.TfPhvZyfucsc9H.oW8CehG3sihXA_dpXm4sH_tGMjtiO3E
+ QnwyaahTHmDf0VbJJ6IsW9_Zs4nf.jfxRsLIpM1lCODuc6yQuEsoDWAM4wbR7DWvclZsrU1yXfp0
+ .iEYP5n7htgfnweVffKjujw4uBpWkYFqvDqIzsp4j4vhz75KemYRq_K_aZGPc.hwoPNPW8qm8Mpx
+ AQhFqoQXOus7VkmAA6cDnf_3vSjWn7l40QtZTR1ga3aFX0zwp8VG_hancfk2KOEz8Qdm5RpSVoq3
+ zwtDZMwld0.SZtHmNfAgZ7.q6joUr5.e4WfJ2nUJElIOLWHemPj0hAhHDrYelbSnv.B2TB8NvVrX
+ 3Ve.tUf1o7pkToaugwiyaVwqMNg8LL4xiGUsouEtcTvIEmJoPnHQue1QBzUJrDte0AKmMv0I.ZVi
+ DL70MyzJAmcowhX8kbwa0ri4phcec5sQioxkKT.BTNfF4ngJSf7oxZisx0XpMhkpMD0dTY2WqzAa
+ HEccKQU_fr2EHRI3oFIUTy4Exb3CN0Gh0NfsIQnIRHW_gt6PeLZ6J9OTqteLwhVqJQ_mrFJB3X5z
+ VLzRL4xStN1K6EX3Ja8r52lo.gi19mkuo9QdmDPvbbqLe8kk8436_N85PL8mFEoIPpM1AqD5MXlk
+ LOyh2qoOdAaKLKz5nDqd0xpVC2Zw78qx8z5kOq47RapZN2rlHJTNmwMCvp.MgLfA6JJh8CrHsIwx
+ LUryftUrlzzVgYoNWcim_LJtSB2BoiY9lkKahcop5o0ulaTHSzfFlRYFyw_hSynCIVVY5qSwP89e
+ yJ5iv0LXmBz2Gt9fSfpuvN6xzEI4aCcEBmzUloW8DQVMOigoMph5m8o3kner7m9VLDl26jqns2mM
+ kN7SLvzrCZlJtysQ7mujZU.LpBsROp52q79Iu_qiVEnSC_a07SFQGggWZbwrI2acefUvOvh_eBt9
+ bCT7E5ol.45glgm_EcY.6K732p98yD0pc4LZcYQYsezVab5Y50NJT5y8xek8bqh5yjx8n2snlHvF
+ 6ZnKxNnjTEuqsNzROz2rCvmaQkhNDDfMfFOwIP72NfNzjA1suv9iFdIBEr4Q37J3unN5YlI1nXtp
+ ma7DYcxjTF.dujLmv8P2h9M0j5VdP5QnyY9dmNaLaLQqowydUE_5sAFrG3d3ilCOHhptPeLjvsO2
+ AGenv5RB1T4oQZugUNB.VevLm8ByFrNNLSa8iYyDaBO0B4CgkEHBXw1Zm37StsHkojFhhwJlaKqF
+ 6s8gvqdN6WgBk061xgJfnSva7TZbee3mR.BcwnZ4ZA.EuyFp.NiM0ULFLbt4iXdXii5t.wNMiz.j
+ .Cs.02Sld2ayIwPzfYZfrRNwEFGUVQDtYvipgp9IcgHxfZLB60Hxd8yBf3aDViNI41DcNpIdVcUC
+ ZGc1cWdCun_0fuD8RyPFjtAA4UzjSQcTYKk5fZ0uO2enhWUay7V5i7Ns3Fn7mJSxsv6VAcQ3gRFw
+ NiOdHy4y1k2sQMugknjqf1QSaeZgrHuu6RobIl425XxuTHjKaXRbHVe9ctgBh2y8pnvG3we1Ew69
+ m_GnkUVonuBwEvwW8cD3WM.WMQBE3f4UJrfuGGAWQOOV0n7C.ZRIpziudHDsx_v0wQyLQkvSG57w
+ pT2LRkbnntm8U3a_kVC6dYHIrxusBqvGYNJt9igbm7qKc6cdx709Lyv84eO.EXsEVj4I.wKhkEyz
+ XUlXIt6aTxkCYaenrSypsj8a18yT6yGiSEUcX44GtZScpUzgUOJ4nAMVuvgapq3A6a3naPSHKspW
+ Tt7zq0TzowXLn0Ywk9jGvE6QlaIe0qGgRFKjMuBucdCsXiLst.ZbyPdS7N0QLTiJfo6NifTognyO
+ Jnc06HiytbzYpwbUBmd7GwAKHv_usMg9WAXEcVFQUWbtsjE0qFfB_fYpQBlawd6v7DXH4fh6Q6yn
+ VKgQBXWWjt9qxNO7TbrjxXCMb7ac1eqZGXJkcjX9BecjsV25IJ6J8Le9JDbHBTo5k.KzMR9QHc6Y
+ HCdf0FoH5RTuV3F88oJylCWSbXkCp7QuY3JyjzUorQem4XLw8CfzcWEIKTlMmUQCshds1ztIyJDL
+ tKrtk5ba9Sw--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: eb61c581-cb5b-4937-8354-363a1c0a7ab0
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Wed, 11 Mar 2026 16:37:16 +0000
+Received: by hermes--production-gq1-6dfcf9f8b-xs62w (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 24648e7493ca04f0df50e0e0751218f5;
+          Wed, 11 Mar 2026 16:37:15 +0000 (UTC)
+Message-ID: <39aab889-8534-485b-a4c3-b6bcb3889721@schaufler-ca.com>
+Date: Wed, 11 Mar 2026 09:37:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aZcPd3OKqxwCZV-5@suesslenovo> <20260219200459.1474232-1-utilityemal77@gmail.com>
- <20260219.de5dc35ec231@gnoack.org> <CAHC9VhSu=YtE0dMiEtUQgz0pFy5K8cuHh_EWprNtFTDAxhss_w@mail.gmail.com>
- <abFhawSTjNoa-KaH@suesslenovo>
-In-Reply-To: <abFhawSTjNoa-KaH@suesslenovo>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 11 Mar 2026 12:08:43 -0400
-X-Gm-Features: AaiRm51y1oanFGZp0hATWZweBML1M22bqKd3H2ES5tayYiLT9l2hp1VRACvAC4Q
-Message-ID: <CAHC9VhSA=jaKTXg-Tmzzpaj9STGMXH3ZMgQm_XvicimRqdW0+w@mail.gmail.com>
-Subject: Re: [PATCH v6] lsm: Add LSM hook security_unix_find
-To: Justin Suess <utilityemal77@gmail.com>
-Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>, brauner@kernel.org, 
-	demiobenour@gmail.com, fahimitahera@gmail.com, hi@alyssa.is, horms@kernel.org, 
-	ivanov.mikhail1@huawei-partners.com, jannh@google.com, jmorris@namei.org, 
-	john.johansen@canonical.com, konstantin.meskhidze@huawei.com, 
-	linux-security-module@vger.kernel.org, m@maowtm.org, matthieu@buffet.re, 
-	mic@digikod.net, netdev@vger.kernel.org, samasth.norway.ananda@oracle.com, 
-	serge@hallyn.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: LSM namespacing API
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: "Dr. Greg" <greg@enjellic.com>, Paul Moore <paul@paul-moore.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>,
+ linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+ John Johansen <john.johansen@canonical.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
+ <CAHC9VhTeVs7kS9hzukukZRfGu6CC6=Dq4KP69tpEtiFpBJ+jOQ@mail.gmail.com>
+ <CAEjxPJ4urh7mUbDJEi-DbdiAifMM_uDH3m35tLeTdx6z+qhPyg@mail.gmail.com>
+ <CAHC9VhTGruOPJ+NWZT8vw1bjXzkB4DSPFmWd1pC=J2jTYHP5BA@mail.gmail.com>
+ <20260306174815.GA9953@wind.enjellic.com>
+ <ae5e9c1b-d0cd-476b-87d2-70c0bc8ba09c@schaufler-ca.com>
+ <CAEjxPJ7yuJ6sAZ-ViqT04M5WPC9O39m5UUGw2f3+GDR87tvbsA@mail.gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAEjxPJ7yuJ6sAZ-ViqT04M5WPC9O39m5UUGw2f3+GDR87tvbsA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.25198 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Wed, Mar 11, 2026 at 8:34=E2=80=AFAM Justin Suess <utilityemal77@gmail.c=
-om> wrote:
->
-> On Tue, Mar 10, 2026 at 06:39:12PM -0400, Paul Moore wrote:
-> > On Thu, Feb 19, 2026 at 3:26=E2=80=AFPM G=C3=BCnther Noack <gnoack3000@=
-gmail.com> wrote:
-> > > On Thu, Feb 19, 2026 at 03:04:59PM -0500, Justin Suess wrote:
-> > > > Add a LSM hook security_unix_find.
-> > > >
-> > > > This hook is called to check the path of a named unix socket before=
- a
-> > > > connection is initiated. The peer socket may be inspected as well.
-> > > >
-> > > > Why existing hooks are unsuitable:
-> > > >
-> > > > Existing socket hooks, security_unix_stream_connect(),
-> > > > security_unix_may_send(), and security_socket_connect() don't provi=
-de
-> > > > TOCTOU-free / namespace independent access to the paths of sockets.
-> > > >
-> > > > (1) We cannot resolve the path from the struct sockaddr in existing=
- hooks.
-> > > > This requires another path lookup. A change in the path between the
-> > > > two lookups will cause a TOCTOU bug.
-> > > >
-> > > > (2) We cannot use the struct path from the listening socket, becaus=
-e it
-> > > > may be bound to a path in a different namespace than the caller,
-> > > > resulting in a path that cannot be referenced at policy creation ti=
-me.
-> > > >
-> > > > Cc: G=C3=BCnther Noack <gnoack3000@gmail.com>
-> > > > Cc: Tingmao Wang <m@maowtm.org>
-> > > > Signed-off-by: Justin Suess <utilityemal77@gmail.com>
-> > > > ---
-> > > >  include/linux/lsm_hook_defs.h |  5 +++++
-> > > >  include/linux/security.h      | 11 +++++++++++
-> > > >  net/unix/af_unix.c            | 13 ++++++++++---
-> > > >  security/security.c           | 20 ++++++++++++++++++++
-> > > >  4 files changed, 46 insertions(+), 3 deletions(-)
-> >
-> > ...
-> >
-> > > Reviewed-by: G=C3=BCnther Noack <gnoack3000@gmail.com>
-> > >
-> > > Thank you, this looks good. I'll include it in the next version of th=
-e
-> > > Unix connect patch set again.
-> >
-> > I'm looking for this patchset to review/ACK the new hook in context,
-> > but I'm not seeing it in my inbox or lore.  Did I simply miss the
-> > patchset or is it still a work in progress?  No worries if it hasn't
-> > been posted yet, I just wanted to make sure I wasn't holding this up
-> > any more than I already may have :)
->
-> Good Morning Paul,
->
-> Can't speak to the rest of the patch, but I sent this LSM hook for
-> review purposes before inclusion with the rest of the V6 of this patch.
->
-> G=C3=BCnther added his review tag, but I was asked to make some minor com=
-ment / commit
-> message updates. I sent the same patch, with updated comments/commit to h=
-im
-> in a follow up, off-list email to avoid spamming the list. No code change=
-s were
-> made, just comments.
->
-> I don't think this particular patch will change substantially, unless we =
-find
-> something unexpected. But the way we use the hook may change (esp wrt to
-> locking and the SOCK_DEAD state), which is important for your review.
->
-> So you may want to hold off your review until the full V6 series gets sen=
-t so
-> you can review the hook in context. There were some questions about
-> locking that needed proper digging into. [1]
+On 3/9/2026 11:15 AM, Stephen Smalley wrote:
+> On Fri, Mar 6, 2026 at 4:01 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 3/6/2026 9:48 AM, Dr. Greg wrote:
+>>> On Tue, Mar 03, 2026 at 11:46:53AM -0500, Paul Moore wrote:
+>>>
+>>> Good morning, I hope the week is winding down well for everyone.
+>>>
+>>>> On Tue, Mar 3, 2026 at 8:30???AM Stephen Smalley
+>>>>> I think my only caveat here is that your proposal is quite a bit more
+>>>>> complex than what I implemented here:
+>>>>> [1] https://lore.kernel.org/selinux/20251003190959.3288-2-stephen.smalley.work@gmail.com/
+>>>>> [2] https://lore.kernel.org/selinux/20251003191328.3605-1-stephen.smalley.work@gmail.com/
+>>>>> and I'm not sure the extra complexity is worth it.
+>>>>>
+>>>>> In particular:
+>>>>> 1. Immediately unsharing the namespace upon lsm_set_self_attr() allows
+>>>>> the caller to immediately and unambiguously know if the operation is
+>>>>> supported and allowed ...
+>>>> Performing the unshare operation immediately looks much less like a
+>>>> LSM attribute and more like its own syscall.  That isn't a problem
+>>>> in my eyes, it just means if this is the direction we want to go we
+>>>> should implement a lsm_unshare(2) API, or something similar.
+>>> Stephen's take on this is correct, the least complicated path forward
+>>> is a simple call, presumably lsm_unshare(2), that instructs the LSM(s)
+>>> to carry out whatever is needed to create a new security namespace.
+>>>
+>>> There are only two public implementations of what can be referred to
+>>> as major security namespacing efforts; Stephen's work with SeLinux and
+>>> our TSEM implementation.
+>> Please be just a tiny bit careful before you make this sort of assertion:
+>>
+>>         https://lwn.net/Articles/645403/
+> I believe both AppArmor and TOMOYO also have namespacing
+> implementations already upstream, so SELinux is certainly not the only
+> one. Looks like the Smack implementation you cited above was based on
+> extending user namespaces rather than purely Smack-internal like the
+> others; is that why it wasn't ultimately merged?
 
-Great, thanks for the update, that was helpful.  As you recommend,
-I'll hold off on reviewing this further until we have the full context
-of the other patchset; we've already talked about this hook addition a
-few times anyway, and based on a quick look yesterday, nothing
-particularly evil jumped out at me.
+Less sophisticated solutions to the problem Smack namespaces were
+intended to address became available. The effort stalled for lack of
+a use case that required it. Much of what you want a namespace for
+can be accomplished using process specific rules.
 
---=20
-paul-moore.com
+
