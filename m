@@ -1,172 +1,121 @@
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2206298CA3;
-	Wed, 11 Mar 2026 13:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9152F31E827
+	for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2026 13:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773235146; cv=none; b=LebxM1EtPRUiXEUQCPRUNnt8AQyDhItksg4/JBupduR7wxm782FHag5rZyN1Lh3MUCYBGiWoRl2KX4fPlyFYEeYdAG0JpIL+8PjA4T0h7Zd7CehPxDMQW9KUJt/yHePSqHXGKgtuAs28bWpxvFfAVOFncxNMwVO/AFhr+NPzU2k=
+	t=1773235395; cv=none; b=feJjGiPuUc6s2rx5h43Kv+8YsTrIgg2vmrQf5SQHzMmIHgyuEsh5cMhC0nbC2Oi2eOdv6uKC6D/iVpaYw8l8SkHONhBXhniXXYMx8mBm7xYrGm8nahx/WSG9K2QDjsuN/zu7gmfd0Oat9ZqkYMrlEhOuL3olI/cRhF19bKddpqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773235146; c=relaxed/simple;
-	bh=yORSnb4FKH66tX09G1qK8g0oY/Uo2rIpyvZkEjNDm84=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R5nnth5HYYP2Hm+EDAUv+LHfZzN0uASaW/pJw+KxG6wdxYA/wfRzr2z4xESFYy8EO/Sd5dXW62CGpBS9Rnc35jgsk2q5gE7ijSzr1N521qQouONrQ1LFixXQCyUK833xq88JsbbckXcRf4dgw75xxNUvmwMi4mP6VGoUGpREX+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=HQsb0mto; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="HQsb0mto"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1773235142;
-	bh=yORSnb4FKH66tX09G1qK8g0oY/Uo2rIpyvZkEjNDm84=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HQsb0mtoTbwEGco/L3lRbJ0WTajceIyEQmoKsZbs3ijP9DIl6uMUH7DyCJEKEf4Nm
-	 owAHusHX0qnegQ4fOa4IysSRsA4AurPsIoJqlTnoeOwj3DxmUIvbEJueidEPMQxkvz
-	 Uowp8NlWKsfgXCHMDcyu0Ko9Yx9jg/4i7nHbYH8o=
-Date: Wed, 11 Mar 2026 14:19:02 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, Daniel Gomez <da.gomez@kernel.org>, 
-	Aaron Tomlin <atomlin@atomlin.com>, "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, 
-	Nicolas Schier <nsc@kernel.org>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
-	Xiu Jianfeng <xiujianfeng@huawei.com>, Fabian =?utf-8?Q?Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>, 
-	Arnout Engelen <arnout@bzzt.net>, Mattia Rizzolo <mattia@mapreri.org>, 
-	kpcyrd <kpcyrd@archlinux.org>, Christian Heusel <christian@heusel.eu>, 
-	=?utf-8?B?Q8OianU=?= Mihai-Drosi <mcaju95@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-modules@vger.kernel.org, linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v4 15/17] module: Introduce hash-based integrity checking
-Message-ID: <5726fc65-7d24-4353-b341-81b785f2575c@t-8ch.de>
-References: <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
- <20260113-module-hashes-v4-15-0b932db9b56b@weissschuh.net>
- <20260311011218.GA212983@quark>
+	s=arc-20240116; t=1773235395; c=relaxed/simple;
+	bh=bQRlE5OR+3/41N9B/xBGXfMeOTv3hgeQ2WrY6jcTpBY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PB+WDzMZV5gv4xp6tT7Ljn1cyF3ftNSy62CTzxmNd+lrVsaw4wWgapheXZ2ohN/oEqg57TV9qALX7F9OiMIe8jueFrNeCHQEdpvEpz/3RjCM6oaOLs9TYa4Pe8hiJxkKDyZm/w2FEgKFyNfTLbNjZh0BGgcpKsEERPLIlRV487E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-56b18f05f49so2423871e0c.1
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2026 06:23:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773235393; x=1773840193;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=34DR94e/1PAvLLEaib58vFA4GW0m5SGe6jvxchEhMek=;
+        b=LE8W0JJOKGbZIeecNLGV8pHgnIuJjhtSpbmxLijMcqpmAdCC4jiPAQJbvU+AsMx3ax
+         RdgRd5N3oibeIm3RLFIdEq4r7d+hpprWVCFU9D/OCtPXxcnFR4W/eRheddIUXR+QwDpb
+         Yv3Y9jO17UybKp74NF/t7phwwxFanHBVltzKOwj5ozmiTlq7CCEJErM1SI++1q99UaWb
+         IFZCEwNWumcNIVsIgnsoheqVh3W04rxOXDYEBMtGzJ4L1WxjByzZTGT5ADS9hLqslZlb
+         iRDIMEJhlp5GGYym4nQSybKfVuDzCYW4BX1YsRoa83s3DNI2NPL54LB8G8jrmh3ClyJJ
+         +oXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTFzL47Y0Bca5VYueCAJrZVDW8x1fZNZ4ADEh4JLeSmskuZzm0r8SExFMMa14zECC12uyO+EJwpFTlg/0Y5w4adoDOujo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzjtr7kPRSgTyorpUjgWfps1OFacE+2vPxvML59BdPU8vGLoOG0
+	6Y9up3jYb1/gy5HBph47P/epx+nTTQNIH0MZyGJSLMuHW19HkiUjLuuaiJ/7t8bQ/38=
+X-Gm-Gg: ATEYQzx5DkQVY8N5gMJDERJ/xAKIYI5489wSMah/vRwVuBpZE0G6hLAr8MTE/LbQCzU
+	eum/Ekz4rChkgMH9CxvsxqzNfJ0IcbW6eBtGx+xifzwh0Q1S/xZnURprkeUKfKODpsmcO0oRzHE
+	PwP2O+S+XXtFkkucmyCamtLU4wo4RiGvoUM8KGoUauiKKbTPguyqgLaldSYJULzX6A/ORkSlaL0
+	OP5KMAE3gi6DHftdDvINcRuHOx/GOYCwDPjzG+jiaCVgfpM7btbE/wdpzdO6DQz1mXxbqpcdX2v
+	46fubbMM/+N+3u6z2/R8+pXbKHrPhwxU0kmgPHkRFWFiquEwnKnRPw/mvCWXsit5duMSYeuMB17
+	zBFHAvhtMPns3Kqeo2cXm2FMaSlcOqRihNupmCtB8ILXGZCdM6mEOfFnoWL9F24PFjxl554+lBh
+	7jmdKkbQiyRfbh0BmOtQrKbSruoUrtjZanTaIZQC/ANpSpiX6kUJvioYeduyyH
+X-Received: by 2002:a05:6122:6090:b0:566:354d:9f4a with SMTP id 71dfb90a1353d-56b47448dfdmr922156e0c.1.1773235393656;
+        Wed, 11 Mar 2026 06:23:13 -0700 (PDT)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56b46336442sm972083e0c.5.2026.03.11.06.23.13
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Mar 2026 06:23:13 -0700 (PDT)
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-5fff774800cso3500736137.0
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2026 06:23:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUby+IyAP03fsUWbOV6iOk3X5h64kl+SK4DjuCNoyxI4FNRkQ2EjVXMu9+6xvQEIvrQHGnJBrM6FbHpTSinae/z+NLZx2I=@vger.kernel.org
+X-Received: by 2002:a05:6122:1d05:b0:55b:7494:177b with SMTP id
+ 71dfb90a1353d-56b4752d806mr922396e0c.10.1773234967338; Wed, 11 Mar 2026
+ 06:16:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260311011218.GA212983@quark>
+References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de> <20260310-b4-is_err_or_null-v1-36-bd63b656022d@avm.de>
+In-Reply-To: <20260310-b4-is_err_or_null-v1-36-bd63b656022d@avm.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 11 Mar 2026 14:15:56 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXQ8Q4jvkgFRJYhghz2BZRDC-9Mk6DbXxuaOc6C9DFHZQ@mail.gmail.com>
+X-Gm-Features: AaiRm52J84H77ROK64ZWWtJfaiCpnFeKyoSRmPbi-NC8CN6Ju1TJEFxJU9gZQQ8
+Message-ID: <CAMuHMdXQ8Q4jvkgFRJYhghz2BZRDC-9Mk6DbXxuaOc6C9DFHZQ@mail.gmail.com>
+Subject: Re: [PATCH 36/61] arch/sh: Prefer IS_ERR_OR_NULL over manual NULL check
+To: Philipp Hahn <phahn-oss@avm.de>
+Cc: amd-gfx@lists.freedesktop.org, apparmor@lists.ubuntu.com, 
+	bpf@vger.kernel.org, ceph-devel@vger.kernel.org, cocci@inria.fr, 
+	dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org, 
+	gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org, 
+	intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org, 
+	linux-bluetooth@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-hyperv@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-mips@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org, 
+	linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, ntfs3@lists.linux.dev, 
+	samba-technical@lists.samba.org, sched-ext@lists.linux.dev, 
+	target-devel@vger.kernel.org, tipc-discussion@lists.sourceforge.net, 
+	v9fs@lists.linux.dev, Yoshinori Sato <ysato@users.sourceforge.jp>, 
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2026-03-10 18:12:18-0700, Eric Biggers wrote:
-> On Tue, Jan 13, 2026 at 01:28:59PM +0100, Thomas Weißschuh wrote:
-> > The current signature-based module integrity checking has some drawbacks
-> > in combination with reproducible builds. Either the module signing key
-> > is generated at build time, which makes the build unreproducible, or a
-> > static signing key is used, which precludes rebuilds by third parties
-> > and makes the whole build and packaging process much more complicated.
-> 
-> I think this actually undersells the feature.
+On Tue, 10 Mar 2026 at 12:56, Philipp Hahn <phahn-oss@avm.de> wrote:
+> Prefer using IS_ERR_OR_NULL() over using IS_ERR() and a manual NULL
+> check.
+>
+> Change generated with coccinelle.
+>
+> To: Yoshinori Sato <ysato@users.sourceforge.jp>
+> To: Rich Felker <dalias@libc.org>
+> To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+> Cc: linux-sh@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Philipp Hahn <phahn-oss@avm.de>
 
-(...)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> So I think this is how module authentication should have been done
-> originally, and I'm glad to see this is finally being fixed.
+Gr{oetje,eeting}s,
 
-Thanks, that is nice to hear.
+                        Geert
 
-> > +struct module_hashes_proof {
-> > +	__be32 pos;
-> > +	u8 hash_sigs[][MODULE_HASHES_HASH_SIZE];
-> > +} __packed;
-> 
-> Is the choice of big endian for consistency with struct
-> module_signature?  Little endian is the usual choice in new code.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Yes, it's for consistency. But I am fine with either way. Given that
-this is essentially an internal ABI, we could always change it later.
-
-> > diff --git a/include/linux/module_signature.h b/include/linux/module_signature.h
-> > index a45ce3b24403..3b510651830d 100644
-> > --- a/include/linux/module_signature.h
-> > +++ b/include/linux/module_signature.h
-> > @@ -18,6 +18,7 @@ enum pkey_id_type {
-> >  	PKEY_ID_PGP,		/* OpenPGP generated key ID */
-> >  	PKEY_ID_X509,		/* X.509 arbitrary subjectKeyIdentifier */
-> >  	PKEY_ID_PKCS7,		/* Signature in PKCS#7 message */
-> > +	PKEY_ID_MERKLE,		/* Merkle proof for modules */
-> 
-> I recommend making the hash algorithm explicit:
-> 
->         PKEY_ID_MERKLE_SHA256,	/* SHA-256 merkle proof for modules */
-> 
-> While I wouldn't encourage the addition of another hash algorithm
-> (specifying one good algorithm for now is absolutely the right choice),
-> if someone ever does need to add another one, we'd want them to be
-> guided to simply introduce a new value of this enum rather than hack it
-> in some other way.
-
-The idea here was that this will only ever be used for module built as
-part of the kernel build. So the actual implementation could change freely
-without affecting anything.
-
-But I don't have hard feelings about it.
-
-> > +static void hash_entry(const void *left, const void *right, void *out)
-> 
-> Byte arrays should use u8 instead of void
-
-Ack.
-
-> > diff --git a/scripts/modules-merkle-tree.c b/scripts/modules-merkle-tree.c
-> [...]
-> 
-> > +struct file_entry {
-> > +	char *name;
-> > +	unsigned int pos;
-> > +	unsigned char hash[EVP_MAX_MD_SIZE];
-> 
-> Considering that the hash algorithm is fixed, EVP_MAX_MD_SIZE can be
-> replaced with a tighter local definition:
-
-Ack.
-
->     #define MAX_HASH_SIZE 32
-
-IMO it shouldn't even mention 'MAX', as there is only one hash
-algorithm.
-
-(...)
-
-> > +{
-> > +	fprintf(stderr,
-> > +		"Usage: scripts/modules-merkle-tree <root definition>\n");
-> > +	exit(2);
-> 
-> This should show both parameters, <root hash> <new suffix>
-
-Ack.
-
-> But they probably should be flipped to put the output second.
-
-Ack.
-
-> Though, is <new suffix> needed at all?  It looks like it doesn't
-> actually affect the output.
-
-It will be required for compatibility with INSTALL_MOD_STRIP,
-two patches later. I'll move this code into the later patch.
-
-> > +	hash_evp = EVP_get_digestbyname("sha256");
-> 
-> EVP_sha256()
-
-(...)
-
-Ack to all other remarks.
-
-
-Thomas
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
