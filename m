@@ -1,36 +1,36 @@
-Received: from a3-9.smtp-out.eu-west-1.amazonses.com (a3-9.smtp-out.eu-west-1.amazonses.com [54.240.3.9])
+Received: from a3-24.smtp-out.eu-west-1.amazonses.com (a3-24.smtp-out.eu-west-1.amazonses.com [54.240.3.24])
 	(using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6459282F24;
-	Wed, 11 Mar 2026 04:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.3.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3637B2BEFF5;
+	Wed, 11 Mar 2026 04:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.3.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773204972; cv=none; b=rgUgMlnfon0exZhJt8I6Wf7E9BKacj+/O9L14eY/W/j2SsnqVDbE5ExTtcNDFc/oswWykLRRSpvvtKHJbUMvBc2WnRyYASbObYffoBXntlO81caNBsMmfy6LtxZlR4D2O7GitmLa9uuLXHd3m7whQFE0rn3J51mk5CSaowkt0Jg=
+	t=1773204975; cv=none; b=F9dix8nm+Ao0tKmN2dTxREi7luJm+SyIYcVGUXcJCDSsQgcQ3tVU4sVm18bswe6KKO9tA+BN3vsH9Ab9CRA/vI+jAr5h4vjLGHEDfCuXQkP6UadjwI+fMPxv2IL268cLjfzgoj2QLrdW1MX12ueVqD9dsgsO1aa39zVilSRZ8u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773204972; c=relaxed/simple;
-	bh=uJV2zz/ducVoPkYFB1yle8WiBdW8UanZOO7frgI+WDU=;
+	s=arc-20240116; t=1773204975; c=relaxed/simple;
+	bh=VaqweD3LtfEsK7QneXTpi/awIl0W4xo3MVnNRstgKyg=;
 	h=In-Reply-To:References:From:To:Cc:Subject:Message-ID:Date:
-	 MIME-Version:Content-Type; b=aCXdFNMgpLZ8Zq4UR2+s8Nnpm0Mjogkx44OpIgPg6YTzNXTqxhGZyua4AxGw6E3imFzUP8OCumSePbC5XPWJIMNKnwBttjav3G3yGHNxACMDET4rWO9pCZKT/mC6Zc+crbq6++dujxmKtBJNXZ7FLjV5W+Emv0q1JBpwWzDlEeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matrixforgelabs.com; spf=pass smtp.mailfrom=send.matrixforgelabs.com; dkim=pass (1024-bit key) header.d=matrixforgelabs.com header.i=@matrixforgelabs.com header.b=D5D93veQ; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=EjzwuL3J; arc=none smtp.client-ip=54.240.3.9
+	 MIME-Version:Content-Type; b=sUI5pkWG8liZ8k1NKFtEswSyS78906ytGrMPPbD6Kz/4qFnGnCVmBllbRx0WCeHVWmDxhQBm5cE0YEZsDBFs3HYvLhU22u86Uxv9/6zXZ5jRx5OGyc9KdE/5j1NvHR9/wrkNvvvfVT+kIU2yz72NxT/Xoi7RBVDMJSoEflMLFds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matrixforgelabs.com; spf=pass smtp.mailfrom=send.matrixforgelabs.com; dkim=pass (1024-bit key) header.d=matrixforgelabs.com header.i=@matrixforgelabs.com header.b=qlC/IHYU; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=IoInumb+; arc=none smtp.client-ip=54.240.3.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matrixforgelabs.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=send.matrixforgelabs.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=matrixforgelabs.com header.i=@matrixforgelabs.com header.b="D5D93veQ";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="EjzwuL3J"
+	dkim=pass (1024-bit key) header.d=matrixforgelabs.com header.i=@matrixforgelabs.com header.b="qlC/IHYU";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="IoInumb+"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple; s=resend;
-	d=matrixforgelabs.com; t=1773204969;
+	d=matrixforgelabs.com; t=1773204972;
 	h=In-Reply-To:References:From:To:Cc:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Content-Type;
-	bh=uJV2zz/ducVoPkYFB1yle8WiBdW8UanZOO7frgI+WDU=;
-	b=D5D93veQzhi55U96tMOVxACBDcl016KFc0TzCYELjBRDiJUZKdnk3ybOqWsoVGE+
-	dZ9qmzbMPe0B1TuGS5p5MEfTIQE2YG+9dm61KsfN6dJGYIDMaNbdx3XPKl/HocDJabC
-	A3iFK+s7L9XMQcShxtHLI4RcVVr/XGrSZPZolako=
+	bh=VaqweD3LtfEsK7QneXTpi/awIl0W4xo3MVnNRstgKyg=;
+	b=qlC/IHYUgcEIPcJEuhMIMAz0uR3fOVI+PEAussJXk7JYey3G+UOLTRtMh9yitQT6
+	9Lm2L/NxmxMdlE770KdRivWgnY9AUws7hT5uDy/YXAQYImsUZFaHRVHsn916PNacLjp
+	gv955985iRcYyOHSg/6xD8Y4td12tokhNioyPlzw=
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=ihchhvubuqgjsxyuhssfvqohv7z3u4hn; d=amazonses.com; t=1773204969;
+	s=ihchhvubuqgjsxyuhssfvqohv7z3u4hn; d=amazonses.com; t=1773204972;
 	h=In-Reply-To:References:From:To:Cc:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Content-Type:Feedback-ID;
-	bh=uJV2zz/ducVoPkYFB1yle8WiBdW8UanZOO7frgI+WDU=;
-	b=EjzwuL3JUVD/4VspM3nQ8b9pc2UuHg3YerhP3i1P3w6Xj5QG6/pGf/SLn6iFKeAO
-	mp5tCOvT56rSdoNEuvMoP1cni8FLtIntUUfY7nlo78r+Ayv+NPU+2eBFBi52RhbSqwX
-	48steTD/KU+1v4j7HA6VPlj4AlgO+sUlYFBrOF8s=
+	bh=VaqweD3LtfEsK7QneXTpi/awIl0W4xo3MVnNRstgKyg=;
+	b=IoInumb+tMkx8pC0clOsbvurbLfGD29mR5zHnaSLyZC569VwKQYJ9PObUOXrWApv
+	o5bx+1P+553E8rm8mc5CpwSwHE/959FWKq1keri+qKuWTjQXb3qXGDtOQB5RvCF3ncr
+	4mWW2GkshTZVPbYjNcmWEuTqQjDkEv3Ajxpav6zg=
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260311045601.649904-1-jamie@matrixforgelabs.com>
 References: <20260311045601.649904-1-jamie@matrixforgelabs.com>
@@ -38,10 +38,11 @@ From: Jamie Lindsey <jamie@matrixforgelabs.com>
 To: rust-for-linux@vger.kernel.org, linux-security-module@vger.kernel.org
 Cc: ojeda@kernel.org, paul@paul-moore.com, aliceryhl@google.com, 
 	jmorris@namei.org, serge@hallyn.com, jamie@matrixforgelabs.com
-Subject: [PATCH 2/5] rust: helpers: add C shims for LSM hook initialisation
-Message-ID: <0102019cdb409740-bfddbbc2-a142-4e0c-99e7-5fa80ba23858-000000@eu-west-1.amazonses.com>
+Subject: [PATCH 4/5] security: add Rust LSM sample
+ (CONFIG_SECURITY_RUST_LSM)
+Message-ID: <0102019cdb40a230-be475611-1a6d-4157-bf6d-ae97aa190e40-000000@eu-west-1.amazonses.com>
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 11 Mar 2026 04:56:09 +0000
+Date: Wed, 11 Mar 2026 04:56:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -50,113 +51,217 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Feedback-ID: :1.eu-west-1.dUvNRtpqGVRXeo8wh60CXsl7GQehaaQ6nnrtD0cVQa3Ql6wtvHFwU/L0ElxknTtyiIJqbukn1OjAm5wWeKC4/L/mSl4kXjXWbCD+H4nPl2leK4flNX+koNzOtq4VJ309U1FPreISQBpCbnqANIVuwUyneL8ocSNAtI9Qxd/4vCM=:1.eu-west-1.xc5b6Z4+0WlftYwtQHAHsTtsfYdZQImSOXWypZD9BdY=:AmazonSES
-X-SES-Outgoing: 2026.03.11-54.240.3.9
+X-SES-Outgoing: 2026.03.11-54.240.3.24
 
-struct security_hook_list carries __randomize_layout, making its fields
-inaccessible to Rust code (bindgen sees the natural field order, which
-may differ when CONFIG_RANDSTRUCT is active).  Add thin C wrapper
-functions that call LSM_HOOK_INIT() =E2=80=94 the existing C macro that =
-handles
-the randomised layout correctly =E2=80=94 so that Rust can populate=
- hook slots
-without touching struct fields directly.
+Add a minimal reference LSM written in Rust using the kernel::lsm
+abstraction layer introduced in the preceding patch.  The module:
 
-Three hook shims are provided (file_open, task_alloc, task_free) plus a
-wrapper for security_add_hooks() which is __init and must carry that
-annotation to ensure correct placement in the init text section.
+- Implements all three v1 hooks (file_open, task_alloc, task_free).
+- Logs each invocation via pr_info() and returns 0 (allow) for every
+  operation.  It enforces no policy.
 
-Hook signatures verified against union security_list_options generated
-from lsm_hook_defs.h: all three match exactly, including u64 for
-task_alloc's clone_flags parameter (not unsigned long).
+Purposes:
+1. Compile-test vehicle for=
+ kernel::lsm.
+2. API demonstration: shows exactly what an LSM author writes=
+.
+3. Boot-test reference: if /sys/kernel/security/lsm lists
+   "rust_lsm_sample" after boot, hook registration works end-to-end.
+
+LSM_ID_UNDEF is used as the identity constant; a permanent LSM_ID_*
+value from include/uapi/linux/lsm.h will be requested as part of the
+upstream patch series.
+
+Activated via lsm=3D kernel command-line parameter =
+or CONFIG_LSM Kconfig
+string.  Requires CONFIG_SECURITYFS=3Dy for =
+/sys/kernel/security/lsm to
+be visible.
+
+Compiled and boot-tested on Linux =
+7.0-rc2 (commit 4ae12d8b).
 
 Assisted-by: Claude:claude-sonnet-4-6
 ---
- rust/helpers/helpers.c |  1 +
- rust/helpers/lsm.c     | 49 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 50 insertions(+)
- create mode 100644 rust/helpers/lsm.c
+ security/Kconfig              |  2 ++
+ security/Makefile             |  1 =
++
+ security/rust_lsm/Kconfig     | 14 ++++++++
+ security/rust_lsm/Makefile =
+   |  2 ++
+ security/rust_lsm/rust_lsm.rs | 66 ++++++++++++++++++++++++++++=
++++++++
+ 5 files changed, 85 insertions(+)
+ create mode 100644 =
+security/rust_lsm/Kconfig
+ create mode 100644 security/rust_lsm/Makefile
+ create mode 100644 security/rust_lsm/rust_lsm.rs
 
-diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-index a3c42e51f00a..c496917be073 100644
---- a/rust/helpers/helpers.c
-+++ b/rust/helpers/helpers.c
-@@ -35,6 +35,7 @@
- #include "io.c"
- #include "jump_label.c"
- #include "kunit.c"
-+#include "lsm.c"
- #include "maple_tree.c"
- #include "mm.c"
- #include "mutex.c"
-diff --git a/rust/helpers/lsm.c b/rust/helpers/lsm.c
+diff --git =
+a/security/Kconfig b/security/Kconfig
+index 6a4393fce9a1..fbd1ad4d36e8 =
+100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -301,6 +301,8 @@ config SECURITY_COMMONCAP_KUNIT_TEST
+=20
+ 	  If unsure, say N.
+=20
++source "security/rust_lsm/Kconfig"
++
+ source "security/Kconfig.hardening"
+=20
+ endmenu
+diff --git =
+a/security/Makefile b/security/Makefile
+index 4601230ba442..f04f10a1592f =
+100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -26,6 +26,7 @@ obj-$(CONFIG_CGROUPS)			+=3D device_cgroup.o
+ obj-$(CONFIG_BPF_LSM)			+=3D bpf/
+ obj-$(CONFIG_SECURITY_LANDLOCK)		+=3D =
+landlock/
+ obj-$(CONFIG_SECURITY_IPE)		+=3D ipe/
++obj-$(CONFIG_SECURITY_RUS=
+T_LSM)		+=3D rust_lsm/
+=20
+ # Object integrity file lists
+ obj-$(CONFIG_INTEGRITY)			+=3D integrity/
+diff --git =
+a/security/rust_lsm/Kconfig b/security/rust_lsm/Kconfig
 new file mode 100644
-index 000000000000..fb475428fd0d
+index 000000000000..e2c3c45b9f7f
 --- /dev/null
-+++ b/rust/helpers/lsm.c
-@@ -0,0 +1,49 @@
++++ b/security/rust_lsm/Kconfig
+@@ -0,0 +1,14 @@
++# =
+SPDX-License-Identifier: GPL-2.0
++config SECURITY_RUST_LSM
++	bool "Rust LSM sample"
++	depends on SECURITY && RUST
++	help
++	  A minimal Linux Security Module written in Rust that demonstrates
++	  the kernel::lsm abstractions.  It logs file_open, task_alloc, and
++	  task_free events via pr_info().
++
++	  This module serves as a reference=
+ implementation and compile-test
++	  vehicle for the Rust LSM abstraction =
+layer.  It imposes no policy
++	  =E2=80=94 all hook implementations return =
+0 (allow) after logging.
++
++	  If unsure, say N.
+diff --git =
+a/security/rust_lsm/Makefile b/security/rust_lsm/Makefile
+new file mode 100644
+index 000000000000..26a2319da08e
+--- /dev/null
++++ b/security/rust_lsm/Makefile
+@@ -0,0 +1,2 @@
++# =
+SPDX-License-Identifier: GPL-2.0
++obj-$(CONFIG_SECURITY_RUST_LSM) +=3D =
+rust_lsm.o
+diff --git a/security/rust_lsm/rust_lsm.rs =
+b/security/rust_lsm/rust_lsm.rs
+new file mode 100644
+index 000000000000..3afba383ef65
+--- /dev/null
++++ b/security/rust_lsm/rust=
+_lsm.rs
+@@ -0,0 +1,66 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
-+#include <linux/lsm_hooks.h>
++//! Rust LSM sample =E2=80=94 reference implementation of the kernel::lsm =
+abstractions.
++//!
++//! This module demonstrates how a Linux Security =
+Module is written in Rust.
++//! It registers three hooks (file_open, =
+task_alloc, task_free), logs each
++//! invocation via pr_info!(), and =
+allows every operation.
++//!
++//! It is not a policy module =E2=80=94 it =
+enforces nothing.  Its purpose is to:
++//!
++//! 1. Serve as a compile-test =
+vehicle for the kernel::lsm abstraction layer.
++//! 2. Demonstrate the API =
+surface that upstream-bound LSMs should target.
++//! 3. Provide a boot-test=
+ reference: if the kernel boots with this LSM
++//!    enabled and =
+/sys/kernel/security/lsm lists "rust_lsm_sample", the
++//!    hook registration machinery is working end-to-end.
++//!
++//! Assisted-by: Claude:claude-sonnet-4-6
 +
-+/*
-+ * Hook list initializers.
-+ *
-+ * struct security_hook_list carries __randomize_layout, so its fields =
-must
-+ * never be set by Rust code directly (bindgen sees only the =
-"natural" field
-+ * order, which may differ when CONFIG_RANDSTRUCT is =
-enabled).  These helpers
-+ * wrap LSM_HOOK_INIT(), the C macro the kernel =
-already uses for this purpose,
-+ * so that Rust can safely obtain an =
-initialised security_hook_list without
-+ * ever touching the struct's =
-fields directly.
-+ */
++// The build system injects #=
+![no_std] for all kernel Rust objects; do not repeat it.
 +
-+__rust_helper void
-+rust_helper_lsm_hook_init_file=
-_open(struct security_hook_list *hl,
-+				    int (*fn)(struct file *))
-+{
-+	*hl =3D (struct security_hook_list)LSM_HOOK_INIT(file_open, fn);
++// Required by pr_info! and other kernel logging macros.
++const __LOG_PREFIX: &[u8] =3D b"rust_lsm_sample\0";
++
++use kernel::bindings;
++use kernel::lsm;
++use kernel::prelude::*;
++
++/// The Rust LSM sample implementation.
++struct RustLsmSample;
++
++impl lsm::Hooks for RustLsmSample {
++    fn file_open(file: =
+&kernel::fs::File) -> Result {
++        pr_info!("rust_lsm: file_open =
+flags=3D{:#x}\n", file.flags());
++        Ok(())
++    }
++
++    fn task_alloc(task: &kernel::task::Task, clone_flags: u64) -> Result {
++        pr_info!(
++            "rust_lsm: task_alloc pid=3D{} =
+clone_flags=3D{:#x}\n",
++            task.pid(),
++            clone_flags
++        );
++        Ok(())
++    }
++
++    fn task_free(task: =
+&kernel::task::Task) {
++        pr_info!("rust_lsm: task_free pid=3D{}\n", =
+task.pid());
++    }
 +}
 +
-+__rust_helper void
-+rust_helper_lsm_hook_init_task_alloc(struct =
-security_hook_list *hl,
-+				     int (*fn)(struct task_struct *, u64))
-+{
-+	*hl =3D (struct security_hook_list)LSM_HOOK_INIT(task_alloc, fn);
-+}
-+
-+__rust_helper void
-+rust_helper_lsm_hook_init_task_free(struct =
-security_hook_list *hl,
-+				    void (*fn)(struct task_struct *))
-+{
-+	*hl =3D (struct security_hook_list)LSM_HOOK_INIT(task_free, fn);
-+}
-+
-+/*
-+ * security_add_hooks() is __init =E2=80=94 it installs callbacks into the=
- static-call
-+ * table and must only be called during kernel initialisation=
-.  This wrapper
-+ * keeps the __init annotation so the linker places it =
-alongside the rest of
-+ * the init text, and Rust callers invoke it only =
-from their own __init path
-+ * (the lsm_info.init callback).
-+ */
-+void __init
-+rust_helper_security_add_hooks(struct security_hook_list =
-*hooks, int count,
-+			       const struct lsm_id *lsmid)
-+{
-+	security_add_hooks(hooks, count, lsmid);
-+}
++// Register RustLsmSample with the kernel LSM =
+framework.
++//
++// This macro generates:
++//   - A static `lsm_id` =
+identifying this module as "rust_lsm_sample".
++//   - A static =
+`security_hook_list[3]` array (filled by C shims via LSM_HOOK_INIT).
++//   - An `unsafe extern "C"` init function that calls =
+security_add_hooks().
++//   - A static `lsm_info` in the `.lsm_info.init` =
+ELF section so that
++//     security_init() discovers and calls the init =
+function at boot.
++//
++// LSM_ID_UNDEF is used during development.  A =
+permanent LSM_ID_* value from
++// include/uapi/linux/lsm.h will be =
+requested as part of the upstream patch series.
++kernel::define_lsm!(
++    RustLsmSample,
++    "rust_lsm_sample\0",
++    bindings::LSM_ID_UNDEF =
+as u64
++);
 --=20
 2.53.0
 
