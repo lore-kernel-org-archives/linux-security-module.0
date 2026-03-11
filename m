@@ -1,267 +1,185 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826FA30C35F;
-	Wed, 11 Mar 2026 08:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773217176; cv=fail; b=T9WkMSW71T7J+V/RKLcCjb8SfD0YVZizd0tY0XyseD39yM5gsmWPqyzRxSv7XbWoZuiNWbDAmCLDjc+95ORb2fIez8t42yCCx25P556TDCB8JRmmB2BrR9XjrA9xm+RmcTNfEPE8hQYjEzY/7FNpD3g+b79EKd3u3Ro8AWRSq3Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773217176; c=relaxed/simple;
-	bh=/ef+jK0YkTsaCNho9PZIEWOi4UpNIRGBY/ukEGrwSAI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=bj2Tc5XqTQrLpjvydwQr8dO3Y7xHlf/IR5nqhPIp4fkuvj5kbUeI4jKOpwnre6yazzQs1/M1fwJF+3yVx/ddkrD8y78gJzh2/85SmDoZYIfJDI0OpfBUpTkeBuwHKt4H4loOTFax+um/jo5umDpyK8DN2AG4RgCFcUSKG7l1/B8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SqfgfEUm; arc=fail smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33320358360;
+	Wed, 11 Mar 2026 08:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773217200; cv=none; b=TrhsUW04nhAUnfsQ/O23oQicNd8C0lXqJtTxejwc7jF2i7ycXfdSYgt7ISopt9kCCDGhm7jZ30fsVkHNoVXNlY5XvJnNANR80o/fLCBf1uHM2H/VwhXHwQcG305LncgYkUYoThc1u67Xp0as4Dycpjzde/JUusoNZaXUfqtSb58=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773217200; c=relaxed/simple;
+	bh=wIlfCxEWTnTMirM0Hzxi5elWcq+7xLnpDh8qwCD9JLI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hwKvpby4CgTSv/ZUhloO+PDZtJCnPN3qX/xM6XJlx3yf5y/JF+2dedD5GTyoVhY1AWtA+qP5MwwqHvcOJiVOGVvb9/sk6k+yXLoFW+aRmgrc4u3c5owQsoa7burBsYd05ljGrzVLhna2tZnB7oRUMLD6qhu7b8/v2557wlIBeZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZUXCHBaj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SqfgfEUm"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1773217175; x=1804753175;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=/ef+jK0YkTsaCNho9PZIEWOi4UpNIRGBY/ukEGrwSAI=;
-  b=SqfgfEUmXMwoyLjBHFI8Bap0RxSF9UH83cvxFN91bLplSDWbvnHth8Mc
-   vp7yRecHsf1Vb3hMqrpISysQ5G7PhEVn4CoomESodoQRBQ+XSg5zcOjW+
-   XkYDXcSIG6Hn4MMxKtG96T2Q3eorOpFw78MD8U3kPLI2btVvFweLnra8J
-   5bSJBEqU16jzDXQ0Aj456NsALt7n+yW44Gl2PFWZvUMKsglFkn6ug6acJ
-   X7/Kb3IeJX+/nrjRrY+For50erXJ04IWPH8VrOE6BU/BajNSUgCgy+zxo
-   edm3KSaArlfOABZ893i0bNx3mEhMcJTebG5ecfnumovuTN0mORZqTEtqZ
-   A==;
-X-CSE-ConnectionGUID: WlyuI4XHS52c4s3jMkd4jw==
-X-CSE-MsgGUID: UKwBjY7HS2uPNyoqPRuKdA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11725"; a="78133106"
-X-IronPort-AV: E=Sophos;i="6.23,113,1770624000"; 
-   d="scan'208";a="78133106"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2026 01:19:33 -0700
-X-CSE-ConnectionGUID: 5S9cH0XpR8WSgUZGhQWMXg==
-X-CSE-MsgGUID: vsD02ZUFQyedQpUuP67l8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,113,1770624000"; 
-   d="scan'208";a="216669451"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2026 01:19:31 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Wed, 11 Mar 2026 01:19:30 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Wed, 11 Mar 2026 01:19:30 -0700
-Received: from CH4PR04CU002.outbound.protection.outlook.com (40.107.201.67) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Wed, 11 Mar 2026 01:19:30 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X6x7DOxwYL2URrNljXUye9/pkkJEgGvMluK0lJvrxOuC0xbXj7FAX30FaacLX8YhZ0OPHvObfLJMQO/2SN+g35yiqaoD0NRLoUjVpE+2Q20auqMH/3eN8vNqeXNA0qqon9XPsaIe92fDZVh+Mg1UkmBsd9SsRDy4gIp0tNH66nGK1sHczu/E46/iEpMu3OTnw5VrTffX0fgcASGq/Ie7EXqV/nMY/jUbQKm5RmjvL6qjRWcWKx6ViJTBK/cyTXPT4S2tdWggG498XtLIIpii+AJvy2fTLtiYSBf15Q9eG3T+Ca0gqQjmJsGaeiN50sqItyfsZKYw9iiBzpM1lzZGkw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/ef+jK0YkTsaCNho9PZIEWOi4UpNIRGBY/ukEGrwSAI=;
- b=H0VSauvRFB1tI8e0jq/4o+oqrWBjsBXRh7ExZegW3lLMuyS/pJ8v4XumtQgojS1iLuwQTGOV+prn9tIE9yLvCiPKb0LgzbgzTM91/8bsXzhSMk92RR9XdGex53qyRcZXOcTP8vXLmFmQINKNoLGDVP5PXaQO/TMnuutqnu9OmCV1ulxV7byf9gzFy0GUcZG79usH9ZV1Iv++LyV/eXJAJeavY0sG/e2QjPhRrgpLP4eMPT0EII6zOos+2wm5EvsoXAp/yqRiVl/sKShbUTDOq+/0mmlp5E5Wj0FJ/f3VGv3eIPxXujghHwmOa0nhwqTjYIAM2NmfqC6EEZaXDgxY6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from IA3PR11MB8986.namprd11.prod.outlook.com (2603:10b6:208:577::21)
- by LV8PR11MB8510.namprd11.prod.outlook.com (2603:10b6:408:1e8::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.11; Wed, 11 Mar
- 2026 08:19:22 +0000
-Received: from IA3PR11MB8986.namprd11.prod.outlook.com
- ([fe80::e6f0:6afb:6ef9:ab5c]) by IA3PR11MB8986.namprd11.prod.outlook.com
- ([fe80::e6f0:6afb:6ef9:ab5c%5]) with mapi id 15.20.9700.010; Wed, 11 Mar 2026
- 08:19:22 +0000
-From: "Loktionov, Aleksandr" <aleksandr.loktionov@intel.com>
-To: Philipp Hahn <phahn-oss@avm.de>, "amd-gfx@lists.freedesktop.org"
-	<amd-gfx@lists.freedesktop.org>, "apparmor@lists.ubuntu.com"
-	<apparmor@lists.ubuntu.com>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, "cocci@inria.fr"
-	<cocci@inria.fr>, "dm-devel@lists.linux.dev" <dm-devel@lists.linux.dev>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"gfs2@lists.linux.dev" <gfs2@lists.linux.dev>,
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-	"intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "kvm@vger.kernel.org"
-	<kvm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-block@vger.kernel.org"
-	<linux-block@vger.kernel.org>, "linux-bluetooth@vger.kernel.org"
-	<linux-bluetooth@vger.kernel.org>, "linux-btrfs@vger.kernel.org"
-	<linux-btrfs@vger.kernel.org>, "linux-cifs@vger.kernel.org"
-	<linux-cifs@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-erofs@lists.ozlabs.org"
-	<linux-erofs@lists.ozlabs.org>, "linux-ext4@vger.kernel.org"
-	<linux-ext4@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "linux-hyperv@vger.kernel.org"
-	<linux-hyperv@vger.kernel.org>, "linux-input@vger.kernel.org"
-	<linux-input@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-leds@vger.kernel.org"
-	<linux-leds@vger.kernel.org>, "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>, "linux-mips@vger.kernel.org"
-	<linux-mips@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-modules@vger.kernel.org" <linux-modules@vger.kernel.org>,
-	"linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
-	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-sctp@vger.kernel.org" <linux-sctp@vger.kernel.org>,
-	"linux-security-module@vger.kernel.org"
-	<linux-security-module@vger.kernel.org>, "linux-sh@vger.kernel.org"
-	<linux-sh@vger.kernel.org>, "linux-sound@vger.kernel.org"
-	<linux-sound@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com"
-	<linux-stm32@st-md-mailman.stormreply.com>,
-	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, "ntfs3@lists.linux.dev"
-	<ntfs3@lists.linux.dev>, "samba-technical@lists.samba.org"
-	<samba-technical@lists.samba.org>, "sched-ext@lists.linux.dev"
-	<sched-ext@lists.linux.dev>, "target-devel@vger.kernel.org"
-	<target-devel@vger.kernel.org>, "tipc-discussion@lists.sourceforge.net"
-	<tipc-discussion@lists.sourceforge.net>, "v9fs@lists.linux.dev"
-	<v9fs@lists.linux.dev>
-CC: Phillip Lougher <phillip@squashfs.org.uk>
-Subject: RE: [Intel-wired-lan] [PATCH 13/61] squashfs: Prefer IS_ERR_OR_NULL
- over manual NULL check
-Thread-Topic: [Intel-wired-lan] [PATCH 13/61] squashfs: Prefer IS_ERR_OR_NULL
- over manual NULL check
-Thread-Index: AQHcsKKX2fg+jweOV02/w33fa6lR77Wo/jSg
-Date: Wed, 11 Mar 2026 08:19:22 +0000
-Message-ID: <IA3PR11MB89862A758B9D064ED69DDEFAE547A@IA3PR11MB8986.namprd11.prod.outlook.com>
-References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
- <20260310-b4-is_err_or_null-v1-13-bd63b656022d@avm.de>
-In-Reply-To: <20260310-b4-is_err_or_null-v1-13-bd63b656022d@avm.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA3PR11MB8986:EE_|LV8PR11MB8510:EE_
-x-ms-office365-filtering-correlation-id: e8b0c821-2d3f-4cc9-93af-08de7f46e668
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014|38070700021|921020|56012099003|22082099003|18002099003;
-x-microsoft-antispam-message-info: hyIuLUdmPyLzFfo/AMlIgUhhPpxXs27MqgAcsjs3Lri9dZWGQ5+fJQ1xWd8ZICk+wRis9iHYgsfZNVJ7jkWWDmFCNCV8kgbZKJlJfRNFyAspZsHjUK8GuRP2mfAL52msAf5GSElgzxcXii8zigcZ2ryUL7j8/4SNLIl5VyYkLT1yroOARCGG/WEyuf4tG/uc2H3MEDJhclHNB0LS7X6mxBbL5fB9NvyIP4lyNKMBwNKVFM3Mjaf+9wFkQBlnfH/Iix3qoDyr0Db1QFfhi/8Tab8b3B1mrEdPW85Kxuriria1pFrWGRUraaG6oRMtPONRUwJnepMR0AWDZSDUF9rzHGvvg5owyPeXf9trGZR2wey3G3QSzs216LtP6d955vO8Msnp92wZz174C+XkIsNGJCupjXktimz09COEuUYxgEwEVnxrAU/iX+PUqnoLZJolB97WMvzkGwqGt0NDJfKP5Y9eqiVm4RUn7IVxfXSvypR+l+Br036/OsOWsR0WvlwkZ7HZQmZwEOIGhD6MEQQIVSgYUhE5yDNKNX1tpNmVNxzMy+dB9deYm2IYTdcC0Ugc/mJu36P8u3i1vhrRrRtXVxmaeREovrXHsz/DzvxYsAWq/oBYKm2+FhLXVAyqOyF5qH/bLfCZijH0D1Bv4+iOy0u7ONlVBTxbOr5Y9JwqqH9p7jkhWALVMfPuloIvXuVs1JpzFIWvYpe755VYqBYIpVEaNwBvF9ONxe7vaRpvSfgCEtGZ+lgB7Cj2x5eqwIAqFLvGI1zZ1oGsiYpofTLbJlkPqlbZe1keXc5yayewRg43f8P95QMeCWPzC5G7dys2
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA3PR11MB8986.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(38070700021)(921020)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?aWRZSndyN3p6MVJLdm8wQWtCdUs5MzFPRTJMOUFSK1hTVGFzM3phb0d3cyto?=
- =?utf-8?B?bU9zV2k5UlJNUVVCZzFhd2gvdEpicW95VFFqY1pxcTRCNjU5ZzNKRWtQMktN?=
- =?utf-8?B?MFl6ai8xbUR2Y3I2SjlwRmQ3aXNDTXZRNmZ5eWo5b0dndEI5eG1NNXZxYzg5?=
- =?utf-8?B?Szl1U0MvTit4bkRMeW5WZmZlYkQrRzVBVjZocnVqQytGY3RFVmVnNkVwTity?=
- =?utf-8?B?NE00YTNXYjAydXZtQ3I3NFE2MnNlZ2pxb3U2MmkwcC9haUk2ZGZlbEZFMWl2?=
- =?utf-8?B?eHRuaDlzU1ZGUWg1UlhlaXcvZnZNZTZISVdCSUgrMVB3eGt3MGhjUGxjZ05i?=
- =?utf-8?B?a25ZNmR6bDBOenBaaHhvcDVSdWRFb0k5MWRML1VTZlVwRkhRTE5Idk1rN3lD?=
- =?utf-8?B?MndNazNEbFo5UXRiQ3FOcFRqUXl3ZE5lOUdKWUo3Y1VVVEFodXowMUFXNWl3?=
- =?utf-8?B?bG16S1pGMjdJNzBmd2U3a3BvS3Y3b1FrMkcrcEJIY2o1QUYxbDRseFZ6bS9n?=
- =?utf-8?B?UkxJWnoxMXBETlRlaGpjR1J2d2NwYkdYejZMSDEzY1lrQzRkSllpeVE1TmYr?=
- =?utf-8?B?bWd3RWh6MHhLM1dYblFaNkNsTnNoQUs2eThTZUs3dGJRUlkvUUxwcEg0WUZs?=
- =?utf-8?B?Sm0vMWxIUExwV2tjR1dxMlROZkJnTWxVWisxK0V2SHZtU3Mrb1gzRVF0aDhL?=
- =?utf-8?B?ZTdtSUh4cS9zbFpjeFF4OW03U3NsV1FUcmdZRjRHWWlMK0ZKVnRrd2ZSVUpw?=
- =?utf-8?B?bGlJWUN3TnhVOE9iZzNMT3RWRE1OR2xES1dZcDJ6alBmOGxMcTg5QittRUha?=
- =?utf-8?B?UXVCS1Nka2wrM2NKcFVLaXc4OEgyUzhVRU1ydGJkMXp1V2RQdGc4NGUvdUI1?=
- =?utf-8?B?d3ZMdWFpREdIdUxHSEtlSXgzazV0eG52QjY0QTdaNXRKam4vWGdvcTNPeDhQ?=
- =?utf-8?B?alVQQTlhYnRkMWE4ZGlQYnUyUm16N2hpaVdRbGNEVUZXakhDR1NkcVhtSjhl?=
- =?utf-8?B?QzkzajRsYlZEQ0JyV25USVpzMG5hSHRQMFpWWi9KMXBMSEVRbjQvTU1pUlJl?=
- =?utf-8?B?SDFHOElpemRwUUF4NjN0dkhhYitKRUNKWmh0VkhJRDRzTUpnMGRsZzdmU0RT?=
- =?utf-8?B?WVlNSi9HaDZRVnQ5Nnp1aWFFcGZFUVQ2aG43d2lMWHlhdFJlUEYvVlBybTBG?=
- =?utf-8?B?cVdkMmg2aVNkSzg2azBLSXRkWjJ4cXJsN3g2Wk1hTmhxODhscStUMC9QbUs5?=
- =?utf-8?B?TFNhRTg0bXo4ckh5ajRQVmd3ZERrelByN28yRm9GRFBTSUhnZ0tHZ0FyOWxw?=
- =?utf-8?B?MGV4ckdXaTFVdmRpbTBsNHNycGN1a20rU09MRWJibXVCYXhWanQxZ3gyaml1?=
- =?utf-8?B?YnYyMWtrQXhDaXBBWm85eERWOXloRUQ0RU16M0dhRFZucmJyZm9qWC8zdTBL?=
- =?utf-8?B?MUZaM3dCSE16a3lxcjVSeGFCdUo3M1RaSUxzTnJ6MVFiUUpWYXltSFhsN2dD?=
- =?utf-8?B?YWdTZ2R2VVR5KzlVRGZCVkZJVm9IU0poOFhaVm1pOTBzUThmak5aUmlNMERz?=
- =?utf-8?B?aEVnS1FqZEFDMGo5dE9VaG5RUFBhZEp1M0cvdWllaytEVFU3WUgrTnBFQlRN?=
- =?utf-8?B?MXNiVXljL0JIQ1BRVkJKTUZrakprM0Y3TnB1Rmw0YzBLdTNCTEpGb0IrSnkw?=
- =?utf-8?B?OE10NlZHS1BoLzVmQ0ZKdlRjWXg5WWRpY09hT3pURVlPQldSaXd1ZDlpUXU5?=
- =?utf-8?B?MjFFT2RCMDEzUXA0L2V3VmpmZTA4RURUOG5heFQ3dlBoKzFTbnFvRXcvNGE3?=
- =?utf-8?B?RDJTbHdPV2ZDWU5MYXhaTTMvQ1RQUmJveXVraWoydjFjSGhranJWVmJHYUFN?=
- =?utf-8?B?ajNYRm1UaEo3MHdqSFJFcjc1Qlp2eFE1bGRHUWhiRzg5V25RU0RGWDVGeVhj?=
- =?utf-8?B?d0hMeG90Ylo0aE5MSkUrZUtDMU5QTTBheDVVZndEeGdYcTlCbGVLa3VTRFNL?=
- =?utf-8?B?TFcxZTBpMVFxRmF3dVpjZnVkRnozUUQydnBuem4vUkpSQ2xYMUhLTDZvazlv?=
- =?utf-8?B?SWdhNGtudFhKZStXaWFERXNlQWtMTnJJNU51WnZKb05HNHJPSU9UeWQ3TXE0?=
- =?utf-8?B?bDREektPd2grVHUwU2YyTXhWNzZKeXdwQnU3YjdJKzJ5dlJmbkhwdHJ0MHli?=
- =?utf-8?B?V09CQjZ5UDh5ZUwrZkFiN0R6VGNJWWtLbkx6WFRHRlZJZEpkb3h0YWtuTmtE?=
- =?utf-8?B?NWk1L0s0WG16OVZnTGJ6cEZhNW5HU3NtWGVSU3Q4Q3R4ZEs5KzdZajZzZnBp?=
- =?utf-8?B?cU1zMHVWZjBMbGM2eGdDYXp5MmlId2ZINlFmQ1N2Tm1jUHo0bWJ2b2xVd2dF?=
- =?utf-8?Q?qzpiEgWXQIGOWACY=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZUXCHBaj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6852BC4CEF7;
+	Wed, 11 Mar 2026 08:19:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773217199;
+	bh=wIlfCxEWTnTMirM0Hzxi5elWcq+7xLnpDh8qwCD9JLI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZUXCHBajKBoLR7t7ubx+Hfm/n0FO2ifumFy6UnHn/zBbFx6c8NVFnxZBx+lSmHgZi
+	 zugXPfz3/IuJFDpUcniwCQPv2T4ao8/nRB9xfW0d73QPLBs/bHAwGQgNwJ2xOyVzit
+	 ToFO7M/fP81vXMEbLM13G0AC+ozjMpTBsOAnfywK8n3Sf4F9GAEkyYM/Ejcnr6ZM5w
+	 050j24PsscMkgWbDlgHPg0LLeazxyMCXD0ftt7Dy0+Jw3m8svMlffluXMm3OUx4Reb
+	 2PnrP6k6e6VaymhQVUQ0qBt7FJUXLzFuE9i+oM67j78oNxgCslZk/iJv19MBZxyJom
+	 HOxTlRDHB6b+Q==
+Date: Wed, 11 Mar 2026 10:19:55 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Saeed Mahameed <saeedm@nvidia.com>,
+	Itay Avraham <itayavr@nvidia.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>,
+	Maher Sanalla <msanalla@nvidia.com>,
+	Edward Srouji <edwards@nvidia.com>
+Subject: Re: [PATCH 0/3] Firmware LSM hook
+Message-ID: <20260311081955.GS12611@unreal>
+References: <20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com>
+ <CAHC9VhTR9CsBgxRCAHXm5T2NZ5tr+XfmA--zkt=udmk9hPRuZQ@mail.gmail.com>
+ <20260309193743.GZ12611@unreal>
+ <CAHC9VhSRt_QEJKJFBDBySNQCiPpcawd5A76xmoRNtppRKGaCog@mail.gmail.com>
+ <20260310090733.GA12611@unreal>
+ <CAHC9VhTKsOYrs8Wh-O548=2gE7N_gkBy+q05+atcR=D+30uQ=w@mail.gmail.com>
+ <20260310193000.GM12611@unreal>
+ <CAHC9VhSh8A+yGHT_+BqFGaLNqsZDcaz_cuqf9A+neRQQ3PMY4A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: P0Tryjjgi7r5Sa0dlJeJhxUWOQBz8cPKEFEztYoIPr4G9+CoOlxKVru1o9mOIJtLJTY8Te8NA1zDRylwrIJ8bEp9UvPbQY3P7wrnmq41gcDMf0KideWh7G3rBfeh4eusiMFtOni/PI1ZCcuU7kkjtwBleS6siQ0a1Rv86ZTPBRp2FdISTmJLmkDC7KRDl3GmMiwpkTbJFJ7/0QuSkCIUlmrscye0PIOC9mWlgNEE1LMhsArZCWgtD7EsRjD0lmgKJ46qBspyG8JcAnk7wYrD57fKY38r2tUvYJA9hM+vSpC0o+LODVBGEyovjgeGID60S25IUFIu1VtmqFyYsdFWGA==
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB8986.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8b0c821-2d3f-4cc9-93af-08de7f46e668
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Mar 2026 08:19:22.2770
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: v/8DqgpKLoEvRkW7zxyEgNR2f6Ove8R3jDy9/Bed5FvhwcoXhnWgJFh0D0pbQpAo9gEO552WAVc460NALCUO8gCA2vIi8cOsqM+scnMQn2k=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8510
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhSh8A+yGHT_+BqFGaLNqsZDcaz_cuqf9A+neRQQ3PMY4A@mail.gmail.com>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSW50ZWwtd2lyZWQtbGFu
-IDxpbnRlbC13aXJlZC1sYW4tYm91bmNlc0Bvc3Vvc2wub3JnPiBPbiBCZWhhbGYNCj4gT2YgUGhp
-bGlwcCBIYWhuDQo+IFNlbnQ6IFR1ZXNkYXksIE1hcmNoIDEwLCAyMDI2IDEyOjQ5IFBNDQo+IFRv
-OiBhbWQtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZzsgYXBwYXJtb3JAbGlzdHMudWJ1bnR1LmNv
-bTsNCj4gYnBmQHZnZXIua2VybmVsLm9yZzsgY2VwaC1kZXZlbEB2Z2VyLmtlcm5lbC5vcmc7IGNv
-Y2NpQGlucmlhLmZyOyBkbS0NCj4gZGV2ZWxAbGlzdHMubGludXguZGV2OyBkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnOw0KPiBnZnMyQGxpc3RzLmxpbnV4LmRldjsgaW50ZWwtZ2Z4QGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZzsgaW50ZWwtd2lyZWQtDQo+IGxhbkBsaXN0cy5vc3Vvc2wub3Jn
-OyBpb21tdUBsaXN0cy5saW51eC5kZXY7IGt2bUB2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LWFy
-bS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgtYmxvY2tAdmdlci5rZXJuZWwub3Jn
-Ow0KPiBsaW51eC1ibHVldG9vdGhAdmdlci5rZXJuZWwub3JnOyBsaW51eC1idHJmc0B2Z2VyLmtl
-cm5lbC5vcmc7IGxpbnV4LQ0KPiBjaWZzQHZnZXIua2VybmVsLm9yZzsgbGludXgtY2xrQHZnZXIu
-a2VybmVsLm9yZzsgbGludXgtDQo+IGVyb2ZzQGxpc3RzLm96bGFicy5vcmc7IGxpbnV4LWV4dDRA
-dmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4gZnNkZXZlbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4
-LWdwaW9Admdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4gaHlwZXJ2QHZnZXIua2VybmVsLm9yZzsg
-bGludXgtaW5wdXRAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVs
-Lm9yZzsgbGludXgtbGVkc0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiBtZWRpYUB2Z2VyLmtl
-cm5lbC5vcmc7IGxpbnV4LW1pcHNAdmdlci5rZXJuZWwub3JnOyBsaW51eC1tbUBrdmFjay5vcmc7
-DQo+IGxpbnV4LW1vZHVsZXNAdmdlci5rZXJuZWwub3JnOyBsaW51eC1tdGRAbGlzdHMuaW5mcmFk
-ZWFkLm9yZzsgbGludXgtDQo+IG5mc0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LW9tYXBAdmdlci5r
-ZXJuZWwub3JnOyBsaW51eC0NCj4gcGh5QGxpc3RzLmluZnJhZGVhZC5vcmc7IGxpbnV4LXBtQHZn
-ZXIua2VybmVsLm9yZzsgbGludXgtDQo+IHJvY2tjaGlwQGxpc3RzLmluZnJhZGVhZC5vcmc7IGxp
-bnV4LXMzOTBAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4gc2NzaUB2Z2VyLmtlcm5lbC5vcmc7
-IGxpbnV4LXNjdHBAdmdlci5rZXJuZWwub3JnOyBsaW51eC1zZWN1cml0eS0NCj4gbW9kdWxlQHZn
-ZXIua2VybmVsLm9yZzsgbGludXgtc2hAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4gc291bmRA
-dmdlci5rZXJuZWwub3JnOyBsaW51eC1zdG0zMkBzdC1tZC1tYWlsbWFuLnN0b3JtcmVwbHkuY29t
-Ow0KPiBsaW51eC10cmFjZS1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC11c2JAdmdlci5r
-ZXJuZWwub3JnOyBsaW51eC0NCj4gd2lyZWxlc3NAdmdlci5rZXJuZWwub3JnOyBuZXRkZXZAdmdl
-ci5rZXJuZWwub3JnOw0KPiBudGZzM0BsaXN0cy5saW51eC5kZXY7IHNhbWJhLXRlY2huaWNhbEBs
-aXN0cy5zYW1iYS5vcmc7IHNjaGVkLQ0KPiBleHRAbGlzdHMubGludXguZGV2OyB0YXJnZXQtZGV2
-ZWxAdmdlci5rZXJuZWwub3JnOyB0aXBjLQ0KPiBkaXNjdXNzaW9uQGxpc3RzLnNvdXJjZWZvcmdl
-Lm5ldDsgdjlmc0BsaXN0cy5saW51eC5kZXY7IFBoaWxpcHAgSGFobg0KPiA8cGhhaG4tb3NzQGF2
-bS5kZT4NCj4gQ2M6IFBoaWxsaXAgTG91Z2hlciA8cGhpbGxpcEBzcXVhc2hmcy5vcmcudWs+DQo+
-IFN1YmplY3Q6IFtJbnRlbC13aXJlZC1sYW5dIFtQQVRDSCAxMy82MV0gc3F1YXNoZnM6IFByZWZl
-cg0KPiBJU19FUlJfT1JfTlVMTCBvdmVyIG1hbnVhbCBOVUxMIGNoZWNrDQo+IA0KPiBQcmVmZXIg
-dXNpbmcgSVNfRVJSX09SX05VTEwoKSBvdmVyIHVzaW5nIElTX0VSUigpIGFuZCBhIG1hbnVhbCBO
-VUxMDQo+IGNoZWNrLg0KPiANCj4gQ2hhbmdlIGdlbmVyYXRlZCB3aXRoIGNvY2NpbmVsbGUuDQo+
-IA0KPiBUbzogUGhpbGxpcCBMb3VnaGVyIDxwaGlsbGlwQHNxdWFzaGZzLm9yZy51az4NCj4gQ2M6
-IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU2lnbmVkLW9mZi1ieTogUGhpbGlwcCBI
-YWhuIDxwaGFobi1vc3NAYXZtLmRlPg0KPiAtLS0NCj4gIGZzL3NxdWFzaGZzL2NhY2hlLmMgfCAy
-ICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4g
-DQo+IGRpZmYgLS1naXQgYS9mcy9zcXVhc2hmcy9jYWNoZS5jIGIvZnMvc3F1YXNoZnMvY2FjaGUu
-YyBpbmRleA0KPiA2N2FiZDRkZmYyMjIyMzVlNzVkOGMyYjEwZDVlOWI4MTFkNmUzOGQ4Li44ODg4
-Y2MwMjk2NmUyZTMzMjEwYzg3MmM3MzMyDQo+IDA1ZDRjNTgxZWNjOSAxMDA2NDQNCj4gLS0tIGEv
-ZnMvc3F1YXNoZnMvY2FjaGUuYw0KPiArKysgYi9mcy9zcXVhc2hmcy9jYWNoZS5jDQo+IEBAIC0x
-OTgsNyArMTk4LDcgQEAgdm9pZCBzcXVhc2hmc19jYWNoZV9kZWxldGUoc3RydWN0IHNxdWFzaGZz
-X2NhY2hlDQo+ICpjYWNoZSkgIHsNCj4gIAlpbnQgaSwgajsNCj4gDQo+IC0JaWYgKElTX0VSUihj
-YWNoZSkgfHwgY2FjaGUgPT0gTlVMTCkNCj4gKwlpZiAoSVNfRVJSX09SX05VTEwoY2FjaGUpKQ0K
-PiAgCQlyZXR1cm47DQo+IA0KPiAgCWZvciAoaSA9IDA7IGkgPCBjYWNoZS0+ZW50cmllczsgaSsr
-KSB7DQo+IA0KPiAtLQ0KPiAyLjQzLjANCg0KUmV2aWV3ZWQtYnk6IEFsZWtzYW5kciBMb2t0aW9u
-b3YgPGFsZWtzYW5kci5sb2t0aW9ub3ZAaW50ZWwuY29tPg0K
+On Tue, Mar 10, 2026 at 05:40:02PM -0400, Paul Moore wrote:
+> On Tue, Mar 10, 2026 at 3:30 PM Leon Romanovsky <leon@kernel.org> wrote:
+> > On Tue, Mar 10, 2026 at 02:24:40PM -0400, Paul Moore wrote:
+> > > On Tue, Mar 10, 2026 at 5:07 AM Leon Romanovsky <leon@kernel.org> wrote:
+> > > > On Mon, Mar 09, 2026 at 07:10:25PM -0400, Paul Moore wrote:
+> > > > > On Mon, Mar 9, 2026 at 3:37 PM Leon Romanovsky <leon@kernel.org> wrote:
+> > > > > > On Mon, Mar 09, 2026 at 02:32:39PM -0400, Paul Moore wrote:
+> > > > > > > On Mon, Mar 9, 2026 at 7:15 AM Leon Romanovsky <leon@kernel.org> wrote:
+> > >
+> > > ...
+> > >
+> > > > > > > Hi Leon,
+> > > > > > >
+> > > > > > > At the link below, you'll find guidance on submitting new LSM hooks.
+> > > > > > > Please take a look and let me know if you have any questions.
+> > > > > > >
+> > > > > > > https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#new-lsm-hooks
+> > > > > >
+> > > > > > I assume that you are referring to this part:
+> > > > >
+> > > > > I'm referring to all of the guidance, but yes, at the very least that
+> > > > > is something that I think we need to see in a future revision of this
+> > > > > patchset.
+> > > > >
+> > > > > >  * New LSM hooks must demonstrate their usefulness by providing a meaningful
+> > > > > >    implementation for at least one in-kernel LSM. The goal is to demonstrate
+> > > > > >    the purpose and expected semantics of the hooks. Out of tree kernel code,
+> > > > > >    and pass through implementations, such as the BPF LSM, are not eligible
+> > > > > >    for LSM hook reference implementations.
+> > > > > >
+> > > > > > The point is that we are not inspecting a kernel call, but the FW mailbox,
+> > > > > > which has very little meaning to the kernel. From the kernel's perspective,
+> > > > > > all relevant checks have already been performed, but the existing capability
+> > > > > > granularity does not allow us to distinguish between FW_CMD1 and FW_CMD2.
+> > > > >
+> > > > > It might help if you could phrase this differently, as I'm not
+> > > > > entirely clear on your argument.  LSMs are not limited to enforcing
+> > > > > access controls on requests the kernel understands (see the SELinux
+> > > > > userspace object manager concept), and the idea of access controls
+> > > > > with greater granularity than capabilities is one of the main reasons
+> > > > > people look to LSMs for access control (SELinux, AppArmor, Smack,
+> > > > > etc.).
+> > > >
+> > > > I should note that my understanding of LSM is limited, so some parts of my
+> > > > answers may be inaccurate.
+> > > >
+> > > > What I am referring to is a different level of granularity — specifically,
+> > > > the internals of the firmware commands. In the proposed approach, BPF
+> > > > programs would make decisions based on data passed through the mailbox.
+> > > > That mailbox format varies across vendors, and may even differ between
+> > > > firmware versions from the same vendor.
+> > >
+> > > That helps, thank you.
+> > >
+> > > > > > Here we propose a generic interface that can be applied to all FWCTL
+> > > > > > devices without out-of-tree kernel code at all.
+> > > > >
+> > > > > I expected to see a patch implementing some meaningful support for
+> > > > > access controls using these hooks in one of the existing LSMs, I did
+> > > > > not see that in this patchset.
+> > > >
+> > > > In some cases, the mailbox is forwarded from user space unchanged, but
+> > > > in others the kernel modifies it before submitting it to the FW.
+> > >
+> > > Without a standard format, opcode definitions, etc. I suspect
+> > > integrating this into an LSM will present a number of challenges.
+> >
+> > The opcode is relatively easy to extract from the mailbox and pass to the LSM.
+> > All drivers implement some variant of mlx5ctl_validate_rpc()/devx_is_general_cmd()
+> > to validate the opcode. The problem is that this check alone is not sufficient.
+> >
+> > > Instead of performing an LSM access control check before submitting
+> > > the firmware command, it might be easier from an LSM perspective to
+> > > have the firmware call into the kernel/LSM for an access control
+> > > decision before performing a security-relevant action.
+> >
+> > Ultimately, the LSM must make a decision for each executed firmware
+> > command. This will need to be handled one way or another, and will
+> > likely require parsing the mailbox again.
+> 
+> As it's unlikely that parsing the mailbox is something that a LSM will
+> want to handle,
+
+I believe this approach offers the cleanest and most natural way to support
+all mailbox‑based devices.
+
+> my suggestion was to leverage the existing mailbox parsing in the firmware
+> and require the firmware to call into the LSM when authorization is needed.
+> 
+> > > This removes the challenge of parsing/interpreting the arbitrary firmware commands,
+> > > but it does add some additional complexity of having to generically
+> > > represent the security relevant actions the firmware might request
+> >
+> > The difference here is that the proposed LSM hook is intended to disable
+> > certain functionality provided by the firmware, effectively depending on
+> > the operator’s preferences.
+> 
+> My suggestion would also allow a LSM hook to disable certain firmware
+> functionality; however, the firmware itself would need to call the LSM
+> to check if the functionality is authorized.
+
+This suggestion adds an extra call from the FW to the LSM for every command, even
+for systems which don't have LSM at all. The FW must pass the already parsed data
+back to the LSM; otherwise, the LSM   has no basis to decide whether to accept or
+reject the request.
+
+For example, consider the MLX5_CMD_OP_QUERY_DCT command handled in  
+mlx5ctl_validate_rpc(). DCT in RDMA refers to Dynamically Connected  
+Transport, a Mellanox-specific extension that effectively introduces a new  
+QP‑type family on top of the standard RC/UC/UD transports. This type does not  
+exist for other vendors, each of whom provides its own vendor‑specific  
+extensions. All parameters here are tightly coupled to those specific  
+commands.
+
+It is unrealistic to expect different firmware implementations to supply  
+their data in a common format that would allow the LSM to make a generic  
+decision.
+
+Thanks
+
+> 
+> -- 
+> paul-moore.com
+> 
