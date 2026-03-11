@@ -1,251 +1,196 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC8E3DE43D;
-	Wed, 11 Mar 2026 12:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD533DF016
+	for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2026 12:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773230884; cv=none; b=ebMxxpfINV3ZkNtcZJaIgwijRgd3/m3IdQmFnDlgXbc2qoOcqDirOKt6GyH8SQflZy9EzQQbQbp/lGtOl8fA+oCKTw0FGhDm43G+CM8A3gjk3tRcrEUCe53jfG2o2MqN6HW1Om0iODRXEJXTOAkbjNPEWiBrj6RZsrbJN2T5P1g=
+	t=1773231524; cv=none; b=DG6nivDvuIW7xSq0zQIoJVuYaRvo83M1Jin5J2nQlxEreRPUlBsKMpc1mqDuvg21JKtU+RUymmrfP6HAOO4rVACUTJBjw2PsuLd39XeC9sY7oikmEFhJ8hk91l6dARuXNIApbjSPTONhheNgzvYIOK+2alv7zs2t6Su69M6N2Rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773230884; c=relaxed/simple;
-	bh=79iJSC+zsY6oYwpI58ah9mdZsHaOdnaOazbfan4YyLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iDzR2ddFFOZWyn55dvR1qXs1b8Q4kz/OuneLbRmTSmO4oYPNwVsMnYQaqnRPJ400XHidwK1o1iypb0sI8D6snq1gy9gOT+GikPDaFM9PPE0EnbSnOK8Rep/8lBGQlvIVjMZLCZ46OctRVLm1z2FvWUZzIGagZh+iexyNPj20/lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IanUOk5G; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1773231524; c=relaxed/simple;
+	bh=hkeF5EhKgtCfMPeQqb+5RnJrMuv4lHrZlhgXJKBD454=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=NDyiDIPwWyH72EBSVqQbotn8NY8cdW2fOP3oosRVPb79JF21nPfd92i+lLkHDE2TFIzp9lq50F5iGnRY6hm8FJ5rGVGAEek8McXSZGfzrw3hBLP1ud8ZtaG7KdPSnDWU8vav7/lPLnHC+EZGIUBsP1WCekXCRP3z4JXQPtnTTPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=JfF0soFJ; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IanUOk5G"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1773230877; x=1804766877;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=79iJSC+zsY6oYwpI58ah9mdZsHaOdnaOazbfan4YyLQ=;
-  b=IanUOk5GI5kM/Zkt/bePFBO3Ebkgl/0fU8OPjIypCArPNCx/fGOYW6D7
-   EC0n8V+/B9p9iccwzO0X/t+qzTqol9erRcp03OX3roWFEKZ7EvH6uVYah
-   Yqq2awm5pC9DHiypcwtL4iRlPE2ngldYswbwUosIOAPNckFOHY3TKbkr+
-   /VRn+SAf+FdHt+8vpxYlssr59BPUBhlyt5BMmXS1BJdpGUbxGiDgJOP7C
-   wczNfgmBY5e5cU74OHuLywVJwU9aWkt2xnwZb0e1LbnXBksW40RzrkWFD
-   qxRGJo2OvVIH1Omy1aEgMpd8/Q+QdM8x08atDY+fvmXQUQ3cqkKlgH161
-   A==;
-X-CSE-ConnectionGUID: T76HipIlSeywunUVDex/Fw==
-X-CSE-MsgGUID: JAVIqyaQQuimbvDilv5XBA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11726"; a="85383085"
-X-IronPort-AV: E=Sophos;i="6.23,113,1770624000"; 
-   d="scan'208";a="85383085"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2026 05:07:56 -0700
-X-CSE-ConnectionGUID: 6PKgAvB5QUaJC7zgdKiiyA==
-X-CSE-MsgGUID: lqsr3qDxRyeGakYN4mO7QQ==
-X-ExtLoop1: 1
-Received: from igk-lkp-server01.igk.intel.com (HELO 9958d990ccf2) ([10.211.93.152])
-  by fmviesa003.fm.intel.com with ESMTP; 11 Mar 2026 05:07:54 -0700
-Received: from kbuild by 9958d990ccf2 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1w0ILv-000000003K1-2unU;
-	Wed, 11 Mar 2026 12:07:51 +0000
-Date: Wed, 11 Mar 2026 13:07:04 +0100
-From: kernel test robot <lkp@intel.com>
-To: Jamie Lindsey <jamie@matrixforgelabs.com>,
-	rust-for-linux@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, ojeda@kernel.org, paul@paul-moore.com,
-	aliceryhl@google.com, jmorris@namei.org, serge@hallyn.com,
-	jamie@matrixforgelabs.com
-Subject: Re: [PATCH v2 3/5] rust: kernel: add LSM abstraction layer
-Message-ID: <202603111327.ZxGK7MvE-lkp@intel.com>
-References: <0102019cdb4c705e-7d46b4f3-5cbb-4a6a-b315-e10f182fa987-000000@eu-west-1.amazonses.com>
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="JfF0soFJ"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-48534237460so41410915e9.3
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2026 05:18:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1773231519; x=1773836319; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LOP4fizghMTtbxn+R2xWmI41wwL6j9WK+V7N8sNfZnM=;
+        b=JfF0soFJlhwCq/YWO3K/sJhHFEglqjhiMJz97YIm8sfg5/bqQsg3CK21QNLgcVtzQT
+         Zh2MTN0J5oTMiIhGlCzyMmH83PztE8MM+AdhZUR+/1Bc+VTvUKmQCJJAkYcZAKBY7wEz
+         yF0CH1AHDGYloggoCoPh7FD5vnP4aqyWcmYwxS/R8EG5pAGHw+X7XYgyqgMUouqMFPo5
+         JNU9GkVAUtMxEucG5XmUnGoLeeLuvMvDifQ2ao5ErT0WoLedRSCEU0UoN6P8/6le7ONP
+         5eFINUGjel7uvMAPi6Q5+iCdO+ydvA2DaGgYTh+X3wGzLVgA9ubt+abF57lwvbGUUuGC
+         ljFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773231519; x=1773836319;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LOP4fizghMTtbxn+R2xWmI41wwL6j9WK+V7N8sNfZnM=;
+        b=mbDx2hiYZKGNul1QiONGGfXkgVzr1gphsxtZd3MuQ0u13SAwkCS/+hZ1//hjtsPAhj
+         wQ13f8f0Qo0uvQFSsyKgeAdqfBY/r4PqwI43A3zsYVXcWE0Gv5jtMZo/T0Y6GsMFvJdF
+         JBH1jHLil5JcOk807lqBJ0x39b/hubjuzknxoX4KvE4MSWvLaB6i6ryDv8ZqU8ACNIoG
+         aesKf5w0b5qcYECC0j06FzcYNISPDs4X0n7Xz2mfrigJUQjOvPtbSuVaT/EN4leSbNem
+         0FsVK3RfcXkGTwujF1w0MFva2cGK/30vB+1MVcatpF0wBWybYEKnbvNtEIvMlNgcWVKr
+         NSwA==
+X-Forwarded-Encrypted: i=1; AJvYcCWz6o4Tp7Sdt7Wohpuljl9fhyq5JvYurbJ0M0+kiI4KadS5NXnypnfHdElX9SY62645um6cFnvC56rgx86MttoCOHu+0U0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw/NbCUD1BuHfWv0VhGF+tfJgWLMV3z/2sxNUFeHlaT25vZwtP
+	R0ZtoM/cmg8GRxKY6DrfZw0gajMT9jZtFb71k7o5xPgL0fz/+CwXMiDY
+X-Gm-Gg: ATEYQzwnspeQdQG5x/GkgsfPj8N+S4mTjq8oy3/reTSd/b3G0rNoVgrjSk+Ub/ESbGz
+	QA+MK4M2mzUw41PeI2KZ852x4PZ8gAatBi9tdbHy4kQFScJm8N+vw7x4FTxdDp3EcFdkDLSD0Ms
+	r+0qhH4qmV59LNKdoFZTPAV89acFmZuAxVkWVJWJMAUzbyxS+jD1rJlngR7swbfwPEOkAq1fpyc
+	j8teSEssBh2I5nHBt9VvsxVLYcRc+6h06U4AcozvY4YwIPKAzdaiIm4N+qL6kvtvccXZgTKLQZE
+	qlWw8GbfmJ5TI1FMwzGG5Q/C+dXP6urchZJG0odB/BxJ7X3OEIu088au6ZDmLHO5RZxyF63/O+X
+	NaSkOFULCoRtaoT+J8uKtgXyvExRclAVv5CsoyLmFTb5qh9F+jp1qaPJ13Q2BW2q4XAEqIqfmGy
+	HdaKH4nyGBGeI1s5zpBRYatfw4ymIT29JddGiDrUMcc6vhljzuN1HZZFuE6EWOG7Z5
+X-Received: by 2002:a05:600c:4e56:b0:480:20f1:7aa6 with SMTP id 5b1f17b1804b1-4854b0fe9d9mr36394375e9.21.1773231519033;
+        Wed, 11 Mar 2026 05:18:39 -0700 (PDT)
+Received: from ?IPV6:2001:a61:2518:4301:dfae:d37f:359:7ae8? ([2001:a61:2518:4301:dfae:d37f:359:7ae8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4854b0febd2sm17035925e9.32.2026.03.11.05.18.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Mar 2026 05:18:38 -0700 (PDT)
+From: bauen1 <j2468h@googlemail.com>
+X-Google-Original-From: bauen1 <j2468h@gmail.com>
+Message-ID: <e61419d0-4f7b-40f9-8e90-fbe5aaaa6dd8@gmail.com>
+Date: Wed, 11 Mar 2026 13:18:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: Subject: x86/msr + lockdown: allow access to **documented**
+ RAPL/TCC controls under Secure Boot
+To: "Rafael J. Wysocki" <rafael@kernel.org>, "Artem S. Tashkinov"
+ <aros@gmx.com>
+Cc: x86@kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-pm@vger.kernel.org, linux-efi@vger.kernel.org,
+ linux-security-module@vger.kernel.org,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ "Zhang, Rui" <rui.zhang@intel.com>
+References: <2780abfc-39d1-4441-833c-65e66f747054@gmx.com>
+ <CAJZ5v0hokpC_2E77nrm2KHeOdhhH6qvYsg3wCQpTEG=PCim=ww@mail.gmail.com>
+Content-Language: en-US
+Autocrypt: addr=j2468h@gmail.com; keydata=
+ xsFNBFhYO0UBEADB9FOvBFPceReJkioc/Wpgb+4jquqgLaYFCq30wMRlbbxRE6W5piQdJBS9
+ 1nHgehc1wKlpoX34I0fDYKmzhxU/wn7kPQqyIJ/x4Xc0un8rgLr6AB9J45+xYDAjTEP6wfzA
+ DyCokyypi7knVSraYAUgmgBk+jEB/B1VpUxsE6X/tilqOLyPEkDX4dKUR/J2nPyfir3pYRFs
+ siohNGbTOmwzwkA+rZClsUl9hO5n3oGAl3gJ352wIDJTDPd0YvyCTrHRpSTP9msKrFh3rILL
+ aNgUNBr44QurGvxDuIrX6CIyqWUKO1tdnA1XOqsZDTEAa7IL6K7yoYRIzGZ+HmxemBhE/dxW
+ qe4+nSru1QoucSNP6xa8F2HLeqvypD+xGerR4MELkBwa2XiGvS5OwF3XjevWcLQDztlXE1cW
+ hK6fnK8XiXNcffG8YIhStSoW3dH3twPpEduqDAooLaCznxfNZFNcRU7iaoAk30xLv885jjga
+ /FKs+jwlkzX/Xf6gvaLZhyIuF7x5yMFYZYKl/kA0XfY9x/d9YJe9MeBE5USZnssSGCgZXSt8
+ +tikDjEWAw43ANOG5Au/4wEoMI9eQmRRrQ9AfIb6MS1irfUwU0yGgHCkFX7nN54+2Zunvy9u
+ YBk55oGh1MbVlIU/rEs+te0Syb8faX53oAMFPljqnqtS71AOLQARAQABzRliYXVlbjEgPGoy
+ NDY4aEBnbWFpbC5jb20+wsGUBBMBCgA+AhsDBQsJCAcDBRUKCQgLBRYCAwEAAh4BAheAFiEE
+ XtbYJqzUP47Z1Puy/wqvXggSupwFAmglfM4FCRGudQkACgkQ/wqvXggSupzqfxAApwDTP9Nc
+ TMXdo6NYADg4T8P4AxMTCaVDL1iY2sHfV4sOr7tGCjrqbXMgdd2HVxl9joco1uYKKwmty7aR
+ SOMeP9K+rrug/B0hhGwMn3enR7f1VdiWSwboD6tbfKnIOlRlzyPL2vLwtgzFmSI0fCvi2G3T
+ /ve7okB3ABwlS3wz6fkUTmZecEKYgV5Nx9JZHZ7rSm/k5Xjp7vl5X4H15DJ1J2MSNmcU1nRF
+ PyabthJRL/ejmXQossVagQEqTooF0xNIpEv2hmDMnU9+2dqc21PU3/D1MJ+jLNUP6HniymUn
+ /nmStatTCnkWFQJtA5ayIdO89/KymP43vApU47ENIufubZEskMP5zjgemsdxW6od7TXE/43b
+ ml5It1u9dqkGZbXnXvsWgIsMkM0hxAvW/So633Edhss1x+9lEiwKZpfALvZ6a4TsiO3Y+uro
+ 5ZljHCL7reBj2QxQYO2kG15WHGATWpRnXazeA0VrcKqQp/Vs2InY/d2RgYBfWMp5cLS0QBqp
+ s3c2nqI8RWr1Vd75UEzT5aWDMMk3XFkHXdPhllw1ySvejnRdcPxXLQ/RzFyBajoWT4QeAPYm
+ UvyMbyIUewfsWHHqibtRDOROdpq8EyyLEwlajF/Udn05izIJna3xHsJ3ToxOLTsNWReHLkAa
+ UyNm21lQ/s8AbWuMdlq4rh4M9DTOwU0EWFg7RQEQANuS3Qmbp63gCD7WHWWedBAY5t/FVrPR
+ mf426pq2xAbms1WBHUeQB9r7F4fUMBFU03WNk8JWi4nSl8p0z4rZaZD1TEsenbYx2IohTxi0
+ qtZ/eaTydVzPfBIY3awBxaS3GuV8xUgR/8VdJATpEUF2BnDKGihXBl9pPM8l46vG6HsqWpeZ
+ /hw/zwaGi8cSXY6PlFRL/fcpiGLR5RefH5VhDwZ5YrwDCYNhWYDKXL++IkDja0NW3s2yRUJM
+ bRib0r8hq87lA7N+HHwgOOYd/sJbCZObZzL/n+lR+VTHLxGmJHbk+JRdagFH1l+x+Vp1zhVM
+ XJDUci7Wcx/kCzCWu08t5t4Lef7rWvYJCf9JQaKJQcKyXr6ky3d4mYfV8AcA/9fat9NzQB6e
+ 7cHw8yOc/1e4xN/h3cGNLWiGb8HCAR0SH22Gb2epyfq+txdn3cwm2ot2lhOXK3l48T081x/q
+ kWOw86ig9dIVxi0RUv3CUaV0/N4SVumVD3GwzMSI0rfwuUb7tOqMGQFxe/k9Fc9uFPP7LfTe
+ ZTOayuZg9oHO6Ju3x+KSXPwYcXAfuy0elZQPyqMZwshC3l1sfwG7Di+98sPzsbVUm9eTjTfN
+ x2r7N/a958W0h+1SuE172qfuabLu8vMMWIuo8RaQG/OVF2bRR8yEPSyUTqS7Aj2osSX5CFB/
+ 4TVLABEBAAHCwXwEGAEKACYCGwwWIQRe1tgmrNQ/jtnU+7L/Cq9eCBK6nAUCaCV83AUJEa51
+ FwAKCRD/Cq9eCBK6nN4jD/9K6mi1SSVAa06QsMmTn5ix+PUkVu/ci/fEca/HByEBIg9X/Mvk
+ zxlzAeUGcUNKK5//lPmc97H/iNZYE5KCbL5ikbXdSs2XWq4otW7gJyEUX2CpHcvv/9CMV2oZ
+ dia9wa403slZ3shPkpaVx8txOxYAg3ErNCqQ94pTMB6XihY5zn1ePcSfHq+++hXV6nXXEj7E
+ ZjPLyNxK2IwTZfEkHSCpdMUlcx/m6lihEVqMP5T1eIyNQuVS5hGI0K6exxPnGiHDXfty0SzP
+ /WszKklCv1YkkOZFGDojURfHMbDK8sgSqyU7i5ZzYRFIOs+uP6F2nE+9aXKAtZg8CN6IDEBT
+ 7ZN1dBkWpNFSkgfQm6YN+9gyB0OCQl50Q4qgd8l/i/XFVpPdsM0mF5Q8pBANLl/8mB8L+lLr
+ FNbRvMK7yS5TbAI7xf8DQW9Ss0Hp9hXEoilmj9EDeM5UFUNhT72Qu5XJzazMuI52sye1tK6L
+ KUDa1iGsZ0ziGbakhimgG5Bqq7jtnrjMmMBxOs5is+J/+XrU39AZiH669gxeUsPFbKKO/2qC
+ lzFvrOxF2EdPDcFquFp9R4EMpOU9nAMz0g1a0w/Sq1kzvNgihu/1BDpSgJJECOcDprJUz1Ku
+ zLiD1OBWWqgvYBJUXHLXvB5r5YQcn5ZqBcLCL0HtgHXv3OFtcZWVK2ZxXQ==
+In-Reply-To: <CAJZ5v0hokpC_2E77nrm2KHeOdhhH6qvYsg3wCQpTEG=PCim=ww@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0102019cdb4c705e-7d46b4f3-5cbb-4a6a-b315-e10f182fa987-000000@eu-west-1.amazonses.com>
 
-Hi Jamie,
+On 3/9/26 4:13 PM, Rafael J. Wysocki wrote:
+> On Mon, Mar 9, 2026 at 1:24 PM Artem S. Tashkinov <aros@gmx.com> wrote:
+>>
+>> Hello,
+>>
+>> When Secure Boot is enabled and kernel lockdown is active, the x86 MSR
+>> driver blocks all raw MSR access from user space via `/dev/cpu/*/msr`.
+>> This effectively prevents legitimate use of documented CPU power and
+>> thermal management interfaces such as RAPL power limits (PL1/PL2) and
+>> the TCC/TjOffset control. These registers are part of Intel’s
+>> **publicly** documented architectural interface and have been stable
+>> across many generations of processors.
+> 
+> There is a power capping RAPL driver.  What's the problem with it with
+> Secure Boot enabled?
 
-kernel test robot noticed the following build errors:
+Hello,
 
-[auto build test ERROR on rust/rust-next]
-[also build test ERROR on linus/master v7.0-rc3 next-20260310]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I believe that the comment about Secure Boot might come from the partially
+incorrect documentation of lockdown:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jamie-Lindsey/rust-helpers-add-C-shims-for-LSM-hook-initialisation/20260311-131258
-base:   https://github.com/Rust-for-Linux/linux rust-next
-patch link:    https://lore.kernel.org/r/0102019cdb4c705e-7d46b4f3-5cbb-4a6a-b315-e10f182fa987-000000%40eu-west-1.amazonses.com
-patch subject: [PATCH v2 3/5] rust: kernel: add LSM abstraction layer
-config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20260311/202603111327.ZxGK7MvE-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260311/202603111327.ZxGK7MvE-lkp@intel.com/reproduce)
+https://lore.kernel.org/linux-security-module/20260203195001.20131-1-hi@alyssa.is/
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202603111327.ZxGK7MvE-lkp@intel.com/
+> -On an EFI-enabled x86 or arm64 machine, lockdown will be automatically enabled
+> -if the system boots in EFI Secure Boot mode.
 
-All error/warnings (new ones prefixed by >>):
+> This is true for Fedora, where this page was sourced from, but I don't
+> believe it has ever been true for the mainline kernel, because Linus
+> rejected it.
 
->> warning: unresolved link to `define_lsm`
-   --> rust/kernel/lsm.rs:7:46
-   |
-   7 | //! registers itself at boot time with the [`define_lsm!`] macro.
-   |                                              ^^^^^^^^^^^ no item named `define_lsm` in scope
-   |
-   = note: `macro_rules` named `define_lsm` exists in this crate, but it is not in scope at this link's location
-   = note: `#[warn(rustdoc::broken_intra_doc_links)]` on by default
---
-   PATH=/opt/cross/clang-20/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-   INFO PATH=/opt/cross/rustc-1.88.0-bindgen-0.72.1/cargo/bin:/opt/cross/clang-20/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-   /usr/bin/timeout -k 100 12h /usr/bin/make KCFLAGS=\ -fno-crash-diagnostics\ -Wno-error=return-type\ -Wreturn-type\ -funsigned-char\ -Wundef\ -falign-functions=64 W=1 --keep-going LLVM=1 -j32 -C source O=/kbuild/obj/consumer/x86_64-rhel-9.4-rust ARCH=x86_64 SHELL=/bin/bash rustfmtcheck 
-   make: Entering directory '/kbuild/src/consumer'
-   make[1]: Entering directory '/kbuild/obj/consumer/x86_64-rhel-9.4-rust'
->> Diff in rust/kernel/lsm.rs:120:
-        /// `file` must be a valid, non-null pointer to a `struct file` that
-        /// remains valid for the duration of this call.  Called only by the
-        /// LSM framework.
-   -    pub unsafe extern "C" fn file_open(
-   -        file: *mut bindings::file,
-   -    ) -> core::ffi::c_int {
-   +    pub unsafe extern "C" fn file_open(file: *mut bindings::file) -> core::ffi::c_int {
-            // SAFETY: The LSM framework guarantees `file` is valid and non-null
-            // for the duration of this call.
-            let file_ref = unsafe { File::from_raw_file(file.cast_const()) };
-   Diff in rust/kernel/lsm.rs:190:
-        // SAFETY: `bindings::lsm_info` is a C struct.  Zero-initialisation
-        // gives valid zero/null values for every optional field.  The caller
-        // is responsible for providing a valid `id` and `init`.
-   -    let mut info: bindings::lsm_info =
-   -        unsafe { MaybeUninit::zeroed().assume_init() };
-   +    let mut info: bindings::lsm_info = unsafe { MaybeUninit::zeroed().assume_init() };
-        info.id = id;
-        info.init = init;
-        LsmInfo(info)
-   Diff in rust/kernel/lsm.rs:230:
-                // The LSM identity — must be 'static because the static-call
-                // table holds a back-pointer to it via security_hook_list.lsmid.
-                // LsmId wraps lsm_id with `unsafe impl Sync` so it can be `static`.
-   -            static __LSM_ID: $crate::lsm::LsmId =
-   -                $crate::lsm::LsmId($crate::bindings::lsm_id {
-   -                    name: $name.as_ptr().cast(),
-   -                    id: $id,
-   -                });
-   +            static __LSM_ID: $crate::lsm::LsmId = $crate::lsm::LsmId($crate::bindings::lsm_id {
-   +                name: $name.as_ptr().cast(),
-   +                id: $id,
-   +            });
-    
-                // The hook list array.  MaybeUninit avoids needing security_hook_list
-                // to implement a const-initialiser; the C shims fill each slot in
-   Diff in rust/kernel/lsm.rs:242:
-                //
-                // SAFETY: This array must be 'static — the static-call table holds
-                // back-pointers (scall->hl) into it after registration.
-   -            static mut __LSM_HOOKS: [
-   -                ::core::mem::MaybeUninit<$crate::bindings::security_hook_list>;
-   -                3
-   -            ] = [::core::mem::MaybeUninit::zeroed(); 3];
-   +            static mut __LSM_HOOKS: [::core::mem::MaybeUninit<
-   +                $crate::bindings::security_hook_list,
-   +            >; 3] = [::core::mem::MaybeUninit::zeroed(); 3];
-    
-                // The init function stored in lsm_info.init.  Called once by
-                // security_init() in single-threaded boot context.
-   Diff in rust/kernel/lsm.rs:283:
-                #[link_section = ".lsm_info.init"]
-                static __LSM_INFO: $crate::lsm::LsmInfo = {
-                    // SAFETY: __LSM_ID and __lsm_init have 'static lifetime.
-   -                unsafe {
-   -                    $crate::lsm::new_lsm_info(
-   -                        &raw const __LSM_ID.0,
-   -                        Some(__lsm_init),
-   -                    )
-   -                }
-   +                unsafe { $crate::lsm::new_lsm_info(&raw const __LSM_ID.0, Some(__lsm_init)) }
-                };
-            }
-        };
->> Diff in rust/kernel/lsm.rs:120:
-        /// `file` must be a valid, non-null pointer to a `struct file` that
-        /// remains valid for the duration of this call.  Called only by the
-        /// LSM framework.
-   -    pub unsafe extern "C" fn file_open(
-   -        file: *mut bindings::file,
-   -    ) -> core::ffi::c_int {
-   +    pub unsafe extern "C" fn file_open(file: *mut bindings::file) -> core::ffi::c_int {
-            // SAFETY: The LSM framework guarantees `file` is valid and non-null
-            // for the duration of this call.
-            let file_ref = unsafe { File::from_raw_file(file.cast_const()) };
-   Diff in rust/kernel/lsm.rs:190:
-        // SAFETY: `bindings::lsm_info` is a C struct.  Zero-initialisation
-        // gives valid zero/null values for every optional field.  The caller
-        // is responsible for providing a valid `id` and `init`.
-   -    let mut info: bindings::lsm_info =
-   -        unsafe { MaybeUninit::zeroed().assume_init() };
-   +    let mut info: bindings::lsm_info = unsafe { MaybeUninit::zeroed().assume_init() };
-        info.id = id;
-        info.init = init;
-        LsmInfo(info)
-   Diff in rust/kernel/lsm.rs:230:
-                // The LSM identity — must be 'static because the static-call
-                // table holds a back-pointer to it via security_hook_list.lsmid.
-                // LsmId wraps lsm_id with `unsafe impl Sync` so it can be `static`.
-   -            static __LSM_ID: $crate::lsm::LsmId =
-   -                $crate::lsm::LsmId($crate::bindings::lsm_id {
-   -                    name: $name.as_ptr().cast(),
-   -                    id: $id,
-   -                });
-   +            static __LSM_ID: $crate::lsm::LsmId = $crate::lsm::LsmId($crate::bindings::lsm_id {
-   +                name: $name.as_ptr().cast(),
-   +                id: $id,
-   +            });
-    
-                // The hook list array.  MaybeUninit avoids needing security_hook_list
-                // to implement a const-initialiser; the C shims fill each slot in
-   Diff in rust/kernel/lsm.rs:242:
-                //
-                // SAFETY: This array must be 'static — the static-call table holds
-                // back-pointers (scall->hl) into it after registration.
-   -            static mut __LSM_HOOKS: [
-   -                ::core::mem::MaybeUninit<$crate::bindings::security_hook_list>;
-   -                3
-   -            ] = [::core::mem::MaybeUninit::zeroed(); 3];
-   +            static mut __LSM_HOOKS: [::core::mem::MaybeUninit<
-   +                $crate::bindings::security_hook_list,
-   +            >; 3] = [::core::mem::MaybeUninit::zeroed(); 3];
-    
-                // The init function stored in lsm_info.init.  Called once by
-                // security_init() in single-threaded boot context.
-   Diff in rust/kernel/lsm.rs:283:
-                #[link_section = ".lsm_info.init"]
-                static __LSM_INFO: $crate::lsm::LsmInfo = {
-                    // SAFETY: __LSM_ID and __lsm_init have 'static lifetime.
-   -                unsafe {
-   -                    $crate::lsm::new_lsm_info(
-   -                        &raw const __LSM_ID.0,
-   -                        Some(__lsm_init),
-   -                    )
-   -                }
-   +                unsafe { $crate::lsm::new_lsm_info(&raw const __LSM_ID.0, Some(__lsm_init)) }
-                };
-            }
-        };
-   make[1]: Leaving directory '/kbuild/obj/consumer/x86_64-rhel-9.4-rust'
-   make[1]: *** [Makefile:248: __sub-make] Error 2
-   make[1]: Target 'rustfmtcheck' not remade because of errors.
-   make: *** [Makefile:248: __sub-make] Error 2
-   make[2]: *** [Makefile:1912: rustfmt] Error 123
-   make: Target 'rustfmtcheck' not remade because of errors.
-   make[2]: Target 'rustfmtcheck' not remade because of errors.
-   make: Leaving directory '/kbuild/src/consumer'
+
+
+> 
+>> As a result, under Secure Boot Linux users lose the ability to read or
+>> adjust **standard** power-management controls that remain available
+>> through equivalent tooling on other operating systems.
+> 
+> The power capping RAPL driver is there, please use it.  It is documented even.
+> 
+> There is also a driver for TCC/TjOffset control, it is called intel_tcc_cooling.
+> 
+> And there are utilities in user space (for example, Intel thermald)
+> that use those interfaces.
+> 
+>> The current all-or-nothing restriction appears broader than necessary
+>> for the stated goal of protecting kernel integrity. MSRs associated with
+>> power limits and TCC offset are not privileged debugging or microcode
+>> interfaces but standard hardware configuration knobs intended for
+>> platform power and thermal management.
+>>
+>> It would be useful if the kernel either allowed access to a small
+>> whitelist of such documented registers under lockdown or exposed a
+>> mediated kernel interface for adjusting them. Without such a mechanism,
+>> Secure Boot effectively disables legitimate and widely used
+>> power/thermal tuning functionality on modern Intel laptops.
+>>
+>> Most (if not all) Intel laptops don't expose or allow to configure
+>> PL1/PL2 limits in BIOS/EFI either.
+> 
+> Because it is not necessary to do so.
+> 
+
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+bauen1
