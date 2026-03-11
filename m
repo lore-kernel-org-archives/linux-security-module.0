@@ -1,121 +1,208 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from a3-28.smtp-out.eu-west-1.amazonses.com (a3-28.smtp-out.eu-west-1.amazonses.com [54.240.3.28])
+	(using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A6A23ABA8;
-	Wed, 11 Mar 2026 04:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DA619DF6A;
+	Wed, 11 Mar 2026 05:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.3.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773205159; cv=none; b=AfUOn7Xr22tdivnqiMJmXtugg75clXxy/ixinW+84d9P9bQcU6XygWynS5vcLY1bvg0ClT+/FZLNRV3acp/hmfB7bGKfikZIxgb4DM7rG+GfxYVjjZgSZlcXDJ+WHdNfJlM6MXdJ14xAjKoxZwyPwj2kpc1le2hoxL9iMo6ym0I=
+	t=1773205744; cv=none; b=e6qrdatIELFW4NYGY8z1yXVWsy+Oi3/zLFn9xM+/hGqmhjssb+UCjGMg/x+CkRv4Lzky3E+ixpZEruu0cKs8+skOGPLR7sPpkfEqkcQX6d3j9c8Bm83kswBcd9PNrSvrBWJ0Dw3nKeIgkMPTnWZpXHhxB8xmZeBiaTjNsMivSyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773205159; c=relaxed/simple;
-	bh=hs7h01zebVZ3Cw5TSlyQoCCjwzUa+l8Cgq+3i/i+v4I=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=d+XpBF8R6hSjSTcMBfmH4ILegC+T+VFU6cnWCeL1UynvVuQvwhGK9HU46EbLxpSuUjgEosLLNlyp/vWQRByhJqvaUVytBWX5j1mOlK0gjr5ZpJ0vTdvEsR3BRMdUbUK3k1H4T5bY1NHCoXs6ClvsiRYESo1PnmzsuR0fJZq8vHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R7QWHNq5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773205744; c=relaxed/simple;
+	bh=yIGd+z2303xtlGp01Ki5ZUYcCfMxLkvb6hRdXKd56TE=;
+	h=From:To:Cc:Subject:Message-ID:Date:MIME-Version:Content-Type; b=TlftXVf14n127SiVi56THDHY/rD7+IrHFDCoCzecarbERTmWFJ19xvnyM0t/j/R+nKApatnCpvpxPi+WyQM54j2j+P3/HMqjIP+INW2AvqgXh7oQOmtjjWcVaJkt+8W/fVJHDO1MM54YeEUBC+9pth3R3ZWXpuuYEyuT7hr9xHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matrixforgelabs.com; spf=pass smtp.mailfrom=send.matrixforgelabs.com; dkim=pass (1024-bit key) header.d=matrixforgelabs.com header.i=@matrixforgelabs.com header.b=Tq4VUpd4; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=mx/2x+xv; arc=none smtp.client-ip=54.240.3.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matrixforgelabs.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=send.matrixforgelabs.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R7QWHNq5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7C9CC4CEF7;
-	Wed, 11 Mar 2026 04:59:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773205158;
-	bh=hs7h01zebVZ3Cw5TSlyQoCCjwzUa+l8Cgq+3i/i+v4I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=R7QWHNq5KYIpTwVo6Up5GHHSOdSE2gpk5GaKkIBbqjAR4gbzmNPFWIlQW10KkTPof
-	 EwepFELDieEhDwLa7MFg7ekO96kgeq0l/+LlK0SmYNrKgD9B5JFn2p8cKdN19q4bAB
-	 ZH5nM61a+EeP1bfo59H2leGLnAv8MA9DVbVTjKyoY75UQZCsrcqb+6U4ml2aryZAOd
-	 53HkEOSnemZkK807SePgE6JYJ0qIK9ypnQbQrEKCx7cEo9CjlroOKs6BchxOV0buhD
-	 E4Ehzc8FteV6XUFhu9KE6nGI0Pkr7s204WVgcSsEwXmzro7D3LuhuKd0AU39V1R3Ja
-	 2cWkRLISF31UQ==
-Date: Wed, 11 Mar 2026 13:59:11 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Philipp Hahn <phahn-oss@avm.de>
-Cc: amd-gfx@lists.freedesktop.org, apparmor@lists.ubuntu.com,
- bpf@vger.kernel.org, ceph-devel@vger.kernel.org, cocci@inria.fr,
- dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org,
- gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org,
- intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev,
- kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
- linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-hyperv@vger.kernel.org,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mm@kvack.org,
- linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-pm@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- ntfs3@lists.linux.dev, samba-technical@lists.samba.org,
- sched-ext@lists.linux.dev, target-devel@vger.kernel.org,
- tipc-discussion@lists.sourceforge.net, v9fs@lists.linux.dev, Philipp Zabel
- <p.zabel@pengutronix.de>
-Subject: Re: [PATCH 57/61] reset: Prefer IS_ERR_OR_NULL over manual NULL
- check
-Message-Id: <20260311135911.ced50d67e940cdf933a98d1a@kernel.org>
-In-Reply-To: <20260310-b4-is_err_or_null-v1-57-bd63b656022d@avm.de>
-References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
-	<20260310-b4-is_err_or_null-v1-57-bd63b656022d@avm.de>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (1024-bit key) header.d=matrixforgelabs.com header.i=@matrixforgelabs.com header.b="Tq4VUpd4";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="mx/2x+xv"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple; s=resend;
+	d=matrixforgelabs.com; t=1773205741;
+	h=From:To:Cc:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Content-Type;
+	bh=yIGd+z2303xtlGp01Ki5ZUYcCfMxLkvb6hRdXKd56TE=;
+	b=Tq4VUpd4E5BeSPjEpHQUBwhHQhG3DmX7uznu5zzCWC6C/FOgJft0kgAXD+osuFkE
+	Cr0gJe9avkyJOaheJXRg87wueAlSmI80brqGcD/eTEogr0mRcPc06oeEPJQIfQW5SeS
+	os9bvRLlUi50PaxWc+y80OeQ1ykF6lcdx90pNmwQ=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=ihchhvubuqgjsxyuhssfvqohv7z3u4hn; d=amazonses.com; t=1773205741;
+	h=From:To:Cc:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Content-Type:Feedback-ID;
+	bh=yIGd+z2303xtlGp01Ki5ZUYcCfMxLkvb6hRdXKd56TE=;
+	b=mx/2x+xv8KgdItgtV64p0NB/wQytsWgrPde32ihDdoD6Qbn8aPNjOAH7XFUH4ilz
+	YOYDWBghFC6QTSnhbA/55bYIY4+2ihG39JDQlJvoDGikRyFOYGhMnhr4apiAN9dNR0p
+	LJs8qsljmJYktxqEHg7x0Rz032tA9N1+h4MZlpAc=
+X-Mailer: git-send-email 2.53.0
+From: Jamie Lindsey <jamie@matrixforgelabs.com>
+To: rust-for-linux@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc: ojeda@kernel.org, paul@paul-moore.com, aliceryhl@google.com, 
+	jmorris@namei.org, serge@hallyn.com, jamie@matrixforgelabs.com
+Subject: [PATCH v2 0/5] rust: lsm: introduce safe Rust abstractions for the
+ LSM framework
+Message-ID: <0102019cdb4c6011-735b3e40-8c94-4c16-ae3f-80c912784e51-000000@eu-west-1.amazonses.com>
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 11 Mar 2026 05:09:01 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Feedback-ID: :1.eu-west-1.dUvNRtpqGVRXeo8wh60CXsl7GQehaaQ6nnrtD0cVQa3Ql6wtvHFwU/L0ElxknTtyiIJqbukn1OjAm5wWeKC4/L/mSl4kXjXWbCD+H4nPl2leK4flNX+koNzOtq4VJ309U1FPreISQBpCbnqANIVuwUyneL8ocSNAtI9Qxd/4vCM=:1.eu-west-1.xc5b6Z4+0WlftYwtQHAHsTtsfYdZQImSOXWypZD9BdY=:AmazonSES
+X-SES-Outgoing: 2026.03.11-54.240.3.28
 
-On Tue, 10 Mar 2026 12:49:23 +0100
-Philipp Hahn <phahn-oss@avm.de> wrote:
+v2: add missing Signed-off-by tags, fix short commit hash in patch 4.
+No code changes from v1.
 
-> Prefer using IS_ERR_OR_NULL() over using IS_ERR() and a manual NULL
-> check.
-> 
-> Semantich change: Previously the code only printed the warning on error,
-> but not when the pointer was NULL. Now the warning is printed in both
-> cases!
-> 
-> Change found with coccinelle.
-> 
-> To: Philipp Zabel <p.zabel@pengutronix.de>
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Philipp Hahn <phahn-oss@avm.de>
-> ---
->  drivers/reset/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index fceec45c8afc1e74fe46311bdc023ff257e8d770..649bb4ebabb20a09349ccbfc62f8280621df450e 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-> @@ -715,7 +715,7 @@ EXPORT_SYMBOL_GPL(reset_control_bulk_acquire);
->   */
->  void reset_control_release(struct reset_control *rstc)
->  {
-> -	if (!rstc || WARN_ON(IS_ERR(rstc)))
-> +	if (WARN_ON(IS_ERR_OR_NULL(rstc)))
+This series introduces the first safe Rust =
+abstractions for the Linux
+Security Module (LSM) framework.  It allows a =
+complete, policy-enforcing
+LSM to be written entirely in Rust with no C =
+boilerplate required from
+the LSM author.
 
-This changes the behavior when rstc == NULL.
-WARN_ON does not hit when rstc == NULL in the original code.
+--- Motivation ---
 
-Thanks,
+The LSM framework is a natural target for Rust: hook registration is
+unsafe by nature (raw function pointers, C ABI, __randomize_layout on
+the hook list struct), and the trait system can enforce correct
+implementation at compile time.
 
->  		return;
->  
->  	if (reset_control_is_array(rstc))
-> 
-> -- 
-> 2.43.0
-> 
-> 
+--- Design ---
 
+The abstraction is =
+trait-based:
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+  impl kernel::lsm::Hooks for MyLsm {
+      fn file_open(file: &File) -> Result { ... }
+  }
+  kernel::define_lsm!(MyLsm, "my_lsm\0", bindings::LSM_ID_UNDEF as u64);
+
+The define_lsm! macro generates all the plumbing: the lsm_id, the hook
+array, the __init function that calls security_add_hooks(), and the
+lsm_info descriptor placed in .lsm_info.init so that security_init()
+discovers it at boot.
+
+Hook implementations receive safe Rust wrappers =
+(&File, &Task) and
+return kernel::error::Result.  The C-callable adapter =
+functions are
+monomorphised per LSM type -- no vtable, no runtime dispatch.
+
+--- Implementation notes for reviewers ---
+
+static mut __LSM_HOOKS:
+  The hook array is static mut because it is written exactly once by
+  __lsm_init() in the single-threaded boot context, before
+  security_add_hooks() copies the entries into the static-call table.
+  No access occurs after that point.  UnsafeCell or a lock would add
+  overhead with no safety benefit in this strictly init-only path.
+
+unsafe impl Sync on LsmId / LsmInfo:
+  Both types are #[repr(transparent)] =
+wrappers around lsm_id / lsm_info,
+  which contain *const c_char pointers =
+to 'static NUL-terminated string
+  literals that are never mutated.  The =
+Sync impl is sound for the same
+  reason that &'static str is Sync.
+
+MaybeUninit hook array:
+  security_hook_list carries __randomize_layout.  =
+Rust code cannot safely
+  initialise it by field name (the field order =
+after randomisation differs
+  from what bindgen sees).  The array is left =
+MaybeUninit and filled at
+  runtime by C shims that call LSM_HOOK_INIT() --=
+ the macro the kernel
+  already uses for this purpose in C LSMs.
+
+Function pointer types:
+  All three hook signatures were verified against =
+union security_list_options
+  generated from lsm_hook_defs.h in this exact =
+tree.  file_open:
+  int(*)(struct file *); task_alloc: int(*)(struct =
+task_struct *, u64)
+  (u64, not unsigned long -- tree-specific); task_free:
+  void(*)(struct task_struct *).  All match the C shim parameters exactly.
+
+checkpatch note:
+  checkpatch reports "Non-standard signature: Assisted-by"=
+ and
+  "Unrecognized email address: Claude:claude-sonnet-4-6".  The
+  Assisted-by tag and its format are defined in
+  Documentation/process/cod=
+ing-assistants.rst; checkpatch has not yet
+  been updated to recognise it. =
+ This is a false positive.
+
+--- Limitations (v1) ---
+
+- Three hooks: file_open, task_alloc, task_free.  Additional hooks will
+  be added in follow-up patches as safe Rust wrappers for their argument
+  types are contributed upstream.
+- At most one Rust LSM per kernel build =
+(unique static symbol names
+  require a proc-macro; planned for v2).
+- No security blob support (SecurityBlob<T> planned for v2).
+
+--- Testing ---
+
+Compiled and boot-tested on Linux 7.0-rc2
+(commit 4ae12d8bd9a8 "Merge tag 'kbuild-fixes-7.0-2' of
+git://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux").
+
+Boot verified: with lsm=3Drust_lsm_sample on the kernel command line,
+/sys/kernel/security/lsm reports "capability,rust_lsm_sample" and
+task_alloc hook invocations appear in dmesg.
+
+--- Patch overview ---
+
+  [1/5] rust: bindings: include lsm_hooks.h -- expose LSM types to bindgen
+  [2/5] rust: helpers: C shims for LSM_HOOK_INIT and security_add_hooks
+  [3/5] rust: kernel: lsm -- Hooks trait, Adapter<T>, define_lsm! macro
+  [4/5] security: rust_lsm_sample -- reference implementation and boot test
+  [5/5] Documentation: rust: lsm abstraction developer guide; MAINTAINERS
+
+Jamie Lindsey (5):
+  rust: bindings: include lsm_hooks.h to expose LSM =
+types to bindgen
+  rust: helpers: add C shims for LSM hook initialisation
+  rust: kernel: add LSM abstraction layer
+  security: add Rust LSM sample =
+(CONFIG_SECURITY_RUST_LSM)
+  Documentation: rust: add LSM abstraction =
+guide; update MAINTAINERS
+
+ Documentation/rust/index.rst    |   1 +
+ Documentation/rust/lsm.rst      | 246 ++++++++++++++++++++++++++
+ MAINTAINERS                     |   9 +
+ rust/bindings/bindings_helper.h |=
+   1 +
+ rust/helpers/helpers.c          |   1 +
+ rust/helpers/lsm.c        =
+      |  49 ++++++
+ rust/kernel/lib.rs              |   2 +
+ rust/kernel/lsm.rs              | 295 ++++++++++++++++++++++++++++++++
+ security/Kconfig                |   2 +
+ security/Makefile               |=
+   1 +
+ security/rust_lsm/Kconfig       |  14 ++
+ security/rust_lsm/Makefil=
+e      |   2 +
+ security/rust_lsm/rust_lsm.rs   |  66 +++++++
+ 13 files changed, 689 insertions(+)
+ create mode 100644 =
+Documentation/rust/lsm.rst
+ create mode 100644 rust/helpers/lsm.c
+ create mode 100644 rust/kernel/lsm.rs
+ create mode 100644 =
+security/rust_lsm/Kconfig
+ create mode 100644 security/rust_lsm/Makefile
+ create mode 100644 security/rust_lsm/rust_lsm.rs
+
+--=20
+2.53.0
+
