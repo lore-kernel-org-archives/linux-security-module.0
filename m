@@ -1,166 +1,116 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8F63009D4;
-	Wed, 11 Mar 2026 05:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FF23290C9
+	for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2026 05:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773206020; cv=none; b=Cc7hQV9GgodxTlVcTtxHKIymC1Xg4S0sMHu/0bcoaO7Gq27+PQp0tT1IwvetCitf5qCuu9qpBN0dKefptjwkA/5DWg59iRKEdggDTw4Lv2QAqPrnjj4R2yP2TCu8J12b1em5zrfekZXLbZMFLLQqd8QLr5zreiqjWd6sPmjjd9c=
+	t=1773206438; cv=none; b=LTkn5Lf3boM2QY/SFAHascp6BTlkVwJo6dc1hT5H8r+Hix0Ytw9zsZrsxAvzx826lbrohluD6uJ4tDQJqFYze81cMPMMpI2F1HU9xQJpUwwPZRtJWBJcX1orKi2Z02YZl9+Gsl2h+0t60sEZC2eZvxkF+kbHrNAWeLPqnGFKAB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773206020; c=relaxed/simple;
-	bh=28by/08L5sQfVInnpnws13wBN8rSRzXkYuFZbXIDejE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=HwyY7YfRAzZm5jwvgo6Fo7N57zCkXx+eASOsgnSNAfyEpcRa/Zi77VD7VkcFsy7idT0U2jjdLC1UDxvKJONFTEB5zDzVxAZXKHq3TvPq0HeGTwIq4E4CIbMxJ1eJxMogQGbEpJsXyqSURpVwuGgH4vFyNA37VgX9rlYgK49cw9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fBD8jk+A; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773206438; c=relaxed/simple;
+	bh=lmPpYSlPcQNZpTQXLMEyB3rxC3XM040jCc/+2R5k/b0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=I0FFzqzQVGn42rluDbwcxFoJC7u0HVCfzbxkjTEQSrI0fQ93Pi9E1daPpYyt6Z2atWztjuUByXcWl8ix8747/rCQkA15hOTHGoKDGWHysT/fOwGXM22BJLavbJOq9h6g4d+k97KTbo2vjKHwgYs4aFcPvMaeCTaF8PFXE4f7CL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R0gnp6f1; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fBD8jk+A"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B290C4CEF7;
-	Wed, 11 Mar 2026 05:13:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773206020;
-	bh=28by/08L5sQfVInnpnws13wBN8rSRzXkYuFZbXIDejE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fBD8jk+Az9XLzjQybetTno+W1ryvU+pJL+N7BKChPP4rEV9IYqgPEFF2K1MPy7V+I
-	 icuIUfL/Dg5/kgC+Hmy6YXnokVmu1zBps2v+geMH037tafu9KbfbPBt55PGuheVQJI
-	 z4qBbYgbztbgPszs8uOt3DWOo4BLsomiZb502AAVr8RGodlkXenJkrZoPQ7T4PM4Oz
-	 vrK0XegnvMjvVzXWSmVe1LK/JeGbm1OZeYQWd07yKlzuY4gn+/WuMImks+j3fST4ms
-	 212iplG27c78T1c+7zhxUp3BWeQ6jYmUF3g5aNFDkxAetR3pCSSickOn/0/x8U56nb
-	 McVwjAbkgnZAA==
-Date: Wed, 11 Mar 2026 14:13:32 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Philipp Hahn <phahn-oss@avm.de>, amd-gfx@lists.freedesktop.org,
- apparmor@lists.ubuntu.com, bpf@vger.kernel.org, ceph-devel@vger.kernel.org,
- cocci@inria.fr, dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org,
- gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org,
- intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev,
- kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
- linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-hyperv@vger.kernel.org,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mm@kvack.org,
- linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-pm@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- ntfs3@lists.linux.dev, samba-technical@lists.samba.org,
- sched-ext@lists.linux.dev, target-devel@vger.kernel.org,
- tipc-discussion@lists.sourceforge.net, v9fs@lists.linux.dev, Masami
- Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH 15/61] trace: Prefer IS_ERR_OR_NULL over manual NULL
- check
-Message-Id: <20260311141332.b611237d36b61b2409e66cb3@kernel.org>
-In-Reply-To: <20260310100750.303af303@gandalf.local.home>
-References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
-	<20260310-b4-is_err_or_null-v1-15-bd63b656022d@avm.de>
-	<20260310100750.303af303@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R0gnp6f1"
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-829ad81b132so13483020b3a.1
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 22:20:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1773206436; x=1773811236; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q82HY+Ox5JF0vwG5eIoCl0bQkH1ycg7BDvsoRBp0gXg=;
+        b=R0gnp6f1gOltq3j9L2+MtAENcu4iK0WGejYPGIqDP5CHN+C5kYWVwbkjzgiKufJZtE
+         fSq7KbjpEryl4h6v3zfPNd2U81AwthhrIQMav6DAxdpxE/t0wdAKjCCWgKXIVCvyKeCY
+         jRwCDkWs5VUmLEp0UgWIpqQPKPUcewd57phTSQMis+6Z0dvS8gBIvyozq6x2mLMuY2tH
+         n1Z6KobG9fZhyC0HerzWGNhRWGIikEjmp0F+FvXAX8m3A50Dnb9na7oj7usqa3BFKTwb
+         57q3OlE4KgpMsuygJFb1Hexn5uI0A+YP03T64FkzFWbs5thnkZNv78R8mc4PQXmE3RUj
+         8MCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773206436; x=1773811236;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q82HY+Ox5JF0vwG5eIoCl0bQkH1ycg7BDvsoRBp0gXg=;
+        b=UERayRIApAoMFSf+HGNtOgxuhjbWoZ3kwya099kB3OOnHOocFFzccXExeJg3xAxD4+
+         Ac+MOsddZUYUCtxCkU0Z1J9eztTUPGUm2SFbBNes3mqp8Id6ZCA3+HZTERcoMKG6cGzl
+         es2+5CiSO5EXFpq61n6FaMCHKYm9kT61lnzDFU+QtmrgnV/4GJG7SVppddgvOnbS0CqE
+         2W3pESwwB6lRrMjjWahsThfxgEmgGrkXoDyIwlcx/pTLSMrOsv40bQ2MJsW2sKGUxwsX
+         uPBW3wmMVRv5UquzePNar5aJjwMl1XJA8mwh9H3ET6/Q4ww60IpuctPOTidJbDxKgft6
+         UEPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPr04l78AUfw0hNmvQCSuV6DtfUW7ZsLeR8VT3fYRy7FIakB66gt1w65XDqX7S0cicAYPI0MsoDiFs6d/1QRBQzJG0Of8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBotnw8DlDln28rqLcyNmidnF42GRC2zAw9Heye97QmwDUpb5n
+	c9gbvRGUYaTW4PSxyafuZQL0FeWYy+vmFkRVP4NRRjxlzwxhy1Jf5BrM81P4IA8rKIDglTvgi2A
+	V02K16A==
+X-Received: from pfbdi8.prod.google.com ([2002:a05:6a00:4808:b0:829:7841:17b5])
+ (user=kuniyu job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:440d:b0:829:bd4d:3817
+ with SMTP id d2e1a72fcca58-829f70462b4mr1340501b3a.28.1773206436051; Tue, 10
+ Mar 2026 22:20:36 -0700 (PDT)
+Date: Wed, 11 Mar 2026 05:19:53 +0000
+In-Reply-To: <20260311052020.1213705-1-kuniyu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260311052020.1213705-1-kuniyu@google.com>
+X-Mailer: git-send-email 2.53.0.473.g4a7958ca14-goog
+Message-ID: <20260311052020.1213705-7-kuniyu@google.com>
+Subject: [PATCH v3 net-next 06/15] smack: Remove IPPROTO_UDPLITE support in security_sock_rcv_skb().
+From: Kuniyuki Iwashima <kuniyu@google.com>
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, David Ahern <dsahern@kernel.org>, 
+	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>, 
+	Kuniyuki Iwashima <kuniyu@google.com>, Kuniyuki Iwashima <kuni1840@gmail.com>, netdev@vger.kernel.org, 
+	Willem de Bruijn <willemb@google.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 10 Mar 2026 10:07:50 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+smack_socket_sock_rcv_skb() is registered as socket_sock_rcv_skb,
+which is called as security_sock_rcv_skb() in sk_filter_trim_cap().
 
-> On Tue, 10 Mar 2026 12:48:41 +0100
-> Philipp Hahn <phahn-oss@avm.de> wrote:
-> 
-> > Prefer using IS_ERR_OR_NULL() over using IS_ERR() and a manual NULL
-> > check.
-> 
-> Why?
-> 
-> > 
-> > Change generated with coccinelle.
-> > 
-> > To: Steven Rostedt <rostedt@goodmis.org>
-> > To: Masami Hiramatsu <mhiramat@kernel.org>
-> > To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> > Cc: linux-kernel@vger.kernel.org
-> > Cc: linux-trace-kernel@vger.kernel.org
-> > Signed-off-by: Philipp Hahn <phahn-oss@avm.de>
-> > ---
-> >  kernel/trace/fprobe.c                | 2 +-
-> >  kernel/trace/kprobe_event_gen_test.c | 2 +-
-> >  kernel/trace/trace_events_hist.c     | 2 +-
-> >  3 files changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-> > index dcadf1d23b8a31f571392d0c49cbd22df1716b4f..a94ce810d83b90f55d1178a9bd29c78fd068df4c 100644
-> > --- a/kernel/trace/fprobe.c
-> > +++ b/kernel/trace/fprobe.c
-> > @@ -607,7 +607,7 @@ static int fprobe_module_callback(struct notifier_block *nb,
-> >  	do {
-> >  		rhashtable_walk_start(&iter);
-> >  
-> > -		while ((node = rhashtable_walk_next(&iter)) && !IS_ERR(node))
-> > +		while (!IS_ERR_OR_NULL((node = rhashtable_walk_next(&iter))))
-> 
-> Ug, No!
-> 
-> That looks so much worse than the original.
+Now that UDP-Lite is gone, let's remove the IPPROTO_UDPLITE support
+in smack_socket_sock_rcv_skb().
 
-Hmm, now IS_ERR_OR_NULL() is an inline function, so it is safe.
-But if you want to use IS_ERR_OR_NULL() here, it will be better something like
+Signed-off-by: Kuniyuki Iwashima <kuniyu@google.com>
+Reviewed-by: Willem de Bruijn <willemb@google.com>
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org
+---
+ security/smack/smack_lsm.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-node = rhashtable_walk_next(&iter);
-while (!IS_ERR_OR_NULL(node)) {
-	fprobe_remove_node_in_module(mod, node, &alist);
-	node = rhashtable_walk_next(&iter);
-}
-
-Thanks,
-
-> 
-> -- Steve
-> 
-> >  			fprobe_remove_node_in_module(mod, node, &alist);
-> >  
-> >  		rhashtable_walk_stop(&iter);
-> > diff --git a/kernel/trace/kprobe_event_gen_test.c b/kernel/trace/kprobe_event_gen_test.c
-> > index 5a4b722b50451bfdee42769a6d3be39c055690d1..a1735ca273f0b756aa1fcfcdab30ddad9bc51c5f 100644
-> > --- a/kernel/trace/kprobe_event_gen_test.c
-> > +++ b/kernel/trace/kprobe_event_gen_test.c
-> > @@ -75,7 +75,7 @@ static struct trace_event_file *gen_kretprobe_test;
-> >  
-> >  static bool trace_event_file_is_valid(struct trace_event_file *input)
-> >  {
-> > -	return input && !IS_ERR(input);
-> > +	return !IS_ERR_OR_NULL(input);
-> >  }
-> >  
-> >  /*
-> > diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-> > index 73ea180cad555898693e92ee397a1c9493c7c167..59df215e1dfd9349eca1c0823ed709ec7285f766 100644
-> > --- a/kernel/trace/trace_events_hist.c
-> > +++ b/kernel/trace/trace_events_hist.c
-> > @@ -3973,7 +3973,7 @@ trace_action_create_field_var(struct hist_trigger_data *hist_data,
-> >  	 */
-> >  	field_var = create_target_field_var(hist_data, system, event, var);
-> >  
-> > -	if (field_var && !IS_ERR(field_var)) {
-> > +	if (!IS_ERR_OR_NULL(field_var)) {
-> >  		save_field_var(hist_data, field_var);
-> >  		hist_field = field_var->var;
-> >  	} else {
-> > 
-> 
-
-
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 98af9d7b9434..e581d6465946 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4176,7 +4176,6 @@ static int smk_skb_to_addr_ipv6(struct sk_buff *skb, struct sockaddr_in6 *sip)
+ 			sip->sin6_port = th->source;
+ 		break;
+ 	case IPPROTO_UDP:
+-	case IPPROTO_UDPLITE:
+ 		uh = skb_header_pointer(skb, offset, sizeof(_udph), &_udph);
+ 		if (uh != NULL)
+ 			sip->sin6_port = uh->source;
+@@ -4301,8 +4300,7 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+ #if IS_ENABLED(CONFIG_IPV6)
+ 	case PF_INET6:
+ 		proto = smk_skb_to_addr_ipv6(skb, &sadd);
+-		if (proto != IPPROTO_UDP && proto != IPPROTO_UDPLITE &&
+-		    proto != IPPROTO_TCP)
++		if (proto != IPPROTO_UDP && proto != IPPROTO_TCP)
+ 			break;
+ #ifdef SMACK_IPV6_SECMARK_LABELING
+ 		skp = smack_from_skb(skb);
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.53.0.473.g4a7958ca14-goog
+
