@@ -1,85 +1,83 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from a3-30.smtp-out.eu-west-1.amazonses.com (a3-30.smtp-out.eu-west-1.amazonses.com [54.240.3.30])
+	(using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969E039DBF5;
-	Wed, 11 Mar 2026 23:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6287D1E8320;
+	Wed, 11 Mar 2026 23:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.3.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773270226; cv=none; b=AkA2Gnlxmrw7n8wlICODGs3io7QO9Oh/YDy07WP09JF/KFh9g5IxYQ17wt6vWQVzPCB+iYEQu7P3mBvtqRc+n31lnQN5NVwKohchMiBQHqmgSZE6jhjwc4hv3UUzJs1InFDBm/aIiY3ylNEkhCwq8TX0CYHFVkpY9m+PERgjhT4=
+	t=1773270516; cv=none; b=Qmm0P3HbgJYceRwYfpyZxm4OGc6/ubb7IizdRvo9kq31eSvNwCA1Qfx62OO9neb9EjS9xu42vhV48Ieddjdix36JHU0G41y/dD8D+aYMgEPQTc+edOYX1Ee/b+CN2MwedhZTYJrN/vvmdYQSe4Btnr0gDF60UIEApXJW45yiZuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773270226; c=relaxed/simple;
-	bh=ATo3aRyKmYSXuSYD8x/NeBUp5LJcLKbzHVpozNXQJC0=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=riWYrESCcc9KNXqP13SZYyXzR58RrYMlS+b2xha5iOXuuIp+StTrVizqL6ketCeeYmMEMoyxUK8taVuLlBt+IYJOKFEOgMITJUBE5YxvJbFyx57ukqqJFBTg7MI8yXilCszhmCyW65ADzTthRqCB0cIhFeDkNxgzAb+Zf6dy7s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=fail (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=WxcdvAR4 reason="signature verification failed"; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1773270516; c=relaxed/simple;
+	bh=OIJ2jS4dUbUjTgFMfE6GJIzCUFUypmdEg02cOK1iYts=;
+	h=In-Reply-To:References:From:To:Cc:Subject:Message-ID:Date:
+	 MIME-Version:Content-Type; b=PI9vFfOrJHeMzxRhsmQfB4nRjc2sYhVZTLUVcCaLvpMCkAiuESM8nYrQVb3Gq22Ulg9NI4FHqINK8CmGmXgNRt3viesyPe2p+j1iD+vAehdFBYCDusyvLOyziEYLmWVAMVKjS6rd93ZPuPtisbicSajXzUL+M4gy/ikqERwDm/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matrixforgelabs.com; spf=pass smtp.mailfrom=send.matrixforgelabs.com; dkim=pass (1024-bit key) header.d=matrixforgelabs.com header.i=@matrixforgelabs.com header.b=GVjrUhQ5; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=j13RVIP0; arc=none smtp.client-ip=54.240.3.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matrixforgelabs.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=send.matrixforgelabs.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WxcdvAR4"
-Received: from monstersaurus.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CD91E448;
-	Thu, 12 Mar 2026 00:02:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1773270149;
-	bh=ATo3aRyKmYSXuSYD8x/NeBUp5LJcLKbzHVpozNXQJC0=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=WxcdvAR4zphcUuTNTLXCbLGiiCOKCwemLRMbnRdmW3ARcBHAWQiYVeysDpnfCIDuk
-	 B8rMCjKjDjoWJdgj4Zp0scfHxrPnr5P3xl9hFANY/wyWKZBZYHzyf2qsFxVEe9S31Y
-	 m9r/HjFnopry9bsUUdk6/id/Q3d97jYK/FiMa+Qw=
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (1024-bit key) header.d=matrixforgelabs.com header.i=@matrixforgelabs.com header.b="GVjrUhQ5";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="j13RVIP0"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple; s=resend;
+	d=matrixforgelabs.com; t=1773270513;
+	h=In-Reply-To:References:From:To:Cc:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Content-Type;
+	bh=OIJ2jS4dUbUjTgFMfE6GJIzCUFUypmdEg02cOK1iYts=;
+	b=GVjrUhQ5cP5f/dTqR2LpT8cJ9/ciP1TIU2bQ/lZgV6IWMeswaweFyqJZZEwbpB6a
+	RIDLWF+0rd2pVV7xQvzzL8aoDBQK/CcvAvQV4zPXrwJPaqm4ftU2v2L3xwmo+UHg4NG
+	xU3sMml2k9XPv0QiUJnuf08dFivpyUP7P7y+7uAE=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=ihchhvubuqgjsxyuhssfvqohv7z3u4hn; d=amazonses.com; t=1773270513;
+	h=In-Reply-To:References:From:To:Cc:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Content-Type:Feedback-ID;
+	bh=OIJ2jS4dUbUjTgFMfE6GJIzCUFUypmdEg02cOK1iYts=;
+	b=j13RVIP0eWnsgpCqKswkN7uvIDic3mJ9A9/fV8dV8reHsfv0+TRkIQPYQBtLPOPo
+	aFz/mSVYsX2sJry7tCbiKXDJI06R29EP3aWPmXYi8DGPaJ2/EszxJCAnTbOkmNnuFt7
+	Eyas510/jM7oGDmcD/knDgcUuhQyPl76SAEXhCao=
+X-Mailer: git-send-email 2.53.0
+In-Reply-To:
+ <CAH5fLgiQm=2YYvmG54o-MEt2m8x5V5xZrtmsqEUtuB9OZ=FPOw@mail.gmail.com>
+References:
+ <CAH5fLgiQm=2YYvmG54o-MEt2m8x5V5xZrtmsqEUtuB9OZ=FPOw@mail.gmail.com>
+From: Jamie Lindsey <jamie@matrixforgelabs.com>
+To: aliceryhl@google.com
+Cc: paul@paul-moore.com, jamie@matrixforgelabs.com, jmorris@namei.org, 
+	linux-security-module@vger.kernel.org, ojeda@kernel.org, 
+	rust-for-linux@vger.kernel.org, serge@hallyn.com
+Subject: Re: [PATCH v2 0/5] rust: lsm: introduce safe Rust abstractions for
+ the LSM framework
+Message-ID: <0102019cdf28b7c2-c69abd03-cd5d-4096-adce-1797b162c083-000000@eu-west-1.amazonses.com>
+Content-Transfer-Encoding: 7bit
+Date: Wed, 11 Mar 2026 23:08:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20260310-b4-is_err_or_null-v1-49-bd63b656022d@avm.de>
-References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de> <20260310-b4-is_err_or_null-v1-49-bd63b656022d@avm.de>
-Subject: Re: [PATCH 49/61] media: Prefer IS_ERR_OR_NULL over manual NULL check
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
-To: Philipp Hahn <phahn-oss@avm.de>, amd-gfx@lists.freedesktop.org, apparmor@lists.ubuntu.com, bpf@vger.kernel.org, ceph-devel@vger.kernel.org, cocci@inria.fr, dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org, gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org, intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev, kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org, linux-clk@vger.kernel.org, linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-hyperv@vger.kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-media@vger.kernel.org, linux-mips@vger.kernel.org, linux-mm@kvack.org, linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org, linux-phy@lists.infradead.org, lin
- ux-pm@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org, linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org, linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, ntfs3@lists.linux.dev, samba-technical@lists.samba.org, sched-ext@lists.linux.dev, target-devel@vger.kernel.org, tipc-discussion@lists.sourceforge.net, v9fs@lists.linux.dev
-Date: Wed, 11 Mar 2026 23:03:33 +0000
-Message-ID: <177327021364.3167621.11851238159935183684@ping.linuxembedded.co.uk>
-User-Agent: alot/0.9.1
+Content-Type: text/plain; charset=utf-8
+Feedback-ID: :1.eu-west-1.dUvNRtpqGVRXeo8wh60CXsl7GQehaaQ6nnrtD0cVQa3Ql6wtvHFwU/L0ElxknTtyiIJqbukn1OjAm5wWeKC4/L/mSl4kXjXWbCD+H4nPl2leK4flNX+koNzOtq4VJ309U1FPreISQBpCbnqANIVuwUyneL8ocSNAtI9Qxd/4vCM=:1.eu-west-1.xc5b6Z4+0WlftYwtQHAHsTtsfYdZQImSOXWypZD9BdY=:AmazonSES
+X-SES-Outgoing: 2026.03.11-54.240.3.30
 
-Quoting Philipp Hahn (2026-03-10 11:49:15)
-> Prefer using IS_ERR_OR_NULL() over using IS_ERR() and a manual NULL
-> check.
->=20
-> Change generated with coccinelle.
->=20
-> To: Shuah Khan <skhan@linuxfoundation.org>
-> To: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> To: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: linux-media@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Philipp Hahn <phahn-oss@avm.de>
-> ---
->  drivers/media/test-drivers/vimc/vimc-streamer.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/media/test-drivers/vimc/vimc-streamer.c b/drivers/me=
-dia/test-drivers/vimc/vimc-streamer.c
-> index 15d863f97cbf96b7ca7fbf3d7b6b6ec39fcc8ae3..da5aca50bcb4990c06f28e5a8=
-83eb398606991e9 100644
-> --- a/drivers/media/test-drivers/vimc/vimc-streamer.c
-> +++ b/drivers/media/test-drivers/vimc/vimc-streamer.c
-> @@ -167,7 +167,7 @@ static int vimc_streamer_thread(void *data)
->                 for (i =3D stream->pipe_size - 1; i >=3D 0; i--) {
->                         frame =3D stream->ved_pipeline[i]->process_frame(
->                                         stream->ved_pipeline[i], frame);
-> -                       if (!frame || IS_ERR(frame))
-> +                       if (IS_ERR_OR_NULL(frame))
+On Wed, Mar 11, 2026 at 07:48:57AM +0100, Alice Ryhl wrote:
+> What is the intended end-user of these abstractions?
 
-Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+The intended end-user is a real, policy-enforcing LSM for autonomous
+agent workloads -- not the sample module included in this series.
 
->                                 break;
->                 }
->                 //wait for 60hz
->=20
-> --=20
-> 2.43.0
->
+I'm building an agent-native security module that enforces capability
+manifests at the kernel level: per-agent file access policy, network
+destination restrictions, process spawn depth limits, and pre-exec
+threat detection. The agent identity is tracked via the LSM security
+blob on struct cred, and policy decisions are made per-hook based on
+compiled manifest rules.
+
+The sample LSM in patch 4 exists as a boot-test vehicle for the
+abstractions, not as the target consumer. I should have made that
+clearer in the cover letter -- that's on me.
+
+Regarding Paul's point about example LSMs: understood completely.
+I'll rework the series to present the abstractions alongside the
+real LSM rather than the sample. I'll review the prior work Paul
+linked and the new-LSM guidance before resubmitting.
+
+Thanks to both of you for the fast feedback.
+
+Jamie
