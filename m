@@ -1,196 +1,160 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD533DF016
-	for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2026 12:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148C12EA480
+	for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2026 12:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773231524; cv=none; b=DG6nivDvuIW7xSq0zQIoJVuYaRvo83M1Jin5J2nQlxEreRPUlBsKMpc1mqDuvg21JKtU+RUymmrfP6HAOO4rVACUTJBjw2PsuLd39XeC9sY7oikmEFhJ8hk91l6dARuXNIApbjSPTONhheNgzvYIOK+2alv7zs2t6Su69M6N2Rc=
+	t=1773232496; cv=none; b=bRY+XoIhfbuJdmjkp0I9I8jRfyhamRDVQwhOlQ31IgUowME/w3C32Q+fytWasVRG8Ozz+chz4kBVhskLa3oMUoLcLn3GFufFy5zKQSmezxC+3BZCOKWFb6mlnKmW9sVr8BxYdH6173pHqGTzI5cMKqT5nvOJ2lGhmvo7cumgw5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773231524; c=relaxed/simple;
-	bh=hkeF5EhKgtCfMPeQqb+5RnJrMuv4lHrZlhgXJKBD454=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=NDyiDIPwWyH72EBSVqQbotn8NY8cdW2fOP3oosRVPb79JF21nPfd92i+lLkHDE2TFIzp9lq50F5iGnRY6hm8FJ5rGVGAEek8McXSZGfzrw3hBLP1ud8ZtaG7KdPSnDWU8vav7/lPLnHC+EZGIUBsP1WCekXCRP3z4JXQPtnTTPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=JfF0soFJ; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+	s=arc-20240116; t=1773232496; c=relaxed/simple;
+	bh=4V/FLewYp4qpRJBMOlrGqYSXJ1bd8KpRc1fnh/8a82k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z4JZ/q9slfpF56pEXzskZGnevbhoRyQE4iHRK/ept1tGMhtP/xn0Gd2XvUetuch2HUgrQbwUy7Q316K9kAXX5XNLco/9Piq5q4WS0zA8ojxg8WuZcga1/wr8tCRzcumXT5EoDakmEi/pEEIbu1Osf6/RUuiRGSQwugFo7K9XJIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jm+bPJvJ; arc=none smtp.client-ip=74.125.224.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="JfF0soFJ"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-48534237460so41410915e9.3
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2026 05:18:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jm+bPJvJ"
+Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-64ae222d978so13945462d50.1
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2026 05:34:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1773231519; x=1773836319; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LOP4fizghMTtbxn+R2xWmI41wwL6j9WK+V7N8sNfZnM=;
-        b=JfF0soFJlhwCq/YWO3K/sJhHFEglqjhiMJz97YIm8sfg5/bqQsg3CK21QNLgcVtzQT
-         Zh2MTN0J5oTMiIhGlCzyMmH83PztE8MM+AdhZUR+/1Bc+VTvUKmQCJJAkYcZAKBY7wEz
-         yF0CH1AHDGYloggoCoPh7FD5vnP4aqyWcmYwxS/R8EG5pAGHw+X7XYgyqgMUouqMFPo5
-         JNU9GkVAUtMxEucG5XmUnGoLeeLuvMvDifQ2ao5ErT0WoLedRSCEU0UoN6P8/6le7ONP
-         5eFINUGjel7uvMAPi6Q5+iCdO+ydvA2DaGgYTh+X3wGzLVgA9ubt+abF57lwvbGUUuGC
-         ljFw==
+        d=gmail.com; s=20230601; t=1773232493; x=1773837293; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+bCTlsnYg7WlwyrXb9b++ZpE0INNBNp3LJgQh0I5kfE=;
+        b=jm+bPJvJ5zE2Z91Qq6YgMknCJiN7F3XLqlJmdlKcxF+NQ1GMTxvoidhTjcGBunBYG+
+         zt0aTPC93/9syrgsO7ND4e0Aluc+WxOTkyrhxpOKdLNbf0JYEukfjxaTwF/d//qGQWfa
+         5AvOAPMumKKLvg0nV+LqEqqVoban4aJPfUe1nfmK1sRZwko3ylLAVpdeuZY6McH9GA86
+         OYN+YDyQdWBOHCucTV1WO7Tl725BPnVGhtVQV26kRv/uGanJV1OeKAKWltGxXbMbm6Sq
+         3W3E/xf7wmD4GKNC9Jzbd7HRHEIVpXmc8t/8xaptpFZNcnTvN0UFvkJOm7/UEqJlcE2F
+         z2Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773231519; x=1773836319;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LOP4fizghMTtbxn+R2xWmI41wwL6j9WK+V7N8sNfZnM=;
-        b=mbDx2hiYZKGNul1QiONGGfXkgVzr1gphsxtZd3MuQ0u13SAwkCS/+hZ1//hjtsPAhj
-         wQ13f8f0Qo0uvQFSsyKgeAdqfBY/r4PqwI43A3zsYVXcWE0Gv5jtMZo/T0Y6GsMFvJdF
-         JBH1jHLil5JcOk807lqBJ0x39b/hubjuzknxoX4KvE4MSWvLaB6i6ryDv8ZqU8ACNIoG
-         aesKf5w0b5qcYECC0j06FzcYNISPDs4X0n7Xz2mfrigJUQjOvPtbSuVaT/EN4leSbNem
-         0FsVK3RfcXkGTwujF1w0MFva2cGK/30vB+1MVcatpF0wBWybYEKnbvNtEIvMlNgcWVKr
-         NSwA==
-X-Forwarded-Encrypted: i=1; AJvYcCWz6o4Tp7Sdt7Wohpuljl9fhyq5JvYurbJ0M0+kiI4KadS5NXnypnfHdElX9SY62645um6cFnvC56rgx86MttoCOHu+0U0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw/NbCUD1BuHfWv0VhGF+tfJgWLMV3z/2sxNUFeHlaT25vZwtP
-	R0ZtoM/cmg8GRxKY6DrfZw0gajMT9jZtFb71k7o5xPgL0fz/+CwXMiDY
-X-Gm-Gg: ATEYQzwnspeQdQG5x/GkgsfPj8N+S4mTjq8oy3/reTSd/b3G0rNoVgrjSk+Ub/ESbGz
-	QA+MK4M2mzUw41PeI2KZ852x4PZ8gAatBi9tdbHy4kQFScJm8N+vw7x4FTxdDp3EcFdkDLSD0Ms
-	r+0qhH4qmV59LNKdoFZTPAV89acFmZuAxVkWVJWJMAUzbyxS+jD1rJlngR7swbfwPEOkAq1fpyc
-	j8teSEssBh2I5nHBt9VvsxVLYcRc+6h06U4AcozvY4YwIPKAzdaiIm4N+qL6kvtvccXZgTKLQZE
-	qlWw8GbfmJ5TI1FMwzGG5Q/C+dXP6urchZJG0odB/BxJ7X3OEIu088au6ZDmLHO5RZxyF63/O+X
-	NaSkOFULCoRtaoT+J8uKtgXyvExRclAVv5CsoyLmFTb5qh9F+jp1qaPJ13Q2BW2q4XAEqIqfmGy
-	HdaKH4nyGBGeI1s5zpBRYatfw4ymIT29JddGiDrUMcc6vhljzuN1HZZFuE6EWOG7Z5
-X-Received: by 2002:a05:600c:4e56:b0:480:20f1:7aa6 with SMTP id 5b1f17b1804b1-4854b0fe9d9mr36394375e9.21.1773231519033;
-        Wed, 11 Mar 2026 05:18:39 -0700 (PDT)
-Received: from ?IPV6:2001:a61:2518:4301:dfae:d37f:359:7ae8? ([2001:a61:2518:4301:dfae:d37f:359:7ae8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4854b0febd2sm17035925e9.32.2026.03.11.05.18.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2026 05:18:38 -0700 (PDT)
-From: bauen1 <j2468h@googlemail.com>
-X-Google-Original-From: bauen1 <j2468h@gmail.com>
-Message-ID: <e61419d0-4f7b-40f9-8e90-fbe5aaaa6dd8@gmail.com>
-Date: Wed, 11 Mar 2026 13:18:36 +0100
+        d=1e100.net; s=20230601; t=1773232493; x=1773837293;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+bCTlsnYg7WlwyrXb9b++ZpE0INNBNp3LJgQh0I5kfE=;
+        b=FATtKXDDQKCytAn15cbQBWC9VNMV/Xp81MskUQsGqfl+n/dFhWHc4BY0J7O+Tqp/3R
+         ulJ/5NfXSuf+p6lMaKIKtqUQi2FDc0Eb7hmY3gHktvX90WvCAg68LvYlh3/jpLi7Hkh/
+         DY50dGJ8Kbr/DQSXcrMtW2yPpq0cH95xPQJrItKy15Kw5HIJePVMiJdz+GGoNzW+h/Fl
+         ev4PVaN1Kc3WUSI/9qS7TmcNkGBlkQto3NKha7v90GqxXzQrWPQwbkWb/Q6CXLk8OGe4
+         OosZ4t15vGt05vwtCkuCfephIpS8apVcjwV4rcOl5dIZIogCOKp5CAWtYTZUrnkcCROF
+         23NA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGXfFi4eRpJaqJG7khLv9Vcav2InkhGB5jryMBnesMPI/4Y7lk8rzfrBd1bg5dhDlw61ww7ciGn/jiTQKUpQz6xUdWHZc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtgLmO4MXcnVyfn9DqPZpAe7ey9ViNpOPwYpVEzCLXQRerZp5M
+	i8pRECh7b4zKchmV7SToIpZ63cDKHoDXIbAyBcSecgAE7k7PyvGmyCqH
+X-Gm-Gg: ATEYQzyYEArvhelfPux1NFmHRzuGv0il6kS4rzJ0HcEJIzBJHQlyuYlx8TfzUn5Xd3e
+	0V3Olg6LSgWQ5yl8Ix1LjarjkkTHKLpMmGf05xSjyGhXkqwapCDG3eI2+7tmljrx+quiADZqURc
+	gtWvRgI6/5CNppvuOxA7/m8Er3Q2mne0wfFaPXxYgxKqw/JFANpTO0fffn7mVrNZwMAvi4OkGw7
+	/03IpZGi/1rqRh4+hTLNg/u/cf/pxeFtp+qSQzavfHCBpg3B6T+6WlclF8g1148bHjZVKnjDWHA
+	B5ykGLhzjq12ZFSOveWLX8dpOl5ZiI1d2QyJMWn2W1th7kNV7Cke5K+FVT7IOuKNRsiQAkt/NqJ
+	AkSRGSusrw3MS2VuigneLcgWYfyaeQXham0LfQSw+8Ue+mfv6n+yvmjmd3bUuvTO6VKqijEsUP8
+	lpu2/ab4AKqQLhr4RAKgNyaQauNaby
+X-Received: by 2002:a05:690c:6c8d:b0:785:cecb:4b19 with SMTP id 00721157ae682-79917e8baeamr20238127b3.5.1773232492914;
+        Wed, 11 Mar 2026 05:34:52 -0700 (PDT)
+Received: from suesslenovo ([129.222.85.110])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-79917ee4feasm12115467b3.30.2026.03.11.05.34.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2026 05:34:52 -0700 (PDT)
+Date: Wed, 11 Mar 2026 08:34:51 -0400
+From: Justin Suess <utilityemal77@gmail.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>,
+	brauner@kernel.org, demiobenour@gmail.com, fahimitahera@gmail.com,
+	hi@alyssa.is, horms@kernel.org, ivanov.mikhail1@huawei-partners.com,
+	jannh@google.com, jmorris@namei.org, john.johansen@canonical.com,
+	konstantin.meskhidze@huawei.com,
+	linux-security-module@vger.kernel.org, m@maowtm.org,
+	matthieu@buffet.re, mic@digikod.net, netdev@vger.kernel.org,
+	samasth.norway.ananda@oracle.com, serge@hallyn.com,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v6] lsm: Add LSM hook security_unix_find
+Message-ID: <abFhawSTjNoa-KaH@suesslenovo>
+References: <aZcPd3OKqxwCZV-5@suesslenovo>
+ <20260219200459.1474232-1-utilityemal77@gmail.com>
+ <20260219.de5dc35ec231@gnoack.org>
+ <CAHC9VhSu=YtE0dMiEtUQgz0pFy5K8cuHh_EWprNtFTDAxhss_w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Subject: x86/msr + lockdown: allow access to **documented**
- RAPL/TCC controls under Secure Boot
-To: "Rafael J. Wysocki" <rafael@kernel.org>, "Artem S. Tashkinov"
- <aros@gmx.com>
-Cc: x86@kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-pm@vger.kernel.org, linux-efi@vger.kernel.org,
- linux-security-module@vger.kernel.org,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- "Zhang, Rui" <rui.zhang@intel.com>
-References: <2780abfc-39d1-4441-833c-65e66f747054@gmx.com>
- <CAJZ5v0hokpC_2E77nrm2KHeOdhhH6qvYsg3wCQpTEG=PCim=ww@mail.gmail.com>
-Content-Language: en-US
-Autocrypt: addr=j2468h@gmail.com; keydata=
- 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
-In-Reply-To: <CAJZ5v0hokpC_2E77nrm2KHeOdhhH6qvYsg3wCQpTEG=PCim=ww@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhSu=YtE0dMiEtUQgz0pFy5K8cuHh_EWprNtFTDAxhss_w@mail.gmail.com>
 
-On 3/9/26 4:13 PM, Rafael J. Wysocki wrote:
-> On Mon, Mar 9, 2026 at 1:24 PM Artem S. Tashkinov <aros@gmx.com> wrote:
->>
->> Hello,
->>
->> When Secure Boot is enabled and kernel lockdown is active, the x86 MSR
->> driver blocks all raw MSR access from user space via `/dev/cpu/*/msr`.
->> This effectively prevents legitimate use of documented CPU power and
->> thermal management interfaces such as RAPL power limits (PL1/PL2) and
->> the TCC/TjOffset control. These registers are part of Intel’s
->> **publicly** documented architectural interface and have been stable
->> across many generations of processors.
+On Tue, Mar 10, 2026 at 06:39:12PM -0400, Paul Moore wrote:
+> On Thu, Feb 19, 2026 at 3:26 PM Günther Noack <gnoack3000@gmail.com> wrote:
+> > On Thu, Feb 19, 2026 at 03:04:59PM -0500, Justin Suess wrote:
+> > > Add a LSM hook security_unix_find.
+> > >
+> > > This hook is called to check the path of a named unix socket before a
+> > > connection is initiated. The peer socket may be inspected as well.
+> > >
+> > > Why existing hooks are unsuitable:
+> > >
+> > > Existing socket hooks, security_unix_stream_connect(),
+> > > security_unix_may_send(), and security_socket_connect() don't provide
+> > > TOCTOU-free / namespace independent access to the paths of sockets.
+> > >
+> > > (1) We cannot resolve the path from the struct sockaddr in existing hooks.
+> > > This requires another path lookup. A change in the path between the
+> > > two lookups will cause a TOCTOU bug.
+> > >
+> > > (2) We cannot use the struct path from the listening socket, because it
+> > > may be bound to a path in a different namespace than the caller,
+> > > resulting in a path that cannot be referenced at policy creation time.
+> > >
+> > > Cc: Günther Noack <gnoack3000@gmail.com>
+> > > Cc: Tingmao Wang <m@maowtm.org>
+> > > Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+> > > ---
+> > >  include/linux/lsm_hook_defs.h |  5 +++++
+> > >  include/linux/security.h      | 11 +++++++++++
+> > >  net/unix/af_unix.c            | 13 ++++++++++---
+> > >  security/security.c           | 20 ++++++++++++++++++++
+> > >  4 files changed, 46 insertions(+), 3 deletions(-)
 > 
-> There is a power capping RAPL driver.  What's the problem with it with
-> Secure Boot enabled?
-
-Hello,
-
-I believe that the comment about Secure Boot might come from the partially
-incorrect documentation of lockdown:
-
-https://lore.kernel.org/linux-security-module/20260203195001.20131-1-hi@alyssa.is/
-
-> -On an EFI-enabled x86 or arm64 machine, lockdown will be automatically enabled
-> -if the system boots in EFI Secure Boot mode.
-
-> This is true for Fedora, where this page was sourced from, but I don't
-> believe it has ever been true for the mainline kernel, because Linus
-> rejected it.
-
-
-
+> ...
 > 
->> As a result, under Secure Boot Linux users lose the ability to read or
->> adjust **standard** power-management controls that remain available
->> through equivalent tooling on other operating systems.
+> > Reviewed-by: Günther Noack <gnoack3000@gmail.com>
+> >
+> > Thank you, this looks good. I'll include it in the next version of the
+> > Unix connect patch set again.
 > 
-> The power capping RAPL driver is there, please use it.  It is documented even.
-> 
-> There is also a driver for TCC/TjOffset control, it is called intel_tcc_cooling.
-> 
-> And there are utilities in user space (for example, Intel thermald)
-> that use those interfaces.
-> 
->> The current all-or-nothing restriction appears broader than necessary
->> for the stated goal of protecting kernel integrity. MSRs associated with
->> power limits and TCC offset are not privileged debugging or microcode
->> interfaces but standard hardware configuration knobs intended for
->> platform power and thermal management.
->>
->> It would be useful if the kernel either allowed access to a small
->> whitelist of such documented registers under lockdown or exposed a
->> mediated kernel interface for adjusting them. Without such a mechanism,
->> Secure Boot effectively disables legitimate and widely used
->> power/thermal tuning functionality on modern Intel laptops.
->>
->> Most (if not all) Intel laptops don't expose or allow to configure
->> PL1/PL2 limits in BIOS/EFI either.
-> 
-> Because it is not necessary to do so.
-> 
+> I'm looking for this patchset to review/ACK the new hook in context,
+> but I'm not seeing it in my inbox or lore.  Did I simply miss the
+> patchset or is it still a work in progress?  No worries if it hasn't
+> been posted yet, I just wanted to make sure I wasn't holding this up
+> any more than I already may have :)
+>
+Good Morning Paul,
 
+Can't speak to the rest of the patch, but I sent this LSM hook for
+review purposes before inclusion with the rest of the V6 of this patch.
 
--- 
-bauen1
+Günther added his review tag, but I was asked to make some minor comment / commit
+message updates. I sent the same patch, with updated comments/commit to him
+in a follow up, off-list email to avoid spamming the list. No code changes were
+made, just comments.
+
+I don't think this particular patch will change substantially, unless we find
+something unexpected. But the way we use the hook may change (esp wrt to
+locking and the SOCK_DEAD state), which is important for your review.
+
+So you may want to hold off your review until the full V6 series gets sent so
+you can review the hook in context. There were some questions about
+locking that needed proper digging into. [1]
+
+Thank you for your time.
+
+Justin
+
+[1]: https://lore.kernel.org/linux-security-module/20260220.82a8adda6f95@gnoack.org/
+
+> -- 
+> paul-moore.com
