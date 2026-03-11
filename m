@@ -1,146 +1,131 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B316736495B;
-	Wed, 11 Mar 2026 22:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C96399351;
+	Wed, 11 Mar 2026 22:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773266899; cv=none; b=PVSte4hFntb8d/5zClivXoFP+mOZv5kawyGcZZ4ZKUNlDIWnZSk2pDGnUvwIhWDl00Be6KpGQMmmrMwqdVIcM1kP+ZRxHRmoxgRAqKMKxYRQAVLObzCBQn+44qOpVxAlugJhfmVnV12KZB1aXvrwEzHaal3vAD4goQpFs+P5Uqo=
+	t=1773269955; cv=none; b=k+dWh2+eIFcICln6WDgAvlWyrERZxUTLbexy7yNevtvPxfQj2W28TIs2sWKpdpQzQParVzy0ZFoYgNbxhN60ivi/5k+yWz67VZ3eff7ppKP/zyLyd0inFD75EqwEn4A43Y35UOxziX/OeHWlhkC+TD+sn6izVInB28zR8U3sVrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773266899; c=relaxed/simple;
-	bh=7MinZtbTOnSEroZFGxvPjQMjUpkX71RK8irsfC1OcsI=;
-	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
-	 Subject:From:To:Cc:Date; b=nw+DmXJ7gCW6C+169F96YsG5NmZif+RrgGp1rCCdLG+hQDerOx4bcN1acAHpyy3tifPtcuYvki90LQb1oCf3i9IesOz9nK5/Zxndb5hpXtKSLqbVRaAt4iU/eu+aEQNjja4lU5aNHcn7PUcaNT7faUHbl5UxeXCwTMO/IUx02wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XRUEpgI3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773269955; c=relaxed/simple;
+	bh=LdDfjKM5xdtNNb47NSd1OkfYPktd1pYlbjrXP+Pjqos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AffR6pMhVLlgFN5uphAq39PpsmvSMQBZrBr2v6nRlqulKhrYCDSyyxtXq3gTsaHKPLoQSfSiDUvlDy2TlOGbdpc3d0LyiXNHfkWcV4+kmQYNNlHXRIGRIejoHCPxTMT6NAwXlK+7BBjqK9IK7aURqW8dMWqTPfGtvR9/stsNIk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iJE8BYrz; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRUEpgI3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1114C4CEF7;
-	Wed, 11 Mar 2026 22:08:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773266899;
-	bh=7MinZtbTOnSEroZFGxvPjQMjUpkX71RK8irsfC1OcsI=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
-	b=XRUEpgI3OPcXoBcHD4j6uu0bANlDWCD4rOaew4yJNklK3JIWA0ntp55NyT8d9Zyko
-	 yq6ZLHPJoaiuN3bNX/k5gNVLg5Q1sjBkHwNxQyJEWMBEkMQLtuGszRGojliqYzMs/O
-	 0/CCOMIrAbcbr3TOHULNSohzITJU7DLawUHYHmyLLKtqJt7nHR0hdQRz+ljjSr5ci7
-	 4JUjWtW4Mzo3cHqkL6miz/2XWI+6VeU+i77vjeeg3n7OgmT6Ia0Yv6jwbA7Jh5RvnX
-	 vFmJ20DOph3ga1VSbt3iZb2lHqUn/QsX5XZq8txdJAunfJ7iRpW9mQqQSgjTA8Wx68
-	 IiMueA4lBaIQw==
-Content-Type: multipart/mixed; boundary="===============6615031658577929282=="
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iJE8BYrz"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1773269952; x=1804805952;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LdDfjKM5xdtNNb47NSd1OkfYPktd1pYlbjrXP+Pjqos=;
+  b=iJE8BYrzNaI/oASBMwlc7eWeFRXTZsuIfBVpw4l6MUf/y7Zd36cvPuOe
+   w+/996kP7awJgHb8Ac/TRTmLJEkIgVXHpgmo0yJpiltIF2Icys0fXp3Vh
+   ncfZH9nB2OfBvOw0rR4dMRTbr2hOnMb6iHFDUI6O24yzVnt/wQLkWoKrb
+   TKDjvexCo3uT5AoSZnwjS1ngeVpEjUxZtC2ysSVMRWs6BjSTUE4eiHWPx
+   9td+slw9jACcPkODaqRMRaHG/HX4doQ0XprPdLghUvD6qOLFJ5o1IfIpY
+   lLkL9tdJMFBToj/TQpDqCRELTH6GlDfBfqwhYvvaPr7C8avI/w4JJ0zA3
+   Q==;
+X-CSE-ConnectionGUID: A92cg3oUTeGxMWrurw1MMQ==
+X-CSE-MsgGUID: nimZQbJJRaa38p848W4dYw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11726"; a="91733928"
+X-IronPort-AV: E=Sophos;i="6.23,115,1770624000"; 
+   d="scan'208";a="91733928"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2026 15:59:12 -0700
+X-CSE-ConnectionGUID: ROUf1J18RVSxm9LAgxnLEw==
+X-CSE-MsgGUID: Q3YfRIKSTw++gwR9PsPKyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,115,1770624000"; 
+   d="scan'208";a="243641634"
+Received: from lkp-server01.sh.intel.com (HELO 418530b1a366) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 11 Mar 2026 15:59:09 -0700
+Received: from kbuild by 418530b1a366 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1w0SWA-000000001nH-0qGV;
+	Wed, 11 Mar 2026 22:59:06 +0000
+Date: Thu, 12 Mar 2026 06:58:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jamie Lindsey <jamie@matrixforgelabs.com>,
+	rust-for-linux@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, ojeda@kernel.org,
+	paul@paul-moore.com, aliceryhl@google.com, jmorris@namei.org,
+	serge@hallyn.com, jamie@matrixforgelabs.com
+Subject: Re: [PATCH v2 3/5] rust: kernel: add LSM abstraction layer
+Message-ID: <202603120654.DWidINbR-lkp@intel.com>
+References: <0102019cdb4c705e-7d46b4f3-5cbb-4a6a-b315-e10f182fa987-000000@eu-west-1.amazonses.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <69cbf119c9c3fb5ebcfca4a19d3cfa8ef6acb2bc1e9b0c9b20cce726266b303c@mail.kernel.org>
-In-Reply-To: <20260311-bpf-auditd-send-message-v1-1-10a62db5c92f@cloudflare.com>
-References: <20260311-bpf-auditd-send-message-v1-1-10a62db5c92f@cloudflare.com>
-Subject: Re: [PATCH RFC bpf-next 1/4] audit: Implement bpf_audit_log_*() wrappers
-From: bot+bpf-ci@kernel.org
-To: fred@cloudflare.com,paul@paul-moore.com,jmorris@namei.org,serge@hallyn.com,eparis@redhat.com,ast@kernel.org,daniel@iogearbox.net,andrii@kernel.org,martin.lau@linux.dev,eddyz87@gmail.com,song@kernel.org,yonghong.song@linux.dev,john.fastabend@gmail.com,kpsingh@kernel.org,sdf@fomichev.me,haoluo@google.com,jolsa@kernel.org,shuah@kernel.org,mic@digikod.net,gnoack@google.com
-Cc: linux-kernel@vger.kernel.org,linux-security-module@vger.kernel.org,audit@vger.kernel.org,bpf@vger.kernel.org,linux-kselftest@vger.kernel.org,kernel-team@cloudflare.com,fred@cloudflare.com,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
-Date: Wed, 11 Mar 2026 22:08:18 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0102019cdb4c705e-7d46b4f3-5cbb-4a6a-b315-e10f182fa987-000000@eu-west-1.amazonses.com>
 
---===============6615031658577929282==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Hi Jamie,
 
-> diff --git a/security/lsm_audit_kfuncs.c b/security/lsm_audit_kfuncs.c
-> --- /dev/null
-> +++ b/security/lsm_audit_kfuncs.c
+kernel test robot noticed the following build errors:
 
-[ ... ]
+[auto build test ERROR on rust/rust-next]
+[also build test ERROR on linus/master v7.0-rc3 next-20260311]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> +__bpf_kfunc
-> +struct bpf_audit_context *bpf_audit_log_start(struct bpf_prog_aux *aux)
-> +{
-> +	char comm[sizeof(current->comm)];
-> +	struct bpf_audit_context *ac;
-> +
-> +	ac = bpf_mem_cache_alloc(&bpf_audit_context_ma);
-> +	if (!ac)
-> +		return NULL;
-> +
-> +	memset(ac, 0, sizeof(*ac));
-> +	ac->ab = audit_log_start(audit_context(),
-> +				 (aux->might_sleep) ? GFP_KERNEL : GFP_ATOMIC,
-> +				 AUDIT_BPF_LSM_ACCESS);
-> +	if (!ac->ab) {
-> +		bpf_mem_cache_free(&bpf_audit_context_ma, ac);
-> +		return NULL;
-> +	}
-> +
-> +	audit_log_format(ac->ab, "prog-id=%d", aux->id);
+url:    https://github.com/intel-lab-lkp/linux/commits/Jamie-Lindsey/rust-helpers-add-C-shims-for-LSM-hook-initialisation/20260311-131258
+base:   https://github.com/Rust-for-Linux/linux rust-next
+patch link:    https://lore.kernel.org/r/0102019cdb4c705e-7d46b4f3-5cbb-4a6a-b315-e10f182fa987-000000%40eu-west-1.amazonses.com
+patch subject: [PATCH v2 3/5] rust: kernel: add LSM abstraction layer
+config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20260312/202603120654.DWidINbR-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260312/202603120654.DWidINbR-lkp@intel.com/reproduce)
 
-aux->id is u32 -- should this be %u?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202603120654.DWidINbR-lkp@intel.com/
 
-> +
-> +	/* Audit may not have a filter configured for syscalls. Include
-> +	 * potentionally redundant pid & comm information
+All errors (new ones prefixed by >>):
 
-Minor typo: "potentionally" -> "potentially".
+>> error[E0433]: failed to resolve: use of unresolved module or unlinked crate `bindings`
+   --> rust/doctests_kernel_generated.rs:8845:40
+   |
+   8845 | kernel::define_lsm!(MyLsm, "my_lsm\0", bindings::LSM_ID_UNDEF as u64);
+   |                                        ^^^^^^^^ use of unresolved module or unlinked crate `bindings`
+   |
+   = help: you might be missing a crate named `bindings`
+   = help: consider importing this crate:
+   kernel::bindings
+--
+>> error[E0412]: cannot find type `MyLsm` in this scope
+   --> rust/doctests_kernel_generated.rs:8845:21
+   |
+   8845 | kernel::define_lsm!(MyLsm, "my_lsm\0", bindings::LSM_ID_UNDEF as u64);
+   |                     ^^^^^ not found in this scope
+--
+>> error[E0433]: failed to resolve: use of unresolved module or unlinked crate `bindings`
+   --> rust/doctests_kernel_generated.rs:8898:44
+   |
+   8898 | kernel::define_lsm!(MyLsmType, "my_lsm\0", bindings::LSM_ID_UNDEF as u64);
+   |                                            ^^^^^^^^ use of unresolved module or unlinked crate `bindings`
+   |
+   = help: you might be missing a crate named `bindings`
+   = help: consider importing this crate:
+   kernel::bindings
+--
+>> error[E0412]: cannot find type `MyLsmType` in this scope
+   --> rust/doctests_kernel_generated.rs:8898:21
+   |
+   8898 | kernel::define_lsm!(MyLsmType, "my_lsm\0", bindings::LSM_ID_UNDEF as u64);
+   |                     ^^^^^^^^^ not found in this scope
 
-> +	 */
-
-[ ... ]
-
-> +__bpf_kfunc int bpf_audit_log_net_sock(struct bpf_audit_context *ac, int netif,
-> +				       const struct socket *sock)
-> +{
-> +	struct lsm_network_audit net = { .sk = sock->sk, .netif = netif };
-> +	struct common_audit_data ad;
-> +
-> +	ad.type = LSM_AUDIT_DATA_NET;
-> +	ad.u.net = &net;
-> +	return __audit_log_lsm_data(ac, &ad);
-> +}
-> +
-> +__bpf_kfunc int
-> +bpf_audit_log_net_sockaddr(struct bpf_audit_context *ac, int netif,
-> +			   const struct sockaddr *saddr__nullable,
-> +			   const struct sockaddr *daddr__nullable, int addrlen)
-> +{
-> +	struct lsm_network_audit net;
-                                    ^^^
-
-Unlike bpf_audit_log_net_sock() above which uses a designated
-initializer that zero-fills the struct, this declaration leaves
-net uninitialized.
-
-In particular, net.sk is never assigned anywhere in this function.
-When audit_log_lsm_data() handles LSM_AUDIT_DATA_NET, it does:
-
-    if (a->u.net->sk) {
-        const struct sock *sk = a->u.net->sk;
-        switch (sk->sk_family) {
-
-Since net.sk contains stack garbage, this will likely dereference
-an invalid pointer and crash.
-
-Additionally, when only one of saddr__nullable or daddr__nullable
-is provided, the corresponding sport/dport and address fields for
-the missing side remain uninitialized, and audit_log_lsm_data()
-unconditionally prints both sides:
-
-    print_ipv4_addr(ab, a->u.net->v4info.saddr, a->u.net->sport, ...);
-    print_ipv4_addr(ab, a->u.net->v4info.daddr, a->u.net->dport, ...);
-
-Would initializing with something like
-struct lsm_network_audit net = { .netif = netif }; address both
-issues?
-
-> +	struct common_audit_data ad;
-> +
-> +	net.netif = netif;
-
-[ ... ]
-
-
----
-AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
-
-CI run summary: https://github.com/kernel-patches/bpf/actions/runs/22976062351
---===============6615031658577929282==--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
