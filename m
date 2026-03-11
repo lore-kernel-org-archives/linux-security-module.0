@@ -1,150 +1,120 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B1E3AF668
-	for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 22:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.170
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773182366; cv=pass; b=m9mfksP//zMnSTq6cjMYwLKJC48Pm1igGcDXLwOOUr19krgNMxLe8dvQQSMOtRVN7mewmqScZ9siVI99+mM/vwWg+EiE8dYRRUt/kBtezm8R3JlfyKRyin0EDDONXrsZwxerLCAGFx+Zd4op1lqZH9uX6MI9mQpjFMd97uZ6FOw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773182366; c=relaxed/simple;
-	bh=UK2S3nbtd7fjW6H8recpqCy0chW5jUnVIcKyUoUcVNg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sehk3t5rJeg+9IxXOf3Ku4Ww4slZnhklpZb2qPxTyEILXUzIHT63PT5oktT7zHGGoKAO8h0LZAF1vu1XeDGgL5hwoycgv30p8ZfvOCfA/yNxAlg57fvTOluXkjk9Q7n0zpbqMAkxmQSouBRyXLgkNRe0wWwNyYXl4d7Fs0WyIVs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=P7QRt8lD; arc=pass smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="P7QRt8lD"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2aae146b604so95563375ad.3
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Mar 2026 15:39:25 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773182364; cv=none;
-        d=google.com; s=arc-20240605;
-        b=Lj2jB7dj2y5PVuNzdzQeBCn2ka6mSMd1tGasWM+NbXjjjHUStrKeY6LOxyh9Zpb+OI
-         XXdMxzwbtmL6k3UXTKMlOul93ylRuUQ2CSyms6aHA+RCwJ11Y6+/8OvwiDDPXXKH6ld8
-         VNJinEaujluanXlRdrYoTAC+T62d753GvaA5GuK3mnp8UMkEJ70kGFzqy2AyoJnVCk2d
-         511DHljjpJDiVL4FdbGwYBgxXl7xDx8SuFajdfprw4dhlnAYyAU6waN2VVXip/rPw4a4
-         Wok/X++hyiSDKlgp1FGhrWeahjnYi1dU7q6CZlPU+pewnwnKC73Pcf9HM1lA4TzWe7gr
-         R2bw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=hgZxL4dPG1JB+pwIvOvrwjtCO4ld6uZtto/CeKqDnV4=;
-        fh=CiX0Fmfca6rL/sGrH99QMwVZz6Vzs5LKTDf8sPEhb2Q=;
-        b=JRBcxeqdUh//hWIv2tA4vX/Bk/XVx7R7QWYHq0z491ElMIJqXpBACXY/4cMyi82nrZ
-         SgZNX1KsWTSiWiUmzFziHHhMLTyBtay0Nvo6GLnrN6c+wGxsRYza19dGIjlA80raA4+u
-         pEbUMkjeyzM8V4zd7wyTf8ofn2wqiD7NA+MkYtUqh2+RYURojmlwZ/vatcYiIrFO94xZ
-         CPvqtLFtR9zlKOBIIvRhBx0+Qd4xpm9kvSRg2BhSqLfDM61jBQLw7X1TByasuWI6KpSk
-         7+6UPg4xHVDyFhCdVTAFrWS1wLKgEn/o11Yyt0DXb1hkvSi6SIySSsDksR/SDoaovCsA
-         9+QQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1773182364; x=1773787164; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hgZxL4dPG1JB+pwIvOvrwjtCO4ld6uZtto/CeKqDnV4=;
-        b=P7QRt8lDpDkuntUow9gPiq+yoTDDhrwnYnfdDNWA41Z/oK+VinxYp3A0NAWm0dNcrI
-         nvQjj1tLybMADgjliODhp2B6Ijhk09cF/zjIimDX0MYehIEjU8TPYbp2fq1663esbNKK
-         VdVrLP8KfmGhvMtmA3gyf6gtsTs33nAezbBBmfJGlUymV8CebuBofyPlhsSK6T8Eaddf
-         FVrDvG0jbi+GyLD5GT+QvVFMtdi+mEeWzeF+9ulGOFwk4ua0qhrMr+qH3NTSYmcL9k8A
-         JLPrB89OdohJ8YqmrEBAtQnfg9T+MFkkgrXdGIRIybWKpfdJaxamanW5JPJAxl9NeRif
-         OP0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773182364; x=1773787164;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=hgZxL4dPG1JB+pwIvOvrwjtCO4ld6uZtto/CeKqDnV4=;
-        b=kKqmrHntT55oCqPtmKEC/0MDeyxf8B2LRiFwz7P0FXSsiEqJU5tSzulyLhuIFaFFuV
-         MrkcAIVcpFUIE+vVM7IvZhK5sXoCGhO8scZBownv6uBEqkTqRRqHc6hmslRc6GXwkQsp
-         E6bTTOE9dJ1lJREc7ZipNobWHjbPkYdzuyy7rU/IUvJYX2kwV7UlBa9RVDphEtHigToE
-         x3G1DeBGw8vprUzxaGQxZ1VXsrTa+O0Y7OGfWOHP0TNwKU4k3SZGAtKBUr9MNCqf4wgK
-         5mndIxPZI7EvcwKzR2jHCE15W/gMI8mHGF7Z50vZiaqLj/i4TXjsChNcbYC70ucg1dGm
-         EzFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVskY9Tj/vdN2txeel4e4oQq/bdB1OPtckTPCk/i5BceOLKWDNyaP3TV3TJezRZRAbKq/HUoQibV+cFtiX+28Fw8HJUZV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHifTqWxJWRKVyqUpEiaSlD0BLg92o1pFA5ZkkU+nlTF6XgTYz
-	MYXzYIisN5Rghli16wv45Pap5MTSdLXvlMJY0ioN/dNepMnBNg6V6jbOPSG/RZ2JkPGXTkswKOh
-	M6tHj81G92dR93WZntiPkhsrxHe0C1Dw5TB6Zor6V
-X-Gm-Gg: ATEYQzy0lHYet7dYbfu8BqB6W45Y6iZRJcHrDl/pE0mFNqC7hcr8TsrWlic46mvkPM5
-	a72z5dBB40+9MJ8k+LooiYE4tuQw1BlglRm/+88zI8VW4wSauIyiREaIKwWuVEK6ceBZ53W/Ygm
-	h5AromtoQfeVQo3KKeB/YJQpeLSDpXJFLwrpDcmIGsCr0zlHCQ3tcgxeMDat/Fgx9uP8jQdKE2B
-	7eif0sLktkBh+ckcadXAgDFZkL4i6gsoeTTfquCZ9gsN9EST+MC/CVecYQeGKXmP2/uebvjtF6E
-	FucoYnU=
-X-Received: by 2002:a17:903:240d:b0:2ae:588a:f3e5 with SMTP id
- d9443c01a7336-2aeae85b2d8mr3734425ad.30.1773182364628; Tue, 10 Mar 2026
- 15:39:24 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0E628F5;
+	Wed, 11 Mar 2026 00:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773187341; cv=none; b=VMb0drDCQYkjprcAwMqr63QT9mgJ5cRWE+QZEIXn8JpSfDvax7sNctFDjuKiIA70EUn1na7b10jFb2niXieMoQy1n24IBcP/1dZtIPxV1+58d1brDu0MSlLlgZCGDMGJj1yWGK3GHEnFZWGPBvgDV6OsZ1bHFkBWq1044gihUXs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773187341; c=relaxed/simple;
+	bh=smzvbB4nmsoWyjvlw6IqwQZpGTU4rmIBF86uCfM5iSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mZ7SZw8AML/61LYZF+cYH3QVClpOnHegGEKkHaYUPO71sjzYDiM5Q+n4lFaME/6BEsW2e1BZyMolXCAJSu5lYFDt+iIzDok/b+Wt2L0EsMSmi2OBcG9piL8W4T14/fiz+ZcJEAo8snm/H1rLrULkiXmcSICjsos5XMZOMusthos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id 7BCB113A961;
+	Wed, 11 Mar 2026 00:02:10 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id 85BFC20027;
+	Wed, 11 Mar 2026 00:02:06 +0000 (UTC)
+Date: Tue, 10 Mar 2026 20:02:17 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ linux-nfs@vger.kernel.org, bpf@vger.kernel.org, kunit-dev@googlegroups.com,
+ linux-doc@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ netfs@lists.linux.dev, io-uring@vger.kernel.org, audit@vger.kernel.org,
+ rcu@vger.kernel.org, kvm@vger.kernel.org, virtualization@lists.linux.dev,
+ netdev@vger.kernel.org, linux-mm@kvack.org,
+ linux-security-module@vger.kernel.org, Christian Loehle
+ <christian.loehle@arm.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] tree-wide: rename do_exit() to task_exit()
+Message-ID: <20260310200217.451cf37e@gandalf.local.home>
+In-Reply-To: <20260310-work-kernel-exit-v2-2-30711759d87b@kernel.org>
+References: <20260310-work-kernel-exit-v2-0-30711759d87b@kernel.org>
+	<20260310-work-kernel-exit-v2-2-30711759d87b@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aZcPd3OKqxwCZV-5@suesslenovo> <20260219200459.1474232-1-utilityemal77@gmail.com>
- <20260219.de5dc35ec231@gnoack.org>
-In-Reply-To: <20260219.de5dc35ec231@gnoack.org>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 10 Mar 2026 18:39:12 -0400
-X-Gm-Features: AaiRm53Bi5v2R8sq4eGVQOtisSif0YBDoTMZ_De5pzTOEuKPyyUhzh7ujbtadX0
-Message-ID: <CAHC9VhSu=YtE0dMiEtUQgz0pFy5K8cuHh_EWprNtFTDAxhss_w@mail.gmail.com>
-Subject: Re: [PATCH v6] lsm: Add LSM hook security_unix_find
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
-Cc: Justin Suess <utilityemal77@gmail.com>, brauner@kernel.org, demiobenour@gmail.com, 
-	fahimitahera@gmail.com, hi@alyssa.is, horms@kernel.org, 
-	ivanov.mikhail1@huawei-partners.com, jannh@google.com, jmorris@namei.org, 
-	john.johansen@canonical.com, konstantin.meskhidze@huawei.com, 
-	linux-security-module@vger.kernel.org, m@maowtm.org, matthieu@buffet.re, 
-	mic@digikod.net, netdev@vger.kernel.org, samasth.norway.ananda@oracle.com, 
-	serge@hallyn.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 5bg3rrg18jbru7uwkfxn1hbh397psca6
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 85BFC20027
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18LHCHZ+vV3JFPf+Z89JvS/nvAKMsv+FAI=
+X-HE-Tag: 1773187326-98008
+X-HE-Meta: U2FsdGVkX1/3tMWPLwyG4JCc4wkqvh9SiSPSlhJp6Tv4W/fwSwUFhWXG3UBrBxSzLq3p72eu37Xu4WWh77aTVVkk97xFw9hCg2Tn+gfwvdW114asIqtfy8xHhNrVuERS2G/65ce3/BsvZjC5d8Vnvs35vga+tnTJklfjQ+UttgL5bwbjp5oOgQNdAzx3oibQ4Mzt0N8V0YHeM+nhQRgwSGhlB1291Y2eHefZmXFBYTpQLIIP1XDBd9pac8iHtBZirKQZfE9I0NK+xzIHdGI0aui4vMm56FkppnHJDf/mUfgi8cC8UEAJB61JKAsSDfwj7R599Re8N4CNbTJgYcDwKo1gfVDZt4y9
 
-On Thu, Feb 19, 2026 at 3:26=E2=80=AFPM G=C3=BCnther Noack <gnoack3000@gmai=
-l.com> wrote:
-> On Thu, Feb 19, 2026 at 03:04:59PM -0500, Justin Suess wrote:
-> > Add a LSM hook security_unix_find.
-> >
-> > This hook is called to check the path of a named unix socket before a
-> > connection is initiated. The peer socket may be inspected as well.
-> >
-> > Why existing hooks are unsuitable:
-> >
-> > Existing socket hooks, security_unix_stream_connect(),
-> > security_unix_may_send(), and security_socket_connect() don't provide
-> > TOCTOU-free / namespace independent access to the paths of sockets.
-> >
-> > (1) We cannot resolve the path from the struct sockaddr in existing hoo=
-ks.
-> > This requires another path lookup. A change in the path between the
-> > two lookups will cause a TOCTOU bug.
-> >
-> > (2) We cannot use the struct path from the listening socket, because it
-> > may be bound to a path in a different namespace than the caller,
-> > resulting in a path that cannot be referenced at policy creation time.
-> >
-> > Cc: G=C3=BCnther Noack <gnoack3000@gmail.com>
-> > Cc: Tingmao Wang <m@maowtm.org>
-> > Signed-off-by: Justin Suess <utilityemal77@gmail.com>
-> > ---
-> >  include/linux/lsm_hook_defs.h |  5 +++++
-> >  include/linux/security.h      | 11 +++++++++++
-> >  net/unix/af_unix.c            | 13 ++++++++++---
-> >  security/security.c           | 20 ++++++++++++++++++++
-> >  4 files changed, 46 insertions(+), 3 deletions(-)
+On Tue, 10 Mar 2026 15:56:10 +0100
+Christian Brauner <brauner@kernel.org> wrote:
 
-...
+> diff --git a/tools/testing/selftests/bpf/progs/tracing_failure.c b/tools/testing/selftests/bpf/progs/tracing_failure.c
+> index 65e485c4468c..5144f4cc5787 100644
+> --- a/tools/testing/selftests/bpf/progs/tracing_failure.c
+> +++ b/tools/testing/selftests/bpf/progs/tracing_failure.c
+> @@ -25,7 +25,7 @@ int BPF_PROG(tracing_deny)
+>  	return 0;
+>  }
+>  
+> -SEC("?fexit/do_exit")
+> +SEC("?fexit/task_exit")
+>  int BPF_PROG(fexit_noreturns)
+>  {
+>  	return 0;
+> diff --git a/tools/testing/selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc b/tools/testing/selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc
+> index fee479295e2f..7e00d8ecd110 100644
+> --- a/tools/testing/selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/dynevent/fprobe_syntax_errors.tc
+> @@ -82,7 +82,7 @@ check_error 'f vfs_read arg1=^'			# NO_ARG_BODY
+>  # multiprobe errors
+>  if grep -q "Create/append/" README && grep -q "imm-value" README; then
+>  echo "f:fprobes/testevent $FUNCTION_FORK" > dynamic_events
+> -check_error '^f:fprobes/testevent do_exit%return'	# DIFF_PROBE_TYPE
+> +check_error '^f:fprobes/testevent task_exit%return'	# DIFF_PROBE_TYPE
+>  
+>  # Explicitly use printf "%s" to not interpret \1
+>  printf "%s" "f:fprobes/testevent $FUNCTION_FORK abcd=\\1" > dynamic_events
+> diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_multiprobe.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_multiprobe.tc
+> index f0d5b7777ed7..a95e3824690a 100644
+> --- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_multiprobe.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_multiprobe.tc
+> @@ -5,7 +5,7 @@
+>  
+>  # Choose 2 symbols for target
+>  SYM1=$FUNCTION_FORK
+> -SYM2=do_exit
+> +SYM2=task_exit
+>  EVENT_NAME=kprobes/testevent
+>  
+>  DEF1="p:$EVENT_NAME $SYM1"
+> diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
+> index 8f1c58f0c239..b55ea3c05cfa 100644
+> --- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
+> @@ -87,7 +87,7 @@ esac
+>  # multiprobe errors
+>  if grep -q "Create/append/" README && grep -q "imm-value" README; then
+>  echo "p:kprobes/testevent $FUNCTION_FORK" > kprobe_events
+> -check_error '^r:kprobes/testevent do_exit'	# DIFF_PROBE_TYPE
+> +check_error '^r:kprobes/testevent task_exit'	# DIFF_PROBE_TYPE
+>  
+>  # Explicitly use printf "%s" to not interpret \1
+>  printf "%s" "p:kprobes/testevent $FUNCTION_FORK abcd=\\1" > kprobe_events
 
-> Reviewed-by: G=C3=BCnther Noack <gnoack3000@gmail.com>
->
-> Thank you, this looks good. I'll include it in the next version of the
-> Unix connect patch set again.
+These tests need to pass on old kernels too. So we can't just do a
+"s/do_exit/task_exit/" conversion. It needs to test for task_exit first,
+and if not found, fallback to do_exit.
 
-I'm looking for this patchset to review/ACK the new hook in context,
-but I'm not seeing it in my inbox or lore.  Did I simply miss the
-patchset or is it still a work in progress?  No worries if it hasn't
-been posted yet, I just wanted to make sure I wasn't holding this up
-any more than I already may have :)
+See how we handled the _do_fork() > kernel_clone() rename:
 
---=20
-paul-moore.com
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/testing/selftests/ftrace/test.d/functions#n182
+
+-- Steve
