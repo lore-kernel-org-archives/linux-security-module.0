@@ -1,286 +1,189 @@
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0133D6CAF
-	for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2026 16:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F333E0C45
+	for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2026 16:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.42
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773245183; cv=pass; b=t30NIl9w5i5fKcuqukl0d9WzaviGWVVRFVspMKqOs4Rl2B1Pfyv2ngWuKzemBdJzHCJP7ydHrLD46B9ELL5yJL8pUoeGDUyshAgotWpnOwtwKVxfg+nPJVk9I/tkfC/NkSh8ssmcaFIBeo+tIpuWE0/5Ki5GIjXBzyfHAUoF1i0=
+	t=1773245340; cv=pass; b=BP+VjQK1XH8H7HweKKZX1Uph8oD2U+sceZAUw86IYOzwRuDiA6qeU74Fj897r+ETQVkshtHXfQKT3RgQMGmKUUseH+XxLny+13zeyrm6Ee0UhygMP6mmTZ6qCtCggo6gAUrADB9T6KWY3d9Svgg6tHSmQ56MGXhwbHzUoTnJEH4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773245183; c=relaxed/simple;
-	bh=NRIwXOg8AdkA9vHzfWMDu4X9liGp4DLxBb6tiCZpKA8=;
+	s=arc-20240116; t=1773245340; c=relaxed/simple;
+	bh=owVe3Qfob2UO8yuqdH2PqAC+rPmSIbbd71zfyNJWtfE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jhqVcw7fSkGtAgxuQMT1r0C3qfAYWcdX9hu+qBw02coPX0NOr2WdsAhAxSwJX1czDcqJX8OqqhzK90ASPnAuLwuHwVEFV2Y7FVjn+0OYUeCXc+lAaWn3b3FO4SzKbPGcyQReQFBYeEvNI9H99N4z7QJkv04zCi8JAxwe33HjRhw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=YxCC/j1v; arc=pass smtp.client-ip=209.85.215.180
+	 To:Cc:Content-Type; b=tmgdbhs7s7mDrYhgvSBBfUF1gh8xodzdpvTI5Csjv7uL9M9LTAwj1TXBLolJbtpGIcWkax2pkW0lJh2UjZqkPuNDHiltW6DK8zEdSsgJ0uiyuC8cLF2gfEkGHo8l1xCUv3oQtskRlNinb/JJFGwnSrS1Y8NTPJFm6cgSBmPmUQY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=e6c+ElXV; arc=pass smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="YxCC/j1v"
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-c73c990a9cdso655097a12.3
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2026 09:06:21 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773245181; cv=none;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="e6c+ElXV"
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3599019ae92so6164730a91.0
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2026 09:08:57 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773245337; cv=none;
         d=google.com; s=arc-20240605;
-        b=cRwi170jUkQKTOiDjPhBD2AuQ9hK8Ihfoa+ol5Bu9G8Co2Km8nOrlftFF/QJBry9vD
-         fP5Lxoft4yaytvMOPkPQx0/HLLPGqV4X3pTeuUCAWUt4xMpt/+Z4CCY9o2qu8Ax0Eh7d
-         F1wCx9w2HcUQjtDt4U14Iw1z/2Ci3UCjX5gIAcl1qqwR+ag/VV4njZYB8UTn3GbjWLyS
-         daVKzWrJu9nQDBv4dOp28fbuFF/i2E34rYOpvPTlgV0PGdIsynLN3IJG7A6XNH0pmzae
-         kjMSrPp+mGzVGrew79olt6O8iq1ugeAmQ20wEZfIiLkYgaq0GHcZV+qqMgQi12sVwE+C
-         6mkA==
+        b=PSTroBTzCKlk/YuItrvAyh1kpz2satruxZ0rZJKfgmsnB6Nj0Sl+BeGMgH8sDsB8G9
+         bxQajUP9/94UAF5dt3HxF7yH7vFQQBRoqYjuRnp6u4P2ptnJ9fzCaoxk9OjZDuRG2uvQ
+         LMuyiZSnCS8H5r6VY+u8JgaRezJ7LCiZyt/0HBKG3M13AZFhL4jA4F/6kiZKu2Fjv5b+
+         l8kg+iJrje0+JJo31PgyHDbEyQcl+aEgDneb0wSaob2vuAwoGYt+bOgt60WvTwOK7BaE
+         6N+p3a8yTQwIRYZnD+BS7DGMiO/jsnQPkeg6g2r3BcqOsWIu/TWA6TcXt6aMdeaZdNiP
+         2bBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=6IVGW/WeQwHNutjLxB1wvk4R1nb3pkKjkp9meFG8IuI=;
-        fh=hBOaSNFyzIZbGLfOsJfIfRrSnh+tJBqH0fCGsP9RE4w=;
-        b=EO56etOSMj17UnbONfD16hO3x2q79wPqvsvmkswe/02VjvN1E5kB01iC9pUPUwSkHV
-         j2Hp4AcF9ml2dvFSSOwxI5EXoS33+dYNh29S/hsZLE0JL5VMaTcb6LUfWFq7TnWQWH7z
-         vpp+ZwMJeWwHJ9jArY44kGNjD040+fBSkjwHYtGGzeD/YK3Cflsl9dXA2/ft+SHsHnc/
-         lJ2oWnf+ktwdmdvkMzyWlyRjsZhcuZPFzIi2o7WZb2c2yt6VgR+wFti0GwU+Snj4/jnQ
-         iAUAjlzz5rpGSDhXqxFH3URo8eEqeeD7Qyym+5ShhbjRzEShNpuqlFQd6P8sY/MrNO7k
-         O6sA==;
+        bh=JZDNJFGDP5amVq7p/dFv6sOGOZTvq599aR4YcZO7qtw=;
+        fh=cS8MtpM9nhZMjOphG8mcstQkVy0AyA7Kf205RPHW5aY=;
+        b=ay6diC5nPdC0PEjAoCZ3el+0TB+3N9llmuLJXPlynJTLZmAwrvQ7dArZDGEvvlDzGX
+         ivysDhzwKq6u73zm+YdxfELiRjmIDl5JrFEb/DV47BeE+zOx8cU9KxHu2PN2jXxEPMGj
+         5CqRptrtHdOHL+5Cds/5JLF+q3fVeGt14pImAQorsrv9FuJ5ZE47xk6v52lf4YH0oDf/
+         peP1VRReUamKvNEgvibYvFI6AwxIJgYwxnB05+ElM6iMgfJekZxzshjJDVaYtErM4siY
+         mzGP8hgZN64gee0yWBk88Ez4Cm6O97sfunDUZIdGPp995qZQpZe5JGs8eFimARleYr9x
+         MHkg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1773245181; x=1773849981; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1773245337; x=1773850137; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6IVGW/WeQwHNutjLxB1wvk4R1nb3pkKjkp9meFG8IuI=;
-        b=YxCC/j1vYioxU572cwyGrOT/92X1dSGFbi849nLb9rfnvCoQ4pB0LR2Mhrxw5UN3kE
-         2H97ALjUFxPkVuP+Kgz1OZF1O2GD89UFazhf2qcVt35WQDseq4diF7rigq8t/VRVgvSW
-         IH+l6vC6Z0im/LnIDxcucoV4YmCmaXCVpQ6BJyGUN4mCOsYgVX9NTtbW5I7HRGAYPYVj
-         KNy5SpFaMVu3Dhih7rXTEZHLa4a7tAEprG9qUbCe/qLWli5JO4CYHbByuOwQshFJJtc1
-         I0h2IldFHGyCHe1QuwqBURYX5s3cEh47N8rgdN5IvX9yzmVUcNxNZOx/w7YLWhWH3s01
-         2QBQ==
+        bh=JZDNJFGDP5amVq7p/dFv6sOGOZTvq599aR4YcZO7qtw=;
+        b=e6c+ElXV9/S8dBAt4s3Y0Qdq9+tZ8d5cWILHAnHHImVT5PIIkJUyCZiacq7jRwg0wO
+         3Cebb97OPazwIb6fjRP+vY3CtMSNoYR2RIKBrDAwtxeicH+/z2rbTPh7Os6MuY5k4bsk
+         ma028J0ookNSr0KijANIvgZg9rIgryyaHdtXthB65JBFV5watPKOGnOo8nJM04Fvkhcu
+         1sUQwoIi9bTkdmnd5BJfx1eZGuBrZjPCVZAWLHDskfYdbIiO+mBd3Ciep3WaOeYu4bZ3
+         AOcYAN3ypG4b0iCneKQdTkcp00UtTnkzuS2zWuf4D3tjbFYHt0mKsjvS4pJXtGlYQIpi
+         h/Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773245181; x=1773849981;
+        d=1e100.net; s=20230601; t=1773245337; x=1773850137;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=6IVGW/WeQwHNutjLxB1wvk4R1nb3pkKjkp9meFG8IuI=;
-        b=I7TKrnVngs80wxsPfWwXKCcbp8OpLJMGJ9hJD2cUk024cauWEXl5YESthEcqTy/Ddx
-         3xNssiRB3QOBn87d90lQtwMtg0GxZDH5tEOOcEQeUSuGkPQYgxMOmybgzYP226NVTIk3
-         aLcXOli7cULudqe+evhVjtQD/XO+DwoZwVl0x9ZNnM7ihMfYN3xXE6SBGJ8DPNrBcltD
-         bsG1g3ks0XTLWLI1VNUm5loqeIlc6Mk6To0dszWRpTUQpjomZjkmyEIl08/QCmrg0L8F
-         KVVOt29f1n4deQ0A19eq0YnDYGbgSFE2D1CCojWe+k4b0sm1uiH8hzhEPtoKlmBMgppW
-         Crcg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4NOqNUyqyh0IMk6uF6vhceojihKvbZrqCy7hWYeVWEYjeGhviNFxBo0nNyF1gAwWn6OiezyzgkeknRH2uogEdzgd3ucQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmsBuOlvbOmmSGtXw0ET2uME5EaFlyNU9GCqTx0VYJn1FmDk53
-	/qKhw7B2PhNa6pCVbnWXAaUvyGtVlQk2P2GQLlHNZGLt7xuOtAYI7lzAzLlL7JsMERvH5aHDCfM
-	FRPkdGWMvwYSDRUA33RAl5SY0ndAYsXnBgyHG3olb
-X-Gm-Gg: ATEYQzxTXn9IXvW2JIlnAW7pwnq50/XHR76dHFVtenFgX9jP0yEWejck09bUkpy56Me
-	E55+lc5y7Ua3BDSHQoZb4GjQH4Ko6HIHn7/3icevuVtBcsxSJJTQz7r3Od65sKk+2PTHS+TTKW9
-	3OjfON3gnglJCRYBMglwFiG28/fqN6zHHBfp0UscuDxDVlDCapoSCOc3NNxiPv8fvw/PlnBGuoK
-	23gkg6j0K5VNT3+FePZd2cfx7ngj7SUl9ddt3TXeLq/fIl12wybc83dP6e2HZxv+ubBDtPNlaaM
-	kCPCZWZ5tylEW+FPuw==
-X-Received: by 2002:a05:6a21:a0c:b0:398:b72a:94c1 with SMTP id
- adf61e73a8af0-398c5f56143mr2683555637.30.1773245181276; Wed, 11 Mar 2026
- 09:06:21 -0700 (PDT)
+        bh=JZDNJFGDP5amVq7p/dFv6sOGOZTvq599aR4YcZO7qtw=;
+        b=Wk4E8mAg4c4Vv4wMzT3bUWraUB9/HJmPfQ40bg9/zad6b6+ZF30QLBK0Z7kHWn4tMB
+         wd7I7bUJIuSkDr3MKdMgnNHiSlINaaoIn2cM6WQ4GyDL7UyEtjG3dp2572Yd2TI6zslV
+         7W4Gq0uOg9EwVk8neox68gFyYRy4uN9wqNZh3OgqOLn4T2MnAP0MmaoIXyRPdDkwY4ZE
+         uTfG8CHEIJO2/RZxw194PVqDDgKDbCU4njv25+VuZ+yIirxXKkU0O7ooSu7hqOZFVCHd
+         wVNWvvlz0Nnl8AwFvfNVPittYcNvxDIpjGFO4V/S2+GdF1OzaofpRqUACKwy8zij/aEU
+         PkZA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHOkQzALXOhKU/5VouIyeWxDi+ygxYgfCOKnsQ2Ne/z8JranTbh0uE6LAb4yHUaRP5UU8UwgWC7gqXnE6IMyyyl75MdjM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5p9BAEGAfwOZoUPDlEEnFghp/LQb1Nqix6yjG7f4GPHJXMZ+C
+	dxSw/TyKCmQQa3ry5nLhIQHFSBtHj0fPsrD9mkB/tOz7ff6nF3fDCYWwShhqraSTyDGFg7cjXFt
+	eK9e4ycBXiwRVD2qgVuCkaaWnOJ9/0i3hT6Pohgst
+X-Gm-Gg: ATEYQzxGIgPuMaTyVmHL1D6cjsCGPWXlvq+bnXoTj5wnRZdjCTpGN5y93nSq4eKNb2T
+	HTQ3kwmz14ECF/iu3liVVn6GuEKrg0hb/8BuKJBSbhH6k2wFNml67+OP+c4fbZyRHjDk85WZN30
+	2RqAm6q0KP0CHkiZ/lI1Yu4bz4RwNNwNzNXjOMQS7hMKiPsZzREJ5DUqDkxZlW5kGZccSxGOqxh
+	4/cIUa73CorFH21uWapN9FPk8jclNRUinQSFNGl1Rw8+M+KHwqNG5cromXL8Bb1xewgksNCf/3w
+	HUUc7dc=
+X-Received: by 2002:a17:903:3d05:b0:2ae:3d7d:d905 with SMTP id
+ d9443c01a7336-2aeae81490amr32213615ad.23.1773245337226; Wed, 11 Mar 2026
+ 09:08:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com>
- <CAHC9VhTR9CsBgxRCAHXm5T2NZ5tr+XfmA--zkt=udmk9hPRuZQ@mail.gmail.com>
- <20260309193743.GZ12611@unreal> <CAHC9VhSRt_QEJKJFBDBySNQCiPpcawd5A76xmoRNtppRKGaCog@mail.gmail.com>
- <20260310090733.GA12611@unreal> <CAHC9VhTKsOYrs8Wh-O548=2gE7N_gkBy+q05+atcR=D+30uQ=w@mail.gmail.com>
- <20260310193000.GM12611@unreal> <CAHC9VhSh8A+yGHT_+BqFGaLNqsZDcaz_cuqf9A+neRQQ3PMY4A@mail.gmail.com>
- <20260311081955.GS12611@unreal>
-In-Reply-To: <20260311081955.GS12611@unreal>
+References: <aZcPd3OKqxwCZV-5@suesslenovo> <20260219200459.1474232-1-utilityemal77@gmail.com>
+ <20260219.de5dc35ec231@gnoack.org> <CAHC9VhSu=YtE0dMiEtUQgz0pFy5K8cuHh_EWprNtFTDAxhss_w@mail.gmail.com>
+ <abFhawSTjNoa-KaH@suesslenovo>
+In-Reply-To: <abFhawSTjNoa-KaH@suesslenovo>
 From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 11 Mar 2026 12:06:09 -0400
-X-Gm-Features: AaiRm52dAjakjLFCSom8AaXbODj-QE-Z4_Nd0uX58SslP9L9TO4kIsM6LJNK_sE
-Message-ID: <CAHC9VhR0iuzYRpi3vPdKAbsOJ-DoMvWV-c7TXVcAmb3u8J4JwA@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Firmware LSM hook
-To: Leon Romanovsky <leon@kernel.org>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Saeed Mahameed <saeedm@nvidia.com>, Itay Avraham <itayavr@nvidia.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>, 
-	Maher Sanalla <msanalla@nvidia.com>, Edward Srouji <edwards@nvidia.com>
+Date: Wed, 11 Mar 2026 12:08:43 -0400
+X-Gm-Features: AaiRm51y1oanFGZp0hATWZweBML1M22bqKd3H2ES5tayYiLT9l2hp1VRACvAC4Q
+Message-ID: <CAHC9VhSA=jaKTXg-Tmzzpaj9STGMXH3ZMgQm_XvicimRqdW0+w@mail.gmail.com>
+Subject: Re: [PATCH v6] lsm: Add LSM hook security_unix_find
+To: Justin Suess <utilityemal77@gmail.com>
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>, brauner@kernel.org, 
+	demiobenour@gmail.com, fahimitahera@gmail.com, hi@alyssa.is, horms@kernel.org, 
+	ivanov.mikhail1@huawei-partners.com, jannh@google.com, jmorris@namei.org, 
+	john.johansen@canonical.com, konstantin.meskhidze@huawei.com, 
+	linux-security-module@vger.kernel.org, m@maowtm.org, matthieu@buffet.re, 
+	mic@digikod.net, netdev@vger.kernel.org, samasth.norway.ananda@oracle.com, 
+	serge@hallyn.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 11, 2026 at 4:20=E2=80=AFAM Leon Romanovsky <leon@kernel.org> w=
-rote:
-> On Tue, Mar 10, 2026 at 05:40:02PM -0400, Paul Moore wrote:
-> > On Tue, Mar 10, 2026 at 3:30=E2=80=AFPM Leon Romanovsky <leon@kernel.or=
-g> wrote:
-> > > On Tue, Mar 10, 2026 at 02:24:40PM -0400, Paul Moore wrote:
-> > > > On Tue, Mar 10, 2026 at 5:07=E2=80=AFAM Leon Romanovsky <leon@kerne=
-l.org> wrote:
-> > > > > On Mon, Mar 09, 2026 at 07:10:25PM -0400, Paul Moore wrote:
-> > > > > > On Mon, Mar 9, 2026 at 3:37=E2=80=AFPM Leon Romanovsky <leon@ke=
-rnel.org> wrote:
-> > > > > > > On Mon, Mar 09, 2026 at 02:32:39PM -0400, Paul Moore wrote:
-> > > > > > > > On Mon, Mar 9, 2026 at 7:15=E2=80=AFAM Leon Romanovsky <leo=
-n@kernel.org> wrote:
+On Wed, Mar 11, 2026 at 8:34=E2=80=AFAM Justin Suess <utilityemal77@gmail.c=
+om> wrote:
+>
+> On Tue, Mar 10, 2026 at 06:39:12PM -0400, Paul Moore wrote:
+> > On Thu, Feb 19, 2026 at 3:26=E2=80=AFPM G=C3=BCnther Noack <gnoack3000@=
+gmail.com> wrote:
+> > > On Thu, Feb 19, 2026 at 03:04:59PM -0500, Justin Suess wrote:
+> > > > Add a LSM hook security_unix_find.
 > > > >
-> > > > ...
+> > > > This hook is called to check the path of a named unix socket before=
+ a
+> > > > connection is initiated. The peer socket may be inspected as well.
 > > > >
-> > > > > > > > Hi Leon,
-> > > > > > > >
-> > > > > > > > At the link below, you'll find guidance on submitting new L=
-SM hooks.
-> > > > > > > > Please take a look and let me know if you have any question=
-s.
-> > > > > > > >
-> > > > > > > > https://github.com/LinuxSecurityModule/kernel/blob/main/REA=
-DME.md#new-lsm-hooks
-> > > > > > >
-> > > > > > > I assume that you are referring to this part:
-> > > > > >
-> > > > > > I'm referring to all of the guidance, but yes, at the very leas=
-t that
-> > > > > > is something that I think we need to see in a future revision o=
-f this
-> > > > > > patchset.
-> > > > > >
-> > > > > > >  * New LSM hooks must demonstrate their usefulness by providi=
-ng a meaningful
-> > > > > > >    implementation for at least one in-kernel LSM. The goal is=
- to demonstrate
-> > > > > > >    the purpose and expected semantics of the hooks. Out of tr=
-ee kernel code,
-> > > > > > >    and pass through implementations, such as the BPF LSM, are=
- not eligible
-> > > > > > >    for LSM hook reference implementations.
-> > > > > > >
-> > > > > > > The point is that we are not inspecting a kernel call, but th=
-e FW mailbox,
-> > > > > > > which has very little meaning to the kernel. From the kernel'=
-s perspective,
-> > > > > > > all relevant checks have already been performed, but the exis=
-ting capability
-> > > > > > > granularity does not allow us to distinguish between FW_CMD1 =
-and FW_CMD2.
-> > > > > >
-> > > > > > It might help if you could phrase this differently, as I'm not
-> > > > > > entirely clear on your argument.  LSMs are not limited to enfor=
-cing
-> > > > > > access controls on requests the kernel understands (see the SEL=
-inux
-> > > > > > userspace object manager concept), and the idea of access contr=
-ols
-> > > > > > with greater granularity than capabilities is one of the main r=
-easons
-> > > > > > people look to LSMs for access control (SELinux, AppArmor, Smac=
-k,
-> > > > > > etc.).
-> > > > >
-> > > > > I should note that my understanding of LSM is limited, so some pa=
-rts of my
-> > > > > answers may be inaccurate.
-> > > > >
-> > > > > What I am referring to is a different level of granularity =E2=80=
-=94 specifically,
-> > > > > the internals of the firmware commands. In the proposed approach,=
- BPF
-> > > > > programs would make decisions based on data passed through the ma=
-ilbox.
-> > > > > That mailbox format varies across vendors, and may even differ be=
-tween
-> > > > > firmware versions from the same vendor.
+> > > > Why existing hooks are unsuitable:
 > > > >
-> > > > That helps, thank you.
+> > > > Existing socket hooks, security_unix_stream_connect(),
+> > > > security_unix_may_send(), and security_socket_connect() don't provi=
+de
+> > > > TOCTOU-free / namespace independent access to the paths of sockets.
 > > > >
-> > > > > > > Here we propose a generic interface that can be applied to al=
-l FWCTL
-> > > > > > > devices without out-of-tree kernel code at all.
-> > > > > >
-> > > > > > I expected to see a patch implementing some meaningful support =
-for
-> > > > > > access controls using these hooks in one of the existing LSMs, =
-I did
-> > > > > > not see that in this patchset.
-> > > > >
-> > > > > In some cases, the mailbox is forwarded from user space unchanged=
-, but
-> > > > > in others the kernel modifies it before submitting it to the FW.
+> > > > (1) We cannot resolve the path from the struct sockaddr in existing=
+ hooks.
+> > > > This requires another path lookup. A change in the path between the
+> > > > two lookups will cause a TOCTOU bug.
 > > > >
-> > > > Without a standard format, opcode definitions, etc. I suspect
-> > > > integrating this into an LSM will present a number of challenges.
-> > >
-> > > The opcode is relatively easy to extract from the mailbox and pass to=
- the LSM.
-> > > All drivers implement some variant of mlx5ctl_validate_rpc()/devx_is_=
-general_cmd()
-> > > to validate the opcode. The problem is that this check alone is not s=
-ufficient.
-> > >
-> > > > Instead of performing an LSM access control check before submitting
-> > > > the firmware command, it might be easier from an LSM perspective to
-> > > > have the firmware call into the kernel/LSM for an access control
-> > > > decision before performing a security-relevant action.
-> > >
-> > > Ultimately, the LSM must make a decision for each executed firmware
-> > > command. This will need to be handled one way or another, and will
-> > > likely require parsing the mailbox again.
+> > > > (2) We cannot use the struct path from the listening socket, becaus=
+e it
+> > > > may be bound to a path in a different namespace than the caller,
+> > > > resulting in a path that cannot be referenced at policy creation ti=
+me.
+> > > >
+> > > > Cc: G=C3=BCnther Noack <gnoack3000@gmail.com>
+> > > > Cc: Tingmao Wang <m@maowtm.org>
+> > > > Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+> > > > ---
+> > > >  include/linux/lsm_hook_defs.h |  5 +++++
+> > > >  include/linux/security.h      | 11 +++++++++++
+> > > >  net/unix/af_unix.c            | 13 ++++++++++---
+> > > >  security/security.c           | 20 ++++++++++++++++++++
+> > > >  4 files changed, 46 insertions(+), 3 deletions(-)
 > >
-> > As it's unlikely that parsing the mailbox is something that a LSM will
-> > want to handle,
->
-> I believe this approach offers the cleanest and most natural way to suppo=
-rt
-> all mailbox=E2=80=91based devices.
->
-> > my suggestion was to leverage the existing mailbox parsing in the firmw=
-are
-> > and require the firmware to call into the LSM when authorization is nee=
-ded.
+> > ...
 > >
-> > > > This removes the challenge of parsing/interpreting the arbitrary fi=
-rmware commands,
-> > > > but it does add some additional complexity of having to generically
-> > > > represent the security relevant actions the firmware might request
+> > > Reviewed-by: G=C3=BCnther Noack <gnoack3000@gmail.com>
 > > >
-> > > The difference here is that the proposed LSM hook is intended to disa=
-ble
-> > > certain functionality provided by the firmware, effectively depending=
- on
-> > > the operator=E2=80=99s preferences.
+> > > Thank you, this looks good. I'll include it in the next version of th=
+e
+> > > Unix connect patch set again.
 > >
-> > My suggestion would also allow a LSM hook to disable certain firmware
-> > functionality; however, the firmware itself would need to call the LSM
-> > to check if the functionality is authorized.
+> > I'm looking for this patchset to review/ACK the new hook in context,
+> > but I'm not seeing it in my inbox or lore.  Did I simply miss the
+> > patchset or is it still a work in progress?  No worries if it hasn't
+> > been posted yet, I just wanted to make sure I wasn't holding this up
+> > any more than I already may have :)
 >
-> This suggestion adds an extra call from the FW to the LSM for every comma=
-nd, even
-> for systems which don't have LSM at all.
-
-If latency is a concern, I imagine we could create an LSM hook to
-report whether any LSMs provided firmware access controls.  The
-firmware could then use that hook, potentially caching the result, to
-limit its calls into the LSM.
-
-> The FW must pass the already parsed data
-> back to the LSM; otherwise, the LSM   has no basis to decide whether to a=
-ccept or
-> reject the request.
+> Good Morning Paul,
 >
-> For example, consider the MLX5_CMD_OP_QUERY_DCT command handled in
-> mlx5ctl_validate_rpc(). DCT in RDMA refers to Dynamically Connected
-> Transport, a Mellanox-specific extension that effectively introduces a ne=
-w
-> QP=E2=80=91type family on top of the standard RC/UC/UD transports. This t=
-ype does not
-> exist for other vendors, each of whom provides its own vendor=E2=80=91spe=
-cific
-> extensions. All parameters here are tightly coupled to those specific
-> commands.
+> Can't speak to the rest of the patch, but I sent this LSM hook for
+> review purposes before inclusion with the rest of the V6 of this patch.
 >
-> It is unrealistic to expect different firmware implementations to supply
-> their data in a common format that would allow the LSM to make a generic
-> decision.
+> G=C3=BCnther added his review tag, but I was asked to make some minor com=
+ment / commit
+> message updates. I sent the same patch, with updated comments/commit to h=
+im
+> in a follow up, off-list email to avoid spamming the list. No code change=
+s were
+> made, just comments.
+>
+> I don't think this particular patch will change substantially, unless we =
+find
+> something unexpected. But the way we use the hook may change (esp wrt to
+> locking and the SOCK_DEAD state), which is important for your review.
+>
+> So you may want to hold off your review until the full V6 series gets sen=
+t so
+> you can review the hook in context. There were some questions about
+> locking that needed proper digging into. [1]
 
-That's unfortunate as that would be the easiest path forward.
-Regardless, you are welcome to work on whatever implementation you
-think makes sense for any of the in-tree LSMs, with that in place we
-can take another look at the firmware command hooks.
-
-Good luck.
+Great, thanks for the update, that was helpful.  As you recommend,
+I'll hold off on reviewing this further until we have the full context
+of the other patchset; we've already talked about this hook addition a
+few times anyway, and based on a quick look yesterday, nothing
+particularly evil jumped out at me.
 
 --=20
 paul-moore.com
