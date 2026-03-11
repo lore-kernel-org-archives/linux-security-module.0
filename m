@@ -1,81 +1,55 @@
-Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148C12EA480
-	for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2026 12:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034912D77E9;
+	Wed, 11 Mar 2026 12:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773232496; cv=none; b=bRY+XoIhfbuJdmjkp0I9I8jRfyhamRDVQwhOlQ31IgUowME/w3C32Q+fytWasVRG8Ozz+chz4kBVhskLa3oMUoLcLn3GFufFy5zKQSmezxC+3BZCOKWFb6mlnKmW9sVr8BxYdH6173pHqGTzI5cMKqT5nvOJ2lGhmvo7cumgw5s=
+	t=1773233899; cv=none; b=ah23GgkQ8r8EJCXe/3YDK+RM0aCqNSFMUm+E/wWO08b2aD4JLhuRpXZ0QacM3V7l+IvemFw6sFQPs/0ndC9AWPfZWZxA5acuL/2MCgqIveMV5e/c4AkJM+61hROGpBtGN10w+LS9vr2d/kaG75h3r68AexdJt4If8vfSFONEXoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773232496; c=relaxed/simple;
-	bh=4V/FLewYp4qpRJBMOlrGqYSXJ1bd8KpRc1fnh/8a82k=;
+	s=arc-20240116; t=1773233899; c=relaxed/simple;
+	bh=mRn/wE2BOJdmVXtetURpi3qdtZ2DQzJb6SnV9QqyjkE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z4JZ/q9slfpF56pEXzskZGnevbhoRyQE4iHRK/ept1tGMhtP/xn0Gd2XvUetuch2HUgrQbwUy7Q316K9kAXX5XNLco/9Piq5q4WS0zA8ojxg8WuZcga1/wr8tCRzcumXT5EoDakmEi/pEEIbu1Osf6/RUuiRGSQwugFo7K9XJIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jm+bPJvJ; arc=none smtp.client-ip=74.125.224.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=RkpxTzlrx8dOT03xldKIH5NGSJDK2wIvCukbd+VbiCiQYD1G9dC9HCZwHlxDqoLfG8MerP6Ws8kca5140X6a6EPd7mPvYbxOhdGU5KnaodmHwio4VFf1geLumsq/GHQX9bHMhyaIPHyJ5BM9K7bq/Cj4QYtD5MQSQuQv36FxM9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=k90soJZP; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jm+bPJvJ"
-Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-64ae222d978so13945462d50.1
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Mar 2026 05:34:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773232493; x=1773837293; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+bCTlsnYg7WlwyrXb9b++ZpE0INNBNp3LJgQh0I5kfE=;
-        b=jm+bPJvJ5zE2Z91Qq6YgMknCJiN7F3XLqlJmdlKcxF+NQ1GMTxvoidhTjcGBunBYG+
-         zt0aTPC93/9syrgsO7ND4e0Aluc+WxOTkyrhxpOKdLNbf0JYEukfjxaTwF/d//qGQWfa
-         5AvOAPMumKKLvg0nV+LqEqqVoban4aJPfUe1nfmK1sRZwko3ylLAVpdeuZY6McH9GA86
-         OYN+YDyQdWBOHCucTV1WO7Tl725BPnVGhtVQV26kRv/uGanJV1OeKAKWltGxXbMbm6Sq
-         3W3E/xf7wmD4GKNC9Jzbd7HRHEIVpXmc8t/8xaptpFZNcnTvN0UFvkJOm7/UEqJlcE2F
-         z2Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773232493; x=1773837293;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+bCTlsnYg7WlwyrXb9b++ZpE0INNBNp3LJgQh0I5kfE=;
-        b=FATtKXDDQKCytAn15cbQBWC9VNMV/Xp81MskUQsGqfl+n/dFhWHc4BY0J7O+Tqp/3R
-         ulJ/5NfXSuf+p6lMaKIKtqUQi2FDc0Eb7hmY3gHktvX90WvCAg68LvYlh3/jpLi7Hkh/
-         DY50dGJ8Kbr/DQSXcrMtW2yPpq0cH95xPQJrItKy15Kw5HIJePVMiJdz+GGoNzW+h/Fl
-         ev4PVaN1Kc3WUSI/9qS7TmcNkGBlkQto3NKha7v90GqxXzQrWPQwbkWb/Q6CXLk8OGe4
-         OosZ4t15vGt05vwtCkuCfephIpS8apVcjwV4rcOl5dIZIogCOKp5CAWtYTZUrnkcCROF
-         23NA==
-X-Forwarded-Encrypted: i=1; AJvYcCUGXfFi4eRpJaqJG7khLv9Vcav2InkhGB5jryMBnesMPI/4Y7lk8rzfrBd1bg5dhDlw61ww7ciGn/jiTQKUpQz6xUdWHZc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtgLmO4MXcnVyfn9DqPZpAe7ey9ViNpOPwYpVEzCLXQRerZp5M
-	i8pRECh7b4zKchmV7SToIpZ63cDKHoDXIbAyBcSecgAE7k7PyvGmyCqH
-X-Gm-Gg: ATEYQzyYEArvhelfPux1NFmHRzuGv0il6kS4rzJ0HcEJIzBJHQlyuYlx8TfzUn5Xd3e
-	0V3Olg6LSgWQ5yl8Ix1LjarjkkTHKLpMmGf05xSjyGhXkqwapCDG3eI2+7tmljrx+quiADZqURc
-	gtWvRgI6/5CNppvuOxA7/m8Er3Q2mne0wfFaPXxYgxKqw/JFANpTO0fffn7mVrNZwMAvi4OkGw7
-	/03IpZGi/1rqRh4+hTLNg/u/cf/pxeFtp+qSQzavfHCBpg3B6T+6WlclF8g1148bHjZVKnjDWHA
-	B5ykGLhzjq12ZFSOveWLX8dpOl5ZiI1d2QyJMWn2W1th7kNV7Cke5K+FVT7IOuKNRsiQAkt/NqJ
-	AkSRGSusrw3MS2VuigneLcgWYfyaeQXham0LfQSw+8Ue+mfv6n+yvmjmd3bUuvTO6VKqijEsUP8
-	lpu2/ab4AKqQLhr4RAKgNyaQauNaby
-X-Received: by 2002:a05:690c:6c8d:b0:785:cecb:4b19 with SMTP id 00721157ae682-79917e8baeamr20238127b3.5.1773232492914;
-        Wed, 11 Mar 2026 05:34:52 -0700 (PDT)
-Received: from suesslenovo ([129.222.85.110])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-79917ee4feasm12115467b3.30.2026.03.11.05.34.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2026 05:34:52 -0700 (PDT)
-Date: Wed, 11 Mar 2026 08:34:51 -0400
-From: Justin Suess <utilityemal77@gmail.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>,
-	brauner@kernel.org, demiobenour@gmail.com, fahimitahera@gmail.com,
-	hi@alyssa.is, horms@kernel.org, ivanov.mikhail1@huawei-partners.com,
-	jannh@google.com, jmorris@namei.org, john.johansen@canonical.com,
-	konstantin.meskhidze@huawei.com,
-	linux-security-module@vger.kernel.org, m@maowtm.org,
-	matthieu@buffet.re, mic@digikod.net, netdev@vger.kernel.org,
-	samasth.norway.ananda@oracle.com, serge@hallyn.com,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v6] lsm: Add LSM hook security_unix_find
-Message-ID: <abFhawSTjNoa-KaH@suesslenovo>
-References: <aZcPd3OKqxwCZV-5@suesslenovo>
- <20260219200459.1474232-1-utilityemal77@gmail.com>
- <20260219.de5dc35ec231@gnoack.org>
- <CAHC9VhSu=YtE0dMiEtUQgz0pFy5K8cuHh_EWprNtFTDAxhss_w@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="k90soJZP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1773233887;
+	bh=mRn/wE2BOJdmVXtetURpi3qdtZ2DQzJb6SnV9QqyjkE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k90soJZPKmK3WO0aN0btxQNxuBpFawAlVAt8Y/y5iCKKutCz/URHVI6erF06qEnJb
+	 UErb09oCmFeFT4NoInvtsQ57j4bPe83GaAnwXmLf73CWGB4LgUkwkKHVTuqOzhv039
+	 l997WH4HQ39CRI7rjR0x4LOMudFJrvf8taL+1xCg=
+Date: Wed, 11 Mar 2026 13:58:07 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
+	Nicolas Schier <nicolas.schier@linux.dev>, Daniel Gomez <da.gomez@kernel.org>, 
+	Aaron Tomlin <atomlin@atomlin.com>, "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, 
+	Nicolas Schier <nsc@kernel.org>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
+	Xiu Jianfeng <xiujianfeng@huawei.com>, Fabian =?utf-8?Q?Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>, 
+	Arnout Engelen <arnout@bzzt.net>, Mattia Rizzolo <mattia@mapreri.org>, 
+	kpcyrd <kpcyrd@archlinux.org>, Christian Heusel <christian@heusel.eu>, 
+	=?utf-8?B?Q8OianU=?= Mihai-Drosi <mcaju95@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v4 06/17] kbuild: add stamp file for vmlinux BTF data
+Message-ID: <cf122165-ebf3-4027-aa31-a37755eb352f@t-8ch.de>
+References: <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
+ <20260113-module-hashes-v4-6-0b932db9b56b@weissschuh.net>
+ <20260310213606.GD120274@quark>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -85,76 +59,97 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhSu=YtE0dMiEtUQgz0pFy5K8cuHh_EWprNtFTDAxhss_w@mail.gmail.com>
+In-Reply-To: <20260310213606.GD120274@quark>
 
-On Tue, Mar 10, 2026 at 06:39:12PM -0400, Paul Moore wrote:
-> On Thu, Feb 19, 2026 at 3:26 PM Günther Noack <gnoack3000@gmail.com> wrote:
-> > On Thu, Feb 19, 2026 at 03:04:59PM -0500, Justin Suess wrote:
-> > > Add a LSM hook security_unix_find.
-> > >
-> > > This hook is called to check the path of a named unix socket before a
-> > > connection is initiated. The peer socket may be inspected as well.
-> > >
-> > > Why existing hooks are unsuitable:
-> > >
-> > > Existing socket hooks, security_unix_stream_connect(),
-> > > security_unix_may_send(), and security_socket_connect() don't provide
-> > > TOCTOU-free / namespace independent access to the paths of sockets.
-> > >
-> > > (1) We cannot resolve the path from the struct sockaddr in existing hooks.
-> > > This requires another path lookup. A change in the path between the
-> > > two lookups will cause a TOCTOU bug.
-> > >
-> > > (2) We cannot use the struct path from the listening socket, because it
-> > > may be bound to a path in a different namespace than the caller,
-> > > resulting in a path that cannot be referenced at policy creation time.
-> > >
-> > > Cc: Günther Noack <gnoack3000@gmail.com>
-> > > Cc: Tingmao Wang <m@maowtm.org>
-> > > Signed-off-by: Justin Suess <utilityemal77@gmail.com>
-> > > ---
-> > >  include/linux/lsm_hook_defs.h |  5 +++++
-> > >  include/linux/security.h      | 11 +++++++++++
-> > >  net/unix/af_unix.c            | 13 ++++++++++---
-> > >  security/security.c           | 20 ++++++++++++++++++++
-> > >  4 files changed, 46 insertions(+), 3 deletions(-)
-> 
-> ...
-> 
-> > Reviewed-by: Günther Noack <gnoack3000@gmail.com>
-> >
-> > Thank you, this looks good. I'll include it in the next version of the
-> > Unix connect patch set again.
-> 
-> I'm looking for this patchset to review/ACK the new hook in context,
-> but I'm not seeing it in my inbox or lore.  Did I simply miss the
-> patchset or is it still a work in progress?  No worries if it hasn't
-> been posted yet, I just wanted to make sure I wasn't holding this up
-> any more than I already may have :)
+On 2026-03-10 14:36:06-0700, Eric Biggers wrote:
+> On Tue, Jan 13, 2026 at 01:28:50PM +0100, Thomas Weißschuh wrote:
+> > The upcoming module hashes functionality will build the modules in
+> > between the generation of the BTF data and the final link of vmlinux.
+> > Having a dependency from the modules on vmlinux would make this
+> > impossible as it would mean having a cyclic dependency.
+> > Break this cyclic dependency by introducing a new target.
+> > 
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > ---
+> >  scripts/Makefile.modfinal | 4 ++--
+> >  scripts/link-vmlinux.sh   | 6 ++++++
+> >  2 files changed, 8 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/scripts/Makefile.modfinal b/scripts/Makefile.modfinal
+> > index 149e12ff5700..adfef1e002a9 100644
+> > --- a/scripts/Makefile.modfinal
+> > +++ b/scripts/Makefile.modfinal
+> > @@ -56,8 +56,8 @@ if_changed_except = $(if $(call newer_prereqs_except,$(2))$(cmd-check),      \
+> >  	printf '%s\n' 'savedcmd_$@ := $(make-cmd)' > $(dot-target).cmd, @:)
+> >  
+> >  # Re-generate module BTFs if either module's .ko or vmlinux changed
+> > -%.ko: %.o %.mod.o .module-common.o $(objtree)/scripts/module.lds $(and $(CONFIG_DEBUG_INFO_BTF_MODULES),$(KBUILD_BUILTIN),$(objtree)/vmlinux) FORCE
+> > -	+$(call if_changed_except,ld_ko_o,$(objtree)/vmlinux)
+> > +%.ko: %.o %.mod.o .module-common.o $(objtree)/scripts/module.lds $(and $(CONFIG_DEBUG_INFO_BTF_MODULES),$(KBUILD_BUILTIN),$(objtree)/.tmp_vmlinux_btf.stamp) FORCE
+> > +	+$(call if_changed_except,ld_ko_o,$(objtree)/.tmp_vmlinux_btf.stamp)
+> >  ifdef CONFIG_DEBUG_INFO_BTF_MODULES
+> >  	+$(if $(newer-prereqs),$(call cmd,btf_ko))
+> >  endif
+> > diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
+> > index 4ab44c73da4d..8c98f8645a5c 100755
+> > --- a/scripts/link-vmlinux.sh
+> > +++ b/scripts/link-vmlinux.sh
+> > @@ -111,6 +111,7 @@ vmlinux_link()
+> >  gen_btf()
+> >  {
+> >  	local btf_data=${1}.btf.o
+> > +	local btf_stamp=.tmp_vmlinux_btf.stamp
+> >  
+> >  	info BTF "${btf_data}"
+> >  	LLVM_OBJCOPY="${OBJCOPY}" ${PAHOLE} -J ${PAHOLE_FLAGS} ${1}
+> > @@ -131,6 +132,11 @@ gen_btf()
+> >  	fi
+> >  	printf "${et_rel}" | dd of="${btf_data}" conv=notrunc bs=1 seek=16 status=none
+> >  
+> > +	info STAMP $btf_stamp
+> > +	if ! cmp --silent $btf_data $btf_stamp; then
+> > +		cp $btf_data $btf_stamp
+> > +	fi
+
+This patch will be gone from the next revision of the series.
+Making use of the recently introduced vmlinux.unstripped,
+as suggested by Petr, removes any modifications to link-vmlinux.sh
+and the issue that this patch tried to address.
+
+> A "stamp file" is traditionally an empty file that is written when some
+> build step has completed.  The above code is instead copying the entire
+> .tmp_vmlinux1.btf.o file (megabytes in size) to .tmp_vmlinux_btf.stamp.
+
+The goal here was not to only have a reference timestamp, but
+specifically the reference file contents.
+
+Note: The duplicated vmlinux.unstripped in its current form is by far
+larger than .tmp_vmlinux1.btf.o.
+
+> So, it's not clear to me why the stamp file is needed at all, versus
+> depending directly on .tmp_vmlinux1.btf.o.
 >
-Good Morning Paul,
+> I guess 'make' doesn't know about the dependencies of
+> .tmp_vmlinux1.btf.o.  But the same is true of the stamp file, right?  So
+> either way, how would 'make' know to finish rebuilding the file before
+> starting to execute the "Re-generate module BTFs" rule?
 
-Can't speak to the rest of the patch, but I sent this LSM hook for
-review purposes before inclusion with the rest of the V6 of this patch.
+The problem was not the ordering, this is handled within link-vmlinux.sh.
+IIRC originally without this patch even no-op rebuilds would end up
+rebuilding the modules. Using .tmp_vmlinux1.btf.o may have worked too.
+But in v4, the patch "kbuild: generate module BTF based on
+vmlinux.unstripped" was added, which also solves this problem.
 
-Günther added his review tag, but I was asked to make some minor comment / commit
-message updates. I sent the same patch, with updated comments/commit to him
-in a follow up, off-list email to avoid spamming the list. No code changes were
-made, just comments.
+> Also, passing the long option '--silent' to 'cmp' creates a dependency
+> on the GNU implementation of 'cmp', which isn't documented as a kernel
+> build dependency.  Probably better to use the short option '-s'.
 
-I don't think this particular patch will change substantially, unless we find
-something unexpected. But the way we use the hook may change (esp wrt to
-locking and the SOCK_DEAD state), which is important for your review.
+Ack.
 
-So you may want to hold off your review until the full V6 series gets sent so
-you can review the hook in context. There were some questions about
-locking that needed proper digging into. [1]
+> Also, the stamp file isn't being deleted by 'make clean'.  It looks like
+> it would need to be added to cleanup() in link-vmlinux.sh.
 
-Thank you for your time.
+Ack.
 
-Justin
 
-[1]: https://lore.kernel.org/linux-security-module/20260220.82a8adda6f95@gnoack.org/
-
-> -- 
-> paul-moore.com
+Thomas
