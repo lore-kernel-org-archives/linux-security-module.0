@@ -1,33 +1,33 @@
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
+Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D705F3B5302
-	for <linux-security-module@vger.kernel.org>; Thu, 12 Mar 2026 10:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E4A3BA254
+	for <linux-security-module@vger.kernel.org>; Thu, 12 Mar 2026 10:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773310445; cv=none; b=SIEoFurewQ+oItMk2tmWszTvYNLgij3siiDYCsoq+mT90WTLZveSVu4iEDfG+hZFA47QB4Qkr7+IpnG/c7fUG0F87r6C+MIB9n2ydjs1QjcFyJBYl4Jr1Zr2cTDZn+gzqZfRPG0Tta5RvYWwanl2p9TYznRapJctSTY0l/ddOWw=
+	t=1773310485; cv=none; b=iCMkvTeIFTWvMPt/k7vOVHIxu/WbDsxXtQSWIM2Ro4/ztgcFpgtEeLWTK107+Ws3QEqerkVJBGAskae+M/y9O/UL7qa/NnoVqvOAgl0C5g9QOHSUiGg+XOrQKFMQZH9nwVOgI6HTdiTHd93yWDUKxIejbxITC550oE5Vi48wX/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773310445; c=relaxed/simple;
-	bh=WSGfULoaaoh9SZWdXCHWXj3qpO9/VQrgb53l57qTdDw=;
+	s=arc-20240116; t=1773310485; c=relaxed/simple;
+	bh=g1MVcFocwFprOD05JbUOdmnhJUbD1bzZqb2K4auCHi8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LL+hwyzoL375RgOxYLOaEdZnLWD+jSY91cPT2K0dn8XMM1dYxR9MQudz1VkwldbPinXhmCZ227Fekl3Nti0w/3Y94eH3gZDrHjfwxdtSwc6oZ20HgchXyIdeJZHwHxbVxotu8OGVjalcZVzgxW0gFJfMG5XkOr9r09Pe8WM+rtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=fJlIkmir; arc=none smtp.client-ip=45.157.188.9
+	 MIME-Version:Content-Type; b=A4o57YzusCVKBK4a6BLk3fYtoB2bWujefvNJBjg0Bwj4PaSaKFlmVnPasKuO9YIB2JMoJGBC6AkagzrsY3B3kB5jI6ns9ugo3/ZcmUJ/lLiBUes1MfG4ofyuNN0MEXZr4CwgCEWydb43k7u4smBy6vSjKQBc35zC7ZkQ2iD+hjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=aJgntXRi; arc=none smtp.client-ip=83.166.143.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="fJlIkmir"
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fWjsj5pJ7z197m;
-	Thu, 12 Mar 2026 11:05:13 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="aJgntXRi"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fWjsd5L76zBVQ;
+	Thu, 12 Mar 2026 11:05:09 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1773309913;
-	bh=MgD9cfGoZ73o8ZH114oUHG3bIOLlZf431npXrrlq/MM=;
+	s=20191114; t=1773309909;
+	bh=EvBBUs2A2WPjeqOyCK1l/ch6Sn9K8GiRl+PW2utO5xU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fJlIkmirbI4pSu1aHf1X7zpIeN5ohdOHZ8C1Z79bBgqoBPhUT2eF7YqyqcRZg0o1f
-	 /gWeXtV3DsqI0thrq6IWcM1uOiudprIOAUuizN5aAsHiukklokPd98MhUo9lv5HHFs
-	 HVpxr418GVCgUxoI4bd5Ohx325oxGIYsOECEvDGw=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4fWjsj15Grz8Qc;
-	Thu, 12 Mar 2026 11:05:13 +0100 (CET)
+	b=aJgntXRilr/mmkEhlQ8mlmQAUzPC4SoxQ59PDPGtJ7FjiwHJjBc24DKMuxBFuhNCn
+	 2l55Vy8v4rn8ioB5R2EOVybtme3PRo0M+d0lGDhtuB6qFQGgeXjW++FMx5Plqcwa4n
+	 jIfZhFqzrbxOOQtxcngQh0wLIT29se/ijJDSmecw=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fWjsd1Gx7zDHv;
+	Thu, 12 Mar 2026 11:05:09 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Christian Brauner <brauner@kernel.org>,
 	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
@@ -44,9 +44,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [RFC PATCH v1 04/11] landlock: Wrap per-layer access masks in struct layer_rights
-Date: Thu, 12 Mar 2026 11:04:37 +0100
-Message-ID: <20260312100444.2609563-5-mic@digikod.net>
+Subject: [RFC PATCH v1 01/11] security: add LSM blob and hooks for namespaces
+Date: Thu, 12 Mar 2026 11:04:34 +0100
+Message-ID: <20260312100444.2609563-2-mic@digikod.net>
 In-Reply-To: <20260312100444.2609563-1-mic@digikod.net>
 References: <20260312100444.2609563-1-mic@digikod.net>
 Precedence: bulk
@@ -59,275 +59,321 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-The per-layer FAM in struct landlock_ruleset currently stores struct
-access_masks directly, but upcoming permission features (capability
-and namespace restrictions) need additional per-layer data beyond the
-handled-access bitfields.
+From: Christian Brauner <brauner@kernel.org>
 
-Introduce struct layer_rights as a wrapper around struct access_masks
-and rename the FAM from access_masks[] to layers[].  This makes room
-for future per-layer fields (e.g. allowed bitmasks) without modifying
-struct access_masks itself, which is also used as a lightweight
-parameter type for functions that only need the handled-access
-bitfields.
+All namespace types now share the same ns_common infrastructure. Extend
+this to include a security blob so LSMs can start managing namespaces
+uniformly without having to add one-off hooks or security fields to
+every individual namespace type.
 
-No functional change.
+Add a ns_security pointer to ns_common and the corresponding lbs_ns
+blob size to lsm_blob_sizes. Allocation and freeing hooks are called
+from the common __ns_common_init() and __ns_common_free() paths so
+every namespace type gets covered in one go. All information about the
+namespace type and the appropriate casting helpers to get at the
+containing namespace are available via ns_common making it
+straightforward for LSMs to differentiate when they need to.
+
+A namespace_install hook is called from validate_ns() during setns(2)
+giving LSMs a chance to enforce policy on namespace transitions.
+
+Individual namespace types can still have their own specialized security
+hooks when needed. This is just the common baseline that makes it easy
+to track and manage namespaces from the security side without requiring
+every namespace type to reinvent the wheel.
 
 Cc: Günther Noack <gnoack@google.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+Link: https://lore.kernel.org/r/20260216-work-security-namespace-v1-1-075c28758e1f@kernel.org
 ---
- security/landlock/access.h   | 29 ++++++++++++++++++++++-------
- security/landlock/cred.h     |  2 +-
- security/landlock/ruleset.c  | 12 ++++++------
- security/landlock/ruleset.h  | 28 +++++++++++++++-------------
- security/landlock/syscalls.c |  2 +-
- 5 files changed, 45 insertions(+), 28 deletions(-)
+ include/linux/lsm_hook_defs.h      |  3 ++
+ include/linux/lsm_hooks.h          |  1 +
+ include/linux/ns/ns_common_types.h |  3 ++
+ include/linux/security.h           | 20 ++++++++
+ kernel/nscommon.c                  | 12 +++++
+ kernel/nsproxy.c                   |  8 +++-
+ security/lsm_init.c                |  2 +
+ security/security.c                | 76 ++++++++++++++++++++++++++++++
+ 8 files changed, 124 insertions(+), 1 deletion(-)
 
-diff --git a/security/landlock/access.h b/security/landlock/access.h
-index 42c95747d7bd..b3e147771a0e 100644
---- a/security/landlock/access.h
-+++ b/security/landlock/access.h
-@@ -19,7 +19,7 @@
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 8c42b4bde09c..fefd3aa6d8f4 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -260,6 +260,9 @@ LSM_HOOK(int, -ENOSYS, task_prctl, int option, unsigned long arg2,
+ LSM_HOOK(void, LSM_RET_VOID, task_to_inode, struct task_struct *p,
+ 	 struct inode *inode)
+ LSM_HOOK(int, 0, userns_create, const struct cred *cred)
++LSM_HOOK(int, 0, namespace_alloc, struct ns_common *ns)
++LSM_HOOK(void, LSM_RET_VOID, namespace_free, struct ns_common *ns)
++LSM_HOOK(int, 0, namespace_install, const struct nsset *nsset, struct ns_common *ns)
+ LSM_HOOK(int, 0, ipc_permission, struct kern_ipc_perm *ipcp, short flag)
+ LSM_HOOK(void, LSM_RET_VOID, ipc_getlsmprop, struct kern_ipc_perm *ipcp,
+ 	 struct lsm_prop *prop)
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index d48bf0ad26f4..3e7afe76e86c 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -111,6 +111,7 @@ struct lsm_blob_sizes {
+ 	unsigned int lbs_ipc;
+ 	unsigned int lbs_key;
+ 	unsigned int lbs_msg_msg;
++	unsigned int lbs_ns;
+ 	unsigned int lbs_perf_event;
+ 	unsigned int lbs_task;
+ 	unsigned int lbs_xattr_count; /* num xattr slots in new_xattrs array */
+diff --git a/include/linux/ns/ns_common_types.h b/include/linux/ns/ns_common_types.h
+index 0014fbc1c626..170288e2e895 100644
+--- a/include/linux/ns/ns_common_types.h
++++ b/include/linux/ns/ns_common_types.h
+@@ -115,6 +115,9 @@ struct ns_common {
+ 	struct dentry *stashed;
+ 	const struct proc_ns_operations *ops;
+ 	unsigned int inum;
++#ifdef CONFIG_SECURITY
++	void *ns_security;
++#endif
+ 	union {
+ 		struct ns_tree;
+ 		struct rcu_head ns_rcu;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 83a646d72f6f..611b9098367d 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -67,6 +67,7 @@ enum fs_value_type;
+ struct watch;
+ struct watch_notification;
+ struct lsm_ctx;
++struct nsset;
+ 
+ /* Default (no) options for the capable function */
+ #define CAP_OPT_NONE 0x0
+@@ -80,6 +81,7 @@ struct lsm_ctx;
+ 
+ struct ctl_table;
+ struct audit_krule;
++struct ns_common;
+ struct user_namespace;
+ struct timezone;
+ 
+@@ -533,6 +535,9 @@ int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+ 			unsigned long arg4, unsigned long arg5);
+ void security_task_to_inode(struct task_struct *p, struct inode *inode);
+ int security_create_user_ns(const struct cred *cred);
++int security_namespace_alloc(struct ns_common *ns);
++void security_namespace_free(struct ns_common *ns);
++int security_namespace_install(const struct nsset *nsset, struct ns_common *ns);
+ int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag);
+ void security_ipc_getlsmprop(struct kern_ipc_perm *ipcp, struct lsm_prop *prop);
+ int security_msg_msg_alloc(struct msg_msg *msg);
+@@ -1407,6 +1412,21 @@ static inline int security_create_user_ns(const struct cred *cred)
+ 	return 0;
+ }
+ 
++static inline int security_namespace_alloc(struct ns_common *ns)
++{
++	return 0;
++}
++
++static inline void security_namespace_free(struct ns_common *ns)
++{
++}
++
++static inline int security_namespace_install(const struct nsset *nsset,
++					     struct ns_common *ns)
++{
++	return 0;
++}
++
+ static inline int security_ipc_permission(struct kern_ipc_perm *ipcp,
+ 					  short flag)
+ {
+diff --git a/kernel/nscommon.c b/kernel/nscommon.c
+index bdc3c86231d3..de774e374f9d 100644
+--- a/kernel/nscommon.c
++++ b/kernel/nscommon.c
+@@ -4,6 +4,7 @@
+ #include <linux/ns_common.h>
+ #include <linux/nstree.h>
+ #include <linux/proc_ns.h>
++#include <linux/security.h>
+ #include <linux/user_namespace.h>
+ #include <linux/vfsdebug.h>
+ 
+@@ -59,6 +60,9 @@ int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_ope
+ 
+ 	refcount_set(&ns->__ns_ref, 1);
+ 	ns->stashed = NULL;
++#ifdef CONFIG_SECURITY
++	ns->ns_security = NULL;
++#endif
+ 	ns->ops = ops;
+ 	ns->ns_id = 0;
+ 	ns->ns_type = ns_type;
+@@ -77,6 +81,13 @@ int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_ope
+ 		ret = proc_alloc_inum(&ns->inum);
+ 	if (ret)
+ 		return ret;
++
++	ret = security_namespace_alloc(ns);
++	if (ret) {
++		proc_free_inum(ns->inum);
++		return ret;
++	}
++
+ 	/*
+ 	 * Tree ref starts at 0. It's incremented when namespace enters
+ 	 * active use (installed in nsproxy) and decremented when all
+@@ -91,6 +102,7 @@ int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_ope
+ 
+ void __ns_common_free(struct ns_common *ns)
+ {
++	security_namespace_free(ns);
+ 	proc_free_inum(ns->inum);
+ }
+ 
+diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
+index 259c4b4f1eeb..f0b30d1907e7 100644
+--- a/kernel/nsproxy.c
++++ b/kernel/nsproxy.c
+@@ -379,7 +379,13 @@ static int prepare_nsset(unsigned flags, struct nsset *nsset)
+ 
+ static inline int validate_ns(struct nsset *nsset, struct ns_common *ns)
+ {
+-	return ns->ops->install(nsset, ns);
++	int ret;
++
++	ret = ns->ops->install(nsset, ns);
++	if (ret)
++		return ret;
++
++	return security_namespace_install(nsset, ns);
+ }
  
  /*
-  * All access rights that are denied by default whether they are handled or not
-- * by a ruleset/layer.  This must be ORed with all ruleset->access_masks[]
-+ * by a ruleset/layer.  This must be ORed with all ruleset->layers[]
-  * entries when we need to get the absolute handled access masks, see
-  * landlock_upgrade_handled_access_masks().
-  */
-@@ -45,7 +45,7 @@ static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_SCOPE);
- /* Makes sure for_each_set_bit() and for_each_clear_bit() calls are OK. */
- static_assert(sizeof(unsigned long) >= sizeof(access_mask_t));
- 
--/* Ruleset access masks. */
-+/* Handled access masks (bitfields only). */
- struct access_masks {
- 	access_mask_t fs : LANDLOCK_NUM_ACCESS_FS;
- 	access_mask_t net : LANDLOCK_NUM_ACCESS_NET;
-@@ -61,6 +61,21 @@ union access_masks_all {
- static_assert(sizeof(typeof_member(union access_masks_all, masks)) ==
- 	      sizeof(typeof_member(union access_masks_all, all)));
+diff --git a/security/lsm_init.c b/security/lsm_init.c
+index 573e2a7250c4..637c2d65e131 100644
+--- a/security/lsm_init.c
++++ b/security/lsm_init.c
+@@ -301,6 +301,7 @@ static void __init lsm_prepare(struct lsm_info *lsm)
+ 	lsm_blob_size_update(&blobs->lbs_ipc, &blob_sizes.lbs_ipc);
+ 	lsm_blob_size_update(&blobs->lbs_key, &blob_sizes.lbs_key);
+ 	lsm_blob_size_update(&blobs->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
++	lsm_blob_size_update(&blobs->lbs_ns, &blob_sizes.lbs_ns);
+ 	lsm_blob_size_update(&blobs->lbs_perf_event,
+ 			     &blob_sizes.lbs_perf_event);
+ 	lsm_blob_size_update(&blobs->lbs_sock, &blob_sizes.lbs_sock);
+@@ -446,6 +447,7 @@ int __init security_init(void)
+ 		lsm_pr("blob(ipc) size %d\n", blob_sizes.lbs_ipc);
+ 		lsm_pr("blob(key) size %d\n", blob_sizes.lbs_key);
+ 		lsm_pr("blob(msg_msg)_size %d\n", blob_sizes.lbs_msg_msg);
++		lsm_pr("blob(ns) size %d\n", blob_sizes.lbs_ns);
+ 		lsm_pr("blob(sock) size %d\n", blob_sizes.lbs_sock);
+ 		lsm_pr("blob(superblock) size %d\n", blob_sizes.lbs_superblock);
+ 		lsm_pr("blob(perf_event) size %d\n", blob_sizes.lbs_perf_event);
+diff --git a/security/security.c b/security/security.c
+index 67af9228c4e9..dcf073cac848 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -26,6 +26,7 @@
+ #include <linux/string.h>
+ #include <linux/xattr.h>
+ #include <linux/msg.h>
++#include <linux/ns_common.h>
+ #include <linux/overflow.h>
+ #include <linux/perf_event.h>
+ #include <linux/fs.h>
+@@ -355,6 +356,19 @@ static int lsm_superblock_alloc(struct super_block *sb)
+ 			      GFP_KERNEL);
+ }
  
 +/**
-+ * struct layer_rights - Per-layer access configuration
++ * lsm_ns_alloc - allocate a composite namespace blob
++ * @ns: the namespace that needs a blob
 + *
-+ * Wraps the handled-access bitfields together with any additional per-layer
-+ * data (e.g. allowed bitmasks added by future patches).  This is the element
-+ * type of the &struct landlock_ruleset.layers FAM.
++ * Allocate the namespace blob for all the modules
++ *
++ * Returns 0, or -ENOMEM if memory can't be allocated.
 + */
-+struct layer_rights {
-+	/**
-+	 * @handled: Bitmask of access rights handled (i.e. restricted) by
-+	 * this layer.
-+	 */
-+	struct access_masks handled;
-+};
++static int lsm_ns_alloc(struct ns_common *ns)
++{
++	return lsm_blob_alloc(&ns->ns_security, blob_sizes.lbs_ns, GFP_KERNEL);
++}
 +
  /**
-  * struct layer_access_masks - A boolean matrix of layers and access rights
-  *
-@@ -100,17 +115,17 @@ static_assert(BITS_PER_TYPE(deny_masks_t) >=
- static_assert(HWEIGHT(LANDLOCK_MAX_NUM_LAYERS) == 1);
- 
- /* Upgrades with all initially denied by default access rights. */
--static inline struct access_masks
--landlock_upgrade_handled_access_masks(struct access_masks access_masks)
-+static inline struct layer_rights
-+landlock_upgrade_handled_access_masks(struct layer_rights layer_rights)
- {
- 	/*
- 	 * All access rights that are denied by default whether they are
- 	 * explicitly handled or not.
- 	 */
--	if (access_masks.fs)
--		access_masks.fs |= _LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
-+	if (layer_rights.handled.fs)
-+		layer_rights.handled.fs |= _LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
- 
--	return access_masks;
-+	return layer_rights;
+  * lsm_fill_user_ctx - Fill a user space lsm_ctx structure
+  * @uctx: a userspace LSM context to be filled
+@@ -3255,6 +3269,68 @@ int security_create_user_ns(const struct cred *cred)
+ 	return call_int_hook(userns_create, cred);
  }
  
- /* Checks the subset relation between access masks. */
-diff --git a/security/landlock/cred.h b/security/landlock/cred.h
-index f287c56b5fd4..3e2a7e88710e 100644
---- a/security/landlock/cred.h
-+++ b/security/landlock/cred.h
-@@ -139,7 +139,7 @@ landlock_get_applicable_subject(const struct cred *const cred,
- 	for (layer_level = domain->num_layers - 1; layer_level >= 0;
- 	     layer_level--) {
- 		union access_masks_all layer = {
--			.masks = domain->access_masks[layer_level],
-+			.masks = domain->layers[layer_level].handled,
- 		};
- 
- 		if (layer.all & masks_all.all) {
-diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-index 181df7736bb9..a7f8be37ec31 100644
---- a/security/landlock/ruleset.c
-+++ b/security/landlock/ruleset.c
-@@ -32,7 +32,7 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
- {
- 	struct landlock_ruleset *new_ruleset;
- 
--	new_ruleset = kzalloc_flex(*new_ruleset, access_masks, num_layers,
-+	new_ruleset = kzalloc_flex(*new_ruleset, layers, num_layers,
- 				   GFP_KERNEL_ACCOUNT);
- 	if (!new_ruleset)
- 		return ERR_PTR(-ENOMEM);
-@@ -48,7 +48,7 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
- 	/*
- 	 * hierarchy = NULL
- 	 * num_rules = 0
--	 * access_masks[] = 0
-+	 * layers[] = 0
- 	 */
- 	return new_ruleset;
- }
-@@ -381,8 +381,8 @@ static int merge_ruleset(struct landlock_ruleset *const dst,
- 		err = -EINVAL;
- 		goto out_unlock;
- 	}
--	dst->access_masks[dst->num_layers - 1] =
--		landlock_upgrade_handled_access_masks(src->access_masks[0]);
-+	dst->layers[dst->num_layers - 1] =
-+		landlock_upgrade_handled_access_masks(src->layers[0]);
- 
- 	/* Merges the @src inode tree. */
- 	err = merge_tree(dst, src, LANDLOCK_KEY_INODE);
-@@ -464,8 +464,8 @@ static int inherit_ruleset(struct landlock_ruleset *const parent,
- 		goto out_unlock;
- 	}
- 	/* Copies the parent layer stack and leaves a space for the new layer. */
--	memcpy(child->access_masks, parent->access_masks,
--	       flex_array_size(parent, access_masks, parent->num_layers));
-+	memcpy(child->layers, parent->layers,
-+	       flex_array_size(parent, layers, parent->num_layers));
- 
- 	if (WARN_ON_ONCE(!parent->hierarchy)) {
- 		err = -EINVAL;
-diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-index 889f4b30301a..900c47eb0216 100644
---- a/security/landlock/ruleset.h
-+++ b/security/landlock/ruleset.h
-@@ -146,7 +146,7 @@ struct landlock_ruleset {
- 		 * section.  This is only used by
- 		 * landlock_put_ruleset_deferred() when @usage reaches zero.
- 		 * The fields @lock, @usage, @num_rules, @num_layers and
--		 * @access_masks are then unused.
-+		 * @layers are then unused.
- 		 */
- 		struct work_struct work_free;
- 		struct {
-@@ -173,9 +173,10 @@ struct landlock_ruleset {
- 			 */
- 			u32 num_layers;
- 			/**
--			 * @access_masks: Contains the subset of filesystem and
--			 * network actions that are restricted by a ruleset.
--			 * A domain saves all layers of merged rulesets in a
-+			 * @layers: Per-layer access configuration, including
-+			 * handled access masks and allowed permission
-+			 * bitmasks.  A domain saves all layers of merged
-+			 * rulesets in a
- 			 * stack (FAM), starting from the first layer to the
- 			 * last one.  These layers are used when merging
- 			 * rulesets, for user space backward compatibility
-@@ -184,7 +185,7 @@ struct landlock_ruleset {
- 			 * layers are set once and never changed for the
- 			 * lifetime of the ruleset.
- 			 */
--			struct access_masks access_masks[];
-+			struct layer_rights layers[] __counted_by(num_layers);
- 		};
- 	};
- };
-@@ -224,7 +225,8 @@ static inline void landlock_get_ruleset(struct landlock_ruleset *const ruleset)
-  *
-  * @domain: Landlock ruleset (used as a domain)
-  *
-- * Return: An access_masks result of the OR of all the domain's access masks.
-+ * Return: An access_masks result of the OR of all the domain's handled access
-+ * masks.
-  */
- static inline struct access_masks
- landlock_union_access_masks(const struct landlock_ruleset *const domain)
-@@ -234,7 +236,7 @@ landlock_union_access_masks(const struct landlock_ruleset *const domain)
- 
- 	for (layer_level = 0; layer_level < domain->num_layers; layer_level++) {
- 		union access_masks_all layer = {
--			.masks = domain->access_masks[layer_level],
-+			.masks = domain->layers[layer_level].handled,
- 		};
- 
- 		matches.all |= layer.all;
-@@ -252,7 +254,7 @@ landlock_add_fs_access_mask(struct landlock_ruleset *const ruleset,
- 
- 	/* Should already be checked in sys_landlock_create_ruleset(). */
- 	WARN_ON_ONCE(fs_access_mask != fs_mask);
--	ruleset->access_masks[layer_level].fs |= fs_mask;
-+	ruleset->layers[layer_level].handled.fs |= fs_mask;
- }
- 
- static inline void
-@@ -264,7 +266,7 @@ landlock_add_net_access_mask(struct landlock_ruleset *const ruleset,
- 
- 	/* Should already be checked in sys_landlock_create_ruleset(). */
- 	WARN_ON_ONCE(net_access_mask != net_mask);
--	ruleset->access_masks[layer_level].net |= net_mask;
-+	ruleset->layers[layer_level].handled.net |= net_mask;
- }
- 
- static inline void
-@@ -275,7 +277,7 @@ landlock_add_scope_mask(struct landlock_ruleset *const ruleset,
- 
- 	/* Should already be checked in sys_landlock_create_ruleset(). */
- 	WARN_ON_ONCE(scope_mask != mask);
--	ruleset->access_masks[layer_level].scope |= mask;
-+	ruleset->layers[layer_level].handled.scope |= mask;
- }
- 
- static inline access_mask_t
-@@ -283,7 +285,7 @@ landlock_get_fs_access_mask(const struct landlock_ruleset *const ruleset,
- 			    const u16 layer_level)
- {
- 	/* Handles all initially denied by default access rights. */
--	return ruleset->access_masks[layer_level].fs |
-+	return ruleset->layers[layer_level].handled.fs |
- 	       _LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
- }
- 
-@@ -291,14 +293,14 @@ static inline access_mask_t
- landlock_get_net_access_mask(const struct landlock_ruleset *const ruleset,
- 			     const u16 layer_level)
- {
--	return ruleset->access_masks[layer_level].net;
-+	return ruleset->layers[layer_level].handled.net;
- }
- 
- static inline access_mask_t
- landlock_get_scope_mask(const struct landlock_ruleset *const ruleset,
- 			const u16 layer_level)
- {
--	return ruleset->access_masks[layer_level].scope;
-+	return ruleset->layers[layer_level].handled.scope;
- }
- 
- bool landlock_unmask_layers(const struct landlock_rule *const rule,
-diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-index 3b33839b80c7..2aa7b50d875f 100644
---- a/security/landlock/syscalls.c
-+++ b/security/landlock/syscalls.c
-@@ -341,7 +341,7 @@ static int add_rule_path_beneath(struct landlock_ruleset *const ruleset,
- 		return -ENOMSG;
- 
- 	/* Checks that allowed_access matches the @ruleset constraints. */
--	mask = ruleset->access_masks[0].fs;
-+	mask = ruleset->layers[0].handled.fs;
- 	if ((path_beneath_attr.allowed_access | mask) != mask)
- 		return -EINVAL;
- 
++/**
++ * security_namespace_alloc() - Allocate LSM security data for a namespace
++ * @ns: the namespace being allocated
++ *
++ * Allocate and attach security data to the namespace. The namespace type
++ * is available via ns->ns_type, and the owning user namespace (if any)
++ * via ns->ops->owner(ns).
++ *
++ * Return: Returns 0 if successful, otherwise < 0 error code.
++ */
++int security_namespace_alloc(struct ns_common *ns)
++{
++	int rc;
++
++	rc = lsm_ns_alloc(ns);
++	if (unlikely(rc))
++		return rc;
++
++	rc = call_int_hook(namespace_alloc, ns);
++	if (unlikely(rc))
++		security_namespace_free(ns);
++
++	return rc;
++}
++
++/**
++ * security_namespace_free() - Release LSM security data from a namespace
++ * @ns: the namespace being freed
++ *
++ * Release security data attached to the namespace. Called before the
++ * namespace structure is freed.
++ *
++ * Note: The namespace may be freed via kfree_rcu(). LSMs must use
++ * RCU-safe freeing for any data that might be accessed by concurrent
++ * RCU readers.
++ */
++void security_namespace_free(struct ns_common *ns)
++{
++	if (!ns->ns_security)
++		return;
++
++	call_void_hook(namespace_free, ns);
++
++	kfree(ns->ns_security);
++	ns->ns_security = NULL;
++}
++
++/**
++ * security_namespace_install() - Check permission to install a namespace
++ * @nsset: the target nsset being configured
++ * @ns: the namespace being installed
++ *
++ * Check permission before allowing a namespace to be installed into the
++ * process's set of namespaces via setns(2).
++ *
++ * Return: Returns 0 if permission is granted, otherwise < 0 error code.
++ */
++int security_namespace_install(const struct nsset *nsset, struct ns_common *ns)
++{
++	return call_int_hook(namespace_install, nsset, ns);
++}
++
+ /**
+  * security_ipc_permission() - Check if sysv ipc access is allowed
+  * @ipcp: ipc permission structure
 -- 
 2.53.0
 
