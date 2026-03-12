@@ -1,33 +1,33 @@
-Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E4A3BA254
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E36C3B5833
 	for <linux-security-module@vger.kernel.org>; Thu, 12 Mar 2026 10:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.170
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773310485; cv=none; b=iCMkvTeIFTWvMPt/k7vOVHIxu/WbDsxXtQSWIM2Ro4/ztgcFpgtEeLWTK107+Ws3QEqerkVJBGAskae+M/y9O/UL7qa/NnoVqvOAgl0C5g9QOHSUiGg+XOrQKFMQZH9nwVOgI6HTdiTHd93yWDUKxIejbxITC550oE5Vi48wX/g=
+	t=1773310486; cv=none; b=s7An8R8LhyPJZ1OMwoFgppzTXeyOZCMoTZ2MhTODOfT8th+OrRblNaKwiJIAT2HLbmh4SLfiuA1uq9BnjIgpH+KyTWfs5cCFcBr8C1EEgmPdItWbLNva3TVp7+jAVR1BTLjKBvh+oZwPPK/K1N7EJN7z7/M2mOd73VQ3MwkMlr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773310485; c=relaxed/simple;
-	bh=g1MVcFocwFprOD05JbUOdmnhJUbD1bzZqb2K4auCHi8=;
+	s=arc-20240116; t=1773310486; c=relaxed/simple;
+	bh=SZhr6EkEdi4nJlRHNXcYGAF/KDnpNZXC6fG4YwBCNj0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A4o57YzusCVKBK4a6BLk3fYtoB2bWujefvNJBjg0Bwj4PaSaKFlmVnPasKuO9YIB2JMoJGBC6AkagzrsY3B3kB5jI6ns9ugo3/ZcmUJ/lLiBUes1MfG4ofyuNN0MEXZr4CwgCEWydb43k7u4smBy6vSjKQBc35zC7ZkQ2iD+hjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=aJgntXRi; arc=none smtp.client-ip=83.166.143.170
+	 MIME-Version:Content-Type; b=I3t5uMcydJGoWDdrAiGflbLrP/0utm/R0WvfgcrriHliNqKHnKjWMzxnohrbtMjgHJz2QmHuoV+km164uAuVVPLwuBNI/uI/UOwipZxKqE/vB23qF7qaEoc2mQtq07m2h09wo9NWeheCto9I+5SK9RD7EhO49wieeQJraQQlzxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=dk7TVQys; arc=none smtp.client-ip=83.166.143.168
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="aJgntXRi"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="dk7TVQys"
 Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fWjsd5L76zBVQ;
-	Thu, 12 Mar 2026 11:05:09 +0100 (CET)
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fWjsm3G3qzB98;
+	Thu, 12 Mar 2026 11:05:16 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1773309909;
-	bh=EvBBUs2A2WPjeqOyCK1l/ch6Sn9K8GiRl+PW2utO5xU=;
+	s=20191114; t=1773309916;
+	bh=RyM3fOjZ2E9hDyjrGtvii5q6YbgiepGquJ5pTciMM7A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aJgntXRilr/mmkEhlQ8mlmQAUzPC4SoxQ59PDPGtJ7FjiwHJjBc24DKMuxBFuhNCn
-	 2l55Vy8v4rn8ioB5R2EOVybtme3PRo0M+d0lGDhtuB6qFQGgeXjW++FMx5Plqcwa4n
-	 jIfZhFqzrbxOOQtxcngQh0wLIT29se/ijJDSmecw=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fWjsd1Gx7zDHv;
-	Thu, 12 Mar 2026 11:05:09 +0100 (CET)
+	b=dk7TVQys2ODJ0WI8NBmpfE5XrC6XEIoBNxQVw8VgCN3eAHqL+yiMHDq86J2+XwJM/
+	 1wnE0GISXB7KekzIlONfjJp8OtkHF+P75i+fCcVLiVJs+VxDoXuV8JoPdMRTznWjyC
+	 nkkuovNLXFM4h0BOYXY2CnX7AFzn9fxwOA7vDniM=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fWjsl6HVqzB6Y;
+	Thu, 12 Mar 2026 11:05:15 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Christian Brauner <brauner@kernel.org>,
 	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
@@ -44,9 +44,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [RFC PATCH v1 01/11] security: add LSM blob and hooks for namespaces
-Date: Thu, 12 Mar 2026 11:04:34 +0100
-Message-ID: <20260312100444.2609563-2-mic@digikod.net>
+Subject: [RFC PATCH v1 06/11] landlock: Enforce capability restrictions
+Date: Thu, 12 Mar 2026 11:04:39 +0100
+Message-ID: <20260312100444.2609563-7-mic@digikod.net>
 In-Reply-To: <20260312100444.2609563-1-mic@digikod.net>
 References: <20260312100444.2609563-1-mic@digikod.net>
 Precedence: bulk
@@ -59,321 +59,563 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-From: Christian Brauner <brauner@kernel.org>
+Add Landlock enforcement for capability use via the LSM capable hook.
+This lets a sandboxed process restrict which Linux capabilities it can
+exercise, using LANDLOCK_PERM_CAPABILITY_USE and per-capability rules.
 
-All namespace types now share the same ns_common infrastructure. Extend
-this to include a security blob so LSMs can start managing namespaces
-uniformly without having to add one-off hooks or security fields to
-every individual namespace type.
+The capable hook is purely restrictive: it runs after cap_capable()
+(LSM_ORDER_FIRST), so it can deny capabilities that commoncap would
+allow, but it can never grant capabilities that commoncap denied.
 
-Add a ns_security pointer to ns_common and the corresponding lbs_ns
-blob size to lsm_blob_sizes. Allocation and freeing hooks are called
-from the common __ns_common_init() and __ns_common_free() paths so
-every namespace type gets covered in one go. All information about the
-namespace type and the appropriate casting helpers to get at the
-containing namespace are available via ns_common making it
-straightforward for LSMs to differentiate when they need to.
+Add hook_capable() that uses landlock_perm_is_denied() to perform a pure
+bitmask check: if the capability is not in the layer's allowed set, the
+check is denied.  No domain ancestry bypass, no cross-namespace
+discriminant, just a flat per-layer allowed-caps bitmask, matching the
+same pattern used by LANDLOCK_PERM_NAMESPACE_ENTER.
 
-A namespace_install hook is called from validate_ns() during setns(2)
-giving LSMs a chance to enforce policy on namespace transitions.
+Adding the 41-bit capability bitfield to struct perm_rules brings it to
+49 out of 64 bits used (41 caps + 8 namespace types, 15 bits padding),
+keeping struct layer_rights at 16 bytes (8 bytes perm_rules + 4 bytes
+access_masks + 4 bytes tail padding) and the layers[] array at 256 bytes
+maximum.  The caps bitfield is placed first in struct perm_rules (before
+the ns bitfield) because capabilities use a direct BIT_ULL(cap) mapping
+that benefits from starting at bit 0 of the storage unit.
 
-Individual namespace types can still have their own specialized security
-hooks when needed. This is just the common baseline that makes it easy
-to track and manage namespaces from the security side without requiring
-every namespace type to reinvent the wheel.
+Non-user namespace operations require both LANDLOCK_PERM_NAMESPACE_ENTER
+(type allowed) and LANDLOCK_PERM_CAPABILITY_USE (CAP_SYS_ADMIN allowed)
+when both permissions are handled.  This follows naturally from the
+kernel calling capable(CAP_SYS_ADMIN) before namespace operations: both
+hooks fire independently and audit logs identify which permission was
+denied.
 
+The enforcement is purely at exercise time via the capable hook, not by
+modifying the credential's capability sets.  Stripping denied
+capabilities would give processes an accurate capget(2) view of their
+usable capabilities, but no LSM other than commoncap modifies capability
+sets; Landlock follows this convention and restricts use without
+altering what the process holds.  A sandboxed process inside a user
+namespace will see all capabilities via capget(2) but will receive
+-EPERM when attempting to use any denied capability.
+
+Cc: Christian Brauner <brauner@kernel.org>
 Cc: Günther Noack <gnoack@google.com>
 Cc: Paul Moore <paul@paul-moore.com>
 Cc: Serge E. Hallyn <serge@hallyn.com>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Link: https://lore.kernel.org/r/20260216-work-security-namespace-v1-1-075c28758e1f@kernel.org
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
- include/linux/lsm_hook_defs.h      |  3 ++
- include/linux/lsm_hooks.h          |  1 +
- include/linux/ns/ns_common_types.h |  3 ++
- include/linux/security.h           | 20 ++++++++
- kernel/nscommon.c                  | 12 +++++
- kernel/nsproxy.c                   |  8 +++-
- security/lsm_init.c                |  2 +
- security/security.c                | 76 ++++++++++++++++++++++++++++++
- 8 files changed, 124 insertions(+), 1 deletion(-)
+ include/uapi/linux/landlock.h |  31 ++++++++
+ security/landlock/Makefile    |   1 +
+ security/landlock/access.h    |  15 +++-
+ security/landlock/audit.c     |   4 +
+ security/landlock/audit.h     |   1 +
+ security/landlock/cap.c       | 142 ++++++++++++++++++++++++++++++++++
+ security/landlock/cap.h       |  49 ++++++++++++
+ security/landlock/cred.h      |   3 +
+ security/landlock/limits.h    |   4 +-
+ security/landlock/setup.c     |   2 +
+ security/landlock/syscalls.c  |  58 +++++++++++++-
+ 11 files changed, 302 insertions(+), 8 deletions(-)
+ create mode 100644 security/landlock/cap.c
+ create mode 100644 security/landlock/cap.h
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 8c42b4bde09c..fefd3aa6d8f4 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -260,6 +260,9 @@ LSM_HOOK(int, -ENOSYS, task_prctl, int option, unsigned long arg2,
- LSM_HOOK(void, LSM_RET_VOID, task_to_inode, struct task_struct *p,
- 	 struct inode *inode)
- LSM_HOOK(int, 0, userns_create, const struct cred *cred)
-+LSM_HOOK(int, 0, namespace_alloc, struct ns_common *ns)
-+LSM_HOOK(void, LSM_RET_VOID, namespace_free, struct ns_common *ns)
-+LSM_HOOK(int, 0, namespace_install, const struct nsset *nsset, struct ns_common *ns)
- LSM_HOOK(int, 0, ipc_permission, struct kern_ipc_perm *ipcp, short flag)
- LSM_HOOK(void, LSM_RET_VOID, ipc_getlsmprop, struct kern_ipc_perm *ipcp,
- 	 struct lsm_prop *prop)
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index d48bf0ad26f4..3e7afe76e86c 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -111,6 +111,7 @@ struct lsm_blob_sizes {
- 	unsigned int lbs_ipc;
- 	unsigned int lbs_key;
- 	unsigned int lbs_msg_msg;
-+	unsigned int lbs_ns;
- 	unsigned int lbs_perf_event;
- 	unsigned int lbs_task;
- 	unsigned int lbs_xattr_count; /* num xattr slots in new_xattrs array */
-diff --git a/include/linux/ns/ns_common_types.h b/include/linux/ns/ns_common_types.h
-index 0014fbc1c626..170288e2e895 100644
---- a/include/linux/ns/ns_common_types.h
-+++ b/include/linux/ns/ns_common_types.h
-@@ -115,6 +115,9 @@ struct ns_common {
- 	struct dentry *stashed;
- 	const struct proc_ns_operations *ops;
- 	unsigned int inum;
-+#ifdef CONFIG_SECURITY
-+	void *ns_security;
-+#endif
- 	union {
- 		struct ns_tree;
- 		struct rcu_head ns_rcu;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 83a646d72f6f..611b9098367d 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -67,6 +67,7 @@ enum fs_value_type;
- struct watch;
- struct watch_notification;
- struct lsm_ctx;
-+struct nsset;
+diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+index b76e656241df..0e73be459d47 100644
+--- a/include/uapi/linux/landlock.h
++++ b/include/uapi/linux/landlock.h
+@@ -166,6 +166,11 @@ enum landlock_rule_type {
+ 	 * landlock_namespace_attr .
+ 	 */
+ 	LANDLOCK_RULE_NAMESPACE,
++	/**
++	 * @LANDLOCK_RULE_CAPABILITY: Type of a &struct
++	 * landlock_capability_attr .
++	 */
++	LANDLOCK_RULE_CAPABILITY,
+ };
  
- /* Default (no) options for the capable function */
- #define CAP_OPT_NONE 0x0
-@@ -80,6 +81,7 @@ struct lsm_ctx;
+ /**
+@@ -237,6 +242,24 @@ struct landlock_namespace_attr {
+ 	__u64 namespace_types;
+ };
  
- struct ctl_table;
- struct audit_krule;
-+struct ns_common;
- struct user_namespace;
- struct timezone;
++/**
++ * struct landlock_capability_attr - Capability definition
++ *
++ * Argument of sys_landlock_add_rule() with %LANDLOCK_RULE_CAPABILITY.
++ */
++struct landlock_capability_attr {
++	/**
++	 * @allowed_perm: Must be set to %LANDLOCK_PERM_CAPABILITY_USE.
++	 */
++	__u64 allowed_perm;
++	/**
++	 * @capabilities: Bitmask of capabilities (``1ULL << CAP_*``) that
++	 * should be allowed for use under this rule.  Bits above
++	 * ``CAP_LAST_CAP`` are silently ignored for forward compatibility.
++	 */
++	__u64 capabilities;
++};
++
+ /**
+  * DOC: fs_access
+  *
+@@ -432,9 +455,17 @@ struct landlock_namespace_attr {
+  *   Landlock domain that handles this permission is denied from entering
+  *   namespace types that are not explicitly allowed by a
+  *   %LANDLOCK_RULE_NAMESPACE rule.
++ * - %LANDLOCK_PERM_CAPABILITY_USE: Restrict the use of specific Linux
++ *   capabilities.  A process in a Landlock domain that handles this
++ *   permission is denied from exercising capabilities that are not
++ *   explicitly allowed by a %LANDLOCK_RULE_CAPABILITY rule.  This hook
++ *   is purely restrictive: it can deny capabilities that the kernel
++ *   would otherwise grant, but it can never grant capabilities that the
++ *   kernel already denied.
+  */
+ /* clang-format off */
+ #define LANDLOCK_PERM_NAMESPACE_ENTER			(1ULL << 0)
++#define LANDLOCK_PERM_CAPABILITY_USE			(1ULL << 1)
+ /* clang-format on */
  
-@@ -533,6 +535,9 @@ int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
- 			unsigned long arg4, unsigned long arg5);
- void security_task_to_inode(struct task_struct *p, struct inode *inode);
- int security_create_user_ns(const struct cred *cred);
-+int security_namespace_alloc(struct ns_common *ns);
-+void security_namespace_free(struct ns_common *ns);
-+int security_namespace_install(const struct nsset *nsset, struct ns_common *ns);
- int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag);
- void security_ipc_getlsmprop(struct kern_ipc_perm *ipcp, struct lsm_prop *prop);
- int security_msg_msg_alloc(struct msg_msg *msg);
-@@ -1407,6 +1412,21 @@ static inline int security_create_user_ns(const struct cred *cred)
+ #endif /* _UAPI_LINUX_LANDLOCK_H */
+diff --git a/security/landlock/Makefile b/security/landlock/Makefile
+index 734aed4ac1bf..63311d556f93 100644
+--- a/security/landlock/Makefile
++++ b/security/landlock/Makefile
+@@ -9,6 +9,7 @@ landlock-y := \
+ 	task.o \
+ 	fs.o \
+ 	ns.o \
++	cap.o \
+ 	tsync.o
+ 
+ landlock-$(CONFIG_INET) += net.o
+diff --git a/security/landlock/access.h b/security/landlock/access.h
+index 9c67987a77ae..65227b3064db 100644
+--- a/security/landlock/access.h
++++ b/security/landlock/access.h
+@@ -72,6 +72,13 @@ static_assert(sizeof(typeof_member(union access_masks_all, masks)) ==
+  * a single 64-bit storage unit.
+  */
+ struct perm_rules {
++	/**
++	 * @caps: Allowed capabilities.  Each bit corresponds to a
++	 * ``CAP_*`` value (e.g. ``CAP_NET_RAW`` = bit 13).  Bits are
++	 * stored directly (sequential mapping) and masked with
++	 * ``CAP_VALID_MASK`` at rule-add time.
++	 */
++	u64 caps : LANDLOCK_NUM_PERM_CAP;
+ 	/**
+ 	 * @ns: Allowed namespace types.  Each bit corresponds to a
+ 	 * sequential index assigned by the ``_LANDLOCK_NS_*`` enum
+@@ -93,10 +100,10 @@ static_assert(sizeof(struct perm_rules) == sizeof(u64));
+  * landlock_ruleset.layers FAM.
+  *
+  * Unlike filesystem and network access rights, which are tracked per-object
+- * in red-black trees, namespace types use a flat bitmask because their
+- * keyspace is small and bounded (~8 namespace types).  A single rule adds
+- * to the allowed set via bitwise OR; at enforcement time each layer is
+- * checked directly (no tree lookup needed).
++ * in red-black trees, namespace types and capabilities use flat bitmasks
++ * because their keyspaces are small and bounded (~8 namespace types, 41
++ * capabilities).  A single rule adds to the allowed set via bitwise OR; at
++ * enforcement time each layer is checked directly (no tree lookup needed).
+  */
+ struct layer_rights {
+ 	/**
+diff --git a/security/landlock/audit.c b/security/landlock/audit.c
+index 46a635893914..24b7800ec479 100644
+--- a/security/landlock/audit.c
++++ b/security/landlock/audit.c
+@@ -82,6 +82,10 @@ get_blocker(const enum landlock_request_type type,
+ 	case LANDLOCK_REQUEST_NAMESPACE:
+ 		WARN_ON_ONCE(access_bit != -1);
+ 		return "perm.namespace_enter";
++
++	case LANDLOCK_REQUEST_CAPABILITY:
++		WARN_ON_ONCE(access_bit != -1);
++		return "perm.capability_use";
+ 	}
+ 
+ 	WARN_ON_ONCE(1);
+diff --git a/security/landlock/audit.h b/security/landlock/audit.h
+index e9e52fb628f5..fe5d701ea45d 100644
+--- a/security/landlock/audit.h
++++ b/security/landlock/audit.h
+@@ -22,6 +22,7 @@ enum landlock_request_type {
+ 	LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET,
+ 	LANDLOCK_REQUEST_SCOPE_SIGNAL,
+ 	LANDLOCK_REQUEST_NAMESPACE,
++	LANDLOCK_REQUEST_CAPABILITY,
+ };
+ 
+ /*
+diff --git a/security/landlock/cap.c b/security/landlock/cap.c
+new file mode 100644
+index 000000000000..536e579f63a9
+--- /dev/null
++++ b/security/landlock/cap.c
+@@ -0,0 +1,142 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Landlock - Capability hooks
++ *
++ * Copyright © 2026 Cloudflare
++ */
++
++#include <linux/capability.h>
++#include <linux/cred.h>
++#include <linux/lsm_audit.h>
++#include <linux/lsm_hooks.h>
++#include <uapi/linux/landlock.h>
++
++#include "audit.h"
++#include "cap.h"
++#include "cred.h"
++#include "limits.h"
++#include "ruleset.h"
++#include "setup.h"
++
++static const struct access_masks cap_perm = {
++	.perm = LANDLOCK_PERM_CAPABILITY_USE,
++};
++
++/**
++ * hook_capable - Deny capability use for Landlock-sandboxed processes
++ *
++ * @cred: Credentials being checked.
++ * @ns: User namespace for the capability check.
++ * @cap: Capability number (CAP_*).
++ * @opts: Capability check options.  CAP_OPT_NOAUDIT suppresses audit logging.
++ *
++ * Pure bitmask check: denies the capability if it is not in the layer's
++ * allowed set.  This hook is purely restrictive: it runs after
++ * cap_capable() (LSM_ORDER_FIRST), so it can deny capabilities that
++ * commoncap would allow, but it can never grant capabilities that
++ * commoncap denied.
++ *
++ * Return: 0 if allowed, -EPERM if capability use is denied.
++ */
++static int hook_capable(const struct cred *cred, struct user_namespace *ns,
++			int cap, unsigned int opts)
++{
++	const struct landlock_cred_security *subject;
++	size_t denied_layer;
++
++	subject = landlock_get_applicable_subject(cred, cap_perm, NULL);
++	if (!subject)
++		return 0;
++
++	denied_layer = landlock_perm_is_denied(subject->domain,
++					       LANDLOCK_PERM_CAPABILITY_USE,
++					       landlock_cap_to_bit(cap));
++	if (!denied_layer)
++		return 0;
++
++	/*
++	 * Respects CAP_OPT_NOAUDIT to suppress audit records for
++	 * capability probes (e.g., ns_capable_noaudit(),
++	 * has_capability_noaudit()).
++	 */
++	if (!(opts & CAP_OPT_NOAUDIT))
++		landlock_log_denial(subject,
++				    &(struct landlock_request){
++					    .type = LANDLOCK_REQUEST_CAPABILITY,
++					    .audit.type = LSM_AUDIT_DATA_CAP,
++					    .audit.u.cap = cap,
++					    .layer_plus_one = denied_layer,
++				    });
++
++	return -EPERM;
++}
++
++static struct security_hook_list landlock_hooks[] __ro_after_init = {
++	LSM_HOOK_INIT(capable, hook_capable),
++};
++
++__init void landlock_add_cap_hooks(void)
++{
++	security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
++			   &landlock_lsmid);
++}
++
++#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
++
++#include <kunit/test.h>
++
++static void test_cap_to_bit(struct kunit *const test)
++{
++	KUNIT_EXPECT_EQ(test, BIT_ULL(0), landlock_cap_to_bit(0));
++	KUNIT_EXPECT_EQ(test, BIT_ULL(CAP_NET_RAW),
++			landlock_cap_to_bit(CAP_NET_RAW));
++	KUNIT_EXPECT_EQ(test, BIT_ULL(CAP_SYS_ADMIN),
++			landlock_cap_to_bit(CAP_SYS_ADMIN));
++	KUNIT_EXPECT_EQ(test, BIT_ULL(CAP_LAST_CAP),
++			landlock_cap_to_bit(CAP_LAST_CAP));
++}
++
++static void test_cap_to_bit_invalid(struct kunit *const test)
++{
++	KUNIT_EXPECT_EQ(test, 0ULL, landlock_cap_to_bit(-1));
++	KUNIT_EXPECT_EQ(test, 0ULL, landlock_cap_to_bit(CAP_LAST_CAP + 1));
++}
++
++static void test_caps_to_bits_valid(struct kunit *const test)
++{
++	KUNIT_EXPECT_EQ(test, (u64)CAP_VALID_MASK,
++			landlock_caps_to_bits(CAP_VALID_MASK));
++	KUNIT_EXPECT_EQ(test, BIT_ULL(CAP_NET_RAW),
++			landlock_caps_to_bits(BIT_ULL(CAP_NET_RAW)));
++}
++
++static void test_caps_to_bits_unknown(struct kunit *const test)
++{
++	KUNIT_EXPECT_EQ(test, 0ULL,
++			landlock_caps_to_bits(BIT_ULL(CAP_LAST_CAP + 1)));
++}
++
++static void test_caps_to_bits_zero(struct kunit *const test)
++{
++	KUNIT_EXPECT_EQ(test, 0ULL, landlock_caps_to_bits(0));
++}
++
++static struct kunit_case test_cases[] = {
++	/* clang-format off */
++	KUNIT_CASE(test_cap_to_bit),
++	KUNIT_CASE(test_cap_to_bit_invalid),
++	KUNIT_CASE(test_caps_to_bits_valid),
++	KUNIT_CASE(test_caps_to_bits_unknown),
++	KUNIT_CASE(test_caps_to_bits_zero),
++	{}
++	/* clang-format on */
++};
++
++static struct kunit_suite test_suite = {
++	.name = "landlock_cap",
++	.test_cases = test_cases,
++};
++
++kunit_test_suite(test_suite);
++
++#endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
+diff --git a/security/landlock/cap.h b/security/landlock/cap.h
+new file mode 100644
+index 000000000000..334b6974fb95
+--- /dev/null
++++ b/security/landlock/cap.h
+@@ -0,0 +1,49 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Landlock - Capability hooks
++ *
++ * Copyright © 2026 Cloudflare
++ */
++
++#ifndef _SECURITY_LANDLOCK_CAP_H
++#define _SECURITY_LANDLOCK_CAP_H
++
++#include <linux/bitops.h>
++#include <linux/bug.h>
++#include <linux/capability.h>
++#include <linux/compiler_attributes.h>
++#include <linux/types.h>
++
++/**
++ * landlock_cap_to_bit - Convert a capability number to a compact bitmask
++ *
++ * @cap: Capability number (CAP_*).
++ *
++ * Return: BIT_ULL(@cap), or 0 if @cap is invalid (with a WARN).
++ */
++static inline __attribute_const__ u64 landlock_cap_to_bit(const int cap)
++{
++	if (WARN_ON_ONCE(!cap_valid(cap)))
++		return 0;
++
++	return BIT_ULL(cap);
++}
++
++/**
++ * landlock_caps_to_bits - Validate and mask a capability bitmask
++ *
++ * @capabilities: Bitmask of capabilities (e.g. from user space).
++ *
++ * Return: @capabilities masked to known capabilities.  Warns if unknown
++ * bits are present (callers must pre-mask for user input).
++ */
++static inline __attribute_const__ u64
++landlock_caps_to_bits(const u64 capabilities)
++{
++	WARN_ON_ONCE(capabilities & ~CAP_VALID_MASK);
++	return capabilities & CAP_VALID_MASK;
++}
++
++__init void landlock_add_cap_hooks(void);
++
++#endif /* _SECURITY_LANDLOCK_CAP_H */
+diff --git a/security/landlock/cred.h b/security/landlock/cred.h
+index 68067ff53ead..257197facbae 100644
+--- a/security/landlock/cred.h
++++ b/security/landlock/cred.h
+@@ -184,6 +184,9 @@ landlock_perm_is_denied(const struct landlock_ruleset *const domain,
+ 		case LANDLOCK_PERM_NAMESPACE_ENTER:
+ 			allowed = domain->layers[layer].allowed.ns;
+ 			break;
++		case LANDLOCK_PERM_CAPABILITY_USE:
++			allowed = domain->layers[layer].allowed.caps;
++			break;
+ 		default:
+ 			WARN_ON_ONCE(1);
+ 			return layer + 1;
+diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+index e361b653fcf5..43e832c0deb0 100644
+--- a/security/landlock/limits.h
++++ b/security/landlock/limits.h
+@@ -11,6 +11,7 @@
+ #define _SECURITY_LANDLOCK_LIMITS_H
+ 
+ #include <linux/bitops.h>
++#include <linux/capability.h>
+ #include <linux/limits.h>
+ #include <linux/ns/ns_common_types.h>
+ #include <uapi/linux/landlock.h>
+@@ -32,11 +33,12 @@
+ #define LANDLOCK_MASK_SCOPE		((LANDLOCK_LAST_SCOPE << 1) - 1)
+ #define LANDLOCK_NUM_SCOPE		__const_hweight64(LANDLOCK_MASK_SCOPE)
+ 
+-#define LANDLOCK_LAST_PERM		LANDLOCK_PERM_NAMESPACE_ENTER
++#define LANDLOCK_LAST_PERM		LANDLOCK_PERM_CAPABILITY_USE
+ #define LANDLOCK_MASK_PERM		((LANDLOCK_LAST_PERM << 1) - 1)
+ #define LANDLOCK_NUM_PERM		__const_hweight64(LANDLOCK_MASK_PERM)
+ 
+ #define LANDLOCK_NUM_PERM_NS		__const_hweight64((u64)(CLONE_NS_ALL))
++#define LANDLOCK_NUM_PERM_CAP		(CAP_LAST_CAP + 1)
+ 
+ #define LANDLOCK_LAST_RESTRICT_SELF	LANDLOCK_RESTRICT_SELF_TSYNC
+ #define LANDLOCK_MASK_RESTRICT_SELF	((LANDLOCK_LAST_RESTRICT_SELF << 1) - 1)
+diff --git a/security/landlock/setup.c b/security/landlock/setup.c
+index a7ed776b41b4..971419d663bb 100644
+--- a/security/landlock/setup.c
++++ b/security/landlock/setup.c
+@@ -11,6 +11,7 @@
+ #include <linux/lsm_hooks.h>
+ #include <uapi/linux/lsm.h>
+ 
++#include "cap.h"
+ #include "common.h"
+ #include "cred.h"
+ #include "errata.h"
+@@ -70,6 +71,7 @@ static int __init landlock_init(void)
+ 	landlock_add_fs_hooks();
+ 	landlock_add_net_hooks();
+ 	landlock_add_ns_hooks();
++	landlock_add_cap_hooks();
+ 	landlock_init_id();
+ 	landlock_initialized = true;
+ 	pr_info("Up and running.\n");
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 152d952e98f6..38a4bf92781a 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -30,6 +30,7 @@
+ #include <linux/uaccess.h>
+ #include <uapi/linux/landlock.h>
+ 
++#include "cap.h"
+ #include "cred.h"
+ #include "domain.h"
+ #include "fs.h"
+@@ -98,8 +99,9 @@ static void build_check_abi(void)
+ 	struct landlock_path_beneath_attr path_beneath_attr;
+ 	struct landlock_net_port_attr net_port_attr;
+ 	struct landlock_namespace_attr namespace_attr;
++	struct landlock_capability_attr capability_attr;
+ 	size_t ruleset_size, path_beneath_size, net_port_size;
+-	size_t namespace_size;
++	size_t namespace_size, capability_size;
+ 
+ 	/*
+ 	 * For each user space ABI structures, first checks that there is no
+@@ -127,6 +129,11 @@ static void build_check_abi(void)
+ 	namespace_size += sizeof(namespace_attr.namespace_types);
+ 	BUILD_BUG_ON(sizeof(namespace_attr) != namespace_size);
+ 	BUILD_BUG_ON(sizeof(namespace_attr) != 16);
++
++	capability_size = sizeof(capability_attr.allowed_perm);
++	capability_size += sizeof(capability_attr.capabilities);
++	BUILD_BUG_ON(sizeof(capability_attr) != capability_size);
++	BUILD_BUG_ON(sizeof(capability_attr) != 16);
+ }
+ 
+ /* Ruleset handling */
+@@ -449,14 +456,57 @@ static int add_rule_namespace(struct landlock_ruleset *const ruleset,
  	return 0;
  }
  
-+static inline int security_namespace_alloc(struct ns_common *ns)
++static int add_rule_capability(struct landlock_ruleset *const ruleset,
++			       const void __user *const rule_attr)
 +{
++	struct landlock_capability_attr cap_attr;
++	int res;
++	access_mask_t mask;
++
++	/* Copies raw user space buffer. */
++	res = copy_from_user(&cap_attr, rule_attr, sizeof(cap_attr));
++	if (res)
++		return -EFAULT;
++
++	/* Informs about useless rule: empty allowed_perm. */
++	if (!cap_attr.allowed_perm)
++		return -ENOMSG;
++
++	/* The allowed_perm must match LANDLOCK_PERM_CAPABILITY_USE. */
++	if (cap_attr.allowed_perm != LANDLOCK_PERM_CAPABILITY_USE)
++		return -EINVAL;
++
++	/* Checks that allowed_perm matches the @ruleset constraints. */
++	mask = landlock_get_perm_mask(ruleset, 0);
++	if (!(mask & LANDLOCK_PERM_CAPABILITY_USE))
++		return -EINVAL;
++
++	/* Informs about useless rule: empty capabilities. */
++	if (!cap_attr.capabilities)
++		return -ENOMSG;
++
++	/*
++	 * Stores only the capabilities this kernel knows about.
++	 * Unknown bits are silently accepted for forward compatibility:
++	 * user space compiled against newer headers can pass new
++	 * CAP_* bits without getting EINVAL on older kernels.
++	 * Unknown bits have no effect because no hook checks them.
++	 */
++	mutex_lock(&ruleset->lock);
++	ruleset->layers[0].allowed.caps |=
++		landlock_caps_to_bits(cap_attr.capabilities & CAP_VALID_MASK);
++	mutex_unlock(&ruleset->lock);
 +	return 0;
 +}
 +
-+static inline void security_namespace_free(struct ns_common *ns)
-+{
-+}
-+
-+static inline int security_namespace_install(const struct nsset *nsset,
-+					     struct ns_common *ns)
-+{
-+	return 0;
-+}
-+
- static inline int security_ipc_permission(struct kern_ipc_perm *ipcp,
- 					  short flag)
- {
-diff --git a/kernel/nscommon.c b/kernel/nscommon.c
-index bdc3c86231d3..de774e374f9d 100644
---- a/kernel/nscommon.c
-+++ b/kernel/nscommon.c
-@@ -4,6 +4,7 @@
- #include <linux/ns_common.h>
- #include <linux/nstree.h>
- #include <linux/proc_ns.h>
-+#include <linux/security.h>
- #include <linux/user_namespace.h>
- #include <linux/vfsdebug.h>
- 
-@@ -59,6 +60,9 @@ int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_ope
- 
- 	refcount_set(&ns->__ns_ref, 1);
- 	ns->stashed = NULL;
-+#ifdef CONFIG_SECURITY
-+	ns->ns_security = NULL;
-+#endif
- 	ns->ops = ops;
- 	ns->ns_id = 0;
- 	ns->ns_type = ns_type;
-@@ -77,6 +81,13 @@ int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_ope
- 		ret = proc_alloc_inum(&ns->inum);
- 	if (ret)
- 		return ret;
-+
-+	ret = security_namespace_alloc(ns);
-+	if (ret) {
-+		proc_free_inum(ns->inum);
-+		return ret;
-+	}
-+
- 	/*
- 	 * Tree ref starts at 0. It's incremented when namespace enters
- 	 * active use (installed in nsproxy) and decremented when all
-@@ -91,6 +102,7 @@ int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_ope
- 
- void __ns_common_free(struct ns_common *ns)
- {
-+	security_namespace_free(ns);
- 	proc_free_inum(ns->inum);
- }
- 
-diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
-index 259c4b4f1eeb..f0b30d1907e7 100644
---- a/kernel/nsproxy.c
-+++ b/kernel/nsproxy.c
-@@ -379,7 +379,13 @@ static int prepare_nsset(unsigned flags, struct nsset *nsset)
- 
- static inline int validate_ns(struct nsset *nsset, struct ns_common *ns)
- {
--	return ns->ops->install(nsset, ns);
-+	int ret;
-+
-+	ret = ns->ops->install(nsset, ns);
-+	if (ret)
-+		return ret;
-+
-+	return security_namespace_install(nsset, ns);
- }
- 
- /*
-diff --git a/security/lsm_init.c b/security/lsm_init.c
-index 573e2a7250c4..637c2d65e131 100644
---- a/security/lsm_init.c
-+++ b/security/lsm_init.c
-@@ -301,6 +301,7 @@ static void __init lsm_prepare(struct lsm_info *lsm)
- 	lsm_blob_size_update(&blobs->lbs_ipc, &blob_sizes.lbs_ipc);
- 	lsm_blob_size_update(&blobs->lbs_key, &blob_sizes.lbs_key);
- 	lsm_blob_size_update(&blobs->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
-+	lsm_blob_size_update(&blobs->lbs_ns, &blob_sizes.lbs_ns);
- 	lsm_blob_size_update(&blobs->lbs_perf_event,
- 			     &blob_sizes.lbs_perf_event);
- 	lsm_blob_size_update(&blobs->lbs_sock, &blob_sizes.lbs_sock);
-@@ -446,6 +447,7 @@ int __init security_init(void)
- 		lsm_pr("blob(ipc) size %d\n", blob_sizes.lbs_ipc);
- 		lsm_pr("blob(key) size %d\n", blob_sizes.lbs_key);
- 		lsm_pr("blob(msg_msg)_size %d\n", blob_sizes.lbs_msg_msg);
-+		lsm_pr("blob(ns) size %d\n", blob_sizes.lbs_ns);
- 		lsm_pr("blob(sock) size %d\n", blob_sizes.lbs_sock);
- 		lsm_pr("blob(superblock) size %d\n", blob_sizes.lbs_superblock);
- 		lsm_pr("blob(perf_event) size %d\n", blob_sizes.lbs_perf_event);
-diff --git a/security/security.c b/security/security.c
-index 67af9228c4e9..dcf073cac848 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -26,6 +26,7 @@
- #include <linux/string.h>
- #include <linux/xattr.h>
- #include <linux/msg.h>
-+#include <linux/ns_common.h>
- #include <linux/overflow.h>
- #include <linux/perf_event.h>
- #include <linux/fs.h>
-@@ -355,6 +356,19 @@ static int lsm_superblock_alloc(struct super_block *sb)
- 			      GFP_KERNEL);
- }
- 
-+/**
-+ * lsm_ns_alloc - allocate a composite namespace blob
-+ * @ns: the namespace that needs a blob
-+ *
-+ * Allocate the namespace blob for all the modules
-+ *
-+ * Returns 0, or -ENOMEM if memory can't be allocated.
-+ */
-+static int lsm_ns_alloc(struct ns_common *ns)
-+{
-+	return lsm_blob_alloc(&ns->ns_security, blob_sizes.lbs_ns, GFP_KERNEL);
-+}
-+
  /**
-  * lsm_fill_user_ctx - Fill a user space lsm_ctx structure
-  * @uctx: a userspace LSM context to be filled
-@@ -3255,6 +3269,68 @@ int security_create_user_ns(const struct cred *cred)
- 	return call_int_hook(userns_create, cred);
- }
- 
-+/**
-+ * security_namespace_alloc() - Allocate LSM security data for a namespace
-+ * @ns: the namespace being allocated
-+ *
-+ * Allocate and attach security data to the namespace. The namespace type
-+ * is available via ns->ns_type, and the owning user namespace (if any)
-+ * via ns->ops->owner(ns).
-+ *
-+ * Return: Returns 0 if successful, otherwise < 0 error code.
-+ */
-+int security_namespace_alloc(struct ns_common *ns)
-+{
-+	int rc;
-+
-+	rc = lsm_ns_alloc(ns);
-+	if (unlikely(rc))
-+		return rc;
-+
-+	rc = call_int_hook(namespace_alloc, ns);
-+	if (unlikely(rc))
-+		security_namespace_free(ns);
-+
-+	return rc;
-+}
-+
-+/**
-+ * security_namespace_free() - Release LSM security data from a namespace
-+ * @ns: the namespace being freed
-+ *
-+ * Release security data attached to the namespace. Called before the
-+ * namespace structure is freed.
-+ *
-+ * Note: The namespace may be freed via kfree_rcu(). LSMs must use
-+ * RCU-safe freeing for any data that might be accessed by concurrent
-+ * RCU readers.
-+ */
-+void security_namespace_free(struct ns_common *ns)
-+{
-+	if (!ns->ns_security)
-+		return;
-+
-+	call_void_hook(namespace_free, ns);
-+
-+	kfree(ns->ns_security);
-+	ns->ns_security = NULL;
-+}
-+
-+/**
-+ * security_namespace_install() - Check permission to install a namespace
-+ * @nsset: the target nsset being configured
-+ * @ns: the namespace being installed
-+ *
-+ * Check permission before allowing a namespace to be installed into the
-+ * process's set of namespaces via setns(2).
-+ *
-+ * Return: Returns 0 if permission is granted, otherwise < 0 error code.
-+ */
-+int security_namespace_install(const struct nsset *nsset, struct ns_common *ns)
-+{
-+	return call_int_hook(namespace_install, nsset, ns);
-+}
-+
- /**
-  * security_ipc_permission() - Check if sysv ipc access is allowed
-  * @ipcp: ipc permission structure
+  * sys_landlock_add_rule - Add a new rule to a ruleset
+  *
+  * @ruleset_fd: File descriptor tied to the ruleset that should be extended
+  *		with the new rule.
+  * @rule_type: Identify the structure type pointed to by @rule_attr:
+- *             %LANDLOCK_RULE_PATH_BENEATH, %LANDLOCK_RULE_NET_PORT, or
+- *             %LANDLOCK_RULE_NAMESPACE.
++ *             %LANDLOCK_RULE_PATH_BENEATH, %LANDLOCK_RULE_NET_PORT,
++ *             %LANDLOCK_RULE_NAMESPACE, or %LANDLOCK_RULE_CAPABILITY.
+  * @rule_attr: Pointer to a rule (matching the @rule_type).
+  * @flags: Must be 0.
+  *
+@@ -508,6 +558,8 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
+ 		return add_rule_net_port(ruleset, rule_attr);
+ 	case LANDLOCK_RULE_NAMESPACE:
+ 		return add_rule_namespace(ruleset, rule_attr);
++	case LANDLOCK_RULE_CAPABILITY:
++		return add_rule_capability(ruleset, rule_attr);
+ 	default:
+ 		return -EINVAL;
+ 	}
 -- 
 2.53.0
 
