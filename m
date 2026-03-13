@@ -1,109 +1,166 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049403E0229;
-	Fri, 13 Mar 2026 18:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80913DEAD6
+	for <linux-security-module@vger.kernel.org>; Fri, 13 Mar 2026 19:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773427533; cv=none; b=amibnnThqcWBu762wOpHBGh7RiW8qPZJzrCQ/iZT5kO1CDwSo1Uh6JXMyVPvcxPIVRTnUMLDyjtEZZjNCIew/9Zn4jsrJ9lZxhr6TYOiRcAOJGSrQXZHm6YxtRbHmkohp0kM/MaXrfy464RWQkpi9kOgGVBKIHMtgGP6Y2bSwyY=
+	t=1773429750; cv=none; b=k3fZmiwp05N29nUkaVlmMWnaEWOJsngfqW81px+leBbVyq7+wrIjVZbXXs0YPlCHj7FmC5E09Xom6ceDwFgyhrIINk1xLqQq45zuw6vDnyRjsbQoggs85cEQkyVWeICNS4UKofQG9Hx2JvNnP05NBH+1VQuSVm/wzaDSlLSkgMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773427533; c=relaxed/simple;
-	bh=Vytham6oPFTdVP7zlc8wsX2dbeVuNOdhbpe3qUY80eE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bsAwdcjx5WHAo/3oBxc5Omx0+dCJqeYjdgyI9pbaE/7h6UDGQ/6m5PcPEfHcPbWPZ79G3kDZFTg363W+iJ/X9YEF6t+S21uNKdIxTCkeHKT7/3+FdCLEWJU1QPaQWUX3pV+Y2/a0xxJKSpURKvGFc76roiQV5Uu8SYe1lP1TBe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PYtz5RvO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773429750; c=relaxed/simple;
+	bh=pL/j9b13bFh0cZAZJhcCPZn1CaRo1RWOXdOwqzbKEsA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cj39l/VW5OuIneLp9+IeUxYNHiViNs/LujV65uGKFfRPoq0BE05VAu9wuSfNhMUJ7N3RMdYFKY71s3yqmAxU203N2NpM23MK3xUUh94nCwOAzCjwZU+unVxSRb75ZjmUlqygPIhCRHPM0OufJaMeuO88y+7L53h4h55RdcHobx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cwr9QvSb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=K+U59XI2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cwr9QvSb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=K+U59XI2; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PYtz5RvO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F053C19421;
-	Fri, 13 Mar 2026 18:45:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773427532;
-	bh=Vytham6oPFTdVP7zlc8wsX2dbeVuNOdhbpe3qUY80eE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=PYtz5RvOFHnpksyifzWqrlcNXD2mHixGwo2ZnIHp+6xKrAc1RCwElMZT56yO5H2Tn
-	 6Yh05DQWwXyZ0nkoqVReUaEADDYXaRpXKZyxeNw4KylJY/jZdTQjXKIpMam5bPZCVp
-	 +xMiXFpsOghYgE5iOYSx5JcQfBCno9D/HVWpRM0pgZZAK86po9ontPVMFif2N4jV5L
-	 T4V07FVs7Sr76drRFa0OE5d48E2mJR8PvhrAoiWkRJy6wpSTroAQ2r9GXMg03Tq1Ir
-	 OXSYyoxpU+qeBj0thU8pXO93XzgdLUT1oHWPcmhvVjuhz95LImcEalC3qcU4M+joMU
-	 T0dVtuhn755zg==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Fri, 13 Mar 2026 14:45:21 -0400
-Subject: [PATCH v2 2/2] EVM: add comment describing why ino field is still
- unsigned long
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cwr9QvSb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="K+U59XI2";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cwr9QvSb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="K+U59XI2"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B208C4D943;
+	Fri, 13 Mar 2026 19:22:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1773429744;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lEZDbFbdaiqtR0DORmYiMySif6us6CTI89GNtF8koIU=;
+	b=cwr9QvSbf3addifFtJFaEE3S5jwqDpZlb749Rs1kTiqHHQe0wIw+TMnTma/8mfA3QiWv+t
+	IZuKpLsIb+k3xwyZAXuL8F5GTiyGUJh1olDjZfpDExV1+UvdVwgZIIojOm6APRysjO8/lt
+	9WDXlxlJVmMpUXoO3id4LXjiv7t5UI0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1773429744;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lEZDbFbdaiqtR0DORmYiMySif6us6CTI89GNtF8koIU=;
+	b=K+U59XI2u6gqS+yANGWtG/Pii/V0SpIQQ7wMg6BtOp5KKFcWyvgFtoDkwX90d0NOWdybeR
+	Ua+tdtixGZm/opAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1773429744;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lEZDbFbdaiqtR0DORmYiMySif6us6CTI89GNtF8koIU=;
+	b=cwr9QvSbf3addifFtJFaEE3S5jwqDpZlb749Rs1kTiqHHQe0wIw+TMnTma/8mfA3QiWv+t
+	IZuKpLsIb+k3xwyZAXuL8F5GTiyGUJh1olDjZfpDExV1+UvdVwgZIIojOm6APRysjO8/lt
+	9WDXlxlJVmMpUXoO3id4LXjiv7t5UI0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1773429744;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lEZDbFbdaiqtR0DORmYiMySif6us6CTI89GNtF8koIU=;
+	b=K+U59XI2u6gqS+yANGWtG/Pii/V0SpIQQ7wMg6BtOp5KKFcWyvgFtoDkwX90d0NOWdybeR
+	Ua+tdtixGZm/opAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6F14A406AC;
+	Fri, 13 Mar 2026 19:22:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 6cTyGvBjtGnfZAAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Fri, 13 Mar 2026 19:22:24 +0000
+Date: Fri, 13 Mar 2026 20:22:15 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Philipp Hahn <phahn-oss@avm.de>
+Cc: amd-gfx@lists.freedesktop.org, apparmor@lists.ubuntu.com,
+	bpf@vger.kernel.org, ceph-devel@vger.kernel.org, cocci@inria.fr,
+	dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org,
+	gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org,
+	intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev,
+	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-mips@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org,
+	linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+	ntfs3@lists.linux.dev, samba-technical@lists.samba.org,
+	sched-ext@lists.linux.dev, target-devel@vger.kernel.org,
+	tipc-discussion@lists.sourceforge.net, v9fs@lists.linux.dev,
+	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>
+Subject: Re: [PATCH 02/61] btrfs: Prefer IS_ERR_OR_NULL over manual NULL check
+Message-ID: <20260313192215.GH5735@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
+ <20260310-b4-is_err_or_null-v1-2-bd63b656022d@avm.de>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260313-iino-u64-v2-2-f9abda2464d5@kernel.org>
-References: <20260313-iino-u64-v2-0-f9abda2464d5@kernel.org>
-In-Reply-To: <20260313-iino-u64-v2-0-f9abda2464d5@kernel.org>
-To: Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
- Viacheslav Dubeyko <slava@dubeyko.com>, 
- Christian Brauner <brauner@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, 
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1386; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=Vytham6oPFTdVP7zlc8wsX2dbeVuNOdhbpe3qUY80eE=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBptFtHVGsrqAxYGtXuCQ/JYxGPfWUNgo1lLCSUj
- /YxSVapIHiJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCabRbRwAKCRAADmhBGVaC
- FX92D/9nua2e1HJ7hFrbi3pC4jkry5qKaxJSkox+XIxiA8MDyoZt64+/KPhETaU4oby4jAT9dJ2
- C3Go+zYOdk2t4kKIQ0UkhYEURTLkSW4/Rs8vyt/vchtzt8Fk5VPbY7Jv15rs6pMZLNx1FjZVBuN
- w7op0eT46v+tiPK3uoRAfE3nZu8bL8BUMriCATH8ySeCQRFiexmRJm2yJBZN1YtB1tgFUvSMfBt
- 1zYagMr7xuZYGIsDcnYWe0H3ugfyOVB9ayg7c6WsIUwqF4RWxbvkSrLm6PRKSkq9tHgWM0Lwz3I
- vixeTLgHswtGFp9LohAct1BZA9lyc7o6NGoPt0xSATQdVpAUG8/IBLMryeiGpjJiiDDItDtR9yW
- f8gTIlz4WOBRUkAOD9tmtf/nyOC4z1jve/OGROLXvmNVh3wPr/sC4tlV6oEegioOGEkhikEsq9a
- t/PsX86yAyGvcDhBSz8Uv4+oo5jmIWaKVwXkPrommyaeglc45/RrrUj2fM6Nwrh39tTfhhOTbZV
- FIOkr67djnn41oHUqn3DRTWvUovkCp8Y79PycPOxGeQOGVwikyV+seLXezk1nvAb6GvVQ9c0Obr
- GZbgFsvnmocoGQtt0xk3n/lK+1nLSDf/QgDxig1O0pj8+RHxWvlRefaiR9IClqgJUQQ0sSghyi5
- zUdFI6+aED4iOCQ==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260310-b4-is_err_or_null-v1-2-bd63b656022d@avm.de>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Score: -2.50
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.50 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLk9qejt5hbtemdgupcccnrijf)];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCPT_COUNT_GT_50(0.00)[56];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,imap1.dmz-prg2.suse.org:helo];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Flag: NO
 
-Mimi pointed out that we didn't widen the inode number field in struct
-h_misc alongside the inode->i_ino widening. While we could make an
-equivalent change there, that would require EVM resigning on all 32-bit
-hosts.
+On Tue, Mar 10, 2026 at 12:48:28PM +0100, Philipp Hahn wrote:
+> Prefer using IS_ERR_OR_NULL() over using IS_ERR() and a manual NULL
+> check.
+> 
+> IS_ERR_OR_NULL() already uses likely(!ptr) internally. checkpatch does
+> not like nesting it:
+> > WARNING: nested (un)?likely() calls, IS_ERR_OR_NULL already uses
+> > unlikely() internally
+> Remove the explicit use of likely().
+> 
+> Change generated with coccinelle.
+> 
+> To: Chris Mason <clm@fb.com>
+> To: David Sterba <dsterba@suse.com>
+> Cc: linux-btrfs@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Philipp Hahn <phahn-oss@avm.de>
 
-Instead, leave the field as an unsigned long. This should have no effect
-on 64-bit hosts, and allow things to continue working on 32-bit hosts in
-the cases where the i_ino fits in 32-bits.
-
-Add a comment explaining why it's being left as unsigned long.
-
-Cc: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- security/integrity/evm/evm_crypto.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index c0ca4eedb0fe5d5c30f45f515a4bc90248ec64ea..1c41af2f91a60a714878ff93b554c90e45546503 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -144,6 +144,12 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
- 			  char type, char *digest)
- {
- 	struct h_misc {
-+		/*
-+		 * Although inode->i_ino is now u64, this field remains
-+		 * unsigned long to allow existing HMAC and signatures from
-+		 * 32-bit hosts to continue working when i_ino hasn't changed
-+		 * and fits in a u32.
-+		 */
- 		unsigned long ino;
- 		__u32 generation;
- 		uid_t uid;
-
--- 
-2.53.0
-
+Added to for-next, we seem to be using IS_ERR_OR_NULL() already in a
+few other places so this is makes sense for consistency. Thanks.
