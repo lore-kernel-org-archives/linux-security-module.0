@@ -1,203 +1,375 @@
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D941B371057
-	for <linux-security-module@vger.kernel.org>; Sun, 15 Mar 2026 20:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A03223EA8D
+	for <linux-security-module@vger.kernel.org>; Sun, 15 Mar 2026 22:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773608345; cv=none; b=F3Pu/XkhDA3hZ2gTr6vPLedw5eaS3PQKewh+wZW1rnvY0844mfdlfCk5Ss3X7vJiT1VAiQo3uULHeqzCLqSK4Er82BxpMizyDLlx00qGgRbnEKmaXOk5yS3X1e7G1/bdzkgT5ESFmJVmurWxjeI6eW1+YYXtWyVUGdcuLqWhD7g=
+	t=1773613366; cv=none; b=UGjZ31BspIrf+bKQAMTehtqCxxceuOaOdP/eSWBX/HZyuk4QXcwa3TF1d60I5nY3btR8S9h5Yj//YZNGzLIbv+9ZUf1csdfBrB8mXSboZfd7kXswLrFmJTaoY/9H8A1lm7+4opfp6dHDlRAtIZ5iuWPMsTib7P+bIeM7Q36M4Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773608345; c=relaxed/simple;
-	bh=3k1PMWAq8SVen9s8I3JcFq8BsZzS8FOA9gTpzngs3Ew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P+I+ohxs5JZs9zYsss9w/+71Ko55RZLEJJ53UfPtdeyZmEBV+Qu/fP9hpq2wSJt9wNqGIxfEH97y+1+PSrCfAfj8D3bnLBIlLenuW3jDKI1lo5iRYzPD9FqeyxSeex86eUEIQRA659afLQDHOc50HfJburx5CqDwAkruUUxTy20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W23xXD5P; arc=none smtp.client-ip=209.85.219.42
+	s=arc-20240116; t=1773613366; c=relaxed/simple;
+	bh=K+P03U7lwiruTPY5C4TeogZyvZ80UU2BPGjSUfzkknI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lFy7zRjbG0MNXoAxeurVUEvxQKUV5XG6BAXv9av0QvGQNf1Ysxh0LQl+Jj7OKyDxwfzYzkeIRvV7Z+2S50W+JSNbs933LKmKUEi6syLt/UJ/8erwpDqHVLfqd2lQPjC0pcpU1AVzYvF4P2gQl45QE6GJsJtjZQyPHkv7rjAXypg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZmHejoSM; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W23xXD5P"
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-89a06bc2f1bso70840346d6.1
-        for <linux-security-module@vger.kernel.org>; Sun, 15 Mar 2026 13:59:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZmHejoSM"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-48534237460so43803455e9.3
+        for <linux-security-module@vger.kernel.org>; Sun, 15 Mar 2026 15:22:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773608342; x=1774213142; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HUtD2tnCdB1ksL3ocbjFWjgoV7+dAsNBOcvbL1rIDX0=;
-        b=W23xXD5PKztRud/w9sE+ePOQxkoiRGJ77ZOe1TWdNWYYMYYDKWTr/ZSFOTGsgkcZsb
-         zC7Rp2se3uz8p+WbSLBfKkeNJLVJzelZmHBzg5f7H4rEXfdtgDyQvCJyBhEKyo+ciSe6
-         Z+9La2q8tpp59+TT1UGhztbL1mk9Ip4ks2NvhTgocBLGC9D0YsQInaEYzA5AJOKSp5M9
-         9GTU6YN/GaIgRHSTzIf0sVCEaL0CSkDNwc4Om71F1lq1YS+jzv2PBg36pTdv+Zf+hpXv
-         lZ7Q/P6JQG7lJ2iQ8r16LaTk2hzLtQMY8l1u8X70sGoPlaM4xRoABze0tYrXAUn/6086
-         IjiQ==
+        d=gmail.com; s=20230601; t=1773613363; x=1774218163; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q/3EyUlA7mAsGyPIBP8O1fKUNYI3HeU3IGpIiBBspoA=;
+        b=ZmHejoSMbSUdHBUhBgGAYBzZcxz+M2QcYIajzdrwyXIKRz0O8h6ovLgMwi1P4Wdstx
+         NC0sttOUUNq7mX3lgips40HYYmO8J+cZ19EFQxfiUcTyYThxwa6wPeGXwPEF0g6/bKQP
+         M1L+zvR6hffO5dwhsI8N/M4aSFmN6pRunKxOn9lwNbIWp7XNMgqYlu3gHdAWzBbqLKl7
+         8D2OH6yIScYqsIFaaZdRAJGsHqK4Xisli6z0z1KGZPX6nHCmodGPv9EIVtg+0WZpDp5G
+         IZifMlnbp0L7S/doN99KRNxuDmDQ7QH1osgRCBbFXvz+yxb96QaS9qPlLotzJg8TLPOd
+         ajqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773608342; x=1774213142;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HUtD2tnCdB1ksL3ocbjFWjgoV7+dAsNBOcvbL1rIDX0=;
-        b=DAgH9gwSC+N6rwYNpkUHu/Ipt7rdXAWPymoQetoPFXKnwTYu3tqETObukhffipULsB
-         c3uMyF6sSM1Byeito4iYE+jEFbRIZyuwu04psu2k5Ygs88Q6WdgU+ox8+DrVWaWGnZOJ
-         W+yV3n0YJOEcu07Km1ycD3En9GRAalnulG71BHsSVbGqZVCBZX/+RIvd6dkkjXnjGVU+
-         faKypUUyBmW+jEdk41Q5c1DIxL9DIHwGQlHk2YaiExYbCb389bgsuUYd2Kf8kWqhkZeh
-         J++a+raufxiucbJNgMfwO/sBxo42fqkN7ZFVWV3A7I3yWff6vg5LXY7E3LgCCJHnLwx8
-         UDTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzud/1ZVszVV+Cm1xyOM85bNRAZQvWXOvradGQd6TC8aGxosQGngGYKnhRv0s6uhSe9SkvSrr+UAWLrpI+Cr4vxvhK9Og=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/wF5dmukYikAl8cBhc32T0VtPkPri6avJxlf7c66NozmWSfdg
-	MxV127nABtDi0M/KTG1cF56DoMuHjXv1Ayq9/fjZGq0wb+HET9nZ3jae
-X-Gm-Gg: ATEYQzyfuXcVvD5+38XDcopRjAR2ceUvYxKa3XEUFh7CRmFkdJyizSJyzHsIUFG4xK3
-	Mx7t9J5MUupxcKIyXH+3PicE1d2p2EdONSJHVp2ratFhSyPMVX5QPH/lOQ3ufHJ7PT+MTVpS5XE
-	LIEGnNWCZqCOM5mF1wiuXr/jIAr1JUufbCwBUrzCP5vmiwvwl9UprjvyQGf4zoarStct1G4W1uj
-	M7fMHYm77lV+U802UW16weLf0DNubrZbIfFFnk3vy2dUG9GGvIwaLEjcd6hv2zDTmWYeqWv9sy7
-	jWB/CcqMFBLtEM6n+h1O/dlUksa3aLEma4st0XRmHjWhw0REXVOE8YY3mtN8pto525zV/vlTSF1
-	SFsjlVs1tesi8YJHyHxzDSqiEbV+/qxLEB9YhzSLsjZT01rPfHNS84cFPGXmrSzd2gs991fstnB
-	coO7/sWTJomIoQBLIMwb+8cB1NRR68GCoePKXG2P7CWGjl6+KO
-X-Received: by 2002:a05:6214:413:b0:899:fab4:7301 with SMTP id 6a1803df08f44-89a81f8be31mr152286206d6.35.1773608342284;
-        Sun, 15 Mar 2026 13:59:02 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1773613363; x=1774218163;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q/3EyUlA7mAsGyPIBP8O1fKUNYI3HeU3IGpIiBBspoA=;
+        b=HtbHRHmfkJZWJ/NtVJhuLZRnvRxuaOUUo/F8ztWRA7L4ZSxeFed4j9RA89LYr+ViOX
+         HRCcA20kwhwv5IVr8GqJpYdq3FCzT/V1EVM4+2qKcyXqKT3+5a0kMKmy02O9gFZ6vUuY
+         fyXYZmG92MOImeaA3w9mvkkqtClmswrRgH6QunWDY3U6NQfQFuu4rvkuJtdTZUAbCScY
+         E0RuRdJTBzScaFs1fD22WNf4kYQZK8yRAgIUrFmyXI+go0fPX8MFqkx4iVvTCRWer+27
+         H41kDfnm0Exbd7QFoInIYzIYmtolG/sqI7n9re9b9XjVIVSKDSDz65ApvJ3WjTfhjIwh
+         444Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXVeumaTsbJ/Z10z9wkXc/rQHfg9CEYH2XjxNF07+b1AnYEBWOn7k6y89BglAcOWs2hh9Al+G8khOzR79Ca4OnQqrT9Ui8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9YTO9xUwbxSNKFPiHPoxyMr3KZEpXX36i2dzOqU84FsW8izIz
+	nzy0IYH0Az7VX3uJ3gQ7cx7VwP8s5V6YC73cBikgRDyBFsAcZ/2njCZg4IOP9L2r
+X-Gm-Gg: ATEYQzy5HEmLzoR5E/HiHHuxovA/KCdXjTbfiPKgr5Ho1QbGn+QaIR5gO9qxRvA96Xu
+	qfFao5oMZ4DbUyxBbhUkEE1f04+rHyFipfQui4/2JFTU5otWZfXh/IVvEqs9wI/B0yskJ7l9ZPn
+	pUz+jmQ1pa9Xb+m2VinNaqhlHZM7Q2mj1JFSCsVwu6SjBHJkqzQlQtFCMTdJytTgzYYGacuH8AS
+	efobizKoMaIRejwDmBW97FDmn5w22FhAuj38HUI7t4I6yJqpxuNLgfmecg2YM68wyVdxMyR6ZGe
+	yNtqF3j3eyh5b6feHXZlxzWuyEa++ZRaLiBsz1m0laCif/sVWMwyUzY19/55Zk1/qOlDDpT4muu
+	Ya0aX5AwvF5GmWqJQjxWXRtUIhkWWr3uKXN0nUoAipFd6+Lgpr2VzPA28zCRYE1ov2OmGJXhdSk
+	RL7nKvWTPWSvKbrE6l58iYtdRc2qpSs48o0HJfztwzbLFTjLWZ
+X-Received: by 2002:a05:600c:5395:b0:485:4278:2558 with SMTP id 5b1f17b1804b1-485566c6a81mr191955575e9.6.1773613363003;
+        Sun, 15 Mar 2026 15:22:43 -0700 (PDT)
 Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89c5471fc7asm1541806d6.12.2026.03.15.13.59.00
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4854b65fd3dsm361781125e9.10.2026.03.15.15.22.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Mar 2026 13:59:01 -0700 (PDT)
-Date: Sun, 15 Mar 2026 21:58:53 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: John Johansen <john.johansen@canonical.com>,
-	Tingmao Wang <m@maowtm.org>, Justin Suess <utilityemal77@gmail.com>,
-	Jann Horn <jannh@google.com>, linux-security-module@vger.kernel.org,
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+        Sun, 15 Mar 2026 15:22:42 -0700 (PDT)
+From: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	"John Johansen" <john.johansen@canonical.com>,
+	"Paul Moore" <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>
+Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
+	linux-security-module@vger.kernel.org,
+	"Tingmao Wang" <m@maowtm.org>,
+	"Justin Suess" <utilityemal77@gmail.com>,
+	"Samasth Norway Ananda" <samasth.norway.ananda@oracle.com>,
+	"Matthieu Buffet" <matthieu@buffet.re>,
+	"Mikhail Ivanov" <ivanov.mikhail1@huawei-partners.com>,
 	konstantin.meskhidze@huawei.com,
-	Demi Marie Obenour <demiobenour@gmail.com>,
-	Alyssa Ross <hi@alyssa.is>, Tahera Fahimi <fahimitahera@gmail.com>
-Subject: Re: [PATCH v5 2/9] landlock: Control pathname UNIX domain socket
- resolution by path
-Message-ID: <20260315.690dc189df72@gnoack.org>
-References: <20260215105158.28132-1-gnoack3000@gmail.com>
- <20260215105158.28132-3-gnoack3000@gmail.com>
- <20260308.zie6thaiP0aj@digikod.net>
+	"Demi Marie Obenour" <demiobenour@gmail.com>,
+	"Alyssa Ross" <hi@alyssa.is>,
+	"Jann Horn" <jannh@google.com>,
+	"Tahera Fahimi" <fahimitahera@gmail.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Kuniyuki Iwashima" <kuniyu@google.com>,
+	Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v6 0/9] landlock: UNIX connect() control by pathname and scope
+Date: Sun, 15 Mar 2026 23:21:41 +0100
+Message-ID: <20260315222150.121952-1-gnoack3000@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260308.zie6thaiP0aj@digikod.net>
 
-On Sun, Mar 08, 2026 at 10:09:21AM +0100, Mickaël Salaün wrote:
-> On Sun, Feb 15, 2026 at 11:51:50AM +0100, Günther Noack wrote:
-> > * Add a new access right LANDLOCK_ACCESS_FS_RESOLVE_UNIX, which
-> >   controls the look up operations for named UNIX domain sockets.  The
-> >   resolution happens during connect() and sendmsg() (depending on
-> >   socket type).
-> > * Hook into the path lookup in unix_find_bsd() in af_unix.c, using a
-> >   LSM hook.  Make policy decisions based on the new access rights
-> > * Increment the Landlock ABI version.
-> > * Minor test adaptions to keep the tests working.
-> > 
-> > With this access right, access is granted if either of the following
-> > conditions is met:
-> > 
-> > * The target socket's filesystem path was allow-listed using a
-> >   LANDLOCK_RULE_PATH_BENEATH rule, *or*:
-> > * The target socket was created in the same Landlock domain in which
-> >   LANDLOCK_ACCESS_FS_RESOLVE_UNIX was restricted.
-> > 
-> > In case of a denial, connect() and sendmsg() return EACCES, which is
-> > the same error as it is returned if the user does not have the write
-> > bit in the traditional Unix file system permissions of that file.
-> 
-> It is not the same error code as for scoped abstract unix socket
-> (EPERM), but it makes sense because the scope restrictions are closer to
-> ambient rights (i.e. similar to a network isolation), whereas here the
-> final denial comes from a missing FS rule (and all FS access checks may
-> return EACCES).  It would be worth mentioning this difference in the
-> user documentation.
+Hello!
 
-Sounds good, added to the syscall documentation for V6.
+This patch set introduces a filesystem-based Landlock restriction
+mechanism for connecting to UNIX domain sockets (or addressing them
+with sendmsg(2)).  It introduces the filesystem access right
+LANDLOCK_ACCESS_FS_RESOLVE_UNIX.
 
+For the connection-oriented SOCK_STREAM and SOCK_SEQPACKET type
+sockets, the access right makes the connect(2) operation fail with
+EACCES, if denied.
 
-> > This feature was created with substantial discussion and input from
-> > Justin Suess, Tingmao Wang and Mickaël Salaün.
-> > 
-> > Cc: Tingmao Wang <m@maowtm.org>
-> > Cc: Justin Suess <utilityemal77@gmail.com>
-> > Cc: Mickaël Salaün <mic@digikod.net>
-> > Suggested-by: Jann Horn <jannh@google.com>
-> > Link: https://github.com/landlock-lsm/linux/issues/36
-> > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> > ---
-> >  include/uapi/linux/landlock.h                |  10 ++
-> >  security/landlock/access.h                   |  11 +-
-> >  security/landlock/audit.c                    |   1 +
-> >  security/landlock/fs.c                       | 102 ++++++++++++++++++-
-> >  security/landlock/limits.h                   |   2 +-
-> >  security/landlock/syscalls.c                 |   2 +-
-> >  tools/testing/selftests/landlock/base_test.c |   2 +-
-> >  tools/testing/selftests/landlock/fs_test.c   |   5 +-
-> >  8 files changed, 128 insertions(+), 7 deletions(-)
-> 
-> > +static int hook_unix_find(const struct path *const path, struct sock *other,
-> > +			  int flags)
-> > +{
-> > +	const struct landlock_ruleset *dom_other;
-> > +	const struct landlock_cred_security *subject;
-> > +	struct layer_access_masks layer_masks;
-> > +	struct landlock_request request = {};
-> > +	static const struct access_masks fs_resolve_unix = {
-> > +		.fs = LANDLOCK_ACCESS_FS_RESOLVE_UNIX,
-> > +	};
-> > +
-> > +	/* Lookup for the purpose of saving coredumps is OK. */
-> > +	if (unlikely(flags & SOCK_COREDUMP))
-> > +		return 0;
-> > +
-> > +	/* Access to the same (or a lower) domain is always allowed. */
-> > +	subject = landlock_get_applicable_subject(current_cred(),
-> > +						  fs_resolve_unix, NULL);
-> > +
-> > +	if (!subject)
-> > +		return 0;
-> > +
-> > +	if (!landlock_init_layer_masks(subject->domain, fs_resolve_unix.fs,
-> > +				       &layer_masks, LANDLOCK_KEY_INODE))
-> > +		return 0;
-> > +
-> > +	/* Checks the layers in which we are connecting within the same domain. */
-> > +	dom_other = landlock_cred(other->sk_socket->file->f_cred)->domain;
-> > +	unmask_scoped_access(subject->domain, dom_other, &layer_masks,
-> > +			     fs_resolve_unix.fs);
-> > +
-> > +	if (layer_access_masks_empty(&layer_masks))
-> 
-> I don't see the point of this helper and this call wrt the following
-> is_access_to_paths_allowed() call and the is_layer_masks_allowed()
-> check.
+SOCK_DGRAM-type UNIX sockets can be used both with connect(2), or by
+passing an explicit recipient address with every sendmsg(2)
+invocation.  In the latter case, the Landlock check is done when an
+explicit recipient address is passed to sendmsg(2) and can make
+sendmsg(2) return EACCES.  When UNIX datagram sockets are connected
+with connect(2), a fixed recipient address is associated with the
+socket and the check happens during connect(2) and may return EACCES.
 
-layer_access_masks_empty() is indeed the same thing as
-is_layer_masks_allowed(), so I removed that implementation again for
-V6.
+When LANDLOCK_ACCESS_FS_RESOLVE_UNIX is handled within a Landlock
+domain, this domain will only allow connect(2) and sendmsg(2) to
+server sockets that were created within the same domain.  Or, to
+phrase it the other way around: Unless it is allow-listed with a
+LANDLOCK_PATH_BENEATH rule, the newly created domain denies connect(2)
+and sendmsg(2) actions that are directed *outwards* of that domain.
+In that regard, LANDLOCK_ACCESS_FS_RESOLVE_UNIX has the same semantics
+as one of the "scoped" access rights.
 
-The reason why I was calling this here is so that we can skip the path
-walk in the case where the scoped-access check already suffices to
-allow the operation.  It is not strictly needed though, so I can
-remove it.  It is probably better to implement such a shortcut within
-is_access_to_paths_allowed() instead.
+== Motivation
 
-Removed the call and the implementation for V6.
+Currently, landlocked processes can connect to named UNIX sockets
+through the BSD socket API described in unix(7), by invoking socket(2)
+followed by connect(2) with a suitable struct sockname_un holding the
+socket's filename.  This is a surprising gap in Landlock's sandboxing
+capabilities for users (e.g. in [1]) and it can be used to escape a
+sandbox when a Unix service offers command execution (various such
+scenarios were listed by Tingmao Wang in [2]).
 
+The original feature request is at [4].
 
-> > +		return 0;
-> > +
-> > +	/* Checks the connections to allow-listed paths. */
-> > +	if (is_access_to_paths_allowed(subject->domain, path,
-> > +				       fs_resolve_unix.fs, &layer_masks,
-> > +				       &request, NULL, 0, NULL, NULL, NULL))
-> > +		return 0;
-> > +
-> > +	landlock_log_denial(subject, &request);
-> > +	return -EACCES;
-> > +}
+== Alternatives and Related Work
+
+=== Alternative: Use existing LSM hooks
+
+We have carefully and seriously considered the use of existing LSM
+hooks, but still came to the conclusion that a new LSM hook is better
+suited in this case:
+
+The existing hooks security_unix_stream_connect(),
+security_unix_may_send() and security_socket_connect() do not give
+access to the resolved filesystem path.
+
+* Resolving the filesystem path in the struct sockaddr_un again within
+  a Landlock would produce a TOCTOU race, so this is not an option.
+* We would therefore need to wire through the resolved struct path
+  from unix_find_bsd() to one of the existing LSM hooks which get
+  called later.  This would be a more substantial change to af_unix.c.
+
+The struct path that is available in the listening-side struct sock is
+can be read through the existing hooks, but it is not an option to use
+this information: As the listening socket may have been bound from
+within a different namespace, the path that was used for that can is
+in the general case not meaningful for a sandboxed process.  In
+particular, it is not possible to use this path (or prefixes thereof)
+when constructing a sandbox policy in the client-side process.
+
+Paul Moore also chimed in in support of adding a new hook, with the
+rationale that the simplest change to the LSM hook interface has
+traditionally proven to be the most robust. [11]
+
+More details are on the Github issue at [6] and on the LKML at [9].
+
+In a the discussion of the V2 review, started by Christian Brauner
+[10], we have further explored the approach of reusing the existing
+LSM hooks but still ended up leaning on the side of introducing a new
+hook, with Paul Moore and me (gnoack) arguing for that option.
+
+Further insights about the LSM hook were shared in the V3 review by
+Tingmao Wang [12], who spotted additional requirements due to the two
+approaches being merged into one patch set.  The summary of that
+discussion is in [13].
+
+=== Related work: Scope Control for Pathname Unix Sockets
+
+The motivation for this patch is the same as in Tingmao Wang's patch
+set for "scoped" control for pathname Unix sockets [2], originally
+proposed in the Github feature request [5].
+
+In [14], we have settled on the decision to merge the two patch sets
+into this one, whose primary way of controlling connect(2) is
+LANDLOCK_ACCESS_FS_RESOLVE_UNIX, but where this flag additionally has
+the semantics of only restricting this unix(7) IPC *outwards* of the
+created Landlock domain, in line with the logic that exists for the
+existing "scoped" flags already.
+
+By having LANDLOCK_ACCESS_FS_RESOLVE_UNIX implement "scoping"
+semantics, we can avoid introducing two separate interacting flags for
+now, but we retain the option of introducing
+LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET at a later point in time, should
+such a flag be needed to express additional rules.
+
+== Credits
+
+The feature was originally suggested by Jann Horn in [7].
+
+Tingmao Wang and Demi Marie Obenour have taken the initiative to
+revive this discussion again in [1], [4] and [5].
+
+Tingmao Wang has sent the patch set for the scoped access control for
+pathname Unix sockets [2] and has contributed substantial insights
+during the code review, shaping the form of the LSM hook and agreeing
+to merge the pathname and scoped-flag patch sets.
+
+Justin Suess has sent the patch for the LSM hook in [8] and
+subsequently through this patch set.
+
+Christian Brauner and Paul Moore have contributed to the design of the
+new LSM hook, discussing the tradeoffs in [10].
+
+Sebastian Andrzej Siewior and Kuniyuki Iwashima have helped with
+locking questions in the networking subsystem. [15] [16]
+
+Ryan Sullivan has started on an initial implementation and has brought
+up relevant discussion points on the Github issue at [4].
+
+As maintainer of Landlock, MickaÃ«l SalaÃ¼n has done the main review so
+far and particularly pointed out ways in which the UNIX connect()
+patch sets interact with each other and what we need to look for with
+regards to UAPI consistency as Landlock evolves.
+
+[1] https://lore.kernel.org/landlock/515ff0f4-2ab3-46de-8d1e-5c66a93c6ede@gmail.com/
+[2] Tingmao Wang's "Implement scope control for pathname Unix sockets"
+    https://lore.kernel.org/all/cover.1767115163.git.m@maowtm.org/
+[3] https://lore.kernel.org/all/20251230.bcae69888454@gnoack.org/
+[4] Github issue for FS-based control for named Unix sockets:
+    https://github.com/landlock-lsm/linux/issues/36
+[5] Github issue for scope-based restriction of named Unix sockets:
+    https://github.com/landlock-lsm/linux/issues/51
+[6] https://github.com/landlock-lsm/linux/issues/36#issuecomment-2950632277
+[7] https://lore.kernel.org/linux-security-module/CAG48ez3NvVnonOqKH4oRwRqbSOLO0p9djBqgvxVwn6gtGQBPcw@mail.gmail.com/
+[8] Patch for the LSM hook:
+    https://lore.kernel.org/all/20251231213314.2979118-1-utilityemal77@gmail.com/
+[9] https://lore.kernel.org/all/20260108.64bd7391e1ae@gnoack.org/
+[10] https://lore.kernel.org/all/20260113-kerngesund-etage-86de4a21da24@brauner/
+[11] https://lore.kernel.org/all/CAHC9VhQHZCe0LMx4xzSo-h1SWY489U4frKYnxu4YVrcJN3x7nA@mail.gmail.com/
+[12] https://lore.kernel.org/all/e6b6b069-384c-4c45-a56b-fa54b26bc72a@maowtm.org/
+[13] https://lore.kernel.org/all/aYMenaSmBkAsFowd@google.com/
+[14] https://lore.kernel.org/all/20260205.Kiech3gupee1@digikod.net/
+[15] https://lore.kernel.org/all/20260310151907.VYySCtJp@linutronix.de/
+[16] https://lore.kernel.org/all/CAAVpQUC95mSjX1vRK===pubHofcYqbkNE7goYKiu6vha5GYAFw@mail.gmail.com/
+
+---
+
+== Patch set history
+
+V1: https://lore.kernel.org/all/20260101134102.25938-1-gnoack3000@gmail.com/
+V2: https://lore.kernel.org/all/20260110143300.71048-2-gnoack3000@gmail.com/
+V3: https://lore.kernel.org/all/20260119203457.97676-2-gnoack3000@gmail.com/
+V4: https://lore.kernel.org/all/20260208231017.114343-1-gnoack3000@gmail.com/
+V5: https://lore.kernel.org/all/20260215105158.28132-1-gnoack3000@gmail.com/
+
+Changes in V6:
+
+* Implementation:
+  * Move the LSM hook call after the check that checks for the other
+    end's matching socket type.  (Justin Suess)
+  * Lock with unix_state_lock() and check SOCK_DEAD.
+  * Remove unnecessary layer_access_masks_empty() call (and its
+    implementation).
+* Documentation:
+  * Squash docs with design rationale into main implementation commit,
+    and cross-referece it from the header docs.
+  * Clarify that denials result in EACCES and that this is consistent
+    with other filesystem access rights.
+* Minor:
+  * Use mem_is_zero() in is_layer_masks_allowed() (minor cleanup)
+  * Omit unnecessary __attribute__((fallthrough)) usages
+  * Remove comment at the end of a line in a place.
+* Selftests:
+  * sun_path population fixes
+  * coredump test: Set EUID to 0 (needed for UML-based selftests)
+    Link[1]: https://lore.kernel.org/all/20260218.ohth8theu8Yi@digikod.net/
+
+Changes in V5:
+
+This change primarily adds tests, changing the testing approach for
+the main test to use the scoped_domains fixture as in Tingmao's patch
+set [2], and adding tests for the audit and coredump cases.
+
+* Selftests:
+  * Replaced the main selftest with one based on scoped_domains
+  * Added audit test
+  * Added test for the coredump case
+  * Added a follow-up commit that simplifies ruleset enforcement
+* Kernel code:
+  * Mark coredump check as unlikely (per Justin's review)
+  * Drop check for socket type (per MickaÃ«l's review)
+
+Changes in V4:
+
+Since this version, this patch set subsumes the scoping semantics from
+Tingmao Wang's "Scope Control" patch set [2], per discussion with
+Tingmao Wang and MickaÃ«l SalaÃ¼n in [14] and in the thread leading up
+to it.
+
+Now, LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET only restricts connect(2) and
+sendmsg(2) *outwards* of the domain where it is restricted, *with the
+same semantics as a "scoped" flag*.
+
+ * Implement a layer-mask based version of domain_is_scoped():
+   unmask_scoped_access().  Rationale: domain_is_scoped() returns
+   early, which we can't do in the layer masks based variant.  The two
+   variants are similar enough.
+ * LSM hook: Replace 'type' argument with 'sk' argument,
+   per discussion in [12] and [13].
+ * Bump ABI version to 9 (pessimistically assuming that we won't make
+   it for 7.0)
+ * Documentation fixes in header file and in Documentation/
+ * selftests: more test variants, now also parameterizing whether the
+   server socket gets created within the Landlock domain or before that
+ * selftests: use EXPECT_EQ() for test cleanup
+
+Changes in V3:
+ * LSM hook: rename it to security_unix_find() (Justin Suess)
+   (resolving the previously open question about the LSM hook name)
+   Related discussions:
+   https://lore.kernel.org/all/20260112.Wufar9coosoo@digikod.net/
+   https://lore.kernel.org/all/CAHC9VhSRiHwLEWfFkQdPEwgB4AXKbXzw_+3u=9hPpvUTnu02Bg@mail.gmail.com/
+ * Reunite the three UNIX resolving access rights back into one
+   (resolving the previously open question about the access right
+   structuring) Related discussion:
+   https://lore.kernel.org/all/20260112.Wufar9coosoo@digikod.net/)
+ * Sample tool: Add new UNIX lookup access rights to ACCESS_FILE
+
+Changes in V2:
+ * Send Justin Suess's LSM hook patch together with the Landlock
+   implementation
+ * LSM hook: Pass type and flags parameters to the hook, to make the
+   access right more generally usable across LSMs, per suggestion from
+   Paul Moore (Implemented by Justin)
+ * Split the access right into the three types of UNIX domain sockets:
+   SOCK_STREAM, SOCK_DGRAM and SOCK_SEQPACKET.
+ * selftests: More exhaustive tests.
+ * Removed a minor commit from V1 which adds a missing close(fd) to a
+   test (it is already in the mic-next branch)
+
+GÃ¼nther Noack (8):
+  landlock: use mem_is_zero() in is_layer_masks_allowed()
+  landlock: Control pathname UNIX domain socket resolution by path
+  samples/landlock: Add support for named UNIX domain socket
+    restrictions
+  landlock/selftests: Test LANDLOCK_ACCESS_FS_RESOLVE_UNIX
+  landlock/selftests: Audit test for LANDLOCK_ACCESS_FS_RESOLVE_UNIX
+  landlock/selftests: Check that coredump sockets stay unrestricted
+  landlock/selftests: fs_test: Simplify ruleset creation and enforcement
+  landlock: Document FS access right for pathname UNIX sockets
+
+Justin Suess (1):
+  lsm: Add LSM hook security_unix_find
+
+ Documentation/security/landlock.rst          |   40 +
+ Documentation/userspace-api/landlock.rst     |   15 +-
+ include/linux/lsm_hook_defs.h                |    5 +
+ include/linux/security.h                     |   11 +
+ include/uapi/linux/landlock.h                |   19 +
+ net/unix/af_unix.c                           |   13 +-
+ samples/landlock/sandboxer.c                 |   12 +-
+ security/landlock/access.h                   |    2 +-
+ security/landlock/audit.c                    |    1 +
+ security/landlock/fs.c                       |  112 +-
+ security/landlock/limits.h                   |    2 +-
+ security/landlock/syscalls.c                 |    2 +-
+ security/security.c                          |   20 +
+ tools/testing/selftests/landlock/base_test.c |    2 +-
+ tools/testing/selftests/landlock/fs_test.c   | 1329 ++++++++++--------
+ 15 files changed, 979 insertions(+), 606 deletions(-)
+
+-- 
+2.53.0
+
