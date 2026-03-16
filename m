@@ -1,160 +1,128 @@
-Received: from flow-a3-smtp.messagingengine.com (flow-a3-smtp.messagingengine.com [103.168.172.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B41364E85;
-	Mon, 16 Mar 2026 22:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69EF733A9E9
+	for <linux-security-module@vger.kernel.org>; Mon, 16 Mar 2026 22:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773699061; cv=none; b=X2HD+TcaXbBKqJwG3FOGvtGJ46b+9I3gceqYyzbiFh6CNe9xr5K5tYkgxy7/FPoH9bW5ibjyU1GRsjl45lwRwaFkYUlkIK460MM/W7tnIzi7BdP62SHY3AFNuzkzLwFRLz8crKfu/KWSHUHvsA941n8ETVzAIJYgBbCgkdzV/Y8=
+	t=1773699284; cv=none; b=M4YPDM+oj8BMHCLDM/MqgHyf9s4GZXSiEfWV+wpkrg0tp11aib+sIah/mErbEfuADAYxoayiWdhSYjMIDlkbIC2jTZmGtbz9or79j2WfhH37GKys39Pe46OEACGZv8649VAPfFo+TWVXSLSnyPsIdeqtnmoYGvIV96puuF5BKlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773699061; c=relaxed/simple;
-	bh=bR3l1XBxxG0Br6WPViaTYx4jBj801ByLeboUNggNeu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A38yHLwEglJnAk0B2QCy7stC9vMmro0enVPstLHcOoOWf+ISPC3fMoHAiOFXJpgQ+JEGYQrlTu0OIZqL9gIfg9EuELK7OlOHQThyqCuvdDItVMWZTKlH5lCT2EoHtG4zqNZ3haS7IZ2EcyWbx12HIJK/xKpWlKg0tgYFk4eMcz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org; spf=pass smtp.mailfrom=shazbot.org; dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b=eyO5nsRG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=guCypQjf; arc=none smtp.client-ip=103.168.172.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shazbot.org
+	s=arc-20240116; t=1773699284; c=relaxed/simple;
+	bh=HGj5yiUG7iKWATjOzUz8OSk7F9PspHcBFX+MhNveJts=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kaUOodzq5YLBCy12vxsrcBva0/WSlyOeTBMSdbRVf9XKFT7ZpAaQnOuoWZPu3CrNP9uXgrIAME+BStZjwKMLRELYCZQHkiu+P4YIUhZMQ4yXyQYkZhhW8vYGwcLV6BWErTo/75MzZOZ8ZDhJ7hZDvLswImW6kBrFR1xtyZHO+lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gTH+pELL; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b="eyO5nsRG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="guCypQjf"
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailflow.phl.internal (Postfix) with ESMTP id 96E81138028E;
-	Mon, 16 Mar 2026 18:10:56 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Mon, 16 Mar 2026 18:10:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shazbot.org; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1773699056;
-	 x=1773706256; bh=pZj8f0JboyjKt94J8KB7OLIiCOoml43GOZ4w8rDpLPA=; b=
-	eyO5nsRGgscBaSPTlSrjx8D8qsmxFZTD+YBT90C8JLtkSU+JG9otBsGP68/aDjfq
-	Ip8/CY7pDqj8uLfl6tk9PaoCLmHFx9BmC+OLDsgQIKz5wruWwvglBIFTzX8Bgo1G
-	D7tyDhfcq/yYvbxAZYbPlVlov+W1BUQwVVZx34myYfSzzczy+o0TvO2AJR+dEy1d
-	h9Fy4zA0IHy3AyAu2lJw7cTPeRVsoH7Q9DZJUhPGVmEq8IZ5byXvr46eUf3RwYLV
-	Pd21rN+O2sxo21UD0KoApMpHYwnhY5vI1CKlHqs6nb1Q0ON5mjBcz18/WvPyI4M2
-	g7ed/wORmv3aHNEvlM9NEQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773699056; x=
-	1773706256; bh=pZj8f0JboyjKt94J8KB7OLIiCOoml43GOZ4w8rDpLPA=; b=g
-	uCypQjfxr+Zi7JxdTC/p3wGQ4VV0q/Wv3rf4QuOSSvRwPZ4hwWoKXSQwRlJppx/A
-	eTD/kX8ytMBkqeeAHXi8QojGoDJPwhemKEl1A5BQyy+VTfQ0kjCklEhRU0D9TNU6
-	QzoouUhJdY7Fi24kVLMS4vkfF5Xif+sxcGuZ+ZH9bmNOAZhg/6jHFnuxjrIUYo4Y
-	sJAjmQ/c58h+MsTVokuL8c2t4xBbVGwnTgXIvKplEwnaY81NNzKXbPGa+zPU58N/
-	vwQ/zZfUYT5zYdyXfBWrfC5sZSkqzhpuD1WACxXIM/TD7Jh2N1ZXy8qS+O1DtSBY
-	h24uS6YuZ9c79L+rKNYRA==
-X-ME-Sender: <xms:73-4aYdtUUIQC679P0YPl8k6UZ10Tz8-qTD319yDZEtXusdBhZuXRA>
-    <xme:73-4aTUav9FvduIIOmc0jldmINr5W_MhUsWQFGzP1fBm1dpf8ggOxSMvCMHniLmCu
-    LbRPk360ujIo39hLA6fsP95YlnCLki5WcrUsiuRyEwh6NcxWlxF>
-X-ME-Received: <xmr:73-4aSY56rJyFtQwMFw-H9dfM29zbbMWxWkWrpi3kYaZ1kbqDyXdf5bHU5U>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvleelheegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfgjfhfogggtgfesthejre
-    dtredtvdenucfhrhhomheptehlvgigucghihhllhhirghmshhonhcuoegrlhgvgiesshhh
-    rgiisghothdrohhrgheqnecuggftrfgrthhtvghrnhepvdekfeejkedvudfhudfhteekud
-    fgudeiteetvdeukedvheetvdekgfdugeevueeunecuvehluhhsthgvrhfuihiivgeptden
-    ucfrrghrrghmpehmrghilhhfrhhomheprghlvgigsehshhgriigsohhtrdhorhhgpdhnsg
-    gprhgtphhtthhopeehhedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepphhhrghh
-    nhdqohhsshesrghvmhdruggvpdhrtghpthhtoheprghmugdqghhfgieslhhishhtshdrfh
-    hrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrphhprghrmhhorheslhhishht
-    shdruhgsuhhnthhurdgtohhmpdhrtghpthhtohepsghpfhesvhhgvghrrdhkvghrnhgvlh
-    drohhrghdprhgtphhtthhopegtvghphhdquggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopegtohgttghisehinhhrihgrrdhfrhdprhgtphhtthhopegumh
-    dquggvvhgvlheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopegurhhiqdgu
-    vghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepgh
-    hfshdvsehlihhsthhsrdhlihhnuhigrdguvghv
-X-ME-Proxy: <xmx:73-4aQltNdDVIdEqvCmz7Mlt0qW50NA4CHgJQUMNlacMN4MGiVKHfA>
-    <xmx:73-4acHdFw15OLpR73_B1AdIXJMG-pYssiD_C0T2dj2N-8ux7fVHFg>
-    <xmx:73-4aU6P6J2BtdvPwSPzfrUNjz9-qYacHOOWBucSAMlha23fXDTcIg>
-    <xmx:73-4aaO5YEqAXlnOLRO88GZx1RbxPW8QtXAeqZQNaqmxlgOL7PgFkQ>
-    <xmx:8H-4abIvs_QYur641c9BpnDuFQ6ssCC-7-o-rPLEHWyRxStBDxJEr6SL>
-Feedback-ID: i03f14258:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 16 Mar 2026 18:10:52 -0400 (EDT)
-Date: Mon, 16 Mar 2026 16:10:50 -0600
-From: Alex Williamson <alex@shazbot.org>
-To: Philipp Hahn <phahn-oss@avm.de>
-Cc: amd-gfx@lists.freedesktop.org, apparmor@lists.ubuntu.com,
- bpf@vger.kernel.org, ceph-devel@vger.kernel.org, cocci@inria.fr,
- dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org,
- gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org,
- intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev,
- kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
- linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-erofs@lists.ozlabs.org,
- linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-hyperv@vger.kernel.org,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mm@kvack.org,
- linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-pm@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- ntfs3@lists.linux.dev, samba-technical@lists.samba.org,
- sched-ext@lists.linux.dev, target-devel@vger.kernel.org,
- tipc-discussion@lists.sourceforge.net, v9fs@lists.linux.dev,
- alex@shazbot.org
-Subject: Re: [PATCH 46/61] vfio: Prefer IS_ERR_OR_NULL over manual NULL
- check
-Message-ID: <20260316161050.01c82973@shazbot.org>
-In-Reply-To: <20260310-b4-is_err_or_null-v1-46-bd63b656022d@avm.de>
-References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
-	<20260310-b4-is_err_or_null-v1-46-bd63b656022d@avm.de>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gTH+pELL"
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-89a0ecbc713so2573596d6.1
+        for <linux-security-module@vger.kernel.org>; Mon, 16 Mar 2026 15:14:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773699282; x=1774304082; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1xVo0DvHLvdFL5zFcyTS5pi/B+LyIVJQdufAwf30Klo=;
+        b=gTH+pELLcKYJsiNcJvWi2+XVvonHdHeESyISqkJ/8XBdU31sJZU54Dafsf+tOfcO7S
+         LZzyi6Q27OscB9DBKM9PSCFNq3bIKRKI8AzHzvgxAHOFdvk69VUkYpszBl0bMrG4o+qm
+         CwmF7fOYP9iFPaXJtuSJY6C3P99CZv0dmNHpssHaizJu4v8p7xTVxvu8E+VKDP9XyYbh
+         bsCGmdfxFVAydBEnEm8d5FNfbjZhIDOlfDb/GdiFjs729HlD/PyygvwmB898d4lbFH77
+         chh4j6zq4JEDejcZCjtpD+Tj/P4lZ76LcXgXMzYv+feMt9RPGjhgVGCYOHqugQ2mI7VP
+         EKaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773699282; x=1774304082;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=1xVo0DvHLvdFL5zFcyTS5pi/B+LyIVJQdufAwf30Klo=;
+        b=Ak2W16fN6R9eumjxiiUWeNA/Us7n4Kb1srCVQUMY2Z9v3Iu6zySaBzyxOqhJGmvUIc
+         c0quxmqYSzpV6gigryyT1ltwqVf9iu64EP30x65YxDPeZ2qI8NCq2vRnffZaCqjpQTeu
+         uwk2N7R2WDRql89W2+NDPhsP6APRm6Anf21Cahbxc6doSz8HoCIb1M1qfnmP2BSWYLed
+         RqdYSw5Pkay5ak2pKwWOND+NjFgnWfmqnpYlBVDX6gGPDuwa6KYXFRYQPI+lnnMnEefW
+         PYuuNhK8ZRmigDEdoMVtFb2hCfvokaSBjsE8ginweeKSSosLJ25P9bCo+ofN+Ph4CJOa
+         XG/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXkTWbIkCtq/+pFahlVMCjb0RZQ3lGVGbDsjb14QQSaUHntOPdFf1AG11zojUlyQaJoEHQLAUkn8EtPTr1hfEm9n2t84cA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yycu1NhRFStDSsBcHfnuMk9Ddmzp57RBcrtG5G0D6jwFDAB/Nuy
+	ws9JVZWsoy9CiCryZE4U3ICCGVnKiuXlknk7smjdouwW7jfl+UvtNnnz
+X-Gm-Gg: ATEYQzzyj+KuAqEJc10Kqsz+KTnyZMU8gVu7P+OHlwNwiRl3lWkWB99mLDo1IjA3tY5
+	Rl99MMJN5iw0EwQIPTEPlvzUZb/fQygNUD4SoExn0pmr4aIeYOVQz2oKvLcxjCoRi0qXIHUO7+V
+	vBxSfQlvdL6OMENsV2rfJGNRhBsWLy8ZfFzDuR8bu7d9PS2Ff1TXRBUidyjOtK4IyQHXU4rg1Wy
+	nH2Z3iK6283jQVXW1qwc7Re5ue0z2a+o/rObXsZObN6RQHK96zrDiP99q3/D+YR+ho8mCic2hhH
+	ZGUQflG0xa7HyDrHv0bLsXdR+sxwtsjkk0UINxpaMB3hi3D/MrRJfXrErqDRks5DzYXo+7a/Q+x
+	vq09XgG5rfaCftxYTTqXKzjFNsbn0gLOPYuUuhxy+mRY9qr01ErCI67SDuQgRJ6+z42xECZDmJs
+	bxpfP7O9rM2QT/zd3dCaf6qHpL3/nORW5nPESGZpGDxh/J3HRix2idy8XhJ5sANjPAj8NunVwpI
+	Pwl7oE9dhCX8PIcA61xg25scAYkCFPawwJjIrO+og==
+X-Received: by 2002:a05:6214:252a:b0:89a:424:984b with SMTP id 6a1803df08f44-89c5e3c81ffmr17623666d6.31.1773699282359;
+        Mon, 16 Mar 2026 15:14:42 -0700 (PDT)
+Received: from kerndev.lan (pool-100-15-227-251.washdc.fios.verizon.net. [100.15.227.251])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89a65beeb7dsm145596556d6.19.2026.03.16.15.14.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Mar 2026 15:14:42 -0700 (PDT)
+From: David Windsor <dwindsor@gmail.com>
+To: fred@cloudflare.com
+Cc: paul@paul-moore.com,
+	bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	audit@vger.kernel.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	kpsingh@kernel.org
+Subject: Re: [PATCH RFC 1/4] audit: Implement bpf_audit_log_*() wrappers
+Date: Mon, 16 Mar 2026 18:14:40 -0400
+Message-ID: <20260316221440.2043299-1-dwindsor@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260311-bpf-auditd-send-message-v1-1-10a62db5c92f@cloudflare.com>
+References: <20260311-bpf-auditd-send-message-v1-1-10a62db5c92f@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 10 Mar 2026 12:49:12 +0100
-Philipp Hahn <phahn-oss@avm.de> wrote:
+Hi Frederick,
 
-> Prefer using IS_ERR_OR_NULL() over using IS_ERR() and a manual NULL
-> check.
-> 
-> Change generated with coccinelle.
-> 
-> To: Alex Williamson <alex@shazbot.org>
-> Cc: kvm@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Philipp Hahn <phahn-oss@avm.de>
-> ---
->  drivers/vfio/vfio_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
-> index 742477546b15d4dbaf9ebcfb2e67627db71521e0..d71922dfde5885967398deddec3e9e04b05adfec 100644
-> --- a/drivers/vfio/vfio_main.c
-> +++ b/drivers/vfio/vfio_main.c
-> @@ -923,7 +923,7 @@ vfio_ioctl_device_feature_mig_device_state(struct vfio_device *device,
->  
->  	/* Handle the VFIO_DEVICE_FEATURE_SET */
->  	filp = device->mig_ops->migration_set_state(device, mig.device_state);
-> -	if (IS_ERR(filp) || !filp)
-> +	if (IS_ERR_OR_NULL(filp))
->  		goto out_copy;
->  
->  	return vfio_ioct_mig_return_fd(filp, arg, &mig);
-> 
+On Wed, Mar 11, 2026 at 04:31:17PM -0500, Frederick Lawler wrote:
+> +__bpf_kfunc int bpf_audit_log_cause(struct bpf_audit_context *ac,
+> +				    const char *cause__str)
+> +{
+> +	if (log_once(ac, BIT_ULL(LSM_AUDIT_DATA_CAUSE)))
+> +		return -EINVAL;
+> +
+> +	audit_log_format(ac->ab, " cause=");
+> +	audit_log_untrustedstring(ac->ab, cause__str);
+> +	return 0;
+> +}
 
-As others have expressed in general, this doesn't seem to be cleaner
-and tends to mask that we consider IS_ERR() and NULL as separate cases
-in the goto.  This code looks like it could use some refactoring, and
-likely that refactoring should handle the IS_ERR() and NULL cases
-separately, but conflating them here is not an improvement.  Thanks,
+Rather than putting everything in the cause field, could we perhaps
+have a separate kfunc here that appends normal stringpairs (not
+format strings) to the audit record:
 
-Alex
+  bpf_audit_log_str(ac, "result", "denied");
+  bpf_audit_log_str(ac, "op", "read");
+  bpf_audit_log_str(ac, "scontext", ctx_str);
+
+I know you didn't want to wrap audit_log_format(), which makes sense,
+this would be a midway point between that and stuffing everything in
+one field.
+
+> +__bpf_kfunc int bpf_audit_log_net_sock(struct bpf_audit_context *ac, int netif,
+> +				       const struct socket *sock)
+> +{
+> +	struct lsm_network_audit net = { .sk = sock->sk, .netif = netif };
+> +	struct common_audit_data ad;
+> +
+> +	ad.type = LSM_AUDIT_DATA_NET;
+> +	ad.u.net = &net;
+> +	return __audit_log_lsm_data(ac, &ad);
+> +}
+
+Should we also wrap ipv4_skb_to_auditdata() /
+ipv6_skb_to_auditdata()? Smack uses it in smack_socket_sock_rcv_skb.
+
+Thanks,
+David
