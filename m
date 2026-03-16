@@ -1,133 +1,135 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C75C3EC2E2;
-	Mon, 16 Mar 2026 19:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E3836495D
+	for <linux-security-module@vger.kernel.org>; Mon, 16 Mar 2026 21:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773687766; cv=none; b=r+22LtYqhp9CKG/EycSCqW9zRE10H11MUsIhPksQbk3wDSM3TjlmvTpyCLN2QaXkT30ZfOR+/R5zlHAFv5HKKu/tMserWL4jf8L8JbanOMqnVbDnWTn9ShY+2wkwgzr7aeHG/ucGqj1ZqyXUTAmtpmEE/hFJOAbPpmu8k5g4Jc8=
+	t=1773696983; cv=none; b=LnZJm8OpjqyKdQVsyW5GKjtrZnnKjOu/ZxDhUZgfR6ltokVmXHQLZX/kAPmDaYbcLhAB+3kYyeU0NAUQEKZuk4/fSUJCV0YK1jLIAlBRv6wb0oJv5Y3neVDLIu20FbJSZqTVWwQXab/KtvPlKW8cuKrzsPiokthZafkYgTHnWvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773687766; c=relaxed/simple;
-	bh=CUkhw3xl8xIRjoR4RbMKIcmO3c0dZFO7usOuKJlm4c4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Co8BaSrH4OJ9PbTt9IOPyuTMiOUQ5qO7uF/aP36NSNlwov7MMZtU+LfU5YxAbFgHYo8qgvEX0Et3Ji+8aHl4u9aPMQr3yYbPbQn+jlKmkzjzHQDbzZXlyQcHFX651wy7585kix524+25+04vy1Xe7J9lPP+6OuTILh/MvC6BINg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mJW4Vh0H; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773696983; c=relaxed/simple;
+	bh=ZHHsteO5AvuECau+jGB9nG1dY25l2SiYgEOKuw8Dlbo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oJw+s9iVLdUna9xjfYS+RGkoWyQXJ8ftRlsbxPfKEPpOP/eRKxMTLiRbf1vmSV6Qrv8stfYikJlUaqvQnB6trYmgg8OHgZ+Uz9q5B1dDhLprYJbmlMcXC1sZUP1IXjH7g9YhV0Zy4l9BYJr9kRG/ZeDHp35goHyHZR7GnEF7/o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Ftw2W6s/; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJW4Vh0H"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B275FC2BCB3;
-	Mon, 16 Mar 2026 19:02:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773687766;
-	bh=CUkhw3xl8xIRjoR4RbMKIcmO3c0dZFO7usOuKJlm4c4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=mJW4Vh0HAFzhHgFoWvUIXGQKWxXFMsnpcqEiyNCLCT3r9CSByh3g0E0fND07bqgRb
-	 0Hb1/kBe+iFnKWX0GeqaraDUgsCr26BkJNw8y0jepowt3oWEKI6XlGubU2aNf4FV+T
-	 MaGVsXE5OfF/nu+sGW4eYjCggEDdSbn1lGoAVtCH3f2TssdyXZ9nFPfhJyhw4TO5aT
-	 HeFEzmdP3r491jMRfD3yhl7CQCiRNE/qzgWRCtYKnp0fOOK3PqSrpl2jRpf+ZyHtbu
-	 +FtVYvn+e4ucu/WfVKkzpjv8y4IqkVTPNhad4QZ4gwZV3J+pPEUX2b+REKYDripGw3
-	 mLJz/25prB3iA==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 16 Mar 2026 15:02:23 -0400
-Subject: [PATCH v3 2/2] nilfs2: fix 64-bit division operations in
- nilfs_bmap_find_target_in_group()
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Ftw2W6s/"
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-5090c48de85so57887211cf.0
+        for <linux-security-module@vger.kernel.org>; Mon, 16 Mar 2026 14:36:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1773696981; x=1774301781; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UuAmGgbfl+JV2g5jci7AOV5QImEZLcznAUEhETM+f8o=;
+        b=Ftw2W6s/R7WmEhemFD+epoWcOKvY0noPp8ClwdgCGW1KwGlLWrfXWJbkzMpZyDFbUd
+         aEYzSWU1pl1UIDcKppkdvYZ3KCCPdQzbNY2guJkYf2Z3pzjwVfKc/IAbPZ0S+WwMukwE
+         yXfGXLHfGaAw4Li7C0rsOzDpdSUQ5RPT1HpVKE5S8VvFuNe64OPGYHKAZSqeuG5KNcMS
+         3aMmEfxIya9tqk8gahcJCTNDBKja1NzqJQ7CFsqXw07X/j6vZGF7UxvSsIfnNVh2rX7C
+         xFESR4xhVIfZ5cXWyVfX9T70tqG6cLG0S9Ry1BPgA0qOIPh4ifdSrUIYqzaiz1t35DSQ
+         91MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773696981; x=1774301781;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UuAmGgbfl+JV2g5jci7AOV5QImEZLcznAUEhETM+f8o=;
+        b=ph4pQxkA5ViRqvWt3xTf7u85yMJTgIqrXwpjpmbHGquEZ0b8/Te8/heTyi1v/u0mon
+         wZbeU0WONW1qZy46sfbry1DpQWWkDXnAxkAoqmaUpd7uGmrFg6vemGAcnUUFYB7WmuxH
+         6RBgSy1ebcJYVSy5wG7OCRywkpENZj3AcqtQiNQ5NTgdKK9AQryPhm7lb6A1uxvGoIiJ
+         CL3cYI/xHpio0LDBMHtRO5yruXErQLAzNJUuywo2kmJtUnpYM0P2Qrf5VCkx7mcLHw+d
+         viknUdFyEVj51Lc4ftqw2gQd5E40V/2Tla5W1PWatb9RQib49VmXWbqIJ2IOqQg3cErR
+         J0RQ==
+X-Gm-Message-State: AOJu0YwThmaNXYRyxTg4fMJ7ViOaMIfhn4xug0QYV3ZGbdZBOCjgbfZ6
+	na2Wv4TTQLZcv9zSZPXtwfzDpv2AnXIiGdbIP35HTiOHiNk20YICwbrI5tpFyYtoa5wqrtnB4ZP
+	sfa4=
+X-Gm-Gg: ATEYQzyBKHKtJwO/SlAq6MBXClVpY4EtzXvBgnPDIDmi45uu2ONnW80qhp3rMqFmzuA
+	kMv5J+fLENs0o/u1I6FsnlokvtJ2cO1N6FBaAGHtNmw3OfKsTu9/6jkjgORfGXnLnnfFyVgrSD1
+	gKq7f5uHSbkGfcguoYCG/qrHyx2KVMCVKZlrF36+yTRnYX23LrQziJm8JKQH6bUgM6QnruTBGsr
+	W3gj287CoU7azYqqD0bNCc10PVhSA1I48RQ4LC/Jj6D5MNtdmw67Ec1nT/9WFSvo3R8S3pZRson
+	rovWV+fX1J3vaHW6ZwZH1J6E8gLioUA+vqd0xAxOYd5/Ptcv7sHqwUUeyA/vN30OUYyRiqbqPzT
+	lnxy9lGi/saMSp136vIBvD9J+5kXnxs2KzJFTJVjj8x8gHyIxzBn2KMKQusTCH5FAfXs7jDHlV2
+	3S8fzA2fAo4ytj1AgB/62vsJtvXQJhPjAE+n7rjvRreqzwXM4fFXN0rMnv8tfc1IT4kwyz
+X-Received: by 2002:a05:622a:199d:b0:509:99c:2cbc with SMTP id d75a77b69052e-50957e1106cmr194434801cf.63.1773696981096;
+        Mon, 16 Mar 2026 14:36:21 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5094a03556csm105356641cf.2.2026.03.16.14.36.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Mar 2026 14:36:20 -0700 (PDT)
+From: Paul Moore <paul@paul-moore.com>
+To: linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org
+Cc: Amir Goldstein <amir73il@gmail.com>,
+	Gao Xiang <xiang@kernel.org>
+Subject: [PATCH 0/3] Fix incorrect overlayfs mmap() and mprotect() LSM access controls
+Date: Mon, 16 Mar 2026 17:35:55 -0400
+Message-ID: <20260316213606.374109-5-paul@paul-moore.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260316-iino-u64-v3-2-d1076b8f7a20@kernel.org>
-References: <20260316-iino-u64-v3-0-d1076b8f7a20@kernel.org>
-In-Reply-To: <20260316-iino-u64-v3-0-d1076b8f7a20@kernel.org>
-To: Ryusuke Konishi <konishi.ryusuke@gmail.com>, 
- Viacheslav Dubeyko <slava@dubeyko.com>, 
- Christian Brauner <brauner@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, 
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: David Laight <david.laight.linux@gmail.com>, 
- linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
- kernel test robot <lkp@intel.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2169; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=CUkhw3xl8xIRjoR4RbMKIcmO3c0dZFO7usOuKJlm4c4=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpuFPQVZMUYX+O8fn7SpAIPVmqwkRvPuMz5JaPj
- Tv7vfY/ClOJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCabhT0AAKCRAADmhBGVaC
- FQZ9D/9E+wUpb9S2ol0rfVLUqP434oMLE4Z/2pT0pJ8AOVE2CMqfbA/2KzU2Y3HrHnYJAirEMNN
- v6WbqhZFaeVxOomaU9Gb5Kyasvd2dBEFWgjXc0U39kzMsyAhE3WRUGEk66Eqvi0bzdKYCpyfjbO
- fSO1JrbT9RPgHhlv2KCWiGhm5/5LRoaYd8k65+YMi4mLkIRhxInG6v9DCfMwjKStdoK37I93Rgq
- eUF78aT52ToEax/9u1vW+my6MkKSm9nXzvDsioOE2o5GoFAt2Nk1fxuO0qWHyCzVYKGN8i2ksvr
- bxODCyGUoOCQ3mq327mQeMlGAUOoXFwmV5nVstqNFhZIRIdsk281GbAajSZc1ScDrrfR2CDbzmp
- z1CbSRGcEs9h4OoJEho7gi4uldeXUAE3YDIJK68UaTAZJS6J+1aa5XXLTNrUGrN2lk4lzhIOWxZ
- kqv31A8mDElVKBLeF4c7/OwTGCi4cKDEFgK1sDVDpmOykQ+m5trn8jwUYwUVLQmF2pZ18gExtn3
- 9GEfptvkU/Hg/GUtoK+8nfuFNq6KHuAkxNHMXxSCjIYJxNURiy725EnzbTg7yzDshNOeeKbX8EU
- anxZv7rNTnkkyKqA5QiwbyAFmgbzIx5NlsDHGsrSuki0nrK+IxKwhU3dqFi78WkRCdTO+84Lcaq
- +s47Dz1vuvvgACA==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Transfer-Encoding: 8bit
 
-With the change to make inode->i_ino a u64, the build started failing on
-32-bit ARM with:
+The existing mmap() and mprotect() LSM access control points for the
+overlayfs filesystem are incomplete in that they do not cover both the
+user and backing files.  This patchset corrects this through the addition
+of a new backing file specific LSM hook, security_mmap_backing_file(),
+a new user path file associated with a backing file that can be used by
+LSMs in the security_file_mprotect() code path, and the associated
+SELinux code changes.
 
-    ERROR: modpost: "__aeabi_uldivmod" [fs/nilfs2/nilfs2.ko] undefined!
+The security_mmap_backing_file() hook is intended to allow LSMs to apply
+access controls on mmap() operations accessing a backing file, similar to
+the security_mmap_file() for user files.  Due to the details around the
+accesses and the desire to distinguish between the two types of accesses,
+a new LSM hook was needed.  More information on this new hook can be
+found in the associated patch.
 
-Fix this by using udiv_u64() for the division.
+The new user path file replaces the existing user path stored in the
+backing file.  This change was necessary to support LSM based access
+controls in the mprotect() code path where only one file is accessible
+via the vma->vm_file field.  Unfortunately, storing a reference to the
+user file inside the backing file does not work due to the cyclic
+ref counting so a stand-in was necessary, the new user O_PATH file.
+This new O_PATH file is intended to be representative of the original
+user file and can be used by LSMs to make access control decisions based
+on both the backing and user files.
 
-For finding the index into the group, switch to using a bitwise &
-operation since that's more efficient. With this change however,
-NILFS_BMAP_GROUP_DIV must be a power of two, so add a compile-time
-assertion for that.
+The SELinux changes in this patchset involve making use of the new
+security_mmap_backing_file() hook and updating the existing mprotect()
+access controls to take into account both the backing and user files.
+These changes preserve the existing SELinux approach of allowing access
+on overlayfs files if the current task has the necessary rights to the
+user file and the mounting process has the necessary rights to the
+underlying backing file.
 
-Fixes: 998a59d371c2 ("treewide: fix missed i_ino format specifier conversions")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202603100602.KPxiClIO-lkp@intel.com/
-Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
-Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/nilfs2/bmap.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+--
+Amir Goldstein (1):
+      backing_file: store user_path_file
 
-diff --git a/fs/nilfs2/bmap.c b/fs/nilfs2/bmap.c
-index 824f2bd91c167965ec3a660202b6e6c5f1fe007e..5f0f1f283af0208e1879e2e84b0b5b9629fd6b8a 100644
---- a/fs/nilfs2/bmap.c
-+++ b/fs/nilfs2/bmap.c
-@@ -450,18 +450,25 @@ __u64 nilfs_bmap_find_target_seq(const struct nilfs_bmap *bmap, __u64 key)
- 		return NILFS_BMAP_INVALID_PTR;
- }
- 
--#define NILFS_BMAP_GROUP_DIV	8
-+#define NILFS_BMAP_GROUP_DIV	8	/* must be power of 2 */
-+
- __u64 nilfs_bmap_find_target_in_group(const struct nilfs_bmap *bmap)
- {
- 	struct inode *dat = nilfs_bmap_get_dat(bmap);
- 	unsigned long entries_per_group = nilfs_palloc_entries_per_group(dat);
--	unsigned long group = bmap->b_inode->i_ino / entries_per_group;
-+	unsigned long group;
-+	u32 index;
-+
-+	BUILD_BUG_ON_NOT_POWER_OF_2(NILFS_BMAP_GROUP_DIV);
-+
-+	group = div_u64(bmap->b_inode->i_ino, entries_per_group);
-+	index = bmap->b_inode->i_ino & (NILFS_BMAP_GROUP_DIV - 1);
- 
- 	return group * entries_per_group +
--		(bmap->b_inode->i_ino % NILFS_BMAP_GROUP_DIV) *
--		(entries_per_group / NILFS_BMAP_GROUP_DIV);
-+	       index * (entries_per_group / NILFS_BMAP_GROUP_DIV);
- }
- 
-+
- static struct lock_class_key nilfs_bmap_dat_lock_key;
- static struct lock_class_key nilfs_bmap_mdt_lock_key;
- 
+Paul Moore (2):
+      lsm: add the security_mmap_backing_file() hook
+      selinux: fix overlayfs mmap() and mprotect() access checks
 
--- 
-2.53.0
+ fs/backing-file.c             |   28 +++++---
+ fs/erofs/ishare.c             |   12 ++-
+ fs/file_table.c               |   53 +++++++++++++---
+ fs/fuse/passthrough.c         |    3 
+ fs/internal.h                 |    5 -
+ fs/overlayfs/dir.c            |    3 
+ fs/overlayfs/file.c           |    1 
+ include/linux/backing-file.h  |   29 ++++++++-
+ include/linux/file_ref.h      |   10 ---
+ include/linux/lsm_audit.h     |    2 
+ include/linux/lsm_hook_defs.h |    2 
+ include/linux/security.h      |   10 +++
+ security/security.c           |   25 +++++++
+ security/selinux/hooks.c      |  108 ++++++++++++++++++++++++++++------
+ 14 files changed, 231 insertions(+), 60 deletions(-)
 
