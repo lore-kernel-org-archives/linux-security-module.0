@@ -1,235 +1,166 @@
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DA0391E4C
-	for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 21:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773783302; cv=none; b=RS+N+EpJ54aIq99VxRZ5rR5JOFcEe7ipNhdtkFwdxEsve4+XTGrTbMTnCS10dVx9Xni+7ftfRe+CwX1KNv51OEAcBbayj9DOk6MntsxNkPIO3pmzn0jQ/FPu0yuWpBDV7wKDhR3JWYGa4xAqNMS/fIBhJqIWC+LgPWxzzOcS09k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773783302; c=relaxed/simple;
-	bh=nU4eV9AGDx8XFIVB4fQcYC+OWLftzQaVoXtlpBOrvHM=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=MjM0KfghBzeyZUjnylx50l5PgSe/SuMsVrq0ZeugMNNoYggJIOHrC15Vq8Vvnz9nYFrf7YHQp0bqEJR1Fw6eQfEZYacchvHjbGn9qeoy+u0E8eDJmz8rIBWrfEpeFWEor38GiYNzXcGIfF3dWMQTlZ+DmZJkpeAjn/gVneIAX9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=TMX5gULk; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4363E51F7
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 22:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.170
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773787372; cv=pass; b=aba98JuHmcD5h0w2Ki052gkWzEaoJx3XgtimvBF45mD2Tdd6mLVjqLX5cBvYZsE1P5u1/oMdwl8l1J7zS4HM72o87cg0W3o1tUPl/CceLVfAeFBx9FmJN6yOcVyfcVtW/q4GPKfzK/kKedq3kOn+kZrotvi75hJCapDYpmXa0WY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773787372; c=relaxed/simple;
+	bh=oScUuIjIjb/tZulbsi2FkIBZwopgeujtHsSn1k3PGiQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EAOCx0h98EzHN9xZGaKZb+N1hqCj/PDf0QbOb00mQ5umTIgw8a0+nOem0257roddeXIN4Nuhaqs5Of3e84Vb2X4GI2pdVYbINU5V/nn4lCTiJwa31yyK1e0VW/9sgBB9scXnCS/3bIdQZGBwJud4koEx87ov8skp7Jua6BjeWh0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Rp4KChT/; arc=pass smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="TMX5gULk"
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-8cd77786e97so621057685a.3
-        for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 14:35:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Rp4KChT/"
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-82a3d3235c9so2280222b3a.2
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 15:42:50 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773787369; cv=none;
+        d=google.com; s=arc-20240605;
+        b=jiXpsVuoSw+JoR37H4FvrLgeRzpK1OG5nIC+h2iWqcpgziXtHIjUCP56rHV/rJCaHM
+         yDU9KjJlWhFp+sE3GLUEGnGZcENwHgHxfBmOc17UARwbfSMD4A2jDzPVbUQtJLSmsJAj
+         pyC1pcj6okIOr9l8rDFD4zJOnjfhpnkg7/KDT1llcyqpu00TcjOZc4B/gPaq8Gd2f3nb
+         QZFjyRkkdHMzFIKshHcOPJYqUn7uwKdYTOn7tJ1vYMYFb7JZBeypDUDPqYHmFddjHLrS
+         2CzIAVjNFAzZvgwGI2/nP44byQzyWYoTbrBQdMPYDDo0pu8VpJWbVQRTxUAHm9X5CUyh
+         cFAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=B8weZ6sz5Sw0SJMaIbsh0p66JDKF/4Vt78zNnjgP+G0=;
+        fh=/XpAAIYvsh+24QrHGHWY/Lehbv+i1IXtGhm0V3NZrs0=;
+        b=ItxvD0SGsUCZxIKv02o4+t00oT6XFMvUq9o0uTSygBdWcDVSta0kLPknrIMm9H09Cm
+         TRbuAjem9xn/RJDMKU4lzkud7qPTj/JqcWoRdx32+itZ+GgUO7lB5Ko4PuS2VU3wk3wi
+         vNqweamW6vCFSbxh7RyVtNyHwBXOkwt/33JSSWmGWn8+KbMq3ITRGpZuWTL0ij/ZkiZd
+         3ZLnmTUfrDvYaL20W5BD/Cu2fr0RCNf51a4PQZ+nf2oeL1zOv8cWTtr6VIRX+gYEOGaP
+         eb2T7X4AEwPUnFHkj/M3vClqR0B1IuwrV4aSEgH9uV2CRpvI2W/lYL/qYpG7VitM/Pgy
+         cySA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1773783299; x=1774388099; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HP3FBNe9OuKfJKVhnVb7LIsNz9sKQC2G5cAIorTIY2g=;
-        b=TMX5gULkq/o00ctQv3uT5ICdvq6GHmSCziJa25ZiLONTDUUypCIio8NSIxmHv8JPBI
-         t0XG3JBTu9xbk71ilwCYpGV1QjF5so9w6xlkdnlD1jssShCAuqx/bRkiVCfWH5ZfNNjx
-         JI7GtKoeoh8i1Hs6ux2waunW/azrkHVCpsINDI/mz1XF/LJVxB276KBnlcMlTLl9cPB8
-         LBZV8Yx5qqeiVZlmlTdgduwSX0H4OoVVcgx2fwCWIMEGGqRklA1r1XUBS7LJjswuNaWI
-         jFeOxjm2lxau0vLmq7AntIY5Gm2+FOVg8Dz15BpVndkgPrmbUQvh4frvKUDxPPC3hpzv
-         IOpg==
+        d=paul-moore.com; s=google; t=1773787369; x=1774392169; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B8weZ6sz5Sw0SJMaIbsh0p66JDKF/4Vt78zNnjgP+G0=;
+        b=Rp4KChT/WWpTu8I8ai/ucT9lIndTLNcnHKlKHGJEhA9cz9/jOtKHRfTj8Mt4k99hLz
+         /I89gTL4UvFCXEXQ+emW/vqxpORQl6tRIFW8QI509j2GTSrVZtaum8vUBrpYmpT8jd0A
+         wISeWETh5lykScg+b9x3/WRqzlb+SKvIZCRY3dNv6Dl6SFOWy6A033zHv7EsB5rYeEko
+         x5aPlsVTKpmigGziLqh1SSMCTlzwf+Rl1EejgXkWvWLlaOaqd9ELuzLTq9ZeivFTN19l
+         O/ftWife1HLsD1vxt+eBkShi1+KqmNcKNpSCyVKzgaGVSMOMFeuIaCIQZbGea997OFsZ
+         J51Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773783299; x=1774388099;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HP3FBNe9OuKfJKVhnVb7LIsNz9sKQC2G5cAIorTIY2g=;
-        b=hFmGU++ckj10QZ4uHKrgZxuljravw6Pvt9qTcIzRr6sp5gNLM21GeWcaUlSreAYuv0
-         JqBcqhuZWH+pD/lsjPiQ0n5VFSROa7CqOs3gH8ZD+dyz3cmU00GzFFBFW0YvDmjhYSOJ
-         C9OCgwD2Cm9eK+Pxr+kBn8dzSu2YfQlgCRSWkBqHuXyF34uH7PpAWyKbwgVDCSjBd7Cp
-         yKcX3XF2ebqg1zUpR4NQqwzRHZBqq4Uwhq079WcvLcgiQh8oI1KIk4JpOkSHm6iHF7I8
-         s4G+dhtB00H20Fq9W2ZvGhVqQsyRHF1SM1hgCMANsBfIJQllu4Z/fULNjXMbgH8Gq/mM
-         4fHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpwlzY/4fEjywYU/mC10TvPTqTAHyfGeyDL1Zm8c5nc+dJf9xwh0MTDBYfIN+k1Fhs8gGxhMtY23ZgdkYKFNkChgNmXC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlNr5IpTSzHjUHYTYissMlcXEP6gt+evHa768YTEMN5Of9ziXT
-	kYUSlaVs0o9kQTr0n11jqD0/tKEIVRD+ub8tTxPoHqZYz/G3wifAmyLRd3aFTF3beA==
-X-Gm-Gg: ATEYQzzm6+xnxbjzJuiFPZvZrrLAesylXN//9EkEEBXN6kqk1YG4HDQpnXCZW9ZsEW7
-	xhc9qRe+vOhdSjatVVxl7xQg2UBeR6HnT6/s3KK5zqZZEJ0OqzE6GeG8NHUTiYy1MLUjciTgqhg
-	q+rpstMB95SWsIBF5t7UUluvZFLekGWY13xulKK03zBMSHf/SGidZiJjXqo6ZB5mH2ywwpWyM+u
-	PE0EMZd7RUMmmuSUEQ51yU2yOkzfrpYpH+07yqiE8bVMaKJ/B3+F5iWYDAgUUYf0jHE0+jQr/B/
-	6RhkTaltZfX9KFFvNa2X48T+zZm0qCqbm9uKaDivJUXWYzeUONT8EVZlpuY/Uv4HNQL3lu+OJRS
-	TwHaOB9FyDg8ke8pEQM9A1R1gXvnGrrx/Hafu/f/9UbHLtsu8wZHWak1gj/vno2+fnbAHbZ2cV8
-	9ej1YQDLHxBBv7qnSRD1+BFdhj9UKdgU4JUXVvkS7+9rpj2NwxkJXSAO+CMNDhro9z+Prf
-X-Received: by 2002:a05:620a:29ca:b0:8cd:c077:40d3 with SMTP id af79cd13be357-8cfad1e0968mr169669185a.25.1773783299458;
-        Tue, 17 Mar 2026 14:34:59 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cfacc352a4sm70941785a.0.2026.03.17.14.34.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2026 14:34:58 -0700 (PDT)
-Date: Tue, 17 Mar 2026 17:34:57 -0400
-Message-ID: <2697b9f672967b1318630f2ffa21914f@paul-moore.com>
+        d=1e100.net; s=20251104; t=1773787369; x=1774392169;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=B8weZ6sz5Sw0SJMaIbsh0p66JDKF/4Vt78zNnjgP+G0=;
+        b=UJjQfvu52wdcu9hcNjrUUXSDlscbDuAbQLnJKgvyCInShTpk5wRnIGlRuWTihOw/4y
+         DU7q16Au7PgpUSZ3KS+/9MeEcabSPafsdVnh4mS5bYbjaBMQwDKn2pHT2NCz9yQ/LYs4
+         pLkVwzuegyPNcOjHa2D7mxe8Y/Jp94iC0COPuhTZsVTlFReJyuMpH3zvsGL1OOkh0vzh
+         5u9nLI39JPXHR4Hn0hQtZJgYQRwVQnDCdhM1PPS/IQSoOI8BstMmLLdgCt1w1McSeDNI
+         0ieFX87mUdPX3NEEI819enig+olzkBc7Lrs1FEI8+stUNBPyYKVh2FkwNjfhyoKxfmMT
+         LKwQ==
+X-Gm-Message-State: AOJu0YzVId5NM5lC1qhf9FoFCA1tPMuvNJE5eHZEetaaUkZM7xLTN4uY
+	pWXQuY/w4slC8ElEyh89jm0Ldy+cZ4qpy5aRoUNvbaBch8t90j12cd480Th+2hyoFaFJktT56Gt
+	nQcMAYyuhBkrmvFaFgy3DF7M1LW87OmnDDN9WQQM/ovRCobx722seGZHa
+X-Gm-Gg: ATEYQzyfWaUwBFozZDCfSBBtYah4SC4OvrzJ/iE23yMU16Bl/hjdk+nmRTTzK1HKLNl
+	gnGzlhxCR/GuHQ+NBlfdmbdsEkKHZ19oxuBe/S2rYngO5VzFPRzpuBM6/Gw6muLFrnXF598fFxg
+	rPe4NLUTEB0R4MqW9q9KlwgSlqxGcUNN0Q7qOc85J9S24LFIazbxX7g5zmzRvq2DNd8T8muGBfP
+	QGz3r5NfuPkhX6C0kM5H6nU4+5xpiMSKSf4dIUXSQf1hgwrX66jhfpY1VTB7D8GKBXuiT83L0Kh
+	E5Nr/665ZmQjiTWAEg==
+X-Received: by 2002:a05:6a00:1816:b0:827:2ec9:e1bc with SMTP id
+ d2e1a72fcca58-82a6af3b680mr1004833b3a.61.1773787368885; Tue, 17 Mar 2026
+ 15:42:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20260317_1333/pstg-lib:20260317_1127/pstg-pwork:20260317_1333
+MIME-Version: 1.0
+References: <20260316213606.374109-5-paul@paul-moore.com> <20260316213606.374109-7-paul@paul-moore.com>
+In-Reply-To: <20260316213606.374109-7-paul@paul-moore.com>
 From: Paul Moore <paul@paul-moore.com>
-To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>, =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, "John Johansen" <john.johansen@canonical.com>, "" , James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>
-Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>, Tingmao Wang <m@maowtm.org>, Justin Suess <utilityemal77@gmail.com>, linux-security-module@vger.kernel.org, "Samasth Norway Ananda" <samasth.norway.ananda@oracle.com>, "Matthieu Buffet" <matthieu@buffet.re>, "Mikhail Ivanov" <ivanov.mikhail1@huawei-partners.com>, konstantin.meskhidze@huawei.com, "Demi Marie Obenour" <demiobenour@gmail.com>, "Alyssa Ross" <hi@alyssa.is>, "Jann Horn" <jannh@google.com>, "Tahera Fahimi" <fahimitahera@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, "Kuniyuki Iwashima" <kuniyu@google.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v6 1/9] lsm: Add LSM hook security_unix_find
-References: <20260315222150.121952-2-gnoack3000@gmail.com>
-In-Reply-To: <20260315222150.121952-2-gnoack3000@gmail.com>
+Date: Tue, 17 Mar 2026 18:42:37 -0400
+X-Gm-Features: AaiRm51ktGDW1-usZMxMHsT1xbcaRYx3q6Ml_vERE0ki9AcWlEliFtDWBIy0vmI
+Message-ID: <CAHC9VhTiB73F9fB1o3K4NfJ-Fa50MsVA_=79kn6X34L62J_TwA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] lsm: add the security_mmap_backing_file() hook
+To: linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org
+Cc: Amir Goldstein <amir73il@gmail.com>, Gao Xiang <xiang@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mar 15, 2026 =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com> wrote:
-> 
-> Add a LSM hook security_unix_find.
-> 
-> This hook is called to check the path of a named unix socket before a
-> connection is initiated. The peer socket may be inspected as well.
-> 
-> Why existing hooks are unsuitable:
-> 
-> Existing socket hooks, security_unix_stream_connect(),
-> security_unix_may_send(), and security_socket_connect() don't provide
-> TOCTOU-free / namespace independent access to the paths of sockets.
-> 
-> (1) We cannot resolve the path from the struct sockaddr in existing hooks.
-> This requires another path lookup. A change in the path between the
-> two lookups will cause a TOCTOU bug.
-> 
-> (2) We cannot use the struct path from the listening socket, because it
-> may be bound to a path in a different namespace than the caller,
-> resulting in a path that cannot be referenced at policy creation time.
-> 
-> Cc: Günther Noack <gnoack3000@gmail.com>
-> Cc: Tingmao Wang <m@maowtm.org>
-> Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+On Mon, Mar 16, 2026 at 5:36=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> Add the security_mmap_backing_file() hook to allow LSMs to properly
+> enforce access controls on mmap() operations on stacked filesystems
+> such as overlayfs.
+>
+> The existing security_mmap_file() hook exists as an access control point
+> for mmap() but on stacked filesystems it only provides a way to enforce
+> access controls on the user visible file.  In order to enforce access
+> controls on the underlying backing file, the new
+> security_mmap_backing_file() hook is needed.
+>
+> In addition the LSM hook additions, this patch also constifies the file
+> struct field in the LSM common_audit_data struct to better support LSMs
+> that will likely need to pass a const file struct pointer from the new
+> backing_file_user_path_file() API into the common LSM audit code.
+>
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
 > ---
->  include/linux/lsm_hook_defs.h |  5 +++++
->  include/linux/security.h      | 11 +++++++++++
->  net/unix/af_unix.c            | 13 ++++++++++---
->  security/security.c           | 20 ++++++++++++++++++++
->  4 files changed, 46 insertions(+), 3 deletions(-)
+>  fs/backing-file.c             |  8 +++++++-
+>  fs/erofs/ishare.c             |  6 ++++++
+>  include/linux/lsm_audit.h     |  2 +-
+>  include/linux/lsm_hook_defs.h |  2 ++
+>  include/linux/security.h      | 10 ++++++++++
+>  security/security.c           | 25 +++++++++++++++++++++++++
+>  6 files changed, 51 insertions(+), 2 deletions(-)
 
-Some really minor nitpicky things (below), but nothing critical.
-However, as we discussed, I would like to see the AppArmor folks comment
-on the new hook before we merge anything as I know they have an interest
-here.
+...
 
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index 8c42b4bde09c..7a0fd3dbfa29 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -317,6 +317,11 @@ LSM_HOOK(int, 0, post_notification, const struct cred *w_cred,
->  LSM_HOOK(int, 0, watch_key, struct key *key)
->  #endif /* CONFIG_SECURITY && CONFIG_KEY_NOTIFICATIONS */
->  
-> +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
-> +LSM_HOOK(int, 0, unix_find, const struct path *path, struct sock *other,
-> +	 int flags)
-> +#endif /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
-
-I'd suggest moving this into the CONFIG_SECURITY_NETWORK that is directly
-below this block so you only have to check the CONFIG_SECURITY_PATH
-state.  You can place it directly after the existing security_unix*()
-hooks.
-
->  #ifdef CONFIG_SECURITY_NETWORK
->  LSM_HOOK(int, 0, unix_stream_connect, struct sock *sock, struct sock *other,
->  	 struct sock *newsk)
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 83a646d72f6f..99a33d8eb28d 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -1931,6 +1931,17 @@ static inline int security_mptcp_add_subflow(struct sock *sk, struct sock *ssk)
+> diff --git a/fs/erofs/ishare.c b/fs/erofs/ishare.c
+> index 17a4941d4518..d66c3a935d83 100644
+> --- a/fs/erofs/ishare.c
+> +++ b/fs/erofs/ishare.c
+> @@ -150,8 +150,14 @@ static ssize_t erofs_ishare_file_read_iter(struct ki=
+ocb *iocb,
+>  static int erofs_ishare_mmap(struct file *file, struct vm_area_struct *v=
+ma)
+>  {
+>         struct file *realfile =3D file->private_data;
+> +       int err;
+>
+>         vma_set_file(vma, realfile);
+> +
+> +       err =3D security_mmap_backing_file(vma, realfile, file);
+> +       if (err)
+> +               return err;
+> +
+>         return generic_file_readonly_mmap(file, vma);
 >  }
->  #endif	/* CONFIG_SECURITY_NETWORK */
->  
-> +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
-> +
-> +int security_unix_find(const struct path *path, struct sock *other, int flags);
-> +
-> +#else /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
-> +static inline int security_unix_find(const struct path *path, struct sock *other, int flags)
-> +{
-> +	return 0;
-> +}
-> +#endif /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
 
-Similar to above, I would suggest moving this into the
-CONFIG_SECURITY_NETWORK block directly above this so you only need to
-check for CONFIG_SECURITY_PATH when declaring the security_unix_find()
-hook.
+The kernel test robot helpfully pointed out that this patch was
+missing a security.h include for the newly added LSM hook.  The fixup
+below has been applied to the patch in lsm/stable-7.0.
 
-Extra bonus points if you locate it next to the existing security_unix*()
-hooks.
+diff --git a/fs/erofs/ishare.c b/fs/erofs/ishare.c
+index d66c3a935d83..f80925b66599 100644
+--- a/fs/erofs/ishare.c
++++ b/fs/erofs/ishare.c
+@@ -4,6 +4,7 @@
+ */
+#include <linux/xxhash.h>
+#include <linux/mount.h>
++#include <linux/security.h>
+#include "internal.h"
+#include "xattr.h"
 
->  #ifdef CONFIG_SECURITY_INFINIBAND
->  int security_ib_pkey_access(void *sec, u64 subnet_prefix, u16 pkey);
->  int security_ib_endport_manage_subnet(void *sec, const char *name, u8 port_num);
-> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-> index 3756a93dc63a..aced28179bac 100644
-> --- a/net/unix/af_unix.c
-> +++ b/net/unix/af_unix.c
-> @@ -1231,11 +1231,18 @@ static struct sock *unix_find_bsd(struct sockaddr_un *sunaddr, int addr_len,
->  		goto path_put;
->  
->  	err = -EPROTOTYPE;
-> -	if (sk->sk_type == type)
-> -		touch_atime(&path);
-> -	else
-> +	if (sk->sk_type != type)
->  		goto sock_put;
->  
-> +	/*
-> +	 * We call the hook because we know that the inode is a socket and we
-> +	 * hold a valid reference to it via the path.
-> +	 */
-
-I'm not entirely sure that this comment is necessary as it doesn't tell
-us anything we don't already know from a quick glance at the code.  Is
-there something sneaky, or hard to see, that we should know about?
-
-> +	err = security_unix_find(&path, sk, flags);
-> +	if (err)
-> +		goto sock_put;
-> +	touch_atime(&path);
-> +
-
-This is hyper nitpicky, but I'd probably put one line of vertical
-whitespace before the touch_atime() call as it has nothing to do with
-the LSM hook being called.
-
->  	path_put(&path);
->  
->  	return sk;
-> diff --git a/security/security.c b/security/security.c
-> index 67af9228c4e9..c73196b8db4b 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -4731,6 +4731,26 @@ int security_mptcp_add_subflow(struct sock *sk, struct sock *ssk)
->  
->  #endif	/* CONFIG_SECURITY_NETWORK */
->  
-> +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
-> +/**
-> + * security_unix_find() - Check if a named AF_UNIX socket can connect
-> + * @path: path of the socket being connected to
-> + * @other: peer sock
-> + * @flags: flags associated with the socket
-> + *
-> + * This hook is called to check permissions before connecting to a named
-> + * AF_UNIX socket.
-> + *
-> + * Return: Returns 0 if permission is granted.
-> + */
-> +int security_unix_find(const struct path *path, struct sock *other, int flags)
-> +{
-> +	return call_int_hook(unix_find, path, other, flags);
-> +}
-> +EXPORT_SYMBOL(security_unix_find);
-> +
-> +#endif	/* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
-
-You can probably guess that I'm going to suggest placing this inside the
-existing CONFIG_SECURITY_NETWORK block, right after the existing UNIX
-hooks :)
-
---
+--=20
 paul-moore.com
