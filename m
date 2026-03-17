@@ -1,247 +1,219 @@
-Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442E6223339
-	for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 02:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773715455; cv=pass; b=rTHW+JcxJJ4iYB/0He60T43gwhAUSfC5MMXDS1GO1Ore9fFRRby9jY9CQUpN1ipfRR3mxW218/wKW67/dWd67erFxjhOy9ko9CnTeB4C3Rptb1f7r0aXyjOFumVmwE7Dr4bt+MMxVY8bkr74yy9kESwW936VGKKio+moVdzq8CA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773715455; c=relaxed/simple;
-	bh=sKwd1vQmDHai1b7yhMZ04Vlhn18rbe5n5SdllC6ho5o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZOhmojLHxhyxVw0f9uiwaP3M+bwCN7FM1BD4YZMnaZsmkNO7l6foxb0tiOdiXmEKxbnWIpCXRoW4z96mwlKxkewhADgE1oPvrARz1OY2QPi9iKS75L1TIonZo0DLcmXcTXtZr6WQampW6r2fs3RzGh70RB29bAVpDoPZvzO88us=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ME3/0nTD; arc=pass smtp.client-ip=209.85.221.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44AD2D1936;
+	Tue, 17 Mar 2026 03:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773717256; cv=none; b=tkVAT/OAiX18DSchJ0F1AonxGKCu5tZxmtETs7CxH4dA6dwTl4Q7/e7+49/urNBDK8IcS95wEpigxkP0Wpv5kaKVv2c6I2xtBmxuktgX1Gu57z3GNTr7pU5tehR3qI0pi0fi1O+O9yUToCJiYjoBhBNrbbhuXPArkEmmF1EGdUw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773717256; c=relaxed/simple;
+	bh=Hgvv2sMzviIsV5ayhpOLXlczyg1/nMnPBTWtKtUGjIY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U2ZNxSLVQ1CS/pWiemPmmw6/iDx7jnUD256+Iu3XR0ltaaPKQsQtTkgMqbEjI9qaxBE1sNX7Z7Ud31HpqjiLab6s4/I1TRXT7ug+XgqQEMmQuVqdxKecBBe5YUMIRIDElueqcQgDCoBCK+szNLJjVUWqCCcQ7JyHQQoWX0RqDnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Fie2dKJh; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ME3/0nTD"
-Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-439d8dc4ae4so5153769f8f.2
-        for <linux-security-module@vger.kernel.org>; Mon, 16 Mar 2026 19:44:14 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773715452; cv=none;
-        d=google.com; s=arc-20240605;
-        b=QTiKfK4vE4T+I99kYBB0EJf2Ttqp86RKZ26HJDStoPZEsVmVeRWstOI/E3qSzNYYK+
-         zd9v2CIOh9GGII7UVN+k5/1vSlVvzEFrPzs3QQo+nCfYx16J8+Z1VMXUJFAjhelIXAKg
-         6Lra7HrgqUCz1oNaFkUxQ3Ebby85x+3DVUEGobcUDd47tochqwyTRFgEj4kXwbr7vBHf
-         06Pjs5VRgr+1d3LUC4+gzm38dMsDykkZnz5xe6VHL4/OjGkc3tQO2yInJWgy7njOiweE
-         46uE8OgiPO5415d1ObEjLZbLSMTdDfZHi5pEz47WHphHZeVZFe+pVSrcc9N2n4cb59QA
-         A6yg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=+KG1TUIaaSVcjY5CkalZriMJmA+CKJA0WRQluiX7M9s=;
-        fh=Qpt2g1pMyuqEdpdrlHmU7ZqTdabOiFmc9iIxQXDabdM=;
-        b=jYI6VlOW+pj5aFZ1QQfID93F9f0G3vquPiDDTJncywmMkUleMfNM1oDGL5WftP6gS8
-         lCBBlyUN+3NvMhdOOLxxV5i8hopuUt6IEvrz1LHyMpjZT80wLOPeWTWaAAXRU1NgZoVj
-         laTsFRkM/Fh3dR++7cWN775QGTkqqTNBCv3XGiUAK/2jjhM9Ue8wVn05ngyWpKmAef0i
-         M02xAmQS+zlRKICu9ehqWlo2NmW1KytYjfpCNc06ZBcmC1DMwXx/l+v/TKjBCpXnKeh+
-         LZNr7/7dIvj67SNDwL22ZVOGIKZBlsebc/8oDF1Qfp7OuvpdSnQFJeyNvPz8qVuGeder
-         QmvQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773715452; x=1774320252; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+KG1TUIaaSVcjY5CkalZriMJmA+CKJA0WRQluiX7M9s=;
-        b=ME3/0nTDwrDUBMRhLFVuBRZqUtLoU4vo2culv+RcRWRo3CQEGiM/ev2Ms5xsksMOWJ
-         JbRxqvIN2vEz5Yc6l8LhYmsYY0WC40CTYTwTVO3uJFoyLqx9JGsFTJ0ltfT+lYKw33OB
-         QdQD71BVRhXogTyjc3rZ/pmbF9UZKU22YBArYKBbCMfGkE7Vm8ykHAcmTep9EbHGSg8U
-         j7tOtRx6YEDsgLHP5qEIo5C0hl4t1BOsKWWm0bjsw6JOBEX4PhA2Xk6TMy1ZN3u1TxWl
-         npo2vzowezghu96tvddggw/K/XPvvjkyOaG2pWXKfuyB2cffsFoMM6wo6NpD7kz0YaGL
-         6+Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773715452; x=1774320252;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+KG1TUIaaSVcjY5CkalZriMJmA+CKJA0WRQluiX7M9s=;
-        b=Aj3Lsi6DLcMIRI8HHg/9Yf5CKOBg4oHpqflrjIEE8G3FbwwKS/MbNqdt6W/eydY25U
-         DXzY6YmbPAAlQBzhq/PgAIl4J0+b6Mjy5+l/mtmfAjPLuKtP9ndZLl/1QRhrEKL7vILP
-         xYTNCajxAuiYdxl2mHc8s8uOR/Mt0q56ZZeWy+wiXgzby6uZV2SxMvF0QPOz+VzoHPDI
-         p509ZtXao6j12H2pxlUefWkHZMHHW7j3X0d5BT3CTxfCVQvAdqIgf8ZmCQe31IM1+XVb
-         DY+qUhlXTsaNXuh3ltYTqu40tmnzQuzUgK0T2QV7yHqhjJhlzTUTKAlgKK9Hbaknqkt6
-         O65w==
-X-Forwarded-Encrypted: i=1; AJvYcCXPWdWbr60RCiLfRKfbzgcTd0kFpXfVPpowzWOJ5yu2O7PTSqBFEaosPMS4cMRQp+kRA7g+8i4IPdvsSZNKPQNSVt2+MkM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSdJM6dqaQYo17hou9iHmqH5kmLg044YIbzSgK4y6DxtVef/BA
-	94WYtAU+WmDG03CqDV7ZWRLJy4UNUHOtS1LwwyY+r4fMm5NuTsVtsNmL7D0gSPvoVLBNZYUdsEA
-	Qu8UCh8BHhqbIdZufp4FcBXGaKr6+wUI=
-X-Gm-Gg: ATEYQzxGRO4TCJkeBf56VcDHJniN7oNgkw/Hh7avhfNUt8xPrlnqQOjl/oW+PKgrA3k
-	+r+8Tga0SRfy3D7RmU/tzudd6DeQo22jpqR0AhkYyJl83aNbZxDsKzT/1GrWrr9sF+TmtBDeCk9
-	AXS2tPPxxeHokkJq3IuF7AT3ojqn+TQrZrUzCwaiQeXpzm2K5CvGx1sUUhNt4bYDNGZkCYVfbO0
-	0uPAe25b7AJTSIlno/5e0X/DX/pE7W/lcIPfiPy5awviGisuFGxAd2D2ewnh7XMqkkORAVf4LPQ
-	Q2CzSKwUGTSCqfjqnLm3MuX0Qy6Er3XT4A2ES6ANQXIJdDCh2sOVuFtp39Q=
-X-Received: by 2002:a5d:5f46:0:b0:43b:3eef:acdc with SMTP id
- ffacd0b85a97d-43b3eefad8dmr14199623f8f.31.1773715452298; Mon, 16 Mar 2026
- 19:44:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Fie2dKJh"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62H0X9pp3176840;
+	Tue, 17 Mar 2026 03:14:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=BYrhz7
+	7AlelDhFzZFk/8Tq75BeLNIKaJmT3DwxUnets=; b=Fie2dKJh1TnlA7ppPKNOva
+	M6WApmALK1dUigITCnFmKeUuq3AfAWs4Xwumytpvkhmh5GTY+1uh48ewjUY4/ZkT
+	2mCZAIz7FI1GIhX1OzXD0pEYcSpaXFphY4t5pOHViRc6dx8WpXC2TADBL9LSsiGO
+	Tje5q1e7RwMkvKQ9Mik/3GowklT+htPe2DfJR3r2tfa9pr7a7ex13F83saD8UuBZ
+	akANITX6llMc62h4Rk8iJL7wpKytBT7+ekGuvjeB50I/g3tFcyTupeSKRcAEmC/6
+	PWmBSYKDfyJeNWhAIbEw+aBI5ATB5R/v9F5BdgQEcOWAFOifnReva5x6wSt4aFhg
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4cvx3ctddf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Mar 2026 03:14:09 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62H1MCMn004575;
+	Tue, 17 Mar 2026 03:14:09 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4cwj0s7g1g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Mar 2026 03:14:09 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 62H3E8nd27066988
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 17 Mar 2026 03:14:08 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2BF9C5805D;
+	Tue, 17 Mar 2026 03:14:08 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 18E1C58056;
+	Tue, 17 Mar 2026 03:14:05 +0000 (GMT)
+Received: from [9.123.14.23] (unknown [9.123.14.23])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 17 Mar 2026 03:14:04 +0000 (GMT)
+Message-ID: <21cc6859-1750-4c22-91bb-116620764ca9@linux.ibm.com>
+Date: Tue, 17 Mar 2026 08:44:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260311-bpf-auditd-send-message-v1-0-10a62db5c92f@cloudflare.com>
-In-Reply-To: <20260311-bpf-auditd-send-message-v1-0-10a62db5c92f@cloudflare.com>
-From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Date: Tue, 17 Mar 2026 03:43:36 +0100
-X-Gm-Features: AaiRm503_pD4wgV7GNSzVXYmQwYnJwIKieOHwAp2XOE6TWNB4pmOA9FL8mUmiUQ
-Message-ID: <CAP01T77VyW=5SHDvM3HXPNHaxRdzs8H__MOh2zx1dQ6STeAUtg@mail.gmail.com>
-Subject: Re: [PATCH RFC bpf-next 0/4] audit: Expose audit subsystem to BPF LSM
- programs via BPF kfuncs
-To: Frederick Lawler <fred@cloudflare.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Eric Paris <eparis@redhat.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	audit@vger.kernel.org, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kernel-team@cloudflare.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] keys/trusted_keys: clean up debug message logging
+ in the tpm backend
+To: Nayna Jain <nayna@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>
+Cc: James.Bottomley@HansenPartnership.com, jarkko@kernel.org,
+        zohar@linux.ibm.com, stefanb@linux.ibm.com,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20260220183426.80446-1-ssrish@linux.ibm.com>
+ <20260220183426.80446-2-ssrish@linux.ibm.com>
+ <7f8b8478-5cd8-4d97-bfd0-341fd5cf10f9@linux.ibm.com>
+Content-Language: en-US
+From: Srish Srinivasan <ssrish@linux.ibm.com>
+In-Reply-To: <7f8b8478-5cd8-4d97-bfd0-341fd5cf10f9@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=arO/yCZV c=1 sm=1 tr=0 ts=69b8c702 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=V8glGbnc2Ofi9Qvn3v5h:22 a=VnNF1IyMAAAA:8
+ a=jGS_jZea7UBjrvt4MQIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE3MDAyNSBTYWx0ZWRfXzLrFejMze+q7
+ 7vTx2T3Jbm/ssCwg6vki8X02yIx59v1T+pKDr2vvmJ9TtlZjFX+7vQItyd8BT1Wt5S7h2lzlhgj
+ S4F/DjfPfIaXoJmojqSV1Joboj038broD9o0dpTKaby/o4lwj5WBadVdzjU/O8geMq7wxojojjJ
+ fJdrskA0jh7M8JTD28T36OgE69QdlGXeNAiNIqZzOpbPbTZNIDP5HUPnJGYKgCDJJGxlw1a1iXz
+ h+TyW4gF14YK/q5J8/Xvt7kiwPPIyA+o79/WZaDCEK4/uIHdY1KY0C2Xnx6JMTx3pMXwmHvQnaD
+ Mue/pIIRaQcfPsA1/xReaxA4KbRbkaCnGDG/fyQru/yv1EIxnauQlqUA9Bm4qdV6D1x/rGccYYF
+ 7J2w4gW9c5BBQDvpQsOUO52z8sVYHRpUWpchy0xvm5i+qx16RTSNsD+9qGlo5kfCw2WmL+SOOdr
+ uVTu9HgJ5nlieK8mtgQ==
+X-Proofpoint-GUID: QE8ppXUkowZJqhn0dm_i5UNsmv1NZE-b
+X-Proofpoint-ORIG-GUID: QE8ppXUkowZJqhn0dm_i5UNsmv1NZE-b
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-16_06,2026-03-16_06,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 spamscore=0 lowpriorityscore=0 impostorscore=0
+ adultscore=0 bulkscore=0 suspectscore=0 malwarescore=0 clxscore=1015
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
+ definitions=main-2603170025
 
-On Wed, 11 Mar 2026 at 22:31, Frederick Lawler <fred@cloudflare.com> wrote:
->
-> The motivation behind the change is to give BPF LSM developers the
-> ability to report accesses via the audit subsystem much like how LSMs
-> operate today.
->
-> Series:
->
-> Patch 1: Introduces bpf_audit_*() kfuncs
-> Patch 2: Enables bpf_audit_*() kfuns
-> Patch 3: Prepares audit helpers used for testing
-> Patch 4: Adds self tests
->
-> Documentation will be added when this becomes a versioned series.
->
-> Key features:
->
-> 1. Audit logs include type=AUDIT_BPF_LSM_ACCESS, BPF program ID, and comm
-> that triggered the hook by default
->
-> We wanted audit log consumers to be able to track who and what created
-> the entry. prog-id=%d is already used for BPF LOAD/UNLOAD logs, thus
-> is reused here for this distinction. Though, it may be better to use
-> the tag instead to capture which _specific_ version of the program
-> made the log, since prog-id can be reused.
 
-I think just id is fine. Whoever is watching the prog can also watch
-for LOAD/UNLOAD events and detect any recycling.
-
+On 3/10/26 4:15 AM, Nayna Jain wrote:
 >
-> 2. Leverages BPF KF_AQUIRE/KF_RELEASE semantics to force use of
->   bpf_audit_log_end().
->
-> One side effect of this decision is that the BPF documentation states
-> that these flags allow the pointer to struct bpf_audit_context to be
-> stored in a map, and then exchanged through bpf_kptr_xchg(). However,
+> On 2/20/26 1:34 PM, Srish Srinivasan wrote:
+>> The TPM trusted-keys backend uses a local TPM_DEBUG guard and pr_info()
+>> for logging debug information.
+>>
+>> Replace pr_info() with pr_debug(), and use KERN_DEBUG for 
+>> print_hex_dump().
+>> Remove TPM_DEBUG.
+>>
+>> No functional change intended.
+> There is functional change here.  This change allows secret and nonce 
+> in the function dump_sess() to be logged to kernel logs when dynamic 
+> debug is enabled. Previously, it was possible only in the debug builds 
+> and not the production builds at runtime. With this change, it is 
+> always there in production build. This can result in possible attack.
 
-Yes, it is only allowed if you give a dtor. No dtor, then no kptr_xchg.
 
-> there's prior work with net/netfilter/nf_conntrack_bpf.c such that the
-> struct is not exposed as a kptr to support that functionality nor is
-> that supplying a dtor function. The verifier will not allow this use case
-> due to not exposing the __kptr. Ideally, we don't want the pointer to
-> be exchanged anyway because the reporting program can become ambiguous.
-> I am sure there are other edge cases WRT to keeping the audit buffer in a
-> strange state too that I cannot think of at this moment.
->
-> 3. All bpf_audit_log_*() functions are destructive
->
-> The audit subsystem allows for AUDIT_FAIL_PANIC to be set when the
-> subsystem can detect that missing events. Further, some call paths may
-> invoke a BUG_ON(). Therefore all the functions are marked destructive.
+Hi Jarkko,
+Could you please let us know your thoughts on this one?
 
-I think the first part makes sense (i.e., the policy simply configured
-the system to panic on failure).
-However, in the second case, if the program is somehow able to trigger
-BUG_ON() relied upon for internal invariants, it would be considered
-broken.
-I tried grepping through and didn't find anything that would cause
-this, hence the whole thing about BUG_ON() in the cover letter only
-adds to confusion.
-Please drop it or describe cases which you were concerned about.
+And Nayna,
+thanks for bringing this up.
+
+thanks,
+Srish.
+
 
 >
-> 4. Functions are callable once per bpf_audit_context
+> Instead of doing this change, I think add a comment to prevent this 
+> sort of change in the future.
 >
-> The rationale for this was to prevent abuse. Logs with repeated fields
-> are not helpful, and may not be handled by user space audit coherently.
+> Thanks & Regards,
 >
-
-This rationale feels weak. What abuse are we talking about?
-The LSM program is already written by a trusted entity.
-
-> This is in the same vein as not providing a audit_format() wrapper.
+>     - Nayna
 >
-
-I think the format() helper would allow for more flexibility.
-I would like to hear what others think, but IMO we may not even want
-to hardcode any fields by default and let the program decide what to
-report.
-prog-id, pid, comm, everything can be logged by the program itself, in
-whatever order.
-
-> Similarly, some functions such as bpf_audit_log_path() and
-> bpf_audit_log_file() report the same information, thus can be
-> interchangeable in use.
->
-> 5. API wraps security/lsm_audit.c
->
-> lsm_audit.c functions are multiplexed and not handled by BPF verifier
-> very well, thus the wrapped functions are isolated to their sole
-> purpose for use within hooks.
-
-This part makes sense. I don't think we can (or should) support the
-same multiplexing.
-
->
-> Key considerations:
->
-> 1. Audit field ordering
->
-> AFAIK, user space audit is particular about what fields are
-> present and their order. This patch series does not address ordering.
->
-> My assumption is that the first three fields: type, prog-id, pid, comm
-> are well known, and user space can make an assumption that other
-> fields after those can appear in any order.
->
-> If that is not acceptable, I would propose that we leverage the struct
-> common_audit_data type order to be the order--much like how the type is
-> used for log_once() functionality.
->
-> I am open to other ideas.
->
-> Signed-off-by: Frederick Lawler <fred@cloudflare.com>
-> ---
-> Frederick Lawler (4):
->       audit: Implement bpf_audit_log_*() wrappers
->       audit/security: Enable audit BPF kfuncs
->       selftests/bpf: Add audit helpers for BPF tests
->       selftests/bpf: Add lsm_audit_kfuncs tests
->
->  include/linux/lsm_audit.h                          |   1 +
->  include/uapi/linux/audit.h                         |   1 +
->  security/Makefile                                  |   2 +
->  security/lsm_audit_kfuncs.c                        | 306 +++++++++++
->  tools/testing/selftests/bpf/Makefile               |   3 +-
->  tools/testing/selftests/bpf/audit_helpers.c        | 281 ++++++++++
->  tools/testing/selftests/bpf/audit_helpers.h        |  55 ++
->  .../selftests/bpf/prog_tests/lsm_audit_kfuncs.c    | 598 +++++++++++++++++++++
->  .../selftests/bpf/progs/test_lsm_audit_kfuncs.c    | 263 +++++++++
->  9 files changed, 1509 insertions(+), 1 deletion(-)
-> ---
-> base-commit: ca0f39a369c5f927c3d004e63a5a778b08a9df94
-> change-id: 20260105-bpf-auditd-send-message-4a883067aab8
->
-> Best regards,
-> --
-> Frederick Lawler <fred@cloudflare.com>
->
->
+>>
+>> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
+>> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+>> ---
+>>   security/keys/trusted-keys/trusted_tpm1.c | 40 +++++++----------------
+>>   1 file changed, 12 insertions(+), 28 deletions(-)
+>>
+>> diff --git a/security/keys/trusted-keys/trusted_tpm1.c 
+>> b/security/keys/trusted-keys/trusted_tpm1.c
+>> index c865c97aa1b4..216caef97ffc 100644
+>> --- a/security/keys/trusted-keys/trusted_tpm1.c
+>> +++ b/security/keys/trusted-keys/trusted_tpm1.c
+>> @@ -46,28 +46,25 @@ enum {
+>>       SRK_keytype = 4
+>>   };
+>>   -#define TPM_DEBUG 0
+>> -
+>> -#if TPM_DEBUG
+>>   static inline void dump_options(struct trusted_key_options *o)
+>>   {
+>> -    pr_info("sealing key type %d\n", o->keytype);
+>> -    pr_info("sealing key handle %0X\n", o->keyhandle);
+>> -    pr_info("pcrlock %d\n", o->pcrlock);
+>> -    pr_info("pcrinfo %d\n", o->pcrinfo_len);
+>> -    print_hex_dump(KERN_INFO, "pcrinfo ", DUMP_PREFIX_NONE,
+>> +    pr_debug("sealing key type %d\n", o->keytype);
+>> +    pr_debug("sealing key handle %0X\n", o->keyhandle);
+>> +    pr_debug("pcrlock %d\n", o->pcrlock);
+>> +    pr_debug("pcrinfo %d\n", o->pcrinfo_len);
+>> +    print_hex_dump(KERN_DEBUG, "pcrinfo ", DUMP_PREFIX_NONE,
+>>                  16, 1, o->pcrinfo, o->pcrinfo_len, 0);
+>>   }
+>>     static inline void dump_sess(struct osapsess *s)
+>>   {
+>> -    print_hex_dump(KERN_INFO, "trusted-key: handle ", DUMP_PREFIX_NONE,
+>> +    print_hex_dump(KERN_DEBUG, "trusted-key: handle ", 
+>> DUMP_PREFIX_NONE,
+>>                  16, 1, &s->handle, 4, 0);
+>> -    pr_info("secret:\n");
+>> -    print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
+>> +    pr_debug("secret:\n");
+>> +    print_hex_dump(KERN_DEBUG, "", DUMP_PREFIX_NONE,
+>>                  16, 1, &s->secret, SHA1_DIGEST_SIZE, 0);
+>> -    pr_info("trusted-key: enonce:\n");
+>> -    print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
+>> +    pr_debug("trusted-key: enonce:\n");
+>> +    print_hex_dump(KERN_DEBUG, "", DUMP_PREFIX_NONE,
+>>                  16, 1, &s->enonce, SHA1_DIGEST_SIZE, 0);
+>>   }
+>>   @@ -75,23 +72,10 @@ static inline void dump_tpm_buf(unsigned char 
+>> *buf)
+>>   {
+>>       int len;
+>>   -    pr_info("\ntpm buffer\n");
+>> +    pr_debug("\ntpm buffer\n");
+>>       len = LOAD32(buf, TPM_SIZE_OFFSET);
+>> -    print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE, 16, 1, buf, len, 
+>> 0);
+>> -}
+>> -#else
+>> -static inline void dump_options(struct trusted_key_options *o)
+>> -{
+>> -}
+>> -
+>> -static inline void dump_sess(struct osapsess *s)
+>> -{
+>> -}
+>> -
+>> -static inline void dump_tpm_buf(unsigned char *buf)
+>> -{
+>> +    print_hex_dump(KERN_DEBUG, "", DUMP_PREFIX_NONE, 16, 1, buf, 
+>> len, 0);
+>>   }
+>> -#endif
+>>     static int TSS_rawhmac(unsigned char *digest, const unsigned char 
+>> *key,
+>>                  unsigned int keylen, ...)
