@@ -1,51 +1,54 @@
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
+Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A173859D7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1165390CB4
 	for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 21:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773782647; cv=none; b=S9HC4/jgBtJcKfmj8ad6/C1WjGaPh+OhPn4ea4eWHRTqXngQnM65z77mfBHoGHLqtovbPvOF4wk6lyYSoJdH1PqiYBSTzRNmZvMw+zyjWHg/WsHSaT4TKzRmHyjaxu7fUplmp4b2VkF/bEl8Y/eAunjGIZO8koAZm/CPMgt+HNg=
+	t=1773782648; cv=none; b=Uii4jpICB3jqR5mAODHoG2JUOpJcGvMtcbrwMVQHqh9p6vm5YupaJ6nL9oCqRnt7KWF97T54xLTQol8LJOZI0ZLVDAvnTkKEDTjHASSZCmdHKjeqDItAdXh5lDTeih6Tr4KmYGYv5Iyi+edB1pEoZLJGlgT3kDwnuIdc+c215cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773782647; c=relaxed/simple;
-	bh=TGqDQVKenKst7ulkB8U2FPYOSqBdO6CBrwx/TU5vxvw=;
+	s=arc-20240116; t=1773782648; c=relaxed/simple;
+	bh=+E0RZb4vOpweEAP5F2itM6+D5RzplLdHXOywcKedzCY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ovebx/bxoFxcd9/4mDZfSp4t3o+pDkrArplI5PIw1i3umcqxapEiu50AWcRK5+sZjrf5asbi+hbFpbrecBru8xYGSzhZbvGGR19CTgEwYXukGD9v7/uSWM1jLIr2NK4EtnGSbr1I/JE9G9S+JJSl2iyHGTtIXSDYZ6qgCCHdkXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=AE2sstpk; arc=none smtp.client-ip=185.125.25.15
+	 Content-Type:Content-Disposition:In-Reply-To; b=X5gawGQVrjXQqGM7ojVE1qFkhQ+bP1LTAfmS1WjKhnncCB8v2ESV5mPrqA89kxqOgyH8P+jB6KAEdIRlCBRDRvabuDC7AVYxu2ejpCyHXcSxQlvuOw8zwswLE+2yxn1AwQsnHjn+uuqEeARCXkZFcTSU+EhT/BXTNq1zUsFaeNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=IrDvWMiL; arc=none smtp.client-ip=45.157.188.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="AE2sstpk"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fb4TZ5w39z2RS;
-	Tue, 17 Mar 2026 22:14:26 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="IrDvWMiL"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fb4Tv0nkRz5Vd;
+	Tue, 17 Mar 2026 22:14:43 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1773782066;
-	bh=9PdX0GoF+dwhSnTxhQP6xSC/aUKyJh+SmOgu8OgcULE=;
+	s=20191114; t=1773782083;
+	bh=NQHdxt+GwqZ2tQFkfT9d6tVMkRLndfuxZdeuDf2oL5s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AE2sstpkYihXXRJ/A5ZQNWjOTKCFVk/U3E+sNDnugqB1XY1KLhpwj6DB+YKpZm43l
-	 2PUNziPG4SeM6bTGMhuqudDTn550ikIdgTwjMwQCCVG2dhoL35gIOWSslx6MMVyy42
-	 PyHcbAeO7Ou4BrIZJZDn4pYyIJKvj2g8qNWW0tTs=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4fb4TY2dTNzrFg;
-	Tue, 17 Mar 2026 22:14:25 +0100 (CET)
-Date: Tue, 17 Mar 2026 22:14:23 +0100
+	b=IrDvWMiL/Ed1zzIWyndPjudD9UwZwlLRcB1UWzwM2HjoVmIaqyJTLKvXfRsR1mXEh
+	 W4/Xfx4fKMKI02564vNd04jYBmhM0A2KhMmySyt4TYJ+l3sPywVOj9uagir2AIrVG4
+	 Wqo5a0yy/PndlnG17+KJTwB9SRIBLjjzo3FRiB34=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fb4Tt3ShkzhGK;
+	Tue, 17 Mar 2026 22:14:42 +0100 (CET)
+Date: Tue, 17 Mar 2026 22:14:40 +0100
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Paul Moore <paul@paul-moore.com>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Kuniyuki Iwashima <kuniyu@google.com>, 
-	Simon Horman <horms@kernel.org>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>, 
-	John Johansen <john.johansen@canonical.com>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Tingmao Wang <m@maowtm.org>, 
-	Justin Suess <utilityemal77@gmail.com>, linux-security-module@vger.kernel.org, 
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, Matthieu Buffet <matthieu@buffet.re>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, konstantin.meskhidze@huawei.com, 
-	Demi Marie Obenour <demiobenour@gmail.com>, Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v6 1/9] lsm: Add LSM hook security_unix_find
-Message-ID: <20260317.Re1jaiThoo5i@digikod.net>
-References: <20260315222150.121952-1-gnoack3000@gmail.com>
- <20260315222150.121952-2-gnoack3000@gmail.com>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	John Johansen <john.johansen@canonical.com>, Tingmao Wang <m@maowtm.org>, 
+	Justin Suess <utilityemal77@gmail.com>, Jann Horn <jannh@google.com>, 
+	linux-security-module@vger.kernel.org, Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, 
+	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	konstantin.meskhidze@huawei.com, Demi Marie Obenour <demiobenour@gmail.com>, 
+	Alyssa Ross <hi@alyssa.is>, Tahera Fahimi <fahimitahera@gmail.com>
+Subject: Re: [PATCH v5 2/9] landlock: Control pathname UNIX domain socket
+ resolution by path
+Message-ID: <20260317.ki4Phu4yooCe@digikod.net>
+References: <20260215105158.28132-1-gnoack3000@gmail.com>
+ <20260215105158.28132-3-gnoack3000@gmail.com>
+ <20260217.lievaS8eeng8@digikod.net>
+ <20260219.IF4zee3Quo3j@digikod.net>
+ <aZcXSmhZRVcRCvum@google.com>
+ <20260307.aeth4weik2Ah@digikod.net>
+ <20260308.IexeiQuae7ee@digikod.net>
+ <20260314.f83f9a697865@gnoack.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -55,141 +58,370 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260315222150.121952-2-gnoack3000@gmail.com>
+In-Reply-To: <20260314.f83f9a697865@gnoack.org>
 X-Infomaniak-Routing: alpha
 
-Paul and netdev folks, I think this new hook is now good.  I'd like to
-push this series to -next this week.  Please let us know if you find any
-issue, otherwise I guess we'll get more eyes and bots in the -next tree.
+On Sun, Mar 15, 2026 at 12:15:10AM +0100, Günther Noack wrote:
+> On Sun, Mar 08, 2026 at 12:50:06PM +0100, Mickaël Salaün wrote:
+> > On Sun, Mar 08, 2026 at 10:09:52AM +0100, Mickaël Salaün wrote:
+> > > On Thu, Feb 19, 2026 at 02:59:38PM +0100, Günther Noack wrote:
+> > > > On Thu, Feb 19, 2026 at 10:45:44AM +0100, Mickaël Salaün wrote:
+> > > > > On Wed, Feb 18, 2026 at 10:37:16AM +0100, Mickaël Salaün wrote:
+> > > > > > On Sun, Feb 15, 2026 at 11:51:50AM +0100, Günther Noack wrote:
+> > > > > > > * Add a new access right LANDLOCK_ACCESS_FS_RESOLVE_UNIX, which
+> > > > > > >   controls the look up operations for named UNIX domain sockets.  The
+> > > > > > >   resolution happens during connect() and sendmsg() (depending on
+> > > > > > >   socket type).
+> > > > > > > * Hook into the path lookup in unix_find_bsd() in af_unix.c, using a
+> > > > > > >   LSM hook.  Make policy decisions based on the new access rights
+> > > > > > > * Increment the Landlock ABI version.
+> > > > > > > * Minor test adaptions to keep the tests working.
+> > > > > > > 
+> > > > > > > With this access right, access is granted if either of the following
+> > > > > > > conditions is met:
+> > > > > > > 
+> > > > > > > * The target socket's filesystem path was allow-listed using a
+> > > > > > >   LANDLOCK_RULE_PATH_BENEATH rule, *or*:
+> > > > > > > * The target socket was created in the same Landlock domain in which
+> > > > > > >   LANDLOCK_ACCESS_FS_RESOLVE_UNIX was restricted.
+> > > > > > > 
+> > > > > > > In case of a denial, connect() and sendmsg() return EACCES, which is
+> > > > > > > the same error as it is returned if the user does not have the write
+> > > > > > > bit in the traditional Unix file system permissions of that file.
+> > > > > > > 
+> > > > > > > This feature was created with substantial discussion and input from
+> > > > > > > Justin Suess, Tingmao Wang and Mickaël Salaün.
+> > > > > > > 
+> > > > > > > Cc: Tingmao Wang <m@maowtm.org>
+> > > > > > > Cc: Justin Suess <utilityemal77@gmail.com>
+> > > > > > > Cc: Mickaël Salaün <mic@digikod.net>
+> > > > > > > Suggested-by: Jann Horn <jannh@google.com>
+> > > > > > > Link: https://github.com/landlock-lsm/linux/issues/36
+> > > > > > > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> > > > > > > ---
+> > > > > > >  include/uapi/linux/landlock.h                |  10 ++
+> > > > > > >  security/landlock/access.h                   |  11 +-
+> > > > > > >  security/landlock/audit.c                    |   1 +
+> > > > > > >  security/landlock/fs.c                       | 102 ++++++++++++++++++-
+> > > > > > >  security/landlock/limits.h                   |   2 +-
+> > > > > > >  security/landlock/syscalls.c                 |   2 +-
+> > > > > > >  tools/testing/selftests/landlock/base_test.c |   2 +-
+> > > > > > >  tools/testing/selftests/landlock/fs_test.c   |   5 +-
+> > > > > > >  8 files changed, 128 insertions(+), 7 deletions(-)
+> > > > > 
+> > > > > > > index 60ff217ab95b..8d0edf94037d 100644
+> > > > > > > --- a/security/landlock/audit.c
+> > > > > > > +++ b/security/landlock/audit.c
+> > > > > > > @@ -37,6 +37,7 @@ static const char *const fs_access_strings[] = {
+> > > > > > >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_REFER)] = "fs.refer",
+> > > > > > >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_TRUNCATE)] = "fs.truncate",
+> > > > > > >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_IOCTL_DEV)] = "fs.ioctl_dev",
+> > > > > > > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_RESOLVE_UNIX)] = "fs.resolve_unix",
+> > > > > > >  };
+> > > > > > >  
+> > > > > > >  static_assert(ARRAY_SIZE(fs_access_strings) == LANDLOCK_NUM_ACCESS_FS);
+> > > > > > > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> > > > > > > index e764470f588c..76035c6f2bf1 100644
+> > > > > > > --- a/security/landlock/fs.c
+> > > > > > > +++ b/security/landlock/fs.c
+> > > > > > > @@ -27,6 +27,7 @@
+> > > > > > >  #include <linux/lsm_hooks.h>
+> > > > > > >  #include <linux/mount.h>
+> > > > > > >  #include <linux/namei.h>
+> > > > > > > +#include <linux/net.h>
+> > > > > > >  #include <linux/path.h>
+> > > > > > >  #include <linux/pid.h>
+> > > > > > >  #include <linux/rcupdate.h>
+> > > > > > > @@ -314,7 +315,8 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
+> > > > > > >  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+> > > > > > >  	LANDLOCK_ACCESS_FS_READ_FILE | \
+> > > > > > >  	LANDLOCK_ACCESS_FS_TRUNCATE | \
+> > > > > > > -	LANDLOCK_ACCESS_FS_IOCTL_DEV)
+> > > > > > > +	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
+> > > > > > > +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX)
+> > > > > > >  /* clang-format on */
+> > > > > > >  
+> > > > > > >  /*
+> > > > > > > @@ -1561,6 +1563,103 @@ static int hook_path_truncate(const struct path *const path)
+> > > > > > >  	return current_check_access_path(path, LANDLOCK_ACCESS_FS_TRUNCATE);
+> > > > > > >  }
+> > > > > > >  
+> > > > > > > +/**
+> > > > > > > + * unmask_scoped_access - Remove access right bits in @masks in all layers
+> > > > > > > + *                        where @client and @server have the same domain
+> > > > > > > + *
+> > > > > > > + * This does the same as domain_is_scoped(), but unmasks bits in @masks.
+> > > > > > > + * It can not return early as domain_is_scoped() does.
+> > > > > 
+> > > > > Why can't we use the same logic as for other scopes?
+> > > > 
+> > > > The other scopes, for which this is implemented in domain_is_scoped(),
+> > > > do not need to do this layer-by-layer.
+> > > > 
+> > > > I have to admit, in my initial implementation, I was using
+> > > > domain_is_scoped() directly, and the logic at the end of the hook was
+> > > > roughly:
+> > > > 
+> > > >    --- BUGGY CODE START ---
+> > > >        // ...
+> > > >        
+> > > >        if (!domain_is_scoped(..., ..., LANDLOCK_ACCESS_FS_RESOLVE_UNIX))
+> > > >            return 0;  /* permitted */
+> > > > 
+> > > >        return current_check_access_path(path, LANDLOCK_ACCESS_FS_RESOLVE_UNIX)
+> > > >    }
+> > > >    --- BUGGY CODE END ---
+> > > > 
+> > > > Unfortunately, that is a logic error though -- it implements the formula
+> > > > 
+> > > >    Access granted if:
+> > > >    (FOR-ALL l ∈ layers scoped-access-ok(l)) OR (FOR-ALL l ∈ layers path-access-ok(l))     (WRONG!)
+> > > > 
+> > > > but the formula we want is:
+> > > > 
+> > > >    Access granted if:
+> > > >    FOR-ALL l ∈ layers (scoped-access-ok(l) OR path-access-ok(l))     (CORRECT!)
+> > > 
+> > > It is worth it to add this explanation to the unmask_scoped_access()
+> > > description, also pointing to the test that check this case.
+> > > 
+> > > > 
+> > > > This makes a difference in the case where (pseudocode):
+> > > > 
+> > > >    1. landlock_restrict_self(RESOLVE_UNIX)  // d1
+> > > >    2. create_unix_server("./sock")
+> > > >    3. landlock_restrict_self(RESOLVE_UNIX, rule=Allow(".", RESOLVE_UNIX))  // d2
+> > > >    4. connect_unix("./sock")
+> > > > 
+> > > >    ,------------------------------------------------d1--,
+> > > >    |                                                    |
+> > > >    |    ./sock server                                   |
+> > > >    |       ^                                            |
+> > > >    |       |                                            |
+> > > >    |  ,------------------------------------------d2--,  |
+> > > >    |  |    |                                         |  |
+> > > >    |  |  client                                      |  |
+> > > >    |  |                                              |  |
+> > > >    |  '----------------------------------------------'  |
+> > > >    |                                                    |
+> > > >    '----------------------------------------------------'
+> > > > 
+> > > > (BTW, this scenario is covered in the selftests, that is why there is
+> > > > a variant of these selftests where instead of applying "no domain", we
+> > > > apply a domain with an exception rule like in step 3 in the pseudocode
+> > > > above.  Applying that domain should behave the same as applying no
+> > > > domain at all.)
+> > > > 
+> > > > Intuitively, it is clear that the access should be granted:
+> > > > 
+> > > >   - d1 does not restrict access to the server,
+> > > >     because the socket was created within d1 itself.
+> > > >   - d2 does not restrict access to the server,
+> > > >     because it has a rule to allow it
+> > > > 
+> > > > But the "buggy code" logic above comes to a different conclusion:
+> > > > 
+> > > >   - the domain_is_scoped() check denies the access, because the server
+> > > >     is in a more privileged domain relative to the client domain.
+> > > >   - the current_check_access_path() check denies the access as well,
+> > > >     because the socket's path is not allow-listed in d1.
+> > > > 
+> > > > In the 'intuitive' reasoning above, we are checking d1 and d2
+> > > > independently of each other.  While Landlock is not implemented like
+> > > > that internally, we need to stay consistent with it so that domains
+> > > > compose correctly.  The way to do that is to track is access check
+> > > > results on a per-layer basis again, and that is why
+> > > > unmask_scoped_access() uses a layer mask for tracking.  The original
+> > > > domain_is_scoped() does not use a layer mask, but that also means that
+> > > > it can return early in some scenarios -- if for any of the relevant
+> > > > layer depths, the client and server domains are not the same, it exits
+> > > > early with failure because it's overall not fulfillable any more.  In
+> > > > the RESOLVE_UNIX case though, we need to remember in which layers we
+> > > > failed (both high an low ones), because these layers can still be
+> > > > fulfilled with a PATH_BENEATH rule later.
+> > > > 
+> > > > Summary:
+> > > > 
+> > > > Option 1: We *can* unify this if you want.  It just might come at a
+> > > > small performance penalty for domain_is_scoped(), which now uses the
+> > > > larger layer mask data structure and can't do the same early returns
+> > > > any more as before.
+> > > > 
+> > > > Option 2: Alternatively, if we move the two functions into the same
+> > > > module, we can keep them separate but still test them against each
+> > > > other to make sure they are in-line:
+> > > > 
+> > > > This invocation should return true...
+> > > > 
+> > > >   domain_is_scoped(cli, srv, access)
+> > > > 
+> > > > ...in the exactly the same situations where this invocation leaves any
+> > > > bits set in layer_masks:
+> > > > 
+> > > >   landlock_init_layer_masks(dom, access, &layer_masks, LL_KEY_INODE);
+> > > >   unmask_scoped_access(cli, srv, &layer_masks, access);
+> > > > 
+> > > > What do you prefer?
+> > > 
+> > > I was thinking about factoring out domain_is_scoped() with
+> > > unmask_scoped_access() but, after some tests, it is not worth it.  Your
+> > > approach is simple and good.
+> > > 
+> > > > 
+> > > > 
+> > > > > > > + *
+> > > > > > > + * @client: Client domain
+> > > > > > > + * @server: Server domain
+> > > > > > > + * @masks: Layer access masks to unmask
+> > > > > > > + * @access: Access bit that controls scoping
+> > > > > > > + */
+> > > > > > > +static void unmask_scoped_access(const struct landlock_ruleset *const client,
+> > > > > > > +				 const struct landlock_ruleset *const server,
+> > > > > > > +				 struct layer_access_masks *const masks,
+> > > > > > > +				 const access_mask_t access)
+> > > > > > 
+> > > > > > This helper should be moved to task.c and factored out with
+> > > > > > domain_is_scoped().  This should be a dedicated patch.
+> > > > > 
+> > > > > Well, if domain_is_scoped() can be refactored and made generic, it would
+> > > > > make more sense to move it to domain.c
+> > > > > 
+> > > > > > 
+> > > > > > > +{
+> > > > > > > +	int client_layer, server_layer;
+> > > > > > > +	const struct landlock_hierarchy *client_walker, *server_walker;
+> > > > > > > +
+> > > > > > > +	if (WARN_ON_ONCE(!client))
+> > > > > > > +		return; /* should not happen */
+> > > 
+> > > Please no comment after ";"
+> > > 
+> > > > > > > +
+> > > > > > > +	if (!server)
+> > > > > > > +		return; /* server has no Landlock domain; nothing to clear */
+> > > > > > > +
+> > > > > > > +	client_layer = client->num_layers - 1;
+> > > > > > > +	client_walker = client->hierarchy;
+> > > > > > > +	server_layer = server->num_layers - 1;
+> > > > > > > +	server_walker = server->hierarchy;
+> > > > > > > +
+> > > > > > > +	/*
+> > > > > > > +	 * Clears the access bits at all layers where the client domain is the
+> > > > > > > +	 * same as the server domain.  We start the walk at min(client_layer,
+> > > > > > > +	 * server_layer).  The layer bits until there can not be cleared because
+> > > > > > > +	 * either the client or the server domain is missing.
+> > > > > > > +	 */
+> > > > > > > +	for (; client_layer > server_layer; client_layer--)
+> > > > > > > +		client_walker = client_walker->parent;
+> > > > > > > +
+> > > > > > > +	for (; server_layer > client_layer; server_layer--)
+> > > > > > > +		server_walker = server_walker->parent;
+> > > > > > > +
+> > > > > > > +	for (; client_layer >= 0; client_layer--) {
+> > > > > > > +		if (masks->access[client_layer] & access &&
+> > > > > > > +		    client_walker == server_walker)
+> > > 
+> > > I'd prefer to first check client_walker == server_walker and then the
+> > > access.  My main concern is that only one bit of access matching
+> > > masks->access[client_layer] clear all the access request bits.  In
+> > > practice there is only one, for now, but this code should be more strict
+> > > by following a defensive approach.
+> 
+> This function works even if multiple access request bits with
+> "scope-like" semantics were being checked in parallel; if you consider
+> the logic in:
+> 
+>   if (masks->access[client_layer] & access &&
+>       client_walker == server_walker)
+>           masks->access[client_layer] &= ~access;
+> 
+> you'll realize that the check for "masks->access[client_layer] &
+> access" is technically irrelevant - if that check fails, all the
 
-On Sun, Mar 15, 2026 at 11:21:42PM +0100, Günther Noack wrote:
-> From: Justin Suess <utilityemal77@gmail.com>
+Correct
+
+> affected bits are already zero, so clearing them is a no-op.  This
+> code is equivalent, but might perform slightly more writes (although
+> it likely does not make a performance difference in practice):
 > 
-> Add a LSM hook security_unix_find.
+>   if (client_walker == server_walker)
+>           masks->access[client_layer] &= ~access;
 > 
-> This hook is called to check the path of a named unix socket before a
-> connection is initiated. The peer socket may be inspected as well.
+> With that code it's a bit easier to see that "access" is actually only
+> used to decide which bits to clear.  This works both with one and with
+> multiple access rights.
 > 
-> Why existing hooks are unsuitable:
+> This follows the same logic as outlined in the comment above in the
+> code, where it says:
 > 
-> Existing socket hooks, security_unix_stream_connect(),
-> security_unix_may_send(), and security_socket_connect() don't provide
-> TOCTOU-free / namespace independent access to the paths of sockets.
+>     Clears the access bits at all layers where the client domain is the
+>     same as the server domain.  We start the walk at min(client_layer,
+>     server_layer).  The layer bits until there can not be cleared because
+>     either the client or the server domain is missing.
 > 
-> (1) We cannot resolve the path from the struct sockaddr in existing hooks.
-> This requires another path lookup. A change in the path between the
-> two lookups will cause a TOCTOU bug.
-> 
-> (2) We cannot use the struct path from the listening socket, because it
-> may be bound to a path in a different namespace than the caller,
-> resulting in a path that cannot be referenced at policy creation time.
-> 
-> Cc: Günther Noack <gnoack3000@gmail.com>
-> Cc: Tingmao Wang <m@maowtm.org>
-> Signed-off-by: Justin Suess <utilityemal77@gmail.com>
-> ---
->  include/linux/lsm_hook_defs.h |  5 +++++
->  include/linux/security.h      | 11 +++++++++++
->  net/unix/af_unix.c            | 13 ++++++++++---
->  security/security.c           | 20 ++++++++++++++++++++
->  4 files changed, 46 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index 8c42b4bde09c..7a0fd3dbfa29 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -317,6 +317,11 @@ LSM_HOOK(int, 0, post_notification, const struct cred *w_cred,
->  LSM_HOOK(int, 0, watch_key, struct key *key)
->  #endif /* CONFIG_SECURITY && CONFIG_KEY_NOTIFICATIONS */
->  
-> +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
-> +LSM_HOOK(int, 0, unix_find, const struct path *path, struct sock *other,
-> +	 int flags)
-> +#endif /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
-> +
->  #ifdef CONFIG_SECURITY_NETWORK
->  LSM_HOOK(int, 0, unix_stream_connect, struct sock *sock, struct sock *other,
->  	 struct sock *newsk)
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 83a646d72f6f..99a33d8eb28d 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -1931,6 +1931,17 @@ static inline int security_mptcp_add_subflow(struct sock *sk, struct sock *ssk)
->  }
->  #endif	/* CONFIG_SECURITY_NETWORK */
->  
-> +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
-> +
-> +int security_unix_find(const struct path *path, struct sock *other, int flags);
-> +
-> +#else /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
-> +static inline int security_unix_find(const struct path *path, struct sock *other, int flags)
-> +{
-> +	return 0;
-> +}
-> +#endif /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
-> +
->  #ifdef CONFIG_SECURITY_INFINIBAND
->  int security_ib_pkey_access(void *sec, u64 subnet_prefix, u16 pkey);
->  int security_ib_endport_manage_subnet(void *sec, const char *name, u8 port_num);
-> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-> index 3756a93dc63a..aced28179bac 100644
-> --- a/net/unix/af_unix.c
-> +++ b/net/unix/af_unix.c
-> @@ -1231,11 +1231,18 @@ static struct sock *unix_find_bsd(struct sockaddr_un *sunaddr, int addr_len,
->  		goto path_put;
->  
->  	err = -EPROTOTYPE;
-> -	if (sk->sk_type == type)
-> -		touch_atime(&path);
-> -	else
-> +	if (sk->sk_type != type)
->  		goto sock_put;
->  
-> +	/*
-> +	 * We call the hook because we know that the inode is a socket and we
-> +	 * hold a valid reference to it via the path.
-> +	 */
-> +	err = security_unix_find(&path, sk, flags);
-> +	if (err)
-> +		goto sock_put;
-> +	touch_atime(&path);
-> +
->  	path_put(&path);
->  
->  	return sk;
-> diff --git a/security/security.c b/security/security.c
-> index 67af9228c4e9..c73196b8db4b 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -4731,6 +4731,26 @@ int security_mptcp_add_subflow(struct sock *sk, struct sock *ssk)
->  
->  #endif	/* CONFIG_SECURITY_NETWORK */
->  
-> +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
-> +/**
-> + * security_unix_find() - Check if a named AF_UNIX socket can connect
-> + * @path: path of the socket being connected to
-> + * @other: peer sock
-> + * @flags: flags associated with the socket
-> + *
-> + * This hook is called to check permissions before connecting to a named
-> + * AF_UNIX socket.
-> + *
-> + * Return: Returns 0 if permission is granted.
-> + */
-> +int security_unix_find(const struct path *path, struct sock *other, int flags)
-> +{
-> +	return call_int_hook(unix_find, path, other, flags);
-> +}
-> +EXPORT_SYMBOL(security_unix_find);
-> +
-> +#endif	/* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
-> +
->  #ifdef CONFIG_SECURITY_INFINIBAND
->  /**
->   * security_ib_pkey_access() - Check if access to an IB pkey is allowed
-> -- 
-> 2.53.0
+> Clearing bits that aren't there is a no-op
 > 
 > 
+> 
+> <Optional Math>
+> 
+> I found it helpful to visualize the scoping logic, this is directly
+> from my notes: (Web version is at https://wiki.gnoack.org/LandlockDomainIsScoped)
+> 
+> The domain_is_scoped() helper implements the following predicate:
+> 
+>   ∀ l ∈ (0,16): (hasbit(self, l) implies-that domain(self, l) == domain(other, l))
+> 
+> That is, we require for each layer l nesting depth that:
+> 
+>   * **If** scoping is active at the layer,
+>   * **Then** the domains of self and other are the same
+>              at the given nesting depth.
+> 
+> For example:
+> 
+>        [ ]
+>         |
+>        [x]     self and other have the same domain at this depth
+>         |
+>        [ ]
+>       /   \
+>     [x]   [ ]  self and other have differing domains at this depth
+>      |     |
+>     [ ]   [ ]
+>      |
+>     [ ]     "other"             "x" marks a domain where "self" has
+>                                     set the scoping bit
+>   "self"
+> 
+> </Optional Math>
+> 
+> 
+> > > > > > > +			masks->access[client_layer] &= ~access;
+> > 
+> > Actually, why not removing the access argument and just reset
+> > masks->access[client_layer]?  The doc would need some updates.
+> 
+> It would feel brittle to me if this function were to clear out
+> unrelated access rights. It receives a struct layer_access_masks after
+> all, where it is normally expected that multiple kinds of access
+> rights are set.  In my understanding, the bit masking does not cost
+> much extra performance compared to clearing it out entirely, so I'd
+> prefer to have clearer semantics and only operate on the access rights
+> that it's about, even when the other bits are all zero at the moment.
+> 
+> (For full disclosure, I have contemplated for a bit whether
+> hook_unix_find() should take a layer_mask_t-like type where each bit
+> indicates whether a given access right
+> (LANDLOCK_ACCESS_FS_RESOLVE_UNIX, in this case) is set at a given
+> layer, and then it would only clear out the bits there.  That would be
+> in some ways simpler, but then the caller would still need to convert
+> back and forth to a layer mask anyway, because that's what the other
+> functions there take.  So it didn't seem like a good option in the
+> bigger scheme (and I would also prefer to not re-introduce
+> layer_mask_t after we just removed it).)
+> 
+> Maybe I did not understand your remark fully though;
+> Does my argument sound reasonable?
+
+Yes! Thanks for the deep explanation.
