@@ -1,219 +1,224 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44AD2D1936;
-	Tue, 17 Mar 2026 03:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773717256; cv=none; b=tkVAT/OAiX18DSchJ0F1AonxGKCu5tZxmtETs7CxH4dA6dwTl4Q7/e7+49/urNBDK8IcS95wEpigxkP0Wpv5kaKVv2c6I2xtBmxuktgX1Gu57z3GNTr7pU5tehR3qI0pi0fi1O+O9yUToCJiYjoBhBNrbbhuXPArkEmmF1EGdUw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773717256; c=relaxed/simple;
-	bh=Hgvv2sMzviIsV5ayhpOLXlczyg1/nMnPBTWtKtUGjIY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U2ZNxSLVQ1CS/pWiemPmmw6/iDx7jnUD256+Iu3XR0ltaaPKQsQtTkgMqbEjI9qaxBE1sNX7Z7Ud31HpqjiLab6s4/I1TRXT7ug+XgqQEMmQuVqdxKecBBe5YUMIRIDElueqcQgDCoBCK+szNLJjVUWqCCcQ7JyHQQoWX0RqDnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Fie2dKJh; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589A538E5C0
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 07:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773732375; cv=pass; b=oZexWyq10ezlx1q/nNywkPlsuFMfEaBNpZkFwgj/aN9O+sXbB5H1IzfBdZLsXCs3oLtbAfomIwyKj4W3BMAGue/Eyu5n8rR0Kw2VUtfY6ffX78+QdV0/15J7Lw0uAH5uQCkmHQ6PzI5UvlhTstCpYhNLs4qMBaeAvag+NsMffAM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773732375; c=relaxed/simple;
+	bh=f8UETNxqUQnzPIAZtG43HfP4bjrDwk0GJJOmlIbeQc8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KeaSPdVNbqxyezzS+eFTHd1xZxyY//w8vkc+W3tDwbOr2uGbnYjNM3JbVVZl++EL4rXEno4phTaehxRy6rrDqgSfpnMQO+kxCh2d2R8ofz6DyajZCZZwYsAPDsvqmA3DeURs/Tv39oZ/ovGh9nICMBrKEtgHcsxV2805PyNmmIw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TGjkNiln; arc=pass smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Fie2dKJh"
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62H0X9pp3176840;
-	Tue, 17 Mar 2026 03:14:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=BYrhz7
-	7AlelDhFzZFk/8Tq75BeLNIKaJmT3DwxUnets=; b=Fie2dKJh1TnlA7ppPKNOva
-	M6WApmALK1dUigITCnFmKeUuq3AfAWs4Xwumytpvkhmh5GTY+1uh48ewjUY4/ZkT
-	2mCZAIz7FI1GIhX1OzXD0pEYcSpaXFphY4t5pOHViRc6dx8WpXC2TADBL9LSsiGO
-	Tje5q1e7RwMkvKQ9Mik/3GowklT+htPe2DfJR3r2tfa9pr7a7ex13F83saD8UuBZ
-	akANITX6llMc62h4Rk8iJL7wpKytBT7+ekGuvjeB50I/g3tFcyTupeSKRcAEmC/6
-	PWmBSYKDfyJeNWhAIbEw+aBI5ATB5R/v9F5BdgQEcOWAFOifnReva5x6wSt4aFhg
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4cvx3ctddf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Mar 2026 03:14:09 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62H1MCMn004575;
-	Tue, 17 Mar 2026 03:14:09 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4cwj0s7g1g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Mar 2026 03:14:09 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 62H3E8nd27066988
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 17 Mar 2026 03:14:08 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2BF9C5805D;
-	Tue, 17 Mar 2026 03:14:08 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 18E1C58056;
-	Tue, 17 Mar 2026 03:14:05 +0000 (GMT)
-Received: from [9.123.14.23] (unknown [9.123.14.23])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 17 Mar 2026 03:14:04 +0000 (GMT)
-Message-ID: <21cc6859-1750-4c22-91bb-116620764ca9@linux.ibm.com>
-Date: Tue, 17 Mar 2026 08:44:03 +0530
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TGjkNiln"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b93698bb57aso77314666b.0
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 00:26:13 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773732372; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Kd/OTrDxwmI3yyhcvGwmJ1ruDRmW/nSk1c3DUHH7XunEc6o4hTySgk6nJWkwLduGvE
+         SOgwmf9chjTbWoPq3OkQmWPlpPOB5MLeRbCx5ADrJ9kzRHaY7QFcN9aqs6DezP/lS/+h
+         Ro/O24YFp7lE5iIh04Ds1UZ4PLb+QHz24D5FPOf0FlH6+d/uiUEqTBcqmTHoG4uab2jE
+         4UDOdgRiUwy2WwlIlgYjl3Kv0+/QRLrK7DRcICfxomf1gxijJ8s8Hs5GidqJEUPMPv87
+         BPKgoNct2Kw1KqX0IYoQwqG09/3adz1gSK1o1aTjfAyWrhi37MpYmSkJ2Y3h109qc0wm
+         vDIg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=i3xav1WzJK9rzK57tlDdYAfYY5vgZYqApatQD+1lTTc=;
+        fh=1FLv0Jz16nFfn8NMF1W/4LOwo1OEaSqkx8dBTTb5sDo=;
+        b=ceVy7VXkJPPtO3s9OuuAspUkorvzylR3S757DyoUeZBeRAqkfDQDOe7UAA0MYq6F9u
+         eP8oMcVC+cY1V2jD01CybOH+IIBpIc7o15MmMf3GxbhZbKHWmF7ZQijVvMic3bFWkPrj
+         dc1ckrg/OTfAEHXrBtp2B1AldRe70t7RmOk/S37N3D7YqUZU/kXNTUG0HgVnC1Q+Ne1Y
+         7UzQ1A1E946776mLdOMYK8Knsz/cdeNDzGj8bG0f8goiUhibve/9mwAA0wrKlKFxwYVQ
+         jtuKnTgLOAOos0fIGgm6yfBt9ngH81xrbFFiOlieFqiE137STqeKRgtKMFknGbYwPCu5
+         lACg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773732372; x=1774337172; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i3xav1WzJK9rzK57tlDdYAfYY5vgZYqApatQD+1lTTc=;
+        b=TGjkNilnWLGvnVVETbbI+TTJD6At4Tcc0N2XhWRm162KPV0KehCLfltBPpboGCf1hF
+         SDTakddI2G70h2P4hVJeZK01D3T3VYvWyHqk2fUlvp76PMKf0DNpM6022lpEQ/cTWBYe
+         UkR6rhiIEOXqAGK6105CDMUD8J+H+4LspFV0iFVLaDyEV8UTMej0KWYOzvHw+VGp5WDK
+         ne3ViYov1uuldf3cOs6mfG/h/gWnbmJwe+f+MgpCbjX/RSzxPFUhIS+aNSnTOmlFbcSB
+         du9b2n/b3n8NyZG3TrPWmna6zi2Brh1voYaRbHegojj2qDyV/5fOS59gXorYFiSy8cbJ
+         26kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773732372; x=1774337172;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=i3xav1WzJK9rzK57tlDdYAfYY5vgZYqApatQD+1lTTc=;
+        b=BIsWH9fEgb5dML00okhtPBofHunPrntsA3MkJ3CgYu9lrdETXiXOKFgm7coorAfXgW
+         FF1z6ujc7S14XXURF0vjDlH7VAtCBlGPfb7qCai/XbZGCa/DKAGZ7OFDQJMDxyG0LwWi
+         Nyx+1peLEdIKQ5zeMLhjfF9aKqgisRinRvHMN5a+47WbPoLbxyiVCyiQXp8k1XlVJmtY
+         MXUcBXMpz6mLQnt5RdoDiAlmEspcmIR6b8KyVmgxTLTRceg6+GzKiYE3gqhSA6x2AQLJ
+         uvX7LHfZcvsHA72QzJw0qfeK4GHFFuzVY4EDxX6hH+5LLuFEAV9XRBlyB7dlz65mxx6T
+         +dmA==
+X-Gm-Message-State: AOJu0YyTuSEBZRik7AztPJpE80sMvsTKj+VoYrA5+hlAYyOVlb9S0rVp
+	rd7EMrxC5A7A6QLxL/lTSv/xKpiNQIQ3gJR9uczcfCyfdAQU2JRWKxh56JFC6ZS2ciPQ7eNPvlO
+	RqE2RmN6WW6+g0ududkR25EJnayXJPGk=
+X-Gm-Gg: ATEYQzwAt548OVTHMxl/jYiq8zOHRwduJkau69EUbWbUaaSDCbccET1xyTrxm3ywfVB
+	01INKQmQfbQIDVgx51Cs8U42+6KF+zHRXZM8PSComQUKEdbdtKwF14fteck7fnS8R2pQ+H9xrcQ
+	hk1ANsUjyRwsgf0HvCcSBDFbxCTGcin9tFG4vLN5xZR3uDfn57a2gTsWcb5O75/qKF2tV9/f5An
+	4j1jK93psiYkEX0+UMoaCl+l6yzKcl/w0LyAGPw060ORm1Y27zHR+iaPIe0ES3MYt3EjQZIsaqx
+	APiMAC9y1/ikasO0YaRRGnpKtVG6h7PCwU9iEl1T
+X-Received: by 2002:a17:907:3d03:b0:b94:231f:26ca with SMTP id
+ a640c23a62f3a-b97d6d99d0fmr133734066b.20.1773732371166; Tue, 17 Mar 2026
+ 00:26:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] keys/trusted_keys: clean up debug message logging
- in the tpm backend
-To: Nayna Jain <nayna@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>
-Cc: James.Bottomley@HansenPartnership.com, jarkko@kernel.org,
-        zohar@linux.ibm.com, stefanb@linux.ibm.com,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20260220183426.80446-1-ssrish@linux.ibm.com>
- <20260220183426.80446-2-ssrish@linux.ibm.com>
- <7f8b8478-5cd8-4d97-bfd0-341fd5cf10f9@linux.ibm.com>
-Content-Language: en-US
-From: Srish Srinivasan <ssrish@linux.ibm.com>
-In-Reply-To: <7f8b8478-5cd8-4d97-bfd0-341fd5cf10f9@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=arO/yCZV c=1 sm=1 tr=0 ts=69b8c702 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=V8glGbnc2Ofi9Qvn3v5h:22 a=VnNF1IyMAAAA:8
- a=jGS_jZea7UBjrvt4MQIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE3MDAyNSBTYWx0ZWRfXzLrFejMze+q7
- 7vTx2T3Jbm/ssCwg6vki8X02yIx59v1T+pKDr2vvmJ9TtlZjFX+7vQItyd8BT1Wt5S7h2lzlhgj
- S4F/DjfPfIaXoJmojqSV1Joboj038broD9o0dpTKaby/o4lwj5WBadVdzjU/O8geMq7wxojojjJ
- fJdrskA0jh7M8JTD28T36OgE69QdlGXeNAiNIqZzOpbPbTZNIDP5HUPnJGYKgCDJJGxlw1a1iXz
- h+TyW4gF14YK/q5J8/Xvt7kiwPPIyA+o79/WZaDCEK4/uIHdY1KY0C2Xnx6JMTx3pMXwmHvQnaD
- Mue/pIIRaQcfPsA1/xReaxA4KbRbkaCnGDG/fyQru/yv1EIxnauQlqUA9Bm4qdV6D1x/rGccYYF
- 7J2w4gW9c5BBQDvpQsOUO52z8sVYHRpUWpchy0xvm5i+qx16RTSNsD+9qGlo5kfCw2WmL+SOOdr
- uVTu9HgJ5nlieK8mtgQ==
-X-Proofpoint-GUID: QE8ppXUkowZJqhn0dm_i5UNsmv1NZE-b
-X-Proofpoint-ORIG-GUID: QE8ppXUkowZJqhn0dm_i5UNsmv1NZE-b
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-16_06,2026-03-16_06,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 spamscore=0 lowpriorityscore=0 impostorscore=0
- adultscore=0 bulkscore=0 suspectscore=0 malwarescore=0 clxscore=1015
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
- definitions=main-2603170025
+References: <20260316213606.374109-5-paul@paul-moore.com> <CAHC9VhTEX-sRjyVi2p9j_jFjyWbzy54b=iteiTKGq-mnBaHkrg@mail.gmail.com>
+In-Reply-To: <CAHC9VhTEX-sRjyVi2p9j_jFjyWbzy54b=iteiTKGq-mnBaHkrg@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 17 Mar 2026 08:25:58 +0100
+X-Gm-Features: AaiRm50sF1v33VMxCQO8F4CAvv3PlKmjLZTCcf_1PYwrrTaEu5VQoATkjlrFBkw
+Message-ID: <CAOQ4uxi7+6Qt5K9s6Fq8deN-ep2gnxqJ6-wJy9pXJzszpfn-6A@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Fix incorrect overlayfs mmap() and mprotect() LSM
+ access controls
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, Gao Xiang <xiang@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 3/10/26 4:15 AM, Nayna Jain wrote:
+On Mon, Mar 16, 2026 at 10:59=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
 >
-> On 2/20/26 1:34 PM, Srish Srinivasan wrote:
->> The TPM trusted-keys backend uses a local TPM_DEBUG guard and pr_info()
->> for logging debug information.
->>
->> Replace pr_info() with pr_debug(), and use KERN_DEBUG for 
->> print_hex_dump().
->> Remove TPM_DEBUG.
->>
->> No functional change intended.
-> There is functional change here.  This change allows secret and nonce 
-> in the function dump_sess() to be logged to kernel logs when dynamic 
-> debug is enabled. Previously, it was possible only in the debug builds 
-> and not the production builds at runtime. With this change, it is 
-> always there in production build. This can result in possible attack.
-
-
-Hi Jarkko,
-Could you please let us know your thoughts on this one?
-
-And Nayna,
-thanks for bringing this up.
-
-thanks,
-Srish.
-
-
+> On Mon, Mar 16, 2026 at 5:36=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> >
+> > The existing mmap() and mprotect() LSM access control points for the
+> > overlayfs filesystem are incomplete in that they do not cover both the
+> > user and backing files.  This patchset corrects this through the additi=
+on
+> > of a new backing file specific LSM hook, security_mmap_backing_file(),
+> > a new user path file associated with a backing file that can be used by
+> > LSMs in the security_file_mprotect() code path, and the associated
+> > SELinux code changes.
+> >
+> > The security_mmap_backing_file() hook is intended to allow LSMs to appl=
+y
+> > access controls on mmap() operations accessing a backing file, similar =
+to
+> > the security_mmap_file() for user files.  Due to the details around the
+> > accesses and the desire to distinguish between the two types of accesse=
+s,
+> > a new LSM hook was needed.  More information on this new hook can be
+> > found in the associated patch.
+> >
+> > The new user path file replaces the existing user path stored in the
+> > backing file.  This change was necessary to support LSM based access
+> > controls in the mprotect() code path where only one file is accessible
+> > via the vma->vm_file field.  Unfortunately, storing a reference to the
+> > user file inside the backing file does not work due to the cyclic
+> > ref counting so a stand-in was necessary, the new user O_PATH file.
+> > This new O_PATH file is intended to be representative of the original
+> > user file and can be used by LSMs to make access control decisions base=
+d
+> > on both the backing and user files.
+> >
+> > The SELinux changes in this patchset involve making use of the new
+> > security_mmap_backing_file() hook and updating the existing mprotect()
+> > access controls to take into account both the backing and user files.
+> > These changes preserve the existing SELinux approach of allowing access
+> > on overlayfs files if the current task has the necessary rights to the
+> > user file and the mounting process has the necessary rights to the
+> > underlying backing file.
+> >
+> > --
+> > Amir Goldstein (1):
+> >       backing_file: store user_path_file
+> >
+> > Paul Moore (2):
+> >       lsm: add the security_mmap_backing_file() hook
+> >       selinux: fix overlayfs mmap() and mprotect() access checks
+> >
+> >  fs/backing-file.c             |   28 +++++---
+> >  fs/erofs/ishare.c             |   12 ++-
+> >  fs/file_table.c               |   53 +++++++++++++---
+> >  fs/fuse/passthrough.c         |    3
+> >  fs/internal.h                 |    5 -
+> >  fs/overlayfs/dir.c            |    3
+> >  fs/overlayfs/file.c           |    1
+> >  include/linux/backing-file.h  |   29 ++++++++-
+> >  include/linux/file_ref.h      |   10 ---
+> >  include/linux/lsm_audit.h     |    2
+> >  include/linux/lsm_hook_defs.h |    2
+> >  include/linux/security.h      |   10 +++
+> >  security/security.c           |   25 +++++++
+> >  security/selinux/hooks.c      |  108 ++++++++++++++++++++++++++++-----=
+-
+> >  14 files changed, 231 insertions(+), 60 deletions(-)
 >
-> Instead of doing this change, I think add a comment to prevent this 
-> sort of change in the future.
+> Due to the nature of the issue, I'm going to merge this into
+> lsm/stable-7.0 in a few moments so the changes can get some testing in
+> linux-next with the idea of sending this up to Linus' later in the
+> week.  If anyone has any concerns over this patchset, please let me
+> know as soon as possible.
 >
-> Thanks & Regards,
+
+Since previous 4 revisions were not posted to public list,
+let me repeat my concern from v4:
+
+On Fri, Mar 6, 2026 at 5:24=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
+te:
 >
->     - Nayna
+> On Fri, Mar 6, 2026 at 3:24=E2=80=AFAM Amir Goldstein <amir73il@gmail.com=
+> wrote:
+...
+> > My expectation is that the merge of this patch will be collaborated
+> > with Christian ...
 >
->>
->> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
->> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
->> ---
->>   security/keys/trusted-keys/trusted_tpm1.c | 40 +++++++----------------
->>   1 file changed, 12 insertions(+), 28 deletions(-)
->>
->> diff --git a/security/keys/trusted-keys/trusted_tpm1.c 
->> b/security/keys/trusted-keys/trusted_tpm1.c
->> index c865c97aa1b4..216caef97ffc 100644
->> --- a/security/keys/trusted-keys/trusted_tpm1.c
->> +++ b/security/keys/trusted-keys/trusted_tpm1.c
->> @@ -46,28 +46,25 @@ enum {
->>       SRK_keytype = 4
->>   };
->>   -#define TPM_DEBUG 0
->> -
->> -#if TPM_DEBUG
->>   static inline void dump_options(struct trusted_key_options *o)
->>   {
->> -    pr_info("sealing key type %d\n", o->keytype);
->> -    pr_info("sealing key handle %0X\n", o->keyhandle);
->> -    pr_info("pcrlock %d\n", o->pcrlock);
->> -    pr_info("pcrinfo %d\n", o->pcrinfo_len);
->> -    print_hex_dump(KERN_INFO, "pcrinfo ", DUMP_PREFIX_NONE,
->> +    pr_debug("sealing key type %d\n", o->keytype);
->> +    pr_debug("sealing key handle %0X\n", o->keyhandle);
->> +    pr_debug("pcrlock %d\n", o->pcrlock);
->> +    pr_debug("pcrinfo %d\n", o->pcrinfo_len);
->> +    print_hex_dump(KERN_DEBUG, "pcrinfo ", DUMP_PREFIX_NONE,
->>                  16, 1, o->pcrinfo, o->pcrinfo_len, 0);
->>   }
->>     static inline void dump_sess(struct osapsess *s)
->>   {
->> -    print_hex_dump(KERN_INFO, "trusted-key: handle ", DUMP_PREFIX_NONE,
->> +    print_hex_dump(KERN_DEBUG, "trusted-key: handle ", 
->> DUMP_PREFIX_NONE,
->>                  16, 1, &s->handle, 4, 0);
->> -    pr_info("secret:\n");
->> -    print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
->> +    pr_debug("secret:\n");
->> +    print_hex_dump(KERN_DEBUG, "", DUMP_PREFIX_NONE,
->>                  16, 1, &s->secret, SHA1_DIGEST_SIZE, 0);
->> -    pr_info("trusted-key: enonce:\n");
->> -    print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
->> +    pr_debug("trusted-key: enonce:\n");
->> +    print_hex_dump(KERN_DEBUG, "", DUMP_PREFIX_NONE,
->>                  16, 1, &s->enonce, SHA1_DIGEST_SIZE, 0);
->>   }
->>   @@ -75,23 +72,10 @@ static inline void dump_tpm_buf(unsigned char 
->> *buf)
->>   {
->>       int len;
->>   -    pr_info("\ntpm buffer\n");
->> +    pr_debug("\ntpm buffer\n");
->>       len = LOAD32(buf, TPM_SIZE_OFFSET);
->> -    print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE, 16, 1, buf, len, 
->> 0);
->> -}
->> -#else
->> -static inline void dump_options(struct trusted_key_options *o)
->> -{
->> -}
->> -
->> -static inline void dump_sess(struct osapsess *s)
->> -{
->> -}
->> -
->> -static inline void dump_tpm_buf(unsigned char *buf)
->> -{
->> +    print_hex_dump(KERN_DEBUG, "", DUMP_PREFIX_NONE, 16, 1, buf, 
->> len, 0);
->>   }
->> -#endif
->>     static int TSS_rawhmac(unsigned char *digest, const unsigned char 
->> *key,
->>                  unsigned int keylen, ...)
+> Of course, that is one reason he is on the To/CC line.  More on this
+> in my reply to your 0/4 comments.
+>
+
+I am sorry Paul. This must be a misunderstanding.
+
+My expectation for collaborating the merge of my patch with
+Christian was that an agreement would be reached regarding
+which way it would be routed to Linus.
+
+CC to Christian and sending the patch to Linus without getting any
+ACK from Christian was not the way I expected this to go.
+
+> > and that it will NOT be auto selected or rushed into stable.
+>
+> I haven't marked it with a 'Fixes:' tag or a stable Cc which in my
+> experience are the two quickest ways to get pulled into a stable tree.
+> I'm not sure what stable policy Al or Christian have for the VFS tree,
+> but LSM and SELinux commits are not pulled into the stable trees
+> unless explicitly marked with a stable Cc or requested by a dev after
+> the fact.
+>
+> > I don't mind if you want to route the security_mmap_backing_file() hook=
+s to
+> > stable to use it for some simpler bandaid for stable, but rushing this
+> > one to stable is not a good idea IMO.
+>
+> Once again, see my (upcoming) reply to your 0/4 comments.
+>
+
+TBH, I don't understand the logic of placing patches in lsm/stable-7.0
+without the intent of backporting them to stable.
+
+I perceive my patch as a risky patch for overlayfs and the vfs
+this is why I wanted Christian do be part of the decision if and when
+my patch is sent to Linus.
+
+Thanks,
+Amir.
