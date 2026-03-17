@@ -1,96 +1,195 @@
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4627538F250
-	for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 21:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A173859D7
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 21:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773782018; cv=none; b=UII7avGqmmVQoNKVlVRU2rbygTmk9QwGWOmnaumXdFbRXhpKadkGyvttL+JgHMTAdSk/9ltm8rRRXs2kV4w9jWNdH1lpVjz6bg0om6PNqcHQyGZsREJebJ24DV4q/LdJpPj9K/q3nlHAJnISkGv+Ls3owQJHdU2qU0BlbOpsPU8=
+	t=1773782647; cv=none; b=S9HC4/jgBtJcKfmj8ad6/C1WjGaPh+OhPn4ea4eWHRTqXngQnM65z77mfBHoGHLqtovbPvOF4wk6lyYSoJdH1PqiYBSTzRNmZvMw+zyjWHg/WsHSaT4TKzRmHyjaxu7fUplmp4b2VkF/bEl8Y/eAunjGIZO8koAZm/CPMgt+HNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773782018; c=relaxed/simple;
-	bh=mQyZJgiPVqoqo74dJHDzp++wqDuqx+Vv/JhKVG5vb/I=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=tO8cWq+mU/7NrJpdj74VjdgKCxJhF3oJpUfSb4qtxrGnAclCf3cr5WbcpUbZWZB6KToepyT5vpZf757LbV69pHAKxOiSiF+UfJpV/OHIf5ckXRdyzIWAYBwLxsbQoH1MkY45F3fMUvqBP+xCaLLs30bzdDDfcZmPc+5KaTYVjt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VJVrAh97; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1773782647; c=relaxed/simple;
+	bh=TGqDQVKenKst7ulkB8U2FPYOSqBdO6CBrwx/TU5vxvw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ovebx/bxoFxcd9/4mDZfSp4t3o+pDkrArplI5PIw1i3umcqxapEiu50AWcRK5+sZjrf5asbi+hbFpbrecBru8xYGSzhZbvGGR19CTgEwYXukGD9v7/uSWM1jLIr2NK4EtnGSbr1I/JE9G9S+JJSl2iyHGTtIXSDYZ6qgCCHdkXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=AE2sstpk; arc=none smtp.client-ip=185.125.25.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VJVrAh97"
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-89c4feaaeb4so33483866d6.2
-        for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 14:13:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1773782016; x=1774386816; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+UqvNa0C4Cv/lWYQzzgHjUHv7+/AUn//LeWFFBXrp9M=;
-        b=VJVrAh97GFsRA+mM9hX8LOjStfPbw0lkbUwbVVLg9fuEFpSJdJtuLKtH5nATP44dhC
-         9NSD6c9ns1xDoOGUtu8R8uItO8i/GWLxSPClYzig+WYcSjifsIrhZP86xP1qDUnvAS/O
-         HUADj9wqyyD6WqFTLHG7SLjU9I0n+wBKvC7Eq2mlIWZpGHNM6VGky7gEX2ovwPc6tVbp
-         u9utLXar0q/G+eMC2ykddM/qw/qSsBL6P++C46iu98UtlRsmn56Q7ExAZfNjVHREbjtd
-         c9CB5VkU94HTL4ln/C2D8dxrRH3E1ZtanJ93VYLnRFcMTy4rU80ZB/ypL+nfC7BIi4nR
-         unvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773782016; x=1774386816;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+UqvNa0C4Cv/lWYQzzgHjUHv7+/AUn//LeWFFBXrp9M=;
-        b=TYlv8TOLx4jEMr29jNUN/sESuEDrOONEN3iAHJwNFVQxK7s6WZK+idPa+qGozFClJK
-         xeiOWN2V4bmSGo+zQSWO7zGlCXi7wa41QzZuCNoeOkYpcTffUQLfvirIdv1SCnlbGudJ
-         ONTR/dRnKE7EXXIUVDxTHkLqZc7cZc8Nd5hTG48bQzT7b/iSG18ScO1znzjJpwFarMUd
-         dS6KkdnpYB9tvfknx0fUAO3XhtBEThIYtoNrbd21uMta7RMhr5OD0oxg0EHicmroVVej
-         VAJulJoca5BiVi+U1Fo2i4uUjUlSyUER67m8dbgBq/bDLKTai3X5Km1x1K5o+hCmrdcA
-         KunQ==
-X-Gm-Message-State: AOJu0YxnxnTzlZQeiYqnMhbPD6XsN89ESZSTkRoRr9stGlzjgbQh+clk
-	Cobj6Xuc95QoS0jWWswl5uh5BAtJ9PlWotKeNsW+p5iC84TZFbP1XF7qTg9MPFVuYAaasv5Q2pz
-	rZO8=
-X-Gm-Gg: ATEYQzwzFoe1qZuGAKgXuC0vTfgTZl6ifb2Xe/cBTt8SWslXlM8w7LXSF6DTGcKIY0F
-	Iqr41sHewaoIfnegvvh91nWGRSFZ9Q87Ymb6tFyrXxlsKftuvV8Q8FWYMQnCAZWLnWnYSVVTLhy
-	YD9cCzVC1xE+Azkv1iiANulXjm7SbRQe6/6oBVfgjtVt/xSoLuQYKx+96Sa06ldmpOBE3GEj+IB
-	DkyYTrlwSRICZfmbkVcL5aXlc0kVrN9aipZM1E3yY9m5/4IGTLAgQUd9YljzPOOgUn3GZ/RvPwA
-	GNOJGXHmWP7GIkSe7J2zIsLTQCLEEDoXdAz8sVNsZ7Jj9Rh+waqN7iraA2AMh1zXbzhdSEhBgDM
-	uCJ3mCYSn4c+7Sj8btQwlNlR7+Av5fBVqgeg2FA5QvqkzmMp6IPph9Cn6zR374SI17h3QoTo2Bd
-	eqSiP7nxx2I77DpnACUhEMVLhYheFQUtVYiBSLYiR8ZxivhYzSAmLEgzPJbQpIeQUSAhF8
-X-Received: by 2002:a05:6214:3111:b0:899:e814:825f with SMTP id 6a1803df08f44-89c6b5dc31cmr18515806d6.59.1773782016133;
-        Tue, 17 Mar 2026 14:13:36 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89c6ba0348fsm5300406d6.47.2026.03.17.14.13.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2026 14:13:35 -0700 (PDT)
-Date: Tue, 17 Mar 2026 17:13:34 -0400
-Message-ID: <f2b73b8286491e7355e8355bf1f4d4cf@paul-moore.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="AE2sstpk"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fb4TZ5w39z2RS;
+	Tue, 17 Mar 2026 22:14:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1773782066;
+	bh=9PdX0GoF+dwhSnTxhQP6xSC/aUKyJh+SmOgu8OgcULE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AE2sstpkYihXXRJ/A5ZQNWjOTKCFVk/U3E+sNDnugqB1XY1KLhpwj6DB+YKpZm43l
+	 2PUNziPG4SeM6bTGMhuqudDTn550ikIdgTwjMwQCCVG2dhoL35gIOWSslx6MMVyy42
+	 PyHcbAeO7Ou4BrIZJZDn4pYyIJKvj2g8qNWW0tTs=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4fb4TY2dTNzrFg;
+	Tue, 17 Mar 2026 22:14:25 +0100 (CET)
+Date: Tue, 17 Mar 2026 22:14:23 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Kuniyuki Iwashima <kuniyu@google.com>, 
+	Simon Horman <horms@kernel.org>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>, 
+	John Johansen <john.johansen@canonical.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Tingmao Wang <m@maowtm.org>, 
+	Justin Suess <utilityemal77@gmail.com>, linux-security-module@vger.kernel.org, 
+	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, Matthieu Buffet <matthieu@buffet.re>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, konstantin.meskhidze@huawei.com, 
+	Demi Marie Obenour <demiobenour@gmail.com>, Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v6 1/9] lsm: Add LSM hook security_unix_find
+Message-ID: <20260317.Re1jaiThoo5i@digikod.net>
+References: <20260315222150.121952-1-gnoack3000@gmail.com>
+ <20260315222150.121952-2-gnoack3000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20260317_1333/pstg-lib:20260317_1127/pstg-pwork:20260317_1333
-From: Paul Moore <paul@paul-moore.com>
-To: Dmitry Antipov <dmantipov@yandex.ru>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-security-module@vger.kernel.org, Dmitry Antipov <dmantipov@yandex.ru>
-Subject: Re: [PATCH] securityfs: use kstrdup_const() to manage symlink targets
-References: <20260317141135.133339-1-dmantipov@yandex.ru>
-In-Reply-To: <20260317141135.133339-1-dmantipov@yandex.ru>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260315222150.121952-2-gnoack3000@gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Mar 17, 2026 Dmitry Antipov <dmantipov@yandex.ru> wrote:
+Paul and netdev folks, I think this new hook is now good.  I'd like to
+push this series to -next this week.  Please let us know if you find any
+issue, otherwise I guess we'll get more eyes and bots in the -next tree.
+
+On Sun, Mar 15, 2026 at 11:21:42PM +0100, Günther Noack wrote:
+> From: Justin Suess <utilityemal77@gmail.com>
 > 
-> Since 'target' argument of 'securityfs_create_symlink()' is (for
-> now at least) a compile-time constant, it may be reasonable to
-> use 'kstrdup_const()' / 'kree_const()' to manage 'i_link' member
-> of the corresponding inode in attempt to reuse .rodata instance
-> rather than making a copy.
+> Add a LSM hook security_unix_find.
 > 
-> Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
+> This hook is called to check the path of a named unix socket before a
+> connection is initiated. The peer socket may be inspected as well.
+> 
+> Why existing hooks are unsuitable:
+> 
+> Existing socket hooks, security_unix_stream_connect(),
+> security_unix_may_send(), and security_socket_connect() don't provide
+> TOCTOU-free / namespace independent access to the paths of sockets.
+> 
+> (1) We cannot resolve the path from the struct sockaddr in existing hooks.
+> This requires another path lookup. A change in the path between the
+> two lookups will cause a TOCTOU bug.
+> 
+> (2) We cannot use the struct path from the listening socket, because it
+> may be bound to a path in a different namespace than the caller,
+> resulting in a path that cannot be referenced at policy creation time.
+> 
+> Cc: Günther Noack <gnoack3000@gmail.com>
+> Cc: Tingmao Wang <m@maowtm.org>
+> Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 > ---
->  security/inode.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-
-Seems reasonable, we can easily back this out if we ever need to support
-non-const link target strings.  Merged into lsm/dev, thanks.
-
---
-paul-moore.com
+>  include/linux/lsm_hook_defs.h |  5 +++++
+>  include/linux/security.h      | 11 +++++++++++
+>  net/unix/af_unix.c            | 13 ++++++++++---
+>  security/security.c           | 20 ++++++++++++++++++++
+>  4 files changed, 46 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index 8c42b4bde09c..7a0fd3dbfa29 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -317,6 +317,11 @@ LSM_HOOK(int, 0, post_notification, const struct cred *w_cred,
+>  LSM_HOOK(int, 0, watch_key, struct key *key)
+>  #endif /* CONFIG_SECURITY && CONFIG_KEY_NOTIFICATIONS */
+>  
+> +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
+> +LSM_HOOK(int, 0, unix_find, const struct path *path, struct sock *other,
+> +	 int flags)
+> +#endif /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
+> +
+>  #ifdef CONFIG_SECURITY_NETWORK
+>  LSM_HOOK(int, 0, unix_stream_connect, struct sock *sock, struct sock *other,
+>  	 struct sock *newsk)
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 83a646d72f6f..99a33d8eb28d 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -1931,6 +1931,17 @@ static inline int security_mptcp_add_subflow(struct sock *sk, struct sock *ssk)
+>  }
+>  #endif	/* CONFIG_SECURITY_NETWORK */
+>  
+> +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
+> +
+> +int security_unix_find(const struct path *path, struct sock *other, int flags);
+> +
+> +#else /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
+> +static inline int security_unix_find(const struct path *path, struct sock *other, int flags)
+> +{
+> +	return 0;
+> +}
+> +#endif /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
+> +
+>  #ifdef CONFIG_SECURITY_INFINIBAND
+>  int security_ib_pkey_access(void *sec, u64 subnet_prefix, u16 pkey);
+>  int security_ib_endport_manage_subnet(void *sec, const char *name, u8 port_num);
+> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+> index 3756a93dc63a..aced28179bac 100644
+> --- a/net/unix/af_unix.c
+> +++ b/net/unix/af_unix.c
+> @@ -1231,11 +1231,18 @@ static struct sock *unix_find_bsd(struct sockaddr_un *sunaddr, int addr_len,
+>  		goto path_put;
+>  
+>  	err = -EPROTOTYPE;
+> -	if (sk->sk_type == type)
+> -		touch_atime(&path);
+> -	else
+> +	if (sk->sk_type != type)
+>  		goto sock_put;
+>  
+> +	/*
+> +	 * We call the hook because we know that the inode is a socket and we
+> +	 * hold a valid reference to it via the path.
+> +	 */
+> +	err = security_unix_find(&path, sk, flags);
+> +	if (err)
+> +		goto sock_put;
+> +	touch_atime(&path);
+> +
+>  	path_put(&path);
+>  
+>  	return sk;
+> diff --git a/security/security.c b/security/security.c
+> index 67af9228c4e9..c73196b8db4b 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -4731,6 +4731,26 @@ int security_mptcp_add_subflow(struct sock *sk, struct sock *ssk)
+>  
+>  #endif	/* CONFIG_SECURITY_NETWORK */
+>  
+> +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
+> +/**
+> + * security_unix_find() - Check if a named AF_UNIX socket can connect
+> + * @path: path of the socket being connected to
+> + * @other: peer sock
+> + * @flags: flags associated with the socket
+> + *
+> + * This hook is called to check permissions before connecting to a named
+> + * AF_UNIX socket.
+> + *
+> + * Return: Returns 0 if permission is granted.
+> + */
+> +int security_unix_find(const struct path *path, struct sock *other, int flags)
+> +{
+> +	return call_int_hook(unix_find, path, other, flags);
+> +}
+> +EXPORT_SYMBOL(security_unix_find);
+> +
+> +#endif	/* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
+> +
+>  #ifdef CONFIG_SECURITY_INFINIBAND
+>  /**
+>   * security_ib_pkey_access() - Check if access to an IB pkey is allowed
+> -- 
+> 2.53.0
+> 
+> 
