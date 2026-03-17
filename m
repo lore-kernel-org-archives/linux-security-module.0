@@ -1,100 +1,88 @@
-Received: from forward206d.mail.yandex.net (forward206d.mail.yandex.net [178.154.239.215])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6968C3E1220
-	for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 14:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.215
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A18D3E3C6E;
+	Tue, 17 Mar 2026 14:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773757087; cv=none; b=jJfz2aa5LeGqp0tPYmXmnc4zT7dc5SAk1KSP8OCmg/WvzunzXdQV0RXtlS1KT30AC+IPnJ3jVNhLZ2ipwsPibIvpK92jxv3ATUTeSSnp/g8yQ+dp4Nvk9sQu4LelBDw9g8r+RqB0efDHMvkPZq8JNplGkO547ygdI8laLFePvRk=
+	t=1773758366; cv=none; b=N7nGp/ZN7l64N1V6D1ZcPJXLjfHLsUzqS9/zfLl5d3qJjVCFASlejUKccIK/go6QaPCI5IQF8sUuREt03UlX9jsGZIOuXd0NEtG+misHlwZFXlSZLXjVAbrru6jBxIFZzQTusN0JnDm20o25DvzuW05UMsfV0wmo4qboEhuF56I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773757087; c=relaxed/simple;
-	bh=p79DHuTVvXpJVoKH4N6hLSGQl4srZfNd9ILdtTievdc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ov1//PWrX8RDUa5AvIXZE6l0EYN4PNM0922zhiNyLllLLeIqJS6tlg8dk4GoPQ3Ps2ALVBByt2Yl4m4kSfAm0e1roO1ahZY9VBoh8qjGdNooKXEUrseSdttKxRYCYPjZg5W+mZV/Ad5M2JPIETbYe9lKK774FKiaUem+PVLi4Rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=B0UGcTaJ; arc=none smtp.client-ip=178.154.239.215
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+	s=arc-20240116; t=1773758366; c=relaxed/simple;
+	bh=PWfE+o5Hz+nic40jQHCKcE3T28Qk2FdkhdgeMe1G7Jc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fGRgxuXc0jIurbPp1m6NpHxpN0NanOjm4+Tu+X0V0r5iOTfLs5IUUrGctyORFt2ifsgw3NL0yBRwIxpZckE/x+R/NQReE97AvgLBla4dkp4WXfmzpPbHrWs3rZeg1Y/ujWiYcia0awWhg405kZiWAIaya08MUXqYi7R+xdzAKcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZxYgYDn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="B0UGcTaJ"
-Received: from forward101d.mail.yandex.net (forward101d.mail.yandex.net [IPv6:2a02:6b8:c41:1300:1:45:d181:d101])
-	by forward206d.mail.yandex.net (Yandex) with ESMTPS id 0621081B47
-	for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 17:12:17 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-99.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-99.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:eaca:0:640:4fc0:0])
-	by forward101d.mail.yandex.net (Yandex) with ESMTPS id 646DFC0031;
-	Tue, 17 Mar 2026 17:12:09 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-99.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 7CN9g1DGn4Y0-VUny64Nu;
-	Tue, 17 Mar 2026 17:12:08 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1773756729; bh=02qxw/jYqyGyMY6AFzmhUleDAePlUPAIrCUsUa+sZpc=;
-	h=Message-ID:Date:Cc:Subject:To:From;
-	b=B0UGcTaJK3A2GH9TisR6JHxK5SGSKMc95xm9beGWX1XS4KYcSOvdncpD85f+jxJBH
-	 10OlhFOjRl4mb+j07niqLe0vVfgBHr5YYQlbwgY3TV9CsNcOhoDxYdEwPX7smGCpl/
-	 ii4As9aKrTebxASbL2EyxuBbYIgD9HkXSNaUg8TQ=
-Authentication-Results: mail-nwsmtp-smtp-production-main-99.klg.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-From: Dmitry Antipov <dmantipov@yandex.ru>
-To: Paul Moore <paul@paul-moore.com>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZxYgYDn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12CEAC4CEF7;
+	Tue, 17 Mar 2026 14:39:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773758366;
+	bh=PWfE+o5Hz+nic40jQHCKcE3T28Qk2FdkhdgeMe1G7Jc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=DZxYgYDnyUnQJBVCjIKBFtdKrR2n2NDrbhTvaPnowGyWoBVJekeM7cIgG+q1myQN0
+	 Q3LaLPEsNuYB0/60IkP+b/ZQc+WFEI/JROmJfRmFVKm3ao+OixC+nKDHQhyeP89YhT
+	 mWlJVI0tZhEVv1Ri05KsVEN7QkwB5o9jvOoNmo8+Yb+HJWh6ZUXo1nMf/zo6bOHDC0
+	 N2QuhWcAwm0LaRrEMx8DuU9zjtS4kL0cz06zZwAdJ/ToHBt78o33mXZiTrQzuhns8U
+	 nmErHEvDg9TEY8zFd2ckWIo+VmPouiHiZwlw8IDAVjJ8+On/NOY0cZs/BML0xNqAuK
+	 sBolTqWEqo6kQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	David Laight <david.laight.linux@gmail.com>,
+	linux-nilfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>,
+	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+	Viacheslav Dubeyko <slava@dubeyko.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>,
 	James Morris <jmorris@namei.org>,
 	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-security-module@vger.kernel.org,
-	Dmitry Antipov <dmantipov@yandex.ru>
-Subject: [PATCH] securityfs: use kstrdup_const() to manage symlink targets
-Date: Tue, 17 Mar 2026 17:11:35 +0300
-Message-ID: <20260317141135.133339-1-dmantipov@yandex.ru>
-X-Mailer: git-send-email 2.53.0
+Subject: Re: [PATCH v3 0/2] vfs: follow-on fixes for i_ino widening
+Date: Tue, 17 Mar 2026 15:39:13 +0100
+Message-ID: <20260317-sinkflug-symmetrie-0f05964e6492@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260316-iino-u64-v3-0-d1076b8f7a20@kernel.org>
+References: <20260316-iino-u64-v3-0-d1076b8f7a20@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1142; i=brauner@kernel.org; h=from:subject:message-id; bh=PWfE+o5Hz+nic40jQHCKcE3T28Qk2FdkhdgeMe1G7Jc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTuTJ9uts1atzj19PQgX3uBpmW2KeHf5/RMYZrsfYLj3 r+nO3Z2dZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExE+ijDX8mHen/cTkl2SNxT XyElLh3AushE/ufxeHfeSwYHv050EmVkOPteyPUTy+HPZzdsWJh86/sJzo4dvTyPf4Skn1wr+U7 Ykg8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-Since 'target' argument of 'securityfs_create_symlink()' is (for
-now at least) a compile-time constant, it may be reasonable to
-use 'kstrdup_const()' / 'kree_const()' to manage 'i_link' member
-of the corresponding inode in attempt to reuse .rodata instance
-rather than making a copy.
+On Mon, 16 Mar 2026 15:02:21 -0400, Jeff Layton wrote:
+> Just some patches to fix follow-on issues reported after the
+> inode->i_ino widening series. Christian, could you toss these
+> onto the vfs-7.1.kino branch?
 
-Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
----
- security/inode.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Applied to the vfs-7.1.kino branch of the vfs/vfs.git tree.
+Patches in the vfs-7.1.kino branch should appear in linux-next soon.
 
-diff --git a/security/inode.c b/security/inode.c
-index 81fb5d6dd33e..080402367674 100644
---- a/security/inode.c
-+++ b/security/inode.c
-@@ -30,7 +30,7 @@ static int mount_count;
- static void securityfs_free_inode(struct inode *inode)
- {
- 	if (S_ISLNK(inode->i_mode))
--		kfree(inode->i_link);
-+		kfree_const(inode->i_link);
- 	free_inode_nonrcu(inode);
- }
- 
-@@ -258,17 +258,17 @@ struct dentry *securityfs_create_symlink(const char *name,
- 					 const struct inode_operations *iops)
- {
- 	struct dentry *dent;
--	char *link = NULL;
-+	const char *link = NULL;
- 
- 	if (target) {
--		link = kstrdup(target, GFP_KERNEL);
-+		link = kstrdup_const(target, GFP_KERNEL);
- 		if (!link)
- 			return ERR_PTR(-ENOMEM);
- 	}
- 	dent = securityfs_create_dentry(name, S_IFLNK | 0444, parent,
--					link, NULL, iops);
-+					(void *)link, NULL, iops);
- 	if (IS_ERR(dent))
--		kfree(link);
-+		kfree_const(link);
- 
- 	return dent;
- }
--- 
-2.53.0
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-7.1.kino
+
+[1/2] EVM: add comment describing why ino field is still unsigned long
+      https://git.kernel.org/vfs/vfs/c/bef5b11087ce
+[2/2] nilfs2: fix 64-bit division operations in nilfs_bmap_find_target_in_group()
+      https://git.kernel.org/vfs/vfs/c/81359c146fba
