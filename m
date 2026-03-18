@@ -1,79 +1,79 @@
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E042361DB3
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 05:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974DE361DA7
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 06:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773813565; cv=none; b=EZwMR+DeRQYDnv4n4xaRPPcI2d+qipGpAYqcX3uuZ+vq9BQu1l1T6assrQtxGbqDw+5XbyjJgze8YUMED3hXpCL1kjtDxND3YsX4i6ZVNzFfoT/etu9uJwjGONyjDvMUlJm/bkk0XrmP/bMYpELdQu60yTnqCgprz+pznb1s/h4=
+	t=1773813606; cv=none; b=dOnorrYXcoKoNVrQ3XPzLNKiZFj6m3TG6pahmHTnGnB5jXDBWWwpQ08jw/eQnf3HrJSKRmBtNNrSg26d40UPZW3bTvUAj8uO4zC1N2GtErPRofi6V48gUKZLEkvP4yXFheG15idrs83LpPZi6t1InRhDn+w6VRIuTVTwDpHOb44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773813565; c=relaxed/simple;
-	bh=d30czZRkc2XcvtgLp/ml4rAGkzT+vUu6xrXY6kq51vc=;
+	s=arc-20240116; t=1773813606; c=relaxed/simple;
+	bh=7WWRN1vIAWhzuNuAj2IZfH8hqINnziFMhTwSlItkpVI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T+B1qJyaQs+xBrjdEfrOt8+SLKB4EYpRXX9bbi05kRXuxLMsx2was67mCur4cLQ1UINFc4tkTYgVJ/upm1wg30u0ac0Ogy/1BJhYa2h3HdfULHavDskxSDYJjh7pfw8Buoji06RAaGLevz5taJdLFbxIxcWRgA0AnXAxUWzlcwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=osYvrhJ/; arc=none smtp.client-ip=185.125.188.122
+	 In-Reply-To:Content-Type; b=gc/SF/NPfZ6slD9ZBVImYJYhmbG/OiQiJcIc7PWHO4Yk17mQ+mVJqmFfBFSbYY+oHtTEvP7Y7lQnwcZBom2kPbIRZoKZIIDg58whjkUKQa9YSMFo+qnMNSBJqqxdU2AKJFcs6CcP+fRiUfWrZvvkrUoBdovINmK8+6W2yPPFR4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=OgKDZzps; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="osYvrhJ/"
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="OgKDZzps"
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 7028B3FBB1
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 05:59:21 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id B2BA93FB75
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 05:53:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1773813561;
-	bh=HnYxWZf82VZYFToxxlKhf4jSSNuvzsDXOVG4cgFbtgw=;
+	s=20251003; t=1773813221;
+	bh=TaXaxCufMl6szy9eE7qxF5U+KCmrPgzfU+BhVZEw+sU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=osYvrhJ/6x8DCgS13rclDQ/qnvBn3Rt1LB13wnTu3JMi+Q5Ir0U6e0h+mnNBfd9wN
-	 UyFBoo77juXzo09Z+Qcvy5JTmIaBpP7EXS8V5zDklNgbDufbym5d/60Nwkyp9wVyPV
-	 s2pVthwHhWHLq4CKW9wb1UnAy5Uiu449hgGFsH9M7rCmI7apPr6FMLZJFithHKBWFP
-	 ummuDHIT4ox7NdgaR/MOQEfOPUX1HMPYh2lQIE9dJU/gun8unEDEF1jrzuklzCUx1d
-	 pDp0AufktKhBQcMKJOR5j36P84o6YRrHtp/EETqBuPIpzxsGBiPjZN8BhJZrHFiAUv
-	 d9VPV6mhy4tv9W1s5QvkoqBvD/9ESaHYdiRggW8gqAeIusWM12ZNqPJzQw7sJo5JuK
-	 Um4h6MwcjIW1IL/aGsi8seqXe7SJR1z/OUHLpaHpqE4wq4x1XBax/IYtaVDFP997vQ
-	 12bip3F5zBlpxUcHXjr5cuUM5aYR9iecz9HsR0+PrHOXJxKpgSJp4KUigEKcf4lth8
-	 IdmYo3QTEyRe5ZHxMwsfQjxC09VReRyEEGS9YJGgMpbyrrtaliTdp/6VL5o9BsP91P
-	 o7Q7zK8u9MiXtzyCtqWIvWi5tNPonCGJkHEQxyONuOfrBqCkhdliscF0SraUKTNptc
-	 ZDriHc3Es5cZzdEE+oLyXV7A=
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-358e425c261so489122a91.3
-        for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 22:59:21 -0700 (PDT)
+	b=OgKDZzps2L0Wnex69+6ti8ktZRd5cq8jfADxnwdsKM5ETb2DcvSYj2/UHc5SRMfCr
+	 3C/w36tvTZ5zBjj21ZlU70r8SrW1bmX69u7lDbxbgWtsltPpIuXlYoBG8BsSZHD6y5
+	 msYXeVHzQom2LBRODozOUT3Bj+DESUDhEoCZVlO6nCQlnvyJYPnjmuUr2+/Ero9e5M
+	 OJ2mEMzMaQJVTKI1dcTPuLWm0eLp2EYiouU7tSAu/My+eafua1wLYpfCGym3JVktF8
+	 c/vYW7Bl5TIkCcMMz/Lucrky2qt4Jgqpgy9/4GB0Dv7oN7rfMHC2H2A5ZsII1vxOvq
+	 w0UqCPQ8K9O6hMzTnPsIlfdTaBbZSbQ/1Yn+FKzr0kIi7gjvCxi4yCYKFhgWBBSljZ
+	 Y0xkR/8v3uVgXUy+kJZ3YohlN30D2Xyp9h+UAscfhK/3ZptfZNoJQ9A+WAMcoLFOn2
+	 xkrj6BIousqHH5S89g9rpAwhMEFE1IzqZaWp6OPdBQlJ3dtxyMutaPIHX8tYiKuYvy
+	 3aa5lPRIc1m7vlYucPavQHJLEA8rmQBncdQeF4KMybGrI6tj/cUSORRJKHaHTEvgLZ
+	 pd9bcVuwyvi8O95ipFEPL6/3MS3HbllcvhHIP8f+7+egKRgauZDzJXBWLhOIxH703F
+	 +BShHMbhD08Tvfb8SVIZcTNI=
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-c73a4983fc0so4128788a12.3
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 22:53:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773813560; x=1774418360;
+        d=1e100.net; s=20251104; t=1773813220; x=1774418020;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HnYxWZf82VZYFToxxlKhf4jSSNuvzsDXOVG4cgFbtgw=;
-        b=lM+Dt1PK34BiaK3/e/3SdsxAjlPMWVgtpmoP+qEdhHH3ifA9qSavWfXPUFu1stLsQU
-         /vlgsvXtfvKRPRRUsxC0H44HZHU5YvDaqLbDcyJoBpACqUD5lRVlk2GOD2MBkJXerhWm
-         oQFHOUQdxT5TpI9NymtorVJqdzSxxpvPS7sfSWqA6LnXSxGaoIpvyZSdE8cQsRZeZ9to
-         mqPIuQFonh94i2iFAPGUddc/+cNVsgnyK/qI2a792sWkglTMfJSaKwwWktscyd8A7USl
-         U2d9qI3Ch92sQ4fwjmeGtcheK95wO7+jwxzVR6euP/cSFZM0rM3/Xs7Acdy0+gFzYJ0T
-         idsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBbJU2gYinu2PmTSg4YgqCVpzk2Qwyc0zy3j63Xso8psaprd7aYGgyiWAEwyZRsi1QLd1lmvFrz0RWKQbP87zh+ol4B8Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+2RAiBY7mpFL+zeRclss+YHeJX63iTkjlfMjyiQTX6tVBVkKZ
-	Nr4CxMqPLzBnQ1+COX8Lgomi6BzkKMNueGth/hjs1KQJrqjXEBNhwfzRSvZ09I96U48FsRBxbgX
-	rPdSw4XXNAtrMw0x2B+EMyqU0Owgy3eEZmQ7tGqMpOpOTf57AhJtSzIEqgm/Yu7KMLR8WSiTscc
-	LZ6XLyTFdLr8k5/NG0qw==
-X-Gm-Gg: ATEYQzwaLGvEw+n1WWLx3JdvBBOS5KnZUzq/Oy8Tu8bDuPwle4UKmPnRA3qrKQnzqXc
-	8sHY+LuIENyyr4PA1v2f11JQmQqFfHloOW2tnZekwwU5vaZa7gTVFRXybPfMjjm97MrGI8wsm5u
-	WUC/16jVFOTpXcUQLkjOfd5CT6gsdFOA9ayQzh2sIFHkVSr7u92saLBUgDH1CQNsu0S2jBfdyI6
-	1YJ1Hj+smy9iSVQDn8eLVxfL8w56iFCGZK1ii8XvKQ42JXfUAXzKfXugQUsEsFUGBl2fft2srnf
-	5WUQenxW9lXL/lN6gmBxpHnJlO4qYS1ToXz1zUXKLvpfaZ0mLFNBwFVMW3hpTQ9bkFZha5+ZjBw
-	7tU2lFXVjdjwDV2juaUwKgNdLHAyYs6DtElzc1Q==
-X-Received: by 2002:a17:903:984:b0:2ae:c88c:197 with SMTP id d9443c01a7336-2b06e34520fmr22225895ad.17.1773813560048;
-        Tue, 17 Mar 2026 22:59:20 -0700 (PDT)
-X-Received: by 2002:a17:903:984:b0:2ae:c88c:197 with SMTP id d9443c01a7336-2b06e34520fmr22225675ad.17.1773813559709;
-        Tue, 17 Mar 2026 22:59:19 -0700 (PDT)
+        bh=TaXaxCufMl6szy9eE7qxF5U+KCmrPgzfU+BhVZEw+sU=;
+        b=PWXSESIeu9ANjXwVJIknCrh/sc6Wx4Yu/X3g3haseTtbLq3T2Vndgchggrhi5r4XYF
+         twlBKVaXpwBQpjK+aZKN6xVj1RnSCsbcNq6RKemboBW1w6Na8oeMwaGz3jiiotq6uaG6
+         9q3CjQu/BFfEIt0XYojDyS8GjT6EQnvqXgBM5VIAtX5luM0Wh6J4ssPcSMjASASzMT0W
+         W5EWswF/JuhKlayZ2iJqIanmelz3s+ArAWSrcyRWEJFstKTbuKipW4WODG2uGG1+eSny
+         h2rNIKRX2cg3q15YhL3E0FGsGyYylQYhhsFItjxkAj2rqjX1if8dTXWtK2kCiL+7lzyo
+         /+dg==
+X-Forwarded-Encrypted: i=1; AJvYcCVawqn9s4XOxTFk13mcSxeIEmfrz47sKcVO/TNuWvtcKmFvgmoCcUSY1/pNgBEbG9I/XkycGzKRN27xQJ7j4Y06t76grMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuKGfhdJGNiJeIJ7CHvYbF8Mexc4hfqVH6LDIPZIQGFg6TekO3
+	53fTaYUbBfTfC+wbtMs8GCegYy/CgE9XUvgOk5hhKA5BUKVp2L2xEVSmJJ9f2nqrr9T3CeoriGz
+	CGn8SkVi1eMqHB0Ik6VYJQ+6S1+g72Ke8rqzmAsIn4Pu5/pVFuNeHyQnvtiA7GCZ1tgbwxAjGvo
+	fcLCj62KTOZYIkgMhOpw==
+X-Gm-Gg: ATEYQzyzkkPofhXkLrWMhpIMes6LnTfu9VZSXTssZKofQ6j/dFhC70ufInVBJkXupYb
+	YVBs/JmJd74LCk99i8l73KDoNZsZvhGcc/JETHRlla2tC2X4cQOcszGOJYGk6bvme6RZMaFU56q
+	EiTLobRFjevaeRCIuFZ9vOf3RNuC4X2i1rWllvNvHpVlIqVhPO0YvOuspD3H2x+UQ5p96aosjDu
+	bvtJ+guTpj/vh37pelpBb3bJhMEmIpkRKYt74Ax8IXcBkTJOkLjfrJWtmWTbYr54hlO/2t28yIP
+	dEMvr0XWVGOc/iEW76cp66xFUriMfXsqNMzxsD5SYZrTgaNsUyFbWo0Ymf3w2vov0RPxANWndAK
+	E2F/vp/V6VSGwCTC/kJD1BzT9BEHRcw5LFNZGsA==
+X-Received: by 2002:a05:6a00:28c3:b0:81f:4884:4fed with SMTP id d2e1a72fcca58-82a6adc8dacmr1917295b3a.7.1773813220139;
+        Tue, 17 Mar 2026 22:53:40 -0700 (PDT)
+X-Received: by 2002:a05:6a00:28c3:b0:81f:4884:4fed with SMTP id d2e1a72fcca58-82a6adc8dacmr1917283b3a.7.1773813219816;
+        Tue, 17 Mar 2026 22:53:39 -0700 (PDT)
 Received: from [192.168.192.71] ([50.39.102.197])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2b06e603b2asm14262025ad.55.2026.03.17.22.59.18
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-82a6bbe200bsm1436681b3a.44.2026.03.17.22.53.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Mar 2026 22:59:18 -0700 (PDT)
-Message-ID: <717f90e0-41cc-4852-b3d7-5ea3b975bc95@canonical.com>
-Date: Tue, 17 Mar 2026 22:59:17 -0700
+        Tue, 17 Mar 2026 22:53:39 -0700 (PDT)
+Message-ID: <779f2d5b-a5af-4137-a1ee-78dc9fed58e1@canonical.com>
+Date: Tue, 17 Mar 2026 22:53:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -81,13 +81,12 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: Remove redundant if check in sk_peer_get_label
-To: Thorsten Blum <thorsten.blum@linux.dev>, Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [apparmor][PATCH] apparmor: fix incorrect success return value in
+ unpack_tag_headers()
+To: Massimiliano Pellizzer <mpellizzer.dev@gmail.com>
 Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20260204220734.1008069-2-thorsten.blum@linux.dev>
+References: <20260210172159.535137-1-mpellizzer.dev@gmail.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -133,43 +132,43 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20260204220734.1008069-2-thorsten.blum@linux.dev>
+In-Reply-To: <20260210172159.535137-1-mpellizzer.dev@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2/4/26 14:07, Thorsten Blum wrote:
-> Remove the redundant if check in sk_peer_get_label() and return
-> ERR_PTR(-ENOPROTOOPT) directly.
+On 2/10/26 09:21, Massimiliano Pellizzer wrote:
+> unpack_tag_headers() returns `true` (1) on success instead of 0.
+> Since it's caller unpack_tags() checks the return value with
+> `if (error)`, a non-zero success value is incorrectly treated as
+> a failure, causing tag header unpacking to always even if the data
+> is well-formed.
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> Change the success return in unpack_tag_headers() from `true` to 0.
+> 
+> Fixes: 3d28e2397af7 ("apparmor: add support loading per permission tagging")
+> Signed-off-by: Massimiliano Pellizzer <mpellizzer.dev@gmail.com>
+
+sorry, my reply to this seems to have failed. This was pulled in for the
+7.0 PR
 
 Acked-by: John Johansen <john.johansen@canonical.com>
 
-I have pulled this into my tree
 
 > ---
->   security/apparmor/lsm.c | 6 +-----
->   1 file changed, 1 insertion(+), 5 deletions(-)
+>   security/apparmor/policy_unpack.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index a87cd60ed206..54343f7c96a4 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -1536,15 +1536,11 @@ static int apparmor_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
->   static struct aa_label *sk_peer_get_label(struct sock *sk)
->   {
->   	struct aa_sk_ctx *ctx = aa_sock(sk);
-> -	struct aa_label *label = ERR_PTR(-ENOPROTOOPT);
+> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+> index dc908e1f5a88..221208788025 100644
+> --- a/security/apparmor/policy_unpack.c
+> +++ b/security/apparmor/policy_unpack.c
+> @@ -825,7 +825,7 @@ static int unpack_tag_headers(struct aa_ext *e, struct aa_tags_struct *tags)
+>   	tags->hdrs.size = size;
+>   	tags->hdrs.table = hdrs;
+>   	AA_DEBUG(DEBUG_UNPACK, "headers %ld size %d", (long) hdrs, size);
+> -	return true;
+> +	return 0;
 >   
->   	if (rcu_access_pointer(ctx->peer))
->   		return aa_get_label_rcu(&ctx->peer);
->   
-> -	if (sk->sk_family != PF_UNIX)
-> -		return ERR_PTR(-ENOPROTOOPT);
-> -
-> -	return label;
-> +	return ERR_PTR(-ENOPROTOOPT);
->   }
->   
->   /**
+>   fail:
+>   	kfree_sensitive(hdrs);
 
