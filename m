@@ -1,157 +1,171 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3F236604D;
-	Wed, 18 Mar 2026 06:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2494E2EA16A
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 06:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773814809; cv=none; b=eEGyh2bXqx7FQBYm8DdexvnSuVOsklAYFkQA3qB/H2DtQUpfiJ5yJRXsJQKAS/Hg5RtHdVQivkIa2GARV5lyDtx7RgxCRl8iL06gcU0stidDaHlTP4fA1MWfBpwDl6UA8zH5uh5CTqdIqcpqY8W51zNjgm1hGtLLiOiFOxbPvgU=
+	t=1773815226; cv=none; b=VA2fIhifyWB2XVclsnhCs58rwkI/nc8ho8vzSJk0UEesLVxhtfkp5zhIhiilqhaDqV8l1D6IldXHYJmovaAJOA0xXQ5CA1EFhiFkO8SzrDO3UVJYT3Bik2K0R7+O0iWzHDej1pyvxtQj1Jd0ZoKtExM7NIBIif7Ho0f2yRBuedU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773814809; c=relaxed/simple;
-	bh=RKnfp3lIMZbjyp9u+KoYB0KW5j6r6GIcddYQ4SogiOo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A7fyRkzJip+PupRs4KGb0JBhXQ7SA1q4SWEwgYgaA6r8LzenL4J28kkZYgPt4rNTP24vAFE4n3UVN20Gb0BSOPKIdZlUbMO3WOlfUuRqspZGPdcoankwLYARTegOzgVPvQqnsxQmv7azd71hxR+1wvg3b2oH9/eCFgfQyBtNeW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=d6daLD1u; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1773815226; c=relaxed/simple;
+	bh=03Tj6VeICuYYYDrO3KoaCDsMMoyb+UePS+/vbyaESCo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P+zyIGdIgxprG+3kljbqkuxaB2Fk0XRaUy8JbkQDGuL4rbMNDlMR65qku4k1U3H0ZH+SpuHXdde+Q45AcyHFex4gTnRrfXSCLDATbU2MawNe/i2XQCA08DaX4pdAytvfzY40DaYBDUvO3iKvrqJQi76bzv3NyrFzS0eTecqEo8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=jA6d0fyr; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="d6daLD1u"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=DV
-	dGvuzrKFZ2rbqb1TpxRnxoVjBWpxqbzjO6jVVnOWA=; b=d6daLD1uz6Xeby7Ejj
-	0Ah7ASTIFBkQc5w8sNVLdTUCSBg3w4URVAPQlaB/GEAAoWF+D8wX5N72NE5SL26s
-	fD5gVncZ5zmpuA/zXfGIptHA9l2e/A/wRU+F9GiSdfuPaDl71k2ijcl7C6uNORfM
-	8vHmy6S6hltD1WORmRvfjCS9M=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id PCgvCgDn1fXuQ7pplHaTRw--.4684S2;
-	Wed, 18 Mar 2026 14:19:28 +0800 (CST)
-From: Feng Yang <yangfeng59949@163.com>
-To: paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] lsm: Fix the crash issue in xfrm_decode_session
-Date: Wed, 18 Mar 2026 14:19:25 +0800
-Message-Id: <20260318061925.134954-1-yangfeng59949@163.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="jA6d0fyr"
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 632C03F60A
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 06:27:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20251003; t=1773815222;
+	bh=e9u2utDffeAat3Jdcbazk5JkvgzpuBoSq9gVDsGwVAg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=jA6d0fyr9B54X0LbMaWCzVyqztgnXAhaX7dt/MMOw9iDI+jx4EE3YVkAZ7yNHle+4
+	 nu8sb4gGUPYX8Nnqma0EwKm93Oh4Ht1kSDpYPEZV1Okf275hFMR4R870phBy8KnGAs
+	 t3fsQeZJGDJ0KoVSNfu7LT1jvc6XhmGk14q2OzXQPy2O6Gn5UReLoWfr4BAiKTMI8L
+	 8Q89IDd2599K8+re3fGbge7UjyhPgyx0IovUY8jh0iaXdSe+OEgwKMtZPUdOeA/AAJ
+	 JVZqETSe6s7EzdCTLh+DVTLaqitt/Fgx41hfZM1L2B7fT0P8A5omxbeaNUOfhM6iee
+	 JKcdwMrZS5xk1kljUYU3kTlxPHyAjXS0rooPfKmSWXAkznoYq4oQ8vAyCx5st6PkZG
+	 3u+gnr6XgLgdqB85U6i9nBZCPXuQlsfXwtEosODAOtFyg/SpN6ACwuHvir/IIWv+Cg
+	 lRHYXHiMaphQDNuLwLGS613sh1l1Y9caafS55uDnnJpSeRouULg2bXTXJpMeD9juSF
+	 trciw5Ltg8Sz0NiM3GBqu7WGhvECXOLrqfNypBSgfaMZbevb6AK25ZSI/XwSG5CbjH
+	 v60JhFztHpuF2YYR69apKATSG+bBIY9uC/fIojJp5ZR5A9I9cGZGa6VtfQS/54kN/G
+	 EbVIDyNxDFw8CBVwoapOW9Os=
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2aebfa0af7dso400745735ad.1
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 23:27:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773815221; x=1774420021;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e9u2utDffeAat3Jdcbazk5JkvgzpuBoSq9gVDsGwVAg=;
+        b=I/sEJRbLOC8OOJOrdXdU+J3aZMlF1TBTBn6XrNGEp9Op7bZ1MEU9r6IVSOX64Mf6QX
+         nu6EJ7E8hspawMNrohMp3aoEs34AE2cmZRKiABoc+aI46N/lpoDflMwvqz1an2vewmH9
+         MxlbfoUxHqerBBVe4GuLSgYcqbhyyjQ+8R+TNavBkV7/svLRn/cktjLk0RfBb5Bu4h0j
+         AaxqmbjHX+B2jLQX+r3x48mMQqJTx1im215A83G8bw5Sy7D+CTRsXzDwTsnf4qyip07n
+         xk2XwpVTyotUQ4LSlSbEo8o05uDpa1/GyrmuDYY6ECb4r1Ps0499okCIko7cnx3XwaNJ
+         YW2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWBlgdNa+FDc75wFiRZSqJEBevBsHyGQvSg4Pcotb3PDwKOnu8RKgU6m3dL98W/Pq6xtncpFRXmfLDbgu5wJ7nWGbi+YiY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA6ko8qHr0WoC2IrhQsmV/0zHkiHUsxn2aq1NwX7izzcm6QCfe
+	kLa1SNV9x6JNuovzUVi3DnhYePsz/eXPG/4GqMcq7cWUsIdQCqW0NxFr5ly4znTQ9SnNt6lqetw
+	aTKsqoO5OwCS8knK7JB5GOi7X5uu2UxHmZht/U5nI0zkE1ahX5nhIwGAF7qCr4Tc7k5Nfzg0XDl
+	aamD0LvfOgqzxLCSdsng==
+X-Gm-Gg: ATEYQzwa9pHg38FBGXf9pzNIEnbBpDnZbbm6J4MN8sLfxGWR3HLNbbMpAKq181X7IRr
+	WpYYM0R80E2nGNStx7hWHX3QSdjbhB0KfSNtY5uBuf/9DVvwhIVlO/PatbD9E93KOMM5KNlv/QK
+	ZLg4a5cC6T3et4/grI577Qompi7EXMHVzaHitDnBWll3Bre2wZNmUOnJaT55QDeilBeENerIWqf
+	tSPn/4fEs9K+0u1ahvXDmkiAbieSKsHqVvweAjNSZNhI3ESi5LDc3wgwACbVKjDpF8mvPj9REpu
+	K4BWbWfk9WtaD1ZJdl57JcrauIUbDQJzBwz5VoTl5wlpIYPEMlG04KLgP11HouHCpGMq0VG/jrB
+	XDgILeO42FMB96boTz0LqEuajYO7tM35zNV80kw==
+X-Received: by 2002:a17:902:d588:b0:2ae:4f15:1aba with SMTP id d9443c01a7336-2b06e3bcfb2mr26165545ad.30.1773815221044;
+        Tue, 17 Mar 2026 23:27:01 -0700 (PDT)
+X-Received: by 2002:a17:902:d588:b0:2ae:4f15:1aba with SMTP id d9443c01a7336-2b06e3bcfb2mr26165285ad.30.1773815220700;
+        Tue, 17 Mar 2026 23:27:00 -0700 (PDT)
+Received: from [192.168.192.71] ([50.39.102.197])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2b06e605108sm18492275ad.60.2026.03.17.23.26.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Mar 2026 23:27:00 -0700 (PDT)
+Message-ID: <9aff5d87-e513-47cc-bafd-993e37d97458@canonical.com>
+Date: Tue, 17 Mar 2026 23:26:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PCgvCgDn1fXuQ7pplHaTRw--.4684S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Gw45tFWxJw4fZw18Ar1UWrg_yoW7Cw1xpw
-	4jqFWUGr48Gr1xJr4xCF1Uur1IqrWDZFyUXr47Ar1rG3W7Z3Z8JF4UAr4jywnxKry5G34f
-	Xr97XwsY9wnrtaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jnhL8UUUUU=
-X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/xtbCzxIWjmm6Q-JA+AAA3f
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] apparmor: Replace memcpy + NUL termination with
+ kmemdup_nul in do_setattr
+To: Thorsten Blum <thorsten.blum@linux.dev>, Paul Moore
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>
+Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260222204645.285727-1-thorsten.blum@linux.dev>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20260222204645.285727-1-thorsten.blum@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Feng Yang <yangfeng@kylinos.cn>
+On 2/22/26 12:46, Thorsten Blum wrote:
+> Use kmemdup_nul() to copy 'value' instead of using memcpy() followed by
+> a manual NUL termination.  No functional changes.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-After hooking the following BPF program:
-SEC("lsm/xfrm_decode_session")
-int BPF_PROG(lsm_hook_xfrm_decode_session, struct sk_buff *skb, u32 *secid, int ckall)
-{
-    return 1; // Any non-zero value
-}
-Subsequent packet transmission triggers will cause a kernel panic:
+sorry this got dropped. It has been now pulled into my tree
 
-[  112.838874] ------------[ cut here ]------------
-[  112.838895] kernel BUG at security/security.c:5282!
-[  112.838902] invalid opcode: 0000 [#1] PREEMPT SMP PTI
-[  112.838905] CPU: 5 PID: 4962 Comm: test Kdump: loaded Not tainted 6.19.0-rc5-gae23bc81ddf7 #2 PREEMPT(full)
-[  112.838907] Source Version: 55e2f799c748c8e195569363edbd1d6a4159675a
-[  112.838908] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-[  112.838909] RIP: 0010:security_skb_classify_flow+0x3f/0x50
-[  112.838914] Code: 85 db 74 28 49 89 fc 48 8d 6e 14 eb 08 48 8b 1b 48 85 db 74 17 31 d2 48 8b 43 18 48 89 ee 4c 89 e7 e8 05 33 86 00 85 c0 74 e3 <0f> 0b 5b 5d 41 5c c3 cc cc cc cc 66 0f 1f 44 00 00 90 90 90 90 90
-[  112.838915] RSP: 0018:ffffc28400200b10 EFLAGS: 00010202
-[  112.838918] RAX: 0000000000000001 RBX: ffffffff91d346d8 RCX: 0000000000000000
-[  112.838919] RDX: ffffa0890f5eaf80 RSI: 0000000000000001 RDI: ffffa0890f5eaf80
-[  112.838920] RBP: ffffc28400200d04 R08: 00000000000000c7 R09: 0000000000000002
-[  112.838922] R10: 0000000000000000 R11: 000000000000000f R12: ffffa089086dedc0
-[  112.838923] R13: ffffc28400200cf0 R14: ffffa08901ab2000 R15: 0000000000000000
-[  112.838926] FS:  00007fb087dd2680(0000) GS:ffffa0891ba80000(0000) knlGS:0000000000000000
-[  112.838927] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  112.838929] CR2: 00007fb087d1b940 CR3: 0000000107520006 CR4: 00000000000706e0
-[  112.838930] Call Trace:
-[  112.838931]  <IRQ>
-[  112.838933]  icmp_route_lookup.constprop.0+0xd7/0x460
-[  112.838941]  ? switch_hrtimer_base+0x135/0x180
-[  112.838944]  ? update_sg_lb_stats+0x9c/0x440
-[  112.838949]  __icmp_send+0x3d3/0x740
-[  112.838952]  ? __udp4_lib_rcv+0x427/0x6f0
-[  112.838955]  __udp4_lib_rcv+0x427/0x6f0
-[  112.838957]  ip_protocol_deliver_rcu+0xb7/0x170
-[  112.838960]  ip_local_deliver_finish+0x76/0xa0
-[  112.838961]  __netif_receive_skb_one_core+0x89/0xa0
-[  112.838967]  process_backlog+0x95/0x140
-[  112.838969]  __napi_poll+0x2b/0x1c0
-[  112.838971]  net_rx_action+0x2aa/0x3a0
-[  112.838972]  ? swake_up_one+0x41/0x70
-[  112.838974]  ? kvm_sched_clock_read+0x11/0x20
-[  112.838977]  handle_softirqs+0xe3/0x2e0
-[  112.838980]  do_softirq+0x43/0x60
-[  112.838982]  </IRQ>
-[  112.838982]  <TASK>
-[  112.838983]  __local_bh_enable_ip+0x68/0x70
-[  112.838985]  __dev_queue_xmit+0x1c4/0x820
-[  112.838987]  ? nf_hook_slow+0x45/0xd0
-[  112.838989]  ip_finish_output2+0x1da/0x4a0
-[  112.838992]  ip_send_skb+0x86/0x90
-[  112.838994]  udp_send_skb+0x15e/0x380
-[  112.838996]  udp_sendmsg+0xb9a/0xf80
-[  112.838998]  ? __pfx_ip_generic_getfrag+0x10/0x10
-[  112.839003]  ? __sys_sendto+0x1e4/0x210
-[  112.839005]  __sys_sendto+0x1e4/0x210
-[  112.839007]  ? __handle_mm_fault+0x2fc/0x6c0
-[  112.839013]  __x64_sys_sendto+0x24/0x30
-[  112.839014]  do_syscall_64+0x5f/0x270
-[  112.839017]  entry_SYSCALL_64_after_hwframe+0x76/0xe0
-[  112.839020] RIP: 0033:0x7fb087cfdb17
-[  112.839021] Code: 0c 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b8 0f 1f 00 f3 0f 1e fa 80 3d 55 c8 0c 00 00 41 89 ca 74 10 b8 2c 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 71 c3 55 48 83 ec 30 44 89 4c 24 2c 4c 89 44
-[  112.839023] RSP: 002b:00007ffea64704e8 EFLAGS: 00000202 ORIG_RAX: 000000000000002c
-[  112.839025] RAX: ffffffffffffffda RBX: 00007ffea6470638 RCX: 00007fb087cfdb17
-[  112.839026] RDX: 0000000000000008 RSI: 00007ffea64704f8 RDI: 0000000000000003
-[  112.839027] RBP: 00007ffea6470520 R08: 00007ffea6470500 R09: 0000000000000010
-[  112.839029] R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000000
-[  112.839030] R13: 00007ffea6470648 R14: 0000000000403df0 R15: 00007fb087e15000
-[  112.839032]  </TASK>
-
-This BUG_ON was first mentioned in [1], but I could not find any explanatory record of why this check is needed.
-
-[1] https://lore.kernel.org/all/Pine.LNX.4.64.0607122149070.573@d.namei/
-
-In the existing LSM_HOOK_INIT(xfrm_decode_session, selinux_xfrm_decode_session),
-when the `ckall` parameter of the `selinux_xfrm_decode_session` function is 0,
-it can only return 0 and will not trigger BUG_ON.
-Therefore, remove the BUG_ON check to fix this issue.
-
-Reported-by: Kaiyan Mei <M202472210@hust.edu.cn>
-Reported-by: Yinhao Hu <dddddd@hust.edu.cn>
-Closes: https://lore.kernel.org/all/4c4d04ba.6c12b.19c039b69e6.Coremail.kaiyanm@hust.edu.cn/
-Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
----
- security/security.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/security/security.c b/security/security.c
-index 67af9228c4e9..198f650070da 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -4991,10 +4991,7 @@ int security_xfrm_decode_session(struct sk_buff *skb, u32 *secid)
- 
- void security_skb_classify_flow(struct sk_buff *skb, struct flowi_common *flic)
- {
--	int rc = call_int_hook(xfrm_decode_session, skb, &flic->flowic_secid,
--			       0);
--
--	BUG_ON(rc);
-+	call_int_hook(xfrm_decode_session, skb, &flic->flowic_secid, 0);
- }
- EXPORT_SYMBOL(security_skb_classify_flow);
- #endif	/* CONFIG_SECURITY_NETWORK_XFRM */
--- 
-2.43.0
+> ---
+>   security/apparmor/lsm.c | 5 +----
+>   1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index c1d42fc72fdb..49aa6ad68838 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -858,12 +858,9 @@ static int do_setattr(u64 attr, void *value, size_t size)
+>   
+>   	/* AppArmor requires that the buffer must be null terminated atm */
+>   	if (args[size - 1] != '\0') {
+> -		/* null terminate */
+> -		largs = args = kmalloc(size + 1, GFP_KERNEL);
+> +		largs = args = kmemdup_nul(value, size, GFP_KERNEL);
+>   		if (!args)
+>   			return -ENOMEM;
+> -		memcpy(args, value, size);
+> -		args[size] = '\0';
+>   	}
+>   
+>   	error = -EINVAL;
 
