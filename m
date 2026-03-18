@@ -1,161 +1,173 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D52175A91
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 01:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.172
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773797325; cv=pass; b=eVIUWZj7e5E2jt+VBTjYN/ugQ2FZujReZljCmPRaIdOYrJmKYA4IjysO6o2ZPHp8sYGa+sEwMKCpp3g7ezSvJf+0dauh0MhvDORAoVM+LHctxZBHgOeYD0Un1jXKXP2qs+YLIzGXV2e20dMZ0sMZtOQzDcE9K/xDwaCTUBdOMRQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773797325; c=relaxed/simple;
-	bh=2V6jVvZ8DlZMKMdAwcrjn8MFYhru6PaNYU+Ll7okqFM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h3tg+hiIt9nkkIQ0WqOXouynsTIk+HdkbGTwn9+JwbjJmruoipapN6OdZK6KrEa9XGBgsvvzkEVR8GqPFIoXSfKi8yD3C2I0mJTNBVkVI2ahg3zirGW+mHvsvxLLP6nX64zFGbRL5fvVgPZ1o+mK+9Dg1MAzPOd6Nbht8UwDbpE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=I4GdSUq1; arc=pass smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6322C324D
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 05:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773813440; cv=none; b=Euuf5eXelWwULhR1y6Rc4xMskACmTEhEyYCJGNShjORphL3Ax0eehFEBXJwk23RWRJXB8/ykolL+f60NEHwSiDNCCJTNySbF3864vTQRQO/4eU8POuJ5Y/Ot1r+A1dXZHOa/P0bt3XrG+H/C4USvfjIqemDCS9uagpGvdar3OmA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773813440; c=relaxed/simple;
+	bh=3RiMoL75aYcT5LR75RjLFjov2e6r10w9d+eFggAeSXk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tWYT7R1I4uNxVuuTgVEB7FCKA/t85LblwSAI9wjuMhypb0XbKU684SjHtGsxb77KP/reJHO2LPIp0iM3//DrOIFQyyzHzZu3iYGbNtrXuqdWF3S0/GwIiUv4KPvOaXJ2yjRnBco8OmPbyt0wssCa0dhKeAHSVxatuhmx9uI0GJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=InLqAJid; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="I4GdSUq1"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2a871daa98fso47804945ad.1
-        for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 18:28:43 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773797323; cv=none;
-        d=google.com; s=arc-20240605;
-        b=ixwJd4RQ4CJaIOdOl4r999mdo4aVE2s6F1zv1ClGlZ/avK7GorqJPfxs7k6rhHt125
-         VSR92gf8jy46dnS/Ex42ClExYYOSjrrNIn1m4fWEk+mVw8FjMiDpDhEcJG46HEwQCvZi
-         Jdrb94RgS07gFQPSqJNE4GnkMBo5T5liKJka55CKTGOkYK5wCKiHEfgfmHEXsGnsVTp8
-         XmWoK/qWo9WtnzieaetHxSdDr4RtvhKdZKwjSeuAEiUKJ4Cf2eEiFBMI7so54VsNTOKQ
-         vp5p3A0tij0ZlUMuXm2OgWgp8xP7/xX52YVpGV7/Y0pxXzWpYQWW6aO9QFZpqd1vsUXj
-         6LWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=mn+do4vOB08303YGsDqP48zKyD6RFfKsS3ht+al/j4s=;
-        fh=6tssLn+3pRYil18nQE/u/WNwyQcOcugaGGpEq9WoRNU=;
-        b=UZs42KAIS6AkWzV+RSdINq9E0daxDtSL7fbZRwfPKECGiKMFmrf68+fuDLp+TRJqvd
-         nyx2OlYV9DPLjGDj+O7PdakrpEpesl9WP6kZriIKGtFMHM72T249Sm2kfGVFzg47eBdl
-         hy/+lT83hQbu9CyiQ2syoMAeHrcLk/eCv0U740EBlFsgRKP/keSYgPZGsYWSOmigTTaw
-         3h/o1b4V8fOPAzGMlpfbzFMKMFaT+1yw7w1c3iIg/mo3GfI6Tbdf9R6z1qfGCZKy5unt
-         MIHwcjbfM+PIWL6HOS9aW4Qfmcbx4NMCIxEG13/gvZYcIzH+XB58BF3O6PrtVJB6BOlj
-         dT8A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1773797323; x=1774402123; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mn+do4vOB08303YGsDqP48zKyD6RFfKsS3ht+al/j4s=;
-        b=I4GdSUq14LMm4VhAg/tLIBIycxMLnPi5Oc3flQnubWNSIZGKBgSNtvQOyW4PRjncDI
-         +jh4I0r2+Oo5OuxI2Zp9+netTaeteAXECFiA4bJJ1d8GPV8QbnR70XBny2FJOw69Hjsq
-         31q1nMshbbSL7LRC3Ywu2SZLvuTzvN0+xOcHY2mJ+XeCmoYDeNlxaPu584qpkkiVkrGM
-         7Rt5m6WUX3ZUYU8M4IgEegRzBHe5WJGRtVR0SYKBzivWulfRqdPkXeG5ulxEKfDiV6ZR
-         5piR3A377SMRDBDQ44XWqcCPI5DcJHXCXbNyv7+/l3Mk6KGgVgVxHFR2kPUsAYe9tk82
-         PZhg==
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="InLqAJid"
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id E3C613F604
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 05:57:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20251003; t=1773813435;
+	bh=tdKTohU/dGRHmKb33jK2uAr6+LR94j48qnN+5dNPdVU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=InLqAJidUpinH3+gtURQfIkT/MGEzy4FOGps4WGlUQEp5m9Ht2hi1MlYE/Mu8BGpj
+	 MsjRB7i3AzxvN/+WV3HbTh4wzYSurXlQHJHyyHsTiQJC144s/6OnrGIyLB9aAojx8c
+	 0uxUxlrSRvDwnYMd3Y2wP3Er9XIxs/9Y/nW23xkwItFfqJvH1cw8I6pnpmne0OVFcy
+	 KKQ39pbkqOhwW1LeXlpz1E7IWdBfSoS37jiBf9svU7NLQ/7dgGMJV32+kvA++dGO0e
+	 nz78SNOBwe3RN9Meyg3BxHNKW3OZcsfPKaMv8faTK0HYs6PNGsYYxS2xAYUbuwbkbp
+	 B4sK8raZoLnChsJWhbjFUM+EZOCBeNA5OGH/BYOp2XLc7jyscsBPHKv/JmWeQc8iA9
+	 0bfBhL7pJM8qJkc5gTZOULGE8gUS1LbnLt1bwOwtDDSvaIAvEdycbdSxiNL264lgdU
+	 jw9MnPLBuWqafaBR59aD3YGRE7V7wZ87Re0xw5ILoDdJ6v6u+ZazigwZnGbhTsiFu5
+	 N6FOk8BZ+ItPxH2Iev1r1UO/ayerhNUbVaBO3y7sqwqoMAgRn+nL8JHUeZM+Nqlcdo
+	 7PMIp3IuFJYqVx78qyYuP+ABcZEMhiuuglbmr6KAEleyFuZ9dZG1c5iwxRjO7OX2Ea
+	 rbA/APsQYnFLZfouMsagKlE8=
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2adef9d486bso94429735ad.2
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 22:57:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773797323; x=1774402123;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=mn+do4vOB08303YGsDqP48zKyD6RFfKsS3ht+al/j4s=;
-        b=KktamOAO6WWVVLqMW6CqTStl3xaE6tHkU3urMrBcNp0DPXLJL3vKrxNgVl6BqAjSnU
-         LdY/EU7Kd1sQnzn4LoIKm0I4nYcxLgDNRXigdwlysAgX8zv51CkY23NBxe9hRBML1sV4
-         DxT7f5aDQLlTnLypoKSgH5v8nzEu1hlZpuqPOk6IAXRQ3WRoKlp2W8JzXJecNiDjcJS+
-         Ze8qiruwR3QCe9xix2zCKv3IS/AACpZMkHuC7gMhfOoNbxW+Jz0vJ6RsmDODpqSJU8lc
-         NKTkknZ8nJliJeMTldVvW+0o1pVKdsptKgHZCOefQAfyDkefZKCx/TFEewMyJi3ZnM/V
-         vQGw==
-X-Forwarded-Encrypted: i=1; AJvYcCWAyYnFY5SICZSmc/JOr2rLVOOz3Zxd5H5UHysw6rafYB7s5+UbAe95zby2Cv8YNG6FmcGFw1T9nqUv/ODNGa1qX4V96B0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOIMudVXVI8joRyemVzAyFJp5tLxlkx/dlSwiOWhAkKUIB50WA
-	ocCoriHtNj+4HKPeSCgKFK0kaA+NJIXzhbNDB+rT28sbjV4QIvzcJ39gIV1IR0QfOgmgAdY0Hze
-	Lgsm7bhunSEvxkAlyeYDvCa+JObaqORVg+nlewMt+/JxRZIZJFCY=
-X-Gm-Gg: ATEYQzxykVv6ubQTxp+Pdptv9r4f5Y/AELrrHhvQpTN2c3PziL1m+eqlF85pZh1dQnN
-	uj3NMtuslOmVl3EgdRRVY5YI/EwwcCbyDd3mTx1FOSBfjFdKsNt2Pt1ArS3v8GmwsSoIVZ1FSwD
-	bRLbKiQC7AyElaaprutDxoUv+IvD4DisZnJwsKx2S2rK4iDGID04A1htfj35cALrrtF7CYKR5nV
-	4yVMnntNplFv43Ym+gc7p+y15XeHwwnsLZc90drH87qV31eY4wzMkqK2DsnDrcihkbn0iB29lpI
-	999BeBnEnoCQajhObg==
-X-Received: by 2002:a17:903:a86:b0:2ae:80a3:ca7d with SMTP id
- d9443c01a7336-2b06e3f8b5dmr14388345ad.39.1773797322844; Tue, 17 Mar 2026
- 18:28:42 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1773813434; x=1774418234;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tdKTohU/dGRHmKb33jK2uAr6+LR94j48qnN+5dNPdVU=;
+        b=QwPePsPEV16hRd9LaUlRAHtlV9M2GPHDZNe+iHgM+NttKCJaBxVhF5L+t1uAC5oBk1
+         ea6sfy7Kd4PfFJuSI8S5hma23b6gKXTxFeu2gcn2VjA3ZBnO7vdUARIjCN0D4X+830la
+         lOmWwMqx06bY3eKd5oFtbGZGimHR2cJTP9rhww9Hmwai9VQ0J96wFZ3EiVyYz7F+nkxV
+         UITx2cww2VZ/DvHelMU4RAUptmglTbZsaiDr/NszqjfVL9uYUf7a8GgFQSnYKGDEPfh5
+         dnvsHNy66MVFJTr9TEocXxpedr6GO3ouGHkWTCBPx+65KgdQiZKSY1G3GZ/k7ZT8Ud8v
+         bt4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVHcKGoUwkq1cu0lbzdTQSeQ7vTS/7pc+HHBTh56ZwXlQwucfldNi+mqZwMZPqafd5AFCoEYyfHW+LwNEYpBgaDaUfJjNM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrkeoVl1nR0XyAxfwjQtnsqyK/1ys/5KWZky9vngLoUw4F1dPO
+	RRjNlyrHyG/4UdRcWZylVdygLRh0dbXv7mmJR8s3CBuxAlt4aTSFucGsJymNRzvBGbUyFHHG4wr
+	zO8Mve1leu7SVpNMB3uS86Fg7rxRZz7toI12L2j3GwYD6DAsm6V4w9t5lG0c0du3uoflRaCcUjL
+	jyb6/UvYBv3kLLakw1+Q==
+X-Gm-Gg: ATEYQzx99V3oS5nZLqSOvrg+FJq7aZz74cqkU2NeTReAJMDKwyo2PTmAt0x2n8ooFQt
+	QX2KCwMSBgfkqYE8BGq55bfkb8tue+iiztpytVmvTrIgMDkfjlGv9jC2X+npbhTbOjDx6HKS7Sl
+	SH7jD27DEEiJqdAQoZrjFFPP6cwTECwwYBVVVY7r6e0rR25xObEnSQMAGEqB3m7phO5ctSxoxTB
+	XWi4u2etbtPfcLxaf7bjpKcM4IjHwu/EFwvhzznHGCwd901eCNUUIrp5OJRkyjNMCLEBt4uhsht
+	QT6OaxALKefd8XUdubafukhHnwlk1g9cw1/cF3/HhqbdqgdsxvQ/oRb/8LAlPzRTc2GW4AhDk0u
+	kXoTNIGlO7pEuUq8Ct7OLZEEFlJIBLx3e6C91KA==
+X-Received: by 2002:a17:90b:2f83:b0:35b:952c:43bd with SMTP id 98e67ed59e1d1-35bb9e45676mr1660154a91.2.1773813434576;
+        Tue, 17 Mar 2026 22:57:14 -0700 (PDT)
+X-Received: by 2002:a17:90b:2f83:b0:35b:952c:43bd with SMTP id 98e67ed59e1d1-35bb9e45676mr1660144a91.2.1773813434252;
+        Tue, 17 Mar 2026 22:57:14 -0700 (PDT)
+Received: from [192.168.192.71] ([50.39.102.197])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-35bba4f2321sm1421876a91.2.2026.03.17.22.57.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Mar 2026 22:57:13 -0700 (PDT)
+Message-ID: <3a2bbedc-1469-466e-b0fa-efd1f4df02db@canonical.com>
+Date: Tue, 17 Mar 2026 22:57:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2697b9f672967b1318630f2ffa21914f@paul-moore.com> <20260317232041.330576-1-utilityemal77@gmail.com>
-In-Reply-To: <20260317232041.330576-1-utilityemal77@gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 17 Mar 2026 21:28:31 -0400
-X-Gm-Features: AaiRm53h-GwzyyaZmhjSG7xFKi5WW3mgA9p3jsbpEqD6OVb1qbMfwU_zcGTi8w4
-Message-ID: <CAHC9VhT+scwVSoMNBKgVMnTNdjP_qVSECScmd+i0M3vj-pM-RQ@mail.gmail.com>
-Subject: Re: [PATCH v7 1/9] lsm: Add LSM hook security_unix_find
-To: Justin Suess <utilityemal77@gmail.com>
-Cc: bigeasy@linutronix.de, brauner@kernel.org, demiobenour@gmail.com, 
-	fahimitahera@gmail.com, gnoack3000@gmail.com, hi@alyssa.is, horms@kernel.org, 
-	ivanov.mikhail1@huawei-partners.com, jannh@google.com, jmorris@namei.org, 
-	john.johansen@canonical.com, konstantin.meskhidze@huawei.com, 
-	kuniyu@google.com, linux-security-module@vger.kernel.org, m@maowtm.org, 
-	matthieu@buffet.re, mic@digikod.net, netdev@vger.kernel.org, 
-	samasth.norway.ananda@oracle.com, serge@hallyn.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] apparmor: Replace memcpy + NUL termination with
+ kmemdup_nul in do_setattr
+To: Thorsten Blum <thorsten.blum@linux.dev>, Paul Moore
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>
+Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260125210014.154432-2-thorsten.blum@linux.dev>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20260125210014.154432-2-thorsten.blum@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 17, 2026 at 7:21=E2=80=AFPM Justin Suess <utilityemal77@gmail.c=
-om> wrote:
->
-> Paul,
->
-> I updated the hook placement as per your suggestions. Moving the hook int=
-o
-> the block does require duplicate stubs, but I don't see another way to mo=
-ve the
-> stub into that block and properly handle the case where CONFIG_SECURITY_P=
-ATH is
-> defined but CONFIG_SECURITY_NETWORK isn't. If the stub is moved into that=
- #else
-> block it will never be defined in that case.
+On 1/25/26 13:00, Thorsten Blum wrote:
+> Use kmemdup_nul() to copy 'value' instead of using memcpy() followed by
+> a manual NUL termination.  No functional changes.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-Oof, yes, my apologies, I must have still been thinking about the
-LSM_HOOK() change and didn't think through the problems with moving
-the declaration.  If you aren't too upset about changing it back, I
-would prefer it back the way you had it in security.h originally.
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-Sorry for the noise :/
+I have pulled this into my tree
 
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 83a646d72f6f..3f8c23ad1199 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -1641,6 +1641,14 @@ static inline int security_watch_key(struct key *k=
-ey)
->  int security_netlink_send(struct sock *sk, struct sk_buff *skb);
->  int security_unix_stream_connect(struct sock *sock, struct sock *other, =
-struct sock *newsk);
->  int security_unix_may_send(struct socket *sock,  struct socket *other);
-> +#ifdef CONFIG_SECURITY_PATH
-> +int security_unix_find(const struct path *path, struct sock *other, int =
-flags);
-> +#else /* CONFIG_SECURITY_PATH */
-> +static inline int security_unix_find(const struct path *path, struct soc=
-k *other, int flags)
-> +{
-> +       return 0;
-> +}
-> +#endif /* CONFIG_SECURITY_PATH */
->  int security_socket_create(int family, int type, int protocol, int kern)=
-;
->  int security_socket_post_create(struct socket *sock, int family,
->                                 int type, int protocol, int kern);
-> @@ -1712,6 +1720,11 @@ static inline int security_unix_may_send(struct so=
-cket *sock,
->         return 0;
->  }
->
-> +static inline int security_unix_find(const struct path *path, struct soc=
-k *other, int flags)
-> +{
-> +       return 0;
-> +}
-> +
+> ---
+>   security/apparmor/lsm.c | 5 +----
+>   1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index a87cd60ed206..98b92af5890e 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -866,12 +866,9 @@ static int do_setattr(u64 attr, void *value, size_t size)
+>   
+>   	/* AppArmor requires that the buffer must be null terminated atm */
+>   	if (args[size - 1] != '\0') {
+> -		/* null terminate */
+> -		largs = args = kmalloc(size + 1, GFP_KERNEL);
+> +		largs = args = kmemdup_nul(value, size, GFP_KERNEL);
+>   		if (!args)
+>   			return -ENOMEM;
+> -		memcpy(args, value, size);
+> -		args[size] = '\0';
+>   	}
+>   
+>   	error = -EINVAL;
 
---=20
-paul-moore.com
