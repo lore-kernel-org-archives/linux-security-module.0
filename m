@@ -1,205 +1,137 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A902C11FA
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 16:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.174
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773852235; cv=pass; b=OVV2u32dg6vSSzNAWcxDRlddW8OUQxYiH7vUa1L/0SgPxnaxtCc8VkqCwFqZ9c/lWZlD4rFvnmdM1ZGpoYc8bn+Mdcz2rbINXXTM1qu/SeioXmVzn8Gj1PgMwnU1Wn6sF+KGNU0ZGcA+qjI3PzvDV/EBbmAHOzeM2xeTWU4Vc68=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773852235; c=relaxed/simple;
-	bh=zXZxPJ1K3LCBhZiouT+2oJJTTv9xMqRYKfOSsTOtYD4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cZtYFoRNRLS4tcDIt9ICoGN2Zx7oQ98guv6IGw1fsNvcrCutZuruDWcH6EcEOgsiBCI/ZNP/AxFOGLeXhVQ9W1xv8CWiy8FgcndMCv61qqkSQUsylanbaMpheIjPjuQsyR1aKBN3V4LsbIwWxps7y5iJIyc/LmN4JzT+rSAcsOg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MGKHeso4; arc=pass smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B002F1FFC
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 16:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773852239; cv=none; b=IA6l32HBAczavGuGDbrRcOhGCruJiPsYIeT2U5004gQqI8qcm9Qr+lv53iaeN6omQT51b+t5O1YltSkZ6xB2vVpXoFimjLGUTd0ufOxdm9nmdA+qfpdD7v18NRMPgD1XXzowZJA7pEdIoRVzSteu7YByAUL8g11IPwzdyjS0mjM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773852239; c=relaxed/simple;
+	bh=H2btuvgm86SnyuyI4cuOl/bgXhsN1Lmk0Cgyy7/0DpY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ggXJlRyqRNGXxcbReyXOymzDkqcCjqaBFoqUfEke5pxwUlkzwd/hoCQ/OQi18K8RXmP9PU5KqX0Rxw/D7WeqWCJbXFAK/k34oLfXOUKSpyviME7oeszEXTKLxwoeAIEEc7jyZ+i1ssvplL/rvK6bEKYzvJYtDvlKfvHue+BaYMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gW2EaEmH; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MGKHeso4"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2aaf59c4f7cso81825ad.1
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 09:43:54 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773852233; cv=none;
-        d=google.com; s=arc-20240605;
-        b=cVIRTUc3VAjSmspHs2G7YjOcJohPk7LFRpIv5BH0XZTEBrzYPknHbKZu80sQWwQ8Sh
-         27XGMbQwoKypN73v5V6golk/5AiMDU2td9EbZ3cMNKhPXGY3g5LfP6OqkBh4ZpT7zV8C
-         JS9ky1/G717Y9I0hy+pycRSYjXi1bZcOrLqXFEWWuQe9kRgLJFlk1I3oK1029hY5bUaP
-         /9Cw2fjMzTSvwTAErqQztCMXsPFp0S6uLhhdHOHDkuZY+tAPaah57gSTAdXY/ls9ZVQY
-         2s40NOYodSE1XNAVIh7cpcQfF2aFKNXTfWl1ACyLkvVs3Wm0kL9jOKDxHsvuSskTX7pI
-         nLKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=PEcuY1KVmJxJTfhrnCiK85Ol/POWaIDlGkzA+uAqUrc=;
-        fh=fWRaEdobaU1b9LG9tg5boYjdeDn/L/KuxPDOvWp4MCU=;
-        b=OPjgumnH5mBybP1iE9Gpp7bgdAwvk9arT+7SIWqrryk0u/w0TswdWtBTXrX+JTyfQE
-         4vyC/dT2hefDlqcPrRaLvs+uhLrAHcmZvTieJj5wYx3RKDJfmmKAbwwEaIyFulR/9pQ6
-         BohEN0TUvAD9agiT5TZWcsJ6QFVaA5pM6gvEpum3LRwmxYdj8UKsMcMK7kn7+xMTCEzi
-         9nNsHHJfROtfjSmgtgz8us7RrgmbwZ2k7W8FLUJbJVobWQXYArx8dMYAcG1MTumdET8v
-         k7dOaNeQsAMzhXNEfBJXgZzvP1R8iE58jtG/iyzYDAfzjjEG6X7WcGw8dUEtWnuVFPb5
-         PJFw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gW2EaEmH"
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-79a51edef1fso18356527b3.1
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 09:43:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1773852233; x=1774457033; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PEcuY1KVmJxJTfhrnCiK85Ol/POWaIDlGkzA+uAqUrc=;
-        b=MGKHeso4Go86WhfyQXTWVzMbre9lUF5Omn2JSNl2Zc6jckdauZ6Uth9AxGK2jYQuZf
-         DiPMHwZOmk+jtgS+c1QbHRov7/nqdkzMuLdLmZNK40//FiHdnOpAnJgfZFSTBo/caq7/
-         zgVmEk7aeily+NtFAOx8ypbuQ8/0qZrHE1k+GUILQ+YAsTrNPZT87ci5fAp+gXHTk+94
-         QZmHV0BUuuk0Tqumx9bbHhlu8ihYLq92FLCrzQu3jn7C/IBNlOrSl0U1sy9QvZYwnPsM
-         P5hgALjH8aEBaAY2KI5+M4dewDvpB8pskMkmwkcqv6NwIHbixLpCVk6GQ+LMSmIRHZdT
-         t6BQ==
+        d=gmail.com; s=20230601; t=1773852237; x=1774457037; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+2kZ3MLxshElSQdSPBUkONr5v8VUA9DJm5ps1Yq6ky4=;
+        b=gW2EaEmHHkxRlEf8OItqOexTT+AsUVzOXFxBQyZUF9UrzEUxcTRLChyLA4jdar691w
+         BVTg5YtkbuYVjzS2eANNT4BJ6uynsabPi+mG9xAsZKnBqpDxmgnKjZj7vOdJZLGfzJJh
+         VZsh3z/zkcZ6h0HD6XdEozZY7+HSb8Q6V+C1vpTyNTVCBdzrTm22Dbp2nSghMLt7rkPY
+         MLbKcLa2SKoPrlB1/PiJSFqdLCBZhRO7WDnAIm3zZJMMqcUzmLKQLtWu///ZyN9xZ/Fb
+         z3GTk0K1EI4zAFyx2qKyvKrsh6mrJi0HrdkV6wBILuLaNq/wZuC4wvSEvPLdILwXq7xt
+         mJOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773852233; x=1774457033;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=PEcuY1KVmJxJTfhrnCiK85Ol/POWaIDlGkzA+uAqUrc=;
-        b=oB5/vqm+rRcEfp9TvMt6A2jYvH5LCRg2+EZ0VIiHhAk6hTtugiusHtkl/bTGtcO4/w
-         UlImcWWi8XU6sqWwliF2+mEwzajMzycXDek7XaebKNAKrJUs7kxf5ll0fFn3wWzse9Nv
-         X4rlDxa8sOANAJhAQXvAoUpuWfkigOdgKcMC67zIjFu/it2VMgwwdyqZkPyny6xZYHR7
-         HeC6IAw9gdkQ9GwZEIQYj3myorcBo45vZgGvQ9tEAkjCBUVzn7xhlbnE8rs8dc+aUa37
-         0DSg3hR73iWn7Jgb9uF50jQxzXqVRMJ8ifxyS321NcL5Qk7JmzJloKEg60DJIbvubCcQ
-         eyIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ3jYf8H4HR1iE7gF08xm7/uhmYH3+nzO0O3kZ2mj9zet4xxnvIZ8zCX+FGW4lWtKLZL9MC7DEckDjRXaDFcMWs8vFWFk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXUfgB7tpG+yQupv8Sqo9DugoBvqVLnqyekE2UzPq3i2zam6nG
-	ISMWMVudSqb2FxyFXQnIP5uKWcI5XqDAlmg+rl1l7OGsi0t46OET84M41ufzJumcD9eyomlJ3yh
-	tD7BS7CrC8sm94LbeFGAgz9ls1gEecqy7UvdvZreU
-X-Gm-Gg: ATEYQzxLKOfocn36+o9BaTrbvC9hZUxXeDD2KcfttQiJ5jjZKjTOYZScAQZktfNwoVy
-	bft5QF+7RIJHHWYrjohCOBX3JhdP+lPubjAX7/oru4ESi7zepIrKGXDSG/M08nz5IKEDHO/uaqw
-	XQooNcueY2AxEqyXPGhVnDKMNTWHZ8LV1F8JJGP1cgr28TKpR0zHZAZnYiw7Yka2hI04h9fIZIc
-	t1zz3iBwFagW3CcG2s89rGzGd08Oq7EgznBffK6V+I+v9oOxH15oAPST+LkNbjSfU1Ey4AiYWlA
-	sMm+AiVYpsdpj5d8UA==
-X-Received: by 2002:a17:903:8d0:b0:2b0:6cb5:c6c5 with SMTP id
- d9443c01a7336-2b06e40be78mr48856105ad.49.1773852233544; Wed, 18 Mar 2026
- 09:43:53 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1773852237; x=1774457037;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+2kZ3MLxshElSQdSPBUkONr5v8VUA9DJm5ps1Yq6ky4=;
+        b=iNmGyfBTsQvIWR33SBTU6Si6sTp/j3ZW8N3IbIDDKI0L6GGKx87ITXDF7bhhv6wHKg
+         NZlsxpHf3dfnj8VhFCAhz9YI0ddRN8XkY39Kp05GlmPapLdS5almuGVDxH82Dp5wAJR+
+         ntxTboAoPQ1FM2phLcAy1509aXRekEIsDgr+R2hX7ei7F+a+48TSnXPRPsX3CSshvC5X
+         PrPhpH0sRjO1j+iWAToACA77Fd7ko2eXndzXPuj9tSBXKOlE+1Ac8aiTSV+3CFYGgP/6
+         Rj8v0fZNuPRTJnjGYwtiCW45xNnSz2AJDOBDWOmgYZacLtXeS/GIqu9eoQXB4w4scnV3
+         UilA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtYBKfC/ZPy9fQMLK6PyXBs1dQSwt2Z3n5LTtAuKFhN4gLwzKP6Gc5dsU4QosBHDWLYgsexw4zX7unqqNYOp07YdyZeqU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNxoPVdn6XBdKV/nNfcJ8QUXElvdekrfXsCquSMwx038wC3eXj
+	fnIwhP11j61kk20oRYlsXJnu2LrbSvIVABTdyoedALCuN/OpvNylk+tp
+X-Gm-Gg: ATEYQzw2j9BLIEZYDp4cHUuEuBE/NWqR8JHGVFPD5GJE0pTzs6pdnhKTKiETJ6d8nfQ
+	0qBLp9I1KPi4me2dDx6+Q0HhFLOWCLBClgI0MWIqidB6XuoBB46/7LjOPjsviZcy86hd4GJ9lss
+	e9ulmnlSCfteByudrbOpWcnSOCghwILrYnQ0h6pcjI7mw8EHew7LYi/nkhVNqda3osWDF3H0KdK
+	KK7AQIL/FTxCXpkKP8i5qu6YNqlbmBL0yWkW7pm1Id2TMYDj4VsCA5nwZE0xVPnnfT+kX6/UjXu
+	OX18JqSMYgxJSgzCATn2zSWkveTw5ThwDxI602QaK7jYl1PnvUp0dfNtKH/0hGYmSdevqMl7LdY
+	ikQU5x2dfxQfHmJXLnb6bgkC7ixXOi1hmI/IOLT3diS2IeLS9fMNDZe12CmKojs//Hcy/6VgNBS
+	mmFE475o5uGxF5ypIyLMpZ84x6hSa9
+X-Received: by 2002:a05:690e:2456:b0:64e:721a:a60a with SMTP id 956f58d0204a3-64e9ccbd1edmr199515d50.14.1773852237214;
+        Wed, 18 Mar 2026 09:43:57 -0700 (PDT)
+Received: from suesslenovo ([129.222.86.248])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-64e91bbecf8sm1875975d50.11.2026.03.18.09.43.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2026 09:43:56 -0700 (PDT)
+Date: Wed, 18 Mar 2026 12:43:55 -0400
+From: Justin Suess <utilityemal77@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>,
+	John Johansen <john.johansen@canonical.com>,
+	Tingmao Wang <m@maowtm.org>, Kuniyuki Iwashima <kuniyu@google.com>,
+	Jann Horn <jannh@google.com>, linux-security-module@vger.kernel.org,
+	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
+	Matthieu Buffet <matthieu@buffet.re>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	konstantin.meskhidze@huawei.com,
+	Demi Marie Obenour <demiobenour@gmail.com>,
+	Alyssa Ross <hi@alyssa.is>, Tahera Fahimi <fahimitahera@gmail.com>
+Subject: Re: [PATCH v6 3/9] landlock: Control pathname UNIX domain socket
+ resolution by path
+Message-ID: <abrWSwS5urQpvbPb@suesslenovo>
+References: <20260315222150.121952-1-gnoack3000@gmail.com>
+ <20260315222150.121952-4-gnoack3000@gmail.com>
+ <20260318111507.1nr6rAki@linutronix.de>
+ <abqzXO3MmMXKqXOy@suesslenovo>
+ <20260318150559.j04YNDtV@linutronix.de>
+ <20260318.Jeph6loh9uSa@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260315222150.121952-2-gnoack3000@gmail.com> <2697b9f672967b1318630f2ffa21914f@paul-moore.com>
- <20260318.In1aekohyivu@digikod.net> <CAHC9VhRy2j3nYHHnyjsDf9Rk6=5DAzCSrmXgHCpo4arVnfBjRw@mail.gmail.com>
- <20260318.wa0eef4tei6I@digikod.net>
-In-Reply-To: <20260318.wa0eef4tei6I@digikod.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 18 Mar 2026 12:43:41 -0400
-X-Gm-Features: AaiRm52R-QUl_6FyQWVZwfUo3fZbrNzCqZ0wswhLxEPTednSfNTcmKYhFSB11MY
-Message-ID: <CAHC9VhTkJ9s6SE2Hhg+zpg9R1-WF71e5HNJPENAc6krBCCyaRQ@mail.gmail.com>
-Subject: Re: [PATCH v6 1/9] lsm: Add LSM hook security_unix_find
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: John Johansen <john.johansen@canonical.com>, 
-	Georgia Garcia <georgia.garcia@canonical.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>, 
-	James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, Tingmao Wang <m@maowtm.org>, 
-	Justin Suess <utilityemal77@gmail.com>, linux-security-module@vger.kernel.org, 
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, Matthieu Buffet <matthieu@buffet.re>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, konstantin.meskhidze@huawei.com, 
-	Demi Marie Obenour <demiobenour@gmail.com>, Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Kuniyuki Iwashima <kuniyu@google.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260318.Jeph6loh9uSa@digikod.net>
 
-On Wed, Mar 18, 2026 at 12:22=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digi=
-kod.net> wrote:
-> On Wed, Mar 18, 2026 at 10:44:26AM -0400, Paul Moore wrote:
-> > On Wed, Mar 18, 2026 at 4:48=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > > On Tue, Mar 17, 2026 at 05:34:57PM -0400, Paul Moore wrote:
-> > > > On Mar 15, 2026 =3D?UTF-8?q?G=3DC3=3DBCnther=3D20Noack?=3D <gnoack3=
-000@gmail.com> wrote:
-> > > > >
-> > > > > Add a LSM hook security_unix_find.
-> > > > >
-> > > > > This hook is called to check the path of a named unix socket befo=
-re a
-> > > > > connection is initiated. The peer socket may be inspected as well=
-.
-> > > > >
-> > > > > Why existing hooks are unsuitable:
-> > > > >
-> > > > > Existing socket hooks, security_unix_stream_connect(),
-> > > > > security_unix_may_send(), and security_socket_connect() don't pro=
-vide
-> > > > > TOCTOU-free / namespace independent access to the paths of socket=
-s.
-> > > > >
-> > > > > (1) We cannot resolve the path from the struct sockaddr in existi=
-ng hooks.
-> > > > > This requires another path lookup. A change in the path between t=
-he
-> > > > > two lookups will cause a TOCTOU bug.
-> > > > >
-> > > > > (2) We cannot use the struct path from the listening socket, beca=
-use it
-> > > > > may be bound to a path in a different namespace than the caller,
-> > > > > resulting in a path that cannot be referenced at policy creation =
-time.
-> > > > >
-> > > > > Cc: G=C3=BCnther Noack <gnoack3000@gmail.com>
-> > > > > Cc: Tingmao Wang <m@maowtm.org>
-> > > > > Signed-off-by: Justin Suess <utilityemal77@gmail.com>
-> > > > > ---
-> > > > >  include/linux/lsm_hook_defs.h |  5 +++++
-> > > > >  include/linux/security.h      | 11 +++++++++++
-> > > > >  net/unix/af_unix.c            | 13 ++++++++++---
-> > > > >  security/security.c           | 20 ++++++++++++++++++++
-> > > > >  4 files changed, 46 insertions(+), 3 deletions(-)
-> > > >
-> > > > Some really minor nitpicky things (below), but nothing critical.
-> > > > However, as we discussed, I would like to see the AppArmor folks co=
-mment
-> > > > on the new hook before we merge anything as I know they have an int=
-erest
-> > > > here.
-> > >
-> > > John, Georgia, we've been discussing this new hook for a few months n=
-ow
-> > > but didn't hear from you yet.  We plan to merge this patch series wit=
-h
-> > > the 7.1 merge window (in a few weeks), so before that I'd like to mer=
-ge
-> > > it in -next in a few days to get a broader coverage.  I'm pretty sure
-> > > this hook will work well with AppArmor too, but could you please take
-> > > look to confirm?
-> >
-> > I probably wasn't as clear as I should have been, my apologies.  The
-> > major reason I held back my ACK on this patch was that I wanted to
-> > hear from the AA folks regarding the hook's suitability for their
-> > needs.  While I don't expect they will have an issue with this hook
-> > as-is, they have expressed interest in the hook, and I would just
-> > assume make sure it is okay for everyone before we send it to Linus.
-> >
-> > Since this is a feature addition and not a critical bug fix, I will be
-> > quite upset if this is sent to Linus without review by the AA
-> > developers and my ACK.
->
-> I definitely understand and that makes sense, but even if it is not a
-> strict fix, please consider that this feature still fixes an important
-> gap in practice (e.g. run anything outside a sandbox with the help of
-> systemd; see cover letter and reported issues [1]).  I don't want to
-> bypass anyone, but given the importance of this change, I don't want to
-> postpone it either (except if there is a major issue of course, but I
-> think the review was pretty good).
+On Wed, Mar 18, 2026 at 05:26:20PM +0100, Mickaël Salaün wrote:
+> On Wed, Mar 18, 2026 at 04:05:59PM +0100, Sebastian Andrzej Siewior wrote:
+> > On 2026-03-18 10:14:52 [-0400], Justin Suess wrote:
+> > > Sebastian,
+> > Justin,
+> > 
+> > > In short: dom_other is a pointer to a landlock-owned refcounted struct.
+> > …
+> > > 
+> > > But we copy the domain pointer, which points to a landlock allocated
+> > > and controlled object.
+> > 
+> > and this is not going away while we are here and preempted after
+> > dropping the lock? (if the landlock policy is updated/ changed/ …)
+> 
+> I agree with Sebastian, this is a bug, see my original proposal:
+> https://lore.kernel.org/all/20260217.lievaS8eeng8@digikod.net/
+Mickaël,
 
-I understand the desire to close the gap, but as this is a known
-limitation of the existing Landlock implementation, I don't think this
-is a MUST (in the RFC sense) for the next merge window.  It's
-definitely a want, and a *very* nice to have, but if they AA folks
-need some more time to sort things out after what has happened
-recently I think we can afford them that in this case.
+Just to make sure we're speaking of the same thing (I spotted a bug
+shortly after replying to Sebastian).
 
-> That's why we'd like to get some
-> feedback sooner than later.  While waiting for AA folks feedback, would
-> you still be OK for me to push it to -next to improve test and review
-> coverage?
+This is a potential UAF if the dom_other is freed before the access
+check takes place correct?
 
-That's fine, my comment about "sent to Linus" was deliberate.  Feel
-free to do what is appropriate to gather additional testing.
+	dom_other = landlock_cred(other->sk_socket->file->f_cred)->domain;
+	unix_state_unlock(other);
 
---=20
-paul-moore.com
+	unmask_scoped_access(subject->domain, dom_other, &layer_masks,
+			     fs_resolve_unix.fs);
+
+If the dom_other->usage reaches zero, then the domain could be
+freed after the unix_state_unlock while we're checking access??
+
+(I guess I assumed the sock_hold on the @other would prevent the task
+@other belongs to from being freed.)
+
+Would it be better to move the access check under the unix_state_lock or
+to acquire another reference to the ruleset (or something else)?
+
+(Good catch Sebastian sorry for the confusion.)
+
+Justin
