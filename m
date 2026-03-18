@@ -1,103 +1,79 @@
-Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [45.157.188.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6FF38F251
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 08:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234C7346AFC;
+	Wed, 18 Mar 2026 10:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773823727; cv=none; b=UFw4bKFOyvAsuUNDhIYnYbJo1V7VKfoWbM6SAwYeSatN+M/qRCoJYOCyYdpdmllXNrM6uLmd9G9GWsT2FJVFclHhk7BRI8ocbjohRjaf4XavZvLrbfENY3z5rRPJsEXyWaVg8Da+d0Mm4nCmRk4J4JbHDw8YiEd0TVgRnYDIcv8=
+	t=1773830609; cv=none; b=jmutLa9l7t4KRSmK/Wddw5del4pO82cNI1bxonn0CJTN5Q4ip3q0yLFaPtP0ueCfUPubRcARS7msV5F+CQNcR54VTFgbY5VwCbs0zBdfKNE4mr0wgpK69ck6ELjX20DH8jhO/YIZ6m3kzU3es15TkWV4VjFg2ErEqedG835ftM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773823727; c=relaxed/simple;
-	bh=UR/nXpuCBspCXE+lzekYX2SJ7tdoA0dohclCQYpSjTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XzNc1QDFIN5zdan1+FQ4k5gq1pYBbWaMnSr74fVAkD46Hr/mvbeI50K4RqeGaoMzG760NjOg0sOYjIAhuWApvq68AiWswxN6ajnd7UhB6bfFOyNr/87EOy2uaQ/GOK052iPkLT34gFWs9juVgS2fvr2j3VJEvCntqqdjwiUIZIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=g+f6U5iK; arc=none smtp.client-ip=45.157.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1773830609; c=relaxed/simple;
+	bh=YSWWS5/RcbLfkRSYSl3dyfcWydaBehiZvsfoJaPyKYM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MVDog+ttNbqTvoQXaVftVLXpSZsCqoOt1bvClNS2sI+RHMr3Phv63GxMTrD5EIrrAx0wVitYWQ34HydtUOc9FTkaIaZ/Us7n66ihcXBwYysrGiPsCpig+XhOZoCkN8epjAGTzJjIoNhaBn9czYhDYwuRQzoxU+xudBUAJYFC7ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bBGSK2+e; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="g+f6U5iK"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fbMtZ07l9z9TM;
-	Wed, 18 Mar 2026 09:48:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1773823717;
-	bh=CcvTuGAfaIcT/ORomhueMOe6/GJ0Q9rLnTjixizSyEA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g+f6U5iKoqszKnih54WK93Z1lUPRYsepUOPJW/NbbgLe+3ItPLoo0koenuYZepkcn
-	 SskPVZbjz0yj8OykZEWxB2vcq+uis9rxakjxfGePXCSFGrIEbVEWHIL87d2i3pfBzl
-	 4t3AxaLMD1ctRzRmaql8oET2P3Ug5bugTO3tDnYc=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fbMtT6BLNz1kh;
-	Wed, 18 Mar 2026 09:48:31 +0100 (CET)
-Date: Wed, 18 Mar 2026 09:48:26 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: John Johansen <john.johansen@canonical.com>, 
-	Georgia Garcia <georgia.garcia@canonical.com>
-Cc: Paul Moore <paul@paul-moore.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Tingmao Wang <m@maowtm.org>, 
-	Justin Suess <utilityemal77@gmail.com>, linux-security-module@vger.kernel.org, 
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, Matthieu Buffet <matthieu@buffet.re>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, konstantin.meskhidze@huawei.com, 
-	Demi Marie Obenour <demiobenour@gmail.com>, Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Kuniyuki Iwashima <kuniyu@google.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v6 1/9] lsm: Add LSM hook security_unix_find
-Message-ID: <20260318.In1aekohyivu@digikod.net>
-References: <20260315222150.121952-2-gnoack3000@gmail.com>
- <2697b9f672967b1318630f2ffa21914f@paul-moore.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBGSK2+e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62D0AC19421;
+	Wed, 18 Mar 2026 10:43:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773830608;
+	bh=YSWWS5/RcbLfkRSYSl3dyfcWydaBehiZvsfoJaPyKYM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bBGSK2+eUr4guK7mFf9E1PAp8ctjGlGmtPkFUbGzWkyMmZllFY5wemT8XABle0nI2
+	 r0DcVCDLNxN/alP3vxavYYKJpcpCD6acqDDcDa5astlJnJ2oJmVy04gyVHRyicTekp
+	 3xu4DkwnuZi4kDRKMNcZ1shK9UT+thmuYvBUDYHjfBpzgcBHmWqE/HdRhu3oxiMQ1e
+	 l8Rovm42jRYMeySQTytIL7y5LzF4YihSJSe2sxZfqHoRFubeg9fZtLBQ37jgvAd+R+
+	 iZ+Sm4+x5eNGxuMO3NdBsnbxZdb2L9SFxUZnz+4ayy6kg+z551EcRm224YK9E5d2fQ
+	 MDNM1U4cTDIbw==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Amir Goldstein <amir73il@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	John Johansen <john.johhansen@canonical.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] lsm: export security_mmap_backing_file
+Date: Wed, 18 Mar 2026 11:42:54 +0100
+Message-Id: <20260318104322.1643085-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2697b9f672967b1318630f2ffa21914f@paul-moore.com>
-X-Infomaniak-Routing: alpha
 
-On Tue, Mar 17, 2026 at 05:34:57PM -0400, Paul Moore wrote:
-> On Mar 15, 2026 =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com> wrote:
-> > 
-> > Add a LSM hook security_unix_find.
-> > 
-> > This hook is called to check the path of a named unix socket before a
-> > connection is initiated. The peer socket may be inspected as well.
-> > 
-> > Why existing hooks are unsuitable:
-> > 
-> > Existing socket hooks, security_unix_stream_connect(),
-> > security_unix_may_send(), and security_socket_connect() don't provide
-> > TOCTOU-free / namespace independent access to the paths of sockets.
-> > 
-> > (1) We cannot resolve the path from the struct sockaddr in existing hooks.
-> > This requires another path lookup. A change in the path between the
-> > two lookups will cause a TOCTOU bug.
-> > 
-> > (2) We cannot use the struct path from the listening socket, because it
-> > may be bound to a path in a different namespace than the caller,
-> > resulting in a path that cannot be referenced at policy creation time.
-> > 
-> > Cc: Günther Noack <gnoack3000@gmail.com>
-> > Cc: Tingmao Wang <m@maowtm.org>
-> > Signed-off-by: Justin Suess <utilityemal77@gmail.com>
-> > ---
-> >  include/linux/lsm_hook_defs.h |  5 +++++
-> >  include/linux/security.h      | 11 +++++++++++
-> >  net/unix/af_unix.c            | 13 ++++++++++---
-> >  security/security.c           | 20 ++++++++++++++++++++
-> >  4 files changed, 46 insertions(+), 3 deletions(-)
-> 
-> Some really minor nitpicky things (below), but nothing critical.
-> However, as we discussed, I would like to see the AppArmor folks comment
-> on the new hook before we merge anything as I know they have an interest
-> here.
+From: Arnd Bergmann <arnd@arndb.de>
 
-John, Georgia, we've been discussing this new hook for a few months now
-but didn't hear from you yet.  We plan to merge this patch series with
-the 7.1 merge window (in a few weeks), so before that I'd like to merge
-it in -next in a few days to get a broader coverage.  I'm pretty sure
-this hook will work well with AppArmor too, but could you please take
-look to confirm?
+This symbol can now be used from a loadable erofs module, which causes
+a build failure when it is not exported:
+
+ERROR: modpost: "security_mmap_backing_file" [fs/erofs/erofs.ko] undefined!
+
+Fixes: 0e2baaf8fed0 ("lsm: add the security_mmap_backing_file() hook")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ security/security.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/security/security.c b/security/security.c
+index 8d10b184ce25..3e426a762864 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2529,6 +2529,7 @@ int security_mmap_backing_file(struct vm_area_struct *vma,
+ 
+ 	return call_int_hook(mmap_backing_file, vma, backing_file, user_file);
+ }
++EXPORT_SYMBOL_GPL(security_mmap_backing_file);
+ 
+ /**
+  * security_mmap_addr() - Check if mmap'ing an address is allowed
+-- 
+2.39.5
+
