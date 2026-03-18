@@ -1,71 +1,148 @@
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCB2345753;
-	Wed, 18 Mar 2026 23:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773875551; cv=none; b=rIkKLv+mglAiFYArbeOUvZfJ0j2595Ek/r4y8fNJakjJCrYVMHWU3uk17pyuD3XjfpZ7A3tBrjhccGFmdlRBqYqi+qkEhPS6J5p2x+nhNgKGClp9a5Eqepza2d6MrcoA5v7hl8cJO6uBQyA/rGlAEGKm9863AOQTzEFbFijsm3A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773875551; c=relaxed/simple;
-	bh=JCh4IeE/Cn60D/pNAmjztbTuiNBWjjTZpNihj1Tve9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JCOffRpAytYhlGLwfkI40vvEG4iUXtUnpHJgkQoL5pmEPwghKbGvMoknLhkTGI5s6Ta3ZpugBMjZZJAeIbbujlmudptXkkjeQfyNcJN4rYms+bjHeOvV01LnL8trD2+hTutLEILizZQ+gAVE6rz2RF4y98sJs7vlbB3BPcLOzGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id 9F2241A01AB;
-	Wed, 18 Mar 2026 23:12:21 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id 729DB2D;
-	Wed, 18 Mar 2026 23:12:17 +0000 (UTC)
-Date: Wed, 18 Mar 2026 19:12:46 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org, linux-nfs@vger.kernel.org,
- bpf@vger.kernel.org, kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, netfs@lists.linux.dev,
- io-uring@vger.kernel.org, audit@vger.kernel.org, rcu@vger.kernel.org,
- kvm@vger.kernel.org, virtualization@lists.linux.dev,
- netdev@vger.kernel.org, linux-mm@kvack.org,
- linux-security-module@vger.kernel.org, Christian Loehle
- <christian.loehle@arm.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] kthread: remove kthread_exit()
-Message-ID: <20260318191246.21f5cae8@gandalf.local.home>
-In-Reply-To: <20260311104736.51b53405@pumpkin>
-References: <20260310-work-kernel-exit-v2-0-30711759d87b@kernel.org>
-	<20260310-work-kernel-exit-v2-1-30711759d87b@kernel.org>
-	<20260311104736.51b53405@pumpkin>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBE4348465
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 23:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.178
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773877624; cv=pass; b=gkiWsnWzSrJRSSheqG+KVGcNk1RjBE9/ysy8UQv7eo4Ma2uTkVYiReIf7VJFra5OBZTQcZ5AtYSUGgsqrhFfOoXYLWZSyuXdeOTkgRlw1MYGrLC2/x4narXg5CMBAjbTJiHJV4MrACZVu6vnvbofYvkWkOCAZyNo259Yls9rLNo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773877624; c=relaxed/simple;
+	bh=goPdRYRb1QYfjLs/QmPDwV3Kh5LoPgcZM/xi+f3fGd0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pIQW1vd1JpISY0/46IXDHjFOQrnDJGQite0/srlBBR18V+nK8QoBgHMiOyjG4EuKqsTjvjAo8/Tjf/LOqQoNgD1Sh0wADKd4AK6775qrbq8OZorz1tASOCxFkrQiViQkVWeh2dwJnyLBEsYu/SB6+c5gg3i1kpIPezBpFPXMG3I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AKLsHbzP; arc=pass smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AKLsHbzP"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2ad9f316d68so1667655ad.2
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 16:47:03 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773877622; cv=none;
+        d=google.com; s=arc-20240605;
+        b=TzN3SOI1ZgBG2ftjH7TmqM9S6GuRlIpOYedeiHfo2Zui2Ni94M223DI5Y7t+MXiMnf
+         hX6vrm4cN0w9SOxJkTZPuGGWN7FowouWvC/jtQWpxjHB3wsPcmMcCJxBkGhW2E/vHZO1
+         2G30R4RDb0RFOPL5ihZRRseX7N7DGq2i/UsntfnjLPj01Yly2uLkNl147HroqPWCDUPA
+         PhF+NZbFZcgeulKEY5p2bz9479gitVIB6KHgQu9lllfrw1MnWOpfJRoLJbWygH2wxjUf
+         4hj3DIZffhdhHQY9X89sRtkhwcYkBeTMH7pG9bJeuXluTs6LmoNUJDOmHFKr6m/Gb8Nr
+         eAtA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=SKdeu+6dCkvAUwBQTZO2KRv3z1lv0eoszoXVMxx1Rl8=;
+        fh=pNcvBJd37bvygHORLJNXBHdoZJ+lTM8mqnTRQiEzzzY=;
+        b=fX6EwNGRXyquZFqQ4CCMnviKlZKX+DyTSVZZPZKpIdinO9NdDJRXobkahTtbz/6bMe
+         F5zAtUkjK/rjiakQRXDTbl+WuGNYYzcyei64iVNv1P8d/DqhbSt227QOqYWeXYSp1+Du
+         tpbPqLUs3Jiwsm/hjIpEcVnozKdXvxfpBnJpsQyuy/f9tJqYiGYPg3Lz855Tf/6/MCxK
+         wa5lb8lgMUTZkkx8DZ8Xg3+TnpYw731la8xpZmv478LSyIkt0z2v+dLfzkqzRz1pQzVf
+         05AkShmY0p2GooI0FN4bvNv8P0AvwwkWNL3qMYDkawJ7zb4bmDvhpCjP+GA00py7ahAV
+         J1ug==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1773877622; x=1774482422; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SKdeu+6dCkvAUwBQTZO2KRv3z1lv0eoszoXVMxx1Rl8=;
+        b=AKLsHbzPe/UFGdaly4ZmKWfwEwmrHjd1DkZL4IVkQuzIErZyEfHo63QiPdDZocQ1er
+         TDQuBHxvJGfj7ByZiLM4PkfV8rNk5V/3NumordXmOjXxnaeC+X32rN8w4u++FYqMJ922
+         qiHl419cOnkMprBN228Xaq+2531KkoPltl6Xoo3Vp6WW2pPtOlttG1dg8+rgq8J+7Dml
+         4EjE2vHGePmPhTt2w4gTd6ctMcC6LeWCMahkdppjXGiyBMeMN+uX9UjHwZhkMaO5oXpt
+         utlaZH6uQCma0rd7bqSMOrjCIguHzeb4LLkVoaJxpS4oP3XYJDepNYXITJJxfvyktN/S
+         yLig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773877622; x=1774482422;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=SKdeu+6dCkvAUwBQTZO2KRv3z1lv0eoszoXVMxx1Rl8=;
+        b=Vl029ae/1UD/JgBFmXSce+jGZ+fvMdB3ZnG5b/SfNlVtx7O6F/BSJfFM+BXk58DvYS
+         V4pjAY7bMdQq/WQCHNet/L23F+QOCjroKSocZWQooh/yuVEFtQnga59ziBjegGCQR8hg
+         kJNZdkR/2cL1K2oML4LEeCiXDbYQIdhk0Hzjpe3LK6TXLszM9EVGt8a14KisNUeQw1j/
+         5Ed8JbXGoE9zt1zlm8tdn1EpfJF2JGocTGShYS8bLHTzGwWDToCeF8L/nRYEijJAoyAT
+         3g8YE1JeYG/GcCfGZj7laXqvLYFeLapdz5ul83wkp5RS8hsfCYorfWZcJlYRjRZC+uId
+         xszg==
+X-Forwarded-Encrypted: i=1; AJvYcCWtzLIAcSDY4We8qAjVlxC4vGsxu37lXxt3C5JtYrSnCAIWFJjYBxDORS4Nyb/REHQKDIIu3r/kKZ+MJRmI/743IJLPxBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymWZMkTwlHhlJ2vh36R7P2MhlvUpXMo2mE6uAgFUG9v71nYCwh
+	1o466cpSyExIdRwqpJOXo1MII/yd9FX6GTwS9ugFM/IXps1UvJy3oqnw5za+7KwJtIoHmrw+WRz
+	6PDHy1+HoYGYI2mnPXZU/a34nNuxXTyYhFqWilECU
+X-Gm-Gg: ATEYQzx+lvy+Gg5rsAgTTdeMPVQhlpYWZPYldM7BqOGG7Mj3UjIMk1y7xA9ybmc5Ua/
+	vXEuQX8GDlx9wmsopVo4IpZrrqit1M4d4jZWUkq2TIaNjC+mXT5FMFr3iDGUtQPIHMlfbof3DPS
+	Wl3ma4X7eLJ0zsgP65oilHveuxvwBvV71p9hiTgEI9Wz+GwyL4SWRYjrBxwHdo4R/fPStcckhtm
+	sPDLWzscQi9yh1cp2m12AkcE33efzwyfC+I/EJvXCJ4FCAKPXZgH8fAYbSe+PFyh68kpFG0yJrq
+	JzsqZqQ=
+X-Received: by 2002:a17:902:f547:b0:2b0:7177:d5e5 with SMTP id
+ d9443c01a7336-2b07177dc04mr35425715ad.43.1773877622532; Wed, 18 Mar 2026
+ 16:47:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 729DB2D
-X-Rspamd-Server: rspamout06
-X-Stat-Signature: k3okmar3gqwa3bym6uatb3yctgtgf59r
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18ZAlHD7zRdqyhWTgVQ561leKpKdrlCUw4=
-X-HE-Tag: 1773875537-654795
-X-HE-Meta: U2FsdGVkX1+7MRZYfjkh8tY3o0PNQxfTCp9CNyhqYR5NFfoxVPCM5iPNukWLzQIvK353tkgDvhZEdUedgHQ5QAkLbovGV5fvwkWyav20iib+DYA0dDHoYUnOxRBuEyIUuWk0DzuG1lL8+oddkej4s1MPcpQDwUN5GqInEA4qcRZLkJpWWxd7t1PfzHXZfqpOcF7WAx+PlcQksO8TPjRtlBOpPJasveRV7LExQmrExj38ijzYTXM4IkABls4ZOZgZxz6jQwh3Jnl0QSJRHa6iPYc7cT5zoaTdKKIxa3A6zx0cZRoh9me2qihdhYWm4g9GrHKVoLJDzQiYMqh11BNCWgZQJ5CMSezB
+References: <20260318131258.1457101-1-amir73il@gmail.com>
+In-Reply-To: <20260318131258.1457101-1-amir73il@gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 18 Mar 2026 19:46:51 -0400
+X-Gm-Features: AaiRm50UCF1CurPQjVXbzqdFj4rL7YmqoTti-AfxH9o9diMwAaN1iIjAFrpAzkY
+Message-ID: <CAHC9VhTKvOzMS2ZyawE=qBN-EpyucfxvwcHZYjXF5zugRhE2rw@mail.gmail.com>
+Subject: Re: [PATCH v6] backing_file: store user_path_file
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, Gao Xiang <xiang@kernel.org>, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 11 Mar 2026 10:47:36 +0000
-David Laight <david.laight.linux@gmail.com> wrote:
+On Wed, Mar 18, 2026 at 9:13=E2=80=AFAM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
+>
+> Instead of storing the user_path, store an O_PATH file for the
+> user_path with the original user file creds and a security context.
+>
+> The user_path_file is only exported as a const pointer and its refcnt
+> is initialized to FILE_REF_DEAD, because it is not a refcounted object.
+>
+> The file_ref_init() helper was changed to accept the FILE_REF_ constant
+> instead of the fake +1 integer count.
+>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>
+> Christian,
+>
+> My v5 patch was sent by Paul along with his LSM/selinux pataches [1].
+> Here are the changes you requested.
+>
+> I removed the ACKs and Tested-by because of the changes.
+>
+> Thanks,
+> Amir.
+>
+> Changes since v5:
+> - Restore file_ref_init() helper without refcnt -1 offset
+> - Future proofing errors from backing_file_open_user_path()
+>
+> [1] https://lore.kernel.org/r/20260316213606.374109-6-paul@paul-moore.com=
+/
+>
+>  fs/backing-file.c            | 26 ++++++++++--------
+>  fs/erofs/ishare.c            | 13 +++++++--
+>  fs/file_table.c              | 53 ++++++++++++++++++++++++++++--------
+>  fs/fuse/passthrough.c        |  3 +-
+>  fs/internal.h                |  5 ++--
+>  fs/overlayfs/dir.c           |  3 +-
+>  fs/overlayfs/file.c          |  1 +
+>  include/linux/backing-file.h | 29 ++++++++++++++++++--
+>  include/linux/file_ref.h     |  4 +--
+>  9 files changed, 103 insertions(+), 34 deletions(-)
 
-> > -#define module_put_and_kthread_exit(code) kthread_exit(code)
-> > +#define module_put_and_kthread_exit(code) do_exit(code)  
-> 
-> I'm intrigued...
-> How does that actually know to do the module_put()?
-> (I know it does one - otherwise my driver wouldn't unload.)
+Still works for me.  I'm going to update lsm/stable-7.0 with this
+patch so we can get some more linux-next testing.
 
-It's in the !CONFIG_MODULES section. No module_put() necessary. Only the
-kthread_exit (do_exit) is needed.
+Tested-by: Paul Moore <paul@paul-moore.com>
 
--- Steve
+--=20
+paul-moore.com
