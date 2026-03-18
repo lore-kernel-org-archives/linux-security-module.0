@@ -1,79 +1,79 @@
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3392533E348
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 06:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B71C29D287
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 06:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773815477; cv=none; b=AGXjb2MaiJzKVsBrwdu8+RprJhg1yapObADaBHkt8r7PctnbycHPH1p6PwM5J0stAPzHFtjadSvHSEt4tcHJAyD3F7BIZK7yfuBq0pcoD++IqtgH4HcwozVFbJ0N74oRabQdyY0bqrAuKwwIVcOKTglQsEymyyh+ThHszjsSxps=
+	t=1773815515; cv=none; b=TCzcDoBYYfzdGlQ5rLK1uaT/XTNnrI0IAzi5VWuO2FL08XvD5SsPn7j90xm+xQOFvk8pZYqczdh7nQ/x+6zWtwD8xdGvQgp5Uyoo3UJmGvBiuwSBOZ3vmVsGmbV23HKqloX80G4fEF3VWzDhcWvQn8qAK/qtzqRYSqW5Ja6OJfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773815477; c=relaxed/simple;
-	bh=Mq1QDxYheorRC5IJIPOGsVMsmBNaV4k5SGC3026w0R8=;
+	s=arc-20240116; t=1773815515; c=relaxed/simple;
+	bh=axv6vZl0GVTlzKcIZ4eSepd993smWSMA4mc9NkmS698=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nCJ8p9+9jpkM1eTlOgBQqVXvrZ39Aju4Sabeyqn5WuPZXfKZl3JxjxyzpAsPXA+zfVLwruJPPxmnHSb8m06JNtQucEMgdsHf82ye/Cd6dj2IH2VCFG84TREDYeC2btqr9wiASJA7u2AQs2RNQEHuV88R6UnFpD/701+LzfFMPNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=UYzNtTjr; arc=none smtp.client-ip=185.125.188.122
+	 In-Reply-To:Content-Type; b=b3r9V+6YDlO7QP93qz9Jak1Him/dtUf14LLkUp0SoUlP9qxsvuCTEhkEeQG3CHaG4ITfq0YJ0e3wcvsD6pHfF+IBkEUDqVEe2p/OOllTlbPMeD69hP7AVfQzBP0XRjGZAt94QazdcDCFVqFHkojG/ndy2Zs2drSQ2pNNr4+Heug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=YiQib5tZ; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="UYzNtTjr"
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="YiQib5tZ"
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id C36233FBAD
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 06:31:14 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A10933FB75
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 06:31:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1773815474;
-	bh=Lie/EmS0JfR2VxP0UhRSLkUp3VDngWeG1TYrbxldO00=;
+	s=20251003; t=1773815512;
+	bh=EML+XTGUQs60PcdBYA32Jysi6fX2cPvKb7rTjuZcNxo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=UYzNtTjrafmPhEVbisMLZpK2bJJEjnbzUTjgy3HiV3Xhvg5FRMpJP2/HBWtaVDk9U
-	 TxRkxW3TrNM8RqsJOHeYGC8Vlgso8u3N3JAeDaKZ28ONYWZKqXTe4GePjQYpIfquhO
-	 51eGekUndMfTHHeLiQOhZgQPt1pFZ+S47lCuD3g4eDnYpv3yi4JVvb9HJ5pPU2MgNA
-	 YhHuAPvCKjST3RPjSmdvMjsvNGuxz/zW8zKHuLGl/x/tuSudV7dSnWD4U743QxRbfR
-	 cC9AZiDmS0EKbKMMPX1FmNxocJkp7zPGLTkG2+m7bHR+rwbvcWXCRohgtVBna7dFRb
-	 HLXILxBC+wd2TJNZcKiKcBmk5AXZcmW11ru+UhRSs+U2L9+8Ykw8to/5w7sK7m5cu7
-	 gT1PkGGFmVDI5pfKt/Fe8yw6rc1YzxQNmADntwv2E+A8smXuCiJF22caHcymJA7xzB
-	 fXkg4ga/jmfhOCRuC5mfqhJ27fg2AUotRPVYVAnprcOzbfF/as1OB0S9JIQ5p0VOpI
-	 UIBUIi9jgD08LkwILC27sh+wMq8jDX6h/Sr6aP2m10Nh43F34Da8IYrQm5HF09RIc2
-	 Eksrfxv9DasXBnRByIWeKgK1ws2BnkWO0s7C9Asd7sMrKgps8W2VBvh8OEM5s82NFU
-	 396TaDfehnEluZM/0alqPSZY=
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b6097ca315bso34450500a12.3
-        for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 23:31:14 -0700 (PDT)
+	b=YiQib5tZjI3up7JoFGouoKC2f0EINfvFkmxNSW3pdzZ4jU2lVeWE9FMDdUbJ6NPCR
+	 6+Gf7gG3ieBzLYLMcIY/4MuFgN2rgta0mMloeeGXiIPwmQ6s/1Jn5/bPfMHV1Ol6DJ
+	 faKIIu1CE98dUblJwgPEzWAYisG4+WYifSuA2GsQ/2sUXArTKM0HztsOm6C+o6OCCS
+	 FCjIf1UZeCeiOD7DHMyoEMgEWBHfk+q5VSCcOlxBJ/Svn6VaWlGeiDWizzXjPinujJ
+	 kYwNi4Uwbusw6UE4Bsmq1x113oY5tzRZ5vbJxM5Edt61LsLGsY2rghYSBZhZmsaNqa
+	 1dJmFl55QxBOGSUepZ2YxehxWiYwTx7j/2QFrQ4nHX/j+GDJ7zMhirU6KfGMHdSoX7
+	 ydMeWV7WJs0V3KBbbf8RVvaQlJsQRqtI/WA1U4Xtr77bYvv7zfFlagREWf5vRTp79t
+	 XnMjV8W7o9wCi6q58vw6AnnzUFEz/guNPbqyXXBdgdcNyxZHSkqTUFJURrwRDP3c++
+	 kqgXwKa5mT5L2XB0fTa6l8wwlNrI4IDR5B9NRCcmCEhNA4/VbHv8jyA7/F/mqqfFhu
+	 f6E5mK5dlGJ25bCzJl6RYD40A2YiYzbgtRosMF0jSkng6AtL8qdJ9IFs+079gAgYbY
+	 zTh6gRk5jMAM4z43zBXTulFo=
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2b061868724so144577125ad.1
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 23:31:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773815473; x=1774420273;
+        d=1e100.net; s=20251104; t=1773815511; x=1774420311;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Lie/EmS0JfR2VxP0UhRSLkUp3VDngWeG1TYrbxldO00=;
-        b=SVukRIazDo3WxlHNgCYQXNXcGOowLsvwwr09AD7iDzyySEIITOCpHdsJ3mEzUVPM9Q
-         VyZe58F+TAaDEPB7pAnrF1zzD8m/9xN1UjQK+KaBS8ex1Q5/dj5lzcjMGqhANmseTpkv
-         zoCa+GuEC8TLpu8xT6cHt+es54D6TzeEtEOw6YHTsJuRzkLPgzSXk/Wr70uOu8IX0JJK
-         HFr4DSqkomi/GyLyZRqjEUrWa54S2KEFct/NeAkOxUJ7J34BCh6axXpGRNQhxLBg8wJP
-         n+XaBXxQBHTVOJ1+wB6fzr91HezBt+lBM6/dwZREqU47SYkG42Ql8YKMMV0+aGNDlav6
-         Ax3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWIqwYwgQmd7f6ZlLwnuhzfnFOAruoVOdxUdsJmoUp0WLVwwXnC7NXlT7HDTWMlVhP0zNMiVbs5JEw/dft83Nw6zm/3Emk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN0LzJ2cJ5FEQcbTzrduy2PILlM4/7krCGMFX8RYWCfn9P8ClE
-	yEwHLu5a0e7AnTgZ6loGR/vREjoWhoYkkanh0CTRP8icWYA+kLWeD3g4Oaa/O5r+Ix32QbXOGnp
-	pgQDBNgVHIrT0ZYQ++sRM2DwhvbRmcCf0Zs0fx5DLOfEfpkqSXgSrDRbo6Dm6Qnu6SXC+LxFd4V
-	0GGFwwta9fr2OzmITWPzhEAzu2aQ==
-X-Gm-Gg: ATEYQzx2wMng2FqKRJt+GjfNTjvbM6+Bjq0nMrtgZ2wjZoCKCHwgq0bX/qda7+RlXvx
-	CdxEfvZOrPI8fxag9Y7IL+kVr8vrGsi9Q219e7Zns6XdhyDMzMN+2I6zPgFqR9u+LPinFRYZ+VY
-	vXMK2zfBA/XvhzUPMi8B7aa+lmwrtqK+onAxhNmkVSIlCar0vN/y9nIATvGzEbP4p1j6JQCZODm
-	6irSBA0bzAgWZ7XR+u6+SssT2aygjKUn1xlHFKpI+SvPUS8zk+ykcbehyl/z9+6g5bwy1ZWO9SS
-	PVPQGzvV8fs9wbNkA/Kvk+EA54e1ruTXocolNQyZPgEFaGO8lgDcfttNmS0iv5DTiF3TfWATEIO
-	8mCKSBcQk1As8bUbmoCpzW/8lfATh+BI8oLgOEg==
-X-Received: by 2002:a05:6a00:ae07:b0:829:88e7:c8a0 with SMTP id d2e1a72fcca58-82a6ac7ac4dmr1663030b3a.12.1773815473313;
-        Tue, 17 Mar 2026 23:31:13 -0700 (PDT)
-X-Received: by 2002:a05:6a00:ae07:b0:829:88e7:c8a0 with SMTP id d2e1a72fcca58-82a6ac7ac4dmr1663007b3a.12.1773815472904;
-        Tue, 17 Mar 2026 23:31:12 -0700 (PDT)
+        bh=EML+XTGUQs60PcdBYA32Jysi6fX2cPvKb7rTjuZcNxo=;
+        b=SnqlMss9eClaJtKhl4blJRL8YVS2GuOGiCpXzE+t2OMpd25KNuIfSf4xFFInIyajim
+         0uc2OiwtzARtJfSFlFeDRFrS2gFKtvfjuIgRYRpe1lH2bDTw8zTNVTaBREkDvvf1lnS1
+         ckp9Mf0n8HBsYTaGygcxvjJoCEKmSvjB7O1gvdxXB3ApJI1NnVXHSZnayzBDRz5jXEbc
+         Qw31YNwEIFelPqQ8kbPECkXTKJ9EhtjJaNngWvvIAgv12NymCo8grlg4vlgm60dDpLTI
+         RsE/ZDUM+xDjG1He1S5MTNc2FQApZRTP7JOr4V3lfS9AefO8Ratm0nRMT8T7s5SttQJ8
+         XTvA==
+X-Forwarded-Encrypted: i=1; AJvYcCWsHGReB/kXUPl6YwqX7ng5vrtj0lJqFJAWr1VcCVxbGKhi7MrvawRcj/E3imFhl6QTy6gL0N2214F7RjQtEdF4s4cYNgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnrNM0fjG0eexZI+ptBSsr+VNVGDSIhANonXGFFzOtvTi1qTqh
+	92+VPdNQi9hrr1qu4LL20ASTC2lKyldb3zbUSRM2kn+hlT61sfp8MyC5vWiilg3sYF83dyMLKPK
+	OWV1t580S0QZH3YrnX0yBqWFCOVizFUdRGWM7JFHopXZsKGU+w91dCF1b9FKgXOYXWZrAkhQqME
+	/e6+Q6YXwCbfgcnqtXtw==
+X-Gm-Gg: ATEYQzz6Wu+rLILWM1S8bV7NpH2i7E08njm/QN/O102QRPAuqVMEHXQTqzkA17PBoyQ
+	H7wab4ZrhuYlvJn0b99jIddvn7Jx80dAunUG5rsoAjor/ZiW/r659a0b7+pUhcJA9KO+NKHpfC2
+	RPOs8t+pU3QLUhpOFoZWUi5m6fKvMLTMDuv8Hw48DyZgM5Aa5zBxArFOWo0stcAozwrKIcP0lSB
+	a04a5q1W9o7bfd+PGfgIadRQIxw7VyBxHunSR4HG3xqEOAWrpLyq7N9Y1/HN/W/n8r7CqLZCOIe
+	vzdnEKsYKhIUQfz4xf6PmyIjYcWUq8pQmObR94ZJLLJMljppLz61KvrVhfcWqQAc1ui1c5X5Pqr
+	tt1JtkhUc2FhGxIaAQKVsar5dsFBNl8g3U84d9w==
+X-Received: by 2002:a17:903:1a0e:b0:2ae:59d3:27f8 with SMTP id d9443c01a7336-2b06e364b30mr23360215ad.19.1773815511311;
+        Tue, 17 Mar 2026 23:31:51 -0700 (PDT)
+X-Received: by 2002:a17:903:1a0e:b0:2ae:59d3:27f8 with SMTP id d9443c01a7336-2b06e364b30mr23360065ad.19.1773815510969;
+        Tue, 17 Mar 2026 23:31:50 -0700 (PDT)
 Received: from [192.168.192.71] ([50.39.102.197])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-82a6bbb390csm1528078b3a.29.2026.03.17.23.31.11
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2b06e419b22sm15820985ad.11.2026.03.17.23.31.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Mar 2026 23:31:12 -0700 (PDT)
-Message-ID: <9eb5a521-9a1b-48fa-a49b-5c8096b873e1@canonical.com>
-Date: Tue, 17 Mar 2026 23:31:11 -0700
+        Tue, 17 Mar 2026 23:31:50 -0700 (PDT)
+Message-ID: <6e51ba11-21e1-425d-851f-60916deec6ba@canonical.com>
+Date: Tue, 17 Mar 2026 23:31:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -81,14 +81,13 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] apparmor: Replace memcpy + NUL termination with
- kmemdup_nul in do_setattr
+Subject: Re: [PATCH RESEND] apparmor: Use sysfs_emit in param_get_{audit,mode}
 To: Thorsten Blum <thorsten.blum@linux.dev>, Paul Moore
  <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
  "Serge E. Hallyn" <serge@hallyn.com>
 Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20260309224150.84575-3-thorsten.blum@linux.dev>
+References: <20260318000758.1568-3-thorsten.blum@linux.dev>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -134,41 +133,54 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20260309224150.84575-3-thorsten.blum@linux.dev>
+In-Reply-To: <20260318000758.1568-3-thorsten.blum@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 3/9/26 15:41, Thorsten Blum wrote:
-> Use kmemdup_nul() to copy 'value' instead of using memcpy() followed by
-> a manual NUL termination.  No functional changes.
+On 3/17/26 17:08, Thorsten Blum wrote:
+> Replace sprintf() with sysfs_emit() in param_get_audit() and
+> param_get_mode(). sysfs_emit() is preferred for formatting sysfs output
+> because it provides safer bounds checking.  Add terminating newlines as
+> suggested by checkpatch.
 > 
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
 > Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-sorry this got lost in the mess of the last month, this has
-now been pulled into my tree
+this has now been pulled into my tree
 
 
 > ---
->   security/apparmor/lsm.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
+>   security/apparmor/lsm.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
 > 
 > diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index c1d42fc72fdb..49aa6ad68838 100644
+> index c1d42fc72fdb..cdf19a5e7626 100644
 > --- a/security/apparmor/lsm.c
 > +++ b/security/apparmor/lsm.c
-> @@ -858,12 +858,9 @@ static int do_setattr(u64 attr, void *value, size_t size)
+> @@ -17,6 +17,7 @@
+>   #include <linux/ptrace.h>
+>   #include <linux/ctype.h>
+>   #include <linux/sysctl.h>
+> +#include <linux/sysfs.h>
+>   #include <linux/audit.h>
+>   #include <linux/user_namespace.h>
+>   #include <linux/netfilter_ipv4.h>
+> @@ -2073,7 +2074,7 @@ static int param_get_audit(char *buffer, const struct kernel_param *kp)
+>   		return -EINVAL;
+>   	if (apparmor_initialized && !aa_current_policy_view_capable(NULL))
+>   		return -EPERM;
+> -	return sprintf(buffer, "%s", audit_mode_names[aa_g_audit]);
+> +	return sysfs_emit(buffer, "%s\n", audit_mode_names[aa_g_audit]);
+>   }
 >   
->   	/* AppArmor requires that the buffer must be null terminated atm */
->   	if (args[size - 1] != '\0') {
-> -		/* null terminate */
-> -		largs = args = kmalloc(size + 1, GFP_KERNEL);
-> +		largs = args = kmemdup_nul(value, size, GFP_KERNEL);
->   		if (!args)
->   			return -ENOMEM;
-> -		memcpy(args, value, size);
-> -		args[size] = '\0';
->   	}
+>   static int param_set_audit(const char *val, const struct kernel_param *kp)
+> @@ -2101,8 +2102,7 @@ static int param_get_mode(char *buffer, const struct kernel_param *kp)
+>   		return -EINVAL;
+>   	if (apparmor_initialized && !aa_current_policy_view_capable(NULL))
+>   		return -EPERM;
+> -
+> -	return sprintf(buffer, "%s", aa_profile_mode_names[aa_g_profile_mode]);
+> +	return sysfs_emit(buffer, "%s\n", aa_profile_mode_names[aa_g_profile_mode]);
+>   }
 >   
->   	error = -EINVAL;
+>   static int param_set_mode(const char *val, const struct kernel_param *kp)
 
