@@ -1,86 +1,50 @@
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B002F1FFC
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 16:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758A13290A6
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 16:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773852239; cv=none; b=IA6l32HBAczavGuGDbrRcOhGCruJiPsYIeT2U5004gQqI8qcm9Qr+lv53iaeN6omQT51b+t5O1YltSkZ6xB2vVpXoFimjLGUTd0ufOxdm9nmdA+qfpdD7v18NRMPgD1XXzowZJA7pEdIoRVzSteu7YByAUL8g11IPwzdyjS0mjM=
+	t=1773852727; cv=none; b=DoTcOuzZcDIOMNZh60PJCygUabzEbfRuGR4i1Y0zQ10pGtPOmqbvDSXDrhtOYiPKghnqWsRyefcZyPoTSl2KWWKLdN3lF8KqhNUkl7alkz9WrkAqI4x0wBOiCaDRTh7EJBYOzcz07VM5jo52jCGAr+khayrGirnT7FKj4iO7Scc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773852239; c=relaxed/simple;
-	bh=H2btuvgm86SnyuyI4cuOl/bgXhsN1Lmk0Cgyy7/0DpY=;
+	s=arc-20240116; t=1773852727; c=relaxed/simple;
+	bh=LQCFyOUUSplp5eShsmV6I/MKXo2fwwMA86XZnghC+IU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ggXJlRyqRNGXxcbReyXOymzDkqcCjqaBFoqUfEke5pxwUlkzwd/hoCQ/OQi18K8RXmP9PU5KqX0Rxw/D7WeqWCJbXFAK/k34oLfXOUKSpyviME7oeszEXTKLxwoeAIEEc7jyZ+i1ssvplL/rvK6bEKYzvJYtDvlKfvHue+BaYMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gW2EaEmH; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=O/PZK57OIINJ1ahvwVAzqnN/n++mv33x/OKXamniFz1Cr6jOo/L72e8SiK7lwKMKS8ieLAu9W6UFZ5vW9/w4OuY0OafPuENE+LTuAEWiMwe8X6X6M62e7Yq3yzypjv2KYF8xI6mXLw7BsU2WbJ+4sVS33wSYlt3f/Q9qbVtgFMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=XOSgSpBz; arc=none smtp.client-ip=45.157.188.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gW2EaEmH"
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-79a51edef1fso18356527b3.1
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 09:43:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773852237; x=1774457037; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+2kZ3MLxshElSQdSPBUkONr5v8VUA9DJm5ps1Yq6ky4=;
-        b=gW2EaEmHHkxRlEf8OItqOexTT+AsUVzOXFxBQyZUF9UrzEUxcTRLChyLA4jdar691w
-         BVTg5YtkbuYVjzS2eANNT4BJ6uynsabPi+mG9xAsZKnBqpDxmgnKjZj7vOdJZLGfzJJh
-         VZsh3z/zkcZ6h0HD6XdEozZY7+HSb8Q6V+C1vpTyNTVCBdzrTm22Dbp2nSghMLt7rkPY
-         MLbKcLa2SKoPrlB1/PiJSFqdLCBZhRO7WDnAIm3zZJMMqcUzmLKQLtWu///ZyN9xZ/Fb
-         z3GTk0K1EI4zAFyx2qKyvKrsh6mrJi0HrdkV6wBILuLaNq/wZuC4wvSEvPLdILwXq7xt
-         mJOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773852237; x=1774457037;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+2kZ3MLxshElSQdSPBUkONr5v8VUA9DJm5ps1Yq6ky4=;
-        b=iNmGyfBTsQvIWR33SBTU6Si6sTp/j3ZW8N3IbIDDKI0L6GGKx87ITXDF7bhhv6wHKg
-         NZlsxpHf3dfnj8VhFCAhz9YI0ddRN8XkY39Kp05GlmPapLdS5almuGVDxH82Dp5wAJR+
-         ntxTboAoPQ1FM2phLcAy1509aXRekEIsDgr+R2hX7ei7F+a+48TSnXPRPsX3CSshvC5X
-         PrPhpH0sRjO1j+iWAToACA77Fd7ko2eXndzXPuj9tSBXKOlE+1Ac8aiTSV+3CFYGgP/6
-         Rj8v0fZNuPRTJnjGYwtiCW45xNnSz2AJDOBDWOmgYZacLtXeS/GIqu9eoQXB4w4scnV3
-         UilA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtYBKfC/ZPy9fQMLK6PyXBs1dQSwt2Z3n5LTtAuKFhN4gLwzKP6Gc5dsU4QosBHDWLYgsexw4zX7unqqNYOp07YdyZeqU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNxoPVdn6XBdKV/nNfcJ8QUXElvdekrfXsCquSMwx038wC3eXj
-	fnIwhP11j61kk20oRYlsXJnu2LrbSvIVABTdyoedALCuN/OpvNylk+tp
-X-Gm-Gg: ATEYQzw2j9BLIEZYDp4cHUuEuBE/NWqR8JHGVFPD5GJE0pTzs6pdnhKTKiETJ6d8nfQ
-	0qBLp9I1KPi4me2dDx6+Q0HhFLOWCLBClgI0MWIqidB6XuoBB46/7LjOPjsviZcy86hd4GJ9lss
-	e9ulmnlSCfteByudrbOpWcnSOCghwILrYnQ0h6pcjI7mw8EHew7LYi/nkhVNqda3osWDF3H0KdK
-	KK7AQIL/FTxCXpkKP8i5qu6YNqlbmBL0yWkW7pm1Id2TMYDj4VsCA5nwZE0xVPnnfT+kX6/UjXu
-	OX18JqSMYgxJSgzCATn2zSWkveTw5ThwDxI602QaK7jYl1PnvUp0dfNtKH/0hGYmSdevqMl7LdY
-	ikQU5x2dfxQfHmJXLnb6bgkC7ixXOi1hmI/IOLT3diS2IeLS9fMNDZe12CmKojs//Hcy/6VgNBS
-	mmFE475o5uGxF5ypIyLMpZ84x6hSa9
-X-Received: by 2002:a05:690e:2456:b0:64e:721a:a60a with SMTP id 956f58d0204a3-64e9ccbd1edmr199515d50.14.1773852237214;
-        Wed, 18 Mar 2026 09:43:57 -0700 (PDT)
-Received: from suesslenovo ([129.222.86.248])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-64e91bbecf8sm1875975d50.11.2026.03.18.09.43.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2026 09:43:56 -0700 (PDT)
-Date: Wed, 18 Mar 2026 12:43:55 -0400
-From: Justin Suess <utilityemal77@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>,
-	John Johansen <john.johansen@canonical.com>,
-	Tingmao Wang <m@maowtm.org>, Kuniyuki Iwashima <kuniyu@google.com>,
-	Jann Horn <jannh@google.com>, linux-security-module@vger.kernel.org,
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	konstantin.meskhidze@huawei.com,
-	Demi Marie Obenour <demiobenour@gmail.com>,
-	Alyssa Ross <hi@alyssa.is>, Tahera Fahimi <fahimitahera@gmail.com>
-Subject: Re: [PATCH v6 3/9] landlock: Control pathname UNIX domain socket
- resolution by path
-Message-ID: <abrWSwS5urQpvbPb@suesslenovo>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="XOSgSpBz"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fbZcD6FnhzdJ7;
+	Wed, 18 Mar 2026 17:51:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1773852716;
+	bh=Xzcs+HBo55vlCaVgM+QV0cRzIBJGQFhXXf13QjKsaAw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XOSgSpBz/LzVvF1/5nsaK+hbSMU+A21p7bi30+qhTS7h5u322GZ7i3sahZoIEleYj
+	 VW5s0+ERmGELFlgxlxy8X4Z9PHY9al/UriHhWO+8I+VHegPQ97uGhCPXz0aLjC6bVG
+	 tds+P12v+ibSico+I2J9Jp89rRKHtHT2fZqbou1U=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fbZcC4Hdrz7GX;
+	Wed, 18 Mar 2026 17:51:55 +0100 (CET)
+Date: Wed, 18 Mar 2026 17:51:51 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: John Johansen <john.johansen@canonical.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Tingmao Wang <m@maowtm.org>, 
+	Justin Suess <utilityemal77@gmail.com>, linux-security-module@vger.kernel.org, 
+	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, Matthieu Buffet <matthieu@buffet.re>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, konstantin.meskhidze@huawei.com, 
+	Demi Marie Obenour <demiobenour@gmail.com>, Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Kuniyuki Iwashima <kuniyu@google.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v6 1/9] lsm: Add LSM hook security_unix_find
+Message-ID: <20260318.giez0eib8Ovu@digikod.net>
 References: <20260315222150.121952-1-gnoack3000@gmail.com>
- <20260315222150.121952-4-gnoack3000@gmail.com>
- <20260318111507.1nr6rAki@linutronix.de>
- <abqzXO3MmMXKqXOy@suesslenovo>
- <20260318150559.j04YNDtV@linutronix.de>
- <20260318.Jeph6loh9uSa@digikod.net>
+ <20260315222150.121952-2-gnoack3000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -90,48 +54,43 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260318.Jeph6loh9uSa@digikod.net>
+In-Reply-To: <20260315222150.121952-2-gnoack3000@gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Wed, Mar 18, 2026 at 05:26:20PM +0100, Mickaël Salaün wrote:
-> On Wed, Mar 18, 2026 at 04:05:59PM +0100, Sebastian Andrzej Siewior wrote:
-> > On 2026-03-18 10:14:52 [-0400], Justin Suess wrote:
-> > > Sebastian,
-> > Justin,
-> > 
-> > > In short: dom_other is a pointer to a landlock-owned refcounted struct.
-> > …
-> > > 
-> > > But we copy the domain pointer, which points to a landlock allocated
-> > > and controlled object.
-> > 
-> > and this is not going away while we are here and preempted after
-> > dropping the lock? (if the landlock policy is updated/ changed/ …)
+On Sun, Mar 15, 2026 at 11:21:42PM +0100, Günther Noack wrote:
+> From: Justin Suess <utilityemal77@gmail.com>
 > 
-> I agree with Sebastian, this is a bug, see my original proposal:
-> https://lore.kernel.org/all/20260217.lievaS8eeng8@digikod.net/
-Mickaël,
+> Add a LSM hook security_unix_find.
 
-Just to make sure we're speaking of the same thing (I spotted a bug
-shortly after replying to Sebastian).
+Add an LSM hook...
 
-This is a potential UAF if the dom_other is freed before the access
-check takes place correct?
+> 
+> This hook is called to check the path of a named unix socket before a
 
-	dom_other = landlock_cred(other->sk_socket->file->f_cred)->domain;
-	unix_state_unlock(other);
+UNIX socket
 
-	unmask_scoped_access(subject->domain, dom_other, &layer_masks,
-			     fs_resolve_unix.fs);
-
-If the dom_other->usage reaches zero, then the domain could be
-freed after the unix_state_unlock while we're checking access??
-
-(I guess I assumed the sock_hold on the @other would prevent the task
-@other belongs to from being freed.)
-
-Would it be better to move the access check under the unix_state_lock or
-to acquire another reference to the ruleset (or something else)?
-
-(Good catch Sebastian sorry for the confusion.)
-
-Justin
+> connection is initiated. The peer socket may be inspected as well.
+> 
+> Why existing hooks are unsuitable:
+> 
+> Existing socket hooks, security_unix_stream_connect(),
+> security_unix_may_send(), and security_socket_connect() don't provide
+> TOCTOU-free / namespace independent access to the paths of sockets.
+> 
+> (1) We cannot resolve the path from the struct sockaddr in existing hooks.
+> This requires another path lookup. A change in the path between the
+> two lookups will cause a TOCTOU bug.
+> 
+> (2) We cannot use the struct path from the listening socket, because it
+> may be bound to a path in a different namespace than the caller,
+> resulting in a path that cannot be referenced at policy creation time.
+> 
+> Cc: Günther Noack <gnoack3000@gmail.com>
+> Cc: Tingmao Wang <m@maowtm.org>
+> Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+> ---
+>  include/linux/lsm_hook_defs.h |  5 +++++
+>  include/linux/security.h      | 11 +++++++++++
+>  net/unix/af_unix.c            | 13 ++++++++++---
+>  security/security.c           | 20 ++++++++++++++++++++
+>  4 files changed, 46 insertions(+), 3 deletions(-)
