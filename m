@@ -1,79 +1,79 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DC3366064
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 06:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3392533E348
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 06:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773815404; cv=none; b=qF077zXX+CNfBSPPWTCaVfq3du8Tz5KO4PyfJswkNc/E+2Zb3YhHcWBoUoCPOlY3+PZVOVGtb48Qmry8jrmPTFZZtVtlPZ/s/i5utDm6I2Ujf0F+LqEEnhMW2sgtKO9tAcbfbqNmSrLxrXpEBn/wkBKviqrMCujMwVscNmxsiU0=
+	t=1773815477; cv=none; b=AGXjb2MaiJzKVsBrwdu8+RprJhg1yapObADaBHkt8r7PctnbycHPH1p6PwM5J0stAPzHFtjadSvHSEt4tcHJAyD3F7BIZK7yfuBq0pcoD++IqtgH4HcwozVFbJ0N74oRabQdyY0bqrAuKwwIVcOKTglQsEymyyh+ThHszjsSxps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773815404; c=relaxed/simple;
-	bh=515SINgI6kqm7ZSbI9U5cU8WIxH3ZlFlRVE7vDStyIE=;
+	s=arc-20240116; t=1773815477; c=relaxed/simple;
+	bh=Mq1QDxYheorRC5IJIPOGsVMsmBNaV4k5SGC3026w0R8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jYPYl/YHPrqBuqUN583UD/6XvuGEaK7Qa/Dv1g8doVbuVYkpOtj5eE7fHbOXW77mIN8SHs8aGsSSVPWMMD5g7IFmcUa6ZAWJ5cPxp1+HyuQTFJVPJg/pYf7YdCrbxfYhLX2HQsgeShbMZAfuKzZ8HFOHIzp0gm2eqUwQHu78neE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=HA7Lp6NB; arc=none smtp.client-ip=185.125.188.123
+	 In-Reply-To:Content-Type; b=nCJ8p9+9jpkM1eTlOgBQqVXvrZ39Aju4Sabeyqn5WuPZXfKZl3JxjxyzpAsPXA+zfVLwruJPPxmnHSb8m06JNtQucEMgdsHf82ye/Cd6dj2IH2VCFG84TREDYeC2btqr9wiASJA7u2AQs2RNQEHuV88R6UnFpD/701+LzfFMPNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=UYzNtTjr; arc=none smtp.client-ip=185.125.188.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="HA7Lp6NB"
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="UYzNtTjr"
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A57553F604
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 06:30:01 +0000 (UTC)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id C36233FBAD
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 06:31:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1773815401;
-	bh=K88Jm+9X5McxqI8geo6x88kcpXettytsIvZ/5tL3nOc=;
+	s=20251003; t=1773815474;
+	bh=Lie/EmS0JfR2VxP0UhRSLkUp3VDngWeG1TYrbxldO00=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=HA7Lp6NBwZRF0FnsmHLp29+VevhNkf9+CzVsdnP7LZToZTZNwwaZAMAi23B/cqrfS
-	 7WvCVpRwr2zVxZnum4g9DAezdwqNSu1tiJvI2VGmNrifmdikZdPpo8LdXYktODJeDq
-	 ljBRwfB9rSuFKjMDUVNpe3wYKhQFGIxMcbm4f9MNOsWUT+elp6iJ6V4+YD1h86vz0T
-	 cNbvm83SOooV1gdZBDW95iT/q6ROwo0n7pvHF9txfmpXFfeAbglRJeAuWJ5xTGn47z
-	 S3dP2rcJfTCK4E+3l7UCcMMNitNwM5c5q928chY5zd6nOITO6ymU8M0zYvE+4gfr7E
-	 Htkf845ML+2BQqyeWozerEG9ibzHt488qfPjCUvLi5fmbadKeGcfwZUGkfNT0+r6t+
-	 S8zeNFTYtoCPUDaOikFOylZaZC+I0Qpz6okwRiU3Zh/FjoNvj1mX8uTQ/9pFnRUDEf
-	 PAJvghLWR2rx0gXQg7Cr3aqgPnenZytVZ8JSksCAbqK0mEgqsFYEW9Mm8Ac7ch/0vA
-	 79EgYWclywD2s/Rr5hlKXMT0cmSA2WSrhlp/LwLSidyGt/FxP9vgROgxiJfww/Et6d
-	 UrA9OFEwjASSddEGuOyNO3wEmyy2eqFbAv6KOq+gpKk5XsFcomaCDEdkq7yw0aI9VQ
-	 3Bk/rO0Yx+V+Kap+i6M6jTB8=
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2b059511554so178881805ad.0
-        for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 23:30:01 -0700 (PDT)
+	b=UYzNtTjrafmPhEVbisMLZpK2bJJEjnbzUTjgy3HiV3Xhvg5FRMpJP2/HBWtaVDk9U
+	 TxRkxW3TrNM8RqsJOHeYGC8Vlgso8u3N3JAeDaKZ28ONYWZKqXTe4GePjQYpIfquhO
+	 51eGekUndMfTHHeLiQOhZgQPt1pFZ+S47lCuD3g4eDnYpv3yi4JVvb9HJ5pPU2MgNA
+	 YhHuAPvCKjST3RPjSmdvMjsvNGuxz/zW8zKHuLGl/x/tuSudV7dSnWD4U743QxRbfR
+	 cC9AZiDmS0EKbKMMPX1FmNxocJkp7zPGLTkG2+m7bHR+rwbvcWXCRohgtVBna7dFRb
+	 HLXILxBC+wd2TJNZcKiKcBmk5AXZcmW11ru+UhRSs+U2L9+8Ykw8to/5w7sK7m5cu7
+	 gT1PkGGFmVDI5pfKt/Fe8yw6rc1YzxQNmADntwv2E+A8smXuCiJF22caHcymJA7xzB
+	 fXkg4ga/jmfhOCRuC5mfqhJ27fg2AUotRPVYVAnprcOzbfF/as1OB0S9JIQ5p0VOpI
+	 UIBUIi9jgD08LkwILC27sh+wMq8jDX6h/Sr6aP2m10Nh43F34Da8IYrQm5HF09RIc2
+	 Eksrfxv9DasXBnRByIWeKgK1ws2BnkWO0s7C9Asd7sMrKgps8W2VBvh8OEM5s82NFU
+	 396TaDfehnEluZM/0alqPSZY=
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b6097ca315bso34450500a12.3
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 23:31:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773815400; x=1774420200;
+        d=1e100.net; s=20251104; t=1773815473; x=1774420273;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=K88Jm+9X5McxqI8geo6x88kcpXettytsIvZ/5tL3nOc=;
-        b=TNNvkWgGB8osajZ6WeG++3OTIOd9LYmVSpmzv1904gV16ZKjXimMreUzLscv44nVZY
-         JzUls89/3KGHXEws38OX1TDOB6IdSz8ZVYwAbv0cgrlYefG1jWj3O+TdHJgveEcmy+5g
-         B1itmuwsM25Qurk84RoLQEK4nj/CJ8XwFeJSU7BQutzWUwTjuuimN9UciQmi24oqcB4Q
-         oE+HQJ+ywMT8cAnnXDqmErzT5Y7fxm//glWnzcZMS56oppwFNsYvlvDsNfaYrtsXHhGy
-         u5naNQCQUtz7kNzx7k8aGdhFrF42unQ48GzPyS7Nr1/dvVdu8PAPu3MMd8jDvj7fYPkv
-         W0sg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSnkP4YedoBhH6C9M5HdWBp5wusHqFtL1USseKyNcLbGQ3qTqqntL98HfYPEE7YZSihtIMVK+piZRI0TaB5Nd1IOxweNc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYabuRLuDNEG8EzCv1gk4Fks2xPTJEAhmnmPYVqmjvcg2RhtDD
-	kr83BSmIwyDqgau/48rpEQDoi0IYO60HqsZOwq7KmAcbBGU+qihlIs3D08SyFVy6VWVEOgvCwBZ
-	y/JAZ+P0eQX9D52/xePggxhY1Agro+vm5gg084dG/GB4O8ilA07tB29ZFqxFNyf7Tc9Ay93An0V
-	/71w4/40MXqwq8ZhyXSQ==
-X-Gm-Gg: ATEYQzzfJkTQtn0+oQxHB53UhNPItwJHbchN/SMsPOHH+h1wshoa8732uXZFso77IEF
-	6W4V6PXMLhJRt3+nMgk/fm+Z9Cezig/Qg34rrU1ffSktrEgXX1bGkCGjAiPnFpJHMNOTLOlqqom
-	JqWlplUh97qhWKY87uv66kDFHVlPUjS461uTwhf/JDSnovzEZEm3ul3k3LODrM2a0Vh8aI3LFXT
-	OgTbCLj2uHPD8xmBAXrRYNOhE7OTPd93iKnX8pbuLVFN4NVrJWDMWCEc79TdNUdgOzcUKps9EZX
-	/AXXJ0B8C9C83p5qSKjgJ7oAAHutHYl8MrOhkkX5LIKW0EkWtgANYMSj4zgS3Q4Sso673UiTtoB
-	bk42LFjar3YWaIxoaGMRd5OGcnXn/KHK8GQNuWg==
-X-Received: by 2002:a17:903:1986:b0:2b0:6140:aa65 with SMTP id d9443c01a7336-2b06e3ca13amr21714225ad.30.1773815400298;
-        Tue, 17 Mar 2026 23:30:00 -0700 (PDT)
-X-Received: by 2002:a17:903:1986:b0:2b0:6140:aa65 with SMTP id d9443c01a7336-2b06e3ca13amr21713945ad.30.1773815399923;
-        Tue, 17 Mar 2026 23:29:59 -0700 (PDT)
+        bh=Lie/EmS0JfR2VxP0UhRSLkUp3VDngWeG1TYrbxldO00=;
+        b=SVukRIazDo3WxlHNgCYQXNXcGOowLsvwwr09AD7iDzyySEIITOCpHdsJ3mEzUVPM9Q
+         VyZe58F+TAaDEPB7pAnrF1zzD8m/9xN1UjQK+KaBS8ex1Q5/dj5lzcjMGqhANmseTpkv
+         zoCa+GuEC8TLpu8xT6cHt+es54D6TzeEtEOw6YHTsJuRzkLPgzSXk/Wr70uOu8IX0JJK
+         HFr4DSqkomi/GyLyZRqjEUrWa54S2KEFct/NeAkOxUJ7J34BCh6axXpGRNQhxLBg8wJP
+         n+XaBXxQBHTVOJ1+wB6fzr91HezBt+lBM6/dwZREqU47SYkG42Ql8YKMMV0+aGNDlav6
+         Ax3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWIqwYwgQmd7f6ZlLwnuhzfnFOAruoVOdxUdsJmoUp0WLVwwXnC7NXlT7HDTWMlVhP0zNMiVbs5JEw/dft83Nw6zm/3Emk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxN0LzJ2cJ5FEQcbTzrduy2PILlM4/7krCGMFX8RYWCfn9P8ClE
+	yEwHLu5a0e7AnTgZ6loGR/vREjoWhoYkkanh0CTRP8icWYA+kLWeD3g4Oaa/O5r+Ix32QbXOGnp
+	pgQDBNgVHIrT0ZYQ++sRM2DwhvbRmcCf0Zs0fx5DLOfEfpkqSXgSrDRbo6Dm6Qnu6SXC+LxFd4V
+	0GGFwwta9fr2OzmITWPzhEAzu2aQ==
+X-Gm-Gg: ATEYQzx2wMng2FqKRJt+GjfNTjvbM6+Bjq0nMrtgZ2wjZoCKCHwgq0bX/qda7+RlXvx
+	CdxEfvZOrPI8fxag9Y7IL+kVr8vrGsi9Q219e7Zns6XdhyDMzMN+2I6zPgFqR9u+LPinFRYZ+VY
+	vXMK2zfBA/XvhzUPMi8B7aa+lmwrtqK+onAxhNmkVSIlCar0vN/y9nIATvGzEbP4p1j6JQCZODm
+	6irSBA0bzAgWZ7XR+u6+SssT2aygjKUn1xlHFKpI+SvPUS8zk+ykcbehyl/z9+6g5bwy1ZWO9SS
+	PVPQGzvV8fs9wbNkA/Kvk+EA54e1ruTXocolNQyZPgEFaGO8lgDcfttNmS0iv5DTiF3TfWATEIO
+	8mCKSBcQk1As8bUbmoCpzW/8lfATh+BI8oLgOEg==
+X-Received: by 2002:a05:6a00:ae07:b0:829:88e7:c8a0 with SMTP id d2e1a72fcca58-82a6ac7ac4dmr1663030b3a.12.1773815473313;
+        Tue, 17 Mar 2026 23:31:13 -0700 (PDT)
+X-Received: by 2002:a05:6a00:ae07:b0:829:88e7:c8a0 with SMTP id d2e1a72fcca58-82a6ac7ac4dmr1663007b3a.12.1773815472904;
+        Tue, 17 Mar 2026 23:31:12 -0700 (PDT)
 Received: from [192.168.192.71] ([50.39.102.197])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2b06e5f12cesm14146285ad.41.2026.03.17.23.29.59
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-82a6bbb390csm1528078b3a.29.2026.03.17.23.31.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Mar 2026 23:29:59 -0700 (PDT)
-Message-ID: <add84d74-27af-45fb-8fe1-c172a2f21cfd@canonical.com>
-Date: Tue, 17 Mar 2026 23:29:58 -0700
+        Tue, 17 Mar 2026 23:31:12 -0700 (PDT)
+Message-ID: <9eb5a521-9a1b-48fa-a49b-5c8096b873e1@canonical.com>
+Date: Tue, 17 Mar 2026 23:31:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -81,13 +81,14 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: Use sysfs_emit in param_get_{audit,mode}
+Subject: Re: [PATCH RESEND] apparmor: Replace memcpy + NUL termination with
+ kmemdup_nul in do_setattr
 To: Thorsten Blum <thorsten.blum@linux.dev>, Paul Moore
  <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
  "Serge E. Hallyn" <serge@hallyn.com>
 Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20260222214038.287814-1-thorsten.blum@linux.dev>
+References: <20260309224150.84575-3-thorsten.blum@linux.dev>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -133,55 +134,41 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20260222214038.287814-1-thorsten.blum@linux.dev>
+In-Reply-To: <20260309224150.84575-3-thorsten.blum@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2/22/26 13:40, Thorsten Blum wrote:
-> Replace sprintf() with sysfs_emit() in param_get_audit() and
-> param_get_mode(). sysfs_emit() is preferred for formatting sysfs output
-> because it provides safer bounds checking.  Add terminating newlines as
-> suggested by checkpatch.
+On 3/9/26 15:41, Thorsten Blum wrote:
+> Use kmemdup_nul() to copy 'value' instead of using memcpy() followed by
+> a manual NUL termination.  No functional changes.
 > 
+> Reviewed-by: Serge Hallyn <serge@hallyn.com>
 > Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-Acked-by: John Johansen <john.johansen@canoncal.com>
+sorry this got lost in the mess of the last month, this has
+now been pulled into my tree
 
-I have pulled this into my tree
 
 > ---
->   security/apparmor/lsm.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
+>   security/apparmor/lsm.c | 5 +----
+>   1 file changed, 1 insertion(+), 4 deletions(-)
 > 
 > diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index a87cd60ed206..1250192f7b12 100644
+> index c1d42fc72fdb..49aa6ad68838 100644
 > --- a/security/apparmor/lsm.c
 > +++ b/security/apparmor/lsm.c
-> @@ -17,6 +17,7 @@
->   #include <linux/ptrace.h>
->   #include <linux/ctype.h>
->   #include <linux/sysctl.h>
-> +#include <linux/sysfs.h>
->   #include <linux/audit.h>
->   #include <linux/user_namespace.h>
->   #include <linux/netfilter_ipv4.h>
-> @@ -2081,7 +2082,7 @@ static int param_get_audit(char *buffer, const struct kernel_param *kp)
->   		return -EINVAL;
->   	if (apparmor_initialized && !aa_current_policy_view_capable(NULL))
->   		return -EPERM;
-> -	return sprintf(buffer, "%s", audit_mode_names[aa_g_audit]);
-> +	return sysfs_emit(buffer, "%s\n", audit_mode_names[aa_g_audit]);
->   }
+> @@ -858,12 +858,9 @@ static int do_setattr(u64 attr, void *value, size_t size)
 >   
->   static int param_set_audit(const char *val, const struct kernel_param *kp)
-> @@ -2109,8 +2110,7 @@ static int param_get_mode(char *buffer, const struct kernel_param *kp)
->   		return -EINVAL;
->   	if (apparmor_initialized && !aa_current_policy_view_capable(NULL))
->   		return -EPERM;
-> -
-> -	return sprintf(buffer, "%s", aa_profile_mode_names[aa_g_profile_mode]);
-> +	return sysfs_emit(buffer, "%s\n", aa_profile_mode_names[aa_g_profile_mode]);
->   }
+>   	/* AppArmor requires that the buffer must be null terminated atm */
+>   	if (args[size - 1] != '\0') {
+> -		/* null terminate */
+> -		largs = args = kmalloc(size + 1, GFP_KERNEL);
+> +		largs = args = kmemdup_nul(value, size, GFP_KERNEL);
+>   		if (!args)
+>   			return -ENOMEM;
+> -		memcpy(args, value, size);
+> -		args[size] = '\0';
+>   	}
 >   
->   static int param_set_mode(const char *val, const struct kernel_param *kp)
+>   	error = -EINVAL;
 
