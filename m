@@ -1,79 +1,71 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124453033FF;
-	Wed, 18 Mar 2026 22:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCB2345753;
+	Wed, 18 Mar 2026 23:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773871963; cv=none; b=nLQVal4WUAZt4MeI4P0+l0syBHufqNpLC+clqU/0son6Ce7XEkgfo1R/3S0xJtDVd6+8N/Si/VnepId8zYN/T0enls4kqScnoXYzxhpTUN8qqGoKBZwJdJwLfX8ybjDBlBYKEf/xfncbyApRX0qAdBYwK3/QNoAXeckhwYYpW7g=
+	t=1773875551; cv=none; b=rIkKLv+mglAiFYArbeOUvZfJ0j2595Ek/r4y8fNJakjJCrYVMHWU3uk17pyuD3XjfpZ7A3tBrjhccGFmdlRBqYqi+qkEhPS6J5p2x+nhNgKGClp9a5Eqepza2d6MrcoA5v7hl8cJO6uBQyA/rGlAEGKm9863AOQTzEFbFijsm3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773871963; c=relaxed/simple;
-	bh=A/YFEWmQFkLBq9Mlf1e19+zH9zHfMrictWL2PzF8c/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BWt0JRCB1Wot/Bi7lkmHZ7eqcsZ/32QGj4IiTmCsPyZNmkrnTEOvkoPs8WIRt7BXDetu7JxZpM043VdCdIeb2QORPL9DLBFJjUiyXJn8D8Jy4Tze+CrGKP4BZm3snZa7FZ9hnrgWtf3LBTI0U6+UO70R/d4W3R/M/m+bqBFeI2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZsGk+gZu; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZsGk+gZu"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=wx4UUAh+LQNE6uFenGJ2i4m1LUK5OoHCvU8Zj8sS1Ns=; b=ZsGk+gZuB3ZWjDO2sqvsNZUScc
-	/rjPKX4k5VBbZreyFYaNIr/molV8erbCZXRDPu9BPmmHSfYLz5kYvyWywustRd9gBHszccJjN1NjO
-	WQ0jKvDkXjiMDh4DyEjNcpziT6NB1LXs5rBWpxNkd1xLAF7sP6NAiNQXB9m6tSGvlPTKERgZNAiwm
-	8amej3cSK4M+zH5Up1AJjAvCGJzn5QSXKK29zb5FxtppDqRp8KQwyJRcLYFod7z34P0tXoKD3OnaM
-	8eDCwD84tJ+r/WQAKem5g/R42XnqnRYK8P0oX9VoYlyuvGZNWThoY5xZjgJVfa65D6cpi0vRj+Q15
-	U83bKmHw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1w2z84-00000009Q04-3azN;
-	Wed, 18 Mar 2026 22:12:40 +0000
-Message-ID: <f2a83432-f0ee-40a2-a3d0-71eef9db48fc@infradead.org>
-Date: Wed, 18 Mar 2026 15:12:39 -0700
+	s=arc-20240116; t=1773875551; c=relaxed/simple;
+	bh=JCh4IeE/Cn60D/pNAmjztbTuiNBWjjTZpNihj1Tve9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JCOffRpAytYhlGLwfkI40vvEG4iUXtUnpHJgkQoL5pmEPwghKbGvMoknLhkTGI5s6Ta3ZpugBMjZZJAeIbbujlmudptXkkjeQfyNcJN4rYms+bjHeOvV01LnL8trD2+hTutLEILizZQ+gAVE6rz2RF4y98sJs7vlbB3BPcLOzGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id 9F2241A01AB;
+	Wed, 18 Mar 2026 23:12:21 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id 729DB2D;
+	Wed, 18 Mar 2026 23:12:17 +0000 (UTC)
+Date: Wed, 18 Mar 2026 19:12:46 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org, linux-nfs@vger.kernel.org,
+ bpf@vger.kernel.org, kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, netfs@lists.linux.dev,
+ io-uring@vger.kernel.org, audit@vger.kernel.org, rcu@vger.kernel.org,
+ kvm@vger.kernel.org, virtualization@lists.linux.dev,
+ netdev@vger.kernel.org, linux-mm@kvack.org,
+ linux-security-module@vger.kernel.org, Christian Loehle
+ <christian.loehle@arm.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] kthread: remove kthread_exit()
+Message-ID: <20260318191246.21f5cae8@gandalf.local.home>
+In-Reply-To: <20260311104736.51b53405@pumpkin>
+References: <20260310-work-kernel-exit-v2-0-30711759d87b@kernel.org>
+	<20260310-work-kernel-exit-v2-1-30711759d87b@kernel.org>
+	<20260311104736.51b53405@pumpkin>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for Mar 18 (landlock docs)
-To: Mark Brown <broonie@kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Dan Cojocaru <dan@dcdev.ro>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>, git@n0toose.net, linux-security-module@vger.kernel.org
-References: <abrYTGOZRH9oP2GQ@sirena.org.uk>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <abrYTGOZRH9oP2GQ@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 729DB2D
+X-Rspamd-Server: rspamout06
+X-Stat-Signature: k3okmar3gqwa3bym6uatb3yctgtgf59r
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18ZAlHD7zRdqyhWTgVQ561leKpKdrlCUw4=
+X-HE-Tag: 1773875537-654795
+X-HE-Meta: U2FsdGVkX1+7MRZYfjkh8tY3o0PNQxfTCp9CNyhqYR5NFfoxVPCM5iPNukWLzQIvK353tkgDvhZEdUedgHQ5QAkLbovGV5fvwkWyav20iib+DYA0dDHoYUnOxRBuEyIUuWk0DzuG1lL8+oddkej4s1MPcpQDwUN5GqInEA4qcRZLkJpWWxd7t1PfzHXZfqpOcF7WAx+PlcQksO8TPjRtlBOpPJasveRV7LExQmrExj38ijzYTXM4IkABls4ZOZgZxz6jQwh3Jnl0QSJRHa6iPYc7cT5zoaTdKKIxa3A6zx0cZRoh9me2qihdhYWm4g9GrHKVoLJDzQiYMqh11BNCWgZQJ5CMSezB
 
+On Wed, 11 Mar 2026 10:47:36 +0000
+David Laight <david.laight.linux@gmail.com> wrote:
 
-
-On 3/18/26 9:52 AM, Mark Brown wrote:
-> Hi all,
+> > -#define module_put_and_kthread_exit(code) kthread_exit(code)
+> > +#define module_put_and_kthread_exit(code) do_exit(code)  
 > 
-> Changes since 20260317:
-> 
+> I'm intrigued...
+> How does that actually know to do the module_put()?
+> (I know it does one - otherwise my driver wouldn't unload.)
 
-linux-next/Documentation/userspace-api/landlock.rst:198: ERROR: Error in "code-block" directive:
-maximum 1 argument(s) allowed, 105 supplied.
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+It's in the !CONFIG_MODULES section. No module_put() necessary. Only the
+kthread_exit (do_exit) is needed.
 
-.. code-block:: c
-    __u32 restrict_flags =
-
-
-Please insert a blank line between ".. code-block:: c"
-and the code.
-
-
-d37d3347aa59 ("landlock: Expand restrict flags example for ABI version 8")
-
--- 
-~Randy
-
+-- Steve
