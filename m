@@ -1,164 +1,169 @@
-Received: from mail-qk1-f196.google.com (mail-qk1-f196.google.com [209.85.222.196])
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B132C3260
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 20:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.196
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773865223; cv=none; b=I3IO5eQeXzQKkjjoTTxHkKwUWP+1zr7i0oYk/jG7oFGGtF9JqZ9ZqEr5xgGhZ/V5tIwKUseya0rM0jp4hhq8h27oClwwb8rsewXB8MVmoqb9/JHzsK0IQLLikpITaUPPu0BDIL4lU8ysHZupdMiOmPio7AfoO47rYq28FBWAdyg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773865223; c=relaxed/simple;
-	bh=3cu4bbj+SmiAm4sX2rF31bDv0sZtySNHbbHzaX2PHwM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T2UqbX6tbjrloSbX2CQEnI7h1dhN8Yg/+E+Wf/Yya425mY4saaygtvp7MEUwzeg+xhgxgKP4P4Pyzg+Tn0GX2cIKdbDn5Y9gPNahSGGnBHZ2Mk8HF+8rnxufQU0TwDIdjL34gEZMC/7x8DKNO5UjXyRvFKt+uGUjJB1OkDvHnX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mZfI1ZCz; arc=none smtp.client-ip=209.85.222.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D19D36CDE3
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 20:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.217.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773867015; cv=pass; b=sc3FjPMAz3/f3fULBVcHNyE8xPmIr9kygNaBdcAUn4lhyZ2FZ6CRSiAjAo+nx4W76kFS988dgGnb0KSZ8CMNrsb6KiZKf/L+Ez6XzozYqYF9t310sx663wyU/UFPbERijY1+gYFkazMuX+KPa0SdL/e47x01K6fEc33EKQ0xeIc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773867015; c=relaxed/simple;
+	bh=yIVbULRr0EyFZ4OSvNq9Etrmqe5QvMpNlx/vqNprP+0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KF5mBN5ZNlV6DwkI6QOAylerG3XV7YH0cyk8ST07qgMYgnlygnGzRe/a3PS4bZwvNRDec0ClNlmwUFnmUAj4jkiYyLMSAC+uuYF5RKrDEBER+hYrGG0g1w+V4xTg9VhaiQkrcRJH1C0qGYuS15/tBop457VeLJWhrIsWrISIjTw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lKAvDzWw; arc=pass smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mZfI1ZCz"
-Received: by mail-qk1-f196.google.com with SMTP id af79cd13be357-8cd8d97aa2eso40700685a.3
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 13:20:22 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lKAvDzWw"
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-5fff18d44fbso161548137.1
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 13:50:13 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773867012; cv=none;
+        d=google.com; s=arc-20240605;
+        b=CS8cpT81pc7l8AwViCzuCeN9u9VPzg6xsBbJR13jdKhcK2yQHCkmI/vBE1Zmdi1AEx
+         O06pvYjIsMtELHrodibHW106+FqIRMMs7ptctI8pRXXxS/0kcGaJr3xt4njTF4IGxp8J
+         3LtcwhrCl+Hv2lQ02GDoXZ2HEUwWych2LbGaovK5gmOfev2RFAYdxOh9q7GZacQkrp4b
+         3stgMSmrJOs1cvx7ylaB5TJR/QtBB+RmtBRkbgn2hTPpajyVd6MaC07NCcBNAlSg0Ai9
+         YtOvZpV/bgNzWjRdHToU+c0QeksA4mGImt2+bfZjJU6y52UxnjrE0o8JykEVsvIpuRSy
+         GurA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=uxxlGXnY5xObrRihI7QeDBw8vg0/smHEQabsz9SwyBw=;
+        fh=Sdpa4Lu8vA13m54lSxS5LTeKo1gic0s/VBtCa9Y1FnU=;
+        b=faNvLZONAOyfunXjAhCjg2VWxPgcpACX+fw5IKQbXHUqaXHPpg1J8Qye3yZUET8dT3
+         8nd+0nPn8T/z0BjayLfEUylRGqV0CdT2+8rb3FsLlA5YQCwKhtm39tl1ehQTuq178ZGU
+         DoXNnVFaACWGy8xFo1JTQ4tAq6xH5GEZ0zE1fUykuid8zPqrJDE/V6zVURrFQp90/iVM
+         TpETvawGJ0T/DjYURXy1vhrnh4qHhJTgGDyraUFEvB9DwjW1Ue4XCVcIHD0OUhf46Qyw
+         MHdKqT5qI/+Tglpdmn4oo7yE8B9fU8EA3P21n/ofEpM/Xhu8rqT2OJRem6Fp+F/1Zucd
+         Rn4w==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773865221; x=1774470021; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1773867012; x=1774471812; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DoIVbPg4RVpfqltNmpd5OJVLlGKBhj+dvXrYSn7+C9s=;
-        b=mZfI1ZCzd2Hy+GXmfRTkAbhkR1MKLNlVuMP8VO69xMLAfzoVa1LxvfKV2MYZFgnlPt
-         bXfaxye2g3CHBlsXH2J6m9eRPC7m+sG8kocWPQ7xoRQJikT4oh98pFoNVk+eHSEIho9z
-         dPBMWVx7vichFnJV0gP2tS0KDkbeyNM+c8eUnx/KQF3wb2YagMw3Q/Oy89euhreS6lq2
-         uUxuHnTW0YAGijj5OAdeIP/hLZOK0TEf0HexRsO3Zl3CEkyJCUv/6rAMRKzMuvVXtAhJ
-         VakYHb6cZ6PBTjklKsvW0wH/6QpIxW11tj7GhaqPQJkkVDDBej2opMh9fR605lA8bIHC
-         FtBQ==
+        bh=uxxlGXnY5xObrRihI7QeDBw8vg0/smHEQabsz9SwyBw=;
+        b=lKAvDzWw5AEjssbagOtpv2xp0ANkO+f/rUFJ/3kSeUiBuzmzXdyvl3Gm0eUYuKAq1q
+         J7iJcfXQu7nmKqBo1o7GVfc/pQKA4BWu8PunWTluZqg/zWeI3oZ+mK8AvTSyq1kQkyLi
+         Tk4wcjXQjkKkLy7vTugH42Tmg1aJkMiUwrd/A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773865221; x=1774470021;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20251104; t=1773867012; x=1774471812;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=DoIVbPg4RVpfqltNmpd5OJVLlGKBhj+dvXrYSn7+C9s=;
-        b=tUULEf/Vaj6tNzVpxM+KlP+u2R9GnkTx+FU7qcqCD+pGGEH6QK5RXUSDjRllPZ8d22
-         pDZapZjQgwF3Zlh3DU30jwJqvVsALOB+N3/iMrKazsLldfqIu8QkGpCtutd3fcqhPvQn
-         r+YiCaGqS6Gy3nwjZZulvdE4rH2ct1wBpCEhTDE79xp7pt1+vQAxzjpNT2w+XAQfAX9I
-         SSoT69jf3NDeu6KpY3pzK5OVFpvNNuGAsjnJazmfwBMOdUkiArzp620mhEW3RI1mOQ9O
-         2BWLD6410rsQQkLxLW5Hf/TooWliajczkcZsr6GRv1li56VG6pjQuA+h6P6g+Aque/CZ
-         CFJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjaRCeiu50TEl8VjaWUrbpwe+Sjna5himn2iAOJX+SES9nXMUDRVyi3OkdYCIjpJeEjYmLJO8HGEYfHBwOVMjT9kGbqwc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs8vp4uOApXAx/nEagpTZY8uFAWpoKSH9fowiqfM1VVxx9XoDw
-	QtkmZv0WCnYKlqjUF4SmzIlf5X6g9ORtqqsj5HhIYPk7kI+YSelpJrh5
-X-Gm-Gg: ATEYQzxHM8kwrajojgfhD+snZiRBes+H4tXtlgtKB6pxBT5DSklJo/pfaY4GI8kJUNl
-	q3tIOE3Av5PMKCOG+VljLrlMg7Ior+cV6UgvMt0siyb73J7Uv1KDl/Y5NpTaD+9IR5PTFs4kmnR
-	e3Deec8xxPPIpV7yTqMtnAMCBJ9WRqkiHp9hh9C36k+66OWQOQ5mD6Ub+f5eAgCuUWE3U6BEYPk
-	fEtwvhvV0YIOBJLLw6V7uqjqhjv8/d7BgXKFsuBagP6NS3dWHSSzaKb/TAX4pTSV+QuZTtYASmA
-	ZnWjdmI3WX5JwC7blF67l0UXgB5h/hv3+0LcQ3eB1y9FWuW66sOYwJuwPaxotqonMKLVRutXNZw
-	s4uNnmVb2oESwV//l72GT5Sms5eSUVsEt+Pu4oMZXTZJ7389U/I29M6P9Qg+gBX585fUCl64jUe
-	idUROyi7ZSg9/bCIIoRT7u5PHMPgdRzah8O3S5jcdfe9lF9r8AkZvp68plvA806H74XwuwDNxST
-	sVc20SlighVjjX5x7s01744TL34
-X-Received: by 2002:a05:620a:2907:b0:8c6:a5bc:8a90 with SMTP id af79cd13be357-8cfad1c20damr695621485a.14.1773865220886;
-        Wed, 18 Mar 2026 13:20:20 -0700 (PDT)
-Received: from localhost (ec2-52-70-167-183.compute-1.amazonaws.com. [52.70.167.183])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8cfacdb01ccsm292534785a.1.2026.03.18.13.20.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2026 13:20:20 -0700 (PDT)
-From: danieldurning.work@gmail.com
-To: brauner@kernel.org
-Cc: mic@digikod.net,
-	jmorris@namei.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	paul@paul-moore.com
-Subject: Re: [PATCH RFC] security: add LSM blob and hooks for namespaces
-Date: Wed, 18 Mar 2026 20:17:46 +0000
-Message-ID: <20260318201747.4477-1-danieldurning.work@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260312.eNg0oog8eeHi@digikod.net>
-References: <20260312.eNg0oog8eeHi@digikod.net>
+        bh=uxxlGXnY5xObrRihI7QeDBw8vg0/smHEQabsz9SwyBw=;
+        b=XEKijmaemTCDLYzH4kICI3xeMsQqUV/V+QXFzjlaT4OQL4Lusg4IJhpcevIP3rlilR
+         eQejVWnrAy7jLXiu8RuiFmUbY2fV4h+401lK960byUJLnhuusshs9NeJkQiegttS6Pxo
+         dP6tFcgvX2RKKfZTvROsCj18/bRlsRNJcma5oOnod3wLtfXuZI2hfWeUJkCBXlwD/HeK
+         r1Tc1ZDrH/4jOKZ8jMBtUtOZ03cHOkfM+W/nEZv8u2t3NcgMCrH0OfxyPsUUQNzHv/Ob
+         meJboaL6ATWfQF7gP9Nltm1/xA0CwH12/6TPEMWFQmMSL8rTiiG1O6ttSF6XZfxKSXpT
+         wZYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXRV6WcaHOx2DFYAh9A6qPYZ1Vka1yy/dmwrWhHxW+2f9vl574TuAVPs08ry5Md1RpnNEN/dlxfcMjhoUqUIA/TVWzSG0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5G5qsMvrsVhVhUSzxUmhpCgla1+ND2L1bPUQ596GkcU08QMip
+	8qzDXLekVH36MgsxhKeH7Rqpsnst5wDYJc/OV4G46899DjnlX+jecI/amGMnunLEzj6RIwlh7xZ
+	3Ht1uNjnOfPyBLqCJ8WH9UuC7dlTDP1Dh6hs2Gn/6nMHoimOjNtDPQg==
+X-Gm-Gg: ATEYQzybirmzBJF49RDK78BCO+X4Gfz7hN9r/A7hCEf+qIzg0v7je0xTF1shsbfg7a2
+	cCcpEPBBKs0O/qfuTSM2amrEzoTuI4rYSEzx85+zDSTjG0mhYeUcWPRBhDXafI1azBqIN1AWc+j
+	nPvdkvza05htf10+AdiWu8egd3qA/cn5JNQu1ydpFcTc1K/Ox4tdkcg3ooY0rL8FhcGAbcerVrV
+	AMSX6TterLZdOYIgt2ck5XKpwx5VbHqlsmx+LTlz1EKqHa3hQxYJrnz6jLnEOmf1c7DX9qRjEn8
+	88vNJCNq9hzHxKYWNWM=
+X-Received: by 2002:a05:6102:c94:b0:601:f74d:a671 with SMTP id
+ ada2fe7eead31-6027d3b4d7cmr2849825137.30.1773867012199; Wed, 18 Mar 2026
+ 13:50:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20260303024025.37916-1-gaoyanwei.tx@gmail.com>
+In-Reply-To: <20260303024025.37916-1-gaoyanwei.tx@gmail.com>
+From: Micah Morton <mortonm@chromium.org>
+Date: Wed, 18 Mar 2026 13:49:59 -0700
+X-Gm-Features: AaiRm50e8eh3esWaXmAkwGv3Lq9Xy8OwAS3GAoTIjO_rWQ43LCMSWba0-M7H3_g
+Message-ID: <CAJ-EccNLTuj74vKsNQFnOSXgjdyRpUrFVARsuqn6VNatQu33WA@mail.gmail.com>
+Subject: Re: [PATCH v1] security/safesetid: fix comment and error handling
+To: "yanwei.gao" <gaoyanwei.tx@gmail.com>
+Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 12, 2026, at 11:10:32AM +0100, Mickaël Salaün <mic@digikod.net> wrote:
-> On Tue, Feb 17, 2026 at 12:33:28PM +0100, Paul Moore wrote:
-> > On February 17, 2026 9:54:42 AM Christian Brauner <brauner@kernel.org> wrote:
-> > > On Mon, Feb 16, 2026 at 07:53:11PM +0100, Paul Moore wrote:
-> > > > On February 16, 2026 2:52:34 PM Christian Brauner <brauner@kernel.org> wrote:
-> > > > > All namespace types now share the same ns_common infrastructure. Extend
-> > > > > this to include a security blob so LSMs can start managing namespaces
-> > > > > uniformly without having to add one-off hooks or security fields to
-> > > > > every individual namespace type.
-> > > > >
-> > > > > Add a ns_security pointer to ns_common and the corresponding lbs_ns
-> > > > > blob size to lsm_blob_sizes. Allocation and freeing hooks are called
-> > > > > from the common __ns_common_init() and __ns_common_free() paths so
-> > > > > every namespace type gets covered in one go. All information about the
-> > > > > namespace type and the appropriate casting helpers to get at the
-> > > > > containing namespace are available via ns_common making it
-> > > > > straightforward for LSMs to differentiate when they need to.
-> > > > >
-> > > > > A namespace_install hook is called from validate_ns() during setns(2)
-> > > > > giving LSMs a chance to enforce policy on namespace transitions.
-> > > > >
-> > > > > Individual namespace types can still have their own specialized security
-> > > > > hooks when needed. This is just the common baseline that makes it easy
-> > > > > to track and manage namespaces from the security side without requiring
-> > > > > every namespace type to reinvent the wheel.
-> > > > >
-> > > > > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > > > > ---
-> > > > > include/linux/lsm_hook_defs.h      |  3 ++
-> > > > > include/linux/lsm_hooks.h          |  1 +
-> > > > > include/linux/ns/ns_common_types.h |  3 ++
-> > > > > include/linux/security.h           | 20 ++++++++++
-> > > > > kernel/nscommon.c                  | 12 ++++++
-> > > > > kernel/nsproxy.c                   |  8 +++-
-> > > > > security/lsm_init.c                |  2 +
-> > > > > security/security.c                | 76 ++++++++++++++++++++++++++++++++++++++
-> > > > > 8 files changed, 124 insertions(+), 1 deletion(-)
-> > > >
-> > > > I still have limited network access for a few more days, but a couple of
-> > > > quick comments in no particular order ...
-> > > >
-> > > > Generally speaking we don't add things to the LSM interface without a user,
-> > > > and I can't think of a good reason why we would want to do things
-> > > > differently here.  This means that when you propose something like this you
-> > > > should also propose an addition to one of the in-tree LSMs to make use of
-> > > > it. While the guidance doc linked below (also linked in the LSM MAINTAINERS
-> > > > entry) doesn't have any guidance for the LSM blobs as they are generally a
-> > > > byproduct of the hooks, if you are looking for some general info I think the
-> > > > bits on adding a new LSM hook would be very close to what we would expect
-> > > > for blob additions.
-> > > >
-> > > > https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
-> > > >
-> > > > Getting to the specifics of namespace related APIs, we've had a lot of
-> > > > discussions about namespacing and my current opinion is that we need to sort
-> > > > out if we want a userspace API at the LSM framework layer, or if we want to
-> > > > do that at the individual LSM layer; there is a lot of nuance there and
-> > > > while one option may seem like an obvious choice, we need some more
-> > > > discussion and I need a chance to get caught up on the threads. Once we have
-> > > > an API decision then we can start sorting out the implementation details
-> > > > like the LSM blobs.
-> > >
-> > > I might be misunderstanding you but what you are talking about seems
-> > > namespacing the LSM layer itself.
-> > >
-> > > But I cannot stress enough this is not at all what this patchset is
-> > > doing. :)
-> >
-> > Likely also a misunderstanding on my end as I triage email/patches via phone.
-> >
-> > Regardless, the guidance in the doc I linked regarding the addition of new
-> > LSM hooks would appear to apply here.
+On Mon, Mar 2, 2026 at 6:40=E2=80=AFPM yanwei.gao <gaoyanwei.tx@gmail.com> =
+wrote:
 >
-> FYI, I just sent an RFC to leverage this patch with Landlock:
-> https://lore.kernel.org/all/20260312100444.2609563-1-mic@digikod.net/
+> - Fix comment in lsm.c: use CAP_SETGID instead of CAP_SETUID in the
+>   GID capability check comment to match the actual logic.
+> - In handle_policy_update(), set err =3D -EINVAL and goto out_free_buf
+>   when policy type is neither UID nor GID, so the error is returned
+>   to the caller instead of only logging.
+> - In safesetid_init_securityfs(), return ret directly when
+>   policy_dir creation fails instead of goto error (no cleanup needed
+>   at that point).
+>
+> Signed-off-by: yanwei.gao <gaoyanwei.tx@gmail.com>
+> ---
+>  security/safesetid/lsm.c        | 2 +-
+>  security/safesetid/securityfs.c | 4 +++-
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
+> index d5fb949050dd..a7b68e65996c 100644
+> --- a/security/safesetid/lsm.c
+> +++ b/security/safesetid/lsm.c
+> @@ -128,7 +128,7 @@ static int safesetid_security_capable(const struct cr=
+ed *cred,
+>                 if (setid_policy_lookup((kid_t){.gid =3D cred->gid}, INVA=
+LID_ID, GID) =3D=3D SIDPOL_DEFAULT)
+>                         return 0;
+>                 /*
+> -                * Reject use of CAP_SETUID for functionality other than =
+calling
+> +                * Reject use of CAP_SETGID for functionality other than =
+calling
+Looks good.
+>                  * set*gid() (e.g. setting up userns gid mappings).
+>                  */
+>                 pr_warn("Operation requires CAP_SETGID, which is not avai=
+lable to GID %u for operations besides approved set*gid transitions\n",
+> diff --git a/security/safesetid/securityfs.c b/security/safesetid/securit=
+yfs.c
+> index a71e548065a9..50682abd342b 100644
+> --- a/security/safesetid/securityfs.c
+> +++ b/security/safesetid/securityfs.c
+> @@ -224,6 +224,8 @@ static ssize_t handle_policy_update(struct file *file=
+,
+>         } else {
+>                 /* Error, policy type is neither UID or GID */
+>                 pr_warn("error: bad policy type");
+> +               err =3D -EINVAL;
+> +               goto out_free_buf;
 
-I was working on an SELinux implementation of these hooks as well.
-However, I noticed that when a mount namespace is created as anon
-the security blob is allocated but never freed. The free_mnt_ns()
-function only calls ns_common_free() if a mount namespace is not
-marked as anon. This seems to be causing a memory leak.
+This makes sense to me and matches how things are done in the
+functions above in verify_ruleset() and parse_policy_line().
+
+Is this code actually reachable? I guess if verify_ruleset returns
+-EINVAL due to a bad policy type value the code still hits this spot?
+
+>         }
+>         err =3D len;
+>
+> @@ -321,7 +323,7 @@ int __init safesetid_init_securityfs(void)
+>         policy_dir =3D securityfs_create_dir("safesetid", NULL);
+>         if (IS_ERR(policy_dir)) {
+>                 ret =3D PTR_ERR(policy_dir);
+> -               goto error;
+> +               return ret;
+
+We still need the `securityfs_remove(policy_dir)` call to clean up the
+dir created with `policy_dir =3D securityfs_create_dir("safesetid",
+NULL)` don't we?
+
+>         }
+>
+>         uid_policy_file =3D securityfs_create_file("uid_allowlist_policy"=
+, 0600,
+> --
+> 2.43.5
+>
