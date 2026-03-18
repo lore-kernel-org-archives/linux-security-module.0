@@ -1,189 +1,153 @@
-Received: from sonic305-27.consmr.mail.ne1.yahoo.com (sonic305-27.consmr.mail.ne1.yahoo.com [66.163.185.153])
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C2730EF84
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 17:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE762FF15B
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 17:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773855012; cv=none; b=tlRpAG48v1FB9ARalxdpRdhCMV0bE9B7jJ/lL+9ErlY23xvAthzdQrggfmj/DfxYqIa3VLIMeQc8/GI0bv8zfJi0qto8k5zV/xDdRyI9KqHzK2T/mhNMvV51u5YXxm2O4PaboFXwiXw2RjNqlz9e4KlviIxWKMovPplf4D81/24=
+	t=1773855265; cv=none; b=XYIYL+LjVcp3gK/0ZXYS5Pop20UFcnkH7xCcTBWsX98yWgu/GvaFUI7CSNuiHcHdBrc9496UU6cHKmWO0mvH0Uj+doQx+Waot927GoBd5QtyCXqreiIApEU1VGiAARK08D1zpDIiIdKa1zBLnmw/mpo0UC356hfSUlxqk68aubw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773855012; c=relaxed/simple;
-	bh=bIzeQVGkCiUG162ntNSPeRIL8qyOp9EaP3VlvtQ3OA0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dwGUInUwbx/3axV+Ezme1HA7rHurmqnkVEkgFqD4kjePyOov1Sv7dmIxfzjzOhkmbcb1opF/2ZpEGrAG/qrZPrI4iPCHYLR190f/IHJHj5BCB4xgfeqewI7xFvAL5zIo3roy1PMe/oMGtvUZ7ZXmgW1JqpR4lWquoG58GR4ypq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=CwkO8GQD; arc=none smtp.client-ip=66.163.185.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1773855265; c=relaxed/simple;
+	bh=FZxvRu+85EWsxqRmuAs5TjqTbVp8lAzOjEKZsLeBTXM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BP9CwbKEmZBsGELCA6DK0R9yL9yLPb5pbuc6b0c310ehIZZmmAJnjDs0KCrwDdayDeEczJwP60lFLHFLdUQCvDPAzWWahqWqIzhvoLapeoQmu0Me+Dq0a/cWyL2hePxMkF5HIYs88HG17mLLMS0L9BrhgrpvHsSN3RfkR7DS4AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=ZIQ8Y8q2; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="CwkO8GQD"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1773855010; bh=F1grKodDVN14w3TCFp79PXRXW7VTHNJ1sL3qraWxeoM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=CwkO8GQDmb9dZy7231m8whggO0vUXbYxTxwvp+BHtpd9W6hdEQGs5UQ//NinPY8+VtS35OoEyR6qJB6d9oqLzkvMIo+dm9rKe3/vTHnQ2N/nAJFcWnY0mdQLH1rh/Oq3LMYmOxb5pHWkCd4rJaCu13N2FMeb06g+2EgfihBSjdSfSJHiolGkhadPmPLgC5HrG0K+f6fNEbdZi3Kn49tXFFmja6cWZxFwa7fF8gBN/HahChanIyxpFURgxFugiz3qFuFc2YE4AmxWHaShuUDtNRGATrc4VHN1rCdps7TndvZ3biZ/kgBWzehrDF39lZiKQ0MSRTYZII1jpNwesZNkiQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1773855010; bh=tZg+3PTl4nWrwo3MGGjQrxl/cAJCWsyLALPY52MZa1v=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=fkJwuMuCB2bI5XVmODENe7XKEQt9Fvbw+3NlB0SXbI0Z89+qYHCpEtEtGICjlK2WvyHLcD5wPiwlJJNQUV1d9MpOT3++KiV5QNDFnIS4D6K6DzwGfKWJ1y7D/Vby01gVFi9z9dxxLfcjCno5yO7+sXpNPPN8ZqkVHqHvbiJK4sSvCOr4qllEzF8py+yZfogHDTBA/2ncH3JqFlLhrQ2zkhrAh33ZoYkSksYH/xEMHskoo8BU+x8worOgcgD/aUlouNFwnCVjzo1B3yAg3Dd90mIFRPXfzIZkDDw+w2yr/nUlK0XXwN5vIBqnQ/D7U8Sa9H7W/Fhix2Uqo0htc1p7bw==
-X-YMail-OSG: O_m32nYVM1kNKUn5gfLXI4Rscj2o8.lg2gJtolG9A0EltIBRExmTmbeV03xTUsJ
- XeywVARySrC_4Ep.vzSIKYKY5hpjbqOgczVbxYBI.NEv1dHQLgAXICtpMTkBh6ydrcRScIes3gZb
- N_mZIXJDQEZ5BHHmdBl3KuWBncz3W_6aDVQBrLfvBn1zpwld671Yg_z10IBK4QAMaw33D.JxaBKj
- ZzezqItqKkkxZax7x8FqsBGhZGzrt.2_ip9HIo0FgkbKPQELPnAJO1Xzfghu1CdXkI7rzeUHhh6a
- NhnOz0IgN13OyJuhknNYcSooCq0E1LcIedHJIFN49dlJGNi.x.fkIUvHHBD0KzHeBg.VrAgu2FOS
- 0od0JIgcxYK0ADeiVf6p_omt2KzyxEB7bI4oOXrg9MYugr8ryQSzQNq8wE6xMyMj8GXPbX0nK8Z7
- 2n9hNAP73.xEQPuGhi_PxBTIsQy3wbThcAOBz7_Gm_C1dx3r5z1_0l7NJg.gx27iqf8ZsRbAUD9n
- L7Xa6tLA7DgTLC2Q3dOP1EyQ6UMn4KB8LD61HPxk.h1bzjLJ1uM1AEOJCWqwPPSnbaxAHQ4YADT2
- aApmw7ObCbAB1rtVLXQKvuLHOrRs0ZJ9XPYg9cRPcqHO1tSfZqp0UyEDrZW0mcuLRxU3F9AEAJrd
- ty4_sfhD5k9rcU2l80SSxhQSyDfHU_58gMFet_bIES9fszxMJRKXQXnYzLt7n5o1y1UYenJLamGP
- d9UiYeX.kpM3Qp1Lt2k9sTVTQyXqdsbmmPYqHUiwgBV6M3tGyrCPVrc7i9ecgvpx4SCCui.KrUFA
- gZitS9u4doABz3wHxtToTo_JUy3IG1AK2yW8UQUqSxB9MQMyaEXx2812P7RL16zBGYhkA6sZVaEB
- gUEZXC9t7vNN50xuCZeaHy1shBli8lCIuBnuFLsojN5qFKTK1nsidBsIRg9dzgopw5AFW0RBVo3W
- vGVVxo0ltZpsaBc1pAN7sPhmg4q9CD9TVboTxNWkbC_UPP39WkVn6.eSBeS7mFMgGtybqgboFy6Y
- yYzE68tAhoBgAGOzDC25GpqGd5.2D.qNssjkFfYctiCSKtcIRbdSwL8tYolNeYsvIOeyXL_VMYKR
- wjlHCmtqEfkRh3GIEmPYGY9XjoHKO0Gae8pGPQeEdrST0mZ1UACpadxxo_LFQv.lzti784fNl.ya
- 0OIeMyToAlWtyvKz7dDaZd9kGw8oouhBtA__62gpM_3NAXPGKHqXq6gUP37orApdlDSjUMPZry31
- LR8yrKrtSxZwosGvouAnxU4OhR2wKh_CtI9xZBMEu209DZgENUd.Hqxe36QNmcDYWufSXQLn.pNp
- RXV5w_sciMmb_kn4FfmjTC2JNSlenAWDsnvBpAnXLsye.LRqYS0OebeEkWdXhDlpkPaKeLq.77t4
- tG7M_DKOO8gSaUhEe.9GadwwrG3J.xYSXy5wrYonkyQYCozdZ3o_gcxFolieKUzi9Xzv7R6qvWai
- .SJ3Vz7.tGmFNJwHGp2SAH5vqRpSBaKZ1E4F6jAj2SVFwhDQvpqnaxRcysHAMzh5yHC4j7joRXXi
- YxDoaQM3Xlui9wVubvz5m_YK6CKgmVOTmtTtLPB9S66cy8S1nDRy6zXfKwNYuwyIy8Cr0A9_U.oi
- cEDxocIFSFy2hnkINiorMvN4rFad8UgZnr70IEbiUS0XAbzbneID98uPfwy5X9UmA76m18gjv.FO
- Wuc4c_muNC5T6PHFMNPgstLHREa2wluikMnVJeJauOvN2ozTJQKa9Q9tahErbVrDNfR2AtNn2b1V
- jT4tUqrJjgG2kRFBXJ2RpSTKPL4uw9O9nI52QYKGgJHwI86S8E1tMhHDkNhvdGkbvcI9kTG0wYRw
- t16Y5qs.k2wOX_s3RTm4O7jzh7LzDe4qHbY7l8DzY7vQmvbDlDhwiT263tk0DbB4WBiZjIuyA8lO
- 1YgvEuqjfSbbXiDFevroWwNkTAzM3C2lnjWjAVIJ5vcO8YeJ6ZJafexOZMh0R1tsfOLIrb4OsHrR
- y83a7i9NNJ4Ms0owUGnWZVSgn80UFJvPQhMOsKGIzpQ_KRDnKg2ztt9P_42vX6ERum8SRImznlXm
- TM7Fx.tMFzA5fwns0WdaYYb7RgZ65VK2qbFyfOtwdYmzshynnxJpmKcD4ievXnopkVcvEU05FCdy
- .hL427kM_b0XdnxHL1J9xG_22jaU29wWhYXO77TC8GWwXnwbKZcxS6pfYfij44BzXTXbIagScgg5
- hhBYA_Wafetk4uGMSvNk3HNyQLVCjjbqRHOFCa5r8mdeZdEUY1Hx6NqjE_BSu7X_08OMjc1WnKil
- pNvq7yhThXbhE1cFeLBKK
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 15040319-32fb-4b75-97e7-8b3229ed246b
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Wed, 18 Mar 2026 17:30:10 +0000
-Received: by hermes--production-gq1-6dfcf9f8b-gxljn (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 1eedf1af817e90a127bd795e708c76f5;
-          Wed, 18 Mar 2026 17:09:49 +0000 (UTC)
-Message-ID: <df35542e-d58f-47db-8a4f-92698281a69a@schaufler-ca.com>
-Date: Wed, 18 Mar 2026 10:09:47 -0700
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="ZIQ8Y8q2"
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7d73ccee442so107580a34.1
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 10:34:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1773855261; x=1774460061; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eWeEa0ZafBH05FmgYmVQzG8J+24xX/BkM77vv1zD8SU=;
+        b=ZIQ8Y8q2up0WQADu+jzFDuMldHGgfqAA3c3j4H3T5Lcxfe4ftsyHELNmFik8FV8e8z
+         w1PLCvdfsEBJkEn9+5kO8ZW+eXOSQZD5rk6PLm+FEZYiu/nCEUpj2T/jmT60Dg/g1CIs
+         CrYOXi04XdvU2IBMEMVyxYjZNz1IMc6tE+G7rfzA6axZlhdnQWS6kgAp1mWQOmY+56i3
+         80Fmpv18cqRt8rAfjsHpSReittFy2zgwKQl8goe6sbUWMxzRopoUWXbESr+9XoJlvnJG
+         vgjo5oNJbpCubomqywdW8+KH14/Vri90Kw7Qu1EqhcZzuIKvEjXPcjOKGJ95WXD2AJvn
+         bXhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773855261; x=1774460061;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eWeEa0ZafBH05FmgYmVQzG8J+24xX/BkM77vv1zD8SU=;
+        b=G1mq8sNYFbfVE0r9rGLBJD7+GchzrPPG2xnqE7uo1SQwvkGAxKOjjLT2/hXeVgk5MH
+         Jq7jbXORwCMlrbYj579je+GPS2dP0j0M0HE+iqI07VaUzKvIqbDYlCNgbh+fHoO6cwmT
+         bIu+VEMAGHOR44QD46JOv2WVnQN7uo7G2PzfQxl5k+Lmd0XQbBi66Gu0aEeq7t5La4vT
+         zu4yLHtVQcgolzcktWaM4urGEidfZn7nMOcdJClVSmrGOs87YKlYsSuJNAB3BeMpF3+a
+         N7dBu5q/z736iTJYWaCffFnP30D/FF2bHEDQgJ4iqSjZP80TLbnkhs/eNKd7ZlIu4/GE
+         GIAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDBtgOOdNGVVaSX6crqIw2ly2W+cEuUrbnTkPmX/NaQl7z4nym5m17Ha7nVky7NfM0vpKgaMPz5FGihcMHoX5lUQaj4CA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFMszlQrbivwGTpkC8f10RA4Di0s0EiDqV5o7fm8iO3gLJtNM+
+	VdMQLPFgcsj8nuS1bR3p4dv9r6v7I2qCgwi87T3j+UR2b2RbZNuQVleIZyPSSKJjNIY=
+X-Gm-Gg: ATEYQzyDV2ZEwvt6DHveCg2LzlDsK1bo6Ej/1xlS+y9WDAJemsXa4GsrujS2aGcpA0y
+	3GR7NzYInMiU8IwchaP5TJ5LyVHFCWndW7dqzDnx4t76cEePk9s0BTKj0mV+gagpY24x+8ooeVZ
+	T0liXoPhCIx7vAGISDx9bSS1HMzOCwpHbzHliGwTRbH6e0OfEdN5jLd/C/zBFajEDWSWrnoJVoR
+	crnDwRL0I6185UYwkWuABz6SXNLefFxaZxsYXoskn0rZNFwGBS3THqRM0AxKP+mjQiLHhkj9+EK
+	rkGidCoNj5AsA5y31yaEwEgcbbGK8phIXFw7RSExNcUCcm2o1eza/u3DFNbS9juvEURUA67LnZa
+	TV9v/lemtpIKzK9K0Mlucx8NssAcXZB796hDnB8GZ96TzPgDdtJpzbK5XIPFXU6MvGxQh3NDA3I
+	xzp6Ue
+X-Received: by 2002:a05:6830:64c8:b0:7d7:4d85:eb05 with SMTP id 46e09a7af769-7d7ca775284mr2522284a34.22.1773855260727;
+        Wed, 18 Mar 2026 10:34:20 -0700 (PDT)
+Received: from CMGLRV3 ([2a09:bac5:947d:1b37::2b6:4e])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d7c9950ef9sm2751073a34.2.2026.03.18.10.34.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2026 10:34:20 -0700 (PDT)
+Date: Wed, 18 Mar 2026 12:34:17 -0500
+From: Frederick Lawler <fred@cloudflare.com>
+To: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Eric Paris <eparis@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	audit@vger.kernel.org, bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, kernel-team@cloudflare.com
+Subject: Re: [PATCH RFC bpf-next 0/4] audit: Expose audit subsystem to BPF
+ LSM programs via BPF kfuncs
+Message-ID: <abriGVbtYY1zhupD@CMGLRV3>
+References: <20260311-bpf-auditd-send-message-v1-0-10a62db5c92f@cloudflare.com>
+ <CAP01T77VyW=5SHDvM3HXPNHaxRdzs8H__MOh2zx1dQ6STeAUtg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lsm: Fix the crash issue in xfrm_decode_session
-To: Feng Yang <yangfeng59949@163.com>, paul@paul-moore.com,
- jmorris@namei.org, serge@hallyn.com
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20260318061925.134954-1-yangfeng59949@163.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20260318061925.134954-1-yangfeng59949@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.25380 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAP01T77VyW=5SHDvM3HXPNHaxRdzs8H__MOh2zx1dQ6STeAUtg@mail.gmail.com>
 
-On 3/17/2026 11:19 PM, Feng Yang wrote:
-> From: Feng Yang <yangfeng@kylinos.cn>
->
-> After hooking the following BPF program:
-> SEC("lsm/xfrm_decode_session")
-> int BPF_PROG(lsm_hook_xfrm_decode_session, struct sk_buff *skb, u32 *secid, int ckall)
-> {
->     return 1; // Any non-zero value
-> }
-> Subsequent packet transmission triggers will cause a kernel panic:
+Hi Kumar,
 
-LSM hooks that use or provide secids cannot be stacked. That is,
-you can't provide a BPF LSM hook and an SELinux LSM hook and expect
-correct behavior. Your proposed "fix" removes a legitimate check.
+On Tue, Mar 17, 2026 at 03:43:36AM +0100, Kumar Kartikeya Dwivedi wrote:
+> On Wed, 11 Mar 2026 at 22:31, Frederick Lawler <fred@cloudflare.com> wrote:
+> > 3. All bpf_audit_log_*() functions are destructive
+> >
+> > The audit subsystem allows for AUDIT_FAIL_PANIC to be set when the
+> > subsystem can detect that missing events. Further, some call paths may
+> > invoke a BUG_ON(). Therefore all the functions are marked destructive.
+> 
+> I think the first part makes sense (i.e., the policy simply configured
+> the system to panic on failure).
+> However, in the second case, if the program is somehow able to trigger
+> BUG_ON() relied upon for internal invariants, it would be considered
+> broken.
+> I tried grepping through and didn't find anything that would cause
+> this, hence the whole thing about BUG_ON() in the cover letter only
+> adds to confusion.
+> Please drop it or describe cases which you were concerned about.
+> 
 
->
-> [  112.838874] ------------[ cut here ]------------
-> [  112.838895] kernel BUG at security/security.c:5282!
-> [  112.838902] invalid opcode: 0000 [#1] PREEMPT SMP PTI
-> [  112.838905] CPU: 5 PID: 4962 Comm: test Kdump: loaded Not tainted 6.19.0-rc5-gae23bc81ddf7 #2 PREEMPT(full)
-> [  112.838907] Source Version: 55e2f799c748c8e195569363edbd1d6a4159675a
-> [  112.838908] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-> [  112.838909] RIP: 0010:security_skb_classify_flow+0x3f/0x50
-> [  112.838914] Code: 85 db 74 28 49 89 fc 48 8d 6e 14 eb 08 48 8b 1b 48 85 db 74 17 31 d2 48 8b 43 18 48 89 ee 4c 89 e7 e8 05 33 86 00 85 c0 74 e3 <0f> 0b 5b 5d 41 5c c3 cc cc cc cc 66 0f 1f 44 00 00 90 90 90 90 90
-> [  112.838915] RSP: 0018:ffffc28400200b10 EFLAGS: 00010202
-> [  112.838918] RAX: 0000000000000001 RBX: ffffffff91d346d8 RCX: 0000000000000000
-> [  112.838919] RDX: ffffa0890f5eaf80 RSI: 0000000000000001 RDI: ffffa0890f5eaf80
-> [  112.838920] RBP: ffffc28400200d04 R08: 00000000000000c7 R09: 0000000000000002
-> [  112.838922] R10: 0000000000000000 R11: 000000000000000f R12: ffffa089086dedc0
-> [  112.838923] R13: ffffc28400200cf0 R14: ffffa08901ab2000 R15: 0000000000000000
-> [  112.838926] FS:  00007fb087dd2680(0000) GS:ffffa0891ba80000(0000) knlGS:0000000000000000
-> [  112.838927] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  112.838929] CR2: 00007fb087d1b940 CR3: 0000000107520006 CR4: 00000000000706e0
-> [  112.838930] Call Trace:
-> [  112.838931]  <IRQ>
-> [  112.838933]  icmp_route_lookup.constprop.0+0xd7/0x460
-> [  112.838941]  ? switch_hrtimer_base+0x135/0x180
-> [  112.838944]  ? update_sg_lb_stats+0x9c/0x440
-> [  112.838949]  __icmp_send+0x3d3/0x740
-> [  112.838952]  ? __udp4_lib_rcv+0x427/0x6f0
-> [  112.838955]  __udp4_lib_rcv+0x427/0x6f0
-> [  112.838957]  ip_protocol_deliver_rcu+0xb7/0x170
-> [  112.838960]  ip_local_deliver_finish+0x76/0xa0
-> [  112.838961]  __netif_receive_skb_one_core+0x89/0xa0
-> [  112.838967]  process_backlog+0x95/0x140
-> [  112.838969]  __napi_poll+0x2b/0x1c0
-> [  112.838971]  net_rx_action+0x2aa/0x3a0
-> [  112.838972]  ? swake_up_one+0x41/0x70
-> [  112.838974]  ? kvm_sched_clock_read+0x11/0x20
-> [  112.838977]  handle_softirqs+0xe3/0x2e0
-> [  112.838980]  do_softirq+0x43/0x60
-> [  112.838982]  </IRQ>
-> [  112.838982]  <TASK>
-> [  112.838983]  __local_bh_enable_ip+0x68/0x70
-> [  112.838985]  __dev_queue_xmit+0x1c4/0x820
-> [  112.838987]  ? nf_hook_slow+0x45/0xd0
-> [  112.838989]  ip_finish_output2+0x1da/0x4a0
-> [  112.838992]  ip_send_skb+0x86/0x90
-> [  112.838994]  udp_send_skb+0x15e/0x380
-> [  112.838996]  udp_sendmsg+0xb9a/0xf80
-> [  112.838998]  ? __pfx_ip_generic_getfrag+0x10/0x10
-> [  112.839003]  ? __sys_sendto+0x1e4/0x210
-> [  112.839005]  __sys_sendto+0x1e4/0x210
-> [  112.839007]  ? __handle_mm_fault+0x2fc/0x6c0
-> [  112.839013]  __x64_sys_sendto+0x24/0x30
-> [  112.839014]  do_syscall_64+0x5f/0x270
-> [  112.839017]  entry_SYSCALL_64_after_hwframe+0x76/0xe0
-> [  112.839020] RIP: 0033:0x7fb087cfdb17
-> [  112.839021] Code: 0c 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b8 0f 1f 00 f3 0f 1e fa 80 3d 55 c8 0c 00 00 41 89 ca 74 10 b8 2c 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 71 c3 55 48 83 ec 30 44 89 4c 24 2c 4c 89 44
-> [  112.839023] RSP: 002b:00007ffea64704e8 EFLAGS: 00000202 ORIG_RAX: 000000000000002c
-> [  112.839025] RAX: ffffffffffffffda RBX: 00007ffea6470638 RCX: 00007fb087cfdb17
-> [  112.839026] RDX: 0000000000000008 RSI: 00007ffea64704f8 RDI: 0000000000000003
-> [  112.839027] RBP: 00007ffea6470520 R08: 00007ffea6470500 R09: 0000000000000010
-> [  112.839029] R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000000
-> [  112.839030] R13: 00007ffea6470648 R14: 0000000000403df0 R15: 00007fb087e15000
-> [  112.839032]  </TASK>
->
-> This BUG_ON was first mentioned in [1], but I could not find any explanatory record of why this check is needed.
->
-> [1] https://lore.kernel.org/all/Pine.LNX.4.64.0607122149070.573@d.namei/
->
-> In the existing LSM_HOOK_INIT(xfrm_decode_session, selinux_xfrm_decode_session),
-> when the `ckall` parameter of the `selinux_xfrm_decode_session` function is 0,
-> it can only return 0 and will not trigger BUG_ON.
-> Therefore, remove the BUG_ON check to fix this issue.
->
-> Reported-by: Kaiyan Mei <M202472210@hust.edu.cn>
-> Reported-by: Yinhao Hu <dddddd@hust.edu.cn>
-> Closes: https://lore.kernel.org/all/4c4d04ba.6c12b.19c039b69e6.Coremail.kaiyanm@hust.edu.cn/
-> Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
-> ---
->  security/security.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
->
-> diff --git a/security/security.c b/security/security.c
-> index 67af9228c4e9..198f650070da 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -4991,10 +4991,7 @@ int security_xfrm_decode_session(struct sk_buff *skb, u32 *secid)
->  
->  void security_skb_classify_flow(struct sk_buff *skb, struct flowi_common *flic)
->  {
-> -	int rc = call_int_hook(xfrm_decode_session, skb, &flic->flowic_secid,
-> -			       0);
-> -
-> -	BUG_ON(rc);
-> +	call_int_hook(xfrm_decode_session, skb, &flic->flowic_secid, 0);
->  }
->  EXPORT_SYMBOL(security_skb_classify_flow);
->  #endif	/* CONFIG_SECURITY_NETWORK_XFRM */
+bpf_audit_log_cause()
+ -> audit_log_untrustedstring()
+   -> audit_log_n_untrustedstring()
+     -> audit_log_n_hex()
+
+Was the primary call chain I was referring to, and yes this relies on
+internal invariant of the SKB existing. I can remove from cover.
+
+> >
+> > 4. Functions are callable once per bpf_audit_context
+> >
+> > The rationale for this was to prevent abuse. Logs with repeated fields
+> > are not helpful, and may not be handled by user space audit coherently.
+> >
+> 
+> This rationale feels weak. What abuse are we talking about?
+> The LSM program is already written by a trusted entity.
+> 
+
+I learned through off-list discussions that there's "undocumented" or
+"unspoken" rules of log formatting and how auditd expects logs. Without
+knowing exactly what these rules are, I can't provide any stronger
+arguments other than to reduce duplication of fields in messages, or
+exclude wrappers that supply unverified data.
+
+WRT to unverified data, the socket wrappers accepting a netinf int.
+In that case, the variable is at least verified via lookup to
+report the interface in which it belongs. I left out wrapping
+LSM_AUDIT_DATA_ANONINODE due to the passing of arbitrary string,
+LSM_AUDIT_DATA_IPC arbitrary int. Others like for infiniband,
+lockdown, nlmsgtype, were left out due to specificity, and not general
+purpose usage.
+
+Some of the rationale behind this is _not_ trusting BPF LSM authors as
+much due to BPF LSM flexibility and accommodating user space audit.
+
+Best,
+Fred
