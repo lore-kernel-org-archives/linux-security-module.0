@@ -1,79 +1,79 @@
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B71C29D287
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 06:31:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E2D36167C
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 06:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773815515; cv=none; b=TCzcDoBYYfzdGlQ5rLK1uaT/XTNnrI0IAzi5VWuO2FL08XvD5SsPn7j90xm+xQOFvk8pZYqczdh7nQ/x+6zWtwD8xdGvQgp5Uyoo3UJmGvBiuwSBOZ3vmVsGmbV23HKqloX80G4fEF3VWzDhcWvQn8qAK/qtzqRYSqW5Ja6OJfc=
+	t=1773815549; cv=none; b=JsB5qp0DEjVYYjJs6RFCVNSKFTbIpye9ahXdxdW5smpa28iAqibztk316jTeM+A5scPNxD7QTKChk+uys8wPJDRTQhUwjF0cxOnOsoMEoUXrafhdfPPduDjM5t4irRNz/n9vUFjiDnZpEkLd8g4LKNvRlYT00POXKp/yvMhSupg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773815515; c=relaxed/simple;
-	bh=axv6vZl0GVTlzKcIZ4eSepd993smWSMA4mc9NkmS698=;
+	s=arc-20240116; t=1773815549; c=relaxed/simple;
+	bh=z9UEvXn1i7IlTVKzdEovYrCfxLruQ5PWEvcY+VRVec8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b3r9V+6YDlO7QP93qz9Jak1Him/dtUf14LLkUp0SoUlP9qxsvuCTEhkEeQG3CHaG4ITfq0YJ0e3wcvsD6pHfF+IBkEUDqVEe2p/OOllTlbPMeD69hP7AVfQzBP0XRjGZAt94QazdcDCFVqFHkojG/ndy2Zs2drSQ2pNNr4+Heug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=YiQib5tZ; arc=none smtp.client-ip=185.125.188.123
+	 In-Reply-To:Content-Type; b=NnfCUSMYhDaA3bdcMlKRJWLowbgK3wcuYeSZ17uD8QEaXiZw8YazrdnQ9a7EonxLF8PzD0LYOWnuHM1lf7zjG5mHGzgVhpP9Wx5IYTK7oybcF2gFAwmpnw+eIYLfYLnkR009BdetdfwX9Fmj/cHgCgb79fI2qsZCGfmJAQmql4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=R3BKFiI6; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="YiQib5tZ"
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="R3BKFiI6"
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A10933FB75
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 06:31:52 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id D51B63FB79
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 06:32:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1773815512;
-	bh=EML+XTGUQs60PcdBYA32Jysi6fX2cPvKb7rTjuZcNxo=;
+	s=20251003; t=1773815546;
+	bh=epmCUqv6SVCOMHsBhYMWL9iFUoQWgW1lR+M3UIYJn6o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=YiQib5tZjI3up7JoFGouoKC2f0EINfvFkmxNSW3pdzZ4jU2lVeWE9FMDdUbJ6NPCR
-	 6+Gf7gG3ieBzLYLMcIY/4MuFgN2rgta0mMloeeGXiIPwmQ6s/1Jn5/bPfMHV1Ol6DJ
-	 faKIIu1CE98dUblJwgPEzWAYisG4+WYifSuA2GsQ/2sUXArTKM0HztsOm6C+o6OCCS
-	 FCjIf1UZeCeiOD7DHMyoEMgEWBHfk+q5VSCcOlxBJ/Svn6VaWlGeiDWizzXjPinujJ
-	 kYwNi4Uwbusw6UE4Bsmq1x113oY5tzRZ5vbJxM5Edt61LsLGsY2rghYSBZhZmsaNqa
-	 1dJmFl55QxBOGSUepZ2YxehxWiYwTx7j/2QFrQ4nHX/j+GDJ7zMhirU6KfGMHdSoX7
-	 ydMeWV7WJs0V3KBbbf8RVvaQlJsQRqtI/WA1U4Xtr77bYvv7zfFlagREWf5vRTp79t
-	 XnMjV8W7o9wCi6q58vw6AnnzUFEz/guNPbqyXXBdgdcNyxZHSkqTUFJURrwRDP3c++
-	 kqgXwKa5mT5L2XB0fTa6l8wwlNrI4IDR5B9NRCcmCEhNA4/VbHv8jyA7/F/mqqfFhu
-	 f6E5mK5dlGJ25bCzJl6RYD40A2YiYzbgtRosMF0jSkng6AtL8qdJ9IFs+079gAgYbY
-	 zTh6gRk5jMAM4z43zBXTulFo=
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2b061868724so144577125ad.1
-        for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 23:31:52 -0700 (PDT)
+	b=R3BKFiI68P4OjLLx9FjahWPUfKXbPj1nqKkpv6YAfe2DkSl3U0dtgQrxfnPqwMw3h
+	 4FN//9Nhu1/cy6tMB7sqDpqYyW8X4G3CnOIaARUAPrfcKAwWuKHyTaEc7TkaEZBsOz
+	 +mbXBnj4ZDawYVvrPazetw7fkX0Xv90167LgahFd7dRAfLBK5lPrQwVbuUs5Fptx3f
+	 7GWUpMvqpwI1MC/fOaWbwGqMonXEQZg3Ox6QUylRWVfP1hlCg2ypBhVnzhYp0A2fEq
+	 W8nkSGK/OCU5q6ap1FWtV4APeiUWk4IZ2q+mbx+7UJmzzLesO7oJ0b7refuKssTMFd
+	 bAFvaLbOAc3YWuTkkvKdj7Lo4CBIwaCJ5fMDyisKvx+a16/2G5uLdZDqo/fN3nElPz
+	 puofeTbynDk/uvBEE8GAhyaGIJi0Fw5eE8lVKeIbCg1iO4yZyEdNwsFHuZPHqjjcwO
+	 D9M9wkzeeVmUfNWl22VDlsADs1/wf7K4/xGUVpqnkOM8nH8FjNCQu2YG2iE5K648vR
+	 AyeT9H5i4Banfjy7gfi9vVK7ouj3+yWX+P/VSG+yEFhm0reGXNoM5fLHwA+/h98JE/
+	 4kmgniJRPduXyrftoXZFpH2+f01iVIjpuQOztsP3LpIhzAbj+SQA70tJsmUXWrCx4w
+	 ZVoxVNmi6XHWIYZEYBMlHyYc=
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-8230d6d54a5so517994b3a.1
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Mar 2026 23:32:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773815511; x=1774420311;
+        d=1e100.net; s=20251104; t=1773815545; x=1774420345;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EML+XTGUQs60PcdBYA32Jysi6fX2cPvKb7rTjuZcNxo=;
-        b=SnqlMss9eClaJtKhl4blJRL8YVS2GuOGiCpXzE+t2OMpd25KNuIfSf4xFFInIyajim
-         0uc2OiwtzARtJfSFlFeDRFrS2gFKtvfjuIgRYRpe1lH2bDTw8zTNVTaBREkDvvf1lnS1
-         ckp9Mf0n8HBsYTaGygcxvjJoCEKmSvjB7O1gvdxXB3ApJI1NnVXHSZnayzBDRz5jXEbc
-         Qw31YNwEIFelPqQ8kbPECkXTKJ9EhtjJaNngWvvIAgv12NymCo8grlg4vlgm60dDpLTI
-         RsE/ZDUM+xDjG1He1S5MTNc2FQApZRTP7JOr4V3lfS9AefO8Ratm0nRMT8T7s5SttQJ8
-         XTvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsHGReB/kXUPl6YwqX7ng5vrtj0lJqFJAWr1VcCVxbGKhi7MrvawRcj/E3imFhl6QTy6gL0N2214F7RjQtEdF4s4cYNgs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnrNM0fjG0eexZI+ptBSsr+VNVGDSIhANonXGFFzOtvTi1qTqh
-	92+VPdNQi9hrr1qu4LL20ASTC2lKyldb3zbUSRM2kn+hlT61sfp8MyC5vWiilg3sYF83dyMLKPK
-	OWV1t580S0QZH3YrnX0yBqWFCOVizFUdRGWM7JFHopXZsKGU+w91dCF1b9FKgXOYXWZrAkhQqME
-	/e6+Q6YXwCbfgcnqtXtw==
-X-Gm-Gg: ATEYQzz6Wu+rLILWM1S8bV7NpH2i7E08njm/QN/O102QRPAuqVMEHXQTqzkA17PBoyQ
-	H7wab4ZrhuYlvJn0b99jIddvn7Jx80dAunUG5rsoAjor/ZiW/r659a0b7+pUhcJA9KO+NKHpfC2
-	RPOs8t+pU3QLUhpOFoZWUi5m6fKvMLTMDuv8Hw48DyZgM5Aa5zBxArFOWo0stcAozwrKIcP0lSB
-	a04a5q1W9o7bfd+PGfgIadRQIxw7VyBxHunSR4HG3xqEOAWrpLyq7N9Y1/HN/W/n8r7CqLZCOIe
-	vzdnEKsYKhIUQfz4xf6PmyIjYcWUq8pQmObR94ZJLLJMljppLz61KvrVhfcWqQAc1ui1c5X5Pqr
-	tt1JtkhUc2FhGxIaAQKVsar5dsFBNl8g3U84d9w==
-X-Received: by 2002:a17:903:1a0e:b0:2ae:59d3:27f8 with SMTP id d9443c01a7336-2b06e364b30mr23360215ad.19.1773815511311;
-        Tue, 17 Mar 2026 23:31:51 -0700 (PDT)
-X-Received: by 2002:a17:903:1a0e:b0:2ae:59d3:27f8 with SMTP id d9443c01a7336-2b06e364b30mr23360065ad.19.1773815510969;
-        Tue, 17 Mar 2026 23:31:50 -0700 (PDT)
+        bh=epmCUqv6SVCOMHsBhYMWL9iFUoQWgW1lR+M3UIYJn6o=;
+        b=mC3bFP1PzJ/PbLWSQGQy4F/GblGJAswKx5E0SE1LSvsEVCUPIrFXQSGCxhSB69ILy+
+         UkXwRKuTNbpCbQLtDdXdwY21J3eHGGp+6yf6P4PtdkbtTfzYegwaPjHHSW1vHFj8+ihU
+         EdFkKtVBUQ9fE2jXMGucz8qk617BuNw+ZU77BLps1IzioVlxMfDfrihPg97isC6/4ypP
+         6SjWIwMlBJzlE+QR0n1IyDtBZXMIUNsJcxKggafO/Q5mF3yJoTY5SUiODSuVvkoTID5y
+         T9G6vOcpcyOdwTJyZyMWIBVBCMXWYkKmaaKsUJEaSKd2XfZxZhCkZdy4P7Uib5dbBHYr
+         PoZA==
+X-Forwarded-Encrypted: i=1; AJvYcCWb96cHfVyNwsS1OdfrxCMXz6a+zgiDAv1NbM4iBhlMBmXcG8PfCSYXniYrgF4SEFiLmj1DOQK+8Z/JEClvgz7EWDqia9o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH3e4Fprz59dL4U+WZQ/uad+xe7tLg3x2AdFbynZ1hz/IRLtQl
+	unR4mWRlLfTtEVpp9dFrnBrFW+AA/arWrRoCk+I4B3u/QgyNdbYYLFa5V4vwsD4Xii2zOl3ikG8
+	thJVGtaMoFdlAfjCWed7tkbDIHky62rTToh8hdxltqZvu6Ee48M4QcGDTgFOLXgqv+jL/fYa92m
+	mJ+hgG4Yyspc+8AyDQDQ==
+X-Gm-Gg: ATEYQzwQ5qKN1s4TeITt0eOtkK843wE3IkcS6B1yPSHcDvv2uUolIC3l7lI9h+f5r1o
+	DmWt3eqz8JZmJ/OguLrfKS/LkrPAUK88PuuHsOdnhhPk7YVYO60D+/6bAe84692U95z+pVopBTp
+	IjVCxYBkPA7qVLJCZ80FysRS05yRcl4ObbztEEIwDH5hbBC75bQQz3MvUr+Gl3JYxUCBblM7sp2
+	B/34eMSUnhhcy55bYqnExUv1FvKkTZ8ikkCQGRX9O8ZjAk1I3hUAceY57mxmBMCh+KbTLDD969n
+	Np8hS8ydMmIW4Dyj3JNsCR8HU+1eHc4PK3jICsnXeZxPQsH52WM3DRIzvhkYOhKg5eIP7fudPuF
+	7MiGK7UXBZksRoQeJ7MqPwGTwTA3u9RYu4mgsCg==
+X-Received: by 2002:a05:6a00:1c9f:b0:824:b304:2d1e with SMTP id d2e1a72fcca58-82a6a088027mr2117673b3a.8.1773815545375;
+        Tue, 17 Mar 2026 23:32:25 -0700 (PDT)
+X-Received: by 2002:a05:6a00:1c9f:b0:824:b304:2d1e with SMTP id d2e1a72fcca58-82a6a088027mr2117654b3a.8.1773815545044;
+        Tue, 17 Mar 2026 23:32:25 -0700 (PDT)
 Received: from [192.168.192.71] ([50.39.102.197])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2b06e419b22sm15820985ad.11.2026.03.17.23.31.50
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-82a6bdd776bsm1380585b3a.49.2026.03.17.23.32.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Mar 2026 23:31:50 -0700 (PDT)
-Message-ID: <6e51ba11-21e1-425d-851f-60916deec6ba@canonical.com>
-Date: Tue, 17 Mar 2026 23:31:49 -0700
+        Tue, 17 Mar 2026 23:32:24 -0700 (PDT)
+Message-ID: <10bcdb0a-5e85-475f-bb02-658d892f1688@canonical.com>
+Date: Tue, 17 Mar 2026 23:32:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -81,13 +81,14 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] apparmor: Use sysfs_emit in param_get_{audit,mode}
+Subject: Re: [PATCH RESEND] apparmor: Remove redundant if check in
+ sk_peer_get_label
 To: Thorsten Blum <thorsten.blum@linux.dev>, Paul Moore
  <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
  "Serge E. Hallyn" <serge@hallyn.com>
 Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20260318000758.1568-3-thorsten.blum@linux.dev>
+References: <20260318002141.3362-3-thorsten.blum@linux.dev>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -133,54 +134,41 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20260318000758.1568-3-thorsten.blum@linux.dev>
+In-Reply-To: <20260318002141.3362-3-thorsten.blum@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 3/17/26 17:08, Thorsten Blum wrote:
-> Replace sprintf() with sysfs_emit() in param_get_audit() and
-> param_get_mode(). sysfs_emit() is preferred for formatting sysfs output
-> because it provides safer bounds checking.  Add terminating newlines as
-> suggested by checkpatch.
+On 3/17/26 17:21, Thorsten Blum wrote:
+> Remove the redundant if check in sk_peer_get_label() and return
+> ERR_PTR(-ENOPROTOOPT) directly.
 > 
 > Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
 this has now been pulled into my tree
 
-
 > ---
->   security/apparmor/lsm.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
+>   security/apparmor/lsm.c | 6 +-----
+>   1 file changed, 1 insertion(+), 5 deletions(-)
 > 
 > diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index c1d42fc72fdb..cdf19a5e7626 100644
+> index c1d42fc72fdb..f7bcfed40222 100644
 > --- a/security/apparmor/lsm.c
 > +++ b/security/apparmor/lsm.c
-> @@ -17,6 +17,7 @@
->   #include <linux/ptrace.h>
->   #include <linux/ctype.h>
->   #include <linux/sysctl.h>
-> +#include <linux/sysfs.h>
->   #include <linux/audit.h>
->   #include <linux/user_namespace.h>
->   #include <linux/netfilter_ipv4.h>
-> @@ -2073,7 +2074,7 @@ static int param_get_audit(char *buffer, const struct kernel_param *kp)
->   		return -EINVAL;
->   	if (apparmor_initialized && !aa_current_policy_view_capable(NULL))
->   		return -EPERM;
-> -	return sprintf(buffer, "%s", audit_mode_names[aa_g_audit]);
-> +	return sysfs_emit(buffer, "%s\n", audit_mode_names[aa_g_audit]);
->   }
+> @@ -1528,15 +1528,11 @@ static int apparmor_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+>   static struct aa_label *sk_peer_get_label(struct sock *sk)
+>   {
+>   	struct aa_sk_ctx *ctx = aa_sock(sk);
+> -	struct aa_label *label = ERR_PTR(-ENOPROTOOPT);
 >   
->   static int param_set_audit(const char *val, const struct kernel_param *kp)
-> @@ -2101,8 +2102,7 @@ static int param_get_mode(char *buffer, const struct kernel_param *kp)
->   		return -EINVAL;
->   	if (apparmor_initialized && !aa_current_policy_view_capable(NULL))
->   		return -EPERM;
+>   	if (rcu_access_pointer(ctx->peer))
+>   		return aa_get_label_rcu(&ctx->peer);
+>   
+> -	if (sk->sk_family != PF_UNIX)
+> -		return ERR_PTR(-ENOPROTOOPT);
 > -
-> -	return sprintf(buffer, "%s", aa_profile_mode_names[aa_g_profile_mode]);
-> +	return sysfs_emit(buffer, "%s\n", aa_profile_mode_names[aa_g_profile_mode]);
+> -	return label;
+> +	return ERR_PTR(-ENOPROTOOPT);
 >   }
 >   
->   static int param_set_mode(const char *val, const struct kernel_param *kp)
+>   /**
 
