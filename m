@@ -1,153 +1,210 @@
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE762FF15B
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 17:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773855265; cv=none; b=XYIYL+LjVcp3gK/0ZXYS5Pop20UFcnkH7xCcTBWsX98yWgu/GvaFUI7CSNuiHcHdBrc9496UU6cHKmWO0mvH0Uj+doQx+Waot927GoBd5QtyCXqreiIApEU1VGiAARK08D1zpDIiIdKa1zBLnmw/mpo0UC356hfSUlxqk68aubw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773855265; c=relaxed/simple;
-	bh=FZxvRu+85EWsxqRmuAs5TjqTbVp8lAzOjEKZsLeBTXM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BP9CwbKEmZBsGELCA6DK0R9yL9yLPb5pbuc6b0c310ehIZZmmAJnjDs0KCrwDdayDeEczJwP60lFLHFLdUQCvDPAzWWahqWqIzhvoLapeoQmu0Me+Dq0a/cWyL2hePxMkF5HIYs88HG17mLLMS0L9BrhgrpvHsSN3RfkR7DS4AI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=ZIQ8Y8q2; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049CA2F12AE
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 17:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773855384; cv=pass; b=s/XYAzDAiQzNc2kU0M6XJDxYq+lKJwddBix5DyYm0xRrcUD4HKnAPBrqn58ioci8AOAlpHELLekoSFJAfkSXlM2DtVCaoY7d+H8TAj1rVXCln4jYZM3vQkYDiqNjaYjmvp1fMQGOwb1M6kD3YEs0mf+bFYu9ivXKWYpzxxQaVjU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773855384; c=relaxed/simple;
+	bh=ETQ6eDY+SrtspdH+SID48Rk/pkOlNOXeML+vzVx/MB4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UWQiGASOaS691YPtjD0c1LgZ4Eyuhqr6Dk408eqonjfGH38j3xn2qGRvKe4VftX38aKRmenK7L8ibitVqvlnxYtk8z7nv2lNMIRny5J55svYq84P3VFE+kBHvL5wcwe6nCTJY/9pI2F0FZIoHvBbx+kFjoGktlPVXlPTJIzHZSA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AEKx2bEE; arc=pass smtp.client-ip=74.125.82.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="ZIQ8Y8q2"
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7d73ccee442so107580a34.1
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 10:34:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AEKx2bEE"
+Received: by mail-dl1-f51.google.com with SMTP id a92af1059eb24-12776bebe9fso235241c88.1
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 10:36:22 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773855382; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Lo46cOnJ+dxsMLfW+C8IO2FrmSfzZ9RAMA5uVkumPkgzMc/RFrIjMEVN/uvmfGWjGX
+         vxt7t4tUuiZrtWCMpDulUhFBkl6Mg8nG0xgp0h8Bq/6m01B6GGqFNzm2gYbiq2WanX26
+         5mOv4J0+lf1Msg33G9uS+cus9kWo8jZaOwEZ0bCGRU5TDg5M3ABE1HdVArmWpjd+Vmly
+         WsbwQGM9tbF0aFKU3DFJSpvLNKfIDXfm8rDHTpbyKFoP3tpyti+vP5plbcDPNciPkxUl
+         cEtsXxI4+rPXuu2SAAzNewtPiDelzcGzLZNC4EdrqYe2EfWw7S3/Mvo8DHhl7NPBt9Jo
+         841w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=CBZBsMC1tuLlkRKALQZa43xF7bjMBt9AHLZN8Ng7/jM=;
+        fh=8W2TX+ZSZ0lmtg2PkYYh1IMe2e0+iuH0BoG28Qc9dlE=;
+        b=EqUhGKCBnvT1ou6H0W/t2f4YKgB2cY5ED8aUvaI0Vb9so0rCKK04xNDV3P/glov9vF
+         aDr5sh6l70oAMseIViTUW5zu+Akqrc/Mh1vRy2eW/4PyMOVXl/TVSzbDjOP/G6laBd5f
+         jV21Vx+kdA1rb3GsZTq62SQ9q8ALej7USaq1wKPeSX/CH+8GMSGqwzzQvZTs4XxIP5OG
+         Vfi1O48tDrvN6wA5Si9X+/uLKJayOXdmXZpE241jscadVG4IbIXuXjvQftCtWFjOaXm0
+         GeeJ1C/KewKENIV0AH+trGLwKn2T1HLqCOxEY8O120nBMjbEKsAoW0y8uSrKVn2pN9Qv
+         S4GQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1773855261; x=1774460061; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eWeEa0ZafBH05FmgYmVQzG8J+24xX/BkM77vv1zD8SU=;
-        b=ZIQ8Y8q2up0WQADu+jzFDuMldHGgfqAA3c3j4H3T5Lcxfe4ftsyHELNmFik8FV8e8z
-         w1PLCvdfsEBJkEn9+5kO8ZW+eXOSQZD5rk6PLm+FEZYiu/nCEUpj2T/jmT60Dg/g1CIs
-         CrYOXi04XdvU2IBMEMVyxYjZNz1IMc6tE+G7rfzA6axZlhdnQWS6kgAp1mWQOmY+56i3
-         80Fmpv18cqRt8rAfjsHpSReittFy2zgwKQl8goe6sbUWMxzRopoUWXbESr+9XoJlvnJG
-         vgjo5oNJbpCubomqywdW8+KH14/Vri90Kw7Qu1EqhcZzuIKvEjXPcjOKGJ95WXD2AJvn
-         bXhQ==
+        d=google.com; s=20251104; t=1773855382; x=1774460182; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CBZBsMC1tuLlkRKALQZa43xF7bjMBt9AHLZN8Ng7/jM=;
+        b=AEKx2bEERz2f7/KhHE67goH75bm9Og/0PVyvWwlEceqQjFBei7zXZoBUWdUkoXEANx
+         DR69Zal/tu31gALsnZSo/ZhVQNYDObJZYIrEtOhrRRBs3tJ4nlQ6oOMJFsIOnyZ6RQdc
+         1KsGem0V/nyu45S9KijOPLujW5iOxOSXg+hCsrk9TT+q8drCb7OHSRhJzFeOd9Bb1GAO
+         RVbkFi9+3HoA+dFpQNDpJa3Zp1lEK4X2ZtgcERoc6QZiVrtrVTym8PO1PBgO3hBWvOtG
+         D1J7cXk0DH6mQrMS/PWC5/Pb77RM27ULnDEd+TWcEZmTFZtzK+IPM0yIL2cqN6JiG2Ch
+         yZGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773855261; x=1774460061;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eWeEa0ZafBH05FmgYmVQzG8J+24xX/BkM77vv1zD8SU=;
-        b=G1mq8sNYFbfVE0r9rGLBJD7+GchzrPPG2xnqE7uo1SQwvkGAxKOjjLT2/hXeVgk5MH
-         Jq7jbXORwCMlrbYj579je+GPS2dP0j0M0HE+iqI07VaUzKvIqbDYlCNgbh+fHoO6cwmT
-         bIu+VEMAGHOR44QD46JOv2WVnQN7uo7G2PzfQxl5k+Lmd0XQbBi66Gu0aEeq7t5La4vT
-         zu4yLHtVQcgolzcktWaM4urGEidfZn7nMOcdJClVSmrGOs87YKlYsSuJNAB3BeMpF3+a
-         N7dBu5q/z736iTJYWaCffFnP30D/FF2bHEDQgJ4iqSjZP80TLbnkhs/eNKd7ZlIu4/GE
-         GIAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDBtgOOdNGVVaSX6crqIw2ly2W+cEuUrbnTkPmX/NaQl7z4nym5m17Ha7nVky7NfM0vpKgaMPz5FGihcMHoX5lUQaj4CA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFMszlQrbivwGTpkC8f10RA4Di0s0EiDqV5o7fm8iO3gLJtNM+
-	VdMQLPFgcsj8nuS1bR3p4dv9r6v7I2qCgwi87T3j+UR2b2RbZNuQVleIZyPSSKJjNIY=
-X-Gm-Gg: ATEYQzyDV2ZEwvt6DHveCg2LzlDsK1bo6Ej/1xlS+y9WDAJemsXa4GsrujS2aGcpA0y
-	3GR7NzYInMiU8IwchaP5TJ5LyVHFCWndW7dqzDnx4t76cEePk9s0BTKj0mV+gagpY24x+8ooeVZ
-	T0liXoPhCIx7vAGISDx9bSS1HMzOCwpHbzHliGwTRbH6e0OfEdN5jLd/C/zBFajEDWSWrnoJVoR
-	crnDwRL0I6185UYwkWuABz6SXNLefFxaZxsYXoskn0rZNFwGBS3THqRM0AxKP+mjQiLHhkj9+EK
-	rkGidCoNj5AsA5y31yaEwEgcbbGK8phIXFw7RSExNcUCcm2o1eza/u3DFNbS9juvEURUA67LnZa
-	TV9v/lemtpIKzK9K0Mlucx8NssAcXZB796hDnB8GZ96TzPgDdtJpzbK5XIPFXU6MvGxQh3NDA3I
-	xzp6Ue
-X-Received: by 2002:a05:6830:64c8:b0:7d7:4d85:eb05 with SMTP id 46e09a7af769-7d7ca775284mr2522284a34.22.1773855260727;
-        Wed, 18 Mar 2026 10:34:20 -0700 (PDT)
-Received: from CMGLRV3 ([2a09:bac5:947d:1b37::2b6:4e])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7d7c9950ef9sm2751073a34.2.2026.03.18.10.34.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2026 10:34:20 -0700 (PDT)
-Date: Wed, 18 Mar 2026 12:34:17 -0500
-From: Frederick Lawler <fred@cloudflare.com>
-To: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Eric Paris <eparis@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	audit@vger.kernel.org, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, kernel-team@cloudflare.com
-Subject: Re: [PATCH RFC bpf-next 0/4] audit: Expose audit subsystem to BPF
- LSM programs via BPF kfuncs
-Message-ID: <abriGVbtYY1zhupD@CMGLRV3>
-References: <20260311-bpf-auditd-send-message-v1-0-10a62db5c92f@cloudflare.com>
- <CAP01T77VyW=5SHDvM3HXPNHaxRdzs8H__MOh2zx1dQ6STeAUtg@mail.gmail.com>
+        d=1e100.net; s=20251104; t=1773855382; x=1774460182;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=CBZBsMC1tuLlkRKALQZa43xF7bjMBt9AHLZN8Ng7/jM=;
+        b=m/VIAbS0OvhjZ0Ckyd8yzKIVt8G7Ku/i4SDp3NEa6irwB3iEHPxKYteT/pp2LYmhCn
+         M8OMPA9gxLg2Gs9ku7KSfimOutyC+gvdX0Ie5Zi6N+ss+rs4Y5PSukY92+4Zf92Vtly2
+         iw5KCWKgGqkhfgK3syWO3SIKzymw3brssRHqjorS8yWGVx/rEpsRmDvzVYrwJloR7raP
+         HLXquevpBaCR37gUGykZa6hXjH8j/uuPl8rCFpkqIOL+zENnkxWT9dGvdFwJAr09xl2I
+         J6+MvgvuO3IrtN3bAnOt4M9gnjEfRxQ93jXd2YbDV3h+OrMQK1Qz8a8AOaieF9KqYrQr
+         p7rA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCI6IPi9cYujSyor7EglgrQPjePhiZznzHR6h665HvGW1jKSwa2yfwz5uPo70ZtLim789kfyWHVIB4cqBMT3DgXme4KiI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwftzEHtmNmgSaKl/5I148k9pp1qCkb40aSzUtjeNvZvwo4b4Wh
+	Vy7wUaytC7BYm9nMR+BMyA6yZ/bQvdSkubWWxOTMgg1gW7BbRnE0NmWTBjw+eDiHQm56jLZOMmK
+	o3e+UZJGrOhxEzA87iiFEJXCoTaOMPm2xun4ute5r
+X-Gm-Gg: ATEYQzzQCobvv/QsDq4VGkXHyNjiVAlTDX3Jquvrgi9J0Up6cA8k8H28R806P/pQSFT
+	xkOWxbczgo3Yg6Ake+xBpWJARLoRBkgLEuZimGEU49pB7tG/2LyEVytCCddRu9TxF6rSdkrGZYw
+	1wBi/+YwKOCcxUJJ8Toj7T+0TybGieznNN855WkKtYlWPYbu8jvVHW69fQR7CBKEd0fkImv9Jju
+	j5bx7JrIHkltNCikQYvqfJvC5Q9SccjhtSQLebz9ZxGz9SsXQy1IQrlgnwWn5jl2mt7U0I67T5v
+	/PlUZQ==
+X-Received: by 2002:a05:7022:102:b0:128:e2a9:d97b with SMTP id
+ a92af1059eb24-129a71c3221mr2167012c88.42.1773855381476; Wed, 18 Mar 2026
+ 10:36:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAP01T77VyW=5SHDvM3HXPNHaxRdzs8H__MOh2zx1dQ6STeAUtg@mail.gmail.com>
+References: <20260125192526.782202-1-jarkko@kernel.org> <20260125192526.782202-2-jarkko@kernel.org>
+ <06a08cbbe47111a1795e5dcd42fb8cc4be643a72.camel@linux.ibm.com>
+ <CAMigqh1H1NKP9gddjhf4M1v-aM=+EpW9O4KJmu=UysOWhn4ryA@mail.gmail.com>
+ <aadTgsbzDDkCg1Pr@kernel.org> <dca994cd0ed11a262d4022c4984984460ba06a78.camel@linux.ibm.com>
+In-Reply-To: <dca994cd0ed11a262d4022c4984984460ba06a78.camel@linux.ibm.com>
+From: Chris Fenner <cfenn@google.com>
+Date: Wed, 18 Mar 2026 10:36:09 -0700
+X-Gm-Features: AaiRm53CRvkQ4Q080Fnyv4js1FR3nt9n7ROPC-ZktGzrj5RdGkL16HIOocsid-Q
+Message-ID: <CAMigqh2kW_srDgnOs+1t=sk9Q9jJgaQVswO0ZRHhV-6zrOAZ6A@mail.gmail.com>
+Subject: Re: [PATCH v9 01/11] KEYS: trusted: Use get_random-fallback for TPM
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org, 
+	Jonathan McDowell <noodles@earth.li>, Eric Biggers <ebiggers@kernel.org>, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, David Howells <dhowells@redhat.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>, 
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	Roberto Sassu <roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Kumar,
+Apologies if my long message derailed this discussion. I meant to
+support Mimi's concern here and project a future vision where
+TCG_TPM2_HMAC doesn't conflict with other features.
 
-On Tue, Mar 17, 2026 at 03:43:36AM +0100, Kumar Kartikeya Dwivedi wrote:
-> On Wed, 11 Mar 2026 at 22:31, Frederick Lawler <fred@cloudflare.com> wrote:
-> > 3. All bpf_audit_log_*() functions are destructive
+More concisely, I think that:
+
+> tpm2_get_random() is costly when TCG_TPM2_HMAC is enabled
+
+is not a compelling argument for removing TPM as an RNG source,
+because TCG_TPM2_HMAC is known to have poor performance already
+anyway.
+
+Thanks
+Chris
+
+
+On Thu, Mar 5, 2026 at 7:37=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com> wro=
+te:
+>
+> On Tue, 2026-03-03 at 23:32 +0200, Jarkko Sakkinen wrote:
+> > On Fri, Feb 20, 2026 at 10:30:26AM -0800, Chris Fenner wrote:
+> > > My conclusion about TCG_TPM2_HMAC after [1] and [2] was that
+> > > TPM2_TCG_HMAC doesn't (or didn't at the time) actually solve the
+> > > threat model it claims to (active interposer adversaries), while
+> > > dramatically increasing the cost of many kernel TPM activities beyond
+> > > the amount that would have been required to just solve for
+> > > passive/bus-sniffer interposer adversaries. The added symmetric crypt=
+o
+> > > required to secure a TPM transaction is almost not noticeable; the bi=
+g
+> > > performance problem is the re-bootstrapping of the session with ECDH
+> > > for every command.
+> > >
+> > > My primary concern at that time was, essentially, that TCG_TPM2_HMAC
+> > > punts on checking that the key that was used to secure the session wa=
+s
+> > > actually resident in a real TPM and not just an interposer adversary.
+> > > I wrote up my understanding at
+> > > https://www.dlp.rip/decorative-cryptography, for anyone who wants a
+> > > long-form opinionated take :).
+> > >
+> > > Unless I'm wrong, or TCG_TPM2_HMAC has changed dramatically since
+> > > August, I don't think "TPM2_TCG_HMAC makes this too costly" is a
+> > > compelling reason to make a security decision. (There could be other
+> > > reasons to make choices about whether to use the TPM as a source of
+> > > randomness in the kernel! This just isn't one IMHO.)
+> > >
+> > > The version of TCG_TPM2_HMAC that I'd like to see someday would be on=
+e
+> > > that fully admits that its threat model is only passive interposers,
+> > > and sets up one session upon startup and ContextSaves/ContextLoads it
+> > > back into the TPM as needed in order to secure parameter encryption
+> > > for e.g., GetRandom() and Unseal() calls.
 > >
-> > The audit subsystem allows for AUDIT_FAIL_PANIC to be set when the
-> > subsystem can detect that missing events. Further, some call paths may
-> > invoke a BUG_ON(). Therefore all the functions are marked destructive.
-> 
-> I think the first part makes sense (i.e., the policy simply configured
-> the system to panic on failure).
-> However, in the second case, if the program is somehow able to trigger
-> BUG_ON() relied upon for internal invariants, it would be considered
-> broken.
-> I tried grepping through and didn't find anything that would cause
-> this, hence the whole thing about BUG_ON() in the cover letter only
-> adds to confusion.
-> Please drop it or describe cases which you were concerned about.
-> 
-
-bpf_audit_log_cause()
- -> audit_log_untrustedstring()
-   -> audit_log_n_untrustedstring()
-     -> audit_log_n_hex()
-
-Was the primary call chain I was referring to, and yes this relies on
-internal invariant of the SKB existing. I can remove from cover.
-
+> > Neither agreeing nor disagreeing but this patch set clearly does not
+> > move forward and I spent already enough energy for this. For better
+> > ideas the patches are available in queue branch.
+>
+> Jarkko, you totally ignored my comments below.  I object to your removing=
+ the
+> TPM trusted-keys RNG support.
+>
+> Mimi
+>
 > >
-> > 4. Functions are callable once per bpf_audit_context
+> > High-level takes don't move anything forward (or backward), sorry.
 > >
-> > The rationale for this was to prevent abuse. Logs with repeated fields
-> > are not helpful, and may not be handled by user space audit coherently.
+> > >
+> > > [1]: https://lore.kernel.org/linux-integrity/CAMigqh2nwuRRxaLyOJ+QaTJ=
++XGmkQj=3DrMj5K9GP1bCcXp2OsBQ@mail.gmail.com/
+> > > [2]: https://lore.kernel.org/linux-integrity/20250825203223.629515-1-=
+jarkko@kernel.org/
+> > >
+> > > Thanks
+> > > Chris
+> > >
+> > > On Fri, Feb 20, 2026 at 10:04=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.=
+com> wrote:
+> > > >
+> > > > [Cc: Chris Fenner, Jonathan McDowell, Roberto]
+> > > >
+> > > > On Sun, 2026-01-25 at 21:25 +0200, Jarkko Sakkinen wrote:
+> > > > > 1. tpm2_get_random() is costly when TCG_TPM2_HMAC is enabled and =
+thus its
+> > > > >    use should be pooled rather than directly used. This both redu=
+ces
+> > > > >    latency and improves its predictability.
+> > > >
+> > > > If the concern is the latency of encrypting the bus session, please=
+ remember
+> > > > that:
+> > > >
+> > > > - Not all environments expose the TPM bus to sniffing.
+> > > > - The current TPM trusted keys design is based on TPM RNG, but alre=
+ady allows it
+> > > > to be replaced with the kernel RNG via the "trusted_rng=3Dkernel" b=
+oot command
+> > > > line option.
+> > > > - The proposed patch removes that possibility for no reason.
+> > > >
+> > > > Mimi & Elaine
+> > > >
+> > > >
 > >
-> 
-> This rationale feels weak. What abuse are we talking about?
-> The LSM program is already written by a trusted entity.
-> 
-
-I learned through off-list discussions that there's "undocumented" or
-"unspoken" rules of log formatting and how auditd expects logs. Without
-knowing exactly what these rules are, I can't provide any stronger
-arguments other than to reduce duplication of fields in messages, or
-exclude wrappers that supply unverified data.
-
-WRT to unverified data, the socket wrappers accepting a netinf int.
-In that case, the variable is at least verified via lookup to
-report the interface in which it belongs. I left out wrapping
-LSM_AUDIT_DATA_ANONINODE due to the passing of arbitrary string,
-LSM_AUDIT_DATA_IPC arbitrary int. Others like for infiniband,
-lockdown, nlmsgtype, were left out due to specificity, and not general
-purpose usage.
-
-Some of the rationale behind this is _not_ trusting BPF LSM authors as
-much due to BPF LSM flexibility and accommodating user space audit.
-
-Best,
-Fred
+> > BR, Jarkko
