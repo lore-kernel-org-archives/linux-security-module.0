@@ -1,179 +1,191 @@
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0F835CB87
-	for <linux-security-module@vger.kernel.org>; Thu, 19 Mar 2026 03:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.217.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773890882; cv=pass; b=u51uTUdDd4zGTgBuwipNDr5HyiFLm7Es7I1yOJozM/Hy+VVakImnqkmMfSqPVG9buYhR1NT3Jw9udJrrBIqzNZiagbY04a4Nwbux6RTvUT1YZlR3myyHel4DeHiBrsXl2rCjLZvIHNZUBBuMxAM1FJRwUMN4dxqEoJnyirs/azc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773890882; c=relaxed/simple;
-	bh=VSyvBWjhdMjZtiAiJ7JWmp9FMaJmuwVICnrjKsUWJ4c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bPluGj9Oy2Hwu/f/V2TRf5N2ETwpiWT1VHcgN5AzyCGGNy7A++vld6SEc//4bUoJ/N0Jh5J9EB/ABgWmr5wlpbqr7wZy1DgBqRltgiVZ6/QCd0lomtow2mubEhup8USTx+GvZZET/E9KcNghPi+ga5gg0ukZwSRpkvpJS1ANOqQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AsCQDq4d; arc=pass smtp.client-ip=209.85.217.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD50345738
+	for <linux-security-module@vger.kernel.org>; Thu, 19 Mar 2026 06:25:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773901517; cv=none; b=d30IcclFFEtLV8KJioZmfupaIoo7Seo0lE8q3C2PwRfMncubOJnghI/5mo5c8p204y+gb2b01baGg18inppLirET/bXy8wz3jQNjG+HQZ4DnqgVHNeJljGrQPQw4vDf2/y2GuyuFYnaQGR6ivYD5UX3C85+dW5fSRzFmdLnIIYk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773901517; c=relaxed/simple;
+	bh=qGqiE3KUBrPkxudnJPpgi7Dxk2L7pvIBgsd4DlVGYN8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NsvVL9oSkLwYsXj0UOahfVlBW42IX4d7a/omsq7XnVGgDY/odIGbcXwcXkZxm2gUWQKd4niFVmKRaum++woCN299vT9utDMdQfiEDKW+YUGnav4BHM2B71o930XMhJO9cpBTnsHTHzF64DUF+hfvP+aZMEqLWbc5sYFfVc0iGlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=quora.org; spf=pass smtp.mailfrom=quora.org; dkim=pass (1024-bit key) header.d=quora.org header.i=@quora.org header.b=Ad3EZLF4; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=quora.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quora.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AsCQDq4d"
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-6028bb29cc9so133101137.0
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 20:27:59 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773890879; cv=none;
-        d=google.com; s=arc-20240605;
-        b=OGml8BFD37UMe2AdpV4Fm4WFcMKkvGML7ad4rWv5ahubOIHITT50YjD7+KQWUSFdyy
-         30vSJI1NbxKrU+oXc3AkmM74S+dxAxzdduDmXFU+g2xDUOalZPTQArIikTsyNMbTIxF+
-         V+vQTR7GOq3+PwAHMZC+dRGvD/uNcbnV/pgduUUFsnfl/oDbkUhkwDlU/av+CPBDRB5z
-         OsORm2fIvYQwYzIE9ZrEc+Zz37UsQO5Db9caCnC/KW6Xk0/kZ6RObEmVlojCeIzIoHby
-         Iy0Rx2I6gxmeDnmfNaAaRVxGkBZ8KYEXRsYlLu8awaLptU/dlnEfu4xsoAM8t07zmRXl
-         ljBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=KwN6OdURA4jnEiYulF2GKwWLLkDnlaYj3NDTXeXZltw=;
-        fh=HYrOAD8NGcTW8qbWYfbZ/HVpmoFNp35jIjxCcd0Qh5k=;
-        b=iDclYyjFPHhKtKmoiStdG9BuojQ9vNR+ZUndDGZtk/gCCoplINF8aTYWhuKf04pS9c
-         JZXhmT1+gamgIg89SW1Gb3jw9J6V1QA4jrJ7PE7e8futykk7dluEs73AfKF/0toymcp7
-         PdPruy7CQU4nWWg4oqrqnrruVY+C9OW97FE1Cjl+TO1NYBK3mLiuhi7sawbG09uhQoy+
-         Sb57wrg6FEbALt5L3785LOD77IRngTt12iaW0TWpvhZMdN4K7kCEPc9s+slIaN7cW8hN
-         0HkfFngzhNR5hzF04muFm47kJ8R5XFvF5h/Z8VawxBPvRReeeuhw1owUmLv2eoKAPD3I
-         p9HA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (1024-bit key) header.d=quora.org header.i=@quora.org header.b="Ad3EZLF4"
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-82735a41920so289005b3a.2
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Mar 2026 23:25:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1773890879; x=1774495679; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KwN6OdURA4jnEiYulF2GKwWLLkDnlaYj3NDTXeXZltw=;
-        b=AsCQDq4drYM95UF8MyOkzGaDcA/OaZaWzHo2YksT4zfVWFxZ8otmztqTIvy3Yw46ds
-         mcyjfMDyvEryRMQ7Kc4Vtx1TZqnAGmrHmlhEaEMQ2IW80LS96Hg/3G887dsqC3swwfrw
-         NH9pPsHhDpcACBNYCJu7+ipQd7t9c38MRE0vs=
+        d=quora.org; s=google; t=1773901514; x=1774506314; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7i2hgB7wzWd0GpL7ZbSfJdBzEQ6VsuZDuvwguDkWp8I=;
+        b=Ad3EZLF4lL/KOFXTNOnjmQBHvHOhTYxo92sN9dz0QBiuosv+KgmYzMZ3HuFO2ubGfm
+         UP6KoJVbdVxNaRpf4Ix6VqSvBh5PmjyTJKv9Bo2g7ZOGAZ4/XbcJJpDzEPDTFkhSjpax
+         oFc1sJBlDBTfTLEiEm1CMp8QWQxRt7NnWfMeA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773890879; x=1774495679;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=KwN6OdURA4jnEiYulF2GKwWLLkDnlaYj3NDTXeXZltw=;
-        b=cnsEWLIY3z+ZRPaH2MgMZ5lOHCZfcjWBzwiFzLmIlS0+wxqig6/CTuWcegeTAiF2DB
-         xyGFhhMbnd0qgpiESxVBuvXzU2E5U0AFgyc77iAVsORXlifmkqAVv0Pj3WzpKM/1iGKp
-         B/u0Sf3KjNnbLaoeYZP2tjuyJc77jEJqFI4t5tcDD7FmwSyCVqfMOZ1ZMaaxi7wQp8gn
-         XhJHIs5xlQiDoyEsQnCIYjwbBNUNx0KgO7CFROOS5mwU4Ca2IgGGtU4o5IRvYlbfphVm
-         bb7NXwJQWjJv83s1twYoUTSoOlrQOLLg5PsplmBI4qDSr0dHmXFCKmTiy8bEgDXQ7qHA
-         0Emg==
-X-Forwarded-Encrypted: i=1; AJvYcCXdk7Ktrl3rfsMqmB8UJGJIY2EJHozEe62qYGVt3JcABYbFURtLADoVMoicdEHzO6oaxmsEpUBEIjjcIKrB5gCR/mXpVm0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziVMWb0qSFO2Z4WD6k0BBlaUtrDfnXcNKWSFyeEA3+1fqx/ugH
-	/vDikCeNyQdRZl2i/Ky05dev7Daoxu4GYGOgY+c3HdC0Zu25XjngKHfVPLtiKgIrtIq7/sRxt/H
-	f+wuprwG+EWvcf6RAJR8LGIIE0RA6NYZs2QgMZvjCuzQbdBkOJnhNoA==
-X-Gm-Gg: ATEYQzz7wSUFg7BXnZv8MVKHxz5cjjqtpitArT3zhY7qAEkfpK0dT93BVg8/2MRkdmx
-	uCX638kPe6dXATSYzQ9vH0VSflVnTBz3lboECKfei/gMQpW5HWkQN9shNfCkoRh8AKH6jcYbP+i
-	cnoK0LIHorpDrKvFJD2uzRYHyriuWafj4H9DhubLb3eaQ6IAWuaNfgyka/eGyKyktYi3wkLv4YD
-	7zJrxpi7iXkG5pRehQK6AfLisqsYQxUw8AEdc6G70thHQKiRXltk0J3J6bnZc5pCkSzFDy8pGyM
-	55RGMg6Q
-X-Received: by 2002:a05:6102:3e19:b0:602:9900:8dd9 with SMTP id
- ada2fe7eead31-60299008f3bmr717301137.35.1773890878878; Wed, 18 Mar 2026
- 20:27:58 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1773901514; x=1774506314;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7i2hgB7wzWd0GpL7ZbSfJdBzEQ6VsuZDuvwguDkWp8I=;
+        b=o9kOM5BCEmdLUy6afMXQO09HFU+fguc78f7MsR5kK5xsaNVS8DiXOQuKAUW1J9+mYz
+         aEv4sYYxHCChFz/NluLPL+BM5llgisYqKcS+puZruYtSKr4+89YA2VMm939BGhP0bwjp
+         IJ9a7eA5kh1o72zMjIJF2xu4oygHeTLdrAQE3zTW3iKEf1ACsQFl/bMbMZ/e38Gs1wZW
+         ilrfif8kz/uCxHrrxU1JWbaElgso4eRarHOUphDgPZWN2KNYMUzo0LFaS6JVa9UYj0AX
+         KJi+K+6xYwxz13PHvHCETHUVqu9yHVpwG6sUPniLRuOoNyi8myT7c6SWrumbN5ufu2IR
+         CT7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVq9DpiiTSbRFsDkH1JnNMIzOMA/TTmOk7J6erLy4A6EZgywKUZlDTzpuBUDWI3VIEVoCUFT5+zJn3h693ICrqzr8hfMBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSmVcuDGIs22EED7PL3TU7Dqyrk69TLR6zeN/L1hXNsMdVev37
+	RZTUZI8yK6UBWMCg5EaaafCjmF5IdX8RRAycT0hl3AmgCy7CYFa740078UqfTT/d+wo=
+X-Gm-Gg: ATEYQzxIUkjqaqEDe+IHSVsC1jMSLKYz0mxMaLaDnQSHbHE3OAQl0LhqTaPG54+Btqj
+	oXAD1DZwLed0C4XKSiABPdjVzJyobZ6ntQvHNjrsGocXxPPZZ3LrVsTd4iSEw13dp6nKtfV1vUx
+	iOnOMmEiJn7LkVjDPZToCDnEJDdYLOKkHpje+xFoVhsnIc2uKc2XE9q+9m+25NOPS9dGDHfCsX7
+	ERI5aozQpziUNa36dM+TBnvX9PriQ+a2fegKiHBSDQ4wwi3tmAwFFawilJpTEV/uQF6UP6WVSgH
+	mcRTeugPEttZBJ3Kijq1nYrrfg9ZG1qjmmGp3ntaMFgDSsZfV/qPtRK/N7918OvIjwCsokuRQyj
+	DU11ynfzeex1ISg7HIdUTYLHHLPGhxODf9t3lMmLczWXWD8+KZztXRHIr+9usJFrSKF8ap5DXVH
+	yczPFFGm5z16yipHVvrDvWZWr1uOWTF4CQGIZLYOki2O9rNWxmi9xjITcuMt5ZvT1Ujy+GSzmyl
+	pHEX/I+hqHrSUyncrxAZ+NtrStwD+j9Jhv6WJ3jXNCbzQzfwMnyckTCwQobRCFS2ZZuxQaC+MUg
+	MbM23+DvvnhS6NbbDoJ0LmmHd4Df9jiOtLqlRU+6rlOCe2f/xj7jAGFBKa4i1cNivo6nY3DbseY
+	EiSe8CbwM
+X-Received: by 2002:a05:6a00:1793:b0:821:a7b6:10a3 with SMTP id d2e1a72fcca58-82a6aed86ebmr5705451b3a.34.1773901514187;
+        Wed, 18 Mar 2026 23:25:14 -0700 (PDT)
+Received: from aegis.localdomain ([49.148.247.44])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82a6bbb2f34sm4862353b3a.30.2026.03.18.23.25.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2026 23:25:13 -0700 (PDT)
+From: Daniel J Blueman <daniel@quora.org>
+To: John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Daniel J Blueman <daniel@quora.org>
+Subject: [PATCH] apparmor: Fix string overrun due to missing termination
+Date: Thu, 19 Mar 2026 14:24:32 +0800
+Message-ID: <20260319062433.17648-1-daniel@quora.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260303024025.37916-1-gaoyanwei.tx@gmail.com> <CAJ-EccNLTuj74vKsNQFnOSXgjdyRpUrFVARsuqn6VNatQu33WA@mail.gmail.com>
-In-Reply-To: <CAJ-EccNLTuj74vKsNQFnOSXgjdyRpUrFVARsuqn6VNatQu33WA@mail.gmail.com>
-From: Micah Morton <mortonm@chromium.org>
-Date: Wed, 18 Mar 2026 20:27:47 -0700
-X-Gm-Features: AaiRm50fjZ8pLnlsQVkRA0IwVdNrfN7rDrbptS4LEmaUZaPQIJhn7PBJxywSIOA
-Message-ID: <CAJ-EccNveP4AQYec-GYpvgrQhe=d=ruUnBxE7xS5D1Q=jspZdw@mail.gmail.com>
-Subject: Re: [PATCH v1] security/safesetid: fix comment and error handling
-To: "yanwei.gao" <gaoyanwei.tx@gmail.com>
-Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 18, 2026 at 1:49=E2=80=AFPM Micah Morton <mortonm@chromium.org>=
- wrote:
->
-> On Mon, Mar 2, 2026 at 6:40=E2=80=AFPM yanwei.gao <gaoyanwei.tx@gmail.com=
-> wrote:
-> >
-> > - Fix comment in lsm.c: use CAP_SETGID instead of CAP_SETUID in the
-> >   GID capability check comment to match the actual logic.
-> > - In handle_policy_update(), set err =3D -EINVAL and goto out_free_buf
-> >   when policy type is neither UID nor GID, so the error is returned
-> >   to the caller instead of only logging.
-> > - In safesetid_init_securityfs(), return ret directly when
-> >   policy_dir creation fails instead of goto error (no cleanup needed
-> >   at that point).
-> >
-> > Signed-off-by: yanwei.gao <gaoyanwei.tx@gmail.com>
-> > ---
-> >  security/safesetid/lsm.c        | 2 +-
-> >  security/safesetid/securityfs.c | 4 +++-
-> >  2 files changed, 4 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
-> > index d5fb949050dd..a7b68e65996c 100644
-> > --- a/security/safesetid/lsm.c
-> > +++ b/security/safesetid/lsm.c
-> > @@ -128,7 +128,7 @@ static int safesetid_security_capable(const struct =
-cred *cred,
-> >                 if (setid_policy_lookup((kid_t){.gid =3D cred->gid}, IN=
-VALID_ID, GID) =3D=3D SIDPOL_DEFAULT)
-> >                         return 0;
-> >                 /*
-> > -                * Reject use of CAP_SETUID for functionality other tha=
-n calling
-> > +                * Reject use of CAP_SETGID for functionality other tha=
-n calling
-> Looks good.
-> >                  * set*gid() (e.g. setting up userns gid mappings).
-> >                  */
-> >                 pr_warn("Operation requires CAP_SETGID, which is not av=
-ailable to GID %u for operations besides approved set*gid transitions\n",
-> > diff --git a/security/safesetid/securityfs.c b/security/safesetid/secur=
-ityfs.c
-> > index a71e548065a9..50682abd342b 100644
-> > --- a/security/safesetid/securityfs.c
-> > +++ b/security/safesetid/securityfs.c
-> > @@ -224,6 +224,8 @@ static ssize_t handle_policy_update(struct file *fi=
-le,
-> >         } else {
-> >                 /* Error, policy type is neither UID or GID */
-> >                 pr_warn("error: bad policy type");
-> > +               err =3D -EINVAL;
-> > +               goto out_free_buf;
->
-> This makes sense to me and matches how things are done in the
-> functions above in verify_ruleset() and parse_policy_line().
->
-> Is this code actually reachable? I guess if verify_ruleset returns
-> -EINVAL due to a bad policy type value the code still hits this spot?
->
-> >         }
-> >         err =3D len;
-> >
-> > @@ -321,7 +323,7 @@ int __init safesetid_init_securityfs(void)
-> >         policy_dir =3D securityfs_create_dir("safesetid", NULL);
-> >         if (IS_ERR(policy_dir)) {
-> >                 ret =3D PTR_ERR(policy_dir);
-> > -               goto error;
-> > +               return ret;
->
-> We still need the `securityfs_remove(policy_dir)` call to clean up the
-> dir created with `policy_dir =3D securityfs_create_dir("safesetid",
-> NULL)` don't we?
+When booting Ubuntu 26.04 with Linux 7.0-rc4 on an ARM64 Qualcomm
+Snapdragon X1 we see a string buffer overrun:
 
-I guess securityfs_remove() just returns right away if the
-'policy_dir' pointer IS_ERR, so either way is fine. I don't really see
-a reason to change this though.. seems better to err on the side of
-calling the securityfs_remove() function even if its currently a
-no-op.
+BUG: KASAN: slab-out-of-bounds in aa_dfa_match (security/apparmor/match.c:535)
+Read of size 1 at addr ffff0008901cc000 by task snap-update-ns/2120
 
->
-> >         }
-> >
-> >         uid_policy_file =3D securityfs_create_file("uid_allowlist_polic=
-y", 0600,
-> > --
-> > 2.43.5
-> >
+CPU: 5 UID: 60578 PID: 2120 Comm: snap-update-ns Not tainted 7.0.0-rc4+ #22 PREEMPTLAZY
+Hardware name: LENOVO 83ED/LNVNB161216, BIOS NHCN60WW 09/11/2025
+Call trace:
+show_stack (arch/arm64/kernel/stacktrace.c:501) (C)
+dump_stack_lvl (lib/dump_stack.c:122)
+print_report (mm/kasan/report.c:379 mm/kasan/report.c:482)
+kasan_report (mm/kasan/report.c:597)
+__asan_report_load1_noabort (mm/kasan/report_generic.c:378)
+aa_dfa_match (security/apparmor/match.c:535)
+match_mnt_path_str (security/apparmor/mount.c:244 security/apparmor/mount.c:336)
+match_mnt (security/apparmor/mount.c:371)
+aa_bind_mount (security/apparmor/mount.c:447 (discriminator 4))
+apparmor_sb_mount (security/apparmor/lsm.c:719 (discriminator 1))
+security_sb_mount (security/security.c:1062 (discriminator 31))
+path_mount (fs/namespace.c:4101)
+__arm64_sys_mount (fs/namespace.c:4172 fs/namespace.c:4361 fs/namespace.c:4338 fs/namespace.c:4338)
+invoke_syscall.constprop.0 (arch/arm64/kernel/syscall.c:35 arch/arm64/kernel/syscall.c:49)
+el0_svc_common.constprop.0 (./include/linux/thread_info.h:142 (discriminator 2) arch/arm64/kernel/syscall.c:140 (discriminator 2))
+do_el0_svc (arch/arm64/kernel/syscall.c:152)
+el0_svc (arch/arm64/kernel/entry-common.c:80 arch/arm64/kernel/entry-common.c:725)
+el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:744)
+el0t_64_sync (arch/arm64/kernel/entry.S:596)
+
+Allocated by task 2120:
+kasan_save_stack (mm/kasan/common.c:58)
+kasan_save_track (./arch/arm64/include/asm/current.h:19 mm/kasan/common.c:70 mm/kasan/common.c:79)
+kasan_save_alloc_info (mm/kasan/generic.c:571)
+__kasan_kmalloc (mm/kasan/common.c:419)
+__kmalloc_noprof (./include/linux/kasan.h:263 mm/slub.c:5260 mm/slub.c:5272)
+aa_get_buffer (security/apparmor/lsm.c:2201)
+aa_bind_mount (security/apparmor/mount.c:442)
+apparmor_sb_mount (security/apparmor/lsm.c:719 (discriminator 1))
+security_sb_mount (security/security.c:1062 (discriminator 31))
+path_mount (fs/namespace.c:4101)
+__arm64_sys_mount (fs/namespace.c:4172 fs/namespace.c:4361 fs/namespace.c:4338 fs/namespace.c:4338)
+invoke_syscall.constprop.0 (arch/arm64/kernel/syscall.c:35 arch/arm64/kernel/syscall.c:49)
+el0_svc_common.constprop.0 (./include/linux/thread_info.h:142 (discriminator 2) arch/arm64/kernel/syscall.c:140 (discriminator 2))
+do_el0_svc (arch/arm64/kernel/syscall.c:152)
+el0_svc (arch/arm64/kernel/entry-common.c:80 arch/arm64/kernel/entry-common.c:725)
+el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:744)
+el0t_64_sync (arch/arm64/kernel/entry.S:596)
+
+The buggy address belongs to the object at ffff0008901ca000
+which belongs to the cache kmalloc-rnd-06-8k of size 8192
+The buggy address is located 0 bytes to the right of
+allocated 8192-byte region [ffff0008901ca000, ffff0008901cc000)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x9101c8
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:-1 pincount:0
+flags: 0x8000000000000040(head|zone=2)
+page_type: f5(slab)
+raw: 8000000000000040 ffff000800016c40 fffffdffe2d14e10 ffff000800015c70
+raw: 0000000000000000 0000000800010001 00000000f5000000 0000000000000000
+head: 8000000000000040 ffff000800016c40 fffffdffe2d14e10 ffff000800015c70
+head: 0000000000000000 0000000800010001 00000000f5000000 0000000000000000
+head: 8000000000000003 fffffdffe2407201 fffffdffffffffff 00000000ffffffff
+head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ffff0008901cbf00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ffff0008901cbf80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff0008901cc000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+^
+ffff0008901cc080: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ffff0008901cc100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+
+This was introduced by previous incorrect conversion from strcpy(). Fix it
+by adding the missing terminator.
+
+Signed-off-by: Daniel J Blueman <daniel@quora.org>
+Fixes: 93d4dbdc8da0 ("apparmor: Replace deprecated strcpy in d_namespace_path")
+---
+ security/apparmor/path.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/security/apparmor/path.c b/security/apparmor/path.c
+index 65a0ca5cc1bd..2494e8101538 100644
+--- a/security/apparmor/path.c
++++ b/security/apparmor/path.c
+@@ -164,14 +164,16 @@ static int d_namespace_path(const struct path *path, char *buf, char **name,
+ 	}
+ 
+ out:
+-	/* Append "/" to directory paths, except for root "/" which
+-	 * already ends in a slash.
++	/* Append "/" to directory paths and reterminate string, except for
++	 * root "/" which already ends in a slash.
+ 	 */
+ 	if (!error && isdir) {
+ 		bool is_root = (*name)[0] == '/' && (*name)[1] == '\0';
+ 
+-		if (!is_root)
++		if (!is_root) {
+ 			buf[aa_g_path_max - 2] = '/';
++			buf[aa_g_path_max - 1] = '\0';
++		}
+ 	}
+ 
+ 	return error;
+-- 
+2.53.0
+
