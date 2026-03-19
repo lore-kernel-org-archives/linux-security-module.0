@@ -1,232 +1,203 @@
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6940B3876CE
-	for <linux-security-module@vger.kernel.org>; Thu, 19 Mar 2026 18:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773945883; cv=pass; b=cw+ZUMhWVyswp3Z/PDeZePTi4n1RzPDaGmvLIJw9XYxZu2mrkV9FoVttRsv41nvFdGwpXTavhbWco6zokU/XxxPNcIbXfjIcue1D/RqqbU3296D2u9VStpl1PwG+xmqVmrIkdBJvnvFjESKq9LhqCYAFqMlhBcACd1yWMxiSA0A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773945883; c=relaxed/simple;
-	bh=uiCScWR+3uywURMbmYz4JIe2t6y1lUqRrJAsT5gXGhE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V9mk2nmkV/F4jsiFaowFaRUvMoa2SaEBZE+2JCjZZh5pKxMYmiAodaFH4HzzLb4fW1tvnzoHSNupm0pQkM0Yn5EdnrWIr5B9DXfzRRlZJ0P4fN1CmbeNlhCNNEBoe2yfQd2SpdQ808jsn+JvEwb8GobiwmlHg6FIXKH317MjkIM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=TjyUaHIz; arc=pass smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BA23AC0EA;
+	Thu, 19 Mar 2026 21:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773955902; cv=none; b=UVvXujLHu3XvZ3XOlsLct46O1MF1bp174QYRIzyJnTxO8LzdqqLxrsOAnJz/T7kBXA0gSUGY4F1ilgBifbnMgfdHYj/XbxFB0D6HPIIBQVqHcnqReT8jfXmGr0nSu4LeEw75tg+EyKrINgsY/gT4zVRr90WZGHtyHYkPjGxheVk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773955902; c=relaxed/simple;
+	bh=IS0BQLbOfw51GZ35diI4pTcOMtevg+pxbCdwDWl1wW8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TKG40lsW8SOJmC3sIiV0X4GnHMCIxPQgUVbqJjjN4pIh93S8nl7zlcZ89PjeyzpDatqvsfJBUgnDaFmBfItAfOw8Qh5lgSMfgS0Q7azkUU0xRkfGvDIRA0eNGXk3WPfxXkVOrKSnP+f/dwdyYrtEp1PBetSjc4MT9JLu965oWKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=mD7T1yYo; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="TjyUaHIz"
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-358e3cc5e7eso813447a91.0
-        for <linux-security-module@vger.kernel.org>; Thu, 19 Mar 2026 11:44:42 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773945882; cv=none;
-        d=google.com; s=arc-20240605;
-        b=bRSux3Gvh7iCpkcE0gJUNgHD37iaOD+VVHRUPE9jDv1/Fx3RaVDvXzckI2uzpf+9v4
-         8FVDDoKfYB7mmmiXSvUhcpmirR/3TeyrWtSawytT8mWNQC2aTLKQXRnAjMHBH4VnpY/y
-         5mgnbYLGFw8JaKRcRzAtbw15YVp/FIvYkpmaU7Z/Vh10zuedkh3LGxY6/KVYCAYEGDIh
-         hBNGA7DQhcVOo8Fvot5AiR123TVbixd5Rb7bLn9mBFPwPNtG63/UShbL7kBCUWruRAse
-         IxiIW/hMHsRmDhO05C4NARtneoekUqhK2n5VipYqhioLSy8XFhkvQFUIMdoZxgG+/sA/
-         mdTQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=3LpRx2Ah23pGDXkHY7jaWEi08gxAWhSArXDD9NIs44I=;
-        fh=lSJLuChosaiZLoPBlaH0w5WdMLrAtDG/aIeFsMk/dAU=;
-        b=llxlxLhTbzGvHv/2pCk+UnxTFfXRyJS12cRrH8bHZd593PSZ7aydZe3fjWUe4wS6En
-         NONvF4ZWTTjEIffxup6fBZ0yzpt9E+1SMJds3459EyRxGMdEKfdf7bPDH02rP9syBx5W
-         8MepGMjr6XdTJN6xY3Jd1nEAL8t9Du9hNZ79O5orkt01/TMZ2Y2psY+x2eNh2M5cYmlO
-         HKrdpTZkZvXk2flq+tNZ3ecaj2+sAp8R7E7YEw7rNF6rmPVJScCZE8D+FCvC+lvkZV+p
-         /+F11WauJ4/ifw77YA7frsOEdbbdf8QwXE9OlvMYZxVadV9/r+XUTSrc99tAOo9i9U2z
-         y6Vw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1773945882; x=1774550682; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3LpRx2Ah23pGDXkHY7jaWEi08gxAWhSArXDD9NIs44I=;
-        b=TjyUaHIzmYG68QqM5p5GbP6rkqxVgWOuQrOEEVjjStrbOJagQocfIPRjeVPrQbdjS7
-         +mWKYqh4xTPF8reGAEST7QyQLIhKpN4kkk1fxVnaYDxAke8u2OcQgE0oQgj5KsKBlyc7
-         IY6QmrnzhEXTxEZ2JlE14Wc0ZFdJ6C8+tq7VmHCcQTTVKKk/Z8pVKsMODNutlPGC+wke
-         aXSnYr/5XJSb7Ewg1FkDDzJZknz2LlE3B06n5k7xCiY2plmZ2yE27HrU1pd2l+C64fI0
-         pHyfUXaSivMCSQ+PiE4tP1wyQGxr22Hk5VEUZIhxcJLoDBO3U0E0hQ4lyVaZ291fdeYF
-         HIAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773945882; x=1774550682;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=3LpRx2Ah23pGDXkHY7jaWEi08gxAWhSArXDD9NIs44I=;
-        b=hjNxOihOJQC5wpMor6u01jrei7h80mqS4TspherHP7SmTLcuDYKe0T7xmGK1VEIg3F
-         rdZ6pSuHoKGRHHwHUrFkFJvSdN9NbNY/sRwzWHMOwAhjzSEtUnydA1euAr+i41/Yx0Rz
-         uOSeWyU9Oqykvy1bqtDYt7276utXb3Cg5bX2NEbartxQ2areSJh6nb24rAaxI04uPFkT
-         2Jbcr7rMt32SXkynCMh+OgGI3a5vLDC0wX/ovh1hjbo1gKfq8jyxcIjP0ZLX54jHeDoU
-         qJp93mt926o+Jj+shRhpXJZNtpq3UjC6AfDFhouN9GTI2bUDohfv5MevGEZhlXHd6H8L
-         kP+g==
-X-Forwarded-Encrypted: i=1; AJvYcCVdEsW2hYB5QwQvhSE/klkIQODFkkgY2H4aEFyQGOaJqja9odfZKw8JWdRmtWbP/cro9ZlwPUbisGtzlZ6AIrRKFPIWxJQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzY4FrHCeUYNfCFLeCF18XKcMu/K0wkpcKoiwl87UWBsKXKzTvp
-	QNO+7/wnfbO/o9FaeJ0Lj01F5dVmYJI3FZWwwTw2WebfOHjhju3O0z6PB3ycrrxtia3tfsibLyD
-	21lDlGp220jnpse7+WtNK1Gx2xVhWMRQhI8+U9aOQ
-X-Gm-Gg: ATEYQzyCEF76zznAi5tQrQ14TJaQAGewwjwlCN9cB7TOOP+AQxd6ej/fwl6JskM+cum
-	6/dUKKMgLEvbe4i1z5EPLk+PEjzgyFhSKn8q6Ak72VaLGL6U9EsrMEx3i3jBuTiXTOFm2bJqeN+
-	4eL/C2cH9+HgVb+9mvBislt7qIO5eMhEme25ABoNdJ5L7QOSABa7J43qHk/g3zs+8WuIC5l/iRx
-	VEpWrQ2mudh4CEkLQ1YPaIHEphT/4xeUozmcYhNaJ12Xfo3rPxY1nkgo8lXdTEpcTJntDhxfH/L
-	QFD1LVQL7Xrqp7RJtQ==
-X-Received: by 2002:a17:90b:3d85:b0:35b:91e1:e110 with SMTP id
- 98e67ed59e1d1-35bd2cb726cmr153296a91.20.1773945881632; Thu, 19 Mar 2026
- 11:44:41 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="mD7T1yYo"
+Received: from [100.64.97.93] (unknown [52.148.138.235])
+	by linux.microsoft.com (Postfix) with ESMTPSA id AAFF320B710C;
+	Thu, 19 Mar 2026 14:31:33 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AAFF320B710C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1773955895;
+	bh=sdvNeWOmfmcsZBfkuiWzVYLD1GTROw2BwLTYy2DXIHo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mD7T1yYo2+IzH6hpJubry/K2spBgFLJY6qHyKHWhfrZyPzkg06GNdACdF14VAQrIY
+	 0wFq0deQkk/y3qX7Ieb75WhhxSJtVNjhidHSz9ynLvlLf4gWVCx9x58bJFLO17KXrh
+	 uMzSraj6iaSSO2R7ydet9OjYZiUKkWKdsj9gt1G0=
+Message-ID: <25e0a273-9044-4e0d-9812-0171ec99e1b7@linux.microsoft.com>
+Date: Thu, 19 Mar 2026 14:31:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260319124616.1544415-1-amir73il@gmail.com> <20260319-unentbehrlich-reitturnier-f78d9fb01230@brauner>
- <CAOQ4uxiS1uM=mn4q6CQfganba1XcqyXYmXfQceWdfUVRFK_Pvg@mail.gmail.com>
- <CAHC9VhQDXHh_=X-OKD9oN8fapVXBwLakNp4rEHLUL0cQ1RSteA@mail.gmail.com> <CAOQ4uxinSLXKWjMgwyA2A_UU5e+6ZjbdsFUY-+f9DMfQcxH0qA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxinSLXKWjMgwyA2A_UU5e+6ZjbdsFUY-+f9DMfQcxH0qA@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 19 Mar 2026 14:44:30 -0400
-X-Gm-Features: AaiRm50mWSepRO31-IrCKePpEwYDJfx_2t8PZ8Bwv853YChliBvO2jCDu0_F2bc
-Message-ID: <CAHC9VhQbT1jPXN-nqmoNS4DGkYGWrVkO9-C1k-9zjYU9cRDi0A@mail.gmail.com>
-Subject: Re: [PATCH] fs: allow vfs code to open an O_PATH file with negative dentry
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Gao Xiang <xiang@kernel.org>, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, 
-	syzbot+f34aab278bf5d664e2be@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] ima: Add support for staging measurements for
+ deletion
+To: Mimi Zohar <zohar@linux.ibm.com>,
+ Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
+ skhan@linuxfoundation.org, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+ gregorylumen@linux.microsoft.com, nramas@linux.microsoft.com,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ steven chen <chenste@linux.microsoft.com>
+References: <20260311171956.2317781-1-roberto.sassu@huaweicloud.com>
+ <20260311171956.2317781-3-roberto.sassu@huaweicloud.com>
+ <587e11bf4d29552bbbfc029f716146e8ebfca1eb.camel@linux.ibm.com>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <587e11bf4d29552bbbfc029f716146e8ebfca1eb.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 19, 2026 at 2:30=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
-> On Thu, Mar 19, 2026 at 4:55=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > On Thu, Mar 19, 2026 at 10:50=E2=80=AFAM Amir Goldstein <amir73il@gmail=
-.com> wrote:
-> > > On Thu, Mar 19, 2026 at 2:13=E2=80=AFPM Christian Brauner <brauner@ke=
-rnel.org> wrote:
-> > > > On Thu, Mar 19, 2026 at 01:46:16PM +0100, Amir Goldstein wrote:
-> > > > > The fields f_mapping, f_wb_err, f_sb_err are irrelevant for O_PAT=
-H file.
-> > > > > Skip setting them for O_PATH file, so that the O_PATH file could =
-be
-> > > > > opened with a negative dentry.
-> > > > >
-> > > > > This is not something that a user should be able to do, but vfs c=
-ode,
-> > > > > such as ovl_tmpfile() can use this to open a backing O_PATH tmpfi=
-le
-> > > > > before instantiating the dentry.
-> > > > >
-> > > > > Reported-by: syzbot+f34aab278bf5d664e2be@syzkaller.appspotmail.co=
-m
-> > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > > ---
-> > > > >
-> > > > > Christian,
-> > > > >
-> > > > > This patch fixes the syzbot report [1] that the
-> > > > > backing_file_user_path_file() patch [2] introduces.
-> > > > >
-> > > > > This is not the only possible fix, but it is the cleanest one IMO=
-.
-> > > > > There is a small risk in introducing a state of an O_PATH file wi=
-th
-> > > > > NULL f_inode, but I (and the bots that I asked) did not find any
-> > > > > obvious risk in this state.
-> > > > >
-> > > > > Note that specifically, the user path inode is accessed via d_ino=
-de()
-> > > > > and not via file_inode(), which makes this safe for file_user_ino=
-de()
-> > > > > callers.
-> > > > >
-> > > > > BTW, I missed this regression with the original patch because I
-> > > > > only ran the quick overlayfs sanity test.
-> > > > >
-> > > > > Now I ran a full quick fstest cycle and verified that the O_TMPFI=
-LE
-> > > > > test case is covered and that the bug is detected.
-> > > > >
-> > > > > WDYT?
-> > > > >
-> > > > > Thanks,
-> > > > > Amir.
-> > > > >
-> > > > > [1] https://syzkaller.appspot.com/bug?extid=3Df34aab278bf5d664e2b=
-e
-> > > > > [2] https://lore.kernel.org/linux-fsdevel/20260318131258.1457101-=
-1-amir73il@gmail.com/
-> > > > >
-> > > > >  fs/open.c | 7 ++++---
-> > > > >  1 file changed, 4 insertions(+), 3 deletions(-)
-> > > > >
-> > > > > diff --git a/fs/open.c b/fs/open.c
-> > > > > index 91f1139591abe..2004a8c0d9c97 100644
-> > > > > --- a/fs/open.c
-> > > > > +++ b/fs/open.c
-> > > > > @@ -893,9 +893,6 @@ static int do_dentry_open(struct file *f,
-> > > > >
-> > > > >       path_get(&f->f_path);
-> > > > >       f->f_inode =3D inode;
-> > > > > -     f->f_mapping =3D inode->i_mapping;
-> > > > > -     f->f_wb_err =3D filemap_sample_wb_err(f->f_mapping);
-> > > > > -     f->f_sb_err =3D file_sample_sb_err(f);
-> > > > >
-> > > > >       if (unlikely(f->f_flags & O_PATH)) {
-> > > > >               f->f_mode =3D FMODE_PATH | FMODE_OPENED;
-> > > > > @@ -904,6 +901,10 @@ static int do_dentry_open(struct file *f,
-> > > > >               return 0;
-> > > > >       }
-> > > > >
-> > > > > +     f->f_mapping =3D inode->i_mapping;
-> > > > > +     f->f_wb_err =3D filemap_sample_wb_err(f->f_mapping);
-> > > > > +     f->f_sb_err =3D file_sample_sb_err(f);
-> > > > > +
-> > > > >       if ((f->f_mode & (FMODE_READ | FMODE_WRITE)) =3D=3D FMODE_R=
-EAD) {
-> > > > >               i_readcount_inc(inode);
-> > > > >       } else if (f->f_mode & FMODE_WRITE && !special_file(inode->=
-i_mode)) {
-> > > >
-> > > > I think this is really ugly and I'm really unhappy that we should a=
-djust
-> > > > initialization of generic vfs code for this. My preference is to pu=
-sh
-> > > > the pain into the backing file stuff. And my ultimate preference is=
- for
-> > > > this backing file stuff to be removed again for a simple struct pat=
-h.
-> > > > We're working around some more fundamental cleanup here imho.
-> > >
-> > > Fair enough, we can rip the entire thing from vfs if you don't like i=
-t.
-> > > The user path file can be opened and stored internally by selinux
-> > > without adding all the associated risks in vfs.
-> > >
-> > > Paul,
-> > >
-> > > Please see compile tested code at:
-> > > https://github.com/amir73il/linux/commits/user_path_file/
-> >
-> > No.  Definitely no.  Ignoring the fact that there is no reason we
-> > should pushing this into the LSM, doing it in this way means it is
-> > very likely that each LSM wanting to provide mmap/mprotect controls on
-> > overlayfs will have to create a new O_PATH file.  No.
-> >
-> > ... and let me preemptively comment that this doesn't belong in the
-> > LSM framework either.
-> >
-> > As Christian already mentioned, this really needs to be addressed in
-> > the backing file code, please do it there.
+On 3/17/2026 2:03 PM, Mimi Zohar wrote:
+> Hi Roberto,
 >
-> OK, will give it another try.
+> On Wed, 2026-03-11 at 18:19 +0100, Roberto Sassu wrote:
+>> From: Roberto Sassu <roberto.sassu@huawei.com>
+>>
+>> Introduce the ability of staging the IMA measurement list for deletion.
+>> Staging means moving the current content of the measurement list to a
+>> separate location, and allowing users to read and delete it. This causes
+>> the measurement list to be atomically truncated before new measurements can
+>> be added.
+> I really like this design of atomically moving and subsequently deleting the
+> measurement list.  However this is a solution, not the motivation for the patch.
+> Please include the motivation for the patch, before describing the solution.
+>
+>> Staging can be done only once at a time. In the event of kexec(),
+>> staging is reverted and staged entries will be carried over to the new
+>> kernel.
+>> Staged measurements can be deleted entirely, or partially, with the
+>> non-deleted ones added back to the IMA measurements list.
+> This patch description is really long, which is an indication that the patch
+> needs to be split up.  Adding support for partially deleting the measurement
+> list records, by prepending the remaining measurement records, should be a
+> separate patch.
+>
+>> This allows the
+>> remote attestation agents to easily separate the measurements that where
+>> verified (staged and deleted) from those that weren't due to the race
+>> between taking a TPM quote and reading the measurements list.
+>>
+>> User space is responsible to concatenate the staged IMA measurements list
+>> portions (excluding the measurements added back to the IMA measurements
+>> list) following the temporal order in which the operations were done,
+>> together with the current measurement list. Then, it can send the collected
+>> data to the remote verifiers.
+> This belongs in a Documentation patch.
+>
+>> The benefit of staging and deleting is the ability to free precious kernel
+>> memory,
+> This is the motivation for the patch.
+>
+>> in exchange of delegating user space to reconstruct the full
+>> measurement list from the chunks. No trust needs to be given to user space,
+>> since the integrity of the measurement list is protected by the TPM.
+> Agreed the measurement list, itself, is protected by the TPM.  However, relying
+> on userspace to reassemble the chunks is another concern. Support for staging
+> and deleting the measurement list should be configurable.  Defining a Kconfig
+> should be part of this initial patch.
+>
+>> By default, staging the measurements list does not alter the hash table.
+>> When staging and deleting are done, IMA is still able to detect collisions
+>> on the staged and later deleted measurement entries, by keeping the entry
+>> digests (only template data are freed).
+>>
+>> However, since during the measurements list serialization only the SHA1
+>> digest is passed, and since there are no template data to recalculate the
+>> other digests from, the hash table is currently not populated with digests
+>> from staged/deleted entries after kexec().
+>>
+>> Introduce the new kernel option ima_flush_htable to decide whether or not
+>> the digests of staged measurement entries are flushed from the hash table,
+>> when they are deleted. Flushing the hash table is supported only when
+>> deleting all the staged measurements, since in that case the old hash table
+>> can be quickly swapped with a blank one (otherwise entries would have to be
+>> removed one by one for partial deletion).
+> Allowing the hash table to be deleted would be an example of another patch.
+>
+>> Then, introduce ascii_runtime_measurements_<algo>_staged and
+>> binary_runtime_measurements_<algo>_staged interfaces to stage and delete
+>> the measurements. Use 'echo A > <IMA interface>' and
+>> 'echo D > <IMA interface>' to respectively stage and delete the entire
+>> measurements list. Use 'echo N > <IMA interface>', with N between 1 and
+>> ULONG_MAX - 1, to delete the selected staged portion of the measurements
+>> list.
+>>
+>> The ima_measure_users counter (protected by the ima_measure_mutex mutex)
+>> has been introduced to protect access to the measurements list and the
+>> staged part. The open method of all the measurement interfaces has been
+>> extended to allow only one writer at a time or, in alternative, multiple
+>> readers. The write permission is used to stage and delete the measurements,
+>> the read permission to read them. Write requires also the CAP_SYS_ADMIN
+>> capability.
+> Yes, this is part of the initial patch that adds support for staging the
+> measurement list.
+>
+>> Finally, introduce the binary_lists enum and make binary_runtime_size
+>> and ima_num_entries as arrays, to keep track of their values for the
+>> current IMA measurements list (BINARY), current list plus staged
+>> measurements (BINARY_STAGED) and the cumulative list since IMA
+>> initialization (BINARY_FULL).
+>>
+>> Use BINARY in ima_show_measurements_count(), BINARY_STAGED in
+>> ima_add_kexec_buffer() and BINARY_FULL in ima_measure_kexec_event().
+>>
+>> It should be noted that the BINARY_FULL counter is not passed through
+>> kexec. Thus, the number of entries included in the kexec critical data
+>> records refers to the entries since the previous kexec records.
+>>
+>> Note: This code derives from the Alt-IMA Huawei project, whose license is
+>>        GPL-2.0 OR MIT.
+>>
+>> Link: https://github.com/linux-integrity/linux/issues/1
+>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> The design looks good.  As I mentioned above, this patch description is quite
+> long, which is an indication that the patch needs to be split up.  One method of
+> breaking it up would be:
+>
+> - (Basic) support for staging measurements for deletion (based on a Kconfig)
+> - Support for removing the hash table
 
-Thanks, please let me know if there is anything I can do to help, e.g.
-testing, etc.
+Great work on performance improvement and hash table redesign.
 
---=20
-paul-moore.com
+If update the following "Trim N" method patch with your current patch 
+lock time performance
+improvement plus the hash table change, "Trim N" method can do the same 
+kernel
+measurement list lock time as staged method do, right?
+
+https://lore.kernel.org/linux-integrity/20260205235849.7086-1-chenste@linux.microsoft.com/ 
+
+> - Support for deleting N measurement records (and pre-pending the remaining
+> measurement records)
+
+Is there any problem to bring work of "stage" step together to the 
+deletion step?
+
+"Trim N" method does everything that "staged" method can do, right? 
+what's the "stage"
+method can do but "trim N" method can't do?
+
+in user space, if in "staged" state, no other user space agent can 
+access the IMA measure list, right?
+
+Could you explain the benefit of bringing the "stage" step?
+
+Thanks,
+
+Steven
+
+> - Adding documentation
+>
+> thanks,
+>
+> Mimi
+
+
