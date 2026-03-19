@@ -1,144 +1,218 @@
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B0B2F28FC
-	for <linux-security-module@vger.kernel.org>; Thu, 19 Mar 2026 18:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1335B26B2CE
+	for <linux-security-module@vger.kernel.org>; Thu, 19 Mar 2026 18:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.47
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773944540; cv=pass; b=ftHCnPtZxxIxB8ghW7yAmYJEe8KI+vWevv6z6lofxeLjScraNogOqF3BqsfZvZ0fgTt/+UaoGi4lu1nn/ertPUklTDn75v250HrvJvDCm/ZQjFPAwTGuegrr6jdxGLybIs/Q142BhTIOSbhpCJgIWY8AE0xFiie1N4vsdMArCfk=
+	t=1773945061; cv=pass; b=Grtvci+Thnfue1wSKj0JqDAng2+wb8WejPlCJ7luuh+mWqL1MBEuhgGH1klKYdtmribygh6HNS0y3n5mhwChj/HjFievQDd5M/X1vU38cRt90sbV/89wEAZ10IGZ5bxW/CqO8a7tbP4TBw7BnW5jO5BS1CwwawRiTUpEz0WTtOU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773944540; c=relaxed/simple;
-	bh=jQglwnXRYkLRXqDE9gqwJFjVbBcRl+Tw0aJqtzOAowk=;
+	s=arc-20240116; t=1773945061; c=relaxed/simple;
+	bh=XDXiDxThcJliysAkHl5an+e0+DrYLc2/sF3Jz2IJVXo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ir5K+Adoy0REz4tADB7jalcc8XTDaaKdiT+/u4LCcSNKLgwiANkYrmOTk7t75LgJx0P0HKaEjDORKBVvVFk+f5xiwE8zlaZI21A4sxcr6//LNzo13UdlfQhGyL38qc8OeUNINhZTPl9pC+zgTjb5fjPGgkEEqoMrBnclNzDSioo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g4m4zjk5; arc=pass smtp.client-ip=209.85.215.177
+	 To:Cc:Content-Type; b=o4eiwRnz7oQjiiKiYIBqLGS569VKbooN9iHSDyXxq1ePp6iC1/ozQOyiSGEeWgqjzo+I4nPVZO3EQ9kbOCK6XGo32qTqkmbjtJN1rY5xhLr0YiHQyLy29CxeqpobZHXkjls1ZeK5XMHa8uIfIke3AGBizKKKBaBNtOB/AaM6qRY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LcSz+E/w; arc=pass smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g4m4zjk5"
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-c7413a0e5a0so703888a12.1
-        for <linux-security-module@vger.kernel.org>; Thu, 19 Mar 2026 11:22:19 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773944539; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LcSz+E/w"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6653b589a78so1919581a12.3
+        for <linux-security-module@vger.kernel.org>; Thu, 19 Mar 2026 11:30:59 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773945058; cv=none;
         d=google.com; s=arc-20240605;
-        b=jJZ96T9Kxs3kM2jHkRGO88MfjIYxoXJbJjpaXHbTxA5mCEPFIi4IGvtfkPCJL3A7Ha
-         b9dphNXrWgOfp5YrXOUo6gPnjp+NX7LjDPjD4jLc8uTxhWVc1PCvaMzxhUyz3ld/NNbf
-         MsfM0jpL6UBC+H/bSJm002t94VdUaBaLttK19P685BE81YLEf4z8yyWk9JtNxcCX44j5
-         gNiVueMNW4f0QXQnDRJSh8oOKxWZ1fG7xO9oDaaryXWck5QaIRUO0rqWYKFUPS5Cc7nZ
-         WrXHebrs+t+v18RHOORtGR18aFKTxagQikSGYdFl2VeQkqBMUNpCLIH7HlemMUr06aSp
-         /G3w==
+        b=Td2GHdCfgkL4Ab6eR/g5l3ugGpMTYMvogrojUKcYCP5aWBeNlHCFOyZDIZx8OMIq9Q
+         P8jr5WmPl0lDG+FDJ2Lq38Y8aWHjgsO2qatX5y/bhOQd8wheKTiBsbCxfw8XDIcOBTl8
+         Cg30Es5b5ioiKz3gmIdXYeq+DqGEspI3A53gRyqyPA14Hyp9eBQrmD6TwjOJ39uQvlf1
+         Y8tjsI8ASIWHMdQ5eHbxwnp+hwOd0xULU9InxmuYZ+xcEDDRZ26ZwALyL/RJYdg7yLzz
+         BihiUv3AKKgWQ7TJccKljxFASK/9z9mAW26RmkV1xQNW3gIBvTjp/rFooORR59HyXyc2
+         Gmfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=wGtVnWtsfaGgBIbYEDL4O4rFQxf4WvyYRQa+7HbQ8SM=;
-        fh=mXsZpKJ3oPUMO1yrwDSgwq+96/zNzHSzGs2wFi1+HWo=;
-        b=fArkSjxTF14HgH3iVVe3+vPWTYDbCIqXlYAiPIHOVgczPYFLiWxM69IOFAoaFZSfiK
-         nJGd30YhpQREPFa6IOzznMD2Q0yKLHl4+GK4sXw5jWIhWxnE7B7F+qhuHNuVzu3Tw7UT
-         T2uMZfRHfeI7wVkXu37n+PRQz+ooRp3tIDVBKODEhSu1tnHNUfMrFMhKaIWnlJUSSEbU
-         FnZ8ao+9mUgah0rncOdJcH6UgEXFtC4XT7a35vl3g+ZnGZgs/2vm8YX3+rE/0NpupCLB
-         YLxKzoBLflm5alYJYXRtLjW7Bml6i0FghgJDZrpdFEcLImY4wZYqh4b3WIi4AVSv3Tz2
-         W4EA==;
+        bh=FJV4dFXvSmt1MChF30a7mY59ejZaZEAqv6m7VOg5tb8=;
+        fh=/lXwbsEmfcpfiGXdP/7hoOvEKm0kquxVb721uALUToc=;
+        b=Vi9RrBzta09HRDoC5hibjnW8z01vwh0GWheSPgQmcfsTSNmgdn6RVGv50Xh/DPgtvh
+         bGPmu1BSZN7MHj/A7XvSuDiLhgo2VKVAWGAzxXIeFuODzye0L4dacZU8wst1vy9DiOfk
+         iNQFni03gAW9i/AwZcuQivbkQAHgi0l8bViZWu3Tp2WSEN7CoiZh97TyuVfxnII3/T8Y
+         BIPGl3/EyQIF+11onuVBG7KYjLM2azpxpg/fWk7wAD114SKjduqixQKtrW219EeUKKPw
+         BzdpYSUQ+8MkYxF7c1ocZuYg0C0jw49sRhsU2WFaEaCk68/C8kJHgT+4mfgbCcGEpMru
+         7xiw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773944539; x=1774549339; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1773945058; x=1774549858; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wGtVnWtsfaGgBIbYEDL4O4rFQxf4WvyYRQa+7HbQ8SM=;
-        b=g4m4zjk5KfW5upeQHVL7dubvrtcHBsZCwFfl4lgYdSHOWEJiHsSTE9b+s6PPxON+I5
-         jB7AWH3W0ibhQii0iu3xkMsavz7KV5S28tjXoMH4zATiG+E6XU318VBi0Y1P8b7IL/E6
-         krb22YbqCkVhMPP4vSXaeXGp+BTmmAQ7Z/bd+5xR7Aglnv2IKpgG/R8YeHd+RwZ/bEis
-         WVryl4mQsvG4e5HQfIl9mo0oIlHIAVesuCUB6YYthMK7bXwLKNOcKciqzRcEnfz5D4mt
-         ++m5e+M3ct2OEPJnNtsuWRlS/YlivmZ9kY6zDlx5ZqsOQ0chr4X9kvoJzX8U6xbruLvm
-         z9Kg==
+        bh=FJV4dFXvSmt1MChF30a7mY59ejZaZEAqv6m7VOg5tb8=;
+        b=LcSz+E/waUBYWjrBULqICHmRq3sGno9OwdMcFklTglWFJAnfzjhBHoyzPO8OvBD1g0
+         gmLsSGj/SJV0JyuM4YSYSqhy6IGjJQ7S0IBuyHcMSFJ97TH93VFPWNibfo/7i81T5nNI
+         FRXvIUGI1XconIdavPnjdxn0JeBlvfRKXvsae6DUrTFxZU0B1eO8QbAJjzkzGpypOo4X
+         g14i1xPf7MjCHoQcJRHHNZYZyEF6vLGM4J0ej6/U4vbfvhS/TKp49DhpLsfmRSjNUVFU
+         QAT2JyDDlwtVxmHc/30JYZKye4h5gwJAt3Gtv9hUgDQrFQ3gT2LLqrvwb6TyGKauSrRg
+         wb+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773944539; x=1774549339;
+        d=1e100.net; s=20251104; t=1773945058; x=1774549858;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=wGtVnWtsfaGgBIbYEDL4O4rFQxf4WvyYRQa+7HbQ8SM=;
-        b=H7MXdtlBWqiyteQm5ykALYH57Eb7dz3PpW4b8++94eoVXcfV0+Gd5rr14VHu2vGGhj
-         FBvSpOvI0mg2cVXTNAjHcRj1HK/gcpvkQZag1VynM/vjosf33Hx4k/3gnVO6B7ASZc5u
-         9l4RAz3Ccfq1KRdZYMEn5m79+ivtthUutG6VI3EIHiSKetSyuKPpEWxePMyedCI4ZFOT
-         Y5Vgya6fGPKfZQ6WIWbrG4FAnANt8PKaArfHGvjpC/UoWGE8dwALGKtUEzWHw7KRcPpO
-         OYtAz4WZnIfOmZLK/vtQ6jyStHDlWAmOzOTKxTpEqb92jjaxjbRPOZt7jYzmX1mZXJ00
-         XDXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXlalaE8haOz5wvtbQu6bNWG8WWvq5xLd8Tx/27UgYObTOmhaPvX5S8bYg1ZIFTIpXDAqiVLy1oE/aXX8NjTTei+5n06s8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuihPgan1W1DCBRzpTFKI3LF+Lz6P2lX3enWt+igSd1zftzLk1
-	GKduJqvmUeKl4AMOfcH8o50jDaldPjRhEKmdZhVKUsNJFEpYcpUveIMHZTRbVRcQnL24zLXkyMA
-	H0hM9FFlZjxKZMbJIxTO/7+xFTNRj804=
-X-Gm-Gg: ATEYQzwNDhaZW/FA7jCqrkXoe/AvWt/5JN0v9cj9D3qLlU5xkIpQESEXRS8zLvWmYJ2
-	n9m/zeiZUd871FILTJrVPXPPzkwDZvSY56Ea3HpYMGEZwLbOpEt5O2Q2djDF7o9XzlxNcfshpI8
-	1wZ++twXRXPxPO5Ynbesi+nOX2c7pxn5DzdP5tDwW+a8sB08AbsKfIkSiJTWqDx4iYUe8hoeCTE
-	MmapFhGO+jgZhgqbrmETw/VH6Er4a5WhGneOGFwJjJkWfTVwE7pA4GJzF21ILBl8PizlLQk4khO
-	2OC2H84=
-X-Received: by 2002:a05:6a21:6d94:b0:394:427b:eab with SMTP id
- adf61e73a8af0-39bce9de099mr348079637.11.1773944538940; Thu, 19 Mar 2026
- 11:22:18 -0700 (PDT)
+        bh=FJV4dFXvSmt1MChF30a7mY59ejZaZEAqv6m7VOg5tb8=;
+        b=Cxzgg+mw83jwbx703bDeUCXcKOR/NfkBhEAwCTKLXmmcCCEGZiA/yRHNV/dBucr8cJ
+         xOAoIulL0PWvEoWx4Muvrzq5FXtLR1nSMLJZqJgr1/zzBbj+vgp6+6pu24V+Ohlcx+TC
+         Pwas+YvVLfv9ysmHI7IupX4DLDWX8krWrj15VTsgbS7j2C/g6Y2K78JTrYOQNIxnAAKG
+         z+flGUQmfb2wxluMR38fThqHaVDxFgnzJRp3RThjMd/uvTd3DB5aepjO/S5qex8CNadN
+         0mp0zSAa2rM7yx4EJs40JyecuqI69W821+kn068aId891n/XvmfEXS98lKhFUwKqRvmE
+         mVxg==
+X-Forwarded-Encrypted: i=1; AJvYcCWlEfx/7e3yDyVSaEUOEUwTCEUFVSBwfYrhrVBYEi02+qo4/0A6rAPviZ2CArdpIWtJs9VM7IaH0Vywy5YYZkulOMT/7b4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzedFBpaMNOqFL57uA3NAiHkyVGXeTlZohdltgxxSp1s23J9yv
+	LZcfIBPAft+TSMAbHDfW2VflOpUY8BwmxEyE0CdhMhEF6fuDfcyoXYikJRA7ijh8fpcXbb/iIvT
+	QiIY7q+OzzN7ZHhVD1UrgswMyckuKH4A=
+X-Gm-Gg: ATEYQzyNtEKbIGlmlNi8Yn5flcyLj2DDIJ7BbpNL52mFVe0lfZDVc8OHv9hecctUSVX
+	2RGld4sgBNyvaQ8NsRor2juzNwvcH1EIhHKP/fFhzN0PeyGbxiCw51+zN3wThetutLSXxr5GnWm
+	EbyPtgkj9cVw12uuSEqPx9AWsvkZ7vYImL7nItovtCM4NLmWpvIcZa8g/tuLSGmSCwWdhovGyTi
+	dHiCHQwb98DPZ6EIlUDUJL94hq0AcFySSN4/LQ0cAyDlGnKF62kpSglfdmwiTBKUN4I9sU1k2Rr
+	ocBkNSezsUoaGYAexF6oR2yM3JRvYdcA15inE7Ro7A==
+X-Received: by 2002:a17:906:c802:b0:b93:a3db:a68c with SMTP id
+ a640c23a62f3a-b982f3e0617mr18697866b.40.1773945058029; Thu, 19 Mar 2026
+ 11:30:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <df35542e-d58f-47db-8a4f-92698281a69a@schaufler-ca.com>
- <20260319022208.69924-1-yangfeng59949@163.com> <80ff003b-51fd-4ec8-9505-dfc1c5890ced@schaufler-ca.com>
-In-Reply-To: <80ff003b-51fd-4ec8-9505-dfc1c5890ced@schaufler-ca.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Thu, 19 Mar 2026 14:22:06 -0400
-X-Gm-Features: AaiRm524MDUd0vlJT7wV4jxy_l7-1kC_j1FcxEAdzOxEKKMOQuBRx9ObpyBl6Go
-Message-ID: <CAEjxPJ5aA01in+Z1yLF1cwe-3uqL_E8SKGK4J294D5eRG5__5Q@mail.gmail.com>
-Subject: Re: [PATCH] lsm: Fix the crash issue in xfrm_decode_session
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Feng Yang <yangfeng59949@163.com>, jmorris@namei.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com
+References: <20260319124616.1544415-1-amir73il@gmail.com> <20260319-unentbehrlich-reitturnier-f78d9fb01230@brauner>
+ <CAOQ4uxiS1uM=mn4q6CQfganba1XcqyXYmXfQceWdfUVRFK_Pvg@mail.gmail.com> <CAHC9VhQDXHh_=X-OKD9oN8fapVXBwLakNp4rEHLUL0cQ1RSteA@mail.gmail.com>
+In-Reply-To: <CAHC9VhQDXHh_=X-OKD9oN8fapVXBwLakNp4rEHLUL0cQ1RSteA@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 19 Mar 2026 19:30:46 +0100
+X-Gm-Features: AaiRm52lvBNmAkQT7DVWo0zF8FRRxYDmyiueu4eOodN3UFl0EjhqJc-Pr5qKv7g
+Message-ID: <CAOQ4uxinSLXKWjMgwyA2A_UU5e+6ZjbdsFUY-+f9DMfQcxH0qA@mail.gmail.com>
+Subject: Re: [PATCH] fs: allow vfs code to open an O_PATH file with negative dentry
+To: Paul Moore <paul@paul-moore.com>
+Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Gao Xiang <xiang@kernel.org>, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, 
+	syzbot+f34aab278bf5d664e2be@syzkaller.appspotmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 19, 2026 at 1:52=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
-.com> wrote:
+On Thu, Mar 19, 2026 at 4:55=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
 >
-> On 3/18/2026 7:22 PM, Feng Yang wrote:
-> > On Wed, 18 Mar 2026 10:09:47 -0700, Casey Schaufler wrote:
-> >> On 3/17/2026 11:19 PM, Feng Yang wrote:
-> >>> From: Feng Yang <yangfeng@kylinos.cn>
-> >>>
-> >>> After hooking the following BPF program:
-> >>> SEC("lsm/xfrm_decode_session")
-> >>> int BPF_PROG(lsm_hook_xfrm_decode_session, struct sk_buff *skb, u32 *=
-secid, int ckall)
-> >>> {
-> >>>     return 1; // Any non-zero value
-> >>> }
-> >>> Subsequent packet transmission triggers will cause a kernel panic:
-> >> LSM hooks that use or provide secids cannot be stacked. That is,
-> >> you can't provide a BPF LSM hook and an SELinux LSM hook and expect
-> >> correct behavior. Your proposed "fix" removes a legitimate check.
-> > I'm very sorry, I didn't quite understand what you meant.
+> On Thu, Mar 19, 2026 at 10:50=E2=80=AFAM Amir Goldstein <amir73il@gmail.c=
+om> wrote:
+> > On Thu, Mar 19, 2026 at 2:13=E2=80=AFPM Christian Brauner <brauner@kern=
+el.org> wrote:
+> > > On Thu, Mar 19, 2026 at 01:46:16PM +0100, Amir Goldstein wrote:
+> > > > The fields f_mapping, f_wb_err, f_sb_err are irrelevant for O_PATH =
+file.
+> > > > Skip setting them for O_PATH file, so that the O_PATH file could be
+> > > > opened with a negative dentry.
+> > > >
+> > > > This is not something that a user should be able to do, but vfs cod=
+e,
+> > > > such as ovl_tmpfile() can use this to open a backing O_PATH tmpfile
+> > > > before instantiating the dentry.
+> > > >
+> > > > Reported-by: syzbot+f34aab278bf5d664e2be@syzkaller.appspotmail.com
+> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > > > ---
+> > > >
+> > > > Christian,
+> > > >
+> > > > This patch fixes the syzbot report [1] that the
+> > > > backing_file_user_path_file() patch [2] introduces.
+> > > >
+> > > > This is not the only possible fix, but it is the cleanest one IMO.
+> > > > There is a small risk in introducing a state of an O_PATH file with
+> > > > NULL f_inode, but I (and the bots that I asked) did not find any
+> > > > obvious risk in this state.
+> > > >
+> > > > Note that specifically, the user path inode is accessed via d_inode=
+()
+> > > > and not via file_inode(), which makes this safe for file_user_inode=
+()
+> > > > callers.
+> > > >
+> > > > BTW, I missed this regression with the original patch because I
+> > > > only ran the quick overlayfs sanity test.
+> > > >
+> > > > Now I ran a full quick fstest cycle and verified that the O_TMPFILE
+> > > > test case is covered and that the bug is detected.
+> > > >
+> > > > WDYT?
+> > > >
+> > > > Thanks,
+> > > > Amir.
+> > > >
+> > > > [1] https://syzkaller.appspot.com/bug?extid=3Df34aab278bf5d664e2be
+> > > > [2] https://lore.kernel.org/linux-fsdevel/20260318131258.1457101-1-=
+amir73il@gmail.com/
+> > > >
+> > > >  fs/open.c | 7 ++++---
+> > > >  1 file changed, 4 insertions(+), 3 deletions(-)
+> > > >
+> > > > diff --git a/fs/open.c b/fs/open.c
+> > > > index 91f1139591abe..2004a8c0d9c97 100644
+> > > > --- a/fs/open.c
+> > > > +++ b/fs/open.c
+> > > > @@ -893,9 +893,6 @@ static int do_dentry_open(struct file *f,
+> > > >
+> > > >       path_get(&f->f_path);
+> > > >       f->f_inode =3D inode;
+> > > > -     f->f_mapping =3D inode->i_mapping;
+> > > > -     f->f_wb_err =3D filemap_sample_wb_err(f->f_mapping);
+> > > > -     f->f_sb_err =3D file_sample_sb_err(f);
+> > > >
+> > > >       if (unlikely(f->f_flags & O_PATH)) {
+> > > >               f->f_mode =3D FMODE_PATH | FMODE_OPENED;
+> > > > @@ -904,6 +901,10 @@ static int do_dentry_open(struct file *f,
+> > > >               return 0;
+> > > >       }
+> > > >
+> > > > +     f->f_mapping =3D inode->i_mapping;
+> > > > +     f->f_wb_err =3D filemap_sample_wb_err(f->f_mapping);
+> > > > +     f->f_sb_err =3D file_sample_sb_err(f);
+> > > > +
+> > > >       if ((f->f_mode & (FMODE_READ | FMODE_WRITE)) =3D=3D FMODE_REA=
+D) {
+> > > >               i_readcount_inc(inode);
+> > > >       } else if (f->f_mode & FMODE_WRITE && !special_file(inode->i_=
+mode)) {
+> > >
+> > > I think this is really ugly and I'm really unhappy that we should adj=
+ust
+> > > initialization of generic vfs code for this. My preference is to push
+> > > the pain into the backing file stuff. And my ultimate preference is f=
+or
+> > > this backing file stuff to be removed again for a simple struct path.
+> > > We're working around some more fundamental cleanup here imho.
 > >
-> > Maybe my commit message wasn't clear. I only used a BPF LSM hook withou=
-t SELinux stacking enabled.
+> > Fair enough, we can rip the entire thing from vfs if you don't like it.
+> > The user path file can be opened and stored internally by selinux
+> > without adding all the associated risks in vfs.
+> >
+> > Paul,
+> >
+> > Please see compile tested code at:
+> > https://github.com/amir73il/linux/commits/user_path_file/
 >
-> Do i understand correctly that you do not have SELinux enabled?
+> No.  Definitely no.  Ignoring the fact that there is no reason we
+> should pushing this into the LSM, doing it in this way means it is
+> very likely that each LSM wanting to provide mmap/mprotect controls on
+> overlayfs will have to create a new O_PATH file.  No.
 >
-> > Therefore, is it the expected behavior that simply using
-> > SEC("lsm/xfrm_decode_session")
-> > int BPF_PROG(lsm_hook_xfrm_decode_session, struct sk_buff *skb, u32 *se=
-cid, int ckall) {
-> >     return -1;
-> > }
-> > would cause a kernel panic?
+> ... and let me preemptively comment that this doesn't belong in the
+> LSM framework either.
 >
-> Yes. As the infrastructure is written, any return other than 0 is erroneo=
-us.
-> You will need to query the SELinux developers about why they decided to
-> implement the xfrm handling in this way.
+> As Christian already mentioned, this really needs to be addressed in
+> the backing file code, please do it there.
+>
 
-Looks like this BUG_ON() has just been preserved since first being
-introduced by:
-https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/commit/=
-?id=3Dbeb8d13bed80f8388f1a9a107d07ddd342e627e8
+OK, will give it another try.
 
-I think we can remove it at this point - it evidently doesn't ever
-trigger for SELinux or we would have seen it by now and it is
-definitely unsafe for BPF LSM.
+Thanks,
+Amir.
