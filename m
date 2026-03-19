@@ -1,224 +1,119 @@
-Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic305-27.consmr.mail.ne1.yahoo.com (sonic305-27.consmr.mail.ne1.yahoo.com [66.163.185.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB333D34A0
-	for <linux-security-module@vger.kernel.org>; Thu, 19 Mar 2026 17:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF763ECBE4
+	for <linux-security-module@vger.kernel.org>; Thu, 19 Mar 2026 17:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773942483; cv=none; b=mY0ijufUw+0vBvQn41JrPjlFxYCxQK4pAoDl/l0qBiLFVC5w4L+3MHwvlpzz5m3LY/Mr0yC36tQwiSi6xu7CFL+LO3vXV6LdW1ONs9q2PdbHuSf5ECJDSQ22Bg5jsQP9W/9luVaqeH+at7xGQLK0knfTLo5GAWyCfHU8gKN/i40=
+	t=1773942702; cv=none; b=IFYWRvvuU+3EsMQcTZJyyhaI7GT4dFr+kxZWIZMwVCFywzVojzZgD9K4HeFAKL43q85nL7DopN/7SJOfsPTFsiqHFxKRtwD+k8kKImAn62HK3YiGrYPOqykhjsKrgwVMyH0ANpdL41QaQ28A39gixqWjHjFzI/i4ERjduBECIvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773942483; c=relaxed/simple;
-	bh=AynbVbF1FtlpDaskwHeUHn4zohSv5D+sAGblfymXqF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XDrCs7aXcI4Zws1/NorflwBHgt1VimQGf3e0IWlpnd3HoS+aIMVKhrg2vuavt5KuVwXwvI3RGlTT4bK+37riFyDetxHoBUw26EuDeKQaMAWvt8sVYkL5lW4n25cSgWMy8/fnSXyTL6HaEmNk96iYkQRKOLok+ld9ZCF07zqZGq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=syvbwr4w; arc=none smtp.client-ip=185.125.25.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1773942702; c=relaxed/simple;
+	bh=D/WQWA9b4kQLeOZ+xSiiNmjeHVJZJFpXX+t7fx44akg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rSfg4nW088B1ED0AOizCfmRHGXVZ0kiABSURmpObwchmUrX2MCCLQphvZvIDBHi/lHXUevPKnVpJWkMKclHzgOs4ZfWalLtfCMM7+xko8MUadb9s0igwJDOQQv4Op9ckFKNjlgLplHLwcvwxsHGYx1Z3PCQgxmujE9Ip+brW6YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=OsudCZz+; arc=none smtp.client-ip=66.163.185.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="syvbwr4w"
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fcCpC07YGzmnQ;
-	Thu, 19 Mar 2026 18:47:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1773942466;
-	bh=1+Q04fJ0jT/nenfplninVye4mdQMNSzbm7XUcoTUtIM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=syvbwr4wYYWFOekEpoBj9NCnApksCprlfSqYmy5WZgS2HrtlgjsSk5cwEPGd3MjHC
-	 R51JrYtCuWTaohuaZAKrDRcdX0tPy5zVuViXiycy8xwpxt+3MC4S21hSB36STMMo3e
-	 XqWqF7NpbsOFYc0S30qd+C/pU8QehsFOIQW+v4y8=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fcCpB3cjkzP1k;
-	Thu, 19 Mar 2026 18:47:46 +0100 (CET)
-Date: Thu, 19 Mar 2026 18:47:45 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	linux-security-module@vger.kernel.org, Justin Suess <utilityemal77@gmail.com>, 
-	Tingmao Wang <m@maowtm.org>, Yihan Ding <dingyihan@uniontech.com>
-Subject: Re: [PATCH v1] selftests/landlock: Test tsync interruption and
- cancellation paths
-Message-ID: <20260319.eicheNg3ooxu@digikod.net>
-References: <20260310190416.1913908-1-mic@digikod.net>
- <20260314.61cb1f2dc01d@gnoack.org>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="OsudCZz+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1773942691; bh=Pg+4BxK0NPvB6iZRMKoVBOpAWheHY8kyA5B8ghw+xpA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=OsudCZz+DhGYlwi15mlhNtUG25bCOeJFp2UWPPt7W2zr4DKtxC+S4qvG25bV0/HwilFEyqLHDgJQ9OjNS82rddngAXjbXuRnhWEM958OibQ37apdxZsNL/8FxLrd0ySojdQGkFYp3kOVxERqacNNcCrmeHVJlpMvw/nvlIW3sN6Nq4y0zRX/i8DsfkEMPJSS2xsp2EnFBpe5OZlrpN+hgtdaFrbsOBNG8g8aYuK+1rR98B4vY7cNzv4d8GMxpXt/bpfVzubUQOHeWiUNPz7a8lmWuKwqDc2CM8bbzsiu7hfynGsOhitBhsJtvnuycLnfSLGu25+vSTQI9uOPQ4rIKg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1773942691; bh=1oCWO/9WYaLQp7kLnmwjX+nuMdS5Dln87I7Khvixnl0=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ktVe0pkHpwY0d8lSPD3CwTEahWQcNxjJOBNbiATflGVcouVLQWzpwvijZttookmrtDAKU5E9jnz56l+AzgRvZB/YX34ATlXLS3Io9zHCUzVaCPZ2LItRGucETQYmboOZyj86wwEVSDogo90Us+lf0HwHJS+J8h0kp4Io/T/s5+PQpLGS+BSkDptEBIIorLltRsuZNV260QRuMn4uLFB2bnfsZu3dHB85wAZzM6aNBgeKJsTq6CBtGE+D3EIab1zps5bfsxrWWebVe6Hpoq9aXq+XwJqV7FZ+cGod1vv00vtF6vaANrpazqO7kbeZUJ1z6y/E18qPrbhmEW6X4QSyfg==
+X-YMail-OSG: 8LxPzE8VM1lTN63PTuPxOLrLoXq0GR9aKOzPMcogyeCW53LpXWzFgTdHWgprUNa
+ VBZ8k9uohtOdIo3xZBDN1ucPyID_r6hVgI16Ab3Qvt9BqYpnFxwHwqVaN7jB4e4kVoDA5lF2oN.M
+ FrOo5iDEEYVi1XdGty6EQEiEcZaU.sC9Mdqcbs117RDVfW4hepEj4N6o8npowDvVqji_XD5bf6vd
+ L_Ok8FZcG3wiaJmeSKp.JmynTOJbzcj4RIQiEPsETxJKACiWut6PcvMFQ4NjMVcj42sjIrHHoqXa
+ BuPpyJy8K6SqKbhgR0HCN_wX1D5bCWVaPFdiq3sD9UP6_ZnNfY2VNNGYp5GFAEv7fPVRve6QkOPS
+ c4aJJZBArOKG1rDbQVh1HbZwS37l6BDxzNihzx_0gl0ZsGWCJQdA1Fz7YHzBnivCt3ImmW5jdlXI
+ _NNAPLVKg9Led8d4cGo4FhOU0EW0SbLhzz1IMhaLrx8FKrTIAuhoLy1cxookqqLMFmxG5524W.o6
+ WwfxEFAu_y72YHNl.tU8Yf4w6OVUInNhw9tS4KIp17j9MIqPfPMfLl_VLXRl7gKeOAHp1Zso6nh.
+ p3_ew49bl3O2ImLtbPDInJ1wYFDQm6pFrkH48RQ0TKCgVjblkylQqKctk94pL0rzaYl6aKTnI5GE
+ tyi_Io.qRJ6AWEJw3yhLysvouJBevfFotXcppj.8ZdBSDNvn7UQdcXSeUyWNKpcRsBhi.VqSnew9
+ UjTnME4HWYFqndzdgj0aiqN6otc0eA8hCG8H6e5h40Tvs140bzANG1BATOpamDlszQunXTan8BRa
+ O.9NXb7_4oMEsgko6rPAz7i4oneb_Jxso1Rx0Qz8ZlZgvJsSiiC5hH1dOl0O4hce3sVSJGZsvd_l
+ HtltWMuFGj6HvQfiVN0.P0H1gCApdK43mxOt0Kt1Gbxdq7rqp0Trg3Qyn75Y88PVQvdPSQ5WMXim
+ vYCKGysNOLdRN6K9ceLCbzYST3MYLy1KSQlCKVq4l.G8JjF.LqclR5TPG4lZqFdnehFU0rljbaGW
+ 0wIzjTfn7Kc.TyQtWP9D3Mx6E15e73lIfnUofBbc6yqhra2wJUOpNBbBcQPIOeNmb.E0hdaveCNg
+ GNZ69azdrw.6BBrVXXekrEQsPHEkTvDJfrlgw9whXToGZXeg_uAHKoVlx9ah15aPSfZTwHd31Y9p
+ 9NCjp3mgST71ZdPDnQeD42Hinhv2IJshewCzbI.ETTGMUsdKtUAlM060kb3qGtvRpS29orufpGSe
+ UPkl4uIb4IH8ukoA8QAJyZ4hwvdsyHU0lEImXRe9Ew2TtOrRr3_uRYjvu5lgJW3BA0e7U.P_eQ0e
+ US6ApxTQ1uw85J96um0WmLMnw9BL.rqm2P2gCbZCvp3B2d0PSPbXqrGSozJAP9GmvFxixny_nxK2
+ QaCjFVLVmimeTwKTJBPawx1ysFAMza0neEaXX5kDlEFeDoaYBAvMiIbRgHbNnGU6fzODn142m1sk
+ aWvRa2S0tkYsPeU5zlo.X5VY9UDhjWFq90afMZ4ePJKTuWFUJGcr0Rqfkz3HNREUKN3LjLw3UI1M
+ 2CWfAavSzi34UkznfbXvx6yYdnTJPU7qI_LNGtrimM4FtxE3Kk7pBG9sZ64RwJIQYuYM1ucd8TUK
+ efFTLZo_mUzHBAoXPJmybfNq.J._zbUfCB7hGrbDV.YympIZSemHFKdmTnyiboRIjGSjulsm.Sgb
+ 5K_bFgGVz223vJhw_7BKonsLUBA0itC8ihsYb_iU7NddYXfhlAoicRzT5V23d6zdinCMhOPujzC8
+ lmBhSMqI1djirxlk25FYaAcJnaswGdLu2l2x1YTMnHg1uckffPs0dAkfNPSwXQGU_w5msoX0OHEB
+ yrICQcneyA2O4lIbi2k_fyPFZLXkVe_A1LIui7TCRkqA8Fb4aYRzV35wFBSR7FU6tmMKTdVReVxx
+ Ucz1lk5FrZ0f.E3sIdsevNqqtqihXt8F7p8a7opGEQEMgU0PKLEPS0OUASse9eeHHe2eqO.sbLb7
+ 8PoA5jy4uRv8i2XY0ISnCmsJYMUcMzt2Xlwfn01Y1bUWXzGCqRjmViRKoFAJWSEj.KlKtqOP40nS
+ YX1TB9iaw2_U782kQlAum71LQGrWsrAOR.ngh9zWO2GgRDZoo9hZMaFc8Y0zsypxZumhNkEK_E3N
+ ZYkqhrlptdTVcWywEEaoOLIW.zcSyM0VSk.wovBLZS5fEfQY81DhiF.rkJhIYUMKn_NKkYy1mXRf
+ kuEm7.FNgvghhmB1j0xK.3dbKl.n55NUXFAaerqZf1TXjLr5gopPEifma3TIsbYQGubqyhaVhUHP
+ F6fwH09iEdw--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: d52259aa-43b0-474d-a6fb-5fe0b5882db1
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Thu, 19 Mar 2026 17:51:31 +0000
+Received: by hermes--production-gq1-6dfcf9f8b-vlhlt (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 4ebe706e084b84abc057ad803d959c8c;
+          Thu, 19 Mar 2026 17:51:26 +0000 (UTC)
+Message-ID: <80ff003b-51fd-4ec8-9505-dfc1c5890ced@schaufler-ca.com>
+Date: Thu, 19 Mar 2026 10:51:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260314.61cb1f2dc01d@gnoack.org>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] lsm: Fix the crash issue in xfrm_decode_session
+To: Feng Yang <yangfeng59949@163.com>
+Cc: jmorris@namei.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, paul@paul-moore.com,
+ serge@hallyn.com, Casey Schaufler <casey@schaufler-ca.com>
+References: <df35542e-d58f-47db-8a4f-92698281a69a@schaufler-ca.com>
+ <20260319022208.69924-1-yangfeng59949@163.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20260319022208.69924-1-yangfeng59949@163.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.25380 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Sat, Mar 14, 2026 at 10:10:23PM +0100, Günther Noack wrote:
-> Hello Mickaël!
-> 
-> On Tue, Mar 10, 2026 at 08:04:15PM +0100, Mickaël Salaün wrote:
-> > Add tsync_interrupt test to exercise the signal interruption path in
-> > landlock_restrict_sibling_threads().  When a signal interrupts
-> > wait_for_completion_interruptible() while the calling thread waits for
-> > sibling threads to finish credential preparation, the kernel:
-> > 
-> > 1. Sets ERESTARTNOINTR to request a transparent syscall restart.
-> > 2. Calls cancel_tsync_works() to opportunistically dequeue task works
-> >    that have not started running yet.
-> > 3. Breaks out of the preparation loop, then unblocks remaining
-> >    task works via complete_all() and waits for them to finish.
-> > 4. Returns the error, causing abort_creds() in the syscall handler.
-> > 
-> > Specifically, cancel_tsync_works() in its entirety, the ERESTARTNOINTR
-> > error branch in landlock_restrict_sibling_threads(), and the
-> > abort_creds() error branch in the landlock_restrict_self() syscall
-> > handler are timing-dependent and not exercised by the existing tsync
-> > tests, making code coverage measurements non-deterministic.
-> > 
-> > The test spawns a signaler thread that rapidly sends SIGUSR1 to the
-> > calling thread while it performs landlock_restrict_self() with
-> > LANDLOCK_RESTRICT_SELF_TSYNC.  Since ERESTARTNOINTR causes a
-> > transparent restart, userspace always sees the syscall succeed.
-> > 
-> > This is a best-effort coverage test: the interruption path is exercised
-> > when the signal lands during the preparation wait, which depends on
-> > thread scheduling.  The test creates enough idle sibling threads (200)
-> > to ensure multiple serialized waves of credential preparation even on
-> > machines with many cores (e.g., 64), widening the window for the
-> > signaler.  Deterministic coverage would require wrapping the wait call
-> > with ALLOW_ERROR_INJECTION() and using CONFIG_FAIL_FUNCTION.
-> > 
-> > Cc: Günther Noack <gnoack@google.com>
-> > Cc: Justin Suess <utilityemal77@gmail.com>
-> > Cc: Tingmao Wang <m@maowtm.org>
-> > Cc: Yihan Ding <dingyihan@uniontech.com>
-> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > ---
-> >  tools/testing/selftests/landlock/tsync_test.c | 91 ++++++++++++++++++-
-> >  1 file changed, 90 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/tools/testing/selftests/landlock/tsync_test.c b/tools/testing/selftests/landlock/tsync_test.c
-> > index 37ef0d2270db..2b9ad4f154f4 100644
-> > --- a/tools/testing/selftests/landlock/tsync_test.c
-> > +++ b/tools/testing/selftests/landlock/tsync_test.c
-> > @@ -6,9 +6,10 @@
-> >   */
-> >  
-> >  #define _GNU_SOURCE
-> > +#include <linux/landlock.h>
-> >  #include <pthread.h>
-> > +#include <signal.h>
-> >  #include <sys/prctl.h>
-> > -#include <linux/landlock.h>
-> >  
-> >  #include "common.h"
-> >  
-> > @@ -158,4 +159,92 @@ TEST(competing_enablement)
-> >  	EXPECT_EQ(0, close(ruleset_fd));
-> >  }
-> >  
-> > +static void signal_nop_handler(int sig)
-> > +{
-> > +}
-> > +
-> > +struct signaler_data {
-> > +	pthread_t target;
-> > +	volatile bool stop;
-> > +};
-> > +
-> > +static void *signaler_thread(void *data)
-> > +{
-> > +	struct signaler_data *sd = data;
-> > +
-> > +	while (!sd->stop)
-> > +		pthread_kill(sd->target, SIGUSR1);
-> > +
-> > +	return NULL;
-> > +}
-> > +
-> > +/*
-> > + * Number of idle sibling threads.  This must be large enough that even on
-> > + * machines with many cores, the sibling threads cannot all complete their
-> > + * credential preparation in a single parallel wave, otherwise the signaler
-> > + * thread has no window to interrupt wait_for_completion_interruptible().
-> > + * 200 threads on a 64-core machine yields ~3 serialized waves, giving the
-> > + * tight signal loop enough time to land an interruption.
-> > + */
-> > +#define NUM_IDLE_THREADS 200
-> > +
-> > +/*
-> > + * Exercises the tsync interruption and cancellation paths in tsync.c.
-> > + *
-> > + * When a signal interrupts the calling thread while it waits for sibling
-> > + * threads to finish their credential preparation
-> > + * (wait_for_completion_interruptible in landlock_restrict_sibling_threads),
-> > + * the kernel sets ERESTARTNOINTR, cancels queued task works that have not
-> > + * started yet (cancel_tsync_works), then waits for the remaining works to
-> > + * finish.  On the error return, syscalls.c aborts the prepared credentials.
-> > + * The kernel automatically restarts the syscall, so userspace sees success.
-> > + */
-> > +TEST(tsync_interrupt)
-> > +{
-> > +	size_t i;
-> > +	pthread_t threads[NUM_IDLE_THREADS];
-> > +	pthread_t signaler;
-> > +	struct signaler_data sd;
-> > +	struct sigaction sa = {};
-> > +	const int ruleset_fd = create_ruleset(_metadata);
-> > +
-> > +	disable_caps(_metadata);
-> > +
-> > +	/* Install a no-op SIGUSR1 handler so the signal does not kill us. */
-> > +	sa.sa_handler = signal_nop_handler;
-> > +	sigemptyset(&sa.sa_mask);
-> > +	ASSERT_EQ(0, sigaction(SIGUSR1, &sa, NULL));
-> > +
-> > +	ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
-> > +
-> > +	for (i = 0; i < NUM_IDLE_THREADS; i++)
-> > +		ASSERT_EQ(0, pthread_create(&threads[i], NULL, idle, NULL));
-> > +
-> > +	/*
-> > +	 * Start a signaler thread that continuously sends SIGUSR1 to the
-> > +	 * calling thread.  This maximizes the chance of interrupting
-> > +	 * wait_for_completion_interruptible() in the kernel's tsync path.
-> > +	 */
-> > +	sd.target = pthread_self();
-> > +	sd.stop = false;
-> > +	ASSERT_EQ(0, pthread_create(&signaler, NULL, signaler_thread, &sd));
-> > +
-> > +	/*
-> > +	 * The syscall may be interrupted and transparently restarted by the
-> > +	 * kernel (ERESTARTNOINTR).  From userspace, it should always succeed.
-> > +	 */
-> > +	EXPECT_EQ(0, landlock_restrict_self(ruleset_fd,
-> > +					    LANDLOCK_RESTRICT_SELF_TSYNC));
-> > +
-> > +	sd.stop = true;
-> > +	ASSERT_EQ(0, pthread_join(signaler, NULL));
-> > +
-> > +	for (i = 0; i < NUM_IDLE_THREADS; i++) {
-> > +		ASSERT_EQ(0, pthread_cancel(threads[i]));
-> > +		ASSERT_EQ(0, pthread_join(threads[i], NULL));
-> > +	}
-> > +
-> > +	EXPECT_EQ(0, close(ruleset_fd));
-> > +}
-> > +
-> >  TEST_HARNESS_MAIN
-> > -- 
-> > 2.53.0
-> 
-> The purpose of a test is to catch errors, so I broke the
-> ERESTARTNOINTR error handling code path, but I could not get the test
-> to fail.  Did you manage to reproduce any of these bugs with it, by
-> any chance, and in what configuration did that work?  I tried with
-> both QEMU (a bit more) and UML (a bit less), but had no luck.
-> 
-> (Does this need to run in a loop like the Syzkaller-generated deadlock
-> reproducer, so that we have a chance of catching these bugs at all?)
+On 3/18/2026 7:22 PM, Feng Yang wrote:
+> On Wed, 18 Mar 2026 10:09:47 -0700, Casey Schaufler wrote:
+>> On 3/17/2026 11:19 PM, Feng Yang wrote:
+>>> From: Feng Yang <yangfeng@kylinos.cn>
+>>>
+>>> After hooking the following BPF program:
+>>> SEC("lsm/xfrm_decode_session")
+>>> int BPF_PROG(lsm_hook_xfrm_decode_session, struct sk_buff *skb, u32 *secid, int ckall)
+>>> {
+>>>     return 1; // Any non-zero value
+>>> }
+>>> Subsequent packet transmission triggers will cause a kernel panic:
+>> LSM hooks that use or provide secids cannot be stacked. That is,
+>> you can't provide a BPF LSM hook and an SELinux LSM hook and expect
+>> correct behavior. Your proposed "fix" removes a legitimate check.
+> I'm very sorry, I didn't quite understand what you meant.
+>
+> Maybe my commit message wasn't clear. I only used a BPF LSM hook without SELinux stacking enabled.
 
-There is no bug and the test should always pass, it's just to improve
-test coverage in the new kernel code introduced by the tsync feature.
+Do i understand correctly that you do not have SELinux enabled?
 
-Without this patch, most of the time we get: 90.2% of 2105 lines.
+> Therefore, is it the expected behavior that simply using
+> SEC("lsm/xfrm_decode_session")
+> int BPF_PROG(lsm_hook_xfrm_decode_session, struct sk_buff *skb, u32 *secid, int ckall) {
+>     return -1;
+> }
+> would cause a kernel panic?
 
-With this patch, we always get: 91.1% of 2105 lines.
+Yes. As the infrastructure is written, any return other than 0 is erroneous.
+You will need to query the SELinux developers about why they decided to
+implement the xfrm handling in this way.
+
+>  If not, and if the BUG_ON check is still necessary,
+> then does it mean we need to modify the return value validation logic in the BPF
+> verifier to ensure that only BPF programs returning 0 are accepted for this hook?
+>
+> Thanks.
+>
+>
