@@ -1,593 +1,586 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBDE330C368
-	for <linux-security-module@vger.kernel.org>; Fri, 20 Mar 2026 13:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804813D0905
+	for <linux-security-module@vger.kernel.org>; Fri, 20 Mar 2026 16:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774014808; cv=none; b=ZHoelpOuu/44qfmA3LDswTDTMv81V9YDsEc5ytjF3onKkV2TN0jVliLkrHyO8mIABoGMSeRx490Ia3D/TYPjzhBEiST9mSJ7AAGE/MhYenylsXpk3DEzkruAVy4Fi//GxKWAoHe/DzH4MrzcxgiEBReF8loUn3bOHneuMFoNmOQ=
+	t=1774023364; cv=none; b=iuVARtBQQts8Hyt5pwin/IR+JpyU2poiZug5ogOlrPZMddVxtdsD37uBWXuaCW/djuVVZrLGOcVKw9k/pQCZqA486YwmGZTPHvOoYNZjoUWTcet5BD40M0XK/nzlZqaj2PVjwz14wbidmiLI3xGxNuSqUng85ZmiGFQzHk+Tsi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774014808; c=relaxed/simple;
-	bh=yHl+B1AOud++XfXBqYXRiSpYxbw9Mct48dzUUXuIwiM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rFrHQe5i/o83Pv4Hty0xR5nVErsIk1uVLTZxTJJ4fqD/TOeKwOCIHJF/syomDScnR7QfQimnI1+LR69ud6lyy4YiSL5sr3TpKjSMe0TlQxpdqbokcFXqGzaXNHqhXrMV3U+/srz8drXK5tvMHfN6rqblC6yVOgEHkK3+S0xiRZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lQ8+NpdR; arc=none smtp.client-ip=209.85.218.53
+	s=arc-20240116; t=1774023364; c=relaxed/simple;
+	bh=OVNLRgQrE95P6oTFe285vx8oWo+nHE2kSaSacNSaEtY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sujRiZoSzk6nXalD3xZAkJs1mBFsqTIH1Sh49xKXqK9X3ZkkrQjJG8zAoq/qrFEw7MLTBLFTi5AQzaWhzN/KVOqjsENRWhxMWZyIy6SDBQR0R0bOFZywTxXmI72dM4lrzkg++234EEfGib1L/o/ssdB6k8Wiok5F7p0AhDGrRtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=afQmCD9Q; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lQ8+NpdR"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b8f97c626aaso324359566b.2
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Mar 2026 06:53:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="afQmCD9Q"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-486fd3a577eso6582505e9.1
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Mar 2026 09:16:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1774014797; x=1774619597; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Pm+eEQ60JIMUuvkrTDt/cbZSgeK8toOkUpeH6Q+x4Q=;
-        b=lQ8+NpdRNpBmTNr0z2RMtUshCgJBYMxf4VdYNA89vClT3bhdCL48qsc0/9ckuGWm1Z
-         a+p2YC7MPE4z66QfLXUXcSGmvHOmAP6oGQ+mewg9+aammukc/t9VKuxq2pzt3e/hTtMo
-         ryYvgCQSg52PvVkd3V72pebcmulb9wnrNBcgPiN3Kp8SEkSDm5K9sxDLGBipE/2KSvz5
-         sDE4+LQwz3ejM+WTfKWUQIoC9unR8zGtxinsxAKr2dHP0gCWzcgdZGGsA5rZkwYEPAf5
-         wy8qZ1sHgRBlq2ajL1biCVtDHMPJYUw5LqhmHREedYfLlbeZvfQDIgxd1OPHq3kLEi1f
-         RL7w==
+        d=gmail.com; s=20230601; t=1774023361; x=1774628161; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=6vqdvPjVFOrk3TaV/af8dB+NDTdmpJHm1H6A0/MsL54=;
+        b=afQmCD9QbGE8dyQAeQijielJWp27GZ+6iE1FUS3dXLSt7B4oe+M5PTuBEVIZqAS/Pe
+         kwmTQm+Ju8fQbNi/dFWUUH6LnY6MVoBFMnsQUUeO7zkS9uAODabiAqXhyxiWQ8ZVX4J6
+         Bkb9R6x6IKAy3PQz6o1u2ohLrP6Frbraoa9C9E6ghkyDDRl7iNX6OEVaOKxKG5x9iOn3
+         G8Oslnysp4UXJLor5ir2z/EoubAhXebwYOFPG56v+Oe8mNuLFwwLWlU5/fgAdL/7VLyb
+         qYG5xsOigL+ZR9xXgij62BG7KzRYwEgk8QhY5tbprbExblO93e9gNDfOntOiITPtZxG3
+         WP7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774014797; x=1774619597;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+Pm+eEQ60JIMUuvkrTDt/cbZSgeK8toOkUpeH6Q+x4Q=;
-        b=i5z1XK2RA95iYNMZH/iGUGvbp/gWYWggktEG54UUIA84Iz5Li1VGyBjQZpmXst7456
-         v2GBNW/XqNt2EWkg/sLxodUoRmqBWln/leJHYKLlb98opQzRPv30C8lT9VGUkRmxxZ1M
-         /il3TuF4/9Ld20ZvtFJwCH6ISjOm69cfdw9DzDJObpwQ4CUBoLc627PqefQ8QCJO1i8l
-         5XI+0S8aWbV2boKGhyfG7Zt77WlDc9XnB0CuFEgCFUf2tWN91QNBvf8QQiOs1lB+yIwe
-         mUcDGg/+tikJO1S9ViPSVKot+wfR9E1GuX8Iu5BqmwUNubT9QMG/qQ/uHOryaiNu+LZ+
-         h1+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVVvv1G27geoRURNrEtsTO5mHwmycppxF4gQN3CXFG5vAhR51zw+yIOlxWM4QlPdNL7ZYHhFk8sKKMXRkS24rat2vu4LFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxxp5j1s8WSShCUWF+Ddh9ojVzn4iBveI/h9C9+oNRed2nqATUe
-	/3FUxV4gMaSHQukji4TsqI8j6jaGELooejY7DS2hqA6dnwLgVA2ForI6
-X-Gm-Gg: ATEYQzzROaQ3I8wTIazTOpK6VWTfKDIYClt6lnFL0ckLnU7CjExx7ggQBEgCJnuviJ2
-	TQ6JUNuB0N2Lnu4GATYC76wKB0ukCUxvrGRzsz6c1BWWn0AoQmHZ7s+GCCvjfTGhOgvm6gJemjY
-	2OIbpcn4eVWFrFu+SSbQFt6hi/kNvkYofGRDJTi7ldphw/WbuthgPIr7hCwOzBHvOdbRevi5rRe
-	ZjzzB0K0lqv/N+3Y4cxCU1Xk60uQ+61725DrekdawuSaIJV9e3+EhQxUpRi9I0k9Eed/LeNjhs+
-	ZseZgpV1c8Nw/Be9lyLZwW2+tvkpbBnBUmQsH/BlUZhtJPW7Fgbx3m1zAUbUjdQJX0WXBeNC7vV
-	JYC968dIgEJ0euIm/+vQ38hLygPdSqxiPUvNAVkaMb/bWx5hFAIR+wo+Q5AE+KIk1rHQrLYMBpO
-	4yqcqDus+6BPXPtI2sGD79DO0Xj2Cr0swzLgO3/z074QEZQu8Vn0AS4aQjx1cdm+GsD+heXPqay
-	/Q62VsdoRgifcPJDu6pPoAviGuD
-X-Received: by 2002:a17:907:c70c:b0:b96:eb7e:bc55 with SMTP id a640c23a62f3a-b982f1edf01mr232203466b.10.1774014796546;
-        Fri, 20 Mar 2026 06:53:16 -0700 (PDT)
-Received: from localhost (2001-1c00-570d-ee00-e98d-b8f7-8d95-53b2.cable.dynamic.v6.ziggo.nl. [2001:1c00:570d:ee00:e98d:b8f7:8d95:53b2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b983365a159sm158826466b.44.2026.03.20.06.53.15
+        d=1e100.net; s=20251104; t=1774023361; x=1774628161;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6vqdvPjVFOrk3TaV/af8dB+NDTdmpJHm1H6A0/MsL54=;
+        b=EOzAa8zUGLja88cRoPgz5aPqGhAXg3WpBZYmW4F2OLlUYpLrd1xzotGPkjxIcvyQXn
+         U247OopTiYgpy7Z5v8Nyva+sDi0xaFT51NFV0VJQibMD2P3olCLYPRMjYoRDFkc9nv7E
+         sXoMZ7y+zr+a8PgLLx/ZNkdkG2up0ecQSYJT8KuiLpG6iKlt1AYUgHv0M67HRqnbkhFy
+         FGbL0qYBUmeLRdIUqU+clSaHvikAisIIjIC2S6IOgL7SxfKA+TpEe+QeaHltIQf22dho
+         +h6QLkBTsqbqfddMS9WjrlaTAq+eCh2TBRAVbr6gF+9owANDwEDwccU/JvkLykRZrlnD
+         VZsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXiLchtTz8t/9xMsx1LINxGYfZjPXTBvdUgfTpnWWiI+8u1OcX530N6T87ZYkik+8o3VGBv//0LO7DXBl5v1T+jkMFAVq4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM5X20YzOdnLUxjOn9OeIVRBRcU0UBTSfhZFfMvDMj6viXWt4f
+	z7jO9k4J5VbbleM0QxCBQNzUR0G06zDiNjdXXhlp8lxfVSlHD/m5pUd5
+X-Gm-Gg: ATEYQzwM5EEXcRXJktDesEBSD+vugUX5tcolrvZ5/pibPLAlwW6RtrTSnDxk4rXoL+0
+	GhKbFOGyUn8RFrkZ6drw719MwUJ6XG3VIjHha9wHdo5YzMgiogvVHBetuq5WI9zGTj+3tTcikUj
+	KZV2w0H/sMppIyIthj3snikkc5sGRi4kj945LPp+tvG669A1RSvuvbNvXSLUgMzeLx7jlcSn7VA
+	NXGXCpUQA+snI4aVj1HyCauKQ4qMeL2uijwioMYKO4eTdsBIcEX1ja5KjaxV0d/NjBii/rz6b2J
+	xuHhKhpQVvUJH8hWM0rMCAbzVPnAPIIpkP2Crs3H4W0keju/NT1PSoTnXK1FglW/RnpAd/jTtRT
+	yeKEG0E+a7dzwGEjLIktMnJU3uLBJlytA/L4t8AkP4dGCnu3OJdU9zkGW4Ue7FyQO4hhqQ8JO4a
+	mNQm76hPNiSWzCM3q27Nv7G5xQ0zN4+DpjdOUfKLkRedV9w+EU
+X-Received: by 2002:a05:600c:1d15:b0:485:2ce2:4c75 with SMTP id 5b1f17b1804b1-486febbc648mr51953525e9.1.1774023360343;
+        Fri, 20 Mar 2026 09:16:00 -0700 (PDT)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-486fe7d6c54sm174920815e9.4.2026.03.20.09.15.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Mar 2026 06:53:16 -0700 (PDT)
-From: Amir Goldstein <amir73il@gmail.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Paul Moore <paul@paul-moore.com>,
-	Gao Xiang <xiang@kernel.org>,
+        Fri, 20 Mar 2026 09:16:00 -0700 (PDT)
+Date: Fri, 20 Mar 2026 17:15:40 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: John Johansen <john.johansen@canonical.com>,
+	Tingmao Wang <m@maowtm.org>, Justin Suess <utilityemal77@gmail.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Kuniyuki Iwashima <kuniyu@google.com>, Jann Horn <jannh@google.com>,
 	linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org
-Subject: [PATCH v7] backing_file: store an internal O_PATH user_path_file
-Date: Fri, 20 Mar 2026 14:53:15 +0100
-Message-ID: <20260320135315.1731572-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
+	Matthieu Buffet <matthieu@buffet.re>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	konstantin.meskhidze@huawei.com,
+	Demi Marie Obenour <demiobenour@gmail.com>,
+	Alyssa Ross <hi@alyssa.is>, Tahera Fahimi <fahimitahera@gmail.com>
+Subject: Re: [PATCH v6 3/9] landlock: Control pathname UNIX domain socket
+ resolution by path
+Message-ID: <20260320.f59cddcb6c6b@gnoack.org>
+References: <20260315222150.121952-1-gnoack3000@gmail.com>
+ <20260315222150.121952-4-gnoack3000@gmail.com>
+ <20260318.peecoo2Ooyep@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260318.peecoo2Ooyep@digikod.net>
 
-Instead of storing the user_path, store an internal O_PATH file,
-embedded in the backing_file struct for the user_path with a copy of
-the original user file creds and with an independent a security context.
+Hello!
 
-This internal O_PATH file is going to be used by LSM mprotect hooks
-to check the permissions to mprotect against a copy of the original
-mmaped file credentials.
+On Wed, Mar 18, 2026 at 05:52:48PM +0100, Mickaël Salaün wrote:
+> On Sun, Mar 15, 2026 at 11:21:44PM +0100, Günther Noack wrote:
+> > * Add a new access right LANDLOCK_ACCESS_FS_RESOLVE_UNIX, which
+> >   controls the look up operations for named UNIX domain sockets.  The
+> 
+> lookup
 
-The internal user_path_file is only exported as a const pointer and
-its refcnt is initialized to FILE_REF_DEAD, because it is not an actual
-refcounted object.  The file_ref_init() helper was changed to accept
-the FILE_REF_ constant instead of the fake +1 integer count.
+Done.
 
-The internal O_PATH file is opened using a new kernel helper
-kernel_path_file_open(), which skips all the generic code in
-do_dentry_open() and does only the essentials, so that the internal
-O_PATH file could be opened with a negative dentry.
 
-This is needed for backing_tmpfile_open() to open a backing O_PATH
-tmpfile before instantiating the dentry.
-The callers of backing_tmpfile_open() are responsible for calling
-backing_tmpfile_finish() after making the path positive.
+> >   resolution happens during connect() and sendmsg() (depending on
+> >   socket type).
+> > * Hook into the path lookup in unix_find_bsd() in af_unix.c, using a
+> >   LSM hook.  Make policy decisions based on the new access rights
+> > * Increment the Landlock ABI version.
+> > * Minor test adaptions to keep the tests working.
+> 
+> adaptations
 
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
+Done.
 
-Christian,
 
-7th time is a charm (?).
+> > * Document the design rationale for scoped access rights,
+> >   and cross-reference it from the header documentation.
+> > 
+> > With this access right, access is granted if either of the following
+> > conditions is met:
+> > 
+> > * The target socket's filesystem path was allow-listed using a
+> >   LANDLOCK_RULE_PATH_BENEATH rule, *or*:
+> > * The target socket was created in the same Landlock domain in which
+> >   LANDLOCK_ACCESS_FS_RESOLVE_UNIX was restricted.
+> > 
+> > In case of a denial, connect() and sendmsg() return EACCES, which is
+> > the same error as it is returned if the user does not have the write
+> > bit in the traditional Unix file system permissions of that file.
+> 
+> UNIX
 
-Here is another try to introduce backing_file_user_path_file(),
-after dealing with the the syzbot report [1] v6 [2] introduces.
+DONE
 
-Thanks,
-Amir.
 
-Changes since v6:
-- Create helper for internal O_PATH open with negative path
-- Create backing_tmpfile_finish() API to fixup the negative path
+> > Document the (possible future) interaction between scoped flags and
+> > other access rights in struct landlock_ruleset_attr, and summarize the
+> > rationale, as discussed in code review leading up to [2].
+> > 
+> > This feature was created with substantial discussion and input from
+> > Justin Suess, Tingmao Wang and Mickaël Salaün.
+> > 
+> > Cc: Tingmao Wang <m@maowtm.org>
+> > Cc: Justin Suess <utilityemal77@gmail.com>
+> > Cc: Mickaël Salaün <mic@digikod.net>
+> > Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> > Cc: Kuniyuki Iwashima <kuniyu@google.com>
+> > Suggested-by: Jann Horn <jannh@google.com>
+> > Link[1]: https://github.com/landlock-lsm/linux/issues/36
+> > Link[2]: https://lore.kernel.org/all/20260205.8531e4005118@gnoack.org/
+> > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> > ---
+> >  Documentation/security/landlock.rst          |  40 +++++++
+> >  include/uapi/linux/landlock.h                |  19 ++++
+> >  security/landlock/access.h                   |   2 +-
+> >  security/landlock/audit.c                    |   1 +
+> >  security/landlock/fs.c                       | 110 ++++++++++++++++++-
+> >  security/landlock/limits.h                   |   2 +-
+> >  security/landlock/syscalls.c                 |   2 +-
+> >  tools/testing/selftests/landlock/base_test.c |   2 +-
+> >  tools/testing/selftests/landlock/fs_test.c   |   5 +-
+> >  9 files changed, 176 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/Documentation/security/landlock.rst b/Documentation/security/landlock.rst
+> > index 3e4d4d04cfae..4bbe250a6829 100644
+> > --- a/Documentation/security/landlock.rst
+> > +++ b/Documentation/security/landlock.rst
+> > @@ -89,6 +89,46 @@ this is required to keep access controls consistent over the whole system, and
+> >  this avoids unattended bypasses through file descriptor passing (i.e. confused
+> >  deputy attack).
+> >  
+> > +.. _scoped-flags-interaction:
+> > +
+> > +Interaction between scoped flags and other access rights
+> > +--------------------------------------------------------
+> > +
+> > +The ``scoped`` flags in ``struct landlock_ruleset_attr`` restrict the
+> > +use of *outgoing* IPC from the created Landlock domain, while they
+> > +permit reaching out to IPC endpoints *within* the created Landlock
+> > +domain.
+> > +
+> > +In the future, scoped flags *may* interact with other access rights,
+> > +e.g. so that abstract UNIX sockets can be allow-listed by name, or so
+> > +that signals can be allow-listed by signal number or target process.
+> > +
+> > +When introducing ``LANDLOCK_ACCESS_FS_RESOLVE_UNIX``, we defined it to
+> > +implicitly have the same scoping semantics as a
+> > +``LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET`` flag would have: connecting to
+> > +UNIX sockets within the same domain (where
+> > +``LANDLOCK_ACCESS_FS_RESOLVE_UNIX`` is used) is unconditionally
+> > +allowed.
+> > +
+> > +The reasoning is:
+> > +
+> > +* Like other IPC mechanisms, connecting to named UNIX sockets in the
+> > +  same domain should be expected and harmless.  (If needed, users can
+> > +  further refine their Landlock policies with nested domains or by
+> > +  restricting ``LANDLOCK_ACCESS_FS_MAKE_SOCK``.)
+> > +* We reserve the option to still introduce
+> > +  ``LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET`` in the future.  (This would
+> > +  be useful if we wanted to have a Landlock rule to permit IPC access
+> > +  to other Landlock domains.)
+> > +* But we can postpone the point in time when users have to deal with
+> > +  two interacting flags visible in the userspace API.  (In particular,
+> > +  it is possible that it won't be needed in practice, in which case we
+> > +  can avoid the second flag altogether.)
+> > +* If we *do* introduce ``LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET`` in the
+> > +  future, setting this scoped flag in a ruleset does *not reduce* the
+> > +  restrictions, because access within the same scope is already
+> > +  allowed based on ``LANDLOCK_ACCESS_FS_RESOLVE_UNIX``.
+> > +
+> >  Tests
+> >  =====
+> >  
+> > diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> > index f88fa1f68b77..751e3c143cba 100644
+> > --- a/include/uapi/linux/landlock.h
+> > +++ b/include/uapi/linux/landlock.h
+> > @@ -248,6 +248,24 @@ struct landlock_net_port_attr {
+> >   *
+> >   *   This access right is available since the fifth version of the Landlock
+> >   *   ABI.
+> > + * - %LANDLOCK_ACCESS_FS_RESOLVE_UNIX: Look up pathname UNIX domain sockets
+> > + *   (:manpage:`unix(7)`).  On UNIX domain sockets, this restricts both calls to
+> > + *   :manpage:`connect(2)` as well as calls to :manpage:`sendmsg(2)` with an
+> > + *   explicit recipient address.
+> > + *
+> > + *   This access right only applies to connections to UNIX server sockets which
+> > + *   were created outside of the newly created Landlock domain (e.g. from within
+> > + *   a parent domain or from an unrestricted process).  Newly created UNIX
+> > + *   servers within the same Landlock domain continue to be accessible.  In this
+> > + *   regard, %LANDLOCK_ACCESS_RESOLVE_UNIX has the same semantics as the
+> 
+> LANDLOCK_ACCESS_FS_RESOLVE_UNIX
 
-[1] https://syzkaller.appspot.com/bug?extid=f34aab278bf5d664e2be
-[2] https://lore.kernel.org/linux-fsdevel/20260318131258.1457101-1-amir73il@gmail.com/
+Whoops, done.
 
- fs/backing-file.c            | 32 +++++++++++-------
- fs/erofs/ishare.c            | 13 ++++++--
- fs/file_table.c              | 63 +++++++++++++++++++++++++++++-------
- fs/fuse/passthrough.c        |  3 +-
- fs/internal.h                | 12 +++++--
- fs/open.c                    | 34 ++++++++++++++++---
- fs/overlayfs/dir.c           |  5 ++-
- fs/overlayfs/file.c          |  1 +
- include/linux/backing-file.h | 30 +++++++++++++++--
- include/linux/file_ref.h     |  4 +--
- 10 files changed, 159 insertions(+), 38 deletions(-)
 
-diff --git a/fs/backing-file.c b/fs/backing-file.c
-index 45da8600d5644..77935c93333ab 100644
---- a/fs/backing-file.c
-+++ b/fs/backing-file.c
-@@ -11,6 +11,7 @@
- #include <linux/fs.h>
- #include <linux/backing-file.h>
- #include <linux/splice.h>
-+#include <linux/uio.h>
- #include <linux/mm.h>
- 
- #include "internal.h"
-@@ -18,9 +19,10 @@
- /**
-  * backing_file_open - open a backing file for kernel internal use
-  * @user_path:	path that the user reuqested to open
-+ * @user_cred:	credentials that the user used for open
-  * @flags:	open flags
-  * @real_path:	path of the backing file
-- * @cred:	credentials for open
-+ * @cred:	credentials for open of the backing file
-  *
-  * Open a backing file for a stackable filesystem (e.g., overlayfs).
-  * @user_path may be on the stackable filesystem and @real_path on the
-@@ -29,20 +31,21 @@
-  * returned file into a container structure that also stores the stacked
-  * file's path, which can be retrieved using backing_file_user_path().
-  */
--struct file *backing_file_open(const struct path *user_path, int flags,
-+struct file *backing_file_open(const struct path *user_path,
-+			       const struct cred *user_cred, int flags,
- 			       const struct path *real_path,
- 			       const struct cred *cred)
- {
- 	struct file *f;
- 	int error;
- 
--	f = alloc_empty_backing_file(flags, cred);
-+	f = alloc_empty_backing_file(flags, cred, user_cred);
- 	if (IS_ERR(f))
- 		return f;
- 
--	path_get(user_path);
--	backing_file_set_user_path(f, user_path);
--	error = vfs_open(real_path, f);
-+	error = backing_file_open_user_path(f, user_path);
-+	if (!error)
-+		error = vfs_open(real_path, f);
- 	if (error) {
- 		fput(f);
- 		f = ERR_PTR(error);
-@@ -52,7 +55,8 @@ struct file *backing_file_open(const struct path *user_path, int flags,
- }
- EXPORT_SYMBOL_GPL(backing_file_open);
- 
--struct file *backing_tmpfile_open(const struct path *user_path, int flags,
-+struct file *backing_tmpfile_open(const struct path *user_path,
-+				  const struct cred *user_cred, int flags,
- 				  const struct path *real_parentpath,
- 				  umode_t mode, const struct cred *cred)
- {
-@@ -60,13 +64,13 @@ struct file *backing_tmpfile_open(const struct path *user_path, int flags,
- 	struct file *f;
- 	int error;
- 
--	f = alloc_empty_backing_file(flags, cred);
-+	f = alloc_empty_backing_file(flags, cred, user_cred);
- 	if (IS_ERR(f))
- 		return f;
- 
--	path_get(user_path);
--	backing_file_set_user_path(f, user_path);
--	error = vfs_tmpfile(real_idmap, real_parentpath, f, mode);
-+	error = backing_file_open_user_path(f, user_path);
-+	if (!error)
-+		error = vfs_tmpfile(real_idmap, real_parentpath, f, mode);
- 	if (error) {
- 		fput(f);
- 		f = ERR_PTR(error);
-@@ -75,6 +79,12 @@ struct file *backing_tmpfile_open(const struct path *user_path, int flags,
- }
- EXPORT_SYMBOL(backing_tmpfile_open);
- 
-+void backing_tmpfile_finish(struct file *file)
-+{
-+	backing_file_set_user_path_inode(file);
-+}
-+EXPORT_SYMBOL_GPL(backing_tmpfile_finish);
-+
- struct backing_aio {
- 	struct kiocb iocb;
- 	refcount_t ref;
-diff --git a/fs/erofs/ishare.c b/fs/erofs/ishare.c
-index 829d50d5c717d..f3a5fb0bffaf0 100644
---- a/fs/erofs/ishare.c
-+++ b/fs/erofs/ishare.c
-@@ -103,18 +103,25 @@ static int erofs_ishare_file_open(struct inode *inode, struct file *file)
- {
- 	struct inode *sharedinode = EROFS_I(inode)->sharedinode;
- 	struct file *realfile;
-+	int err;
- 
- 	if (file->f_flags & O_DIRECT)
- 		return -EINVAL;
--	realfile = alloc_empty_backing_file(O_RDONLY|O_NOATIME, current_cred());
-+	realfile = alloc_empty_backing_file(O_RDONLY|O_NOATIME, current_cred(),
-+					    file->f_cred);
- 	if (IS_ERR(realfile))
- 		return PTR_ERR(realfile);
-+
-+	err = backing_file_open_user_path(realfile, &file->f_path);
-+	if (err) {
-+		fput(realfile);
-+		return err;
-+	}
-+
- 	ihold(sharedinode);
- 	realfile->f_op = &erofs_file_fops;
- 	realfile->f_inode = sharedinode;
- 	realfile->f_mapping = sharedinode->i_mapping;
--	path_get(&file->f_path);
--	backing_file_set_user_path(realfile, &file->f_path);
- 
- 	file_ra_state_init(&realfile->f_ra, file->f_mapping);
- 	realfile->private_data = EROFS_I(inode);
-diff --git a/fs/file_table.c b/fs/file_table.c
-index aaa5faaace1e9..a4d1064d50896 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -27,6 +27,7 @@
- #include <linux/task_work.h>
- #include <linux/swap.h>
- #include <linux/kmemleak.h>
-+#include <linux/backing-file.h>
- 
- #include <linux/atomic.h>
- 
-@@ -43,11 +44,11 @@ static struct kmem_cache *bfilp_cachep __ro_after_init;
- 
- static struct percpu_counter nr_files __cacheline_aligned_in_smp;
- 
--/* Container for backing file with optional user path */
-+/* Container for backing file with optional user path file */
- struct backing_file {
- 	struct file file;
- 	union {
--		struct path user_path;
-+		struct file user_path_file;
- 		freeptr_t bf_freeptr;
- 	};
- };
-@@ -56,24 +57,54 @@ struct backing_file {
- 
- const struct path *backing_file_user_path(const struct file *f)
- {
--	return &backing_file(f)->user_path;
-+	return &backing_file(f)->user_path_file.f_path;
- }
- EXPORT_SYMBOL_GPL(backing_file_user_path);
- 
--void backing_file_set_user_path(struct file *f, const struct path *path)
-+const struct file *backing_file_user_path_file(const struct file *f)
- {
--	backing_file(f)->user_path = *path;
-+	return &backing_file(f)->user_path_file;
- }
--EXPORT_SYMBOL_GPL(backing_file_set_user_path);
-+EXPORT_SYMBOL_GPL(backing_file_user_path_file);
- 
--static inline void file_free(struct file *f)
-+int backing_file_open_user_path(struct file *f, const struct path *path)
-+{
-+	if (WARN_ON(!(f->f_mode & FMODE_BACKING)))
-+		return -EIO;
-+	kernel_path_file_open(&backing_file(f)->user_path_file, path);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(backing_file_open_user_path);
-+
-+void backing_file_set_user_path_inode(struct file *f)
-+{
-+	if (WARN_ON(!(f->f_mode & FMODE_BACKING)))
-+		return;
-+	file_set_d_inode(&backing_file(f)->user_path_file);
-+}
-+EXPORT_SYMBOL_GPL(backing_file_set_user_path_inode);
-+
-+static void destroy_file(struct file *f)
- {
- 	security_file_free(f);
-+	put_cred(f->f_cred);
-+}
-+
-+static inline void file_free(struct file *f)
-+{
-+	destroy_file(f);
- 	if (likely(!(f->f_mode & FMODE_NOACCOUNT)))
- 		percpu_counter_dec(&nr_files);
--	put_cred(f->f_cred);
- 	if (unlikely(f->f_mode & FMODE_BACKING)) {
--		path_put(backing_file_user_path(f));
-+		struct file *user_path_file = &backing_file(f)->user_path_file;
-+
-+		/*
-+		 * no refcount on the user_path_file - they die together,
-+		 * so __fput() is not called for user_path_file. path_put()
-+		 * is the only relevant cleanup from __fput().
-+		 */
-+		destroy_file(user_path_file);
-+		path_put(&user_path_file->__f_path);
- 		kmem_cache_free(bfilp_cachep, backing_file(f));
- 	} else {
- 		kmem_cache_free(filp_cachep, f);
-@@ -201,7 +232,7 @@ static int init_file(struct file *f, int flags, const struct cred *cred)
- 	 * fget-rcu pattern users need to be able to handle spurious
- 	 * refcount bumps we should reinitialize the reused file first.
- 	 */
--	file_ref_init(&f->f_ref, 1);
-+	file_ref_init(&f->f_ref, FILE_REF_ONEREF);
- 	return 0;
- }
- 
-@@ -290,7 +321,8 @@ struct file *alloc_empty_file_noaccount(int flags, const struct cred *cred)
-  * This is only for kernel internal use, and the allocate file must not be
-  * installed into file tables or such.
-  */
--struct file *alloc_empty_backing_file(int flags, const struct cred *cred)
-+struct file *alloc_empty_backing_file(int flags, const struct cred *cred,
-+				      const struct cred *user_cred)
- {
- 	struct backing_file *ff;
- 	int error;
-@@ -305,6 +337,15 @@ struct file *alloc_empty_backing_file(int flags, const struct cred *cred)
- 		return ERR_PTR(error);
- 	}
- 
-+	error = init_file(&ff->user_path_file, O_PATH, user_cred);
-+	/* user_path_file is not refcounterd - it dies with the backing file */
-+	file_ref_init(&ff->user_path_file.f_ref, FILE_REF_DEAD);
-+	if (unlikely(error)) {
-+		destroy_file(&ff->file);
-+		kmem_cache_free(bfilp_cachep, ff);
-+		return ERR_PTR(error);
-+	}
-+
- 	ff->file.f_mode |= FMODE_BACKING | FMODE_NOACCOUNT;
- 	return &ff->file;
- }
-diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
-index 72de97c03d0ee..60018c6359342 100644
---- a/fs/fuse/passthrough.c
-+++ b/fs/fuse/passthrough.c
-@@ -10,6 +10,7 @@
- #include <linux/file.h>
- #include <linux/backing-file.h>
- #include <linux/splice.h>
-+#include <linux/uio.h>
- 
- static void fuse_file_accessed(struct file *file)
- {
-@@ -167,7 +168,7 @@ struct fuse_backing *fuse_passthrough_open(struct file *file, int backing_id)
- 		goto out;
- 
- 	/* Allocate backing file per fuse file to store fuse path */
--	backing_file = backing_file_open(&file->f_path, file->f_flags,
-+	backing_file = backing_file_open(&file->f_path, file->f_cred, file->f_flags,
- 					 &fb->file->f_path, fb->cred);
- 	err = PTR_ERR(backing_file);
- 	if (IS_ERR(backing_file)) {
-diff --git a/fs/internal.h b/fs/internal.h
-index cbc384a1aa096..4a9e5e00678d9 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -106,8 +106,16 @@ extern void chroot_fs_refs(const struct path *, const struct path *);
-  */
- struct file *alloc_empty_file(int flags, const struct cred *cred);
- struct file *alloc_empty_file_noaccount(int flags, const struct cred *cred);
--struct file *alloc_empty_backing_file(int flags, const struct cred *cred);
--void backing_file_set_user_path(struct file *f, const struct path *path);
-+struct file *alloc_empty_backing_file(int flags, const struct cred *cred,
-+				      const struct cred *user_cred);
-+int backing_file_open_user_path(struct file *f, const struct path *path);
-+void backing_file_set_user_path_inode(struct file *f);
-+void kernel_path_file_open(struct file *f, const struct path *path);
-+
-+static inline void file_set_d_inode(struct file *f)
-+{
-+	f->f_inode = d_inode(f->f_path.dentry);
-+}
- 
- static inline void file_put_write_access(struct file *file)
- {
-diff --git a/fs/open.c b/fs/open.c
-index 91f1139591abe..a7b3b04cd9ae7 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -884,10 +884,38 @@ static inline int file_get_write_access(struct file *f)
- 	return error;
- }
- 
-+static const struct file_operations empty_fops = {};
-+
-+static void do_path_file_open(struct file *f)
-+{
-+	f->f_mode = FMODE_PATH | FMODE_OPENED;
-+	file_set_fsnotify_mode(f, FMODE_NONOTIFY);
-+	f->f_op = &empty_fops;
-+}
-+
-+/**
-+ * kernel_path_file_open - open an O_PATH file for kernel internal use
-+ * @f:		pre-allocated file with f_flags and f_cred initialized
-+ * @path:	path to reference (may have a negative dentry)
-+ *
-+ * Open a minimal O_PATH file that only references a path.
-+ * Unlike vfs_open(), this does not require a positive dentry and does not
-+ * set up f_mapping and other fields not needed for O_PATH.
-+ * If path is negative at the time of this call, the caller is responsible for
-+ * callingn backing_file_set_user_path_inode() after making the path positive.
-+
-+ */
-+void kernel_path_file_open(struct file *f, const struct path *path)
-+{
-+	f->__f_path = *path;
-+	path_get(&f->f_path);
-+	file_set_d_inode(f);
-+	do_path_file_open(f);
-+}
-+
- static int do_dentry_open(struct file *f,
- 			  int (*open)(struct inode *, struct file *))
- {
--	static const struct file_operations empty_fops = {};
- 	struct inode *inode = f->f_path.dentry->d_inode;
- 	int error;
- 
-@@ -898,9 +926,7 @@ static int do_dentry_open(struct file *f,
- 	f->f_sb_err = file_sample_sb_err(f);
- 
- 	if (unlikely(f->f_flags & O_PATH)) {
--		f->f_mode = FMODE_PATH | FMODE_OPENED;
--		file_set_fsnotify_mode(f, FMODE_NONOTIFY);
--		f->f_op = &empty_fops;
-+		do_path_file_open(f);
- 		return 0;
- 	}
- 
-diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-index ff3dbd1ca61f2..24e961f165a78 100644
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -1374,7 +1374,8 @@ static int ovl_create_tmpfile(struct file *file, struct dentry *dentry,
- 				return PTR_ERR(cred);
- 
- 			ovl_path_upper(dentry->d_parent, &realparentpath);
--			realfile = backing_tmpfile_open(&file->f_path, flags, &realparentpath,
-+			realfile = backing_tmpfile_open(&file->f_path, file->f_cred,
-+							flags, &realparentpath,
- 							mode, current_cred());
- 			err = PTR_ERR_OR_ZERO(realfile);
- 			pr_debug("tmpfile/open(%pd2, 0%o) = %i\n", realparentpath.dentry, mode, err);
-@@ -1392,6 +1393,8 @@ static int ovl_create_tmpfile(struct file *file, struct dentry *dentry,
- 			err = ovl_instantiate(dentry, inode, newdentry, false, file);
- 			if (!err) {
- 				file->private_data = of;
-+				/* user_path_file was opened with a negative path */
-+				backing_tmpfile_finish(realfile);
- 			} else {
- 				dput(newdentry);
- 				ovl_file_free(of);
-diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index 97bed2286030d..767c128407fcc 100644
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -49,6 +49,7 @@ static struct file *ovl_open_realfile(const struct file *file,
- 				flags &= ~O_NOATIME;
- 
- 			realfile = backing_file_open(file_user_path(file),
-+						     file_user_cred(file),
- 						     flags, realpath, current_cred());
- 		}
- 	}
-diff --git a/include/linux/backing-file.h b/include/linux/backing-file.h
-index 1476a6ed1bfd7..52ac51ada6ff9 100644
---- a/include/linux/backing-file.h
-+++ b/include/linux/backing-file.h
-@@ -9,21 +9,45 @@
- #define _LINUX_BACKING_FILE_H
- 
- #include <linux/file.h>
--#include <linux/uio.h>
- #include <linux/fs.h>
- 
-+/*
-+ * When mmapping a file on a stackable filesystem (e.g., overlayfs), the file
-+ * stored in ->vm_file is a backing file whose f_inode is on the underlying
-+ * filesystem.
-+ *
-+ * LSM can use file_user_path_file() to store context related to the user path
-+ * that was opened and mmaped.
-+ */
-+const struct file *backing_file_user_path_file(const struct file *f);
-+
-+static inline const struct file *file_user_path_file(const struct file *f)
-+{
-+	if (f && unlikely(f->f_mode & FMODE_BACKING))
-+		return backing_file_user_path_file(f);
-+	return f;
-+}
-+
-+static inline const struct cred *file_user_cred(const struct file *f)
-+{
-+	return file_user_path_file(f)->f_cred;
-+}
-+
- struct backing_file_ctx {
- 	const struct cred *cred;
- 	void (*accessed)(struct file *file);
- 	void (*end_write)(struct kiocb *iocb, ssize_t);
- };
- 
--struct file *backing_file_open(const struct path *user_path, int flags,
-+struct file *backing_file_open(const struct path *user_path,
-+			       const struct cred *user_cred, int flags,
- 			       const struct path *real_path,
- 			       const struct cred *cred);
--struct file *backing_tmpfile_open(const struct path *user_path, int flags,
-+struct file *backing_tmpfile_open(const struct path *user_path,
-+				  const struct cred *user_cred, int flags,
- 				  const struct path *real_parentpath,
- 				  umode_t mode, const struct cred *cred);
-+void backing_tmpfile_finish(struct file *file);
- ssize_t backing_file_read_iter(struct file *file, struct iov_iter *iter,
- 			       struct kiocb *iocb, int flags,
- 			       struct backing_file_ctx *ctx);
-diff --git a/include/linux/file_ref.h b/include/linux/file_ref.h
-index 31551e4cb8f34..c7512ce70f9c4 100644
---- a/include/linux/file_ref.h
-+++ b/include/linux/file_ref.h
-@@ -54,11 +54,11 @@ typedef struct {
- /**
-  * file_ref_init - Initialize a file reference count
-  * @ref: Pointer to the reference count
-- * @cnt: The initial reference count typically '1'
-+ * @cnt: The initial reference count typically FILE_REF_ONEREF
-  */
- static inline void file_ref_init(file_ref_t *ref, unsigned long cnt)
- {
--	atomic_long_set(&ref->refcnt, cnt - 1);
-+	atomic_long_set(&ref->refcnt, cnt);
- }
- 
- bool __file_ref_put(file_ref_t *ref, unsigned long cnt);
--- 
-2.53.0
+> > + *   ``LANDLOCK_SCOPE_*`` flags.
+> > + *
+> > + *   If a resolve attempt is denied, the operation returns an ``EACCES`` error,
+> > + *   in line with other filesystem access rights (but different to denials for
+> > + *   abstract UNIX domain sockets).
+> 
+> This access right is available since the ninth version of the Landlock ABI.
 
+Thanks, added.
+
+
+> > + *
+> > + *   The rationale for this design is described in
+> > + *   :ref:`Documentation/security/landlock.rst <scoped-flags-interaction>`.
+> >   *
+> >   * Whether an opened file can be truncated with :manpage:`ftruncate(2)` or used
+> >   * with `ioctl(2)` is determined during :manpage:`open(2)`, in the same way as
+> > @@ -333,6 +351,7 @@ struct landlock_net_port_attr {
+> >  #define LANDLOCK_ACCESS_FS_REFER			(1ULL << 13)
+> >  #define LANDLOCK_ACCESS_FS_TRUNCATE			(1ULL << 14)
+> >  #define LANDLOCK_ACCESS_FS_IOCTL_DEV			(1ULL << 15)
+> > +#define LANDLOCK_ACCESS_FS_RESOLVE_UNIX			(1ULL << 16)
+> >  /* clang-format on */
+> >  
+> >  /**
+> > diff --git a/security/landlock/access.h b/security/landlock/access.h
+> > index 42c95747d7bd..89dc8e7b93da 100644
+> > --- a/security/landlock/access.h
+> > +++ b/security/landlock/access.h
+> > @@ -34,7 +34,7 @@
+> >  	LANDLOCK_ACCESS_FS_IOCTL_DEV)
+> >  /* clang-format on */
+> >  
+> > -typedef u16 access_mask_t;
+> > +typedef u32 access_mask_t;
+> 
+> This change and the underlying implications are not explained in the
+> commit message, especially regarding the stack delta.
+
+Thanks, will add it.
+
+
+> >  /* Makes sure all filesystem access rights can be stored. */
+> >  static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_FS);
+> > diff --git a/security/landlock/audit.c b/security/landlock/audit.c
+> > index 60ff217ab95b..8d0edf94037d 100644
+> > --- a/security/landlock/audit.c
+> > +++ b/security/landlock/audit.c
+> > @@ -37,6 +37,7 @@ static const char *const fs_access_strings[] = {
+> >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_REFER)] = "fs.refer",
+> >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_TRUNCATE)] = "fs.truncate",
+> >  	[BIT_INDEX(LANDLOCK_ACCESS_FS_IOCTL_DEV)] = "fs.ioctl_dev",
+> > +	[BIT_INDEX(LANDLOCK_ACCESS_FS_RESOLVE_UNIX)] = "fs.resolve_unix",
+> >  };
+> >  
+> >  static_assert(ARRAY_SIZE(fs_access_strings) == LANDLOCK_NUM_ACCESS_FS);
+> > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> > index 97065d51685a..0486f5ab06c9 100644
+> > --- a/security/landlock/fs.c
+> > +++ b/security/landlock/fs.c
+> > @@ -27,6 +27,7 @@
+> >  #include <linux/lsm_hooks.h>
+> >  #include <linux/mount.h>
+> >  #include <linux/namei.h>
+> > +#include <linux/net.h>
+> >  #include <linux/path.h>
+> >  #include <linux/pid.h>
+> >  #include <linux/rcupdate.h>
+> > @@ -36,6 +37,7 @@
+> >  #include <linux/types.h>
+> >  #include <linux/wait_bit.h>
+> >  #include <linux/workqueue.h>
+> > +#include <net/af_unix.h>
+> >  #include <uapi/linux/fiemap.h>
+> >  #include <uapi/linux/landlock.h>
+> >  
+> > @@ -314,7 +316,8 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
+> >  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+> >  	LANDLOCK_ACCESS_FS_READ_FILE | \
+> >  	LANDLOCK_ACCESS_FS_TRUNCATE | \
+> > -	LANDLOCK_ACCESS_FS_IOCTL_DEV)
+> > +	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
+> > +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX)
+> >  /* clang-format on */
+> >  
+> >  /*
+> > @@ -1557,6 +1560,110 @@ static int hook_path_truncate(const struct path *const path)
+> >  	return current_check_access_path(path, LANDLOCK_ACCESS_FS_TRUNCATE);
+> >  }
+> >  
+> > +/**
+> > + * unmask_scoped_access - Remove access right bits in @masks in all layers
+> > + *                        where @client and @server have the same domain
+> > + *
+> > + * This does the same as domain_is_scoped(), but unmasks bits in @masks.
+> > + * It can not return early as domain_is_scoped() does.
+> 
+> I'd like a summary of your previous excellent explanation of
+> unmask_scoped_access() in this comment.
+
+Adding:
+
+ A scoped access for a given access right bit is allowed iff, for all
+ layer depths where the access bit is set, the client and server
+ domain are the same.  This function clears the access rights @access
+ in @masks at all layer depths where the client and server domain are
+ the same, so that, when they are all cleared, the access is allowed.
+
+It's not as detailed as drawing a picture in the other mail, but I
+hope it helps.
+
+
+> > + * @client: Client domain
+> > + * @server: Server domain
+> > + * @masks: Layer access masks to unmask
+> > + * @access: Access bit that controls scoping
+> > + */
+> > +static void unmask_scoped_access(const struct landlock_ruleset *const client,
+> > +				 const struct landlock_ruleset *const server,
+> > +				 struct layer_access_masks *const masks,
+> > +				 const access_mask_t access)
+> > +{
+> > +	int client_layer, server_layer;
+> > +	const struct landlock_hierarchy *client_walker, *server_walker;
+> > +
+> > +	/* This should not happen. */
+> > +	if (WARN_ON_ONCE(!client))
+> > +		return;
+> > +
+> > +	/* Server has no Landlock domain; nothing to clear. */
+> > +	if (!server)
+> > +		return;
+> > +
+> 
+> Please also copy the BUILD_BUG_ON() from domain_is_scoped().
+
+I don't understand what this check is good for.  It says:
+
+/*
+ * client_layer must be a signed integer with greater capacity
+ * than client->num_layers to ensure the following loop stops.
+ */
+BUILD_BUG_ON(sizeof(client_layer) > sizeof(client->num_layers));
+
+For the loop to terminate, in my understanding, client_layer must be
+able to store client->num_layers - 1 down to - 1, but that is anyway a
+given since num_layers can't exceed 16 and client_layer is signed.  It
+seems that the termination of this would anyway be caught in our tests
+as well?
+
+Could you please clarify what this BUILD_BUG_ON() is trying to assert?
+
+
+> > +	client_layer = client->num_layers - 1;
+> > +	client_walker = client->hierarchy;
+> > +	server_layer = server->num_layers - 1;
+> > +	server_walker = server->hierarchy;
+> > +
+> > +	/*
+> > +	 * Clears the access bits at all layers where the client domain is the
+> > +	 * same as the server domain.  We start the walk at min(client_layer,
+> > +	 * server_layer).  The layer bits until there can not be cleared because
+> > +	 * either the client or the server domain is missing.
+> > +	 */
+> > +	for (; client_layer > server_layer; client_layer--)
+> > +		client_walker = client_walker->parent;
+> > +
+> > +	for (; server_layer > client_layer; server_layer--)
+> > +		server_walker = server_walker->parent;
+> > +
+> > +	for (; client_layer >= 0; client_layer--) {
+> > +		if (masks->access[client_layer] & access &&
+> > +		    client_walker == server_walker)
+> > +			masks->access[client_layer] &= ~access;
+> > +
+> > +		client_walker = client_walker->parent;
+> > +		server_walker = server_walker->parent;
+> > +	}
+> > +}
+> > +
+> > +static int hook_unix_find(const struct path *const path, struct sock *other,
+> > +			  int flags)
+> > +{
+> > +	const struct landlock_ruleset *dom_other;
+> > +	const struct landlock_cred_security *subject;
+> > +	struct layer_access_masks layer_masks;
+> > +	struct landlock_request request = {};
+> > +	static const struct access_masks fs_resolve_unix = {
+> > +		.fs = LANDLOCK_ACCESS_FS_RESOLVE_UNIX,
+> > +	};
+> > +
+> > +	/* Lookup for the purpose of saving coredumps is OK. */
+> > +	if (unlikely(flags & SOCK_COREDUMP))
+> > +		return 0;
+> > +
+> > +	/* Access to the same (or a lower) domain is always allowed. */
+> 
+> This comment is related to the unmask_scoped_access() call.
+
+Thanks, I moved it down.
+
+
+> > +	subject = landlock_get_applicable_subject(current_cred(),
+> > +						  fs_resolve_unix, NULL);
+> > +
+> > +	if (!subject)
+> > +		return 0;
+> > +
+> > +	if (!landlock_init_layer_masks(subject->domain, fs_resolve_unix.fs,
+> > +				       &layer_masks, LANDLOCK_KEY_INODE))
+> 
+> This case is not possible because landlock_get_applicable_subject()
+> already check it.  Other hooks just ignore the returned value in this
+> case.
+
+Hm, fair enough. I added a comment to explain why we are ignoring the
+return value, as it wasn't as obvious to me.  In the other places, we
+are using the result of the landlock_init_layer_masks() function
+(because in the generic case, it can be a subset of the original
+access rights).
+
+
+> > +		return 0;
+> > +
+> > +	/* Checks the layers in which we are connecting within the same domain. */
+> > +	unix_state_lock(other);
+> > +	if (unlikely(sock_flag(other, SOCK_DEAD) || !other->sk_socket ||
+> > +		     !other->sk_socket->file)) {
+> > +		unix_state_unlock(other);
+> > +		return 0;
+> 
+> Is it safe to not return -ECONNREFUSED?
+
+Yes.  My reasoning is:
+
+In all three places where this gets called in af_unix.c (stream
+connect, dgram connect, dgram send), these functions check for socket
+death shortly after, and if they find the socket to be SOCK_DEAD, they
+will *retry* the UNIX lookup.  The code commentary about this says
+that this is for a race condition where the VFS has "overslept" the
+socket death, so I presume that the retry aims at getting a race-free
+sitation on the next attempt.
+
+Since sock_orphan() is a one-way teardown operation, when we observe
+SOCK_DEAD in our hook, we can be sure that the caller will see it as
+well when it does the same check a bit later after our hook.
+
+If we *were* to return -ECONNREFUSED, the caller would immediately
+return an error though, and it would not retry as it normally does
+when it encounters this race condition.  So we have to return 0 here.
+
+
+> > +	}
+> > +	dom_other = landlock_cred(other->sk_socket->file->f_cred)->domain;
+> > +	unix_state_unlock(other);
+> > +
+> > +	unmask_scoped_access(subject->domain, dom_other, &layer_masks,
+> > +			     fs_resolve_unix.fs);
+> 
+> dom_other is not safe to use without the lock.
+
+Thanks, fixed by extending the lock scope across that function call,
+as discussed in other thread in more detail.
+
+
+> > +	/* Checks the connections to allow-listed paths. */
+> > +	if (is_access_to_paths_allowed(subject->domain, path,
+> > +				       fs_resolve_unix.fs, &layer_masks,
+> > +				       &request, NULL, 0, NULL, NULL, NULL))
+> > +		return 0;
+> > +
+> > +	landlock_log_denial(subject, &request);
+> > +	return -EACCES;
+> > +}
+> > +
+> >  /* File hooks */
+> >  
+> >  /**
+> > @@ -1834,6 +1941,7 @@ static struct security_hook_list landlock_hooks[] __ro_after_init = {
+> >  	LSM_HOOK_INIT(path_unlink, hook_path_unlink),
+> >  	LSM_HOOK_INIT(path_rmdir, hook_path_rmdir),
+> >  	LSM_HOOK_INIT(path_truncate, hook_path_truncate),
+> > +	LSM_HOOK_INIT(unix_find, hook_unix_find),
+> >  
+> >  	LSM_HOOK_INIT(file_alloc_security, hook_file_alloc_security),
+> >  	LSM_HOOK_INIT(file_open, hook_file_open),
+> > diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> > index eb584f47288d..b454ad73b15e 100644
+> > --- a/security/landlock/limits.h
+> > +++ b/security/landlock/limits.h
+> > @@ -19,7 +19,7 @@
+> >  #define LANDLOCK_MAX_NUM_LAYERS		16
+> >  #define LANDLOCK_MAX_NUM_RULES		U32_MAX
+> >  
+> > -#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_IOCTL_DEV
+> > +#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_RESOLVE_UNIX
+> >  #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
+> >  #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
+> >  
+> > diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> > index 3b33839b80c7..a6e23657f3ce 100644
+> > --- a/security/landlock/syscalls.c
+> > +++ b/security/landlock/syscalls.c
+> > @@ -166,7 +166,7 @@ static const struct file_operations ruleset_fops = {
+> >   * If the change involves a fix that requires userspace awareness, also update
+> >   * the errata documentation in Documentation/userspace-api/landlock.rst .
+> >   */
+> > -const int landlock_abi_version = 8;
+> > +const int landlock_abi_version = 9;
+> >  
+> >  /**
+> >   * sys_landlock_create_ruleset - Create a new ruleset
+> > diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
+> > index 0fea236ef4bd..30d37234086c 100644
+> > --- a/tools/testing/selftests/landlock/base_test.c
+> > +++ b/tools/testing/selftests/landlock/base_test.c
+> > @@ -76,7 +76,7 @@ TEST(abi_version)
+> >  	const struct landlock_ruleset_attr ruleset_attr = {
+> >  		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
+> >  	};
+> > -	ASSERT_EQ(8, landlock_create_ruleset(NULL, 0,
+> > +	ASSERT_EQ(9, landlock_create_ruleset(NULL, 0,
+> >  					     LANDLOCK_CREATE_RULESET_VERSION));
+> >  
+> >  	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
+> > diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> > index 968a91c927a4..b318627e7561 100644
+> > --- a/tools/testing/selftests/landlock/fs_test.c
+> > +++ b/tools/testing/selftests/landlock/fs_test.c
+> > @@ -575,9 +575,10 @@ TEST_F_FORK(layout1, inval)
+> >  	LANDLOCK_ACCESS_FS_WRITE_FILE | \
+> >  	LANDLOCK_ACCESS_FS_READ_FILE | \
+> >  	LANDLOCK_ACCESS_FS_TRUNCATE | \
+> > -	LANDLOCK_ACCESS_FS_IOCTL_DEV)
+> > +	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
+> > +	LANDLOCK_ACCESS_FS_RESOLVE_UNIX)
+> >  
+> > -#define ACCESS_LAST LANDLOCK_ACCESS_FS_IOCTL_DEV
+> > +#define ACCESS_LAST LANDLOCK_ACCESS_FS_RESOLVE_UNIX
+> >  
+> >  #define ACCESS_ALL ( \
+> >  	ACCESS_FILE | \
+> > -- 
+> > 2.53.0
+> > 
+> > 
+
+–Günther
