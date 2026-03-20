@@ -1,326 +1,165 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18B83AE703
-	for <linux-security-module@vger.kernel.org>; Fri, 20 Mar 2026 12:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774010052; cv=pass; b=thxYen/ImJUMcaz8pb4CZCya2e/eNpxDWyY0/0MnfcaSRsKvY0pbnabE22lTN+mXhFJqdDEu5pSiRkIw4EfT+XaanvYYLSnpAuEE454+FDSoYdb8oMb/ko4z6g3/OIkKMSd8cDr01sMiUUnPr7HS21Xi5J1METw+ZTLutwsdoTY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774010052; c=relaxed/simple;
-	bh=XLaoLqDtanoExFeuxa0YKat22sa9hJ9P+EPmS3WvgL8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fq5cZUWMGlO2ak+ahXOkYyCxZU/WGqScZXWeoRzGCTlwlTSJo23uveMtmxNTYIdJJZmqUIx7aax/WMVZMoXWtzkv0vF2oSYpj0cGCsQ1JXipZ51XwaccsWItlud2Cmg2agpWX6X2SnC6VDF1qairEWMVFh5VoM1BwYVJx6IBmiA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kgp7Fjyb; arc=pass smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF4937187C;
+	Fri, 20 Mar 2026 12:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774010634; cv=none; b=OTgnHux+zSsOu43Ug6DaxouZckStIFcbAuA4c9lFU090OBEPqwMOAO6IvERojNklaiNrKx4wiUCbRFkW79CRBNflFr7ueg8zoh7Vca4JayyKoG58xJmpvgb/klhJka6CWfobgkFNECb82ecY5WhIMEqEAHX4SXjhhKXrkDOeTPY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774010634; c=relaxed/simple;
+	bh=yNppS9cHlBOq3hi2OuU+lLqCPo6TTLgiTKj2ELmxZFo=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=plgJm4xG7t93BVWYcKz6FitQcUhW9qoOBbwByZdiQfZerm2eCOM24J9VQZTRaFkG0McTJ+lWrcFBVv0IkQis2sVOyokut28aO4T0SYA/WT7P4xu6M8cZvPJAFfxit4YM/zswbNpvW55XK7jzCiJu+4ZPgPlmQEqqZomG9DHvOj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=biqgZdZ4; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kgp7Fjyb"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b9793fa5371so245522966b.2
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Mar 2026 05:34:09 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1774010048; cv=none;
-        d=google.com; s=arc-20240605;
-        b=LumV66oHeNrRJPiYqj8Tz9FQcLMS9orCzcQ8Zr2V3oGwiVbAOH/FtHEGwLkuq/UAqD
-         C7AMC9h1GhvsxzgYNgKiTn4NykneDHgvKJparZi+F+ArUlv1PIBZGIWZ6u8jdJ8cYNAK
-         2hjkmdd5rAIT/PbbnvrL9wkYVNklWtXxMjX1ZUWQ6zw1qmcFT6uP7a4X/p2+9T5UbNgA
-         QG3IE896JeCogaB2zZKMOt8UpvtV/+8PxbD4qRrXqutsPerNNfjnmIvo5fe1wVldej96
-         6RDNJhiW94Tfv5SD7bLaVikki1AGTr6/oT4CIsrI5adgedyt0zgvBwFLBhtftPfwkk/V
-         mJrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=3K8SJZxerjn7Jv5y3gL2e2Dax0E0bqqyMdQ4wn7A4ls=;
-        fh=i9k0RYvmvBrPSQFmNvJ6pDkcE2vVKvNlR9j+HyyaOVk=;
-        b=VFbKTG4QsQLCOWDVKyK/V0K9c1gUgIVBVAO654xNDMeurYEXH8sfwHVtLLvy7BXITf
-         i+4Ll9IqrZx4X2LP7juLKtXVeipiisi3Jea+qgWK4g7t0l1sQhOVa0ep8/0Oi9SSwsbe
-         w9NRd54WGBEiCIceBEcfgrre454tZnHJTSzCD0cz65xnC+1HBJWA+0Kw1bMX9GRPmFSy
-         YkAMVOHbWuhf1IOXQLG5n/j+HEwzScMX96woDXr/2EqZZjXFi/7uxGwDgRfZkFCe0b0K
-         kKX3HzBnhV53BpVWHjRPkb+4g+0iTGfyAmugOqP2TfSDgg3ix4n/8DRGNsYg8GjLAcyf
-         JG/A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1774010048; x=1774614848; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3K8SJZxerjn7Jv5y3gL2e2Dax0E0bqqyMdQ4wn7A4ls=;
-        b=Kgp7FjybKjpTHrOOpyYircgze9ZH96xU05e3De1KUvI/TdyyUVIjPMKzxB7DsAzuI8
-         YXpHJMZh3qeeCFYhZDlOqSRjecMsxdF1T3zRuK7ZcjwNqOO6OEEjiBwnuAv8L+YWOblK
-         1mAHi1SSgNSqMaUWhuRtsy5vCy0tuY0Ubt/Onbtdqp2a1WTUE+hBxHsqUZHCNDncCf+H
-         KT5XCyx9kSOQeR4x/A/WxegzfdXHRW3AZnWO1068MMNXWbPOtOzegXsjSJQj6NmArNSY
-         UIheDaHBuuXhcbacJzxUev/6V5ANMlV0dmuV49mdBKzjL4n3kN/4HF/FcPSkmSem49Sb
-         HpdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774010048; x=1774614848;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=3K8SJZxerjn7Jv5y3gL2e2Dax0E0bqqyMdQ4wn7A4ls=;
-        b=IvA51cqyBDEo+XNT3jXJuUW4MzHPU/Z5HqMHFkXMtg4IKlmuVcjLYNFltAFo9L5LpN
-         V5ZQEZ0qMgN7mINt0yRVIMvoWEDD4872aC50Drr6UKUSPdDgHsRN1eX/Y3CZheQcBtSl
-         Z9bdMWxZfI5Wa0kBv79QSsZ7YpPreucjXRbSpr6H9Rf74i6/aRqmXnGo2skfPSWe+owq
-         HEnjCSdn3+heLBkAhR6VjTnIMDyNIqSa5SKQXCEZu+IvgO5/NzcEDAC7iefNidQ4WW07
-         u7Z+HDtkP7iI96iFdf7QiNQ0e4wwfvpZfOCYE0ZB1YUjoSrIYs6LasZ8wzho7JKpl/M5
-         O1Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCW5V8YFwDcLd7JMZyT6/PcZpMidJWAt/3QNEHMBGFk5+ojXZA4qwmm5RRQ/kx/8uPPPes1FlQaYqyNHGGxIP+IgzA/AIw0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBuj2mod/uRkB8K676WPbYlCuHfF00ADqnvmKRILijw9EL0YkG
-	7SYH3FTDy12Hkz8wZE5HF0EeURcMejLV3yjLbnfUwWBmFQTP+sWeNydVRHVF1XHchiTWuqEqVfG
-	nl07IcreHRyNuXjwoiGoAjRA6Oru0ySs=
-X-Gm-Gg: ATEYQzxh8ih0h5A66zZ0lJlCpLkLw380Wl+G/ptMMr4QdMmKmFlRVxC4UNJhykFHgOZ
-	CxwBd+c38N6dbcEtkwQYLP91rYtU99bHBTcPXqHx+wSq0CRomvactN6w4LsR1XldpaMNObnfMz4
-	NX/6Uzv21BVkMSX/d+AGZ9GeO2zP6FmNWPaDk2kUn/n0vw1aBQ9HrbMEJrbpV0SDKTzoEC/wHcp
-	zOX8D5qsKxLnB95uSKgE7cw+j1rr0UMER89tY+pYOtx55eD3ZEfHh/l610milPcv8blBf66Yspu
-	HkNDHjRoA3b8fYoQbpav46Uq9OKLAJtswdmmFRp1bQ==
-X-Received: by 2002:a17:907:1604:b0:b97:fe6d:2e4a with SMTP id
- a640c23a62f3a-b982f0a95fbmr232459366b.10.1774010047484; Fri, 20 Mar 2026
- 05:34:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="biqgZdZ4"
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62K9KQHp1190011;
+	Fri, 20 Mar 2026 12:43:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=dVXFCD
+	S6uoQ7xpxgXlI+9S5+RobPtFcQppGW3wo3APY=; b=biqgZdZ4cDNueXS2BO3mQm
+	xXVsaYwbJqM2uf9/tdb3AZ9lsBk5YHz2c4t3oWYLgV7sVQFKvNcgqzLjoC1xhlBn
+	drPTT0WGRkJAIK4ScbEtKLI1p3rjHN8clpMpi6QLVcE0c/hvWC6Js8JjyHC2uRbG
+	e/+I9004fo8wWjdQWYxP0DPkif4oRrvn5ncdJ9wfAuhVIw0zl5bhxEANXk0ZKdPq
+	ykXjkyGvnTzGyNcRla5Yz3YgE8XHOSkj3O2pa1g9Kb2ID5x1u3IgWh6f6Y3bfDEI
+	RGvWlZE+COtux0FflNSawh+RSeXIah9f+Agjg91RSnorCzKiHW2HOnvG9rqpAPJg
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4cx7vfwux9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Mar 2026 12:43:16 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62KBtEVU014113;
+	Fri, 20 Mar 2026 12:43:15 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4cwjcyf7hs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Mar 2026 12:43:15 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 62KChExl29164222
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 20 Mar 2026 12:43:14 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D50BA5804B;
+	Fri, 20 Mar 2026 12:43:14 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 48FDA58055;
+	Fri, 20 Mar 2026 12:43:13 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.147.150])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 20 Mar 2026 12:43:13 +0000 (GMT)
+Message-ID: <ffe1d4645a66a690892163be8e16c4b5d24a690d.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 3/3] ima: Add support for staging measurements for
+ deletion
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: steven chen <chenste@linux.microsoft.com>,
+        Roberto Sassu	
+ <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
+        skhan@linuxfoundation.org, dmitry.kasatkin@gmail.com,
+        eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        gregorylumen@linux.microsoft.com, nramas@linux.microsoft.com,
+        Roberto Sassu
+	 <roberto.sassu@huawei.com>
+In-Reply-To: <25e0a273-9044-4e0d-9812-0171ec99e1b7@linux.microsoft.com>
+References: <20260311171956.2317781-1-roberto.sassu@huaweicloud.com>
+	 <20260311171956.2317781-3-roberto.sassu@huaweicloud.com>
+	 <587e11bf4d29552bbbfc029f716146e8ebfca1eb.camel@linux.ibm.com>
+	 <25e0a273-9044-4e0d-9812-0171ec99e1b7@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 20 Mar 2026 08:41:18 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260320122918.1726043-1-amir73il@gmail.com>
-In-Reply-To: <20260320122918.1726043-1-amir73il@gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 20 Mar 2026 13:33:55 +0100
-X-Gm-Features: AaiRm50yxSl-GpcT9aAyYPhbaKvhkBm3eNaH28AUrvLwA3Ejcz4sEkf5zVBNIlU
-Message-ID: <CAOQ4uxhsTG0mQCeiAw-8qGqjQo9HjRYfdRYQzPGXSgKb4udOiw@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: allow backing file code to open an O_PATH file
- with negative dentry
-To: Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Paul Moore <paul@paul-moore.com>, Gao Xiang <xiang@kernel.org>, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, 
-	syzbot+f34aab278bf5d664e2be@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-ORIG-GUID: LCuC5On_83ousWRx60Wk21U32FhyP-LH
+X-Authority-Analysis: v=2.4 cv=KajfcAYD c=1 sm=1 tr=0 ts=69bd40e4 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=U7nrCbtTmkRpXpFmAIza:22 a=zauGFP8psBLEDG-jHCkA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzIwMDEwMCBTYWx0ZWRfXxmCEw0mb2dRQ
+ bPt5+fyq4ZTouWloR4ChkkZ4PEz4tSCpg9QrvDmHiMaKU5/oMfwyrEZYbmG+5WjP023WWGr2Oha
+ +hYk06QZpfewSJ06jH8951wdTiGaeYCUf7/JcoK6GhZrOBCEaAQwntLLOY6w7zHtIKUSOtYL4Lf
+ G9OGdMrZTIIdK5wrYqA/s4nEk7bV7uUKuv3q+73Zc3SYuu/NGYqMqhgxCSvrtwXZg2hNlPEjki0
+ F+teb4JHruekgob4FFzPQEGjW93ObKBummfOGownlwUZytZY0ofWFT2nnj0XOrABCHqeMv5BsUK
+ vyLTDiMXw8LS1S7KcKRMK5E4zolcLLwW66YX4TTUPfQ8JR4oqMS3tfyJawLOAvvByN5BO58Q0kH
+ RQat8qp7LMYu3sox1TAJdIHFqeH5Ga2HyAme9AFTTf2mVk0Tp6n3kjeX3xQ4ZzcrlGplqeb2LVh
+ 8+FmnlR3KbOXhWvswGg==
+X-Proofpoint-GUID: WSIvWMAJxyv9drqAYdzx-nEZC9eLd_Br
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-20_02,2026-03-19_05,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 adultscore=0 spamscore=0 malwarescore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
+ definitions=main-2603200100
 
-On Fri, Mar 20, 2026 at 1:29=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> The fields f_mapping and f_wb_err are irrelevant for the O_PATH file
-> in backing_file_user_path_file().
->
-> Create a dedicated helper kernel_path_file_open(), which skips all the
-> generic code in do_dentry_open() and does only the essentials, so that
-> the internal O_PATH file could be opened with a negative dentry.
->
-> This is needed for backing_tmpfile_open() to open a backing O_PATH
-> tmpfile before instantiating the dentry.
->
-> The callers of backing_tmpfile_open() are responsible for calling
-> backing_tmpfile_finish() after making the path positive.
->
-> Reported-by: syzbot+f34aab278bf5d664e2be@syzkaller.appspotmail.com
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->
-> Christian,
->
-> This patch fixes the syzbot report [1] that the
-> backing_file_user_path_file() patch [2] introduces.
+On Thu, 2026-03-19 at 14:31 -0700, steven chen wrote:
 
-Sorry, forgot to mention that this patch applies on top of [2]
-so the vfs CI is likely to fail to apply it.
+> > - Support for deleting N measurement records (and pre-pending the remai=
+ning
+> > measurement records)
+>=20
+> Is there any problem to bring work of "stage" step together to the=20
+> deletion step?
+>=20
+> "Trim N" method does everything that "staged" method can do, right?=20
+> what's the "stage" method can do but "trim N" method can't do?
+>=20
+> in user space, if in "staged" state, no other user space agent can=20
+> access the IMA measure list, right?
+>=20
+> Could you explain the benefit of bringing the "stage" step?
 
-The previous patch + fix are also available on my github
-https://github.com/amir73il/linux/commits/user_path_file/
+The performance improvement is because "staging" the IMA measurement list t=
+akes
+the lock in order to move the measurement list pointer and then releases it=
+.=20
+New measurements can then be appended to a new measurement list.  Deleting
+records is done without taking the lock to walk the staged measurement list=
+.
 
-Thanks,
-Amir.
+Without staging the measurement list, walking the measurement list to trim =
+N
+records requires taking and holding the lock.  The performance is dependent=
+ on
+the size of the measurement list.
 
->
-> Following your feedback on v1, this version makes an effort to stay
-> out of the way of main vfs execution paths and restrict the changes
-> to backing_file users.
->
-> This still introduced a temporary state of an O_PATH file with negative
-> path, but only for a short time and only for backing_file users and
-> ones that use backing_tmpfile_open() (i.e. only overlayfs), so the
-> risk is minimal.
->
-> WDYT?
->
-> Thanks,
-> Amir.
->
-> Changes since v1:
-> - Create helper for internal O_PATH open with negative path
-> - Create backing_tmpfile_finish() API to fixup the negative path
->
-> [1] https://syzkaller.appspot.com/bug?extid=3Df34aab278bf5d664e2be
-> [2] https://lore.kernel.org/linux-fsdevel/20260318131258.1457101-1-amir73=
-il@gmail.com/
->
->  fs/backing-file.c            |  6 ++++++
->  fs/file_table.c              | 14 ++++++++++++--
->  fs/internal.h                |  7 +++++++
->  fs/open.c                    | 34 ++++++++++++++++++++++++++++++----
->  fs/overlayfs/dir.c           |  2 ++
->  include/linux/backing-file.h |  1 +
->  6 files changed, 58 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/backing-file.c b/fs/backing-file.c
-> index d0a64c2103907..3357d624eac96 100644
-> --- a/fs/backing-file.c
-> +++ b/fs/backing-file.c
-> @@ -80,6 +80,12 @@ struct file *backing_tmpfile_open(const struct path *u=
-ser_path,
->  }
->  EXPORT_SYMBOL(backing_tmpfile_open);
->
-> +void backing_tmpfile_finish(struct file *file)
-> +{
-> +       backing_file_set_user_path_inode(file);
-> +}
-> +EXPORT_SYMBOL_GPL(backing_tmpfile_finish);
-> +
->  struct backing_aio {
->         struct kiocb iocb;
->         refcount_t ref;
-> diff --git a/fs/file_table.c b/fs/file_table.c
-> index e8b4eb2bbff85..a4d1064d50896 100644
-> --- a/fs/file_table.c
-> +++ b/fs/file_table.c
-> @@ -69,11 +69,21 @@ EXPORT_SYMBOL_GPL(backing_file_user_path_file);
->
->  int backing_file_open_user_path(struct file *f, const struct path *path)
->  {
-> -       /* open an O_PATH file to reference the user path - should not fa=
-il */
-> -       return WARN_ON(vfs_open(path, &backing_file(f)->user_path_file));
-> +       if (WARN_ON(!(f->f_mode & FMODE_BACKING)))
-> +               return -EIO;
-> +       kernel_path_file_open(&backing_file(f)->user_path_file, path);
-> +       return 0;
->  }
->  EXPORT_SYMBOL_GPL(backing_file_open_user_path);
->
-> +void backing_file_set_user_path_inode(struct file *f)
-> +{
-> +       if (WARN_ON(!(f->f_mode & FMODE_BACKING)))
-> +               return;
-> +       file_set_d_inode(&backing_file(f)->user_path_file);
-> +}
-> +EXPORT_SYMBOL_GPL(backing_file_set_user_path_inode);
-> +
->  static void destroy_file(struct file *f)
->  {
->         security_file_free(f);
-> diff --git a/fs/internal.h b/fs/internal.h
-> index 7c44a58627ba3..4a9e5e00678d9 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -109,6 +109,13 @@ struct file *alloc_empty_file_noaccount(int flags, c=
-onst struct cred *cred);
->  struct file *alloc_empty_backing_file(int flags, const struct cred *cred=
-,
->                                       const struct cred *user_cred);
->  int backing_file_open_user_path(struct file *f, const struct path *path)=
-;
-> +void backing_file_set_user_path_inode(struct file *f);
-> +void kernel_path_file_open(struct file *f, const struct path *path);
-> +
-> +static inline void file_set_d_inode(struct file *f)
-> +{
-> +       f->f_inode =3D d_inode(f->f_path.dentry);
-> +}
->
->  static inline void file_put_write_access(struct file *file)
->  {
-> diff --git a/fs/open.c b/fs/open.c
-> index 91f1139591abe..a7b3b04cd9ae7 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -884,10 +884,38 @@ static inline int file_get_write_access(struct file=
- *f)
->         return error;
->  }
->
-> +static const struct file_operations empty_fops =3D {};
-> +
-> +static void do_path_file_open(struct file *f)
-> +{
-> +       f->f_mode =3D FMODE_PATH | FMODE_OPENED;
-> +       file_set_fsnotify_mode(f, FMODE_NONOTIFY);
-> +       f->f_op =3D &empty_fops;
-> +}
-> +
-> +/**
-> + * kernel_path_file_open - open an O_PATH file for kernel internal use
-> + * @f:         pre-allocated file with f_flags and f_cred initialized
-> + * @path:      path to reference (may have a negative dentry)
-> + *
-> + * Open a minimal O_PATH file that only references a path.
-> + * Unlike vfs_open(), this does not require a positive dentry and does n=
-ot
-> + * set up f_mapping and other fields not needed for O_PATH.
-> + * If path is negative at the time of this call, the caller is responsib=
-le for
-> + * callingn backing_file_set_user_path_inode() after making the path pos=
-itive.
-> +
-> + */
-> +void kernel_path_file_open(struct file *f, const struct path *path)
-> +{
-> +       f->__f_path =3D *path;
-> +       path_get(&f->f_path);
-> +       file_set_d_inode(f);
-> +       do_path_file_open(f);
-> +}
-> +
->  static int do_dentry_open(struct file *f,
->                           int (*open)(struct inode *, struct file *))
->  {
-> -       static const struct file_operations empty_fops =3D {};
->         struct inode *inode =3D f->f_path.dentry->d_inode;
->         int error;
->
-> @@ -898,9 +926,7 @@ static int do_dentry_open(struct file *f,
->         f->f_sb_err =3D file_sample_sb_err(f);
->
->         if (unlikely(f->f_flags & O_PATH)) {
-> -               f->f_mode =3D FMODE_PATH | FMODE_OPENED;
-> -               file_set_fsnotify_mode(f, FMODE_NONOTIFY);
-> -               f->f_op =3D &empty_fops;
-> +               do_path_file_open(f);
->                 return 0;
->         }
->
-> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index 5fd32ccc134d2..4010c87e10196 100644
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -1408,6 +1408,8 @@ static int ovl_create_tmpfile(struct file *file, st=
-ruct dentry *dentry,
->                         err =3D ovl_instantiate(dentry, inode, newdentry,=
- false, file);
->                         if (!err) {
->                                 file->private_data =3D of;
-> +                               /* user_path_file was opened with a negat=
-ive path */
-> +                               backing_tmpfile_finish(realfile);
->                         } else {
->                                 dput(newdentry);
->                                 ovl_file_free(of);
-> diff --git a/include/linux/backing-file.h b/include/linux/backing-file.h
-> index 8afba93f3ce07..52ac51ada6ff9 100644
-> --- a/include/linux/backing-file.h
-> +++ b/include/linux/backing-file.h
-> @@ -47,6 +47,7 @@ struct file *backing_tmpfile_open(const struct path *us=
-er_path,
->                                   const struct cred *user_cred, int flags=
-,
->                                   const struct path *real_parentpath,
->                                   umode_t mode, const struct cred *cred);
-> +void backing_tmpfile_finish(struct file *file);
->  ssize_t backing_file_read_iter(struct file *file, struct iov_iter *iter,
->                                struct kiocb *iocb, int flags,
->                                struct backing_file_ctx *ctx);
-> --
-> 2.53.0
->
+Your question isn't really about "staging" the measurement list records, bu=
+t
+requiring a userspace signal to delete them.  To answer that question, dele=
+ting
+N records (third patch) could imply staging all the measurement records and
+immediately deleting N records without an explicit userspace signal.
+
+I expect the requested "documentation" patch will provide the motivation fo=
+r the
+delayed deletion of the measurement list.
+
+Mimi=20
+
+
+
+
+
+
+
+
+
+
