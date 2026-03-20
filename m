@@ -1,158 +1,280 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9911728FFFB
-	for <linux-security-module@vger.kernel.org>; Fri, 20 Mar 2026 12:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA933A6404
+	for <linux-security-module@vger.kernel.org>; Fri, 20 Mar 2026 12:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774009696; cv=none; b=myIJr2+8nID0Um9sr54EAOYdcqeScCj2YkcqkBQ5HDT5pAERZkV7eeSriWza8QlU8Y3RJjJOC1+MJRqXg/Zh86j7n87eQeAQ2p++sqftJyJFN09/KEn0LT5FA3eHrvFcsrrxeHYsuQ4ZcWj3y6tmfOwwi/UC4m1GL4yfl+rbJPk=
+	t=1774009766; cv=none; b=FA5a3TUoozbd9vGkc/wS+uJQkOuvAr8WyW+JHqIkM70QTRjYA6Muh1BQW4E6W7bkfVEe+lb/iIv5cqxgledS88Ce6mqPAhYHDvg9ynMIRHZkBO1nm/fhckvk75x+oRJs7GvsuPOgUB2M40E1TtBhxBGy3n+NlLNLGV1zDJlcV0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774009696; c=relaxed/simple;
-	bh=WGPhIgP3bxlQmw7G9caGH1dS23/rd2JDwWAXSIFvOnE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s4kp9vnQBJ7H85JIfnNPVY3zOZ/8Ug3zEWyeEXjYAB+3DjfeC41Rn+bpWqdLn7DZjzVwzZN9Dkk4AAogOPo5BgxSqEnY021Dan9OIiwXDS7WL4tG61kIjzJeDfZrosLvpLnfEqM/IVv4IElVV1ILHWjg22LdJRO/1mAsytpHoxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CcmXTS+S; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1774009766; c=relaxed/simple;
+	bh=poSpfqt8/Yzn979lw8Qf/FBPtAw4waGRBHvjDcstTVA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jMYk4KTU1o2NgW7rFWpM0w/0Gcntimsj0veiN1nNVD6yh2Nvaqwk/DNejQp0GdPURXfJ7hiswsh/ulEX4MhhmWeHAkZ7fVM3ZvovGgHHxeMe589CTvU2XwnjubsalJ3WU382Y1enhYoKcnKivdhhNBsOuZA987+QKjNwwiPaLOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TG0R3dqC; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CcmXTS+S"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-486fd5360d4so15179595e9.1
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Mar 2026 05:28:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TG0R3dqC"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b983ca059a1so60326666b.0
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Mar 2026 05:29:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1774009694; x=1774614494; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zjWX/kPhPRlRLLqOSVNiOv5rgOLZkTVsCLsIHKKSN0Y=;
-        b=CcmXTS+SJiuGI4fYHPQZqijR204LyLCirkQvr39snkpB1aVnPuBMoIq6z+JkpanNbW
-         Wl1qg5dh2io36KwB9W0Z1h7qH2nVnQjtIHDTHkGEi6+v6MQCumOgdbg0hEbFANHclBlz
-         L/XFiDmLjkx+PrySfMkTpU4najt1UD2jM/JZ9CWweRkzjlOeM/h4pN6Y9xY4ANp7XoV9
-         K0REKN0SdL5LM5qAki/osHEBAc9eRnYE6Jin2vAVAqgFfejgu2bbK4NzV5LIOeYCa1ut
-         iIM0JZz+V1617YGqZeSzAjBY6wteZCKmG0W4+9uiMp5haIebkuKhXFyfdHXjg8b3MLaV
-         a2IQ==
+        d=gmail.com; s=20230601; t=1774009761; x=1774614561; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Py9dQG34+cgMso0dXF7GsCnnqB5bfyHvTV9BR0i/BXo=;
+        b=TG0R3dqCvwnFyc3VoaVyvsLEmlRAwQoOAwZyM13TIL+d6QRllmlf2VV3/26vS/qh5a
+         i2NXu6g2Ed9hnB/A4bfMg5nMmdrortsYtrzOGJl2BqaXzQ1zuEb7TQfMRa3kWoULhifH
+         SXkVcwnaEElIvyEJskWYAnNOWw+Hyi+sDlOEm14zmWvyD5AN1dLwTBBuGpwlN9ePobNT
+         X1YH390q1Nl+4OY2zVixgnk+1GH0Ly+YbOpCamAx9LbCSp5GdiBt8sK707zRhDdQcsLb
+         j0uggvQsFHkdOeALp4y1DtJN3oNjF7Lq0vKmyvcTZfjRXbF3+hm/fBOUprTNIc2mEMC8
+         YgSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774009694; x=1774614494;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zjWX/kPhPRlRLLqOSVNiOv5rgOLZkTVsCLsIHKKSN0Y=;
-        b=jT1fQuEOnhfQIUjwFBrett6n8M3l4QmzNnQcuv1bU5wwbZi47j0On/YLz7yzLtgvio
-         LnVfJenFy5Upxc7BsRuku7E9OAB4Qk3NiLqz/hu9mah+hg6xmY1ap0OOockI50Et40Tl
-         ltTyNBcB4KC7qtsgEcT4G+zb+AGyogckTY5oZnulLtt039d2sbUvnKnuOdasafqbNSlp
-         MJqgcUETFKbJX8T9x11rp0XZV6uZiy1ztjJ5nCuVU3CNDk443KZ40SuLnKLmy0kg9xBU
-         YRszjEE9b3Nut+daW+Tvd6Zkf95M3CEdIn9KBfmActmSg/AmjFTbx00ynKYY577msRvR
-         YeXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYr152t33YZWhCXaJIW3M1Cd+mG39/vgH4DG2mF+WRhm48aemcX8iCg0hlMfX9vAsXFMC9LGfYHgdGNNC7YV/5JH4Y2aE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymAXnhvyHX3syLUxMIXsHkIm70Ea/0352QFW+U1nv5yBoo1a4X
-	cb1u0aWGYc16E2egDutH1XbDtPdqwiEdsWXUquH1ymyCsupF5hvhl+l3
-X-Gm-Gg: ATEYQzz30qSYYq6vqpOTJkzqhR9yRY3lbWdpZiiBiLLlVz307gmS2YrCWzO5UXYzDvK
-	7J89P2xaUfbncj2EKaSmtDkiP2ynmBNudv4c0F/l6A/tx9LvfwWWZ/Ob1HDLpM0wLskWQFS+9cN
-	eLVz1aigQIqXhtEh20eLmDwvGJ08TULbAp1w94UEZq7Cv8DEAHPwM4DEQQADdhu5fvmmy3A1bTE
-	uaDqun1UlRNAr945pwZhF/B8gRZBMzSLzTa7V8oGzEjPWWolY595+hknMr2wBedLGrWvxdE+S5+
-	YqibhENYBxYMz5o8LFcIvw59xmYYc1FOOOlbn6g2SbpdRV3joe1rCI+8w1JnqHjjqa3AqSPYerR
-	w4aTA/V8BOpru7GQ00Voq6kIRR/H3yHVPMzDG9p5bsFk/ZNxcIgCzPAMj/QkjeBIAhUDVTmWBzG
-	+WlW+EyIg+gwYnNuc6ofPafxxM07l9oYz39vExD5OJCc0BQq3dj+k97jY82RI=
-X-Received: by 2002:a05:600c:8b0a:b0:47e:e57d:404 with SMTP id 5b1f17b1804b1-486fee0f917mr44101615e9.16.1774009693646;
-        Fri, 20 Mar 2026 05:28:13 -0700 (PDT)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-486fe7e3a94sm67595655e9.7.2026.03.20.05.28.13
+        d=1e100.net; s=20251104; t=1774009761; x=1774614561;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Py9dQG34+cgMso0dXF7GsCnnqB5bfyHvTV9BR0i/BXo=;
+        b=aBQeKof1z4EagVZaRw3m+kXVhbeEja14TIoXOdK3uXolQbX3sQgZBcwwKADzntvNLd
+         pS2g8RQ0ZFRm6ss6Dj4yV0g2BPuks2n+ko0zv9ua2s5xsq/wRph++hthHq0bxT4TBVEx
+         w0eHLDVcQcXtRPkCpHHaKGWPIsYRszjihR2ohosgqYqRDVGnC/y/a5A7jKjfoJsp2I3h
+         75p3gSwqimBAB/n8ilGPM4tBX1+56ZrieYwRP8b1/b1udBuL3qIR4zMoTqq9D6Ngn+lH
+         BtWu3JPoxm9KPQEpFLmFM9/z+25AV2cmvniTXVWDdlaKXND6OQBY6lQul+kN6L1ivfJU
+         Jwpw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgI6sjJvaclbYI4aiqQpCj2UO7tLbLQxX5x+ZRkxAD+qgJE0i1xeRxGTuBDPGvpbIMURmVkxYozg7y8rGasUj/Sh9GTxQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaI4a9FZjr/YAIG3Y98+YIRwAczrv8dHWotsYHYkYqLUs/du7/
+	+8FJxtvpb+CRI844/xE0+nEpuio4ATdBSnVzNiK8GKRvoFozzsfCBBTK
+X-Gm-Gg: ATEYQzz+mRnpwNGNO6ojXZ8ekf2OwuI19zGgaj20bN3hUqjARaCUOsz9BHQwjXo+vGa
+	8en7QFmB+Cw1XvxvGLieJ0FeyUFJtdeZd6AxuX9ccm3e5ZkpnhHfAfdsidnbBiTE/9OCl+o0U+x
+	ujXIu/26JjiFQbPlQmTZxFXWIyePwXQ0bDepu98h1SxYspY1l8bdSPiw1++4zY9b8HmlnVrx4oT
+	Jre70/lESMo3V8E2YIbRg7/hbzRZh7MdRY824S0V3k6uZVl2B93cGGGReSO8YM756UAbbxQ+rER
+	KMKD0pRhLahRPx/UC9eKl5HQuvaKaiyuAPK2Xo8xlO5rauJOClkhGuhwJ6Ao37q9fNMH6GbS7nN
+	X1qO+0yCjOiPNXj9uyNDbgZ69uHvp5+tQWTOjMNq3UJPGG7VngjHIO20eWPm1KtsbS4Nr0CWTsd
+	ltfUrOzvCLLuMmldlPHU4sc/NnVo3zINilGDp2giuZDnEVvTlEsN557J16bBRJxEabd1BUTQ2dL
+	BCkMNPDd4EkubuVvDpfcvsJ8ahBXl+YiOkM82Q=
+X-Received: by 2002:a17:907:e11a:b0:b96:edcd:cd19 with SMTP id a640c23a62f3a-b982f502793mr138927666b.50.1774009760240;
+        Fri, 20 Mar 2026 05:29:20 -0700 (PDT)
+Received: from localhost (2001-1c00-570d-ee00-e98d-b8f7-8d95-53b2.cable.dynamic.v6.ziggo.nl. [2001:1c00:570d:ee00:e98d:b8f7:8d95:53b2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b9832f42f0dsm154218566b.12.2026.03.20.05.29.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Mar 2026 05:28:13 -0700 (PDT)
-Date: Fri, 20 Mar 2026 13:28:08 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Justin Suess <utilityemal77@gmail.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	John Johansen <john.johansen@canonical.com>,
-	Tingmao Wang <m@maowtm.org>, Kuniyuki Iwashima <kuniyu@google.com>,
-	Jann Horn <jannh@google.com>, linux-security-module@vger.kernel.org,
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	konstantin.meskhidze@huawei.com,
-	Demi Marie Obenour <demiobenour@gmail.com>,
-	Alyssa Ross <hi@alyssa.is>, Tahera Fahimi <fahimitahera@gmail.com>
-Subject: Re: [PATCH v6 3/9] landlock: Control pathname UNIX domain socket
- resolution by path
-Message-ID: <20260320.a44048ae9c83@gnoack.org>
-References: <20260315222150.121952-1-gnoack3000@gmail.com>
- <20260315222150.121952-4-gnoack3000@gmail.com>
- <20260318111507.1nr6rAki@linutronix.de>
- <abqzXO3MmMXKqXOy@suesslenovo>
- <20260318150559.j04YNDtV@linutronix.de>
- <20260318.Jeph6loh9uSa@digikod.net>
- <abrWSwS5urQpvbPb@suesslenovo>
- <20260318.aequoaDaeb7h@digikod.net>
+        Fri, 20 Mar 2026 05:29:19 -0700 (PDT)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Paul Moore <paul@paul-moore.com>,
+	Gao Xiang <xiang@kernel.org>,
+	linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org,
+	syzbot+f34aab278bf5d664e2be@syzkaller.appspotmail.com
+Subject: [PATCH v2] fs: allow backing file code to open an O_PATH file with negative dentry
+Date: Fri, 20 Mar 2026 13:29:18 +0100
+Message-ID: <20260320122918.1726043-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260318.aequoaDaeb7h@digikod.net>
 
-On Wed, Mar 18, 2026 at 06:52:57PM +0100, Mickaël Salaün wrote:
-> On Wed, Mar 18, 2026 at 12:43:55PM -0400, Justin Suess wrote:
-> > On Wed, Mar 18, 2026 at 05:26:20PM +0100, Mickaël Salaün wrote:
-> > > On Wed, Mar 18, 2026 at 04:05:59PM +0100, Sebastian Andrzej Siewior wrote:
-> > > > On 2026-03-18 10:14:52 [-0400], Justin Suess wrote:
-> > > > > Sebastian,
-> > > > Justin,
-> > > > 
-> > > > > In short: dom_other is a pointer to a landlock-owned refcounted struct.
-> > > > …
-> > > > > 
-> > > > > But we copy the domain pointer, which points to a landlock allocated
-> > > > > and controlled object.
-> > > > 
-> > > > and this is not going away while we are here and preempted after
-> > > > dropping the lock? (if the landlock policy is updated/ changed/ …)
-> > > 
-> > > I agree with Sebastian, this is a bug, see my original proposal:
-> > > https://lore.kernel.org/all/20260217.lievaS8eeng8@digikod.net/
-> > Mickaël,
-> > 
-> > Just to make sure we're speaking of the same thing (I spotted a bug
-> > shortly after replying to Sebastian).
-> > 
-> > This is a potential UAF if the dom_other is freed before the access
-> > check takes place correct?
-> 
-> Yes
-> 
-> > 
-> > 	dom_other = landlock_cred(other->sk_socket->file->f_cred)->domain;
-> > 	unix_state_unlock(other);
-> > 
-> > 	unmask_scoped_access(subject->domain, dom_other, &layer_masks,
-> > 			     fs_resolve_unix.fs);
-> > 
-> > If the dom_other->usage reaches zero, then the domain could be
-> > freed after the unix_state_unlock while we're checking access??
-> > 
-> > (I guess I assumed the sock_hold on the @other would prevent the task
-> > @other belongs to from being freed.)
-> > 
-> > Would it be better to move the access check under the unix_state_lock or
-> > to acquire another reference to the ruleset (or something else)?
-> 
-> Because the unmask_scoped_access() only read a bounded array, it's
-> simpler to unlock just after.
-> 
-> The other alternatives would be to use an RCU lock or a new reference
-> but I don't think it's worth it.
+The fields f_mapping and f_wb_err are irrelevant for the O_PATH file
+in backing_file_user_path_file().
 
-Thank you, Sebastian, Mickaël and Justin for spotting this!
+Create a dedicated helper kernel_path_file_open(), which skips all the
+generic code in do_dentry_open() and does only the essentials, so that
+the internal O_PATH file could be opened with a negative dentry.
 
-I agree, holding the existing lock across the unmask_scoped_access()
-call seems like the simplest solution.  This function only walks a
-previously loaded bounded memory structure, so it does not seem worth
-switching to a different lock for that.
+This is needed for backing_tmpfile_open() to open a backing O_PATH
+tmpfile before instantiating the dentry.
 
-I'm changing my WIP for V7 to hold the unix_state_lock across that
-function call.
+The callers of backing_tmpfile_open() are responsible for calling
+backing_tmpfile_finish() after making the path positive.
 
-–Günther
+Reported-by: syzbot+f34aab278bf5d664e2be@syzkaller.appspotmail.com
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+
+Christian,
+
+This patch fixes the syzbot report [1] that the
+backing_file_user_path_file() patch [2] introduces.
+
+Following your feedback on v1, this version makes an effort to stay
+out of the way of main vfs execution paths and restrict the changes
+to backing_file users.
+
+This still introduced a temporary state of an O_PATH file with negative
+path, but only for a short time and only for backing_file users and
+ones that use backing_tmpfile_open() (i.e. only overlayfs), so the
+risk is minimal.
+
+WDYT?
+
+Thanks,
+Amir.
+
+Changes since v1:
+- Create helper for internal O_PATH open with negative path
+- Create backing_tmpfile_finish() API to fixup the negative path
+
+[1] https://syzkaller.appspot.com/bug?extid=f34aab278bf5d664e2be
+[2] https://lore.kernel.org/linux-fsdevel/20260318131258.1457101-1-amir73il@gmail.com/
+
+ fs/backing-file.c            |  6 ++++++
+ fs/file_table.c              | 14 ++++++++++++--
+ fs/internal.h                |  7 +++++++
+ fs/open.c                    | 34 ++++++++++++++++++++++++++++++----
+ fs/overlayfs/dir.c           |  2 ++
+ include/linux/backing-file.h |  1 +
+ 6 files changed, 58 insertions(+), 6 deletions(-)
+
+diff --git a/fs/backing-file.c b/fs/backing-file.c
+index d0a64c2103907..3357d624eac96 100644
+--- a/fs/backing-file.c
++++ b/fs/backing-file.c
+@@ -80,6 +80,12 @@ struct file *backing_tmpfile_open(const struct path *user_path,
+ }
+ EXPORT_SYMBOL(backing_tmpfile_open);
+ 
++void backing_tmpfile_finish(struct file *file)
++{
++	backing_file_set_user_path_inode(file);
++}
++EXPORT_SYMBOL_GPL(backing_tmpfile_finish);
++
+ struct backing_aio {
+ 	struct kiocb iocb;
+ 	refcount_t ref;
+diff --git a/fs/file_table.c b/fs/file_table.c
+index e8b4eb2bbff85..a4d1064d50896 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -69,11 +69,21 @@ EXPORT_SYMBOL_GPL(backing_file_user_path_file);
+ 
+ int backing_file_open_user_path(struct file *f, const struct path *path)
+ {
+-	/* open an O_PATH file to reference the user path - should not fail */
+-	return WARN_ON(vfs_open(path, &backing_file(f)->user_path_file));
++	if (WARN_ON(!(f->f_mode & FMODE_BACKING)))
++		return -EIO;
++	kernel_path_file_open(&backing_file(f)->user_path_file, path);
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(backing_file_open_user_path);
+ 
++void backing_file_set_user_path_inode(struct file *f)
++{
++	if (WARN_ON(!(f->f_mode & FMODE_BACKING)))
++		return;
++	file_set_d_inode(&backing_file(f)->user_path_file);
++}
++EXPORT_SYMBOL_GPL(backing_file_set_user_path_inode);
++
+ static void destroy_file(struct file *f)
+ {
+ 	security_file_free(f);
+diff --git a/fs/internal.h b/fs/internal.h
+index 7c44a58627ba3..4a9e5e00678d9 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -109,6 +109,13 @@ struct file *alloc_empty_file_noaccount(int flags, const struct cred *cred);
+ struct file *alloc_empty_backing_file(int flags, const struct cred *cred,
+ 				      const struct cred *user_cred);
+ int backing_file_open_user_path(struct file *f, const struct path *path);
++void backing_file_set_user_path_inode(struct file *f);
++void kernel_path_file_open(struct file *f, const struct path *path);
++
++static inline void file_set_d_inode(struct file *f)
++{
++	f->f_inode = d_inode(f->f_path.dentry);
++}
+ 
+ static inline void file_put_write_access(struct file *file)
+ {
+diff --git a/fs/open.c b/fs/open.c
+index 91f1139591abe..a7b3b04cd9ae7 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -884,10 +884,38 @@ static inline int file_get_write_access(struct file *f)
+ 	return error;
+ }
+ 
++static const struct file_operations empty_fops = {};
++
++static void do_path_file_open(struct file *f)
++{
++	f->f_mode = FMODE_PATH | FMODE_OPENED;
++	file_set_fsnotify_mode(f, FMODE_NONOTIFY);
++	f->f_op = &empty_fops;
++}
++
++/**
++ * kernel_path_file_open - open an O_PATH file for kernel internal use
++ * @f:		pre-allocated file with f_flags and f_cred initialized
++ * @path:	path to reference (may have a negative dentry)
++ *
++ * Open a minimal O_PATH file that only references a path.
++ * Unlike vfs_open(), this does not require a positive dentry and does not
++ * set up f_mapping and other fields not needed for O_PATH.
++ * If path is negative at the time of this call, the caller is responsible for
++ * callingn backing_file_set_user_path_inode() after making the path positive.
++
++ */
++void kernel_path_file_open(struct file *f, const struct path *path)
++{
++	f->__f_path = *path;
++	path_get(&f->f_path);
++	file_set_d_inode(f);
++	do_path_file_open(f);
++}
++
+ static int do_dentry_open(struct file *f,
+ 			  int (*open)(struct inode *, struct file *))
+ {
+-	static const struct file_operations empty_fops = {};
+ 	struct inode *inode = f->f_path.dentry->d_inode;
+ 	int error;
+ 
+@@ -898,9 +926,7 @@ static int do_dentry_open(struct file *f,
+ 	f->f_sb_err = file_sample_sb_err(f);
+ 
+ 	if (unlikely(f->f_flags & O_PATH)) {
+-		f->f_mode = FMODE_PATH | FMODE_OPENED;
+-		file_set_fsnotify_mode(f, FMODE_NONOTIFY);
+-		f->f_op = &empty_fops;
++		do_path_file_open(f);
+ 		return 0;
+ 	}
+ 
+diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+index 5fd32ccc134d2..4010c87e10196 100644
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -1408,6 +1408,8 @@ static int ovl_create_tmpfile(struct file *file, struct dentry *dentry,
+ 			err = ovl_instantiate(dentry, inode, newdentry, false, file);
+ 			if (!err) {
+ 				file->private_data = of;
++				/* user_path_file was opened with a negative path */
++				backing_tmpfile_finish(realfile);
+ 			} else {
+ 				dput(newdentry);
+ 				ovl_file_free(of);
+diff --git a/include/linux/backing-file.h b/include/linux/backing-file.h
+index 8afba93f3ce07..52ac51ada6ff9 100644
+--- a/include/linux/backing-file.h
++++ b/include/linux/backing-file.h
+@@ -47,6 +47,7 @@ struct file *backing_tmpfile_open(const struct path *user_path,
+ 				  const struct cred *user_cred, int flags,
+ 				  const struct path *real_parentpath,
+ 				  umode_t mode, const struct cred *cred);
++void backing_tmpfile_finish(struct file *file);
+ ssize_t backing_file_read_iter(struct file *file, struct iov_iter *iter,
+ 			       struct kiocb *iocb, int flags,
+ 			       struct backing_file_ctx *ctx);
+-- 
+2.53.0
+
