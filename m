@@ -1,153 +1,96 @@
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9C71A6807
-	for <linux-security-module@vger.kernel.org>; Sat, 21 Mar 2026 09:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7B840DFC7;
+	Sat, 21 Mar 2026 13:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774084194; cv=none; b=JgApRshBSwO0OyG8eMOP4gDJZlOIUcBatqblJnJ1/Tx1cXPuQ8wr2cR6NCTEFn2dD8Y2e1V6s5zmbGeXThmkTn5aXh5LRCsrtElFFPVlQT2SSJEwVc0IHEZpaBCzwVFBKL2D2eekfraGweC7o+WcSvnYq69hh9NbT35MQNvpXLU=
+	t=1774098376; cv=none; b=czE2DMJsacR6uia5R7VjKJWRfSRtbucSX/G6xkyqubVuNUtQTexd1QSQb0tO9es+uXMQ5zWiWUb+RHZlhsRUr+OgbWsSv9xQkLE8hRK8dAZ7DPf9Cg7Q8TP3ZkcLbZnVZPkOARhSp8wl35bbtA5RAwEvD/A8A7w6T3Tsf0zPdNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774084194; c=relaxed/simple;
-	bh=LUPp8whwSfGTu6LtsmNNwA8zpxZ1/e3qu+SUWPurZF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hwQg/qLExGkaK1IkBng+4Z0QVlNMbQGUQHYPuf7Pb2V6MUf28LwJuO7365xBml6HWZsX+28N6Bi8KFOdL/kvOKC3D2CQ+jkcP3p3FfEzwckt4I/KDJ3mqjaM7XZF+Nt96M4MmoDHZ/iT4znqq0sAdD/mNdEr5k9aj0DL7Ckrqus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=UKogouu1; arc=none smtp.client-ip=83.166.143.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="UKogouu1"
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fdDCT5WKDztGW;
-	Sat, 21 Mar 2026 10:09:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1774084181;
-	bh=dluNRpCdS0X5VEFdRp5D6xWdIaxz6Nw8rKsdwlTlHwM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UKogouu1drPlhL80fBTsLXkuFDkW5eDMhwGZz9VhweqWH/7uKOShTwfFnPbGWw24S
-	 6nov3Fu5TvxJ0AYY0FLJd6Z/9dJPbIXEKLT+maWQmXp/cjI8u2tkygznmFeFfbQPwk
-	 IU6THLEAy+BjioPaZSWFiT/Zb8kpboA2FeWmFFTo=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4fdDCS2ZrNzVXl;
-	Sat, 21 Mar 2026 10:09:40 +0100 (CET)
-Date: Sat, 21 Mar 2026 10:09:35 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Cc: John Johansen <john.johansen@canonical.com>, 
-	Tingmao Wang <m@maowtm.org>, Justin Suess <utilityemal77@gmail.com>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Kuniyuki Iwashima <kuniyu@google.com>, 
-	Jann Horn <jannh@google.com>, linux-security-module@vger.kernel.org, 
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, Matthieu Buffet <matthieu@buffet.re>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, konstantin.meskhidze@huawei.com, 
-	Demi Marie Obenour <demiobenour@gmail.com>, Alyssa Ross <hi@alyssa.is>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v6 3/9] landlock: Control pathname UNIX domain socket
- resolution by path
-Message-ID: <20260321.Aiquah5gaedo@digikod.net>
-References: <20260315222150.121952-1-gnoack3000@gmail.com>
- <20260315222150.121952-4-gnoack3000@gmail.com>
- <20260318.peecoo2Ooyep@digikod.net>
- <20260320.f59cddcb6c6b@gnoack.org>
- <20260320.eez3sheeThul@digikod.net>
- <20260320.ee35c8125f6f@gnoack.org>
+	s=arc-20240116; t=1774098376; c=relaxed/simple;
+	bh=2e+gVAC0kX7iB8vNaVgfCTAAIDKD44KDUoe5aMAPeCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hJo8wIXJu8iT8cjOc+tH65JEg/26eOQ/MFMNhvM1VhV0WkYfxkyjNucqZeNcHmiPI5M1rKzdZK1p8lfMuFbbUodANNC4bdJqs0oVlgM4gjU5ySIJUGo+BXupCxXHsfz+bTikEkosKxT/EjgeEX+c0sMDRslnAqOw3nRrFuYYoxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 62LCseeN068067;
+	Sat, 21 Mar 2026 21:54:40 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.2] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 62LCseWX068062
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 21 Mar 2026 21:54:40 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <b720f521-e930-4f35-9505-1bfdf9e2818c@I-love.SAKURA.ne.jp>
+Date: Sat, 21 Mar 2026 21:54:39 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260320.ee35c8125f6f@gnoack.org>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/7] tomoyo: Convert from sb_mount to granular mount hooks
+To: Song Liu <song@kernel.org>, viro@zeniv.linux.org.uk
+Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        brauner@kernel.org, jack@suse.cz, john.johansen@canonical.com,
+        stephen.smalley.work@gmail.com, omosnace@redhat.com, mic@digikod.net,
+        gnoack@google.com, takedakn@nttdata.co.jp, herton@canonical.com,
+        kernel-team@meta.com, selinux@vger.kernel.org,
+        apparmor@lists.ubuntu.com, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20260318184400.3502908-1-song@kernel.org>
+ <20260318184400.3502908-7-song@kernel.org>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20260318184400.3502908-7-song@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav201.rs.sakura.ne.jp
 
-On Fri, Mar 20, 2026 at 11:25:04PM +0100, Günther Noack wrote:
-> On Fri, Mar 20, 2026 at 06:51:13PM +0100, Mickaël Salaün wrote:
-> > On Fri, Mar 20, 2026 at 05:15:40PM +0100, Günther Noack wrote:
-> > > On Wed, Mar 18, 2026 at 05:52:48PM +0100, Mickaël Salaün wrote:
-> > > > On Sun, Mar 15, 2026 at 11:21:44PM +0100, Günther Noack wrote:
-> > > > > + * @client: Client domain
-> > > > > + * @server: Server domain
-> > > > > + * @masks: Layer access masks to unmask
-> > > > > + * @access: Access bit that controls scoping
-> > > > > + */
-> > > > > +static void unmask_scoped_access(const struct landlock_ruleset *const client,
-> > > > > +				 const struct landlock_ruleset *const server,
-> > > > > +				 struct layer_access_masks *const masks,
-> > > > > +				 const access_mask_t access)
-> > > > > +{
-> > > > > +	int client_layer, server_layer;
-> > > > > +	const struct landlock_hierarchy *client_walker, *server_walker;
-> > > > > +
-> > > > > +	/* This should not happen. */
-> > > > > +	if (WARN_ON_ONCE(!client))
-> > > > > +		return;
-> > > > > +
-> > > > > +	/* Server has no Landlock domain; nothing to clear. */
-> > > > > +	if (!server)
-> > > > > +		return;
-> > > > > +
-> > > > 
-> > > > Please also copy the BUILD_BUG_ON() from domain_is_scoped().
-> > > 
-> > > I don't understand what this check is good for.  It says:
-> > > 
-> > > /*
-> > >  * client_layer must be a signed integer with greater capacity
-> > >  * than client->num_layers to ensure the following loop stops.
-> > >  */
-> > > BUILD_BUG_ON(sizeof(client_layer) > sizeof(client->num_layers));
-> > > 
-> > > For the loop to terminate, in my understanding, client_layer must be
-> > > able to store client->num_layers - 1 down to - 1, but that is anyway a
-> > > given since num_layers can't exceed 16 and client_layer is signed.  It
-> > > seems that the termination of this would anyway be caught in our tests
-> > > as well?
-> > > 
-> > > Could you please clarify what this BUILD_BUG_ON() is trying to assert?
-> > 
-> > The intent was to make sure client_layer is indeed an int and not an
-> > unsigned int for instance.  Hopefully tests catch that but using a
-> > build-time assert catch the potential issue and document it.  Also, it
-> > would be weird to not have the same checks in both copies of code.
+On 2026/03/19 3:43, Song Liu wrote:
+> Replace tomoyo_sb_mount() with granular mount hooks. Each hook
+> reconstructs the MS_* flags expected by tomoyo_mount_permission()
+> using the original flags parameter where available.
 > 
-> It isn't clear to me why the BUILD_BUG_ON is checking based on the
-> sizeof() of these variables then.  The number of bytes in an integer
-> type is independent of its signedness, after all.  Should we rather do
-> this maybe?
+> Key changes:
+> - mount_bind: passes the pre-resolved source path to
+>   tomoyo_mount_acl() via a new dev_path parameter, instead of
+>   re-resolving dev_name via kern_path(). This eliminates a TOCTOU
+>   vulnerability.
+> - mount_new, mount_remount, mount_reconfigure: use the original
+>   mount(2) flags for policy matching.
+> - mount_move: passes pre-resolved paths for both source and
+>   destination.
+> - mount_change_type: passes raw ms_flags directly.
 > 
->   /*
->    * client_layer must be a signed integer to ensure the following
->    * loop stops.
->    */
->   BUILD_BUG_ON(!is_signed_type(typeof(client_layer)));
-
-I didn't know about this macro, looks good.
-
+> Also removes the unused data_page parameter from
+> tomoyo_mount_permission().
 > 
-> (Although that is also a bit of a triviality given that the same
-> variable is being defined as a signed integer just a few lines above,
-> but at least it is very explicit about it.)
-
-Yeah, I know, but I added this canary check because I was bitten by a
-bug.  Even if it might be trivial now, it might help when working on
-other parts, and it's just a build-time check that also serves as doc.
-If in doubt, let's keep build-time checks that were most likely added
-for a good reason.  I prefer to have build-time errors than run-time
-ones.
-
+> Code generated with the assistance of Claude, reviewed by human.
 > 
-> I'd drop the remark about the capacity, as even a signed 8-bit integer
-> is large enough to hold the layer indices and the -1.
+> Signed-off-by: Song Liu <song@kernel.org>
 
-Large enough for now...  All these checks are useful to easily spot
-issues if/when the current invariant change (e.g. if one day we extend
-the number of max layers).  Integer C types can silently cast to other
-integer types (with different capacity or sign/unsigned), which might be
-the source of bugs.  So yeah, please keep the current capacity check and
-add the sign one, it won't do any harm.
+Basically OK. One question to Al Viro.
 
-> 
-> Does that sound reasonable?  I can do it in the other function as well
-> if you want to keep things consistent.
+Do you still refuse the idea of resolving dev_path argument before calling LSM hooks
+(the proposal you NAKed at https://lkml.kernel.org/r/20250709102410.GU1880847@ZenIV )
+despite this series removes security_sb_mount() and security_move_mount() hooks?
 
-Yes, please update the other function as well.
+> diff --git a/security/tomoyo/mount.c b/security/tomoyo/mount.c
+> index 322dfd188ada..82ffe7d02814 100644
+> --- a/security/tomoyo/mount.c
+> +++ b/security/tomoyo/mount.c
+> @@ -70,6 +70,7 @@ static bool tomoyo_check_mount_acl(struct tomoyo_request_info *r,
+>   * @dir:      Pointer to "struct path".
+>   * @type:     Name of filesystem type.
+>   * @flags:    Mount options.
+> + * @dev_path: Pre-resolved device/source path. Maybe NULL.
+
+I guess that we can avoid passing maybe-NULL dev_name if Al Viro can accept
+resolving maybe-NULL dev_path argument before calling LSM hooks.
+
