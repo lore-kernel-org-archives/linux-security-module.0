@@ -1,208 +1,1185 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197FA23ABAA
-	for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2026 15:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C125D3BF678
+	for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2026 16:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774279928; cv=none; b=MQzj+o4FuXsowYf1yb3baqXMrxC/hEPGtXCosZYvXAoungxj4A1IxRC42f+hZE4Xc2KcGhBvm8/O46vyWzjxQWoJ8pUeBB+BxL8t9tt8DruaqD4MYuygCk/M6SvemfV+OiaoenIaK5j0t2iYe1FezpL4VHbn3KgvXzV6ZhM43KI=
+	t=1774285091; cv=none; b=Zl/NH1Ukr7HBPn8YIoZpjZU1H884NSkYv3Cm6EPuHqUw08iaD3QrrwxxYkq3dwBQ59+t8lsJX659YkD1truR3nYWIQF2Z6b83uaDoSGz8xx9PppOZN+qv4HtCfY2PYGlCqPxG9qBo440M8c+GdKJsEacWwFMpVLDTm2UE4IbaNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774279928; c=relaxed/simple;
-	bh=PEGnjDovZdCE+HnYhQmMuR6oFFp7NAe2bipZ0FUt5ig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R45M+Oo9PYvePNFnscfHTyTZzmB0iZdAy9ILPEanh/PayKnWJDGBkQukme+Z8dJDJbceu7GcH23lgvzWdvTEdeC9L1JqjapWYG7jYj5eXCgw7yjzHCc1CMgKWQzbSeZ2+RqBQ00eVjMFuJGzVoiWlDygAqu/qoycdbxIs49I6Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O/wmvFTH; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1774285091; c=relaxed/simple;
+	bh=H3r0oqonbF+JvuldcLLdRHu03VSWiqg4sxfy1wt8ds8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Srm/eGy7ZJhlwm3LBslObdS0NxylNpndQkkPVskfMm6fi3YG0v/1r3GkHBSmK3H64WNmJLq1ZGsVk2bSUjJY4HommGFn6H7s50sFL2/U++idSakNwnTebTA/qsKXm7cT5j0/Vo41inm+iwpIeBeV74/rrrzi0paxcb9a3/MzeiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SE1tKiow; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O/wmvFTH"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-486507134e4so3442375e9.0
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2026 08:32:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SE1tKiow"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-486507134e4so4468825e9.0
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2026 09:58:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1774279925; x=1774884725; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Z5ZV7l3Fxtmr1G9g8uZIpUEQ/LOVLTV4dKszYyUtIFw=;
-        b=O/wmvFTHRG7A06bdPy1laDmvma6zIP1SRT8P+Z770bbQY1ZXYsDsEJ8qGUlnbVk+Uj
-         ur2DwhV6ggDxMyAQQbTU6+E0NLsFqToY2/PFAWVKRfDgFBEG4cOuXr39HS13+Z4+DjJN
-         z6+pFcqTq5R6mVkVmLlOg8XihcDyrfvDdcuC2XeIz4C5vXRh5g0Bmv8ZgvUNdatB/AQ3
-         rQ7bMrT8zpK2Wmy3YbjAayDic84QX6WdMJsMBEGe7zxAbfUDT88fUTvY+f6Nnm1N+pBv
-         bhzViale7SqWE99wBVufzCQfZWxpBSJIoQx/fmsBIEDXm9k2UgpDcW3qEHh7YnMM5+aV
-         kodw==
+        d=gmail.com; s=20230601; t=1774285087; x=1774889887; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=z4ffkOY+6p/NlYHV+sbGxNygvHF+TY1FOGbqtfFowt8=;
+        b=SE1tKiowQWOBTISOehOITIRk4R2GA6lnstboOr9nXIpa14fiVgSbQUjYDstOq/1ukn
+         n4o6L41iItiX3FD5xHcaFzRwVk7cd3n1aQj+8KWiHfwPw4iN5gldLEU3eE7sNyR6xiIF
+         MnlZT5JupZlgbVFVIwe+wm9jua8IGYA4Allvu8qL3+GitaDqQpt8cp37KO4nzMDc/GLZ
+         8ywcqDs/fTRYvlCf4NZW4fOe3bGfuJJRus2kO6MlABqzC8EPBpnd31jhoGMSuwo+jzAP
+         ZqpkIBIl2GvuZjBhop0bS7AKom0oLakAd4H9XR/NzijjwoCUaLeHbyqTf0mhju71mJO/
+         mUrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774279925; x=1774884725;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z5ZV7l3Fxtmr1G9g8uZIpUEQ/LOVLTV4dKszYyUtIFw=;
-        b=qnkTOPcJgiPl8wGr1SOY2VVeFBOQNd3o7acY+Uq85uQoGDt3iZAhXXPu5Uo3OHzr4A
-         nxxW+XJSfMnqSOf6RWEBOYNi66Lpj0dxVdvt9hOWQ0X9s/4jlxpM/LrGW6tPvOFM2s4H
-         GoUyTJKOoVV6Rox6UpTllV8EnSCbvYabxuk7LSRaFY6UfoXDPdE2PwvWT2DUJ/GC9Wrw
-         hUUiX6N6MyXk2/UHVdOfkqxKJl2aPpDvkaJ+Avri10ooBTfMiGvpfQcLyxIle9yQyvrM
-         RKDr0dGfjxDRs6ev5wMLP2BzisQQR6WJJ7gBb/BEHvkGKEtXus0XH0CYiRUMgLuhIssq
-         WNjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWwFTKBklfQN4Yp7LKr7iPfgLCJ/Smpgeark+159LNrujnPcy2VdBDiAeeBiVf4oS+Tf0c/xeKlsH8FzNzBlyq4K2/3tEQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuACgpYnkhG3opwsar8t49XqsqWAqJfWRK5IBvLsw6Y3HvMNJC
-	26Po4ddPzY40wsJnfsduhlmFt6aSQzSqVe29nYAVbojt/GvMAoRB6U6A
-X-Gm-Gg: ATEYQzwx4ivSp/kaDdhDafzXekJ/+c3sYG/In8a9/BagOm/hodoObMD8SE2DmHfRcZR
-	58ZiPeNJw3gdbtFBoNrEtRZFoeBRBWaLjFGrYHjkYNudFcV1m+Iw4KBTWPc3EKIcAZfyoAUVwoh
-	+izHitQoNym8/IY6hos/PNLDQuXkpnyror4Af7MadNMr546ccskKof0UPe0Z7Do7FVNVph/TGQ8
-	o4VGeH7ClIMciLbMfDMVkSKzVv9KnOtw/pwfxd3glcXMqsWEdJqv3HTC1EHA6MeHXsElfXcg8uv
-	5EQJVUx4mRIa9YZDa5o09MPJcVrZxddTZZTRZimCqDbzigS3A+dqslm/mIIYW3NlfcIotRJld+1
-	cIstZWFsrxtuxtGvKnUUyOgid2jZOLMweFNSbD3X6J7vJ3OQdXPRJcrFHHQU++2aogk9PChVlzl
-	J73j7Aj3suba3mq49e+ztZGV5ER4ET1Nwi1pakgDxOmQXCAPlG
-X-Received: by 2002:a05:600c:8508:b0:485:3b00:f92e with SMTP id 5b1f17b1804b1-486fedab7dbmr179523845e9.2.1774279925024;
-        Mon, 23 Mar 2026 08:32:05 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1774285087; x=1774889887;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z4ffkOY+6p/NlYHV+sbGxNygvHF+TY1FOGbqtfFowt8=;
+        b=kgelF+tyJ+Lg6GPd8fpODWJdtEYkcDUejlHxbiKX7k0Kp919HUAxlBkY0XVIVyX0Lx
+         t/YJfm43/ueluV9NUaAvkDfqTNBi+PJdnjM0Lw+QahMxC1GuEJ/Tb1uLYBC5Zb9aC8kf
+         YAgjygBzBFu/HAwdGsKIxJ8u9F4nh4BHgNrPZbq1nplW60Eoy7W/c5REo/WPX+FFlW5S
+         tSx6SeWnKxcElm26UupbHURzE5MYaFgVFkfUkHurMMEkWj4rYsOPA363ATOb1Bghv9r/
+         vNs/Sr42E+LDDZSanoMNGBgmc0f7M6qtKBc+BNImOiy0u5oLeFJ3EVYK55y/Ez3Lv3XD
+         L6ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbFSXLvG4AF4EOa+9kz9U8yiG2QJqzUfZyKtjD7NKvKLgLjOmC8KXkBcY9cssQoLgnIH6H8spD9HEKHaLRKpEUoNT/0xk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF9QhDxNA4GgASUACNNaNqose0nKtPG5bJMPNertFOpl4lK/RI
+	dxg02PiDGMIg4E+cHPDt2kWpF1N2arZ3mGe3exWCofFix5rNP5a0Ed79
+X-Gm-Gg: ATEYQzzsMMqJKd94MxbfcRB5AAdixDCpHsjEKkRMcEPKgHRJif9TwcSgZ9rqcSFMw4I
+	gpDJIzKkT0kfuD1q0HW5WkYfGUZeXSuY3BCxQDINb6WM2nMU+TE5Z0Yib2Qbo5YOfK1fSyKSfiM
+	D4YR5j1OqH4UQAXokP00PagQWRCHSxlUhRVgQLMWxT3BuyWmCqzAK4nWD9AnXWNQuBr+PiD+wkH
+	pfYWWahXojD39Lzt2uBP3anzC6goNwjInW7HDQy89Ylt3xosiCUq6319ivkhpHitLFg9EN9wRuB
+	qvSgdwDZKb0mINiRurrjAtMHs+x1YdHLS95iKL+q2ezmBFkWzAp9vREAeDw2fxhp+nHv18Q91pm
+	Jfe3aWpU+y4iBA8tAwGG6rDeNHyXgAL6aixU9ur95zjzN0+4dxpc42D7gDqVOP+q3QNt+RWRFBo
+	HGC5PTx9K5zBloPdQRtFnf/5DBSByE9maymP77oo2GP5ZmfQFH
+X-Received: by 2002:a05:600c:5288:b0:485:3bb5:92cf with SMTP id 5b1f17b1804b1-486fedc9a5fmr195515635e9.12.1774285086474;
+        Mon, 23 Mar 2026 09:58:06 -0700 (PDT)
 Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-486ff1dd9f1sm124828425e9.8.2026.03.23.08.32.04
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-486f8b949e1sm601409055e9.9.2026.03.23.09.58.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2026 08:32:04 -0700 (PDT)
-Date: Mon, 23 Mar 2026 16:31:58 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: John Johansen <john.johansen@canonical.com>,
-	Tingmao Wang <m@maowtm.org>, Justin Suess <utilityemal77@gmail.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Kuniyuki Iwashima <kuniyu@google.com>, Jann Horn <jannh@google.com>,
+        Mon, 23 Mar 2026 09:58:06 -0700 (PDT)
+From: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	"John Johansen" <john.johansen@canonical.com>,
+	"Paul Moore" <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>
+Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
 	linux-security-module@vger.kernel.org,
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	"Tingmao Wang" <m@maowtm.org>,
+	"Justin Suess" <utilityemal77@gmail.com>,
+	"Samasth Norway Ananda" <samasth.norway.ananda@oracle.com>,
+	"Matthieu Buffet" <matthieu@buffet.re>,
+	"Mikhail Ivanov" <ivanov.mikhail1@huawei-partners.com>,
 	konstantin.meskhidze@huawei.com,
-	Demi Marie Obenour <demiobenour@gmail.com>,
-	Alyssa Ross <hi@alyssa.is>, Tahera Fahimi <fahimitahera@gmail.com>,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v6 3/9] landlock: Control pathname UNIX domain socket
- resolution by path
-Message-ID: <20260323.31999db4370b@gnoack.org>
-References: <20260315222150.121952-1-gnoack3000@gmail.com>
- <20260315222150.121952-4-gnoack3000@gmail.com>
- <20260318.peecoo2Ooyep@digikod.net>
- <20260320.f59cddcb6c6b@gnoack.org>
- <20260320.eez3sheeThul@digikod.net>
- <20260320.ee35c8125f6f@gnoack.org>
- <20260321.Aiquah5gaedo@digikod.net>
+	"Demi Marie Obenour" <demiobenour@gmail.com>,
+	"Alyssa Ross" <hi@alyssa.is>,
+	"Jann Horn" <jannh@google.com>,
+	"Tahera Fahimi" <fahimitahera@gmail.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Kuniyuki Iwashima" <kuniyu@google.com>,
+	Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v7 00/11] landlock: UNIX connect() control by pathname and scope
+Date: Mon, 23 Mar 2026 17:56:42 +0100
+Message-ID: <20260323165654.193957-1-gnoack3000@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260321.Aiquah5gaedo@digikod.net>
 
 Hello!
 
-On Sat, Mar 21, 2026 at 10:09:35AM +0100, Mickaël Salaün wrote:
-> On Fri, Mar 20, 2026 at 11:25:04PM +0100, Günther Noack wrote:
-> > On Fri, Mar 20, 2026 at 06:51:13PM +0100, Mickaël Salaün wrote:
-> > > On Fri, Mar 20, 2026 at 05:15:40PM +0100, Günther Noack wrote:
-> > > > On Wed, Mar 18, 2026 at 05:52:48PM +0100, Mickaël Salaün wrote:
-> > > > > On Sun, Mar 15, 2026 at 11:21:44PM +0100, Günther Noack wrote:
-> > > > > > + * @client: Client domain
-> > > > > > + * @server: Server domain
-> > > > > > + * @masks: Layer access masks to unmask
-> > > > > > + * @access: Access bit that controls scoping
-> > > > > > + */
-> > > > > > +static void unmask_scoped_access(const struct landlock_ruleset *const client,
-> > > > > > +				 const struct landlock_ruleset *const server,
-> > > > > > +				 struct layer_access_masks *const masks,
-> > > > > > +				 const access_mask_t access)
-> > > > > > +{
-> > > > > > +	int client_layer, server_layer;
-> > > > > > +	const struct landlock_hierarchy *client_walker, *server_walker;
-> > > > > > +
-> > > > > > +	/* This should not happen. */
-> > > > > > +	if (WARN_ON_ONCE(!client))
-> > > > > > +		return;
-> > > > > > +
-> > > > > > +	/* Server has no Landlock domain; nothing to clear. */
-> > > > > > +	if (!server)
-> > > > > > +		return;
-> > > > > > +
-> > > > > 
-> > > > > Please also copy the BUILD_BUG_ON() from domain_is_scoped().
-> > > > 
-> > > > I don't understand what this check is good for.  It says:
-> > > > 
-> > > > /*
-> > > >  * client_layer must be a signed integer with greater capacity
-> > > >  * than client->num_layers to ensure the following loop stops.
-> > > >  */
-> > > > BUILD_BUG_ON(sizeof(client_layer) > sizeof(client->num_layers));
-> > > > 
-> > > > For the loop to terminate, in my understanding, client_layer must be
-> > > > able to store client->num_layers - 1 down to - 1, but that is anyway a
-> > > > given since num_layers can't exceed 16 and client_layer is signed.  It
-> > > > seems that the termination of this would anyway be caught in our tests
-> > > > as well?
-> > > > 
-> > > > Could you please clarify what this BUILD_BUG_ON() is trying to assert?
-> > > 
-> > > The intent was to make sure client_layer is indeed an int and not an
-> > > unsigned int for instance.  Hopefully tests catch that but using a
-> > > build-time assert catch the potential issue and document it.  Also, it
-> > > would be weird to not have the same checks in both copies of code.
-> > 
-> > It isn't clear to me why the BUILD_BUG_ON is checking based on the
-> > sizeof() of these variables then.  The number of bytes in an integer
-> > type is independent of its signedness, after all.  Should we rather do
-> > this maybe?
-> > 
-> >   /*
-> >    * client_layer must be a signed integer to ensure the following
-> >    * loop stops.
-> >    */
-> >   BUILD_BUG_ON(!is_signed_type(typeof(client_layer)));
-> 
-> I didn't know about this macro, looks good.
-> 
-> > 
-> > (Although that is also a bit of a triviality given that the same
-> > variable is being defined as a signed integer just a few lines above,
-> > but at least it is very explicit about it.)
-> 
-> Yeah, I know, but I added this canary check because I was bitten by a
-> bug.  Even if it might be trivial now, it might help when working on
-> other parts, and it's just a build-time check that also serves as doc.
-> If in doubt, let's keep build-time checks that were most likely added
-> for a good reason.  I prefer to have build-time errors than run-time
-> ones.
-> 
-> > 
-> > I'd drop the remark about the capacity, as even a signed 8-bit integer
-> > is large enough to hold the layer indices and the -1.
-> 
-> Large enough for now...  All these checks are useful to easily spot
-> issues if/when the current invariant change (e.g. if one day we extend
-> the number of max layers).  Integer C types can silently cast to other
-> integer types (with different capacity or sign/unsigned), which might be
-> the source of bugs.  So yeah, please keep the current capacity check and
-> add the sign one, it won't do any harm.
+This patch set introduces a filesystem-based Landlock restriction
+mechanism for connecting to UNIX domain sockets (or addressing them
+with sendmsg(2)).  It introduces the filesystem access right
+LANDLOCK_ACCESS_FS_RESOLVE_UNIX.
 
-I feel that this is still not fully addressed.  I know it is a
-triviality to go in circles over this BUILD_BUG, but the current form:
+For the connection-oriented SOCK_STREAM and SOCK_SEQPACKET type
+sockets, the access right makes the connect(2) operation fail with
+EACCES, if denied.
 
-  BUILD_BUG_ON(sizeof(client_layer) > sizeof(client->num_layers));
+SOCK_DGRAM-type UNIX sockets can be used both with connect(2), or by
+passing an explicit recipient address with every sendmsg(2)
+invocation.  In the latter case, the Landlock check is done when an
+explicit recipient address is passed to sendmsg(2) and can make
+sendmsg(2) return EACCES.  When UNIX datagram sockets are connected
+with connect(2), a fixed recipient address is associated with the
+socket and the check happens during connect(2) and may return EACCES.
 
-checks that the size of client_layer is smaller(!) or equal than the
-size of client->num_layers, so it seems that the check is accidentally
-done the wrong way around.  It does not fire because the two integers
-happen to have the same size, but it feels a bit misleading to leave
-it like that?
+When LANDLOCK_ACCESS_FS_RESOLVE_UNIX is handled within a Landlock
+domain, this domain will only allow connect(2) and sendmsg(2) to
+server sockets that were created within the same domain.  Or, to
+phrase it the other way around: Unless it is allow-listed with a
+LANDLOCK_PATH_BENEATH rule, the newly created domain denies connect(2)
+and sendmsg(2) actions that are directed *outwards* of that domain.
+In that regard, LANDLOCK_ACCESS_FS_RESOLVE_UNIX has the same semantics
+as one of the "scoped" access rights.
 
-To keep things moving, and because it feels like a minor (any maybe
-optional) issue, I will send V7 now and optimistically do the
-following:
+== Motivation
 
-* Copy the BUILD_BUG_ON and matching comment from domain_is_checked()
-  as you initially requested.
-* Make a constructive proposal that rewrites the check in both
-  functions, to check that all numbers from -1 to
-  LANDLOCK_MAX_NUM_LAYERS are representable (and the loop therefore
-  terminates).  In my understanding that was the intention here.
+Currently, landlocked processes can connect to named UNIX sockets
+through the BSD socket API described in unix(7), by invoking socket(2)
+followed by connect(2) with a suitable struct sockname_un holding the
+socket's filename.  This is a surprising gap in Landlock's sandboxing
+capabilities for users (e.g. in [1]) and it can be used to escape a
+sandbox when a Unix service offers command execution (various such
+scenarios were listed by Tingmao Wang in [2]).
 
-–Günther
+The original feature request is at [4].
+
+== Alternatives and Related Work
+
+=== Alternative: Use existing LSM hooks
+
+We have carefully and seriously considered the use of existing LSM
+hooks, but still came to the conclusion that a new LSM hook is better
+suited in this case:
+
+The existing hooks security_unix_stream_connect(),
+security_unix_may_send() and security_socket_connect() do not give
+access to the resolved filesystem path.
+
+* Resolving the filesystem path in the struct sockaddr_un again within
+  a Landlock would produce a TOCTOU race, so this is not an option.
+* We would therefore need to wire through the resolved struct path
+  from unix_find_bsd() to one of the existing LSM hooks which get
+  called later.  This would be a more substantial change to af_unix.c.
+
+The struct path that is available in the listening-side struct sock is
+can be read through the existing hooks, but it is not an option to use
+this information: As the listening socket may have been bound from
+within a different namespace, the path that was used for that can is
+in the general case not meaningful for a sandboxed process.  In
+particular, it is not possible to use this path (or prefixes thereof)
+when constructing a sandbox policy in the client-side process.
+
+Paul Moore also chimed in in support of adding a new hook, with the
+rationale that the simplest change to the LSM hook interface has
+traditionally proven to be the most robust. [11]
+
+More details are on the Github issue at [6] and on the LKML at [9].
+
+In a the discussion of the V2 review, started by Christian Brauner
+[10], we have further explored the approach of reusing the existing
+LSM hooks but still ended up leaning on the side of introducing a new
+hook, with Paul Moore and me (gnoack) arguing for that option.
+
+Further insights about the LSM hook were shared in the V3 review by
+Tingmao Wang [12], who spotted additional requirements due to the two
+approaches being merged into one patch set.  The summary of that
+discussion is in [13].
+
+=== Related work: Scope Control for Pathname Unix Sockets
+
+The motivation for this patch is the same as in Tingmao Wang's patch
+set for "scoped" control for pathname Unix sockets [2], originally
+proposed in the Github feature request [5].
+
+In [14], we have settled on the decision to merge the two patch sets
+into this one, whose primary way of controlling connect(2) is
+LANDLOCK_ACCESS_FS_RESOLVE_UNIX, but where this flag additionally has
+the semantics of only restricting this unix(7) IPC *outwards* of the
+created Landlock domain, in line with the logic that exists for the
+existing "scoped" flags already.
+
+By having LANDLOCK_ACCESS_FS_RESOLVE_UNIX implement "scoping"
+semantics, we can avoid introducing two separate interacting flags for
+now, but we retain the option of introducing
+LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET at a later point in time, should
+such a flag be needed to express additional rules.
+
+== Credits
+
+The feature was originally suggested by Jann Horn in [7].
+
+Tingmao Wang and Demi Marie Obenour have taken the initiative to
+revive this discussion again in [1], [4] and [5].
+
+Tingmao Wang has sent the patch set for the scoped access control for
+pathname Unix sockets [2] and has contributed substantial insights
+during the code review, shaping the form of the LSM hook and agreeing
+to merge the pathname and scoped-flag patch sets.
+
+Justin Suess has sent the patch for the LSM hook in [8] and
+subsequently through this patch set.
+
+Christian Brauner and Paul Moore have contributed to the design of the
+new LSM hook, discussing the tradeoffs in [10].
+
+Sebastian Andrzej Siewior and Kuniyuki Iwashima have helped with
+locking questions in the networking subsystem. [15] [16]
+
+Ryan Sullivan has started on an initial implementation and has brought
+up relevant discussion points on the Github issue at [4].
+
+As maintainer of Landlock, Mickaël Salaün has done the main review so
+far and particularly pointed out ways in which the UNIX connect()
+patch sets interact with each other and what we need to look for with
+regards to UAPI consistency as Landlock evolves.
+
+[1] https://lore.kernel.org/landlock/515ff0f4-2ab3-46de-8d1e-5c66a93c6ede@gmail.com/
+[2] Tingmao Wang's "Implement scope control for pathname Unix sockets"
+    https://lore.kernel.org/all/cover.1767115163.git.m@maowtm.org/
+[3] https://lore.kernel.org/all/20251230.bcae69888454@gnoack.org/
+[4] Github issue for FS-based control for named Unix sockets:
+    https://github.com/landlock-lsm/linux/issues/36
+[5] Github issue for scope-based restriction of named Unix sockets:
+    https://github.com/landlock-lsm/linux/issues/51
+[6] https://github.com/landlock-lsm/linux/issues/36#issuecomment-2950632277
+[7] https://lore.kernel.org/linux-security-module/CAG48ez3NvVnonOqKH4oRwRqbSOLO0p9djBqgvxVwn6gtGQBPcw@mail.gmail.com/
+[8] Patch for the LSM hook:
+    https://lore.kernel.org/all/20251231213314.2979118-1-utilityemal77@gmail.com/
+[9] https://lore.kernel.org/all/20260108.64bd7391e1ae@gnoack.org/
+[10] https://lore.kernel.org/all/20260113-kerngesund-etage-86de4a21da24@brauner/
+[11] https://lore.kernel.org/all/CAHC9VhQHZCe0LMx4xzSo-h1SWY489U4frKYnxu4YVrcJN3x7nA@mail.gmail.com/
+[12] https://lore.kernel.org/all/e6b6b069-384c-4c45-a56b-fa54b26bc72a@maowtm.org/
+[13] https://lore.kernel.org/all/aYMenaSmBkAsFowd@google.com/
+[14] https://lore.kernel.org/all/20260205.Kiech3gupee1@digikod.net/
+[15] https://lore.kernel.org/all/20260310151907.VYySCtJp@linutronix.de/
+[16] https://lore.kernel.org/all/CAAVpQUC95mSjX1vRK===pubHofcYqbkNE7goYKiu6vha5GYAFw@mail.gmail.com/
+
+---
+
+== Patch set history
+
+V1: https://lore.kernel.org/all/20260101134102.25938-1-gnoack3000@gmail.com/
+V2: https://lore.kernel.org/all/20260110143300.71048-2-gnoack3000@gmail.com/
+V3: https://lore.kernel.org/all/20260119203457.97676-2-gnoack3000@gmail.com/
+V4: https://lore.kernel.org/all/20260208231017.114343-1-gnoack3000@gmail.com/
+V5: https://lore.kernel.org/all/20260215105158.28132-1-gnoack3000@gmail.com/
+V6: https://lore.kernel.org/all/20260315222150.121952-1-gnoack3000@gmail.com/
+
+Changes in V7:
+
+* Implementation:
+  * LSM hook: Small header file layout restructurings, typos (Justin)
+  * Hold unix_state_lock across the usage of the other Landlock domain
+    This prevents a UAF; spotted by Mickaël and Sebastian in code review 🏆
+  * Ignore the return value from landlock_init_layer_masks() -
+    it is not needed in this specific case
+  * Add a BUILD_BUG_ON to unmask_scoped_access() like in
+    domain_is_scoped().  Revise the BUILD_BUG_ON logic and bring both
+    implementations in line.
+* Documentation and commentary:
+  * Mention access_mask_t change from u16 to u32 in commit message
+  * Improve documentation for unmask_scoped_access()
+  * Various typos and smaller documentation fixes, caught in code review
+  * Add ABI version remark to landlock.h
+  * Add comment to explain why returning 0 on SOCK_DEAD is correct -
+    This is not obvious in the code and requires understanding the callers
+  * In kernel docs, use "case 6 ... 8" in a place
+
+Changes in V6:
+
+* Implementation:
+  * Move the LSM hook call after the check that checks for the other
+    end's matching socket type.  (Justin Suess)
+  * Lock with unix_state_lock() and check SOCK_DEAD.
+  * Remove unnecessary layer_access_masks_empty() call (and its
+    implementation).
+* Documentation:
+  * Squash docs with design rationale into main implementation commit,
+    and cross-referece it from the header docs.
+  * Clarify that denials result in EACCES and that this is consistent
+    with other filesystem access rights.
+* Minor:
+  * Use mem_is_zero() in is_layer_masks_allowed() (minor cleanup)
+  * Omit unnecessary __attribute__((fallthrough)) usages
+  * Remove comment at the end of a line in a place.
+* Selftests:
+  * sun_path population fixes
+  * coredump test: Set EUID to 0 (needed for UML-based selftests)
+    Link[1]: https://lore.kernel.org/all/20260218.ohth8theu8Yi@digikod.net/
+
+Changes in V5:
+
+This change primarily adds tests, changing the testing approach for
+the main test to use the scoped_domains fixture as in Tingmao's patch
+set [2], and adding tests for the audit and coredump cases.
+
+* Selftests:
+  * Replaced the main selftest with one based on scoped_domains
+  * Added audit test
+  * Added test for the coredump case
+  * Added a follow-up commit that simplifies ruleset enforcement
+* Kernel code:
+  * Mark coredump check as unlikely (per Justin's review)
+  * Drop check for socket type (per Mickaël's review)
+
+Changes in V4:
+
+Since this version, this patch set subsumes the scoping semantics from
+Tingmao Wang's "Scope Control" patch set [2], per discussion with
+Tingmao Wang and Mickaël Salaün in [14] and in the thread leading up
+to it.
+
+Now, LANDLOCK_SCOPE_PATHNAME_UNIX_SOCKET only restricts connect(2) and
+sendmsg(2) *outwards* of the domain where it is restricted, *with the
+same semantics as a "scoped" flag*.
+
+ * Implement a layer-mask based version of domain_is_scoped():
+   unmask_scoped_access().  Rationale: domain_is_scoped() returns
+   early, which we can't do in the layer masks based variant.  The two
+   variants are similar enough.
+ * LSM hook: Replace 'type' argument with 'sk' argument,
+   per discussion in [12] and [13].
+ * Bump ABI version to 9 (pessimistically assuming that we won't make
+   it for 7.0)
+ * Documentation fixes in header file and in Documentation/
+ * selftests: more test variants, now also parameterizing whether the
+   server socket gets created within the Landlock domain or before that
+ * selftests: use EXPECT_EQ() for test cleanup
+
+Changes in V3:
+ * LSM hook: rename it to security_unix_find() (Justin Suess)
+   (resolving the previously open question about the LSM hook name)
+   Related discussions:
+   https://lore.kernel.org/all/20260112.Wufar9coosoo@digikod.net/
+   https://lore.kernel.org/all/CAHC9VhSRiHwLEWfFkQdPEwgB4AXKbXzw_+3u=9hPpvUTnu02Bg@mail.gmail.com/
+ * Reunite the three UNIX resolving access rights back into one
+   (resolving the previously open question about the access right
+   structuring) Related discussion:
+   https://lore.kernel.org/all/20260112.Wufar9coosoo@digikod.net/)
+ * Sample tool: Add new UNIX lookup access rights to ACCESS_FILE
+
+Changes in V2:
+ * Send Justin Suess's LSM hook patch together with the Landlock
+   implementation
+ * LSM hook: Pass type and flags parameters to the hook, to make the
+   access right more generally usable across LSMs, per suggestion from
+   Paul Moore (Implemented by Justin)
+ * Split the access right into the three types of UNIX domain sockets:
+   SOCK_STREAM, SOCK_DGRAM and SOCK_SEQPACKET.
+ * selftests: More exhaustive tests.
+ * Removed a minor commit from V1 which adds a missing close(fd) to a
+   test (it is already in the mic-next branch)
+
+
+Günther Noack (10):
+  landlock: Use mem_is_zero() in is_layer_masks_allowed()
+  landlock: Control pathname UNIX domain socket resolution by path
+  samples/landlock: Add support for named UNIX domain socket
+    restrictions
+  landlock: Clarify BUILD_BUG_ON check in scoping logic
+  selftests/landlock: Replace access_fs_16 with ACCESS_ALL in fs_test
+  selftests/landlock: Test LANDLOCK_ACCESS_FS_RESOLVE_UNIX
+  selftests/landlock: Audit test for LANDLOCK_ACCESS_FS_RESOLVE_UNIX
+  selftests/landlock: Check that coredump sockets stay unrestricted
+  selftests/landlock: fs_test: Simplify ruleset creation and enforcement
+  landlock: Document FS access right for pathname UNIX sockets
+
+Justin Suess (1):
+  lsm: Add LSM hook security_unix_find
+
+ Documentation/security/landlock.rst          |   40 +
+ Documentation/userspace-api/landlock.rst     |   14 +-
+ include/linux/lsm_hook_defs.h                |    5 +
+ include/linux/security.h                     |   11 +
+ include/uapi/linux/landlock.h                |   21 +
+ net/unix/af_unix.c                           |   10 +-
+ samples/landlock/sandboxer.c                 |   12 +-
+ security/landlock/access.h                   |    2 +-
+ security/landlock/audit.c                    |    1 +
+ security/landlock/fs.c                       |  135 +-
+ security/landlock/limits.h                   |    2 +-
+ security/landlock/syscalls.c                 |    2 +-
+ security/landlock/task.c                     |    9 +-
+ security/security.c                          |   20 +
+ tools/testing/selftests/landlock/base_test.c |    2 +-
+ tools/testing/selftests/landlock/fs_test.c   | 1345 ++++++++++--------
+ 16 files changed, 1003 insertions(+), 628 deletions(-)
+
+Range-diff against v6:
+ 1:  b2235eddb099 !  1:  dec515e7d7bf lsm: Add LSM hook security_unix_find
+    @@ Metadata
+      ## Commit message ##
+         lsm: Add LSM hook security_unix_find
+     
+    -    Add a LSM hook security_unix_find.
+    +    Add an LSM hook security_unix_find.
+     
+    -    This hook is called to check the path of a named unix socket before a
+    +    This hook is called to check the path of a named UNIX socket before a
+         connection is initiated. The peer socket may be inspected as well.
+     
+         Why existing hooks are unsuitable:
+    @@ Commit message
+         may be bound to a path in a different namespace than the caller,
+         resulting in a path that cannot be referenced at policy creation time.
+     
+    +    Consumers of the hook wishing to reference @other are responsible
+    +    for acquiring the unix_state_lock and checking for the SOCK_DEAD flag
+    +    therein, ensuring the socket hasn't died since lookup.
+    +
+         Cc: Günther Noack <gnoack3000@gmail.com>
+         Cc: Tingmao Wang <m@maowtm.org>
+    +    Cc: Mickaël Salaün <mic@digikod.net>
+    +    Cc: Paul Moore <paul@paul-moore.com>
+         Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+    +    Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+     
+      ## include/linux/lsm_hook_defs.h ##
+     @@ include/linux/lsm_hook_defs.h: LSM_HOOK(int, 0, post_notification, const struct cred *w_cred,
+    @@ net/unix/af_unix.c: static struct sock *unix_find_bsd(struct sockaddr_un *sunadd
+     +	if (sk->sk_type != type)
+      		goto sock_put;
+      
+    -+	/*
+    -+	 * We call the hook because we know that the inode is a socket and we
+    -+	 * hold a valid reference to it via the path.
+    -+	 */
+     +	err = security_unix_find(&path, sk, flags);
+     +	if (err)
+     +		goto sock_put;
+    ++
+     +	touch_atime(&path);
+     +
+      	path_put(&path);
+    @@ security/security.c: int security_mptcp_add_subflow(struct sock *sk, struct sock
+     + * @flags: flags associated with the socket
+     + *
+     + * This hook is called to check permissions before connecting to a named
+    -+ * AF_UNIX socket.
+    ++ * AF_UNIX socket. The caller does not hold any locks on @other.
+     + *
+     + * Return: Returns 0 if permission is granted.
+     + */
+ 2:  0e25c15eea62 !  2:  aaa334660a52 landlock: use mem_is_zero() in is_layer_masks_allowed()
+    @@ Metadata
+     Author: Günther Noack <gnoack3000@gmail.com>
+     
+      ## Commit message ##
+    -    landlock: use mem_is_zero() in is_layer_masks_allowed()
+    +    landlock: Use mem_is_zero() in is_layer_masks_allowed()
+     
+         This is equivalent, but expresses the intent a bit clearer.
+     
+ 3:  e50515788eba !  3:  4d455134c5d9 landlock: Control pathname UNIX domain socket resolution by path
+    @@ Commit message
+         landlock: Control pathname UNIX domain socket resolution by path
+     
+         * Add a new access right LANDLOCK_ACCESS_FS_RESOLVE_UNIX, which
+    -      controls the look up operations for named UNIX domain sockets.  The
+    +      controls the lookup operations for named UNIX domain sockets.  The
+           resolution happens during connect() and sendmsg() (depending on
+           socket type).
+    +    * Change access_mask_t from u16 to u32 (see below)
+         * Hook into the path lookup in unix_find_bsd() in af_unix.c, using a
+           LSM hook.  Make policy decisions based on the new access rights
+         * Increment the Landlock ABI version.
+    -    * Minor test adaptions to keep the tests working.
+    +    * Minor test adaptations to keep the tests working.
+         * Document the design rationale for scoped access rights,
+           and cross-reference it from the header documentation.
+     
+    @@ Commit message
+     
+         In case of a denial, connect() and sendmsg() return EACCES, which is
+         the same error as it is returned if the user does not have the write
+    -    bit in the traditional Unix file system permissions of that file.
+    +    bit in the traditional UNIX file system permissions of that file.
+    +
+    +    The access_mask_t type grows from u16 to u32 to make space for the new
+    +    access right.  This also doubles the size of struct layer_access_masks
+    +    from 32 byte to 64 byte.
+     
+         Document the (possible future) interaction between scoped flags and
+         other access rights in struct landlock_ruleset_attr, and summarize the
+    @@ include/uapi/linux/landlock.h: struct landlock_net_port_attr {
+     + *   were created outside of the newly created Landlock domain (e.g. from within
+     + *   a parent domain or from an unrestricted process).  Newly created UNIX
+     + *   servers within the same Landlock domain continue to be accessible.  In this
+    -+ *   regard, %LANDLOCK_ACCESS_RESOLVE_UNIX has the same semantics as the
+    ++ *   regard, %LANDLOCK_ACCESS_FS_RESOLVE_UNIX has the same semantics as the
+     + *   ``LANDLOCK_SCOPE_*`` flags.
+     + *
+     + *   If a resolve attempt is denied, the operation returns an ``EACCES`` error,
+     + *   in line with other filesystem access rights (but different to denials for
+     + *   abstract UNIX domain sockets).
+     + *
+    ++ *   This access right is available since the ninth version of the Landlock ABI.
+    ++ *
+     + *   The rationale for this design is described in
+     + *   :ref:`Documentation/security/landlock.rst <scoped-flags-interaction>`.
+       *
+    @@ security/landlock/fs.c: static int hook_path_truncate(const struct path *const p
+     + * This does the same as domain_is_scoped(), but unmasks bits in @masks.
+     + * It can not return early as domain_is_scoped() does.
+     + *
+    ++ * A scoped access for a given access right bit is allowed iff, for all layer
+    ++ * depths where the access bit is set, the client and server domain are the
+    ++ * same.  This function clears the access rights @access in @masks at all layer
+    ++ * depths where the client and server domain are the same, so that, when they
+    ++ * are all cleared, the access is allowed.
+    ++ *
+     + * @client: Client domain
+     + * @server: Server domain
+     + * @masks: Layer access masks to unmask
+    -+ * @access: Access bit that controls scoping
+    ++ * @access: Access bits that control scoping
+     + */
+     +static void unmask_scoped_access(const struct landlock_ruleset *const client,
+     +				 const struct landlock_ruleset *const server,
+    @@ security/landlock/fs.c: static int hook_path_truncate(const struct path *const p
+     +	if (!server)
+     +		return;
+     +
+    ++	/*
+    ++	 * client_layer must be a signed integer with greater capacity
+    ++	 * than client->num_layers to ensure the following loop stops.
+    ++	 */
+    ++	BUILD_BUG_ON(sizeof(client_layer) > sizeof(client->num_layers));
+    ++
+     +	client_layer = client->num_layers - 1;
+     +	client_walker = client->hierarchy;
+     +	server_layer = server->num_layers - 1;
+    @@ security/landlock/fs.c: static int hook_path_truncate(const struct path *const p
+     +	if (unlikely(flags & SOCK_COREDUMP))
+     +		return 0;
+     +
+    -+	/* Access to the same (or a lower) domain is always allowed. */
+     +	subject = landlock_get_applicable_subject(current_cred(),
+     +						  fs_resolve_unix, NULL);
+     +
+     +	if (!subject)
+     +		return 0;
+     +
+    -+	if (!landlock_init_layer_masks(subject->domain, fs_resolve_unix.fs,
+    -+				       &layer_masks, LANDLOCK_KEY_INODE))
+    -+		return 0;
+    ++	/*
+    ++	 * Ignoring return value: that the domains apply was already checked in
+    ++	 * landlock_get_applicable_subject() above.
+    ++	 */
+    ++	landlock_init_layer_masks(subject->domain, fs_resolve_unix.fs,
+    ++				  &layer_masks, LANDLOCK_KEY_INODE);
+     +
+     +	/* Checks the layers in which we are connecting within the same domain. */
+     +	unix_state_lock(other);
+     +	if (unlikely(sock_flag(other, SOCK_DEAD) || !other->sk_socket ||
+     +		     !other->sk_socket->file)) {
+     +		unix_state_unlock(other);
+    ++		/*
+    ++		 * We rely on the caller to catch the (non-reversible) SOCK_DEAD
+    ++		 * condition and retry the lookup.  If we returned an error
+    ++		 * here, the lookup would not get retried.
+    ++		 */
+     +		return 0;
+     +	}
+     +	dom_other = landlock_cred(other->sk_socket->file->f_cred)->domain;
+    -+	unix_state_unlock(other);
+     +
+    ++	/* Access to the same (or a lower) domain is always allowed. */
+     +	unmask_scoped_access(subject->domain, dom_other, &layer_masks,
+     +			     fs_resolve_unix.fs);
+    ++	unix_state_unlock(other);
+     +
+     +	/* Checks the connections to allow-listed paths. */
+     +	if (is_access_to_paths_allowed(subject->domain, path,
+ 4:  8c1a813b9831 =  4:  70354dfcefcb samples/landlock: Add support for named UNIX domain socket restrictions
+ -:  ------------ >  5:  00c90045f470 landlock: Clarify BUILD_BUG_ON check in scoping logic
+ 9:  43c93c9af805 !  6:  b8e6477b2f9a landlock: Document FS access right for pathname UNIX sockets
+    @@ Metadata
+     Author: Günther Noack <gnoack3000@gmail.com>
+     
+      ## Commit message ##
+    -    landlock: Document FS access right for pathname UNIX sockets
+    +    selftests/landlock: Replace access_fs_16 with ACCESS_ALL in fs_test
+     
+    -    Cc: Justin Suess <utilityemal77@gmail.com>
+    -    Cc: Mickaël Salaün <mic@digikod.net>
+    +    The access_fs_16 variable was originally intended to stay frozen at 16
+    +    access rights so that audit tests would not need updating when new
+    +    access rights are added.  Now that we have 17 access rights, the name
+    +    is confusing.
+    +
+    +    Replace all uses of access_fs_16 with ACCESS_ALL and delete the
+    +    variable.
+    +
+    +    Suggested-by: Mickaël Salaün <mic@digikod.net>
+         Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+     
+    - ## Documentation/userspace-api/landlock.rst ##
+    -@@ Documentation/userspace-api/landlock.rst: to be explicit about the denied-by-default access rights.
+    -             LANDLOCK_ACCESS_FS_MAKE_SYM |
+    -             LANDLOCK_ACCESS_FS_REFER |
+    -             LANDLOCK_ACCESS_FS_TRUNCATE |
+    --            LANDLOCK_ACCESS_FS_IOCTL_DEV,
+    -+            LANDLOCK_ACCESS_FS_IOCTL_DEV |
+    -+            LANDLOCK_ACCESS_FS_RESOLVE_UNIX,
+    -         .handled_access_net =
+    -             LANDLOCK_ACCESS_NET_BIND_TCP |
+    -             LANDLOCK_ACCESS_NET_CONNECT_TCP,
+    -@@ Documentation/userspace-api/landlock.rst: version, and only use the available subset of access rights:
+    -         /* Removes LANDLOCK_SCOPE_* for ABI < 6 */
+    -         ruleset_attr.scoped &= ~(LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
+    -                                  LANDLOCK_SCOPE_SIGNAL);
+    -+        __attribute__((fallthrough));
+    -+    case 7:
+    -+    case 8:
+    -+        /* Removes LANDLOCK_ACCESS_FS_RESOLVE_UNIX for ABI < 9 */
+    -+        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_RESOLVE_UNIX;
+    -     }
+    + ## tools/testing/selftests/landlock/fs_test.c ##
+    +@@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, execute_make)
+    +  * only the blocked ones are logged.
+    +  */
+      
+    - This enables the creation of an inclusive ruleset that will contain our rules.
+    -@@ Documentation/userspace-api/landlock.rst: enforce Landlock rulesets across all threads of the calling process
+    - using the ``LANDLOCK_RESTRICT_SELF_TSYNC`` flag passed to
+    - sys_landlock_restrict_self().
+    +-/* clang-format off */
+    +-static const __u64 access_fs_16 =
+    +-	LANDLOCK_ACCESS_FS_EXECUTE |
+    +-	LANDLOCK_ACCESS_FS_WRITE_FILE |
+    +-	LANDLOCK_ACCESS_FS_READ_FILE |
+    +-	LANDLOCK_ACCESS_FS_READ_DIR |
+    +-	LANDLOCK_ACCESS_FS_REMOVE_DIR |
+    +-	LANDLOCK_ACCESS_FS_REMOVE_FILE |
+    +-	LANDLOCK_ACCESS_FS_MAKE_CHAR |
+    +-	LANDLOCK_ACCESS_FS_MAKE_DIR |
+    +-	LANDLOCK_ACCESS_FS_MAKE_REG |
+    +-	LANDLOCK_ACCESS_FS_MAKE_SOCK |
+    +-	LANDLOCK_ACCESS_FS_MAKE_FIFO |
+    +-	LANDLOCK_ACCESS_FS_MAKE_BLOCK |
+    +-	LANDLOCK_ACCESS_FS_MAKE_SYM |
+    +-	LANDLOCK_ACCESS_FS_REFER |
+    +-	LANDLOCK_ACCESS_FS_TRUNCATE |
+    +-	LANDLOCK_ACCESS_FS_IOCTL_DEV;
+    +-/* clang-format on */
+    +-
+    + TEST_F(audit_layout1, execute_read)
+    + {
+    + 	struct audit_records records;
+    +@@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, execute_read)
+    + 	test_check_exec(_metadata, 0, file1_s1d1);
+      
+    -+Pathname UNIX sockets (ABI < 9)
+    -+-------------------------------
+    -+
+    -+Starting with the Landlock ABI version 9, it is possible to restrict
+    -+connections to pathname UNIX domain sockets (:manpage:`unix(7)`) using
+    -+the new ``LANDLOCK_ACCESS_FS_RESOLVE_UNIX`` right.
+    -+
+    - .. _kernel_support:
+    + 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    +-					      .handled_access_fs = access_fs_16,
+    ++					      .handled_access_fs = ACCESS_ALL,
+    + 				      });
+    + 
+    + 	/*
+    +@@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, write_file)
+    + 	struct audit_records records;
+    + 
+    + 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    +-					      .handled_access_fs = access_fs_16,
+    ++					      .handled_access_fs = ACCESS_ALL,
+    + 				      });
+    + 
+    + 	EXPECT_EQ(EACCES, test_open(file1_s1d1, O_WRONLY));
+    +@@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, read_file)
+    + 	struct audit_records records;
+    + 
+    + 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    +-					      .handled_access_fs = access_fs_16,
+    ++					      .handled_access_fs = ACCESS_ALL,
+    + 				      });
+    + 
+    + 	EXPECT_EQ(EACCES, test_open(file1_s1d1, O_RDONLY));
+    +@@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, read_dir)
+    + 	struct audit_records records;
+    + 
+    + 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    +-					      .handled_access_fs = access_fs_16,
+    ++					      .handled_access_fs = ACCESS_ALL,
+    + 				      });
+    + 
+    + 	EXPECT_EQ(EACCES, test_open(dir_s1d1, O_DIRECTORY));
+    +@@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, remove_dir)
+    + 	EXPECT_EQ(0, unlink(file2_s1d3));
+    + 
+    + 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    +-					      .handled_access_fs = access_fs_16,
+    ++					      .handled_access_fs = ACCESS_ALL,
+    + 				      });
+    + 
+    + 	EXPECT_EQ(-1, rmdir(dir_s1d3));
+    +@@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, remove_file)
+    + 	struct audit_records records;
+    + 
+    + 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    +-					      .handled_access_fs = access_fs_16,
+    ++					      .handled_access_fs = ACCESS_ALL,
+    + 				      });
+    + 
+    + 	EXPECT_EQ(-1, unlink(file1_s1d3));
+    +@@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, make_char)
+    + 	EXPECT_EQ(0, unlink(file1_s1d3));
+    + 
+    + 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    +-					      .handled_access_fs = access_fs_16,
+    ++					      .handled_access_fs = ACCESS_ALL,
+    + 				      });
+    + 
+    + 	EXPECT_EQ(-1, mknod(file1_s1d3, S_IFCHR | 0644, 0));
+    +@@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, make_dir)
+    + 	EXPECT_EQ(0, unlink(file1_s1d3));
+    + 
+    + 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    +-					      .handled_access_fs = access_fs_16,
+    ++					      .handled_access_fs = ACCESS_ALL,
+    + 				      });
+    + 
+    + 	EXPECT_EQ(-1, mkdir(file1_s1d3, 0755));
+    +@@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, make_reg)
+    + 	EXPECT_EQ(0, unlink(file1_s1d3));
+    + 
+    + 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    +-					      .handled_access_fs = access_fs_16,
+    ++					      .handled_access_fs = ACCESS_ALL,
+    + 				      });
+    + 
+    + 	EXPECT_EQ(-1, mknod(file1_s1d3, S_IFREG | 0644, 0));
+    +@@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, make_sock)
+    + 	EXPECT_EQ(0, unlink(file1_s1d3));
+    + 
+    + 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    +-					      .handled_access_fs = access_fs_16,
+    ++					      .handled_access_fs = ACCESS_ALL,
+    + 				      });
+    + 
+    + 	EXPECT_EQ(-1, mknod(file1_s1d3, S_IFSOCK | 0644, 0));
+    +@@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, make_fifo)
+    + 	EXPECT_EQ(0, unlink(file1_s1d3));
+    + 
+    + 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    +-					      .handled_access_fs = access_fs_16,
+    ++					      .handled_access_fs = ACCESS_ALL,
+    + 				      });
+    + 
+    + 	EXPECT_EQ(-1, mknod(file1_s1d3, S_IFIFO | 0644, 0));
+    +@@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, make_block)
+    + 	EXPECT_EQ(0, unlink(file1_s1d3));
+    + 
+    + 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    +-					      .handled_access_fs = access_fs_16,
+    ++					      .handled_access_fs = ACCESS_ALL,
+    + 				      });
+    + 
+    + 	EXPECT_EQ(-1, mknod(file1_s1d3, S_IFBLK | 0644, 0));
+    +@@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, make_sym)
+    + 	EXPECT_EQ(0, unlink(file1_s1d3));
+    + 
+    + 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    +-					      .handled_access_fs = access_fs_16,
+    ++					      .handled_access_fs = ACCESS_ALL,
+    + 				      });
+    + 
+    + 	EXPECT_EQ(-1, symlink("target", file1_s1d3));
+    +@@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, refer_rename)
+    + 	EXPECT_EQ(0, unlink(file1_s1d3));
+    + 
+    + 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    +-					      .handled_access_fs = access_fs_16,
+    ++					      .handled_access_fs = ACCESS_ALL,
+    + 				      });
+    + 
+    + 	EXPECT_EQ(EACCES, test_rename(file1_s1d2, file1_s2d3));
+    +@@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, refer_exchange)
+    + 	EXPECT_EQ(0, unlink(file1_s1d3));
+    + 
+    + 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    +-					      .handled_access_fs = access_fs_16,
+    ++					      .handled_access_fs = ACCESS_ALL,
+    + 				      });
+    + 
+    + 	/*
+    +@@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, truncate)
+    + 	struct audit_records records;
+    + 
+    + 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    +-					      .handled_access_fs = access_fs_16,
+    ++					      .handled_access_fs = ACCESS_ALL,
+    + 				      });
+    + 
+    + 	EXPECT_EQ(-1, truncate(file1_s1d3, 0));
+    +@@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, ioctl_dev)
+    + 	drop_access_rights(_metadata,
+    + 			   &(struct landlock_ruleset_attr){
+    + 				   .handled_access_fs =
+    +-					   access_fs_16 &
+    ++					   ACCESS_ALL &
+    + 					   ~LANDLOCK_ACCESS_FS_READ_FILE,
+    + 			   });
+      
+    - Kernel support
+ 5:  7c360d3c293f !  7:  66554c5b5b9c landlock/selftests: Test LANDLOCK_ACCESS_FS_RESOLVE_UNIX
+    @@ Metadata
+     Author: Günther Noack <gnoack3000@gmail.com>
+     
+      ## Commit message ##
+    -    landlock/selftests: Test LANDLOCK_ACCESS_FS_RESOLVE_UNIX
+    +    selftests/landlock: Test LANDLOCK_ACCESS_FS_RESOLVE_UNIX
+     
+         * Extract common helpers from an existing IOCTL test that
+           also uses pathname unix(7) sockets.
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F_FORK(ioctl, handle_file_acces
+     +		enforce_ruleset(_metadata, fd);
+     +		EXPECT_EQ(0, close(fd));
+     +	} else {
+    -+		drop_access_rights(
+    -+			_metadata,
+    -+			&(struct landlock_ruleset_attr){
+    -+				.handled_access_fs =
+    -+					LANDLOCK_ACCESS_FS_RESOLVE_UNIX,
+    -+			});
+    ++		struct landlock_ruleset_attr attr = {
+    ++			.handled_access_fs = LANDLOCK_ACCESS_FS_RESOLVE_UNIX,
+    ++		};
+    ++		drop_access_rights(_metadata, &attr);
+     +	}
+     +}
+     +
+ 6:  6ea15ea91990 !  8:  fab3d3d71215 landlock/selftests: Audit test for LANDLOCK_ACCESS_FS_RESOLVE_UNIX
+    @@ Metadata
+     Author: Günther Noack <gnoack3000@gmail.com>
+     
+      ## Commit message ##
+    -    landlock/selftests: Audit test for LANDLOCK_ACCESS_FS_RESOLVE_UNIX
+    +    selftests/landlock: Audit test for LANDLOCK_ACCESS_FS_RESOLVE_UNIX
+     
+         Add an audit test to check that Landlock denials from
+         LANDLOCK_ACCESS_FS_RESOLVE_UNIX result in audit logs in the expected
+    @@ Commit message
+         Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+     
+      ## tools/testing/selftests/landlock/fs_test.c ##
+    -@@ tools/testing/selftests/landlock/fs_test.c: static const __u64 access_fs_16 =
+    - 	LANDLOCK_ACCESS_FS_MAKE_SYM |
+    - 	LANDLOCK_ACCESS_FS_REFER |
+    - 	LANDLOCK_ACCESS_FS_TRUNCATE |
+    --	LANDLOCK_ACCESS_FS_IOCTL_DEV;
+    -+	LANDLOCK_ACCESS_FS_IOCTL_DEV |
+    -+	LANDLOCK_ACCESS_FS_RESOLVE_UNIX;
+    - /* clang-format on */
+    - 
+    - TEST_F(audit_layout1, execute_read)
+     @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, ioctl_dev)
+      	EXPECT_EQ(1, records.domain);
+      }
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, ioctl_dev)
+     +	if (!child_pid) {
+     +		drop_access_rights(_metadata,
+     +				   &(struct landlock_ruleset_attr){
+    -+					   .handled_access_fs = access_fs_16,
+    ++					   .handled_access_fs = ACCESS_ALL,
+     +				   });
+     +
+     +		cli_fd = socket(AF_UNIX, SOCK_STREAM, 0);
+ 7:  0ada3dd8e1a1 !  9:  4e8a07344278 landlock/selftests: Check that coredump sockets stay unrestricted
+    @@ Metadata
+     Author: Günther Noack <gnoack3000@gmail.com>
+     
+      ## Commit message ##
+    -    landlock/selftests: Check that coredump sockets stay unrestricted
+    +    selftests/landlock: Check that coredump sockets stay unrestricted
+     
+         Even when a process is restricted with the new
+    -    LANDLOCK_ACCESS_FS_RESOLVE_SOCKET right, the kernel can continue
+    -    writing its coredump to the configured coredump socket.
+    +    LANDLOCK_ACCESS_FS_RESOLVE_UNIX right, the kernel can continue writing
+    +    its coredump to the configured coredump socket.
+     
+         In the test, we create a local server and rewire the system to write
+         coredumps into it.  We then create a child process within a Landlock
+    -    domain where LANDLOCK_ACCESS_FS_RESOLVE_SOCKET is restricted and make
+    +    domain where LANDLOCK_ACCESS_FS_RESOLVE_UNIX is restricted and make
+         the process crash.  The test uses SO_PEERCRED to check that the
+         connecting client process is the expected one.
+     
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(scoped_domains, unix_seqpacke
+     +	set_core_pattern(_metadata, core_pattern);
+     +
+     +	/* Restrict LANDLOCK_ACCESS_FS_RESOLVE_UNIX. */
+    -+	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    -+		.handled_access_fs = LANDLOCK_ACCESS_FS_RESOLVE_UNIX,
+    -+	});
+    ++	drop_access_rights(_metadata,
+    ++			   &(struct landlock_ruleset_attr){
+    ++				   .handled_access_fs =
+    ++					   LANDLOCK_ACCESS_FS_RESOLVE_UNIX,
+    ++			   });
+     +
+     +	/* Fork a child that crashes. */
+     +	child_pid = fork();
+ 8:  e9f591ec527f ! 10:  fcaef2882dbd landlock/selftests: fs_test: Simplify ruleset creation and enforcement
+    @@ Metadata
+     Author: Günther Noack <gnoack3000@gmail.com>
+     
+      ## Commit message ##
+    -    landlock/selftests: fs_test: Simplify ruleset creation and enforcement
+    +    selftests/landlock: fs_test: Simplify ruleset creation and enforcement
+     
+         * Add enforce_fs() for defining and enforcing a ruleset in one step
+         * In some places, dropped "ASSERT_LE(0, fd)" checks after
+    @@ tools/testing/selftests/landlock/fs_test.c: FIXTURE_TEARDOWN(scoped_domains)
+     -		enforce_ruleset(_metadata, fd);
+     -		EXPECT_EQ(0, close(fd));
+     -	} else {
+    --		drop_access_rights(
+    --			_metadata,
+    --			&(struct landlock_ruleset_attr){
+    --				.handled_access_fs =
+    --					LANDLOCK_ACCESS_FS_RESOLVE_UNIX,
+    --			});
+    +-		struct landlock_ruleset_attr attr = {
+    +-			.handled_access_fs = LANDLOCK_ACCESS_FS_RESOLVE_UNIX,
+    +-		};
+    +-		drop_access_rights(_metadata, &attr);
+     -	}
+     -}
+     -
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F_FORK(coredump, socket_not_res
+      	set_core_pattern(_metadata, core_pattern);
+      
+      	/* Restrict LANDLOCK_ACCESS_FS_RESOLVE_UNIX. */
+    --	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    --		.handled_access_fs = LANDLOCK_ACCESS_FS_RESOLVE_UNIX,
+    --	});
+    +-	drop_access_rights(_metadata,
+    +-			   &(struct landlock_ruleset_attr){
+    +-				   .handled_access_fs =
+    +-					   LANDLOCK_ACCESS_FS_RESOLVE_UNIX,
+    +-			   });
+     +	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_RESOLVE_UNIX, NULL);
+      
+      	/* Fork a child that crashes. */
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, execute_read)
+      	test_check_exec(_metadata, 0, file1_s1d1);
+      
+     -	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    --					      .handled_access_fs = access_fs_16,
+    +-					      .handled_access_fs = ACCESS_ALL,
+     -				      });
+    -+	enforce_fs(_metadata, access_fs_16, NULL);
+    ++	enforce_fs(_metadata, ACCESS_ALL, NULL);
+      
+      	/*
+      	 * The only difference with the previous audit_layout1.execute_read test is
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, write_file)
+      	struct audit_records records;
+      
+     -	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    --					      .handled_access_fs = access_fs_16,
+    +-					      .handled_access_fs = ACCESS_ALL,
+     -				      });
+    -+	enforce_fs(_metadata, access_fs_16, NULL);
+    ++	enforce_fs(_metadata, ACCESS_ALL, NULL);
+      
+      	EXPECT_EQ(EACCES, test_open(file1_s1d1, O_WRONLY));
+      	EXPECT_EQ(0, matches_log_fs(_metadata, self->audit_fd,
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, read_file)
+      	struct audit_records records;
+      
+     -	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    --					      .handled_access_fs = access_fs_16,
+    +-					      .handled_access_fs = ACCESS_ALL,
+     -				      });
+    -+	enforce_fs(_metadata, access_fs_16, NULL);
+    ++	enforce_fs(_metadata, ACCESS_ALL, NULL);
+      
+      	EXPECT_EQ(EACCES, test_open(file1_s1d1, O_RDONLY));
+      	EXPECT_EQ(0, matches_log_fs(_metadata, self->audit_fd, "fs\\.read_file",
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, read_dir)
+      	struct audit_records records;
+      
+     -	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    --					      .handled_access_fs = access_fs_16,
+    +-					      .handled_access_fs = ACCESS_ALL,
+     -				      });
+    -+	enforce_fs(_metadata, access_fs_16, NULL);
+    ++	enforce_fs(_metadata, ACCESS_ALL, NULL);
+      
+      	EXPECT_EQ(EACCES, test_open(dir_s1d1, O_DIRECTORY));
+      	EXPECT_EQ(0, matches_log_fs(_metadata, self->audit_fd, "fs\\.read_dir",
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, remove_dir)
+      	EXPECT_EQ(0, unlink(file2_s1d3));
+      
+     -	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    --					      .handled_access_fs = access_fs_16,
+    +-					      .handled_access_fs = ACCESS_ALL,
+     -				      });
+    -+	enforce_fs(_metadata, access_fs_16, NULL);
+    ++	enforce_fs(_metadata, ACCESS_ALL, NULL);
+      
+      	EXPECT_EQ(-1, rmdir(dir_s1d3));
+      	EXPECT_EQ(EACCES, errno);
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, remove_file)
+      	struct audit_records records;
+      
+     -	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    --					      .handled_access_fs = access_fs_16,
+    +-					      .handled_access_fs = ACCESS_ALL,
+     -				      });
+    -+	enforce_fs(_metadata, access_fs_16, NULL);
+    ++	enforce_fs(_metadata, ACCESS_ALL, NULL);
+      
+      	EXPECT_EQ(-1, unlink(file1_s1d3));
+      	EXPECT_EQ(EACCES, errno);
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, make_char)
+      	EXPECT_EQ(0, unlink(file1_s1d3));
+      
+     -	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    --					      .handled_access_fs = access_fs_16,
+    +-					      .handled_access_fs = ACCESS_ALL,
+     -				      });
+    -+	enforce_fs(_metadata, access_fs_16, NULL);
+    ++	enforce_fs(_metadata, ACCESS_ALL, NULL);
+      
+      	EXPECT_EQ(-1, mknod(file1_s1d3, S_IFCHR | 0644, 0));
+      	EXPECT_EQ(EACCES, errno);
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, make_dir)
+      	EXPECT_EQ(0, unlink(file1_s1d3));
+      
+     -	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    --					      .handled_access_fs = access_fs_16,
+    +-					      .handled_access_fs = ACCESS_ALL,
+     -				      });
+    -+	enforce_fs(_metadata, access_fs_16, NULL);
+    ++	enforce_fs(_metadata, ACCESS_ALL, NULL);
+      
+      	EXPECT_EQ(-1, mkdir(file1_s1d3, 0755));
+      	EXPECT_EQ(EACCES, errno);
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, make_reg)
+      	EXPECT_EQ(0, unlink(file1_s1d3));
+      
+     -	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    --					      .handled_access_fs = access_fs_16,
+    +-					      .handled_access_fs = ACCESS_ALL,
+     -				      });
+    -+	enforce_fs(_metadata, access_fs_16, NULL);
+    ++	enforce_fs(_metadata, ACCESS_ALL, NULL);
+      
+      	EXPECT_EQ(-1, mknod(file1_s1d3, S_IFREG | 0644, 0));
+      	EXPECT_EQ(EACCES, errno);
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, make_sock)
+      	EXPECT_EQ(0, unlink(file1_s1d3));
+      
+     -	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    --					      .handled_access_fs = access_fs_16,
+    +-					      .handled_access_fs = ACCESS_ALL,
+     -				      });
+    -+	enforce_fs(_metadata, access_fs_16, NULL);
+    ++	enforce_fs(_metadata, ACCESS_ALL, NULL);
+      
+      	EXPECT_EQ(-1, mknod(file1_s1d3, S_IFSOCK | 0644, 0));
+      	EXPECT_EQ(EACCES, errno);
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, make_fifo)
+      	EXPECT_EQ(0, unlink(file1_s1d3));
+      
+     -	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    --					      .handled_access_fs = access_fs_16,
+    +-					      .handled_access_fs = ACCESS_ALL,
+     -				      });
+    -+	enforce_fs(_metadata, access_fs_16, NULL);
+    ++	enforce_fs(_metadata, ACCESS_ALL, NULL);
+      
+      	EXPECT_EQ(-1, mknod(file1_s1d3, S_IFIFO | 0644, 0));
+      	EXPECT_EQ(EACCES, errno);
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, make_block)
+      	EXPECT_EQ(0, unlink(file1_s1d3));
+      
+     -	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    --					      .handled_access_fs = access_fs_16,
+    +-					      .handled_access_fs = ACCESS_ALL,
+     -				      });
+    -+	enforce_fs(_metadata, access_fs_16, NULL);
+    ++	enforce_fs(_metadata, ACCESS_ALL, NULL);
+      
+      	EXPECT_EQ(-1, mknod(file1_s1d3, S_IFBLK | 0644, 0));
+      	EXPECT_EQ(EACCES, errno);
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, make_sym)
+      	EXPECT_EQ(0, unlink(file1_s1d3));
+      
+     -	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    --					      .handled_access_fs = access_fs_16,
+    +-					      .handled_access_fs = ACCESS_ALL,
+     -				      });
+    -+	enforce_fs(_metadata, access_fs_16, NULL);
+    ++	enforce_fs(_metadata, ACCESS_ALL, NULL);
+      
+      	EXPECT_EQ(-1, symlink("target", file1_s1d3));
+      	EXPECT_EQ(EACCES, errno);
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, refer_rename)
+      	EXPECT_EQ(0, unlink(file1_s1d3));
+      
+     -	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    --					      .handled_access_fs = access_fs_16,
+    +-					      .handled_access_fs = ACCESS_ALL,
+     -				      });
+    -+	enforce_fs(_metadata, access_fs_16, NULL);
+    ++	enforce_fs(_metadata, ACCESS_ALL, NULL);
+      
+      	EXPECT_EQ(EACCES, test_rename(file1_s1d2, file1_s2d3));
+      	EXPECT_EQ(0, matches_log_fs(_metadata, self->audit_fd,
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, refer_exchange
+      	EXPECT_EQ(0, unlink(file1_s1d3));
+      
+     -	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    --					      .handled_access_fs = access_fs_16,
+    +-					      .handled_access_fs = ACCESS_ALL,
+     -				      });
+    -+	enforce_fs(_metadata, access_fs_16, NULL);
+    ++	enforce_fs(_metadata, ACCESS_ALL, NULL);
+      
+      	/*
+      	 * The only difference with the previous audit_layout1.refer_rename test is
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, truncate)
+      	struct audit_records records;
+      
+     -	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+    --					      .handled_access_fs = access_fs_16,
+    +-					      .handled_access_fs = ACCESS_ALL,
+     -				      });
+    -+	enforce_fs(_metadata, access_fs_16, NULL);
+    ++	enforce_fs(_metadata, ACCESS_ALL, NULL);
+      
+      	EXPECT_EQ(-1, truncate(file1_s1d3, 0));
+      	EXPECT_EQ(EACCES, errno);
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, ioctl_dev)
+     -	drop_access_rights(_metadata,
+     -			   &(struct landlock_ruleset_attr){
+     -				   .handled_access_fs =
+    --					   access_fs_16 &
+    +-					   ACCESS_ALL &
+     -					   ~LANDLOCK_ACCESS_FS_READ_FILE,
+     -			   });
+    -+	enforce_fs(_metadata, access_fs_16 & ~LANDLOCK_ACCESS_FS_READ_FILE,
+    -+		   NULL);
+    ++	enforce_fs(_metadata, ACCESS_ALL & ~LANDLOCK_ACCESS_FS_READ_FILE, NULL);
+      
+      	fd = open("/dev/null", O_RDONLY | O_CLOEXEC);
+      	ASSERT_LE(0, fd);
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F(audit_layout1, resolve_unix)
+      	if (!child_pid) {
+     -		drop_access_rights(_metadata,
+     -				   &(struct landlock_ruleset_attr){
+    --					   .handled_access_fs = access_fs_16,
+    +-					   .handled_access_fs = ACCESS_ALL,
+     -				   });
+    -+		enforce_fs(_metadata, access_fs_16, NULL);
+    ++		enforce_fs(_metadata, ACCESS_ALL, NULL);
+      
+      		cli_fd = socket(AF_UNIX, SOCK_STREAM, 0);
+      		ASSERT_LE(0, cli_fd);
+ -:  ------------ > 11:  362a0e8f84a0 landlock: Document FS access right for pathname UNIX sockets
+-- 
+2.53.0
+
