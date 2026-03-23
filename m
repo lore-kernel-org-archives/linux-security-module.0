@@ -1,70 +1,70 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181593C278C
-	for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2026 16:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D76C3C4571
+	for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2026 16:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774285108; cv=none; b=hkX/63ZNafapzNKlZXQn6qCbjTFG9yCF0ZzjbVaf9v6RNff9t2VMkEzMFHUBQwanTLBxdj3dG/nYVBznztTx/zIybS2CWc2boZBhp8J43gEpbxL+JLOtWxgEsvOIw2+uIYZl/vw/wh/nWKT9h3r7oDiDtI9MziAeKEzIvjm2YcQ=
+	t=1774285112; cv=none; b=O3r+YjIpPxuz9lelILjhtlFuqRh6ZXQURgMu6iFidPn+3tEy3fpqwMIO2JJIMMSMRax6tFiaDWg6IsHpWThurX7eThJKJZ9lBe7gogd8JfgAeatAHMe2xCUqj2nrrnlG4GhS9sKrEBpskI6EeU3IYVj5znd4W50bX8kF/okZnbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774285108; c=relaxed/simple;
-	bh=soSjTG95ht7W/sofZ3swr5xdYwxH+YayUkQUqZGq7Bo=;
+	s=arc-20240116; t=1774285112; c=relaxed/simple;
+	bh=opw9caHfWbBZMewr9t9CjGESwa5zyg4Lv/nCU5nn8Cs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=melcAMoWUVrsicO/BRCs/Cyf9606UZ/yMlFTiRcM3BQk6V4YYmC9BWuvLq+s92U3tMwH/U9l+GKMHJWB8iaBa2MLJdnsYaAtP4w5BeOwsUqqz/00/i5xtywLVMAdFRTa5xd7pv6LnZjZkCk1eMToLYmoLVHr/dCjStxaWiyxcuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qWOd8MJY; arc=none smtp.client-ip=209.85.128.41
+	 MIME-Version:Content-Type; b=cV1Tt78xzHDwKrxmTPMDq4e1eTmcyPUObmpKqsmXRhC7IpZKCIzjQQLZCZA34VSlzAHySD66i4OA5BQ51nHMuzmI2c4BKTKqfqoNAJAH6KW6WUhn09Z+yv4jHGcMaELCHnhtKzQOi4DtZ1A2+j0qTzBmtyN4ss8047W1DEIq/kY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kXzwoNla; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qWOd8MJY"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-487012ce896so2099775e9.0
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2026 09:58:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kXzwoNla"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-486fc4725f0so37420345e9.1
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2026 09:58:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774285105; x=1774889905; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1774285110; x=1774889910; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IErThYYEnjWcOyFkuLbJo/2qjPpdzT2BIhU/7PK6OzA=;
-        b=qWOd8MJY/pnyKfzJ66Tr4ITf51sQTe/Y3U5dFiuYnh2uFBBCcv7R+O8N/7OZHQ614a
-         jBnJ7KrInBK6hNQKJwTCqAZoWf4CUIkMeueVB+9vwuxT7oGKRvACrCyyJ4I9n+0y3e31
-         NhoVkG9an5xEfepqpU/s/YbyUkIuJn2JU3J6sGQTEm34WIhTBpt3JCtpB9P+R+/HPEeU
-         HbMJyMT7mG3UkcCVpGi569dErgjVE6eW3CQpc4mF+VwGJzbw+XNllwlvE/xf4rhteq96
-         iO+TU2NxDa48XTIELZWIcdVfNrGtcw2ssWGJxJseaRs6yScNoLF1zn3ZEzyzFgijma96
-         /Rtw==
+        bh=sG503LK+N1uxl3LfYfBRebWpzPPsbYWGZEMX2o/lkhA=;
+        b=kXzwoNlaHlXiEGtvbFdB/Tq9pS6exIUmmtO0svV+kDZbPRLVJ+I8kU9LrLE+gaFcQN
+         c9Yue6jRMS1NWUrRm6gRlMwwB4ruj1SVMjJdEVupgpTLPMzWL6EsHz6SGDA0Pr1Zz+on
+         yKig+eks2xf+AWcUFFHurs9B/0SJ6rIHm2ThRMVr6GJlo+9Z2iEDqT6ukqLwfcZO+PWF
+         g39otrkM5X+Z7t+jNiGyPQR/SNarH6MrPkT+7FiIN4LQlUo8aKJoZe+jfZXNgqI43/CN
+         QZ2DcNOG5KMLrUQLj/6HHrS9ZISadnXWjFzUhYm8Nhn0AB7ZyPaNkvCzCjo+OYWFiBX5
+         ibTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774285105; x=1774889905;
+        d=1e100.net; s=20251104; t=1774285110; x=1774889910;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=IErThYYEnjWcOyFkuLbJo/2qjPpdzT2BIhU/7PK6OzA=;
-        b=LyLtZPf0ZV3Sx2rC/OB4M1l2FMtJv5Xp3jsGZD+x3Wi4bQalXtA72zdZZuQ3n2I0UN
-         oIOT6uU33ZQNf3fCnYbFNjqLZvitj9MusnkAfq4TqnwlFKiUCW3qH5F0sGT67OD6GKSf
-         qQj1QQQEmhQ1uDKeO1jhrBsYLaFgSiD7fqHwqhyRexhvejA4GP7EIWwhMngA1Dw3PDsj
-         PXAYFUIYziLlAEAHJIHlwPsBdINTMz9QOQURFjS8MA1HuoZ6sfSFKAmIIMODyvFpDnvn
-         9m3qEUBExYMl2ceZw/x9RzTHyUIsfbnhrulVnhX0otvWyMqquzGEW/tWdOwKlJcEhGAh
-         R5FA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGuDc+qr//tWuIOn/ydjXi6InD9WxTPnUzKguuSg1NbWF2wf8yhUxBLk4PUgi/L0OM8sQQQuiXRm+1fP9jmqD2JoNklt0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNecGPXwXiDP1ILVLsFpeIV+6jb+v1oTVNlr9791kPXUGwDfHk
-	yx6P3nssiRcEEMD9Lp0/6jELR7quVCj+MXrhnGfgW+PUHStmMUueAVGW
-X-Gm-Gg: ATEYQzzBtAeUqhKEDAFauiqv5UBdNtNhiNzYr0J9dmzbX+tyDMrDIPhu+utuvCfI+k6
-	7u5jvtU12SKM8YKR0eBlta4FCohntzZ96kF2l7uebVAsmWakquxVsuVyiazGzrhbmd3Vky98DEx
-	3z3mdoBpQxTNtIEOfO0bZOuhf3fSWWzYovMMvtAOVGNPA31zQ0XNsjJfssheiGqL4m+Vv/KqO2a
-	4BSddYxrU7c1sGzHU3NxQiUQn/Z5k7kxn2cTgWrBn04lclIxaCYN6vp1C5lN0jeoQsZrmpjowcb
-	Fb0035191ZH1yoLHcWlqIboEFEvzKNSUMmBlXov5fc9yZ/TlsS9aqSaZoiqF4Ht7rHuoLDpbZ5y
-	7kWBfBomDMIYQmf6YZjcXBnXtX7Upb2LlVyYqmwPSeKXHCk50T2iA9sumYEO2DiQfTXrctyM56X
-	szffwTz0ANP/7WdqaYe0AXSnLM/M4KlAvOv8qQvIxFgeJULBrF
-X-Received: by 2002:a05:600c:4fc9:b0:483:6a8d:b2f9 with SMTP id 5b1f17b1804b1-486fede7393mr181754435e9.5.1774285105226;
-        Mon, 23 Mar 2026 09:58:25 -0700 (PDT)
+        bh=sG503LK+N1uxl3LfYfBRebWpzPPsbYWGZEMX2o/lkhA=;
+        b=NZR6TaV18b1TVcEp4gucSpZxoh/QytbCO3SXf87OdxvPJzZKbOI58U+IR/LzInFFd/
+         YLpwFQiv6MKPFWX/J59dgpp4aaRGfuDHsuryErIXbkI5BJzr7DO2D5P1H+3izFGFsX1o
+         c0y4/FdJ4ec9ZuWFuy/I11KsYolTEyRS/B7xwAoBp2dKB1EsHlL0kXUTvjQSjgpSDD4r
+         lHlAXQZDakZe80ZI3zXn5KNu11uiJRvLBdi1ErlSzAdFgHvuG4XyLgnXUvtRJJYdK1sc
+         SCygO5TpMgP1I8u6mHWCRrwP2xjHq9C+vFVOlDXohvSqnmDrxR8PPPKovwyjgisDvfdm
+         6n+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUd5Lp8KRPlza2ycr4EZ1vvPwhV6wzaaYrOEHW/BORjw3GDja2ilx260lym+mc8EYfFLY64SUhw66EhyjMxW+iImapE/qs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPaT2yzrNWzGTCMmTZhhnXzRF4Y27M4RP8M8bSNMgpD/g5t3DF
+	StL5IzZNj8GuluZxQydYvdg1pu9VH6f3E+yVlUB8Zo6T/MkLT9IntXps
+X-Gm-Gg: ATEYQzzjplGl4+EoYbd07cUVyD8mhurdwNA/2lT5hequkU4QI8Vh+FRiCBYSnqXyhr6
+	kFYrMKOQGubfZDzFGNBHS6mtT+etOt+dZcBGrv8va7q0qhTHzi+4Cia/aQ/4VIRPr7fTLdd6Oi2
+	lX57u8FYT8CBl6V7w44LdybClAVr2sBxKjLovOg/oFUCnGZyn1a0aPo3rZZlNhNEYtIl+gGLSAi
+	iIbqiZ4pgPblNjCNTx7qUvaVE3EKfNeAjqxMiaHxsDwlfGG0b5HEumn6SG3/CSNHSDOKRI+It9V
+	u+1u+fPA2ThBPzORVIfM9kuXA3DMXxJ3U0xxvJj+sTG3tXIKiNUVCbObaYfzr7vqS8/XoTnas5j
+	mdh4SoL7jZGGt6kcN9yvo/wf1d142/mEW3rIWGWFKYnYW74RIfZ7SGr+/0GDfd7wlbbRHhu/QuU
+	ghiJ+eGBC79XMjayVUs5gupmA3cqBJnpCjfawfeMIaMFG1HZOy4t6hOkzV/Os=
+X-Received: by 2002:a05:600c:6096:b0:47e:e59c:67c5 with SMTP id 5b1f17b1804b1-4870f1fc5e2mr4242265e9.8.1774285109582;
+        Mon, 23 Mar 2026 09:58:29 -0700 (PDT)
 Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b64714e2esm33171017f8f.32.2026.03.23.09.58.24
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-486fe8c2987sm116263995e9.3.2026.03.23.09.58.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2026 09:58:24 -0700 (PDT)
+        Mon, 23 Mar 2026 09:58:29 -0700 (PDT)
 From: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	"John Johansen" <john.johansen@canonical.com>
 Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
+	Justin Suess <utilityemal77@gmail.com>,
 	linux-security-module@vger.kernel.org,
 	"Tingmao Wang" <m@maowtm.org>,
-	"Justin Suess" <utilityemal77@gmail.com>,
 	"Samasth Norway Ananda" <samasth.norway.ananda@oracle.com>,
 	"Matthieu Buffet" <matthieu@buffet.re>,
 	"Mikhail Ivanov" <ivanov.mikhail1@huawei-partners.com>,
@@ -75,9 +75,9 @@ Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
 	"Tahera Fahimi" <fahimitahera@gmail.com>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
 	"Kuniyuki Iwashima" <kuniyu@google.com>
-Subject: [PATCH v7 09/11] selftests/landlock: Check that coredump sockets stay unrestricted
-Date: Mon, 23 Mar 2026 17:56:51 +0100
-Message-ID: <20260323165654.193957-10-gnoack3000@gmail.com>
+Subject: [PATCH v7 11/11] landlock: Document FS access right for pathname UNIX sockets
+Date: Mon, 23 Mar 2026 17:56:53 +0100
+Message-ID: <20260323165654.193957-12-gnoack3000@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260323165654.193957-1-gnoack3000@gmail.com>
 References: <20260323165654.193957-1-gnoack3000@gmail.com>
@@ -90,186 +90,57 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Even when a process is restricted with the new
-LANDLOCK_ACCESS_FS_RESOLVE_UNIX right, the kernel can continue writing
-its coredump to the configured coredump socket.
+Add LANDLOCK_ACCESS_FS_RESOLVE_UNIX to the example code, and explain
+it in the section about previous limitations.  The bulk of the
+interesting flag documentation lives in the kernel header and is
+included in the Sphinx rendering.
 
-In the test, we create a local server and rewire the system to write
-coredumps into it.  We then create a child process within a Landlock
-domain where LANDLOCK_ACCESS_FS_RESOLVE_UNIX is restricted and make
-the process crash.  The test uses SO_PEERCRED to check that the
-connecting client process is the expected one.
-
-Includes a fix by Mickaël Salaün for setting the EUID to 0 (see [1]).
-
-Link[1]: https://lore.kernel.org/all/20260218.ohth8theu8Yi@digikod.net/
-Suggested-by: Mickaël Salaün <mic@digikod.net>
+Cc: Justin Suess <utilityemal77@gmail.com>
+Cc: Mickaël Salaün <mic@digikod.net>
 Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 ---
- tools/testing/selftests/landlock/fs_test.c | 143 +++++++++++++++++++++
- 1 file changed, 143 insertions(+)
+ Documentation/userspace-api/landlock.rst | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-index 3dad643741f7..af0f0b16129a 100644
---- a/tools/testing/selftests/landlock/fs_test.c
-+++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -22,6 +22,7 @@
- #include <sys/ioctl.h>
- #include <sys/mount.h>
- #include <sys/prctl.h>
-+#include <sys/resource.h>
- #include <sys/sendfile.h>
- #include <sys/socket.h>
- #include <sys/stat.h>
-@@ -4928,6 +4929,148 @@ TEST_F(scoped_domains, unix_seqpacket_connect_to_child_full)
- #undef USE_SENDTO
- #undef ENFORCE_ALL
+diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+index 13134bccdd39..318d0d8a16da 100644
+--- a/Documentation/userspace-api/landlock.rst
++++ b/Documentation/userspace-api/landlock.rst
+@@ -77,7 +77,8 @@ to be explicit about the denied-by-default access rights.
+             LANDLOCK_ACCESS_FS_MAKE_SYM |
+             LANDLOCK_ACCESS_FS_REFER |
+             LANDLOCK_ACCESS_FS_TRUNCATE |
+-            LANDLOCK_ACCESS_FS_IOCTL_DEV,
++            LANDLOCK_ACCESS_FS_IOCTL_DEV |
++            LANDLOCK_ACCESS_FS_RESOLVE_UNIX,
+         .handled_access_net =
+             LANDLOCK_ACCESS_NET_BIND_TCP |
+             LANDLOCK_ACCESS_NET_CONNECT_TCP,
+@@ -127,6 +128,10 @@ version, and only use the available subset of access rights:
+         /* Removes LANDLOCK_SCOPE_* for ABI < 6 */
+         ruleset_attr.scoped &= ~(LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
+                                  LANDLOCK_SCOPE_SIGNAL);
++        __attribute__((fallthrough));
++    case 6 ... 8:
++        /* Removes LANDLOCK_ACCESS_FS_RESOLVE_UNIX for ABI < 9 */
++        ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_RESOLVE_UNIX;
+     }
  
-+static void read_core_pattern(struct __test_metadata *const _metadata,
-+			      char *buf, size_t buf_size)
-+{
-+	int fd;
-+	ssize_t ret;
+ This enables the creation of an inclusive ruleset that will contain our rules.
+@@ -685,6 +690,13 @@ enforce Landlock rulesets across all threads of the calling process
+ using the ``LANDLOCK_RESTRICT_SELF_TSYNC`` flag passed to
+ sys_landlock_restrict_self().
+ 
++Pathname UNIX sockets (ABI < 9)
++-------------------------------
 +
-+	fd = open("/proc/sys/kernel/core_pattern", O_RDONLY | O_CLOEXEC);
-+	ASSERT_LE(0, fd);
++Starting with the Landlock ABI version 9, it is possible to restrict
++connections to pathname UNIX domain sockets (:manpage:`unix(7)`) using
++the new ``LANDLOCK_ACCESS_FS_RESOLVE_UNIX`` right.
 +
-+	ret = read(fd, buf, buf_size - 1);
-+	ASSERT_LE(0, ret);
-+	EXPECT_EQ(0, close(fd));
-+
-+	buf[ret] = '\0';
-+}
-+
-+static void set_core_pattern(struct __test_metadata *const _metadata,
-+			     const char *pattern)
-+{
-+	int fd;
-+	size_t len = strlen(pattern);
-+
-+	/*
-+	 * Writing to /proc/sys/kernel/core_pattern requires EUID 0 because
-+	 * sysctl_perm() checks that, ignoring capabilities like
-+	 * CAP_SYS_ADMIN or CAP_DAC_OVERRIDE.
-+	 *
-+	 * Switching EUID clears the dumpable flag, which must be restored
-+	 * afterwards to allow coredumps.
-+	 */
-+	set_cap(_metadata, CAP_SETUID);
-+	ASSERT_EQ(0, seteuid(0));
-+	clear_cap(_metadata, CAP_SETUID);
-+
-+	fd = open("/proc/sys/kernel/core_pattern", O_WRONLY | O_CLOEXEC);
-+	ASSERT_LE(0, fd)
-+	{
-+		TH_LOG("Failed to open core_pattern for writing: %s",
-+		       strerror(errno));
-+	}
-+
-+	ASSERT_EQ(len, write(fd, pattern, len));
-+	EXPECT_EQ(0, close(fd));
-+
-+	set_cap(_metadata, CAP_SETUID);
-+	ASSERT_EQ(0, seteuid(getuid()));
-+	clear_cap(_metadata, CAP_SETUID);
-+
-+	/* Restore dumpable flag cleared by seteuid(). */
-+	ASSERT_EQ(0, prctl(PR_SET_DUMPABLE, 1, 0, 0, 0));
-+}
-+
-+FIXTURE(coredump)
-+{
-+	char original_core_pattern[256];
-+};
-+
-+FIXTURE_SETUP(coredump)
-+{
-+	disable_caps(_metadata);
-+	read_core_pattern(_metadata, self->original_core_pattern,
-+			  sizeof(self->original_core_pattern));
-+}
-+
-+FIXTURE_TEARDOWN_PARENT(coredump)
-+{
-+	set_core_pattern(_metadata, self->original_core_pattern);
-+}
-+
-+/*
-+ * Test that even when a process is restricted with
-+ * LANDLOCK_ACCESS_FS_RESOLVE_UNIX, the kernel can still initiate a connection
-+ * to the coredump socket on the processes' behalf.
-+ */
-+TEST_F_FORK(coredump, socket_not_restricted)
-+{
-+	static const char core_pattern[] = "@/tmp/landlock_coredump_test.sock";
-+	const char *const sock_path = core_pattern + 1;
-+	int srv_fd, conn_fd, status;
-+	pid_t child_pid;
-+	struct ucred cred;
-+	socklen_t cred_len = sizeof(cred);
-+	char buf[4096];
-+
-+	/* Set up the coredump server socket. */
-+	unlink(sock_path);
-+	srv_fd = set_up_named_unix_server(_metadata, SOCK_STREAM, sock_path);
-+
-+	/* Point coredumps at our socket. */
-+	set_core_pattern(_metadata, core_pattern);
-+
-+	/* Restrict LANDLOCK_ACCESS_FS_RESOLVE_UNIX. */
-+	drop_access_rights(_metadata,
-+			   &(struct landlock_ruleset_attr){
-+				   .handled_access_fs =
-+					   LANDLOCK_ACCESS_FS_RESOLVE_UNIX,
-+			   });
-+
-+	/* Fork a child that crashes. */
-+	child_pid = fork();
-+	ASSERT_LE(0, child_pid);
-+	if (child_pid == 0) {
-+		struct rlimit rl = {
-+			.rlim_cur = RLIM_INFINITY,
-+			.rlim_max = RLIM_INFINITY,
-+		};
-+
-+		ASSERT_EQ(0, setrlimit(RLIMIT_CORE, &rl));
-+
-+		/* Crash on purpose. */
-+		kill(getpid(), SIGSEGV);
-+		_exit(1);
-+	}
-+
-+	/*
-+	 * Accept the coredump connection.  If Landlock incorrectly denies the
-+	 * kernel's coredump connect, accept() will block forever, so the test
-+	 * would time out.
-+	 */
-+	conn_fd = accept(srv_fd, NULL, NULL);
-+	ASSERT_LE(0, conn_fd);
-+
-+	/* Check that the connection came from the crashing child. */
-+	ASSERT_EQ(0, getsockopt(conn_fd, SOL_SOCKET, SO_PEERCRED, &cred,
-+				&cred_len));
-+	EXPECT_EQ(child_pid, cred.pid);
-+
-+	/* Drain the coredump data so the kernel can finish. */
-+	while (read(conn_fd, buf, sizeof(buf)) > 0)
-+		;
-+
-+	EXPECT_EQ(0, close(conn_fd));
-+
-+	/* Wait for the child and verify it coredumped. */
-+	ASSERT_EQ(child_pid, waitpid(child_pid, &status, 0));
-+	ASSERT_TRUE(WIFSIGNALED(status));
-+	ASSERT_TRUE(WCOREDUMP(status));
-+
-+	EXPECT_EQ(0, close(srv_fd));
-+	EXPECT_EQ(0, unlink(sock_path));
-+}
-+
- /* clang-format off */
- FIXTURE(layout1_bind) {};
- /* clang-format on */
+ .. _kernel_support:
+ 
+ Kernel support
 -- 
 2.53.0
 
