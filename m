@@ -1,238 +1,186 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E70732D441
-	for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2026 19:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774293031; cv=none; b=Vz8JZk4c0Fbqj60zdtwJRqOHukFcXEKiqkBZInvxNTdJzwoFKk/BBK5LxND0xtKi129BZXbq0f+yzw1egExQWhon8Nv6ekO6sY+ieAKEEzwol9PXkfjHEYZTcAFEadfs9YvceXmJNismalUwOJsmzO6pXLHHGpVLJv3fHa99e9I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774293031; c=relaxed/simple;
-	bh=u70jMS93ZGGf12b9u664ZuoNzvkPh/Jd7rvrgWDjRkw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LTculOdgTeEdBdr3+bxG/DJE5mR0/Hkkek+qDIsekajR7OOHxp+XBP+eliHLmWQtMo6tPxb3+4Djw71N6OdcrxurWFq4k2U2FcEUdwairyq79hot283qXfUNrqyoLU229U4jDBKSsf62oX57PXrFYfQD/wsBJcD7pqDR8h/Mfcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ix6dWKgQ; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72FC3D891A
+	for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2026 19:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=67.231.145.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774294315; cv=pass; b=iZMCwRYiUrIMVdg7P4yhHgw2OGNTi324b7qftrvxKwT/lsVlBsTrfofrmFz/NVHFo3x7pefCNSpBe0+Ljsg9FY2stWkefZO9pj0yv4vuOXTmaO7o2dDve3VTb984AhD8YUGouiCJOO1NypcPS2gFRDc+aUfjy6Oc/znRZQG21pk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774294315; c=relaxed/simple;
+	bh=qEmaMrG6tQEKHABcH5kGpa1dSTH50exe6PGoRyajv9c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VhjhRN9jBmKR6cV8p1OwmOLSzLf+UhQCpevzAcznAvqcmKGXLuCKJj6yYFRFLjaB5pGLFurTEYggrc/LLs7nj7YGmCKSDGce/A/dKXHkQEtlNj6rKJL8qa0rmsoGPSNACuEQmWmkFw2L/PZFZNleUOZmSfNrWPzH5l66sUgSV/U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=dau72Gt3; arc=pass smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ix6dWKgQ"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-43b7c844b20so771159f8f.3
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2026 12:10:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774293027; x=1774897827; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=D9t95D8xEX/7Je1aEX2cgVLU/Fxa2+umElabflj3GR8=;
-        b=ix6dWKgQQNdskix454coJXm1sgLYJcojCNl15XUvAxNE3GS9+uiKg2HHhuCZbiC+oy
-         Mb/SI3YGgAepmQKoPfrBILoOaUBbd0oceB5wF12j8cK8jYRw+uVGvWegoIJziOj2zbC+
-         2vmyBrj1BDUbi2zZm3ML7epS92hF6hKsFHfajjfwcrc4LWKf81GFaHJr4CDX7MMzNTLu
-         1uY5KmWlldehiBV4lGpJXU91SzpG4k44/EovbXTsFWQUxAX0mGH1rLu7rA+RI7l1GAGk
-         DPxrFPSVkRaXdJnJDIIaasa58nP8W1qeb2mpv3ZHBConH+RuDstW85jJ7w06nVXPYwhb
-         rx2w==
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="dau72Gt3"
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62NHGtVr467099
+	for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2026 12:31:52 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
+	 bh=qEmaMrG6tQEKHABcH5kGpa1dSTH50exe6PGoRyajv9c=; b=dau72Gt3dvQN
+	Jbl5OSdTRlLie7gsjtUOOGmFwPdNDx2OdKuFIEHt8cZz0kC//nK7765yvsXTEi5l
+	tpAHkjjgzsZKqXlOzQVJRY6FG+Qw2rdPOXZ+dZcwhQlI68qFAS3dmH1GKyLm0I4j
+	TrfOtFZgU4WHizGxN+QnfN60+hdV58LEK7ei3jrXaADUY+5MxzwOupKP52n3IBzy
+	dnWRPzWGgUCw8OWMRHWFHvqb1R2HIL6IrXdaBfkvvASEXPxUTHQPbY5vKkvlrpWB
+	vQHjyWNNttoIT+uPLz71hulmTcfnNhKnW/7afG5Dk8LCfa1w4UdrwIfYWQRyMv0J
+	t3A9GTFdrg==
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com [209.85.208.197])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4d38rjumpd-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2026 12:31:51 -0700 (PDT)
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-38abf1618easo13270531fa.0
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2026 12:31:51 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1774294310; cv=none;
+        d=google.com; s=arc-20240605;
+        b=kTK2ZLObR7W3AZncbDsh2pma1Qb4eGOJHdZjb1BEiyYie1iZ18jbhakQtkfY2d1xxp
+         DK9U1oU05i31V5vkBrv8+s/NhZZcci9MsgikXCSJedsSHqG8U+WtTOmiDue/NI2j18vw
+         JlGOuOvel/88DNEXsM8AB4ECfZ4VIt9hAEayWZIwPELeFkLqh7Xt3UIeXeI0uMQsUdHd
+         BSk0qA1vmNuGsDSCgMlvXfU/siIJC8lXhEbRSGLVLU5Dn3HZfNzmDZoEAyXHF0huPPdJ
+         UD3KSFEHI3C3bL5a9RXYLp2qC+VL8y2TdH3QYUKzSmSP75t+uwrVlu2A2UVxAnbO1tZG
+         +bSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version;
+        bh=qEmaMrG6tQEKHABcH5kGpa1dSTH50exe6PGoRyajv9c=;
+        fh=I5auneEM3Go+qX/mP481d2BBmKmVr8lgHjhhumqEPZ4=;
+        b=a47dI/jT0LQjQiCn+8FgSEilcjVgi7CDikGvHN321cMJo9Nw3ZjpY923+oDQRiRNBZ
+         bYAIfTGU4cl6E71OE0/uMKemnXo/WxgN0Og1bPkhQKqkZKI6/mvvzfJzQMSp9+1If+Js
+         XQJLPZvya4OfXZlueCiyX0qlN+O8hAJwas7i4rMHtq/q203XxDOfw9moGtJ1s5afXALx
+         MjCzGy1ClLHPANa9zKOq5mECL1p1so7M7aiEgSQqva+WC9ffrNkBj/9WyLWlrkaU4KAo
+         YXUeVDyz+OAYpO8jUMZYfEYrd78ReHaCF+5BpWbQp42ut1kyTmlQODaC8Olt7yAcZ7MN
+         DEXw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774293027; x=1774897827;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D9t95D8xEX/7Je1aEX2cgVLU/Fxa2+umElabflj3GR8=;
-        b=ZDV5LUAD0JvLcV/rhmA77a8hMqW9DWZLXHgOvm4J8NFReHBmdusLqQa2mWmIfbQjgH
-         dd2vEUnQMsO6swcK314L1sM1ghrNdRpWk1xhE+PQQc+bezUANMZFJ1qCzKa+rt7Ho4OB
-         I9/FvKKx9zNnVcHUpo9sdSdGlpFMxEVkQs+2cgmxKBJZgGF/8ijwixfXa6qgLQQhAO9f
-         VMsbG0oucCOSM0CZMI5etmUrC6gyEjRaLKR0OvEOsmFEwctZOiVTCBMrwrRmNPGmY/Ls
-         uQ5vra+QsoIYqYKPfGDnFBH6XltRL92+s/b6aDsqzh6zWr2/zDdmr55yqEn/TdeSD2AG
-         /B8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVZPtm1IcgVARFhGgcAoAeaS9V5XPzN7EeLgvS4oVgTzU/QaD41Vroc/ggCn/a+BwrthY8uTzknK7RWwYhCVQPBV6flyo4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCFd9SNV0sqlxsYkmfprsjkniN/YppZmXb7VV1cVHd7YaU4+QW
-	uyNIFfDgIec7hAaRESVHEkVDuLn4VKX4fJXxXhTYdiN3tZWCjq2qbMK1
-X-Gm-Gg: ATEYQzx0hK1mZZJGYZ0ABcmS1cLwpw2pvAL6xEXOx6yfukTn5ca3HDmKqu6bXDe+qMi
-	LUu5ZNCngfA6ff6PBM4QKQRn1iTIj0VHxeq2zdgtGUIlGRC7ZDehxxr5rs08woEFw+Nrp/O49SL
-	b9jxv/tIr4PuKUSd/ZDHOb+eMXcsMLAY6hHhSWdXTQX0+Ne4wBW3ZrVGR9OgkwhpYm3BfOVprrz
-	Q3CIhvbeVqq9+r0IAJPGvWXctC7V3VUKh00NZIHzz5LmDCHXzXGr+hZ0NXyQNN3vi5g9s7uQKLc
-	PkYODNYxeDii8cRxeOZWMB8FIYI7AsD1kTkmFXQuSBVoSQlKuIzW6VK4Ojatvm3XmOpQF+X7LQ0
-	XGDuyL9Dg8KF/oa6/JnYzrst5Z+JSfM1Y6ennTs/XEGXx+CWPvVARqIvzhFB03AhtK8clB0Cy8U
-	dKOjp6O5QCMf30WFLOMp8mcajdaujKzWbJ5alUFV/kJUCufwDM0GsVzCVoWnE=
-X-Received: by 2002:a05:6000:420e:b0:439:ddf9:a205 with SMTP id ffacd0b85a97d-43b64232830mr19438002f8f.10.1774293026166;
-        Mon, 23 Mar 2026 12:10:26 -0700 (PDT)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b647120a1sm32247095f8f.30.2026.03.23.12.10.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Mar 2026 12:10:25 -0700 (PDT)
-Date: Mon, 23 Mar 2026 20:10:24 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	Georgia Garcia <georgia.garcia@canonical.com>
-Cc: Tingmao Wang <m@maowtm.org>, Justin Suess <utilityemal77@gmail.com>,
-	linux-security-module@vger.kernel.org,
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	konstantin.meskhidze@huawei.com,
-	Demi Marie Obenour <demiobenour@gmail.com>,
-	Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v7 01/11] lsm: Add LSM hook security_unix_find
-Message-ID: <20260323.4eae8ac1df61@gnoack.org>
-References: <20260323165654.193957-1-gnoack3000@gmail.com>
- <20260323165654.193957-2-gnoack3000@gmail.com>
+        d=1e100.net; s=20251104; t=1774294310; x=1774899110;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=qEmaMrG6tQEKHABcH5kGpa1dSTH50exe6PGoRyajv9c=;
+        b=ByhUFkLQbb1Qa6Ez4QVlLF9ZUc7A9wu0JCLQmEGBSn6yjNSCr4COUOg1SkQ29sQYTu
+         l+VgmZuO6G3wG5/IA85xtuDVmK+hB4gqUbAUSx28ubMFYHC422uInhqMM8XnyHde5k/C
+         aw5qj07ULlYiqDKL4MrJuUzbPOR+9kb4BK5oJbRoxnZYlNYTHvtlZcXZHgz5F1348K8l
+         TmJ0qmAObEfiJHhAkMCjm2KwQ8eGvLygBkHxmi12nn13UWYqPE/3gVBL6wmebipc3BjO
+         oHHFKH6HS50WvrNaJEpkOEuPTuWjyIBQwlL+xCcczcOzxbvPcYfbNq7SL6YPQFEyyntZ
+         A8ig==
+X-Forwarded-Encrypted: i=1; AJvYcCUMZ13gPy1uyhvw/pnOPeyI7DQhkt04JfZ/OvQfSVy+npmw07ImjF5FPnd2Y0+wh5JZC5sEoFRKAyMl5d6rb8kklHDxhPg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyOcanuBNCm3Y0EjvHscn0r6x/NNKge/fogHvTaLHKQxRFENQC
+	G4d/KjEnL99st29tZaweN0Dd94vLx5EYpopvIlbF6FNZqcfLP3scTlNICG/4Rge2w3fHuCnG9co
+	fXMweQFpkPMMiAbVwEwusbl4QWyHhlJU4QNjaX2YWSPk1fuccr+Vy5+kPeCDGsHp4pbj6ORlDIS
+	4yCcDlgNBd62IC4FtfNDDIwsPQyB+tQp8szm5bQOJ815mMsgq3uek=
+X-Gm-Gg: ATEYQzxvfqIIty9V0Dl0yBqiQCLzxwE8++iAeHqr60EwD9JgVwIYFbBhg1u1qge7fYr
+	Ck1KXSAHl4ZhnzJkwLptJvCVPO/e4Ls7aGApoKEtoztkBlCSiRiWzj4dO/sMUMNrL9WSyz8k+a3
+	fjNpuxclGQ8etDgFoXd97qDqyM3mlM4YTN2y/WRaXH8JiCQKvOAfZ0ouxQ2P93HEZovIEM4S+UG
+	G+G6/WIDOYLpGq0GkhKRw==
+X-Received: by 2002:a05:651c:418e:b0:387:1ba5:99bd with SMTP id 38308e7fff4ca-38bf972b0e5mr41075441fa.27.1774294309948;
+        Mon, 23 Mar 2026 12:31:49 -0700 (PDT)
+X-Received: by 2002:a05:651c:418e:b0:387:1ba5:99bd with SMTP id
+ 38308e7fff4ca-38bf972b0e5mr41075301fa.27.1774294309455; Mon, 23 Mar 2026
+ 12:31:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260323165654.193957-2-gnoack3000@gmail.com>
+References: <20260318184400.3502908-1-song@kernel.org> <20260318184400.3502908-7-song@kernel.org>
+ <b720f521-e930-4f35-9505-1bfdf9e2818c@I-love.SAKURA.ne.jp>
+ <4DF5C4A8-7C92-4F76-9B34-2262089E7289@meta.com> <33abcf34-13e2-4a37-83f3-78bb27ecbc11@I-love.SAKURA.ne.jp>
+ <F0A0D13E-8208-49A4-9AC6-89AC4BF3F4FB@meta.com> <20260323-klappen-atemschutz-7a0af8c6b087@brauner>
+ <714a614b-cfb4-4b20-af8c-df3cc56dfb92@I-love.SAKURA.ne.jp>
+In-Reply-To: <714a614b-cfb4-4b20-af8c-df3cc56dfb92@I-love.SAKURA.ne.jp>
+From: Song Liu <songliubraving@meta.com>
+Date: Mon, 23 Mar 2026 12:31:38 -0700
+X-Gm-Features: AQROBzBKFBxWkFKdSZb6aDqln1iqdiuNWYNqj8Bk3Aj5pcgV1TsyMg6HDo5_J7A
+Message-ID: <CAAeYb7k+TWArOKyOomkLZ8fwqUPjha9iORpJaj4nMyN=o4ZRQg@mail.gmail.com>
+Subject: Re: [PATCH 6/7] tomoyo: Convert from sb_mount to granular mount hooks
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Christian Brauner <brauner@kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        Song Liu <song@kernel.org>,
+        "paul@paul-moore.com" <paul@paul-moore.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>, "jack@suse.cz" <jack@suse.cz>,
+        "john.johansen@canonical.com" <john.johansen@canonical.com>,
+        "stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>,
+        "omosnace@redhat.com" <omosnace@redhat.com>,
+        "mic@digikod.net" <mic@digikod.net>,
+        "gnoack@google.com" <gnoack@google.com>,
+        "takedakn@nttdata.co.jp" <takedakn@nttdata.co.jp>,
+        "herton@canonical.com" <herton@canonical.com>,
+        Kernel Team <kernel-team@meta.com>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "apparmor@lists.ubuntu.com" <apparmor@lists.ubuntu.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzIzMDE0NCBTYWx0ZWRfX6T8hJ970WWlj
+ Y7enkPmoFEif16XT9D6JWpbLb2tfc/K+IYflQqd5MHZONraJcaD9TCGOL2qz86KuEmzOXyPIlf+
+ 2MguHEpBc0OLCQBCfA6m2jKyZkgP75BIkwA+lKSGF8I+AUnvSTt6K6s81cBr52oTqI5KH9GK2wO
+ 8uDspOzsPdITxFkAmN+KbpEAgNC0F1RGg2XeyrXbayh9i5/Pg03IWzbHFl12DTKUXgJVtNmQjUk
+ mWw8Iq0N4aIhk5skKAYtfCBM6TNn7AdimIZYoYb20S79ROTydCP598LI0BK6/oUU/O/KlsPUAlb
+ 0Zv4wkxkNlKjlCUdA7+EraSJO5YBDTWJ5U5bV1XAz3XfR3EdMiFQLjojyvE2rYkopESokA1NKJH
+ SMpU7xoZ2xZChYhXPNwvNHcfIjcWyr86sjSdEwz6sjj8//glv25B/PDpE2IT/pQme5ecnc41Fg/
+ kbYLHwb61lu8p2Gs+wA==
+X-Proofpoint-ORIG-GUID: yifwFloH5nrPV4r_iicUqMnFKq2imD8h
+X-Authority-Analysis: v=2.4 cv=KeffcAYD c=1 sm=1 tr=0 ts=69c19527 cx=c_pps
+ a=/zUzjrEyDQOchHorqPmRvg==:117 a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=7x6HtfJdh03M6CCDgxCd:22 a=PAz_-FQ8hEVmOPYdF0yf:22
+ a=BqB2_f_Oa2Tj43kevx4A:9 a=QEXdDO2ut3YA:10 a=zJl3WwEMzhwkf_fFxYei:22
+X-Proofpoint-GUID: yifwFloH5nrPV4r_iicUqMnFKq2imD8h
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-23_04,2026-03-23_01,2025-10-01_01
 
-On Mon, Mar 23, 2026 at 05:56:43PM +0100, Günther Noack wrote:
-> From: Justin Suess <utilityemal77@gmail.com>
-> 
-> Add an LSM hook security_unix_find.
-> 
-> This hook is called to check the path of a named UNIX socket before a
-> connection is initiated. The peer socket may be inspected as well.
-> 
-> Why existing hooks are unsuitable:
-> 
-> Existing socket hooks, security_unix_stream_connect(),
-> security_unix_may_send(), and security_socket_connect() don't provide
-> TOCTOU-free / namespace independent access to the paths of sockets.
-> 
-> (1) We cannot resolve the path from the struct sockaddr in existing hooks.
-> This requires another path lookup. A change in the path between the
-> two lookups will cause a TOCTOU bug.
-> 
-> (2) We cannot use the struct path from the listening socket, because it
-> may be bound to a path in a different namespace than the caller,
-> resulting in a path that cannot be referenced at policy creation time.
-> 
-> Consumers of the hook wishing to reference @other are responsible
-> for acquiring the unix_state_lock and checking for the SOCK_DEAD flag
-> therein, ensuring the socket hasn't died since lookup.
-> 
-> Cc: Günther Noack <gnoack3000@gmail.com>
-> Cc: Tingmao Wang <m@maowtm.org>
-> Cc: Mickaël Salaün <mic@digikod.net>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Signed-off-by: Justin Suess <utilityemal77@gmail.com>
-> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> ---
->  include/linux/lsm_hook_defs.h |  5 +++++
->  include/linux/security.h      | 11 +++++++++++
->  net/unix/af_unix.c            | 10 +++++++---
->  security/security.c           | 20 ++++++++++++++++++++
->  4 files changed, 43 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index 8c42b4bde09c..7a0fd3dbfa29 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -317,6 +317,11 @@ LSM_HOOK(int, 0, post_notification, const struct cred *w_cred,
->  LSM_HOOK(int, 0, watch_key, struct key *key)
->  #endif /* CONFIG_SECURITY && CONFIG_KEY_NOTIFICATIONS */
->  
-> +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
-> +LSM_HOOK(int, 0, unix_find, const struct path *path, struct sock *other,
-> +	 int flags)
-> +#endif /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
-> +
->  #ifdef CONFIG_SECURITY_NETWORK
->  LSM_HOOK(int, 0, unix_stream_connect, struct sock *sock, struct sock *other,
->  	 struct sock *newsk)
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 83a646d72f6f..99a33d8eb28d 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -1931,6 +1931,17 @@ static inline int security_mptcp_add_subflow(struct sock *sk, struct sock *ssk)
->  }
->  #endif	/* CONFIG_SECURITY_NETWORK */
->  
-> +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
-> +
-> +int security_unix_find(const struct path *path, struct sock *other, int flags);
-> +
-> +#else /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
-> +static inline int security_unix_find(const struct path *path, struct sock *other, int flags)
-> +{
-> +	return 0;
-> +}
-> +#endif /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
-> +
->  #ifdef CONFIG_SECURITY_INFINIBAND
->  int security_ib_pkey_access(void *sec, u64 subnet_prefix, u16 pkey);
->  int security_ib_endport_manage_subnet(void *sec, const char *name, u8 port_num);
-> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-> index 3756a93dc63a..5ef3c2e31757 100644
-> --- a/net/unix/af_unix.c
-> +++ b/net/unix/af_unix.c
-> @@ -1231,11 +1231,15 @@ static struct sock *unix_find_bsd(struct sockaddr_un *sunaddr, int addr_len,
->  		goto path_put;
->  
->  	err = -EPROTOTYPE;
-> -	if (sk->sk_type == type)
-> -		touch_atime(&path);
-> -	else
-> +	if (sk->sk_type != type)
->  		goto sock_put;
->  
-> +	err = security_unix_find(&path, sk, flags);
-> +	if (err)
-> +		goto sock_put;
-> +
-> +	touch_atime(&path);
-> +
->  	path_put(&path);
->  
->  	return sk;
-> diff --git a/security/security.c b/security/security.c
-> index 67af9228c4e9..28ccea205874 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -4731,6 +4731,26 @@ int security_mptcp_add_subflow(struct sock *sk, struct sock *ssk)
->  
->  #endif	/* CONFIG_SECURITY_NETWORK */
->  
-> +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
-> +/**
-> + * security_unix_find() - Check if a named AF_UNIX socket can connect
-> + * @path: path of the socket being connected to
-> + * @other: peer sock
-> + * @flags: flags associated with the socket
-> + *
-> + * This hook is called to check permissions before connecting to a named
-> + * AF_UNIX socket. The caller does not hold any locks on @other.
-> + *
-> + * Return: Returns 0 if permission is granted.
-> + */
-> +int security_unix_find(const struct path *path, struct sock *other, int flags)
-> +{
-> +	return call_int_hook(unix_find, path, other, flags);
-> +}
-> +EXPORT_SYMBOL(security_unix_find);
-> +
-> +#endif	/* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
-> +
->  #ifdef CONFIG_SECURITY_INFINIBAND
->  /**
->   * security_ib_pkey_access() - Check if access to an IB pkey is allowed
-> -- 
-> 2.53.0
-> 
+On Mon, Mar 23, 2026 at 3:33=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> On 2026/03/23 19:16, Christian Brauner wrote:
+> >>> Since not all filesystems need to resolve dev_name argument, conversi=
+on from dev_name
+> >>> to "struct path" is up to individual filesystem. If we can use a flag=
+ like FS_REQUIRES_DEV
+> >>> that tells whether that filesystem will resolve dev_name argument, I =
+think we can resolve
+> >>> the dev_name argument before security_mount_new() is called (and can =
+avoid TOCTOU).
+> >>
+>
+> I was expecting that "struct file_system_type"->fs_flags containing FS_RE=
+QUIRES_DEV
+> is a sign that the dev_name argument is a pathname. But it seems that suc=
+h assumption
+> no longer holds true. For example, cramfs started treating dev_name like =
+"mtd$num"
+> as if /dev/mtdblock$num since 4.15. So, current TOMOYO logic causes mount=
+ request of
+> cramfs with dev_name like "mtd0" to fail.
+>
+> >> I guess we can add dev_path to fs_context?
+> >
+> > No, when and how the path is resolved is entirely up to the individual
+> > filesystem and we're not hoisting the block-based specific path lookup
+> > up into the VFS while leaving the other stuff per-filesystem. And it's
+> > not as trivial as you want it to be either.
+>
+> Then, how can LSM modules know that how the requested filesystem resolves
+> the dev_name argument, without embedding filesystem specific resolution
+> logic into individual LSM module?
 
-P.S. I noticed it too late today, so it's not on the commit message,
-but we also got a Reviewed-by from Georgia Garcia in
-https://lore.kernel.org/all/c3fccd822db5fc76b7fab00a9515eb276a71b421.camel@canonical.com/
-(in response to V6 of the patch).
+IIUC, if an LSM cares about the dev_name of a new mount, it will have to lo=
+ok
+into each individual filesystem. We can add a LSM hook for the filesystems =
+to
+call. But this will require changes to individual filesystem code. OTOH,
+dev_name can probably bridge the gap as we change filesystems.
 
-Thanks, Georgia!
-–Günther
+Would this work?
+
+Thanks,
+Song
