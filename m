@@ -1,44 +1,88 @@
-Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E94346776
-	for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2026 18:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E70732D441
+	for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2026 19:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774292199; cv=none; b=OpNqwwLXlQiCCKv/0P9/+mW3iPlsMLGVQ/4YuMv3X8K5NgW4tiKQBmHviV5SNDtYqiB43ZgOc3fPVO+NvOrCslZA4uMfLCSkZJmpyh0C49M6frWVdCjHreZpo74VxXKPYIQFJnJdj5GpRTLRWZULyNH+N1wUc1eVhfxr5C332Oc=
+	t=1774293031; cv=none; b=Vz8JZk4c0Fbqj60zdtwJRqOHukFcXEKiqkBZInvxNTdJzwoFKk/BBK5LxND0xtKi129BZXbq0f+yzw1egExQWhon8Nv6ekO6sY+ieAKEEzwol9PXkfjHEYZTcAFEadfs9YvceXmJNismalUwOJsmzO6pXLHHGpVLJv3fHa99e9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774292199; c=relaxed/simple;
-	bh=bTJJJNIwy5qbvCNGmmJQKbhw8rdrPesSn0Z4Q8DjdRg=;
+	s=arc-20240116; t=1774293031; c=relaxed/simple;
+	bh=u70jMS93ZGGf12b9u664ZuoNzvkPh/Jd7rvrgWDjRkw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QE8vAYjXl9FPB7UaxDlnyNjjG/51erhxtqdyO/Qia91y06Dnd/N70xp/JZYT40UWN9qPk/5ro2MNhezwaqbH+bA/6+8P2wOCMpyMq5xk0V7sWKstIP1+ITxo5OSeLp/KgH84nGjL0KsWmAC7flnIoxugZE0QmWTMJSVoS2uz7ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=NQt8ST4W; arc=none smtp.client-ip=185.125.25.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=LTculOdgTeEdBdr3+bxG/DJE5mR0/Hkkek+qDIsekajR7OOHxp+XBP+eliHLmWQtMo6tPxb3+4Djw71N6OdcrxurWFq4k2U2FcEUdwairyq79hot283qXfUNrqyoLU229U4jDBKSsf62oX57PXrFYfQD/wsBJcD7pqDR8h/Mfcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ix6dWKgQ; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="NQt8ST4W"
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ffj7W49tCz7j4;
-	Mon, 23 Mar 2026 19:56:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1774292183;
-	bh=WfnkvrWuiEZRvZQcABPgotX6aHLuW+FtcyOcUhZQreY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NQt8ST4W3AJNlO6lZtnuJV23LBYnkrxBIRlzQ5qu31rZSXW0wL8ll9Q5sOcvO7Rer
-	 DRIjRzt1LYwWsQI/2EAJry5VcWvSQC60cDq0dqSlRA3w/FHZzVv3F9CpehksW9lVty
-	 Elx9pm2MeOjRzsLKy1LYhMS+EaYkXYf8Nm2/V9wY=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ffj7V4MXmzZRQ;
-	Mon, 23 Mar 2026 19:56:22 +0100 (CET)
-Date: Mon, 23 Mar 2026 19:56:21 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: "Panagiotis \"Ivory\" Vasilopoulos" <git@n0toose.net>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dan Cojocaru <dan@dcdev.ro>
-Subject: Re: [PATCH v4] landlock: Expand restrict flags example for ABI
- version 8
-Message-ID: <20260323.sheiHaR5uRoo@digikod.net>
-References: <20260304-landlock-docs-add-tsync-example-v4-1-819a276f05c5@n0toose.net>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ix6dWKgQ"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-43b7c844b20so771159f8f.3
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Mar 2026 12:10:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1774293027; x=1774897827; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=D9t95D8xEX/7Je1aEX2cgVLU/Fxa2+umElabflj3GR8=;
+        b=ix6dWKgQQNdskix454coJXm1sgLYJcojCNl15XUvAxNE3GS9+uiKg2HHhuCZbiC+oy
+         Mb/SI3YGgAepmQKoPfrBILoOaUBbd0oceB5wF12j8cK8jYRw+uVGvWegoIJziOj2zbC+
+         2vmyBrj1BDUbi2zZm3ML7epS92hF6hKsFHfajjfwcrc4LWKf81GFaHJr4CDX7MMzNTLu
+         1uY5KmWlldehiBV4lGpJXU91SzpG4k44/EovbXTsFWQUxAX0mGH1rLu7rA+RI7l1GAGk
+         DPxrFPSVkRaXdJnJDIIaasa58nP8W1qeb2mpv3ZHBConH+RuDstW85jJ7w06nVXPYwhb
+         rx2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774293027; x=1774897827;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D9t95D8xEX/7Je1aEX2cgVLU/Fxa2+umElabflj3GR8=;
+        b=ZDV5LUAD0JvLcV/rhmA77a8hMqW9DWZLXHgOvm4J8NFReHBmdusLqQa2mWmIfbQjgH
+         dd2vEUnQMsO6swcK314L1sM1ghrNdRpWk1xhE+PQQc+bezUANMZFJ1qCzKa+rt7Ho4OB
+         I9/FvKKx9zNnVcHUpo9sdSdGlpFMxEVkQs+2cgmxKBJZgGF/8ijwixfXa6qgLQQhAO9f
+         VMsbG0oucCOSM0CZMI5etmUrC6gyEjRaLKR0OvEOsmFEwctZOiVTCBMrwrRmNPGmY/Ls
+         uQ5vra+QsoIYqYKPfGDnFBH6XltRL92+s/b6aDsqzh6zWr2/zDdmr55yqEn/TdeSD2AG
+         /B8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVZPtm1IcgVARFhGgcAoAeaS9V5XPzN7EeLgvS4oVgTzU/QaD41Vroc/ggCn/a+BwrthY8uTzknK7RWwYhCVQPBV6flyo4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCFd9SNV0sqlxsYkmfprsjkniN/YppZmXb7VV1cVHd7YaU4+QW
+	uyNIFfDgIec7hAaRESVHEkVDuLn4VKX4fJXxXhTYdiN3tZWCjq2qbMK1
+X-Gm-Gg: ATEYQzx0hK1mZZJGYZ0ABcmS1cLwpw2pvAL6xEXOx6yfukTn5ca3HDmKqu6bXDe+qMi
+	LUu5ZNCngfA6ff6PBM4QKQRn1iTIj0VHxeq2zdgtGUIlGRC7ZDehxxr5rs08woEFw+Nrp/O49SL
+	b9jxv/tIr4PuKUSd/ZDHOb+eMXcsMLAY6hHhSWdXTQX0+Ne4wBW3ZrVGR9OgkwhpYm3BfOVprrz
+	Q3CIhvbeVqq9+r0IAJPGvWXctC7V3VUKh00NZIHzz5LmDCHXzXGr+hZ0NXyQNN3vi5g9s7uQKLc
+	PkYODNYxeDii8cRxeOZWMB8FIYI7AsD1kTkmFXQuSBVoSQlKuIzW6VK4Ojatvm3XmOpQF+X7LQ0
+	XGDuyL9Dg8KF/oa6/JnYzrst5Z+JSfM1Y6ennTs/XEGXx+CWPvVARqIvzhFB03AhtK8clB0Cy8U
+	dKOjp6O5QCMf30WFLOMp8mcajdaujKzWbJ5alUFV/kJUCufwDM0GsVzCVoWnE=
+X-Received: by 2002:a05:6000:420e:b0:439:ddf9:a205 with SMTP id ffacd0b85a97d-43b64232830mr19438002f8f.10.1774293026166;
+        Mon, 23 Mar 2026 12:10:26 -0700 (PDT)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b647120a1sm32247095f8f.30.2026.03.23.12.10.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Mar 2026 12:10:25 -0700 (PDT)
+Date: Mon, 23 Mar 2026 20:10:24 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Georgia Garcia <georgia.garcia@canonical.com>
+Cc: Tingmao Wang <m@maowtm.org>, Justin Suess <utilityemal77@gmail.com>,
+	linux-security-module@vger.kernel.org,
+	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
+	Matthieu Buffet <matthieu@buffet.re>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	konstantin.meskhidze@huawei.com,
+	Demi Marie Obenour <demiobenour@gmail.com>,
+	Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>,
+	Tahera Fahimi <fahimitahera@gmail.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v7 01/11] lsm: Add LSM hook security_unix_find
+Message-ID: <20260323.4eae8ac1df61@gnoack.org>
+References: <20260323165654.193957-1-gnoack3000@gmail.com>
+ <20260323165654.193957-2-gnoack3000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -48,94 +92,147 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260304-landlock-docs-add-tsync-example-v4-1-819a276f05c5@n0toose.net>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20260323165654.193957-2-gnoack3000@gmail.com>
 
-Thanks!  I pushed your patch in next with a minor fix.
-
-Günther, does it look good to you?
-
-On Wed, Mar 04, 2026 at 07:13:04PM +0100, Panagiotis "Ivory" Vasilopoulos wrote:
-> Add LANDLOCK_RESTRICT_SELF_TSYNC to the backwards compatibility example
-> for restrict flags. This introduces completeness, similar to that of
-> the ruleset attributes example. However, as the new example can impact
-> enforcement in certain cases, an appropriate warning is also included.
+On Mon, Mar 23, 2026 at 05:56:43PM +0100, Günther Noack wrote:
+> From: Justin Suess <utilityemal77@gmail.com>
 > 
-> Additionally, I modified the two comments of the example to make them
-> more consistent with the ruleset attributes example's.
+> Add an LSM hook security_unix_find.
 > 
-> Signed-off-by: Panagiotis 'Ivory' Vasilopoulos <git@n0toose.net>
-> Co-developed-by: Dan Cojocaru <dan@dcdev.ro>
-> Signed-off-by: Dan Cojocaru <dan@dcdev.ro>
+> This hook is called to check the path of a named UNIX socket before a
+> connection is initiated. The peer socket may be inspected as well.
+> 
+> Why existing hooks are unsuitable:
+> 
+> Existing socket hooks, security_unix_stream_connect(),
+> security_unix_may_send(), and security_socket_connect() don't provide
+> TOCTOU-free / namespace independent access to the paths of sockets.
+> 
+> (1) We cannot resolve the path from the struct sockaddr in existing hooks.
+> This requires another path lookup. A change in the path between the
+> two lookups will cause a TOCTOU bug.
+> 
+> (2) We cannot use the struct path from the listening socket, because it
+> may be bound to a path in a different namespace than the caller,
+> resulting in a path that cannot be referenced at policy creation time.
+> 
+> Consumers of the hook wishing to reference @other are responsible
+> for acquiring the unix_state_lock and checking for the SOCK_DEAD flag
+> therein, ensuring the socket hasn't died since lookup.
+> 
+> Cc: Günther Noack <gnoack3000@gmail.com>
+> Cc: Tingmao Wang <m@maowtm.org>
+> Cc: Mickaël Salaün <mic@digikod.net>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 > ---
-> Changes in v4:
-> - Make warning somewhat more terse, merge comments.
->   - Remove some sensationalization. ("Don't copy-paste this just yet!")
->   - Apply Günther's suggestion (v3 "recycled" some phrases, was long)
->     - ... but also retain some of the wording on ABI differences
-> - Provide a brief overview that contextualizes the example further:
->   - Clarify the difference behind ABI < 8 & ABI v8, to avoid
->     misunderstandings on which option is the default.
->   - Make "linear reading" easier.
-> - Based on Mickaël's feedback: Avoid cans of worms w.r.t. use cases
-> - Link to v3: https://lore.kernel.org/r/20260228-landlock-docs-add-tsync-example-v3-1-140ab50f0524@n0toose.net
+>  include/linux/lsm_hook_defs.h |  5 +++++
+>  include/linux/security.h      | 11 +++++++++++
+>  net/unix/af_unix.c            | 10 +++++++---
+>  security/security.c           | 20 ++++++++++++++++++++
+>  4 files changed, 43 insertions(+), 3 deletions(-)
 > 
-> Changes in v3:
-> - Add __attribute__((fallthrough)) like in earlier example.
-> - Improve comment for LANDLOCK_RESTRICT_SELF_TSYNC (ABI < 8) example.
-> - Add relevant warning for ABI < 8 example based on Günther's feedback.
-> - Link to v2: https://lore.kernel.org/r/20260221-landlock-docs-add-tsync-example-v2-1-60990986bba5@n0toose.net
-> 
-> Changes in v2:
-> - Fix formatting error.
-> - Link to v1: https://lore.kernel.org/r/20260221-landlock-docs-add-tsync-example-v1-1-f89383809eb4@n0toose.net
-> ---
->  Documentation/userspace-api/landlock.rst | 22 ++++++++++++++++++----
->  1 file changed, 18 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index 13134bccdd39d78ddce3daf454f32dda162ce91b..64c7138a788d74f99da0a71428da392b3d873bf8 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
-> @@ -196,13 +196,27 @@ similar backwards compatibility check is needed for the restrict flags
->  (see sys_landlock_restrict_self() documentation for available flags):
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index 8c42b4bde09c..7a0fd3dbfa29 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -317,6 +317,11 @@ LSM_HOOK(int, 0, post_notification, const struct cred *w_cred,
+>  LSM_HOOK(int, 0, watch_key, struct key *key)
+>  #endif /* CONFIG_SECURITY && CONFIG_KEY_NOTIFICATIONS */
 >  
->  .. code-block:: c
-> -
-> -    __u32 restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON;
-> -    if (abi < 7) {
-> -        /* Clear logging flags unsupported before ABI 7. */
-> +    __u32 restrict_flags =
-> +        LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON |
-> +        LANDLOCK_RESTRICT_SELF_TSYNC;
-> +    switch (abi) {
-> +    case 1 ... 6:
-> +        /* Clear logging flags unsupported for ABI < 7 */
->          restrict_flags &= ~(LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF |
->                              LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON |
->                              LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF);
-> +        __attribute__((fallthrough));
-> +    case 7:
-> +        /*
-> +         * Removes multithreaded enforcement flag unsupported for ABI < 8
-> +         *
-> +         * WARNING: Without this flag, calling landlock_restrict_self(2) is
-> +         * only equivalent if the calling process is single-threaded. Below
-> +         * ABI v8 (and as of ABI v8, when not using this flag), a Landlock
-> +         * policy would only be enforced for the calling thread and its
-> +         * children (and not for all threads, including parents and siblings).
-> +         */
-> +        restrict_flags &= ~LANDLOCK_RESTRICT_SELF_TSYNC;
->      }
+> +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
+> +LSM_HOOK(int, 0, unix_find, const struct path *path, struct sock *other,
+> +	 int flags)
+> +#endif /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
+> +
+>  #ifdef CONFIG_SECURITY_NETWORK
+>  LSM_HOOK(int, 0, unix_stream_connect, struct sock *sock, struct sock *other,
+>  	 struct sock *newsk)
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 83a646d72f6f..99a33d8eb28d 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -1931,6 +1931,17 @@ static inline int security_mptcp_add_subflow(struct sock *sk, struct sock *ssk)
+>  }
+>  #endif	/* CONFIG_SECURITY_NETWORK */
 >  
->  The next step is to restrict the current thread from gaining more privileges
-> 
-> ---
-> base-commit: ceb977bfe9e8715e6cd3a4785c7aab8ea5cd2b77
-> change-id: 20260221-landlock-docs-add-tsync-example-e8fd5c64a366
-> 
-> Best regards,
+> +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
+> +
+> +int security_unix_find(const struct path *path, struct sock *other, int flags);
+> +
+> +#else /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
+> +static inline int security_unix_find(const struct path *path, struct sock *other, int flags)
+> +{
+> +	return 0;
+> +}
+> +#endif /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
+> +
+>  #ifdef CONFIG_SECURITY_INFINIBAND
+>  int security_ib_pkey_access(void *sec, u64 subnet_prefix, u16 pkey);
+>  int security_ib_endport_manage_subnet(void *sec, const char *name, u8 port_num);
+> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+> index 3756a93dc63a..5ef3c2e31757 100644
+> --- a/net/unix/af_unix.c
+> +++ b/net/unix/af_unix.c
+> @@ -1231,11 +1231,15 @@ static struct sock *unix_find_bsd(struct sockaddr_un *sunaddr, int addr_len,
+>  		goto path_put;
+>  
+>  	err = -EPROTOTYPE;
+> -	if (sk->sk_type == type)
+> -		touch_atime(&path);
+> -	else
+> +	if (sk->sk_type != type)
+>  		goto sock_put;
+>  
+> +	err = security_unix_find(&path, sk, flags);
+> +	if (err)
+> +		goto sock_put;
+> +
+> +	touch_atime(&path);
+> +
+>  	path_put(&path);
+>  
+>  	return sk;
+> diff --git a/security/security.c b/security/security.c
+> index 67af9228c4e9..28ccea205874 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -4731,6 +4731,26 @@ int security_mptcp_add_subflow(struct sock *sk, struct sock *ssk)
+>  
+>  #endif	/* CONFIG_SECURITY_NETWORK */
+>  
+> +#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
+> +/**
+> + * security_unix_find() - Check if a named AF_UNIX socket can connect
+> + * @path: path of the socket being connected to
+> + * @other: peer sock
+> + * @flags: flags associated with the socket
+> + *
+> + * This hook is called to check permissions before connecting to a named
+> + * AF_UNIX socket. The caller does not hold any locks on @other.
+> + *
+> + * Return: Returns 0 if permission is granted.
+> + */
+> +int security_unix_find(const struct path *path, struct sock *other, int flags)
+> +{
+> +	return call_int_hook(unix_find, path, other, flags);
+> +}
+> +EXPORT_SYMBOL(security_unix_find);
+> +
+> +#endif	/* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
+> +
+>  #ifdef CONFIG_SECURITY_INFINIBAND
+>  /**
+>   * security_ib_pkey_access() - Check if access to an IB pkey is allowed
 > -- 
-> Panagiotis "Ivory" Vasilopoulos <git@n0toose.net>
+> 2.53.0
 > 
-> 
+
+P.S. I noticed it too late today, so it's not on the commit message,
+but we also got a Reviewed-by from Georgia Garcia in
+https://lore.kernel.org/all/c3fccd822db5fc76b7fab00a9515eb276a71b421.camel@canonical.com/
+(in response to V6 of the patch).
+
+Thanks, Georgia!
+–Günther
