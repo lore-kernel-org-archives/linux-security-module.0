@@ -1,119 +1,77 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316CD3DE443;
-	Tue, 24 Mar 2026 09:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403603E1CEA;
+	Tue, 24 Mar 2026 10:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774346373; cv=none; b=u6+SCW/knyhqTyYnLqC3G8FmilDTKN+SDuc3RDQ0z4wOuS5YbRBbfdzIp12OxJ6l2ookI66bopW/IpV/X65v/5PazjD5jlvoqprQWWdGSvKbzU9ltYXF1MWMKKTmO9xLzGH1lNavnTtTMTkiLx91hQfpLbG5UEr5kYSrHTQJLrI=
+	t=1774348510; cv=none; b=AWXSVheslyxmoQ0gqIKSjOdAaCdNlNiag4Je1Sd6M7xwkHaiHElQS3qI0GmZDq+li3q3VdDxyqUxjbOzm5Wbvd6MHUwjzAjlOkchdpUY9kBkZDK7Dgp8VyHPYRFtLKspGzkVZdDDI9P7pU4zl/zUVPVR7Xoym3OzNW7siGoQKos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774346373; c=relaxed/simple;
-	bh=1xU6iCDvCSqHvUmbAzo7xKeogjKnF8lOTAkNLBo8/PI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ANgnoej+Z+ndFyoQrsmluCxx0IY9d4v3m4dPyzwAQUadfKkaetRr5Qtu60JHlcH7/2BG8DkJ5WUXfCmZ4X1ydIZxucZLdEXt/CUeInPDkX20Ij+b5PMZ4rNGR8WYvJirq4FIfAzqegWl0EkXorV8iIuZWFM5zFqxP44+UKAWxs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 62O9wJsG072034;
-	Tue, 24 Mar 2026 18:58:19 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.2] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 62O9wJMb072031
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 24 Mar 2026 18:58:19 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <6c298238-8d87-4c41-84a7-e0373d466a15@I-love.SAKURA.ne.jp>
-Date: Tue, 24 Mar 2026 18:58:15 +0900
+	s=arc-20240116; t=1774348510; c=relaxed/simple;
+	bh=ozLikLvinqIb2bQ42DgDWdNkICnKWw52pWepRkNHFkA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ae4CwYOL/MdIXjVaTSfgrNqeSw5WZhyEDuPUC7oKAXbSSChSP9xDLPZozzPvLEc6oSJhanVoL8L+zqqQj7O5h2dh4D8XqULYPxtdK1gJfICnqwo38IuDle/buN22BvBCPP5WSWjTQZc+/+gFky0VBfKelT9jAwfvKZ+XiHeBdJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BnnNQ3qe; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BnnNQ3qe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09F90C19424;
+	Tue, 24 Mar 2026 10:35:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774348509;
+	bh=ozLikLvinqIb2bQ42DgDWdNkICnKWw52pWepRkNHFkA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BnnNQ3qeiL76pbHy8+Fe+UascEhQ2QZuk06i6byF7axDxpxXE65ts1CdK5GnmmIGN
+	 QOG296DavABcXeZ4wkg//XaTUQvVy+VxF1Ar8ASZ0PxGvR+i/DjBsD2EVu86DsHHH3
+	 20RJDmMDkKEVJByy9ITBCvBAvlDcgxV8uXM3/EtGIWg09PZVYAKqaRzPYuExyjuM8c
+	 LybbGJUHyF5NgeW50H7fwLo7iQo/dKzwmLTUgfYtpcMur7OfSH8TRSwjpUmy1Tdqvc
+	 642KVy1hwvW4ry5OjiojRzdCuIKrnKo9qqzLvw7Mqp+hJANvac6sn3aFp8zmvTqVd1
+	 oY+GFKFLgpK/Q==
+Date: Tue, 24 Mar 2026 12:35:05 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: keyrings@vger.kernel.org, Srish Srinivasan <ssrish@linux.ibm.com>,
+	Nayna Jain <nayna@linux.ibm.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] KEYS: trusted: Protocol debugging as a feature
+Message-ID: <acJo2cBe2pfDWWGc@kernel.org>
+References: <20260323090047.632499-1-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/7] tomoyo: Convert from sb_mount to granular mount hooks
-To: Song Liu <song@kernel.org>
-Cc: Song Liu <songliubraving@meta.com>,
-        Christian Brauner
- <brauner@kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com"
- <serge@hallyn.com>, "jack@suse.cz" <jack@suse.cz>,
-        "john.johansen@canonical.com" <john.johansen@canonical.com>,
-        "stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>,
-        "omosnace@redhat.com" <omosnace@redhat.com>,
-        "mic@digikod.net" <mic@digikod.net>,
-        "gnoack@google.com"
- <gnoack@google.com>,
-        "takedakn@nttdata.co.jp" <takedakn@nttdata.co.jp>,
-        "herton@canonical.com" <herton@canonical.com>,
-        Kernel Team <kernel-team@meta.com>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "apparmor@lists.ubuntu.com" <apparmor@lists.ubuntu.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>
-References: <20260318184400.3502908-1-song@kernel.org>
- <20260318184400.3502908-7-song@kernel.org>
- <b720f521-e930-4f35-9505-1bfdf9e2818c@I-love.SAKURA.ne.jp>
- <4DF5C4A8-7C92-4F76-9B34-2262089E7289@meta.com>
- <33abcf34-13e2-4a37-83f3-78bb27ecbc11@I-love.SAKURA.ne.jp>
- <F0A0D13E-8208-49A4-9AC6-89AC4BF3F4FB@meta.com>
- <20260323-klappen-atemschutz-7a0af8c6b087@brauner>
- <714a614b-cfb4-4b20-af8c-df3cc56dfb92@I-love.SAKURA.ne.jp>
- <CAAeYb7k+TWArOKyOomkLZ8fwqUPjha9iORpJaj4nMyN=o4ZRQg@mail.gmail.com>
- <6609e11e-90aa-4021-974e-e9937688dd49@I-love.SAKURA.ne.jp>
- <CAPhsuW4G7vo-JZqenZ-sFHw9z02wZUJa1-+9U81U--vQhnfG_Q@mail.gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAPhsuW4G7vo-JZqenZ-sFHw9z02wZUJa1-+9U81U--vQhnfG_Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav104.rs.sakura.ne.jp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260323090047.632499-1-jarkko@kernel.org>
 
-On 2026/03/24 16:46, Song Liu wrote:
-> On Mon, Mar 23, 2026 at 11:12 PM Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->>
->> On 2026/03/24 4:31, Song Liu wrote:
->>>> Then, how can LSM modules know that how the requested filesystem resolves
->>>> the dev_name argument, without embedding filesystem specific resolution
->>>> logic into individual LSM module?
->>>
->>> IIUC, if an LSM cares about the dev_name of a new mount, it will have to look
->>> into each individual filesystem. We can add a LSM hook for the filesystems to
->>> call. But this will require changes to individual filesystem code. OTOH,
->>> dev_name can probably bridge the gap as we change filesystems.
->>>
->>> Would this work?
->>
->> I guess something like untested diff shown below would work.
+On Mon, Mar 23, 2026 at 11:00:46AM +0200, Jarkko Sakkinen wrote:
+> TPM_DEBUG is a non-standard way to specify a feature in Linux kernel.
+> Introduce CONFIG_TRUSTED_KEYS_DEBUG, and use it to replace TPM_DEBUG in
+> TPM 1.x trusted keys.
 > 
-> I think this doesn't work with erofs on file (requires
-> CONFIG_EROFS_FS_BACKED_BY_FILE). erofs may not be the
-> only one that has this problem.
+> Given that protocol bus could contain sensitive data, harden the feature as
+> follows:
+> 
+> 1. In the  Kconfig description postulate that pr_debug() statements must be
+>    used.
+> 2. Use pr_debug() statements in TPM 1.x driver to print the protocol dump.
+> 
+> Traces can be enabled e.g., by providing trusted.dyndbg='+p' for the kernel
+> command-line.
+> 
+> Cc: Srish Srinivasan <ssrish@linux.ibm.com>
+> Reported-by: Nayna Jain <nayna@linux.ibm.com>
+> Closes: https://lore.kernel.org/all/7f8b8478-5cd8-4d97-bfd0-341fd5cf10f9@linux.ibm.com/
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> ---
 
-This is incomplete but I think this is better than now because currently
-mount() operation likely fails with -ENOENT if the requested filesystem
-does not interpret fc->source as a pathname despite tomoyo_mount_acl()
-always interprets fc->source as a pathname when FS_REQUIRES_DEV is set.
+I'm posting a v2 update with HAVE_* flag and a bit wider scope.
 
-Also, mount() operation might by error succeed because tomoyo_mount_acl()
-checks permission against unintended file when e.g. "mtd0" by chance exists
-in the current directory.
-
-We could add filesystem-specific logic to e.g. CONFIG_EROFS_FS_BACKED_BY_FILE
-case that copies the resolved "struct path" to fc->source_path. But even without
-adding filesystem-specific logic, mount() operation will succeed because
-tomoyo_mount_acl() can handle fc->source as a string rather than a canonicalized
-pathname.
-
-Being able to know whether tomoyo_mount_acl() should interpret dev_name as a
-pathname (which is subjected to canonicalization, and also subjected to more
-complicated permission checks based on e.g. inode's uid/gid) is appreciated.
-
+BR, Jarkko
