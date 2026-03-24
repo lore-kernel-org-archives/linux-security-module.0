@@ -1,101 +1,142 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA53390CAA
-	for <linux-security-module@vger.kernel.org>; Tue, 24 Mar 2026 15:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06037311973
+	for <linux-security-module@vger.kernel.org>; Tue, 24 Mar 2026 19:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774366238; cv=none; b=VvRVGOSL4p+VviFmIExTKi4sZ4mK9dU+KF2XGFiFJiRvFk4By8zPlSq+h1rSfiTICL13rBOiTIQeklxhn2jdTVVj479xVBasJknutxJNKeKsrNaIkXSy4faiho9ZjZSitF2YomTYJkAGOdQ18JNBuB02LV8RruRw24xDQwZ6n3Q=
+	t=1774378996; cv=none; b=SUYtrE94P3seRXyVjtCI9bOFvIXXyl6IGUCiIoaAvFV7mrTxslE2sADAk75nE3jfff1N/q6A0qR8rIJP24GNWWoKUGOUO/rkVhSjoJK04HwuITefZlW1U5uX5Rcq3t44UNn70uop9aC0IQHhI/72TcTddCzoCTVMhd34U6Soc0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774366238; c=relaxed/simple;
-	bh=gAfLzcxzb5imxOXbOMzClv6ppwCmz/QiaDAaLw0iWak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IOuxleqMRc7VNj8W0Lu1Jxzeq3/RVsXaP2ekijAKoB1pxiRbS1ePxkFE7MGRLZYm0E36NSu3oKhI2WMYIcaa2uScZRB+0o93sXtrCL1hvNCYwwRypuxlsEu40l3woL8JNH3V5k0kfEJLukM8EMNeEZRO43j5vora0DprmPpWt5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XV2pXuWG; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1774378996; c=relaxed/simple;
+	bh=8ERkArUkKAJMAJlGeP18u5PgNVycSZvsdsG8KYtB5t8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jXOO76C6btUVyT87IJbHOQ0ik8M4vppAB8Mktrr5QKxHKEUjHgT2Pj/qdq2aAxQjSY9CvA4zoskvBjOixeyhQA0SJ6TODL+0/Y9ZBAMmdbogYN24dSp9HP0COyP6qkm/t3AUxzyU4zJjDnXCFJTcjL7zyoE+Fev8k91XF1iyopk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=trXb3kjA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XV2pXuWG"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-486fe2024a9so32000105e9.0
-        for <linux-security-module@vger.kernel.org>; Tue, 24 Mar 2026 08:30:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1774366236; x=1774971036; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EYKECZ+c2+1LaN0ZpFAMYQ/fUaZTTSWm0KVzZuhW4Vk=;
-        b=XV2pXuWG7rxFy5ipjK9CA18xJUvder5LDpvT+L/Li6pTg23usRSINUk9udkN8adrQ0
-         9ThbsJKLArHhkgGnnMxlphnVrYXZHi0cDcrJ4KoGv1V5M+pb93/QMQlX3Vy8QKzk+6oM
-         aTncfP9WM8JjSmr70VMcuSR3YV50pafVWvYAWdKussborjmYdMFkUyhzwDhEbEEVklj1
-         ALgjT8iIiaQux7zfwKKFAH8/ianFnZZct3tpKWYokJPbVBU3PxIsduoTRNZSKn4HdfH3
-         b+3k+WU6+1Rd21BLU1yRMQOL9L2DTa76Wp++71qddu4YcSUT+mvEZ7uaB3S0GwTYPpAu
-         nzww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774366236; x=1774971036;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EYKECZ+c2+1LaN0ZpFAMYQ/fUaZTTSWm0KVzZuhW4Vk=;
-        b=KfKq3B1bS/+R0zdaBa1CLbqViz8dCPSLJ/G9d/wZCiBrXawQjwUvBWVo+KFrJr4UrR
-         IbhDoHsE4gQjJ3st4wKoYK1eRjmTgzpcxtuza7lxhK/ximgpBx03/iBywabvjOYHreVv
-         nvfCx/TzXCX8S9rVocPEzTuqzjLnnBQXLzBfLmz4kLOsnzyHF5FvSRDrG0U0o/h3WeQu
-         cugskCKrkuBhy2LBwaRWq1qfWlphgN3hA3UgjCFU4V3pYlIVvrXtAIz0Z0+eEsnvgOa5
-         is+/xSOrK+8lVuoJsm2Z7R2dmF2s1UkR6lExWH3zR6RKEFr24TGJoJQXsQgkk2TjD+Xp
-         oRLw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxLIjj8Wdsl45u69zVqZsXv3f6nVVMxTEKuif8AAYs8eTTCQ/KKrPiAORGO1fS7Z6n+5shjGEvuyMrHDFLSQmIvUQStxU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8eOYDOHjspS2XMGN8YdMVypRFhw8kiX95JLxqTHgOERciAnDU
-	oCiyIQm1L11WgfPohej6yw4jmpbhlGn+K1DHbRZo6Ksvtuuf54bvj6WCH1CS9J5OWQ==
-X-Gm-Gg: ATEYQzzepwmr7NGpXH4/8Xq25nPGdF4mf+/PyqhPIrAILadMuSwTu3wjff9y7Eqqd52
-	gCJq6Wr5rv4QEZeVUmuxCxwDE8HG5nj3MA3iDpAW+dLVeVA6n6f+cnZMWrsO9DQyGl6qAzslDgc
-	rbYdJ/DzPuCpzYjSXVTKaqKQhSg0WS+6V38obruD0Iy8eoXVdIO3vD+zpg86sDq1cr2qKoL6Pvf
-	58VA129xpo7nGIZCrSFG8PIlVaG0xSnrZUFN8KTKldALiRhxZJIHdD6NRr7vAPb5XeWLiFjDcSu
-	bKfN8Huv849Z887z8Y35d88PmPEAf5rQby2D+p2KsSuGDYLViaEGBfkgj3BX/kwnD6BivuM8kZG
-	rV2wC0tdVbiRpclI9wC1c+RWvcO7Pw+VwlR5MZJtgm+khhVKnJgPVc1bm1zEJU/sGs/bRJUBzxt
-	ErxB4xITx1eE4QvznXu4/Cpt31IEq5kvXfnOxOM/WHQ0bjnS9kqXYpzQ==
-X-Received: by 2002:a05:600d:8:b0:483:1403:c47f with SMTP id 5b1f17b1804b1-48715fb7246mr2891295e9.6.1774366235189;
-        Tue, 24 Mar 2026 08:30:35 -0700 (PDT)
-Received: from google.com ([2a00:79e0:288a:8:820c:ac9a:1d85:a65e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4871105c799sm26733795e9.20.2026.03.24.08.30.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2026 08:30:33 -0700 (PDT)
-Date: Tue, 24 Mar 2026 16:30:27 +0100
-From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: "Panagiotis \"Ivory\" Vasilopoulos" <git@n0toose.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Dan Cojocaru <dan@dcdev.ro>
-Subject: Re: [PATCH v4] landlock: Expand restrict flags example for ABI
- version 8
-Message-ID: <acKuE2X2PWsRkfpR@google.com>
-References: <20260304-landlock-docs-add-tsync-example-v4-1-819a276f05c5@n0toose.net>
- <20260323.sheiHaR5uRoo@digikod.net>
- <acJa_56LtPeeH956@google.com>
- <20260324.aqu5Eic7Thee@digikod.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="trXb3kjA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 576CFC2BC9E
+	for <linux-security-module@vger.kernel.org>; Tue, 24 Mar 2026 19:03:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774378995;
+	bh=8ERkArUkKAJMAJlGeP18u5PgNVycSZvsdsG8KYtB5t8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=trXb3kjAHLI67smIXDwwAf48RXbt+0nCdIkpi3H788qXY723neQjh0YgPKFYvJIm1
+	 8m+Qi0x7+ZYZ+j8uHWv4Pwuj41UI1OoGGOlXzac/EtNVqCbwDBg2TenOBSN0CjUzUW
+	 uRfCFut55vMk8wAEa2+r10jCxNCx/Ph/T3GpC26ah0s7U6N8q3g6elCfMTC/GqVFGE
+	 Hx5LEbi55a865esBlPBGVQDuhVy6wBi+4U9S3OkvLpCjRc2CpYLkPEqcnbUFWklkze
+	 CYKsXLgE5pkjR09Y1ziWls4GwsBm0SI6nANr2jkkwCHe8fArJRHbqhEgXzpqA8V7Lk
+	 zQfjKx2T2QbkQ==
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-899e87b04d8so61407986d6.3
+        for <linux-security-module@vger.kernel.org>; Tue, 24 Mar 2026 12:03:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWgqFK1V3v6tX5Fs3ZAhcRcg58t6zrLe3uSfkGT/33U7D+QEnRVJjvqAre1ne9l2SuyGrT2oOIGJrlHlmVjnEpcB3DSNRw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOuH3Yvz5z6zA7jkPGtmWGxs5HSYsbwrJ59xDyvzO6YECe7KR0
+	cfaMMjhChXKBMlYFPF2l02GUzrsXUFgzdA4QgUpnaeBky5O4frieMb0zEz/u68KMWcBFCUCANFc
+	mNGDTgXF9uyj8ZClQtNSHCiqiqnxyWNk=
+X-Received: by 2002:a05:6214:1316:b0:89c:5b90:3d7e with SMTP id
+ 6a1803df08f44-89cc4ad7e94mr14077846d6.36.1774378994278; Tue, 24 Mar 2026
+ 12:03:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260324.aqu5Eic7Thee@digikod.net>
+References: <20260318184400.3502908-1-song@kernel.org> <20260318184400.3502908-7-song@kernel.org>
+ <b720f521-e930-4f35-9505-1bfdf9e2818c@I-love.SAKURA.ne.jp>
+ <4DF5C4A8-7C92-4F76-9B34-2262089E7289@meta.com> <33abcf34-13e2-4a37-83f3-78bb27ecbc11@I-love.SAKURA.ne.jp>
+ <F0A0D13E-8208-49A4-9AC6-89AC4BF3F4FB@meta.com> <20260323-klappen-atemschutz-7a0af8c6b087@brauner>
+ <714a614b-cfb4-4b20-af8c-df3cc56dfb92@I-love.SAKURA.ne.jp>
+ <CAAeYb7k+TWArOKyOomkLZ8fwqUPjha9iORpJaj4nMyN=o4ZRQg@mail.gmail.com>
+ <6609e11e-90aa-4021-974e-e9937688dd49@I-love.SAKURA.ne.jp>
+ <CAPhsuW4G7vo-JZqenZ-sFHw9z02wZUJa1-+9U81U--vQhnfG_Q@mail.gmail.com> <6c298238-8d87-4c41-84a7-e0373d466a15@I-love.SAKURA.ne.jp>
+In-Reply-To: <6c298238-8d87-4c41-84a7-e0373d466a15@I-love.SAKURA.ne.jp>
+From: Song Liu <song@kernel.org>
+Date: Tue, 24 Mar 2026 12:03:02 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW4E_BrF0ap5yg_6TbRAna=2Ajk2nuoT6WGwkS5cyyYB3w@mail.gmail.com>
+X-Gm-Features: AaiRm53BtyNmgu2U1A-lRqlHK3FKxeh66Hvb786qvSu1X2siuc6pnMMByLeZto4
+Message-ID: <CAPhsuW4E_BrF0ap5yg_6TbRAna=2Ajk2nuoT6WGwkS5cyyYB3w@mail.gmail.com>
+Subject: Re: [PATCH 6/7] tomoyo: Convert from sb_mount to granular mount hooks
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Song Liu <songliubraving@meta.com>, Christian Brauner <brauner@kernel.org>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "paul@paul-moore.com" <paul@paul-moore.com>, 
+	"jmorris@namei.org" <jmorris@namei.org>, "serge@hallyn.com" <serge@hallyn.com>, "jack@suse.cz" <jack@suse.cz>, 
+	"john.johansen@canonical.com" <john.johansen@canonical.com>, 
+	"stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>, 
+	"omosnace@redhat.com" <omosnace@redhat.com>, "mic@digikod.net" <mic@digikod.net>, 
+	"gnoack@google.com" <gnoack@google.com>, "takedakn@nttdata.co.jp" <takedakn@nttdata.co.jp>, 
+	"herton@canonical.com" <herton@canonical.com>, Kernel Team <kernel-team@meta.com>, 
+	"selinux@vger.kernel.org" <selinux@vger.kernel.org>, 
+	"apparmor@lists.ubuntu.com" <apparmor@lists.ubuntu.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 24, 2026 at 04:06:01PM +0100, Mickaël Salaün wrote:
-> On Tue, Mar 24, 2026 at 10:48:29AM +0100, Günther Noack wrote:
-> > Apologies for the delay, this must have slipped through the cracks.
-> > Thanks for bringing it up again.  Yes, this looks good.
-> > 
-> > Signed-off-by: Günther Noack <gnoack@google.com>
-> 
-> Shouldn't it be a Reviewed-by?
+On Tue, Mar 24, 2026 at 2:59=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> On 2026/03/24 16:46, Song Liu wrote:
+> > On Mon, Mar 23, 2026 at 11:12=E2=80=AFPM Tetsuo Handa
+> > <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> >>
+> >> On 2026/03/24 4:31, Song Liu wrote:
+> >>>> Then, how can LSM modules know that how the requested filesystem res=
+olves
+> >>>> the dev_name argument, without embedding filesystem specific resolut=
+ion
+> >>>> logic into individual LSM module?
+> >>>
+> >>> IIUC, if an LSM cares about the dev_name of a new mount, it will have=
+ to look
+> >>> into each individual filesystem. We can add a LSM hook for the filesy=
+stems to
+> >>> call. But this will require changes to individual filesystem code. OT=
+OH,
+> >>> dev_name can probably bridge the gap as we change filesystems.
+> >>>
+> >>> Would this work?
+> >>
+> >> I guess something like untested diff shown below would work.
+> >
+> > I think this doesn't work with erofs on file (requires
+> > CONFIG_EROFS_FS_BACKED_BY_FILE). erofs may not be the
+> > only one that has this problem.
+>
+> This is incomplete but I think this is better than now because currently
+> mount() operation likely fails with -ENOENT if the requested filesystem
+> does not interpret fc->source as a pathname despite tomoyo_mount_acl()
+> always interprets fc->source as a pathname when FS_REQUIRES_DEV is set.
 
-Absolutely, thanks! I meant to send a Reviewed-by.
-Please ignore the previous message.
+If I understand Christian correctly, the main challenge here is that
+FS_REQUIRES_DEV doesn't imply fc->source is the path of a device.
+Changing this assumption is a major change between VFS and many
+filesystems.
 
-Reviewed-by: Günther Noack <gnoack@google.com>
+I was thinking about something like:
 
-—Günther
+diff --git i/fs/super.c w/fs/super.c
+index 378e81efe643..91ce3003bc23 100644
+--- i/fs/super.c
++++ w/fs/super.c
+@@ -1676,6 +1676,9 @@ int get_tree_bdev_flags(struct fs_context *fc,
+                        errorf(fc, "%s: Can't lookup blockdev", fc->source)=
+;
+                return error;
+        }
++       error =3D security_mount_dev(fc, dev);
++       if (error)
++               return error;
+        fc->sb_flags |=3D SB_NOSEC;
+        s =3D sget_dev(fc, dev);
+        if (IS_ERR(s))
+
+This allows the LSMs to monitor the dev being mounted in a new mount.
+If a filesystem doesn't use get_tree_bdev*(), we will need something else
+to cover this specific filesystem. I am not sure whether this is acceptable
+for VFS and LSM, specifically tomoyo and apparmor.
+
+Also, before we go too deep into the hook for new mounts, can we focus
+on this set, which will fix some existing TOCTOU issues?
+
+Thanks,
+Song
