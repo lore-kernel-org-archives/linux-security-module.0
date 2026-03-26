@@ -1,316 +1,249 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B0D27FD75;
-	Thu, 26 Mar 2026 17:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD331423A77;
+	Thu, 26 Mar 2026 17:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774544728; cv=none; b=OFiy8K1HgRBD/v8t68EGRIHdc14fTuP0H7SMpj/3Jt4F3FqF5y9BnyY+XR06hjJxSKlgR2rRDVMGZofJ9U9SKdy3i8DVa75Ssp6v4656YT4yN1vgaVZamxPV67fYTf6sswwkLM56Jjq8m7MWnnfgO9StimsK7ZUK+4RwV3fZigs=
+	t=1774546268; cv=none; b=Tnp7xrMChQKkjHMBaEeLGhpGMhYMis0K8m7puRIy0twV9fB8dAatTjazuXE78d89qgWtWcFAwBsALj+UtEI8b5XnhAbcFGblfgD8jU3fVv1Bb8cKNIL3Ly1zgi5JXFMuJ4jrHHwVB22Jl4GGQ/ZVgHm75D3r+v2kMCvDSUOH45Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774544728; c=relaxed/simple;
-	bh=wwT8IcuZNGY/4L8pI23iKZgguLKjG+SYZC129kw9BGU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YnRbYqVB6b1awLc33ggx2r8O9LNf4LNq9hq3bXfCYh+c4lidinN5/itDikIMeZbj3GrCiAhTDjyLKJzVPXV546Kx7RymvMugI2MGoFk4owzRwugxUInn/PmONaK6fAYyS8DchVkG2bBz8UQ7FJx9J4TiBSOnAS8wrURWdXU0f/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CpRuM4SW; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CpRuM4SW"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62QElNQg670670;
-	Thu, 26 Mar 2026 17:05:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=cX4hUe
-	gJluicWnx+VsXDTf/AVhViit/rZsgRCm8k/NA=; b=CpRuM4SWqiEXTsztr9X/Ee
-	BqUG/Trmol9JlsvBIm+CFxIM+Gi3yNsYkN11vkVdyRyE7C3dHalnurSKAqJYKY6h
-	7frUScvYbC4vAwmm8L1Z7imaLgKp8Oi5uxmIDNH4SbbiVfjdlSXyDyaQoSo0UomC
-	6mDppOfr0qA+xpcnEWgB/bjVg7HqrE9Zj/FJeg5pwkYZ3Rh7m7qgK+hpJSvKHKQz
-	AfrRotqhIfNlL+4kuZihHszQSo/OhiHxHKFugNmE+c6FigZjLxKwOQW3jKzV+GU2
-	PFQAOGFXhw1uXxnxoWWRvn0khVMnddlk9ALloI7oRsUvIDRXqscQnPgvXc3bFJ5Q
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4d1ktv5a6d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Mar 2026 17:05:07 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62QFjI7g005976;
-	Thu, 26 Mar 2026 17:05:06 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4d261yv0dy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 26 Mar 2026 17:05:06 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 62QH558634013750
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 26 Mar 2026 17:05:05 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 09C2C58050;
-	Thu, 26 Mar 2026 17:05:05 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 787C558054;
-	Thu, 26 Mar 2026 17:05:00 +0000 (GMT)
-Received: from [9.39.29.16] (unknown [9.39.29.16])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 26 Mar 2026 17:05:00 +0000 (GMT)
-Message-ID: <0ce8d850-9ca7-4327-a6be-d1cb84925915@linux.ibm.com>
-Date: Thu, 26 Mar 2026 22:34:58 +0530
+	s=arc-20240116; t=1774546268; c=relaxed/simple;
+	bh=GVA+pRSUc8z9qjax4x44siGnI0py36BZBiWSsjLmxJM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=co+IqDSo9lAvWvWDEpOjp+JQUKiZy03ZdB7QAAOscfATr4RtuWk0qZavvS1aJYaDBm4tUSAbu/9hEP3LGEZYYFI8TQVER4y0w0GyMxjUmr6LOudPyP6f21g9CndCscedumIc2XFoL49oJSyr13Aj+gM7biPXZN/+8jaiudR7aJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.196])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4fhW124LvJzpVVw;
+	Fri, 27 Mar 2026 01:27:02 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id D24DE4056C;
+	Fri, 27 Mar 2026 01:30:50 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwB3Yu84bcVppGUvAQ--.1881S3;
+	Thu, 26 Mar 2026 18:30:50 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: corbet@lwn.net,
+	skhan@linuxfoundation.org,
+	zohar@linux.ibm.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	gregorylumen@linux.microsoft.com,
+	chenste@linux.microsoft.com,
+	nramas@linux.microsoft.com,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v4 01/13] ima: Remove ima_h_table structure
+Date: Thu, 26 Mar 2026 18:29:59 +0100
+Message-ID: <20260326173011.1191815-2-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260326173011.1191815-1-roberto.sassu@huaweicloud.com>
+References: <20260326173011.1191815-1-roberto.sassu@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] KEYS: trusted: Debugging as a feature
-To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
-Cc: keyrings@vger.kernel.org, Nayna Jain <nayna@linux.ibm.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Ahmad Fatoum
- <a.fatoum@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-References: <20260324110018.67081-1-jarkko@kernel.org>
-Content-Language: en-US
-From: Srish Srinivasan <ssrish@linux.ibm.com>
-In-Reply-To: <20260324110018.67081-1-jarkko@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: czlX2P7hXv12V3PGer_OJzZI345CX_cz
-X-Authority-Analysis: v=2.4 cv=aMr9aL9m c=1 sm=1 tr=0 ts=69c56743 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=VwQbUJbxAAAA:8
- a=VnNF1IyMAAAA:8 a=E9m4iwf8s1Ab0jgAuK4A:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI2MDExOSBTYWx0ZWRfXy2UHYXUjEkwv
- NEXekn9joZLK1DLnL+AvkOY8QG5mltQ2ZQPNvzFbi/n/PfQ/OMk6CiXqpNjNiwM58DQLLZ4ROBk
- 7dPU6RXEb4yKmhGO0vZX+wBbG4zaXMu/MeIsNL3IeHNm1scGTjK+GAEOK/PYokb/E9kQ2IhQm0w
- I/HAcWWkuGFb4fYERmvdffOMpBaDc8tvGRD+fATRxu1cWYUgA7Fi+yZzR/FNmM6JeF4EHVIx1mr
- AN5Fudqh/XhAF2OlTjldOk0XBuNn5AJb8Aj/APDdT7K4C97nRg2I+OMIQKVRY9wDAjyJtg/gEcJ
- zk17RBh0tmWOHYKV/NlvqZj1MD2WE1ej4lUagANDWhLMFAnd3qWQF4a7px8+u6WmjzyOj/n0uL+
- vwufadnVW1GK0r7I5D92HDakI+IPvvXLNPKwt5Rd9a+xctD90U69MgkdENpOtJEHWVcn8XL80Nj
- vR7jbTpWCxHU7uIiB2g==
-X-Proofpoint-GUID: czlX2P7hXv12V3PGer_OJzZI345CX_cz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-26_03,2026-03-26_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 lowpriorityscore=0 adultscore=0 impostorscore=0 malwarescore=0
- suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0 clxscore=1011
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603260119
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:LxC2BwB3Yu84bcVppGUvAQ--.1881S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxtw4rXFW5Zw1fXr1DCry7trb_yoWxtw1kpa
+	nFga42kF48XFyI9ryDAayqkrWrW3yUKr17Wws8Gw1Fk3ZrXr12gF15AFy2kFyfGFZYyF1I
+	qrs0qr1YkwsYyrJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPqb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGw
+	A2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2
+	WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkE
+	bVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7
+	AKxVWrXVW3AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wr
+	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
+	0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x
+	07jQ4SrUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAEBGnEnS4TtgAFs8
 
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-On 3/24/26 4:30 PM, Jarkko Sakkinen wrote:
-> TPM_DEBUG, and other similar flags, are a non-standard way to specify a
-> feature in Linux kernel.  Introduce CONFIG_TRUSTED_KEYS_DEBUG for
-> trusted keys, and use it to replace these ad-hoc feature flags.
->
-> Given that trusted keys debug dumps can contain sensitive data, harden
-> the feature as follows:
->
-> 1. In the Kconfig description postulate that pr_debug() statements must be
->     used.
-> 2. Use pr_debug() statements in TPM 1.x driver to print the protocol dump.
->
-> Traces, when actually needed, can be easily enabled by providing
-> trusted.dyndbg='+p' in the kernel command-line.
->
-> Cc: Srish Srinivasan <ssrish@linux.ibm.com>
-> Reported-by: Nayna Jain <nayna@linux.ibm.com>
-> Closes: https://lore.kernel.org/all/7f8b8478-5cd8-4d97-bfd0-341fd5cf10f9@linux.ibm.com/
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+With the upcoming change of dynamically allocating and replacing the hash
+table, the ima_h_table structure would have been replaced with a new one.
 
+However, since the ima_h_table structure contains also the counters for
+number of measurements entries and violations, we would have needed to
+preserve their values in the new ima_h_table structure.
 
-Tested on PKWM and emulated TPM backends.
+Instead, separate those counters from the hash table, remove the
+ima_h_table structure, and just replace the hash table pointer.
 
-Tested-by: Srish Srinivasan <ssrish@linux.ibm.com>
+Finally, rename ima_show_htable_value(), ima_show_htable_violations()
+and ima_htable_violations_ops respectively to ima_show_counter(),
+ima_show_num_violations() and ima_num_violations_ops.
 
+Link: https://github.com/linux-integrity/linux/issues/1
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/ima/ima.h       |  9 +++------
+ security/integrity/ima/ima_api.c   |  2 +-
+ security/integrity/ima/ima_fs.c    | 19 +++++++++----------
+ security/integrity/ima/ima_kexec.c |  2 +-
+ security/integrity/ima/ima_queue.c | 17 ++++++++++-------
+ 5 files changed, 24 insertions(+), 25 deletions(-)
 
-> ---
-> v2:
-> - Implement for all trusted keys backends.
-> - Add HAVE_TRUSTED_KEYS_DEBUG as it is a good practice despite full
->    coverage.
-> ---
->   include/keys/trusted-type.h               | 18 +++++-------
->   security/keys/trusted-keys/Kconfig        | 19 ++++++++++++
->   security/keys/trusted-keys/trusted_caam.c |  4 +--
->   security/keys/trusted-keys/trusted_tpm1.c | 36 +++++++++++------------
->   4 files changed, 46 insertions(+), 31 deletions(-)
->
-> diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
-> index 03527162613f..620a1f890b6b 100644
-> --- a/include/keys/trusted-type.h
-> +++ b/include/keys/trusted-type.h
-> @@ -83,18 +83,16 @@ struct trusted_key_source {
->   
->   extern struct key_type key_type_trusted;
->   
-> -#define TRUSTED_DEBUG 0
-> -
-> -#if TRUSTED_DEBUG
-> +#ifdef CONFIG_TRUSTED_KEYS_DEBUG
->   static inline void dump_payload(struct trusted_key_payload *p)
->   {
-> -	pr_info("key_len %d\n", p->key_len);
-> -	print_hex_dump(KERN_INFO, "key ", DUMP_PREFIX_NONE,
-> -		       16, 1, p->key, p->key_len, 0);
-> -	pr_info("bloblen %d\n", p->blob_len);
-> -	print_hex_dump(KERN_INFO, "blob ", DUMP_PREFIX_NONE,
-> -		       16, 1, p->blob, p->blob_len, 0);
-> -	pr_info("migratable %d\n", p->migratable);
-> +	pr_debug("key_len %d\n", p->key_len);
-> +	print_hex_dump_debug("key ", DUMP_PREFIX_NONE,
-> +			     16, 1, p->key, p->key_len, 0);
-> +	pr_debug("bloblen %d\n", p->blob_len);
-> +	print_hex_dump_debug("blob ", DUMP_PREFIX_NONE,
-> +			     16, 1, p->blob, p->blob_len, 0);
-> +	pr_debug("migratable %d\n", p->migratable);
->   }
->   #else
->   static inline void dump_payload(struct trusted_key_payload *p)
-> diff --git a/security/keys/trusted-keys/Kconfig b/security/keys/trusted-keys/Kconfig
-> index 9e00482d886a..2ad9ba0e03f1 100644
-> --- a/security/keys/trusted-keys/Kconfig
-> +++ b/security/keys/trusted-keys/Kconfig
-> @@ -1,10 +1,25 @@
->   config HAVE_TRUSTED_KEYS
->   	bool
->   
-> +config HAVE_TRUSTED_KEYS_DEBUG
-> +	bool
-> +
-> +config TRUSTED_KEYS_DEBUG
-> +	bool "Debug trusted keys"
-> +	depends on HAVE_TRUSTED_KEYS_DEBUG
-> +	default n
-> +	help
-> +	  Trusted keys backends and core code that support debug dumps
-> +	  can opt-in that feature here. Dumps must only use DEBUG
-> +	  level output, as sensitive data may pass by. In the
-> +	  kernel-command line traces can be enabled via
-> +	  trusted.dyndbg='+p'.
-> +
->   config TRUSTED_KEYS_TPM
->   	bool "TPM-based trusted keys"
->   	depends on TCG_TPM >= TRUSTED_KEYS
->   	default y
-> +	select HAVE_TRUSTED_KEYS_DEBUG
->   	select CRYPTO_HASH_INFO
->   	select CRYPTO_LIB_SHA1
->   	select CRYPTO_LIB_UTILS
-> @@ -23,6 +38,7 @@ config TRUSTED_KEYS_TEE
->   	bool "TEE-based trusted keys"
->   	depends on TEE >= TRUSTED_KEYS
->   	default y
-> +	select HAVE_TRUSTED_KEYS_DEBUG
->   	select HAVE_TRUSTED_KEYS
->   	help
->   	  Enable use of the Trusted Execution Environment (TEE) as trusted
-> @@ -33,6 +49,7 @@ config TRUSTED_KEYS_CAAM
->   	depends on CRYPTO_DEV_FSL_CAAM_JR >= TRUSTED_KEYS
->   	select CRYPTO_DEV_FSL_CAAM_BLOB_GEN
->   	default y
-> +	select HAVE_TRUSTED_KEYS_DEBUG
->   	select HAVE_TRUSTED_KEYS
->   	help
->   	  Enable use of NXP's Cryptographic Accelerator and Assurance Module
-> @@ -42,6 +59,7 @@ config TRUSTED_KEYS_DCP
->   	bool "DCP-based trusted keys"
->   	depends on CRYPTO_DEV_MXS_DCP >= TRUSTED_KEYS
->   	default y
-> +	select HAVE_TRUSTED_KEYS_DEBUG
->   	select HAVE_TRUSTED_KEYS
->   	help
->   	  Enable use of NXP's DCP (Data Co-Processor) as trusted key backend.
-> @@ -50,6 +68,7 @@ config TRUSTED_KEYS_PKWM
->   	bool "PKWM-based trusted keys"
->   	depends on PSERIES_PLPKS >= TRUSTED_KEYS
->   	default y
-> +	select HAVE_TRUSTED_KEYS_DEBUG
->   	select HAVE_TRUSTED_KEYS
->   	help
->   	  Enable use of IBM PowerVM Key Wrapping Module (PKWM) as a trusted key backend.
-> diff --git a/security/keys/trusted-keys/trusted_caam.c b/security/keys/trusted-keys/trusted_caam.c
-> index 601943ce0d60..015cddc6b53c 100644
-> --- a/security/keys/trusted-keys/trusted_caam.c
-> +++ b/security/keys/trusted-keys/trusted_caam.c
-> @@ -28,10 +28,10 @@ static const match_table_t key_tokens = {
->   	{opt_err, NULL}
->   };
->   
-> -#ifdef CAAM_DEBUG
-> +#ifdef CONFIG_TRUSTED_KEYS_DEBUG
->   static inline void dump_options(const struct caam_pkey_info *pkey_info)
->   {
-> -	pr_info("key encryption algo %d\n", pkey_info->key_enc_algo);
-> +	pr_debug("key encryption algo %d\n", pkey_info->key_enc_algo);
->   }
->   #else
->   static inline void dump_options(const struct caam_pkey_info *pkey_info)
-> diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-> index c865c97aa1b4..8fe889c7cdd1 100644
-> --- a/security/keys/trusted-keys/trusted_tpm1.c
-> +++ b/security/keys/trusted-keys/trusted_tpm1.c
-> @@ -46,38 +46,36 @@ enum {
->   	SRK_keytype = 4
->   };
->   
-> -#define TPM_DEBUG 0
-> -
-> -#if TPM_DEBUG
-> +#ifdef CONFIG_TRUSTED_KEYS_DEBUG
->   static inline void dump_options(struct trusted_key_options *o)
->   {
-> -	pr_info("sealing key type %d\n", o->keytype);
-> -	pr_info("sealing key handle %0X\n", o->keyhandle);
-> -	pr_info("pcrlock %d\n", o->pcrlock);
-> -	pr_info("pcrinfo %d\n", o->pcrinfo_len);
-> -	print_hex_dump(KERN_INFO, "pcrinfo ", DUMP_PREFIX_NONE,
-> -		       16, 1, o->pcrinfo, o->pcrinfo_len, 0);
-> +	pr_debug("sealing key type %d\n", o->keytype);
-> +	pr_debug("sealing key handle %0X\n", o->keyhandle);
-> +	pr_debug("pcrlock %d\n", o->pcrlock);
-> +	pr_debug("pcrinfo %d\n", o->pcrinfo_len);
-> +	print_hex_dump_debug("pcrinfo ", DUMP_PREFIX_NONE,
-> +			     16, 1, o->pcrinfo, o->pcrinfo_len, 0);
->   }
->   
->   static inline void dump_sess(struct osapsess *s)
->   {
-> -	print_hex_dump(KERN_INFO, "trusted-key: handle ", DUMP_PREFIX_NONE,
-> -		       16, 1, &s->handle, 4, 0);
-> -	pr_info("secret:\n");
-> -	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
-> -		       16, 1, &s->secret, SHA1_DIGEST_SIZE, 0);
-> -	pr_info("trusted-key: enonce:\n");
-> -	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
-> -		       16, 1, &s->enonce, SHA1_DIGEST_SIZE, 0);
-> +	print_hex_dump_debug("trusted-key: handle ", DUMP_PREFIX_NONE,
-> +			     16, 1, &s->handle, 4, 0);
-> +	pr_debug("secret:\n");
-> +	print_hex_dump_debug("", DUMP_PREFIX_NONE,
-> +			     16, 1, &s->secret, SHA1_DIGEST_SIZE, 0);
-> +	pr_debug("trusted-key: enonce:\n");
-> +	print_hex_dump_debug("", DUMP_PREFIX_NONE,
-> +			     16, 1, &s->enonce, SHA1_DIGEST_SIZE, 0);
->   }
->   
->   static inline void dump_tpm_buf(unsigned char *buf)
->   {
->   	int len;
->   
-> -	pr_info("\ntpm buffer\n");
-> +	pr_debug("\ntpm buffer\n");
->   	len = LOAD32(buf, TPM_SIZE_OFFSET);
-> -	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE, 16, 1, buf, len, 0);
-> +	print_hex_dump_debug("", DUMP_PREFIX_NONE, 16, 1, buf, len, 0);
->   }
->   #else
->   static inline void dump_options(struct trusted_key_options *o)
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 0eea02ff04df..d759988fde45 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -323,12 +323,9 @@ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
+  */
+ extern spinlock_t ima_queue_lock;
+ 
+-struct ima_h_table {
+-	atomic_long_t len;	/* number of stored measurements in the list */
+-	atomic_long_t violations;
+-	struct hlist_head queue[IMA_MEASURE_HTABLE_SIZE];
+-};
+-extern struct ima_h_table ima_htable;
++extern atomic_long_t ima_num_entries;
++extern atomic_long_t ima_num_violations;
++extern struct hlist_head ima_htable[IMA_MEASURE_HTABLE_SIZE];
+ 
+ static inline unsigned int ima_hash_key(u8 *digest)
+ {
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index 0916f24f005f..122d127e108d 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -146,7 +146,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+ 	int result;
+ 
+ 	/* can overflow, only indicator */
+-	atomic_long_inc(&ima_htable.violations);
++	atomic_long_inc(&ima_num_violations);
+ 
+ 	result = ima_alloc_init_template(&event_data, &entry, NULL);
+ 	if (result < 0) {
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index ca4931a95098..aaa460d70ff7 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -38,8 +38,8 @@ __setup("ima_canonical_fmt", default_canonical_fmt_setup);
+ 
+ static int valid_policy = 1;
+ 
+-static ssize_t ima_show_htable_value(char __user *buf, size_t count,
+-				     loff_t *ppos, atomic_long_t *val)
++static ssize_t ima_show_counter(char __user *buf, size_t count, loff_t *ppos,
++				atomic_long_t *val)
+ {
+ 	char tmpbuf[32];	/* greater than largest 'long' string value */
+ 	ssize_t len;
+@@ -48,15 +48,14 @@ static ssize_t ima_show_htable_value(char __user *buf, size_t count,
+ 	return simple_read_from_buffer(buf, count, ppos, tmpbuf, len);
+ }
+ 
+-static ssize_t ima_show_htable_violations(struct file *filp,
+-					  char __user *buf,
+-					  size_t count, loff_t *ppos)
++static ssize_t ima_show_num_violations(struct file *filp, char __user *buf,
++				       size_t count, loff_t *ppos)
+ {
+-	return ima_show_htable_value(buf, count, ppos, &ima_htable.violations);
++	return ima_show_counter(buf, count, ppos, &ima_num_violations);
+ }
+ 
+-static const struct file_operations ima_htable_violations_ops = {
+-	.read = ima_show_htable_violations,
++static const struct file_operations ima_num_violations_ops = {
++	.read = ima_show_num_violations,
+ 	.llseek = generic_file_llseek,
+ };
+ 
+@@ -64,7 +63,7 @@ static ssize_t ima_show_measurements_count(struct file *filp,
+ 					   char __user *buf,
+ 					   size_t count, loff_t *ppos)
+ {
+-	return ima_show_htable_value(buf, count, ppos, &ima_htable.len);
++	return ima_show_counter(buf, count, ppos, &ima_num_entries);
+ 
+ }
+ 
+@@ -545,7 +544,7 @@ int __init ima_fs_init(void)
+ 	}
+ 
+ 	dentry = securityfs_create_file("violations", S_IRUSR | S_IRGRP,
+-				   ima_dir, NULL, &ima_htable_violations_ops);
++				   ima_dir, NULL, &ima_num_violations_ops);
+ 	if (IS_ERR(dentry)) {
+ 		ret = PTR_ERR(dentry);
+ 		goto out;
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 36a34c54de58..5801649fbbef 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -43,7 +43,7 @@ void ima_measure_kexec_event(const char *event_name)
+ 	int n;
+ 
+ 	buf_size = ima_get_binary_runtime_size();
+-	len = atomic_long_read(&ima_htable.len);
++	len = atomic_long_read(&ima_num_entries);
+ 
+ 	n = scnprintf(ima_kexec_event, IMA_KEXEC_EVENT_LEN,
+ 		      "kexec_segment_size=%lu;ima_binary_runtime_size=%lu;"
+diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+index 319522450854..1f6515f7d015 100644
+--- a/security/integrity/ima/ima_queue.c
++++ b/security/integrity/ima/ima_queue.c
+@@ -32,11 +32,14 @@ static unsigned long binary_runtime_size;
+ static unsigned long binary_runtime_size = ULONG_MAX;
+ #endif
+ 
++/* num of stored measurements in the list */
++atomic_long_t ima_num_entries = ATOMIC_LONG_INIT(0);
++/* num of violations in the list */
++atomic_long_t ima_num_violations = ATOMIC_LONG_INIT(0);
++
+ /* key: inode (before secure-hashing a file) */
+-struct ima_h_table ima_htable = {
+-	.len = ATOMIC_LONG_INIT(0),
+-	.violations = ATOMIC_LONG_INIT(0),
+-	.queue[0 ... IMA_MEASURE_HTABLE_SIZE - 1] = HLIST_HEAD_INIT
++struct hlist_head ima_htable[IMA_MEASURE_HTABLE_SIZE] = {
++	[0 ... IMA_MEASURE_HTABLE_SIZE - 1] = HLIST_HEAD_INIT
+ };
+ 
+ /* mutex protects atomicity of extending measurement list
+@@ -61,7 +64,7 @@ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
+ 
+ 	key = ima_hash_key(digest_value);
+ 	rcu_read_lock();
+-	hlist_for_each_entry_rcu(qe, &ima_htable.queue[key], hnext) {
++	hlist_for_each_entry_rcu(qe, &ima_htable[key], hnext) {
+ 		rc = memcmp(qe->entry->digests[ima_hash_algo_idx].digest,
+ 			    digest_value, hash_digest_size[ima_hash_algo]);
+ 		if ((rc == 0) && (qe->entry->pcr == pcr)) {
+@@ -113,10 +116,10 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
+ 	INIT_LIST_HEAD(&qe->later);
+ 	list_add_tail_rcu(&qe->later, &ima_measurements);
+ 
+-	atomic_long_inc(&ima_htable.len);
++	atomic_long_inc(&ima_num_entries);
+ 	if (update_htable) {
+ 		key = ima_hash_key(entry->digests[ima_hash_algo_idx].digest);
+-		hlist_add_head_rcu(&qe->hnext, &ima_htable.queue[key]);
++		hlist_add_head_rcu(&qe->hnext, &ima_htable[key]);
+ 	}
+ 
+ 	if (binary_runtime_size != ULONG_MAX) {
+-- 
+2.43.0
+
