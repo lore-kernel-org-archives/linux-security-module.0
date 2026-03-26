@@ -1,91 +1,89 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0ED37C0E7;
-	Thu, 26 Mar 2026 14:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85CDB1A6832;
+	Thu, 26 Mar 2026 14:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774534466; cv=none; b=ABLYtzznskeWUG2er2FNZ9IDYzdOMZ7jrzN1uFH104zF2Yji2FngW9XnlnN6j8Bywagsj5PetCCZnQuk+QQgqUiH3Tb+J1USgvd7HLKoRGo9oA6mIME/dLh/brIw5HTDGGqiMUPCRhW5q5hEINgB5Cn6c4y+XPasfEbel3RU6mw=
+	t=1774534984; cv=none; b=Cs5KT+97UDwhz+qpd4/qWEXlGkEPa6dv4lwyH22xk+FNbCTW9QC1qIMLxvF8TZhmth/0xHRMZdec9yVMwG1J61huXS3KV9yrfT0HnWVDMfkqyXxH8XloaYYcmcj2EAICeDfcvHBtU0ylmyFkhE2A5dl/IYlrbRipqerkJyzmDkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774534466; c=relaxed/simple;
-	bh=9/Mc8wqWTo8FPFWf+YyPCWyvxNDgMHkuBpBcOLX21aE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mv+mphfZOO/pf6e3TK9ER5LSRLE0FTEn3xOgNLreS8wgCUI8BiuqsmtnR2SlyBHET3ymkt6nFr9vE/xHedDlP57M6Z0xNhACSzmRzgNmm+WZ1kevDZC0YdsdUv0T79gWmE19m3L1XiVEKd0wEJJ8sRXnrRt2nz9SBe9FjMogVWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cU6Z0CDK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774534984; c=relaxed/simple;
+	bh=UUwqG2nwVJ/9dy22E7iEHnBXWe5FznRUomFJAXNLPPo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ut1J8tOKreSlVTnf3KuA9vu5jocRImpotvMTmLXFZvTyPGDv/ZWx5EXtZMZYDnO8Wz4au0PoAMhPdaOAFemFj0LIM+CLWO+GkMkYNMlrtJJQfzBZa/drnd7BadSFLBCfWgd8/sBOQ8UMEZY0BQEMg9CIo/y5Ns8S7oxcbPPALNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i+DLU0s2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cU6Z0CDK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F086EC116C6;
-	Thu, 26 Mar 2026 14:14:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i+DLU0s2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1779C4AF09;
+	Thu, 26 Mar 2026 14:23:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774534466;
-	bh=9/Mc8wqWTo8FPFWf+YyPCWyvxNDgMHkuBpBcOLX21aE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cU6Z0CDKLvPywdcWRaVckLWCGFMQ9BFlM0IEu+M554IZykD8OMttZxM4vFECn2de6
-	 ljdVm+SE1Y90FqE/VgCURofZNyRt9oI6AQy/20XN3PiiBzTgrHnRt3bU3BSdQXS8QZ
-	 oPKMegFXcX7QdSNJdkkklUOF6HVdAyxoVsaK6kt94bavqoexspxGFRrGuaKDXleUNA
-	 7GCmlhztB8Wkb+qSttaCbKQX+vWak9Qin5x5NJ+HINkXo/DHgCSKMV2r301dRSdvx/
-	 NU3VvJfrdunBQ9tV5NvKzAAALXy5VdZLNcaSLBJloG3/atVngBKzhRho/7YnFWZqJv
-	 5qFkISDTdKr+A==
-Date: Thu, 26 Mar 2026 15:14:21 +0100
+	s=k20201202; t=1774534984;
+	bh=UUwqG2nwVJ/9dy22E7iEHnBXWe5FznRUomFJAXNLPPo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=i+DLU0s2YpZezJ+mTi1Zrml2D+DUtLyo5Xia+3odzwyPFbfJzZgk8RoZ6LaK5ZBNk
+	 Tm1dOvqCuzFUq9AGgAhGua8iwmsJurw36fVVfCyqJikPmrkTsjmz4l5+gejnNPplDB
+	 aJUTt0KCnlOL+mOuAQn4xW4Y12sNRM1AyRoAoFE1/F9OZkGg4To7Wpob3zSL4C2uWR
+	 sdLk/lD4qTxWZcp2t4qLis/5zmE09gH8X0XqYq8VUyzrXialQp23UvA5aTABf2Ditn
+	 oIfABmkghI/Mh3mozSU3FLndlcjlzQ0F4Bq1aZvI66kQ30831bFtiMXjPCaD1IN/0I
+	 kC1MzyfeZkC/w==
 From: Christian Brauner <brauner@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-erofs@lists.ozlabs.org, 
-	Amir Goldstein <amir73il@gmail.com>, Gao Xiang <xiang@kernel.org>
-Subject: Re: [RFC PATCH v2 1/2] lsm: add backing_file LSM hooks
-Message-ID: <20260326-wildwasser-notorisch-7271180258ef@brauner>
-References: <20260323042510.3331778-4-paul@paul-moore.com>
- <20260323042510.3331778-5-paul@paul-moore.com>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Justin Suess <utilityemal77@gmail.com>,
+	Lennart Poettering <lennart@poettering.net>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
+	Shervin Oloumi <enlightened@google.com>,
+	Tingmao Wang <m@maowtm.org>,
+	kernel-team@cloudflare.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Paul Moore <paul@paul-moore.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>
+Subject: Re: (subset) [RFC PATCH v1 03/11] nsproxy: Add FOR_EACH_NS_TYPE() X-macro and CLONE_NS_ALL
+Date: Thu, 26 Mar 2026 15:22:50 +0100
+Message-ID: <20260326-sandplatz-peitschen-d802beb8275b@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260312100444.2609563-4-mic@digikod.net>
+References: <20260312100444.2609563-4-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260323042510.3331778-5-paul@paul-moore.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1259; i=brauner@kernel.org; h=from:subject:message-id; bh=UUwqG2nwVJ/9dy22E7iEHnBXWe5FznRUomFJAXNLPPo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQedXRcLl7eL7QicIlt3m4ftpcnmS1+BoWfiFC6fcjyq 4CdbufcjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIkc/cvI0D61JEj4rpVUqYPL 1a7iWdXtclt9lc0mTTG9uddT9nhKJMM/S83TR5obdiuqiqky9B/sKb1r0hB/Nk3mUPQHZl7Bpbs 5AQ==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 23, 2026 at 12:24:18AM -0400, Paul Moore wrote:
-> Stacked filesystems such as overlayfs do not currently provide the
-> necessary mechanisms for LSMs to properly enforce access controls on the
-> mmap() and mprotect() operations.  In order to resolve this gap, a LSM
-> security blob is being added to the backing_file struct and the following
-> new LSM hooks are being created:
+On Thu, 12 Mar 2026 11:04:36 +0100, Mickaël Salaün wrote:
+> Introduce the FOR_EACH_NS_TYPE(X) macro as the single source of truth
+> for the set of (struct type, CLONE_NEW* flag) pairs that define Linux
+> namespace types.
 > 
->  security_backing_file_alloc()
->  security_backing_file_free()
->  security_mmap_backing_file()
+> Currently, the list of CLONE_NEW* flags is duplicated inline in
+> multiple call sites and would need another copy in each new consumer.
+> This makes it easy to miss one when a new namespace type is added.
 > 
-> The first two hooks are to manage the lifecycle of the LSM security blob
-> in the backing_file struct, while the third provides a new mmap() access
-> control point for the underlying backing file.  It is also expected that
-> LSMs will likely want to update their security_file_mprotect() callback
-> to address issues with their mprotect() controls, but that does not
-> require a change to the security_file_mprotect() LSM hook.
-> 
-> There are a two other small changes to support these new LSM hooks.  We
-> pass the user file associated with a backing file down to
-> alloc_empty_backing_file() so it can be included in the
-> security_backing_file_alloc() hook, and we constify the file struct field
-> in the LSM common_audit_data struct to better support LSMs that need to
-> pass a const file struct pointer into the common LSM audit code.
-> 
-> Thanks to Arnd Bergmann for identifying the missing EXPORT_SYMBOL_GPL()
-> and supplying a fixup.
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> ---
->  fs/backing-file.c             |  18 ++++--
->  fs/erofs/ishare.c             |  10 +++-
->  fs/file_table.c               |  21 ++++++-
->  fs/fuse/passthrough.c         |   2 +-
->  fs/internal.h                 |   3 +-
->  fs/overlayfs/dir.c            |   2 +-
->  fs/overlayfs/file.c           |   2 +-
->  include/linux/backing-file.h  |   4 +-
->  include/linux/fs.h            |   1 +
+> [...]
 
-Thanks, this looks much better.
-Acked-by: Christian Brauner <brauner@kernel.org>
+Applied to the namespaces-7.1.misc branch of the vfs/vfs.git tree.
+Patches in the namespaces-7.1.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: namespaces-7.1.misc
+
+[03/11] nsproxy: Add FOR_EACH_NS_TYPE() X-macro and CLONE_NS_ALL
+        https://git.kernel.org/vfs/vfs/c/935a04923ad2
