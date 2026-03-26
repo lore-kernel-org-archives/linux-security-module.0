@@ -1,30 +1,30 @@
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371FE3B2FE7;
-	Thu, 26 Mar 2026 06:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3267C3B19D2;
+	Thu, 26 Mar 2026 06:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774505232; cv=none; b=Q9GQRUk/KA2KPviSr03iCkORzNEZAv/TpxnRuu3NsuUsIEkuQEQUw7gbS9tiSpQ0Kd2apfqGmTmOZ2nH546SmpZsf4JyEFbuDS9AmLYmjJ5ZTahRAWZ/bqzm0YL6gLsve24Kbcgpx8Zu2CbNUzwNEee4VGfTmbr+WjuuPpx+QrM=
+	t=1774505234; cv=none; b=NN//awfKbWBrFifzAtE2ft8pDhIecoq9FJq4B5cBagLPxTIGPdfFlxpaXbAHNOicFSjjSQWk03i09XlyOy2FjYTQZDyz85PHpYv7vF19PcoDFypvVP63g6Vurs+56f3FYEyt/RVL4h6Qq6Y/u56SexgP1je9SXomoclvbCnf2cE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774505232; c=relaxed/simple;
-	bh=AzWlhO19VpuGg5nZz3+D71Jy4Fjph/CriKJF5JAlOOU=;
+	s=arc-20240116; t=1774505234; c=relaxed/simple;
+	bh=Ci9UXCEjmDeMF7CgvSnZGSRCSs8Gb8m2vBIvIOyE5Fg=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BeK8IJagcrEKaT+82OFFettGMLQ1oYe2y8vUwRVHsnsLzPr+gIQghZrL7ZgVb+iBuHwr1vasMH6gNY2OcaZj+4AWp25Sk499l3pvk62OSfuI83+Cc0E3EaEtBp+/A1ntK1UncyELjB2W9IAlh//vmqKQ0atlBTqtFcmmwXtE/qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=MD6LEyFQ; arc=none smtp.client-ip=13.77.154.182
+	 MIME-Version; b=Y7AKz55onTwasilBZP9d4lgF8b34iNQX8RW5JDyC1yqC6Rvyr44a1oNlVvN54OBPGFfGPgSEt/8/auM+Pjt506uz0XJYOjOyym2lyRCdRL7Ehq8Cta5bcauSFphQwKMHh87GCUDY6pWeTuUl9rnqjU7o9zlcs8A9Ahbz3+o9lkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=IiiotFz7; arc=none smtp.client-ip=13.77.154.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MD6LEyFQ"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="IiiotFz7"
 Received: from narnia.corp.microsoft.com (unknown [40.78.13.173])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 8F90420B712B;
-	Wed, 25 Mar 2026 23:07:09 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8F90420B712B
+	by linux.microsoft.com (Postfix) with ESMTPSA id 7DEF620B712D;
+	Wed, 25 Mar 2026 23:07:11 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7DEF620B712D
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1774505230;
-	bh=EVhnJ7wpgbA7sp8Fr92qnAkJ63wmwYjrDe6dMMlvu1U=;
+	s=default; t=1774505232;
+	bh=b5RW/euS7AWDwSHps0EFFYf3Ol5URATxRtieBDmcepQ=;
 	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=MD6LEyFQblq0fzV65XhlaaZdUtGGu3Efh/kWsc+xcchnwyP7XXPPclYm8STZr6gkZ
-	 XmWdepsyV6wFvDlcMBHE2ybtEQIvtAz3628pxOqPJCSoX9QR+yuG7/FFV1yGXgtMU7
-	 2+KAKcmosPShbMGfkE9635jWFg4YRBlsVxZPuq2I=
+	b=IiiotFz7SkQKMw6WrD0+fACbapHM9wER5jGTR2XP45t6HNDnJ1bqUt1lTOpFDtZmT
+	 WlNwWAPoAi0au6Q/7ynuFNCneTIgx2y5hpeSEqSeImPCQyvvfACJDIMMeU1CV5q0w3
+	 5esPYHRimGoDj1Tb4u21BXWirzFb1MbK1ydTBtYQ=
 From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
 	Jonathan Corbet <corbet@lwn.net>,
@@ -44,9 +44,9 @@ To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	bpf@vger.kernel.org
-Subject: [PATCH v3 3/9] crypto: pkcs7: add tests for pkcs7_get_authattr
-Date: Wed, 25 Mar 2026 23:06:32 -0700
-Message-ID: <20260326060655.2550595-4-bboscaccy@linux.microsoft.com>
+Subject: [PATCH v3 4/9] lsm: framework for BPF integrity verification
+Date: Wed, 25 Mar 2026 23:06:33 -0700
+Message-ID: <20260326060655.2550595-5-bboscaccy@linux.microsoft.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260326060655.2550595-1-bboscaccy@linux.microsoft.com>
 References: <20260326060655.2550595-1-bboscaccy@linux.microsoft.com>
@@ -58,89 +58,229 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
+From: Paul Moore <paul@paul-moore.com>
 
-Add example code to the test module pkcs7_key_type.c that verifies a
-message and then pulls out a known authenticated attribute.
+Add a new LSM hook and two new LSM hook callbacks to support LSMs that
+perform integrity verification, e.g. digital signature verification,
+of BPF programs.
 
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+While the BPF subsystem does implement a signature verification scheme,
+it does not satisfy a number of existing requirements, adding support
+for BPF program integrity verification to the LSM framework allows
+administrators to select additional integrity verification mechanisms
+to meet these needs while also providing a mechanism for future
+expansion.  Additional on why this is necessary can be found at the
+lore archive link below:
+
+https://lore.kernel.org/linux-security-module/CAHC9VhTQ_DR=ANzoDBjcCtrimV7XcCZVUsANPt=TjcvM4d-vjg@mail.gmail.com/
+
+The LSM-based BPF integrity verification mechanism works within the
+existing security_bpf_prog_load() hook called by the BPF subsystem.
+It adds an additional dedicated integrity callback and a new LSM
+hook/callback to be called from within LSMs implementing integrity
+verification.
+
+The first new callback, bpf_prog_load_integrity(), located within the
+security_bpf_prog_load() hook, is necessary to ensure that the integrity
+verification callbacks are executed before any of the existing LSMs
+are executed via the bpf_prog_load() callback.  Reusing the existing
+bpf_prog_load() callback for integrity verification could result in LSMs
+not having access to the integrity verification results when asked to
+authorize the BPF program load in the bpf_prog_load() callback.
+
+The new LSM hook, security_bpf_prog_load_post_integrity(), is intended
+to be called from within LSMs performing BPF program integrity
+verification.  It is used to report the verdict of the integrity
+verification to other LSMs enforcing access control policy on BPF
+program loads.  LSMs enforcing such access controls should register a
+bpf_prog_load_post_integrity() callback to receive integrity verdicts.
+
+More information on these new callbacks and hook can be found in the
+code comments in this patch.
+
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Acked-by: David Howells <dhowells@redhat.com>
 ---
- crypto/asymmetric_keys/pkcs7_key_type.c | 44 ++++++++++++++++++++++++-
- 1 file changed, 43 insertions(+), 1 deletion(-)
+ include/linux/lsm_hook_defs.h |  5 +++
+ include/linux/security.h      | 25 ++++++++++++
+ security/security.c           | 75 +++++++++++++++++++++++++++++++++--
+ 3 files changed, 102 insertions(+), 3 deletions(-)
 
-diff --git a/crypto/asymmetric_keys/pkcs7_key_type.c b/crypto/asymmetric_keys/pkcs7_key_type.c
-index b930d3bbf1af5..e0b1ce0202f6d 100644
---- a/crypto/asymmetric_keys/pkcs7_key_type.c
-+++ b/crypto/asymmetric_keys/pkcs7_key_type.c
-@@ -12,6 +12,7 @@
- #include <linux/verification.h>
- #include <linux/key-type.h>
- #include <keys/user-type.h>
-+#include <crypto/pkcs7.h>
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 8c42b4bde09c0..4971d3c36d5b4 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -434,6 +434,11 @@ LSM_HOOK(int, 0, bpf_prog, struct bpf_prog *prog)
+ LSM_HOOK(int, 0, bpf_map_create, struct bpf_map *map, union bpf_attr *attr,
+ 	 struct bpf_token *token, bool kernel)
+ LSM_HOOK(void, LSM_RET_VOID, bpf_map_free, struct bpf_map *map)
++LSM_HOOK(int, 0, bpf_prog_load_post_integrity, struct bpf_prog *prog,
++	 union bpf_attr *attr, struct bpf_token *token, bool kernel,
++	 const struct lsm_id *lsmid, enum lsm_integrity_verdict verdict)
++LSM_HOOK(int, 0, bpf_prog_load_integrity, struct bpf_prog *prog,
++	 union bpf_attr *attr, struct bpf_token *token, bool kernel)
+ LSM_HOOK(int, 0, bpf_prog_load, struct bpf_prog *prog, union bpf_attr *attr,
+ 	 struct bpf_token *token, bool kernel)
+ LSM_HOOK(void, LSM_RET_VOID, bpf_prog_free, struct bpf_prog *prog)
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 83a646d72f6f8..298a43b7744a4 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -67,6 +67,7 @@ enum fs_value_type;
+ struct watch;
+ struct watch_notification;
+ struct lsm_ctx;
++struct lsm_id;
  
- MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("PKCS#7 testing key type");
-@@ -51,16 +52,57 @@ static int pkcs7_view_content(void *ctx, const void *data, size_t len,
- static int pkcs7_preparse(struct key_preparsed_payload *prep)
- {
- 	enum key_being_used_for usage = pkcs7_usage;
-+	int ret;
-+	struct pkcs7_message *pkcs7;
-+	const void *data;
-+	size_t len;
+ /* Default (no) options for the capable function */
+ #define CAP_OPT_NONE 0x0
+@@ -100,6 +101,14 @@ enum lsm_integrity_type {
+ 	LSM_INT_FSVERITY_BUILTINSIG_VALID,
+ };
  
- 	if (usage >= NR__KEY_BEING_USED_FOR) {
- 		pr_err("Invalid usage type %d\n", usage);
- 		return -EINVAL;
- 	}
++enum lsm_integrity_verdict {
++	LSM_INT_VERDICT_NONE = 0,
++	LSM_INT_VERDICT_OK,
++	LSM_INT_VERDICT_UNSIGNED,
++	LSM_INT_VERDICT_PARTIALSIG,
++	LSM_INT_VERDICT_BADSIG,
++};
++
+ /*
+  * These are reasons that can be passed to the security_locked_down()
+  * LSM hook. Lockdown reasons that protect kernel integrity (ie, the
+@@ -2269,6 +2278,12 @@ extern int security_bpf_prog(struct bpf_prog *prog);
+ extern int security_bpf_map_create(struct bpf_map *map, union bpf_attr *attr,
+ 				   struct bpf_token *token, bool kernel);
+ extern void security_bpf_map_free(struct bpf_map *map);
++extern int security_bpf_prog_load_post_integrity(struct bpf_prog *prog,
++					union bpf_attr *attr,
++					struct bpf_token *token,
++					bool kernel,
++					const struct lsm_id *lsmid,
++					enum lsm_integrity_verdict verdict);
+ extern int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
+ 				  struct bpf_token *token, bool kernel);
+ extern void security_bpf_prog_free(struct bpf_prog *prog);
+@@ -2303,6 +2318,16 @@ static inline int security_bpf_map_create(struct bpf_map *map, union bpf_attr *a
+ static inline void security_bpf_map_free(struct bpf_map *map)
+ { }
  
--	return verify_pkcs7_signature(NULL, 0,
-+	ret = verify_pkcs7_signature(NULL, 0,
- 				      prep->data, prep->datalen,
- 				      VERIFY_USE_SECONDARY_KEYRING, usage,
- 				      pkcs7_view_content, prep);
-+	if (ret)
-+		return ret;
-+
-+	pkcs7 = pkcs7_parse_message(prep->data, prep->datalen);
-+	if (IS_ERR(pkcs7)) {
-+		pr_err("pkcs7 parse error\n");
-+		return PTR_ERR(pkcs7);
-+	}
-+
-+	/*
-+	 * the parsed message has no trusted signer, so nothing should
-+	 * be returned here
-+	 */
-+	ret = pkcs7_get_authattr(pkcs7, OID_messageDigest, &data, &len);
-+	if (ret == 0) {
-+		pr_err("OID returned when no trust in signer\n");
-+		goto out;
-+	}
-+	/* add trust and check again */
-+	ret = verify_pkcs7_message_sig(NULL, 0, pkcs7,
-+				       VERIFY_USE_SECONDARY_KEYRING, usage,
-+				       NULL, NULL);
-+	if (ret) {
-+		pr_err("verify_pkcs7_message_sig failed!!\n");
-+		goto out;
-+	}
-+	/* now we should find the OID */
-+	ret = pkcs7_get_authattr(pkcs7, OID_messageDigest, &data, &len);
-+	if (ret) {
-+		pr_err("Failed to get message digest\n");
-+		goto out;
-+	}
-+	pr_info("Correctly Got message hash, size=%zu\n", len);
-+
-+ out:
-+	pkcs7_free_message(pkcs7);
++static inline int security_bpf_prog_load_post_integrity(struct bpf_prog *prog,
++					  union bpf_attr *attr,
++					  struct bpf_token *token,
++					  bool kernel,
++					  const struct lsm_id *lsmid,
++					  enum lsm_integrity_verdict verdict)
++{
 +	return 0;
++}
++
+ static inline int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
+ 					 struct bpf_token *token, bool kernel)
+ {
+diff --git a/security/security.c b/security/security.c
+index 67af9228c4e94..2d8279bd4aae2 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -5232,6 +5232,50 @@ int security_bpf_map_create(struct bpf_map *map, union bpf_attr *attr,
+ 	return rc;
  }
  
- /*
++/**
++ * security_bpf_prog_load_post_integrity() - Check if the BPF prog is allowed
++ * @prog: BPF program object
++ * @attr: BPF syscall attributes used to create BPF program
++ * @token: BPF token used to grant user access to BPF subsystem
++ * @kernel: whether or not call originated from kernel
++ * @lsmid: LSM ID of the LSM providing @verdict
++ * @verdict: result of the integrity verification
++ *
++ * See the comment block for the security_bpf_prog_load() LSM hook.
++ *
++ * This LSM hook is intended to be called from within the
++ * bpf_prog_load_integrity() callback that is part of the
++ * security_bpf_prog_load() hook; kernel subsystems outside the scope of the
++ * LSM framework should not call this hook directly.
++ *
++ * If the LSM calling into this hook receives a non-zero error code, it should
++ * return the same error code back to its caller.  If this hook returns a zero,
++ * it does not necessarily mean that all of the enabled LSMs have authorized
++ * the BPF program load, as there may be other LSMs implementing BPF integrity
++ * checks which have yet to execute.  However, if a zero is returned, the LSM
++ * calling into this hook should continue and return zero back to its caller.
++ *
++ * LSMs which implement the bpf_prog_load_post_integrity() callback and
++ * determine that a particular BPF program load is not authorized may choose to
++ * either return an error code for immediate rejection, or store their decision
++ * in their own LSM state attached to @prog, later returning an error code in
++ * the bpf_prog_load() callback.  An immediate error code return is in keeping
++ * with the "fail fast" practice, but waiting until the bpf_prog_load()
++ * callback allows the LSM to consider multiple different integrity verdicts.
++ *
++ * Return: Returns 0 on success, error on failure.
++ */
++int security_bpf_prog_load_post_integrity(struct bpf_prog *prog,
++					  union bpf_attr *attr,
++					  struct bpf_token *token,
++					  bool kernel,
++					  const struct lsm_id *lsmid,
++					  enum lsm_integrity_verdict verdict)
++{
++	return call_int_hook(bpf_prog_load_post_integrity, prog, attr, token,
++			     kernel, lsmid, verdict);
++}
++
+ /**
+  * security_bpf_prog_load() - Check if loading of BPF program is allowed
+  * @prog: BPF program object
+@@ -5240,8 +5284,24 @@ int security_bpf_map_create(struct bpf_map *map, union bpf_attr *attr,
+  * @kernel: whether or not call originated from kernel
+  *
+  * Perform an access control check when the kernel loads a BPF program and
+- * allocates associated BPF program object. This hook is also responsible for
+- * allocating any required LSM state for the BPF program.
++ * allocates the associated BPF program object. This hook is also responsible
++ * for allocating any required LSM state for the BPF program.
++ *
++ * This hook calls two LSM callbacks: bpf_prog_load_integrity() and
++ * bpf_prog_load().  The bpf_prog_load_integrity() callback is for those LSMs
++ * that wish to implement integrity verifications of BPF programs, e.g.
++ * signature verification, while the bpf_prog_load() callback is for general
++ * authorization of the BPF program load.  Performing both verification and
++ * authorization in a single callback, with arbitrary LSM ordering, would be
++ * a challenge.
++ *
++ * LSMs which implement the bpf_prog_load_integrity() callback should call into
++ * the security_bpf_prog_load_post_integrity() hook with their integrity
++ * verdict.  LSMs which implement BPF program integrity policy can register a
++ * callback for the security_bpf_prog_load_post_integrity() hook and
++ * either update their own internal state based on the verdict, or immediately
++ * reject the BPF program load with an error code.  See the comment block for
++ * security_bpf_prog_load_post_integrity() for more information.
+  *
+  * Return: Returns 0 on success, error on failure.
+  */
+@@ -5254,9 +5314,18 @@ int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
+ 	if (unlikely(rc))
+ 		return rc;
+ 
++	rc = call_int_hook(bpf_prog_load_integrity, prog, attr, token, kernel);
++	if (unlikely(rc))
++		goto err;
++
+ 	rc = call_int_hook(bpf_prog_load, prog, attr, token, kernel);
+ 	if (unlikely(rc))
+-		security_bpf_prog_free(prog);
++		goto err;
++
++	return rc;
++
++err:
++	security_bpf_prog_free(prog);
+ 	return rc;
+ }
+ 
 -- 
 2.53.0
 
