@@ -1,30 +1,30 @@
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4B93B27CC;
-	Thu, 26 Mar 2026 06:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93CE93B27E1;
+	Thu, 26 Mar 2026 06:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774505236; cv=none; b=MVreVBlCqQjm/aZhRSc9hBNqwhf/OKGuhnGc7LhIOkGo2bGNYBaaTH696MZtguus/F4ugBi/T/ybtkrmqrefvTOOnWVIGifTlTdhl9PmiezuWNLpilItU13yssRh/GZ20BOiuwS871zBDmvogxE0PTzTPcTRzrUltEPSgnoJDa8=
+	t=1774505249; cv=none; b=ci1A3tqt8dGdEf7QEzIgQH5MTI09aHPtNkkOeGkb5KO+HRwKW2nzH6/tRt+wnvCwIVHjCQdcUnK40yX3Udfb/cQYkjFsDEYTnOdqvJxyGjzTcz13lFDxCXTHMv1+/MLrRbUn1A2sO7wg3fPZW/9Y5bmE1htTh3PVevw6WXlu9M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774505236; c=relaxed/simple;
-	bh=lYY7mlnz/I5tTigKcZU1CGQmpWi+foMTdQ91LE8eJUY=;
+	s=arc-20240116; t=1774505249; c=relaxed/simple;
+	bh=mDxKsNyMAotOJJIKSMrNDvzzvZl8s4qPKRRUz+n/+ok=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bs8lYTbT2N1wHA+80QD8rVO+rROuOScxZ+pD5oKGbFUGG5ZxSIEuvsUBooIoSyCjAoiEKVhNkhE8hyncVOy4UixiFNo3CcEA8Gsz6ljwY3K6a920a7/0rqwLqDvQqcRWFQ7kAozfMb2nLm5SEZp2GKylxZU/2U+4PMJK++/UQnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=tMWln0cW; arc=none smtp.client-ip=13.77.154.182
+	 MIME-Version:Content-Type; b=IN7shK54MGqW0cBJamc+DQG5wth7E9AbWRjQJDlvP1uXcg/JlCn12UxKBZNCjexZ5Pb2ZAh1awm1Z6gj4oxdUlrB7ZzgXZ7xQIy0BY+lWpXzL1UOjP27WIPGt+tTVx+j5zxBPHlOiVZTQ1m02hwNMrIBBvq4QqnGi6DJlr/2gJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=AjpfgAWc; arc=none smtp.client-ip=13.77.154.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="tMWln0cW"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="AjpfgAWc"
 Received: from narnia.corp.microsoft.com (unknown [40.78.13.173])
-	by linux.microsoft.com (Postfix) with ESMTPSA id A821F20B7135;
-	Wed, 25 Mar 2026 23:07:13 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A821F20B7135
+	by linux.microsoft.com (Postfix) with ESMTPSA id 8C59420B7138;
+	Wed, 25 Mar 2026 23:07:18 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8C59420B7138
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1774505235;
-	bh=h+ZXPkrSgGzxoBzPwxxF4EFDe8cfsVIUv4H7fHFxIBY=;
+	s=default; t=1774505239;
+	bh=2HI3OYhIEggkRn2Upj3FDZyJzaB1+n+BWXPNK10o8U8=;
 	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=tMWln0cWZL+Zue3zqlV7P+TxPY5E//icK6I25ng2m0X04F5jHqU7HVn2QDvUPIJak
-	 iuCyaBJr8vW00JbUdRYt+gWafbJHlaLnGSGEKQlWYInyguW8OvSRkJz7sfBmrZS7W/
-	 rl16rmTFLG0NwXJs0a+A4TY2sqU8WYhsnk5uv9DQ=
+	b=AjpfgAWcRGRPNaSjDCzEI6fIfwtBRcZl7YyY3vIwQKVCm3qgj54eRVmZ36xW2uFWD
+	 vobP6u9jDlFfflzbOvi79AeRIibH6/573cUr1ZTATh86e6pUw4499TySwf9YPXCLH7
+	 xQf45EuYUJmV+0WNiIY9o+phmR0LLz61ebCi/EnI=
 From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
 	Jonathan Corbet <corbet@lwn.net>,
@@ -44,9 +44,9 @@ To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	bpf@vger.kernel.org
-Subject: [PATCH v3 5/9] lsm: security: Add additional enum values for bpf integrity checks
-Date: Wed, 25 Mar 2026 23:06:34 -0700
-Message-ID: <20260326060655.2550595-6-bboscaccy@linux.microsoft.com>
+Subject: [PATCH v3 7/9] hornet: Introduce gen_sig
+Date: Wed, 25 Mar 2026 23:06:36 -0700
+Message-ID: <20260326060655.2550595-8-bboscaccy@linux.microsoft.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260326060655.2550595-1-bboscaccy@linux.microsoft.com>
 References: <20260326060655.2550595-1-bboscaccy@linux.microsoft.com>
@@ -56,34 +56,482 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-First add a generic LSM_INT_VERDICT_FAULT value to indicate a system
-failure during checking. Second, add a LSM_INT_VERDICT_UNKNOWNKEY to
-signal that the payload was signed with a key other than one that
-exists in the secondary keyring. And finally add an
-LSM_INT_VERDICT_UNEXPECTED enum value to indicate that a unexpected
-hash value was encountered at some stage of verification.
+This introduces the gen_sig tool. It creates a pkcs#7 signature of a
+data payload. Additionally it appends a signed attribute containing a
+set of hashes.
+
+Typical usage is to provide a payload containing the light skeleton
+ebpf syscall program binary and it's associated maps, which can be
+extracted from the auto-generated skeleton header.
 
 Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 ---
- include/linux/security.h | 3 +++
- 1 file changed, 3 insertions(+)
+ scripts/Makefile            |   1 +
+ scripts/hornet/Makefile     |   5 +
+ scripts/hornet/gen_sig.c    | 392 ++++++++++++++++++++++++++++++++++++
+ scripts/hornet/write-sig.sh |  27 +++
+ 4 files changed, 425 insertions(+)
+ create mode 100644 scripts/hornet/Makefile
+ create mode 100644 scripts/hornet/gen_sig.c
+ create mode 100755 scripts/hornet/write-sig.sh
 
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 298a43b7744a4..84c82c41b48c4 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -106,6 +106,9 @@ enum lsm_integrity_verdict {
- 	LSM_INT_VERDICT_OK,
- 	LSM_INT_VERDICT_UNSIGNED,
- 	LSM_INT_VERDICT_PARTIALSIG,
-+	LSM_INT_VERDICT_UNKNOWNKEY,
-+	LSM_INT_VERDICT_UNEXPECTED,
-+	LSM_INT_VERDICT_FAULT,
- 	LSM_INT_VERDICT_BADSIG,
- };
+diff --git a/scripts/Makefile b/scripts/Makefile
+index 0941e5ce7b575..dea8ab91bbe4e 100644
+--- a/scripts/Makefile
++++ b/scripts/Makefile
+@@ -63,6 +63,7 @@ subdir-$(CONFIG_GENKSYMS) += genksyms
+ subdir-$(CONFIG_GENDWARFKSYMS) += gendwarfksyms
+ subdir-$(CONFIG_SECURITY_SELINUX) += selinux
+ subdir-$(CONFIG_SECURITY_IPE) += ipe
++subdir-$(CONFIG_SECURITY_HORNET) += hornet
  
+ # Let clean descend into subdirs
+ subdir-	+= basic dtc gdb kconfig mod
+diff --git a/scripts/hornet/Makefile b/scripts/hornet/Makefile
+new file mode 100644
+index 0000000000000..3ee41e5e9a9ff
+--- /dev/null
++++ b/scripts/hornet/Makefile
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0
++hostprogs-always-y	:= gen_sig
++
++HOSTCFLAGS_gen_sig.o = $(shell $(HOSTPKG_CONFIG) --cflags libcrypto 2> /dev/null)
++HOSTLDLIBS_gen_sig = $(shell $(HOSTPKG_CONFIG) --libs libcrypto 2> /dev/null || echo -lcrypto)
+diff --git a/scripts/hornet/gen_sig.c b/scripts/hornet/gen_sig.c
+new file mode 100644
+index 0000000000000..f966516ebc99b
+--- /dev/null
++++ b/scripts/hornet/gen_sig.c
+@@ -0,0 +1,392 @@
++/* SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
++ *
++ * Generate a signature for an eBPF program along with appending
++ * map hashes as signed attributes
++ *
++ * Copyright © 2025      Microsoft Corporation.
++ *
++ * Authors: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public License
++ * as published by the Free Software Foundation; either version 2.1
++ * of the licence, or (at your option) any later version.
++ */
++
++#define _GNU_SOURCE
++#include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
++#include <errno.h>
++#include <stdbool.h>
++#include <stdint.h>
++#include <err.h>
++#include <getopt.h>
++
++#include <openssl/cms.h>
++#include <openssl/err.h>
++#include <openssl/evp.h>
++#include <openssl/pkcs7.h>
++#include <openssl/x509.h>
++#include <openssl/pem.h>
++#include <openssl/objects.h>
++#include <openssl/asn1.h>
++#include <openssl/asn1t.h>
++#include <openssl/opensslv.h>
++#include <openssl/bio.h>
++#include <openssl/stack.h>
++
++#if OPENSSL_VERSION_MAJOR >= 3
++# define USE_PKCS11_PROVIDER
++# include <openssl/provider.h>
++# include <openssl/store.h>
++#else
++# if !defined(OPENSSL_NO_ENGINE) && !defined(OPENSSL_NO_DEPRECATED_3_0)
++#  define USE_PKCS11_ENGINE
++#  include <openssl/engine.h>
++# endif
++#endif
++#include "../ssl-common.h"
++
++#define SHA256_LEN 32
++#define BUF_SIZE   (1 << 15) // 32 KiB
++#define MAX_HASHES 64
++
++struct hash_spec {
++	char *file;
++	int index;
++};
++
++typedef struct {
++	ASN1_INTEGER *index;
++	ASN1_OCTET_STRING *hash;
++
++} HORNET_MAP;
++
++DECLARE_ASN1_FUNCTIONS(HORNET_MAP)
++ASN1_SEQUENCE(HORNET_MAP) = {
++	ASN1_SIMPLE(HORNET_MAP, index, ASN1_INTEGER),
++	ASN1_SIMPLE(HORNET_MAP, hash, ASN1_OCTET_STRING)
++} ASN1_SEQUENCE_END(HORNET_MAP);
++
++IMPLEMENT_ASN1_FUNCTIONS(HORNET_MAP)
++
++DEFINE_STACK_OF(HORNET_MAP)
++
++typedef struct {
++	STACK_OF(HORNET_MAP) * maps;
++} MAP_SET;
++
++DECLARE_ASN1_FUNCTIONS(MAP_SET)
++ASN1_SEQUENCE(MAP_SET) = {
++	ASN1_SET_OF(MAP_SET, maps, HORNET_MAP)
++} ASN1_SEQUENCE_END(MAP_SET);
++
++IMPLEMENT_ASN1_FUNCTIONS(MAP_SET)
++
++#define DIE(...) do { fprintf(stderr, __VA_ARGS__); fputc('\n', stderr); \
++		exit(EXIT_FAILURE); } while (0)
++
++static BIO *bio_open_wr(const char *path)
++{
++	BIO *b = BIO_new_file(path, "wb");
++
++	if (!b) {
++		perror(path);
++		ERR_print_errors_fp(stderr);
++		exit(EXIT_FAILURE);
++	}
++	return b;
++}
++
++static void usage(const char *prog)
++{
++	fprintf(stderr,
++		"Usage:\n"
++		"  %s --data content.bin --cert signer.crt --key signer.key [-pass pass]\n"
++		"     --out newsig.p7b \n"
++		"     --add FILE:index [--add FILE:index ...]\n",
++		prog);
++}
++
++static const char *key_pass;
++
++static int pem_pw_cb(char *buf, int len, int w, void *v)
++{
++	int pwlen;
++
++	if (!key_pass)
++		return -1;
++
++	pwlen = strlen(key_pass);
++	if (pwlen >= len)
++		return -1;
++
++	strcpy(buf, key_pass);
++
++	key_pass = NULL;
++
++	return pwlen;
++}
++
++static EVP_PKEY *read_private_key(const char *private_key_name)
++{
++	EVP_PKEY *private_key;
++	BIO *b;
++
++	b = BIO_new_file(private_key_name, "rb");
++	ERR(!b, "%s", private_key_name);
++	private_key = PEM_read_bio_PrivateKey(b, NULL, pem_pw_cb,
++					      NULL);
++	ERR(!private_key, "%s", private_key_name);
++	BIO_free(b);
++
++	return private_key;
++}
++
++static X509 *read_x509(const char *x509_name)
++{
++	unsigned char buf[2];
++	X509 *x509;
++	BIO *b;
++	int n;
++
++	b = BIO_new_file(x509_name, "rb");
++	ERR(!b, "%s", x509_name);
++
++	/* Look at the first two bytes of the file to determine the encoding */
++	n = BIO_read(b, buf, 2);
++	if (n != 2) {
++		if (BIO_should_retry(b)) {
++			fprintf(stderr, "%s: Read wanted retry\n", x509_name);
++			exit(1);
++		}
++		if (n >= 0) {
++			fprintf(stderr, "%s: Short read\n", x509_name);
++			exit(1);
++		}
++		ERR(1, "%s", x509_name);
++	}
++
++	ERR(BIO_reset(b) != 0, "%s", x509_name);
++
++	if (buf[0] == 0x30 && buf[1] >= 0x81 && buf[1] <= 0x84)
++		/* Assume raw DER encoded X.509 */
++		x509 = d2i_X509_bio(b, NULL);
++	else
++		/* Assume PEM encoded X.509 */
++		x509 = PEM_read_bio_X509(b, NULL, NULL, NULL);
++
++	BIO_free(b);
++	ERR(!x509, "%s", x509_name);
++
++	return x509;
++}
++
++static int sha256(const char *path, unsigned char out[SHA256_LEN], unsigned int *out_len)
++{
++	FILE *f;
++	int rc;
++	EVP_MD_CTX *ctx;
++	unsigned char buf[BUF_SIZE];
++	size_t n;
++	unsigned int mdlen = 0;
++
++	if (!path || !out)
++		return -1;
++
++	f = fopen(path, "rb");
++	if (!f) {
++		perror("fopen");
++		return -2;
++	}
++
++	ERR_load_crypto_strings();
++
++	rc = -3;
++	ctx = EVP_MD_CTX_new();
++	if (!ctx) {
++		rc = -4;
++		goto done;
++	}
++
++#if OPENSSL_VERSION_NUMBER >= 0x30000000L
++	if (EVP_DigestInit_ex2(ctx, EVP_sha256(), NULL) != 1) {
++		rc = -5;
++		goto done;
++	}
++#else
++	if (EVP_DigestInit_ex(ctx, EVP_sha256(), NULL) != 1) {
++		rc = -5;
++		goto done;
++	}
++#endif
++	while ((n = fread(buf, 1, sizeof(buf), f)) > 0) {
++		if (EVP_DigestUpdate(ctx, buf, n) != 1) {
++			rc = -6;
++			goto done;
++		}
++	}
++	if (ferror(f)) {
++		rc = -7;
++		goto done;
++	}
++
++	if (EVP_DigestFinal_ex(ctx, out, &mdlen) != 1) {
++		rc = -8;
++		goto done;
++	}
++	if (mdlen != SHA256_LEN) {
++		rc = -9;
++		goto done;
++	}
++
++	if (out_len)
++		*out_len = mdlen;
++	rc = 0;
++
++done:
++	EVP_MD_CTX_free(ctx);
++	fclose(f);
++	ERR_free_strings();
++	return rc;
++}
++
++static void add_hash(MAP_SET *set, unsigned char *buffer, int buffer_len, int index)
++{
++	HORNET_MAP *map = NULL;
++
++	map = HORNET_MAP_new();
++	ASN1_INTEGER_set(map->index, index);
++	ASN1_OCTET_STRING_set(map->hash, buffer, buffer_len);
++	sk_HORNET_MAP_push(set->maps, map);
++}
++
++int main(int argc, char **argv)
++{
++	const char *cert_path = NULL;
++	const char *key_path = NULL;
++	const char *data_path = NULL;
++	const char *out_path = NULL;
++
++	X509 *signer;
++	EVP_PKEY *pkey;
++	BIO *data_in;
++	CMS_ContentInfo *cms_out;
++	struct hash_spec hashes[MAX_HASHES];
++	int hash_count = 0;
++	int flags;
++	CMS_SignerInfo *si;
++	MAP_SET *set;
++	unsigned char hash_buffer[SHA256_LEN];
++	unsigned int hash_len;
++	ASN1_OBJECT *oid;
++	unsigned char *der = NULL;
++	int der_len;
++	int err;
++	BIO *b_out;
++	int i;
++	char opt;
++
++	const char *short_opts = "C:K:P:O:A:Sh";
++
++	static const struct option long_opts[] = {
++		{"cert", required_argument, 0, 'C'},
++		{"key",  required_argument, 0, 'K'},
++		{"pass",  required_argument, 0, 'P'},
++		{"out",  required_argument, 0, 'O'},
++		{"data",  required_argument, 0, 'D'},
++		{"add",  required_argument, 0, 'A'},
++		{"help",    no_argument,       0, 'h'},
++		{0, 0, 0, 0}
++	};
++
++	while ((opt = getopt_long_only(argc, argv, short_opts, long_opts, NULL)) != -1) {
++		switch (opt) {
++		case 'C':
++			cert_path = optarg;
++			break;
++		case 'K':
++			key_path = optarg;
++			break;
++		case 'P':
++			key_pass = optarg;
++			break;
++		case 'O':
++			out_path = optarg;
++			break;
++		case 'D':
++			data_path = optarg;
++			break;
++		case 'A':
++			if (strchr(optarg, ':')) {
++				hashes[hash_count].file = strsep(&optarg, ":");
++				hashes[hash_count].index = atoi(optarg);
++				hash_count++;
++			} else {
++				usage(argv[0]);
++				return EXIT_FAILURE;
++			}
++		}
++	}
++
++	if (!cert_path || !key_path || !out_path || !data_path) {
++		usage(argv[0]);
++		return EXIT_FAILURE;
++	}
++
++	OpenSSL_add_all_algorithms();
++	ERR_load_crypto_strings();
++
++	signer = read_x509(cert_path);
++	ERR(!signer, "Load cert failed");
++
++	pkey = read_private_key(key_path);
++	ERR(!pkey, "Load key failed");
++
++	data_in = BIO_new_file(data_path, "rb");
++	ERR(!data_in, "Load data failed");
++
++	cms_out = CMS_sign(NULL, NULL, NULL, NULL,
++			   CMS_NOCERTS | CMS_PARTIAL | CMS_BINARY | CMS_DETACHED);
++	ERR(!cms_out, "create cms failed");
++
++	flags = CMS_NOCERTS | CMS_PARTIAL | CMS_BINARY | CMS_NOSMIMECAP | CMS_DETACHED;
++
++	si = CMS_add1_signer(cms_out, signer, pkey, EVP_sha256(), flags);
++	ERR(!si, "add signer failed");
++
++	set = MAP_SET_new();
++	set->maps = sk_HORNET_MAP_new_null();
++
++	for (i = 0; i < hash_count; i++) {
++		sha256(hashes[i].file, hash_buffer, &hash_len);
++		add_hash(set, hash_buffer, hash_len, hashes[i].index);
++	}
++
++	oid = OBJ_txt2obj("2.25.316487325684022475439036912669789383960", 1);
++	if (!oid) {
++		ERR_print_errors_fp(stderr);
++		DIE("create oid failed");
++	}
++
++	der_len = ASN1_item_i2d((ASN1_VALUE *)set, &der, ASN1_ITEM_rptr(MAP_SET));
++	CMS_signed_add1_attr_by_OBJ(si, oid, V_ASN1_SEQUENCE, der, der_len);
++
++	err = CMS_final(cms_out, data_in, NULL, CMS_NOCERTS | CMS_BINARY);
++	ERR(!err, "cms final failed");
++
++	OPENSSL_free(der);
++	MAP_SET_free(set);
++
++	b_out = bio_open_wr(out_path);
++	ERR(!b_out, "opening output path failed");
++
++	i2d_CMS_bio_stream(b_out, cms_out, NULL, 0);
++
++	BIO_free(data_in);
++	BIO_free(b_out);
++	EVP_cleanup();
++	ERR_free_strings();
++	return 0;
++}
+diff --git a/scripts/hornet/write-sig.sh b/scripts/hornet/write-sig.sh
+new file mode 100755
+index 0000000000000..7eaabe3bab9aa
+--- /dev/null
++++ b/scripts/hornet/write-sig.sh
+@@ -0,0 +1,27 @@
++#!/bin/bash
++# SPDX-License-Identifier: GPL-2.0
++#
++# Copyright (c) 2025 Microsoft Corporation
++#
++# This program is free software; you can redistribute it and/or
++# modify it under the terms of version 2 of the GNU General Public
++# License as published by the Free Software Foundation.
++
++function usage() {
++    echo "Sample for rewriting an autogenerated eBPF lskel headers"
++    echo "with a new signature"
++    echo ""
++    echo "USAGE: header_file sig"
++    exit
++}
++
++ARGC=$#
++
++EXPECTED_ARGS=2
++
++if [ $ARGC -ne $EXPECTED_ARGS ] ; then
++    usage
++else
++    SIG=$(xxd -p $2 | tr -d '\n' | sed 's/\(..\)/\\\\x\1/g')
++    sed '/const char opts_sig/,/;/c\\tstatic const char opts_sig[] __attribute__((__aligned__(8))) = "\\\n'"$(printf '%s\n' "$SIG")"'\";' $1
++fi
 -- 
 2.53.0
 
