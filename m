@@ -1,28 +1,28 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D1C428473;
-	Thu, 26 Mar 2026 17:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9179D426ED4;
+	Thu, 26 Mar 2026 17:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774546309; cv=none; b=E0y0rOK5kqDsHQ9ZGqkFqeYLfzxufG39w8BADZmqxdlA37XGZlm7BOWOz7umZJ11nMv4HHUqyf5AwawIYQxZb+LzTRGChhUWrMlZtaPHcWOaZHBYple0+pvc0ZaH2s/XEbdJxNUgJmHmPFBEoVEG3F3cxdZAitu3cp1z3J0M1M8=
+	t=1774546316; cv=none; b=AY7RxdmlRw8nrRc5ilrRPcP/C3CoKq29oEJxNo9Z62s29p+yHywjLht+/OLuuqsfLsEbkSNoytPn+j9JDZitXiHfVp8c+C1qa5drXCeuOi/alxmo6yA2wqGq+AzCvPEbubld7dvBmrcww6eM4yf7puLd6EALrbUFM5hQhFuLyOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774546309; c=relaxed/simple;
-	bh=XrG5Rzjw97/k4hs9NuHnDSP9PLebkbtARyW+dgXrZZk=;
+	s=arc-20240116; t=1774546316; c=relaxed/simple;
+	bh=lTEMSdWntKFwJ7UZj396vRRLvGqDKzB88Vh6/ciMCuk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nRWCul4ptqDeLbqhsuJp95+LVPKuegRhKh0h8jVOglYm/OSkOollDfZXRFwh0QWt6DePa+la2wx0VdllIYA/WzyLBF7aE1HNONAWRe9V5yA3rwL9sKLp+VdXEZerDnC/V42hruEnb8FGyvXQUeC67KRreZiGEkKkh/rK2l6O/s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+	 MIME-Version; b=iT+adKDNot8s7SI4uG1KEbDbgtWOP0lpQ35mFdfESEsxVWyP6gNj5sWssdoJprXlzB2B+NnolGhSWM2+2D7iZX+hH9vsGO6OAJyi5ReYuODQjZB3kT9H9/dFJsoIbglJn5h7XX6aS92dCzQWb9Vjy9nFJBnhdL6KMXLzYLWDar0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.18.224.235])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4fhW202NKkzpW04;
-	Fri, 27 Mar 2026 01:27:52 +0800 (CST)
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4fhW2N34KMztKR0;
+	Fri, 27 Mar 2026 01:28:12 +0800 (CST)
 Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 8F18A40560;
-	Fri, 27 Mar 2026 01:31:40 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id D571940569;
+	Fri, 27 Mar 2026 01:31:48 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwB3Yu84bcVppGUvAQ--.1881S9;
-	Thu, 26 Mar 2026 18:31:40 +0100 (CET)
+	by APP1 (Coremail) with SMTP id LxC2BwB3Yu84bcVppGUvAQ--.1881S10;
+	Thu, 26 Mar 2026 18:31:48 +0100 (CET)
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
 To: corbet@lwn.net,
 	skhan@linuxfoundation.org,
@@ -40,9 +40,9 @@ Cc: linux-doc@vger.kernel.org,
 	chenste@linux.microsoft.com,
 	nramas@linux.microsoft.com,
 	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v4 07/13] ima: Use snprintf() in create_securityfs_measurement_lists
-Date: Thu, 26 Mar 2026 18:30:05 +0100
-Message-ID: <20260326173011.1191815-8-roberto.sassu@huaweicloud.com>
+Subject: [PATCH v4 08/13] ima: Introduce ima_dump_measurement()
+Date: Thu, 26 Mar 2026 18:30:06 +0100
+Message-ID: <20260326173011.1191815-9-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260326173011.1191815-1-roberto.sassu@huaweicloud.com>
 References: <20260326173011.1191815-1-roberto.sassu@huaweicloud.com>
@@ -53,10 +53,10 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwB3Yu84bcVppGUvAQ--.1881S9
-X-Coremail-Antispam: 1UD129KBjvJXoW7tFy5XFWDWw1rtF1kWr4rXwb_yoW8tF48pa
-	ySgF18Crs5J3yxKFn3K3Z7uaySk3yagF1UW3yvg3WkAFn3XrWFkr4vkr1jkr95Kr10yFy8
-	XrsFqF13C3Z0yaDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:LxC2BwB3Yu84bcVppGUvAQ--.1881S10
+X-Coremail-Antispam: 1UD129KBjvJXoW7CFyfXryDAw1rKFyfCFy7trb_yoW8AF43pa
+	9IgFy8Cr18tFyxKrn3GF98Ja1F93y8AF1UW3yDWwn3XF1DJr1Dur95Cr1IvrZ8GrZayF1x
+	tw4agF4ruan0yaDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUPlb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
 	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
@@ -71,61 +71,60 @@ X-Coremail-Antispam: 1UD129KBjvJXoW7tFy5XFWDWw1rtF1kWr4rXwb_yoW8tF48pa
 	c7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
 	AFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZF
 	pf9x07jhXo7UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAEBGnEnS4T6QAAsm
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAEBGnEnS4T6QABsn
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Use the more secure snprintf() function (accepting the buffer size) in
-create_securityfs_measurement_lists().
+Introduce ima_dump_measurement() to simplify the code of
+ima_dump_measurement_list() and to avoid repeating the
+ima_dump_measurement() code block if iteration occurs on multiple lists.
 
-No functional change: sprintf() and snprintf() have the same behavior.
+No functional change: only code moved to a separate function.
 
 Link: https://github.com/linux-integrity/linux/issues/1
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/integrity/ima/ima_fs.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ security/integrity/ima/ima_kexec.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index 68edea7139d5..7709a4576322 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -472,11 +472,13 @@ static int __init create_securityfs_measurement_lists(void)
- 		struct dentry *dentry;
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 44ebefbdcab0..d7d0fb639d99 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -80,6 +80,17 @@ static int ima_alloc_kexec_file_buf(size_t segment_size)
+ 	return 0;
+ }
  
- 		if (algo == HASH_ALGO__LAST)
--			sprintf(file_name, "ascii_runtime_measurements_tpm_alg_%x",
--				ima_tpm_chip->allocated_banks[i].alg_id);
-+			snprintf(file_name, sizeof(file_name),
-+				 "ascii_runtime_measurements_tpm_alg_%x",
-+				 ima_tpm_chip->allocated_banks[i].alg_id);
- 		else
--			sprintf(file_name, "ascii_runtime_measurements_%s",
--				hash_algo_name[algo]);
-+			snprintf(file_name, sizeof(file_name),
-+				 "ascii_runtime_measurements_%s",
-+				 hash_algo_name[algo]);
- 		dentry = securityfs_create_file(file_name, S_IRUSR | S_IRGRP,
- 						ima_dir, (void *)(uintptr_t)i,
- 						&ima_ascii_measurements_ops);
-@@ -484,11 +486,13 @@ static int __init create_securityfs_measurement_lists(void)
- 			return PTR_ERR(dentry);
++static int ima_dump_measurement(struct ima_kexec_hdr *khdr,
++				struct ima_queue_entry *qe)
++{
++	if (ima_kexec_file.count >= ima_kexec_file.size)
++		return -EINVAL;
++
++	khdr->count++;
++	ima_measurements_show(&ima_kexec_file, qe);
++	return 0;
++}
++
+ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+ 				     unsigned long segment_size)
+ {
+@@ -97,13 +108,9 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+ 	khdr.version = 1;
+ 	/* This is an append-only list, no need to hold the RCU read lock */
+ 	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
+-		if (ima_kexec_file.count < ima_kexec_file.size) {
+-			khdr.count++;
+-			ima_measurements_show(&ima_kexec_file, qe);
+-		} else {
+-			ret = -EINVAL;
++		ret = ima_dump_measurement(&khdr, qe);
++		if (ret < 0)
+ 			break;
+-		}
+ 	}
  
- 		if (algo == HASH_ALGO__LAST)
--			sprintf(file_name, "binary_runtime_measurements_tpm_alg_%x",
--				ima_tpm_chip->allocated_banks[i].alg_id);
-+			snprintf(file_name, sizeof(file_name),
-+				 "binary_runtime_measurements_tpm_alg_%x",
-+				 ima_tpm_chip->allocated_banks[i].alg_id);
- 		else
--			sprintf(file_name, "binary_runtime_measurements_%s",
--				hash_algo_name[algo]);
-+			snprintf(file_name, sizeof(file_name),
-+				 "binary_runtime_measurements_%s",
-+				 hash_algo_name[algo]);
- 		dentry = securityfs_create_file(file_name, S_IRUSR | S_IRGRP,
- 						ima_dir, (void *)(uintptr_t)i,
- 						&ima_measurements_ops);
+ 	/*
 -- 
 2.43.0
 
