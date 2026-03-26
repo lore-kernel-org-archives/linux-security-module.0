@@ -1,63 +1,125 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f74.google.com (mail-dl1-f74.google.com [74.125.82.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C53347BD4;
-	Thu, 26 Mar 2026 19:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88097322A00
+	for <linux-security-module@vger.kernel.org>; Thu, 26 Mar 2026 20:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774554520; cv=none; b=YDtgoGWhjBPw/lOnqGYw3nYnrGd/u8xL504J9MY7ZOsn05m77BnkoBrrHfFaBl6hV1mXdrA52g/ba8qg1VO7WsMRGTyF4DB5LH9g+CYqu2lj9VCR0D8kln76acSredFPGmgC1sBJ696ALZtD8ovlRJPRZxicUGh6SBFv+WK/2eQ=
+	t=1774555615; cv=none; b=CZwfRSSMg2Y8JGxIQbDB0l9Ze/TPvWc+TIc/nom1+TfRCi7DuGkNuFo9HE2vSaeGrxX3YZdDIOJDOKjyaDMuEBHrTbCA876msh6HXTvoe8ZP4L7tCNu1g0JVrq2vQgMj8u15/Pd7j6/DNeiAexrmgo0HCWQ9dTnHSv2I4ia3Gnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774554520; c=relaxed/simple;
-	bh=PA1rgUM9sWjksMzQSTbUm440CHQpMBc450Q20oBYMgo=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=dJfhCpmnzTImVZ84d1YhKSqfoP4lFInAlpvdE+Pk1geWMRJocFr7gdls+8KMoIjrJ9tEp/qMkEkMVQiNgnZiYtmfQdxi2yw4NrmCfh6IV2wXglF9Dcqn8C9kGmuWbZIvs9wpBZcPW4CNiGrXwGZljTvNLbztfksQ7PUcbpsWaus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rERoNl2C; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774555615; c=relaxed/simple;
+	bh=jj+yorpeEBxwk+7nym3Vu8xagBVeQ+tug3rKRqZFhbU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=io/GzTA2TGRfUMQDJ6RawJpdYbJnGz0JVfd29FGd5M0i2d2RIJelVtV9M2oZXZi5dOrnAEjHGQUzWiqItN8t8BokzrWQT1q38frSZ2XbHDmJk5CkExcnuUugPmuuxeN72oob49/SqxhZQCNkwcVy3Racz1HMTeMIDp6IBGtXWGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lZiTYQ6K; arc=none smtp.client-ip=74.125.82.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rERoNl2C"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 057A5C116C6;
-	Thu, 26 Mar 2026 19:48:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774554520;
-	bh=PA1rgUM9sWjksMzQSTbUm440CHQpMBc450Q20oBYMgo=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=rERoNl2Cj+sCXeOPTdZ0xSQOzx8NR500o+Urm8xro/uk79aCGEwCI45x7RkKoUGoZ
-	 ftbe0PHpdTpJ8iLOeINBCWUxXudVIIsDS7t6h2ur2BZT6nUMkdkCUElXVqNpp8gL6O
-	 UDwyUQ0N47OrAnufz7tRWCDU+0LolQR6qxcG3eT5/mLA1/SCzp3FDgMqYuy2+u1iS4
-	 IYW/92ON99VFJCGeq/Q4uYfoWwLep8VI7Mae6u6NhNQ6cw8LHSIbo8G8i08cTNcPCj
-	 3XcejMXEc9Tjq/UC1qhGX/ma48YuV0Y/WcKBQ83/XUNFpvgDuFFPsDnrFYxoooA8mK
-	 FjPxGktH9pE6Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id BA19B39F2038;
-	Thu, 26 Mar 2026 19:48:27 +0000 (UTC)
-Subject: Re: [GIT PULL] Landlock fix for v7.0-rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20260326172727.119094-1-mic@digikod.net>
-References: <20260326172727.119094-1-mic@digikod.net>
-X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20260326172727.119094-1-mic@digikod.net>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-7.0-rc6
-X-PR-Tracked-Commit-Id: a23811061a553c70c42de0e811b2ec15b2d54157
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 25b69ebe28c8e3f883b071e924b87d358db56047
-Message-Id: <177455450635.3152977.8033712459408999510.pr-tracker-bot@kernel.org>
-Date: Thu, 26 Mar 2026 19:48:26 +0000
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, Dan Cojocaru <dan@dcdev.ro>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, Panagiotis Ivory Vasilopoulos <git@n0toose.net>, Yihan Ding <dingyihan@uniontech.com>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lZiTYQ6K"
+Received: by mail-dl1-f74.google.com with SMTP id a92af1059eb24-12a77b008deso4920887c88.0
+        for <linux-security-module@vger.kernel.org>; Thu, 26 Mar 2026 13:06:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1774555613; x=1775160413; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q39vkXCHwVXHxLZOMIlHqDW4HE8OruDbuf0XK+bdxP4=;
+        b=lZiTYQ6Kyz0T/yPpRU+2Ues0ncOW+GZ8GrSdz9B5oe/4TO36d9Ev8LUF8ozT8UsAHd
+         2bjYRDZ3tiFtL7tXngPxVo8KHGLnfj9Aj3pVdD/+Xcc8IQ95oRsE7B8xRrgyQowML9dw
+         qHSTkk5cAotTvdMS4d7EOVfKI1ZcKPyReHPbSanRuWfrxB/Dedsb7i+hStuMvIV3BEE1
+         uE1LfztRPH3kETgM/+rYr2JyHnGu+ig1uWp2hjgJ3tYF4HUnE5XV5xlClzEO+7B3nJEA
+         UlfD7isuxSZXtc6vWE7NEVDt6oCIbop+EGUh/HTcGHPuVP15IcqVfi33sCVcfIqtjh/R
+         uSXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774555613; x=1775160413;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Q39vkXCHwVXHxLZOMIlHqDW4HE8OruDbuf0XK+bdxP4=;
+        b=IFo8E68ylodve190lQka+IRvYudXzOzsPU08Q0scdO5nlk7aCrVMwUUNk6YMxn+2nI
+         W5lULWE/GfDOlZw1eN5kKuUvbPKK+p8p20dt+WH1WFuVbeNzXqVWkJKAELTZ1S3IeoUG
+         AHZQDtrCnKBfPxqeLpLHYwBV2rbkMIAnA1EK7EVaWT5j/VoVBZwRZyw7YxuUqWuT+pX8
+         rG+yvjBKYhTrt7kxVFufcGXFVXqZaNoPMtokdaxk9OEoUlo4sjzmfOVE1CPC8yNgqo6z
+         ytqzDEwLrpi4sRB0s+PE9v7Q+xIbwfHXs7oEGGB0zTozCEkJ3cOiRXOL0essuUk9TiTd
+         shKA==
+X-Forwarded-Encrypted: i=1; AJvYcCV75gKzIrm5kKrQ1KRw/AZHAnSDZBfRGi6zAqtAjsS9DzDwbR1x02m0iwvIk/6rZy3OiFDBfxduycKzgR2sCQ6J9aGeo3k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl0tGTca/hj5Ua4rufIPsIhZ9Me6IOD1bzZss2oTQvJ6q8NWbF
+	9nts98KDAASL+Mhp6ycBy7xNC2C+eUc2sqtXfzIMINprrh9Bd73Qoj3B0dJ2MycTTimBqrCPLvC
+	i56EcmWOnnewwSHZuJcQxhAH1FuoKuQ==
+X-Received: from dleb3-n1.prod.google.com ([2002:a05:701b:4243:10b0:12a:86e5:44de])
+ (user=samitolvanen job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:7022:125:b0:128:cf5c:5362 with SMTP id a92af1059eb24-12a96e5cde5mr5257574c88.12.1774555612457;
+ Thu, 26 Mar 2026 13:06:52 -0700 (PDT)
+Date: Thu, 26 Mar 2026 20:06:51 +0000
+In-Reply-To: <20260305-module-signature-uapi-v3-0-92f45ea6028c@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+References: <20260305-module-signature-uapi-v3-0-92f45ea6028c@linutronix.de>
+X-Mailer: b4 0.14.3
+Message-ID: <177455561121.2009594.1781899946157697823.b4-ty@google.com>
+Subject: Re: [PATCH v3 0/8] module: Move 'struct module_signature' to UAPI
+From: Sami Tolvanen <samitolvanen@google.com>
+To: David Howells <dhowells@redhat.com>, David Woodhouse <dwmw2@infradead.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Daniel Gomez <da.gomez@kernel.org>, Aaron Tomlin <atomlin@atomlin.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+	Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	"=?utf-8?q?Thomas_Wei=C3=9Fschuh?=" <thomas.weissschuh@linutronix.de>
+Cc: keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-s390@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Thu, 26 Mar 2026 18:27:27 +0100:
+On Thu, 05 Mar 2026 10:31:36 +0100, Thomas Wei=C3=9Fschuh wrote:
+> This structure definition is used outside the kernel proper.
+> For example in kmod and the kernel build environment.
+>=20
+> To allow reuse, move it to a new UAPI header.
+>=20
+> While it is not a true UAPI, it is a common practice to have
+> non-UAPI interface definitions in the kernel's UAPI headers.
+>=20
+> [...]
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-7.0-rc6
+Applied to modules-next, thanks!
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/25b69ebe28c8e3f883b071e924b87d358db56047
+[1/8] extract-cert: drop unused definition of PKEY_ID_PKCS7
+      commit: 137676d4482d8b8d755890b4ed29fe8223661d20
+[2/8] module: Drop unused signature types
+      commit: 8988913aacee82e5401bf3b96839731982dcbde7
+[3/8] module: Give 'enum pkey_id_type' a more specific name
+      commit: acd87264af525dba6e9355310e8acdf066a5f6b5
+[4/8] module: Give MODULE_SIG_STRING a more descriptive name
+      commit: 2ae4ea2d9aaf25cb74fbc23450b1b8f0a5b7aa89
+[5/8] module: Move 'struct module_signature' to UAPI
+      commit: f9909cf0a2dcc9e99377f3fcc965ccd93e518e34
+[6/8] tools uapi headers: add linux/module_signature.h
+      commit: d2d7561dc656748f592cc34d34bf5db8d5c67f7b
+[7/8] sign-file: use 'struct module_signature' from the UAPI headers
+      commit: e340db306c3bb85877490f33a78eb80549ac43a7
+[8/8] selftests/bpf: verify_pkcs7_sig: Use 'struct module_signature' from t=
+he UAPI headers
+      commit: 55722b3f80377103bac6ac748554129108c75651
 
-Thank you!
+Best regards,
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+	Sami
+
+
