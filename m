@@ -1,70 +1,70 @@
 Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19A035CB9F
-	for <linux-security-module@vger.kernel.org>; Fri, 27 Mar 2026 16:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3DE351C38
+	for <linux-security-module@vger.kernel.org>; Fri, 27 Mar 2026 16:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774630163; cv=none; b=Pd1Y3SjFwF/eBNXpaSkRbwaFeU/3inAgJRY3eK/lMDCsThJAQRpa9Lyplj4sGOUsNgmSDDf+IvA05DzV+p+mZnNIQYOPsDKcPkf0FhBf8A0WcGxY9IQPha9hUXN+K8FzRQlRk0EkJf05NNh+zCx46+E5M55RcqT0bv7WG2YoG1M=
+	t=1774630165; cv=none; b=ZJkxHIhRsLzHOHXXGgk/wj0aWLITh8TlA7w/ulSbrWfBYeZqqPJKixZ3EtQOljEuDWpILUo6mDqiLooi7690qpG30mei3IRF/YgjEfp2i2Pg8FCoEuhXZtiOm03iQD4QRe+efz0uQnOG6OKbIxUOOk54uOULJKgJ8w7Kc/pgQkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774630163; c=relaxed/simple;
-	bh=2vUGALO9uZKAjCpKbcNBhVMLzh1JWfApkokXuuQ89yQ=;
+	s=arc-20240116; t=1774630165; c=relaxed/simple;
+	bh=VnKb47iJWoCqztP6k2fyeS5+mmhQNA8KUZPiw6hYxHA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E8S85BbMV6mozHJD1tuYSgmCHvJ4IvnuX/4MscT+1kdLt4XjBjyqvpLuM0YfgqdmeKOL9h0ishjAtgBRNHSmBMJBPO54Z8aZCKEOPMwZY8eCnELcOjL+xJa0DFOINZhnewhVeDBaKHkf68P26tQrsuyC6VeRNxEezEXAuuJfSnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dVNKCGTl; arc=none smtp.client-ip=209.85.128.51
+	 MIME-Version:Content-Type; b=BLxaCiIrT9J2lN+FVAJCmFXqeOxDSH7l1iD9R7+YEUHw67ny1WniOi2RagNSO9F6oY49FOvsLgqiZmjdg2dd7/ZNyocmfbUBD0T6HDA/d1n70njzNGed+4qANpuL6CwQZRoFi+wxSpHvI/kTt9Focn73GaA1CNT+Z3zB8ipJO5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=q/By31N7; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dVNKCGTl"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-48558d6ef83so22523215e9.3
-        for <linux-security-module@vger.kernel.org>; Fri, 27 Mar 2026 09:49:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q/By31N7"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4853e1ce427so27675125e9.3
+        for <linux-security-module@vger.kernel.org>; Fri, 27 Mar 2026 09:49:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774630160; x=1775234960; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1774630163; x=1775234963; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=USBSZwtwkVhJyz8WY2h6vy9d6CAM7AC4OGGdtIthKzE=;
-        b=dVNKCGTlRfoLWGZ5p9LWoDroml9hlL9C8V2L1Jmtv0O3lrexowX0ZOGyYUAmsUqo27
-         jwVXNZxMvfQu0hHQA3l/MKBQA4DjUDUCOMogI7eJiAVbZ6vxwp1LDg3mFxQkBWsOqOxI
-         v8HnsIErBIUjrafhzSo3vKPy74LjUO/fwBoVTbek4FCaDUP6R6qi45em2bntsWRpVWC6
-         tGLPc89jPBveteCvjL8sgaA8xiY+v4d0ZTRk8NVQ7+yg8JPCsUM5bytUpMOWbiV1Lssb
-         D5xwgCkrpBddXm1ui/hPWJ2+Kljhs5yocC6G4Ks3ut5lyEEDCzItnGwxsTuziBujO7rD
-         kiXw==
+        bh=rPQJrt55aef6C108749YnlMS+3dITTGe5TAUePuRZLM=;
+        b=q/By31N7UGlHTZ1meZhc6VmOfHfMK9hSwRrBvfDSCjCwcA9tzgT12Go/Ub4bBdk5bc
+         zsKEwNemet6OvJJJE0n3bvCCdhpokV3xIwFEeWJ4B5xT2W1cYVWMkv9m++dmS7Fh7fXo
+         Y+BX3PHQCvXKk30kFEobRpWpMljPOd2UdL1cYKAjtJWUOWGCCD2JC0zvO8Mbc8GNBOjJ
+         RyA3BrE1anobGCLYqBACWI6+aCnNNMk2um12UqWmY+1kw0sU8xun6+JrIMGl7ppQwS5v
+         VlOnjwajFB/kfHmi1qUFt9d1dTxQ2nOt47tnydHEf3M9rpJyU65EeWBqOWSLX8bo49Ce
+         089w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774630160; x=1775234960;
+        d=1e100.net; s=20251104; t=1774630163; x=1775234963;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=USBSZwtwkVhJyz8WY2h6vy9d6CAM7AC4OGGdtIthKzE=;
-        b=fHIa+B9LceWtT+D47huKnVIBo4QdhpPwD/PT8AXhMWydVNXva5n+Ub2X3EvG0lS5n5
-         8CHIFpJ+UVz8m/o0BXn4ovj9EpsUep0E/cyFpfMB+b7BttePnPIuKN46BNm2yjpc2BH5
-         sLgnflTojvFzZDAwaxP+C8H7i0RmOw7TtdMcHFxfU8k7ytooY54qRGAhY3+U2scCsoSm
-         4LpLWJQCawysZ3m2pOohSuGrGLqkug5N+LjCmmEfssgfm9f3289I4roNKKN6bzCHvuCD
-         uU2OG6IULEulDVHx2o00CMHTVBwZ1vr1LvQgbG7TnqsiPu2TlxQC8bJyOA92zIb11KMU
-         qoUA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/aErow+1KPUT3XcHkONaHtYQfek+GFeZXWU2PIHe0ahUQ7AcBMUC/wphkd5Rlp776YNrVLdEfHUb5C77h62swDhv13hk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCwZCm2xhVRyUpGPxM9Zl2wyZiB8hF0D65/HzIwmrtMhCYvQey
-	WxtesHe27ZPaGwOgrhwEmR9owoZwK7PcTj8NQO2gZBAemxT9tXcMgKED
-X-Gm-Gg: ATEYQzyMWI3IjM4/B5bWZa6WopXciqw+KKj8gCQJX7whMan0ZAuHFUG4pg+0ZmdUm2O
-	ucLerxtRgrDfwVyMsOA3CtVVXqRqzq09rI75dluD/ty9Q+8LT5uP1wiWrqI1oU6KXXDK/O4NYq+
-	GT3jXaFjVmo3wkDcy6/LsOsdfpcrdfTwR1JdFVlkUvYk6AmEKAzRInXCxvsE8oNg4NLyW0VylBE
-	EGQrZpESGXk0VO0By1Uw2aTe4rGoXz6/p+wL08dZzVagBFRco3nw4TPORa5FEukL3KQOuPtwCuH
-	Gr+dg6xFF53EBy0Xt9PmEUUBayNBesAUoONUv+NsL+i8IFvAbzu/YNGbNytN5/yNjJxZ3TtNWSQ
-	ItaSByuRZ+9qIvkE/5klSQmT3JPzEUe6WQAKVNuqpcr2rKw1I27olnKOBuw9JsVqv4mdhk+2g5d
-	ndCnC7WqoV2+reELSHmIKJvxoo7Zg/JauMw/amY0QPKqI6M7mG
-X-Received: by 2002:a05:600c:c10b:b0:485:3f1c:d8a1 with SMTP id 5b1f17b1804b1-48727d84152mr38429905e9.9.1774630160152;
-        Fri, 27 Mar 2026 09:49:20 -0700 (PDT)
+        bh=rPQJrt55aef6C108749YnlMS+3dITTGe5TAUePuRZLM=;
+        b=moPTgERQD8BuexDjEGTAiWU8UZ74/gnLbgEptj1+sSjijAyBDFbB6VVT3f6d/KE20E
+         x7QnALl/wDFhmXag4eOJKA1oFAw2NP3qYZbFXFD63AB1eFh0LBlaZunzr4cb7gV0wjk2
+         ZFcKTKjstiKzEk9+HABz0w2rJ24HZG/kE/T6ax1vghmeizI1elbiWih9KgnmNmnwNd0x
+         nFnALoEpjsG38g+TLH75ESyyhTPLaycT0gVoWoC1YphtIccMNEWZ/SxaAV4eIqm1NQFe
+         XRdrVk2DCZ7MVoHaP4R6A6xULKMkh2xZtRU63wDk3EWtIc9qXQOd3G84SE9zAyWmoZrB
+         nMMw==
+X-Forwarded-Encrypted: i=1; AJvYcCXA/NsuOrJDvPVwJ8GUKaYnxsgXoIc648NOKG8rVzQf63hFvDcCXAr3P4yL/KSAKI+GyNwdTJhhQLL9/JsK6PGNYJJRf8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAxNxWqLC3emJFBiN3HSpQ5r4x2eipOhoQ2A+RUMTGyMf9jD9m
+	uU8K1JAPlpbJwKD8n34ayxZxUslSb4wDW9k7y5DS9sW4d2qxPzsXb/N/
+X-Gm-Gg: ATEYQzyaPX3IKj2sVdXoi1/iKvc//rAI5IkOT69xNRrh8ji6bL6471zX2KG3hD1ulZC
+	qwbHqvSdwozq8hXif03yL52T8rNor0z1Kb/K2kULH/k3IrWRqQmUDTTX5MY/JvS7AGHXfFL0ZJs
+	xszOvJx04UsF6H3uiuvSqGLrrM5Inf7iC3zG063lXyE6O8IAPLjR+sZxnb3T0UBj2QM5J36VXJt
+	Gcllajn4o1MDY0Wxo9GKvswLoWrxjNKQkCO5WrZdZA4IzvTmUPyWBEGuCNvqo2S3CjdstqESbJj
+	5mbP7Qjs0srVHb07hAg2LTksVczisWIRvuPr5rzob+x/pZ8jN3hkQwOSfZVrs2MfzOLK/zZ1I+3
+	WYSHUId2Uks+oycxceq6BiIKci4AhkCTM/iUYPzLY+iqfaEuldXdioQT1wzVpjdNlOMSJ0wIfm5
+	fsW1yIC3mAioV6QdjrUe2b+86uftITk9G4VnG3d8FtkotdWujy
+X-Received: by 2002:a05:600c:a407:b0:485:4526:ee06 with SMTP id 5b1f17b1804b1-48727e8bd95mr46347795e9.11.1774630162589;
+        Fri, 27 Mar 2026 09:49:22 -0700 (PDT)
 Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-487278c71f4sm35256275e9.0.2026.03.27.09.49.19
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b919cf2c8sm15132075f8f.20.2026.03.27.09.49.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Mar 2026 09:49:19 -0700 (PDT)
+        Fri, 27 Mar 2026 09:49:22 -0700 (PDT)
 From: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	"John Johansen" <john.johansen@canonical.com>
 Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
-	Justin Suess <utilityemal77@gmail.com>,
 	linux-security-module@vger.kernel.org,
 	"Tingmao Wang" <m@maowtm.org>,
+	"Justin Suess" <utilityemal77@gmail.com>,
 	"Samasth Norway Ananda" <samasth.norway.ananda@oracle.com>,
 	"Matthieu Buffet" <matthieu@buffet.re>,
 	"Mikhail Ivanov" <ivanov.mikhail1@huawei-partners.com>,
@@ -76,9 +76,9 @@ Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
 	"Kuniyuki Iwashima" <kuniyu@google.com>,
 	"Georgia Garcia" <georgia.garcia@canonical.com>
-Subject: [PATCH v8 06/12] samples/landlock: Add support for named UNIX domain socket restrictions
-Date: Fri, 27 Mar 2026 17:48:31 +0100
-Message-ID: <20260327164838.38231-7-gnoack3000@gmail.com>
+Subject: [PATCH v8 07/12] selftests/landlock: Replace access_fs_16 with ACCESS_ALL in fs_test
+Date: Fri, 27 Mar 2026 17:48:32 +0100
+Message-ID: <20260327164838.38231-8-gnoack3000@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260327164838.38231-1-gnoack3000@gmail.com>
 References: <20260327164838.38231-1-gnoack3000@gmail.com>
@@ -91,58 +91,204 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The access right for UNIX domain socket lookups is grouped with the
-read-write rights in the sample tool.  Rationale: In the general case,
-any operations are possible through a UNIX domain socket, including
-data-mutating operations.
+The access_fs_16 variable was originally intended to stay frozen at 16
+access rights so that audit tests would not need updating when new
+access rights are added.  Now that we have 17 access rights, the name
+is confusing.
 
-Cc: Justin Suess <utilityemal77@gmail.com>
-Cc: Mickaël Salaün <mic@digikod.net>
+Replace all uses of access_fs_16 with ACCESS_ALL and delete the
+variable.
+
+Suggested-by: Mickaël Salaün <mic@digikod.net>
 Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 ---
- samples/landlock/sandboxer.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ tools/testing/selftests/landlock/fs_test.c | 54 +++++++---------------
+ 1 file changed, 17 insertions(+), 37 deletions(-)
 
-diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-index 9f21088c0855..66e56ae275c6 100644
---- a/samples/landlock/sandboxer.c
-+++ b/samples/landlock/sandboxer.c
-@@ -111,7 +111,8 @@ static int parse_path(char *env_path, const char ***const path_list)
- 	LANDLOCK_ACCESS_FS_WRITE_FILE | \
- 	LANDLOCK_ACCESS_FS_READ_FILE | \
- 	LANDLOCK_ACCESS_FS_TRUNCATE | \
--	LANDLOCK_ACCESS_FS_IOCTL_DEV)
-+	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
-+	LANDLOCK_ACCESS_FS_RESOLVE_UNIX)
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+index b318627e7561..9fdd3b8f7b11 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -7161,26 +7161,6 @@ TEST_F(audit_layout1, execute_make)
+  * only the blocked ones are logged.
+  */
  
- /* clang-format on */
+-/* clang-format off */
+-static const __u64 access_fs_16 =
+-	LANDLOCK_ACCESS_FS_EXECUTE |
+-	LANDLOCK_ACCESS_FS_WRITE_FILE |
+-	LANDLOCK_ACCESS_FS_READ_FILE |
+-	LANDLOCK_ACCESS_FS_READ_DIR |
+-	LANDLOCK_ACCESS_FS_REMOVE_DIR |
+-	LANDLOCK_ACCESS_FS_REMOVE_FILE |
+-	LANDLOCK_ACCESS_FS_MAKE_CHAR |
+-	LANDLOCK_ACCESS_FS_MAKE_DIR |
+-	LANDLOCK_ACCESS_FS_MAKE_REG |
+-	LANDLOCK_ACCESS_FS_MAKE_SOCK |
+-	LANDLOCK_ACCESS_FS_MAKE_FIFO |
+-	LANDLOCK_ACCESS_FS_MAKE_BLOCK |
+-	LANDLOCK_ACCESS_FS_MAKE_SYM |
+-	LANDLOCK_ACCESS_FS_REFER |
+-	LANDLOCK_ACCESS_FS_TRUNCATE |
+-	LANDLOCK_ACCESS_FS_IOCTL_DEV;
+-/* clang-format on */
+-
+ TEST_F(audit_layout1, execute_read)
+ {
+ 	struct audit_records records;
+@@ -7190,7 +7170,7 @@ TEST_F(audit_layout1, execute_read)
+ 	test_check_exec(_metadata, 0, file1_s1d1);
  
-@@ -295,11 +296,12 @@ static bool check_ruleset_scope(const char *const env_var,
- 	LANDLOCK_ACCESS_FS_MAKE_SYM | \
- 	LANDLOCK_ACCESS_FS_REFER | \
- 	LANDLOCK_ACCESS_FS_TRUNCATE | \
--	LANDLOCK_ACCESS_FS_IOCTL_DEV)
-+	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
-+	LANDLOCK_ACCESS_FS_RESOLVE_UNIX)
+ 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+-					      .handled_access_fs = access_fs_16,
++					      .handled_access_fs = ACCESS_ALL,
+ 				      });
  
- /* clang-format on */
+ 	/*
+@@ -7214,7 +7194,7 @@ TEST_F(audit_layout1, write_file)
+ 	struct audit_records records;
  
--#define LANDLOCK_ABI_LAST 8
-+#define LANDLOCK_ABI_LAST 9
+ 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+-					      .handled_access_fs = access_fs_16,
++					      .handled_access_fs = ACCESS_ALL,
+ 				      });
  
- #define XSTR(s) #s
- #define STR(s) XSTR(s)
-@@ -438,6 +440,10 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 			~LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON;
- 		__attribute__((fallthrough));
- 	case 7:
-+	case 8:
-+		/* Removes LANDLOCK_ACCESS_FS_RESOLVE_UNIX for ABI < 9 */
-+		ruleset_attr.handled_access_fs &=
-+			~LANDLOCK_ACCESS_FS_RESOLVE_UNIX;
- 		/* Must be printed for any ABI < LANDLOCK_ABI_LAST. */
- 		fprintf(stderr,
- 			"Hint: You should update the running kernel "
+ 	EXPECT_EQ(EACCES, test_open(file1_s1d1, O_WRONLY));
+@@ -7231,7 +7211,7 @@ TEST_F(audit_layout1, read_file)
+ 	struct audit_records records;
+ 
+ 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+-					      .handled_access_fs = access_fs_16,
++					      .handled_access_fs = ACCESS_ALL,
+ 				      });
+ 
+ 	EXPECT_EQ(EACCES, test_open(file1_s1d1, O_RDONLY));
+@@ -7248,7 +7228,7 @@ TEST_F(audit_layout1, read_dir)
+ 	struct audit_records records;
+ 
+ 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+-					      .handled_access_fs = access_fs_16,
++					      .handled_access_fs = ACCESS_ALL,
+ 				      });
+ 
+ 	EXPECT_EQ(EACCES, test_open(dir_s1d1, O_DIRECTORY));
+@@ -7268,7 +7248,7 @@ TEST_F(audit_layout1, remove_dir)
+ 	EXPECT_EQ(0, unlink(file2_s1d3));
+ 
+ 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+-					      .handled_access_fs = access_fs_16,
++					      .handled_access_fs = ACCESS_ALL,
+ 				      });
+ 
+ 	EXPECT_EQ(-1, rmdir(dir_s1d3));
+@@ -7291,7 +7271,7 @@ TEST_F(audit_layout1, remove_file)
+ 	struct audit_records records;
+ 
+ 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+-					      .handled_access_fs = access_fs_16,
++					      .handled_access_fs = ACCESS_ALL,
+ 				      });
+ 
+ 	EXPECT_EQ(-1, unlink(file1_s1d3));
+@@ -7311,7 +7291,7 @@ TEST_F(audit_layout1, make_char)
+ 	EXPECT_EQ(0, unlink(file1_s1d3));
+ 
+ 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+-					      .handled_access_fs = access_fs_16,
++					      .handled_access_fs = ACCESS_ALL,
+ 				      });
+ 
+ 	EXPECT_EQ(-1, mknod(file1_s1d3, S_IFCHR | 0644, 0));
+@@ -7331,7 +7311,7 @@ TEST_F(audit_layout1, make_dir)
+ 	EXPECT_EQ(0, unlink(file1_s1d3));
+ 
+ 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+-					      .handled_access_fs = access_fs_16,
++					      .handled_access_fs = ACCESS_ALL,
+ 				      });
+ 
+ 	EXPECT_EQ(-1, mkdir(file1_s1d3, 0755));
+@@ -7351,7 +7331,7 @@ TEST_F(audit_layout1, make_reg)
+ 	EXPECT_EQ(0, unlink(file1_s1d3));
+ 
+ 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+-					      .handled_access_fs = access_fs_16,
++					      .handled_access_fs = ACCESS_ALL,
+ 				      });
+ 
+ 	EXPECT_EQ(-1, mknod(file1_s1d3, S_IFREG | 0644, 0));
+@@ -7371,7 +7351,7 @@ TEST_F(audit_layout1, make_sock)
+ 	EXPECT_EQ(0, unlink(file1_s1d3));
+ 
+ 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+-					      .handled_access_fs = access_fs_16,
++					      .handled_access_fs = ACCESS_ALL,
+ 				      });
+ 
+ 	EXPECT_EQ(-1, mknod(file1_s1d3, S_IFSOCK | 0644, 0));
+@@ -7391,7 +7371,7 @@ TEST_F(audit_layout1, make_fifo)
+ 	EXPECT_EQ(0, unlink(file1_s1d3));
+ 
+ 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+-					      .handled_access_fs = access_fs_16,
++					      .handled_access_fs = ACCESS_ALL,
+ 				      });
+ 
+ 	EXPECT_EQ(-1, mknod(file1_s1d3, S_IFIFO | 0644, 0));
+@@ -7411,7 +7391,7 @@ TEST_F(audit_layout1, make_block)
+ 	EXPECT_EQ(0, unlink(file1_s1d3));
+ 
+ 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+-					      .handled_access_fs = access_fs_16,
++					      .handled_access_fs = ACCESS_ALL,
+ 				      });
+ 
+ 	EXPECT_EQ(-1, mknod(file1_s1d3, S_IFBLK | 0644, 0));
+@@ -7431,7 +7411,7 @@ TEST_F(audit_layout1, make_sym)
+ 	EXPECT_EQ(0, unlink(file1_s1d3));
+ 
+ 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+-					      .handled_access_fs = access_fs_16,
++					      .handled_access_fs = ACCESS_ALL,
+ 				      });
+ 
+ 	EXPECT_EQ(-1, symlink("target", file1_s1d3));
+@@ -7501,7 +7481,7 @@ TEST_F(audit_layout1, refer_rename)
+ 	EXPECT_EQ(0, unlink(file1_s1d3));
+ 
+ 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+-					      .handled_access_fs = access_fs_16,
++					      .handled_access_fs = ACCESS_ALL,
+ 				      });
+ 
+ 	EXPECT_EQ(EACCES, test_rename(file1_s1d2, file1_s2d3));
+@@ -7523,7 +7503,7 @@ TEST_F(audit_layout1, refer_exchange)
+ 	EXPECT_EQ(0, unlink(file1_s1d3));
+ 
+ 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+-					      .handled_access_fs = access_fs_16,
++					      .handled_access_fs = ACCESS_ALL,
+ 				      });
+ 
+ 	/*
+@@ -7586,7 +7566,7 @@ TEST_F(audit_layout1, truncate)
+ 	struct audit_records records;
+ 
+ 	drop_access_rights(_metadata, &(struct landlock_ruleset_attr){
+-					      .handled_access_fs = access_fs_16,
++					      .handled_access_fs = ACCESS_ALL,
+ 				      });
+ 
+ 	EXPECT_EQ(-1, truncate(file1_s1d3, 0));
+@@ -7607,7 +7587,7 @@ TEST_F(audit_layout1, ioctl_dev)
+ 	drop_access_rights(_metadata,
+ 			   &(struct landlock_ruleset_attr){
+ 				   .handled_access_fs =
+-					   access_fs_16 &
++					   ACCESS_ALL &
+ 					   ~LANDLOCK_ACCESS_FS_READ_FILE,
+ 			   });
+ 
 -- 
 2.53.0
 
