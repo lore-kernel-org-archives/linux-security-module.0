@@ -1,73 +1,70 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9C534D938
-	for <linux-security-module@vger.kernel.org>; Fri, 27 Mar 2026 16:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79F435F18C
+	for <linux-security-module@vger.kernel.org>; Fri, 27 Mar 2026 16:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774630149; cv=none; b=WRzgaV3TbBFiNSvhOj1u8A6r/rQ/eLuQidBIjyg84IC+srQk0VNFk0ool3HxplC4ajrFgBOdvtfwuoZDM+7eH+00as8aSqvO8+VQRoNIgmot/T7mWImKkK/pcHecKHK5CFdgYp5zwfOaKEkYlR6nirh3xKaCR3c+WVGvx0hS2OA=
+	t=1774630152; cv=none; b=K5aeE6jDcoZVNXZfay73WhmJlz+zMg/i9Fpcl8Xoa/lJxQz7r37UhwZh3o4bN69cH8KBGZNM0BeFpruR19iLmzL9bNyexldYM9rcvqGmSMKCQXd8MJeUhmJke6Fzwfjs2yqsfEIbUL/CO62qPxE77moThoKCCAVMI2UaFxF4OJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774630149; c=relaxed/simple;
-	bh=1R5QoRjpryjEmRKSu+GecPhvfAVUv2rQ3tJZWgcI/Fs=;
+	s=arc-20240116; t=1774630152; c=relaxed/simple;
+	bh=OhXXG2xIldVvbJF1GHdQoasLmdqqVTz3GR7wBlfcQIE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VrI8Dv9ZRDuMnNmhI/R0AMSVKUDAHAehVAEMx0WnwBUkMOSn0Sgm0ALTZOqyGGmzIUButYo4st7cGBa1k4rnLUpunX8lr1KQEeYhbrwZclXoPAbS301j0fHXiD5zc1b8K/HCIL3VDHTxUDPz3bALEy8AeQnWnKQhZO36voEK+Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hq4oOeI3; arc=none smtp.client-ip=209.85.221.42
+	 MIME-Version:Content-Type; b=kZsawKRsVJNsB9IC5/fDWrvQpMhkEbXWJIebw42XwFZs392J1nKrCgYNhli99e0xbs1T8Yixtfau4/WU+JEVI6wQX5lfpqR+7/CTRrdPizPsWlA1a5ADrh/N092iveR/AyU4iRc9vchGcinq3DUfb4vrDqgbNspJdfWICOFBf5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PYj+U1JE; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hq4oOeI3"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-439b94a19fdso2188129f8f.0
-        for <linux-security-module@vger.kernel.org>; Fri, 27 Mar 2026 09:49:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PYj+U1JE"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-43b8e8e7432so1894940f8f.1
+        for <linux-security-module@vger.kernel.org>; Fri, 27 Mar 2026 09:49:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774630146; x=1775234946; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1774630149; x=1775234949; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=B00FySKCwug1nr/4nnc+9QuABBXvC6ZmF4Hl8lqc1Mc=;
-        b=Hq4oOeI3Cu5ZfFjRKshJU+pTCsD28o6TUlnBfac64pxupRAHxVvfYn/Mw1w5Bth3Cg
-         RwbgAZl3MIevtPUqzbTXyZgt9foQoc0VEz3MHZiVwpVhPPHOcrh9oaY0YuezeKBVK24c
-         5QmUzIb3NQIQ9mDTSQi759WcBVf68cHrm6M6Mubp7F9L0p8J/X1FjvaPlnKmiymehKD3
-         PrUXjzypgW+wDWw6FCkoUrL+iAHdjdPkieD/N3HQQ2YNhzMXy3ihlDUflimNEFEpFOlf
-         rO7T44YtzgoGaZE+euXd+fQ+TaaojhDr2BSPufTrg7rSeMZGB5vpY0rXTiSA1GK/7Olh
-         Jvfw==
+        bh=rJshHyAlu0Amwsqvbh39fSwfWMmGLorddxfy+zZs6KE=;
+        b=PYj+U1JExWdBw7HZC6dyeJPJEKTTN6+tIcW02fcS5cei6CJfFF6mbnyp5d2TlgLaqz
+         K1ycIul3JchXUrdRbymjJMZse7VN+h1Kn4fKDsJgYSAhcRdoikI5zkbulWRJ17J2DrlI
+         7d2qYfON7OZx6vNzg8ndUq/tHr4+R2gJH2T9vl49sGk/sGOXxfIH9jmZFyS0M1lpsbjI
+         4coIe40lL3LXnmrXSXDkBExfua3Sy9ULO15E2GI1dICPmo1fJREBLMJLqHFRGX/3l3Tp
+         8O0BPT8AQrn+czDpVSEkhh0J4ZcrCXACV3QL3LGBJX1XN+3Uyo73Vx14TGo2PVJzj6Rv
+         3BsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774630146; x=1775234946;
+        d=1e100.net; s=20251104; t=1774630149; x=1775234949;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=B00FySKCwug1nr/4nnc+9QuABBXvC6ZmF4Hl8lqc1Mc=;
-        b=FxklodRv9Z7hi8toR5NlprDkYi32aOMG31QtQRbQ7DyY6tZdgrTwsjDWtmjTmrwAFF
-         uKAHPqAsjysnaydbaUAKA7ugeGHjTPAVOeBY7tbYTpblw4ZwAl/XP2ekplGl/9c2+WJC
-         QlLBNLnxcKVXrm1NXoUqcSH/IPqdmLVrXZlYf9lQT+5V6VWQTgYGi1AESJQf5DjM75qA
-         Ov7BuNRPnnpugbBwEmpgkacfb+ghFacZhDs60wYoW56QxtxNviMuta+ZS+OIEzjLP8ur
-         xtZ+QCivYwhgD/nastSxT1StH2lSiCUXpeonuV+er7Qf6uVpgGqbLitlYoddwO4+Qv5Y
-         oLLg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1rb3Q50DEbu/l2OJe178FqR+eOtJ1rmkqBeNYIbFV/YAX9EjJ+2DqHyjzIVfpjboHbKxgL/WXZhc0RVCW1rN7ZiAMDQU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymTvX1AqZtCDoqMrDB+bkQ4OxqqpzcKmLtCOYuiu/xnPEv3jBQ
-	6qxLq+Uzt+QhJb8GNGtzBQwDWG3uQ4/inscCcy/ijamsPAbcq7Fev3XJ
-X-Gm-Gg: ATEYQzww91odR0e5483JFgwKMvMIrBIfDQReD+l4OERfeIqWBZjoyOxSSC3eCCKN4ih
-	inlAltdQKSsBJS13TituHobsmEaNnffv2KlmNZYzMxHV/gaSFB2Iu/Nkv4xytPJEuBcD4gmLyI5
-	yIEbjNnR6wtOyeuVIsNb8fvSTXQSfxTqIDMMMoiQ6oWUUHgglkkRvTOlgwkrQA2PNxoyHpp1KOh
-	BGaxCAdKaC1BPZM+LsxPhMjBlwN35IOEpj7ff7/wAxbK42gmHCp1KWl4JKh1EeE9xpGDL1QB7NY
-	yFGcbl0/HJY9ygYFmiWB+4fxBWgdfAxmc1L301h9QJhdkjxxYwZPOYukMg5WgpvgIGroDF7nXr6
-	3xPalgIomKV7s/PQEKFZmRZnT1krAhrhPaQHvfET/zfPb3BuMN4bnjYrINARO0iPIPg3oZ7BSu/
-	6mZjLCVN/7v9ftO4dY1l/WniUHW8F4h5S/WfDbS6GD72Xddru4
-X-Received: by 2002:a05:6000:4287:b0:439:b8b2:fac6 with SMTP id ffacd0b85a97d-43b9e9e8ffamr5655815f8f.22.1774630146088;
-        Fri, 27 Mar 2026 09:49:06 -0700 (PDT)
+        bh=rJshHyAlu0Amwsqvbh39fSwfWMmGLorddxfy+zZs6KE=;
+        b=VaAOuPy7clgHJ9CdTvb8Ie0PTVzLjeC/DTuzQJAmAEuAIWmER6Uv8tX5ZPirtkkHmJ
+         1YvCBBwWVdbhnky4lYKJf6LeK3LVb56/zS1Meuq93RNKmy+ryPIw2xXGlw7bXr+MAxL8
+         FCK24r0FkZN88hDKLG3SaXzj3mvHtsNYqytjes16V7vlu6JhJtPD6V+50x4pripqFM9r
+         bkz/tGwQwlOOxoHT0qG/iu9fU8WNOY0K+Qcg9QckY/czydAQ2HzpI0dzlfk6hTbPXXNm
+         gsX2RrLhvxGHbaD9R4YtA4rcYFnzEgqQwNa9CbW+kQ3IBWkLaBUgDDuTzya3mxjusIo+
+         tYsw==
+X-Forwarded-Encrypted: i=1; AJvYcCXrpkl3z/8BCopd7pm/FNPPQfsWhUaC1TVji/KL3JJF6YcTwFRp9AbZfmqaHkeTF74OJTqs4PnkqxviXNjd43R1JOeaDHw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPsEnjwZFIHiYE1Wvc3e9isnUrSwp3LivX/u0mD/WKJ6jzShIs
+	//klItPc55oOmbvy4l3Ct6VQ3RVCYxJoMKndh0lIEhIxP0nw2Ap2ceh6
+X-Gm-Gg: ATEYQzyFRxCLcCr7x4AcDOrPghGLq8CVVFcvFF8cVN0EuX1RJpeu3g8ife6f+ULmpe4
+	wi9PLOwClzrHs3+Izl6RhZmVjPQCLZtVCoaNJ08ZWNIDedTIm149cuvgpFVf83HAvMlY1aghZXq
+	zVvsORg/4ythUklFXxJaALR6r+oH2ADZ8tmYn7hfloatXLcLNropz8jZtnwshu6MAVsDA38d6zm
+	lPa9twRnrTvhlBpWqHYc84cBLfo98nTLzNoKDDi/yWUes2qZMQ4+cXolB5qAQ3dYdIriym6pE75
+	P9FNCDcyuANbxVUhCpPxPKEwiQ8P3qpBjpBlYpTNVimlb6NTgP38pDY/gJEhBYcSp7YnqbguWjj
+	4jKUIbW4SPZiqBJgLKOUuGtdge/yqcPdUEKJ5Yvabkk22mpv0jmMTeoapt/3BMo3sPP8wFbBJpz
+	+uRkk4ELpDBwXy/U+4/fi2rx77SzMsBRLgeSERokq/3kx0Dokn
+X-Received: by 2002:a05:6000:430a:b0:43b:5022:804 with SMTP id ffacd0b85a97d-43b9e9ee7a9mr5395217f8f.29.1774630148746;
+        Fri, 27 Mar 2026 09:49:08 -0700 (PDT)
 Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b919df7e7sm15397364f8f.26.2026.03.27.09.49.05
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b91943184sm14466301f8f.14.2026.03.27.09.49.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Mar 2026 09:49:05 -0700 (PDT)
+        Fri, 27 Mar 2026 09:49:08 -0700 (PDT)
 From: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	"John Johansen" <john.johansen@canonical.com>,
-	"Paul Moore" <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>
+	"John Johansen" <john.johansen@canonical.com>
 Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
-	Tingmao Wang <m@maowtm.org>,
-	Justin Suess <utilityemal77@gmail.com>,
 	linux-security-module@vger.kernel.org,
+	"Tingmao Wang" <m@maowtm.org>,
+	"Justin Suess" <utilityemal77@gmail.com>,
 	"Samasth Norway Ananda" <samasth.norway.ananda@oracle.com>,
 	"Matthieu Buffet" <matthieu@buffet.re>,
 	"Mikhail Ivanov" <ivanov.mikhail1@huawei-partners.com>,
@@ -78,14 +75,10 @@ Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
 	"Tahera Fahimi" <fahimitahera@gmail.com>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
 	"Kuniyuki Iwashima" <kuniyu@google.com>,
-	"Georgia Garcia" <georgia.garcia@canonical.com>,
-	Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH v8 01/12] lsm: Add LSM hook security_unix_find
-Date: Fri, 27 Mar 2026 17:48:26 +0100
-Message-ID: <20260327164838.38231-2-gnoack3000@gmail.com>
+	"Georgia Garcia" <georgia.garcia@canonical.com>
+Subject: [PATCH v8 02/12] landlock: Use mem_is_zero() in is_layer_masks_allowed()
+Date: Fri, 27 Mar 2026 17:48:27 +0100
+Message-ID: <20260327164838.38231-3-gnoack3000@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260327164838.38231-1-gnoack3000@gmail.com>
 References: <20260327164838.38231-1-gnoack3000@gmail.com>
@@ -98,136 +91,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Justin Suess <utilityemal77@gmail.com>
+This is equivalent, but expresses the intent a bit clearer.
 
-Add an LSM hook security_unix_find.
-
-This hook is called to check the path of a named UNIX socket before a
-connection is initiated. The peer socket may be inspected as well.
-
-Why existing hooks are unsuitable:
-
-Existing socket hooks, security_unix_stream_connect(),
-security_unix_may_send(), and security_socket_connect() don't provide
-TOCTOU-free / namespace independent access to the paths of sockets.
-
-(1) We cannot resolve the path from the struct sockaddr in existing hooks.
-This requires another path lookup. A change in the path between the
-two lookups will cause a TOCTOU bug.
-
-(2) We cannot use the struct path from the listening socket, because it
-may be bound to a path in a different namespace than the caller,
-resulting in a path that cannot be referenced at policy creation time.
-
-Consumers of the hook wishing to reference @other are responsible
-for acquiring the unix_state_lock and checking for the SOCK_DEAD flag
-therein, ensuring the socket hasn't died since lookup.
-
-Cc: Günther Noack <gnoack3000@gmail.com>
-Cc: Tingmao Wang <m@maowtm.org>
-Cc: Mickaël Salaün <mic@digikod.net>
-Cc: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 ---
- include/linux/lsm_hook_defs.h |  5 +++++
- include/linux/security.h      | 11 +++++++++++
- net/unix/af_unix.c            | 10 +++++++---
- security/security.c           | 20 ++++++++++++++++++++
- 4 files changed, 43 insertions(+), 3 deletions(-)
+ security/landlock/fs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 8c42b4bde09c..7a0fd3dbfa29 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -317,6 +317,11 @@ LSM_HOOK(int, 0, post_notification, const struct cred *w_cred,
- LSM_HOOK(int, 0, watch_key, struct key *key)
- #endif /* CONFIG_SECURITY && CONFIG_KEY_NOTIFICATIONS */
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index a03ec664c78e..97065d51685a 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -564,7 +564,7 @@ static void test_no_more_access(struct kunit *const test)
  
-+#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
-+LSM_HOOK(int, 0, unix_find, const struct path *path, struct sock *other,
-+	 int flags)
-+#endif /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
-+
- #ifdef CONFIG_SECURITY_NETWORK
- LSM_HOOK(int, 0, unix_stream_connect, struct sock *sock, struct sock *other,
- 	 struct sock *newsk)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 83a646d72f6f..99a33d8eb28d 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -1931,6 +1931,17 @@ static inline int security_mptcp_add_subflow(struct sock *sk, struct sock *ssk)
+ static bool is_layer_masks_allowed(const struct layer_access_masks *masks)
+ {
+-	return !memchr_inv(&masks->access, 0, sizeof(masks->access));
++	return mem_is_zero(&masks->access, sizeof(masks->access));
  }
- #endif	/* CONFIG_SECURITY_NETWORK */
  
-+#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
-+
-+int security_unix_find(const struct path *path, struct sock *other, int flags);
-+
-+#else /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
-+static inline int security_unix_find(const struct path *path, struct sock *other, int flags)
-+{
-+	return 0;
-+}
-+#endif /* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
-+
- #ifdef CONFIG_SECURITY_INFINIBAND
- int security_ib_pkey_access(void *sec, u64 subnet_prefix, u16 pkey);
- int security_ib_endport_manage_subnet(void *sec, const char *name, u8 port_num);
-diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index 3756a93dc63a..5ef3c2e31757 100644
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -1231,11 +1231,15 @@ static struct sock *unix_find_bsd(struct sockaddr_un *sunaddr, int addr_len,
- 		goto path_put;
- 
- 	err = -EPROTOTYPE;
--	if (sk->sk_type == type)
--		touch_atime(&path);
--	else
-+	if (sk->sk_type != type)
- 		goto sock_put;
- 
-+	err = security_unix_find(&path, sk, flags);
-+	if (err)
-+		goto sock_put;
-+
-+	touch_atime(&path);
-+
- 	path_put(&path);
- 
- 	return sk;
-diff --git a/security/security.c b/security/security.c
-index 67af9228c4e9..28ccea205874 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -4731,6 +4731,26 @@ int security_mptcp_add_subflow(struct sock *sk, struct sock *ssk)
- 
- #endif	/* CONFIG_SECURITY_NETWORK */
- 
-+#if defined(CONFIG_SECURITY_NETWORK) && defined(CONFIG_SECURITY_PATH)
-+/**
-+ * security_unix_find() - Check if a named AF_UNIX socket can connect
-+ * @path: path of the socket being connected to
-+ * @other: peer sock
-+ * @flags: flags associated with the socket
-+ *
-+ * This hook is called to check permissions before connecting to a named
-+ * AF_UNIX socket. The caller does not hold any locks on @other.
-+ *
-+ * Return: Returns 0 if permission is granted.
-+ */
-+int security_unix_find(const struct path *path, struct sock *other, int flags)
-+{
-+	return call_int_hook(unix_find, path, other, flags);
-+}
-+EXPORT_SYMBOL(security_unix_find);
-+
-+#endif	/* CONFIG_SECURITY_NETWORK && CONFIG_SECURITY_PATH */
-+
- #ifdef CONFIG_SECURITY_INFINIBAND
- /**
-  * security_ib_pkey_access() - Check if access to an IB pkey is allowed
+ /*
 -- 
 2.53.0
 
