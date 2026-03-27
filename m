@@ -1,132 +1,120 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4C727467F
-	for <linux-security-module@vger.kernel.org>; Fri, 27 Mar 2026 00:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774572062; cv=none; b=k+OpgOhgVV3sUtd5Wf5xEhSU7R8ldulCzV/BOxkXCB6yXh14ily1qQ7dhVw59i9F6/hMWWrJdC6AlaYLUb/1Pwr5rEyv5EslaqOs9p5V3pGA8RKOy2cVREAKvO/NRLZcloF0mQSQnnRiVN/DgCFd2aDMwRUy6UWpz9yZXEur7IQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774572062; c=relaxed/simple;
-	bh=vt7T/qUGOGLlqaNchVHzH7ZNkaAHnV/vULH5YOrsQpM=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75392E7179
+	for <linux-security-module@vger.kernel.org>; Fri, 27 Mar 2026 01:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.169
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774573617; cv=pass; b=iIwIcyjmGVb82JrgOwtkRZNKAMl5fqYvW68vIIDQzx77xWhz40rvUIHId3Qn7JBGACF1+okPE/MCTMuvoTtgy4rmUwl1W3GaAlAVqUsM2ykBT91epTmZtJ/EG2LOf3ceS8Av7bZOisBytdGxTkzg3Djsymxfanarr8d3eGKugfM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774573617; c=relaxed/simple;
+	bh=KeWbF+sH5V49VasvoUwepM1LdJoATosJLZoY9VySM00=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QJ1sej3QwmsvJ3j+Jk+5VlpQcds8h8QbYp2WIky96w6MUow6vaZ+PpODP2rmQsV2JRCaqDd9VVhGmfPIyjXzQcG3JCaeUBtt1Tv/B6evrHqy951VGuIU/irujiKxrGSg/YmzH33HfGCK932fRiIOoYm7j6fEEN78WMtDDh+v9s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RwQe+H24; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=sjKQWpeMn8kMnioJyZ4HDd6twp2yNVp4vNKhDRDdfEVoqJj44IjBd8osNvqzbKyj92OVcSx0CTcu1Q1ieQIAy7/MN6u5mb0EvUVRdiGHmMkvWcujBVim5B62o3roXPpnQVJ3JNAiieY1Q11Wa2IHg0fc2x74JI8+AKOHZ+Rlffw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=cYL8cSf8; arc=pass smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RwQe+H24"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5E83C19423
-	for <linux-security-module@vger.kernel.org>; Fri, 27 Mar 2026 00:41:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774572061;
-	bh=vt7T/qUGOGLlqaNchVHzH7ZNkaAHnV/vULH5YOrsQpM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RwQe+H24wpJs63oazuy6TuUNOuF2BjCXU/yfjRKeh++eEwS0at4Lvb8j79sHrpkpm
-	 dA6moXoBljhfGWmtVN+lqV8oQ1LEfCVys/pV5Bx5hjE8LBehBDflEkggtG63v1Kwug
-	 VncZhlxUAwK/3hTzlhWRzpfiLGjD9hGll5xRkrE/lTenAIXxuCHp7ek9OU5Bq8bJ/C
-	 ciUcTKl9B4NtkXEMEbw7p6fsTmUbY9Pp54U51JPiYJJ4+pL8J9osKnXg1imB8bwrqG
-	 MxBZFpGvt/u/vysUjaG794KzVBAmazVAXWbuE6t5vL1FZ8/KfRQWoVvondIaaPbn27
-	 WlPl4szD3hdHA==
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-89a05955720so19118526d6.2
-        for <linux-security-module@vger.kernel.org>; Thu, 26 Mar 2026 17:41:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUglLT+wHhvb+JwI2jhS3rqpw2BMeHtaupE6LlhkBEd5ytImjrXdV+e5aHpXT8oPRHN0L3osB5Dm8P8+ZREZJlYh5UcNvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs3NfatQA4FkmbQHS2lbBTsqySpVZ653xcBSSGzElj0P+7GDGV
-	e9Xl7+IS4g4TrOkHDMWpbZ823dgnD+zvjCICVHQ6p+C5jH3zorLcUJUhAF6IlFZmSwfJEw3jEW9
-	C8i/dAh0fhfBHauSl6Vb/bltRTWgG7rw=
-X-Received: by 2002:ad4:5cc7:0:b0:89c:99f5:52c4 with SMTP id
- 6a1803df08f44-89ce8d43382mr7198476d6.15.1774572060621; Thu, 26 Mar 2026
- 17:41:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="cYL8cSf8"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2b0b0064027so10170475ad.3
+        for <linux-security-module@vger.kernel.org>; Thu, 26 Mar 2026 18:06:54 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1774573614; cv=none;
+        d=google.com; s=arc-20240605;
+        b=JeRlWH+oeFQpPLC4p75dFlXxwwu+EpeEMpbZiEpZJP3Ur2y/BZMIhW/jdRDf0jQgTo
+         SodXCKYSMDd4uH//Q5F8E2KFnjTFt3DaBIAbyJPjn3ZmvQk32it6S/MH+LK+Id1CuzjS
+         EotvrD/827uj8eG+Em+LC3B1HiELJIStX4tQ5Gzi2dKfxFLadDLnUYQST3vF5RboTbQR
+         FWCLe/GAiUFtd4GPZnbYwdMJV2xAr7ow2X22A1LotpmAncoRaGshorYNF3byR8Psg57z
+         iwi6b7Zvlf28qkevTifw/oXaFGalUOnNoWu9fp/ynQcrM1p0WGp9/vMm9BzMZZr5IdCg
+         GSGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=NnHkamm+AEobpA8psr45RG6jMwGE1Y1ScbSXU6OCnyU=;
+        fh=w1ejQT3WX1RrK/+gbLMmsrZR5nduO2Kb5kj7QZ5Vc2U=;
+        b=hFUOJE/51l3RQeIQaaxcVbCM7jnoupYuPlG6PIixO6KB5xkBcG7guhgjPMoNk35SpQ
+         fg4YuVEGysX1ZhzmH6zo24MoGARdGftXqz35LVtj8nPL+m0VZs01qFWlQB7yd2n2Ep3/
+         PAjp2kubdbCD/EmVllEUYwWhhSluaV1LVd75rI+gQcK6lswwq16SANqPOQ9WFS561kVf
+         UU7w3tijilF817D5U9LyrFmgEt3QfUdR2Ystce0xQXw9hVTOVSM9vbevReq6zsUt/3Q+
+         ORQrpuXg9HyMYnqNIVvwtOYBuu/5vmEUvttrgksPHPMQTRCLUZK2H1Yr1EOQt0eL+Rxg
+         biqw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1774573614; x=1775178414; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NnHkamm+AEobpA8psr45RG6jMwGE1Y1ScbSXU6OCnyU=;
+        b=cYL8cSf8NDB0HIRMHK4tAVG03Ua0EQnoUA01/dFQOnZPLqMoShmKMGruN+aMrYYtEp
+         4ZbB9vLpk36qoIpjixi01Qg91rrF1GfkGBVOJSA9j0VhKca+cJnK6uKzeV305tYZFFqD
+         jrOi4AbHQhpjC4MBYDC6jXgWbkujta7SSQ5LN+yRr11Cxf1iny012RHgPBI8iaqrfk9q
+         RLSPFP/hzk05SX3kP1A1Rsnsx/HV4DINpDS25aIHT6oCcUopV1gRVSntM1DJzbqiXZFE
+         iXtopPIeAGyYBmm26xAxDJ92j9KLM5NY92jzoAHSznQ0wx8UTlj7D/fRHGg/NFVbnoJ0
+         5F/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774573614; x=1775178414;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=NnHkamm+AEobpA8psr45RG6jMwGE1Y1ScbSXU6OCnyU=;
+        b=bEqW5ipmLmaf7+x/aKr9H1fKogRJnW3HJZPxrG9axgtC63KJ0FUUdsFvmGcHM4TT7k
+         05/bjLqwZYRYYaLM1UwpE+ZFSdLme+cbyO6+PUUauQWZtpUKod1ui0wT725AWbTcE2q4
+         cDi/zApMmPYZA5wjVUmlRdP3RSrc2s81j/G6wWolsqgwCc+zjvaRYp6L3bVPJlO277Eb
+         du3T9HJoFiXBIrn49dCkU8/qQRtzLhsyzOmb4M0UX0R/8O6VE5q9Asem4CMferjOcD41
+         Jyw3kWAe2VE8YnOalFuvkZ+0Fkw38ICE7ge6EpnImWHj96TAYD6mInM9B2F0DxGjMrmb
+         bqeA==
+X-Gm-Message-State: AOJu0Yy8i16lKfgDXrUf74IhZO+Lp8lRIz1jtcTAv83ppPjsb2mvkeNo
+	em1yby+uMCrEYsrX3Qp9x9Sh/RQSKkWESwTnRV9RRaH2HjnkW8x+Gq6bppP3Xz+FBKrz8ujUMZQ
+	J6Wuf3B4yQncCTRSz0RVNt3Muf7Rp120+jfIWoA48
+X-Gm-Gg: ATEYQzzKmCK+ofxdvaI0+ln0jCQwOPihdzMYJJsIXUEzQnTz1nU9/8etuAih0dFvAbS
+	pYxiEVVfgyXLXLIvgXI32Vq+yDJ3QXnZXksaA0ImKQGod4ZjDdkbRcIY/iDDa+tKemCMmEbT3nD
+	zvMGB2mnmnVmV5GCwzRuiH99DtcLuRbFL5mBJgfOscY/HJDGd917V+2WKlxEavZtHDPP2D7VmqG
+	4x8C3RvjW7dzUm2KJTuWfKnaPzBagTix6etsQoX2LZ60BwLcHxsDW9YVNaoNmvN5h9mDa2X9HhO
+	ZbPcvws=
+X-Received: by 2002:a17:903:4407:b0:2b0:6621:cedd with SMTP id
+ d9443c01a7336-2b0cdd31a51mr5581795ad.49.1774573613689; Thu, 26 Mar 2026
+ 18:06:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260318184400.3502908-1-song@kernel.org> <20260318184400.3502908-7-song@kernel.org>
- <b720f521-e930-4f35-9505-1bfdf9e2818c@I-love.SAKURA.ne.jp>
- <4DF5C4A8-7C92-4F76-9B34-2262089E7289@meta.com> <33abcf34-13e2-4a37-83f3-78bb27ecbc11@I-love.SAKURA.ne.jp>
- <F0A0D13E-8208-49A4-9AC6-89AC4BF3F4FB@meta.com> <20260323-klappen-atemschutz-7a0af8c6b087@brauner>
- <714a614b-cfb4-4b20-af8c-df3cc56dfb92@I-love.SAKURA.ne.jp>
- <CAAeYb7k+TWArOKyOomkLZ8fwqUPjha9iORpJaj4nMyN=o4ZRQg@mail.gmail.com> <6609e11e-90aa-4021-974e-e9937688dd49@I-love.SAKURA.ne.jp>
-In-Reply-To: <6609e11e-90aa-4021-974e-e9937688dd49@I-love.SAKURA.ne.jp>
-From: Song Liu <song@kernel.org>
-Date: Thu, 26 Mar 2026 17:40:49 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW5PyqkkAbLr9JZKtJ7F0sys3pENdSOQqG=dggbrEf11iA@mail.gmail.com>
-X-Gm-Features: AQROBzDUWLVisdSlnIPADASIVeAPQUaRFecDIf-Shx_lh3e_Wu7aKFzg04hWSF8
-Message-ID: <CAPhsuW5PyqkkAbLr9JZKtJ7F0sys3pENdSOQqG=dggbrEf11iA@mail.gmail.com>
-Subject: Re: [PATCH 6/7] tomoyo: Convert from sb_mount to granular mount hooks
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	Christian Brauner <brauner@kernel.org>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-Cc: Song Liu <songliubraving@meta.com>, "paul@paul-moore.com" <paul@paul-moore.com>, 
-	"jmorris@namei.org" <jmorris@namei.org>, "serge@hallyn.com" <serge@hallyn.com>, "jack@suse.cz" <jack@suse.cz>, 
-	"john.johansen@canonical.com" <john.johansen@canonical.com>, 
-	"stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>, 
-	"omosnace@redhat.com" <omosnace@redhat.com>, "mic@digikod.net" <mic@digikod.net>, 
-	"gnoack@google.com" <gnoack@google.com>, "takedakn@nttdata.co.jp" <takedakn@nttdata.co.jp>, 
-	"herton@canonical.com" <herton@canonical.com>, Kernel Team <kernel-team@meta.com>, 
-	"selinux@vger.kernel.org" <selinux@vger.kernel.org>, 
-	"apparmor@lists.ubuntu.com" <apparmor@lists.ubuntu.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>
+References: <20260318184400.3502908-1-song@kernel.org> <CAPhsuW5h=-BVp6g2UtHTUO8PQtbiSmqDrn0BT3rbdN4BkhQpeA@mail.gmail.com>
+In-Reply-To: <CAPhsuW5h=-BVp6g2UtHTUO8PQtbiSmqDrn0BT3rbdN4BkhQpeA@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 26 Mar 2026 21:06:42 -0400
+X-Gm-Features: AQROBzBKwxHMqZrCazbp_EEoFhocvn47dYCOH9CjcWVrjXYp2B_xhHc7YALOkis
+Message-ID: <CAHC9VhQUU9L9OTtyo+2mdi0P5jCk1RXnJBxT1+YUyywMSfLuPg@mail.gmail.com>
+Subject: Re: [PATCH 0/7] lsm: Replace security_sb_mount with granular mount hooks
+To: Song Liu <song@kernel.org>
+Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	selinux@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	john.johansen@canonical.com, mic@digikod.net, jmorris@namei.org, 
+	serge@hallyn.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	stephen.smalley.work@gmail.com, omosnace@redhat.com, gnoack@google.com, 
+	takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp, 
+	herton@canonical.com, kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Christian and Al,
-
-On Mon, Mar 23, 2026 at 11:12=E2=80=AFPM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-[...]
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index ba5baccdde67..621b8205a0af 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -3777,7 +3777,7 @@ static bool mount_too_revealing(const struct super_=
-block *sb, int *new_mnt_flags
->   * be added to the namespace tree.
->   */
->  static int do_new_mount_fc(struct fs_context *fc, const struct path *mou=
-ntpoint,
-> -                          unsigned int mnt_flags)
-> +                          unsigned int mnt_flags, void *data, unsigned l=
-ong flags)
->  {
->         struct super_block *sb;
->         struct vfsmount *mnt __free(mntput) =3D fc_mount(fc);
-> @@ -3786,6 +3786,10 @@ static int do_new_mount_fc(struct fs_context *fc, =
-const struct path *mountpoint,
->         if (IS_ERR(mnt))
->                 return PTR_ERR(mnt);
+On Thu, Mar 26, 2026 at 8:31=E2=80=AFPM Song Liu <song@kernel.org> wrote:
 >
-> +       error =3D security_mount_new(fc, mountpoint, mnt_flags, flags, da=
-ta);
-> +       if (error)
-> +               return error;
-> +
->         sb =3D fc->root->d_sb;
->         error =3D security_sb_kern_mount(sb);
->         if (unlikely(error))
-> @@ -3857,9 +3861,7 @@ static int do_new_mount(const struct path *path, co=
-nst char *fstype,
->                 err =3D -EPERM;
+> Hi folks, especially SELinux, AppArmor, and LandLock maintainers,
 >
->         if (!err)
-> -               err =3D security_mount_new(fc, path, mnt_flags, flags, da=
-ta);
-> -       if (!err)
-> -               err =3D do_new_mount_fc(fc, path, mnt_flags);
-> +               err =3D do_new_mount_fc(fc, path, mnt_flags, data, flags)=
-;
->
->         put_fs_context(fc);
->         return err;
+> Could you please share your comments on this set?
 
-Could you please comment on Tetsuo's proposal here? The core
-change (moving security_mount_new after fc_mount) makes sense
-to me. However, it seems to require a lot of code to support this
-change.
+I think we are all aware of this patchset, but most of us are fairly
+busy at the moment.  This patchset is in my queue to review, but it
+isn't something I'm going to be able to review this week.
 
-Given the current patchset addresses TOCTOU issues of bind
-mount, etc. Maybe we can land this set and address TOCTOU
-issue with new mount in follow-up patches?
+> If there are no issues with these changes, can we land the set in 7.1
+> kernels?
 
-Thanks,
-Song
+Given that we are near the end of -rc5, that is highly unlikely.
+
+https://github.com/LinuxSecurityModule/kernel?tab=3Dreadme-ov-file#kernel-d=
+evelopment-process
+
+--=20
+paul-moore.com
