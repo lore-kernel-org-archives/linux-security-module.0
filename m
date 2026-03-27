@@ -1,361 +1,99 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1BA35CB75;
-	Fri, 27 Mar 2026 17:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A19F33F8B1;
+	Fri, 27 Mar 2026 17:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774630948; cv=none; b=fU4W1uy0yYsFQFc+IsSLMSvg7udhdIBo5EnExTV5FM3b/d8tv9siFnce04rV+GMGAwmHjst8x0/B+RAgiv61Bccy7Ue3pdVwmVVF0iS/b8dwAaqa7STHbfFnV2Mlf2+6YDFHqHLPKk55Q8mCjjkklUbnBZjK5BLYSiArwgE+PZw=
+	t=1774634065; cv=none; b=QRljlCpuje2Qr7y4NpRXUM2advWiN1UO2fVs2V8BwNK8gnedxAuFqArqgf1+RwC/gkxcd2ehI6NoIHlY2VKTTwGn2ulIecmwCZPgowPs3j1tGd7i0+SwfFvuZCjgEvEtyWw5ObYFBcQSjVzvqq26S6HncTaXd0VGHVBYk9UUvMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774630948; c=relaxed/simple;
-	bh=MWTC6MVw5V8w3zeaRJqKJ/Y5D9fqUSmg7mnfBks57FM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ahkhBmt13oJsu2XIxlj4vuMZeYdHj79fEckJ6KEWWs68F8rcgM2O8nCFHDiwLF1YOYdg83F0ducZDYvXN+pqf/c/aCRKyin3zoLRsfC7vIyJ1w3Pmnl8z8VPd3Q6LfB07dtBHyWF16QcAwBN2YEtLcJo3yCN0v/FYt+OiE6VyIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.235])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4fj6Kj1T1bzpW0v;
-	Sat, 28 Mar 2026 00:58:33 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id A40974056A;
-	Sat, 28 Mar 2026 01:02:22 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwB3sO0SuMZp_pc+AQ--.5676S2;
-	Fri, 27 Mar 2026 18:02:21 +0100 (CET)
-Message-ID: <af6aa732b85af36e07e4a82b29170e80b13dc7c4.camel@huaweicloud.com>
-Subject: Re: [PATCH v4 11/13] ima: Support staging and deleting N
- measurements entries
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: steven chen <chenste@linux.microsoft.com>, corbet@lwn.net, 
- skhan@linuxfoundation.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
- eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	gregorylumen@linux.microsoft.com, nramas@linux.microsoft.com, Roberto Sassu
-	 <roberto.sassu@huawei.com>
-Date: Fri, 27 Mar 2026 18:02:08 +0100
-In-Reply-To: <0e186faf-8111-4fd9-a7df-bff30f7fb20a@linux.microsoft.com>
-References: <20260326173011.1191815-1-roberto.sassu@huaweicloud.com>
-	 <20260326173011.1191815-12-roberto.sassu@huaweicloud.com>
-	 <0e186faf-8111-4fd9-a7df-bff30f7fb20a@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1774634065; c=relaxed/simple;
+	bh=xT1Z1Xf1nId1mNV7McJTlqqXVZzT5JJypn9FsrQ2Sgk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=h9mtSb6xgxRqT8b9i2gMYkpm/Fd2qND+5IMF9HF+kuUVYxqpxe+Ee2TcNl69WkxTxqeTpqGGQO7SrRv/dZuToczjWHaRIpV+WF/yQWj5NRQ3TcL5DSMfYwfT5rsCSV2G8S1RHb8Vw9cyH0H6L8aKbfV8N+7q5aLKFUz6mbXExEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=NVItzwWY; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="NVItzwWY"
+Received: from narnia (unknown [20.236.11.29])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 1209F20B710C;
+	Fri, 27 Mar 2026 10:54:18 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1209F20B710C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1774634058;
+	bh=p1OrZTY/b5umyuYKNTIPKtE8SHUxFqRbAaccKYQolvg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=NVItzwWYYnXqhvhWgOG/iUkc3jaID3YT+OmGT50Uvokju1zf+EtUkzzmbD2Ixy/TI
+	 SJ0UafXZpAQdWEfJlziYubNtu/71f0XTmLM90y03wfNO1NR/zExjX+z32rSi8AzArT
+	 kzhuZybx6aX0xb77l8lqd79uzOAdJSdAhlpETy2c=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: Song Liu <song@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BC?=
+ =?utf-8?Q?nther?= Noack <gnoack@google.com>, "Dr.
+ David Alan Gilbert" <linux@treblig.org>, Andrew Morton
+ <akpm@linux-foundation.org>, James.Bottomley@hansenpartnership.com,
+ dhowells@redhat.com, Fan Wu <wufan@kernel.org>, Ryan Foster
+ <foster.ryan.r@gmail.com>, Randy Dunlap <rdunlap@infradead.org>,
+ linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v3 4/9] lsm: framework for BPF integrity verification
+In-Reply-To: <CAPhsuW6P-K=nTPxBk0_Wd0E1wDCBqb=uUQzmzpEg2NJub=L+dg@mail.gmail.com>
+References: <20260326060655.2550595-1-bboscaccy@linux.microsoft.com>
+ <20260326060655.2550595-5-bboscaccy@linux.microsoft.com>
+ <CAPhsuW6P-K=nTPxBk0_Wd0E1wDCBqb=uUQzmzpEg2NJub=L+dg@mail.gmail.com>
+Date: Fri, 27 Mar 2026 10:54:16 -0700
+Message-ID: <871ph5f99z.fsf@microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwB3sO0SuMZp_pc+AQ--.5676S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Wr1UuFW5tF4UCw1DWry3Arb_yoWDGr4rpa
-	90ga47Cry8JryxKr1kG3Z7Crsag3ykGF1UGw13Ga4xAF13ZF1v9rnxCryYkFs5Cryvqr4I
-	vw4qqrsxCan0yFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFk
-	u4UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBGnF7qwTrAAAsR
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2026-03-26 at 16:19 -0700, steven chen wrote:
-> On 3/26/2026 10:30 AM, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> >=20
-> > Add support for sending a value N between 1 and ULONG_MAX to the stagin=
-g
-> > interface. This value represents the number of measurements that should=
- be
-> > deleted from the current measurements list.
-> >=20
-> > This staging method allows the remote attestation agents to easily sepa=
-rate
-> > the measurements that were verified (staged and deleted) from those tha=
-t
-> > weren't due to the race between taking a TPM quote and reading the
-> > measurements list.
-> >=20
-> > In order to minimize the locking time of ima_extend_list_mutex, deletin=
-g
-> > N entries is realized by staging the entire current measurements list
-> > (with the lock), by determining the N-th staged entry (without the lock=
-),
-> > and by splicing the entries in excess back to the current measurements =
-list
-> > (with the lock). Finally, the N entries are deleted (without the lock).
-> >=20
-> > Flushing the hash table is not supported for N entries, since it would
-> > require removing the N entries one by one from the hash table under the
-> > ima_extend_list_mutex lock, which would increase the locking time.
-> >=20
-> > The ima_extend_list_mutex lock is necessary in ima_dump_measurement_lis=
-t()
-> > because ima_queue_staged_delete_partial() uses __list_cut_position() to
-> > modify ima_measurements_staged, for which no RCU-safe variant exists. F=
-or
-> > the staging with prompt flavor alone, list_replace_rcu() could have bee=
-n
-> > used instead, but since both flavors share the same kexec serialization
-> > path, the mutex is required regardless.
-> >=20
-> > Link: https://github.com/linux-integrity/linux/issues/1
-> > Suggested-by: Steven Chen <chenste@linux.microsoft.com>
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >   security/integrity/ima/Kconfig     |  3 ++
-> >   security/integrity/ima/ima.h       |  1 +
-> >   security/integrity/ima/ima_fs.c    | 22 +++++++++-
-> >   security/integrity/ima/ima_queue.c | 70 +++++++++++++++++++++++++++++=
-+
-> >   4 files changed, 95 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kc=
-onfig
-> > index e714726f3384..6ddb4e77bff5 100644
-> > --- a/security/integrity/ima/Kconfig
-> > +++ b/security/integrity/ima/Kconfig
-> > @@ -341,6 +341,9 @@ config IMA_STAGING
-> >   	  It allows user space to stage the measurements list for deletion a=
-nd
-> >   	  to delete the staged measurements after confirmation.
-> >  =20
-> > +	  Or, alternatively, it allows user space to specify N measurements
-> > +	  entries to be deleted.
-> > +
-> >   	  On kexec, staging is reverted and staged measurements are prepende=
-d
-> >   	  to the current measurements list when measurements are copied to t=
-he
-> >   	  secondary kernel.
-> > diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.=
-h
-> > index 699b735dec7d..de0693fce53c 100644
-> > --- a/security/integrity/ima/ima.h
-> > +++ b/security/integrity/ima/ima.h
-> > @@ -319,6 +319,7 @@ struct ima_template_desc *lookup_template_desc(cons=
-t char *name);
-> >   bool ima_template_has_modsig(const struct ima_template_desc *ima_temp=
-late);
-> >   int ima_queue_stage(void);
-> >   int ima_queue_staged_delete_all(void);
-> > +int ima_queue_staged_delete_partial(unsigned long req_value);
-> >   int ima_restore_measurement_entry(struct ima_template_entry *entry);
-> >   int ima_restore_measurement_list(loff_t bufsize, void *buf);
-> >   int ima_measurements_show(struct seq_file *m, void *v);
-> > diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/i=
-ma_fs.c
-> > index 39d9128e9f22..eb3f343c1138 100644
-> > --- a/security/integrity/ima/ima_fs.c
-> > +++ b/security/integrity/ima/ima_fs.c
-> > @@ -28,6 +28,7 @@
-> >    * Requests:
-> >    * 'A\n': stage the entire measurements list
-> >    * 'D\n': delete all staged measurements
-> > + * '[1, ULONG_MAX]\n' delete N measurements entries
-> >    */
-> >   #define STAGED_REQ_LENGTH 21
-> >  =20
-> > @@ -319,6 +320,7 @@ static ssize_t ima_measurements_staged_write(struct=
- file *file,
-> >   					     size_t datalen, loff_t *ppos)
-> >   {
-> >   	char req[STAGED_REQ_LENGTH];
-> > +	unsigned long req_value;
-> >   	int ret;
-> >  =20
-> >   	if (*ppos > 0 || datalen < 2 || datalen > STAGED_REQ_LENGTH)
-> > @@ -346,7 +348,25 @@ static ssize_t ima_measurements_staged_write(struc=
-t file *file,
-> >   		ret =3D ima_queue_staged_delete_all();
-> >   		break;
-> >   	default:
-> > -		ret =3D -EINVAL;
-> > +		if (ima_flush_htable) {
-> > +			pr_debug("Deleting staged N measurements not supported when flushin=
-g the hash table is requested\n");
-> > +			return -EINVAL;
-> > +		}
-> > +
-> > +		ret =3D kstrtoul(req, 10, &req_value);
-> > +		if (ret < 0)
-> > +			return ret;
-> > +
-> > +		if (req_value =3D=3D 0) {
-> > +			pr_debug("Must delete at least one entry\n");
-> > +			return -EINVAL;
-> > +		}
-> > +
-> > +		ret =3D ima_queue_stage();
-> > +		if (ret < 0)
-> > +			return ret;
-> > +
-> > +		ret =3D ima_queue_staged_delete_partial(req_value);
-> The default processing is "Trim N" idea plus performance improvement.
->=20
-> Here do everything in one time. And this is what I said in v3.
->=20
-> [PATCH v3 1/3] ima: Remove ima_h_table structure=20
-> <https://lore.kernel.org/linux-integrity/c61aeaa79929a98cb3a6d30835972891=
-fac3570f.camel@linux.ibm.com/T/#t>
+Song Liu <song@kernel.org> writes:
 
-In your approach you do:
+> On Wed, Mar 25, 2026 at 11:07=E2=80=AFPM Blaise Boscaccy
+> <bboscaccy@linux.microsoft.com> wrote:
+> [...]
+>> The first new callback, bpf_prog_load_integrity(), located within the
+>> security_bpf_prog_load() hook, is necessary to ensure that the integrity
+>> verification callbacks are executed before any of the existing LSMs
+>> are executed via the bpf_prog_load() callback.  Reusing the existing
+>> bpf_prog_load() callback for integrity verification could result in LSMs
+>> not having access to the integrity verification results when asked to
+>> authorize the BPF program load in the bpf_prog_load() callback.
+>>
+>> The new LSM hook, security_bpf_prog_load_post_integrity(), is intended
+>> to be called from within LSMs performing BPF program integrity
+>> verification.  It is used to report the verdict of the integrity
+>> verification to other LSMs enforcing access control policy on BPF
+>> program loads.  LSMs enforcing such access controls should register a
+>> bpf_prog_load_post_integrity() callback to receive integrity verdicts.
+>
+> bpf_prog_load_post_integrity() is weird. Some questions about it:
+>
+> 1. Is it possible to call it from other LSMs (not hornet)? Specifically, =
+is it
+>    possible to call it from BPF LSM?
 
-lock ima_extend_measure_list_mutex
-scan entries until N
-cut list staged -> trim
-unlock ima_extend_measure_list_mutex
+There is nothing hornet exclusive about that security hook. If the BPF
+LSM folks wanted to use it they would probably need to implement a
+kfunc to invoke it.=20=20
 
+> 2. This set does not include any LSMs that attach functions to
+>    bpf_prog_load_post_integrity. This is against the new LSM hook policy.
+>    I guess the plan is to add LSM users in follow up patches? Could you
+>    please include at least some of such code in this patchset? This will
+>    help folks understand the use case.
+>
 
-In my approach I do:
-lock ima_extend_measure_list_mutex
-list replace active -> staged
-unlock ima_extend_measure_list_mutex
+Sure thing. I will be sending out a v4 with additional patches that has
+a concrete user of bpf_prog_load_post_integrity.
 
-scan entries until N
-
-lock ima_extend_measure_list_mutex
-cut list staged -> trim
-splice staged ->active
-unlock ima_extend_measure_list_mutex
-
-So, I guess if you refer to less user space locking time, you mean one
-lock/unlock and one list replace + list splice less in your solution.
-
-In exchange, you propose to hold the lock in the kernel while scanning
-N. I think it is a significant increase of kernel locking time vs a
-negligible increase of user space locking time (in the kernel, all
-processes need to wait for the ima_extend_measure_list_mutex to be
-released, in user space it is just the agent waiting).
-
-Roberto
-
-> The important two parts of trimming is "trim N" and performance improveme=
-nt.
->=20
-> The performance improvement include two parts:
->  =C2=A0 =C2=A0 hash table staging
->  =C2=A0 =C2=A0 active log list staging
->=20
-> And I think "Trim N" plus performance improvement is the right direction=
-=20
-> to go.
-> Lots of code for two steps "stage and trim" "stage" part can be removed.
->=20
-> Also race condition may happen if not holding the list all time in user=
-=20
-> space
-> during attestation period: from stage, read list, attestation and trimmin=
-g.
->=20
-> So in order to improve the above user space lock time, "Trim T:N" can be=
-=20
-> used
-> not to hold list long in user space during attestation.
->=20
-> For Trim T:N, T represent total log trimmed since system boot up. Please=
-=20
-> refer to
-> https://lore.kernel.org/linux-integrity/20260205235849.7086-1-chenste@lin=
-ux.microsoft.com/T/#t
->=20
 > Thanks,
->=20
-> Steven
-> >   	}
-> >  =20
-> >   	if (ret < 0)
-> > diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/im=
-a/ima_queue.c
-> > index f5c18acfbc43..4fb557d61a88 100644
-> > --- a/security/integrity/ima/ima_queue.c
-> > +++ b/security/integrity/ima/ima_queue.c
-> > @@ -371,6 +371,76 @@ int ima_queue_staged_delete_all(void)
-> >   	return 0;
-> >   }
-> >  =20
-> > +int ima_queue_staged_delete_partial(unsigned long req_value)
-> > +{
-> > +	unsigned long req_value_copy =3D req_value;
-> > +	unsigned long size_to_remove =3D 0, num_to_remove =3D 0;
-> > +	struct list_head *cut_pos =3D NULL;
-> > +	LIST_HEAD(ima_measurements_trim);
-> > +	struct ima_queue_entry *qe;
-> > +	int ret =3D 0;
-> > +
-> > +	/*
-> > +	 * Safe walk (no concurrent write), not under ima_extend_list_mutex
-> > +	 * for performance reasons.
-> > +	 */
-> > +	list_for_each_entry(qe, &ima_measurements_staged, later) {
-> > +		size_to_remove +=3D get_binary_runtime_size(qe->entry);
-> > +		num_to_remove++;
-> > +
-> > +		if (--req_value_copy =3D=3D 0) {
-> > +			/* qe->later always points to a valid list entry. */
-> > +			cut_pos =3D &qe->later;
-> > +			break;
-> > +		}
-> > +	}
-> > +
-> > +	/* Nothing to remove, undoing staging. */
-> > +	if (req_value_copy > 0) {
-> > +		size_to_remove =3D 0;
-> > +		num_to_remove =3D 0;
-> > +		ret =3D -ENOENT;
-> > +	}
-> > +
-> > +	mutex_lock(&ima_extend_list_mutex);
-> > +	if (list_empty(&ima_measurements_staged)) {
-> > +		mutex_unlock(&ima_extend_list_mutex);
-> > +		return -ENOENT;
-> > +	}
-> > +
-> > +	if (cut_pos !=3D NULL)
-> > +		/*
-> > +		 * ima_dump_measurement_list() does not modify the list,
-> > +		 * cut_pos remains the same even if it was computed before
-> > +		 * the lock.
-> > +		 */
-> > +		__list_cut_position(&ima_measurements_trim,
-> > +				    &ima_measurements_staged, cut_pos);
-> > +
-> > +	atomic_long_sub(num_to_remove, &ima_num_entries[BINARY_STAGED]);
-> > +	atomic_long_add(atomic_long_read(&ima_num_entries[BINARY_STAGED]),
-> > +			&ima_num_entries[BINARY]);
-> > +	atomic_long_set(&ima_num_entries[BINARY_STAGED], 0);
-> > +
-> > +	if (IS_ENABLED(CONFIG_IMA_KEXEC)) {
-> > +		binary_runtime_size[BINARY_STAGED] -=3D size_to_remove;
-> > +		binary_runtime_size[BINARY] +=3D
-> > +					binary_runtime_size[BINARY_STAGED];
-> > +		binary_runtime_size[BINARY_STAGED] =3D 0;
-> > +	}
-> > +
-> > +	/*
-> > +	 * Splice (prepend) any remaining non-deleted staged entries to the
-> > +	 * active list (RCU not needed, there cannot be concurrent readers).
-> > +	 */
-> > +	list_splice(&ima_measurements_staged, &ima_measurements);
-> > +	INIT_LIST_HEAD(&ima_measurements_staged);
-> > +	mutex_unlock(&ima_extend_list_mutex);
-> > +
-> > +	ima_queue_delete(&ima_measurements_trim, false);
-> > +	return ret;
-> > +}
-> > +
-> >   static void ima_queue_delete(struct list_head *head, bool flush_htabl=
-e)
-> >   {
-> >   	struct ima_queue_entry *qe, *qe_tmp;
->=20
-
+> Song
+>
+> [...]
