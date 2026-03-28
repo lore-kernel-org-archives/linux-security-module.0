@@ -1,512 +1,186 @@
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434A339DBE6
-	for <linux-security-module@vger.kernel.org>; Fri, 27 Mar 2026 22:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0C326F46F;
+	Sat, 28 Mar 2026 02:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774649108; cv=none; b=XFdLixUyIHIrAfAsSkSxOHwPuuPpCtAat60yMiCHuJrty54PjSSqDksyTTY3Z+CXLNF6Ar5CifLIoqS+ZfkdXLxPG/qdvq4L5fR9yutsDvjKOeFyHpqoPWWxgvi2WyAwTY2BEwk2G4DHj6U2mQ/Pex7EM9NRhOKLgxTzWaKtQJQ=
+	t=1774666555; cv=none; b=U20gwdkiFYks7RtAGcd54wWzYCeOec12MtJxajrX7GM754XfcQY+mhWeNAcNZrgfDNNaNgJmRCBX5TjwFzZrSYHgQtX8fL6wUytug6Tl0bWuTp7T1Lui7Vy7udhV94HSCoT7uLQLAsdChJh7lT6g+7Yp4lcQ5K3SdnUZhuHCzks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774649108; c=relaxed/simple;
-	bh=uAsoCWMtcPyMp/S2SCYo9T7XmE/BIztqzDW98RmcLw0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s4CJ1pEttC/UTPm27d95EhtLClwx8kNJ0lYsXwEyIrhj5sp/XNpEJXSWyPixpRZ3MKIzlsmubEvFh2ei88SnOzHd3OBwzRZ6H4xIcaO1UmCeK133RRiy3n9idEqd0gMEvuQYFs2DaXkStDD+m060Fds1XYTmNslv+U8q4IGF+vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AO/k6HSI; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1774666555; c=relaxed/simple;
+	bh=+nZ4u3MBcRwp9OGWXaCUo2FPTKLyPZrQVTAvSmX15Bk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jpKtGCQ+thKUBjtezz5uWL+Phn13pIvk35lcpZUKWer6f6uiJ/Dt8Un5CKKQp+5LSK0V96Oq351W/UhdeOvb/UsOOO3fUKrp4pZdBhCnb9RwMv+wrovaTOD128NSYeCBaJHtbvkMrHBiWULUYjv6/dY84c/ZMNjEM2zOys+ixwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aknoCzpB; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AO/k6HSI"
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-89a465bd7edso22012996d6.0
-        for <linux-security-module@vger.kernel.org>; Fri, 27 Mar 2026 15:05:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1774649105; x=1775253905; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rvmB3982RCg91CztQ8nF7ZM39jIt6VKpquOeXwnbw0A=;
-        b=AO/k6HSICfFc0PlayzjVZlleKkYn7SfrGS5KSFy50MUTB8yy/QZEcpkRxbMTLC2RcJ
-         zdJuXLSjI6brPRuZY3VIgHLcRYdq39GnbliyhRntIMIfT6v1+M0mZ2k+ostA1HSFzcYE
-         Y3xg2BSuFU2Q0PImFeUHc0vvXTCDqaEatf9SXyy31fSqMRY3vuAKR7lhu2YGVNjzvOL1
-         Jrmv1FcUlDcqDQ7S4jb7l/8KmvUBmLe7bjJPWLowcGQlhYoH5pgBtlvU4k2sDoVpfmDK
-         umIxoYo5wkGyc9bv9W8Bbh3B3h+ae3cCc2gudQGB71St4+Ts2XhrIvS+8sICiLYbHH6T
-         wPXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774649105; x=1775253905;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=rvmB3982RCg91CztQ8nF7ZM39jIt6VKpquOeXwnbw0A=;
-        b=hZDobYKT1vjtvbNj23BBLIrKipZPbRzUWd02GY7KEKuRcpQwNMNr6LjxGYGwwZESLH
-         43r/O+s0qb8MBuSl5GH31vcaqqFT/aPCvfJdGKBisxuLFaWqdEO9+lCasq2uHK6AIUdQ
-         bdPf3fyFPokmAOhaHs84uJkvkeTBCRZhhU8VRXYnUYpmT0fO9emm0tVOiOo98DKNe7Bk
-         F5DhVxZ/g4/e62irIvLO+X2VZ584o/E8uobSVbCgFCCe0sLmDSHvKwWoEB+dHBBBjTC8
-         sYk0zSqt+Iaqde8V94Ok7IIhuSeO2qudvDT0jFePDww+mgPpvMN2zpmfY2a9gvDCg+2b
-         kq2g==
-X-Gm-Message-State: AOJu0Yx4fPPYIaIs20x10B/4eUJCfHOB8GsvDJwJDl4hc7RGTqsGbTkG
-	JjrxAhDpqvfmMReN3TyuLCYvOWOyzSvI9OD5zGNtH43lNguEWjI/Xlln9/ogQrUI8fwkN7I6USP
-	d9W8=
-X-Gm-Gg: ATEYQzw1g632sDvVfngQ8Csh98k2/Z3O33AD2OvhJI4rAwrM/bXphzxwGnEj1I7vJ56
-	AJMV7Lgz23y+UIZ6nIsSv3eI3XHF+1VkOg7IM5QKW9MzHoKxkFS3xBGSI9j9CGbO6WGTLalJ8/J
-	JVxuH5kPFaMzQJxv5K+b5ZxLPfKD86RsAkMpJJlVzN73Zv4RjqFMG+mI4lXF9SvFEvk8UslTmsu
-	0rMyAmFhH76jmnXoeyHBZddKWVC7EUhxAPGeQ2Uwvss9yDyyVL0MrzomGgFQm7F9T9qba+Q8KnM
-	ZWgIo5UBoK89yW7IdLcioRLUr52GIdACyVIZdDR9hYYmjEKmWV4J+TkfMRpNWqKGK5fW2svNLKC
-	Cov/yKwbC6HepeEocSOD5zAvK+AB4zPZd9qCECt6XBMlLtzx4g9obQIRMocBZQFAovzOmXkRmEJ
-	Z15L52n57w2qX0UtCJ1cCVUUp/Jj95+lupfnX5EjHMCN+d//jPE8xOLBtTUCofvaW4H/Gee1SFM
-	5n1rpg=
-X-Received: by 2002:ad4:5d4e:0:b0:89a:b20:9f4f with SMTP id 6a1803df08f44-89ce8ecdf21mr64567106d6.29.1774649104663;
-        Fri, 27 Mar 2026 15:05:04 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-89ecf2820d8sm3741006d6.26.2026.03.27.15.05.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Mar 2026 15:05:03 -0700 (PDT)
-From: Paul Moore <paul@paul-moore.com>
-To: linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org
-Cc: Amir Goldstein <amir73il@gmail.com>,
-	Gao Xiang <xiang@kernel.org>,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH v3 2/2] selinux: fix overlayfs mmap() and mprotect() access checks
-Date: Fri, 27 Mar 2026 18:04:33 -0400
-Message-ID: <20260327220446.353103-6-paul@paul-moore.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260327220446.353103-4-paul@paul-moore.com>
-References: <20260327220446.353103-4-paul@paul-moore.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aknoCzpB"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1774666553; x=1806202553;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+nZ4u3MBcRwp9OGWXaCUo2FPTKLyPZrQVTAvSmX15Bk=;
+  b=aknoCzpBFPiWDl2zhYIRTrNx/Viwi1izg4yymvSELiYZiZhNSPZ6NjqS
+   T23LURY1gE0trdSMruvKRHrQZ/Ti9Q86vSqImFVQ0OCWI9LGiwIsLjuhU
+   25yGqXYrHQcKwxXRQ6g62rpyjL9XGNmrYpoF75MQDxYtKxgAjQMD46n80
+   dYHgsfkWJI6Q5B7lxe2ugD/ZB9TFklfuJbmaWva4pv0G3+3h2/8omGYwi
+   j1u6cX1cBHur1UfXxzexXjXS++yfO1p2YFyJwGMpmZKwqWA7l97QcaWTd
+   WReT9Bx348IxEcv1jMHCtqaY1eu5Q2yKu1+DGa4tSWW9MxQD6pQgcoQ6d
+   w==;
+X-CSE-ConnectionGUID: o0uctF+YQuywrHHaHwpYCg==
+X-CSE-MsgGUID: X4M4L7QvRrqnHdC3y1/2Ow==
+X-IronPort-AV: E=McAfee;i="6800,10657,11742"; a="75857023"
+X-IronPort-AV: E=Sophos;i="6.23,145,1770624000"; 
+   d="scan'208";a="75857023"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2026 19:55:52 -0700
+X-CSE-ConnectionGUID: /bKuae7qTwSAoSUlotz+1g==
+X-CSE-MsgGUID: peMT7tAZRFGoECNlx4ANoA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,145,1770624000"; 
+   d="scan'208";a="224685528"
+Received: from lkp-server01.sh.intel.com (HELO 3905d212be1b) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 27 Mar 2026 19:55:46 -0700
+Received: from kbuild by 3905d212be1b with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1w6Jpv-00000000B0v-1g9H;
+	Sat, 28 Mar 2026 02:55:43 +0000
+Date: Sat, 28 Mar 2026 10:55:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
+	Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	James.Bottomley@hansenpartnership.com, dhowells@redhat.com,
+	Fan Wu <wufan@kernel.org>, Ryan Foster <foster.ryan.r@gmail.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>
+Subject: Re: [PATCH v3 6/9] security: Hornet LSM
+Message-ID: <202603281030.AIoqyOy3-lkp@intel.com>
+References: <20260326060655.2550595-7-bboscaccy@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13699; i=paul@paul-moore.com; h=from:subject; bh=uAsoCWMtcPyMp/S2SCYo9T7XmE/BIztqzDW98RmcLw0=; b=owEBbQKS/ZANAwAKAeog8tqXN4lzAcsmYgBpxv8CTc3P8pX++ZLYVj2X4l6uAGngrffMBiWtp p71eDswIVqJAjMEAAEKAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCacb/AgAKCRDqIPLalzeJ c1QwD/96PuDqq9HRBacHpqPQXBRFukLJaPYxlXHSW6AH9QXBXwjCQQB/uNQEqk+DkwLfpMY5eXF lY5V/UCM3FgUjfJYYxGBHOIt/ZJND+uqJsZYGoIR1nBmJqsjgb97Dk8TymNaSh9+nr8zuShUCvP fWwfddhRsAYOyZwt6bT9+jZStuKUKyBjkppyqRf5VS/ctHKDhoBAMJmqMIzihpHF7VduqKcg+UY G0xW+Yn6Qa7pSoFGz2Iyx8jsKZTCL/6UBYcsRTbyNznwYbZYQJEnOwkArAtgEHw5f4/iBpCnNJv 352sn7QxCLYKXMsE9SiZBKNhn8zJ28NltTe7/dICgzbmy4hkVlm7sxHRvroTKwiiapP0RgBZaX6 xNn4NaZ0pPnA8dZTqXgwMX6qBPpBr5IvQupE3fUurud9KrUuLkg6SS+2S9DshXploZbpGY0q808 1cgUV9duBo7NM6VWvBCpieQK0cLogM3Mjr+8WCzWEbSDhNcCLkXbWjQPRj7jgJY0rBxHgV/LtND YU1PX0j1DgOlIznVyuP63Tt/rAFRnLJ0vgkxEtNR6I04J+u1YXDGbnVBOV/7jgUsX6xuGH6AQp4 263XOOt045E87l7m6kiTDLB9Pypeyy32Z3U7jLQkNvpawOQ454XA9GB30l9MPoHDv7Axq0Iuwt4 Vecbft1u+WNO0hg==
-X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260326060655.2550595-7-bboscaccy@linux.microsoft.com>
 
-The existing SELinux security model for overlayfs is to allow access if
-the current task is able to access the top level file (the "user" file)
-and the mounter's credentials are sufficient to access the lower
-level file (the "backing" file).  Unfortunately, the current code does
-not properly enforce these access controls for both mmap() and mprotect()
-operations on overlayfs filesystems.
+Hi Blaise,
 
-This patch makes use of the newly created security_mmap_backing_file()
-LSM hook to provide the missing backing file enforcement for mmap()
-operations, and leverages the backing file API and new LSM blob to
-provide the necessary information to properly enforce the mprotect()
-access controls.
+kernel test robot noticed the following build errors:
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Paul Moore <paul@paul-moore.com>
----
- security/selinux/hooks.c          | 256 +++++++++++++++++++++---------
- security/selinux/include/objsec.h |  17 ++
- 2 files changed, 202 insertions(+), 71 deletions(-)
+[auto build test ERROR on herbert-cryptodev-2.6/master]
+[also build test ERROR on herbert-crypto-2.6/master shuah-kselftest/next shuah-kselftest/fixes linus/master v7.0-rc5 next-20260327]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index d8224ea113d1..d8557da79480 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -1745,6 +1745,60 @@ static inline int file_path_has_perm(const struct cred *cred,
- static int bpf_fd_pass(const struct file *file, u32 sid);
- #endif
- 
-+static int __file_has_perm(const struct cred *cred, const struct file *file,
-+			   u32 av, bool bf_user_file)
-+
-+{
-+	struct common_audit_data ad;
-+	struct inode *inode;
-+	u32 ssid = cred_sid(cred);
-+	u32 tsid_fd;
-+	int rc;
-+
-+	if (bf_user_file) {
-+		struct backing_file_security_struct *bfsec;
-+		const struct path *path;
-+
-+		if (WARN_ON(!(file->f_mode & FMODE_BACKING)))
-+			return -EIO;
-+
-+		bfsec = selinux_backing_file(file);
-+		path = backing_file_user_path(file);
-+		tsid_fd = bfsec->uf_sid;
-+		inode = d_inode(path->dentry);
-+
-+		ad.type = LSM_AUDIT_DATA_PATH;
-+		ad.u.path = *path;
-+	} else {
-+		struct file_security_struct *fsec = selinux_file(file);
-+
-+		tsid_fd = fsec->sid;
-+		inode = file_inode(file);
-+
-+		ad.type = LSM_AUDIT_DATA_FILE;
-+		ad.u.file = file;
-+	}
-+
-+	if (ssid != tsid_fd) {
-+		rc = avc_has_perm(ssid, tsid_fd, SECCLASS_FD, FD__USE, &ad);
-+		if (rc)
-+			return rc;
-+	}
-+
-+#ifdef CONFIG_BPF_SYSCALL
-+	/* regardless of backing vs user file, use the underlying file here */
-+	rc = bpf_fd_pass(file, ssid);
-+	if (rc)
-+		return rc;
-+#endif
-+
-+	/* av is zero if only checking access to the descriptor. */
-+	if (av)
-+		return inode_has_perm(cred, inode, av, &ad);
-+
-+	return 0;
-+}
-+
- /* Check whether a task can use an open file descriptor to
-    access an inode in a given way.  Check access to the
-    descriptor itself, and then use dentry_has_perm to
-@@ -1753,41 +1807,10 @@ static int bpf_fd_pass(const struct file *file, u32 sid);
-    has the same SID as the process.  If av is zero, then
-    access to the file is not checked, e.g. for cases
-    where only the descriptor is affected like seek. */
--static int file_has_perm(const struct cred *cred,
--			 struct file *file,
--			 u32 av)
-+static inline int file_has_perm(const struct cred *cred,
-+				const struct file *file, u32 av)
- {
--	struct file_security_struct *fsec = selinux_file(file);
--	struct inode *inode = file_inode(file);
--	struct common_audit_data ad;
--	u32 sid = cred_sid(cred);
--	int rc;
--
--	ad.type = LSM_AUDIT_DATA_FILE;
--	ad.u.file = file;
--
--	if (sid != fsec->sid) {
--		rc = avc_has_perm(sid, fsec->sid,
--				  SECCLASS_FD,
--				  FD__USE,
--				  &ad);
--		if (rc)
--			goto out;
--	}
--
--#ifdef CONFIG_BPF_SYSCALL
--	rc = bpf_fd_pass(file, cred_sid(cred));
--	if (rc)
--		return rc;
--#endif
--
--	/* av is zero if only checking access to the descriptor. */
--	rc = 0;
--	if (av)
--		rc = inode_has_perm(cred, inode, av, &ad);
--
--out:
--	return rc;
-+	return __file_has_perm(cred, file, av, false);
- }
- 
- /*
-@@ -3825,6 +3848,17 @@ static int selinux_file_alloc_security(struct file *file)
- 	return 0;
- }
- 
-+static int selinux_backing_file_alloc(void *backing_file_blob,
-+				      const struct file *user_file)
-+{
-+	struct backing_file_security_struct *bfsec;
-+
-+	bfsec = selinux_backing_file_raw(backing_file_blob);
-+	bfsec->uf_sid = selinux_file(user_file)->sid;
-+
-+	return 0;
-+}
-+
- /*
-  * Check whether a task has the ioctl permission and cmd
-  * operation to an inode.
-@@ -3942,42 +3976,55 @@ static int selinux_file_ioctl_compat(struct file *file, unsigned int cmd,
- 
- static int default_noexec __ro_after_init;
- 
--static int file_map_prot_check(struct file *file, unsigned long prot, int shared)
-+static int __file_map_prot_check(const struct cred *cred,
-+				 const struct file *file, unsigned long prot,
-+				 bool shared, bool bf_user_file)
- {
--	const struct cred *cred = current_cred();
--	u32 sid = cred_sid(cred);
--	int rc = 0;
-+	struct inode *inode = NULL;
-+	bool prot_exec = prot & PROT_EXEC;
-+	bool prot_write = prot & PROT_WRITE;
-+
-+	if (file) {
-+		if (bf_user_file)
-+			inode = d_inode(backing_file_user_path(file)->dentry);
-+		else
-+			inode = file_inode(file);
-+	}
-+
-+	if (default_noexec && prot_exec &&
-+	    (!file || IS_PRIVATE(inode) || (!shared && prot_write))) {
-+		int rc;
-+		u32 sid = cred_sid(cred);
- 
--	if (default_noexec &&
--	    (prot & PROT_EXEC) && (!file || IS_PRIVATE(file_inode(file)) ||
--				   (!shared && (prot & PROT_WRITE)))) {
- 		/*
--		 * We are making executable an anonymous mapping or a
--		 * private file mapping that will also be writable.
--		 * This has an additional check.
-+		 * We are making executable an anonymous mapping or a private
-+		 * file mapping that will also be writable.
- 		 */
--		rc = avc_has_perm(sid, sid, SECCLASS_PROCESS,
--				  PROCESS__EXECMEM, NULL);
-+		rc = avc_has_perm(sid, sid, SECCLASS_PROCESS, PROCESS__EXECMEM,
-+				  NULL);
- 		if (rc)
--			goto error;
-+			return rc;
- 	}
- 
- 	if (file) {
--		/* read access is always possible with a mapping */
-+		/* "read" always possible, "write" only if shared */
- 		u32 av = FILE__READ;
--
--		/* write access only matters if the mapping is shared */
--		if (shared && (prot & PROT_WRITE))
-+		if (shared && prot_write)
- 			av |= FILE__WRITE;
--
--		if (prot & PROT_EXEC)
-+		if (prot_exec)
- 			av |= FILE__EXECUTE;
- 
--		return file_has_perm(cred, file, av);
-+		return __file_has_perm(cred, file, av, bf_user_file);
- 	}
- 
--error:
--	return rc;
-+	return 0;
-+}
-+
-+static inline int file_map_prot_check(const struct cred *cred,
-+				      const struct file *file,
-+				      unsigned long prot, bool shared)
-+{
-+	return __file_map_prot_check(cred, file, prot, shared, false);
- }
- 
- static int selinux_mmap_addr(unsigned long addr)
-@@ -3993,36 +4040,80 @@ static int selinux_mmap_addr(unsigned long addr)
- 	return rc;
- }
- 
--static int selinux_mmap_file(struct file *file,
--			     unsigned long reqprot __always_unused,
--			     unsigned long prot, unsigned long flags)
-+static int selinux_mmap_file_common(const struct cred *cred, struct file *file,
-+				    unsigned long prot, bool shared)
- {
--	struct common_audit_data ad;
--	int rc;
--
- 	if (file) {
-+		int rc;
-+		struct common_audit_data ad;
-+
- 		ad.type = LSM_AUDIT_DATA_FILE;
- 		ad.u.file = file;
--		rc = inode_has_perm(current_cred(), file_inode(file),
--				    FILE__MAP, &ad);
-+		rc = inode_has_perm(cred, file_inode(file), FILE__MAP, &ad);
- 		if (rc)
- 			return rc;
- 	}
- 
--	return file_map_prot_check(file, prot,
--				   (flags & MAP_TYPE) == MAP_SHARED);
-+	return file_map_prot_check(cred, file, prot, shared);
-+}
-+
-+static int selinux_mmap_file(struct file *file,
-+			     unsigned long reqprot __always_unused,
-+			     unsigned long prot, unsigned long flags)
-+{
-+	return selinux_mmap_file_common(current_cred(), file, prot,
-+					(flags & MAP_TYPE) == MAP_SHARED);
-+}
-+
-+/**
-+ * selinux_mmap_backing_file - Check mmap permissions on a backing file
-+ * @vma: memory region
-+ * @backing_file: stacked filesystem backing file
-+ * @user_file: user visible file
-+ *
-+ * This is called after selinux_mmap_file() on stacked filesystems, and it
-+ * is this function's responsibility to verify access to @backing_file and
-+ * setup the SELinux state for possible later use in the mprotect() code path.
-+ *
-+ * By the time this function is called, mmap() access to @user_file has already
-+ * been authorized and @vma->vm_file has been set to point to @backing_file.
-+ *
-+ * Return zero on success, negative values otherwise.
-+ */
-+static int selinux_mmap_backing_file(struct vm_area_struct *vma,
-+				     struct file *backing_file,
-+				     struct file *user_file __always_unused)
-+{
-+	unsigned long prot = 0;
-+
-+	/* translate vma->vm_flags perms into PROT perms */
-+	if (vma->vm_flags & VM_READ)
-+		prot |= PROT_READ;
-+	if (vma->vm_flags & VM_WRITE)
-+		prot |= PROT_WRITE;
-+	if (vma->vm_flags & VM_EXEC)
-+		prot |= PROT_EXEC;
-+
-+	return selinux_mmap_file_common(backing_file->f_cred, backing_file,
-+					prot, vma->vm_flags & VM_SHARED);
- }
- 
- static int selinux_file_mprotect(struct vm_area_struct *vma,
- 				 unsigned long reqprot __always_unused,
- 				 unsigned long prot)
- {
-+	int rc;
- 	const struct cred *cred = current_cred();
- 	u32 sid = cred_sid(cred);
-+	const struct file *file = vma->vm_file;
-+	bool backing_file;
-+	bool shared = vma->vm_flags & VM_SHARED;
-+
-+	/* check if we need to trigger the "backing files are awful" mode */
-+	backing_file = file && (file->f_mode & FMODE_BACKING);
- 
- 	if (default_noexec &&
- 	    (prot & PROT_EXEC) && !(vma->vm_flags & VM_EXEC)) {
--		int rc = 0;
- 		/*
- 		 * We don't use the vma_is_initial_heap() helper as it has
- 		 * a history of problems and is currently broken on systems
-@@ -4036,11 +4127,15 @@ static int selinux_file_mprotect(struct vm_area_struct *vma,
- 		    vma->vm_end <= vma->vm_mm->brk) {
- 			rc = avc_has_perm(sid, sid, SECCLASS_PROCESS,
- 					  PROCESS__EXECHEAP, NULL);
--		} else if (!vma->vm_file && (vma_is_initial_stack(vma) ||
-+			if (rc)
-+				return rc;
-+		} else if (!file && (vma_is_initial_stack(vma) ||
- 			    vma_is_stack_for_current(vma))) {
- 			rc = avc_has_perm(sid, sid, SECCLASS_PROCESS,
- 					  PROCESS__EXECSTACK, NULL);
--		} else if (vma->vm_file && vma->anon_vma) {
-+			if (rc)
-+				return rc;
-+		} else if (file && vma->anon_vma) {
- 			/*
- 			 * We are making executable a file mapping that has
- 			 * had some COW done. Since pages might have been
-@@ -4048,13 +4143,29 @@ static int selinux_file_mprotect(struct vm_area_struct *vma,
- 			 * modified content.  This typically should only
- 			 * occur for text relocations.
- 			 */
--			rc = file_has_perm(cred, vma->vm_file, FILE__EXECMOD);
-+			rc = __file_has_perm(cred, file, FILE__EXECMOD,
-+					     backing_file);
-+			if (rc)
-+				return rc;
-+			if (backing_file) {
-+				rc = file_has_perm(file->f_cred, file,
-+						   FILE__EXECMOD);
-+				if (rc)
-+					return rc;
-+			}
- 		}
-+	}
-+
-+	rc = __file_map_prot_check(cred, file, prot, shared, backing_file);
-+	if (rc)
-+		return rc;
-+	if (backing_file) {
-+		rc = file_map_prot_check(file->f_cred, file, prot, shared);
- 		if (rc)
- 			return rc;
- 	}
- 
--	return file_map_prot_check(vma->vm_file, prot, vma->vm_flags&VM_SHARED);
-+	return 0;
- }
- 
- static int selinux_file_lock(struct file *file, unsigned int cmd)
-@@ -7393,6 +7504,7 @@ struct lsm_blob_sizes selinux_blob_sizes __ro_after_init = {
- 	.lbs_cred = sizeof(struct cred_security_struct),
- 	.lbs_task = sizeof(struct task_security_struct),
- 	.lbs_file = sizeof(struct file_security_struct),
-+	.lbs_backing_file = sizeof(struct backing_file_security_struct),
- 	.lbs_inode = sizeof(struct inode_security_struct),
- 	.lbs_ipc = sizeof(struct ipc_security_struct),
- 	.lbs_key = sizeof(struct key_security_struct),
-@@ -7498,9 +7610,11 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
- 
- 	LSM_HOOK_INIT(file_permission, selinux_file_permission),
- 	LSM_HOOK_INIT(file_alloc_security, selinux_file_alloc_security),
-+	LSM_HOOK_INIT(backing_file_alloc, selinux_backing_file_alloc),
- 	LSM_HOOK_INIT(file_ioctl, selinux_file_ioctl),
- 	LSM_HOOK_INIT(file_ioctl_compat, selinux_file_ioctl_compat),
- 	LSM_HOOK_INIT(mmap_file, selinux_mmap_file),
-+	LSM_HOOK_INIT(mmap_backing_file, selinux_mmap_backing_file),
- 	LSM_HOOK_INIT(mmap_addr, selinux_mmap_addr),
- 	LSM_HOOK_INIT(file_mprotect, selinux_file_mprotect),
- 	LSM_HOOK_INIT(file_lock, selinux_file_lock),
-diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
-index 5bddd28ea5cb..8ec493064aa2 100644
---- a/security/selinux/include/objsec.h
-+++ b/security/selinux/include/objsec.h
-@@ -88,6 +88,10 @@ struct file_security_struct {
- 	u32 pseqno; /* Policy seqno at the time of file open */
- };
- 
-+struct backing_file_security_struct {
-+	u32 uf_sid; /* associated user file fsec->sid */
-+};
-+
- struct superblock_security_struct {
- 	u32 sid; /* SID of file system superblock */
- 	u32 def_sid; /* default SID for labeling */
-@@ -195,6 +199,19 @@ static inline struct file_security_struct *selinux_file(const struct file *file)
- 	return file->f_security + selinux_blob_sizes.lbs_file;
- }
- 
-+static inline struct backing_file_security_struct *
-+selinux_backing_file_raw(void *blob)
-+{
-+	return blob + selinux_blob_sizes.lbs_backing_file;
-+}
-+
-+static inline struct backing_file_security_struct *
-+selinux_backing_file(const struct file *backing_file)
-+{
-+	void *blob = backing_file_security(backing_file);
-+	return selinux_backing_file_raw(blob);
-+}
-+
- static inline struct inode_security_struct *
- selinux_inode(const struct inode *inode)
- {
+url:    https://github.com/intel-lab-lkp/linux/commits/Blaise-Boscaccy/crypto-pkcs7-add-flag-for-validated-trust-on-a-signed-info-block/20260327-145024
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
+patch link:    https://lore.kernel.org/r/20260326060655.2550595-7-bboscaccy%40linux.microsoft.com
+patch subject: [PATCH v3 6/9] security: Hornet LSM
+config: x86_64-randconfig-102-20260328 (https://download.01.org/0day-ci/archive/20260328/202603281030.AIoqyOy3-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260328/202603281030.AIoqyOy3-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202603281030.AIoqyOy3-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> security/hornet/hornet_lsm.c:194:6: error: call to undeclared function 'verify_pkcs7_message_sig'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     194 |         if (verify_pkcs7_message_sig(prog->insnsi, prog->len * sizeof(struct bpf_insn), msg,
+         |             ^
+   1 error generated.
+
+
+vim +/verify_pkcs7_message_sig +194 security/hornet/hornet_lsm.c
+
+   155	
+   156	static int hornet_check_program(struct bpf_prog *prog, union bpf_attr *attr,
+   157					struct bpf_token *token, bool is_kernel,
+   158					enum lsm_integrity_verdict *verdict)
+   159	{
+   160		struct hornet_maps maps = {0};
+   161		bpfptr_t usig = make_bpfptr(attr->signature, is_kernel);
+   162		struct pkcs7_message *msg;
+   163		struct hornet_parse_context *ctx;
+   164		void *sig;
+   165		int err;
+   166		const void *authattrs;
+   167		size_t authattrs_len;
+   168	
+   169		if (!attr->signature) {
+   170			*verdict = LSM_INT_VERDICT_UNSIGNED;
+   171			return 0;
+   172		}
+   173	
+   174		ctx = kzalloc(sizeof(struct hornet_parse_context), GFP_KERNEL);
+   175		if (!ctx)
+   176			return -ENOMEM;
+   177	
+   178		maps.fd_array = make_bpfptr(attr->fd_array, is_kernel);
+   179		sig = kzalloc(attr->signature_size, GFP_KERNEL);
+   180		if (!sig) {
+   181			err = -ENOMEM;
+   182			goto out;
+   183		}
+   184		err = copy_from_bpfptr(sig, usig, attr->signature_size);
+   185		if (err != 0)
+   186			goto cleanup_sig;
+   187	
+   188		msg = pkcs7_parse_message(sig, attr->signature_size);
+   189		if (IS_ERR(msg)) {
+   190			err = LSM_INT_VERDICT_BADSIG;
+   191			goto cleanup_sig;
+   192		}
+   193	
+ > 194		if (verify_pkcs7_message_sig(prog->insnsi, prog->len * sizeof(struct bpf_insn), msg,
+   195					     VERIFY_USE_SECONDARY_KEYRING,
+   196					     VERIFYING_BPF_SIGNATURE,
+   197					     NULL, NULL)) {
+   198			err = LSM_INT_VERDICT_UNKNOWNKEY;
+   199			goto cleanup_msg;
+   200		}
+   201	
+   202		if (pkcs7_get_authattr(msg, OID_hornet_data,
+   203				       &authattrs, &authattrs_len) == -ENODATA) {
+   204			err = LSM_INT_VERDICT_PARTIALSIG;
+   205			goto cleanup_msg;
+   206		}
+   207	
+   208		err = asn1_ber_decoder(&hornet_decoder, ctx, authattrs, authattrs_len);
+   209		if (err < 0 || authattrs == NULL) {
+   210			err = LSM_INT_VERDICT_BADSIG;
+   211			goto cleanup_msg;
+   212		}
+   213	
+   214		err = hornet_verify_hashes(&maps, ctx, prog);
+   215	
+   216	cleanup_msg:
+   217		pkcs7_free_message(msg);
+   218	cleanup_sig:
+   219		kfree(sig);
+   220	out:
+   221		kfree(ctx);
+   222		return err;
+   223	}
+   224	
+
 -- 
-2.53.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
