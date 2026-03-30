@@ -1,50 +1,52 @@
-Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D058935F5F2
-	for <linux-security-module@vger.kernel.org>; Mon, 30 Mar 2026 11:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8953D903C
+	for <linux-security-module@vger.kernel.org>; Mon, 30 Mar 2026 16:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774868696; cv=none; b=VsyiEyaSRfzDAC6Nr3R/6kFE33NI3dCGiuMtkeykcFKa1UJAJ7X5rRQXUec2erE+oXIQEhagm90G1jjtxwusYoQDuYbKnueBje0DgjSdZ1shykIMbIYDCM1+gFNiiA/Pl75YJ+zogABJRP6M0DtZKcd1EWQJl9M6fyI2xWXOPkw=
+	t=1774886541; cv=none; b=dgNY8Mq/1kilUBRg8UWcXgLMOlWlJuulhRy7ZYucFVGF/4BY8PX9Xf56oKP7bQlr7+aSEDhkHoSgAnyS1jt3FoS1OSXEewOqiWZbxqBTI6UZm0w4TLmwqbumssxd8vP0ZUfqih2+tWZBJckwhs0yUZyqmWJ7JtJWEcXR/yuj2xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774868696; c=relaxed/simple;
-	bh=XYILW26L98rYLfFqitetxo51EOoFFnNc5r1pU0lGUtU=;
+	s=arc-20240116; t=1774886541; c=relaxed/simple;
+	bh=FTuPN9pkuRk/knUlmKwpvTYIByq38R8qrglue9xcxxw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MiUEKONFlCuZGvNiugZWloDjQ6326VmIXIis/jJ89IslXQSdeUUIiUYqpYQM5PZC9jafVdkdqNWuQLWdHMh7hIoXzahkBigPyazRi7DAVxUAivoiB1O85hcDsbQYsJNHRTWZ2pxNmAcViSNZSUlCt35eeJfTMsFfn/0cCPTh2ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=aMkqHAA4; arc=none smtp.client-ip=83.166.143.174
+	 Content-Type:Content-Disposition:In-Reply-To; b=avLQP6JP5CT+lZvjGS78BlxERFkSsSqKczIxMz7O3Qr8qxkMAGXarjuNf8MwXB8YbFFjqywMa+q9ynoAAkRT8hdYWlwI3K5uPJ4BNYxQ3mTBC6YR8BC+h9xhfbAEEiLAAG4rx/XIZdgb6ucqSdqEAiB3v0yu/tLo/bRn8SKtg40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=N1zrrHC5; arc=none smtp.client-ip=45.157.188.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="aMkqHAA4"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fkp524mgJzcJs;
-	Mon, 30 Mar 2026 12:53:26 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="N1zrrHC5"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fkwxG6x6Fzgc5;
+	Mon, 30 Mar 2026 18:02:10 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1774868006;
-	bh=oFNoicqm5oZ0JMKDdCTTpIqH5EpbxlSEqKL9IwI7xew=;
+	s=20191114; t=1774886530;
+	bh=QH+ghypWdt87NimbK9S9Ph50XXZxDv7xSO3Sn1QWNq0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aMkqHAA4th9iXMqvP1mWtFZUXnOfOg5Md1KEc5Nvsmqqo0+s6VnAMgwhNJzrjRfzI
-	 djtkFoPNCDegJa+6eXB9v+lEbRqI6DxUiHK7DhT4F/JhC81RfsDHnslrgLW2miVx+S
-	 vXekBJskHckCmSkeTF3FEjUD1wflUASjXgYm6djU=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4fkp514gBdzFY6;
-	Mon, 30 Mar 2026 12:53:25 +0200 (CEST)
-Date: Mon, 30 Mar 2026 12:53:21 +0200
+	b=N1zrrHC5/XlFGcLq2WXkDxiJWkywxl5OC7LjS3jxwhKkKNJfWNIZaZo48glpkXnAj
+	 eUX/PgGy83Euh+3N6M3IfEQa0QKaLBSlQaxWdbISCcvyWU7xo97xYoQp/rSHfX5DA6
+	 d5Q96ooHGB8ZXGWcm2m04q2cZIvwLDu8P7ZWEo94=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fkwxF0FL0zhFP;
+	Mon, 30 Mar 2026 18:02:08 +0200 (CEST)
+Date: Mon, 30 Mar 2026 18:02:05 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Cc: John Johansen <john.johansen@canonical.com>, 
-	kernel test robot <lkp@intel.com>, linux-security-module@vger.kernel.org, 
+To: Paul Moore <paul@paul-moore.com>, 
+	John Johansen <john.johansen@canonical.com>, Georgia Garcia <georgia.garcia@canonical.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>, 
+	James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, 
 	Tingmao Wang <m@maowtm.org>, Justin Suess <utilityemal77@gmail.com>, 
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, Matthieu Buffet <matthieu@buffet.re>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, konstantin.meskhidze@huawei.com, 
-	Demi Marie Obenour <demiobenour@gmail.com>, Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>, 
+	linux-security-module@vger.kernel.org, Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, 
+	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	konstantin.meskhidze@huawei.com, Demi Marie Obenour <demiobenour@gmail.com>, 
+	Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>, 
 	Tahera Fahimi <fahimitahera@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Kuniyuki Iwashima <kuniyu@google.com>, Georgia Garcia <georgia.garcia@canonical.com>
-Subject: Re: [PATCH v8 03/12] landlock: Replace union access_masks_all with
- helper functions
-Message-ID: <20260330.laew6AthooD6@digikod.net>
+	Kuniyuki Iwashima <kuniyu@google.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v8 01/12] lsm: Add LSM hook security_unix_find
+Message-ID: <20260330.ie1eth0ex9Pa@digikod.net>
 References: <20260327164838.38231-1-gnoack3000@gmail.com>
- <20260327164838.38231-4-gnoack3000@gmail.com>
- <20260330.ohsoe7vu2Nob@digikod.net>
+ <20260327164838.38231-2-gnoack3000@gmail.com>
+ <CAHC9VhRktViRp_U3ZAvo2e7vbjUd6RZb-y8+YPXhtLpt7hsXYg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -54,156 +56,58 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260330.ohsoe7vu2Nob@digikod.net>
+In-Reply-To: <CAHC9VhRktViRp_U3ZAvo2e7vbjUd6RZb-y8+YPXhtLpt7hsXYg@mail.gmail.com>
 X-Infomaniak-Routing: alpha
 
-On Mon, Mar 30, 2026 at 11:56:40AM +0200, Mickaël Salaün wrote:
-> On Fri, Mar 27, 2026 at 05:48:28PM +0100, Günther Noack wrote:
-> > * Stop using a union for access_masks_all.
-> > * Expose helper functions for intersection checks and union operations.
-> > 
-> > The memory layout of bitfields is only loosely defined by the C
-> > standard, so our static assertion that expects a fixed size was
-> > brittle, and it broke on some compilers when we attempted to add a
-> > 17th file system access right.
-> > 
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202603261438.jBx2DGNe-lkp@intel.com/
+On Fri, Mar 27, 2026 at 01:55:58PM -0400, Paul Moore wrote:
+> On Fri, Mar 27, 2026 at 12:49 PM Günther Noack <gnoack3000@gmail.com> wrote:
+> >
+> > From: Justin Suess <utilityemal77@gmail.com>
+> >
+> > Add an LSM hook security_unix_find.
+> >
+> > This hook is called to check the path of a named UNIX socket before a
+> > connection is initiated. The peer socket may be inspected as well.
+> >
+> > Why existing hooks are unsuitable:
+> >
+> > Existing socket hooks, security_unix_stream_connect(),
+> > security_unix_may_send(), and security_socket_connect() don't provide
+> > TOCTOU-free / namespace independent access to the paths of sockets.
+> >
+> > (1) We cannot resolve the path from the struct sockaddr in existing hooks.
+> > This requires another path lookup. A change in the path between the
+> > two lookups will cause a TOCTOU bug.
+> >
+> > (2) We cannot use the struct path from the listening socket, because it
+> > may be bound to a path in a different namespace than the caller,
+> > resulting in a path that cannot be referenced at policy creation time.
+> >
+> > Consumers of the hook wishing to reference @other are responsible
+> > for acquiring the unix_state_lock and checking for the SOCK_DEAD flag
+> > therein, ensuring the socket hasn't died since lookup.
+> >
+> > Cc: Günther Noack <gnoack3000@gmail.com>
+> > Cc: Tingmao Wang <m@maowtm.org>
+> > Cc: Mickaël Salaün <mic@digikod.net>
+> > Cc: Paul Moore <paul@paul-moore.com>
+> > Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 > > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 > > ---
-> >  security/landlock/access.h  | 21 ++++++++++++++-------
-> >  security/landlock/cred.h    | 10 ++--------
-> >  security/landlock/ruleset.h | 13 ++++---------
-> >  3 files changed, 20 insertions(+), 24 deletions(-)
+> >  include/linux/lsm_hook_defs.h |  5 +++++
+> >  include/linux/security.h      | 11 +++++++++++
+> >  net/unix/af_unix.c            | 10 +++++++---
+> >  security/security.c           | 20 ++++++++++++++++++++
+> >  4 files changed, 43 insertions(+), 3 deletions(-)
 > 
-> I'd prefer this approach:
-> 
-> diff --git a/security/landlock/access.h b/security/landlock/access.h
-> index 89dc8e7b93da..bc9efbb5c900 100644
-> --- a/security/landlock/access.h
-> +++ b/security/landlock/access.h
-> @@ -50,7 +50,7 @@ struct access_masks {
->         access_mask_t fs : LANDLOCK_NUM_ACCESS_FS;
->         access_mask_t net : LANDLOCK_NUM_ACCESS_NET;
->         access_mask_t scope : LANDLOCK_NUM_SCOPE;
-> -};
-> +} __packed;
+> This patch doesn't look like it changed significantly in this
+> revision, is there a reason you dropped the tags from Georgia and I?
 
-Actually, we can just use '__packed __aligned(sizeof(u32))' and avoid
-the static_assert change.  That would have no impact on x86, but pack it
-on m68k.
+You'r right, the patch didn't change at all. I added Georgia's tag in my
+-next branch for the previous version, I guess Günther forgot to add it
+for this version, but I updated my branch with the same tag, so it's
+still there.  Thank you both BTW!
 
-> 
->  union access_masks_all {
->         struct access_masks masks;
-> @@ -58,7 +58,7 @@ union access_masks_all {
->  };
-> 
->  /* Makes sure all fields are covered. */
-> -static_assert(sizeof(typeof_member(union access_masks_all, masks)) ==
-> +static_assert(sizeof(typeof_member(union access_masks_all, masks)) <=
->               sizeof(typeof_member(union access_masks_all, all)));
-> 
->  /**
-> 
-> 
-> This keep the check and make sure new field will not introduce issues, but more
-> importantly it save memory, which was one of the goal of struct access_masks.
-> 
-> If that's good with you I'll replace your patch and squash this packed
-> annotation with the following patch.
-> 
-> 
-> > 
-> > diff --git a/security/landlock/access.h b/security/landlock/access.h
-> > index 42c95747d7bd..277b6ed7f7bb 100644
-> > --- a/security/landlock/access.h
-> > +++ b/security/landlock/access.h
-> > @@ -52,14 +52,21 @@ struct access_masks {
-> >  	access_mask_t scope : LANDLOCK_NUM_SCOPE;
-> >  };
-> >  
-> > -union access_masks_all {
-> > -	struct access_masks masks;
-> > -	u32 all;
-> > -};
-> > +/* Checks whether two access masks have any common bit set. */
-> > +static inline bool access_masks_intersect(const struct access_masks a,
-> > +					  const struct access_masks b)
-> > +{
-> > +	return (a.fs & b.fs) || (a.net & b.net) || (a.scope & b.scope);
-> > +}
-> >  
-> > -/* Makes sure all fields are covered. */
-> > -static_assert(sizeof(typeof_member(union access_masks_all, masks)) ==
-> > -	      sizeof(typeof_member(union access_masks_all, all)));
-> > +/* ORs the bits of @src into @dst. */
-> > +static inline void access_masks_merge(struct access_masks *dst,
-> > +				      const struct access_masks src)
-> > +{
-> > +	dst->fs |= src.fs;
-> > +	dst->net |= src.net;
-> > +	dst->scope |= src.scope;
-> > +}
-> >  
-> >  /**
-> >   * struct layer_access_masks - A boolean matrix of layers and access rights
-> > diff --git a/security/landlock/cred.h b/security/landlock/cred.h
-> > index f287c56b5fd4..207a6db1c086 100644
-> > --- a/security/landlock/cred.h
-> > +++ b/security/landlock/cred.h
-> > @@ -123,9 +123,6 @@ landlock_get_applicable_subject(const struct cred *const cred,
-> >  				const struct access_masks masks,
-> >  				size_t *const handle_layer)
-> >  {
-> > -	const union access_masks_all masks_all = {
-> > -		.masks = masks,
-> > -	};
-> >  	const struct landlock_ruleset *domain;
-> >  	ssize_t layer_level;
-> >  
-> > @@ -138,11 +135,8 @@ landlock_get_applicable_subject(const struct cred *const cred,
-> >  
-> >  	for (layer_level = domain->num_layers - 1; layer_level >= 0;
-> >  	     layer_level--) {
-> > -		union access_masks_all layer = {
-> > -			.masks = domain->access_masks[layer_level],
-> > -		};
-> > -
-> > -		if (layer.all & masks_all.all) {
-> > +		if (access_masks_intersect(domain->access_masks[layer_level],
-> > +					   masks)) {
-> >  			if (handle_layer)
-> >  				*handle_layer = layer_level;
-> >  
-> > diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-> > index 889f4b30301a..9f8b33815c2c 100644
-> > --- a/security/landlock/ruleset.h
-> > +++ b/security/landlock/ruleset.h
-> > @@ -229,18 +229,13 @@ static inline void landlock_get_ruleset(struct landlock_ruleset *const ruleset)
-> >  static inline struct access_masks
-> >  landlock_union_access_masks(const struct landlock_ruleset *const domain)
-> >  {
-> > -	union access_masks_all matches = {};
-> > +	struct access_masks matches = {};
-> >  	size_t layer_level;
-> >  
-> > -	for (layer_level = 0; layer_level < domain->num_layers; layer_level++) {
-> > -		union access_masks_all layer = {
-> > -			.masks = domain->access_masks[layer_level],
-> > -		};
-> > +	for (layer_level = 0; layer_level < domain->num_layers; layer_level++)
-> > +		access_masks_merge(&matches, domain->access_masks[layer_level]);
-> >  
-> > -		matches.all |= layer.all;
-> > -	}
-> > -
-> > -	return matches.masks;
-> > +	return matches;
-> >  }
-> >  
-> >  static inline void
-> > -- 
-> > 2.53.0
-> > 
-> > 
+I just included a one-line fix because of the m68k warning, we'll see if
+it works as expected, and we should be good to go.  It would be nice to
+have John's feedback though.
