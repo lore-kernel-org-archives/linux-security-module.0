@@ -1,135 +1,112 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1E82C21D0
-	for <linux-security-module@vger.kernel.org>; Mon, 30 Mar 2026 19:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC4A27B32C
+	for <linux-security-module@vger.kernel.org>; Mon, 30 Mar 2026 20:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774897382; cv=none; b=DYl4sl2qN0+UH9IqxgTWpJEF8pI9a1BuCGMln2MLv9lrOuXyWlzj7Jy9vS7ItPvwYSptmwvMJ59uKAeRbaZ5x1GHPWN3eQGS5KvSB8UmCRPQ4g2NBmuVf+h+hc4dumhL3lZUzfBy8vrvDx9Z/JBZr6ZcZ0HoLU6G43ZtFg1cbHA=
+	t=1774901079; cv=none; b=Bt9bopQuXbYRmc0vBbXRdqLkhwpqwBN5ubnCjS75yWs4yKYr59nOj4Yus0FsvBaqzYKb/NrQML7uMMi4QfGcT5S1RALUOv70IC/EWi1eJriMHDw7ydup0N+2ZYcIDY5VOYTOK/DCweX2koEOh15oL6pCLJX4FmhXW28dE3eZaN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774897382; c=relaxed/simple;
-	bh=8evj0OpjHZ8r8nnKmE4JkW59JXSG8Um37Vl2FFdMhBk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t5gK8TCL8DI0/3AFNglB75EzjXB4s1fKPyazJnBwDfN+nM3zfhg0WziyN0ie1hsV492L5lY/PEARQHxaNS6MTB6O3Bo4FRMzWdxh7p6oghU9u411THcltAb44JWz8drrKQEuAc2JU99y3cgdYn5OGfWI2PpiWQznZJnNCqwDqA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CHidwdej; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1774901079; c=relaxed/simple;
+	bh=1X1yQpwKHXFHDTwoogHV/wsFWF8CFNxD4Jdw11uzolI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FUXAExvVYk0iF3ALg0q6RJP3QmIWN2+p0IhFJDAVfltjbghUAKQPrxsDE+AkdEiF1tv9kQLqs6sMbqPRFVQ6eH+MSbqWfx3mcaCXdqzCZIdRFzt0rPVTxK6gp+khjrqI0tiTrsw9OYMngeP2TBonFIcQluXEG453Laylo7yA/eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IDfKIL10; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CHidwdej"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-486fb14227cso63911045e9.3
-        for <linux-security-module@vger.kernel.org>; Mon, 30 Mar 2026 12:03:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774897380; x=1775502180; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=kB3VJ5DsNIbZ3UksrkiocR0BgDr2YRaTFnnLRxLiWCY=;
-        b=CHidwdejGVZzugVA4nRipAoBrfSUjdpRSjZ4/wiH1wTpOd5YDybiMj1l/wmbAIuXPW
-         hh3gEmVAGXDTecRHcvrj7U28nVnYMLffQe1566dfKunK8nWpgZWXdaP9SWzwGNMeXq1e
-         PEgiA7JgoCKQXq7Pz1ki7co+CAL8OVHL01FD7nV+UF8C+UV4tipeu7PkDXxXzCrmq0fB
-         OstifrhQy5QZ72RZyVkC9aauTtJjtdv543jIC4+AUxh1KH7mSMODp4Smr0HZ5chZKokG
-         SxOoncWoFTm/volDeUd8prNsxq8SgnKY/zeHMO/sG0rB/6Y4sro02JTGPPWr5vNmt2YH
-         aABA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774897380; x=1775502180;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kB3VJ5DsNIbZ3UksrkiocR0BgDr2YRaTFnnLRxLiWCY=;
-        b=PObA0oaM85mEYpTlTknTN+Fv3GUT1uFbNXWC6vOiqhD//Qr3DhKEJaD0yD1Qi+iOrs
-         wrS7fZTICqZaVzWtrF8oPo8tcv2TJJlh3ketE+gBU4OmebVbXDM+LinD6onP/XXUyeco
-         jHu6PBz6lNCIgM8w0aUt9rOluL9j0InhEM4fk5GSsM5UpJ6oxfWoYLs64w4+RAEExZoP
-         E2XcSAzTNMXBVkqo2UNEwkOkfjmGGKzTU3Da1FzhJ2aAUv71+JrzusL7mi+qn06VN2i0
-         BxtxPR023nHLyfCK9pmKbqJQiaGcmnw1gEEakIeI+ao+24rdvdZBtLedF725mJS6fug2
-         Vwrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQAflAU3VyYRY22McKF8VmivWQu67sAP7uUzMgqYWOuG8glpqvpkK11VlHytg9Evc3zccv75MR48t/qpdm8uia6w2N2SM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOrPS1cSbbbaiU8/VR05CBjwP45pZ4AvWuddxlifXkEt/gbbIS
-	bgqb5tXcaGFyN3R1gr2/xRLKNgTMy2+aTv5iFDB4LyaXOopotm1jr3y0
-X-Gm-Gg: ATEYQzxRRxuZ6OUWOvYdTRbrvPQGtS+DgnG9uFHdM/ltbkmKGb8Rc+8b4SUTOExILzl
-	yguppPKmSfne6p+MEMHXQSEfue+EYk1aMIFXK72N4M2XOyTYS16EJcuCC69eIJgphXkrNMO033M
-	TsCELf8VXcN5NxnCwOlfach0JvFY4k2PWUygVPY7exJhm7ztRMEj1GBVMuhvSnieYQoP77p5yth
-	UtaK+BZhQWY07r/yG8EpiU7bO/LvtvhN6IL4q8vW0nXJnpEXaPpnfxyGV3FrYZhNOWYPQiBv4xt
-	aJgQyYt81+Huhx3n6MGuzH2mvNzN3EJK2hPtVB8zECCmLQ4YSFFr6NmAWBy0FhlEuLsZbo6qGZX
-	rbdJehC6kSdMRyBvkjXg0qiD2wqUquMwBKwVCcxAjQEHS3z0WsHPEQvWkR0kZ6NHUub+iRmAqDb
-	JY40fu6DYNxU++ib2rAZyGGd3XRD4SSELERtXcTVX7D79QPbEG
-X-Received: by 2002:a05:600c:1d1c:b0:483:7903:c3b1 with SMTP id 5b1f17b1804b1-48727efacb3mr220126565e9.20.1774897379590;
-        Mon, 30 Mar 2026 12:02:59 -0700 (PDT)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48730688694sm187287435e9.11.2026.03.30.12.02.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2026 12:02:59 -0700 (PDT)
-Date: Mon, 30 Mar 2026 21:02:57 +0200
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Paul Moore <paul@paul-moore.com>,
-	John Johansen <john.johansen@canonical.com>,
-	Georgia Garcia <georgia.garcia@canonical.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>, Tingmao Wang <m@maowtm.org>,
-	Justin Suess <utilityemal77@gmail.com>,
-	linux-security-module@vger.kernel.org,
-	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	konstantin.meskhidze@huawei.com,
-	Demi Marie Obenour <demiobenour@gmail.com>,
-	Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v8 01/12] lsm: Add LSM hook security_unix_find
-Message-ID: <20260330.a2fbe19c0689@gnoack.org>
-References: <20260327164838.38231-1-gnoack3000@gmail.com>
- <20260327164838.38231-2-gnoack3000@gmail.com>
- <CAHC9VhRktViRp_U3ZAvo2e7vbjUd6RZb-y8+YPXhtLpt7hsXYg@mail.gmail.com>
- <20260330.ie1eth0ex9Pa@digikod.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IDfKIL10"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20928C2BCB6
+	for <linux-security-module@vger.kernel.org>; Mon, 30 Mar 2026 20:04:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774901079;
+	bh=1X1yQpwKHXFHDTwoogHV/wsFWF8CFNxD4Jdw11uzolI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=IDfKIL10p1+7rBp/suyM4lQdQ9SgBcvMG7bQmtXVp1lqia4FLJ2nYQGmv4H6yOLPZ
+	 fLnLW7At8v1FFAJqxDlsdrfOmUhgn52Taok0gZ8ZMlpqmxQAlkZ4VWEMa5HQiMHDfn
+	 ro4PxhFWpmhbYWxD5w4Ys9mYFEwoXPQNebe5IjMdLbZyFXBUwJrktLCEIXnXb0vsth
+	 0IvnJm7848RbA4U96ZBX1BX143qXHezDsBmu7s0pREUSC3LOB/vQ2XtKAdScrrSdIm
+	 BTh7FKkOXYhPbP3L9teazTjzxQUoB6hOzDoEzqARuwy8G/LY6f+nbwa+1llwnbfory
+	 X4sJlQr6yxwLw==
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-8a032383008so29052326d6.1
+        for <linux-security-module@vger.kernel.org>; Mon, 30 Mar 2026 13:04:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUNM2rZBbM/X+hmoD26m99Utg6l8Q9YoLL3v+oM1eKnwP/7jAGvLOmJ/rtFuY8Ip/h6zoyb5qbo9ohN/OeRC/y2EU7QbQ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe4WMU/X/lZm0hXRjnW2lHh5ZtfmZ25W7tGZHLdIk+zKckW5cn
+	coljkixDVeoHOOYFCmiyHd4icIozzrn3EX+uf4fSpiinXUcmbqrxK0ELavPMlZ6U5fuSSY6WrU+
+	MFdD5YVt7q94ZxpZo7U0bpc2IaHK9hcA=
+X-Received: by 2002:a05:6214:2128:b0:89a:10d8:f9ca with SMTP id
+ 6a1803df08f44-89ce8dd0b9emr214870836d6.26.1774901078259; Mon, 30 Mar 2026
+ 13:04:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260330.ie1eth0ex9Pa@digikod.net>
+References: <20260318184400.3502908-1-song@kernel.org> <20260318184400.3502908-7-song@kernel.org>
+ <b720f521-e930-4f35-9505-1bfdf9e2818c@I-love.SAKURA.ne.jp>
+ <4DF5C4A8-7C92-4F76-9B34-2262089E7289@meta.com> <33abcf34-13e2-4a37-83f3-78bb27ecbc11@I-love.SAKURA.ne.jp>
+ <F0A0D13E-8208-49A4-9AC6-89AC4BF3F4FB@meta.com> <20260323-klappen-atemschutz-7a0af8c6b087@brauner>
+ <714a614b-cfb4-4b20-af8c-df3cc56dfb92@I-love.SAKURA.ne.jp>
+ <CAAeYb7k+TWArOKyOomkLZ8fwqUPjha9iORpJaj4nMyN=o4ZRQg@mail.gmail.com>
+ <6609e11e-90aa-4021-974e-e9937688dd49@I-love.SAKURA.ne.jp>
+ <CAPhsuW4G7vo-JZqenZ-sFHw9z02wZUJa1-+9U81U--vQhnfG_Q@mail.gmail.com>
+ <6c298238-8d87-4c41-84a7-e0373d466a15@I-love.SAKURA.ne.jp>
+ <CAPhsuW4E_BrF0ap5yg_6TbRAna=2Ajk2nuoT6WGwkS5cyyYB3w@mail.gmail.com> <4f5d1b1f-ecb2-421a-8a46-36c7a12d48de@I-love.SAKURA.ne.jp>
+In-Reply-To: <4f5d1b1f-ecb2-421a-8a46-36c7a12d48de@I-love.SAKURA.ne.jp>
+From: Song Liu <song@kernel.org>
+Date: Mon, 30 Mar 2026 13:04:25 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW6FewkhGoNCqJ9p5V4sGmJTC8pJM2BUv8Ekxcft93nuyQ@mail.gmail.com>
+X-Gm-Features: AQROBzC66Kh9nC3Ny7eCdzD0vCLOETw0qurKeL6o2A35S67y_YeSqFGNhcnT1NY
+Message-ID: <CAPhsuW6FewkhGoNCqJ9p5V4sGmJTC8pJM2BUv8Ekxcft93nuyQ@mail.gmail.com>
+Subject: Re: [PATCH 6/7] tomoyo: Convert from sb_mount to granular mount hooks
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Song Liu <songliubraving@meta.com>, Christian Brauner <brauner@kernel.org>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "paul@paul-moore.com" <paul@paul-moore.com>, 
+	"jmorris@namei.org" <jmorris@namei.org>, "serge@hallyn.com" <serge@hallyn.com>, "jack@suse.cz" <jack@suse.cz>, 
+	"john.johansen@canonical.com" <john.johansen@canonical.com>, 
+	"stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>, 
+	"omosnace@redhat.com" <omosnace@redhat.com>, "mic@digikod.net" <mic@digikod.net>, 
+	"gnoack@google.com" <gnoack@google.com>, "takedakn@nttdata.co.jp" <takedakn@nttdata.co.jp>, 
+	"herton@canonical.com" <herton@canonical.com>, Kernel Team <kernel-team@meta.com>, 
+	"selinux@vger.kernel.org" <selinux@vger.kernel.org>, 
+	"apparmor@lists.ubuntu.com" <apparmor@lists.ubuntu.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 30, 2026 at 06:02:05PM +0200, Mickaël Salaün wrote:
-> On Fri, Mar 27, 2026 at 01:55:58PM -0400, Paul Moore wrote:
-> > On Fri, Mar 27, 2026 at 12:49 PM Günther Noack <gnoack3000@gmail.com> wrote:
-> > > Cc: Günther Noack <gnoack3000@gmail.com>
-> > > Cc: Tingmao Wang <m@maowtm.org>
-> > > Cc: Mickaël Salaün <mic@digikod.net>
-> > > Cc: Paul Moore <paul@paul-moore.com>
-> > > Signed-off-by: Justin Suess <utilityemal77@gmail.com>
-> > > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> > > ---
-> > >  include/linux/lsm_hook_defs.h |  5 +++++
-> > >  include/linux/security.h      | 11 +++++++++++
-> > >  net/unix/af_unix.c            | 10 +++++++---
-> > >  security/security.c           | 20 ++++++++++++++++++++
-> > >  4 files changed, 43 insertions(+), 3 deletions(-)
-> > 
-> > This patch doesn't look like it changed significantly in this
-> > revision, is there a reason you dropped the tags from Georgia and I?
-> 
-> You'r right, the patch didn't change at all. I added Georgia's tag in my
-> -next branch for the previous version, I guess Günther forgot to add it
-> for this version, but I updated my branch with the same tag, so it's
-> still there.  Thank you both BTW!
+Hi Tetsuo,
 
-I only missed to add them by accident, thanks for adding it back,
-Mickaël, and Paul for spotting it!
+On Tue, Mar 24, 2026 at 6:02=E2=80=AFPM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+[...]
+> >
+> > If I understand Christian correctly, the main challenge here is that
+> > FS_REQUIRES_DEV doesn't imply fc->source is the path of a device.
+>
+> Correct. FS_REQUIRES_DEV no longer implies that fc->source is a pathname.
+>
+> > Changing this assumption is a major change between VFS and many
+> > filesystems.
+>
+> Wrong. I'm not trying to change this assumption. I'm trying to move LSM h=
+ook
+> to a location after fc->source was interpreted by individual filesystem.
 
+After spending some more time on this, I think we should not add
+fc->source_path. This is because in many cases, dev_name for a new mount
+is not a dev, or a path. For example, I can create a btrfs raid0 volume on =
+two
+devices, and use either of them as dev_name to mount the volume. It is not
+accurate to put the path of either device in fc->source_path.
 
-> I just included a one-line fix because of the m68k warning, we'll see if
-> it works as expected, and we should be good to go.  It would be nice to
-> have John's feedback though.
+OTOH, if a LSM really wants to monitor the devices used by this mount,
+security_sb_kern_mount() is a better hook to use. This will require the
+LSM understands s_fs_info for specific file systems, which is not easy but
+necessary.
 
-Agreed.  John, I would also appreciate if you could find the time to
-have a look.
+For now, I think it makes sense to keep security_mount_new() in this set
+as-is, and let LSMs like tomoyo and apparmor call kern_path when
+necessary.
 
-–Günther
+Thanks,
+Song
