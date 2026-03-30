@@ -1,70 +1,73 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5BF393DFB
-	for <linux-security-module@vger.kernel.org>; Mon, 30 Mar 2026 19:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1E82C21D0
+	for <linux-security-module@vger.kernel.org>; Mon, 30 Mar 2026 19:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774897237; cv=none; b=sY5jKuAkbFA/mBiPQ0eY4SxA823g/sc4d40us3WTs5tHeGo9MmUrtZ8EM+bB7Oins2l/YS5gmW2QEQMIjWfQTekbo8CvgNLZ43xNIWcnMNaM7GjluqpuIcJmyW0GRDi0nlMSjjb/Gri55MsR545oztQucdZtiGOOLTLfhQmk0kc=
+	t=1774897382; cv=none; b=DYl4sl2qN0+UH9IqxgTWpJEF8pI9a1BuCGMln2MLv9lrOuXyWlzj7Jy9vS7ItPvwYSptmwvMJ59uKAeRbaZ5x1GHPWN3eQGS5KvSB8UmCRPQ4g2NBmuVf+h+hc4dumhL3lZUzfBy8vrvDx9Z/JBZr6ZcZ0HoLU6G43ZtFg1cbHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774897237; c=relaxed/simple;
-	bh=jdWG70JAd8OtAyhRqPPHhe0sprEsCXmIDy0a/lY+JzI=;
+	s=arc-20240116; t=1774897382; c=relaxed/simple;
+	bh=8evj0OpjHZ8r8nnKmE4JkW59JXSG8Um37Vl2FFdMhBk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=koO6OvktNlUvYRdfVIg0YnATqjDDXqtaP2BDcghqzBa3omU4Djv7yY4VZvoCMO15d9XdbdkRlurj6Gu8ghj2/u+JpOugZIPHCg8I2K53vf89CgTka/pCswF0mvNJqMtlr+1HMy03gdNmWjCLw4q8oCAXuwCPu24HjlYR7+EyBAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PH69iBM7; arc=none smtp.client-ip=209.85.208.53
+	 Content-Type:Content-Disposition:In-Reply-To; b=t5gK8TCL8DI0/3AFNglB75EzjXB4s1fKPyazJnBwDfN+nM3zfhg0WziyN0ie1hsV492L5lY/PEARQHxaNS6MTB6O3Bo4FRMzWdxh7p6oghU9u411THcltAb44JWz8drrKQEuAc2JU99y3cgdYn5OGfWI2PpiWQznZJnNCqwDqA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CHidwdej; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PH69iBM7"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-65c0891f4e9so8482357a12.1
-        for <linux-security-module@vger.kernel.org>; Mon, 30 Mar 2026 12:00:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CHidwdej"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-486fb14227cso63911045e9.3
+        for <linux-security-module@vger.kernel.org>; Mon, 30 Mar 2026 12:03:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774897234; x=1775502034; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1774897380; x=1775502180; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=+Ykz3/gOUH5An5cyE/2BWJho/3DQJWwugApX+wp8V1o=;
-        b=PH69iBM71bae/eiGYNurLJlAuNsgv8p3N1YKYKZtqXI4q/4sl1OpoRcAl+ugMTxbYx
-         fmSmBE9oqbT13JAnvQ9kON863i4m1vfPhK370EaydEmu2EkmrJM4AQ4ZGuBsGre4jmKd
-         povF5zv+/JaOrWTP37K2G/C42LgTwx/x6dofo3DFhYLwr9UGtEIa9cjKJ1mMsZ3x/feC
-         r0LdQo5RwuWmZxe/OnbXM2Iq0F3z0lZ977sBAVSRGJWAXf1AnlUO4UOwNFocyDOGiZKd
-         NBPboH8q0PF+1ueb/IFPPDipRh2cWfnKGCsfNGJzu1obotYilLlDLan69JfEFu96ixei
-         sQtg==
+        bh=kB3VJ5DsNIbZ3UksrkiocR0BgDr2YRaTFnnLRxLiWCY=;
+        b=CHidwdejGVZzugVA4nRipAoBrfSUjdpRSjZ4/wiH1wTpOd5YDybiMj1l/wmbAIuXPW
+         hh3gEmVAGXDTecRHcvrj7U28nVnYMLffQe1566dfKunK8nWpgZWXdaP9SWzwGNMeXq1e
+         PEgiA7JgoCKQXq7Pz1ki7co+CAL8OVHL01FD7nV+UF8C+UV4tipeu7PkDXxXzCrmq0fB
+         OstifrhQy5QZ72RZyVkC9aauTtJjtdv543jIC4+AUxh1KH7mSMODp4Smr0HZ5chZKokG
+         SxOoncWoFTm/volDeUd8prNsxq8SgnKY/zeHMO/sG0rB/6Y4sro02JTGPPWr5vNmt2YH
+         aABA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774897234; x=1775502034;
+        d=1e100.net; s=20251104; t=1774897380; x=1775502180;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Ykz3/gOUH5An5cyE/2BWJho/3DQJWwugApX+wp8V1o=;
-        b=M6u0mjH4Fdf9Ie2dV2nLK2p7uwxtxuW1Kc/ZdTOJFUX3EGvgbEG27/EbHWj2b5dKKV
-         jDRTO9w2wKl+V1y8dH9HuN73+gKxyKb/NVrqJ/qCHm07W30cXQ9s0RZOhVhEtxOD+SYw
-         CflWdKMzUxa0lMrmYSc5Pbh7Pm+rvV3yFvSHbw+ia8MEfPUXedI1zNgQ6MAGHsTh68Nd
-         tjSR7XXea6d3idXPrH34N5brKbGx0wR7GkOCIzaQndHps9NMjB9v17sA4QXPjoO3LQsN
-         CdLcmNLZY0TraTdc5R0ezM7M6D82PK5Nsyp/AeGQHd7Y+R0gLlbwMZ27c97YXmli3krL
-         xM4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVCVnougBFDuZGsM2BRxPn/h0owr/nXVHk4L60CuVWoHW8Fe3FNrLXLP1Uvtt2o//rC4BV48eV83OSxX/uVjltaMg0mBAQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvGlwI31uFUDXbERtEEU1Pf4FmHOlzcQIO5uNidlL08bVMWZay
-	fXueyh4MJjeAn3HtD3Iv4rnHKVEr7owy7D7xBNclRG7yOKQVRkO0va46
-X-Gm-Gg: ATEYQzz+Cok56NHbrMD/hVLwstyFtgJLV/g3ddbph6VfbHXYt8iO/+qoRKJ6GeiqWO3
-	yNXyxEQIpJMJY0ip7qyqwaPm2J0PIVK+NrS2AORWWpcei42Wq33AUJO9k0kMOxeHdOgV3+Tjq6d
-	4zindLfe8fDZckmdTg751Y4m77Co4wJBolPuaKjkm2RUsNeNdxXlimQzA4SjgNBS9g/3J5Ix1KS
-	Wpti0bKYnNbLTg4ehOylSd+kmYd5fvAXJPRbBo//RLx+j0DHUsQw3SJ37ZhI7SA5/583s2rZg52
-	F6kgFZn8Szk74y3IyMqOB9Wdl3zLy9uatAoZbpIxSOrdgf2qdbxaD6GX+f5ZRiadfC/DxOrFK/a
-	vhbin8BJDqbpKQtTaRHOmhM59IWzvZdOgrLE6GjLU7A5TBMI0kkr7I05YMTJTzq7sCe8X1UkxRO
-	FdRAENTzaoPgQ6nKQnaVMSEoaW6ej7UEwHsYl6U6HOdA8pB+W+JWQHwc+YvCs=
-X-Received: by 2002:a17:907:1c1e:b0:b9b:452f:fd9 with SMTP id a640c23a62f3a-b9b50363076mr788424766b.22.1774897233789;
-        Mon, 30 Mar 2026 12:00:33 -0700 (PDT)
+        bh=kB3VJ5DsNIbZ3UksrkiocR0BgDr2YRaTFnnLRxLiWCY=;
+        b=PObA0oaM85mEYpTlTknTN+Fv3GUT1uFbNXWC6vOiqhD//Qr3DhKEJaD0yD1Qi+iOrs
+         wrS7fZTICqZaVzWtrF8oPo8tcv2TJJlh3ketE+gBU4OmebVbXDM+LinD6onP/XXUyeco
+         jHu6PBz6lNCIgM8w0aUt9rOluL9j0InhEM4fk5GSsM5UpJ6oxfWoYLs64w4+RAEExZoP
+         E2XcSAzTNMXBVkqo2UNEwkOkfjmGGKzTU3Da1FzhJ2aAUv71+JrzusL7mi+qn06VN2i0
+         BxtxPR023nHLyfCK9pmKbqJQiaGcmnw1gEEakIeI+ao+24rdvdZBtLedF725mJS6fug2
+         Vwrg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQAflAU3VyYRY22McKF8VmivWQu67sAP7uUzMgqYWOuG8glpqvpkK11VlHytg9Evc3zccv75MR48t/qpdm8uia6w2N2SM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOrPS1cSbbbaiU8/VR05CBjwP45pZ4AvWuddxlifXkEt/gbbIS
+	bgqb5tXcaGFyN3R1gr2/xRLKNgTMy2+aTv5iFDB4LyaXOopotm1jr3y0
+X-Gm-Gg: ATEYQzxRRxuZ6OUWOvYdTRbrvPQGtS+DgnG9uFHdM/ltbkmKGb8Rc+8b4SUTOExILzl
+	yguppPKmSfne6p+MEMHXQSEfue+EYk1aMIFXK72N4M2XOyTYS16EJcuCC69eIJgphXkrNMO033M
+	TsCELf8VXcN5NxnCwOlfach0JvFY4k2PWUygVPY7exJhm7ztRMEj1GBVMuhvSnieYQoP77p5yth
+	UtaK+BZhQWY07r/yG8EpiU7bO/LvtvhN6IL4q8vW0nXJnpEXaPpnfxyGV3FrYZhNOWYPQiBv4xt
+	aJgQyYt81+Huhx3n6MGuzH2mvNzN3EJK2hPtVB8zECCmLQ4YSFFr6NmAWBy0FhlEuLsZbo6qGZX
+	rbdJehC6kSdMRyBvkjXg0qiD2wqUquMwBKwVCcxAjQEHS3z0WsHPEQvWkR0kZ6NHUub+iRmAqDb
+	JY40fu6DYNxU++ib2rAZyGGd3XRD4SSELERtXcTVX7D79QPbEG
+X-Received: by 2002:a05:600c:1d1c:b0:483:7903:c3b1 with SMTP id 5b1f17b1804b1-48727efacb3mr220126565e9.20.1774897379590;
+        Mon, 30 Mar 2026 12:02:59 -0700 (PDT)
 Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b9b7ae50e6dsm336150166b.15.2026.03.30.12.00.33
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48730688694sm187287435e9.11.2026.03.30.12.02.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2026 12:00:33 -0700 (PDT)
-Date: Mon, 30 Mar 2026 21:00:31 +0200
+        Mon, 30 Mar 2026 12:02:59 -0700 (PDT)
+Date: Mon, 30 Mar 2026 21:02:57 +0200
 From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
 To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: John Johansen <john.johansen@canonical.com>,
-	kernel test robot <lkp@intel.com>,
-	linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>,
+Cc: Paul Moore <paul@paul-moore.com>,
+	John Johansen <john.johansen@canonical.com>,
+	Georgia Garcia <georgia.garcia@canonical.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>, Tingmao Wang <m@maowtm.org>,
 	Justin Suess <utilityemal77@gmail.com>,
+	linux-security-module@vger.kernel.org,
 	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
 	Matthieu Buffet <matthieu@buffet.re>,
 	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
@@ -74,14 +77,15 @@ Cc: John Johansen <john.johansen@canonical.com>,
 	Tahera Fahimi <fahimitahera@gmail.com>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
 	Kuniyuki Iwashima <kuniyu@google.com>,
-	Georgia Garcia <georgia.garcia@canonical.com>
-Subject: Re: [PATCH v8 03/12] landlock: Replace union access_masks_all with
- helper functions
-Message-ID: <20260330.6229e57c9563@gnoack.org>
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v8 01/12] lsm: Add LSM hook security_unix_find
+Message-ID: <20260330.a2fbe19c0689@gnoack.org>
 References: <20260327164838.38231-1-gnoack3000@gmail.com>
- <20260327164838.38231-4-gnoack3000@gmail.com>
- <20260330.ohsoe7vu2Nob@digikod.net>
- <20260330.laew6AthooD6@digikod.net>
+ <20260327164838.38231-2-gnoack3000@gmail.com>
+ <CAHC9VhRktViRp_U3ZAvo2e7vbjUd6RZb-y8+YPXhtLpt7hsXYg@mail.gmail.com>
+ <20260330.ie1eth0ex9Pa@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -91,46 +95,41 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260330.laew6AthooD6@digikod.net>
+In-Reply-To: <20260330.ie1eth0ex9Pa@digikod.net>
 
-On Mon, Mar 30, 2026 at 12:53:21PM +0200, Mickaël Salaün wrote:
-> On Mon, Mar 30, 2026 at 11:56:40AM +0200, Mickaël Salaün wrote:
-> > On Fri, Mar 27, 2026 at 05:48:28PM +0100, Günther Noack wrote:
-> > > * Stop using a union for access_masks_all.
-> > > * Expose helper functions for intersection checks and union operations.
-> > > 
-> > > The memory layout of bitfields is only loosely defined by the C
-> > > standard, so our static assertion that expects a fixed size was
-> > > brittle, and it broke on some compilers when we attempted to add a
-> > > 17th file system access right.
-> > > 
-> > > Reported-by: kernel test robot <lkp@intel.com>
-> > > Closes: https://lore.kernel.org/oe-kbuild-all/202603261438.jBx2DGNe-lkp@intel.com/
+On Mon, Mar 30, 2026 at 06:02:05PM +0200, Mickaël Salaün wrote:
+> On Fri, Mar 27, 2026 at 01:55:58PM -0400, Paul Moore wrote:
+> > On Fri, Mar 27, 2026 at 12:49 PM Günther Noack <gnoack3000@gmail.com> wrote:
+> > > Cc: Günther Noack <gnoack3000@gmail.com>
+> > > Cc: Tingmao Wang <m@maowtm.org>
+> > > Cc: Mickaël Salaün <mic@digikod.net>
+> > > Cc: Paul Moore <paul@paul-moore.com>
+> > > Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 > > > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 > > > ---
-> > >  security/landlock/access.h  | 21 ++++++++++++++-------
-> > >  security/landlock/cred.h    | 10 ++--------
-> > >  security/landlock/ruleset.h | 13 ++++---------
-> > >  3 files changed, 20 insertions(+), 24 deletions(-)
+> > >  include/linux/lsm_hook_defs.h |  5 +++++
+> > >  include/linux/security.h      | 11 +++++++++++
+> > >  net/unix/af_unix.c            | 10 +++++++---
+> > >  security/security.c           | 20 ++++++++++++++++++++
+> > >  4 files changed, 43 insertions(+), 3 deletions(-)
 > > 
-> > I'd prefer this approach:
-> > 
-> > diff --git a/security/landlock/access.h b/security/landlock/access.h
-> > index 89dc8e7b93da..bc9efbb5c900 100644
-> > --- a/security/landlock/access.h
-> > +++ b/security/landlock/access.h
-> > @@ -50,7 +50,7 @@ struct access_masks {
-> >         access_mask_t fs : LANDLOCK_NUM_ACCESS_FS;
-> >         access_mask_t net : LANDLOCK_NUM_ACCESS_NET;
-> >         access_mask_t scope : LANDLOCK_NUM_SCOPE;
-> > -};
-> > +} __packed;
+> > This patch doesn't look like it changed significantly in this
+> > revision, is there a reason you dropped the tags from Georgia and I?
 > 
-> Actually, we can just use '__packed __aligned(sizeof(u32))' and avoid
-> the static_assert change.  That would have no impact on x86, but pack it
-> on m68k.
+> You'r right, the patch didn't change at all. I added Georgia's tag in my
+> -next branch for the previous version, I guess Günther forgot to add it
+> for this version, but I updated my branch with the same tag, so it's
+> still there.  Thank you both BTW!
 
-Thanks, good catch (and thanks for pushing it to mic-next).
-Fingers crossed that this works on m68k.
+I only missed to add them by accident, thanks for adding it back,
+Mickaël, and Paul for spotting it!
+
+
+> I just included a one-line fix because of the m68k warning, we'll see if
+> it works as expected, and we should be good to go.  It would be nice to
+> have John's feedback though.
+
+Agreed.  John, I would also appreciate if you could find the time to
+have a look.
 
 –Günther
