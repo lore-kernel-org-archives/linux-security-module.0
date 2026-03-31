@@ -1,239 +1,173 @@
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9AD536680E
-	for <linux-security-module@vger.kernel.org>; Tue, 31 Mar 2026 02:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4608738F647
+	for <linux-security-module@vger.kernel.org>; Tue, 31 Mar 2026 22:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.42
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774923245; cv=pass; b=HMeE/h+sJiq5p2B4IXgEF/CTbOui1cPzAnAJ8Mobi5+ajWn0ihcU2wkiTKOCdqJ00EPN9SgL2NeuH/8OHN8WnUHnBiR/x5BtdnblprQCnw5FU36eYv1GMYC1iyJZT99a/crhvzHRfDsAeCXy6KPMhO/uhp/3RwxrcC2kilLJV4w=
+	t=1774994712; cv=pass; b=DGgzFOp1M07ivvhKlSq3tS1MQXB9EsjINvttRvlGPJsUdnZSIIgI0cgPpeIXhntCMoFHKtmiOC6Y7dlv0E8fa7S7gkX7zRmVoX15XWtF8Y9uJSCq+JDmOm+OY+2Sdvgb98v6YBYwsDdd0OFgxxrfl8nTCo4oJDydJAqiNTuvFBk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774923245; c=relaxed/simple;
-	bh=kuHXhiMZpV8pzgclUVPNNZAJrO4wx07kTO5po2LMqSk=;
+	s=arc-20240116; t=1774994712; c=relaxed/simple;
+	bh=aVIpPJDxtVjGTfUw8kQm/EJ+Xr7PeRLNbyuFyTTwN3A=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zf9ZAy67Np7nEcoAi301ndpfqZ4S8BdHYQi+L9Aw5oVhqGslL0ff0yu0ViOKk72cZr7tdHJx+49re7qulFNhOlWggn6d7auX71XyqOCaWxGXue53u3qnU7CrflIOQ4bx/uBH8+QzZ7SOwD86pIk3rYOxiERGjASjtZobY9Ga+Vg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GYGCT/NS; arc=pass smtp.client-ip=209.85.216.47
+	 To:Cc:Content-Type; b=hJU7HWdOovKc3dE8e8OgXu4h821ANR+BPSH8FxTGx2acjb+fnL2xYH53Ayp/v18wg9u0Z3HEhzRhESWnkivMyz1nN0ljEw5FEDccx3rLJAFRNOdXCk89/Cm45epajessOWOkpBQCxihCu5UQSKuRXnWrlRllIvDw3TnLFDNNZV0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=cK700kJE; arc=pass smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GYGCT/NS"
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-35d971fbcddso1370365a91.1
-        for <linux-security-module@vger.kernel.org>; Mon, 30 Mar 2026 19:14:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1774923242; cv=none;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="cK700kJE"
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-35d99bae2ebso3053883a91.3
+        for <linux-security-module@vger.kernel.org>; Tue, 31 Mar 2026 15:05:11 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1774994710; cv=none;
         d=google.com; s=arc-20240605;
-        b=KBAq80h51Kjq5TGtzDc/r9g76pvEj87JUz4KUt1A9UCov7G4NkjnJlMHpN1DlV7JpK
-         lyyJgoXM6AyBfad0BjjvIFbfmsTQpJgXJQ4gJL95Bi02PDXOm50gqcWXTa5B/rfcShpw
-         M26ad2te1WlGW7NkhBgmGSUr5PJxFv04TQX/NHpOrq88R0EXh3RI7GRQNzYdsfxFPhEC
-         630z1duZ/SvpEiOOIu2NEO390CqFUYwJorzmMDXZzVjLr2xfZqDRioh8/Bd7ioh0LysO
-         OqVIGzJmXPvQHKoJPJsAW0hMZW8GDdj5HhPICNPfeKQJPhHWxV9Dnyrtk+iMuwVpaqLw
-         IjJQ==
+        b=kzgX/+pKEvrcBt2UXRqEDOAIpK80AZN26TsxfPNCcA2BVS7Lm/uZU/e6WvgaA+d2nI
+         T46kTdPJPoQg20b/aAioplB62wK0Uc3v5LS4FoAGA6y78otmOLZgJMlKI9RsWWzbuJug
+         7k3kVCJPDRH/YKveEWXCJvtr6ng7uGJVVXqZvPew6Dov/0vj6DC7yExZmDzCfflPDTgD
+         Jg/jhYAc2RlJdvKWeAIQrZvvonlt2/tVQB2PXwB0yhTgQVQxUyOCVZ7HW69hqYhsP2d/
+         RWHYswXt0gJW/oA+vdWZ5aKAGwVresg8nFK/NDvA2dPWVIHSOeen9Z/nFflQN7kKr/or
+         mmXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=cTY73uli4S8kcgZc+rHMQS5AIJA2/isaeJaubiJWEjo=;
-        fh=qqEvKvFMPGbjluH0yZMDTk4BF5Y1Ogn2rOw1Di2F/uY=;
-        b=ZkXpFaU9Pqg7A+BYHzrcqtpzZFGGCNc1UQJiCvpHdBigi143Tgw6h60Nr3scLNA+Z2
-         wFZ8TRhGexEzS6ULjKiWJBKZGcVMedTeMYEkxczTWrU5ukhyNPe3UI9VccrxT7h3q0/n
-         E+b3sZ/s46LFRXjryQ2tS3Rt9KW5FapbvkUiRori2McUHksG7GFEFOOEGJPZPBpREpTY
-         hnGO5oLwe/bkfHqNahklP12tzAPPHwcFxQMCxPP1R1IJMiMR6XjDAoMfwZ+TgWuw9+l6
-         RBzqSA4m7l3NqLtsYtHYRARPTiRLhxi+qIB6F2Imc1tnERQfRsVmeHtCaDc6MG4pKhEu
-         fmaw==;
+        bh=Ep4GCTgxX8JIYhXvMhkjfxUN+0Y0dj6DzLbtLvfj93U=;
+        fh=cEe7K2t0Q03/VCqdlwTmhEzp+sRQxTIO1LR6UMkG1Ic=;
+        b=hWT6EPVJux1APeMuox8AnOmEG6Mf+zR4oe/9IfBcN3ie316ZcIdqQAB6heRNesR9+j
+         JBTqPc8CBtdDa9+YgUZCbLuFfnM34lPuhSw9cJ8NA9YHMfpqEtKC1znaFdN8bnFLqyIL
+         HWCYmXgGrQTKShkTRa/sgMuUUc/6yfDOHFKhHSNHqLExKHeSrE44edTxttyYqxldNupw
+         jAPetGRng99w9v7ArwoZMFA6rNjP6uX6TK2xPgyvKY66fUbpd/r4mpCONUNBWCf8whhN
+         +/KbEQCiL4iyWADWm113f03RHjKO9w596C58L21gD8GJ/kp5C8AY/NUndrbBLmERFYWA
+         wvHg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1774923242; x=1775528042; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1774994710; x=1775599510; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cTY73uli4S8kcgZc+rHMQS5AIJA2/isaeJaubiJWEjo=;
-        b=GYGCT/NSXsOi8vmwL5DlhSSh4I0Ja1JeqXScEjDMtkGydO6MDYcNwbPBuyi6AL/0gk
-         8aeEnV5M73vYmilF4UnDnaD9lw68AJSwi/mrbGJu6/X2S8kL1o/fjwaFi2qtnO9Gux63
-         8uW0tJA2iXIWKcWULVPxGbHGThdqvHpYWA3tdHkhJpGTqTiEdrh/GtQ1SMnwEhZHmAME
-         gl+JtG2JY4GkeQtUvrfJMRYk2Cuc0JLLAQi3BZePNnRz2VyhcbnlqCSjZHXvFr5hBBnK
-         mvxiKzyfoK5ytQAJySI0ZXdzbc3EwvtOXSgMOqVMsyrK57e8CC2etHkVLyjCya6cr374
-         AKoA==
+        bh=Ep4GCTgxX8JIYhXvMhkjfxUN+0Y0dj6DzLbtLvfj93U=;
+        b=cK700kJErZ3XTR83YmrvrOIJGcQRkoNv5CKJH03tF81ANmsX/hERPsaUZd/aKmgsDL
+         pXZhznvHmYvHhAVhXorUiZMVGhSlfyWwn1eKv0qm3GNal9RN5hdxQaRNL4JUp3QK3/In
+         drPXv3+7h46+XLrbBuy9lMF1nivoEDVg2fKoOD3fjeIHVeNkC6eWlsSJDyotKhU8fh81
+         YubMJa0ZRLHhSe87QBGXDQcJO0CMIAp5THH7AYNeAoAD8Yd4hvh+d1BGUdD+hVkZOW6D
+         Zhd9DR3VXp3FClSrgOLhDXovflqcNSQyCLZ1/uao7PC1B/EdMq4WMC7hShMWZ9bBG4+s
+         yvHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774923242; x=1775528042;
+        d=1e100.net; s=20251104; t=1774994710; x=1775599510;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=cTY73uli4S8kcgZc+rHMQS5AIJA2/isaeJaubiJWEjo=;
-        b=qzcM5IN2xe2SqoI4Qf+elHVhC3ktlz0STWR+D39VC38A0QBEeCa+++4OlEGayjsCV0
-         BO4tHg34kU7XJN46H/y51ugjBLO4Aa4yaFzbFAtl9952ptjFUaGA4R17faUoTM8mAprh
-         pLKGzK2lbEHwRkiA7oq8iHVQBU4eBCEoqvvUmQrLQstRMRJ2o72F2gt40DYe/CRwOQ5/
-         YESF45hg2fyWx3Fab2DK71FmGdD9TL8YYYT9Y75R/SGt81yDmWLL4488jgBncmMwo+Z8
-         HXsTMzmSvrUieuKZVl4eMOJBcjz2h2nz0btm0d6dEa2yJlw0Z9qbvrEopr9650CWoCdg
-         6ivw==
-X-Gm-Message-State: AOJu0YyirOf2SdOEfQUL4RTSowFrYpB3Z/ejDG3rFsjur/jlHMx2JrU+
-	lKR0tP/BgS7em0IgNklQEkoSVb7jbEpGZjDILPjIoS/NN+dP7XfGd/0hJSGxtIidjIcyRsDIql0
-	rNpMbv6P8wNlu+a3p3U+mzCHKRbSSiZh1g6HDqakY
-X-Gm-Gg: ATEYQzxNMYqI/UsYW4CRPvS9VwD/MYQ/MbBmqWuhViBAGPM/mbwitXja0Z2rZed46IA
-	vFock4Q3tfgjQSd2BP9i8R5fl4FaB7ll3Ob2MK7iHyojvgSeuboP0JLQXygZ5LkgN0aI7pwcSP6
-	XEjEzGgkTVnv1tk+L17I89hUcXCfBUKezDTWQzX2Yk3GbiH6J+zD3OPzkQuNWyFy6GvIfhBf3Aq
-	r3UdxVuxBYv28pk2YNyAqbzXzxFl9W2Hf3eSEC/Ty4lWt3e43/aMLYtEOwpakGkcNcL7uOQsMRR
-	grzfji8=
-X-Received: by 2002:a17:90b:1e4e:b0:35d:aa02:d776 with SMTP id
- 98e67ed59e1d1-35db8e5d15amr1344113a91.2.1774923242128; Mon, 30 Mar 2026
- 19:14:02 -0700 (PDT)
+        bh=Ep4GCTgxX8JIYhXvMhkjfxUN+0Y0dj6DzLbtLvfj93U=;
+        b=RGtpLoayH9ICseqSSjp9AbSGm+5Zahe/T/3Ovje5Wm426QqYkImkxnNfvlQVKAN7Ai
+         5/B999qPJej9Mp5oH5WmbD3P39f8D9iaBGc2aoSEhciFfDo9M9HpEPlszRtnGHwQsVaD
+         K4fxm5EnxI7WUnBOcgIR0Ka5x8EtbgdocNg3WPbJT26c1wF9woubEKqhSVEJBZ78lWq+
+         1+0M3crE1I4Hp/UnF8CoY6qQJfLLWWG/4pbIB9AOR0gZFFl4fUyBrYvQzen2/0QVyzf7
+         5rpzw8SLVDUQuWHgWAF4m8rNDh5jAd9szKlUg2vGxu3c/5iiorBbCAodZT6kEf/LFzgo
+         OqpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgktO3qaR3rb0Uvkd6sl/OxWrcecUrD9HtZ7uUDLLSFEE0wxij7TEgUDb9t/WUWlIC5OBxr5D+jhz+Kx3BqPYTh44capI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY9r58sO2v2KFIEXnwm6/aY2ITotu7uufc6rFPKUeRSSep4Wgi
+	9e0OMzA8Jlhu5CJhuteGHyGBQL1Mnjq1B1M76gAYWaJFLcsOdLdRIQX68xn4gp6pMhXRPOg1JZx
+	UmBKWclMXenBkl25SkXoQT9A2wTIw41k8RnrVbIbL
+X-Gm-Gg: ATEYQzwwPvuUad4tmq6CGEOqaUuD0xOLMJkCkNFtdMJbwKnH4P9sW6qIKQkmkcyWDnz
+	c0HawDgOipy79WUNIH9/QODh6CjptX3yDwheMncPLXel/syRngkyO8ur7hCtasMVEVrfF48gMvp
+	mBwrs3Fb6fIVfrz6+cDLjxNd/aK1kyEqxcsEnAg3QIeYpnwQZ3NeUkqBMt/XcltoFaAUboiop5r
+	m311Aj5TSa+a7g+u42HceuoFGbriBF2CjuFQ77mlh8pcGdp+RRvXDhwdPuDvzXSjRjUzfKPavp+
+	QR9s5T4=
+X-Received: by 2002:a17:90b:3e4e:b0:35b:a170:f266 with SMTP id
+ 98e67ed59e1d1-35dc6e6d5d9mr852192a91.13.1774994710597; Tue, 31 Mar 2026
+ 15:05:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260327220446.353103-4-paul@paul-moore.com> <20260327220446.353103-5-paul@paul-moore.com>
- <CAOQ4uxgcOCP8cf8KvCsC=5OiuRvULKOf52mc2n9qEBAhPKoUGg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgcOCP8cf8KvCsC=5OiuRvULKOf52mc2n9qEBAhPKoUGg@mail.gmail.com>
+References: <20260326060655.2550595-1-bboscaccy@linux.microsoft.com>
+ <20260326060655.2550595-5-bboscaccy@linux.microsoft.com> <CAPhsuW6P-K=nTPxBk0_Wd0E1wDCBqb=uUQzmzpEg2NJub=L+dg@mail.gmail.com>
+ <871ph5f99z.fsf@microsoft.com> <CAPhsuW6fWG8674+LOAACqb1LDAz17w-CxvwBaTf7JXQL6ip5Pg@mail.gmail.com>
+In-Reply-To: <CAPhsuW6fWG8674+LOAACqb1LDAz17w-CxvwBaTf7JXQL6ip5Pg@mail.gmail.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 30 Mar 2026 22:13:49 -0400
-X-Gm-Features: AQROBzAeO-pr44FHCmrznY1FfG77xj1P2susMVAMZI8kAhJNYbfNcCYgp9cpQWg
-Message-ID: <CAHC9VhRvJwrp47-A0frOjJcTmiLr0G218idQ9obXBrNpRWuDUQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] lsm: add backing_file LSM hooks
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, Gao Xiang <xiang@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>
+Date: Tue, 31 Mar 2026 18:04:59 -0400
+X-Gm-Features: AQROBzCUIiXEj4VIIcZZGbFprLIdepai1hqVM7-_X8-rSxluuSgqIzTNSpqHed0
+Message-ID: <CAHC9VhSeRuQ0t+bU29o2z1xeC+g+6h9e+RWnfEKqpzT7rv2Vcg@mail.gmail.com>
+Subject: Re: [PATCH v3 4/9] lsm: framework for BPF integrity verification
+To: Song Liu <song@kernel.org>
+Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Jonathan Corbet <corbet@lwn.net>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	James.Bottomley@hansenpartnership.com, dhowells@redhat.com, 
+	Fan Wu <wufan@kernel.org>, Ryan Foster <foster.ryan.r@gmail.com>, 
+	Randy Dunlap <rdunlap@infradead.org>, linux-security-module@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 30, 2026 at 4:35=E2=80=AFAM Amir Goldstein <amir73il@gmail.com>=
- wrote:
-> On Fri, Mar 27, 2026 at 11:05=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
- wrote:
+On Fri, Mar 27, 2026 at 2:25=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+> On Fri, Mar 27, 2026 at 10:54=E2=80=AFAM Blaise Boscaccy
+> <bboscaccy@linux.microsoft.com> wrote:
 > >
-> > Stacked filesystems such as overlayfs do not currently provide the
-> > necessary mechanisms for LSMs to properly enforce access controls on th=
+> > Song Liu <song@kernel.org> writes:
+> >
+> > > On Wed, Mar 25, 2026 at 11:07=E2=80=AFPM Blaise Boscaccy
+> > > <bboscaccy@linux.microsoft.com> wrote:
+> > > [...]
+> > >> The first new callback, bpf_prog_load_integrity(), located within th=
 e
-> > mmap() and mprotect() operations.  In order to resolve this gap, a LSM
-> > security blob is being added to the backing_file struct and the followi=
-ng
-> > new LSM hooks are being created ...
-
-...
-
-> > diff --git a/fs/file_table.c b/fs/file_table.c
-> > index aaa5faaace1e..0bdc26cae138 100644
-> > --- a/fs/file_table.c
-> > +++ b/fs/file_table.c
-> > @@ -50,6 +50,7 @@ struct backing_file {
-> >                 struct path user_path;
-> >                 freeptr_t bf_freeptr;
-> >         };
-> > +       void *security;
->
-> This needs ifdef SECURITY
-
-Yep.  That will require some other changes, but I should be able to
-keep those fairly limited.
-
-> and the name should be user_security
-
-I'd strongly prefer to keep it as "security" both because "void
-*security" is a very common pattern in the kernel when adding LSM
-blobs to structs, and we don't know what each and every LSM may need
-to store in the backing_file LSM blob.
-
-> > +void *backing_file_security(const struct file *f)
-> > +{
-> > +       return backing_file(f)->security;
-> > +}
->
-> I prefer the name backing_file_user_security()
->
-> Terminology here is very confusing but when saying
-> "backing file" it is more natural that one is referring to the
-> backing xfs file with overlayfs has opened.
->
-> The "backing file" already has an LSM blob f->f_security
-> which is fair the call it the "backing file's LSM blob" ...
-
-From a LSM dev's perspective, I would call file->f_security blob a
-file's LSM blob regardless of if the file is a user or backing file;
-the backing_file->security blob would be a backing file LSM blob.  If
-you look at what the SELinux code does, specifically in the
-__file_has_perm() and __file_map_prot_check() functions (newly added
-in this patchset), you'll see this supported by the code: the
-file->f_security field is basically handled the same regardless of if
-it is a user or backing file whereas the backing_file->security field
-is handled very differently because it is a backing file.
-
-While I think it makes sense to match the accessor function's name to
-the struct field, ultimately I care more about the struct field's
-name.  If you really feel strongly about changing
-backing_file_security() to backing_file_user_security() I can live
-with that so long as we keep backing_file->security intact.
-
-> > @@ -73,8 +79,11 @@ static inline void file_free(struct file *f)
-> >                 percpu_counter_dec(&nr_files);
-> >         put_cred(f->f_cred);
-> >         if (unlikely(f->f_mode & FMODE_BACKING)) {
-> > -               path_put(backing_file_user_path(f));
-> > -               kmem_cache_free(bfilp_cachep, backing_file(f));
-> > +               struct backing_file *ff =3D backing_file(f);
-> > +
-> > +               security_backing_file_free(&ff->security);
-> > +               path_put(&ff->user_path);
-> > +               kmem_cache_free(bfilp_cachep, ff);
->
-> Not directly related to your patch, but as this is growing, IMO
-> this would look cleaner with backing_file_free() inline helper
-> (see attached path).
-
-Sure, I'll include your patch in the patchset.  I'll also fix the
-comment style in the patch to match C style in the rest of the file
-(I'll note the change in the metadata).
-
-> >         } else {
-> >                 kmem_cache_free(filp_cachep, f);
-> >         }
-> > @@ -290,7 +299,8 @@ struct file *alloc_empty_file_noaccount(int flags, =
-const struct cred *cred)
-> >   * This is only for kernel internal use, and the allocate file must no=
-t be
-> >   * installed into file tables or such.
-> >   */
-> > -struct file *alloc_empty_backing_file(int flags, const struct cred *cr=
-ed)
-> > +struct file *alloc_empty_backing_file(int flags, const struct cred *cr=
-ed,
-> > +                                     const struct file *user_file)
-> >  {
-> >         struct backing_file *ff;
-> >         int error;
-> > @@ -306,6 +316,11 @@ struct file *alloc_empty_backing_file(int flags, c=
-onst struct cred *cred)
-> >         }
+> > >> security_bpf_prog_load() hook, is necessary to ensure that the integ=
+rity
+> > >> verification callbacks are executed before any of the existing LSMs
+> > >> are executed via the bpf_prog_load() callback.  Reusing the existing
+> > >> bpf_prog_load() callback for integrity verification could result in =
+LSMs
+> > >> not having access to the integrity verification results when asked t=
+o
+> > >> authorize the BPF program load in the bpf_prog_load() callback.
+> > >>
+> > >> The new LSM hook, security_bpf_prog_load_post_integrity(), is intend=
+ed
+> > >> to be called from within LSMs performing BPF program integrity
+> > >> verification.  It is used to report the verdict of the integrity
+> > >> verification to other LSMs enforcing access control policy on BPF
+> > >> program loads.  LSMs enforcing such access controls should register =
+a
+> > >> bpf_prog_load_post_integrity() callback to receive integrity verdict=
+s.
+> > >
+> > > bpf_prog_load_post_integrity() is weird. Some questions about it:
+> > >
+> > > 1. Is it possible to call it from other LSMs (not hornet)? Specifical=
+ly, is it
+> > >    possible to call it from BPF LSM?
 > >
-> >         ff->file.f_mode |=3D FMODE_BACKING | FMODE_NOACCOUNT;
-> > +       error =3D security_backing_file_alloc(&ff->security, user_file)=
-;
-> > +       if (unlikely(error)) {
-> > +               fput(&ff->file);
-> > +               return ERR_PTR(error);
-> > +       }
-> >         return &ff->file;
-> >  }
+> > There is nothing hornet exclusive about that security hook. If the BPF
+> > LSM folks wanted to use it they would probably need to implement a
+> > kfunc to invoke it.
 >
-> There is an API issue here.
-> in order to call fput() we must ensure that user_security was initialized=
- to
-> NULL (or allocated).
->
-> I don't think that we want security_backing_file_alloc() to provide this
-> semantic and the current patch does not implement it.
->
-> Furthermore, user_path is also not initialized in the error case.
->
-> Attached UNTESTED fixup patch to suggest a cleanup with
-> init_backing_file() helper.
->
-> It also changes the variable and helper name to user_security
-> and plays some trick to avoid many ifdef SECURITY.
-> Feel free to take whichever bits you like with/without attribution.
+> Please also include the kfunc in v4.
 
-I think I've got a cleaner approach than what you've proposed, let me
-code it up, test it all, and I'll post a new revision of the patchset
-soon.
+Blaise is welcome to provide a kfunc for
+bpf_prog_load_post_integrity(), but I don't see that as a requirement
+for Hornet's acceptance.  If a developer wanted to write a service
+LSM, like Hornet, in BPF to verify a BPF program's integrity, that
+developer would be responsible for implementing the kfunc.  If you are
+interested in doing that, I suggest you talk with KP as he is the BPF
+LSM maintainer and I suspect he may have some concerns around
+supporting that (see prior discussions around BPF signature
+verification and his own implementation of BPF signature
+verification).
+
+As a reminder, if you want to apply security policy to a BPF program
+load operation without considering the program's integrity or
+provenance, you can do that today with the
+security_bpf_prog_load()/bpf_prog_load hook/callback combination.
+
+However, as you pointed out, we ultimately need to see at least one
+LSM providing a callback for the bpf_prog_load_post_integrity
+callback.  I wrote a toy SELinux implementation when I was playing
+with Hornet a couple of revisions ago, which could serve as the basis
+for a proper patch if needed, but my understanding is that Blaise has
+been working with Fan on an IPE implementation.
 
 --=20
 paul-moore.com
