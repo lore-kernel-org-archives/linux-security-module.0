@@ -1,156 +1,198 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBC33806DB
-	for <linux-security-module@vger.kernel.org>; Wed,  1 Apr 2026 17:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6836447DD66;
+	Wed,  1 Apr 2026 17:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775063625; cv=none; b=nmgnvKWGaxHpj2HLk8kAqtg1FvsG96ruaK06CbyewndUaT8VjIDPn+7lWiIc1x/PeFIOR7eosIdSxCA/HdBdxifpM7qSn/LX7nbBZ2juslP4+Z4wjuIs+EoFCiXkkCU4AoG8R+ZqcFucNNMYtkyhqHF+xNZtf8q6MX73n20+HNM=
+	t=1775064929; cv=none; b=QGYPJP5HTdoQOeFDAfFELSHFJ6WGPcsEEpSu3ic2d4q9Mh9DnMyVMdTRJIh/vdNnCQ1BbFBUyrC3cpaV8FFLsR5Vc4naNoOjeBvfPwXJjd4MXN7sClKJDT205zSt96ZU7jyU+50Y0L1HDXKsP2J53rQ8qUrmPksDlF3lRcbk/o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775063625; c=relaxed/simple;
-	bh=qACuUW8MJQK15d3swLXJQrq/Dz+q6uksea/sKvV6CG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=klO7p3qt7A4taVKCqt/ditBjxTqGeTgI0y57Q3eUk4edD6wQ6NPskhhh7o2oJ6SXIDOCcALXM6YYpEnmLvxHsm/ljS7K9VypNmIWGCgaPMt8NHqYN8j2L0zhOz19/CH1bQEjUzwng0L6oylRxYgrybY9yiqREa2g6q+pQKuU20E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eCY5/QBP; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1775064929; c=relaxed/simple;
+	bh=eaE0d++8x8d1/1c8Q3kSHHs6PRk9dsU4dLXa7wTKxks=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DKm05vl7sZdQxMUetwuPvU8f6dKbYIJWMTa4NwVzInW+vURyUJrg4x8dGO+Hbn9ylwoLmy+kgzqYiJBYWtJn1rCGbvV8yoBv9Utx1n+jTrA+v/ZIjQfJT6KHhXweja3ffI0jVR+wiTmHx+P+u/oVfXCEZf6UPT04fMnADrqUPgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=YSIvzG8s; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eCY5/QBP"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-43cf73bbfbdso16618f8f.1
-        for <linux-security-module@vger.kernel.org>; Wed, 01 Apr 2026 10:13:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1775063622; x=1775668422; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fJpwqdjWjQodjK2dvOM09fqMSUPEuijecDw3AHC/yLY=;
-        b=eCY5/QBPOE6V6phd/RpkFYQ5VoXTOGKt1VnwTW/6zE0Gg3d5ap0tTOzCu+iKezOAmp
-         FIWHL1BoYNjA6JB0o9CdGj3G9O7IABF0mU/OpPPUBLpvGsec2oXufDQBNFd1QbHNVSrL
-         JR47nIZEXTba9HtwFa4oRLULBwJOM6E1fh9oDeySbs4QGUBqu9ldAOzilKKA+ZY0DmHP
-         Vv5kCC0OqbrZtfH3mvSN9ynYHl2yRVAM1Ylws577spnaujboXtrXl7i3puwV7Lj8k7K1
-         +xB2jxzqnCAdosx3p8oPRD1v1GXhYdkqKEZKEtaslKDbLKxLmhM1q3hx4MhM/STYdRiJ
-         Dlag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775063622; x=1775668422;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fJpwqdjWjQodjK2dvOM09fqMSUPEuijecDw3AHC/yLY=;
-        b=Pnb4n9IO4RYQdZr1eAvdZrobQU9KoGFrvxTA/L4+iyWZG6N/EmFaY51XdrqoJit980
-         UmHcb2ngbwr0lruKukVmzD3prarYl+tKX8MFbiUuFgw8G8i+rx87baXCK+FfULRBT13F
-         Gft1YCorGS3z4ZwypA4F5XWfA7SzHaR4YoDe/go6BhyfuvU2aFoJ3/YHEVaq+aAqPjgt
-         6M1OyYw2U0zdZKQJh+RU6h7uSNOQ2TnYul8+zY2TafyXV5cCMVgOhRf+uE3oFLqzdFF6
-         TN69QDrRmRIJPqtn6uUHsvI/eJXjTHAQj8dh/xGGk8e4uyY9nOAspY6n1aN00Lm+YmhP
-         0zSw==
-X-Gm-Message-State: AOJu0YyymmrPZ0J+xDXm4eGEPAVJXThSi7kJ4Oq1WSYlHTQ6DHRpMpyP
-	4BpfClw5fM9jkfZ/V7Lk+EYMWOCk5+VtWm0dC0Tj2fVdU4wwdp2Dg/ZSZ5r2n8IfWR568iJJk9L
-	NoUJfp+Xk
-X-Gm-Gg: ATEYQzxxyElrjFR6k61fjb7K1lXMeSz9vzdHzWvl8f6udiyCqSiGmF4+3RVwYZdB+yI
-	z/Hq0Yg+H9cq1LSshkuNolC4F5V9Uox6edR/qQHhrc+IsTcJ1U2+p7YZmYeaBo8Mf9e+pDqqlak
-	dZS8PFJf2NlRGEFZak07EClrjW2BCXGhOC9g2HEAgmtqoSVERzqMiGPBhM1lRJhJxIao+z59mD9
-	kL/kY2hHo4JLqZ8n0P/dR8N+YWl55duzwpJ8BdKGVizqKthqdkoOhXirP9x9c/EM89U1Xlp2fMN
-	aJyHCNN9Q1bza4O38usok7z5BUMQxwvwR5V9pX/ZL05o+Le1UcirD1DoLiOvFXQsC+n1WYtxYww
-	VdQvNys76kBJyBpvhHqzcuJEWj5qNTpiVsQOrbJzCL9YY54qTAJ3iME9zxjsGFBx9bSKX9h+fMM
-	Al5Mw5kmk1rCcnUV86Ob25cLBru8+DF/jrytgJOaE6iX+utroQE4CuKA==
-X-Received: by 2002:a05:6000:1842:b0:43b:50d6:4f04 with SMTP id ffacd0b85a97d-43d150e99a9mr8423551f8f.38.1775063621195;
-        Wed, 01 Apr 2026 10:13:41 -0700 (PDT)
-Received: from google.com ([2a00:79e0:288a:8:d433:27f3:1afe:42d9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d1e4d282esm1334013f8f.18.2026.04.01.10.13.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Apr 2026 10:13:40 -0700 (PDT)
-Date: Wed, 1 Apr 2026 19:13:35 +0200
-From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] landlock: Document fallocate(2) as another truncation
- corner case
-Message-ID: <ac1SP3cGuEeIZFmM@google.com>
-References: <20260401150911.1038072-1-gnoack@google.com>
- <20260401.oor1chahp2oF@digikod.net>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="YSIvzG8s"
+Received: from chenste-Virtual-Machine.mshome.net (unknown [131.107.174.223])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A9DC520B710C;
+	Wed,  1 Apr 2026 10:35:26 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A9DC520B710C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1775064926;
+	bh=2IJwL8/O3PkPKN6JWP55pOr/Z6dhg01IhjDRHmeVyjY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YSIvzG8sMEi5F1O1o5etXJqI/9DUQ09Q5SD+LjQezKXaLTjhKoiNcYuPdla0iNFU0
+	 f/4sUmRxRD8W0OjlR1Ff3IvmYorIcylWOTnzNKSmkTDdu/hYWhZtGbomo5o9JJiE2C
+	 ul+NNVx/7bp1YMKu861dftP2TC/07UuNjT/jerpQ=
+From: steven chen <chenste@linux.microsoft.com>
+To: linux-integrity@vger.kernel.org
+Cc: zohar@linux.ibm.com,
+	roberto.sassu@huawei.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	corbet@lwn.net,
+	serge@hallyn.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	linux-security-module@vger.kernel.org,
+	anirudhve@linux.microsoft.com,
+	chenste@linux.microsoft.com,
+	gregorylumen@linux.microsoft.com,
+	nramas@linux.microsoft.com,
+	sushring@linux.microsoft.com,
+	linux-doc@vger.kernel.org
+Subject: [PATCH v5 0/3] Trim N entries of IMA event logs
+Date: Wed,  1 Apr 2026 10:29:52 -0700
+Message-ID: <20260401172956.4581-1-chenste@linux.microsoft.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260401.oor1chahp2oF@digikod.net>
 
-On Wed, Apr 01, 2026 at 06:30:28PM +0200, Mickaël Salaün wrote:
-> On Wed, Apr 01, 2026 at 05:09:10PM +0200, Günther Noack wrote:
-> > Reinforce the already stated policy that LANDLOCK_ACCESS_FS_TRUNCATE should
-> > always go hand in hand with LANDLOCK_ACCESS_FS_WRITE_FILE, as their
-> > meanings and enforcement overlap in counterintuitive ways.
-> > 
-> > On many common file systems, fallocate(2) offers a way to shorten files as
-> > long as the file is opened for writing, side-stepping the
-> > LANDLOCK_ACCESS_FS_TRUNCATE right.
-> > 
-> > Assisted-by: Gemini-CLI:gemini-3.1
-> > Signed-off-by: Günther Noack <gnoack@google.com>
-> > ---
-> >  Documentation/userspace-api/landlock.rst | 8 ++++++--
-> >  1 file changed, 6 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> > index 7f86d7a37dc2..d5691ec136cc 100644
-> > --- a/Documentation/userspace-api/landlock.rst
-> > +++ b/Documentation/userspace-api/landlock.rst
-> > @@ -378,8 +378,8 @@ Truncating files
-> >  
-> >  The operations covered by ``LANDLOCK_ACCESS_FS_WRITE_FILE`` and
-> >  ``LANDLOCK_ACCESS_FS_TRUNCATE`` both change the contents of a file and sometimes
-> > -overlap in non-intuitive ways.  It is recommended to always specify both of
-> > -these together.
-> > +overlap in non-intuitive ways.  It is strongly recommended to always specify
-> > +both of these together (either granting both, or granting none).
-> >  
-> >  A particularly surprising example is :manpage:`creat(2)`.  The name suggests
-> >  that this system call requires the rights to create and write files.  However,
-> > @@ -391,6 +391,10 @@ It should also be noted that truncating files does not require the
-> >  system call, this can also be done through :manpage:`open(2)` with the flags
-> >  ``O_RDONLY | O_TRUNC``.
-> >  
-> > +At the same time, on some filesystems, :manpage:`fallocate(2)` offers a way to
-> > +shorten file contents with ``FALLOC_FL_COLLAPSE_RANGE`` when the file is opened
-> > +for writing, sidestepping the ``LANDLOCK_ACCESS_FS_TRUNCATE`` right.
-> 
-> Interesting, which filesystems?  Shouldn't it be fixed in the code
-> instead?
+The Integrity Measurement Architecture (IMA) maintains a measurement list
+—a record of system events used for integrity verification. The IMA event
+logs are the entries within this measurement list, each representing a
+specific event or measurement that contributes to the system's integrity
+assessment.
 
-It works on ext4, and I also see mentions of FALLOC_FL_COLLAPSE_RANGE
-in XFS, F2FS, SMB and NTFS3.
+This update introduces the ability to trim, or remove, N entries from the
+current measurement list. Trimming involves deleting N entries from the
+list. This action atomically truncates the measurement list, ensuring that
+no new measurements can be added until the operation is complete.
+Importantly, only one writer can initiate this trimming process at a time,
+maintaining consistency and preventing race conditions.
 
-I should mention, it is not *exactly* the same as a truncation, but
-you can remove a chunk of the file from the middle, which also leads
-to a shorter file.  For example, assuming a block size of 1024:
+A userspace interface, ima_trim_log, has been provided for this purpose.
+When this interface is read, it returns the total number T of entries
+trimmed since system boot up. This value T need to be preserved across
+kexec soft reboots. By writing two number T:N to this interface, userspace
+can request the kernel to trim N entries from the IMA event logs.
 
-  1. Make a file with 2*1024 bytes: 1024*'A', then 1024*'B'
-  2. fallocate(collapse range, 0, 1024)
+To maintain a complete record, userspace is responsible for concatenating
+and storing the logs before initiating trimming. Userspace can then send
+the collected data to remote verifiers for validation. After receiving
+confirmation from the remote verifiers, userspace may instruct the kernel
+to proceed with trimming the IMA event logs accordingly.
 
-Resulting file is 1024*'B', and the file is shortened to 1024 bytes.
+The primary benefit of this solution is the ability to free valuable
+kernel memory by delegating the task of reconstructing the full
+measurement list from log chunks to userspace. Trust is not required in
+userspace for the integrity of the measurement list, as its integrity is
+cryptographically protected by the Trusted Platform Module (TPM).
 
-So this is not *exactly* a truncation.  (The man page says that an
-attempt to remove the end of a file results in EINVAL, so you have to
-take it from the middle, and it needs to align with block boundaries.)
+Multiple readers are allowed to access the ima_trim_log interface
+concurrently, while only one writer can trigger log trimming at any time.
+During trimming, readers do not see the list and cannot access it while
+deletion is in progress, ensuring atomicity.
 
-But it's quite similar, also shortens the file, and it does not
-require the Landlock truncation access right.
+Introduce the new kernel option ima_flush_htable to decide whether or not
+the digests of measurement entries are flushed from the hash table (from
+reference [2]).
 
-I agree, another way would potentially be to call the LSM ftruncate
-hook.  I suspect this would stay compatible with other LSMs, because
-the LSM ftruncate hook is a relatively recent addition (but have not
-checked in detail).
+The ima_measure_users counter (protected by the ima_measure_lock mutex) has
+been introduced to protect access to the measurement list part. The open
+method of all the measurement interfaces has been extended to allow only
+one writer at a time or, in alternative, multiple readers. The write
+permission is used to stage/delete the measurements, the read permission
+to read them. Write requires also the CAP_SYS_ADMIN capability (from
+reference [2]). This ima_measure_users needs to be preserved across kexec
+soft reboots
 
-The implementation of fallocate is vfs_fallocate() in fs/open.c - I
-only had a tentative look now; it checks that the file->f_mode is open
-for writing and calls security_file_permission() with MAY_WRITE.
+The total trimmed number T and the ima_measure_users both need to be
+preserved across kexec soft reboot and new patch will be added for this
+purpose in next version.
 
-I always saw LANDLOCK_ACCESS_FS_WRITE_FILE and
-LANDLOCK_ACCESS_FS_TRUNCATE as rights that should always go together,
-so I suspect that it does not make a big difference in practice, and
-that is why I am suggesting to just document it more clearly for now.
+New IMA log trim event is added when trimming finish.
 
-—Günther
+The time required for trimming is minimal, and IMA event logs are briefly
+on hold during this process, preventing read or add operations. This short
+interruption has no impact on the overall functionality of IMA.
+
+A new critical data record "ima_log_trim" is added in this solution. This
+record logs the trim event with number of entries deleted total T since
+system start and time when this happened. User space can get the total
+number T of entries trimmed by checking "ima_log_trim" event in the
+measurement list.
+
+The following are how user space to use the measurement list and
+ima_log_trim interface
+1. get the total numer trimmed T through "ima_log_trim" interface
+2. get the PCR quote
+3. read the measurement list file, close the file, send for verification
+4. wait for response from verifier, until get the good response from
+verifier with number N that matched the PCR quote got in step 2
+5. get the number N from the above message
+6. write the T:N to the ima_log_trim interface when no conflict
+
+when kernel get log trim request T:N
+ Get the T, compare with the total trimmed number
+ if equal, then do trim N and change T to T+N
+ else return error
+
+Using above way to trim the log, the time for user space to hold the list
+will be trimming T:N operation itself at the step 6. User space agent
+race condition is solved too in this way.
+
+References:
+-----------
+[1] [PATCH 0/1] Trim N entries of IMA event logs
+https://lore.kernel.org/linux-integrity/20251202232857.8211-1-chenste@linux.microsoft.com/T/#t
+
+[2] [RFC][PATCH] ima: Add support for staging measurements for deletion
+https://lore.kernel.org/linux-integrity/207fd6d7-53c-57bb-36d8-13a0902052d1@linux.microsoft.com/T/#t
+
+[3] [PATCH v2 0/1] Trim N entries of IMA event logs
+https://lore.kernel.org/linux-integrity/20251210235314.3341-1-chenste@linux.microsoft.com/T/#t
+
+[4] [PATCH v3 0/3] Trim N entries of IMA event logs
+https://lore.kernel.org/linux-integrity/20260106020713.3994-1-chenste@linux.microsoft.com/T/#t
+
+[5] [PATCH v4 0/3] Trim N entries of IMA event logs
+https://lore.kernel.org/linux-integrity/20260205235849.7086-1-chenste@linux.microsoft.com/T/#t
+
+Change Log v5:
+ - lock time performance improvement
+ - Keep hash table unchanged because log already use the hash value
+ - Updated patch descriptions as necessary.
+
+Change Log v4:
+ - Incorporated feedback from Roberto on v3 series.
+ - Update "ima_log_trim" interface definition
+   When read this interface, return total number of records trimmed T
+   need to write T:N to this interface to trim N records
+ - Update user space use case on how to trim IMA event logs
+ - Updated patch descriptions as necessary.
+
+Change Log v3:
+ - Incorporated feedback from Mimi on v2 series.
+ - split patch into multiple patches
+ - lock time performance improvement
+ - Updated patch descriptions as necessary.
+
+Change Log v2:
+ - Incorporated feedback from the Roberto on v1 series.
+ - Adapted code from Roberto's RFC [Reference 2]
+ - Add IMA log trim event log to record trim event
+ - Updated patch descriptions as necessary
+
+steven chen (3):
+  ima: make ima event log trimming configurable
+  ima: trim N IMA event log records
+  ima: add new critical data record to measure log trim
+
+ .../admin-guide/kernel-parameters.txt         |   4 +
+ security/integrity/ima/Kconfig                |  12 +
+ security/integrity/ima/ima.h                  |   4 +-
+ security/integrity/ima/ima_fs.c               | 218 +++++++++++++++++-
+ security/integrity/ima/ima_kexec.c            |   2 +-
+ security/integrity/ima/ima_queue.c            |  96 ++++++++
+ 6 files changed, 328 insertions(+), 8 deletions(-)
+
+-- 
+2.43.0
+
