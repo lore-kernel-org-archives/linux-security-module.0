@@ -1,119 +1,108 @@
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B7D361DDA
-	for <linux-security-module@vger.kernel.org>; Wed,  1 Apr 2026 15:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8E046AECC
+	for <linux-security-module@vger.kernel.org>; Wed,  1 Apr 2026 16:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775056169; cv=none; b=L86epaDqY5u9cX/UkdUnyYsYWEyJ4X+0DaEuTZt6qnYhMcNZJUxrh96h58cIS7ady5S03RTTc8MRCguOM5K6WdoLTxkgcR3zm4Ue/sfZe85tRwIbeCUG8/Agg0wJ699ThfGKjM+56UgcvGG6fFHTB121fZDekL2WgX4Nvs0MFE8=
+	t=1775060129; cv=none; b=cq6sATC/IQQad1Iu3wFkB1iIV8BIyQJu+xbC0I1QiUudD/FnIT5IiYYw+SjdtKOXnLF6VDeH0x0h+q0SGayS5o4NOA8bqNomE+431ytgb27hvT0Jm8+mvTI+GNns4gP6Ju59ZpVb2hqH33ahmar9KlQC+mM++YCtsMPlIA/YUUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775056169; c=relaxed/simple;
-	bh=TYImxQ0raZlYxa+hVemvw4NjrHU/MZubi0CaurCmRgQ=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=kA3QUnl4KlRtIo+GVPqLeH5CjTJ7o89eHeqheIUjuJ8ReLEIU4v+kcEVY7oM+SBN8tbdekHIr5eVXcbWD95Mkk17oeCkhKRN52cv/fqQe/+dra6axIqcNRH/BkWZ7yHh1lAmfIsBrysGkI8Ay0QR023fJzYPLRyf7PTHy3t3T3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MQt2NQz8; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1775060129; c=relaxed/simple;
+	bh=wlWFKP6/PvCRgGJaj8JOCfNyZvXiHGM0DIfxISByMkg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=riM8aAi5HKpdAAIJKyjgcV3JGBcutR3P2oawKA8SB/XefYmgx/JyMmJdKir0NqexZQZegWm/mQohp8yXK3xOrYc1YVYg0HDab5c3BHlKgBpi0LX4r+RA3+t4B674iDV8IkfTbI/VmegRxBZslLT9GLyxWnztPdH/w2CFdSIIlyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=fTcqJJz3; arc=none smtp.client-ip=84.16.66.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MQt2NQz8"
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4887e4b338bso10641655e9.1
-        for <linux-security-module@vger.kernel.org>; Wed, 01 Apr 2026 08:09:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1775056166; x=1775660966; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3/C1aMgqD9yw77MbkVR8omjc4JaXGn+12NJ8kWTEyuk=;
-        b=MQt2NQz8dBQbMuhLBJ/Zgg+0DjFjF8iMKLzca9b2ySKreMwQ+O+6H8e7z1v8tMbmsy
-         taHQCTBb1givjvXAgYNyuY4p3pPlW/b/ps1FnLeDijORrNF5yOQX+uRL9VapQFLEQBxu
-         DtcewiekACTq7w3Ctoo6QXYdrM2+r7z1ase3IPiIDq5VxerQ71i7sskrS1WLPv33Hc8u
-         Wnp+1zvibkQPpHr350fZb1sB/zHsI/MnhvIjUoC5th45iyuqrN3IaDaFKZF3/zYExyvq
-         Aw5yZzipLgc6hArx1Cjw+4PCK0gOINiEeJY8L5FF4NWUp0zA7KgqOjQgnb+uFMZlwSfE
-         pIpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775056166; x=1775660966;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3/C1aMgqD9yw77MbkVR8omjc4JaXGn+12NJ8kWTEyuk=;
-        b=DaablXbuVGU6rLM2WMe6GWJo240RLOGg/LiwoDkukUOj6HVEiwqJwMeJ+tgaWQfTWl
-         7wDkuHrtOupeZEPVu4p/b8dQcf0VDd+HDjCEtjAyBwE+t/iEfpl4reK80dQ3MbMnV9wd
-         BQgZB1mZk1KZ+58GYEqfY1o3VIRccJU5k0AsR0pgFeYXuZt5D7Juw1O7I4yET04EJNFC
-         sy5uFaPOk1g+Ai3NmMQpUpXsH1NSXeTuEDix4zJcWcCOFww/HtcB5kmhJTgHoEBvJBpe
-         OWL9LT3sI0lv7oAB97EdTkv55YO+GT6liMwYKuDfFHekKyJ23bIm+yNoYcT+SHyMDjeP
-         EUUw==
-X-Gm-Message-State: AOJu0Yy2CHxPLIEYBKymS8/Ps/arJVlpKAhrQGDKCfZZjkvlFlojxyVl
-	F01XApri3sckQpMF4g4OnHwBM0WczBoxq0jNKVHx7328cwsFD6tHu4aBmh5GLluWgYMxFGqkciu
-	jLX/yDQ==
-X-Received: from wmbjt8.prod.google.com ([2002:a05:600c:5688:b0:485:314d:637a])
- (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:1e85:b0:487:12c:e7ea
- with SMTP id 5b1f17b1804b1-4888358935amr58995365e9.5.1775056165849; Wed, 01
- Apr 2026 08:09:25 -0700 (PDT)
-Date: Wed,  1 Apr 2026 17:09:10 +0200
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="fTcqJJz3"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fm97W0rkPz47D;
+	Wed,  1 Apr 2026 18:15:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1775060119;
+	bh=rm6y+3RQbj0mRF2bvt+eixtrUy80oCyQto/hwUVN2C0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fTcqJJz38JSHbUV0yw8urvZcwjGhOnLapdXlAfCtTC7mJhkVhw7r9yayYDHC23/1s
+	 fT5OfAjnNT6KhTWSA7j0/immDw+jmHMjp3KHHecPLiGN+hYzm+zgnf5wHRnB4SgZeQ
+	 k2a6PnwsVbjnGqoKt7HJHH/cObnJx733z6SyB5e8=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4fm97V4mP4zKwt;
+	Wed,  1 Apr 2026 18:15:18 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org,
+	Justin Suess <utilityemal77@gmail.com>,
+	Tingmao Wang <m@maowtm.org>
+Subject: [PATCH v2 0/4] Fix Landlock audit test flakiness
+Date: Wed,  1 Apr 2026 18:14:47 +0200
+Message-ID: <20260401161503.1136946-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.53.0.1185.g05d4b7b318-goog
-Message-ID: <20260401150911.1038072-1-gnoack@google.com>
-Subject: [PATCH] landlock: Document fallocate(2) as another truncation corner case
-From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-To: "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
-Cc: linux-security-module@vger.kernel.org, 
-	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-Reinforce the already stated policy that LANDLOCK_ACCESS_FS_TRUNCATE should
-always go hand in hand with LANDLOCK_ACCESS_FS_WRITE_FILE, as their
-meanings and enforcement overlap in counterintuitive ways.
+This series fixes two classes of audit selftest failures plus two minor
+bugs in the audit test helpers.
 
-On many common file systems, fallocate(2) offers a way to shorten files as
-long as the file is opened for writing, side-stepping the
-LANDLOCK_ACCESS_FS_TRUNCATE right.
+The main issue is that domain deallocation audit records are emitted
+asynchronously from kworker threads and can arrive after a previous
+test's socket has been closed.  This causes two distinct failure modes:
 
-Assisted-by: Gemini-CLI:gemini-3.1
-Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
----
- Documentation/userspace-api/landlock.rst | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+- audit_match_record() picks up a stale deallocation record from a
+  previous test instead of the expected one, causing a domain ID
+  mismatch.  The audit.layers test (which reads 16 deallocation records
+  in sequence) is particularly vulnerable because the large read window
+  allows stale records to interleave.  Patch 4 fixes this by filtering
+  deallocation records by domain ID and skipping type-matching records
+  with wrong content patterns.
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/users=
-pace-api/landlock.rst
-index 7f86d7a37dc2..d5691ec136cc 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -378,8 +378,8 @@ Truncating files
-=20
- The operations covered by ``LANDLOCK_ACCESS_FS_WRITE_FILE`` and
- ``LANDLOCK_ACCESS_FS_TRUNCATE`` both change the contents of a file and som=
-etimes
--overlap in non-intuitive ways.  It is recommended to always specify both o=
-f
--these together.
-+overlap in non-intuitive ways.  It is strongly recommended to always speci=
-fy
-+both of these together (either granting both, or granting none).
-=20
- A particularly surprising example is :manpage:`creat(2)`.  The name sugges=
-ts
- that this system call requires the rights to create and write files.  Howe=
-ver,
-@@ -391,6 +391,10 @@ It should also be noted that truncating files does not=
- require the
- system call, this can also be done through :manpage:`open(2)` with the fla=
-gs
- ``O_RDONLY | O_TRUNC``.
-=20
-+At the same time, on some filesystems, :manpage:`fallocate(2)` offers a wa=
-y to
-+shorten file contents with ``FALLOC_FL_COLLAPSE_RANGE`` when the file is o=
-pened
-+for writing, sidestepping the ``LANDLOCK_ACCESS_FS_TRUNCATE`` right.
-+
- The truncate right is associated with the opened file (see below).
-=20
- Rights associated with file descriptors
---=20
-2.53.0.1185.g05d4b7b318-goog
+- audit_count_records() counts stale deallocation records from a
+  previous test, incrementing records.domain from the expected 0 to 1.
+  Patch 3 fixes this by draining stale records at audit_init() time and
+  removing records.domain == 0 checks that are not preceded by
+  audit_match_record() calls (which would consume stale records).
+
+These races are more likely to manifest when additional instrumentation
+changes kworker timing in the deallocation path (e.g. with the upcoming
+Landlock tracepoints work).
+
+The two minor fixes (patches 1-2) correct a snprintf truncation check
+off-by-one and socket file descriptor leaks on error paths in
+audit_init(), audit_init_with_exe_filter(), and audit_cleanup().
+
+Patch 1 is an exact subset of the v1 combined patch, which is why it
+carries the Reviewed-by tag.  Patches 2 and 3 extend beyond what was in
+v1, so the Reviewed-by is not carried.  Patch 4 is new.
+
+Changes since v1:
+https://lore.kernel.org/r/20260312100444.2609563-8-mic@digikod.net
+- Split the combined drain fix into four separate patches.
+- Patch 2: extend fd leak fix to audit_init_with_exe_filter() and
+  audit_cleanup().
+- Patch 3: also remove domain checks from audit.trace and
+  scoped_audit.connect_to_child, document constraint, explain why a
+  longer drain timeout was rejected.
+- Patch 4: new, add domain ID filtering and timeout management to
+  matches_log_domain_deallocated(), skip stale records in
+  audit_match_record().
+
+Mickaël Salaün (4):
+  selftests/landlock: Fix snprintf truncation checks in audit helpers
+  selftests/landlock: Fix socket file descriptor leaks in audit helpers
+  selftests/landlock: Drain stale audit records on init
+  selftests/landlock: Skip stale records in audit_match_record()
+
+ tools/testing/selftests/landlock/audit.h      | 132 ++++++++++++++----
+ tools/testing/selftests/landlock/audit_test.c |  34 ++---
+ .../testing/selftests/landlock/ptrace_test.c  |   1 -
+ .../landlock/scoped_abstract_unix_test.c      |   1 -
+ 4 files changed, 116 insertions(+), 52 deletions(-)
+
+-- 
+2.53.0
 
