@@ -1,42 +1,42 @@
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039D33264CB
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F179E3115A5
 	for <linux-security-module@vger.kernel.org>; Wed,  1 Apr 2026 16:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775060511; cv=none; b=BrCd+MuFys7TlCv48LUXzRGlHnKIUmrjAhZgVXzjH43UzITH+Oj96qp6iZURGb9V1jhXpSV9FR0KIVMcnH01ILpePgUm7hDnTZu5FojE1cg7OLxjUgbz2OwhBRMpGEomdfmXRsSGWbtQCsDo0RbOclpiR+lYjIzaxlTfI6/b/og=
+	t=1775060511; cv=none; b=ENhHTfCB4dsQRiGvm3m8cBP9Qujt0SOQOD9i7MoxEW6uNkaIZeqihXi5PkXYbr/1nTntkaZKtr5reFPoahS/iPn0M+Z65pVh1ES6/sSYGDi3KKw6VXT/FPXkFWONFV94Smwl5K7+phHsIPTBF4jExU+wRcSP3TGBBEgyNUBfyOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1775060511; c=relaxed/simple;
-	bh=v77w847xxmON+bfG33t4Elv8CP/ieGaF3hq7helmlFg=;
+	bh=obyOfmRaXFMuUHo9g0PeEd21rFKHLRLTpOLGFY98/+k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rjZ7zHnkduzREx7TzqXTV+4kYzN3yG6IVqQuNGFdu3NMv9fia5bDb8GJXCap5Pr7uAI45ONx67J97ssTeIN5Y4maPKuXYIIXj0gbiN67slmqEVS0S3TDuMx09DP/QYOjwHoF6MVxhmI8W5CkSz9VeyaBTC6GowKCWDMaUBp1Kaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=PTfXPDnn; arc=none smtp.client-ip=45.157.188.9
+	 MIME-Version:Content-Type; b=IhQmPs7GriIUMIqL6K9gTRYY5OHtlA7+vgxOGbCIXBlpkQcAj15YBvILPxO8aE1MSMksyAR9sfymKU+UYt+vvgD3t4T+YTuKpwXs5GQz5hvSC8s8mnpG9g2ntTvrE0O+xOTmb4q0uLTUHl16n4odJF3NGRRYTdHCVMSyNqbHwDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=iUpzxhHG; arc=none smtp.client-ip=185.125.25.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="PTfXPDnn"
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fm97r0Jd4z4Mn;
-	Wed,  1 Apr 2026 18:15:36 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="iUpzxhHG"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fm97c2rGkz49m;
+	Wed,  1 Apr 2026 18:15:24 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1775060135;
-	bh=PD7pBQyCixdvA3rXc4JFgzNbY70uRffpjJ5CiWM7XQg=;
+	s=20191114; t=1775060124;
+	bh=5b8QSKrxs4WQ0WQ0ydOU1r7n07mMZCPyxsVvc52Lipg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PTfXPDnn/z7O5LJZ1qEGm8kLd4mBhS3QeTvWuvIBMITMBlJ88LF89ie9/RvkYRFDI
-	 n/7F7MVM8JxdXLuY4p/FH6U7z8Kd/8ceMeLr7qKaYrscwCdJHYmJD6MegbT34dEJM7
-	 f3nkaC0HMnYhRNaNkH3wh3JeTxpGzJ9E2LwfyE6M=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fm97q4czRzB5H;
-	Wed,  1 Apr 2026 18:15:35 +0200 (CEST)
+	b=iUpzxhHG37U2dfFvVgbCEnBwRvoIIXPRSEplRFO2Xg1hQpHLoK1j7syxmjGs4y+M3
+	 kNmfU7lTBRyh9t9Wx/vIcH6SzbQenPMKEduTzO9ikzCgOapEk4bEhzrCophvBvQDOy
+	 /uG7GBIyWHwhtKqboKyP/4/oIGW9VUvonOnEkwCU=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fm97c05Zvz8t2;
+	Wed,  1 Apr 2026 18:15:24 +0200 (CEST)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
 Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	linux-security-module@vger.kernel.org,
 	Justin Suess <utilityemal77@gmail.com>,
 	Tingmao Wang <m@maowtm.org>
-Subject: [PATCH v2 4/4] selftests/landlock: Skip stale records in audit_match_record()
-Date: Wed,  1 Apr 2026 18:14:51 +0200
-Message-ID: <20260401161503.1136946-5-mic@digikod.net>
+Subject: [PATCH v2 1/4] selftests/landlock: Fix snprintf truncation checks in audit helpers
+Date: Wed,  1 Apr 2026 18:14:48 +0200
+Message-ID: <20260401161503.1136946-2-mic@digikod.net>
 In-Reply-To: <20260401161503.1136946-1-mic@digikod.net>
 References: <20260401161503.1136946-1-mic@digikod.net>
 Precedence: bulk
@@ -49,249 +49,48 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Domain deallocation records are emitted asynchronously from kworker
-threads (via free_ruleset_work()).  Stale deallocation records from a
-previous test can arrive during the current test's deallocation read
-loop and be picked up by audit_match_record() instead of the expected
-record, causing a domain ID mismatch.  The audit.layers test (which
-creates 16 nested domains) is particularly vulnerable because it reads
-16 deallocation records in sequence, providing a large window for stale
-records to interleave.
-
-The same issue affects audit_flags.signal, where deallocation records
-from a previous test (audit.layers) can leak into the next test and be
-picked up by audit_match_record() instead of the expected record.
-
-Fix this by continuing to read records when the type matches but the
-content pattern does not.  Stale records are silently consumed, and the
-loop only stops when both type and pattern match (or the socket times
-out with -EAGAIN).
-
-Additionally, extend matches_log_domain_deallocated() with an
-expected_domain_id parameter.  When set, the regex pattern includes the
-specific domain ID as a literal hex value, so that deallocation records
-for a different domain do not match the pattern at all.  This handles
-the case where the stale record has the same denial count as the
-expected one (e.g. both have denials=1), which the type+pattern loop
-alone cannot distinguish.  Callers that already know the expected domain
-ID (from a prior denial or allocation record) now pass it to filter
-precisely.
-
-When expected_domain_id is set, matches_log_domain_deallocated() also
-temporarily increases the socket timeout to audit_tv_dom_drop (1 second)
-to wait for the asynchronous kworker deallocation, and restores
-audit_tv_default afterward.  This removes the need for callers to manage
-the timeout switch manually.
+snprintf() returns the number of characters that would have been
+written, excluding the terminating NUL byte.  When the output is
+truncated, this return value equals or exceeds the buffer size.  Fix
+matches_log_domain_allocated() and matches_log_domain_deallocated() to
+detect truncation with ">=" instead of ">".
 
 Cc: Günther Noack <gnoack@google.com>
 Fixes: 6a500b22971c ("selftests/landlock: Add tests for audit flags and domain IDs")
+Reviewed-by: Günther Noack <gnoack@google.com>
+Link: https://lore.kernel.org/r/20260312100444.2609563-8-mic@digikod.net
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
 
 Changes since v1:
-- New patch.
+https://lore.kernel.org/r/20260312100444.2609563-8-mic@digikod.net
+- New patch (split from the drain fix).
 ---
- tools/testing/selftests/landlock/audit.h      | 81 ++++++++++++++-----
- tools/testing/selftests/landlock/audit_test.c | 32 ++++----
- 2 files changed, 75 insertions(+), 38 deletions(-)
+ tools/testing/selftests/landlock/audit.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/tools/testing/selftests/landlock/audit.h b/tools/testing/selftests/landlock/audit.h
-index 74e1c3d763be..b439a9b00f0e 100644
+index 44eb433e9666..1049a0582af5 100644
 --- a/tools/testing/selftests/landlock/audit.h
 +++ b/tools/testing/selftests/landlock/audit.h
-@@ -249,9 +249,9 @@ static __maybe_unused char *regex_escape(const char *const src, char *dst,
- static int audit_match_record(int audit_fd, const __u16 type,
- 			      const char *const pattern, __u64 *domain_id)
- {
--	struct audit_message msg;
-+	struct audit_message msg, last_mismatch = {};
- 	int ret, err = 0;
--	bool matches_record = !type;
-+	int num_type_match = 0;
- 	regmatch_t matches[2];
- 	regex_t regex;
+@@ -309,7 +309,7 @@ static int __maybe_unused matches_log_domain_allocated(int audit_fd, pid_t pid,
  
-@@ -259,21 +259,35 @@ static int audit_match_record(int audit_fd, const __u16 type,
- 	if (ret)
- 		return -EINVAL;
- 
--	do {
-+	/*
-+	 * Reads records until one matches both the expected type and the
-+	 * pattern.  Type-matching records with non-matching content are
-+	 * silently consumed, which handles stale domain deallocation records
-+	 * from a previous test emitted asynchronously by kworker threads.
-+	 */
-+	while (true) {
- 		memset(&msg, 0, sizeof(msg));
- 		err = audit_recv(audit_fd, &msg);
--		if (err)
-+		if (err) {
-+			if (num_type_match) {
-+				printf("DATA: %s\n", last_mismatch.data);
-+				printf("ERROR: %d record(s) matched type %u"
-+				       " but not pattern: %s\n",
-+				       num_type_match, type, pattern);
-+			}
- 			goto out;
-+		}
- 
--		if (msg.header.nlmsg_type == type)
--			matches_record = true;
--	} while (!matches_record);
-+		if (type && msg.header.nlmsg_type != type)
-+			continue;
- 
--	ret = regexec(&regex, msg.data, ARRAY_SIZE(matches), matches, 0);
--	if (ret) {
--		printf("DATA: %s\n", msg.data);
--		printf("ERROR: no match for pattern: %s\n", pattern);
--		err = -ENOENT;
-+		ret = regexec(&regex, msg.data, ARRAY_SIZE(matches), matches,
-+			      0);
-+		if (!ret)
-+			break;
-+
-+		num_type_match++;
-+		last_mismatch = msg;
- 	}
- 
- 	if (domain_id) {
-@@ -316,21 +330,48 @@ static int __maybe_unused matches_log_domain_allocated(int audit_fd, pid_t pid,
- 				  domain_id);
- }
- 
--static int __maybe_unused matches_log_domain_deallocated(
--	int audit_fd, unsigned int num_denials, __u64 *domain_id)
-+/*
-+ * Matches a domain deallocation record.  When expected_domain_id is non-zero,
-+ * the pattern includes the specific domain ID so that stale deallocation
-+ * records from a previous test (with a different domain ID) are skipped by
-+ * audit_match_record(), and the socket timeout is temporarily increased to
-+ * audit_tv_dom_drop to wait for the asynchronous kworker deallocation.
-+ */
-+static int __maybe_unused
-+matches_log_domain_deallocated(int audit_fd, unsigned int num_denials,
-+			       __u64 expected_domain_id, __u64 *domain_id)
- {
- 	static const char log_template[] = REGEX_LANDLOCK_PREFIX
- 		" status=deallocated denials=%u$";
--	char log_match[sizeof(log_template) + 10];
--	int log_match_len;
-+	static const char log_template_with_id[] =
-+		"^audit([0-9.:]\\+): domain=\\(%llx\\)"
-+		" status=deallocated denials=%u$";
-+	char log_match[sizeof(log_template_with_id) + 32];
-+	int log_match_len, err;
-+
-+	if (expected_domain_id)
-+		log_match_len = snprintf(log_match, sizeof(log_match),
-+					 log_template_with_id,
-+					 expected_domain_id, num_denials);
-+	else
-+		log_match_len = snprintf(log_match, sizeof(log_match),
-+					 log_template, num_denials);
- 
--	log_match_len = snprintf(log_match, sizeof(log_match), log_template,
--				 num_denials);
- 	if (log_match_len >= sizeof(log_match))
+ 	log_match_len =
+ 		snprintf(log_match, sizeof(log_match), log_template, pid);
+-	if (log_match_len > sizeof(log_match))
++	if (log_match_len >= sizeof(log_match))
  		return -E2BIG;
  
--	return audit_match_record(audit_fd, AUDIT_LANDLOCK_DOMAIN, log_match,
--				  domain_id);
-+	if (expected_domain_id)
-+		setsockopt(audit_fd, SOL_SOCKET, SO_RCVTIMEO,
-+			   &audit_tv_dom_drop, sizeof(audit_tv_dom_drop));
-+
-+	err = audit_match_record(audit_fd, AUDIT_LANDLOCK_DOMAIN, log_match,
-+				 domain_id);
-+
-+	if (expected_domain_id)
-+		setsockopt(audit_fd, SOL_SOCKET, SO_RCVTIMEO, &audit_tv_default,
-+			   sizeof(audit_tv_default));
-+
-+	return err;
- }
+ 	return audit_match_record(audit_fd, AUDIT_LANDLOCK_DOMAIN, log_match,
+@@ -326,7 +326,7 @@ static int __maybe_unused matches_log_domain_deallocated(
  
- struct audit_records {
-diff --git a/tools/testing/selftests/landlock/audit_test.c b/tools/testing/selftests/landlock/audit_test.c
-index f92ba6774faa..a76c3686a0fe 100644
---- a/tools/testing/selftests/landlock/audit_test.c
-+++ b/tools/testing/selftests/landlock/audit_test.c
-@@ -139,13 +139,16 @@ TEST_F(audit, layers)
- 	    WEXITSTATUS(status) != EXIT_SUCCESS)
- 		_metadata->exit_code = KSFT_FAIL;
+ 	log_match_len = snprintf(log_match, sizeof(log_match), log_template,
+ 				 num_denials);
+-	if (log_match_len > sizeof(log_match))
++	if (log_match_len >= sizeof(log_match))
+ 		return -E2BIG;
  
--	/* Purges log from deallocated domains. */
--	EXPECT_EQ(0, setsockopt(self->audit_fd, SOL_SOCKET, SO_RCVTIMEO,
--				&audit_tv_dom_drop, sizeof(audit_tv_dom_drop)));
-+	/*
-+	 * Purges log from deallocated domains.  Records arrive in LIFO order
-+	 * (innermost domain first) because landlock_put_hierarchy() walks the
-+	 * chain sequentially in a single kworker context.
-+	 */
- 	for (i = ARRAY_SIZE(*domain_stack) - 1; i >= 0; i--) {
- 		__u64 deallocated_dom = 2;
- 
- 		EXPECT_EQ(0, matches_log_domain_deallocated(self->audit_fd, 1,
-+							    (*domain_stack)[i],
- 							    &deallocated_dom));
- 		EXPECT_EQ((*domain_stack)[i], deallocated_dom)
- 		{
-@@ -154,8 +157,6 @@ TEST_F(audit, layers)
- 		}
- 	}
- 	EXPECT_EQ(0, munmap(domain_stack, sizeof(*domain_stack)));
--	EXPECT_EQ(0, setsockopt(self->audit_fd, SOL_SOCKET, SO_RCVTIMEO,
--				&audit_tv_default, sizeof(audit_tv_default)));
- 	EXPECT_EQ(0, close(ruleset_fd));
- }
- 
-@@ -270,13 +271,9 @@ TEST_F(audit, thread)
- 	EXPECT_EQ(0, close(pipe_parent[1]));
- 	ASSERT_EQ(0, pthread_join(thread, NULL));
- 
--	EXPECT_EQ(0, setsockopt(self->audit_fd, SOL_SOCKET, SO_RCVTIMEO,
--				&audit_tv_dom_drop, sizeof(audit_tv_dom_drop)));
--	EXPECT_EQ(0, matches_log_domain_deallocated(self->audit_fd, 1,
--						    &deallocated_dom));
-+	EXPECT_EQ(0, matches_log_domain_deallocated(
-+			     self->audit_fd, 1, denial_dom, &deallocated_dom));
- 	EXPECT_EQ(denial_dom, deallocated_dom);
--	EXPECT_EQ(0, setsockopt(self->audit_fd, SOL_SOCKET, SO_RCVTIMEO,
--				&audit_tv_default, sizeof(audit_tv_default)));
- }
- 
- FIXTURE(audit_flags)
-@@ -432,22 +429,21 @@ TEST_F(audit_flags, signal)
- 
- 	if (variant->restrict_flags &
- 	    LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF) {
-+		/*
-+		 * No deallocation record: denials=0 never matches a real
-+		 * record.
-+		 */
- 		EXPECT_EQ(-EAGAIN,
--			  matches_log_domain_deallocated(self->audit_fd, 0,
-+			  matches_log_domain_deallocated(self->audit_fd, 0, 0,
- 							 &deallocated_dom));
- 		EXPECT_EQ(deallocated_dom, 2);
- 	} else {
--		EXPECT_EQ(0, setsockopt(self->audit_fd, SOL_SOCKET, SO_RCVTIMEO,
--					&audit_tv_dom_drop,
--					sizeof(audit_tv_dom_drop)));
- 		EXPECT_EQ(0, matches_log_domain_deallocated(self->audit_fd, 2,
-+							    *self->domain_id,
- 							    &deallocated_dom));
- 		EXPECT_NE(deallocated_dom, 2);
- 		EXPECT_NE(deallocated_dom, 0);
- 		EXPECT_EQ(deallocated_dom, *self->domain_id);
--		EXPECT_EQ(0, setsockopt(self->audit_fd, SOL_SOCKET, SO_RCVTIMEO,
--					&audit_tv_default,
--					sizeof(audit_tv_default)));
- 	}
- }
- 
+ 	return audit_match_record(audit_fd, AUDIT_LANDLOCK_DOMAIN, log_match,
 -- 
 2.53.0
 
