@@ -1,648 +1,115 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0090D1D7E41;
-	Wed,  1 Apr 2026 17:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4D03115A5
+	for <linux-security-module@vger.kernel.org>; Wed,  1 Apr 2026 17:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775065954; cv=none; b=KwgxrqvkWq8FtWBHFJ7O6Y/d5e7yXG9I6FD2TfMXCWEJIu63C2XUIXA8QOX0eQMKnGnUKhYajUao1GZJwF4NampzS+jCrRNN7iSZHzdvnsTuu2/1CV0OKyvH4qti7SvbGjFG1T+26PrDXAvbrQOKLXANojIdJ2pl52dF15HdegM=
+	t=1775066286; cv=none; b=bS64moD9ftspU80Ibcy6ew+L+G9xhovLn5rGqfhhfzxg67IDdUuzVw5LTEtZTglijuL0e3oUe8vk4i26xWEFLpP2/Kse0Xu417U3J8FtN/Wz5PK5m6QjqZss+tc21M3QB+lReQL4tXriKVDAFLvIcUt4yyh6VKct9ZZSxAUOc58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775065954; c=relaxed/simple;
-	bh=Qo4OItZacaHO7TysxoypYZ02Y0JVY1Za0EvmiuPutEg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r8l7xdS4+9H9bSptb/KBxWqzBpn1SJTXQwYHKualogLUFz3ZSw7gOj0CEyHmT2mU1MzBOXHXV1PPxcm9ex3tL6KMI69fP7BAVqEo8wvQyEx6KYsmScLd4gG0eYlAz8oPFc6Sja1bUlKMp+STdvKD5FmumSA4TA2Dqrtp1fEmlak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=jQjvP0Fl; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1775066286; c=relaxed/simple;
+	bh=MZ6oNDyCZVwdbAO3jiRErfRc1IGaBAObeg4tFYCzlyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AL6LsuMYCLsAGLScDfx/jZktBEZ4haZjZnrFQxq3eX2MP9qM3Xe5ELrWbt5worRKOeYFQHU1YmGWqbWSQVB55NONoWuqBbIvhA8rnMVCyOGVXs6go4Jf4TKTMlukrfh73WJ0ZCzNmUxRtlf0EIBhjaBG8fz6LCOwo+O/xFW2Hlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ckjF76zh; arc=none smtp.client-ip=45.157.188.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="jQjvP0Fl"
-Received: from [10.14.138.223] (unknown [131.107.174.223])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 0DF6A20B710C;
-	Wed,  1 Apr 2026 10:52:32 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0DF6A20B710C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1775065952;
-	bh=W/20Y8zIlEH3wE5TwsCZ88i/TD068D4ATAp6TRCZjcY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jQjvP0FlznqhE5R0S1ouAPtovM35i+3k2I8gnTDtExLzfx4XT6vpLdv+8ULQUJ5t8
-	 CNMuGLKlWF5CorYL7+AEtoJ8gYbiTDG1OMjgNWA44MFa7LSvlzGGMwpQvlsXG2DuBV
-	 297ow+WW785EK/ky2EH9HHLpRNGTv7wfO9WuUGsc=
-Message-ID: <2cf54d28-396b-4165-a0ca-368d0524d658@linux.microsoft.com>
-Date: Wed, 1 Apr 2026 10:52:32 -0700
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ckjF76zh"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fmCPv4fxQzSBr;
+	Wed,  1 Apr 2026 19:57:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1775066275;
+	bh=L9xLfj48FBQxFm9y4+h5MQ9bi8sQbYKyvD5HE0mDFAc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ckjF76zhaoA6j8YBXHPuCaIxY9cNUbl1FnGE+lSv9iECFHyzqOzglOUj1PCgxqvgo
+	 Dd6B2k9msEL0n4XkGTKkIb2cLIyraTxaQi/uSI87Rsh+ydBUSC3hffARexIQM679Mz
+	 AdLXvxvh8rPEp/Ml+LJ8LeFUjbZlIJS3KNPu8p00=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fmCPt3Fcdzff9;
+	Wed,  1 Apr 2026 19:57:54 +0200 (CEST)
+Date: Wed, 1 Apr 2026 19:57:49 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: John Johansen <john.johansen@canonical.com>, 
+	kernel test robot <lkp@intel.com>, linux-security-module@vger.kernel.org, 
+	Tingmao Wang <m@maowtm.org>, Justin Suess <utilityemal77@gmail.com>, 
+	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>, Matthieu Buffet <matthieu@buffet.re>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, konstantin.meskhidze@huawei.com, 
+	Demi Marie Obenour <demiobenour@gmail.com>, Alyssa Ross <hi@alyssa.is>, Jann Horn <jannh@google.com>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Kuniyuki Iwashima <kuniyu@google.com>, Georgia Garcia <georgia.garcia@canonical.com>
+Subject: Re: [PATCH v8 03/12] landlock: Replace union access_masks_all with
+ helper functions
+Message-ID: <20260401.Re1Eesu1Yaij@digikod.net>
+References: <20260327164838.38231-1-gnoack3000@gmail.com>
+ <20260327164838.38231-4-gnoack3000@gmail.com>
+ <20260330.ohsoe7vu2Nob@digikod.net>
+ <20260330.laew6AthooD6@digikod.net>
+ <20260330.6229e57c9563@gnoack.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 09/13] ima: Add support for staging measurements with
- prompt
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
- skhan@linuxfoundation.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
- gregorylumen@linux.microsoft.com, nramas@linux.microsoft.com,
- Roberto Sassu <roberto.sassu@huawei.com>,
- steven chen <chenste@linux.microsoft.com>
-References: <20260326173011.1191815-1-roberto.sassu@huaweicloud.com>
- <20260326173011.1191815-10-roberto.sassu@huaweicloud.com>
- <ef9c296a-940a-4bb5-a0b9-184532cf4bb6@linux.microsoft.com>
- <19a1815a1222bd78f6bfde30f60b60ebfacb65aa.camel@huaweicloud.com>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <19a1815a1222bd78f6bfde30f60b60ebfacb65aa.camel@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260330.6229e57c9563@gnoack.org>
+X-Infomaniak-Routing: alpha
 
-On 3/27/2026 9:45 AM, Roberto Sassu wrote:
-> On Thu, 2026-03-26 at 15:44 -0700, steven chen wrote:
->> On 3/26/2026 10:30 AM, Roberto Sassu wrote:
->>> From: Roberto Sassu <roberto.sassu@huawei.com>
->>>
->>> Introduce the ability of staging the IMA measurement list and deleting them
->>> with a prompt.
->>>
->>> Staging means moving the current content of the measurement list to a
->>> separate location, and allowing users to read and delete it. This causes
->>> the measurement list to be atomically truncated before new measurements can
->>> be added. Staging can be done only once at a time. In the event of kexec(),
->>> staging is reverted and staged entries will be carried over to the new
->>> kernel.
->>>
->>> Introduce ascii_runtime_measurements_<algo>_staged and
->>> binary_runtime_measurements_<algo>_staged interfaces to stage and delete
->>> the measurements. Use 'echo A > <IMA interface>' and
->>> 'echo D > <IMA interface>' to respectively stage and delete the entire
->>> measurements list. Locking of these interfaces is also mediated with a call
->>> to _ima_measurements_open() and with ima_measurements_release().
->>>
->>> Implement the staging functionality by introducing the new global
->>> measurements list ima_measurements_staged, and ima_queue_stage() and
->>> ima_queue_delete_staged_all() to respectively move measurements from the
->>> current measurements list to the staged one, and to move staged
->>> measurements to the ima_measurements_trim list for deletion. Introduce
->>> ima_queue_delete() to delete the measurements.
->>>
->>> Finally, introduce the BINARY_STAGED AND BINARY_FULL binary measurements
->>> list types, to maintain the counters and the binary size of staged
->>> measurements and the full measurements list (including entries that were
->>> staged). BINARY still represents the current binary measurements list.
->>>
->>> Use the binary size for the BINARY + BINARY_STAGED types in
->>> ima_add_kexec_buffer(), since both measurements list types are copied to
->>> the secondary kernel during kexec. Use BINARY_FULL in
->>> ima_measure_kexec_event(), to generate a critical data record.
->>>
->>> It should be noted that the BINARY_FULL counter is not passed through
->>> kexec. Thus, the number of entries included in the kexec critical data
->>> records refers to the entries since the previous kexec records.
->>>
->>> Note: This code derives from the Alt-IMA Huawei project, whose license is
->>>         GPL-2.0 OR MIT.
->>>
->>> Link: https://github.com/linux-integrity/linux/issues/1
->>> Suggested-by: Gregory Lumen <gregorylumen@linux.microsoft.com> (staging revert)
->>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->>> ---
->>>    security/integrity/ima/Kconfig     |  13 +++
->>>    security/integrity/ima/ima.h       |   8 +-
->>>    security/integrity/ima/ima_fs.c    | 167 ++++++++++++++++++++++++++---
->>>    security/integrity/ima/ima_kexec.c |  22 +++-
->>>    security/integrity/ima/ima_queue.c |  97 ++++++++++++++++-
->>>    5 files changed, 286 insertions(+), 21 deletions(-)
->>>
->>> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
->>> index 976e75f9b9ba..e714726f3384 100644
->>> --- a/security/integrity/ima/Kconfig
->>> +++ b/security/integrity/ima/Kconfig
->>> @@ -332,4 +332,17 @@ config IMA_KEXEC_EXTRA_MEMORY_KB
->>>    	  If set to the default value of 0, an extra half page of memory for those
->>>    	  additional measurements will be allocated.
->>>    
->>> +config IMA_STAGING
->>> +	bool "Support for staging the measurements list"
->>> +	default y
->>> +	help
->>> +	  Add support for staging the measurements list.
->>> +
->>> +	  It allows user space to stage the measurements list for deletion and
->>> +	  to delete the staged measurements after confirmation.
->>> +
->>> +	  On kexec, staging is reverted and staged measurements are prepended
->>> +	  to the current measurements list when measurements are copied to the
->>> +	  secondary kernel.
->>> +
->>>    endif
->>> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
->>> index 97b7d6024b5d..65db152a0a24 100644
->>> --- a/security/integrity/ima/ima.h
->>> +++ b/security/integrity/ima/ima.h
->>> @@ -30,9 +30,11 @@ enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8, TPM_PCR10 = 10 };
->>>    
->>>    /*
->>>     * BINARY: current binary measurements list
->>> + * BINARY_STAGED: staged binary measurements list
->>> + * BINARY_FULL: binary measurements list since IMA init (lost after kexec)
->>>     */
->>>    enum binary_lists {
->>> -	BINARY, BINARY__LAST
->>> +	BINARY, BINARY_STAGED, BINARY_FULL, BINARY__LAST
->>>    };
->>>    
->>>    /* digest size for IMA, fits SHA1 or MD5 */
->>> @@ -125,6 +127,7 @@ struct ima_queue_entry {
->>>    	struct ima_template_entry *entry;
->>>    };
->>>    extern struct list_head ima_measurements;	/* list of all measurements */
->>> +extern struct list_head ima_measurements_staged; /* list of staged meas. */
->>>    
->>>    /* Some details preceding the binary serialized measurement list */
->>>    struct ima_kexec_hdr {
->>> @@ -314,6 +317,8 @@ struct ima_template_desc *ima_template_desc_current(void);
->>>    struct ima_template_desc *ima_template_desc_buf(void);
->>>    struct ima_template_desc *lookup_template_desc(const char *name);
->>>    bool ima_template_has_modsig(const struct ima_template_desc *ima_template);
->>> +int ima_queue_stage(void);
->>> +int ima_queue_staged_delete_all(void);
->>>    int ima_restore_measurement_entry(struct ima_template_entry *entry);
->>>    int ima_restore_measurement_list(loff_t bufsize, void *buf);
->>>    int ima_measurements_show(struct seq_file *m, void *v);
->>> @@ -334,6 +339,7 @@ extern spinlock_t ima_queue_lock;
->>>    extern atomic_long_t ima_num_entries[BINARY__LAST];
->>>    extern atomic_long_t ima_num_violations;
->>>    extern struct hlist_head __rcu *ima_htable;
->>> +extern struct mutex ima_extend_list_mutex;
->>>    
->>>    static inline unsigned int ima_hash_key(u8 *digest)
->>>    {
->>> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
->>> index 7709a4576322..39d9128e9f22 100644
->>> --- a/security/integrity/ima/ima_fs.c
->>> +++ b/security/integrity/ima/ima_fs.c
->>> @@ -24,6 +24,13 @@
->>>    
->>>    #include "ima.h"
->>>    
->>> +/*
->>> + * Requests:
->>> + * 'A\n': stage the entire measurements list
->>> + * 'D\n': delete all staged measurements
->>> + */
->>> +#define STAGED_REQ_LENGTH 21
->>> +
->>>    static DEFINE_MUTEX(ima_write_mutex);
->>>    static DEFINE_MUTEX(ima_measure_mutex);
->>>    static long ima_measure_users;
->>> @@ -97,6 +104,11 @@ static void *ima_measurements_start(struct seq_file *m, loff_t *pos)
->>>    	return _ima_measurements_start(m, pos, &ima_measurements);
->>>    }
->>>    
->>> +static void *ima_measurements_staged_start(struct seq_file *m, loff_t *pos)
->>> +{
->>> +	return _ima_measurements_start(m, pos, &ima_measurements_staged);
->>> +}
->>> +
->>>    static void *_ima_measurements_next(struct seq_file *m, void *v, loff_t *pos,
->>>    				    struct list_head *head)
->>>    {
->>> @@ -118,6 +130,12 @@ static void *ima_measurements_next(struct seq_file *m, void *v, loff_t *pos)
->>>    	return _ima_measurements_next(m, v, pos, &ima_measurements);
->>>    }
->>>    
->>> +static void *ima_measurements_staged_next(struct seq_file *m, void *v,
->>> +					  loff_t *pos)
->>> +{
->>> +	return _ima_measurements_next(m, v, pos, &ima_measurements_staged);
->>> +}
->>> +
->>>    static void ima_measurements_stop(struct seq_file *m, void *v)
->>>    {
->>>    }
->>> @@ -283,6 +301,68 @@ static const struct file_operations ima_measurements_ops = {
->>>    	.release = ima_measurements_release,
->>>    };
->>>    
->>> +static const struct seq_operations ima_measurments_staged_seqops = {
->>> +	.start = ima_measurements_staged_start,
->>> +	.next = ima_measurements_staged_next,
->>> +	.stop = ima_measurements_stop,
->>> +	.show = ima_measurements_show
->>> +};
->>> +
->>> +static int ima_measurements_staged_open(struct inode *inode, struct file *file)
->>> +{
->>> +	return _ima_measurements_open(inode, file,
->>> +				      &ima_measurments_staged_seqops);
->>> +}
->>> +
->>> +static ssize_t ima_measurements_staged_write(struct file *file,
->>> +					     const char __user *buf,
->>> +					     size_t datalen, loff_t *ppos)
->>> +{
->>> +	char req[STAGED_REQ_LENGTH];
->>> +	int ret;
->>> +
->>> +	if (*ppos > 0 || datalen < 2 || datalen > STAGED_REQ_LENGTH)
->>> +		return -EINVAL;
->>> +
->>> +	if (copy_from_user(req, buf, datalen) != 0)
->>> +		return -EFAULT;
->>> +
->>> +	if (req[datalen - 1] != '\n')
->>> +		return -EINVAL;
->>> +
->>> +	req[datalen - 1] = '\0';
->>> +
->>> +	switch (req[0]) {
->>> +	case 'A':
->>> +		if (datalen != 2)
->>> +			return -EINVAL;
->>> +
->>> +		ret = ima_queue_stage();
->>> +		break;
->>> +	case 'D':
->>> +		if (datalen != 2)
->>> +			return -EINVAL;
->>> +
->>> +		ret = ima_queue_staged_delete_all();
->>> +		break;
->> I think the following two steps may not work because of race condition:
->>
->> step1: ret = ima_queue_stage(); //this will put all logs in active list into staged list;
->> step2: ret = ima_queue_staged_delete_all(); //this will delete all logs in staged list;
->>
->> The following is the step of race condition:
->>       1. current active log list LA1;
->>       2. user agent read the TPM quote QA1 match list LA1;
->>       3. new event NewLog is added into active log list LA1+NewLog
->>       4. user agent call ima_queue_stage() and generated staged list
->>          including LA1+NewLog.
->>       5. user agent call ima_queue_staged_delete_all();
->>          The new log NewLog in step 3 is also deleted
-> Please refer to the documentation patch which explains the intended
-> workflow of this approach (Remote Attestation Agent Workflow).
->
-> Roberto
-So the user agent needs to deeply involve measurement list management:
-in user space, user agent need to maintain two lists
-user agent is more complicated in this case
+On Mon, Mar 30, 2026 at 09:00:31PM +0200, Günther Noack wrote:
+> On Mon, Mar 30, 2026 at 12:53:21PM +0200, Mickaël Salaün wrote:
+> > On Mon, Mar 30, 2026 at 11:56:40AM +0200, Mickaël Salaün wrote:
+> > > On Fri, Mar 27, 2026 at 05:48:28PM +0100, Günther Noack wrote:
+> > > > * Stop using a union for access_masks_all.
+> > > > * Expose helper functions for intersection checks and union operations.
+> > > > 
+> > > > The memory layout of bitfields is only loosely defined by the C
+> > > > standard, so our static assertion that expects a fixed size was
+> > > > brittle, and it broke on some compilers when we attempted to add a
+> > > > 17th file system access right.
+> > > > 
+> > > > Reported-by: kernel test robot <lkp@intel.com>
+> > > > Closes: https://lore.kernel.org/oe-kbuild-all/202603261438.jBx2DGNe-lkp@intel.com/
+> > > > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> > > > ---
+> > > >  security/landlock/access.h  | 21 ++++++++++++++-------
+> > > >  security/landlock/cred.h    | 10 ++--------
+> > > >  security/landlock/ruleset.h | 13 ++++---------
+> > > >  3 files changed, 20 insertions(+), 24 deletions(-)
+> > > 
+> > > I'd prefer this approach:
+> > > 
+> > > diff --git a/security/landlock/access.h b/security/landlock/access.h
+> > > index 89dc8e7b93da..bc9efbb5c900 100644
+> > > --- a/security/landlock/access.h
+> > > +++ b/security/landlock/access.h
+> > > @@ -50,7 +50,7 @@ struct access_masks {
+> > >         access_mask_t fs : LANDLOCK_NUM_ACCESS_FS;
+> > >         access_mask_t net : LANDLOCK_NUM_ACCESS_NET;
+> > >         access_mask_t scope : LANDLOCK_NUM_SCOPE;
+> > > -};
+> > > +} __packed;
+> > 
+> > Actually, we can just use '__packed __aligned(sizeof(u32))' and avoid
+> > the static_assert change.  That would have no impact on x86, but pack it
+> > on m68k.
+> 
+> Thanks, good catch (and thanks for pushing it to mic-next).
+> Fingers crossed that this works on m68k.
 
-Steven
+So, this works!  I did some experiments with m68k and this architecture
+is very special: it packs bitfields at byte granularity, not at
+storage-unit granularity, except when the size of a bitfield is a
+multiple of 8, in which case it aligns on this size.
 
->> Next time the attestation will fail if using the active log list in the
->> kernel.
->>
->> Thanks,
->>
->> Steven
->>
->>> +	default:
->>> +		ret = -EINVAL;
->>> +	}
->>> +
->>> +	if (ret < 0)
->>> +		return ret;
->>> +
->>> +	return datalen;
->>> +}
->>> +
->>> +static const struct file_operations ima_measurements_staged_ops = {
->>> +	.open = ima_measurements_staged_open,
->>> +	.read = seq_read,
->>> +	.write = ima_measurements_staged_write,
->>> +	.llseek = seq_lseek,
->>> +	.release = ima_measurements_release,
->>> +};
->>> +
->>>    void ima_print_digest(struct seq_file *m, u8 *digest, u32 size)
->>>    {
->>>    	u32 i;
->>> @@ -356,6 +436,28 @@ static const struct file_operations ima_ascii_measurements_ops = {
->>>    	.release = ima_measurements_release,
->>>    };
->>>    
->>> +static const struct seq_operations ima_ascii_measurements_staged_seqops = {
->>> +	.start = ima_measurements_staged_start,
->>> +	.next = ima_measurements_staged_next,
->>> +	.stop = ima_measurements_stop,
->>> +	.show = ima_ascii_measurements_show
->>> +};
->>> +
->>> +static int ima_ascii_measurements_staged_open(struct inode *inode,
->>> +					      struct file *file)
->>> +{
->>> +	return _ima_measurements_open(inode, file,
->>> +				      &ima_ascii_measurements_staged_seqops);
->>> +}
->>> +
->>> +static const struct file_operations ima_ascii_measurements_staged_ops = {
->>> +	.open = ima_ascii_measurements_staged_open,
->>> +	.read = seq_read,
->>> +	.write = ima_measurements_staged_write,
->>> +	.llseek = seq_lseek,
->>> +	.release = ima_measurements_release,
->>> +};
->>> +
->>>    static ssize_t ima_read_policy(char *path)
->>>    {
->>>    	void *data = NULL;
->>> @@ -459,10 +561,21 @@ static const struct seq_operations ima_policy_seqops = {
->>>    };
->>>    #endif
->>>    
->>> -static int __init create_securityfs_measurement_lists(void)
->>> +static int __init create_securityfs_measurement_lists(bool staging)
->>>    {
->>> +	const struct file_operations *ascii_ops = &ima_ascii_measurements_ops;
->>> +	const struct file_operations *binary_ops = &ima_measurements_ops;
->>> +	mode_t permissions = S_IRUSR | S_IRGRP;
->>> +	const char *file_suffix = "";
->>>    	int count = NR_BANKS(ima_tpm_chip);
->>>    
->>> +	if (staging) {
->>> +		ascii_ops = &ima_ascii_measurements_staged_ops;
->>> +		binary_ops = &ima_measurements_staged_ops;
->>> +		file_suffix = "_staged";
->>> +		permissions |= (S_IWUSR | S_IWGRP);
->>> +	}
->>> +
->>>    	if (ima_sha1_idx >= NR_BANKS(ima_tpm_chip))
->>>    		count++;
->>>    
->>> @@ -473,29 +586,32 @@ static int __init create_securityfs_measurement_lists(void)
->>>    
->>>    		if (algo == HASH_ALGO__LAST)
->>>    			snprintf(file_name, sizeof(file_name),
->>> -				 "ascii_runtime_measurements_tpm_alg_%x",
->>> -				 ima_tpm_chip->allocated_banks[i].alg_id);
->>> +				 "ascii_runtime_measurements_tpm_alg_%x%s",
->>> +				 ima_tpm_chip->allocated_banks[i].alg_id,
->>> +				 file_suffix);
->>>    		else
->>>    			snprintf(file_name, sizeof(file_name),
->>> -				 "ascii_runtime_measurements_%s",
->>> -				 hash_algo_name[algo]);
->>> -		dentry = securityfs_create_file(file_name, S_IRUSR | S_IRGRP,
->>> +				 "ascii_runtime_measurements_%s%s",
->>> +				 hash_algo_name[algo], file_suffix);
->>> +		dentry = securityfs_create_file(file_name, permissions,
->>>    						ima_dir, (void *)(uintptr_t)i,
->>> -						&ima_ascii_measurements_ops);
->>> +						ascii_ops);
->>>    		if (IS_ERR(dentry))
->>>    			return PTR_ERR(dentry);
->>>    
->>>    		if (algo == HASH_ALGO__LAST)
->>>    			snprintf(file_name, sizeof(file_name),
->>> -				 "binary_runtime_measurements_tpm_alg_%x",
->>> -				 ima_tpm_chip->allocated_banks[i].alg_id);
->>> +				 "binary_runtime_measurements_tpm_alg_%x%s",
->>> +				 ima_tpm_chip->allocated_banks[i].alg_id,
->>> +				 file_suffix);
->>>    		else
->>>    			snprintf(file_name, sizeof(file_name),
->>> -				 "binary_runtime_measurements_%s",
->>> -				 hash_algo_name[algo]);
->>> -		dentry = securityfs_create_file(file_name, S_IRUSR | S_IRGRP,
->>> +				 "binary_runtime_measurements_%s%s",
->>> +				 hash_algo_name[algo], file_suffix);
->>> +
->>> +		dentry = securityfs_create_file(file_name, permissions,
->>>    						ima_dir, (void *)(uintptr_t)i,
->>> -						&ima_measurements_ops);
->>> +						binary_ops);
->>>    		if (IS_ERR(dentry))
->>>    			return PTR_ERR(dentry);
->>>    	}
->>> @@ -503,6 +619,23 @@ static int __init create_securityfs_measurement_lists(void)
->>>    	return 0;
->>>    }
->>>    
->>> +static int __init create_securityfs_staging_links(void)
->>> +{
->>> +	struct dentry *dentry;
->>> +
->>> +	dentry = securityfs_create_symlink("binary_runtime_measurements_staged",
->>> +		ima_dir, "binary_runtime_measurements_sha1_staged", NULL);
->>> +	if (IS_ERR(dentry))
->>> +		return PTR_ERR(dentry);
->>> +
->>> +	dentry = securityfs_create_symlink("ascii_runtime_measurements_staged",
->>> +		ima_dir, "ascii_runtime_measurements_sha1_staged", NULL);
->>> +	if (IS_ERR(dentry))
->>> +		return PTR_ERR(dentry);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>>    /*
->>>     * ima_open_policy: sequentialize access to the policy file
->>>     */
->>> @@ -595,7 +728,13 @@ int __init ima_fs_init(void)
->>>    		goto out;
->>>    	}
->>>    
->>> -	ret = create_securityfs_measurement_lists();
->>> +	ret = create_securityfs_measurement_lists(false);
->>> +	if (ret == 0 && IS_ENABLED(CONFIG_IMA_STAGING)) {
->>> +		ret = create_securityfs_measurement_lists(true);
->>> +		if (ret == 0)
->>> +			ret = create_securityfs_staging_links();
->>> +	}
->>> +
->>>    	if (ret != 0)
->>>    		goto out;
->>>    
->>> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
->>> index d7d0fb639d99..d5503dd5cc9b 100644
->>> --- a/security/integrity/ima/ima_kexec.c
->>> +++ b/security/integrity/ima/ima_kexec.c
->>> @@ -42,8 +42,8 @@ void ima_measure_kexec_event(const char *event_name)
->>>    	long len;
->>>    	int n;
->>>    
->>> -	buf_size = ima_get_binary_runtime_size(BINARY);
->>> -	len = atomic_long_read(&ima_num_entries[BINARY]);
->>> +	buf_size = ima_get_binary_runtime_size(BINARY_FULL);
->>> +	len = atomic_long_read(&ima_num_entries[BINARY_FULL]);
->>>    
->>>    	n = scnprintf(ima_kexec_event, IMA_KEXEC_EVENT_LEN,
->>>    		      "kexec_segment_size=%lu;ima_binary_runtime_size=%lu;"
->>> @@ -106,13 +106,26 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
->>>    
->>>    	memset(&khdr, 0, sizeof(khdr));
->>>    	khdr.version = 1;
->>> -	/* This is an append-only list, no need to hold the RCU read lock */
->>> -	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
->>> +	/* It can race with ima_queue_stage() and ima_queue_delete_staged(). */
->>> +	mutex_lock(&ima_extend_list_mutex);
->>> +
->>> +	list_for_each_entry_rcu(qe, &ima_measurements_staged, later,
->>> +				lockdep_is_held(&ima_extend_list_mutex)) {
->>>    		ret = ima_dump_measurement(&khdr, qe);
->>>    		if (ret < 0)
->>>    			break;
->>>    	}
->>>    
->>> +	list_for_each_entry_rcu(qe, &ima_measurements, later,
->>> +				lockdep_is_held(&ima_extend_list_mutex)) {
->>> +		if (!ret)
->>> +			ret = ima_dump_measurement(&khdr, qe);
->>> +		if (ret < 0)
->>> +			break;
->>> +	}
->>> +
->>> +	mutex_unlock(&ima_extend_list_mutex);
->>> +
->>>    	/*
->>>    	 * fill in reserved space with some buffer details
->>>    	 * (eg. version, buffer size, number of measurements)
->>> @@ -167,6 +180,7 @@ void ima_add_kexec_buffer(struct kimage *image)
->>>    		extra_memory = CONFIG_IMA_KEXEC_EXTRA_MEMORY_KB * 1024;
->>>    
->>>    	binary_runtime_size = ima_get_binary_runtime_size(BINARY) +
->>> +			      ima_get_binary_runtime_size(BINARY_STAGED) +
->>>    			      extra_memory;
->>>    
->>>    	if (binary_runtime_size >= ULONG_MAX - PAGE_SIZE)
->>> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
->>> index b6d10dceb669..50519ed837d4 100644
->>> --- a/security/integrity/ima/ima_queue.c
->>> +++ b/security/integrity/ima/ima_queue.c
->>> @@ -26,6 +26,7 @@
->>>    static struct tpm_digest *digests;
->>>    
->>>    LIST_HEAD(ima_measurements);	/* list of all measurements */
->>> +LIST_HEAD(ima_measurements_staged); /* list of staged measurements */
->>>    #ifdef CONFIG_IMA_KEXEC
->>>    static unsigned long binary_runtime_size[BINARY__LAST];
->>>    #else
->>> @@ -45,11 +46,11 @@ atomic_long_t ima_num_violations = ATOMIC_LONG_INIT(0);
->>>    /* key: inode (before secure-hashing a file) */
->>>    struct hlist_head __rcu *ima_htable;
->>>    
->>> -/* mutex protects atomicity of extending measurement list
->>> +/* mutex protects atomicity of extending and staging measurement list
->>>     * and extending the TPM PCR aggregate. Since tpm_extend can take
->>>     * long (and the tpm driver uses a mutex), we can't use the spinlock.
->>>     */
->>> -static DEFINE_MUTEX(ima_extend_list_mutex);
->>> +DEFINE_MUTEX(ima_extend_list_mutex);
->>>    
->>>    /*
->>>     * Used internally by the kernel to suspend measurements.
->>> @@ -174,12 +175,16 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
->>>    				lockdep_is_held(&ima_extend_list_mutex));
->>>    
->>>    	atomic_long_inc(&ima_num_entries[BINARY]);
->>> +	atomic_long_inc(&ima_num_entries[BINARY_FULL]);
->>> +
->>>    	if (update_htable) {
->>>    		key = ima_hash_key(entry->digests[ima_hash_algo_idx].digest);
->>>    		hlist_add_head_rcu(&qe->hnext, &htable[key]);
->>>    	}
->>>    
->>>    	ima_update_binary_runtime_size(entry, BINARY);
->>> +	ima_update_binary_runtime_size(entry, BINARY_FULL);
->>> +
->>>    	return 0;
->>>    }
->>>    
->>> @@ -280,6 +285,94 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
->>>    	return result;
->>>    }
->>>    
->>> +int ima_queue_stage(void)
->>> +{
->>> +	int ret = 0;
->>> +
->>> +	mutex_lock(&ima_extend_list_mutex);
->>> +	if (!list_empty(&ima_measurements_staged)) {
->>> +		ret = -EEXIST;
->>> +		goto out_unlock;
->>> +	}
->>> +
->>> +	if (list_empty(&ima_measurements)) {
->>> +		ret = -ENOENT;
->>> +		goto out_unlock;
->>> +	}
->>> +
->>> +	list_replace(&ima_measurements, &ima_measurements_staged);
->>> +	INIT_LIST_HEAD(&ima_measurements);
->>> +
->>> +	atomic_long_set(&ima_num_entries[BINARY_STAGED],
->>> +			atomic_long_read(&ima_num_entries[BINARY]));
->>> +	atomic_long_set(&ima_num_entries[BINARY], 0);
->>> +
->>> +	if (IS_ENABLED(CONFIG_IMA_KEXEC)) {
->>> +		binary_runtime_size[BINARY_STAGED] =
->>> +					binary_runtime_size[BINARY];
->>> +		binary_runtime_size[BINARY] = 0;
->>> +	}
->>> +out_unlock:
->>> +	mutex_unlock(&ima_extend_list_mutex);
->>> +	return ret;
->>> +}
->>> +
->>> +static void ima_queue_delete(struct list_head *head);
->>> +
->>> +int ima_queue_staged_delete_all(void)
->>> +{
->>> +	LIST_HEAD(ima_measurements_trim);
->>> +
->>> +	mutex_lock(&ima_extend_list_mutex);
->>> +	if (list_empty(&ima_measurements_staged)) {
->>> +		mutex_unlock(&ima_extend_list_mutex);
->>> +		return -ENOENT;
->>> +	}
->>> +
->>> +	list_replace(&ima_measurements_staged, &ima_measurements_trim);
->>> +	INIT_LIST_HEAD(&ima_measurements_staged);
->>> +
->>> +	atomic_long_set(&ima_num_entries[BINARY_STAGED], 0);
->>> +
->>> +	if (IS_ENABLED(CONFIG_IMA_KEXEC))
->>> +		binary_runtime_size[BINARY_STAGED] = 0;
->>> +
->>> +	mutex_unlock(&ima_extend_list_mutex);
->>> +
->>> +	ima_queue_delete(&ima_measurements_trim);
->>> +	return 0;
->>> +}
->>> +
->>> +static void ima_queue_delete(struct list_head *head)
->>> +{
->>> +	struct ima_queue_entry *qe, *qe_tmp;
->>> +	unsigned int i;
->>> +
->>> +	list_for_each_entry_safe(qe, qe_tmp, head, later) {
->>> +		/*
->>> +		 * Safe to free template_data here without synchronize_rcu()
->>> +		 * because the only htable reader, ima_lookup_digest_entry(),
->>> +		 * accesses only entry->digests, not template_data. If new
->>> +		 * htable readers are added that access template_data, a
->>> +		 * synchronize_rcu() is required here.
->>> +		 */
->>> +		for (i = 0; i < qe->entry->template_desc->num_fields; i++) {
->>> +			kfree(qe->entry->template_data[i].data);
->>> +			qe->entry->template_data[i].data = NULL;
->>> +			qe->entry->template_data[i].len = 0;
->>> +		}
->>> +
->>> +		list_del(&qe->later);
->>> +
->>> +		/* No leak if condition is false, referenced by ima_htable. */
->>> +		if (IS_ENABLED(CONFIG_IMA_DISABLE_HTABLE)) {
->>> +			kfree(qe->entry->digests);
->>> +			kfree(qe->entry);
->>> +			kfree(qe);
->>> +		}
->>> +	}
->>> +}
->>> +
->>>    int ima_restore_measurement_entry(struct ima_template_entry *entry)
->>>    {
->>>    	int result = 0;
+I also look at the past versions of Landlock (in the stable branches),
+and they are good because struct access_masks (and the related assert)
+was introduced in v6.11 and fs was exactly 16 bits, which makes m68k
+aligns on 2 bytes and then the size of the struct was 4 bytes.
+Switching fs to 17 bits removes this optimization (I guess) and pack
+(back) to 3 bytes, so recording more bits can take less space!
 
-
+That's why we don't need a standalone fix to backport...
