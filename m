@@ -1,42 +1,42 @@
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A0946AF31
-	for <linux-security-module@vger.kernel.org>; Wed,  1 Apr 2026 16:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F4727E05F
+	for <linux-security-module@vger.kernel.org>; Wed,  1 Apr 2026 16:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775060141; cv=none; b=QTweeC7ICd2Ws0D2bGKjEB1N6p5zDKrlm6cSeta4H0txJJbIcYThnLSg9lh90H0CEhSpcfkJgVcVpSGyRM7buto3FfNDroOlVAVoxzG/ELEDYgnSWj1N/fHaV6x3a2tv2rIaZrHb12qsn7z6WEW7uzD0M8tQ8R1WbXLv7uPJsC0=
+	t=1775060506; cv=none; b=bh3gLsCanOR2s5IbO9bF7sWi3PC++hCg2zteM3tkdjgOW3NAHPnf2i8+PSPU6KbaItPHPfOOzEytt9/4JVPt7RanPajh4Cnmm6anR5T4zxwInPNC6nIDPXeY+HWxVF7sSW6Gv4lswHd/jN0IL1/YCkINjP1qVZ9TTQKt0ZN378U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775060141; c=relaxed/simple;
-	bh=T9/DpyE+ftq95f1FZNPKg9s0DbvGN10D21N2HWVMjCo=;
+	s=arc-20240116; t=1775060506; c=relaxed/simple;
+	bh=J9cAS4fB/FW8Roo8YyDjhgmvTTjTUHAhZ6b0VyKKZ4k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VoYgOqfptbksktcyiSD9EBzSekBkYEeoNnfbtRxuTHe/I+/hfAT48vZo/Np0akLQulzzZX7EcezD13X0aswXWUyFKDAxWQHCT9qCBYGi1tu4YpwvzQqSZtGv6myoseFSkIIdyq+2xK9V66Mg8IR94HgcKzB5TMl/+qmYW24MEQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ooRqwRja; arc=none smtp.client-ip=83.166.143.171
+	 MIME-Version:Content-Type; b=l7qGpayNuu9KA/Qb98EhLQVmWfLVG13tBajpwUJmGaUWe1o9x17vP+qvxF0kZGEaL1ZKbg370omcsatD9jmw0Q4khXD1V1b0RiOshKmWFikiCFwKWgd5oD6SAmNwckARCgQAM4Pasntb2llbJgirZZJQ85JvYRx9U21mKNJbItY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Kbj2V9sY; arc=none smtp.client-ip=83.166.143.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ooRqwRja"
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fm97m4Y2fz32D;
-	Wed,  1 Apr 2026 18:15:32 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Kbj2V9sY"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fm97h5Mspz3JP;
+	Wed,  1 Apr 2026 18:15:28 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1775060132;
-	bh=4J2vfKt0z8/6JvoKOd9jH4hW1D1SdnEUrAseGo7aMU0=;
+	s=20191114; t=1775060128;
+	bh=r1SkO6xjizLxWPyr7WAb5Qd8nq6tmDyWDMj5NZpadN8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ooRqwRjarFv6G0Td4aSV59UlXS1OgdurBdXVdCobY0f+onYEAicp+meAXVesQq5U5
-	 6fjpFfzp6ckQyVkiKQm23FpfLST5ZBqlXXi6qwp9nWDfc2gikEFCZO7sr8l68/YzAY
-	 Lt7NjEfcmoHiqw7tFhS3N6MCAPM7hguTQ9dCzL0M=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4fm97m1pJgzM6v;
-	Wed,  1 Apr 2026 18:15:32 +0200 (CEST)
+	b=Kbj2V9sYvvmh8Vi/Hv9wWjg1ufWB1PqIGF0QoqKk21OL8nlNO5hwlAS1U7qPAiWy9
+	 nVjxrKh39MI+MvEK2qUxDMekGFtsvIh5lQYvxCr++/vy85VrncWZunEZVmcPYQpDY+
+	 E0nJWk3wHF/XQjyFfctIjaP37kvt9HXXXQ2SFMb4=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fm97h2dBjz9rf;
+	Wed,  1 Apr 2026 18:15:28 +0200 (CEST)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
 Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	linux-security-module@vger.kernel.org,
 	Justin Suess <utilityemal77@gmail.com>,
 	Tingmao Wang <m@maowtm.org>
-Subject: [PATCH v2 3/4] selftests/landlock: Drain stale audit records on init
-Date: Wed,  1 Apr 2026 18:14:50 +0200
-Message-ID: <20260401161503.1136946-4-mic@digikod.net>
+Subject: [PATCH v2 2/4] selftests/landlock: Fix socket file descriptor leaks in audit helpers
+Date: Wed,  1 Apr 2026 18:14:49 +0200
+Message-ID: <20260401161503.1136946-3-mic@digikod.net>
 In-Reply-To: <20260401161503.1136946-1-mic@digikod.net>
 References: <20260401161503.1136946-1-mic@digikod.net>
 Precedence: bulk
@@ -49,30 +49,14 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Non-audit Landlock tests generate audit records as side effects when
-audit_enabled is non-zero (e.g. from boot configuration).  These records
-accumulate in the kernel audit backlog while no audit daemon socket is
-open.  When the next test opens a new netlink socket and registers as
-the audit daemon, the stale backlog is delivered, causing baseline
-record count checks to fail spuriously.
+audit_init() opens a netlink socket and configures it, but leaks the
+file descriptor if audit_set_status() or setsockopt() fails.  Fix this
+by jumping to an error path that closes the socket before returning.
 
-Fix this by draining all pending records in audit_init() right after
-setting the receive timeout.  The 1-usec SO_RCVTIMEO causes audit_recv()
-to return -EAGAIN once the backlog is empty, naturally terminating the
-drain loop.
-
-Domain deallocation records are emitted asynchronously from a work
-queue, so they may still arrive after the drain.  Remove records.domain
-== 0 checks that are not preceded by audit_match_record() calls, which
-would otherwise consume stale records before the count.  Document this
-constraint above audit_count_records().
-
-Increasing the drain timeout to catch in-flight deallocation records was
-considered but rejected: a longer timeout adds latency to every
-audit_init() call even when no stale record is pending, and any fixed
-timeout is still not guaranteed to catch all records under load.
-Removing the unprotected checks is simpler and avoids the spurious
-failures.
+Apply the same fix to audit_init_with_exe_filter(), which leaks the file
+descriptor from audit_init() if audit_init_filter_exe() or
+audit_filter_exe() fails, and to audit_cleanup(), which leaks it if
+audit_init_filter_exe() fails in FIXTURE_TEARDOWN_PARENT().
 
 Cc: Günther Noack <gnoack@google.com>
 Fixes: 6a500b22971c ("selftests/landlock: Add tests for audit flags and domain IDs")
@@ -82,101 +66,76 @@ Signed-off-by: Mickaël Salaün <mic@digikod.net>
 
 Changes since v1:
 https://lore.kernel.org/r/20260312100444.2609563-8-mic@digikod.net
-- Also remove domain checks from audit.trace and
-  scoped_audit.connect_to_child.
-- Document records.domain == 0 constraint above
-  audit_count_records().
-- Explain why a longer drain timeout was rejected.
-- Drop Reviewed-by (new code comment not in v1).
-- Split snprintf and fd leak fixes into separate patches.
+- New patch (split from the drain fix, extended to
+  audit_init_with_exe_filter() and audit_cleanup()).
 ---
- tools/testing/selftests/landlock/audit.h      | 19 +++++++++++++++++++
- tools/testing/selftests/landlock/audit_test.c |  2 --
- .../testing/selftests/landlock/ptrace_test.c  |  1 -
- .../landlock/scoped_abstract_unix_test.c      |  1 -
- 4 files changed, 19 insertions(+), 4 deletions(-)
+ tools/testing/selftests/landlock/audit.h | 26 +++++++++++++++++-------
+ 1 file changed, 19 insertions(+), 7 deletions(-)
 
 diff --git a/tools/testing/selftests/landlock/audit.h b/tools/testing/selftests/landlock/audit.h
-index 6422943fc69e..74e1c3d763be 100644
+index 1049a0582af5..6422943fc69e 100644
 --- a/tools/testing/selftests/landlock/audit.h
 +++ b/tools/testing/selftests/landlock/audit.h
-@@ -338,6 +338,15 @@ struct audit_records {
- 	size_t domain;
- };
+@@ -379,19 +379,25 @@ static int audit_init(void)
  
-+/*
-+ * WARNING: Do not assert records.domain == 0 without a preceding
-+ * audit_match_record() call.  Domain deallocation records are emitted
-+ * asynchronously from kworker threads and can arrive after the drain in
-+ * audit_init(), corrupting the domain count.  A preceding audit_match_record()
-+ * call consumes stale records while scanning, making the assertion safe in
-+ * practice because stale deallocation records arrive before the expected access
-+ * records.
-+ */
- static int audit_count_records(int audit_fd, struct audit_records *records)
- {
- 	struct audit_message msg;
-@@ -393,6 +402,16 @@ static int audit_init(void)
- 		goto err_close;
+ 	err = audit_set_status(fd, AUDIT_STATUS_ENABLED, 1);
+ 	if (err)
+-		return err;
++		goto err_close;
+ 
+ 	err = audit_set_status(fd, AUDIT_STATUS_PID, getpid());
+ 	if (err)
+-		return err;
++		goto err_close;
+ 
+ 	/* Sets a timeout for negative tests. */
+ 	err = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &audit_tv_default,
+ 			 sizeof(audit_tv_default));
+-	if (err)
+-		return -errno;
++	if (err) {
++		err = -errno;
++		goto err_close;
++	}
+ 
+ 	return fd;
++
++err_close:
++	close(fd);
++	return err;
+ }
+ 
+ static int audit_init_filter_exe(struct audit_filter *filter, const char *path)
+@@ -441,8 +447,10 @@ static int audit_cleanup(int audit_fd, struct audit_filter *filter)
+ 
+ 		filter = &new_filter;
+ 		err = audit_init_filter_exe(filter, NULL);
+-		if (err)
++		if (err) {
++			close(audit_fd);
+ 			return err;
++		}
  	}
  
-+	/*
-+	 * Drains stale audit records that accumulated in the kernel backlog
-+	 * while no audit daemon socket was open.  This happens when non-audit
-+	 * Landlock tests generate records while audit_enabled is non-zero (e.g.
-+	 * from boot configuration), or when domain deallocation records arrive
-+	 * asynchronously after a previous test's socket was closed.
-+	 */
-+	while (audit_recv(fd, NULL) == 0)
-+		;
-+
+ 	/* Filters might not be in place. */
+@@ -468,11 +476,15 @@ static int audit_init_with_exe_filter(struct audit_filter *filter)
+ 
+ 	err = audit_init_filter_exe(filter, NULL);
+ 	if (err)
+-		return err;
++		goto err_close;
+ 
+ 	err = audit_filter_exe(fd, filter, AUDIT_ADD_RULE);
+ 	if (err)
+-		return err;
++		goto err_close;
+ 
  	return fd;
- 
- err_close:
-diff --git a/tools/testing/selftests/landlock/audit_test.c b/tools/testing/selftests/landlock/audit_test.c
-index 46d02d49835a..f92ba6774faa 100644
---- a/tools/testing/selftests/landlock/audit_test.c
-+++ b/tools/testing/selftests/landlock/audit_test.c
-@@ -412,7 +412,6 @@ TEST_F(audit_flags, signal)
- 		} else {
- 			EXPECT_EQ(1, records.access);
- 		}
--		EXPECT_EQ(0, records.domain);
- 
- 		/* Updates filter rules to match the drop record. */
- 		set_cap(_metadata, CAP_AUDIT_CONTROL);
-@@ -601,7 +600,6 @@ TEST_F(audit_exec, signal_and_open)
- 	/* Tests that there was no denial until now. */
- 	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
- 	EXPECT_EQ(0, records.access);
--	EXPECT_EQ(0, records.domain);
- 
- 	/*
- 	 * Wait for the child to do a first denied action by layer1 and
-diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testing/selftests/landlock/ptrace_test.c
-index 4f64c90583cd..1b6c8b53bf33 100644
---- a/tools/testing/selftests/landlock/ptrace_test.c
-+++ b/tools/testing/selftests/landlock/ptrace_test.c
-@@ -342,7 +342,6 @@ TEST_F(audit, trace)
- 	/* Makes sure there is no superfluous logged records. */
- 	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
- 	EXPECT_EQ(0, records.access);
--	EXPECT_EQ(0, records.domain);
- 
- 	yama_ptrace_scope = get_yama_ptrace_scope();
- 	ASSERT_LE(0, yama_ptrace_scope);
-diff --git a/tools/testing/selftests/landlock/scoped_abstract_unix_test.c b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
-index 72f97648d4a7..c47491d2d1c1 100644
---- a/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
-+++ b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
-@@ -312,7 +312,6 @@ TEST_F(scoped_audit, connect_to_child)
- 	/* Makes sure there is no superfluous logged records. */
- 	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
- 	EXPECT_EQ(0, records.access);
--	EXPECT_EQ(0, records.domain);
- 
- 	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
- 	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
++
++err_close:
++	close(fd);
++	return err;
+ }
 -- 
 2.53.0
 
