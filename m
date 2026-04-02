@@ -1,75 +1,75 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CA7384232
-	for <linux-security-module@vger.kernel.org>; Thu,  2 Apr 2026 20:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB53386C25
+	for <linux-security-module@vger.kernel.org>; Thu,  2 Apr 2026 20:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775161523; cv=none; b=DqcxQmTzU1TsrsBJaas9bz4179i3JTtj8QhODEUClj02Kmgw2zCc5+cerKUmS4C5s6wWvchMOlHsbTi72bVK4WIM4uB9Vfjzvvmku1c0AFRCctHGoL276lVNRpEsG2BICAR2hLkdP7LrCtMac5Mv/rEPaK8LCRl0jnq+BMHRLLk=
+	t=1775161721; cv=none; b=aT1gLSqfJhiGCH99ZD3mEYnyVRGCrHJi8+/kAPnyPZr1M8CBFIG7IpL4QRVgAjbcCoo27A1HSaiZSLmfue7JB8wpVtZjo4R8tKk7xsZj8P4y8Njugwnxb4PR6k94IFjQ6HIvZcDG82owMs7oYz3d+XYRBcBrhXfmWTuPxON4vjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775161523; c=relaxed/simple;
-	bh=M+ygnrvbd1t83GBCmH+solpxR3l4QjrCqXbvg1oenBU=;
+	s=arc-20240116; t=1775161721; c=relaxed/simple;
+	bh=lBzQ0jpitKP98ZTAkwFEdHgUVBlphXCaQwQZuiVivOw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qJG9b/DD6w2oS9+5fcMh6cPpSQBiufaEPMZtk8p77Hddg+BBhyBAHMinwY5LUk1R9ZDvmvDz470K85LYNmHRfBoYcHmP4esSymes9nCZKB2Khm+Iz4Nb88uQ1xwOUF/b+1SGP6nnjt8Ufs7Wr5zCEs82dufSrnYLQCe2ENpUhjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y+sfZfYR; arc=none smtp.client-ip=209.85.128.50
+	 Content-Type:Content-Disposition:In-Reply-To; b=cybz7MEzQ0oG/XuQDIxA+Fyw+MQ9srVjYPvIAOSr14sLu4qTpQXkXXFTrlGnGNKDpB6E2tx5XBbAHg0+1VtubVZXoKIkAeNgng4YQEYWV5AStooBCMLXdLNiSwKC1oMCgwNWDX2+ujY9x4p6NWFVy94Xks6KKy9SrSJrYb4I9co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=psTuyY06; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y+sfZfYR"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4853c1ca73aso13121965e9.2
-        for <linux-security-module@vger.kernel.org>; Thu, 02 Apr 2026 13:25:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="psTuyY06"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-43cfd832155so758692f8f.1
+        for <linux-security-module@vger.kernel.org>; Thu, 02 Apr 2026 13:28:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775161520; x=1775766320; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1775161718; x=1775766518; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=jcc1hZOquhNmlP9pXmTrYcA0fCA/28vP38rmU1pTwc0=;
-        b=Y+sfZfYRU/TjPxABK0xcx0Iv5Gfqas27zmnl9HFq5aCJPo0+ET7XuXxu/DWfESeqjp
-         phoTe8SBFP4/8LBNRRwuCGjC57y4o/jRF8Moe7sQfZNkwpkEKeBdArmiGnj0dTkZDgf6
-         Kl6ULtfefHtggY6/uNG6IARPp84qMN57l5aUDtLX0wcHAjNsNrmzffbhfsCKhQVIuW/h
-         qrbn6M6UPWCkYMO/fuECnB4+9qahSqwLc5VAiPZA/76BtSUAoH0FftJB/d5vYjkFWPMB
-         JkZp63aJu9oXLook6PzGQkcvzauIQYQA7uSudlNVXdI0yGtr+LQaBre+XQ0u+k9wnCqg
-         7+Bg==
+        bh=IY+wvfMpAE2CGN50Lr532tqIAzIHTJ9V6stJxfVHwGE=;
+        b=psTuyY06ReF6N+tEPYvtpMWuW8ZiZP1qWRahvGgf4uC7rVOnZ7vtcOVOzy8ucZCkZ8
+         Okt07CQiZQtWpltWLgzbiEfXE2LS8WkvUWn88LNRbj1/JiHygHsmWfBSom79IdXJ5ebE
+         r5XJo+8O/w+XotnWT/ER6iZcp9JZjoG/Rx4Qcl0K6ooXk+aaiGuCZtaiC65LmmJPZuCd
+         9l4/9C0X0pxDOEYzyP/hQcVTUYBZmUx68URWRFQBr2opYil3YUN5lwt/+M6wRxrJp2hg
+         eFhgreNGQJBwdikgA9G/YtYZGaS6yAYc3k4LzyQ8uwtWioJ8XkCGrjyluxJFVO50Yauo
+         TeKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775161520; x=1775766320;
+        d=1e100.net; s=20251104; t=1775161718; x=1775766518;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jcc1hZOquhNmlP9pXmTrYcA0fCA/28vP38rmU1pTwc0=;
-        b=spt3eKQ2wta3jEbLsP8rd2/U9rB5sg/8S0irJQznhsHVo+A41q+A+HtmQCp03p2Wke
-         BbckeIs1hz7RP1lr+k+BiPRpbK/TmGyPBw+k8HRE/q7uB7IGiwvpaNx6IBd/RGtcGZSa
-         mgqQb8Oq/MYtooU7LB9i6k/hf4Q/4QeLfHt4qjSQjlF8THkh8WMGpVn9sk7TxPtpx8uE
-         0et+Nm6SQa23Une0mQeyS8oH+99EO6rQ2bZLn8o9xlgKGHdaKFUxbbpL0He6h2efMLMZ
-         3raCpxfaOhtPGhljllCj6PMiFDmEAtP7wjTNYdkMAmhfL98xB0UfKKKbJ2M66shFiXYR
-         2pqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXBts201YX9ibM8Q6thybySwnkXGv75434bL4ckE3tIWh5pzoEkhgpHK84H0Ugk0dV9rrlavgpwAe5Pew64hcdN/PZpnho=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFfSgnOFANQaQ/ZwLJMqYewHU5koZPSHSqJsbXRMvwDsvXoEFz
-	sW6enPBcKg2TGXNAnpMBNDvoW81Y3AsVhb8RG553ZNaM8UvcjP+Btoh/
-X-Gm-Gg: ATEYQzyytlmBNX3tu7JfWJWslstGwJ2h8u2GDyp7QdBXtz4SBRJZLAgpNnVUIDxmcn+
-	HiHkZrzIR2KQSDcolCDanjxzf6tQhmC0RfMw2NmKOpWgwfmHP4JsXDkLrHsKnqRLUr79dw2f3Xy
-	upwbO+UpcEsBlJniYfeHIN8engoVk3OAqN271WbYxR1PUWavDT7arWCeePkdw5KA18cQCEqAp35
-	hadiCcvUe0iAkoAE/xm8McvYjt9XPuRHBQ3hMNE5XTgjg7TWSy9H0kF/TWaSgTigxJsX7EyOqju
-	h7APXolbobajY3Lu3NL2aOQdxcYUfc7bkyPPs+BYwU9/67vP60NNLlBDArflwMPWEj0Vll26zfJ
-	idaKzKVlQVogZLI/zuzN8cWw1dfSvRbgAXRRqSPWCTfOKgngKaeeNro4vWa0WbDgC4k0trxz91g
-	CQOUeJJuGG5QxRrpkcx+efh5w7pgXa+ubOx0LVAQ1CZhrfn70q
-X-Received: by 2002:a05:600c:8b32:b0:487:1c2:6a56 with SMTP id 5b1f17b1804b1-488996afe1cmr6726265e9.3.1775161519863;
-        Thu, 02 Apr 2026 13:25:19 -0700 (PDT)
+        bh=IY+wvfMpAE2CGN50Lr532tqIAzIHTJ9V6stJxfVHwGE=;
+        b=Gnv7edTK0Mp/PRNQDQm8plXmJzKAcGQoCaNuclV36eYdqVwXOwONuu0e8qzuZOmlg7
+         BBPZUtGBshg+DEF84wciAmwjzyr1/DBW6m1w8+ND++x+NzU0rDnfvVSvM2ir35xsaZw5
+         czAUW0ssLyCoapYM8qJp9/+8s08luSts7arvK56Fc/KGMiqs2j2tWp7YtdFl59Ej33hV
+         or/SCyt58qffup+QS0ClLvBLZx4WBxyrBn6aT2GzYmRfU04zqV3AM4OTEEa8k6i+2TgS
+         mtDBrEK7tTt1+dycjTqM29oWTLhsCqQhhXTJMm69U2IcxRE6zymtmaMhryYmeMBf5rTn
+         sBAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJO9KpQGlJpu3sCq5ZmvmlziEGH2oIRd9oVeDGGgFP3+44WdjPN2iiZCOU8LapmAS66o4ii/Rdgwu0ub+qsvhon3Ref7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrzX3MmO5jlAzC51KnLF0vCXTeL4VPPE/fZAIYQKm/c+lHHcFx
+	zA+sJaEz0c1HDS6t+JTl8L7gzZ/X5v11ogR0Yn+yhWc+ZO9yDXnrORZB
+X-Gm-Gg: AeBDievnDSB6kDJmIn2ONP1H40c5/EaXux6NwrqHur1Q/a2MciHbZBA1gY63xhF0v9I
+	k2/bwvBsJMZp2vBkZj9wq8030+B02boHMR9+/kGmkGrlBzeFH81GsCLr2DYPcSarYDRxcqgMFLx
+	/fc+o+/dHU+McK8iJnbCIeEVzWn0HlCnet7AOBfz/5erCWDvZO7mbVhxbyfVEI4lXpgvgEMpB5V
+	Zj9hZS83KRYP9yVjoBEBpes3p6mk0VVlHBfEkqodc6GRMI+uaiekQIQ8JXXAbtKZbJYPlcXvh3D
+	K7sLAuaUaVnRHQmkQyrla/0l4qVT1Kg4ddYOth1WsT0sBJZ5mQFuc3wB4X1yf6oJIlZnI/syEgs
+	cUfRCVVx/RkOAtWLhFj2h/cDBGBYFvYcwQxUtO566clzJrbkR+fEIC6o28VmhMpU3xIr+sXe8rx
+	FWpi10ly2JvrV3MWtTkIbY5zrXJ7J5U/FunTIn8TGIKvfLJWBE
+X-Received: by 2002:a05:6000:40cc:b0:43c:dc99:771c with SMTP id ffacd0b85a97d-43d292ff698mr629797f8f.42.1775161717704;
+        Thu, 02 Apr 2026 13:28:37 -0700 (PDT)
 Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d1e2c637asm10040513f8f.14.2026.04.02.13.25.19
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d1e4f5016sm11002853f8f.33.2026.04.02.13.28.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Apr 2026 13:25:19 -0700 (PDT)
-Date: Thu, 2 Apr 2026 22:25:18 +0200
+        Thu, 02 Apr 2026 13:28:37 -0700 (PDT)
+Date: Thu, 2 Apr 2026 22:28:35 +0200
 From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
 To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
 Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
 	linux-security-module@vger.kernel.org,
 	Justin Suess <utilityemal77@gmail.com>, Tingmao Wang <m@maowtm.org>,
 	stable@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] selftests/landlock: Fix socket file descriptor
- leaks in audit helpers
-Message-ID: <20260402.4ce8eba2f199@gnoack.org>
+Subject: Re: [PATCH v3 3/5] selftests/landlock: Drain stale audit records on
+ init
+Message-ID: <20260402.91698fca8a06@gnoack.org>
 References: <20260402192608.1458252-1-mic@digikod.net>
- <20260402192608.1458252-3-mic@digikod.net>
+ <20260402192608.1458252-4-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -79,17 +79,33 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260402192608.1458252-3-mic@digikod.net>
+In-Reply-To: <20260402192608.1458252-4-mic@digikod.net>
 
-On Thu, Apr 02, 2026 at 09:26:03PM +0200, Mickaël Salaün wrote:
-> audit_init() opens a netlink socket and configures it, but leaks the
-> file descriptor if audit_set_status() or setsockopt() fails.  Fix this
-> by jumping to an error path that closes the socket before returning.
+On Thu, Apr 02, 2026 at 09:26:04PM +0200, Mickaël Salaün wrote:
+> Non-audit Landlock tests generate audit records as side effects when
+> audit_enabled is non-zero (e.g. from boot configuration).  These records
+> accumulate in the kernel audit backlog while no audit daemon socket is
+> open.  When the next test opens a new netlink socket and registers as
+> the audit daemon, the stale backlog is delivered, causing baseline
+> record count checks to fail spuriously.
 > 
-> Apply the same fix to audit_init_with_exe_filter(), which leaks the file
-> descriptor from audit_init() if audit_init_filter_exe() or
-> audit_filter_exe() fails, and to audit_cleanup(), which leaks it if
-> audit_init_filter_exe() fails in FIXTURE_TEARDOWN_PARENT().
+> Fix this by draining all pending records in audit_init() right after
+> setting the receive timeout.  The 1-usec SO_RCVTIMEO causes audit_recv()
+> to return -EAGAIN once the backlog is empty, naturally terminating the
+> drain loop.
+> 
+> Domain deallocation records are emitted asynchronously from a work
+> queue, so they may still arrive after the drain.  Remove records.domain
+> == 0 checks that are not preceded by audit_match_record() calls, which
+> would otherwise consume stale records before the count.  Document this
+> constraint above audit_count_records().
+> 
+> Increasing the drain timeout to catch in-flight deallocation records was
+> considered but rejected: a longer timeout adds latency to every
+> audit_init() call even when no stale record is pending, and any fixed
+> timeout is still not guaranteed to catch all records under load.
+> Removing the unprotected checks is simpler and avoids the spurious
+> failures.
 > 
 > Cc: Günther Noack <gnoack@google.com>
 > Cc: stable@vger.kernel.org
@@ -99,76 +115,101 @@ On Thu, Apr 02, 2026 at 09:26:03PM +0200, Mickaël Salaün wrote:
 > 
 > Changes since v1:
 > https://lore.kernel.org/r/20260312100444.2609563-8-mic@digikod.net
-> - New patch (split from the drain fix, extended to
->   audit_init_with_exe_filter() and audit_cleanup()).
+> - Also remove domain checks from audit.trace and
+>   scoped_audit.connect_to_child.
+> - Document records.domain == 0 constraint above
+>   audit_count_records().
+> - Explain why a longer drain timeout was rejected.
+> - Drop Reviewed-by (new code comment not in v1).
+> - Split snprintf and fd leak fixes into separate patches.
 > ---
->  tools/testing/selftests/landlock/audit.h | 26 +++++++++++++++++-------
->  1 file changed, 19 insertions(+), 7 deletions(-)
+>  tools/testing/selftests/landlock/audit.h      | 19 +++++++++++++++++++
+>  tools/testing/selftests/landlock/audit_test.c |  2 --
+>  .../testing/selftests/landlock/ptrace_test.c  |  1 -
+>  .../landlock/scoped_abstract_unix_test.c      |  1 -
+>  4 files changed, 19 insertions(+), 4 deletions(-)
 > 
 > diff --git a/tools/testing/selftests/landlock/audit.h b/tools/testing/selftests/landlock/audit.h
-> index 1049a0582af5..6422943fc69e 100644
+> index 6422943fc69e..74e1c3d763be 100644
 > --- a/tools/testing/selftests/landlock/audit.h
 > +++ b/tools/testing/selftests/landlock/audit.h
-> @@ -379,19 +379,25 @@ static int audit_init(void)
+> @@ -338,6 +338,15 @@ struct audit_records {
+>  	size_t domain;
+>  };
 >  
->  	err = audit_set_status(fd, AUDIT_STATUS_ENABLED, 1);
->  	if (err)
-> -		return err;
-> +		goto err_close;
->  
->  	err = audit_set_status(fd, AUDIT_STATUS_PID, getpid());
->  	if (err)
-> -		return err;
-> +		goto err_close;
->  
->  	/* Sets a timeout for negative tests. */
->  	err = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &audit_tv_default,
->  			 sizeof(audit_tv_default));
-> -	if (err)
-> -		return -errno;
-> +	if (err) {
-> +		err = -errno;
-> +		goto err_close;
-> +	}
->  
->  	return fd;
-> +
-> +err_close:
-> +	close(fd);
-> +	return err;
->  }
->  
->  static int audit_init_filter_exe(struct audit_filter *filter, const char *path)
-> @@ -441,8 +447,10 @@ static int audit_cleanup(int audit_fd, struct audit_filter *filter)
->  
->  		filter = &new_filter;
->  		err = audit_init_filter_exe(filter, NULL);
-> -		if (err)
-> +		if (err) {
-> +			close(audit_fd);
->  			return err;
-> +		}
+> +/*
+> + * WARNING: Do not assert records.domain == 0 without a preceding
+> + * audit_match_record() call.  Domain deallocation records are emitted
+> + * asynchronously from kworker threads and can arrive after the drain in
+> + * audit_init(), corrupting the domain count.  A preceding audit_match_record()
+> + * call consumes stale records while scanning, making the assertion safe in
+> + * practice because stale deallocation records arrive before the expected access
+> + * records.
+> + */
+>  static int audit_count_records(int audit_fd, struct audit_records *records)
+>  {
+>  	struct audit_message msg;
+> @@ -393,6 +402,16 @@ static int audit_init(void)
+>  		goto err_close;
 >  	}
 >  
->  	/* Filters might not be in place. */
-> @@ -468,11 +476,15 @@ static int audit_init_with_exe_filter(struct audit_filter *filter)
->  
->  	err = audit_init_filter_exe(filter, NULL);
->  	if (err)
-> -		return err;
-> +		goto err_close;
->  
->  	err = audit_filter_exe(fd, filter, AUDIT_ADD_RULE);
->  	if (err)
-> -		return err;
-> +		goto err_close;
->  
->  	return fd;
+> +	/*
+> +	 * Drains stale audit records that accumulated in the kernel backlog
+> +	 * while no audit daemon socket was open.  This happens when non-audit
+> +	 * Landlock tests generate records while audit_enabled is non-zero (e.g.
+> +	 * from boot configuration), or when domain deallocation records arrive
+> +	 * asynchronously after a previous test's socket was closed.
+> +	 */
+> +	while (audit_recv(fd, NULL) == 0)
+> +		;
 > +
-> +err_close:
-> +	close(fd);
-> +	return err;
->  }
+>  	return fd;
+>  
+>  err_close:
+> diff --git a/tools/testing/selftests/landlock/audit_test.c b/tools/testing/selftests/landlock/audit_test.c
+> index 46d02d49835a..f92ba6774faa 100644
+> --- a/tools/testing/selftests/landlock/audit_test.c
+> +++ b/tools/testing/selftests/landlock/audit_test.c
+> @@ -412,7 +412,6 @@ TEST_F(audit_flags, signal)
+>  		} else {
+>  			EXPECT_EQ(1, records.access);
+>  		}
+> -		EXPECT_EQ(0, records.domain);
+>  
+>  		/* Updates filter rules to match the drop record. */
+>  		set_cap(_metadata, CAP_AUDIT_CONTROL);
+> @@ -601,7 +600,6 @@ TEST_F(audit_exec, signal_and_open)
+>  	/* Tests that there was no denial until now. */
+>  	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
+>  	EXPECT_EQ(0, records.access);
+> -	EXPECT_EQ(0, records.domain);
+>  
+>  	/*
+>  	 * Wait for the child to do a first denied action by layer1 and
+> diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testing/selftests/landlock/ptrace_test.c
+> index 4f64c90583cd..1b6c8b53bf33 100644
+> --- a/tools/testing/selftests/landlock/ptrace_test.c
+> +++ b/tools/testing/selftests/landlock/ptrace_test.c
+> @@ -342,7 +342,6 @@ TEST_F(audit, trace)
+>  	/* Makes sure there is no superfluous logged records. */
+>  	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
+>  	EXPECT_EQ(0, records.access);
+> -	EXPECT_EQ(0, records.domain);
+>  
+>  	yama_ptrace_scope = get_yama_ptrace_scope();
+>  	ASSERT_LE(0, yama_ptrace_scope);
+> diff --git a/tools/testing/selftests/landlock/scoped_abstract_unix_test.c b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
+> index 72f97648d4a7..c47491d2d1c1 100644
+> --- a/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
+> +++ b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
+> @@ -312,7 +312,6 @@ TEST_F(scoped_audit, connect_to_child)
+>  	/* Makes sure there is no superfluous logged records. */
+>  	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
+>  	EXPECT_EQ(0, records.access);
+> -	EXPECT_EQ(0, records.domain);
+>  
+>  	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
+>  	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
 > -- 
 > 2.53.0
 > 
