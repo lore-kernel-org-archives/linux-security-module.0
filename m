@@ -1,122 +1,142 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD72372678
-	for <linux-security-module@vger.kernel.org>; Thu,  2 Apr 2026 19:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.177
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775158309; cv=pass; b=nMMg1aY3snrXURFcd6E+HcMmCpGYAyuXmMpVK0eRXNNPobqIKjcrocOIZ+w0lJ5HjSe+flAIHRH9t0LKgl/OvQQkx1HY86wz5gxYzfoulM3TzUi/nCm4C/lYqJ+3K6DlsP8HJ4W7k8B2xRQEbVA6lsms/hmAAWl2KLmbuGUZuc8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775158309; c=relaxed/simple;
-	bh=h4Q0Y5YHf5nDQ1C9hTkU/4FOQDfs8Yi/kGtNKAxFubE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f0I7xTDTNr8XLAthGJd7HFUhHjQOg0DqJamNxyoWNUoAiU+t8gr/QVCJzsMqnFCxlyq9GOwmvqIHUACApRYolf453ekESaCP0++F/Dmm3xN1KgjJ3m67UD4S3lOIfogZiadTCDHZVDjEviRTXw/24wbnW8+7y4r+Ap4/kmTF6Gg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=F/Bo8Ef1; arc=pass smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8C42FF147
+	for <linux-security-module@vger.kernel.org>; Thu,  2 Apr 2026 19:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775158311; cv=none; b=LOSZSslb5psHyuxtKrPnG/oLlciL2XsR0VbZ4V3X4jP6V1wI4ijj+CuwaQxSIgn3CzNSgWjpLjGHyLu/Ich+AURZgkCQs4tx4z5T3KPPohcFStoMOjNAnawC/csRe/rdNbWSLuEE2Y1luQlzyuTEC0P1/oMsDVTHe2SnnEhjHLE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775158311; c=relaxed/simple;
+	bh=ZLPFmzVxTeoO3UlZmgJPRYil3LGxf2tKed38PwRRnzw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sHFVgj42140mnDA4xSmlgicG7hk5vsoA1Pae9fHrAv3GT3z+PJoTKhDyQIZY//WVA8n9BBdMhz97QUsjdkYlUC+x3HO4TABtIz5XZg31J3IrnQuQLjEZAUJLg1ZGtuS+1x/j0ZKml1/EZLjOeWrqaYA28NT3ctR7/LldcuUZ7cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=jKZkAH1x; arc=none smtp.client-ip=83.166.143.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="F/Bo8Ef1"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2b2494440f3so4752845ad.2
-        for <linux-security-module@vger.kernel.org>; Thu, 02 Apr 2026 12:31:46 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1775158306; cv=none;
-        d=google.com; s=arc-20240605;
-        b=QT3UKa3L0OITKHiMygfF6tOhGYZ7Y2MeHc9jdAk1bXuZ0sZcCkUS9vBJw5UDH5Dy8G
-         FNPfo6Exth8doU0P8a5YPC5akVP64uplliBWmYWnrclu47akLAJIFdeHnVHshl3NDXID
-         MgV4iCGcYiPsBHcq4PzWNI+6X1S8asXuxpnqqBTcVbskOInUvh0+RJQH0M1GYSMH/ujV
-         bsr/dGPNONzyeOGDAXhgvOIXNh/PJiHWIDMD7jNyN/siy14NwcDaFJWtA3rttxwDkBUI
-         IDDfI2vGB0nn6sN4o8UhEiYjIWTgyTSPNFagJnSEGeLYRK9mR1zsv3a+y+YBaM8tD6CR
-         s47g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=h4Q0Y5YHf5nDQ1C9hTkU/4FOQDfs8Yi/kGtNKAxFubE=;
-        fh=F9cUN02MR78vT0IEjKwknxadABlxH0+nssW06rqPmWg=;
-        b=jpBXK5ZdNgA+Dy+yMdSUgrp+TsjSfo9dQn3Buv6tEU+nqjcA0iONfzQOpooa82rDUg
-         VOe/tEpGmmKhb7oE9OiQ4HkZZ27yoDS5zZ21VBQ/Ot4VWbg07qW1/g7oqBYyCRdRddnz
-         n2u7jzQ/+rSvPBlhRmUUVfVXK+lwJDTySKQFLGVEoAcmGswRmDuxd6FAK3+CuPXWAQCS
-         RJC7EiWXyOjyABolLtxFH68GZqxcjvmxB8VPTtVKX57tGP2fEPc4XpfIwCy/cVVD0xte
-         Ff43LcBvthNaMnG9f/OqtPrz2TBcPQv4rFqn0Z7rDuwJwN40BiogmlXdHhKNk8CvweS3
-         dcOw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1775158306; x=1775763106; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h4Q0Y5YHf5nDQ1C9hTkU/4FOQDfs8Yi/kGtNKAxFubE=;
-        b=F/Bo8Ef1ix/Ip+36dzOWPBR/iRqCVgHYlnI4Lx1gj6WAjW21NzMiSUomGjwE4Kes+D
-         EH2kFo36k4WMSuZkipKHnM1GIVU4lCfdS4q0fy7P8rB6v2dqPNVSEdTqB7T3+oSr/Evr
-         BgX9YOknQCwI16TVGytJZ50PSwFqRHI6Ae5RYItot5F7Rb23GbFzuq8qr6CAq7wnfKrs
-         DfqWbBXcUqt1VxRP9J4cXHE3UFWOJrhW7MJPLCtavTC48ClkMrTlXP9NqUknbFvF/2g/
-         EVBxZIcgWuw8t3j3f4RniUtE8GM1yhoU9eN8V6ZiZApKP6rCnCe0iYPIJaC3ITb8xpZB
-         Kb8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775158306; x=1775763106;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=h4Q0Y5YHf5nDQ1C9hTkU/4FOQDfs8Yi/kGtNKAxFubE=;
-        b=RlH1XESl6HwNvRJvC/r9AWttQGNvwPAOvH5y1uP3HH04aDxsuxKisBOt/FilZmGlvI
-         gQ4i9tYhuHJN1fx7hD5Pkoi3jHMnUGKTkYDdlgvTxIjlfc4AVWVy7M0z97yk9+Ft7uc2
-         xeUooovn8g3Oc+III3GOznimEF5WiF6jx9hFhdVQp+JKnCFhvXEghbYxxwiBhhwvD/TF
-         vsdJLfQlv9i7DNlSyTmH6iii4OWXckNQEboN3aXyMtx2Q9LMxR+s+spjfSMlkofzYsJy
-         odw+n3QctGyNU25ANUJYFA6y6Sy7q1tJ5Actm7L2nzrFeNxC53GzvxnevjOTQWWPTBJP
-         0JKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNbHPrzT1J1xt4WbLLOy3W+cwrT+zgggbNdWad+1VKrN0CMiVp0F0lbqnroOhjyvw5fJuCBo1KMUmokcXYtLTC9Vh5g/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpUkJ/IBJjzjCLD2Anp9EEHRmR4fVacWNPYH44PSyAciGcy8Bu
-	ExJgNRZGdt/UBNjQrnghoGq7V2+HKWwTyc9W+Uiqok4NTvLBJHodh4xxkyW2qAr+q8ax5v6nIyc
-	SLKPyV9vqQd90+lr7+wyiLWTj5Zmz42FumQKRd91dOcucnxsO0uk=
-X-Gm-Gg: AeBDietxwPNTM22oYd0WuY/lqOAhM12+WZbH6Apk6Jx1wXEUWA29vqT43uebpSVk4Nd
-	Ry6VHRSvjoV2xvJEp7CS7HTqeBv0NI3ROaJUH3t+iOjitYhljGWlhGAJdZIHOdKr9XxxcuksE4V
-	6SuklK7dUwzMELbv1fsrnj2YpIwnQiV+Gp+8DTwf1r6+PVh98NzDjWmyE3dr61xdfTLEfCE0I9x
-	I7wlHCmZU7tzff+FD2BkFA6pjhaUAYjEiSIYwSIdNJlw2eY6fm4Jm3t0XmGVaIDLcXSjLrpoff7
-	4jsVXN0=
-X-Received: by 2002:a17:903:17cb:b0:2b2:5a5a:4f2d with SMTP id
- d9443c01a7336-2b28176a472mr5113795ad.31.1775158306102; Thu, 02 Apr 2026
- 12:31:46 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="jKZkAH1x"
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fmsKN2Q5KzJvr;
+	Thu,  2 Apr 2026 21:26:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1775157976;
+	bh=0gLvNpHE+Gf58oSodBBF5EKIn7dLRrInQCSTksiP2hA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=jKZkAH1xjaMPNuC/gZe5yutRyNaT6XZjqdl89DePO1liCCtLhdmcFDiaqjH2joRia
+	 elm4SHvKvID5HCvqOQVAQi7WJXJ2SKzcLefd5bfW2BQJ3aHK1vcxTcUmOAaLYA8bwe
+	 prhajC7NvzUlyiLSesEmnyiP60GxsQtfXT4blt08=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4fmsKM6pzTzDMt;
+	Thu,  2 Apr 2026 21:26:15 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org,
+	Justin Suess <utilityemal77@gmail.com>,
+	Tingmao Wang <m@maowtm.org>,
+	stable@vger.kernel.org
+Subject: [PATCH v3 2/5] selftests/landlock: Fix socket file descriptor leaks in audit helpers
+Date: Thu,  2 Apr 2026 21:26:03 +0200
+Message-ID: <20260402192608.1458252-3-mic@digikod.net>
+In-Reply-To: <20260402192608.1458252-1-mic@digikod.net>
+References: <20260402192608.1458252-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
- <CAHC9VhTeVs7kS9hzukukZRfGu6CC6=Dq4KP69tpEtiFpBJ+jOQ@mail.gmail.com>
- <CAEjxPJ4urh7mUbDJEi-DbdiAifMM_uDH3m35tLeTdx6z+qhPyg@mail.gmail.com>
- <CAHC9VhTGruOPJ+NWZT8vw1bjXzkB4DSPFmWd1pC=J2jTYHP5BA@mail.gmail.com>
- <CAHC9VhRgi8_gdx0nKwkOws1VD6EFG+bHNTN5Q8YCxZ3HOCu5PQ@mail.gmail.com>
- <aclOtS61nbG5Wf3p@wind.enjellic.com> <CAHC9VhR1R7TcC2a2wZ9-G8dmXTuhcDK1YedDduq0sFgPC8QxFw@mail.gmail.com>
- <ac5MKr4lFQhc44i6@wind.enjellic.com> <5e210223-f9a4-4613-8c4b-bea5eea7f8c0@schaufler-ca.com>
-In-Reply-To: <5e210223-f9a4-4613-8c4b-bea5eea7f8c0@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 2 Apr 2026 15:31:34 -0400
-X-Gm-Features: AQROBzCKlDtIgICtjmoltlMzQQF_LTufdSQcW4goNdwWquqG4-w9OR3uTEvjvgU
-Message-ID: <CAHC9VhQn1=pSPF=n0SnUAKFnsnyTr52OqCCGc0a32LVqx5JfLQ@mail.gmail.com>
-Subject: Re: LSM namespacing API
-To: "Dr. Greg" <greg@enjellic.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	John Johansen <john.johansen@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Thu, Apr 2, 2026 at 1:49=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
-com> wrote:
->
-> On 4/2/2026 3:59 AM, Dr. Greg wrote:
-> > That still leaves the question of whether or not CAP_MAC_ADMIN is
-> > appropriate for gating the creation of a new security namespace.
->
-> That will have to be up to the individual LSMs.
+audit_init() opens a netlink socket and configures it, but leaks the
+file descriptor if audit_set_status() or setsockopt() fails.  Fix this
+by jumping to an error path that closes the socket before returning.
 
-Yes, exactly.
+Apply the same fix to audit_init_with_exe_filter(), which leaks the file
+descriptor from audit_init() if audit_init_filter_exe() or
+audit_filter_exe() fails, and to audit_cleanup(), which leaks it if
+audit_init_filter_exe() fails in FIXTURE_TEARDOWN_PARENT().
 
-> Not all LSMs implement Mandatory Access Controls.
+Cc: Günther Noack <gnoack@google.com>
+Cc: stable@vger.kernel.org
+Fixes: 6a500b22971c ("selftests/landlock: Add tests for audit flags and domain IDs")
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
 
-... and not all LSMs that implement mandatory access controls rely on
-CAP_MAC_ADMIN to gate configuration changes.
+Changes since v1:
+https://lore.kernel.org/r/20260312100444.2609563-8-mic@digikod.net
+- New patch (split from the drain fix, extended to
+  audit_init_with_exe_filter() and audit_cleanup()).
+---
+ tools/testing/selftests/landlock/audit.h | 26 +++++++++++++++++-------
+ 1 file changed, 19 insertions(+), 7 deletions(-)
 
---=20
-paul-moore.com
+diff --git a/tools/testing/selftests/landlock/audit.h b/tools/testing/selftests/landlock/audit.h
+index 1049a0582af5..6422943fc69e 100644
+--- a/tools/testing/selftests/landlock/audit.h
++++ b/tools/testing/selftests/landlock/audit.h
+@@ -379,19 +379,25 @@ static int audit_init(void)
+ 
+ 	err = audit_set_status(fd, AUDIT_STATUS_ENABLED, 1);
+ 	if (err)
+-		return err;
++		goto err_close;
+ 
+ 	err = audit_set_status(fd, AUDIT_STATUS_PID, getpid());
+ 	if (err)
+-		return err;
++		goto err_close;
+ 
+ 	/* Sets a timeout for negative tests. */
+ 	err = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &audit_tv_default,
+ 			 sizeof(audit_tv_default));
+-	if (err)
+-		return -errno;
++	if (err) {
++		err = -errno;
++		goto err_close;
++	}
+ 
+ 	return fd;
++
++err_close:
++	close(fd);
++	return err;
+ }
+ 
+ static int audit_init_filter_exe(struct audit_filter *filter, const char *path)
+@@ -441,8 +447,10 @@ static int audit_cleanup(int audit_fd, struct audit_filter *filter)
+ 
+ 		filter = &new_filter;
+ 		err = audit_init_filter_exe(filter, NULL);
+-		if (err)
++		if (err) {
++			close(audit_fd);
+ 			return err;
++		}
+ 	}
+ 
+ 	/* Filters might not be in place. */
+@@ -468,11 +476,15 @@ static int audit_init_with_exe_filter(struct audit_filter *filter)
+ 
+ 	err = audit_init_filter_exe(filter, NULL);
+ 	if (err)
+-		return err;
++		goto err_close;
+ 
+ 	err = audit_filter_exe(fd, filter, AUDIT_ADD_RULE);
+ 	if (err)
+-		return err;
++		goto err_close;
+ 
+ 	return fd;
++
++err_close:
++	close(fd);
++	return err;
+ }
+-- 
+2.53.0
+
