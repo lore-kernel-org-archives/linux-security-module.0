@@ -1,100 +1,97 @@
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C194939E6C9
-	for <linux-security-module@vger.kernel.org>; Thu,  2 Apr 2026 18:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECFC368282
+	for <linux-security-module@vger.kernel.org>; Thu,  2 Apr 2026 19:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775154590; cv=none; b=Yn/Srn6Fit5NCuOvey5Fsychh3XoPBbG0YglVAt5mYrgAdFm5FeGHrV8AfVtK2tO1a0+mVwF5YKSFwVFMSaSF6tGiyQ4kCIh5g37r9eDNWAtKNhMtJ8Ull6RBPZj+2fOSJosTqIPiFqi2UDlfNulKqpsJfFjBlN/OJH+/4+y8LI=
+	t=1775157984; cv=none; b=YQUwOx0llTGPneMQI9LlFUkU9ict9g4xOtiHn/HrdEEA7QYqBClemrNGgESY7qHdkzAQPlkjJn2MXFAFQM69SUQ27c8N5fTP617DoRc7HoMeGb47wzHmfzWUTjfZCmLFFDfr60V5Q/V2Zg/qW9on34S2vloq21RKwxhDcbb2ygw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775154590; c=relaxed/simple;
-	bh=5GZ0g3FSLnxS8kHbyMl57UkANLIDdgpK/fkqjTQu4EE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Oin4kbFsJjGkSrQS7Aa5vOsBL3HVWjIKLMDkE+SRiuMCso4Z6G5FfEm9stZaUfPTKoe9n32O3O3DSL3dn4uSXHwpVYiOaMoNgFW4ddiiRx5HO/ktX8C8EBCzyFL4Xj0xjztgaQiWwlXYlMYcQG0GxZjdfH5/bw1zXIqny5iVx/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=FGPThLhI; arc=none smtp.client-ip=66.163.187.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1775157984; c=relaxed/simple;
+	bh=dcVeVcgNXrg3K/4MkgoiKd3lz6c/L/XqVbuYn3jDs2Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UN7qh7ObNFQ8td0lDdKzQPuB2mvQrKHoy3ajnrrdbYgzc8KysMM8YHktyLu+rom65W3p305Lg5vOz9DSIxkMoIvyD8cOtVNJOiYmygcX4n6nQTfWqEulJRqM0WIdGRyjyyuNbWiIDuPVOmcAvN6GpLzsZgNm08+hP/fuWmB0Jgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=xdDQiin+; arc=none smtp.client-ip=83.166.143.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="FGPThLhI"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1775154587; bh=5GZ0g3FSLnxS8kHbyMl57UkANLIDdgpK/fkqjTQu4EE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=FGPThLhIRu6rGz3wJXaCp9BOBUNxiQ2yicSviKpfrUl6GhCm9nlgWzAen6vvdcpkQ9P9nby3QT7hfVS0AGp1d9Y68Lu18ewNsh+VmOzgqmG1T1IES098AQBnjosgRfSSIgGrNMtVD00hSsi3DYdzL8buTgZnHkRHI7cqUjQl27wfLq8PKO5gBrA7wDKyKzEmVbuRlHD8tvK8OqH4Bf8apdR4CuhDKBV4+jAIqSyRq3nztgxfPbhNSg8Gd56bveIwqAbWOSM9nOUOZpR12mAhxux2QiNowIPqWNSbA6nlSImCkKYAKSmDtAEMsThk10JZaliE89G+htq0k7irtvZGkg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1775154587; bh=dTxinnl+c6p6fkyUhU/XP5vuw5vIG3PL+4Sb1ijZ2dc=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=BHzP3FCrtwpsGjAK54RKy4mIYn0L5hgq3pbU5LG/27hWDLXBWcZRq1i0LRNnYiuaHCVKYRYoI2XWadDXkD1mA0f2q6xBfYjiHn3BE3uMoIrNblYCiHzt/+3VScZSnL45UCJFI++qH/8B5uV1agRfnDNhg80ftJrtyq1khmUTb9s6+RIg3LnjtLCl0kopfuAbM7bY+zeNrKPUzt2CY1CJb/ksOogsdH7PJUFea+a391joUVSZ/gQ6n4ObURki6VlwYIA9yFoqefDS1mYoOUwg0yOO3zOvGPLVtUikkBNNNpIjXYP2Ye3jphdG1FBWYksBXauEbgkAOdOl1VVBC2ihiA==
-X-YMail-OSG: 6tFpofUVM1mvuP86l8kOx3ZaLW3AVM.T3vmMKF2R.8hIn6nYK.oCL70m5C0mxxl
- VdFkaDZ9RSRyf6xyGcifps3azg6adKe2iY74Pr8l80HEK4YA9vfmZkqyu0wG0crdO2NzYJO4n5B_
- pV5b.rVGjyTLglYB5H1ixnyJbpGsbo18JrJQ6SVed5vkDJkluyLCo1mKdmjJFHdunXmr5zgH74H_
- jjERNB_tK13cc54_UEgsaTYspU.LcSYqJFnBRm7LiNqclbsJCBFqw6Tt.15nRmHH1ZF9XF3HDF5A
- gxcFfXrV6g8.J9e1oMJPENJiRi_3aB051muorFo1Dja7806NfewAHy59Z6uExOUYK4jWQpnj5fAR
- RTg42LCBW60GO3Ww2rNiuy0Jfni.YaFgsAsDLi9g1ImJuD4RP7grYqXSiaK10sCuZkJnFX_siogk
- 8ESNa0GPpnLL0ca11ZDYCNObEyurrUNc.jFLREk.6gO78fp1YhlLv2iT9hTKL49QcRzpgvzvO.gZ
- 8qQUHl6mu0RpoB383obftpu1uKdb0mTRnmP_G.MxQzr1PtECQCDL7Tdq1s7PyHWYBE3LAgcix.hJ
- MBdSk3tgrWFPOJNQlNprhRWj9rbonmE8Xp3urgxQqHc8p5oCpFVjJG_vaWACPdzTWStNuVRDZU8S
- 0RCLywqHMN5LZCrst4lTJuANwkVVTutmc0y0QPZ6fiuSW9ST_O9wcDW.N91GqXGTkqbvL0UQ1sfM
- IsOLAFQc8GcVmsNcqZDRisG97bi8KfN_WJXkrkKkZh1UcIFrw1LWdlkQPZEHf8cUFUGsiQFe2N2g
- mRhwSqMsoK2KmvF8T5txQc97VB8AJHgdtocq1ufPv2CwzvAxUCqMNz7VPpnQvXreo1KAA2MhsU6a
- eP.DVkqcuDj4TrAw_y8Ulr4ZRL70MD9UzELyBbLoUG2IsuTZKKOc9E3Ltzx8O_0tDPvqG8fwWXqy
- 4EGTqY5anpqK7zwwaUngxbkSSs.N14iACrOZtPCJ9KvYevIPmVhaQ.4dIjjjsiHPrMLqDtoZ1vU9
- PlHI5WfLtjiAerOZ_X8sd3qYtn76LcDKcN30EPSxNF1X.WJclcuiLg1FBDC_BuNfUGmHotIIvmuA
- 57kCBWbY35WxAwqualKZqfhEx3_Y6agq_3shdYVyfOk7kAUIbAwDtc9XwZUkezNd4RZAXxIfouwT
- bNLSesyCzeSNYooFgDRjqCAFvUyz3utOu.2whZwctmYVm2smA1ZrLjwCgP3qH2Jpw2HVE_dijgzu
- GkpGTd_S8iHn3bSRjU3t6EHq8K7Q9vRIRbM3OXZ.Qo2Cc_z1Ps7zl6mZN4D_ep3qjWnujl.yTOLV
- eDXza0uoToqlGu3XhgVNeb7OkK2h23QO0jov0a8YtRsKEbPWlTzlKnzezjFyl7C4dVnY6O7sl5bF
- 7ugSkDL4ColSunytYNExBVZWtYYqmj5c_IzmujAIt9VSv3RAc_3MzjICeG3OkvDhICAR8.y5YaZa
- n3bYe27iEfYqfFiWqQdb_Bt2M2oMo1X2YISHkW.BfdA8QMu9JoV.uzVWsV.Uq_Z6AOHxQ7ont_iO
- .qaFF3PVt4Le4zheP8.eorvqxIRM2ewk6RwBAlpTh0g0FN8q9q8Be3TI0CGdnuzWUwYeWkDbilM.
- ybOQl1aK9JrEN4EuIm8QoeU_PzNuhka.uu1KpqaUtHSvpB9g0FDPq3K5NzEfjyq8vGb2ZJ_h9GNr
- KZ7KEtFRHThmHzWw6G67NLKr5QZonU3NCXDloEuCs.ulYkjcqbUqOM0LOhRgCETaXaHPw6ddqfE5
- JNju7V9t3igFzbtlyJTmmcVoMfbEzmIREdhmSEcSl5ZTlWbdsGqeiuiyo2HOvKCJEehr_1nhY8Ds
- LYRCV9whmwua3a8e2uPWLgPYHqiIWPR1msMF8Bvqe.EcWLfrLRIr9XgInB04ap0F6IywxN2d3yBv
- 2qTrEUDWfs0zeWA0YnZag5FVx8ZCCldbiPl2EWNE3RpSBZeIqAeNnr1lKXWXkl8.u5.70.SBObVS
- YB1e9F5Qm7bWUO0BKJhdTiOYytDdzZdPFVLIEoHBHkYiuZ.GQI4z2SPj1j8apKmMAqhluxz5QChM
- FxP0cWBGe4l_PMus1.L9a2J48So2rID4xQ4Zc5rCYma5G3UV7sHlISRcjtt8b89Da5N2viilglKp
- N_WhoMIBTjUOOvgSSbUr81RyB0aQRmewxCg50KNOm.7nvNOUITOy02HBYmrripM36HclfgrQNOU.
- HY2FJ6.dPaQNaPhw3tFj8zjgl8c65Hspbd41QQjHBbTwxLVaY5UtYiPtHzCpWAIuPRg_rpttXqA-
- -
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: bbb0ac71-81c0-47e3-bdc2-07f5cb1c536e
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Thu, 2 Apr 2026 18:29:47 +0000
-Received: by hermes--production-gq1-6dfcf9f8b-b9zl5 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e2854c90b467af2a2bc094afd898ee69;
-          Thu, 02 Apr 2026 17:49:17 +0000 (UTC)
-Message-ID: <5e210223-f9a4-4613-8c4b-bea5eea7f8c0@schaufler-ca.com>
-Date: Thu, 2 Apr 2026 10:49:14 -0700
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="xdDQiin+"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fmsKM1gDrzcsH;
+	Thu,  2 Apr 2026 21:26:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1775157975;
+	bh=I3+UBNcOi7OC3QVhP9FCEtB94xQThSIJgWT+bxReHUY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=xdDQiin+NZK9JwdNmHevyLw9/oCXEs9LlKyAawsrTy+Wby2ZysF7Ndd5cnfdmgUc7
+	 m/KKcRxPKLa0ur9jRlNgeNUJUPQIjmHe2SM1pqG7CQzUnMci/BFAohIOSNS9fqVd8x
+	 PQRja4cfK9K8LudJXJhENITYvTNlZgYug8h131D4=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4fmsKL54h7zmyk;
+	Thu,  2 Apr 2026 21:26:14 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org,
+	Justin Suess <utilityemal77@gmail.com>,
+	Tingmao Wang <m@maowtm.org>,
+	stable@vger.kernel.org
+Subject: [PATCH v3 1/5] selftests/landlock: Fix snprintf truncation checks in audit helpers
+Date: Thu,  2 Apr 2026 21:26:02 +0200
+Message-ID: <20260402192608.1458252-2-mic@digikod.net>
+In-Reply-To: <20260402192608.1458252-1-mic@digikod.net>
+References: <20260402192608.1458252-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: LSM namespacing API
-To: "Dr. Greg" <greg@enjellic.com>, Paul Moore <paul@paul-moore.com>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>,
- linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
- John Johansen <john.johansen@canonical.com>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <CAHC9VhRGMmhxbajwQNfGFy+ZFF1uN=UEBjqQZQ4UBy7yds3eVQ@mail.gmail.com>
- <CAHC9VhTeVs7kS9hzukukZRfGu6CC6=Dq4KP69tpEtiFpBJ+jOQ@mail.gmail.com>
- <CAEjxPJ4urh7mUbDJEi-DbdiAifMM_uDH3m35tLeTdx6z+qhPyg@mail.gmail.com>
- <CAHC9VhTGruOPJ+NWZT8vw1bjXzkB4DSPFmWd1pC=J2jTYHP5BA@mail.gmail.com>
- <CAHC9VhRgi8_gdx0nKwkOws1VD6EFG+bHNTN5Q8YCxZ3HOCu5PQ@mail.gmail.com>
- <aclOtS61nbG5Wf3p@wind.enjellic.com>
- <CAHC9VhR1R7TcC2a2wZ9-G8dmXTuhcDK1YedDduq0sFgPC8QxFw@mail.gmail.com>
- <ac5MKr4lFQhc44i6@wind.enjellic.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <ac5MKr4lFQhc44i6@wind.enjellic.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.25449 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On 4/2/2026 3:59 AM, Dr. Greg wrote:
-> That still leaves the question of whether or not CAP_MAC_ADMIN is
-> appropriate for gating the creation of a new security namespace.
+snprintf() returns the number of characters that would have been
+written, excluding the terminating NUL byte.  When the output is
+truncated, this return value equals or exceeds the buffer size.  Fix
+matches_log_domain_allocated() and matches_log_domain_deallocated() to
+detect truncation with ">=" instead of ">".
 
-That will have to be up to the individual LSMs. Not all LSMs implement
-Mandatory Access Controls. It would be inappropriate for an LSM that
-provides finer grain privilege than capabilities do to be gated by
-CAP_MAC_ADMIN. An LSM that implements a novel access control list scheme
-would fall under CAP_DAC_SOMETHING, not CAP_MAC_ADMIN. While a time-of-day
-access scheme might require CAP_MAC_ADMIN, it might not. Implying that all
-LSMs enforce a MAC policy is not a good idea.
+Cc: Günther Noack <gnoack@google.com>
+Cc: stable@vger.kernel.org
+Fixes: 6a500b22971c ("selftests/landlock: Add tests for audit flags and domain IDs")
+Reviewed-by: Günther Noack <gnoack@google.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+
+Changes since v1:
+https://lore.kernel.org/r/20260312100444.2609563-8-mic@digikod.net
+- New patch (split from the drain fix).
+---
+ tools/testing/selftests/landlock/audit.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/testing/selftests/landlock/audit.h b/tools/testing/selftests/landlock/audit.h
+index 44eb433e9666..1049a0582af5 100644
+--- a/tools/testing/selftests/landlock/audit.h
++++ b/tools/testing/selftests/landlock/audit.h
+@@ -309,7 +309,7 @@ static int __maybe_unused matches_log_domain_allocated(int audit_fd, pid_t pid,
+ 
+ 	log_match_len =
+ 		snprintf(log_match, sizeof(log_match), log_template, pid);
+-	if (log_match_len > sizeof(log_match))
++	if (log_match_len >= sizeof(log_match))
+ 		return -E2BIG;
+ 
+ 	return audit_match_record(audit_fd, AUDIT_LANDLOCK_DOMAIN, log_match,
+@@ -326,7 +326,7 @@ static int __maybe_unused matches_log_domain_deallocated(
+ 
+ 	log_match_len = snprintf(log_match, sizeof(log_match), log_template,
+ 				 num_denials);
+-	if (log_match_len > sizeof(log_match))
++	if (log_match_len >= sizeof(log_match))
+ 		return -E2BIG;
+ 
+ 	return audit_match_record(audit_fd, AUDIT_LANDLOCK_DOMAIN, log_match,
+-- 
+2.53.0
 
