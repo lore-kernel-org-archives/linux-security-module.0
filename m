@@ -1,568 +1,192 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA4B369224
-	for <linux-security-module@vger.kernel.org>; Fri,  3 Apr 2026 06:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775197047; cv=pass; b=EN6PIhpKmBOFZzXsSja2BBzdgDlS5Jg+W9Ym7aD8hdJoOkmnJzorLAtWRETk+/Aoryo8wKawykQl7TRw3KVqXrIWaGXdOm4ZmoY/a7MNiUjdHgaAHrK41NRqt3sts5wLiRoh5WBU1AP+J8Bbz+2RLCldHvLOcU0IQYsETjOKjgg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775197047; c=relaxed/simple;
-	bh=uleAhNH+oO2YbR9dRTbQ4apX5Z4tQFFheSINmWB7Bm4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f1CbyO+OmZ/0gTQ0VczRI9pANiZym74+bvIQDZgbVbCtIEN/qA5PrBgmAX1v864OFZ71UacHXNoDk1h+d0d8v6kLpC/N4i56gvveXAswzTF8kWVXI15B0FTkDp6KQ/XCozDg2NP0fkiXqZfz8L4kpd0kid/u3LbZLuHI5LVVJcU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a8wjxhUh; arc=pass smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D621B3CF69B
+	for <linux-security-module@vger.kernel.org>; Fri,  3 Apr 2026 17:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775236149; cv=none; b=nR2ofwkxFZdr3g99bBGxo3yVNM0Ns5IbA9MfcRbzBqZUFwn5eV7+ZwRmShGNdPp65dqRDgToz6XPROGIgVWKUNKpHjK1WVxhMce+1z3V2Agj3aoLFZ+7In+6OQf0S6BYa1TnNcmNTfnnjr03dkxmm5G0TuCMnHWOq74rxeDkzq0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775236149; c=relaxed/simple;
+	bh=ZlklJEKfH/WRO+EUZPs7YkN6XdgDhkMxRf+i5ma5MA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ku6SaYgIF03VGuz/0yuHFhq6qMyGYLSChD3DtVgJBGBGXuQZHJ2k2ZXgeaoJORMe4QDrVmzY1kQ8LSrZb4Rjab6st7ok1jD+lkEvVA55Qv4NH/L9R+RMu8qKuAzEnDAp2xy8DAjTTgxnreGFTWgu5PYsb+iFqCgUwslTS3WcILc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=qVvSlwnK; arc=none smtp.client-ip=45.157.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a8wjxhUh"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-66dd1b5bb6aso2788783a12.2
-        for <linux-security-module@vger.kernel.org>; Thu, 02 Apr 2026 23:17:15 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1775197034; cv=none;
-        d=google.com; s=arc-20240605;
-        b=Tn1W93NVTh2ptnvjCD8nLe4F+SnIEET2BQC/aTDKiLciAKYNy2j90T4YaJd6+To4I+
-         4nEkyVeU+PSzrwiU4RZoT+y843RpXpjKgVbpsFLRtoiWMIx01YrNI11X4gG4rfRVBaBE
-         rWkiUY+NuR+/JAnWuL++FH8P4PCZAC2cyzkcuzU+NHgrwZE6eB2a5ZKkW/64zoPqOhrK
-         b40YNTkbCypA2A+T/1Ri2b7DVc44yk6WwcScoihdv0VQpYfjzKUy+w2phaJiwLGEoe5s
-         zEY7MAaAEjw2jxrr3jxDW4vhXfFrwAGENk31PhZZ+muozaxYY0vQCU+0GhcfKIvCNkk4
-         8ReQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=T2ARNn36t/8nKb8lFPnRUge6KFlcIwa4Ay/uiEuGZEU=;
-        fh=LMn2lWG4QzfCjoqHGIMDS7Kn+8QNawEPLjqvJIXVdvo=;
-        b=Dc3odV5LtmJARoyZQB+hEC7jjT9lb/px6NUp2CfUYXgNl3vCMDA6NWMUsq7WN9MFKH
-         zNx35ZIg/7bQRJqKkz5cG//PcyTmQ6JxEdyBzd8Sy0al+7aFsY5TwALCqPaYdrnB9xe/
-         hgzwmCcpm8aPPt/AogzYRWtEctUPUk0OHIRalW8ofhf5P4AsI/+eVA2WTW1aqQlg4pBr
-         fpOD+DH63dmcyWb1dtvetz+xna78AHwYT+AfTUmFmjyAHwlgD67qnc+PcJsogl7QyMC/
-         oT9r8fv28HZQhL/VbWZ7NNH2y4p1DB95l8rA/USk6cLXMJ93iGHdwAfaue2Cwpwuozd9
-         uKPA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775197034; x=1775801834; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T2ARNn36t/8nKb8lFPnRUge6KFlcIwa4Ay/uiEuGZEU=;
-        b=a8wjxhUhNzdPsZUs8l6fsF9+dyLlFhZofFJwA+y9Vam480zWn3jb+R5DOShLygKHmn
-         DdzoTOc73MY5qH9LYvaEaAxFaFN/h9lI4h6S4FQDX4lnwa4gz2EcV5Qe9RDCpVuXrIlp
-         EEWiHn4/0+7LD4Ru6QKIXCvGgCVw0cri83v1Udx51nhH52fK4407Nd7IdtV5ISpiYgtu
-         6EoaVPRdz1nbLOxGonocJdYowMnw9gSepOXQA32vOVUf63o0qkxpcFhEgT5RoyvflUig
-         Dcgcrvtzb094FcFd0gVZR60s6V1LUBtpD8iDebPTd0QFsmsQLESvi+RpFZPjLYuhwN0l
-         TmiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775197034; x=1775801834;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=T2ARNn36t/8nKb8lFPnRUge6KFlcIwa4Ay/uiEuGZEU=;
-        b=FeuGntOsj+msRD7HOx02HV6T0ZuB5D1tQLkGV95DCLX2hlwsWYfRtlXuqCmvhSBOe3
-         x1JCyuIZp+j97rYr/U7U2Syk27pFIf74aWWsMPU9TxvPFNOcZbPyyfY5J2BexfHi9zh3
-         KhtAF7dhzWGza4Wia35i7IVe1KGGh1S/HRdTiN338qM3mmBjILM4e9Cu1hA6IFJDZctb
-         ZmMrlL0URKXXb1aczM9si7+ge/KyrRhiK1IifDB7cR8gAuYRyvMjLe8017YROLmkXZoS
-         XqweSpA9bjCaPhCxL6g3m93Hpzvc5C/bkldBi1rR3kHHDpE3gMo8ucLYbxBat9+Nk3Nj
-         oz6A==
-X-Gm-Message-State: AOJu0YziB00bhhmLTpVHvaSaReedswSIN1HWgSw3KOT8BXg/abwxHQxF
-	a83n0eYonEv6JLzy0otjJMN4ROsSDTHfuXyPqWMbUzX8qhlSvcWUMkrAST7/Hn0c1grtgMd4tZY
-	Zb4bo65H3I4BKqp557VxjqCB41r000s19PqGAr/0=
-X-Gm-Gg: AeBDiesl/edalJne1Fjsm5tpZ07o1jTJ0+TvWcC3tIx3fL2aodUzZ2n5CPo0Gvyv3u0
-	xJKAOYt/dfJ2CY44mC6JRdEP9sshB112Cqg4U3WLVMbJbMBA9SU3P2jKwBo+2qgoEazYGry7/Un
-	d3M5Ab5ovdjKen245zbWH9W6WbtH+/rNO+9/TBts5muWzulL+eCgDDf9c5kWNavDGJRPzgDjQdv
-	pQF/XATjYZNrYpXw2S1Q2hQ6h89PXqSY2hetdrZzMVxIuyeFRieni2QRp0qcz5can7hboFnBFbo
-	b5ElmBoHunnHHVJqBpaoQGh52qN2tPovgGsuGBdofQ==
-X-Received: by 2002:a05:6402:4449:b0:66d:d077:d18a with SMTP id
- 4fb4d7f45d1cf-66e3f4da943mr834911a12.12.1775197033329; Thu, 02 Apr 2026
- 23:17:13 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="qVvSlwnK"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fnQDT483Kzr5N;
+	Fri,  3 Apr 2026 19:08:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1775236137;
+	bh=5fYyptLt80MJGU3BYZf7WCfFcSlen8EdsO5N4+/rj8A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qVvSlwnK8wEDizsA09V+dSiD1qTViCDNv57UBEr8Hib3ZRg4fnz+ZI0Muc+8+EX9M
+	 dSUUUQ/ExmXG8mv/28yAUSSl84MOTx/stAgWfJGwR0wocLXsNqaxBZ7NVuJO/AbIUT
+	 NU8P3pd92L+7W6v8SP+SFsyW1CAXYODcmuRndoxk=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fnQDS6wr6zGmp;
+	Fri,  3 Apr 2026 19:08:56 +0200 (CEST)
+Date: Fri, 3 Apr 2026 19:08:52 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org, Justin Suess <utilityemal77@gmail.com>, 
+	Tingmao Wang <m@maowtm.org>
+Subject: Re: [PATCH v3 0/5] Fix Landlock audit test flakiness
+Message-ID: <20260403.aimeisieB4ei@digikod.net>
+References: <20260402192608.1458252-1-mic@digikod.net>
+ <20260402.eb5c4e85f472@gnoack.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260403030848.731867-5-paul@paul-moore.com> <20260403030848.731867-8-paul@paul-moore.com>
-In-Reply-To: <20260403030848.731867-8-paul@paul-moore.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 3 Apr 2026 08:17:01 +0200
-X-Gm-Features: AQROBzDmsH9YGllMb7aE-zIYe-TTbvJvK67fkAXHUx2ZVad9dbe5P_NGte21nOI
-Message-ID: <CAOQ4uxjr=Mc5wQizyhxW3=esCLQvZub1xm3G3SRkUwUPBbPh_A@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] selinux: fix overlayfs mmap() and mprotect()
- access checks
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, Gao Xiang <xiang@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260402.eb5c4e85f472@gnoack.org>
+X-Infomaniak-Routing: alpha
 
-On Fri, Apr 3, 2026 at 5:09=E2=80=AFAM Paul Moore <paul@paul-moore.com> wro=
-te:
->
-> The existing SELinux security model for overlayfs is to allow access if
-> the current task is able to access the top level file (the "user" file)
-> and the mounter's credentials are sufficient to access the lower
-> level file (the "backing" file).  Unfortunately, the current code does
-> not properly enforce these access controls for both mmap() and mprotect()
-> operations on overlayfs filesystems.
->
-> This patch makes use of the newly created security_mmap_backing_file()
-> LSM hook to provide the missing backing file enforcement for mmap()
-> operations, and leverages the backing file API and new LSM blob to
-> provide the necessary information to properly enforce the mprotect()
-> access controls.
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
+On Thu, Apr 02, 2026 at 10:52:46PM +0200, Günther Noack wrote:
+> Hello!
+> 
+> On Thu, Apr 02, 2026 at 09:26:01PM +0200, Mickaël Salaün wrote:
+> > This series fixes two classes of audit selftest failures plus two minor
+> > bugs in the audit test helpers.
+> > 
+> > The main issue is that domain deallocation audit records are emitted
+> > asynchronously from kworker threads and can arrive after a previous
+> > test's socket has been closed.  This causes two distinct failure modes:
+> > 
+> > - audit_match_record() picks up a stale deallocation record from a
+> >   previous test instead of the expected one, causing a domain ID
+> >   mismatch.  The audit.layers test (which reads 16 deallocation records
+> >   in sequence) is particularly vulnerable because the large read window
+> >   allows stale records to interleave.  Patch 4 fixes this by filtering
+> >   deallocation records by domain ID and skipping type-matching records
+> >   with wrong content patterns.
+> > 
+> > - audit_count_records() counts stale deallocation records from a
+> >   previous test, incrementing records.domain from the expected 0 to 1.
+> >   Patch 3 fixes this by draining stale records at audit_init() time and
+> >   removing records.domain == 0 checks that are not preceded by
+> >   audit_match_record() calls (which would consume stale records).
+> > 
+> > These races are more likely to manifest when additional instrumentation
+> > changes kworker timing in the deallocation path (e.g. with the upcoming
+> > Landlock tracepoints work).
+> > 
+> > The two minor fixes (patches 1-2) correct a snprintf truncation check
+> > off-by-one and socket file descriptor leaks on error paths in
+> > audit_init(), audit_init_with_exe_filter(), and audit_cleanup().
+> > Patch 5 fixes a __u64 format warning reported by the kbuild bot on
+> > powerpc64.
+> > 
+> > Patch 1 is an exact subset of the v1 combined patch, which is why it
+> > carries the Reviewed-by tag.  Patches 2 and 3 extend beyond what was in
+> > v1, so the Reviewed-by is not carried.  Patches 4 and 5 are new.
+> > 
+> > Changes since v2:
+> > https://lore.kernel.org/r/20260401161503.1136946-1-mic@digikod.net
+> > - Patches 4-5: fix __u64 format warnings on powerpc64 (cast to unsigned
+> >   long long for %llx).  Patch 5 is new.
+> > 
+> > Changes since v1:
+> > https://lore.kernel.org/r/20260312100444.2609563-8-mic@digikod.net
+> > - Split the combined drain fix into four separate patches.
+> > - Patch 2: extend fd leak fix to audit_init_with_exe_filter() and
+> >   audit_cleanup().
+> > - Patch 3: also remove domain checks from audit.trace and
+> >   scoped_audit.connect_to_child, document constraint, explain why a
+> >   longer drain timeout was rejected.
+> > - Patch 4: new, add domain ID filtering and timeout management to
+> >   matches_log_domain_deallocated(), skip stale records in
+> >   audit_match_record().
+> > 
+> > Mickaël Salaün (5):
+> >   selftests/landlock: Fix snprintf truncation checks in audit helpers
+> >   selftests/landlock: Fix socket file descriptor leaks in audit helpers
+> >   selftests/landlock: Drain stale audit records on init
+> >   selftests/landlock: Skip stale records in audit_match_record()
+> >   selftests/landlock: Fix format warning for __u64 in net_test
+> > 
+> >  tools/testing/selftests/landlock/audit.h      | 133 ++++++++++++++----
+> >  tools/testing/selftests/landlock/audit_test.c |  36 ++---
+> >  tools/testing/selftests/landlock/net_test.c   |   2 +-
+> >  .../testing/selftests/landlock/ptrace_test.c  |   1 -
+> >  .../landlock/scoped_abstract_unix_test.c      |   1 -
+> >  5 files changed, 119 insertions(+), 54 deletions(-)
+> > 
+> > -- 
+> > 2.53.0
+> > 
+> 
+> I am still getting flaky audit tests even with these patches, I am
+> afraid.  It differs which of these tests is flaking, some of them
+> still do, for example:
+> 
+> #  RUN           audit_layout1.remove_dir ...
+> # fs_test.c:7281:remove_dir:Expected 0 (0) == matches_log_fs(_metadata, self->audit_fd, "fs\\.remove_dir", dir_s1d2) (-11)
+> # remove_dir: Test failed
+> #          ❌ FAIL  audit_layout1.remove_dir
+> not ok 191 audit_layout1.remove_dir
+> #  RUN           audit_layout1.read_dir ...
+> #            ✅ OK  audit_layout1.read_dir
+> ok 192 audit_layout1.read_dir
+> #  RUN           audit_layout1.read_file ...
+> #            ✅ OK  audit_layout1.read_file
+> ok 193 audit_layout1.read_file
+> #  RUN           audit_layout1.write_file ...
+> # fs_test.c:7221:write_file:Expected 0 (0) == matches_log_fs(_metadata, self->audit_fd, "fs\\.write_file", file1_s1d1) (-11)
+> # fs_test.c:7224:write_file:Expected 0 (0) == records.access (1)
+> # write_file: Test failed
+> #          ❌ FAIL  audit_layout1.write_file
+> not ok 194 audit_layout1.write_file
 
-Can't say much about selinux implementation, but
-for the use of backing file API and the concept solution
+I never hit these issues and I cannot reproduce them.  This patch fixes
+the async events (i.e. domain drops).
 
-Acked-by: Amir Goldstein <amir73il@gmail.com>
+You can try to increase audit_tv_default.
 
-Thanks,
-Amir.
+> 
+> My kernel config is this:
+> 
+>     make defconfig
+>     make kvm_guest.config
+>     KCONFIG_CONFIG="${KBUILD_OUTPUT}/.config" ./scripts/kconfig/merge_config.sh "${KBUILD_OUTPUT}/.config" tools/testing/selftests/landlock/config
+>     make debug.config
+>     echo "CONFIG_RANDOMIZE_BASE=n" >> "${KBUILD_OUTPUT}/.config"
+>     make olddefconfig
+> 
+> and then I run the selftests in Qemu with these flags:
+> 
+> qemu-system-x86_64 \
+>     -nographic \
+>     -m 4G \
+>     -enable-kvm \
+>     -append "console=ttyS0 lsm=landlock no_hash_pointers" \
+>     -kernel "${KBUILD_OUTPUT}/arch/x86/boot/bzImage" \
+>     -initrd "${INITRAMFS}"
+> 
+> This is using my own selftest runner scripts which builds an initramfs
+> with the statically linked selftests.
 
-> ---
->  security/selinux/hooks.c          | 256 +++++++++++++++++++++---------
->  security/selinux/include/objsec.h |  11 ++
->  2 files changed, 196 insertions(+), 71 deletions(-)
->
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index d8224ea113d1..76e0fb7dcb36 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -1745,6 +1745,60 @@ static inline int file_path_has_perm(const struct =
-cred *cred,
->  static int bpf_fd_pass(const struct file *file, u32 sid);
->  #endif
->
-> +static int __file_has_perm(const struct cred *cred, const struct file *f=
-ile,
-> +                          u32 av, bool bf_user_file)
-> +
-> +{
-> +       struct common_audit_data ad;
-> +       struct inode *inode;
-> +       u32 ssid =3D cred_sid(cred);
-> +       u32 tsid_fd;
-> +       int rc;
-> +
-> +       if (bf_user_file) {
-> +               struct backing_file_security_struct *bfsec;
-> +               const struct path *path;
-> +
-> +               if (WARN_ON(!(file->f_mode & FMODE_BACKING)))
-> +                       return -EIO;
-> +
-> +               bfsec =3D selinux_backing_file(file);
-> +               path =3D backing_file_user_path(file);
-> +               tsid_fd =3D bfsec->uf_sid;
-> +               inode =3D d_inode(path->dentry);
-> +
-> +               ad.type =3D LSM_AUDIT_DATA_PATH;
-> +               ad.u.path =3D *path;
-> +       } else {
-> +               struct file_security_struct *fsec =3D selinux_file(file);
-> +
-> +               tsid_fd =3D fsec->sid;
-> +               inode =3D file_inode(file);
-> +
-> +               ad.type =3D LSM_AUDIT_DATA_FILE;
-> +               ad.u.file =3D file;
-> +       }
-> +
-> +       if (ssid !=3D tsid_fd) {
-> +               rc =3D avc_has_perm(ssid, tsid_fd, SECCLASS_FD, FD__USE, =
-&ad);
-> +               if (rc)
-> +                       return rc;
-> +       }
-> +
-> +#ifdef CONFIG_BPF_SYSCALL
-> +       /* regardless of backing vs user file, use the underlying file he=
-re */
-> +       rc =3D bpf_fd_pass(file, ssid);
-> +       if (rc)
-> +               return rc;
-> +#endif
-> +
-> +       /* av is zero if only checking access to the descriptor. */
-> +       if (av)
-> +               return inode_has_perm(cred, inode, av, &ad);
-> +
-> +       return 0;
-> +}
-> +
->  /* Check whether a task can use an open file descriptor to
->     access an inode in a given way.  Check access to the
->     descriptor itself, and then use dentry_has_perm to
-> @@ -1753,41 +1807,10 @@ static int bpf_fd_pass(const struct file *file, u=
-32 sid);
->     has the same SID as the process.  If av is zero, then
->     access to the file is not checked, e.g. for cases
->     where only the descriptor is affected like seek. */
-> -static int file_has_perm(const struct cred *cred,
-> -                        struct file *file,
-> -                        u32 av)
-> +static inline int file_has_perm(const struct cred *cred,
-> +                               const struct file *file, u32 av)
->  {
-> -       struct file_security_struct *fsec =3D selinux_file(file);
-> -       struct inode *inode =3D file_inode(file);
-> -       struct common_audit_data ad;
-> -       u32 sid =3D cred_sid(cred);
-> -       int rc;
-> -
-> -       ad.type =3D LSM_AUDIT_DATA_FILE;
-> -       ad.u.file =3D file;
-> -
-> -       if (sid !=3D fsec->sid) {
-> -               rc =3D avc_has_perm(sid, fsec->sid,
-> -                                 SECCLASS_FD,
-> -                                 FD__USE,
-> -                                 &ad);
-> -               if (rc)
-> -                       goto out;
-> -       }
-> -
-> -#ifdef CONFIG_BPF_SYSCALL
-> -       rc =3D bpf_fd_pass(file, cred_sid(cred));
-> -       if (rc)
-> -               return rc;
-> -#endif
-> -
-> -       /* av is zero if only checking access to the descriptor. */
-> -       rc =3D 0;
-> -       if (av)
-> -               rc =3D inode_has_perm(cred, inode, av, &ad);
-> -
-> -out:
-> -       return rc;
-> +       return __file_has_perm(cred, file, av, false);
->  }
->
->  /*
-> @@ -3825,6 +3848,17 @@ static int selinux_file_alloc_security(struct file=
- *file)
->         return 0;
->  }
->
-> +static int selinux_backing_file_alloc(struct file *backing_file,
-> +                                     const struct file *user_file)
-> +{
-> +       struct backing_file_security_struct *bfsec;
-> +
-> +       bfsec =3D selinux_backing_file(backing_file);
-> +       bfsec->uf_sid =3D selinux_file(user_file)->sid;
-> +
-> +       return 0;
-> +}
-> +
->  /*
->   * Check whether a task has the ioctl permission and cmd
->   * operation to an inode.
-> @@ -3942,42 +3976,55 @@ static int selinux_file_ioctl_compat(struct file =
-*file, unsigned int cmd,
->
->  static int default_noexec __ro_after_init;
->
-> -static int file_map_prot_check(struct file *file, unsigned long prot, in=
-t shared)
-> +static int __file_map_prot_check(const struct cred *cred,
-> +                                const struct file *file, unsigned long p=
-rot,
-> +                                bool shared, bool bf_user_file)
->  {
-> -       const struct cred *cred =3D current_cred();
-> -       u32 sid =3D cred_sid(cred);
-> -       int rc =3D 0;
-> +       struct inode *inode =3D NULL;
-> +       bool prot_exec =3D prot & PROT_EXEC;
-> +       bool prot_write =3D prot & PROT_WRITE;
-> +
-> +       if (file) {
-> +               if (bf_user_file)
-> +                       inode =3D d_inode(backing_file_user_path(file)->d=
-entry);
-> +               else
-> +                       inode =3D file_inode(file);
-> +       }
-> +
-> +       if (default_noexec && prot_exec &&
-> +           (!file || IS_PRIVATE(inode) || (!shared && prot_write))) {
-> +               int rc;
-> +               u32 sid =3D cred_sid(cred);
->
-> -       if (default_noexec &&
-> -           (prot & PROT_EXEC) && (!file || IS_PRIVATE(file_inode(file)) =
-||
-> -                                  (!shared && (prot & PROT_WRITE)))) {
->                 /*
-> -                * We are making executable an anonymous mapping or a
-> -                * private file mapping that will also be writable.
-> -                * This has an additional check.
-> +                * We are making executable an anonymous mapping or a pri=
-vate
-> +                * file mapping that will also be writable.
->                  */
-> -               rc =3D avc_has_perm(sid, sid, SECCLASS_PROCESS,
-> -                                 PROCESS__EXECMEM, NULL);
-> +               rc =3D avc_has_perm(sid, sid, SECCLASS_PROCESS, PROCESS__=
-EXECMEM,
-> +                                 NULL);
->                 if (rc)
-> -                       goto error;
-> +                       return rc;
->         }
->
->         if (file) {
-> -               /* read access is always possible with a mapping */
-> +               /* "read" always possible, "write" only if shared */
->                 u32 av =3D FILE__READ;
-> -
-> -               /* write access only matters if the mapping is shared */
-> -               if (shared && (prot & PROT_WRITE))
-> +               if (shared && prot_write)
->                         av |=3D FILE__WRITE;
-> -
-> -               if (prot & PROT_EXEC)
-> +               if (prot_exec)
->                         av |=3D FILE__EXECUTE;
->
-> -               return file_has_perm(cred, file, av);
-> +               return __file_has_perm(cred, file, av, bf_user_file);
->         }
->
-> -error:
-> -       return rc;
-> +       return 0;
-> +}
-> +
-> +static inline int file_map_prot_check(const struct cred *cred,
-> +                                     const struct file *file,
-> +                                     unsigned long prot, bool shared)
-> +{
-> +       return __file_map_prot_check(cred, file, prot, shared, false);
->  }
->
->  static int selinux_mmap_addr(unsigned long addr)
-> @@ -3993,36 +4040,80 @@ static int selinux_mmap_addr(unsigned long addr)
->         return rc;
->  }
->
-> -static int selinux_mmap_file(struct file *file,
-> -                            unsigned long reqprot __always_unused,
-> -                            unsigned long prot, unsigned long flags)
-> +static int selinux_mmap_file_common(const struct cred *cred, struct file=
- *file,
-> +                                   unsigned long prot, bool shared)
->  {
-> -       struct common_audit_data ad;
-> -       int rc;
-> -
->         if (file) {
-> +               int rc;
-> +               struct common_audit_data ad;
-> +
->                 ad.type =3D LSM_AUDIT_DATA_FILE;
->                 ad.u.file =3D file;
-> -               rc =3D inode_has_perm(current_cred(), file_inode(file),
-> -                                   FILE__MAP, &ad);
-> +               rc =3D inode_has_perm(cred, file_inode(file), FILE__MAP, =
-&ad);
->                 if (rc)
->                         return rc;
->         }
->
-> -       return file_map_prot_check(file, prot,
-> -                                  (flags & MAP_TYPE) =3D=3D MAP_SHARED);
-> +       return file_map_prot_check(cred, file, prot, shared);
-> +}
-> +
-> +static int selinux_mmap_file(struct file *file,
-> +                            unsigned long reqprot __always_unused,
-> +                            unsigned long prot, unsigned long flags)
-> +{
-> +       return selinux_mmap_file_common(current_cred(), file, prot,
-> +                                       (flags & MAP_TYPE) =3D=3D MAP_SHA=
-RED);
-> +}
-> +
-> +/**
-> + * selinux_mmap_backing_file - Check mmap permissions on a backing file
-> + * @vma: memory region
-> + * @backing_file: stacked filesystem backing file
-> + * @user_file: user visible file
-> + *
-> + * This is called after selinux_mmap_file() on stacked filesystems, and =
-it
-> + * is this function's responsibility to verify access to @backing_file a=
-nd
-> + * setup the SELinux state for possible later use in the mprotect() code=
- path.
-> + *
-> + * By the time this function is called, mmap() access to @user_file has =
-already
-> + * been authorized and @vma->vm_file has been set to point to @backing_f=
-ile.
-> + *
-> + * Return zero on success, negative values otherwise.
-> + */
-> +static int selinux_mmap_backing_file(struct vm_area_struct *vma,
-> +                                    struct file *backing_file,
-> +                                    struct file *user_file __always_unus=
-ed)
-> +{
-> +       unsigned long prot =3D 0;
-> +
-> +       /* translate vma->vm_flags perms into PROT perms */
-> +       if (vma->vm_flags & VM_READ)
-> +               prot |=3D PROT_READ;
-> +       if (vma->vm_flags & VM_WRITE)
-> +               prot |=3D PROT_WRITE;
-> +       if (vma->vm_flags & VM_EXEC)
-> +               prot |=3D PROT_EXEC;
-> +
-> +       return selinux_mmap_file_common(backing_file->f_cred, backing_fil=
-e,
-> +                                       prot, vma->vm_flags & VM_SHARED);
->  }
->
->  static int selinux_file_mprotect(struct vm_area_struct *vma,
->                                  unsigned long reqprot __always_unused,
->                                  unsigned long prot)
->  {
-> +       int rc;
->         const struct cred *cred =3D current_cred();
->         u32 sid =3D cred_sid(cred);
-> +       const struct file *file =3D vma->vm_file;
-> +       bool backing_file;
-> +       bool shared =3D vma->vm_flags & VM_SHARED;
-> +
-> +       /* check if we need to trigger the "backing files are awful" mode=
- */
-> +       backing_file =3D file && (file->f_mode & FMODE_BACKING);
->
->         if (default_noexec &&
->             (prot & PROT_EXEC) && !(vma->vm_flags & VM_EXEC)) {
-> -               int rc =3D 0;
->                 /*
->                  * We don't use the vma_is_initial_heap() helper as it ha=
-s
->                  * a history of problems and is currently broken on syste=
-ms
-> @@ -4036,11 +4127,15 @@ static int selinux_file_mprotect(struct vm_area_s=
-truct *vma,
->                     vma->vm_end <=3D vma->vm_mm->brk) {
->                         rc =3D avc_has_perm(sid, sid, SECCLASS_PROCESS,
->                                           PROCESS__EXECHEAP, NULL);
-> -               } else if (!vma->vm_file && (vma_is_initial_stack(vma) ||
-> +                       if (rc)
-> +                               return rc;
-> +               } else if (!file && (vma_is_initial_stack(vma) ||
->                             vma_is_stack_for_current(vma))) {
->                         rc =3D avc_has_perm(sid, sid, SECCLASS_PROCESS,
->                                           PROCESS__EXECSTACK, NULL);
-> -               } else if (vma->vm_file && vma->anon_vma) {
-> +                       if (rc)
-> +                               return rc;
-> +               } else if (file && vma->anon_vma) {
->                         /*
->                          * We are making executable a file mapping that h=
-as
->                          * had some COW done. Since pages might have been
-> @@ -4048,13 +4143,29 @@ static int selinux_file_mprotect(struct vm_area_s=
-truct *vma,
->                          * modified content.  This typically should only
->                          * occur for text relocations.
->                          */
-> -                       rc =3D file_has_perm(cred, vma->vm_file, FILE__EX=
-ECMOD);
-> +                       rc =3D __file_has_perm(cred, file, FILE__EXECMOD,
-> +                                            backing_file);
-> +                       if (rc)
-> +                               return rc;
-> +                       if (backing_file) {
-> +                               rc =3D file_has_perm(file->f_cred, file,
-> +                                                  FILE__EXECMOD);
-> +                               if (rc)
-> +                                       return rc;
-> +                       }
->                 }
-> +       }
-> +
-> +       rc =3D __file_map_prot_check(cred, file, prot, shared, backing_fi=
-le);
-> +       if (rc)
-> +               return rc;
-> +       if (backing_file) {
-> +               rc =3D file_map_prot_check(file->f_cred, file, prot, shar=
-ed);
->                 if (rc)
->                         return rc;
->         }
->
-> -       return file_map_prot_check(vma->vm_file, prot, vma->vm_flags&VM_S=
-HARED);
-> +       return 0;
->  }
->
->  static int selinux_file_lock(struct file *file, unsigned int cmd)
-> @@ -7393,6 +7504,7 @@ struct lsm_blob_sizes selinux_blob_sizes __ro_after=
-_init =3D {
->         .lbs_cred =3D sizeof(struct cred_security_struct),
->         .lbs_task =3D sizeof(struct task_security_struct),
->         .lbs_file =3D sizeof(struct file_security_struct),
-> +       .lbs_backing_file =3D sizeof(struct backing_file_security_struct)=
-,
->         .lbs_inode =3D sizeof(struct inode_security_struct),
->         .lbs_ipc =3D sizeof(struct ipc_security_struct),
->         .lbs_key =3D sizeof(struct key_security_struct),
-> @@ -7498,9 +7610,11 @@ static struct security_hook_list selinux_hooks[] _=
-_ro_after_init =3D {
->
->         LSM_HOOK_INIT(file_permission, selinux_file_permission),
->         LSM_HOOK_INIT(file_alloc_security, selinux_file_alloc_security),
-> +       LSM_HOOK_INIT(backing_file_alloc, selinux_backing_file_alloc),
->         LSM_HOOK_INIT(file_ioctl, selinux_file_ioctl),
->         LSM_HOOK_INIT(file_ioctl_compat, selinux_file_ioctl_compat),
->         LSM_HOOK_INIT(mmap_file, selinux_mmap_file),
-> +       LSM_HOOK_INIT(mmap_backing_file, selinux_mmap_backing_file),
->         LSM_HOOK_INIT(mmap_addr, selinux_mmap_addr),
->         LSM_HOOK_INIT(file_mprotect, selinux_file_mprotect),
->         LSM_HOOK_INIT(file_lock, selinux_file_lock),
-> diff --git a/security/selinux/include/objsec.h b/security/selinux/include=
-/objsec.h
-> index 5bddd28ea5cb..b19e5d978e82 100644
-> --- a/security/selinux/include/objsec.h
-> +++ b/security/selinux/include/objsec.h
-> @@ -88,6 +88,10 @@ struct file_security_struct {
->         u32 pseqno; /* Policy seqno at the time of file open */
->  };
->
-> +struct backing_file_security_struct {
-> +       u32 uf_sid; /* associated user file fsec->sid */
-> +};
-> +
->  struct superblock_security_struct {
->         u32 sid; /* SID of file system superblock */
->         u32 def_sid; /* default SID for labeling */
-> @@ -195,6 +199,13 @@ static inline struct file_security_struct *selinux_f=
-ile(const struct file *file)
->         return file->f_security + selinux_blob_sizes.lbs_file;
->  }
->
-> +static inline struct backing_file_security_struct *
-> +selinux_backing_file(const struct file *backing_file)
-> +{
-> +       void *blob =3D backing_file_security(backing_file);
-> +       return blob + selinux_blob_sizes.lbs_backing_file;
-> +}
-> +
->  static inline struct inode_security_struct *
->  selinux_inode(const struct inode *inode)
->  {
-> --
-> 2.53.0
->
+Can you try with the check-linux.sh build kselftest (which also set a
+lot of debug options)?  You can also try with qemu if you set
+ARCH=x86_64
+
+> 
+> Do you have a hunch what might be missing there?  In the test run
+> above, I have applied your V4 patch set on top of the current master,
+> 5619b098e2fbf3a23bf13d91897056a1fe238c6d ("Merge tag 'for-7.0-rc6-tag'
+> of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux").
+
+This is weird because this is related to FS events, and they should be
+(almost) synchronous events.  Maybe the audit event pipeline is made
+very slow because of some audit options but still...
+
+Anyway, this is not what this patch fixes, but we should fix your issues
+as well.
