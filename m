@@ -1,166 +1,124 @@
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574101DED40;
-	Mon,  6 Apr 2026 15:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C676340A6C
+	for <linux-security-module@vger.kernel.org>; Mon,  6 Apr 2026 15:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775487619; cv=none; b=O1j2/eCu7hZfeUVb2NvgVi15+eusx+Abw/L8Jvlxk3Rb1RzbMhDcQv8BkkvI8WTKj236cG0zGKFoB4cKhK+1v/VRc1/QzdSHiBOeCwBdLAeC7zQMf4qUKXZl/rEmlY7tCdH8FpH7+18nkQ8uKfJJFeS9etQLsbR9OszsGQ2wwYY=
+	t=1775488483; cv=none; b=BLJXFxRSDXMklQgCvV915ayrvfhtGb/57BOzleprVhTZk02eQSWGBvAPZza+HaTriCVYZRe3yuY49X4MoKzlGAIYOs+OfwXnR3e7q3yNVFxQABdG6FlPe97OEHNefzljI6qPZbkAn4wkEQLkkjSqSAzcqPgL+RLQVGyzacG4pL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775487619; c=relaxed/simple;
-	bh=fWsGmb1Fw37OxBHg4rHYiZ57RuO0n0OIC3nqp6NAhAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DzBfRv23N+1iGXv+zayTbCosVn+pfelTh/lGh0svf147uckIgVJSHYwD47pPsqYjhgPSNAIQ24q3UNVgWBYp65XAoenunmQUQvaCK6Tm2vHMk6r8jQlNEW1HBDsIlOGvyh3GS66u0+Hg62JlqdXQ9dr8FPs9H1qrBBi+aQNUwyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id CDCE7140476;
-	Mon,  6 Apr 2026 15:00:14 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id 82BC360015;
-	Mon,  6 Apr 2026 15:00:11 +0000 (UTC)
-Date: Mon, 6 Apr 2026 11:01:23 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>, =?UTF-8?B?R8O8bnRoZXI=?= Noack
- <gnoack@google.com>, Jann Horn <jannh@google.com>, Jeff Xu
- <jeffxu@google.com>, Justin Suess <utilityemal77@gmail.com>, Kees Cook
- <kees@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Matthieu Buffet
- <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
- Tingmao Wang <m@maowtm.org>, kernel-team@cloudflare.com,
- linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 12/17] landlock: Add tracepoints for ptrace and scope
- denials
-Message-ID: <20260406110123.4072a765@gandalf.local.home>
-In-Reply-To: <20260406143717.1815792-13-mic@digikod.net>
-References: <20260406143717.1815792-1-mic@digikod.net>
-	<20260406143717.1815792-13-mic@digikod.net>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1775488483; c=relaxed/simple;
+	bh=7HV2EwXCsSb46EbBKFd4DNWtpr/PNMyQtH6uXqI7cno=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XqnDf8GenPZSaERpkv9KuYAy8upNkaWdwA8Ct/1R+FbQ84v6zGo53cTu/lfyv7WssKUOHE/ZaA+xA/t7b7WNQ8hUwBKgLYQxxGNcVJxCorwZk8x3RbiTsNFE0MorLCnuIeQH1C6aSIdMjn2N4Xk82/9XQsEhzaqeTKWwW4AqO50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=JFfoPTle; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=u9jUw8Bm; arc=none smtp.client-ip=202.12.124.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="JFfoPTle";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="u9jUw8Bm"
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 3BE197A01E4;
+	Mon,  6 Apr 2026 11:14:40 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Mon, 06 Apr 2026 11:14:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1775488480;
+	 x=1775574880; bh=TqtoqQ+ODsPyscUoF3xJCdq9g/w5EPSRw6LsW2jdTfA=; b=
+	JFfoPTleT54vcLGY0/Rfulw8lSUSUacKjThL81WevofGTs6Kqa2VbQE3jV6hL8Y3
+	N4a2qd/1uiStYjBzk6owKV3PY/YaC2V7RwRq91uAEALoTkSKQoOcvibYYQfRxZds
+	gytQQd5cPein4fcUhs3sOvEA3k3IfWoY5fRminEmjWq7qZvFCzO6lGKQ+N0fbbiS
+	2w9PLtVAWPG1a96oI94Lfd5LyplB7SJPr2EPsqRUilw8vTc+brM8GGyVre9zUVwp
+	0dOO9zE7tec8v2f1wTvnGbusEojw04dcDUANFXmvIJuAB87j6wvo30ew5g3BhX+m
+	XECnGGRPLq7XlW7uaexmDg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1775488480; x=
+	1775574880; bh=TqtoqQ+ODsPyscUoF3xJCdq9g/w5EPSRw6LsW2jdTfA=; b=u
+	9jUw8BmcsVuDqTV+Z4wh/yNO8+VYxcXJw6bKDFDRCCP4eVNaBFwsC4wolWgMIWGW
+	KA0iUSvIPu2N0m2expjmbjn6yuXEgbQJCRQzXNQGUce9lOBNF/oJbP1HHFppPJD1
+	Joj9GrZKHhVNBJeoGqrfHmxjjFEgfxxWELASNhw6naI8AGJaa93k2wzu3KvpRyO2
+	q6w9GANuhnGaHF2D/jJ4FPpeGMvdi+0Mj4Dghx1ZExaP0kH0v6I6Cd08IngNM6CF
+	k4DwIcw83vV0YIG3JmeHI7HDNlrqecxA/tb5obfWNhDQbtJJpqn9ZZvTldsEVluo
+	/lQ+/9DvL3nXwQrYWXp3w==
+X-ME-Sender: <xms:3s3TabaRKaqCOaUK8q0zU1ndGFjMqdmab8O8tQrKnEJARMyV590HqQ>
+    <xme:3s3Tac9uGCcpR_VMixWS7iBVi6RJN_U_lnh5Twut38yidNSoNGqkEViDd8lHVlqiP
+    w1hXfxgAtrCEfQkdda-XulNdy-9S_naIJEc99__8XC189v0Io5pfXc>
+X-ME-Received: <xmr:3s3TaRn95sjGrvsPp9kp8gXAKVWbvh6zs2XRcrht9kitJmkjUiYk9blKtEiWXvuorj6GN-mUGieZMjSrew>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddukedthecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepvfhinhhgmhgr
+    ohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpeduke
+    evhfegvedvveeihedvvdeghfeglefgudegfeetvdekiefgledtheeggefhgfenucevlhhu
+    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmh
+    drohhrghdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
+    ohepghhnohgrtghkfedttddtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhhitgesug
+    highhikhhougdrnhgvthdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhho
+    ughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuhhtihhlihhthi
+    gvmhgrlhejjeesghhmrghilhdrtghomhdprhgtphhtthhopehsrghmrghsthhhrdhnohhr
+    figrhidrrghnrghnuggrsehorhgrtghlvgdrtghomhdprhgtphhtthhopehmrghtthhhih
+    gvuhessghufhhfvghtrdhrvgdprhgtphhtthhopehivhgrnhhovhdrmhhikhhhrghilhdu
+    sehhuhgrfigvihdqphgrrhhtnhgvrhhsrdgtohhmpdhrtghpthhtohepkhhonhhsthgrnh
+    htihhnrdhmvghskhhhihguiigvsehhuhgrfigvihdrtghomhdprhgtphhtthhopehrughu
+    nhhlrghpsehinhhfrhgruggvrggurdhorhhg
+X-ME-Proxy: <xmx:3s3TaRzvViClxSe1Rr8djyvrNsdH_b3rRl10HIRINpooVHyRoXc8NA>
+    <xmx:3s3Tab4mJxd9RRgzFbG1QIU__ATWhR5mCxq3TQVYcjqptK9fGxiD0A>
+    <xmx:3s3TaRXpQ5X8MRjLffV-JHX7QAYIYluiIBqOSDLmAPKyuVWj50cKKw>
+    <xmx:3s3TaTIYtm-G2puzoiDSXP2RHa_TookT0O37VC3RrLOu3aCJeqh33Q>
+    <xmx:4M3TaVcPxuhNJXvMC5WbVsIJXvDz933IsoQgjUlQ2ZIW35CCKcwTXcN9>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 6 Apr 2026 11:14:37 -0400 (EDT)
+Message-ID: <6cf45109-3e74-4917-92bd-127eca5a1176@maowtm.org>
+Date: Mon, 6 Apr 2026 16:14:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] landlock: transpose the layer masks data structure
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org,
+ Justin Suess <utilityemal77@gmail.com>,
+ Samasth Norway Ananda <samasth.norway.ananda@oracle.com>,
+ Matthieu Buffet <matthieu@buffet.re>,
+ Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+ konstantin.meskhidze@huawei.com, Randy Dunlap <rdunlap@infradead.org>
+References: <20260206151154.97915-2-gnoack3000@gmail.com>
+ <20260206151154.97915-5-gnoack3000@gmail.com>
+Content-Language: en-US
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <20260206151154.97915-5-gnoack3000@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Stat-Signature: gwnxd6j845pikyrfe6c6z9qip457uz1j
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: 82BC360015
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18rtP2BghMwmlrtx2qAWEFbjUEnEf4mmow=
-X-HE-Tag: 1775487611-32422
-X-HE-Meta: U2FsdGVkX1+VAppAuFeAFAjIyqYgaDFfLssgTYp556s0ZvwVmjq3yZTVi2E59j+UzcVVSghO7YKl1+rgKKFUDuPLkmeAGhcNa6DUCBycRMeE9u9PaGPVHLmamFQrLLyWwVF5wDyZPxiAefu2aMHrBibVTonhMDI3912zBmU2Ppke9SHuR0D2tcjpkTWH+kJ4VZSCBxHK2GFJ9CRKhhDwTxBVP4VVOOtZTNy3HW0EkiCcajJIqK/cbirP4Y1wZM45GdUVC0cj31B7ZJUU7JK5PBJqFTmtoUFJf7PFJuTIebAMvI4IyIG1e55jWMpmOXaJZY9BYDv2idbfpeeTiR+5j2j5g8RfmH2O1XUonxA6prE9HT7kbwNswIgvjrM2bQQf
+Content-Transfer-Encoding: 8bit
 
-On Mon,  6 Apr 2026 16:37:10 +0200
-Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> wrote:
+On 2/6/26 15:11, Günther Noack wrote:
+> [...]
+> @@ -406,12 +375,12 @@ void landlock_log_denial(const struct landlock_cred_security *const subject,
+>  	if (missing) {
+>  		/* Gets the nearest domain that denies the request. */
+>  		if (request->layer_masks) {
+> -			youngest_layer = get_denied_layer(
+> -				subject->domain, &missing, request->layer_masks,
+> -				request->layer_masks_size);
+> +			youngest_layer = get_denied_layer(subject->domain,
+> +							  &missing,
+> +							  request->layer_masks);
+>  		} else {
+>  			youngest_layer = get_layer_from_deny_masks(
+> -				&missing, request->all_existing_optional_access,
+> +				&missing, _LANDLOCK_ACCESS_FS_OPTIONAL,
 
-> ---
->  include/trace/events/landlock.h | 135 ++++++++++++++++++++++++++++++++
->  security/landlock/log.c         |  20 +++++
->  2 files changed, 155 insertions(+)
->=20
-> diff --git a/include/trace/events/landlock.h b/include/trace/events/landl=
-ock.h
-> index 1afab091efba..9f96c9897f44 100644
-> --- a/include/trace/events/landlock.h
-> +++ b/include/trace/events/landlock.h
-> @@ -11,6 +11,7 @@
->  #define _TRACE_LANDLOCK_H
-> =20
->  #include <linux/tracepoint.h>
-> +#include <net/af_unix.h>
-> =20
->  struct dentry;
->  struct landlock_domain;
-> @@ -19,6 +20,7 @@ struct landlock_rule;
->  struct landlock_ruleset;
->  struct path;
->  struct sock;
-> +struct task_struct;
-> =20
->  /**
->   * DOC: Landlock trace events
-> @@ -433,6 +435,139 @@ TRACE_EVENT(
->  		__entry->log_new_exec, __entry->blockers, __entry->sport,
->  		__entry->dport));
-> =20
-> +/**
-> + * landlock_deny_ptrace - ptrace access denied
-> + * @hierarchy: Hierarchy node that blocked the access (never NULL)
-> + * @same_exec: Whether the current task is the same executable that call=
-ed
-> + *             landlock_restrict_self() for the denying hierarchy node
-> + * @tracee: Target task (never NULL); eBPF can read pid, comm, cred,
-> + *          namespaces, and cgroup via BTF
-> + */
-> +TRACE_EVENT(
-> +	landlock_deny_ptrace,
-> +
-> +	TP_PROTO(const struct landlock_hierarchy *hierarchy, bool same_exec,
-> +		 const struct task_struct *tracee),
-> +
-> +	TP_ARGS(hierarchy, same_exec, tracee),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(__u64, domain_id) __field(bool, same_exec)
-> +			__field(u32, log_same_exec) __field(u32, log_new_exec)
-> +				__field(pid_t, tracee_pid)
-> +					__string(tracee_comm, tracee->comm)),
-
-Event formats are different than normal macro formatting. Please use the
-event formatting. The above is a defined structure that is being created
-for use. Keep it looking like a structure:
-
-	TP_STRUCT__entry(
-		__field(	__u64,		domain_id)
-		__field(	bool,		same_exec)
-		__field(	u32,		log_same_exec)
-		__field(	u32,		log_new_exec)
-		__field(	pid_t,		tracee_pid)
-		__string(	tracee_comm,	tracee->comm)
-	),
-
-See how the above resembles:
-
-struct entry {
-	__u64		domain_id;
-	bool		same_exec;
-	u32		log_same_exec;
-	u32		log_new_exec;
-	pid_t		tracee_pid;
-	string		tracee_comm;
-};
-
-Because that's pretty much what the trace event TP_STRUCT__entry() is going
-to do with it. (The string will obviously be something else).
-
-This way it's also easy to spot wholes in the structure that is written
-into the ring buffer. The "same_exec" being a bool followed by two u32
-types, is going to cause a hole. Move it to between tracee_pid and
-tracee_comm.
-
-Please fix the other events too.
-
--- Steve
-
-
-> +
-> +	TP_fast_assign(__entry->domain_id =3D hierarchy->id;
-> +		       __entry->same_exec =3D same_exec;
-> +		       __entry->log_same_exec =3D hierarchy->log_same_exec;
-> +		       __entry->log_new_exec =3D hierarchy->log_new_exec;
-> +		       __entry->tracee_pid =3D
-> +			       task_tgid_nr((struct task_struct *)tracee);
-> +		       __assign_str(tracee_comm);),
-> +
-> +	TP_printk(
-> +		"domain=3D%llx same_exec=3D%d log_same_exec=3D%u log_new_exec=3D%u tra=
-cee_pid=3D%d comm=3D%s",
-> +		__entry->domain_id, __entry->same_exec, __entry->log_same_exec,
-> +		__entry->log_new_exec, __entry->tracee_pid,
-> +		__print_untrusted_str(tracee_comm)));
-> +
->
+Apologies for the post-merge review, but is this intentional?
+request->all_existing_optional_access is only ever set to
+_LANDLOCK_ACCESS_FS_OPTIONAL tho so this is not a bug, but I guess the
+original code was intended to be generic.
