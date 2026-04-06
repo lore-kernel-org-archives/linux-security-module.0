@@ -1,33 +1,33 @@
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
+Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281212F3C0A
-	for <linux-security-module@vger.kernel.org>; Mon,  6 Apr 2026 14:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38EC382F2A
+	for <linux-security-module@vger.kernel.org>; Mon,  6 Apr 2026 14:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775486269; cv=none; b=hUheuZJfdXKgT08pHudWUXM3DvdSHmg1prtW4ZNHcG1ieOPUVeVqunj8DgEYCVRYt6MNH1xGDjeI1sYeG+qAtvj9u3+6ugo0N0B7HNJaTj0mxjQDPO/7rxE45JvImYGzAdQT3Mw23KwTfcO4wNw4I19ok3eeg4F5F1nqbg9Nc2Y=
+	t=1775486272; cv=none; b=GL17o2Ka5FGu2lglSyHkJ5Oaud9HIzPGZ6fIX/fTxpKnuSv85d5KFBcFKXyGS3y4cJdBNrqOYeJf71TeAy6H8yctFR6TP/grNhRXk03Q45xM1oHO7U8p6Gx9HerFFlEN6qRXwu/XqtPfj7vtVLlmysWOo+rgww8seK97MX2ixT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775486269; c=relaxed/simple;
-	bh=Qjfiu4xug+ziDtKNBIaA3LiQ/8d4jPkq8lOVBivAFrk=;
+	s=arc-20240116; t=1775486272; c=relaxed/simple;
+	bh=yntYopewjKJlvCgPyMBgTX8bhYuK0ESNq7uiTdHw2+M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZW3F7+ySp4JMNxy57DXEoNQolT7alyxZnIJdELbPVEDsnmqADI700yPppUBzZTDva3G8JBIjloTYIcCLPJ1AGkKJ/EnrQ7P/X24NGFAR7OtlQ79iOdEx8LCwDLTlyVxm/t4RcHTSTEJnQfuBa0vqzgVjfX9kVY3lwHTJyJF4XVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=kvgKXvj7; arc=none smtp.client-ip=83.166.143.175
+	 MIME-Version:Content-Type; b=D2l1hnFwBxpPbF7A4UWX+mxb96wkFruVsHgS+FmTBaw5Ba7d4DSWYPrR8bRRvGMutPIRoAqRZXI8znjstKaFokGJafQUKvH59Uv8eDgq6uk/t2s6JOJUIOPN4gd4FvTKPsU1nlZNWHs/WCn5DMPu9USZ87YC379EqgHUO9gI/7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=2DTz5fye; arc=none smtp.client-ip=84.16.66.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="kvgKXvj7"
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fqBkc5ZDTzwVP;
-	Mon,  6 Apr 2026 16:37:44 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="2DTz5fye"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fqBkX54ltzSRJ;
+	Mon,  6 Apr 2026 16:37:40 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1775486264;
-	bh=XiZtDyMONqiSyL1jZa5X9VY/acj/RESGOk7UIZhwFao=;
+	s=20191114; t=1775486260;
+	bh=/Hch2jVap5AfV69zq+H5w0X6oki3orky27Sk7iZOWRM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kvgKXvj7MIjVs5IEy/Olu60GirNPM6IKr0E3Nv0zwp9vv3sth0kSBmTyXB6iX5FV4
-	 B4UcEa3DE9WqPjx3EzUXw6qIbBeGQmtR3AXLkL3mPUBTH4Nb0aUKx7WFRFKxASkngX
-	 HdUnVUdXTcru/ulQZV1xx0dYBYwt83txLkVqlDCE=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fqBkc17s6zZ5V;
-	Mon,  6 Apr 2026 16:37:44 +0200 (CEST)
+	b=2DTz5fyeSbxDamhg0i6wfzc/XIQnJGESQ3GikXnbu+mF/uJqAQ850spjMYi1Me+B6
+	 9Lz/1gS6qoGoln2gmXNAF+03WdirxUZnAB+VE1ItHjhYYQzW3UashX9Pg537pwULx2
+	 N2kR7ZO7xq6X8ix95fY74cGTL7dRtRDFWp8IbKKA=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4fqBkX0pdSzCsW;
+	Mon,  6 Apr 2026 16:37:40 +0200 (CEST)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Christian Brauner <brauner@kernel.org>,
 	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
@@ -46,9 +46,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	linux-fsdevel@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v2 15/17] selftests/landlock: Add network tracepoint tests
-Date: Mon,  6 Apr 2026 16:37:13 +0200
-Message-ID: <20260406143717.1815792-16-mic@digikod.net>
+Subject: [PATCH v2 12/17] landlock: Add tracepoints for ptrace and scope denials
+Date: Mon,  6 Apr 2026 16:37:10 +0200
+Message-ID: <20260406143717.1815792-13-mic@digikod.net>
 In-Reply-To: <20260406143717.1815792-1-mic@digikod.net>
 References: <20260406143717.1815792-1-mic@digikod.net>
 Precedence: bulk
@@ -61,11 +61,41 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Add trace tests for the landlock_deny_access_net tracepoint: denied
-bind, allowed bind (no event), denied connect, bind field verification,
-connect-after-bind field verification, and an unsandboxed baseline.
+Scope and ptrace denials follow a different code path (domain hierarchy
+check) than access-right denials, requiring dedicated tracepoints with
+type-specific TP_PROTO arguments.
+
+Complete the tracepoint coverage for all Landlock denial types by adding
+tracepoints for ptrace and scope-based denials:
+- landlock_deny_ptrace: emitted when ptrace access is denied due to
+  domain hierarchy mismatch.
+- landlock_deny_scope_signal: emitted when signal delivery is denied by
+  LANDLOCK_SCOPE_SIGNAL.
+- landlock_deny_scope_abstract_unix_socket: emitted when abstract unix
+  socket access is denied by LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET.
+
+TP_PROTO passes the raw kernel object (struct task_struct or struct
+sock) for eBPF BTF access.  String fields (comm, sun_path) use
+__print_untrusted_str() because they contain untrusted input.
+
+Unlike deny_access_fs and deny_access_net which include a blockers field
+showing which specific access rights were denied, these events omit
+blockers because each event corresponds to exactly one denial type
+identified by the event name itself (e.g., landlock_deny_ptrace can only
+mean a ptrace denial).  A blockers field is always zero since
+scope and ptrace denials do not use access-right bitmasks.
+
+Audit records use generic field names (opid, ocomm) for the target
+process, while tracepoints use role-specific names (tracee_pid,
+target_pid, peer_pid).  The tracepoint naming is more descriptive
+because trace events are strongly typed and tied to the semantics of each
+event, while the audit log format is generic.
 
 Cc: Günther Noack <gnoack@google.com>
+Cc: Justin Suess <utilityemal77@gmail.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: Tingmao Wang <m@maowtm.org>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
@@ -73,583 +103,208 @@ Signed-off-by: Mickaël Salaün <mic@digikod.net>
 Changes since v1:
 - New patch.
 ---
- tools/testing/selftests/landlock/net_test.c | 547 +++++++++++++++++++-
- 1 file changed, 546 insertions(+), 1 deletion(-)
+ include/trace/events/landlock.h | 135 ++++++++++++++++++++++++++++++++
+ security/landlock/log.c         |  20 +++++
+ 2 files changed, 155 insertions(+)
 
-diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
-index 4c528154ea92..4fe41425995c 100644
---- a/tools/testing/selftests/landlock/net_test.c
-+++ b/tools/testing/selftests/landlock/net_test.c
-@@ -10,11 +10,12 @@
- #include <arpa/inet.h>
- #include <errno.h>
- #include <fcntl.h>
--#include <linux/landlock.h>
- #include <linux/in.h>
-+#include <linux/landlock.h>
- #include <sched.h>
- #include <stdint.h>
- #include <string.h>
-+#include <sys/mount.h>
- #include <sys/prctl.h>
- #include <sys/socket.h>
- #include <sys/syscall.h>
-@@ -22,6 +23,9 @@
+diff --git a/include/trace/events/landlock.h b/include/trace/events/landlock.h
+index 1afab091efba..9f96c9897f44 100644
+--- a/include/trace/events/landlock.h
++++ b/include/trace/events/landlock.h
+@@ -11,6 +11,7 @@
+ #define _TRACE_LANDLOCK_H
  
- #include "audit.h"
- #include "common.h"
-+#include "trace.h"
-+
-+#define TRACE_TASK "net_test"
+ #include <linux/tracepoint.h>
++#include <net/af_unix.h>
  
- const short sock_port_start = (1 << 10);
+ struct dentry;
+ struct landlock_domain;
+@@ -19,6 +20,7 @@ struct landlock_rule;
+ struct landlock_ruleset;
+ struct path;
+ struct sock;
++struct task_struct;
  
-@@ -2026,4 +2030,545 @@ TEST_F(audit, connect)
- 	EXPECT_EQ(0, close(sock_fd));
- }
+ /**
+  * DOC: Landlock trace events
+@@ -433,6 +435,139 @@ TRACE_EVENT(
+ 		__entry->log_new_exec, __entry->blockers, __entry->sport,
+ 		__entry->dport));
  
-+/* Trace tests */
-+
-+/* clang-format off */
-+FIXTURE(trace_net) {
-+	/* clang-format on */
-+	int tracefs_ok;
-+};
-+
-+FIXTURE_SETUP(trace_net)
-+{
-+	int ret;
-+
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	ASSERT_EQ(0, unshare(CLONE_NEWNS));
-+	ASSERT_EQ(0, mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, NULL));
-+
-+	ret = tracefs_fixture_setup();
-+	if (ret) {
-+		clear_cap(_metadata, CAP_SYS_ADMIN);
-+		self->tracefs_ok = 0;
-+		SKIP(return, "tracefs not available");
-+	}
-+	self->tracefs_ok = 1;
-+
-+	ASSERT_EQ(0,
-+		  tracefs_enable_event(TRACEFS_DENY_ACCESS_NET_ENABLE, true));
-+	ASSERT_EQ(0, tracefs_clear());
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+}
-+
-+FIXTURE_TEARDOWN(trace_net)
-+{
-+	if (!self->tracefs_ok)
-+		return;
-+
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	tracefs_enable_event(TRACEFS_DENY_ACCESS_NET_ENABLE, false);
-+	tracefs_fixture_teardown();
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+}
-+
-+/*
-+ * Baseline: verifies that without Landlock, the bind succeeds and no
-+ * deny_access_net trace event fires.
++/**
++ * landlock_deny_ptrace - ptrace access denied
++ * @hierarchy: Hierarchy node that blocked the access (never NULL)
++ * @same_exec: Whether the current task is the same executable that called
++ *             landlock_restrict_self() for the denying hierarchy node
++ * @tracee: Target task (never NULL); eBPF can read pid, comm, cred,
++ *          namespaces, and cgroup via BTF
 + */
-+/* clang-format off */
-+FIXTURE_VARIANT(trace_net)
-+{
-+	/* clang-format on */
-+	bool sandbox;
-+	int bind_port_offset; /* 0 = allowed port, 1 = denied port */
-+	int expect_denied;
-+};
++TRACE_EVENT(
++	landlock_deny_ptrace,
 +
-+/* Unsandboxed: no Landlock, bind should succeed with no events. */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(trace_net, unsandboxed) {
-+	/* clang-format on */
-+	.sandbox = false,
-+	.bind_port_offset = 0,
-+	.expect_denied = 0,
-+};
++	TP_PROTO(const struct landlock_hierarchy *hierarchy, bool same_exec,
++		 const struct task_struct *tracee),
 +
-+/* Denied: sandboxed, bind to port not in ruleset. */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(trace_net, bind_denied) {
-+	/* clang-format on */
-+	.sandbox = true,
-+	.bind_port_offset = 1,
-+	.expect_denied = 1,
-+};
++	TP_ARGS(hierarchy, same_exec, tracee),
 +
-+/* Allowed: sandboxed, bind to port in ruleset. */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(trace_net, bind_allowed) {
-+	/* clang-format on */
-+	.sandbox = true,
-+	.bind_port_offset = 0,
-+	.expect_denied = 0,
-+};
++	TP_STRUCT__entry(
++		__field(__u64, domain_id) __field(bool, same_exec)
++			__field(u32, log_same_exec) __field(u32, log_new_exec)
++				__field(pid_t, tracee_pid)
++					__string(tracee_comm, tracee->comm)),
 +
-+TEST_F(trace_net, deny_access_net_bind)
-+{
-+	char *buf;
-+	int count, status;
-+	pid_t child;
++	TP_fast_assign(__entry->domain_id = hierarchy->id;
++		       __entry->same_exec = same_exec;
++		       __entry->log_same_exec = hierarchy->log_same_exec;
++		       __entry->log_new_exec = hierarchy->log_new_exec;
++		       __entry->tracee_pid =
++			       task_tgid_nr((struct task_struct *)tracee);
++		       __assign_str(tracee_comm);),
 +
-+	if (!self->tracefs_ok)
-+		SKIP(return, "tracefs not available");
++	TP_printk(
++		"domain=%llx same_exec=%d log_same_exec=%u log_new_exec=%u tracee_pid=%d comm=%s",
++		__entry->domain_id, __entry->same_exec, __entry->log_same_exec,
++		__entry->log_new_exec, __entry->tracee_pid,
++		__print_untrusted_str(tracee_comm)));
 +
-+	ASSERT_EQ(0, tracefs_clear_buf());
-+
-+	child = fork();
-+	ASSERT_LE(0, child);
-+
-+	if (child == 0) {
-+		struct sockaddr_in addr = {
-+			.sin_family = AF_INET,
-+			.sin_addr.s_addr = htonl(INADDR_LOOPBACK),
-+		};
-+		int sock_fd;
-+
-+		if (variant->sandbox) {
-+			struct landlock_ruleset_attr ruleset_attr = {
-+				.handled_access_net =
-+					LANDLOCK_ACCESS_NET_BIND_TCP,
-+			};
-+			struct landlock_net_port_attr port_attr = {
-+				.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
-+				.port = sock_port_start,
-+			};
-+			int ruleset_fd;
-+
-+			ruleset_fd = landlock_create_ruleset(
-+				&ruleset_attr, sizeof(ruleset_attr), 0);
-+			if (ruleset_fd < 0)
-+				_exit(1);
-+
-+			if (landlock_add_rule(ruleset_fd,
-+					      LANDLOCK_RULE_NET_PORT,
-+					      &port_attr, 0)) {
-+				close(ruleset_fd);
-+				_exit(1);
-+			}
-+
-+			prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-+			if (landlock_restrict_self(ruleset_fd, 0)) {
-+				close(ruleset_fd);
-+				_exit(1);
-+			}
-+			close(ruleset_fd);
-+		}
-+
-+		sock_fd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
-+		if (sock_fd < 0)
-+			_exit(1);
-+
-+		addr.sin_port =
-+			htons(sock_port_start + variant->bind_port_offset);
-+		if (variant->expect_denied) {
-+			/* Bind should be denied. */
-+			if (bind(sock_fd, (struct sockaddr *)&addr,
-+				 sizeof(addr)) == 0) {
-+				close(sock_fd);
-+				_exit(2);
-+			}
-+			if (errno != EACCES) {
-+				close(sock_fd);
-+				_exit(3);
-+			}
-+		} else {
-+			/* Bind should succeed. */
-+			if (bind(sock_fd, (struct sockaddr *)&addr,
-+				 sizeof(addr))) {
-+				close(sock_fd);
-+				_exit(2);
-+			}
-+		}
-+		close(sock_fd);
-+		_exit(0);
-+	}
-+
-+	ASSERT_EQ(child, waitpid(child, &status, 0));
-+	ASSERT_TRUE(WIFEXITED(status));
-+	EXPECT_EQ(0, WEXITSTATUS(status));
-+
-+	buf = tracefs_read_buf();
-+	ASSERT_NE(NULL, buf);
-+
-+	count = tracefs_count_matches(buf, REGEX_DENY_ACCESS_NET(TRACE_TASK));
-+	if (variant->expect_denied) {
-+		EXPECT_LE(variant->expect_denied, count)
-+		{
-+			TH_LOG("Expected deny_access_net event, got %d\n%s",
-+			       count, buf);
-+		}
-+	} else {
-+		EXPECT_EQ(0, count)
-+		{
-+			TH_LOG("Expected 0 deny_access_net events, "
-+			       "got %d\n%s",
-+			       count, buf);
-+		}
-+	}
-+
-+	free(buf);
-+}
-+
-+/* Connect and field-check tests use a separate fixture without variants. */
-+
-+/* clang-format off */
-+FIXTURE(trace_net_connect) {
-+	/* clang-format on */
-+	int tracefs_ok;
-+};
-+
-+FIXTURE_SETUP(trace_net_connect)
-+{
-+	int ret;
-+
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	ASSERT_EQ(0, unshare(CLONE_NEWNS));
-+	ASSERT_EQ(0, mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, NULL));
-+
-+	ret = tracefs_fixture_setup();
-+	if (ret) {
-+		clear_cap(_metadata, CAP_SYS_ADMIN);
-+		self->tracefs_ok = 0;
-+		SKIP(return, "tracefs not available");
-+	}
-+	self->tracefs_ok = 1;
-+
-+	ASSERT_EQ(0,
-+		  tracefs_enable_event(TRACEFS_DENY_ACCESS_NET_ENABLE, true));
-+	ASSERT_EQ(0, tracefs_clear());
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+}
-+
-+FIXTURE_TEARDOWN(trace_net_connect)
-+{
-+	if (!self->tracefs_ok)
-+		return;
-+
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	tracefs_enable_event(TRACEFS_DENY_ACCESS_NET_ENABLE, false);
-+	tracefs_fixture_teardown();
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+}
-+
-+/*
-+ * Verifies that a denied connect emits a deny_access_net trace event with
-+ * sport=0 and dport=<denied_port>.
++/**
++ * landlock_deny_scope_signal - signal delivery denied by
++ *                               LANDLOCK_SCOPE_SIGNAL
++ * @hierarchy: Hierarchy node that blocked the access (never NULL)
++ * @same_exec: Whether the current task is the same executable that called
++ *             landlock_restrict_self() for the denying hierarchy node
++ * @target: Signal target task (never NULL); eBPF can read pid, comm, cred,
++ *          namespaces, and cgroup via BTF
 + */
-+TEST_F(trace_net_connect, deny_access_net_connect_denied)
-+{
-+	pid_t child;
-+	int status;
-+	char *buf;
-+	char field[64], expected[16];
++TRACE_EVENT(
++	landlock_deny_scope_signal,
 +
-+	if (!self->tracefs_ok)
-+		SKIP(return, "tracefs not available");
++	TP_PROTO(const struct landlock_hierarchy *hierarchy, bool same_exec,
++		 const struct task_struct *target),
 +
-+	child = fork();
-+	ASSERT_LE(0, child);
++	TP_ARGS(hierarchy, same_exec, target),
 +
-+	if (child == 0) {
-+		struct landlock_ruleset_attr ruleset_attr = {
-+			.handled_access_net = LANDLOCK_ACCESS_NET_CONNECT_TCP,
-+		};
-+		struct landlock_net_port_attr port_attr = {
-+			.allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
-+			.port = sock_port_start,
-+		};
-+		struct sockaddr_in addr = {
-+			.sin_family = AF_INET,
-+			.sin_addr.s_addr = htonl(INADDR_LOOPBACK),
-+		};
-+		int ruleset_fd, sock_fd;
++	TP_STRUCT__entry(
++		__field(__u64, domain_id) __field(bool, same_exec)
++			__field(u32, log_same_exec) __field(u32, log_new_exec)
++				__field(pid_t, target_pid)
++					__string(target_comm, target->comm)),
 +
-+		ruleset_fd = landlock_create_ruleset(&ruleset_attr,
-+						     sizeof(ruleset_attr), 0);
-+		if (ruleset_fd < 0)
-+			_exit(1);
++	TP_fast_assign(__entry->domain_id = hierarchy->id;
++		       __entry->same_exec = same_exec;
++		       __entry->log_same_exec = hierarchy->log_same_exec;
++		       __entry->log_new_exec = hierarchy->log_new_exec;
++		       __entry->target_pid =
++			       task_tgid_nr((struct task_struct *)target);
++		       __assign_str(target_comm);),
 +
-+		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
-+				      &port_attr, 0)) {
-+			close(ruleset_fd);
-+			_exit(1);
-+		}
++	TP_printk(
++		"domain=%llx same_exec=%d log_same_exec=%u log_new_exec=%u target_pid=%d comm=%s",
++		__entry->domain_id, __entry->same_exec, __entry->log_same_exec,
++		__entry->log_new_exec, __entry->target_pid,
++		__print_untrusted_str(target_comm)));
 +
-+		prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-+		if (landlock_restrict_self(ruleset_fd, 0)) {
-+			close(ruleset_fd);
-+			_exit(1);
-+		}
-+		close(ruleset_fd);
-+
-+		/* Connect to denied port. */
-+		sock_fd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
-+		if (sock_fd < 0)
-+			_exit(1);
-+
-+		addr.sin_port = htons(sock_port_start + 1);
-+		if (connect(sock_fd, (struct sockaddr *)&addr, sizeof(addr)) ==
-+		    0) {
-+			close(sock_fd);
-+			_exit(2);
-+		}
-+		if (errno != EACCES) {
-+			close(sock_fd);
-+			_exit(3);
-+		}
-+		close(sock_fd);
-+		_exit(0);
-+	}
-+
-+	ASSERT_EQ(child, waitpid(child, &status, 0));
-+	ASSERT_TRUE(WIFEXITED(status));
-+	EXPECT_EQ(0, WEXITSTATUS(status));
-+
-+	buf = tracefs_read_buf();
-+	ASSERT_NE(NULL, buf);
-+
-+	EXPECT_LE(1, tracefs_count_matches(buf,
-+					   REGEX_DENY_ACCESS_NET(TRACE_TASK)));
-+
-+	/*
-+	 * Verify dport is the denied port and sport is 0.  The port
-+	 * value must be in host endianness, matching the UAPI convention
-+	 * (landlock_net_port_attr.port).  On little-endian,
-+	 * htons(sock_port_start + 1) would produce a different decimal
-+	 * value, so this comparison also catches byte-order bugs.
-+	 */
-+	ASSERT_EQ(0,
-+		  tracefs_extract_field(buf, REGEX_DENY_ACCESS_NET(TRACE_TASK),
-+					"sport", field, sizeof(field)));
-+	EXPECT_STREQ("0", field);
-+
-+	ASSERT_EQ(0,
-+		  tracefs_extract_field(buf, REGEX_DENY_ACCESS_NET(TRACE_TASK),
-+					"dport", field, sizeof(field)));
-+	snprintf(expected, sizeof(expected), "%llu",
-+		 (unsigned long long)(sock_port_start + 1));
-+	EXPECT_STREQ(expected, field);
-+
-+	free(buf);
-+}
-+
-+/* Verifies that a denied bind emits sport=<port> dport=0. */
-+TEST_F(trace_net_connect, deny_access_net_bind_fields)
-+{
-+	pid_t child;
-+	int status;
-+	char *buf;
-+	char field[64], expected[16];
-+
-+	if (!self->tracefs_ok)
-+		SKIP(return, "tracefs not available");
-+
-+	child = fork();
-+	ASSERT_LE(0, child);
-+
-+	if (child == 0) {
-+		struct landlock_ruleset_attr ruleset_attr = {
-+			.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP,
-+		};
-+		struct landlock_net_port_attr port_attr = {
-+			.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
-+			.port = sock_port_start,
-+		};
-+		struct sockaddr_in addr = {
-+			.sin_family = AF_INET,
-+			.sin_addr.s_addr = htonl(INADDR_LOOPBACK),
-+		};
-+		int ruleset_fd, sock_fd;
-+
-+		ruleset_fd = landlock_create_ruleset(&ruleset_attr,
-+						     sizeof(ruleset_attr), 0);
-+		if (ruleset_fd < 0)
-+			_exit(1);
-+
-+		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
-+				      &port_attr, 0)) {
-+			close(ruleset_fd);
-+			_exit(1);
-+		}
-+
-+		prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-+		if (landlock_restrict_self(ruleset_fd, 0)) {
-+			close(ruleset_fd);
-+			_exit(1);
-+		}
-+		close(ruleset_fd);
-+
-+		/* Bind to denied port. */
-+		sock_fd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
-+		if (sock_fd < 0)
-+			_exit(1);
-+
-+		addr.sin_port = htons(sock_port_start + 1);
-+		if (bind(sock_fd, (struct sockaddr *)&addr, sizeof(addr)) ==
-+		    0) {
-+			close(sock_fd);
-+			_exit(2);
-+		}
-+		if (errno != EACCES) {
-+			close(sock_fd);
-+			_exit(3);
-+		}
-+		close(sock_fd);
-+		_exit(0);
-+	}
-+
-+	ASSERT_EQ(child, waitpid(child, &status, 0));
-+	ASSERT_TRUE(WIFEXITED(status));
-+	EXPECT_EQ(0, WEXITSTATUS(status));
-+
-+	buf = tracefs_read_buf();
-+	ASSERT_NE(NULL, buf);
-+
-+	EXPECT_LE(1, tracefs_count_matches(buf,
-+					   REGEX_DENY_ACCESS_NET(TRACE_TASK)));
-+
-+	/* Verify sport is the denied port and dport is 0. */
-+	ASSERT_EQ(0,
-+		  tracefs_extract_field(buf, REGEX_DENY_ACCESS_NET(TRACE_TASK),
-+					"dport", field, sizeof(field)));
-+	EXPECT_STREQ("0", field);
-+
-+	ASSERT_EQ(0,
-+		  tracefs_extract_field(buf, REGEX_DENY_ACCESS_NET(TRACE_TASK),
-+					"sport", field, sizeof(field)));
-+	snprintf(expected, sizeof(expected), "%llu",
-+		 (unsigned long long)(sock_port_start + 1));
-+	EXPECT_STREQ(expected, field);
-+
-+	free(buf);
-+}
-+
-+/*
-+ * Verifies that a denied connect after a successful bind shows sport=0 and
-+ * dport=<denied_port>.  The bind succeeds (allowed port), then the connect is
-+ * denied.  sport=0 because the denied operation is connect, not bind.
++/**
++ * landlock_deny_scope_abstract_unix_socket - abstract unix socket access
++ *     denied by LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET
++ * @hierarchy: Hierarchy node that blocked the access (never NULL)
++ * @same_exec: Whether the current task is the same executable that called
++ *             landlock_restrict_self() for the denying hierarchy node
++ * @peer: Peer socket (never NULL); eBPF can read sk_peer_pid,
++ *        sk_peer_cred, socket type, and protocol via BTF
 + */
-+TEST_F(trace_net_connect, deny_access_net_connect_after_bind)
-+{
-+	pid_t child;
-+	int status;
-+	char *buf;
-+	char field[64], expected[16];
++TRACE_EVENT(
++	landlock_deny_scope_abstract_unix_socket,
 +
-+	if (!self->tracefs_ok)
-+		SKIP(return, "tracefs not available");
++	TP_PROTO(const struct landlock_hierarchy *hierarchy, bool same_exec,
++		 const struct sock *peer),
 +
-+	child = fork();
-+	ASSERT_LE(0, child);
++	TP_ARGS(hierarchy, same_exec, peer),
 +
-+	if (child == 0) {
-+		struct landlock_ruleset_attr ruleset_attr = {
-+			.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
-+					      LANDLOCK_ACCESS_NET_CONNECT_TCP,
-+		};
-+		struct landlock_net_port_attr port_attr;
-+		struct sockaddr_in bind_addr = {
-+			.sin_family = AF_INET,
-+			.sin_port = htons(sock_port_start),
-+			.sin_addr.s_addr = htonl(INADDR_LOOPBACK),
-+		};
-+		struct sockaddr_in conn_addr = {
-+			.sin_family = AF_INET,
-+			.sin_port = htons(sock_port_start + 1),
-+			.sin_addr.s_addr = htonl(INADDR_LOOPBACK),
-+		};
-+		int ruleset_fd, sock_fd, optval = 1;
++	TP_STRUCT__entry(
++		__field(__u64, domain_id) __field(bool, same_exec)
++			__field(u32, log_same_exec) __field(u32, log_new_exec)
++				__field(pid_t, peer_pid)
++		/*
++		 * Abstract socket names are untrusted binary data from
++		 * user space.  Use __string_len because abstract names
++		 * are not NUL-terminated; their length is determined by
++		 * addr->len.
++		 */
++		__string_len(sun_path,
++			     unix_sk(peer)->addr ?
++				     unix_sk(peer)->addr->name->sun_path + 1 :
++				     "",
++			     unix_sk(peer)->addr ?
++				     unix_sk(peer)->addr->len -
++					     offsetof(struct sockaddr_un,
++						      sun_path) -
++					     1 :
++				     0)),
 +
-+		ruleset_fd = landlock_create_ruleset(&ruleset_attr,
-+						     sizeof(ruleset_attr), 0);
-+		if (ruleset_fd < 0)
-+			_exit(1);
++	TP_fast_assign(struct pid *peer_pid;
 +
-+		/* Allow bind and connect on sock_port_start only. */
-+		port_attr.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP |
-+					   LANDLOCK_ACCESS_NET_CONNECT_TCP;
-+		port_attr.port = sock_port_start;
-+		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
-+				      &port_attr, 0)) {
-+			close(ruleset_fd);
-+			_exit(1);
-+		}
++		       __entry->domain_id = hierarchy->id;
++		       __entry->same_exec = same_exec;
++		       __entry->log_same_exec = hierarchy->log_same_exec;
++		       __entry->log_new_exec = hierarchy->log_new_exec;
++		       /*
++			* READ_ONCE prevents compiler double-read.  The value
++			* is stable because unix_state_lock(peer) is held by
++			* the caller (hook_unix_stream_connect or
++			* hook_unix_may_send).
++			*/
++		       peer_pid = READ_ONCE(peer->sk_peer_pid);
++		       __entry->peer_pid = peer_pid ? pid_nr(peer_pid) : 0;
++		       __assign_str(sun_path);),
 +
-+		prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-+		if (landlock_restrict_self(ruleset_fd, 0)) {
-+			close(ruleset_fd);
-+			_exit(1);
-+		}
-+		close(ruleset_fd);
++	TP_printk(
++		"domain=%llx same_exec=%d log_same_exec=%u log_new_exec=%u peer_pid=%d sun_path=%s",
++		__entry->domain_id, __entry->same_exec, __entry->log_same_exec,
++		__entry->log_new_exec, __entry->peer_pid,
++		__print_untrusted_str(sun_path)));
 +
-+		sock_fd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
-+		if (sock_fd < 0)
-+			_exit(1);
-+		setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, &optval,
-+			   sizeof(optval));
-+
-+		/* Bind to allowed port (succeeds, no trace event). */
-+		if (bind(sock_fd, (struct sockaddr *)&bind_addr,
-+			 sizeof(bind_addr))) {
-+			close(sock_fd);
-+			_exit(1);
-+		}
-+
-+		/* Connect to denied port (fails, emits trace event). */
-+		if (connect(sock_fd, (struct sockaddr *)&conn_addr,
-+			    sizeof(conn_addr)) == 0) {
-+			close(sock_fd);
-+			_exit(2);
-+		}
-+		if (errno != EACCES) {
-+			close(sock_fd);
-+			_exit(3);
-+		}
-+		close(sock_fd);
-+		_exit(0);
-+	}
-+
-+	ASSERT_EQ(child, waitpid(child, &status, 0));
-+	ASSERT_TRUE(WIFEXITED(status));
-+	EXPECT_EQ(0, WEXITSTATUS(status));
-+
-+	buf = tracefs_read_buf();
-+	ASSERT_NE(NULL, buf);
-+
-+	EXPECT_LE(1, tracefs_count_matches(buf,
-+					   REGEX_DENY_ACCESS_NET(TRACE_TASK)));
-+
-+	/*
-+	 * The denied operation is connect, so sport=0 and dport=<denied_port>,
-+	 * regardless of the prior bind.
-+	 */
-+	ASSERT_EQ(0,
-+		  tracefs_extract_field(buf, REGEX_DENY_ACCESS_NET(TRACE_TASK),
-+					"sport", field, sizeof(field)));
-+	EXPECT_STREQ("0", field);
-+
-+	ASSERT_EQ(0,
-+		  tracefs_extract_field(buf, REGEX_DENY_ACCESS_NET(TRACE_TASK),
-+					"dport", field, sizeof(field)));
-+	snprintf(expected, sizeof(expected), "%llu",
-+		 (unsigned long long)(sock_port_start + 1));
-+	EXPECT_STREQ(expected, field);
-+
-+	free(buf);
-+}
-+
-+/*
-+ * IPv6 network trace tests are intentionally elided.  IPv6 hook dispatch uses
-+ * the same current_check_access_socket() code path as IPv4, validated by the
-+ * audit tests in this file.  The trace events use the same blockers/sport/dport
-+ * fields regardless of address family.
-+ */
-+
- TEST_HARNESS_MAIN
+ #endif /* _TRACE_LANDLOCK_H */
+ 
+ /* This part must be outside protection */
+diff --git a/security/landlock/log.c b/security/landlock/log.c
+index c81cb7c1c448..a2f61aed81ff 100644
+--- a/security/landlock/log.c
++++ b/security/landlock/log.c
+@@ -11,6 +11,9 @@
+ #include <linux/bitops.h>
+ #include <linux/lsm_audit.h>
+ #include <linux/pid.h>
++#include <linux/sched.h>
++#include <linux/slab.h>
++#include <net/sock.h>
+ #include <uapi/linux/landlock.h>
+ 
+ #include "access.h"
+@@ -259,6 +262,23 @@ static void trace_denial(const struct landlock_cred_security *const subject,
+ 				ntohs(request->audit.u.net->sport),
+ 				ntohs(request->audit.u.net->dport));
+ 		break;
++	case LANDLOCK_REQUEST_PTRACE:
++		if (trace_landlock_deny_ptrace_enabled())
++			trace_landlock_deny_ptrace(youngest_denied, same_exec,
++						   request->audit.u.tsk);
++		break;
++	case LANDLOCK_REQUEST_SCOPE_SIGNAL:
++		if (trace_landlock_deny_scope_signal_enabled())
++			trace_landlock_deny_scope_signal(youngest_denied,
++							 same_exec,
++							 request->audit.u.tsk);
++		break;
++	case LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET:
++		if (trace_landlock_deny_scope_abstract_unix_socket_enabled())
++			trace_landlock_deny_scope_abstract_unix_socket(
++				youngest_denied, same_exec,
++				request->audit.u.net->sk);
++		break;
+ 	default:
+ 		break;
+ 	}
 -- 
 2.53.0
 
