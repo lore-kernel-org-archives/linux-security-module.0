@@ -1,120 +1,182 @@
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [84.16.66.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5DE3A63F6
-	for <linux-security-module@vger.kernel.org>; Tue,  7 Apr 2026 12:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775564090; cv=pass; b=TahJAxbBonGJCSlDKSKc7/LUGHtrfpe0AillBXe9vyAmVR+tLs+XUrgZc9B4biYFHWQqcbIhrUugs+NNADeUdpUFzB9MmxEgCCFNrVosvhDkV9YcV81Rxv1CzoCdRqas4rmbqbLXoYk+H28nCA0GdbPBbv2vRRBt2FFoAKGEpW0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775564090; c=relaxed/simple;
-	bh=DYtH3ovqeZiNqkreX7Nz4nkPWobgUXsJ5dwCB2BpWgA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lh/9rPVw3IDOM6n6Lku37lQXGzyjsM5Tzl6anSZ4KMVE5EnfV53tWkhhMTUUKthwoL4YQlS5N8KoXdMD4hRos902GN9L0n7sSLtfFusvIeRNijrA22oI1hyrH/4MLiUT4qLT2RvUy6sSTCyPJtlPVesT4CeCBNiTczQeCo1CRz8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mVZPYGFy; arc=pass smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79F53B636E
+	for <linux-security-module@vger.kernel.org>; Tue,  7 Apr 2026 13:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775566838; cv=none; b=T9sY6zVJTt8SOKltkXLxS4QtnP4J2rr0pjEVO4sv1NM1zdRoRsWZVKB0DKQKcnpwScB535qWMlEgZ5jWiSH7iTv/Ud/vzN0bL01smlV2HzKXj2DOl1pzY7jeVgsKsyG7ne4vJ9me9to6ALU8m7N4P+RRNv2v9gHekeUSwn1qems=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775566838; c=relaxed/simple;
+	bh=n69LQER+gpzAtUXozptn9ySUKii4kDCxgzw5XwT4DRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FXi4bMOQOQF7oIUvkfB+AuP6PhV/nb4AY+gETvlFCTrDguohXzZT8ewEyEkib32ERs01w/jUVJHHJwATWuL+ndDuVjyCd1/bqzBXaJfi09q/ncl6EVHJvQ9BuxjUuq19oioa5pr17d0MRY4MCOf9PrIa+5D7jcYpWy2EuWK+RcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=X1HQ/Mft; arc=none smtp.client-ip=84.16.66.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mVZPYGFy"
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-35d9f68d011so3209941a91.2
-        for <linux-security-module@vger.kernel.org>; Tue, 07 Apr 2026 05:14:48 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1775564088; cv=none;
-        d=google.com; s=arc-20240605;
-        b=B5Og5Yp6lezwTaZe9uSkZFi3wZsGNqddnCGCpgjZJ084e/ujvj2wvpgwrdHmTr47rI
-         O3D40jnYVTjTeGXN3fHKefzryKWKvfh0HijKBv0B3ZZMyru6lrPrHhYq7zW4tBsaghWr
-         v4isTPzlbJA/nDugIMno5p022ky0bIcAnDmGemdzNP14+AFZZDYQF1YJ2UyIE/GVjmmm
-         hqRhol4dDrt1CsUCsEgakRLM6eVu2mS6lTmW69l5vsksU4/ngc/WZ6Z/RzyxTiR8SFM9
-         9T5hLSgsXp8iomoxVD/OgkV0p18zcl8tTKV6ZsDkVRP+3XQoQq325gBA1NTKd4MBbo7j
-         0DtA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=zTDkABRGJ7UHzKZMFM6DSH1URUE3mRRr3uWbQhi8EKg=;
-        fh=kEr/IbOL7svhdlfg0VmFqAmfagol6bF69wyh4u3DgQk=;
-        b=GQqs1KKvPHbA07zHuDdFFlmh1R93MNSiKtM+DMPZSUTiiXmvWg3keGPBvuKfgC7C3K
-         fz406B3enyjHQXf4hw7Mg+W1rm2h8hqpW/XL538xOWYDcA8v8Hdkt4Pbm3jwWfxU2CNt
-         O0N9e35/zyHsVbzz/TnekHe+xRrhdfJyocJ3iXunD1TYpkoNVN3qiLRFm8sztj1GgES3
-         JRyp1Sp4Bd+U24a0TZYvHhrUEikjqJ3sNdSoh2eEJFyG509SRZjeyUo1bCuP4aKiycZk
-         x6L/2ekWEpJH4x6V/fxO7Rmj/AWx8nGiEFieAWEntjGSbmaosNrD6rLjGiu8wj9ExLVH
-         rFog==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775564088; x=1776168888; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zTDkABRGJ7UHzKZMFM6DSH1URUE3mRRr3uWbQhi8EKg=;
-        b=mVZPYGFyBgGtpWk4sX37nuVl392e96R4bjfs0ORNcxHmm4repjBBJl6wER9s05QPRx
-         u9yMmyrIxhKtFPIgahhJkUem9XXnOt0Y4udHqUe5ZV5JLiunPgHbLwuF5YVLX9xOMwfS
-         SHajj6jRYt56S5BkSVItPD2zTTs+S886TqgSWf6wGsfmVf48l/adO1vgGfcBxFHMUdKk
-         98zAae8oxZWozMTxhB3oIy7PG5AaxmT0a1YdtlKIlVFcGbOdculw91xtDE6pfiAGsJ+L
-         dEx4POQKFfhhxVSIboL7SSA5JB8IVPNytMGFiSoathMYqf1+sLX8Za9GGxj7OoZpqzGF
-         gAug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775564088; x=1776168888;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zTDkABRGJ7UHzKZMFM6DSH1URUE3mRRr3uWbQhi8EKg=;
-        b=r/sH9M7OW8IuNoXrHsqo6mZyinsqdtyjGr76WSNRIBtfLlfw55sd1bNAKOsDcln3hE
-         HucfsJmoQ/xUIUIw3rW0yl5ytjdOuRUmPwhYMAuYUlc89z+usfdewhVvQgE9BfRplD3r
-         1wjyI5nPiNQ93doRTLzz9uLXpoZCl7ZGbxuEjQeBJRvEZhFvB2A6+tX7T/ybE/KmwbWZ
-         QL82C6K6ZsGAW8tIUfvje9QBurrosO1dRqIsdDPQFzEoV0Lt81OVwxx3txIe/JWIVmg7
-         XXQGdsS8+nphvI9wSXrDCZNjt/kfyE2orns264w82BOcUgsQ0JYIaejtqzQsU6bNjLae
-         x8cg==
-X-Gm-Message-State: AOJu0YxP3aGMh0bBeRXW03La0cI9TLui7XpU+183d4+GqiZQQw3r8I3I
-	+kYl3qXMgtmzgd3VlhfyuZahyN5sDi5nfOpT+GOpv5QVpqQClmQ8JqCHzBbYDxzN7prcl7V+pZj
-	Si3Ejr485qzgBPfZRtTOwiwC/vkDQCFM=
-X-Gm-Gg: AeBDiet0Aw5tecg/Vy5a4QdJjggtema3aH/Y7ktLEuk2AZYAYU7djRB/9C2o2CEgEFd
-	wjoZU4fMqoOhzASps9SIl0bRZuMxRoMgUKT12vCrxQ+iToEGcBUz83ha/Z64TjSTKMUhkSlMJLo
-	lQbyChpZaM94HOGjJGvkUOgZYP+IA2CCNqO1JQ7ZtcVU+7PWdVMPqEzE6x7Z7S0o+b9S+8nQ9st
-	55hW28TP9YKMGMuA9P2ZUJAAw81lhfOPD+UuCiAxDMSC9gnG8dVAzh//cN7lxuHfFAkgZLq0j5g
-	9p2cSBE=
-X-Received: by 2002:a17:90b:3d4d:b0:35c:d37:6024 with SMTP id
- 98e67ed59e1d1-35de67ea9d5mr15645164a91.11.1775564088070; Tue, 07 Apr 2026
- 05:14:48 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="X1HQ/Mft"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fqmX06NxFzNjv;
+	Tue,  7 Apr 2026 15:00:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1775566832;
+	bh=8ZxPSXWDIoiuY5G2zijl5txUNOYBhI92nA1iVSSfllo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X1HQ/MftNpwfQzzWsM/qUT8sNrr4dRSGYIVauVfY8Vb+O3i8VT1Fwkj0ZXmxUdkrC
+	 athEYlil+TY5HuCphBRyRBIDpL2ZMOqX/q6dRPOGEq+PAKbJ0t7+28kjOpAjAy9KE0
+	 +yAfw9LOy6zjg4ulROelMcOBQtX2yPlLAYjU86sQ=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4fqmWz5bgFzCQy;
+	Tue,  7 Apr 2026 15:00:31 +0200 (CEST)
+Date: Tue, 7 Apr 2026 15:00:27 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Justin Suess <utilityemal77@gmail.com>, Kees Cook <kees@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Tingmao Wang <m@maowtm.org>, kernel-team@cloudflare.com, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 12/17] landlock: Add tracepoints for ptrace and scope
+ denials
+Message-ID: <20260407.Aesoo2sairai@digikod.net>
+References: <20260406143717.1815792-1-mic@digikod.net>
+ <20260406143717.1815792-13-mic@digikod.net>
+ <20260406110123.4072a765@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260403030848.731867-5-paul@paul-moore.com> <20260403030848.731867-8-paul@paul-moore.com>
-In-Reply-To: <20260403030848.731867-8-paul@paul-moore.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Tue, 7 Apr 2026 08:14:36 -0400
-X-Gm-Features: AQROBzAHeiE5r-KOh8TmARe6SlYgAd0n8yvhwUwHmTAae_PdDX5ZmAScFcPTcfU
-Message-ID: <CAEjxPJ4nqeuPhve3Fe-tFuNW9R5grnWwfYJv7q2cRu+UPQ5c4A@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] selinux: fix overlayfs mmap() and mprotect()
- access checks
-To: Paul Moore <paul@paul-moore.com>, Ondrej Mosnacek <omosnace@redhat.com>
-Cc: linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, Amir Goldstein <amir73il@gmail.com>, 
-	Gao Xiang <xiang@kernel.org>, Christian Brauner <brauner@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260406110123.4072a765@gandalf.local.home>
+X-Infomaniak-Routing: alpha
 
-On Thu, Apr 2, 2026 at 11:09=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> The existing SELinux security model for overlayfs is to allow access if
-> the current task is able to access the top level file (the "user" file)
-> and the mounter's credentials are sufficient to access the lower
-> level file (the "backing" file).  Unfortunately, the current code does
-> not properly enforce these access controls for both mmap() and mprotect()
-> operations on overlayfs filesystems.
->
-> This patch makes use of the newly created security_mmap_backing_file()
-> LSM hook to provide the missing backing file enforcement for mmap()
-> operations, and leverages the backing file API and new LSM blob to
-> provide the necessary information to properly enforce the mprotect()
-> access controls.
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
+On Mon, Apr 06, 2026 at 11:01:23AM -0400, Steven Rostedt wrote:
+> On Mon,  6 Apr 2026 16:37:10 +0200
+> Mickaël Salaün <mic@digikod.net> wrote:
+> 
+> > ---
+> >  include/trace/events/landlock.h | 135 ++++++++++++++++++++++++++++++++
+> >  security/landlock/log.c         |  20 +++++
+> >  2 files changed, 155 insertions(+)
+> > 
+> > diff --git a/include/trace/events/landlock.h b/include/trace/events/landlock.h
+> > index 1afab091efba..9f96c9897f44 100644
+> > --- a/include/trace/events/landlock.h
+> > +++ b/include/trace/events/landlock.h
+> > @@ -11,6 +11,7 @@
+> >  #define _TRACE_LANDLOCK_H
+> >  
+> >  #include <linux/tracepoint.h>
+> > +#include <net/af_unix.h>
+> >  
+> >  struct dentry;
+> >  struct landlock_domain;
+> > @@ -19,6 +20,7 @@ struct landlock_rule;
+> >  struct landlock_ruleset;
+> >  struct path;
+> >  struct sock;
+> > +struct task_struct;
+> >  
+> >  /**
+> >   * DOC: Landlock trace events
+> > @@ -433,6 +435,139 @@ TRACE_EVENT(
+> >  		__entry->log_new_exec, __entry->blockers, __entry->sport,
+> >  		__entry->dport));
+> >  
+> > +/**
+> > + * landlock_deny_ptrace - ptrace access denied
+> > + * @hierarchy: Hierarchy node that blocked the access (never NULL)
+> > + * @same_exec: Whether the current task is the same executable that called
+> > + *             landlock_restrict_self() for the denying hierarchy node
+> > + * @tracee: Target task (never NULL); eBPF can read pid, comm, cred,
+> > + *          namespaces, and cgroup via BTF
+> > + */
+> > +TRACE_EVENT(
+> > +	landlock_deny_ptrace,
+> > +
+> > +	TP_PROTO(const struct landlock_hierarchy *hierarchy, bool same_exec,
+> > +		 const struct task_struct *tracee),
+> > +
+> > +	TP_ARGS(hierarchy, same_exec, tracee),
+> > +
+> > +	TP_STRUCT__entry(
+> > +		__field(__u64, domain_id) __field(bool, same_exec)
+> > +			__field(u32, log_same_exec) __field(u32, log_new_exec)
+> > +				__field(pid_t, tracee_pid)
+> > +					__string(tracee_comm, tracee->comm)),
+> 
+> Event formats are different than normal macro formatting. Please use the
+> event formatting. The above is a defined structure that is being created
+> for use. Keep it looking like a structure:
+> 
+> 	TP_STRUCT__entry(
+> 		__field(	__u64,		domain_id)
+> 		__field(	bool,		same_exec)
+> 		__field(	u32,		log_same_exec)
+> 		__field(	u32,		log_new_exec)
+> 		__field(	pid_t,		tracee_pid)
+> 		__string(	tracee_comm,	tracee->comm)
+> 	),
 
-Do you have tests for these changes showing the before and after (i.e.
-failing without your patches, passing with them)? I tried running an
-earlier set from Ondrej but they failed.
+I was using clang-format, but it doesn't make sense here, I'll fix it.
+
+> 
+> See how the above resembles:
+> 
+> struct entry {
+> 	__u64		domain_id;
+> 	bool		same_exec;
+> 	u32		log_same_exec;
+> 	u32		log_new_exec;
+> 	pid_t		tracee_pid;
+> 	string		tracee_comm;
+> };
+> 
+> Because that's pretty much what the trace event TP_STRUCT__entry() is going
+> to do with it. (The string will obviously be something else).
+> 
+> This way it's also easy to spot wholes in the structure that is written
+> into the ring buffer. The "same_exec" being a bool followed by two u32
+> types, is going to cause a hole. Move it to between tracee_pid and
+> tracee_comm.
+
+Actually, the log_* field should be bool too.  Anyway, is it a concern
+that the ring buffer leaks (previous event) kernel memory or is the
+concern mostly about avoiding wasted space and making easy to spot holes
+even if it's OK?
+
+> 
+> Please fix the other events too.
+
+Sure. Thanks!
+
+> 
+> -- Steve
+> 
+> 
+> > +
+> > +	TP_fast_assign(__entry->domain_id = hierarchy->id;
+> > +		       __entry->same_exec = same_exec;
+> > +		       __entry->log_same_exec = hierarchy->log_same_exec;
+> > +		       __entry->log_new_exec = hierarchy->log_new_exec;
+> > +		       __entry->tracee_pid =
+> > +			       task_tgid_nr((struct task_struct *)tracee);
+> > +		       __assign_str(tracee_comm);),
+> > +
+> > +	TP_printk(
+> > +		"domain=%llx same_exec=%d log_same_exec=%u log_new_exec=%u tracee_pid=%d comm=%s",
+> > +		__entry->domain_id, __entry->same_exec, __entry->log_same_exec,
+> > +		__entry->log_new_exec, __entry->tracee_pid,
+> > +		__print_untrusted_str(tracee_comm)));
+
+Are you OK with this new helper?
+
+> > +
+> >
+> 
