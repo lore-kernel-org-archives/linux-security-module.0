@@ -1,134 +1,138 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D896372B3B
-	for <linux-security-module@vger.kernel.org>; Tue,  7 Apr 2026 13:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775567123; cv=none; b=lwIcyNS8bCysITcPj0TNhE3JG02lOAzwjOklK2Mh9mqm620ce1yXcf0jVadNNDhjtron6FLBVE7I/8AJ9SRZ9n+zB4VEfiz4/mtagqgTfpDkaHCpm5ZS9h+B88IjY2grixKZzBMx46KRniQ4xy+xxqIQy0Pp61RITDuWwHxNcKA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775567123; c=relaxed/simple;
-	bh=1G1PvJ9sljvQHnODv9BNC37tg5Ir59mfeBIQTEmltUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LVpFk5NdviSFDkZ1ZqIwAmK7FUYruTvPxrC56TUhiBFB34z694pVulZpyYfoZ9oabOPe5dtdL/tC0y7hgI2xppfgwjCI9I427cnwTpro+vQMcqhVbiQTakaqaXyu4L0ecqKZx9UIpsA8d9+RyGopw1ms9kDpO1ekXn2oUi8SASs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tpxu/MFa; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246542236EE
+	for <linux-security-module@vger.kernel.org>; Tue,  7 Apr 2026 14:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.181
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775572514; cv=pass; b=RhqM6NaHwCVFIgcO8A7p0hLnqmchbqQCoSFxn84tMU+Bn07zz/s+XqBv13cHQIHxS7+KnbbtZYsvUpd2YEndDVln4kxKBxfQ2haKSJC+84Qs7NHnqUeDKgZ3HWUUZS9QkjvnGKYu9G2pFZlDvP10IQegnTCc52yc8AqvDpq5hfs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775572514; c=relaxed/simple;
+	bh=52zpGg3kueHgGet8IztKdLA8+tZp4VM8MiDQmi08+vU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X3BR31uwDLW1m1IkGY/VWzUdPHQjdSOfOeYMbhcNBxu4lN3+tVVHDF0rQB+wEjkynSyiYsOOmq62ASNJmjU2420HllGYYlGzViBd47LlyrQEeVeZUSGeSZKYMHeeTjF3mcapIIW+9PRISVlaxZaFUN2kGl29WMAegz51Jic9dQ0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MSeCwIrQ; arc=pass smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tpxu/MFa"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-43cff5dafc3so4401414f8f.1
-        for <linux-security-module@vger.kernel.org>; Tue, 07 Apr 2026 06:05:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MSeCwIrQ"
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-c76864f4e58so2012403a12.1
+        for <linux-security-module@vger.kernel.org>; Tue, 07 Apr 2026 07:35:13 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1775572512; cv=none;
+        d=google.com; s=arc-20240605;
+        b=lSd4TolgphZCbRBsPyptNI9yQ8RNQ/iBI/+x8qcqwbLRBwr9M3GTh+azSVUzKfoGhd
+         XqrdfY0HYtemwDBkVlG3Y/n3yY3nNMNf9AA1WJxkRpe3fc2RDEXo39zKrlkhvekrYq/r
+         qXF5i84kwJAhj9T+7k/3+GsxFDtHTicPcuo8Rbq25gNlCe9QKZq0c3rHl6529uPld8q5
+         hwq/3e0JJWyk/cdbYbhPaV7msElj0YKh7RKqHLrD2edgyEpF1USzxjSC/Pm6h86YteLh
+         OHxA2NF9ESA545zOVWit79DJZ6U80iKJYR9ERsLI/5YfJ4Y2Hu1Ihw4eee0z2US+Fw0K
+         P0IQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=2qC5HIWFMfgCC7dxk8CsqfkMoXma/koXyhFD7US+Mog=;
+        fh=9Rhz3GpT70JpGfMhTMx2v2ovAAdU45R1Pu6ctPX64FQ=;
+        b=NDg9STFfa1ibXW2BW30HY212K4P/BxJrvMOzr/PrVnwM1w8qOzRuR7skMH7aMHs/sT
+         pTj0m6dyv3zRcTIe7f5XCKeLYb+uvt+fgtyvGlipfhDEGSTMM4H6SKOdYU/ntUX5C4jZ
+         lHmVKS1i/1/yMALAA/MtU0Uzej+fIk3A4uavaamV8/kedsL2j/yBPfM3GrCbykFZhB8b
+         RrNYC7V5ZzZbSv+xB29JEBVM6nDiHST2zrrl5BWAOD7qys6UFJgveSLDpQz934cQr2Xn
+         r043Px/dE1HQ0EkaUXZtemymtlJlNCfwDHYbm6dkq9ZlNSuxJqSSSZXWRy9eITOlARWc
+         iM4w==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1775567120; x=1776171920; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1775572512; x=1776177312; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oipARofKieVoI6IiaE0rpflVsalDoSLrUlN/Dq4QXVo=;
-        b=tpxu/MFanc9wxu3l0wUczsvcaAFbQpOppX2t4UOc0eTOTDX9aKK/qPDzyK9N0EWJtK
-         zfXJzzvvnkyRz8KclFsyFNYQNucvnzygVpl48AN2zCpn6vsKW7O4WKhAMGm672x0fUwI
-         0TK6vkDVsCswQnsLPIhhhp+gqq1rvLEzkDUhVofrmLN22bj7P57w8QVuU0W41A2lqGgn
-         OgiD4xdK/jfVAxK3cSj/8EQZda3oiCL1olp+DdVpL4kRGDRrVQ/u65vKQoci+p1SnoP1
-         yrHb13Kls8Hmy4EOmH6yMp8M+a4oig9EpSMMUe+9Y8zReqq99eOhSgdv+EiwRGIlfE8Q
-         CqtQ==
+        bh=2qC5HIWFMfgCC7dxk8CsqfkMoXma/koXyhFD7US+Mog=;
+        b=MSeCwIrQe235ez7W8m6HlUnnYkAayZ4Ym0rsusDeGgjvysabx79GAswgymvMDwdX15
+         FZci+n28iUiJBkB94aYRm7cQN12xS5bQ2IvJ7vp9ZFzi01QrgKVQbOKHprEKQycHOx8g
+         SwVpNT39z5mwh+sxkYl8XfXHIQ9jVIlGYCnWPXnZEZpiWl4+pK++qko+6KngzKrbFYmN
+         zgQHd4/KTK9qCjAsNh4izeax1jtfpXnjJn6T9gERrt5c5odoNSP2z1QDpX+Z7Erj5g4t
+         g4zNjphNUV2pniRnLFMWEo9qP5FZzGWUsKuGfgyxQNrK71fbqKDP8i8JNOaOfLepmYl+
+         xAPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775567120; x=1776171920;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20251104; t=1775572512; x=1776177312;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=oipARofKieVoI6IiaE0rpflVsalDoSLrUlN/Dq4QXVo=;
-        b=ZLHt7EC3bSIj22GX7KtNbhwRZiFUy86uNbMxSptOe5X7LRlq6+mn9us+ICVAumMqsa
-         Z514b8+XQni1N5jdw7jNx4jYU8jeJ+lQ09PuqMBTlEGS8aKQ6ha2XQWZRZBDePJRO2UG
-         EftXKTowkmzcdkvecTKIh3e1Chfvo8/OyjQiqz2uQoujo3L7cKwPxRvW0KZYJgGuKtna
-         SxkUA2KQFZsraKwd6Efwts2hERjc8Db77movkDdB6sJcqv0MSL9kwiLf6gmT+X8M+9/L
-         kNmZxxFsWOgLJEFLF977mJ7/8rkyPvibA8dTjKgk7iZ71s4D3mKawQnoPAcIBwZTNOSw
-         t77A==
-X-Gm-Message-State: AOJu0YzcqSHVIpNRlXbALDAltXgBuppR9GtZmyQqQsa/gni+gSTgPex/
-	YRddOxmLf09GHLtwc6zJKWb8bsty7eU3QRoH3uRO7/qjmjranqSvoal+kvdpZQY62SFxKXoEfB8
-	4Jizrl45n
-X-Gm-Gg: AeBDieuhKp1VSi4YokCtf5NdirhLh22UM+IuaYPF9xwh98MFQunq4Vmn5SSizstnWXE
-	C9pJIcCkdQ1xXJGJMj+DHFX7rNVARe4I801KbdbQNW7ywFJZRgrDu+YzDQa2t2ErujPwVoy+A5u
-	uJFQgI2tPCClTGY6IXbKQ1HNQuBC3iNapIGes2vNIE7/emq64wCyde2atwjc/53wYGZGOT2CUnc
-	CASNDLR6BWvioOLzh8DHMaySg6/bvE0g6ikNw/9bQaiG8XMXzoBnXPqL7QjdEPkH3K/RkH4uPrE
-	QxHrgZlpCOZPX2ipQNyjtsUHBe+SFRCY9f4O6Nr9No0nRzuDHd90da2SpTJhLEpJombHRARZnwr
-	LleZvKKyTrETTVGVMWiAL2HfvmxUAIGTyVS1pNkIkW18F+AYMWJGu4bwMK5t5zMpLh7H31b6XZu
-	2ZU4Rv4V6G2hcbh5Y1rSQaPy/4XJoFEAY6MQUjsb7Gyb6MkJH1xlyvJhnP1DjD9IWJ
-X-Received: by 2002:a05:6000:1acd:b0:43b:45d1:f449 with SMTP id ffacd0b85a97d-43d292f5827mr23214806f8f.51.1775567119836;
-        Tue, 07 Apr 2026 06:05:19 -0700 (PDT)
-Received: from google.com ([2a00:79e0:288a:8:1b63:327a:301d:8eab])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d1e2c54bdsm51322313f8f.16.2026.04.07.06.05.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Apr 2026 06:05:18 -0700 (PDT)
-Date: Tue, 7 Apr 2026 15:05:13 +0200
-From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: Christian Brauner <brauner@kernel.org>,
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org
-Subject: LSM: Whiteout chardev creation sidesteps mknod hook
-Message-ID: <adUBCQXrt7kmgqJT@google.com>
+        bh=2qC5HIWFMfgCC7dxk8CsqfkMoXma/koXyhFD7US+Mog=;
+        b=ec4S4iEcv979ZECskfeJUUJ6nuxR4a/pCooqMFo+Ymm+kcsZqCtAY2WfcoHSnxp20H
+         IAXiSxyVPokWQa1e5jVhFoAj+wc0PUpWop2cLAGpnZf7lsh0morM7NUkRi+jNFKgR12l
+         FbmQKE1gOm8Q6auV3p/aTiTB4or+/kppdAQ/pE2by2hvFPBSAD2uM3jM2UvsDaCZ5eO2
+         +NNn5kG7a4AWYdIiK/RZPWx6b2ZDD+eb5WcfOKxY0uQyU+mD0HpJxIgxf16dfEzzY09q
+         2Bl2BADCshyUuWhI/4gWd2D+Kctwyopl1FxkfpbxGeOJyCxDyWB39ECLo53FQq82xYtt
+         ++5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVNyA163wPBcDVdf+prQGxY4YnYUpb+NvfKaa5b9py8WN6OQB/2eC8SrT3dzWrKbUWz/AwsLTqkHp6KKdqRz/qWdc9jUOs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz00AQgC93oCN8VOKixvVnpL7UifGxjv0hUdaczWuKC7c+K9kFr
+	igbbj5gbK27nRI5WMAW3RzO0qgU1Fysq4kwQY59do3WF1HEIFjMpb5vNlBdEggVprpKSLXe7ZHo
+	YkBvpxK7G+8Ln6XACUxouApurtAEMAcMv39SCeOUy
+X-Gm-Gg: AeBDieshmkQMy5oq6wPn/soA94tSVkN38iFlia9kGRad8c3sK5kZWtI5vecEP6R5V4C
+	58ebXkZ4NecierOs5XpM07f2kufzRd0a2nBaT+7aUVMZdXOffd7ja2zpfSNH0hkZkiV9t02ZH6U
+	PQWFaPodbWS/TMd0yLU8Ibn4E3mjRPg6lpEbSWFZXF310SZs4IrILrAEnm29KozoRfpYzUmaeSq
+	72lAbhKBuDQrlbu5/oogKpZerFUVrl97Zd/z6PMwoWadhKiMImZn2dtnXVBnB/Hdxg1dlzT8dc+
+	e6B8u8c=
+X-Received: by 2002:a05:6a20:a91f:b0:39f:75a6:16e3 with SMTP id
+ adf61e73a8af0-39f75a642ddmr6186836637.2.1775572512468; Tue, 07 Apr 2026
+ 07:35:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+References: <20260403030848.731867-5-paul@paul-moore.com> <20260403030848.731867-8-paul@paul-moore.com>
+ <CAEjxPJ4nqeuPhve3Fe-tFuNW9R5grnWwfYJv7q2cRu+UPQ5c4A@mail.gmail.com>
+In-Reply-To: <CAEjxPJ4nqeuPhve3Fe-tFuNW9R5grnWwfYJv7q2cRu+UPQ5c4A@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 7 Apr 2026 10:35:00 -0400
+X-Gm-Features: AQROBzCbJor8xEV12qkCxYwq58fXkfkjQP4svTBOSHpDEN5glYblz9lJ5v7xffk
+Message-ID: <CAHC9VhQnA38-9wDeVmOMxAFPHnd9y6x5LXtD3cSquGiL_MDDpA@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] selinux: fix overlayfs mmap() and mprotect()
+ access checks
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Ondrej Mosnacek <omosnace@redhat.com>, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, linux-erofs@lists.ozlabs.org, 
+	Amir Goldstein <amir73il@gmail.com>, Gao Xiang <xiang@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Christian, Paul, Mickaël and LSM maintainers!
+On Tue, Apr 7, 2026 at 8:14=E2=80=AFAM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+> On Thu, Apr 2, 2026 at 11:09=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> >
+> > The existing SELinux security model for overlayfs is to allow access if
+> > the current task is able to access the top level file (the "user" file)
+> > and the mounter's credentials are sufficient to access the lower
+> > level file (the "backing" file).  Unfortunately, the current code does
+> > not properly enforce these access controls for both mmap() and mprotect=
+()
+> > operations on overlayfs filesystems.
+> >
+> > This patch makes use of the newly created security_mmap_backing_file()
+> > LSM hook to provide the missing backing file enforcement for mmap()
+> > operations, and leverages the backing file API and new LSM blob to
+> > provide the necessary information to properly enforce the mprotect()
+> > access controls.
+> >
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Paul Moore <paul@paul-moore.com>
+>
+> Do you have tests for these changes showing the before and after (i.e.
+> failing without your patches, passing with them)? I tried running an
+> earlier set from Ondrej but they failed.
 
-I discovered the following bug in Landlock, which potentially also
-affects other LSMs:
+A few months ago I sent you and Ondrej some feedback on those early
+tests from Ondrej, but yes, I also had problems with Ondrej's tests.
+I've been using a hacked up combination of the existing tests, some of
+Ondrej's additions, and an additional debug/test patch to ensure the
+labeling is correct.  It's far from ideal, but I didn't invest time in
+test development as I assumed Ondrej would continue his efforts there
+(unfortunately it doesn't appear that he has?), and I wanted to focus
+on getting a solution as soon as possible for obvious reasons.
 
-With renameat2(2)'s RENAME_WHITEOUT flag, it is possible to create a
-"whiteout object" at the source of the rename.  Whiteout objects are
-character devices with major/minor (0, 0) -- these devices are not
-bound to any driver, so they are harmless, but still, the creation of
-these files can sidestep the LANDLOCK_ACCESS_FS_MAKE_CHAR access right
-in Landlock.
-
-
-I am unconvinced which is the right fix here -- do you have an opinion
-on this from the VFS/LSM side?
-
-
-Option 1: Make filesystems call security_path_mknod() during RENAME_WHITEOUT?
-
-Do it in the VFS rename hook.
-
-* Pro: Fixes it for all LSMs
-* Con: Call would have to be done in multiple filesystems
-
-
-Option 2: Handle it in security_{path,inode}_rename()
-
-Make Landlock handle it in security_inode_rename() by looking for the
-RENAME_WHITEOUT flag.
-
-* Con: Operation should only be denied if the file system even
-  implements RENAME_WHITEOUT, and we would have to maintain a list of
-  affected filesystems for that.  (That feels like solving it at the
-  wrong layer of abstraction.)
-* Con: Unclear whether other LSMs need a similar fix
-
-
-Option 3: Declare that this is working as intended?
-
-* Pro: (0, 0) is not a "real" character device
-
-
-In cases 1 and 2, we'd likely need to double check that we are not
-breaking existing scenarios involving OverlayFS, by suddenly requiring
-a more lax policy for creating character devices on these directories.
-
-Please let me know what you think.  I'm specifically interested in:
-
-1. Christian: What is the appropriate way to do this VFS wise?
-2. LSM maintainers: Is this a bug that affects other LSMs as well?
-
-Thanks,
-—Günther
-
-P.S.: For full transparency, I found this bug by pointing Google
-Gemini at the Landlock codebase.
+--=20
+paul-moore.com
