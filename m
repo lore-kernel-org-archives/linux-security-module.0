@@ -1,401 +1,318 @@
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE343B6C07;
-	Wed,  8 Apr 2026 14:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AD0346FB0
+	for <linux-security-module@vger.kernel.org>; Wed,  8 Apr 2026 17:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775656847; cv=none; b=a6OiZYYVx/3kISS4hyWVe6JX7d30gnArr8dYC+ITGY+H+B8TUDWiesrb6K4cfxDQhskpx6ztbZV9oelfuDkHFFb1RpvHaNUKDO00D8cVpnxMcTy0FB4haHZOazWlL7OLwrqQazkjI2V8WblMVTvYk9PGWiHhy30VBtcknGfd2u4=
+	t=1775668300; cv=none; b=TgnxpjDRYc5/1JBSZfPo1aW4Wu8UxeyM7PtDClzAFehk171dFdUYQHMTYor6Xgf7t7gfyvqSKsJsJw1lGG0uonJssUPCIuMMw/HxprSyjLGYixPxPVU0nH+ya8yZdmK5WCTRQwjbvJr7RAw+xohM4wBwF9AW+OKh/OubwhsUeBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775656847; c=relaxed/simple;
-	bh=CXmF6HELYR8l13B5gor19p3gXQCNXSpE7Yo48J6hyJ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H3bEqPlDdqn8CamdFsOXOvMv4KZvhkU98maHfrS0B+Nhod+/29UYv66igmpQjyMzhhjzkeJ7d93ViDtES/0zSmpZaGtBWQ6Yocw6iF6DK5pjp9L08eOs+QCkqmvvpQz0Yyaxp+wI3+zEcGTorR0mmTq7fyPQUFsL1sIJvRL3FN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=FOOLBbUz; arc=none smtp.client-ip=84.16.66.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1775668300; c=relaxed/simple;
+	bh=skTHfg5nopiPlA39+yQldHS0YW2EP7eSiDJo+l9/xQY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZyBGPYqdUBOr/huZCr73IuuqIoWWkOPBFYPeVtvmrGbYM6L/+Sm9qyz0+K67+tM7atHC5ygUVZjgpt1SyyDqhqWjB8cdrljH2zaLK3+znyDfFBZ3zvxf+nHm+eyfxPPXEeFPErRHYr++nX/3XR4chRS5RpIYJT/geKbhVn2jUPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NfiL7iWA; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="FOOLBbUz"
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4frPpx6QMRz2kf;
-	Wed,  8 Apr 2026 16:00:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1775656841;
-	bh=3j6c0WbpqkoroP/bemGZEZH1gBNDoOR23onaEKUiYfw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FOOLBbUzzhnUk9xI2oMxQrlGRgMzz+Rtq0vUxo6GIe6kaSPFJBbvyGDMAjAAStt4u
-	 1W8T7auAvH4s5aG1lQe+W3AAOZsdFWaze5x4lTYGl+L7rXzHx3KLF4OMEl+8BgzbMj
-	 3zHDaCd7qmpHH+b2XOGGLxFzx/trRp1CjSwkQDTg=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4frPpv2QVBz7rp;
-	Wed,  8 Apr 2026 16:00:39 +0200 (CEST)
-Date: Wed, 8 Apr 2026 16:00:35 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Justin Suess <utilityemal77@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	kpsingh@kernel.org, paul@paul-moore.com, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	kees@kernel.org, gnoack@google.com, jack@suse.cz, jmorris@namei.org, 
-	serge@hallyn.com, song@kernel.org, yonghong.song@linux.dev, martin.lau@linux.dev, 
-	m@maowtm.org, eddyz87@gmail.com, john.fastabend@gmail.com, sdf@fomichev.me, 
-	skhan@linuxfoundation.org, bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Frederick Lawler <fred@cloudflare.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NfiL7iWA"
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-7a2b6adbfa6so1581417b3.0
+        for <linux-security-module@vger.kernel.org>; Wed, 08 Apr 2026 10:11:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1775668297; x=1776273097; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q/8rwKhb/x/3zExFoHaPVXkH6YxE9ylkF1qlsN1QT9k=;
+        b=NfiL7iWABBYC684D4DiCzXjKdpSKu/4ng2g2wgycuNom0EORiSUL+2rHIZVINKkwu7
+         wBeG7VC9OCkN5glXS+8HWG/60PJdneGSF/NDCDwjMfrjPyER1vYS/RlPiu0ycYSp/TRc
+         Ak81q9i1oEgp1zduAPJVx7a0CRflUsR01sLMX3Ulc3Rz1L6kckmIVYbRvxsurBKNhgFZ
+         qXppVPv7aZkhxsD6Rp6KShC7Vmw0DLSQygD4vf8fo5jNa1xCn2FEJMDjAXk3yAvawEeA
+         T58rT4u+9egl0i/A5COlWS4YvSFSYOsf416sIuXfAWCmqffkzYlcaP9B4WzwKo/ijadY
+         2pVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775668297; x=1776273097;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Q/8rwKhb/x/3zExFoHaPVXkH6YxE9ylkF1qlsN1QT9k=;
+        b=DSStH2fiPWNemUkfa/30u0EIAAClFfW907+/5B7CN+Qy+ZfYfOxzbiebkxHap5SVY4
+         XOuS/4sZwqYhWNWnxwbTptKcsMy+7mrO/Wi3MJEK2hfQh5yJjumkS9cmWj9cp9r+7Oo2
+         CkpfmRR4eoJ3WqacK9T62icq2Z+ipBUtfzBAK/M2kOq9JFCKGaPDQPnyiMwORv3U+8o1
+         42KHiBljab83jfDZze3bqC6iyrcuGA1KNryOhLv8722T3MOs38td+h7XeX6LqR5qzMNc
+         +j7b0tfLt0Jq0nI0/LKCbPSaVzXi4Dwacw7mOKgWkTjxqmGc8m58sY8sxcndi0PPf+EA
+         zLWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUp0pGPLpVNNC8OCf/yJx+LAUhz0TRQbqmvg74F0E5RZl88wc9eBBnNZ2uGuxt3lAqWrqIKoCwrQOoQSIzV8Jb+co2QQWI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5T7S7UicTzGLcG0DnNK4lSr/UOPhVlCAQ0JvP/LxfSC2WgG/V
+	nEXNDbLdQly24gVWMESwJZU6SE/k3XIdu1ahhhOcHJwjo5P2YNvFBeuJ
+X-Gm-Gg: AeBDiev7E55BNMpAZSnGuJ164N6/5CRtG1h//PC+YshX1397gQGvGYztpv2n1ibZErP
+	Dv0zCqgOPt3vzaSZx8hd/X+0+YKbfpqE9zXJydOxCrBRLeI3E5nB3+h8ilHrsDAM5F4CrZEg0z+
+	j9lWdEQh5nMX1aQk/nQ6FWWpzU3BX+wiYHm2njf26f8ZN38vpvZcxchSJ3BaIJM9qSIoQSPRy53
+	lT1oxTrJKlxu3vtGPJklnTy0oX1iXNkELNG+8+6uo3/fahME7cucVskHKjU5+2kNmHWzdDyxvBr
+	cbx1GX/lJl4WW+8AdIBherPTwsWTYzDeBg/LyNsSx3xd242LWjWlTSZgxLBP9o3ZCYLHPg8Y73k
+	R3obDMOFDrwSDrxvBpnkVBTsB1jOBvQGtjBr1O+EtSvHulXFOP8a45rEXgrhQpTO8AaGHAJ2A5w
+	ODAEfxi56pOWWcIsADoSOUeu1g5WYEeY0WPBMX62MbgrySmpOL54zC9uNptL5jSsLX891xlOOG
+X-Received: by 2002:a05:690c:63c2:b0:79b:d1d9:daac with SMTP id 00721157ae682-7a4d8cad324mr216124687b3.38.1775668297224;
+        Wed, 08 Apr 2026 10:11:37 -0700 (PDT)
+Received: from zenbox.prizrak.me ([2600:1700:18fb:6011:4f39:118b:d212:714e])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7a36e22b926sm91175117b3.5.2026.04.08.10.11.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Apr 2026 10:11:36 -0700 (PDT)
+From: Justin Suess <utilityemal77@gmail.com>
+To: mic@digikod.net
+Cc: andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	brauner@kernel.org,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	fred@cloudflare.com,
+	gnoack@google.com,
+	jack@suse.cz,
+	jmorris@namei.org,
+	john.fastabend@gmail.com,
+	kees@kernel.org,
+	kpsingh@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	m@maowtm.org,
+	martin.lau@linux.dev,
+	paul@paul-moore.com,
+	Justin Suess <utilityemal77@gmail.com>
 Subject: Re: [RFC PATCH 00/20] BPF interface for applying Landlock rulesets
-Message-ID: <20260408.ong9Eshe0omu@digikod.net>
-References: <20260407200157.3874806-1-utilityemal77@gmail.com>
+Date: Wed,  8 Apr 2026 13:10:28 -0400
+Message-ID: <20260408171030.4083129-1-utilityemal77@gmail.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260408.ong9Eshe0omu@digikod.net>
+References: <20260408.ong9Eshe0omu@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260407200157.3874806-1-utilityemal77@gmail.com>
-X-Infomaniak-Routing: alpha
 
-Thanks for this RFC.
 
-On Tue, Apr 07, 2026 at 04:01:22PM -0400, Justin Suess wrote:
-> Hello,
-> 
-> This series lets sleepable BPF LSM programs apply an existing,
-> userspace-created Landlock ruleset to a program during exec.
-> 
-> The goal is not to move Landlock policy definition into BPF, nor to create a
-> second policy engine.  Instead, BPF is used only to select when an already
-> valid Landlock ruleset should be applied, based on runtime exec context.
-> 
-> Background
-> ===
-> 
-> Landlock is primarily a syscall-driven, unprivileged-first LSM.  That model
-> works well when the application being sandboxed can create and enforce its own
-> rulesets, or when a trusted launcher can impose restrictions directly before
-> running a trusted target.
-> 
-> That becomes harder when the target program is not under first-party control,
-> for example:
-> 
-> 1. third-party binaries,
-> 2. unmodified container images,
-> 3. programs reached through shells, wrappers, or service managers, and
-> 4. user-supplied or otherwise untrusted code.
-> 
-> In these cases, an external supervisor may want to apply a Landlock ruleset to
-> the final executed program, while leaving unrelated parents or helper
-> processes alone.
-> 
-> Why external sandboxing is awkward today
-> ===
-> 
-> There are two recurring problems.
-> 
-> First, userspace cannot reliably predict every file a target may need across
-> different systems, packaging layouts, and runtime conditions.  Shared
-> libraries, configuration files, interpreters, and helper binaries often depend
-> on details that are only known at runtime.
+Add a flag LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS, which executes
+task_set_no_new_privs on the current credentials, but only if
+the process lacks the CAP_SYS_ADMIN capability.
 
-Agreed, it would make sense to leverage eBPF for this context
-identification rather than implementing a Landlock-specfic feature.
+While this operation is redundant for code running from userspace
+(indeed callers may achieve the same logic by calling
+prctl w/ PR_SET_NO_NEW_PRIVS), this flag enables callers without access
+to the syscall abi (defined in subsequent patches) to restrict processes
+from gaining additional capabilities. This is important to ensure that
+consumers can meet the task_no_new_privs || CAP_SYS_ADMIN invariant
+enforced by Landlock without having syscall access.
 
-> 
-> Second, Landlock inheritance is intentionally one-way.  Once a task is
-> restricted, descendants inherit that domain and may only become more
-> restricted.  This is exactly what Landlock should do, but it makes external
-> sandboxing awkward when the program of interest is buried inside a larger exec
-> chain.  Applying restrictions too early can affect unrelated intermediates;
-> applying them too late misses the target entirely.
+This is done by hooking bprm_committing_creds along with a
+landlock_cred_security flag to indicate that the next execution should
+task_set_no_new_privs if the process doesn't possess CAP_SYS_ADMIN. This
+is done to ensure that task_set_no_new_privs is being done past the
+point of no return.
 
-This makes sense too.
+Cc: Mickaël Salaün <mic@digikod.net>
+Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+---
 
-> 
-> This series addresses that target-selection problem.
-> 
-> Overview
-> ===
-> 
-> This series adds a small BPF-to-Landlock bridge:
-> 
-> 1. userspace creates a normal Landlock ruleset through the existing ABI;
-> 2. userspace inserts that ruleset FD into a new
-> 	BPF_MAP_TYPE_LANDLOCK_RULESET map;
-> 3. a sleepable BPF LSM program attached to an exec-time hook looks up the
-> 	ruleset; and
-> 4. the program calls a kfunc to apply that ruleset to the new program's
-> 	credentials before exec completes.
-> 
-> The important point is that BPF does not create, inspect, or mutate Landlock
-> policy here.  It only decides whether to apply a ruleset that was already
-> created and validated through Landlock's existing userspace API.
+On Wed, Apr 08, 2026 at 02:00:00 -0000, Mickaël Salaün wrote:
+> > Points of Feedback
+> > ===
+> > 
+> > First, the new set_nnp_on_point_of_no_return field in struct linux_binprm.
+> > This field was needed to request that task_set_no_new_privs be set during an
+> > execution, but only after the execution has proceeded beyond the point of no
+> > return. I couldn't find a way to express this semantic without adding a new
+> > bitfield to struct linux_binprm and a conditional in fs/exec.c. Please see
+> > patch 2.
 
-I like this approach.  It makes it possible for users enforce Landlock
-security policies on arbitrary new executions.  Sandboxing at this
-specific point is the best time because it ensures a consistency for the
-whole lifetime of the process, whereas applying new restriction in the
-middle of an execution would make the process unstable (if the request
-doesn't come from the process itself).
+> What about using security_bprm_committing_creds()?
 
-> 
-> Interface
-> ===
-> 
-> The series adds:
-> 
-> 1. bpf_landlock_restrict_binprm(), which applies a referenced ruleset to
-> 	struct linux_binprm credentials;
-> 2. bpf_landlock_put_ruleset(), which releases a referenced ruleset; and
-> 3. BPF_MAP_TYPE_LANDLOCK_RULESET, a specialized map type for holding
-> 	references to Landlock rulesets originating from userspace file
-> 	descriptors.
-> 4. A new field in the linux_binprm struct to enable application of
->    task_set_no_new_privs once execution is beyond the point of no return.
+Good idea. Definitely cleaner.
 
-This "beyond the point of no return" is indeed important, and it would
-be nice to also have this property for Landlock restriction i.e., only
-create a Landlock domain if we know that the execution will succeed (or
-if the caller will exit).  This is especially important for
-logging/tracing event consistency.
+Something like this? Then dropping the "execve: Add set_nnp_on_point_of_no_return"
+commit.
 
-> 
-> The kfuncs are restricted to sleepable BPF LSM programs attached to
-> bprm_creds_for_exec and bprm_creds_from_file, which are the points where the
-> new program's credentials may still be updated safely.
-> 
-> This series also adds LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS.  On the BPF path,
-> this is staged through the exec context and committed only after exec reaches
-> point-of-no-return.  This avoids side effects on failed executions while
-> ensuring that the resulting task cannot gain more privileges through later exec
-> transitions. This is done through the set_nnp_on_point_of_no_return field.
-> 
-> This has a little subtlety: LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS in the BPF
-> path will not stop the current execution from escalating at all; only subsequent
-> ones.
+This adds a bitfield to the landlock_cred_security struct to indicate that the flag
+should be set on the next exec(s).
 
-This makes sense too, but it needs to be documented.
+ include/uapi/linux/landlock.h | 14 ++++++++++++++
+ security/landlock/cred.c      | 13 +++++++++++++
+ security/landlock/cred.h      |  7 +++++++
+ security/landlock/limits.h    |  2 +-
+ security/landlock/ruleset.c   | 15 ++++++++++++---
+ security/landlock/syscalls.c  |  5 +++++
+ 6 files changed, 52 insertions(+), 4 deletions(-)
 
-> This is intentional to allow landlock policies to be applied through a
+diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+index f88fa1f68b77..edd9d9a7f60e 100644
+--- a/include/uapi/linux/landlock.h
++++ b/include/uapi/linux/landlock.h
+@@ -129,12 +129,26 @@ struct landlock_ruleset_attr {
+  *
+  *     If the calling thread is running with no_new_privs, this operation
+  *     enables no_new_privs on the sibling threads as well.
++ *
++ * %LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
++ *    Sets no_new_privs on the calling thread before applying the Landlock domain.
++ *    This flag is useful for convenience as well as for applying a ruleset from
++ *    an outside context (e.g BPF). This flag only has an effect on when both
++ *    no_new_privs isn't already set and the caller doesn't possess CAP_SYS_ADMIN.
++ *
++ *    This flag has slightly different behavior when used from BPF. Instead of
++ *    setting no_new_privs on the current task, it sets a flag on the bprm so that
++ *    no_new_privs is set on the task at exec point-of-no-return. This guarantees
++ *    that the current execution is unaffected, and may escalate as usual until the
++ *    next exec, but the resulting task cannot gain more privileges through later
++ *    exec transitions.
+  */
+ /* clang-format off */
+ #define LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF		(1U << 0)
+ #define LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON			(1U << 1)
+ #define LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF		(1U << 2)
+ #define LANDLOCK_RESTRICT_SELF_TSYNC				(1U << 3)
++#define LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS			(1U << 4)
+ /* clang-format on */
+ 
+ /**
+diff --git a/security/landlock/cred.c b/security/landlock/cred.c
+index 0cb3edde4d18..bcc9b716916f 100644
+--- a/security/landlock/cred.c
++++ b/security/landlock/cred.c
+@@ -43,6 +43,18 @@ static void hook_cred_free(struct cred *const cred)
+ 		landlock_put_ruleset_deferred(dom);
+ }
+ 
++static void hook_bprm_committing_creds(const struct linux_binprm *bprm)
++{
++	struct landlock_cred_security *const llcred = landlock_cred(bprm->cred);
++
++	if (llcred->set_nnp_on_committing_creds &&
++	    !ns_capable_noaudit(current_user_ns(), CAP_SYS_ADMIN)) {
++		task_set_no_new_privs(current);
++		/* Don't need to set it again for subsequent execution. */
++		llcred->set_nnp_on_committing_creds = false;
++	}
++}
++
+ #ifdef CONFIG_AUDIT
+ 
+ static int hook_bprm_creds_for_exec(struct linux_binprm *const bprm)
+@@ -55,6 +67,7 @@ static int hook_bprm_creds_for_exec(struct linux_binprm *const bprm)
+ #endif /* CONFIG_AUDIT */
+ 
+ static struct security_hook_list landlock_hooks[] __ro_after_init = {
++	LSM_HOOK_INIT(bprm_committing_creds, hook_bprm_committing_creds),
+ 	LSM_HOOK_INIT(cred_prepare, hook_cred_prepare),
+ 	LSM_HOOK_INIT(cred_transfer, hook_cred_transfer),
+ 	LSM_HOOK_INIT(cred_free, hook_cred_free),
+diff --git a/security/landlock/cred.h b/security/landlock/cred.h
+index c10a06727eb1..7ec6dd12ebc3 100644
+--- a/security/landlock/cred.h
++++ b/security/landlock/cred.h
+@@ -49,6 +49,13 @@ struct landlock_cred_security {
+ 	 * not require a current domain.
+ 	 */
+ 	u8 log_subdomains_off : 1;
++	/**
++	 * @set_nnp_on_committing_creds: Set if the domain should set NO_NEW_PRIVS on the
++	 * execution past the point of no return in security_bprm_committing_creds().
++	 * This is not a hierarchy configuration because the nnp state is inherited by
++	 * exec and doesn't need further configuration.
++	 */
++	u8 set_nnp_on_committing_creds : 1;
+ #endif /* CONFIG_AUDIT */
+ } __packed;
+ 
+diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+index eb584f47288d..d298086a4180 100644
+--- a/security/landlock/limits.h
++++ b/security/landlock/limits.h
+@@ -31,7 +31,7 @@
+ #define LANDLOCK_MASK_SCOPE		((LANDLOCK_LAST_SCOPE << 1) - 1)
+ #define LANDLOCK_NUM_SCOPE		__const_hweight64(LANDLOCK_MASK_SCOPE)
+ 
+-#define LANDLOCK_LAST_RESTRICT_SELF	LANDLOCK_RESTRICT_SELF_TSYNC
++#define LANDLOCK_LAST_RESTRICT_SELF	LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
+ #define LANDLOCK_MASK_RESTRICT_SELF	((LANDLOCK_LAST_RESTRICT_SELF << 1) - 1)
+ 
+ /* clang-format on */
+diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+index 1d6fa74f2a52..ad0bd5994ec5 100644
+--- a/security/landlock/ruleset.c
++++ b/security/landlock/ruleset.c
+@@ -121,11 +121,13 @@ int landlock_restrict_cred_precheck(const __u32 flags,
+ 
+ 	/*
+ 	 * Similar checks as for seccomp(2), except that an -EPERM may be
+-	 * returned.
++	 * returned, or no_new_privs may be set by the caller via
++	 * LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS.
+ 	 */
+ 	if (!task_no_new_privs(current) &&
+ 	    !ns_capable_noaudit(current_user_ns(), CAP_SYS_ADMIN)) {
+-		return -EPERM;
++		if (!(flags & LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS))
++			return -EPERM;
+ 	}
+ 
+ 	if (flags & ~LANDLOCK_MASK_RESTRICT_SELF)
+@@ -140,7 +142,7 @@ int landlock_restrict_cred(struct cred *const cred,
+ {
+ 	struct landlock_cred_security *new_llcred;
+ 	bool __maybe_unused log_same_exec, log_new_exec, log_subdomains,
+-		prev_log_subdomains;
++		prev_log_subdomains, set_nnp_on_committing_creds;
+ 
+ 	/*
+ 	 * It is allowed to set LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF without
+@@ -157,6 +159,12 @@ int landlock_restrict_cred(struct cred *const cred,
+ 	log_new_exec = !!(flags & LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON);
+ 	/* Translates "off" flag to boolean. */
+ 	log_subdomains = !(flags & LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF);
++	/*
++	 * Translates "on" flag to boolean. This flag is not inherited by exec,
++	 * but the resulting nnp state is.
++	 */
++	set_nnp_on_committing_creds =
++		!!(flags & LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS);
+ 
+ 	new_llcred = landlock_cred(cred);
+ 
+@@ -165,6 +173,7 @@ int landlock_restrict_cred(struct cred *const cred,
+ 	new_llcred->log_subdomains_off = !prev_log_subdomains ||
+ 					 !log_subdomains;
+ #endif /* CONFIG_AUDIT */
++	new_llcred->set_nnp_on_committing_creds = set_nnp_on_committing_creds;
+ 
+ 	/*
+ 	 * The only case when a ruleset may not be set is if
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index c6c7be7698a2..f3520c764360 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -397,6 +397,7 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
+  *         - %LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON
+  *         - %LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF
+  *         - %LANDLOCK_RESTRICT_SELF_TSYNC
++ *         - %LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
+  *
+  * This system call enforces a Landlock ruleset on the current thread.
+  * Enforcing a ruleset requires that the task has %CAP_SYS_ADMIN in its
+@@ -450,6 +451,10 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+ 	if (!new_cred)
+ 		return -ENOMEM;
+ 
++	if (flags & LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS &&
++	    !ns_capable_noaudit(current_user_ns(), CAP_SYS_ADMIN))
++		task_set_no_new_privs(current);
++
+ 	err = landlock_restrict_cred(new_cred, ruleset, flags);
+ 	if (err) {
+ 		abort_creds(new_cred);
+-- 
+2.53.0
 
-s/landlock/Landlock/g in every text/comment/commit description please.
-
-> setuid transition for instance, without affecting the current escalation.
-> 
-> Semantics
-> ===
-> 
-> This proposal is intended to preserve Landlock semantics as much as practical
-> for an exec-time BPF attachment model:
-> 
-> 1. only pre-existing Landlock rulesets may be applied;
-> 2. BPF cannot construct, inspect, or modify rulesets;
-
-Inspection will be possible with tracepoints, but it is orthogonal to
-this series.
-
-> 3. enforcement still happens before the new program begins execution;
-> 4. normal Landlock inheritance, layering, and future composition remain
-> 	unchanged; and
-> 5. this does not bypass Landlock's privilege checks for applying Landlock
->     rulesets.
-> 
-> In other words, BPF acts as an external selector for when to apply Landlock,
-> not as a replacement for Landlock's enforcement engine.
-> 
-> All behavior, future access rights, and previous access rights are designed
-> to automatically be supported from either BPF or existing syscall contexts.
-> 
-> The main semantic difference is LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS on the BPF
-> path: it guarantees that the resulting task is pinned with no_new_privs before
-> it can perform later exec transitions, but it does not retroactively suppress
-> privilege gain for the current exec transition itself.
-> 
-> The other exception to semantics is the LANDLOCK_RESTRICT_SELF_TSYNC flag.
-> (see Points of Feedback section)
-> 
-> Patch layout
-> ===
-> 
-> Patches 1-5 prepare the Landlock side by moving shared ruleset logic out of
-> syscalls.c, adding a no_new_privs flag for non-syscall callers, exposing
-> linux_binprm->set_nnp_on_point_of_no_return as an interface to set no_new_privs
-> on the point of no return, and making deferred ruleset destruction RCU-safe.
-> 
-> Patches 6-10 add the BPF-facing pieces: the Landlock kfuncs, the new map type,
-> syscall handling for that map, and verifier support.
-> 
-> Patches 11-15 add selftests and the small bpftool update needed for the new
-> map type.
-> 
-> Patches 16-20 add docs and bump the ABI version and update MAINTAINERS.
-> 
-> Feedback is especially welcome on the overall interface shape, the choice of
-> hooks, and the map semantics.
-
-I'll review each patch separately, but this approach is promising.
-
-I think it would be simpler to have a dedicated patch series for
-LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS, and then send another series
-specific to the eBPF side (kfunc, tests, doc...).  I'm not sure what is
-the best way to deal with dependencies across Landlock and BPF though.
-What is the policy for BPF next wrt other next branches?
-
-> 
-> Testing
-> ===
-> 
-> This patch series has two portions of tests.
-> 
-> One lives in the traditional Landlock selftests, for the new
-> LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS flag.
-> 
-> The other suite lives under the BPF selftests, and this tests the Landlock
-> kfuncs and the new BPF_MAP_TYPE_LANDLOCK_RULESET.
-> 
-> This patch series was run through BPF CI, the results of which are here. [1]
-> 
-> All mentioned tests are passing, as well as the BPF CI.
-> 
-> [1] : https://github.com/kernel-patches/bpf/pull/11562
-> 
-> Points of Feedback
-> ===
-> 
-> First, the new set_nnp_on_point_of_no_return field in struct linux_binprm.
-> This field was needed to request that task_set_no_new_privs be set during an
-> execution, but only after the execution has proceeded beyond the point of no
-> return. I couldn't find a way to express this semantic without adding a new
-> bitfield to struct linux_binprm and a conditional in fs/exec.c. Please see
-> patch 2.
-
-What about using security_bprm_committing_creds()?
-
-> 
-> Feedback on the BPF testing harness, which was generated with AI assistance as
-> disclosed in the commit footer, is welcomed. I have only limited familiarity
-> with BPF testing practices. These tests were made with strong human supervision.
-> See patches 14 and 15.
-> 
-> Feedback on the NO_NEW_PRIVS situation is also welcomed. Because task_set_no_new_privs()
-> would otherwise leak state on failed executions or AT_EXECVE_CHECK, this series
-> stages no_new_privs through the exec context and only commits it after
-> point-of-no-return. This preserves failure behavior while still ensuring that
-> the resulting task cannot elevate further through later exec transitions.
-> When called from bprm_creds_from_file, this does not retroactively change the
-> privilege outcome of the current exec transition itself.
-> 
-> See patch 2 and 3.
-> 
-> Next, the RCU in the landlock_ruleset. Existing BPF maps use RCU to make sure maps
-> holding references stay valid. I altered the landlock ruleset to use rcu_work
-> to make sure that the rcu is synchronized before putting on a ruleset, and
-> acquire the rcu in the arraymap implementation. See patches 5-10.
-> 
-> Next, the semantics of the map. What operations should be supported from BPF
-> and userspace and what data types should they return? I consider the struct
-> bpf_landlock_ruleset to be opaque. Userspace can add items to the map via the
-> fd, delete items by their index, and BPF can delete and lookup items by their
-> index. Items cannot be updated, only swapped.
-> 
-> Finally, the handling of the LANDLOCK_RESTRICT_SELF_TSYNC flag. This flag has
-> no meaning in a pre-execution context, as the credentials during the designated
-> LSM hooks (bprm_creds_for_exec/creds_from_file) still represent the pre-execution
-> task. Therefore, this flag is invalidated and attempting to use it with
-> bpf_landlock_restrict_binprm will return -EINVAL. Otherwise, the flag would
-> result in applying the landlock ruleset to the wrong target in addition to the
-> intended one. (see patch 2). This behavior is validated with selftests.
-> 
-> Existing works / Credits
-> ===
-> 
-> Mickaël Salaün created patchsets adding BPF tracepoints for landlock in [2] [3].
-> 
-> Mickaël also gave feedback on this feature and the idea in this GitHub thread. [4]
-> 
-> Günther Noack initially received and provided initial feedback on this idea as
-> an early prototype.
-> 
-> Liz Rice, author of "Learning eBPF: Programming the Linux Kernel for Enhanced
-> Observability, Networking, and Security" provided background and inspired me to
-> experiment with BPF and the BPF LSM. [5]
-> 
-> [2] : https://lore.kernel.org/all/20250523165741.693976-1-mic@digikod.net/
-> [3] : https://lore.kernel.org/linux-security-module/20260406143717.1815792-1-mic@digikod.net/
-> [4] : https://github.com/landlock-lsm/linux/issues/56
-> [5] : https://wellesleybooks.com/book/9781098135126
-> 
-> Kind Regards,
-> Justin Suess
-> 
-> Justin Suess (20):
->   landlock: Move operations from syscall into ruleset code
->   execve: Add set_nnp_on_point_of_no_return
->   landlock: Implement LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
->   selftests/landlock: Cover LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
->   landlock: Make ruleset deferred free RCU safe
->   bpf: lsm: Add Landlock kfuncs
->   bpf: arraymap: Implement Landlock ruleset map
->   bpf: Add Landlock ruleset map type
->   bpf: syscall: Handle Landlock ruleset maps
->   bpf: verifier: Add Landlock ruleset map support
->   selftests/bpf: Add Landlock kfunc declarations
->   selftests/landlock: Rename gettid wrapper for BPF reuse
->   selftests/bpf: Enable Landlock in selftests kernel.
->   selftests/bpf: Add Landlock kfunc test program
->   selftests/bpf: Add Landlock kfunc test runner
->   landlock: Bump ABI version
->   tools: bpftool: Add documentation for landlock_ruleset
->   landlock: Document LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
->   bpf: Document BPF_MAP_TYPE_LANDLOCK_RULESET
->   MAINTAINERS: update entry for the Landlock subsystem
-> 
->  Documentation/bpf/map_landlock_ruleset.rst    | 181 +++++
->  Documentation/userspace-api/landlock.rst      |  22 +-
->  MAINTAINERS                                   |   4 +
->  fs/exec.c                                     |   8 +
->  include/linux/binfmts.h                       |   7 +-
->  include/linux/bpf_lsm.h                       |  15 +
->  include/linux/bpf_types.h                     |   1 +
->  include/linux/landlock.h                      |  92 +++
->  include/uapi/linux/bpf.h                      |   1 +
->  include/uapi/linux/landlock.h                 |  14 +
->  kernel/bpf/arraymap.c                         |  67 ++
->  kernel/bpf/bpf_lsm.c                          | 145 ++++
->  kernel/bpf/syscall.c                          |   4 +-
->  kernel/bpf/verifier.c                         |  15 +-
->  samples/landlock/sandboxer.c                  |   7 +-
->  security/landlock/limits.h                    |   2 +-
->  security/landlock/ruleset.c                   | 198 ++++-
->  security/landlock/ruleset.h                   |  25 +-
->  security/landlock/syscalls.c                  | 158 +---
->  .../bpf/bpftool/Documentation/bpftool-map.rst |   2 +-
->  tools/bpf/bpftool/map.c                       |   2 +-
->  tools/include/uapi/linux/bpf.h                |   1 +
->  tools/lib/bpf/libbpf.c                        |   1 +
->  tools/lib/bpf/libbpf_probes.c                 |   6 +
->  tools/testing/selftests/bpf/bpf_kfuncs.h      |  20 +
->  tools/testing/selftests/bpf/config            |   5 +
->  tools/testing/selftests/bpf/config.x86_64     |   1 -
->  .../bpf/prog_tests/landlock_kfuncs.c          | 733 ++++++++++++++++++
->  .../selftests/bpf/progs/landlock_kfuncs.c     |  92 +++
->  tools/testing/selftests/landlock/base_test.c  |  10 +-
->  tools/testing/selftests/landlock/common.h     |  28 +-
->  tools/testing/selftests/landlock/fs_test.c    | 103 +--
->  tools/testing/selftests/landlock/net_test.c   |  55 +-
->  .../testing/selftests/landlock/ptrace_test.c  |  14 +-
->  .../landlock/scoped_abstract_unix_test.c      |  51 +-
->  .../selftests/landlock/scoped_base_variants.h |  23 +
->  .../selftests/landlock/scoped_common.h        |   5 +-
->  .../selftests/landlock/scoped_signal_test.c   |  30 +-
->  tools/testing/selftests/landlock/wrappers.h   |   2 +-
->  39 files changed, 1877 insertions(+), 273 deletions(-)
->  create mode 100644 Documentation/bpf/map_landlock_ruleset.rst
->  create mode 100644 include/linux/landlock.h
->  create mode 100644 tools/testing/selftests/bpf/prog_tests/landlock_kfuncs.c
->  create mode 100644 tools/testing/selftests/bpf/progs/landlock_kfuncs.c
-> 
-> 
-> base-commit: 8c6a27e02bc55ab110d1828610048b19f903aaec
-> -- 
-> 2.53.0
-> 
-> 
