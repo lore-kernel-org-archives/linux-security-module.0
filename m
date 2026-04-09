@@ -1,124 +1,128 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322BB386566;
-	Thu,  9 Apr 2026 12:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6073A3CE48C
+	for <linux-security-module@vger.kernel.org>; Thu,  9 Apr 2026 12:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775738758; cv=none; b=W8FlGbkmUh+manCRaDEb64J0Sje8RNKygItsanA2mwoKxDETUg2qF1xxVQfYKxRDg+Wl9wQtRsS1lKX8LGZRod1iIL23aiUJZEVr3uyFBmRiN0rCiOHNwXrBqhZmjdx3WETfGtvvb/JBdSaFYJ3wmWSD7XG/FaZaPN6H3wh4reE=
+	t=1775738841; cv=none; b=DiHg+py+XKTqc18hx/Pi8q7SGNI5TZ8MsCRvLmycXW1t8GwYk4cS5YxxUlSxetz5hDnhoRl5bDftLnlvxB9Q0/kh0nv6dMOtsNY/NJbEVqwpqsou16YOz4efZ8C1VLjHpS7JmCCilgoB5zajTC4aS9UFisFHiYEURQCBYFJFQ1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775738758; c=relaxed/simple;
-	bh=F3YWEWo+ZWw7HTP+EW83s9mQm7lmQNVuen/JBUuUnKU=;
+	s=arc-20240116; t=1775738841; c=relaxed/simple;
+	bh=JzLual4b8vOgSlvSLdY4sHt5oZXZB627tGbFNb96fEU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GdYVDNhmoLZB9gWKN77ecj8IHp76uE9idqgi2GtcbgYk/RSuyJ/525Kj2W+XCYt/LBkw+VYNhH0fL8kpB5TYEyjW0O5VytFewMbdHgknIXDHJWoneJWpajDAo2VyvsAYref/1t1hYPHooKpXKCQNjD0h5lmFdqIIQGyhqyBUgpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jIvAptah; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tl1QE88j0oI6cm6Xf5kcAMKEIuN4/SgDbWjuBidLEpnIb324kR9BNYXfZLicUGE46dCsBhOT7AmQzxkYpdzuR8Lzu47SMgOV6+oW+BZQfM8n72qYskAx2B0cuULcIu4AkjkmSBS/XtoCFN5E4uDWXGIuvVxitP5oSnkukRrJPbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a0cZ3OI9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jIvAptah"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D466C4CEF7;
-	Thu,  9 Apr 2026 12:45:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0cZ3OI9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFDE0C4CEF7;
+	Thu,  9 Apr 2026 12:47:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775738757;
-	bh=F3YWEWo+ZWw7HTP+EW83s9mQm7lmQNVuen/JBUuUnKU=;
+	s=k20201202; t=1775738841;
+	bh=JzLual4b8vOgSlvSLdY4sHt5oZXZB627tGbFNb96fEU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jIvAptahXSFmNzHFMElZa6wcgXee9e/ruyoLqF6Pn1zw/4Vj6v3Ty2OoXzK6dY+n6
-	 2giIpM4yXIXlAMd3pnD52DFd75PZ7MU0CKqrYewo8qXGe+vMyZBBFR3XIKkJtWRJbu
-	 8mmahAZCkXnwJF4kNrYpVnQ+qu6wfhmeV3eBK1YBYTHoQfr0H/wcI4D4LjSB5iGBTb
-	 TpE0L/EzixG7I1N3dGOaXH2J6grSzeact+g1IrL2wJ22ecjIbkSatnNTFXrjYZ8+c4
-	 Uro7UxW4GX6d5qMe9Pfi1cmKR+SsInIFZ3Srx/4wKQQpKLSlqNwwEcArq7k82hhZ3a
-	 TBEwjf+JPqOGA==
-Date: Thu, 9 Apr 2026 15:45:53 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Saeed Mahameed <saeedm@nvidia.com>,
-	Itay Avraham <itayavr@nvidia.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>,
-	Maher Sanalla <msanalla@nvidia.com>, paul@paul-moore.com,
+	b=a0cZ3OI9HbY6ImT5L3OQpOrKo1HEBl3RLnL/wX+Bu/qXagLRqetbf50rzpE1DIvTv
+	 MNMRmyxelY3T0grlk01a72w0/igksp5NrfMOg8hqTbUi3TQadGYvqUCXYgei4HEtjH
+	 usMkBtVLioBBAetbKFv4HFOj+2ZkAWE5eyiOzXv+X34ake6n7CHsD3yxUGU80Q7cWH
+	 NQjhQkmvzTYM1zoDd2PxRU1EFRv8NT02HYCuf3IJmOw7H1szi4yIkGz/KYD1yp7Qvr
+	 Jk4wvlyQMG2UYho55uZc6hqLL64F4DJb1/U56xEpBFrnNLFByaYj+bLL/Py/4Wg0Yg
+	 avMmqt86jxP6A==
+Date: Thu, 9 Apr 2026 14:47:16 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Serge Hallyn <serge@hallyn.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Amir Goldstein <amir73il@gmail.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, Paul Moore <paul@paul-moore.com>, 
 	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] Firmware LSM hook
-Message-ID: <20260409124553.GB720371@unreal>
-References: <20260331-fw-lsm-hook-v2-0-78504703df1f@nvidia.com>
- <20260409121230.GA720371@unreal>
- <2dd138a2ae87f90c55dbc3178d9c798294fd4450.camel@huaweicloud.com>
+Subject: Re: LSM: Whiteout chardev creation sidesteps mknod hook
+Message-ID: <20260409-entbrennen-turnschuh-54af9b45610e@brauner>
+References: <adUBCQXrt7kmgqJT@google.com>
+ <06337e89-349a-4334-a735-b8dc9b566cdd@hallyn.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2dd138a2ae87f90c55dbc3178d9c798294fd4450.camel@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <06337e89-349a-4334-a735-b8dc9b566cdd@hallyn.com>
 
-On Thu, Apr 09, 2026 at 02:27:43PM +0200, Roberto Sassu wrote:
-> On Thu, 2026-04-09 at 15:12 +0300, Leon Romanovsky wrote:
-> > On Tue, Mar 31, 2026 at 08:56:32AM +0300, Leon Romanovsky wrote:
-> > > From Chiara:
-> > > 
-> > > This patch set introduces a new BPF LSM hook to validate firmware commands
-> > > triggered by userspace before they are submitted to the device. The hook
-> > > runs after the command buffer is constructed, right before it is sent
-> > > to firmware.
-> > 
-> > <...>
-> > 
-> > > ---
-> > > Chiara Meiohas (4):
-> > >       bpf: add firmware command validation hook
-> > >       selftests/bpf: add test cases for fw_validate_cmd hook
-> > >       RDMA/mlx5: Externally validate FW commands supplied in DEVX interface
-> > >       fwctl/mlx5: Externally validate FW commands supplied in fwctl
-> > 
-> > Hi,
-> > 
-> > Can we get Ack from BPF/LSM side?
+On Tue, Apr 07, 2026 at 12:15:00PM -0500, Serge Hallyn wrote:
+> Apr 7, 2026 08:05:43 Günther Noack <gnoack@google.com>:
 > 
-> + Paul, linux-security-module ML
-> 
-> Hi
-> 
-> probably you also want to get an Ack from the LSM maintainer (added in
-> CC with the list). Most likely, he will also ask you to create the
-> security_*() functions counterparts of the BPF hooks.
+> > Hello Christian, Paul, Mickaël and LSM maintainers!
+> >
+> > I discovered the following bug in Landlock, which potentially also
+> > affects other LSMs:
+> >
+> > With renameat2(2)'s RENAME_WHITEOUT flag, it is possible to create a
+> > "whiteout object" at the source of the rename.  Whiteout objects are
+> > character devices with major/minor (0, 0) -- these devices are not
+> > bound to any driver, so they are harmless, but still, the creation of
+> > these files can sidestep the LANDLOCK_ACCESS_FS_MAKE_CHAR access right
+> > in Landlock.
 
-We implemented this approach in v1:
-https://patch.msgid.link/20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com
-and were advised to pursue a different direction.
+They aren't devices.
 
-Thanks
+> >
+> >
+> > I am unconvinced which is the right fix here -- do you have an opinion
+> > on this from the VFS/LSM side?
+> >
+> >
+> > Option 1: Make filesystems call security_path_mknod() during RENAME_WHITEOUT?
+
+No.
+
+> >
+> > Do it in the VFS rename hook.
+> >
+> > * Pro: Fixes it for all LSMs
+> > * Con: Call would have to be done in multiple filesystems
+> >
+> >
+> > Option 2: Handle it in security_{path,inode}_rename()
+> >
+> > Make Landlock handle it in security_inode_rename() by looking for the
+> > RENAME_WHITEOUT flag.
+> >
+> > * Con: Operation should only be denied if the file system even
+> >   implements RENAME_WHITEOUT, and we would have to maintain a list of
+
+Why? Just deny RENAME_WHITEOUT. What does it matter if the filesystem
+implements it or not. Overlayfs would fall back to non-RENAME_WHITEOUT
+if not provided by the upper fs anway.
+
+> >   affected filesystems for that.  (That feels like solving it at the
+> >   wrong layer of abstraction.)
+> > * Con: Unclear whether other LSMs need a similar fix
+> >
+> >
+> > Option 3: Declare that this is working as intended?
+> 
+> Option 3 has my vote.
+
+Seconded.
 
 > 
-> Roberto
 > 
-> > Thanks
-> > 
-> > > 
-> > >  drivers/fwctl/mlx5/main.c                        | 12 +++++-
-> > >  drivers/infiniband/hw/mlx5/devx.c                | 49 ++++++++++++++++++------
-> > >  include/linux/bpf_lsm.h                          | 41 ++++++++++++++++++++
-> > >  kernel/bpf/bpf_lsm.c                             | 11 ++++++
-> > >  tools/testing/selftests/bpf/progs/verifier_lsm.c | 23 +++++++++++
-> > >  5 files changed, 122 insertions(+), 14 deletions(-)
-> > > ---
-> > > base-commit: 11439c4635edd669ae435eec308f4ab8a0804808
-> > > change-id: 20260309-fw-lsm-hook-7c094f909ffc
-> > > 
-> > > Best regards,
-> > > --  
-> > > Leon Romanovsky <leonro@nvidia.com>
-> > > 
-> 
-> 
+> > * Pro: (0, 0) is not a "real" character device
+> >
+> >
+> > In cases 1 and 2, we'd likely need to double check that we are not
+> > breaking existing scenarios involving OverlayFS, by suddenly requiring
+> > a more lax policy for creating character devices on these directories.
+> >
+> > Please let me know what you think.  I'm specifically interested in:
+> >
+> > 1. Christian: What is the appropriate way to do this VFS wise?
+> > 2. LSM maintainers: Is this a bug that affects other LSMs as well?
+> >
+> > Thanks,
+> > —Günther
+> >
+> > P.S.: For full transparency, I found this bug by pointing Google
+> > Gemini at the Landlock codebase.
+
+Clearly.
