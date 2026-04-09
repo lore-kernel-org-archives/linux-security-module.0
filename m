@@ -1,291 +1,220 @@
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E5B3D9DBF
-	for <linux-security-module@vger.kernel.org>; Wed,  8 Apr 2026 19:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1FD1B4257;
+	Thu,  9 Apr 2026 00:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775676089; cv=none; b=phJExlBPXW39CdK7i2CTHg1TB+K8cUHB1EhXlfsgk9gWe+UEwL1lOeMIfyHz45RwlxfqUQoP19ap+pwM+HCNO0faZzE27RrmFmp9Xp6LgB3SbJjotLG50wBeDFwUObmnfLQbp6eg8ONA3ABFjNH6YXGGdB6RWCzH1tbxopPA5IM=
+	t=1775695307; cv=none; b=R7ttcpPn81eH0rmSMi+VIXjeuL352p96RjewJ8vUw5sEud8wolXZCJS9jVdDcx4nrOz9K/udytokJKmD+aFXP2w/m74DjAajt3TPeZTtJhZXLM3S+XeKsFPfJFLGeXCqSirZLWGv1RQEkLkfzdCOovjwq2ceEk/Yo6kTKxmciCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775676089; c=relaxed/simple;
-	bh=w/vChAtlWYNJS+fM3MqBkAXddxe84quORPtoobVD8Bg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cQp3YMGOM2ALDgZX1Z1Ws8QFXHspLXTO/0ylRLgM1rTw08AZS7EmPHWM/jR13H3MCeHF68MsCPBAOXqxaSZ8hmNwLo/8Ox1Jewcmcdg1Mc/soHdt3sodV50XXHkB1Dn6AzHMdv3+sqBO/D/Ssccdn+gOJvyahPuq7I6U+cgE8Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=hH9ITMQf; arc=none smtp.client-ip=45.157.188.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1775695307; c=relaxed/simple;
+	bh=8wLuI6mh7RXt8kDT4ACedoTRSCK518cCE/kGtYLgjzs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o0cJLLR3ncD39EYw5gTeUpaY5rvYAXCd5ZMaMF5juJ9Pqr18hLorIots4qLh0IV321N/bfrnu3XCKVGC1s9G3u5XE7NjdyabZZa/+0cjTvaY4IXniP30vvI/lHJPOYsF50jZw3AaPS+D1AC27UTV23sv+lfEYsdHEcKcNbA9rSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rdk4EEpr; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="hH9ITMQf"
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4frXwt2Cmsz13BT;
-	Wed,  8 Apr 2026 21:21:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1775676078;
-	bh=lqgJbO6VKY1s5BuLIOCqFqlJGru+qWSHakL+QAEcm6k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hH9ITMQfuNU8tov8EpppnqI3Nr4J/WBjxXU3lvalSA4MvJBCurY8jg4Q4+CAO+4V1
-	 Zc0asqtOkKf7mmlin7bvrkX//+F+b9DRyeCldNUkiNopDSG0EtUpYM5Yc1lZqr0afS
-	 qevN2L1tk5dh2Kv+K/bFAsAzyOJu4SPVXRqPLZO8=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4frXwr54JhzWF3;
-	Wed,  8 Apr 2026 21:21:16 +0200 (CEST)
-Date: Wed, 8 Apr 2026 21:21:11 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Justin Suess <utilityemal77@gmail.com>
-Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	brauner@kernel.org, daniel@iogearbox.net, eddyz87@gmail.com, fred@cloudflare.com, 
-	gnoack@google.com, jack@suse.cz, jmorris@namei.org, john.fastabend@gmail.com, 
-	kees@kernel.org, kpsingh@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, m@maowtm.org, 
-	martin.lau@linux.dev, paul@paul-moore.com
-Subject: Re: [RFC PATCH 00/20] BPF interface for applying Landlock rulesets
-Message-ID: <20260408.ainu5Chohnge@digikod.net>
-References: <20260408.ong9Eshe0omu@digikod.net>
- <20260408171030.4083129-1-utilityemal77@gmail.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rdk4EEpr"
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 638JwMZS2302812;
+	Thu, 9 Apr 2026 00:41:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=pRmlUh
+	ffsUdNaSm0DEU37CAO1oOaNK/euXOQaoxSaSA=; b=rdk4EEpr/tmMiUNhFkqbU8
+	7Fo+coYxcS6ZHPGjcHU/uS8/P/rFty9qgyqOM0IH/H3hGWEq3Am1wVBaVnayZIhc
+	18AoLpjRCF/XFt1bDZ24BAzLaodUdA8zNvElqXq2tG/4Hotp8e68P7kJZEOZSrjl
+	q6/irpToG3G8O7WxC9doHv5sFElV8zeu/zonQDfZdjv7Z+oZj0nR2cPjogAunJZ0
+	75u5fa6a7oksxTIk9tQ+nyMFrmrL8mohIHLQFWn4nHRUMntUiWgAY45EECnKK7tu
+	xn+wad2YbytkLz1x/yqj6ITjhAnbDTwUGHnSn6NgqeVNZQDw5Tt0MDZ+jir68hHQ
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4dcn2fjm8f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 09 Apr 2026 00:41:24 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 638KivM3013827;
+	Thu, 9 Apr 2026 00:41:23 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4dcmf49kmg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 09 Apr 2026 00:41:23 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6390fMdf29426372
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 9 Apr 2026 00:41:22 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F2FC258051;
+	Thu,  9 Apr 2026 00:41:21 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2FD425805C;
+	Thu,  9 Apr 2026 00:41:21 +0000 (GMT)
+Received: from [9.61.12.143] (unknown [9.61.12.143])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  9 Apr 2026 00:41:21 +0000 (GMT)
+Message-ID: <de80f843-32cf-44fc-99fa-27741bb5591a@linux.ibm.com>
+Date: Wed, 8 Apr 2026 20:41:20 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] KEYS: trusted: Debugging as a feature
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        Srish Srinivasan <ssrish@linux.ibm.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Ahmad Fatoum
+ <a.fatoum@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+References: <20260324110043.67248-1-jarkko@kernel.org>
+ <afc489d2-a62f-4604-8e56-219311b46516@linux.ibm.com>
+ <adYRURAJfNCu0FYB@kernel.org>
+Content-Language: en-US
+From: Nayna Jain <nayna@linux.ibm.com>
+In-Reply-To: <adYRURAJfNCu0FYB@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260408171030.4083129-1-utilityemal77@gmail.com>
-X-Infomaniak-Routing: alpha
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDA5MDAwMSBTYWx0ZWRfXx03AtMlscnw0
+ +nHg0Q1ejTFqilAIAFX/PS/H+YJcRn5uw9YzKjL8vaGETUH+ktrw6C5mUcs+1oBbRXIKQcD+/Nm
+ 28Mx0LAybPA2KjS6vsd+QP83xa30zDv9vnid84UQO1Z7vLNkfTh6fHPdBQf/pfU2Z46jiu0yDZa
+ TfuwyfXTcVpAWDstqF4nFZSOJzJV2RsYaC36t2twHwj4wSIMnEFw+DVITWu6ZxCsr+9ibSlVb4N
+ qoqCakTZ9cC7ThHAasbvBYswRgKNKJuzF6Z40mWeqXfBa1BRWsI6PwJsFO2iGY5n9nPOepgk7NW
+ KhySIq5mQsE4nW7taDiME3dT3Cxa/1MuZogI2s5tQ2D9xCfjxBt5VbtiyJ9wUV8vPOR9/OBJuUi
+ 4OkSrgj7uLUtpIuq91dbnAQBCQgDeu/GsqT0ilhk+doT5P9xUY1DC2q3MUIRmq3aiR29K32hvM8
+ 4UTT+U5z55ZMPX5rVJg==
+X-Authority-Analysis: v=2.4 cv=FsY1OWrq c=1 sm=1 tr=0 ts=69d6f5b4 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=U7nrCbtTmkRpXpFmAIza:22 a=VwQbUJbxAAAA:8
+ a=VnNF1IyMAAAA:8 a=9zmYnvBJHafUxEwRPyoA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: iiKealSa48_Ha8C8NaPTn0cV83Mj2L13
+X-Proofpoint-GUID: iiKealSa48_Ha8C8NaPTn0cV83Mj2L13
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-08_07,2026-04-08_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 impostorscore=0 spamscore=0 phishscore=0
+ lowpriorityscore=0 clxscore=1015 adultscore=0 malwarescore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604010000 definitions=main-2604090001
 
-On Wed, Apr 08, 2026 at 01:10:28PM -0400, Justin Suess wrote:
-> 
-> Add a flag LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS, which executes
-> task_set_no_new_privs on the current credentials, but only if
-> the process lacks the CAP_SYS_ADMIN capability.
-> 
-> While this operation is redundant for code running from userspace
-> (indeed callers may achieve the same logic by calling
-> prctl w/ PR_SET_NO_NEW_PRIVS), this flag enables callers without access
-> to the syscall abi (defined in subsequent patches) to restrict processes
-> from gaining additional capabilities. This is important to ensure that
-> consumers can meet the task_no_new_privs || CAP_SYS_ADMIN invariant
-> enforced by Landlock without having syscall access.
-> 
-> This is done by hooking bprm_committing_creds along with a
-> landlock_cred_security flag to indicate that the next execution should
-> task_set_no_new_privs if the process doesn't possess CAP_SYS_ADMIN. This
-> is done to ensure that task_set_no_new_privs is being done past the
-> point of no return.
-> 
-> Cc: Mickaël Salaün <mic@digikod.net>
-> Signed-off-by: Justin Suess <utilityemal77@gmail.com>
-> ---
-> 
-> On Wed, Apr 08, 2026 at 02:00:00 -0000, Mickaël Salaün wrote:
-> > > Points of Feedback
-> > > ===
-> > > 
-> > > First, the new set_nnp_on_point_of_no_return field in struct linux_binprm.
-> > > This field was needed to request that task_set_no_new_privs be set during an
-> > > execution, but only after the execution has proceeded beyond the point of no
-> > > return. I couldn't find a way to express this semantic without adding a new
-> > > bitfield to struct linux_binprm and a conditional in fs/exec.c. Please see
-> > > patch 2.
-> 
-> > What about using security_bprm_committing_creds()?
-> 
-> Good idea. Definitely cleaner.
-> 
-> Something like this? Then dropping the "execve: Add set_nnp_on_point_of_no_return"
-> commit.
-> 
-> This adds a bitfield to the landlock_cred_security struct to indicate that the flag
-> should be set on the next exec(s).
-> 
->  include/uapi/linux/landlock.h | 14 ++++++++++++++
->  security/landlock/cred.c      | 13 +++++++++++++
->  security/landlock/cred.h      |  7 +++++++
->  security/landlock/limits.h    |  2 +-
->  security/landlock/ruleset.c   | 15 ++++++++++++---
->  security/landlock/syscalls.c  |  5 +++++
->  6 files changed, 52 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> index f88fa1f68b77..edd9d9a7f60e 100644
-> --- a/include/uapi/linux/landlock.h
-> +++ b/include/uapi/linux/landlock.h
-> @@ -129,12 +129,26 @@ struct landlock_ruleset_attr {
->   *
->   *     If the calling thread is running with no_new_privs, this operation
->   *     enables no_new_privs on the sibling threads as well.
-> + *
-> + * %LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
-> + *    Sets no_new_privs on the calling thread before applying the Landlock domain.
-> + *    This flag is useful for convenience as well as for applying a ruleset from
-> + *    an outside context (e.g BPF). This flag only has an effect on when both
-> + *    no_new_privs isn't already set and the caller doesn't possess CAP_SYS_ADMIN.
-> + *
-> + *    This flag has slightly different behavior when used from BPF. Instead of
-> + *    setting no_new_privs on the current task, it sets a flag on the bprm so that
-> + *    no_new_privs is set on the task at exec point-of-no-return. This guarantees
-> + *    that the current execution is unaffected, and may escalate as usual until the
-> + *    next exec, but the resulting task cannot gain more privileges through later
-> + *    exec transitions.
->   */
->  /* clang-format off */
->  #define LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF		(1U << 0)
->  #define LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON			(1U << 1)
->  #define LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF		(1U << 2)
->  #define LANDLOCK_RESTRICT_SELF_TSYNC				(1U << 3)
-> +#define LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS			(1U << 4)
->  /* clang-format on */
->  
->  /**
-> diff --git a/security/landlock/cred.c b/security/landlock/cred.c
-> index 0cb3edde4d18..bcc9b716916f 100644
-> --- a/security/landlock/cred.c
-> +++ b/security/landlock/cred.c
-> @@ -43,6 +43,18 @@ static void hook_cred_free(struct cred *const cred)
->  		landlock_put_ruleset_deferred(dom);
->  }
->  
-> +static void hook_bprm_committing_creds(const struct linux_binprm *bprm)
-> +{
-> +	struct landlock_cred_security *const llcred = landlock_cred(bprm->cred);
-> +
-> +	if (llcred->set_nnp_on_committing_creds &&
-> +	    !ns_capable_noaudit(current_user_ns(), CAP_SYS_ADMIN)) {
 
-If asked by the caller, NNP must be set, whatever the capabilities of
-the task.
+On 4/8/26 4:26 AM, Jarkko Sakkinen wrote:
+> On Mon, Apr 06, 2026 at 10:42:00PM -0400, Nayna Jain wrote:
+>> On 3/24/26 7:00 AM, Jarkko Sakkinen wrote:
+>>> TPM_DEBUG, and other similar flags, are a non-standard way to specify a
+>>> feature in Linux kernel.  Introduce CONFIG_TRUSTED_KEYS_DEBUG for
+>>> trusted keys, and use it to replace these ad-hoc feature flags.
+>>>
+>>> Given that trusted keys debug dumps can contain sensitive data, harden
+>>> the feature as follows:
+>>>
+>>> 1. In the Kconfig description postulate that pr_debug() statements must be
+>>>      used.
+>>> 2. Use pr_debug() statements in TPM 1.x driver to print the protocol dump.
+>>>
+>>> Traces, when actually needed, can be easily enabled by providing
+>>> trusted.dyndbg='+p' in the kernel command-line.
+>>>
+>>> Cc: Srish Srinivasan <ssrish@linux.ibm.com>
+>>> Reported-by: Nayna Jain <nayna@linux.ibm.com>
+>>> Closes: https://lore.kernel.org/all/7f8b8478-5cd8-4d97-bfd0-341fd5cf10f9@linux.ibm.com/
+>>> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+>>> ---
+>>> v2:
+>>> - Implement for all trusted keys backends.
+>>> - Add HAVE_TRUSTED_KEYS_DEBUG as it is a good practice despite full
+>>>     coverage.
+>>> ---
+>>>    include/keys/trusted-type.h               | 18 +++++-------
+>>>    security/keys/trusted-keys/Kconfig        | 19 ++++++++++++
+>>>    security/keys/trusted-keys/trusted_caam.c |  4 +--
+>>>    security/keys/trusted-keys/trusted_tpm1.c | 36 +++++++++++------------
+>>>    4 files changed, 46 insertions(+), 31 deletions(-)
+>>>
+>>> diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
+>>> index 03527162613f..620a1f890b6b 100644
+>>> --- a/include/keys/trusted-type.h
+>>> +++ b/include/keys/trusted-type.h
+>>> @@ -83,18 +83,16 @@ struct trusted_key_source {
+>>>    extern struct key_type key_type_trusted;
+>>> -#define TRUSTED_DEBUG 0
+>>> -
+>>> -#if TRUSTED_DEBUG
+>>> +#ifdef CONFIG_TRUSTED_KEYS_DEBUG
+>>>    static inline void dump_payload(struct trusted_key_payload *p)
+>>>    {
+>>> -	pr_info("key_len %d\n", p->key_len);
+>>> -	print_hex_dump(KERN_INFO, "key ", DUMP_PREFIX_NONE,
+>>> -		       16, 1, p->key, p->key_len, 0);
+>>> -	pr_info("bloblen %d\n", p->blob_len);
+>>> -	print_hex_dump(KERN_INFO, "blob ", DUMP_PREFIX_NONE,
+>>> -		       16, 1, p->blob, p->blob_len, 0);
+>>> -	pr_info("migratable %d\n", p->migratable);
+>>> +	pr_debug("key_len %d\n", p->key_len);
+>>> +	print_hex_dump_debug("key ", DUMP_PREFIX_NONE,
+>>> +			     16, 1, p->key, p->key_len, 0);
+>>> +	pr_debug("bloblen %d\n", p->blob_len);
+>>> +	print_hex_dump_debug("blob ", DUMP_PREFIX_NONE,
+>>> +			     16, 1, p->blob, p->blob_len, 0);
+>>> +	pr_debug("migratable %d\n", p->migratable);
+>>>    }
+>>>    #else
+>>>    static inline void dump_payload(struct trusted_key_payload *p)
+>>> diff --git a/security/keys/trusted-keys/Kconfig b/security/keys/trusted-keys/Kconfig
+>>> index 9e00482d886a..2ad9ba0e03f1 100644
+>>> --- a/security/keys/trusted-keys/Kconfig
+>>> +++ b/security/keys/trusted-keys/Kconfig
+>>> @@ -1,10 +1,25 @@
+>>>    config HAVE_TRUSTED_KEYS
+>>>    	bool
+>>> +config HAVE_TRUSTED_KEYS_DEBUG
+>>> +	bool
+>>> +
+>>> +config TRUSTED_KEYS_DEBUG
+>>> +	bool "Debug trusted keys"
+>>> +	depends on HAVE_TRUSTED_KEYS_DEBUG
+>>> +	default n
+>>> +	help
+>>> +	  Trusted keys backends and core code that support debug dumps
+>>> +	  can opt-in that feature here. Dumps must only use DEBUG
+>>> +	  level output, as sensitive data may pass by. In the
+>>> +	  kernel-command line traces can be enabled via
+>>> +	  trusted.dyndbg='+p'.
+>> Would it be good idea to add an explicit note/warning:
+>>
+>>
+>> NOTE: This option is intended for debugging purposes only. Do not enable on
+>> production systems as debug output may expose sensitive cryptographic
+>> material.
+>> If you are unsure, say N.
+>>
+>> Apart from this, looks good to me.
+>>
+>> Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
+> Thank, I'll add your tag but would you mind quickly screening v3 again
+> where I add "trusted.debug=0|1". And yes, your suggestion about extra
+> warning makes sense.
+Sure Jarkko.. However, I don't see v3 version in my inbox or in 
+linux-integrity. Or you are about to post it soon.
+>
+> Let's make this safe as possible. Mistakes do happen... and then those
+> measures pay off :-)
+Yes agree.
+>
+> BR, Jarkko
 
-> +		task_set_no_new_privs(current);
-> +		/* Don't need to set it again for subsequent execution. */
-> +		llcred->set_nnp_on_committing_creds = false;
-> +	}
+Thanks & Regards,
 
-Thinking more about it, it would make more sense to add another flag to
-enforce restriction on the next exec.  This new cred bit would then be
-generic and enforce both NNP (if set) and the domain once we know the
-execution is ok.  That should also bring the required plumbing to
-create the domain at syscall (or kfunc) time and handle memory
-allocation issue there, but only enforce it at exec time with
-security_bprm_committing_creds() (without any possible error).
+     - Nayna
 
-> +}
-> +
->  #ifdef CONFIG_AUDIT
->  
->  static int hook_bprm_creds_for_exec(struct linux_binprm *const bprm)
-> @@ -55,6 +67,7 @@ static int hook_bprm_creds_for_exec(struct linux_binprm *const bprm)
->  #endif /* CONFIG_AUDIT */
->  
->  static struct security_hook_list landlock_hooks[] __ro_after_init = {
-> +	LSM_HOOK_INIT(bprm_committing_creds, hook_bprm_committing_creds),
->  	LSM_HOOK_INIT(cred_prepare, hook_cred_prepare),
->  	LSM_HOOK_INIT(cred_transfer, hook_cred_transfer),
->  	LSM_HOOK_INIT(cred_free, hook_cred_free),
-> diff --git a/security/landlock/cred.h b/security/landlock/cred.h
-> index c10a06727eb1..7ec6dd12ebc3 100644
-> --- a/security/landlock/cred.h
-> +++ b/security/landlock/cred.h
-> @@ -49,6 +49,13 @@ struct landlock_cred_security {
->  	 * not require a current domain.
->  	 */
->  	u8 log_subdomains_off : 1;
-> +	/**
-> +	 * @set_nnp_on_committing_creds: Set if the domain should set NO_NEW_PRIVS on the
-> +	 * execution past the point of no return in security_bprm_committing_creds().
-> +	 * This is not a hierarchy configuration because the nnp state is inherited by
-> +	 * exec and doesn't need further configuration.
-> +	 */
-> +	u8 set_nnp_on_committing_creds : 1;
->  #endif /* CONFIG_AUDIT */
->  } __packed;
->  
-> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
-> index eb584f47288d..d298086a4180 100644
-> --- a/security/landlock/limits.h
-> +++ b/security/landlock/limits.h
-> @@ -31,7 +31,7 @@
->  #define LANDLOCK_MASK_SCOPE		((LANDLOCK_LAST_SCOPE << 1) - 1)
->  #define LANDLOCK_NUM_SCOPE		__const_hweight64(LANDLOCK_MASK_SCOPE)
->  
-> -#define LANDLOCK_LAST_RESTRICT_SELF	LANDLOCK_RESTRICT_SELF_TSYNC
-> +#define LANDLOCK_LAST_RESTRICT_SELF	LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
->  #define LANDLOCK_MASK_RESTRICT_SELF	((LANDLOCK_LAST_RESTRICT_SELF << 1) - 1)
->  
->  /* clang-format on */
-> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-> index 1d6fa74f2a52..ad0bd5994ec5 100644
-> --- a/security/landlock/ruleset.c
-> +++ b/security/landlock/ruleset.c
-> @@ -121,11 +121,13 @@ int landlock_restrict_cred_precheck(const __u32 flags,
->  
->  	/*
->  	 * Similar checks as for seccomp(2), except that an -EPERM may be
-> -	 * returned.
-> +	 * returned, or no_new_privs may be set by the caller via
-> +	 * LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS.
->  	 */
->  	if (!task_no_new_privs(current) &&
->  	    !ns_capable_noaudit(current_user_ns(), CAP_SYS_ADMIN)) {
-> -		return -EPERM;
-> +		if (!(flags & LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS))
-> +			return -EPERM;
->  	}
->  
->  	if (flags & ~LANDLOCK_MASK_RESTRICT_SELF)
-> @@ -140,7 +142,7 @@ int landlock_restrict_cred(struct cred *const cred,
->  {
->  	struct landlock_cred_security *new_llcred;
->  	bool __maybe_unused log_same_exec, log_new_exec, log_subdomains,
-> -		prev_log_subdomains;
-> +		prev_log_subdomains, set_nnp_on_committing_creds;
->  
->  	/*
->  	 * It is allowed to set LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF without
-> @@ -157,6 +159,12 @@ int landlock_restrict_cred(struct cred *const cred,
->  	log_new_exec = !!(flags & LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON);
->  	/* Translates "off" flag to boolean. */
->  	log_subdomains = !(flags & LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF);
-> +	/*
-> +	 * Translates "on" flag to boolean. This flag is not inherited by exec,
-> +	 * but the resulting nnp state is.
-> +	 */
-> +	set_nnp_on_committing_creds =
-> +		!!(flags & LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS);
->  
->  	new_llcred = landlock_cred(cred);
->  
-> @@ -165,6 +173,7 @@ int landlock_restrict_cred(struct cred *const cred,
->  	new_llcred->log_subdomains_off = !prev_log_subdomains ||
->  					 !log_subdomains;
->  #endif /* CONFIG_AUDIT */
-> +	new_llcred->set_nnp_on_committing_creds = set_nnp_on_committing_creds;
->  
->  	/*
->  	 * The only case when a ruleset may not be set is if
-> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-> index c6c7be7698a2..f3520c764360 100644
-> --- a/security/landlock/syscalls.c
-> +++ b/security/landlock/syscalls.c
-> @@ -397,6 +397,7 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
->   *         - %LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON
->   *         - %LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF
->   *         - %LANDLOCK_RESTRICT_SELF_TSYNC
-> + *         - %LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
->   *
->   * This system call enforces a Landlock ruleset on the current thread.
->   * Enforcing a ruleset requires that the task has %CAP_SYS_ADMIN in its
-> @@ -450,6 +451,10 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
->  	if (!new_cred)
->  		return -ENOMEM;
->  
-> +	if (flags & LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS &&
-> +	    !ns_capable_noaudit(current_user_ns(), CAP_SYS_ADMIN))
-> +		task_set_no_new_privs(current);
-> +
->  	err = landlock_restrict_cred(new_cred, ruleset, flags);
->  	if (err) {
->  		abort_creds(new_cred);
-> -- 
-> 2.53.0
-> 
-> 
