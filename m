@@ -1,360 +1,165 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8501931197B;
-	Fri, 10 Apr 2026 17:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B043876CD
+	for <linux-security-module@vger.kernel.org>; Fri, 10 Apr 2026 23:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775842467; cv=none; b=jYNmCE//m5yLyi4ID35eZjsBUGvtX+bpCl6jaFnc1diHkf5OcaxlCIeQRSysuw0o+iKkFc7KxM9EymtM2UVyK17k0r9bERzFdCQ7joR/p2u3+eN29KO2L28yG3Ft4IL4u+sxN10e8to97dAuKry4s4Gm6zgNNYT2Rg1+8/CKSRg=
+	t=1775863570; cv=none; b=FnU51lWJPjhkDhyJGpCzhiNgZbGsig1d2840RCMj1KjyvKdxzc+pzqQHmszjwp7WpB9QDfLU+sYF2IcinquXISlGKM4hT8EzS8t5PWbNxPyvE6BDrJOZ0SGZVT7FfB4J5uN2aH7KyKL1qfNlSI2QYWoHe4MhtGJcG/uzV0aYgmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775842467; c=relaxed/simple;
-	bh=SytBU+gVlBZFZmcD149/vLjEy1Kc7EaN4+jTmF5X16k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gczwuhzUjCYIiNS5mWR6+G3I5nayM1x8z5lpURUXcbOOh2/DWV1P7j+7TXBitFdj3xhqK0UD+Fz46BdRW/zJe1t0D91TxTCldKKugF4BP9bWAC82u0bbpUOVotvQH/KBOupvgPiQJd50rRCwLW+fC3i09GeDgTYFzE3aIN02gg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KQdyXOOs; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1775863570; c=relaxed/simple;
+	bh=Nuzl7SzUb36RGtsiAcR1c9Ieru1jN8wMpzXLxPBpSoc=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=Di/ETQkHreFMd8KHgGB4scdWQZ6h2aRXH8TqTYmiH/QjL67Quq0engcRo+4f6jPTCPz7Jdfx+iUwp25WD3Eyaf4x2A5KjIhL70sMg0pvCI/NHRPtseSlJXH2/MFSjXIM8XWz5YJJEewYwORQRTadh6ktc1XHWRqua1rnQB0iekc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=gnoiI6AO; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KQdyXOOs"
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63AF4MFO2315079;
-	Fri, 10 Apr 2026 17:34:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=sxuw9U
-	RWaYwq734cQChTmoBJHNMMp2zsf3hfTKvU1J0=; b=KQdyXOOsLJ/eFiWD5HGcqV
-	XHzHnVrRrZyD1TjxECfCZyUoKxm0elaOqVB22rtvbRWJXMmGYkr1+656UqENGMHz
-	bAQPwHKd5brpv6o8EWDcgZX5mndgCk4JOBs7n6hSG3Psv8X203Nez/6hCEF4ipu7
-	78DiEs0XmV7VmRrLY1Za01urYT8K0AaJW1PRSE9zascRFDIM5+uX1+wC0PDYAcOJ
-	GGhlRDadNn0INGuNYUx5kCHcjOJuwDxY5rEWuKDAtGxcqTCtvZ3AMF9TXbwb9j7w
-	1pIVDG3tRc4ul5p9PyYVO4WSKiuY9blQTOEt7cLhdCxwqAyllLOiM1cH15lZ1fJw
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4dcn2gb9bk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 Apr 2026 17:34:07 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 63AGmSwW026646;
-	Fri, 10 Apr 2026 17:34:06 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4dcmg894qk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 Apr 2026 17:34:06 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 63AHY4Jf40567132
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 10 Apr 2026 17:34:04 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8EC7E58055;
-	Fri, 10 Apr 2026 17:34:04 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id ED7BD5803F;
-	Fri, 10 Apr 2026 17:33:59 +0000 (GMT)
-Received: from [9.124.214.12] (unknown [9.124.214.12])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 10 Apr 2026 17:33:59 +0000 (GMT)
-Message-ID: <05c9a2c3-8077-4a1c-87f8-4e240ee1e5c4@linux.ibm.com>
-Date: Fri, 10 Apr 2026 23:03:58 +0530
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="gnoiI6AO"
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-8d1b746f522so284411385a.0
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Apr 2026 16:26:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1775863567; x=1776468367; darn=vger.kernel.org;
+        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hHb6SI3b6dJgkA4ClKJYO+UN8/fHAXhAk0b1FfPTMyk=;
+        b=gnoiI6AO6GUrIBABYHpZIbuAZvOto39W8JSyUVfp5SDDwf1VI4p4rulCpkrSEPWrex
+         CghemwFXk1U2roNTywMN8G9YtEJqVtsGSSGK7dHsrSDXFlzs0bYm9LlvcVX1H87G6yBg
+         OP7AKhnNsZ9xY6krmee1OBihC48EFkPVBGTmT7G7CALXdU6qUZPvCDoVnoDvQN0D0YS9
+         TcALgPwWmagV86J06gPFdxvWH56Daw6aro5j3Owz6vR/m2hr1EiXgpcLtmnKXkjSy8Mr
+         O67cG8PscBRJ42DLE/IQ/m2uHKeHlW7QwXulfbfb96bENYrpAejW1fOVf2MIKngzjrjt
+         19QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775863567; x=1776468367;
+        h=subject:cc:to:from:message-id:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=hHb6SI3b6dJgkA4ClKJYO+UN8/fHAXhAk0b1FfPTMyk=;
+        b=V5BJJE/XQIdqCmpdMhzFoQvqxF0+UKY+Nw2Q8stfJwTBrtbc37jCONAywoWQ4Ce4Q6
+         umZD7syl+y+Cl1yIYgo71P6wbMSEyR8e0xivZA+pKpRl0UAUOqlQynb3m+EJRhw8+El9
+         nyWFILPAZXTOfGVorip5J5dydOEx1sNDQZZxox7F10EmFT78P4Vsf8Z8Ff2y7W2t4o0D
+         9PWlaacXDeJOgvtlh3gRYrAP9X9YcyMAluU9Chd1PZqTEloKf5OUhG+ybfVzGzdfkkQO
+         JpsSP9SLezXrSpoY2GSny0r655q5BoZAIRDuHd8axqq18Vgrb/2YE0cerWJ4CzO3yqMU
+         6nIQ==
+X-Gm-Message-State: AOJu0YySBKKkWBlpLavTWBGRiuwDhGqVdwp5LjqLXTqAMf/rIVjxoIzW
+	0RYmBzS8K/dik46SQ/EHCf81OXIBGHU5b0H1J3+4QYUcyZOUoKdTRtz0/r5lk4yWnKENHPVmb9s
+	Xdu8=
+X-Gm-Gg: AeBDiesR0zBaq5dlSl5QPD7g5jVwMTI+i5ndL+nkFlXC2ybLfTkNA35ja4Uajg4ytEl
+	cSKwjRffvE2W+AroYEQetBnhTVPVGODeeKW67NV6euEc8EXh6rqo3SF8akqg55scbe1ZmClQOGj
+	y0u/cktqASARtO5lm31dDdpnof+h8N6+C9vSHXHyAZNiBbwF2KsIEql07ydL12QQDpPS8SkRt2E
+	bIfCi+IROyE7KtfJ4wcdqHIwR4vfAX4gMgLyxBrZEQ9rx9DQpNnB7ImTG95fTqa/nIEEMcXwtmn
+	Y9Xd5tT/XuXAcD4qC7GfZX+/EKc1s+p70F2tfLQeO9srAR8ts/f6zJbxiOKLFpFgJfp+IwhPxMf
+	d18z7UuKvlveJPFF4Ty55Dz3vBxgBaEGqcNxHuzHkGlcEGesHNMnavIJBC/K0sHl/KvblGsgrVx
+	8zIa5Kj81qd8gNp1356wYDB80HuYVf1airmpnd9Q6iZGyi9dUugkymqcxQpt5lhMKsBqDy
+X-Received: by 2002:a05:620a:17a7:b0:8cf:d565:fcb1 with SMTP id af79cd13be357-8ddcd21931fmr737017285a.5.1775863567058;
+        Fri, 10 Apr 2026 16:26:07 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8ddb5f88c82sm313385285a.2.2026.04.10.16.26.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Apr 2026 16:26:06 -0700 (PDT)
+Date: Fri, 10 Apr 2026 19:26:05 -0400
+Message-ID: <9a2a59bd8d9548fb5dab128f4859fa3d@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] lsm/lsm-pr-20260410
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] KEYS: trusted: Debugging as a feature
-To: Jarkko Sakinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org
-Cc: Nayna Jain <nayna@linux.ibm.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Ahmad Fatoum
- <a.fatoum@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20260409160752.988713-1-jarkko@kernel.org>
-Content-Language: en-US
-From: Srish Srinivasan <ssrish@linux.ibm.com>
-In-Reply-To: <20260409160752.988713-1-jarkko@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=FKArAeos c=1 sm=1 tr=0 ts=69d9348f cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=uAbxVGIbfxUO_5tXvNgY:22 a=VwQbUJbxAAAA:8
- a=VnNF1IyMAAAA:8 a=tDorxWB54CrSdUbKvnUA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: P81F6UpsKvBJQvCIils-FdvMCFHRncEU
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDEwMDE2MiBTYWx0ZWRfX6A8Sfe9Ny/w9
- J+8Dm3Fd9jUweJWzBtu2+Cs595iEHjcbZT0hc3v2s7hXC5adi45+QxEZ94h7mlNdHw7s6KrX+ce
- TrVr9CMWTP/x/r/SQclzrUVNR/AdWtrmdZAjV9zO4xRV/gWlPckV33e+AtSwze+GDAMaZnlNKl/
- o8lxfFgtnJtwq+75tzXahJ6HvhfbVm5FR2NRC2FdWPyOc+3Ff0K9MkN5d2rnMJLzYaSWnzHGo/T
- A7gt/h38b6IFWaofmsfqg2f/pUbk+75MzkuXNDaZn8nXWR5UC0dlXO6CrOJqUreWPEC9DjluFxR
- D3gxxgP2FmtrBAAkLBFePi1ablyxpjPtkGf73l1hoOddiQwHfV/ytEBPcghk0L0V9UsTavEweEY
- RIb81v5ZUwgNiGIywrGVz+SXnmOD9PyP6GYSxGcvyZT5HxedUoii83B+GlOXYMTUSBBljCq5bFx
- pudRc6aVnbJmtStUxUA==
-X-Proofpoint-GUID: P81F6UpsKvBJQvCIils-FdvMCFHRncEU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-10_05,2026-04-09_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 lowpriorityscore=0 adultscore=0 bulkscore=0
- suspectscore=0 priorityscore=1501 impostorscore=0 spamscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2604010000 definitions=main-2604100162
 
+Linus,
 
-On 4/9/26 9:37 PM, Jarkko Sakinen wrote:
-> From: Jarkko Sakkinen <jarkko@kernel.org>
->
-> TPM_DEBUG, and other similar flags, are a non-standard way to specify a
-> feature in Linux kernel. Introduce CONFIG_TRUSTED_KEYS_DEBUG for trusted
-> keys, and use it to replace these ad-hoc feature flags.
->
-> Given that trusted keys debug dumps can contain sensitive data, harden the
-> feature as follows:
->
-> 1. In the Kconfig description postulate that pr_debug() statements must be
->     used.
-> 2. Use pr_debug() statements in TPM 1.x driver to print the protocol dump.
-> 3. Require trusted.debug=1 on the kernel command line (default: 0) to
->     activate dumps at runtime, even when CONFIG_TRUSTED_KEYS_DEBUG=y.
->
-> Traces, when actually needed, can be easily enabled by providing
-> trusted.dyndbg='+p' and trusted.debug=1 in the kernel command-line.
->
-> Cc: Srish Srinivasan <ssrish@linux.ibm.com>
-> Reported-by: Nayna Jain <nayna@linux.ibm.com>
-> Closes: https://lore.kernel.org/all/7f8b8478-5cd8-4d97-bfd0-341fd5cf10f9@linux.ibm.com/
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+We only have five patches in the LSM tree, but three of the five are for
+an important bugfix relating to overlayfs and the mmap() and mprotect()
+access controls for LSMs.  Highlights below:
 
+- Fix problems with the mmap() and mprotect() LSM hooks on overlayfs
 
-Tested on PKWM and emulated TPM backends.
+As we are dealing with problems both in mmap() and mprotect() there are
+essentially two components to this fix, spread across three patches with
+all marked for stable.
 
-Tested-by: Srish Srinivasan <ssrish@linux.ibm.com>
+The simplest portion of the fix is the creation of a new LSM hook,
+security_mmap_backing_file(), that is used to enforce LSM mmap() access
+controls on backing files in the stacked/overlayfs case.  The existing
+security_mmap_file() does not have visibility past the user file.  You
+can see from the associated SELinux hook callback the code is fairly
+straightforward.
 
+The mprotect() fix is a bit more complicated as there is no way in the
+mprotect() code path to inspect both the user and backing files, and
+bolting on a second file reference to vm_area_struct wasn't really an
+option.  The solution taken here adds a LSM security blob and associated
+hooks to the backing_file struct that LSMs can use to capture and store
+relevant information from the user file.  While the necessary SELinux
+information is relatively small, a single u32, I expect other LSMs to
+require more than that, and a dedicated backing_file LSM blob provides
+a storage mechanism without negatively impacting other filesystems.
 
-> ---
-> v3:
-> - Add kernel-command line option for enabling the traces.
-> - Add safety information to the Kconfig entry.
-> v2:
-> - Implement for all trusted keys backends.
-> - Add HAVE_TRUSTED_KEYS_DEBUG as it is a good practice despite full
->    coverage.
-> ---
->   include/keys/trusted-type.h               | 21 ++++++-----
->   security/keys/trusted-keys/Kconfig        | 23 ++++++++++++
->   security/keys/trusted-keys/trusted_caam.c |  7 ++--
->   security/keys/trusted-keys/trusted_core.c |  6 ++++
->   security/keys/trusted-keys/trusted_tpm1.c | 44 +++++++++++++----------
->   5 files changed, 71 insertions(+), 30 deletions(-)
->
-> diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
-> index 03527162613f..9f9940482da4 100644
-> --- a/include/keys/trusted-type.h
-> +++ b/include/keys/trusted-type.h
-> @@ -83,18 +83,21 @@ struct trusted_key_source {
->   
->   extern struct key_type key_type_trusted;
->   
-> -#define TRUSTED_DEBUG 0
-> +#ifdef CONFIG_TRUSTED_KEYS_DEBUG
-> +extern bool trusted_debug;
->   
-> -#if TRUSTED_DEBUG
->   static inline void dump_payload(struct trusted_key_payload *p)
->   {
-> -	pr_info("key_len %d\n", p->key_len);
-> -	print_hex_dump(KERN_INFO, "key ", DUMP_PREFIX_NONE,
-> -		       16, 1, p->key, p->key_len, 0);
-> -	pr_info("bloblen %d\n", p->blob_len);
-> -	print_hex_dump(KERN_INFO, "blob ", DUMP_PREFIX_NONE,
-> -		       16, 1, p->blob, p->blob_len, 0);
-> -	pr_info("migratable %d\n", p->migratable);
-> +	if (!trusted_debug)
-> +		return;
-> +
-> +	pr_debug("key_len %d\n", p->key_len);
-> +	print_hex_dump_debug("key ", DUMP_PREFIX_NONE,
-> +			     16, 1, p->key, p->key_len, 0);
-> +	pr_debug("bloblen %d\n", p->blob_len);
-> +	print_hex_dump_debug("blob ", DUMP_PREFIX_NONE,
-> +			     16, 1, p->blob, p->blob_len, 0);
-> +	pr_debug("migratable %d\n", p->migratable);
->   }
->   #else
->   static inline void dump_payload(struct trusted_key_payload *p)
-> diff --git a/security/keys/trusted-keys/Kconfig b/security/keys/trusted-keys/Kconfig
-> index 9e00482d886a..c1ae7db1f612 100644
-> --- a/security/keys/trusted-keys/Kconfig
-> +++ b/security/keys/trusted-keys/Kconfig
-> @@ -1,10 +1,29 @@
->   config HAVE_TRUSTED_KEYS
->   	bool
->   
-> +config HAVE_TRUSTED_KEYS_DEBUG
-> +	bool
-> +
-> +config TRUSTED_KEYS_DEBUG
-> +	bool "Debug trusted keys"
-> +	depends on HAVE_TRUSTED_KEYS_DEBUG
-> +	default n
-> +	help
-> +	  Trusted keys backends and core code that support debug traces can
-> +	  opt-in that feature here. Traces must only use debug level output, as
-> +	  sensitive data may pass by. In the kernel-command line traces can be
-> +	  enabled via trusted.dyndbg='+p'.
-> +
-> +	  SAFETY: Debug dumps are inactive at runtime until trusted.debug=1 is
-> +	  set on the kernel command-line. Use at your utmost consideration when
-> +	  enabling this feature on a production build. The general advice is not
-> +	  to do this.
-> +
->   config TRUSTED_KEYS_TPM
->   	bool "TPM-based trusted keys"
->   	depends on TCG_TPM >= TRUSTED_KEYS
->   	default y
-> +	select HAVE_TRUSTED_KEYS_DEBUG
->   	select CRYPTO_HASH_INFO
->   	select CRYPTO_LIB_SHA1
->   	select CRYPTO_LIB_UTILS
-> @@ -23,6 +42,7 @@ config TRUSTED_KEYS_TEE
->   	bool "TEE-based trusted keys"
->   	depends on TEE >= TRUSTED_KEYS
->   	default y
-> +	select HAVE_TRUSTED_KEYS_DEBUG
->   	select HAVE_TRUSTED_KEYS
->   	help
->   	  Enable use of the Trusted Execution Environment (TEE) as trusted
-> @@ -33,6 +53,7 @@ config TRUSTED_KEYS_CAAM
->   	depends on CRYPTO_DEV_FSL_CAAM_JR >= TRUSTED_KEYS
->   	select CRYPTO_DEV_FSL_CAAM_BLOB_GEN
->   	default y
-> +	select HAVE_TRUSTED_KEYS_DEBUG
->   	select HAVE_TRUSTED_KEYS
->   	help
->   	  Enable use of NXP's Cryptographic Accelerator and Assurance Module
-> @@ -42,6 +63,7 @@ config TRUSTED_KEYS_DCP
->   	bool "DCP-based trusted keys"
->   	depends on CRYPTO_DEV_MXS_DCP >= TRUSTED_KEYS
->   	default y
-> +	select HAVE_TRUSTED_KEYS_DEBUG
->   	select HAVE_TRUSTED_KEYS
->   	help
->   	  Enable use of NXP's DCP (Data Co-Processor) as trusted key backend.
-> @@ -50,6 +72,7 @@ config TRUSTED_KEYS_PKWM
->   	bool "PKWM-based trusted keys"
->   	depends on PSERIES_PLPKS >= TRUSTED_KEYS
->   	default y
-> +	select HAVE_TRUSTED_KEYS_DEBUG
->   	select HAVE_TRUSTED_KEYS
->   	help
->   	  Enable use of IBM PowerVM Key Wrapping Module (PKWM) as a trusted key backend.
-> diff --git a/security/keys/trusted-keys/trusted_caam.c b/security/keys/trusted-keys/trusted_caam.c
-> index 601943ce0d60..6a33dbf2a7f5 100644
-> --- a/security/keys/trusted-keys/trusted_caam.c
-> +++ b/security/keys/trusted-keys/trusted_caam.c
-> @@ -28,10 +28,13 @@ static const match_table_t key_tokens = {
->   	{opt_err, NULL}
->   };
->   
-> -#ifdef CAAM_DEBUG
-> +#ifdef CONFIG_TRUSTED_KEYS_DEBUG
->   static inline void dump_options(const struct caam_pkey_info *pkey_info)
->   {
-> -	pr_info("key encryption algo %d\n", pkey_info->key_enc_algo);
-> +	if (!trusted_debug)
-> +		return;
-> +
-> +	pr_debug("key encryption algo %d\n", pkey_info->key_enc_algo);
->   }
->   #else
->   static inline void dump_options(const struct caam_pkey_info *pkey_info)
-> diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
-> index 9046123d94de..9ce2459d14b4 100644
-> --- a/security/keys/trusted-keys/trusted_core.c
-> +++ b/security/keys/trusted-keys/trusted_core.c
-> @@ -31,6 +31,12 @@ static char *trusted_rng = "default";
->   module_param_named(rng, trusted_rng, charp, 0);
->   MODULE_PARM_DESC(rng, "Select trusted key RNG");
->   
-> +#ifdef CONFIG_TRUSTED_KEYS_DEBUG
-> +bool trusted_debug;
-> +module_param_named(debug, trusted_debug, bool, 0);
-> +MODULE_PARM_DESC(debug, "Enable trusted keys debug traces (default: 0)");
-> +#endif
-> +
->   static char *trusted_key_source;
->   module_param_named(source, trusted_key_source, charp, 0);
->   MODULE_PARM_DESC(source, "Select trusted keys source (tpm, tee, caam, dcp or pkwm)");
-> diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-> index c865c97aa1b4..b9fa2b4205cf 100644
-> --- a/security/keys/trusted-keys/trusted_tpm1.c
-> +++ b/security/keys/trusted-keys/trusted_tpm1.c
-> @@ -46,38 +46,44 @@ enum {
->   	SRK_keytype = 4
->   };
->   
-> -#define TPM_DEBUG 0
-> -
-> -#if TPM_DEBUG
-> +#ifdef CONFIG_TRUSTED_KEYS_DEBUG
->   static inline void dump_options(struct trusted_key_options *o)
->   {
-> -	pr_info("sealing key type %d\n", o->keytype);
-> -	pr_info("sealing key handle %0X\n", o->keyhandle);
-> -	pr_info("pcrlock %d\n", o->pcrlock);
-> -	pr_info("pcrinfo %d\n", o->pcrinfo_len);
-> -	print_hex_dump(KERN_INFO, "pcrinfo ", DUMP_PREFIX_NONE,
-> -		       16, 1, o->pcrinfo, o->pcrinfo_len, 0);
-> +	if (!trusted_debug)
-> +		return;
-> +
-> +	pr_debug("sealing key type %d\n", o->keytype);
-> +	pr_debug("sealing key handle %0X\n", o->keyhandle);
-> +	pr_debug("pcrlock %d\n", o->pcrlock);
-> +	pr_debug("pcrinfo %d\n", o->pcrinfo_len);
-> +	print_hex_dump_debug("pcrinfo ", DUMP_PREFIX_NONE,
-> +			     16, 1, o->pcrinfo, o->pcrinfo_len, 0);
->   }
->   
->   static inline void dump_sess(struct osapsess *s)
->   {
-> -	print_hex_dump(KERN_INFO, "trusted-key: handle ", DUMP_PREFIX_NONE,
-> -		       16, 1, &s->handle, 4, 0);
-> -	pr_info("secret:\n");
-> -	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
-> -		       16, 1, &s->secret, SHA1_DIGEST_SIZE, 0);
-> -	pr_info("trusted-key: enonce:\n");
-> -	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
-> -		       16, 1, &s->enonce, SHA1_DIGEST_SIZE, 0);
-> +	if (!trusted_debug)
-> +		return;
-> +
-> +	print_hex_dump_debug("trusted-key: handle ", DUMP_PREFIX_NONE,
-> +			     16, 1, &s->handle, 4, 0);
-> +	pr_debug("secret:\n");
-> +	print_hex_dump_debug("", DUMP_PREFIX_NONE,
-> +			     16, 1, &s->secret, SHA1_DIGEST_SIZE, 0);
-> +	pr_debug("trusted-key: enonce:\n");
-> +	print_hex_dump_debug("", DUMP_PREFIX_NONE,
-> +			     16, 1, &s->enonce, SHA1_DIGEST_SIZE, 0);
->   }
->   
->   static inline void dump_tpm_buf(unsigned char *buf)
->   {
->   	int len;
->   
-> -	pr_info("\ntpm buffer\n");
-> +	if (!trusted_debug)
-> +		return;
-> +	pr_debug("\ntpm buffer\n");
->   	len = LOAD32(buf, TPM_SIZE_OFFSET);
-> -	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE, 16, 1, buf, len, 0);
-> +	print_hex_dump_debug("", DUMP_PREFIX_NONE, 16, 1, buf, len, 0);
->   }
->   #else
->   static inline void dump_options(struct trusted_key_options *o)
+I want to note that other LSMs beyond SELinux have been involved in the
+discussion of the fixes presented here and they are working on their own
+related changes using these new hooks, but due to other issues those
+patches will be coming at a later date.
+
+- Use kstrdup_const()/kfree_const() for securityfs symlink targets
+
+- Resolve a handful of kernel-doc warnings in cred.h
+
+Paul
+
+--
+The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
+
+  Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+    tags/lsm-pr-20260410
+
+for you to fetch changes up to 82544d36b1729153c8aeb179e84750f0c085d3b1:
+
+  selinux: fix overlayfs mmap() and mprotect() access checks
+    (2026-04-03 16:53:50 -0400)
+
+----------------------------------------------------------------
+lsm/stable-7.1 PR 20260410
+----------------------------------------------------------------
+
+Amir Goldstein (1):
+      fs: prepare for adding LSM blob to backing_file
+
+Dmitry Antipov (1):
+      securityfs: use kstrdup_const() to manage symlink targets
+
+Paul Moore (2):
+      lsm: add backing_file LSM hooks
+      selinux: fix overlayfs mmap() and mprotect() access checks
+
+Randy Dunlap (1):
+      cred: fix kernel-doc warnings in cred.h
+
+ fs/backing-file.c                 |   18 +-
+ fs/erofs/ishare.c                 |   10 +
+ fs/file_table.c                   |   43 ++++-
+ fs/fuse/passthrough.c             |    2 
+ fs/internal.h                     |    3 
+ fs/overlayfs/dir.c                |    2 
+ fs/overlayfs/file.c               |    2 
+ include/linux/backing-file.h      |    4 
+ include/linux/cred.h              |   10 -
+ include/linux/fs.h                |   13 +
+ include/linux/lsm_audit.h         |    2 
+ include/linux/lsm_hook_defs.h     |    5 
+ include/linux/lsm_hooks.h         |    1 
+ include/linux/security.h          |   22 ++
+ security/inode.c                  |   10 -
+ security/lsm.h                    |    1 
+ security/lsm_init.c               |    9 +
+ security/security.c               |  102 +++++++++++
+ security/selinux/hooks.c          |  256 +++++++++++++++++++++---------
+ security/selinux/include/objsec.h |   11 +
+ 20 files changed, 431 insertions(+), 95 deletions(-)
+
+--
+paul-moore.com
