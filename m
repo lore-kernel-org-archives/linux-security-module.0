@@ -1,66 +1,67 @@
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B043876CD
-	for <linux-security-module@vger.kernel.org>; Fri, 10 Apr 2026 23:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B20531326B
+	for <linux-security-module@vger.kernel.org>; Fri, 10 Apr 2026 23:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775863570; cv=none; b=FnU51lWJPjhkDhyJGpCzhiNgZbGsig1d2840RCMj1KjyvKdxzc+pzqQHmszjwp7WpB9QDfLU+sYF2IcinquXISlGKM4hT8EzS8t5PWbNxPyvE6BDrJOZ0SGZVT7FfB4J5uN2aH7KyKL1qfNlSI2QYWoHe4MhtGJcG/uzV0aYgmo=
+	t=1775863574; cv=none; b=sK0slTYx7pg63yRg2QfEYmGpzF/3sgNw+d/kdIJGDS0ZNvZMbHoSZw45y8/SHl0wokcpsBdjtHJiKK1ipRO1x8Q7QNd2IDtt57F6NQTm+W5lV0X5j8hbRQ22bp52wAk0e5WUoEniQxqH6bI5Jm0WDBPxu65uj8cb4NRtdrf/1Ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775863570; c=relaxed/simple;
-	bh=Nuzl7SzUb36RGtsiAcR1c9Ieru1jN8wMpzXLxPBpSoc=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=Di/ETQkHreFMd8KHgGB4scdWQZ6h2aRXH8TqTYmiH/QjL67Quq0engcRo+4f6jPTCPz7Jdfx+iUwp25WD3Eyaf4x2A5KjIhL70sMg0pvCI/NHRPtseSlJXH2/MFSjXIM8XWz5YJJEewYwORQRTadh6ktc1XHWRqua1rnQB0iekc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=gnoiI6AO; arc=none smtp.client-ip=209.85.222.180
+	s=arc-20240116; t=1775863574; c=relaxed/simple;
+	bh=RjKD6/7f0V5Pv8dDCdBDZirn9vm90RAC+82O3MrCRRU=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=fOT14to6NA0AwxFkqDGOxCe3BKs8yEaacUNMwFRSm4HMziyh6SRa2864UgWVjRjaeA2clzTPAYvFr8AgX8K+H4SEkrLE82JNjbVKQBNX56nOuJ05u08kS5POMAUMkySCpNDOTgHNaEoQ9E7Uxa81YsUEG30LQc+mhoO5mswVMUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BMH8lXfl; arc=none smtp.client-ip=209.85.160.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="gnoiI6AO"
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-8d1b746f522so284411385a.0
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Apr 2026 16:26:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BMH8lXfl"
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-50b69bf5638so28462991cf.1
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Apr 2026 16:26:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1775863567; x=1776468367; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1775863572; x=1776468372; darn=vger.kernel.org;
         h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hHb6SI3b6dJgkA4ClKJYO+UN8/fHAXhAk0b1FfPTMyk=;
-        b=gnoiI6AO6GUrIBABYHpZIbuAZvOto39W8JSyUVfp5SDDwf1VI4p4rulCpkrSEPWrex
-         CghemwFXk1U2roNTywMN8G9YtEJqVtsGSSGK7dHsrSDXFlzs0bYm9LlvcVX1H87G6yBg
-         OP7AKhnNsZ9xY6krmee1OBihC48EFkPVBGTmT7G7CALXdU6qUZPvCDoVnoDvQN0D0YS9
-         TcALgPwWmagV86J06gPFdxvWH56Daw6aro5j3Owz6vR/m2hr1EiXgpcLtmnKXkjSy8Mr
-         O67cG8PscBRJ42DLE/IQ/m2uHKeHlW7QwXulfbfb96bENYrpAejW1fOVf2MIKngzjrjt
-         19QQ==
+        bh=WKeEg/Y0drNcc2Fnb+CIsFkFz7BP00BXAJeV9myWHSc=;
+        b=BMH8lXfl4nHqxsnBJVqLTP9jrD/+5fkMOJxB/Znhmp0DO+4Jb21IHM/aW2KZZWseVM
+         VCIfAafNwRWsinzuGCrfesC7ysy2J0jX8BDmFyBI1N5cCmHESqXCcYEb5F5paW1U1mJN
+         mKEfBa1rky1FrRLCviQ3/O9m0n2GNmmqSTJm76dwxQlnn/LT++cngXGXN7wiaMAAsNJ0
+         Y+bqoEr1jAEPORBeXqLKcvSAHFCnGzrWlejOqYEv7hCQStX9cOy6C6gJ8Mqui14OwNSW
+         Rd0LXgOeKMQk10cIrWayAY0STjTZMpaj6j2taeAZox8j+r7hv7FkKp1BG5kZBNRJ4GeZ
+         7D3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775863567; x=1776468367;
+        d=1e100.net; s=20251104; t=1775863572; x=1776468372;
         h=subject:cc:to:from:message-id:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=hHb6SI3b6dJgkA4ClKJYO+UN8/fHAXhAk0b1FfPTMyk=;
-        b=V5BJJE/XQIdqCmpdMhzFoQvqxF0+UKY+Nw2Q8stfJwTBrtbc37jCONAywoWQ4Ce4Q6
-         umZD7syl+y+Cl1yIYgo71P6wbMSEyR8e0xivZA+pKpRl0UAUOqlQynb3m+EJRhw8+El9
-         nyWFILPAZXTOfGVorip5J5dydOEx1sNDQZZxox7F10EmFT78P4Vsf8Z8Ff2y7W2t4o0D
-         9PWlaacXDeJOgvtlh3gRYrAP9X9YcyMAluU9Chd1PZqTEloKf5OUhG+ybfVzGzdfkkQO
-         JpsSP9SLezXrSpoY2GSny0r655q5BoZAIRDuHd8axqq18Vgrb/2YE0cerWJ4CzO3yqMU
-         6nIQ==
-X-Gm-Message-State: AOJu0YySBKKkWBlpLavTWBGRiuwDhGqVdwp5LjqLXTqAMf/rIVjxoIzW
-	0RYmBzS8K/dik46SQ/EHCf81OXIBGHU5b0H1J3+4QYUcyZOUoKdTRtz0/r5lk4yWnKENHPVmb9s
-	Xdu8=
-X-Gm-Gg: AeBDiesR0zBaq5dlSl5QPD7g5jVwMTI+i5ndL+nkFlXC2ybLfTkNA35ja4Uajg4ytEl
-	cSKwjRffvE2W+AroYEQetBnhTVPVGODeeKW67NV6euEc8EXh6rqo3SF8akqg55scbe1ZmClQOGj
-	y0u/cktqASARtO5lm31dDdpnof+h8N6+C9vSHXHyAZNiBbwF2KsIEql07ydL12QQDpPS8SkRt2E
-	bIfCi+IROyE7KtfJ4wcdqHIwR4vfAX4gMgLyxBrZEQ9rx9DQpNnB7ImTG95fTqa/nIEEMcXwtmn
-	Y9Xd5tT/XuXAcD4qC7GfZX+/EKc1s+p70F2tfLQeO9srAR8ts/f6zJbxiOKLFpFgJfp+IwhPxMf
-	d18z7UuKvlveJPFF4Ty55Dz3vBxgBaEGqcNxHuzHkGlcEGesHNMnavIJBC/K0sHl/KvblGsgrVx
-	8zIa5Kj81qd8gNp1356wYDB80HuYVf1airmpnd9Q6iZGyi9dUugkymqcxQpt5lhMKsBqDy
-X-Received: by 2002:a05:620a:17a7:b0:8cf:d565:fcb1 with SMTP id af79cd13be357-8ddcd21931fmr737017285a.5.1775863567058;
-        Fri, 10 Apr 2026 16:26:07 -0700 (PDT)
+        bh=WKeEg/Y0drNcc2Fnb+CIsFkFz7BP00BXAJeV9myWHSc=;
+        b=mrRNkoIl9BX0mpgrTjx5UjavZsNJBjRvhKuE3H1VvBc7WweMh/dXC1t7neogK5lYSv
+         4ch5rVOKLmxd7xIdGFS8Sd7R+lAtBuY8F+UgtXPUeCENPnoWc80fhrWQilHT0EzZlBbw
+         Y1oMnrbpD1YPmg44XNprCj4OYfYKUT7nxXkhxj46VBpwPyygADKRY7ZXpXOPP/ESuseQ
+         zudo0RfKhWVqWCQNvhRkuo1eXaLo0K0niBdy/mrSK7WiDsKtmlF9TEIfbfB40J0Lx7Cu
+         /g4IZ9qxsMccQg6jPJHTDOIOp0mgdHLhgnHy28Hj+UgpL09fA368mHUvbb4akl96yc43
+         IClw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+GZXSNeNTR5tUZKsaKFqZKCH75bRmdbR+uvetxl+BxQVxQOkLIFiPrpAoe1LW4sQ7TSWbbGBLkMMSxDS/zVT1lImE3xw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2Mc6tgaD/MyfzzDePdE6cJ6JcilgfO74ryCQMI4vhUFqDCEB8
+	SSPLrAZge4TA33CMfmn0L9F/Gj9IQ4DQvNNFBJdHtlt8E9W3PfuA8Qli18ogljtdyQ==
+X-Gm-Gg: AeBDievWDlOS0einldMtzOSurp/dowXvuWrR2TW9XqJODpcwpXUyX8Ecw34m96gbQSZ
+	EaCIHNrEvPviTQFdplYvWv3zj5oPl+B6an3DVYOW5uBzyQgCXTRisaL/G98lJt7FwhyeTyc0sK9
+	L9+uJDlkTDhi8XpADSf3FXisaVW0T9vT3cyswc+h2QrwEahz0B2TtoKZzt0+j5ck5+0zquakvok
+	PpzB0FM1WGNJJIAAZyPwOZSvr1HU0MlG7nKEYAzwOG0oTBrsBnhd1wwzQHbw07qByox0xwfesja
+	fifBYQmcOYOc2bGdKlvuxGbz/HwGuycwSImVGVTv9MVcesltEL9SEcfT7YFXV+IXceLJZSPIYmy
+	h2WB8wzw2wu0LAk/r+sbUYLL9DTiQXDIO0UKo1OUpJnIqo8RB43yMmU7CCC51M+900yU9Yj2Iea
+	/dZAMTyKzMChDbWFoUZWtxBnaROF99ChubaFyn54zcJku/4YZj3g6kDvzxoPdVlWkEQdVoh0h6f
+	b9JQV8=
+X-Received: by 2002:ac8:5d89:0:b0:50d:6d90:31fc with SMTP id d75a77b69052e-50dd5b95d29mr83445011cf.13.1775863572287;
+        Fri, 10 Apr 2026 16:26:12 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8ddb5f88c82sm313385285a.2.2026.04.10.16.26.06
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ac84c4af3dsm33861406d6.31.2026.04.10.16.26.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Apr 2026 16:26:06 -0700 (PDT)
-Date: Fri, 10 Apr 2026 19:26:05 -0400
-Message-ID: <9a2a59bd8d9548fb5dab128f4859fa3d@paul-moore.com>
+        Fri, 10 Apr 2026 16:26:11 -0700 (PDT)
+Date: Fri, 10 Apr 2026 19:26:11 -0400
+Message-ID: <60af9bced9ea23be5deffcb469805ff5@paul-moore.com>
 From: Paul Moore <paul@paul-moore.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] lsm/lsm-pr-20260410
+Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] selinux/selinux-pr-20260410
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -69,41 +70,11 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
 Linus,
 
-We only have five patches in the LSM tree, but three of the five are for
-an important bugfix relating to overlayfs and the mmap() and mprotect()
-access controls for LSMs.  Highlights below:
+Just a single patch from the SELinux tree for v7.1, although you will find
+an important SELinux fix in the LSM pull request (if you haven't processed
+that already).
 
-- Fix problems with the mmap() and mprotect() LSM hooks on overlayfs
-
-As we are dealing with problems both in mmap() and mprotect() there are
-essentially two components to this fix, spread across three patches with
-all marked for stable.
-
-The simplest portion of the fix is the creation of a new LSM hook,
-security_mmap_backing_file(), that is used to enforce LSM mmap() access
-controls on backing files in the stacked/overlayfs case.  The existing
-security_mmap_file() does not have visibility past the user file.  You
-can see from the associated SELinux hook callback the code is fairly
-straightforward.
-
-The mprotect() fix is a bit more complicated as there is no way in the
-mprotect() code path to inspect both the user and backing files, and
-bolting on a second file reference to vm_area_struct wasn't really an
-option.  The solution taken here adds a LSM security blob and associated
-hooks to the backing_file struct that LSMs can use to capture and store
-relevant information from the user file.  While the necessary SELinux
-information is relatively small, a single u32, I expect other LSMs to
-require more than that, and a dedicated backing_file LSM blob provides
-a storage mechanism without negatively impacting other filesystems.
-
-I want to note that other LSMs beyond SELinux have been involved in the
-discussion of the fixes presented here and they are working on their own
-related changes using these new hooks, but due to other issues those
-patches will be coming at a later date.
-
-- Use kstrdup_const()/kfree_const() for securityfs symlink targets
-
-- Resolve a handful of kernel-doc warnings in cred.h
+- Annotate a known race condition to soothe KCSAN
 
 Paul
 
@@ -114,52 +85,24 @@ The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
-    tags/lsm-pr-20260410
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+    tags/selinux-pr-20260410
 
-for you to fetch changes up to 82544d36b1729153c8aeb179e84750f0c085d3b1:
+for you to fetch changes up to 8dc51459ef702bcc0ef5fb26bb4d362b38aa56c2:
 
-  selinux: fix overlayfs mmap() and mprotect() access checks
-    (2026-04-03 16:53:50 -0400)
+  selinux: annotate intentional data race in inode_doinit_with_dentry()
+    (2026-02-23 11:14:29 -0500)
 
 ----------------------------------------------------------------
-lsm/stable-7.1 PR 20260410
+selinux/stable-7.1 PR 20260410
 ----------------------------------------------------------------
 
-Amir Goldstein (1):
-      fs: prepare for adding LSM blob to backing_file
+Christian Göttsche (1):
+      selinux: annotate intentional data race in
+         inode_doinit_with_dentry()
 
-Dmitry Antipov (1):
-      securityfs: use kstrdup_const() to manage symlink targets
-
-Paul Moore (2):
-      lsm: add backing_file LSM hooks
-      selinux: fix overlayfs mmap() and mprotect() access checks
-
-Randy Dunlap (1):
-      cred: fix kernel-doc warnings in cred.h
-
- fs/backing-file.c                 |   18 +-
- fs/erofs/ishare.c                 |   10 +
- fs/file_table.c                   |   43 ++++-
- fs/fuse/passthrough.c             |    2 
- fs/internal.h                     |    3 
- fs/overlayfs/dir.c                |    2 
- fs/overlayfs/file.c               |    2 
- include/linux/backing-file.h      |    4 
- include/linux/cred.h              |   10 -
- include/linux/fs.h                |   13 +
- include/linux/lsm_audit.h         |    2 
- include/linux/lsm_hook_defs.h     |    5 
- include/linux/lsm_hooks.h         |    1 
- include/linux/security.h          |   22 ++
- security/inode.c                  |   10 -
- security/lsm.h                    |    1 
- security/lsm_init.c               |    9 +
- security/security.c               |  102 +++++++++++
- security/selinux/hooks.c          |  256 +++++++++++++++++++++---------
- security/selinux/include/objsec.h |   11 +
- 20 files changed, 431 insertions(+), 95 deletions(-)
+ security/selinux/hooks.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 --
 paul-moore.com
