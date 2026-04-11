@@ -1,176 +1,149 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668EA1C84BB
-	for <linux-security-module@vger.kernel.org>; Sat, 11 Apr 2026 08:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48A22417D1
+	for <linux-security-module@vger.kernel.org>; Sat, 11 Apr 2026 09:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775896610; cv=none; b=YxDm9iWhtiq55A2EnitG2UBGXKOWV91QVYld+T0qymmAlT7mjQPUH1yVxjyalDcTsTE/mqbPBsQgKyaREHiEvm+8yXnIkz9LxHOAQuN4cTmnGFxhhJia5nxNxOJEqLNJdjykJbUttgbAeg/X7rdHcFF3k2Xt4EvDW/imMIB8rXM=
+	t=1775898618; cv=none; b=GXKeyQb2t2bS/JGgJwCHbVASo4Z4jdT9IpPq4j4RvuRyL7u0MhfDHXNB2rUmm0ptVwQRJv21LFWizT0n3X2zuMSj5TTmGjYO7NpCgksjJBSk6WWziYIlc9O1elDwRogTLqL1hY389e3spjgHmXgKWJ/x2Vd0Rp6soqYy0F5x01k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775896610; c=relaxed/simple;
-	bh=MVUF7SP1sd0Cy5545Dd+aWne606r1wgsVyI2cxhgHpo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h/rZ0kPbCaUrHhRzo92GIEId682OMhmLdU9j22YMhdw22g7RlPN0ivtCMV+LUsjkRZ7jyaf/pG5XXvnkHzNpsCTFaAjfi/D0eClHxflc46s/f3mJqBs21X+XhOQP78TWrp+gM0aiG3L0IdZ2Sw0OHDHzI695XBT5nVLnsuAXk/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LiDUka9S; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1775898618; c=relaxed/simple;
+	bh=J8z+RgmNnH4bgcNYzvuL+pU3F3T9gT3HICxT4bkPIvE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=GcWP1YT//tnGe4RepN8PTAz0Yt9GpD2xZD5dsMnHghuNjuvS+94ek6pixnjKBLS/DSfmfZPgLuG/HgFIoxh24rsfI7fVhRsX5O5IMi/9hKEHDOIxelzTAWDRpflp+FQeK9rVty0tbt3YClRFqxNY+xcrJ55HcBtugKiEGATRThU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v6huwkGw; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LiDUka9S"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-488b8efed61so25413415e9.1
-        for <linux-security-module@vger.kernel.org>; Sat, 11 Apr 2026 01:36:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v6huwkGw"
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-488d4ac6ff9so11990545e9.1
+        for <linux-security-module@vger.kernel.org>; Sat, 11 Apr 2026 02:10:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1775896607; x=1776501407; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8wzioy4E/6FOUF7Efgzz7WDtjqLGZQycOJu2qhn5rpk=;
-        b=LiDUka9SSXPxcVq886f9Asq3Ar+sAzlFfPgyPPqTfvRZ20Op5RqfgLBTUVvXBbHGG5
-         7gpdvWyIVXzpLIqALhK2/iqYX3Fm5O/AuXzjH7tWuB30noWi3l6pmsppGO98t+nnWHLF
-         rcVA8Mh6ksaF+de8CN1iPQ3G97AFmwRXJS3f/7vyTyqC6X+wUacwV5zpWfKyZYE3HDrv
-         gkbPmICUZ8rtHcmq1c/IeyT0FQfAUqCSuOTQptUeQQz1a4VFXRuASX/C6L6L6s5aJZdZ
-         +92MzhVwNN+s4gGrvd694w8XrngMINUGvTTJCngy6h1zINQLzR0nrkaW072pLIWh8xpf
-         U7Dg==
+        d=google.com; s=20251104; t=1775898615; x=1776503415; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=127o4HDS6+Bv2199Lrxa79+ntmr5bNns4x8YhtzA5eo=;
+        b=v6huwkGwnFJ9mqB3YZ/qUw16MSRiYXESiwOHouzRGMRoQoJGkM2wyyFf9SL3t66q54
+         kr0U/hZ9/M9YdKztBMPS68LUMpmGt40BGNubYjGQlXe1TlEoekiIxYxqArFZbr3vOivv
+         1YBUst4nIXsLxpK8Pm2VMBYMCuBVtEYmNoZcCapRzARJuizIFhy9DN4o2VI3tWqd/MRc
+         AkK/fa7meXYktnX+ClSFvDkq1p5QTMRiaC7G9ebsyExXZ6MCViOWuH1iRU/jsBAf0hl2
+         P3eB2FiwPJbJGofqPtLfEBBrK4juy183gJxhcRDLSR6JIH86GFigBlfdQ+bTa83/vRNU
+         MHPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775896607; x=1776501407;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8wzioy4E/6FOUF7Efgzz7WDtjqLGZQycOJu2qhn5rpk=;
-        b=Ciwkctwm66zLnDpvD/FXoKRfIWRQb7cb7OjTISEfRwlVMEPJtxAITQZOC1Ij3ZXtE0
-         gpm4I020262n1+iaVsZX2q4TqbS6fgZ/GbUIdBg7uEbA0BNY19vulKXEIlzsT5QlB1jP
-         pPF7YTmFAUYbistAVB+juDEI1xmyHhYHg5s/6+C2chdHPfQNwdsksUnKfhA/O4UcokfX
-         4HfRw3zVzF8GY2+425Olf/vDSk3qZO3oK/h8v/X2hNmODXWR/q40WNzCwULTukksHaah
-         T+arAvlPN2soQtyqw1pAbT6KQiHw8cIzC+S4qPat1cjPbD7WseuR+lEHux8Bl2s2aOYw
-         c1Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCWemZc864fQ73MmJjkTttaar9evvAhJ9Hc7TazAGyoqP1UMkx7qFmLLVIRbMvEKhJKYBBD+As0EIoYiVZw+8YjPi9Xj1l4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9UWlh5Qv1wsexC0nuH8Gr58k+R8Ukd5aAgYIUipqDH5Sit74b
-	riSUg+82xqsQWsnm5z2VqisS2P+r33FvgYcXUAfdgMeQZP2tyB47owDB6BTzxMLmZA==
-X-Gm-Gg: AeBDiesWuqH6NtZ7/rxkSULLArsxGRH9E8tBqdlQfyousJtCF90uTQZnsMFCQQedt8f
-	gzhJULp7emoM44b+0G1H0ku0kDlhA4qCVMUx9gyumusnvQQE4kMtxnSCv96cxCMcnXuqjy/UJbX
-	eZKlyUz+k3ry30KJB2ctvGl0DQDtyuExF0b7Id/ILyYApnh9T3hXD0skIDOasrKZxiNErt1KWjq
-	0I7q5tBNFNi46hWfgGyk1z2N9wnQ8+VpfUFSxjMPvacbogy4cXR14CEoVbo9jMG5Q6qbgRWxy56
-	s9fjZx/YPvpGKCzdGZxmBBP8C9uVZZpg+uQGIKUzk2HWnpedDbRR8EPo+f3ktmdXqqoZfjS3xSi
-	E/Xkv1JDyH4IPZRFAKDz/x+qTB21RxxMWQWsDqFheSxMGOc+tqrb6kzfonfrR6EaemTaT7PnHgE
-	Y7UJPPV/+Nf04CRkNsgyoSe/Th7ebF75RiH4fhCetn+z0Qdb4hX12SjQkR3TUpyjQv
-X-Received: by 2002:a05:600c:3ba4:b0:488:c6e9:1e0c with SMTP id 5b1f17b1804b1-488d6847de9mr75093505e9.5.1775896606313;
-        Sat, 11 Apr 2026 01:36:46 -0700 (PDT)
-Received: from google.com ([2a00:79e0:288a:8:2b66:d8bf:3624:ab43])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488d5888a97sm157704815e9.2.2026.04.11.01.36.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Apr 2026 01:36:45 -0700 (PDT)
-Date: Sat, 11 Apr 2026 10:36:40 +0200
-From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Serge Hallyn <serge@hallyn.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>,
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	Paul Moore <paul@paul-moore.com>,
-	linux-security-module@vger.kernel.org
-Subject: Re: LSM: Whiteout chardev creation sidesteps mknod hook
-Message-ID: <adoIGHwgMJSuRfE5@google.com>
-References: <adUBCQXrt7kmgqJT@google.com>
- <06337e89-349a-4334-a735-b8dc9b566cdd@hallyn.com>
- <20260409-entbrennen-turnschuh-54af9b45610e@brauner>
+        d=1e100.net; s=20251104; t=1775898615; x=1776503415;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=127o4HDS6+Bv2199Lrxa79+ntmr5bNns4x8YhtzA5eo=;
+        b=fEv6JiLGqBw2A4qxI1roimQw598R6YlSWpC3Axh+N+GBhslqIcaVU4rUX2H/lzFGDR
+         EoOozw9Zsu4JTB3jgB0GdD+QU+MXz7iNIVhTRj9qFNmz6hsX0paJawcAsd/Q5SNfXrFh
+         6eNJc3E2fp0wR9ZS0yPTFszk5vLJNJ90zuAeW11CAQ9lMbpRX4Fl1ooe72Bv2sjAbtRh
+         7q4VJ1f2fbGuUs3yNRJUEeYtgbvPabaEafJ2TQUWjWrchniuvVh+pPSAcXs2ppFxt65j
+         LBfsDxzLzVpFhyVX2M2/AUi3Oo/jFE+i1fdgZ0F4q9SeCeb+sP/JUcFty1OnpOPHFxGS
+         URiw==
+X-Gm-Message-State: AOJu0YwjWBOwapV6SE3G5joYHU3WKsvy4jXTrKuWImW9/L/0L6/AD7gc
+	Y3/nzpgrA0mnrsz7MCy/K+SG5tQt1ISlkkxRzL+1Gzq0xiNxBkoW9evcCzcWM6QDZZ3OsVJL6TN
+	KsLW6Ew==
+X-Received: from wmpf21.prod.google.com ([2002:a05:600c:4915:b0:488:7e69:14c1])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:3047:b0:488:d6eb:e635
+ with SMTP id 5b1f17b1804b1-488d6ebe7ebmr49955835e9.12.1775898615153; Sat, 11
+ Apr 2026 02:10:15 -0700 (PDT)
+Date: Sat, 11 Apr 2026 11:09:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260409-entbrennen-turnschuh-54af9b45610e@brauner>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.54.0.rc0.605.g598a273b03-goog
+Message-ID: <20260411090944.3131168-2-gnoack@google.com>
+Subject: [PATCH 0/3] landlock: Restrict renameat2 with RENAME_WHITEOUT
+From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
+To: "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, Christian Brauner <brauner@kernel.org>
+Cc: linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, Serge Hallyn <serge@hallyn.com>, 
+	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 09, 2026 at 02:47:16PM +0200, Christian Brauner wrote:
-> On Tue, Apr 07, 2026 at 12:15:00PM -0500, Serge Hallyn wrote:
-> > Apr 7, 2026 08:05:43 Günther Noack <gnoack@google.com>:
-> > 
-> > > Hello Christian, Paul, Mickaël and LSM maintainers!
-> > >
-> > > I discovered the following bug in Landlock, which potentially also
-> > > affects other LSMs:
-> > >
-> > > With renameat2(2)'s RENAME_WHITEOUT flag, it is possible to create a
-> > > "whiteout object" at the source of the rename.  Whiteout objects are
-> > > character devices with major/minor (0, 0) -- these devices are not
-> > > bound to any driver, so they are harmless, but still, the creation of
-> > > these files can sidestep the LANDLOCK_ACCESS_FS_MAKE_CHAR access right
-> > > in Landlock.
-> 
-> They aren't devices.
+Hello!
 
-The LANDLOCK_ACCESS_FS_MAKE_CHAR access right is about the *creation of
-character device directory entries*.
+As discussed in [1], the renameat2() syscall's RENAME_WHITEOUT flag allows
+the creation of chardev directory entries with major=3Dminor=3D0 as "whiteo=
+ut
+objects" in the location of the rename source file [2].
 
-These files do not hook up to any of the kernel's device driver subsystems, but
-they *are* directory entries of the chardev type, and the creation of these is
-still sidestepping the LANDLOCK_ACCESS_FS_MAKE_CHAR right.
+This functionality is available even without having any OverlayFS mounted
+and can be invoked with the regular renameat2(2) syscall [3].
 
 
-> > > I am unconvinced which is the right fix here -- do you have an opinion
-> > > on this from the VFS/LSM side?
-> > >
-> > >
-> > > Option 1: Make filesystems call security_path_mknod() during RENAME_WHITEOUT?
-> 
-> No.
-> 
-> > >
-> > > Do it in the VFS rename hook.
-> > >
-> > > * Pro: Fixes it for all LSMs
-> > > * Con: Call would have to be done in multiple filesystems
-> > >
-> > >
-> > > Option 2: Handle it in security_{path,inode}_rename()
-> > >
-> > > Make Landlock handle it in security_inode_rename() by looking for the
-> > > RENAME_WHITEOUT flag.
-> > >
-> > > * Con: Operation should only be denied if the file system even
-> > >   implements RENAME_WHITEOUT, and we would have to maintain a list of
-> 
-> Why? Just deny RENAME_WHITEOUT. What does it matter if the filesystem
-> implements it or not. Overlayfs would fall back to non-RENAME_WHITEOUT
-> if not provided by the upper fs anway.
+Motivation
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-I'll send a patch with this approach for discussion.
+The RENAME_WHITEOUT flag side-steps Landlock's LANDLOCK_ACCESS_FS_MAKE_CHAR
+right, which is designed to restrict the creation of chardev device files.
 
-It turns out it is less difficult than I feared:
-
-* OverlayFS uses its own credentials object, and since that is not under a
-  Landlock policy, the OverlayFS-internal vfs_rename() invocations do not have
-  that problem.  (Under a Landlock policy, mount(2) is not permitted, so the
-  OverlayFS-internal credentials are not Landlocked.)
-* The remaining use case is only when a user calls renameat2(...,
-  RENAME_WHITEOUT) directly on a filesystem (which is not necessarily part of an
-  OverlayFS).  That case can be restricted with Landlock.
-
-We might have slight error code inconsistencies yes, but as Mickaël is saying on
-the sibling mail thread, it would not be worth the tradeoff to maintain a list
-of supported file systems just to get the error codes right.
+This patch set fixes that by adding a check in Landlock's path_rename hook.
 
 
-> > >   affected filesystems for that.  (That feels like solving it at the
-> > >   wrong layer of abstraction.)
-> > > * Con: Unclear whether other LSMs need a similar fix
-> > >
-> > >
-> > > Option 3: Declare that this is working as intended?
-> > 
-> > Option 3 has my vote.
-> 
-> Seconded.
+Tradeoffs considered in the implementation
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-(See also discussion on sibling thread)
+Q: Should we guard it with a dedicated LANDLOCK_ACCESS_FS_MAKE_WHITEOUT
+   right?
 
-I also don't currently see how an attacker would abuse this, but I still see
-this as a violation of Landlock's security model if we can create a policy that
-denies the creation of character device directory entries, and then we still
-have a way to make them appear there where we previously had a different file.
+   Pros:
+   * This would be the fully backwards compatible solution,
+     and Linux always strives for full backward compatibility.
 
-I'll send a tentative patch for option 2 for discussion. We can discuss more in
-the context of that more concrete proposal, if needed.
+   Cons:
+   * Complicates the Landlock API surface for a very minor use case.
 
-—Günther
+     In Debian Code search, the only use of RENAME_WHITEOUT from userspace
+     seems to be for fuse-overlayfs.  It is used there for the same purpose
+     as in the kernel OverlayFS and it likely does not run in a Landlock
+     domain.
+
+   The tradeoff does not seem worth it to me.  The chances that we break
+   anyone with this seem very low, and I'm inclined to treat it as a bugfix
+   for the existing LANDLOCK_ACCESS_FS_MAKE_CHAR right.
+
+
+Q: Should we add a Landlock erratum for this?
+
+   I punted on it for now, but we can do it if needed.
+
+Q: Should the access right check be merged into the longer
+   current_check_refer_path() function?
+
+   I am leaning towards keeping it as a special case earlier.  This means
+   that we traverse the source path twice, but as we have seen in Debian
+   Code Search, there are apparently no legitimate callers of renameat2()
+   with RENAME_WHITEOUT who are calling this from within a Landlock domain.
+   (fuse-overlayfs is legitimate, but is not landlocked)
+
+   It doesn't seem worth complicating our common rename code for a corner
+   case that doesn't happen in practice.
+
+
+[1] https://lore.kernel.org/all/adUBCQXrt7kmgqJT@google.com/
+[2] https://docs.kernel.org/filesystems/overlayfs.html#whiteouts-and-opaque=
+-directories
+[3] https://man7.org/linux/man-pages/man2/renameat2.2.html#DESCRIPTION
+[4] https://codesearch.debian.net/search?q=3Drename.*RENAME_WHITEOUT&litera=
+l=3D0
+
+
+G=C3=BCnther Noack (3):
+  landlock: Require LANDLOCK_ACCESS_FS_MAKE_CHAR for RENAME_WHITEOUT
+  selftests/landlock: Add test for RENAME_WHITEOUT denial
+  selftests/landlock: Test OverlayFS renames w/o
+    LANDLOCK_ACCESS_FS_MAKE_CHAR
+
+ security/landlock/fs.c                     | 16 ++++++++
+ tools/testing/selftests/landlock/fs_test.c | 45 ++++++++++++++++++++++
+ 2 files changed, 61 insertions(+)
+
+--=20
+2.54.0.rc0.605.g598a273b03-goog
+
