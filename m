@@ -1,55 +1,55 @@
 Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A3233030F
-	for <linux-security-module@vger.kernel.org>; Sat, 11 Apr 2026 09:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7617433030F
+	for <linux-security-module@vger.kernel.org>; Sat, 11 Apr 2026 09:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775898637; cv=none; b=Ao0nF4It81pV058jATb326pBBiup6kOLWZBjsZ4vkuQaRB3aqpQUOOf4k4nqBUIQ/W1tyfYLZivWnborxUCXr+R+E2DjIyjyitMQg4iSL0kPc5lketKmkmfcuSEptQ7ueyMn3Fm7zPG+Ur+tW7+gKRhbf8Y4QLX//XGZKxkdEUY=
+	t=1775898640; cv=none; b=dO4y2pjqzm8bYD45aghSXnSZLIGOVOBdSZxklI8eiAB3s66dMBuC3cqWQt52xP4gNI0LJFAXhVrv5DSrgsA4/+Y5t8xoib6muJz7UqxBsn2xuacpsp1BzBEWgpeClBgVVOL0HE8lMYVc1TiQocLqFDdbTPe2885uEuoUoAxNgkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775898637; c=relaxed/simple;
-	bh=Js+pvHdZfZaUrBFysXEJqrIWU3Tqm2pvYV+EtMmrzj0=;
+	s=arc-20240116; t=1775898640; c=relaxed/simple;
+	bh=TJGJJlmuObuMk1a0mhrOptWgVlNY3mmt5yJN1Kem1/U=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=stLJxh1fIzgK4XyVUllv9NjJtijWhU3cTjwRgnkNZ+bahtKhW64qcii634JWJ34jkq6+yBNvxPlh9DY2BzVKZ8HAfCjfbRZAJkVW5r3v1OYDRNJ6nUnn1PSYF+3SAItHOv1qeCBcqy/alE4kvlZo2yLRemkMEg+8dm3OzirLVRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R3ZPsA3s; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=f0H38mU2GRVga8z8mdkvha/oIW8wMctyoHWDsg6mD25gS48zkMjorT1tqw6eNtjyVZUUq71+Ri4XhHEZ24fKpO+dxzlWLHKdOZ3L7Xv0CQUobwP9+7NHhKohAkBYcUENqDo9GEcdFLNjHZrOe+kFZDSPpsjpAJeVNJ06fRUd0mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IrSUyh+Y; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R3ZPsA3s"
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-488df213f8bso2316785e9.1
-        for <linux-security-module@vger.kernel.org>; Sat, 11 Apr 2026 02:10:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IrSUyh+Y"
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-488dcaf2f2fso3834995e9.0
+        for <linux-security-module@vger.kernel.org>; Sat, 11 Apr 2026 02:10:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1775898634; x=1776503434; darn=vger.kernel.org;
+        d=google.com; s=20251104; t=1775898638; x=1776503438; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qXZ7hVyNV+J9DaGwWeoXNYLiN9KJhcyX3JwSvbKBF8A=;
-        b=R3ZPsA3slZn+cqN2k/1m6guhj+LS2TEFJ+wJ+P6+0MfQqw4CA5LyTRLmh6U96zc8m5
-         bLCqa24bx9EAFL7w9QiDLMkjr4qjcfB2TkwixF1S9dRsHXG3Ax1ysk/zUAO7iBLGTxD5
-         CkfJQrCsWYKWGwDY7DMH2qpF9in5QVIrocOwOz+AZVRN9RGsikebYgL1ULyS2oT9nT19
-         HOY0gkPhukbGdAu+MnNwSVDLXZmo1pzjw99utlSiswPulZbLLYfzSI9zaGLypjzR3IS+
-         t/XzoWje6XlF/BqW/M+5ymxC23rq84xYFR/WNxjbbgwaqGzU4mYF0Ls/StjYmbljKzt0
-         ArQQ==
+        bh=6FCJxa/S51s5aJDCX+k6HJH5U0vcvWWW6o0Ap45aP9w=;
+        b=IrSUyh+Ykhbkpl8DGtt+VZFE4GSjVqGYp8BBjCluMTzFb/Qo2RNX2sdk6LU9ljE+xF
+         y80IyVp6L1+dwnu9lB9/Y6aWdLT68FXqtMTtA/7n7hIZ4obKcv5QDb1VQ8SQEvP02S8T
+         o6Q39uRzjJZ6XgADITpxJCMiD775ZhG8LFb+4oAz6IfXVoIgff07NEqsRzC/Vq5sUMAX
+         ADVqkdktcop5IR1OR+t82Q7MwW5Tc5OsTq7U97r9ncBPHBtKce/jRgyynhXcH+IWZxBI
+         NBp1ox7IdsR+w55H9NxcxvX7oSgmeuiEaYEZvAEk9Um5F8x5QUM/XnakevoFrC+4vve9
+         MBZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775898634; x=1776503434;
+        d=1e100.net; s=20251104; t=1775898638; x=1776503438;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=qXZ7hVyNV+J9DaGwWeoXNYLiN9KJhcyX3JwSvbKBF8A=;
-        b=n6Q7f3MngNcRMs1Q8Sk0BV74XGhUIIc0ILYfSsphitmIvv69399SkCmt2ti1d9BTaL
-         ndCIsNU4X606fjuhqDK0mDB/9Sn5c7UO8Qn8wM0eUSLfb7oF56170inzJ6oYCsu3hMQ1
-         GEsm/woIk6t+EJVqQMYsDouFWUgp9wpL5gneR2T7FhLS5VVajUeaID9cL9CcHa7+G7eu
-         OVgwX25uf3kMlZywujLpwM5wP+w5XkDyEyAC8h8Nd4AzUBb++/NzYSyyhQ7uy0POPK4n
-         gwAp7b2b5dkITC5K7C8gyaKY7P0M/xFOtp25ht+B2Rv7MgkS10NRYlIhStCo5WSFlioa
-         +0mw==
-X-Gm-Message-State: AOJu0Yystm9Lqt81TlIQBAMbGE2vkI8ZPkSM/Zu54hftsWK5y3n8VS8C
-	inDsx2j9K93sXOay5e9zakDMeMUBzqW/OZeRwLJcNGWvKptelwZYliNwc5VUzlBnKTt/ac1X9P6
-	YCFc8mg==
-X-Received: from wmco3.prod.google.com ([2002:a05:600c:a303:b0:488:c127:b938])
- (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600d:8453:b0:46e:59bd:f7e2
- with SMTP id 5b1f17b1804b1-488d68ae9b7mr64344655e9.11.1775898634404; Sat, 11
- Apr 2026 02:10:34 -0700 (PDT)
-Date: Sat, 11 Apr 2026 11:09:45 +0200
+        bh=6FCJxa/S51s5aJDCX+k6HJH5U0vcvWWW6o0Ap45aP9w=;
+        b=riDea/d3jCzpHTkqGmzi/AehuyadrOwLEnFq0zvKW/nHOTX/pe1rq4Xo9VUM471D51
+         7VmNn4Ymnuw0iptSMKUkif10KQqfukvz4cxahZDcyhAZ4gRWLxNixud+EFlcJfHf6GRX
+         kVTKWRtQdYvx4EyMRB3NuLPyUbIub6Z7cE6f9OTmlp9+Ke8Gl47abj77t1C462Za/D1O
+         8+1jCXckIjhU0gotDY//pDefKyx3aDKm5x+DPmbtvSP4RCTQGiJ/0Jsv2Ty1mME75YeJ
+         Z4pECaWYlmeTKjqXkSLxJXTeEd0DpB8Nod1vT9kS+rOWbH7OZ1dzl6SfH/EM4OlFGKXw
+         8g7g==
+X-Gm-Message-State: AOJu0YxxlQvhGElQY6RllL6owoow1IzeA2V1e2xxMfMU0SRfpA20wjaW
+	iv9Fam+LlWeIyRUZmzEPLbXnCiCYeii4r4VhA7rYc941XWe4aAqkuwvlUJaK8yZnQeN3rwRrGt5
+	bEmoPJQ==
+X-Received: from wmbb20.prod.google.com ([2002:a05:600c:5894:b0:485:2f8c:9478])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:198c:b0:485:3fd1:9936
+ with SMTP id 5b1f17b1804b1-488d67b8d43mr80209665e9.5.1775898637916; Sat, 11
+ Apr 2026 02:10:37 -0700 (PDT)
+Date: Sat, 11 Apr 2026 11:09:46 +0200
 In-Reply-To: <20260411090944.3131168-2-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -59,8 +59,8 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20260411090944.3131168-2-gnoack@google.com>
 X-Mailer: git-send-email 2.54.0.rc0.605.g598a273b03-goog
-Message-ID: <20260411090944.3131168-5-gnoack@google.com>
-Subject: [PATCH 2/3] selftests/landlock: Add test for RENAME_WHITEOUT denial
+Message-ID: <20260411090944.3131168-6-gnoack@google.com>
+Subject: [PATCH 3/3] selftests/landlock: Test OverlayFS renames w/o LANDLOCK_ACCESS_FS_MAKE_CHAR
 From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
 To: "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, Christian Brauner <brauner@kernel.org>
 Cc: linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
@@ -69,48 +69,88 @@ Cc: linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Add a test to check that renames with RENAME_WHITEOUT are guarded by
-LANDLOCK_ACCESS_FS_MAKE_CHAR.
+Even though OverlayFS uses vfs_rename() with RENAME_WHITEOUT under the
+hood, and even though RENAME_WHITEOUT requires
+LANDLOCK_ACCESS_FS_MAKE_CHAR, a process that renames files in an OverlayFS
+can do so without having the LANDLOCK_ACCESS_FS_MAKE_CHAR right in that
+location.  This works because OverlayFS uses the credentials determined at
+mount time for the internal vfs_rename() operation.
 
 Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
 ---
- tools/testing/selftests/landlock/fs_test.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ security/landlock/fs.c                     | 11 +++++---
+ tools/testing/selftests/landlock/fs_test.c | 31 ++++++++++++++++++++++
+ 2 files changed, 38 insertions(+), 4 deletions(-)
 
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index 2b84a229e4d8..9b49f6c3e5da 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -1523,11 +1523,14 @@ static int hook_path_rename(const struct path *cons=
+t old_dir,
+ 		int err;
+=20
+ 		/*
+-		 * This check would better be done together with other path
+-		 * walks which are already happening for the normal rename check
+-		 * in current_check_refer_path().
++		 * Rename with RENAME_WHITEOUT creates a whiteout object
++		 * (character device file with major=3Dminor=3D0) in the old
++		 * location, so we check the access right for creating that.
++		 *
++		 * See Documentation/filesystems/overlayfs.rst and renameat2(2).
+ 		 */
+-		err =3D current_check_access_path(old_dir, LANDLOCK_ACCESS_FS_MAKE_CHAR)=
+;
++		err =3D current_check_access_path(old_dir,
++						LANDLOCK_ACCESS_FS_MAKE_CHAR);
+ 		if (err)
+ 			return err;
+ 	}
 diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/sel=
 ftests/landlock/fs_test.c
-index cdb47fc1fc0a..d867016e3fd3 100644
+index d867016e3fd3..4cf6fc0bcb71 100644
 --- a/tools/testing/selftests/landlock/fs_test.c
 +++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -2247,6 +2247,19 @@ TEST_F_FORK(layout1, rename_file)
- 			       RENAME_EXCHANGE));
- }
-=20
-+TEST_F_FORK(layout1, rename_whiteout_denied)
-+{
-+	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_MAKE_CHAR, NULL);
-+
-+	/*
-+	 * Try to rename a file with RENAME_WHITEOUT.
-+	 * file1_s3d3 is in dir_s3d2 (tmpfs), so it supports RENAME_WHITEOUT.
-+	 */
-+	EXPECT_EQ(-1, renameat2(AT_FDCWD, file1_s3d3, AT_FDCWD,
-+				TMP_DIR "/s3d1/s3d2/s3d3/f2", RENAME_WHITEOUT));
-+	EXPECT_EQ(EACCES, errno);
-+}
-+
- TEST_F_FORK(layout1, rename_dir)
- {
- 	const struct rule rules[] =3D {
-@@ -6949,6 +6962,7 @@ TEST_F_FORK(layout2_overlay, same_content_different_f=
-ile)
+@@ -6962,6 +6962,37 @@ TEST_F_FORK(layout2_overlay, same_content_different_=
+file)
  	}
  }
 =20
++TEST_F_FORK(layout2_overlay, rename_in_overlay_without_make_char)
++{
++	struct stat st;
++	const char *merge_fl1_renamed =3D MERGE_DATA "/fl1_renamed";
 +
++	if (self->skip_test)
++		SKIP(return, "overlayfs is not supported (test)");
++
++	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_MAKE_CHAR, NULL);
++
++	/*
++	 * Execute a regular file rename within OverlayFS.
++	 * merge_fl1 originates from lower layer, so this triggers a copy-up
++	 * and creation of a whiteout in the upper layer.
++	 */
++	EXPECT_EQ(0, rename(merge_fl1, merge_fl1_renamed));
++
++	/* Check that the rename worked. */
++	EXPECT_EQ(0, stat(merge_fl1_renamed, &st));
++	EXPECT_EQ(-1, stat(merge_fl1, &st));
++	EXPECT_EQ(ENOENT, errno);
++
++	/*
++	 * Check that the whiteout object on the underlying "upper" filesystem
++	 * exists after the rename.  This is OK because it was done with the
++	 * credentials of the OverlayFS.
++	 */
++	EXPECT_EQ(0, stat(UPPER_DATA "/fl1", &st));
++	EXPECT_TRUE(S_ISCHR(st.st_mode));
++	EXPECT_EQ(0, st.st_rdev);
++}
+=20
  FIXTURE(layout3_fs)
  {
- 	bool has_created_dir;
 --=20
 2.54.0.rc0.605.g598a273b03-goog
 
