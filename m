@@ -1,80 +1,60 @@
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738D6271456;
-	Sun, 12 Apr 2026 16:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677B5362133;
+	Sun, 12 Apr 2026 18:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776011371; cv=none; b=lDNPF32exfEjEMySiga7q1vrQtCpt+mypgqESLKK0B5HIGD5Pdx3JheHnjZohjZZfcBHw8/8cl2MvZ7kfuDTEXXM8Fp3ha9dVHkGhWhufVH1k5WFloBqEMoOL7jctJhKNxuLF1LHpiR3qlje15NneEfMvVzQZxeG3WzetV+k+PA=
+	t=1776019662; cv=none; b=nUU2da3QquJbr+Ha8GaH2vQsvVwE8p9rmK0L/xNA+9MIZ5RVHJepy7Pn5oSW0kPNfRYlooIJ6lGYXH44Ulbi3DSsXhcBztxyBH1iV3H+g8WhEwAj3QeSis6ceU041K+v670m+NJmxbYxCu8GJt6LkoBwOo6ArvPn6tDhjE3SFqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776011371; c=relaxed/simple;
-	bh=RByfpH+PZ0mnQDZT7rC2TxNtViuclKa4ObQpONWapzg=;
+	s=arc-20240116; t=1776019662; c=relaxed/simple;
+	bh=9Obmst+vffFZ2JuGzK4zifDXwljV3xYV6tNooPgFR9s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tZ+j4lLuDr7tJQSApZNbWeHBYcFU2sYEsyJdCPBcYHgH8llvanl1U1QxyOVlxtnG6UrDJTLyeOUzG27WXk/bBsOrk4+qBaAsOYJ7GS31hBDzLlvBmzW+x1Mo9aA6748xHw2+zx2FPzathKJAbjmnD0Z1rkcDUFwR66TOKklDegA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=ISMQQS1P; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LeDOI44y; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	 In-Reply-To:Content-Type; b=ipLnf8cWFvdtdKg0buD7ROUFNRvwh/roVN3d51ZUTxNjztO/BnPlsazCXb9EJ75sPsibtoWabSNi5NoijR842vk8RFUAqPCboflNgmpC77eyaFVbL9zmGG16552DyJgC0+d1QXzF9zcuWtVPL4UR+KEpZDAzRzK76Tg9zWyxmmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Am89wA0z; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="ISMQQS1P";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LeDOI44y"
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 67C087A0275;
-	Sun, 12 Apr 2026 12:29:28 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Sun, 12 Apr 2026 12:29:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1776011368;
-	 x=1776097768; bh=wU7xx4y42EqftV+K9QOvqUvU2b/Vk9fw+6/QZjqjueM=; b=
-	ISMQQS1PBMY9rVEMYQLixDDKvLIGh0PsctpdnhhUyedmY6FO6ERYafFB42DYtnvF
-	4VFHf+4cP1Qh3xawJJmVOtEj6YYJVJmeW4SHXqxUeJKroI9EV3l4ZwcRptY1rEm1
-	2talhFvCEf2KmdeqUlo839xuUCT2/n1CSecBcTfm7xNn7B8QCrMGtJzC4zrcBDKg
-	aqkKalRODYsLhjo7BbfZGxb5or0Bv5rzD2Hc1BlZfhMC3VEufcmnDh19WOqdkt3b
-	bxw/skA9aOUF1O4y2t5eHY5mmZcEX+6jfS5rrmE2tIuO3ohlXxyirqUU1Tluhba/
-	/syNjzvEwXbPliz6mSCILw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1776011368; x=
-	1776097768; bh=wU7xx4y42EqftV+K9QOvqUvU2b/Vk9fw+6/QZjqjueM=; b=L
-	eDOI44yaG47XsQHgo/zW3ds4SepAV/KrrNUff4uhckShNJmNTUB+5gLGpNYcL+W9
-	LirDkiklrVj8QEyYTKN3vltnnnfKuFYEtYRFGR0g9bp7Ceh945nNAeYJVLED8K9S
-	Vl1YTMj5r8JOo5mwequxUMErd5BW0ZiWKDWObVNB5Xmokue/exPtlTojGjcMIMk5
-	WgmlJAPNoZOLd1GUjFXk8PIY6gZ10n7osZ27qLvA7rOdFIGCbCv/bmKWcRUoIvk6
-	0uhFfPf1tErC9SaAEzHGwBT6V4Qix3YHSTjLoy3+qb4fdU5ZipSYIrIzFdgYvRvl
-	YdRBSI/Hax1thAkhpA2Bw==
-X-ME-Sender: <xms:Z8jbaXesUfiCEi8ku9FVjBoScbVMbdi9PAbW8WqfZ7JhDqZam6Al_Q>
-    <xme:Z8jbaSy4IP_Rf6NpkaPDoPGA8__vCK7dZMQCus3HEgIZfG2ZC5qpBcZu5C86lhcGc
-    Bjucs_n_ZYSQ8BM3XzXjEonbEoueK_EnnnMY2_Gb71vBMwsA_Aovs8>
-X-ME-Received: <xmr:Z8jbaaF6Rwu4QaEm_bjiiksFrpuvMGl084_xAr9uuc5M529l9F1wzcb5oZUA0QPjTcu_ka9OBq4un4LGyA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdefheejlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepvfhinhhgmhgr
-    ohcuhggrnhhguceomhesmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpeduke
-    evhfegvedvveeihedvvdeghfeglefgudegfeetvdekiefgledtheeggefhgfenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmh
-    drohhrghdpnhgspghrtghpthhtohepudeipdhmohguvgepshhmthhpohhuthdprhgtphht
-    thhopehmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepsghrrghunhgvrheskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdp
-    rhgtphhtthhopehrohhsthgvughtsehgohhoughmihhsrdhorhhgpdhrtghpthhtohepjh
-    grnhhnhhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepjhgvfhhfgihusehgohhoghhl
-    vgdrtghomhdprhgtphhtthhopehuthhilhhithihvghmrghljeejsehgmhgrihhlrdgtoh
-    hmpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmhhhi
-    rhgrmhgrtheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:Z8jbaZ0ajo9BbkliiflQfuCaz4fEPc-ZZ8hUuTy76MXYv7D6H2BezQ>
-    <xmx:Z8jbaa9-IvCZGB1TaLQ64lhffDON0SMN_ccwL_8Tf-7F8PKhGksRlA>
-    <xmx:Z8jbaUF2O5nJW1ffiII7TfSak7KfqBfndY33f6fOYVjBTDFu4qqHSQ>
-    <xmx:Z8jbaYj9etyeGzFDBLCbnPguFqzjH23J-dXOQsnj4Ap92kTCD84oEA>
-    <xmx:aMjbackfNn6uWAGtq5xfGIhw9Us7NLf-RSKN4FJfJPZSjAAYwlY0-iZn>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 12 Apr 2026 12:29:25 -0400 (EDT)
-Message-ID: <0e6fe895-9c3e-443d-a928-35640ba8c184@maowtm.org>
-Date: Sun, 12 Apr 2026 17:29:24 +0100
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Am89wA0z"
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63CBteJE2081391;
+	Sun, 12 Apr 2026 18:47:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Xj9+2x
+	m71UDvoJ8SbcfXc1BJI9JWIvui23ZYPXOYMds=; b=Am89wA0zf+c60FC9KOPmVI
+	GMAl5E98UDykqjUYqlsMORhUkV9YJGflXW5eU2rXinL0EXSsC4aN0iGVeetFajwq
+	xs6lPiZ+tC4gePmWcwHbBJmR7X+5+Vd02g2rWupEN3iy9E9DISna8IYnrrMl5w6l
+	N/YHy7AH25OafBaRn2aRMkquOjEPon7gTa6VlDsrsYWf2oeGFhOkSZObjeo1CIyn
+	/zszkPyyu4JFHqfMUxhc2PnQzHsDhERR14tF4cXW4RMedniE2y01YVTw+NXlLrJS
+	8Vf1lxN4LFUrAiwTv4nP7DQzib2sUrTtgLAIVyabbgghNpPGtMEAbZFaT7HEuiSQ
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4dfbqkcrb3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 12 Apr 2026 18:47:25 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 63CGD3P5025831;
+	Sun, 12 Apr 2026 18:47:24 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4dg3b1a3hv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 12 Apr 2026 18:47:24 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 63CIlM8L22151690
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 12 Apr 2026 18:47:22 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3E40E58056;
+	Sun, 12 Apr 2026 18:47:22 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3928F5803F;
+	Sun, 12 Apr 2026 18:47:21 +0000 (GMT)
+Received: from [9.61.16.31] (unknown [9.61.16.31])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Sun, 12 Apr 2026 18:47:21 +0000 (GMT)
+Message-ID: <129b137c-be9b-4b01-824f-beec7111377c@linux.ibm.com>
+Date: Sun, 12 Apr 2026 14:47:20 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -82,72 +62,79 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/17] landlock: Prepare ruleset and domain type split
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>, =?UTF-8?Q?G=C3=BCnther_Noack?=
- <gnoack@google.com>, Steven Rostedt <rostedt@goodmis.org>,
- Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>,
- Justin Suess <utilityemal77@gmail.com>, Kees Cook <kees@kernel.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Matthieu Buffet <matthieu@buffet.re>,
- Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
- kernel-team@cloudflare.com, linux-fsdevel@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-References: <20260406143717.1815792-1-mic@digikod.net>
- <20260406143717.1815792-2-mic@digikod.net>
+Subject: Re: [PATCH v3] KEYS: trusted: Debugging as a feature
+To: Jarkko Sakinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org
+Cc: Srish Srinivasan <ssrish@linux.ibm.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Ahmad Fatoum
+ <a.fatoum@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20260409160752.988713-1-jarkko@kernel.org>
 Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <20260406143717.1815792-2-mic@digikod.net>
-Content-Type: text/plain; charset=UTF-8
+From: Nayna Jain <nayna@linux.ibm.com>
+In-Reply-To: <20260409160752.988713-1-jarkko@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=I+9Vgtgg c=1 sm=1 tr=0 ts=69dbe8bd cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=VwQbUJbxAAAA:8
+ a=VnNF1IyMAAAA:8 a=rlHd4n21sRncWQMmDL0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: BUR2Qn7W8kE29AgtgCgbdcxV3guvnvO9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDEyMDE4NCBTYWx0ZWRfX77VwhTiXgwV4
+ YmhhxjLCtyUOzManSjWGLizoRjiP1OHmHzYLmpWuWNQ3qSeB5+Cx4THYkppN14MOwUa8t5FcxjR
+ Lhe+vAArsZYkf08TioNwHQK559UdkHvfHHlyCMGu5xFjMw9ZoizFiezziTieHP1Vqk9ZorbNRLE
+ 6adDjweFl+6KdqOScFFfWW5tmYj0gGme6+WclsWpp9Qu4JDMXHTuZOjJgyJDlxIk8I2giE8gc7v
+ 3j9z1RW5Ow3o8UyMnPMep8fNdgLZiDGe8gLHDgIbVqoWISNHpLrLrzotr/OV/UieGqQ1OjO9V2N
+ XJkFx7HPwne01+SOvgGlsJIFq9SbnQEf49OLsW0v4IsejZjHn54rvsKvYel836DSctmowkdBaz6
+ LfGxXvsYdPvDpBXZSrU+ibTrsCjg6vGu4QGCnY78GiOJRwY8J4UfK90yRET8dCZph6u9VWh7/Vr
+ N7epiJjidGNwOJiURGA==
+X-Proofpoint-ORIG-GUID: BUR2Qn7W8kE29AgtgCgbdcxV3guvnvO9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-12_04,2026-04-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 bulkscore=0 suspectscore=0 adultscore=0
+ lowpriorityscore=0 spamscore=0 malwarescore=0 clxscore=1015 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604010000 definitions=main-2604120184
 
-On 4/6/26 15:36, Mickaël Salaün wrote:
-> [...]
 
-Hi Mickaël,
+On 4/9/26 12:07 PM, Jarkko Sakinen wrote:
+> From: Jarkko Sakkinen <jarkko@kernel.org>
+>
+> TPM_DEBUG, and other similar flags, are a non-standard way to specify a
+> feature in Linux kernel. Introduce CONFIG_TRUSTED_KEYS_DEBUG for trusted
+> keys, and use it to replace these ad-hoc feature flags.
+>
+> Given that trusted keys debug dumps can contain sensitive data, harden the
+> feature as follows:
+>
+> 1. In the Kconfig description postulate that pr_debug() statements must be
+>     used.
+> 2. Use pr_debug() statements in TPM 1.x driver to print the protocol dump.
+> 3. Require trusted.debug=1 on the kernel command line (default: 0) to
+>     activate dumps at runtime, even when CONFIG_TRUSTED_KEYS_DEBUG=y.
+>
+> Traces, when actually needed, can be easily enabled by providing
+> trusted.dyndbg='+p' and trusted.debug=1 in the kernel command-line.
 
-I like this approach, as I basically ended up doing similar refactoring
-previously for the hashtable / array-based domain changes, and having this
-done first should make it easier to adopt the domain data structure
-changes in the future.
+Thanks Jarkko. Additional changes looks good to me. I just realized that 
+the kernel command-line parameters document may need to be updated to 
+include these parameters.
 
-I assume it's fine for me to add:
-Reviewed-by: Tingmao Wang <m@maowtm.org>
+Apart from that, feel free to add my
 
-> @@ -175,19 +163,24 @@ static void free_rule(struct landlock_rule *const rule,
->  
->  static void build_check_ruleset(void)
->  {
-> -	const struct landlock_ruleset ruleset = {
-> +	const struct landlock_rules rules = {
->  		.num_rules = ~0,
-> +	};
-> +	const struct landlock_ruleset ruleset = {
->  		.num_layers = ~0,
->  	};
->  
-> -	BUILD_BUG_ON(ruleset.num_rules < LANDLOCK_MAX_NUM_RULES);
-> +	BUILD_BUG_ON(rules.num_rules < LANDLOCK_MAX_NUM_RULES);
->  	BUILD_BUG_ON(ruleset.num_layers < LANDLOCK_MAX_NUM_LAYERS);
->  }
->  
->  /**
-> - * insert_rule - Create and insert a rule in a ruleset
-> + * insert_rule - Create and insert a rule in a rule set
-                                                  ^^^^^^^^
+Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
 
-Should this be rule storage to be consistent with the next 2 lines?
+Thanks & Regards,
 
-Alternatively maybe we can just say "struct landlock_rules" to avoid
-inventing new names?
+     - Nayna
 
->   *
-> - * @ruleset: The ruleset to be updated.
-> + * @rules: The rule storage to be updated.  The caller is responsible for
-> + *         any required locking.  For rulesets, this means holding
-> + *         landlock_ruleset.lock.  For domains under construction, no lock is
-> + *         needed because the domain is not yet visible to other tasks.
->   * @id: The ID to build the new rule with.  The underlying kernel object, if
->   *      any, must be held by the caller.
->   * @layers: One or multiple layers to be copied into the new rule.
+
