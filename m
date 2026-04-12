@@ -1,63 +1,63 @@
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92BF1A9FA4
-	for <linux-security-module@vger.kernel.org>; Sun, 12 Apr 2026 19:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61A6346FB3
+	for <linux-security-module@vger.kernel.org>; Sun, 12 Apr 2026 19:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776022353; cv=none; b=L8eBwVve9RO3Ys3RRFk8Unh00dR7krPE1edmrYPFpLYxfA2+0Z8Sc3rmOF56TybzOXaKDaxPxqG2LyrgyAHCtgbqq52DcMy1zF4mK3L5dR8gCiFWUVucRh8TvebiBXiQItm/c+Eo/srHq8rJoyNPLGrxQyJlsSMfRUyq8re19Jo=
+	t=1776022355; cv=none; b=QJsxo8mngJNvRTRSWiRFlPEEND8uNmfAZGjwvsGLrQAG+wHbQLo82GQeJ88j1/TaeoRtoGsbcWzEedfTQaHi7OVkKZX8yEx1QQ5/hZjEYSg+ZnOYjdCwRY6ElyZvnTrjFb/035YD7iqUO5tjsK4/SX8WWSIlVq6m/LovQ07EWdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776022353; c=relaxed/simple;
-	bh=oTcR4CCr8Ocq8t7qP/Oqx/qCDuG7oxO3x20lTSDDTLs=;
+	s=arc-20240116; t=1776022355; c=relaxed/simple;
+	bh=HzgjBGJL8mlZipuxZKPuRGs7hgiEKjce8SeJqtWeXF4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=niK6qbCxj6MHM35gEduvSPqKikrV7TzKGo3QuIELU/p39HfHrgt992l4j8uooM/jqqq9MFbKHvrdiR/xVkLXUhgq3CJ2jlW4PF4MhhJyL2f9EBv8YiMIPvVe9w2eEaU0K6AcoB8B2utEJyQGm5xzir0lghbux3vvEaoH7GZoDhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R3fGjrsJ; arc=none smtp.client-ip=209.85.128.177
+	 MIME-Version; b=S9q7RCb7Rs2sP2X+o4kGgEWvK9B2L2qG0V2oNim4tIAx9DMR8clk0ymB5Wq82eex6t3qMqNFxzUz/4Hsg9/BISrz7LMsZHYm+R3G9EaWQSMdmqo42E+rFgxwDgER3mjsAKlnfME/X11SK0MVfxFDAtaeogiSpp99BTYydLJs7J4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mVL3Hh2a; arc=none smtp.client-ip=209.85.128.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R3fGjrsJ"
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-79885f4a8ffso35176137b3.3
-        for <linux-security-module@vger.kernel.org>; Sun, 12 Apr 2026 12:32:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mVL3Hh2a"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-797ab169454so42383667b3.3
+        for <linux-security-module@vger.kernel.org>; Sun, 12 Apr 2026 12:32:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776022351; x=1776627151; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1776022353; x=1776627153; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7wiA/RsoYoY172m6Ory17tQ0n/z36I2wypoPAvXCQLg=;
-        b=R3fGjrsJTy6B/lNNfP5u6/GMJ7K0Nr+/dXDtD3EbNZhTx+/Hmehk+D5Y+KQH5p8sjL
-         lAjzFWX7RsmiLpxqKC4D4owmGCyoRby/M0J5uy+ANoW5MpHfg20Wq2u2VMJfyLg33dKI
-         aQqShbe1Yus1DNFZBCsY31mPGFKQ42g1YMs8WbMLIk4+PJy4tnPoG/eHwQ/Qo6jfUcmU
-         +UAjGSnd5OgCSUtAZLDpG8ZxmRkgyL45C5rn34ZmWMo9ws8yfuQLgYTi6+QKqFD/BoqD
-         yN1Xppobl9ahLzLdwvITi0Qgmo9uqRP8bOyVjCIk8664qXjgNqGPX7KDK2+aADMjjJgW
-         ZBNQ==
+        bh=HEyMqYSg8snFq9sPZuhnT2t5BnIqsZznW6Z++dJScqI=;
+        b=mVL3Hh2a4HQ0amCD15G/z+XRXGgFuxN9jtQzQN/5RxjkzKzhRhpSnUdR4kGfuau/1t
+         G6gpyMYFxlNzkhtaL6nTyj2cfuuyXLPM5NeqAMIC9jlCVU8eJPzW4ZDOPtF3oInGJKNo
+         fuKVPzAM5HBkwnIaM0OQ85dzySJXz1oY8G1YYwOB0rxkGauKUPJDv1LegX8/u3XiLuoe
+         s+mrwa77UA5dJGKNGT6cG9FQXt4noZIE2Mw1XEqEkKz6NvsmzvvBXJtTo0X3iGy7gnkl
+         yJwAoE2QGh1/2BP4j/F2jOzHtbJ6y5NDgEYsxAixpkJ9vCf2VmOXn5cs/t3HR1eJmPce
+         cfuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776022351; x=1776627151;
+        d=1e100.net; s=20251104; t=1776022353; x=1776627153;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=7wiA/RsoYoY172m6Ory17tQ0n/z36I2wypoPAvXCQLg=;
-        b=h1EC2Q4qw18akn4c0dMl2HLwtId3E/vN1wSIFZI9W3gsIJ41XY3V8xfjfxQ49yYv6r
-         P5xvbeYcD0TMlW9Z8/SRZ4fczrEPXLcnpl1gsQuVGY+kflinBDQ3cR/JmfQ5YZv+Mm3n
-         SIT2eHX5Id2M1vF/tRNBK3SnEBfy35atuyE99clZETnKnQlbTax8s6VTsBsMrb2bL8kd
-         8bHfwNVRAJLBY42mT15WLBj/1oaP9occOrURcK7p26pKZ0NN8h9nm+1BSNIMYQ9p+3j4
-         6G2jVbphJJTaPFiljPncmxY7xHPvSJWiluKHQRyNiLAsUT/aWCFnezLI13uyuc6iPvbb
-         m+VQ==
-X-Forwarded-Encrypted: i=1; AFNElJ8248TTEu6kL4QflL7PFEOD+dYqSDSZTdxXdnD4u9F/cwV82DnmiJ0/vquWBFbpt8WlUVP72zmT+/omRlCTCK6WMb2Axkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDXlq3k4lqSEr+XadVOziv/bclKDbu7skOW464CgBTI1xa4STn
-	xSoQRTbWTXdItATAHx1X0p28JY6N7ZfbmGVeUH4blVEiqTqe4ZUBIHNB
-X-Gm-Gg: AeBDieunOU0HsjQEIYdM4ZoQy3ntpwjY5+C8u3M6COY3NV664rutGA+5DvL2VOhtCiz
-	LqDPJXo3/7VQM5Q5//xzxa6zroW9V/D0rfDYyZUv3YVl5wDt8dLv5c97SJEoDrwLNW7IZuC/QWZ
-	Pra48kEa89WMPAj/0/ZNE2HJQ7pQAaHJ22AhHlYyl62eZI13mw2vu/5Z6QJ/TfWgCc1MGC8VLvk
-	Zm6APf89xDkkAwZWdB31Q0zagQE5nuGgyCdRTZJjljO32FTbQpCh+ciCqoiArPtnxhIy+XEX2E/
-	jHsdVk2mZopDojWvXKifJ2yHauuo6ZvX4XZ9qikbqknvsvy2BDPjizKZgsLONwB+1vMyWyICzIK
-	1aKQSQ9vS/aLAvOGIt+EGKgdnWKwrA7f1Dy6nFclqL/FsSAJHCyUSNasBa+xzf0OSr4Ti6S0olp
-	h83UPUXxlobWtQE0MJ59nXqxyd7EOOPDpk/+/j7pZvQ/yu/JRQulGsQRu88nj8MzA8mw7m63nV
-X-Received: by 2002:a05:690c:110:b0:7a2:1f26:3d5f with SMTP id 00721157ae682-7af71281b8emr117019907b3.28.1776022350881;
-        Sun, 12 Apr 2026 12:32:30 -0700 (PDT)
+        bh=HEyMqYSg8snFq9sPZuhnT2t5BnIqsZznW6Z++dJScqI=;
+        b=PQ5K9C82jDXjDKkGjSGo8bLGNShfEz0zBQavt2PKvRfArLDq49Zwqq/plNaGugQVEV
+         i+d2EUSx6H0jwpToNzYHJN7mgz4mE5c9a7eXR6LH4Nn7DGY5gKJW05Fu2L/X4J8aCDuY
+         4hOus+Am1tTwKWlBAx2TWrzRi3oDeTPEg0RkGdOMll+DUNDgkX3QjdGlxnEQh/wlG5VC
+         cSVqs8JrIKhnSxTVMaskXPhNxqgnBVDKVnkfirMu77t5vbsJdffsKgHQzU8jfzws1lJp
+         Zoyhz0HRMzvdvIqF/gZ8SZRU0TOWbVdANpNNGwOkYahR0HMeHNQk5RLLnA2oMSYzpryZ
+         yHMw==
+X-Forwarded-Encrypted: i=1; AFNElJ+K97tkiqWmP3V3cZzd9Pi3tzXhQUM5N0i8xy+JzkUQNfuupuEcs0m7pjJno5+evm/c3b66jkaGd9SNAItyb/GOWx0i7W4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcTBxpNPIEVdoQN6VfHnyngbgrGqyfZrGwIC4h2xohbA2Aj7Th
+	54Bqy8Xirz0P9m6S6HpTfGR5OOS7IqwbX/8DLFrUr0EqJN+tiqeZHNdW
+X-Gm-Gg: AeBDiesryISNKIXKIAQEc0KquCRV+UoaOR4lxoDKKayxrzUPSZxgJkb1yjJ+NOLdDGb
+	44SsTBnbEAWjEi1QjytyLBdUAN6prTMxh5Sw2dGSzdl+0/kgz4mlvKUU+sTZ6wiPiumgj7mYkan
+	DZPd4oEd1FJsWQvsvMjpuO4CCSLt/XYNy+KyWWn07uQm///dYV5hks0UoMYuW5HhDquBCKdQdtv
+	IAGLDYjm4p5MPpF+Zza+wNMY0H/9aNRV8VEv5AWT6iMISDsGufPdjeMsRl1n2KONolwMmsDYhSQ
+	IfH3DNzK6i912Dt5QIb8nTFAaYAMCO8tkpDXTriwpv+/iODUwBzbKG8BN0EwdzX+CfjNGaMXf72
+	Um2jmXR15INj3jcuVfsWwvGtLL/vSkwxYVyNO1vXSMYGlbWby63+kU7MexXY5oPINmVH8XHb2OF
+	Vzf5df7O4RMXsZZUYgW/qOLXm3BtKk/1RiKvsl8TlqNTm60jemL4sksnZHe5qih2H+9C3JAyG7
+X-Received: by 2002:a05:690c:81:b0:79b:73dc:d30d with SMTP id 00721157ae682-7af6f228687mr124644107b3.3.1776022352633;
+        Sun, 12 Apr 2026 12:32:32 -0700 (PDT)
 Received: from zenbox.prizrak.me ([2600:1700:18fb:6011:1192:20dc:2cb3:dcdc])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-7af3c8decbfsm42395807b3.8.2026.04.12.12.32.30
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7af3c8decbfsm42395807b3.8.2026.04.12.12.32.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Apr 2026 12:32:30 -0700 (PDT)
+        Sun, 12 Apr 2026 12:32:32 -0700 (PDT)
 From: Justin Suess <utilityemal77@gmail.com>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 Cc: Tingmao Wang <m@maowtm.org>,
@@ -66,9 +66,9 @@ Cc: Tingmao Wang <m@maowtm.org>,
 	Jan Kara <jack@suse.cz>,
 	Abhinav Saxena <xandfury@gmail.com>,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v7 03/10] landlock: Use landlock_walk_path_up for collect_domain_accesses
-Date: Sun, 12 Apr 2026 15:31:54 -0400
-Message-ID: <20260412193214.87072-4-utilityemal77@gmail.com>
+Subject: [PATCH v7 04/10] landlock: Implement LANDLOCK_ADD_RULE_NO_INHERIT userspace api
+Date: Sun, 12 Apr 2026 15:31:55 -0400
+Message-ID: <20260412193214.87072-5-utilityemal77@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260412193214.87072-1-utilityemal77@gmail.com>
 References: <20260412193214.87072-1-utilityemal77@gmail.com>
@@ -80,10 +80,8 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use common path walk helper for collect_domain_accesses. This
-extends the new centralized traversal logic to the current_check_refer
-path code flow, and maintains consistency with the is_access_to_paths
-allowed traversal while allowing reuse of traversal semantics.
+Implements the syscall side flag handling and kernel api headers for the
+LANDLOCK_ADD_RULE_NO_INHERIT flag.
 
 Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 ---
@@ -91,156 +89,125 @@ Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 Notes:
     v6..v7 changes:
     
-      * New patch split out from the v6 core NO_INHERIT implementation.
+      * None
+    
+    v5..v6 changes:
+    
+      * None
+    
+    v4..v5 changes:
+    
+      * Moved syscall handling to this patch and moved out flag definition
+        to allow independent build.
+    
+    v3..v4 changes:
+    
+      * Changed documentation to reflect protections now apply to VFS root
+        instead of the mountpoint.
+    
+    v2..v3 changes:
+    
+      * Extended documentation for flag inheritance suppression on
+        LANDLOCK_ADD_RULE_NO_INHERIT.
+      * Extended the flag validation rules in the syscall.
+      * Added mention of no inherit in empty rules in add_rule_path_beneath
+        as per Tingmao Wang's suggestion.
+      * Added check for useless no-inherit flag in networking rules.
 
- security/landlock/fs.c | 75 ++++++++++++++++++++++--------------------
- 1 file changed, 40 insertions(+), 35 deletions(-)
+ include/uapi/linux/landlock.h | 29 ++++++++++++++++++++++++++++-
+ security/landlock/syscalls.c  | 15 +++++++++++----
+ 2 files changed, 39 insertions(+), 5 deletions(-)
 
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index b31bd2980e5c..7ec26c671f91 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -1036,49 +1036,52 @@ static access_mask_t maybe_remove(const struct dentry *const dentry)
-  * collect_domain_accesses - Walk through a file path and collect accesses
-  *
-  * @domain: Domain to check against.
-- * @mnt_root: Last directory to check.
-- * @dir: Directory to start the walk from.
-+ * @path: Path to start the walk from and whose mount root is the last
-+ *     directory to check.
-  * @layer_masks_dom: Where to store the collected accesses.
-  *
-- * This helper is useful to begin a path walk from the @dir directory to a
-- * @mnt_root directory used as a mount point.  This mount point is the common
-- * ancestor between the source and the destination of a renamed and linked
-- * file.  While walking from @dir to @mnt_root, we record all the domain's
-- * allowed accesses in @layer_masks_dom.
-+ * This helper is useful to begin a path walk from @path to the mount root
-+ * directory used as a mount point.  This mount point is the common ancestor
-+ * between the source and the destination of a renamed and linked file.  While
-+ * walking from @path to that mount root, we record all the domain's allowed
-+ * accesses in @layer_masks_dom.
-  *
-- * Because of disconnected directories, this walk may not reach @mnt_dir.  In
-- * this case, the walk will continue to @mnt_dir after this call.
-+ * Because of disconnected directories, this walk may not reach that mount
-+ * root.  In this case, the walk will continue to the mount root after this
-+ * call.
-  *
-  * This is similar to is_access_to_paths_allowed() but much simpler because it
-  * only handles walking on the same mount point and only checks one set of
-  * accesses.
-  *
-- * Return: True if all the domain access rights are allowed for @dir, false if
-- * the walk reached @mnt_root.
-+ * Return: True if all the domain access rights are allowed for @path, false if
-+ * the walk reached the mount root.
+diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+index 9a41c65623a1..290f76774e3f 100644
+--- a/include/uapi/linux/landlock.h
++++ b/include/uapi/linux/landlock.h
+@@ -127,10 +127,37 @@ struct landlock_ruleset_attr {
+  *     allowed_access in the passed in rule_attr.  When this flag is
+  *     present, the caller is also allowed to pass in an empty
+  *     allowed_access.
++ * %LANDLOCK_ADD_RULE_NO_INHERIT
++ *     When set on a rule being added to a ruleset, this flag disables the
++ *     inheritance of access rights and flags from parent objects.
++ *
++ *     This flag currently applies only to filesystem rules.  Adding it to
++ *     non-filesystem rules will return -EINVAL, unless future extensions
++ *     of Landlock define other hierarchical object types.
++ *
++ *     By default, Landlock filesystem rules inherit allowed accesses from
++ *     ancestor directories: if a parent directory grants certain rights,
++ *     those rights also apply to its children.  A rule marked with
++ *     LANDLOCK_ADD_RULE_NO_INHERIT stops this propagation at the directory
++ *     covered by the rule.  Descendants of that directory continue to inherit
++ *     normally unless they also have rules using this flag.
++ *
++ *     If a regular file is marked with this flag, it will not inherit any
++ *     access rights from its parent directories; only the accesses explicitly
++ *     allowed by the rule will apply to that file.
++ *
++ *     This flag also enforces parent-directory restrictions: rename, rmdir,
++ *     link, and other operations that would change the directory's immediate
++ *     parent subtree are denied up to the VFS root.  This prevents
++ *     sandboxed processes from manipulating the filesystem hierarchy to evade
++ *     restrictions (e.g., via sandbox-restart attacks).
++ *
++ *     In addition, this flag blocks the inheritance of rule flags from parent
++ *     directories to the object covered by this rule.
   */
- static bool
- collect_domain_accesses(const struct landlock_ruleset *const domain,
--			const struct dentry *const mnt_root, struct dentry *dir,
-+			const struct path *const path,
- 			struct layer_access_masks *layer_masks_dom,
- 			struct collected_rule_flags *const rule_flags)
- {
- 	bool ret = false;
-+	struct path walker_path;
- 
--	if (WARN_ON_ONCE(!domain || !mnt_root || !dir || !layer_masks_dom))
-+	if (WARN_ON_ONCE(!domain || !path || !path->dentry ||
-+			 !path->mnt || !layer_masks_dom))
- 		return true;
--	if (is_nouser_or_private(dir))
-+	if (is_nouser_or_private(path->dentry))
- 		return true;
- 
- 	if (!landlock_init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
- 				       layer_masks_dom, LANDLOCK_KEY_INODE))
- 		return true;
- 
--	dget(dir);
-+	walker_path = *path;
-+	path_get(&walker_path);
- 	while (true) {
--		struct dentry *parent_dentry;
 -
- 		/* Gets all layers allowing all domain accesses. */
--		if (landlock_unmask_layers(find_rule(domain, dir),
-+		if (landlock_unmask_layers(find_rule(domain,
-+						     walker_path.dentry),
- 					   layer_masks_dom, rule_flags)) {
- 			/*
- 			 * Stops when all handled accesses are allowed by at
-@@ -1092,14 +1095,16 @@ collect_domain_accesses(const struct landlock_ruleset *const domain,
- 		 * Stops at the mount point or the filesystem root for a disconnected
- 		 * directory.
- 		 */
--		if (dir == mnt_root || unlikely(IS_ROOT(dir)))
-+		if ((walker_path.dentry == path->mnt->mnt_root &&
-+		     walker_path.mnt == path->mnt) ||
-+		    unlikely(IS_ROOT(walker_path.dentry)))
- 			break;
+ /* clang-format off */
+ #define LANDLOCK_ADD_RULE_QUIET			(1U << 0)
++#define LANDLOCK_ADD_RULE_NO_INHERIT		(1U << 1)
+ /* clang-format on */
  
--		parent_dentry = dget_parent(dir);
--		dput(dir);
--		dir = parent_dentry;
-+		if (WARN_ON_ONCE(landlock_walk_path_up(&walker_path) !=
-+				 LANDLOCK_WALK_CONTINUE))
-+			break;
- 	}
--	dput(dir);
-+	path_put(&walker_path);
- 	return ret;
- }
- 
-@@ -1165,7 +1170,7 @@ static int current_check_refer_path(struct dentry *const old_dentry,
- 	bool allow_parent1, allow_parent2;
- 	access_mask_t access_request_parent1, access_request_parent2;
- 	struct path mnt_dir;
--	struct dentry *old_parent;
-+	struct path old_parent_path;
- 	struct layer_access_masks layer_masks_parent1 = {},
- 				  layer_masks_parent2 = {};
- 	struct landlock_request request1 = {}, request2 = {};
-@@ -1223,19 +1228,19 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+ /**
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index a71068c41f76..fbab6573df70 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -360,7 +360,7 @@ static int add_rule_path_beneath(struct landlock_ruleset *const ruleset,
  	/*
- 	 * old_dentry may be the root of the common mount point and
- 	 * !IS_ROOT(old_dentry) at the same time (e.g. with open_tree() and
--	 * OPEN_TREE_CLONE).  We do not need to call dget(old_parent) because
--	 * we keep a reference to old_dentry.
-+	 * OPEN_TREE_CLONE).  We do not need to call path_get(&old_parent_path)
-+	 * because we keep a reference to old_dentry.
+ 	 * Informs about useless rule: empty allowed_access (i.e. deny rules)
+ 	 * are ignored in path walks.  However, the rule is not useless if it
+-	 * is there to hold a quiet flag
++	 * is there to hold a quiet or no inherit flag
  	 */
--	old_parent = (old_dentry == mnt_dir.dentry) ? old_dentry :
--						      old_dentry->d_parent;
-+	old_parent_path.mnt = mnt_dir.mnt;
-+	old_parent_path.dentry = (old_dentry == mnt_dir.dentry) ?
-+					 old_dentry :
-+					 old_dentry->d_parent;
+ 	if (!flags && !path_beneath_attr.allowed_access)
+ 		return -ENOMSG;
+@@ -414,6 +414,9 @@ static int add_rule_net_port(struct landlock_ruleset *ruleset,
+ 	/* Check for useless quiet flag. */
+ 	if (flags & LANDLOCK_ADD_RULE_QUIET && !ruleset->quiet_masks.net)
+ 		return -EINVAL;
++	/* No inherit is always useless for this scope */
++	if (flags & LANDLOCK_ADD_RULE_NO_INHERIT)
++		return -EINVAL;
  
- 	/* new_dir->dentry is equal to new_dentry->d_parent */
--	allow_parent1 = collect_domain_accesses(subject->domain, mnt_dir.dentry,
--						old_parent,
--						&layer_masks_parent1,
--						&rule_flags_parent1);
--	allow_parent2 = collect_domain_accesses(subject->domain, mnt_dir.dentry,
--						new_dir->dentry,
-+	allow_parent1 = collect_domain_accesses(
-+		subject->domain, &old_parent_path,
-+		&layer_masks_parent1, &rule_flags_parent1);
-+	allow_parent2 = collect_domain_accesses(subject->domain, new_dir,
- 						&layer_masks_parent2,
- 						&rule_flags_parent2);
- 	if (allow_parent1 && allow_parent2)
-@@ -1256,7 +1261,7 @@ static int current_check_refer_path(struct dentry *const old_dentry,
- 		return 0;
+ 	/* Denies inserting a rule with port greater than 65535. */
+ 	if (net_port_attr.port > U16_MAX)
+@@ -432,7 +435,7 @@ static int add_rule_net_port(struct landlock_ruleset *ruleset,
+  * @rule_type: Identify the structure type pointed to by @rule_attr:
+  *             %LANDLOCK_RULE_PATH_BENEATH or %LANDLOCK_RULE_NET_PORT.
+  * @rule_attr: Pointer to a rule (matching the @rule_type).
+- * @flags: Must be 0 or %LANDLOCK_ADD_RULE_QUIET.
++ * @flags: Must be 0 or %LANDLOCK_ADD_RULE_QUIET or %LANDLOCK_ADD_RULE_NO_INHERIT.
+  *
+  * This system call enables to define a new rule and add it to an existing
+  * ruleset.
+@@ -470,8 +473,12 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
  
- 	if (request1.access) {
--		request1.audit.u.path.dentry = old_parent;
-+		request1.audit.u.path.dentry = old_parent_path.dentry;
- 		request1.rule_flags = rule_flags_parent1;
- 		landlock_log_denial(subject, &request1);
- 	}
+ 	if (!is_initialized())
+ 		return -EOPNOTSUPP;
+-
+-	if (flags && flags != LANDLOCK_ADD_RULE_QUIET)
++	/* Checks flag existence */
++	if (flags & ~(LANDLOCK_ADD_RULE_NO_INHERIT | LANDLOCK_ADD_RULE_QUIET))
++		return -EINVAL;
++	/* No inherit may only apply on path_beneath rules. */
++	if ((flags & LANDLOCK_ADD_RULE_NO_INHERIT) &&
++	    rule_type != LANDLOCK_RULE_PATH_BENEATH)
+ 		return -EINVAL;
+ 
+ 	/* Gets and checks the ruleset. */
 -- 
 2.53.0
 
