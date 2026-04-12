@@ -1,63 +1,63 @@
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7ECD346FB3
-	for <linux-security-module@vger.kernel.org>; Sun, 12 Apr 2026 19:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8514A317142
+	for <linux-security-module@vger.kernel.org>; Sun, 12 Apr 2026 19:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776022359; cv=none; b=Pdo/kaF93EJWA/NX+QxKslCNfGaNEtGODf2K4Nf3NjZFjN5+Mcogij5YuCnCkQvT2G9KqktsmcgcAH/4sORLErzVm0QKHbdUpbQ2iwtemipfi9twE9T/eJSU5V7DGwqu9wkvYo1DywD+ASKn7GEgumCUnPs95mr6FKFX2Bl0MiQ=
+	t=1776022361; cv=none; b=kgm3RAgX1zvNB+OhBAF6WmWJNJKjky7sPDK1BauM8zRJGTXqpR6OY4vvw+Hjv0OfuH4r30K6eQL7iw3RA+sc0EiNU6Jyxz+vYJ8gx2gbGOM6J83ywkewm7g/Gc6P1E83PNzmItHT7x/szM8IblJfxJsGmRNDQGEMP7s9+75k3R8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776022359; c=relaxed/simple;
-	bh=vD2Lqmpd8WID0ao4NCkZ+pRjlzaYIr18UixJHy0+WT0=;
+	s=arc-20240116; t=1776022361; c=relaxed/simple;
+	bh=2iO6bOQTVYc0L/NHvSLbf3JIQ5fpmlXhxfFmKjsZrnQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kL1tMfW2ZcBIOUBoNvflvk55Z08fa2YXxxAv3yC770tcD6v4s5QJ5DH/n2gZUxoFasiudSGMhOft7xitRVmm/kVXgzCu3AnYjESXi642aCva/HTGAWiMMpK2bT1VCfw313E2rsMdL6Mc2VgDyOag2MGwupViUpuHB5OeF+Gb0xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HE1rYDTJ; arc=none smtp.client-ip=209.85.128.170
+	 MIME-Version; b=cjKyd5C2d70AnfjuwU/OcjyQIfgXajnBVfktqRLXEKTTiB2gfbyBst1OTpPQjQuE4kvnV7/zRIf4pi3epPtucWss/nKEjo3KxaockJjzeQJmx0GRLhfI6+wCdolfnTie4/dsCCIJlkGZelUt2x0fDQN8ITpzZRI7pNtRhwK6PUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zyurp6CG; arc=none smtp.client-ip=209.85.128.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HE1rYDTJ"
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-7986e0553bdso35191797b3.2
-        for <linux-security-module@vger.kernel.org>; Sun, 12 Apr 2026 12:32:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zyurp6CG"
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-7b186dfc1d0so10187557b3.1
+        for <linux-security-module@vger.kernel.org>; Sun, 12 Apr 2026 12:32:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776022358; x=1776627158; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1776022359; x=1776627159; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UqKl5sNylpq5crdJu3jFiO/PkjPfc0zWN4ejZQ/7vEA=;
-        b=HE1rYDTJ8YJoJFN2eUEaJ9dPfGNFBP+yiKKMj3fU+U5Xld8bjqtv4tskE9YkawUIYt
-         1vrCA2LOsjjvbGUEVtCwFul/9ghnMsjGmq3qYm8ddK2l19r7Z6f9hK4rZxsmNvFipvKn
-         FFUg4ed8XAS+JAgUwBqkCm8COHC2GBpZ6BZy3XktnKnVuFA9NsKKiaihIogfGiaUSyC1
-         Qf0IkQr5l/TvJ5fAz1qyNxp+cqLsp0cFdgiGRD+UOy5R5FJQlmH8Km+1aylqqBmn9VHi
-         yfNf4vS0Y95oaIUgHnijdygZsy+pSEJYnzRp3wQ4uRsrXLLIBrEnxKnDAfIF2XoHIrA7
-         x/sA==
+        bh=zf7LxIAdF4UniBGd0ydg6fz6KWxBzxKiGc9FKldIaHM=;
+        b=Zyurp6CG38LjxZuSFOKB/MSjnMaVOS4n+rKdb0dBIw7f0hl/ZrjM0XMDcpNoNHEpHi
+         dHCrZ/EK0wX/jFm8srG8SKZwc198PvPnoBVrBBEWIqm5YwaZlY6jWvWaoD7dsD6w7FIR
+         m310oFyyfIJ19aCqBiTKMItmKd6s5icm7pOxk4gbUFNrCkYL2GRTnMOG3j4BG5x5zruY
+         +7F/ktCa0R0dgSLnBikOfxM/LeVTbjpB1IUTomLmYlJu5Jca4WgQPwqMu+jvsBbrRnHH
+         28skPJzRQgexxigXqKX3/jl7e6ziPjFpwedwLm7A0Mg3elNNUjgtF1GRVZ1+DxK+pZvx
+         vbVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776022358; x=1776627158;
+        d=1e100.net; s=20251104; t=1776022359; x=1776627159;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=UqKl5sNylpq5crdJu3jFiO/PkjPfc0zWN4ejZQ/7vEA=;
-        b=VGvfv0KpHA2+HbXEuilSJ+rP/Q0Rp0Fa4a6uvKYElzmJgyTAkmwML0/S7RoVUNchIg
-         Cv5nW3hiCH1aQnG4zN5Iap+al72TtMalbGiwPWBDQuspeo+gU/yOpARky9w86J6qdQiP
-         FXbeRcJXleA7f+dSh11QYdkJ000JapHl9BojSjMwuXcLs8xHwoKfdRY100fVQkOGRXQo
-         TiqhEYLv9++DDd0bDpNf2dSq8z6rj3I0JG3gRUyYAniZ6gF2Xc7vt/ZTYm36HPxuZ/ov
-         qBBntmwLiGmp8VmeucetzgWtvPw9bL+f0nzBHw4uEpPm5R70eTypfev006xRPkgOWWQY
-         5GxQ==
-X-Forwarded-Encrypted: i=1; AFNElJ85PghDQVcppkC7/XnC1Z/4MB+hB24dDd64YIjgitEBkgpnqafgNhbEb3keaMVBkKlbfKZsksoh8+XSpmRj83OlbakgnkQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM0101fQrgtWCDHsuZYlVAZUQHby8YiX04M8E0BKqZAq/PcH9q
-	QvgzSRFNYiqzMmiSejZXZ06zjiw/C8VIrdeKiyFobTlpG17XxtmjVDst
-X-Gm-Gg: AeBDieufJmcNgrkmy1PvAu3zdYURLVQp03ACapeSoBpEr17VhLOtJgptqKaFX0UkkVI
-	p2Dl1JguqCQF6IMcz2gz5h4AHG4mcMQ30cE0fsWI+IK38TzttbKN+Q7K7Ew3XpE5xsb7m4X1FB7
-	+ayGzu1+Fd18ZIgmgyMneBetjp7Ja9Ga34rHUdWiFvWjVnghPb7+wr67u1zJCjC95dwi7JYvTep
-	g2g8YFI6B1H7T+oZYAtCXsngyL+OvKTc3XRBf+PIZmS/kLLUjFQudvgP7VN0HUqzyoafnUVuk4H
-	u70N6OXQwSbBAfz6KquBPqZEwWI2a0hWkWY01YqJt8kHRrHKr1XBmh4M7gTBpJev4O50+LxCnVj
-	OnfXgQAHnrm3W+dOUoXnpLA4VNCRRROJ6OXOi+fZDv+JYubQfAOo5Su3q1W9or0DptkHT7t6HwF
-	a1Df7sq51voBRnSmBCy8F6sXl4J1gw4HuNKxjEoClRhCJTeTFfy20G+SvVB2BEWrVsm15NuC9P
-X-Received: by 2002:a05:690c:6604:b0:7a4:a215:9238 with SMTP id 00721157ae682-7af6fbf7a47mr125020977b3.19.1776022357693;
-        Sun, 12 Apr 2026 12:32:37 -0700 (PDT)
+        bh=zf7LxIAdF4UniBGd0ydg6fz6KWxBzxKiGc9FKldIaHM=;
+        b=j7gt1/X2prg5g2UFw8rNqsaLaDamMCcp2wML2x6amlLd+cyP6k8459S22lb4GXr/QD
+         L9VW7swHgsECBxLSCxB7MYGZpqSRDXb5m6X+Y5eGx7LSoV+MXcjErJ4XNxlxDiaCc+TX
+         tkAjEUKxPETqAvru32vM3YIik6JxRHoqHXHNq4ghIv45DvaIchH43+a9naQ0iOakgDHA
+         D8bgg6+YFDKv9RkCIRkzUqBeH1njo2ocmAvS1NTEcj1uacHHn2wgh5jLVBrK2Jhf0XYp
+         Yn8lMWgnQPX7p06s5r7Pd4A6z57sTD6wTQpQmXm5DTnLVltEgcUvpWijdy/5LJo5Ydaw
+         8y2g==
+X-Forwarded-Encrypted: i=1; AFNElJ90EwFcXpoK679ch5cbbO/E47p2J15BRFlsw4vzhGFYB+3fXW//RdTiE3v4fK7wJEF8a4AurrQ5XH7dZbR2xbzQmxZ0xlQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywoy+gN/jIVq8FHyHw0hMjL1krUhwx52h0u+QfCzfsgqOfCqDfZ
+	zVvZYHpgzdVpfTRprxQntRqQpyt0cNcKQW8/fZwyYI0H2h1uz6hADY97
+X-Gm-Gg: AeBDiesi3aLPWdq8pgtj0T6miDGh+l4dX3B1KRhNLV7t4nE3GK3AFHDGZ1GdDLnqWf9
+	V7CW5sqxS5g2UagL3+q9ERHBnCsJtZ7dLH6yaqCGdFUoA/RGY2Mc50TRNnLQobRRxJouPbRVEVb
+	+Pp9xoau5Fr7aZmSJD59BGm4eUeMbmetN4bZKFYaBu3/xnUor/TkVQLTYV7ruuDC+tm5PpeiKNk
+	I2O3l3vn+A80w+gmSjkjIEHOVNlRCFRigCNucenrWOPdUFZwgoTPyg5/VXeOjo85FK/sxGIsDYz
+	6T08gROYGUZyXqTlFmbKrS5WNd2K2uGdJ4a1qYGQSTXOP33rssbTgkZG4GYn/o+v5WoA2XWUQhb
+	PHAcrbFo7d2FYetCTNUxiv9hERAiwJ2bII4ylodU7J+aCEmUqB87SWj75b3Gtv5Unz7mlFfE8mk
+	iR0UjIsyXKUH2h4us2jB9M2Ioao5Pkg7N0vU8ki73TODQAt5BFoqROo0S5YJfbg+AY2e2qf0pT
+X-Received: by 2002:a05:690c:e682:10b0:79a:31ca:6663 with SMTP id 00721157ae682-7adef01f120mr92187817b3.28.1776022359455;
+        Sun, 12 Apr 2026 12:32:39 -0700 (PDT)
 Received: from zenbox.prizrak.me ([2600:1700:18fb:6011:1192:20dc:2cb3:dcdc])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-7af3c8decbfsm42395807b3.8.2026.04.12.12.32.37
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7af3c8decbfsm42395807b3.8.2026.04.12.12.32.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Apr 2026 12:32:37 -0700 (PDT)
+        Sun, 12 Apr 2026 12:32:39 -0700 (PDT)
 From: Justin Suess <utilityemal77@gmail.com>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 Cc: Tingmao Wang <m@maowtm.org>,
@@ -66,9 +66,9 @@ Cc: Tingmao Wang <m@maowtm.org>,
 	Jan Kara <jack@suse.cz>,
 	Abhinav Saxena <xandfury@gmail.com>,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v7 07/10] landlock: Add documentation for LANDLOCK_ADD_RULE_NO_INHERIT
-Date: Sun, 12 Apr 2026 15:31:58 -0400
-Message-ID: <20260412193214.87072-8-utilityemal77@gmail.com>
+Subject: [PATCH v7 08/10] samples/landlock: Add LANDLOCK_ADD_RULE_NO_INHERIT to landlock-sandboxer
+Date: Sun, 12 Apr 2026 15:31:59 -0400
+Message-ID: <20260412193214.87072-9-utilityemal77@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260412193214.87072-1-utilityemal77@gmail.com>
 References: <20260412193214.87072-1-utilityemal77@gmail.com>
@@ -80,56 +80,85 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Adds documentation of the flag to the userspace api, describing
-the functionality of the flag and parent directory protections.
+Adds support to landlock-sandboxer with environment variable
+LL_FS_NO_INHERIT, which can be tagged on any filesystem object to
+suppress access right inheritance.
 
+Cc: Tingmao Wang <m@maowtm.org>
 Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 ---
 
 Notes:
     v6..v7 changes:
     
-      * Bump the documented ABI for LANDLOCK_ADD_RULE_NO_INHERIT to 10.
+      * Bump ABI
     
-    v5..v6 changes:
+    v4..v6 changes:
     
       * None
     
-    v1..v5 changes:
+    v3..v4 changes:
     
-      * Initial addition
+      * Modified LL_FS_R(O/W)_NO_INHERIT variables to a single variable
+        to allow access rule combination.
+    
+    v2..v3 changes:
+    
+      * Minor formatting fixes
 
- Documentation/userspace-api/landlock.rst | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ samples/landlock/sandboxer.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index fd8b78c31f2f..f49e30a1599a 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -716,6 +716,23 @@ Starting with the Landlock ABI version 9, it is possible to restrict
- connections to pathname UNIX domain sockets (:manpage:`unix(7)`) using
- the new ``LANDLOCK_ACCESS_FS_RESOLVE_UNIX`` right.
+diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+index daba6da2fb74..8dc3b4471b36 100644
+--- a/samples/landlock/sandboxer.c
++++ b/samples/landlock/sandboxer.c
+@@ -60,6 +60,7 @@ static inline int landlock_restrict_self(const int ruleset_fd,
+ #define ENV_FS_RW_NAME "LL_FS_RW"
+ #define ENV_FS_QUIET_NAME "LL_FS_QUIET"
+ #define ENV_FS_QUIET_ACCESS_NAME "LL_FS_QUIET_ACCESS"
++#define ENV_FS_NO_INHERIT_NAME "LL_FS_NO_INHERIT"
+ #define ENV_TCP_BIND_NAME "LL_TCP_BIND"
+ #define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
+ #define ENV_NET_QUIET_NAME "LL_NET_QUIET"
+@@ -385,6 +386,7 @@ static const char help[] =
+ 	"but to test audit we can set " ENV_FORCE_LOG_NAME "=1\n"
+ 	ENV_FS_QUIET_NAME " and " ENV_NET_QUIET_NAME ", both optional, can then be used "
+ 	"to make access to some denied paths or network ports not trigger audit logging.\n"
++	ENV_FS_NO_INHERIT_NAME " can be used to suppress access right propagation (ABI >= 10).\n"
+ 	ENV_FS_QUIET_ACCESS_NAME " and " ENV_NET_QUIET_ACCESS_NAME " can be used to specify "
+ 	"which accesses should be quieted (defaults to all):\n"
+ 	"* " ENV_FS_QUIET_ACCESS_NAME ": file system accesses to quiet\n"
+@@ -432,6 +434,7 @@ int main(const int argc, char *const argv[], char *const *const envp)
+ 	};
  
-+Filesystem inheritance suppression (ABI < 10)
-+---------------------------------------------
-+
-+Starting with the Landlock ABI version 10, it is possible to prevent a directory
-+or file from inheriting it's parent's access grants by using the
-+``LANDLOCK_ADD_RULE_NO_INHERIT`` flag passed to sys_landlock_add_rule().  This
-+can be useful for policies where a parent directory needs broader access than its
-+children.
-+
-+To mitigate sandbox-restart attacks, the inode itself, and ancestors of inodes
-+tagged with ``LANDLOCK_ADD_RULE_NO_INHERIT`` cannot be removed, renamed,
-+reparented, or linked into/from other directories.
-+
-+These parent directory protections propagate up to the root. Further inheritance
-+for grants originating beneath a ``LANDLOCK_ADD_RULE_NO_INHERIT`` tagged inode
-+are not affected unless also tagged with this flag.
-+
- .. _kernel_support:
+ 	bool quiet_supported = true;
++	bool no_inherit_supported = true;
+ 	int supported_restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON;
+ 	int set_restrict_flags = 0;
  
- Kernel support
+@@ -526,6 +529,7 @@ int main(const int argc, char *const argv[], char *const *const envp)
+ 	case 9:
+ 		/* Don't add quiet flags for ABI < 10 later on. */
+ 		quiet_supported = false;
++		no_inherit_supported = false;
+ 
+ 		__attribute__((fallthrough));
+ 	case LANDLOCK_ABI_LAST:
+@@ -612,6 +616,13 @@ int main(const int argc, char *const argv[], char *const *const envp)
+ 			goto err_close_ruleset;
+ 	}
+ 
++	/* Don't require this env to be present. */
++	if (no_inherit_supported && getenv(ENV_FS_NO_INHERIT_NAME)) {
++		if (populate_ruleset_fs(ENV_FS_NO_INHERIT_NAME, ruleset_fd, 0,
++					LANDLOCK_ADD_RULE_NO_INHERIT))
++			goto err_close_ruleset;
++	}
++
+ 	if (populate_ruleset_net(ENV_TCP_BIND_NAME, ruleset_fd,
+ 				 LANDLOCK_ACCESS_NET_BIND_TCP, 0)) {
+ 		goto err_close_ruleset;
 -- 
 2.53.0
 
