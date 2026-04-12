@@ -1,140 +1,228 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677B5362133;
-	Sun, 12 Apr 2026 18:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857761A9FA4
+	for <linux-security-module@vger.kernel.org>; Sun, 12 Apr 2026 19:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776019662; cv=none; b=nUU2da3QquJbr+Ha8GaH2vQsvVwE8p9rmK0L/xNA+9MIZ5RVHJepy7Pn5oSW0kPNfRYlooIJ6lGYXH44Ulbi3DSsXhcBztxyBH1iV3H+g8WhEwAj3QeSis6ceU041K+v670m+NJmxbYxCu8GJt6LkoBwOo6ArvPn6tDhjE3SFqI=
+	t=1776022346; cv=none; b=GMu0ITEjbvymC9k5bblmuB8OXgUDVaoFVkou51lsotiQP/z0b+vtrokeqDxcASN5Ey2OSv0jDg5JKrssh+G34TaucyMwhUqzfsJG9N8viPg00KWBh0cqlGnQNgfusNZAvupDPUfwdLZblS8l9JN3NaZbTHBS3VC99BArZrRs9R8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776019662; c=relaxed/simple;
-	bh=9Obmst+vffFZ2JuGzK4zifDXwljV3xYV6tNooPgFR9s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ipLnf8cWFvdtdKg0buD7ROUFNRvwh/roVN3d51ZUTxNjztO/BnPlsazCXb9EJ75sPsibtoWabSNi5NoijR842vk8RFUAqPCboflNgmpC77eyaFVbL9zmGG16552DyJgC0+d1QXzF9zcuWtVPL4UR+KEpZDAzRzK76Tg9zWyxmmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Am89wA0z; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1776022346; c=relaxed/simple;
+	bh=yw5tfiCGhnu6M1SAL0QjS4LB5FREg1qT/tFfu/147Ow=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gQAkMdyNJqj2U/joCUuv9hoWaUO7wazv/V36Ez99a5rEsEDfJlgEnPLhN5Ieo18R9i+dXrPn1zgZl22hgOhw8Un4uazqmlFmiZRxY4FEhaf4rQhxrdrdE6Zte1NbFtUdgSE2ne/0WK6avMi2JbCuA/QfA1hPcAc7YtK/l5tnK1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=soXKtS8d; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Am89wA0z"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63CBteJE2081391;
-	Sun, 12 Apr 2026 18:47:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Xj9+2x
-	m71UDvoJ8SbcfXc1BJI9JWIvui23ZYPXOYMds=; b=Am89wA0zf+c60FC9KOPmVI
-	GMAl5E98UDykqjUYqlsMORhUkV9YJGflXW5eU2rXinL0EXSsC4aN0iGVeetFajwq
-	xs6lPiZ+tC4gePmWcwHbBJmR7X+5+Vd02g2rWupEN3iy9E9DISna8IYnrrMl5w6l
-	N/YHy7AH25OafBaRn2aRMkquOjEPon7gTa6VlDsrsYWf2oeGFhOkSZObjeo1CIyn
-	/zszkPyyu4JFHqfMUxhc2PnQzHsDhERR14tF4cXW4RMedniE2y01YVTw+NXlLrJS
-	8Vf1lxN4LFUrAiwTv4nP7DQzib2sUrTtgLAIVyabbgghNpPGtMEAbZFaT7HEuiSQ
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4dfbqkcrb3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 12 Apr 2026 18:47:25 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 63CGD3P5025831;
-	Sun, 12 Apr 2026 18:47:24 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4dg3b1a3hv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 12 Apr 2026 18:47:24 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 63CIlM8L22151690
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 12 Apr 2026 18:47:22 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3E40E58056;
-	Sun, 12 Apr 2026 18:47:22 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3928F5803F;
-	Sun, 12 Apr 2026 18:47:21 +0000 (GMT)
-Received: from [9.61.16.31] (unknown [9.61.16.31])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Sun, 12 Apr 2026 18:47:21 +0000 (GMT)
-Message-ID: <129b137c-be9b-4b01-824f-beec7111377c@linux.ibm.com>
-Date: Sun, 12 Apr 2026 14:47:20 -0400
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="soXKtS8d"
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-79a2ee65171so38048157b3.2
+        for <linux-security-module@vger.kernel.org>; Sun, 12 Apr 2026 12:32:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1776022344; x=1776627144; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=t/lgaoU9KTxQ3aanDpqBxSJ4YYsKT2wzhbPPwY2d8uk=;
+        b=soXKtS8d0FKZUWa4paTwivQRRHepQ3n4jB6G4zw18mMSH3800HVlQUinPmQdJIiqkB
+         P8v8wbCjGYv76zvSJGP3WtYKAfRPkgxdyq89q5cBnejMepIlo3DOMgivFgI+gzlWuLgW
+         MNfRXJNIDge4CIye9VVqDrx9dEo55a7MXtr+IBPo9mmycthKeZd2R5CCjMZOd058F0OW
+         NfHAy8o5NpjCBaRXl2AVIXZqQ0OVNu/NS6/y/0SaR8Nc4SVCyTUvv9U9PopK0aCEwehW
+         F+Dyne5FtZpHv9IKKCiZNZziWjs7nR93XIaH2pFn4Iy6Ie8wN9/SJiC72kX86j+R1TZa
+         8u+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776022344; x=1776627144;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t/lgaoU9KTxQ3aanDpqBxSJ4YYsKT2wzhbPPwY2d8uk=;
+        b=pot6o44nYpJUsTfSKZEpQc5X628ab48QXqgN0/OOst28NITv1HBbCpwdaaErdz8W4x
+         mZbFY+jTUlsZFurYxqJ1bBtyqSiWGsuSwxTbSApZOxxGsirH4/so54Neo/Vk78gXeShq
+         PUdUY4EfiexkS2i/lywR8F/7IXlb8DDlpHK6WGXA7MXV4HAq/nnypN1ghcrfjP7ojiCI
+         xPz7gaGZehtQ4LGrXC9ou1jqbh85O3b7RPqFurpIDImheRIfRoAn9eoOVlWw95LG3w6y
+         qPng1HbunZf5/J9WxFU9Kwfo6d2llj20lIzT73hOux5O4lmWgITnUOeNQezF17x8cu1E
+         w3Lg==
+X-Forwarded-Encrypted: i=1; AFNElJ8T17uvmG7R6Kop4SQOASQN6/5e9xBC3NmqJhA0gzIV6YahflwLy5tKmgr9QYYeTfdQPiBM6Mk8hmyFhEPeK3wzxzIiXtc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPNCzj7L1QtqlHBUJt5HuZCdB0WTgZ3Zo/nbW35f88OUyUGye5
+	dH4ADN6F7iUfjgdN9qDAp4Uqy6mO3u6ylOr52Ogo6KHXxkjinyULkTqW
+X-Gm-Gg: AeBDietnihGV7ZdpEPXxSno99ebRycEhGvanypaeG0zBKtR9rWKt5hRkERiPUxGzv/L
+	ci+EB59Oe8CucP3BrZ45m4x/tkaRIMmlcDzbTKTdM9P4XS+3fce6U6cB2Ft2HKBvEwVWyQJIjIU
+	mKh0QAxsS4I7tuqBTJ8HO12cxkxeGp4Cnr888XVOtpFpz+2MJoL2BbzuBKq9flxoFd7AYaI/ew4
+	MnOKgJSBCxKUH+k6SEnI+xk+KjorDKv8GItS0TFHcJJOBIPM7wTVa8n03kCugqBH3aDxhGRpdnS
+	/svGwh6gp7Nf/NzktH4L+YFJS98q2dGtyqfsmNS32toeQPd/l5g2wDk1rmi0P5gJ9N41DyX5gIv
+	tbaTYfcuUkqcOi3fbsZMRcxS05q3d83It4DttK2GevX2j2e12p7vcAokCq5xe1VrtbQf87mopDr
+	OzN62Qf0fQS/OurYb+8Pmn1cX2+gF+ckpPZaW0iW9NQSJZNHu799poK70US4mLDSsoXYXGOvsc
+X-Received: by 2002:a05:690c:13:b0:79b:dfc1:9c4e with SMTP id 00721157ae682-7af7147823dmr121652957b3.27.1776022344362;
+        Sun, 12 Apr 2026 12:32:24 -0700 (PDT)
+Received: from zenbox.prizrak.me ([2600:1700:18fb:6011:1192:20dc:2cb3:dcdc])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7af3c8decbfsm42395807b3.8.2026.04.12.12.32.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Apr 2026 12:32:24 -0700 (PDT)
+From: Justin Suess <utilityemal77@gmail.com>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: Tingmao Wang <m@maowtm.org>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Justin Suess <utilityemal77@gmail.com>,
+	Jan Kara <jack@suse.cz>,
+	Abhinav Saxena <xandfury@gmail.com>,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v7 00/10] Implement LANDLOCK_ADD_RULE_NO_INHERIT
+Date: Sun, 12 Apr 2026 15:31:51 -0400
+Message-ID: <20260412193214.87072-1-utilityemal77@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] KEYS: trusted: Debugging as a feature
-To: Jarkko Sakinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org
-Cc: Srish Srinivasan <ssrish@linux.ibm.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Ahmad Fatoum
- <a.fatoum@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20260409160752.988713-1-jarkko@kernel.org>
-Content-Language: en-US
-From: Nayna Jain <nayna@linux.ibm.com>
-In-Reply-To: <20260409160752.988713-1-jarkko@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=I+9Vgtgg c=1 sm=1 tr=0 ts=69dbe8bd cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=VwQbUJbxAAAA:8
- a=VnNF1IyMAAAA:8 a=rlHd4n21sRncWQMmDL0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: BUR2Qn7W8kE29AgtgCgbdcxV3guvnvO9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDEyMDE4NCBTYWx0ZWRfX77VwhTiXgwV4
- YmhhxjLCtyUOzManSjWGLizoRjiP1OHmHzYLmpWuWNQ3qSeB5+Cx4THYkppN14MOwUa8t5FcxjR
- Lhe+vAArsZYkf08TioNwHQK559UdkHvfHHlyCMGu5xFjMw9ZoizFiezziTieHP1Vqk9ZorbNRLE
- 6adDjweFl+6KdqOScFFfWW5tmYj0gGme6+WclsWpp9Qu4JDMXHTuZOjJgyJDlxIk8I2giE8gc7v
- 3j9z1RW5Ow3o8UyMnPMep8fNdgLZiDGe8gLHDgIbVqoWISNHpLrLrzotr/OV/UieGqQ1OjO9V2N
- XJkFx7HPwne01+SOvgGlsJIFq9SbnQEf49OLsW0v4IsejZjHn54rvsKvYel836DSctmowkdBaz6
- LfGxXvsYdPvDpBXZSrU+ibTrsCjg6vGu4QGCnY78GiOJRwY8J4UfK90yRET8dCZph6u9VWh7/Vr
- N7epiJjidGNwOJiURGA==
-X-Proofpoint-ORIG-GUID: BUR2Qn7W8kE29AgtgCgbdcxV3guvnvO9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-12_04,2026-04-09_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 bulkscore=0 suspectscore=0 adultscore=0
- lowpriorityscore=0 spamscore=0 malwarescore=0 clxscore=1015 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2604010000 definitions=main-2604120184
 
+Hi,
 
-On 4/9/26 12:07 PM, Jarkko Sakinen wrote:
-> From: Jarkko Sakkinen <jarkko@kernel.org>
->
-> TPM_DEBUG, and other similar flags, are a non-standard way to specify a
-> feature in Linux kernel. Introduce CONFIG_TRUSTED_KEYS_DEBUG for trusted
-> keys, and use it to replace these ad-hoc feature flags.
->
-> Given that trusted keys debug dumps can contain sensitive data, harden the
-> feature as follows:
->
-> 1. In the Kconfig description postulate that pr_debug() statements must be
->     used.
-> 2. Use pr_debug() statements in TPM 1.x driver to print the protocol dump.
-> 3. Require trusted.debug=1 on the kernel command line (default: 0) to
->     activate dumps at runtime, even when CONFIG_TRUSTED_KEYS_DEBUG=y.
->
-> Traces, when actually needed, can be easily enabled by providing
-> trusted.dyndbg='+p' and trusted.debug=1 in the kernel command-line.
+This is version 7 of the LANDLOCK_ADD_RULE_NO_INHERIT series, which
+implements a new flag to suppress inheritance of access rights and
+flags from parent objects.
 
-Thanks Jarkko. Additional changes looks good to me. I just realized that 
-the kernel command-line parameters document may need to be updated to 
-include these parameters.
+This version of the series focuses again on cleanup, splitting out
+some patches and fixing an edge case with disconnected directories.
 
-Apart from that, feel free to add my
+Behavior of the flag is identical to the previous patch.
 
-Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
+This series is rebased on v8 of Tingmao Wang's "quiet flag" series.
 
-Thanks & Regards,
+Previous patch summary:
 
-     - Nayna
+The new flag enables policies where a parent directory needs broader
+access than its children. For example, a sandbox may permit read-write
+access to /home/user but still prohibit writes to ~/.bashrc or
+~/.ssh, even though they are nested beneath the parent. Today this is
+not possible because access rights always propagate from parent to
+child inodes.
 
+When a rule is added with LANDLOCK_ADD_RULE_NO_INHERIT:
+
+  * access rights on parent inodes are ignored for that inode and its
+    descendants; and
+  * operations that reparent, rename, or remove the tagged inode or
+    its ancestors (via rename, rmdir, link) are denied up to the VFS
+    root; and
+  * parent flags do not propagate below a NO_INHERIT rule.
+
+These parent-directory restrictions help mitigate sandbox-restart
+attacks: a sandboxed process could otherwise move a protected
+directory before exit, causing the next sandbox instance to apply its
+policy to the wrong path.
+
+Changes since v6:
+
+  1. The main implementation of NO_INHERIT was split into smaller more
+     reviewable patches, separating the landlock_walk_path_up
+     implementation, usages of landlock_walk_path_up, and the find_rule
+     move to separate patches
+  2. A small issue regarding disconnected directory handling, where rules
+     inserted with NO_INHERIT only had protection up to a disconnected
+     directory instead of the mountpoint was fixed. In practice, this
+     isn't a problem at the current time since landlock forbids the mount
+     syscall needed to move a mountpoint with MS_MOVE. However, for
+     future-proofing in the case landlock allows some mount operations,
+     restrictions on parent directories now apply to the real root.
+
+Changes since v5:
+
+  1. Retain existing documentation for path traversal in
+     is_access_to_paths_allowed.
+  2. Change conditional for path walk in is_access_to_paths_allowed
+     removing possibility of infinite loop and renamed constant.
+  3. Remove (now) redundant mnt_root parameter from
+     collect_domain_accesses.
+  4. Change path parameter to a dentry for
+     deny_no_inherit_topology_change because only the dentry was needed.
+  5. Remove duplicated tree diagram comment from selftests.
+  6. Minor documentation fixes.
+
+  Credit to Tingmao Wang for pointing out 1, 2, 3, 4, and 6.
+
+Changes since v4:
+
+  1. Trimmed 120 lines from core implementation in fs.c.
+  2. Centralized path traversal logic with a helper function
+     landlock_walk_path_up.
+  3. Fixed bug in test on applying LANDLOCK_ADD_RULE_NO_INHERIT on
+     a file, giving it valid access rights.
+  4. Restructured commits to allow independent builds.
+  5. Adds userspace API documentation for the flag.
+
+Changes since v3:
+
+  1. Trimmed core implementation in fs.c by removing redundant functions.
+  2. Fixed placement/inclusion of prototypes.
+  3. Added 4 new selftests for bind mount cases.
+  4. Protections now apply up to the VFS root instead of the mountpoint
+     root.
+
+Links:
+
+v1:
+  https://lore.kernel.org/linux-security-module/20251105180019.1432367-1-utilityemal77@gmail.com/
+v2:
+  https://lore.kernel.org/linux-security-module/20251120222346.1157004-1-utilityemal77@gmail.com/
+v3:
+  https://lore.kernel.org/linux-security-module/20251126122039.3832162-1-utilityemal77@gmail.com/
+v4:
+  https://lore.kernel.org/linux-security-module/20251207015132.800576-1-utilityemal77@gmail.com/
+v5:
+  https://lore.kernel.org/linux-security-module/20251214170548.408142-1-utilityemal77@gmail.com/
+quiet-flag v6:
+  https://lore.kernel.org/linux-security-module/cover.1765040503.git.m@maowtm.org/
+quiet-flag v7:
+  https://lore.kernel.org/linux-security-module/cover.1766330134.git.m@maowtm.org/
+quiet-flag v8:
+  https://lore.kernel.org/linux-security-module/cover.1775490344.git.m@maowtm.org/
+
+Example usage:
+
+  # LL_FS_RO="/a/b/c" LL_FS_RW="/" LL_FS_NO_INHERIT="/a/b/c"
+    landlock-sandboxer sh
+  # touch /a/b/c/fi                    # denied; / RW does not inherit
+  # rmdir /a/b/c                       # denied by ancestor protections
+  # mv /a /bad                         # denied
+  # mkdir /a/good; touch /a/good/fi    # allowed; unrelated path
+
+All tests added by this series, and all other existing landlock tests,
+are passing. This patch was also validated through checkpatch.pl.
+
+Special thanks to Tingmao Wang and Mickaël Salaün for your valuable
+feedback.
+
+Thank you for your time and review.
+
+Regards,
+Justin Suess
+
+Justin Suess (10):
+  landlock: Add path walk helper
+  landlock: Use landlock_walk_path_up for is_access_to_paths_allowed
+  landlock: Use landlock_walk_path_up for collect_domain_accesses
+  landlock: Implement LANDLOCK_ADD_RULE_NO_INHERIT userspace api
+  landlock: Move find_rule definition above landlock_append_fs_rule
+  landlock: Implement LANDLOCK_ADD_RULE_NO_INHERIT
+  landlock: Add documentation for LANDLOCK_ADD_RULE_NO_INHERIT
+  samples/landlock: Add LANDLOCK_ADD_RULE_NO_INHERIT to
+    landlock-sandboxer
+  selftests/landlock: Implement selftests for
+    LANDLOCK_ADD_RULE_NO_INHERIT
+  landlock: Implement KUnit test for LANDLOCK_ADD_RULE_NO_INHERIT
+
+ Documentation/userspace-api/landlock.rst   |  17 +
+ include/uapi/linux/landlock.h              |  29 +-
+ samples/landlock/sandboxer.c               |  11 +
+ security/landlock/fs.c                     | 342 +++++++---
+ security/landlock/ruleset.c                | 125 +++-
+ security/landlock/ruleset.h                |  26 +
+ security/landlock/syscalls.c               |  15 +-
+ tools/testing/selftests/landlock/fs_test.c | 705 +++++++++++++++++++++
+ 8 files changed, 1151 insertions(+), 119 deletions(-)
+
+-- 
+2.53.0
 
