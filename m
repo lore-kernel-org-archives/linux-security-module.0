@@ -1,34 +1,34 @@
-Received: from n169-113.mail.139.com (n169-113.mail.139.com [120.232.169.113])
+Received: from n169-110.mail.139.com (n169-110.mail.139.com [120.232.169.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69531CF8B
-	for <linux-security-module@vger.kernel.org>; Mon, 13 Apr 2026 05:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=120.232.169.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4266329C48
+	for <linux-security-module@vger.kernel.org>; Mon, 13 Apr 2026 05:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=120.232.169.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776059370; cv=none; b=Koot+lmMYnqCH8VYYfoceCde0TRyCfQzXcSIQZ14/U3hfT+UL0dxyEe0qOAYtt9HJthIWohhtqo/eKS1TCCeKfUv8kHsA4Wo6zKLCavz68VDoEZBj6Z1zbWzZllKuLN4pbXJbMLFVIdIpScjjrs0aE6B0kFkQfyqngq9Fq/mY20=
+	t=1776059410; cv=none; b=FaNK23l1ZC5ha0xevK/ON2KrduRars+sqiq3mtlCGFjju2CwHobYnjj3EfDvXG1JE700x3/t2n2EclDxRyOzTH0uDoHq/zXI5g5o4KPZb6ffeW2QTloxbjoPv2wTYqH4FxBbzyQ9gkgWX+T+xZuLN0PRLjVSN/TAIiGGHeCFnCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776059370; c=relaxed/simple;
-	bh=bVOgcEFca8l7LLMejE0bVSv1ySNeaKuA36hrI6O4p+Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XaWppFIg6k0fJ4XHejpLUFwcp3nMW2CSEVaTA6rKS4Qzn7XSFDnfJm1vCCwEn31QdtPKFMVWxtCjpE6jrNGs1s1Z48TZf5sBbzvu/4ijQbPEbmjraZhA5FnhG2BqMsDf8NMH7WP9IgokvDnpdgzqLBxfitSMo15382FkT6bW2Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com; spf=pass smtp.mailfrom=139.com; dkim=pass (1024-bit key) header.d=139.com header.i=@139.com header.b=hTGNW2lx; arc=none smtp.client-ip=120.232.169.113
+	s=arc-20240116; t=1776059410; c=relaxed/simple;
+	bh=+ryDYu86n7TcsZdDUrZQz+c1K+EjkjiGiTyxlnbi0SA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OZMl7Rb5CKmfYXmQO0PrYzu4+V5SdkB6vT7c4j7OqIoiNdjY+Zwvu6JPo4LS4Gt0rTwpdDZ0cahyNeMVd02e9t5RiRlYYFtCJUXrgzNrREQZsbcMVB9EK3FfpOpkhh05cFbm9JSEXLq9y9z4ug84pY7MbUtbFMsdYjtAQXns6KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com; spf=pass smtp.mailfrom=139.com; dkim=pass (1024-bit key) header.d=139.com header.i=@139.com header.b=wSSlHZUn; arc=none smtp.client-ip=120.232.169.110
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=139.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=139.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=139.com header.i=@139.com header.b="hTGNW2lx"
+	dkim=pass (1024-bit key) header.d=139.com header.i=@139.com header.b="wSSlHZUn"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=139.com; s=dkim; l=0;
 	h=from:subject:message-id:to:cc:mime-version;
 	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-	b=hTGNW2lxzVW+exODemMDyEwIlfVYrpYdUpv9SKMUnRgi/1iYCTtqz82EDyyq+OuFnK0fhBNOH6ROr
-	 mXWMdTzPWnvLOilAhCq6HKQ775hQ71pBgzqU49VzH9niFmWOCJvff6i1hTYR64NeCMLtmMLMwJRg1K
-	 1pY06PpBXQ1+k1AQ=
+	b=wSSlHZUniE0gf+FHzpDwXmyPU5yLr37iKyHwSpEBJLsW4z7MFUlaLlJaN9UDBR1xSrzUQJZBKdRWQ
+	 UR3ZYtoqO4jrzFjRfQWc0qkt0B/GHVThdHyatovqDHYp2iQKWYStCJdwGbyAgM2yBC6HMAA+ctgWh7
+	 moIG8k652BCcASHQ=
 X-RM-TagInfo: emlType=0                                       
 X-RM-SPAM:                                                                                        
 X-RM-SPAM-FLAG:00000000
 Received:from NTT-kernel-dev (unknown[60.247.85.88])
-	by rmsmtp-lg-appmail-29-12034 (RichMail) with SMTP id 2f0269dc83e0836-00841;
-	Mon, 13 Apr 2026 13:49:22 +0800 (CST)
-X-RM-TRANSID:2f0269dc83e0836-00841
+	by rmsmtp-lg-appmail-08-12086 (RichMail) with SMTP id 2f3669dc8401e79-00e8f;
+	Mon, 13 Apr 2026 13:49:55 +0800 (CST)
+X-RM-TRANSID:2f3669dc8401e79-00e8f
 From: Li hongliang <1468888505@139.com>
 To: massimiliano.pellizzer@canonical.com
 Cc: john.johansen@canonical.com,
@@ -41,9 +41,9 @@ Cc: john.johansen@canonical.com,
 	carnil@debian.org,
 	georgia.garcia@canonical.com,
 	cengiz.can@canonical.com
-Subject: [PATCH 5.15.y] apparmor: fix memory leak in verify_header
-Date: Mon, 13 Apr 2026 13:49:21 +0800
-Message-Id: <20260413054921.2244728-1-1468888505@139.com>
+Subject: [PATCH 5.10.y] apparmor: fix memory leak in verify_header
+Date: Mon, 13 Apr 2026 13:49:58 +0800
+Message-Id: <20260413054958.2244856-1-1468888505@139.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -79,7 +79,7 @@ Signed-off-by: Li hongliang <1468888505@139.com>
  1 file changed, 1 deletion(-)
 
 diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-index 851fd6212831..3bbd28603c8c 100644
+index 93fcafdaa548..5ea8c14f5eac 100644
 --- a/security/apparmor/policy_unpack.c
 +++ b/security/apparmor/policy_unpack.c
 @@ -959,7 +959,6 @@ static int verify_header(struct aa_ext *e, int required, const char **ns)
