@@ -1,35 +1,72 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E1E125A9;
-	Mon, 13 Apr 2026 15:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588D02D8364
+	for <linux-security-module@vger.kernel.org>; Mon, 13 Apr 2026 16:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776095616; cv=none; b=dix1E8+no/Yv00CqE+12xxhLy1Tc1LMm5q1dPd7v84eHhircEjMyUxdwhW+EzRiSFPx1hrGjNqQiKAkim3+TbF2Iw6aQDKMt5m7i5jsXJQ/bOcP5HGYe6i0J3Xqf7Eo3/FjbkE+3sZUF3Fr3Pv8sVNbKKeoxpYqRspcssPR6ZFQ=
+	t=1776098543; cv=none; b=d64vVZOOzfW8Du+RO+YP8zkVcY4gpWAW6ueOabZGuXC9GoHQBk4zXqYeQbvhBBrRtdqMCllaa5CnjT7AAJxj6zzTfSvUnU8xaf9iqh4+88CxDHFSXLyzEMnUZotdh2kWTZAaSodJbuoUfx8wvalRjtBMH4C1gqOL7ZJIBkF83bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776095616; c=relaxed/simple;
-	bh=9M6tnLgIr+sMqBYY17RTZRwcr2YkcNi64g6q6UG2hdk=;
+	s=arc-20240116; t=1776098543; c=relaxed/simple;
+	bh=G+WYrb1BBVDoPFmFwGScCNyDrJlyYOjXSYKOQwe+8ko=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B4QeJ3Fse7ZUlZRvHFYiAwiWiR1QZ4Ao3tyZC+Hd81uZ54QiiLIFxjpn4XgFR3UfkgBq4E+tbBA4IAC6+eRIoi5AxlwJ7mFfmthYaFDSne6AqLUvFpPxy4c3zhYNbCgR8d7EDbyjJf1UDFBfoYaG9Skx/IqugIE4rGlM2885FAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ia0sDvZ4; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=MK2ADZrahT2Jf5IuyU/MN55wMKd1FXnM5Dn5gpXcSiJvsysqYEtw4jujOs+dQsNyzU/mWzJbch0QwlmZMcT5y/Jur2hleV5T2G2pJ7u+IxdIMXsTn2h/RKTL34KfZyLpNFncvYO7DNofOjYZ+McUrqTjK7nA8dbUxNQfbJoM5gQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=E2wavPRL; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ia0sDvZ4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F00D0C2BCAF;
-	Mon, 13 Apr 2026 15:53:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776095616;
-	bh=9M6tnLgIr+sMqBYY17RTZRwcr2YkcNi64g6q6UG2hdk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ia0sDvZ4lmIa/fXnarKKku6xXJW3V+56XzaeZOpO6F3X8Ow8pD6wXa3N/3VWNOAaj
-	 ybUrRO4+LWB/5UiKpAQ4KCdCijHpeH92xtAcIsSXadz4Mjdwsy6+q6BRwZwIRZuukC
-	 rOlAtExAFewHXIQ9FAu0e5DUTneN75JJM7i5S3d00aZi3kXvvwQSnxf9KvBEmlcmTd
-	 JIWQwF74SQOLwTJArhFb2WflOc5KaoUtx84BBU2DXw4Z8AmFmuiOPXOMlpp13767Th
-	 4qOLCEHoEV9tnM0NFO2zR/uV3LdtOOzTFqT322eQxO1KOeIgxzYadv6TGqsVCZvUwF
-	 OMb79RWzbXHAQ==
-Date: Mon, 13 Apr 2026 18:53:32 +0300
-From: Leon Romanovsky <leon@kernel.org>
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="E2wavPRL"
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-50d59d249fbso48812021cf.0
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Apr 2026 09:42:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1776098541; x=1776703341; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jUiNyilK1I2myoXjgAEGP+spYezLcxgAYqqWit3D6Xk=;
+        b=E2wavPRL5AmyZgB0g/U0hP95w+LHR0CODATHBR29H0d0H1ZgOljvH8X8HvEY3mXt5a
+         YlnadNIjO+fQDkEchqiV9cHty+PdpSlVJ0f4C9c9V84ivaVyIHJVhYYiHOq6kNaLYdCy
+         RS6GxQgi6h43fT46Qsn7sAG84AXG/H7JJnfCpu1q5aml+RfpX8WXFWxo1JtI9p6txnZa
+         PdoMOOEpmP/FwRH5QMlO4oHklEDiJJ+80RerI/KkkD87VkTNCjDn28FG8unDsu3pExSz
+         eHYOVnR1ITXBzK/9kIafEqDD5d9qV0i6BSWJek3gMW5q99EoszY3lceECT/YF1kRVaZz
+         9cvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776098541; x=1776703341;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jUiNyilK1I2myoXjgAEGP+spYezLcxgAYqqWit3D6Xk=;
+        b=PlpYjPB7QfvjM0KhGboB8o4WmA35RqNwfpJKEMz6EIZjLv0Lgm4uLJXW7dEexh2ALT
+         FwBjQe273aYj3aEmRQkBnViyrWlyGcjYFG1HUnZxCBNr6GASJOf2Wjl0JVJkpWqAd2UB
+         BYLyo0zv/LHnv3Tou3MQF1EhB1Jj9bp0iRqIFurHR9pDPHgye7G7hG30iRsWQnIK671C
+         tbHx5J7WdFTKvfIA2UR0I7AVmiu0gv96dsbWM8uXiQZV1vE53yLpFy1Qct8RZdTO0V6T
+         nTsKjI4R70KaVBEN2I1Bq5Gij3rRMJxSvHw0ACKFMGnLNrMunQoozvD+2A8xdIYD58u4
+         uDjA==
+X-Forwarded-Encrypted: i=1; AFNElJ+qljgvZcB88ed2RO1UcBRo8gc60Vn6gfVmSCFiGt4Mh36hXKhD4wC1xN76Kx9yJK2drWelEI2geKRHlbrBHSk3KR3BH9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeZr2HgQswPbeXyFdhLXVztX3i1x2eLFUO6HhwQXri1uqoT+Ku
+	Q4lbb8rys1M/f3/zvup6GDmqUTrU3O9fwhX903opyF/sVUJZDSDO/rXsF7/JMrpLwz8=
+X-Gm-Gg: AeBDieteRWaZM4ffiel8nKamSVn/VUNy7RnBzjh6/s2ZHII03W77Z0b9jqKeakQCLkm
+	CMpzxsnGFouiypGXJ+SXroym7vcrCIxYA7tMh8vHJnDpqgqU9KaN97FBHUmbjnL+DFyUeaRMpvS
+	2Ah0/O6odBdAxJEV4mqpYcUWba5s1JeXHX2/MTQcvWWMRyYGqs4cPjvy9wRJd4Qo18ynKX5qwgh
+	xN97ZByADKTVGttndnkEE09Tc5/S6n/ojKPuBnADgtVAt8ddpXLaCRpaOsO4g8ulWZJFfuef36T
+	rSuyGFvGK0qh3gI6Vhc2/55WLh6qEYTkz5wq5bmbH7Qw6gNRO4LgTelIUhE0vFmDzlScN+WvvEj
+	diKr2wNaQ+ABX295JuoiojWnMjvHELi/rUEHFnH7orM/qYzYonb23qpCOV5DnRb2vwGA/bFMXF3
+	NEfCijJv2CHehS+8p0hvcZ0oeYX1eGG0e26kMO8u4O3Nl/sJ0IR7HXQ6vJVlgqTaDZmU3zryDVs
+	HkEFQ==
+X-Received: by 2002:ac8:5ac8:0:b0:509:120d:4311 with SMTP id d75a77b69052e-50dd5c02761mr211953761cf.60.1776098541243;
+        Mon, 13 Apr 2026 09:42:21 -0700 (PDT)
+Received: from ziepe.ca (crbknf0213w-47-54-130-67.pppoe-dynamic.high-speed.nl.bellaliant.net. [47.54.130.67])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-50de6bc04e0sm60997991cf.19.2026.04.13.09.42.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Apr 2026 09:42:20 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1wCKMe-00000005Zr4-10vb;
+	Mon, 13 Apr 2026 13:42:20 -0300
+Date: Mon, 13 Apr 2026 13:42:20 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
 To: Paul Moore <paul@paul-moore.com>
-Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+Cc: Leon Romanovsky <leon@kernel.org>,
+	Roberto Sassu <roberto.sassu@huaweicloud.com>,
 	KP Singh <kpsingh@kernel.org>,
 	Matt Bobrowski <mattbobrowski@google.com>,
 	Alexei Starovoitov <ast@kernel.org>,
@@ -41,7 +78,7 @@ Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>,
 	Yonghong Song <yonghong.song@linux.dev>,
 	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
 	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Saeed Mahameed <saeedm@nvidia.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
 	Itay Avraham <itayavr@nvidia.com>,
 	Dave Jiang <dave.jiang@intel.com>,
 	Jonathan Cameron <Jonathan.Cameron@huawei.com>, bpf@vger.kernel.org,
@@ -50,7 +87,7 @@ Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>,
 	Maher Sanalla <msanalla@nvidia.com>,
 	linux-security-module@vger.kernel.org
 Subject: Re: [PATCH v2 0/4] Firmware LSM hook
-Message-ID: <20260413155332.GL21470@unreal>
+Message-ID: <20260413164220.GP3694781@ziepe.ca>
 References: <20260331-fw-lsm-hook-v2-0-78504703df1f@nvidia.com>
  <20260409121230.GA720371@unreal>
  <2dd138a2ae87f90c55dbc3178d9c798294fd4450.camel@huaweicloud.com>
@@ -64,79 +101,11 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 In-Reply-To: <CAHC9VhRnYXjg+vE9a8PeykbXk91is12zYLaO7EFdfZPKMxDfPA@mail.gmail.com>
 
 On Sun, Apr 12, 2026 at 09:38:35PM -0400, Paul Moore wrote:
-> On Sun, Apr 12, 2026 at 5:00 AM Leon Romanovsky <leon@kernel.org> wrote:
-> > On Thu, Apr 09, 2026 at 05:04:24PM -0400, Paul Moore wrote:
-> > > On Thu, Apr 9, 2026 at 8:45 AM Leon Romanovsky <leon@kernel.org> wrote:
-> > > > On Thu, Apr 09, 2026 at 02:27:43PM +0200, Roberto Sassu wrote:
-> > > > > On Thu, 2026-04-09 at 15:12 +0300, Leon Romanovsky wrote:
-> > > > > > On Tue, Mar 31, 2026 at 08:56:32AM +0300, Leon Romanovsky wrote:
-> 
-> ...
-> 
-> > > > We implemented this approach in v1:
-> > > > https://patch.msgid.link/20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com
-> > > > and were advised to pursue a different direction.
-> > >
-> > > I'm assuming you are referring to my comments? If so, that isn't exactly what I said,
-> > > I mentioned at least one other option besides
-> > > going directly to BPF.  Ultimately, it is your choice to decide how
-> > > you want to proceed, but to claim I advised you to avoid a LSM based
-> > > solution isn't strictly correct.
-> >
-> > Yes, this matches how we understood your comments:
-> > https://lore.kernel.org/all/20260311081955.GS12611@unreal/
-> >
-> > In the end, the goal is to build something practical and avoid adding
-> > unnecessary complexity that brings no real benefit to users.
-> >
-> > > Regardless, looking at your v2 patchset, it looks like you've taken an
-> > > unusual approach of using some of the LSM mechanisms, e.g. LSM_HOOK(),
-> > > but not actually exposing a LSM hook with proper callbacks.
-> > > Unfortunately, that's not something we want to support.  If you want
-> > > to pursue an LSM based solution, complete with a security_XXX() hook,
-> > > use of LSM_HOOK() macros, etc. then that's fine, I'm happy to work
-> > > with you on that.
-> >
-> > The issue is that the sentence below was the reason we did not merge v1 with v2:
-> > https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#new-lsm-hooks
-> > "pass through implementations, such as the BPF LSM, are not eligible for
-> > LSM hook reference implementations."
-> 
-> I can expand on that in a minute, but I'd like to return to your use
-> of the LSM_HOOK() macro and locating the hook within the BPF LSM as
-> that is the most concerning issue from my perspective.  One should
-> only use the LSM_HOOK() macro and locate code within bpf_lsm.c if that
-> code is part of the BPF LSM, utilizing an LSM hook.  Since this
-> patchset doesn't use an LSM hook or any part of the LSM framework, the
-> implementation choices seem odd and are not something we want to
-> support.  As mentioned in my prior reply, you could do something very
-> similar though the use of a normal BPF hook similar to what was done
-> with the update_socket_protocol() BPF hook.
-> 
-> There are multiple reasons why out-of-tree and pass through LSMs are
-> not considered eligible for reference implementations of LSM hooks.  I
-> think is most relevant to this patchset is that an out-of-tree hook
-> implementation doesn't necessarily require a stable interface, and
-> without a stable interface it is impossible to make a generic API at
-> the LSM framework layer.  As you mentioned previously, each vendor and
-> each firmware version brings the possibility of a new
-> format/interface, and while that may not be a problem for out-of-tree
-> code which is left to the user/admin to manage, it makes upstream
-> development difficult.  I did mention at least one approach that might
-> be a possibility to enable upstream, in-tree support of this, but you
-> seem to prefer a BPF approach that doesn't require a well defined
-> format.
-> 
-> > > However, if you've decided that your preferred
-> > > option is to create a BPF hook you should avoid using things like
-> > > LSM_HOOK() and locating your hook/code in bpf_lsm.c.
-> >
 > > We are not limited to LSM solution, the goal is to intercept commands
 > > which are submitted to the FW and "security" bucket sounded right to us.
 > 
@@ -144,31 +113,37 @@ On Sun, Apr 12, 2026 at 09:38:35PM -0400, Paul Moore wrote:
 > interface/format it is going to be difficult to write a generic LSM to
 > have any level of granularity beyond a basic "load firmware"
 > permission.
-> 
-> > > The good news is that there are plenty of other examples of BPF
-> > > plugable code that you could use as an example, one such thing is the
-> > > update_socket_protocol() BPF hook that was originally proposed as a
-> > > LSM hook, but moved to a dedicated BPF hook as we generally want to
-> > > avoid changing non-LSM kernel objects within the scope of the LSMs.
-> > > While your proposed case is slightly different, I think the basic idea
-> > > and mechanism should still be useful.
-> > >
-> > > https://lore.kernel.org/all/cover.1692147782.git.geliang.tang@suse.com
-> >
-> > Thanks
-> 
-> Good luck on whatever you choose, and while I'm guessing it is
-> unlikely, if you do decide to pursue a LSM based solution please let
-> us know and we can work with you to try and find ways to make it work.
 
-Thanks a lot. We should know which direction we'll take in a week or two,
-once Chiara wraps up her internal commitments and returns to this series.
+I think to step back a bit, what this is trying to achieve is very
+similar to the iptables fwmark/secmark scheme.
 
-I appreciate your help.
+secmark allows the user to specify programmable rules via iptables
+which results in each packet being tagged with a SELinux context and
+then the userspace policy can consume that and make security decision
+based on that.
 
-Thanks
+Google is showing me examples of this to permit only certain processes
+to use certain network addresses.
 
-> 
-> -- 
-> paul-moore.com
-> 
+So this is exactly the same high level idea. The transport of the
+packet is different (firwmare cmd vs network) but otherwise it is all
+the same basic problem. We need a user programmable classifier like
+iptables. Once classified we want this to work with more than SELinux
+only, we have a particular interest in the eBPF LSM. In any case the
+userspace should be able to specify the security policy that applies
+to the kernel classified data.
+
+Following the fwmark example, if there was some programmable in-kernel
+function to convert the cmd into a SELinux label would we be able to
+enable SELinux following the SECMARK design?
+
+Would there be an objection if that in-kernel function was using a
+system-wide eBPF uploaded with some fwctl uAPI?
+
+Finally, would there be an objection to enabling the same function in
+eBPF by feeding it the entire command and have it classify and make a
+security decision in a single eBPF program? Is there some other way to
+enable eBPF? I see eBPF doesn't interwork with SECMARK today so there
+isn't a ready example?
+
+Jason
