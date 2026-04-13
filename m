@@ -1,106 +1,174 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9663E122E;
-	Mon, 13 Apr 2026 15:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E1E125A9;
+	Mon, 13 Apr 2026 15:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776094781; cv=none; b=GXJhixyPEni82bFYr2O2JQys5k5iGtr/PqJddOE843qoz0kNM25ll6wflYJKV32KqW3+bD3aLyAEu+5ZCh7PW+j2rQiYADYWtQW7j/dsZqO7Pn0y8SKHYCVnPP1NGHpPTUvFw4i2h0xIQlR6ZuzjSbg/8miO2sqopzJ2FfYty00=
+	t=1776095616; cv=none; b=dix1E8+no/Yv00CqE+12xxhLy1Tc1LMm5q1dPd7v84eHhircEjMyUxdwhW+EzRiSFPx1hrGjNqQiKAkim3+TbF2Iw6aQDKMt5m7i5jsXJQ/bOcP5HGYe6i0J3Xqf7Eo3/FjbkE+3sZUF3Fr3Pv8sVNbKKeoxpYqRspcssPR6ZFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776094781; c=relaxed/simple;
-	bh=KLHXMxmpNRD6wvf4gCGYsc4aoUyDu7HAGgr8qoNH8eU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bRI2sZdLUirq4tLfX080V96ITfaCs98SlHbNpQq54hJLcgVyCkXuqpaBR4ClvyqOCK8o/bRV0E1NYgtGKbMDHrDcXjgs8kbQLX861DEeWWzdjqzFRNF5g19bvjTGfwTG6ICWPuizqEUCzFqHKi+No+osVwJkaZK6bUtjOqaqXcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.196])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4fvWFs5CDTztf5N;
-	Mon, 13 Apr 2026 23:16:17 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id E0FB84056C;
-	Mon, 13 Apr 2026 23:20:14 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwC3xN6mCd1pR5okAA--.31610S2;
-	Mon, 13 Apr 2026 16:20:14 +0100 (CET)
-Message-ID: <d95993e3d879bec4c9e3416906d409cca9c8ffeb.camel@huaweicloud.com>
-Subject: Re: [PATCH] evm: zero-initialize the evm_xattrs read buffer
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Pengpeng Hou <pengpeng@iscas.ac.cn>, Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg
-	 <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James Morris
-	 <jmorris@namei.org>, Serge Hallyn <serge@hallyn.com>, 
-	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 13 Apr 2026 17:20:04 +0200
-In-Reply-To: <20260407153002.2-evm-xattrs-pengpeng@iscas.ac.cn>
-References: <20260407153002.2-evm-xattrs-pengpeng@iscas.ac.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1776095616; c=relaxed/simple;
+	bh=9M6tnLgIr+sMqBYY17RTZRwcr2YkcNi64g6q6UG2hdk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B4QeJ3Fse7ZUlZRvHFYiAwiWiR1QZ4Ao3tyZC+Hd81uZ54QiiLIFxjpn4XgFR3UfkgBq4E+tbBA4IAC6+eRIoi5AxlwJ7mFfmthYaFDSne6AqLUvFpPxy4c3zhYNbCgR8d7EDbyjJf1UDFBfoYaG9Skx/IqugIE4rGlM2885FAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ia0sDvZ4; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ia0sDvZ4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F00D0C2BCAF;
+	Mon, 13 Apr 2026 15:53:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1776095616;
+	bh=9M6tnLgIr+sMqBYY17RTZRwcr2YkcNi64g6q6UG2hdk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ia0sDvZ4lmIa/fXnarKKku6xXJW3V+56XzaeZOpO6F3X8Ow8pD6wXa3N/3VWNOAaj
+	 ybUrRO4+LWB/5UiKpAQ4KCdCijHpeH92xtAcIsSXadz4Mjdwsy6+q6BRwZwIRZuukC
+	 rOlAtExAFewHXIQ9FAu0e5DUTneN75JJM7i5S3d00aZi3kXvvwQSnxf9KvBEmlcmTd
+	 JIWQwF74SQOLwTJArhFb2WflOc5KaoUtx84BBU2DXw4Z8AmFmuiOPXOMlpp13767Th
+	 4qOLCEHoEV9tnM0NFO2zR/uV3LdtOOzTFqT322eQxO1KOeIgxzYadv6TGqsVCZvUwF
+	 OMb79RWzbXHAQ==
+Date: Mon, 13 Apr 2026 18:53:32 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Saeed Mahameed <saeedm@nvidia.com>,
+	Itay Avraham <itayavr@nvidia.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>,
+	Maher Sanalla <msanalla@nvidia.com>,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] Firmware LSM hook
+Message-ID: <20260413155332.GL21470@unreal>
+References: <20260331-fw-lsm-hook-v2-0-78504703df1f@nvidia.com>
+ <20260409121230.GA720371@unreal>
+ <2dd138a2ae87f90c55dbc3178d9c798294fd4450.camel@huaweicloud.com>
+ <20260409124553.GB720371@unreal>
+ <CAHC9VhT1X4HX4bGrK=mEzu=g=mZ-Wg-LDXVgZVe-e6oM+W9aHg@mail.gmail.com>
+ <20260412090006.GA21470@unreal>
+ <CAHC9VhRnYXjg+vE9a8PeykbXk91is12zYLaO7EFdfZPKMxDfPA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwC3xN6mCd1pR5okAA--.31610S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7CFW5Aw4UAr1fGw4kZF4kCrg_yoW8Jw4xpF
-	sxtayDtrn8XrykCF98AF1rua4rW3yYkryUGrsavw1vvF9IvryxXr92krWUur1rKrW0yw45
-	t3Wvyr1Yk3Z0qaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOB
-	MKDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgACBGnckwUOtQACse
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhRnYXjg+vE9a8PeykbXk91is12zYLaO7EFdfZPKMxDfPA@mail.gmail.com>
 
-On Tue, 2026-04-07 at 14:09 +0800, Pengpeng Hou wrote:
-> evm_read_xattrs() allocates size + 1 bytes, fills them from the list of
-> enabled xattrs and then passes strlen(temp) to simple_read_from_buffer().
-> When no configured xattrs are enabled, the fill loop stores nothing and
-> temp[0] remains uninitialized, so strlen() reads beyond initialized
-> memory.
->=20
-> Use kzalloc() so the empty-list case stays a valid empty C string.
+On Sun, Apr 12, 2026 at 09:38:35PM -0400, Paul Moore wrote:
+> On Sun, Apr 12, 2026 at 5:00 AM Leon Romanovsky <leon@kernel.org> wrote:
+> > On Thu, Apr 09, 2026 at 05:04:24PM -0400, Paul Moore wrote:
+> > > On Thu, Apr 9, 2026 at 8:45 AM Leon Romanovsky <leon@kernel.org> wrote:
+> > > > On Thu, Apr 09, 2026 at 02:27:43PM +0200, Roberto Sassu wrote:
+> > > > > On Thu, 2026-04-09 at 15:12 +0300, Leon Romanovsky wrote:
+> > > > > > On Tue, Mar 31, 2026 at 08:56:32AM +0300, Leon Romanovsky wrote:
+> 
+> ...
+> 
+> > > > We implemented this approach in v1:
+> > > > https://patch.msgid.link/20260309-fw-lsm-hook-v1-0-4a6422e63725@nvidia.com
+> > > > and were advised to pursue a different direction.
+> > >
+> > > I'm assuming you are referring to my comments? If so, that isn't exactly what I said,
+> > > I mentioned at least one other option besides
+> > > going directly to BPF.  Ultimately, it is your choice to decide how
+> > > you want to proceed, but to claim I advised you to avoid a LSM based
+> > > solution isn't strictly correct.
+> >
+> > Yes, this matches how we understood your comments:
+> > https://lore.kernel.org/all/20260311081955.GS12611@unreal/
+> >
+> > In the end, the goal is to build something practical and avoid adding
+> > unnecessary complexity that brings no real benefit to users.
+> >
+> > > Regardless, looking at your v2 patchset, it looks like you've taken an
+> > > unusual approach of using some of the LSM mechanisms, e.g. LSM_HOOK(),
+> > > but not actually exposing a LSM hook with proper callbacks.
+> > > Unfortunately, that's not something we want to support.  If you want
+> > > to pursue an LSM based solution, complete with a security_XXX() hook,
+> > > use of LSM_HOOK() macros, etc. then that's fine, I'm happy to work
+> > > with you on that.
+> >
+> > The issue is that the sentence below was the reason we did not merge v1 with v2:
+> > https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#new-lsm-hooks
+> > "pass through implementations, such as the BPF LSM, are not eligible for
+> > LSM hook reference implementations."
+> 
+> I can expand on that in a minute, but I'd like to return to your use
+> of the LSM_HOOK() macro and locating the hook within the BPF LSM as
+> that is the most concerning issue from my perspective.  One should
+> only use the LSM_HOOK() macro and locate code within bpf_lsm.c if that
+> code is part of the BPF LSM, utilizing an LSM hook.  Since this
+> patchset doesn't use an LSM hook or any part of the LSM framework, the
+> implementation choices seem odd and are not something we want to
+> support.  As mentioned in my prior reply, you could do something very
+> similar though the use of a normal BPF hook similar to what was done
+> with the update_socket_protocol() BPF hook.
+> 
+> There are multiple reasons why out-of-tree and pass through LSMs are
+> not considered eligible for reference implementations of LSM hooks.  I
+> think is most relevant to this patchset is that an out-of-tree hook
+> implementation doesn't necessarily require a stable interface, and
+> without a stable interface it is impossible to make a generic API at
+> the LSM framework layer.  As you mentioned previously, each vendor and
+> each firmware version brings the possibility of a new
+> format/interface, and while that may not be a problem for out-of-tree
+> code which is left to the user/admin to manage, it makes upstream
+> development difficult.  I did mention at least one approach that might
+> be a possibility to enable upstream, in-tree support of this, but you
+> seem to prefer a BPF approach that doesn't require a well defined
+> format.
+> 
+> > > However, if you've decided that your preferred
+> > > option is to create a BPF hook you should avoid using things like
+> > > LSM_HOOK() and locating your hook/code in bpf_lsm.c.
+> >
+> > We are not limited to LSM solution, the goal is to intercept commands
+> > which are submitted to the FW and "security" bucket sounded right to us.
+> 
+> Yes, it does sound "security relevant", but without a well defined
+> interface/format it is going to be difficult to write a generic LSM to
+> have any level of granularity beyond a basic "load firmware"
+> permission.
+> 
+> > > The good news is that there are plenty of other examples of BPF
+> > > plugable code that you could use as an example, one such thing is the
+> > > update_socket_protocol() BPF hook that was originally proposed as a
+> > > LSM hook, but moved to a dedicated BPF hook as we generally want to
+> > > avoid changing non-LSM kernel objects within the scope of the LSMs.
+> > > While your proposed case is slightly different, I think the basic idea
+> > > and mechanism should still be useful.
+> > >
+> > > https://lore.kernel.org/all/cover.1692147782.git.geliang.tang@suse.com
+> >
+> > Thanks
+> 
+> Good luck on whatever you choose, and while I'm guessing it is
+> unlikely, if you do decide to pursue a LSM based solution please let
+> us know and we can work with you to try and find ways to make it work.
 
-Please also add the Fixes: tag with the relevant commit.
+Thanks a lot. We should know which direction we'll take in a week or two,
+once Chiara wraps up her internal commitments and returns to this series.
 
-> Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
-> ---
->  security/integrity/evm/evm_secfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/=
-evm_secfs.c
-> index acd840461902..03d376fa36c2 100644
-> --- a/security/integrity/evm/evm_secfs.c
-> +++ b/security/integrity/evm/evm_secfs.c
-> @@ -145,7 +145,7 @@ static ssize_t evm_read_xattrs(struct file *filp, cha=
-r __user *buf,
->  		size +=3D strlen(xattr->name) + 1;
->  	}
-> =20
-> -	temp =3D kmalloc(size + 1, GFP_KERNEL);
-> +	temp =3D kzalloc(size + 1, GFP_KERNEL);
-
-Yes, or just set temp[size] to the terminator so that we don't waste
-computation. Can you also change sprintf() to snprintf()?
+I appreciate your help.
 
 Thanks
 
-Roberto
-
->  	if (!temp) {
->  		mutex_unlock(&xattr_list_mutex);
->  		return -ENOMEM;
-
+> 
+> -- 
+> paul-moore.com
+> 
