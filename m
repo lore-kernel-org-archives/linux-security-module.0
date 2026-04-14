@@ -1,139 +1,150 @@
-Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048242C11FA
-	for <linux-security-module@vger.kernel.org>; Tue, 14 Apr 2026 13:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776174612; cv=none; b=bzzkgylSBqwUakQthgwFVwR1hFVYXCsMmpoZRPyDOFlKnyufEjzSKvqNYODcQplBF+WNTxd8jlAvll29lBJ+wj4TSNf3Y1AwgfZAwQLUwUYbpQb9tbM92yjMOMXleEL/q2lLQp2/T1ZsHPp2OrCqB12+vvhlGr5JdO4PX+LCHCY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776174612; c=relaxed/simple;
-	bh=GWY8aYWhNeSJBn1xDUJnUsRFAhOBaXiD1sXJ0m3yf20=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bkPL+VwkGqbe7Zs4sls/j09pIsEw6zyOHEzFumSXTyIUniueEXLdSeGOFcMvRiWtzFap6JhrMbFO6wKQBLyDSpiyICKH8APr+wCOseZGE3ZnfORMelrMF7sF1grnHxBlipIH1xM5bUYgnuhuk/XsvJAjuBLEm3vlxaZw29zeG2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=PBjJTQrz; arc=none smtp.client-ip=84.16.66.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BD6344031
+	for <linux-security-module@vger.kernel.org>; Tue, 14 Apr 2026 13:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776175175; cv=pass; b=jvz6WUY+YE0+HVA4Bs1Ep/KCcKRxDOPGkLIiyjeTEfp7HWW61+QiqX/3Yjs7f+V5PrS5egjPVk1DWO7eDlTZnyYPTw2S7Rcbv3p7qpzxAXdRaGQuNcg/4nKHVDnfgburT2pjOM/rvWQiuA4RH92z/m+d1z09nUkFjQHy4Gtkj4A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776175175; c=relaxed/simple;
+	bh=uhkKoG4nDJFkr1B87DG2veQXw+10pkGHqsixQqY1vjQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B15qDuqhG1gR0VEAti4mXbxD6EwbhLId/2SZz3wLi3jVuz9b/9GtqqR8IVXL+I27y7/xpNSMjf4RRTmxDmo7xthzBSdEY2+wYMMCqGz1CUHM62x/gBPVW+FgIHdrCJcmbpticcYRv+WWCX6EtvX7dN/rvjK+hVws1ay2ricc3CE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=S1MkYPEj; arc=pass smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="PBjJTQrz"
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fw57L2cTczNZH;
-	Tue, 14 Apr 2026 15:42:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1776174158;
-	bh=Hheu6xMRjCuyZb7FDJGhjQIfajggJ44e+hm+U0MAzAU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PBjJTQrz9VeBlQCMxWieLRVLPcACE+xhGWjiAPsTOxQ4L+IYEWjk/4p2uXnXgm0Yi
-	 z3IWuizAHuzP+Ga/qMuIWIMWgnWRUntxKtLKPKfHf4rgO1JNPg8DD9NnQxrJsnjwiS
-	 SfsqtTYpowwVNgOabPZLfAASxjZ3wLaesWUm69Gg=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4fw57K5c1Nzfp5;
-	Tue, 14 Apr 2026 15:42:37 +0200 (CEST)
-Date: Tue, 14 Apr 2026 15:42:36 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, 
-	Christian Brauner <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Paul Moore <paul@paul-moore.com>, 
-	linux-security-module@vger.kernel.org
-Subject: Re: LSM: Whiteout chardev creation sidesteps mknod hook
-Message-ID: <20260414.gailoogieGh0@digikod.net>
-References: <adUBCQXrt7kmgqJT@google.com>
- <06337e89-349a-4334-a735-b8dc9b566cdd@hallyn.com>
- <20260409-entbrennen-turnschuh-54af9b45610e@brauner>
- <adoIGHwgMJSuRfE5@google.com>
- <CAJfpegv6GDFZjdGrQ=0Jahvz5mSgfJr+GvjVwws=SFX-yirpSg@mail.gmail.com>
- <adzgKVIhRj5t3GqM@google.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="S1MkYPEj"
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-35d90833cacso3382564a91.2
+        for <linux-security-module@vger.kernel.org>; Tue, 14 Apr 2026 06:59:33 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1776175173; cv=none;
+        d=google.com; s=arc-20240605;
+        b=LHuUuhvAmpYzvMHLRt8Xfz6/aGeez+0TPpTYZWeZL++Jf7P5tToDA2wnCHg7t6J9Sb
+         rr56JSDrEXd8v6waAlIhxVxqU7artBjvnCk3M6S0cJGiv/HnwEP2YlYNQGGf9z04UZqX
+         f/vrJPU56WCua6wFWqwX2W115LSg3ePpjoJCsRyfGtYLmGSRoaHrWdHBK5BEA5LNw5KZ
+         X0p8/lz1dJbCg7jYnwTw2PrOgpOF2ThyowwL2AAzlUQV3d6zhjxSgP/oCodVnoU6IJq8
+         2J9nbSmUV27Z8wMCOq1bPen8pYo26I1sIYyV8chbtEaVz2Z9gkL9riXKfon9RwVmPziF
+         k3+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=Yn7fwY2ls7VFIteCUJo+VkkyMal6bHZLIgIF+IhGWsA=;
+        fh=jqAKW33Zr+S/ASLb4akDX4FbKRj8rdayHzdUVrmiypA=;
+        b=cf+lrIndjPbPnqmPdEJJ9Y6nwlX4QsBc4wcMygarTEYInBnCJPNdLnF2y60uitL/cE
+         8KrEoija4i8hPxMOq1UDqHrGAmbBF6TWwf1CjBdZCxDkZqGKhWmCQms1wiQcSor16FX4
+         Mak+znSal5etosd4UlHN/Gpi8CBk4M1pHds5WCXvev2QUWpVdYohRbbX+u5v1P4fvTjM
+         rfgqW5f+V9NeY1t6YLZ29UP1WkvXmXjFO9PWdSnHlimeun2pzQlU67wJt5KhZpr0po0M
+         mWf0X+jK9KXJ1IP5reS4TYyL0bomG3VERm2U3yiKSsZ+2cbQkCeatb0C/gmy1kMkHx5j
+         eHKw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1776175173; x=1776779973; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Yn7fwY2ls7VFIteCUJo+VkkyMal6bHZLIgIF+IhGWsA=;
+        b=S1MkYPEjty/sVOA2T+1I+hWL8KKin6SHIOjyVMNImxiNyf0I1sbsAHw8EsNKlU7taq
+         +XW/aZ02YfFJzwzVXRVK6nsAAIKN0MBiPGsXYmF/4V2yuT17DtH9SPG8qYt8VG/8OrVm
+         spPhxGYmOpEuArNdNazZyhXVPFDRNh5jCE2iBcKbWyWr4+rLxm94Ow9sXCOsE37yTALR
+         uDs91LvAenykXTTkEEuUlUVJP8oB49Kv2rznZA7DixGTsUBCEd2o9mHOfpB58hA18ryW
+         XSoa6bbClo8vdKEZJoTdhrpLKIhY7OwX+ZBs0uD8dGeFc9RGY+tD600EbxCwqacUhpA5
+         OXSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776175173; x=1776779973;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Yn7fwY2ls7VFIteCUJo+VkkyMal6bHZLIgIF+IhGWsA=;
+        b=LnsKX6X0k5an41VGpzcYCthORUkTB2wRbTgnlgTQATSfA/BJcIJKDOxUGKksmYY8C0
+         arS11Od8gbgyU5lFb8e5JJI4KoYXc4+ZIRS4d6X29nlhan352LSpHZpm8WE/bGJObdhi
+         X71vis3XgPvvpA7F4ogjoBYTCTUnn8LkW/z69t/NUkHT7Zd9sQL3lcV7tYK32A7ITp/8
+         jLghuOcRIiYDfcSkPOdHarnMREBnlIFQAYi0nLI6DV79btp+G0SjbowPQ5CcRV3ps/0t
+         Oic/sIcbLKzRc/2sgUmt3mY8XfBrH0vBSapJnI4vmi44Pc216KCpJ9Vp1lFa6Lf+/r4N
+         zEcg==
+X-Forwarded-Encrypted: i=1; AFNElJ+NoRDd3raeMWTP2cfIkhdgNkB6d2WxFu5OurV9nS2Z4VtsdysdytboB77X7xP9b4YUDg9ER962DZJZZEf2IkzH+60OMu0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1L7JnSMmTZ1+LIzTToIdxtS1qOJTJZr7IjXm5JqMDCObunRbK
+	qaMt6gXFiFODJXveiYnLbfYhUOQwtk6fy1MHtIaVJ4rqY8eb6qwnPlsLN3C0mFzk6AgOOs2Ep/Y
+	w2kyS/QpjHa9SuADx6pOSKGx9qGu8Z4YXjAivTAH4
+X-Gm-Gg: AeBDievCkqzCGADZKt3whjADPeyrqeuBxoHIcAkW4UkQ/hqzYRcWLY+qHeRpK4SsmAi
+	u9cqix3SnLZFSnCKikBTxkgYBeXmocVS0t1WXEdDTfd1AkFyC5y7MzrI12s0O5GMvLwW/ayN8Cu
+	NUl6SkDwLiC0ILkR0iXXLOOQujdVsSFeIDtt/DYkr0Gfx1i8+zGITMEiDwI83D7jHrgHJdjhA6B
+	Ig+aqD8KeQpQRCt2dnVRZUS0sUhLV5gRWW5ojm7A9a1oi4+DKYjy4rQa70MdU7NTQs/3aKskIPZ
+	yU01hh06G6e3hQUgmg==
+X-Received: by 2002:a17:90b:4a41:b0:35f:bf4b:c396 with SMTP id
+ 98e67ed59e1d1-35fbf4bc5afmr5097560a91.1.1776175173140; Tue, 14 Apr 2026
+ 06:59:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <adzgKVIhRj5t3GqM@google.com>
-X-Infomaniak-Routing: alpha
+References: <69dde155.050a0220.3030df.004d.GAE@google.com>
+In-Reply-To: <69dde155.050a0220.3030df.004d.GAE@google.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 14 Apr 2026 09:59:21 -0400
+X-Gm-Features: AQROBzDmCcuqLX2LRPTmlUV3w5wYWNkElipbcPGc2XI8z-enDYeQlCt_CgR9i-c
+Message-ID: <CAHC9VhTO4z1oPnNK748oTU6H7FcnxL2yzbuqkEKAfsrDV2Rcig@mail.gmail.com>
+Subject: Re: [syzbot] Monthly lsm report (Apr 2026)
+To: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, 
+	syzbot <syzbot+liste5004e02dae137bbd339@syzkaller.appspotmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 13, 2026 at 02:23:05PM +0200, Günther Noack wrote:
-> On Mon, Apr 13, 2026 at 12:18:08PM +0200, Miklos Szeredi wrote:
-> > On Sat, 11 Apr 2026 at 10:36, Günther Noack <gnoack@google.com> wrote:
-> > > I also don't currently see how an attacker would abuse this, but I still see
-> > > this as a violation of Landlock's security model if we can create a policy that
-> > > denies the creation of character device directory entries, and then we still
-> > > have a way to make them appear there where we previously had a different file.
-> > 
-> > Look: a whiteout is a whiteout, NOT a character device.  Don't let the
-> > fact that it's represented by "c 0 0" fool you, this is a completely
-> > different beast.  See commit a3c751a50fe6 ("vfs: allow unprivileged
-> > whiteout creation").
-> > 
-> > Does this beast need special handling by LSMs?  I have no idea, but
-> > treating them the same as char devs sounds like a bad idea.
-> 
-> Thanks for the pointer to that commit.  I was under the impression
-> that creation of the whiteout objects required CAP_MKNOD, but it seems
-> you have dropped that requirement in that commit.
-> 
-> (FWIW, I was mislead by the rename(2) man page[1], which is apparently
-> not up to date and where it explicitly says:
-> 
->     RENAME_WHITEOUT requires the same privileges as creating a
->     device node (i.e., the CAP_MKNOD capability).
-> 
-> So with that assumption, it seemed natural that this should have
-> extended equivalently into a Landlock policy.)
+On Tue, Apr 14, 2026 at 2:48=E2=80=AFAM syzbot
+<syzbot+liste5004e02dae137bbd339@syzkaller.appspotmail.com> wrote:
+>
+> Hello lsm maintainers/developers,
+>
+> This is a 31-day syzbot report for the lsm subsystem.
+> All related reports/information can be found at:
+> https://syzkaller.appspot.com/upstream/s/lsm
+>
+> During the period, 0 new issues were detected and 0 were fixed.
+> In total, 3 issues are still open and 45 have already been fixed.
+>
+> Some of the still happening issues:
+>
+> Ref Crashes Repro Title
+> <1> 95      Yes   INFO: task hung in process_measurement (3)
+>                   https://syzkaller.appspot.com/bug?extid=3Dcb9e66807bcb8=
+82cd0c5
+> <2> 68      Yes   possible deadlock in keyring_clear (3)
+>                   https://syzkaller.appspot.com/bug?extid=3Df55b043dacf43=
+776b50c
+> <3> 31      Yes   INFO: task hung in ima_file_free (4)
+>                   https://syzkaller.appspot.com/bug?extid=3D8036326eebe7d=
+0140944
 
-I agree with Miklos and also pointed out to this commit:
-https://lore.kernel.org/all/20260408.beu1Eing5aFo@digikod.net/
+Mimi, Roberto,
 
-> 
-> So if the "c 0 0" whiteout device is indeed a different kind of file,
-> maybe we would need to treat it with a separate Landlock access right
-> after all then.  I'll ponder it.
+If I recall correctly, we've discussed the process measurement issue
+before, and I thought it was being resolved.  What is the current
+status on a fix?
 
-What is sure is that we should not treat it like character devices,
-which required special capabilities/permissions because they are a door
-to a driver interface.
+I don't recall discussing the ima_file_free() issue, but it looks like
+the syzbot reports go back to 2024; is there a fix under development
+for that?
 
-> 
-> FWIW, besides introducing a new LANDLOCK_ACCESS_FS_MAKE_WHITEOUT
-> access right and adding more special cases to the Landlock API,
+Thanks.
 
-> another possible option might be to just forbid creating whiteout
-> objects altogether, when under a Landlock policy.
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> To disable reminders for individual bugs, reply with the following comman=
+d:
+> #syz set <Ref> no-reminders
+>
+> To change bug's subsystems, reply with:
+> #syz set <Ref> subsystems: new-subsystem
+>
+> You may send multiple commands in a single email message.
 
-This doesn't feel right.  Mount operations restriction are there because
-Landlock currently cannot properly control mount operations yet (see
-https://github.com/landlock-lsm/linux/issues/14).
-
-> As the man page
-> also notes, "This operation makes sense only for overlay/union
-> filesystem implementations",
-
-The man pages contain at least one important error wrt this feature, so
-we should only trust the kernel code.  Anyway, anyone can create a
-whiteout with mknod, so let's consider that there are other use cases.
-
-> and since these likely can't use Landlock
-> anyway due to mounting, I think there would be no use case left where
-> anyone would want to perform such an operation within a Landlock
-> domain -- I don't think this would break anyone.  Mickaël, do you have
-> an opinion on that idea?
-
-The LANDLOCK_ACCESS_FS_MAKE_WHITEOUT right makes sense wrt other MAKE_*
-rights (i.e. per file type).  See may detailed reply here:
-https://lore.kernel.org/r/20260414.Lae5ida1eeGh@digikod.net
-
-BTW, I don't understand why only the renameat2(2) syscall can
-(indirectly) create this file type; why not also unlink(2) or rmdir(2)?
-
-> 
-> —Günther
-> 
-> P.S. Initial patch set from Saturday is at [2], but this still uses
-> the LANDLOCK_ACCESS_FS_MAKE_CHAR right.
-> 
-> [1] https://man7.org/linux/man-pages/man2/rename.2.html
-> [2] https://lore.kernel.org/all/20260411090944.3131168-2-gnoack@google.com/
-> 
+--=20
+paul-moore.com
