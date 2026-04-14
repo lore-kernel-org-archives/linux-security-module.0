@@ -1,43 +1,48 @@
-Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387FD217723
-	for <linux-security-module@vger.kernel.org>; Tue, 14 Apr 2026 13:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048242C11FA
+	for <linux-security-module@vger.kernel.org>; Tue, 14 Apr 2026 13:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776174080; cv=none; b=DQrvWhCO7CVpQ82vcyKUdkookcRGdh9QFqaahHbVyK+Cc1DgEybP3i7EDe8a4X+tA1Ia1+vJuD4tWJ9ygBPGfVeMiaiTha6GvXJS3rSaE58V1U2U/2Uwj6US4GvRuqQ4FaqYLcaDF+a5BXo4uqZQWXAKFRVGyoSvzS5rBvGlsl0=
+	t=1776174612; cv=none; b=bzzkgylSBqwUakQthgwFVwR1hFVYXCsMmpoZRPyDOFlKnyufEjzSKvqNYODcQplBF+WNTxd8jlAvll29lBJ+wj4TSNf3Y1AwgfZAwQLUwUYbpQb9tbM92yjMOMXleEL/q2lLQp2/T1ZsHPp2OrCqB12+vvhlGr5JdO4PX+LCHCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776174080; c=relaxed/simple;
-	bh=KwFN08rCGo730yCyPg6XGv/ZyNBKyJ5YOKNOYZhfr4k=;
+	s=arc-20240116; t=1776174612; c=relaxed/simple;
+	bh=GWY8aYWhNeSJBn1xDUJnUsRFAhOBaXiD1sXJ0m3yf20=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kdlIz1A73N1FtEHbrI+xg31auZy4g7VNvCng5onw59gfjY8z7dg6SvUbysdQoiNsFOtAgiIavGSG4f9DHzVWW63pFsLda0PDhHsRyUZqPp7EWJog4e6ZS8QpU1rdV7VAQR2k452zudf+2hdxP7nbDhKAK+0VnrGhKmhno6zA/i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=OJoJKTnl; arc=none smtp.client-ip=84.16.66.172
+	 Content-Type:Content-Disposition:In-Reply-To; b=bkPL+VwkGqbe7Zs4sls/j09pIsEw6zyOHEzFumSXTyIUniueEXLdSeGOFcMvRiWtzFap6JhrMbFO6wKQBLyDSpiyICKH8APr+wCOseZGE3ZnfORMelrMF7sF1grnHxBlipIH1xM5bUYgnuhuk/XsvJAjuBLEm3vlxaZw29zeG2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=PBjJTQrz; arc=none smtp.client-ip=84.16.66.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="OJoJKTnl"
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fw55b2YHfz2Tf;
-	Tue, 14 Apr 2026 15:41:07 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="PBjJTQrz"
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fw57L2cTczNZH;
+	Tue, 14 Apr 2026 15:42:38 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1776174067;
-	bh=VGxM23V9y2uxjrCfhg8JQZRmLfzT9sZuky6Ein29IhM=;
+	s=20191114; t=1776174158;
+	bh=Hheu6xMRjCuyZb7FDJGhjQIfajggJ44e+hm+U0MAzAU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OJoJKTnlT/D//6Ky+VYQBBr57GTXwKgf9E1lGZu4B9xlt2suq9mOXPVSSj33giiuV
-	 2ENoM++xhBgbppDg2CPpAoMEdOW0rl8bse+q1Uo3qV55+jzYZbfT5KEaJtriNc3wqm
-	 tYFI08KPD3/USLgTy/MjD3oYJ+tjyJz2ywaMIYQA=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fw55Z2D6nzjhv;
-	Tue, 14 Apr 2026 15:41:06 +0200 (CEST)
-Date: Tue, 14 Apr 2026 15:40:59 +0200
+	b=PBjJTQrz9VeBlQCMxWieLRVLPcACE+xhGWjiAPsTOxQ4L+IYEWjk/4p2uXnXgm0Yi
+	 z3IWuizAHuzP+Ga/qMuIWIMWgnWRUntxKtLKPKfHf4rgO1JNPg8DD9NnQxrJsnjwiS
+	 SfsqtTYpowwVNgOabPZLfAASxjZ3wLaesWUm69Gg=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4fw57K5c1Nzfp5;
+	Tue, 14 Apr 2026 15:42:37 +0200 (CEST)
+Date: Tue, 14 Apr 2026 15:42:36 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Serge Hallyn <serge@hallyn.com>
-Subject: Re: [PATCH 0/3] landlock: Restrict renameat2 with RENAME_WHITEOUT
-Message-ID: <20260414.Lae5ida1eeGh@digikod.net>
-References: <20260411090944.3131168-2-gnoack@google.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	Christian Brauner <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Paul Moore <paul@paul-moore.com>, 
+	linux-security-module@vger.kernel.org
+Subject: Re: LSM: Whiteout chardev creation sidesteps mknod hook
+Message-ID: <20260414.gailoogieGh0@digikod.net>
+References: <adUBCQXrt7kmgqJT@google.com>
+ <06337e89-349a-4334-a735-b8dc9b566cdd@hallyn.com>
+ <20260409-entbrennen-turnschuh-54af9b45610e@brauner>
+ <adoIGHwgMJSuRfE5@google.com>
+ <CAJfpegv6GDFZjdGrQ=0Jahvz5mSgfJr+GvjVwws=SFX-yirpSg@mail.gmail.com>
+ <adzgKVIhRj5t3GqM@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -47,122 +52,88 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260411090944.3131168-2-gnoack@google.com>
+In-Reply-To: <adzgKVIhRj5t3GqM@google.com>
 X-Infomaniak-Routing: alpha
 
-Thanks for bringing this up.
+On Mon, Apr 13, 2026 at 02:23:05PM +0200, Günther Noack wrote:
+> On Mon, Apr 13, 2026 at 12:18:08PM +0200, Miklos Szeredi wrote:
+> > On Sat, 11 Apr 2026 at 10:36, Günther Noack <gnoack@google.com> wrote:
+> > > I also don't currently see how an attacker would abuse this, but I still see
+> > > this as a violation of Landlock's security model if we can create a policy that
+> > > denies the creation of character device directory entries, and then we still
+> > > have a way to make them appear there where we previously had a different file.
+> > 
+> > Look: a whiteout is a whiteout, NOT a character device.  Don't let the
+> > fact that it's represented by "c 0 0" fool you, this is a completely
+> > different beast.  See commit a3c751a50fe6 ("vfs: allow unprivileged
+> > whiteout creation").
+> > 
+> > Does this beast need special handling by LSMs?  I have no idea, but
+> > treating them the same as char devs sounds like a bad idea.
+> 
+> Thanks for the pointer to that commit.  I was under the impression
+> that creation of the whiteout objects required CAP_MKNOD, but it seems
+> you have dropped that requirement in that commit.
+> 
+> (FWIW, I was mislead by the rename(2) man page[1], which is apparently
+> not up to date and where it explicitly says:
+> 
+>     RENAME_WHITEOUT requires the same privileges as creating a
+>     device node (i.e., the CAP_MKNOD capability).
+> 
+> So with that assumption, it seemed natural that this should have
+> extended equivalently into a Landlock policy.)
 
-By default, creating whiteout files is not privileged e.g.,
-mknod whiteout c 0 0 is allowed for unprivileged users.  Landlock should
-follow this semantic.  So there are two issues:
-1. LANDLOCK_ACCESS_FS_MAKE_CHAR should not apply for whiteouts.
-2. Whiteouts creation should be controllable by Landlock (e.g. through
-mknod and renameat2).
+I agree with Miklos and also pointed out to this commit:
+https://lore.kernel.org/all/20260408.beu1Eing5aFo@digikod.net/
 
-I see four options:
+> 
+> So if the "c 0 0" whiteout device is indeed a different kind of file,
+> maybe we would need to treat it with a separate Landlock access right
+> after all then.  I'll ponder it.
 
-1. Consider whiteouts as regular files and make them handled by
-   LANDLOCK_ACCESS_FS_MAKE_REG.  This would require an erratum and would
-   make sense for direct mknod calls, but it would be weird for
-   renameat2 calls than move a file and should only require
-   LANDLOCK_ACCESS_FS_REMOVE_FILE from the user point of view.
+What is sure is that we should not treat it like character devices,
+which required special capabilities/permissions because they are a door
+to a driver interface.
 
-2. Add a new LANDLOCK_ACCESS_FS_MAKE_WHITEOUT right to handle whitout
-   creation (direct and indirect?) and keep LANDLOCK_ACCESS_FS_MAKE_CHAR
-   handle direct whiteout creation (and don't backport anything).  It
-   looks inconsistent from an access control point of view.
+> 
+> FWIW, besides introducing a new LANDLOCK_ACCESS_FS_MAKE_WHITEOUT
+> access right and adding more special cases to the Landlock API,
 
-3. Add a new LANDLOCK_ACCESS_FS_MAKE_WHITEOUT right and, when handled,
-   make LANDLOCK_ACCESS_FS_MAKE_CHAR not handle whiteout.  This would be
-   a bit weird from a kernel point of view but it should work well for
-   users while still forbidding direct whiteout creation.
+> another possible option might be to just forbid creating whiteout
+> objects altogether, when under a Landlock policy.
 
-4. Add a new LANDLOCK_ACCESS_FS_MAKE_WHITEOUT right and make
-   LANDLOCK_ACCESS_FS_MAKE_CHAR never handle whiteout (and backport
-   MAKE_CHAR fix with an errata).  This would be consistent but backport
-   a way to directly create whiteouts (e.g. with mknod).
+This doesn't feel right.  Mount operations restriction are there because
+Landlock currently cannot properly control mount operations yet (see
+https://github.com/landlock-lsm/linux/issues/14).
 
-I think option 3 is the more pragmatic.  Landlock should properly log
-the right blocker wrt handled access rights though.
+> As the man page
+> also notes, "This operation makes sense only for overlay/union
+> filesystem implementations",
 
+The man pages contain at least one important error wrt this feature, so
+we should only trust the kernel code.  Anyway, anyone can create a
+whiteout with mknod, so let's consider that there are other use cases.
 
-On Sat, Apr 11, 2026 at 11:09:42AM +0200, Günther Noack wrote:
-> Hello!
+> and since these likely can't use Landlock
+> anyway due to mounting, I think there would be no use case left where
+> anyone would want to perform such an operation within a Landlock
+> domain -- I don't think this would break anyone.  Mickaël, do you have
+> an opinion on that idea?
+
+The LANDLOCK_ACCESS_FS_MAKE_WHITEOUT right makes sense wrt other MAKE_*
+rights (i.e. per file type).  See may detailed reply here:
+https://lore.kernel.org/r/20260414.Lae5ida1eeGh@digikod.net
+
+BTW, I don't understand why only the renameat2(2) syscall can
+(indirectly) create this file type; why not also unlink(2) or rmdir(2)?
+
 > 
-> As discussed in [1], the renameat2() syscall's RENAME_WHITEOUT flag allows
-> the creation of chardev directory entries with major=minor=0 as "whiteout
-> objects" in the location of the rename source file [2].
+> —Günther
 > 
-> This functionality is available even without having any OverlayFS mounted
-> and can be invoked with the regular renameat2(2) syscall [3].
+> P.S. Initial patch set from Saturday is at [2], but this still uses
+> the LANDLOCK_ACCESS_FS_MAKE_CHAR right.
 > 
-> 
-> Motivation
-> ==========
-> 
-> The RENAME_WHITEOUT flag side-steps Landlock's LANDLOCK_ACCESS_FS_MAKE_CHAR
-> right, which is designed to restrict the creation of chardev device files.
-> 
-> This patch set fixes that by adding a check in Landlock's path_rename hook.
-> 
-> 
-> Tradeoffs considered in the implementation
-> ==========================================
-> 
-> Q: Should we guard it with a dedicated LANDLOCK_ACCESS_FS_MAKE_WHITEOUT
->    right?
-> 
->    Pros:
->    * This would be the fully backwards compatible solution,
->      and Linux always strives for full backward compatibility.
-> 
->    Cons:
->    * Complicates the Landlock API surface for a very minor use case.
-> 
->      In Debian Code search, the only use of RENAME_WHITEOUT from userspace
->      seems to be for fuse-overlayfs.  It is used there for the same purpose
->      as in the kernel OverlayFS and it likely does not run in a Landlock
->      domain.
-> 
->    The tradeoff does not seem worth it to me.  The chances that we break
->    anyone with this seem very low, and I'm inclined to treat it as a bugfix
->    for the existing LANDLOCK_ACCESS_FS_MAKE_CHAR right.
-> 
-> 
-> Q: Should we add a Landlock erratum for this?
-> 
->    I punted on it for now, but we can do it if needed.
-> 
-> Q: Should the access right check be merged into the longer
->    current_check_refer_path() function?
-> 
->    I am leaning towards keeping it as a special case earlier.  This means
->    that we traverse the source path twice, but as we have seen in Debian
->    Code Search, there are apparently no legitimate callers of renameat2()
->    with RENAME_WHITEOUT who are calling this from within a Landlock domain.
->    (fuse-overlayfs is legitimate, but is not landlocked)
-> 
->    It doesn't seem worth complicating our common rename code for a corner
->    case that doesn't happen in practice.
-> 
-> 
-> [1] https://lore.kernel.org/all/adUBCQXrt7kmgqJT@google.com/
-> [2] https://docs.kernel.org/filesystems/overlayfs.html#whiteouts-and-opaque-directories
-> [3] https://man7.org/linux/man-pages/man2/renameat2.2.html#DESCRIPTION
-> [4] https://codesearch.debian.net/search?q=rename.*RENAME_WHITEOUT&literal=0
-> 
-> 
-> Günther Noack (3):
->   landlock: Require LANDLOCK_ACCESS_FS_MAKE_CHAR for RENAME_WHITEOUT
->   selftests/landlock: Add test for RENAME_WHITEOUT denial
->   selftests/landlock: Test OverlayFS renames w/o
->     LANDLOCK_ACCESS_FS_MAKE_CHAR
-> 
->  security/landlock/fs.c                     | 16 ++++++++
->  tools/testing/selftests/landlock/fs_test.c | 45 ++++++++++++++++++++++
->  2 files changed, 61 insertions(+)
-> 
-> -- 
-> 2.54.0.rc0.605.g598a273b03-goog
-> 
+> [1] https://man7.org/linux/man-pages/man2/rename.2.html
+> [2] https://lore.kernel.org/all/20260411090944.3131168-2-gnoack@google.com/
 > 
