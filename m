@@ -1,31 +1,61 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123214A21;
-	Tue, 14 Apr 2026 19:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8D630F540
+	for <linux-security-module@vger.kernel.org>; Tue, 14 Apr 2026 20:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776195924; cv=none; b=ENmoHBJG4wRU3pIWGkt3LkXZpgtC7Bryfmqqd9B5VmhTSQc5mLcW6jda3YeNddWupCAtCc4pFQzB7PaU70siIgK30wWSqq3IZJESJorV7M/N8kimIxx5Qb2wyGZKA3PMVeC0aKizfP4g/lugA2CvUU6eWMAQFplKux5hHHioKDI=
+	t=1776198013; cv=none; b=Vhb/QUdRhJeWd0hTJWtvFLo46DWSjXDcnRbn/OrC725sLLtRh0DdossE1rKv+Fiw/id8Nj/x4KEL3kDchzPjKC8Nv/wieNjuL/yRbSKGz0oiVHnI9xtwknxttCNM5QbfvfdsAgJ5C3KAWVdnutypJ1vup5DPZjhuIe5E79cj9hE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776195924; c=relaxed/simple;
-	bh=SCb3Z/dZ22cVzayhaiKrzLcTl/xZxhDvHzEqomewDTU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=N4N76gUYkNE5qmOURZcUxMvydE+QXGM8zg+WnV8IDZgV2u9ArHU28bNSdtUl2CE4OBQNOpjKprcX8iSpymnkPActNKi1ThFL3BRKR+NYhtgiCf2Z/6VvQS7hX26HTPmHlcYjSr/yMOG4Is4O1agpUn71CMBh9KL8Dyu3Zw3DlI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.18.224.107])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fwF900pRtzJ467v;
-	Wed, 15 Apr 2026 03:44:36 +0800 (CST)
-Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
-	by mail.maildlp.com (Postfix) with ESMTPS id 145A340584;
-	Wed, 15 Apr 2026 03:45:18 +0800 (CST)
-Received: from [10.123.123.159] (10.123.123.159) by
- mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 14 Apr 2026 22:45:16 +0300
-Message-ID: <acc8ac68-d581-b5b1-afce-95d304b943d2@huawei-partners.com>
-Date: Tue, 14 Apr 2026 22:45:14 +0300
+	s=arc-20240116; t=1776198013; c=relaxed/simple;
+	bh=6RA72LREKomIWQz20rOHPiKnlvWsEq+7Qsyttzg4eCo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DPAimtrxl6xvg8d+Hdzjnk0ZG9PWGUx2Er2gu6mdbQfrlWwa7KahcfEfTT2Abl/grHmr94wTXkqJWKKziSx7QJqkRA192KsHBgtF+MwX6+55hIOD7rDbJMAeRjI2LgwLahitM9/OYNp3DeQIt34joCDucE4et9L7dcSmhU2kHfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=RVMPbCpx; arc=none smtp.client-ip=66.163.189.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="RVMPbCpx"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1776198011; bh=Gi1Te5MKu3lSkf9CJ6/ejqyTfTqko6UyGFbJ/Gs5eMI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=RVMPbCpxrs3myrA/44pKvquEbYP5i8DwJqhBXhf9Y0wf4A20y10tktbI+aUUqjJhYS2vNsYa7wExTR3pqarOE59V21YwPe+1uMoVandAxfrlFL0WW9Jf5l12JDUFyX+H4Vva4hR61RAE8DrxrWc3Aht4ADUfgoTikmX5kAl4ifp/1XdTcd1Lk41GAGHz5Vz0XKRPIxC7gVBhS0w/LDnTo0pYwtuFptYw/qRdnUrDDIui1tnlxODt1x9E16hyY5yUnkhcKMCMe3wfosiQSphcB1aNbN5jb9FqY3DfV+XQWnBAXtXYoTdC3eyEJu/9QU/yln87SkHiR4dYS5wJKAgBPQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1776198011; bh=Mqj6LMQSmLgUTImUI9L0mJpGv6PcZk4wp1l1ONGMAnc=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=bU0cAWuVGN8cXoDIkm589/J+0E4epbFEX79kOGNsGteXFHWF0l55KM9v12TnDgIZ+8ijz7X0zQL4R/CsdPLxrcegZOx5pc3jGzMQCz/Hfz/dygaJvMFTo7sL8pd/qlGjOsUkdmxG8M+DWycBfQMFpQhOFv3kf8k+BT6rjIejiKtDrbh+RFtpwdyTRAhi5z7fvGBDe3iWJNj1YO1rD/p8sf3bUb7DaOudnOBomSpV9Kr0SPpay5BmgBzVF+w6NJeK+gSGBBtiLWg8xMGCLGOlf/jR7fyjyjj7zb3mjYEiWzUvDK4HCjasZE4eWyImDh4W6suhixqaTs5rHVGBK2urlg==
+X-YMail-OSG: iay6JtoVM1k0h6r_zLyTJrXRIr3aSR906hOswAKIVf64Slcl8gPMUSKv3byLnYf
+ s_EsKWeto798l7yb.Gn.PSrflgfdUwonQAURtzPVhvA7Fl0o3QQNLiZfItH6GEaWrn8xbPB48UxE
+ JvLUl1qmj.VDD27okP15BemWdGIXJUx_0kotjlCkgd9QUlSa1.dBHkRGNkWuie2.otqvAmh3gcN3
+ iw5i9OGoiI1H3l5jU3az.AncPfZd6qXvVRKkwxqGq65_420NzVqHL1atK5krVJbeWFuUTYq5wLMY
+ fOdT.lUEhAYQY.tngCRGae4YpvaObv8j1_n7cH5oqZYs2P_.XmKMYZCCiCNC1dflQBrtt87RIXBF
+ WEBja3aHB1W6cvjUlpkkFQYSm1Zn1JGRQd3rqFyJgNRtsVL6VXcQtpxe41n2GeDUWDZV22JMEL2O
+ g7ycpx_ROUKuh0sAYHpoW.q_A2n.zLTVNNVKr3JI3MdMDHz8bcAAl6CA.JW1kPxAf50vEIDPHdoe
+ Gl9iIzmwYR.otZORerLkLGQOsPp1E_Ite6bRgucNB2Tu3Uu2dA1zINBkuzHBWbSMhFaNjFywciyq
+ TWmY6BwwakA6_kiavl8EM4am6J.Sz8XMmoOTm1Ffzr.u.AFEq5xuHDf80mPxcISQJyJY9Cyswj8Z
+ .REdQHoRybUfb4CjtWMJJXNL2Lodizrsf.c7VJMeJj6k9V4ahOPOB6Sw2MDWjqdZdldRmPa.gP0q
+ vdSE1wYIxWYT1Sgv3WhibVlDnUALAmf5DTa39F1CCvrnFTs0DoOQPLmP2wBphWlmMdmih49wJpJB
+ 95fNiQyCNymtA4Cp.g2.guwEgsO9nH5nTH013tHljLl8t_JuS2wpXWv8dHYS5xRBjX7yKuvvKrAb
+ EVmewx6N7Hxei87gZNDUNqC1qz9SfAEYktEJsfMQHL6yXww348XaDF3RtsqivJ4TdEI_Fq9CpHZW
+ H9.Xx1Am9mjOsEdCq9LUPYMHx3uauPogOL5sUASOQcfPWRvwAlBmlqblgAQBpfukJ2dRW85xeHId
+ 5.blW3UTxPYnNfS_9bxK3yPgKDc_jDV3AVyZhZoRamgrMaz._Kj3dBNFF6RsBmwL2IPkv5vmv0D2
+ E3fYhZ8vdOLFfaMiAgtu7exqzWBXyxo6xDF2xiSf_h1lBgRzH0_6ZDNpeHkT7L2P.z_zx4E3EASJ
+ zwJ9rMY2qgXmno3vN.tkLsfu08qWSYiG91ak4L7ZctKGdXaHpnZNcDyq70BTAQNT7TtMMO63.TGx
+ e5Srk8d61YzOKBL3F0Nz5uGpgtLlYu3GRT0rQlYskiY52OgbNimCOHC8tkXsABqrq5tItOjzbTyJ
+ rxMD6px5aQsFmBrWFuMtE5i_GweFmv3UArqAq522E.D98Q_cy7hgSu779ep2Gp6t8VD9VXL3HaUF
+ ruuxnr7voim323k8z4b1ql0uQFcfnIAPd3dsAA4rnd1mJQ7_bw1crsE5Gsa7UNkqzwT8R_39R0HB
+ XBssnbTb_GKkNJPS_jVrmx00zB2Y6YkeVrpdUYTp29ZVF3JTEeFhRkhJ..YQM1BCWWQg.VLz2QKM
+ gqO1nmg3Z3WQlSam8wNtgBPIUaGpz4YFNc4LQezYv._XuCDvB2jIdjSIA5AXpQO7aUjCKBWSoYj_
+ 5eSvyxmm66rqUmy4hXF1VleTovFhE9yHypTTefgV4GMJ3ytpXrDWh9NGitPfyMBwXNIDR6seAam_
+ f0SLK5ZmLZp.ldOMdL1DVQ2DaSbB7e6dk0Etvuo8JQ_vGSwNVL65Wq0lXZy8U3eGFErxgtxU4vUS
+ YDamSSndVvg7xKTjrPK7eeCh_3uT1JC0wAfketpYsbZF49gM1T59nw3nikmnW2f_Pv8AUEwTGo29
+ civCtQR4V8imc_Rr1_noR_XC9ZgOvV4qW8lUfdnJEB7YKp69_xAASmFvKnM2OCaKUe2MJHQQ7nNx
+ svqUqyjFepnK6ntadO53LtRnueVc29X4ALS86lTMnlnV7tpXO17pT2.nFivHGOeiuGSUuGqI3pwR
+ fXEezigAXlkIYRm1iK.PtKQWhmChZxjxdkCiIJ2KTmPCJ88EMp2hCBL6no6J583Pje1.YEElN5_W
+ uCqt0a3sLoAGYNxRrfdoMrXwyFeDFotFHpp4EEq4xYX6S6x9kz2HXB6U0tiZwm5Rgnn7p6l5DxCx
+ _r6XjnoGDBBlP7XqYN8Jh08chKthKFHpt_lNMxbW8L3dlycRPacEG6ps14eTur.Vk1TMVZ_NOz8r
+ h9qdlP9dBZtbck_ZwzKVSVLCDs.Mh9hnKnBltA23fPbL6hJVwE1AwbQ--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 5645cfa9-c473-4367-838c-8ef631aabbef
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Tue, 14 Apr 2026 20:20:11 +0000
+Received: by hermes--production-gq1-6dfcf9f8b-7ggwq (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ed718aee344bcab0b89868fa26b773d6;
+          Tue, 14 Apr 2026 20:10:01 +0000 (UTC)
+Message-ID: <53a532e8-5981-49b4-896e-0bf5021ff78b@schaufler-ca.com>
+Date: Tue, 14 Apr 2026 13:09:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -33,257 +63,107 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 00/19] Support socket access-control
-Content-Language: ru
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-CC: <gnoack@google.com>, <willemdebruijn.kernel@gmail.com>,
-	<matthieu@buffet.re>, <linux-security-module@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
-	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
-	<konstantin.meskhidze@huawei.com>
-References: <20251118134639.3314803-1-ivanov.mikhail1@huawei-partners.com>
- <20260408.icooCaighie2@digikod.net>
- <ca9b74f3-ce72-1d7f-c922-be1b276b69a8@huawei-partners.com>
- <20260414.thaeki1iigeM@digikod.net>
-From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-In-Reply-To: <20260414.thaeki1iigeM@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH v2 0/4] Firmware LSM hook
+To: Paul Moore <paul@paul-moore.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+ Roberto Sassu <roberto.sassu@huaweicloud.com>, KP Singh
+ <kpsingh@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ Saeed Mahameed <saeedm@nvidia.com>, Itay Avraham <itayavr@nvidia.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>,
+ Maher Sanalla <msanalla@nvidia.com>, linux-security-module@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20260331-fw-lsm-hook-v2-0-78504703df1f@nvidia.com>
+ <20260409121230.GA720371@unreal>
+ <2dd138a2ae87f90c55dbc3178d9c798294fd4450.camel@huaweicloud.com>
+ <20260409124553.GB720371@unreal>
+ <CAHC9VhT1X4HX4bGrK=mEzu=g=mZ-Wg-LDXVgZVe-e6oM+W9aHg@mail.gmail.com>
+ <20260412090006.GA21470@unreal>
+ <CAHC9VhRnYXjg+vE9a8PeykbXk91is12zYLaO7EFdfZPKMxDfPA@mail.gmail.com>
+ <20260413164220.GP3694781@ziepe.ca>
+ <CAHC9VhR1Uke9P==CELKavBcogHoNCtMZFfNWUbgm5HYUfomhtw@mail.gmail.com>
+ <20260413231920.GS3694781@ziepe.ca>
+ <4cf6b20b-f53b-4b5e-ba03-c7ac01bec0c2@schaufler-ca.com>
+ <CAHC9VhTm9MG-NzdwxtqJA6LZeTEsmUjyy8da2=8KOVxgDtEqWQ@mail.gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhTm9MG-NzdwxtqJA6LZeTEsmUjyy8da2=8KOVxgDtEqWQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
- mscpeml500004.china.huawei.com (7.188.26.250)
+X-Mailer: WebService/1.1.25495 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 4/14/2026 5:27 PM, Mickaël Salaün wrote:
-> On Mon, Apr 13, 2026 at 08:11:48PM +0300, Mikhail Ivanov wrote:
->> On 4/8/2026 1:26 PM, Mickaël Salaün wrote:
->>> Hi Mikhail,
->>
->> Hi!
->>
->>>
->>> On Tue, Nov 18, 2025 at 09:46:20PM +0800, Mikhail Ivanov wrote:
->>>> Hello! This is v4 RFC patch dedicated to socket protocols restriction.
->>>>
->>>> It is based on the landlock's mic-next branch on top of Linux 6.16-rc2
->>>> kernel version.
->>>>
->>>> Objective
->>>> =========
->>>> Extend Landlock with a mechanism to restrict any set of protocols in
->>>> a sandboxed process.
->>>>
->>>> Closes: https://github.com/landlock-lsm/linux/issues/6
->>>>
->>>> Motivation
->>>> ==========
->>>> Landlock implements the `LANDLOCK_RULE_NET_PORT` rule type, which provides
->>>> fine-grained control of actions for a specific protocol. Any action or
->>>> protocol that is not supported by this rule can not be controlled. As a
->>>> result, protocols for which fine-grained control is not supported can be
->>>> used in a sandboxed system and lead to vulnerabilities or unexpected
->>>> behavior.
->>>>
->>>> Controlling the protocols used will allow to use only those that are
->>>> necessary for the system and/or which have fine-grained Landlock control
->>>> through others types of rules (e.g. TCP bind/connect control with
->>>> `LANDLOCK_RULE_NET_PORT`, UNIX bind control with
->>>> `LANDLOCK_RULE_PATH_BENEATH`).
->>>>
->>>> Consider following examples:
->>>> * Server may want to use only TCP sockets for which there is fine-grained
->>>>     control of bind(2) and connect(2) actions [1].
->>>> * System that does not need a network or that may want to disable network
->>>>     for security reasons (e.g. [2]) can achieve this by restricting the use
->>>>     of all possible protocols.
->>>>
->>>> [1] https://lore.kernel.org/all/ZJvy2SViorgc+cZI@google.com/
->>>> [2] https://cr.yp.to/unix/disablenetwork.html
->>>>
->>>> Implementation
->>>> ==============
->>>> This patchset adds control over the protocols used by implementing a
->>>> restriction of socket creation. This is possible thanks to the new type
->>>> of rule - `LANDLOCK_RULE_SOCKET`, that allows to restrict actions on
->>>> sockets, and a new access right - `LANDLOCK_ACCESS_SOCKET_CREATE`, that
->>>> corresponds to user space sockets creation. The key in this rule
->>>> corresponds to communication protocol signature from socket(2) syscall.
->>>
->>> FYI, I sent a new patch series that adds a handled_perm field to
->>> rulesets:
->>> https://lore.kernel.org/all/20260312100444.2609563-6-mic@digikod.net/
->>> See also the rationale:
->>> https://lore.kernel.org/all/20260312100444.2609563-12-mic@digikod.net/
->>>
->>> I think that would work well with the socket creation permission.  WDYT?
->>
->> Agreed. AFAICS restrictions of protocols used for communication (eg.TCP)
->> will complement restriction of network namespace which sandboxed process
->> is pinned by LANDLOCK_PERM_NAMESPACE_ENTER permission.
-> 
-> I mean that socket creation restriction should use the same handled_perm
-> interface e.g. add a LANDLOCK_PERM_SOCKET_CREATE right with related
-> LANDLOCK_RULE_SOCKET rule type.
+On 4/14/2026 12:09 PM, Paul Moore wrote:
+> On Tue, Apr 14, 2026 at 1:05 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> Netlabel has a similar issue to secmarks with its use of secids, and
+>> currently supports only a single CIPSO tag in the IP header, making
+>> multiple concurrent LSM support impossible.
+> That's not correct.
 
-Oh, I see your point.
+OK, you're right. However ...
 
-> 
-> With the first RFC for handled_perm, the related rules (e.g. struct
-> landlock_socket_attr) don't have an allowed_access field but an
-> allowed_perm one instead.  The related permission would then be
-> LANDLOCK_PERM_SOCKET_CREATE.  WDYT?
+>
+> We've talked about this multiple times Casey.  The short version is
+> that while NetLabel doesn't support multiple simultaneous LSMs at the
+> moment (mostly due to an issue with outbound traffic), this is not due
+> to some inherent limitation, it is due to the fact that it wasn't
+> needed when NetLabel was created, and no one has done the (relatively
+> minor) work to add support since then.
+>
+> For those of you who are interested in a more detailed explanation,
+> here ya go ...
+>
+> NetLabel passes security attributes between itself and various LSMs
+> through the netlbl_lsm_secattr struct.  The netlbl_lsm_secattr struct
+> is an abstraction not only for the underlying labeling protocols, e.g.
+> CIPSO and CALIPSO, but also for the LSMs.  Multiple LSMs call into
+> NetLabel for the same inbound packet using netlbl_skbuff_getattr() and
+> then translate the attributes into their own label representation.
+>
+> Outbound traffic is a bit more complicated as it involves changing the
+> state of either a sock, via netlbl_sock_setattr(), or a packet, via
+> netlbl_skbuff_setattr(), but in both cases we are once again dealing
+> with netlbl_lsm_secattr struct, not a LSM specific label.  Since the
+> underlying labeling protocol is configured within the NetLabel
+> subsystem and outside the individual LSMs, there is no worry about
+> different LSMs requesting different protocol configurations (that is a
+> separate system/network management issue). The only concern is that
+> the on-the-wire representation is the same for each LSM that is using
+> NetLabel based labeling.  While some additional work would be
+> required, it shouldn't be that hard to add NetLabel/protocol code to
+> ensure the protocol specific labels are the same, and reject/drop the
+> packet if not.
 
-Of course, thats reasonable. We haven't come up with reasonable ideas of
-access rights for LANDLOCK_RULE_SOCKET except socket creation, so
-current patchset will fit in handled_perm design very well.
+Indeed, we've discussed this, and I had at one point implemented it.
+The problem is that for any meaningful access control policies you will
+never get the two LSMs to agree on a unified network representation.
+SELinux transmits the MLS component of the security context. Smack passes
+the text of its context. Unless the Smack label is completely in step with
+the MLS component of the SELinux context there is no hope of a common
+network representation. If a *very talented* sysadmin could create such a
+policy, you would have to wonder why, because Smack would be duplicating
+the SELinux MLS policy.
 
-> 
->>
->>>
->>> Do you think you'll be able to continue this work or would you like me
->>> or Günther to complete the remaining last bits (while of course keeping
->>> you as the main author)?
->>
->> Sorry for the delay. I will finish and send patch series ASAP.
-> 
-> This new version should then be on top of the Landlock namespace and
-> capability patchset to reuse the handled_perm interface.  I plan to send
-> a new version by the end of the month, but this should not change the
-> handled_perm interface.
+So there's really no value in pursuing that approach.
 
-OK. I will send RFC v5 based on current design for the review anyway.
+> Use of the NetLabel translation cache, e.g. netlbl_cache_add(), would
+> require some additional work to convert over to a lsm_prop instead of
+> a u32/secid, but if you look at the caching code that should be
+> trivial.  It might be as simple as adding a lsm_prop to the
+> netlbl_lsm_secattr::attr struct since the cache stores a full secattr
+> and not just a u32/secid.
 
-> 
->>
->>>
->>>
->>>>
->>>> The right to create a socket is checked in the LSM hook which is called
->>>> in the __sock_create method. The following user space operations are
->>>> subject to this check: socket(2), socketpair(2), io_uring(7).
->>>>
->>>> `LANDLOCK_ACCESS_SOCKET_CREATE` does not restrict socket creation
->>>> performed by accept(2), because created socket is used for messaging
->>>> between already existing endpoints.
->>>>
->>>> Design discussion
->>>> ===================
->>>> 1. Should `SCTP_SOCKOPT_PEELOFF` and socketpair(2) be restricted?
->>>>
->>>> SCTP socket can be connected to a multiple endpoints (one-to-many
->>>> relation). Calling setsockopt(2) on such socket with option
->>>> `SCTP_SOCKOPT_PEELOFF` detaches one of existing connections to a separate
->>>> UDP socket. This detach is currently restrictable.
->>>>
->>>> Same applies for the socketpair(2) syscall. It was noted that denying
->>>> usage of socketpair(2) in sandboxed environment may be not meaninful [1].
->>>>
->>>> Currently both operations use general socket interface to create sockets.
->>>> Therefore it's not possible to distinguish between socket(2) and those
->>>> operations inside security_socket_create LSM hook which is currently
->>>> used for protocols restriction. Providing such separation may require
->>>> changes in socket layer (eg. in __sock_create) interface which may not be
->>>> acceptable.
->>>>
->>>> [1] https://lore.kernel.org/all/ZurZ7nuRRl0Zf2iM@google.com/
->>>>
->>>> Code coverage
->>>> =============
->>>> Code coverage(gcov) report with the launch of all the landlock selftests:
->>>> * security/landlock:
->>>> lines......: 94.0% (1200 of 1276 lines)
->>>> functions..: 95.0% (134 of 141 functions)
->>>>
->>>> * security/landlock/socket.c:
->>>> lines......: 100.0% (56 of 56 lines)
->>>> functions..: 100.0% (5 of 5 functions)
->>>>
->>>> Currently landlock-test-tools fails on mini.kernel_socket test due to lack
->>>> of SMC protocol support.
->>>>
->>>> General changes v3->v4
->>>> ======================
->>>> * Implementation
->>>>     * Adds protocol field to landlock_socket_attr.
->>>>     * Adds protocol masks support via wildcards values in
->>>>       landlock_socket_attr.
->>>>     * Changes LSM hook used from socket_post_create to socket_create.
->>>>     * Changes protocol ranges acceptable by socket rules.
->>>>     * Adds audit support.
->>>>     * Changes ABI version to 8.
->>>> * Tests
->>>>     * Adds 5 new tests:
->>>>       * mini.rule_with_wildcard, protocol_wildcard.access,
->>>>         mini.ruleset_with_wildcards_overlap:
->>>>         verify rulesets containing rules with wildcard values.
->>>>       * tcp_protocol.alias_restriction: verify that Landlock doesn't
->>>>         perform protocol mappings.
->>>>       * audit.socket_create: tests audit denial logging.
->>>>     * Squashes tests corresponding to Landlock rule adding to a single commit.
->>>> * Documentation
->>>>     * Refactors Documentation/userspace-api/landlock.rst.
->>>> * Commits
->>>>     * Rebases on mic-next.
->>>>     * Refactors commits.
->>>>
->>>> Previous versions
->>>> =================
->>>> v3: https://lore.kernel.org/all/20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com/
->>>> v2: https://lore.kernel.org/all/20240524093015.2402952-1-ivanov.mikhail1@huawei-partners.com/
->>>> v1: https://lore.kernel.org/all/20240408093927.1759381-1-ivanov.mikhail1@huawei-partners.com/
->>>>
->>>> Mikhail Ivanov (19):
->>>>     landlock: Support socket access-control
->>>>     selftests/landlock: Test creating a ruleset with unknown access
->>>>     selftests/landlock: Test adding a socket rule
->>>>     selftests/landlock: Testing adding rule with wildcard value
->>>>     selftests/landlock: Test acceptable ranges of socket rule key
->>>>     landlock: Add hook on socket creation
->>>>     selftests/landlock: Test basic socket restriction
->>>>     selftests/landlock: Test network stack error code consistency
->>>>     selftests/landlock: Test overlapped rulesets with rules of protocol
->>>>       ranges
->>>>     selftests/landlock: Test that kernel space sockets are not restricted
->>>>     selftests/landlock: Test protocol mappings
->>>>     selftests/landlock: Test socketpair(2) restriction
->>>>     selftests/landlock: Test SCTP peeloff restriction
->>>>     selftests/landlock: Test that accept(2) is not restricted
->>>>     lsm: Support logging socket common data
->>>>     landlock: Log socket creation denials
->>>>     selftests/landlock: Test socket creation denial log for audit
->>>>     samples/landlock: Support socket protocol restrictions
->>>>     landlock: Document socket rule type support
->>>>
->>>>    Documentation/userspace-api/landlock.rst      |   48 +-
->>>>    include/linux/lsm_audit.h                     |    8 +
->>>>    include/uapi/linux/landlock.h                 |   60 +-
->>>>    samples/landlock/sandboxer.c                  |  118 +-
->>>>    security/landlock/Makefile                    |    2 +-
->>>>    security/landlock/access.h                    |    3 +
->>>>    security/landlock/audit.c                     |   12 +
->>>>    security/landlock/audit.h                     |    1 +
->>>>    security/landlock/limits.h                    |    4 +
->>>>    security/landlock/ruleset.c                   |   37 +-
->>>>    security/landlock/ruleset.h                   |   46 +-
->>>>    security/landlock/setup.c                     |    2 +
->>>>    security/landlock/socket.c                    |  198 +++
->>>>    security/landlock/socket.h                    |   20 +
->>>>    security/landlock/syscalls.c                  |   61 +-
->>>>    security/lsm_audit.c                          |    4 +
->>>>    tools/testing/selftests/landlock/base_test.c  |    2 +-
->>>>    tools/testing/selftests/landlock/common.h     |   14 +
->>>>    tools/testing/selftests/landlock/config       |   47 +
->>>>    tools/testing/selftests/landlock/net_test.c   |   11 -
->>>>    .../selftests/landlock/protocols_define.h     |  169 +++
->>>>    .../testing/selftests/landlock/socket_test.c  | 1169 +++++++++++++++++
->>>>    22 files changed, 1990 insertions(+), 46 deletions(-)
->>>>    create mode 100644 security/landlock/socket.c
->>>>    create mode 100644 security/landlock/socket.h
->>>>    create mode 100644 tools/testing/selftests/landlock/protocols_define.h
->>>>    create mode 100644 tools/testing/selftests/landlock/socket_test.c
->>>>
->>>>
->>>> base-commit: 6dde339a3df80a57ac3d780d8cfc14d9262e2acd
->>>> -- 
->>>> 2.34.1
->>>>
->>>>
->>
+Indeed. But with no viable users it seems like a lower priority task.
+
+And to be clear, I have no problem with netlabel as written. Multiple tag
+support isn't simple (we did it for Trusted IRIX) and the limited space
+available for IP options make it tricky.
+
