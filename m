@@ -1,350 +1,313 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989CA36895D;
-	Wed, 15 Apr 2026 11:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8942BDC3F
+	for <linux-security-module@vger.kernel.org>; Wed, 15 Apr 2026 13:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776251528; cv=none; b=qLF4ta2U7OL04ckMEjfHgIgCG+szmfrxLmsTq6S7EKpjKcDEztPBH7wzm5owBQCsg3rbXGDcgYbp2tYjVmnP2l6ok2vpYiTMoH2I24N6khYcAq/cbtSN0JTe0PT0SFvT9yHEPXid0JOe0w+FZSzyW0j1DS6c8wK2LEfxwbsn9YE=
+	t=1776260830; cv=none; b=eAfw0KxO6k6LPDRQ763UH7NbyX2sT76TCdkaUkb8FXV/QLzjR37lSzM6sj/S0Zctk4mcVDdmG1SIUgLY3fFgPGHYpOXs/yKqwAQcYRVepvCNDg80QljNEUQUAwRMTJjVDfuubdFgeZbQIVP+eUDtPq0YTRMPNTddHQk5VSP4Fok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776251528; c=relaxed/simple;
-	bh=fayZBoBbFheO/kclvc+4SUw+dXjp/LYFzJvRENUQZRU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uqQRCkZflz/QRS0Ip9Ize2jH4P15/Bl7ynp65w92QrPohEReoK5QBKWkOh7zO+2W0geD6aDFS+15y7ymVW5Yr6EmLx1/1+gaIhD3bdTK7Z6DFDGMaYcq2wxqS2HNsTxp5YvpSDjHS7jgnFllCc8P9AeQvh9J1KQN9BuBQ5iP3wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bN0YvBY/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1776260830; c=relaxed/simple;
+	bh=DsDZiqoekDSXhnvu8Hw6B7k2oxF+RKGbcd38/Xn6Clw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GNRA3vaAHCxf62axiHE2xDR6H9dwNqH9F+7mdd/7gyxoLWpeZOeL1BPxxfhcZtEiltSYjdBdg3vSP5f4mpZCAHWrBrvQUvBIdo3bXug2xeB/zwTmzdr2FcvA/zQE6IODrn3odBWY45o/nJJtPKjG653PN7HPwD5Y79hBFp5Obxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Kz/AXpbu; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bN0YvBY/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CA2FC2BCB8;
-	Wed, 15 Apr 2026 11:12:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776251527;
-	bh=fayZBoBbFheO/kclvc+4SUw+dXjp/LYFzJvRENUQZRU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=bN0YvBY/TEX8XZxKyBizo1sp/iPMShVMk8/2jAo7X+ubM+pPo2iG737HhqEflYOla
-	 x5mC9uJzqMoAv6LwiFaxkdg1XHcoAFx9jo/giJD6G9XVB/zOLnGG2SaAIkPdbZlZ4w
-	 +mphdQYEGKOM3R14LHphcZTt6SIYVE/unii4ti3A3soDG+uYDpBrYjTeKAFOkY+M8t
-	 tLJv0aeRnQKiRGFb6QqYjMe8csNiQO64m8CSNXxUbBscL8Yu6sHN2NbPRbRFi6MbQo
-	 pjrAAwq91IXgqhuIHph/UyyIExqbfFb+en+vfFI/fObr8+IP2oUTS7czCx9m1qb/Il
-	 T5hedV3g/B8eg==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	Nayna Jain <nayna@linux.ibm.com>,
-	Srish Srinivasan <ssrish@linux.ibm.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Feng Tang <feng.tang@linux.alibaba.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Kees Cook <kees@kernel.org>,
-	Marco Elver <elver@google.com>,
-	Li RongQing <lirongqing@baidu.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	keyrings@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Kz/AXpbu"
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-89f87257904so55239126d6.1
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Apr 2026 06:47:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1776260827; x=1776865627; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0Eik4sapJ1qNNSpJUkcgxvBfIDMdhd6II0vk3D5WLXU=;
+        b=Kz/AXpbuMRt4fqDbjlYmADkWkpGtgIdaMI0GlK4U4Exa7onwd8o+QTIO6ljuGMsqnd
+         d6hYuLY7tbTUW0dR1TBIv3gN1IyBmJ4iuJ3JgxbMMNWoBYsZpJLHFn1QxTxuJOiSKf7P
+         pblbgr+Hjv04vq4kEbUR0kkq8iLVBaK5Kx6F2ebIxmOx7pZKcRQcYN7cJ7NSSUoN/Yh1
+         J1ZaXNhS4+KUM+BP7wpAhFA96/DPdj6cp4bmGDR0q1lZGUiL3CDEehn0u+HdSN+COSaV
+         Dcl9QmkjRclTy//NasQnKizs6KGAjHgK5gVhAq0xSHr5GfZ7PUSXHKjXpsZI9RzU57GQ
+         /K3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776260827; x=1776865627;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0Eik4sapJ1qNNSpJUkcgxvBfIDMdhd6II0vk3D5WLXU=;
+        b=Fj77Z8yMgDMXi6y5bFoX6ReVX9Dl8DiAlfmfAXiohyzrpAy8gXwKatOZzKLaOti1bT
+         vJWNIFFg0A9b7dRS/rK3wehIdXabQyIx7pKIgCQ24IPUko6ovl/FzeXTq+ZKCxgFAWUG
+         xOV4hNM7LpNGbL1WCr+r5YAcKvoGErEs+SvSMjufmaKDXam7f/CXIqmVaLGZksSxciEJ
+         fvNVHYe3N1/sq5vvA9V1LBNrTWTKikokyF5F5JVuuhul385MvA1RtIkP2cf3Z2BEETNo
+         Ix6gA+N7Nx8YHKEgNZFhUXtfOedXyU4NfDGgThjo2uV5XmWyHsWHWVRI085PjjDfxGBc
+         Ofig==
+X-Forwarded-Encrypted: i=1; AFNElJ/i4j4EjD9BAyH8P1yD8KFeWlYNIlbCMI1ZDklWlktBacp+A6K+k5l6tutpXBDyXyx2e1R4JBM9ZdHqMRy0Y64hCSwUiZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf+9V7jwa+BarvZeoNMHWFQw0iLnTAfPeuuToobSob6e30vK8B
+	MeL8N1HjH7aLXHx6WVSa5o/eFt6ftcooDjzXDB7WnIbSZCe3TQr7Bek0IYM7q+4mggE=
+X-Gm-Gg: AeBDiesJ63zNNALlgUmm0DyQBL1dxTsPqe1xCM4bjsmXGQyyUXpsTKwB2xxs7m9RELb
+	t7VnNfjxta63vIfo9kiKJfQ/nk2zEBQ+SroSncYj1nRQIOmz0zCUc2+WrZbbQb9pY4o76xAmZ4e
+	o+VRJPEcwO2m/eQQSasBffDNe3NtNuuaWRtwfALkx5GCMLbGZF3w9P6lL9tg5jIcZI6BOUStrCf
+	mcd0890oL8FUNGEEr6d8dDWlRyoEm+aMhhHNBzs9OA+SWWlsWhnzUfjFJNWwPXHV60fVq+iuX8q
+	ObVsVsiuYFgf0OxEvycJRpb80DQnvBTAXIjOUZH4BuAIN1/GWfDsWdiMXadmHFagbyfw3e+kLxK
+	RhpBrFIOSLQW41x1+8P49fJhreiypgN3ANbrxSe++8+ElkmFUzg3KTA4/G8v57hugjoPJ7nFiZl
+	il/HnPOHHaAOcMOJXpedNHkeu4cgk2wp+F4uMG9I6KpscIKl1y2KrO+dhYYirDeeecjPvzvPi4W
+	gzCHQ==
+X-Received: by 2002:a05:6214:449e:b0:8ac:7f70:4441 with SMTP id 6a1803df08f44-8ac862b51ccmr345394526d6.48.1776260827109;
+        Wed, 15 Apr 2026 06:47:07 -0700 (PDT)
+Received: from ziepe.ca (crbknf0213w-47-54-130-67.pppoe-dynamic.high-speed.nl.bellaliant.net. [47.54.130.67])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ae6ceb891csm11733136d6.48.2026.04.15.06.47.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Apr 2026 06:47:06 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1wD0a9-00000000FYO-1ssS;
+	Wed, 15 Apr 2026 10:47:05 -0300
+Date: Wed, 15 Apr 2026 10:47:05 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Leon Romanovsky <leon@kernel.org>,
+	Roberto Sassu <roberto.sassu@huaweicloud.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Itay Avraham <itayavr@nvidia.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>,
+	Maher Sanalla <msanalla@nvidia.com>,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v4] KEYS: trusted: Debugging as a feature
-Date: Wed, 15 Apr 2026 14:12:00 +0300
-Message-Id: <20260415111202.63888-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.39.5
+Subject: Re: [PATCH v2 0/4] Firmware LSM hook
+Message-ID: <20260415134705.GG2577880@ziepe.ca>
+References: <20260409121230.GA720371@unreal>
+ <2dd138a2ae87f90c55dbc3178d9c798294fd4450.camel@huaweicloud.com>
+ <20260409124553.GB720371@unreal>
+ <CAHC9VhT1X4HX4bGrK=mEzu=g=mZ-Wg-LDXVgZVe-e6oM+W9aHg@mail.gmail.com>
+ <20260412090006.GA21470@unreal>
+ <CAHC9VhRnYXjg+vE9a8PeykbXk91is12zYLaO7EFdfZPKMxDfPA@mail.gmail.com>
+ <20260413164220.GP3694781@ziepe.ca>
+ <CAHC9VhR1Uke9P==CELKavBcogHoNCtMZFfNWUbgm5HYUfomhtw@mail.gmail.com>
+ <20260413231920.GS3694781@ziepe.ca>
+ <CAHC9VhTLamfe4C81ZNRVT=H32x+KLxSqH3o0eBfrHsWAgAqxCA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhTLamfe4C81ZNRVT=H32x+KLxSqH3o0eBfrHsWAgAqxCA@mail.gmail.com>
 
-TPM_DEBUG, and other similar flags, are a non-standard way to specify a
-feature in Linux kernel. Introduce CONFIG_TRUSTED_KEYS_DEBUG for trusted
-keys, and use it to replace these ad-hoc feature flags.
+On Tue, Apr 14, 2026 at 04:27:58PM -0400, Paul Moore wrote:
+> On Mon, Apr 13, 2026 at 7:19 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > On Mon, Apr 13, 2026 at 06:36:06PM -0400, Paul Moore wrote:
+> > > On Mon, Apr 13, 2026 at 12:42 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > > > On Sun, Apr 12, 2026 at 09:38:35PM -0400, Paul Moore wrote:
+> > > > > > We are not limited to LSM solution, the goal is to intercept commands
+> > > > > > which are submitted to the FW and "security" bucket sounded right to us.
+> > > > >
+> > > > > Yes, it does sound "security relevant", but without a well defined
+> > > > > interface/format it is going to be difficult to write a generic LSM to
+> > > > > have any level of granularity beyond a basic "load firmware"
+> > > > > permission.
+> > > >
+> > > > I think to step back a bit, what this is trying to achieve is very
+> > > > similar to the iptables fwmark/secmark scheme.
+> > >
+> > > Points for thinking outside the box a bit, but from what I've seen
+> > > thus far, it differs from secmark in a few important areas.  The
+> > > secmark concept relies on the admin to configure the network stack to
+> > > apply secmark labels to network traffic as it flows through the
+> > > system, the LSM then applies security policy to these packets based on
+> > > their label.  The firmware LSM hooks, at least as I currently
+> > > understand them, rely on the LSM hook callback to parse the firmware
+> > > op/request and apply a security policy to the request.
+> >
+> > That was what was proposed because the idea was to combine the
+> > parse/clasification/decision steps into one eBPF program, but I think
+> > it can be split up too.
+> >
+> > > We've already talked about the first issue, parsing the request, and
+> > > my suggestion was to make the LSM hook call from within the firmware
+> > > (the firmware must have some way to call into the kernel/driver code,
+> > > no?)
+> >
+> > No, that's not workable on so many levels. It is sort of anaologous to
+> > asking the NIC to call the LSM to apply the secmark while sending the
+> > packet.
+> 
+> From the LSM's perspective it really doesn't matter who calls the LSM
+> hook as long as the caller can be trusted to handle the access control
+> verdict properly.
 
-Given that trusted keys debug dumps can contain sensitive data, harden the
-feature as follows:
+The NIC doesn't know anything more than the kernel to call the LSM
+hook. It can't magically generate the label the admin wants to use any
+better than the kernel can.
 
-1. In the Kconfig description postulate that pr_debug() statements must be
-   used.
-2. Use pr_debug() statements in TPM 1.x driver to print the protocol dump.
-3. Require trusted.debug=1 on the kernel command line (default: 0) to
-   activate dumps at runtime, even when CONFIG_TRUSTED_KEYS_DEBUG=y.
+Just like you could never get everyone to agree on a fixed set of
+labels for network packets we could never get agreemnt on a fixed set
+of labels for command packets either.
 
-Traces, when actually needed, can be easily enabled by providing
-trusted.dyndbg='+p' and trusted.debug=1 in the kernel command-line.
+> > > so that only the firmware would need to parse the request.  If we
+> > > wanted to adopt a secmark-esque approach, one could develop a second
+> > > parsing mechanism that would be responsible for assigning a LSM label
+> > > to the request, and then pass the firmware request to the LSM, but I
+> > > do worry a bit about the added complexity associated with keeping the
+> > > parser sync'd with the driver/fw.
+> >
+> > In practice it would be like iptables, the parser would be entirely
+> > programmed by userspace and there is nothing to keep in sync.
+> 
+> You've mentioned a few times now that the firmware/request will vary
+> across not only devices, but firmware revisions too, 
 
-Reported-by: Nayna Jain <nayna@linux.ibm.com>
-Closes: https://lore.kernel.org/all/7f8b8478-5cd8-4d97-bfd0-341fd5cf10f9@linux.ibm.com/
-Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
-Tested-by: Srish Srinivasan <ssrish@linux.ibm.com>
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v4:
-- Added kernel parameter documentation.t
-- Added tags from Srishand and Nayna.
-- Sanity check round. This version will be applied unless there is
-  something specific to address.
-v3:
-- Add kernel-command line option for enabling the traces.
-- Add safety information to the Kconfig entry.
-v2:
-- Implement for all trusted keys backends.
-- Add HAVE_TRUSTED_KEYS_DEBUG as it is a good practice despite full
-  coverage.
----
- .../admin-guide/kernel-parameters.txt         | 16 +++++++
- include/keys/trusted-type.h                   | 21 +++++----
- security/keys/trusted-keys/Kconfig            | 23 ++++++++++
- security/keys/trusted-keys/trusted_caam.c     |  7 ++-
- security/keys/trusted-keys/trusted_core.c     |  6 +++
- security/keys/trusted-keys/trusted_tpm1.c     | 44 +++++++++++--------
- 6 files changed, 87 insertions(+), 30 deletions(-)
+I never said firmware revisions, part of the requirement is strong ABI
+compatability in these packets. 
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index f2ce1f4975c1..f1515668c8ab 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -7917,6 +7917,22 @@ Kernel parameters
- 			first trust source as a backend which is initialized
- 			successfully during iteration.
- 
-+	trusted.debug=	[KEYS]
-+			Format: <bool>
-+			Enable trusted keys debug traces at runtime when
-+			CONFIG_TRUSTED_KEYS_DEBUG=y.
-+
-+			To make the traces visible after enabling the option,
-+			use trusted.dyndbg='+p' as needed. By convention,
-+			the subsystem uses pr_debug() for these traces.
-+
-+			SAFETY: The traces can leak sensitive data, so be
-+			cautious before enabling this. They remain inactive
-+			unless this parameter is set this option to  a true
-+			value.
-+
-+			Default: false
-+
- 	trusted.rng=	[KEYS]
- 			Format: <string>
- 			The RNG used to generate key material for trusted keys.
-diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
-index 03527162613f..9f9940482da4 100644
---- a/include/keys/trusted-type.h
-+++ b/include/keys/trusted-type.h
-@@ -83,18 +83,21 @@ struct trusted_key_source {
- 
- extern struct key_type key_type_trusted;
- 
--#define TRUSTED_DEBUG 0
-+#ifdef CONFIG_TRUSTED_KEYS_DEBUG
-+extern bool trusted_debug;
- 
--#if TRUSTED_DEBUG
- static inline void dump_payload(struct trusted_key_payload *p)
- {
--	pr_info("key_len %d\n", p->key_len);
--	print_hex_dump(KERN_INFO, "key ", DUMP_PREFIX_NONE,
--		       16, 1, p->key, p->key_len, 0);
--	pr_info("bloblen %d\n", p->blob_len);
--	print_hex_dump(KERN_INFO, "blob ", DUMP_PREFIX_NONE,
--		       16, 1, p->blob, p->blob_len, 0);
--	pr_info("migratable %d\n", p->migratable);
-+	if (!trusted_debug)
-+		return;
-+
-+	pr_debug("key_len %d\n", p->key_len);
-+	print_hex_dump_debug("key ", DUMP_PREFIX_NONE,
-+			     16, 1, p->key, p->key_len, 0);
-+	pr_debug("bloblen %d\n", p->blob_len);
-+	print_hex_dump_debug("blob ", DUMP_PREFIX_NONE,
-+			     16, 1, p->blob, p->blob_len, 0);
-+	pr_debug("migratable %d\n", p->migratable);
- }
- #else
- static inline void dump_payload(struct trusted_key_payload *p)
-diff --git a/security/keys/trusted-keys/Kconfig b/security/keys/trusted-keys/Kconfig
-index 9e00482d886a..e5a4a53aeab2 100644
---- a/security/keys/trusted-keys/Kconfig
-+++ b/security/keys/trusted-keys/Kconfig
-@@ -1,10 +1,29 @@
- config HAVE_TRUSTED_KEYS
- 	bool
- 
-+config HAVE_TRUSTED_KEYS_DEBUG
-+	bool
-+
-+config TRUSTED_KEYS_DEBUG
-+	bool "Debug trusted keys"
-+	depends on HAVE_TRUSTED_KEYS_DEBUG
-+	default n
-+	help
-+	  Trusted key backends and core code that support debug traces can
-+	  opt-in that feature here. Traces must only use debug level output, as
-+	  sensitive data may pass by. In the kernel-command line traces can be
-+	  enabled via trusted.dyndbg='+p'.
-+
-+	  SAFETY: Debug dumps are inactive at runtime until trusted.debug is set
-+	  to a true value on the kernel command-line. Use at your utmost
-+	  consideration when enabling this feature on a production build. The
-+	  general advice is not to do this.
-+
- config TRUSTED_KEYS_TPM
- 	bool "TPM-based trusted keys"
- 	depends on TCG_TPM >= TRUSTED_KEYS
- 	default y
-+	select HAVE_TRUSTED_KEYS_DEBUG
- 	select CRYPTO_HASH_INFO
- 	select CRYPTO_LIB_SHA1
- 	select CRYPTO_LIB_UTILS
-@@ -23,6 +42,7 @@ config TRUSTED_KEYS_TEE
- 	bool "TEE-based trusted keys"
- 	depends on TEE >= TRUSTED_KEYS
- 	default y
-+	select HAVE_TRUSTED_KEYS_DEBUG
- 	select HAVE_TRUSTED_KEYS
- 	help
- 	  Enable use of the Trusted Execution Environment (TEE) as trusted
-@@ -33,6 +53,7 @@ config TRUSTED_KEYS_CAAM
- 	depends on CRYPTO_DEV_FSL_CAAM_JR >= TRUSTED_KEYS
- 	select CRYPTO_DEV_FSL_CAAM_BLOB_GEN
- 	default y
-+	select HAVE_TRUSTED_KEYS_DEBUG
- 	select HAVE_TRUSTED_KEYS
- 	help
- 	  Enable use of NXP's Cryptographic Accelerator and Assurance Module
-@@ -42,6 +63,7 @@ config TRUSTED_KEYS_DCP
- 	bool "DCP-based trusted keys"
- 	depends on CRYPTO_DEV_MXS_DCP >= TRUSTED_KEYS
- 	default y
-+	select HAVE_TRUSTED_KEYS_DEBUG
- 	select HAVE_TRUSTED_KEYS
- 	help
- 	  Enable use of NXP's DCP (Data Co-Processor) as trusted key backend.
-@@ -50,6 +72,7 @@ config TRUSTED_KEYS_PKWM
- 	bool "PKWM-based trusted keys"
- 	depends on PSERIES_PLPKS >= TRUSTED_KEYS
- 	default y
-+	select HAVE_TRUSTED_KEYS_DEBUG
- 	select HAVE_TRUSTED_KEYS
- 	help
- 	  Enable use of IBM PowerVM Key Wrapping Module (PKWM) as a trusted key backend.
-diff --git a/security/keys/trusted-keys/trusted_caam.c b/security/keys/trusted-keys/trusted_caam.c
-index 601943ce0d60..6a33dbf2a7f5 100644
---- a/security/keys/trusted-keys/trusted_caam.c
-+++ b/security/keys/trusted-keys/trusted_caam.c
-@@ -28,10 +28,13 @@ static const match_table_t key_tokens = {
- 	{opt_err, NULL}
- };
- 
--#ifdef CAAM_DEBUG
-+#ifdef CONFIG_TRUSTED_KEYS_DEBUG
- static inline void dump_options(const struct caam_pkey_info *pkey_info)
- {
--	pr_info("key encryption algo %d\n", pkey_info->key_enc_algo);
-+	if (!trusted_debug)
-+		return;
-+
-+	pr_debug("key encryption algo %d\n", pkey_info->key_enc_algo);
- }
- #else
- static inline void dump_options(const struct caam_pkey_info *pkey_info)
-diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
-index 0b142d941cd2..6aed17bee09d 100644
---- a/security/keys/trusted-keys/trusted_core.c
-+++ b/security/keys/trusted-keys/trusted_core.c
-@@ -31,6 +31,12 @@ static char *trusted_rng = "default";
- module_param_named(rng, trusted_rng, charp, 0);
- MODULE_PARM_DESC(rng, "Select trusted key RNG");
- 
-+#ifdef CONFIG_TRUSTED_KEYS_DEBUG
-+bool trusted_debug;
-+module_param_named(debug, trusted_debug, bool, 0);
-+MODULE_PARM_DESC(debug, "Enable trusted keys debug traces (default: 0)");
-+#endif
-+
- static char *trusted_key_source;
- module_param_named(source, trusted_key_source, charp, 0);
- MODULE_PARM_DESC(source, "Select trusted keys source (tpm, tee, caam, dcp or pkwm)");
-diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-index 6ea728f1eae6..13513819991e 100644
---- a/security/keys/trusted-keys/trusted_tpm1.c
-+++ b/security/keys/trusted-keys/trusted_tpm1.c
-@@ -46,38 +46,44 @@ enum {
- 	SRK_keytype = 4
- };
- 
--#define TPM_DEBUG 0
--
--#if TPM_DEBUG
-+#ifdef CONFIG_TRUSTED_KEYS_DEBUG
- static inline void dump_options(struct trusted_key_options *o)
- {
--	pr_info("sealing key type %d\n", o->keytype);
--	pr_info("sealing key handle %0X\n", o->keyhandle);
--	pr_info("pcrlock %d\n", o->pcrlock);
--	pr_info("pcrinfo %d\n", o->pcrinfo_len);
--	print_hex_dump(KERN_INFO, "pcrinfo ", DUMP_PREFIX_NONE,
--		       16, 1, o->pcrinfo, o->pcrinfo_len, 0);
-+	if (!trusted_debug)
-+		return;
-+
-+	pr_debug("sealing key type %d\n", o->keytype);
-+	pr_debug("sealing key handle %0X\n", o->keyhandle);
-+	pr_debug("pcrlock %d\n", o->pcrlock);
-+	pr_debug("pcrinfo %d\n", o->pcrinfo_len);
-+	print_hex_dump_debug("pcrinfo ", DUMP_PREFIX_NONE,
-+			     16, 1, o->pcrinfo, o->pcrinfo_len, 0);
- }
- 
- static inline void dump_sess(struct osapsess *s)
- {
--	print_hex_dump(KERN_INFO, "trusted-key: handle ", DUMP_PREFIX_NONE,
--		       16, 1, &s->handle, 4, 0);
--	pr_info("secret:\n");
--	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
--		       16, 1, &s->secret, SHA1_DIGEST_SIZE, 0);
--	pr_info("trusted-key: enonce:\n");
--	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
--		       16, 1, &s->enonce, SHA1_DIGEST_SIZE, 0);
-+	if (!trusted_debug)
-+		return;
-+
-+	print_hex_dump_debug("trusted-key: handle ", DUMP_PREFIX_NONE,
-+			     16, 1, &s->handle, 4, 0);
-+	pr_debug("secret:\n");
-+	print_hex_dump_debug("", DUMP_PREFIX_NONE,
-+			     16, 1, &s->secret, SHA1_DIGEST_SIZE, 0);
-+	pr_debug("trusted-key: enonce:\n");
-+	print_hex_dump_debug("", DUMP_PREFIX_NONE,
-+			     16, 1, &s->enonce, SHA1_DIGEST_SIZE, 0);
- }
- 
- static inline void dump_tpm_buf(unsigned char *buf)
- {
- 	int len;
- 
--	pr_info("\ntpm buffer\n");
-+	if (!trusted_debug)
-+		return;
-+	pr_debug("\ntpm buffer\n");
- 	len = LOAD32(buf, TPM_SIZE_OFFSET);
--	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE, 16, 1, buf, len, 0);
-+	print_hex_dump_debug("", DUMP_PREFIX_NONE, 16, 1, buf, len, 0);
- }
- #else
- static inline void dump_options(struct trusted_key_options *o)
--- 
-2.39.5
+> this implies there will need to be some effort to keep whatever
+> parser you develop (BPF, userspace config, etc.) in sync with the
+> parser built into the firmware.  Or am I misunderstanding something?
 
+I would not use the word "sync". It is very similar to deep packet
+inspection, if you want to look inside, say, RPC messages carried
+within HTTP then you have to keep up to date. How onerous that is
+depends on what the admin's labeling goals are.
+
+> > > However, even if we solve the parsing problem, I worry we have
+> > > another, closely related issue, of having to categorize all of the
+> > > past, present, and future firmware requests into a set of LSM specific
+> > > actions.
+> >
+> > Why? secmark doesn't have this issue? The classifer would return the
+> > same kind of information as secmark, some user provided label that is
+> > delivered to the LSM policy side.
+> 
+> I think there is a misunderstanding in either how secmark works or how
+> the LSMs use secmark labels when enforcing their security policy.
+> 
+> The secmark label is set on a packet to represent the network
+> properties of a packet.  While the rules governing how a packet's
+> secmark is set and the semantic meaning of that secmark label is going
+> to be LSM and solution specific,
+
+"network properties" are a bit vauge. I can use iptables to inspect
+the packet quite completely. It has protocol modules that can do very
+detailed inspection. I can use general things like -m string to apply
+a secmark to packets containing specific data for example.
+
+From my perspective iptables runs a complicated scheme to evaluate the
+full content of the packet and on match applies a secmark.
+
+You can already create a hacky labeling scheme that would tell the
+difference between HTTP PUT and HTT GET sessions for example.
+
+At this point it is not just "network properties" but you are
+inspecting a RPC and evaluating what operation a remote CPU will
+perform.
+
+Even just simple port inspection in most cases is often classifiying
+RPCs on the network "Any HTTP RPC" "Any DNS RPC", etc.
+
+> secmark labels represent the properties of a packet and not the
+> operation, e.g.  send/receive/forward/etc., being requested at a
+> given access control point.
+
+Yes, still aligned.
+
+> The access control point itself represents the requested
+> operation.  This is possible because the number of networking
+> operations on a given packet is well defined and fairly limited; at a
+> high level the packet is either being sent from the node, received by
+> the node, or is passing through the node.
+
+I think we have the same split, fwctl send/recive analog is also very
+limited.
+
+> As I understand the firmware controls being proposed here, encoded
+> within the firmware request blob is the operation being requested.
+
+I am not proposing that kind of interpretation, I want to stay in the
+secmark model.
+
+When the packet blob is sent into the kernel at the uAPI boundary
+(send_msg, send, write, FWCTL_CMD_RPC, etc) that is your access
+control point.
+
+Deep inspection on the packet blob determines the secmark.
+
+LSM takes the secmark and determines if the access control point
+accept/rejects.
+
+In both cases deep inspection will allow the admin to create labels
+detailed to the RPC that is described in the packet. Eg
+labels like "HTTP GET", "HTTP PUT", "FWCTL CREATE OBJ X", etc.
+
+In both cases these are packets containing RPC messages some remote
+CPU will excute.
+
+> While we've discussed possible solutions on how to parse the request
+> blob to determine the operation, we haven't really discussed how to
+> represent the requested operation to the LSMs.  
+
+I don't understand this? The secmark example I pulled up is this:
+
+iptables -t mangle -A INPUT -p tcp --dport 80 -j SECMARK --selctx system_u:object_r:httpd_packet_t:s0
+
+The "represent the requested operation" is the string 
+"system_u:object_r:httpd_packet_t:s0", which is entirely admin
+defined, right?
+
+The analog here is some
+
+'fwctl iptables' -match 'byte[10]=0x20' -selctx system_u:object_r:fwctl_mlx5_create_pd_t:s0
+
+Again, all admin defined?
+
+> I'm assuming there isn't a well defined set of operations, and like
+> the request format itself, the set of valid operations will vary
+> from device and firmware revision.  I hope you can understand both
+> how this differs from secmark and that it is a challenge that really
+> hasn't been addressed in the proposals we've discussed.
+
+I still don't see the difference from iptables. IPSEC, SIP, DNS, HTTP,
+etc are all protocols with the same lack of any commonality.
+
+> At a very high level the access control decision for firmware/device
+> requests depends on whether the LSM wants to allow process A to do B
+> to device C.  The identity/credentials associated with process A are
+> easy to understand, we have plenty of examples both inside and outside
+> of the LSM on how to do that.  The device identity/attributes
+> associated with device C can be a bit trickier, but once again we have
+> plenty of examples to draw from, and we can even fall back to a
+> generic "kernel" id/attribute if the LSM chooses not to distinguish
+> entities below the userspace/kernel boundary. 
+
+I think I would feed that into the classifier as well. Like iptables
+can have a netdev argument to only match against specific devices, we
+can have the same logical thing.
+
+> I think the hardest issue with the firmware request hooks is going
+> to be determining what operation is being requested, the "B",
+> portion of access request tuple.  If we can create a well defined
+> set of operations and leave it to the parser to characterize the
+> operation we've potentially got a solution, but if the operation is
+> truly going to be arbitrary then we have a real problem.  How do you
+> craft a meaningful access control policy when you don't understand
+> what is being requested?
+
+Same as for networking. Admin understands, admin defines, kernel is
+just a programmable classifier.
+
+Jason
