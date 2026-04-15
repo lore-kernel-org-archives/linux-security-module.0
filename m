@@ -1,179 +1,168 @@
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+Received: from sonic304-16.consmr.mail.bf2.yahoo.com (sonic304-16.consmr.mail.bf2.yahoo.com [74.6.128.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E4231E106
-	for <linux-security-module@vger.kernel.org>; Wed, 15 Apr 2026 21:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.179
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776287024; cv=pass; b=EJOLrvaDeKJM9Ldwtm+5LrjXi6Pc4WbsrcO/F19TYWPiOgL/oOAWuULPWiVg+8TuQwJNGSsdRe8tevtAB77KiK5yVNSIWQSOsplNNo5jlW/ynhLfTtMld9WQgRbAe1ZxJhi49kj1h81R/pOLAn3AUaZMcDVjgT901u7sY7yMYLs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776287024; c=relaxed/simple;
-	bh=GaaNZcjpodnsAzv4m2iPX05Zq7otswTnvY9FgzS0EHY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kdgBZNUJ3E628rqEb8wBc5X9oRG+0/6NaGFxHNvu+QvPGnrB7LHSBiV0QcmChshnqe5oVvYPdNT9IVqy3eQQIEwJKuKxJ1n8ocwewUiKBBGBBwKlcYySNXa1y9MAVjCMnNbNDpzSHCsSqyLZwXnxM6ePp3t0yyorKj4ggU9Evno=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=XsRY/SFM; arc=pass smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B88F38F656
+	for <linux-security-module@vger.kernel.org>; Wed, 15 Apr 2026 21:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.128.39
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776288725; cv=none; b=VAj9p8oOGionWmQlud82iVZw0T3yHSqKggdKkb0hLseTnThxgocObWcfxg3fF2j+lBAvHUtcfMVR6OsYXyTdJRcO7XVc7/iX4Orl3EZI2bMt5vkjuLi9ubnfwzLi4xhs70LrjdA1InhWbbEzv1uOUpf6++F4N8nusltAoJmmvRs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776288725; c=relaxed/simple;
+	bh=1VRzEwc9as955hJAJQZkD8aoU2tfmXZsG3lk/RyK87w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RPRXpkZsiCDUKom1WcSMpEo4cSdXSr6LpADy2d0Lj5yUxfsgQkopQpMraqrnTu5FlHL3U9W6XC87fL8qj3cTlyLpU+nxPzv2mVIfzf/eUwdxinLFMiZ8Gq6N3lw7hwGpT1xFzwXekc5lTNTeB7kvP7QwVt2MzW6mGz3hJcefuB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=Lzen8Ygq; arc=none smtp.client-ip=74.6.128.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="XsRY/SFM"
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-c76c60c7502so1164a12.0
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Apr 2026 14:03:43 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1776287023; cv=none;
-        d=google.com; s=arc-20240605;
-        b=WY6DcxG2bbGghIHN/TuWam1ObGOvCUWf2lBMfa2h5huyauS4UcuWNXqTON02UM3TtQ
-         CxttnEaVdECxYBchgmk3LVEotAzXnslCBGBdbElXA3lL67CuSJi61lO2EQI/5LXZhbcc
-         orIP63UcF6/Z1Fou2MRcmRp49iB860Ly9K9fuYX+R0lShfJuo+pWaDcngqAtm8b+7sjR
-         oT8kbW74hOG+Y8AivzvAE1Nrzq7SH02XE77FpmhMivntIXwvWRJWTk6HH5DUcvPMPWZE
-         drqOEcJ64zpsz3EMFJkIMZ5+Uk7LOIWMVKcO9KTy5RY7OpSADfjscLo3N5cn5Rde4bp0
-         Mo+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=+83jR3u+OMYuyXETY5Yv8xOj3xNbNwA4cnwnv5DT6dU=;
-        fh=nb2/BqVcxKQzYIFIQXYpHn0ZqiihztSEaqx/w+W6Ags=;
-        b=P1qukOBiLxyd0mmIOlfgMdiU5Fs2lwjfX5+0uwgGLBrln9TIx1hnftkr1btf/Ce5eO
-         5+1XkCr/TPauDw53z0iHeBhfq5FQWs8J5ZXS8sSRiWYt+Kkfv+Lmma0Lk8Tm1HCn6H5B
-         OgVwHJDxkKBxXTA7ANDqVVTh9yOCy8n9MA6XpnYjsLWldO5e7ak5sVZzcwUXvn0a30E1
-         fPxe/v9lsx82XgBBjmb54iXMgvoQEDGGnKMmpfksA0Ms3VsjdaON1OpxxJc9rXCRWZS3
-         5nztR14iS/E3+BJkoagauiiS1oWTFXLOwsSSc7CswhDoMOjMbdnw55ufJB+1/Xx6U/Ae
-         raaw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1776287023; x=1776891823; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+83jR3u+OMYuyXETY5Yv8xOj3xNbNwA4cnwnv5DT6dU=;
-        b=XsRY/SFMGYJCRXoivRO3oa5bLJ71GiHRIJmHzS5CrF5VUjJdd+hV8k6h8Hc8acy5UA
-         yzCv2maRQmr3UoQgWe2BwKVdIFSSWgXAb058iwgFF5JGOAuxjg1etk+/4PjX0jNPtUfU
-         F196m2hDsOIS+hHWcXKTv65cuesfDho6jb7u0fZwDdvNVDz96meOZVK0rjbpVwrZzRTv
-         T/LRK7lfQK/1zur7SEA8te1lqaqQp1WcYuRZzZQSO6vMSPwTZTOQtXueZqAS1KEiib8l
-         St6JQ9G58yL/vXw8hfuKPmmqe3FCUg92QZH0BSvagOrhGJLUUSTgse7gFR8UZkuZe3mB
-         snIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776287023; x=1776891823;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=+83jR3u+OMYuyXETY5Yv8xOj3xNbNwA4cnwnv5DT6dU=;
-        b=bBYXEKusMvkJ4wqpG97Wo2ZG35MFGe43M2ntsOOZ6sg4HJXx+zVV+YBViPYXEluVOW
-         nDp9FY6EEoD3TzftNbjLCIuggdFlNWaABuF5iFc6TVToa7nghWSynDH94Bu+yJn4/mAg
-         AmuHNaoaCJpCa0Hgw4JL87kfFxm8PIJ4cPTFIx19kNlSM0/2YW3fw6pxwJXBpJGzvZNK
-         6lTLvyVxY51fLZcb1I0juLsECMRh7TsLXbMQL4GIIvInI7GuPephsCJRF6cU9j6s7tx6
-         dr9tX0w0NIRvUeXF9ydoYT5yttyyY4t56f/FIsM39Rg7e/GfexbmU1Xs0Kj+z9qukHbj
-         GtYg==
-X-Forwarded-Encrypted: i=1; AFNElJ+K3ACFNkXx3dsz0f1HNsejBYb/j1hdmdduFzesgIwJKIdYD/1WsRJRlgRI9a3d+pwC5Z0G24vA8pZuk8h+AILA1tzvo+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw09lfrAnWKjve/xVjkb34R7GKY6txONGT7ZKrHUMeTIFlpDiSP
-	63eDE+X/KnkSe2w3RfwBBEydVwgUOgx4qvKguYwEmh9B1EDI4HFMk+WL6y+0wHTGRGou3KeYzgM
-	hX5dXjbFVd0/ESIwLSBsMCPvMQTtptaDl/pqTFNul
-X-Gm-Gg: AeBDievSNgNwoB6l0OTPZPzIiBNeEzUMWBWF6HDJte+gEKPYi+cgSy10WzxhXTr3ddH
-	kmN/G/IYLxycDAZAfR7RzBX3EvXXucK4+5j7hQNGTIWoatRwzQmKGhxqWyk6UFnM0pu/Gk8qfcq
-	uAquCLDH279OM4Czoh6ueJKznj8vBNH0KWS8l+NRf2NJsZI6f+BlNFhfD+dfpDfDN81Q6CF33SG
-	JAiVpJ0KQJ/SrxH0dScliSgwOAZpxHyGV+VgkxF8mQ14fCcfgAAec8JNavhveLh3+d+9zfmPheG
-	9NIHS8g=
-X-Received: by 2002:a17:903:2484:b0:2b4:5d0c:7a85 with SMTP id
- d9443c01a7336-2b5eaa22380mr5127465ad.3.1776287022908; Wed, 15 Apr 2026
- 14:03:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Lzen8Ygq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1776288722; bh=PCIEZUDtvL4fKDuA56MB9W3LMeOH6yBvvyQFCUOW0uA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Lzen8YgqsJcRZaymd0GypzqtIX08oWXSgmtm6rEG/Y8glOaMX+YHX8AyxLeCzWBZ7s4jZYpPhhT31TzY8HHdKnBWvC3rzq8Z0FTxN4BP7FixfY65gEWVOj1BhC5wwT2qsRW+bwRBwEGYfbfmPjXiGmWacg1ZxSLBuro9aau1HfCf8cBqzQYDozEQDiil8fqxi85aCYOPQMEcAykVLXigYXZ/bHCZ1o7sJNE69ijQaSgAXP5NpgcJMTz8eolW18ybNuDHxkw3LbxmXk8MEmWiNtDNNE71RX7mlVExXHVCsdHzi2jmlWdRLbt253KbG9Vr3V0bl/Ec6kH5K0Ompu5V4A==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1776288722; bh=beOyHWXL96lJreOhdbULagC+uJ1gVWy2cWmPiXA28u4=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ePWwFsrZi4YYt4xtpZtSwf6F2+2v96uq+bCT3cbRvPSQJU+JzcglWAao71+/Wat+SvSv4oamsYwVapHQFIQZBTMJXmUMjCW18DCBlVtB5LgZgKqQu7vZM1rtn2se1fPcC1q7Ya7naTYaH9XkLRFkCY5KHSV9hU9DfPr1qLkxHKIR/kKxUx9dy9AOO+e0G7+D4/Wp4hwJ9g/MGhtmIssXBZJwolU51xatHZ5ToHrKhlYt3nkf2XuRxPf8boGOfcocEeWM09djTpkbsnbk+SL/o7ngZUUGvt0ydGvONPyId8KhQaI1POxd68O7fo+YYSwAfAxJZilPFhrY1mjcvnD4qA==
+X-YMail-OSG: OTWDq0wVM1kWBKlAClbtD.6W.Rgce4yInLQVN97jyOJxSa1hGgVXGNaz8TPVgxy
+ wm5N0OZz2yEOydYM1i9uZWkp53km0ZmaQkIg_xaEAQozcV1Di9tdpXDzSQWS1GhrMcTVr3m201Bf
+ 40FW9DxdNkcJtDsTRUNTPDV9kKxT42IPULUl3WPiN7iJCfkWKxlDyLXiE8eTt0KGHvmb.OoGEgBy
+ AoXITcef2y4r_WqBS2gLbeKfpnr1RVZihFcNWgCsuIY63wgZbLoMSXSSjm1XtlxfjrPk.DP6XoZC
+ biDFbDHSnoY5P9o7u2G.zZilDjVYT.qCa0GNh_g_RDahhSok_q3mp79XDGMCZAGQ.GG.syh6lTHX
+ P7fXQ8bkTWUIQA8pTh0KLK6O_1mk6agZcCD3Ba8WhDTDCI7CxauFy.kkMolNdYB_qGXENI.wK3n3
+ eBbZ.zjPooFiUCULsa6jzGX.C7VFGzcpLXp1s9hOl1yvdRHIBO0LmhANf.o2aFhh7tnWhAssqd41
+ e_7RHNS.i_dixFkALoTeixj6VYYlduEwIzAcQU5DS8ILULg9kFLEmT4DNKPS0CkuuJeRHBCmrG3o
+ AN0p75xLlz27f3QoKImoBCNd.2n7G78LfZfgTQ0Qjzg2SUpjIcYwmgzopERLZ92zOXS3Tciopgwy
+ yCK65MgTPVZ5BKNBwRd5qxwDf0FBmVAPEhU5ZhPw9k.NIUN13Fmbh3t8EQ7c0wJU4UUTYAWoGELY
+ .LJrht6FcvDWGCYBfkzbVmb6XFam4HNtRSKaUTlA9OiHwHtm4gMX6iAVbf.ULGI8J3eJrnntvS0p
+ XpUvYDl0cC3V.rXaUlnGmT7GMnjYPfVDhGwbXH9KtEfnW30DQXVtyassb5E4w9w8Vf7IngNVsRXO
+ mn3heo2tZw.TslL5cexILIeli0HuHhHv1gRQeKHyrrreLLWuSlxsrfNCTw1L1pITqKrl_dgGrjyu
+ viLWNKZR5sCA6YzRt6RbMZQt5xVnI0HbQwMsQWV_gN5.f2AruKDVsBxY4TFUyvDhbJjwFNlf3fz2
+ UVUZFtplvxfr5uMIzH2lrhuZ1GGcR0IjajNfhfkiXLpQs9ENLFaZ4fjYKayEcBz5vZ51jv_PSS64
+ 4K8wVVo4mekXJZGTTq1T8UA0tcFgUGXEBuIXeAVcudJcqwA0mfOcXvy1_5jPVTKsMvLeCcN65g6w
+ xrm73ukJDYwf.jg46aqpYnZ6TPb.GN0YXJIRAb9s2BOY0f4DZxCSMUXfAdsLJOxSCd9OC8VMQsIU
+ gmw5mLLKSQQWibutpi_be0SxKGt3H1XNppl0cQ7R99F8GcVjzUNg0y9dGrr34MOOURzBwF3U33Ku
+ K8LCt.8.s_uWAIRmEKnx6a.V1bPc1dUMi_NIyNSxu.i2B1kHAPIkQgYd8HRjO4E3fM_qPEonpCnI
+ skpVSJd3.ApsyiDhpSaV1ChED8ZpoUR4gG42uRBcYph2GHBrpLPUAC2LeOuFRWfAWXf.t.pcgEtd
+ I8.UAg67i33D8xJhxToGhcBAnnFzFVSU0F8X2ApA.R4cvXHwS6ZBOO_7n5mk6N2LjeT8O5D87MHa
+ YsbmoFSX3my0K6SGsK4XAgU.IuU4.sRCz52du8xWXED03Gi9wbAKiSdf7dok7tBZ7eOoBFGnKsXx
+ G5aUNd9kJb6PXeflkbmlkl.Hs5P9Vsi8qtExRZMzAot9nsj2JxmaUkbKB9tHX1vrw_3Qx6syt5_.
+ BVYaEa2QtTpNlEdb.hpQJTLRIT5szY2eni9XytJwEoClRDx5LWvfA9V10yoTKxAu5F_Df4GD..UB
+ bd.4yenjrfIj3EkXhPq3NBD3gAwoVihMUlAl3ODeP29zNpyOq0_N0WAiC6APoM07UeLtKQyjRvE.
+ qnp9CFNvRm7fPc5FDQJeNuDkfKYHAQjzJIvKrokib13kmBLEV5owRT_LJ1ubfTS8aeSlgP5SNQIE
+ kOdiOmBLN0dOFrUYyr8ZwYTJVNITmEKnN5uDKN28VKEMM7BwTMxmAAOxmndwH1xJH0Ae6jLHZfJv
+ qxgF70jsVRzidZkW32xeYRfkwwhxR1woQAEr0QbYBG2sdw3GyfzgdHXaDZLdQS1EWuQh3h5N.BeU
+ mHAuyoXwIrnAH89NmLZq0xjL6gWB1FuxCdLDovUk8Oxny3CjWzGWxtLnW6L7xlF5SHDrqX6bu3mq
+ ue50btk6e7y1bf2iXuJf1pQAdHL5rTGCQi5z5ROlkBGtq_MzNHPTQSjrKvrZYdvCHiFwjRie0rI1
+ 8d2LalaiufdwZdKZYuWCgbmv.p9efZbZyLJR8Zs1qEF8r8gNBIpCazw--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 2d41aabe-9af5-437d-8e9e-568444c670cb
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.bf2.yahoo.com with HTTP; Wed, 15 Apr 2026 21:32:02 +0000
+Received: by hermes--production-gq1-6dfcf9f8b-h78wr (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b799781f33bb01013e1e244a638df756;
+          Wed, 15 Apr 2026 21:21:52 +0000 (UTC)
+Message-ID: <a77f43dc-f05f-4dd3-9f0f-296447c44e8d@schaufler-ca.com>
+Date: Wed, 15 Apr 2026 14:21:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260331-fw-lsm-hook-v2-0-78504703df1f@nvidia.com>
- <20260409121230.GA720371@unreal> <2dd138a2ae87f90c55dbc3178d9c798294fd4450.camel@huaweicloud.com>
- <20260409124553.GB720371@unreal> <CAHC9VhT1X4HX4bGrK=mEzu=g=mZ-Wg-LDXVgZVe-e6oM+W9aHg@mail.gmail.com>
- <20260412090006.GA21470@unreal> <CAHC9VhRnYXjg+vE9a8PeykbXk91is12zYLaO7EFdfZPKMxDfPA@mail.gmail.com>
- <20260413164220.GP3694781@ziepe.ca> <CAHC9VhR1Uke9P==CELKavBcogHoNCtMZFfNWUbgm5HYUfomhtw@mail.gmail.com>
- <20260413231920.GS3694781@ziepe.ca> <4cf6b20b-f53b-4b5e-ba03-c7ac01bec0c2@schaufler-ca.com>
- <CAHC9VhTm9MG-NzdwxtqJA6LZeTEsmUjyy8da2=8KOVxgDtEqWQ@mail.gmail.com>
- <53a532e8-5981-49b4-896e-0bf5021ff78b@schaufler-ca.com> <CAHC9VhRoaECt03Rs-ZyoGhW2_qZkA_1weTYYjiXc41Yf5U8A_g@mail.gmail.com>
- <a5fe292b-77c8-4190-8989-1d32cadb5689@schaufler-ca.com>
-In-Reply-To: <a5fe292b-77c8-4190-8989-1d32cadb5689@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 15 Apr 2026 17:03:30 -0400
-X-Gm-Features: AQROBzBz2q68BZW8dTm1i7JCyf7T-jJ8N457zfM2449jgU9ei1obevOWDfD4MWI
-Message-ID: <CAHC9VhS1sVMGHpO-5Zn0K0w6suTB-i_SwvouDpEmT8sXffsRfg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 0/4] Firmware LSM hook
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, 
-	Roberto Sassu <roberto.sassu@huaweicloud.com>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, Saeed Mahameed <saeedm@nvidia.com>, 
-	Itay Avraham <itayavr@nvidia.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>, 
-	Maher Sanalla <msanalla@nvidia.com>, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To: Paul Moore <paul@paul-moore.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+ Roberto Sassu <roberto.sassu@huaweicloud.com>, KP Singh
+ <kpsingh@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ Saeed Mahameed <saeedm@nvidia.com>, Itay Avraham <itayavr@nvidia.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>,
+ Maher Sanalla <msanalla@nvidia.com>, linux-security-module@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20260331-fw-lsm-hook-v2-0-78504703df1f@nvidia.com>
+ <20260409121230.GA720371@unreal>
+ <2dd138a2ae87f90c55dbc3178d9c798294fd4450.camel@huaweicloud.com>
+ <20260409124553.GB720371@unreal>
+ <CAHC9VhT1X4HX4bGrK=mEzu=g=mZ-Wg-LDXVgZVe-e6oM+W9aHg@mail.gmail.com>
+ <20260412090006.GA21470@unreal>
+ <CAHC9VhRnYXjg+vE9a8PeykbXk91is12zYLaO7EFdfZPKMxDfPA@mail.gmail.com>
+ <20260413164220.GP3694781@ziepe.ca>
+ <CAHC9VhR1Uke9P==CELKavBcogHoNCtMZFfNWUbgm5HYUfomhtw@mail.gmail.com>
+ <20260413231920.GS3694781@ziepe.ca>
+ <4cf6b20b-f53b-4b5e-ba03-c7ac01bec0c2@schaufler-ca.com>
+ <CAHC9VhTm9MG-NzdwxtqJA6LZeTEsmUjyy8da2=8KOVxgDtEqWQ@mail.gmail.com>
+ <53a532e8-5981-49b4-896e-0bf5021ff78b@schaufler-ca.com>
+ <CAHC9VhRoaECt03Rs-ZyoGhW2_qZkA_1weTYYjiXc41Yf5U8A_g@mail.gmail.com>
+ <a5fe292b-77c8-4190-8989-1d32cadb5689@schaufler-ca.com>
+ <CAHC9VhS1sVMGHpO-5Zn0K0w6suTB-i_SwvouDpEmT8sXffsRfg@mail.gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhS1sVMGHpO-5Zn0K0w6suTB-i_SwvouDpEmT8sXffsRfg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.25495 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Tue, Apr 14, 2026 at 6:42=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
-.com> wrote:
-> On 4/14/2026 1:44 PM, Paul Moore wrote:
-> > On Tue, Apr 14, 2026 at 4:10=E2=80=AFPM Casey Schaufler <casey@schaufle=
-r-ca.com> wrote:
-> >> On 4/14/2026 12:09 PM, Paul Moore wrote:
-> >>> On Tue, Apr 14, 2026 at 1:05=E2=80=AFPM Casey Schaufler <casey@schauf=
-ler-ca.com> wrote:
-
-...
-
-> CMW MLS and SELinux MLS can be mapped. They have the same components.
-
-Yes, one of the fields in a full SELinux label can be an MLS field,
-but that doesn't mean there isn't translation needed.  The important
-point is that security label translation, mapping, etc. is necessary,
-possible, and has been proven to work across a variety of systems.
-
-> >> SELinux transmits the MLS component of the security context. Smack pas=
-ses
-> >> the text of its context.
-> > Arguably the NetLabel/CIPSO interoperability challenge between SELinux
-> > and Smack is due more to differences in how Smack encodes its security
-> > labels into MLS attributes than from any inherent interop limitation.
+On 4/15/2026 2:03 PM, Paul Moore wrote:
+> On Tue, Apr 14, 2026 at 6:42 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 4/14/2026 1:44 PM, Paul Moore wrote:
+>>> On Tue, Apr 14, 2026 at 4:10 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>> On 4/14/2026 12:09 PM, Paul Moore wrote:
+>>>>> On Tue, Apr 14, 2026 at 1:05 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> ..
 >
-> Yes. That is correct. The big issue I see is that SELinux does not repres=
-ent
-> the entire context in the CIPSO header. Thus, you're up against many SELi=
-nux
-> contexts having the same wire representation, where Smack will have a uni=
-que
-> on wire for each context ...
+>> CMW MLS and SELinux MLS can be mapped. They have the same components.
+> Yes, one of the fields in a full SELinux label can be an MLS field,
+> but that doesn't mean there isn't translation needed.  The important
+> point is that security label translation, mapping, etc. is necessary,
+> possible, and has been proven to work across a variety of systems.
 
-That isn't always true is it?  From my understanding of the "cipso2"
-interface an admin could easily map multiple Smack labels to a single
-CIPSO label.
+I'm not especially concerned about translation between systems.
+The problem at hand is negotiating between LSMs on the same system.
 
-It's important to remember that if you wanted to utilize CIPSO to
-communicate between SELinux and Smack, the label translation is not
-between SELinux and Smack but rather between SELinux and CIPSO as well
-as between Smack and CIPSO.
-
-> >>> Use of the NetLabel translation cache, e.g. netlbl_cache_add(), would
-> >>> require some additional work to convert over to a lsm_prop instead of
-> >>> a u32/secid, but if you look at the caching code that should be
-> >>> trivial.  It might be as simple as adding a lsm_prop to the
-> >>> netlbl_lsm_secattr::attr struct since the cache stores a full secattr
-> >>> and not just a u32/secid.
-> >> Indeed. But with no viable users it seems like a lower priority task.
-> > You need to be very careful about those "viable users" claims ...
 >
-> Today there are no users.
+>>>> SELinux transmits the MLS component of the security context. Smack passes
+>>>> the text of its context.
+>>> Arguably the NetLabel/CIPSO interoperability challenge between SELinux
+>>> and Smack is due more to differences in how Smack encodes its security
+>>> labels into MLS attributes than from any inherent interop limitation.
+>> Yes. That is correct. The big issue I see is that SELinux does not represent
+>> the entire context in the CIPSO header. Thus, you're up against many SELinux
+>> contexts having the same wire representation, where Smack will have a unique
+>> on wire for each context ...
+> That isn't always true is it?  From my understanding of the "cipso2"
+> interface an admin could easily map multiple Smack labels to a single
+> CIPSO label.
 
-That you are aware of at the moment.  You are also well aware of my
-feelings on this issue and ultimately I'm the one who has to sign off
-on that stuff.
+True, but you can't map multiple Smack labels to the same CIPSO label
+without introducing ambiguity.
 
-> There are other problems (e.g. mount options) that have yet to be address=
-ed.
+> It's important to remember that if you wanted to utilize CIPSO to
+> communicate between SELinux and Smack, the label translation is not
+> between SELinux and Smack but rather between SELinux and CIPSO as well
+> as between Smack and CIPSO.
+>
+>>>>> Use of the NetLabel translation cache, e.g. netlbl_cache_add(), would
+>>>>> require some additional work to convert over to a lsm_prop instead of
+>>>>> a u32/secid, but if you look at the caching code that should be
+>>>>> trivial.  It might be as simple as adding a lsm_prop to the
+>>>>> netlbl_lsm_secattr::attr struct since the cache stores a full secattr
+>>>>> and not just a u32/secid.
+>>>> Indeed. But with no viable users it seems like a lower priority task.
+>>> You need to be very careful about those "viable users" claims ...
+>> Today there are no users.
+> That you are aware of at the moment.  You are also well aware of my
+> feelings on this issue and ultimately I'm the one who has to sign off
+> on that stuff.
 
-The existence of one problem does not mean another does not exist.
+Understood. There are a serious number of considerations that need to
+be worked through.
 
---=20
-paul-moore.com
+>
+>> There are other problems (e.g. mount options) that have yet to be addressed.
+> The existence of one problem does not mean another does not exist.
+
+True enough.
+
