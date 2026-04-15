@@ -1,275 +1,228 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com [74.125.82.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D972222D0;
-	Wed, 15 Apr 2026 20:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F9C38837B
+	for <linux-security-module@vger.kernel.org>; Wed, 15 Apr 2026 20:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776285174; cv=none; b=h/sPE+ija3Yu9S0SWHHLtWOefrZkPVuZbB60mz4aK2eHFe4pyL9qgK4e5ZZpvkCFYziWILGrAljbUwZjY0okJGFPvk3an+U9HmNi9JicEUwv4gCuJjbH/LuH4jM9/qzMQtN8AHtJ57W26oEgEPIdCwJ3bN2EP7ovhI4SY7ag8yg=
+	t=1776285646; cv=none; b=JsjzKJ4n+SeGs9sNFGlrWjgFRVF8TfoCmJBL872B96DG42ZHt0BgbGl5owzom/Ahe6Jqy58wVs1bsCnJbkPbTYlQpdN2DsarECGlE4vHZFAlvVx9XyoDuKrEpRLaNLvQWlbKV3CJ6SKAf3btqpumj/O+rIxpiRYbN5vqRkfk0SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776285174; c=relaxed/simple;
-	bh=K1URluIj0cdEaODFooYuB8im6L2bLEqaFCC2O7SoCls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=puG9FhhaUD2l22o3z0A7N6Pu6EZR2m2UT6lMA9wimj0i9B+RkEow2d0V18Iel+SDt2gz2HkpvjYsKwUydfo4mhf4FpSZog52JthKCsZLC959i99PWpHfvjv8g/Cd+pXx+zMEgMUyBbcwecjL7S+skwjraIV8wV9h36ZU2L3r6zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nroOUvPt; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1776285646; c=relaxed/simple;
+	bh=PL+CgPqPyNnjf7gBFemSf1QF6zWNuC2OalLgIdp7xuw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ThNpjlb27iUWNuryh6zOCwTz9P2mQL5uOAnEDCNe2bIl3oWb0G9QbuHKnamNTdCvjm7XJyOklFGwqBDIX1N5OewxC0il/0gFdZeMy+8BUH8s6huOYbWNdWlCBtdaE1i2ERmOYzqraM9XdeqtqwuBKB2hMYJA5ZaJ1l7MmiPPxWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=code406.com; spf=pass smtp.mailfrom=code406.com; dkim=pass (1024-bit key) header.d=code406.com header.i=@code406.com header.b=gp3T3WMo; arc=none smtp.client-ip=74.125.82.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=code406.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=code406.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nroOUvPt"
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63FH5a1J1834640;
-	Wed, 15 Apr 2026 20:32:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=2D+6e+
-	liD73SBB5g9gxJQqUK4+/I/WKA4veH9C8ibRs=; b=nroOUvPtoMB4ivZgwoHr8d
-	64Bk/WB0mqCywvEJ02p7nLJfKbFzQKtuk8y4sF8BAn44X5mEyJe1CNsG50hfHhal
-	fNrwrpIeP10wJTqs5F0KxI9Zi37tF6bStGaHslBVXe0tjAfmts2PJ+N0UpgZjZxX
-	q73duDWyYteDEgVhfXEW9MWX9WpEt7bnUd6ALFW5H5JC9TYLIg2EAzUP4859UUv9
-	wcrxPt6JI7ZdPmrev5E/s76DA4qauKRTnc2RhIUlO7ywnm1iOUxsIscjFD2MaenS
-	ZhQBGGaR896sz3Lp/433uFstmUdhgP+LU/Cm+qUbWTuX5p+q2fbNpk0CRFNiUKgA
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4dh89rj7yb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Apr 2026 20:32:45 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 63FHQ0Q1004180;
-	Wed, 15 Apr 2026 20:32:44 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4dg24kfwhm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 15 Apr 2026 20:32:44 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 63FKWii614942826
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 15 Apr 2026 20:32:44 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 82ED55803F;
-	Wed, 15 Apr 2026 20:32:44 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F03F658055;
-	Wed, 15 Apr 2026 20:32:43 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 15 Apr 2026 20:32:43 +0000 (GMT)
-Message-ID: <52b6f2d4-0044-4629-836a-3b3c8064b5a6@linux.ibm.com>
-Date: Wed, 15 Apr 2026 16:32:41 -0400
+	dkim=pass (1024-bit key) header.d=code406.com header.i=@code406.com header.b="gp3T3WMo"
+Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-2b6b0500e06so13783860eec.1
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Apr 2026 13:40:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=code406.com; s=google; t=1776285643; x=1776890443; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cbsjcA0Wtc42+WgruHSL9U8A4+1Yi6KUpTr2Kkr/Yn0=;
+        b=gp3T3WMoIW0+sDChfN/YAbShLGV6tvdPH9qjxI5br4JR1wonXFpSVGipiNIBcgIHRF
+         oPOsYl9690KZ5lLy9Oa+lan+tsKaGFoBoZzhXQfgkgaYbsA0au0gyskdkKEJSbTobSAg
+         z9z3EHxbzMCer/Vfxc2NLoap+8wyVmee+wlrc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776285643; x=1776890443;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cbsjcA0Wtc42+WgruHSL9U8A4+1Yi6KUpTr2Kkr/Yn0=;
+        b=OV62hLZWsM2VwXbWw3+3EPuNjfq8rZ9JO/9b6Fi9wpajK0yLWHP+TCaSx81sHHCBLw
+         sCWPF9gV0DKdyhgoLllmtNkSgbR2I6wCRgGzGKIlrX8tsx1soZI7BsZBIphBDdckjgfi
+         fo7be8m6i3Dd6O/tOumBD+ogRrzqdHJa4MIWHrLZL65VKZWt6Atw3mzEYK68SKT1FTuj
+         42BnvC3kgAYk1ec3iBAq353vL7639bgW55InVZ1SPqF+KkVyo/XAEkeuTlXZMark2LQR
+         JxrZmryxq/Ao7w8cWIutnGL242x1D+My5w7BHOaB6vjS86d4pLUPGXfC+5lNIGJYPEMV
+         u7yg==
+X-Forwarded-Encrypted: i=1; AFNElJ+uhOumIRpnePunx3ZJRe7ZY8p02pYy9IF+9lUuF3aY+e1g0JDBhi6gKx4NMPzE//JwJSrOjLo08yuLmeu2nCYuA4jZs6E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR1ebHY51Ho7nW/Y0UE7JK+ACLAJ4aPUus8iKwNBUUKXrKbjmh
+	Kae3fhxRiLPh+L5tjDzjONxEs2JTZUmPDzaeNihqq/9POSpr1S3iljOsntL8rA+gtg==
+X-Gm-Gg: AeBDieujrjoAZw6g7FZQ83FIEd1rzBxZQnA8ZMtf+064mobZ8epBPs+dGBaN4+ivMMO
+	x7pIe8CbeNubwulYbVy9HnQzwcRtG9tQMXRsCehMmR6yB0U6S7G1fOxPgFXoVjSHBBwMjOMsXxc
+	VCebKDzoG33k7S32QXUFOL8+j7ZQJRrkdi8eEZwQhlAZYt9OBc+rE4Fl0WKyTzxIwSyx/xxk8TV
+	DS/HRuEjIlY9vVhF+lmt9S+Ejfy48gIHdrknhwMCsZFeogcuuZQy2WnDtzT1/2VTMtyM55rbOel
+	93UKDVsBq9dgiai5yE9TZz2IxY4fThO2zPnFRUjNPbywlQq925tcbRAkXExQ/76jIEo5ZU/29Hc
+	zDp9qWkKGlFmaEqXJ+YUsSOiUn9UQQZUDW+g0sOTGgvTpdX1RZHdWTmbBxOVuLMn3lgWcfwWvEV
+	gSEuus06dGhEMNFncZFfTJV/yEclSknvFwIm6WmcMo5pHtvlfwGbTyOrdrNskm3hs8IBs1BLopT
+	qxEcXYUFloO4sVd4rpwVo1h47ONr6w+l95Gin+r9M3d
+X-Received: by 2002:a05:7022:fa04:b0:12b:ebb9:1c0b with SMTP id a92af1059eb24-12c34ef8f1cmr13538669c88.31.1776285642621;
+        Wed, 15 Apr 2026 13:40:42 -0700 (PDT)
+Received: from localhost ([2601:645:8a00:6e44:a6e4:945f:db92:a0c3])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2de8c606222sm5403860eec.8.2026.04.15.13.40.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Apr 2026 13:40:42 -0700 (PDT)
+From: Josh Snyder <josh@code406.com>
+Date: Wed, 15 Apr 2026 13:40:40 -0700
+Subject: [PATCH v2] trusted-keys: move pr_fmt out of trusted-type.h
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] integrity: Add support for sigv3 verification
- using ML-DSA keys
-To: Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, roberto.sassu@huawei.com,
-        ebiggers@kernel.org
-References: <20260408174154.139606-1-stefanb@linux.ibm.com>
- <20260408174154.139606-3-stefanb@linux.ibm.com>
- <be3fdb81a322ab96e356e165b737c46f00c12cc3.camel@linux.ibm.com>
-Content-Language: en-US
-From: Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <be3fdb81a322ab96e356e165b737c46f00c12cc3.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDE1MDE5MCBTYWx0ZWRfX8s4nKgsYe1Tb
- dssNIn3+eRkH9G0VhVEJxzG2OeCO5CA/E1NCqbok9xNANMV+eUOeIcd+INRI2NsXQWEfBHxCks/
- NCEKjC8XUrPAw3dy31QN/XYcs4GB+/koDc134KCQBfNwsy17tEX8wb3c0kwjzELVYMOnKvJLODN
- +cY5NzKVhMTc91cWq1aPyT4EPZNPW1vkvN9HC8sSvUvnlZXeBnSNmaq9O057OTC0wMELSCs/1FD
- PeAKAPxoBBds8yybjF0c07O08CqDLLnxBSVFVd5iNEtB7+iVPezG/r9qnxNBby/soHNMkT3KdJx
- EiAzMxoU0TCTORghfyKxQZRaDAkw2DfqVAihG+tMKjbnPC2NczY85v2trWMsp3RcZj83uMuQxCU
- sOSVUlZGBFghqHWlyb3zFN4zBM10NUwHV7tor9DAcfahyXLUtLc4v8YGOLdzLEPLwaViIuT/8+k
- zZdQ6PBocbCj+C9RBIw==
-X-Proofpoint-ORIG-GUID: hhV8PvF_d0l4-_4w9tJyUzG-PQ3xDb9N
-X-Proofpoint-GUID: hhV8PvF_d0l4-_4w9tJyUzG-PQ3xDb9N
-X-Authority-Analysis: v=2.4 cv=fYidDUQF c=1 sm=1 tr=0 ts=69dff5ee cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=U7nrCbtTmkRpXpFmAIza:22 a=VwQbUJbxAAAA:8
- a=VnNF1IyMAAAA:8 a=J7pf2ADVnq6S3Gxr93MA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-15_01,2026-04-13_04,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 clxscore=1015 malwarescore=0 phishscore=0
- bulkscore=0 priorityscore=1501 spamscore=0 suspectscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2604070000 definitions=main-2604150190
+Message-Id: <20260415-trusted-key-header-v2-1-5244f9ef0d09@code406.com>
+X-B4-Tracking: v=1; b=H4sIAMf332kC/32NQQ6CMBBFr0Jm7Zi2GTS48h6GRekMUo3UtIVIC
+ HcXcO/yJe+/P0OS6CXBpZghyuiTD/0K5lCA62x/F/S8MhhlToq0xhyHlIXxKRN2Ylki2pLIUqu
+ pYgPr8B2l9Z89eqt/nIbmIS5vpc3ofMohTvvrqDfv78GoUSOpszOOq5K4ubrAQup0dOEF9bIsX
+ 2Pd7C7IAAAA
+X-Change-ID: 20260411-trusted-key-header-a544a4f149d2
+To: James Bottomley <James.Bottomley@HansenPartnership.com>, 
+ Jarkko Sakkinen <jarkko@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>, 
+ David Howells <dhowells@redhat.com>, Ahmad Fatoum <a.fatoum@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+ "Serge E. Hallyn" <serge@hallyn.com>, David Gstir <david@sigma-star.at>, 
+ sigma star Kernel Team <upstream+dcp@sigma-star.at>, 
+ Srish Srinivasan <ssrish@linux.ibm.com>, Nayna Jain <nayna@linux.ibm.com>, 
+ Sumit Garg <sumit.garg@kernel.org>
+Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ Josh Snyder <josh@code406.com>
+X-Mailer: b4 0.15.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1776285641; l=4657;
+ i=josh@code406.com; s=20260402; h=from:subject:message-id;
+ bh=PL+CgPqPyNnjf7gBFemSf1QF6zWNuC2OalLgIdp7xuw=;
+ b=6UB4xFpTx/1kQsSZ4hXcjkipxPZWe750cz4gLWaMxo1QghaHejOqrj6z1FeMcxvqCjoV8jdM1
+ DVFq/0lBw+HC+C78H9vJXgAR49Hdf27J9eWM2z2/kiJVEQBgrTcJXKV
+X-Developer-Key: i=josh@code406.com; a=ed25519;
+ pk=J60jemVD5rPt9HnGvw/AAQ6RPciMTW8aAgWykCCnCXg=
 
+Defining pr_fmt in a widely-included header leaks the "trusted_key: "
+prefix into every translation unit that transitively includes
+<keys/trusted-type.h>. dm-crypt, for example, ends up printing
 
+    trusted_key: device-mapper: crypt: dm-10: INTEGRITY AEAD ERROR ...
 
-On 4/14/26 10:01 PM, Mimi Zohar wrote:
-> On Wed, 2026-04-08 at 13:41 -0400, Stefan Berger wrote:
->> Add support for sigv3 signature verification using ML-DSA in pure mode.
->> When a sigv3 signature is verified, first check whether the key to use
->> for verification is an ML-DSA key and therefore uses a hashless signature
->> verification scheme. The hashless signature verification method uses the
->> ima_file_id structure directly for signature verification rather than
->> its digest.
->>
->> Suggested-by: Eric Biggers <ebiggers@kernel.org>
->> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
->>
-> 
-> Thanks, Stefan.
->> ---
->> v2: Set hash_algo in public_key_signature to "none"
->> ---
->>   security/integrity/digsig_asymmetric.c | 84 ++++++++++++++++++++++++--
->>   1 file changed, 79 insertions(+), 5 deletions(-)
->>
->> diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
->> index e29ed73f15cd..c80cb2b117a6 100644
->> --- a/security/integrity/digsig_asymmetric.c
->> +++ b/security/integrity/digsig_asymmetric.c
->> @@ -190,17 +190,91 @@ static int calc_file_id_hash(enum evm_ima_xattr_type type,
->>   	return rc;
->>   }
->>   
->> +/*
-> 
-> kernel-doc starts with "/**".
+dm-crypt began including <keys/trusted-type.h> in commit 363880c4eb36
+("dm crypt: support using trusted keys"), which predates the pr_fmt
+addition, so the regression has been live from the moment the header
+gained its own pr_fmt definition.
 
-I followed the pattern of documentation of a static function that you 
-just moved:
+Move the pr_fmt definition into the trusted-keys source files that
+actually want the prefix, with specific prefixes for each key type.
 
-/*
-  * calc_file_id_hash - calculate the hash of the ima_file_id struct data
-  * @type: xattr type [enum evm_ima_xattr_type]
+Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
+Assisted-by: Claude:claude-opus-4-6
+Signed-off-by: Josh Snyder <josh@code406.com>
+---
+Changes in v2:
+- specific pr_fmt based on trusted key type
+---
+ include/keys/trusted-type.h               | 6 ------
+ security/keys/trusted-keys/trusted_caam.c | 2 ++
+ security/keys/trusted-keys/trusted_core.c | 2 ++
+ security/keys/trusted-keys/trusted_dcp.c  | 2 ++
+ security/keys/trusted-keys/trusted_pkwm.c | 2 ++
+ security/keys/trusted-keys/trusted_tpm1.c | 2 ++
+ security/keys/trusted-keys/trusted_tpm2.c | 2 ++
+ 7 files changed, 12 insertions(+), 6 deletions(-)
 
+diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
+index 03527162613f7..54da1f174aeab 100644
+--- a/include/keys/trusted-type.h
++++ b/include/keys/trusted-type.h
+@@ -11,12 +11,6 @@
+ #include <linux/rcupdate.h>
+ #include <linux/tpm.h>
+ 
+-#ifdef pr_fmt
+-#undef pr_fmt
+-#endif
+-
+-#define pr_fmt(fmt) "trusted_key: " fmt
+-
+ #define MIN_KEY_SIZE			32
+ #define MAX_KEY_SIZE			128
+ #if IS_ENABLED(CONFIG_TRUSTED_KEYS_PKWM)
+diff --git a/security/keys/trusted-keys/trusted_caam.c b/security/keys/trusted-keys/trusted_caam.c
+index 601943ce0d60f..71c173bb2f727 100644
+--- a/security/keys/trusted-keys/trusted_caam.c
++++ b/security/keys/trusted-keys/trusted_caam.c
+@@ -4,6 +4,8 @@
+  * Copyright 2025 NXP
+  */
+ 
++#define pr_fmt(fmt) "trusted_key: caam: " fmt
++
+ #include <keys/trusted_caam.h>
+ #include <keys/trusted-type.h>
+ #include <linux/build_bug.h>
+diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+index 0b142d941cd2e..159af9dcfc774 100644
+--- a/security/keys/trusted-keys/trusted_core.c
++++ b/security/keys/trusted-keys/trusted_core.c
+@@ -6,6 +6,8 @@
+  * See Documentation/security/keys/trusted-encrypted.rst
+  */
+ 
++#define pr_fmt(fmt) "trusted_key: " fmt
++
+ #include <keys/user-type.h>
+ #include <keys/trusted-type.h>
+ #include <keys/trusted_tee.h>
+diff --git a/security/keys/trusted-keys/trusted_dcp.c b/security/keys/trusted-keys/trusted_dcp.c
+index 7b6eb655df0cb..41a23e2f30891 100644
+--- a/security/keys/trusted-keys/trusted_dcp.c
++++ b/security/keys/trusted-keys/trusted_dcp.c
+@@ -3,6 +3,8 @@
+  * Copyright (C) 2021 sigma star gmbh
+  */
+ 
++#define pr_fmt(fmt) "trusted_key: dcp: " fmt
++
+ #include <crypto/aead.h>
+ #include <crypto/aes.h>
+ #include <crypto/algapi.h>
+diff --git a/security/keys/trusted-keys/trusted_pkwm.c b/security/keys/trusted-keys/trusted_pkwm.c
+index bf42c6679245a..108db105b639f 100644
+--- a/security/keys/trusted-keys/trusted_pkwm.c
++++ b/security/keys/trusted-keys/trusted_pkwm.c
+@@ -3,6 +3,8 @@
+  * Copyright (C) 2025 IBM Corporation, Srish Srinivasan <ssrish@linux.ibm.com>
+  */
+ 
++#define pr_fmt(fmt) "trusted_key: pwkm: " fmt
++
+ #include <keys/trusted_pkwm.h>
+ #include <keys/trusted-type.h>
+ #include <linux/build_bug.h>
+diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
+index 6ea728f1eae6f..207be849796ed 100644
+--- a/security/keys/trusted-keys/trusted_tpm1.c
++++ b/security/keys/trusted-keys/trusted_tpm1.c
+@@ -6,6 +6,8 @@
+  * See Documentation/security/keys/trusted-encrypted.rst
+  */
+ 
++#define pr_fmt(fmt) "trusted_key: tpm1: " fmt
++
+ #include <crypto/hash_info.h>
+ #include <crypto/sha1.h>
+ #include <crypto/utils.h>
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 6340823f8b53c..2a540b1af0b33 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -4,6 +4,8 @@
+  * Copyright (C) 2014 Intel Corporation
+  */
+ 
++#define pr_fmt(fmt) "trusted_key: tpm2: " fmt
++
+ #include <linux/asn1_encoder.h>
+ #include <linux/oid_registry.h>
+ #include <linux/string.h>
 
-> 
->> + * asymmetric_verify_v3_hashless - Use hashless signature verification on sigv3
->> + * @key: The key to use for signature verification
->> + * @pk: The associated public key
->> + * @encoding: The encoding the key type uses
->> + * @sig: The signature
->> + * @siglen: The length of the xattr signature
->> + * @algo: The hash algorithm
->> + * @digest: The file digest
->> + *
->> + * Create an ima_file_id structure and use it for signature verification
->> + * directly. This can be used for ML-DSA in pure mode for example.
-> 
-> Like the comments on 1/2, please add a comment here indicating that all callers
-> must verify the signature length (siglen) and the public key (pk) is not NULL,
-> before calling asymmetric_verify_v3_hashless().  Also indicate that the caller
-> must free the key.
-> 
->> + */
->> +static int asymmetric_verify_v3_hashless(struct key *key,
->> +					 const struct public_key *pk,
->> +					 const char *encoding,
->> +					 const char *sig, int siglen,
->> +					 u8 algo,
->> +					 const u8 *digest)
->> +{
->> +	struct signature_v2_hdr *hdr = (struct signature_v2_hdr *)sig;
->> +	struct ima_file_id file_id = {
->> +		.hash_type = hdr->type,
->> +		.hash_algorithm = algo,
->> +	};
->> +	size_t digest_size = hash_digest_size[algo];
-> 
-> Defer initializing the digest_size and .m_size, below, until after checking the
-> hash algorithm is valid.
+---
+base-commit: 66672af7a095d89f082c5327f3b15bc2f93d558e
+change-id: 20260411-trusted-key-header-a544a4f149d2
 
-This function is called by asymmetric_verify. asymmetric_verify calls 
-calc_file_id_hash, which doesn't check algo for valid range, either. I 
-suppose it's an untrusted value at this point (IMA never checked it's 
-value for valid range?) an we should check it in asymmetric_verify then 
-to cover both cases? Or you want to check it individually?
-
-> 
->> +	struct public_key_signature pks = {
->> +		.m = (u8 *)&file_id,
->> +		.m_size = sizeof(file_id) - (HASH_MAX_DIGESTSIZE - digest_size),
->> +		.s = hdr->sig,
->> +		.s_size = siglen - sizeof(*hdr),
->> +		.pkey_algo = pk->pkey_algo,
->> +		.hash_algo = "none",
->> +		.encoding = encoding,
->> +	};
->> +	int ret;
->> +
->> +	if (hdr->type != IMA_VERITY_DIGSIG &&
->> +	    hdr->type != EVM_IMA_XATTR_DIGSIG &&
->> +	    hdr->type != EVM_XATTR_PORTABLE_DIGSIG)
->> +		return -EINVAL;
->> +
->> +	if (pks.s_size != be16_to_cpu(hdr->sig_size))
->> +		return -EBADMSG;
->> +
->> +	memcpy(file_id.hash, digest, digest_size);
-> 
-> First check the hash algorithm is valid, before using digest_size.
-> 
->> +
->> +	ret = verify_signature(key, &pks);
->> +	pr_debug("%s() = %d\n", __func__, ret);
->> +	return ret;
->> +}
->> +
->>   int asymmetric_verify_v3(struct key *keyring, const char *sig, int siglen,
->>   			 const char *data, int datalen, u8 algo)
->>   {
->>   	struct signature_v2_hdr *hdr = (struct signature_v2_hdr *)sig;
->>   	struct ima_max_digest_data hash;
->> +	const struct public_key *pk;
->> +	struct key *key;
->>   	int rc;
->>   
->> -	rc = calc_file_id_hash(hdr->type, algo, data, &hash);
->> -	if (rc)
->> -		return -EINVAL;
->> +	if (siglen <= sizeof(*hdr))
->> +		return -EBADMSG;
->> +
->> +	key = request_asymmetric_key(keyring, be32_to_cpu(hdr->keyid));
->> +	if (IS_ERR(key))
->> +		return PTR_ERR(key);
->>   
->> -	return asymmetric_verify(keyring, sig, siglen, hash.digest,
->> -				 hash.hdr.length);
->> +	pk = asymmetric_key_public_key(key);
-> 
-> Please add a test to check that 'pk' isn't null.
-> 
->> +	if (!strncmp(pk->pkey_algo, "mldsa", 5)) {
->> +		rc = asymmetric_verify_v3_hashless(key, pk, "raw",
->> +						   sig, siglen, algo, data);
->> +	} else {
->> +		rc = calc_file_id_hash(hdr->type, algo, data, &hash);
->> +		if (rc) {
->> +			rc = -EINVAL;
->> +			goto err_exit;
->> +		}
->> +
->> +		rc = asymmetric_verify_common(key, pk, sig, siglen, hash.digest,
->> +					      hash.hdr.length);
->> +	}
->> +
->> +err_exit:
-> 
-> Normally a label named 'err*' would be preceded by a return.  Here, the label
-> "err_exit" is always called, not only when there is an error.  Please rename the
-> label to something more appropriate - out, cleanup, etc.
-
-Ok, will call it 'out'.
-
-> 
->> +	key_put(key);
->> +
->> +	return rc;
->>   }
-> 
-> thanks,
-> 
-> Mimi
-> 
+Best regards,
+--  
+Josh
 
