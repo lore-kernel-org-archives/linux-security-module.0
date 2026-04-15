@@ -1,104 +1,42 @@
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8942BDC3F
-	for <linux-security-module@vger.kernel.org>; Wed, 15 Apr 2026 13:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451452848A7;
+	Wed, 15 Apr 2026 16:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776260830; cv=none; b=eAfw0KxO6k6LPDRQ763UH7NbyX2sT76TCdkaUkb8FXV/QLzjR37lSzM6sj/S0Zctk4mcVDdmG1SIUgLY3fFgPGHYpOXs/yKqwAQcYRVepvCNDg80QljNEUQUAwRMTJjVDfuubdFgeZbQIVP+eUDtPq0YTRMPNTddHQk5VSP4Fok=
+	t=1776270924; cv=none; b=IsyXVf54GwcW5d1GBXy0pQ9GN03MmSd0o9IQ+ti1x6vOwBMiUY+14R/Evva08lJqjppxT51XoDWsSdHEGdZS+A1VlwEFHue8kBQx7RNqrJstBW626DHB/bC2osk4QNcxcTO1p1Byi5NsbrEj5Vk2yZCGYLiPrnDVZ5BG5XuBBoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776260830; c=relaxed/simple;
-	bh=DsDZiqoekDSXhnvu8Hw6B7k2oxF+RKGbcd38/Xn6Clw=;
+	s=arc-20240116; t=1776270924; c=relaxed/simple;
+	bh=y/K7Dl0aWRlGBlsg4K57mg7Hk6sFDw9z2HgCzeTpJeE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GNRA3vaAHCxf62axiHE2xDR6H9dwNqH9F+7mdd/7gyxoLWpeZOeL1BPxxfhcZtEiltSYjdBdg3vSP5f4mpZCAHWrBrvQUvBIdo3bXug2xeB/zwTmzdr2FcvA/zQE6IODrn3odBWY45o/nJJtPKjG653PN7HPwD5Y79hBFp5Obxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Kz/AXpbu; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+	 Content-Type:Content-Disposition:In-Reply-To; b=nfHUgv2TEstIZqaxodzz3TxeZR9rwPlNOtKhCZT/nkY06FrUBZZdoH/t4M9FNNOBKIONVG2Gzwj1NtSg/tO7v6wlpJ3+CL2Bs/T91gem+WHUimvjOs9aJ1bIcEv59BMcssqd9ANQazH1KQhwAu4IA3D4mUkP85MxVuvWBGK4v4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dCgyuJO2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Kz/AXpbu"
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-89f87257904so55239126d6.1
-        for <linux-security-module@vger.kernel.org>; Wed, 15 Apr 2026 06:47:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1776260827; x=1776865627; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0Eik4sapJ1qNNSpJUkcgxvBfIDMdhd6II0vk3D5WLXU=;
-        b=Kz/AXpbuMRt4fqDbjlYmADkWkpGtgIdaMI0GlK4U4Exa7onwd8o+QTIO6ljuGMsqnd
-         d6hYuLY7tbTUW0dR1TBIv3gN1IyBmJ4iuJ3JgxbMMNWoBYsZpJLHFn1QxTxuJOiSKf7P
-         pblbgr+Hjv04vq4kEbUR0kkq8iLVBaK5Kx6F2ebIxmOx7pZKcRQcYN7cJ7NSSUoN/Yh1
-         J1ZaXNhS4+KUM+BP7wpAhFA96/DPdj6cp4bmGDR0q1lZGUiL3CDEehn0u+HdSN+COSaV
-         Dcl9QmkjRclTy//NasQnKizs6KGAjHgK5gVhAq0xSHr5GfZ7PUSXHKjXpsZI9RzU57GQ
-         /K3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776260827; x=1776865627;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Eik4sapJ1qNNSpJUkcgxvBfIDMdhd6II0vk3D5WLXU=;
-        b=Fj77Z8yMgDMXi6y5bFoX6ReVX9Dl8DiAlfmfAXiohyzrpAy8gXwKatOZzKLaOti1bT
-         vJWNIFFg0A9b7dRS/rK3wehIdXabQyIx7pKIgCQ24IPUko6ovl/FzeXTq+ZKCxgFAWUG
-         xOV4hNM7LpNGbL1WCr+r5YAcKvoGErEs+SvSMjufmaKDXam7f/CXIqmVaLGZksSxciEJ
-         fvNVHYe3N1/sq5vvA9V1LBNrTWTKikokyF5F5JVuuhul385MvA1RtIkP2cf3Z2BEETNo
-         Ix6gA+N7Nx8YHKEgNZFhUXtfOedXyU4NfDGgThjo2uV5XmWyHsWHWVRI085PjjDfxGBc
-         Ofig==
-X-Forwarded-Encrypted: i=1; AFNElJ/i4j4EjD9BAyH8P1yD8KFeWlYNIlbCMI1ZDklWlktBacp+A6K+k5l6tutpXBDyXyx2e1R4JBM9ZdHqMRy0Y64hCSwUiZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywf+9V7jwa+BarvZeoNMHWFQw0iLnTAfPeuuToobSob6e30vK8B
-	MeL8N1HjH7aLXHx6WVSa5o/eFt6ftcooDjzXDB7WnIbSZCe3TQr7Bek0IYM7q+4mggE=
-X-Gm-Gg: AeBDiesJ63zNNALlgUmm0DyQBL1dxTsPqe1xCM4bjsmXGQyyUXpsTKwB2xxs7m9RELb
-	t7VnNfjxta63vIfo9kiKJfQ/nk2zEBQ+SroSncYj1nRQIOmz0zCUc2+WrZbbQb9pY4o76xAmZ4e
-	o+VRJPEcwO2m/eQQSasBffDNe3NtNuuaWRtwfALkx5GCMLbGZF3w9P6lL9tg5jIcZI6BOUStrCf
-	mcd0890oL8FUNGEEr6d8dDWlRyoEm+aMhhHNBzs9OA+SWWlsWhnzUfjFJNWwPXHV60fVq+iuX8q
-	ObVsVsiuYFgf0OxEvycJRpb80DQnvBTAXIjOUZH4BuAIN1/GWfDsWdiMXadmHFagbyfw3e+kLxK
-	RhpBrFIOSLQW41x1+8P49fJhreiypgN3ANbrxSe++8+ElkmFUzg3KTA4/G8v57hugjoPJ7nFiZl
-	il/HnPOHHaAOcMOJXpedNHkeu4cgk2wp+F4uMG9I6KpscIKl1y2KrO+dhYYirDeeecjPvzvPi4W
-	gzCHQ==
-X-Received: by 2002:a05:6214:449e:b0:8ac:7f70:4441 with SMTP id 6a1803df08f44-8ac862b51ccmr345394526d6.48.1776260827109;
-        Wed, 15 Apr 2026 06:47:07 -0700 (PDT)
-Received: from ziepe.ca (crbknf0213w-47-54-130-67.pppoe-dynamic.high-speed.nl.bellaliant.net. [47.54.130.67])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ae6ceb891csm11733136d6.48.2026.04.15.06.47.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Apr 2026 06:47:06 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1wD0a9-00000000FYO-1ssS;
-	Wed, 15 Apr 2026 10:47:05 -0300
-Date: Wed, 15 Apr 2026 10:47:05 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dCgyuJO2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49E7BC19424;
+	Wed, 15 Apr 2026 16:35:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1776270923;
+	bh=y/K7Dl0aWRlGBlsg4K57mg7Hk6sFDw9z2HgCzeTpJeE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dCgyuJO2L68O6bEy2/p4nJeXBp2GrpTb/+eZVVF9+MpH29CON2auXZXIuXLHCdZB4
+	 Ls8Cu8EAJmA6Ah1mEQJKVYaX9sBUV3J6RfYHmj6Vd+S81QSF90/yVMz020w4hL/tkI
+	 lp/FL41oopJIJGOIM3w6zoSjoDxFqvsbI0jNjH1kIPJ8Vq7PsSBBtORrOipUR3IjV/
+	 KZTjB9liM9hKiHSEEQQZEHVw6FhEKR2lWlpkgDdy/r2WX5k5cp8L5QWZLBsteC6qnR
+	 tmfPWSFUuCbqay1od7/SiBhGts2sZME50ExVaZYHhJTfGvOGal/jXGEu7URi2e3KIK
+	 7nri1p54oqBFQ==
+Date: Wed, 15 Apr 2026 19:35:19 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
 To: Paul Moore <paul@paul-moore.com>
-Cc: Leon Romanovsky <leon@kernel.org>,
-	Roberto Sassu <roberto.sassu@huaweicloud.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Itay Avraham <itayavr@nvidia.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>,
-	Maher Sanalla <msanalla@nvidia.com>,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] Firmware LSM hook
-Message-ID: <20260415134705.GG2577880@ziepe.ca>
-References: <20260409121230.GA720371@unreal>
- <2dd138a2ae87f90c55dbc3178d9c798294fd4450.camel@huaweicloud.com>
- <20260409124553.GB720371@unreal>
- <CAHC9VhT1X4HX4bGrK=mEzu=g=mZ-Wg-LDXVgZVe-e6oM+W9aHg@mail.gmail.com>
- <20260412090006.GA21470@unreal>
- <CAHC9VhRnYXjg+vE9a8PeykbXk91is12zYLaO7EFdfZPKMxDfPA@mail.gmail.com>
- <20260413164220.GP3694781@ziepe.ca>
- <CAHC9VhR1Uke9P==CELKavBcogHoNCtMZFfNWUbgm5HYUfomhtw@mail.gmail.com>
- <20260413231920.GS3694781@ziepe.ca>
- <CAHC9VhTLamfe4C81ZNRVT=H32x+KLxSqH3o0eBfrHsWAgAqxCA@mail.gmail.com>
+Cc: David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	syzbot <syzbot+liste5004e02dae137bbd339@syzkaller.appspotmail.com>
+Subject: Re: [syzbot] Monthly lsm report (Apr 2026)
+Message-ID: <ad--R8KaGgucLxmH@kernel.org>
+References: <69dde155.050a0220.3030df.004d.GAE@google.com>
+ <CAHC9VhS2AaRwAQw1hNcpuGdFSOL7Li9PavKtU7eW-w8eMOFuKA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -108,206 +46,35 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhTLamfe4C81ZNRVT=H32x+KLxSqH3o0eBfrHsWAgAqxCA@mail.gmail.com>
+In-Reply-To: <CAHC9VhS2AaRwAQw1hNcpuGdFSOL7Li9PavKtU7eW-w8eMOFuKA@mail.gmail.com>
 
-On Tue, Apr 14, 2026 at 04:27:58PM -0400, Paul Moore wrote:
-> On Mon, Apr 13, 2026 at 7:19 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > On Mon, Apr 13, 2026 at 06:36:06PM -0400, Paul Moore wrote:
-> > > On Mon, Apr 13, 2026 at 12:42 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > > > On Sun, Apr 12, 2026 at 09:38:35PM -0400, Paul Moore wrote:
-> > > > > > We are not limited to LSM solution, the goal is to intercept commands
-> > > > > > which are submitted to the FW and "security" bucket sounded right to us.
-> > > > >
-> > > > > Yes, it does sound "security relevant", but without a well defined
-> > > > > interface/format it is going to be difficult to write a generic LSM to
-> > > > > have any level of granularity beyond a basic "load firmware"
-> > > > > permission.
-> > > >
-> > > > I think to step back a bit, what this is trying to achieve is very
-> > > > similar to the iptables fwmark/secmark scheme.
-> > >
-> > > Points for thinking outside the box a bit, but from what I've seen
-> > > thus far, it differs from secmark in a few important areas.  The
-> > > secmark concept relies on the admin to configure the network stack to
-> > > apply secmark labels to network traffic as it flows through the
-> > > system, the LSM then applies security policy to these packets based on
-> > > their label.  The firmware LSM hooks, at least as I currently
-> > > understand them, rely on the LSM hook callback to parse the firmware
-> > > op/request and apply a security policy to the request.
+On Tue, Apr 14, 2026 at 10:02:13AM -0400, Paul Moore wrote:
+> On Tue, Apr 14, 2026 at 2:48 AM syzbot
+> <syzbot+liste5004e02dae137bbd339@syzkaller.appspotmail.com> wrote:
 > >
-> > That was what was proposed because the idea was to combine the
-> > parse/clasification/decision steps into one eBPF program, but I think
-> > it can be split up too.
+> > Hello lsm maintainers/developers,
 > >
-> > > We've already talked about the first issue, parsing the request, and
-> > > my suggestion was to make the LSM hook call from within the firmware
-> > > (the firmware must have some way to call into the kernel/driver code,
-> > > no?)
+> > This is a 31-day syzbot report for the lsm subsystem.
+> > All related reports/information can be found at:
+> > https://syzkaller.appspot.com/upstream/s/lsm
 > >
-> > No, that's not workable on so many levels. It is sort of anaologous to
-> > asking the NIC to call the LSM to apply the secmark while sending the
-> > packet.
+> > During the period, 0 new issues were detected and 0 were fixed.
+> > In total, 3 issues are still open and 45 have already been fixed.
+> >
+> > Some of the still happening issues:
+> >
+> > Ref Crashes Repro Title
+> > <1> 95      Yes   INFO: task hung in process_measurement (3)
+> >                   https://syzkaller.appspot.com/bug?extid=cb9e66807bcb882cd0c5
+> > <2> 68      Yes   possible deadlock in keyring_clear (3)
+> >                   https://syzkaller.appspot.com/bug?extid=f55b043dacf43776b50c
 > 
-> From the LSM's perspective it really doesn't matter who calls the LSM
-> hook as long as the caller can be trusted to handle the access control
-> verdict properly.
-
-The NIC doesn't know anything more than the kernel to call the LSM
-hook. It can't magically generate the label the admin wants to use any
-better than the kernel can.
-
-Just like you could never get everyone to agree on a fixed set of
-labels for network packets we could never get agreemnt on a fixed set
-of labels for command packets either.
-
-> > > so that only the firmware would need to parse the request.  If we
-> > > wanted to adopt a secmark-esque approach, one could develop a second
-> > > parsing mechanism that would be responsible for assigning a LSM label
-> > > to the request, and then pass the firmware request to the LSM, but I
-> > > do worry a bit about the added complexity associated with keeping the
-> > > parser sync'd with the driver/fw.
-> >
-> > In practice it would be like iptables, the parser would be entirely
-> > programmed by userspace and there is nothing to keep in sync.
+> Jarkko, David,
 > 
-> You've mentioned a few times now that the firmware/request will vary
-> across not only devices, but firmware revisions too, 
+> Do we have a fix for the keyring_clear() issue, or is it not a real problem?
 
-I never said firmware revisions, part of the requirement is strong ABI
-compatability in these packets. 
+I'm actually doing something to this already: trying to write a
+simplified reproducer. But yeah most likely still will take up until
+some point next week.
 
-> this implies there will need to be some effort to keep whatever
-> parser you develop (BPF, userspace config, etc.) in sync with the
-> parser built into the firmware.  Or am I misunderstanding something?
-
-I would not use the word "sync". It is very similar to deep packet
-inspection, if you want to look inside, say, RPC messages carried
-within HTTP then you have to keep up to date. How onerous that is
-depends on what the admin's labeling goals are.
-
-> > > However, even if we solve the parsing problem, I worry we have
-> > > another, closely related issue, of having to categorize all of the
-> > > past, present, and future firmware requests into a set of LSM specific
-> > > actions.
-> >
-> > Why? secmark doesn't have this issue? The classifer would return the
-> > same kind of information as secmark, some user provided label that is
-> > delivered to the LSM policy side.
-> 
-> I think there is a misunderstanding in either how secmark works or how
-> the LSMs use secmark labels when enforcing their security policy.
-> 
-> The secmark label is set on a packet to represent the network
-> properties of a packet.  While the rules governing how a packet's
-> secmark is set and the semantic meaning of that secmark label is going
-> to be LSM and solution specific,
-
-"network properties" are a bit vauge. I can use iptables to inspect
-the packet quite completely. It has protocol modules that can do very
-detailed inspection. I can use general things like -m string to apply
-a secmark to packets containing specific data for example.
-
-From my perspective iptables runs a complicated scheme to evaluate the
-full content of the packet and on match applies a secmark.
-
-You can already create a hacky labeling scheme that would tell the
-difference between HTTP PUT and HTT GET sessions for example.
-
-At this point it is not just "network properties" but you are
-inspecting a RPC and evaluating what operation a remote CPU will
-perform.
-
-Even just simple port inspection in most cases is often classifiying
-RPCs on the network "Any HTTP RPC" "Any DNS RPC", etc.
-
-> secmark labels represent the properties of a packet and not the
-> operation, e.g.  send/receive/forward/etc., being requested at a
-> given access control point.
-
-Yes, still aligned.
-
-> The access control point itself represents the requested
-> operation.  This is possible because the number of networking
-> operations on a given packet is well defined and fairly limited; at a
-> high level the packet is either being sent from the node, received by
-> the node, or is passing through the node.
-
-I think we have the same split, fwctl send/recive analog is also very
-limited.
-
-> As I understand the firmware controls being proposed here, encoded
-> within the firmware request blob is the operation being requested.
-
-I am not proposing that kind of interpretation, I want to stay in the
-secmark model.
-
-When the packet blob is sent into the kernel at the uAPI boundary
-(send_msg, send, write, FWCTL_CMD_RPC, etc) that is your access
-control point.
-
-Deep inspection on the packet blob determines the secmark.
-
-LSM takes the secmark and determines if the access control point
-accept/rejects.
-
-In both cases deep inspection will allow the admin to create labels
-detailed to the RPC that is described in the packet. Eg
-labels like "HTTP GET", "HTTP PUT", "FWCTL CREATE OBJ X", etc.
-
-In both cases these are packets containing RPC messages some remote
-CPU will excute.
-
-> While we've discussed possible solutions on how to parse the request
-> blob to determine the operation, we haven't really discussed how to
-> represent the requested operation to the LSMs.  
-
-I don't understand this? The secmark example I pulled up is this:
-
-iptables -t mangle -A INPUT -p tcp --dport 80 -j SECMARK --selctx system_u:object_r:httpd_packet_t:s0
-
-The "represent the requested operation" is the string 
-"system_u:object_r:httpd_packet_t:s0", which is entirely admin
-defined, right?
-
-The analog here is some
-
-'fwctl iptables' -match 'byte[10]=0x20' -selctx system_u:object_r:fwctl_mlx5_create_pd_t:s0
-
-Again, all admin defined?
-
-> I'm assuming there isn't a well defined set of operations, and like
-> the request format itself, the set of valid operations will vary
-> from device and firmware revision.  I hope you can understand both
-> how this differs from secmark and that it is a challenge that really
-> hasn't been addressed in the proposals we've discussed.
-
-I still don't see the difference from iptables. IPSEC, SIP, DNS, HTTP,
-etc are all protocols with the same lack of any commonality.
-
-> At a very high level the access control decision for firmware/device
-> requests depends on whether the LSM wants to allow process A to do B
-> to device C.  The identity/credentials associated with process A are
-> easy to understand, we have plenty of examples both inside and outside
-> of the LSM on how to do that.  The device identity/attributes
-> associated with device C can be a bit trickier, but once again we have
-> plenty of examples to draw from, and we can even fall back to a
-> generic "kernel" id/attribute if the LSM chooses not to distinguish
-> entities below the userspace/kernel boundary. 
-
-I think I would feed that into the classifier as well. Like iptables
-can have a netdev argument to only match against specific devices, we
-can have the same logical thing.
-
-> I think the hardest issue with the firmware request hooks is going
-> to be determining what operation is being requested, the "B",
-> portion of access request tuple.  If we can create a well defined
-> set of operations and leave it to the parser to characterize the
-> operation we've potentially got a solution, but if the operation is
-> truly going to be arbitrary then we have a real problem.  How do you
-> craft a meaningful access control policy when you don't understand
-> what is being requested?
-
-Same as for networking. Admin understands, admin defines, kernel is
-just a programmable classifier.
-
-Jason
+BR, Jarkko
