@@ -1,116 +1,78 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CF831F981
-	for <linux-security-module@vger.kernel.org>; Thu, 16 Apr 2026 21:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B65374E59
+	for <linux-security-module@vger.kernel.org>; Thu, 16 Apr 2026 21:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776373443; cv=none; b=JVkYO8wmx+Lxd5hFA15GY4yvEvU2HZkFXBSayCY9ikqsf01wfa53bDs28DwXsEQGehYVepOX4IgsS8qbHZFiw3IrvdSq4sLLL+VsGZfq5HEA4FxWRdrlC2gtLshCvj6cC45+D+KsIjOVD+6GUJkEtzvrRCgRjsmilK8vNcUoHFI=
+	t=1776373943; cv=none; b=pI46xafQnQJlXJA470xFYELwmd9wSrwyWCVUQfNuAPi6To/+nbr956v2kuvkU+cYU+t2Si/GY8eezh1UTmi61h0OtqWFdSrEGXkc8X9i8hpvTW7aBPMfZD/7OYjYjMGUyLQld1MzflKEA03yLlA/iobXcBiAgzWZViVi09dChZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776373443; c=relaxed/simple;
-	bh=HV7jGFdLhzAZHOmvudPnyfEXv5F47QiRBZi1CMuDfc0=;
+	s=arc-20240116; t=1776373943; c=relaxed/simple;
+	bh=IrYmcZF9hxAXNqt9zfpOlti0Oz+SLkvIJYPq35Swg/w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tyoFxRySuTNJqwvXzpWvBM88EGaWKx7fDI5aPPaM/X/w6xvLRwK1mrxQ9b8QprxcJ8oUMlomaPClY0nl96H9ZeFhwhr1YqzLSADocdrw4IYzkle6HYg2zE77T5siYrB7Y5IlomOvK6ogrhToLv6InC9fs/Ncuez4kKSyTWiwfXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fjo+1mGD; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=oPoiSK6DO0/gaa3aTA0xalZ6Y0ppKLOmj777GrUOFSQ3ql5LTx55T7tCSUX0roFbWFDnK9Ov+p3Tqh5GAYoNy48lNmPmhx9lQ8wEqgmjPWxpRpORLPkvhhQKDfarxD2Ocy2UJj7fWIXdc9kZlzV5B3zTmvJrUXTQtxUqqGjy63Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sAwCrrpy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fjo+1mGD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47FD4C2BCAF
-	for <linux-security-module@vger.kernel.org>; Thu, 16 Apr 2026 21:04:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sAwCrrpy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83AA2C2BCC6
+	for <linux-security-module@vger.kernel.org>; Thu, 16 Apr 2026 21:12:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776373443;
-	bh=HV7jGFdLhzAZHOmvudPnyfEXv5F47QiRBZi1CMuDfc0=;
+	s=k20201202; t=1776373943;
+	bh=IrYmcZF9hxAXNqt9zfpOlti0Oz+SLkvIJYPq35Swg/w=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fjo+1mGDvQ7wn6KV99duUBZLaL2KzoC4IMHeObTHtknQrusLqaYl/c/oHYUIgnP1t
-	 SsiScWiySwQ6DSMcQFlsF/rzQV8eDkonZftgzIdL7MeFaY38M3+2iJHQ0MRFxBYxNh
-	 E9FYwzpl2Ty6VDiRLvWohyGhD96sG6zT2SnTfBffQs9ZLbDI4K4WeQnZmSBYsB4OyF
-	 1Oyjf04cXE+01GFW0603IkbnFkUiTMcSMJxCBbwjsIAlQgIBgHoA9/Mx6TWr3fg+oy
-	 F8taDIotykU9no3T+aw8IqY9WrwE5JFXQyxWT3ZB8T2ZCqT77VGGyKkthDxhuECvCp
-	 WvE5SFH5oj7hg==
-Received: by mail-dl1-f52.google.com with SMTP id a92af1059eb24-1274204434bso827090c88.1
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Apr 2026 14:04:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/IO9p0+celGX6Z5oWNSMrD+xSYwubhUpe7N51SgsYXcgTJokc4LaPOz2c6gAOkGB4w/8x8TbbdFtUyc/hPJ6B/keTF2tY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWQBKr0pnnq8UyTB3l4+qM5xNXHRMfSYtbKcEhvc1RA/y4NaXp
-	LB2NxD/WvuOxw4CgVAAfpPYLzxQryP32NUF3huZNNMfv3jSZgDwcZhgQGAeR20OltxchpUZXoDi
-	MmkdwQmBMxC223TKF25GL0JYnVMfYWoA=
-X-Received: by 2002:a05:7022:6990:b0:12c:41ec:8303 with SMTP id
- a92af1059eb24-12c73b042cdmr28854c88.9.1776373442262; Thu, 16 Apr 2026
- 14:04:02 -0700 (PDT)
+	b=sAwCrrpyjCeuDIwYlOGb+qhfSW8IAuUv1b2XSTzcACcQFSqbD5WndiLXGFLDqUtb6
+	 1gLb0QMTTFdTbDJum4HUw+nZFDlDT0boBGY+n50w2HiqeWMKukR4W7yZN1Ba/3Ive0
+	 l4w+UZLV6FtegytSbRqGK/9UxUDvJJTPhIQUAmUTUQSOwCX2xNZwbISkvX+onWElR0
+	 Wy53pjyrIN965xKkiEgLFVIVQvOURzuMIxn40bn2NSWA4fq4LjoA1eoWzXd7YIeGZl
+	 47AG412prmljKPORIJvl+HvA8UxP+La8pXeT1mGIcnHd3njllNsBC5hGHKO5PlPXGw
+	 QA9i/zptvhU1Q==
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-8cfc2d1fdbfso639233385a.3
+        for <linux-security-module@vger.kernel.org>; Thu, 16 Apr 2026 14:12:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9/S8WNfI3jP5DxyfOOwQB9TN2EGsa6yBJStWp9u/90nsxNJX2QO6hWcvUXS6B65otsUHBqKqvfh4YVmpw+osljdUoy7FE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFJ3WVbjVAQk8E5inZk+yPudSKDi3/nMbx6/nGkohszrZYfWpl
+	P92wQieWwW5UyVJfEI95epXEUiCy+RoYv0+BkvTpJtWi4KA1SOiUuTI0G3WG2katSsF2r9Tuf+J
+	aQXK5lct9I3i/KHIxME96vuf8dEEW0kE=
+X-Received: by 2002:a05:622a:a09:b0:50b:893f:7d93 with SMTP id
+ d75a77b69052e-50e367feadbmr901151cf.2.1776373942596; Thu, 16 Apr 2026
+ 14:12:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260416173500.176716-1-bboscaccy@linux.microsoft.com> <20260416173500.176716-11-bboscaccy@linux.microsoft.com>
-In-Reply-To: <20260416173500.176716-11-bboscaccy@linux.microsoft.com>
-From: Fan Wu <wufan@kernel.org>
-Date: Thu, 16 Apr 2026 14:03:50 -0700
-X-Gmail-Original-Message-ID: <CAKtyLkGbcD940c2OG2RpShEo7WnXj5OPt0qik9x=fEfp3GMVXw@mail.gmail.com>
-X-Gm-Features: AQROBzBd3MFbWFa56VUxGXd30U0dprFH8If1gqEB7uKOZwigi_RUa5OVut8j4RQ
-Message-ID: <CAKtyLkGbcD940c2OG2RpShEo7WnXj5OPt0qik9x=fEfp3GMVXw@mail.gmail.com>
-Subject: Re: [PATCH v4 10/10] ipe: Add BPF program load policy enforcement via
- Hornet integration
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	James.Bottomley@hansenpartnership.com, dhowells@redhat.com, 
-	Fan Wu <wufan@kernel.org>, Ryan Foster <foster.ryan.r@gmail.com>, 
-	Randy Dunlap <rdunlap@infradead.org>, linux-security-module@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	Song Liu <song@kernel.org>
+References: <20260407200157.3874806-1-utilityemal77@gmail.com> <20260407200157.3874806-9-utilityemal77@gmail.com>
+In-Reply-To: <20260407200157.3874806-9-utilityemal77@gmail.com>
+From: Song Liu <song@kernel.org>
+Date: Thu, 16 Apr 2026 14:12:11 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW7zzXXd6-d86B-rpGr-wfSzmEoCYNKhTMP_pXnybtA27A@mail.gmail.com>
+X-Gm-Features: AQROBzDk-eOQnc3KIcDHr-rTAWlI-wv9602XvRcYDgzfGDKiclbye-SKGL6YBWU
+Message-ID: <CAPhsuW7zzXXd6-d86B-rpGr-wfSzmEoCYNKhTMP_pXnybtA27A@mail.gmail.com>
+Subject: Re: [RFC PATCH 08/20] bpf: Add Landlock ruleset map type
+To: Justin Suess <utilityemal77@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	kpsingh@kernel.org, paul@paul-moore.com, mic@digikod.net, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, kees@kernel.org, 
+	gnoack@google.com, jack@suse.cz, jmorris@namei.org, serge@hallyn.com, 
+	yonghong.song@linux.dev, martin.lau@linux.dev, m@maowtm.org, 
+	eddyz87@gmail.com, john.fastabend@gmail.com, sdf@fomichev.me, 
+	skhan@linuxfoundation.org, bpf@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 16, 2026 at 10:35=E2=80=AFAM Blaise Boscaccy
-<bboscaccy@linux.microsoft.com> wrote:
+On Tue, Apr 7, 2026 at 1:02=E2=80=AFPM Justin Suess <utilityemal77@gmail.co=
+m> wrote:
 >
-> Add support for the bpf_prog_load_post_integrity LSM hook, enabling IPE
-> to make policy decisions about BPF program loading based on integrity
-> verdicts provided by the Hornet LSM.
+> Expose the new BPF_MAP_TYPE_LANDLOCK_RULESET via headers, allowing
+> programs to utilize the map.
 >
-> New policy operation:
->   op=3DBPF_PROG_LOAD - Matches BPF program load events
->
-> New policy properties:
->   bpf_signature=3DNONE      - No Verdict
->   bpf_signature=3DOK        - Program signature and map hashes verified
->   bpf_signature=3DUNSIGNED  - No signature provided
->   bpf_signature=3DPARTIALSIG - Signature OK but no map hash data
->   bpf_signature=3DUNKNOWNKEY - Cert not trusted
->   bpf_signature=3DUNEXPECTED - An unexpected hash value was encountered
->   bpf_signature=3DFAULT      - System error during verification
->   bpf_signature=3DBADSIG    - Signature or map hash verification failed
->   bpf_keyring=3DBUILTIN     - Program was signed using a builtin keyring
->   bpf_keyring=3DSECONDARY   - Program was signed using the secondary keyr=
-ing
->   bpf_keyring=3DPLATFORM    - Program was signed using the platform keyri=
-ng
->   bpf_kernel=3DTRUE         - Program originated from kernelspace
->   bpf_kernel=3DFALSE        - Program originated from userspace
->
-> These properties map directly to the lsm_integrity_verdict enum values
-> provided by the Hornet LSM through security_bpf_prog_load_post_integrity.
->
-> The feature is gated on CONFIG_IPE_PROP_BPF_SIGNATURE which depends on
-> CONFIG_SECURITY_HORNET.
->
-> Example policy for bpf signature enforcement:
->  DEFAULT op=3DBPF_PROG_LOAD action=3DDENY
->  op=3DBPF_PROG_LOAD is_kernel=3DTRUE action=3DALLOW
->  op=3DBPF_PROG_LOAD bpf_signature=3DOK action=3DALLOW
->
-> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+> Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 
-Hi Blaise,
+I don't think we can introduce a new map type for this. Instead, we should =
+use
+existing map with __kptr values.
 
-I have not finished reviewing the code yet, so I do not have
-implementation comments at this point.
-
-Since this code introduces new policy semantics, it would be helpful
-to also reflect that in the IPE documentation, and perhaps include a
-link to the Hornet documentation for context.
-
--Fan
+Thanks,
+Song
