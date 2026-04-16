@@ -1,68 +1,65 @@
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C503022A80D;
-	Thu, 16 Apr 2026 15:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1940E1E9B3A;
+	Thu, 16 Apr 2026 15:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776354124; cv=none; b=ZfNUSVQaj/kMmxyFsVO/vyb8SC28zF1BvCjSYZCTU9s2bELUagTWx0W1rWqr8XiXrsqjSurNyWt9BcDc0zTUohwScsgcLt/AMCXgEt1lUVH1d0VWIZWh5Wb2qO2zqYIK9cIa2G365KVClY+77//VOI2wjGLzjCWFOo7KWX7yDSU=
+	t=1776354357; cv=none; b=pR3DZqtDDsduynzhGeokPR85ltl1o9IYpTVEzJPspORY/a58pq3jTS5lWNMDJ8XnYueslcAPCNy4eUVXWjK7aOJA0z2eF7bvD4l199cHWb7Fkaud5kbFjDofrNJ0Ed/T4929iAnq1UgUomaqVKVtySLtam2HbHJ/+CmvRY2Wv/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776354124; c=relaxed/simple;
-	bh=Rgf8Y0sL+2EzuyaQuiNdJwtnN/IKPsFTL9EbJ/ggnPA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Epw1LzmRUDxKDPOn/JGaa6/MZXJ5tEKaLyJ0pkd/He65elu+0EHsSYrlz4X2A45CUonf8zQKHpBxQ9YBnE2V/3bcO98rIj9XnCCmt6L0p5/y/b++rfK6ObJz9A/5slI+4NwDIUubMAd+1hNbXoSxqV8xs4V1vg6BqOuLQo+BWK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ewrprYnw; arc=none smtp.client-ip=148.163.156.1
+	s=arc-20240116; t=1776354357; c=relaxed/simple;
+	bh=+UPMKRQGt2oiKqYwpxIjDTS39Px41gwCkqKJkh8yXc8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IQ16ame+J01Zehg8nv3qSGuqVPBRFL/P5xv3wIQHKBLZdcciS/eDPsVCFbxVMHS+wZnbdo8PkmDnBJABzysb2NWiQ11TXdMVFdOdDq0pi5+FbMXGwzMdvJgMKrf3tVSJ0EKSCGCG5HWjmQXyeQfBH2gzYQdn+/2Z0KvGx7TFZas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hUqScc5m; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ewrprYnw"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hUqScc5m"
 Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63G9rHL41833140;
-	Thu, 16 Apr 2026 15:40:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=TE5km50Vc83kAjEgo
-	Qf5mL5coAwifb5RbTpDZdm3SA8=; b=ewrprYnwhRkmiGWX35dcuwTqQRz3DyJHM
-	5i+Wky3S9+tlz6z+gwPVLq2W/93YBCIGE+iidyUAwfep50c89tkAfirOnH7S3kR4
-	264HmN7YVdNcdK1xHnvjfprUnDYAkawqjnVbtoHaHdgb4E8VUy+Jgjs6NJzlIQ9Z
-	zofsm1p3gVbFlWYeiiw/JeK0rrQWFJXdTKkXHlsl5f58YEXa44bvI4raEaFouScw
-	ZupTfUBQ/h3W1mo3UDvQtWqRW2DppBWNFI+xFHinEtyaibTBAx7/vMfjGeG2oMo6
-	iOoySBLzrO/n6ahkjlm2Qwr3O3MMO1rIyaCpvRI98wRCVKweWG1+Q==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4dh89rp8xa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Apr 2026 15:40:50 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 63GBuMwZ003594;
-	Thu, 16 Apr 2026 15:40:49 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4dg1mnkfs6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Apr 2026 15:40:49 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 63GFel1H65405274
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63G85Tm81833338;
 	Thu, 16 Apr 2026 15:40:47 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4841B5804E;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=HsIV1xEB9fQ/JWCdHfzfG4/zGhRNUgvR6kV9Gf3VR
+	vE=; b=hUqScc5mu/cQUVCJ3YaJP38+AwIZ+3+oIQLbd8ZX3ZflA+HpDrtsSSOAi
+	IVzFEIcMWh0HrwC6z6BhSv60LWOsFchkEjvAQ1j0ezb8BXVpud/fMygrLN9Qqnk3
+	Tq6QVrY8Pek+Vw2QzrAwvkV3aza+LLgx5bcmUMaTIOpqq2psz6ruRtJZ5AA2zQ5X
+	NuFTX3qCRQym1vD8FqEGmida11XqzM3mzqsLd96ypRpMhij4OYLWPu4G8DbEQWpt
+	h12vDlXstvuMPSEkjD5Z271wsncikMFAPQNDQD66CHfGCEU/5AiBz0G5BlPb8bOp
+	O4g51st+P1UVNtpyNGuZdlNW/rJ7g==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4dh89rp8x2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Thu, 16 Apr 2026 15:40:47 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 63GBuMwY003594;
+	Thu, 16 Apr 2026 15:40:46 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4dg1mnkfs3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 16 Apr 2026 15:40:46 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 63GFei9Z29229678
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 16 Apr 2026 15:40:44 GMT
 Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9491B5803F;
-	Thu, 16 Apr 2026 15:40:46 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id AF91A58060;
+	Thu, 16 Apr 2026 15:40:44 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F282E58054;
+	Thu, 16 Apr 2026 15:40:43 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
 	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 16 Apr 2026 15:40:46 +0000 (GMT)
+	Thu, 16 Apr 2026 15:40:43 +0000 (GMT)
 From: Stefan Berger <stefanb@linux.ibm.com>
 To: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
         roberto.sassu@huawei.com, ebiggers@kernel.org,
         Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v3 3/4] integrity: Refactor asymmetric_verify for reusability
-Date: Thu, 16 Apr 2026 11:40:38 -0400
-Message-ID: <20260416154039.1648083-4-stefanb@linux.ibm.com>
+Subject: [PATCH v3 0/4] Add support for ML-DSA signature for EVM and IMA
+Date: Thu, 16 Apr 2026 11:40:35 -0400
+Message-ID: <20260416154039.1648083-1-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260416154039.1648083-1-stefanb@linux.ibm.com>
-References: <20260416154039.1648083-1-stefanb@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -71,20 +68,21 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDE2MDE0NiBTYWx0ZWRfX6RhnbVqPmk0V
- kyGE4dgfAls/LXhkin60u718t8RSjL2xzniEscc69YTyJYc2odkdHWIGI8Bzr7XkuU93nUDdQYg
- +q6Qepldc/nE6vj2Xfhxz2P+77/FkHNDQ8WdaU2pvCpJWuCXPrAylXjX2SP+pUab/PDWwoaEs8B
- Xnii7etAB/E19gVY3xFJAeeV12Ptr1gahOPWLxAhI3ROJKmMWwZQdNbt0Kd6/N1Gm3/AkeGYm/t
- Kj91KqNEuHIDs6AnEesvseYBJ6ouI0YbCcvG218MhmZ1NcVqDqqB3I1OH56TA49XKx0gMy1snSJ
- lTMCPsAES6y46KGK/FUegoWKKH0EyRWyXricoliWiSddn8Gvn7WNF1lmRqak1W1wUFE84R/3Ec/
- R+ZomPJ81zOTZAvxHQWnLpXhAHeEgHoRcfOUuoiNcXTEOs1BVxo6miCwmd99nVML7WxnDYlg1XE
- iIl9aUzqcaGpTlSMMnw==
-X-Proofpoint-ORIG-GUID: k01mjgMGWmLyHlIbLFvyKNCNzwqldau5
-X-Proofpoint-GUID: k01mjgMGWmLyHlIbLFvyKNCNzwqldau5
-X-Authority-Analysis: v=2.4 cv=fYidDUQF c=1 sm=1 tr=0 ts=69e10302 cx=c_pps
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDE2MDE0NiBTYWx0ZWRfXx8wg7EBImvad
+ aJRV7VFzdzZuJzvo0wjL+0N0pNob+gGbXg+CCEYsuj83sBTFUl9XK09ERmvPALNcTJ/LHzBT3fC
+ DAv9TY+MhpPsy2YFx9U0+35oD6SQxOOkMz7As1AR2gOk9RlSHQRmXINnud67NtxRuSqQqZvHU2P
+ 5nNbVS1Zjz7+Rq5aMcELqE5bBDCW6MJg8sTbnAvH8N9RmUrzQKmE5IafNycIaZKy41ffItrg6Gz
+ Z0ilNxVcLThLB3QtCjIjuUGeYxh6tPHAxMMdC+bwxbGSsJWLlyZOmjBA/NbljsCqZkKpNtYOCpm
+ WEP7wYEZ7fSCH0ErNllSUuqXqxSlzRxeyE8WoW23c3EMf34HYSX5RkjTolpOrWOge2HN6UwbZnr
+ aVidFBwBS4yvv4/ayd7/Snk0V1sW2N7BSWZqDD8i4GNdptXCTVT6rSnjF8uOCmNtslWuYpIAv5F
+ UzcYwDFoNGZC7fGgNQw==
+X-Proofpoint-ORIG-GUID: jWv8dB5JhOAR2GWJ9nGvjsUaEjb-qaoJ
+X-Proofpoint-GUID: jWv8dB5JhOAR2GWJ9nGvjsUaEjb-qaoJ
+X-Authority-Analysis: v=2.4 cv=fYidDUQF c=1 sm=1 tr=0 ts=69e102ff cx=c_pps
  a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
  a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
- a=U7nrCbtTmkRpXpFmAIza:22 a=VnNF1IyMAAAA:8 a=0zGWYjSCjxdcbThUK0gA:9
+ a=U7nrCbtTmkRpXpFmAIza:22 a=TEWfzw_xA5YbLXciGhYA:9 a=ZXulRonScM0A:10
+ a=zZCYzV9kfG8A:10
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-04-16_03,2026-04-16_03,2025-10-01_01
@@ -94,121 +92,30 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2604070000 definitions=main-2604160146
 
-Refactor asymmetric_verify for reusability. Have it call
-asymmetric_verify_common with the signature verification key and the
-public_key structure as parameters. sigv3 support for ML-DSA will need to
-check the public key type first to decide how to do the signature
-verification and therefore will have these parameters available for
-calling asymmetric_verify_common.
+Based on IMA sigv3 type of signatures, add support for ML-DSA signature
+for EVM and IMA. Use the existing ML-DSA hashless signing mode (pure mode).
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+   Stefan
 
----
- v3:
-   - added kernel-doc
-   - NULL pointer check on asymmetric_key_public_key return value
----
- security/integrity/digsig_asymmetric.c | 62 ++++++++++++++++++--------
- 1 file changed, 43 insertions(+), 19 deletions(-)
+v3:
+  - new patches 1/4 and 2/4
+  - addressed Mimi's comments on v2
 
-diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
-index ed171a627d18..a4eb73bba6d2 100644
---- a/security/integrity/digsig_asymmetric.c
-+++ b/security/integrity/digsig_asymmetric.c
-@@ -79,18 +79,25 @@ static struct key *request_asymmetric_key(struct key *keyring, uint32_t keyid)
- 	return key;
- }
- 
--int asymmetric_verify(struct key *keyring, const char *sig,
--		      int siglen, const char *data, int datalen)
-+/**
-+ * asymmetric_verify_common -- sigv2 and sigv3 common verify function
-+ * @key: The key to use for signature verification; caller must free it
-+ * @pk: The associated public key; must not be NULL
-+ * @sig: The xattr signature
-+ * @siglen: The length of the xattr signature; must be at least
-+ *          sizeof(struct signature_v2_hdr)
-+ * @data: The data to verify the signature on
-+ * @datalen: Length of @data
-+ */
-+static int asymmetric_verify_common(const struct key *key,
-+				    const struct public_key *pk,
-+				    const char *sig, int siglen,
-+				    const char *data, int datalen)
- {
--	struct public_key_signature pks;
- 	struct signature_v2_hdr *hdr = (struct signature_v2_hdr *)sig;
--	const struct public_key *pk;
--	struct key *key;
-+	struct public_key_signature pks;
- 	int ret;
- 
--	if (siglen <= sizeof(*hdr))
--		return -EBADMSG;
--
- 	siglen -= sizeof(*hdr);
- 
- 	if (siglen != be16_to_cpu(hdr->sig_size))
-@@ -99,19 +106,9 @@ int asymmetric_verify(struct key *keyring, const char *sig,
- 	if (hdr->hash_algo >= HASH_ALGO__LAST)
- 		return -ENOPKG;
- 
--	key = request_asymmetric_key(keyring, be32_to_cpu(hdr->keyid));
--	if (IS_ERR(key))
--		return PTR_ERR(key);
--
- 	memset(&pks, 0, sizeof(pks));
- 
- 	pks.hash_algo = hash_algo_name[hdr->hash_algo];
--
--	pk = asymmetric_key_public_key(key);
--	if (!pk) {
--		ret = -ENOKEY;
--		goto out;
--	}
- 	pks.pkey_algo = pk->pkey_algo;
- 	if (!strcmp(pk->pkey_algo, "rsa")) {
- 		pks.encoding = "pkcs1";
-@@ -131,11 +128,38 @@ int asymmetric_verify(struct key *keyring, const char *sig,
- 	pks.s_size = siglen;
- 	ret = verify_signature(key, &pks);
- out:
--	key_put(key);
- 	pr_debug("%s() = %d\n", __func__, ret);
- 	return ret;
- }
- 
-+int asymmetric_verify(struct key *keyring, const char *sig,
-+		      int siglen, const char *data, int datalen)
-+{
-+	struct signature_v2_hdr *hdr = (struct signature_v2_hdr *)sig;
-+	const struct public_key *pk;
-+	struct key *key;
-+	int ret;
-+
-+	if (siglen <= sizeof(*hdr))
-+		return -EBADMSG;
-+
-+	key = request_asymmetric_key(keyring, be32_to_cpu(hdr->keyid));
-+	if (IS_ERR(key))
-+		return PTR_ERR(key);
-+	pk = asymmetric_key_public_key(key);
-+	if (!pk) {
-+		ret = -ENOKEY;
-+		goto out;
-+	}
-+
-+	ret = asymmetric_verify_common(key, pk, sig, siglen, data, datalen);
-+
-+out:
-+	key_put(key);
-+
-+	return ret;
-+}
-+
- /*
-  * calc_file_id_hash - calculate the hash of the ima_file_id struct data
-  * @type: xattr type [enum evm_ima_xattr_type]
+v2:
+  - Dropped 1/3
+  - Using "none" as hash_algo in 2/2
+
+Stefan Berger (4):
+  integrity: Check for NULL returned by asymmetric_key_public_key
+  integrity: Check that algo parameter is within valid range
+  integrity: Refactor asymmetric_verify for reusability
+  integrity: Add support for sigv3 verification using ML-DSA keys
+
+ security/integrity/digsig_asymmetric.c | 152 +++++++++++++++++++++----
+ 1 file changed, 131 insertions(+), 21 deletions(-)
+
+
+base-commit: 82bbd447199ff1441031d2eaf9afe041550cf525
 -- 
 2.53.0
 
