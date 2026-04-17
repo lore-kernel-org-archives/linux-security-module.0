@@ -1,293 +1,198 @@
-Received: from mail-oo1-f78.google.com (mail-oo1-f78.google.com [209.85.161.78])
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7753B2FFC
-	for <linux-security-module@vger.kernel.org>; Fri, 17 Apr 2026 18:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9673C9440
+	for <linux-security-module@vger.kernel.org>; Fri, 17 Apr 2026 19:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776449503; cv=none; b=uDHIFjTXMHLmAJj8BOMJCgL6MBNtbpC0jeqloXroNVYq9MjTOQnNnhxNey2zFfS2rDgUl49nIAAHjgREMeGlJx+1mycC+rKO0FlILwEIIDUNBCHsqUY3TRtSedtdwfMBQqK4e3dMQ3NgUxcVvW6N2YxAfFtw+ghtz3d1i5780h0=
+	t=1776453476; cv=none; b=lSSODxC/ezVP/bE0EMBO3UkBFvhwiL8UQc6wTVWP8MYx26r5gzJqpcKIeDwxpFrxaE32+u1mJxEaRRyBoPxjsbSL8W7alacolfTfb9WYlSV0X9+YpXghENJ8Pm1/oDxnVx1PcKalw7dCIktNdzowd6y8eETTw8Us/RJhAlM1xwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776449503; c=relaxed/simple;
-	bh=EGqyT+nZhpmK/rDcplJnUEgvFvJ3SVDUz++8n3SoIUU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=l9yfeaCB3kN7o5rqSu483nt+CQiOGZyagttT/sqckgAAW8Za01a1Bdj39eAFc4To/Z6K+58RgzuakNb9l5ZcAuDk66e9RU6dqLLo4x8N3ilovdMYuV3w0dDIk+H4sRTkYNuot5S3k2KCKU8c5Z1BL5DJvga9zFnoUEmzNaF3KDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo1-f78.google.com with SMTP id 006d021491bc7-689b18091ebso2277084eaf.1
-        for <linux-security-module@vger.kernel.org>; Fri, 17 Apr 2026 11:11:34 -0700 (PDT)
+	s=arc-20240116; t=1776453476; c=relaxed/simple;
+	bh=de+cgeiRloRqiMe4wUivFxwt1KqtqUuvg8OBq9NZKi0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OZUt2Cljj4z3WMGycqZ3GbdgF7dnxVaS4MoLk30a0IqjMZszvqdh9r7r5IBqvLARbRh70cQLI6rlETxEEvOtv84XMA0TAytgxlYWk6AvtqVv/geRHYhEsL2QzpmUSywTYBcyCpMLPVKyApiivzE02R9ggbJWrXfphsAT7y5SNUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Sx8fcCLW; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Sx8fcCLW"
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-8a3970f1a0eso12650826d6.2
+        for <linux-security-module@vger.kernel.org>; Fri, 17 Apr 2026 12:17:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1776453471; x=1777058271; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4EAYiUx134wz4kkjk1jnBH2zllAceLFfLUvioLTQuWg=;
+        b=Sx8fcCLWseq3/lgxypDZO6saM5K9gzfIKNypH3NUSGbT5dqx7sAGtNZe4sRWAbtSKo
+         kYlLDdv/LSV9Lz4MqvSZUrFT/0zy6GOc9/LN5By5UfPTbS/hQIZ5X9Hy/1Bu9tVkAh1S
+         3mcpURKlwyMKqI2sF0iBTmG4qejHM4Wm525Mio/t0pj2Wgfd+SXl9IJQLHY3/hdZZhJP
+         6B1OI7GtaiSQ+hWTESH7hcWeaHbPmNt5kp2p22y6VagKOfmpcI2BS+3CeRAPJ/kDnH/l
+         PIFct8tdk/bNU9F5+Kzs/tDxkUIlecnXOJUDLpVGSW3EPUOrEFsDmEl0ZVdeGVWVGxYB
+         ZAcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776449493; x=1777054293;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=exjvMgqOm3iVyT9rirlqaY/LhTqHqZBlcHSSUxwTkFE=;
-        b=qyZG3KskF8E4gQFDtRRySxRpa7j5s+5aYaKIth/4Z3qCBKhA8fXivTOI2TxRBYZAda
-         maKrqX3ax9cYxZ+afmxI9jcmSPjOuOZXmbfZst3bqdKG2LOp+8rHV9Fz72KpUyHzT2uF
-         pu0CYCbKP6HvaYTknVrtkwBrGlTQ7748yQ1KAzyZUoArxcQF6gcB8nGRSC4lBd6EgzFB
-         0xES9umiOOpBaytMGcXleOJ7BPqxCC61A2+E2z+iC/+y7YfoKeTQsjlaqNO0uAwcqwzN
-         tDAm5sCi6PNlgzwjCNk2Kn/0H/55yWbAH67oH6jlyPXLTR4aRuT4ebduSmX9eE7CDKPM
-         btxw==
-X-Forwarded-Encrypted: i=1; AFNElJ+XHk3E31RJoehVrcSjLxXCA3PXSmQVIC5+pCTLVoQYTHZoc0YWJC58SG5ie7QMGwykM6zR9mr6pyRfbDrhVKCPRqMPdmk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/VJNQi+idMIkcbDhJdPdOb+LXks+QJy7x/UMXuN4nh6Eafqoe
-	+qzUCiEccKDu4JzjAk1FgReT8FkB5Q2Chfq/07D5FnkUnrbcnS/9rYevjdDKKGDDuo9+o/ArsB9
-	8dq6lteP+m00uzi96J1Seq2sx0IjDsoyhw+ks0p5HAqZ3wdQ4b0+7aRvtdVk=
+        d=1e100.net; s=20251104; t=1776453471; x=1777058271;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4EAYiUx134wz4kkjk1jnBH2zllAceLFfLUvioLTQuWg=;
+        b=Fj7ZxxEBHpPZMr5aJ65xkNEzIFu3v/TZ+WlR76QPDdP5UYmg3qXTH0xstGcGQyhtPz
+         IGB019kb3cdxDKGgzDXNGE/QUeV8WZHF+Zk3LYMOAXcxmInIsCiVnbzhyyYYKFtGwoxj
+         UWRKerUUukyaoaiE6/cEVpdgn3UjPj4fLkqEfTHh0pHkRKmMvCBKDm8opxeyM361U+MN
+         SVyCH8YgzCy8aDcXoxv/GUMqsieIAQ4SHK/PwMn4QVJckvpsa7KlDKT5Ixtq+yEA1xQL
+         uvmU0lG2WsmjJmd1chWb2VlYD9yJpLE3EgW3LLG57v0k2bf49qC1olULnfB4vyDhjbcs
+         meSA==
+X-Forwarded-Encrypted: i=1; AFNElJ+8NS+aFC0hc3kVBl8sXMzSLieGHnS/fGQFUZGQ5kPrA+8xSjiVjqHv4tk3LqOBFxqcLHuZncHiFFD77h8w/eGueytGypA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIrad8dCLsADdO2c6OeJcX6mCdUc454GMsmCcJVhjT59p06rWw
+	MRgxGvfCZPnnB0wzfj1sfjN/cM9yF05WhN83Aq7wpKjIsRBHbl5Y0E6Qzqd9J6L6ErU=
+X-Gm-Gg: AeBDievC7C+GTSB7RhdJ/bTD8c19uobRJXr3+dJukqEIPdr5z9jK4ojj1ApMsFwlNWK
+	EpaNRav2e8qX/hokuQlWbqDSioeY2rgx1O0A9ya0pqQd29XGxfIkjVqXqUakkFyAV3lOvJ8AGPU
+	UjjpzMrFD38uO6hFwmRqcPjKj3UgTb6jetzclYWEdJj67QNOzDVTdaRh1R1mkJiG1XB/exoZMQr
+	2I/TrurAjAJQCmxrUOEyccCrAdPLdIu6Gwb7lHLYG3H/vZNeZjh+LkvM56De65DHgUbTKU0Msl3
+	p2Ko7uFvb2K032S2kCB4sXxPhiRhoIooxomGSw4iJAIhcNH/gSsw8A4Y3TSr8rIXBFuCwEmoAfD
+	HJvq9lUChhFAA9wl6MsQ6Xh3BUb9bVSCVGpAS4qfie9aex873Eck/u3dF4amSNZV3gw3sNqnMD0
+	St9L+lqldAYnX23DKpSVXfTunmplElAW7oOmXCIKuDzNJ6Ms3bbdQNOyq/QK+LtBeqZHsCp3yiM
+	HDs5wcWXO2buONe
+X-Received: by 2002:a05:6214:2a46:b0:8b0:2d20:ff79 with SMTP id 6a1803df08f44-8b02d2100femr46126906d6.27.1776453470830;
+        Fri, 17 Apr 2026 12:17:50 -0700 (PDT)
+Received: from ziepe.ca (crbknf0213w-47-54-130-67.pppoe-dynamic.high-speed.nl.bellaliant.net. [47.54.130.67])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8b02ae86947sm26222946d6.37.2026.04.17.12.17.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Apr 2026 12:17:50 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1wDohJ-0000000DV61-2ye0;
+	Fri, 17 Apr 2026 16:17:49 -0300
+Date: Fri, 17 Apr 2026 16:17:49 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Leon Romanovsky <leon@kernel.org>,
+	Roberto Sassu <roberto.sassu@huaweicloud.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Itay Avraham <itayavr@nvidia.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>,
+	Maher Sanalla <msanalla@nvidia.com>,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] Firmware LSM hook
+Message-ID: <20260417191749.GK2577880@ziepe.ca>
+References: <20260409124553.GB720371@unreal>
+ <CAHC9VhT1X4HX4bGrK=mEzu=g=mZ-Wg-LDXVgZVe-e6oM+W9aHg@mail.gmail.com>
+ <20260412090006.GA21470@unreal>
+ <CAHC9VhRnYXjg+vE9a8PeykbXk91is12zYLaO7EFdfZPKMxDfPA@mail.gmail.com>
+ <20260413164220.GP3694781@ziepe.ca>
+ <CAHC9VhR1Uke9P==CELKavBcogHoNCtMZFfNWUbgm5HYUfomhtw@mail.gmail.com>
+ <20260413231920.GS3694781@ziepe.ca>
+ <CAHC9VhTLamfe4C81ZNRVT=H32x+KLxSqH3o0eBfrHsWAgAqxCA@mail.gmail.com>
+ <20260415134705.GG2577880@ziepe.ca>
+ <CAHC9VhSECYihup=tURo_Qk__xUdYYPkHgnz5CWA0BrRAkvwbog@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:858e:10b0:67e:e9c:63f0 with SMTP id
- 006d021491bc7-694637d7901mr1299995eaf.25.1776449492929; Fri, 17 Apr 2026
- 11:11:32 -0700 (PDT)
-Date: Fri, 17 Apr 2026 11:11:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69e277d4.a00a0220.1bd0ca.0019.GAE@google.com>
-Subject: [syzbot] [integrity?] [lsm?] BUG: sleeping function called from
- invalid context in page_cache_ra_unbounded
-From: syzbot <syzbot+77103043d0c16dbc71ae@syzkaller.appspotmail.com>
-To: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
-	roberto.sassu@huawei.com, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
-	zohar@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhSECYihup=tURo_Qk__xUdYYPkHgnz5CWA0BrRAkvwbog@mail.gmail.com>
 
-Hello,
+On Wed, Apr 15, 2026 at 05:40:04PM -0400, Paul Moore wrote:
+> > The NIC doesn't know anything more than the kernel to call the LSM
+> > hook. It can't magically generate the label the admin wants to use any
+> > better than the kernel can.
+> 
+> The NIC presumably knows how to parse the firmware request and extract
+> whatever security relevant info is needed to pass to the kernel so the
+> driver can make an access control request.
 
-syzbot found the following issue on:
+Not in practice, we'd have to agree on how to describe the "security relevant
+info" and that won't happen..
 
-HEAD commit:    1c7cc4904160 Add linux-next specific files for 20260413
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=104e10ce580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=56c2b36de3316f1b
-dashboard link: https://syzkaller.appspot.com/bug?extid=77103043d0c16dbc71ae
-compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
+> Leon mentioned that different firmware revisions would have different
+> parameters for a given opcode, and that one would need to inspect
+> those parameters to properly filter the command.  Is that not true, or
+> am I misreading or misunderstanding Leon's comments?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+They are ABI stable, so there will be rules about future changes that
+old software can follow to ignore or reject future things it doesn't
+understand.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/91a765b703da/disk-1c7cc490.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/da75a3061146/vmlinux-1c7cc490.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d55367ced048/bzImage-1c7cc490.xz
+> > > The access control point itself represents the requested
+> > > operation.  This is possible because the number of networking
+> > > operations on a given packet is well defined and fairly limited; at a
+> > > high level the packet is either being sent from the node, received by
+> > > the node, or is passing through the node.
+> >
+> > I think we have the same split, fwctl send/recive analog is also very
+> > limited.
+> 
+> Sure, but I thought the goal was to enforce access controls on the
+> firmware requests based on the opcodes/parameters contained within the
+> firmware request blob/mailbox?  
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+77103043d0c16dbc71ae@syzkaller.appspotmail.com
+Yes, that's the goal. It is the same as iptables being able to
+identify that a send system call has a packet that is http or dns. I'd
+like to have a fwctl RPC ioctl system call identify if the RPC packet
+is A or B.
 
-cgroup: Unknown subsys name 'rlimit'
-BUG: sleeping function called from invalid context at ./include/linux/sched/mm.h:323
-in_atomic(): 0, irqs_disabled(): 0, non_block: 0, pid: 5809, name: syz-executor
-preempt_count: 0, expected: 0
-RCU nest depth: 1, expected: 0
-3 locks held by syz-executor/5809:
- #0: ffff888025b9e458 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: process_measurement+0x7fd/0x1c90 security/integrity/ima/ima_main.c:319
- #1: ffff8880406185f0 (mapping.invalidate_lock#2){++++}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:1094 [inline]
- #1: ffff8880406185f0 (mapping.invalidate_lock#2){++++}-{4:4}, at: do_page_cache_ra mm/readahead.c:333 [inline]
- #1: ffff8880406185f0 (mapping.invalidate_lock#2){++++}-{4:4}, at: page_cache_ra_order+0x2a5/0x490 mm/readahead.c:538
- #2: ffffffff8dfc80c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:300 [inline]
- #2: ffffffff8dfc80c0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
- #2: ffffffff8dfc80c0 (rcu_read_lock){....}-{1:3}, at: __rt_spin_lock kernel/locking/spinlock_rt.c:50 [inline]
- #2: ffffffff8dfc80c0 (rcu_read_lock){....}-{1:3}, at: rt_spin_lock+0x1e0/0x400 kernel/locking/spinlock_rt.c:57
-CPU: 0 UID: 0 PID: 5809 Comm: syz-executor Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/18/2026
-Call Trace:
- <TASK>
- dump_stack_lvl+0xe8/0x150 lib/dump_stack.c:120
- __might_resched+0x329/0x480 kernel/sched/core.c:9162
- might_alloc include/linux/sched/mm.h:323 [inline]
- prepare_alloc_pages+0x1f0/0x6b0 mm/page_alloc.c:4995
- __alloc_frozen_pages_noprof+0x12f/0x380 mm/page_alloc.c:5215
- alloc_pages_mpol+0xd1/0x380 mm/mempolicy.c:2490
- alloc_frozen_pages_noprof mm/mempolicy.c:2561 [inline]
- alloc_pages_noprof+0xd2/0x2f0 mm/mempolicy.c:2581
- folio_alloc_noprof+0x22/0xc0 mm/mempolicy.c:2591
- filemap_alloc_folio_noprof+0x111/0x4d0 mm/filemap.c:1013
- ractl_alloc_folio mm/readahead.c:189 [inline]
- page_cache_ra_unbounded+0x2f7/0x980 mm/readahead.c:277
- do_page_cache_ra mm/readahead.c:334 [inline]
- page_cache_ra_order+0x2b5/0x490 mm/readahead.c:538
- filemap_readahead mm/filemap.c:2663 [inline]
- filemap_get_pages+0x832/0x1e70 mm/filemap.c:2709
- filemap_read+0x44a/0x1240 mm/filemap.c:2805
- __kernel_read+0x50d/0x9c0 fs/read_write.c:532
- integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
- ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:222 [inline]
- ima_calc_file_hash+0x452/0x870 security/integrity/ima/ima_crypto.c:280
- ima_collect_measurement+0x523/0x9d0 security/integrity/ima/ima_api.c:300
- process_measurement+0x12d9/0x1c90 security/integrity/ima/ima_main.c:425
- ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
- security_file_post_open+0xb3/0x260 security/security.c:2755
- do_open fs/namei.c:4701 [inline]
- path_openat+0x2e88/0x38a0 fs/namei.c:4858
- do_file_open+0x23e/0x4a0 fs/namei.c:4887
- file_open_name+0x162/0x1c0 fs/open.c:1322
- __do_sys_swapon mm/swapfile.c:3574 [inline]
- __se_sys_swapon+0x856/0x2010 mm/swapfile.c:3539
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0x15f/0xf80 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4a4d9cc7d7
-Code: 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a7 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc336ba3b8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a7
-RAX: ffff[   83.300808][ T5809] RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00007f4a4d9cc7d7
-RDX: 0000000000000000 RSI: 0000000000008000 RDI: 00007f4a4da62e5b
-RBP: 00007f4a4da62e5b R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000008 R11: 0000000000000246 R12: 00007f4a4dc163e0
-R13: 00007f4a4da7dd26 R14: 0000000000200000 R15: 00007f4a4dc163a0
- </TASK>
+> > Deep inspection on the packet blob determines the secmark.
+> 
+> ... and this would be done by your BPF classifier, yes?
 
-=============================
-[ BUG: Invalid wait context ]
-syzkaller #0 Tainted: G        W          
------------------------------
-syz-executor/5809 is trying to lock:
-ffff8880406185f0 (mapping.invalidate_lock#2){++++}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:1094 [inline]
-ffff8880406185f0 (mapping.invalidate_lock#2){++++}-{4:4}, at: do_page_cache_ra mm/readahead.c:333 [inline]
-ffff8880406185f0 (mapping.invalidate_lock#2){++++}-{4:4}, at: page_cache_ra_order+0x2a5/0x490 mm/readahead.c:538
-other info that might help us debug this:
-context-{5:5}
-2 locks held by syz-executor/5809:
- #0: ffff888025b9e458 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: process_measurement+0x7fd/0x1c90 security/integrity/ima/ima_main.c:319
- #1: ffffffff8dfc80c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:300 [inline]
- #1: ffffffff8dfc80c0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
- #1: ffffffff8dfc80c0 (rcu_read_lock){....}-{1:3}, at: __rt_spin_lock kernel/locking/spinlock_rt.c:50 [inline]
- #1: ffffffff8dfc80c0 (rcu_read_lock){....}-{1:3}, at: rt_spin_lock+0x1e0/0x400 kernel/locking/spinlock_rt.c:57
-stack backtrace:
-CPU: 0 UID: 0 PID: 5809 Comm: syz-executor Tainted: G        W           syzkaller #0 PREEMPT_{RT,(full)} 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/18/2026
-Call Trace:
- <TASK>
- dump_stack_lvl+0xe8/0x150 lib/dump_stack.c:120
- print_lock_invalid_wait_context kernel/locking/lockdep.c:4832 [inline]
- check_wait_context kernel/locking/lockdep.c:4904 [inline]
- __lock_acquire+0xec1/0x2cf0 kernel/locking/lockdep.c:5189
- lock_acquire+0x106/0x350 kernel/locking/lockdep.c:5870
- down_read+0x97/0x200 kernel/locking/rwsem.c:1568
- filemap_invalidate_lock_shared include/linux/fs.h:1094 [inline]
- do_page_cache_ra mm/readahead.c:333 [inline]
- page_cache_ra_order+0x2a5/0x490 mm/readahead.c:538
- filemap_readahead mm/filemap.c:2663 [inline]
- filemap_get_pages+0x832/0x1e70 mm/filemap.c:2709
- filemap_read+0x44a/0x1240 mm/filemap.c:2805
- __kernel_read+0x50d/0x9c0 fs/read_write.c:532
- integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
- ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:222 [inline]
- ima_calc_file_hash+0x452/0x870 security/integrity/ima/ima_crypto.c:280
- ima_collect_measurement+0x523/0x9d0 security/integrity/ima/ima_api.c:300
- process_measurement+0x12d9/0x1c90 security/integrity/ima/ima_main.c:425
- ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
- security_file_post_open+0xb3/0x260 security/security.c:2755
- do_open fs/namei.c:4701 [inline]
- path_openat+0x2e88/0x38a0 fs/namei.c:4858
- do_file_open+0x23e/0x4a0 fs/namei.c:4887
- file_open_name+0x162/0x1c0 fs/open.c:1322
- __do_sys_swapon mm/swapfile.c:3574 [inline]
- __se_sys_swapon+0x856/0x2010 mm/swapfile.c:3539
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0x15f/0xf80 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4a4d9cc7d7
-Code: 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a7 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc336ba3b8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a7
-RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00007f4a4d9cc7d7
-RDX: 0000000000000000 RSI: 0000000000008000 RDI: 00007f4a4da62e5b
-RBP: 00007f4a4da62e5b R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000008 R11: 0000000000000246 R12: 00007f4a4dc163e0
-R13: 00007f4a4da7dd26 R14: 0000000000200000 R15: 00007f4a4dc163a0
- </TASK>
-------------[ cut here ]------------
-Voluntary context switch within RCU read-side critical section!
-WARNING: kernel/rcu/tree_plugin.h:332 at rcu_note_context_switch+0xcac/0xf40 kernel/rcu/tree_plugin.h:332, CPU#0: syz-executor/5809
-Modules linked in:
-CPU: 0 UID: 0 PID: 5809 Comm: syz-executor Tainted: G        W           syzkaller #0 PREEMPT_{RT,(full)} 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/18/2026
-RIP: 0010:rcu_note_context_switch+0xcac/0xf40 kernel/rcu/tree_plugin.h:332
-Code: 00 41 c6 45 00 00 48 8b 3d 81 5e e2 0d 48 81 c4 b8 00 00 00 5b 41 5c 41 5d 41 5e 41 5f 5d e9 9b 60 ff ff 48 8d 3d f4 26 e6 0d <67> 48 0f b9 3a e9 1b f4 ff ff 90 0f 0b 90 45 84 e4 0f 84 ea f3 ff
-RSP: 0018:ffffc900043b6fb0 EFLAGS: 00010002
-RAX: 0000000000000000 RBX: ffff88803906bd80 RCX: 0000000080000002
-RDX: 0000000000000000 RSI: ffffffff8ba83740 RDI: ffffffff8f907b60
-RBP: dffffc0000000000 R08: ffffffff8f8d05f7 R09: 1ffffffff1f1a0be
-R10: dffffc0000000000 R11: fffffbfff1f1a0bf R12: 0000000000000000
-R13: ffff88803906bd80 R14: ffff8880b883c980 R15: ffff88803906c244
-FS:  0000555571f48540(0000) GS:ffff8881260c2000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f64ae81e7b8 CR3: 000000001a1e4000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- __schedule+0x297/0x54f0 kernel/sched/core.c:7043
- __schedule_loop kernel/sched/core.c:7267 [inline]
- schedule+0x164/0x360 kernel/sched/core.c:7282
- schedule_timeout+0x158/0x2c0 kernel/time/sleep_timeout.c:99
- io_schedule_timeout+0x88/0xe0 kernel/sched/core.c:8097
- do_wait_for_common kernel/sched/completion.c:100 [inline]
- __wait_for_common kernel/sched/completion.c:121 [inline]
- wait_for_common_io+0x2d7/0x610 kernel/sched/completion.c:138
- blk_wait_io block/blk.h:102 [inline]
- bio_await block/bio.c:1496 [inline]
- submit_bio_wait+0x16d/0x250 block/bio.c:1513
- blkdev_issue_flush+0xe0/0x150 block/blk-flush.c:475
- ext4_sync_file+0x8b6/0xd60 fs/ext4/fsync.c:179
- iomap_swapfile_activate+0x1e4/0xbe0 fs/iomap/swapfile.c:162
- setup_swap_extents+0x176/0x640 mm/swapfile.c:2890
- __do_sys_swapon mm/swapfile.c:3630 [inline]
- __se_sys_swapon+0xdc9/0x2010 mm/swapfile.c:3539
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0x15f/0xf80 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4a4d9cc7d7
-Code: 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a7 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc336ba3b8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a7
-RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00007f4a4d9cc7d7
-RDX: 0000000000000000 RSI: 0000000000008000 RDI: 00007f4a4da62e5b
-RBP: 00007f4a4da62e5b R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000008 R11: 0000000000000246 R12: 00007f4a4dc163e0
-R13: 00007f4a4da7dd26 R14: 0000000000200000 R15: 00007f4a4dc163a0
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	00 41 c6             	add    %al,-0x3a(%rcx)
-   3:	45 00 00             	add    %r8b,(%r8)
-   6:	48 8b 3d 81 5e e2 0d 	mov    0xde25e81(%rip),%rdi        # 0xde25e8e
-   d:	48 81 c4 b8 00 00 00 	add    $0xb8,%rsp
-  14:	5b                   	pop    %rbx
-  15:	41 5c                	pop    %r12
-  17:	41 5d                	pop    %r13
-  19:	41 5e                	pop    %r14
-  1b:	41 5f                	pop    %r15
-  1d:	5d                   	pop    %rbp
-  1e:	e9 9b 60 ff ff       	jmp    0xffff60be
-  23:	48 8d 3d f4 26 e6 0d 	lea    0xde626f4(%rip),%rdi        # 0xde6271e
-* 2a:	67 48 0f b9 3a       	ud1    (%edx),%rdi <-- trapping instruction
-  2f:	e9 1b f4 ff ff       	jmp    0xfffff44f
-  34:	90                   	nop
-  35:	0f 0b                	ud2
-  37:	90                   	nop
-  38:	45 84 e4             	test   %r12b,%r12b
-  3b:	0f                   	.byte 0xf
-  3c:	84 ea                	test   %ch,%dl
-  3e:	f3                   	repz
-  3f:	ff                   	.byte 0xff
+BPF would be one option. We could probably also meaningfully do a
+fixed set of matching functions (ie pkt_data[X] == A then MATCH) more
+like iptables does if that is somehow relevant to LSM.
+ 
+> > LSM takes the secmark and determines if the access control point
+> > accept/rejects.
+> 
+> At this point I think it would be helpful to write out the
+> subject-access-object triple for an example operation and explain how
+> an LSM could obtain each component of the access request.
 
+I think I am talking about this:
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+app_1 FWCTL_RPC op_unpriv_t
+app_2 FWCTL_RPC op_priv_t
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+- app_x broadly comes from the process executing the ioctl
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+- FWCTL_RPC identifies the IOCTL userspace called to send the RPC
+  packet
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+- op_X_t is the result of the classifier inspecting the RPC
+  packet. Admin tells the classifier to return op_X_t similar to
+  how --selctx does for iptables.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+For sketch purposes I've used the words priv/unpriv as something an
+admin might want to setup. As I said above the actual buckets and
+mapping would have to decided by the local admin.
 
-If you want to undo deduplication, reply with:
-#syz undup
+> > Same as for networking. Admin understands, admin defines, kernel is
+> > just a programmable classifier.
+> 
+> Are you able to define all of the firmware request operations at this
+> point in time?  That is my largest concern at this point, and perhaps
+> the answer is a simple "yes", but I haven't seen it yet.
+
+We can identify all the IOCTL points where the RPC packet will be
+delivered to the kernel (send/recv/etc)
+
+We cannot pre-identify all the mlx_XXX_op_t's an admin might want to
+use.
+
+The same way secmark cannot pre-identify all the XXX_packet_t's.
+
+Jason
