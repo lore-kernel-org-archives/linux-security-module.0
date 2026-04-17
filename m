@@ -1,198 +1,174 @@
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+Received: from mail-yx1-f52.google.com (mail-yx1-f52.google.com [74.125.224.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9673C9440
-	for <linux-security-module@vger.kernel.org>; Fri, 17 Apr 2026 19:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BD4175A98
+	for <linux-security-module@vger.kernel.org>; Fri, 17 Apr 2026 20:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776453476; cv=none; b=lSSODxC/ezVP/bE0EMBO3UkBFvhwiL8UQc6wTVWP8MYx26r5gzJqpcKIeDwxpFrxaE32+u1mJxEaRRyBoPxjsbSL8W7alacolfTfb9WYlSV0X9+YpXghENJ8Pm1/oDxnVx1PcKalw7dCIktNdzowd6y8eETTw8Us/RJhAlM1xwQ=
+	t=1776457986; cv=none; b=DBLsj+PpAq/CXgvy/qiu0cS+x0N/HIF+7abYBgb0xFMEcukl+qPukUOwQa6wCXpvx9amZlXwq8tlUKxn3Sj1d3vha0ykp4h5Rt2kWXTyFdfvvVoNsSelbUV9+O1yBXfIpn9JApbwTrDKWoaRvZCRjekfYV2pS92Dgq5PaW9Y/As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776453476; c=relaxed/simple;
-	bh=de+cgeiRloRqiMe4wUivFxwt1KqtqUuvg8OBq9NZKi0=;
+	s=arc-20240116; t=1776457986; c=relaxed/simple;
+	bh=jFrdw+X0q0nEQz1vk2GjktA7ZkOoieLsktKpKwr3zTI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OZUt2Cljj4z3WMGycqZ3GbdgF7dnxVaS4MoLk30a0IqjMZszvqdh9r7r5IBqvLARbRh70cQLI6rlETxEEvOtv84XMA0TAytgxlYWk6AvtqVv/geRHYhEsL2QzpmUSywTYBcyCpMLPVKyApiivzE02R9ggbJWrXfphsAT7y5SNUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Sx8fcCLW; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+	 Content-Type:Content-Disposition:In-Reply-To; b=hP3/539F+y5nZe8xXae229n6ZwvJRvNwZ8ovYG8s+RP13rwgRJRWR474yvPRsjgVk/rI4f0mpkbI/uTt3/pzZNfGjbfaVYzGNevva+PWHMz9NIkHIj9gTcv4MpwbObB/5VeLKrKm9z0/GaWydyLK4LjUbisV6MITD+cNrvZQ+LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QIEq/xxA; arc=none smtp.client-ip=74.125.224.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Sx8fcCLW"
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-8a3970f1a0eso12650826d6.2
-        for <linux-security-module@vger.kernel.org>; Fri, 17 Apr 2026 12:17:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QIEq/xxA"
+Received: by mail-yx1-f52.google.com with SMTP id 956f58d0204a3-650775f427eso1285771d50.2
+        for <linux-security-module@vger.kernel.org>; Fri, 17 Apr 2026 13:33:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1776453471; x=1777058271; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4EAYiUx134wz4kkjk1jnBH2zllAceLFfLUvioLTQuWg=;
-        b=Sx8fcCLWseq3/lgxypDZO6saM5K9gzfIKNypH3NUSGbT5dqx7sAGtNZe4sRWAbtSKo
-         kYlLDdv/LSV9Lz4MqvSZUrFT/0zy6GOc9/LN5By5UfPTbS/hQIZ5X9Hy/1Bu9tVkAh1S
-         3mcpURKlwyMKqI2sF0iBTmG4qejHM4Wm525Mio/t0pj2Wgfd+SXl9IJQLHY3/hdZZhJP
-         6B1OI7GtaiSQ+hWTESH7hcWeaHbPmNt5kp2p22y6VagKOfmpcI2BS+3CeRAPJ/kDnH/l
-         PIFct8tdk/bNU9F5+Kzs/tDxkUIlecnXOJUDLpVGSW3EPUOrEFsDmEl0ZVdeGVWVGxYB
-         ZAcA==
+        d=gmail.com; s=20251104; t=1776457984; x=1777062784; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ESaQCO0d6F6EEXsq95L8Y+GOiOFVbRFpB4PjdvQLY8g=;
+        b=QIEq/xxAbkZ6O5c/fPXqKyawmbwI4Q6j0S1T0aZ3Uo6WSgE7MvrIsP2BwumApzVRCm
+         LSTPuCpA9U9n7vYfGuaEB4o/nWTZEi1u8ueioeyfmAN51YsXCSuhmHkssN86X52AmTIC
+         0Nv+LQAAh118nRTrIdo3vFlKv6dUA21g0LqvUuw4Z6yRs7brk5UKph10rKOZfZF9X0eR
+         CtCsLy7ktWK0ob19qWxYcFxzYI1wnNGWzlZyDQrQhNIUuLnd8LrrH73KyRt6dMEzjOda
+         Z9M+dBsD9XPf1ZRrHHFPQxge0NIFaim6mKxiXZkGlwVZJB9QNnBjuvV/6nscNcEbY1aL
+         gzDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776453471; x=1777058271;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4EAYiUx134wz4kkjk1jnBH2zllAceLFfLUvioLTQuWg=;
-        b=Fj7ZxxEBHpPZMr5aJ65xkNEzIFu3v/TZ+WlR76QPDdP5UYmg3qXTH0xstGcGQyhtPz
-         IGB019kb3cdxDKGgzDXNGE/QUeV8WZHF+Zk3LYMOAXcxmInIsCiVnbzhyyYYKFtGwoxj
-         UWRKerUUukyaoaiE6/cEVpdgn3UjPj4fLkqEfTHh0pHkRKmMvCBKDm8opxeyM361U+MN
-         SVyCH8YgzCy8aDcXoxv/GUMqsieIAQ4SHK/PwMn4QVJckvpsa7KlDKT5Ixtq+yEA1xQL
-         uvmU0lG2WsmjJmd1chWb2VlYD9yJpLE3EgW3LLG57v0k2bf49qC1olULnfB4vyDhjbcs
-         meSA==
-X-Forwarded-Encrypted: i=1; AFNElJ+8NS+aFC0hc3kVBl8sXMzSLieGHnS/fGQFUZGQ5kPrA+8xSjiVjqHv4tk3LqOBFxqcLHuZncHiFFD77h8w/eGueytGypA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIrad8dCLsADdO2c6OeJcX6mCdUc454GMsmCcJVhjT59p06rWw
-	MRgxGvfCZPnnB0wzfj1sfjN/cM9yF05WhN83Aq7wpKjIsRBHbl5Y0E6Qzqd9J6L6ErU=
-X-Gm-Gg: AeBDievC7C+GTSB7RhdJ/bTD8c19uobRJXr3+dJukqEIPdr5z9jK4ojj1ApMsFwlNWK
-	EpaNRav2e8qX/hokuQlWbqDSioeY2rgx1O0A9ya0pqQd29XGxfIkjVqXqUakkFyAV3lOvJ8AGPU
-	UjjpzMrFD38uO6hFwmRqcPjKj3UgTb6jetzclYWEdJj67QNOzDVTdaRh1R1mkJiG1XB/exoZMQr
-	2I/TrurAjAJQCmxrUOEyccCrAdPLdIu6Gwb7lHLYG3H/vZNeZjh+LkvM56De65DHgUbTKU0Msl3
-	p2Ko7uFvb2K032S2kCB4sXxPhiRhoIooxomGSw4iJAIhcNH/gSsw8A4Y3TSr8rIXBFuCwEmoAfD
-	HJvq9lUChhFAA9wl6MsQ6Xh3BUb9bVSCVGpAS4qfie9aex873Eck/u3dF4amSNZV3gw3sNqnMD0
-	St9L+lqldAYnX23DKpSVXfTunmplElAW7oOmXCIKuDzNJ6Ms3bbdQNOyq/QK+LtBeqZHsCp3yiM
-	HDs5wcWXO2buONe
-X-Received: by 2002:a05:6214:2a46:b0:8b0:2d20:ff79 with SMTP id 6a1803df08f44-8b02d2100femr46126906d6.27.1776453470830;
-        Fri, 17 Apr 2026 12:17:50 -0700 (PDT)
-Received: from ziepe.ca (crbknf0213w-47-54-130-67.pppoe-dynamic.high-speed.nl.bellaliant.net. [47.54.130.67])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8b02ae86947sm26222946d6.37.2026.04.17.12.17.50
+        d=1e100.net; s=20251104; t=1776457984; x=1777062784;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ESaQCO0d6F6EEXsq95L8Y+GOiOFVbRFpB4PjdvQLY8g=;
+        b=aYCu4QlVaKnkbDegEjjA0x2S92SZ28+xRNfnhv45m8/uTIsam9SypI+pjsDYJ7f+3F
+         g8+NOrFyEKr9N+6G/jKqd9SWx/d3CtHLmxKsOjxqlYqvtJZPvVDbEO3HS+4YaRIag5kl
+         L0bawrbXffs0Ncv51SsT8we9BBkULCaiETHEvCtonWeWgcL7IQkFxrb6dxistiC+PT5r
+         hbO/IM24IyAN0dTJg3gklTJEsXlzNYO1cfm4jLOtu14A/YKN+QPR4q5dODMuG7hKfOr1
+         CA0USXFQ8Kx0cV6Vh2uHq0iI2YIGQ6fZSN82jqhsSlrPtyOqaT/MemZvLdy2P+DNGAYH
+         r1+w==
+X-Forwarded-Encrypted: i=1; AFNElJ/EatwFPJdRNPHSeL3fqkYm5xtmblJmYBIS7wDgP7EI06XjsXomePpkBuASlCM+tS9qWV4GIY2vDHfh/15iYdly1vpcsWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypBuoyOH3bLY8VReDLTcgRdo3J2OAwf26nfNEYfNGzXwf+vFCv
+	NNPWxgzv965TBCKD0b43TjaikakWYPhZKM7ad30R1t4i61DbmDi1oH0e
+X-Gm-Gg: AeBDieuDhQI/Y7L8ptw2hya2y/ztj7knG4plpDe8yV2fP7n4hX3wb5glG7MxaCkbUqm
+	hwKXBjDgreROGU0pzULOhVU6ttS3BvAhABv/FhnMVf9KolsSmFaIgOhkZWI9D+HQodsZppH5VGa
+	QmuXbrGPCtUugStu2kKOVHu1wgM7VUk5TJZ/KmWXEzf7zD9HG9oN6tayZT1uuO8zVseMZD3oYIN
+	UKu6CzDEI8holQMhXbdo7y0UD4ulNY3aexnezvrtxAjMFAWFBzP47sKBoCdgxu1GQOlOmLbmS2u
+	ZVxRM6+HeKTT/OVTi+yjQ4Z6APmA6HwxWC2xSiAOknA4xR+wZzIIDB9PUjmuETv/bSKIGMyWv84
+	VihOPtLbVPgb3YDBy/P0XYGNTYhgf9iHWJ0NhT2X9j1CfSjPIjJZFocDx0eq6QfNVCnSw1zeG84
+	s0PTQrQjHY5SQsFKCjAi0Fa8vrFN7H4nISU6shEU8FaxObI4pGe2z6nMVjooG8jOo6eWZBcCG7b
+	g==
+X-Received: by 2002:a05:690c:3181:b0:7b3:5872:694d with SMTP id 00721157ae682-7b9ecef5437mr48642037b3.22.1776457983655;
+        Fri, 17 Apr 2026 13:33:03 -0700 (PDT)
+Received: from suesslenovo ([2600:1700:18fb:6011:e63d:3ec:f0d3:1523])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7b9ee99bd34sm11026187b3.26.2026.04.17.13.33.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Apr 2026 12:17:50 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1wDohJ-0000000DV61-2ye0;
-	Fri, 17 Apr 2026 16:17:49 -0300
-Date: Fri, 17 Apr 2026 16:17:49 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Leon Romanovsky <leon@kernel.org>,
-	Roberto Sassu <roberto.sassu@huaweicloud.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Itay Avraham <itayavr@nvidia.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>,
-	Maher Sanalla <msanalla@nvidia.com>,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] Firmware LSM hook
-Message-ID: <20260417191749.GK2577880@ziepe.ca>
-References: <20260409124553.GB720371@unreal>
- <CAHC9VhT1X4HX4bGrK=mEzu=g=mZ-Wg-LDXVgZVe-e6oM+W9aHg@mail.gmail.com>
- <20260412090006.GA21470@unreal>
- <CAHC9VhRnYXjg+vE9a8PeykbXk91is12zYLaO7EFdfZPKMxDfPA@mail.gmail.com>
- <20260413164220.GP3694781@ziepe.ca>
- <CAHC9VhR1Uke9P==CELKavBcogHoNCtMZFfNWUbgm5HYUfomhtw@mail.gmail.com>
- <20260413231920.GS3694781@ziepe.ca>
- <CAHC9VhTLamfe4C81ZNRVT=H32x+KLxSqH3o0eBfrHsWAgAqxCA@mail.gmail.com>
- <20260415134705.GG2577880@ziepe.ca>
- <CAHC9VhSECYihup=tURo_Qk__xUdYYPkHgnz5CWA0BrRAkvwbog@mail.gmail.com>
+        Fri, 17 Apr 2026 13:33:03 -0700 (PDT)
+Date: Fri, 17 Apr 2026 16:33:01 -0400
+From: Justin Suess <utilityemal77@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Song Liu <song@kernel.org>, ast@kernel.org, daniel@iogearbox.net,
+	andrii@kernel.org, kpsingh@kernel.org, paul@paul-moore.com,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, kees@kernel.org,
+	gnoack@google.com, jack@suse.cz, jmorris@namei.org,
+	serge@hallyn.com, yonghong.song@linux.dev, martin.lau@linux.dev,
+	m@maowtm.org, eddyz87@gmail.com, john.fastabend@gmail.com,
+	sdf@fomichev.me, skhan@linuxfoundation.org, bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH 08/20] bpf: Add Landlock ruleset map type
+Message-ID: <aeKY_QUge4okHjrW@suesslenovo>
+References: <20260407200157.3874806-1-utilityemal77@gmail.com>
+ <20260407200157.3874806-9-utilityemal77@gmail.com>
+ <CAPhsuW7zzXXd6-d86B-rpGr-wfSzmEoCYNKhTMP_pXnybtA27A@mail.gmail.com>
+ <aeFaQXkKNHFeE-oC@suesslenovo>
+ <CAPhsuW648HdcCbXWMHaJ4uirPWq2WX3Ggx3AGMU6CGzhNYUREg@mail.gmail.com>
+ <aeI_CXj6F-nI_DCL@suesslenovo>
+ <20260417.ohgoh0Eecome@digikod.net>
+ <aeJlHIoSjVPmccDx@suesslenovo>
+ <20260417.aPh1ooQu8esh@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhSECYihup=tURo_Qk__xUdYYPkHgnz5CWA0BrRAkvwbog@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260417.aPh1ooQu8esh@digikod.net>
 
-On Wed, Apr 15, 2026 at 05:40:04PM -0400, Paul Moore wrote:
-> > The NIC doesn't know anything more than the kernel to call the LSM
-> > hook. It can't magically generate the label the admin wants to use any
-> > better than the kernel can.
+On Fri, Apr 17, 2026 at 08:03:14PM +0200, Mickaël Salaün wrote:
+> On Fri, Apr 17, 2026 at 12:51:40PM -0400, Justin Suess wrote:
+> > On Fri, Apr 17, 2026 at 05:18:05PM +0200, Mickaël Salaün wrote:
+> > > On Fri, Apr 17, 2026 at 10:09:13AM -0400, Justin Suess wrote:
+> > > > On Thu, Apr 16, 2026 at 04:47:40PM -0700, Song Liu wrote:
+> > > > > On Thu, Apr 16, 2026 at 2:53 PM Justin Suess <utilityemal77@gmail.com> wrote:
+> > [...]
+> > > Why not using proper typing with a dedicated map?
+> > > 
+> > 
+> > I may be misunderstanding, but from what I see, a __kptr DOES give
+> > proper typing, __kptr is an annotation not a type.
 > 
-> The NIC presumably knows how to parse the firmware request and extract
-> whatever security relevant info is needed to pass to the kernel so the
-> driver can make an access control request.
-
-Not in practice, we'd have to agree on how to describe the "security relevant
-info" and that won't happen..
-
-> Leon mentioned that different firmware revisions would have different
-> parameters for a given opcode, and that one would need to inspect
-> those parameters to properly filter the command.  Is that not true, or
-> am I misreading or misunderstanding Leon's comments?
-
-They are ABI stable, so there will be rules about future changes that
-old software can follow to ignore or reject future things it doesn't
-understand.
-
-> > > The access control point itself represents the requested
-> > > operation.  This is possible because the number of networking
-> > > operations on a given packet is well defined and fairly limited; at a
-> > > high level the packet is either being sent from the node, received by
-> > > the node, or is passing through the node.
-> >
-> > I think we have the same split, fwctl send/recive analog is also very
-> > limited.
+> Ok, good.
 > 
-> Sure, but I thought the goal was to enforce access controls on the
-> firmware requests based on the opcodes/parameters contained within the
-> firmware request blob/mailbox?  
-
-Yes, that's the goal. It is the same as iptables being able to
-identify that a send system call has a packet that is http or dns. I'd
-like to have a fwctl RPC ioctl system call identify if the RPC packet
-is A or B.
-
-> > Deep inspection on the packet blob determines the secmark.
+> > 
+> > This is what it would look like in an BPF_MAP_TYPE_ARRAY.
+> > 
+> >     struct ruleset_kptr_value {
+> > 	    struct bpf_landlock_ruleset __kptr * ruleset;
+> >     };
+> > 
+> >     struct {
+> > 	      __uint(type, BPF_MAP_TYPE_ARRAY);
+> > 	      __uint(max_entries, 1);
+> > 	      __type(key, __u32);
+> > 	      __type(value, struct ruleset_kptr_value);
+> >     } ruleset_kptr_map SEC(".maps");
+> > 
+> > So we get proper typing from what I see. (It's not like a __kptr is a
+> > special void*, it has a type)
 > 
-> ... and this would be done by your BPF classifier, yes?
-
-BPF would be one option. We could probably also meaningfully do a
-fixed set of matching functions (ie pkt_data[X] == A then MATCH) more
-like iptables does if that is somehow relevant to LSM.
- 
-> > LSM takes the secmark and determines if the access control point
-> > accept/rejects.
+> Looks good.
 > 
-> At this point I think it would be helpful to write out the
-> subject-access-object triple for an example operation and explain how
-> an LSM could obtain each component of the access request.
-
-I think I am talking about this:
-
-app_1 FWCTL_RPC op_unpriv_t
-app_2 FWCTL_RPC op_priv_t
-
-- app_x broadly comes from the process executing the ioctl
-
-- FWCTL_RPC identifies the IOCTL userspace called to send the RPC
-  packet
-
-- op_X_t is the result of the classifier inspecting the RPC
-  packet. Admin tells the classifier to return op_X_t similar to
-  how --selctx does for iptables.
-
-For sketch purposes I've used the words priv/unpriv as something an
-admin might want to setup. As I said above the actual buckets and
-mapping would have to decided by the local admin.
-
-> > Same as for networking. Admin understands, admin defines, kernel is
-> > just a programmable classifier.
+> [...]
+> > 
+> > The answer the the lifetime part is yes.
+> > 
+> > The kptr destructors and the landlock ruleset refcounting give us that
+> > abstraction. (along with the KF_ACQUIRE/KF_RELEASE annotations and
+> > destructor implementation)
 > 
-> Are you able to define all of the firmware request operations at this
-> point in time?  That is my largest concern at this point, and perhaps
-> the answer is a simple "yes", but I haven't seen it yet.
+> Good.
+> 
+> > 
+> > > to the caller) and pass them as file descriptor?
+> > This "pass them as a file descriptor" is the tricky part. It would be
+> > very convenient if we could send the fd to bpf from userspace and have
+> > it be implicitly converted (like in the BPF_MAP_TYPE_LANDLOCK_RULESET
+> > implementation) in one step, but I just don't see a way to do that with
+> > the bpf_landlock_get_ruleset_from_fd kfunc approach.
+> 
+> Song's idea to have a generic FD map looks promising.
+> 
 
-We can identify all the IOCTL points where the RPC packet will be
-delivered to the kernel (send/recv/etc)
+I agree the generic FD map sounds like a good fit.
 
-We cannot pre-identify all the mlx_XXX_op_t's an admin might want to
-use.
+So this would be three parts like:
 
-The same way secmark cannot pre-identify all the XXX_packet_t's.
+1. The new point-of-no-return flags for NNP and staging domain to
+execution time in Landlock. Selftests and doc updates.
+2. The generic FD map implementation for bpf. Selftests and doc updates.
+3. The BPF kfunc implementations for Landlock using the same point-of-no
+return staging. Selftests and doc updates.
 
-Jason
+The scope of which is probably too big for one series.
+
+Luckily part 1 is pretty close to being done as part of my work for v2
+of this series, and can standalone as a preparatory series for Landlock,
+since it adds flags and features that have utility outside of BPF.
+
+Open for ideas on how to split this up (or even better, for some help in
+implementation or prior works).
+
+I'd like to get some feedback and figue out what this generic fd map
+should look like and get some more eyes on that idea to avoid wasting
+reviewer time on an unsuitable implementation.
+
+Justin
