@@ -1,318 +1,293 @@
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f78.google.com (mail-oo1-f78.google.com [209.85.161.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C3231E83D
-	for <linux-security-module@vger.kernel.org>; Fri, 17 Apr 2026 18:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7753B2FFC
+	for <linux-security-module@vger.kernel.org>; Fri, 17 Apr 2026 18:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776449009; cv=none; b=MVP3YFfWhP5WPWSoIEYCC+SoHfmuKl2QW0lJ1tkJqRE28R+lbU8erBJMEU7eMVH+iirfWfOCZPR+rcF9vFj8k/GPU+qr8gyim0v/xvYMRNBvRCtkGDRcqMGFg7P51rZOjZO8qx4GtWBcx6pMaYSW1bRLfcQO9t1tDo5gj4U3GoA=
+	t=1776449503; cv=none; b=uDHIFjTXMHLmAJj8BOMJCgL6MBNtbpC0jeqloXroNVYq9MjTOQnNnhxNey2zFfS2rDgUl49nIAAHjgREMeGlJx+1mycC+rKO0FlILwEIIDUNBCHsqUY3TRtSedtdwfMBQqK4e3dMQ3NgUxcVvW6N2YxAfFtw+ghtz3d1i5780h0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776449009; c=relaxed/simple;
-	bh=dxzHKB8J6kbUKyu0ZCEch3q/D0y+//kBi4xeuwq2G/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GprvGnvb///e2RKB6lGoE/EyZ0dhiUdZgxcMepPeBHMf8hahVjLVH7sOd2Fd2HcJbXoU9Ut56rlp5NjMaZp2PYYBssvRn0J5RJLaz9e738fuGwUOVQB7NcejvgWmtw7CxU0gHa8R2L4wteYtxHsDewPsaeES+/4b96tIROZ1Xfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=PqqFybNJ; arc=none smtp.client-ip=83.166.143.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="PqqFybNJ"
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fy2mh1MQkz1M1;
-	Fri, 17 Apr 2026 20:03:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1776448995;
-	bh=p5Inpj/YtolZ92WKJychXbAh/LIr4WXGTzIPW/VeaAY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PqqFybNJE+ushd3LC44hSobe6sr+OfKszeyfUJWnnzSefVMQiFWWpK7mifYNvstNC
-	 HgKB2ErrKUpsFVSH7qeAc4Eu6YdF01QcvikWpwp/Dv5C/OiFvqYlxLDHsuu+XIxr/d
-	 Z2dAgs7fsrcDaMd3eY578mb02oODCUsmmsEAqIyY=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4fy2mg15v7zFfF;
-	Fri, 17 Apr 2026 20:03:15 +0200 (CEST)
-Date: Fri, 17 Apr 2026 20:03:14 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Justin Suess <utilityemal77@gmail.com>
-Cc: Song Liu <song@kernel.org>, ast@kernel.org, daniel@iogearbox.net, 
-	andrii@kernel.org, kpsingh@kernel.org, paul@paul-moore.com, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, kees@kernel.org, gnoack@google.com, jack@suse.cz, 
-	jmorris@namei.org, serge@hallyn.com, yonghong.song@linux.dev, martin.lau@linux.dev, 
-	m@maowtm.org, eddyz87@gmail.com, john.fastabend@gmail.com, sdf@fomichev.me, 
-	skhan@linuxfoundation.org, bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 08/20] bpf: Add Landlock ruleset map type
-Message-ID: <20260417.aPh1ooQu8esh@digikod.net>
-References: <20260407200157.3874806-1-utilityemal77@gmail.com>
- <20260407200157.3874806-9-utilityemal77@gmail.com>
- <CAPhsuW7zzXXd6-d86B-rpGr-wfSzmEoCYNKhTMP_pXnybtA27A@mail.gmail.com>
- <aeFaQXkKNHFeE-oC@suesslenovo>
- <CAPhsuW648HdcCbXWMHaJ4uirPWq2WX3Ggx3AGMU6CGzhNYUREg@mail.gmail.com>
- <aeI_CXj6F-nI_DCL@suesslenovo>
- <20260417.ohgoh0Eecome@digikod.net>
- <aeJlHIoSjVPmccDx@suesslenovo>
+	s=arc-20240116; t=1776449503; c=relaxed/simple;
+	bh=EGqyT+nZhpmK/rDcplJnUEgvFvJ3SVDUz++8n3SoIUU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=l9yfeaCB3kN7o5rqSu483nt+CQiOGZyagttT/sqckgAAW8Za01a1Bdj39eAFc4To/Z6K+58RgzuakNb9l5ZcAuDk66e9RU6dqLLo4x8N3ilovdMYuV3w0dDIk+H4sRTkYNuot5S3k2KCKU8c5Z1BL5DJvga9zFnoUEmzNaF3KDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f78.google.com with SMTP id 006d021491bc7-689b18091ebso2277084eaf.1
+        for <linux-security-module@vger.kernel.org>; Fri, 17 Apr 2026 11:11:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776449493; x=1777054293;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=exjvMgqOm3iVyT9rirlqaY/LhTqHqZBlcHSSUxwTkFE=;
+        b=qyZG3KskF8E4gQFDtRRySxRpa7j5s+5aYaKIth/4Z3qCBKhA8fXivTOI2TxRBYZAda
+         maKrqX3ax9cYxZ+afmxI9jcmSPjOuOZXmbfZst3bqdKG2LOp+8rHV9Fz72KpUyHzT2uF
+         pu0CYCbKP6HvaYTknVrtkwBrGlTQ7748yQ1KAzyZUoArxcQF6gcB8nGRSC4lBd6EgzFB
+         0xES9umiOOpBaytMGcXleOJ7BPqxCC61A2+E2z+iC/+y7YfoKeTQsjlaqNO0uAwcqwzN
+         tDAm5sCi6PNlgzwjCNk2Kn/0H/55yWbAH67oH6jlyPXLTR4aRuT4ebduSmX9eE7CDKPM
+         btxw==
+X-Forwarded-Encrypted: i=1; AFNElJ+XHk3E31RJoehVrcSjLxXCA3PXSmQVIC5+pCTLVoQYTHZoc0YWJC58SG5ie7QMGwykM6zR9mr6pyRfbDrhVKCPRqMPdmk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/VJNQi+idMIkcbDhJdPdOb+LXks+QJy7x/UMXuN4nh6Eafqoe
+	+qzUCiEccKDu4JzjAk1FgReT8FkB5Q2Chfq/07D5FnkUnrbcnS/9rYevjdDKKGDDuo9+o/ArsB9
+	8dq6lteP+m00uzi96J1Seq2sx0IjDsoyhw+ks0p5HAqZ3wdQ4b0+7aRvtdVk=
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aeJlHIoSjVPmccDx@suesslenovo>
-X-Infomaniak-Routing: alpha
+X-Received: by 2002:a05:6820:858e:10b0:67e:e9c:63f0 with SMTP id
+ 006d021491bc7-694637d7901mr1299995eaf.25.1776449492929; Fri, 17 Apr 2026
+ 11:11:32 -0700 (PDT)
+Date: Fri, 17 Apr 2026 11:11:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69e277d4.a00a0220.1bd0ca.0019.GAE@google.com>
+Subject: [syzbot] [integrity?] [lsm?] BUG: sleeping function called from
+ invalid context in page_cache_ra_unbounded
+From: syzbot <syzbot+77103043d0c16dbc71ae@syzkaller.appspotmail.com>
+To: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
+	roberto.sassu@huawei.com, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Apr 17, 2026 at 12:51:40PM -0400, Justin Suess wrote:
-> On Fri, Apr 17, 2026 at 05:18:05PM +0200, Mickaël Salaün wrote:
-> > On Fri, Apr 17, 2026 at 10:09:13AM -0400, Justin Suess wrote:
-> > > On Thu, Apr 16, 2026 at 04:47:40PM -0700, Song Liu wrote:
-> > > > On Thu, Apr 16, 2026 at 2:53 PM Justin Suess <utilityemal77@gmail.com> wrote:
-> > > > [...]
-> > > > > I don't think we can pass the FD number via a map, since the FD is
-> > > > > process specific. And it needs to be done in a way where we can lookup
-> > > > > the specific ruleset the FD points to safely.
-> > > > >
-> > > > > So we'd need some other way to load the ruleset from a file descriptor,
-> > > > > either through a new userspace side BPF call or similar mechanism.
-> > > > >
-> > > > > Is there some other common pattern for FDs --> kptr I can follow?
-> > > > 
-> > > > I didn't find an exact example like this. There must be a way to achieve
-> > > > this. In the worst case, we can add a kfunc for this.
-> > > >
-> > > 
-> > > I think new kfunc is a doable approach. I could make a kfunc taking a struct
-> > > *task_struct and an FD that looks up a landlock ruleset within a given
-> > > task that returns a trusted kptr.
-> > > 
-> > > Something like:
-> > > 
-> > > struct bpf_landlock_ruleset* bpf_landlock_get_ruleset_from_fd(struct
-> > > task_struct* task, int fd)
-> 
-> Thanks Mickaël and Song,
-> 
-> There are definitely pros and cons to both approaches.
-> 
-> I think it would be OK to have a dedicated map and indeed cleaner from
-> the userspace side since there would be no intermediate step to find the
-> task and lookup the fd since that would be handled by the map_ops.
-> 
-> Cons of the new map type:
-> 
-> The main issue is with the new map type is then we are limited to the
-> specific data structure we define in the map. For instance if we want
-> to use a hash or other data structure instead of an array to store
-> rulesets, we'd need to define variants of the landlock map type for
-> all data structures.
-> 
-> So this kind of bungles the "data structure" and "data type" layers.
-> 
-> Pros of the new map type:
-> 
-> The ruleset_fd conversion would be implicitly handled by the map_ops.
-> Userspace could insert the fd and bpf would not have to deal with it at
-> all.
-> 
-> Cons of bpf_landlock_get_ruleset_from_fd:
-> 
-> Awkward conversion step. We need to find the task of the original
-> ruleset creator and recieve the fd before looking it up and converting
-> it to a kptr to the bpf_landlock_ruleset.
-> 
-> Pros of bpf_landlock_get_ruleset_from_fd:
-> 
-> We can use any existing map data structure to store our kptrs.
-> 
-> Not having a dedicated map type simplifies implementation.
-> 
-> ...
-> 
-> Appreciate the feedback from both of you.
-> > 
-> > That looks like a hack that would not handle FD's (object) lifetime
-> > (e.g. what happen when the task is gone?).
-> >
-> 
-> If we take an underlying reference on the ruleset backing the fd, then the fd
-> being closed shouldn't matter right?
-> 
-> This is how the lifetime management works for that
-> bpf_landlock_get_ruleset_from fd, in my draft implementation prior to
-> the RFC:
-> 
->   /**
->    * bpf_landlock_get_ruleset_from_fd - acquire a Landlock ruleset from a task FD
->    * @task: task owning the file descriptor table to look up
->    * @fd: Landlock ruleset file descriptor in @task
->    *
->    * Returns: a referenced opaque Landlock ruleset, or NULL if the FD lookup or
->    * validation fails.
->    */
->   __bpf_kfunc struct bpf_landlock_ruleset *
->   bpf_landlock_get_ruleset_from_fd(struct task_struct *task, int fd)
->   {
->   	struct landlock_ruleset *ruleset;
->     /* does landlock_get_ruleset and increments refcount */
->   	ruleset = landlock_get_task_ruleset_from_fd(task, fd, FMODE_CAN_READ);
->   	if (IS_ERR(ruleset))
->   		return NULL;
->   
->   	return (struct bpf_landlock_ruleset *)ruleset;
->   }
-> 
-> The landlock_get_task_ruleset_from_fd increments the usage with
-> landlock_get_ruleset. (This may sleep, so it must be tagged with
-> KF_SLEEPABLE)
-> 
-> If the fd is closed before landlock_get_ruleset_from_fd, then null is returned.
-> The verifier will force the program to do the null check b/c of KF_RET_NULL.
-> 
-> __kptr also have destructor kfuncs. So if we get the reference in
-> bpf_landlock_get_ruleset_from_fd with landlock_get_ruleset_from_fd, and
-> put the reference to the ruleset.
-> 
-> The destructor path looks like this:
-> 
->   /* Define ID for destructor * /
->   BTF_ID_LIST(bpf_landlock_dtor_ids)
->   BTF_ID(struct, bpf_landlock_ruleset)
->   BTF_ID(func, bpf_landlock_put_ruleset_dtor)
->   ...
->   /**
->   * bpf_landlock_put_ruleset - put a Landlock ruleset
->   * @ruleset: Landlock ruleset to put
->   */
->   __bpf_kfunc void
->   bpf_landlock_put_ruleset(const struct bpf_landlock_ruleset *ruleset)
->   {
-> 	  landlock_put_ruleset((struct landlock_ruleset *)ruleset);
->   }
-> 
->   __bpf_kfunc void bpf_landlock_put_ruleset_dtor(void *ruleset)
->   {
-> 	  bpf_landlock_put_ruleset(ruleset);
->   }
-> 
->   static int __init bpf_landlock_kfunc_init(void)
->   {
->   	const struct btf_id_dtor_kfunc bpf_landlock_dtors[] = {
->   		{
->   			.btf_id = bpf_landlock_dtor_ids[0],
->   			.kfunc_btf_id = bpf_landlock_dtor_ids[1],
->   		},
->   	};
->   	int ret;
->   
->   	ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM,
->   					&bpf_landlock_kfunc_set);
->   	if (ret)
->   		return ret;
->   
->   	return register_btf_id_dtor_kfuncs(bpf_landlock_dtors,
->   					   ARRAY_SIZE(bpf_landlock_dtors),
->   					   THIS_MODULE);
->   }
-> 
-> Good reminder I need to include a test making sure the ruleset
-> remains valid after the FD and/or task is closed. :)
-> 
-> > Why not using proper typing with a dedicated map?
-> > 
-> 
-> I may be misunderstanding, but from what I see, a __kptr DOES give
-> proper typing, __kptr is an annotation not a type.
+Hello,
 
-Ok, good.
+syzbot found the following issue on:
 
-> 
-> This is what it would look like in an BPF_MAP_TYPE_ARRAY.
-> 
->     struct ruleset_kptr_value {
-> 	    struct bpf_landlock_ruleset __kptr * ruleset;
->     };
-> 
->     struct {
-> 	      __uint(type, BPF_MAP_TYPE_ARRAY);
-> 	      __uint(max_entries, 1);
-> 	      __type(key, __u32);
-> 	      __type(value, struct ruleset_kptr_value);
->     } ruleset_kptr_map SEC(".maps");
-> 
-> So we get proper typing from what I see. (It's not like a __kptr is a
-> special void*, it has a type)
+HEAD commit:    1c7cc4904160 Add linux-next specific files for 20260413
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=104e10ce580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=56c2b36de3316f1b
+dashboard link: https://syzkaller.appspot.com/bug?extid=77103043d0c16dbc71ae
+compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
 
-Looks good.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> 
-> > > 
-> > > And tagging it with KF_ACQUIRE + KF_RET_NULL.
-> > > 
-> > > Then keep the existing kfunc for putting the ruleset and enforcing it on
-> > > a struct linux_binprm.
-> > > 
-> > > The BPF program would need to get a reference to a task struct
-> > > of the program creating the rulesets with bpf_task_from_pid for
-> > > instance. Then they could use the task_struct with another plain integer
-> > > map to store FD numbers and then use the rulesets or store them in a map
-> > > of __kptr objects for later usage.
-> > > 
-> > > Would this be more acceptable?
-> > > > > Basically the pattern I need is userspace must create the file
-> > > > > descriptor, BPF converts that FD into a refcounted kernel object, and
-> > > > > even if userspace closes the FD BPF needs to hold a reference on the
-> > > > > underlying ruleset structure.
-> > > > >
-> > > > > (In this patch this was accomplished through the map_ops)
-> > > > >
-> > > > > Let me know what you think Song. I do understand the benefit of having a
-> > > > > __kptr instead, the refcounting is all there, and it would allow storing
-> > > > > rulesets in multiple map types. (and one less map type to maintain).
-> > > > 
-> > > > A new type of map for each FD referenced kernel type is non-starter.
-> > > > It is impossible to add UAPI for a specific use case.
-> > 
-> > This new map type is only about one file descriptor type, similarly to
-> > socket FDs.  From a UAPI point of view, it looks clean and safe,
-> > especially to deal with underlying object lifetime (e.g. reference
-> > tracking).
-> > 
-> > > >
-> > > You've convinced me. I could see a lot of problems if everyone wanting
-> > > to add their specialized maps, it would be difficult to maintain.
-> > 
-> > Is there another way to properly handle kernel object lifetime (not tied
-> 
-> The answer the the lifetime part is yes.
-> 
-> The kptr destructors and the landlock ruleset refcounting give us that
-> abstraction. (along with the KF_ACQUIRE/KF_RELEASE annotations and
-> destructor implementation)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/91a765b703da/disk-1c7cc490.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/da75a3061146/vmlinux-1c7cc490.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d55367ced048/bzImage-1c7cc490.xz
 
-Good.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+77103043d0c16dbc71ae@syzkaller.appspotmail.com
 
-> 
-> > to the caller) and pass them as file descriptor?
-> This "pass them as a file descriptor" is the tricky part. It would be
-> very convenient if we could send the fd to bpf from userspace and have
-> it be implicitly converted (like in the BPF_MAP_TYPE_LANDLOCK_RULESET
-> implementation) in one step, but I just don't see a way to do that with
-> the bpf_landlock_get_ruleset_from_fd kfunc approach.
+cgroup: Unknown subsys name 'rlimit'
+BUG: sleeping function called from invalid context at ./include/linux/sched/mm.h:323
+in_atomic(): 0, irqs_disabled(): 0, non_block: 0, pid: 5809, name: syz-executor
+preempt_count: 0, expected: 0
+RCU nest depth: 1, expected: 0
+3 locks held by syz-executor/5809:
+ #0: ffff888025b9e458 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: process_measurement+0x7fd/0x1c90 security/integrity/ima/ima_main.c:319
+ #1: ffff8880406185f0 (mapping.invalidate_lock#2){++++}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:1094 [inline]
+ #1: ffff8880406185f0 (mapping.invalidate_lock#2){++++}-{4:4}, at: do_page_cache_ra mm/readahead.c:333 [inline]
+ #1: ffff8880406185f0 (mapping.invalidate_lock#2){++++}-{4:4}, at: page_cache_ra_order+0x2a5/0x490 mm/readahead.c:538
+ #2: ffffffff8dfc80c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:300 [inline]
+ #2: ffffffff8dfc80c0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
+ #2: ffffffff8dfc80c0 (rcu_read_lock){....}-{1:3}, at: __rt_spin_lock kernel/locking/spinlock_rt.c:50 [inline]
+ #2: ffffffff8dfc80c0 (rcu_read_lock){....}-{1:3}, at: rt_spin_lock+0x1e0/0x400 kernel/locking/spinlock_rt.c:57
+CPU: 0 UID: 0 PID: 5809 Comm: syz-executor Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/18/2026
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0xe8/0x150 lib/dump_stack.c:120
+ __might_resched+0x329/0x480 kernel/sched/core.c:9162
+ might_alloc include/linux/sched/mm.h:323 [inline]
+ prepare_alloc_pages+0x1f0/0x6b0 mm/page_alloc.c:4995
+ __alloc_frozen_pages_noprof+0x12f/0x380 mm/page_alloc.c:5215
+ alloc_pages_mpol+0xd1/0x380 mm/mempolicy.c:2490
+ alloc_frozen_pages_noprof mm/mempolicy.c:2561 [inline]
+ alloc_pages_noprof+0xd2/0x2f0 mm/mempolicy.c:2581
+ folio_alloc_noprof+0x22/0xc0 mm/mempolicy.c:2591
+ filemap_alloc_folio_noprof+0x111/0x4d0 mm/filemap.c:1013
+ ractl_alloc_folio mm/readahead.c:189 [inline]
+ page_cache_ra_unbounded+0x2f7/0x980 mm/readahead.c:277
+ do_page_cache_ra mm/readahead.c:334 [inline]
+ page_cache_ra_order+0x2b5/0x490 mm/readahead.c:538
+ filemap_readahead mm/filemap.c:2663 [inline]
+ filemap_get_pages+0x832/0x1e70 mm/filemap.c:2709
+ filemap_read+0x44a/0x1240 mm/filemap.c:2805
+ __kernel_read+0x50d/0x9c0 fs/read_write.c:532
+ integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
+ ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:222 [inline]
+ ima_calc_file_hash+0x452/0x870 security/integrity/ima/ima_crypto.c:280
+ ima_collect_measurement+0x523/0x9d0 security/integrity/ima/ima_api.c:300
+ process_measurement+0x12d9/0x1c90 security/integrity/ima/ima_main.c:425
+ ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
+ security_file_post_open+0xb3/0x260 security/security.c:2755
+ do_open fs/namei.c:4701 [inline]
+ path_openat+0x2e88/0x38a0 fs/namei.c:4858
+ do_file_open+0x23e/0x4a0 fs/namei.c:4887
+ file_open_name+0x162/0x1c0 fs/open.c:1322
+ __do_sys_swapon mm/swapfile.c:3574 [inline]
+ __se_sys_swapon+0x856/0x2010 mm/swapfile.c:3539
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x15f/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4a4d9cc7d7
+Code: 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a7 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc336ba3b8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a7
+RAX: ffff[   83.300808][ T5809] RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00007f4a4d9cc7d7
+RDX: 0000000000000000 RSI: 0000000000008000 RDI: 00007f4a4da62e5b
+RBP: 00007f4a4da62e5b R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000008 R11: 0000000000000246 R12: 00007f4a4dc163e0
+R13: 00007f4a4da7dd26 R14: 0000000000200000 R15: 00007f4a4dc163a0
+ </TASK>
 
-Song's idea to have a generic FD map looks promising.
+=============================
+[ BUG: Invalid wait context ]
+syzkaller #0 Tainted: G        W          
+-----------------------------
+syz-executor/5809 is trying to lock:
+ffff8880406185f0 (mapping.invalidate_lock#2){++++}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:1094 [inline]
+ffff8880406185f0 (mapping.invalidate_lock#2){++++}-{4:4}, at: do_page_cache_ra mm/readahead.c:333 [inline]
+ffff8880406185f0 (mapping.invalidate_lock#2){++++}-{4:4}, at: page_cache_ra_order+0x2a5/0x490 mm/readahead.c:538
+other info that might help us debug this:
+context-{5:5}
+2 locks held by syz-executor/5809:
+ #0: ffff888025b9e458 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: process_measurement+0x7fd/0x1c90 security/integrity/ima/ima_main.c:319
+ #1: ffffffff8dfc80c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:300 [inline]
+ #1: ffffffff8dfc80c0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
+ #1: ffffffff8dfc80c0 (rcu_read_lock){....}-{1:3}, at: __rt_spin_lock kernel/locking/spinlock_rt.c:50 [inline]
+ #1: ffffffff8dfc80c0 (rcu_read_lock){....}-{1:3}, at: rt_spin_lock+0x1e0/0x400 kernel/locking/spinlock_rt.c:57
+stack backtrace:
+CPU: 0 UID: 0 PID: 5809 Comm: syz-executor Tainted: G        W           syzkaller #0 PREEMPT_{RT,(full)} 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/18/2026
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0xe8/0x150 lib/dump_stack.c:120
+ print_lock_invalid_wait_context kernel/locking/lockdep.c:4832 [inline]
+ check_wait_context kernel/locking/lockdep.c:4904 [inline]
+ __lock_acquire+0xec1/0x2cf0 kernel/locking/lockdep.c:5189
+ lock_acquire+0x106/0x350 kernel/locking/lockdep.c:5870
+ down_read+0x97/0x200 kernel/locking/rwsem.c:1568
+ filemap_invalidate_lock_shared include/linux/fs.h:1094 [inline]
+ do_page_cache_ra mm/readahead.c:333 [inline]
+ page_cache_ra_order+0x2a5/0x490 mm/readahead.c:538
+ filemap_readahead mm/filemap.c:2663 [inline]
+ filemap_get_pages+0x832/0x1e70 mm/filemap.c:2709
+ filemap_read+0x44a/0x1240 mm/filemap.c:2805
+ __kernel_read+0x50d/0x9c0 fs/read_write.c:532
+ integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
+ ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:222 [inline]
+ ima_calc_file_hash+0x452/0x870 security/integrity/ima/ima_crypto.c:280
+ ima_collect_measurement+0x523/0x9d0 security/integrity/ima/ima_api.c:300
+ process_measurement+0x12d9/0x1c90 security/integrity/ima/ima_main.c:425
+ ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
+ security_file_post_open+0xb3/0x260 security/security.c:2755
+ do_open fs/namei.c:4701 [inline]
+ path_openat+0x2e88/0x38a0 fs/namei.c:4858
+ do_file_open+0x23e/0x4a0 fs/namei.c:4887
+ file_open_name+0x162/0x1c0 fs/open.c:1322
+ __do_sys_swapon mm/swapfile.c:3574 [inline]
+ __se_sys_swapon+0x856/0x2010 mm/swapfile.c:3539
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x15f/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4a4d9cc7d7
+Code: 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a7 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc336ba3b8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a7
+RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00007f4a4d9cc7d7
+RDX: 0000000000000000 RSI: 0000000000008000 RDI: 00007f4a4da62e5b
+RBP: 00007f4a4da62e5b R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000008 R11: 0000000000000246 R12: 00007f4a4dc163e0
+R13: 00007f4a4da7dd26 R14: 0000000000200000 R15: 00007f4a4dc163a0
+ </TASK>
+------------[ cut here ]------------
+Voluntary context switch within RCU read-side critical section!
+WARNING: kernel/rcu/tree_plugin.h:332 at rcu_note_context_switch+0xcac/0xf40 kernel/rcu/tree_plugin.h:332, CPU#0: syz-executor/5809
+Modules linked in:
+CPU: 0 UID: 0 PID: 5809 Comm: syz-executor Tainted: G        W           syzkaller #0 PREEMPT_{RT,(full)} 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/18/2026
+RIP: 0010:rcu_note_context_switch+0xcac/0xf40 kernel/rcu/tree_plugin.h:332
+Code: 00 41 c6 45 00 00 48 8b 3d 81 5e e2 0d 48 81 c4 b8 00 00 00 5b 41 5c 41 5d 41 5e 41 5f 5d e9 9b 60 ff ff 48 8d 3d f4 26 e6 0d <67> 48 0f b9 3a e9 1b f4 ff ff 90 0f 0b 90 45 84 e4 0f 84 ea f3 ff
+RSP: 0018:ffffc900043b6fb0 EFLAGS: 00010002
+RAX: 0000000000000000 RBX: ffff88803906bd80 RCX: 0000000080000002
+RDX: 0000000000000000 RSI: ffffffff8ba83740 RDI: ffffffff8f907b60
+RBP: dffffc0000000000 R08: ffffffff8f8d05f7 R09: 1ffffffff1f1a0be
+R10: dffffc0000000000 R11: fffffbfff1f1a0bf R12: 0000000000000000
+R13: ffff88803906bd80 R14: ffff8880b883c980 R15: ffff88803906c244
+FS:  0000555571f48540(0000) GS:ffff8881260c2000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f64ae81e7b8 CR3: 000000001a1e4000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ __schedule+0x297/0x54f0 kernel/sched/core.c:7043
+ __schedule_loop kernel/sched/core.c:7267 [inline]
+ schedule+0x164/0x360 kernel/sched/core.c:7282
+ schedule_timeout+0x158/0x2c0 kernel/time/sleep_timeout.c:99
+ io_schedule_timeout+0x88/0xe0 kernel/sched/core.c:8097
+ do_wait_for_common kernel/sched/completion.c:100 [inline]
+ __wait_for_common kernel/sched/completion.c:121 [inline]
+ wait_for_common_io+0x2d7/0x610 kernel/sched/completion.c:138
+ blk_wait_io block/blk.h:102 [inline]
+ bio_await block/bio.c:1496 [inline]
+ submit_bio_wait+0x16d/0x250 block/bio.c:1513
+ blkdev_issue_flush+0xe0/0x150 block/blk-flush.c:475
+ ext4_sync_file+0x8b6/0xd60 fs/ext4/fsync.c:179
+ iomap_swapfile_activate+0x1e4/0xbe0 fs/iomap/swapfile.c:162
+ setup_swap_extents+0x176/0x640 mm/swapfile.c:2890
+ __do_sys_swapon mm/swapfile.c:3630 [inline]
+ __se_sys_swapon+0xdc9/0x2010 mm/swapfile.c:3539
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x15f/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4a4d9cc7d7
+Code: 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a7 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc336ba3b8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a7
+RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00007f4a4d9cc7d7
+RDX: 0000000000000000 RSI: 0000000000008000 RDI: 00007f4a4da62e5b
+RBP: 00007f4a4da62e5b R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000008 R11: 0000000000000246 R12: 00007f4a4dc163e0
+R13: 00007f4a4da7dd26 R14: 0000000000200000 R15: 00007f4a4dc163a0
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	00 41 c6             	add    %al,-0x3a(%rcx)
+   3:	45 00 00             	add    %r8b,(%r8)
+   6:	48 8b 3d 81 5e e2 0d 	mov    0xde25e81(%rip),%rdi        # 0xde25e8e
+   d:	48 81 c4 b8 00 00 00 	add    $0xb8,%rsp
+  14:	5b                   	pop    %rbx
+  15:	41 5c                	pop    %r12
+  17:	41 5d                	pop    %r13
+  19:	41 5e                	pop    %r14
+  1b:	41 5f                	pop    %r15
+  1d:	5d                   	pop    %rbp
+  1e:	e9 9b 60 ff ff       	jmp    0xffff60be
+  23:	48 8d 3d f4 26 e6 0d 	lea    0xde626f4(%rip),%rdi        # 0xde6271e
+* 2a:	67 48 0f b9 3a       	ud1    (%edx),%rdi <-- trapping instruction
+  2f:	e9 1b f4 ff ff       	jmp    0xfffff44f
+  34:	90                   	nop
+  35:	0f 0b                	ud2
+  37:	90                   	nop
+  38:	45 84 e4             	test   %r12b,%r12b
+  3b:	0f                   	.byte 0xf
+  3c:	84 ea                	test   %ch,%dl
+  3e:	f3                   	repz
+  3f:	ff                   	.byte 0xff
 
-> > 
-> > > 
-> > > It's probably best to keep the specialized map types to core kernel
-> > > interfaces only that are unlikely to change.
-> > 
-> > File descriptors are a stable interface.
-> >
-> No that's correct. I cede that point :)
-> > > 
-> > > > Thanks,
-> > > > Song
-> > > > 
-> > > > > Mickaël, do you have any thoughts on this? I have v2 basically ready,
-> > > > > although it uses the BPF_MAP_TYPE_LANDLOCK_RULESET it changes a lot on
-> > > > > the Landlock side.
-> > > 
-> 
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
