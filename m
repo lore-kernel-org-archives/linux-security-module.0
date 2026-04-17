@@ -1,102 +1,64 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03022372B23
-	for <linux-security-module@vger.kernel.org>; Thu, 16 Apr 2026 23:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692C5265621;
+	Fri, 17 Apr 2026 03:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776383274; cv=none; b=CR8/0OLQqhr08ogCJar4Cubq6G1qNIpeb1hBij7givJ4lSFGgSRKXazw4yZLfQtGmLj0njUhgLPFWlHIIpMVhJYdNdJgTEtZKfgIajI5vTbj6J1yr372spzQmstTWe9KQO56Fvu5xCEBLk7yS7RSjjVyiySEi6OVgasjROSX4fk=
+	t=1776395214; cv=none; b=Wget3tp9Qf4YwPPHdaCQYA1iUzUy1cgVU4054JJpk6cofdE+Bpar8leV0+XXjpMZ7rolOYe7bPktzOQ48k8hxGKR/q8F47w+ff8Dzh8ICj/2bqmNwVtIZYu79ZNqwJjuwBTije8IYkAqhKGocv0tHkvCnLp8mgDbuzEk2ZDBNHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776383274; c=relaxed/simple;
-	bh=C5WAELTVBhjyFEhNaeXPis1p6w2t0pIcbw7WfXDAdoU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l6NqTQF2VKCAIerrWVKk8dbiyZRztHWVos/nLsqESBinRp2HBNId5F0YWu+jzZPwyLmd7mhamfd5kIxT0Vt5R5G9EWl4gBWa3ZnNinfEzmCXZd7jbVFdRI1OWsW/mJ5/IHnZp9k+uzZhmPpzlHhunGXjN+rykMRdZSMknlmyjB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zvvj0cVy; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zvvj0cVy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE5CFC2BCB8
-	for <linux-security-module@vger.kernel.org>; Thu, 16 Apr 2026 23:47:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776383273;
-	bh=C5WAELTVBhjyFEhNaeXPis1p6w2t0pIcbw7WfXDAdoU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Zvvj0cVyQQ2wyzlLb4eaQt7rSG6HFVdmufSZfGIyXkPlP9bYZooQzVCqgx8+WRm5K
-	 vf+jsJYhh7T3Cm1wk2ycg91u4HCYj6HGXU0LGtUEOJglDsNuc5xyh7ntSywXVPbztw
-	 clQ9VKwIxEuWRedy5FPZsb8Ywb6yMudZFsdLPBSDglSooUGcKZw24ShDzcwK3yne0j
-	 j5wfnWKuwo7ywRgyUmZz0Pd9RsgrVoxp6H6gDcsBa8/bRcRKIuQ1+DyvfabVKDIzYX
-	 8zHGpXA4vD7gGtPLoRB9/iTk0dFMxOd1pg2XuN4SFY9Sd7MIB5CXc1Sp04GZjLGMOE
-	 r2IeAElTMW/uA==
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-8d583bfc415so13167885a.2
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Apr 2026 16:47:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ8UbklF6qmrGxd7GDCgHnjpG11LUssJN2X8ueSvqa1S+EOSuXqiMp6tpDod/feCOTBs97boMrBFdbSZGbeJ6Ik5J/BX+X8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvXC+ErE2Dpf5Lf9aFAhwuSLeTsU5ArnY42PbGFqyskFmBnAqa
-	+hgxc2Mm67kkbAeYXJTlqtvi3W3jDQeNZ4ZB8SCGVNdHoGk344lNcvnb6ADbyr0DprHuOi9I16K
-	Bia5PIBpuq6uzQ8P7qwtXPlvRnfDtoJ0=
-X-Received: by 2002:a05:6214:590b:b0:89a:116b:e67d with SMTP id
- 6a1803df08f44-8b02816d14cmr11472166d6.37.1776383272731; Thu, 16 Apr 2026
- 16:47:52 -0700 (PDT)
+	s=arc-20240116; t=1776395214; c=relaxed/simple;
+	bh=/1SxhRBxYMAL3pjerId2Ah2s3M9DRq2tcCYGomDLNYI=;
+	h=From:Date:Message-ID:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UupRSxxxhYYkEpv9v8Pi3ggdjwF0DuYmwYWzRxhAak43OtW0XgqB7GpDeMP/hTUgWCmVnqt7ToWZIKat0YxW7ZUbplhTnU/GJckbGm87PHZSzkqLToZiKoLxw/dBMuQhOUhqMDOZMq7YJTir/1FY2PZhflFjKq4gY61U+aoUnFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from 0004-evm-xattrs-reply.eml (unknown [111.196.245.116])
+	by APP-03 (Coremail) with SMTP id rQCowACHnNPBo+FpSrhVDg--.50365S2;
+	Fri, 17 Apr 2026 11:06:41 +0800 (CST)
+From: Pengpeng Hou <pengpeng@iscas.ac.cn>
+Date: Fri, 17 Apr 2026 11:06:41 +0800
+Message-ID: <20260417190004.4-evm-xattrs-reply-pengpeng@iscas.ac.cn>
+To: Roberto Sassu <roberto.sassu@huawei.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, Serge Hallyn <serge@hallyn.com>, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, pengpeng@iscas.ac.cn
+Subject: Re: [PATCH] evm: zero-initialize the evm_xattrs read buffer
+In-Reply-To: <20260407153002.2-evm-xattrs-pengpeng@iscas.ac.cn>
+References: <20260407153002.2-evm-xattrs-pengpeng@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260407200157.3874806-1-utilityemal77@gmail.com>
- <20260407200157.3874806-9-utilityemal77@gmail.com> <CAPhsuW7zzXXd6-d86B-rpGr-wfSzmEoCYNKhTMP_pXnybtA27A@mail.gmail.com>
- <aeFaQXkKNHFeE-oC@suesslenovo>
-In-Reply-To: <aeFaQXkKNHFeE-oC@suesslenovo>
-From: Song Liu <song@kernel.org>
-Date: Thu, 16 Apr 2026 16:47:40 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW648HdcCbXWMHaJ4uirPWq2WX3Ggx3AGMU6CGzhNYUREg@mail.gmail.com>
-X-Gm-Features: AQROBzBjp2CZyNelxoIb8OGY5jbxiGMArE6FN8nqGrHbNb-DuxdjTnWhkFkE_iU
-Message-ID: <CAPhsuW648HdcCbXWMHaJ4uirPWq2WX3Ggx3AGMU6CGzhNYUREg@mail.gmail.com>
-Subject: Re: [RFC PATCH 08/20] bpf: Add Landlock ruleset map type
-To: Justin Suess <utilityemal77@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	kpsingh@kernel.org, paul@paul-moore.com, mic@digikod.net, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, kees@kernel.org, 
-	gnoack@google.com, jack@suse.cz, jmorris@namei.org, serge@hallyn.com, 
-	yonghong.song@linux.dev, martin.lau@linux.dev, m@maowtm.org, 
-	eddyz87@gmail.com, john.fastabend@gmail.com, sdf@fomichev.me, 
-	skhan@linuxfoundation.org, bpf@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowACHnNPBo+FpSrhVDg--.50365S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY97AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87
+	Iv6xkF7I0E14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAK
+	zVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx
+	8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAC
+	I402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxV
+	WUtVW8ZwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUp6wZUUUUU=
+X-CM-SenderInfo: pshqw1xhqjqxpvfd2hldfou0/
 
-On Thu, Apr 16, 2026 at 2:53=E2=80=AFPM Justin Suess <utilityemal77@gmail.c=
-om> wrote:
-[...]
-> I don't think we can pass the FD number via a map, since the FD is
-> process specific. And it needs to be done in a way where we can lookup
-> the specific ruleset the FD points to safely.
->
-> So we'd need some other way to load the ruleset from a file descriptor,
-> either through a new userspace side BPF call or similar mechanism.
->
-> Is there some other common pattern for FDs --> kptr I can follow?
+Hi Roberto,
 
-I didn't find an exact example like this. There must be a way to achieve
-this. In the worst case, we can add a kfunc for this.
+Thanks, I'll respin this.
 
-> Basically the pattern I need is userspace must create the file
-> descriptor, BPF converts that FD into a refcounted kernel object, and
-> even if userspace closes the FD BPF needs to hold a reference on the
-> underlying ruleset structure.
->
-> (In this patch this was accomplished through the map_ops)
->
-> Let me know what you think Song. I do understand the benefit of having a
-> __kptr instead, the refcounting is all there, and it would allow storing
-> rulesets in multiple map types. (and one less map type to maintain).
-
-A new type of map for each FD referenced kernel type is non-starter.
-It is impossible to add UAPI for a specific use case.
+I'll add the `Fixes:` tag, switch the formatting site to `snprintf()`,
+and rework the empty-list handling so it does not depend on `kzalloc()`
+for the terminator.
 
 Thanks,
-Song
+Pengpeng
 
-> Micka=C3=ABl, do you have any thoughts on this? I have v2 basically ready=
-,
-> although it uses the BPF_MAP_TYPE_LANDLOCK_RULESET it changes a lot on
-> the Landlock side.
+
