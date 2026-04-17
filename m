@@ -1,40 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E240D31F981
-	for <linux-security-module@vger.kernel.org>; Fri, 17 Apr 2026 16:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1CD333F8B7
+	for <linux-security-module@vger.kernel.org>; Fri, 17 Apr 2026 16:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776441692; cv=none; b=Pqz4/uBXAmU67HgIZlMv4uA71L29ALgF2iR1xhZ5LkuXI/Gg5ceQO0QU4dfStymEALDLKoQGnroNxCWo5MaePVu6FiRaveJsgDSUS5vWDni9zstYqd8Ng4/bTfurXuPSStIFNnSDpP0HRii+nK3mJQTjuzMD11Cge7qXMpXmVdk=
+	t=1776442243; cv=none; b=gJyzZC1rKP+Yr7fa1qIPfCf8Al0d/GKA/5NSykgctdU3AjeYkFUdjMr0pP/mBg9NIOnZlCh09uV9xmskC5EAfA3iQJGkQyk95sXDIUU5cFV4a6fnB8fKV/DoAdbGxdmk3VexWB/f0R28mBJYXzepsJIvL0Akya/B9rTLMe7+NA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776441692; c=relaxed/simple;
-	bh=MN9ukJ7sbOLNOd6kQgcy+yDM0fT1YKyxdtcXRjq2DYA=;
+	s=arc-20240116; t=1776442243; c=relaxed/simple;
+	bh=XuJXEpu0aKvc85JG7EApCC3CRfSpOkMFDMwAyfRfCeo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OD3S8HZ6Emebzx5Ydqi2lxq7k3lm23V1iy1QY7KJBFVfL3PecnLh3oN7zuihsO1DU+522YcwPc50u0/iI2+a8KpkW+l6KEUa42KduyGojTcQbvzw1EgBH2eRh3BV5DXP//uySlwlODW9KeCxq0oRfRoerG8H46ys58uDPG/VA1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dHrdgBW9; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=Xznm++qts2Hto+comqtmkvu/xnTSTDD8nH6CMfQuOLXOo6uQ51Rl1o0sxXQ4Vf6LNtR0jNpepaTDkUI/mTpEohWagYGa7FKVotLvZ6oBrOM7jpA4eu49pVO6jVAH51ETqUY6W8ocQtgvQ8HjMWMxBXp3Gwl5niTAuhtlVT4MMSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uO+y02bx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dHrdgBW9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE2CDC2BCC4
-	for <linux-security-module@vger.kernel.org>; Fri, 17 Apr 2026 16:01:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uO+y02bx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90969C2BCFB
+	for <linux-security-module@vger.kernel.org>; Fri, 17 Apr 2026 16:10:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776441691;
-	bh=MN9ukJ7sbOLNOd6kQgcy+yDM0fT1YKyxdtcXRjq2DYA=;
+	s=k20201202; t=1776442243;
+	bh=XuJXEpu0aKvc85JG7EApCC3CRfSpOkMFDMwAyfRfCeo=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dHrdgBW9Ui4yGV/tFWHkhsAmhn7p98/vopfYgyN1v/7bCv1K6KsiU3lSeN5O9zdXg
-	 782jQsbgrIZ4BJ3Ouroz6cHDQ91bmJ3HWtbLV20lKvSP8gP6G4vjcwKX5APUm9UCWK
-	 7zO/xMNa6/6nQmQAD1ohGhfB/Ov2PU9CJxf+73QekwQtaRUzE/rHheIoXA6yLIMVtF
-	 tjcRLNyWbnNsv30cZMfRP/ExzeOVoTk9PVuxP1v+ehD5YPEU4wTzl6cFQJiELGBDmZ
-	 CyF2tmN/rhKbcs8jbCv7U210sZm8mFAV3T/fGauNatoN0kLy5mzTQevK9CcXUmvSXQ
-	 OGcXbv32b6pUA==
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-8a4b8c3a30bso8160296d6.3
-        for <linux-security-module@vger.kernel.org>; Fri, 17 Apr 2026 09:01:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ+EwKZ7orRjjL4Jjd4jeIUdcwy5p5xVJoP3WbKva/9GgMfWIK2hlU4lQA0VphHw6IuVH6TzGVBAc/ftkvF4yP8p1sNicYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNLFr2/23YDAJ2qpjZObtr1wftAt48QxqCdfRaraXGi3AHnF0A
-	yeiO8p2P3IosTpJmRlxU9wP0CmTDI8NaxmtOVVMk6USMulh5s4/F37RU/nDAvUobAoRaVKy650d
-	+id0/m0Imy7l21T/l7X7r6HvlAE12HSw=
-X-Received: by 2002:a05:6214:e4e:b0:89c:ac1f:8d86 with SMTP id
- 6a1803df08f44-8b0281210b4mr51796826d6.19.1776441690675; Fri, 17 Apr 2026
- 09:01:30 -0700 (PDT)
+	b=uO+y02bxIUtTOEFtMbmbQQl9yNDwhh96BoV5fW6tjDiZU5cMzJtJKj6R4YUXc4aPa
+	 z2J5Ru76+e1/XSmjfTXyzltS4KBsW/1uQYLAp/tv5mOHYzeLIguqac9+vRLJtaQmr7
+	 tMNzl84rKZ7ZdPedFQvhTD0uAYYNEBbHp6yHBJdfq9qjc5eXxPSoG5SkMemYE5pnkR
+	 i7xTpNBApijI0ZHJgNv0tHL513eI9TvKs+aSNZV3kFFIFjqkTn2JKQXO+DWOA+3GVs
+	 JCpfVkaZwW+iaZWOSGfvJWQwEQJqZkajfmjaOy+6e9BqlFES6O/RptxVhaFQMjYMcN
+	 L1Z4vrK1RDXQg==
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-8aca2726f61so10157026d6.0
+        for <linux-security-module@vger.kernel.org>; Fri, 17 Apr 2026 09:10:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ/kRblkBQ70u5MQ1Ar8qmyn+nmxtEhGn/jFm4gOCnD4GSIQ0vxza7kJaKFH9aYw3GBKeloZEStpsK0o7mJOPR7FpAAegAE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCVlsq1mN2oo1kgJM1+phYVL5lSjpgEE17WXQokGfRNF1Eh5kw
+	TrvMiOjKmGlhj0j5BRe5xH6AJ/eHFPgUAXvTY0nXrzDRsYwNcFf4FyNKgKBlRCJmvoZPX/LgTJP
+	E5CiYOWoxVQTitQ+auH7HSqirv73C1iA=
+X-Received: by 2002:a05:6214:2f03:b0:8ac:af0d:c101 with SMTP id
+ 6a1803df08f44-8b027fd9d3fmr54364896d6.10.1776442242620; Fri, 17 Apr 2026
+ 09:10:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -44,17 +44,17 @@ MIME-Version: 1.0
 References: <20260407200157.3874806-1-utilityemal77@gmail.com>
  <20260407200157.3874806-9-utilityemal77@gmail.com> <CAPhsuW7zzXXd6-d86B-rpGr-wfSzmEoCYNKhTMP_pXnybtA27A@mail.gmail.com>
  <aeFaQXkKNHFeE-oC@suesslenovo> <CAPhsuW648HdcCbXWMHaJ4uirPWq2WX3Ggx3AGMU6CGzhNYUREg@mail.gmail.com>
- <aeI_CXj6F-nI_DCL@suesslenovo>
-In-Reply-To: <aeI_CXj6F-nI_DCL@suesslenovo>
+ <aeI_CXj6F-nI_DCL@suesslenovo> <20260417.ohgoh0Eecome@digikod.net>
+In-Reply-To: <20260417.ohgoh0Eecome@digikod.net>
 From: Song Liu <song@kernel.org>
-Date: Fri, 17 Apr 2026 09:01:17 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW5Dzf6-nX4t6Wq_+q6j=fHnpWTQCEY_NS-8d1Z0B+QeTg@mail.gmail.com>
-X-Gm-Features: AQROBzBvGU9zbBLMBzHROKZ4Fu1wZJFg6S9v6mWviyTKM2qb_YceCdIYyWnmZg4
-Message-ID: <CAPhsuW5Dzf6-nX4t6Wq_+q6j=fHnpWTQCEY_NS-8d1Z0B+QeTg@mail.gmail.com>
+Date: Fri, 17 Apr 2026 09:10:31 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW4g3Q4rK8GD=wCYi0iAGhcHcdh-ynsvC44f8rE8OuTqTg@mail.gmail.com>
+X-Gm-Features: AQROBzDGBSiT121PHW-UB_rcUdN4Gaz5rncLKRCi24TJMuRNJwq28aGp4x7Zpn0
+Message-ID: <CAPhsuW4g3Q4rK8GD=wCYi0iAGhcHcdh-ynsvC44f8rE8OuTqTg@mail.gmail.com>
 Subject: Re: [RFC PATCH 08/20] bpf: Add Landlock ruleset map type
-To: Justin Suess <utilityemal77@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	kpsingh@kernel.org, paul@paul-moore.com, mic@digikod.net, 
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Justin Suess <utilityemal77@gmail.com>, ast@kernel.org, daniel@iogearbox.net, 
+	andrii@kernel.org, kpsingh@kernel.org, paul@paul-moore.com, 
 	viro@zeniv.linux.org.uk, brauner@kernel.org, kees@kernel.org, 
 	gnoack@google.com, jack@suse.cz, jmorris@namei.org, serge@hallyn.com, 
 	yonghong.song@linux.dev, martin.lau@linux.dev, m@maowtm.org, 
@@ -65,57 +65,44 @@ Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 17, 2026 at 7:09=E2=80=AFAM Justin Suess <utilityemal77@gmail.c=
-om> wrote:
+On Fri, Apr 17, 2026 at 8:18=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
 >
-> On Thu, Apr 16, 2026 at 04:47:40PM -0700, Song Liu wrote:
-> > On Thu, Apr 16, 2026 at 2:53=E2=80=AFPM Justin Suess <utilityemal77@gma=
-il.com> wrote:
-> > [...]
-> > > I don't think we can pass the FD number via a map, since the FD is
-> > > process specific. And it needs to be done in a way where we can looku=
-p
-> > > the specific ruleset the FD points to safely.
-> > >
-> > > So we'd need some other way to load the ruleset from a file descripto=
-r,
-> > > either through a new userspace side BPF call or similar mechanism.
-> > >
-> > > Is there some other common pattern for FDs --> kptr I can follow?
-> >
-> > I didn't find an exact example like this. There must be a way to achiev=
-e
-> > this. In the worst case, we can add a kfunc for this.
-> >
+> On Fri, Apr 17, 2026 at 10:09:13AM -0400, Justin Suess wrote:
+[...]
+> > > A new type of map for each FD referenced kernel type is non-starter.
+> > > It is impossible to add UAPI for a specific use case.
 >
-> I think new kfunc is a doable approach. I could make a kfunc taking a str=
-uct
-> *task_struct and an FD that looks up a landlock ruleset within a given
-> task that returns a trusted kptr.
->
-> Something like:
->
-> struct bpf_landlock_ruleset* bpf_landlock_get_ruleset_from_fd(struct
-> task_struct* task, int fd)
->
-> And tagging it with KF_ACQUIRE + KF_RET_NULL.
->
-> Then keep the existing kfunc for putting the ruleset and enforcing it on
-> a struct linux_binprm.
->
-> The BPF program would need to get a reference to a task struct
-> of the program creating the rulesets with bpf_task_from_pid for
-> instance. Then they could use the task_struct with another plain integer
-> map to store FD numbers and then use the rulesets or store them in a map
-> of __kptr objects for later usage.
->
-> Would this be more acceptable?
+> This new map type is only about one file descriptor type, similarly to
+> socket FDs.  From a UAPI point of view, it looks clean and safe,
+> especially to deal with underlying object lifetime (e.g. reference
+> tracking).
 
-Maybe we don't need bpf_task_from_pid(), as we only need to work
-with current task?
+We have changed the UAPI policy. New program type, new map type
+will not be added for a single use case.
 
-I will need to read landlock code more give a better recommendation
-on this.
+> > >
+> > You've convinced me. I could see a lot of problems if everyone wanting
+> > to add their specialized maps, it would be difficult to maintain.
+>
+> Is there another way to properly handle kernel object lifetime (not tied
+> to the caller) and pass them as file descriptor?
+
+bpf_kptr gives same life time promise.
+
+> >
+> > It's probably best to keep the specialized map types to core kernel
+> > interfaces only that are unlikely to change.
+>
+> File descriptors are a stable interface.
+
+Maybe we can add a new map type that can handle file descriptor of
+any type. I haven't thought about all the details. Maybe we don't need
+a new map type for this either. Instead, some new kfunc may be
+sufficient to make bpf_kptr work.
+
+OTOH, adding a new map type just for landlock rulesets is not gonna
+happen.
 
 Thanks,
 Song
