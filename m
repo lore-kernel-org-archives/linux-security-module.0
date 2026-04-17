@@ -1,125 +1,118 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A0E34EF0D;
-	Fri, 17 Apr 2026 17:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26FD636C9EE
+	for <linux-security-module@vger.kernel.org>; Fri, 17 Apr 2026 18:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776448700; cv=none; b=pumm5ikdIyPrcOeS4xBvdvLC9tSGg8qTb2RMyLQaj0avpFcZiylHQsL/qnuvfJCRxaqhOyRXw6dVXFxjTqcIz2Zsmdh194anZPbkrC/DNy35YzY5B3Ap8qRwTmplMw/hrTIgBNKzdwC56IBuwNUM5dQcVPLJkhKDbozus97xOmk=
+	t=1776448933; cv=none; b=rF1vIvv1ZHu8YPivm+HmCqoxd9cWnbWUBjBovTxVlrexN/MTzUNPiQoNWimHK5ein9eDspmjyw7rOAhJtqxvHOTlSjrKASurMM/wTN7fYWSW9qMxuKURhft0LaxvtyvA9M3uA87kyFblEiBtt/liPsRn25WbgiyLLYgygWtYm3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776448700; c=relaxed/simple;
-	bh=e3o4nX2FYzFLs1uAJiYhcCfAbWsy9IaHHY4Cf/NSGlU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NmvnItbM++KSIsmCpSYqKoSmKfKBDs6vcpBmieh1ldLqTMG/7dj5J+Zd7jQ7DXTWZJy4TdibId+j/HQCki6O4dbGOahDZw4UhoA1ItM2IcVdgaeASpLsOI4bQVxyrVi236vOn3AOHj99+8O/pQXoDPlYK+Mu0zkwaOIkE1IqyxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=PAQgiHJf; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1776448933; c=relaxed/simple;
+	bh=rSePFDHMeZxfVHKVi3pScGW0ErFh34Ga+BiLPTwp4/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dg4VeP2JaD0xkf2LL+cFz6FfS5dIR2+bKuT6NoTi4BoXrFB6tQFOrROyvkgHcvEgPixVB/hO80KZX9JTQJMS9JvAUFYthmN/EPl59VxRk7F+5akjFG4Ah7z3SrfnXC6t/ZLCejkHKy4qH59NZN0TLTe4ckZwfMnpiPuFr561lo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=X0FJahOp; arc=none smtp.client-ip=185.125.25.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="PAQgiHJf"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7B1CE1D70;
-	Fri, 17 Apr 2026 10:58:13 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CAEDA3F7D8;
-	Fri, 17 Apr 2026 10:58:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1776448699; bh=e3o4nX2FYzFLs1uAJiYhcCfAbWsy9IaHHY4Cf/NSGlU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PAQgiHJflKchkVTf/kQxxIrjzTHGvFJkuV2kwY6XVZZlvHYUbI3Avkufy0FHECdDg
-	 0P+g9FWmwfm3CDwAafNIVAFd5MRZvLs98syRr3ZCobKtO8PfJc1iP/boxHqZ8imHPw
-	 eybNPYc6+cBCnjNgTj1nJ8zU6CpETaF8idHpaOrA=
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev
-Cc: paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	zohar@linux.ibm.com,
-	roberto.sassu@huawei.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	peterhuewe@gmx.de,
-	jarkko@kernel.org,
-	jgg@ziepe.ca,
-	sudeep.holla@kernel.org,
-	maz@kernel.org,
-	oupton@kernel.org,
-	joey.gouly@arm.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [RFC PATCH 4/4] firmware: arm_ffa: check pkvm initailised when initailise ffa driver
-Date: Fri, 17 Apr 2026 18:57:59 +0100
-Message-Id: <20260417175759.3191279-5-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260417175759.3191279-1-yeoreum.yun@arm.com>
-References: <20260417175759.3191279-1-yeoreum.yun@arm.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="X0FJahOp"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4fy2lF14Z0z4Gb;
+	Fri, 17 Apr 2026 20:02:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1776448920;
+	bh=Lz+16VLXjCg00b0MHkrfi/NqmCMJJKDK6YyvO3rUux0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X0FJahOpUZ2cviXAj22eZH7cwPDAuVwELvyogD6wucTuGAqr5LY5wbMxjRm9TtCOb
+	 ynoSOXUmR2hzlsm9MmPJQJK2i8aUJCF1TEnU6Pms5bIHa8zVdycJE+m3nMKuikNmQE
+	 szn4F5KmshQEvHlnlACmAvAQZib2cDRBlWZIk7a8=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4fy2lC2zKVzNrH;
+	Fri, 17 Apr 2026 20:01:59 +0200 (CEST)
+Date: Fri, 17 Apr 2026 20:01:50 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Song Liu <song@kernel.org>
+Cc: Justin Suess <utilityemal77@gmail.com>, ast@kernel.org, 
+	daniel@iogearbox.net, andrii@kernel.org, kpsingh@kernel.org, paul@paul-moore.com, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, kees@kernel.org, gnoack@google.com, 
+	jack@suse.cz, jmorris@namei.org, serge@hallyn.com, yonghong.song@linux.dev, 
+	martin.lau@linux.dev, m@maowtm.org, eddyz87@gmail.com, john.fastabend@gmail.com, 
+	sdf@fomichev.me, skhan@linuxfoundation.org, bpf@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH 08/20] bpf: Add Landlock ruleset map type
+Message-ID: <20260417.aeCheeru9The@digikod.net>
+References: <20260407200157.3874806-1-utilityemal77@gmail.com>
+ <20260407200157.3874806-9-utilityemal77@gmail.com>
+ <CAPhsuW7zzXXd6-d86B-rpGr-wfSzmEoCYNKhTMP_pXnybtA27A@mail.gmail.com>
+ <aeFaQXkKNHFeE-oC@suesslenovo>
+ <CAPhsuW648HdcCbXWMHaJ4uirPWq2WX3Ggx3AGMU6CGzhNYUREg@mail.gmail.com>
+ <aeI_CXj6F-nI_DCL@suesslenovo>
+ <20260417.ohgoh0Eecome@digikod.net>
+ <CAPhsuW4g3Q4rK8GD=wCYi0iAGhcHcdh-ynsvC44f8rE8OuTqTg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPhsuW4g3Q4rK8GD=wCYi0iAGhcHcdh-ynsvC44f8rE8OuTqTg@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-When pKVM is enabled, the FF-A driver must be initialized after pKVM.
-Otherwise, pKVM cannot negotiate the FF-A version or
-obtain RX/TX buffer information, leading to failures in FF-A calls.
+On Fri, Apr 17, 2026 at 09:10:31AM -0700, Song Liu wrote:
+> On Fri, Apr 17, 2026 at 8:18 AM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > On Fri, Apr 17, 2026 at 10:09:13AM -0400, Justin Suess wrote:
+> [...]
+> > > > A new type of map for each FD referenced kernel type is non-starter.
+> > > > It is impossible to add UAPI for a specific use case.
+> >
+> > This new map type is only about one file descriptor type, similarly to
+> > socket FDs.  From a UAPI point of view, it looks clean and safe,
+> > especially to deal with underlying object lifetime (e.g. reference
+> > tracking).
+> 
+> We have changed the UAPI policy. New program type, new map type
+> will not be added for a single use case.
 
-During FF-A driver initialization, check whether pKVM has been initialized.
-If not, defer probing of the FF-A driver.
+Ok, I didn't know.
 
-Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
----
- arch/arm64/kvm/arm.c              |  1 +
- drivers/firmware/arm_ffa/driver.c | 12 ++++++++++++
- 2 files changed, 13 insertions(+)
+> 
+> > > >
+> > > You've convinced me. I could see a lot of problems if everyone wanting
+> > > to add their specialized maps, it would be difficult to maintain.
+> >
+> > Is there another way to properly handle kernel object lifetime (not tied
+> > to the caller) and pass them as file descriptor?
+> 
+> bpf_kptr gives same life time promise.
 
-diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-index 410ffd41fd73..0f517b1c05cd 100644
---- a/arch/arm64/kvm/arm.c
-+++ b/arch/arm64/kvm/arm.c
-@@ -119,6 +119,7 @@ bool is_kvm_arm_initialised(void)
- {
- 	return kvm_arm_initialised;
- }
-+EXPORT_SYMBOL(is_kvm_arm_initialised);
+Ok, that could work if we can transform an FD to a kptr.
 
- int kvm_arch_vcpu_should_kick(struct kvm_vcpu *vcpu)
- {
-diff --git a/drivers/firmware/arm_ffa/driver.c b/drivers/firmware/arm_ffa/driver.c
-index 02c76ac1570b..2647d6554afd 100644
---- a/drivers/firmware/arm_ffa/driver.c
-+++ b/drivers/firmware/arm_ffa/driver.c
-@@ -42,6 +42,8 @@
- #include <linux/uuid.h>
- #include <linux/xarray.h>
+> 
+> > >
+> > > It's probably best to keep the specialized map types to core kernel
+> > > interfaces only that are unlikely to change.
+> >
+> > File descriptors are a stable interface.
+> 
+> Maybe we can add a new map type that can handle file descriptor of
+> any type.
 
-+#include <asm/virt.h>
-+
- #include "common.h"
+Good idea, that would be much more generic indeed.  Maybe we could
+add a new file_operations function specific to BPF so that each file
+descriptor type can make their type supported by this new map type while
+making sure only tested/reviewed FD type can be added to this map?
+Something like file_operation.to_bpf_kptr(struct file *file)?
 
- #define FFA_DRIVER_VERSION	FFA_VERSION_1_2
-@@ -2035,6 +2037,16 @@ static int __init ffa_init(void)
- 	u32 buf_sz;
- 	size_t rxtx_bufsz = SZ_4K;
-
-+	/*
-+	 * When pKVM is enabled, the FF-A driver must be initialized
-+	 * after pKVM initialization. Otherwise, pKVM cannot negotiate
-+	 * the FF-A version or obtain RX/TX buffer information,
-+	 * which leads to failures in FF-A calls.
-+	 */
-+	if (IS_ENABLED(CONFIG_KVM) && is_protected_kvm_enabled() &&
-+	    !is_kvm_arm_initialised())
-+		return -EPROBE_DEFER;
-+
- 	ret = ffa_transport_init(&invoke_ffa_fn);
- 	if (ret)
- 		return ret;
---
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
-
+> I haven't thought about all the details. Maybe we don't need
+> a new map type for this either. Instead, some new kfunc may be
+> sufficient to make bpf_kptr work.
+> 
+> OTOH, adding a new map type just for landlock rulesets is not gonna
+> happen.
+> 
+> Thanks,
+> Song
+> 
