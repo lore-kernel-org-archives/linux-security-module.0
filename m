@@ -1,137 +1,122 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D74D31326B;
-	Sat, 18 Apr 2026 10:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CD12E4274;
+	Sat, 18 Apr 2026 11:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776508479; cv=none; b=qGG0iuN9jO3+7i/00GJm5s3iHZMrJQvm2vGoXmdDwDnpqw39Mn+UsRF4nqCClf42Cysx7C7G/qWytifsUCpPQ2fcE6AB3Trdwz1nq5t6hkXbgjNDVibM3rn8ngmHIHj+u9TfIFFXS8/PDeRp82w774c53h8Lj+4+6owlslhh7XA=
+	t=1776511754; cv=none; b=iNyQ29/pgcxDI0SZ9hMpY5PC3T5dj/Sej4Brg9BiPH9S0Z61bJ5YV0nwihsIfX+i3Nb/KbHwJMag/jDovUq+QnTdgKIADk0l8wmbwfW1+xWwI4Wxj/ghWIcOYuMG5EcAWYpMTSv1TUQFQK62rFTvI1R9wTj+UXvZyt8DN/Oo9Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776508479; c=relaxed/simple;
-	bh=Ciycx8QqHb67sqchL+YA+/lrYPi38l87mnERhghqxMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vs5lJTh4VKfWm8ZLsWrTkbBfPoXwu58cEFpJP0Oa7dWcors8Gz8fayEYvgc0KatvauKBlT0VgPQAPYpBafglzaOYGVeE+Bi4Nmz3Yc6Ep0HdfpZvOoerHjIi/Lj67vMFue2St6xus+NV/wL9y9vMtIr4w+hIi4Ol5COnfnxDLqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=JKK5K+Om; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="JKK5K+Om"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C5A601764;
-	Sat, 18 Apr 2026 03:34:29 -0700 (PDT)
-Received: from e129823.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C27643F7D8;
-	Sat, 18 Apr 2026 03:34:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1776508475; bh=Ciycx8QqHb67sqchL+YA+/lrYPi38l87mnERhghqxMs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JKK5K+OmEERf3Ey1f9imniEVj3Xa2H4WCBBD0cVwO/iRQ6G1M1uI03ZJaaDRNbCP2
-	 2QWiZECceul4y+JU1g5Jm+oLecljKqseZJpgPCKktH2oemMRsQWUFqaKqXnNEpzjBQ
-	 e8jdnRcY1c4a2J1f5NY2s5/CXyCqNGfk9zY9/IS4=
-Date: Sat, 18 Apr 2026 11:34:30 +0100
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	zohar@linux.ibm.com, roberto.sassu@huawei.com,
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
-	peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
-	sudeep.holla@kernel.org, oupton@kernel.org, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org
-Subject: Re: [RFC PATCH 4/4] firmware: arm_ffa: check pkvm initailised when
- initailise ffa driver
-Message-ID: <aeNeNjfO7i128TIP@e129823.arm.com>
-References: <20260417175759.3191279-1-yeoreum.yun@arm.com>
- <20260417175759.3191279-5-yeoreum.yun@arm.com>
- <87se8sbozv.wl-maz@kernel.org>
+	s=arc-20240116; t=1776511754; c=relaxed/simple;
+	bh=6O/pb8vvHaHRxbC+obPeX028Zh1XWHYTz00dyoHREA4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=b+MueW45HNmUaV0wxg0G7oSW09woKEgv7N/bKo1aEI2xHfHL9bDMVkbOeTjdZyrrzBmX9dZxl+e9QPwkqHtOaV9hxCYAFczlkMPSeBnaVT6oh3b8znsyyvn9SqVLqKyTDJuV3d/AHntyhOTjIK9bHXynEVWS2kyaAPwTV+hYxes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fyTyX5Xc9zJ467k;
+	Sat, 18 Apr 2026 19:28:20 +0800 (CST)
+Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
+	by mail.maildlp.com (Postfix) with ESMTPS id BAB6C4058B;
+	Sat, 18 Apr 2026 19:29:08 +0800 (CST)
+Received: from [10.123.123.159] (10.123.123.159) by
+ mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 18 Apr 2026 14:29:06 +0300
+Message-ID: <d7b3a4ed-034e-a0a3-4a68-9bc5fdc6e2ff@huawei-partners.com>
+Date: Sat, 18 Apr 2026 14:29:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87se8sbozv.wl-maz@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v4 01/19] landlock: Support socket access-control
+Content-Language: ru
+From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
+CC: <mic@digikod.net>, <gnoack@google.com>, <willemdebruijn.kernel@gmail.com>,
+	<matthieu@buffet.re>, <linux-security-module@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
+	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
+	<konstantin.meskhidze@huawei.com>
+References: <20251118134639.3314803-1-ivanov.mikhail1@huawei-partners.com>
+ <20251118134639.3314803-2-ivanov.mikhail1@huawei-partners.com>
+ <20251122.e645d2f1b8a1@gnoack.org>
+ <af464773-b01b-f3a4-474d-0efb2cfae142@huawei-partners.com>
+In-Reply-To: <af464773-b01b-f3a4-474d-0efb2cfae142@huawei-partners.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
+ mscpeml500004.china.huawei.com (7.188.26.250)
 
-Hi Marc,
+On 11/22/2025 2:13 PM, Mikhail Ivanov wrote:
+> On 11/22/2025 1:49 PM, Günther Noack wrote:
+>> On Tue, Nov 18, 2025 at 09:46:21PM +0800, Mikhail Ivanov wrote:
+>>> +/**
+>>> + * struct landlock_socket_attr - Socket protocol definition
+>>> + *
+>>> + * Argument of sys_landlock_add_rule().
+>>> + */
+>>> +struct landlock_socket_attr {
+>>> +    /**
+>>> +     * @allowed_access: Bitmask of allowed access for a socket protocol
+>>> +     * (cf. `Socket flags`_).
+>>> +     */
+>>> +    __u64 allowed_access;
+>>> +    /**
+>>> +     * @family: Protocol family used for communication
+>>> +     * (cf. include/linux/socket.h).
+>>> +     */
+>>> +    __s32 family;
+>>> +    /**
+>>> +     * @type: Socket type (cf. include/linux/net.h)
+>>> +     */
+>>> +    __s32 type;
+>>> +    /**
+>>> +     * @protocol: Communication protocol specific to protocol family 
+>>> set in
+>>> +     * @family field.
+>>
+>> This is specific to both the @family and the @type, not just the @family.
+>>
+>>> From socket(2):
+>>
+>>    Normally only a single protocol exists to support a particular
+>>    socket type within a given protocol family.
+>>
+>> For instance, in your commit message above the protocol in the example
+>> is IPPROTO_TCP, which would imply the type SOCK_STREAM, but not work
+>> with SOCK_DGRAM.
+> 
+> You're right.
+> 
 
-> On Fri, 17 Apr 2026 18:57:59 +0100,
-> Yeoreum Yun <yeoreum.yun@arm.com> wrote:
-> >
-> > When pKVM is enabled, the FF-A driver must be initialized after pKVM.
-> > Otherwise, pKVM cannot negotiate the FF-A version or
-> > obtain RX/TX buffer information, leading to failures in FF-A calls.
-> >
-> > During FF-A driver initialization, check whether pKVM has been initialized.
-> > If not, defer probing of the FF-A driver.
-> >
-> > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> > ---
-> >  arch/arm64/kvm/arm.c              |  1 +
-> >  drivers/firmware/arm_ffa/driver.c | 12 ++++++++++++
-> >  2 files changed, 13 insertions(+)
-> >
-> > diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-> > index 410ffd41fd73..0f517b1c05cd 100644
-> > --- a/arch/arm64/kvm/arm.c
-> > +++ b/arch/arm64/kvm/arm.c
-> > @@ -119,6 +119,7 @@ bool is_kvm_arm_initialised(void)
-> >  {
-> >  	return kvm_arm_initialised;
-> >  }
-> > +EXPORT_SYMBOL(is_kvm_arm_initialised);
->
-> EXPORT_SYMBOL_GPL(), please.
+I revised the socket(2) semantics and this part is about that kernel
+maps (family, type, 0) to the default protocol of given family and type.
+Eg. (AF_INET, SOCK_STREAM, 0) is mapped to (AF_INET, SOCK_STREAM,
+IPPROTO_TCP). I would like to clarify that such mapping is taking place
+in landlock_socket_attr.protocol field doc.
 
-Okay.
+There should be list of protocols defined per protocol family. From
+socket(2):
+	The domain argument specifies a communication domain.
+	...
+	The protocol number to use is specific to the “communication
+	domain” in which communication is to take place.
 
->
-> >
-> >  int kvm_arch_vcpu_should_kick(struct kvm_vcpu *vcpu)
-> >  {
-> > diff --git a/drivers/firmware/arm_ffa/driver.c b/drivers/firmware/arm_ffa/driver.c
-> > index 02c76ac1570b..2647d6554afd 100644
-> > --- a/drivers/firmware/arm_ffa/driver.c
-> > +++ b/drivers/firmware/arm_ffa/driver.c
-> > @@ -42,6 +42,8 @@
-> >  #include <linux/uuid.h>
-> >  #include <linux/xarray.h>
-> >
-> > +#include <asm/virt.h>
-> > +
-> >  #include "common.h"
-> >
-> >  #define FFA_DRIVER_VERSION	FFA_VERSION_1_2
-> > @@ -2035,6 +2037,16 @@ static int __init ffa_init(void)
-> >  	u32 buf_sz;
-> >  	size_t rxtx_bufsz = SZ_4K;
-> >
-> > +	/*
-> > +	 * When pKVM is enabled, the FF-A driver must be initialized
-> > +	 * after pKVM initialization. Otherwise, pKVM cannot negotiate
-> > +	 * the FF-A version or obtain RX/TX buffer information,
-> > +	 * which leads to failures in FF-A calls.
-> > +	 */
-> > +	if (IS_ENABLED(CONFIG_KVM) && is_protected_kvm_enabled() &&
-> > +	    !is_kvm_arm_initialised())
-> > +		return -EPROBE_DEFER;
-> > +
->
-> That's still fundamentally wrong: pkvm is not ready until
-> finalize_pkvm() has finished, and that's not indicated by
-> is_kvm_arm_initialised().
+Such mapping allows to define strange socket rules if setting @type=-1.
+For example:
+	struct landlock_socket_attr attr = {
+		.family = AF_INET,
+		.type = -1,
+		.protocol = 0,
+	};
 
-Thanks. I miss the TSC bit set in here.
-IMHO, I'd like to make an new state check function --
-is_pkvm_arm_initialised() so that ff-a driver to know whether
-pkvm is initialised.
+This definition corresponds to (AF_INET, SOCK_STREAM, 0->IPPROTO_TCP)
+and to (AF_INET, SOCK_DGRAM, 0->IPPROTO_UDP).
 
-or any other suggestion?
-
-Thanks.
-
---
-Sincerely,
-Yeoreum Yun
+I don't see this as a bad thing as far as there is proper documentation
+for landlock_socket_attr.
