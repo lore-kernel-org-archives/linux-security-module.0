@@ -1,122 +1,179 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CD12E4274;
-	Sat, 18 Apr 2026 11:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6B728469F
+	for <linux-security-module@vger.kernel.org>; Sat, 18 Apr 2026 21:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776511754; cv=none; b=iNyQ29/pgcxDI0SZ9hMpY5PC3T5dj/Sej4Brg9BiPH9S0Z61bJ5YV0nwihsIfX+i3Nb/KbHwJMag/jDovUq+QnTdgKIADk0l8wmbwfW1+xWwI4Wxj/ghWIcOYuMG5EcAWYpMTSv1TUQFQK62rFTvI1R9wTj+UXvZyt8DN/Oo9Lc=
+	t=1776549014; cv=none; b=SWpvaxOKdMTY/OeIX+98Q+SVk5Jd/jr5tWaVSaEWPzs0F5CnxnDQd2tU+INje/uPEgY6uV4THdIakiwsxZ6Q1UhEjD2m7xWRw1M1LRqANX9hWpXp0BYimah0fsEpOt1d+D6pu3UHOvfZ+VlmBLOej115ARJMFqNUsqFHkNm5cpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776511754; c=relaxed/simple;
-	bh=6O/pb8vvHaHRxbC+obPeX028Zh1XWHYTz00dyoHREA4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=b+MueW45HNmUaV0wxg0G7oSW09woKEgv7N/bKo1aEI2xHfHL9bDMVkbOeTjdZyrrzBmX9dZxl+e9QPwkqHtOaV9hxCYAFczlkMPSeBnaVT6oh3b8znsyyvn9SqVLqKyTDJuV3d/AHntyhOTjIK9bHXynEVWS2kyaAPwTV+hYxes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.18.224.107])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fyTyX5Xc9zJ467k;
-	Sat, 18 Apr 2026 19:28:20 +0800 (CST)
-Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
-	by mail.maildlp.com (Postfix) with ESMTPS id BAB6C4058B;
-	Sat, 18 Apr 2026 19:29:08 +0800 (CST)
-Received: from [10.123.123.159] (10.123.123.159) by
- mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 18 Apr 2026 14:29:06 +0300
-Message-ID: <d7b3a4ed-034e-a0a3-4a68-9bc5fdc6e2ff@huawei-partners.com>
-Date: Sat, 18 Apr 2026 14:29:04 +0300
+	s=arc-20240116; t=1776549014; c=relaxed/simple;
+	bh=3t3O3sUz87huz0M+miAOXIZUv7RqPxu3nH6k1jR28j0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XtudoxV4h8heYPEXR0YafVQAFHI/K8sKLlU20DWNfQQHr+1uj2Yd4x/Y7G++sfQKGrd8BGBPMIyGLzt5ZhXpX4oiPgcI+ehZAsKSN3D9yXWKJ2qQ5cgP3fhxvDrpdUUywkG1pER6B4n27qH5j6bAUeZJgXITakpagXwFOfS7LXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fEIRqRep; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fEIRqRep"
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-7b6ae2ea4a1so16691377b3.2
+        for <linux-security-module@vger.kernel.org>; Sat, 18 Apr 2026 14:50:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1776549012; x=1777153812; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=36X19zjYQyKBdMHD9gCjle7K5J8JMLJfZmqliCGv0kA=;
+        b=fEIRqRepCGZHHwDeYcQPuGgeVTaflRQq5+lBchI27/BfrZgSyaafzb8AOwkwE1Stfb
+         Nin0EPW+Vw8I4M2su6BmCfrShrHJZgdSiO5qpdSzJSEI5sc5mSYWTHaSK2UQXvv3+RJN
+         SpD8WvbvafSjgZRK22N7msCzhjEc3r+iXKTvNPAfE22tEYgPqmha2EGmh78/Lh+MFiUk
+         zoTxpDvuxUu22vKYSm5sJxB0VlVWXAVmIQ+OKxPYzvQHACZRohRJO21zROlY/CV0GiZf
+         wWq+ZAxjBKTrMT8dO6AEbG6Abo4p2q9k5Uyy7lQ/VkwwzaV+FE1s9pPc5bd0EaVToJWc
+         48Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776549012; x=1777153812;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=36X19zjYQyKBdMHD9gCjle7K5J8JMLJfZmqliCGv0kA=;
+        b=jh1RPSDGQPQa/ODNpY/CfUj2Q7Jvs8FtFirmffYup9yxnj5hOaSn/d9cWPmz2j5i8M
+         ucpntYGjfBXA1nIpQcVgHtXYFFV0epTP+clXECDQt1bKGb8lmQhvl2zMgexAFveW+2gJ
+         mECxAOnPfkBYGc7pyUp/VySlyT6k1H2UQkNW8EiDcL5BSXswy5JtziaKf2CZzjcUM5kl
+         sUpnyx6ZZdfApTmAl6HyMdq4S6v96OxnM2peD7pFNCc7Ale6aiRd9l7LhTCtrJOWv5sb
+         M/qv5LIz4zpibvD2XAzFHPjwQYL8azSbH7prW8nlIEN/FLMnaKA+h8mS3Rij+4+Lr0Ny
+         lIXg==
+X-Forwarded-Encrypted: i=1; AFNElJ8rqpgSGW5HEu8cH5XXS9S5bWairRWgBHPJN4Hu/ahIovOhQ0pO+8nAJToh1l/c2UNgTcmcganzCJ9Iiwtp0wjVWJAfRuA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy51T0oPhGLfE8S83ftRfFbgxYvuyA9qGVLUXJ3DyBopIYqcHv
+	lpI0jb+t8MQOjVCWAUXbMyuCD5VEL+dS8bMZQ9qVzMA6hSZX78kSn6Kv
+X-Gm-Gg: AeBDietPfVMruDuAqcOSJsWNqv7CQoJlT+ANrTXWEIbkbgIEQGqqBcM9okuJwLTlnNc
+	zuT0S9Z2RQWiSvDSHOM/62EJ20jR3/5JzEk7ojDKsHIkbqDrGTLaQmW90MmmrPtN9/6YbvAEUnt
+	toI7s35dny/jMtkBW1N6xN/Fpmz+JdKuoEHoJ+/oi22trINj8mV+znZAYR8aFrz9fpOdZGs1Gs+
+	Md3h3moQb72p2V2aQwdgo8rn443mpWiINbn8Z0t0knTzq1eTba0FM4SYh67YAanyNY0gdhFqDMe
+	4TlXrClFr44KuOsEUUVCBNCexQXdzjtY+P7MdxujDuOJNENQSV3HnHzBG4SZhcGxG0SztrlHx4C
+	1HqpTDORApzR2SiUXpQclN38q/uMq3m+D1nSfDC/XZ8bK8hFhtU4isd81y+OHRSVFWFiXI6mU44
+	yBOjs0xZGEZviHd/ky+3GvmhjNcz69rVlhcMIrOy+xXAiBIRSSw8fxRcHCZHKLZAKIz+ByiwYhu
+	RA=
+X-Received: by 2002:a05:690c:1b:b0:7ac:ff2:4603 with SMTP id 00721157ae682-7b9ecf0fee4mr87792467b3.20.1776549012081;
+        Sat, 18 Apr 2026 14:50:12 -0700 (PDT)
+Received: from suesslenovo ([2600:1700:18fb:6011:3699:d8a1:7856:daf4])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7b9ee9ce88dsm24935397b3.48.2026.04.18.14.50.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 Apr 2026 14:50:11 -0700 (PDT)
+Date: Sat, 18 Apr 2026 17:50:09 -0400
+From: Justin Suess <utilityemal77@gmail.com>
+To: Song Liu <song@kernel.org>
+Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, kpsingh@kernel.org,
+	paul@paul-moore.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	kees@kernel.org, gnoack@google.com, jack@suse.cz, jmorris@namei.org,
+	serge@hallyn.com, yonghong.song@linux.dev, martin.lau@linux.dev,
+	m@maowtm.org, eddyz87@gmail.com, john.fastabend@gmail.com,
+	sdf@fomichev.me, skhan@linuxfoundation.org, bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH 08/20] bpf: Add Landlock ruleset map type
+Message-ID: <aeP8kWX2POlBBjlm@suesslenovo>
+References: <20260407200157.3874806-9-utilityemal77@gmail.com>
+ <CAPhsuW7zzXXd6-d86B-rpGr-wfSzmEoCYNKhTMP_pXnybtA27A@mail.gmail.com>
+ <aeFaQXkKNHFeE-oC@suesslenovo>
+ <CAPhsuW648HdcCbXWMHaJ4uirPWq2WX3Ggx3AGMU6CGzhNYUREg@mail.gmail.com>
+ <aeI_CXj6F-nI_DCL@suesslenovo>
+ <20260417.ohgoh0Eecome@digikod.net>
+ <aeJlHIoSjVPmccDx@suesslenovo>
+ <20260417.aPh1ooQu8esh@digikod.net>
+ <aeKY_QUge4okHjrW@suesslenovo>
+ <CAPhsuW4CoskfaqEE5yS2LU_mFvNBDsKc5OX1+f=Lkduc2ykSdQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 01/19] landlock: Support socket access-control
-Content-Language: ru
-From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
-CC: <mic@digikod.net>, <gnoack@google.com>, <willemdebruijn.kernel@gmail.com>,
-	<matthieu@buffet.re>, <linux-security-module@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
-	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
-	<konstantin.meskhidze@huawei.com>
-References: <20251118134639.3314803-1-ivanov.mikhail1@huawei-partners.com>
- <20251118134639.3314803-2-ivanov.mikhail1@huawei-partners.com>
- <20251122.e645d2f1b8a1@gnoack.org>
- <af464773-b01b-f3a4-474d-0efb2cfae142@huawei-partners.com>
-In-Reply-To: <af464773-b01b-f3a4-474d-0efb2cfae142@huawei-partners.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
- mscpeml500004.china.huawei.com (7.188.26.250)
+In-Reply-To: <CAPhsuW4CoskfaqEE5yS2LU_mFvNBDsKc5OX1+f=Lkduc2ykSdQ@mail.gmail.com>
 
-On 11/22/2025 2:13 PM, Mikhail Ivanov wrote:
-> On 11/22/2025 1:49 PM, Günther Noack wrote:
->> On Tue, Nov 18, 2025 at 09:46:21PM +0800, Mikhail Ivanov wrote:
->>> +/**
->>> + * struct landlock_socket_attr - Socket protocol definition
->>> + *
->>> + * Argument of sys_landlock_add_rule().
->>> + */
->>> +struct landlock_socket_attr {
->>> +    /**
->>> +     * @allowed_access: Bitmask of allowed access for a socket protocol
->>> +     * (cf. `Socket flags`_).
->>> +     */
->>> +    __u64 allowed_access;
->>> +    /**
->>> +     * @family: Protocol family used for communication
->>> +     * (cf. include/linux/socket.h).
->>> +     */
->>> +    __s32 family;
->>> +    /**
->>> +     * @type: Socket type (cf. include/linux/net.h)
->>> +     */
->>> +    __s32 type;
->>> +    /**
->>> +     * @protocol: Communication protocol specific to protocol family 
->>> set in
->>> +     * @family field.
->>
->> This is specific to both the @family and the @type, not just the @family.
->>
->>> From socket(2):
->>
->>    Normally only a single protocol exists to support a particular
->>    socket type within a given protocol family.
->>
->> For instance, in your commit message above the protocol in the example
->> is IPPROTO_TCP, which would imply the type SOCK_STREAM, but not work
->> with SOCK_DGRAM.
+On Fri, Apr 17, 2026 at 01:42:02PM -0700, Song Liu wrote:
+> On Fri, Apr 17, 2026 at 1:33 PM Justin Suess <utilityemal77@gmail.com> wrote:
+> [...]
+> > > > > to the caller) and pass them as file descriptor?
+> > > > This "pass them as a file descriptor" is the tricky part. It would be
+> > > > very convenient if we could send the fd to bpf from userspace and have
+> > > > it be implicitly converted (like in the BPF_MAP_TYPE_LANDLOCK_RULESET
+> > > > implementation) in one step, but I just don't see a way to do that with
+> > > > the bpf_landlock_get_ruleset_from_fd kfunc approach.
+> > >
+> > > Song's idea to have a generic FD map looks promising.
+> > >
+> >
+> > I agree the generic FD map sounds like a good fit.
 > 
-> You're right.
+> Well, I am not 100% sure a generic FD map adds enough value
+> on top of current __kptr solutions. This will be more tricky if we
+> have to touch file_operations.
 > 
+> > So this would be three parts like:
+> >
+> > 1. The new point-of-no-return flags for NNP and staging domain to
+> > execution time in Landlock. Selftests and doc updates.
+> > 2. The generic FD map implementation for bpf. Selftests and doc updates.
+> > 3. The BPF kfunc implementations for Landlock using the same point-of-no
+> > return staging. Selftests and doc updates.
+> >
+> > The scope of which is probably too big for one series.
+> >
+> > Luckily part 1 is pretty close to being done as part of my work for v2
+> > of this series, and can standalone as a preparatory series for Landlock,
+> > since it adds flags and features that have utility outside of BPF.
+> >
+> > Open for ideas on how to split this up (or even better, for some help in
+> > implementation or prior works).
+> >
+> > I'd like to get some feedback and figue out what this generic fd map
+> > should look like and get some more eyes on that idea to avoid wasting
+> > reviewer time on an unsuitable implementation.
+> 
+> I will think more about 2. If it indeed adds good value, the upcoming
+> LSF/MM/BPF is a good opportunity to move this forward.
+> 
+> In the meanwhile, we still need kfuncs to access landlock ruleset.
+> Therefore, any work on that front should be useful.
+>
+Instead of a new map type, could the same usecase be fulfilled as a
+flag for bpf_map__update_elem? (BPF_FROM_FD?)
 
-I revised the socket(2) semantics and this part is about that kernel
-maps (family, type, 0) to the default protocol of given family and type.
-Eg. (AF_INET, SOCK_STREAM, 0) is mapped to (AF_INET, SOCK_STREAM,
-IPPROTO_TCP). I would like to clarify that such mapping is taking place
-in landlock_socket_attr.protocol field doc.
+  int bpf_map__update_elem(
+    map,
+    &key, 
+    sizeof(key),
+    &fd,
+    sizeof(fd), 
+    BPF_FROM_FD);
 
-There should be list of protocols defined per protocol family. From
-socket(2):
-	The domain argument specifies a communication domain.
-	...
-	The protocol number to use is specific to the “communication
-	domain” in which communication is to take place.
+We could register an operation at the BTF type level to acquire a
+reference to an underlying kernel object from a struct file* to a
+specific BTF type, like how destructors are registered.
 
-Such mapping allows to define strange socket rules if setting @type=-1.
-For example:
-	struct landlock_socket_attr attr = {
-		.family = AF_INET,
-		.type = -1,
-		.protocol = 0,
-	};
+Something like void* bpf_kptr_acquire_from_file_t(struct file*)
 
-This definition corresponds to (AF_INET, SOCK_STREAM, 0->IPPROTO_TCP)
-and to (AF_INET, SOCK_DGRAM, 0->IPPROTO_UDP).
+(adding it to btf_field_kptr).
 
-I don't see this as a bad thing as far as there is proper documentation
-for landlock_socket_attr.
+Then this would get a reference on the kernel object for the underlying
+file and insert it as a kptr into the map if the file indeed points to
+the correct type.
+
+This would be valid only for a map holding a supported __kptr type
+implementing the bpf_kptr_acquire_from_file operation.
+
+This flag would allow inserting __kptr from userspace (previously
+impossible) with a file descriptor.
+
+This wouldn't need any new file_operations changes nor any new map
+types.
+
+This could be implemented for specific kernel object backed FDs as
+appropriate.
+
+> Thanks,
+> Song
