@@ -1,129 +1,131 @@
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799ED396B66
-	for <linux-security-module@vger.kernel.org>; Sat, 18 Apr 2026 23:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5727528002B;
+	Sun, 19 Apr 2026 10:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776553719; cv=none; b=GNu5t3jTgVwcNXJciZFGCGd2hH+ZknzsXBZPTrPwd9jIWHhr+V7bFg7RFHLHMejLOybpigzW4T2y9VWKXcOxve9u3mHQQhmJB86dCTDjwIn4RFgCMXbtXvwwljzXABIWwx6eeKyzksSmjGkP+08IMfvF2JwdMqWZ8hnq5PrUHPQ=
+	t=1776595281; cv=none; b=YFzLvyjUEkVdSw4yMKJAOTgC4otMK7nD0eX7MaIMU+/MHrHkJUe2IeR+bsts9zF+v/V4iJSLRBwmig+mlF9jHgqQyALf6WCDcsmu3fUDN+lyXdC6SW5bop6y8bOOghGfoyKt9s20oHTSqo+LGPInUcv/TiUOuk4Xj9CPVu4Gdm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776553719; c=relaxed/simple;
-	bh=Xar4WmIgCE2sEueWRogWtI/LcIsN6hYef9Fkw6uWnIQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jt1YMR6rbemkDVQCn2p+//4kpUAJ+1aKzFUPXeaXOJi4iGoCFfTH2Kg20a5hM4eD3nG6gpOowWiN46y26GI9xt7iS6okAD/sUhTHP4Vka0uucLCQiMv0A3v0H6iqksu7hg6IyrJdUD1w6Yt/hA4Li+sg8/TUvVVqRt57Ejoub24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nc8x+fkL; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1776595281; c=relaxed/simple;
+	bh=LAIQFEbnaUquFHk2b6GIMNU7b8Bu+5PRFwtbx+UqY0o=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fHIcwm+LwpdGsE2EgEpsoTDWplsW97lAtB1MFAKJiiPFlkQehWZ1yoyKivPlk2AfMsozzeIdnxP8Ly2I267mEKgGGXyZZ5svxvwTb41aopRNVycbl7ss3sqi0VPw2DBRcpHd88W2lJL29sqMrcYgiI6Lq4soZNQst0N2sTYOE5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gB0CKlBy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nc8x+fkL"
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-79827d28fc4so16903267b3.1
-        for <linux-security-module@vger.kernel.org>; Sat, 18 Apr 2026 16:08:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1776553716; x=1777158516; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=QDLBwLu2Osjs067OAPxTWdOsEiACtCr2ZJS7OWNSDmU=;
-        b=Nc8x+fkL9qtiX9YPOgvJ7Z+Bb36HJhLdTNZe7s5v5bpawRLtP+8JQ9G0CluZ1eYzCz
-         G3k4VD5z3g97Ceiz9imYe3gJ2XVrsGRvbHL4p8M0RNRgiRph6DM5Cokg5qkmBDNcLCBc
-         06IAIDvXrIT4J3CNjIUXIVrDnLJ78Wm83PSwwjf4KOVGG4VPSauquGiW5gFX1u+vIe+4
-         Lj3TXNgT/ABfbMQi4/dRYv+PAv8DLZG8yLdwax6vHXfsmURhva2MeMqMbwfTh1a9yK/+
-         6teqOhn7fdqUz34CGqsDqPpQXMBzGZWwCOXTo/uzrYy2CeXQnd0S2reo3YNZ1HcBZKN8
-         2WWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776553716; x=1777158516;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QDLBwLu2Osjs067OAPxTWdOsEiACtCr2ZJS7OWNSDmU=;
-        b=QDF+Jn3lUh87ma1Y7V0zT8G2ldFOgGJClEVSLfGUpgLubM5qTUrp8dIOgYCOfCmP+X
-         9ODLR/QswT8Yqm+SKqoKbsK1cwnLRHDVKXMXiKiNgfkzjOhaWEupl9SWMsftrcHQH7mu
-         4VgE0AHX3aUaVDdoZYKS+fvIm/TkQwwbV9sAlQmsKlwTnwVvPz/vaBYEKk9X2Q6HMr3y
-         PWPmEc1QL72HdTWUiQZ5NnXaDyUM62aipdoMtqBUQj7qF5fwRlN+PdtDGJleDqJyliLm
-         gN7jYe7Q3iydbuK5KV0HNCS0/UhgZUlRK+eWHhRJwvPPWTBYsTWXKRZjurRhJD6TQgCi
-         NPSw==
-X-Gm-Message-State: AOJu0YwDcXlePJbSXK1W0pdWe0e31lrpA43rJfXJaGOPKYp5m2VXtEVe
-	ahMQZfAqjAQUYhKsqA3+MPLWv8IXNWF+2GtSiO2DfzD2iPQBIZj6lAri
-X-Gm-Gg: AeBDietyOufu482+SQqC/QvOnuL5xaLPCuegCK9IrQYkxSp8DbX4E8+23IYlLvKw2j/
-	qW3f+A2JjOqjtjyoFBDOWAo4B+xftrIK7xWmWSt9xTWN+iEsQPkuuTRlb/wIzqmbaUMi0sDHPhS
-	bOVvbzyQv/MOeFY+Ir3tJ1fB5ixuUgeZUqvc/uq25KF7+paRGJklyGOJoFcdgdYin5z7HiOvTgK
-	xLjWigcIR5jr6MR8xfrRe4ozhbDLgwDOJolINq45CN4f3JKKH581BhXhKpSsw6dbVuHfLji6m2f
-	jIdfr2E0DFmsdkr/EeNdOhc2ihVaCq+ltfX1qDiGk7+L6/aChC82YiRHrQAcHXtO5mzmc2VgU0b
-	jj5G5D4UHFItQvphBZscaAL7g/dqIfmSb42IeymdlPgjCjl3Py6java6K776qSuVtlwTxRW4INW
-	PFPfki/U+3yW5bUBgZPtcZTf9wg6oIz/5TBU7Vau0DYlcxD8LPxz68qWZy3ztq98He1h6MtVoZ5
-	fb1h/Ns3fq/gA==
-X-Received: by 2002:a05:690c:399:b0:79c:c51c:7f4a with SMTP id 00721157ae682-7b9ed002905mr87916127b3.46.1776553716465;
-        Sat, 18 Apr 2026 16:08:36 -0700 (PDT)
-Received: from suesslenovo ([2600:1700:18fb:6011:3b24:58f5:5e89:7648])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-7b9ee99bc3bsm24805917b3.27.2026.04.18.16.08.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Apr 2026 16:08:36 -0700 (PDT)
-Date: Sat, 18 Apr 2026 19:08:34 -0400
-From: Justin Suess <utilityemal77@gmail.com>
-To: =?utf-8?B?546L5b+X?= <23009200614@stu.xidian.edu.cn>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, paul@paul-moore.com
-Subject: Re: [BUG] landlock: warning in collect_domain_accesses via renameat2
- path rename
-Message-ID: <aeQO8plVsM4dg9jL@suesslenovo>
-References: <25536ce2.4391.19d9b3484ff.Coremail.23009200614@stu.xidian.edu.cn>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gB0CKlBy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7CF6C2BCB7;
+	Sun, 19 Apr 2026 10:41:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1776595280;
+	bh=LAIQFEbnaUquFHk2b6GIMNU7b8Bu+5PRFwtbx+UqY0o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gB0CKlByXWXs8jyP6JohfSBJudqFkFOMTl5zUyKA+qzXWnnJiWQ1bQJdiIFrtxGvL
+	 34bx74gukoDmNYcCm9NOUSGFjZo1mZUBAcNB3XGEpc4Xho2+e0ZMpDS8bYpskzNDCc
+	 00UBjh75dX6I1N2lOYCzAqZFaD3TFSEbd+geF5UyWADAnjRjqqQjuKSlKD7dIkO2sj
+	 1hhSWRO+FOyO38e8840rl/lHtGhixcUJYi/ehKfsSZfRDYHrD4R4dVT0uJQkT1XMgI
+	 eli3Nba4lqpuNzE40Cr8t3TdCjgcOytWiFQxE7cyKRgBQufFZdjgiOmL3epkRfyl3N
+	 TL6wsRl7bqC+w==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1wEPaY-0000000Cocy-0x2N;
+	Sun, 19 Apr 2026 10:41:18 +0000
+Date: Sun, 19 Apr 2026 11:41:17 +0100
+Message-ID: <87pl3vb5bm.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	zohar@linux.ibm.com,
+	roberto.sassu@huawei.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	peterhuewe@gmx.de,
+	jarkko@kernel.org,
+	jgg@ziepe.ca,
+	sudeep.holla@kernel.org,
+	oupton@kernel.org,
+	joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	catalin.marinas@arm.com,
+	will@kernel.org
+Subject: Re: [RFC PATCH 4/4] firmware: arm_ffa: check pkvm initailised when initailise ffa driver
+In-Reply-To: <aeNeNjfO7i128TIP@e129823.arm.com>
+References: <20260417175759.3191279-1-yeoreum.yun@arm.com>
+	<20260417175759.3191279-5-yeoreum.yun@arm.com>
+	<87se8sbozv.wl-maz@kernel.org>
+	<aeNeNjfO7i128TIP@e129823.arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <25536ce2.4391.19d9b3484ff.Coremail.23009200614@stu.xidian.edu.cn>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: yeoreum.yun@arm.com, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, sudeep.holla@kernel.org, oupton@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri, Apr 17, 2026 at 07:30:03PM +0800, 王志 wrote:
-> Dear Maintainers,
+On Sat, 18 Apr 2026 11:34:30 +0100,
+Yeoreum Yun <yeoreum.yun@arm.com> wrote:
 > 
-> When using our customized Syzkaller to fuzz the latest Linux kernel, we discovered a crash related to Landlock during a path rename operation.
+> > > @@ -2035,6 +2037,16 @@ static int __init ffa_init(void)
+> > >  	u32 buf_sz;
+> > >  	size_t rxtx_bufsz = SZ_4K;
+> > >
+> > > +	/*
+> > > +	 * When pKVM is enabled, the FF-A driver must be initialized
+> > > +	 * after pKVM initialization. Otherwise, pKVM cannot negotiate
+> > > +	 * the FF-A version or obtain RX/TX buffer information,
+> > > +	 * which leads to failures in FF-A calls.
+> > > +	 */
+> > > +	if (IS_ENABLED(CONFIG_KVM) && is_protected_kvm_enabled() &&
+> > > +	    !is_kvm_arm_initialised())
+> > > +		return -EPROBE_DEFER;
+> > > +
+> >
+> > That's still fundamentally wrong: pkvm is not ready until
+> > finalize_pkvm() has finished, and that's not indicated by
+> > is_kvm_arm_initialised().
 > 
-> HEAD commit: 7d0a66e4bb9081d75c82ec4957c50034cb0ea449
+> Thanks. I miss the TSC bit set in here.
 
-This is the initial 6.18 release, without the stable backported fixes.
+That's the least of the problems. None of the infrastructure is in
+place at this stage...
 
-> git tree: upstream
-> 
-> Reproducer and logs:
-> Output: https://github.com/manual0/crash/blob/main/cebd27007e806e16cf15cb1e0214c24054e8998e/report1
-> Kernel config: https://github.com/manual0/crash/blob/main/6.18-syzbot.config
-> C reproducer: https://github.com/manual0/crash/blob/main/cebd27007e806e16cf15cb1e0214c24054e8998e/repro.c
-> 
-> ----------------------------------------
-> 
-> Analysis:
-> 
-> The crash is triggered through the following path:
-> 
-> renameat2
->   → security_path_rename
->   → current_check_refer_path
->   → collect_domain_accesses
-> 
-> This indicates that a path rename operation triggers Landlock's path access control checks. The crash occurs inside collect_domain_accesses(), which is responsible for collecting the current process's domain access rights.
-> 
-> The bug is caused by collect_domain_accesses() traversing inconsistent or invalid Landlock ruleset data during rename path permission checks, leading to unsafe memory access.
-> ----------------------------------------
-> 
-> If you fix this issue, please add the following tag to the commit:
-> 
-> Reported-by: Zhi Wang <wangzhi@stu.xidian.edu.cn>
->
-This was fixed in 6.18.2 with
-cadb28f8b3fd6908e3051e86158c65c3a8e1c907 (landlock: Fix handling of
-disconnected directories) [1]
+> IMHO, I'd like to make an new state check function --
+> is_pkvm_arm_initialised() so that ff-a driver to know whether
+> pkvm is initialised.
 
-So this has been fixed upstream and backported already.
+Doesn't sound great, TBH.
 
-Please target fuzzing against a supported tag.
+> or any other suggestion?
 
-[1]: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-6.18.y&id=cadb28f8b3fd6908e3051e86158c65c3a8e1c907
+Instead of adding more esoteric predicates, I'd rather you build on an
+existing infrastructure. You have a dependency on KVM, use something
+that is designed to enforce dependencies. Device links spring to mind
+as something designed for that.
 
-Justin
-> Thanks,
-> Zhi Wang
+Can you look into enabling this for KVM? If that's possible, then it
+should be easy enough to delay the actual KVM registration after pKVM
+is finalised.
+
+Thanks,
+
+	M.
+
+-- 
+Jazz isn't dead. It just smells funny.
