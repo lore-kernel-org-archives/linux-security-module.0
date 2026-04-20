@@ -1,138 +1,217 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D16A37AA65;
-	Mon, 20 Apr 2026 17:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83BB38229E;
+	Mon, 20 Apr 2026 21:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776704662; cv=none; b=QHLbIOFVZwlScEa1uhC5D1hQYjNq13Sbn2F6u4DtOaeThw3CxytyBvxRThESlePar5JNEzhHZ3MRsPcrW11xwASSCk2f4SWHo7yX8fyA9oEjVBNHx929nQBMXeKdZmnp50S6pktnEi5E3HkbbcoHAioqL4CP7aCwrcf1Fb1Qo+U=
+	t=1776720423; cv=none; b=lR5atO5eQrrxT5CXH/fW6yZ+wLgH2qz9faNDiFwXAmgUChslAtoiu0+HQpmacCORe/8YJ/9aylKcZ4zyD6SKK4V3fz9seDvEwB3S7VLAGW/kI6Lh37uwAeCc9TYsd01nplAO0adi19Qgo+HpXOF/8ZBtuGP7z2qVmMLev2ReJmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776704662; c=relaxed/simple;
-	bh=yRc6tzbhIjqa28m1qmW4UX0qWCRaHh+34fkYVAyFgQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lW1mIIVi3snIufcIgcu1nxjtpEPotr3zSSV8zgy48alExUyT5jyTq5yQ6rTyrppphZQWsQPpiTdUl4OYD7IMMFsd5+2z40DQ6dmutwsH20XGdeNSeHqCmJqzGn1znmjg81HOUWRcFxvqtWdciRw+JwKji0msZmyOjM5ZQ6pmXMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Wacy9S/Z; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1776720423; c=relaxed/simple;
+	bh=U/zamC7l5coah0AXiwtU750a8aLe1fvytQTEg+NxQQw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RrHS3FyDkTeFHzhxGw59RCD3bbZKEpmC+EID7WT3tvZ4q+GE7E7XAEBQyNof07XMFC/5CXSVPKg7kv/X+0uBuQXY/jm3xTzFNZvs8G62qIBdnbholSFiCXlaB2FXwcHgFk8pYvgYJcuJmud65170ur33ukXnlZxR+JPIF4uuOQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=TtndzpSQ; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Wacy9S/Z"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B54D01516;
-	Mon, 20 Apr 2026 10:04:13 -0700 (PDT)
-Received: from e129823.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 50C183F915;
-	Mon, 20 Apr 2026 10:04:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1776704659; bh=yRc6tzbhIjqa28m1qmW4UX0qWCRaHh+34fkYVAyFgQw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wacy9S/ZPt9Y7v/ct+Hb+QPydm3fjVRQplB9QxXGOsLTBekpTPqnsaMca0kamuoEW
-	 SGQ6QONwRmBlO8d/cVwMwpP6TU7OmYw273xBR7Zj7hU5thdu5jlLJAp8INH5VzhLz9
-	 ijzBSlASATvCse9gHcojqyT85ag+98biT096gBAc=
-Date: Mon, 20 Apr 2026 18:04:12 +0100
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: Sudeep Holla <sudeep.holla@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	zohar@linux.ibm.com, roberto.sassu@huawei.com,
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
-	peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
-	oupton@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, catalin.marinas@arm.com,
-	sebastianene@google.com
-Subject: Re: [RFC PATCH 4/4] firmware: arm_ffa: check pkvm initailised when
- initailise ffa driver
-Message-ID: <aeZcjPaIiCHYVwfd@e129823.arm.com>
-References: <20260417175759.3191279-5-yeoreum.yun@arm.com>
- <87se8sbozv.wl-maz@kernel.org>
- <aeNeNjfO7i128TIP@e129823.arm.com>
- <87pl3vb5bm.wl-maz@kernel.org>
- <aeS4rAeVQ0yJIPYw@e129823.arm.com>
- <aeXp7WSqpXNytNPG@willie-the-truck>
- <aeXxCe4hdizdQbFD@e129823.arm.com>
- <aeYDMEgWdt8F9jWb@willie-the-truck>
- <aeYGeojpqcYAN5++@e129823.arm.com>
- <20260420-olivine-cobra-of-brotherhood-bfd4bd@sudeepholla>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="TtndzpSQ"
+Received: from narnia.corp.microsoft.com (unknown [40.78.12.246])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 9F26F20B6F01;
+	Mon, 20 Apr 2026 14:26:59 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9F26F20B6F01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1776720420;
+	bh=m4eJF28gnCHuiGq82w5fw+WD1bCrxt+Hhgudym7HBNo=;
+	h=From:To:Subject:Date:From;
+	b=TtndzpSQhhkxgzQBLcfRVxbLUY+wLp4iNt7LBWGJ4wOnpKw4eXBFFd8bTletZ2gpE
+	 zOFzZluFyz7HEy78cn+SFs28W2nD83ZhvveFf+aTn0ztB3njGzxd0iiWHl0NX59SY9
+	 uvzA2JuxjhTxlW8MzmKf5si1rqKfaYTI/0eKw+Es=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: "Blaise Boscaccy" <bboscaccy@linux.microsoft.com>,
+	"Jonathan Corbet" <corbet@lwn.net>,
+	"Paul Moore" <paul@paul-moore.com>,
+	"James Morris" <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	"Andrew Morton" <akpm@linux-foundation.org>,
+	James.Bottomley@HansenPartnership.com,
+	dhowells@redhat.com,
+	"Fan Wu" <wufan@kernel.org>,
+	"Ryan Foster" <foster.ryan.r@gmail.com>,
+	"Randy Dunlap" <rdunlap@infradead.org>,
+	linux-security-module@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	"Song Liu" <song@kernel.org>
+Subject: [PATCH v5 00/10] Reintroduce Hornet LSM
+Date: Mon, 20 Apr 2026 14:26:32 -0700
+Message-ID: <20260420212653.438685-1-bboscaccy@linux.microsoft.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260420-olivine-cobra-of-brotherhood-bfd4bd@sudeepholla>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-> On Mon, Apr 20, 2026 at 11:56:58AM +0100, Yeoreum Yun wrote:
-> > Hi Will,
-> >
-> > > [+Seb for the pKVM FFA bits]
-> > >
-> > > Ah sorry, I mixed up the ordering of 'module_init' vs 'rootfs_initcall'
-> > > and thought you wanted to probe the version earlier. But then I'm still
-> > > confused because, prior to 0e0546eabcd6 ("firmware: arm_ffa: Change
-> > > initcall level of ffa_init() to rootfs_initcall"), ffa_init() was a
-> > > 'device_initcall' which is still called earlier than finalize_pkvm().
-> >
-> > Right, and this is what I missed when writing patch
-> > 0e0546eabcd6 ("firmware: arm_ffa: Change initcall level of ffa_init() to rootfs_initcall").
-> > and it still exists even if it's device call.
-> >
-> > However, rather than changing ffa_init to rootfs_initcall, moving ima_init
-> > to late_initcall_sync is a better approach, as it also addresses similar
-> > issues for TPM devices that do not use FF-A. For this reason,
-> > the FF-A-related changes were reverted.
-> >
-> > As a result, patch 4/4 addresses an issue that existed independently of
-> > 0e0546eabcd6, as you pointed out.
-> >
->
-> I was not fully convinced by commit 0e0546eabcd6 ("firmware: arm_ffa: Change
-> initcall level of ffa_init() to rootfs_initcall"), and I had raised this
-> concern at the time. However, in the absence of a better alternative, we
-> proceeded with merging it.
->
-> My concern remains essentially the same. That change moved the initcall one
-> stage earlier, and now, by introducing `late_initcall_sync()`, we are
-> effectively shifting the dependency issue one stage later instead of resolving
-> it in a more fundamental way. From my perspective, this still relies on
-> adjusting initcall ordering as the primary means of making the dependency
-> work.
->
-> I do not think that is a robust or sustainable approach. Tweaking initcall
-> levels tends to be inherently fragile because it addresses the symptom through
-> sequencing rather than establishing a clear and explicit dependency model.
->
-> I also recall that `finalise_pkvm()` is itself at `device_initcall` level. If
-> that is correct, would this not introduce another ordering issue or at least
-> leave us exposed to similar dependency problems? That is exactly why I remain
-> uneasy about solving this by continuing to move initcalls backward or forward.
->
-> More broadly, the fact that we are revisiting the same class of issue again
-> after such a short time reinforces my concern that this direction is not
-> sufficiently stable. We may revisit it soon after we merge this approach.
+This patch series introduces the next iteration of the Hornet LSM.
+Hornet’s goal is to provide a secure and extensible in-kernel
+signature verification mechanism for eBPF programs.
 
-I understand your concern about relying on initcall ordering.
+Hornet addresses concerns from users who require strict audit trails and
+verification guarantees for eBPF programs, especially in
+security-sensitive environments. Many production systems need assurance
+that only authorized, unmodified eBPF programs are loaded into the
+kernel. Hornet provides this assurance through cryptographic signature
+verification.
 
-However, I think there is an important difference in scope in this case.
-This change primarily affects the IMA subsystem, and the impact is
-largely confined to IMA (at least based on my current understanding).
+The currently accepted loader-plus-map signature verification scheme,
+mandated by Alexei and KP, is simple to implement and generally
+acceptable if users and administrators are satisfied with it. However,
+verifying both the loader and the maps offers additional benefits
+beyond verifying the loader alone:
 
-Also, this is not just about FF-A. The issue arises when TPM devices are
-deferred, and IMA does not handle such cases properly. From that
-perspective, moving ima_init() to a later stage is not simply about
-adjusting ordering, but about ensuring that IMA correctly handles its
-dependency on TPM devices.
+1. Security and Audit Integrity
 
-In other words, the goal here is not to align dependencies indirectly
-via initcall levels, but to ensure that IMA is initialized only after
-its required dependencies are ready.
+A key advantage is that the LSM hook for authorizing BPF program loads
+can operate after signature verification. This ensures:
 
-Regarding pKVM, finalise_pkvm() runs at the device_initcall_sync level.
-Because of this, the FF-A driver needs a reliable way to determine when
-pKVM initialization has completed, rather than relying purely on
-initcall ordering.
+* Access control decisions are based on verified signature status.
+* Accurate system state measurement and logging.
+* Log entries claiming a verified signature are truthful, avoiding
+  misleading records where only the loader was verified while the actual
+  BPF program verification occurs later without logging.
 
---
-Sincerely,
-Yeoreum Yun
+2. TOCTOU Attack Prevention
+
+The current map hash implementation may be vulnerable to a TOCTOU
+attack because it allows unfrozen maps to cache a previously
+calculated hash. The accepted “trusted loader” scheme cannot detect
+this and may permit loading altered maps.
+
+3. Supply Chain Integrity
+
+Verify that eBPF programs and their associated map data have not been
+modified since they were built and signed, in the kernel proper, may
+aid in protecting against supply chain attacks.
+
+This approach addresses concerns from users who require strict audit
+trails and verification guarantees, especially in security-sensitive
+environments. Map hashes for extended verification are passed via the
+existing PKCS#7 UAPI and verified by the crypto subsystem. Hornet then
+calculates the program’s verification state.  Hornet itself does not
+enforce a policy on whether unsigned or partially signed programs
+should be rejected. It delegates that decision to downstream LSMs
+hook, making it a composable building block in a larger security
+architecture.
+
+Changes in V5:
+- Added IPE documentation
+
+Link to V4: https://lore.kernel.org/linux-security-module/20260416173500.176716-1-bboscaccy@linux.microsoft.com/
+
+Changes in V4:
+- IPE integration
+- Arbitrary keyring support
+
+Link to V3: https://lore.kernel.org/linux-security-module/20260326060655.2550595-1-bboscaccy@linux.microsoft.com/
+
+Changes in V3:
+- Updated for signed attribute patch series changes
+- Added some new result enum values
+- Minor documentation clarification
+- Misc style fixes
+- Added missing signed-off-by tags
+
+Link to V2: https://lore.kernel.org/linux-security-module/20260227233930.2418522-1-bboscaccy@linux.microsoft.com/
+
+Changes in V2:
+- Addressed possible TocTou races in hash verification
+- Improved documentation and tooling
+- Added Alexie's nack
+
+Link to RFC: https://lore.kernel.org/linux-security-module/20251211021257.1208712-1-bboscaccy@linux.microsoft.com/
+
+Blaise Boscaccy (6):
+  lsm: security: Add additional enum values for bpf integrity checks
+  security: Hornet LSM
+  hornet: Introduce gen_sig
+  hornet: Add a light skeleton data extractor scripts
+  selftests/hornet: Add a selftest for the Hornet LSM
+  ipe: Add BPF program load policy enforcement via Hornet integration
+
+James Bottomley (3):
+  crypto: pkcs7: add flag for validated trust on a signed info block
+  crypto: pkcs7: add ability to extract signed attributes by OID
+  crypto: pkcs7: add tests for pkcs7_get_authattr
+
+Paul Moore (1):
+  lsm: framework for BPF integrity verification
+
+ Documentation/admin-guide/LSM/Hornet.rst     | 321 +++++++++++++++
+ Documentation/admin-guide/LSM/index.rst      |   1 +
+ Documentation/admin-guide/LSM/ipe.rst        | 162 +++++++-
+ Documentation/security/ipe.rst               |  39 ++
+ MAINTAINERS                                  |   9 +
+ certs/system_keyring.c                       |   1 +
+ crypto/asymmetric_keys/Makefile              |   4 +-
+ crypto/asymmetric_keys/pkcs7_aa.asn1         |  18 +
+ crypto/asymmetric_keys/pkcs7_key_type.c      |  44 ++-
+ crypto/asymmetric_keys/pkcs7_parser.c        |  81 ++++
+ crypto/asymmetric_keys/pkcs7_parser.h        |   1 +
+ crypto/asymmetric_keys/pkcs7_trust.c         |   1 +
+ include/crypto/pkcs7.h                       |   4 +
+ include/linux/lsm_hook_defs.h                |   5 +
+ include/linux/oid_registry.h                 |   3 +
+ include/linux/security.h                     |  28 ++
+ include/uapi/linux/lsm.h                     |   1 +
+ scripts/Makefile                             |   1 +
+ scripts/hornet/Makefile                      |   5 +
+ scripts/hornet/extract-insn.sh               |  27 ++
+ scripts/hornet/extract-map.sh                |  27 ++
+ scripts/hornet/extract-skel.sh               |  27 ++
+ scripts/hornet/gen_sig.c                     | 392 +++++++++++++++++++
+ scripts/hornet/write-sig.sh                  |  27 ++
+ security/Kconfig                             |   3 +-
+ security/Makefile                            |   1 +
+ security/hornet/Kconfig                      |  11 +
+ security/hornet/Makefile                     |   7 +
+ security/hornet/hornet.asn1                  |  13 +
+ security/hornet/hornet_lsm.c                 | 346 ++++++++++++++++
+ security/ipe/Kconfig                         |  14 +
+ security/ipe/audit.c                         |  15 +
+ security/ipe/eval.c                          |  73 +++-
+ security/ipe/eval.h                          |   5 +
+ security/ipe/hooks.c                         |  37 ++
+ security/ipe/hooks.h                         |  11 +
+ security/ipe/ipe.c                           |   3 +
+ security/ipe/policy.h                        |  14 +
+ security/ipe/policy_parser.c                 |  27 ++
+ security/security.c                          |  75 +++-
+ tools/testing/selftests/Makefile             |   1 +
+ tools/testing/selftests/hornet/Makefile      |  63 +++
+ tools/testing/selftests/hornet/loader.c      |  21 +
+ tools/testing/selftests/hornet/trivial.bpf.c |  33 ++
+ 44 files changed, 1994 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/admin-guide/LSM/Hornet.rst
+ create mode 100644 crypto/asymmetric_keys/pkcs7_aa.asn1
+ create mode 100644 scripts/hornet/Makefile
+ create mode 100755 scripts/hornet/extract-insn.sh
+ create mode 100755 scripts/hornet/extract-map.sh
+ create mode 100755 scripts/hornet/extract-skel.sh
+ create mode 100644 scripts/hornet/gen_sig.c
+ create mode 100755 scripts/hornet/write-sig.sh
+ create mode 100644 security/hornet/Kconfig
+ create mode 100644 security/hornet/Makefile
+ create mode 100644 security/hornet/hornet.asn1
+ create mode 100644 security/hornet/hornet_lsm.c
+ create mode 100644 tools/testing/selftests/hornet/Makefile
+ create mode 100644 tools/testing/selftests/hornet/loader.c
+ create mode 100644 tools/testing/selftests/hornet/trivial.bpf.c
+
+-- 
+2.53.0
+
