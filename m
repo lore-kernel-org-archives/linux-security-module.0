@@ -1,54 +1,54 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E5C6FC5
-	for <linux-security-module@vger.kernel.org>; Tue, 21 Apr 2026 00:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C0612CDA5
+	for <linux-security-module@vger.kernel.org>; Tue, 21 Apr 2026 00:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776730135; cv=none; b=JyN/GByjSn70diUmRoX14NUa90V7NnkWoRB0QaOJO4Dj3uZ35Pi+lfqRWZNMCkzhljoQNG1wi9Twg6Hp/4Gy6dwj60Hd7NhMnsKzj07Qo8/I7aXU8nGOJOzD8cZ00C3/q0dzYw7k4SrGqzOVl9FweJ+VwYL94vfhNZlNL9V32WE=
+	t=1776730750; cv=none; b=uppxyVGAzz+qwyGQA0kdRXKud8UYFGUIoasKbNkRh4Jz8/2p0Ccd+4AyrJ1ldp2E6ZRYsiqxplb2U/eIVl92fftopaOT4rhH2UEfcJ5hzM6lQheBcorRFkGUyyMfzGu/fVMNaJj6lxER0mziuIx1e//TqwsBPIcibHlPuoMEntw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776730135; c=relaxed/simple;
-	bh=ATCgYw55EOTp5lCVqtX9sVNwcdW6hNzESvgRXize5fE=;
+	s=arc-20240116; t=1776730750; c=relaxed/simple;
+	bh=KXS8VUn+I0Rlv06Y0qm6NF1tUvNAG7EcKgHO0taOsig=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LB2u66gJ2VanMjLe7EAiBvHLUbG8Z+Y2kEwyuvkukJ462CXSowczwJYRlH+3IRGFg7ZULYFxwTTr2/rV7UjqgWlZt2cHf1nVmddFBxVidvDt+Vl1bbSleqwVvoM6+/KgpB1hgwopU30L6pbL8M7VepbWbGQR85LfDNDuQ+zP4nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OcJJOsON; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=cLapDMyK1DH5RINuFC1SaIm79jZfZ4eXe1Bm9ZbotirKwlt4uilA8A4qwqEyf6U2+3m7HJh7OjpCeCZARXoD+ki9sQ/85DJwVSk9AskLDSaTsbBPJq3x4db08J5UJwWFFTZK0gQpxmDdOKxkuc/pgJoucixJNzWRp4AS3uti27k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QM/5ggrA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OcJJOsON"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A437EC2BCB3
-	for <linux-security-module@vger.kernel.org>; Tue, 21 Apr 2026 00:08:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QM/5ggrA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7119C2BCB9
+	for <linux-security-module@vger.kernel.org>; Tue, 21 Apr 2026 00:19:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776730134;
-	bh=ATCgYw55EOTp5lCVqtX9sVNwcdW6hNzESvgRXize5fE=;
+	s=k20201202; t=1776730749;
+	bh=KXS8VUn+I0Rlv06Y0qm6NF1tUvNAG7EcKgHO0taOsig=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=OcJJOsONjmI57n/aCmUh9vO5u/3d884+pIz7Bjbz/ETQYQPSrBVP13WhmuSZS0jCE
-	 FHNIW902GdbIhlsj1+/0CN/B1Yh+ZAshRi6+huPoiUljzw5zc9zdXxCRvy+nrZICQ5
-	 vMNePAFcvxsD38nuSA0BgPL1YRey7KtNyt9FkQllesLCyE+ghRqXoOSLgT3zHMH1DM
-	 3/LcXzXfw1hpUhCCL6HWwZQl+gQxsY+i0D29P1Xtdj4KTzkDvekPA7M7AMzocTJjam
-	 mAeuKhChkcIa7GutKh5uWiBkeQPmOVwJ9iNoqILL+cIfQ3n+um+XWqdc9eqcddKHDL
-	 wbWA7DuG2MBag==
-Received: by mail-dl1-f47.google.com with SMTP id a92af1059eb24-12c45281a06so4806745c88.1
-        for <linux-security-module@vger.kernel.org>; Mon, 20 Apr 2026 17:08:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ+mLEM+4Z/qrvqEZW93L1vbrTnePMIZKYDgZ2EJ4XiZgywwv7+3JGwbiHnwXf2CTrXUFJgfbRgfn5paw16lx+WxYzXlPEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxf41+0ojFr1azPI257ZqDDgIHwVBW5lLGypGQoewsRBvG4kgy1
-	lIxQTNmugSztUQrp0l82lANdAQCT2VJ7pRaL4c3TSKhyxXQsgIVLYfxFOZL4yQyKqAJqjQleG5y
-	gz7tZ7UjiuZeVV3B+S8Su0anCq9sDWqc=
-X-Received: by 2002:a05:7022:6728:b0:128:cf5c:535a with SMTP id
- a92af1059eb24-12c73f7595emr9114238c88.11.1776730134015; Mon, 20 Apr 2026
- 17:08:54 -0700 (PDT)
+	b=QM/5ggrANiqesB8KSOU9LTOFXR5QQCIle1Rvuv9Z/cmHvbNA/NXsjtwmKbVl+bNlX
+	 e+KwAeQJejwq3Y3kvUO0nUs8OLF/xuDI+YYe8sMOdi58VhZK/WFkSxBKeLPDkr/GNS
+	 ytDVnFxkyyGeb5aLjE8SXbuLpkFyjWBCbhLfagpngOPsaj/w8arPWobr5aJ0BE1R+c
+	 lmXQtHFv+xaW0Z9PiwMJ56IjBqnnhpa/tO+kaA05iMscZa/s0hGJeUgXxVyesmrJXr
+	 lILeLGo/Ara1SbfNXlmTUqy4uXZgYtUTkX2T1WNhB0YdPYd181Pz7P8tkZyO1KrpNR
+	 QFn/In3FSh84g==
+Received: by mail-dy1-f178.google.com with SMTP id 5a478bee46e88-2b4520f6b32so4640419eec.0
+        for <linux-security-module@vger.kernel.org>; Mon, 20 Apr 2026 17:19:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ8kzyhduCE2KktDJ6kEzz9vNOrBxiN4LkPPKon+v8b1zrW0FYdmhUlbZvoJ+RXggWExQU58RsoAwYD2S34TejIItpL97Iw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt4+chBoW8s4Nhs2G3M4SIR6MjbiG0NFPou31NS+JjMuW2fgMW
+	NKZMKX4Fr8p/+Gz3r+/ZqVvRykvsCocjS03wOQSy3FgRai2dZ8F4K0e5BzYYgV1/6ZnSWOgO/NO
+	v1j2m+yCJ3VNOLZoqGA+hB4l2jnnlH9Y=
+X-Received: by 2002:a05:7022:6627:b0:128:ca83:5aa1 with SMTP id
+ a92af1059eb24-12c73f9217dmr9020004c88.16.1776730748952; Mon, 20 Apr 2026
+ 17:19:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260420212653.438685-1-bboscaccy@linux.microsoft.com> <20260420212653.438685-7-bboscaccy@linux.microsoft.com>
-In-Reply-To: <20260420212653.438685-7-bboscaccy@linux.microsoft.com>
+References: <20260420212653.438685-1-bboscaccy@linux.microsoft.com> <20260420212653.438685-8-bboscaccy@linux.microsoft.com>
+In-Reply-To: <20260420212653.438685-8-bboscaccy@linux.microsoft.com>
 From: Fan Wu <wufan@kernel.org>
-Date: Mon, 20 Apr 2026 17:08:42 -0700
-X-Gmail-Original-Message-ID: <CAKtyLkF5L_sDHmtT2eVhmHLdhB_rAxWzotUJER6A5DFQ=S6EPw@mail.gmail.com>
-X-Gm-Features: AQROBzAq9vn23GJvfUzynZvcjGwb_i9NPY5naNJwza-6jOjiQM2f4M5e8MVf3ZI
-Message-ID: <CAKtyLkF5L_sDHmtT2eVhmHLdhB_rAxWzotUJER6A5DFQ=S6EPw@mail.gmail.com>
-Subject: Re: [PATCH v5 06/10] security: Hornet LSM
+Date: Mon, 20 Apr 2026 17:18:56 -0700
+X-Gmail-Original-Message-ID: <CAKtyLkGXfe5JV4BMAhCMnT=ZqHGpNc+W3fTz2VbEUd3jH8hYgw@mail.gmail.com>
+X-Gm-Features: AQROBzB11YLGb4Kb8u0HqItuKuRibey7StefJT6KkIu_5l15FPswgBDy1G003Tw
+Message-ID: <CAKtyLkGXfe5JV4BMAhCMnT=ZqHGpNc+W3fTz2VbEUd3jH8hYgw@mail.gmail.com>
+Subject: Re: [PATCH v5 07/10] hornet: Introduce gen_sig
 To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 Cc: Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>, 
 	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
@@ -66,479 +66,507 @@ Content-Transfer-Encoding: quoted-printable
 On Mon, Apr 20, 2026 at 2:27=E2=80=AFPM Blaise Boscaccy
 <bboscaccy@linux.microsoft.com> wrote:
 >
-> This adds the Hornet Linux Security Module which provides enhanced
-> signature verification and data validation for eBPF programs. This
-> allows users to continue to maintain an invariant that all code
-> running inside of the kernel has actually been signed and verified, by
-> the kernel.
+> This introduces the gen_sig tool. It creates a pkcs#7 signature of a
+> data payload. Additionally it appends a signed attribute containing a
+> set of hashes.
 >
-> This effort builds upon the currently excepted upstream solution. It
-> further hardens it by providing deterministic, in-kernel checking of
-> map hashes to solidify auditing along with preventing TOCTOU attacks
-> against lskel map hashes.
->
-> Target map hashes are passed in via PKCS#7 signed attributes. Hornet
-> determines the extent which the eBFP program is signed and defers to
-> other LSMs for policy decisions.
+> Typical usage is to provide a payload containing the light skeleton
+> ebpf syscall program binary and it's associated maps, which can be
+> extracted from the auto-generated skeleton header.
 >
 > Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-> Nacked-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-
-...
-
-> diff --git a/security/hornet/Kconfig b/security/hornet/Kconfig
+> ---
+>  scripts/Makefile            |   1 +
+>  scripts/hornet/Makefile     |   5 +
+>  scripts/hornet/gen_sig.c    | 392 ++++++++++++++++++++++++++++++++++++
+>  scripts/hornet/write-sig.sh |  27 +++
+>  4 files changed, 425 insertions(+)
+>  create mode 100644 scripts/hornet/Makefile
+>  create mode 100644 scripts/hornet/gen_sig.c
+>  create mode 100755 scripts/hornet/write-sig.sh
+>
+> diff --git a/scripts/Makefile b/scripts/Makefile
+> index 0941e5ce7b575..dea8ab91bbe4e 100644
+> --- a/scripts/Makefile
+> +++ b/scripts/Makefile
+> @@ -63,6 +63,7 @@ subdir-$(CONFIG_GENKSYMS) +=3D genksyms
+>  subdir-$(CONFIG_GENDWARFKSYMS) +=3D gendwarfksyms
+>  subdir-$(CONFIG_SECURITY_SELINUX) +=3D selinux
+>  subdir-$(CONFIG_SECURITY_IPE) +=3D ipe
+> +subdir-$(CONFIG_SECURITY_HORNET) +=3D hornet
+>
+>  # Let clean descend into subdirs
+>  subdir-        +=3D basic dtc gdb kconfig mod
+> diff --git a/scripts/hornet/Makefile b/scripts/hornet/Makefile
 > new file mode 100644
-> index 0000000000000..19406aa237ac6
+> index 0000000000000..3ee41e5e9a9ff
 > --- /dev/null
-> +++ b/security/hornet/Kconfig
-> @@ -0,0 +1,11 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +config SECURITY_HORNET
-> +       bool "Hornet support"
-> +       depends on SECURITY
-
-The dependency doesn't seem to be complete, for example,
-PKCS7_MESSAGE_PARSER is not selected.
-
-> +       default n
-> +       help
-> +         This selects Hornet.
-> +         Further information can be found in
-> +         Documentation/admin-guide/LSM/Hornet.rst.
+> +++ b/scripts/hornet/Makefile
+> @@ -0,0 +1,5 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +hostprogs-always-y     :=3D gen_sig
 > +
-> +         If you are unsure how to answer this question, answer N.
-> diff --git a/security/hornet/Makefile b/security/hornet/Makefile
+> +HOSTCFLAGS_gen_sig.o =3D $(shell $(HOSTPKG_CONFIG) --cflags libcrypto 2>=
+ /dev/null)
+> +HOSTLDLIBS_gen_sig =3D $(shell $(HOSTPKG_CONFIG) --libs libcrypto 2> /de=
+v/null || echo -lcrypto)
+> diff --git a/scripts/hornet/gen_sig.c b/scripts/hornet/gen_sig.c
 > new file mode 100644
-> index 0000000000000..26b6f954f762e
+> index 0000000000000..f966516ebc99b
 > --- /dev/null
-> +++ b/security/hornet/Makefile
-> @@ -0,0 +1,7 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +obj-$(CONFIG_SECURITY_HORNET) :=3D hornet.o
-> +
-> +hornet-y :=3D hornet.asn1.o \
-> +       hornet_lsm.o \
-> +
-> +$(obj)/hornet.asn1.o: $(obj)/hornet.asn1.c $(obj)/hornet.asn1.h
-> diff --git a/security/hornet/hornet.asn1 b/security/hornet/hornet.asn1
-> new file mode 100644
-> index 0000000000000..c8d47b16b65d7
-> --- /dev/null
-> +++ b/security/hornet/hornet.asn1
-> @@ -0,0 +1,13 @@
-> +-- SPDX-License-Identifier: BSD-3-Clause
-> +--
-> +-- Copyright (C) 2009 IETF Trust and the persons identified as authors
-> +-- of the code
-
-I'm not a lawyer, but since this is a new AA which is not in the RFC,
-should the copyright belong to IETF?
-
-> +--
-> +-- https://www.rfc-editor.org/rfc/rfc5652#section-3
-> +
-> +HornetData ::=3D SET OF Map
-> +
-> +Map ::=3D SEQUENCE {
-> +       index                   INTEGER ({ hornet_map_index }),
-> +       sha                     OCTET STRING ({ hornet_map_hash })
-> +} ({ hornet_next_map })
-> diff --git a/security/hornet/hornet_lsm.c b/security/hornet/hornet_lsm.c
-> new file mode 100644
-> index 0000000000000..f7d62fe6229c9
-> --- /dev/null
-> +++ b/security/hornet/hornet_lsm.c
-> @@ -0,0 +1,346 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Hornet Linux Security Module
+> +++ b/scripts/hornet/gen_sig.c
+> @@ -0,0 +1,392 @@
+> +/* SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
 > + *
-> + * Author: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+> + * Generate a signature for an eBPF program along with appending
+> + * map hashes as signed attributes
 > + *
-> + * Copyright (C) 2026 Microsoft Corporation
+> + * Copyright =C2=A9 2025      Microsoft Corporation.
+> + *
+> + * Authors: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU Lesser General Public License
+> + * as published by the Free Software Foundation; either version 2.1
+> + * of the licence, or (at your option) any later version.
 > + */
 > +
-> +#include <linux/lsm_hooks.h>
-> +#include <uapi/linux/lsm.h>
-> +#include <linux/bpf.h>
-> +#include <linux/verification.h>
-> +#include <crypto/public_key.h>
-> +#include <linux/module_signature.h>
-> +#include <crypto/pkcs7.h>
-> +#include <linux/sort.h>
-> +#include <linux/asn1_decoder.h>
-> +#include <linux/oid_registry.h>
-> +#include "hornet.asn1.h"
+> +#define _GNU_SOURCE
+> +#include <stdio.h>
+> +#include <string.h>
+> +#include <stdlib.h>
+> +#include <errno.h>
+> +#include <stdbool.h>
+> +#include <stdint.h>
+> +#include <err.h>
+> +#include <getopt.h>
 > +
-> +#define MAX_USED_MAPS 64
+> +#include <openssl/cms.h>
+> +#include <openssl/err.h>
+> +#include <openssl/evp.h>
+> +#include <openssl/pkcs7.h>
+> +#include <openssl/x509.h>
+> +#include <openssl/pem.h>
+> +#include <openssl/objects.h>
+> +#include <openssl/asn1.h>
+> +#include <openssl/asn1t.h>
+> +#include <openssl/opensslv.h>
+> +#include <openssl/bio.h>
+> +#include <openssl/stack.h>
 > +
-> +struct hornet_maps {
-> +       bpfptr_t fd_array;
-> +};
+> +#if OPENSSL_VERSION_MAJOR >=3D 3
+> +# define USE_PKCS11_PROVIDER
+> +# include <openssl/provider.h>
+> +# include <openssl/store.h>
+> +#else
+> +# if !defined(OPENSSL_NO_ENGINE) && !defined(OPENSSL_NO_DEPRECATED_3_0)
+> +#  define USE_PKCS11_ENGINE
+> +#  include <openssl/engine.h>
+> +# endif
+> +#endif
+> +#include "../ssl-common.h"
 > +
-> +/* The only hashing algorithm available is SHA256 due to it be hardcoded
-> +   in the bpf subsystem. */
+> +#define SHA256_LEN 32
+> +#define BUF_SIZE   (1 << 15) // 32 KiB
+> +#define MAX_HASHES 64
 > +
-> +struct hornet_parse_context {
-> +       int indexes[MAX_USED_MAPS];
-> +       bool skips[MAX_USED_MAPS];
-> +       unsigned char hashes[SHA256_DIGEST_SIZE * MAX_USED_MAPS];
-> +       int hash_count;
-> +};
-> +
-> +struct hornet_prog_security_struct {
-> +       bool checked[MAX_USED_MAPS];
-> +       unsigned char hashes[SHA256_DIGEST_SIZE * MAX_USED_MAPS];
-> +};
-> +
-> +struct hornet_map_security_struct {
-> +       bool checked;
+> +struct hash_spec {
+> +       char *file;
 > +       int index;
 > +};
 > +
-
-Can maps be shared between programs? If so, since the LSM blob is
-per-map, a second program's load will overwrite map_security->index
-set by the first. A later run of the first program would then fail to
-find its own map.
-
-> +struct lsm_blob_sizes hornet_blob_sizes __ro_after_init =3D {
-> +       .lbs_bpf_map =3D sizeof(struct hornet_map_security_struct),
-> +       .lbs_bpf_prog =3D sizeof(struct hornet_prog_security_struct),
-> +};
+> +typedef struct {
+> +       ASN1_INTEGER *index;
+> +       ASN1_OCTET_STRING *hash;
 > +
-> +static inline struct hornet_prog_security_struct *
-> +hornet_bpf_prog_security(struct bpf_prog *prog)
+> +} HORNET_MAP;
+> +
+> +DECLARE_ASN1_FUNCTIONS(HORNET_MAP)
+> +ASN1_SEQUENCE(HORNET_MAP) =3D {
+> +       ASN1_SIMPLE(HORNET_MAP, index, ASN1_INTEGER),
+> +       ASN1_SIMPLE(HORNET_MAP, hash, ASN1_OCTET_STRING)
+> +} ASN1_SEQUENCE_END(HORNET_MAP);
+> +
+> +IMPLEMENT_ASN1_FUNCTIONS(HORNET_MAP)
+> +
+> +DEFINE_STACK_OF(HORNET_MAP)
+> +
+> +typedef struct {
+> +       STACK_OF(HORNET_MAP) * maps;
+> +} MAP_SET;
+> +
+> +DECLARE_ASN1_FUNCTIONS(MAP_SET)
+> +ASN1_SEQUENCE(MAP_SET) =3D {
+> +       ASN1_SET_OF(MAP_SET, maps, HORNET_MAP)
+> +} ASN1_SEQUENCE_END(MAP_SET);
+> +
+> +IMPLEMENT_ASN1_FUNCTIONS(MAP_SET)
+> +
+> +#define DIE(...) do { fprintf(stderr, __VA_ARGS__); fputc('\n', stderr);=
+ \
+> +               exit(EXIT_FAILURE); } while (0)
+> +
+> +static BIO *bio_open_wr(const char *path)
 > +{
-> +       return prog->aux->security + hornet_blob_sizes.lbs_bpf_prog;
-> +}
+> +       BIO *b =3D BIO_new_file(path, "wb");
 > +
-> +static inline struct hornet_map_security_struct *
-> +hornet_bpf_map_security(struct bpf_map *map)
-> +{
-> +       return map->security + hornet_blob_sizes.lbs_bpf_map;
-> +}
-> +
-> +static int hornet_verify_hashes(struct hornet_maps *maps,
-> +                               struct hornet_parse_context *ctx,
-> +                               struct bpf_prog *prog)
-> +{
-> +       int map_fd;
-> +       u32 i;
-> +       struct bpf_map *map;
-> +       int err =3D 0;
-> +       unsigned char hash[SHA256_DIGEST_SIZE];
-> +       struct hornet_prog_security_struct *security =3D hornet_bpf_prog_=
-security(prog);
-> +       struct hornet_map_security_struct *map_security;
-> +
-> +       for (i =3D 0; i < ctx->hash_count; i++) {
-> +               if (ctx->skips[i])
-> +                       continue;
-> +
-> +               err =3D copy_from_bpfptr_offset(&map_fd, maps->fd_array,
-> +                                             ctx->indexes[i] * sizeof(ma=
-p_fd),
-> +                                             sizeof(map_fd));
-> +               if (err < 0)
-> +                       return LSM_INT_VERDICT_FAULT;
-> +
-> +               CLASS(fd, f)(map_fd);
-> +               if (fd_empty(f))
-> +                       return LSM_INT_VERDICT_FAULT;
-> +               if (unlikely(fd_file(f)->f_op !=3D &bpf_map_fops))
-> +                       return LSM_INT_VERDICT_FAULT;
-> +
-> +               map =3D fd_file(f)->private_data;
-> +               if (!map->frozen)
-> +                       return LSM_INT_VERDICT_FAULT;
-> +
-> +               map->ops->map_get_hash(map, SHA256_DIGEST_SIZE, hash);
-> +
-> +               err =3D memcmp(hash, &ctx->hashes[i * SHA256_DIGEST_SIZE]=
-,
-> +                             SHA256_DIGEST_SIZE);
-> +               if (err)
-> +                       return LSM_INT_VERDICT_UNEXPECTED;
-> +
-> +               security->checked[i] =3D true;
-> +               memcpy(&security->hashes[i * SHA256_DIGEST_SIZE], hash, S=
-HA256_DIGEST_SIZE);
-> +               map_security =3D hornet_bpf_map_security(map);
-> +               map_security->checked =3D true;
-> +               map_security->index =3D i;
+> +       if (!b) {
+> +               perror(path);
+> +               ERR_print_errors_fp(stderr);
+> +               exit(EXIT_FAILURE);
 > +       }
-> +       return LSM_INT_VERDICT_OK;
+> +       return b;
 > +}
 > +
-> +int hornet_next_map(void *context, size_t hdrlen,
-> +                    unsigned char tag,
-> +                    const void *value, size_t vlen)
+> +static void usage(const char *prog)
 > +{
-> +       struct hornet_parse_context *ctx =3D (struct hornet_parse_context=
- *)context;
-> +
-> +       if (++ctx->hash_count >=3D MAX_USED_MAPS)
-> +               return -EINVAL;
-> +       return 0;
+> +       fprintf(stderr,
+> +               "Usage:\n"
+> +               "  %s --data content.bin --cert signer.crt --key signer.k=
+ey [-pass pass]\n"
+> +               "     --out newsig.p7b \n"
+> +               "     --add FILE:index [--add FILE:index ...]\n",
+> +               prog);
 > +}
 > +
-> +int hornet_map_index(void *context, size_t hdrlen,
-> +                    unsigned char tag,
-> +                    const void *value, size_t vlen)
+> +static const char *key_pass;
+> +
+> +static int pem_pw_cb(char *buf, int len, int w, void *v)
 > +{
-> +       struct hornet_parse_context *ctx =3D (struct hornet_parse_context=
- *)context;
+> +       int pwlen;
 > +
-> +       if (vlen > 1)
-> +               return -EINVAL;
+> +       if (!key_pass)
+> +               return -1;
 > +
-> +       ctx->indexes[ctx->hash_count] =3D *(u8 *)value;
-> +       return 0;
+> +       pwlen =3D strlen(key_pass);
+> +       if (pwlen >=3D len)
+> +               return -1;
+> +
+> +       strcpy(buf, key_pass);
+> +
+> +       key_pass =3D NULL;
+> +
+> +       return pwlen;
 > +}
 > +
-> +int hornet_map_hash(void *context, size_t hdrlen,
-> +                   unsigned char tag,
-> +                   const void *value, size_t vlen)
-> +
+> +static EVP_PKEY *read_private_key(const char *private_key_name)
 > +{
-> +       struct hornet_parse_context *ctx =3D (struct hornet_parse_context=
- *)context;
+> +       EVP_PKEY *private_key;
+> +       BIO *b;
 > +
-> +       if (vlen !=3D SHA256_DIGEST_SIZE && vlen !=3D 0)
-> +               return -EINVAL;
+> +       b =3D BIO_new_file(private_key_name, "rb");
+> +       ERR(!b, "%s", private_key_name);
+> +       private_key =3D PEM_read_bio_PrivateKey(b, NULL, pem_pw_cb,
+> +                                             NULL);
+> +       ERR(!private_key, "%s", private_key_name);
+> +       BIO_free(b);
 > +
-> +       if (vlen) {
-> +               ctx->skips[ctx->hash_count] =3D false;
-> +               memcpy(&ctx->hashes[ctx->hash_count * SHA256_DIGEST_SIZE]=
-, value, vlen);
-> +       } else
-> +               ctx->skips[ctx->hash_count] =3D true;
-> +
-> +       return 0;
+> +       return private_key;
 > +}
 > +
-> +static int hornet_check_program(struct bpf_prog *prog, union bpf_attr *a=
-ttr,
-> +                               struct bpf_token *token, bool is_kernel,
-> +                               enum lsm_integrity_verdict *verdict)
+> +static X509 *read_x509(const char *x509_name)
 > +{
-> +       struct hornet_maps maps =3D {0};
-> +       bpfptr_t usig =3D make_bpfptr(attr->signature, is_kernel);
-> +       struct pkcs7_message *msg;
-> +       struct hornet_parse_context *ctx;
-> +       void *sig;
+> +       unsigned char buf[2];
+> +       X509 *x509;
+> +       BIO *b;
+> +       int n;
+> +
+> +       b =3D BIO_new_file(x509_name, "rb");
+> +       ERR(!b, "%s", x509_name);
+> +
+> +       /* Look at the first two bytes of the file to determine the encod=
+ing */
+> +       n =3D BIO_read(b, buf, 2);
+> +       if (n !=3D 2) {
+> +               if (BIO_should_retry(b)) {
+> +                       fprintf(stderr, "%s: Read wanted retry\n", x509_n=
+ame);
+> +                       exit(1);
+> +               }
+> +               if (n >=3D 0) {
+> +                       fprintf(stderr, "%s: Short read\n", x509_name);
+> +                       exit(1);
+> +               }
+> +               ERR(1, "%s", x509_name);
+> +       }
+> +
+> +       ERR(BIO_reset(b) !=3D 0, "%s", x509_name);
+> +
+> +       if (buf[0] =3D=3D 0x30 && buf[1] >=3D 0x81 && buf[1] <=3D 0x84)
+> +               /* Assume raw DER encoded X.509 */
+> +               x509 =3D d2i_X509_bio(b, NULL);
+> +       else
+> +               /* Assume PEM encoded X.509 */
+> +               x509 =3D PEM_read_bio_X509(b, NULL, NULL, NULL);
+> +
+> +       BIO_free(b);
+> +       ERR(!x509, "%s", x509_name);
+> +
+> +       return x509;
+> +}
+> +
+> +static int sha256(const char *path, unsigned char out[SHA256_LEN], unsig=
+ned int *out_len)
+> +{
+> +       FILE *f;
+> +       int rc;
+> +       EVP_MD_CTX *ctx;
+> +       unsigned char buf[BUF_SIZE];
+> +       size_t n;
+> +       unsigned int mdlen =3D 0;
+> +
+> +       if (!path || !out)
+> +               return -1;
+> +
+> +       f =3D fopen(path, "rb");
+> +       if (!f) {
+> +               perror("fopen");
+> +               return -2;
+> +       }
+> +
+> +       ERR_load_crypto_strings();
+> +
+> +       rc =3D -3;
+> +       ctx =3D EVP_MD_CTX_new();
+> +       if (!ctx) {
+> +               rc =3D -4;
+> +               goto done;
+> +       }
+> +
+> +#if OPENSSL_VERSION_NUMBER >=3D 0x30000000L
+> +       if (EVP_DigestInit_ex2(ctx, EVP_sha256(), NULL) !=3D 1) {
+> +               rc =3D -5;
+> +               goto done;
+> +       }
+> +#else
+> +       if (EVP_DigestInit_ex(ctx, EVP_sha256(), NULL) !=3D 1) {
+> +               rc =3D -5;
+> +               goto done;
+> +       }
+> +#endif
+> +       while ((n =3D fread(buf, 1, sizeof(buf), f)) > 0) {
+> +               if (EVP_DigestUpdate(ctx, buf, n) !=3D 1) {
+> +                       rc =3D -6;
+> +                       goto done;
+> +               }
+> +       }
+> +       if (ferror(f)) {
+> +               rc =3D -7;
+> +               goto done;
+> +       }
+> +
+> +       if (EVP_DigestFinal_ex(ctx, out, &mdlen) !=3D 1) {
+> +               rc =3D -8;
+> +               goto done;
+> +       }
+> +       if (mdlen !=3D SHA256_LEN) {
+> +               rc =3D -9;
+> +               goto done;
+> +       }
+> +
+> +       if (out_len)
+> +               *out_len =3D mdlen;
+> +       rc =3D 0;
+> +
+> +done:
+> +       EVP_MD_CTX_free(ctx);
+> +       fclose(f);
+> +       ERR_free_strings();
+> +       return rc;
+> +}
+> +
+> +static void add_hash(MAP_SET *set, unsigned char *buffer, int buffer_len=
+, int index)
+> +{
+> +       HORNET_MAP *map =3D NULL;
+> +
+> +       map =3D HORNET_MAP_new();
+> +       ASN1_INTEGER_set(map->index, index);
+> +       ASN1_OCTET_STRING_set(map->hash, buffer, buffer_len);
+> +       sk_HORNET_MAP_push(set->maps, map);
+> +}
+> +
+> +int main(int argc, char **argv)
+> +{
+> +       const char *cert_path =3D NULL;
+> +       const char *key_path =3D NULL;
+> +       const char *data_path =3D NULL;
+> +       const char *out_path =3D NULL;
+> +
+> +       X509 *signer;
+> +       EVP_PKEY *pkey;
+> +       BIO *data_in;
+> +       CMS_ContentInfo *cms_out;
+> +       struct hash_spec hashes[MAX_HASHES];
+> +       int hash_count =3D 0;
+> +       int flags;
+> +       CMS_SignerInfo *si;
+> +       MAP_SET *set;
+> +       unsigned char hash_buffer[SHA256_LEN];
+> +       unsigned int hash_len;
+> +       ASN1_OBJECT *oid;
+> +       unsigned char *der =3D NULL;
+> +       int der_len;
 > +       int err;
-> +       const void *authattrs;
-> +       size_t authattrs_len;
-> +       struct key *key;
-> +
-> +       if (!attr->signature) {
-> +               *verdict =3D LSM_INT_VERDICT_UNSIGNED;
-> +               return 0;
-> +       }
-> +
-> +       ctx =3D kzalloc(sizeof(struct hornet_parse_context), GFP_KERNEL);
-> +       if (!ctx)
-> +               return -ENOMEM;
-> +
-> +       maps.fd_array =3D make_bpfptr(attr->fd_array, is_kernel);
-> +       sig =3D kzalloc(attr->signature_size, GFP_KERNEL);
-> +       if (!sig) {
-> +               err =3D -ENOMEM;
-> +               goto out;
-> +       }
-> +       err =3D copy_from_bpfptr(sig, usig, attr->signature_size);
-> +       if (err !=3D 0)
-> +               goto cleanup_sig;
-> +
-> +       msg =3D pkcs7_parse_message(sig, attr->signature_size);
-> +       if (IS_ERR(msg)) {
-> +               *verdict =3D LSM_INT_VERDICT_BADSIG;
-> +               err =3D 0;
-> +               goto cleanup_sig;
-> +       }
-> +
-> +       if (system_keyring_id_check(attr->keyring_id) =3D=3D 0)
-> +               key =3D (struct key*)(unsigned long)attr->keyring_id;
-> +       else
-> +               key =3D key_ref_to_ptr(lookup_user_key(attr->keyring_id, =
-0, KEY_DEFER_PERM_CHECK));
-
-You might need to key_put the user key.
-
-> +
-> +       if (verify_pkcs7_message_sig(prog->insnsi, prog->len * sizeof(str=
-uct bpf_insn), msg,
-> +                                    key,
-> +                                    VERIFYING_BPF_SIGNATURE,
-> +                                    NULL, NULL)) {
-> +               *verdict =3D LSM_INT_VERDICT_UNKNOWNKEY;
-> +               err =3D 0;
-> +               goto cleanup_msg;
-> +       }
-> +
-> +       if (pkcs7_get_authattr(msg, OID_hornet_data,
-> +                              &authattrs, &authattrs_len) =3D=3D -ENODAT=
-A) {
-> +               *verdict =3D LSM_INT_VERDICT_PARTIALSIG;
-> +               err =3D 0;
-> +               goto cleanup_msg;
-> +       }
-> +
-> +       err =3D asn1_ber_decoder(&hornet_decoder, ctx, authattrs, authatt=
-rs_len);
-> +       if (err < 0 || authattrs =3D=3D NULL) {
-> +               *verdict =3D LSM_INT_VERDICT_BADSIG;
-> +               err =3D 0;
-> +               goto cleanup_msg;
-> +       }
-> +
-> +       err =3D hornet_verify_hashes(&maps, ctx, prog);
-> +       if (err =3D=3D 0)
-> +               *verdict =3D LSM_INT_VERDICT_OK;
-> +       else
-> +               *verdict =3D err;
-> +
-> +cleanup_msg:
-> +       pkcs7_free_message(msg);
-> +cleanup_sig:
-> +       kfree(sig);
-> +out:
-> +       kfree(ctx);
-> +       return err;
-> +}
-> +
-> +static const struct lsm_id hornet_lsmid =3D {
-> +       .name =3D "hornet",
-> +       .id =3D LSM_ID_HORNET,
-> +};
-> +
-> +static int hornet_bpf_prog_load_integrity(struct bpf_prog *prog, union b=
-pf_attr *attr,
-> +                                         struct bpf_token *token, bool i=
-s_kernel)
-> +{
-> +       enum lsm_integrity_verdict verdict;
-> +       int result =3D hornet_check_program(prog, attr, token, is_kernel,=
- &verdict);
-> +
-> +       if (result < 0)
-> +               return result;
-> +
-> +       return security_bpf_prog_load_post_integrity(prog, attr, token, i=
-s_kernel,
-> +                                                    &hornet_lsmid, verdi=
-ct);
-> +}
-> +
-> +static int hornet_verify_map(struct bpf_prog *prog, int index)
-> +{
-> +       unsigned char hash[SHA256_DIGEST_SIZE];
+> +       BIO *b_out;
 > +       int i;
-> +       struct bpf_map *map;
-> +       struct hornet_prog_security_struct *security =3D hornet_bpf_prog_=
-security(prog);
-> +       struct hornet_map_security_struct *map_security;
+> +       char opt;
 > +
-> +       if (!security->checked[index])
-> +               return 0;
+> +       const char *short_opts =3D "C:K:P:O:A:Sh";
 > +
-> +       for (i =3D 0; i < prog->aux->used_map_cnt; i++) {
-> +               map =3D prog->aux->used_maps[i];
-> +               map_security =3D hornet_bpf_map_security(map);
-> +               if (map_security->index !=3D index)
-> +                       continue;
+> +       static const struct option long_opts[] =3D {
+> +               {"cert", required_argument, 0, 'C'},
+> +               {"key",  required_argument, 0, 'K'},
+> +               {"pass",  required_argument, 0, 'P'},
+> +               {"out",  required_argument, 0, 'O'},
+> +               {"data",  required_argument, 0, 'D'},
+> +               {"add",  required_argument, 0, 'A'},
+> +               {"help",    no_argument,       0, 'h'},
+> +               {0, 0, 0, 0}
+> +       };
 > +
-> +               if (!map->frozen)
-> +                       return -EPERM;
-> +
-> +               map->ops->map_get_hash(map, SHA256_DIGEST_SIZE, hash);
-> +               if (memcmp(hash, &security->hashes[index * SHA256_DIGEST_=
-SIZE],
-> +                          SHA256_DIGEST_SIZE) !=3D 0)
-> +                       return -EPERM;
-> +               else
-> +                       return 0;
-> +       }
-> +       return -EINVAL;
-> +}
-> +
-> +static int hornet_check_prog_maps(u32 ufd)
-> +{
-> +       CLASS(fd, f)(ufd);
-> +       struct bpf_prog *prog;
-> +       int i, result =3D 0;
-> +
-> +       if (fd_empty(f))
-> +               return -EBADF;
-> +       if (fd_file(f)->f_op !=3D &bpf_prog_fops)
-> +               return -EINVAL;
-> +
-> +       prog =3D fd_file(f)->private_data;
-> +
-> +       mutex_lock(&prog->aux->used_maps_mutex);
-> +       if (!prog->aux->used_map_cnt)
-> +               goto out;
-> +
-> +       for (i =3D 0; i < prog->aux->used_map_cnt; i++) {
-> +               result =3D hornet_verify_map(prog, i);
-> +               if (result)
-> +                       goto out;
-> +       }
+> +       while ((opt =3D getopt_long_only(argc, argv, short_opts, long_opt=
+s, NULL)) !=3D -1) {
+> +               switch (opt) {
+> +               case 'C':
+> +                       cert_path =3D optarg;
+> +                       break;
+> +               case 'K':
+> +                       key_path =3D optarg;
+> +                       break;
+> +               case 'P':
+> +                       key_pass =3D optarg;
+> +                       break;
+> +               case 'O':
+> +                       out_path =3D optarg;
+> +                       break;
+> +               case 'D':
+> +                       data_path =3D optarg;
+> +                       break;
+> +               case 'A':
+> +                       if (strchr(optarg, ':')) {
+> +                               hashes[hash_count].file =3D strsep(&optar=
+g, ":");
+> +                               hashes[hash_count].index =3D atoi(optarg)=
+;
+> +                               hash_count++;
 
-This loop is kind of confusing for me, I guess it's just iterating
-through the maps the program currently in use. I feel the nested loop
-is unnecessary and the hash could be saved into the map's blob
-instead. Please correct me if I'm wrong here.
+Should the hash_count be compared to MAX_HASHES here?
+
+> +                       } else {
+> +                               usage(argv[0]);
+> +                               return EXIT_FAILURE;
+> +                       }
+> +               }
+> +       }
+> +
+> +       if (!cert_path || !key_path || !out_path || !data_path) {
+> +               usage(argv[0]);
+> +               return EXIT_FAILURE;
+> +       }
+> +
+> +       OpenSSL_add_all_algorithms();
+> +       ERR_load_crypto_strings();
+> +
+> +       signer =3D read_x509(cert_path);
+> +       ERR(!signer, "Load cert failed");
+> +
+> +       pkey =3D read_private_key(key_path);
+> +       ERR(!pkey, "Load key failed");
+> +
+> +       data_in =3D BIO_new_file(data_path, "rb");
+> +       ERR(!data_in, "Load data failed");
+> +
+> +       cms_out =3D CMS_sign(NULL, NULL, NULL, NULL,
+> +                          CMS_NOCERTS | CMS_PARTIAL | CMS_BINARY | CMS_D=
+ETACHED);
+> +       ERR(!cms_out, "create cms failed");
+> +
+> +       flags =3D CMS_NOCERTS | CMS_PARTIAL | CMS_BINARY | CMS_NOSMIMECAP=
+ | CMS_DETACHED;
+> +
+> +       si =3D CMS_add1_signer(cms_out, signer, pkey, EVP_sha256(), flags=
+);
+> +       ERR(!si, "add signer failed");
+> +
+> +       set =3D MAP_SET_new();
+> +       set->maps =3D sk_HORNET_MAP_new_null();
+> +
+> +       for (i =3D 0; i < hash_count; i++) {
+> +               sha256(hashes[i].file, hash_buffer, &hash_len);
+
+Can sha256 fail here? In that case the program should stop here and
+report errors.
 
 -Fan
 
-> +out:
-> +       mutex_unlock(&prog->aux->used_maps_mutex);
-> +       return result;
-> +}
+> +               add_hash(set, hash_buffer, hash_len, hashes[i].index);
+> +       }
 > +
-> +static int hornet_bpf(int cmd, union bpf_attr *attr, unsigned int size, =
-bool kernel)
-> +{
-> +       /* in horent_bpf(), anything that had originated from kernel spac=
-e we assume
-> +          has already been checked, in some form or another, so we don't=
- bother
-> +          checking the intergity of any maps. In hornet_bpf_prog_load_in=
-tegrity(),
-> +          hornet doesn't make any opinion on that and delegates that to =
-the downstream
-> +          policy enforcement. */
+> +       oid =3D OBJ_txt2obj("2.25.316487325684022475439036912669789383960=
+", 1);
+> +       if (!oid) {
+> +               ERR_print_errors_fp(stderr);
+> +               DIE("create oid failed");
+> +       }
 > +
-> +       if (cmd !=3D BPF_PROG_RUN)
-> +               return 0;
-> +       if (kernel)
-> +               return 0;
+> +       der_len =3D ASN1_item_i2d((ASN1_VALUE *)set, &der, ASN1_ITEM_rptr=
+(MAP_SET));
+> +       CMS_signed_add1_attr_by_OBJ(si, oid, V_ASN1_SEQUENCE, der, der_le=
+n);
 > +
-> +       return hornet_check_prog_maps(attr->test.prog_fd);
-> +}
+> +       err =3D CMS_final(cms_out, data_in, NULL, CMS_NOCERTS | CMS_BINAR=
+Y);
+> +       ERR(!err, "cms final failed");
 > +
-> +static struct security_hook_list hornet_hooks[] __ro_after_init =3D {
-> +       LSM_HOOK_INIT(bpf_prog_load_integrity, hornet_bpf_prog_load_integ=
-rity),
-> +       LSM_HOOK_INIT(bpf, hornet_bpf),
-> +};
+> +       OPENSSL_free(der);
+> +       MAP_SET_free(set);
 > +
-> +static int __init hornet_init(void)
-> +{
-> +       pr_info("Hornet: eBPF signature verification enabled\n");
-> +       security_add_hooks(hornet_hooks, ARRAY_SIZE(hornet_hooks), &horne=
-t_lsmid);
+> +       b_out =3D bio_open_wr(out_path);
+> +       ERR(!b_out, "opening output path failed");
+> +
+> +       i2d_CMS_bio_stream(b_out, cms_out, NULL, 0);
+> +
+> +       BIO_free(data_in);
+> +       BIO_free(b_out);
+> +       EVP_cleanup();
+> +       ERR_free_strings();
 > +       return 0;
 > +}
+> diff --git a/scripts/hornet/write-sig.sh b/scripts/hornet/write-sig.sh
+> new file mode 100755
+> index 0000000000000..7eaabe3bab9aa
+> --- /dev/null
+> +++ b/scripts/hornet/write-sig.sh
+> @@ -0,0 +1,27 @@
+> +#!/bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Copyright (c) 2025 Microsoft Corporation
+> +#
+> +# This program is free software; you can redistribute it and/or
+> +# modify it under the terms of version 2 of the GNU General Public
+> +# License as published by the Free Software Foundation.
 > +
-> +DEFINE_LSM(hornet) =3D {
-> +       .id =3D &hornet_lsmid,
-> +       .blobs =3D &hornet_blob_sizes,
-> +       .init =3D hornet_init,
-> +};
+> +function usage() {
+> +    echo "Sample for rewriting an autogenerated eBPF lskel headers"
+> +    echo "with a new signature"
+> +    echo ""
+> +    echo "USAGE: header_file sig"
+> +    exit
+> +}
+> +
+> +ARGC=3D$#
+> +
+> +EXPECTED_ARGS=3D2
+> +
+> +if [ $ARGC -ne $EXPECTED_ARGS ] ; then
+> +    usage
+> +else
+> +    SIG=3D$(xxd -p $2 | tr -d '\n' | sed 's/\(..\)/\\\\x\1/g')
+> +    sed '/const char opts_sig/,/;/c\\tstatic const char opts_sig[] __att=
+ribute__((__aligned__(8))) =3D "\\\n'"$(printf '%s\n' "$SIG")"'\";' $1
+> +fi
 > --
 > 2.53.0
 >
