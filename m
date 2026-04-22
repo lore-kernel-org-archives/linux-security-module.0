@@ -1,50 +1,98 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A672B2DA76F;
-	Wed, 22 Apr 2026 18:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE6A2DC76C
+	for <linux-security-module@vger.kernel.org>; Wed, 22 Apr 2026 18:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776883571; cv=none; b=GKHLu7bpdrcraN5fomC7EN8C3fJ6OY1uObaG2nmWjgw3uWNIj/ElZ+/xNbfEd4yGPHekr05ynW3mm0SdxflzZ3q6EJQ31bPbB6VEMPsl8Y3hWZQVc3Lrp4VjSfRU0fKn+Q7pVLK2dsFq29vIiy81qsVaMsv/epV/VNmfWvOQPNw=
+	t=1776883847; cv=none; b=BeNSJBP5vN3Am/9lfRI6hHd3g29w5II0NIknYVW3HYaTGt0uWSypIjDg9IOYYH4CDrEHJnBTkKwI/FyebCWwf3hNJUqS75PPtTlwybhr2jB5E3kJq8I/a9OKmmEAQ6YB2bTUZgcZpHK3g8UgBZvlcHSdlkuVzrO7dbyItGIw4dU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776883571; c=relaxed/simple;
-	bh=YL9Q/CEimzmzvwqCzwcq+9U08GB6hZYu6L+QSbxPgrw=;
+	s=arc-20240116; t=1776883847; c=relaxed/simple;
+	bh=ic2g+3H1Bjt8Eoenl8C/wnTWLiAcZvj+NJ4io3SQ8Y4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MsePRc+ALM1PJuswQmQhkCf6hbP20MtLKy8NLJCS8kuVgyBuoQQkPqeatAHBiN2SG1pGJMOxv/jNnQ2i0nwzk9YpAgpnwlhZkKDF10jH74VmsnQbs10T6DgNqCU+aCUx9Mz0Bp0zvD3yMVisBV6RRyK4usLmrIo/e6c0B/A0Axg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=ch/BFBWe; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=RWPyk2HRPR+h1dVL67Q3otwtQmWiScE+Vq8tdBZLUoJbPsapMv3BG91en3V3PlO/Wj5K5XjK694krpbw+KXiLrPPAHQzqCycWioXv5lE4qTYYnwvUj3501+DaqoPk7KVxO1Lgq3ukavAjcheeU1jWW+orKlc3Nxq80UxNj/FfAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=IwYpqDKm; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="ch/BFBWe"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7ACD91E8D;
-	Wed, 22 Apr 2026 11:46:02 -0700 (PDT)
-Received: from e129823.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 197FD3F641;
-	Wed, 22 Apr 2026 11:46:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1776883568; bh=YL9Q/CEimzmzvwqCzwcq+9U08GB6hZYu6L+QSbxPgrw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ch/BFBWebDovM5JHuimYfJaNKI9Po1y0ZhwIQ6leJBuyfIlDwYKANwoEMc46lZ5Ev
-	 v4fZKAit7uX3nqmR4VWwqePi9+0FE6G0isDwEx4RFVkccZyVEgPvPIlGRaQtKy9SzW
-	 WSMb0XZ1/GKDIraL5xbdmcKmc0+UY89GWDXJ3nyg=
-Date: Wed, 22 Apr 2026 19:46:01 +0100
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com, jarkko@kernel.org, jgg@ziepe.ca,
-	sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org,
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org, noodles@meta.com,
-	sebastianene@google.com
-Subject: Re: [RFC PATCH v2 1/4] security: ima: call ima_init() again at
- late_initcall_sync for defered TPM
-Message-ID: <aekXaU52fzvNYaUF@e129823.arm.com>
-References: <20260422162449.1814615-1-yeoreum.yun@arm.com>
- <20260422162449.1814615-2-yeoreum.yun@arm.com>
- <6919248bdc85dac60277fa9d9c83d8bd258ca635.camel@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="IwYpqDKm"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-793fdbb8d3aso61204167b3.3
+        for <linux-security-module@vger.kernel.org>; Wed, 22 Apr 2026 11:50:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1776883844; x=1777488644; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NfY2mNb6T4MB2zH44et65lOJxNFCx009tFohO2VhSnE=;
+        b=IwYpqDKmG67OEyUOuXSHQ8a+NIVvM+dBOrf9IsGH8Xq9K1F8tZmqXgBJ7KSutUqzYO
+         udOwG8n8aojk9T2SE/41dxAjH6sGzozgUceMQpC96Nv9hqmga+lhf7CUSBzDfWDvaPCU
+         hkGwGhB5FUM2WUNpot9gmd76sJg5kk9XlOSe5vqitiGFYf0X1kyTlsa9TwGIDgzjGg/5
+         9xv/psJozsTIEy9d4CxiygIDjYbcha+oPXr2+icOmdRJg1vr5pa3tGnuAzC2jYhKVTTC
+         fdMfL9fjuGfSHeTU98grv5fkO+Ntc9LwHB1eNOJM9w9F5Ey05ELuFDj8HRJ9B0cUWzSH
+         pkqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776883844; x=1777488644;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NfY2mNb6T4MB2zH44et65lOJxNFCx009tFohO2VhSnE=;
+        b=fkpNbUlwb3JljauaKLU/Iz10HcJliljsit7aRG8jrmBGjnwdTf6LTkdoXiE12nWxWn
+         aDv+BPTW7mfqF47guzW00XpTd0ZoioRayAzLRKTtwZq8SA0XjWYLuT9qJQ+cmZElj79c
+         C7TrzsjQh+N9dlrKZwZax9mS6BcVquu0q8vXXU76xf803UFmeP6Nt75HHkRwmtrC1674
+         R7Wsy1OpVR7qLKveoby9SI60dfCkBRa9tUDJyS8Z1AQdnNR4Qh7YnfyXiL8QCRkZ/k3o
+         Jn6tiLMxR99Ou4qey/h4Wqr2Nmv+mZG1VCIH0j7O8wTcCvHXLl7NlfxycJAt+iv1ucXf
+         DBNw==
+X-Forwarded-Encrypted: i=1; AFNElJ/1YgKZAX40mOGdRmxRy8VRtMbmsXJ4grdwOD99mzYnpL46CIN8OAitNCQMd2e1BJY/6LkMJTZUVzUMJ25qShgcJf5d3d0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+gksdnILBXws4JoAyct7fS10QT4o97VlMFSYyI+woVGWb3EeK
+	L4ciu9Je/yU8SmfZMw2NosVGkYphr83KvQ1cr7wspK+osYtDM4NAmLk5I/pRMnUctF4=
+X-Gm-Gg: AeBDiespu1LyK/F64ix5JPDvJ74f5s423U2TEP8TX10tnuW5vd6e3Lj2MMg760K7z19
+	bdSfkJpymQzMl+nbQfatvmYLrRVRS2TwcrA6W2nH0ri66jaRjfAxRPp/zaq6Cb7FJsNteyDkybt
+	i7J3qCr9Ub4TybQdqLSF/7YY25iE2DwFPHFvA+Gv3bgBqmsd3e5jeFDLvQmif/XrNeh8+VPvCIc
+	FgGw3tiEKX1m+LEpDJrUgreOr3v5tttVW0pB6OH7bI9nCiFSZgIIZFov4hJj9581ml9m6WKnFpX
+	0Fe93+G9pKFbZCaAELQuUDVUaLAG4JSG/Cdh5FZzeCcOezjkKVCZfaZOPA3+z5/KKGpPZB1JR15
+	AlJIRX9GYQJ4IKmwSbi1KTWdMaccxIbP6RFz+LcdjwmjK0tHard+nGQ0jo4IBj2S+MKBz/vPkHZ
+	x3pxiPAIZ4WuvQ
+X-Received: by 2002:a05:690c:7283:b0:79b:e24e:e2f8 with SMTP id 00721157ae682-7b9eccb6dfemr246497157b3.0.1776883844180;
+        Wed, 22 Apr 2026 11:50:44 -0700 (PDT)
+Received: from CMGLRV3 ([2a09:bac6:947f:3af::5e:42])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7b9ee89abbfsm71419907b3.10.2026.04.22.11.50.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Apr 2026 11:50:43 -0700 (PDT)
+Date: Wed, 22 Apr 2026 13:50:40 -0500
+From: Frederick Lawler <fred@cloudflare.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Eric Paris <eparis@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	LSM List <linux-security-module@vger.kernel.org>,
+	audit@vger.kernel.org, bpf <bpf@vger.kernel.org>,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+	kernel-team <kernel-team@cloudflare.com>
+Subject: Re: [PATCH RFC bpf-next 0/4] audit: Expose audit subsystem to BPF
+ LSM programs via BPF kfuncs
+Message-ID: <aekYgEylSTDBcWK1@CMGLRV3>
+References: <20260311-bpf-auditd-send-message-v1-0-10a62db5c92f@cloudflare.com>
+ <aefnIw1Tx_2r5nkS@CMGLRV3>
+ <CAADnVQJQxa+fHM9X8COc60ZMcxF0DMhWbtArg_gPynpbbg55TQ@mail.gmail.com>
+ <CAHC9VhSo-M1wK2s2P0B+2F0pJqNguW7Kj-g63anp1xCMSBLa6Q@mail.gmail.com>
+ <CAADnVQL33TOWFmxcWod3BCgmMXSQ=cEp6NCcxgQaJL0C7+Z9zA@mail.gmail.com>
+ <CAHC9VhSKvC+p5j5Pe1YKB-=vRkRA81K3kp97Q6-H5K+kvYa0AQ@mail.gmail.com>
+ <CAADnVQJBOk8w89kj95M3GH-eFdC7njZt=zMEU=skB-DTb3k-bw@mail.gmail.com>
+ <CAHC9VhT0poHt_9P407tr3ihfMGJYH0d9=PKxW0sk7gYF8fD5Lg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -54,306 +102,71 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6919248bdc85dac60277fa9d9c83d8bd258ca635.camel@linux.ibm.com>
+In-Reply-To: <CAHC9VhT0poHt_9P407tr3ihfMGJYH0d9=PKxW0sk7gYF8fD5Lg@mail.gmail.com>
 
-Hi Mimi,
+Hi Alexei & Paul,
 
-> On Wed, 2026-04-22 at 17:24 +0100, Yeoreum Yun wrote:
-> > To generate the boot_aggregate log in the IMA subsystem with TPM PCR values,
-> > the TPM driver must be built as built-in and
-> > must be probed before the IMA subsystem is initialized.
-> >
-> > However, when the TPM device operates over the FF-A protocol using
-> > the CRB interface, probing fails and returns -EPROBE_DEFER if
-> > the tpm_crb_ffa device — an FF-A device that provides the communication
-> > interface to the tpm_crb driver — has not yet been probed.
-> >
-> > To ensure the TPM device operating over the FF-A protocol with
-> > the CRB interface is probed before IMA initialization,
-> > the following conditions must be met:
-> >
-> >    1. The corresponding ffa_device must be registered,
-> >       which is done via ffa_init().
-> >
-> >    2. The tpm_crb_driver must successfully probe this device via
-> >       tpm_crb_ffa_init().
-> >
-> >    3. The tpm_crb driver using CRB over FF-A can then
-> >       be probed successfully. (See crb_acpi_add() and
-> >       tpm_crb_ffa_init() for reference.)
-> >
-> > Unfortunately, ffa_init(), tpm_crb_ffa_init(), and crb_acpi_driver_init() are
-> > all registered with device_initcall, which means crb_acpi_driver_init() may
-> > be invoked before ffa_init() and tpm_crb_ffa_init() are completed.
-> >
-> > When this occurs, probing the TPM device is deferred.
-> > However, the deferred probe can happen after the IMA subsystem
-> > has already been initialized, since IMA initialization is performed
-> > during late_initcall, and deferred_probe_initcall() is performed
-> > at the same level.
-> >
-> > To resolve this, call ima_init() again at late_inicall_sync level
-> > so that let IMA not miss TPM PCR value when generating boot_aggregate
-> > log though TPM device presents in the system.
-> >
-> > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
->
-> A lot of change for just detecting whether ima_init() is being called on
-> late_initcall or late_initcall_sync(), without any explanation for all the other
-> changes (e.g. ima_init_core).
->
-> Please just limit the change to just calling ima_init() twice.
+Thanks for the comments. I did not mean for the talk announcement to
+end in this state.
 
-My concern is that ima_update_policy_flags() will be called
-when ima_init() is deferred -- not initialised anything.
-though functionally, it might be okay however,
-I think ima_update_policy_flags() and notifier should work after ima_init()
-works logically.
+I understood the RFC was NACK'd, but I thought having a talk at LSS
+could open up for some additional discussion around what can be done
+with audit to make it more BPF friendly. I apologize.
 
-This change I think not much quite a lot. just wrapper ima_init() with
-ima_init_core() with some error handling.
+My assumption is that the committee would've denied the talk if there
+wasn't _some_ interest here. And still intend to give it unless
+committee decides to revoke it, because there is always opportunity
+to improve subsystems.
 
-Am I missing something?
+On Wed, Apr 22, 2026 at 10:33:27AM -0400, Paul Moore wrote:
+> On Tue, Apr 21, 2026 at 7:08 PM Alexei Starovoitov
+> > Every time somebody adds a kfunc it breaks safety, because
+> > people don't read or don't understand Documentation/bpf/kfuncs.rst.
+> > kfuncs are not export_symbol.
+> > Object ownership model needs to be thought through.
+> > Calling context needs to be analyzed and so on.
+> > Just because something "works for me" it doesn't mean
+> > that it's safe.
 
->
->
-> > ---
-> >  include/linux/lsm_hooks.h           |  2 +
-> >  security/integrity/ima/ima.h        |  4 +-
-> >  security/integrity/ima/ima_init.c   | 10 +++-
-> >  security/integrity/ima/ima_main.c   | 76 +++++++++++++++++++++++------
-> >  security/integrity/ima/ima_policy.c |  3 ++
-> >  security/lsm_init.c                 | 13 ++++-
-> >  6 files changed, 87 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> > index d48bf0ad26f4..88fe105b7f00 100644
-> > --- a/include/linux/lsm_hooks.h
-> > +++ b/include/linux/lsm_hooks.h
-> > @@ -166,6 +166,7 @@ enum lsm_order {
-> >   * @initcall_fs: LSM callback for fs_initcall setup, optional
-> >   * @initcall_device: LSM callback for device_initcall() setup, optional
-> >   * @initcall_late: LSM callback for late_initcall() setup, optional
-> > + * @initcall_late_sync: LSM callback for late_initcall_sync() setup, optional
-> >   */
-> >  struct lsm_info {
-> >  	const struct lsm_id *id;
-> > @@ -181,6 +182,7 @@ struct lsm_info {
-> >  	int (*initcall_fs)(void);
-> >  	int (*initcall_device)(void);
-> >  	int (*initcall_late)(void);
-> > +	int (*initcall_late_sync)(void);
-> >  };
-> >
-> >  #define DEFINE_LSM(lsm)							\
-> > diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> > index 89ebe98ffc5e..75ee7ad184d0 100644
-> > --- a/security/integrity/ima/ima.h
-> > +++ b/security/integrity/ima/ima.h
-> > @@ -62,6 +62,8 @@ extern int ima_hash_algo_idx __ro_after_init;
-> >  extern int ima_extra_slots __ro_after_init;
-> >  extern struct ima_algo_desc *ima_algo_array __ro_after_init;
-> >
-> > +extern bool ima_initialised __ro_after_init;
-> > +
-> >  extern int ima_appraise;
-> >  extern struct tpm_chip *ima_tpm_chip;
-> >  extern const char boot_aggregate_name[];
-> > @@ -257,7 +259,7 @@ static inline void ima_measure_kexec_event(const char *event_name) {}
-> >  extern bool ima_canonical_fmt;
-> >
-> >  /* Internal IMA function definitions */
-> > -int ima_init(void);
-> > +int ima_init(bool late);
-> >  int ima_fs_init(void);
-> >  int ima_add_template_entry(struct ima_template_entry *entry, int violation,
-> >  			   const char *op, struct inode *inode,
-> > diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-> > index a2f34f2d8ad7..c28c71090ad2 100644
-> > --- a/security/integrity/ima/ima_init.c
-> > +++ b/security/integrity/ima/ima_init.c
-> > @@ -115,13 +115,19 @@ void __init ima_load_x509(void)
-> >  }
-> >  #endif
-> >
-> > -int __init ima_init(void)
-> > +int __init ima_init(bool late)
-> >  {
-> >  	int rc;
-> >
-> >  	ima_tpm_chip = tpm_default_chip();
-> > -	if (!ima_tpm_chip)
-> > +	if (!ima_tpm_chip) {
-> > +		if (!late) {
-> > +			pr_info("Defer initialisation to the late_initcall_sync stage.\n");
-> > +			return -EPROBE_DEFER;
-> > +		}
-> > +
-> >  		pr_info("No TPM chip found, activating TPM-bypass!\n");
-> > +	}
-> >
-> >  	rc = integrity_init_keyring(INTEGRITY_KEYRING_IMA);
-> >  	if (rc)
-> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> > index 1d6229b156fb..ac444ee600e2 100644
-> > --- a/security/integrity/ima/ima_main.c
-> > +++ b/security/integrity/ima/ima_main.c
-> > @@ -38,6 +38,7 @@ int ima_appraise;
-> >  #endif
-> >
-> >  int __ro_after_init ima_hash_algo = HASH_ALGO_SHA1;
-> > +bool ima_initialised __ro_after_init = false;
-> >  static int hash_setup_done;
-> >  static int ima_disabled __ro_after_init;
-> >
-> > @@ -1237,6 +1238,35 @@ static int ima_kernel_module_request(char *kmod_name)
-> >
-> >  #endif /* CONFIG_INTEGRITY_ASYMMETRIC_KEYS */
-> >
-> > +static int __init init_ima_core(bool late)
-> > +{
-> > +	int err;
-> > +
-> > +	if (ima_initialised)
-> > +		return 0;
-> > +
-> > +	err = ima_init(late);
-> > +	if (err == -EPROBE_DEFER)
-> > +		return 0;
-> > +
-> > +	if (err && strcmp(hash_algo_name[ima_hash_algo],
-> > +			  CONFIG_IMA_DEFAULT_HASH) != 0) {
-> > +		pr_info("Allocating %s failed, going to use default hash algorithm %s\n",
-> > +			hash_algo_name[ima_hash_algo], CONFIG_IMA_DEFAULT_HASH);
-> > +		hash_setup_done = 0;
-> > +		hash_setup(CONFIG_IMA_DEFAULT_HASH);
-> > +		err = ima_init(late);
-> > +	}
-> > +
-> > +	if (!err) {
-> > +		ima_update_policy_flags();
-> > +		ima_initialised = true;
-> > +	} else
-> > +		ima_disabled = 1;
-> > +
-> > +	return err;
-> > +}
-> > +
-> >  static int __init init_ima(void)
-> >  {
-> >  	int error;
-> > @@ -1250,30 +1280,42 @@ static int __init init_ima(void)
-> >  	ima_appraise_parse_cmdline();
-> >  	ima_init_template_list();
-> >  	hash_setup(CONFIG_IMA_DEFAULT_HASH);
-> > -	error = ima_init();
-> > -
-> > -	if (error && strcmp(hash_algo_name[ima_hash_algo],
-> > -			    CONFIG_IMA_DEFAULT_HASH) != 0) {
-> > -		pr_info("Allocating %s failed, going to use default hash algorithm %s\n",
-> > -			hash_algo_name[ima_hash_algo], CONFIG_IMA_DEFAULT_HASH);
-> > -		hash_setup_done = 0;
-> > -		hash_setup(CONFIG_IMA_DEFAULT_HASH);
-> > -		error = ima_init();
-> > -	}
-> > -
-> > -	if (error)
-> > -		return error;
-> >
-> >  	error = register_blocking_lsm_notifier(&ima_lsm_policy_notifier);
-> > -	if (error)
-> > +	if (error) {
-> >  		pr_warn("Couldn't register LSM notifier, error %d\n", error);
-> > +		goto disable_ima;
-> > +	}
-> >
-> > -	if (!error)
-> > -		ima_update_policy_flags();
-> > +	error = init_ima_core(false);
-> > +	if (error) {
-> > +		unregister_blocking_lsm_notifier(&ima_lsm_policy_notifier);
-> > +		goto disable_ima;
-> > +	}
-> > +
-> > +	return 0;
-> >
-> > +disable_ima:
-> > +	ima_disabled = 1;
-> >  	return error;
-> >  }
-> >
-> > +static int __init late_init_ima(void)
-> > +{
-> > +	int err;
-> > +
-> > +	if (ima_disabled)
-> > +		return 0;
-> > +
-> > +	err = init_ima_core(true);
-> > +	if (err) {
-> > +		unregister_blocking_lsm_notifier(&ima_lsm_policy_notifier);
-> > +		ima_disabled = 1;
-> > +	}
-> > +
-> > +	return err;
-> > +}
-> > +
-> >  static struct security_hook_list ima_hooks[] __ro_after_init = {
-> >  	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
-> >  	LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
-> > @@ -1321,4 +1363,6 @@ DEFINE_LSM(ima) = {
-> >  	.blobs = &ima_blob_sizes,
-> >  	/* Start IMA after the TPM is available */
-> >  	.initcall_late = init_ima,
-> > +	/* Start IMA late in case of probing TPM is deferred. */
-> > +	.initcall_late_sync = late_init_ima,
-> >  };
-> > diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> > index bf2d7ba4c14a..c3bcc3521c81 100644
-> > --- a/security/integrity/ima/ima_policy.c
-> > +++ b/security/integrity/ima/ima_policy.c
-> > @@ -501,6 +501,9 @@ static void ima_lsm_update_rules(void)
-> >  int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
-> >  			  void *lsm_data)
-> >  {
-> > +	if (!ima_initialised)
-> > +		return NOTIFY_DONE;
-> > +
-> >  	if (event != LSM_POLICY_CHANGE)
-> >  		return NOTIFY_DONE;
-> >
-> > diff --git a/security/lsm_init.c b/security/lsm_init.c
-> > index 573e2a7250c4..4e5c59beb82a 100644
-> > --- a/security/lsm_init.c
-> > +++ b/security/lsm_init.c
-> > @@ -547,13 +547,22 @@ device_initcall(security_initcall_device);
-> >   * security_initcall_late - Run the LSM late initcalls
-> >   */
-> >  static int __init security_initcall_late(void)
-> > +{
-> > +	return lsm_initcall(late);
-> > +}
-> > +late_initcall(security_initcall_late);
-> > +
-> > +/**
-> > + * security_initcall_late_sync - Run the LSM late initcalls sync
-> > + */
-> > +static int __init security_initcall_late_sync(void)
-> >  {
-> >  	int rc;
-> >
-> > -	rc = lsm_initcall(late);
-> > +	rc = lsm_initcall(late_sync);
-> >  	lsm_pr_dbg("all enabled LSMs fully activated\n");
-> >  	call_blocking_lsm_notifier(LSM_STARTED_ALL, NULL);
-> >
-> >  	return rc;
-> >  }
-> > -late_initcall(security_initcall_late);
-> > +late_initcall_sync(security_initcall_late_sync);
-> > --
-> > LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+I interpreted this comment as more broadly applied to patch
+submissions in general, and not this patch series itself (necessarily).
 
---
-Sincerely,
-Yeoreum Yun
+I do think that "... it breaks saftey ... kfuncs are not export_symbol"
+is what the crux here is. I argue that that Documentation/bpf/kfuncs.rst
+should be improved if this is a common trap that I and others fall in.
+
+As I understood kfuncs, the point is to move away from BPF helpers so
+that subsystems can have a export_symbol of sorts.
+
+To quote:
+
+	BPF Kernel Functions or more commonly known as kfuncs are functions
+	in the Linux kernel which are exposed for use by BPF programs
+	Unlike normal BPF helpers, kfuncs do not have a stable interface
+	and can change from one kernel release to another.
+	...
+
+As Paul mentioned, there are examples of the export_symbols use case, and
+even one whose sole purpose is to crash the kernel: crash_kexec()[1]
+And to be clear, I don't think that is a bad or uneeded patch. I just find it
+interesting and unexpected that it was applied.
+
+Maybe this series is the straw that breaks the camel's back?
+
+> 
+> Unfortunately that isn't the review you provided Fred in this thread.
+> There were no comments about object ownership, calling context,
+> safety, etc., only a dismissive comment telling Fred to use something
+> else for logging.  If you want to provide proper feedback, something
+> along the lines of Kumar's constructive review, I think Fred would
+> welcome that.
+> 
+
+Agreed. I can work with addressing calling context and object ownership
+concerns. I thought I addressed these, but I'd like to know if there's
+something I didn't consider.
+
+Best,
+Fred
+
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=133790596406ce2658f0864eb7eac64987c2b12f
