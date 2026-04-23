@@ -1,126 +1,183 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DC53ECBFB
-	for <linux-security-module@vger.kernel.org>; Thu, 23 Apr 2026 12:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24EEC3E6DC4;
+	Thu, 23 Apr 2026 12:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776947136; cv=none; b=TmYkg2scOuaKk2Ae/LMHD8W3fbguVNTs+1Fet9Mcgi8i8AVnuAGA4g7Vim1GTK9w/Kq0B5lS0yjBVtqz9Ik2DHgwdrkqcywij1nrpXtZOdL9zWjOLnC33B59XgV7ah5JBU558mQVUUxRYUY9MafbtSVVFtt0nnWnkLj0E2s77Nc=
+	t=1776947662; cv=none; b=XVDhCbmUeUsLBvmrgBLVES0SISOV67d6aZvggqY8Wxe3iDVJHADYo6C09suCNOsU7YmTBbseumyCNNW6K9k5XOdG9k8GP4BM2o2XQ+DTJbRpbVAJCr/TFOSe7FQk4iuJlFs42oUBfsZcfq8lj7AMafqdB6/7Wd41dUzFaeN974E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776947136; c=relaxed/simple;
-	bh=4PiMwKbGqc68zTiZ+OmL03wP5AWBpSr38ZAoA7Ui1Mo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UEKn4gHzfebCesZIxXiNE9IJuld/OqPsJQiQtMw3/wEvfvmw42J3g/Y3WPYbB5oT6Ut/2n2fPXiOVYmlYxt1moMvvuLIH4afZXsWlwHCDG/XnTxq/cAbbpEQ2Hqa6igjFmcMrq/6qIn0w1OBpJHAVfroRULH8YN3eCiyJlzHXSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=QJOhHHRa; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1776947662; c=relaxed/simple;
+	bh=t0e31yEIkhaU89vXVYCz+XFvgY/e04Ky3PJz4ZIM2Ug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dZAqJSOHHFyJic4HbVYX/N6Lyfvwp3memFZtbZuD7qXBFAiT+AxPoV7T+S9Wjij6aegQwZmLnkFfvgGTQgGiDDuPe1cX90TGrXwtlmEmw6DKCZ8GJT74LKBPxzXyo0wyz/M7mFYo92Wl1yJYhhRNdzqEynR+5ms2ByP1eoxTGVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=hpcyQWCe; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="QJOhHHRa"
-Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com [209.85.221.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5F82C3F212
-	for <linux-security-module@vger.kernel.org>; Thu, 23 Apr 2026 12:25:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1776947131;
-	bh=NkPqKO7ZmpqAAc7Ac7xNIDTe0L1sSM5Ly9dix8xV50o=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version;
-	b=QJOhHHRaq2HkEz846RzCjirWDgeDg3PjJS+hPrTMjy1zks4W+QQbwDta59Dhc3ytv
-	 9vn1dZmV87EV3+0yy59E51aMkF1nxsG0kIBOD2hlppzG+Vy2sasminP+2C22gML6YN
-	 +f1JCCc8PMo+0A/WnEcK9ohNWh/7S0V4fnPyIM5OsCOGGwdno4r1TDJWQHzK1/gRYb
-	 ZEvhtuvfuUeQNDkWvMh4b2c9SWFV5qE5OTJy+yZAS4UnhbbSlAEdsy76UgqxSSrl1P
-	 x66zymw8SwEFzaOGforbt7/GL2hs9PhZaiwL2OV7uZi2zNNKG5q2VRC+Z7FBKNRRI/
-	 fTG/MMujPXaIg3XMTsOU3si+y421Jp+Ok9saBzAOhrEkWZpUE26/tmQU4ScLkGMO3h
-	 ZPR0iZkURuOgaDmsAB/sEtiIzIhSmsQUVGf4xPKvT4oe0YSPNdHUppCYZSMLp4VN9N
-	 29EI0mQprc7/7rt782WlZS1odi+xKKHqIQlrxNBQdnQuHIvcT0+/c8oFqDGR7z5Rau
-	 5N9KYU2HoO1vc/M6cN8SBmVX+5ocOZhuGk2/zd357WmUhwfSn2vEwHgv2uoK09o4RX
-	 xK9um48cuzxfhS/0vUPYfKJb+2kYYeBcrPZUv6ANyqqYd6sRXMYKDA+YUuACWH+GY+
-	 Q+KX4YpWzZX/Ua6gam1I07cw=
-Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-56fb91588deso3598897e0c.0
-        for <linux-security-module@vger.kernel.org>; Thu, 23 Apr 2026 05:25:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776947130; x=1777551930;
-        h=mime-version:user-agent:content-transfer-encoding:organization
-         :references:in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NkPqKO7ZmpqAAc7Ac7xNIDTe0L1sSM5Ly9dix8xV50o=;
-        b=UaQ4YbErkNg4Q5bKg5WKS6abTtQWzRV31MfUGvygCTtCkqjmRCjLS3Zh5Kp6pNwOSQ
-         LtrmDRTjHRUvcXAW94EhfNwrZMd2fWLwpKyVo1h3t8f6U7xX3g1s+XgdlIonJvSr8uQw
-         19G69oPhn0aWzjxT2J++Yvghdu/n/B2Ptk98Cf3udOaxGY0qjty27WGK7wivXGdUGHN7
-         fNONSdTt8t3bdMCp0vtUEFYcfrfUDdMW9le+2TkMc5TZLc0pvaZ2gaQ6MYL0TqczJxpt
-         8KRnjVPW7fhQfChNpKWJ+nvBgpU1eSMM67OAPLsL9dsJlFAE8zdTWXPpanbAADXTjXpi
-         Mw+Q==
-X-Forwarded-Encrypted: i=1; AFNElJ91qclgerCEOSNZyE35Idz0/nwIF4ZA+5Wxfo1FFGdWNeYZSKsYsUWNHEjoHqL/DXFor1i4AzItQtdNrven99zwdJMrezg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7XATSeSzblwHhugatM938AQgkyAe5bge//mCbM8glmbRu+T9Z
-	BJl3YseOVYIHdy0LnB2JjjRQEwVxQOfP2fIs4+/5H+cG7OQTFpNVBqXQd6PI3EEjWosb8zup9M5
-	nVfj2qHyca5gOlgDqbrwI/PAXOVpdlsMzNUZtW9sE/Mx9IvHvuxvgX9uKmS7q5JzX7ccUb1SdQl
-	03o9s1YtXau968BG82Dw==
-X-Gm-Gg: AeBDiesY1ltWqJq6Ia/RUKnLUbAT+BYPDMkY+CLFyUTBJ2Y1Xt/9UP+6Slkfw3U3zct
-	pJ6acearoa5+qQ4qH2+kTNo01YB4+cFoOXWV6jJQFiPIJnyd/kBzA9BSFrjMT/kmE3yFkPDd2zi
-	4H+tRmHNPnWxKXBHhHGmEIwn3CjGHTMVY5y3cQ/ABTwqrEyzgUOI7LsuAXHAjVjzwo3ScOOFH1o
-	BxFvMz8k39fQ+1YavUpr3O8Op21A4kWPbSKMY9L4IvRR6rTTFOxueqV933LtXHKkpT/zufH8rv+
-	WnFEsT4kxZfuXZilv9aTASrLIhtkkRvSSDIW+CaAAPXqmLJuX14ufp7ZbA+WHu8wz6A+Biz4nmT
-	WGavFSoa5qGnzJCjsbCCws+out886IgFmbtg5cKSv4crSgus2VQnVxQEDPTO+gKjsuLxew8qOr6
-	4cCroQ
-X-Received: by 2002:a05:6122:2087:b0:56f:2aaa:450c with SMTP id 71dfb90a1353d-56fa57a56e7mr13477202e0c.1.1776947130416;
-        Thu, 23 Apr 2026 05:25:30 -0700 (PDT)
-X-Received: by 2002:a05:6122:2087:b0:56f:2aaa:450c with SMTP id 71dfb90a1353d-56fa57a56e7mr13477194e0c.1.1776947130033;
-        Thu, 23 Apr 2026 05:25:30 -0700 (PDT)
-Received: from [192.168.0.106] ([187.95.109.208])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-56fa91ea606sm11459481e0c.5.2026.04.23.05.25.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Apr 2026 05:25:29 -0700 (PDT)
-Message-ID: <7861e5cac7997776abf068836e649efb0460db3c.camel@canonical.com>
-Subject: Re: [PATCH] apparmor/lsm: Fix aa_dfa_unpack's error handling in
- aa_setup_dfa_engine
-From: Georgia Garcia <georgia.garcia@canonical.com>
-To: GONG Ruiqi <gongruiqi1@huawei.com>, John Johansen
- <john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>, James
- Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>
-Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lujialin4@huawei.com, zhaoyipeng5@huawei.com
-Date: Thu, 23 Apr 2026 09:25:23 -0300
-In-Reply-To: <20260423031056.563527-1-gongruiqi1@huawei.com>
-References: <20260423031056.563527-1-gongruiqi1@huawei.com>
-Organization: Canonical
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1.1 
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="hpcyQWCe"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 081B11C25;
+	Thu, 23 Apr 2026 05:34:14 -0700 (PDT)
+Received: from e129823.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 49A233F7B4;
+	Thu, 23 Apr 2026 05:34:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1776947659; bh=t0e31yEIkhaU89vXVYCz+XFvgY/e04Ky3PJz4ZIM2Ug=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hpcyQWCektGSUKXAdaPwQCCsm/9tqnEPUuSkf2M3HHF4JdLsJw/A6VwW4SqeqkCQo
+	 H4SsKko+/C1paFJeuFvw2b6kED0VQfbIU+cibuRnBSxa/LmnpkvgfSXXCl29IGgGIj
+	 Q21eE7a3sRxhLtUBmq+enmuKpeWc2krXpr6f/NIg=
+Date: Thu, 23 Apr 2026 13:34:13 +0100
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com, jarkko@kernel.org, jgg@ziepe.ca,
+	sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org,
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org, noodles@meta.com,
+	sebastianene@google.com
+Subject: Re: [RFC PATCH v2 1/4] security: ima: call ima_init() again at
+ late_initcall_sync for defered TPM
+Message-ID: <aeoRxWPyOHGJd+Jh@e129823.arm.com>
+References: <20260422162449.1814615-1-yeoreum.yun@arm.com>
+ <20260422162449.1814615-2-yeoreum.yun@arm.com>
+ <6919248bdc85dac60277fa9d9c83d8bd258ca635.camel@linux.ibm.com>
+ <aekXaU52fzvNYaUF@e129823.arm.com>
+ <aekkVQwueKbFtG7C@e129823.arm.com>
+ <82803bb3b471898a77084c449b73c7f7b4eb2149.camel@linux.ibm.com>
+ <aem0SSQuE1e3pGOS@e129823.arm.com>
+ <56a8aab50a3b5ce0a345fc2079fb2abc7d0f1b23.camel@linux.ibm.com>
+ <aeoAlVEwzRUPrlVe@e129823.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aeoAlVEwzRUPrlVe@e129823.arm.com>
 
-On Thu, 2026-04-23 at 11:10 +0800, GONG Ruiqi wrote:
-> aa_dfa_unpack returns ERR_PTR not NULL when it fails, but aa_put_dfa
-> only checks NULL for its input, which would cause invalid memory access
-> in aa_put_dfa. Set nulldfa to NULL explicitly to fix that.
->=20
+> > On Thu, 2026-04-23 at 06:55 +0100, Yeoreum Yun wrote:
+> > > > On Wed, 2026-04-22 at 20:41 +0100, Yeoreum Yun wrote:
+> > > > > > Hi Mimi,
+> > > > > >
+> > > > > > > On Wed, 2026-04-22 at 17:24 +0100, Yeoreum Yun wrote:
+> > > > > > > > To generate the boot_aggregate log in the IMA subsystem with TPM PCR values,
+> > > > > > > > the TPM driver must be built as built-in and
+> > > > > > > > must be probed before the IMA subsystem is initialized.
+> > > > > > > >
+> > > > > > > > However, when the TPM device operates over the FF-A protocol using
+> > > > > > > > the CRB interface, probing fails and returns -EPROBE_DEFER if
+> > > > > > > > the tpm_crb_ffa device — an FF-A device that provides the communication
+> > > > > > > > interface to the tpm_crb driver — has not yet been probed.
+> > > > > > > >
+> > > > > > > > To ensure the TPM device operating over the FF-A protocol with
+> > > > > > > > the CRB interface is probed before IMA initialization,
+> > > > > > > > the following conditions must be met:
+> > > > > > > >
+> > > > > > > >    1. The corresponding ffa_device must be registered,
+> > > > > > > >       which is done via ffa_init().
+> > > > > > > >
+> > > > > > > >    2. The tpm_crb_driver must successfully probe this device via
+> > > > > > > >       tpm_crb_ffa_init().
+> > > > > > > >
+> > > > > > > >    3. The tpm_crb driver using CRB over FF-A can then
+> > > > > > > >       be probed successfully. (See crb_acpi_add() and
+> > > > > > > >       tpm_crb_ffa_init() for reference.)
+> > > > > > > >
+> > > > > > > > Unfortunately, ffa_init(), tpm_crb_ffa_init(), and crb_acpi_driver_init() are
+> > > > > > > > all registered with device_initcall, which means crb_acpi_driver_init() may
+> > > > > > > > be invoked before ffa_init() and tpm_crb_ffa_init() are completed.
+> > > > > > > >
+> > > > > > > > When this occurs, probing the TPM device is deferred.
+> > > > > > > > However, the deferred probe can happen after the IMA subsystem
+> > > > > > > > has already been initialized, since IMA initialization is performed
+> > > > > > > > during late_initcall, and deferred_probe_initcall() is performed
+> > > > > > > > at the same level.
+> > > > > > > >
+> > > > > > > > To resolve this, call ima_init() again at late_inicall_sync level
+> > > > > > > > so that let IMA not miss TPM PCR value when generating boot_aggregate
+> > > > > > > > log though TPM device presents in the system.
+> > > > > > > >
+> > > > > > > > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+> > > > > > >
+> > > > > > > A lot of change for just detecting whether ima_init() is being called on
+> > > > > > > late_initcall or late_initcall_sync(), without any explanation for all the other
+> > > > > > > changes (e.g. ima_init_core).
+> > > > > > >
+> > > > > > > Please just limit the change to just calling ima_init() twice.
+> > > > > >
+> > > > > > My concern is that ima_update_policy_flags() will be called
+> > > > > > when ima_init() is deferred -- not initialised anything.
+> > > > > > though functionally, it might be okay however,
+> > > > > > I think ima_update_policy_flags() and notifier should work after ima_init()
+> > > > > > works logically.
+> > > > > >
+> > > > > > This change I think not much quite a lot. just wrapper ima_init() with
+> > > > > > ima_init_core() with some error handling.
+> > > > > >
+> > > > > > Am I missing something?
+> > > > >
+> > > > > Also, if we handle in ima_init() only, but it failed with other reason,
+> > > > > we shouldn't call again ima_init() in the late_initcall_sync.
+> > > > >
+> > > > > To handle this, It wouldn't do in the ima_init() but we need to handle
+> > > > > it by caller of ima_init().
+> > > >
+> > > > Only tpm_default_chip() is being called to set the ima_tpm_chip.  On failure,
+> > > > instead of going into TPM-bypass mode, return immediately.  There are no calls
+> > > > to anything else.  Just call ima_init() a second time.
+> > >
+> > > I’m not fully convinced this is sufficient.
+> > >
+> > > What I meant is the case where ima_init() fails due to other
+> > > initialisation steps, not only tpm_default_chip() (e.g. ima_fs_init()).
+> >
+> > The purpose of THIS patch is to add late_initcall_sync, when the TPM is not
+> > available at late_initcall.  This would be classified as a bug fix and would be
+> > backported.  No other changes should be included in this patch.
+>
+> Okay.
+>
+> > >
+> > > I’d also like to ask again whether it is fine to call
+> > > ima_update_policy_flags() and keep the notifier registered in the
+> > > deferred TPM case. While this may be functionally acceptable, it seems
+> > > logically questionable to do so when ima_init() has not completed.
+> >
+> > Other than extending the TPM, IMA should behave exactly the same whether there
+> > is a TPM or goes into TPM-bypass mode.
+> >
+> > >
+> > > There is also a possibility that a deferred case ultimately fails (e.g.
+> > > deferred at late_initcall, but then failing at late_initcall_sync
+> > > for another reason, even while entering TPM bypass mode). In that case,
+> > > it seems more appropriate to handle this state in the caller of
+> > > ima_init(), rather than inside ima_init() itself.
+> >
+> > If the TPM isn't found at late_initcall_sync(), then IMA should go into TPM-
+> > bypass mode.  Please don't make any other changes to the existing IMA behavior
+> > and hide it here behind the late_initcall_sync change.
+>
+> Okay. you're talking called ima_update_policy_flags() at late_initcall
+> wouldn't be not a problem even in case of late_initcall_sync's ima_init()
+> get failed with "TPM-bypass mode".
+>
+> I see then, I'll make a patch simpler then.
 
-Thank you!
+But I think in case of below situation:
+  - late_initcall's first ima_init() is deferred.
+  - late_initcall_sync try again but failed and try again with
+    CONFIG_IMA_DEFAULT_HASH.
 
-Acked-by: Georgia Garcia <georgia.garcia@canonical.com>
+I would like to sustain init_ima_core to reduce the same code repeat
+in late_initcall_sync.
 
-> Fixes: 98b824ff8984 ("apparmor: refcount the pdb")
-> Signed-off-by: GONG Ruiqi <gongruiqi1@huawei.com>
-> ---
->  security/apparmor/lsm.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index c1d42fc72fdb..ead2f07982b6 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -2465,6 +2465,7 @@ static int __init aa_setup_dfa_engine(void)
->  			    TO_ACCEPT2_FLAG(YYTD_DATA32));
->  	if (IS_ERR(nulldfa)) {
->  		error =3D PTR_ERR(nulldfa);
-> +		nulldfa =3D NULL;
->  		goto fail;
->  	}
->  	nullpdb->dfa =3D aa_get_dfa(nulldfa);
-
+--
+Sincerely,
+Yeoreum Yun
