@@ -1,113 +1,63 @@
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FB42EC086;
-	Thu, 23 Apr 2026 22:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0549935C19F;
+	Thu, 23 Apr 2026 22:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776984565; cv=none; b=O2QMqiPzSqxQS8irmvLjAdsnKKrsYOkxa3/nw9vKIKhXZQ1K6pbW61+mOkuJ4s7qWNRmFTDrf9ySkYUNLtjOxeH97Epo/hZ+4bSpmjB0ceobaOIrBKyWNnHxWKpkLNmrw5YjJEJzqIt0GWLoXPCyDnlNvDpZXSG5FPEOw+u9fv4=
+	t=1776984798; cv=none; b=DT+ukjtjP+w3qC1MruEolhdxbU1NseeTE+pgWmJ/Pqc/B78dO2RCE9PRs/D8PAklLeuGdYcsEkLxhfL22ON8l8/RwjdaTwqxqbhvguKRdH3r2zEmQ4KY4OzED1PN9nh1OSNpVBUnCzIT215np5InbU9ROtYxc0uMxgGdFOCYg2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776984565; c=relaxed/simple;
-	bh=rqBQwjO2RiGFR5atuWXVqj5XDse3eXh6V+nTA0MaS/s=;
-	h=From:Date:Message-ID:To:Cc:Subject:In-Reply-To:References; b=RrG4sMjd2sYoyhPib5AxyZrl1XuY9tweylAnKyfkKF4y0aATbtJWWXkmJFzxZV15Q2wC1h5eJuLxkm7KPukjx5NtNBMG0EgW6P4PQw9hjQHPJwpHef7vOvBviNvYXumGInA52mLTIr8ZyON1MMGOscPHxmw/ztFvzDoal6peiXA=
+	s=arc-20240116; t=1776984798; c=relaxed/simple;
+	bh=nBdr1L4KtwUodAfRKBBP7dJ1bWfLPWcLF5VYaVeAk3Q=;
+	h=From:Date:Message-ID:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VbTTRFBP/o0EZNLgtyFsMk29eCamrbSjZ0nWoUEk0sYUoWNMTo+RplUNpR1lVg5vsgPKJzopx/RHOnNXQIjGhsbKU6Ggb1UGwsdCPrviDM+i4bbiETMgE30gqwVMAi/S/1HZ9NDKqdFApJ2ADcTlm8PNCedkqtOpFW9PkX5P+tk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from 01-evm-v3.eml (unknown [111.196.245.116])
-	by APP-05 (Coremail) with SMTP id zQCowAAHlQgjoOppI2psDg--.55726S2;
-	Fri, 24 Apr 2026 06:41:40 +0800 (CST)
+Received: from 09-tomoyo-drop.eml (unknown [111.196.245.116])
+	by APP-05 (Coremail) with SMTP id zQCowAC3TBDPouppV5BsDg--.55057S2;
+	Fri, 24 Apr 2026 06:53:04 +0800 (CST)
 From: Pengpeng Hou <pengpeng@iscas.ac.cn>
-Date: Thu, 23 Apr 2026 23:30:00 +0800
-Message-ID: <20260424070101.1-evm-v3-pengpeng@iscas.ac.cn>
-To: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, Serge Hallyn <serge@hallyn.com>, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, pengpeng@iscas.ac.cn
-Subject: [PATCH v3] evm: terminate and bound the evm_xattrs read buffer
-In-Reply-To: <20260417223004.1-evm-xattrs-v2-pengpeng@iscas.ac.cn>
-References: <20260417223004.1-evm-xattrs-v2-pengpeng@iscas.ac.cn>
-X-CM-TRANSID:zQCowAAHlQgjoOppI2psDg--.55726S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF4DJr1xXFWkZF4fJFWxXrb_yoW8uF4kpF
-	sxtasrtw1kXrykGrWUJF47u3s5G3ykGFyUGws3Gw129a9xXrySqFyvka4Y9F95XrW0yw4a
-	q3s0kwnIkF15X3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2jI8I6cxK6x804I0_JFv_Gryl8cAvFVAK0II2c7
-	xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE
-	2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4
-	vEx4A2jsIEc7CjxVAFwI0_Cr1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
-	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
-	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: pshqw1xhqjqxpvfd2hldfou0/
+Date: Fri, 24 Apr 2026 06:53:03 +0800
+Message-ID: <20260424070109.1-tomoyo-drop-pengpeng@iscas.ac.cn>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Kentaro Takeda <takedakn@nttdata.co.jp>, Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, Serge Hallyn <serge@hallyn.com>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, pengpeng@iscas.ac.cn
+Subject: Re: [PATCH] tomoyo: reject short exec.envp[] names before suffix checks
+In-Reply-To: <20260417073249.93906-1-pengpeng@iscas.ac.cn>
+References: <20260417073249.93906-1-pengpeng@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAC3TBDPouppV5BsDg--.55057S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY47AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z2
+	80aVCY1x0267AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26r1j6r4UMc
+	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1l
+	42xK82IYc2Ij64vIr41l4c8EcI0Ec7CjxVAaw2AFwI0_JF0_Jw1l4I8I3I0E4IkC6x0Yz7
+	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIx
+	AIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+	C2KfnxnUUI43ZEXa7VUbLZ23UUUUU==
+X-CM-SenderInfo: pshqw1xhqjqxpvfd2hldfou0/
 
-evm_read_xattrs() allocates size + 1 bytes, fills them from the list of
-enabled xattrs, and then passes strlen(temp) to
-simple_read_from_buffer(). When no configured xattrs are enabled, the
-fill loop stores nothing and temp[0] remains uninitialized, so strlen()
-reads beyond initialized memory.
+Hi Tetsuo,
 
-Explicitly terminate the buffer after allocation, use snprintf() for
-each formatted line, and pass the accumulated length, without risk of
-truncation, to simple_read_from_buffer().
+Thanks for the explanation.
 
-Fixes: fa516b66a1bf ("EVM: Allow runtime modification of the set of verified xattrs")
-Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
----
-Changes since v2:
-- adjust the changelog wording to mention why the accumulated length is
-  safe
-- add the blank line after the allocation error path
-- add a comment explaining why snprintf() cannot truncate in the fill loop
+Agreed, I missed that the left-hand string is already guaranteed to be
+safely dereferenced at that call site. I'll drop this patch.
 
-diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
-index acd840461902..4baf5e23bc97 100644
---- a/security/integrity/evm/evm_secfs.c
-+++ b/security/integrity/evm/evm_secfs.c
-@@ -127,8 +127,8 @@ static ssize_t evm_read_xattrs(struct file *filp, char __user *buf,
- 			       size_t count, loff_t *ppos)
- {
- 	char *temp;
--	int offset = 0;
--	ssize_t rc, size = 0;
-+	size_t offset = 0, size = 0;
-+	ssize_t rc;
- 	struct xattr_list *xattr;
- 
- 	if (*ppos != 0)
-@@ -151,16 +151,22 @@ static ssize_t evm_read_xattrs(struct file *filp, char __user *buf,
- 		return -ENOMEM;
- 	}
- 
-+	temp[size] = '\0';
-+
-+	/*
-+	 * No truncation possible: size is computed over the same enabled
-+	 * xattrs under xattr_list_mutex, so offset never exceeds size.
-+	 */
- 	list_for_each_entry(xattr, &evm_config_xattrnames, list) {
- 		if (!xattr->enabled)
- 			continue;
- 
--		sprintf(temp + offset, "%s\n", xattr->name);
--		offset += strlen(xattr->name) + 1;
-+		offset += snprintf(temp + offset, size + 1 - offset, "%s\n",
-+				   xattr->name);
- 	}
- 
- 	mutex_unlock(&xattr_list_mutex);
--	rc = simple_read_from_buffer(buf, count, ppos, temp, strlen(temp));
-+	rc = simple_read_from_buffer(buf, count, ppos, temp, offset);
- 
- 	kfree(temp);
- 
--- 
-2.50.1 (Apple Git-155)
+Thanks,
+Pengpeng
+
 
