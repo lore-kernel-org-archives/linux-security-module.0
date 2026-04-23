@@ -1,58 +1,49 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684C82BFC8F;
-	Thu, 23 Apr 2026 13:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75EB2D595D
+	for <linux-security-module@vger.kernel.org>; Thu, 23 Apr 2026 13:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776952521; cv=none; b=X0+PAcpoWkVGR3TdDuHYMT9CvmtiwhTLVjpKoHA9Ro9rZB5g+/holemgD2IGdJ8YqAcfNmAxehYFqza6zmSZg2JkVlbjB0upUbwmfc5U03/tjRsVQGmvKNhyJT3LoqGsMOUQv4PewBsexcR+qz2HjfLTERNL0fqnHWOOw5WZCFQ=
+	t=1776952693; cv=none; b=oj56RkVODg7Kghwo7pwrpZVTd3rGUIfdNPnqobPstG53PtzsMArrSO+tsbIvUudaI0wwlBa8388D2oZh6P7PA0TADdBCqHzqb4BrYC0tHFFYpQAvO8uANzX/wEcLlidW8Rd6EXZuYYCnbSuaSTk2whH0aYMR3HlWzBFV8uov4io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776952521; c=relaxed/simple;
-	bh=quGwF0POZZMWSw3MtDXTCOpYSCku5HoAlCX2fTkXUug=;
+	s=arc-20240116; t=1776952693; c=relaxed/simple;
+	bh=i1GsA90njOWwD3f73Ej7mn+eqST6Xv+q5/OxQGxlPIk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U7Zxh8keAK+NYtz95TRP0mGvTtRFlIi3peyFbkRI/ubS9HV42s1NaMxVGHowHsfzhafZODnoN+Io0sztJ5mD3C5nMnFk07por4o0EfnF6+tFJkjxRSoscT5ADZQdsqaGm1vGy9+Yh8zNQdZ5NhsnMOSJL2cySb5e2LPtotKlZCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=HoFfquLk; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=TB7nILYSxZeX24kKKhquPznrkKADb+5vukq/emOdC1etvyuTgNvl9NVRHxVu9/M0C4N/Lv9LpW2c6KvU3DHUUJdwvFz/sqp4RtluOtzatUqVHW+cyH5mVKiKx4+ojOXMv+lFDmKHafbvDhLmNmDyilMPIT5MAFrE/Wz2vEOF43o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Cz7wQqMW; arc=none smtp.client-ip=84.16.66.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="HoFfquLk"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D1181BF7;
-	Thu, 23 Apr 2026 06:55:13 -0700 (PDT)
-Received: from e129823.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C49CF3F641;
-	Thu, 23 Apr 2026 06:55:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1776952518; bh=quGwF0POZZMWSw3MtDXTCOpYSCku5HoAlCX2fTkXUug=;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Cz7wQqMW"
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4g1ctx1zx6zQ0h;
+	Thu, 23 Apr 2026 15:51:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1776952265;
+	bh=6B8gdxhiSe0gDeQJBBKHVS9LdqfRr+KcZyzPDe+Pp2w=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HoFfquLkrAjIHbreqmD/vsngA9Jq51G8D1ZktxBkXr0+1Imrp0R2GMKqVly52pOE4
-	 DNTOm6Jzb+i35WhTDOyqbHHIC1TtsngxZ5SzoCAW3QiufJValXXzCb6AYutmOGG+tC
-	 eiLybmpLA+D6Nuhs4c63SyPB9GaptFUCKVn5h12w=
-Date: Thu, 23 Apr 2026 14:55:14 +0100
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Jonathan McDowell <noodles@earth.li>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com, jarkko@kernel.org, jgg@ziepe.ca,
-	sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org,
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org, noodles@meta.com,
-	sebastianene@google.com
-Subject: Re: [RFC PATCH v2 1/4] security: ima: call ima_init() again at
- late_initcall_sync for defered TPM
-Message-ID: <aeokwrC86WI7uT+K@e129823.arm.com>
-References: <6919248bdc85dac60277fa9d9c83d8bd258ca635.camel@linux.ibm.com>
- <aekXaU52fzvNYaUF@e129823.arm.com>
- <aekkVQwueKbFtG7C@e129823.arm.com>
- <82803bb3b471898a77084c449b73c7f7b4eb2149.camel@linux.ibm.com>
- <aem0SSQuE1e3pGOS@e129823.arm.com>
- <56a8aab50a3b5ce0a345fc2079fb2abc7d0f1b23.camel@linux.ibm.com>
- <aeoAlVEwzRUPrlVe@e129823.arm.com>
- <aeoRxWPyOHGJd+Jh@e129823.arm.com>
- <aeoWO2Cwo04YYu2l@earth.li>
- <bd908e28298d968740d03c97bc7e441de188b7b4.camel@linux.ibm.com>
+	b=Cz7wQqMW6Skr90Iq+CQJ0U3tyH/BjG/8JvlWhb9Z4WJU1W5R581lnLhwd+ML1vLou
+	 0+V+XFC+Ph0hEZ13rAif6+IpkszE3GQ+ASXKU/+VWt9duXKzOg4ryfYFMk72hiUctI
+	 oyBeTNWUn3CQIuSpcA7K3eEsSn1fLhIlqzWQUAGA=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4g1ctv3lSLzLFW;
+	Thu, 23 Apr 2026 15:51:03 +0200 (CEST)
+Date: Thu, 23 Apr 2026 15:50:59 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Paul Moore <paul@paul-moore.com>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Justin Suess <utilityemal77@gmail.com>, 
+	Lennart Poettering <lennart@poettering.net>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Shervin Oloumi <enlightened@google.com>, 
+	Tingmao Wang <m@maowtm.org>, kernel-team@cloudflare.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 00/11] Landlock: Namespace and capability control
+Message-ID: <20260423.iet9Taichotu@digikod.net>
+References: <20260312100444.2609563-1-mic@digikod.net>
+ <20260420.aaab9bf39ef8@gnoack.org>
+ <20260421.aen9Pheishah@digikod.net>
+ <20260422.c1e2cbee5589@gnoack.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -62,323 +53,227 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <bd908e28298d968740d03c97bc7e441de188b7b4.camel@linux.ibm.com>
+In-Reply-To: <20260422.c1e2cbee5589@gnoack.org>
+X-Infomaniak-Routing: alpha
 
-> On Thu, 2026-04-23 at 13:53 +0100, Jonathan McDowell wrote:
-> > On Thu, Apr 23, 2026 at 01:34:13PM +0100, Yeoreum Yun wrote:
-> > > > > On Thu, 2026-04-23 at 06:55 +0100, Yeoreum Yun wrote:
-> > > > > > > On Wed, 2026-04-22 at 20:41 +0100, Yeoreum Yun wrote:
-> > > > > > > > > Hi Mimi,
-> > > > > > > > >
-> > > > > > > > > > On Wed, 2026-04-22 at 17:24 +0100, Yeoreum Yun wrote:
-> > > > > > > > > > > To generate the boot_aggregate log in the IMA subsystem with TPM PCR values,
-> > > > > > > > > > > the TPM driver must be built as built-in and
-> > > > > > > > > > > must be probed before the IMA subsystem is initialized.
-> > > > > > > > > > >
-> > > > > > > > > > > However, when the TPM device operates over the FF-A protocol using
-> > > > > > > > > > > the CRB interface, probing fails and returns -EPROBE_DEFER if
-> > > > > > > > > > > the tpm_crb_ffa device — an FF-A device that provides the communication
-> > > > > > > > > > > interface to the tpm_crb driver — has not yet been probed.
-> > > > > > > > > > >
-> > > > > > > > > > > To ensure the TPM device operating over the FF-A protocol with
-> > > > > > > > > > > the CRB interface is probed before IMA initialization,
-> > > > > > > > > > > the following conditions must be met:
-> > > > > > > > > > >
-> > > > > > > > > > >    1. The corresponding ffa_device must be registered,
-> > > > > > > > > > >       which is done via ffa_init().
-> > > > > > > > > > >
-> > > > > > > > > > >    2. The tpm_crb_driver must successfully probe this device via
-> > > > > > > > > > >       tpm_crb_ffa_init().
-> > > > > > > > > > >
-> > > > > > > > > > >    3. The tpm_crb driver using CRB over FF-A can then
-> > > > > > > > > > >       be probed successfully. (See crb_acpi_add() and
-> > > > > > > > > > >       tpm_crb_ffa_init() for reference.)
-> > > > > > > > > > >
-> > > > > > > > > > > Unfortunately, ffa_init(), tpm_crb_ffa_init(), and crb_acpi_driver_init() are
-> > > > > > > > > > > all registered with device_initcall, which means crb_acpi_driver_init() may
-> > > > > > > > > > > be invoked before ffa_init() and tpm_crb_ffa_init() are completed.
-> > > > > > > > > > >
-> > > > > > > > > > > When this occurs, probing the TPM device is deferred.
-> > > > > > > > > > > However, the deferred probe can happen after the IMA subsystem
-> > > > > > > > > > > has already been initialized, since IMA initialization is performed
-> > > > > > > > > > > during late_initcall, and deferred_probe_initcall() is performed
-> > > > > > > > > > > at the same level.
-> > > > > > > > > > >
-> > > > > > > > > > > To resolve this, call ima_init() again at late_inicall_sync level
-> > > > > > > > > > > so that let IMA not miss TPM PCR value when generating boot_aggregate
-> > > > > > > > > > > log though TPM device presents in the system.
-> > > > > > > > > > >
-> > > > > > > > > > > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> > > > > > > > > >
-> > > > > > > > > > A lot of change for just detecting whether ima_init() is being called on
-> > > > > > > > > > late_initcall or late_initcall_sync(), without any explanation for all the other
-> > > > > > > > > > changes (e.g. ima_init_core).
-> > > > > > > > > >
-> > > > > > > > > > Please just limit the change to just calling ima_init() twice.
-> > > > > > > > >
-> > > > > > > > > My concern is that ima_update_policy_flags() will be called
-> > > > > > > > > when ima_init() is deferred -- not initialised anything.
-> > > > > > > > > though functionally, it might be okay however,
-> > > > > > > > > I think ima_update_policy_flags() and notifier should work after ima_init()
-> > > > > > > > > works logically.
-> > > > > > > > >
-> > > > > > > > > This change I think not much quite a lot. just wrapper ima_init() with
-> > > > > > > > > ima_init_core() with some error handling.
-> > > > > > > > >
-> > > > > > > > > Am I missing something?
-> > > > > > > >
-> > > > > > > > Also, if we handle in ima_init() only, but it failed with other reason,
-> > > > > > > > we shouldn't call again ima_init() in the late_initcall_sync.
-> > > > > > > >
-> > > > > > > > To handle this, It wouldn't do in the ima_init() but we need to handle
-> > > > > > > > it by caller of ima_init().
-> > > > > > >
-> > > > > > > Only tpm_default_chip() is being called to set the ima_tpm_chip.  On failure,
-> > > > > > > instead of going into TPM-bypass mode, return immediately.  There are no calls
-> > > > > > > to anything else.  Just call ima_init() a second time.
-> > > > > >
-> > > > > > I’m not fully convinced this is sufficient.
-> > > > > >
-> > > > > > What I meant is the case where ima_init() fails due to other
-> > > > > > initialisation steps, not only tpm_default_chip() (e.g. ima_fs_init()).
-> > > > >
-> > > > > The purpose of THIS patch is to add late_initcall_sync, when the TPM is not
-> > > > > available at late_initcall.  This would be classified as a bug fix and would be
-> > > > > backported.  No other changes should be included in this patch.
-> > > >
-> > > > Okay.
-> > > >
-> > > > > >
-> > > > > > I’d also like to ask again whether it is fine to call
-> > > > > > ima_update_policy_flags() and keep the notifier registered in the
-> > > > > > deferred TPM case. While this may be functionally acceptable, it seems
-> > > > > > logically questionable to do so when ima_init() has not completed.
-> > > > >
-> > > > > Other than extending the TPM, IMA should behave exactly the same whether there
-> > > > > is a TPM or goes into TPM-bypass mode.
-> > > > >
-> > > > > >
-> > > > > > There is also a possibility that a deferred case ultimately fails (e.g.
-> > > > > > deferred at late_initcall, but then failing at late_initcall_sync
-> > > > > > for another reason, even while entering TPM bypass mode). In that case,
-> > > > > > it seems more appropriate to handle this state in the caller of
-> > > > > > ima_init(), rather than inside ima_init() itself.
-> > > > >
-> > > > > If the TPM isn't found at late_initcall_sync(), then IMA should go into TPM-
-> > > > > bypass mode.  Please don't make any other changes to the existing IMA behavior
-> > > > > and hide it here behind the late_initcall_sync change.
-> > > >
-> > > > Okay. you're talking called ima_update_policy_flags() at late_initcall
-> > > > wouldn't be not a problem even in case of late_initcall_sync's ima_init()
-> > > > get failed with "TPM-bypass mode".
-> > > >
-> > > > I see then, I'll make a patch simpler then.
-> > >
-> > > But I think in case of below situation:
-> > >  - late_initcall's first ima_init() is deferred.
-> > >  - late_initcall_sync try again but failed and try again with
-> > >    CONFIG_IMA_DEFAULT_HASH.
-> > >
-> > > I would like to sustain init_ima_core to reduce the same code repeat
-> > > in late_initcall_sync.
-> >
-> > I think what Mimi's proposing is:
-> >
-> > If we're in late_initcall, and the TPM isn't available, return
-> > immediately with an error (the EPROBE_DEFER?), don't do any init.
-> >
-> > If we're in late_initcall_sync, either we're already initialised, so do
-> > return and nothing, or run through the entire flow, even if the TPM
-> > isn't unavailable.
-> >
-> > So ima_init() just needs to know a) if it's in the sync or non-sync mode
-> > and b) for the sync mode, if we've already done the init at
-> > non-sync.
->
-> Thanks, Jonathan.  That is exactly what I'm suggesting.  Any other changes
-> should not be included in this patch.  Since Yeoreum is not hearing me, feel
-> free to post a patch.
+On Wed, Apr 22, 2026 at 11:16:59PM +0200, Günther Noack wrote:
+> On Tue, Apr 21, 2026 at 10:24:00AM +0200, Mickaël Salaün wrote:
+> > On Mon, Apr 20, 2026 at 05:06:32PM +0200, Günther Noack wrote:
+> > > Hello!
+> > > 
+> > > On Thu, Mar 12, 2026 at 11:04:33AM +0100, Mickaël Salaün wrote:
+> > > > Namespaces are a fundamental building block for containers and
+> > > > application sandboxes, but user namespace creation significantly widens
+> > > > the kernel attack surface.  CVE-2022-0185 (filesystem mount parsing),
+> > > > CVE-2022-25636 and CVE-2023-32233 (netfilter), and CVE-2022-0492 (cgroup
+> > > > v1 release_agent) all demonstrate vulnerabilities exploitable only
+> > > > through capabilities gained via user namespaces.  Some distributions
+> > > > block user namespace creation entirely, but this removes a useful
+> > > > isolation primitive.  Fine-grained control allows trusted programs to
+> > > > use namespaces while preventing unnecessary exposure for programs that
+> > > > do not need them.
+> > > > 
+> > > > Existing mechanisms (user.max_*_namespaces sysctls, userns_create LSM
+> > > > hook, PR_SET_NO_NEW_PRIVS, and capset) each address part of this threat
+> > > > but none provides per-process, fine-grained control over both namespace
+> > > > types and capabilities.  Container runtimes resort to seccomp-based
+> > > > clone/unshare filtering, but seccomp cannot dereference clone3's flag
+> > > > structure, forcing runtimes to block clone3 entirely.
+> > > > 
+> > > > Landlock's composable layer model enables several patterns: a user
+> > > > session manager can restrict namespace types and capabilities broadly
+> > > > while allowing trusted programs to create the namespaces they need, and
+> > > > each deeper layer can further restrict the allowed set.  Container
+> > > > runtimes can similarly deny namespace creation inside managed
+> > > > containers.
+> > > 
+> > > I assume we are talking about an unrestricted systemd user session
+> > > manager, which would not itself be restricted?  (If the entire user
+> > > session were running under Landlock, users couldn't change their
+> > > passwords with "passwd" any more, because of the no_new_privs
+> > > requirement.)
+> > 
+> > systemd can be use to create such session, as other init systems.
+> > If no_new_privs is set, commands such as passwd would indeed not work,
+> > but:
+> > 1. The process applying the Landlock restrictions (e.g. creating the
+> >    user session) doesn't need to set no_new_privs if it has
+> >    CAP_SYS_ADMIN in the current user namespace.
+> > 2. SUID programs can (and should probably) be replaced with proper
+> >    client/server interfaces (i.e. for the client to not be privileged),
+> >    see DBus services (e.g. Account) or homectl for instance.
+> 
+> I also think services are a better approach than the suid bit, but
+> that's to my knowledge not the state of affairs yet (until Lennart
+> makes it happen, hint hint ;-)).
+> 
+> 
+> > > > This series adds two new permission categories to Landlock:
+> > > > 
+> > > > - LANDLOCK_PERM_NAMESPACE_ENTER: Restricts which namespace types a
+> > > >   sandboxed process can acquire: both creation (unshare/clone) and entry
+> > > >   (setns).  User namespace creation has no capability check in the
+> > > >   kernel, so this is the only enforcement mechanism for that entry
+> > > >   point.
+> > > > 
+> > > > - LANDLOCK_PERM_CAPABILITY_USE: Restricts which Linux capabilities a
+> > > >   sandboxed process can use, regardless of how they were obtained
+> > > >   (including through user namespace creation).
+> > > 
+> > > Given that you already went through multiple iterations here, I fully
+> > 
+> > It's the first public one, but it's well advanced.
+> > 
+> > > expect that I am overlooking something here, but based on the
+> > > explanation, it's not clear to me why the capability control is needed
+> > > in addition to the namespace control, to reduce the kernel attack
+> > > surface.
+> > > 
+> > > In my understanding the "attack surface" problem with user namespaces
+> > > is that they allow unprivileged processes to gain CAP_SYS_ADMIN within
+> > > that namespace, which unlocks access to code paths which were
+> > > traditionally reserved for the (top level) root user.
+> > 
+> > This capability and others.
+> > 
+> > > 
+> > > But then, to prevent that from happening, it seems that restricting
+> > > access to user namespace creation would be sufficient?
+> > 
+> > It would be sufficient to limit the kernel attack surface, but it would
+> > make all the related features unusable.  As explained in this cover
+> > letter, there are already several ways to block everything, but this
+> > doesn't help for a lot of use cases and this Landlock feature proposes a
+> > new fine-grained and unprivileged way to properly restrict some
+> > capabilities.
+> > 
+> > > 
+> > > (Also, in some cases, I suspect it might be possible to break
+> > > assumptions that more privileged processes make about filesystem
+> > > layout if the user can change the mount layout.  But that is not an
+> > > issue with Landlock, as we forbid changes to mounts and also require
+> > > no_new_privs.)
+> > > 
+> > > 
+> > > > Both use new handled_perm and LANDLOCK_RULE_* constants following the
+> > > > existing allow-list model.  The UAPI uses raw CAP_* and CLONE_NEW*
+> > > > values directly; unknown values are silently accepted for forward
+> > > > compatibility (the allow-list denies them by default).  The Landlock ABI
+> > > > version is bumped from 8 to 9.
+> > > 
+> > > Compatibility question:
+> > > 
+> > > For both permission categories, when they are "handled" in the
+> > > ruleset, they default to denying *all* types of namespaces, and *all*
+> > > types of capabilities.
+> > > 
+> > > This is different to the handled_access_* rights, where we are
+> > > requiring users to explicitly list all restricted rights as "handled",
+> > > because the full list of available operations might be a moving
+> > > target.
+> > > 
+> > > Why is this not a problem for capabilities and for namespaces?  Both
+> > > the list of capabilities and the list of namespaces has been expanded
+> > > in the past.  What happens if a new capability or namespace is
+> > > invented?  If these are evolved, is that backwards compatible for the
+> > > existing users of these Landlock permission categories?
+> > 
+> > This question is answered is the documentation (and the commit
+> > messages), and that's the main difference between handled_access_* and
+> > handled_perm.  In a nutshell, the permission rules uses non-Landlock
+> > bits that naturally evolve without any Landlock-specific changes.
+> 
+> I think the deny-by-default is fine given that these namespaces and
+> capabilities do not exist yet.  It is the case where users add a rule
+> and we silently ignore unknown bits in the bitfield, which I think
+> introduces a small problem.  I responded to the documentation commit
+> with what I believe is a counterexample for the capabilities case.
+> (Let's discuss it on the documentation patch in the context of the
+> examples.)
+> 
+> 
+> > > > The handled_perm infrastructure is designed to be reusable by future
+> > > > permission categories.  The last patch documents the design rationale
+> > > > for the permission model and the criteria for choosing between
+> > > > handled_access_*, handled_perm, and scoped.  A patch series to add
+> > > > socket creation control is under review [2]; it could benefit from the
+> > > > same permission model to achieve complete deny-by-default coverage of
+> > > > socket creation.
+> > 
+> > See here ^
+> > 
+> > > > 
+> > > > This series builds on Christian Brauner's namespace LSM blob RFC [1],
+> > > > included as patch 1.
+> > > > 
+> > > > Christian, could you please review patch 3?  It adds a FOR_EACH_NS_TYPE
+> > > > X-macro to ns_common_types.h and derives CLONE_NS_ALL, replacing inline
+> > > > CLONE_NEW* flag enumerations in nsproxy.c and fork.c.
+> > > > 
+> > > > Paul, could you please review patch 2?  It adds LSM_AUDIT_DATA_NS, a new
+> > > > audit record type that logs namespace_type and inum for
+> > > > namespace-related LSM denials.
+> > > > 
+> > > > All four example vulnerabilities follow the same pattern: an
+> > > > unprivileged user creates a user namespace to obtain capabilities, then
+> > > > creates a second namespace to exercise them against vulnerable code.
+> > > > LANDLOCK_PERM_NAMESPACE_ENTER prevents this by denying the user
+> > > > namespace (eliminating the capability grant) or the specific namespace
+> > > > type needed to exercise it.  LANDLOCK_PERM_CAPABILITY_USE independently
+> > > > prevents it by denying the required capability.
+> > > 
+> > > Here, it is also not clear to me why LANDLOCK_PERM_CAPABILITY_USE is
+> > > needed in addition to LANDLOCK_PERM_NAMESPACE_ENTER.
+> > 
+> > This is also explained in the documentation.
+> 
+> > > Looking at capabilities(7), my understanding is that capabilities can
+> > > only be acquired through:
+> > > 
+> > > (1) user namespaces (prevented with LANDLOCK_PERM_NAMESPACE_ENTER)
+> > > (2) execve (setuid or individual capabilities, prevented using
+> > >     PR_SET_NO_NEW_PRIVS)
+> > > 
+> > > ...so if a process were to start out with no such capabilities,
+> > > wouldn't that be enough to prevent it from gaining more?  Am I
+> > > overlooking another way through which these can be acquired?
+> > > 
+> > > The Landlock capability support adds a "filter" for the use of
+> > > capabilities, but my understanding of the capability system was that
+> > > it already *is* that filter.  As long as we prevent the acquisition of
+> > > new capabilities, shouldn't that be sufficient?
+> > 
+> > In a nutshell, capabilities applies to namespaces (and their type), so
+> > it makes sense to be able to control them together, see the chroot
+> > example.  Please take a look at the documentation.
+> 
+> I had a hard time puzzling it together in the documentation, but the
+> chroot example helped.
+> 
+> So, if I am understanding correctly, the idea is that you need it in
+> order to create a new user namespace,
 
-I see. so what you need to is this only
-If it looks good to you. I'll send it at v3.
+The user namespace is the only namespace that doesn't require a
+capability, but all others need at least one (which can be gained with a
+user namespace).
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index d48bf0ad26f4..88fe105b7f00 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -166,6 +166,7 @@ enum lsm_order {
-  * @initcall_fs: LSM callback for fs_initcall setup, optional
-  * @initcall_device: LSM callback for device_initcall() setup, optional
-  * @initcall_late: LSM callback for late_initcall() setup, optional
-+ * @initcall_late_sync: LSM callback for late_initcall_sync() setup, optional
-  */
- struct lsm_info {
-        const struct lsm_id *id;
-@@ -181,6 +182,7 @@ struct lsm_info {
-        int (*initcall_fs)(void);
-        int (*initcall_device)(void);
-        int (*initcall_late)(void);
-+       int (*initcall_late_sync)(void);
- };
+> but the restrict the use of
+> capabilities within that user namespace (not only CAP_SYS_ADMIN, but
+> also more individual ones).  Sounds reasonable.
 
- #define DEFINE_LSM(lsm)                                                        \
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index a2f34f2d8ad7..334fa8927c45 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -118,10 +118,22 @@ void __init ima_load_x509(void)
- int __init ima_init(void)
- {
-        int rc;
-+       static bool deferred = false;
-+       static bool initialised = false;
-+
-+       if (initialised)
-+               return 0;
+That enables us to restrict the use of capabilities (within a user
+namespace or not), and then, because capabilities applies to a namespace
+hierarchy, to restrict some operations too.  The limitation lies in the
+split of capabilities (e.g. CAP_SYS_ADMIN is needed to create most
+namespaces), but we cannot do anything about that (because of
+compatibility).  We can only hope that new capabilities will be
+introduced to improve the situation.
 
-        ima_tpm_chip = tpm_default_chip();
--       if (!ima_tpm_chip)
-+       if (!ima_tpm_chip) {
-+               if (!deferred) {
-+                       pr_info("Defer initialisation to the late_initcall_sync stage.\n");
-+                       deferred = true;
-+                       return 0;
-+               }
-+
-                pr_info("No TPM chip found, activating TPM-bypass!\n");
-+       }
+> 
+> I can also see that in order to do that without the Landlock
+> capability support, the first process within the new namespace would
+> immediately need to drop capabilities, and that may be outside of the
+> control of the person defining the Landlock policy..?
 
-        rc = integrity_init_keyring(INTEGRITY_KEYRING_IMA);
-        if (rc)
-@@ -158,5 +170,7 @@ int __init ima_init(void)
-                                  UTS_RELEASE, strlen(UTS_RELEASE), false,
-                                  NULL, 0);
-
-+       initialised = true;
-+
-        return rc;
- }
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 1d6229b156fb..847ec74a183d 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -1274,6 +1274,11 @@ static int __init init_ima(void)
-        return error;
- }
-
-+static int __init late_init_ima(void)
-+{
-+       return ima_init();
-+}
-+
- static struct security_hook_list ima_hooks[] __ro_after_init = {
-        LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
-        LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
-@@ -1321,4 +1326,6 @@ DEFINE_LSM(ima) = {
-        .blobs = &ima_blob_sizes,
-        /* Start IMA after the TPM is available */
-        .initcall_late = init_ima,
-+       /* Start IMA late in case of probing TPM is deferred. */
-+       .initcall_late_sync = late_init_ima,
- };
-diff --git a/security/lsm_init.c b/security/lsm_init.c
-index 573e2a7250c4..4e5c59beb82a 100644
---- a/security/lsm_init.c
-+++ b/security/lsm_init.c
-@@ -547,13 +547,22 @@ device_initcall(security_initcall_device);
-  * security_initcall_late - Run the LSM late initcalls
-  */
- static int __init security_initcall_late(void)
-+{
-+       return lsm_initcall(late);
-+}
-+late_initcall(security_initcall_late);
-+
-+/**
-+ * security_initcall_late_sync - Run the LSM late initcalls sync
-+ */
-+static int __init security_initcall_late_sync(void)
- {
-        int rc;
-
--       rc = lsm_initcall(late);
-+       rc = lsm_initcall(late_sync);
-        lsm_pr_dbg("all enabled LSMs fully activated\n");
-        call_blocking_lsm_notifier(LSM_STARTED_ALL, NULL);
-
-        return rc;
- }
--late_initcall(security_initcall_late);
-+late_initcall_sync(security_initcall_late_sync);
-...skipping...
-+
-                pr_info("No TPM chip found, activating TPM-bypass!\n");
-+       }
-
-        rc = integrity_init_keyring(INTEGRITY_KEYRING_IMA);
-        if (rc)
-@@ -158,5 +170,7 @@ int __init ima_init(void)
-                                  UTS_RELEASE, strlen(UTS_RELEASE), false,
-                                  NULL, 0);
-
-+       initialised = true;
-+
-        return rc;
- }
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 1d6229b156fb..847ec74a183d 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -1274,6 +1274,11 @@ static int __init init_ima(void)
-        return error;
- }
-
-+static int __init late_init_ima(void)
-+{
-+       return ima_init();
-+}
-+
- static struct security_hook_list ima_hooks[] __ro_after_init = {
-        LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
-        LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
-@@ -1321,4 +1326,6 @@ DEFINE_LSM(ima) = {
-        .blobs = &ima_blob_sizes,
-        /* Start IMA after the TPM is available */
-        .initcall_late = init_ima,
-+       /* Start IMA late in case of probing TPM is deferred. */
-+       .initcall_late_sync = late_init_ima,
- };
-diff --git a/security/lsm_init.c b/security/lsm_init.c
-index 573e2a7250c4..4e5c59beb82a 100644
---- a/security/lsm_init.c
-+++ b/security/lsm_init.c
-@@ -547,13 +547,22 @@ device_initcall(security_initcall_device);
-  * security_initcall_late - Run the LSM late initcalls
-  */
- static int __init security_initcall_late(void)
-+{
-+       return lsm_initcall(late);
-+}
-+late_initcall(security_initcall_late);
-+
-+/**
-+ * security_initcall_late_sync - Run the LSM late initcalls sync
-+ */
-+static int __init security_initcall_late_sync(void)
- {
-        int rc;
-
--       rc = lsm_initcall(late);
-+       rc = lsm_initcall(late_sync);
-        lsm_pr_dbg("all enabled LSMs fully activated\n");
-        call_blocking_lsm_notifier(LSM_STARTED_ALL, NULL);
-
-        return rc;
- }
--late_initcall(security_initcall_late);
-+late_initcall_sync(security_initcall_late_sync);
-
-
---
-Sincerely,
-Yeoreum Yun
+Right, dropping capabilities doesn't make sense for a (sandboxed)
+attacker able to create a user namespace.
