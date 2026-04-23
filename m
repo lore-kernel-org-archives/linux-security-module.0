@@ -1,49 +1,58 @@
-Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD63A1DD525;
-	Thu, 23 Apr 2026 13:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684C82BFC8F;
+	Thu, 23 Apr 2026 13:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776952344; cv=none; b=DyddQTjAMKyiBufySNSaOndeMASyk/7CvgsS/bd/B69URJEMj70bqqIDUeQ+Iskvb5liNTaQEf7xjEVx2xP2GTlCvWxRSxekGCIHF4oCf7OeYyMN4hH01gqEofaaXJmamWKc4zZt5KV/1Im2mnlWTWpNX99vWP8hVaPq//rnFEc=
+	t=1776952521; cv=none; b=X0+PAcpoWkVGR3TdDuHYMT9CvmtiwhTLVjpKoHA9Ro9rZB5g+/holemgD2IGdJ8YqAcfNmAxehYFqza6zmSZg2JkVlbjB0upUbwmfc5U03/tjRsVQGmvKNhyJT3LoqGsMOUQv4PewBsexcR+qz2HjfLTERNL0fqnHWOOw5WZCFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776952344; c=relaxed/simple;
-	bh=R6Yo37SFLOc20Pfnxw0/Ez6m576c/DjqvzD0fVDJY8E=;
+	s=arc-20240116; t=1776952521; c=relaxed/simple;
+	bh=quGwF0POZZMWSw3MtDXTCOpYSCku5HoAlCX2fTkXUug=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DF0eW+/S1qDyVGL5J9xWbkkPXlkeCjL02FtBwTI9PP16ndzG1wPmWknOvsP+5op8PDOfZgmSHImQfoxd9TuvqIEaeBOhP7KXmI82x9mc783R0w4LQn2jhugVDNp51IO+SNP+D5TDC2yz7OZYigRQTjJHA8Doo5EZn4itjB9LbPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0mw7LG95; arc=none smtp.client-ip=83.166.143.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=U7Zxh8keAK+NYtz95TRP0mGvTtRFlIi3peyFbkRI/ubS9HV42s1NaMxVGHowHsfzhafZODnoN+Io0sztJ5mD3C5nMnFk07por4o0EfnF6+tFJkjxRSoscT5ADZQdsqaGm1vGy9+Yh8zNQdZ5NhsnMOSJL2cySb5e2LPtotKlZCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=HoFfquLk; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0mw7LG95"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4g1cwG4hRTzNTs;
-	Thu, 23 Apr 2026 15:52:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1776952334;
-	bh=ujOARAKNJE6B//ahpbKdkZ0gq4IH7YcnRhxe+O6S230=;
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="HoFfquLk"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D1181BF7;
+	Thu, 23 Apr 2026 06:55:13 -0700 (PDT)
+Received: from e129823.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C49CF3F641;
+	Thu, 23 Apr 2026 06:55:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1776952518; bh=quGwF0POZZMWSw3MtDXTCOpYSCku5HoAlCX2fTkXUug=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0mw7LG95r1/GORUDgfLuDRlMqcazBT1F3EjMlXqDbHQbeglhTqNxWk/rCL4hPSgLF
-	 lUvk5hPhX+RjlZcUsyfEm8Rwnt7qdtKD43dVW1llEOzKnj8qQkyqzcAYlE6xf1Q+F9
-	 TNfHG/0uWNogVDmNgde6xma7XV2qx5HHF8bk9AYo=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4g1cwF5vYJzKjh;
-	Thu, 23 Apr 2026 15:52:13 +0200 (CEST)
-Date: Thu, 23 Apr 2026 15:52:12 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Paul Moore <paul@paul-moore.com>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Justin Suess <utilityemal77@gmail.com>, 
-	Lennart Poettering <lennart@poettering.net>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Shervin Oloumi <enlightened@google.com>, 
-	Tingmao Wang <m@maowtm.org>, kernel-team@cloudflare.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v1 11/11] landlock: Add documentation for capability
- and namespace restrictions
-Message-ID: <20260423.yipaikooJ6oo@digikod.net>
-References: <20260312100444.2609563-1-mic@digikod.net>
- <20260312100444.2609563-12-mic@digikod.net>
- <20260422.5a7059c06fb0@gnoack.org>
+	b=HoFfquLkrAjIHbreqmD/vsngA9Jq51G8D1ZktxBkXr0+1Imrp0R2GMKqVly52pOE4
+	 DNTOm6Jzb+i35WhTDOyqbHHIC1TtsngxZ5SzoCAW3QiufJValXXzCb6AYutmOGG+tC
+	 eiLybmpLA+D6Nuhs4c63SyPB9GaptFUCKVn5h12w=
+Date: Thu, 23 Apr 2026 14:55:14 +0100
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Jonathan McDowell <noodles@earth.li>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com, jarkko@kernel.org, jgg@ziepe.ca,
+	sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org,
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org, noodles@meta.com,
+	sebastianene@google.com
+Subject: Re: [RFC PATCH v2 1/4] security: ima: call ima_init() again at
+ late_initcall_sync for defered TPM
+Message-ID: <aeokwrC86WI7uT+K@e129823.arm.com>
+References: <6919248bdc85dac60277fa9d9c83d8bd258ca635.camel@linux.ibm.com>
+ <aekXaU52fzvNYaUF@e129823.arm.com>
+ <aekkVQwueKbFtG7C@e129823.arm.com>
+ <82803bb3b471898a77084c449b73c7f7b4eb2149.camel@linux.ibm.com>
+ <aem0SSQuE1e3pGOS@e129823.arm.com>
+ <56a8aab50a3b5ce0a345fc2079fb2abc7d0f1b23.camel@linux.ibm.com>
+ <aeoAlVEwzRUPrlVe@e129823.arm.com>
+ <aeoRxWPyOHGJd+Jh@e129823.arm.com>
+ <aeoWO2Cwo04YYu2l@earth.li>
+ <bd908e28298d968740d03c97bc7e441de188b7b4.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -53,605 +62,323 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260422.5a7059c06fb0@gnoack.org>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <bd908e28298d968740d03c97bc7e441de188b7b4.camel@linux.ibm.com>
 
-On Wed, Apr 22, 2026 at 10:38:33PM +0200, Günther Noack wrote:
-> Hello!
-> 
-> On Thu, Mar 12, 2026 at 11:04:44AM +0100, Mickaël Salaün wrote:
-> > Document the two new Landlock permission categories in the userspace
-> > API guide, admin guide, and kernel security documentation.
-> > 
-> > The userspace API guide adds sections on capability restriction
-> > (LANDLOCK_PERM_CAPABILITY_USE with LANDLOCK_RULE_CAPABILITY), namespace
-> > restriction (LANDLOCK_PERM_NAMESPACE_ENTER with LANDLOCK_RULE_NAMESPACE
-> > covering creation via unshare/clone and entry via setns), and the
-> > backward-compatible degradation pattern for ABI < 9.  A table documents
-> > the per-namespace-type capability requirements for both creation and
-> > entry.
-> > 
-> > The admin guide adds the new perm.namespace_enter and
-> > perm.capability_use audit blocker names with their object identification
-> > fields (namespace_type, namespace_inum, capability).
-> > 
-> > The kernel security documentation adds a "Ruleset restriction models"
-> > section defining the three models (handled_access_*, handled_perm,
-> > scoped), their coverage and compatibility properties, and the criteria
-> > for choosing between them for future features.  It also documents
-> > composability with user namespaces and adds kernel-doc references for
-> > the new capability and namespace headers.
-> > 
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Cc: Günther Noack <gnoack@google.com>
-> > Cc: Paul Moore <paul@paul-moore.com>
-> > Cc: Serge E. Hallyn <serge@hallyn.com>
-> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > ---
-> >  Documentation/admin-guide/LSM/landlock.rst |  19 ++-
-> >  Documentation/security/landlock.rst        |  80 ++++++++++-
-> >  Documentation/userspace-api/landlock.rst   | 156 ++++++++++++++++++++-
-> >  3 files changed, 245 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/Documentation/admin-guide/LSM/landlock.rst b/Documentation/admin-guide/LSM/landlock.rst
-> > index 9923874e2156..99c6a599ce9e 100644
-> > --- a/Documentation/admin-guide/LSM/landlock.rst
-> > +++ b/Documentation/admin-guide/LSM/landlock.rst
-> > @@ -6,7 +6,7 @@ Landlock: system-wide management
-> >  ================================
-> >  
-> >  :Author: Mickaël Salaün
-> > -:Date: January 2026
-> > +:Date: March 2026
-> >  
-> >  Landlock can leverage the audit framework to log events.
-> >  
-> > @@ -59,14 +59,25 @@ AUDIT_LANDLOCK_ACCESS
-> >          - scope.abstract_unix_socket - Abstract UNIX socket connection denied
-> >          - scope.signal - Signal sending denied
-> >  
-> > +    **perm.*** - Permission restrictions (ABI 9+):
-> > +        - perm.namespace_enter - Namespace entry was denied (creation via
-> > +          :manpage:`unshare(2)` / :manpage:`clone(2)` or joining via
-> > +          :manpage:`setns(2)`);
-> > +          ``namespace_type`` indicates the type (hex CLONE_NEW* bitmask),
-> > +          ``namespace_inum`` identifies the target namespace for
-> > +          :manpage:`setns(2)` operations
-> > +        - perm.capability_use - Capability use was denied;
-> > +          ``capability`` indicates the capability number
-> > +
-> >      Multiple blockers can appear in a single event (comma-separated) when
-> >      multiple access rights are missing. For example, creating a regular file
-> >      in a directory that lacks both ``make_reg`` and ``refer`` rights would show
-> >      ``blockers=fs.make_reg,fs.refer``.
-> >  
-> > -    The object identification fields (path, dev, ino for filesystem; opid,
-> > -    ocomm for signals) depend on the type of access being blocked and provide
-> > -    context about what resource was involved in the denial.
-> > +    The object identification fields depend on the type of access being blocked:
-> > +    ``path``, ``dev``, ``ino`` for filesystem; ``opid``, ``ocomm`` for signals;
-> > +    ``namespace_type`` and ``namespace_inum`` for namespace operations;
-> > +    ``capability`` for capability use.
-> >  
-> >  
-> >  AUDIT_LANDLOCK_DOMAIN
-> > diff --git a/Documentation/security/landlock.rst b/Documentation/security/landlock.rst
-> > index 3e4d4d04cfae..cd3d640ca5c9 100644
-> > --- a/Documentation/security/landlock.rst
-> > +++ b/Documentation/security/landlock.rst
-> > @@ -7,7 +7,7 @@ Landlock LSM: kernel documentation
-> >  ==================================
-> >  
-> >  :Author: Mickaël Salaün
-> > -:Date: September 2025
-> > +:Date: March 2026
-> >  
-> >  Landlock's goal is to create scoped access-control (i.e. sandboxing).  To
-> >  harden a whole system, this feature should be available to any process,
-> > @@ -89,6 +89,72 @@ this is required to keep access controls consistent over the whole system, and
-> >  this avoids unattended bypasses through file descriptor passing (i.e. confused
-> >  deputy attack).
-> >  
-> > +Composability with user namespaces
-> > +----------------------------------
-> > +
-> > +Landlock domain-based scoping and the kernel's user namespace-based capability
-> > +scoping enforce isolation over independent hierarchies.  Landlock checks domain
-> > +ancestry; the kernel's ``ns_capable()`` checks user namespace ancestry.  These
-> > +hierarchies are orthogonal: Landlock enforcement is deterministic with respect
-> > +to its own configuration, regardless of namespace or capability state, and vice
-> > +versa.  This orthogonality is a design invariant that must hold for all new
-> > +scoped features.
-> > +
-> > +Ruleset restriction models
-> > +--------------------------
-> 
-> I have to second Justin, it's a good idea to introduce this explanation.
-> 
-> > +
-> > +Landlock provides three restriction models, each with different coverage
-> > +and compatibility properties.
-> > +
-> > +Access rights (``handled_access_*``)
-> > +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > +
-> > +Access rights control **enumerated operations on kernel objects**
-> > +identified by a rule key (a file hierarchy or a network port).  Each
-> > +``handled_access_*`` field declares a set of access rights that the
-> > +ruleset restricts.  Multiple access rights share a single rule type.
-> > +Operations for which no access right exists yet remain uncontrolled;
-> > +new rights are added incrementally across ABI versions.
-> > +
-> > +Permissions (``handled_perm``)
-> > +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > +
-> > +Permissions control **broad operations enforced at single kernel
-> > +chokepoints**, achieving complete deny-by-default coverage.  Each
-> > +``LANDLOCK_PERM_*`` flag maps to its own rule type.  When a ruleset
-> > +handles a permission, all instances of that operation are denied unless
-> > +explicitly allowed by a rule.  New kernel values (new ``CAP_*``
-> > +capabilities, new ``CLONE_NEW*`` namespace types) are automatically
-> > +denied without any Landlock update.
-> 
-> I find the terminology of "chokepoints" and "gateways" in this and the
-> header documentation a bit vague; you could argue that opening a file
-> for reading is also a chokepoint/gateway for using read() later on;
-> it's not immediately clear to me how that's delineated.
+> On Thu, 2026-04-23 at 13:53 +0100, Jonathan McDowell wrote:
+> > On Thu, Apr 23, 2026 at 01:34:13PM +0100, Yeoreum Yun wrote:
+> > > > > On Thu, 2026-04-23 at 06:55 +0100, Yeoreum Yun wrote:
+> > > > > > > On Wed, 2026-04-22 at 20:41 +0100, Yeoreum Yun wrote:
+> > > > > > > > > Hi Mimi,
+> > > > > > > > >
+> > > > > > > > > > On Wed, 2026-04-22 at 17:24 +0100, Yeoreum Yun wrote:
+> > > > > > > > > > > To generate the boot_aggregate log in the IMA subsystem with TPM PCR values,
+> > > > > > > > > > > the TPM driver must be built as built-in and
+> > > > > > > > > > > must be probed before the IMA subsystem is initialized.
+> > > > > > > > > > >
+> > > > > > > > > > > However, when the TPM device operates over the FF-A protocol using
+> > > > > > > > > > > the CRB interface, probing fails and returns -EPROBE_DEFER if
+> > > > > > > > > > > the tpm_crb_ffa device — an FF-A device that provides the communication
+> > > > > > > > > > > interface to the tpm_crb driver — has not yet been probed.
+> > > > > > > > > > >
+> > > > > > > > > > > To ensure the TPM device operating over the FF-A protocol with
+> > > > > > > > > > > the CRB interface is probed before IMA initialization,
+> > > > > > > > > > > the following conditions must be met:
+> > > > > > > > > > >
+> > > > > > > > > > >    1. The corresponding ffa_device must be registered,
+> > > > > > > > > > >       which is done via ffa_init().
+> > > > > > > > > > >
+> > > > > > > > > > >    2. The tpm_crb_driver must successfully probe this device via
+> > > > > > > > > > >       tpm_crb_ffa_init().
+> > > > > > > > > > >
+> > > > > > > > > > >    3. The tpm_crb driver using CRB over FF-A can then
+> > > > > > > > > > >       be probed successfully. (See crb_acpi_add() and
+> > > > > > > > > > >       tpm_crb_ffa_init() for reference.)
+> > > > > > > > > > >
+> > > > > > > > > > > Unfortunately, ffa_init(), tpm_crb_ffa_init(), and crb_acpi_driver_init() are
+> > > > > > > > > > > all registered with device_initcall, which means crb_acpi_driver_init() may
+> > > > > > > > > > > be invoked before ffa_init() and tpm_crb_ffa_init() are completed.
+> > > > > > > > > > >
+> > > > > > > > > > > When this occurs, probing the TPM device is deferred.
+> > > > > > > > > > > However, the deferred probe can happen after the IMA subsystem
+> > > > > > > > > > > has already been initialized, since IMA initialization is performed
+> > > > > > > > > > > during late_initcall, and deferred_probe_initcall() is performed
+> > > > > > > > > > > at the same level.
+> > > > > > > > > > >
+> > > > > > > > > > > To resolve this, call ima_init() again at late_inicall_sync level
+> > > > > > > > > > > so that let IMA not miss TPM PCR value when generating boot_aggregate
+> > > > > > > > > > > log though TPM device presents in the system.
+> > > > > > > > > > >
+> > > > > > > > > > > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+> > > > > > > > > >
+> > > > > > > > > > A lot of change for just detecting whether ima_init() is being called on
+> > > > > > > > > > late_initcall or late_initcall_sync(), without any explanation for all the other
+> > > > > > > > > > changes (e.g. ima_init_core).
+> > > > > > > > > >
+> > > > > > > > > > Please just limit the change to just calling ima_init() twice.
+> > > > > > > > >
+> > > > > > > > > My concern is that ima_update_policy_flags() will be called
+> > > > > > > > > when ima_init() is deferred -- not initialised anything.
+> > > > > > > > > though functionally, it might be okay however,
+> > > > > > > > > I think ima_update_policy_flags() and notifier should work after ima_init()
+> > > > > > > > > works logically.
+> > > > > > > > >
+> > > > > > > > > This change I think not much quite a lot. just wrapper ima_init() with
+> > > > > > > > > ima_init_core() with some error handling.
+> > > > > > > > >
+> > > > > > > > > Am I missing something?
+> > > > > > > >
+> > > > > > > > Also, if we handle in ima_init() only, but it failed with other reason,
+> > > > > > > > we shouldn't call again ima_init() in the late_initcall_sync.
+> > > > > > > >
+> > > > > > > > To handle this, It wouldn't do in the ima_init() but we need to handle
+> > > > > > > > it by caller of ima_init().
+> > > > > > >
+> > > > > > > Only tpm_default_chip() is being called to set the ima_tpm_chip.  On failure,
+> > > > > > > instead of going into TPM-bypass mode, return immediately.  There are no calls
+> > > > > > > to anything else.  Just call ima_init() a second time.
+> > > > > >
+> > > > > > I’m not fully convinced this is sufficient.
+> > > > > >
+> > > > > > What I meant is the case where ima_init() fails due to other
+> > > > > > initialisation steps, not only tpm_default_chip() (e.g. ima_fs_init()).
+> > > > >
+> > > > > The purpose of THIS patch is to add late_initcall_sync, when the TPM is not
+> > > > > available at late_initcall.  This would be classified as a bug fix and would be
+> > > > > backported.  No other changes should be included in this patch.
+> > > >
+> > > > Okay.
+> > > >
+> > > > > >
+> > > > > > I’d also like to ask again whether it is fine to call
+> > > > > > ima_update_policy_flags() and keep the notifier registered in the
+> > > > > > deferred TPM case. While this may be functionally acceptable, it seems
+> > > > > > logically questionable to do so when ima_init() has not completed.
+> > > > >
+> > > > > Other than extending the TPM, IMA should behave exactly the same whether there
+> > > > > is a TPM or goes into TPM-bypass mode.
+> > > > >
+> > > > > >
+> > > > > > There is also a possibility that a deferred case ultimately fails (e.g.
+> > > > > > deferred at late_initcall, but then failing at late_initcall_sync
+> > > > > > for another reason, even while entering TPM bypass mode). In that case,
+> > > > > > it seems more appropriate to handle this state in the caller of
+> > > > > > ima_init(), rather than inside ima_init() itself.
+> > > > >
+> > > > > If the TPM isn't found at late_initcall_sync(), then IMA should go into TPM-
+> > > > > bypass mode.  Please don't make any other changes to the existing IMA behavior
+> > > > > and hide it here behind the late_initcall_sync change.
+> > > >
+> > > > Okay. you're talking called ima_update_policy_flags() at late_initcall
+> > > > wouldn't be not a problem even in case of late_initcall_sync's ima_init()
+> > > > get failed with "TPM-bypass mode".
+> > > >
+> > > > I see then, I'll make a patch simpler then.
+> > >
+> > > But I think in case of below situation:
+> > >  - late_initcall's first ima_init() is deferred.
+> > >  - late_initcall_sync try again but failed and try again with
+> > >    CONFIG_IMA_DEFAULT_HASH.
+> > >
+> > > I would like to sustain init_ima_core to reduce the same code repeat
+> > > in late_initcall_sync.
+> >
+> > I think what Mimi's proposing is:
+> >
+> > If we're in late_initcall, and the TPM isn't available, return
+> > immediately with an error (the EPROBE_DEFER?), don't do any init.
+> >
+> > If we're in late_initcall_sync, either we're already initialised, so do
+> > return and nothing, or run through the entire flow, even if the TPM
+> > isn't unavailable.
+> >
+> > So ima_init() just needs to know a) if it's in the sync or non-sync mode
+> > and b) for the sync mode, if we've already done the init at
+> > non-sync.
+>
+> Thanks, Jonathan.  That is exactly what I'm suggesting.  Any other changes
+> should not be included in this patch.  Since Yeoreum is not hearing me, feel
+> free to post a patch.
 
-Yeah, I wanted to express something wider that a fine-grained access
-right.  Any alternative words that would fit better?
+I see. so what you need to is this only
+If it looks good to you. I'll send it at v3.
 
-> 
-> In my mind, the handled_* groups of access rights are usually defined
-> by the "namespace" of the objects they are protecting, more than
-> anything else: handled_access_fs: file paths, handled_access_net:
-> struct sockaddr (which we only expose as "port" for now).
-> 
-> To play the devil's advocate, a possible alternative would have been
-> to introduce:
-> 
->   handled_access_ns with values LANDLOCK_ACCESS_NS_FOO_ENTER,
->   LANDLOCK_ACCESS_NS_BAR_ENTER, etc. (and documenting somewhere that
->   these are guaranteed to stay in sync; a static assert is enough to
->   make sure they do).
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index d48bf0ad26f4..88fe105b7f00 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -166,6 +166,7 @@ enum lsm_order {
+  * @initcall_fs: LSM callback for fs_initcall setup, optional
+  * @initcall_device: LSM callback for device_initcall() setup, optional
+  * @initcall_late: LSM callback for late_initcall() setup, optional
++ * @initcall_late_sync: LSM callback for late_initcall_sync() setup, optional
+  */
+ struct lsm_info {
+        const struct lsm_id *id;
+@@ -181,6 +182,7 @@ struct lsm_info {
+        int (*initcall_fs)(void);
+        int (*initcall_device)(void);
+        int (*initcall_late)(void);
++       int (*initcall_late_sync)(void);
+ };
 
-That was actually one of my initial version, but I couldn't find any
-meaning ful other access rights that would both be useful for the
-sandboxing use case and worth the implementation.  At the end I
-concluded that we needed "ambiant" access rights for things that are not
-really tied to existing kernel objects, and to be able to fully express
-current and future properties, hence using non-Landlock UAPI
-(capabilities, namespace types...).  The handled_perm name was the less
-ambiguous one I could find, which still make sense.
+ #define DEFINE_LSM(lsm)                                                        \
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index a2f34f2d8ad7..334fa8927c45 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -118,10 +118,22 @@ void __init ima_load_x509(void)
+ int __init ima_init(void)
+ {
+        int rc;
++       static bool deferred = false;
++       static bool initialised = false;
++
++       if (initialised)
++               return 0;
 
-Another important property is that the permissions rules don't have
-access rights, only *one* permission bit which could be removed.  I
-choose to keep it as a safeguard (for UAPI check) and to still be able
-to add new ones for such rule if one day we really find a useful use
-case.  Anyway, it's basically free.
+        ima_tpm_chip = tpm_default_chip();
+-       if (!ima_tpm_chip)
++       if (!ima_tpm_chip) {
++               if (!deferred) {
++                       pr_info("Defer initialisation to the late_initcall_sync stage.\n");
++                       deferred = true;
++                       return 0;
++               }
++
+                pr_info("No TPM chip found, activating TPM-bypass!\n");
++       }
 
-> 
->   handled_access_caps with values LANDLOCK_ACCESS_CAPS_USE_FOO,
->   LANDLOCK_ACCESS_CAPS_USE_BAR, etc., also guaranteed to stay in sync.
+        rc = integrity_init_keyring(INTEGRITY_KEYRING_IMA);
+        if (rc)
+@@ -158,5 +170,7 @@ int __init ima_init(void)
+                                  UTS_RELEASE, strlen(UTS_RELEASE), false,
+                                  NULL, 0);
 
-Genuine question: what would be these FOO and BAR?  I couldn't find
-anything worth it.  The idea is to have a simple interface.  In fact,
-initially I didn't have these suffixes (i.e. _USE, _ENTER), and they are
-not really needed, but these are also safeguards in the case we would
-need one, and the main motivation is to make the semantic clear to
-users (and more consistent with other Landlock access rights).
++       initialised = true;
++
+        return rc;
+ }
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 1d6229b156fb..847ec74a183d 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -1274,6 +1274,11 @@ static int __init init_ima(void)
+        return error;
+ }
 
-> 
-> That way the blocked accesses would still be "operations", and we
-> would not need to have rules for them because the "object" being
-> protected are the processes within the Landlock domain, so to say.
++static int __init late_init_ima(void)
++{
++       return ima_init();
++}
++
+ static struct security_hook_list ima_hooks[] __ro_after_init = {
+        LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
+        LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
+@@ -1321,4 +1326,6 @@ DEFINE_LSM(ima) = {
+        .blobs = &ima_blob_sizes,
+        /* Start IMA after the TPM is available */
+        .initcall_late = init_ima,
++       /* Start IMA late in case of probing TPM is deferred. */
++       .initcall_late_sync = late_init_ima,
+ };
+diff --git a/security/lsm_init.c b/security/lsm_init.c
+index 573e2a7250c4..4e5c59beb82a 100644
+--- a/security/lsm_init.c
++++ b/security/lsm_init.c
+@@ -547,13 +547,22 @@ device_initcall(security_initcall_device);
+  * security_initcall_late - Run the LSM late initcalls
+  */
+ static int __init security_initcall_late(void)
++{
++       return lsm_initcall(late);
++}
++late_initcall(security_initcall_late);
++
++/**
++ * security_initcall_late_sync - Run the LSM late initcalls sync
++ */
++static int __init security_initcall_late_sync(void)
+ {
+        int rc;
 
-I'm not sure to understand, but an (also) previous version was to just
-put the capability (and namespace type) bits directly in the ruleset
-struct.  The issue with this approach is that it doesn't work well with
-a deny-by-default enforcement, and this would not be extensible, and
-this would not handle well compatibility (fields set to zero by
-default).
+-       rc = lsm_initcall(late);
++       rc = lsm_initcall(late_sync);
+        lsm_pr_dbg("all enabled LSMs fully activated\n");
+        call_blocking_lsm_notifier(LSM_STARTED_ALL, NULL);
 
-> 
-> Arguably, the LANDLOCK_ACCESS_FS_MAKE_* rights already follow a
-> similar pattern.
+        return rc;
+ }
+-late_initcall(security_initcall_late);
++late_initcall_sync(security_initcall_late_sync);
+...skipping...
++
+                pr_info("No TPM chip found, activating TPM-bypass!\n");
++       }
 
-Hmm, I'm not following.
+        rc = integrity_init_keyring(INTEGRITY_KEYRING_IMA);
+        if (rc)
+@@ -158,5 +170,7 @@ int __init ima_init(void)
+                                  UTS_RELEASE, strlen(UTS_RELEASE), false,
+                                  NULL, 0);
 
-> 
-> To be clear, I am myself only 50% convinced whether the API would be
-> better.  The implementation would be easier (but that doesn't count
-> much in comparison).
-> 
-> 
-> > +Each permission flag names a single gateway operation whose control
-> > +transitively covers an open-ended set of downstream operations: for
-> > +example, exercising a capability enables privileged operations across
-> > +many subsystems; entering a namespace enables gaining capabilities in a
-> > +new context.
-> > +
-> > +Permission rules identify what to allow using constants defined by other
-> > +kernel subsystems (``CAP_*``, ``CLONE_NEW*``).  Unknown values are
-> > +silently ignored because deny-by-default ensures they are denied anyway.
-> > +In contrast, unknown ``LANDLOCK_PERM_*`` flags in ``handled_perm`` are
-> > +rejected (``-EINVAL``), since Landlock owns that namespace.
-> 
-> OK I played through the compatibility scenarios which puzzled me in my
-> reply to the cover letter, for both namespaces and capabilities.
-> Namespaces are OK, so I'm just including that for completeness and for
-> comparison, but I think the capabilities might be tricky?
-> 
-> 
-> Case A: Namespaces
-> 
-> In the scenario where a caller restricts
-> LANDLOCK_PERM_NAMESPACE_ENTER, but then adds a rule to allow a
-> non-existent namespace number like 1<<63.
-> 
-> Landlock ABI v9:
-> * The rule is accepted and the unknown value for the namespace type
->   silently ignored
-> * It is not possible to enter the namespace because the namespace API
->   doesn't exist for it.  (But that's appropriate.)
++       initialised = true;
++
+        return rc;
+ }
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 1d6229b156fb..847ec74a183d 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -1274,6 +1274,11 @@ static int __init init_ima(void)
+        return error;
+ }
 
-Yes, the namespace would just be unknown to the kernel, Landlock doesn't
-do anything here.
++static int __init late_init_ima(void)
++{
++       return ima_init();
++}
++
+ static struct security_hook_list ima_hooks[] __ro_after_init = {
+        LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
+        LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
+@@ -1321,4 +1326,6 @@ DEFINE_LSM(ima) = {
+        .blobs = &ima_blob_sizes,
+        /* Start IMA after the TPM is available */
+        .initcall_late = init_ima,
++       /* Start IMA late in case of probing TPM is deferred. */
++       .initcall_late_sync = late_init_ima,
+ };
+diff --git a/security/lsm_init.c b/security/lsm_init.c
+index 573e2a7250c4..4e5c59beb82a 100644
+--- a/security/lsm_init.c
++++ b/security/lsm_init.c
+@@ -547,13 +547,22 @@ device_initcall(security_initcall_device);
+  * security_initcall_late - Run the LSM late initcalls
+  */
+ static int __init security_initcall_late(void)
++{
++       return lsm_initcall(late);
++}
++late_initcall(security_initcall_late);
++
++/**
++ * security_initcall_late_sync - Run the LSM late initcalls sync
++ */
++static int __init security_initcall_late_sync(void)
+ {
+        int rc;
 
-> 
-> Landlock ABI v_future (the namespace type 1<<63 exists now):
-> * The rule continues to be accepted.
-> * When trying to exercise the namespace type, it works.
+-       rc = lsm_initcall(late);
++       rc = lsm_initcall(late_sync);
+        lsm_pr_dbg("all enabled LSMs fully activated\n");
+        call_blocking_lsm_notifier(LSM_STARTED_ALL, NULL);
 
-It works because the kernel now know about this namespace.  Again,
-nothing related to Landlock specifically.
+        return rc;
+ }
+-late_initcall(security_initcall_late);
++late_initcall_sync(security_initcall_late_sync);
 
-> 
-> It seems that this scenario works fine.  In the earlier version,
-> entering the namespace already doesn't work because the kernel doesn't
-> have support for it.
-> 
-> 
-> Case B: Capabilities
-> 
-> Whne new capabilities are introduced, I see that people have used the
-> pattern where these capabilities are split off from operations which
-> were previously controlled by CAP_SYS_ADMIN.  An example is commit
-> a17b53c4a4b5 ("bpf, capability: Introduce CAP_BPF"), which states:
-> 
->   Split BPF operations that are allowed under CAP_SYS_ADMIN into
->   combination of CAP_BPF, CAP_PERFMON, CAP_NET_ADMIN.  For backward
->   compatibility include them in CAP_SYS_ADMIN as well.
-> 
-> (The same pattern was also used in the introduction of
-> CAP_CHECKPOINT_RESTORE and CAP_PERFMON.  CAP_AUDIT_READ is older and
-> did it differently.)
 
-The key point here (and the architectural limitation) is that a new
-capability cannot completely replace an existing one.  The original
-capability check will remain forever.
-
-> 
-> Let's say there is a frobnicate() syscall guarded by CAP_SYS_ADMIN.  A
-> future kernel introduces CAP_FOO and then checks for frobnicate() that
-> either one of CAP_FOO or CAP_SYS_ADMIN are present.
-> 
-> A caller creates a ruleset restricting capability use with Landlock,
-> and adds a rule to allow CAP_FOO but not CAP_SYS_ADMIN (e.g.,
-> ^CAP_SYS_ADMIN)
-> 
-> Landlock ABI v9:  (CAP_FOO doesn't exist)
-> * The rule for CAP_FOO is accepted and the unknown value for the
->   capability silently ignored.
-> * The call to frobnicate() fails because the use of the capability is
->   forbidden
-> 
-> Landlock ABI v10:  (CAP_FOO starts to exist)
-> * The rule continues to be accepted
-> * The call to frobnicate() **succeeds now**, because the new kernel guards
->   the operation by either one of those capabilities.
-> 
-> 
-> So... for capabilities, it seems to be slightly incompatible if users
-> allow capabilities with a rule which are not known yet?  The reason
-> for that is the way how capabilities "fork off" from CAP_SYS_ADMIN.
-
-The key point is that the compatibility is deferred to the other kernel
-subsystems.  User space need to know which capabilities (or namespace
-types) are supported before using them.  It's not a Landlock
-compatibility issue.
-
-> 
-> I mean, I can see that it's a pretty fringe scenario if users pass
-> capabilities that don't exist yet, but it *is* strictly speaking an
-> incompatibiliy.  Should we check the range of the passed capabilities?
-> Am I overlooking any downsides to this if we force users to stay
-> between 0 and CAP_LAST_CAP?
-
-Checking the range of known capabilities (or namespace types) could
-break the same Landlock rules on different kernels even if targeting the
-same Landlock ABI version, which would be much worse.  I definitely
-prefer to have idempotent/deterministic Landlock rules.
-
-> 
-> 
-> > +
-> > +Scopes (``scoped``)
-> > +~~~~~~~~~~~~~~~~~~~~
-> > +
-> > +Scopes restrict **cross-domain interactions** categorically, without
-> > +rules.  Setting a scope flag (e.g. ``LANDLOCK_SCOPE_SIGNAL``) denies the
-> > +operation to targets outside the Landlock domain or its children.  Like
-> > +permissions, scopes provide complete coverage of the controlled
-> > +operation.
-> > +
-> > +When adding new Landlock features, new operations on existing rule types
-> > +extend the corresponding ``handled_access_*`` field (e.g. a new
-> > +filesystem operation extends ``handled_access_fs``).  A new object
-> > +category with multiple fine-grained operations would use a new
-> > +``handled_access_*`` field.  New rule types that control a single
-> > +chokepoint operation use ``handled_perm``.
-> > +
-> >  Tests
-> >  =====
-> >  
-> > @@ -110,6 +176,18 @@ Filesystem
-> >  .. kernel-doc:: security/landlock/fs.h
-> >      :identifiers:
-> >  
-> > +Namespace
-> > +---------
-> > +
-> > +.. kernel-doc:: security/landlock/ns.h
-> > +    :identifiers:
-> > +
-> > +Capability
-> > +----------
-> > +
-> > +.. kernel-doc:: security/landlock/cap.h
-> > +    :identifiers:
-> > +
-> >  Process credential
-> >  ------------------
-> >  
-> > diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> > index 13134bccdd39..238d30a18162 100644
-> > --- a/Documentation/userspace-api/landlock.rst
-> > +++ b/Documentation/userspace-api/landlock.rst
-> > @@ -8,7 +8,7 @@ Landlock: unprivileged access control
-> >  =====================================
-> >  
-> >  :Author: Mickaël Salaün
-> > -:Date: January 2026
-> > +:Date: March 2026
-> >  
-> >  The goal of Landlock is to enable restriction of ambient rights (e.g. global
-> >  filesystem or network access) for a set of processes.  Because Landlock
-> > @@ -33,7 +33,7 @@ A Landlock rule describes an action on an object which the process intends to
-> >  perform.  A set of rules is aggregated in a ruleset, which can then restrict
-> >  the thread enforcing it, and its future children.
-> >  
-> > -The two existing types of rules are:
-> > +The existing types of rules are:
-> >  
-> >  Filesystem rules
-> >      For these rules, the object is a file hierarchy,
-> > @@ -44,6 +44,14 @@ Network rules (since ABI v4)
-> >      For these rules, the object is a TCP port,
-> >      and the related actions are defined with `network access rights`.
-> >  
-> > +Capability rules (since ABI v9)
-> > +    For these rules, the object is a set of Linux capabilities,
-> > +    and the related actions are defined with `permission flags`.
-> > +
-> > +Namespace rules (since ABI v9)
-> > +    For these rules, the object is a set of namespace types,
-> > +    and the related actions are defined with `permission flags`.
-> > +
-> >  Defining and enforcing a security policy
-> >  ----------------------------------------
-> >  
-> > @@ -84,6 +92,9 @@ to be explicit about the denied-by-default access rights.
-> >          .scoped =
-> >              LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
-> >              LANDLOCK_SCOPE_SIGNAL,
-> > +        .handled_perm =
-> > +            LANDLOCK_PERM_CAPABILITY_USE |
-> > +            LANDLOCK_PERM_NAMESPACE_ENTER,
-> >      };
-> >  
-> >  Because we may not know which kernel version an application will be executed
-> > @@ -127,6 +138,12 @@ version, and only use the available subset of access rights:
-> >          /* Removes LANDLOCK_SCOPE_* for ABI < 6 */
-> >          ruleset_attr.scoped &= ~(LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
-> >                                   LANDLOCK_SCOPE_SIGNAL);
-> > +        __attribute__((fallthrough));
-> > +    case 6:
-> > +    case 7:
-> > +    case 8:
-> > +        /* Removes permission support for ABI < 9 */
-> > +        ruleset_attr.handled_perm = 0;
-> >      }
-> >  
-> >  This enables the creation of an inclusive ruleset that will contain our rules.
-> > @@ -191,6 +208,42 @@ number for a specific action: HTTPS connections.
-> >      err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
-> >                              &net_port, 0);
-> >  
-> > +For capability access-control, we can add rules that allow specific
-> > +capabilities.  For instance, to allow ``CAP_SYS_CHROOT`` (so the sandboxed
-> > +process can call :manpage:`chroot(2)` inside a user namespace):
-> > +
-> > +.. code-block:: c
-> > +
-> > +    struct landlock_capability_attr cap_attr = {
-> > +        .allowed_perm = LANDLOCK_PERM_CAPABILITY_USE,
-> > +        .capabilities = (1ULL << CAP_SYS_CHROOT),
-> > +    };
-> > +
-> > +    err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_CAPABILITY,
-> > +                            &cap_attr, 0);
-> > +
-> > +For namespace access-control, we can add rules that allow entering specific
-> > +namespace types (creating them via :manpage:`unshare(2)` / :manpage:`clone(2)`
-> > +or joining them via :manpage:`setns(2)`).  For instance, to allow creating user
-> > +namespaces (which grants all capabilities inside the new namespace):
-> > +
-> > +.. code-block:: c
-> > +
-> > +    struct landlock_namespace_attr ns_attr = {
-> > +        .allowed_perm = LANDLOCK_PERM_NAMESPACE_ENTER,
-> > +        .namespace_types = CLONE_NEWUSER,
-> > +    };
-> > +
-> > +    err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NAMESPACE,
-> > +                            &ns_attr, 0);
-> > +
-> > +Together, these two rules allow an unprivileged process to create a user
-> > +namespace and call :manpage:`chroot(2)` inside it, while denying all other
-> > +capabilities and namespace types.  User namespace creation is the one operation
-> > +that does not require ``CAP_SYS_ADMIN``, so no capability rule is needed for it.
-> > +See `Capability and namespace restrictions`_ for details on capability
-> > +requirements.
-> > +
-> >  When passing a non-zero ``flags`` argument to ``landlock_restrict_self()``, a
-> >  similar backwards compatibility check is needed for the restrict flags
-> >  (see sys_landlock_restrict_self() documentation for available flags):
-> > @@ -354,10 +407,87 @@ The operations which can be scoped are:
-> >      A :manpage:`sendto(2)` on a socket which was previously connected will not
-> >      be restricted.  This works for both datagram and stream sockets.
-> >  
-> > -IPC scoping does not support exceptions via :manpage:`landlock_add_rule(2)`.
-> > +Scoping does not support exceptions via :manpage:`landlock_add_rule(2)`.
-> >  If an operation is scoped within a domain, no rules can be added to allow access
-> >  to resources or processes outside of the scope.
-> >  
-> > +Capability and namespace restrictions
-> > +-------------------------------------
-> > +
-> > +See Documentation/security/landlock.rst for the design rationale behind
-> > +the permission model (``handled_perm``) and how it differs from access
-> > +rights (``handled_access_*``) and scopes (``scoped``).
-> > +When a process creates a user namespace, the kernel grants all capabilities
-> > +within that namespace.  While these capabilities cannot directly bypass Landlock
-> > +restrictions (Landlock enforces access controls independently of capability
-> > +checks), they open kernel code paths that are normally unreachable to
-> > +unprivileged users and may contain exploitable bugs.
-> > +
-> > +Landlock provides two complementary permissions to address this.
-> > +``LANDLOCK_PERM_CAPABILITY_USE`` restricts which capabilities a process can use,
-> > +even when it holds them.  ``LANDLOCK_PERM_NAMESPACE_ENTER`` restricts which
-> > +namespace types a process can create (via :manpage:`unshare(2)` or
-> > +:manpage:`clone(2)`) or join (via :manpage:`setns(2)`).  After creating a user
-> > +namespace, the granted capabilities are scoped to namespaces owned by that user
-> > +namespace or its descendants; to exercise a capability such as
-> > +``CAP_NET_ADMIN``, the process must create a namespace of the corresponding type
-> > +(e.g., a network namespace).  Configuring both permissions together provides
-> > +full coverage: ``LANDLOCK_PERM_CAPABILITY_USE`` restricts which capabilities are
-> > +available, while ``LANDLOCK_PERM_NAMESPACE_ENTER`` restricts the namespaces in
-> > +which they can be used.
-> > +
-> > +When a Landlock domain handles ``LANDLOCK_PERM_CAPABILITY_USE``, all Linux
-> > +:manpage:`capabilities(7)` are denied by default unless a rule explicitly allows
-> > +them.  This is purely restrictive: Landlock can only deny capabilities that the
-> > +traditional capability mechanism would have allowed, never grant additional ones.
-> > +Rules are added with ``LANDLOCK_RULE_CAPABILITY`` using a
-> > +&struct landlock_capability_attr.  Each rule specifies a set of ``CAP_*`` values
-> > +(as a bitmask) to allow.  Capabilities above ``CAP_LAST_CAP`` are silently
-> > +accepted but have no effect since the kernel never checks them; this means new
-> > +capabilities introduced by future kernels are automatically denied.
-> 
-> (See example above.)
-> 
-> 
-> > +
-> > +When a Landlock domain handles ``LANDLOCK_PERM_NAMESPACE_ENTER``, namespace
-> > +creation and entry are denied by default unless a rule explicitly allows them.
-> > +Rules are added with ``LANDLOCK_RULE_NAMESPACE`` using a
-> > +&struct landlock_namespace_attr.  Each rule specifies a set of ``CLONE_NEW*``
-> > +flags to allow.
-> > +
-> > +In practice, unprivileged processes first create a user namespace (which requires
-> > +no capability and grants all capabilities within it), then use those capabilities
-> > +to create other namespace types.  All non-user namespace types require
-> > +``CAP_SYS_ADMIN`` for both creation and :manpage:`setns(2)` entry; mount
-> > +namespace entry additionally requires ``CAP_SYS_CHROOT``.  For
-> > +:manpage:`setns(2)`, capabilities are checked relative to the target namespace,
-> > +so a process in an ancestor user namespace naturally satisfies them; this
-> > +includes joining user namespaces, which requires ``CAP_SYS_ADMIN``.  When
-> > +``LANDLOCK_PERM_CAPABILITY_USE`` is also handled, each of these capabilities
-> > +must be explicitly allowed by a rule.
-> > +
-> > +When combining ``CLONE_NEWUSER`` with other ``CLONE_NEW*`` flags in a single
-> > +:manpage:`unshare(2)` call, the ``CAP_SYS_ADMIN`` check targets the newly
-> > +created user namespace, which is handled by ``LANDLOCK_PERM_NAMESPACE_ENTER``
-> > +independently from ``LANDLOCK_PERM_CAPABILITY_USE``.  Performing the user
-> > +namespace creation and the additional namespace creation in two separate
-> > +:manpage:`unshare(2)` calls requires a rule allowing ``CAP_SYS_ADMIN`` if the
-> > +domain also handles ``LANDLOCK_PERM_CAPABILITY_USE``.
-> > +
-> > +More generally, Landlock domains and user namespaces form independent
-> > +hierarchies: Landlock domains restrict what actions are allowed (each stacked
-> > +layer narrows the permitted set), while user namespaces restrict where
-> > +capabilities take effect (only within the process's own namespace and its
-> > +descendants).  Landlock access controls are fully determined by the domain
-> > +configuration, regardless of the process's position in the user namespace
-> > +hierarchy.  When creating child user namespaces, it is recommended to also
-> > +create a dedicated Landlock domain with restrictions relevant to each namespace
-> > +context.
-> > +
-> > +Note that ``LANDLOCK_PERM_CAPABILITY_USE`` restricts the *use* of capabilities,
-> > +not their presence in the process's credential.  Capability sets can change
-> > +after a domain is enforced through user namespace entry, :manpage:`execve(2)` of
-> > +binaries with file capabilities, or :manpage:`capset(2)`.  In all cases,
-> > +:manpage:`capget(2)` will report the credential's capability sets, but any
-> > +denied capability will fail with ``EPERM`` when exercised.
-> > +
-> >  Truncating files
-> >  ----------------
-> >  
-> > @@ -515,7 +645,7 @@ Access rights
-> >  -------------
-> >  
-> >  .. kernel-doc:: include/uapi/linux/landlock.h
-> > -    :identifiers: fs_access net_access scope
-> > +    :identifiers: fs_access net_access scope perm
-> >  
-> >  Creating a new ruleset
-> >  ----------------------
-> > @@ -534,7 +664,8 @@ Extending a ruleset
-> >  
-> >  .. kernel-doc:: include/uapi/linux/landlock.h
-> >      :identifiers: landlock_rule_type landlock_path_beneath_attr
-> > -                  landlock_net_port_attr
-> > +                  landlock_net_port_attr landlock_capability_attr
-> > +                  landlock_namespace_attr
-> >  
-> >  Enforcing a ruleset
-> >  -------------------
-> > @@ -685,6 +816,21 @@ enforce Landlock rulesets across all threads of the calling process
-> >  using the ``LANDLOCK_RESTRICT_SELF_TSYNC`` flag passed to
-> >  sys_landlock_restrict_self().
-> >  
-> > +Capability restriction (ABI < 9)
-> > +--------------------------------
-> > +
-> > +Starting with the Landlock ABI version 9, it is possible to restrict
-> > +:manpage:`capabilities(7)` with the new ``LANDLOCK_PERM_CAPABILITY_USE``
-> > +permission flag and ``LANDLOCK_RULE_CAPABILITY`` rule type.
-> > +
-> > +Namespace restriction (ABI < 9)
-> > +-------------------------------
-> > +
-> > +Starting with the Landlock ABI version 9, it is possible to restrict
-> > +namespace creation (:manpage:`unshare(2)`, :manpage:`clone(2)`) and entry
-> > +(:manpage:`setns(2)`) with the new ``LANDLOCK_PERM_NAMESPACE_ENTER`` permission
-> > +flag and ``LANDLOCK_RULE_NAMESPACE`` rule type.
-> > +
-> >  .. _kernel_support:
-> >  
-> >  Kernel support
-> > -- 
-> > 2.53.0
-> > 
-> 
+--
+Sincerely,
+Yeoreum Yun
