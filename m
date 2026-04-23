@@ -1,81 +1,161 @@
-Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91893B52FD;
-	Thu, 23 Apr 2026 02:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.222
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D6938B7B1;
+	Thu, 23 Apr 2026 05:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776912991; cv=none; b=lDcFZVS4VESraz9bSEdYLTzijO1cqomxE+/OCiW7ARdKqPm3S4GOETIzQcgwEzlBGkWxs5goW1g8iYpy9uJyOZxLyx0Ws6trJfmJRzG9KlKD1jCO+bLgCQQ40a1DcXfsWajDzp+8nXLFDa2cWH7EcZu86gVTDaL98szgI0pN3qk=
+	t=1776923728; cv=none; b=T2/hyHfEb8jIIUcTZhcwwMLBoRr1KPRIh6NhcD0lhRThD9RsqFz0lDGUXa22FDSCoiwC3nt2vxbfq71dDi9foY7Z3dLa70r7L9xefua/SMtAhHCiPN61x4oQuocZlqVRitTomYdvuqbbJDmDLq2QB3+1BYGNnD3M88604e8G/bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776912991; c=relaxed/simple;
-	bh=slp1/df97e9HejUPj2FtdsPJYodA3Os3oEE4UDiyAcs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H/Sb05FL9hbLItZnUgAHlkQYkyd52fgBW6qfBQpnLKNdP2V8tCxftLs96hBcojoVDV6s4Ns2bST+m2RcQwyzkWAIAWogtt5+JT3njdlLo/9BrU5yaedb8qlRQvYxceHLJWbiCFf+6J8tyyLehmi0PE8X0jURDvjVnBPt9O58cLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=b59gjuSn; arc=none smtp.client-ip=113.46.200.222
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+	s=arc-20240116; t=1776923728; c=relaxed/simple;
+	bh=49YekNFCjF8JEjH2R7KLyZgzeM9KBzyRw9umwpY5wno=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c4VUJ/vH9sn57+PSe83UWtGx0iDcrG+oToJkrpNiblFUziLc2NZDfEYECR7PqrGswuM3RItscN7tesaVkdlegp3v02n1FJKjME8uLAsc76gGO2ST3ClrsfFZqcY81w6s+hPmEwIE3ADh3V8tiGRwdvEAGWd5N0nbE3pqOOI3vBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=YMwCU1Om; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="b59gjuSn"
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=cI9EPb4U3rIy4OPkKYa2Khl98cSKaAlG52wx2V3maNo=;
-	b=b59gjuSnw3qXHrJD0ddTyZp9qxJ4U5G+qvsWphgK1DqsCqxIxHFuzHQWCGMONsPV437r7R+Tw
-	eqp/pVfALebDc/Ex2B413mcOCSOehPJXZZE2L3L0ipebc2MnnvX52yNbp9ul0k3jlPoMVq+QeJB
-	lHtAT09iPASjBnBsZ/R7y4k=
-Received: from mail.maildlp.com (unknown [172.19.162.92])
-	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4g1LD60kcbzLlSv;
-	Thu, 23 Apr 2026 10:49:58 +0800 (CST)
-Received: from kwepemk100018.china.huawei.com (unknown [7.202.194.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6636E40562;
-	Thu, 23 Apr 2026 10:56:20 +0800 (CST)
-Received: from huawei.com (10.67.174.33) by kwepemk100018.china.huawei.com
- (7.202.194.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Thu, 23 Apr
- 2026 10:56:19 +0800
-From: GONG Ruiqi <gongruiqi1@huawei.com>
-To: John Johansen <john.johansen@canonical.com>, Paul Moore
-	<paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn"
-	<serge@hallyn.com>, Georgia Garcia <georgia.garcia@canonical.com>
-CC: <apparmor@lists.ubuntu.com>, <linux-security-module@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lujialin4@huawei.com>,
-	<gongruiqi1@huawei.com>, <zhaoyipeng5@huawei.com>
-Subject: [PATCH] apparmor/lsm: Fix aa_dfa_unpack's error handling in aa_setup_dfa_engine
-Date: Thu, 23 Apr 2026 11:10:56 +0800
-Message-ID: <20260423031056.563527-1-gongruiqi1@huawei.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="YMwCU1Om"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9AB2A2681;
+	Wed, 22 Apr 2026 22:55:20 -0700 (PDT)
+Received: from e129823.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6C79C3F23F;
+	Wed, 22 Apr 2026 22:55:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1776923726; bh=49YekNFCjF8JEjH2R7KLyZgzeM9KBzyRw9umwpY5wno=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YMwCU1OmjkG75bpTZVQuyXEv+f4HLPb9bRAn2pjvQ9kw2YzQDju4CYyXPmYvBybhE
+	 gbCqRhvP14892fryqkg2Ucclu7RBSq5XmJNP01l6SwxTMh0vgsZ/ELTCtt37gwG1Jh
+	 EAZD5CRL5UEc458d04LQazuWqsSE11yOLPSn8Lmw=
+Date: Thu, 23 Apr 2026 06:55:21 +0100
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com, jarkko@kernel.org, jgg@ziepe.ca,
+	sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org,
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org, noodles@meta.com,
+	sebastianene@google.com
+Subject: Re: [RFC PATCH v2 1/4] security: ima: call ima_init() again at
+ late_initcall_sync for defered TPM
+Message-ID: <aem0SSQuE1e3pGOS@e129823.arm.com>
+References: <20260422162449.1814615-1-yeoreum.yun@arm.com>
+ <20260422162449.1814615-2-yeoreum.yun@arm.com>
+ <6919248bdc85dac60277fa9d9c83d8bd258ca635.camel@linux.ibm.com>
+ <aekXaU52fzvNYaUF@e129823.arm.com>
+ <aekkVQwueKbFtG7C@e129823.arm.com>
+ <82803bb3b471898a77084c449b73c7f7b4eb2149.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemk100018.china.huawei.com (7.202.194.66)
+In-Reply-To: <82803bb3b471898a77084c449b73c7f7b4eb2149.camel@linux.ibm.com>
 
-aa_dfa_unpack returns ERR_PTR not NULL when it fails, but aa_put_dfa
-only checks NULL for its input, which would cause invalid memory access
-in aa_put_dfa. Set nulldfa to NULL explicitly to fix that.
+> On Wed, 2026-04-22 at 20:41 +0100, Yeoreum Yun wrote:
+> > > Hi Mimi,
+> > >
+> > > > On Wed, 2026-04-22 at 17:24 +0100, Yeoreum Yun wrote:
+> > > > > To generate the boot_aggregate log in the IMA subsystem with TPM PCR values,
+> > > > > the TPM driver must be built as built-in and
+> > > > > must be probed before the IMA subsystem is initialized.
+> > > > >
+> > > > > However, when the TPM device operates over the FF-A protocol using
+> > > > > the CRB interface, probing fails and returns -EPROBE_DEFER if
+> > > > > the tpm_crb_ffa device — an FF-A device that provides the communication
+> > > > > interface to the tpm_crb driver — has not yet been probed.
+> > > > >
+> > > > > To ensure the TPM device operating over the FF-A protocol with
+> > > > > the CRB interface is probed before IMA initialization,
+> > > > > the following conditions must be met:
+> > > > >
+> > > > >    1. The corresponding ffa_device must be registered,
+> > > > >       which is done via ffa_init().
+> > > > >
+> > > > >    2. The tpm_crb_driver must successfully probe this device via
+> > > > >       tpm_crb_ffa_init().
+> > > > >
+> > > > >    3. The tpm_crb driver using CRB over FF-A can then
+> > > > >       be probed successfully. (See crb_acpi_add() and
+> > > > >       tpm_crb_ffa_init() for reference.)
+> > > > >
+> > > > > Unfortunately, ffa_init(), tpm_crb_ffa_init(), and crb_acpi_driver_init() are
+> > > > > all registered with device_initcall, which means crb_acpi_driver_init() may
+> > > > > be invoked before ffa_init() and tpm_crb_ffa_init() are completed.
+> > > > >
+> > > > > When this occurs, probing the TPM device is deferred.
+> > > > > However, the deferred probe can happen after the IMA subsystem
+> > > > > has already been initialized, since IMA initialization is performed
+> > > > > during late_initcall, and deferred_probe_initcall() is performed
+> > > > > at the same level.
+> > > > >
+> > > > > To resolve this, call ima_init() again at late_inicall_sync level
+> > > > > so that let IMA not miss TPM PCR value when generating boot_aggregate
+> > > > > log though TPM device presents in the system.
+> > > > >
+> > > > > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+> > > >
+> > > > A lot of change for just detecting whether ima_init() is being called on
+> > > > late_initcall or late_initcall_sync(), without any explanation for all the other
+> > > > changes (e.g. ima_init_core).
+> > > >
+> > > > Please just limit the change to just calling ima_init() twice.
+> > >
+> > > My concern is that ima_update_policy_flags() will be called
+> > > when ima_init() is deferred -- not initialised anything.
+> > > though functionally, it might be okay however,
+> > > I think ima_update_policy_flags() and notifier should work after ima_init()
+> > > works logically.
+> > >
+> > > This change I think not much quite a lot. just wrapper ima_init() with
+> > > ima_init_core() with some error handling.
+> > >
+> > > Am I missing something?
+> >
+> > Also, if we handle in ima_init() only, but it failed with other reason,
+> > we shouldn't call again ima_init() in the late_initcall_sync.
+> >
+> > To handle this, It wouldn't do in the ima_init() but we need to handle
+> > it by caller of ima_init().
+>
+> Only tpm_default_chip() is being called to set the ima_tpm_chip.  On failure,
+> instead of going into TPM-bypass mode, return immediately.  There are no calls
+> to anything else.  Just call ima_init() a second time.
 
-Fixes: 98b824ff8984 ("apparmor: refcount the pdb")
-Signed-off-by: GONG Ruiqi <gongruiqi1@huawei.com>
----
- security/apparmor/lsm.c | 1 +
- 1 file changed, 1 insertion(+)
+I’m not fully convinced this is sufficient.
 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index c1d42fc72fdb..ead2f07982b6 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -2465,6 +2465,7 @@ static int __init aa_setup_dfa_engine(void)
- 			    TO_ACCEPT2_FLAG(YYTD_DATA32));
- 	if (IS_ERR(nulldfa)) {
- 		error = PTR_ERR(nulldfa);
-+		nulldfa = NULL;
- 		goto fail;
- 	}
- 	nullpdb->dfa = aa_get_dfa(nulldfa);
--- 
-2.43.0
+What I meant is the case where ima_init() fails due to other
+initialisation steps, not only tpm_default_chip() (e.g. ima_fs_init()).
 
+If it fails at the late_initcall stage for such reasons, then we
+should not call ima_init() again at late_initcall_sync.
+
+For this reason, instead of adding a static variable inside
+ima_init(), I think it would be better to manage the state in the
+caller and introduce something like an ima_initialised flag. Also, if
+initialisation fails for other reasons, the notifier block should be
+unregistered.
+
+I’d also like to ask again whether it is fine to call
+ima_update_policy_flags() and keep the notifier registered in the
+deferred TPM case. While this may be functionally acceptable, it seems
+logically questionable to do so when ima_init() has not completed.
+
+There is also a possibility that a deferred case ultimately fails (e.g.
+deferred at late_initcall, but then failing at late_initcall_sync
+for another reason, even while entering TPM bypass mode). In that case,
+it seems more appropriate to handle this state in the caller of
+ima_init(), rather than inside ima_init() itself.
+
+Am I still missing something?
+
+--
+Sincerely,
+Yeoreum Yun
