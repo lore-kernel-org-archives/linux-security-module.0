@@ -1,291 +1,379 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5EB52C0285;
-	Thu, 23 Apr 2026 13:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CB6199FB0
+	for <linux-security-module@vger.kernel.org>; Thu, 23 Apr 2026 13:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776951857; cv=none; b=rKWtNsQTR03r2+PMc0c4IcbN9ArocrC29y8gEcaserq5N1vu0rqF6ZR7lljX/oAmx/fH6CtHLwYhHAm3ZBrqkfUr1WdthnJ/hPz/SMmdGOWQvdvo/nq2UaNKmGWvVJSuvHQnwepxj1PFTg8yDwwTmBHehnXcoh3o5IB5ISmbwGk=
+	t=1776952289; cv=none; b=S1MEznmKR6QWQYrzSwsPObz2ST8+jOBizc6Q/xUL+L4KGOp7ZyNhkgtynjKbmwlK8p0WnaksXfveQU5Zcm0iGOq043DMmRAy8hGnveEDqUHnDDstKJlK+VRr2CxYGjV8fHbwq1t8/RVnLem9jcrH7x7CfKpbmU6yfwYU1AO2Nvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776951857; c=relaxed/simple;
-	bh=GFfBv1A9XoMMQjboNfbMvImcPrwkC05tlceuFf8ToNQ=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=oeUtrPL82GkSxVk9Kyd3w3oYQXm/SjefXnQ3ItpvBmT/6olmX541d5ywEw+OZ3TDf0HQ3rZJfcAvitAd3WH8Q52c+1GR1Qhxx5okt/sZzFBreFOZCmXIsFapJGjqKVE33grrEaiE8cBvpYQTXCeeV7wHxIuexKcRzmjC83bgQqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FH+DTb1H; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1776952289; c=relaxed/simple;
+	bh=x0u5EEeLspSe+f/Vf8Z1ttHV9945Ha5ZyxNdUQTIAJQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fh8tnih+u8iAy8fNRlHdRLNOruoiE+wEYp4C6zNEEBXRTvA2k7xgjPp5yji5zjRGXWbt0J6OwA78XbgqR/V7HTB9KlIY5xLWewfNPZcmab/mPF5JMMkWSu/2E3WxtQOM7UJYBRy5GVTeqUBXMhxqWYtxU6+7ruRADwxhvaBktJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=jQENE99C; arc=none smtp.client-ip=185.125.25.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FH+DTb1H"
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63N6ooMu3229044;
-	Thu, 23 Apr 2026 13:43:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=xd0UHF
-	P1ZE/nb/myoyLJa+WYNKpg4XG8PdpKOXq78eM=; b=FH+DTb1Hk/HLZ5IX+0nwww
-	PHxw7sDsX/bbBxrkX5qSA3anbsGJLf6sCLQUIyxugSg37D3jvWYISa6c4XQiDYvy
-	xNSYtGos9QBXkERsiJq9rme5GAWeLtzfcGBiYLPiWhDpgroMnMwSX0Z5GpBjgtVu
-	Mc5akUizT8x/tk8/kYfGt8PusUb9nv4KPsoTexqoVo+KZ9zG5WGbnZuC+Kg7qTaa
-	BG0rtdlYUtWK0AxtSrSxyGJ3X7CxgSwkdHNe4ErykTBdnbxjs418I+N5CXAlTJYt
-	lvR76v56AwAYfJsdE/4RWFyFzECN6VFS/mYSWSrdA6CtvtPLM+0r0suTZNQLMm5A
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4dpeu28wgr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 Apr 2026 13:43:48 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 63NDZO0C003099;
-	Thu, 23 Apr 2026 13:43:47 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4dpjkyetdt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 Apr 2026 13:43:47 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 63NDhkfS15204980
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 23 Apr 2026 13:43:46 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 35EE858053;
-	Thu, 23 Apr 2026 13:43:46 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E803A58043;
-	Thu, 23 Apr 2026 13:43:43 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.20.220])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 23 Apr 2026 13:43:43 +0000 (GMT)
-Message-ID: <bd908e28298d968740d03c97bc7e441de188b7b4.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH v2 1/4] security: ima: call ima_init() again at
- late_initcall_sync for defered TPM
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Jonathan McDowell <noodles@earth.li>, Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.linux.dev, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
-        eric.snowberg@oracle.com, jarkko@kernel.org, jgg@ziepe.ca,
-        sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org,
-        joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-        catalin.marinas@arm.com, will@kernel.org, noodles@meta.com,
-        sebastianene@google.com
-In-Reply-To: <aeoWO2Cwo04YYu2l@earth.li>
-References: <20260422162449.1814615-1-yeoreum.yun@arm.com>
-	 <20260422162449.1814615-2-yeoreum.yun@arm.com>
-	 <6919248bdc85dac60277fa9d9c83d8bd258ca635.camel@linux.ibm.com>
-	 <aekXaU52fzvNYaUF@e129823.arm.com> <aekkVQwueKbFtG7C@e129823.arm.com>
-	 <82803bb3b471898a77084c449b73c7f7b4eb2149.camel@linux.ibm.com>
-	 <aem0SSQuE1e3pGOS@e129823.arm.com>
-	 <56a8aab50a3b5ce0a345fc2079fb2abc7d0f1b23.camel@linux.ibm.com>
-	 <aeoAlVEwzRUPrlVe@e129823.arm.com> <aeoRxWPyOHGJd+Jh@e129823.arm.com>
-	 <aeoWO2Cwo04YYu2l@earth.li>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 23 Apr 2026 09:43:43 -0400
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="jQENE99C"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4g1cvC4LV1z6n6;
+	Thu, 23 Apr 2026 15:51:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1776952279;
+	bh=67+/ZUiFOWBZnkLWi87ewXuVnG/JSmG+1D8A+1mICIY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jQENE99C1TKyn85WRhFNdat/Bj8ruzkfpcDAozHVVMFXiSM6lFh+4IpObQ8afjXml
+	 vqVwS7nBYFmuVA+mcLdhZxMMHm8ZNTBTdBcbC387liifjXX9Cv3wkmlBf/jFqQ/ZEU
+	 KcnKw5l1FArEaKKDuIbJrQBlbj7UVuQPMcup90qo=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4g1cvB4RMzzZSG;
+	Thu, 23 Apr 2026 15:51:18 +0200 (CEST)
+Date: Thu, 23 Apr 2026 15:51:17 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Paul Moore <paul@paul-moore.com>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Justin Suess <utilityemal77@gmail.com>, 
+	Lennart Poettering <lennart@poettering.net>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Shervin Oloumi <enlightened@google.com>, 
+	Tingmao Wang <m@maowtm.org>, kernel-team@cloudflare.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 10/11] samples/landlock: Add capability and
+ namespace restriction support
+Message-ID: <20260423.faiNgoo4yo5r@digikod.net>
+References: <20260312100444.2609563-1-mic@digikod.net>
+ <20260312100444.2609563-11-mic@digikod.net>
+ <20260422.cd00ad04e709@gnoack.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Proofpoint-GUID: VLk680LfBuWU4MevutP832_aGjpXtcSO
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDIzMDEzMiBTYWx0ZWRfX1SRS9jK1yggO
- X77pyH0zDuAwUvEo5aO+nYKfstVA3eSbLhWbqPYgKOevRXLGOe5S2U/gSU8MZfbcX6gpnQxVLD9
- 1OAvLBDiaZrXjSArGCv7VSfIfae7PWgrhLdt2cK9/zO2W9zApRoFZ8amAEPSNcPECUj8cNbMVmJ
- 0ePoPNmlz3hvXtCAtfLm0qF03F432IZsQH6jnOazTFXCn2XutmBjt3evzKFc7p9k89bxOlYb3Fw
- AY3Pw0w6cxtOoMB+hBEk4WySVSQNdjqO2ACFsO8R3OkOX9Nb+u/gtAbVFEqumANDg50ZXhgweGd
- kJRpSEyLEMxkkB3tNZpZ7PW2iri4LnfS1AMWKKHmUy9VAl4frVAZVN8WCjahQA1hhz+BZq4b7R3
- lQxB/emfoYcLCvspVPPseJ8lAsZv2/+O6b12a8cFw7NY9kFRmqtUvqh2SVAFgkbV/bXCXGEiLjz
- klORdMEueANPVYuURWw==
-X-Authority-Analysis: v=2.4 cv=C8LZDwP+ c=1 sm=1 tr=0 ts=69ea2215 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=U7nrCbtTmkRpXpFmAIza:22 a=7CQSdrXTAAAA:8
- a=4FW480EdQVPiPFE7CngA:9 a=QEXdDO2ut3YA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
-X-Proofpoint-ORIG-GUID: 2Vy1Wxh-GJVQo-0D4VxrtFTAzJHLMVrq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-23_03,2026-04-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 suspectscore=0 priorityscore=1501 malwarescore=0
- lowpriorityscore=0 clxscore=1015 bulkscore=0 impostorscore=0 spamscore=0
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604200000
- definitions=main-2604230132
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260422.cd00ad04e709@gnoack.org>
+X-Infomaniak-Routing: alpha
 
-On Thu, 2026-04-23 at 13:53 +0100, Jonathan McDowell wrote:
-> On Thu, Apr 23, 2026 at 01:34:13PM +0100, Yeoreum Yun wrote:
-> > > > On Thu, 2026-04-23 at 06:55 +0100, Yeoreum Yun wrote:
-> > > > > > On Wed, 2026-04-22 at 20:41 +0100, Yeoreum Yun wrote:
-> > > > > > > > Hi Mimi,
-> > > > > > > >=20
-> > > > > > > > > On Wed, 2026-04-22 at 17:24 +0100, Yeoreum Yun wrote:
-> > > > > > > > > > To generate the boot_aggregate log in the IMA subsystem=
- with TPM PCR values,
-> > > > > > > > > > the TPM driver must be built as built-in and
-> > > > > > > > > > must be probed before the IMA subsystem is initialized.
-> > > > > > > > > >=20
-> > > > > > > > > > However, when the TPM device operates over the FF-A pro=
-tocol using
-> > > > > > > > > > the CRB interface, probing fails and returns -EPROBE_DE=
-FER if
-> > > > > > > > > > the tpm_crb_ffa device =E2=80=94 an FF-A device that pr=
-ovides the communication
-> > > > > > > > > > interface to the tpm_crb driver =E2=80=94 has not yet b=
-een probed.
-> > > > > > > > > >=20
-> > > > > > > > > > To ensure the TPM device operating over the FF-A protoc=
-ol with
-> > > > > > > > > > the CRB interface is probed before IMA initialization,
-> > > > > > > > > > the following conditions must be met:
-> > > > > > > > > >=20
-> > > > > > > > > >    1. The corresponding ffa_device must be registered,
-> > > > > > > > > >       which is done via ffa_init().
-> > > > > > > > > >=20
-> > > > > > > > > >    2. The tpm_crb_driver must successfully probe this d=
-evice via
-> > > > > > > > > >       tpm_crb_ffa_init().
-> > > > > > > > > >=20
-> > > > > > > > > >    3. The tpm_crb driver using CRB over FF-A can then
-> > > > > > > > > >       be probed successfully. (See crb_acpi_add() and
-> > > > > > > > > >       tpm_crb_ffa_init() for reference.)
-> > > > > > > > > >=20
-> > > > > > > > > > Unfortunately, ffa_init(), tpm_crb_ffa_init(), and crb_=
-acpi_driver_init() are
-> > > > > > > > > > all registered with device_initcall, which means crb_ac=
-pi_driver_init() may
-> > > > > > > > > > be invoked before ffa_init() and tpm_crb_ffa_init() are=
- completed.
-> > > > > > > > > >=20
-> > > > > > > > > > When this occurs, probing the TPM device is deferred.
-> > > > > > > > > > However, the deferred probe can happen after the IMA su=
-bsystem
-> > > > > > > > > > has already been initialized, since IMA initialization =
-is performed
-> > > > > > > > > > during late_initcall, and deferred_probe_initcall() is =
-performed
-> > > > > > > > > > at the same level.
-> > > > > > > > > >=20
-> > > > > > > > > > To resolve this, call ima_init() again at late_inicall_=
-sync level
-> > > > > > > > > > so that let IMA not miss TPM PCR value when generating =
-boot_aggregate
-> > > > > > > > > > log though TPM device presents in the system.
-> > > > > > > > > >=20
-> > > > > > > > > > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> > > > > > > > >=20
-> > > > > > > > > A lot of change for just detecting whether ima_init() is =
-being called on
-> > > > > > > > > late_initcall or late_initcall_sync(), without any explan=
-ation for all the other
-> > > > > > > > > changes (e.g. ima_init_core).
-> > > > > > > > >=20
-> > > > > > > > > Please just limit the change to just calling ima_init() t=
-wice.
-> > > > > > > >=20
-> > > > > > > > My concern is that ima_update_policy_flags() will be called
-> > > > > > > > when ima_init() is deferred -- not initialised anything.
-> > > > > > > > though functionally, it might be okay however,
-> > > > > > > > I think ima_update_policy_flags() and notifier should work =
-after ima_init()
-> > > > > > > > works logically.
-> > > > > > > >=20
-> > > > > > > > This change I think not much quite a lot. just wrapper ima_=
-init() with
-> > > > > > > > ima_init_core() with some error handling.
-> > > > > > > >=20
-> > > > > > > > Am I missing something?
-> > > > > > >=20
-> > > > > > > Also, if we handle in ima_init() only, but it failed with oth=
-er reason,
-> > > > > > > we shouldn't call again ima_init() in the late_initcall_sync.
-> > > > > > >=20
-> > > > > > > To handle this, It wouldn't do in the ima_init() but we need =
-to handle
-> > > > > > > it by caller of ima_init().
-> > > > > >=20
-> > > > > > Only tpm_default_chip() is being called to set the ima_tpm_chip=
-.  On failure,
-> > > > > > instead of going into TPM-bypass mode, return immediately.  The=
-re are no calls
-> > > > > > to anything else.  Just call ima_init() a second time.
-> > > > >=20
-> > > > > I=E2=80=99m not fully convinced this is sufficient.
-> > > > >=20
-> > > > > What I meant is the case where ima_init() fails due to other
-> > > > > initialisation steps, not only tpm_default_chip() (e.g. ima_fs_in=
-it()).
-> > > >=20
-> > > > The purpose of THIS patch is to add late_initcall_sync, when the TP=
-M is not
-> > > > available at late_initcall.  This would be classified as a bug fix =
-and would be
-> > > > backported.  No other changes should be included in this patch.
-> > >=20
-> > > Okay.
-> > >=20
-> > > > >=20
-> > > > > I=E2=80=99d also like to ask again whether it is fine to call
-> > > > > ima_update_policy_flags() and keep the notifier registered in the
-> > > > > deferred TPM case. While this may be functionally acceptable, it =
-seems
-> > > > > logically questionable to do so when ima_init() has not completed=
-.
-> > > >=20
-> > > > Other than extending the TPM, IMA should behave exactly the same wh=
-ether there
-> > > > is a TPM or goes into TPM-bypass mode.
-> > > >=20
-> > > > >=20
-> > > > > There is also a possibility that a deferred case ultimately fails=
- (e.g.
-> > > > > deferred at late_initcall, but then failing at late_initcall_sync
-> > > > > for another reason, even while entering TPM bypass mode). In that=
- case,
-> > > > > it seems more appropriate to handle this state in the caller of
-> > > > > ima_init(), rather than inside ima_init() itself.
-> > > >=20
-> > > > If the TPM isn't found at late_initcall_sync(), then IMA should go =
-into TPM-
-> > > > bypass mode.  Please don't make any other changes to the existing I=
-MA behavior
-> > > > and hide it here behind the late_initcall_sync change.
-> > >=20
-> > > Okay. you're talking called ima_update_policy_flags() at late_initcal=
-l
-> > > wouldn't be not a problem even in case of late_initcall_sync's ima_in=
-it()
-> > > get failed with "TPM-bypass mode".
-> > >=20
-> > > I see then, I'll make a patch simpler then.
-> >=20
-> > But I think in case of below situation:
-> >  - late_initcall's first ima_init() is deferred.
-> >  - late_initcall_sync try again but failed and try again with
-> >    CONFIG_IMA_DEFAULT_HASH.
-> >=20
-> > I would like to sustain init_ima_core to reduce the same code repeat
-> > in late_initcall_sync.
->=20
-> I think what Mimi's proposing is:
->=20
-> If we're in late_initcall, and the TPM isn't available, return=20
-> immediately with an error (the EPROBE_DEFER?), don't do any init.
->=20
-> If we're in late_initcall_sync, either we're already initialised, so do=
-=20
-> return and nothing, or run through the entire flow, even if the TPM=20
-> isn't unavailable.
->=20
-> So ima_init() just needs to know a) if it's in the sync or non-sync mode=
-=20
-> and b) for the sync mode, if we've already done the init at
-> non-sync.
+On Wed, Apr 22, 2026 at 11:20:45PM +0200, Günther Noack wrote:
+> On Thu, Mar 12, 2026 at 11:04:43AM +0100, Mickaël Salaün wrote:
+> > Extend the sandboxer sample to demonstrate the new Landlock capability
+> > and namespace restriction features.  The LL_CAPS environment variable
+> > takes a colon-delimited list of allowed capability numbers (e.g. "18"
+> > for CAP_SYS_CHROOT).  The LL_NS variable takes a colon-delimited list of
+> > allowed namespace types by short name (e.g.  "user:uts:net").  Update
+> > LANDLOCK_ABI_LAST to 9 and add best-effort degradation for older
+> > kernels.
+> > 
+> > Allow creating user and UTS namespaces but deny network namespaces
+> > (works as an unprivileged user).  All capabilities are available
+> > (LL_CAPS is not set), but namespace creation is still restricted to the
+> > types listed in LL_NS.  The first command succeeds because user and UTS
+> > types are in the allowed set, and sets the hostname inside the new UTS
+> > namespace.  The second command fails because the network namespace type
+> > is not allowed by the LANDLOCK_PERM_NAMESPACE_ENTER rule:
+> > 
+> >   LL_FS_RO=/ LL_FS_RW=/proc LL_NS="user:uts" \
+> >     ./sandboxer /bin/sh -c \
+> >     "unshare --user --uts --map-root-user hostname sandbox \
+> >     && ! unshare --user --net true"
+> > 
+> > Allow only user namespace creation and CAP_SYS_CHROOT (18), denying all
+> > other capabilities and namespace types (works as an unprivileged user).
+> > An unprivileged process creates a user namespace (no capability
+> > required) and calls chroot inside it using the CAP_SYS_CHROOT granted
+> > within the new namespace:
+> > 
+> >   LL_FS_RO=/ LL_FS_RW="" LL_NS="user" LL_CAPS="18" \
+> >     ./sandboxer /bin/sh -c \
+> >     "unshare --user --keep-caps chroot / true"
+> > 
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Cc: Günther Noack <gnoack@google.com>
+> > Cc: Paul Moore <paul@paul-moore.com>
+> > Cc: Serge E. Hallyn <serge@hallyn.com>
+> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > ---
+> >  samples/landlock/sandboxer.c | 164 +++++++++++++++++++++++++++++++++--
+> >  1 file changed, 155 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+> > index 9f21088c0855..09c499703835 100644
+> > --- a/samples/landlock/sandboxer.c
+> > +++ b/samples/landlock/sandboxer.c
+> > @@ -14,6 +14,8 @@
+> >  #include <fcntl.h>
+> >  #include <linux/landlock.h>
+> >  #include <linux/socket.h>
+> > +#include <sched.h>
+> > +#include <stdbool.h>
+> >  #include <stddef.h>
+> >  #include <stdio.h>
+> >  #include <stdlib.h>
+> > @@ -22,12 +24,16 @@
+> >  #include <sys/stat.h>
+> >  #include <sys/syscall.h>
+> >  #include <unistd.h>
+> > -#include <stdbool.h>
+> >  
+> >  #if defined(__GLIBC__)
+> >  #include <linux/prctl.h>
+> >  #endif
+> >  
+> > +/* From include/linux/bits.h, not available in userspace. */
+> > +#ifndef BITS_PER_TYPE
+> > +#define BITS_PER_TYPE(type) (sizeof(type) * 8)
+> > +#endif
+> > +
+> >  #ifndef landlock_create_ruleset
+> >  static inline int
+> >  landlock_create_ruleset(const struct landlock_ruleset_attr *const attr,
+> > @@ -60,6 +66,8 @@ static inline int landlock_restrict_self(const int ruleset_fd,
+> >  #define ENV_FS_RW_NAME "LL_FS_RW"
+> >  #define ENV_TCP_BIND_NAME "LL_TCP_BIND"
+> >  #define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
+> > +#define ENV_CAPS_NAME "LL_CAPS"
+> > +#define ENV_NS_NAME "LL_NS"
+> >  #define ENV_SCOPED_NAME "LL_SCOPED"
+> >  #define ENV_FORCE_LOG_NAME "LL_FORCE_LOG"
+> >  #define ENV_DELIMITER ":"
+> > @@ -226,11 +234,125 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
+> >  	return ret;
+> >  }
+> >  
+> > +static __u64 str2ns(const char *const name)
+> > +{
+> > +	static const struct {
+> > +		const char *name;
+> > +		__u64 value;
+> > +	} ns_map[] = {
+> > +		/* clang-format off */
+> > +		{ "cgroup",	CLONE_NEWCGROUP },
+> > +		{ "ipc",	CLONE_NEWIPC },
+> > +		{ "mnt",	CLONE_NEWNS },
+> > +		{ "net",	CLONE_NEWNET },
+> > +		{ "pid",	CLONE_NEWPID },
+> > +		{ "time",	CLONE_NEWTIME },
+> > +		{ "user",	CLONE_NEWUSER },
+> > +		{ "uts",	CLONE_NEWUTS },
+> > +		/* clang-format on */
+> > +	};
+> > +	size_t i;
+> > +
+> > +	for (i = 0; i < sizeof(ns_map) / sizeof(ns_map[0]); i++) {
+> > +		if (strcmp(name, ns_map[i].name) == 0)
+> > +			return ns_map[i].value;
+> > +	}
+> > +	return 0;
+> > +}
+> > +
+> > +static int populate_ruleset_caps(const char *const env_var,
+> > +				 const int ruleset_fd)
+> > +{
+> > +	int ret = 1;
+> > +	char *env_cap_name, *env_cap_name_next, *strcap;
+> > +	struct landlock_capability_attr cap_attr = {
+> > +		.allowed_perm = LANDLOCK_PERM_CAPABILITY_USE,
+> > +	};
+> > +
+> > +	env_cap_name = getenv(env_var);
+> > +	if (!env_cap_name)
+> > +		return 0;
+> > +	env_cap_name = strdup(env_cap_name);
+> > +	unsetenv(env_var);
+> > +
+> > +	env_cap_name_next = env_cap_name;
+> > +	while ((strcap = strsep(&env_cap_name_next, ENV_DELIMITER))) {
+> > +		__u64 cap;
+> > +
+> > +		if (strcmp(strcap, "") == 0)
+> > +			continue;
+> > +
+> > +		if (str2num(strcap, &cap) ||
+> 
+> libcap has cap_from_name(3).  I believe we are linking with libcap
+> already to drop them before tests.  (I have not used this function
+> myself yet, but it sounds like it would address this case.)
 
-Thanks, Jonathan.  That is exactly what I'm suggesting.  Any other changes
-should not be included in this patch.  Since Yeoreum is not hearing me, fee=
-l
-free to post a patch.
+libcap is only used for kselftests, not this sample, but yes, let's use
+libcap here too.
 
-Mimi
+> 
+> 
+> > +		    cap >= BITS_PER_TYPE(cap_attr.capabilities)) {
+> > +			fprintf(stderr,
+> > +				"Failed to parse capability at \"%s\"\n",
+> > +				strcap);
+> > +			goto out_free_name;
+> > +		}
+> > +		cap_attr.capabilities = 1ULL << cap;
+> > +		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_CAPABILITY,
+> > +				      &cap_attr, 0)) {
+> > +			fprintf(stderr,
+> > +				"Failed to update the ruleset with capability \"%llu\": %s\n",
+> > +				(unsigned long long)cap, strerror(errno));
+> > +			goto out_free_name;
+> > +		}
+> > +	}
+> > +	ret = 0;
+> > +
+> > +out_free_name:
+> > +	free(env_cap_name);
+> > +	return ret;
+> > +}
+> > +
+> > +static int populate_ruleset_ns(const char *const env_var, const int ruleset_fd)
+> > +{
+> > +	int ret = 1;
+> > +	char *env_ns_name, *env_ns_name_next, *strns;
+> > +	struct landlock_namespace_attr ns_attr = {
+> > +		.allowed_perm = LANDLOCK_PERM_NAMESPACE_ENTER,
+> > +	};
+> > +
+> > +	env_ns_name = getenv(env_var);
+> > +	if (!env_ns_name)
+> > +		return 0;
+> > +	env_ns_name = strdup(env_ns_name);
+> > +	unsetenv(env_var);
+> > +
+> > +	env_ns_name_next = env_ns_name;
+> > +	while ((strns = strsep(&env_ns_name_next, ENV_DELIMITER))) {
+> > +		__u64 ns_type;
+> > +
+> > +		if (strcmp(strns, "") == 0)
+> > +			continue;
+> > +
+> > +		ns_type = str2ns(strns);
+> > +		if (!ns_type) {
+> > +			fprintf(stderr, "Unknown namespace type \"%s\"\n",
+> > +				strns);
+> > +			goto out_free_name;
+> > +		}
+> > +		ns_attr.namespace_types = ns_type;
+> > +		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NAMESPACE,
+> > +				      &ns_attr, 0)) {
+> > +			fprintf(stderr,
+> > +				"Failed to update the ruleset with namespace \"%s\": %s\n",
+> > +				strns, strerror(errno));
+> > +			goto out_free_name;
+> > +		}
+> > +	}
+> > +	ret = 0;
+> > +
+> > +out_free_name:
+> > +	free(env_ns_name);
+> > +	return ret;
+> > +}
+> > +
+> >  /* Returns true on error, false otherwise. */
+> >  static bool check_ruleset_scope(const char *const env_var,
+> >  				struct landlock_ruleset_attr *ruleset_attr)
+> >  {
+> > -	char *env_type_scope, *env_type_scope_next, *ipc_scoping_name;
+> > +	char *env_type_scope, *env_type_scope_next, *scope_name;
+> >  	bool error = false;
+> >  	bool abstract_scoping = false;
+> >  	bool signal_scoping = false;
+> > @@ -247,16 +369,14 @@ static bool check_ruleset_scope(const char *const env_var,
+> >  
+> >  	env_type_scope = strdup(env_type_scope);
+> >  	env_type_scope_next = env_type_scope;
+> > -	while ((ipc_scoping_name =
+> > -			strsep(&env_type_scope_next, ENV_DELIMITER))) {
+> > -		if (strcmp("a", ipc_scoping_name) == 0 && !abstract_scoping) {
+> > +	while ((scope_name = strsep(&env_type_scope_next, ENV_DELIMITER))) {
+> > +		if (strcmp("a", scope_name) == 0 && !abstract_scoping) {
+> >  			abstract_scoping = true;
+> > -		} else if (strcmp("s", ipc_scoping_name) == 0 &&
+> > -			   !signal_scoping) {
+> > +		} else if (strcmp("s", scope_name) == 0 && !signal_scoping) {
+> >  			signal_scoping = true;
+> >  		} else {
+> >  			fprintf(stderr, "Unknown or duplicate scope \"%s\"\n",
+> > -				ipc_scoping_name);
+> > +				scope_name);
+> >  			error = true;
+> >  			goto out_free_name;
+> >  		}
+> > @@ -299,7 +419,7 @@ static bool check_ruleset_scope(const char *const env_var,
+> >  
+> >  /* clang-format on */
+> >  
+> > -#define LANDLOCK_ABI_LAST 8
+> > +#define LANDLOCK_ABI_LAST 9
+> >  
+> >  #define XSTR(s) #s
+> >  #define STR(s) XSTR(s)
+> > @@ -322,6 +442,10 @@ static const char help[] =
+> >  	"means an empty list):\n"
+> >  	"* " ENV_TCP_BIND_NAME ": ports allowed to bind (server)\n"
+> >  	"* " ENV_TCP_CONNECT_NAME ": ports allowed to connect (client)\n"
+> > +	"* " ENV_CAPS_NAME ": capability numbers allowed to use "
+> > +	"(e.g. 10 for CAP_NET_BIND_SERVICE, 21 for CAP_SYS_ADMIN)\n"
+> > +	"* " ENV_NS_NAME ": namespace types allowed to enter "
+> > +	"(cgroup, ipc, mnt, net, pid, time, user, uts)\n"
+> >  	"* " ENV_SCOPED_NAME ": actions denied on the outside of the landlock domain\n"
+> >  	"  - \"a\" to restrict opening abstract unix sockets\n"
+> >  	"  - \"s\" to restrict sending signals\n"
+> > @@ -334,6 +458,8 @@ static const char help[] =
+> >  	ENV_FS_RW_NAME "=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
+> >  	ENV_TCP_BIND_NAME "=\"9418\" "
+> >  	ENV_TCP_CONNECT_NAME "=\"80:443\" "
+> > +	ENV_CAPS_NAME "=\"21\" "
+> > +	ENV_NS_NAME "=\"user:uts:net\" "
+> >  	ENV_SCOPED_NAME "=\"a:s\" "
+> >  	"%1$s bash -i\n"
+> >  	"\n"
+> > @@ -357,6 +483,8 @@ int main(const int argc, char *const argv[], char *const *const envp)
+> >  				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> >  		.scoped = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
+> >  			  LANDLOCK_SCOPE_SIGNAL,
+> > +		.handled_perm = LANDLOCK_PERM_CAPABILITY_USE |
+> > +				LANDLOCK_PERM_NAMESPACE_ENTER,
+> >  	};
+> >  	int supported_restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON;
+> >  	int set_restrict_flags = 0;
+> > @@ -438,6 +566,10 @@ int main(const int argc, char *const argv[], char *const *const envp)
+> >  			~LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON;
+> >  		__attribute__((fallthrough));
+> >  	case 7:
+> > +		__attribute__((fallthrough));
+> > +	case 8:
+> > +		/* Removes permission support for ABI < 9 */
+> > +		ruleset_attr.handled_perm = 0;
+> >  		/* Must be printed for any ABI < LANDLOCK_ABI_LAST. */
+> >  		fprintf(stderr,
+> >  			"Hint: You should update the running kernel "
+> > @@ -470,6 +602,14 @@ int main(const int argc, char *const argv[], char *const *const envp)
+> >  			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
+> >  	}
+> >  
+> > +	/* Removes capability handling if not set by a user. */
+> > +	if (!getenv(ENV_CAPS_NAME))
+> > +		ruleset_attr.handled_perm &= ~LANDLOCK_PERM_CAPABILITY_USE;
+> > +
+> > +	/* Removes namespace handling if not set by a user. */
+> > +	if (!getenv(ENV_NS_NAME))
+> > +		ruleset_attr.handled_perm &= ~LANDLOCK_PERM_NAMESPACE_ENTER;
+> > +
+> >  	if (check_ruleset_scope(ENV_SCOPED_NAME, &ruleset_attr))
+> >  		return 1;
+> >  
+> > @@ -514,6 +654,12 @@ int main(const int argc, char *const argv[], char *const *const envp)
+> >  		goto err_close_ruleset;
+> >  	}
+> >  
+> > +	if (populate_ruleset_caps(ENV_CAPS_NAME, ruleset_fd))
+> > +		goto err_close_ruleset;
+> > +
+> > +	if (populate_ruleset_ns(ENV_NS_NAME, ruleset_fd))
+> > +		goto err_close_ruleset;
+> > +
+> >  	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
+> >  		perror("Failed to restrict privileges");
+> >  		goto err_close_ruleset;
+> > -- 
+> > 2.53.0
+> > 
+> 
