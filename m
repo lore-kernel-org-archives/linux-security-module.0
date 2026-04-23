@@ -1,359 +1,262 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A66241139;
-	Thu, 23 Apr 2026 18:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF7D3AD514
+	for <linux-security-module@vger.kernel.org>; Thu, 23 Apr 2026 18:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776967992; cv=none; b=cVuOBGeezhNp7RvgvD57GRla37W/ZRLI6YCI6Ohzhv0ePfUKwuamQCOQOhz0cLMDDOg0jVaBtnRe3FjWGZ9kAhcuck4PQzLFCpJAD7ACzgAji+WsHqCbCyQrTZRJamauabVMeLFZ8LdSw1BJ21zVXY7lBd4OD+YDnEUvmI9w9+M=
+	t=1776969472; cv=none; b=iThEJeNx+seULpW3TmJIZJmlHDFs1nSubQQW1i8ki2bdYA5EFISPEqLMVKuJg3oBJZ9GOWt3djgOMvJzxXtJCNwYmtpbkjAxHaAcLoK51EYPUUqDxEmM0JMJJs/IuwCl1qWgHBN7fITcztqG7D7fEJnYw72cO50SkfzoOH2wVCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776967992; c=relaxed/simple;
-	bh=qN2ImR2acmSpGyN9irv3oH0HwA7Hv0qbR0ljRSiejpw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aGMow3Kc6R991HLx+ID2qUMNGn9uL9MHkN4axaj/T+yJ8RFsH8LxRKZ/6FXLyAg82OD1IfNgeRbFB2V2MyG+hRKh2BFGu/bsNf90C//4vdfAs+3GsF/B5UpSlWfakbrgxE2B3eDAzl3o3McN+l+pN27Mk/s5kxRu6GDslu8RUGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=O/FFKBr3; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1776969472; c=relaxed/simple;
+	bh=pLogyO6U0JGk6ooB0P4t5Xcvy9poB88Kwj5skPGIyDY=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Subject:
+	 References:In-Reply-To; b=bdUhKBt89odIaKmwn0iQYChx1UGM8d3SFD/J2AC6BoOiIIyKbjajSCyEz2IrebjqR4IAXXSuDTwO//Um1Z1nDzEnJiGc2UC/JMkxmqXRj6wEtDYm5D3sU+WJK2u8FbRFBLLYl5j3TQgDblPlpPfGKR5JyEqQuDZ0yXjmiLrV+CM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SYtzxNgy; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="O/FFKBr3"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A0D761BB2;
-	Thu, 23 Apr 2026 11:13:03 -0700 (PDT)
-Received: from e129823.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F3D73F641;
-	Thu, 23 Apr 2026 11:13:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1776967989; bh=qN2ImR2acmSpGyN9irv3oH0HwA7Hv0qbR0ljRSiejpw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O/FFKBr3mDdwVWQiw0ARWF1XLS6DdW70wJAdJKL+QOfcZpLp9vQTPy1Z/Yh09LMQB
-	 FoyBVp76npmWOcNWcjrpnMQz7jlWpLAC/F+A0enlRd6yTdBzKIELTcpakNc2+Vu7xh
-	 bGrRgOCuDe5o1yWXKyXIcF8h4Hi17R1DlXOgjfoI=
-Date: Thu, 23 Apr 2026 19:13:03 +0100
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Jonathan McDowell <noodles@earth.li>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com, jarkko@kernel.org, jgg@ziepe.ca,
-	sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org,
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org, noodles@meta.com,
-	sebastianene@google.com
-Subject: Re: [RFC PATCH v2 1/4] security: ima: call ima_init() again at
- late_initcall_sync for defered TPM
-Message-ID: <aephL3MzYoqFGaT5@e129823.arm.com>
-References: <aem0SSQuE1e3pGOS@e129823.arm.com>
- <56a8aab50a3b5ce0a345fc2079fb2abc7d0f1b23.camel@linux.ibm.com>
- <aeoAlVEwzRUPrlVe@e129823.arm.com>
- <aeoRxWPyOHGJd+Jh@e129823.arm.com>
- <aeoWO2Cwo04YYu2l@earth.li>
- <bd908e28298d968740d03c97bc7e441de188b7b4.camel@linux.ibm.com>
- <aeokwrC86WI7uT+K@e129823.arm.com>
- <aeomlp3I0eVE5mce@earth.li>
- <aeotq8nPVu4wvEx5@e129823.arm.com>
- <e4e242ae5533d5762a3647186a178764881bf9ff.camel@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SYtzxNgy"
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-8acb7f2586bso73469326d6.1
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Apr 2026 11:37:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1776969467; x=1777574267; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7WuJ9ZclNJckM0eVZPQcmoslgmsrrdaxBWMSl5N+wUo=;
+        b=SYtzxNgyK/MxdkMZ22OgKhaWjtmTyZtOUJx+VQxElxF7Bl5ijvJoQ+2TCUPMO7NBYd
+         xuZXeh48GikngxwIn9xWdxroCm/fWosOCCF8VDtYnsASvIgUzxP43a6KwYqOTPJQL1af
+         N2eK3fr9AWE7WVjP1+c+b+pCCX5ySXQ3nYRV+6GullDe6D32z/fh0/wEmvjPj3YgsR84
+         /v4D8u03VkmmFFGuUp4Xmk78E5rInidiz8uZxi6RXYFkudne/hQVxp6uveKgiQQ7ErdE
+         fq8LF18vHseYhYZ5ilamchLPtMEyQE8DL2uG5ZBU+jJxm4202j4/xHzD3HowBiVXgSU+
+         hQQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776969467; x=1777574267;
+        h=in-reply-to:references:subject:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7WuJ9ZclNJckM0eVZPQcmoslgmsrrdaxBWMSl5N+wUo=;
+        b=Cbi8UQP9OlZdIanUbRx8w3mSj7B8y12v85k9q2DDBpDN/xtmTCp1lS4Zqcz1dAzeGW
+         S5ZV3Mt1Hc4ls2gSwM3ZMv8nKpz1L4ZxwF//pSZCutNKsbec8O6+htMHfVJQ0x/L+NK+
+         r7a9s3DSUQ8U1NHpqVidYByH8AT2R/ZfaeLGRbZYXvsm6xipALt1vsH9+jBjFV2fy1vU
+         m0wpHG0Yc1rkWogsbGcZxJsGs7X4zG80hcgxlR3ABZ6s9+rTUleO57gZLUX3Hi45luuw
+         lPtYkIiWYhVy550XrcAEOsfqJ4AAInED+e2/MwqBgALXTq5HKPWMWOAtyzbYTpclo+UR
+         bJWg==
+X-Forwarded-Encrypted: i=1; AFNElJ8ogNPWRK6Wdd4twv0uOIeiglaCXxwAHnnNZaaQ/ewUhpn1leCz2fbbz+3Tl4GBd1/rNLp5ERkgUSg+p2DObb3YiLw0EQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjDhLiG/Q47F+rgKpjJluKCQAcVLp1vlxKV2VoP55/tlM8A6+Q
+	ThrrUgfbkPazDlb8WS6agKC+Ye8UStgDWs9FgeJsSQcvLY1WFSmcSIJVk3LPjNEgEQ==
+X-Gm-Gg: AeBDievT4O5CHlUHPH84mea+4seJt1bba/YJ2Juz4/cZsewuhbW1oA6tUqDgevK3QKK
+	jLQ+/6xb6GJXqkb6yHC1BQntIDqxtWCvpamRuu7mccu4jUvgCP+ohBloWnGZ3E016e4G3oN5I8p
+	D6913cPIrbcNkeG+8L71MFk6cQogvw3EABIHn4JNEArUMpcGsy+esm63qLsmWQOe6n1cSmb/SQ5
+	zw8A6thgeIk6J8qxvsdoz+YU0waKXb9fP7upPDtggVQxJ55OpI7Tu6sZrKbrRF3Q7oTv/JBC0Zf
+	dvaSJzhnrJx9XdG4aZenhI0TOio444tVeCTyE3l4o/vB/gf9Y1KclUfbdlSQBMZTLW3tEPPU2ik
+	OgXZX+WbIjhSfYHhSfjy0xPnBrMqkfE/gIhzzJzjEZ8d0Lesf5ECUACfe4HGlye3qmopWtQyWKJ
+	qrD7lEPDV1MK/E2yGwNmsmQLhXhfMGro9fmW/UQpRlCr0Q0XMJeZw0K5ri7G7bR8fsRg/l0hUdV
+	X1OHI4=
+X-Received: by 2002:a05:6214:3c8c:b0:8b1:f069:3fc6 with SMTP id 6a1803df08f44-8b1f06946f6mr255771196d6.40.1776969466835;
+        Thu, 23 Apr 2026 11:37:46 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8b02aea5ebcsm165040706d6.44.2026.04.23.11.37.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Apr 2026 11:37:45 -0700 (PDT)
+Date: Thu, 23 Apr 2026 14:37:45 -0400
+Message-ID: <7e924e82fbdfb5091f0436fe9ecac2b8@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e4e242ae5533d5762a3647186a178764881bf9ff.camel@linux.ibm.com>
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20260423_1403/pstg-lib:20260423_1403/pstg-pwork:20260423_1403
+From: Paul Moore <paul@paul-moore.com>
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, "Blaise Boscaccy" <bboscaccy@linux.microsoft.com>, "Jonathan Corbet" <corbet@lwn.net>, "" , "James Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, "Andrew Morton" <akpm@linux-foundation.org>, James.Bottomley@HansenPartnership.com, dhowells@redhat.com, "Fan Wu" <wufan@kernel.org>, "Ryan Foster" <foster.ryan.r@gmail.com>, "Randy Dunlap" <rdunlap@infradead.org>, linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, "Song Liu" <song@kernel.org>
+Subject: Re: [PATCH v5 6/10] security: Hornet LSM
+References: <20260420212653.438685-7-bboscaccy@linux.microsoft.com>
+In-Reply-To: <20260420212653.438685-7-bboscaccy@linux.microsoft.com>
 
-> On Thu, 2026-04-23 at 15:33 +0100, Yeoreum Yun wrote:
-> > Hi Jonathan,
-> >
-> > > * # Be careful, this email looks suspicious; * Out of Character: The sender is exhibiting a significant deviation from their usual behavior, this may indicate that their account has been compromised. Be extra cautious before opening links or attachments. *
-> > > On Thu, Apr 23, 2026 at 02:55:14PM +0100, Yeoreum Yun wrote:
-> > > > > On Thu, 2026-04-23 at 13:53 +0100, Jonathan McDowell wrote:
-> > > > > > On Thu, Apr 23, 2026 at 01:34:13PM +0100, Yeoreum Yun wrote:
-> > > > > > > > > On Thu, 2026-04-23 at 06:55 +0100, Yeoreum Yun wrote:
-> > > > > > > > > > > On Wed, 2026-04-22 at 20:41 +0100, Yeoreum Yun wrote:
-> > > > > > > > > > > > > Hi Mimi,
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > > On Wed, 2026-04-22 at 17:24 +0100, Yeoreum Yun wrote:
-> > > > > > > > > > > > > > > To generate the boot_aggregate log in the IMA subsystem with TPM PCR values,
-> > > > > > > > > > > > > > > the TPM driver must be built as built-in and
-> > > > > > > > > > > > > > > must be probed before the IMA subsystem is initialized.
-> > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > > However, when the TPM device operates over the FF-A protocol using
-> > > > > > > > > > > > > > > the CRB interface, probing fails and returns -EPROBE_DEFER if
-> > > > > > > > > > > > > > > the tpm_crb_ffa device — an FF-A device that provides the communication
-> > > > > > > > > > > > > > > interface to the tpm_crb driver — has not yet been probed.
-> > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > > To ensure the TPM device operating over the FF-A protocol with
-> > > > > > > > > > > > > > > the CRB interface is probed before IMA initialization,
-> > > > > > > > > > > > > > > the following conditions must be met:
-> > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > >    1. The corresponding ffa_device must be registered,
-> > > > > > > > > > > > > > >       which is done via ffa_init().
-> > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > >    2. The tpm_crb_driver must successfully probe this device via
-> > > > > > > > > > > > > > >       tpm_crb_ffa_init().
-> > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > >    3. The tpm_crb driver using CRB over FF-A can then
-> > > > > > > > > > > > > > >       be probed successfully. (See crb_acpi_add() and
-> > > > > > > > > > > > > > >       tpm_crb_ffa_init() for reference.)
-> > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > > Unfortunately, ffa_init(), tpm_crb_ffa_init(), and crb_acpi_driver_init() are
-> > > > > > > > > > > > > > > all registered with device_initcall, which means crb_acpi_driver_init() may
-> > > > > > > > > > > > > > > be invoked before ffa_init() and tpm_crb_ffa_init() are completed.
-> > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > > When this occurs, probing the TPM device is deferred.
-> > > > > > > > > > > > > > > However, the deferred probe can happen after the IMA subsystem
-> > > > > > > > > > > > > > > has already been initialized, since IMA initialization is performed
-> > > > > > > > > > > > > > > during late_initcall, and deferred_probe_initcall() is performed
-> > > > > > > > > > > > > > > at the same level.
-> > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > > To resolve this, call ima_init() again at late_inicall_sync level
-> > > > > > > > > > > > > > > so that let IMA not miss TPM PCR value when generating boot_aggregate
-> > > > > > > > > > > > > > > log though TPM device presents in the system.
-> > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> > > > > > > > > > > > > >
-> > > > > > > > > > > > > > A lot of change for just detecting whether ima_init() is being called on
-> > > > > > > > > > > > > > late_initcall or late_initcall_sync(), without any explanation for all the other
-> > > > > > > > > > > > > > changes (e.g. ima_init_core).
-> > > > > > > > > > > > > >
-> > > > > > > > > > > > > > Please just limit the change to just calling ima_init() twice.
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > My concern is that ima_update_policy_flags() will be called
-> > > > > > > > > > > > > when ima_init() is deferred -- not initialised anything.
-> > > > > > > > > > > > > though functionally, it might be okay however,
-> > > > > > > > > > > > > I think ima_update_policy_flags() and notifier should work after ima_init()
-> > > > > > > > > > > > > works logically.
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > This change I think not much quite a lot. just wrapper ima_init() with
-> > > > > > > > > > > > > ima_init_core() with some error handling.
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > Am I missing something?
-> > > > > > > > > > > >
-> > > > > > > > > > > > Also, if we handle in ima_init() only, but it failed with other reason,
-> > > > > > > > > > > > we shouldn't call again ima_init() in the late_initcall_sync.
-> > > > > > > > > > > >
-> > > > > > > > > > > > To handle this, It wouldn't do in the ima_init() but we need to handle
-> > > > > > > > > > > > it by caller of ima_init().
-> > > > > > > > > > >
-> > > > > > > > > > > Only tpm_default_chip() is being called to set the ima_tpm_chip.  On failure,
-> > > > > > > > > > > instead of going into TPM-bypass mode, return immediately.  There are no calls
-> > > > > > > > > > > to anything else.  Just call ima_init() a second time.
-> > > > > > > > > >
-> > > > > > > > > > I’m not fully convinced this is sufficient.
-> > > > > > > > > >
-> > > > > > > > > > What I meant is the case where ima_init() fails due to other
-> > > > > > > > > > initialisation steps, not only tpm_default_chip() (e.g. ima_fs_init()).
-> > > > > > > > >
-> > > > > > > > > The purpose of THIS patch is to add late_initcall_sync, when the TPM is not
-> > > > > > > > > available at late_initcall.  This would be classified as a bug fix and would be
-> > > > > > > > > backported.  No other changes should be included in this patch.
-> > > > > > > >
-> > > > > > > > Okay.
-> > > > > > > >
-> > > > > > > > > >
-> > > > > > > > > > I’d also like to ask again whether it is fine to call
-> > > > > > > > > > ima_update_policy_flags() and keep the notifier registered in the
-> > > > > > > > > > deferred TPM case. While this may be functionally acceptable, it seems
-> > > > > > > > > > logically questionable to do so when ima_init() has not completed.
-> > > > > > > > >
-> > > > > > > > > Other than extending the TPM, IMA should behave exactly the same whether there
-> > > > > > > > > is a TPM or goes into TPM-bypass mode.
-> > > > > > > > >
-> > > > > > > > > >
-> > > > > > > > > > There is also a possibility that a deferred case ultimately fails (e.g.
-> > > > > > > > > > deferred at late_initcall, but then failing at late_initcall_sync
-> > > > > > > > > > for another reason, even while entering TPM bypass mode). In that case,
-> > > > > > > > > > it seems more appropriate to handle this state in the caller of
-> > > > > > > > > > ima_init(), rather than inside ima_init() itself.
-> > > > > > > > >
-> > > > > > > > > If the TPM isn't found at late_initcall_sync(), then IMA should go into TPM-
-> > > > > > > > > bypass mode.  Please don't make any other changes to the existing IMA behavior
-> > > > > > > > > and hide it here behind the late_initcall_sync change.
-> > > > > > > >
-> > > > > > > > Okay. you're talking called ima_update_policy_flags() at late_initcall
-> > > > > > > > wouldn't be not a problem even in case of late_initcall_sync's ima_init()
-> > > > > > > > get failed with "TPM-bypass mode".
-> > > > > > > >
-> > > > > > > > I see then, I'll make a patch simpler then.
-> > > > > > >
-> > > > > > > But I think in case of below situation:
-> > > > > > >  - late_initcall's first ima_init() is deferred.
-> > > > > > >  - late_initcall_sync try again but failed and try again with
-> > > > > > >    CONFIG_IMA_DEFAULT_HASH.
-> > > > > > >
-> > > > > > > I would like to sustain init_ima_core to reduce the same code repeat
-> > > > > > > in late_initcall_sync.
-> > > > > >
-> > > > > > I think what Mimi's proposing is:
-> > > > > >
-> > > > > > If we're in late_initcall, and the TPM isn't available, return
-> > > > > > immediately with an error (the EPROBE_DEFER?), don't do any init.
-> > > > > >
-> > > > > > If we're in late_initcall_sync, either we're already initialised, so do
-> > > > > > return and nothing, or run through the entire flow, even if the TPM
-> > > > > > isn't unavailable.
-> > > > > >
-> > > > > > So ima_init() just needs to know a) if it's in the sync or non-sync mode
-> > > > > > and b) for the sync mode, if we've already done the init at
-> > > > > > non-sync.
-> > > > >
-> > > > > Thanks, Jonathan.  That is exactly what I'm suggesting.  Any other changes
-> > > > > should not be included in this patch.  Since Yeoreum is not hearing me, feel
-> > > > > free to post a patch.
-> > > >
-> > > > I see. so what you need to is this only
-> > > > If it looks good to you. I'll send it at v3.
-> > >
-> > > FWIW, I pulled the tpm_default_chip check out a level to account for the
-> > > extra init you mentioned, and have the following (completely untested or
-> > > compiled, but gives the approach):
-> > >
-> > > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> > > index d48bf0ad26f4..88fe105b7f00 100644
-> > > --- a/include/linux/lsm_hooks.h
-> > > +++ b/include/linux/lsm_hooks.h
-> > > @@ -166,6 +166,7 @@ enum lsm_order {
-> > >   * @initcall_fs: LSM callback for fs_initcall setup, optional
-> > >   * @initcall_device: LSM callback for device_initcall() setup, optional
-> > >   * @initcall_late: LSM callback for late_initcall() setup, optional
-> > > + * @initcall_late_sync: LSM callback for late_initcall_sync() setup, optional
-> > >   */
-> > >  struct lsm_info {
-> > >  	const struct lsm_id *id;
-> > > @@ -181,6 +182,7 @@ struct lsm_info {
-> > >  	int (*initcall_fs)(void);
-> > >  	int (*initcall_device)(void);
-> > >  	int (*initcall_late)(void);
-> > > +	int (*initcall_late_sync)(void);
-> > >  };
-> > >  #define DEFINE_LSM(lsm)							\
-> > > diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-> > > index a2f34f2d8ad7..a60dfb8316d8 100644
-> > > --- a/security/integrity/ima/ima_init.c
-> > > +++ b/security/integrity/ima/ima_init.c
-> > > @@ -119,10 +119,6 @@ int __init ima_init(void)
-> > >  {
-> > >  	int rc;
-> > > -	ima_tpm_chip = tpm_default_chip();
-> > > -	if (!ima_tpm_chip)
-> > > -		pr_info("No TPM chip found, activating TPM-bypass!\n");
-> > > -
-> > >  	rc = integrity_init_keyring(INTEGRITY_KEYRING_IMA);
-> > >  	if (rc)
-> > >  		return rc;
-> > > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> > > index 1d6229b156fb..b60a85fa803a 100644
-> > > --- a/security/integrity/ima/ima_main.c
-> > > +++ b/security/integrity/ima/ima_main.c
-> > > @@ -1237,7 +1237,7 @@ static int ima_kernel_module_request(char *kmod_name)
-> > >  #endif /* CONFIG_INTEGRITY_ASYMMETRIC_KEYS */
-> > > -static int __init init_ima(void)
-> > > +static int __init init_ima(bool sync)
-> > >  {
-> > >  	int error;
-> > > @@ -1247,6 +1247,19 @@ static int __init init_ima(void)
-> > >  		return 0;
-> > >  	}
-> > > +	/* If we found the TPM during our first attempt, nothing further to do */
-> > > +	if (sync && ima_tpm_chip)
-> > > +		return 0;
-> > > +
-> > > +	ima_tpm_chip = tpm_default_chip();
-> > > +	if (!ima_tpm_chip && !sync) {
-> > > +		pr_debug("TPM not available, will try later\n");
-> > > +		return -EPROBE_DEFER;
-> > > +	}
-> > > +
-> > > +	if (!ima_tpm_chip)
-> > > +		pr_info("No TPM chip found, activating TPM-bypass!\n");
-> > > +
-> > >  	ima_appraise_parse_cmdline();
-> > >  	ima_init_template_list();
-> > >  	hash_setup(CONFIG_IMA_DEFAULT_HASH);
-> > > @@ -1274,6 +1287,16 @@ static int __init init_ima(void)
-> > >  	return error;
-> > >  }
-> > > +static int __init init_ima_late(void)
-> > > +{
-> > > +	return init_ima(false);
-> > > +}
-> > > +
-> > > +static int __init init_ima_late_sync(void)
-> > > +{
-> > > +	return init_ima(true);
-> > > +}
-> > > +
-> > >  static struct security_hook_list ima_hooks[] __ro_after_init = {
-> > >  	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
-> > >  	LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
-> > > @@ -1319,6 +1342,7 @@ DEFINE_LSM(ima) = {
-> > >  	.init = init_ima_lsm,
-> > >  	.order = LSM_ORDER_LAST,
-> > >  	.blobs = &ima_blob_sizes,
-> > > -	/* Start IMA after the TPM is available */
-> > > -	.initcall_late = init_ima,
-> > > +	/* Ensure we start IMA after the TPM is available */
-> > > +	.initcall_late = init_ima_late,
-> > > +	.initcall_late_sync = init_ima_late_sync,
-> > >  };
-> > > diff --git a/security/lsm_init.c b/security/lsm_init.c
-> > > index 573e2a7250c4..4e5c59beb82a 100644
-> > > --- a/security/lsm_init.c
-> > > +++ b/security/lsm_init.c
-> > > @@ -547,13 +547,22 @@ device_initcall(security_initcall_device);
-> > >   * security_initcall_late - Run the LSM late initcalls
-> > >   */
-> > >  static int __init security_initcall_late(void)
-> > > +{
-> > > +	return lsm_initcall(late);
-> > > +}
-> > > +late_initcall(security_initcall_late);
-> > > +
-> > > +/**
-> > > + * security_initcall_late_sync - Run the LSM late initcalls sync
-> > > + */
-> > > +static int __init security_initcall_late_sync(void)
-> > >  {
-> > >  	int rc;
-> > > -	rc = lsm_initcall(late);
-> > > +	rc = lsm_initcall(late_sync);
-> > >  	lsm_pr_dbg("all enabled LSMs fully activated\n");
-> > >  	call_blocking_lsm_notifier(LSM_STARTED_ALL, NULL);
-> > >  	return rc;
-> > >  }
-> > > -late_initcall(security_initcall_late);
-> > > +late_initcall_sync(security_initcall_late_sync);
-> >
-> > I'm fine this. but are we talking about "ima_init()" not "init_ima()"?
->
-> Having two functions named ima_init() and init_ima() is really confusing.  At
-> least with this patch, init_ima() will be replaced with init_ima_late() and
-> init_ima_sync().
->
-> > Because of this, I've fixuated and make a long stupid speaking myself.
->
-> The commit 0e0546eabcd6 ("firmware: arm_ffa: Change initcall level of ffa_init()
-> to rootfs_initcall") patch description was really well written.  I'm really sad
-> that it needs to be reverted.
->
-> The TPM not being initialized before IMA, has been an issue for a really long
-> time.  Hopefully this patch will safely fix it, not only for you, but for others
-> as well.
->
-> >
-> > If this seems good to Mimi, I don't care who send it.
-> > But If you're going to send this, could you includes 2 and 3 too?
->
-> Once this patch is ready, we can create a topic branch to coordinate upstreaming
-> the remaining patches.
+On Apr 20, 2026 Blaise Boscaccy <bboscaccy@linux.microsoft.com> wrote:
+> 
+> This adds the Hornet Linux Security Module which provides enhanced
+> signature verification and data validation for eBPF programs. This
+> allows users to continue to maintain an invariant that all code
+> running inside of the kernel has actually been signed and verified, by
+> the kernel.
+> 
+> This effort builds upon the currently excepted upstream solution. It
+> further hardens it by providing deterministic, in-kernel checking of
+> map hashes to solidify auditing along with preventing TOCTOU attacks
+> against lskel map hashes.
+> 
+> Target map hashes are passed in via PKCS#7 signed attributes. Hornet
+> determines the extent which the eBFP program is signed and defers to
+> other LSMs for policy decisions.
+> 
+> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+> Nacked-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+> ---
+>  Documentation/admin-guide/LSM/Hornet.rst | 321 +++++++++++++++++++++
+>  Documentation/admin-guide/LSM/index.rst  |   1 +
+>  MAINTAINERS                              |   9 +
+>  include/linux/oid_registry.h             |   3 +
+>  include/uapi/linux/lsm.h                 |   1 +
+>  security/Kconfig                         |   3 +-
+>  security/Makefile                        |   1 +
+>  security/hornet/Kconfig                  |  11 +
+>  security/hornet/Makefile                 |   7 +
+>  security/hornet/hornet.asn1              |  13 +
+>  security/hornet/hornet_lsm.c             | 346 +++++++++++++++++++++++
+>  11 files changed, 715 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/admin-guide/LSM/Hornet.rst
+>  create mode 100644 security/hornet/Kconfig
+>  create mode 100644 security/hornet/Makefile
+>  create mode 100644 security/hornet/hornet.asn1
+>  create mode 100644 security/hornet/hornet_lsm.c
 
-Sounds good. Once the patch is posted, I’ll review it as well.
-Sorry again for the noise, and thanks for your patience ;)
+While I think this is looking pretty reasonable, I think Fan had some
+feedback which merits a reply.  I also spotted some references to the
+secondary keyring in the docs which need to be updated (below).
 
+> diff --git a/Documentation/admin-guide/LSM/Hornet.rst b/Documentation/admin-guide/LSM/Hornet.rst
+> new file mode 100644
+> index 0000000000000..af5e9cd9d83a8
+> --- /dev/null
+> +++ b/Documentation/admin-guide/LSM/Hornet.rst
+> @@ -0,0 +1,321 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +======
+> +Hornet
+> +======
+> +
+> +Hornet is a Linux Security Module that provides extensible signature
+> +verification for eBPF programs. This is selectable at build-time with
+> +``CONFIG_SECURITY_HORNET``.
+> +
+> +Overview
+> +========
+> +
+> +Hornet addresses concerns from users who require strict audit trails and
+> +verification guarantees for eBPF programs, especially in
+> +security-sensitive environments. Many production systems need assurance
+> +that only authorized, unmodified eBPF programs are loaded into the
+> +kernel. Hornet provides this assurance through cryptographic signature
+> +verification.
+> +
+> +When an eBPF program is loaded via the ``bpf()`` syscall, Hornet
+> +verifies a PKCS#7 signature attached to the program instructions. The
+> +signature is checked against the kernel's secondary keyring using the
+
+This version now supports using the keyring specified in the bpf_attr
+union (presumably for maximum compatibility with KP's signature scheme),
+which is good, but the docs need to be updated.
+
+See below, but I would probably make a note that LSMs providing
+enforcement of BPF signatures will likely want to check what keyring was
+used to verify the signature, e.g. a trusted keyring vs a user supplied
+keyring.
+
+> +existing kernel cryptographic infrastructure. In addition to signing the
+> +program bytecode, Hornet supports signing SHA-256 hashes of associated
+> +BPF maps, enabling integrity verification of map contents at load time
+> +and at runtime.
+> +
+> +After verification, Hornet classifies the program into one of the
+> +following integrity states and passes the result to a downstream LSM hook
+> +(``bpf_prog_load_post_integrity``), allowing other security modules to
+> +make policy decisions based on the verification outcome:
+> +
+> +``LSM_INT_VERDICT_OK``
+> +  The program signature and all map hashes verified successfully.
+> +
+> +``LSM_INT_VERDICT_UNSIGNED``
+> +  No signature was provided with the program.
+> +
+> +``LSM_INT_VERDICT_PARTIALSIG``
+> +  The program signature verified, but the signature did not contain
+> +  hornet map hash data.
+> +
+> +``LSM_INT_VERDICT_UNKNOWNKEY``
+> +  The signing certificate is not trusted in the secondary keyring,
+
+Another secondary keyring mention.
+
+> +``LSM_INT_VERDICT_FAULT``
+> +  A system error occured during verification.
+> +
+> +``LSM_INT_VERDICT_UNEXPECTED``
+> +  An unexpected map hash value was encountered.
+> +
+> +``LSM_INT_VERDICT_BADSIG``
+> +  The signature or a map hash failed verification.
+> +
+> +Hornet itself does not enforce a policy on whether unsigned or partially
+> +signed programs should be rejected. It delegates that decision to
+> +downstream LSMs via the ``bpf_prog_load_post_integrity`` hook, making it
+> +a composable building block in a larger security architecture.
+
+This might be a good place to document that in addition to the verdicts
+described above, LSMs providing enforcement should also consider the
+keyring used for verification.
+
+> +Known Limitations
+> +=================
+> +
+> +- Hornet requires programs to use :doc:`light skeletons
+> +  </bpf/libbpf/libbpf_naming_convention>` (lskels) for the signing
+> +  workflow, as the tooling operates on lskel-generated headers.
+> +
+> +- A maximum of 64 maps per program can be tracked for hash
+> +  verification.
+> +
+> +- Map hash verification requires the maps to be frozen before loading.
+> +  Maps that are not frozen at load time will cause verification to fail
+> +  when their hashes are included in the signature.
+> +
+> +- Hornet relies on the kernel's secondary keyring
+> +  (``VERIFY_USE_SECONDARY_KEYRING``) for certificate trust. Keys must
+> +  be provisioned into this keyring before programs can be verified.
+
+... another spot.
+
+> +- The only hashing algorithm available is SHA256 due to it be hardcoded
+> +  in the bpf subsystem.
+
+...
+
+> +Signature Verification Flow
+> +---------------------------
+> +
+> +The following describes what happens when a userspace program calls
+> +``bpf(BPF_PROG_LOAD, ...)`` with a signature attached:
+> +
+> +1. The ``bpf_prog_load_integrity`` LSM hook is invoked.
+> +
+> +2. Hornet reads the signature from the userspace buffer specified by
+> +   ``attr->signature`` (with length ``attr->signature_size``).
+> +
+> +3. The PKCS#7 signature is verified against the program instructions
+> +   using ``verify_pkcs7_signature()`` with the kernel's secondary
+> +   keyring.
+
+I believe this is the last mention of the secondary keyring.
+
+> +4. The PKCS#7 message is parsed and its trust chain is validated via
+> +   ``validate_pkcs7_trust()``.
+> +
+> +5. Hornet extracts the authenticated attribute identified by
+> +   ``OID_hornet_data`` (OID ``2.25.316487325684022475439036912669789383960``)
+> +   from the PKCS#7 message. This attribute contains an ASN.1-encoded set
+> +   of map index/hash pairs.
+> +
+> +6. For each map hash entry, Hornet retrieves the corresponding BPF map
+> +   via its file descriptor, confirms it is frozen, computes its SHA-256
+> +   hash, and compares it against the signed hash.
+> +
+> +7. The resulting integrity verdict is passed to the
+> +   ``bpf_prog_load_post_integrity`` hook so that downstream LSMs can
+> +   enforce policy.
 
 --
-Sincerely,
-Yeoreum Yun
+paul-moore.com
