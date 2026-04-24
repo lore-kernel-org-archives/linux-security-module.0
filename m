@@ -1,149 +1,176 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53416347BDC;
-	Fri, 24 Apr 2026 20:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777062370; cv=none; b=BImDjcZl7p4H2wVQG46MdOD7VNTZ+N59a1LUnV1zXRAaLjYZ8roRQoL2F47KJ6HCr6aZFRDjgjR3BCBK96k9KXIIBSivxAw2YoEJtU01uQC7cvmBUMv1I1H7Nyw0prZ+8LKfuqagnIKuZLM5/dI4TlAw2W3V6z9A4+jX9c19D4Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777062370; c=relaxed/simple;
-	bh=Koj4CUktlogAnNVhJjluP/UK0I95wXh5VIxD3ENSAyo=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=VGoKfs9WYnHnegYt4F+JZMf2wN4jDFzS5/u/i/gFhJ4L07q7AFhKTvEZvtb8zhZzgBC7RyPHZT20yUl64aQ0N1ADsMwZlvwPleQjYihjC56tyeZMbaZUkUn5Vo1A1xNkQsFH7i0lYAjFu76rcRtZaflo7//XjnpN1bFyIDDUpTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eURssOLp; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EAC23D6467
+	for <linux-security-module@vger.kernel.org>; Fri, 24 Apr 2026 20:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.170
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777062595; cv=pass; b=U3t12TDMmGfJqRQtTO1HiFGLqZM4xvHktEAuMiLt7kM4Ngej+n9YCRdzZIPV88jEoxuh9LWrDLj+LRA5kZmTdgWfR581n3l4lGw0DqbEJ3KJh0MKQv9ABzpYLyNLoe/VnAUKA9u1/UJFp+3h5Ap8memNuNA+8Mqay72SULBzpoo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777062595; c=relaxed/simple;
+	bh=+T4F0uNh5J6jVmx6oy3qBJn+uIleAsU3LmMjgFHY7kE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BZl49mrssVtc8mQFFzmstPXAEHJvzpMbE62dCkui3b3zMxs/+COsXBuhJqMhdPnqDc7noXdWIpEylqq5zC1yDJ8fRydW1vEK1r2866nicb1B4k/RY1v4XfTLOQhUYeSYMFIAVN9iQPCKbJvL3FyUdQklXBcwPKEs+OnYzkX6/I8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=c1G2CN1C; arc=pass smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eURssOLp"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63OK2d6f3657864;
-	Fri, 24 Apr 2026 20:25:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=qlBu7T
-	NKzfpXasOOTL0wruUdS0hFrUoHwLMc6Celeck=; b=eURssOLpdkBlItoz8asJrY
-	yJ/U89jyh5uOcODsiIObYY2XdX/9DWggtc0eiovDLm9vHeKUzAV0mQn6ticaa+ou
-	MdDzsIPf17Qpp0VdKksledynFUt3NElFO320AO2rnS1b2qgcm8qdStfPJhLh5uB+
-	qu+WMY+ClH5YfiAWmxyLdmd1o7QLJ69uF73nO7vNDSnZZi5C2ElEsLG9sJ2bklI5
-	x6s43KUwN4DqHAk+GPSRRO5LdUlkc/EX04jgTanfUPfrWfMFSMPOUHrT7CwQ8DOI
-	Pi9s9anAmdwJFLy7zOC2eDqbCRkT8zqvULxA11syTD+SISh4flXywUd0MtmxOMIw
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4dpeu7xt00-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 Apr 2026 20:25:34 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 63OKKHhC001937;
-	Fri, 24 Apr 2026 20:25:34 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4dpjkycd2n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 Apr 2026 20:25:34 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 63OKPXjv27656892
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 24 Apr 2026 20:25:33 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 75C4558055;
-	Fri, 24 Apr 2026 20:25:33 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A465E58043;
-	Fri, 24 Apr 2026 20:25:31 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.11.225])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 24 Apr 2026 20:25:31 +0000 (GMT)
-Message-ID: <43ff6ca37df45ed53061dad46e9d31a5118e5714.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH v3 2/4] security: ima: call ima_init() again at
- late_initcall_sync for defered TPM
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Jonathan McDowell <noodles@earth.li>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.linux.dev
-Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
-        eric.snowberg@oracle.com, jarkko@kernel.org, jgg@ziepe.ca,
-        sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org,
-        joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-        catalin.marinas@arm.com, will@kernel.org, noodles@meta.com,
-        sebastianene@google.com, Yeoreum Yun <yeoreum.yun@arm.com>
-In-Reply-To: <5552c20c6d6d2ae3bbb6b35124af5d98d2f79163.1777036497.git.noodles@meta.com>
-References: <cover.1777036497.git.noodles@meta.com>
-	 <5552c20c6d6d2ae3bbb6b35124af5d98d2f79163.1777036497.git.noodles@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 24 Apr 2026 16:25:31 -0400
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="c1G2CN1C"
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-c76cce85bd9so3216306a12.1
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Apr 2026 13:29:54 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1777062594; cv=none;
+        d=google.com; s=arc-20240605;
+        b=JxuaTdGR3SYiE22ae5CgIseq2PA6iz/Pwv8SmgouyRJvFhYaii0/wPE0LdKkK0e6Tq
+         HCgi5Y8A1Zu1jpzyH4aPIoFNWoszd4kkhsZWd2VNkZlwO1N1SGfDUCEa93LDtPS8Dpeg
+         QXW4hp2gHYhDNcXq9rvyByx7S//qOhHOcrlGnCZg+kz5DKlSJQpt4oA8TV7ooZxvUCr+
+         LxkVN83LT4EL3n+telPJWgMi/f1hnhlq1tWxSQ84PCLjVWdCl5xFQrVcy5CZQMPcOH4i
+         sYNVrD3yxN0dkAPhhBCHwmNUaE18l0aHxDsu5HQKaWbmiQR1575461hNVb3GLgp9RRpw
+         XpZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=LMhwv8B42Oswf/FXJKVpTMSL/MUmT8hvMVU/KqHGQy4=;
+        fh=tW6c0hT+px9Y6i10wCq/WHp2rxuItY1HfEXhWIjJ4E8=;
+        b=CPu277wxoNYTLctppck9cl6d4HOLv1RxDUZW4TrFPhcJj6eLcqA6aT+bxTidzzc2Yr
+         2xEfCf45T3P+kkZpSEQjTPHnmYTikBc2jSXklhOXEfwzK6yZYJjv+CjnPqMuIt4XnCWL
+         sjQMCOyAn5gnZk28LVf3k2PJHZs7ut+6TqT3yG6s96NQukoIpx2H5zUf85pEEYL/4gJ6
+         quedOh8TWYy4c9o1ZUTGqV1bTxFbY3WUiZNJ9v7SZyjKi1BeL/sUntLYFrIrAQiEVxk/
+         ZW6LL2gG59DJO7/fHMhy4voYF1c9XAmXHSVdAJVSOjSf/upOxi5UxdcOFvs3gfZECr5b
+         LWCQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1777062594; x=1777667394; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LMhwv8B42Oswf/FXJKVpTMSL/MUmT8hvMVU/KqHGQy4=;
+        b=c1G2CN1CkneFjh8oFfUBALGPUhj5INybitdCwnI0cky12C0x+V0zOvxmwng8KJt4XO
+         VZODtdockWiBywa0Vc7xGPsou6698PC+UZQm903TGLBLj3ixGVyu2BbzjGjPv6THQoX8
+         n6sLRlyi8sVgnJtH7mDmFANbVl97tBR2RSZpNQhHR/y8nE7f8S48PxFCflHDhwuAKk/i
+         4fXyROZr9pwSsR8xDiRIr9/W5BP1Gj6svPBlsmfMY+40Sj2z2GxoVEbQS0JywQDNpVrF
+         mKNfsCC4uj8y5OPwb+Y9zEe3SL/M/Dksj50osRHW8KJUJYDlgpOMxeDJFLj9nX+Ykp3o
+         4aXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777062594; x=1777667394;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=LMhwv8B42Oswf/FXJKVpTMSL/MUmT8hvMVU/KqHGQy4=;
+        b=nWCBl2MvMBR6S4EEuMsyE4VWmv4Q+8jcbVv31orh/z43DtQ8kddQ8K1waKKodZlAQw
+         cpw2IWa3qyWXrvb9xvg1qFUDjn02VqeKxYISnmHOze0m7o1gOPT47JQczuaDpTBOEfZH
+         xsnt2reOdp3Uui5vkXzc6h3/hzCwrE6LrzBR8mQcSVr/hQVuovbVSxuNuI/NwrZz1wKP
+         Eyfq/S/blbhy/SLllHpscipMOtvqF5oGAMSeEY55i74aCBarpXF2GFP9f+g4g9KceCqc
+         MBt0Ois/nJoH+/3XNyTOgWPk16NBdY//q0EjeO4k3Ta8agNvB4jpNR/tzI1EZt1Pa1s4
+         i2VA==
+X-Gm-Message-State: AOJu0Yz/aAcYPFP5X/Wj95QrHsm6PvY9zW2NIuVYEI5+F4RKBdU89kdv
+	gRWZ3/DJy9IOTIWIJzNn6Q2JrSrtL/FcP/KJWApFqETAcWigC/rx+2HRfg1lmzWB4st0hxJ16Q3
+	EniKVhOuJs+5z4lk/xGMwpL8K6P0mKIDtnr/8u3s3
+X-Gm-Gg: AeBDieuprwBXCOP1GAl7tYHPvETvLKTk+tvzAC+JmlYRWvKXXW56D2ubYFv2haf5foV
+	Rf07+alvzEvaQMpa4s3k39wqH7JQOl7SQxn4Or4Rm4H9tLudegbwD12fvuZjIT9m+wyX9Gy8zLI
+	doc948KtYvdK1894qrh67XKmqcgt6ot4bzR9hJZbc0/UHVQkP+Ky2UlpG/N803kXPZf67+0C8W/
+	/F2Tqbvvb5ME92Bx+3eGU2ZWSodwqpc+iaxImRky6LXTsz715eT2K9C8+7GqUoR6M/LY73I9r8w
+	gRXRjTIwJ27rbD6Kvw==
+X-Received: by 2002:a05:6a20:e211:b0:3a2:7ef4:81df with SMTP id
+ adf61e73a8af0-3a27ef485b0mr27995081637.26.1777062593995; Fri, 24 Apr 2026
+ 13:29:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Proofpoint-ORIG-GUID: bIZjqaR-Z68OsHDjoYn96_ZIv_N3PmeO
-X-Authority-Analysis: v=2.4 cv=Ksp9H2WN c=1 sm=1 tr=0 ts=69ebd1bf cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=i188C8hGdHaRUZsAyrEA:9
- a=QEXdDO2ut3YA:10 a=ZXulRonScM0A:10 a=zZCYzV9kfG8A:10
-X-Proofpoint-GUID: e8gVjJiNmvZd8ESYrbBmAUwz6zsi2-VM
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDI0MDE5OCBTYWx0ZWRfX4ZLpxJGMkFFq
- gmVmSQI97B7WqDu8cBd0ZQKiq0rs4XhnQkHQ8RCV6lO+cUmLTGrhbirIvRtlisb+25lSnbJOwKl
- RLLEt6KG46mTYH0U4Jjwg4RnTEXH4+3zMSdZigcF36LQtBSAPFwOvOEoZMulgG5CaDQ4CBomq1e
- TpUDpGe4wEIAmU1TiIWQiB1hSU9XvLUCvGwQQ8atT5lMlb85k8RI41cLowGSR8lGo6A143TDo1h
- QngrhJeH7YDT1k7OdwEzCPDfBE1x5xGlIFHX3prrmlZAv0/V5UgvmMi7KCaj3T12Nac+I7to1JY
- T59kIDws1gcyW0peoBR8WaMXePLI5/QJis8m4jldhSoRtyJqUwsYQXJFB0SpUfe/34zhm6vG7q1
- 5PXOMFNbu2f2XYBKkhw3kEbLs6mYemYSVqzZZngWt8J6T8qy1lwo+LHDwnwgQTWFpW6de4xqrhq
- 3fhfbe/zeyCE3G7msGg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-24_03,2026-04-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 impostorscore=0 malwarescore=0 phishscore=0 priorityscore=1501
- lowpriorityscore=0 clxscore=1015 adultscore=0 suspectscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2604200000 definitions=main-2604240198
+References: <20260225192143.14448-2-casey@schaufler-ca.com>
+ <c25833f447e6c00868b352cfea50d2b2@paul-moore.com> <fadac326-d6cc-4d28-8ebe-b4ed3a06ddd0@schaufler-ca.com>
+In-Reply-To: <fadac326-d6cc-4d28-8ebe-b4ed3a06ddd0@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 24 Apr 2026 16:29:40 -0400
+X-Gm-Features: AQROBzA0OT_v6zCGlJnHnfaAeWLqvw1KB9PbY7WrmJzxL-y-1ou3DTCM5FkLECM
+Message-ID: <CAHC9VhRkup6GSj_wXp26_8PmjgBZSZK7Fk=F6RPy+bjbCRgJyQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/3] LSM: add a flags field to the LSM hook definitions
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
+	keescook@chromium.org, john.johansen@canonical.com, 
+	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
+	selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, Jonathan!
+On Fri, Apr 24, 2026 at 11:24=E2=80=AFAM Casey Schaufler <casey@schaufler-c=
+a.com> wrote:
+> On 4/23/2026 6:19 PM, Paul Moore wrote:
+> > On Feb 25, 2026 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >> Add a field for flags to the definition of LSM hooks.  This allows
+> >> for hooks to be identified at system initialization for special
+> >> processing.
+> >>
+> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> >> ---
+> >>  include/linux/bpf_lsm.h       |   2 +-
+> >>  include/linux/lsm_hook_defs.h | 614 ++++++++++++++++++---------------=
+-
+> >>  include/linux/lsm_hooks.h     |   4 +-
+> >>  kernel/bpf/bpf_lsm.c          |  10 +-
+> >>  security/bpf/hooks.c          |   2 +-
+> >>  security/security.c           |   6 +-
+> >>  6 files changed, 331 insertions(+), 307 deletions(-)
+> >>
+> >> diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
+> >> index 643809cc78c3..d71ba8c87e79 100644
+> >> --- a/include/linux/bpf_lsm.h
+> >> +++ b/include/linux/bpf_lsm.h
+> >> @@ -14,7 +14,7 @@
+> >>
+> >>  #ifdef CONFIG_BPF_LSM
+> >>
+> >> -#define LSM_HOOK(RET, DEFAULT, NAME, ...) \
+> >> +#define LSM_HOOK(RET, DEFAULT, FLAGS, NAME, ...) \
+> >>      RET bpf_lsm_##NAME(__VA_ARGS__);
+> >>  #include <linux/lsm_hook_defs.h>
+> >>  #undef LSM_HOOK
+> >> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_de=
+fs.h
+> >> index 8c42b4bde09c..acda3a02da97 100644
+> >> --- a/include/linux/lsm_hook_defs.h
+> >> +++ b/include/linux/lsm_hook_defs.h
+> >> @@ -18,451 +18,475 @@
+> >>   * The macro LSM_HOOK is used to define the data structures required =
+by
+> >>   * the LSM framework using the pattern:
+> >>   *
+> >> - *  LSM_HOOK(<return_type>, <default_value>, <hook_name>, args...)
+> >> + *  LSM_HOOK(<return_type>, <default_value>, <flags>, <single>,
+> >> + *           <hook_name>, args...)
+> >>   *
+> >>   * struct security_hook_heads {
+> >> - *   #define LSM_HOOK(RET, DEFAULT, NAME, ...) struct hlist_head NAME=
+;
+> >> + *   #define LSM_HOOK(RET, DEFAULT, FLAGS, NAME, ...) struct hlist_he=
+ad NAME;
+> >>   *   #include <linux/lsm_hook_defs.h>
+> >>   *   #undef LSM_HOOK
+> >>   * };
+> >>   */
+> >> -LSM_HOOK(int, 0, binder_set_context_mgr, const struct cred *mgr)
+> >> -LSM_HOOK(int, 0, binder_transaction, const struct cred *from,
+> >> +LSM_HOOK(int, 0, 0, binder_set_context_mgr, const struct cred *mgr)
+> >> +LSM_HOOK(int, 0, 0, binder_transaction, const struct cred *from,
+> >>       const struct cred *to)
+> > I think adding a flag field to the LSM_HOOK() macro/definitions is a go=
+od
+> > and useful addition, but I'd prefer if we created a LSM_FLAG_NONE #defi=
+ne
+> > and used it here just so we could avoid the back-to-back 0's and do a b=
+it
+> > of self-documentation.
+>
+> I had LSM_FLAG_NONE initially, but removed it when I saw the amount of co=
+de
+> churn it introduced. I'm happy to put it back.
 
-On Fri, 2026-04-24 at 14:24 +0100, Jonathan McDowell wrote:
-> -static int __init init_ima(void)
-> +static int __init init_ima(bool late)
-> =C2=A0{
-> =C2=A0	int error;
-> =C2=A0
-> @@ -1247,10 +1247,26 @@ static int __init init_ima(void)
-> =C2=A0		return 0;
-> =C2=A0	}
-> =C2=A0
-> +	/*
-> +	 * If we found the TPM during our first attempt, or we know there's no
-> +	 * TPM, nothing further to do
-> +	 */
+You're already touching every LSM_HOOK() definition to add a another
+parameter, changing that parameter from 0 to LSM_FLAG_NONE shouldn't
+make it that much worse.
 
-Perhaps it's just me, but the comment wording is a bit off.  Could I change=
- it
-to: If we either found the TPM or knew there's no TPM during our first atte=
-mpt,
-nothing futher to do.
-
-Otherwise the patch looks good.
-
-Mimi
-
-
-> +	if (late && (ima_tpm_chip || !IS_ENABLED(CONFIG_TCG_TPM)))
-> +		return 0;
-> +
-> +	ima_tpm_chip =3D tpm_default_chip();
-> +	if (!ima_tpm_chip && !late && IS_ENABLED(CONFIG_TCG_TPM)) {
-> +		pr_debug("TPM not available, will try later\n");
-> +		return -EPROBE_DEFER;
-> +	}
-> +
-> +	if (!ima_tpm_chip)
-> +		pr_info("No TPM chip found, activating TPM-bypass!\n");
-> +
+--=20
+paul-moore.com
