@@ -1,134 +1,107 @@
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from the.earth.li (the.earth.li [93.93.131.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6BF3BAD8F
-	for <linux-security-module@vger.kernel.org>; Fri, 24 Apr 2026 11:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A72B366558;
+	Fri, 24 Apr 2026 13:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777030795; cv=none; b=VCfzgVTGyl7J9Up9wQazeL/9PeZFMSilIq2SFbM0uPnCxcozO/5mM2uV1qMo8/eWyxQB+WKf9NgrahG4tgTnHR8DCqDPToQwkW2t2CDj7oEYehOD30xDKvkBzrxg5/RiF9FAvOoAbkn7fYlBevPS4yFl3GPKdYVNneLfbyCyMHQ=
+	t=1777037040; cv=none; b=Tx5InrSpt00ZVK9HFiibwHJVhuutDv3Uo2RFQIgM0CWvwmepcVM+NEklwplkonNvNGWODM+vqgwJnWMq6OFySkDK0ME6prew000zd/rJyJBJuLFbqnwvG3UHpihyvIah0GyCTIcV8vC3P89xj8Q24BxR+9/pFQFeVSQTH2M/wr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777030795; c=relaxed/simple;
-	bh=Mn8baejszrg8TBBwgRqdVIVk2uHyhbJN3nmGuxlJh1I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RtiTPQ5jCjXCCq5h9x18dRMmLnFs9XHDKIQsdVRHGHBsbyuAjrCbTmxkH9giH/bHEBpwAPpzN1+HSNnHtU0PXyIOJx2b14ffhiPBzDGC/LI/ZeT4D/7spLptBo3pi11kHKRpVz0+ni+JfSpM/L3O6lIDDyLLZ6XJTVGHQQeAp4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dig6Aj/2; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1777037040; c=relaxed/simple;
+	bh=1HJ+/OiLY73OfdlVSwbhrZdHIc9dHR6DAd4V97ElNTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Pw0CmMDicmGBnbtF4+dlYmljvViDj0WI9AecPYhxoG6oRdu6Zr9uMRA1kYWl06Ux5EcwLbD1Z9bchYKMv36LvwUtITzfXuyVAhLNdtghBEWno4CN39+z9UtR2an/pLFdzKsAylMP+LgHF0T//XqwsKQlKDLef3i0ZGbGprXCG+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=sv4a7879; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dig6Aj/2"
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2aaed195901so33982555ad.0
-        for <linux-security-module@vger.kernel.org>; Fri, 24 Apr 2026 04:39:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777030794; x=1777635594; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9ycQfsCwJU6aj5y3c9itCmneMe/paG5gWp/wWLRcNhI=;
-        b=dig6Aj/2VdAZ8VmJDRgXYMIVoFNuliTvOX9hXkRdpsI9uEiRJC2dQC4DRUPX+17JbJ
-         IYH+vyVtekzdjpCxTkTAt2F2rod4ZvIvKHo0QPjr7gceJY/x0CUeZTifWbXbMEvvpO43
-         mP+3mu9Rh/7JoptvosYcpL+YAsHROPob8xIDlaRfWC9XPV+oEdlR0GqEvvlBv9e1wxra
-         zHThyI/MmsGdFowxu5wWEF9iH5A6RuiF9yxN9x90pP2fMl8UiUBW/C5/oqRoqlaP0Z8a
-         IvcQYFGxtiUsKdjZ6Vjaj6uCIh6A3/mxMKY+WSWbiNF7xmm4Ijawe0egwEIF43mfNesh
-         4tqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777030794; x=1777635594;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9ycQfsCwJU6aj5y3c9itCmneMe/paG5gWp/wWLRcNhI=;
-        b=nwvH9u3ufbBXkU9tU3laTy07QxUrCNnLi8ZuS/TBkQ9J3y9XM5Ou7dElrwZOCfPobC
-         EpmwEQXXooQWvH/BbKka84scPsxoW2V+BRrq8GW0s56vqurGicxIZEDkXP+oe/RYhShG
-         iu0STwEeOZpD3aFgj7HEDbKXObz7O8Kck8C+bpfuhq+p+FqKocScI9/k769ROMKYgISL
-         xzhsaVQuBQ5xd6MMwUEnXT04UBuX6XxnSV/jwVjDIYm3MDrXjoxzXqX+amfrevkPxVK1
-         W++GCzIIVjmf1HrfroI4sM73LZ5jrTwh86g8Irzkvv8jpFPzbp62q57N1hVjurWrhe1E
-         5U/w==
-X-Forwarded-Encrypted: i=1; AFNElJ/Bm18KpXeKc5YBnz6SokRxJPIyOu/Z4sD88GcFlfzvcK/alO+xi3FVGBK8ozgggWZ1acfXzW5kLaj/B3DHk554CQa6V1s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDeCkBAxeR0QTR5xOvYHGsGWgPwslgkJAYvzlSo4SP5nieOWtj
-	DdpG4Jwj8nF94F1Lw36aqCQS0SPCLtD64o0EW+KasB+TND6wyO98rzrp
-X-Gm-Gg: AeBDievgZ4sdzxKkSbp2Xwu9mFpijm0eiapGkbtJl78OJ+UOIMp4AsNLxx8Rwzxu+YN
-	YG79wJ1GD6drrFGzgBQy48DpoGbX7L/9UXGmaxzV4/fbJ5hKVb6rgqZ61V4STavGWzWXsrvBmhh
-	up2bF5CvxzLBri/2Y4rcmpXv6s5JbuHPOtzmP5bj4mj76OhkKZkiGLv/ULzBGUfrPVXD0W5XqZj
-	Q17qlXKg3QFD41i/5b8E39zx8brprpGK/Sgu+vxcfUZH00qOw0a6bRJVewLe0F03A9jI4iK4Q9c
-	wxeA5SrBTFa5bjTuFJiRMpa4KhjeqL5o59p6ivPMLUNBqvVVb+7AldcxFpkhQENTSr09DPCWsrj
-	p8wGv2gnq5JhrCDGa5CrdkX9tKMQM7ZfXHzqKKDVMpuopQ83UhdhDieiES5aKjZ3z0heQo2iQet
-	jXQZmrmIUpdykMCiWDRGu0lgFk4KZ3jewTjkeBgifWligAFzA+jF5/Gic=
-X-Received: by 2002:a17:903:1a88:b0:2b4:5b9e:4edd with SMTP id d9443c01a7336-2b5f9e9a500mr337105715ad.9.1777030793817;
-        Fri, 24 Apr 2026 04:39:53 -0700 (PDT)
-Received: from kam-mbp.juniper.net ([136.226.244.181])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b5faa3073asm213824545ad.27.2026.04.24.04.39.51
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 24 Apr 2026 04:39:53 -0700 (PDT)
-From: Kamlesh Kumar <kamlesh0hrs@gmail.com>
-X-Google-Original-From: Kamlesh Kumar <kam@juniper.net>
-To: zohar@linux.ibm.com,
-	stefanb@linux.ibm.com
-Cc: linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kamlesh Kumar <kam@juniper.net>
-Subject: [PATCH] ima: Fix sigv3 signature handling for EVM_IMA_XATTR_DIGSIG
-Date: Fri, 24 Apr 2026 17:09:46 +0530
-Message-Id: <20260424113946.16561-1-kam@juniper.net>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b="sv4a7879"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:
+	Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+	:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+	References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+	List-Owner:List-Archive; bh=JmF0qibZtKOHXTwdjY+VV0OSRsvAx+RxlsILPiao7RI=; b=s
+	v4a78795KOSH9KoUfXxgxQi/ESnPuimjFA8bBIWOOVlybU1uicTvPznFO0//UI3POT8JPIpHz4hkT
+	7u/UClrD/yH38ufAx9Qvo0hH3rtRis3VxNl/68qsKOKg60KShhIRPKASvARiobeDjoIaOnj0PDSD/
+	ydCRBMMR1VFnZuzZP7ycoFaaVfA0M5b7cGkkXs/BXMaPexlfMfM+kbxaum1HXwugfDGzTgVYeWb43
+	TMBnC8kOVhe1XP5//No4iJCyq26FZzJ5/eYCVew1xPEs5KDwvFszuNnjhG/9rdTxiMTQveVxHTLEu
+	TudIgyHxY7RJJaXbddM8kB2wwHoXlv1mg==;
+Received: from noodles by the.earth.li with local (Exim 4.98.2)
+	(envelope-from <noodles@earth.li>)
+	id 1wGGVV-0000000551k-3EYt;
+	Fri, 24 Apr 2026 14:23:45 +0100
+Date: Fri, 24 Apr 2026 14:23:45 +0100
+From: Jonathan McDowell <noodles@earth.li>
+To: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
+Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	zohar@linux.ibm.com, roberto.sassu@huawei.com,
+	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+	jarkko@kernel.org, jgg@ziepe.ca, sudeep.holla@kernel.org,
+	maz@kernel.org, oupton@kernel.org, joey.gouly@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org, noodles@meta.com,
+	sebastianene@google.com, Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [RFC PATCH v3 0/4] Fix IMA + TPM initialisation ordering issue
+Message-ID: <cover.1777036497.git.noodles@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-ima_get_hash_algo() only recognizes version 2 signatures when the xattr
-type is EVM_IMA_XATTR_DIGSIG. Since sigv3 signatures also use
-EVM_IMA_XATTR_DIGSIG as the xattr type, version 3 must be accepted as
-well to correctly determine the hash algorithm.
+This is a slight reworking of the series from Yeoreum Yun, adding
+functionality for IMA initialisation during the late_initcall_sync
+stage. This solves the situation where the TPM is not fully registered
+at the point IMA wants to initialise, avoiding a failure to correctly
+extend TPM measurements from IMA. This has been observed on both Arm
+FF-A and SPI attached TPM setups.
 
-Additionally, ima_validate_rule() does not include IMA_SIGV3_REQUIRED in
-the allowed flags bitmask for MODULE_CHECK, KEXEC_KERNEL_CHECK, and
-KEXEC_INITRAMFS_CHECK hook functions. As a result, policy rules with
-"appraise_type=sigv3" are rejected for these functions.
+As part of this series we also revert the original changes made to the
+FF-A driver to try and solve this problem.
 
-Add version 3 to the accepted versions in ima_get_hash_algo() for
-EVM_IMA_XATTR_DIGSIG, and add IMA_SIGV3_REQUIRED to the allowed flags
-for MODULE_CHECK, KEXEC_KERNEL_CHECK, and KEXEC_INITRAMFS_CHECK in
-ima_validate_rule().
+(I have left Yeoreum credited in all the diffs except my rework of the
+ IMA piece. Yeoreum, please yell if you're not happy with this.)
 
-Signed-off-by: Kamlesh Kumar <kam@juniper.net>
----
- security/integrity/ima/ima_appraise.c | 5 +++--
- security/integrity/ima/ima_policy.c   | 3 ++-
- 2 files changed, 5 insertions(+), 3 deletions(-)
+Patch history
+=============
+from v2 to v3:
+  - Drop ff-a/pKVM diff (this seems to have a separate set of
+    discussion)
+  - Rework IMA delayed initialisation to avoid delaying when unnecessary
+  - Ensure IMA log clearly indicates when we've initialised late
 
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index de963b9f3634..2dd231567710 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -195,8 +195,9 @@ enum hash_algo ima_get_hash_algo(const struct evm_ima_xattr_data *xattr_value,
- 		return sig->hash_algo;
- 	case EVM_IMA_XATTR_DIGSIG:
- 		sig = (typeof(sig))xattr_value;
--		if (sig->version != 2 || xattr_len <= sizeof(*sig)
--		    || sig->hash_algo >= HASH_ALGO__LAST)
-+		if ((sig->version != 2 && sig->version != 3) ||
-+		    xattr_len <= sizeof(*sig) ||
-+		    sig->hash_algo >= HASH_ALGO__LAST)
- 			return ima_hash_algo;
- 		return sig->hash_algo;
- 	case IMA_XATTR_DIGEST_NG:
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index f7f940a76922..b1c010e8eb13 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -1313,7 +1313,8 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
- 				     IMA_GID | IMA_EGID |
- 				     IMA_FGROUP | IMA_DIGSIG_REQUIRED |
- 				     IMA_PERMIT_DIRECTIO | IMA_MODSIG_ALLOWED |
--				     IMA_CHECK_BLACKLIST | IMA_VALIDATE_ALGOS))
-+				     IMA_CHECK_BLACKLIST | IMA_VALIDATE_ALGOS |
-+				     IMA_SIGV3_REQUIRED))
- 			return false;
- 
- 		break;
+from v1 to v2:
+  - add notifier to make ffa-driver pkvm initialised.
+  - modify to try initailisation again when IMA coudln't find proper TPM device.
+  - https://lore.kernel.org/all/20260417175759.3191279-1-yeoreum.yun@arm.com/#t
 
-base-commit: 82bbd447199ff1441031d2eaf9afe041550cf525
+
+Jonathan McDowell (1):
+  security: ima: call ima_init() again at late_initcall_sync for defered
+    TPM
+
+Yeoreum Yun (3):
+  lsm: Allow LSMs to register for late_initcall_sync init
+  Revert "tpm: tpm_crb_ffa: try to probe tpm_crb_ffa when it's built-in"
+  Revert "firmware: arm_ffa: Change initcall level of ffa_init() to
+    rootfs_initcall"
+
+ drivers/char/tpm/tpm_crb_ffa.c            | 19 ++----------
+ drivers/firmware/arm_ffa/driver.c         |  2 +-
+ include/linux/lsm_hooks.h                 |  2 ++
+ security/integrity/ima/ima.h              |  3 +-
+ security/integrity/ima/ima_init.c         | 25 ++++++++-------
+ security/integrity/ima/ima_main.c         | 37 ++++++++++++++++++++---
+ security/integrity/ima/ima_template_lib.c |  3 +-
+ security/lsm_init.c                       | 13 ++++++--
+ 8 files changed, 67 insertions(+), 37 deletions(-)
+
 -- 
-2.34.1
+2.53.0
 
