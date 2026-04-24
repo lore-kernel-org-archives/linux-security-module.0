@@ -1,233 +1,207 @@
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D19B34A3C5
-	for <linux-security-module@vger.kernel.org>; Fri, 24 Apr 2026 22:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.181
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777068629; cv=pass; b=XmvhPCkuTudaruHZMS6BVQCJMKvhPVqZCzrJiqXpTiNWCKHYGIWO9zrQEqQobwh8Q2qRlc8KOdlt5FrvaDCxQolZo5GTVBdNdUwzZX8cbKP58g72Dkmn9meB9G8s3a/8LXq2P0JX0sWIwhCA79p7IzVNJ/68AtGnJuLfZzAqoWs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777068629; c=relaxed/simple;
-	bh=6w7q+JRY4PyPX6nQEYfB2IZ2WiHoYGMKfvmYc+6h3js=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qz2AhTH/mrRJT+c8114khqULB/TIgET2unoFarhkz6pxHSXtOLXo72UoB4TMzzAxGb1FYmDIkuGv79lC9iTL/L5jU/pn6owO1n3sIAIC+Kxt09TDyPk8CHmHZ5zkYr68+ZhJ5EUA2NisZlhQ2r8w6h7kjoWgJSgPyH314vybQcw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=aDhY2VwX; arc=pass smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4C134A3C5
+	for <linux-security-module@vger.kernel.org>; Fri, 24 Apr 2026 22:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777068794; cv=none; b=cJ1XaKi9cardw2meicbrjNSz26GvdbTEv+xDndejMlQItA7qj3j3j7UgLCV1zlcdw0iEcyEkUI+USQ5OWkciuvNflsPH3AtWD2AF32a78SLqUH/74z1aSKOUqrWEnpvPzoagEB2dopDr23lTQh1B/EVAd2SJiLYean05K7TZiBM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777068794; c=relaxed/simple;
+	bh=edkfnYqeyMC0Qt+W6n8ze5hGF7NTNhj3oyNEAcTDdxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NlCV6GAuGTprAeaHaec4Ha1iLdOb4lzzFBK+XeOfrj8wXJ5XKXPAUNjThjOUNqsHyAsx2N17mXCs6jS5gv1jHHKBYzoicVLu9veAiyyaWL30/5GbFxYPBd/ArhB3Bww8o2kvXrm+zDbmXYJl7iFvgOd6w14Tu1IzUqO+ld2XhVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=H5m4vQCZ; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="aDhY2VwX"
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-c79662668bbso3215483a12.1
-        for <linux-security-module@vger.kernel.org>; Fri, 24 Apr 2026 15:10:28 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1777068627; cv=none;
-        d=google.com; s=arc-20240605;
-        b=AIupvO8RZJ28pTNPt2OipHYNM2cVyTYUrZEFxOzjGb2T64qNOrIjMC5mBgTk3BMAcv
-         n/USIcAayi0PKZ+tbD7sL2O/e/UgBr9ZFrZaYBBglIMNt19/aTJtozsKLmJlOQuQHnZ0
-         XeG57Tl9G3cl9U4oVqTLXRVyEL3Vvdgf5ZwHKrCiASYFFYZk3RfYD6k+etjfULHeRuO1
-         y2cRjjAR20JPBvTpWGUwFIOKUWWj4/cYIX7tSUTilE6ilTlHV1EsHd5Yv2ijL9YcE8C1
-         ej9TydzrhJkG1KN56LgYbtnm6PPrxzLcLXJecjuDEa4lfaEDYgxtkBks/Chryf5TykqW
-         CzgQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=hAcyp6tj20FtAf4IQx3ifIttGPMFNnHtv6J7kGhC8TM=;
-        fh=UKgOua3Gv3HMXZ/vPCptDhOLdj4F9Ij6ADD8bp5dpJw=;
-        b=eMxi9QvZ/FT1UIJF0AJAlr0HHcAAkULWnnMs/zOn4CbY0Lv7ZerATzMVw111R3lLUT
-         iwOj7BniH6r2LvV985ybK/RLyVzMVYH9Dz/tsmkTQFc18gqtC9NLGrAp57TnCdZzvElp
-         rGO/ARjJxtPzEqEekQVsmecQdq9oHws+Y/dbCVjdYDYYbfduB/POONY3NkI2qx4nMNDM
-         Sm7fVFV4FPzHoJsBDBQeJWQIhyjsLQ1/YUZmvyPyjD4P8fFuPf0f1Cq1Idlb3qA3Ydzx
-         2jElahNav/ns+faHhURdY2MHgvyXcJ2QlN3wLbFZAt8+cAmiQj8nkFSN+5vpHaEqdegw
-         4pKQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="H5m4vQCZ"
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-8d67a483d3eso945506385a.1
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Apr 2026 15:13:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1777068627; x=1777673427; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hAcyp6tj20FtAf4IQx3ifIttGPMFNnHtv6J7kGhC8TM=;
-        b=aDhY2VwXyMyVBI0EPvDpLDRNus142EZqQTDoOcZ5ZOk3WEKViHxmrogrhvcqq6bGzM
-         xDWhcKaHyeSmomA++lZDAEDNI0GKEIgyciTAB4Z729KxJHT1teiZcPS/U3D8du1a5Y/C
-         dzQHnCc6A38kiIPJVQlRvW/V7nxkY9Qu/jAl2YHbhlx5eJaPs6W7OYJGkSbgvVOS4kH5
-         bZq/f+fe3CFmuHg/oAJJMe3JKiLq5db81JCQwTdaFcxYZ0oZhAVIYeA9HtB3GfrzB4D5
-         BQr9vMn5oAA1fsNjWHHl9HlD3KCJLA//YRp+3g7s5/CPHUkAKwOqbMB2oS/74p8KPicj
-         haAg==
+        d=ziepe.ca; s=google; t=1777068792; x=1777673592; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=p1Bt8LRPmWuCECk46OUK1KhCrmrzQEbzIWvPlDI3cp4=;
+        b=H5m4vQCZE27E+gDtn8BVCf5jLiPS6GNSYRuHd7oK/ryAnR76eU7gh4QWRI3SAXCvku
+         xwbAjZ3hIBI5GEUgbOSGuhXCViPpczYPF9VhNc2dh89l7qQROTD8YZ3pfblRmIXAApD+
+         LLNyElsdRzbz0O8P7asNE1yJaILYoWrFSeatd7+ExO8xnYjLQgg2muQOyOklYWskuFkU
+         cwfy9M7PKhf/GFqDNR2idR9iNUU//TC3BIEIHtpqSrhi/HtxH3xMTkMDNiCC7PJfnIaI
+         RfTF+U+c9gQck78mXjxg5cQFxiXkgiK0mPHrBDKGiKFmfg+/2VAfJKkgnb8JLTc01FjS
+         F9Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777068627; x=1777673427;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=hAcyp6tj20FtAf4IQx3ifIttGPMFNnHtv6J7kGhC8TM=;
-        b=sdf3/ugPPwc32rHijiu6ahakmHg3rDaIIEJsT4QWY1UALJN1kOZqTR0yDzF6gs1tW2
-         KjJcVI5Rg1zeo1n9JaWjRPa1HpGq9nEKh+L+9BTghVd7JIFL0ZzDiVVnOERlSqrATnWT
-         V8/oQMAXlycyUONsxAs0ebHpgH+cF02YpHc23dgSaKmcJm6WV8mdWkSPz8e1pvd19P7e
-         diToYtR8iPOeC665FWK5gssPyi1XS8ZuOplDH0Y+DZfEEEE6+jogsg00E/QPZTzRVJBU
-         r9bD0Nn71vcGZUroe6ty9ZkPP2qHhL8o5YWbmc/L7gA9xsPgLKBfa62op/ppALFKHJU+
-         8/BA==
-X-Forwarded-Encrypted: i=1; AFNElJ/yl9RfA9zCryM2p7PI44H9Q75fp4l36JCqNtMiudI6OvIPzCcO7SzVsxEZ4tIKlErJ50NHh5k8Up78nDvDrFKYO5hvZCA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyznpxjVuexGW7XiU8Uq/HAnfjX8hCLfImDET3WUXULU1xMzNB
-	M3B7bMHeUBB65L2N+f7nijLiBvQgdg8+ppsLWGDM6cCTMJCvKZ/IlXlenCn3mcoiImLrMCYYkaj
-	s9eT97OcmFrHLxggEzU3zpoABnTRfOygaWmmNWJkV
-X-Gm-Gg: AeBDietviIXGx6H2kwSp94o/fUrtuU2xFlR29Tx/NWhPJ3VqWj6q4eQRR0MUDRr0VoJ
-	aCwGE/McRtyFrEakE0au8GSz3jaYXg7rdDli9SatL2zfALYnZHIoqE+U4HxUhfUqJG71pVi8GfQ
-	gAzg0NN9MrSvdpwtLQ4OSGA2HMubIQGJUXnZ7sxRH2nHDmVOJmQQ11isIBJ6JFk074B4riOZyeb
-	u8YtG3VHRIfC2iVl1Ho+3yjjK2l9LZ6x+sRxx2P5GcHD7NEEbgnijASIkt+Mj3wghzGaPXXw85n
-	dQTM0flQQS6TjwaB7w==
-X-Received: by 2002:a05:6a21:e082:b0:39f:91e9:cada with SMTP id
- adf61e73a8af0-3a08d677abemr37340839637.9.1777068627375; Fri, 24 Apr 2026
- 15:10:27 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1777068792; x=1777673592;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p1Bt8LRPmWuCECk46OUK1KhCrmrzQEbzIWvPlDI3cp4=;
+        b=SGWPQsBkmKMk7jL84yQ1rhmFjO9lOBX1+D5e4joPe11QJGGwzFG+r9P/FuJT1cpcsH
+         EsiRQy2TKp0DMpCEV8iSmZtuXSdIW1/5OlRXTpBmWVie89JQoFdTVhrhjYKShdaOlgYl
+         IOneLl3PBNJ4Me1CDeBhw1WvLry3IbCCcbwtAAx4B8iaJtFdAeqg1NL8n47p/nAJeNrM
+         NmNbvnLN3yw/KRDwErHnFkk6VDKSl6rq8VQj5PHrlu+sEWqaNlBg4Hge20ZREWS7QKnm
+         Cq9XjbT8DYhr5hU5la/V1007pULZmx2IPOBnInBiICfgIar7joBUpPVHQ1TBhJbDyYec
+         qu+A==
+X-Forwarded-Encrypted: i=1; AFNElJ8Q+y+8BvErzyVqzE2gBwoZjTNIj9nq6/MB2qZVvz0R8vlw7zvpT+HJiHuNEh5CP0S58+92Jrd480cpvaf0J+DMcPcoXN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw653P9cU0bDE97762T1hvrRKCLyENLg89v/7I6rVRloCB2udsK
+	WLDOMuTI+082p2DjUOx1VqpM5wNqthgW1x4QnVq4d9akiEF6+tCagvDGFkYSUj8AzQA=
+X-Gm-Gg: AeBDieuyux7bN3wySddMNcIjHMmUA/SE2KucRh8OsihwvT4gqhYP9cSf5z5l9fKCCla
+	Q6e8ANiFaE9shcGqTUp+bLlixrCXLB1ocbP135jyd6oKF+QolO6XammlttM9NhVenlCHbUdRYfR
+	erGDJ6HsfH5+Hqf/Q6SsrPbby2fys55RinZ5/uxmC2SpJHBKpwzLWW7MKo8WBrgoBsKdKJTtnRq
+	sknzBzjGK7zT0KQlzrf//GBdqtKjncQyja3ID0v47WxOIWNllcyFDkxXjYaOW4xIb56MYjBqrXv
+	F2ugKZLMvIR++AtujxR8WE9V9BxQH8255T80TmVyZWBJvqq7EER57wpw7TEIAm+gYgYYWmTlBP+
+	58etqI2ayGRmPWirFedEY/+EXeoG9udUK2SO82iEY6EYgxgRiQoBFLz1uLLef7lW2fdcmqQyGFB
+	naTgQrYfa3bbho9v8/mrincTfnD1Y3w8ECf2fZhjpNL9nzS6B8e9zuAQAUUHjAiWOhnqK2X5QwH
+	7YiaN4TQic3h26A
+X-Received: by 2002:ac8:7d15:0:b0:50f:b13e:b740 with SMTP id d75a77b69052e-50fb13eb934mr273244551cf.9.1777068792308;
+        Fri, 24 Apr 2026 15:13:12 -0700 (PDT)
+Received: from ziepe.ca (crbknf0213w-47-54-130-67.pppoe-dynamic.high-speed.nl.bellaliant.net. [47.54.130.67])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-50fc42c7fabsm78174021cf.9.2026.04.24.15.13.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Apr 2026 15:13:11 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1wGOlq-00000004lHz-0nuV;
+	Fri, 24 Apr 2026 19:13:10 -0300
+Date: Fri, 24 Apr 2026 19:13:10 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Leon Romanovsky <leon@kernel.org>,
+	Roberto Sassu <roberto.sassu@huaweicloud.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Itay Avraham <itayavr@nvidia.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>,
+	Maher Sanalla <msanalla@nvidia.com>,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] Firmware LSM hook
+Message-ID: <20260424221310.GA804026@ziepe.ca>
+References: <20260413164220.GP3694781@ziepe.ca>
+ <CAHC9VhR1Uke9P==CELKavBcogHoNCtMZFfNWUbgm5HYUfomhtw@mail.gmail.com>
+ <20260413231920.GS3694781@ziepe.ca>
+ <CAHC9VhTLamfe4C81ZNRVT=H32x+KLxSqH3o0eBfrHsWAgAqxCA@mail.gmail.com>
+ <20260415134705.GG2577880@ziepe.ca>
+ <CAHC9VhSECYihup=tURo_Qk__xUdYYPkHgnz5CWA0BrRAkvwbog@mail.gmail.com>
+ <20260417191749.GK2577880@ziepe.ca>
+ <CAHC9VhQbpS9XpO6dWu7gOiX=ppjtAxnNBOFe6s5wjEZNpMRjgw@mail.gmail.com>
+ <20260424143603.GB3611611@ziepe.ca>
+ <CAHC9VhR++21SD+v4Bb16SQmYHgJYZ0ytQ+BecGPNK+fEOe4G7g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aeoAlVEwzRUPrlVe@e129823.arm.com> <aeoRxWPyOHGJd+Jh@e129823.arm.com>
- <aeoWO2Cwo04YYu2l@earth.li> <bd908e28298d968740d03c97bc7e441de188b7b4.camel@linux.ibm.com>
- <aeokwrC86WI7uT+K@e129823.arm.com> <aeomlp3I0eVE5mce@earth.li>
- <aeotq8nPVu4wvEx5@e129823.arm.com> <e4e242ae5533d5762a3647186a178764881bf9ff.camel@linux.ibm.com>
- <aephL3MzYoqFGaT5@e129823.arm.com> <CAHC9VhRQWHEWQ5NzOPiu8jtYv6UsRm8WVS4fd74AbkOcAd4y_g@mail.gmail.com>
- <aesGU8a3mbVzvteH@e129823.arm.com> <CAHC9VhSaT_quKYnpFjAfqvL07JNbWMgM6c4pB9F46NHawX3DCA@mail.gmail.com>
- <014cf39aa8d6a0bcfa1a95c069675977ac67b843.camel@linux.ibm.com>
- <CAHC9VhTW3=RJ8L91RWXYYA9tFjfSXGN-DMEEwdiD6big9H57Ew@mail.gmail.com> <1f78fc75b2e95239973612a4b6c4cc782960b7ac.camel@linux.ibm.com>
-In-Reply-To: <1f78fc75b2e95239973612a4b6c4cc782960b7ac.camel@linux.ibm.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 24 Apr 2026 18:10:15 -0400
-X-Gm-Features: AQROBzAx1ZA_SOme2lQN7_v2fyTxeQpFzpK5JHTmeoRh2Wyy1mmm1jq2VzT2o90
-Message-ID: <CAHC9VhS4JmPmCJrYTdbjxb3TO-uK6cB3Zij-ef=wswGce2BGzg@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 1/4] security: ima: call ima_init() again at
- late_initcall_sync for defered TPM
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Yeoreum Yun <yeoreum.yun@arm.com>, roberto.sassu@huawei.com, 
-	Jonathan McDowell <noodles@earth.li>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	jmorris@namei.org, serge@hallyn.com, dmitry.kasatkin@gmail.com, 
-	eric.snowberg@oracle.com, jarkko@kernel.org, jgg@ziepe.ca, 
-	sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org, 
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, 
-	catalin.marinas@arm.com, will@kernel.org, noodles@meta.com, 
-	sebastianene@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhR++21SD+v4Bb16SQmYHgJYZ0ytQ+BecGPNK+fEOe4G7g@mail.gmail.com>
 
-On Fri, Apr 24, 2026 at 6:01=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> wr=
-ote:
-> On Fri, 2026-04-24 at 17:08 -0400, Paul Moore wrote:
-> > On Fri, Apr 24, 2026 at 4:58=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com=
-> wrote:
-> > > On Fri, 2026-04-24 at 16:15 -0400, Paul Moore wrote:
-> > > > On Fri, Apr 24, 2026 at 1:57=E2=80=AFAM Yeoreum Yun <yeoreum.yun@ar=
-m.com> wrote:
-> > > > > > On Thu, Apr 23, 2026 at 2:13=E2=80=AFPM Yeoreum Yun <yeoreum.yu=
-n@arm.com> wrote:
-> > > > > > >
-> > > > > > > Sounds good. Once the patch is posted, I=E2=80=99ll review it=
- as well.
-> > > > > > > Sorry again for the noise, and thanks for your patience ;)
-> > > > > >
-> > > > > > My apologies for not getting a chance to look at this patchset =
-sooner.
-> > > > > >
-> > > > > > This seems like an obvious, perhaps even stupid, question, but =
-I have
-> > > > > > to ask: if IMA can be properly initialized via late_initcall_sy=
-nc(),
-> > > > > > why not simply do the initialization in late_initcall_sync() an=
-d drop
-> > > > > > the late_initcall() initialization?
-> > > > > >
-> > > > > > Does any IMA functionality suffer if initialization waits until
-> > > > > > late_initcall_sync()?  If so, it seems non-critical if waiting =
-until
-> > > > > > _sync() is acceptable, as it appears in these patches/comments.
-> > > > >
-> > > > > This is the way first patch did, and here is some discussion for =
-this
-> > > > > (Might you have seen, but in case of you missed):
-> > > > >   - https://lore.kernel.org/all/a6a0e15286c983d720de227c6827adbe9=
-76c5b9b.camel@linux.ibm.com/
-> > > >
-> > > > Thanks for the pointer.
-> > > >
-> > > > Unfortunately, my concern remains the same: it's either "safe" to
-> > > > initialize IMA at late_initcall_sync() or it isn't.  Attempting to
-> > > > initialize IMA twice seems both odd and wrong.
-> > >
-> > > Agreed.  However, IMA should be initialized as soon as the TPM become=
-s
-> > > available, not delayed.
-> > >
-> > > In patch 2/4 patch description, Jonathan describes the reasoning:
-> > >
-> > > Unfortunately some TPM drivers (such as Arm FF-A, or SPI attached TPM
-> > > devices) are not reliably available during the initcall_late stage,
-> > > resulting in a log error:
-> > >
-> > >   ima: No TPM chip found, activating TPM-bypass!
-> > >
-> > > and no measurements into the TPM by IMA. We can avoid this by doing I=
-MA
-> > > init in the initcall_late_sync stage, after the drivers have complete=
-d
-> > > their init + registration.
-> > >
-> > > Rather than do this everywhere, and needlessly delay the initialisati=
-on
-> > > of IMA when there is no need to do so, we continue to try to initiali=
-se
-> > > at the earlier stage, only deferring to the later point if the TPM is
-> > > not available yet.
+On Fri, Apr 24, 2026 at 04:59:30PM -0400, Paul Moore wrote:
 > >
-> > Once again, that heavily implies that it is safe to initialize IMA in l=
-ate-sync.
+> > > Most LSMs will want to know who is initiating the firmware request
+> > > (the subject), the requested operation/opcode (the action/verb), and
+> > > the target of the request (the object, which in this case is likely
+> > > the kernel or the device).
 > >
-> > Put another way, what breaks if IMA's initialization is delayed to
-> > late-sync?  If the answer is nothing, just move the initialization to
-> > late-sync.  However, if something *is* broken and we are just doing
-> > this because of TPM delays at boot, this patchset just creates
-> > additional problems and we need a different solution.  I can't
-> > envision a scenario where it makes sense to attempt initialization
-> > twice.
+> > How is
+> >   system_u:object_r:httpd_packet_t:s0
 > >
-> > > > I understand the need to ensure that the TPM is available, but if i=
-t
-> > > > isn't safe to wait to initialize IMA at late_initcall_sync() then i=
-t
-> > > > would seem like this is a bad option and we need another mechanism =
-to
-> > > > synchronize IMA with TPM devices.  If it is safe to initalize IMA i=
-n
-> > > > late_initcall_sync(), just do that and be done with it.
+> > A kernel or device?
+> 
+> It's not.  It's one of two labels on a packet.  I've cautioned you
+> about leaning too heavily on the secmark comparison as it falls apart
+> in a number of places, this is one of those places.
+
+But I want to label a packet too, you keep going back to it not being
+the same thing and I keep repeating that all I want to do is put
+labels on FWCTL packets :(
+
+> > It is a label for packet contents. I also want a label for packet contents.
+> 
+> According to your explanations, my understanding is that you want a
+> fwctl RPC operation.  That is not the same as the secmark label
+> assigned by an iptables/nftables rule.
+
+I view fwctl as an opaque packet based messaging subsystem. It
+communicates a packet to a remote CPU and returns a response packet
+back to the userspace.
+
+Trying to have the kernel assign fixed meaning to the content of the
+packets inside the kernel is contrary to the entire design of fwctl.
+
+It is like demanding the netstack parse HTTP packets as a precondition
+to using LSM. It makes no sense.
+
+Any LSM integration requires a labeling system that is not hard wired
+into the built kernel. I don't much care what it is, so long as the
+classification and label space are defined by userspace.
+
+You say it is not like secmark, fine, but I see a perfect mirror in
+secmark...
+
+> > You can take that view, it is certainly one valid way to look at it.
+> >
+> > But it is completely impractical.
+> 
+> Elaborate on that, because from what I can tell that is the valid way
+> to look at it from a subject/verb/object perspective.
+
+We cannot have the kernel predefine verb labels.
+
+I'm completely fine with using verb if it can be dynamic and userspace
+can tell the kernel what the verbs labels are.
+
+This is the only reason I pointed at secmark, it shows a system that
+has both a user controller classifier and dynamic labels that are not
+fixed into the built kernel. ie it is flexible.
+
+> > > > The same way secmark cannot pre-identify all the XXX_packet_t's.
 > > >
-> > > Within the same initcall level there is no way of ordering the initia=
-lization.
-> > > Yeorum attempted to address the ordering issue in commit 0e0546eabcd6
-> > > ("firmware: arm_ffa: Change initcall level of ffa_init() to rootfs_in=
-itcall"),
-> > > which is being reverted in this patch set.
-> > >
-> > > Ordering within an initcall level needs to be fixed, but for now retr=
-ying at
-> > > late_initcall_sync works for some, hopefully most, cases.
+> > > Once again, I think there is a disconnect or misunderstanding, on a
+> > > SELinux system using secmark all of the packet types, e.g.
+> > > "XXX_packet_t's", *are* pre-defined in the SELinux policy.
 > >
-> > That's not a good answer.  Ignoring the TPM issue for a moment, can
-> > you confirm that moving IMA's initialization to late-sync is safe?  If
-> > not, why is this approach being considered?
+> > "Pre-defined" in a text files in user space controlled by the admin.
 >
-> I'm not seeing any measurements between late_initcall and late_initcall_s=
-ync.
-> Based on this very limited testing, I don't feel comfortable to actually =
-move
-> the syscall, but can see adding support to allow IMA initialization to be
-> deferred.
+> That's not correct.  It's kinda like saying the NIC driver sources are
+> simply "text files in user space controlled by the admin".  
 
-(I'm assuming you meant initcall and not syscall above, but if you're
-talking about something else, please let me know.)
+That's very pedantic. I mean to the point I wonder if we are even
+speaking the same language.
 
-Saying that you aren't comfortable moving IMA initialization to
-late-sync is inconsistent with allowing IMA initialization to be
-deferred to late-sync.  Either it is okay to initialize IMA in
-late-sync or it isn't.  You must pick one.
+I said the labels are defined by userspace, you said no, and then
+explained that they are defined by userspace going through a bunch of
+steps:
 
---=20
-paul-moore.com
+> The SELinux secmark labels are defined in the SELinux policy sources
+> which must be compiled and loaded into the kernel before they are
+> valid on a running system. Policy must be written not only to define
+> the secmark labels, but also to define the access control rules
+> which govern how those packets are handled by the system.  The
+> iptables/nftables command lines simply assign a secmark label to a
+> packet; that's important, but only a small part of the total
+> equation.
+
+I understand all of this, I am totally fine with it. A package will
+install, a distribution will provide, or admin will write these
+things, and do all the steps to load them into the kernel. I don't see
+any issue with that.
+
+Hardwiring things into the built kernel is a problem that must be
+avoided because end users only run the kernel provided by the
+distribution. "recompiling the driver" is not an option that is
+available.
+
+Jason
