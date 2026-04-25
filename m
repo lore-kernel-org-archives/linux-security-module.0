@@ -1,142 +1,264 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic304-28.consmr.mail.ne1.yahoo.com (sonic304-28.consmr.mail.ne1.yahoo.com [66.163.191.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3763A2673B0;
-	Fri, 24 Apr 2026 22:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD8E22068D
+	for <linux-security-module@vger.kernel.org>; Sat, 25 Apr 2026 00:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.191.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777070999; cv=none; b=QGT5mwGOZ7qU3fAo9grOVkOWszYEp4zSCuX17IipnxTGk6Ahq6z5lsGmQ0yicJte28I62M8N4cyKDnQ/8p+XWLhrCgj9yG+Pg/JuRXEjgU0UPcAjhZDVDTSqklQPMjRFeE+4GpBqxCt3R+NohNm9E8ZQyNkzRebEeLwCcGybVYI=
+	t=1777078795; cv=none; b=PNuYOLfaEaGfS5ZOte4HxHPNRm1Yh/M2GDdIh0Pt7dpVZF1yPO0Yj5fXnIECEzp49fu1QwsGF7YpI3ldn/7sYlxmnS6FvXLsLpq71yfKoiGEZF8kMTZcn3WcXKJjzCXJQv9TT+Ic/K+OkWNGb/PPu/7zti8YqbCO/Iy+e0BtYvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777070999; c=relaxed/simple;
-	bh=7pcMgIl+mAqbbbs/rWoWZZGmNLknhhmRxDaH4su564Y=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=iUcVh9ucKx/K6nWz3ROyPNEknhrIHDj8/1Z/qR5ZsvixNrT96KACmqdnh3MPwAzw4/cXN0s6CcS0ScieuiWsaOo6UFID5IhfC/FgNaC8/wN/BWOBRSB3jARROKZ1jOTH1f4dnsHHR4E9gzUsgcJ0TU5yQ/pqiK9yPQSY1wwxcx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aM/yAGMY; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1777078795; c=relaxed/simple;
+	bh=dkPLu20/XX797k3v5QRKFlqW0c2s2lYt/RVR/bBe1Sg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RJRbEWwURtx1SY+LaL5w13+SG9efzHdbFZ1Hr8bNlWl+FUJYnKk8ySChXeoPb4oL+xbcmjqIGvsah+ruIwoXltJruSwH+JXXhgVBWhV6XOo7lf49YE0VXLVn4MHbTuQ6CkhBate+fLEEN9AxkYxTQtRGItRAkYnCtWP5IHMekqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=r/ZXfkKx; arc=none smtp.client-ip=66.163.191.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aM/yAGMY"
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63OCVYqr3229166;
-	Fri, 24 Apr 2026 22:49:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=6PUYKv
-	xWyxCnfYDINczo2CrN5MRwpmVokR6BqgvWo4U=; b=aM/yAGMY/mr/wYGlA1BBmX
-	99VKzLzUY/1gDb4tKmjig41b1TxovwHORu8ruubOh7NRipSU9oW47rSCPkcvZnNc
-	ZdhTY74lWmXda9o//M8BoUzlMryjSik4nCa/xaS6/nYspVufdybKIk7uyCTx9ero
-	qlZtQ0thjovAbosjOH9Gn6LUPHfvQo7fVXJxxZKRQVnrpp0Ly2tEjsAT1eNdWk7T
-	ugfCiZqXehgK4ec2xVXecJ/+FgG3mE+IfPt8PBisHy6IBIusEyNaKZd4AymkCTk4
-	Bd4LAF38DhYBxyqaV/2swDoDa1AVXvlzGau9hBHoxXjNSeK7b+ERKA6IZjZ7MujA
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4dpeu2g67u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 Apr 2026 22:49:30 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 63OMZQ3J007657;
-	Fri, 24 Apr 2026 22:49:29 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4dpjkycsjj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 Apr 2026 22:49:29 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 63OMnSw514221924
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 24 Apr 2026 22:49:29 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D9ED05804B;
-	Fri, 24 Apr 2026 22:49:28 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9E3C958055;
-	Fri, 24 Apr 2026 22:49:26 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.11.225])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 24 Apr 2026 22:49:26 +0000 (GMT)
-Message-ID: <1e51c2fd090e5ceb07b1d09e50650c70fd3ccdb1.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH v2 1/4] security: ima: call ima_init() again at
- late_initcall_sync for defered TPM
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Yeoreum Yun <yeoreum.yun@arm.com>, roberto.sassu@huawei.com,
-        Jonathan
- McDowell <noodles@earth.li>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.linux.dev, jmorris@namei.org, serge@hallyn.com,
-        dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jarkko@kernel.org,
-        jgg@ziepe.ca, sudeep.holla@kernel.org, maz@kernel.org,
-        oupton@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com,
-        yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org,
-        noodles@meta.com, sebastianene@google.com
-In-Reply-To: <CAHC9VhS4JmPmCJrYTdbjxb3TO-uK6cB3Zij-ef=wswGce2BGzg@mail.gmail.com>
-References: <aeoAlVEwzRUPrlVe@e129823.arm.com>
-	 <aeoRxWPyOHGJd+Jh@e129823.arm.com> <aeoWO2Cwo04YYu2l@earth.li>
-	 <bd908e28298d968740d03c97bc7e441de188b7b4.camel@linux.ibm.com>
-	 <aeokwrC86WI7uT+K@e129823.arm.com> <aeomlp3I0eVE5mce@earth.li>
-	 <aeotq8nPVu4wvEx5@e129823.arm.com>
-	 <e4e242ae5533d5762a3647186a178764881bf9ff.camel@linux.ibm.com>
-	 <aephL3MzYoqFGaT5@e129823.arm.com>
-	 <CAHC9VhRQWHEWQ5NzOPiu8jtYv6UsRm8WVS4fd74AbkOcAd4y_g@mail.gmail.com>
-	 <aesGU8a3mbVzvteH@e129823.arm.com>
-	 <CAHC9VhSaT_quKYnpFjAfqvL07JNbWMgM6c4pB9F46NHawX3DCA@mail.gmail.com>
-	 <014cf39aa8d6a0bcfa1a95c069675977ac67b843.camel@linux.ibm.com>
-	 <CAHC9VhTW3=RJ8L91RWXYYA9tFjfSXGN-DMEEwdiD6big9H57Ew@mail.gmail.com>
-	 <1f78fc75b2e95239973612a4b6c4cc782960b7ac.camel@linux.ibm.com>
-	 <CAHC9VhS4JmPmCJrYTdbjxb3TO-uK6cB3Zij-ef=wswGce2BGzg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 24 Apr 2026 18:49:26 -0400
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="r/ZXfkKx"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1777078792; bh=pMqHjcj4aX8BxI66vssw/8fVMjiLymykofzem6zYYcM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=r/ZXfkKx/UWz2Zge4VWz2shTvvm/NgpAAOtqEvnQoG3ErvHVTbeLaENl54uMHRgKBhGYDkHsbxSuaKRUB/BAwrIsIG892fAdtbXDTKkbDR9kqPk8W6rMDVbflz7FUiOrVL2pki9zZA77Xi1wz0QmalH05vgsOzTqcHJg3QPNFdwPL545Y0xZZTvhV0hVH5/zsQHb38wT1olO6khd2ubuqpk4qQuZ7l0YAMUcgpBu6F2f6GHeMU0aCwiaTIAqzek44T8Rjzw0KdIWILiUHfdm/PnvtOK0SCbBbNlxS1sBWOVsSx2wxI6RYn6yDUw8xTmZ5D3voOGcmaK1dJTpS1wckg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1777078792; bh=+TRGIHhrltyND5K0Uyg+00RRN2uNwyXlmM7d/ooWcsG=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=j22/1C0XrRi6KJTox5t0OwV4GK7m38FXlX/aTQZwj5RNAt2UfaN5uLeW/ubGAVUvpKDIeA3Mq0o5mCRsSQoxLNWUxGHc5RQlxb0nYhrFMDkbkS34CKrkRwFklZnnJbzGSffjF1+YNy2OiINtv9k/zPASJGOIj3jMvZnCvFjisP2k7DSe766dDV2NJClhyCNGfIdgiW+u8jFs2g1yPvqTOfXPIhhuLa1fpv1+JrGUHe/t1EulUMkzJJd96oAD/N+cKQXMUzzCc0s0rdjJw/xGwSBXvYqO59mUvK873vwkDDbO2bbwhpMnOyjQzRjVO1bk1RHv4PTRCRz133lRYGHdIA==
+X-YMail-OSG: GD0iMSoVM1m.r_m1nCcfv1_.sWt0Gn.P8TmP7Vqun7iQlqj5TYMktTbHOmI8X6E
+ xJfjSR4xrez.FBxFSncdrCZmDKe3ky5Oln7DB7WrfxQBpKg6iIwyiG0zcAIRVC464uhvyIL6NSzp
+ YSw9f7I4pXSoh1Mu4LjNCY.6pPNzxsJTNvc1MB1beE8ByUTqc1mVT3YLBzMjsQM2_PLiafdOIZR8
+ 3eMEedLaAEAUn6nj8yW7Mo5223FVVCO8vkaIoUGJhkJOitosuyYhxR7OApjyjywGs5BlMRufXPnk
+ pBLrieJSiSb2LFgvktN_LrPQauPWBjgR.vfpkOvODoL4u5tnTg2KQTxgTQ5CsRLWRdEpjz7f5RgN
+ NcvLbDpB1Re9yJ9PMoG4t8INMIFOjnmwDvuwi04Bs34I.DKhA6RH59BwtFdFgkaNaUT8eVqwXsDX
+ FenO3eKC3PkiJE.4lduTL9qI3XWVhztNzsb5ecXW3Kj4JT1tEph_2YOBDlLJESGVNCOD3Z_th48_
+ PSwlUQ5vyw01OfXgo5UDzgV0ZgWCnXpfqFO5o037dD_Jrh2xWKSa07QZsX4Kl9NcgDwIlh6TKAG5
+ iqwAVJZhqs.wSQJKeRa7w4N5_ujuzxNE3DdM_NeYS24VhrEp6.va.sLJ6gW9lRv3gzJ9Pe439zoW
+ 5eewDQE5n5tiq4zljZX6acLVlFiBgBOpSAkEc5zJYYLFN5z4Z_cnS_FwXmRzzY9TIFjBxOWPjeYr
+ sf1374afRHzs_sVxAxCzqrSiBYFGLlbsp5f.3b7qaBAluxrnp3tTYzOvUaE1_soGd4XljkWU3qYZ
+ TN80tRd7.Y8T32MBTx7SJxkMTum1l2Cdcz_6tFvJSyUfuO_JxuXNdbl9T6wPkwNGtrPz0UefWxHP
+ hE684izFp6APB_TpncB30klOxpqL_4DgzBxCf3V7E3ycHQNtvrOBGKzdy5gQ9KgnVLHuHEFicxMs
+ .p03ZcJL55QLzCwruXWv7BerflDwh48.bu37xqeaPMZ662YntqHoqKaOU5z1srDpTJzef5cmRO4q
+ FDRi13movJ7VGXlXhOslK_O9CdyKy_YWMB1LNAK3sv4hjZg7pOco7XsL7aV08NnKnnW5KtSiDW1j
+ H8eSE9pqKIICp5X_rcX3rHrpLmGe.lpCrIDBsgX6JDjDbS.YAZ3GFJ5ry1awmhITRhrOovr.7XFb
+ bGy2J53VUTElBUKUXoglAwyelVbBK5UwWFXjFi9hshHfhD7BsSDMps3qAU0bF7Mn88_tVu1EBRlx
+ fMDo0jIT3Mi8wb5RfTkjbvy2Uebcq3Dcx0v3uTa6iEKHsPUv23XWaI1BDlxmcuxo82F6PrW5tnvb
+ cr5uklo50D6UjquCPWTaTdR5IDr6r1LOzImLZuUVV3oYq5kIXol5JaJXALDua1maj9UmIZ04y2Bi
+ OA0NMk__FY1xx3.N7dZp5fT_05Jr7TtosNskr_FLSRM8MugqNqyHKNJJ5YZO7vP8T4Qb_8Ts9eUN
+ j_RbSOXJ5ZtAxXNHx5d8Ao9bXrhxjYUMntawE24.JUN5QcIOeFSODKb5OMxWYpmZVs7aDrZsQxjs
+ pfyF4iHrbC3ax_EsK.z5OZuEg4ODnVNilWXWcVKUwDLn1gqH0FYaZQfXXZfQD875B3eQH1UGcLsN
+ a3EMVjsrP47mc3c4GNf.80hbnSCpsahHculmAIpWiavxN2WX9bnHrDpW6OcIr_7H7.KEVeI.eiPt
+ DPlURLlualgzppNebuY9MYBNgA3hkxORR6KR8xJLoqg_nRaMfJP.eAxsDZ3Z_fJDAzaasryMMH8d
+ .7tO9kLkAcLeVBM4aHmVhrY2Jb3oZK9a3uGX4rNr2oER5V.IW2gRgvbfnYZOvHNSTG579Cfop6ie
+ F79gMMhCGGIoaHtO6qlm.CHsGq6b76cPsUxK9schscI_PaClhDWYdb0j2yiqJ6luGYbHVvifHkB.
+ Lrsz3v9SBtojjvPXK1kAQK1YzIw0nbRDqY1A8l4Su0XReaBYSM28n6mqZgk.5EzHu01P9F8ZQKoI
+ v2X2klCruDKydPhwXM6aP0F8OoxYPIephFQn_94nvp8UXvmnio3osST0wJbsX8L6Lui13vyXfBTt
+ V3qmg06NwdhKYD164QNld0y2k7XOcMWpWnLnvT1y_UjiC91iTifgp3cVpT67r6qRppwrUMOj5RSh
+ q8R0R2XX0QFd6LkL4Ud70zLy0Zim1GsNrc20xRWArEn2.Z2uRmY.bGeBl6Ofe0njrYcuTm86qjGU
+ .pmfwRGm4SMsMrffB_YMHnyIvoOJZzusOXgEJDipOEu.gL3jtOQfZcITD11TPDDQ4CT6a29KXTtg
+ 3WcNgGQc-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 5130c370-2072-4e66-87e1-1b3724a5d0f5
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Sat, 25 Apr 2026 00:59:52 +0000
+Received: by hermes--production-gq1-7bb7df5c46-rzgvh (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 62ac5aef9c3f8e469e057f1fe5e11743;
+          Sat, 25 Apr 2026 00:39:11 +0000 (UTC)
+Message-ID: <2b773051-58ed-4b81-8118-b3142491e5a9@schaufler-ca.com>
+Date: Fri, 24 Apr 2026 17:39:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Proofpoint-GUID: BYlQdtA16k2P2wxouf2QQi1JdFQQ9yXD
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDI0MDIyMyBTYWx0ZWRfX7eYu4KC3WB1B
- 0hB1lGPQNXcKBmLBuOSTV3ZuRr2TsMu7mCbGAcNFMqDoxx8oxVqHidKExzu6cHl6nd6bp5GENpz
- I0Lw25kfh0R7utjrGY+hqBSmHYNQ5cDdqq2nBAdn6J00YiX7s/7+G7P4OSRpgnH9DZgDz82dIm1
- wNn0CUuNjJa2FRloE/Fda3n8Dl3uw64tbGL1srmySw4dqDy6qdB+iS5aAdjzuIF6L06B0BVfgW1
- i+AdhlzmWIDbuoQAISRzc9o7HFUH0mjaLU8g9742exGmB+kcWONSwLPoU5NDYr2ZAk+OIvlp3/b
- d6L84fnwd4pJlr/cSaFncvmDLH1zdswZpanjdCGyKWh7Q1a9TSUClDYBiPnbuWv9P8f8t01gayT
- RGicxhByMp3hDWpRA3Hdd2E/tIaOvAQMajthdtjU+8aBJU9iud00sawpRzNaOyN5jWkKW0IZ6X7
- RwbYe2agyOfDI07c1ZA==
-X-Authority-Analysis: v=2.4 cv=C8LZDwP+ c=1 sm=1 tr=0 ts=69ebf37b cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=U7nrCbtTmkRpXpFmAIza:22 a=8uTKPb2Waj3ysghmV9oA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: s-z82vbUyaezwgG1JHnrH41iYtTrJYkv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-24_04,2026-04-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 suspectscore=0 priorityscore=1501 malwarescore=0
- lowpriorityscore=0 clxscore=1015 bulkscore=0 impostorscore=0 spamscore=0
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604200000
- definitions=main-2604240223
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 2/3] LSM: Enforce exclusive hooks
+To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+ stephen.smalley.work@gmail.com, selinux@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20260225192143.14448-3-casey@schaufler-ca.com>
+ <c101a47f7d262bded2bce52bf5463586@paul-moore.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <c101a47f7d262bded2bce52bf5463586@paul-moore.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.25559 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Fri, 2026-04-24 at 18:10 -0400, Paul Moore wrote:
-> (I'm assuming you meant initcall and not syscall above, but if you're
-> talking about something else, please let me know.)
->=20
-> Saying that you aren't comfortable moving IMA initialization to
-> late-sync is inconsistent with allowing IMA initialization to be
-> deferred to late-sync.  Either it is okay to initialize IMA in
-> late-sync or it isn't.  You must pick one.
+On 4/23/2026 6:19 PM, Paul Moore wrote:
+> On Feb 25, 2026 Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> If an LSM hook is marked as exclusive via LSM_FLAG_EXCLUSIVE
+>> in lsm_hook_defs.h it will not be added to the set of hooks to
+>> be executed if an different LSM has already registered an
+>> exclusive hook.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> ---
+>>  include/linux/security.h |  2 ++
+>>  security/lsm_init.c      | 66 ++++++++++++++++++++++++++++++++++++++++
+>>  2 files changed, 68 insertions(+)
+>>
+>> diff --git a/include/linux/security.h b/include/linux/security.h
+>> index 83a646d72f6f..e3c137a1b30a 100644
+>> --- a/include/linux/security.h
+>> +++ b/include/linux/security.h
+>> @@ -2404,4 +2404,6 @@ static inline void security_initramfs_populated(void)
+>>  }
+>>  #endif /* CONFIG_SECURITY */
+>>  
+>> +extern u64 lsm_exclusive_hooks;
+> We already have the 'lsm_exclusive' variable in lsm_init.c, don't create
+> another variable that does the same thing.  If the scope of the existing
+> variable isn't what you need, change that.
 
-Yes, we're discussing late_initcall and late_initcall_sync.
+Reusing lsm_exclusive is probably doable. For the RFC it made more
+sense to make them separate.
 
-I prefer to look at it as being pragmatic. I'd rather err on the side of ca=
-ution
-and not move the syscall to late_initcall_sync, than move it.  However, oth=
-ers
-have moved the syscall to address the TPM-bypass issue for their environmen=
-t.
+> Although to be honest, I'm not in love with what you're doing with the
+> variable anyway, more on that later in the review.
+>
+>>  #endif /* ! __LINUX_SECURITY_H */
+>> diff --git a/security/lsm_init.c b/security/lsm_init.c
+>> index 05bd52e6b1f2..dc3c84387a7e 100644
+>> --- a/security/lsm_init.c
+>> +++ b/security/lsm_init.c
+>> @@ -356,6 +356,70 @@ static int __init lsm_static_call_init(struct security_hook_list *hl)
+>>  	return -ENOSPC;
+>>  }
+>>  
+>> +/*
+>> + * Hooks that are restricted to use by a single security module.
+>> + *
+>> + * Secmark hooks have not been converted from secids to lsm_props
+>> + * due to space limitations in packet headers.
+> If this is a general purpose mechanism for all types of LSM hooks, please
+> don't put commentary in here about a single class of hook.
 
-Mimi
+OKey Dokey. 
+
+> If this only reason for doing all of this is for secmark, just fix
+> secmark instead of going through all of this trouble.
+
+Secmark is the bellwether for using the mechanism.
+
+>> + * Conversions from a secid to a secctx are restricted to the
+>> + * single security module. All cases where there may be multiple
+>> + * modules providing the input data have been converted to use
+>> + * a lsm_prop instead of a secid.
+> Okay, yes, the paragraph above is true, I'm just not sure why it is
+> important here?
+
+It's important because it addresses the objection that the secmark
+issue might be addressed by converting the secmark to a lsm_prop pointer.
+I can certainly make that clearer.
+
+>> + */
+>> +struct lsm_exclusive {
+>> +	struct lsm_static_call *name;
+>> +	char *namestr;
+>> +	u32 flags;
+>> +};
+>> +
+>> +static __initdata struct lsm_exclusive lsm_exclusive_set[] = {
+>> +#define LSM_HOOK(RET, DEFAULT, FLAGS, NAME, ...)	\
+>> +	{ .name = static_calls_table.NAME, .flags = FLAGS, .namestr = "" #NAME "" , },
+>> +#include <linux/lsm_hook_defs.h>
+>> +#undef LSM_HOOK
+>> +};
+>> +u64 lsm_exclusive_hooks;
+>> +EXPORT_SYMBOL(lsm_exclusive_hooks);
+> Unless I missed something, we really shouldn't need to export this, why
+> did you need EXPORT_SYMBOL() here?
+
+No, you didn't miss anything. It's a carryover from an early experiment.
+
+>> +/**
+>> + * lsm_exclusive_hook_denial - Check if exclusive hook is in use
+>> + * @hook: the hook to check
+>> + *
+>> + * Check if the hook in question is restricted to a single using LSM,
+>> + * and if the LSM providing single LSM hooks is defined.
+>> + *
+>> + * Returns true if the hook is exclusive and they are already provided,
+>> + * false otherwise.
+>> + */
+>> +static bool __init lsm_exclusive_hook_denial(struct security_hook_list *hook)
+>> +{
+>> +	int i;
+>> +
+>> +	if (lsm_exclusive_hooks == hook->lsmid->id)
+>> +		return false;
+>> +
+>> +	for (i = 0; i < ARRAY_SIZE(lsm_exclusive_set); i++) {
+>> +		if (!(lsm_exclusive_set[i].flags & LSM_FLAG_EXCLUSIVE))
+>> +			continue;
+> The logic on this looks a bit odd.  What is wrong with something like the
+> pseduo code below?
+
+This code isn't just looking to see if the hook is exclusive, it's looking
+to see if the hook is exclusive and if the LSM requesting it has been given
+the privilege to register exclusive hooks. This may not be the cleanest way
+to go about it, so I will reconsider how best to do that.
+
+>     for (i = 0; ARRAY_SIZE(lsm_hooks); i++) {
+>       if (lsm_hooks[i] == hook) {
+>         if (lsm_hooks[i].flags & LSM_FLAG_EXCLUSIVE)
+>           return true;
+>         else
+>           return false;
+>       }
+>     }
+>
+>> +		if (hook->scalls == lsm_exclusive_set[i].name) {
+>> +			if (lsm_exclusive_hooks) {
+>> +				if (lsm_debug)
+>> +					lsm_pr("%s denied for %s.\n",
+>> +						lsm_exclusive_set[i].namestr,
+>> +						hook->lsmid->name);
+> The lsm_pr_dbg() macro exists for this very reason.
+
+Indeed. I missed it here. Will correct.
+
+>> +				return true;
+>> +			}
+>> +			if (lsm_debug)
+>> +				lsm_pr("Exclusive hooks limited to %s.\n",
+>> +					hook->lsmid->name);
+> Same as above.
+
+Same as above.
+
+>> +			lsm_exclusive_hooks = hook->lsmid->id;
+>> +			break;
+>> +		}
+>> +	}
+>> +	return false;
+>> +}
+>>
+>>  /**
+>>   * security_add_hooks - Add a LSM's hooks to the LSM framework's hook lists
+>>   * @hooks: LSM hooks to add
+>> @@ -371,6 +435,8 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
+>>  
+>>  	for (i = 0; i < count; i++) {
+>>  		hooks[i].lsmid = lsmid;
+>> +		if (lsm_exclusive_hook_denial(&hooks[i]))
+>> +			continue;
+>>  		if (lsm_static_call_init(&hooks[i]))
+>>  			panic("exhausted LSM callback slots with LSM %s\n",
+>>  			      lsmid->name);
+> I don't think we'd want to simply skip over a hook registration if the
+> LSM doesn't have access to an exclusive hook.  At the very least it risks
+> unexpected behavior in the LSM and at the worst it prevents the LSM from
+> properly enforcing it's security policy.  There is a reason we have the
+> panic() call in the existing code if we are not able to register a hook.
+>
+> The simpliest solution here would be to panic, like we do today.
+>
+> However, if you want to get fancy and enable LSMs to optionally adjust
+> their behavior to cope with the loss of a hook callback (I'm looking at
+> your patch 3/3 now), come up with a mechanism to report back to the LSM
+> that one or more of the callbacks were not registered.  One quick thought
+> would be to return a non-zero error code and add an indicator/bool/flag
+> to the security_hook_list that would be set by security_add_hooks().
+
+An LSM can easily check to see if it doesn't get exclusive hooks by looking
+at lsm_exclusive_hooks after registration.
+
+	if (lsm_exclusive_hooks != LSM_ID_ME)
+		... do something (in)appropriate
+
