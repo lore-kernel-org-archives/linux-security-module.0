@@ -1,137 +1,114 @@
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B8D2E888C
-	for <linux-security-module@vger.kernel.org>; Sun, 26 Apr 2026 13:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423FF315D35
+	for <linux-security-module@vger.kernel.org>; Sun, 26 Apr 2026 23:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777210949; cv=none; b=DfSKduH2GdF3fZRBzMCtPNNLj7nqkyzhwEgqs8wOn7jG+2IavfF1/mwPp7m4NOrc7zPH5cPqvvJKo+ETZhkfGm3DfCCMFnUfpKQWz6VdIvY70Hs/PfW9/kbOdEFINaP1VGc6ZudXBPuqTgN+nme7WFlXXviBnXtsPpgj4Io0hN0=
+	t=1777245832; cv=none; b=UlHXE7RTdcAUxFhhsXTt22itUTGCe7fYv77cJL41dJfWDtcSrFfxYApL86xSEaCD8gl01R9H4+IumyVcKbb4C6NcI9Qw8OHHJIriZgYZIW0z+DMq6QHSk+JucBFMLOqW0z4RTvaJ1Nw29YAEJKv6/nq4ke/lE1WswarSrxGd+JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777210949; c=relaxed/simple;
-	bh=FhdP40ZNedHqEmlY8s3OTQPdz7LoUhJhpTXV8+ccUeY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DLJrrwCs2BJsbInaMgZGBusILyeisuxgZa2UHbY11xW+ZaL/aAJ2UFKsTLxgXzJeLR34MXpqdylJb2UPQfnqh3282ZWMvwlG08RzJinuaRhALc38rPWhpSXLcA9CtQ8uWD85MFoNCT/r6SbXWf2kbkjn1GexvnFYSDuKLaiKiww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=NDVK9wCG; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+	s=arc-20240116; t=1777245832; c=relaxed/simple;
+	bh=3PfpSsq9PVqlOFmWLAB5WPbcbb7zy7cmiuYW1YK3Yac=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sE0ZW+MsVjRl3XjkD4MbahUME6SlhpPqzx0hViEnaRj9lTrkDHF6mxd021017TK+GBkacnFeMveORqmgdSyEtsgqBcW1T5A2RbftUG+dDiLyZTUaF9lssRf/caq+EyKJfVNsll2wMNpRSIey4QvB0/eLZSqQHD4lC82FXdH7xcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R83f3coU; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="NDVK9wCG"
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-506a7bbe9d0so78424111cf.0
-        for <linux-security-module@vger.kernel.org>; Sun, 26 Apr 2026 06:42:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R83f3coU"
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-8ef2118b478so583143185a.0
+        for <linux-security-module@vger.kernel.org>; Sun, 26 Apr 2026 16:23:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1777210947; x=1777815747; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=etZa6+dwk3PB/o1Yn2oB8jvevYbsEL8oVxXn5echsWc=;
-        b=NDVK9wCGz9EYGOfwj4a+B7VlhjB+7bxntO+H2Mhsmfh7HADt2fuEn7Sm0iCM098dI0
-         GV6TunZ93LQSKNrxXPxmwg/MJ53dYV8drX54guno0onWf4crbuJa5LbgjWkTNH3Ok30S
-         fUtLQMo4W8G5W/1xI6OANVL5kO5J1dKBMTd4sOlO8L1Wn3DE/AnMcGVl81a5IG/xzFmB
-         Bsa8p6eX/cVEH26ggcREruOgMbp/xpfytVhND/VStxGcstiEUHvRwxPGvXeYsCf35G07
-         sZG+pt3Z2Y9kXqKaMdBDpoELBmE2BcxoVH/niuVgtAIMzjRtCAXMOIV2/qb1QTYJtE2C
-         fPfg==
+        d=gmail.com; s=20251104; t=1777245830; x=1777850630; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SMcVPLr/wbi2Q8Kaqf49orEV0Xtu1ZF/I9pLdpkPlEs=;
+        b=R83f3coU1bE3WufNsrV+dbv02EBiCFDAJuGnn9wQEDCs7kjA+Yhud5f0dWS9S52VlR
+         Ydyoo41RB51h1BOttZd0CaG+Ip62cX26fmzspW3tVo/kJ4ZOE9UqEodJfKxsSwqpwWIy
+         Vn7yFD1JIONuHVCCd3dJX/WoJCKOuIKSQrqkOosuRZMVFINgENxHk0cIaxIFndf4EfwF
+         GpnobeWEZOydLUDEdN0FLcmq+jsxTSIcPs4s2v8MJjTpuKL689Zaejse0rrO+ZjSb/mp
+         ddTjJqBW4tgiTuthSsrqF4NVFnI4fO248ZN8IOu9/VHRXYn5aMfwiUYMrFJ9dbRbEcTJ
+         eSCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777210947; x=1777815747;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=etZa6+dwk3PB/o1Yn2oB8jvevYbsEL8oVxXn5echsWc=;
-        b=UYIlsiF9BQbopE+ajrm4+5di6D7188hmyayhMbGGQFzQUKZn5FawRE5uShzHprupTO
-         NJC9PW5k/jf/Rghc7SDwWxymy5eP5ENC6uvnrQ8ZhcprNKKmKFtMlLzCEhvZilMyNmyZ
-         bbhI+gKhZZeNov7Ah926paUFOLjCf1OTgLlUs6/xBqtcxW22tHER1PwJ6z4T4nczdotj
-         0NMiqfQBTNy860yPkLMCGHNghunFAi8dnSF24lWTYbkTzPpeGzrYvndolX0dPzM3VaCq
-         juUbvx0o0VBJ5tm/OHrclDoY9Z/5vDvB0Z53tTN4q+iriZ3RTT4spd70gXw5rDy19l1B
-         OG/g==
-X-Forwarded-Encrypted: i=1; AFNElJ8Gw/KSp3E/7OM4/tUwFjLnclaW83OsKMdLfo6DfqyFwpSS5hrZ13o/KHI443jLKeTYCVRsMWEoScYBwDDbuF1YZMQStNY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyypfcrNJf8yZGxFkpRySzyNAAKqp1O/oifJSOruAm+22V6HiD4
-	3Ze7nWkD9MtT/92SMuiFlYVYIGSExQjnfYijf5SgtPmYmjf7wSe90fMPBQHbTywedDXk2GS6uwy
-	giCPhN1Q=
-X-Gm-Gg: AeBDieu8+E/kFKJGmBY4OHkt9UUXOvk57Rz2k3o9nu01osQEt1P1V/HCFExwLYgQtBn
-	XGPEF1Ht4Uh0I7/z/wvFfOwiMQYfZPfMEbgXZq8mzmcH3Ca1OSTxmgNxQ9BYn4HwDmU0J+bsLph
-	vEebtuzqBSvLUA2oqcXAsM/DYA7EbdGMtBt00UdiqsVK7ALQmSGfbNIfZLCgL1QfkSNqBF0hV3c
-	Eb2CkoKJ9+lC2zprULOJLkLRhjQj83A0aL5r6VfHlLYeHeDKJ9A6MBZtSUKGGTI/NsY3JGqmDH7
-	TGEBxFMnkgngY0T67fl6vK2XNhNe5lMV6eIYwW3oL9vPUA+YRyDGTsdLA2Hx6hkgc8id9fmpAhv
-	RBActL8rp4LeR7CmVf4aHCjLXkRAxT28Oug/qLBZ6I59lwoFOkAF8+/mWSAe2/17BxWPPzn5rNE
-	xCYU6z+h2z1fDajEYR5ttl/vgJLnQMtldcQFMUq2a21f0Lp1mlynnLQkIxnLNKWCM3GzVw4lF2n
-	dQAIQIZtUfTR9zz
-X-Received: by 2002:ac8:7d14:0:b0:50e:df54:c36d with SMTP id d75a77b69052e-50edf54c741mr408613341cf.18.1777210947033;
-        Sun, 26 Apr 2026 06:42:27 -0700 (PDT)
-Received: from ziepe.ca (crbknf0213w-47-54-130-67.pppoe-dynamic.high-speed.nl.bellaliant.net. [47.54.130.67])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-50e392c859asm305729281cf.1.2026.04.26.06.42.25
+        d=1e100.net; s=20251104; t=1777245830; x=1777850630;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SMcVPLr/wbi2Q8Kaqf49orEV0Xtu1ZF/I9pLdpkPlEs=;
+        b=JEn9db2jj2LqXeE6zr3MZcvP2WG3to6ZRVvbHg+8MbcnOtYJcIVnfAnGZCmo9Ua0tM
+         2unDR3ylQjnsga1zM7VbjVb3tmOj7HTpAGsR1dsZjAho+9XMD256BGMKMbJTMTUzNut6
+         7+/vmbgdhQYyjox2Pi6SV3Jw3Nadlv1qh/AnpzyZqmjQOfm4khdHTMNurkV1NhQ0MwXP
+         GOCcldFARDXCjTBbwGdeUAMpToA+1Ld98RudbfTRXeH7/6vFA/grhbW8R5deowXoNFk1
+         iWblvs8MLfke1gTAGts7qI7j8UAQz9AzOYosWW3MzWlRESPHD8mOOTdb13OYOiwdN5x5
+         VPRQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9/OVWKGxka9DGKEKwtM+FHixS/wQ9aXWhf/hFcpLNAjmdxN5lSWgDBMAHSfsN1SbsVnygW7G0P0RNVSuLsYUCAd+hWf44=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY14Iq5oSsfA73YsYjKVCS2gMND9StX33WSuTHZMsmQ6MGH0ig
+	zwQ9lM9ZkqRHVVmYBwoYgxOKabCKBrmjzrJivdEYKzNpF/WovwpfOaaX
+X-Gm-Gg: AeBDiesFLIk/WBfm7yW8ehj41H094Xy8tb6ViJ95K6sjVolDSsFC0fQ6dSgalmQW/gN
+	KC5OyTWfsvr+9SmZTFwB1kjmMT++/febyzWRO0LKBHdh4m5Y2+pnn3oXDf9+wikYHi8TAF56Ogr
+	CgcYhgNp+hYXljMrlq504rV75cuuJCIL4WijIdRUSTsdY2Tt9/knJZ7pziSfeK/fKu397IbqpWZ
+	VD50LFMNi0BPBHvx4h0/9SQdFjE4NjudXdpdUMYcw5BVzMIhuausdVxDeinFLMh3bg8BgJNNlUd
+	DmrBNGddtiHLFzMX8BI1m8EyHkrWYIUvBjQ5UxJ0tAxlGWX7L4SwzxS5JVFkDPwN+t8YeiDQUYI
+	Q00krLxEwBkHeCW1NIbopTci5reAWgTooCQUhtxdbNozoeEbsBvAWJUE6/Z/ga8eMXyyGhvbbAz
+	uJU8HrV6fJJUP2QxiHGrklM0TlXejBkXNeNTjx5ZTqwC+2u2Ebwc4ua2VFSOMFhVd3hTR2oQJdB
+	px/CbKx+vqFcOh0MM0NAaXYXilSncY9HX/RmnL+ehTePfwj1X8u
+X-Received: by 2002:a05:620a:46a9:b0:8db:de3:92a1 with SMTP id af79cd13be357-8e79208594dmr5861913385a.48.1777245830182;
+        Sun, 26 Apr 2026 16:23:50 -0700 (PDT)
+Received: from battery.lan (pool-100-15-227-251.washdc.fios.verizon.net. [100.15.227.251])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8e7d93c2fffsm2383899085a.36.2026.04.26.16.23.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Apr 2026 06:42:26 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1wGzke-0000000EqhS-4C2t;
-	Sun, 26 Apr 2026 10:42:25 -0300
-Date: Sun, 26 Apr 2026 10:42:24 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>,
-	Roberto Sassu <roberto.sassu@huaweicloud.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Itay Avraham <itayavr@nvidia.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>,
-	Maher Sanalla <msanalla@nvidia.com>,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] Firmware LSM hook
-Message-ID: <20260426134224.GC3501894@ziepe.ca>
-References: <20260413164220.GP3694781@ziepe.ca>
- <CAHC9VhR1Uke9P==CELKavBcogHoNCtMZFfNWUbgm5HYUfomhtw@mail.gmail.com>
- <20260413231920.GS3694781@ziepe.ca>
- <CAHC9VhTLamfe4C81ZNRVT=H32x+KLxSqH3o0eBfrHsWAgAqxCA@mail.gmail.com>
- <20260415134705.GG2577880@ziepe.ca>
- <CAHC9VhSECYihup=tURo_Qk__xUdYYPkHgnz5CWA0BrRAkvwbog@mail.gmail.com>
- <20260417191749.GK2577880@ziepe.ca>
- <20260423140950.GE172828@unreal>
- <20260424141921.GA3611611@ziepe.ca>
- <20260426103957.GH172828@unreal>
+        Sun, 26 Apr 2026 16:23:49 -0700 (PDT)
+From: David Windsor <dwindsor@gmail.com>
+To: Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Ondrej Mosnacek <omosnace@redhat.com>,
+	selinux@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selinux: don't reserve xattr slot when we won't fill it
+Date: Sun, 26 Apr 2026 19:23:49 -0400
+Message-ID: <20260426232349.844289-1-dwindsor@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260426103957.GH172828@unreal>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Apr 26, 2026 at 01:39:57PM +0300, Leon Romanovsky wrote:
-> On Fri, Apr 24, 2026 at 11:19:21AM -0300, Jason Gunthorpe wrote:
-> > On Thu, Apr 23, 2026 at 05:09:50PM +0300, Leon Romanovsky wrote:
-> > 
-> > > > > Leon mentioned that different firmware revisions would have different
-> > > > > parameters for a given opcode, and that one would need to inspect
-> > > > > those parameters to properly filter the command.  Is that not true, or
-> > > > > am I misreading or misunderstanding Leon's comments?
-> > > > 
-> > > > They are ABI stable, so there will be rules about future changes that
-> > > > old software can follow to ignore or reject future things it doesn't
-> > > > understand.
-> > > 
-> > > It is wishful thinking and applicable only to mlx5 devices. No one
-> > > promises that other devices follow same ABI rules.
-> > 
-> > Well, I will definately kick them out of fwctl if they don't.
-> 
-> It is easy to say but harder to follow. The kernel includes many devices that
-> exist only in specific hyperscale environments, where the update cycle is
-> tightly controlled. They easily can break FW backward compatibility.
+Move lsm_get_xattr_slot() below the SBLABEL_MNT check so we don't leave
+a NULL-named slot in the array when returning -EOPNOTSUPP; filesystem
+initxattrs() callbacks stop iterating at the first NULL ->name, silently
+dropping xattrs installed by later LSMs.
 
-Well Linus's rule applies here, if it doesn't bother anyone it didn't
-break..
+Signed-off-by: David Windsor <dwindsor@gmail.com>
+---
+ security/selinux/hooks.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Jason
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 97801966bf32..4ff118a9395f 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2966,7 +2966,7 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+ {
+ 	const struct cred_security_struct *crsec = selinux_cred(current_cred());
+ 	struct superblock_security_struct *sbsec;
+-	struct xattr *xattr = lsm_get_xattr_slot(xattrs, xattr_count);
++	struct xattr *xattr;
+ 	u32 newsid, clen;
+ 	u16 newsclass;
+ 	int rc;
+@@ -2992,6 +2992,7 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+ 	    !(sbsec->flags & SBLABEL_MNT))
+ 		return -EOPNOTSUPP;
+ 
++	xattr = lsm_get_xattr_slot(xattrs, xattr_count);
+ 	if (xattr) {
+ 		rc = security_sid_to_context_force(newsid,
+ 						   &context, &clen);
+
+base-commit: 254f49634ee16a731174d2ae34bc50bd5f45e731
+-- 
+2.53.0
+
