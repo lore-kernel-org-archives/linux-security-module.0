@@ -1,210 +1,139 @@
-Received: from mail-wr1-f67.google.com (mail-wr1-f67.google.com [209.85.221.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0906B2F12AC
-	for <linux-security-module@vger.kernel.org>; Mon, 27 Apr 2026 14:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777300438; cv=pass; b=Ud3yeqdS3x7tQR4KrVBWSITAQVtqq7Z8CliWyavmXbWH9sPJz42xW071JkL6HcQUk8s4GwpdePUah9qJ5Ulg2XWWebndlbDweZAbd7iGhL4jyRSyEW9TL90GHhceAVF9D9ONi98+dUEPslw57gQNLv0xofhHQW+04B0trYxcIq8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777300438; c=relaxed/simple;
-	bh=BxBDIJpOCEN9cmK7Xc3qnTtKGs1GTwEe6Gc287iXtLI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=csoFlkDul4lKgcddILt6ASQzeZiy0aECGUrhEYMEu/7EcI13eu2JaKh5skrMxlzRLdt3aMEK3AaiPFAlErvGZLDVugFDNu5J51VWjRWsY4aGkyjfEjGoUzg+dJ2Q2UU9aELLkmV7OBRmBlrkk8OQSL0lqEi5MztKVuRMafIrp2Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fg7lEW6B; arc=pass smtp.client-ip=209.85.221.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1DA3803DB;
+	Mon, 27 Apr 2026 14:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777301857; cv=none; b=jy84YlMFi13o6DPkK4o+0RrRsvpaj2KJEK4EqAgwH1zCajTeLAk3Z2qeVf4ZcviY6JfnCPt4AkNGC2V7xsNMP0pZGqPp6/1tyamLS/PpAKc7nf9k8d0QpPOSlLv9u19ZwfXbF/aA1hlN6CrGsRo2Jv4KBAB22WQTd/wTM4xMr/g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777301857; c=relaxed/simple;
+	bh=k54AbQ273apsHSbmihG65p6CQFsiF6CH6TWTe+51Sm4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bhhf/ARbjR0Sk23TxbXEQ4bn/6MSfKHLfu/7OHuy+yRK2DHcizOsHOmfWgAjSHSM1TF6DbFvN+IIS0FHWd6IdZvrF0c4/haTQU/DBT6ZAIk/NfuD/hE8MD/yrZF6umvwC6Qn7hemIosbuiYMplj2GozWPV8HG3fx2S9cd+8Wx+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uw09pMTF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fg7lEW6B"
-Received: by mail-wr1-f67.google.com with SMTP id ffacd0b85a97d-43cfde3c3f3so10488258f8f.3
-        for <linux-security-module@vger.kernel.org>; Mon, 27 Apr 2026 07:33:56 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1777300435; cv=none;
-        d=google.com; s=arc-20240605;
-        b=Ob2wWbDlxP9QeK4O8GilJwEQtkD95zW/BLplzNn9dpxL6aGH/MKvODPMZyKF1G7i5y
-         2OfVNMikCwrD+nTnEhuEgiLAwjKMXAMFbvQY504m752uxeBEbVk/hk1CJy03vzjqtZFs
-         RgmePZuhpIGfzmHk/VcfKkMjfCOb2BsC0YNggEHVWoCqBnIifpbZLE67htad+covZyw2
-         IIOQDNqNrI7B0MEt68LCCirjazXvwdAnuCMxT1+5OCbhkjog7Ac7zbPxrh95ZSGAyii/
-         Q1yHRF1OHyfheokbmtw9MOFCgFTH4axqAFPYdjpLwQgAWZc94wySfFt0G8fxKwDimQ5w
-         Fx0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=pFu1HBFOkQUkkUSIPtiTt9PSDYzJQuwVt6q+ET8HXT8=;
-        fh=YOh/jHzBgnUur1kC/8tV7NpTo8JGpLp5a2Uo9nUSBGs=;
-        b=Gk0EbkpAegvGh2G3lB/WjctFPoIphJYAFE3Q3UQIGMVw+3WH6QSU1k7r4Om+BqCp+E
-         YBY42X4faReq+kyJWdclJ4g0NWMRjZ9KMEAGhb/Cp3FwSoXj19lpA6T62PaETPw0Igno
-         CXlZGmhOYOYpV74mn1mYOkLIjNcNm+Lg1Ru7KN7W+HBPUlUl9qXZ0Y0D8Sp1ZoVC5Vye
-         qXjgfMR3teUWMGths2o9x84L08Ti5bM0XSvHtm3TFF3oioqr0w5rYkxDR3STqb6DKDiZ
-         vmRGH0C2CAkr6ax5bHE0ASWWZWrcxG6pmpRHd3InFETm2y5o58/JVQ08px/lZvUmkbiI
-         0U3g==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777300435; x=1777905235; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pFu1HBFOkQUkkUSIPtiTt9PSDYzJQuwVt6q+ET8HXT8=;
-        b=fg7lEW6Btht96XYQoo3Bu45XSjelEwr/rNUaNMxN5Q9HHjCmzkizrvkLQ/sgQEA/Hg
-         Z6nNTGaZgv7qJYWlkU09sbvus0KzCLnHr5wGA+axsn7gcESH3xEKyw2W4jPKQXPLmmiE
-         nG/KPsfwL96b7NYjTFsnu86cIJtn3oJoDQD1klXl157DrMX3Dvv+iqQJvEJ4NuJDQYak
-         ngAI5xVEa7A4pdoOqpdL8FfbscBryWB8UhtZDc8BhCf4pYLNr1QJd4Vd3XupgU4hwKLZ
-         EoSMcApEG2MhxIWKHWVHVBepuycD5K+u43Wsw2fyvYuvobBW1+gl8Q3OCpDyBjJU5+s6
-         wYCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777300435; x=1777905235;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=pFu1HBFOkQUkkUSIPtiTt9PSDYzJQuwVt6q+ET8HXT8=;
-        b=XpEK7igqP+HT0nHd+dUw5ol2A97T1ndNX3Ohzd4y4YnxOjw5IHXJPsZ6jfB3mKLfoP
-         oKKMCoPSI+qnWQYPnFQHLY4A7mhf/0LUqlgKbuUHtcLipoPFRImZyrEhFE8kj7zFZ4Ac
-         KWeRSdVVDJaZhw0s9ZTNUpySOo92/UEZWISgGnoLoW7LW2v6RUXZ7g9+turJ4Dl0bf05
-         gwM5lsYaBNuM0Lpp+/PkxlYIRzABkb0hsPUJk2zDnAJ/67Rs/i70zzxmUlNv5hDOopdL
-         AKaWnfiHXiP7gMb7MvTxypA10JeVqDm6Tc7+MtGK9LKOGucOLxnb9OO621/0zW1o7xAR
-         6ZEQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/stwhMCtqBSjzG1iY+dDEIUGdt33G6MPtqQUkNfYapNfNE/jqOLqKmuXBk7gOV45rjQfeD0u6AonDmiG5J95KlLcz1iGw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7L3Nt8vHV5ymL73bNuyueJXzeJPYwsKW/ZNapkXu79lyvgziJ
-	f/vmgYlNJ5U8AoAMQX4Zrq7WUPEmxtMSg4ySdKi4wnDfHwrntHoeo/qfVosiZRBGM/Jt9vtxJLe
-	YjPL7RR9sLSlUuA+krLYGk9tfePKjmwM=
-X-Gm-Gg: AeBDiet0y6AGa0GNCqFwa9LEfyYyXnV9dD9B6zd1jL4tt/UOAtuirFl2ObycZ2K6VLQ
-	kHAMD+wDWvO40Kj73KVPhAnYAtescQsCVltbbg6kaLIzNM6DDwnhYou8/ryuKNhLSRItmesyWWm
-	6Gzh/Xvll2TWJ6lWBNC7NjWnDbfL1+zOUtG1roXGooZc6+lMDhpL9M6C5ajpS416eoByz+A7i6G
-	cuR1cI1aErfYPYFmERL3ImmpQNgbGQU03gilhMmqJtoIIhD4yJUHadgzadh3IcUVoe0l0qYxpIt
-	KY7h+XoIlCDxGMsfQAOwuordz4sbTM01A2GfYsz3xkYXZwSDHbSRdknOr2D5aa92X+/OwqIE1U3
-	o5l2tql7SoW2tP0RxN4zjl9Bgoo9ViJVdfJ+bXv+M8PMxgGhpioWZEChb7G38vaBkbsU=
-X-Received: by 2002:a05:6000:2503:b0:43c:fde7:f1 with SMTP id
- ffacd0b85a97d-43fe3dd3a84mr67619523f8f.18.1777300435210; Mon, 27 Apr 2026
- 07:33:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uw09pMTF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13233C2BCB5;
+	Mon, 27 Apr 2026 14:57:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777301857;
+	bh=k54AbQ273apsHSbmihG65p6CQFsiF6CH6TWTe+51Sm4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uw09pMTFeSUuI8yA10vV8LDgoUIEivaXgxIYlE6tHuSX25otvKWKs6B4rkqhNbPXh
+	 oA11xKOD4AGSKUFGmnNcUdnxKwq/U77Ok0GeV7/LLHJidJPHKERaYYxWgVmRuqhqGD
+	 KbXHsRIrJN5ikufTMwT6lt5z61XIqcWxqVBPUWxPbnGOsl9Mv/l+6ccZZcO6G/WZmW
+	 spTkQCO80wleTOLGHzYru2IecjWEIuAorsDJVZ79HehbYpTQsPjOzZt1aNm4BIDkVh
+	 55rwSyJhSrK5XNK4q6jp6kkZuTQnq6hxLef4D3J6arNyIhLkS6XqmLo0YkJ9RtM7br
+	 dmfc2AgAAIcOw==
+Date: Mon, 27 Apr 2026 16:57:31 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Justin Suess <utilityemal77@gmail.com>, Lennart Poettering <lennart@poettering.net>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
+	Shervin Oloumi <enlightened@google.com>, Tingmao Wang <m@maowtm.org>, kernel-team@cloudflare.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 01/11] security: add LSM blob and hooks for
+ namespaces
+Message-ID: <20260427-belegen-euren-997f91347820@brauner>
+References: <20260312100444.2609563-1-mic@digikod.net>
+ <20260312100444.2609563-2-mic@digikod.net>
+ <CAHC9VhT4Cd-FMYhaKgt6Gv-Suu7YJm7YbKZ-vdMwQV7EiWDryA@mail.gmail.com>
+ <20260424.ein5Aiwah6Ai@digikod.net>
+ <CAHC9VhRcokUR0ZKzCuZnZAyaFEMd6EH93BE3OTTKHY9Mo9pVkQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260427001602.38353-1-dwindsor@gmail.com> <20260427001602.38353-2-dwindsor@gmail.com>
- <CAP01T74iuSDJeL6g=5yLdYGb-VcESK1SYY3R1S1r-CtQEsW+oQ@mail.gmail.com>
- <CAEXv5_heSFK5rZYtaJG70Xgv92Um6Dbq8b95PtnpKy7XFwpKUw@mail.gmail.com>
- <CAP01T74WBjcMXbWYeaWB-oTk-bUzoxi_EEALDpT1hFUEOovnpw@mail.gmail.com>
- <ae82Vv0RWzcXqSaz@google.com> <CAPhsuW60SRXZbFYRDm-QaTiB8tTtJD_N4jk1=680x5UsZmpj9w@mail.gmail.com>
-In-Reply-To: <CAPhsuW60SRXZbFYRDm-QaTiB8tTtJD_N4jk1=680x5UsZmpj9w@mail.gmail.com>
-From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Date: Mon, 27 Apr 2026 16:33:18 +0200
-X-Gm-Features: AVHnY4LqkIDPfVb8uImPBj27UWWOVcz7SAlBpnueXBL0kV-JzzdvYtW43eOfPb0
-Message-ID: <CAP01T75SBw6NNvBKyPW11JSYY2oh449yoBsWi_GOBR5Kq1ykmw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 1/2] bpf: add bpf_init_inode_xattr kfunc for
- atomic inode labeling
-To: Song Liu <song@kernel.org>
-Cc: Matt Bobrowski <mattbobrowski@google.com>, David Windsor <dwindsor@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Jan Kara <jack@suse.cz>, 
-	John Fastabend <john.fastabend@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Yonghong Song <yonghong.song@linux.dev>, Jiri Olsa <jolsa@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhRcokUR0ZKzCuZnZAyaFEMd6EH93BE3OTTKHY9Mo9pVkQ@mail.gmail.com>
 
-On Mon, 27 Apr 2026 at 16:21, Song Liu <song@kernel.org> wrote:
->
-> On Mon, Apr 27, 2026 at 11:11=E2=80=AFAM Matt Bobrowski
-> <mattbobrowski@google.com> wrote:
-> >
-> > On Mon, Apr 27, 2026 at 05:32:47AM +0200, Kumar Kartikeya Dwivedi wrote=
-:
-> > > On Mon, 27 Apr 2026 at 05:24, David Windsor <dwindsor@gmail.com> wrot=
-e:
+On Fri, Apr 24, 2026 at 03:28:44PM -0400, Paul Moore wrote:
+> On Fri, Apr 24, 2026 at 2:56 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > On Wed, Apr 22, 2026 at 08:19:59PM -0400, Paul Moore wrote:
+> > > On Thu, Mar 12, 2026 at 6:05 AM Mickaël Salaün <mic@digikod.net> wrote:
 > > > >
-> > > > On Sun, Apr 26, 2026 at 10:57=E2=80=AFPM Kumar Kartikeya Dwivedi
-> > > > <memxor@gmail.com> wrote:
-> > > > >
-> > > > > On Mon, 27 Apr 2026 at 02:16, David Windsor <dwindsor@gmail.com> =
-wrote:
-> > > > > >
-> > > > > > Add bpf_init_inode_xattr() kfunc for BPF LSM programs to atomic=
-ally set
-> > > > > > xattrs via inode_init_security hook using lsm_get_xattr_slot().
-> > > > > >
-> > > > > > lsm_get_xattr_slot() claims a slot by writing to xattr_count, w=
-hich BPF
-> > > > > > programs cannot do: hook arguments are not directly writable fr=
-om BPF.
-> > > > > > To hide this, the BPF-facing API is just bpf_init_inode_xattr(n=
-ame,
-> > > > > > value), and the verifier transparently rewrites each call into
-> > > > > > bpf_init_inode_xattr_impl(xattrs, xattr_count, name, value). xa=
-ttrs and
-> > > > > > xattr_count are extracted from the hook context, which the veri=
-fier
-> > > > > > spills to the stack at program entry since R1 is clobbered duri=
-ng normal
-> > > > > > execution.
-> > > > > >
-> > > > > > A previous attempt [1] required a kmalloc string output protoco=
-l for
-> > > > > > the xattr name. Since commit 6bcdfd2cac55 ("security: Allow all=
- LSMs to
-> > > > > > provide xattrs for inode_init_security hook") [2], the xattr na=
-me is no
-> > > > > > longer allocated; it is a static constant. We take advantage of=
- this by
-> > > > > > passing the name directly. Because we rely on the hook-specific=
- ctx
-> > > > > > layout, the kfunc is restricted to lsm/inode_init_security.
-> > > > > >
-> > > > > > Link: https://kernsec.org/pipermail/linux-security-module-archi=
-ve/2022-October/034878.html [1]
-> > > > > > Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/=
-linux.git/commit/?id=3D6bcdfd2cac55 [2]
-> > > > > > Suggested-by: Song Liu <song@kernel.org>
-> > > > > > Signed-off-by: David Windsor <dwindsor@gmail.com>
-> > > > > > ---
-> > > > >
-> > > > > The explanation and code make no sense to me. Why not pass xattrs=
- and
-> > > > > xattr_count directly as arguments, even if you choose to restrict=
- the
-> > > > > kfunc to a specific hook? Why does the verifier core need the hac=
-k to
-> > > > > spill the context and extract the two arguments?
-> > > > >
+> > > > From: Christian Brauner <brauner@kernel.org>
 > > > >
-> > > > xattr_count is an output parameter; we cannot currently write to it=
- in
-> > > > bpf as there is no verifier support for writing to int *.  xattrs a=
-nd
-> > > > xattr_count can be fixed up by the verifier, so we only require the
-> > > > user to pass the name and value.
+> > > > All namespace types now share the same ns_common infrastructure. Extend
+> > > > this to include a security blob so LSMs can start managing namespaces
+> > > > uniformly without having to add one-off hooks or security fields to
+> > > > every individual namespace type.
+> > > >
+> > > > Add a ns_security pointer to ns_common and the corresponding lbs_ns
+> > > > blob size to lsm_blob_sizes. Allocation and freeing hooks are called
+> > > > from the common __ns_common_init() and __ns_common_free() paths so
+> > > > every namespace type gets covered in one go. All information about the
+> > > > namespace type and the appropriate casting helpers to get at the
+> > > > containing namespace are available via ns_common making it
+> > > > straightforward for LSMs to differentiate when they need to.
+> > > >
+> > > > A namespace_install hook is called from validate_ns() during setns(2)
+> > > > giving LSMs a chance to enforce policy on namespace transitions.
+> > > >
+> > > > Individual namespace types can still have their own specialized security
+> > > > hooks when needed. This is just the common baseline that makes it easy
+> > > > to track and manage namespaces from the security side without requiring
+> > > > every namespace type to reinvent the wheel.
+> > > >
+> > > > Cc: Günther Noack <gnoack@google.com>
+> > > > Cc: Paul Moore <paul@paul-moore.com>
+> > > > Cc: Serge E. Hallyn <serge@hallyn.com>
+> > > > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > > > Link: https://lore.kernel.org/r/20260216-work-security-namespace-v1-1-075c28758e1f@kernel.org
+> > > > ---
+> > > >  include/linux/lsm_hook_defs.h      |  3 ++
+> > > >  include/linux/lsm_hooks.h          |  1 +
+> > > >  include/linux/ns/ns_common_types.h |  3 ++
+> > > >  include/linux/security.h           | 20 ++++++++
+> > > >  kernel/nscommon.c                  | 12 +++++
+> > > >  kernel/nsproxy.c                   |  8 +++-
+> > > >  security/lsm_init.c                |  2 +
+> > > >  security/security.c                | 76 ++++++++++++++++++++++++++++++
+> > > >  8 files changed, 124 insertions(+), 1 deletion(-)
+> 
+> ...
+> 
+> > > > diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
+> > > > index 259c4b4f1eeb..f0b30d1907e7 100644
+> > > > --- a/kernel/nsproxy.c
+> > > > +++ b/kernel/nsproxy.c
+> > > > @@ -379,7 +379,13 @@ static int prepare_nsset(unsigned flags, struct nsset *nsset)
+> > > >
+> > > >  static inline int validate_ns(struct nsset *nsset, struct ns_common *ns)
+> > > >  {
+> > > > -       return ns->ops->install(nsset, ns);
+> > > > +       int ret;
+> > > > +
+> > > > +       ret = ns->ops->install(nsset, ns);
+> > > > +       if (ret)
+> > > > +               return ret;
+> > > > +
+> > > > +       return security_namespace_install(nsset, ns);
+> > > >  }
 > > >
-> > > Sure, but the kfunc can. Did you try passing them in directly?
-> > > If that doesn't work for some reason, we should fix it instead.
+> > > Do we also want a security_namespace_switch() called from within
+> > > switch_task_namespaces()?  Of course LSMs would not be able to fail or
+> > > return an error at that point, but it seems reasonable that LSMs might
+> > > want to update LSM state associated with the current task once the
+> > > namespaces have been changed.  This is similar to all the "_post_" LSM
+> > > hooks we have for various operations in the VFS and network layers.
 > >
-> > Hm, perhaps this fixup approach might be the simplest in order to
-> > assure the needed safety?
->
-> +1. I think this is the best approach I can think of.
+> > What cannot be infered from security_namespace_install()?
+> 
+> We don't actually know if the namespace is attached to a process until
+> we get to switch_task_namespaces().
+> 
+> Now that I'm looking at this again, why is the
+> security_namespace_install() call placed after the ns->ops->install()
+> call?  From an access control perspective we want the LSM hook before
 
-We're not going to add more and more special cases to the verifier.
-The whole approach is unscalable.
-
-If the concern is that int xattr_count passed for xattrs can be
-unrelated int pointer obtained from elsewhere, can we pack the xattrs
-and xattr_count into a struct and pass it as an argument to the LSM?
-Then the pair struct can be passed in directly, ensuring both
-originate from the arguments passed to the LSM. That should eliminate
-concerns about either being out of sync if obtained from different
-sources.
-
-Even if we wanted to ensure argument provenance was stuff loaded from
-context, the right solution would be some kfunc flag that constraints
-the argument to be derived by following the ctx pointer, not whatever
-is done in this patch.
-
->
-> Thanks,
-> Song
->
-> [...]
+See https://lore.kernel.org/20260325-filmverleih-auffressen-e897fcf8d3f2@brauner
+where I requested the order to be changed.
