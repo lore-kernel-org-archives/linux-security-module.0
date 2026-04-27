@@ -1,219 +1,147 @@
-Received: from mail-oi1-f206.google.com (mail-oi1-f206.google.com [209.85.167.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F2E3B960B
-	for <linux-security-module@vger.kernel.org>; Mon, 27 Apr 2026 13:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8833D3D08
+	for <linux-security-module@vger.kernel.org>; Mon, 27 Apr 2026 14:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777296981; cv=none; b=ELHiQ1OQ/bYcVTgX0LM4W+OJRG/JMDqYPG+P27GljAvnGAOYK17JRD5M0Ccl4Y0b2+IxgF4yvEQC3S4l/8s3YQ8981nIe9gp8FTbrgYqIBPFIn3zDM5Wen1Xo+MXCxibCLG3+dZ4bG2LSuKsh23fTPbAcwL5CvhKW19TCZAM8IU=
+	t=1777299661; cv=none; b=NPcVRC/BQDn5UcPBfD981Qrqb/ufpVAURo171SGflJaVh8O2LNJGYq3UHNYjMsnzl10Y+dPlhqRyLsQIhfdtGvGvh8vfgZ7j8i1VVs1RFUvu6AEN89KWOppFk97vNkzye6IeNsjUrwTVejuLXUP5ohlr1B7f4RE5Q3gh57M3Oc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777296981; c=relaxed/simple;
-	bh=3cjlvtbiCMKUvQ4+pzEFrkcpMtN8DT/M0MP7m9f3Pr8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KbeB5coUUs/38snNoXXKGPYoLokb5qHAenGROEO4mvFsVyX5B6EExG9TFgAoIq41qUpa/XdsIBqELX6JtrBDp5M+R7HBi+/NZi9dnwfa4xtFZVnPiWl+2YLADjjLQOPJf8IsEfvYiSouWTY1QmAiENVvDKz+1ymFjr2DQVkACuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oi1-f206.google.com with SMTP id 5614622812f47-46ebf50edc8so12429865b6e.2
-        for <linux-security-module@vger.kernel.org>; Mon, 27 Apr 2026 06:36:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777296979; x=1777901779;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=W79VFKdnwYOpztsFD9PwpcmbDBrcIAHQaWyCw4ftoJE=;
-        b=dffJAm76hPUbbsurqt6nOKtgFGnrPn90eTw0qNV/BLvjtLB5z1QCkeMfmmcx2OOGgI
-         QymDOUUF/JkopF05v/DOUYWGDCM65OI76ORshcJae0+Zo3DlvVuI1845ySfKDEkAUOpH
-         mAqkQMU3SL6FbfDUnn4yQ/FWh9sGgfPEdGHJ9mO0wrUlRn016I9mtmKZOdkSfgP8UpK2
-         +t5Nx9cLJzGiKhswSi46/mv2cOHDpJRSb0Ad01mZO9Fv7zAGbAdkx9rJrcTTPO7s3gj2
-         O0LXefv8A6oL9o5rr/5Wdo57oVoVmXk9A5gl0HhP6IXFH/C33tKrSN0V/zZBr16tENCY
-         iL9w==
-X-Forwarded-Encrypted: i=1; AFNElJ9qTZJYSSPJ6p3G2IroD3fBylM1JxOaQ2bxPfDCc/FuVl/kT7rkFQJr5cH6irMeY4LrzAvFw0n5a3d+p80ycIqZYL3vruQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9e7D69apDbDQH0OP9Kf/HJ0Qpjg7pnkOXScgfhtcL6FrFfXym
-	OocrrpftDS5jVp4+JqXWaJWfMqPZbyD+bVQKEh1fxGF0JkGedtzw8vZd4ny8ApHSS/SSw+LYlE8
-	0D8MYbE1XCodUc4qHJP27iKpgaQWYr8YUicNx9NWj5Wa/3r19XKQ3WlpS+p0=
+	s=arc-20240116; t=1777299661; c=relaxed/simple;
+	bh=iYeaM1jIWkQgRPkEZHNaD/j88IYl3E3ZeJw9cZlyYl8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sXAb7Uu0SNVyTFxsPwW4w+CPYIULxdpbU0fcWwtPNPeXPGYksobp4m1l/J1SfdNnYdwWewWM25nkLmXChSosgNStzQTIHSIKvL6AvObCEZyBsOtGwD189HFzbjxPhvSxiVmvj/rne8uLlHoqLOnYSbTSsASQBYvPKzKaP97zB3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bD+VTiTp; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bD+VTiTp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93E78C2BCB9
+	for <linux-security-module@vger.kernel.org>; Mon, 27 Apr 2026 14:21:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777299661;
+	bh=iYeaM1jIWkQgRPkEZHNaD/j88IYl3E3ZeJw9cZlyYl8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bD+VTiTpIJAQcPm4X7aatvaCwq8cFO3iNoQc+YM/5JtACWc/iHiAr+NYGWnNnGggN
+	 MKnkVL2kS8ZKBXN3QXUG0JeA0ZrPmb2oNLCc4siQCXbSAu/iG4wiWIIKC0daLu6Gll
+	 EEHkgHIQkUOKbDKplFjAkaPl9R9EImDXIcRgkq1POg2FIlwe/AsnoPJC9pQxVIyaEm
+	 OaWyzV19evFKRYRbLDL7CwZDk2F4e9xXwGm20HlyJjnHIpnnCeWTNWx4HMy1CoyV8L
+	 y8mdqxrajutBhr2yB5hUj6RPjX1lZrVZzSZC0EGSHeWvBEpiarE1XxRMzopCJ7K2la
+	 Ok9eTDzPZD2yQ==
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-60fa13bde2dso6529329137.3
+        for <linux-security-module@vger.kernel.org>; Mon, 27 Apr 2026 07:21:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9PfHhEo6FqTTctfMJGQkqj+KTYQ6lzWgtimy2buwN/YLJVQbN3vBy4c8YS5P3QeR+MUqHhPQ78cEISGLieTnmVnsesIuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0lQoZmkmrQTcUwmYfeBdIMtV7DLGotWGm2SjK8xh951s5tKxi
+	F683yI4+XfbQuiRVN64e1/6fTQgASIRZXT/+5B6uF7XmLAVOHCwe3HykeKW8cubgGhFApLYQKe7
+	T+NbPftt50wZ21z9iRNrMm9IkX3Kb+aI=
+X-Received: by 2002:a05:6102:162a:b0:605:5d09:8631 with SMTP id
+ ada2fe7eead31-616f807265emr21177893137.29.1777299660351; Mon, 27 Apr 2026
+ 07:21:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:2d05:b0:696:32ad:e894 with SMTP id
- 006d021491bc7-69632adee68mr4842540eaf.23.1777296979353; Mon, 27 Apr 2026
- 06:36:19 -0700 (PDT)
-Date: Mon, 27 Apr 2026 06:36:19 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69ef6653.050a0220.1d2f3.0000.GAE@google.com>
-Subject: [syzbot] [integrity?] [lsm?] WARNING: bad unlock balance in __filemap_add_folio
-From: syzbot <syzbot+914bc925a90b7e137017@syzkaller.appspotmail.com>
-To: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
-	roberto.sassu@huawei.com, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
-	zohar@linux.ibm.com
+References: <20260427001602.38353-1-dwindsor@gmail.com> <20260427001602.38353-2-dwindsor@gmail.com>
+ <CAP01T74iuSDJeL6g=5yLdYGb-VcESK1SYY3R1S1r-CtQEsW+oQ@mail.gmail.com>
+ <CAEXv5_heSFK5rZYtaJG70Xgv92Um6Dbq8b95PtnpKy7XFwpKUw@mail.gmail.com>
+ <CAP01T74WBjcMXbWYeaWB-oTk-bUzoxi_EEALDpT1hFUEOovnpw@mail.gmail.com> <ae82Vv0RWzcXqSaz@google.com>
+In-Reply-To: <ae82Vv0RWzcXqSaz@google.com>
+From: Song Liu <song@kernel.org>
+Date: Mon, 27 Apr 2026 07:20:45 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW60SRXZbFYRDm-QaTiB8tTtJD_N4jk1=680x5UsZmpj9w@mail.gmail.com>
+X-Gm-Features: AVHnY4IpuvPbEgxDVLoVsaHhXP3B7YAYoqdEKM5mE-x3NufiAn57piXniLfGauE
+Message-ID: <CAPhsuW60SRXZbFYRDm-QaTiB8tTtJD_N4jk1=680x5UsZmpj9w@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 1/2] bpf: add bpf_init_inode_xattr kfunc for
+ atomic inode labeling
+To: Matt Bobrowski <mattbobrowski@google.com>
+Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>, David Windsor <dwindsor@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Jan Kara <jack@suse.cz>, 
+	John Fastabend <john.fastabend@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Yonghong Song <yonghong.song@linux.dev>, Jiri Olsa <jolsa@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Apr 27, 2026 at 11:11=E2=80=AFAM Matt Bobrowski
+<mattbobrowski@google.com> wrote:
+>
+> On Mon, Apr 27, 2026 at 05:32:47AM +0200, Kumar Kartikeya Dwivedi wrote:
+> > On Mon, 27 Apr 2026 at 05:24, David Windsor <dwindsor@gmail.com> wrote:
+> > >
+> > > On Sun, Apr 26, 2026 at 10:57=E2=80=AFPM Kumar Kartikeya Dwivedi
+> > > <memxor@gmail.com> wrote:
+> > > >
+> > > > On Mon, 27 Apr 2026 at 02:16, David Windsor <dwindsor@gmail.com> wr=
+ote:
+> > > > >
+> > > > > Add bpf_init_inode_xattr() kfunc for BPF LSM programs to atomical=
+ly set
+> > > > > xattrs via inode_init_security hook using lsm_get_xattr_slot().
+> > > > >
+> > > > > lsm_get_xattr_slot() claims a slot by writing to xattr_count, whi=
+ch BPF
+> > > > > programs cannot do: hook arguments are not directly writable from=
+ BPF.
+> > > > > To hide this, the BPF-facing API is just bpf_init_inode_xattr(nam=
+e,
+> > > > > value), and the verifier transparently rewrites each call into
+> > > > > bpf_init_inode_xattr_impl(xattrs, xattr_count, name, value). xatt=
+rs and
+> > > > > xattr_count are extracted from the hook context, which the verifi=
+er
+> > > > > spills to the stack at program entry since R1 is clobbered during=
+ normal
+> > > > > execution.
+> > > > >
+> > > > > A previous attempt [1] required a kmalloc string output protocol =
+for
+> > > > > the xattr name. Since commit 6bcdfd2cac55 ("security: Allow all L=
+SMs to
+> > > > > provide xattrs for inode_init_security hook") [2], the xattr name=
+ is no
+> > > > > longer allocated; it is a static constant. We take advantage of t=
+his by
+> > > > > passing the name directly. Because we rely on the hook-specific c=
+tx
+> > > > > layout, the kfunc is restricted to lsm/inode_init_security.
+> > > > >
+> > > > > Link: https://kernsec.org/pipermail/linux-security-module-archive=
+/2022-October/034878.html [1]
+> > > > > Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/li=
+nux.git/commit/?id=3D6bcdfd2cac55 [2]
+> > > > > Suggested-by: Song Liu <song@kernel.org>
+> > > > > Signed-off-by: David Windsor <dwindsor@gmail.com>
+> > > > > ---
+> > > >
+> > > > The explanation and code make no sense to me. Why not pass xattrs a=
+nd
+> > > > xattr_count directly as arguments, even if you choose to restrict t=
+he
+> > > > kfunc to a specific hook? Why does the verifier core need the hack =
+to
+> > > > spill the context and extract the two arguments?
+> > > >
+> > >
+> > > xattr_count is an output parameter; we cannot currently write to it i=
+n
+> > > bpf as there is no verifier support for writing to int *.  xattrs and
+> > > xattr_count can be fixed up by the verifier, so we only require the
+> > > user to pass the name and value.
+> >
+> > Sure, but the kfunc can. Did you try passing them in directly?
+> > If that doesn't work for some reason, we should fix it instead.
+>
+> Hm, perhaps this fixup approach might be the simplest in order to
+> assure the needed safety?
 
-syzbot found the following issue on:
++1. I think this is the best approach I can think of.
 
-HEAD commit:    2e6803928193 Merge tag 'tracefs-v7.1-2' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=117dff16580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=80b28e8d6ef9384a
-dashboard link: https://syzkaller.appspot.com/bug?extid=914bc925a90b7e137017
-compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
+Thanks,
+Song
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/690094a31275/disk-2e680392.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7d17ea4e1f81/vmlinux-2e680392.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c1478f49f523/bzImage-2e680392.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+914bc925a90b7e137017@syzkaller.appspotmail.com
-
-cgroup: Unknown subsys name 'cpuset'
-cgroup: Unknown subsys name 'rlimit'
-=====================================
-WARNING: bad unlock balance detected!
-syzkaller #0 Not tainted
--------------------------------------
-syz-executor/5795 is trying to release lock (rcu_read_lock) at:
-[<ffffffff8b2f32cf>] rcu_lock_release include/linux/rcupdate.h:310 [inline]
-[<ffffffff8b2f32cf>] rcu_read_unlock include/linux/rcupdate.h:869 [inline]
-[<ffffffff8b2f32cf>] rt_spin_unlock+0x14f/0x200 kernel/locking/spinlock_rt.c:82
-but there are no more locks to release!
-
-other info that might help us debug this:
-2 locks held by syz-executor/5795:
- #0: ffff888035e50f58 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: process_measurement+0x7fd/0x1c90 security/integrity/ima/ima_main.c:319
- #1: ffff8880434dc100 (mapping.invalidate_lock#2){++++}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:1094 [inline]
- #1: ffff8880434dc100 (mapping.invalidate_lock#2){++++}-{4:4}, at: do_page_cache_ra mm/readahead.c:333 [inline]
- #1: ffff8880434dc100 (mapping.invalidate_lock#2){++++}-{4:4}, at: page_cache_ra_order+0x2a5/0x490 mm/readahead.c:538
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 5795 Comm: syz-executor Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/18/2026
-Call Trace:
- <TASK>
- dump_stack_lvl+0xe8/0x150 lib/dump_stack.c:120
- print_unlock_imbalance_bug+0xdc/0xf0 kernel/locking/lockdep.c:5298
- __lock_release kernel/locking/lockdep.c:5537 [inline]
- lock_release+0x248/0x3c0 kernel/locking/lockdep.c:5889
- rcu_lock_release include/linux/rcupdate.h:310 [inline]
- rcu_read_unlock include/linux/rcupdate.h:869 [inline]
- rt_spin_unlock+0x15b/0x200 kernel/locking/spinlock_rt.c:82
- spin_unlock_irq include/linux/spinlock_rt.h:122 [inline]
- __filemap_add_folio+0xc85/0x1200 mm/filemap.c:931
- filemap_add_folio+0x2de/0x610 mm/filemap.c:967
- page_cache_ra_unbounded+0x407/0x980 mm/readahead.c:282
- do_page_cache_ra mm/readahead.c:334 [inline]
- page_cache_ra_order+0x2b5/0x490 mm/readahead.c:538
- filemap_readahead mm/filemap.c:2664 [inline]
- filemap_get_pages+0x832/0x1e70 mm/filemap.c:2710
- filemap_read+0x44a/0x1240 mm/filemap.c:2806
- __kernel_read+0x50d/0x9c0 fs/read_write.c:532
- integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
- ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:222 [inline]
- ima_calc_file_hash+0x452/0x870 security/integrity/ima/ima_crypto.c:280
- ima_collect_measurement+0x523/0x9d0 security/integrity/ima/ima_api.c:300
- process_measurement+0x12d9/0x1c90 security/integrity/ima/ima_main.c:425
- ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
- security_file_post_open+0xb3/0x260 security/security.c:2755
- do_open fs/namei.c:4701 [inline]
- path_openat+0x2e88/0x38a0 fs/namei.c:4858
- do_file_open+0x23e/0x4a0 fs/namei.c:4887
- file_open_name+0x162/0x1c0 fs/open.c:1322
- __do_sys_swapon mm/swapfile.c:3467 [inline]
- __se_sys_swapon+0x856/0x2010 mm/swapfile.c:3432
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0x15f/0xf80 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f884264c7d7
-Code: 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a7 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe6306a658 EFLAGS: 00000246 ORIG_RAX: 00000000000000a7
-RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00007f884264c7d7
-RDX: 0000000000000000 RSI: 0000000000008000 RDI: 00007f88426e2e5b
-RBP: 00007f88426e2e5b R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000008 R11: 0000000000000246 R12: 00007f88428963e0
-R13: 00007f88426fdd26 R14: 0000000000200000 R15: 00007f88428963a0
- </TASK>
-------------[ cut here ]------------
-rrln < 0 || rrln > RCU_NEST_PMAX
-WARNING: kernel/rcu/tree_plugin.h:443 at __rcu_read_unlock+0x79/0xe0 kernel/rcu/tree_plugin.h:443, CPU#1: syz-executor/5795
-Modules linked in:
-CPU: 1 UID: 0 PID: 5795 Comm: syz-executor Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/18/2026
-RIP: 0010:__rcu_read_unlock+0x79/0xe0 kernel/rcu/tree_plugin.h:443
-Code: 75 66 41 83 3e 00 75 27 43 0f b6 04 3c 84 c0 75 41 8b 03 3d 00 00 00 40 73 0f 5b 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc cc 90 <0f> 0b 90 eb eb e8 6d 00 00 00 eb d2 89 d9 80 e1 07 80 c1 03 38 c1
-RSP: 0018:ffffc900046e6418 EFLAGS: 00010286
-RAX: 00000000ffffffff RBX: ffff888039e82384 RCX: 0000000000000046
-RDX: 0000000000000000 RSI: ffffffff8d8986dc RDI: ffff888039e81ec0
-RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-R10: dffffc0000000000 R11: fffffbfff1bcaacc R12: 1ffff110073d0470
-R13: ffff888039e81ec0 R14: ffff8880b893c610 R15: dffffc0000000000
-FS:  000055555b61b540(0000) GS:ffff8881261fb000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fec05db0e9c CR3: 0000000042cbe000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- rcu_read_unlock include/linux/rcupdate.h:871 [inline]
- rt_spin_unlock+0x160/0x200 kernel/locking/spinlock_rt.c:82
- spin_unlock_irq include/linux/spinlock_rt.h:122 [inline]
- __filemap_add_folio+0xc85/0x1200 mm/filemap.c:931
- filemap_add_folio+0x2de/0x610 mm/filemap.c:967
- page_cache_ra_unbounded+0x407/0x980 mm/readahead.c:282
- do_page_cache_ra mm/readahead.c:334 [inline]
- page_cache_ra_order+0x2b5/0x490 mm/readahead.c:538
- filemap_readahead mm/filemap.c:2664 [inline]
- filemap_get_pages+0x832/0x1e70 mm/filemap.c:2710
- filemap_read+0x44a/0x1240 mm/filemap.c:2806
- __kernel_read+0x50d/0x9c0 fs/read_write.c:532
- integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
- ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:222 [inline]
- ima_calc_file_hash+0x452/0x870 security/integrity/ima/ima_crypto.c:280
- ima_collect_measurement+0x523/0x9d0 security/integrity/ima/ima_api.c:300
- process_measurement+0x12d9/0x1c90 security/integrity/ima/ima_main.c:425
- ima_file_check+0xe1/0x130 security/integrity/ima/ima_main.c:685
- security_file_post_open+0xb3/0x260 security/security.c:2755
- do_open fs/namei.c:4701 [inline]
- path_openat+0x2e88/0x38a0 fs/namei.c:4858
- do_file_open+0x23e/0x4a0 fs/namei.c:4887
- file_open_name+0x162/0x1c0 fs/open.c:1322
- __do_sys_swapon mm/swapfile.c:3467 [inline]
- __se_sys_swapon+0x856/0x2010 mm/swapfile.c:3432
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0x15f/0xf80 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f884264c7d7
-Code: 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a7 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe6306a658 EFLAGS: 00000246 ORIG_RAX: 00000000000000a7
-RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00007f884264c7d7
-RDX: 0000000000000000 RSI: 0000000000008000 RDI: 00007f88426e2e5b
-RBP: 00007f88426e2e5b R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000008 R11: 0000000000000246 R12: 00007f88428963e0
-R13: 00007f88426fdd26 R14: 0000000000200000 R15: 00007f88428963a0
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+[...]
