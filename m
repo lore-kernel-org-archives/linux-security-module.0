@@ -1,240 +1,278 @@
-Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com [209.85.128.67])
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA44933031C
-	for <linux-security-module@vger.kernel.org>; Tue, 28 Apr 2026 16:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777394039; cv=pass; b=q6SDpE2oPzxyQd7GLl39rArjRTyNvcJjjjxlfxXCIiBcBUk6ENoIR50og63kSwFPQewVZWsEYEQ4ID9Drw1tnDRMfWPkNVwruzXBHd3B0YVMSHdmB6EyJsLTI4QUcvT/ixmzHMd/4E1Ioacq6E/a5HyGcwR3qHFRsqU4xqnrokY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777394039; c=relaxed/simple;
-	bh=52MdagQnrh3ZadMCj+Aj5TQ5SCuB+VKPYF2izc01Hgg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H8dSZzPNjteQXhyzv9DmvOUY0gu6ab1y45X8pZK+h7tRdB5+A3Mp2/KjMTzp9HQO+ZOX5gAqgxzfI1OnjB+2vB+XF5jz5krHU2PBqEJ6W193V+Q9BO2Wf8Q9V3VgpE8WABhFvpv/uf2YWpPqtcVNNNEfgl7ZhFs5l/OaoAMj1h4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gOq5rH3q; arc=pass smtp.client-ip=209.85.128.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8961ACED5
+	for <linux-security-module@vger.kernel.org>; Tue, 28 Apr 2026 19:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777404087; cv=none; b=Q4D7XKJCKCrWTHeLjQVmHlFoD/0vkVRlzUdVk2laH6lDRmRsWYHUJVj4O9mISn+HGGLpuH+bgZFMbBQNcAM+LoAFwhzg3fP3os5vaNNrRkykwLtKW6BcAI4lgF6byFSwk1+YI63lmD5RYMY/5bCKeeWG4CVFo5jK6u54cBSTTdY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777404087; c=relaxed/simple;
+	bh=rADsMyQZW7KYZ4YfdbvpqFxHzHaQXlVKJ1dK2uBWxRs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Veryo6anb5X/eGIOoT5OwLxdKXZVj4zvskn6dno+X5I2KxWHp9NP1DjqxPHlrtaZC6bmIbK51G7Q1MrBjlktLt4eOMLuoS/q5yBuCbE/vtzyZ9Tm8BZPdPcKcqw+x8uGvGujVP0M4kNs2himNBomU1+C5QR9H0END9Kz/B78lwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AjpyRrIV; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gOq5rH3q"
-Received: by mail-wm1-f67.google.com with SMTP id 5b1f17b1804b1-488b0e1b870so199093595e9.2
-        for <linux-security-module@vger.kernel.org>; Tue, 28 Apr 2026 09:33:57 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1777394036; cv=none;
-        d=google.com; s=arc-20240605;
-        b=WhbxKMgiICwQrk6UOIFdlr3oDrhDWhaXEZG+cycDRz1uS8cFMIPeL7LtD1MLFM7dhO
-         N9zUxbo+qYKThb5YgYCKqdb8T7z1xYE7j6/jxQbMbiIltJVG80gGmVEP9vZaT0CUG3+u
-         ITeIUQp25Wouxf2ocoPYEA49yQ1AkN/cBaiBnBQl3ta+jORcvSUu/1XTkOnwPgbupMy1
-         2vG9lPf41QfSn7eL5yNwERen8gr06ZHBS2fyaxk6fhu8z4+lRwc2HNIYytCglOp+QGGS
-         h2dpnrw4l8Kn6Y5ao625W7LyGZfJNbKvS3Th/uWHynh8HOTHsfF0LlxGjzpfugSQk0S3
-         MW/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=H4tL94f/+zrQ9tmGfQ35+hzuIQymZx/bUR4W9C2f3sk=;
-        fh=Xiagob23ZMHZvWC1GiFlCVJ2Ck7dbCufDLfNSWtHsMU=;
-        b=U3S3tnVoxyeqpNcqAgiqvWSN2xWDi95TaxZxn/6FjDNCzU4Fvz/h8jkqf7041ukQqm
-         +d/+SYQb6gC2oIQgjIHDcJQuzi7jKrP8VWIB7Lqczb5hBzdm/jQXb72U53qDL5vEIl1h
-         2syaGzWauXggssBjHdKsDHG3zrolZlTC63N9pVxDUKY241/mwv4ZLWObSsrV2etb5V/b
-         NB1RDOPEIq2UGI36tqN1+ry1etGuOtHW+xb8vwSIXkmG34c4XkP82oQfMQR8KNe2wkse
-         HR5uf4hyzqddOgBt2ztgW8eKDYITYWlFgayMsjn8we9dm9i9DSgMJqfjtBRSqY9XeDpS
-         ElYA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AjpyRrIV"
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-8cbb6d5f780so1044172285a.1
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Apr 2026 12:21:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777394036; x=1777998836; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1777404085; x=1778008885; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=H4tL94f/+zrQ9tmGfQ35+hzuIQymZx/bUR4W9C2f3sk=;
-        b=gOq5rH3q1hO6smyOz5GzqsPvxPNLDz3e/MlvRz5dyyg0/MnMIvzOWGlOBynkUz6bQB
-         l/Oi6SUp1x+0mOtg7NTulQSbwDWDik7w/N4axau/LqIf9ZdF7JeWdEX7v4r26ewv4z3e
-         fX7xTBb/NjxY2OdM9axpZruwB2LphvNJOwDJOcDUvympYS4DrBJbv0fXzsvJYbPC4Y+h
-         n5grZAEZeYcHy326JARFl4XHpajn2scsSbcTzYR1E1jC6I/mdZMKrYtukmwZhize6Y0R
-         csIqvJZCB6+vRcboClVSHD9IyGs+6KOBRDdE+Ay/2h+oJ6KxhDjW3pDzfMak6C31RPoX
-         v9fQ==
+        bh=7HsRQzwddKIQadLpTvf+1Rg5IrK/BcQTm8bGEwPFxUs=;
+        b=AjpyRrIV8EAauo76IpD94fxmP8PgxZwLOa9Vua4I3n8fU9kr6nSInXHyYhMHOitS9J
+         AFfF+c7bJ2Y8v9IHBC+DbmdkJtSXfT/E2RC3CyAPcKsnC3ftO5LG452FeXaNtf28VXcu
+         6KmYmqExqbUqP2zseOyAFiyHHMe3e91Nf7g2+yT+SvMzYEhKJKCZ5C/WwGAyAlDOh2t4
+         aX2nQIxENNGZNlSwkCJT6Ye99JY4D6ggW5GgSgXgk5vxpaCIPSmPg+abyK6a0o3vmlKR
+         mikf7f5DYKYQaoRp+MXwM/fnkLeP4r343YS0EF3id0lQfgNidb761CVD58pCoffy2GKQ
+         wRfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777394036; x=1777998836;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20251104; t=1777404085; x=1778008885;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=H4tL94f/+zrQ9tmGfQ35+hzuIQymZx/bUR4W9C2f3sk=;
-        b=YIdNgqC5ZEFlINNyyn+oC/K8Jh1dr1jyBXNBGbqRuAruknCVRb4O+AVAlgTG11kVEZ
-         /H17vi7EZGcvCxS5+rFpOT/mavgZ4lgTBRaSIMW1Ipk/VMsF4ZuBpBfgfGMLcVvRCiNm
-         26G6tSF9VGIHsu2Ovc+fkY69dkOC24qgqr7fbFOR9DR8IT4QBRgmg/jhsWZ9ojgwItYU
-         1Wlli+lojGXmRnhgtWB1XMZN6HpJ1aDwOmwX8BCX3XOFu4PIoZKrQ6rKcDuS1mOfhHwM
-         Zimb+JOdFMhNTnjcZsM3O4K3R9yQaVk+2Fh2FQQ4I0S3kMsexsGtu+cFDMXgpUl60APy
-         TwWQ==
-X-Forwarded-Encrypted: i=1; AFNElJ+VrHRoAPjUwIDEOCbOhRHl+tJRL49oWN1zhSzEc+/nlmYzAdyAzWISDQHrAVWI2oSwXr3UJy20EDWPVaTFyVLf1CzeG5I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIbUHDRIppWb1ViItZ4vCuZYJay+JKV/fuzzRCFP82KjPH897U
-	7eugSx2SVqXfYTG1DNZGLVUfLBWtDx43JAlJ/LMbATgzMrOA3DgYUCEG+zHicJJyxqyA8z+5fpw
-	rqTVnHlGNr2Gxdngm0wmaZoveM/7khNg=
-X-Gm-Gg: AeBDieuETSXH7Yv1vse0ApOVVQSelcbBb1Zph42WvMK/2Tac/mdLBjEEj8A5OygjOYZ
-	YSKN9SLeepBVq2OV4QiOtrcLMVjZjeLGoaR6/x1EMYT1wq4fbCu9LruhuXtV7x7gQW1Ja44Ww1F
-	tmDvLN5uxDfEbbBqdHZs14BK4WfJujuA7csYBkrS2WYi9yP33qH8xTebE3Iu/UcErW5nKZyitlt
-	8r+mywISbxEiQi06V0r27xSF+zQg46xyh2i7jYyb3T55weiMSM1gsQFPQzMlLd3l0PWpesl/y2i
-	JpdRQyjLKQdlFaElSc3Xjr3zQ4eGazAo7uiQPyyAdKI5Q7CCsZbPfUrKDGz18sILrwq5FQ1OqvM
-	Nutbdj38w6oSY0SQ6Xq1eUveoVI1wHVhtDogFjN4mHDOVVJu2ZD50i3WFtcw57+9sZGsQ
-X-Received: by 2002:a05:6000:2905:b0:43f:e94a:e777 with SMTP id
- ffacd0b85a97d-4464a070b10mr6490623f8f.37.1777394036183; Tue, 28 Apr 2026
- 09:33:56 -0700 (PDT)
+        bh=7HsRQzwddKIQadLpTvf+1Rg5IrK/BcQTm8bGEwPFxUs=;
+        b=XyU/8aTFeM7STyXQ8I0/jp2+kv5ENLHCEb77ovHH6KPebyk5e4URT11a5R9Sn+uCgn
+         gEVtiBpJ6nAevu1KSAk1hT2cNvzUN2M4c6S4vsTlFEXmu6HpqcZXUZMf9QWjYK7SidJP
+         nr3i0jtJ6X/wXFRoOUGNLAjxEtMDLSJH5KbX7lasZGxBF97FxFu6saAZyrPSpZoR1q+m
+         s50ctaLsO7uZh5lpPCsbwKN20lfdpbwJTuNojB378tGwMG9tsFOD4OjofGGWqDR3b8bL
+         2pgbA0lbW5HxAp7qEDP+TFqXws9sndi77OQWNADfotErJmWLiYgV80dh7/3QPgCOoLNv
+         s+kA==
+X-Forwarded-Encrypted: i=1; AFNElJ+xBPosszcId9xMt1osWzJsQvWg05ROl0nNLNLvJ+vVSXbAyDERmJGmQJ7Lqvz27Tw3Th1ZgK4pWCUguWVluv+ALhEOYDk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC9QxUs53yJNS1RfZqxjfwyTCAAhZ8Ozw29syAl8YeBprDi9uy
+	n4hDguGqgbV6g4KjQYg52iEv3s0Yh4Dczir0cnZBH+B9gaiY+POKgblUx8rBRhBoNA==
+X-Gm-Gg: AeBDietF7Djml3CIlbsWwIdGdhx7la0jlDCGaCq/X7KPeYXUCWUQEDsM+yTkmCZK9aq
+	PY2muNRJWzW4/+jawo0CQxi+SEU9vCIxWlnZb4rLPmNgpkvHwrUYDD5vW8beYLPZlqxuCcw+idD
+	JJENqftl+Z2cVnsh8ZLU6twDpFArbg7Qr/zJnGkHFYDU4oXYBISuZoeQt896Ua6smZEkQBx7DFZ
+	eg9HIG1BJHZuyasov2l8QeRO204BOU9kNyeXcvJsyMW+mUUR4sWuUWWxKluMpKYxsNCGoF48k3e
+	iPSyPPcmxJTW5gWMv35nyKw2GgQ8XQUrTVg3o+7KvfHdt7B1/FNNS197fjUkh7EtGbH7CtWYtVd
+	61vpqcxHSaDY/xXvPB8wX8q5lctlNDIK2+pCXPygSyvOgX90CEbUeX0mPaSmaZ2KgaTjpEBs1gL
+	4yVby/xzpxWim8Thtkaz8/S0lLH9w/UqDx93LswlmrXcr6TdAqiP1Zerg2VBAhbPfwpQxiOkCTi
+	rDChDU=
+X-Received: by 2002:a05:620a:4456:b0:8d6:bd01:a67a with SMTP id af79cd13be357-8f7d7e171a8mr634934685a.26.1777404084901;
+        Tue, 28 Apr 2026 12:21:24 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8f7c84b1d92sm263877485a.38.2026.04.28.12.21.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Apr 2026 12:21:23 -0700 (PDT)
+From: Paul Moore <paul@paul-moore.com>
+To: selinux@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org
+Cc: stephen.smalley.work@gmail.com
+Subject: [PATCH ported/repost v2] security,fs,nfs,net: update security_inode_listsecurity() interface
+Date: Tue, 28 Apr 2026 15:21:20 -0400
+Message-ID: <20260428192119.226244-2-paul@paul-moore.com>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20250428195022.24587-2-stephen.smalley.work@gmail.com>
+References: <20250428195022.24587-2-stephen.smalley.work@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260427001602.38353-1-dwindsor@gmail.com> <20260427001602.38353-2-dwindsor@gmail.com>
- <CAP01T74iuSDJeL6g=5yLdYGb-VcESK1SYY3R1S1r-CtQEsW+oQ@mail.gmail.com>
- <CAEXv5_heSFK5rZYtaJG70Xgv92Um6Dbq8b95PtnpKy7XFwpKUw@mail.gmail.com>
- <CAP01T74WBjcMXbWYeaWB-oTk-bUzoxi_EEALDpT1hFUEOovnpw@mail.gmail.com>
- <ae82Vv0RWzcXqSaz@google.com> <CAPhsuW60SRXZbFYRDm-QaTiB8tTtJD_N4jk1=680x5UsZmpj9w@mail.gmail.com>
- <CAP01T75SBw6NNvBKyPW11JSYY2oh449yoBsWi_GOBR5Kq1ykmw@mail.gmail.com> <afCUADdbNrpbEPMa@google.com>
-In-Reply-To: <afCUADdbNrpbEPMa@google.com>
-From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Date: Tue, 28 Apr 2026 18:33:18 +0200
-X-Gm-Features: AVHnY4I9zeiNlmD4AyDEKEpxt8mFMp29ig53d2G_1svR9xHiMr5JdVGll07goQM
-Message-ID: <CAP01T76ipTgY3EM8uMSXymdO4co3AWZeXqwV3amqDnHiFXhrTw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 1/2] bpf: add bpf_init_inode_xattr kfunc for
- atomic inode labeling
-To: Matt Bobrowski <mattbobrowski@google.com>
-Cc: Song Liu <song@kernel.org>, David Windsor <dwindsor@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Jan Kara <jack@suse.cz>, 
-	John Fastabend <john.fastabend@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Yonghong Song <yonghong.song@linux.dev>, Jiri Olsa <jolsa@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7674; i=paul@paul-moore.com; h=from:subject; bh=TIBYVxpxKKE5XNqm2t5t5Zkc1qweb5gcM/rYatRhygg=; b=owEBbQKS/ZANAwAKAeog8tqXN4lzAcsmYgBp8Qivtdaz8kIJzR5ih/0JRGEl15mQnHjbbXmKU Vd1awybi5uJAjMEAAEKAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCafEIrwAKCRDqIPLalzeJ c39KD/0QmxerRTCNDDzPUzdXuWLg0P0l7CVvmGWX5e/vy0NKGMNoVoY0Bk7iW9cGIjR7xjQH40h oAvirMrk2niZSjVWCjT88PyzeIZxkbKM4eVBA2swvkssSdKC53MPMS/eJTpVIA17X+23Z+Vi8LM 4/neLwI3AYZgDxdGP1E0UQ0ZlWzzode+fR6qOEzWvTLMmtfn9Nd/RB/5tKxno9uC5k83lfP+SZD ptADRIgGSQsiqOUtbCjkAAOyUG4u83Xb545DVQtdYP/ULVwkAgsDxCbfvCY6CJumTCgiZSUnHTS uoAACC/zM5m/ikPD3sQCj60R0zNQPKCNs5TZ2uqEJmD1m5NoJ+8uOKRqZyTOtnBaOSKWGcrPZ/U NbfLLcN62Jcgom4ac9vtnfBZmv8LhrI3DzlHSMPmrSEyfZidxVqcXPG3Ger0sTQLVUPxGfHxp0u Ed4GeJeuN9vipb6pVf6mXueJaVp50sZWE+9CIW5InxEsW5ZohGrjsl2zLn1cpW3Iur4F/YkAQul wfffjgvcZQkcfXo6dUpCPQPyNx6/BcimCZV5tUGiYFWyn10JlaRQ0YEIJUVFaO6c522I6UpydDF n0ccg2sBWPlVrv++GSjfWp1Ss/DumQDrUBsWzkX/dqSI02nRNuA7Fk5VJ/gM/5nwDILWvHMOXAW BLtroLvFvBsoslQ==
+X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
+Content-Transfer-Encoding: 8bit
 
-On Tue, 28 Apr 2026 at 13:03, Matt Bobrowski <mattbobrowski@google.com> wro=
-te:
->
-> On Mon, Apr 27, 2026 at 04:33:18PM +0200, Kumar Kartikeya Dwivedi wrote:
-> > On Mon, 27 Apr 2026 at 16:21, Song Liu <song@kernel.org> wrote:
-> > >
-> > > On Mon, Apr 27, 2026 at 11:11=E2=80=AFAM Matt Bobrowski
-> > > <mattbobrowski@google.com> wrote:
-> n> > >
-> > > > On Mon, Apr 27, 2026 at 05:32:47AM +0200, Kumar Kartikeya Dwivedi w=
-rote:
-> > > > > On Mon, 27 Apr 2026 at 05:24, David Windsor <dwindsor@gmail.com> =
-wrote:
-> > > > > >
-> > > > > > On Sun, Apr 26, 2026 at 10:57=E2=80=AFPM Kumar Kartikeya Dwived=
-i
-> > > > > > <memxor@gmail.com> wrote:
-> > > > > > >
-> > > > > > > On Mon, 27 Apr 2026 at 02:16, David Windsor <dwindsor@gmail.c=
-om> wrote:
-> > > > > > > >
-> > > > > > > > Add bpf_init_inode_xattr() kfunc for BPF LSM programs to at=
-omically set
-> > > > > > > > xattrs via inode_init_security hook using lsm_get_xattr_slo=
-t().
-> > > > > > > >
-> > > > > > > > lsm_get_xattr_slot() claims a slot by writing to xattr_coun=
-t, which BPF
-> > > > > > > > programs cannot do: hook arguments are not directly writabl=
-e from BPF.
-> > > > > > > > To hide this, the BPF-facing API is just bpf_init_inode_xat=
-tr(name,
-> > > > > > > > value), and the verifier transparently rewrites each call i=
-nto
-> > > > > > > > bpf_init_inode_xattr_impl(xattrs, xattr_count, name, value)=
-. xattrs and
-> > > > > > > > xattr_count are extracted from the hook context, which the =
-verifier
-> > > > > > > > spills to the stack at program entry since R1 is clobbered =
-during normal
-> > > > > > > > execution.
-> > > > > > > >
-> > > > > > > > A previous attempt [1] required a kmalloc string output pro=
-tocol for
-> > > > > > > > the xattr name. Since commit 6bcdfd2cac55 ("security: Allow=
- all LSMs to
-> > > > > > > > provide xattrs for inode_init_security hook") [2], the xatt=
-r name is no
-> > > > > > > > longer allocated; it is a static constant. We take advantag=
-e of this by
-> > > > > > > > passing the name directly. Because we rely on the hook-spec=
-ific ctx
-> > > > > > > > layout, the kfunc is restricted to lsm/inode_init_security.
-> > > > > > > >
-> > > > > > > > Link: https://kernsec.org/pipermail/linux-security-module-a=
-rchive/2022-October/034878.html [1]
-> > > > > > > > Link: https://git.kernel.org/pub/scm/linux/kernel/git/torva=
-lds/linux.git/commit/?id=3D6bcdfd2cac55 [2]
-> > > > > > > > Suggested-by: Song Liu <song@kernel.org>
-> > > > > > > > Signed-off-by: David Windsor <dwindsor@gmail.com>
-> > > > > > > > ---
-> > > > > > >
-> > > > > > > The explanation and code make no sense to me. Why not pass xa=
-ttrs and
-> > > > > > > xattr_count directly as arguments, even if you choose to rest=
-rict the
-> > > > > > > kfunc to a specific hook? Why does the verifier core need the=
- hack to
-> > > > > > > spill the context and extract the two arguments?
-> > > > > > >
-> > > > > >
-> > > > > > xattr_count is an output parameter; we cannot currently write t=
-o it in
-> > > > > > bpf as there is no verifier support for writing to int *.  xatt=
-rs and
-> > > > > > xattr_count can be fixed up by the verifier, so we only require=
- the
-> > > > > > user to pass the name and value.
-> > > > >
-> > > > > Sure, but the kfunc can. Did you try passing them in directly?
-> > > > > If that doesn't work for some reason, we should fix it instead.
-> > > >
-> > > > Hm, perhaps this fixup approach might be the simplest in order to
-> > > > assure the needed safety?
-> > >
-> > > +1. I think this is the best approach I can think of.
-> >
-> > We're not going to add more and more special cases to the verifier.
-> > The whole approach is unscalable.
->
-> Totally fair of you to push back here. I'm also agreement with you on
-> the fact that extending the BPF verifier with such special casing
-> doesn't scale all that well.
->
-> > If the concern is that int xattr_count passed for xattrs can be
-> > unrelated int pointer obtained from elsewhere, can we pack the xattrs
-> > and xattr_count into a struct and pass it as an argument to the LSM?
-> > Then the pair struct can be passed in directly, ensuring both
-> > originate from the arguments passed to the LSM. That should eliminate
-> > concerns about either being out of sync if obtained from different
-> > sources.
->
-> This could work, but we'd also need to modify all the other
-> pre-existing hook implementations along with the core
-> security_inode_init_security() LSM hook itself. I don't think that'd
-> be an issue. The biggest hurdle here I think would be convincing the
-> LSM maintainers themselves.
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
 
-Yeah, when these parameters were introduced, we changed all LSMs, so I
-don't see why we cannot adjust things again to benefit this use case.
+Update the security_inode_listsecurity() interface to allow
+use of the xattr_list_one() helper and update the hook
+implementations.
 
->
-> > Even if we wanted to ensure argument provenance was stuff loaded from
-> > context, the right solution would be some kfunc flag that constraints
-> > the argument to be derived by following the ctx pointer, not whatever
-> > is done in this patch.
->
-> OK, so it is provenance-like tracking which you were initially kinda
-> alluding to here. Currently, I don't believe that PTR_TO_CTX is
-> preserved upon any subsequent R1 (ctx) dereferences, so we'd need to
-> think about how this type could be preserved such that we can enforce
-> this kinda constraint (__ctx) at the time which the new BPF kfunc is
-> called. Do you have any ideas on how to do this?
+Link: https://lore.kernel.org/selinux/20250424152822.2719-1-stephen.smalley.work@gmail.com
+Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+[PM: forward porting to bring this patch up to v7.1-rc1+]
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+---
+ fs/nfs/nfs4proc.c             |  7 ++-----
+ fs/xattr.c                    | 11 +++++++----
+ include/linux/lsm_hook_defs.h |  4 ++--
+ include/linux/security.h      |  5 +++--
+ security/security.c           | 16 ++++++++--------
+ security/selinux/hooks.c      | 10 +++-------
+ security/smack/smack_lsm.c    | 13 ++++---------
+ 7 files changed, 29 insertions(+), 37 deletions(-)
 
-I think we'll have to track in the register whether the PTR_TO_BTF_ID
-came from a PTR_TO_CTX load. That said, I still prefer changing the
-prototype to pack the array and its output size parameter together. It
-is even clearer to have a well named type than int *xattr_count in the
-prototype.
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index a9b8d482d289..a16342056ae5 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -10562,13 +10562,10 @@ static ssize_t nfs4_listxattr(struct dentry *dentry, char *list, size_t size)
+ 		left -= error;
+ 	}
+ 
+-	error2 = security_inode_listsecurity(d_inode(dentry), list, left);
++	error2 = security_inode_listsecurity(d_inode(dentry), &list, &left);
+ 	if (error2 < 0)
+ 		return error2;
+-	if (list) {
+-		list += error2;
+-		left -= error2;
+-	}
++	error2 = size - error - left;
+ 
+ 	error3 = nfs4_listxattr_nfs4_user(d_inode(dentry), list, left);
+ 	if (error3 < 0)
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 09ecbaaa1660..0bc3b47e6936 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -510,9 +510,12 @@ vfs_listxattr(struct dentry *dentry, char *list, size_t size)
+ 	if (inode->i_op->listxattr) {
+ 		error = inode->i_op->listxattr(dentry, list, size);
+ 	} else {
+-		error = security_inode_listsecurity(inode, list, size);
+-		if (size && error > size)
+-			error = -ERANGE;
++		ssize_t remaining = size;
++
++		error = security_inode_listsecurity(inode, &list, &remaining);
++		if (error)
++			return error;
++		error = size - remaining;
+ 	}
+ 	return error;
+ }
+@@ -1540,7 +1543,7 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
+ 	if (err)
+ 		return err;
+ 
+-	err = security_inode_listsecurity(inode, buffer, remaining_size);
++	err = security_inode_listsecurity(inode, &buffer, &remaining_size);
+ 	if (err < 0)
+ 		return err;
+ 
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 2b8dfb35caed..65c9609ec207 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -176,8 +176,8 @@ LSM_HOOK(int, -EOPNOTSUPP, inode_getsecurity, struct mnt_idmap *idmap,
+ 	 struct inode *inode, const char *name, void **buffer, bool alloc)
+ LSM_HOOK(int, -EOPNOTSUPP, inode_setsecurity, struct inode *inode,
+ 	 const char *name, const void *value, size_t size, int flags)
+-LSM_HOOK(int, 0, inode_listsecurity, struct inode *inode, char *buffer,
+-	 size_t buffer_size)
++LSM_HOOK(int, 0, inode_listsecurity, struct inode *inode, char **buffer,
++	 ssize_t *remaining_size)
+ LSM_HOOK(void, LSM_RET_VOID, inode_getlsmprop, struct inode *inode,
+ 	 struct lsm_prop *prop)
+ LSM_HOOK(int, 0, inode_copy_up, struct dentry *src, struct cred **new)
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 41d7367cf403..153e9043058f 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -459,7 +459,7 @@ int security_inode_getsecurity(struct mnt_idmap *idmap,
+ 			       struct inode *inode, const char *name,
+ 			       void **buffer, bool alloc);
+ int security_inode_setsecurity(struct inode *inode, const char *name, const void *value, size_t size, int flags);
+-int security_inode_listsecurity(struct inode *inode, char *buffer, size_t buffer_size);
++int security_inode_listsecurity(struct inode *inode, char **buffer, ssize_t *remaining_size);
+ void security_inode_getlsmprop(struct inode *inode, struct lsm_prop *prop);
+ int security_inode_copy_up(struct dentry *src, struct cred **new);
+ int security_inode_copy_up_xattr(struct dentry *src, const char *name);
+@@ -1097,7 +1097,8 @@ static inline int security_inode_setsecurity(struct inode *inode, const char *na
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static inline int security_inode_listsecurity(struct inode *inode, char *buffer, size_t buffer_size)
++static inline int security_inode_listsecurity(struct inode *inode,
++					char **buffer, ssize_t *remaining_size)
+ {
+ 	return 0;
+ }
+diff --git a/security/security.c b/security/security.c
+index 4e999f023651..71aea8fdf014 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2258,22 +2258,22 @@ int security_inode_setsecurity(struct inode *inode, const char *name,
+ /**
+  * security_inode_listsecurity() - List the xattr security label names
+  * @inode: inode
+- * @buffer: buffer
+- * @buffer_size: size of buffer
++ * @buffer: pointer to buffer
++ * @remaining_size: pointer to remaining size of buffer
+  *
+  * Copy the extended attribute names for the security labels associated with
+- * @inode into @buffer.  The maximum size of @buffer is specified by
+- * @buffer_size.  @buffer may be NULL to request the size of the buffer
+- * required.
++ * @inode into *(@buffer).  The remaining size of @buffer is specified by
++ * *(@remaining_size).  *(@buffer) may be NULL to request the size of the
++ * buffer required. Updates *(@buffer) and *(@remaining_size).
+  *
+- * Return: Returns number of bytes used/required on success.
++ * Return: Returns 0 on success, or -errno on failure.
+  */
+ int security_inode_listsecurity(struct inode *inode,
+-				char *buffer, size_t buffer_size)
++				char **buffer, ssize_t *remaining_size)
+ {
+ 	if (unlikely(IS_PRIVATE(inode)))
+ 		return 0;
+-	return call_int_hook(inode_listsecurity, inode, buffer, buffer_size);
++	return call_int_hook(inode_listsecurity, inode, buffer, remaining_size);
+ }
+ EXPORT_SYMBOL(security_inode_listsecurity);
+ 
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 97801966bf32..4ae736755557 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3684,16 +3684,12 @@ static int selinux_inode_setsecurity(struct inode *inode, const char *name,
+ 	return 0;
+ }
+ 
+-static int selinux_inode_listsecurity(struct inode *inode, char *buffer, size_t buffer_size)
++static int selinux_inode_listsecurity(struct inode *inode, char **buffer,
++				ssize_t *remaining_size)
+ {
+-	const int len = sizeof(XATTR_NAME_SELINUX);
+-
+ 	if (!selinux_initialized())
+ 		return 0;
+-
+-	if (buffer && len <= buffer_size)
+-		memcpy(buffer, XATTR_NAME_SELINUX, len);
+-	return len;
++	return xattr_list_one(buffer, remaining_size, XATTR_NAME_SELINUX);
+ }
+ 
+ static void selinux_inode_getlsmprop(struct inode *inode, struct lsm_prop *prop)
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 3f9ae05039a2..ff115068c5c0 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -1665,17 +1665,12 @@ static int smack_inode_getsecurity(struct mnt_idmap *idmap,
+  * smack_inode_listsecurity - list the Smack attributes
+  * @inode: the object
+  * @buffer: where they go
+- * @buffer_size: size of buffer
++ * @remaining_size: size of buffer
+  */
+-static int smack_inode_listsecurity(struct inode *inode, char *buffer,
+-				    size_t buffer_size)
++static int smack_inode_listsecurity(struct inode *inode, char **buffer,
++				    ssize_t *remaining_size)
+ {
+-	int len = sizeof(XATTR_NAME_SMACK);
+-
+-	if (buffer != NULL && len <= buffer_size)
+-		memcpy(buffer, XATTR_NAME_SMACK, len);
+-
+-	return len;
++	return xattr_list_one(buffer, remaining_size, XATTR_NAME_SMACK);
+ }
+ 
+ /**
+-- 
+2.54.0
+
