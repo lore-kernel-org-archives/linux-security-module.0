@@ -1,93 +1,58 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154393ACF07
-	for <linux-security-module@vger.kernel.org>; Tue, 28 Apr 2026 11:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84D91B3B19;
+	Tue, 28 Apr 2026 13:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777374218; cv=none; b=KTcB4iwPuhwznBR5Nhel/uVLA8dZ0uH3KVTLTlqisidr/Ruh1XthJgAL1xytbqHx9kGMmhvBLIYQqmLT0SUmh5nxMfLb9Ylg2GEgrJkDSBfKkoaQFMx8BYK6l2OLoUV205ys75pXTbFDkar47mbkqW/M9xMb/frisr9cWVXepx0=
+	t=1777382489; cv=none; b=EM3gB5NU/SuTwR+J7vBfHQLNxVqQ6K32kMxNOhijE7zWxRIaz7haSkM/tBkeoISEyzgnIiH8Xn2ci8rQwGx82DGUAzQddJu3yCWdCfBsKre5C05AZNU5TFTeJS4MEhBbp9LRVQJ3hoJdK8YGmIUwAktpBC/QjjXIOkkxWM54gO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777374218; c=relaxed/simple;
-	bh=nbBfiQy5OmG6fC0ydXJiDdbmzz1c29k9ixxOb2sNiRY=;
+	s=arc-20240116; t=1777382489; c=relaxed/simple;
+	bh=bsvWlDxYnAplPFAgfU//71QRl4oKYiApqcT8JyjzfgE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=svDGy98xVvkv96m19ZFp6R6Bv5/p5ZMtMKj5oQHkC9/YbeV9FyE8cZ4+M0fq/md+Ww3whe+0NNAgJ+M+fHDemSVv91bQzEyGxKPGRKyQWXvEbSEEx80utcggfBKWnWEXTHzn84KKcY1Rh1D/SC3l0i2T9yASq8+/su3fNSnyPTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JEfq8bWE; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=jcX2plEHErok5CmLfmG9+w0DUE+VyNrx2BpcHW9PANdqxKlJA/HpAeoHUJUWo6cdN0CEwX/UewuiZ44OdMwDnrz0JtAil6zVgA/cFfWzeT4j7JwiKW2O/QZRfMkys6siSo4QktX7dRaXZ3WfQK+Y9FHeLVhIKMPgSMKiPFCDV+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=pdhUfWsd; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JEfq8bWE"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b8f9568e074so1857591266b.0
-        for <linux-security-module@vger.kernel.org>; Tue, 28 Apr 2026 04:03:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1777374214; x=1777979014; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jo4c4cmPyO4lyFt3dhTmNJgnSzf3xxWYEbZoxm7KBv4=;
-        b=JEfq8bWEd24xmIJeNTpRwy8xdWMSMszxPX3CsEzrnv0cTV6uq0KhTpeKGFdTpwGcd5
-         DSK7C2a6DQYuEVfPGdbBqlMk86p864HpgrF7ho9XsWDcmJ/lFlFXBu/WsXXag3+fGPbc
-         DasVT0ixfRlTAi++0loaN9q5Lys0qI8BPMZlNaTwUzP7iMf0Z3kdUxx3yz8RH0z8G5cw
-         L3fPCJyqEzZzhsStPibSHMi5D+UgZ8vsc8enZg4NfmQfYcGvSO63uR29L77lK0USrBpF
-         o0s8sYD7VGUzWQBFUVATohH5PboZ1DJbsgXM+Nna1Jn1XdPEtu4AjU8oqPDGY1aip+/q
-         ah6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777374214; x=1777979014;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jo4c4cmPyO4lyFt3dhTmNJgnSzf3xxWYEbZoxm7KBv4=;
-        b=p3LwQKqUUuZg2riy9CBCPeFLrUnMpRPnDDfMWsv4IRshuvEQgGQW7ResnRwQKjtqLR
-         /6DjN5P9dzYT1hBzfEfseWesY9MkTNw37+QhmLPa7Ppm6VbKi+KKOaSzZLqcS1mNsKJl
-         pUvOPrcWX09IINLrL1gVJi7kQj8BbddhEVQpP8Jk4EuNXyAjEXKa4XWrkydenEakT8pb
-         JSGBzta8DbNU/O73ZgiTZo/V97AgD0gESUTtM2T+ycoLRAu5jEqSaunE1GI5TQ42k8Ln
-         xHnF0GJYajHUixgGFjHO/X3ZbE5KP463y1l/Id6VoU8hvTmc2MAsEj729E+yjZd6IUUO
-         fCJg==
-X-Forwarded-Encrypted: i=1; AFNElJ+L8p/47LNWdpO7pzi2HKQ+ADnJNVpKEBh/xJcCmfET99MpOTdVMkBr3k3kKAXwUiIKsZgA2h1jwzN7bxp0iwk05SyuGZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+10fraDV5j0Oc737RtIdWxc5iKyPhnIHRywk1JALYX5/QB2V3
-	oHEFsJc+GnBduedeoZTTSlH6qQ6QLZwki+aje6W5+pHBDzV+4VgyDSiAnUrqVTQv1w==
-X-Gm-Gg: AeBDietIBpinvvin9OwUXsIjwYhEsXZpt5IW1/DVDBFo7GLiUhX1c9PEVpzau609dsF
-	qzYm5VO5vPBJlAQ0aBoSyG74CjJRz6ZrNqds79jbnLsrFfpNYWhbUodOj1HG5oHSipSct4PWKNN
-	gXfzReIzZthZyT05yWLN3W/CgkGTezjKHVCtLsNOvQTI3FhOAQsvhROeeRKJ50Vw6AGW4sGKpvi
-	8ahv+HP8yWS3KGvjddgf1eXAD1RdIvhpVlHh1R4N8ngBJCdckK9cyRhQgIqEKT6TWa6CCI37I0s
-	dzmIDzZQ4533XAFZfFljlBoZouK8EKlA569HKVDEnbwHTipHf2ORj+w0glMplfx/NbVb60YcnE6
-	Wvkv16uvDfkM1h8/+yiLKE5lF3hCiHgstirk6XCQqAIOAko48puxpCnTi6TuyCjT9jxDnIgZSDI
-	GZUBzXPXqV9VXEllgIzWsTJ3eOJTDOw9uWiP9//B2/+yYCgQm54asCz/9JQPs/BRV9dSCRH1mr6
-	HIg2fpC4Q+N
-X-Received: by 2002:a17:907:3e1e:b0:ba0:d58b:6045 with SMTP id a640c23a62f3a-bb803778202mr162273266b.27.1777374213640;
-        Tue, 28 Apr 2026 04:03:33 -0700 (PDT)
-Received: from google.com (57.35.34.34.bc.googleusercontent.com. [34.34.35.57])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bb808a35d85sm85472166b.17.2026.04.28.04.03.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Apr 2026 04:03:32 -0700 (PDT)
-Date: Tue, 28 Apr 2026 11:03:28 +0000
-From: Matt Bobrowski <mattbobrowski@google.com>
-To: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Cc: Song Liu <song@kernel.org>, David Windsor <dwindsor@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>, KP Singh <kpsingh@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, Jan Kara <jack@suse.cz>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	Jiri Olsa <jolsa@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH bpf-next 1/2] bpf: add bpf_init_inode_xattr kfunc for
- atomic inode labeling
-Message-ID: <afCUADdbNrpbEPMa@google.com>
-References: <20260427001602.38353-1-dwindsor@gmail.com>
- <20260427001602.38353-2-dwindsor@gmail.com>
- <CAP01T74iuSDJeL6g=5yLdYGb-VcESK1SYY3R1S1r-CtQEsW+oQ@mail.gmail.com>
- <CAEXv5_heSFK5rZYtaJG70Xgv92Um6Dbq8b95PtnpKy7XFwpKUw@mail.gmail.com>
- <CAP01T74WBjcMXbWYeaWB-oTk-bUzoxi_EEALDpT1hFUEOovnpw@mail.gmail.com>
- <ae82Vv0RWzcXqSaz@google.com>
- <CAPhsuW60SRXZbFYRDm-QaTiB8tTtJD_N4jk1=680x5UsZmpj9w@mail.gmail.com>
- <CAP01T75SBw6NNvBKyPW11JSYY2oh449yoBsWi_GOBR5Kq1ykmw@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="pdhUfWsd"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 830982BCB;
+	Tue, 28 Apr 2026 06:21:21 -0700 (PDT)
+Received: from e129823.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DADBE3F62B;
+	Tue, 28 Apr 2026 06:21:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1777382487; bh=bsvWlDxYnAplPFAgfU//71QRl4oKYiApqcT8JyjzfgE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pdhUfWsdmeN3C7bkilDKrPemnn+Oq83RRdC0jvgk7oqYcB095DXFCXxYuWkk0UNEX
+	 fIpcey6sslxOGabc6XfGzmecVE2summH/DK2QVGNggJHiRT0Sc7B2RNU7tnq4Eh50E
+	 BfHAUUmAgFezutGPVgqHQ6FZ1hjcTqgpvtFQwlmg=
+Date: Tue, 28 Apr 2026 14:21:20 +0100
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, roberto.sassu@huawei.com,
+	Jonathan McDowell <noodles@earth.li>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	jmorris@namei.org, serge@hallyn.com, dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com, jarkko@kernel.org, jgg@ziepe.ca,
+	sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org,
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org, noodles@meta.com,
+	sebastianene@google.com
+Subject: Re: [RFC PATCH v2 1/4] security: ima: call ima_init() again at
+ late_initcall_sync for defered TPM
+Message-ID: <afC0UPfGhNTsXnyi@e129823.arm.com>
+References: <aephL3MzYoqFGaT5@e129823.arm.com>
+ <CAHC9VhRQWHEWQ5NzOPiu8jtYv6UsRm8WVS4fd74AbkOcAd4y_g@mail.gmail.com>
+ <aesGU8a3mbVzvteH@e129823.arm.com>
+ <CAHC9VhSaT_quKYnpFjAfqvL07JNbWMgM6c4pB9F46NHawX3DCA@mail.gmail.com>
+ <014cf39aa8d6a0bcfa1a95c069675977ac67b843.camel@linux.ibm.com>
+ <CAHC9VhTW3=RJ8L91RWXYYA9tFjfSXGN-DMEEwdiD6big9H57Ew@mail.gmail.com>
+ <1f78fc75b2e95239973612a4b6c4cc782960b7ac.camel@linux.ibm.com>
+ <CAHC9VhS4JmPmCJrYTdbjxb3TO-uK6cB3Zij-ef=wswGce2BGzg@mail.gmail.com>
+ <1e51c2fd090e5ceb07b1d09e50650c70fd3ccdb1.camel@linux.ibm.com>
+ <CAHC9VhS_WgwhW_NDO91LoTeSzdieGqbwqnwPq8KpavH1_Lwi7g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -97,95 +62,53 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP01T75SBw6NNvBKyPW11JSYY2oh449yoBsWi_GOBR5Kq1ykmw@mail.gmail.com>
+In-Reply-To: <CAHC9VhS_WgwhW_NDO91LoTeSzdieGqbwqnwPq8KpavH1_Lwi7g@mail.gmail.com>
 
-On Mon, Apr 27, 2026 at 04:33:18PM +0200, Kumar Kartikeya Dwivedi wrote:
-> On Mon, 27 Apr 2026 at 16:21, Song Liu <song@kernel.org> wrote:
-> >
-> > On Mon, Apr 27, 2026 at 11:11 AM Matt Bobrowski
-> > <mattbobrowski@google.com> wrote:
-n> > >
-> > > On Mon, Apr 27, 2026 at 05:32:47AM +0200, Kumar Kartikeya Dwivedi wrote:
-> > > > On Mon, 27 Apr 2026 at 05:24, David Windsor <dwindsor@gmail.com> wrote:
-> > > > >
-> > > > > On Sun, Apr 26, 2026 at 10:57 PM Kumar Kartikeya Dwivedi
-> > > > > <memxor@gmail.com> wrote:
-> > > > > >
-> > > > > > On Mon, 27 Apr 2026 at 02:16, David Windsor <dwindsor@gmail.com> wrote:
-> > > > > > >
-> > > > > > > Add bpf_init_inode_xattr() kfunc for BPF LSM programs to atomically set
-> > > > > > > xattrs via inode_init_security hook using lsm_get_xattr_slot().
-> > > > > > >
-> > > > > > > lsm_get_xattr_slot() claims a slot by writing to xattr_count, which BPF
-> > > > > > > programs cannot do: hook arguments are not directly writable from BPF.
-> > > > > > > To hide this, the BPF-facing API is just bpf_init_inode_xattr(name,
-> > > > > > > value), and the verifier transparently rewrites each call into
-> > > > > > > bpf_init_inode_xattr_impl(xattrs, xattr_count, name, value). xattrs and
-> > > > > > > xattr_count are extracted from the hook context, which the verifier
-> > > > > > > spills to the stack at program entry since R1 is clobbered during normal
-> > > > > > > execution.
-> > > > > > >
-> > > > > > > A previous attempt [1] required a kmalloc string output protocol for
-> > > > > > > the xattr name. Since commit 6bcdfd2cac55 ("security: Allow all LSMs to
-> > > > > > > provide xattrs for inode_init_security hook") [2], the xattr name is no
-> > > > > > > longer allocated; it is a static constant. We take advantage of this by
-> > > > > > > passing the name directly. Because we rely on the hook-specific ctx
-> > > > > > > layout, the kfunc is restricted to lsm/inode_init_security.
-> > > > > > >
-> > > > > > > Link: https://kernsec.org/pipermail/linux-security-module-archive/2022-October/034878.html [1]
-> > > > > > > Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=6bcdfd2cac55 [2]
-> > > > > > > Suggested-by: Song Liu <song@kernel.org>
-> > > > > > > Signed-off-by: David Windsor <dwindsor@gmail.com>
-> > > > > > > ---
-> > > > > >
-> > > > > > The explanation and code make no sense to me. Why not pass xattrs and
-> > > > > > xattr_count directly as arguments, even if you choose to restrict the
-> > > > > > kfunc to a specific hook? Why does the verifier core need the hack to
-> > > > > > spill the context and extract the two arguments?
-> > > > > >
-> > > > >
-> > > > > xattr_count is an output parameter; we cannot currently write to it in
-> > > > > bpf as there is no verifier support for writing to int *.  xattrs and
-> > > > > xattr_count can be fixed up by the verifier, so we only require the
-> > > > > user to pass the name and value.
-> > > >
-> > > > Sure, but the kfunc can. Did you try passing them in directly?
-> > > > If that doesn't work for some reason, we should fix it instead.
+Hi Paul,
+
+> On Fri, Apr 24, 2026 at 6:49 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > On Fri, 2026-04-24 at 18:10 -0400, Paul Moore wrote:
+> > > (I'm assuming you meant initcall and not syscall above, but if you're
+> > > talking about something else, please let me know.)
 > > >
-> > > Hm, perhaps this fixup approach might be the simplest in order to
-> > > assure the needed safety?
+> > > Saying that you aren't comfortable moving IMA initialization to
+> > > late-sync is inconsistent with allowing IMA initialization to be
+> > > deferred to late-sync.  Either it is okay to initialize IMA in
+> > > late-sync or it isn't.  You must pick one.
 > >
-> > +1. I think this is the best approach I can think of.
-> 
-> We're not going to add more and more special cases to the verifier.
-> The whole approach is unscalable.
+> > Yes, we're discussing late_initcall and late_initcall_sync.
+> >
+> > I prefer to look at it as being pragmatic. I'd rather err on the side of caution
+> > and not move the syscall to late_initcall_sync, than move it.
+>
+> If you were truly erring on the side of caution you wouldn't allow
+> late-sync initialization without knowing if it was safe or not.
+> Determine whether IMA initialization is safe at late-sync.  If it is
+> safe, move the init to late-sync; if not, keep it at late and figure
+> out another mechanism to sync with the TPM availability.  If needed,
+> you could probably use the LSM notifier to enable the TPM driver to
+> signal when it is up and running.
 
-Totally fair of you to push back here. I'm also agreement with you on
-the fact that extending the BPF verifier with such special casing
-doesn't scale all that well. 
+I don't think LSM notifier wouldn't be good since it a one time
+notification for initailisation and it wouldn't tell properly
+whehter TPM isn't present in system or present unless functions
+ima_init() are rewritten to discern the "TPM deferred" and
+"TPM doesn't exist" in the system (e.x) boot-aggregate log creation.
 
-> If the concern is that int xattr_count passed for xattrs can be
-> unrelated int pointer obtained from elsewhere, can we pack the xattrs
-> and xattr_count into a struct and pass it as an argument to the LSM?
-> Then the pair struct can be passed in directly, ensuring both
-> originate from the arguments passed to the LSM. That should eliminate
-> concerns about either being out of sync if obtained from different
-> sources.
+One question, though.
+In the end, for systems where the TPM has already been probed by late_initcall(),
+init_ima() continues to be called at late_initcall(), while the above approach
+is introduced for systems where the TPM is not properly initialized by that point.
 
-This could work, but we'd also need to modify all the other
-pre-existing hook implementations along with the core
-security_inode_init_security() LSM hook itself. I don't think that'd
-be an issue. The biggest hurdle here I think would be convincing the
-LSM maintainers themselves.
+If init_ima(), which used to be called at late_initcall(),
+were instead called at late_initcall_sync(), could this break system integration?
+In my view, both late_initcall and late_initcall_sync run during the do_basic_setup() phase,
+so it doesn’t seem like this would cause tampering or affect things like the creation of the boot-aggregate log.
 
-> Even if we wanted to ensure argument provenance was stuff loaded from
-> context, the right solution would be some kfunc flag that constraints
-> the argument to be derived by following the ctx pointer, not whatever
-> is done in this patch.
+Is there any particular reason why init_ima() must be called specifically at late_initcall()?
 
-OK, so it is provenance-like tracking which you were initially kinda
-alluding to here. Currently, I don't believe that PTR_TO_CTX is
-preserved upon any subsequent R1 (ctx) dereferences, so we'd need to
-think about how this type could be preserved such that we can enforce
-this kinda constraint (__ctx) at the time which the new BPF kfunc is
-called. Do you have any ideas on how to do this?
+Thanks.
+
+--
+Sincerely,
+Yeoreum Yun
