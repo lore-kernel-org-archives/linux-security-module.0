@@ -1,30 +1,30 @@
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B60423A76;
-	Wed, 29 Apr 2026 19:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83AC21C3F0C;
+	Wed, 29 Apr 2026 19:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777490084; cv=none; b=u9pwTwNm3o+KYAJos3o6uJ4KhKuOGx+qOHsn2urzyUZuWcUebyiR2DBekSsDO5bg74YsZBizzfgr4yf4j2yOoncG6lTeitO8m3xh9O1sF4ZX/oSxgIiIA3En4+Zo6E1gTCSqU/WiIuSJIjb05eU8DJjFtJZ85Bfx0nMnaeqbcHY=
+	t=1777490088; cv=none; b=Lnsb09FeQVpJ6AeH5RL5KQgcMsS+CFtjusQB9YYMbkbKuxETJ+y8n94ZqDVYGBse+xQCgwEfscQML4xZrYkl8pU3qZCKU4mJb4e5c/ohgQJwtc0BaxeIkxEilQ0XenLOi1lJfJ+34gKgKddhYzB1003SG5HxY6i1UQHgRRcYccc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777490084; c=relaxed/simple;
-	bh=fYARcDBmPPcHO7t07Sr6HPEeL+UytBm9Oitq4eLFb94=;
+	s=arc-20240116; t=1777490088; c=relaxed/simple;
+	bh=AzWlhO19VpuGg5nZz3+D71Jy4Fjph/CriKJF5JAlOOU=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oHwcdvpR09QOwyMiwTDWnkRESoSGYWdSbeaqTVCbx4PwAVVXMZhIIfpPM5lslcTQqdu7Bh6OycizNu2hHSWnUR9aNRMNsEpvPL/LVGA5r540IKPDHGoGP9WFRXg05KzxSVOw97w9qY2XDeOsYc6MBOVS0eMDmo4otK7I2U33PEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=icOeqGij; arc=none smtp.client-ip=13.77.154.182
+	 MIME-Version; b=XKrTqKgYzxxbKHyjttlhZ32Nm3HM/ahRWNgGoiz7+7t5P3dNf1AsBG/8dduUMSehgyL7RQumw6GWKaA5xpRqF3dbNmyVekDKb/a1wP4zqoSkG9GGB5tpGlxsxQVEjcnWsSfklBHz+Z7RCVwe9Ghc0Vm4mWPXJgdYSqpDY3nYAKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=AuA51J8j; arc=none smtp.client-ip=13.77.154.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="icOeqGij"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="AuA51J8j"
 Received: from narnia.corp.microsoft.com (unknown [40.78.12.246])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 26A4E20B716D;
-	Wed, 29 Apr 2026 12:14:40 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 26A4E20B716D
+	by linux.microsoft.com (Postfix) with ESMTPSA id BDD4320B716E;
+	Wed, 29 Apr 2026 12:14:45 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BDD4320B716E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1777490082;
-	bh=TdoGL/WFRJu1LL991oi0llbx4SxP9bDplmkY7d0i3/c=;
+	s=default; t=1777490087;
+	bh=EVhnJ7wpgbA7sp8Fr92qnAkJ63wmwYjrDe6dMMlvu1U=;
 	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=icOeqGijio30I+mDExtt5tWD0TKRId6zAq0TTy2cn0NFWCDGRzErkDAKt5iQ8N1J2
-	 1I+iLEYJfQxwp6WzYhvEjAs05GW8fLQWftjd3IF11mAWQ2W5JYMssAaz3zQLWIUxVR
-	 ZkCnf5bBscX0dDxT0EMurWlVfMuTViQzE4tUJikw=
+	b=AuA51J8jegRfZUBSinuylQGT7VRGIjg8lEefJ6tPaP1D0TDWbOvHThRCVVRYZ2zLJ
+	 T9RcE8SGgs5uUswUO+AVR+rlGC0o7yYXKUZ3umzjYyVjrhIomNEaJcZrKEYm/9OK/X
+	 sSUllkP2GIBZ5BE7I64Ox5lzFs8U0oKTw7tdc7ss=
 From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 To: "Blaise Boscaccy" <bboscaccy@linux.microsoft.com>,
 	"Jonathan Corbet" <corbet@lwn.net>,
@@ -45,9 +45,9 @@ To: "Blaise Boscaccy" <bboscaccy@linux.microsoft.com>,
 	linux-kernel@vger.kernel.org,
 	bpf@vger.kernel.org,
 	"Song Liu" <song@kernel.org>
-Subject: [v6 01/10] crypto: pkcs7: add flag for validated trust on a signed info block
-Date: Wed, 29 Apr 2026 12:14:06 -0700
-Message-ID: <20260429191431.2345448-2-bboscaccy@linux.microsoft.com>
+Subject: [v6 03/10] crypto: pkcs7: add tests for pkcs7_get_authattr
+Date: Wed, 29 Apr 2026 12:14:08 -0700
+Message-ID: <20260429191431.2345448-4-bboscaccy@linux.microsoft.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260429191431.2345448-1-bboscaccy@linux.microsoft.com>
 References: <20260429191431.2345448-1-bboscaccy@linux.microsoft.com>
@@ -61,57 +61,87 @@ Content-Transfer-Encoding: 8bit
 
 From: James Bottomley <James.Bottomley@HansenPartnership.com>
 
-Allow consumers of struct pkcs7_message to tell if any of the sinfo
-fields has passed a trust validation.  Note that this does not happen
-in parsing, pkcs7_validate_trust() must be explicitly called or called
-via validate_pkcs7_trust().  Since the way to get this trusted pkcs7
-object is via verify_pkcs7_message_sig, export that so modules can use
-it.
+Add example code to the test module pkcs7_key_type.c that verifies a
+message and then pulls out a known authenticated attribute.
 
 Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
 Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+Acked-by: David Howells <dhowells@redhat.com>
 ---
- certs/system_keyring.c                | 1 +
- crypto/asymmetric_keys/pkcs7_parser.h | 1 +
- crypto/asymmetric_keys/pkcs7_trust.c  | 1 +
- 3 files changed, 3 insertions(+)
+ crypto/asymmetric_keys/pkcs7_key_type.c | 44 ++++++++++++++++++++++++-
+ 1 file changed, 43 insertions(+), 1 deletion(-)
 
-diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-index e0761436ec7f4..9bda49295bd02 100644
---- a/certs/system_keyring.c
-+++ b/certs/system_keyring.c
-@@ -380,6 +380,7 @@ int verify_pkcs7_message_sig(const void *data, size_t len,
- 	pr_devel("<==%s() = %d\n", __func__, ret);
- 	return ret;
- }
-+EXPORT_SYMBOL(verify_pkcs7_message_sig);
+diff --git a/crypto/asymmetric_keys/pkcs7_key_type.c b/crypto/asymmetric_keys/pkcs7_key_type.c
+index b930d3bbf1af5..e0b1ce0202f6d 100644
+--- a/crypto/asymmetric_keys/pkcs7_key_type.c
++++ b/crypto/asymmetric_keys/pkcs7_key_type.c
+@@ -12,6 +12,7 @@
+ #include <linux/verification.h>
+ #include <linux/key-type.h>
+ #include <keys/user-type.h>
++#include <crypto/pkcs7.h>
  
- /**
-  * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
-diff --git a/crypto/asymmetric_keys/pkcs7_parser.h b/crypto/asymmetric_keys/pkcs7_parser.h
-index 6ef9f335bb17f..203062a33def6 100644
---- a/crypto/asymmetric_keys/pkcs7_parser.h
-+++ b/crypto/asymmetric_keys/pkcs7_parser.h
-@@ -20,6 +20,7 @@ struct pkcs7_signed_info {
- 	unsigned	index;
- 	bool		unsupported_crypto;	/* T if not usable due to missing crypto */
- 	bool		blacklisted;
-+	bool		verified; /* T if this signer has validated trust */
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("PKCS#7 testing key type");
+@@ -51,16 +52,57 @@ static int pkcs7_view_content(void *ctx, const void *data, size_t len,
+ static int pkcs7_preparse(struct key_preparsed_payload *prep)
+ {
+ 	enum key_being_used_for usage = pkcs7_usage;
++	int ret;
++	struct pkcs7_message *pkcs7;
++	const void *data;
++	size_t len;
  
- 	/* Message digest - the digest of the Content Data (or NULL) */
- 	const void	*msgdigest;
-diff --git a/crypto/asymmetric_keys/pkcs7_trust.c b/crypto/asymmetric_keys/pkcs7_trust.c
-index 9a87c34ed1733..78ebfb6373b61 100644
---- a/crypto/asymmetric_keys/pkcs7_trust.c
-+++ b/crypto/asymmetric_keys/pkcs7_trust.c
-@@ -127,6 +127,7 @@ static int pkcs7_validate_trust_one(struct pkcs7_message *pkcs7,
- 		for (p = sinfo->signer; p != x509; p = p->signer)
- 			p->verified = true;
+ 	if (usage >= NR__KEY_BEING_USED_FOR) {
+ 		pr_err("Invalid usage type %d\n", usage);
+ 		return -EINVAL;
  	}
-+	sinfo->verified = true;
- 	kleave(" = 0");
- 	return 0;
+ 
+-	return verify_pkcs7_signature(NULL, 0,
++	ret = verify_pkcs7_signature(NULL, 0,
+ 				      prep->data, prep->datalen,
+ 				      VERIFY_USE_SECONDARY_KEYRING, usage,
+ 				      pkcs7_view_content, prep);
++	if (ret)
++		return ret;
++
++	pkcs7 = pkcs7_parse_message(prep->data, prep->datalen);
++	if (IS_ERR(pkcs7)) {
++		pr_err("pkcs7 parse error\n");
++		return PTR_ERR(pkcs7);
++	}
++
++	/*
++	 * the parsed message has no trusted signer, so nothing should
++	 * be returned here
++	 */
++	ret = pkcs7_get_authattr(pkcs7, OID_messageDigest, &data, &len);
++	if (ret == 0) {
++		pr_err("OID returned when no trust in signer\n");
++		goto out;
++	}
++	/* add trust and check again */
++	ret = verify_pkcs7_message_sig(NULL, 0, pkcs7,
++				       VERIFY_USE_SECONDARY_KEYRING, usage,
++				       NULL, NULL);
++	if (ret) {
++		pr_err("verify_pkcs7_message_sig failed!!\n");
++		goto out;
++	}
++	/* now we should find the OID */
++	ret = pkcs7_get_authattr(pkcs7, OID_messageDigest, &data, &len);
++	if (ret) {
++		pr_err("Failed to get message digest\n");
++		goto out;
++	}
++	pr_info("Correctly Got message hash, size=%zu\n", len);
++
++ out:
++	pkcs7_free_message(pkcs7);
++	return 0;
  }
+ 
+ /*
 -- 
 2.53.0
 
