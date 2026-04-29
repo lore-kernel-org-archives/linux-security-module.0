@@ -1,123 +1,242 @@
 Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2793FD129;
-	Wed, 29 Apr 2026 13:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F5F40DFD7;
+	Wed, 29 Apr 2026 16:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777469638; cv=none; b=nilPBgJGU5bwftit51zkQJgdZP77/f8EL7sQbUWWzj/G/8B0yOfGmdiswhpOgNjNd8XzMh6Aqp3sicLtHMne3XD3B+mOBf/LMRhRBdibaBQ4GF18bvzUc5uBVvyLMDSWQt/9R99s0vNsyYJ5AM9qXNQ+fRmxH/4R7Qh3v524/Mg=
+	t=1777478632; cv=none; b=cAQTSN9HuZdd+JJUXroqcBaJt3wc8Mvlb6pvjqLBwpRCJF7OFb2rIU879OgvL2Mxj8iXTEfMGWIzroqW1MSeSkPioSymJSo+g/51Bi9mUZItyOlGX/SjOii3odVyUr/BCXZmBnOZmWcD37Um1tgHa5VXqCmbaAREQ9w140YlkmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777469638; c=relaxed/simple;
-	bh=RtVxhdA8HcPFpzc6VqaKYSDDTN/K2BuRD6IhM1UOsDk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gKNdKmfpd1N7QlQ7qkzzxomNadsyWwRf6dJSGQwNe2qpz89ZPomthl8wCXCjUnBmQ8+GjDavhs7uuDi3L9UUpJrmUciCT5uMTk5/Q9rG+KVNPLYYXbTy8hqR9e7I5/k/HwgW8GD70XmuAKukC3f1qEUJhjZZaOiIfDZjbRvDjkM=
+	s=arc-20240116; t=1777478632; c=relaxed/simple;
+	bh=7gyGZbLzyS7YTLYlv+rKDGG1Qob46JD45A2HFA38ztg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O9VmQmbq3BTvxvnId2tNLzmE5NOju+3b/C8VyUtR1So4ZuThHFaNjlHpZUxQQqgzngaBNqdc3yeDid5PyZXAh5PqCVTmUXkE23F6odobcqhmP3Qcohg//GdImNzW2q6XrjPCCfAVFoQpYepyJU0/5xRj26qFz5uuJbAJbAtFAfM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.18.224.235])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4g5J7D2jypzwPDw;
-	Wed, 29 Apr 2026 21:29:28 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 1F2864056A;
-	Wed, 29 Apr 2026 21:33:44 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwD3qKKpCPJpsYU_AA--.18035S2;
-	Wed, 29 Apr 2026 14:33:43 +0100 (CET)
-Message-ID: <e325b7a8041b7122e8415de9193f4fe1be04bb02.camel@huaweicloud.com>
-Subject: Re: [RFC PATCH v2 1/4] security: ima: call ima_init() again at
- late_initcall_sync for defered TPM
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4g5MSL6nBtzvQlV;
+	Wed, 29 Apr 2026 23:59:30 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id C891240560;
+	Thu, 30 Apr 2026 00:03:46 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwBHPmrYK_JpRQ1BAA--.12298S2;
+	Wed, 29 Apr 2026 17:03:46 +0100 (CET)
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>
-Cc: Yeoreum Yun <yeoreum.yun@arm.com>, roberto.sassu@huawei.com, Jonathan
- McDowell <noodles@earth.li>, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-integrity@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,  kvmarm@lists.linux.dev,
- jmorris@namei.org, serge@hallyn.com,  dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com, jarkko@kernel.org,  jgg@ziepe.ca,
- sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org, 
- joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, 
- catalin.marinas@arm.com, will@kernel.org, noodles@meta.com, 
- sebastianene@google.com
-Date: Wed, 29 Apr 2026 15:33:27 +0200
-In-Reply-To: <CAHC9VhS_WgwhW_NDO91LoTeSzdieGqbwqnwPq8KpavH1_Lwi7g@mail.gmail.com>
-References: <aeoAlVEwzRUPrlVe@e129823.arm.com>
-	 <aeoRxWPyOHGJd+Jh@e129823.arm.com> <aeoWO2Cwo04YYu2l@earth.li>
-	 <bd908e28298d968740d03c97bc7e441de188b7b4.camel@linux.ibm.com>
-	 <aeokwrC86WI7uT+K@e129823.arm.com> <aeomlp3I0eVE5mce@earth.li>
-	 <aeotq8nPVu4wvEx5@e129823.arm.com>
-	 <e4e242ae5533d5762a3647186a178764881bf9ff.camel@linux.ibm.com>
-	 <aephL3MzYoqFGaT5@e129823.arm.com>
-	 <CAHC9VhRQWHEWQ5NzOPiu8jtYv6UsRm8WVS4fd74AbkOcAd4y_g@mail.gmail.com>
-	 <aesGU8a3mbVzvteH@e129823.arm.com>
-	 <CAHC9VhSaT_quKYnpFjAfqvL07JNbWMgM6c4pB9F46NHawX3DCA@mail.gmail.com>
-	 <014cf39aa8d6a0bcfa1a95c069675977ac67b843.camel@linux.ibm.com>
-	 <CAHC9VhTW3=RJ8L91RWXYYA9tFjfSXGN-DMEEwdiD6big9H57Ew@mail.gmail.com>
-	 <1f78fc75b2e95239973612a4b6c4cc782960b7ac.camel@linux.ibm.com>
-	 <CAHC9VhS4JmPmCJrYTdbjxb3TO-uK6cB3Zij-ef=wswGce2BGzg@mail.gmail.com>
-	 <1e51c2fd090e5ceb07b1d09e50650c70fd3ccdb1.camel@linux.ibm.com>
-	 <CAHC9VhS_WgwhW_NDO91LoTeSzdieGqbwqnwPq8KpavH1_Lwi7g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+To: corbet@lwn.net,
+	skhan@linuxfoundation.org,
+	zohar@linux.ibm.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	gregorylumen@linux.microsoft.com,
+	chenste@linux.microsoft.com,
+	nramas@linux.microsoft.com,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v5 00/13] ima: Introduce staging mechanism
+Date: Wed, 29 Apr 2026 18:03:06 +0200
+Message-ID: <20260429160319.4162918-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwD3qKKpCPJpsYU_AA--.18035S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw4DZF17Ww1xtFyxJry3CFg_yoW8WrWkpF
-	W2q34FkaykJFWrAwn7Jw4xXw10qr93Wry7Jrn0gFyUAws09r1qgrs3K3yYkFy8urs3WayY
-	qFWqq398u3ZxZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwBHPmrYK_JpRQ1BAA--.12298S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3XF1rCryrXw18GFWxAF1kZrb_yoWxKF4xpa
+	9ag34xCwn5Ja4fCwn7Jw1xCr4ru397ta1UCrn7J34xJF15WFyvvr4YkrWa9FsxKr1Fvr1j
+	y3W2qrs8uan0yFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
 	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
 	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
 	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
 	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIF
-	4iUUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQASBGnx6jgC6QABs3
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
+	w2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xUFku4UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgASBGnx6jEF2AAEsO
 
-On Mon, 2026-04-27 at 21:31 -0400, Paul Moore wrote:
-> On Fri, Apr 24, 2026 at 6:49=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> =
-wrote:
-> > On Fri, 2026-04-24 at 18:10 -0400, Paul Moore wrote:
-> > > (I'm assuming you meant initcall and not syscall above, but if you're
-> > > talking about something else, please let me know.)
-> > >=20
-> > > Saying that you aren't comfortable moving IMA initialization to
-> > > late-sync is inconsistent with allowing IMA initialization to be
-> > > deferred to late-sync.  Either it is okay to initialize IMA in
-> > > late-sync or it isn't.  You must pick one.
-> >=20
-> > Yes, we're discussing late_initcall and late_initcall_sync.
-> >=20
-> > I prefer to look at it as being pragmatic. I'd rather err on the side o=
-f caution
-> > and not move the syscall to late_initcall_sync, than move it.
->=20
-> If you were truly erring on the side of caution you wouldn't allow
-> late-sync initialization without knowing if it was safe or not.
-> Determine whether IMA initialization is safe at late-sync.  If it is
-> safe, move the init to late-sync; if not, keep it at late and figure
-> out another mechanism to sync with the TPM availability.  If needed,
-> you could probably use the LSM notifier to enable the TPM driver to
-> signal when it is up and running.
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Yes, I agree with you, or transition or not.
+Introduction
+============
 
-However, all of this looks very fragile and easy to be broken. If we
-want to be on the safe side, we can use any notification mechanism that
-is suitable, but at the same time from IMA side we need to deny any
-file access that would require a measurement until the TPM comes up.
+The IMA measurements list is currently stored in the kernel memory.
+Memory occupation grows linearly with the number of entries, and can
+become a problem especially in environments with reduced resources.
 
-If you accept this, I don't have any problem to move to late_sync.
+While there is an advantage in keeping the IMA measurements list in
+kernel memory, so that it is always available for reading from the
+securityfs interfaces, storing it elsewhere would make it possible to
+free precious memory for other kernel components.
 
-Roberto
+Storing the IMA measurements list outside the kernel does not introduce
+security issues, since its integrity is anyway protected by the TPM.
+
+Hence, the new IMA staging mechanism is introduced to allow user space
+to remove the desired portion of the measurements list from the kernel.
+
+
+Usage
+=====
+
+The IMA staging mechanism can be enabled from the kernel configuration
+with the CONFIG_IMA_STAGING option.
+
+If it is enabled, IMA duplicates the current measurements interfaces
+(both binary and ASCII), by adding the _staged file suffix. Both the
+original and the staging interfaces gain the write permission for the
+root user and group, but require the process to have CAP_SYS_ADMIN set.
+
+The staging mechanism supports two flavors.
+
+Staging with prompt
+~~~~~~~~~~~~~~~~~~~
+
+The current measurements list is moved to a temporary staging area, and
+staged measurements are deleted upon confirmation.
+
+This staging process is achieved with the following steps.
+
+  1.  echo A > <original interface>: the user requests IMA to stage the
+      entire measurements list;
+  2.  cat <_staged interface>: the user reads the staged measurements;
+  3.  echo D > <_staged interface>: the user requests IMA to delete
+      staged measurements.
+
+Staging and deleting
+~~~~~~~~~~~~~~~~~~~~
+
+N measurements are staged to a temporary staging area, and immediately
+deleted without further confirmation.
+
+This staging process is achieved with the following steps.
+
+  1.  cat <original interface>: the user reads the current measurements
+      list and determines what the value N for staging should be;
+  2.  echo N > <original interface>: the user requests IMA to delete N
+      measurements from the current measurements list.
+
+
+Management of Staged Measurements
+=================================
+
+Since with the staging mechanism measurement entries are removed from
+the kernel, the user needs to save the staged ones in a storage and
+concatenate them together, so that it can present them to remote
+attestation agents as if staging was never done.
+
+
+Patch set content
+=================
+
+Patches 1-8 are preparatory patches to quickly replace the hash table,
+maintain separate counters for the different measurements list types,
+mediate access to the measurements list interface, and simplify the staging
+patches.
+
+Patch 9 introduces the staging with prompt flavor. Patch 10 makes it
+possible to flush the hash table when deleting all the staged measurements.
+Patch 11 introduces the staging and deleting flavor. Patch 12 avoids
+measurements entries to be stored twice if there is contention between the
+measurements interfaces and kexec. Patch 13 adds the documentation of the
+staging mechanism.
+
+
+Changelog
+=========
+
+v4:
+ - Add write permission to the original measurement interface, and move
+   the A and N staging commands to that interface
+ - Explain better the two staging flavors and highlight that the staging
+   and delete only stages measurements internally
+ - Rename ima_queue_staged_delete_partial() to ima_queue_delete_partial()
+ - Replace ima_staged_measurements_prepended with per measurements list
+   flag to avoid copying staged and active list measurements twice
+ - Optimize the staging and deleting flavor by locklessly determining the
+   cut position in the active list, and immediately deleting entries
+   without explicit staging and splicing (suggested by Steven Chen)
+
+v3:
+ - Add Kconfig option to enable the staging mechanism (suggested by Mimi)
+ - Change the meaning of BINARY_STAGED to be just the staged measurements
+ - Separate the two staging flavors in two different functions:
+   ima_queue_staged_delete_all() for staging with prompt,
+   ima_queue_staged_delete_partial() for staging and deleting
+ - Delete N entries without staging first (suggested by Mimi)
+ - Avoid duplicate staged entries if there is contention between the
+   measurements list interfaces and kexec
+
+v2:
+ - New patch to move measurements and violation counters outside the
+   ima_h_table structure
+ - New patch to quickly replace the hash table
+ - Forbid partial deletion when flushing hash table (suggested by Mimi)
+ - Ignore ima_flush_htable if CONFIG_IMA_DISABLE_HTABLE is enabled
+ - BINARY_SIZE_* renamed to BINARY_* for better clarity
+ - Removed ima_measurements_staged_exist and testing list empty instead
+ - ima_queue_stage_trim() and ima_queue_delete_staged_trimmed() renamed to
+   ima_queue_stage() and ima_queue_delete_staged()
+ - New delete interval [1, ULONG_MAX - 1]
+ - Rename ima_measure_lock to ima_measure_mutex
+ - Move seq_open() and seq_release() outside the ima_measure_mutex lock
+ - Drop ima_measurements_staged_read() and use seq_read() instead
+ - Optimize create_securityfs_measurement_lists() changes
+ - New file name format with _staged suffix at the end of the file name
+ - Use _rcu list variant in ima_dump_measurement_list()
+ - Remove support for direct trimming and splice the remaining entries to
+   the active list (suggested by Mimi)
+ - Hot swap the hash table if flushing is requested
+
+v1:
+ - Support for direct trimming without staging
+ - Support unstaging on kexec (requested by Gregory Lumen)
+
+Roberto Sassu (13):
+  ima: Remove ima_h_table structure
+  ima: Replace static htable queue with dynamically allocated array
+  ima: Introduce per binary measurements list type ima_num_entries
+    counter
+  ima: Introduce per binary measurements list type binary_runtime_size
+    value
+  ima: Introduce _ima_measurements_start() and _ima_measurements_next()
+  ima: Mediate open/release method of the measurements list
+  ima: Use snprintf() in create_securityfs_measurement_lists
+  ima: Introduce ima_dump_measurement()
+  ima: Add support for staging measurements with prompt
+  ima: Add support for flushing the hash table when staging measurements
+  ima: Support staging and deleting N measurements entries
+  ima: Return error on deleting measurements already copied during kexec
+  doc: security: Add documentation of the IMA staging mechanism
+
+ .../admin-guide/kernel-parameters.txt         |   4 +
+ Documentation/security/IMA-staging.rst        | 163 +++++++++
+ Documentation/security/index.rst              |   1 +
+ MAINTAINERS                                   |   2 +
+ security/integrity/ima/Kconfig                |  16 +
+ security/integrity/ima/ima.h                  |  32 +-
+ security/integrity/ima/ima_api.c              |   2 +-
+ security/integrity/ima/ima_fs.c               | 315 ++++++++++++++++--
+ security/integrity/ima/ima_init.c             |   5 +
+ security/integrity/ima/ima_kexec.c            |  53 ++-
+ security/integrity/ima/ima_queue.c            | 283 ++++++++++++++--
+ 11 files changed, 803 insertions(+), 73 deletions(-)
+ create mode 100644 Documentation/security/IMA-staging.rst
+
+-- 
+2.43.0
 
