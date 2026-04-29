@@ -1,249 +1,545 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E4340F8F4;
-	Wed, 29 Apr 2026 16:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796491E4AF;
+	Wed, 29 Apr 2026 18:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777479618; cv=none; b=FGQlHzYn3A0RuuLiDemgmRoL0va8sWxQAT+zOvpoWKAnMC+o81cPIUbvTFz7yFnNRMuS0w+SfGXBpSy1r9rUPsvJIi6U32xtRPtgxTFniy3ehMflpKSKVBRYWbZLhIvWIebViRb+SxS3vHmHA0600eAElNtnLK2zyrF2+rBUQA4=
+	t=1777487701; cv=none; b=Dp8L+cGKcAycHuKJ8jcgDhsaTjsmdRFTxPlurbXWiZfMMnnzyu5MT/N3nhKSkxwHAK/vtrPdKdH4NMRoesL0gnb+u7+oqqyVvkS3Z471EOUTMNDl8vJaFkT6Mu8hJY4Ml7o78ePm3dMqvRkFnSVu57CCZVrsTVlNQFrKbVcTw34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777479618; c=relaxed/simple;
-	bh=MP9+scg3dwoUSuqETp6ePAjChlt97Y7yrh+Xbl1cumQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nIIGw8yZV9Zwl5aYK+2kgcWvphL7AmNjuWhfv8kK4G+ViXd5AOitUVMYcNvdqThPC97HK1Vx46OltmwBIN0uGpM44jq6IkxbQe7V+RTdOao/h5/jxZwMLBZVeZ7a9K/LVrC5PQdVpOrHf49O1Okz0Yg73XZRNRjTmcdWNJ6a3dM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.235])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4g5MSD2wKbzpTvM;
-	Wed, 29 Apr 2026 23:59:24 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 989D44056A;
-	Thu, 30 Apr 2026 00:03:54 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwBHPmrYK_JpRQ1BAA--.12298S3;
-	Wed, 29 Apr 2026 17:03:54 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: corbet@lwn.net,
-	skhan@linuxfoundation.org,
-	zohar@linux.ibm.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	gregorylumen@linux.microsoft.com,
-	chenste@linux.microsoft.com,
-	nramas@linux.microsoft.com,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v5 01/13] ima: Remove ima_h_table structure
-Date: Wed, 29 Apr 2026 18:03:07 +0200
-Message-ID: <20260429160319.4162918-2-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260429160319.4162918-1-roberto.sassu@huaweicloud.com>
-References: <20260429160319.4162918-1-roberto.sassu@huaweicloud.com>
+	s=arc-20240116; t=1777487701; c=relaxed/simple;
+	bh=n+NVogIRep+ymWOMp2E7Apj2QseV5XL4POXOI9RDhJY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=p+xEqE0LprkLzCBWGwPieFNC/dLSzUbdM0LlP/2mGELsrnQuNJeVg557OEpAJQAnCOkBCJO5YWQRuvcnOs4Z9jPEqNk6v/dd0HDPthC6+Y4siX5ouMQ6MhZVtBV4niAlGy2vmgunABXQdXgk3Zp6GJfuYpx42pqPYtRtWtZxleA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=QA9pTiwH; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="QA9pTiwH"
+Received: from narnia (unknown [40.78.12.246])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 7333820B716C;
+	Wed, 29 Apr 2026 11:34:57 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7333820B716C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1777487698;
+	bh=aXf97LxHBjTD88WDN+5b5+qAq1In70SnE4SHaSh20fw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=QA9pTiwHhn5AlGUAySLt/5UyqLZ9EU3CVB01yvPj6G4dFq0p6BPf1BClO56Tf5Wsb
+	 hhIW2vL6Sy6E8c9/4luMkhJG21XpcdmhSOoP70rIhVnKAhP5ZTbSeCcQoBwm46ZqLu
+	 8zXURytoakXil4veOyees8Dl/5DhUDyTn0+/+2iI=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: Fan Wu <wufan@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BC?=
+ =?utf-8?Q?nther?= Noack <gnoack@google.com>, "Dr.
+ David Alan Gilbert" <linux@treblig.org>, Andrew Morton
+ <akpm@linux-foundation.org>, James.Bottomley@hansenpartnership.com,
+ dhowells@redhat.com, Fan Wu <wufan@kernel.org>, Ryan Foster
+ <foster.ryan.r@gmail.com>, Randy Dunlap <rdunlap@infradead.org>,
+ linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org, Song Liu
+ <song@kernel.org>
+Subject: Re: [PATCH v5 06/10] security: Hornet LSM
+In-Reply-To: <CAKtyLkF5L_sDHmtT2eVhmHLdhB_rAxWzotUJER6A5DFQ=S6EPw@mail.gmail.com>
+References: <20260420212653.438685-1-bboscaccy@linux.microsoft.com>
+ <20260420212653.438685-7-bboscaccy@linux.microsoft.com>
+ <CAKtyLkF5L_sDHmtT2eVhmHLdhB_rAxWzotUJER6A5DFQ=S6EPw@mail.gmail.com>
+Date: Wed, 29 Apr 2026 11:34:55 -0700
+Message-ID: <87jytpk434.fsf@microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwBHPmrYK_JpRQ1BAA--.12298S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxtw4rXFW5Zw1fXFWUuw17Jrb_yoWxtw1kpa
-	nFga42kF48XFyI9ryDAayqkrWrW3yUKr17Wws8Gw1Fk3ZrXr12gF15AFy2kFyfGrZYyF1I
-	qrs0qrn0kwsYyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGw
-	A2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r1j6r4UM28EF7xvwVC2z280aVCY1x0267AKxVW8
-	JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx
-	0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWU
-	JVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxV
-	WUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
-	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jnpnQU
-	UUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQASBGnx6jgGGgAAsB
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+Fan Wu <wufan@kernel.org> writes:
 
-With the upcoming change of dynamically allocating and replacing the hash
-table, the ima_h_table structure would have been replaced with a new one.
+> On Mon, Apr 20, 2026 at 2:27=E2=80=AFPM Blaise Boscaccy
+> <bboscaccy@linux.microsoft.com> wrote:
+>>
+>> This adds the Hornet Linux Security Module which provides enhanced
+>> signature verification and data validation for eBPF programs. This
+>> allows users to continue to maintain an invariant that all code
+>> running inside of the kernel has actually been signed and verified, by
+>> the kernel.
+>>
+>> This effort builds upon the currently excepted upstream solution. It
+>> further hardens it by providing deterministic, in-kernel checking of
+>> map hashes to solidify auditing along with preventing TOCTOU attacks
+>> against lskel map hashes.
+>>
+>> Target map hashes are passed in via PKCS#7 signed attributes. Hornet
+>> determines the extent which the eBFP program is signed and defers to
+>> other LSMs for policy decisions.
+>>
+>> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+>> Nacked-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+>
+> ...
+>
+>> diff --git a/security/hornet/Kconfig b/security/hornet/Kconfig
+>> new file mode 100644
+>> index 0000000000000..19406aa237ac6
+>> --- /dev/null
+>> +++ b/security/hornet/Kconfig
+>> @@ -0,0 +1,11 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only
+>> +config SECURITY_HORNET
+>> +       bool "Hornet support"
+>> +       depends on SECURITY
+>
+> The dependency doesn't seem to be complete, for example,
+> PKCS7_MESSAGE_PARSER is not selected.
+>
+>> +       default n
+>> +       help
+>> +         This selects Hornet.
+>> +         Further information can be found in
+>> +         Documentation/admin-guide/LSM/Hornet.rst.
+>> +
+>> +         If you are unsure how to answer this question, answer N.
+>> diff --git a/security/hornet/Makefile b/security/hornet/Makefile
+>> new file mode 100644
+>> index 0000000000000..26b6f954f762e
+>> --- /dev/null
+>> +++ b/security/hornet/Makefile
+>> @@ -0,0 +1,7 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only
+>> +obj-$(CONFIG_SECURITY_HORNET) :=3D hornet.o
+>> +
+>> +hornet-y :=3D hornet.asn1.o \
+>> +       hornet_lsm.o \
+>> +
+>> +$(obj)/hornet.asn1.o: $(obj)/hornet.asn1.c $(obj)/hornet.asn1.h
+>> diff --git a/security/hornet/hornet.asn1 b/security/hornet/hornet.asn1
+>> new file mode 100644
+>> index 0000000000000..c8d47b16b65d7
+>> --- /dev/null
+>> +++ b/security/hornet/hornet.asn1
+>> @@ -0,0 +1,13 @@
+>> +-- SPDX-License-Identifier: BSD-3-Clause
+>> +--
+>> +-- Copyright (C) 2009 IETF Trust and the persons identified as authors
+>> +-- of the code
+>
+> I'm not a lawyer, but since this is a new AA which is not in the RFC,
+> should the copyright belong to IETF?
+>
 
-However, since the ima_h_table structure contains also the counters for
-number of measurements entries and violations, we would have needed to
-preserve their values in the new ima_h_table structure.
+gah thanks.=20
+>> +--
+>> +-- https://www.rfc-editor.org/rfc/rfc5652#section-3
+>> +
+>> +HornetData ::=3D SET OF Map
+>> +
+>> +Map ::=3D SEQUENCE {
+>> +       index                   INTEGER ({ hornet_map_index }),
+>> +       sha                     OCTET STRING ({ hornet_map_hash })
+>> +} ({ hornet_next_map })
+>> diff --git a/security/hornet/hornet_lsm.c b/security/hornet/hornet_lsm.c
+>> new file mode 100644
+>> index 0000000000000..f7d62fe6229c9
+>> --- /dev/null
+>> +++ b/security/hornet/hornet_lsm.c
+>> @@ -0,0 +1,346 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Hornet Linux Security Module
+>> + *
+>> + * Author: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+>> + *
+>> + * Copyright (C) 2026 Microsoft Corporation
+>> + */
+>> +
+>> +#include <linux/lsm_hooks.h>
+>> +#include <uapi/linux/lsm.h>
+>> +#include <linux/bpf.h>
+>> +#include <linux/verification.h>
+>> +#include <crypto/public_key.h>
+>> +#include <linux/module_signature.h>
+>> +#include <crypto/pkcs7.h>
+>> +#include <linux/sort.h>
+>> +#include <linux/asn1_decoder.h>
+>> +#include <linux/oid_registry.h>
+>> +#include "hornet.asn1.h"
+>> +
+>> +#define MAX_USED_MAPS 64
+>> +
+>> +struct hornet_maps {
+>> +       bpfptr_t fd_array;
+>> +};
+>> +
+>> +/* The only hashing algorithm available is SHA256 due to it be hardcoded
+>> +   in the bpf subsystem. */
+>> +
+>> +struct hornet_parse_context {
+>> +       int indexes[MAX_USED_MAPS];
+>> +       bool skips[MAX_USED_MAPS];
+>> +       unsigned char hashes[SHA256_DIGEST_SIZE * MAX_USED_MAPS];
+>> +       int hash_count;
+>> +};
+>> +
+>> +struct hornet_prog_security_struct {
+>> +       bool checked[MAX_USED_MAPS];
+>> +       unsigned char hashes[SHA256_DIGEST_SIZE * MAX_USED_MAPS];
+>> +};
+>> +
+>> +struct hornet_map_security_struct {
+>> +       bool checked;
+>> +       int index;
+>> +};
+>> +
+>
+> Can maps be shared between programs? If so, since the LSM blob is
+> per-map, a second program's load will overwrite map_security->index
+> set by the first. A later run of the first program would then fail to
+> find its own map.
+>
 
-Instead, separate those counters from the hash table, remove the
-ima_h_table structure, and just replace the hash table pointer.
+Yes, it can. We can support that.
 
-Finally, rename ima_show_htable_value(), ima_show_htable_violations()
-and ima_htable_violations_ops respectively to ima_show_counter(),
-ima_show_num_violations() and ima_num_violations_ops.
+>> +struct lsm_blob_sizes hornet_blob_sizes __ro_after_init =3D {
+>> +       .lbs_bpf_map =3D sizeof(struct hornet_map_security_struct),
+>> +       .lbs_bpf_prog =3D sizeof(struct hornet_prog_security_struct),
+>> +};
+>> +
+>> +static inline struct hornet_prog_security_struct *
+>> +hornet_bpf_prog_security(struct bpf_prog *prog)
+>> +{
+>> +       return prog->aux->security + hornet_blob_sizes.lbs_bpf_prog;
+>> +}
+>> +
+>> +static inline struct hornet_map_security_struct *
+>> +hornet_bpf_map_security(struct bpf_map *map)
+>> +{
+>> +       return map->security + hornet_blob_sizes.lbs_bpf_map;
+>> +}
+>> +
+>> +static int hornet_verify_hashes(struct hornet_maps *maps,
+>> +                               struct hornet_parse_context *ctx,
+>> +                               struct bpf_prog *prog)
+>> +{
+>> +       int map_fd;
+>> +       u32 i;
+>> +       struct bpf_map *map;
+>> +       int err =3D 0;
+>> +       unsigned char hash[SHA256_DIGEST_SIZE];
+>> +       struct hornet_prog_security_struct *security =3D hornet_bpf_prog=
+_security(prog);
+>> +       struct hornet_map_security_struct *map_security;
+>> +
+>> +       for (i =3D 0; i < ctx->hash_count; i++) {
+>> +               if (ctx->skips[i])
+>> +                       continue;
+>> +
+>> +               err =3D copy_from_bpfptr_offset(&map_fd, maps->fd_array,
+>> +                                             ctx->indexes[i] * sizeof(m=
+ap_fd),
+>> +                                             sizeof(map_fd));
+>> +               if (err < 0)
+>> +                       return LSM_INT_VERDICT_FAULT;
+>> +
+>> +               CLASS(fd, f)(map_fd);
+>> +               if (fd_empty(f))
+>> +                       return LSM_INT_VERDICT_FAULT;
+>> +               if (unlikely(fd_file(f)->f_op !=3D &bpf_map_fops))
+>> +                       return LSM_INT_VERDICT_FAULT;
+>> +
+>> +               map =3D fd_file(f)->private_data;
+>> +               if (!map->frozen)
+>> +                       return LSM_INT_VERDICT_FAULT;
+>> +
+>> +               map->ops->map_get_hash(map, SHA256_DIGEST_SIZE, hash);
+>> +
+>> +               err =3D memcmp(hash, &ctx->hashes[i * SHA256_DIGEST_SIZE=
+],
+>> +                             SHA256_DIGEST_SIZE);
+>> +               if (err)
+>> +                       return LSM_INT_VERDICT_UNEXPECTED;
+>> +
+>> +               security->checked[i] =3D true;
+>> +               memcpy(&security->hashes[i * SHA256_DIGEST_SIZE], hash, =
+SHA256_DIGEST_SIZE);
+>> +               map_security =3D hornet_bpf_map_security(map);
+>> +               map_security->checked =3D true;
+>> +               map_security->index =3D i;
+>> +       }
+>> +       return LSM_INT_VERDICT_OK;
+>> +}
+>> +
+>> +int hornet_next_map(void *context, size_t hdrlen,
+>> +                    unsigned char tag,
+>> +                    const void *value, size_t vlen)
+>> +{
+>> +       struct hornet_parse_context *ctx =3D (struct hornet_parse_contex=
+t *)context;
+>> +
+>> +       if (++ctx->hash_count >=3D MAX_USED_MAPS)
+>> +               return -EINVAL;
+>> +       return 0;
+>> +}
+>> +
+>> +int hornet_map_index(void *context, size_t hdrlen,
+>> +                    unsigned char tag,
+>> +                    const void *value, size_t vlen)
+>> +{
+>> +       struct hornet_parse_context *ctx =3D (struct hornet_parse_contex=
+t *)context;
+>> +
+>> +       if (vlen > 1)
+>> +               return -EINVAL;
+>> +
+>> +       ctx->indexes[ctx->hash_count] =3D *(u8 *)value;
+>> +       return 0;
+>> +}
+>> +
+>> +int hornet_map_hash(void *context, size_t hdrlen,
+>> +                   unsigned char tag,
+>> +                   const void *value, size_t vlen)
+>> +
+>> +{
+>> +       struct hornet_parse_context *ctx =3D (struct hornet_parse_contex=
+t *)context;
+>> +
+>> +       if (vlen !=3D SHA256_DIGEST_SIZE && vlen !=3D 0)
+>> +               return -EINVAL;
+>> +
+>> +       if (vlen) {
+>> +               ctx->skips[ctx->hash_count] =3D false;
+>> +               memcpy(&ctx->hashes[ctx->hash_count * SHA256_DIGEST_SIZE=
+], value, vlen);
+>> +       } else
+>> +               ctx->skips[ctx->hash_count] =3D true;
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int hornet_check_program(struct bpf_prog *prog, union bpf_attr *=
+attr,
+>> +                               struct bpf_token *token, bool is_kernel,
+>> +                               enum lsm_integrity_verdict *verdict)
+>> +{
+>> +       struct hornet_maps maps =3D {0};
+>> +       bpfptr_t usig =3D make_bpfptr(attr->signature, is_kernel);
+>> +       struct pkcs7_message *msg;
+>> +       struct hornet_parse_context *ctx;
+>> +       void *sig;
+>> +       int err;
+>> +       const void *authattrs;
+>> +       size_t authattrs_len;
+>> +       struct key *key;
+>> +
+>> +       if (!attr->signature) {
+>> +               *verdict =3D LSM_INT_VERDICT_UNSIGNED;
+>> +               return 0;
+>> +       }
+>> +
+>> +       ctx =3D kzalloc(sizeof(struct hornet_parse_context), GFP_KERNEL);
+>> +       if (!ctx)
+>> +               return -ENOMEM;
+>> +
+>> +       maps.fd_array =3D make_bpfptr(attr->fd_array, is_kernel);
+>> +       sig =3D kzalloc(attr->signature_size, GFP_KERNEL);
+>> +       if (!sig) {
+>> +               err =3D -ENOMEM;
+>> +               goto out;
+>> +       }
+>> +       err =3D copy_from_bpfptr(sig, usig, attr->signature_size);
+>> +       if (err !=3D 0)
+>> +               goto cleanup_sig;
+>> +
+>> +       msg =3D pkcs7_parse_message(sig, attr->signature_size);
+>> +       if (IS_ERR(msg)) {
+>> +               *verdict =3D LSM_INT_VERDICT_BADSIG;
+>> +               err =3D 0;
+>> +               goto cleanup_sig;
+>> +       }
+>> +
+>> +       if (system_keyring_id_check(attr->keyring_id) =3D=3D 0)
+>> +               key =3D (struct key*)(unsigned long)attr->keyring_id;
+>> +       else
+>> +               key =3D key_ref_to_ptr(lookup_user_key(attr->keyring_id,=
+ 0, KEY_DEFER_PERM_CHECK));
+>
+> You might need to key_put the user key.
+>
+>> +
+>> +       if (verify_pkcs7_message_sig(prog->insnsi, prog->len * sizeof(st=
+ruct bpf_insn), msg,
+>> +                                    key,
+>> +                                    VERIFYING_BPF_SIGNATURE,
+>> +                                    NULL, NULL)) {
+>> +               *verdict =3D LSM_INT_VERDICT_UNKNOWNKEY;
+>> +               err =3D 0;
+>> +               goto cleanup_msg;
+>> +       }
+>> +
+>> +       if (pkcs7_get_authattr(msg, OID_hornet_data,
+>> +                              &authattrs, &authattrs_len) =3D=3D -ENODA=
+TA) {
+>> +               *verdict =3D LSM_INT_VERDICT_PARTIALSIG;
+>> +               err =3D 0;
+>> +               goto cleanup_msg;
+>> +       }
+>> +
+>> +       err =3D asn1_ber_decoder(&hornet_decoder, ctx, authattrs, authat=
+trs_len);
+>> +       if (err < 0 || authattrs =3D=3D NULL) {
+>> +               *verdict =3D LSM_INT_VERDICT_BADSIG;
+>> +               err =3D 0;
+>> +               goto cleanup_msg;
+>> +       }
+>> +
+>> +       err =3D hornet_verify_hashes(&maps, ctx, prog);
+>> +       if (err =3D=3D 0)
+>> +               *verdict =3D LSM_INT_VERDICT_OK;
+>> +       else
+>> +               *verdict =3D err;
+>> +
+>> +cleanup_msg:
+>> +       pkcs7_free_message(msg);
+>> +cleanup_sig:
+>> +       kfree(sig);
+>> +out:
+>> +       kfree(ctx);
+>> +       return err;
+>> +}
+>> +
+>> +static const struct lsm_id hornet_lsmid =3D {
+>> +       .name =3D "hornet",
+>> +       .id =3D LSM_ID_HORNET,
+>> +};
+>> +
+>> +static int hornet_bpf_prog_load_integrity(struct bpf_prog *prog, union =
+bpf_attr *attr,
+>> +                                         struct bpf_token *token, bool =
+is_kernel)
+>> +{
+>> +       enum lsm_integrity_verdict verdict;
+>> +       int result =3D hornet_check_program(prog, attr, token, is_kernel=
+, &verdict);
+>> +
+>> +       if (result < 0)
+>> +               return result;
+>> +
+>> +       return security_bpf_prog_load_post_integrity(prog, attr, token, =
+is_kernel,
+>> +                                                    &hornet_lsmid, verd=
+ict);
+>> +}
+>> +
+>> +static int hornet_verify_map(struct bpf_prog *prog, int index)
+>> +{
+>> +       unsigned char hash[SHA256_DIGEST_SIZE];
+>> +       int i;
+>> +       struct bpf_map *map;
+>> +       struct hornet_prog_security_struct *security =3D hornet_bpf_prog=
+_security(prog);
+>> +       struct hornet_map_security_struct *map_security;
+>> +
+>> +       if (!security->checked[index])
+>> +               return 0;
+>> +
+>> +       for (i =3D 0; i < prog->aux->used_map_cnt; i++) {
+>> +               map =3D prog->aux->used_maps[i];
+>> +               map_security =3D hornet_bpf_map_security(map);
+>> +               if (map_security->index !=3D index)
+>> +                       continue;
+>> +
+>> +               if (!map->frozen)
+>> +                       return -EPERM;
+>> +
+>> +               map->ops->map_get_hash(map, SHA256_DIGEST_SIZE, hash);
+>> +               if (memcmp(hash, &security->hashes[index * SHA256_DIGEST=
+_SIZE],
+>> +                          SHA256_DIGEST_SIZE) !=3D 0)
+>> +                       return -EPERM;
+>> +               else
+>> +                       return 0;
+>> +       }
+>> +       return -EINVAL;
+>> +}
+>> +
+>> +static int hornet_check_prog_maps(u32 ufd)
+>> +{
+>> +       CLASS(fd, f)(ufd);
+>> +       struct bpf_prog *prog;
+>> +       int i, result =3D 0;
+>> +
+>> +       if (fd_empty(f))
+>> +               return -EBADF;
+>> +       if (fd_file(f)->f_op !=3D &bpf_prog_fops)
+>> +               return -EINVAL;
+>> +
+>> +       prog =3D fd_file(f)->private_data;
+>> +
+>> +       mutex_lock(&prog->aux->used_maps_mutex);
+>> +       if (!prog->aux->used_map_cnt)
+>> +               goto out;
+>> +
+>> +       for (i =3D 0; i < prog->aux->used_map_cnt; i++) {
+>> +               result =3D hornet_verify_map(prog, i);
+>> +               if (result)
+>> +                       goto out;
+>> +       }
+>
+> This loop is kind of confusing for me, I guess it's just iterating
+> through the maps the program currently in use. I feel the nested loop
+> is unnecessary and the hash could be saved into the map's blob
+> instead. Please correct me if I'm wrong here.
+>
 
-Link: https://github.com/linux-integrity/linux/issues/1
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/ima/ima.h       |  9 +++------
- security/integrity/ima/ima_api.c   |  2 +-
- security/integrity/ima/ima_fs.c    | 19 +++++++++----------
- security/integrity/ima/ima_kexec.c |  2 +-
- security/integrity/ima/ima_queue.c | 17 ++++++++++-------
- 5 files changed, 24 insertions(+), 25 deletions(-)
+It turns out that we can. I'll send out the simplified version in v6.
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 69e9bf0b82c6..51a8a582df56 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -324,12 +324,9 @@ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
-  */
- extern spinlock_t ima_queue_lock;
- 
--struct ima_h_table {
--	atomic_long_t len;	/* number of stored measurements in the list */
--	atomic_long_t violations;
--	struct hlist_head queue[IMA_MEASURE_HTABLE_SIZE];
--};
--extern struct ima_h_table ima_htable;
-+extern atomic_long_t ima_num_entries;
-+extern atomic_long_t ima_num_violations;
-+extern struct hlist_head ima_htable[IMA_MEASURE_HTABLE_SIZE];
- 
- static inline unsigned int ima_hash_key(u8 *digest)
- {
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index 0916f24f005f..122d127e108d 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -146,7 +146,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
- 	int result;
- 
- 	/* can overflow, only indicator */
--	atomic_long_inc(&ima_htable.violations);
-+	atomic_long_inc(&ima_num_violations);
- 
- 	result = ima_alloc_init_template(&event_data, &entry, NULL);
- 	if (result < 0) {
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index ca4931a95098..aaa460d70ff7 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -38,8 +38,8 @@ __setup("ima_canonical_fmt", default_canonical_fmt_setup);
- 
- static int valid_policy = 1;
- 
--static ssize_t ima_show_htable_value(char __user *buf, size_t count,
--				     loff_t *ppos, atomic_long_t *val)
-+static ssize_t ima_show_counter(char __user *buf, size_t count, loff_t *ppos,
-+				atomic_long_t *val)
- {
- 	char tmpbuf[32];	/* greater than largest 'long' string value */
- 	ssize_t len;
-@@ -48,15 +48,14 @@ static ssize_t ima_show_htable_value(char __user *buf, size_t count,
- 	return simple_read_from_buffer(buf, count, ppos, tmpbuf, len);
- }
- 
--static ssize_t ima_show_htable_violations(struct file *filp,
--					  char __user *buf,
--					  size_t count, loff_t *ppos)
-+static ssize_t ima_show_num_violations(struct file *filp, char __user *buf,
-+				       size_t count, loff_t *ppos)
- {
--	return ima_show_htable_value(buf, count, ppos, &ima_htable.violations);
-+	return ima_show_counter(buf, count, ppos, &ima_num_violations);
- }
- 
--static const struct file_operations ima_htable_violations_ops = {
--	.read = ima_show_htable_violations,
-+static const struct file_operations ima_num_violations_ops = {
-+	.read = ima_show_num_violations,
- 	.llseek = generic_file_llseek,
- };
- 
-@@ -64,7 +63,7 @@ static ssize_t ima_show_measurements_count(struct file *filp,
- 					   char __user *buf,
- 					   size_t count, loff_t *ppos)
- {
--	return ima_show_htable_value(buf, count, ppos, &ima_htable.len);
-+	return ima_show_counter(buf, count, ppos, &ima_num_entries);
- 
- }
- 
-@@ -545,7 +544,7 @@ int __init ima_fs_init(void)
- 	}
- 
- 	dentry = securityfs_create_file("violations", S_IRUSR | S_IRGRP,
--				   ima_dir, NULL, &ima_htable_violations_ops);
-+				   ima_dir, NULL, &ima_num_violations_ops);
- 	if (IS_ERR(dentry)) {
- 		ret = PTR_ERR(dentry);
- 		goto out;
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index 36a34c54de58..5801649fbbef 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -43,7 +43,7 @@ void ima_measure_kexec_event(const char *event_name)
- 	int n;
- 
- 	buf_size = ima_get_binary_runtime_size();
--	len = atomic_long_read(&ima_htable.len);
-+	len = atomic_long_read(&ima_num_entries);
- 
- 	n = scnprintf(ima_kexec_event, IMA_KEXEC_EVENT_LEN,
- 		      "kexec_segment_size=%lu;ima_binary_runtime_size=%lu;"
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 319522450854..1f6515f7d015 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -32,11 +32,14 @@ static unsigned long binary_runtime_size;
- static unsigned long binary_runtime_size = ULONG_MAX;
- #endif
- 
-+/* num of stored measurements in the list */
-+atomic_long_t ima_num_entries = ATOMIC_LONG_INIT(0);
-+/* num of violations in the list */
-+atomic_long_t ima_num_violations = ATOMIC_LONG_INIT(0);
-+
- /* key: inode (before secure-hashing a file) */
--struct ima_h_table ima_htable = {
--	.len = ATOMIC_LONG_INIT(0),
--	.violations = ATOMIC_LONG_INIT(0),
--	.queue[0 ... IMA_MEASURE_HTABLE_SIZE - 1] = HLIST_HEAD_INIT
-+struct hlist_head ima_htable[IMA_MEASURE_HTABLE_SIZE] = {
-+	[0 ... IMA_MEASURE_HTABLE_SIZE - 1] = HLIST_HEAD_INIT
- };
- 
- /* mutex protects atomicity of extending measurement list
-@@ -61,7 +64,7 @@ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
- 
- 	key = ima_hash_key(digest_value);
- 	rcu_read_lock();
--	hlist_for_each_entry_rcu(qe, &ima_htable.queue[key], hnext) {
-+	hlist_for_each_entry_rcu(qe, &ima_htable[key], hnext) {
- 		rc = memcmp(qe->entry->digests[ima_hash_algo_idx].digest,
- 			    digest_value, hash_digest_size[ima_hash_algo]);
- 		if ((rc == 0) && (qe->entry->pcr == pcr)) {
-@@ -113,10 +116,10 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
- 	INIT_LIST_HEAD(&qe->later);
- 	list_add_tail_rcu(&qe->later, &ima_measurements);
- 
--	atomic_long_inc(&ima_htable.len);
-+	atomic_long_inc(&ima_num_entries);
- 	if (update_htable) {
- 		key = ima_hash_key(entry->digests[ima_hash_algo_idx].digest);
--		hlist_add_head_rcu(&qe->hnext, &ima_htable.queue[key]);
-+		hlist_add_head_rcu(&qe->hnext, &ima_htable[key]);
- 	}
- 
- 	if (binary_runtime_size != ULONG_MAX) {
--- 
-2.43.0
-
+> -Fan
+>
+>> +out:
+>> +       mutex_unlock(&prog->aux->used_maps_mutex);
+>> +       return result;
+>> +}
+>> +
+>> +static int hornet_bpf(int cmd, union bpf_attr *attr, unsigned int size,=
+ bool kernel)
+>> +{
+>> +       /* in horent_bpf(), anything that had originated from kernel spa=
+ce we assume
+>> +          has already been checked, in some form or another, so we don'=
+t bother
+>> +          checking the intergity of any maps. In hornet_bpf_prog_load_i=
+ntegrity(),
+>> +          hornet doesn't make any opinion on that and delegates that to=
+ the downstream
+>> +          policy enforcement. */
+>> +
+>> +       if (cmd !=3D BPF_PROG_RUN)
+>> +               return 0;
+>> +       if (kernel)
+>> +               return 0;
+>> +
+>> +       return hornet_check_prog_maps(attr->test.prog_fd);
+>> +}
+>> +
+>> +static struct security_hook_list hornet_hooks[] __ro_after_init =3D {
+>> +       LSM_HOOK_INIT(bpf_prog_load_integrity, hornet_bpf_prog_load_inte=
+grity),
+>> +       LSM_HOOK_INIT(bpf, hornet_bpf),
+>> +};
+>> +
+>> +static int __init hornet_init(void)
+>> +{
+>> +       pr_info("Hornet: eBPF signature verification enabled\n");
+>> +       security_add_hooks(hornet_hooks, ARRAY_SIZE(hornet_hooks), &horn=
+et_lsmid);
+>> +       return 0;
+>> +}
+>> +
+>> +DEFINE_LSM(hornet) =3D {
+>> +       .id =3D &hornet_lsmid,
+>> +       .blobs =3D &hornet_blob_sizes,
+>> +       .init =3D hornet_init,
+>> +};
+>> --
+>> 2.53.0
+>>
