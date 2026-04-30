@@ -1,210 +1,136 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DDC2F7462;
-	Wed, 29 Apr 2026 20:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2382338D;
+	Thu, 30 Apr 2026 00:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777492916; cv=none; b=V4G/hsOX2uimfWi8YWrzGggHoE5lF+zqgeE73U908luwCKf2WCvkPW2DsW4DPu+0fXAw/sMTZSMSQL/ylKFyQiiORbu2nETx+Y38LuAPMqix2xO66I1tY7iy4FgXtgnzhjp2VKhjKgrNhRXn+nX+Cd37w8H9OpF6Iqabh76JsJM=
+	t=1777507410; cv=none; b=fR6TF/Iu1alHg3Zr5qHR1v9AmUQNdOnRYffKHn6QxVR1fHwHIaXZzQq70Foixs3fX42DNeNEjuStvoiXk1GIAbZpxpHP5kxsWmllHNMb6eGvmd8GiPXPL45T5e9tVM5uXDfZ8nepR5Eaxr+OBhpXDGrhN1JxBJMV9xK+h2VTrZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777492916; c=relaxed/simple;
-	bh=fJSg5n+VTofLF+R3vGeT0B6uJwenTXr9SrOBn2KG+f8=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=u8Xap3xTeVjvKIRru02bLB/QbhufSWkjfNjqxtB915GVmfHzag1WxbE6GvdN+XbBrMB7SQqmmoXVfXzttwpMom+UAb7fznyBh/ry22q+1uGNM7qpCNtNmx3G2uAU40cvi4EknmPOHBlzCmeW2UT/eVd9TfOhrHyAVhfWLjMedY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XN8bSfMy; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1777507410; c=relaxed/simple;
+	bh=p9Phw1+Q0qn7qJdQ+RdBxfq/ar2HNwvEN/RCKhkS0Jk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DowoTQFRUz2FsSNn7ogMBZ/7az1LfzN6UbknGcTleksb3F4PY/dFf/aNnENF71gOqoJd90hzz2syqTmCK2W5MtddGzlyaV1SK3TCKidNqsAFMBOXqSNh4fZiDjDk8HABsoWEQTQvx4XZQLG2GSgei1U+djt4JnfzCuahoasA2PI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O2io5zCP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XN8bSfMy"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63TFUqIl1317126;
-	Wed, 29 Apr 2026 20:01:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=R2x2PQ
-	rvORUdwNxHDcUtETRc8rS0gty21jpHed4L61s=; b=XN8bSfMyWP8gMr/AlEGpjg
-	I9o25iCplYG0leQKr/pZYRG7PLhl95Ed2+CYsJhH4qP+Lo4NYjDh/HzB9RUOTqL+
-	aPy3pnBcvVFfaCWE/ZIWOvitKBZ7cJmClG6R6SDSOAwG/NoIkemEPUsSAGJcuprL
-	JMlC3+ku0+VNHW4R3wqWMuI3lcENDx+3vIpxgmBTxPs4Kg0sZZN0Jr6tIKQo5Ue5
-	+0iKoIDgbNiIWR2wpr8MR39Y1Nap0sXOI5oXtK13NQiai4YmH/AMs7plpOWZY9xy
-	v9R+8j/nJvKvvhjIoJcpuGZCsaHDEe/Az/VoJDq5080NvHc5KXwwK83I9Dml+m0A
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4drk1ju408-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 Apr 2026 20:01:15 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 63TJrroh010290;
-	Wed, 29 Apr 2026 20:01:14 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4dsa5gfsjt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 Apr 2026 20:01:14 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 63TK1EAE30343876
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 29 Apr 2026 20:01:14 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0D87958052;
-	Wed, 29 Apr 2026 20:01:14 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7D9FA58065;
-	Wed, 29 Apr 2026 20:01:12 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.118.181])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 29 Apr 2026 20:01:12 +0000 (GMT)
-Message-ID: <7734099f5e7fda5480bca016a9e6707983325fbd.camel@linux.ibm.com>
-Subject: [PATCH] ima: debugging late_initcall_sync measurements
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Jonathan McDowell <noodles@earth.li>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.linux.dev
-Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
-        eric.snowberg@oracle.com, jarkko@kernel.org, jgg@ziepe.ca,
-        sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org,
-        joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-        catalin.marinas@arm.com, will@kernel.org, noodles@meta.com,
-        sebastianene@google.com, Yeoreum Yun <yeoreum.yun@arm.com>
-In-Reply-To: <cover.1777036497.git.noodles@meta.com>
-References: <cover.1777036497.git.noodles@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 29 Apr 2026 16:01:12 -0400
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2io5zCP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2425C19425;
+	Thu, 30 Apr 2026 00:03:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777507409;
+	bh=p9Phw1+Q0qn7qJdQ+RdBxfq/ar2HNwvEN/RCKhkS0Jk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=O2io5zCPCWx+DUmuFfauRNsEMGKvEpFxbLUil1Zln8q2E2SjH2xBthmHA1xSeUkNi
+	 BEsdm0YkAP6804hb1IDRxgvf9GETm0jwdeOVZFtSbb3vBszDI9DcneMNrHamCKSgnN
+	 K0vaWcF65wwZlGxl0Iejmp2sv5D66EyFRii4jTJNDOF1gW7eNnoq070m62ILob07zK
+	 Vzr8XlCn9wdgMoBuetwdLUXLb3BXKHFjCmhK9DdlHdJh1zt2gzCi2ok58UXtZZswS3
+	 L0L5dmkTgUaZTHG/fw5XhnXaMJYGhD2cGamjQsOKgSv1SAr6eATeVQd7KbWFdTkTmy
+	 epfA3dpQiAv/A==
+From: Song Liu <song@kernel.org>
+To: linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	selinux@vger.kernel.org,
+	apparmor@lists.ubuntu.com
+Cc: paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	john.johansen@canonical.com,
+	stephen.smalley.work@gmail.com,
+	omosnace@redhat.com,
+	mic@digikod.net,
+	gnoack@google.com,
+	takedakn@nttdata.co.jp,
+	penguin-kernel@I-love.SAKURA.ne.jp,
+	herton@canonical.com,
+	kernel-team@meta.com,
+	Song Liu <song@kernel.org>
+Subject: [PATCH v2 0/7] lsm: Replace security_sb_mount with granular mount hooks
+Date: Wed, 29 Apr 2026 17:03:08 -0700
+Message-ID: <20260430000315.918964-1-song@kernel.org>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDI5MDE5OCBTYWx0ZWRfX7FCsE6eIcPV0
- dRO44UnF0wfI9Fsdy2pzNYSqckElbnehPhzYgU59deAy09/NqVV5peRfk/XnbOaVW4WNoW3yIeh
- 5F+xYDm7ICIWl6PiWsn9iHAP1ul1MYT7KzCitUYIxkTTG19zx6c8QY6KuVi8oxcM9zdCQPY8ObM
- r9CMcB2a2GKNRKXO/IeLvVr2M4oKebO8S43cNheX553J3+3F+CUMfY8bMCnlJ8d9j7Ai4xxA0g0
- h+c8R0ktb+8HGBQfxSF+PRXxXejvuC6BsLbJf+Fu3oHQivQmbviOYnZP/e+oyKNzqrGn1CZmGWK
- WiLsM3Uq/RkPd0CFQziWQZ1FSxfcMvfGF0u+zsxxDD7Ya5RQYxWa8fK48enDGobj4cMyO3GfQqZ
- XEvi6l4hn5CYxmeDkErHfoJjX6+ewPe+gLpxlN/DGP1CJcwZrDob9FSjNkZbySgRy4so59IQp57
- iZ9BLkgkza1SODVqvrQ==
-X-Proofpoint-GUID: G4mI1EHlNTHJ2Sv4EmdWBE_u_oyWeRVx
-X-Proofpoint-ORIG-GUID: 6taI1q2EF8KzjwX9tVp-Ex5_1ZWFnHn4
-X-Authority-Analysis: v=2.4 cv=MohiLWae c=1 sm=1 tr=0 ts=69f2638c cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=VwQbUJbxAAAA:8
- a=VabnemYjAAAA:8 a=fWDe5KWseGDh5RaNRN8A:9 a=QEXdDO2ut3YA:10
- a=gKebqoRLp9LExxC7YDUY:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-29_02,2026-04-28_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 suspectscore=0 bulkscore=0 spamscore=0
- priorityscore=1501 malwarescore=0 clxscore=1015 lowpriorityscore=0
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604200000
- definitions=main-2604290198
+Content-Transfer-Encoding: 8bit
 
-With this "[RFC PATCH v3 0/4] Fix IMA + TPM initialisation ordering
-issue" patch set, how many records would be missing if IMA
-initialization is deferred to late_initcall_sync [1]?
+This series replaces the monolithic security_sb_mount() hook with
+per-operation mount hooks, addressing two main issues:
 
-[1]https://lore.kernel.org/linux-integrity/cover.1777036497.git.noodles@met=
-a.com/
----
-Jonathan, Yeoreum, others -
+1. TOCTOU: security_sb_mount() receives dev_name as a string, which
+   LSMs like AppArmor and Tomoyo re-resolve via kern_path(). The new
+   hooks pass pre-resolved struct path pointers where possible (bind
+   mount, move mount), eliminating the double-resolution.
 
-By going into TPM-bypass mode, we can see how many measurements are actuall=
-y
-missing when deferring IMA initialization to late_initcall_sync. As this is
-system/TPM dependent, I'd appreciate your checking. Please use the boot com=
-mand
-line option "ima_policy=3Dtcb|critical_data".
+2. Conflation: security_sb_mount() handles bind, new mount, remount,
+   move, propagation changes, and mount reconfiguration through a
+   single hook, requiring LSMs to dispatch on flags internally. The
+   new hooks are called at the operation level with appropriate
+   context.
 
-thanks, Mimi
+The new hooks are:
+  mount_bind        - bind mount (pre-resolved source path)
+  mount_new         - new filesystem mount (with fs_context)
+  mount_remount     - filesystem remount (with fs_context)
+  mount_reconfigure - mount flag reconfiguration (MS_REMOUNT|MS_BIND)
+  mount_move        - move mount (pre-resolved paths)
+  mount_change_type - propagation type changes
 
- security/integrity/ima/ima.h      |  1 +
- security/integrity/ima/ima_init.c |  6 ++++++
- security/integrity/ima/ima_main.c | 19 +++++++++++++++++++
- 3 files changed, 26 insertions(+)
+mount_new and mount_remount are called after parse_monolithic_mount_data(),
+so LSMs have access to the fs_context with parsed mount options. They also
+receive the original mount(2) flags and data pointer for LSMs (AppArmor,
+Tomoyo) that need them for policy matching.
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 01aae19ed365..9a1117112fb2 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -286,6 +286,7 @@ extern bool ima_canonical_fmt;
-=20
- /* Internal IMA function definitions */
- int ima_init_core(bool late);
-+int ima_init_debug(bool late);
- int ima_fs_init(void);
- int ima_add_template_entry(struct ima_template_entry *entry, int violation=
-,
- 			   const char *op, struct inode *inode,
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima=
-_init.c
-index 5f335834a9bb..edd063b99685 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -122,6 +122,12 @@ void __init ima_load_x509(void)
- }
- #endif
-=20
-+int __init ima_init_debug(bool late)
-+{
-+	ima_add_boot_aggregate(late); /* just add an additional record */
-+	return 0;
-+}
-+
- int __init ima_init_core(bool late)
- {
- 	int rc;
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima=
-_main.c
-index 42099bfe7e43..23e669be54fc 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -1254,6 +1254,7 @@ static int ima_kernel_module_request(char *kmod_name)
-=20
- #endif /* CONFIG_INTEGRITY_ASYMMETRIC_KEYS */
-=20
-+#define TESTING 1
- static int __init init_ima(bool late)
- {
- 	int error;
-@@ -1264,6 +1265,23 @@ static int __init init_ima(bool late)
- 		return 0;
- 	}
-=20
-+#ifdef TESTING
-+	/*
-+	 * Initialize early, even if it means going into TPM-bypass mode,
-+	 * but add an additional boot_aggregrate message for the
-+	 * late_initcall_sync.
-+	 *
-+	 * If measurement list records exist between the boot_aggregate
-+	 * and the boot_aggregate_late records, these records would be
-+	 * missing when IMA initializion is deferred to late_initcall_sync.
-+	 */
-+	if (ima_tpm_chip) {
-+		ima_init_debug(late); /* Add an additional record */
-+		return 0;
-+	}
-+
-+	ima_tpm_chip =3D tpm_default_chip();
-+#elif
- 	/*
- 	 * If we found the TPM during our first attempt, or we know there's no
- 	 * TPM, nothing further to do
-@@ -1276,6 +1294,7 @@ static int __init init_ima(bool late)
- 		pr_debug("TPM not available, will try later\n");
- 		return -EPROBE_DEFER;
- 	}
-+#endif
-=20
- 	if (!ima_tpm_chip)
- 		pr_info("No TPM chip found, activating TPM-bypass!\n");
---=20
-2.53.0
+The series also replaces security_move_mount() with the new mount_move
+hook, unifying the old mount(2) MS_MOVE path with the move_mount(2)
+syscall path.
+
+All existing LSM behaviors are preserved:
+  AppArmor: same policy matching, TOCTOU fixed for bind/move
+  SELinux:  same permission checks (FILE__MOUNTON, FILESYSTEM__REMOUNT)
+  Landlock: same deny-all for sandboxed processes
+  Tomoyo:   same policy matching, TOCTOU fixed for bind/move, unused
+            data_page parameter removed
+
+
+This work is inspired by earlier discussions:
+
+[1] https://lore.kernel.org/bpf/20251127005011.1872209-1-song@kernel.org/
+[2] https://lore.kernel.org/linux-security-module/20250708230504.3994335-1-song@kernel.org/
+
+Changes v1 => v2:
+1. Rebase.
+2. Add Reviewed-by and Tested-by from Stephen Smalley.
+
+v1: https://lore.kernel.org/linux-security-module/20260318184400.3502908-1-song@kernel.org/
+
+Song Liu (7):
+  lsm: Add granular mount hooks to replace security_sb_mount
+  apparmor: Remove redundant MS_MGC_MSK stripping in apparmor_sb_mount
+  apparmor: Convert from sb_mount to granular mount hooks
+  selinux: Convert from sb_mount to granular mount hooks
+  landlock: Convert from sb_mount to granular mount hooks
+  tomoyo: Convert from sb_mount to granular mount hooks
+  lsm: Remove security_sb_mount and security_move_mount
+
+ fs/namespace.c                    |  41 +++++++---
+ include/linux/lsm_hook_defs.h     |  14 +++-
+ include/linux/security.h          |  56 +++++++++++---
+ kernel/bpf/bpf_lsm.c              |   7 +-
+ security/apparmor/include/mount.h |   5 +-
+ security/apparmor/lsm.c           | 102 ++++++++++++++++++-------
+ security/apparmor/mount.c         |  37 ++--------
+ security/landlock/fs.c            |  41 ++++++++--
+ security/security.c               | 119 +++++++++++++++++++++++-------
+ security/selinux/hooks.c          |  49 ++++++++----
+ security/tomoyo/common.h          |   2 +-
+ security/tomoyo/mount.c           |  31 +++++---
+ security/tomoyo/tomoyo.c          |  63 ++++++++++++----
+ 13 files changed, 406 insertions(+), 161 deletions(-)
+
+--
+2.52.0
