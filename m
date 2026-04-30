@@ -1,172 +1,217 @@
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5068C13777E
-	for <linux-security-module@vger.kernel.org>; Thu, 30 Apr 2026 00:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36B127CB35;
+	Thu, 30 Apr 2026 02:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777509799; cv=pass; b=XZjMp3outFFFA2p/XVsT9D0XCDbUd+T4/TLSNFm8MXUfwRgcY70cvPCJ8lZQxVdMiGZStbVucqN1R6DZYP/O19HySNEVCAovjP2OCeTsnyGSlTk86Mccyu9vGB0nDeVkRl1ZBjAvjghCsBtSfOQ8jDXIMQma+EIWGsLctSMTySc=
+	t=1777517484; cv=fail; b=XPlCAwE1BcYPaFBAvrwRk+dykENvfhIo6eTbr+FDY0eP5iBaIuyW/Mz7oB5vDlohGnnMsX7J5eEp2fWbn6Q8NxeC4AMoMXuxTccsaGjaeYuoYq3uLMoS51+Ah53Azg0nSOPbIZnLV6Tpr1TDGjt3dT2I7RAnvAmErFOpJM006Og=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777509799; c=relaxed/simple;
-	bh=ZdaMDMnsE2bNTMd0UOmXsnLLXqtDt1Cqm9/WufJEwTo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ALe2nnomm5xox0uhcuoUoMLiC4kedPE0nFsD+8H7qb1ZMarGnIKrzBjTKTkjpRJ5To/A0q/5YQnZENYz8tPFyEO4+QE0K8KRu7fDwqwntMIqOUIYeBFGoxZ6Xb04x2KNXPEd3OpxIPGLPr+LHQ7zEibDO5vaFdoxjBhcz2Ca1GQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=G2yi90uS; arc=pass smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1777517484; c=relaxed/simple;
+	bh=B/1nbb2drHujmXLpx2IwYSOrIrXrzGx/BkixJSORw3k=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=tLA51RdHQAq+1VtlEpJkWuv+ZFxhYDd1A77chVoTXLJOlYhhaZ+vqsNf6myKxB/oPgxAmp7Rwnqh23vMFtmUZgIq0IJRC+HQKSDg+s4zJX8XRYqItOPUJ8ufIItfgYPbpfo7X9mL4YaMMD1wcq3QHp1uYzSuQ1KU6zPV5T6rXDM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cYD4XXrm; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="G2yi90uS"
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-35d965648a2so325684a91.0
-        for <linux-security-module@vger.kernel.org>; Wed, 29 Apr 2026 17:43:18 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1777509798; cv=none;
-        d=google.com; s=arc-20240605;
-        b=Jq+LiLIepCywQgeo3/Ou5LazWwa7SfY0JK7XKccHYRfGbV9/g9XHUx7NXkfow3FwR2
-         1x4QijdVu2z7DKEh9RwuRZR8XP5tOFrolgyPZabN1ZkcvaNDTOWq7QufhpJKj94ds+1r
-         t4i5iBzxkE6YYSjAuN67bQ9aHQ9Mcx+hnt6qnUpwcW5N47wmWx7erjZMzLmSPE9t1DYa
-         aubU0BaCgFfcIk00DP7I5hwUyQ1VV1fkV9rwo2iOg+xTW9OpStbBkfrVDIIrHt260W36
-         ABgC3xhwVLV26ljEke3jFAbcrGgwpB4eKZOZfHmdRQMFqiCuaEtH1Xr//vc9wwxqfKtd
-         SFQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=+22Vew3O7NYuCAbB+MpAlEjTY5hterfUj3xJsaAyHE8=;
-        fh=E9ePw1slIyvgfzXwO4otp+RDIcSR+aOXEcHKNluw5tA=;
-        b=XtpgVZDInGKTAemHayX3HZnj62mAroSru/35PLw4JMup99po/vuZDQN9gyBppGdlug
-         96vvGWgi4IakvRaFc8lP3pDAl3EDu3ifwHEf8W7kgpGJKMrqsB02QfWhyZTQutS1tohU
-         hOkhTIRJ1RAjDyfN54O/so97Q73+0xSGRwiSoQooFbN/kXQffGXOl9cTiyyLW0G1U0Y9
-         Gf3RBXJLGpe7ImpN0C+axwf0nTVH5KM8DQ9fzm+/4zalHkU3AbG3CY2t8soAY7Oy8kcQ
-         T+e8DTwaiY6ou682+/sGB/56tiCoT5Y01+Fi4VwjDY644AVVkcul2hTQQyYChIIAULMC
-         iCtg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1777509798; x=1778114598; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+22Vew3O7NYuCAbB+MpAlEjTY5hterfUj3xJsaAyHE8=;
-        b=G2yi90uS0VYAefuD0q4YL5MvIf+jTDDyZMDzTJucknJJFV7BwKM+BAPQtWErB6rAKo
-         PcT0gaj+LkO07kcO8Qqjd0k7OEgyADrViPpLXjbCiFH21CLt9rrey5+fhRCyuoZ67nr5
-         Ft8qm7H4gbesCMBczBfzrrgbgyXEE+6FM+by2f8JesasyRJUcFDTuTJpIEmm9UELeLnR
-         qQY+oLDkiklsy3fCC3u4PuqRiFZ6/wA1Jv5XBilacVJ5UscbLNY6T+lBXuYZMpF6QOXf
-         g6+mg4XWWbcGLdzVhal8kV9oQdVS35EiMlw2xfiln8MIQjmw3EQE2F4ZCPzmKDhi1S3T
-         Pbqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777509798; x=1778114598;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=+22Vew3O7NYuCAbB+MpAlEjTY5hterfUj3xJsaAyHE8=;
-        b=RTmyRc5QiajI8HvBcSszCg383IMfGx9jqV+RXUb13zX9ES3z7u0S8ydJK/GA9wzGri
-         8W7ARq/54J+duwT6PKilhMBiDPl/oqAkOyxmvyy9/o6tn0R4ccTzwpsG7/+pihEMZZCV
-         SspgV9sZpqqTRarn6M95DtM5YJoIp12saQB4uiRySPhjDg9+8jgkU0yYVm9bjomnquzu
-         Fr7sxC4HYpR85+0QbmYodDGj4UU4Sh9HJ5yhHqr5l7OCUGTfxDwBXmP/izy5E9kblD3C
-         cDvv8wt0/atmoC4apQNoQsnfXZTRAUpFJg7h/snWDpxjHpKo0Q/AcOYPrd9xYdXZUWQ+
-         e6Ag==
-X-Forwarded-Encrypted: i=1; AFNElJ9x1CmlNSE4UY3ccwS9EKD81R4Jartj7v0q2rU0dcPARt/PgHTsN2sFOopAaANHPqmxDANY1BwC7LN40EMbbSS4GEi+1nU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwO9Y/eFuJUhEhQ7tuBHKwixa14pSH02fIwROS9gjJytbnIV8i
-	Ms6mk6abQYSpilZ6ueqhgGGqhPQP7YCW67X3JSu9tWBkkiXarHjhgI9hEuLlKrF5vFCx3z71yxy
-	GmfndcWY0NxF0VwJQtUW3W/Y2HGnyPFBTNipBb8zK
-X-Gm-Gg: AeBDiets7hFOQ7HhDNKzTJKXLjFEDBKcLyFnUBl1GYoPmP4fkKhidK4m4OQAp5TbrVq
-	Wexf8CLkz6ygBy9MXKVAmfVOaFwzvB68q65lOlGzRdROkV7cPJLTvsXYNPHKcotZnJJc2JxSzlk
-	54VWFeQDUHMpStkPVY9/50is3QLapfK9g5rfVd9zORskxn2K3P7hlflc3I/Gm5XfubiwItPIldG
-	mUyMfb+vF4YYDv5qmRRjx2pwGmkGgaoDJhxhkZRzGNGI5+O6VFK5oZcKQtN9q4jIDVwiEUtP02o
-	22+M/yQyMqBKK2NTjg==
-X-Received: by 2002:a17:90b:3b8c:b0:35f:b5df:450 with SMTP id
- 98e67ed59e1d1-364c309b046mr561429a91.19.1777509797729; Wed, 29 Apr 2026
- 17:43:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cYD4XXrm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1777517482; x=1809053482;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=B/1nbb2drHujmXLpx2IwYSOrIrXrzGx/BkixJSORw3k=;
+  b=cYD4XXrmZ08zp8PpDlH3s431NYa4r+AfLZ4t7koYkoRheuieTdipaAfp
+   uCUGvjMWOgfj3tRum36tSRFsoY0CEpC7Lj+URRceVm+IAw4JSIAXRH6O3
+   9H4F+8XQTjQuw/lwqM0FUKQYrQvSY0WOnHcGj/3VrRYcorglQGc8LDBCr
+   M0uF0J2A/Smx/8dMNmxRgd4OhoeE2jgQaaW7kbB9b7oiyCEoXkHIru0SN
+   XW9zQ9BICrQqzCtz/fi+n5CoZNq35L7wU7b0Ef16J6EhcNp5+FNI/K6mH
+   Hm/N1kOW8Sfks81QOQL+riSWVL8S0aEZzvdMh/5/jSK2Hoq9SqtKf4nIF
+   w==;
+X-CSE-ConnectionGUID: rG65pQfyTM64llOuSAOFfA==
+X-CSE-MsgGUID: wOqpuMffSE+NfqLc16Uw4A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11771"; a="81033310"
+X-IronPort-AV: E=Sophos;i="6.23,207,1770624000"; 
+   d="scan'208";a="81033310"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2026 19:51:22 -0700
+X-CSE-ConnectionGUID: JVKSey/YTxi/wtCmTwNyoQ==
+X-CSE-MsgGUID: RWwrlXe4SMKbe0xOlxheAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,207,1770624000"; 
+   d="scan'208";a="229844366"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Apr 2026 19:51:21 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Wed, 29 Apr 2026 19:51:20 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37 via Frontend Transport; Wed, 29 Apr 2026 19:51:20 -0700
+Received: from CH5PR02CU005.outbound.protection.outlook.com (40.107.200.69) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Wed, 29 Apr 2026 19:51:20 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GY7zVIrzA8OpboqZcFflwN4EcV+w9+HhUJDaQGq6r5WmbcMGtb74+c785KFpdsBAnFm/bhnD3e3ZYfCrubK1Eef0PYGhqAlo1HsGgtDwfu6wCbActE7ZUx1DvzoPUBiOJqS5EfclHuFpoZg9OhRivN63uDi/X49uuTuaMcEKxl5y2KQFxfM8JPR8Mm2KUnHZ68g3q/SV8Seo+6SVzXiNsWBhPYwQyEHIi5apBHHOWlQJ2tnukTYrrzGk+9DHdky1tfMlM13ERbnd4kBotQUgRzT9B8jQ72vNj0f3tWJ5xmp79w684+8+y2gdlkc0O9j4rOivDPCBDbt9on6HgXZvMQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZJty/de14af24ZT596JDIQC244/4RLIwDxyDrGTpDNU=;
+ b=dTCdq8qrUBBbW/+4uOrvMblvZrjYD6uhuRphQUkhcDeNIcP7mSll91h1tYTvrm3xFHRjCesAopwGb1R+oRSW7TbRtjc9WKTjN98EitvJepJEWcv1EVVi2vCX7cyR9DYB0GPTc6j9z9wgtmp338iRPNXmD5qsPTQEygeuVMuxQBAJwkJBZx87t0ZCx37dHT26tIdXPmpWm8uE0h9rY3Juqgfm4cc5kKZa2Fs4xzHMzUCu5gAFOf9Da7bqb71YwIixZkcUdBjCXaDXYQwB5PnvljnRcPyAI5wnPorKbreGH4gLJbHwbJzUhwJJU7unfrECJ8iPM3xsGoY7BEOwvQcg3A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH0PR11MB5832.namprd11.prod.outlook.com (2603:10b6:510:141::7)
+ by PH8PR11MB9723.namprd11.prod.outlook.com (2603:10b6:510:3a2::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.17; Thu, 30 Apr
+ 2026 02:51:17 +0000
+Received: from PH0PR11MB5832.namprd11.prod.outlook.com
+ ([fe80::106e:78dd:4c96:d707]) by PH0PR11MB5832.namprd11.prod.outlook.com
+ ([fe80::106e:78dd:4c96:d707%3]) with mapi id 15.20.9870.020; Thu, 30 Apr 2026
+ 02:51:17 +0000
+Date: Thu, 30 Apr 2026 10:51:07 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>, Jann Horn
+	<jannh@google.com>, =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>,
+	<linux-security-module@vger.kernel.org>, <oliver.sang@intel.com>
+Subject: [linus:master] [landlock]  874c8f8382:
+ kernel-selftests.landlock.audit_test.audit.thread.fail
+Message-ID: <202604300436.a07fae12-lkp@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+User-Agent: s-nail v14.9.25
+X-ClientProxiedBy: SI2P153CA0030.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:190::15) To PH0PR11MB5832.namprd11.prod.outlook.com
+ (2603:10b6:510:141::7)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aeoAlVEwzRUPrlVe@e129823.arm.com> <aeoRxWPyOHGJd+Jh@e129823.arm.com>
- <aeoWO2Cwo04YYu2l@earth.li> <bd908e28298d968740d03c97bc7e441de188b7b4.camel@linux.ibm.com>
- <aeokwrC86WI7uT+K@e129823.arm.com> <aeomlp3I0eVE5mce@earth.li>
- <aeotq8nPVu4wvEx5@e129823.arm.com> <e4e242ae5533d5762a3647186a178764881bf9ff.camel@linux.ibm.com>
- <aephL3MzYoqFGaT5@e129823.arm.com> <CAHC9VhRQWHEWQ5NzOPiu8jtYv6UsRm8WVS4fd74AbkOcAd4y_g@mail.gmail.com>
- <aesGU8a3mbVzvteH@e129823.arm.com> <CAHC9VhSaT_quKYnpFjAfqvL07JNbWMgM6c4pB9F46NHawX3DCA@mail.gmail.com>
- <014cf39aa8d6a0bcfa1a95c069675977ac67b843.camel@linux.ibm.com>
- <CAHC9VhTW3=RJ8L91RWXYYA9tFjfSXGN-DMEEwdiD6big9H57Ew@mail.gmail.com>
- <1f78fc75b2e95239973612a4b6c4cc782960b7ac.camel@linux.ibm.com>
- <CAHC9VhS4JmPmCJrYTdbjxb3TO-uK6cB3Zij-ef=wswGce2BGzg@mail.gmail.com>
- <1e51c2fd090e5ceb07b1d09e50650c70fd3ccdb1.camel@linux.ibm.com>
- <CAHC9VhS_WgwhW_NDO91LoTeSzdieGqbwqnwPq8KpavH1_Lwi7g@mail.gmail.com> <e325b7a8041b7122e8415de9193f4fe1be04bb02.camel@huaweicloud.com>
-In-Reply-To: <e325b7a8041b7122e8415de9193f4fe1be04bb02.camel@huaweicloud.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 29 Apr 2026 20:43:05 -0400
-X-Gm-Features: AVHnY4LHifXVy7YvtGHgR9F7kahKzv5vW_Z8KfHyWJ-dvateuzzdMLdc0MOzfBY
-Message-ID: <CAHC9VhTqYgc6fE2v+ZY4QXuCDkvNMKZcM4Wi+7Vkxspff08K0A@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 1/4] security: ima: call ima_init() again at
- late_initcall_sync for defered TPM
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, Yeoreum Yun <yeoreum.yun@arm.com>, roberto.sassu@huawei.com, 
-	Jonathan McDowell <noodles@earth.li>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	jmorris@namei.org, serge@hallyn.com, dmitry.kasatkin@gmail.com, 
-	eric.snowberg@oracle.com, jarkko@kernel.org, jgg@ziepe.ca, 
-	sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org, 
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, 
-	catalin.marinas@arm.com, will@kernel.org, noodles@meta.com, 
-	sebastianene@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR11MB5832:EE_|PH8PR11MB9723:EE_
+X-MS-Office365-Filtering-Correlation-Id: e6477afa-1562-43a8-b9a5-08dea66359a7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|56012099003|18002099003;
+X-Microsoft-Antispam-Message-Info: 8JwxEP87ICbNwcx3UAo7MnKyyExIkM2qiBOH3EV8z3JnML7DRMdwPzGe1pas/mJswewawzs6f0dgkow0GSQKPSPLdn90FvhVMrqwsnKrS9MxCO6ChrmKgeqiwqtYjNJoiJzE0v/rlv3078wb0aHwO+RvXqyZzdJAV8o2DbqG87mp5mf44507y2QNR/ve1HfFysTzwISvVwkbsYLPYSFLWRsbYiJ8d96Kqf1w/4Dgnyd/yCk+qdXz4GoyGyzUufXK/mJJwlxxVYgI31Z948oRBS+U4KHJBM6zVNl/psr2lpEVBNTxiUDu34W/c+ZoWjl2WOdxgcPKxXMvVUsOQapiloXOeRMln9+HjA+9GBlKiEoAeLwjB2v6BKhux2CmZzSfreQC9a/olxT65wuOkOKWTL54kK0YbhTfMTSv/U4XgKQr+Z9xVBdgERZdYCqX9J0VeaKGvsbrVoFwhr5BurrA47i4pkC+e/zdGF4UiQLOJ0rQgK/DYZJ11UxFI+7Moj+81DHCmevVzDRfIhfMvias1VfPdlwz2DNuB/+xnADvgFj+sF3mOc0azwsK79AGdIvEere+4m7oO7cupx9fN0RVoQ/Zxfi9kUdX79tB2meVAxNlP9sobfsktoPE3BTMD87+1JFpb7GARQOdeF6ZfTAzbLXrGRPDYeVYJNUqA+PRWHCFAWJl7mDLKq6B51IicB1B
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB5832.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(56012099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?e9T62REp0h9l1GbeVgVjSWBdkIetoAnl1LOSPkLXsyeAWLD+TapuVIFGSS59?=
+ =?us-ascii?Q?qkBLANAx5J7pRsd17JDiko8rzBnOt5CaMobo9e3ceih1iQOWY82IdoK+K68z?=
+ =?us-ascii?Q?U9Lu02mVVDMtEfiBYnDkfMCDZeAUHTA1gtXe4mXd+aebi/cdtef7nWn9mJLe?=
+ =?us-ascii?Q?QvL8C6X260DkB5zk9onsIENNbt1vuFtKxWy3CBWxyOkANIIntGeibkdYDg4b?=
+ =?us-ascii?Q?nKEEWrKGAIM7teNc7OSu5HxNeHkc2DkO20HDQD+v5FpFQwOa2SHQ229gngBm?=
+ =?us-ascii?Q?hdXZVDkbOUnXLhT/9v7rUH7fdXh/6jo4z1XC1TfeOvzTc3gUYyloE2MB/vcd?=
+ =?us-ascii?Q?FwI99YTdeV4nVBMeotWIFqsZcFnSPim3jSNAUweCbCZkOATn5eJcU4j2EQKr?=
+ =?us-ascii?Q?We5zZnYol/NrXZO4bPoIbx/JPClNPnd48UZGjbTRSEvszeWtwpxl16oUwulE?=
+ =?us-ascii?Q?wz/lSdBSCZZUqQc/2yBGT6ktBnBcHYiTSqIc/gC5UghXgGCZm1IC85HRZVkM?=
+ =?us-ascii?Q?jDwB6bxaOYOxPVHbYSspy+jqVsnx25igvEvXf2p/wFJMUHHNggp5fQVlBIG6?=
+ =?us-ascii?Q?yJwD08kE6lvLsm+3cq9tuzK//vtpCdHLcHgmfAyqffvZhp1jcl2LGKakkh1I?=
+ =?us-ascii?Q?iLS2nOzVuYuSWCtyUov1B34GS98Ars2sdIHJEdr5wTwHkTCXki25ruoicQvM?=
+ =?us-ascii?Q?CGf8DMcoKd9NMnWDgQwJkNa6w2YZXhoyH6m0wlZr6tLak/TxaYEjPTFJjDDv?=
+ =?us-ascii?Q?tbGrbQHFLgEvuOEUCNW9EXa/wIdjkWnCKQQxk6Qe66v1L1B2cOUZVLVNkoa2?=
+ =?us-ascii?Q?hUu11CUMc+AjdVkNnLy+NcEGVmFdHW9TYh7Ycy/kZ86vEh90G1O2PDqxyzt1?=
+ =?us-ascii?Q?3V3SnaRFaca/ECV1TLQWYbqozYDdB2qkIOlJnJSq6v+sGjJ3SQxzZDLogKTb?=
+ =?us-ascii?Q?6ZVIFdLfn75aisPxc79lxW+IgOJZLkItqqdHLuE3Swz0zcSKADgInyhpavgK?=
+ =?us-ascii?Q?krEBc1B2HdU0trCeSAifgHlF/2dIZAc6VDmFjZGnIGrYVea4FysxJv1uGJ1D?=
+ =?us-ascii?Q?5sR93Yy9mjOTJSrhH7TVqdK+mbckzJHLNMPYBWrs7aASxBFMqnrp1wgaDZF+?=
+ =?us-ascii?Q?o6/LtCw+Di0BLIthZvLkBxti5irO+oCCE2o3QnlsW1veJjOVHX0YU6yMz79Q?=
+ =?us-ascii?Q?TL2CE9DZ9rIFu1DljucOMabA2ytikZcgF63IJ4vAACLvne7eTc2zwTOousUD?=
+ =?us-ascii?Q?5o5vBJSuplDpFGpmTFEgF39fmm1yOE9F5F75fLKjNhWwtTYPeoNwpuAVRBpb?=
+ =?us-ascii?Q?Gb2t5ZOENworYbfDXpAktvIPA0v9bW/zU0xiHpeo5HYmC2e1PNw5auQpCKjW?=
+ =?us-ascii?Q?96SxFYn36b8PUwGqxaTQT+oc/RIHSX3b/L0dU29auxVW/hosNx69LOV9C8PG?=
+ =?us-ascii?Q?DMaaHHtYwP/lm9F6xbMk4XYsBGkqN0Lw7Wrff+cNjhOrFWMIK2qJRpwrIHKv?=
+ =?us-ascii?Q?ms4lczSkOh5rcwNxlfs1wg7JbCHorwiJY8fl7LoKCTyuT9DO53BnQXalMtqA?=
+ =?us-ascii?Q?vD4QZLFQacdkxGRH5KvyQY2BnjDmIzU2sUbRtKyVZb+8zwLO0xnyFW8r4kS4?=
+ =?us-ascii?Q?QLLWrSuTfmoKKCzaCg3jl/6ZUXZfw/ZyD6AudkHX9TullXqo1HGI4kUiMlFo?=
+ =?us-ascii?Q?+JQblzc9mo1l8f0u3qa/8LVdGQ8kftJ5BmVz0hXZ5+dLQqPNTJcykVifCUEr?=
+ =?us-ascii?Q?8jOzMXFLLA=3D=3D?=
+X-Exchange-RoutingPolicyChecked: KkdPfJ5Urkgs7S7H9Zbs78U7FWWaDAav5dCR1SDKbbAmHebJ6OjMTM0rypYOZZxhE8l16YPivs5H+XimTwEgNTcwpZZFIxLG6RZJ+gwVwd7hjglj7nXyh2EPtna3fmwLDGnWsC1H5TxNbrA+9atpolZkXPC+OfZUK+zkZpYv9/q9eK1pV7xu8l2FKUQWlrAm6hEGM8+elG2H2xeu5rHyUanA/C4yiNgYiiaEwAgnoTO0Pype1AkgE6n6Wqq5xVK2u9akg8terOiJMyqzphLf+LLYnbWplyO/pmdDoHkkn0X7XDaBpNpNFhJhhC+tVpUgV99OtYSeJJvU4cyqbNZ3TQ==
+X-MS-Exchange-CrossTenant-Network-Message-Id: e6477afa-1562-43a8-b9a5-08dea66359a7
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB5832.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2026 02:51:17.0530
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9201Qu3dvI52RJxMx4zgsQUi/E7xQtvH+3hsmC+3tDUXz2WHg+nFx05OEq3KzO8kWWW9b71Xa4KOPESCB+an0A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB9723
+X-OriginatorOrg: intel.com
 
-On Wed, Apr 29, 2026 at 9:33=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On Mon, 2026-04-27 at 21:31 -0400, Paul Moore wrote:
-> > On Fri, Apr 24, 2026 at 6:49=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com=
-> wrote:
-> > > On Fri, 2026-04-24 at 18:10 -0400, Paul Moore wrote:
-> > > > (I'm assuming you meant initcall and not syscall above, but if you'=
-re
-> > > > talking about something else, please let me know.)
-> > > >
-> > > > Saying that you aren't comfortable moving IMA initialization to
-> > > > late-sync is inconsistent with allowing IMA initialization to be
-> > > > deferred to late-sync.  Either it is okay to initialize IMA in
-> > > > late-sync or it isn't.  You must pick one.
-> > >
-> > > Yes, we're discussing late_initcall and late_initcall_sync.
-> > >
-> > > I prefer to look at it as being pragmatic. I'd rather err on the side=
- of caution
-> > > and not move the syscall to late_initcall_sync, than move it.
-> >
-> > If you were truly erring on the side of caution you wouldn't allow
-> > late-sync initialization without knowing if it was safe or not.
-> > Determine whether IMA initialization is safe at late-sync.  If it is
-> > safe, move the init to late-sync; if not, keep it at late and figure
-> > out another mechanism to sync with the TPM availability.  If needed,
-> > you could probably use the LSM notifier to enable the TPM driver to
-> > signal when it is up and running.
->
-> Yes, I agree with you, or transition or not.
->
-> However, all of this looks very fragile and easy to be broken. If we
-> want to be on the safe side, we can use any notification mechanism that
-> is suitable, but at the same time from IMA side we need to deny any
-> file access that would require a measurement until the TPM comes up.
->
-> If you accept this, I don't have any problem to move to late_sync.
 
-To be perfectly honest, I don't care what the solution to the IMA/TPM
-dependency issue looks like as long as it doesn't involve simply
-trying to initialize IMA multiple times hoping that at one of those
-times all of the dependencies have been satisfied and it isn't too
-late.
 
-If the notifier helps you solve this, great.  If the notifier isn't
-helpful, that's fine too.
+Hello,
 
-If you need to decompose IMA initialization into a multi-step process
-spread across multiple initcall levels, that's okay; we do that with
-other LSMs.  However, calling into the same init code across multiple
-initcall levels is not okay; you need to figure out what is needed
-when, and establish some synchronization mechanisms to provide some
-assurance that the system will boot up correctly.
+kernel test robot noticed "kernel-selftests.landlock.audit_test.audit.thread.fail" on:
 
---=20
-paul-moore.com
+commit: 874c8f83826c95c62c21d9edfe9ef43e5c346724 ("landlock: Fix LOG_SUBDOMAINS_OFF inheritance across fork()")
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+
+[test failed on linus/master      dca922e019dd758b4c1b4bec8f1d509efddeaab4]
+[test failed on linux-next/master 9974969c14031a097d6b45bcb7a06bb4aa525c40]
+
+in testcase: kernel-selftests
+version: kernel-selftests-x86_64-9f2693489ef8-1_20260201
+with following parameters:
+
+	group: landlock
+
+
+
+config: x86_64-rhel-9.4-kselftests
+compiler: gcc-14
+test machine: 16 threads Intel(R) Core(TM) i7-13620H (Raptor Lake) with 32G memory
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202604300436.a07fae12-lkp@intel.com
+
+
+# timeout set to 300
+# selftests: landlock: audit_test
+# TAP version 13
+# 1..12
+# # Starting 12 tests from 10 test cases.
+# #  RUN           audit.log_subdomains_off_fork ...
+# #            OK  audit.log_subdomains_off_fork
+# ok 1 audit.log_subdomains_off_fork
+# #  RUN           audit.thread ...
+# # audit_test.c:252:thread:Expected 0 (0) == matches_log_signal(_metadata, self->audit_fd, child_data.parent_pid, &denial_dom) (-11)
+# # audit_test.c:254:thread:Expected denial_dom (1) != 1 (1)
+# # audit_test.c:257:thread:Expected 0 (0) == matches_log_domain_allocated(self->audit_fd, getpid(), &allocated_dom) (-11)
+# # audit_test.c:259:thread:Expected denial_dom (1) == allocated_dom (2)
+# DATA: audit(1777390809.810:10): domain=1a323af0a status=allocated mode=enforcing pid=2437 uid=0 exe="/opt/rootfs/tmp/kselftests/landlock/landlock/audit_test" comm="audit_test"
+# ERROR: no match for pattern: ^audit([0-9.:]\+): domain=\([0-9a-f]\+\) status=deallocated denials=1$
+# # audit_test.c:275:thread:Expected 0 (0) == matches_log_domain_deallocated(self->audit_fd, 1, &deallocated_dom) (-2)
+# # audit_test.c:277:thread:Expected denial_dom (1) == deallocated_dom (0)
+# # thread: Test failed
+# #          FAIL  audit.thread
+# not ok 2 audit.thread
+
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20260430/202604300436.a07fae12-lkp@intel.com
+
+
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
