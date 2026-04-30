@@ -1,204 +1,156 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4A73E8C49;
-	Thu, 30 Apr 2026 09:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCBF2EDD70
+	for <linux-security-module@vger.kernel.org>; Thu, 30 Apr 2026 21:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777542538; cv=none; b=YEFGM04iaaQXvKVDkflsgz5lBBcgp2BckuN5kXPKkWdgKpA/VDXeGv4nKFje+fzPCIxNWF6u5bH3keyoNhXPIeRfOTZa8hvy2zglXomdCL6WwkTFGWaMtO38z/gwkQeQnNoC452g4iYXtInuBXtb0h5pWKntM21gFAHZos/paJA=
+	t=1777584643; cv=none; b=GTrEOvG96sVXfJFLSMjCR+62tQrS0Ki48qdsxZ3yG2f8JhMZi/IICHq+GaJIAR10wffu8BFs7+3vgelNICLr9BzPM/BX43cnYgljBvwNxUFELwuk0Mz7idACaI4peRvGqRq1bORtJv9J96Fpy81UROZ0ziLIPUmF7eriQnyK8L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777542538; c=relaxed/simple;
-	bh=rzcIYj7NzzucogeiuQ/ByvTxcKuN8A1oBUxuhPjfH7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KMFvbeHlH6mJnAh2VIU+zdLfALZvzHxizRYD+lhm4rUrS61bzzx1hQ20nYPgyGv9OZJZvm9IJaXzeeozlNGTys44emQ+bOqzIy7ZgbUBvbEi/h9UEMWutSmlh4E9jK+ec42zpft9BRLIR7P5cfFv2TNbBe7gsrf7FovZ5wuyu/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=eFo/K5gM; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1777584643; c=relaxed/simple;
+	bh=ZrM6lFX2UCFPg5Kjyem9LHqjHIVlenZXidp39hyYm1w=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Epio1h88f1/lM7AldY0eIZu4VWsMaRv0uGXD7v/6o8yb7vaemGDU+MMSRw4hHODop5ZJynN9nRjg2IEBWf1vmGLrgOUfTexjN8TMLpcH+Q3BuswPs4Sek64LOklZLJ/Jo5iwW7D659rtT6GgUpLTHsvgbQJKIbBuY+wCs7vkmIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GwRk+e9C; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=UeV+B5Nq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="eFo/K5gM"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 62CA21A9A;
-	Thu, 30 Apr 2026 02:48:51 -0700 (PDT)
-Received: from e129823.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 46D953F7B4;
-	Thu, 30 Apr 2026 02:48:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1777542536; bh=rzcIYj7NzzucogeiuQ/ByvTxcKuN8A1oBUxuhPjfH7w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eFo/K5gMt2O/K0ixr+Iw6rFpXaEcpWJ2+qHc0kYzzPm3RfnEds4QfonFkGRBTdRUK
-	 OoLeIkr69ulpGR6jATyx4HSrGhATKhOjwOB3/hbIEsPdNqT7J0tLJCgyz/jMo4ohK5
-	 xJudtOZDygy6ZlDmbe0Yjhj8s/FiZ6ovsxkoVlds=
-Date: Thu, 30 Apr 2026 10:48:50 +0100
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Jonathan McDowell <noodles@earth.li>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com, jarkko@kernel.org, jgg@ziepe.ca,
-	sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org,
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org, noodles@meta.com,
-	sebastianene@google.com
-Subject: Re: [PATCH] ima: debugging late_initcall_sync measurements
-Message-ID: <afMlgstqahnZg68h@e129823.arm.com>
-References: <cover.1777036497.git.noodles@meta.com>
- <7734099f5e7fda5480bca016a9e6707983325fbd.camel@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GwRk+e9C";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="UeV+B5Nq"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63UGIchD2121658
+	for <linux-security-module@vger.kernel.org>; Thu, 30 Apr 2026 21:30:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EYg1mHZ78qeUHVxwPW5soi9NfELbaGNPD7XescIFQxE=; b=GwRk+e9C/NctBONv
+	CIKu36r0sw9XwAGbMoUqHqk8F3VsXA1Z1IX+hsOk3wgNN/JYTVQvbelDoTs3yzuo
+	w8ezTKWH7Cya2BXuC44TAdPlRU8SQmaJcMNXiKYwjOFvyRGDKVQfv7I2qgynfWTY
+	r3EApPmP70ekVWgvhzJfgC6bVqHdGWbty3vae3lGMFqfi8tOR8I2JqlQts85BqhM
+	8out9exLsmmNUug79lT5bf9BYWkq6CJsA+vrOol8mk12K5q2bS7qoM5EkB+ewhcY
+	Vr6TDrt5AHoCmUfADKd0AGe5/EbNQ87zJKvejDFn3FAwN2iZke4/njr9CTXoUrl3
+	5870vQ==
+Received: from mail-dy1-f199.google.com (mail-dy1-f199.google.com [74.125.82.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dvag4sc4p-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-security-module@vger.kernel.org>; Thu, 30 Apr 2026 21:30:41 +0000 (GMT)
+Received: by mail-dy1-f199.google.com with SMTP id 5a478bee46e88-2ddd8ef5343so1448435eec.1
+        for <linux-security-module@vger.kernel.org>; Thu, 30 Apr 2026 14:30:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1777584641; x=1778189441; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EYg1mHZ78qeUHVxwPW5soi9NfELbaGNPD7XescIFQxE=;
+        b=UeV+B5NqiCZ/BrFv0CvfbpPzVZQ86lsYxKf4hOOSM5SIVWZtzfUI6P5HqNvtbyG/rB
+         agi/3g6jUssY+cpiirMKM+luydqqrlO49iEDyQqXj/ein/yWTUFJz2cG0MGDg4M6NXrJ
+         ZVU3MnU8ls1A2DKFZaf52TzwZBci8k9zscVKvViafw5abb0BV4IBECuQShC7nF3f3H9T
+         rs6lj02yBk/bSSGL/02yoPaR18wVY7bZXdEAuIwemUDcjs3mFR8P2Ko5RQfrzC+AgZ6/
+         GxdPGT30+zPeMYFx4cUhfVvBXcp2kGCEu1JKbKIJIkzEIJ/UWa9vSsZRoytmto3PWAvH
+         qvaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777584641; x=1778189441;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=EYg1mHZ78qeUHVxwPW5soi9NfELbaGNPD7XescIFQxE=;
+        b=CpZkxvxLOuwzDWBhQbGrnT8bJ2q8w0vssXoSzmadQwwz92+uMVe8j0O/uf93xpk00w
+         7fCcSAyeS5r9gHMiNoq5ml0dRZtjSt3OorJo0MORawMrQ8pCd1sDBEh2ybqcYgvYZdEi
+         pp8tMUzDnLgB/cU5lCJ5DvH0OaP97RXK/VGdmcUUnAuMMMOFv97KOgWl3fKCAb4HV/rJ
+         yWkUhpehGI1wjyBo/BPo7+zIMMMPPxGKI54qXE9sxIx/UX3ZX4XoFPs0zJc/ijTOSGcs
+         C344jTIwuqZLvyC4p+SQoHaEvy6ES4Bem1OJHJSj9z6zw2HUVqaGz5sVoLAv9BnOf57I
+         L0vQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/ssc2zvKK4ZDZn+rg1hfJCmNBBsLNhhAKa/sFPV+PRtBtGLZ45bzqXg4X5D12hLFjn7WQ1iy/oh+lhcm6UFeH6UL/6E9g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRAuGROhCko6ULAoCcw2paV1LbiTIW0xqEXw/JcqsaF8k/SQ2i
+	rnjiZuwxPS0Uc8jZnedw24TrapzXQfFKTBYa31/E8/d1wfRlEgjGreBrBg+Y9PYQXx1U5FZTAeW
+	qf0yU5+OVpp5iOWQdcbnVLbrqYs2rgFIh9lyqSE2vy2XygCl21jd20yK+WrK6GSyASl0IlqjkXA
+	UB6+Y=
+X-Gm-Gg: AeBDievbO7rFD/P3v6quwCOg4i5gyjjDOrmI/07lp7f60/ig+nsk+cPq2HBNLMhMxG+
+	jlk9AO7U4ot2mJNzjmGqb2TZXotahJvXBheY/mgHHd0cByHyc8epTJbOst/2NXG3iNmyWDdOCum
+	UX2tdDgcNuIfbc6UWN77SskL6SfMmWdD80IZOeJ7p8rl+tANt2u8EA1elO9tc5U07oN9w1mfbSN
+	7oc+XfStODRPsoSxWyXQyvB9XVqx53P0e7KqLsW9yJFOGP1JMs6eqp3WaC10Of+AHmaSzWPdD3e
+	WUXCSsiBj9TiHyki0iIQVWnRVLbETuGx7J0CTaeKZzJVLMNcphNrLLfHdMktqn49Bx3vVbY4LrW
+	EzEovCThEX4BqdDBU9MvmGKhwEgmaoP9vmlq49qZPJ5PsJ/PPxJahU4R0AylKjuBcL172iSuty1
+	DV4rHgJe5qJnw=
+X-Received: by 2002:a05:7300:e402:b0:2dd:6937:79d5 with SMTP id 5a478bee46e88-2ed3d5c6b8fmr2496720eec.8.1777584641153;
+        Thu, 30 Apr 2026 14:30:41 -0700 (PDT)
+X-Received: by 2002:a05:7300:e402:b0:2dd:6937:79d5 with SMTP id 5a478bee46e88-2ed3d5c6b8fmr2496677eec.8.1777584640462;
+        Thu, 30 Apr 2026 14:30:40 -0700 (PDT)
+Received: from hu-jjohnson-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2ee38d79eb9sm2504861eec.8.2026.04.30.14.30.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Apr 2026 14:30:39 -0700 (PDT)
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+To: tj@kernel.org, tony.luck@intel.com, jani.nikula@linux.intel.com,
+        ap420073@gmail.com, jv@jvosburgh.net, freude@linux.ibm.com,
+        bcrl@kvack.org, trondmy@kernel.org, longman@redhat.com,
+        kees@kernel.org, pengdonglin <dolinux.peng@gmail.com>
+Cc: bigeasy@linutronix.de, hdanton@sina.com, paulmck@kernel.org,
+        linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+        linux-nfs@vger.kernel.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
+        netdev@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-wireless@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-s390@vger.kernel.org, cgroups@vger.kernel.org
+In-Reply-To: <20250916044735.2316171-1-dolinux.peng@gmail.com>
+References: <20250916044735.2316171-1-dolinux.peng@gmail.com>
+Subject: Re: (subset) [PATCH v3 00/14] Remove redundant
+ rcu_read_lock/unlock() in spin_lock
+Message-Id: <177758463946.1848985.4916088351427792183.b4-ty@oss.qualcomm.com>
+Date: Thu, 30 Apr 2026 14:30:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7734099f5e7fda5480bca016a9e6707983325fbd.camel@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
+X-Proofpoint-GUID: nmn0JyeBmfsooP-FWXVNoLAYLBREAawx
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDMwMDIyMiBTYWx0ZWRfX8gNP6Rs3vILM
+ 4vF5Q8X1BZCM/nnu5aeKW4Slo2r1Waz+UCxW0lF20reui7acEAA0qDy99A3RGY8Ycm1tYMyZChm
+ PqBQI2RY+9TjbYSKttsrf0ourcro7gZ2bDVJxN8qD13dO/FmaUMHYqeIxfuIQHOnTtJT4kDmaUp
+ KiHjV7O11IMdyK1f9m/GVNu98EPnjwPMcs+qKFt0F4GybLCRP05vtKdxHmr7Jj/b7mKZV++1hXj
+ iLRH2UOsDM2sb0z3o7uLNLJmGliGrcSNgo6J2QwgXPhrTDnwmpyovpOmZ/q7UP2BdoVJKsJF7EN
+ 6AKrJBQKBmqPkH6Jprt8WAPVPawS4v90gP/MOGaSyRJIa4x0otnqAnsmyuzkbIMtVgB0prH8Ygz
+ fzY4kQFoVUi8jBVRQl2RdzCqgb2lJzvqqQpG/t3nwddcQyZxbJbHbR8my3z6FNvMffnoQB1seBo
+ GY+O79qFVBP6GqFtQpg==
+X-Authority-Analysis: v=2.4 cv=UcxhjqSN c=1 sm=1 tr=0 ts=69f3ca01 cx=c_pps
+ a=cFYjgdjTJScbgFmBucgdfQ==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
+ a=EUspDBNiAAAA:8 a=R8he2_Gm4Sd0DFq6ycoA:9 a=QEXdDO2ut3YA:10
+ a=scEy_gLbYbu1JhEsrz4S:22
+X-Proofpoint-ORIG-GUID: nmn0JyeBmfsooP-FWXVNoLAYLBREAawx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-30_06,2026-04-30_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 bulkscore=0 clxscore=1011 lowpriorityscore=0 malwarescore=0
+ impostorscore=0 adultscore=0 spamscore=0 phishscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604200000 definitions=main-2604300222
 
-Hi Mimi,
 
-Thanks to share the testing code and please see the below:
+On Tue, 16 Sep 2025 12:47:21 +0800, pengdonglin wrote:
+> Since commit a8bb74acd8efe ("rcu: Consolidate RCU-sched update-side function definitions")
+> there is no difference between rcu_read_lock(), rcu_read_lock_bh() and
+> rcu_read_lock_sched() in terms of RCU read section and the relevant grace
+> period. That means that spin_lock(), which implies rcu_read_lock_sched(),
+> also implies rcu_read_lock().
+> 
+> There is no need no explicitly start a RCU read section if one has already
+> been started implicitly by spin_lock().
+> 
+> [...]
 
-> With this "[RFC PATCH v3 0/4] Fix IMA + TPM initialisation ordering
-> issue" patch set, how many records would be missing if IMA
-> initialization is deferred to late_initcall_sync [1]?
->
-> [1]https://lore.kernel.org/linux-integrity/cover.1777036497.git.noodles@meta.com/
-> ---
-> Jonathan, Yeoreum, others -
->
-> By going into TPM-bypass mode, we can see how many measurements are actually
-> missing when deferring IMA initialization to late_initcall_sync. As this is
-> system/TPM dependent, I'd appreciate your checking. Please use the boot command
-> line option "ima_policy=tcb|critical_data".
->
-> thanks, Mimi
->
->  security/integrity/ima/ima.h      |  1 +
->  security/integrity/ima/ima_init.c |  6 ++++++
->  security/integrity/ima/ima_main.c | 19 +++++++++++++++++++
->  3 files changed, 26 insertions(+)
->
-> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index 01aae19ed365..9a1117112fb2 100644
-> --- a/security/integrity/ima/ima.h
-> +++ b/security/integrity/ima/ima.h
-> @@ -286,6 +286,7 @@ extern bool ima_canonical_fmt;
->
->  /* Internal IMA function definitions */
->  int ima_init_core(bool late);
-> +int ima_init_debug(bool late);
->  int ima_fs_init(void);
->  int ima_add_template_entry(struct ima_template_entry *entry, int violation,
->  			   const char *op, struct inode *inode,
-> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-> index 5f335834a9bb..edd063b99685 100644
-> --- a/security/integrity/ima/ima_init.c
-> +++ b/security/integrity/ima/ima_init.c
-> @@ -122,6 +122,12 @@ void __init ima_load_x509(void)
->  }
->  #endif
->
-> +int __init ima_init_debug(bool late)
-> +{
-> +	ima_add_boot_aggregate(late); /* just add an additional record */
-> +	return 0;
-> +}
-> +
->  int __init ima_init_core(bool late)
->  {
->  	int rc;
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 42099bfe7e43..23e669be54fc 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -1254,6 +1254,7 @@ static int ima_kernel_module_request(char *kmod_name)
->
->  #endif /* CONFIG_INTEGRITY_ASYMMETRIC_KEYS */
->
-> +#define TESTING 1
->  static int __init init_ima(bool late)
->  {
->  	int error;
-> @@ -1264,6 +1265,23 @@ static int __init init_ima(bool late)
->  		return 0;
->  	}
->
-> +#ifdef TESTING
-> +	/*
-> +	 * Initialize early, even if it means going into TPM-bypass mode,
-> +	 * but add an additional boot_aggregrate message for the
-> +	 * late_initcall_sync.
-> +	 *
-> +	 * If measurement list records exist between the boot_aggregate
-> +	 * and the boot_aggregate_late records, these records would be
-> +	 * missing when IMA initializion is deferred to late_initcall_sync.
-> +	 */
-> +	if (ima_tpm_chip) {
+Applied, thanks!
 
-I believe this should be:
-  if (late) {
-     ...
-  }
+[14/14] wifi: ath9k: Remove redundant rcu_read_lock/unlock() in spin_lock
+        commit: c4f518736472c8cfbf1d304e01c631babd2bbf34
 
-> +		ima_init_debug(late); /* Add an additional record */
-> +		return 0;
-> +	}
-> +
-> +	ima_tpm_chip = tpm_default_chip();
-> +#elif
->  	/*
->  	 * If we found the TPM during our first attempt, or we know there's no
->  	 * TPM, nothing further to do
-> @@ -1276,6 +1294,7 @@ static int __init init_ima(bool late)
->  		pr_debug("TPM not available, will try later\n");
->  		return -EPROBE_DEFER;
->  	}
-> +#endif
->
->  	if (!ima_tpm_chip)
->  		pr_info("No TPM chip found, activating TPM-bypass!\n");
-> --
-> 2.53.0
+Best regards,
+-- 
+Jeff Johnson <jeff.johnson@oss.qualcomm.com>
 
-With above change I confirmed there is no meaurement log
-between boot_aggregate and boot_aggregate_late except "kernel_version"
-But this is ignorable since this UTS measurement is done in
-"ima_init_core() (old: ima_init())" and it is part of ima initialisation.
-
-1. ima_policy=tcb
-
-  # cat /sys/kernel/security/ima/ascii_runtime_measurements
-  10 0adefe762c149c7cec19da62f0da1297fcfbffff ima-ng sha256:0000000000000000000000000000000000000000000000000000000000000000 boot_aggregate
-  10 4e5d73ebadfd8f850cb93ce4de755ba148a9a7d5 ima-ng sha256:0000000000000000000000000000000000000000000000000000000000000000 boot_aggregate_late
-  10 7c23cc970eceec906f7a41bc2fbde770d7092209 ima-ng sha256:72ade6ae3d35cfe5ede7a77b1c0ed1d1782a899445fdcb219c0e994a084a70d5 /bin/busybox
-  10 17ec669c65c401e5e85875cf2962eb7d8c47595f ima-ng sha256:dc6b013e9768d9b13bcd6678470448090138ca831f4771a43ce3988d8e54ffce /lib/ld-linux-aarch64.so.1
-  10 58679a66ac1de17f02595625a8fbeafa259a4c81 ima-ng sha256:494f62bcfb2fcf1b427d5092fafa62c8df39a83b4a64402620b28846724f237f /usr/lib/libtirpc.so.3.0.0
-  10 42f74ee200434576e33be153830b3d55bbe6d2bf ima-ng sha256:a18856b4f6927bc2b8dd4608c0768b8f98544a161b85bf4a64419131243ad300 /lib/libresolv.so.2
-  10 626b4f7bd4f123d18d3a3d8719ed0ae19ee5f331 ima-ng sha256:b8d442de5d31c3f9d1bbb98785f04d4a23dc53442b286d85d4b355927cbe9af4 /lib/libc.so.6
-  10 655a200869696207646377a58cab417fd35b09d2 ima-ng sha256:ad46146b6dd32b47213e5327f1bb2f962ef838a4b707ef7445fa2dbc9019b44f /etc/inittab
-  10 81353202685e022fcd0069a3b2fc4eaa6b1db537 ima-ng sha256:74d698fe0a6862050af29083aa591c960ec1f67be960047e96bb6be5fc2bc0c0 /bin/mount
-  10 ae64184ee607ef8f3aa08ab52cb548318534fd4b ima-ng sha256:27846b57e8234c6a9611b00351f581a54ad6f9a1920b9aa18ceb0ae28e4f7564 /lib/libmount.so.1.1.0
-  10 5ea01f34e7705d1bdb936fd576e2aeb5fd78dab9 ima-ng sha256:3d2a414ec0355fcf0910224fb4a3c53e13d98731a35241edfdf4fb911ed9b210 /lib/libblkid.so.1.1.0
-  10 22c48b4853594a08a73ad4ae6dbe6f2c2bebc6c5 ima-ng sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 /run/utmp
-  10 3024ea5021f8a5d9fb4bd519d599bdca43b7fb93 ima-ng sha256:71ea9ffe2b30e5a9bdceff78785cf281cc41544474db8dc4605a06a597ce1edc /etc/fstab
-  10 2e7530a0f56420991ac7611734cea4774b92b9ef ima-ng sha256:df4697d699442cfe73db7cc8b4c1b37e8a31e75e01f66a0d70134ac812fa683b /bin/mkdir
-  10 3ad117a863aa1ed7b7c09e1d106f84abf7d2ae96 ima-ng sha256:c19a710989b43222431b02399273dba409fe10ca8eefff88eaa936fa695f8324 /bin/ln
-  10 4141c82cb516ac3c846e0b08abcd6abeee7efa1a ima-ng sha256:b75d7f28772f71715a941c77e07e3922815391dd9cc5718ad21f2231c2da09bb /etc/hostname
-  10 dfcedd3c7dc3ed42e09219804504489ab264e2e3 ima-ng sha256:dc1615df9f2012b20b81ffad8e07e16293039ba7fd897854ca3646d6cfea0c0f /etc/init.d/rcS
-  ...
-
-2. ima_policy=critical_data
-
-  # cat /sys/kernel/security/ima/ascii_runtime_measurements
-  10 0adefe762c149c7cec19da62f0da1297fcfbffff ima-ng sha256:0000000000000000000000000000000000000000000000000000000000000000 boot_aggregate
-  10 49ab61dd97ea2f759edcb6c6a3387ac67f0aa576 ima-buf sha256:0c907aab3261194f16b0c2a422a82f145bc9b9ecb8fdb633fa43e3e5379f0af2 kernel_version 372e312e302d7263312b // Ignorable since it's generated by ima_init(_core)().
-  10 4e5d73ebadfd8f850cb93ce4de755ba148a9a7d5 ima-ng sha256:0000000000000000000000000000000000000000000000000000000000000000 boot_aggregate_late
-
-Therefore, init_ima() could move into late_initcall_sync like v1 did:
-  - https://lore.kernel.org/all/20260417175759.3191279-2-yeoreum.yun@arm.com/
-
-Thanks.
-
---
-Sincerely,
-Yeoreum Yun
