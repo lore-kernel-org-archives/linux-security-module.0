@@ -1,123 +1,113 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D932641C6;
-	Sun,  3 May 2026 12:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777812159; cv=none; b=jKf/GJ3jQw0WYb5ICLlJYCJN+KDifyTXFzkL7Hd00wFks0nr9Go4oVjsCqaE81a7iAm9I2VOQStGFE/Z697DaqFCfA97N2uls+BS1zVggGADSE/T5FTXmbCCDNY/VeyLiHc58cJR74/GQXzorj9kyaYE8JE1Hu/8c8NUzz7IQno=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777812159; c=relaxed/simple;
-	bh=ifrq9Y2siac1Pnu88pNPjFdNaxAbP5eem53lg4JpEUw=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=jZxf0w/Dw/IJO9SpmO4vk+r2mMmSzPKp+Xq0gO+B/voUkArQNxjKLgOJ6XMLefrWnTqJykxvpxq2uz3TeDLuLNVOsO5by630OpMj6YD3KKmEd0uVkKygzNxczz2+9aXdFEvqiRnnWNpLaR+kirfi3ysSNqEUgB8UB2I8Cqjr4/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OnzJmAMp; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D19377543
+	for <linux-security-module@vger.kernel.org>; Sun,  3 May 2026 16:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777826797; cv=pass; b=eC6qGn1GxUitCu60lG5FaV2/W680G1HiGFNom7B0Go9dKBi5aCkxAdpBy06aBKn9+cV8zoyeUsPckojaxmhnCF3Ih6p8n6wv4Jr9xiLU7ndBsVDAbx4jX+VcXRZy+CGE32Gxqjw6D0dj3UH51opyg5QTSqSfRjfQDke9mezvLCI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777826797; c=relaxed/simple;
+	bh=YM2w+8iga6X0KGUCUEQ+IcUBubK3K3glecWKuCK54Y8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fnjbTluk2QQqlVzdsUH00c011iLtsYRW4tPE4wunAQnqRwFgxJ+f1g8qbKUO0sD1X3EuRBWRW2ZFQbM4Y8ePqt6eRo5+j87SxH4MatDzfUwwbjFqna5ObwsIK3YogD4CgcL8JU8/OO232xbnXLUGXHWcTqcD/EcPm2X956VVxlk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=LwpDfoqR; arc=pass smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OnzJmAMp"
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6438ZrcX1117863;
-	Sun, 3 May 2026 12:42:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Dftxqj
-	ao0p8SRJgT3ZplRc/PI5myzyLa0OHFKaOuM0o=; b=OnzJmAMpdnD5vxU2L5z+8Y
-	naqag3d04STv3gBKyR+Cngb0cgNzmfEyUgRqnuVUBdSESsU8YG1ZoTykBW6sKF0b
-	Xen9HHn6NTFrYZ/RdaZYfYVQ0sLCwy+kcRYphvqudYpVHWZNrpZ+mHgDqUhJOadb
-	N+cm0f+e0h92BXzMhqbcnTYnwViqR4fStMMUPCGae4ERGYW9pwI9ZGXa9uy+NlXs
-	DTPaOodaxlBWiE+7g4no1lmqZkyUlxPRrw8dymplxffBlFevsX4F/XbOXhIdpsnV
-	JN1wwXwKIF+qntua8CBbjoifLSAI5Hh19pBPPYmKOcKLgifkU6uj2ckTCek1o3dQ
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4dw9x4bp1g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 03 May 2026 12:42:06 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 643CdL8E007216;
-	Sun, 3 May 2026 12:42:05 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4dwwtg19yb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 03 May 2026 12:42:05 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 643Cg5lq27329238
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 3 May 2026 12:42:05 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3D4185805A;
-	Sun,  3 May 2026 12:42:05 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BBDE458056;
-	Sun,  3 May 2026 12:42:03 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.175.251])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Sun,  3 May 2026 12:42:03 +0000 (GMT)
-Message-ID: <201b9172ac47c6766443c1f2343cab3548f33c29.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: debugging late_initcall_sync measurements
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: David Safford <david.safford@gmail.com>
-Cc: Yeoreum Yun <yeoreum.yun@arm.com>, Jonathan McDowell
- <noodles@earth.li>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.linux.dev, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
-        eric.snowberg@oracle.com, jarkko@kernel.org, jgg@ziepe.ca,
-        sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org,
-        joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-        catalin.marinas@arm.com, will@kernel.org, noodles@meta.com,
-        sebastianene@google.com
-In-Reply-To: <202f90682fe47bb5fb9b08f8678ae00981b5290b.camel@linux.ibm.com>
-References: <cover.1777036497.git.noodles@meta.com>
-		 <7734099f5e7fda5480bca016a9e6707983325fbd.camel@linux.ibm.com>
-		 <afMlgstqahnZg68h@e129823.arm.com>
-		 <9f188536f09a2db30877d6bfbb84aeaf2565cccf.camel@linux.ibm.com>
-		 <CAGWfHUW+AX0Hpuw5Vr5iTSaJKQJ+O_4nWWmU1UR8Z_3XFctHZg@mail.gmail.com>
-	 <202f90682fe47bb5fb9b08f8678ae00981b5290b.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 03 May 2026 08:42:03 -0400
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="LwpDfoqR"
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-358ed696623so1459212a91.0
+        for <linux-security-module@vger.kernel.org>; Sun, 03 May 2026 09:46:35 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1777826795; cv=none;
+        d=google.com; s=arc-20240605;
+        b=AwuCC8kS3i773rb7M6teABj5BChOkxSucTUQn3POd8oP940dXBZ2Vm+tX9aFt/0aKd
+         BdeWWt/rj6ga1NF+6xNpUgTyvVyIhaLwrBh6nxsKuab4FragoXo6+UVy+wyZ0Ah3VecE
+         43XIIn4c48WzjVYg3veeIPpAy1/1WuUlPoHPNFP4SGwukqp3UkM/iXEoCrr6XgL90gyG
+         IQ8dfChQKvxtGhXFjagZT7f2yiYMfVRzATiE9t3JjKBu0ebiLGbFJfWkgp1PBfNh49xz
+         UqBZ6qxfnjLKwcaAaoRSaQD0fsJZB9TAjcPA5tXJkT9LQVyGjwxpyZuT+okvJJugUANq
+         6oGQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=lV+PWS6h5YsTugRvYXVkVMVA3Y637YXU6QnwmmlucsU=;
+        fh=hlsB3OxfJlhUN9lANCZOaW5bzJMS1r84QPfFIIAZshc=;
+        b=NnqEFS9Oid5JaWFpjDWV73u3pKOdvjC3pG0BRUx/AFfys/U07L6Wd4W0Es3DMb+rVh
+         B2eXFnp5gSM4sKDmjBJTYgwnfj9sr/ffwlaGaFdTDKyVr7Io1OuFOCZBa1ryYNH43YXF
+         M0hHaZXgLM/f5D8BijZZJsZb937/5wM7SXY1o3AKtlPhkpGzukmx3xNvQK62wZJdU5xL
+         cWMOWQbX6ikrIi6IxSQDRoenGVaCmhqfwnvUiWV/hOedNraHXLb1MxlG1E0FLtJsxwzj
+         SSd2wiF6PDI/ZwsibKlUDT1/oXqaVvJL7qK4KoM6KLFB0uBPjoBP4SG1NaTvaidBJOLG
+         J2vA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1777826795; x=1778431595; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lV+PWS6h5YsTugRvYXVkVMVA3Y637YXU6QnwmmlucsU=;
+        b=LwpDfoqRRUUb1UVKoIAAo4bld4m00G4+bFiEaVlCP1gnddr9nd0jF+lQ8lccFNLeQT
+         43cfHHEuJE/fnyo6cp4agULY/cMhbFSkGlm4LbxVUzl1mNP5b716d4t4TuD2vFhFjrVZ
+         4QF81mbyqbt1KLgvmDRHFeoSju5ABmJvVqvvG8uDxn3Mu7PrmEHfPsP3vrWlpKmY1rgk
+         Bt3L/UgERg+OQ3yWm9go4ipvh8SusV1JnNZlB0c33KSqSsMxb7cXwtBiKX6rcPVTxode
+         BUFELIabuOjsNtSrIlNxuYZ+GuQj2ytDCvV/vDNX9nyoSziOprS0/9W08DWdK/xOp9jR
+         WUOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777826795; x=1778431595;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=lV+PWS6h5YsTugRvYXVkVMVA3Y637YXU6QnwmmlucsU=;
+        b=lmn0BEenUkY59rS4LPoP9pl7/QpISOLs6NBl+h5Zf+SoceUOmaE2nDak/1Kv5qBbqi
+         8DEFXL2cRiak5uv/WrSgVLZHWtPIttXff9SDmwfYxuSgT5vZqc8fJg+MeSpYn88vRzsl
+         WNfIn70I7qaCvoj4LkLv7a1Ri7XjWy+jZE1C4F51Bl0iQWiIGO1PVlw3GfTXkMfaGhWt
+         8zfwDqBjG45LD8SfOWnagKzsSAdgcilSdDAixMjm5rqpyUjbUmB5wJvtLgknLeHXXy3s
+         g43+2p5twkO7t+l+B6pLJIJILpV3Tm3lqHLH7z4++56ozGPbPz/i1FK3gkl76y10x79x
+         YPSA==
+X-Forwarded-Encrypted: i=1; AFNElJ85+pMGNla6SpJR33+Vq0HaRMiIvV43cQWbhEQE8K2sROatwKzBpFIrf1DvupgCsbujECJ3A/pFB2/ASR6B/3I0wrUEqSE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxcFYDXPnKaBzQ52zW3MyASqKBgpUKONFFjkKsNvsrXmWaoRU2
+	OaL6tHxRBUqoG/+iR2jNhhiTnkSSO6amU+T1/0roxh63W+Ils76WE9kLHJSqDIfS3bTllEoEJjm
+	rL/5AfJtRvX3nY5Sbv59xeknXKDaih+3lDw/IzRvA
+X-Gm-Gg: AeBDietEdlWgwsEYDxhFcHnTr0MmfNGUx8ul9WzPavIPaABHUJN7QgJzcQ6Qm+WDnf0
+	89GRBNJAjQnCJNeXV15+ckAYjwxQWLyAa2eQ3jLrzAny4HoaXdW7ob1zdwoKWQffOpCkhjvhIoX
+	dCZlSAwLUTpjDNthOvJWCg7Q8TKceFIwA7HKpLl5ENbZ8UpWx/3woVuhi42+VeRFI6kPh8kXO7H
+	IHWOVW/g0uY+shro3mKB8vWrV/QqiatoBtDUwqrsA6axPfOKK/T90T8iBIy+xGVgpTXlqEF4bRd
+	ZaZhW6SY3rigtx61BgJ4vZWhpJyx
+X-Received: by 2002:a17:90b:3e46:b0:35e:5ae3:298a with SMTP id
+ 98e67ed59e1d1-3650cece2d0mr6631879a91.18.1777826795343; Sun, 03 May 2026
+ 09:46:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTAzMDE0MCBTYWx0ZWRfX4ejQNZ4HY+QH
- eWm2cTFJFTDk8BbJEmUK3VGbdxRkNtorI4hZtlTvquWKmoaNKx0m4UA/8s9hGeXpj6fNygtbb0y
- pmMVRI9C0QhSkEJbLSWi6Z9kqAExOUwYNvNKwi39Wy3FvDYE2WSq4f9+dsws1z+i/PEnNOjbA7E
- GXht8B6YEKgfei3pNUmzJuKPcoKg6dASyZuGvc1Nj/ORH986AJykfJjJHYBpSXrit9sKz5vuOLC
- pi0HWYAMPPmODM98P1T0v6NUyrB6f+hSdXg8wKBjCR/fbuXhLmCO3Ephj6qqEttxm+RLKX+42Dd
- JRNoORGRAab5xMLDehh3hFVVHY3JuFE7+ujAEuQJtbw/wjBVlyluK0hTNY+egCNfqkUD4ZOO5V4
- raAKPrX2iTVChPVeyWK8g3C8oWxj7CY5rqp4htmkvrxMH0HRl5k1TH3ktqfP8RSXDn3adQrOcG7
- pDr6frGytUv5u//ZZ1g==
-X-Proofpoint-ORIG-GUID: VS_ogRrxYNEL1bVE6dmcFUl4ACX0l2TQ
-X-Proofpoint-GUID: VXsGapUQwiBgE_Z2EHwAYps9SSnaHTYE
-X-Authority-Analysis: v=2.4 cv=W7UIkxWk c=1 sm=1 tr=0 ts=69f7429f cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=uAbxVGIbfxUO_5tXvNgY:22 a=VwQbUJbxAAAA:8
- a=7CQSdrXTAAAA:8 a=VnNF1IyMAAAA:8 a=I3il15lo3WIE8je3RjQA:9 a=QEXdDO2ut3YA:10
- a=a-qgeE7W1pNrGK8U0ZQC:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-05-03_04,2026-04-30_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 adultscore=0 lowpriorityscore=0 malwarescore=0
- suspectscore=0 spamscore=0 clxscore=1015 phishscore=0 bulkscore=0
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604200000
- definitions=main-2605030140
+References: <cover.1777036497.git.noodles@meta.com> <7734099f5e7fda5480bca016a9e6707983325fbd.camel@linux.ibm.com>
+ <afMlgstqahnZg68h@e129823.arm.com> <9f188536f09a2db30877d6bfbb84aeaf2565cccf.camel@linux.ibm.com>
+ <CAHC9VhRsnmPp2KmQAns5uq5qXX5EF2xQQzyfTgrPi4O9AXyPpg@mail.gmail.com> <ba4bf28314b679474a6a8da6298e548e54b3754c.camel@linux.ibm.com>
+In-Reply-To: <ba4bf28314b679474a6a8da6298e548e54b3754c.camel@linux.ibm.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sun, 3 May 2026 12:46:23 -0400
+X-Gm-Features: AVHnY4L2at1Ee87namZ-f-yBAzCWpTyJONd_xc3EwssaGjpCZndG6MYs1AyLIxg
+Message-ID: <CAHC9VhRE2kRr1fdDf6xgQgpSrtvqtP8Vy9LVGJhDZFUbzLKGmQ@mail.gmail.com>
+Subject: Re: [PATCH] ima: debugging late_initcall_sync measurements
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Yeoreum Yun <yeoreum.yun@arm.com>, Jonathan McDowell <noodles@earth.li>, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, jmorris@namei.org, serge@hallyn.com, 
+	roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
+	jarkko@kernel.org, jgg@ziepe.ca, sudeep.holla@kernel.org, maz@kernel.org, 
+	oupton@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com, 
+	yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, 
+	noodles@meta.com, sebastianene@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 2026-05-03 at 07:36 -0400, Mimi Zohar wrote:
-> On Fri, 2026-05-01 at 12:52 -0400, David Safford wrote:
-> > On Thu, Apr 30, 2026 at 5:43=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com=
+On Thu, Apr 30, 2026 at 9:51=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> wr=
+ote:
+> On Thu, 2026-04-30 at 18:35 -0400, Paul Moore wrote:
+> > On Thu, Apr 30, 2026 at 5:39=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com=
 > wrote:
-> > >=20
 > > > On Thu, 2026-04-30 at 10:48 +0100, Yeoreum Yun wrote:
 > > > > With above change I confirmed there is no meaurement log
 > > > > between boot_aggregate and boot_aggregate_late except "kernel_versi=
@@ -125,9 +115,9 @@ on"
 > > > > But this is ignorable since this UTS measurement is done in
 > > > > "ima_init_core() (old: ima_init())" and it is part of ima initialis=
 ation.
-> > > >=20
+> > > >
 > > > > 1. ima_policy=3Dtcb
-> > > >=20
+> > > >
 > > > >   # cat /sys/kernel/security/ima/ascii_runtime_measurements
 > > > >   10 0adefe762c149c7cec19da62f0da1297fcfbffff ima-ng sha256:0000000=
 000000000000000000000000000000000000000000000000000000000 boot_aggregate
@@ -136,10 +126,43 @@ ation.
 te
 > > > >   10 7c23cc970eceec906f7a41bc2fbde770d7092209 ima-ng sha256:72ade6a=
 e3d35cfe5ede7a77b1c0ed1d1782a899445fdcb219c0e994a084a70d5 /bin/busybox
-> > snip
-> > > >=20
+> > > >   10 17ec669c65c401e5e85875cf2962eb7d8c47595f ima-ng sha256:dc6b013=
+e9768d9b13bcd6678470448090138ca831f4771a43ce3988d8e54ffce /lib/ld-linux-aar=
+ch64.so.1
+> > > >   10 58679a66ac1de17f02595625a8fbeafa259a4c81 ima-ng sha256:494f62b=
+cfb2fcf1b427d5092fafa62c8df39a83b4a64402620b28846724f237f /usr/lib/libtirpc=
+.so.3.0.0
+> > > >   10 42f74ee200434576e33be153830b3d55bbe6d2bf ima-ng sha256:a18856b=
+4f6927bc2b8dd4608c0768b8f98544a161b85bf4a64419131243ad300 /lib/libresolv.so=
+.2
+> > > >   10 626b4f7bd4f123d18d3a3d8719ed0ae19ee5f331 ima-ng sha256:b8d442d=
+e5d31c3f9d1bbb98785f04d4a23dc53442b286d85d4b355927cbe9af4 /lib/libc.so.6
+> > > >   10 655a200869696207646377a58cab417fd35b09d2 ima-ng sha256:ad46146=
+b6dd32b47213e5327f1bb2f962ef838a4b707ef7445fa2dbc9019b44f /etc/inittab
+> > > >   10 81353202685e022fcd0069a3b2fc4eaa6b1db537 ima-ng sha256:74d698f=
+e0a6862050af29083aa591c960ec1f67be960047e96bb6be5fc2bc0c0 /bin/mount
+> > > >   10 ae64184ee607ef8f3aa08ab52cb548318534fd4b ima-ng sha256:27846b5=
+7e8234c6a9611b00351f581a54ad6f9a1920b9aa18ceb0ae28e4f7564 /lib/libmount.so.=
+1.1.0
+> > > >   10 5ea01f34e7705d1bdb936fd576e2aeb5fd78dab9 ima-ng sha256:3d2a414=
+ec0355fcf0910224fb4a3c53e13d98731a35241edfdf4fb911ed9b210 /lib/libblkid.so.=
+1.1.0
+> > > >   10 22c48b4853594a08a73ad4ae6dbe6f2c2bebc6c5 ima-ng sha256:e3b0c44=
+298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 /run/utmp
+> > > >   10 3024ea5021f8a5d9fb4bd519d599bdca43b7fb93 ima-ng sha256:71ea9ff=
+e2b30e5a9bdceff78785cf281cc41544474db8dc4605a06a597ce1edc /etc/fstab
+> > > >   10 2e7530a0f56420991ac7611734cea4774b92b9ef ima-ng sha256:df4697d=
+699442cfe73db7cc8b4c1b37e8a31e75e01f66a0d70134ac812fa683b /bin/mkdir
+> > > >   10 3ad117a863aa1ed7b7c09e1d106f84abf7d2ae96 ima-ng sha256:c19a710=
+989b43222431b02399273dba409fe10ca8eefff88eaa936fa695f8324 /bin/ln
+> > > >   10 4141c82cb516ac3c846e0b08abcd6abeee7efa1a ima-ng sha256:b75d7f2=
+8772f71715a941c77e07e3922815391dd9cc5718ad21f2231c2da09bb /etc/hostname
+> > > >   10 dfcedd3c7dc3ed42e09219804504489ab264e2e3 ima-ng sha256:dc1615d=
+f9f2012b20b81ffad8e07e16293039ba7fd897854ca3646d6cfea0c0f /etc/init.d/rcS
+> > > >   ...
+> > > >
 > > > > 2. ima_policy=3Dcritical_data
-> > > >=20
+> > > >
 > > > >   # cat /sys/kernel/security/ima/ascii_runtime_measurements
 > > > >   10 0adefe762c149c7cec19da62f0da1297fcfbffff ima-ng sha256:0000000=
 000000000000000000000000000000000000000000000000000000000 boot_aggregate
@@ -149,48 +172,39 @@ ab3261194f16b0c2a422a82f145bc9b9ecb8fdb633fa43e3e5379f0af2 kernel_version 3=
 > > > >   10 4e5d73ebadfd8f850cb93ce4de755ba148a9a7d5 ima-ng sha256:0000000=
 000000000000000000000000000000000000000000000000000000000 boot_aggregate_la=
 te
-> > > >=20
+> > > >
 > > > > Therefore, init_ima() could move into late_initcall_sync like v1 di=
 d:
 > > > >   - https://lore.kernel.org/all/20260417175759.3191279-2-yeoreum.yu=
 n@arm.com/
-> > >=20
+> > >
 > > > Thanks, Yeoreum.  It's a bit premature to claim it's "safe" to move t=
 he
 > > > initcall.  Hopefully others will respond.
-> > >=20
-> > > Mimi
-> >=20
-> > I have also run with this patch on a number of bare metal and virtual m=
-achines,
-> > running everything from default Fedora 44 to a version with everything =
-turned on
-> > (uefi secure boot, UKI with sdboot stub measurements, IMA measurement
-> > and appraisal enabled,
-> > all systemd measurements on, and systemd using the TPM for root
-> > partition decryption.)
-> > I too see only the kernel_version event between the normal and late
-> > calls, if ima_policy=3Dcritical_data.
->=20
-> Thanks, Dave!  Were all the systems you tested x86_64?  The next step wou=
-ld be
-> to test on different arch's (e.g. Z, Power).
+> >
+> > Is it not possible to look at the code and determine if it is safe or
+> > not?  Or is the initialization of TPM devices at boot done in a random
+> > order with respect to the initcall levels?
+>
+> The TPM is normally initialized at the device_initcall, except when other
+> resources are not ready.
+>
+> (Abbreviated) AI explanation:
+>    If the TPM's first probe succeeds at device_initcall with no deferral,=
+ IMA
+>    finds it fine. It is only when the TPM is pushed onto the deferred lis=
+t that
+>    late_initcall can execute before the retry succeeds, leaving
+>    tpm_default_chip() returning NULL.
 
-On both Z and PowerVM, there are ~30 measurements between boot_aggregate an=
-d
-boot_aggregate_late.  For example, on PowerVM:
+I really hope you are using AI only to phrase a response and not as a
+substitute for actually investigating the code and determining what is
+happening.
 
-# grep -n boot_aggregate
-/sys/kernel/security/integrity/ima/ascii_runtime_measurements
+Regardless, assuming you always want IMA to leverage a TPMs when they
+exist, your reply suggests that using an initcall based IMA init
+scheme, even a late-sync initcall, may not be sufficient because
+deferred TPM initialization could happen later, yes?
 
-1:10 f60a05d7354fb34aabc02965216abd3428ea52bb ima-sig
-sha256:9887dd089ee19a6517bca10580b02c1bb9aa6cd86c157b6ead8a1c0403f348d5
-boot_aggregate=20
-31:10 e2592b0d61da6300d3db447b143897a9792231ea ima-sig
-sha256:9887dd089ee19a6517bca10580b02c1bb9aa6cd86c157b6ead8a1c0403f348d5
-boot_aggregate_late
-
-It would be interesting to the results from a Raspberry Pi 5 as well,
-with/without a TPM.
-
-Mimi
+--=20
+paul-moore.com
