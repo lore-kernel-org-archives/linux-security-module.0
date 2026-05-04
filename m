@@ -1,74 +1,133 @@
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C97837C0E9
-	for <linux-security-module@vger.kernel.org>; Mon,  4 May 2026 09:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038993C1980;
+	Mon,  4 May 2026 12:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777887151; cv=none; b=dNorGS6mdgSCb8is874rKIsQcQWlQJNpU8/Pe858b3I57J7Hgo3qoWiOSVFsX+A83o9uxEEcaKGNDiBmdhrZxOlBCzaYqsNMR8iCQ3ozQjT6Hr26xA0k+AmQn1GLVKpyHet1FnCV1Ss/nJPIxJXPZVSCVTmUusklpdJ+PHJJWNc=
+	t=1777896204; cv=none; b=ub2u17OSoZomkqxcAAfVJNmz+un3k7mPBAsm4A21XSbjIpNbRXMrMulYjjyIEkGOflQH6KnHu3CSMB/nikTHHOoF2KfIAUs+IysNEP5xvGASi/L7/3sCMxzwEOJcUDlodrGYLLiW6FJY8J3vyiHBklq0ujsofJfQw7c5aULn4CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777887151; c=relaxed/simple;
-	bh=d3jjdlqxS6Pmw3trIxP6Y5gG4qE55vK24pn1BNcI6qk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oZXdsfJU4tB5Gtk2+2jhOfdFLN1O7awrp+CqqC1h83eXcF4gF/dRn+0WxH5K+5Uz9HpkyNycNuMVcV0NDO5Nb10I8pnsdmiN8/ZTgbmkfKh8dI20ldBlp4LappxgH7Ij4vsyefXh2stw/kzG2Xj8rBm/CIhEAo4ufy0Cwb28nQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YiHk0+5n; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1777896204; c=relaxed/simple;
+	bh=/X6RS1Fqu7I3voeFmchwbuKmcgmlda7edLIPfQe8NzE=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=mOmZVxotX5uiKaEqqTOGdTAN3krP/5fgeWAoKCpLrrCavd9pkWR4dgLYTEG0Tz8PVQOlCHfmimmLZ/d+3P3dAMcZ44yebidwPGR405jQDQP0tzwFFNT8GXvVvPmtMXnunnSZUMo2/Y/w9xn6XGk0xA4KmxeELZEjeHVZWFzM40Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qMq4yCIV; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YiHk0+5n"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1777887137;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=mMEES11wDto3t464bsRDzt/19GId/Z9Kgc8sPF4Za/M=;
-	b=YiHk0+5n1ReXGiQ/q24ADGzOzk56aJacS086ZYJDZwjoVt5jq9wd/7E5Iizc6F47i9lg5z
-	3jQJ6VSo9my3OymkprP7/McKwjbakfKi1TCz10WqQehACDslRy+P8HTWctsyxQVNCh5VsO
-	wlHJwf5LFkJu56RLs/C+LRatk2zpisI=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] keys: use kmalloc_flex in user_preparse
-Date: Mon,  4 May 2026 11:31:00 +0200
-Message-ID: <20260504093058.49720-3-thorsten.blum@linux.dev>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qMq4yCIV"
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6447sMqf852737;
+	Mon, 4 May 2026 12:02:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=l04vgr
+	hiUBVJ40ibTRxasIaQMDV+oR0MUnO977L5BNY=; b=qMq4yCIVP5pOXgmriDeS8z
+	2i5OoS7ezJBicI9G3O7lt8iJIu9r7mKgYDj2yQxvTP2o1rft0/gRpqU8MOEtUsl6
+	2dr6DI02Oty2Tf6Ku3m9SEbToQXjl/sBbrUECu1FoGPl0HBsuZql5Kb3f1LSQ5Wo
+	XNOf2cbppkKV9xWK/F080sNR/TopaV1cXQdpkZtM53lNPP85i91qajzSgrkMHYRI
+	ORBFNskXcwMddg825hCZ9rMVzwTrvz0lP0+0iT0dZrlOchC3V/tzuSli5KxHVKpC
+	SyGc6fLOtWfqiG9S2rPIvRLpBod6n7aKM5yxGxsT48UNGVDWaFJp2V6mGihbDoog
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4dw9y4em46-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 May 2026 12:02:52 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 644BsXqP030860;
+	Mon, 4 May 2026 12:02:51 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4dwx9y4q8a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 May 2026 12:02:51 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 644C2oI236962950
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 4 May 2026 12:02:50 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2F5E358056;
+	Mon,  4 May 2026 12:02:50 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8BD0C5803F;
+	Mon,  4 May 2026 12:02:48 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.125.169])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  4 May 2026 12:02:48 +0000 (GMT)
+Message-ID: <ff28c6dcb60c357c752724927addaa8c4fd3bf2c.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: debugging late_initcall_sync measurements
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Yeoreum Yun <yeoreum.yun@arm.com>, Jonathan McDowell
+ <noodles@earth.li>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.linux.dev, jmorris@namei.org, serge@hallyn.com,
+        roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+        eric.snowberg@oracle.com, jarkko@kernel.org, jgg@ziepe.ca,
+        sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org,
+        joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+        catalin.marinas@arm.com, will@kernel.org, noodles@meta.com,
+        sebastianene@google.com
+In-Reply-To: <CAHC9VhRE2kRr1fdDf6xgQgpSrtvqtP8Vy9LVGJhDZFUbzLKGmQ@mail.gmail.com>
+References: <cover.1777036497.git.noodles@meta.com>
+	 <7734099f5e7fda5480bca016a9e6707983325fbd.camel@linux.ibm.com>
+	 <afMlgstqahnZg68h@e129823.arm.com>
+	 <9f188536f09a2db30877d6bfbb84aeaf2565cccf.camel@linux.ibm.com>
+	 <CAHC9VhRsnmPp2KmQAns5uq5qXX5EF2xQQzyfTgrPi4O9AXyPpg@mail.gmail.com>
+	 <ba4bf28314b679474a6a8da6298e548e54b3754c.camel@linux.ibm.com>
+	 <CAHC9VhRE2kRr1fdDf6xgQgpSrtvqtP8Vy9LVGJhDZFUbzLKGmQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 04 May 2026 08:02:48 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=809; i=thorsten.blum@linux.dev; h=from:subject; bh=d3jjdlqxS6Pmw3trIxP6Y5gG4qE55vK24pn1BNcI6qk=; b=owGbwMvMwCUWt7pQ4caZUj3G02pJDJk/0oNnSO2vKRDKPudyZj5zmP3WvDeuBhxOAgyWiXP6W YJn1b/oKGVhEONikBVTZHkw68cM39Kayk0mETth5rAygQxh4OIUgInodjMyvHgRuuLkdENn0XsB UStrTpsu2Sv86bGIqcEtr2bWIiHWXYwMHbEOwoc0i1dK6BnenjfJ+8g9M8fFx0X8Hd7wTQ2dyxH NBgA=
-X-Developer-Key: i=thorsten.blum@linux.dev; a=openpgp; fpr=1D60735E8AEF3BE473B69D84733678FD8DFEEAD4
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA0MDEyMyBTYWx0ZWRfX3lMCQg2GdYj4
+ zb2CMGSv1FXRAseLkhlhbewvpipIcXqCuAAgkCPXN1KvrRXdayHGQOiX/xUxPm7WC7yvK3xuCpO
+ rYTn+YW2RUnrBzbtgMxhAmOrmjmqxSAvesI4dG+D7MAMezH+PAWholxiSC67tqx+CwgyG9rLVVu
+ UQq4MmEplwy2wpaOuAQHLdjLRZbjqtx4cs3/yAB2VphrYiReNq8YVBGKBA/kJ3oTG4xRNXgt2/b
+ xr+Zr0ru+u5buZEDsjzzmMeOxNOb+2GW+VFSUDN9fCyhAp0CjfaCJiH4vPej8PBBfikpWx5Aw5F
+ YRELIQ8yCl//aGuk7w3mErQdmaTerpRh7XN3BgH64nSx4M2x5tvJJS3zb/DBAEueK5CRDprMGx8
+ wJwhtBuxYaXPcQ1jh+kh9xHVxcDS+uDgovoOwv9tINNgr23a7PbmmIXOHrgBKzg6dKi5i5e44o0
+ lGF83L9CkswtGdJYtfA==
+X-Authority-Analysis: v=2.4 cv=J4GaKgnS c=1 sm=1 tr=0 ts=69f88aec cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=RzCfie-kr_QcCd8fBx8p:22 a=HoVq9zYKdZc2vep7obkA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: iXpw0SMeopALzrzjBD9UShBrcyb1LlDE
+X-Proofpoint-ORIG-GUID: 5uQlSXbiDIA3UYiMMFtdaLflhQcXZ96V
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-04_04,2026-04-30_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 clxscore=1015 malwarescore=0 bulkscore=0 suspectscore=0
+ priorityscore=1501 spamscore=0 phishscore=0 adultscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604200000 definitions=main-2605040123
 
-Use kmalloc_flex() when allocating a new struct user_key_payload in
-user_preparse() to replace the open-coded size arithmetic and to keep
-the size type-safe.
+On Sun, 2026-05-03 at 12:46 -0400, Paul Moore wrote:
+> Regardless, assuming you always want IMA to leverage a TPMs when they
+> exist, your reply suggests that using an initcall based IMA init
+> scheme, even a late-sync initcall, may not be sufficient because
+> deferred TPM initialization could happen later, yes?
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- security/keys/user_defined.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Well yeah.  The TPM could be configured as a module, but that scenario is n=
+ot of
+interest.  That's way too late.  The case being addressed in this patch set=
+ is
+when the TPM driver tries to initialize at device_initcall, returns
+EPROBE_DEFER, and is retried at deferred_probe_initcall (late_initcall).  S=
+ince
+ordering within an initcall is not supported, this patch attempts to initia=
+lize
+IMA at late_initcall and similarly retries, in this case, at late_initcall_=
+sync.
 
-diff --git a/security/keys/user_defined.c b/security/keys/user_defined.c
-index 686d56e4cc85..6f88b507f927 100644
---- a/security/keys/user_defined.c
-+++ b/security/keys/user_defined.c
-@@ -64,7 +64,7 @@ int user_preparse(struct key_preparsed_payload *prep)
- 	if (datalen == 0 || datalen > 32767 || !prep->data)
- 		return -EINVAL;
- 
--	upayload = kmalloc(sizeof(*upayload) + datalen, GFP_KERNEL);
-+	upayload = kmalloc_flex(*upayload, data, datalen);
- 	if (!upayload)
- 		return -ENOMEM;
- 
+Mimi
