@@ -1,32 +1,31 @@
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706163E3DAA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F503CEBA9;
 	Tue,  5 May 2026 09:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777971935; cv=none; b=Oa03xd19BrLkIGxmIJUN69HkuGLnZIID8SvJPdMACqbopH8Z0+O3C0Sdxz8MWbLqU9im6q0tsERZIP4X2U46Zqkwu0VNTyBTAQwqNh/DdQF2CNBe+KpzO80lHax7qZ844uEcIc2S6mQrxC+PssDnv/2J9sui1qCTMdAmAL4mYzM=
+	t=1777971936; cv=none; b=LlwWG1UmycG+dpWPvq9raWbvlbAWpJrPpekLSRCt+wl1nWylhDUvtgwEiFwVvaqWcjONQT5ado6xNd3T2wCQ4KMEQRSw/iFcxPpjUQG/8lB5y0LFqPrkX7JJHEKjV2Wlt44hG4hZPrKF9eYk6BDzaXfElfUyIujC418CmX8AA9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777971935; c=relaxed/simple;
-	bh=6VJvYnOHZshtQlmEnWd/K1udWrIwe9dejx/5mZI/Wtg=;
+	s=arc-20240116; t=1777971936; c=relaxed/simple;
+	bh=iI+v2zM5qx20jDnDNLqjiaP4ZCALKgVYw8ssU51phr8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fkqnszPBcxsx8vyUpPbbP9tyWLLo75QPFeIbHGNZ2rqgW/8Wso/AJZFSJocJLuPO4N5rvp0xYgfGuxdvbrKm6DW8NRSkvFUdW4S6oKGMXsfV+ksornOYcCqaKDkaxScdkD/MvvGOm3GoHnAIQy39T+6OReGhYygz9bOcrcSy3+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=owjODUEx; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=Rs/MQCqCyrHUrazZ6bKR6xvmeJuuoi59yC+UppVOtjjpf613SFJ86wOtNECxpAmRPUYZbuI1FPAwB/vwV9+u/6daFzqjjfYNDzM2BJ3bcvF1+mbaj/vEkTxu4lt1zqrEZtZOEDiaaKpxRaCGwuXJaqfbjRTlw5/ndrL2oH9Z6Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=FOhks3pk; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="owjODUEx"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="FOhks3pk"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1777971923;
-	bh=6VJvYnOHZshtQlmEnWd/K1udWrIwe9dejx/5mZI/Wtg=;
+	bh=iI+v2zM5qx20jDnDNLqjiaP4ZCALKgVYw8ssU51phr8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=owjODUExCCypec6TKWlnIwzT8DVnXMsfb+ZaEjU0MoKmKL+u/Hgk0XMLanRHlOS5p
-	 MNeyeJ7VYX8n6e4baZNE/ejhPU8IePBOA5zatZB7qfpcaHAbaVKcUT7fN5vxhMYVdb
-	 T5d4nFyczBMUPklVRaKpvkmaSNX/c9tzIRq1bRpM=
+	b=FOhks3pkSuAan068u2UrzFyi9JQsEDgIjv34ZSsFVHJqVSf+M9lMkHDLbcwRwXefN
+	 Kr4mPvuQzzcb89VMnTHnol7YQJlmZ5JPIrnRSymUvGG61NYOoRb0UE6homXaCCq5YY
+	 nSuxvKf2aVU1eaBfgL7NkhG2PzPNeJuB2f42nHeI=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Tue, 05 May 2026 11:05:13 +0200
-Subject: [PATCH v5 09/14] module: Move signature type check out of
- mod_check_sig()
+Date: Tue, 05 May 2026 11:05:10 +0200
+Subject: [PATCH v5 06/14] module: Switch load_info::len to size_t
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -35,7 +34,7 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260505-module-hashes-v5-9-e174a5a49fce@weissschuh.net>
+Message-Id: <20260505-module-hashes-v5-6-e174a5a49fce@weissschuh.net>
 References: <20260505-module-hashes-v5-0-e174a5a49fce@weissschuh.net>
 In-Reply-To: <20260505-module-hashes-v5-0-e174a5a49fce@weissschuh.net>
 To: Alexei Starovoitov <ast@kernel.org>, 
@@ -75,83 +74,54 @@ Cc: Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
  debian-kernel@lists.debian.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1777971921; l=2558;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1777971921; l=1545;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=6VJvYnOHZshtQlmEnWd/K1udWrIwe9dejx/5mZI/Wtg=;
- b=CMdNpxTCGkVu3CYbUQ//Xh1Da5BfQXG6erPbBdP2NTFne3QRqh52DC/9CSjILoKbNrS8gBQHS
- 8rcJfdzG3nTABuTlKzuzZV5cQk7a/PkWY+ZZAqFMl0YgtXmFbCISOTR
+ bh=iI+v2zM5qx20jDnDNLqjiaP4ZCALKgVYw8ssU51phr8=;
+ b=nKBC+C6HVlaqqDqx1TU0YJ08KliDEuzosprDqqk3GExyuaX84HA5wt2KjHAaFNjSCBBzGKVKB
+ tB2qsXnAO4LCSyyikeSwSVZHyHpzisots6OnVJBH4YtPeVK30OntV0b
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-Additional signature types are about to be added.
-As each caller of mod_check_sig() can have different support for these,
-move the type validation into the callers.
+Switching the types will make some later changes cleaner.
+size_t is also the semantically correct type for this field.
 
+As both 'size_t' and 'unsigned long' are always the same size, this
+should be risk-free.
+
+Reviewed-by: Nicolas Schier <nsc@kernel.org>
+Acked-by: Nicolas Schier <nsc@kernel.org>
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- kernel/module/auth.c                | 5 +++++
- kernel/module_signature.c           | 8 +-------
- security/integrity/ima/ima_modsig.c | 5 +++++
- 3 files changed, 11 insertions(+), 7 deletions(-)
+ kernel/module/internal.h | 2 +-
+ kernel/module/main.c     | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/module/auth.c b/kernel/module/auth.c
-index 831a13eb0c9b..21e49eb4967c 100644
---- a/kernel/module/auth.c
-+++ b/kernel/module/auth.c
-@@ -48,6 +48,11 @@ static int mod_verify_sig(const void *mod, struct load_info *info)
- 
- 	memcpy(&ms, mod + (modlen - sizeof(ms)), sizeof(ms));
- 
-+	if (ms.id_type != MODULE_SIGNATURE_TYPE_PKCS7) {
-+		pr_err("module: not signed with expected PKCS#7 message\n");
-+		return -ENOPKG;
-+	}
-+
- 	ret = mod_check_sig(&ms, modlen, "module");
- 	if (ret)
- 		return ret;
-diff --git a/kernel/module_signature.c b/kernel/module_signature.c
-index a0eee2fe4368..4d0476bcdb72 100644
---- a/kernel/module_signature.c
-+++ b/kernel/module_signature.c
-@@ -24,12 +24,6 @@ int mod_check_sig(const struct module_signature *ms, size_t file_len,
- 	if (be32_to_cpu(ms->sig_len) >= file_len - sizeof(*ms))
- 		return -EBADMSG;
- 
--	if (ms->id_type != MODULE_SIGNATURE_TYPE_PKCS7) {
--		pr_err("%s: not signed with expected PKCS#7 message\n",
--		       name);
--		return -ENOPKG;
--	}
--
- 	if (ms->algo != 0 ||
- 	    ms->hash != 0 ||
- 	    ms->signer_len != 0 ||
-@@ -37,7 +31,7 @@ int mod_check_sig(const struct module_signature *ms, size_t file_len,
- 	    ms->__pad[0] != 0 ||
- 	    ms->__pad[1] != 0 ||
- 	    ms->__pad[2] != 0) {
--		pr_err("%s: PKCS#7 signature info has unexpected non-zero params\n",
-+		pr_err("%s: signature info has unexpected non-zero params\n",
- 		       name);
- 		return -EBADMSG;
+diff --git a/kernel/module/internal.h b/kernel/module/internal.h
+index 071999743341..006ada7d4e6e 100644
+--- a/kernel/module/internal.h
++++ b/kernel/module/internal.h
+@@ -64,7 +64,7 @@ struct load_info {
+ 	/* pointer to module in temporary copy, freed at end of load_module() */
+ 	struct module *mod;
+ 	Elf_Ehdr *hdr;
+-	unsigned long len;
++	size_t len;
+ 	Elf_Shdr *sechdrs;
+ 	char *secstrings, *strtab;
+ 	unsigned long symoffs, stroffs, init_typeoffs, core_typeoffs;
+diff --git a/kernel/module/main.c b/kernel/module/main.c
+index 46dd8d25a605..17a352198016 100644
+--- a/kernel/module/main.c
++++ b/kernel/module/main.c
+@@ -1898,7 +1898,7 @@ static int validate_section_offset(const struct load_info *info, Elf_Shdr *shdr)
+ static int elf_validity_ehdr(const struct load_info *info)
+ {
+ 	if (info->len < sizeof(*(info->hdr))) {
+-		pr_err("Invalid ELF header len %lu\n", info->len);
++		pr_err("Invalid ELF header len %zu\n", info->len);
+ 		return -ENOEXEC;
  	}
-diff --git a/security/integrity/ima/ima_modsig.c b/security/integrity/ima/ima_modsig.c
-index 632c746fd81e..ebfcdd368a2a 100644
---- a/security/integrity/ima/ima_modsig.c
-+++ b/security/integrity/ima/ima_modsig.c
-@@ -57,6 +57,11 @@ int ima_read_modsig(enum ima_hooks func, const void *buf, loff_t buf_len,
- 	buf_len -= marker_len;
- 	sig = (const struct module_signature *)(p - sizeof(*sig));
- 
-+	if (sig->id_type != MODULE_SIGNATURE_TYPE_PKCS7) {
-+		pr_err("%s: not signed with expected PKCS#7 message\n", func_tokens[func]);
-+		return -ENOPKG;
-+	}
-+
- 	rc = mod_check_sig(sig, buf_len, func_tokens[func]);
- 	if (rc)
- 		return rc;
+ 	if (memcmp(info->hdr->e_ident, ELFMAG, SELFMAG) != 0) {
 
 -- 
 2.54.0
