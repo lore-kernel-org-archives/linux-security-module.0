@@ -1,31 +1,32 @@
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640DE3E1205;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52C63D1CC0;
 	Tue,  5 May 2026 09:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777971935; cv=none; b=FyVttL2anDAifiG3sVLYgQ2HoeX/mBsMS+/UQzhOD7IF+AoaikAO/lt2vR+t2wT2cwpn84aH2g1UZwFLmCYMUq0O4LVWuSkN1dPb6x6k/wphKSXQTqodmqKmDU4Ob5tZH3EDaliQDZv7stMd9z9UwgmBlDQbg1zkE8Z9G9pa5hg=
+	t=1777971935; cv=none; b=pz4B84fY2H7rPAKOq4dj7kzIUc4hXiRrB6tQSO9dJDa03+cdB+CiIEh5G2hp0EIHsHMSyXDfFLSTOUka1Z4KYquVTDJaKytjQehtaMYqB9gdgtX0AaQBVqi4RcnTbN+4Meg/JUsg99pvG1onmpm9NjUR8yuSja4vn0oeNZAk6I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1777971935; c=relaxed/simple;
-	bh=QGuEjahQSX5KIR3mv9uZyKkgUGxQh5zTTSgnqh/jiis=;
+	bh=OjVEQENALnBrLz41nWZb6yT3a4erxpjD/nxLglpoCvs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kfg8lwUNlb5tbsZoECPtYy3q8K997utwzhGll5pZJso3U6gcxOUcKhr+O2m0u5bdMAsFIo2H3knEf/x/gcgJfkbD9RMnlLQktOQlz/xpuKcUnM23u7IGC4C0Sp/8Y9zHOjljRYkSubvDmvyZXGOxjc/8bY8SeVOSxBd2JeDVNxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=g4Fknziw; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=N1WSjSpT+7nm4+Q5XhovtOSXdrQ5AktWtwA2F7pQVEJxj56NDyY1uLqowOAZ99zz+MGl2QgOiLWHLQaNAF0SlF5OWGoWlKBFtcNyEFiU0IvaZ4VZMsJcQ8fZK27XzwvAnVm8kSvQ7HztMoy7nX41UC10eL1oTMNtYlXN8EK5swE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=tmzHYMjU; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="g4Fknziw"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="tmzHYMjU"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1777971923;
-	bh=QGuEjahQSX5KIR3mv9uZyKkgUGxQh5zTTSgnqh/jiis=;
+	bh=OjVEQENALnBrLz41nWZb6yT3a4erxpjD/nxLglpoCvs=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=g4Fknziwd96fLN+TTNQAV/fMHOhd/dIN0idNYLfwkjvob2sS26e2GZhdQjmJKGBg2
-	 1Wuj9kttFMh09utr0/SaRmtgS+EoGk8Ji0s7efvwWTViHA7Eic1XoFHkeNankvLZGH
-	 d2Dvf/IQdZzsPGC4AF+nGave4W25BM2Rl2cxHXow=
+	b=tmzHYMjU7VY9tL4bgMd6fMoXTE3q7cG/Qex8Dk9sjAPpSacechAhv+JHofoNabdIe
+	 vNsX5gMznznkkxeWPJ3Gpa13BCxlGEx/A8z+ow4LMv/tu6o7Vqe2fjHJJL+ChUUtZZ
+	 mf/qpWSsYolANVA57Z5UN4LH+pH1QpynislBDC48=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Tue, 05 May 2026 11:05:09 +0200
-Subject: [PATCH v5 05/14] module: Make mod_verify_sig() static
+Date: Tue, 05 May 2026 11:05:15 +0200
+Subject: [PATCH v5 11/14] module: update timestamp of modules.order after
+ modules are built
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -34,7 +35,7 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260505-module-hashes-v5-5-e174a5a49fce@weissschuh.net>
+Message-Id: <20260505-module-hashes-v5-11-e174a5a49fce@weissschuh.net>
 References: <20260505-module-hashes-v5-0-e174a5a49fce@weissschuh.net>
 In-Reply-To: <20260505-module-hashes-v5-0-e174a5a49fce@weissschuh.net>
 To: Alexei Starovoitov <ast@kernel.org>, 
@@ -74,50 +75,41 @@ Cc: Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
  debian-kernel@lists.debian.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1777971921; l=1372;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1777971921; l=973;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=QGuEjahQSX5KIR3mv9uZyKkgUGxQh5zTTSgnqh/jiis=;
- b=YPbhooCs8Z4p5xzEA8Bou2VKPPahpzMZhKoMk8D4SPl0woEZ2hjUdTCq/NfLfVDVlfTISZ3Ax
- 2PKz7Hagg7xC31UJ4xI2NezkX4xUOqNSMisfL91GfGeptv87RApuP5L
+ bh=OjVEQENALnBrLz41nWZb6yT3a4erxpjD/nxLglpoCvs=;
+ b=uffap1Yp7A9oUyxJAg/JMqLbZ7j2qeL8SXGije4OWjL3Lmqea939UF78GetZTKRZdUELCxw7k
+ wcm9ivOs6zTCvQInib7BHj9Xe5zk405K6/DXSFSlvx+rY7B0KYo+1yw
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-It is not used outside of signing.c.
+Make sure that modules.order is always newer than the module .ko files.
+Other rules can then use modules.order as a prerequisite and rerun if
+any module is (re-)built.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-Reviewed-by: Aaron Tomlin <atomlin@atomlin.com>
-Reviewed-by: Nicolas Schier <nsc@kernel.org>
-Reviewed-by: Eric Biggers <ebiggers@kernel.org>
 ---
- kernel/module/internal.h | 1 -
- kernel/module/signing.c  | 2 +-
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ scripts/Makefile.modfinal | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/kernel/module/internal.h b/kernel/module/internal.h
-index 061161cc79d9..071999743341 100644
---- a/kernel/module/internal.h
-+++ b/kernel/module/internal.h
-@@ -117,7 +117,6 @@ struct module_use {
- 	struct module *source, *target;
- };
+diff --git a/scripts/Makefile.modfinal b/scripts/Makefile.modfinal
+index b09040ccddd2..44a382689a5a 100644
+--- a/scripts/Makefile.modfinal
++++ b/scripts/Makefile.modfinal
+@@ -66,6 +66,13 @@ endif
  
--int mod_verify_sig(const void *mod, struct load_info *info);
- int try_to_force_load(struct module *mod, const char *reason);
- bool find_symbol(struct find_symbol_arg *fsa);
- struct module *find_module_all(const char *name, size_t len, bool even_unformed);
-diff --git a/kernel/module/signing.c b/kernel/module/signing.c
-index 4a5e4eef250d..69d4b1758540 100644
---- a/kernel/module/signing.c
-+++ b/kernel/module/signing.c
-@@ -40,7 +40,7 @@ void set_module_sig_enforced(void)
- /*
-  * Verify the signature on a module.
-  */
--int mod_verify_sig(const void *mod, struct load_info *info)
-+static int mod_verify_sig(const void *mod, struct load_info *info)
- {
- 	struct module_signature ms;
- 	size_t sig_len, modlen = info->len;
+ targets += $(modules:%.o=%.ko) $(modules:%.o=%.mod.o) .module-common.o
+ 
++# Update modules.order when a module is (re-)built.
++# Allow using it as target dependency.
++targets += modules.order
++__modfinal: modules.order
++modules.order: $(modules:%.o=%.ko)
++	@touch $@
++
+ # Add FORCE to the prerequisites of a target to force it to be always rebuilt.
+ # ---------------------------------------------------------------------------
+ 
 
 -- 
 2.54.0
