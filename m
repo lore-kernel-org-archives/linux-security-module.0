@@ -1,31 +1,31 @@
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B843D1CC0;
-	Tue,  5 May 2026 09:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640DE3E1205;
+	Tue,  5 May 2026 09:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777971933; cv=none; b=fJx4CC5a/kQ3RgEwuaS9K/KVNQfbVUsf4j/W7J60RJlSQZa44N1jcc8tLL/QvZ0V8FLhCIcA8sYE9i0CzbKyrnsgxIb81rlKj00uK2q1bOIwn96kAvNIIxOA3lWygTv7/TI2vB1AnrfmfkRDJRi5YzBn1e1Xy60CHolZR0PgN1A=
+	t=1777971935; cv=none; b=FyVttL2anDAifiG3sVLYgQ2HoeX/mBsMS+/UQzhOD7IF+AoaikAO/lt2vR+t2wT2cwpn84aH2g1UZwFLmCYMUq0O4LVWuSkN1dPb6x6k/wphKSXQTqodmqKmDU4Ob5tZH3EDaliQDZv7stMd9z9UwgmBlDQbg1zkE8Z9G9pa5hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777971933; c=relaxed/simple;
-	bh=urNb3wCpvLUEWBOX/KRz/AvKSgOExMhmzt3qzgx4rLs=;
+	s=arc-20240116; t=1777971935; c=relaxed/simple;
+	bh=QGuEjahQSX5KIR3mv9uZyKkgUGxQh5zTTSgnqh/jiis=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gjOFPbM5RZPuhIM3L1bo1GmlfxEU8fIolkezporRUyY99zxbGtr19zJ3QndHlAI9XolyoX2634Z7EBABYlD6Kb6i6ytHd8yiZ0qBmeyJbu0AxTqFzEsCSSpaS853xNaKH5FZzVHPv04WjTObUZoTiaPKDrem5QkjymaysMqiriY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=poeXsk/E; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=kfg8lwUNlb5tbsZoECPtYy3q8K997utwzhGll5pZJso3U6gcxOUcKhr+O2m0u5bdMAsFIo2H3knEf/x/gcgJfkbD9RMnlLQktOQlz/xpuKcUnM23u7IGC4C0Sp/8Y9zHOjljRYkSubvDmvyZXGOxjc/8bY8SeVOSxBd2JeDVNxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=g4Fknziw; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="poeXsk/E"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="g4Fknziw"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1777971923;
-	bh=urNb3wCpvLUEWBOX/KRz/AvKSgOExMhmzt3qzgx4rLs=;
+	bh=QGuEjahQSX5KIR3mv9uZyKkgUGxQh5zTTSgnqh/jiis=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=poeXsk/EvObYbjXy4HSzGJkG81yH9eZxYDfI2zdvyzhmzm3VQgeBpFtkc5rn2f0Cf
-	 2GlFQSb9eJWSwLrGHFdpZLSogN9NFrz0qOUhccmCa6L6KTBH+Uh5IkhQwOKq99CUHv
-	 Dwco9AlI5HmCGhTAKuLOnMEJ/OR7pM53b1jYYOnQ=
+	b=g4Fknziwd96fLN+TTNQAV/fMHOhd/dIN0idNYLfwkjvob2sS26e2GZhdQjmJKGBg2
+	 1Wuj9kttFMh09utr0/SaRmtgS+EoGk8Ji0s7efvwWTViHA7Eic1XoFHkeNankvLZGH
+	 d2Dvf/IQdZzsPGC4AF+nGave4W25BM2Rl2cxHXow=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Tue, 05 May 2026 11:05:07 +0200
-Subject: [PATCH v5 03/14] kbuild: rename the strip_relocs command
+Date: Tue, 05 May 2026 11:05:09 +0200
+Subject: [PATCH v5 05/14] module: Make mod_verify_sig() static
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -34,7 +34,7 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260505-module-hashes-v5-3-e174a5a49fce@weissschuh.net>
+Message-Id: <20260505-module-hashes-v5-5-e174a5a49fce@weissschuh.net>
 References: <20260505-module-hashes-v5-0-e174a5a49fce@weissschuh.net>
 In-Reply-To: <20260505-module-hashes-v5-0-e174a5a49fce@weissschuh.net>
 To: Alexei Starovoitov <ast@kernel.org>, 
@@ -74,46 +74,50 @@ Cc: Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
  debian-kernel@lists.debian.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1777971921; l=1526;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1777971921; l=1372;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=urNb3wCpvLUEWBOX/KRz/AvKSgOExMhmzt3qzgx4rLs=;
- b=zO4+a83ARZh91UdHs8c/zFFH5RWsYxSMyvtjjkwAZh87tyFNn/XXyYS4Ur+mm7rbCt/arjCT/
- XQJfLzxEaBjBWLAWIx91HgeLuKwV16KxbtUDUGkyZZG34V7Riun6CDM
+ bh=QGuEjahQSX5KIR3mv9uZyKkgUGxQh5zTTSgnqh/jiis=;
+ b=YPbhooCs8Z4p5xzEA8Bou2VKPPahpzMZhKoMk8D4SPl0woEZ2hjUdTCq/NfLfVDVlfTISZ3Ax
+ 2PKz7Hagg7xC31UJ4xI2NezkX4xUOqNSMisfL91GfGeptv87RApuP5L
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-This command is doing more than just stripping relocations.
-With the introduction of CONFIG_MODULE_HASHES it will do even more.
-
-Use a more generic name for the variable.
+It is not used outside of signing.c.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+Reviewed-by: Aaron Tomlin <atomlin@atomlin.com>
+Reviewed-by: Nicolas Schier <nsc@kernel.org>
+Reviewed-by: Eric Biggers <ebiggers@kernel.org>
 ---
- scripts/Makefile.vmlinux | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ kernel/module/internal.h | 1 -
+ kernel/module/signing.c  | 2 +-
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-index fcae1e432d9a..6cc661e5292b 100644
---- a/scripts/Makefile.vmlinux
-+++ b/scripts/Makefile.vmlinux
-@@ -91,13 +91,13 @@ remove-symbols := -w --strip-unneeded-symbol='__mod_device_table__*'
+diff --git a/kernel/module/internal.h b/kernel/module/internal.h
+index 061161cc79d9..071999743341 100644
+--- a/kernel/module/internal.h
++++ b/kernel/module/internal.h
+@@ -117,7 +117,6 @@ struct module_use {
+ 	struct module *source, *target;
+ };
  
- # To avoid warnings: "empty loadable segment detected at ..." from GNU objcopy,
- # it is necessary to remove the PT_LOAD flag from the segment.
--quiet_cmd_strip_relocs = OBJCOPY $@
--      cmd_strip_relocs = $(OBJCOPY) $(patsubst %,--set-section-flags %=noload,$(remove-section-y)) $< $@; \
--                         $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) $(remove-symbols) $@
-+quiet_cmd_objcopy_vmlinux = OBJCOPY $@
-+      cmd_objcopy_vmlinux = $(OBJCOPY) $(patsubst %,--set-section-flags %=noload,$(remove-section-y)) $< $@; \
-+                            $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) $(remove-symbols) $@
- 
- targets += vmlinux
- vmlinux: vmlinux.unstripped FORCE
--	$(call if_changed,strip_relocs)
-+	$(call if_changed,objcopy_vmlinux)
- 
- # modules.builtin.modinfo
- # ---------------------------------------------------------------------------
+-int mod_verify_sig(const void *mod, struct load_info *info);
+ int try_to_force_load(struct module *mod, const char *reason);
+ bool find_symbol(struct find_symbol_arg *fsa);
+ struct module *find_module_all(const char *name, size_t len, bool even_unformed);
+diff --git a/kernel/module/signing.c b/kernel/module/signing.c
+index 4a5e4eef250d..69d4b1758540 100644
+--- a/kernel/module/signing.c
++++ b/kernel/module/signing.c
+@@ -40,7 +40,7 @@ void set_module_sig_enforced(void)
+ /*
+  * Verify the signature on a module.
+  */
+-int mod_verify_sig(const void *mod, struct load_info *info)
++static int mod_verify_sig(const void *mod, struct load_info *info)
+ {
+ 	struct module_signature ms;
+ 	size_t sig_len, modlen = info->len;
 
 -- 
 2.54.0
