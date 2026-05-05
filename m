@@ -1,32 +1,32 @@
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52C63D1CC0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9C03E3C5D;
 	Tue,  5 May 2026 09:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777971935; cv=none; b=pz4B84fY2H7rPAKOq4dj7kzIUc4hXiRrB6tQSO9dJDa03+cdB+CiIEh5G2hp0EIHsHMSyXDfFLSTOUka1Z4KYquVTDJaKytjQehtaMYqB9gdgtX0AaQBVqi4RcnTbN+4Meg/JUsg99pvG1onmpm9NjUR8yuSja4vn0oeNZAk6I4=
+	t=1777971935; cv=none; b=PJGRbE1/4OO2bhmH4uG21lI2MBRc9qzXMj6x1IpGLa+cPVIMpaApK0yGP2v2BKOT7sldHMPUJlV7CjXWsMYNZiPO4vLrwjvY3iGk/3XDJdYWPanYyxhz5Gudy1Gr2vbbnrsk+q529x5hNOQEjJTINpn/qZZMRwuV+anaX/o5gT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1777971935; c=relaxed/simple;
-	bh=OjVEQENALnBrLz41nWZb6yT3a4erxpjD/nxLglpoCvs=;
+	bh=z587DQf7ydM5gOPKNIBxSBWu9EUeBOTRuUfIH6UhiJM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=N1WSjSpT+7nm4+Q5XhovtOSXdrQ5AktWtwA2F7pQVEJxj56NDyY1uLqowOAZ99zz+MGl2QgOiLWHLQaNAF0SlF5OWGoWlKBFtcNyEFiU0IvaZ4VZMsJcQ8fZK27XzwvAnVm8kSvQ7HztMoy7nX41UC10eL1oTMNtYlXN8EK5swE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=tmzHYMjU; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=muDjj3ZHTI6bCoQolZx15IClu8eagYWVmoQziT3KK/qRXpVckZM6LcjnjROqRShWNQvo7aJ0EL34e12u3dw8Mex0UHKfSHQ1uVMfvXNMvLBZG6zVyiULd91fupXTt/qzT2pZXoNSDSwUp4/0kxaJnFNk6iRUfH/Dg3TXivaqoz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=aIgpWDKX; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="tmzHYMjU"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="aIgpWDKX"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1777971923;
-	bh=OjVEQENALnBrLz41nWZb6yT3a4erxpjD/nxLglpoCvs=;
+	bh=z587DQf7ydM5gOPKNIBxSBWu9EUeBOTRuUfIH6UhiJM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=tmzHYMjU7VY9tL4bgMd6fMoXTE3q7cG/Qex8Dk9sjAPpSacechAhv+JHofoNabdIe
-	 vNsX5gMznznkkxeWPJ3Gpa13BCxlGEx/A8z+ow4LMv/tu6o7Vqe2fjHJJL+ChUUtZZ
-	 mf/qpWSsYolANVA57Z5UN4LH+pH1QpynislBDC48=
+	b=aIgpWDKXrg76P12O4zkGtJLBuZn8YCeI7ZzPJs6xm6dzdrhNjHvlCsyJmUEjNrCDX
+	 nnsToJ9+zngAbg5KnB2apzV2zul/tNtdLxtFkKFMh/CCZJG5ISZHQPcUMzBA/S/C/H
+	 yDIMRiiPrmSBoXKa210qmdtwe3j1bEA6l8n1iwS4=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Tue, 05 May 2026 11:05:15 +0200
-Subject: [PATCH v5 11/14] module: update timestamp of modules.order after
- modules are built
+Date: Tue, 05 May 2026 11:05:12 +0200
+Subject: [PATCH v5 08/14] module: Move authentication logic into dedicated
+ new file
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260505-module-hashes-v5-11-e174a5a49fce@weissschuh.net>
+Message-Id: <20260505-module-hashes-v5-8-e174a5a49fce@weissschuh.net>
 References: <20260505-module-hashes-v5-0-e174a5a49fce@weissschuh.net>
 In-Reply-To: <20260505-module-hashes-v5-0-e174a5a49fce@weissschuh.net>
 To: Alexei Starovoitov <ast@kernel.org>, 
@@ -75,41 +75,291 @@ Cc: Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
  debian-kernel@lists.debian.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1777971921; l=973;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1777971921; l=8567;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=OjVEQENALnBrLz41nWZb6yT3a4erxpjD/nxLglpoCvs=;
- b=uffap1Yp7A9oUyxJAg/JMqLbZ7j2qeL8SXGije4OWjL3Lmqea939UF78GetZTKRZdUELCxw7k
- wcm9ivOs6zTCvQInib7BHj9Xe5zk405K6/DXSFSlvx+rY7B0KYo+1yw
+ bh=z587DQf7ydM5gOPKNIBxSBWu9EUeBOTRuUfIH6UhiJM=;
+ b=0QD9Bo5ArZ/toPAgrZ/Kwp8g1MN5vGvLlI3JacHftC7LXDAwqZfm7Tb5hscKQ74Tdp4pPzyNi
+ hUJ9tsUkDfZBUtISxftgnKStnD51XKADZgJpNxcoo2sKOBdHsu9omPS
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-Make sure that modules.order is always newer than the module .ko files.
-Other rules can then use modules.order as a prerequisite and rerun if
-any module is (re-)built.
+The module authentication functionality will also be used by the
+hash-based module authentication. To make it usable even if
+CONFIG_MODULE_SIG is disabled, move it to a new file.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- scripts/Makefile.modfinal | 7 +++++++
- 1 file changed, 7 insertions(+)
+ kernel/module/auth.c     | 85 +++++++++++++++++++++++++++++++++++++++++++++
+ kernel/module/internal.h | 14 ++++++--
+ kernel/module/main.c     |  6 ++--
+ kernel/module/signing.c  | 90 ++----------------------------------------------
+ 4 files changed, 103 insertions(+), 92 deletions(-)
 
-diff --git a/scripts/Makefile.modfinal b/scripts/Makefile.modfinal
-index b09040ccddd2..44a382689a5a 100644
---- a/scripts/Makefile.modfinal
-+++ b/scripts/Makefile.modfinal
-@@ -66,6 +66,13 @@ endif
+diff --git a/kernel/module/auth.c b/kernel/module/auth.c
+index 956ac63d9d33..831a13eb0c9b 100644
+--- a/kernel/module/auth.c
++++ b/kernel/module/auth.c
+@@ -5,10 +5,16 @@
+  * Written by David Howells (dhowells@redhat.com)
+  */
  
- targets += $(modules:%.o=%.ko) $(modules:%.o=%.mod.o) .module-common.o
++#include <linux/errno.h>
+ #include <linux/export.h>
+ #include <linux/module.h>
++#include <linux/module_signature.h>
+ #include <linux/moduleparam.h>
++#include <linux/security.h>
++#include <linux/string.h>
+ #include <linux/types.h>
++#include <uapi/linux/module.h>
++#include "internal.h"
  
-+# Update modules.order when a module is (re-)built.
-+# Allow using it as target dependency.
-+targets += modules.order
-+__modfinal: modules.order
-+modules.order: $(modules:%.o=%.ko)
-+	@touch $@
+ #undef MODULE_PARAM_PREFIX
+ #define MODULE_PARAM_PREFIX "module."
+@@ -30,3 +36,82 @@ void set_module_sig_enforced(void)
+ {
+ 	sig_enforce = true;
+ }
 +
- # Add FORCE to the prerequisites of a target to force it to be always rebuilt.
- # ---------------------------------------------------------------------------
++static int mod_verify_sig(const void *mod, struct load_info *info)
++{
++	struct module_signature ms;
++	size_t sig_len, modlen = info->len;
++	int ret;
++
++	if (modlen <= sizeof(ms))
++		return -EBADMSG;
++
++	memcpy(&ms, mod + (modlen - sizeof(ms)), sizeof(ms));
++
++	ret = mod_check_sig(&ms, modlen, "module");
++	if (ret)
++		return ret;
++
++	sig_len = be32_to_cpu(ms.sig_len);
++	modlen -= sig_len + sizeof(ms);
++	info->len = modlen;
++
++	return module_sig_check(mod, modlen, mod + modlen, sig_len);
++}
++
++int module_auth_check(struct load_info *info, int flags)
++{
++	int err = -ENODATA;
++	const unsigned long markerlen = sizeof(MODULE_SIGNATURE_MARKER) - 1;
++	const char *reason;
++	const void *mod = info->hdr;
++	bool mangled_module = flags & (MODULE_INIT_IGNORE_MODVERSIONS |
++				       MODULE_INIT_IGNORE_VERMAGIC);
++	/*
++	 * Do not allow mangled modules as a module with version information
++	 * removed is no longer the module that was signed.
++	 */
++	if (!mangled_module &&
++	    info->len > markerlen &&
++	    memcmp(mod + info->len - markerlen, MODULE_SIGNATURE_MARKER, markerlen) == 0) {
++		/* We truncate the module to discard the signature */
++		info->len -= markerlen;
++		err = mod_verify_sig(mod, info);
++		if (!err) {
++			info->auth_ok = true;
++			return 0;
++		}
++	}
++
++	/*
++	 * We don't permit modules to be loaded into the trusted kernels
++	 * without a valid signature on them, but if we're not enforcing,
++	 * certain errors are non-fatal.
++	 */
++	switch (err) {
++	case -ENODATA:
++		reason = "unsigned module";
++		break;
++	case -ENOPKG:
++		reason = "module with unsupported crypto";
++		break;
++	case -ENOKEY:
++		reason = "module with unavailable key";
++		break;
++
++	default:
++		/*
++		 * All other errors are fatal, including lack of memory,
++		 * unparseable signatures, and signature check failures --
++		 * even if signatures aren't required.
++		 */
++		return err;
++	}
++
++	if (is_module_sig_enforced()) {
++		pr_notice("Loading of %s is rejected\n", reason);
++		return -EKEYREJECTED;
++	}
++
++	return security_locked_down(LOCKDOWN_MODULE_SIGNATURE);
++}
+diff --git a/kernel/module/internal.h b/kernel/module/internal.h
+index f8f425b167f1..d923e31a5d8e 100644
+--- a/kernel/module/internal.h
++++ b/kernel/module/internal.h
+@@ -336,14 +336,24 @@ void module_mark_ro_after_init(const Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+ 			       const char *secstrings);
  
+ #ifdef CONFIG_MODULE_SIG
+-int module_sig_check(struct load_info *info, int flags);
++int module_sig_check(const void *mod, size_t mod_len, const void *sig, size_t sig_len);
+ #else /* !CONFIG_MODULE_SIG */
+-static inline int module_sig_check(struct load_info *info, int flags)
++static inline int module_sig_check(const void *mod, size_t mod_len,
++				   const void *sig, size_t sig_len)
+ {
+ 	return 0;
+ }
+ #endif /* !CONFIG_MODULE_SIG */
+ 
++#ifdef CONFIG_MODULE_AUTH
++int module_auth_check(struct load_info *info, int flags);
++#else /* !CONFIG_MODULE_AUTH */
++static inline int module_auth_check(struct load_info *info, int flags)
++{
++	return 0;
++}
++#endif /* !CONFIG_MODULE_AUTH */
++
+ #ifdef CONFIG_DEBUG_KMEMLEAK
+ void kmemleak_load_module(const struct module *mod, const struct load_info *info);
+ #else /* !CONFIG_DEBUG_KMEMLEAK */
+diff --git a/kernel/module/main.c b/kernel/module/main.c
+index cd8a74df117e..55a010383a8d 100644
+--- a/kernel/module/main.c
++++ b/kernel/module/main.c
+@@ -3428,8 +3428,8 @@ static int load_module(struct load_info *info, const char __user *uargs,
+ 	char *after_dashes;
+ 
+ 	/*
+-	 * Do the signature check (if any) first. All that
+-	 * the signature check needs is info->len, it does
++	 * Do the authentication checks (if any) first. All that
++	 * the authentication checks need is info->len, it does
+ 	 * not need any of the section info. That can be
+ 	 * set up later. This will minimize the chances
+ 	 * of a corrupt module causing problems before
+@@ -3439,7 +3439,7 @@ static int load_module(struct load_info *info, const char __user *uargs,
+ 	 * off the sig length at the end of the module, making
+ 	 * checks against info->len more correct.
+ 	 */
+-	err = module_sig_check(info, flags);
++	err = module_auth_check(info, flags);
+ 	if (err)
+ 		goto free_copy;
+ 
+diff --git a/kernel/module/signing.c b/kernel/module/signing.c
+index 07a786723221..a49317e3c66f 100644
+--- a/kernel/module/signing.c
++++ b/kernel/module/signing.c
+@@ -5,98 +5,14 @@
+  * Written by David Howells (dhowells@redhat.com)
+  */
+ 
+-#include <linux/kernel.h>
+-#include <linux/errno.h>
+-#include <linux/module.h>
+-#include <linux/module_signature.h>
+-#include <linux/string.h>
++#include <linux/types.h>
+ #include <linux/verification.h>
+-#include <linux/security.h>
+-#include <crypto/public_key.h>
+-#include <uapi/linux/module.h>
+ #include "internal.h"
+ 
+-/*
+- * Verify the signature on a module.
+- */
+-static int mod_verify_sig(const void *mod, struct load_info *info)
++int module_sig_check(const void *mod, size_t mod_len, const void *sig, size_t sig_len)
+ {
+-	struct module_signature ms;
+-	size_t sig_len, modlen = info->len;
+-	int ret;
+-
+-	if (modlen <= sizeof(ms))
+-		return -EBADMSG;
+-
+-	memcpy(&ms, mod + (modlen - sizeof(ms)), sizeof(ms));
+-
+-	ret = mod_check_sig(&ms, modlen, "module");
+-	if (ret)
+-		return ret;
+-
+-	sig_len = be32_to_cpu(ms.sig_len);
+-	modlen -= sig_len + sizeof(ms);
+-	info->len = modlen;
+-
+-	return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
++	return verify_pkcs7_signature(mod, mod_len, sig, sig_len,
+ 				      VERIFY_USE_SECONDARY_KEYRING,
+ 				      VERIFYING_MODULE_SIGNATURE,
+ 				      NULL, NULL);
+ }
+-
+-int module_sig_check(struct load_info *info, int flags)
+-{
+-	int err = -ENODATA;
+-	const unsigned long markerlen = sizeof(MODULE_SIGNATURE_MARKER) - 1;
+-	const char *reason;
+-	const void *mod = info->hdr;
+-	bool mangled_module = flags & (MODULE_INIT_IGNORE_MODVERSIONS |
+-				       MODULE_INIT_IGNORE_VERMAGIC);
+-	/*
+-	 * Do not allow mangled modules as a module with version information
+-	 * removed is no longer the module that was signed.
+-	 */
+-	if (!mangled_module &&
+-	    info->len > markerlen &&
+-	    memcmp(mod + info->len - markerlen, MODULE_SIGNATURE_MARKER, markerlen) == 0) {
+-		/* We truncate the module to discard the signature */
+-		info->len -= markerlen;
+-		err = mod_verify_sig(mod, info);
+-		if (!err) {
+-			info->auth_ok = true;
+-			return 0;
+-		}
+-	}
+-
+-	/*
+-	 * We don't permit modules to be loaded into the trusted kernels
+-	 * without a valid signature on them, but if we're not enforcing,
+-	 * certain errors are non-fatal.
+-	 */
+-	switch (err) {
+-	case -ENODATA:
+-		reason = "unsigned module";
+-		break;
+-	case -ENOPKG:
+-		reason = "module with unsupported crypto";
+-		break;
+-	case -ENOKEY:
+-		reason = "module with unavailable key";
+-		break;
+-
+-	default:
+-		/*
+-		 * All other errors are fatal, including lack of memory,
+-		 * unparseable signatures, and signature check failures --
+-		 * even if signatures aren't required.
+-		 */
+-		return err;
+-	}
+-
+-	if (is_module_sig_enforced()) {
+-		pr_notice("Loading of %s is rejected\n", reason);
+-		return -EKEYREJECTED;
+-	}
+-
+-	return security_locked_down(LOCKDOWN_MODULE_SIGNATURE);
+-}
 
 -- 
 2.54.0
