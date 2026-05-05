@@ -1,190 +1,88 @@
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA333A5428
-	for <linux-security-module@vger.kernel.org>; Tue,  5 May 2026 13:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777988996; cv=pass; b=GdkEFO3XItelkHoogoFvUEtz4Df0mG19KI6yrYzCpKLWxHMI2sIBOOwUmZCjtYdlLUO+ITpunMoGP+ZJEzR46Y+1NwyfdyIC7siE3CG+0wSJjg+xLXW7fCBMDLnrMCjeTDdsSSuXWMBhkICOikhr7rjsxkUU6yqZpGJu+GqWswQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777988996; c=relaxed/simple;
-	bh=dwtJGGtWfivJTDnEUkDart9O2ukOCksxaNnx6dZ9xy4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZmrY5weIYHQI2xOaJbJv6NYzQUV4RaQRWyV2WPy6Kl2mWlvAMapISCNRVO0vN4InMdY52Q6kjSwP7kKxZtdeeb/mZkqOD9TCpr3ohWYId9WkYzuFOYaGgFe719olKcDpReJH8JwfPwz164bVudbO+vC4dErpdSIGKrzwqq+HT3I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=frbFmbFg; arc=pass smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFDDC3624C9;
+	Tue,  5 May 2026 14:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777991974; cv=none; b=fRAKN2qdaVJPQSqYEG4gm1YnoHvieMt+VQ3EAaSpDR9IejZ/WppJhUZtZ9dLYDK9LgLsQXJKvvG4zAEiD/Vd956/OMci6mF71uDaRkfkLBQ6z0oP4D/0wCSlYDHKZGjOG+pYZBjAFPt53A3cz4NZ4ma5pQgOe1MdAllE3zG1KeE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777991974; c=relaxed/simple;
+	bh=NgwaOYYhwkJoidvqP9ynAMiAuhZHiTJ5mxPCuvHYbM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W2Z/Lqx+1zbaEMV3abj7Fztm7l5ur8oREW9jCLyHt+9OPIzQLy7n8AYXWEtKTfJg+BfIelFJVZ8BKREM3gx5qB+fuz0xgHXtz5796C/b5OPI/HsWA7kfEDpORtmMjCPBlBXZlAm1nRpjbhgnsleViECXjNxwPUBU+YBVY4ilEJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bvYfCPdE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="frbFmbFg"
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-3651fa24c6bso2128828a91.2
-        for <linux-security-module@vger.kernel.org>; Tue, 05 May 2026 06:49:54 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1777988994; cv=none;
-        d=google.com; s=arc-20240605;
-        b=IR7PLx4ljEhVorWbnbggOY9uOH4fWX8I6lh46Az+WhYO64e5AJqLpzzeKF/bLi7ix2
-         6RFnScjub7C+pLxiuN/uxd4Yfq1iIIBp83tEoQ5Q7yqz4vMS/kacSDYtyfQACUC4A2CF
-         a04HFoUQQFYm6XtX6S5ujyhm2OEalKM05Q8ovsO03Ix8XrZ2hzPpMWnE7yVJ+WgbjaTC
-         sauukQcZ+SIL5rqu/qoYDaztGdfjpumuzlHaxkfvGgBAinf5pudhMMFvF79nq2RybjYH
-         Va/+1g9Yn2peNOCRh5SG3v6hSfjYJc7Mu1ur3KDoBt9QGQMa0DzapB2sCP7yuQQfXWtr
-         dD7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Hqf6lIUgsNlkAq08zxsjQWbzrMpXMe/Oxc4pqEJz68g=;
-        fh=9j9soTvxy49XtIHDRLJvlCR1/C2b7ij0uccE1fOd5Ys=;
-        b=ZirmT0ulIsGrNM2Hba0rybsfG2lMKFcUm7NYbsN1qsxtXHqMOxF0YQppPVsDmlr7Ek
-         ily2dEbqJMOASAQi8FCw4wPJ2Ly7Kf8mHHkhQurSdP+xKIOWGFVVcqxmzX6pXq/ChrQv
-         JqtJqdRqTIUCLs9idxk1SS0lF1FRtibIRtR/CLyZEvJCTd2x0y/gbEXz3/ZxYK0harOR
-         qJUFEcD4ElYEJbByWHSqqmVpE+BMxgn9VTKw30l/hfBICrhkyIXxC9yX2gZY+SOLa87E
-         pabMHKcTgFiGac4GJs7/caxFXRhxbU7qviq47x/RN6ZRS5cZz+LsQAsk987ZWzwKRkWO
-         6gww==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1777988994; x=1778593794; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hqf6lIUgsNlkAq08zxsjQWbzrMpXMe/Oxc4pqEJz68g=;
-        b=frbFmbFgOy5VDj09J4f62miUa6qVAKlhZG3/8HfPOneejt5h6GUtQh+bJQcYyVXcJy
-         OmsPiOMuN59cYHOycQHeT/fex5uKz0C3c9lNgZRI5cWhWaf/YgfV3zrNKOTQvhctF7/b
-         SsxJo8VaIiPaynadx4HM4POuFQY7HM3sNWB3aP6pj6djFe1joxyMQF/ThxZnKM3T5tui
-         olWtUGCea0udn3tlMK8N80eYwbORI2WLMtMKL0G6v0P3OTM6azccnmnPrJCmunmrLZ93
-         RPuZFY0oa1or8jPs4empxBo4YHxMqqLLDwDL19QSzLbL4rVWxUp9aOEvIlTWfpe1qw18
-         Fg0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777988994; x=1778593794;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Hqf6lIUgsNlkAq08zxsjQWbzrMpXMe/Oxc4pqEJz68g=;
-        b=fnvqlCLQWgtBrD/oFfDFPvqHTL3vRbGYzpGaND5ijIdvZ3TCcCh1ok197SK5rJn+Th
-         O9i/ycGnUPH14qfjMudv+ClSAoDmhiTPgiinEwsvkAfqUsmeB1XjqvQm5dnYXtv4jc8z
-         aJsztHJudeblklyjuus3fWZqt+IwqlvxFXD6ynAxpf+RRxjDzENAKZ4wGUIciw2KcuMM
-         vObToQIJIaKBC3it+0JSK7ZnR1yEkKAgB9LF8vYyXr7/l7qZAACi1Loqrnj8a8KZW1Zp
-         QWhj2D7SIwlvyT5GTWCZg3XGHxeDAWErrJ4fRlyXbkx+UZR4ErX37gSQGdn8fiNtp/60
-         hW1Q==
-X-Forwarded-Encrypted: i=1; AFNElJ86miawyDT4YitAlRXTzMe3AqUS2StSzt+dAmq+7FC4aoi6G8trrPG9yDaeofGAdyb7AjzABD+olJWwGEfZ+YVO8rpelko=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi6Ujzu0j0s0ywvuDNzGkCZVrJ9aj2wxMPA/FibJ1ATPYN8Rhf
-	Xe3pZDwEP631N1p7QEZRLyia+5GoPXA83kzZZ/H8Ik2HGY3tRuWl+hJdAJu7wVbaVdVA0OYlyZO
-	vZaFUCyw8YtkF3HsGZacg0W5DBNsqYiVp6TQKLm0k
-X-Gm-Gg: AeBDievk/HOZmV0qzxJTZuZu7aN1GJq1w81Hu+uuYvi73R/yafvnt0x3MMp1Q6O7i03
-	q9BHG8rpKJ9pmS/94vPJG9dxkaFwvdjnSnAlSvUPyrflCP4N/I0WoEXIvYbjS4hMDDUHwTLmqX2
-	XzI0gQoZlz40jbZ8pMrsODERHwgtB40ovT+Wipasyvr5kCjFdDQE6fH6+7YNRxe9G1QWMnsfQQp
-	0JcfqWtcdAG8Xmu3MkZeQrvPwptmS2jsQ6s2vPYlk8G3XQZO/w0IU2ZSuz2n8Xy7iva1rZR7rfy
-	gcCstSwC+z0mfGeAvg==
-X-Received: by 2002:a17:90b:3a84:b0:361:4521:d311 with SMTP id
- 98e67ed59e1d1-3657747cdadmr3159694a91.18.1777988993821; Tue, 05 May 2026
- 06:49:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvYfCPdE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2880C2BCB4;
+	Tue,  5 May 2026 14:39:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777991973;
+	bh=NgwaOYYhwkJoidvqP9ynAMiAuhZHiTJ5mxPCuvHYbM4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bvYfCPdEURheb7BU5RKgPvIL+Vd0jex98+FTp1gb0vtK2vTkS8ONmY2bBZDIshbB9
+	 z2FEbM5CHxGKeDHpIl/bU28tnETNo8/UupR8KVhyLLEzi0LkCW99D9wh8WAhak/pFo
+	 zfaxYthB9lMPsbzd20eSvu2+0A+IhuJAmaHwO/XQLh57NsDpPxBED3q3tWggEIt2cC
+	 U1S7jFYiUt1Lz6hu5sQDX3ra2cAI0KVEc7c8CbrfoGdMLFRlLN0CFkMJLHt0K9+Tov
+	 o2+fcoWTCpsacPoeehvuyfcDGsXMr6CWbkJAtkD2vJKx/CDY+kB9dMjVblusWkL7Kc
+	 Zbi+jt7w3hYTA==
+Date: Tue, 5 May 2026 15:39:27 +0100
+From: Sudeep Holla <sudeep.holla@kernel.org>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	jarkko@kernel.org, zohar@linux.ibm.com, roberto.sassu@huawei.com,
+	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	maz@kernel.org, oupton@kernel.org, joey.gouly@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org
+Subject: Re: [RFC PATCH 2/3] firmware: arm_ffa: initialise ff-a after
+ finalising pKVM initialisation
+Message-ID: <20260505-super-gecko-of-argument-655030@sudeepholla>
+References: <20260505095409.1948371-1-yeoreum.yun@arm.com>
+ <20260505095409.1948371-3-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260503211835.16103-1-dwindsor@gmail.com> <20260503211835.16103-2-dwindsor@gmail.com>
- <CAHC9VhSy5K5nQTtFUE4BScy1Ur61v7eZW067vTcUYDQeJb13Bw@mail.gmail.com>
- <CAPhsuW6sy2cdC4B7Z48-5A-yVX6fmVWxS_fWVjQxiX95KeUguw@mail.gmail.com>
- <CAHC9VhQLN5NA_ZMMNyUdMCZVdwC3VM4PUnzka8xDK5rpR2a3sw@mail.gmail.com>
- <CAPhsuW5nDaLAV5UfAHeX6QPeF6bs-WDkFYOzYO7Q9_O6v=jEHA@mail.gmail.com>
- <CAHC9VhRx7L1WXYgQvWmGN0a7ssSaDKx4JPhup2E3W161sdp74A@mail.gmail.com> <CAPhsuW5zRktottTujy_O1=8VkdJGDO71M3DVVM4ezffwT_dm+A@mail.gmail.com>
-In-Reply-To: <CAPhsuW5zRktottTujy_O1=8VkdJGDO71M3DVVM4ezffwT_dm+A@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 5 May 2026 09:49:42 -0400
-X-Gm-Features: AVHnY4Kdcn8NUgT3x3TCJLSbVA7TxZZZNO16IatME0SS0-imLL4d0tdSq1ceCGU
-Message-ID: <CAHC9VhTWpFbK30ueZw5zTgNfMoABLXcbny=_eWOV17+1ebFVKA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] bpf: add bpf_init_inode_xattr kfunc for atomic
- inode labeling
-To: Song Liu <song@kernel.org>
-Cc: David Windsor <dwindsor@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Jan Kara <jack@suse.cz>, John Fastabend <john.fastabend@gmail.com>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Yonghong Song <yonghong.song@linux.dev>, 
-	Jiri Olsa <jolsa@kernel.org>, Eric Snowberg <eric.snowberg@oracle.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260505095409.1948371-3-yeoreum.yun@arm.com>
 
-On Tue, May 5, 2026 at 5:00=E2=80=AFAM Song Liu <song@kernel.org> wrote:
-> On Tue, May 5, 2026 at 4:02=E2=80=AFAM Paul Moore <paul@paul-moore.com> w=
-rote:
-> > On Mon, May 4, 2026 at 7:09=E2=80=AFPM Song Liu <song@kernel.org> wrote=
-:
-> > > On Tue, May 5, 2026 at 12:42=E2=80=AFAM Paul Moore <paul@paul-moore.c=
-om> wrote:
-> > > [...]
-> > > > > > Perhaps I'm simply not seeing it, but is there a check to ensur=
-e that
-> > > > > > there is only one BPF LSM calling into security_inode_init_secu=
-rity()
-> > > > > > at any given time?  With the BPF LSM only reserving a single xa=
-ttr
-> > > > > > slot, multiple loaded BPF LSM programs providing
-> > > > > > security_inode_init_security() callbacks will be a problem.
-> > > > >
-> > > > > I don't think there is such a check. Also, a single BPF LSM funct=
-ion
-> > > > > may call the kfunc multiple times, which is also problematic.
-> > > > >
-> > > > > I think we will need to make the default bigger, and also introdu=
-ce
-> > > > > some realloc mechanism for the worst case scenario. This should
-> > > > > work, but the code might be a bit messy.
-> > > >
-> > > > Thanks for the clarification, that is what I was afraid of when
-> > > > looking at the code, but I was hoping I was just missing it.
-> > > >
-> > > > Increasing the default is an option, but I don't think we want to
-> > > > support a dynamic reallocation scheme for the xattr slots, that wil=
-l
-> > > > likely get extremely messy with synchronization between the LSM
-> > > > framework and BPF LSM hook registrations as well as special code to
-> > > > handle inodes with lifetimes that are disjoint from the BPF LSM
-> > > > programs ... I suppose there may be a way to do it, but it will sur=
-ely
-> > > > be ugly and come at a cost.
-> > >
-> > > BPF trampoline already handles all the synchronizations, such as
-> > > add hook, remove hook, etc. properly. So this is not that hard.
-> >
-> > How do you plan to handle the issue of disjoint lifetimes?
-> >
-> > > All we really need is to allocate a new array, copy pointers, and fre=
-e
-> > > the old array. And we only really need this in the worst case
-> > > scenarios.
-> >
-> > Oh, is that all? :D
-> >
-> > Keep in mind that the code must also handle arbitrary ordering of
-> > LSMs; in other words, you must handle a BPF LSM that isn't at the end
-> > of the LSM order.  While a BPF LSM at the end of the LSM list is the
-> > most common, and recommended ordering for the vast majority of users,
-> > we've been working to make the ordering as generalized as possible.
->
-> All the BPF LSM hooks are called together, so it should be fine.
-> Maybe I missed some corner cases.
+On Tue, May 05, 2026 at 10:54:08AM +0100, Yeoreum Yun wrote:
+> When pKVM is enabled, the FF-A driver must be initialised after pKVM.
+> Otherwise, pKVM cannot negotiate the FF-A version or obtain the RX/TX
+> buffer information, leading to failures in FF-A calls.
+> 
+> Currently, pKVM initialisation completes at device_initcall_sync,
+> while ffa_init() runs at the device_initcall level.
+> 
+> So far, linker deployes kvm_arm_init() before ffa_init(), and SMCs can
+> still be trapped even before finalise_pkvm() is invoked.
+> As a result, this issue has not been observed.
+> 
+> However, relying on above stuff is fragile.
+> Therefore, when pKVM is enabled, the FF-A infrastructure should be
+> initialised only after pKVM initialisation has been fully finalised.
+> 
+> To achieve this, introduce an ffa_root_dev ("arm-ffa") and
+> a corresponding driver to defer initialisation of the FF-A infrastructure
+> until pKVM initialisation is complete, and to defer probing of all FF-A devices until then
+> when pKVM is enabled.
+> 
 
-I was thinking about the LSM framework as a whole, not just the
-potential for multiple BPF programs attached to the BPF LSM.
+I don't like this whole ffa root device design.
+Two question for now:
+1. Can FF-A be a module on systems with pKVM which removes the need for all
+   this dance done here ?
+2. If it is a requirement to have this built-in, I prefer to add a probe
+   and defer it instead of this root ffa device.
 
-> Either way, I agree with David that we don't need too many xattrs.
-> Since BPF LSM is reserved to the privileged users only, it is safe
-> to put a reasonable limit, say 4 or 8, and do not handle the realloc.
-> If the admin would like to brick a system with BPF LSM, there are
-> many other ways to do it.
-
-That is definitely the easier route.  However, please add code to
-ensure the number of attached BPF programs is limited to the number of
-requested slots.
-
---=20
-paul-moore.com
+-- 
+Regards,
+Sudeep
