@@ -1,32 +1,32 @@
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641673E1213;
-	Tue,  5 May 2026 09:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0F63D5649;
+	Tue,  5 May 2026 09:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777971936; cv=none; b=iF2k1ihp5XYhryt1lR7VjAFsSzQGN5p0uvKMopp8lZ4Ohj53Ikc0PyTzX4cf09dhBk2HxtDjYPyeoBXpRGCfE77p5fROxUs2ImpiwMIcownbtQ5Jcg8/mbR6AVQpztBCabhinvogBEYwsS0ufd5mazvgduCTurY6pVtd5RPuKdg=
+	t=1777971938; cv=none; b=BxFx5/3b0cwU2hMGv6FdQAbcJGu6FM4yZnETgv95AKlutbo6cfEr+B1ag3lTHUizX/EwSiC8/x61FtNMfCBnxt70li+wbpD0E9XbAhYKVOkSXxIjDM5q/B8CMlJHtHbL+Fb+AMdXcBBHEP+I+q7vokVh5vzuILtwmmW3SPpDZrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777971936; c=relaxed/simple;
-	bh=Z6oGRNNDPv7HY7Jwe2K5yTNZdEqWzrdbU1BcgGO8c9s=;
+	s=arc-20240116; t=1777971938; c=relaxed/simple;
+	bh=chCyrFKTgdh3bqAx/mQ6lIysEIJoVqpFJGF/rlIkqi4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BLgQ41Sr+GxTmPcKKFgz3VezCsZVr0fl40XyRueuEET1qLQX6YKSVZgq5Y5yas9/QZSM+MhhGhCMEbeC5sqsdpojfIeuaZg4JG2TrPRysTdQgZiMbJO3qFlgkN4x7jf0WhuarErUW92WQK3+QNAH+eFpXNI711a2Aumx0uPWYeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=XkblmXkp; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=ZRB1PEY+0p0AssTxY+P8D9kod+9ThNF4c/pPFoXRkD1OKuv2cjhPhrYqRHADBy2nW2/vBJiHBUbP72ikil6m/1jaXUzD7GD8lCJGEhsTq0k9aImIuWRckZi7vHhdb26yQdbFzztivSw4uv1P9Fa/NQo8bao+WMzDwxT60cFRewg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=uSjcE3/7; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="XkblmXkp"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="uSjcE3/7"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1777971923;
-	bh=Z6oGRNNDPv7HY7Jwe2K5yTNZdEqWzrdbU1BcgGO8c9s=;
+	bh=chCyrFKTgdh3bqAx/mQ6lIysEIJoVqpFJGF/rlIkqi4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=XkblmXkpzZZAvu9TAu6Fo8xGr7wGUQLffhlfPsrw/JunGdCmxKegomNJfYxkSvKrq
-	 nY+Ah0UWy7MZtVE5pdWxGb2KLagXUd1+rXC3feh++QtJWTN2zCB+dX2wFX50KLr0rC
-	 evPC6zYWtifj99O9PunB91EAD+OYk/kkSVv7oceU=
+	b=uSjcE3/7RPzqVxYeknvP09UES2PQcOS9VkYVVqueNpzecmFvo1an3XpkguzW1D0Bg
+	 nFEHj3iswoLhusE/F96Ei5XojOmHw/x30HPACKMdW35EThCzDfqEd2VucH5aOjSyPt
+	 ZadmbkICr/8be6TA7uVP9y8q16Xm891dDk9OoxpA=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Tue, 05 May 2026 11:05:11 +0200
-Subject: [PATCH v5 07/14] module: Make module authentication usable without
- MODULE_SIG
+Date: Tue, 05 May 2026 11:05:14 +0200
+Subject: [PATCH v5 10/14] module: Prepare for additional module
+ authentication mechanisms
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260505-module-hashes-v5-7-e174a5a49fce@weissschuh.net>
+Message-Id: <20260505-module-hashes-v5-10-e174a5a49fce@weissschuh.net>
 References: <20260505-module-hashes-v5-0-e174a5a49fce@weissschuh.net>
 In-Reply-To: <20260505-module-hashes-v5-0-e174a5a49fce@weissschuh.net>
 To: Alexei Starovoitov <ast@kernel.org>, 
@@ -75,238 +75,87 @@ Cc: Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
  debian-kernel@lists.debian.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1777971921; l=7097;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1777971921; l=2563;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=Z6oGRNNDPv7HY7Jwe2K5yTNZdEqWzrdbU1BcgGO8c9s=;
- b=gZ9L4Pv0bW11gPm0OadkMRRSd3fcG4bTAsBKfMt93FHeYTx6e3IE0Apbb9U2ZuKdpL6rwl+xH
- 0w+pvk6DlWQB4Kj/mcYSKmEB5iRuH1DnEV/AbAzFaQus13MV8FaxoKp
+ bh=chCyrFKTgdh3bqAx/mQ6lIysEIJoVqpFJGF/rlIkqi4=;
+ b=AghgISpSvC9jFLJMASwIQ2fl2y7giwEV7IIPQJiNe92PMZ8lKZf0qC99jV/SdHmNA1NchS945
+ I53O1yr0Ve6Cw+2TVu7rpkv9iMeNkP/+D4AMPAnvVv3dujuIZnIrT4f
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-The module authentication functionality will also be used by the
-hash-based module authentication. Split it out from CONFIG_MODULE_SIG
-so it is usable by both.
+Reorganize the code to make it easier to add the new hash-based module
+authentication.
+
+Also drop the now unnecessary stub for module_sig_check().
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- crypto/algapi.c          |  4 ++--
- include/linux/module.h   | 18 +++++++++---------
- kernel/module/Kconfig    |  5 ++++-
- kernel/module/Makefile   |  1 +
- kernel/module/auth.c     | 32 ++++++++++++++++++++++++++++++++
- kernel/module/internal.h |  2 +-
- kernel/module/main.c     |  8 ++++----
- kernel/module/signing.c  | 23 +----------------------
- 8 files changed, 54 insertions(+), 39 deletions(-)
+ kernel/module/auth.c     | 17 ++++++++++++++---
+ kernel/module/internal.h |  8 --------
+ 2 files changed, 14 insertions(+), 11 deletions(-)
 
-diff --git a/crypto/algapi.c b/crypto/algapi.c
-index 37de377719ae..14252b780266 100644
---- a/crypto/algapi.c
-+++ b/crypto/algapi.c
-@@ -24,8 +24,8 @@ static LIST_HEAD(crypto_template_list);
- 
- static inline void crypto_check_module_sig(struct module *mod)
- {
--	if (fips_enabled && mod && !module_sig_ok(mod))
--		panic("Module %s signature verification failed in FIPS mode\n",
-+	if (fips_enabled && mod && !module_auth_ok(mod))
-+		panic("Module %s authentication failed in FIPS mode\n",
- 		      module_name(mod));
- }
- 
-diff --git a/include/linux/module.h b/include/linux/module.h
-index 7566815fabbe..b4760777daad 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -437,9 +437,9 @@ struct module {
- 	/* GPL-only exported symbols. */
- 	bool using_gplonly_symbols;
- 
--#ifdef CONFIG_MODULE_SIG
--	/* Signature was verified. */
--	bool sig_ok;
-+#ifdef CONFIG_MODULE_AUTH
-+	/* Module was authenticated. */
-+	bool auth_ok;
- #endif
- 
- 	bool async_probe_requested;
-@@ -918,16 +918,16 @@ static inline bool retpoline_module_ok(bool has_retpoline)
- }
- #endif
- 
--#ifdef CONFIG_MODULE_SIG
-+#ifdef CONFIG_MODULE_AUTH
- bool is_module_sig_enforced(void);
- 
- void set_module_sig_enforced(void);
- 
--static inline bool module_sig_ok(struct module *module)
-+static inline bool module_auth_ok(struct module *module)
- {
--	return module->sig_ok;
-+	return module->auth_ok;
- }
--#else	/* !CONFIG_MODULE_SIG */
-+#else	/* !CONFIG_MODULE_AUTH */
- static inline bool is_module_sig_enforced(void)
- {
- 	return false;
-@@ -937,11 +937,11 @@ static inline void set_module_sig_enforced(void)
- {
- }
- 
--static inline bool module_sig_ok(struct module *module)
-+static inline bool module_auth_ok(struct module *module)
- {
- 	return true;
- }
--#endif	/* CONFIG_MODULE_SIG */
-+#endif	/* CONFIG_MODULE_AUTH */
- 
- #if defined(CONFIG_MODULES) && defined(CONFIG_KALLSYMS)
- int module_kallsyms_on_each_symbol(const char *modname,
-diff --git a/kernel/module/Kconfig b/kernel/module/Kconfig
-index f535181e0d98..84297da666ff 100644
---- a/kernel/module/Kconfig
-+++ b/kernel/module/Kconfig
-@@ -271,9 +271,12 @@ config MODULE_SIG
- 	  debuginfo strip done by some packagers (such as rpmbuild) and
- 	  inclusion into an initramfs that wants the module size reduced.
- 
-+config MODULE_AUTH
-+	def_bool MODULE_SIG
-+
- config MODULE_SIG_FORCE
- 	bool "Require modules to be validly signed"
--	depends on MODULE_SIG
-+	depends on MODULE_AUTH
- 	help
- 	  Reject unsigned modules or signed modules for which we don't have a
- 	  key.  Without this, such modules will simply taint the kernel.
-diff --git a/kernel/module/Makefile b/kernel/module/Makefile
-index d9e8759a7b05..c7200e293d04 100644
---- a/kernel/module/Makefile
-+++ b/kernel/module/Makefile
-@@ -14,6 +14,7 @@ obj-y += strict_rwx.o
- obj-y += kmod.o
- obj-$(CONFIG_MODULE_DEBUG_AUTOLOAD_DUPS) += dups.o
- obj-$(CONFIG_MODULE_DECOMPRESS) += decompress.o
-+obj-$(CONFIG_MODULE_AUTH) += auth.o
- obj-$(CONFIG_MODULE_SIG) += signing.o
- obj-$(CONFIG_LIVEPATCH) += livepatch.o
- obj-$(CONFIG_MODULES_TREE_LOOKUP) += tree_lookup.o
 diff --git a/kernel/module/auth.c b/kernel/module/auth.c
-new file mode 100644
-index 000000000000..956ac63d9d33
---- /dev/null
+index 21e49eb4967c..2ee512d26790 100644
+--- a/kernel/module/auth.c
 +++ b/kernel/module/auth.c
-@@ -0,0 +1,32 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/* Module authentication checker
-+ *
-+ * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ */
-+
-+#include <linux/export.h>
-+#include <linux/module.h>
-+#include <linux/moduleparam.h>
-+#include <linux/types.h>
-+
-+#undef MODULE_PARAM_PREFIX
-+#define MODULE_PARAM_PREFIX "module."
-+
-+static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
-+module_param(sig_enforce, bool_enable_only, 0644);
-+
-+/*
-+ * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
-+ * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
-+ */
-+bool is_module_sig_enforced(void)
+@@ -37,6 +37,14 @@ void set_module_sig_enforced(void)
+ 	sig_enforce = true;
+ }
+ 
++static __always_inline bool mod_sig_type_valid(enum module_signature_type id_type)
 +{
-+	return sig_enforce;
-+}
-+EXPORT_SYMBOL(is_module_sig_enforced);
++	if (id_type == MODULE_SIGNATURE_TYPE_PKCS7 && IS_ENABLED(CONFIG_MODULE_SIG))
++		return true;
 +
-+void set_module_sig_enforced(void)
-+{
-+	sig_enforce = true;
++	return false;
 +}
++
+ static int mod_verify_sig(const void *mod, struct load_info *info)
+ {
+ 	struct module_signature ms;
+@@ -48,8 +56,8 @@ static int mod_verify_sig(const void *mod, struct load_info *info)
+ 
+ 	memcpy(&ms, mod + (modlen - sizeof(ms)), sizeof(ms));
+ 
+-	if (ms.id_type != MODULE_SIGNATURE_TYPE_PKCS7) {
+-		pr_err("module: not signed with expected PKCS#7 message\n");
++	if (!mod_sig_type_valid(ms.id_type)) {
++		pr_err("module: not signed with expected signature\n");
+ 		return -ENOPKG;
+ 	}
+ 
+@@ -61,7 +69,10 @@ static int mod_verify_sig(const void *mod, struct load_info *info)
+ 	modlen -= sig_len + sizeof(ms);
+ 	info->len = modlen;
+ 
+-	return module_sig_check(mod, modlen, mod + modlen, sig_len);
++	if (ms.id_type == MODULE_SIGNATURE_TYPE_PKCS7 && IS_ENABLED(CONFIG_MODULE_SIG))
++		return module_sig_check(mod, modlen, mod + modlen, sig_len);
++
++	return 0;
+ }
+ 
+ int module_auth_check(struct load_info *info, int flags)
 diff --git a/kernel/module/internal.h b/kernel/module/internal.h
-index 006ada7d4e6e..f8f425b167f1 100644
+index d923e31a5d8e..aabe7f8e1af4 100644
 --- a/kernel/module/internal.h
 +++ b/kernel/module/internal.h
-@@ -68,7 +68,7 @@ struct load_info {
- 	Elf_Shdr *sechdrs;
- 	char *secstrings, *strtab;
- 	unsigned long symoffs, stroffs, init_typeoffs, core_typeoffs;
--	bool sig_ok;
-+	bool auth_ok;
- #ifdef CONFIG_KALLSYMS
- 	unsigned long mod_kallsyms_init_off;
- #endif
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 17a352198016..cd8a74df117e 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -2601,10 +2601,10 @@ static void module_augment_kernel_taints(struct module *mod, struct load_info *i
- 				mod->name);
- 		add_taint_module(mod, TAINT_TEST, LOCKDEP_STILL_OK);
- 	}
--#ifdef CONFIG_MODULE_SIG
--	mod->sig_ok = info->sig_ok;
--	if (!mod->sig_ok) {
--		pr_notice_once("%s: module verification failed: signature "
-+#ifdef CONFIG_MODULE_AUTH
-+	mod->auth_ok = info->auth_ok;
-+	if (!mod->auth_ok) {
-+		pr_notice_once("%s: module authentication failed: signature "
- 			       "and/or required key missing - tainting "
- 			       "kernel\n", mod->name);
- 		add_taint_module(mod, TAINT_UNSIGNED_MODULE, LOCKDEP_STILL_OK);
-diff --git a/kernel/module/signing.c b/kernel/module/signing.c
-index 69d4b1758540..07a786723221 100644
---- a/kernel/module/signing.c
-+++ b/kernel/module/signing.c
-@@ -16,27 +16,6 @@
- #include <uapi/linux/module.h>
- #include "internal.h"
+@@ -335,15 +335,7 @@ int module_enforce_rwx_sections(const Elf_Ehdr *hdr, const Elf_Shdr *sechdrs,
+ void module_mark_ro_after_init(const Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+ 			       const char *secstrings);
  
--#undef MODULE_PARAM_PREFIX
--#define MODULE_PARAM_PREFIX "module."
--
--static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
--module_param(sig_enforce, bool_enable_only, 0644);
--
--/*
-- * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
-- * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
-- */
--bool is_module_sig_enforced(void)
+-#ifdef CONFIG_MODULE_SIG
+ int module_sig_check(const void *mod, size_t mod_len, const void *sig, size_t sig_len);
+-#else /* !CONFIG_MODULE_SIG */
+-static inline int module_sig_check(const void *mod, size_t mod_len,
+-				   const void *sig, size_t sig_len)
 -{
--	return sig_enforce;
+-	return 0;
 -}
--EXPORT_SYMBOL(is_module_sig_enforced);
--
--void set_module_sig_enforced(void)
--{
--	sig_enforce = true;
--}
--
- /*
-  * Verify the signature on a module.
-  */
-@@ -84,7 +63,7 @@ int module_sig_check(struct load_info *info, int flags)
- 		info->len -= markerlen;
- 		err = mod_verify_sig(mod, info);
- 		if (!err) {
--			info->sig_ok = true;
-+			info->auth_ok = true;
- 			return 0;
- 		}
- 	}
+-#endif /* !CONFIG_MODULE_SIG */
+ 
+ #ifdef CONFIG_MODULE_AUTH
+ int module_auth_check(struct load_info *info, int flags);
 
 -- 
 2.54.0
