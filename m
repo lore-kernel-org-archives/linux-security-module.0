@@ -1,142 +1,78 @@
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-05.mail-europe.com (mail-05.mail-europe.com [85.9.206.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B4A2652AF
-	for <linux-security-module@vger.kernel.org>; Wed,  6 May 2026 02:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC4D1E7C18
+	for <linux-security-module@vger.kernel.org>; Wed,  6 May 2026 05:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.9.206.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778033509; cv=none; b=YJKoANlbtT5g11MQSW7NNac4fV5nRSvp8qEQmya1EhdyQeACkpgljW9WRgPs5IvIKIMzsX6Nuopadls00ziMjgZZx5RUiFhdUBqFC2AxFTm4brfmMrxYcN1ub8GxIMHCDSMk17mMsT6PP6k51fxxGV1GfdUdRVKCn2Xk2+Z5Y1c=
+	t=1778046576; cv=none; b=F8uwLHYQsnzDYRiaHlEGKvk6gvJ1m1VOsCI3f8rf/UZ1EfCeVca9nNKo6Fp1lHLj2+uk+IQVhCFeCIVwinhenitlx2Asa+PyML2cYqBdcLPHbBwsc+nxiB7sUIAb0OLET5+O8Tw4z7IGY+4Fk2cNPC9kw3KPwvizj2sOdDCx2f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778033509; c=relaxed/simple;
-	bh=jr0C3ws9gN/dCpRosmQxsI5jdCjT1h5T1Ng7TbjVcBY=;
-	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=ZaAAzTl9/aHZvQ0yiHLQxhySAZvt4KRvxXi4bBDeaqzqcAqKKkb5ygw7H5XYO6mDeElZVYl2BdrOimez/mDCoQKUXErS2V+i3c/3Yu2DAkGLtR3KVBg1jeVHtg7y0EfWSsqtbm9IxVXiqAnoS/4icX+m/1QiIA+s6ahv6RyRDkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=G4xQIEJR; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1778046576; c=relaxed/simple;
+	bh=V63HCRFuyfYgt+cbtqqWh5Ry5LYRNQC5sAiPc4io1AA=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=PB8J9cBsv2ImlT39YB0HXCyHvh/a+M33H4PwrxmcRjCvGrgW8kwwXduc9BDs5t7io7cYmUu9qgud6MgZ77GD/f8IcXGlIjt+9xCcI87ZOPxFbvvgUzVpZ/Ag1sMAT1EB3/Nu99SIAdpyqwW+p6GeoHtChMELA0tOevG73jTp1T4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=Yp1YYKIk; arc=none smtp.client-ip=85.9.206.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="G4xQIEJR"
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-8dbbc6c16b2so63701485a.0
-        for <linux-security-module@vger.kernel.org>; Tue, 05 May 2026 19:11:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1778033506; x=1778638306; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yrGezS/XNq9+psZQ70L22Z8q+JOJb1NZlusetExcJPM=;
-        b=G4xQIEJR/ebOjowjSSdMTbqoNKWOl5jU7BKss3pM77W3gCg2St8Ue0lw15TNrBF5yG
-         BG/LmFlgWOon/npVbLJdOHPM1xkdNAKTcJRXA1dAofk8PogkSBUC+PC8I6XLgI7tfGy0
-         fp34/9U70domkU8qO+OUpBES5fw3pgPYbql01bA4+bwLfATPOlTZAJICFqJU6Xsdf4OJ
-         g/sFb3CdEp3DcJvshSgvHwqQUXJohiA3dfmwE1tjLT4TFo+lIAfXx0LMbgT11QyhTJo6
-         5yJRgMXJ4N18Rjf51FB8PVJ5iSKjoJtIi+M/p341WnJP1VAmnbAyNSpjPx/qhyhcMBvz
-         k/Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778033506; x=1778638306;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yrGezS/XNq9+psZQ70L22Z8q+JOJb1NZlusetExcJPM=;
-        b=A7d/fsUBnF2tPEBn7tinGM9dyHn68oKF9leUtjpM53DMwlLevG5rRMVHeQNJyku9Y9
-         8BotgRWYnm/gHhAWmsn7QSrAnHDEcjCKgp+F7tne7kmjGBQfLKluhg3wAST4EnEP9lxC
-         do+pvzoTSKZh6NCJP911r6Ba/JXpDaAsPmYbhBMwwnOl6Y9Be+iHH0mAsJJ4L4tMzJEu
-         epr48cAD0m474pCKVe0PfFQE+n+fFy4v5JQ6GkcvRSpsR/kdqCIZcXHqTu7tJe12EFsh
-         j4KBkxWGDeTdBiJJuitBZiAsAl2kcQpw/bYL1VrUvXylO1V1QGAt1tI2IqD3lN+GSWY1
-         VhiA==
-X-Forwarded-Encrypted: i=1; AFNElJ+/+OYI0UArYMacKhuXOSVnn1ssLpKuF8SGyiSUt7/PLe+3WG+QefqUG3gG9KCJJfjyJHtKghaeTu379qxk0q3cSbuHH60=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh4+98eghLsQeQjcf5zMHJ8TTx7QnlZKnKuDzZDwGUEmiZleZA
-	6GJAtIr0ZZS4ZGgNgpfZfMZkATuuWcKx7CHGXPWEHSC+erg59kNM/54M2XdI5YjCKg==
-X-Gm-Gg: AeBDieus5wU4wSMQpH8w9d1a+Zgy2+5HuG4vYjt2q5UGoOW0BuwN37lKMTOtKHox8Lo
-	FVJvAItF2ln/lCMcjDkjGjjWjw4TyQCyWDFsXOdoR75tj1lPSJMGtQnRlbt0x3z4H7WWfbv1BAE
-	ZoCv9kGIdz7kP2E7OZ3ZtEOlhX7AEwabOFQjcgspN3B5MYh7zW7HNNwE5tPpbHs0C9lS0v1kqlI
-	gJIoovJEJyogR0v+zchauBLcRPobIQubWcdDJHL8BIbcUD48FAcPbEx0mH9tw6tLHTf2FdE+ihD
-	M/pPbdAWJ04yUMAuxr0rYPnVqSb8/q1Op5ZOPsZh4FX1TC5B7x8dzflHQsssaH8xn4ueU+QbYfZ
-	Zq/1MjKi7AfZ76RboVQcco35J3sEvgyod601p1ATFbh04POeM0vb/2V9ZSHcTmUVk7U3bqUUWbG
-	XVEpInJMT+JtT5VisBOIwrnOZYsM/CVP3Jbxvk5Eur8cschjsc2SySxek+sw1zEKXnimZbCLD8Q
-	W+1q4Ex7eqTxERQrL3Opg==
-X-Received: by 2002:a05:620a:318e:b0:8ee:fc5e:e2e9 with SMTP id af79cd13be357-902e298aa9cmr923174085a.13.1778033506563;
-        Tue, 05 May 2026 19:11:46 -0700 (PDT)
-Received: from [192.168.7.16] (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8fc2c91e11fsm1471690385a.40.2026.05.05.19.11.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 May 2026 19:11:45 -0700 (PDT)
-From: Paul Moore <paul@paul-moore.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-CC: Yeoreum Yun <yeoreum.yun@arm.com>, Jonathan McDowell <noodles@earth.li>, <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <linux-integrity@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>, <jmorris@namei.org>, <serge@hallyn.com>, <roberto.sassu@huawei.com>, <dmitry.kasatkin@gmail.com>, <eric.snowberg@oracle.com>, <jarkko@kernel.org>, <jgg@ziepe.ca>, <sudeep.holla@kernel.org>, <maz@kernel.org>, <oupton@kernel.org>, <joey.gouly@arm.com>, <suzuki.poulose@arm.com>, <yuzenghui@huawei.com>, <catalin.marinas@arm.com>, <will@kernel.org>, <noodles@meta.com>, <sebastianene@google.com>
-Date: Tue, 05 May 2026 22:11:42 -0400
-Message-ID: <19dfb0e2730.2843.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-In-Reply-To: <5debff82dc758d9c91223e4f1f5b9e39a3fcd4f5.camel@linux.ibm.com>
-References: <cover.1777036497.git.noodles@meta.com>
- <7734099f5e7fda5480bca016a9e6707983325fbd.camel@linux.ibm.com>
- <afMlgstqahnZg68h@e129823.arm.com>
- <9f188536f09a2db30877d6bfbb84aeaf2565cccf.camel@linux.ibm.com>
- <CAHC9VhRsnmPp2KmQAns5uq5qXX5EF2xQQzyfTgrPi4O9AXyPpg@mail.gmail.com>
- <ba4bf28314b679474a6a8da6298e548e54b3754c.camel@linux.ibm.com>
- <CAHC9VhRE2kRr1fdDf6xgQgpSrtvqtP8Vy9LVGJhDZFUbzLKGmQ@mail.gmail.com>
- <ff28c6dcb60c357c752724927addaa8c4fd3bf2c.camel@linux.ibm.com>
- <CAHC9VhQY2TMkTvQq9P8oZteQWQSr7qq2utOuH+pdVx+8jWLBCw@mail.gmail.com>
- <a9412fe10e70ce95dd70556ace19368bec5c188c.camel@linux.ibm.com>
- <CAHC9VhRUgNA=Sj=jhD=zOt8R80Q+FQj+H0nYSy-FAujTL3EKPA@mail.gmail.com>
- <5debff82dc758d9c91223e4f1f5b9e39a3fcd4f5.camel@linux.ibm.com>
-User-Agent: AquaMail/1.58.1 (build: 105801620)
-Subject: Re: [PATCH] ima: debugging late_initcall_sync measurements
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="Yp1YYKIk"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1778046564; x=1778305764;
+	bh=KpcgUtDn3EXTG1BBcztlZzlGN9ycWgoh9qrRkBRq/p4=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=Yp1YYKIkP1entrrA514OkrKPwHtv8aoy/9HiyP7QU+871t63DbSEYnJ0v5bIlFFG6
+	 LRD8M4CWo+DdUxV1hPgxFBX2mFG4YBGF86rKDV2c48Hp+fGoCtLZsQmqe2XfiEQcbe
+	 ETUAXI4Mn1wLr64/0FI8lhLYK38Xv3Uzr6CsiNZaw6En9p+l+j4XdKBm5rfvJ01CQB
+	 YOnBaPB8UuWlEAXn1+nRjqNpEY5osV194W6soJuBSmZXM058679XP+9nIgSog67UaW
+	 jTYWv8Fmgvv8R77j2qFMvRHRlw9suOkc5mBiuEoN7KVE025Fs5Iih8AW8rcQVnZ4as
+	 A3VA9endSPhQw==
+Date: Wed, 06 May 2026 05:49:18 +0000
+To: Paul Moore <paul@paul-moore.com>
+From: Mayank Gite <drapl0n@protonmail.com>
+Cc: Mayank Gite <drapl0n@protonmail.com>, Serge Hallyn <sergeh@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Documentation: fix typo and formattting in security/credentials.rst
+Message-ID: <20260506054914.162806-1-drapl0n@protonmail.com>
+Feedback-ID: 27639855:user:proton
+X-Pm-Message-ID: 7ea98b8c116dfdecef9204ec1d3c723a46d2eb38
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On May 5, 2026 9:57:23 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> On Tue, 2026-05-05 at 18:55 -0400, Paul Moore wrote:
->> On Tue, May 5, 2026 at 5:05 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
->>> On Mon, 2026-05-04 at 16:51 -0400, Paul Moore wrote:
->>>> On Mon, May 4, 2026 at 8:03 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
->>>>> On Sun, 2026-05-03 at 12:46 -0400, Paul Moore wrote:
->>>>>> Regardless, assuming you always want IMA to leverage a TPMs when they
->>>>>> exist, your reply suggests that using an initcall based IMA init
->>>>>> scheme, even a late-sync initcall, may not be sufficient because
->>>>>> deferred TPM initialization could happen later, yes?
->>>>>
->>>>> Well yeah.  The TPM could be configured as a module, but that scenario is 
->>>>> not of
->>>>> interest.  That's way too late.  The case being addressed in this patch set is
->>>>> when the TPM driver tries to initialize at device_initcall, returns
->>>>> EPROBE_DEFER, and is retried at deferred_probe_initcall (late_initcall).  Since
->>>>> ordering within an initcall is not supported, this patch attempts to initialize
->>>>> IMA at late_initcall and similarly retries, in this case, at 
->>>>> late_initcall_sync.
->>>>
->>>> Okay, so from a TPM initialization perspective you are satisfied with
->>>> a late-sync IMA initialization, yes?
->>>
->>> No. On some architectures moving IMA initialization from the late_initcall to
->>> late_initcall_sync does not miss any measurement records. However, as 
->>> previously
->>> mentioned, Linux running in a PowerVM LPAR the move would drop ~30 measurement
->>> records[1].  So no, only if the TPM is not initialized by late_initcall, should
->>> IMA retry at late_initcall_sync.
->>
->> What do you do in the PowerVM LPAR when the TPM is not avaiable at
->> late initcall and you have to defer IMA initialization until
->> late-sync?
->
-> Your question is hypothetical ...
+- Fixes a typo in "Keys and keyrings" section. Replaces "keying" with
+  "keyring".
+- Updates formatting of keyring types.
 
-<heavy eye roll>
+Signed-off-by: Mayank Gite <drapl0n@protonmail.com>
+---
+ Documentation/security/credentials.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> ... as the TPM isn't deferred, so IMA doesn't go into
-> TPM-bypass mode.  Testing on a PowerVM LPAR demonstrated that it skips ~30
-> measurement list records.  So moving the initcall to late_initcall_sync would
-> cause a regression.
-
-Let me rephrase to make the question clear - how do you plan to handle a 
-system where you lose measurements by waiting until late-sync, but the TPM 
-is not available at the late initcall.
-
---
-paul-moore.com
-
-
+diff --git a/Documentation/security/credentials.rst b/Documentation/securit=
+y/credentials.rst
+index d0191c8b8060..4996838491b1 100644
+--- a/Documentation/security/credentials.rst
++++ b/Documentation/security/credentials.rst
+@@ -189,9 +189,9 @@ The Linux kernel supports the following types of creden=
+tials:
+      be searched for the desired key.  Each process may subscribe to a num=
+ber
+      of keyrings:
+=20
+-=09Per-thread keying
+-=09Per-process keyring
+-=09Per-session keyring
++=09- Per-thread keyring
++=09- Per-process keyring
++=09- Per-session keyring
+=20
+      When a process accesses a key, if not already present, it will normal=
+ly be
+      cached on one of these keyrings for future accesses to find.
+--=20
+2.53.0
 
