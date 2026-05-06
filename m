@@ -1,39 +1,55 @@
-Received: from mail-05.mail-europe.com (mail-05.mail-europe.com [85.9.206.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC4D1E7C18
-	for <linux-security-module@vger.kernel.org>; Wed,  6 May 2026 05:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.9.206.169
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0878C2DB78B;
+	Wed,  6 May 2026 05:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778046576; cv=none; b=F8uwLHYQsnzDYRiaHlEGKvk6gvJ1m1VOsCI3f8rf/UZ1EfCeVca9nNKo6Fp1lHLj2+uk+IQVhCFeCIVwinhenitlx2Asa+PyML2cYqBdcLPHbBwsc+nxiB7sUIAb0OLET5+O8Tw4z7IGY+4Fk2cNPC9kw3KPwvizj2sOdDCx2f0=
+	t=1778046883; cv=none; b=PdD5ox0bzNlMx7svlAvMc1R9r55ITZtyA2Ne5FHMaJ4u96exeD0NhoIUKQsnfU6D0Yl6v1rvycsYS1Gp5FZqwnYnrJTogtjLoAwu8v1/Y9qI+Dw9ZfCHpLyv826+s1dB6jzVkDZFF7ItP8Qe+ajmDSor8dU9nU0lrJHeRk5OxYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778046576; c=relaxed/simple;
-	bh=V63HCRFuyfYgt+cbtqqWh5Ry5LYRNQC5sAiPc4io1AA=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=PB8J9cBsv2ImlT39YB0HXCyHvh/a+M33H4PwrxmcRjCvGrgW8kwwXduc9BDs5t7io7cYmUu9qgud6MgZ77GD/f8IcXGlIjt+9xCcI87ZOPxFbvvgUzVpZ/Ag1sMAT1EB3/Nu99SIAdpyqwW+p6GeoHtChMELA0tOevG73jTp1T4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=Yp1YYKIk; arc=none smtp.client-ip=85.9.206.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+	s=arc-20240116; t=1778046883; c=relaxed/simple;
+	bh=n19EvKj9ct8WooqEGIU96Ez3cJ1oH3gc14hD5umAenU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nUooIViToVv633pTpvOBFoZkIzlwB9NU4VUMQ219C0nsbZbiTo+TlaxdQp9+AYFB02qXIKLl7mmiEedV+YByxnWpVUv9mTfNdvQt3Xu95S7Yky2VW8b0YLCsD4ksjN7cttLIFlbCAxQwNbyB0jqrHAIpU6J9YQnDf+UKQ4i2B18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=W+4eIhwb; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="Yp1YYKIk"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1778046564; x=1778305764;
-	bh=KpcgUtDn3EXTG1BBcztlZzlGN9ycWgoh9qrRkBRq/p4=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=Yp1YYKIkP1entrrA514OkrKPwHtv8aoy/9HiyP7QU+871t63DbSEYnJ0v5bIlFFG6
-	 LRD8M4CWo+DdUxV1hPgxFBX2mFG4YBGF86rKDV2c48Hp+fGoCtLZsQmqe2XfiEQcbe
-	 ETUAXI4Mn1wLr64/0FI8lhLYK38Xv3Uzr6CsiNZaw6En9p+l+j4XdKBm5rfvJ01CQB
-	 YOnBaPB8UuWlEAXn1+nRjqNpEY5osV194W6soJuBSmZXM058679XP+9nIgSog67UaW
-	 jTYWv8Fmgvv8R77j2qFMvRHRlw9suOkc5mBiuEoN7KVE025Fs5Iih8AW8rcQVnZ4as
-	 A3VA9endSPhQw==
-Date: Wed, 06 May 2026 05:49:18 +0000
-To: Paul Moore <paul@paul-moore.com>
-From: Mayank Gite <drapl0n@protonmail.com>
-Cc: Mayank Gite <drapl0n@protonmail.com>, Serge Hallyn <sergeh@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Documentation: fix typo and formattting in security/credentials.rst
-Message-ID: <20260506054914.162806-1-drapl0n@protonmail.com>
-Feedback-ID: 27639855:user:proton
-X-Pm-Message-ID: 7ea98b8c116dfdecef9204ec1d3c723a46d2eb38
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="W+4eIhwb"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A28319F6;
+	Tue,  5 May 2026 22:54:34 -0700 (PDT)
+Received: from e129823.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7374B3F7B4;
+	Tue,  5 May 2026 22:54:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1778046880; bh=n19EvKj9ct8WooqEGIU96Ez3cJ1oH3gc14hD5umAenU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W+4eIhwbn7rw9HtfloGyopJGPMzUByUeKixAFz193Mkz0xdeDphTN4xqLf04XWs8O
+	 aWhpj6LNS6pMGe8aY82wj8s1kG/NGvejLFdkoFCHmnhilJR7EFC+e87JStoIqu7GTX
+	 Hftc6y/Jcm6wqu70VK1DoNZmB6V+3c4g8pmNicO0=
+Date: Wed, 6 May 2026 06:54:33 +0100
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: David Safford <david.safford@gmail.com>,
+	Jonathan McDowell <noodles@earth.li>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com, jarkko@kernel.org, jgg@ziepe.ca,
+	sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org,
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org, noodles@meta.com,
+	sebastianene@google.com
+Subject: Re: [PATCH] ima: debugging late_initcall_sync measurements
+Message-ID: <afrXmRiq7XvSe6yN@e129823.arm.com>
+References: <cover.1777036497.git.noodles@meta.com>
+ <7734099f5e7fda5480bca016a9e6707983325fbd.camel@linux.ibm.com>
+ <afMlgstqahnZg68h@e129823.arm.com>
+ <9f188536f09a2db30877d6bfbb84aeaf2565cccf.camel@linux.ibm.com>
+ <CAGWfHUW+AX0Hpuw5Vr5iTSaJKQJ+O_4nWWmU1UR8Z_3XFctHZg@mail.gmail.com>
+ <202f90682fe47bb5fb9b08f8678ae00981b5290b.camel@linux.ibm.com>
+ <201b9172ac47c6766443c1f2343cab3548f33c29.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -41,38 +57,83 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <201b9172ac47c6766443c1f2343cab3548f33c29.camel@linux.ibm.com>
 
-- Fixes a typo in "Keys and keyrings" section. Replaces "keying" with
-  "keyring".
-- Updates formatting of keyring types.
+Hi Mimi,
 
-Signed-off-by: Mayank Gite <drapl0n@protonmail.com>
----
- Documentation/security/credentials.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> On Sun, 2026-05-03 at 07:36 -0400, Mimi Zohar wrote:
+> > On Fri, 2026-05-01 at 12:52 -0400, David Safford wrote:
+> > > On Thu, Apr 30, 2026 at 5:43 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > > > 
+> > > > On Thu, 2026-04-30 at 10:48 +0100, Yeoreum Yun wrote:
+> > > > > With above change I confirmed there is no meaurement log
+> > > > > between boot_aggregate and boot_aggregate_late except "kernel_version"
+> > > > > But this is ignorable since this UTS measurement is done in
+> > > > > "ima_init_core() (old: ima_init())" and it is part of ima initialisation.
+> > > > > 
+> > > > > 1. ima_policy=tcb
+> > > > > 
+> > > > >   # cat /sys/kernel/security/ima/ascii_runtime_measurements
+> > > > >   10 0adefe762c149c7cec19da62f0da1297fcfbffff ima-ng sha256:0000000000000000000000000000000000000000000000000000000000000000 boot_aggregate
+> > > > >   10 4e5d73ebadfd8f850cb93ce4de755ba148a9a7d5 ima-ng sha256:0000000000000000000000000000000000000000000000000000000000000000 boot_aggregate_late
+> > > > >   10 7c23cc970eceec906f7a41bc2fbde770d7092209 ima-ng sha256:72ade6ae3d35cfe5ede7a77b1c0ed1d1782a899445fdcb219c0e994a084a70d5 /bin/busybox
+> > > snip
+> > > > > 
+> > > > > 2. ima_policy=critical_data
+> > > > > 
+> > > > >   # cat /sys/kernel/security/ima/ascii_runtime_measurements
+> > > > >   10 0adefe762c149c7cec19da62f0da1297fcfbffff ima-ng sha256:0000000000000000000000000000000000000000000000000000000000000000 boot_aggregate
+> > > > >   10 49ab61dd97ea2f759edcb6c6a3387ac67f0aa576 ima-buf sha256:0c907aab3261194f16b0c2a422a82f145bc9b9ecb8fdb633fa43e3e5379f0af2 kernel_version 372e312e302d7263312b // Ignorable since it's generated by ima_init(_core)().
+> > > > >   10 4e5d73ebadfd8f850cb93ce4de755ba148a9a7d5 ima-ng sha256:0000000000000000000000000000000000000000000000000000000000000000 boot_aggregate_late
+> > > > > 
+> > > > > Therefore, init_ima() could move into late_initcall_sync like v1 did:
+> > > > >   - https://lore.kernel.org/all/20260417175759.3191279-2-yeoreum.yun@arm.com/
+> > > > 
+> > > > Thanks, Yeoreum.  It's a bit premature to claim it's "safe" to move the
+> > > > initcall.  Hopefully others will respond.
+> > > > 
+> > > > Mimi
+> > > 
+> > > I have also run with this patch on a number of bare metal and virtual machines,
+> > > running everything from default Fedora 44 to a version with everything turned on
+> > > (uefi secure boot, UKI with sdboot stub measurements, IMA measurement
+> > > and appraisal enabled,
+> > > all systemd measurements on, and systemd using the TPM for root
+> > > partition decryption.)
+> > > I too see only the kernel_version event between the normal and late
+> > > calls, if ima_policy=critical_data.
+> > 
+> > Thanks, Dave!  Were all the systems you tested x86_64?  The next step would be
+> > to test on different arch's (e.g. Z, Power).
+> 
+> On both Z and PowerVM, there are ~30 measurements between boot_aggregate and
+> boot_aggregate_late.  For example, on PowerVM:
+> 
+> # grep -n boot_aggregate
+> /sys/kernel/security/integrity/ima/ascii_runtime_measurements
+> 
+> 1:10 f60a05d7354fb34aabc02965216abd3428ea52bb ima-sig
+> sha256:9887dd089ee19a6517bca10580b02c1bb9aa6cd86c157b6ead8a1c0403f348d5
+> boot_aggregate 
+> 31:10 e2592b0d61da6300d3db447b143897a9792231ea ima-sig
+> sha256:9887dd089ee19a6517bca10580b02c1bb9aa6cd86c157b6ead8a1c0403f348d5
+> boot_aggregate_late
+> 
+> It would be interesting to the results from a Raspberry Pi 5 as well,
+> with/without a TPM.
 
-diff --git a/Documentation/security/credentials.rst b/Documentation/securit=
-y/credentials.rst
-index d0191c8b8060..4996838491b1 100644
---- a/Documentation/security/credentials.rst
-+++ b/Documentation/security/credentials.rst
-@@ -189,9 +189,9 @@ The Linux kernel supports the following types of creden=
-tials:
-      be searched for the desired key.  Each process may subscribe to a num=
-ber
-      of keyrings:
-=20
--=09Per-thread keying
--=09Per-process keyring
--=09Per-session keyring
-+=09- Per-thread keyring
-+=09- Per-process keyring
-+=09- Per-session keyring
-=20
-      When a process accesses a key, if not already present, it will normal=
-ly be
-      cached on one of these keyrings for future accesses to find.
---=20
-2.53.0
+Honestly, I find this result hard to accept.
 
+This effectively means that there is code invoking IMA measurement during late_initcall().
+It also implies that if, in the future, a late_initcall is added that performs
+an IMA measurement before IMA initialization has occurred accoding to order by linker,
+that measurement could be missed.
+
+Could you please check how the index (1, 31) was added to either
+ima_template_entry or ima_queue_entry to produce this result?
+
+-- 
+Sincerely,
+Yeoreum Yun
