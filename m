@@ -1,197 +1,103 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37653F9F4B
-	for <linux-security-module@vger.kernel.org>; Wed,  6 May 2026 15:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E4D4B8DE9;
+	Wed,  6 May 2026 17:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778081639; cv=none; b=H1TzCqi74ZmztVpVzX5Ma5zr4W/wVIw6N2Xcwg+EMizhZeTprvGmGl8m+rpQ4xO43Ld5a/QBoQdyu9gGDBtm9v6x3BwDxUIhUfyGm4lxJiAwqpj6TYIob935QjjCw/A5Q11HUYf5QAYHwXk5mdu2m9zZ1a7ikXwqUMHD4dvCYac=
+	t=1778088691; cv=none; b=H7c3lil3JM5KXKioSSZNXo3OKT4iJwHr4XkoSSZgZkKejb7toa5xX/vR2w1pwS8BwK6Mq49X6LCws8VcmzyYUbEHRscHwUs0AWcsguikdnMdrT2oaiYwcJGTZpzK6Y2xyeZOBkORhbNxV/C5XhFqJczg1EBYJXhscAG8R+KhMYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778081639; c=relaxed/simple;
-	bh=v7iWJA7AOWqAM5g8QOaOTdACaW3JaQX1YwwtDoobk+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bEt5yAkAO4HhSPz4DyiSDZbA1cnMlrpO6rDoyNt4d4QH7Ftp52iex54znc/qWbIEpBCANy0i04te/Xb7+4SghIFTiX44lY9XpBZBK8wQz4g7Mzlv8tkm3HQWbiy//I+Nok4a3PU43EvYKHEZHz7Mp2TXGnn8RNf7eLLgVOyGRXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I/O1ZBHG; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1778088691; c=relaxed/simple;
+	bh=09gOH9z89fiGikL7sFb1HYcEIaMz4M52kOWacbyxoZs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WFekIQvQ0J/dBT177RJVXLExAzfOUGc0lhvbm5yTmZ6dg0Y8XYF0T7rdn2m7RdLovLNtGwuGuX0wnsJIt4sooash0LPx7AmL8GDI977R5Wv0EeVqOMfw1GkWxKng+TKYC1nb9LTZgzeBsyPSEjyEcVpxtD9bz4dj4cUhtVyIpHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kUiHFHXK; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I/O1ZBHG"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-48984d29fe3so93335915e9.0
-        for <linux-security-module@vger.kernel.org>; Wed, 06 May 2026 08:33:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1778081629; x=1778686429; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pPgcwkvVhL8aXocPAgoIRAhV9vFqMpLjuj83PIidEBY=;
-        b=I/O1ZBHGO+5NYtv/Jz2fe90F87I4XbCwMI767rGH4xPBExZDXi1S1dANoOUY1+U/O/
-         iQpEea5bZVhTq0A0E0e95IsDY/R68RBGTk9NfOtHLJqrGnrsthwY5au2Lmx33YsjV94S
-         Cm7e2DYF+7Oo9fjkO6c2OArRKhPOZ2uV/k/m2Qzj8hhcNL2z0m4RYRwkBVkXJndfWJiZ
-         ShHYg8pUmSOiD4VsEr60z1T5t4sQLGSsCCQwtDEWREXDGJ25E/sk8RdQy17SDCp9fyVQ
-         4ow8Kd2xDtXvVlehyU4lBrMunGPrh/H4e5xzcXL8mJV19LHUrtocfVL4rFOQz/aY9ISz
-         bobg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778081629; x=1778686429;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pPgcwkvVhL8aXocPAgoIRAhV9vFqMpLjuj83PIidEBY=;
-        b=VDQU+O0uwRxu7bcJa8zWgwvCPSu2vqtaBMewb/JDuSRUmdDygn9xk6vGepM6jP/oeE
-         5YZkwcm2o9h4fTT5fUarcXFe9Klkig495X+8DlblMJAkerzr0DE62lNws7rtdJGB7P5N
-         9ZzFix7YZ16dIPfy8hXPKJY4iSqsnTsPILITDoTupY9kommsNv3Qgda5/BcZtjTjTzT7
-         NUqszZ+hmUosD/aUeq7ulWnKPQpMNtUuvrmto7jrsgNiKYARacfRKcoqAeBhKxFfAXSb
-         UEh9Qd8bEkEjomP0S7HFVrgj/uD3LUcWUxov0aifVjdOgesXuORi7Se736bZaqVupTEv
-         nQmw==
-X-Forwarded-Encrypted: i=1; AFNElJ9zne041TbwtjG/owkxBnK1kOKGMPT6j4THVvaTcYxcE3EddlHdTcsjdfqRFKeHTscPCKuf3kM5O6q9hvgdplWhKpZwhn4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywq9P7P/i9HTdOc7K4ocXMw6/xP/YoKsws9Hy/OxUctLztMu3Jy
-	EhYyJTnv+fwVfNbcP8sAr8xY+RYO5dxp7qEqJPMRQBr7WYfoXjtBYtvX4JmWVFQLFQ==
-X-Gm-Gg: AeBDieuxymx9iNBnNFpuCSED6FaySR7E8lT0ruZCQMW+KAEPFtN848kR5Ddo+pr+UXB
-	hWxHl0NXcUDNwAmdxYhalI7MCskATSJgdgMg+mYnlZGnkOotOqsJsElsHpWMlY14qF6pV8j1miT
-	bi2Ctv362gnKivCTW1cq8GGaShF6rQVawkrL+I+k8myxgT19I0uaziRU7Rb72cC2r8LMZ3F8SK8
-	FNbHebJK6gFqB42zAaIE0odlH7jZu4g1PAgoHwWp3nc58giadE1ljkNaAfu5XX7yJXF8iEiOs3U
-	Qb/9CJvTBTByQZOoiIyUSo7psZgnTLhvNfUGr0KoCGjMClsVItiMSghKw5vAiK0Svt+xBUaipWl
-	Husyc8jwzWx4y9k5Y6lS/YdI/qKifBqGehq/G8YiPdayqVvDU9kT8iHbIaXlx18Un7CmBFc8Puk
-	qjlfrm2EWLPQ3m/Lu1CY5J69Vf2P7h45lHsGsDIFNWLwl1zwao/e2wzdAvRBZIvxsvj3YFHJuPd
-	cNhxLP6aIi2dA==
-X-Received: by 2002:a05:600c:1d18:b0:489:1a63:509c with SMTP id 5b1f17b1804b1-48e51dd689fmr66886705e9.0.1778081628773;
-        Wed, 06 May 2026 08:33:48 -0700 (PDT)
-Received: from google.com ([2a00:79e0:288a:8:ad61:8ca1:7cb9:f2e1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e538a50d0sm91608975e9.5.2026.05.06.08.33.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 May 2026 08:33:47 -0700 (PDT)
-Date: Wed, 6 May 2026 17:33:42 +0200
-From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: Matthieu Buffet <matthieu@buffet.re>
-Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	linux-security-module@vger.kernel.org,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	konstantin.meskhidze@huawei.com, Tingmao Wang <m@maowtm.org>,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v4 0/7] landlock: Add UDP access control support
-Message-ID: <aftfVvru3npQ9kWq@google.com>
-References: <20260502124306.3975990-1-matthieu@buffet.re>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kUiHFHXK"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=76vttDvg4y9AZKkRp0beXp2t/fQ+E1/znFnFmENOgVc=; b=kUiHFHXKSlqIAsgv3Kb5ciVeD1
+	uElhnQBj1eOeqT/aU71QAiWY9EmDgq+mbod86oP6lPczCz58GBUyHi5CxRPwuefvnvj9PblcAQKqA
+	ccr9wEyghNynBhFKROY+CKkV5fPZa//NwqyV5cv5O+d0kulK7+ZYCqtCiO7KEhtOsa8meGsEEc2Qo
+	9ZG7KRtjl10Oi9AGNP2qCfHrZG8GcaDCYOkKNpEgyvzLPGg5frMNBJMDAi1319Cnf0ziAk2ECyf7K
+	OG00XZc65LhE/prr9EFdsAIViEEiCZBaUEn2cDQPYubpeK6v5rDhgpjYc0spsROtSgsirSG/KApKe
+	7PS0k6UQ==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1wKg5h-00000001fK9-2wTI;
+	Wed, 06 May 2026 17:31:21 +0000
+Message-ID: <14dd9b3a-63ad-4749-ac03-e48be5491dc1@infradead.org>
+Date: Wed, 6 May 2026 10:31:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260502124306.3975990-1-matthieu@buffet.re>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation: fix typo and formattting in
+ security/credentials.rst
+To: Mayank Gite <drapl0n@protonmail.com>, Paul Moore <paul@paul-moore.com>
+Cc: Serge Hallyn <sergeh@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Shuah Khan <skhan@linuxfoundation.org>,
+ linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260506054914.162806-1-drapl0n@protonmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20260506054914.162806-1-drapl0n@protonmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello!
+Hi--
 
-Thanks for sending another revision!
+On 5/5/26 10:49 PM, Mayank Gite wrote:
+> - Fixes a typo in "Keys and keyrings" section. Replaces "keying" with
+>   "keyring".
+> - Updates formatting of keyring types.
+> 
+> Signed-off-by: Mayank Gite <drapl0n@protonmail.com>
 
-On Sat, May 02, 2026 at 02:42:59PM +0200, Matthieu Buffet wrote:
-> This is V4 of UDP access control in Landlock. Thanks to the round of
-> review of v3, access rights have changed to something that seems easier
-> to use and understand. It adds only two access rights, to restrict
-> configuring local and remote addresses on UDP sockets. The one that
-> restricts setting a remote address also controls sending datagrams to
-> explicit remote addresses -ignoring any remote address preset on the
-> socket-. The one that restricts binding to a local port also applies
-> when the kernel auto-binds an ephemeral port.
-> v1:
-> Link: https://lore.kernel.org/all/20240916122230.114800-1-matthieu@buffet.re/
-> v2:
-> Link: https://lore.kernel.org/all/20241214184540.3835222-1-matthieu@buffet.re/
-> v3:
-> Link: https://lore.kernel.org/all/20251212163704.142301-1-matthieu@buffet.re/
-> 
-> The limitation around allowing a process to send but not receive is
-> still there, and could warrant another patch if there is a real user
-> need.
-> I'm just not super happy about the clarity of logs generated for denied
-> autobinds ("domain=xxxxxx blockers=net.bind_udp"), due to the fact that
-> addresses and ports are currently only logged if they are non-0. A later
-> (coordinated LSM-wide) patch could improve readability by replacing != 0
-> checks with new booleans in struct lsm_network_audit. I'm also not
-> exactly happy with the integration in existing TCP selftests, but
-> refactoring them has already been discussed earlier.
-> 
-> Changes v1->v2
-> ==============
-> - recvmsg hook is gone and sendmsg hook doesn't apply when sending to a
->   remote address pre-set on socket, to improve performance
-> - don't add a get_addr_port() helper function, which required a weird
->   "am I in IPv4 or IPv6 context"
-> - reorder hook prologue for consistency: check domain, then type and
->   family
-> 
-> Changes v2->v3
-> ==============
-> - removed support for sending datagrams with explicit destination
->   address of family AF_UNSPEC, which allowed to bypass restrictions with
->   a race condition
-> - rebased on linux-mic/next => add support for auditing
-> - fixed mistake in selftests when using unspec_srv variables, which were
->   implicitly of type SOCK_STREAM and did not actually test UDP code
-> - add tests for IPPROTO_IP
-> - improved docs, split off TCP-related refactoring
-> 
-> Changes v3->v4
-> ==============
-> - merge LANDLOCK_ACCESS_NET_CONNECT_UDP and
->   LANDLOCK_ACCESS_NET_SENDTO_UDP into
->   LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP (everything that might set the
->   destination of a datagram)
+Something (protonmail?) split some lines of your patch so that it
+cannot be applied:
 
-I wish the name could be more in-line with
-LANDLOCK_ACCESS_FS_RESOLVE_UNIX, but since this does not need
-resolving any more, "resolve" in the name would be confusing.  I also
-failed to come up with a better name for this access right.
+patch: **** malformed patch at line 24: tials:
 
+See https://lore.kernel.org/linux-doc/20260506054914.162806-1-drapl0n@protonmail.com/raw
 
-> - make LANDLOCK_ACCESS_NET_BIND_UDP apply when kernel is about to
->   auto-bind an ephemeral port for the caller. Block it if policy would
->   not allow an explicit call to bind(0)
-> - only deny sending AF_UNSPEC datagrams on IPv6 sockets, where there is
->   a risk of the address family changing midway
-> 
-> Patch is based on https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git
-> 3457a5ccacd3 ("landlock: Document fallocate(2) as another truncation corner case")
-> All lines added are covered with selftests, except the "default: return
-> 0" in current_check_autobind_udp_socket() which is not currently
-> reachable (net.c goes from 92.9%->94.6% line coverage).
-> 
-> Let me know what you think!
-> 
-> Closes: https://github.com/landlock-lsm/linux/issues/10
-> 
-> Matthieu Buffet (7):
->   landlock: Add UDP bind() access control
->   landlock: Add UDP connect() access control
->   landlock: Add UDP send access control
+You can see if Documentation/process/email-clients.rst can help you any,
+or just do an web search for using Proton mail to send plain text patches,
+but using Proton might be difficult (IDK).
 
-For the final revision, I think it would be good to squash the two
-commits that are about LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP.  That
-reduces the chances that someone backports the first but not the
-second to one of the distribution kernels.
+> ---
+>  Documentation/security/credentials.rst | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/security/credentials.rst b/Documentation/security/credentials.rst
+> index d0191c8b8060..4996838491b1 100644
+> --- a/Documentation/security/credentials.rst
+> +++ b/Documentation/security/credentials.rst
+> @@ -189,9 +189,9 @@ The Linux kernel supports the following types of credentials:
+>       be searched for the desired key.  Each process may subscribe to a number
+>       of keyrings:
+>  
+> -	Per-thread keying
+> -	Per-process keyring
+> -	Per-session keyring
+> +	- Per-thread keyring
+> +	- Per-process keyring
+> +	- Per-session keyring
+>  
+>       When a process accesses a key, if not already present, it will normally be
+>       cached on one of these keyrings for future accesses to find.
 
+The change itself looks good - if you can find a good way to email it.
 
->   selftests/landlock: Add UDP bind/connect tests
->   selftests/landlock: Add tests for sendmsg()
->   samples/landlock: Add sandboxer UDP access control
->   landlock: Add documentation for UDP support
-> 
->  Documentation/userspace-api/landlock.rst     |   89 +-
->  include/uapi/linux/landlock.h                |   35 +-
->  samples/landlock/sandboxer.c                 |   40 +-
->  security/landlock/audit.c                    |    3 +
->  security/landlock/limits.h                   |    2 +-
->  security/landlock/net.c                      |  161 ++-
->  security/landlock/syscalls.c                 |    2 +-
->  tools/testing/selftests/landlock/base_test.c |    4 +-
->  tools/testing/selftests/landlock/net_test.c  | 1146 ++++++++++++++++--
->  9 files changed, 1341 insertions(+), 141 deletions(-)
-> 
-> 
-> base-commit: 3457a5ccacd34fdd5ebd3a4745e721b5a1239690
-> -- 
-> 2.39.5
-> 
+thanks.
+-- 
+~Randy
 
-—Günther
