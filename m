@@ -1,57 +1,75 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70E346AF3D;
-	Wed,  6 May 2026 13:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37653F9F4B
+	for <linux-security-module@vger.kernel.org>; Wed,  6 May 2026 15:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778075841; cv=none; b=dicZRsk4ahoG53N1j/I+49+Xr0G23TR8sK4a7RFLJjci+Z57fgBohXc9nn3SnI4ldqLJe3w24Jeji3n/Guh8TEGEY8JmbfZmioMXTM2U6aCoA5E9Sq4MceJ66V0yX4uAdlMF5mOcsvdqW1hv/lgbRFqKNOd4i+5+teFz/HlZ7g4=
+	t=1778081639; cv=none; b=H1TzCqi74ZmztVpVzX5Ma5zr4W/wVIw6N2Xcwg+EMizhZeTprvGmGl8m+rpQ4xO43Ld5a/QBoQdyu9gGDBtm9v6x3BwDxUIhUfyGm4lxJiAwqpj6TYIob935QjjCw/A5Q11HUYf5QAYHwXk5mdu2m9zZ1a7ikXwqUMHD4dvCYac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778075841; c=relaxed/simple;
-	bh=qAxl0RqtACkHiwzEDE0zWDfw6tUQYsvu/LQEyZO/AkA=;
+	s=arc-20240116; t=1778081639; c=relaxed/simple;
+	bh=v7iWJA7AOWqAM5g8QOaOTdACaW3JaQX1YwwtDoobk+k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PozllEm+9aKI+/LpSGYdy9EF+PUOD1fVbQF46vOUh/BGCOsO+hVnmeuMvYAI48BhIc2ts+tMuoxlfLk0BFV4OS6fEiyH/bNdTxVX9PWNwfLji0D4u1aBXrp3p05Xujy72XY6r0uA3OHcRYiFiyz6BYrFOqJHGPVXpkLQBBL5VWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Wh5Dv8Sp; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=bEt5yAkAO4HhSPz4DyiSDZbA1cnMlrpO6rDoyNt4d4QH7Ftp52iex54znc/qWbIEpBCANy0i04te/Xb7+4SghIFTiX44lY9XpBZBK8wQz4g7Mzlv8tkm3HQWbiy//I+Nok4a3PU43EvYKHEZHz7Mp2TXGnn8RNf7eLLgVOyGRXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I/O1ZBHG; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Wh5Dv8Sp"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B7D701A25;
-	Wed,  6 May 2026 06:57:12 -0700 (PDT)
-Received: from e129823.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2C3963F7B4;
-	Wed,  6 May 2026 06:57:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1778075838; bh=qAxl0RqtACkHiwzEDE0zWDfw6tUQYsvu/LQEyZO/AkA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wh5Dv8Spfr4cehZvmkTo+VGhkybCzPCOIagZiw2rRjeAKplHHfzv6dAzxjDBD+ZWZ
-	 UMAZ2SCVCNte9NjytmyRPpe3Jib05FwIYLLNQsNBVfYFFs48R1DKAdnnco/5QrjWcA
-	 BL++VUG9CzKbW8Z1Nn4uKYXJ9WhejPuqDlErDvWQ=
-Date: Wed, 6 May 2026 14:57:12 +0100
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: David Safford <david.safford@gmail.com>,
-	Jonathan McDowell <noodles@earth.li>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com, jarkko@kernel.org, jgg@ziepe.ca,
-	sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org,
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org, noodles@meta.com,
-	sebastianene@google.com
-Subject: Re: [PATCH] ima: debugging late_initcall_sync measurements
-Message-ID: <aftIuPwNeuzc9nY1@e129823.arm.com>
-References: <cover.1777036497.git.noodles@meta.com>
- <7734099f5e7fda5480bca016a9e6707983325fbd.camel@linux.ibm.com>
- <afMlgstqahnZg68h@e129823.arm.com>
- <9f188536f09a2db30877d6bfbb84aeaf2565cccf.camel@linux.ibm.com>
- <CAGWfHUW+AX0Hpuw5Vr5iTSaJKQJ+O_4nWWmU1UR8Z_3XFctHZg@mail.gmail.com>
- <202f90682fe47bb5fb9b08f8678ae00981b5290b.camel@linux.ibm.com>
- <201b9172ac47c6766443c1f2343cab3548f33c29.camel@linux.ibm.com>
- <afrXmRiq7XvSe6yN@e129823.arm.com>
- <9ff4853a8e9932b3a1424f2a6c3347f1723fb5f4.camel@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I/O1ZBHG"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-48984d29fe3so93335915e9.0
+        for <linux-security-module@vger.kernel.org>; Wed, 06 May 2026 08:33:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1778081629; x=1778686429; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pPgcwkvVhL8aXocPAgoIRAhV9vFqMpLjuj83PIidEBY=;
+        b=I/O1ZBHGO+5NYtv/Jz2fe90F87I4XbCwMI767rGH4xPBExZDXi1S1dANoOUY1+U/O/
+         iQpEea5bZVhTq0A0E0e95IsDY/R68RBGTk9NfOtHLJqrGnrsthwY5au2Lmx33YsjV94S
+         Cm7e2DYF+7Oo9fjkO6c2OArRKhPOZ2uV/k/m2Qzj8hhcNL2z0m4RYRwkBVkXJndfWJiZ
+         ShHYg8pUmSOiD4VsEr60z1T5t4sQLGSsCCQwtDEWREXDGJ25E/sk8RdQy17SDCp9fyVQ
+         4ow8Kd2xDtXvVlehyU4lBrMunGPrh/H4e5xzcXL8mJV19LHUrtocfVL4rFOQz/aY9ISz
+         bobg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778081629; x=1778686429;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pPgcwkvVhL8aXocPAgoIRAhV9vFqMpLjuj83PIidEBY=;
+        b=VDQU+O0uwRxu7bcJa8zWgwvCPSu2vqtaBMewb/JDuSRUmdDygn9xk6vGepM6jP/oeE
+         5YZkwcm2o9h4fTT5fUarcXFe9Klkig495X+8DlblMJAkerzr0DE62lNws7rtdJGB7P5N
+         9ZzFix7YZ16dIPfy8hXPKJY4iSqsnTsPILITDoTupY9kommsNv3Qgda5/BcZtjTjTzT7
+         NUqszZ+hmUosD/aUeq7ulWnKPQpMNtUuvrmto7jrsgNiKYARacfRKcoqAeBhKxFfAXSb
+         UEh9Qd8bEkEjomP0S7HFVrgj/uD3LUcWUxov0aifVjdOgesXuORi7Se736bZaqVupTEv
+         nQmw==
+X-Forwarded-Encrypted: i=1; AFNElJ9zne041TbwtjG/owkxBnK1kOKGMPT6j4THVvaTcYxcE3EddlHdTcsjdfqRFKeHTscPCKuf3kM5O6q9hvgdplWhKpZwhn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq9P7P/i9HTdOc7K4ocXMw6/xP/YoKsws9Hy/OxUctLztMu3Jy
+	EhYyJTnv+fwVfNbcP8sAr8xY+RYO5dxp7qEqJPMRQBr7WYfoXjtBYtvX4JmWVFQLFQ==
+X-Gm-Gg: AeBDieuxymx9iNBnNFpuCSED6FaySR7E8lT0ruZCQMW+KAEPFtN848kR5Ddo+pr+UXB
+	hWxHl0NXcUDNwAmdxYhalI7MCskATSJgdgMg+mYnlZGnkOotOqsJsElsHpWMlY14qF6pV8j1miT
+	bi2Ctv362gnKivCTW1cq8GGaShF6rQVawkrL+I+k8myxgT19I0uaziRU7Rb72cC2r8LMZ3F8SK8
+	FNbHebJK6gFqB42zAaIE0odlH7jZu4g1PAgoHwWp3nc58giadE1ljkNaAfu5XX7yJXF8iEiOs3U
+	Qb/9CJvTBTByQZOoiIyUSo7psZgnTLhvNfUGr0KoCGjMClsVItiMSghKw5vAiK0Svt+xBUaipWl
+	Husyc8jwzWx4y9k5Y6lS/YdI/qKifBqGehq/G8YiPdayqVvDU9kT8iHbIaXlx18Un7CmBFc8Puk
+	qjlfrm2EWLPQ3m/Lu1CY5J69Vf2P7h45lHsGsDIFNWLwl1zwao/e2wzdAvRBZIvxsvj3YFHJuPd
+	cNhxLP6aIi2dA==
+X-Received: by 2002:a05:600c:1d18:b0:489:1a63:509c with SMTP id 5b1f17b1804b1-48e51dd689fmr66886705e9.0.1778081628773;
+        Wed, 06 May 2026 08:33:48 -0700 (PDT)
+Received: from google.com ([2a00:79e0:288a:8:ad61:8ca1:7cb9:f2e1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e538a50d0sm91608975e9.5.2026.05.06.08.33.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 May 2026 08:33:47 -0700 (PDT)
+Date: Wed, 6 May 2026 17:33:42 +0200
+From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+To: Matthieu Buffet <matthieu@buffet.re>
+Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	konstantin.meskhidze@huawei.com, Tingmao Wang <m@maowtm.org>,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v4 0/7] landlock: Add UDP access control support
+Message-ID: <aftfVvru3npQ9kWq@google.com>
+References: <20260502124306.3975990-1-matthieu@buffet.re>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -61,284 +79,119 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9ff4853a8e9932b3a1424f2a6c3347f1723fb5f4.camel@linux.ibm.com>
+In-Reply-To: <20260502124306.3975990-1-matthieu@buffet.re>
 
-Hi Mimi,
+Hello!
 
-> On Wed, 2026-05-06 at 06:54 +0100, Yeoreum Yun wrote:
-> > Hi Mimi,
-> > 
-> > > On Sun, 2026-05-03 at 07:36 -0400, Mimi Zohar wrote:
-> > > > On Fri, 2026-05-01 at 12:52 -0400, David Safford wrote:
-> > > > > On Thu, Apr 30, 2026 at 5:43 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > > > > > 
-> > > > > > On Thu, 2026-04-30 at 10:48 +0100, Yeoreum Yun wrote:
-> > > > > > > With above change I confirmed there is no meaurement log
-> > > > > > > between boot_aggregate and boot_aggregate_late except "kernel_version"
-> > > > > > > But this is ignorable since this UTS measurement is done in
-> > > > > > > "ima_init_core() (old: ima_init())" and it is part of ima initialisation.
-> > > > > > > 
-> > > > > > > 1. ima_policy=tcb
-> > > > > > > 
-> > > > > > >   # cat /sys/kernel/security/ima/ascii_runtime_measurements
-> > > > > > >   10 0adefe762c149c7cec19da62f0da1297fcfbffff ima-ng sha256:0000000000000000000000000000000000000000000000000000000000000000 boot_aggregate
-> > > > > > >   10 4e5d73ebadfd8f850cb93ce4de755ba148a9a7d5 ima-ng sha256:0000000000000000000000000000000000000000000000000000000000000000 boot_aggregate_late
-> > > > > > >   10 7c23cc970eceec906f7a41bc2fbde770d7092209 ima-ng sha256:72ade6ae3d35cfe5ede7a77b1c0ed1d1782a899445fdcb219c0e994a084a70d5 /bin/busybox
-> > > > > snip
-> > > > > > > 
-> > > > > > > 2. ima_policy=critical_data
-> > > > > > > 
-> > > > > > >   # cat /sys/kernel/security/ima/ascii_runtime_measurements
-> > > > > > >   10 0adefe762c149c7cec19da62f0da1297fcfbffff ima-ng sha256:0000000000000000000000000000000000000000000000000000000000000000 boot_aggregate
-> > > > > > >   10 49ab61dd97ea2f759edcb6c6a3387ac67f0aa576 ima-buf sha256:0c907aab3261194f16b0c2a422a82f145bc9b9ecb8fdb633fa43e3e5379f0af2 kernel_version 372e312e302d7263312b // Ignorable since it's generated by ima_init(_core)().
-> > > > > > >   10 4e5d73ebadfd8f850cb93ce4de755ba148a9a7d5 ima-ng sha256:0000000000000000000000000000000000000000000000000000000000000000 boot_aggregate_late
-> > > > > > > 
-> > > > > > > Therefore, init_ima() could move into late_initcall_sync like v1 did:
-> > > > > > >   - https://lore.kernel.org/all/20260417175759.3191279-2-yeoreum.yun@arm.com/
-> > > > > > 
-> > > > > > Thanks, Yeoreum.  It's a bit premature to claim it's "safe" to move the
-> > > > > > initcall.  Hopefully others will respond.
-> > > > > > 
-> > > > > > Mimi
-> > > > > 
-> > > > > I have also run with this patch on a number of bare metal and virtual machines,
-> > > > > running everything from default Fedora 44 to a version with everything turned on
-> > > > > (uefi secure boot, UKI with sdboot stub measurements, IMA measurement
-> > > > > and appraisal enabled,
-> > > > > all systemd measurements on, and systemd using the TPM for root
-> > > > > partition decryption.)
-> > > > > I too see only the kernel_version event between the normal and late
-> > > > > calls, if ima_policy=critical_data.
-> > > > 
-> > > > Thanks, Dave!  Were all the systems you tested x86_64?  The next step would be
-> > > > to test on different arch's (e.g. Z, Power).
-> > > 
-> > > On both Z and PowerVM, there are ~30 measurements between boot_aggregate and
-> > > boot_aggregate_late.  For example, on PowerVM:
-> > > 
-> > > # grep -n boot_aggregate
-> > > /sys/kernel/security/integrity/ima/ascii_runtime_measurements
-> > > 
-> > > 1:10 f60a05d7354fb34aabc02965216abd3428ea52bb ima-sig
-> > > sha256:9887dd089ee19a6517bca10580b02c1bb9aa6cd86c157b6ead8a1c0403f348d5
-> > > boot_aggregate 
-> > > 31:10 e2592b0d61da6300d3db447b143897a9792231ea ima-sig
-> > > sha256:9887dd089ee19a6517bca10580b02c1bb9aa6cd86c157b6ead8a1c0403f348d5
-> > > boot_aggregate_late
-> > > 
-> > > It would be interesting to the results from a Raspberry Pi 5 as well,
-> > > with/without a TPM.
-> > 
-> > Honestly, I find this result hard to accept.
-> > 
-> > This effectively means that there is code invoking IMA measurement during late_initcall().
-> > It also implies that if, in the future, a late_initcall is added that performs
-> > an IMA measurement before IMA initialization has occurred accoding to order by linker,
-> > that measurement could be missed.
+Thanks for sending another revision!
+
+On Sat, May 02, 2026 at 02:42:59PM +0200, Matthieu Buffet wrote:
+> This is V4 of UDP access control in Landlock. Thanks to the round of
+> review of v3, access rights have changed to something that seems easier
+> to use and understand. It adds only two access rights, to restrict
+> configuring local and remote addresses on UDP sockets. The one that
+> restricts setting a remote address also controls sending datagrams to
+> explicit remote addresses -ignoring any remote address preset on the
+> socket-. The one that restricts binding to a local port also applies
+> when the kernel auto-binds an ephemeral port.
+> v1:
+> Link: https://lore.kernel.org/all/20240916122230.114800-1-matthieu@buffet.re/
+> v2:
+> Link: https://lore.kernel.org/all/20241214184540.3835222-1-matthieu@buffet.re/
+> v3:
+> Link: https://lore.kernel.org/all/20251212163704.142301-1-matthieu@buffet.re/
 > 
-> Exactly.  The results are simply from booting with the builtin "tcb" and
-> "critical_data" policies.
+> The limitation around allowing a process to send but not receive is
+> still there, and could warrant another patch if there is a real user
+> need.
+> I'm just not super happy about the clarity of logs generated for denied
+> autobinds ("domain=xxxxxx blockers=net.bind_udp"), due to the fact that
+> addresses and ports are currently only logged if they are non-0. A later
+> (coordinated LSM-wide) patch could improve readability by replacing != 0
+> checks with new booleans in struct lsm_network_audit. I'm also not
+> exactly happy with the integration in existing TCP selftests, but
+> refactoring them has already been discussed earlier.
 > 
-> $ sudo grubby --args="ima_policy=\"tcb|critical_data\"" --update-kernel
-> /boot/vmlinuz-${SUFFIX}
+> Changes v1->v2
+> ==============
+> - recvmsg hook is gone and sendmsg hook doesn't apply when sending to a
+>   remote address pre-set on socket, to improve performance
+> - don't add a get_addr_port() helper function, which required a weird
+>   "am I in IPv4 or IPv6 context"
+> - reorder hook prologue for consistency: check domain, then type and
+>   family
+> 
+> Changes v2->v3
+> ==============
+> - removed support for sending datagrams with explicit destination
+>   address of family AF_UNSPEC, which allowed to bypass restrictions with
+>   a race condition
+> - rebased on linux-mic/next => add support for auditing
+> - fixed mistake in selftests when using unspec_srv variables, which were
+>   implicitly of type SOCK_STREAM and did not actually test UDP code
+> - add tests for IPPROTO_IP
+> - improved docs, split off TCP-related refactoring
+> 
+> Changes v3->v4
+> ==============
+> - merge LANDLOCK_ACCESS_NET_CONNECT_UDP and
+>   LANDLOCK_ACCESS_NET_SENDTO_UDP into
+>   LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP (everything that might set the
+>   destination of a datagram)
 
-Thanks. but I still wonder what meaasurements there are between
-boot_aggregate and boot_aggregate_late.
-Might be there would be key measurements if it takes more than
-5 mins before generating boot_aggregate_late but this seems rare.
+I wish the name could be more in-line with
+LANDLOCK_ACCESS_FS_RESOLVE_UNIX, but since this does not need
+resolving any more, "resolve" in the name would be confusing.  I also
+failed to come up with a better name for this access right.
 
-If you don't mind, would you share the contents of the log between
-boot_aggregate and boot_aggregate_late?
-since I only get a kernel_version in my environment.
 
-And I think we can collect missing measurements before ima_init_core()
-into another separate list than ima_measurements in ima_add_template_entry() and
-we can extend them after boot_aggreagate log generation at ima_init_core()
-then ima initialisation could be moved to late_initcall_sync like
-(just for a test and share concept):
+> - make LANDLOCK_ACCESS_NET_BIND_UDP apply when kernel is about to
+>   auto-bind an ephemeral port for the caller. Block it if policy would
+>   not allow an explicit call to bind(0)
+> - only deny sending AF_UNSPEC datagrams on IPv6 sockets, where there is
+>   a risk of the address family changing midway
+> 
+> Patch is based on https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git
+> 3457a5ccacd3 ("landlock: Document fallocate(2) as another truncation corner case")
+> All lines added are covered with selftests, except the "default: return
+> 0" in current_check_autobind_udp_socket() which is not currently
+> reachable (net.c goes from 92.9%->94.6% line coverage).
+> 
+> Let me know what you think!
+> 
+> Closes: https://github.com/landlock-lsm/linux/issues/10
+> 
+> Matthieu Buffet (7):
+>   landlock: Add UDP bind() access control
+>   landlock: Add UDP connect() access control
+>   landlock: Add UDP send access control
 
--------&<-------
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 9a1117112fb2..737c1ac8ad77 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -67,6 +67,7 @@ extern int ima_appraise;
- extern struct tpm_chip *ima_tpm_chip;
- extern const char boot_aggregate_name[];
- extern const char boot_aggregate_late_name[];
-+extern bool ima_extend_on;
+For the final revision, I think it would be good to squash the two
+commits that are about LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP.  That
+reduces the chances that someone backports the first but not the
+second to one of the distribution kernels.
 
- /* IMA event related data */
- struct ima_event_data {
-@@ -107,6 +108,7 @@ struct ima_template_desc {
 
-:...skipping...
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 9a1117112fb2..737c1ac8ad77 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -67,6 +67,7 @@ extern int ima_appraise;
- extern struct tpm_chip *ima_tpm_chip;
- extern const char boot_aggregate_name[];
- extern const char boot_aggregate_late_name[];
-+extern bool ima_extend_on;
+>   selftests/landlock: Add UDP bind/connect tests
+>   selftests/landlock: Add tests for sendmsg()
+>   samples/landlock: Add sandboxer UDP access control
+>   landlock: Add documentation for UDP support
+> 
+>  Documentation/userspace-api/landlock.rst     |   89 +-
+>  include/uapi/linux/landlock.h                |   35 +-
+>  samples/landlock/sandboxer.c                 |   40 +-
+>  security/landlock/audit.c                    |    3 +
+>  security/landlock/limits.h                   |    2 +-
+>  security/landlock/net.c                      |  161 ++-
+>  security/landlock/syscalls.c                 |    2 +-
+>  tools/testing/selftests/landlock/base_test.c |    4 +-
+>  tools/testing/selftests/landlock/net_test.c  | 1146 ++++++++++++++++--
+>  9 files changed, 1341 insertions(+), 141 deletions(-)
+> 
+> 
+> base-commit: 3457a5ccacd34fdd5ebd3a4745e721b5a1239690
+> -- 
+> 2.39.5
+> 
 
- /* IMA event related data */
- struct ima_event_data {
-@@ -107,6 +108,7 @@ struct ima_template_desc {
-
- struct ima_template_entry {
-        int pcr;
-+       int violation;
-        struct tpm_digest *digests;
-        struct ima_template_desc *template_desc; /* template descriptor */
-        u32 template_data_len;
-@@ -317,6 +319,7 @@ unsigned long ima_get_binary_runtime_size(void);
- int ima_init_template(void);
- void ima_init_template_list(void);
- int __init ima_init_digests(void);
-+int __init ima_extend_deferred(void);
- void __init ima_init_reboot_notifier(void);
- int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
-                          void *lsm_data);
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index edd063b99685..f6a2b53c1dcb 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -149,10 +149,22 @@ int __init ima_init_core(bool late)
-        rc = ima_init_digests();
-        if (rc != 0)
-                return rc;
-+
-+       ima_extend_on = true;
-+
-        rc = ima_add_boot_aggregate(late);      /* boot aggregate must be first entry */
-        if (rc != 0)
-                return rc;
-
-+       /* This is just for a test. */
-+       if (!late)
-+               ima_extend_on = false;
-+       else  {
-+               rc = ima_extend_deferred();
-+               if (rc != 0)
-+                       return rc;
-+       }
-+
-        ima_init_policy();
-
-        rc = ima_fs_init();
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 319522450854..81f2ee070fee 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -22,10 +22,13 @@
-
- #define AUDIT_CAUSE_LEN_MAX 32
-
-+bool ima_extend_on;
-+
- /* pre-allocated array of tpm_digest structures to extend a PCR */
- static struct tpm_digest *digests;
-
- LIST_HEAD(ima_measurements);   /* list of all measurements */
-+static LIST_HEAD(ima_extend_deferred_head);
- #ifdef CONFIG_IMA_KEXEC
- static unsigned long binary_runtime_size;
- #else
-@@ -91,6 +94,7 @@ static int get_binary_runtime_size(struct ima_template_entry *entry)
-        return size;
- }
-
-+
- /* ima_add_template_entry helper function:
-  * - Add template entry to the measurement list and hash table, for
-  *   all entries except those carried across kexec.
-@@ -98,7 +102,8 @@ static int get_binary_runtime_size(struct ima_template_entry *entry)
-  * (Called with ima_extend_list_mutex held.)
-  */
- static int ima_add_digest_entry(struct ima_template_entry *entry,
--                               bool update_htable)
-+                               bool update_htable,
-+                               struct list_head *measurements_list)
- {
-        struct ima_queue_entry *qe;
-        unsigned int key;
-@@ -111,7 +116,7 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
-        qe->entry = entry;
-
-        INIT_LIST_HEAD(&qe->later);
--       list_add_tail_rcu(&qe->later, &ima_measurements);
-+       list_add_tail_rcu(&qe->later, measurements_list);
-
-        atomic_long_inc(&ima_htable.len);
-        if (update_htable) {
-@@ -173,6 +178,7 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
-        char tpm_audit_cause[AUDIT_CAUSE_LEN_MAX];
-        int audit_info = 1;
-        int result = 0, tpmresult = 0;
-+       struct list_head *measurements_list;
-
-        mutex_lock(&ima_extend_list_mutex);
-
-@@ -195,15 +201,21 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
-                }
-        }
-
-+
-+       entry->violation = violation;
-+       measurements_list = (ima_extend_on) ? &ima_measurements :
-+                                             &ima_extend_deferred_head;
-+
-        result = ima_add_digest_entry(entry,
--                                     !IS_ENABLED(CONFIG_IMA_DISABLE_HTABLE));
-+                                     !IS_ENABLED(CONFIG_IMA_DISABLE_HTABLE),
-+                                     measurements_list);
-        if (result < 0) {
-                audit_cause = "ENOMEM";
-                audit_info = 0;
-                goto out;
-        }
-
--       if (violation)          /* invalidate pcr */
-+       if (violation)                  /* invalidate pcr */
-                digests_arg = digests;
-
-        tpmresult = ima_pcr_extend(digests_arg, entry->pcr);
-@@ -225,7 +237,7 @@ int ima_restore_measurement_entry(struct ima_template_entry *entry)
-        int result = 0;
-
-        mutex_lock(&ima_extend_list_mutex);
--       result = ima_add_digest_entry(entry, 0);
-+       result = ima_add_digest_entry(entry, 0, &ima_measurements);
-        mutex_unlock(&ima_extend_list_mutex);
-        return result;
- }
-@@ -288,3 +300,23 @@ int __init ima_init_digests(void)
-
-        return 0;
- }
-+
-+int __init ima_extend_deferred(void)
-+{
-+       guard(mutex)(&ima_extend_list_mutex);
-+       struct ima_queue_entry *qe;
-+       struct tpm_digest *digests_arg;
-+       int ret = 0;
-+
-+       list_for_each_entry(qe, &ima_extend_deferred_head, later) {
-+               digests_arg = (qe->entry->violation) ? digests : qe->entry->digests;
-+               ret = ima_pcr_extend(digests_arg, qe->entry->pcr);
-+               if (ret)
-+                       /* TODO: audit? */
-+                       break;
-+       }
-+
-+       list_splice_tail_init(&ima_extend_deferred_head, &ima_measurements);
-+
-+       return ret;
-+}
-
--- 
-Sincerely,
-Yeoreum Yun
+—Günther
