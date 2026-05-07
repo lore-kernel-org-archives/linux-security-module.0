@@ -1,176 +1,85 @@
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27B4377EC1;
-	Thu,  7 May 2026 08:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D293890EE
+	for <linux-security-module@vger.kernel.org>; Thu,  7 May 2026 09:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778142631; cv=none; b=Fxlw9dHa3MSa+tClEj70x1Op3v/uBr+kJmZja0Njhn05dW384TNYk9KVFkVpdLPLfQytJcYFbZnCtHazT0+vjptUnWWWYUND7zjPtls4bFnB8KvdzNCwUX4K1LhKyVeNkJifLPZFCUboU8YkcEfHdoRjflVehK//Ceny0jX4fXs=
+	t=1778146698; cv=none; b=uAg5W4jYrPsNuewzXSCEGvNqLYBrrkJ9QIcs7ALK9se063PjORoucRDHZoinm225IbIpKOL1ZCf+zr4IxZW2eKGJ50rLHOcrms/ubNnjmGgaNtn/Mxx5a8BeyQFifxeh23urfWkvak7wFIQOy4MujjZcXMpX504/Op45G14xRXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778142631; c=relaxed/simple;
-	bh=9JH+JKtOUYC88OvLe5TjJNgR65xA2MidNnhXMXVbBdg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Vrnlbvi5CpDOkInzmd4yQ3mNCtdum4Xe4Ie4ucUoYuyp4GiUxRKR5BrmmcV4aeddZe65b6wDim3a4DIb5++TrCzHGFom/OGMaVzFnihLP7WgVwZ5b8+xBvUF+FPdRqjEg1OoD4V6ILV+x+qqg5sWlyYYN1StBWWPYj9EjlZchnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.235])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4gB4Zs6zYbz1HCMn;
-	Thu,  7 May 2026 16:06:29 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id B69604056F;
-	Thu,  7 May 2026 16:11:10 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwDXiKIPSfxptCa3AA--.10670S2;
-	Thu, 07 May 2026 09:11:10 +0100 (CET)
-Message-ID: <8c99263d8e63100e0b5e6c8cf739f7f6e7e79f6b.camel@huaweicloud.com>
-Subject: Re: [PATCH] ima: debugging late_initcall_sync measurements
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>
-Cc: Yeoreum Yun <yeoreum.yun@arm.com>, Jonathan McDowell <noodles@earth.li>,
-  linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-integrity@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- kvmarm@lists.linux.dev, jmorris@namei.org, serge@hallyn.com, 
- roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com,  jarkko@kernel.org, jgg@ziepe.ca,
- sudeep.holla@kernel.org, maz@kernel.org,  oupton@kernel.org,
- joey.gouly@arm.com, suzuki.poulose@arm.com,  yuzenghui@huawei.com,
- catalin.marinas@arm.com, will@kernel.org, noodles@meta.com, 
- sebastianene@google.com
-Date: Thu, 07 May 2026 10:10:52 +0200
-In-Reply-To: <461ec995935e2b42a8414f6f87063ff2557bbfb4.camel@linux.ibm.com>
-References: <cover.1777036497.git.noodles@meta.com>
-	 <7734099f5e7fda5480bca016a9e6707983325fbd.camel@linux.ibm.com>
-	 <afMlgstqahnZg68h@e129823.arm.com>
-	 <9f188536f09a2db30877d6bfbb84aeaf2565cccf.camel@linux.ibm.com>
-	 <CAHC9VhRsnmPp2KmQAns5uq5qXX5EF2xQQzyfTgrPi4O9AXyPpg@mail.gmail.com>
-	 <ba4bf28314b679474a6a8da6298e548e54b3754c.camel@linux.ibm.com>
-	 <CAHC9VhRE2kRr1fdDf6xgQgpSrtvqtP8Vy9LVGJhDZFUbzLKGmQ@mail.gmail.com>
-	 <ff28c6dcb60c357c752724927addaa8c4fd3bf2c.camel@linux.ibm.com>
-	 <CAHC9VhQY2TMkTvQq9P8oZteQWQSr7qq2utOuH+pdVx+8jWLBCw@mail.gmail.com>
-	 <a9412fe10e70ce95dd70556ace19368bec5c188c.camel@linux.ibm.com>
-	 <CAHC9VhRUgNA=Sj=jhD=zOt8R80Q+FQj+H0nYSy-FAujTL3EKPA@mail.gmail.com>
-	 <5debff82dc758d9c91223e4f1f5b9e39a3fcd4f5.camel@linux.ibm.com>
-	 <19dfb0e2730.2843.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-	 <461ec995935e2b42a8414f6f87063ff2557bbfb4.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1778146698; c=relaxed/simple;
+	bh=/yiXf/5xl8o57guTin2z3QusbJ6kQ1jyJsibAKS23/o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dae7DG4WoPd6USBokl920V3u9KkersBzAj9S31xICRCA8/Bb6yPRBFSa4KGYOkIb6g3+JEVF8sKfXVnRKfJXdI9qZkVtexTDFmF0AEqpETh6fTlgecaNu9s94g7NZ2EqTWbLdBDFg74+60lCNlSodlTpT6yYP0eXYcAOn/qZJNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=0z/hb76z; arc=none smtp.client-ip=113.46.200.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="0z/hb76z"
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=1EtwIOJFv3Rp2Bm4yjCgwUNB1UQEo7p0rYJxQXYpGOg=;
+	b=0z/hb76zEED3eO21So/Oq6U7lpj3ByW58qbLnOQLwYiYgGdesx/jbe1+wNbOZsNXrc6lud+Y5
+	JKXPCFf9Tr7quvUFYhAao+oiwv/xzs03i5dhHiTDbfwrYcuKTjF6PVQOUXBtEkduQiGHb5eeRSq
+	BJW1gW3z3xag/Vw0qB1NG74=
+Received: from mail.maildlp.com (unknown [172.19.163.0])
+	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4gB6Rz5DyGz1T4fn;
+	Thu,  7 May 2026 17:30:39 +0800 (CST)
+Received: from kwepemj100004.china.huawei.com (unknown [7.202.195.249])
+	by mail.maildlp.com (Postfix) with ESMTPS id 98F1740537;
+	Thu,  7 May 2026 17:38:12 +0800 (CST)
+Received: from [10.34.207.117] (10.34.207.117) by
+ kwepemj100004.china.huawei.com (7.202.195.249) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Thu, 7 May 2026 17:38:12 +0800
+Message-ID: <d3393689-ef1a-4c79-b6db-9d4fb1c9f5ae@huawei.com>
+Date: Thu, 7 May 2026 17:38:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwDXiKIPSfxptCa3AA--.10670S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxuF18Kw4kArWDAr17tFy8AFb_yoW5tFWfpa
-	y7W3WIkrWktFW8Aws2qw18WryIy3s3GayUXr15Kry5ArnYkr9Y9FsxtrWFka97C3ykt3WY
-	qF1jqay2kw1DAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIF
-	4iUUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAGBGn7JLIKAwAAsN
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] lockdown: remove useless decrement operation
+To: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Kalevi Kolttonen
+	<kalevi@kolttonen.fi>
+CC: <linux-security-module@vger.kernel.org>, <xiujianfeng@huaweicloud.com>
+References: <20260501174448.47154-1-kalevi@kolttonen.fi>
+ <afm9F_neup5eiD5z@archlinux>
+From: Xiu Jianfeng <xiujianfeng@huawei.com>
+In-Reply-To: <afm9F_neup5eiD5z@archlinux>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemj100004.china.huawei.com (7.202.195.249)
 
-On Wed, 2026-05-06 at 22:25 -0400, Mimi Zohar wrote:
-> On Tue, 2026-05-05 at 22:11 -0400, Paul Moore wrote:
-> > On May 5, 2026 9:57:23 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > > On Tue, 2026-05-05 at 18:55 -0400, Paul Moore wrote:
-> > > > On Tue, May 5, 2026 at 5:05=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.=
-com> wrote:
-> > > > > On Mon, 2026-05-04 at 16:51 -0400, Paul Moore wrote:
-> > > > > > On Mon, May 4, 2026 at 8:03=E2=80=AFAM Mimi Zohar <zohar@linux.=
-ibm.com> wrote:
-> > > > > > > On Sun, 2026-05-03 at 12:46 -0400, Paul Moore wrote:
-> > > > > > > > Regardless, assuming you always want IMA to leverage a TPMs=
- when they
-> > > > > > > > exist, your reply suggests that using an initcall based IMA=
- init
-> > > > > > > > scheme, even a late-sync initcall, may not be sufficient be=
-cause
-> > > > > > > > deferred TPM initialization could happen later, yes?
-> > > > > > >=20
-> > > > > > > Well yeah.  The TPM could be configured as a module, but that=
- scenario is=20
-> > > > > > > not of
-> > > > > > > interest.  That's way too late.  The case being addressed in =
-this patch set is
-> > > > > > > when the TPM driver tries to initialize at device_initcall, r=
-eturns
-> > > > > > > EPROBE_DEFER, and is retried at deferred_probe_initcall (late=
-_initcall).  Since
-> > > > > > > ordering within an initcall is not supported, this patch atte=
-mpts to initialize
-> > > > > > > IMA at late_initcall and similarly retries, in this case, at=
-=20
-> > > > > > > late_initcall_sync.
-> > > > > >=20
-> > > > > > Okay, so from a TPM initialization perspective you are satisfie=
-d with
-> > > > > > a late-sync IMA initialization, yes?
-> > > > >=20
-> > > > > No. On some architectures moving IMA initialization from the late=
-_initcall to
-> > > > > late_initcall_sync does not miss any measurement records. However=
-, as=20
-> > > > > previously
-> > > > > mentioned, Linux running in a PowerVM LPAR the move would drop ~3=
-0 measurement
-> > > > > records[1].  So no, only if the TPM is not initialized by late_in=
-itcall, should
-> > > > > IMA retry at late_initcall_sync.
-> > > >=20
-> > > > What do you do in the PowerVM LPAR when the TPM is not avaiable at
-> > > > late initcall and you have to defer IMA initialization until
-> > > > late-sync?
-> > >=20
-> > > Your question is hypothetical ...
-> >=20
-> > <heavy eye roll>
-> >=20
-> > > ... as the TPM isn't deferred, so IMA doesn't go into
-> > > TPM-bypass mode.  Testing on a PowerVM LPAR demonstrated that it skip=
-s ~30
-> > > measurement list records.  So moving the initcall to late_initcall_sy=
-nc would
-> > > cause a regression.
-> >=20
-> > Let me rephrase to make the question clear - how do you plan to handle =
-a=20
-> > system where you lose measurements by waiting until late-sync, but the =
-TPM=20
-> > is not available at the late initcall.
->=20
-> There have been suggestions to queue the IMA measurements, but that goes =
-against
-> the "measure before use" principle. The solution is not to defer IMA
-> initialization for all systems, but to differentiate the boot_aggregate r=
-ecord
-> (boot_aggregate vs. boot_aggregate_late) based on when the TPM becomes av=
-ailable
-> relative to IMA's initcall.  IMA's job is simply to collect and provide t=
-he
-> measurement list.  Based on the attestation service policy, the attestati=
-on
-> service will decide whether a measurement list containing boot_aggregate_=
-late is
-> acceptable.
+On 5/5/2026 5:51 PM, Nicolas Bouchinet wrote:
+> Hi Kalevi, thanks for your contribution,
+> 
+> While it is true the len variable decrementing is not used anywhere and
+> that it would be cleaner to remove it, ideally we should go through a
+> more in depth Lockdown code cleaning.
+> I'll include it with Cai's one[1] when a more consequent patch will be
+> ready. I'll thus keep it somewhere with the patch until then.
+> 
+> I have a two week holiday starting this Friday and will thus not be available
+> until the 26th of may. Xiu, and Cai, if you want to work on it I'll gladly
+> review the patch set.
 
-Agreed on no violation of the measure and load principle.
+Hi Nicolas,
 
-But also the two boot_aggregate solution does not work. If there are
-measurements before boot_aggregate_late, they can corrupt the system
-without noticing, and the corrupted system would emit the
-boot_aggregate measurement (non-late) to pass verification.
+Have a nice holiday!
 
-Roberto
+I'm in favor of a cleanup where it makes sense, but I don't see any
+code that specifically needs it at the moment. Feel free to point out
+any areas of concern when you have a moment.
+
+> 
+> [1]: https://lore.kernel.org/all/20260119091226.3195309-1-caixinchen1@huawei.com/
+> 
+> Best regards,
+> 
+> Nicolas
 
