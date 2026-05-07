@@ -1,848 +1,122 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71328495515;
-	Thu,  7 May 2026 19:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778181324; cv=none; b=hGFKZ4ZthvXmPP6FEm3QBHexYxOAvTO7PaDhGveLqzBNu0oTUZpHS8fbDv8uIA/OH1SMBz4Iqyk153uByCZCTR0p+uMOx/eZ9idDFN/zv48nTXyJgwFuZHOBMDDmSUOQt0JtItnGeLhYBd+4StzkKoonL/e0RVRciqhYejX1HPM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778181324; c=relaxed/simple;
-	bh=S8UY5dcxqQZ/WFduC4Y1XXoqXOI2ZwOUfa0ED9C5dJY=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BtiT22Ht5FDpFQnOOF/mQXO3QngAJ1qZBHLOtCl5XyR+PzTfCFlpS1fkxX1YnXcwsBcBZ6jD1n2280suMpm/0p5tzWxkDDBJACgUQakH5/CM0BPwndSAMXV0FtU6FKTvuCE1kMphbwXGRxfcRC7uh53lfIyG38IaapMLw+5j8bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=lP1/F/Kj; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C2B47DD48
+	for <linux-security-module@vger.kernel.org>; Thu,  7 May 2026 19:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778181597; cv=pass; b=MAcM67oYSNaldC5s4x+wxRYDQ51xkhtq11Q7CD3OxhZ/u8rteJyTU1NHNmvyUPNrIfdAcvWTi4JoYry41X0d/YYoiPv4zYnGng0R+PhNpHf366Ej9TZe+N5cvcjBVny9SlNIGvrf8RBBANCYao+P55xn/tDjrazgCcrdjCqT5cY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778181597; c=relaxed/simple;
+	bh=I5DZUCNXHDpvnJ8tiHxWBxQrtvvS0aWP/FaWpvJs1Mw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=opzyVkBXIh0hTwy09Se8S2wmERxxNZwofsI6gMGKAfNnpqq2/T7Q05TlE2glGHxqekAIW9f5OFLK4RjMKNFf9WxsXQpAZT1p2GF4ZhLZ8kC6093TgUBX1xF5apO705iLG6QoXn2rQTEAaWznjNVQ9e8kTKxgItMBWOuyZ7J1nTw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GLnNKXiY; arc=pass smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="lP1/F/Kj"
-Received: from narnia.corp.microsoft.com (unknown [40.78.12.246])
-	by linux.microsoft.com (Postfix) with ESMTPSA id B008420B716A;
-	Thu,  7 May 2026 12:14:59 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B008420B716A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1778181301;
-	bh=LNlwkEp+stONN+6/+g9ZF/dZiQdVP0skoONPZKcccWo=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=lP1/F/Kj38z14rJEsyvYTXhP1b8swhHzbU+FuQCDXCjhMfktfhtZU8MkwXcPrCndx
-	 w6DiS2Un3pddi4A2ecPt8z3rGmW7BNHm9zffZhgI8OfV1Uz6z+h6LmeWqf2lvaA+8W
-	 zW0e4Gdx8QAHKdpCBERAa0qd3k2rQ5rTj6bpdOVU=
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-To: "Blaise Boscaccy" <bboscaccy@linux.microsoft.com>,
-	"Jonathan Corbet" <corbet@lwn.net>,
-	"Paul Moore" <paul@paul-moore.com>,
-	"James Morris" <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	"Andrew Morton" <akpm@linux-foundation.org>,
-	James.Bottomley@HansenPartnership.com,
-	dhowells@redhat.com,
-	"Fan Wu" <wufan@kernel.org>,
-	"Ryan Foster" <foster.ryan.r@gmail.com>,
-	"Randy Dunlap" <rdunlap@infradead.org>,
-	linux-security-module@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	"Song Liu" <song@kernel.org>
-Subject: [PATCH v7 10/10] ipe: Add BPF program load policy enforcement via Hornet integration
-Date: Thu,  7 May 2026 12:14:04 -0700
-Message-ID: <20260507191416.2984054-11-bboscaccy@linux.microsoft.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260507191416.2984054-1-bboscaccy@linux.microsoft.com>
-References: <20260507191416.2984054-1-bboscaccy@linux.microsoft.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GLnNKXiY"
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-366375c43c2so397073a91.2
+        for <linux-security-module@vger.kernel.org>; Thu, 07 May 2026 12:19:55 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1778181595; cv=none;
+        d=google.com; s=arc-20240605;
+        b=YrL3L6oXCeswXcEeXaCmzw+/ZKHJo8sFq04e/4LG9lHaybT+MGICDoqK3soW3Ce2/n
+         g+em97BSmpCSjIBWLkN+LVRdUDmPsQvLYs86GR2RrsfRpR0V7AGAcC7Cp1j3ql8+PD1z
+         YkDgTHkB7XAV95rU1/U0sgJJgV/Kl6QZG31xGHaUyR7lLYILMQhgRE45jdy5KWQ7ToP4
+         BVnjB3K3MLn03nzbW8oRUnYgRMNZIT2GMe72iaB9HetMm8D6j8tEJGh3gNx1NT1KcDcX
+         kVANjkmiR7llOH315rKKX0+pR6cV2nBno6cUf7NbXRfxa2H37bHVBgaVNe3hzvl6Hajz
+         zFhg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=lLAJ2nIgwojcJGz7oCLjCvCHgUm4ZxZWAITSlIqPTzE=;
+        fh=1sQw8ORVtXLRwq1dbtZQNzohWT4kRUvNLLy0kRrpOeM=;
+        b=T1+9ECzXuo/RPY2m1liDESCtOB5GvXFncJzLc4ta0C+Y9bnkZFoU8wMadkIEH6RFz0
+         uUdcRj7ZN4a5KaH2ys0KsosOtVHNl3iWAIePJVrnPlYTyEjEzF75vwiG4fP5zeJfs+u/
+         weEQhIzKXvbcnyolpM7+xGX/v5CHGOHiyCtChLtLZOC6vyxue2qG+7AEuTE0DZqhaOG5
+         EGjm/4dMwl4/jm5KpgvFq6WEwZWh/qb6vjnabuzxdaOXr3bNevAPRwfXgcXYGkw63Krb
+         KZeLzNZhRFR1PQPzq3ROVZ8l+xOZokOLKOOEcBNlScQJHpFsAdaTPMMpfvG9DjWp8uSN
+         bUvg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1778181595; x=1778786395; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lLAJ2nIgwojcJGz7oCLjCvCHgUm4ZxZWAITSlIqPTzE=;
+        b=GLnNKXiYDLm9X4lYJUk02s0b+xtbyxLM6HP4HQx4rvJuLbAOYJILY1cJpj1vNvYPq7
+         IsgG3W/RqKyXG988mhDHnBhJKdvLepgkXwL0CiTNMCHdxOFlJqjE0CUq4yheVcwODhYy
+         uN/JtKwkvlrtUbHhiMzDk0LHc94wDdqa1JuReUq3eOpJkysLpIO+F4ANHmloLujAkE8X
+         T77szf4tb5LSXgz1RHfFaROnD6uMCDwWsDzAJBEXzhhkrDHauI8M2MxkOpBbou+zAAlv
+         fC1A0peVt1fHW63vTiXaWyJh8nJ01Czu7BUWbHZRwpnyYQjWoKepZ3tLXLtcSt4vBAs1
+         b1yQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778181595; x=1778786395;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=lLAJ2nIgwojcJGz7oCLjCvCHgUm4ZxZWAITSlIqPTzE=;
+        b=Rcj+I9W94sIZg2f2n/wZfx4Nr/YveJzUUa4eoX9zrfMFwmerY4Dm/MNL8BCXXDqdox
+         rtGplnuv7pr6Ahk9aNRievpaJVXeLKycxbeAuGQwsdiJRGDC0cuPwOeTnqB6lNuFdWQf
+         Ls8RYLxxN4fK4ec0QTWC0qjT9hghWdPyKd8jhZh/Iq9O+z3ZzkaAB6TP69qLFo0kQPr0
+         mW9DOzLfcWqb0h8u23piudbSqw+JR3G77w7aXto2ItZFdLmVy4YiGz4HYOM0SH0gQVxe
+         ft8EyWcBRfDBwXfqObxmMKH5fO6CBa8OCJSA2X3QbHAjcPYHBkEWGUIIi33hIdyCyddj
+         o87A==
+X-Forwarded-Encrypted: i=1; AFNElJ/awS0QRY4XxYblVmfadH134DJm4UT73sJE+tJAJQJ4NlTEoT/Rjc4RFbFvXuixpFmLiTFC5TtJylerstU1hy99qsH95V4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT6eDwsh6g4AMcKoM3MsBsyG+NTC4TsNn4q9areIMJMqv2VI/J
+	MIdGIwHwEhUNt+0MQmBoR23+qdPs/2o5N+NhWYpKIOXaeRPz2j88vd2kLkmZEbHm81yTsg9yPif
+	dg/J8eQNDYA4FbDk34uu0cxojG9ws2X+ydSySX+x1
+X-Gm-Gg: Acq92OFVZ9a/h/Vur8dK9Y60Y67T1N+H06nqR8nNfutuXNdKIXdOVJ3iTyIHKMQbcmQ
+	JvNcUzu8SEirO5s7qQgUHej10GuNJiVb2nSaOsCifg0PFQ/HYFDF0wEHg7GuPWEUy+O9b2lq3na
+	2qylAdLTQUiE1Quf3ISRGWrZCdMoO/n3cJYbjsO4SC3CghOMtr1HuDEe48JVxpIjVEZwdqSaYjq
+	d3nEhKU1yz44o2FAGEADIqZUlFBHskAN4kPQZPf7/V1fVkarJTvQJr1eTeHph5WRupu0/bGNnYr
+	3iaZ5F0=
+X-Received: by 2002:a17:90b:3c8f:b0:35e:5ae3:299d with SMTP id
+ 98e67ed59e1d1-365abcddd36mr9275143a91.11.1778181595203; Thu, 07 May 2026
+ 12:19:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260429191431.2345448-1-bboscaccy@linux.microsoft.com>
+In-Reply-To: <20260429191431.2345448-1-bboscaccy@linux.microsoft.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 7 May 2026 15:19:43 -0400
+X-Gm-Features: AVHnY4K2gE6-_wPdetwQUwodb--l1vbJFrrIitihnjQHsL-gyI1WmZmW-6cI99I
+Message-ID: <CAHC9VhScmOoCtoFtccJ6x_cTdwvKCBfUyg=1p-kuAGmo=FdgwA@mail.gmail.com>
+Subject: Re: [v6 00/10] Reintroduce Hornet LSM
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	James.Bottomley@hansenpartnership.com, dhowells@redhat.com, 
+	Fan Wu <wufan@kernel.org>, Ryan Foster <foster.ryan.r@gmail.com>, 
+	Randy Dunlap <rdunlap@infradead.org>, linux-security-module@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	Song Liu <song@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support for the bpf_prog_load_post_integrity LSM hook, enabling IPE
-to make policy decisions about BPF program loading based on integrity
-verdicts provided by the Hornet LSM.
+On Wed, Apr 29, 2026 at 3:14=E2=80=AFPM Blaise Boscaccy
+<bboscaccy@linux.microsoft.com> wrote:
+>
+> This patch series introduces the next iteration of the Hornet LSM.
+> Hornet=E2=80=99s goal is to provide a secure and extensible in-kernel
+> signature verification mechanism for eBPF programs.
 
-New policy operation:
-  op=BPF_PROG_LOAD - Matches BPF program load events
+I see that Fan identified a few issues that need resolution, but I
+just wanted to make sure you've read the expectations for a new LSM.
+To be clear, I think you've ticked all the boxes, and there is a
+MAINTAINERS entry with your name attached, but I just wanted to make
+sure you're okay with maintaining Hornet.  I like Hornet, I think it's
+a nice and fairly clever solution, but the last thing I need is a new
+LSM to maintain :)
 
-New policy properties:
-  bpf_signature=NONE      - No Verdict
-  bpf_signature=OK        - Program signature and map hashes verified
-  bpf_signature=UNSIGNED  - No signature provided
-  bpf_signature=PARTIALSIG - Signature OK but no map hash data
-  bpf_signature=UNKNOWNKEY - The keyring requested by the user is invalid
-  bpf_signature=UNEXPECTED - An unexpected hash value was encountered
-  bpf_signature=FAULT 	   - System error during verification
-  bpf_signature=BADSIG    - Signature or map hash verification failed
-  bpf_keyring=BUILTIN     - Program was signed using a builtin keyring
-  bpf_keyring=SECONDARY   - Program was signed using the secondary keyring
-  bpf_keyring=PLATFORM    - Program was signed using the platform keyring
-  bpf_kernel=TRUE         - Program originated from kernelspace
-  bpf_kernel=FALSE        - Program originated from userspace
+https://github.com/LinuxSecurityModule/kernel#new-lsms
 
-These properties map directly to the lsm_integrity_verdict enum values
-provided by the Hornet LSM through security_bpf_prog_load_post_integrity.
-
-The feature is gated on CONFIG_IPE_PROP_BPF_SIGNATURE which depends on
-CONFIG_SECURITY_HORNET.
-
-Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
----
- Documentation/admin-guide/LSM/ipe.rst | 162 +++++++++++++++++++++++++-
- Documentation/security/ipe.rst        |  68 +++++++++++
- security/ipe/Kconfig                  |  15 +++
- security/ipe/audit.c                  |  15 +++
- security/ipe/eval.c                   |  93 ++++++++++++++-
- security/ipe/eval.h                   |  11 ++
- security/ipe/hooks.c                  |  63 ++++++++++
- security/ipe/hooks.h                  |  15 +++
- security/ipe/ipe.c                    |  14 +++
- security/ipe/ipe.h                    |   3 +
- security/ipe/policy.h                 |  14 +++
- security/ipe/policy_parser.c          |  27 +++++
- 12 files changed, 498 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-guide/LSM/ipe.rst
-index a756d81585317..d68ba9d98859e 100644
---- a/Documentation/admin-guide/LSM/ipe.rst
-+++ b/Documentation/admin-guide/LSM/ipe.rst
-@@ -559,7 +559,8 @@ policy. Two properties are built-into the policy parser: 'op' and 'action'.
- The other properties are used to restrict immutable security properties
- about the files being evaluated. Currently those properties are:
- '``boot_verified``', '``dmverity_signature``', '``dmverity_roothash``',
--'``fsverity_signature``', '``fsverity_digest``'. A description of all
-+'``fsverity_signature``', '``fsverity_digest``', '``bpf_signature``',
-+'``bpf_keyring``', '``bpf_kernel``'. A description of all
- properties supported by IPE are listed below:
- 
- op
-@@ -603,6 +604,14 @@ as the first token. IPE supports the following operations:
-       Controls loading IMA certificates through the Kconfigs,
-       ``CONFIG_IMA_X509_PATH`` and ``CONFIG_EVM_X509_PATH``.
- 
-+   ``BPF_PROG_LOAD``:
-+
-+      Pertains to BPF programs being loaded via the ``bpf()`` syscall.
-+      This operation is used in conjunction with the ``bpf_signature``,
-+      ``bpf_keyring``, and ``bpf_kernel`` properties to control BPF
-+      program loading based on integrity verification provided by the
-+      Hornet LSM.
-+
- action
- ~~~~~~
- 
-@@ -713,6 +722,105 @@ fsverity_signature
- 
-       fsverity_signature=(TRUE|FALSE)
- 
-+bpf_signature
-+~~~~~~~~~~~~~
-+
-+   This property can be utilized for authorization of BPF program loads based
-+   on the integrity verdict provided by the Hornet LSM. When a BPF program is
-+   loaded, Hornet performs cryptographic verification of the program's PKCS#7
-+   signature (if present) and passes an integrity verdict to IPE via the
-+   ``security_bpf_prog_load_post_integrity`` hook. IPE can then allow or deny
-+   the load based on the verdict.
-+
-+   This property depends on ``SECURITY_HORNET`` and is controlled by the
-+   ``IPE_PROP_BPF_SIGNATURE`` config option.
-+   The format of this property is::
-+
-+      bpf_signature=(NONE|OK|UNSIGNED|PARTIALSIG|UNKNOWNKEY|UNEXPECTED|FAULT|BADSIG)
-+
-+   The possible values correspond to the integrity verdicts from Hornet:
-+
-+      ``NONE``
-+
-+         No integrity verdict was set (default/uninitialized).
-+
-+      ``OK``
-+
-+         The BPF program's signature and all map hashes were successfully
-+         verified.
-+
-+      ``UNSIGNED``
-+
-+         No signature was provided with the BPF program.
-+
-+      ``PARTIALSIG``
-+
-+         The program signature was verified, but no authenticated map hash
-+         data was present.
-+
-+      ``UNKNOWNKEY``
-+
-+         The keyring requested by the user is invalid.
-+
-+      ``UNEXPECTED``
-+
-+         An unexpected map hash value was encountered during verification.
-+
-+      ``FAULT``
-+
-+         A system error occurred during signature verification.
-+
-+      ``BADSIG``
-+
-+         The signature or hash verification failed.
-+
-+bpf_keyring
-+~~~~~~~~~~~~
-+
-+   This property can be utilized for authorization of BPF program loads based
-+   on the keyring specified in the ``bpf_attr`` during the ``BPF_PROG_LOAD``
-+   syscall. This allows policies to restrict which keyring must be used for
-+   signature verification of BPF programs.
-+
-+   This property shares the ``IPE_PROP_BPF_SIGNATURE`` config option with
-+   ``bpf_signature``.
-+   The format of this property is::
-+
-+      bpf_keyring=(BUILTIN|SECONDARY|PLATFORM)
-+
-+   The possible values correspond to the system keyrings:
-+
-+      ``BUILTIN``
-+
-+         The builtin trusted keyring (``.builtin_trusted_keys``), which
-+         contains keys embedded at kernel compile time.
-+
-+      ``SECONDARY``
-+
-+         The secondary trusted keyring (``.secondary_trusted_keys``), which
-+         includes both builtin trusted keys and keys added at runtime.
-+
-+      ``PLATFORM``
-+
-+         The platform keyring (``.platform``), which contains keys provided
-+         by the platform firmware (e.g. UEFI db keys).
-+
-+bpf_kernel
-+~~~~~~~~~~
-+
-+   This property can be utilized for authorization of BPF program loads based
-+   on whether the load originated from kernel space or user space. The BPF
-+   light skeleton infrastructure performs a secondary kernel-originated program
-+   load that will not carry a signature. This property allows policies to
-+   permit such kernel-originated loads while still requiring signatures for
-+   user-space loads.
-+
-+   This property shares the ``IPE_PROP_BPF_SIGNATURE`` config option with
-+   ``bpf_signature``.
-+   The format of this property is::
-+
-+      bpf_kernel=(TRUE|FALSE)
-+
- Policy Examples
- ---------------
- 
-@@ -788,6 +896,58 @@ Allow execution of a specific fs-verity file
- 
-    op=EXECUTE fsverity_digest=sha256:fd88f2b8824e197f850bf4c5109bea5cf0ee38104f710843bb72da796ba5af9e action=ALLOW
- 
-+Allow only signed BPF programs
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+::
-+
-+   policy_name=Allow_Signed_BPF policy_version=0.0.0
-+   DEFAULT action=ALLOW
-+
-+   DEFAULT op=BPF_PROG_LOAD action=DENY
-+   op=BPF_PROG_LOAD bpf_kernel=TRUE action=ALLOW
-+   op=BPF_PROG_LOAD bpf_signature=OK action=ALLOW
-+
-+This policy allows all other operations but restricts BPF program loading
-+to only programs that either originate from kernel space (e.g. light skeleton
-+reloads) or have a valid signature verified by the Hornet LSM. Unsigned or
-+improperly signed BPF programs from user space will be denied.
-+
-+Allow signed BPF programs from a specific keyring
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+::
-+
-+   policy_name=Allow_BPF_Builtin_Keyring policy_version=0.0.0
-+   DEFAULT action=ALLOW
-+
-+   DEFAULT op=BPF_PROG_LOAD action=DENY
-+   op=BPF_PROG_LOAD bpf_kernel=TRUE action=ALLOW
-+   op=BPF_PROG_LOAD bpf_signature=OK bpf_keyring=BUILTIN action=ALLOW
-+
-+This policy further restricts BPF program loading to only accept programs
-+whose signatures were verified using the builtin trusted keyring. Programs
-+signed against the secondary or platform keyrings will be denied, providing
-+tighter control over which signing keys are acceptable.
-+
-+Allow signed BPF programs with relaxed partial signatures
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+::
-+
-+   policy_name=Allow_BPF_Partial policy_version=0.0.0
-+   DEFAULT action=ALLOW
-+
-+   DEFAULT op=BPF_PROG_LOAD action=DENY
-+   op=BPF_PROG_LOAD bpf_kernel=TRUE action=ALLOW
-+   op=BPF_PROG_LOAD bpf_signature=OK action=ALLOW
-+   op=BPF_PROG_LOAD bpf_signature=PARTIALSIG action=ALLOW
-+
-+This policy allows BPF programs that have been fully verified (``OK``) as
-+well as programs with a valid program signature but without authenticated
-+map hash data (``PARTIALSIG``). This can be useful during development or
-+for programs that do not use maps.
-+
- Additional Information
- ----------------------
- 
-diff --git a/Documentation/security/ipe.rst b/Documentation/security/ipe.rst
-index 4a7d953abcdc3..2363734e934f0 100644
---- a/Documentation/security/ipe.rst
-+++ b/Documentation/security/ipe.rst
-@@ -412,6 +412,73 @@ a standard securityfs policy tree::
- 
- The policy is stored in the ``->i_private`` data of the MyPolicy inode.
- 
-+BPF/Hornet Integration
-+~~~~~~~~~~~~~~~~~~~~~~
-+
-+IPE integrates with the Hornet LSM to enforce integrity policies on BPF
-+program loading. Hornet performs cryptographic verification of BPF program
-+signatures (PKCS#7 with authenticated attributes containing map hashes)
-+and produces an ``enum lsm_integrity_verdict``. IPE acts as the policy
-+enforcer: it stores Hornet's verdict in a per-program LSM blob and later
-+evaluates it against the active IPE policy when the BPF program load is
-+finalized.
-+
-+Enforcement is split across two LSM hooks so that signature verification
-+and policy evaluation are cleanly separated. This also lets IPE evaluate
-+policy uniformly even when no integrity provider ran.
-+
-+The hook flow is:
-+
-+  1. User space (or the kernel, via the BPF light skeleton) invokes
-+     ``BPF_PROG_LOAD`` through the ``bpf()`` syscall.
-+  2. Hornet's ``bpf_prog_load_integrity`` hook runs first and calls
-+     ``hornet_check_program()`` to verify the program's PKCS#7 signature
-+     against ``attr->keyring_id`` and to check the signed map hashes
-+     (decoded from the ``OID_hornet_data`` authenticated attribute)
-+     against the live hashes of the frozen maps referenced from
-+     ``attr->fd_array``. The function produces one of
-+     ``LSM_INT_VERDICT_OK``, ``LSM_INT_VERDICT_UNSIGNED``,
-+     ``LSM_INT_VERDICT_BADSIG``, ``LSM_INT_VERDICT_PARTIALSIG``,
-+     ``LSM_INT_VERDICT_UNKNOWNKEY``, ``LSM_INT_VERDICT_UNEXPECTED``, or
-+     ``LSM_INT_VERDICT_FAULT``.
-+  3. Hornet calls ``security_bpf_prog_load_post_integrity()`` with the
-+     resulting verdict and its ``lsm_id``. IPE's
-+     ``ipe_bpf_prog_load_post_integrity`` handler does **not** enforce
-+     policy here; it only stashes the verdict in IPE's per-program blob
-+     and returns ``0``. This keeps the integrity step decoupled from
-+     policy evaluation and allows multiple providers to coexist without
-+     short-circuiting each other.
-+  4. The core BPF load path then invokes the standard ``bpf_prog_load``
-+     LSM hook. IPE's ``ipe_bpf_prog_load`` reads the verdict back out of
-+     the per-program blob, populates an ``ipe_eval_ctx``, and calls
-+     ``ipe_evaluate_event()`` against the active policy's
-+     ``BPF_PROG_LOAD`` rules. A deny verdict returns ``-EACCES`` and
-+     aborts the load.
-+
-+If no integrity provider populated the blob (e.g. Hornet is not enabled,
-+or the load came from a path Hornet does not cover), the verdict defaults
-+to ``LSM_INT_VERDICT_NONE`` and IPE evaluates accordingly. Policy can
-+therefore express "deny anything Hornet did not vouch for".
-+
-+Three properties are available for BPF policy rules:
-+
-+  - ``bpf_signature``: Matches against the integrity verdict (OK, UNSIGNED,
-+    BADSIG, etc.)
-+  - ``bpf_keyring``: Matches against the keyring specified in ``bpf_attr``
-+    (BUILTIN, SECONDARY, PLATFORM)
-+  - ``bpf_kernel``: Matches whether the load originated from kernel space
-+    (TRUE/FALSE). This is important because the BPF light skeleton
-+    infrastructure performs a secondary kernel-originated program load that
-+    does not carry a signature.
-+
-+All three properties are gated on ``CONFIG_IPE_PROP_BPF_SIGNATURE`` which
-+depends on ``CONFIG_SECURITY_HORNET``.
-+
-+The evaluation context (``struct ipe_eval_ctx``) carries three BPF-specific
-+fields: ``bpf_verdict`` (the integrity verdict enum), ``bpf_keyring_id``
-+(the ``s32`` keyring ID from ``bpf_attr``), and ``bpf_kernel`` (bool
-+indicating kernel origin).
-+
- Tests
- -----
- 
-@@ -439,6 +506,7 @@ IPE has KUnit Tests for the policy parser. Recommended kunitconfig::
-   CONFIG_IPE_PROP_DM_VERITY_SIGNATURE=y
-   CONFIG_IPE_PROP_FS_VERITY=y
-   CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG=y
-+  CONFIG_IPE_PROP_BPF_SIGNATURE=y
-   CONFIG_SECURITY_IPE_KUNIT_TEST=y
- 
- In addition, IPE has a python based integration
-diff --git a/security/ipe/Kconfig b/security/ipe/Kconfig
-index a110a6cd848b7..95775139612df 100644
---- a/security/ipe/Kconfig
-+++ b/security/ipe/Kconfig
-@@ -95,6 +95,21 @@ config IPE_PROP_FS_VERITY_BUILTIN_SIG
- 
- 	  if unsure, answer Y.
- 
-+config IPE_PROP_BPF_SIGNATURE
-+	bool "Enable support for Hornet BPF program signature verification"
-+	depends on SECURITY_HORNET
-+	help
-+	  This option enables the 'bpf_signature', 'bpf_kernel' and
-+	  'bpf_keyring' properties within IPE policies. The
-+	  'bpf_signature' property allows IPE to make policy decisions
-+	  based on the integrity verdict provided by the Hornet LSM
-+	  when a BPF program is loaded.  Verdicts include OK,
-+	  UNSIGNED, PARTIALSIG, BADSIG, and others.  The 'bpf_keyring'
-+	  property allows policies to match against the keyring
-+	  specified in bpf_attr (BUILTIN, SECONDARY, PLATFORM).
-+
-+	  If unsure, answer Y.
-+
- endmenu
- 
- config SECURITY_IPE_KUNIT_TEST
-diff --git a/security/ipe/audit.c b/security/ipe/audit.c
-index 3f0deeb549127..251c6ec2f8423 100644
---- a/security/ipe/audit.c
-+++ b/security/ipe/audit.c
-@@ -41,6 +41,7 @@ static const char *const audit_op_names[__IPE_OP_MAX + 1] = {
- 	"KEXEC_INITRAMFS",
- 	"POLICY",
- 	"X509_CERT",
-+	"BPF_PROG_LOAD",
- 	"UNKNOWN",
- };
- 
-@@ -51,6 +52,7 @@ static const char *const audit_hook_names[__IPE_HOOK_MAX] = {
- 	"MPROTECT",
- 	"KERNEL_READ",
- 	"KERNEL_LOAD",
-+	"BPF_PROG_LOAD",
- };
- 
- static const char *const audit_prop_names[__IPE_PROP_MAX] = {
-@@ -62,6 +64,19 @@ static const char *const audit_prop_names[__IPE_PROP_MAX] = {
- 	"fsverity_digest=",
- 	"fsverity_signature=FALSE",
- 	"fsverity_signature=TRUE",
-+	"bpf_signature=NONE",
-+	"bpf_signature=OK",
-+	"bpf_signature=UNSIGNED",
-+	"bpf_signature=PARTIALSIG",
-+	"bpf_signature=UNKNOWNKEY",
-+	"bpf_signature=UNEXPECTED",
-+	"bpf_signature=FAULT",
-+	"bpf_signature=BADSIG",
-+	"bpf_keyring=BUILTIN",
-+	"bpf_keyring=SECONDARY",
-+	"bpf_keyring=PLATFORM",
-+	"bpf_kernel=FALSE",
-+	"bpf_kernel=TRUE",
- };
- 
- /**
-diff --git a/security/ipe/eval.c b/security/ipe/eval.c
-index 21439c5be3364..705c4ecfda696 100644
---- a/security/ipe/eval.c
-+++ b/security/ipe/eval.c
-@@ -11,6 +11,7 @@
- #include <linux/rcupdate.h>
- #include <linux/moduleparam.h>
- #include <linux/fsverity.h>
-+#include <linux/verification.h>
- 
- #include "ipe.h"
- #include "eval.h"
-@@ -265,8 +266,72 @@ static bool evaluate_fsv_sig_true(const struct ipe_eval_ctx *const ctx)
- }
- #endif /* CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG */
- 
-+#ifdef CONFIG_IPE_PROP_BPF_SIGNATURE
-+/**
-+ * evaluate_bpf_sig() - Evaluate @ctx against a bpf_signature property.
-+ * @ctx: Supplies a pointer to the context being evaluated.
-+ * @expected: The expected lsm_integrity_verdict to match against.
-+ *
-+ * Return:
-+ * * %true	- The current @ctx matches the expected verdict
-+ * * %false	- The current @ctx doesn't match the expected verdict
-+ */
-+static bool evaluate_bpf_sig(const struct ipe_eval_ctx *const ctx,
-+			     enum lsm_integrity_verdict expected)
-+{
-+	return ctx->bpf_verdict == expected;
-+}
-+#else
-+static bool evaluate_bpf_sig(const struct ipe_eval_ctx *const ctx,
-+			     enum lsm_integrity_verdict expected)
-+{
-+	return false;
-+}
-+#endif /* CONFIG_IPE_PROP_BPF_SIGNATURE */
-+
-+#ifdef CONFIG_IPE_PROP_BPF_SIGNATURE
-+/**
-+ * evaluate_bpf_keyring() - Evaluate @ctx against a bpf_keyring property.
-+ * @ctx: Supplies a pointer to the context being evaluated.
-+ * @expected: The expected keyring_id to match against.
-+ *
-+ * Return:
-+ * * %true	- The current @ctx matches the expected keyring
-+ * * %false	- The current @ctx doesn't match the expected keyring
-+ */
-+static bool evaluate_bpf_keyring(const struct ipe_eval_ctx *const ctx,
-+				 s32 expected)
-+{
-+	return ctx->bpf_keyring_id == expected;
-+}
-+#else
-+static bool evaluate_bpf_keyring(const struct ipe_eval_ctx *const ctx,
-+				 s32 expected)
-+{
-+	return false;
-+}
-+#endif /* CONFIG_IPE_PROP_BPF_SIGNATURE */
-+
-+#ifdef CONFIG_IPE_PROP_BPF_SIGNATURE
-+/**
-+ * evaluate_bpf_kernel() - Evaluate @ctx against the bpf_kernel property.
-+ * @ctx: Supplies a pointer to the context being evaluated.
-+ *
-+ * Return:
-+ * * %true	- The current @ctx bpf_kernel property is true
-+ * * %false	- The current @ctx bpf_kernel property is false
-+ */
-+static bool evaluate_bpf_kernel(const struct ipe_eval_ctx *const ctx)
-+{
-+	return ctx->bpf_kernel;
-+}
-+#else
-+static bool evaluate_bpf_kernel(const struct ipe_eval_ctx *const ctx)
-+{
-+	return false;
-+}
-+#endif /* CONFIG_IPE_PROP_BPF_SIGNATURE */
- /**
-- * evaluate_property() - Analyze @ctx against a rule property.
-  * @ctx: Supplies a pointer to the context to be evaluated.
-  * @p: Supplies a pointer to the property to be evaluated.
-  *
-@@ -297,6 +362,32 @@ static bool evaluate_property(const struct ipe_eval_ctx *const ctx,
- 		return evaluate_fsv_sig_false(ctx);
- 	case IPE_PROP_FSV_SIG_TRUE:
- 		return evaluate_fsv_sig_true(ctx);
-+	case IPE_PROP_BPF_SIG_NONE:
-+		return evaluate_bpf_sig(ctx, LSM_INT_VERDICT_NONE);
-+	case IPE_PROP_BPF_SIG_OK:
-+		return evaluate_bpf_sig(ctx, LSM_INT_VERDICT_OK);
-+	case IPE_PROP_BPF_SIG_UNSIGNED:
-+		return evaluate_bpf_sig(ctx, LSM_INT_VERDICT_UNSIGNED);
-+	case IPE_PROP_BPF_SIG_PARTIALSIG:
-+		return evaluate_bpf_sig(ctx, LSM_INT_VERDICT_PARTIALSIG);
-+	case IPE_PROP_BPF_SIG_UNKNOWNKEY:
-+		return evaluate_bpf_sig(ctx, LSM_INT_VERDICT_UNKNOWNKEY);
-+	case IPE_PROP_BPF_SIG_UNEXPECTED:
-+		return evaluate_bpf_sig(ctx, LSM_INT_VERDICT_UNEXPECTED);
-+	case IPE_PROP_BPF_SIG_FAULT:
-+		return evaluate_bpf_sig(ctx, LSM_INT_VERDICT_FAULT);
-+	case IPE_PROP_BPF_SIG_BADSIG:
-+		return evaluate_bpf_sig(ctx, LSM_INT_VERDICT_BADSIG);
-+	case IPE_PROP_BPF_KEYRING_BUILTIN:
-+		return evaluate_bpf_keyring(ctx, 0);
-+	case IPE_PROP_BPF_KEYRING_SECONDARY:
-+		return evaluate_bpf_keyring(ctx, (s32)(unsigned long)VERIFY_USE_SECONDARY_KEYRING);
-+	case IPE_PROP_BPF_KEYRING_PLATFORM:
-+		return evaluate_bpf_keyring(ctx, (s32)(unsigned long)VERIFY_USE_PLATFORM_KEYRING);
-+	case IPE_PROP_BPF_KERNEL_FALSE:
-+		return !evaluate_bpf_kernel(ctx);
-+	case IPE_PROP_BPF_KERNEL_TRUE:
-+		return evaluate_bpf_kernel(ctx);
- 	default:
- 		return false;
- 	}
-diff --git a/security/ipe/eval.h b/security/ipe/eval.h
-index fef65a36468cb..b061cb5ade27e 100644
---- a/security/ipe/eval.h
-+++ b/security/ipe/eval.h
-@@ -37,6 +37,12 @@ struct ipe_inode {
- };
- #endif /* CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG */
- 
-+#ifdef CONFIG_IPE_PROP_BPF_SIGNATURE
-+struct ipe_bpf_prog {
-+	enum lsm_integrity_verdict verdict;
-+};
-+#endif /* CONFIG_IPE_PROP_BPF_SIGNATURE */
-+
- struct ipe_eval_ctx {
- 	enum ipe_op_type op;
- 	enum ipe_hook_type hook;
-@@ -52,6 +58,11 @@ struct ipe_eval_ctx {
- #ifdef CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG
- 	const struct ipe_inode *ipe_inode;
- #endif /* CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG */
-+#ifdef CONFIG_IPE_PROP_BPF_SIGNATURE
-+	enum lsm_integrity_verdict bpf_verdict;
-+	s32 bpf_keyring_id;
-+	bool bpf_kernel;
-+#endif /* CONFIG_IPE_PROP_BPF_SIGNATURE */
- };
- 
- enum ipe_match {
-diff --git a/security/ipe/hooks.c b/security/ipe/hooks.c
-index 0ae54a880405a..9271e129a2cf2 100644
---- a/security/ipe/hooks.c
-+++ b/security/ipe/hooks.c
-@@ -340,3 +340,66 @@ int ipe_inode_setintegrity(const struct inode *inode,
- 	return -EINVAL;
- }
- #endif /* CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG */
-+
-+#ifdef CONFIG_IPE_PROP_BPF_SIGNATURE
-+/**
-+ * ipe_bpf_prog_load_post_integrity() - Store integrity verdict in per-prog blob.
-+ * @prog: Supplies the BPF program being loaded.
-+ * @attr: Supplies the bpf syscall attributes.
-+ * @token: Supplies the BPF token, if any.
-+ * @kernel: Whether the call originated from the kernel.
-+ * @lsmid: Supplies the LSM ID of the integrity provider.
-+ * @verdict: Supplies the integrity verdict from the provider (e.g. Hornet).
-+ *
-+ * This hook stores the integrity verdict in IPE's per-prog security blob
-+ * so that ipe_bpf_prog_load() can later read it for policy evaluation.
-+ *
-+ * Return:
-+ * * %0		- Always succeeds (policy is evaluated in bpf_prog_load)
-+ */
-+int ipe_bpf_prog_load_post_integrity(struct bpf_prog *prog,
-+				     union bpf_attr *attr,
-+				     struct bpf_token *token,
-+				     bool kernel,
-+				     const struct lsm_id *lsmid,
-+				     enum lsm_integrity_verdict verdict)
-+{
-+	struct ipe_bpf_prog *blob = ipe_bpf_prog(prog);
-+
-+	blob->verdict = verdict;
-+
-+	return 0;
-+}
-+
-+/**
-+ * ipe_bpf_prog_load() - IPE policy evaluation for BPF program load.
-+ * @prog: Supplies the BPF program being loaded.
-+ * @attr: Supplies the bpf syscall attributes.
-+ * @token: Supplies the BPF token, if any.
-+ * @kernel: Whether the call originated from the kernel.
-+ *
-+ * Reads the integrity verdict previously stored by post_integrity (if any)
-+ * and evaluates IPE policy. If no integrity provider ran, the verdict
-+ * defaults to LSM_INT_VERDICT_NONE.
-+ *
-+ * Return:
-+ * * %0		- Success
-+ * * %-EACCES	- Did not pass IPE policy
-+ */
-+int ipe_bpf_prog_load(struct bpf_prog *prog,
-+		      union bpf_attr *attr,
-+		      struct bpf_token *token,
-+		      bool kernel)
-+{
-+	struct ipe_bpf_prog *blob = ipe_bpf_prog(prog);
-+	struct ipe_eval_ctx ctx = IPE_EVAL_CTX_INIT;
-+
-+	ctx.op = IPE_OP_BPF_PROG_LOAD;
-+	ctx.hook = IPE_HOOK_BPF_PROG_LOAD;
-+	ctx.bpf_verdict = blob->verdict;
-+	ctx.bpf_keyring_id = attr->keyring_id;
-+	ctx.bpf_kernel = kernel;
-+
-+	return ipe_evaluate_event(&ctx);
-+}
-+#endif /* CONFIG_IPE_PROP_BPF_SIGNATURE */
-diff --git a/security/ipe/hooks.h b/security/ipe/hooks.h
-index 07db373327402..8a6d1a459e00c 100644
---- a/security/ipe/hooks.h
-+++ b/security/ipe/hooks.h
-@@ -10,6 +10,7 @@
- #include <linux/security.h>
- #include <linux/blk_types.h>
- #include <linux/fsverity.h>
-+#include <linux/bpf.h>
- 
- enum ipe_hook_type {
- 	IPE_HOOK_BPRM_CHECK = 0,
-@@ -18,6 +19,7 @@ enum ipe_hook_type {
- 	IPE_HOOK_MPROTECT,
- 	IPE_HOOK_KERNEL_READ,
- 	IPE_HOOK_KERNEL_LOAD,
-+	IPE_HOOK_BPF_PROG_LOAD,
- 	__IPE_HOOK_MAX
- };
- 
-@@ -52,4 +54,17 @@ int ipe_inode_setintegrity(const struct inode *inode, enum lsm_integrity_type ty
- 			   const void *value, size_t size);
- #endif /* CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG */
- 
-+#ifdef CONFIG_IPE_PROP_BPF_SIGNATURE
-+int ipe_bpf_prog_load_post_integrity(struct bpf_prog *prog,
-+				     union bpf_attr *attr,
-+				     struct bpf_token *token,
-+				     bool kernel,
-+				     const struct lsm_id *lsmid,
-+				     enum lsm_integrity_verdict verdict);
-+int ipe_bpf_prog_load(struct bpf_prog *prog,
-+		      union bpf_attr *attr,
-+		      struct bpf_token *token,
-+		      bool kernel);
-+#endif /* CONFIG_IPE_PROP_BPF_SIGNATURE */
-+
- #endif /* _IPE_HOOKS_H */
-diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
-index 495bb765de1b8..5af13903287fe 100644
---- a/security/ipe/ipe.c
-+++ b/security/ipe/ipe.c
-@@ -19,6 +19,9 @@ static struct lsm_blob_sizes ipe_blobs __ro_after_init = {
- #ifdef CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG
- 	.lbs_inode = sizeof(struct ipe_inode),
- #endif /* CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG */
-+#ifdef CONFIG_IPE_PROP_BPF_SIGNATURE
-+	.lbs_bpf_prog = sizeof(struct ipe_bpf_prog),
-+#endif /* CONFIG_IPE_PROP_BPF_SIGNATURE */
- };
- 
- static const struct lsm_id ipe_lsmid = {
-@@ -45,6 +48,13 @@ struct ipe_inode *ipe_inode(const struct inode *inode)
- }
- #endif /* CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG */
- 
-+#ifdef CONFIG_IPE_PROP_BPF_SIGNATURE
-+struct ipe_bpf_prog *ipe_bpf_prog(const struct bpf_prog *prog)
-+{
-+	return prog->aux->security + ipe_blobs.lbs_bpf_prog;
-+}
-+#endif /* CONFIG_IPE_PROP_BPF_SIGNATURE */
-+
- static struct security_hook_list ipe_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(bprm_check_security, ipe_bprm_check_security),
- 	LSM_HOOK_INIT(bprm_creds_for_exec, ipe_bprm_creds_for_exec),
-@@ -60,6 +70,10 @@ static struct security_hook_list ipe_hooks[] __ro_after_init = {
- #ifdef CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG
- 	LSM_HOOK_INIT(inode_setintegrity, ipe_inode_setintegrity),
- #endif /* CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG */
-+#ifdef CONFIG_IPE_PROP_BPF_SIGNATURE
-+	LSM_HOOK_INIT(bpf_prog_load_post_integrity, ipe_bpf_prog_load_post_integrity),
-+	LSM_HOOK_INIT(bpf_prog_load, ipe_bpf_prog_load),
-+#endif /* CONFIG_IPE_PROP_BPF_SIGNATURE */
- };
- 
- /**
-diff --git a/security/ipe/ipe.h b/security/ipe/ipe.h
-index 25cfdb8f0c20a..47de32b5bc938 100644
---- a/security/ipe/ipe.h
-+++ b/security/ipe/ipe.h
-@@ -22,6 +22,9 @@ struct ipe_bdev *ipe_bdev(struct block_device *b);
- #ifdef CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG
- struct ipe_inode *ipe_inode(const struct inode *inode);
- #endif /* CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG */
-+#ifdef CONFIG_IPE_PROP_BPF_SIGNATURE
-+struct ipe_bpf_prog *ipe_bpf_prog(const struct bpf_prog *prog);
-+#endif /* CONFIG_IPE_PROP_BPF_SIGNATURE */
- 
- int ipe_init_securityfs(void);
- 
-diff --git a/security/ipe/policy.h b/security/ipe/policy.h
-index 5bfbdbddeef86..748bea92beb19 100644
---- a/security/ipe/policy.h
-+++ b/security/ipe/policy.h
-@@ -17,6 +17,7 @@ enum ipe_op_type {
- 	IPE_OP_KEXEC_INITRAMFS,
- 	IPE_OP_POLICY,
- 	IPE_OP_X509,
-+	IPE_OP_BPF_PROG_LOAD,
- 	__IPE_OP_MAX,
- };
- 
-@@ -39,6 +40,19 @@ enum ipe_prop_type {
- 	IPE_PROP_FSV_DIGEST,
- 	IPE_PROP_FSV_SIG_FALSE,
- 	IPE_PROP_FSV_SIG_TRUE,
-+	IPE_PROP_BPF_SIG_NONE,
-+	IPE_PROP_BPF_SIG_OK,
-+	IPE_PROP_BPF_SIG_UNSIGNED,
-+	IPE_PROP_BPF_SIG_PARTIALSIG,
-+	IPE_PROP_BPF_SIG_UNKNOWNKEY,
-+	IPE_PROP_BPF_SIG_UNEXPECTED,
-+	IPE_PROP_BPF_SIG_FAULT,
-+	IPE_PROP_BPF_SIG_BADSIG,
-+	IPE_PROP_BPF_KEYRING_BUILTIN,
-+	IPE_PROP_BPF_KEYRING_SECONDARY,
-+	IPE_PROP_BPF_KEYRING_PLATFORM,
-+	IPE_PROP_BPF_KERNEL_FALSE,
-+	IPE_PROP_BPF_KERNEL_TRUE,
- 	__IPE_PROP_MAX
- };
- 
-diff --git a/security/ipe/policy_parser.c b/security/ipe/policy_parser.c
-index 6fa5bebf84714..71f63de56616b 100644
---- a/security/ipe/policy_parser.c
-+++ b/security/ipe/policy_parser.c
-@@ -237,6 +237,7 @@ static const match_table_t operation_tokens = {
- 	{IPE_OP_KEXEC_INITRAMFS,	"op=KEXEC_INITRAMFS"},
- 	{IPE_OP_POLICY,			"op=POLICY"},
- 	{IPE_OP_X509,			"op=X509_CERT"},
-+	{IPE_OP_BPF_PROG_LOAD,		"op=BPF_PROG_LOAD"},
- 	{IPE_OP_INVALID,		NULL}
- };
- 
-@@ -281,6 +282,19 @@ static const match_table_t property_tokens = {
- 	{IPE_PROP_FSV_DIGEST,		"fsverity_digest=%s"},
- 	{IPE_PROP_FSV_SIG_FALSE,	"fsverity_signature=FALSE"},
- 	{IPE_PROP_FSV_SIG_TRUE,		"fsverity_signature=TRUE"},
-+	{IPE_PROP_BPF_SIG_NONE,		"bpf_signature=NONE"},
-+	{IPE_PROP_BPF_SIG_OK,		"bpf_signature=OK"},
-+	{IPE_PROP_BPF_SIG_UNSIGNED,	"bpf_signature=UNSIGNED"},
-+	{IPE_PROP_BPF_SIG_PARTIALSIG,	"bpf_signature=PARTIALSIG"},
-+	{IPE_PROP_BPF_SIG_UNKNOWNKEY,	"bpf_signature=UNKNOWNKEY"},
-+	{IPE_PROP_BPF_SIG_UNEXPECTED,	"bpf_signature=UNEXPECTED"},
-+	{IPE_PROP_BPF_SIG_FAULT,	"bpf_signature=FAULT"},
-+	{IPE_PROP_BPF_SIG_BADSIG,	"bpf_signature=BADSIG"},
-+	{IPE_PROP_BPF_KEYRING_BUILTIN,	"bpf_keyring=BUILTIN"},
-+	{IPE_PROP_BPF_KEYRING_SECONDARY,	"bpf_keyring=SECONDARY"},
-+	{IPE_PROP_BPF_KEYRING_PLATFORM,	"bpf_keyring=PLATFORM"},
-+	{IPE_PROP_BPF_KERNEL_FALSE,	"bpf_kernel=FALSE"},
-+	{IPE_PROP_BPF_KERNEL_TRUE,	"bpf_kernel=TRUE"},
- 	{IPE_PROP_INVALID,		NULL}
- };
- 
-@@ -331,6 +345,19 @@ static int parse_property(char *t, struct ipe_rule *r)
- 	case IPE_PROP_DMV_SIG_TRUE:
- 	case IPE_PROP_FSV_SIG_FALSE:
- 	case IPE_PROP_FSV_SIG_TRUE:
-+	case IPE_PROP_BPF_SIG_NONE:
-+	case IPE_PROP_BPF_SIG_OK:
-+	case IPE_PROP_BPF_SIG_UNSIGNED:
-+	case IPE_PROP_BPF_SIG_PARTIALSIG:
-+	case IPE_PROP_BPF_SIG_UNKNOWNKEY:
-+	case IPE_PROP_BPF_SIG_UNEXPECTED:
-+	case IPE_PROP_BPF_SIG_FAULT:
-+	case IPE_PROP_BPF_SIG_BADSIG:
-+	case IPE_PROP_BPF_KEYRING_BUILTIN:
-+	case IPE_PROP_BPF_KEYRING_SECONDARY:
-+	case IPE_PROP_BPF_KEYRING_PLATFORM:
-+	case IPE_PROP_BPF_KERNEL_FALSE:
-+	case IPE_PROP_BPF_KERNEL_TRUE:
- 		p->type = token;
- 		break;
- 	default:
--- 
-2.53.0
-
+--
+paul-moore.com
