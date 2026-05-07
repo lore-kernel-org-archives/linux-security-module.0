@@ -1,105 +1,176 @@
-Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA53332EBC
-	for <linux-security-module@vger.kernel.org>; Thu,  7 May 2026 07:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27B4377EC1;
+	Thu,  7 May 2026 08:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778138556; cv=none; b=aPom0vr/Fn83N/sob0+weFpMwkXpwnjkskQ/+6M3AsNapuA0mufJTW9Xy6EtYi8Sm75Y6s/AQZxBRnnxSxrwnYS8lpzuLgwhN5vdsYnqcAZmZvK831Chmerk2Y5IHOZXTTDB5jBTkD5n2Rcdfed8a0ldnAX7imRO1x42ymXN3k0=
+	t=1778142631; cv=none; b=Fxlw9dHa3MSa+tClEj70x1Op3v/uBr+kJmZja0Njhn05dW384TNYk9KVFkVpdLPLfQytJcYFbZnCtHazT0+vjptUnWWWYUND7zjPtls4bFnB8KvdzNCwUX4K1LhKyVeNkJifLPZFCUboU8YkcEfHdoRjflVehK//Ceny0jX4fXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778138556; c=relaxed/simple;
-	bh=YXMOp31DDtx5suzwWLOoKI74J+bo3KCD0s3BvMgpp6I=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hmL/gZ9J3ckT/55Sojcz1OQnYEQF6oyZP3Ldp/rrPTH9wgTKiD7COeCt3ddEslrYlVEf9A8Jo4txeea/iMJH5euJ5UwgkGLwXyRdwzT9q3RiMJcbSD/t0TwJKWpsJ2xMqQLg6hOFpSFVfxdaTdOZA+XgC8TGfuLYAE6BCQW0Gkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jhD4JFOa; arc=none smtp.client-ip=209.85.218.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jhD4JFOa"
-Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-ba70cda6755so42997066b.1
-        for <linux-security-module@vger.kernel.org>; Thu, 07 May 2026 00:22:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1778138554; x=1778743354; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pVOdNzD+VUU7vHw2dUnq3MKLiiC7IJnQhyGnEgnRkcM=;
-        b=jhD4JFOaHJ4vXMX//pOLMK2IEml2M9q6caGeMTaZsZmy5QliHidvKAblZqGdJOWxOZ
-         eyLVV2qCDXuwDFANDLom4i8CkunACZkJnQ13rXlWgHZYyb01doFA9isewVP7VU1CmUJ6
-         j1ztulOBCbOf0I4ZdEIbcjZged4G7iE8uS/0JW2OqUB/550mEVAMc2u7a3hLGoYF3g9S
-         l8o111U1/joH+KfG+tab/FjsRdlldccSM0D0xRL70tImvtqTilvn3/Wqc9Zuo8zkInbQ
-         gxgG3QNc08NwIx/VwxgSv0QrNqMcSgT5xgSCT/mLsAH22ib3gUNIg66q68o2c3VfrwmL
-         byWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778138554; x=1778743354;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pVOdNzD+VUU7vHw2dUnq3MKLiiC7IJnQhyGnEgnRkcM=;
-        b=BewfN0Xw8CNkiFOcFCv8vET1ps5WfzWKd8xbjT6g78lokLK2pl7Chi1R5ZIBq9X+4N
-         j44qVAkyo+dY/VOlX3y+Y30BdPwULcLLc54AwsxSCmVYWW25+NGNW7EQYX8zQqsGLJ5g
-         GFMCLywvIrBnvG+98mujz3JOtuSWheXKcSbqUs5+HjV0HlDiqvXQqLjnOdLIBM34EI2n
-         xtcaLgx5l5LtG6zk81VBQsPvZ7pzMVV5i3YjTQ6xjsus3JSG4aGcJHQuP+9HXJbbZ0MM
-         B4eZyeGWrvKMAkQOLOgcSeJEyFk/GDXaG3wh+zH1DECZtwFN+Yv9WmprfWoQidpknyTq
-         HPUA==
-X-Forwarded-Encrypted: i=1; AFNElJ9zEFPsaEePEGQnucBVYvPoSRSNBLYltsf3ovom0OxuRnmFYlPALDcw72T8jUa5YWNjDPC25gUlmOtCdG4OQY6TMzZrCJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6ruOhHus0GM6MvOUZ0BWhHWzTlGOa1KSrM8OEVz2FoM4jwNB/
-	JL29BY/xH3tDN7DHVo10a/I9mpWUIr2lcKFJk7q5IEC2U4z0yd/obDfSclBj5XYSO/YoOi+LVUo
-	OsphyI6rrpK1dWhiEZw==
-X-Received: from ejcsa38.prod.google.com ([2002:a17:907:6d26:b0:bc1:3e57:bbd0])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:907:70a:b0:b8e:796a:fd5d with SMTP id a640c23a62f3a-bc56f303d16mr420732366b.39.1778138553287;
- Thu, 07 May 2026 00:22:33 -0700 (PDT)
-Date: Thu, 7 May 2026 07:22:31 +0000
-In-Reply-To: <20260506204913.26022-1-arnav4324@gmail.com>
+	s=arc-20240116; t=1778142631; c=relaxed/simple;
+	bh=9JH+JKtOUYC88OvLe5TjJNgR65xA2MidNnhXMXVbBdg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Vrnlbvi5CpDOkInzmd4yQ3mNCtdum4Xe4Ie4ucUoYuyp4GiUxRKR5BrmmcV4aeddZe65b6wDim3a4DIb5++TrCzHGFom/OGMaVzFnihLP7WgVwZ5b8+xBvUF+FPdRqjEg1OoD4V6ILV+x+qqg5sWlyYYN1StBWWPYj9EjlZchnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.235])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4gB4Zs6zYbz1HCMn;
+	Thu,  7 May 2026 16:06:29 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id B69604056F;
+	Thu,  7 May 2026 16:11:10 +0800 (CST)
+Received: from [10.204.63.22] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwDXiKIPSfxptCa3AA--.10670S2;
+	Thu, 07 May 2026 09:11:10 +0100 (CET)
+Message-ID: <8c99263d8e63100e0b5e6c8cf739f7f6e7e79f6b.camel@huaweicloud.com>
+Subject: Re: [PATCH] ima: debugging late_initcall_sync measurements
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>
+Cc: Yeoreum Yun <yeoreum.yun@arm.com>, Jonathan McDowell <noodles@earth.li>,
+  linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-integrity@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ kvmarm@lists.linux.dev, jmorris@namei.org, serge@hallyn.com, 
+ roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com,  jarkko@kernel.org, jgg@ziepe.ca,
+ sudeep.holla@kernel.org, maz@kernel.org,  oupton@kernel.org,
+ joey.gouly@arm.com, suzuki.poulose@arm.com,  yuzenghui@huawei.com,
+ catalin.marinas@arm.com, will@kernel.org, noodles@meta.com, 
+ sebastianene@google.com
+Date: Thu, 07 May 2026 10:10:52 +0200
+In-Reply-To: <461ec995935e2b42a8414f6f87063ff2557bbfb4.camel@linux.ibm.com>
+References: <cover.1777036497.git.noodles@meta.com>
+	 <7734099f5e7fda5480bca016a9e6707983325fbd.camel@linux.ibm.com>
+	 <afMlgstqahnZg68h@e129823.arm.com>
+	 <9f188536f09a2db30877d6bfbb84aeaf2565cccf.camel@linux.ibm.com>
+	 <CAHC9VhRsnmPp2KmQAns5uq5qXX5EF2xQQzyfTgrPi4O9AXyPpg@mail.gmail.com>
+	 <ba4bf28314b679474a6a8da6298e548e54b3754c.camel@linux.ibm.com>
+	 <CAHC9VhRE2kRr1fdDf6xgQgpSrtvqtP8Vy9LVGJhDZFUbzLKGmQ@mail.gmail.com>
+	 <ff28c6dcb60c357c752724927addaa8c4fd3bf2c.camel@linux.ibm.com>
+	 <CAHC9VhQY2TMkTvQq9P8oZteQWQSr7qq2utOuH+pdVx+8jWLBCw@mail.gmail.com>
+	 <a9412fe10e70ce95dd70556ace19368bec5c188c.camel@linux.ibm.com>
+	 <CAHC9VhRUgNA=Sj=jhD=zOt8R80Q+FQj+H0nYSy-FAujTL3EKPA@mail.gmail.com>
+	 <5debff82dc758d9c91223e4f1f5b9e39a3fcd4f5.camel@linux.ibm.com>
+	 <19dfb0e2730.2843.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+	 <461ec995935e2b42a8414f6f87063ff2557bbfb4.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20260506204913.26022-1-arnav4324@gmail.com>
-Message-ID: <afw9t0V6_yLxauPk@google.com>
-Subject: Re: [PATCH] rust: cred: add safe abstractions for capable() and ns_capable()
-From: Alice Ryhl <aliceryhl@google.com>
-To: Arnav Sharma <arnav4324@gmail.com>
-Cc: ojeda@kernel.org, paul@paul-moore.com, Serge Hallyn <sergeh@kernel.org>, 
-	Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-security-module@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-CM-TRANSID:LxC2BwDXiKIPSfxptCa3AA--.10670S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxuF18Kw4kArWDAr17tFy8AFb_yoW5tFWfpa
+	y7W3WIkrWktFW8Aws2qw18WryIy3s3GayUXr15Kry5ArnYkr9Y9FsxtrWFka97C3ykt3WY
+	qF1jqay2kw1DAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIF
+	4iUUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAGBGn7JLIKAwAAsN
 
-On Thu, May 07, 2026 at 02:19:13AM +0530, Arnav Sharma wrote:
-> The capable() function is the primary privilege gate in the Linux kernel,
-> used to check if the current task possesses a specific POSIX capability.
-> While bindings for capable() and ns_capable() exist, there are currently
-> no safe Rust abstractions for them.
-> 
-> Introduce safe Rust wrappers for capable() and ns_capable() in the
-> kernel::cred module. These functions validate that the requested
-> capability is within the valid [0, CAP_LAST_CAP] bounds before calling
-> into the C side, ensuring that safe Rust code cannot inadvertently
-> trigger a kernel BUG() on invalid inputs.
-> 
-> The abstractions take a `u32` parameter to ergonomically match the
-> generated `bindings::CAP_*` constants without requiring explicit caller
-> casts.
-> 
-> Signed-off-by: Arnav Sharma <arnav4324@gmail.com>
+On Wed, 2026-05-06 at 22:25 -0400, Mimi Zohar wrote:
+> On Tue, 2026-05-05 at 22:11 -0400, Paul Moore wrote:
+> > On May 5, 2026 9:57:23 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > > On Tue, 2026-05-05 at 18:55 -0400, Paul Moore wrote:
+> > > > On Tue, May 5, 2026 at 5:05=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.=
+com> wrote:
+> > > > > On Mon, 2026-05-04 at 16:51 -0400, Paul Moore wrote:
+> > > > > > On Mon, May 4, 2026 at 8:03=E2=80=AFAM Mimi Zohar <zohar@linux.=
+ibm.com> wrote:
+> > > > > > > On Sun, 2026-05-03 at 12:46 -0400, Paul Moore wrote:
+> > > > > > > > Regardless, assuming you always want IMA to leverage a TPMs=
+ when they
+> > > > > > > > exist, your reply suggests that using an initcall based IMA=
+ init
+> > > > > > > > scheme, even a late-sync initcall, may not be sufficient be=
+cause
+> > > > > > > > deferred TPM initialization could happen later, yes?
+> > > > > > >=20
+> > > > > > > Well yeah.  The TPM could be configured as a module, but that=
+ scenario is=20
+> > > > > > > not of
+> > > > > > > interest.  That's way too late.  The case being addressed in =
+this patch set is
+> > > > > > > when the TPM driver tries to initialize at device_initcall, r=
+eturns
+> > > > > > > EPROBE_DEFER, and is retried at deferred_probe_initcall (late=
+_initcall).  Since
+> > > > > > > ordering within an initcall is not supported, this patch atte=
+mpts to initialize
+> > > > > > > IMA at late_initcall and similarly retries, in this case, at=
+=20
+> > > > > > > late_initcall_sync.
+> > > > > >=20
+> > > > > > Okay, so from a TPM initialization perspective you are satisfie=
+d with
+> > > > > > a late-sync IMA initialization, yes?
+> > > > >=20
+> > > > > No. On some architectures moving IMA initialization from the late=
+_initcall to
+> > > > > late_initcall_sync does not miss any measurement records. However=
+, as=20
+> > > > > previously
+> > > > > mentioned, Linux running in a PowerVM LPAR the move would drop ~3=
+0 measurement
+> > > > > records[1].  So no, only if the TPM is not initialized by late_in=
+itcall, should
+> > > > > IMA retry at late_initcall_sync.
+> > > >=20
+> > > > What do you do in the PowerVM LPAR when the TPM is not avaiable at
+> > > > late initcall and you have to defer IMA initialization until
+> > > > late-sync?
+> > >=20
+> > > Your question is hypothetical ...
+> >=20
+> > <heavy eye roll>
+> >=20
+> > > ... as the TPM isn't deferred, so IMA doesn't go into
+> > > TPM-bypass mode.  Testing on a PowerVM LPAR demonstrated that it skip=
+s ~30
+> > > measurement list records.  So moving the initcall to late_initcall_sy=
+nc would
+> > > cause a regression.
+> >=20
+> > Let me rephrase to make the question clear - how do you plan to handle =
+a=20
+> > system where you lose measurements by waiting until late-sync, but the =
+TPM=20
+> > is not available at the late initcall.
+>=20
+> There have been suggestions to queue the IMA measurements, but that goes =
+against
+> the "measure before use" principle. The solution is not to defer IMA
+> initialization for all systems, but to differentiate the boot_aggregate r=
+ecord
+> (boot_aggregate vs. boot_aggregate_late) based on when the TPM becomes av=
+ailable
+> relative to IMA's initcall.  IMA's job is simply to collect and provide t=
+he
+> measurement list.  Based on the attestation service policy, the attestati=
+on
+> service will decide whether a measurement list containing boot_aggregate_=
+late is
+> acceptable.
 
-I have the same question about what the use-case for this is.
+Agreed on no violation of the measure and load principle.
 
-> +/// # Safety
-> +///
-> +/// The caller must ensure that:
-> +///
-> +/// - `ns` is a non-null pointer to a fully initialized `struct user_namespace`.
-> +/// - The `user_namespace` pointed to by `ns` remains valid and is not freed for
-> +///   the duration of this call.
-> +#[inline]
-> +pub unsafe fn ns_capable(ns: *mut bindings::user_namespace, cap: u32) -> bool {
+But also the two boot_aggregate solution does not work. If there are
+measurements before boot_aggregate_late, they can corrupt the system
+without noticing, and the corrupted system would emit the
+boot_aggregate measurement (non-late) to pass verification.
 
-I would add a UserNamespace struct so that this raw pointer could be
-avoided, before I add this method.
+Roberto
 
-Alice
