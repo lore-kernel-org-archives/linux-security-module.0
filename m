@@ -1,81 +1,103 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68550221DB3;
-	Fri,  8 May 2026 18:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9063336C588
+	for <linux-security-module@vger.kernel.org>; Fri,  8 May 2026 18:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778263420; cv=none; b=QF/unhsXBXy6HT7Fj/aXt2GaDhlrXED5fY58oOVmk+CM3kePj2coMImDVSlaJJYENb6A16prw7IyOjDAreQsj4Pgx3tXhGDYaplmKnAJfT9RiGFCqbe0OHSU2+jr7l9maXFL99ppGeM4rZSt3cVIdFbobyHXBr6yPFtOcqV1vjU=
+	t=1778265624; cv=none; b=vFCqMzBRf0KV1953JPNqZ5uF8PCML/NP3aX/UUMqiJeyriQlaeOTFy3EvRAOJb4vwbaFxByaWlSW7sN8DUdXYacUcRWT/S1VhmfDqUmpYdCEhPmH/IQLvZjWA88yTRoRfKpvTLLmsV9CIi5mWD3NnzGc1Fsk5z3Bu46Ph5xNH0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778263420; c=relaxed/simple;
-	bh=mT7hFidEP7AVCr+tnid5u2QIlN5qFuXSXKBplp8khd4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=L2t7Qa0XeC74AVMeBR+TlNee8CnYhuSKMnVXi+9Dn737nntM5UvXX52zw+UBY+st0hABxbvZ4vye9pGPS3rLfgCv85COGvMFTLmEf8mc6NV4vG6zqjAcplnud/QUIMTg+E40c9/A5KfksYI3nhXrPR8h/CY5VHGBveFjA3dO36U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=mASBns6x; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1778265624; c=relaxed/simple;
+	bh=qz93F/HxdriwHEV/MIqKAkXcmepTE7EdTknHdMsdiAE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ocorY7FjGBzxHJ0LiZ2MB0zA7opvkPFXMkk0RtmBDJO/11vfRrGXABTNly9uwEuQK/JLWoJYaQGY98n8BT3t5mP26HxsVB4yych0qydynJwyVYElDL9fDJrVC0hGoav75M4ylQs7WtrpumnGwN/OWxMxNN7u63iXbcge2IYBMn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dKoI9bOP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="mASBns6x"
-Received: from narnia (unknown [40.78.13.173])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 179B320B7169;
-	Fri,  8 May 2026 11:03:30 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 179B320B7169
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1778263412;
-	bh=Q4c1yvumySi7QC6m/TuK0EoekCVJuBiX+wLaSpiId6I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=mASBns6x9W+xeJRY88R3v2h9Vq29gQ/cSxoabEp8QTAoX9aGsAhBsu5r/VGTrHSl5
-	 AeRisgsApzouWz8mlUGnU+fu45j7WaSV7neSkHyrYrjJmTkAttgfzMg36lL8rS4YFF
-	 GSDYOeFuvB33I4M9XwSyUsuYo42Gu7s+4VTQu+VI=
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>,
- =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, "Dr. David Alan
- Gilbert"
- <linux@treblig.org>, Andrew Morton <akpm@linux-foundation.org>,
- James.Bottomley@hansenpartnership.com, dhowells@redhat.com, Fan Wu
- <wufan@kernel.org>, Ryan Foster <foster.ryan.r@gmail.com>, Randy Dunlap
- <rdunlap@infradead.org>, linux-security-module@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, Song Liu <song@kernel.org>
-Subject: Re: [v6 00/10] Reintroduce Hornet LSM
-In-Reply-To: <CAHC9VhScmOoCtoFtccJ6x_cTdwvKCBfUyg=1p-kuAGmo=FdgwA@mail.gmail.com>
-References: <20260429191431.2345448-1-bboscaccy@linux.microsoft.com>
- <CAHC9VhScmOoCtoFtccJ6x_cTdwvKCBfUyg=1p-kuAGmo=FdgwA@mail.gmail.com>
-Date: Fri, 08 May 2026 11:03:29 -0700
-Message-ID: <87v7cxaidq.fsf@microsoft.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dKoI9bOP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 474A8C2BCC9
+	for <linux-security-module@vger.kernel.org>; Fri,  8 May 2026 18:40:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778265624;
+	bh=qz93F/HxdriwHEV/MIqKAkXcmepTE7EdTknHdMsdiAE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dKoI9bOPWxgxC0+6yp6R0geAeeqpKPRqTDg2g3dM4Nnia09m1ZhLRUM1ZviTiUiDo
+	 XTiHqaZdmnpeDECBG7pvN7RuixmxJroanOwYH6POhWWt0PyzCb/7Si/gZYLZTwj50x
+	 Vkp/BHPtrXYv82BhUZZiLlRC40wUTOBkLL1CPClE5f8FU6tf4fpfC3cU1tRkVqoCH+
+	 m+oGDneRZCZw3PA6hbPxgiNMikcedLr+Db+DFn2UTQb8f7yz4XiGiRNh4FJM9+B6VF
+	 yMUdLCUzcw8P4Cxr+Lc7tEu6RerjTndLCUtvd616xap2bTab2FA/Fnqq1n9jSfV6kC
+	 +Oe3jHiWfVktA==
+Received: by mail-dl1-f54.google.com with SMTP id a92af1059eb24-1329507c387so566488c88.1
+        for <linux-security-module@vger.kernel.org>; Fri, 08 May 2026 11:40:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9w42y28PgL+GIVbEGtLorCb4En8zd5XAhlc9q/fECqMW/7l3dzz6RPqklY/SqaWj4n7FXpt5+ecNgiAezBZOBI7+zQ6LI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzR46juynwRnjMMRfm1S2ASRHuTUCq5pMAnK54RN019EJtsE0ZT
+	kj7ZcL5eBtek23eOuZZXF9uQgh0mx/Vz5ANDAnHX84M+0ZPjzm62Lo8bzjLLZmCuPjQOZGxZ9XX
+	WTtg73JgT0PSaebwPP34bQCkJFtYXEG4=
+X-Received: by 2002:a05:7022:4184:b0:12d:b7bb:4f54 with SMTP id
+ a92af1059eb24-131965af1a2mr8712853c88.3.1778265623772; Fri, 08 May 2026
+ 11:40:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20260507191416.2984054-1-bboscaccy@linux.microsoft.com> <20260507191416.2984054-11-bboscaccy@linux.microsoft.com>
+In-Reply-To: <20260507191416.2984054-11-bboscaccy@linux.microsoft.com>
+From: Fan Wu <wufan@kernel.org>
+Date: Fri, 8 May 2026 11:40:12 -0700
+X-Gmail-Original-Message-ID: <CAKtyLkHjxanzN5MZsMP520CytqjqhZBgC=P=USAZZf9-4Z5zjw@mail.gmail.com>
+X-Gm-Features: AVHnY4L0ricLjqitH1mYLaoPM_3aJ0znexaW7kxQTHh_lR1Ix2wR_9tibB86JxM
+Message-ID: <CAKtyLkHjxanzN5MZsMP520CytqjqhZBgC=P=USAZZf9-4Z5zjw@mail.gmail.com>
+Subject: Re: [PATCH v7 10/10] ipe: Add BPF program load policy enforcement via
+ Hornet integration
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	James.Bottomley@hansenpartnership.com, dhowells@redhat.com, 
+	Fan Wu <wufan@kernel.org>, Ryan Foster <foster.ryan.r@gmail.com>, 
+	Randy Dunlap <rdunlap@infradead.org>, linux-security-module@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	Song Liu <song@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Paul Moore <paul@paul-moore.com> writes:
-
-> On Wed, Apr 29, 2026 at 3:14=E2=80=AFPM Blaise Boscaccy
-> <bboscaccy@linux.microsoft.com> wrote:
->>
->> This patch series introduces the next iteration of the Hornet LSM.
->> Hornet=E2=80=99s goal is to provide a secure and extensible in-kernel
->> signature verification mechanism for eBPF programs.
+On Thu, May 7, 2026 at 12:15=E2=80=AFPM Blaise Boscaccy
+<bboscaccy@linux.microsoft.com> wrote:
 >
-> I see that Fan identified a few issues that need resolution, but I
-> just wanted to make sure you've read the expectations for a new LSM.
-> To be clear, I think you've ticked all the boxes, and there is a
-> MAINTAINERS entry with your name attached, but I just wanted to make
-> sure you're okay with maintaining Hornet.  I like Hornet, I think it's
-> a nice and fairly clever solution, but the last thing I need is a new
-> LSM to maintain :)
+> Add support for the bpf_prog_load_post_integrity LSM hook, enabling IPE
+> to make policy decisions about BPF program loading based on integrity
+> verdicts provided by the Hornet LSM.
 >
-
-Yes, I'm good with maintaining Hornet. Thanks Paul
-
--blaise
-
-> https://github.com/LinuxSecurityModule/kernel#new-lsms
+> New policy operation:
+>   op=3DBPF_PROG_LOAD - Matches BPF program load events
 >
-> --
-> paul-moore.com
+> New policy properties:
+>   bpf_signature=3DNONE      - No Verdict
+>   bpf_signature=3DOK        - Program signature and map hashes verified
+>   bpf_signature=3DUNSIGNED  - No signature provided
+>   bpf_signature=3DPARTIALSIG - Signature OK but no map hash data
+>   bpf_signature=3DUNKNOWNKEY - The keyring requested by the user is inval=
+id
+>   bpf_signature=3DUNEXPECTED - An unexpected hash value was encountered
+>   bpf_signature=3DFAULT      - System error during verification
+>   bpf_signature=3DBADSIG    - Signature or map hash verification failed
+>   bpf_keyring=3DBUILTIN     - Program was signed using a builtin keyring
+>   bpf_keyring=3DSECONDARY   - Program was signed using the secondary keyr=
+ing
+>   bpf_keyring=3DPLATFORM    - Program was signed using the platform keyri=
+ng
+>   bpf_kernel=3DTRUE         - Program originated from kernelspace
+>   bpf_kernel=3DFALSE        - Program originated from userspace
+>
+> These properties map directly to the lsm_integrity_verdict enum values
+> provided by the Hornet LSM through security_bpf_prog_load_post_integrity.
+>
+> The feature is gated on CONFIG_IPE_PROP_BPF_SIGNATURE which depends on
+> CONFIG_SECURITY_HORNET.
+>
+> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+
+Acked-by: Fan Wu <wufan@kernel.org>
