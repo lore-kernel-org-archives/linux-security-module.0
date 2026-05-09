@@ -1,76 +1,209 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from CWXP265CU010.outbound.protection.outlook.com (mail-ukwestazon11022080.outbound.protection.outlook.com [52.101.101.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB54D25EF87;
-	Sat,  9 May 2026 15:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778342040; cv=none; b=gYUez16Xuj4saKHxQ3Qn9tWvTL6snkT7bP9UUzPAXLnfFH3EzMcdlgRCp1rTLXnGNZ7kcclnNnVSDBIEQuZb1YSRuv6nWIpJ5EnntBY0StzYIS3WMbcyphkJjna5gpR3r9nG3UG+hXwY6clnTTqj7L5E0OWNEIWr3tVOCSg1hw8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778342040; c=relaxed/simple;
-	bh=dsn6L52VxnTeNUOtGszavzH1vhlT3rK+e3GO+cFQvOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c2cfHDo+8ah6M1ivlo+YRWn8TuVBQk8vX4l2t5XVBOLQ1ehG3kyscJyTRvaXni4UWri0IN7KEZIMP8nyjaS0E20jshYTHsjX8YwTfHit/ZdKTYn1B96VJvxhwQxM8n5p486QpNjCMRIkCyH0774uwSdgH7g5G/R8W5ZIhgOBaZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BvNeTTNk; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BvNeTTNk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33ACCC2BCC4;
-	Sat,  9 May 2026 15:54:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778342040;
-	bh=dsn6L52VxnTeNUOtGszavzH1vhlT3rK+e3GO+cFQvOI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BvNeTTNkTg1YWsz/YmP52oNHnHylADIlQ+kwqGwNkQoy53JVnKO1HvH9AnXm88O/H
-	 m8ZIc5iaxTcGiAqHQOrSnK0lKbY2EMNbx+dgJntlT7ZEMYpEm8tS+iTr3lLjdegmyf
-	 4eBsYjLy0t0uuhVrEeA6615xBd4jqJHtZTeC5AbPSGThrN7jk/8E4aMOyWdiU3JeqV
-	 yR/hsevW8XA9Rx+G4YbyQxlyzQfO8belXSacdQTvWrxxRop/EwiQTwqs5Fyz2LDE0y
-	 tVmVmXTLqzUBhlvfbZgt99/kE6PFm1T7Px7mKfifpLcwJw401VhZeiRwqbFqm66NeS
-	 L+6VAj9WX4eRw==
-Date: Sat, 9 May 2026 18:53:56 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-hardening@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] keys: use kmalloc_flex in user_preparse
-Message-ID: <af9YlFPk3VbZ1kdZ@kernel.org>
-References: <20260504093058.49720-3-thorsten.blum@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0702D2397;
+	Sat,  9 May 2026 16:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.101.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778345336; cv=fail; b=BmdriSgWnOfjoPSp/O/RUbwoTSYois8aHGn0YPPjChENKZJ/7kT1rWQ1hxkXaLX5DrtyOFNikuJN/g7U+4P+s5pclIt/fZyloUiGJtmQ1jbT1m6BaNGvfSyrxKmMOFGTJFOgLqeyk3DqsKFV0UjuRVSgpbK1GUIsHNdL6f3zrsI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778345336; c=relaxed/simple;
+	bh=SYFXpDSW1F8xxnD0Y1yodYOXwlVIXP8FXiHdsPpj9co=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=uOTvhPvUfTiAa4E3BngIs1pUlalYG/i0/r3VGmBEAkg8eMDpnn4ITyS+tuP1dJ2s75xH8xS5mW2YfEZvTeX5gJsQ4vrfDzyRurYhkYJlnb6E3PBtmUps4MIrKp9TI4gK3JeApdc3SottC6GKoWQtc6ZDwyBki4Q9CqR5S0GcENQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com; spf=pass smtp.mailfrom=atomlin.com; arc=fail smtp.client-ip=52.101.101.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atomlin.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JmukhprMCkLJjGG7N3ewHBldcRX/+ZcfKV4WF/tjGVgpA0yOoVwYWcIMD4SGQcH7pgPr0M1AGJc1Lj5yOfVajrSxIRJbJQrGQqkI1F6/l5PqNPJCWB2NUg0q9zeThcOk2asKxkNRejaphYkU2y77UJeUB5Q4o1TkknZDLwU3j5KYlYap+o6pRlBI1vRjGeLmY+QB3xjTQ9zzdiurc5ofNbkR+q3ah/zOYY3iv/q3W1o02whzbeJ1EIH0jI7HIjhg4+9nO/w4HwxZlMuLT3HdPqiNKjnkGF8aRH+cT0ZOHNz8ibXMLEwoURaNpPC3+2+teYesPB2jBIzcY0c+93IvbA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bZkB36RKhsi/hL1NlutAcSX0nHdgHD46/mLYW5UgrSw=;
+ b=g3cygSLXbfqVq5wYEb9BCsg4rRdP2o6zaGMt4tPTb680m1CdXcFTnV/lHfPI0/+nOy7o2xAddXEE0GT9hW9u2kTINTfiDQQv3L9AKGlMnN7KOgTIZ4HPLQtQ9tLZeygv7PtI1ubSq5+JssDFOVccSrBjNw/8I1xnocxw1+8KSz9CKnJZ8zV7mETC53XNUCaevCXHd9Lfsk5mtYRtENbmjiGC3j4xMhAP+qUXljLZ/npfpxxZ3HkGXwct2QrPukyateJtc/zzh2qNb8tT1DEsHQbfIceKj8v0RykRvfFetKI/H+keEPNEA2wl5cKqUMrNTwRUgsJtATTsIOMOAzyp+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=atomlin.com; dmarc=pass action=none header.from=atomlin.com;
+ dkim=pass header.d=atomlin.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=atomlin.com;
+Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:70::10)
+ by CWLP123MB6996.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:1df::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.21; Sat, 9 May
+ 2026 16:48:51 +0000
+Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::de8e:2e4f:6c6:f3bf]) by CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::de8e:2e4f:6c6:f3bf%2]) with mapi id 15.20.9846.025; Sat, 9 May 2026
+ 16:48:51 +0000
+From: Aaron Tomlin <atomlin@atomlin.com>
+To: tsbogend@alpha.franken.de,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	stephen.smalley.work@gmail.com,
+	casey@schaufler-ca.com,
+	longman@redhat.com,
+	tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com
+Cc: chenridong@huaweicloud.com,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	kprateek.nayak@amd.com,
+	omosnace@redhat.com,
+	kees@kernel.org,
+	atomlin@atomlin.com,
+	neelx@suse.com,
+	sean@ashe.io,
+	chjohnst@gmail.com,
+	steve@abita.co,
+	mproche@gmail.com,
+	nick.lange@gmail.com,
+	cgroups@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] security, sched: Expand task_setscheduler LSM hook and related fixes
+Date: Sat,  9 May 2026 12:48:44 -0400
+Message-ID: <20260509164847.939294-1-atomlin@atomlin.com>
+X-Mailer: git-send-email 2.51.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BN9PR03CA0470.namprd03.prod.outlook.com
+ (2603:10b6:408:139::25) To CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:400:70::10)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260504093058.49720-3-thorsten.blum@linux.dev>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CWLP123MB3523:EE_|CWLP123MB6996:EE_
+X-MS-Office365-Filtering-Correlation-Id: e79efda5-829e-4f03-5a4f-08deadead8e3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|366016|1800799024|376014|921020|56012099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	yNhD6W/7jtrEwQsoEgTzDs2BHrFydk1uXnoraQywLUTWBfWbvE7SLMjWIK0qI8mVwwB2YtG/KifuStsLJgEHBDGEX8heilB2OZaGbwTdgjjNhkvK4u/NpH5fUYuRitCmdNKwnrgiwwjdDz5oNDD22WGO7j8f6VqV3Zvt2mErvIf5EWtv8bXreu57LDc2pmFzqbtpMRq86t1Kg6Jlu99aaqeCXP8gT/fhEUN9DBTroZA3LXhSIgpSXI+O8uthqTTMkdIPgCaxMj1QFiJLHAeYVWL5P8oaSgVZgwDrqf63wS346jK1f07g+QGtLyS9+OiIP+MfcNSr43mZHKW3hShA3tu6PMVR5Ewf5uJMdV43Soubn5UI6MxMnPQVmFXV7ep60hY9jgmCSQiFZoquL0e6j+XsSk/0kNGX1wDZV1rZwNPvnN3e/TYe3i2qjReQaAkSeQi+Y4IifA0luRAtwtDSKlidZOk4/FWol9KJcR35cIplbaIcpQuEFgS/ImVxkaOzmAvBKY39SbcfpnkESNzDFld/xUFlwfh8xxjdln2GAw+CMnMkj539rAEnfGVKv4x4QcfVphPqW6LaeiSFGTr4m7uJ3i61q8Jw6hFyLCC1wOMV5UFdVIvcbBAzwqfYCzZ0T9SJuKNSg0eeGW/yXAz2WsFn2CFFGDnMZ/mzxaO2cHjizmdgq8nWzHvhRDOucXOhjVVYHmfCxzkoxayco9GLyVk59VbIFXe76JmZwCeUiow=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014)(921020)(56012099003)(18002099003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?MB8hhV4ikI0u5TtwKVD1tZ12/s97r2jBTkMIgHNxFBeOeTszDmX4B2oNH94L?=
+ =?us-ascii?Q?OtWmfPpzZaq3UieqdpKZh1NAPfqpRpXYXvAy3aoZAMI2aClLlC5k7ZNYVaKt?=
+ =?us-ascii?Q?LyRsqjw7ezMhLTWfydR5JFCyfJBL7KkqDQytKvrYbojOpgWO9GjXecUaIg42?=
+ =?us-ascii?Q?F18xtwh0CQ0WaRFc/1OhwVTnnY7fC6j9O5zsbJJC9FJDt2Qks1p9RNH4FSPT?=
+ =?us-ascii?Q?noO93hGhILVe+RiZOWp1vCSFfpSWlSF9tTnwAFfdaUeVsWRESFcAjaiWBEOA?=
+ =?us-ascii?Q?56pfblNcW1F4GrvpgUYaOBaTuSBcZaWFzQIXnGhyG331VmLPCTdAIubL0rUW?=
+ =?us-ascii?Q?xKl72QJNqNgr/dTIS9IxSZyWjC585CEE3hQhaUq+EJbf9sLlJewcBdt5AziJ?=
+ =?us-ascii?Q?gWpaimg25hWvjxCoLhecVa+i+l8OADFkBEibGtbQQFkRD/NBIk3sQGh9zToI?=
+ =?us-ascii?Q?DySiZWhoHey5MUQtwsYEI+Xgj39j+8SZg9igSHn929F2+2IfLDXpseQUULyt?=
+ =?us-ascii?Q?HJAbRUALdlR7QTlI8mbrJ+qbDWBVLvto6WEiiZxX3ZIl1/JjHl+d6DlCL8sE?=
+ =?us-ascii?Q?nYGtlyY2GbqlfSN8dwBv8Gtot/MBgnrwkv3PIp6Yc61O/m3b8DlOJyso1fGW?=
+ =?us-ascii?Q?MexQ3n7PgVNBa3S+vkgb9gBZXP+UGQsWQYSKW1e7CChJNNR6l1HLN51OR91x?=
+ =?us-ascii?Q?Vd2+6QehVoR76U0SqooWTcsJd1zCz3CfKxOLkH6ktkGw8iFwYbm9oxdOxANh?=
+ =?us-ascii?Q?ZjUFhhkxmw64NvphW3FPjmBCXQYMHvSsEWaE4wRveQRdK7g0b+/rlCn1NQ8Q?=
+ =?us-ascii?Q?D/dL8JdUK0Cpb+gJrbgwu8g1JiJLoNsjO3JySkydQqCjqc1jWOm7ehwhyxhs?=
+ =?us-ascii?Q?nCxn7PUal9jzl+bj4Zw+yer3UZIS42j01fAUb2q4AAUo0caQpobfATOyyZ/L?=
+ =?us-ascii?Q?kt0oinhbDFa7YCcd7PfmvJGLurefhyUaoKQo0pqUoRehuiZ2TMJkpJQCedHj?=
+ =?us-ascii?Q?IhQXRVFgupGmrH/FqyunHRi66MKm76jrSraV/uen3eoh8jL3KhX9VHO3minI?=
+ =?us-ascii?Q?Jod/bnnm0/2zGgmwAa5cw7vOU5R0jFounNblxEDR/Gjdy6JoeLVcftH2cDxW?=
+ =?us-ascii?Q?s10fI9UbbpnFUUdKM472hBkFtm4Cl3rGL05m6ghFzT83Ba5yg0c/qRux6sNj?=
+ =?us-ascii?Q?7g0WjmTanwl9i4k1rxN2lAzfv/B2y5EXbgmX63Pn9aJmmTNjOXdCfKKIIJFT?=
+ =?us-ascii?Q?DRsND3BZk2LZX/NqcPNKFsWl2GGsQU/Os7qhEyYO9BXwZs73WcFHvSCT72Ep?=
+ =?us-ascii?Q?XLiwzY56E2ZhVkRhjivq6RKLh+48DE9xFwHvCYr9wE6OFV5weggcJu2GwVjM?=
+ =?us-ascii?Q?hWWVk4dKNiv3u50VpuFUp1pmLdB2mNyJwgMZ6MOWiw5ICtpSA28MakEwKr2v?=
+ =?us-ascii?Q?nwx4JJwhW3Ms4MpWscmlEBPin2tlt4he4nBLNmmbGOgM/QPyoK+MRF0oOLF0?=
+ =?us-ascii?Q?oiT+k6rwELuYh7/JUJvSTork7D9PEr9E9pREJQYt8TpPIvrcEc0KPxN39eos?=
+ =?us-ascii?Q?L/KFZYmOjP8Ilsy47EMr2PK5dcpopiCHPTJZxbNEaeTFnWm/4VWwmTew+X2O?=
+ =?us-ascii?Q?cxjV3ApGIY7YLK5DRNo8DN7cBXSjSbiIn7KWwTT4DYJUNwp/SoembS43H6ei?=
+ =?us-ascii?Q?sQe/jQo6NXLj0eNUsGP7eDF32JegYmBWkQfp6w1aGWn4h0Qly0PuAUVlml/R?=
+ =?us-ascii?Q?cVg7iJMS5A=3D=3D?=
+X-OriginatorOrg: atomlin.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e79efda5-829e-4f03-5a4f-08deadead8e3
+X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2026 16:48:51.0390
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: e6a32402-7d7b-4830-9a2b-76945bbbcb57
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9YztpON5eWsvqSKQvVW35dyi3KMZAc1Nej7pHu0B+MeaTy59yg5tbfTHhwko13rCJjX4n8kJaMGQ4ftoet0Zqg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP123MB6996
 
-On Mon, May 04, 2026 at 11:31:00AM +0200, Thorsten Blum wrote:
-> Use kmalloc_flex() when allocating a new struct user_key_payload in
-> user_preparse() to replace the open-coded size arithmetic and to keep
-> the size type-safe.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  security/keys/user_defined.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/keys/user_defined.c b/security/keys/user_defined.c
-> index 686d56e4cc85..6f88b507f927 100644
-> --- a/security/keys/user_defined.c
-> +++ b/security/keys/user_defined.c
-> @@ -64,7 +64,7 @@ int user_preparse(struct key_preparsed_payload *prep)
->  	if (datalen == 0 || datalen > 32767 || !prep->data)
->  		return -EINVAL;
->  
-> -	upayload = kmalloc(sizeof(*upayload) + datalen, GFP_KERNEL);
-> +	upayload = kmalloc_flex(*upayload, data, datalen);
->  	if (!upayload)
->  		return -ENOMEM;
->  
+Hi,
 
-applied, thanks
+This series expands the task_setscheduler LSM hook to include the requested
+CPU affinity mask, enabling BPF-based security modules to enforce strict
+spatial isolation boundaries. During the development of this expansion, two
+pre-existing subsystem bugs were identified and fixed.
 
-BR, Jarkko
+In modern multi-tenant and real-time environments, CPU isolation is a
+critical boundary. Currently, the task_setscheduler hook lacks visibility
+into the actual CPU affinity mask being requested via sched_setaffinity()
+or cgroup migrations. This limits the effectiveness of eBPF-driven security
+policies when attempting to monitor and shield specific cores.
+
+By expanding the LSM hook signature, BPF LSMs are provided with the
+necessary context to audit and even restrict specific CPU pinning requests.
+
+    Patch 1 (cgroup/cpuset): Fixes a pre-existing deadline (DL) bandwidth
+    metric leak in cpuset_can_attach(). It was discovered that if a task
+    fails its security checks mid-batch during a thread group migration,
+    the loop aborts without unwinding previously accumulated DL metrics
+    (nr_migrate_dl_tasks and sum_migrate_dl_bw). This patch introduces an
+    out_unlock_reset path to guarantee clean unwinding.
+
+    Patch 2 (security): Implements the core LSM hook expansion. It safely
+    propagates either the requested cpumask (via sched_setaffinity and
+    cpuset_can_attach) or passes NULL for unchanged affinities. It also
+    adds proper __nullable annotations to ensure the BPF verifier mandates
+    explicit NULL checks for attached eBPF programs, and mechanically
+    updates SELinux, Smack, and Commoncap.
+
+    Patch 3 (mips): Resolves a critical memory corruption vulnerability in
+    the MIPS MT architecture's sched_setaffinity implementation. When
+    CONFIG_CPUMASK_OFFSTACK=y is enabled, copy_from_user() was clobbering
+    the stack pointer due to an invalid sizeof() evaluation, followed by an
+    uninitialised heap allocation. This patch safely reorders the
+    allocations and properly utilises cpumask_size().
+
+These patches have been logically separated to assist subsystem maintainers
+with review and backporting.
+
+Comments and feedback are welcome.
+
+Kind regards,
+
+
+Aaron Tomlin (3):
+  cgroup/cpuset: Fix deadline bandwidth leak in cpuset_can_attach()
+  security: Expand task_setscheduler LSM hook to include CPU affinity
+    mask
+  mips: sched: Fix CPUMASK_OFFSTACK memory corruption
+
+ arch/mips/kernel/mips-mt-fpaff.c | 41 ++++++++++++++++----------------
+ fs/proc/base.c                   |  2 +-
+ include/linux/lsm_hook_defs.h    |  3 ++-
+ include/linux/security.h         | 11 +++++----
+ kernel/cgroup/cpuset.c           | 13 ++++++----
+ kernel/sched/syscalls.c          |  4 ++--
+ security/commoncap.c             |  7 ++++--
+ security/security.c              | 11 +++++----
+ security/selinux/hooks.c         |  3 ++-
+ security/smack/smack_lsm.c       | 11 +++++++--
+ 10 files changed, 64 insertions(+), 42 deletions(-)
+
+-- 
+2.51.0
+
