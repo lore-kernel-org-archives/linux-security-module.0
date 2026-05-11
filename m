@@ -1,224 +1,114 @@
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC661BD9D0
-	for <linux-security-module@vger.kernel.org>; Mon, 11 May 2026 00:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2A2371076
+	for <linux-security-module@vger.kernel.org>; Mon, 11 May 2026 05:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778459189; cv=none; b=lAlIxw6ffTDpPYqSkcUOF59+q7i1J52D16SETat2yuwlX23OsSdJCDy886U/oP0W4FnQ3sXTqzdEDsYILToN2j7O9RgzGOVvk5InKfsQL78e91LfTGrOYyrUVx0zRbooO8CEYpaz+IdDF5IVJhCoxzttkuNpWVUM4JOWzwMwOAE=
+	t=1778476227; cv=none; b=OZts69dXs11aIucA7GVrwyQrAQOUv0Qt+FYmCIOwwpPF3loEkWVDzGFxIhgyuhf/1+jpliCcV9219qQyvmpUFULRVrIWYVt+6gIUNjg04zC3o2TX20Vk4youDWohL98Svh+r10HA2jkvp6wbogoJ86GEmnTi3Bhb5P3IgHqwRJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778459189; c=relaxed/simple;
-	bh=HHGfQno/UCVi95/j7POsermtpEcJBAfSS76g/Tckooo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KnbTPKmKRvof0YeHfqm8bgCMflgmnm6VFYZJ1rN2+lHg1fKPGP7Gg0uGAfSCu3cXb9l+OFdX7Sq/9BuQ+cjwLsoC2Yc2k/i/t9dK6SqI/uWEL4+jtiIr0nTHDwGaDH1GQQtKQRBJ/XKI0M5oCAzrmIQ2ttYRcW9lOuPTIhT9zrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=dKkaXsfa; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+	s=arc-20240116; t=1778476227; c=relaxed/simple;
+	bh=9bPgUgowYtDZvwWDaDvH9GE08BbGRUl9XHTtvYleq54=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CcEXEqCw5uMboMZWWQOJQBiwFgZe/OJ2S22w05Xb1rkq5YQuNT8dDZT3Kur2VqOg9fhM2TYO1lggmgt3YKONzbrX3K/6QZzpqNG98Dttqm7qIryrX+Z5tCx93ZZAv1hCIOdC4aTTkAaYRWgMbsk05S7ujVSSXhamai/WKEcBktk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PySMFVy0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="dKkaXsfa"
-From: Konstantin Andreev <andreev@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1778458638;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PySMFVy0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1778476224;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Voqs+D/YxK+2FppjCEsG0gdSqgatbUbn4dzi7srOrb4=;
-	b=dKkaXsfaAsaiXLBOjPRKSEnwaDOehPUuhQO681G5Dt6Lc1/yCMpNJpCQluYdOedHL9YjUt
-	L27h2kUYwXHzDr+C04E3vNcjyV1zPYZPNN1r3nNMZ6Wn8RUrwC1PvIkmoYT5xWq4OXiemM
-	ZH8iF4bhxe7lCU2zbLDjq9ROk/uskc0=
-To: casey@schaufler-ca.com
-Cc: linux-security-module@vger.kernel.org
-Subject: [PATCH 1/2] smack: fix incorrect task context in smack_msg_queue_msgrcv
-Date: Mon, 11 May 2026 03:17:16 +0300
-Message-ID: <20260511001717.3522345-2-andreev@swemel.ru>
-In-Reply-To: <20260511001717.3522345-1-andreev@swemel.ru>
-References: <20260511001717.3522345-1-andreev@swemel.ru>
+	bh=3tz4VshiSjvGUhY3dhtN6lD+p4cKMAlBefoUW+XXMHE=;
+	b=PySMFVy0Vq+luQxQLGj2CmM0BqKRDIPj8v98MHytYYJJCJOunDg7HofhKvJma5859QlHHM
+	TRuhY7a9td2BQDfqvZzx9DNJ7/+jwoEllwVny0OdsbW/GmSJyDorCNj5ZHIsLFF+6iM4pz
+	BqRY9vcwKZuJ75Ua8Pojvj4T1EubmC8=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-422-w6iTBQSwOBK7DQjDiHYbAg-1; Mon,
+ 11 May 2026 01:10:18 -0400
+X-MC-Unique: w6iTBQSwOBK7DQjDiHYbAg-1
+X-Mimecast-MFC-AGG-ID: w6iTBQSwOBK7DQjDiHYbAg_1778476215
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 51FEF19560B4;
+	Mon, 11 May 2026 05:10:13 +0000 (UTC)
+Received: from [10.2.16.21] (unknown [10.2.16.21])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3A09030001BE;
+	Mon, 11 May 2026 05:10:04 +0000 (UTC)
+Message-ID: <8aaa7dd9-2426-475c-af64-85ef5f2aa855@redhat.com>
+Date: Mon, 11 May 2026 01:10:02 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] cgroup/cpuset: Fix deadline bandwidth leak in
+ cpuset_can_attach()
+To: Aaron Tomlin <atomlin@atomlin.com>, tsbogend@alpha.franken.de,
+ paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ stephen.smalley.work@gmail.com, casey@schaufler-ca.com, tj@kernel.org,
+ hannes@cmpxchg.org, mkoutny@suse.com
+Cc: chenridong@huaweicloud.com, dietmar.eggemann@arm.com,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com, kprateek.nayak@amd.com, omosnace@redhat.com,
+ kees@kernel.org, neelx@suse.com, sean@ashe.io, chjohnst@gmail.com,
+ steve@abita.co, mproche@gmail.com, nick.lange@gmail.com,
+ cgroups@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ selinux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260509164847.939294-1-atomlin@atomlin.com>
+ <20260509164847.939294-2-atomlin@atomlin.com>
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20260509164847.939294-2-atomlin@atomlin.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Mimecast-MFC-PROC-ID: AFdFhTXEPer1skau67q9pCp5DYVicB77w9GL43U3hzg_1778476215
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The smack_msg_queue_msgrcv() function incorrectly checks
-the permissions of the 'current' task instead of the
-'target' task.
 
-In the msgsnd() syscall path, if a receiver is already waiting,
-the pipelined_send() optimization is used to push the message
-directly to the receiver task:
+On 5/9/26 12:48 PM, Aaron Tomlin wrote:
+> During a cgroup migration, cpuset_can_attach() iterates over the
+> provided taskset. If a task within the batch is a deadline (DL) task,
+> the destination cpuset's DL metrics (i.e., nr_migrate_dl_tasks and
+> sum_migrate_dl_bw) are appropriately incremented.
+>
+> However, if a subsequent task in the same migration batch fails the
+> task_can_attach() check, the loop aborts and jumps directly to
+> out_unlock. Consequently, any DL metrics accumulated from previously
+> processed tasks in the batch remain permanently inflated in the
+> destination cpuset. Because the migration is subsequently aborted by the
+> cgroup core, cpuset_cancel_attach() is never invoked to unwind these
+> specific increments.
+>
+> This behaviour results in a permanent leak of deadline bandwidth, which
+> incorrectly restricts the admission control capacity of the destination
+> cpuset.
+>
+> To resolve this, introduce an out_unlock_reset failure path that
+> conditionally invokes reset_migrate_dl_data(). This guarantees that if a
+> batch migration is aborted for any reason, the pending DL metrics are
+> safely reset before returning the error.
+>
+> Fixes: 0a67b847e1f06 ("cpuset: Allow setscheduler regardless of manipulated task")
 
-    ipc/msg.c`pipelined_send():
-    ` smp_store_release(&msr->r_msg, msg)
+That is not the commit that introduced the bug. Anyway, there is already 
+another patch sent recently to fix this bug. See
 
-In this case, the 'sender' (current) task performs the check
-on behalf of the 'receiver' task (msr->r_tsk, passed as the
-'target' parameter):
+https://lore.kernel.org/lkml/20260509102031.97608-2-zhangguopeng@kylinos.cn/
 
-  ipc/msg.c`pipelined_send():
-  ` security_msg_queue_msgrcv(,, target := msr->r_tsk,,)
+Cheers,
+Longman
 
-However, smack_msg_queue_msgrcv() ignores the 'target' and
-checks 'current':
-
-  smack_msg_queue_msgrcv(…)
-  ` smk_curacc_msq(isp, MAY_READWRITE); // current task
-
-'current' MAY satisfy smack_msg_queue_msgrcv r/w requirement,
-but 'target' (the receiver task) might NOT;
-as a result, an unauthorized receiver gets the message,
-violating MAC policy.
-
-Test:
-1) create a sysv message queue with label “foo”
-2) echo "bar foo r" >/smack/load2
-3) msgrcv(,,,0,MSG_NOERROR) in "bar"-labeled task.
-    The task is waiting for the messages ...
-4) msgsnd() from a "foo"-labeled task:
-"bar"-labeled task gets the message.
-
-This patch fixes the issue by checking permission on the
-'target' task instead of 'current'.
-
-(2008-02-04, Casey Schaufler)
-Fixes: e114e473771c ("Smack: Simplified Mandatory Access Control Kernel")
-
-Signed-off-by: Konstantin Andreev <andreev@swemel.ru>
----
- security/smack/smack_lsm.c | 65 +++++++++++++++++++++++++++-----------
- 1 file changed, 47 insertions(+), 18 deletions(-)
-
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index f4ef840b203e..3146fa83c2f1 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -130,12 +130,13 @@ static int smk_bu_note(char *note, struct smack_known *sskp,
- #define smk_bu_note(note, sskp, oskp, mode, RC) (RC)
- #endif
- 
--#ifdef CONFIG_SECURITY_SMACK_BRINGUP
--static int smk_bu_current(char *note, struct smack_known *oskp,
--			  int mode, int rc)
-+static int
-+smk_bu_tsk_to_obj(struct task_struct *tsk, const struct task_smack *tsp,
-+		  char *note, struct smack_known *oskp, int mode, int rc)
- {
--	struct task_smack *tsp = smack_cred(current_cred());
-+#ifdef CONFIG_SECURITY_SMACK_BRINGUP
- 	char acc[SMK_NUM_ACCESS_TYPE + 1];
-+	char comm[TASK_COMM_LEN];
- 
- 	if (rc <= 0)
- 		return rc;
-@@ -143,14 +144,22 @@ static int smk_bu_current(char *note, struct smack_known *oskp,
- 		rc = 0;
- 
- 	smk_bu_mode(mode, acc);
-+
- 	pr_info("Smack %s: (%s %s %s) %s %s\n", smk_bu_mess[rc],
--		tsp->smk_task->smk_known, oskp->smk_known,
--		acc, current->comm, note);
-+		smk_of_task(tsp)->smk_known, oskp->smk_known,
-+		acc, get_task_comm(comm, tsk), note);
- 	return 0;
--}
- #else
--#define smk_bu_current(note, oskp, mode, RC) (RC)
-+	return rc;
- #endif
-+}
-+
-+static int smk_bu_current(char *note, struct smack_known *oskp,
-+			  int mode, int rc)
-+{
-+	return smk_bu_tsk_to_obj(current, smack_cred(current_cred()),
-+				 note, oskp, mode, rc);
-+}
- 
- #ifdef CONFIG_SECURITY_SMACK_BRINGUP
- static int smk_bu_task(struct task_struct *otp, int mode, int rc)
-@@ -3353,14 +3362,20 @@ static int smack_sem_semop(struct kern_ipc_perm *isp, struct sembuf *sops,
- }
- 
- /**
-- * smk_curacc_msq : helper to check if current has access on msq
-- * @isp : the msq
-+ * smk_tskacc_msq : helper to check if tsk has access on msq
-+ * @tsk: the task that requests access
-+ * @isp : the sysv msg queue permissions
-  * @access : access requested
-  *
-- * return 0 if current has access, error otherwise
-+ * return 0 if tsk has access, error otherwise
-  */
--static int smk_curacc_msq(struct kern_ipc_perm *isp, int access)
-+static int
-+smk_tskacc_msq(struct task_struct *tsk, struct kern_ipc_perm *isp, int access)
- {
-+	const bool tsk_is_current = (tsk == current);
-+	const struct cred * const tsk_cred =
-+			(tsk_is_current ? current_cred() : get_task_cred(tsk));
-+	struct task_smack * const tsp = smack_cred(tsk_cred);
- 	struct smack_known *msp = smack_of_ipc(isp);
- 	struct smk_audit_info ad;
- 	int rc;
-@@ -3369,11 +3384,25 @@ static int smk_curacc_msq(struct kern_ipc_perm *isp, int access)
- 	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_IPC);
- 	ad.a.u.ipc_id = isp->id;
- #endif
--	rc = smk_curacc(msp, access, &ad);
--	rc = smk_bu_current("msq", msp, access, rc);
-+	rc = smk_tskacc(tsp, msp, access, &ad);
-+	rc = smk_bu_tsk_to_obj(tsk, tsp, "msq", msp, access, rc);
-+	if (!tsk_is_current)
-+		put_cred(tsk_cred);
- 	return rc;
- }
- 
-+/**
-+ * smk_curacc_msq : helper to check if current has access on msq
-+ * @isp : the sysv msg queue permissions
-+ * @access : access requested
-+ *
-+ * return 0 if current has access, error otherwise
-+ */
-+static int smk_curacc_msq(struct kern_ipc_perm *isp, int access)
-+{
-+	return smk_tskacc_msq(current, isp, access);
-+}
-+
- /**
-  * smack_msg_queue_associate - Smack access check for msg_queue
-  * @isp: the object
-@@ -3441,21 +3470,21 @@ static int smack_msg_queue_msgsnd(struct kern_ipc_perm *isp, struct msg_msg *msg
- }
- 
- /**
-- * smack_msg_queue_msgrcv - Smack access check for msg_queue
-+ * smack_msg_queue_msgrcv - check it target has r/w access to msg_queue
-  * @isp: the object
-  * @msg: unused
-- * @target: unused
-+ * @target: the task that msgrcv() from the queue
-  * @type: unused
-  * @mode: unused
-  *
-- * Returns 0 if current has read and write access, error code otherwise
-+ * Returns 0 if target has read and write access, error code otherwise
-  */
- static int smack_msg_queue_msgrcv(struct kern_ipc_perm *isp,
- 				  struct msg_msg *msg,
- 				  struct task_struct *target, long type,
- 				  int mode)
- {
--	return smk_curacc_msq(isp, MAY_READWRITE);
-+	return smk_tskacc_msq(target, isp, MAY_READWRITE);
- }
- 
- /**
--- 
-2.47.3
 
