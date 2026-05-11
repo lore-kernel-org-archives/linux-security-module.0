@@ -1,32 +1,49 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CB3423A6B;
-	Mon, 11 May 2026 17:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CD547AF5D
+	for <linux-security-module@vger.kernel.org>; Mon, 11 May 2026 17:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778520568; cv=none; b=VSqGk/CMLnM09sLdfKkAI7t13p690q0HTI1BRh7eNTlKU3xXXa2ez6dATCvniVSoojcPqXicBzL1jYOD+O7RzGPay7TJOSV5VEOiBLwvRuY/1cPZfSWX6nd89tlyscjjbVDgnqCizWJhCLtrzc/x4cU3u5xpAvMdAozUBTPgMIQ=
+	t=1778522100; cv=none; b=m4CK1jQ69mKfLl3J/QV6QVzahwZPLRSonnVBO+WUJBf8RWzCJRH8F+aU4OxTm5krw5ocOQ08pl4lxb9JK5KJXtdJKwcVEig/Ocfo47oIGLP9bJ4bU4+4AfSuv32puzvw6IXutU1B4/DAuWlQ01PwyI7khrRurkINKG8t5GQqeVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778520568; c=relaxed/simple;
-	bh=yMWBpNUT5aNuw3V9XIZoorQgUxmjks1iackgkJ/snl8=;
+	s=arc-20240116; t=1778522100; c=relaxed/simple;
+	bh=0iTg+leX0j2qT7Fm8ZWc0NcP/PDd5Medeqon2RI8VYQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BDXc7WUA/UWNvGzD8L2LbaZlpW51BJjm2JvKWkox+j9flsln4yphfFkP1PJDw+SDb7BNaMutvC/Ag51NpFEi7Du1/iv8x+9BOqxneXdxPYMansWERtYpk7WgxHVfijx6rgkFUsqWsXtFXlCLw6hcqeB8/kyjPBJfuZBQm+/SAAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qPr3GfIA; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	 In-Reply-To:Content-Type; b=HIrwLTeoUSaEc6nZ3AyBClMOU8zUE/HCDCWn8d8AFd7htetGPHswgL8qGbTssgL5t3MnfPnxX3gN5q3Jzrzg+hz1RcBaBmjopfGEeejgZCq9JdYUn4thpnWp2VHDNXdnJv+0GDlmLkOUWUd/wbzpvQZoLcOzrkje30FFRM1kk38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gqCelkhF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qPr3GfIA"
-Received: from [10.2.212.4] (unknown [131.107.8.4])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 0EC9B20B7166;
-	Mon, 11 May 2026 10:29:24 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0EC9B20B7166
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1778520564;
-	bh=EY/LhrL3JM0ElRC6pWR4zlZABquSUEPTVPGME7ilfAE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qPr3GfIAExhTrBx+vW6z04VEtwuHufnzKC2Cuobqhgi+jXK8B5WJn5U/8AuY4IuR1
-	 gctDJYqvaGxDiuM3sdUmiMnyj8eQav91qWB47p3T2RM2WYl1MYeUYAcqhOAWOjKQ64
-	 3wnHZX/hx0hhTM8+aGFGvVBJXMR24gFYj+iX5v54=
-Message-ID: <aaed52cf-26e1-4c40-812d-3788024ce5b5@linux.microsoft.com>
-Date: Mon, 11 May 2026 10:29:23 -0700
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gqCelkhF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1778522097;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GKvjdJ57xbDNtz0/ef8xqKSCc51OBN1WOr77UzgegmY=;
+	b=gqCelkhFn/oPa8i1CqIq4ufTi+S7lI+NIDtt49dnjidfKAMM3lgezEQbtwbopfebTW/r3i
+	zPt6UKBayCidnallFNvhNe4nP1t4NYaTmuQZHY1/RZZuNc4o/GCfINmg79NuL/GCqtZlbO
+	4qQ4yGBQcANhY6B3/4tRD1/euA83yKI=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-647-DDlwY3Z8OlqsCjfisEs3DA-1; Mon,
+ 11 May 2026 13:54:54 -0400
+X-MC-Unique: DDlwY3Z8OlqsCjfisEs3DA-1
+X-Mimecast-MFC-AGG-ID: DDlwY3Z8OlqsCjfisEs3DA_1778522090
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0D5941956080;
+	Mon, 11 May 2026 17:54:49 +0000 (UTC)
+Received: from [10.2.17.16] (unknown [10.2.17.16])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5F33B18004A3;
+	Mon, 11 May 2026 17:54:39 +0000 (UTC)
+Message-ID: <354af9fc-1c70-4ee4-a0ff-8821bebec7b8@redhat.com>
+Date: Mon, 11 May 2026 13:54:37 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -34,144 +51,81 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 00/13] ima: Introduce staging mechanism
-To: steven chen <chenste@linux.microsoft.com>,
- Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
- skhan@linuxfoundation.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
- gregorylumen@linux.microsoft.com, Roberto Sassu <roberto.sassu@huawei.com>
-References: <20260429160319.4162918-1-roberto.sassu@huaweicloud.com>
- <99c30be6-8b0f-486a-890c-cf74c5930726@linux.microsoft.com>
+Subject: Re: [PATCH 1/3] cgroup/cpuset: Fix deadline bandwidth leak in
+ cpuset_can_attach()
+To: Aaron Tomlin <atomlin@atomlin.com>
+Cc: tsbogend@alpha.franken.de, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com, mingo@redhat.com, peterz@infradead.org,
+ juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ stephen.smalley.work@gmail.com, casey@schaufler-ca.com, tj@kernel.org,
+ hannes@cmpxchg.org, mkoutny@suse.com, chenridong@huaweicloud.com,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com, kprateek.nayak@amd.com,
+ omosnace@redhat.com, kees@kernel.org, neelx@suse.com, sean@ashe.io,
+ chjohnst@gmail.com, steve@abita.co, mproche@gmail.com, nick.lange@gmail.com,
+ cgroups@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ selinux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260509164847.939294-1-atomlin@atomlin.com>
+ <20260509164847.939294-2-atomlin@atomlin.com>
+ <8aaa7dd9-2426-475c-af64-85ef5f2aa855@redhat.com>
+ <aihz6zlfmcaxwb3ef4luisfpwqibwsajpphy5vzuksy3ftfkms@whhv2ax5plpb>
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <aihz6zlfmcaxwb3ef4luisfpwqibwsajpphy5vzuksy3ftfkms@whhv2ax5plpb>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Mimecast-MFC-PROC-ID: TRU8TtNajIJtmwbvHC6VX2ZKnPzgElKD1Hwhe5q30m0_1778522090
+X-Mimecast-Originator: redhat.com
 Content-Language: en-US
-From: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-In-Reply-To: <99c30be6-8b0f-486a-890c-cf74c5930726@linux.microsoft.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
+On 5/11/26 7:08 AM, Aaron Tomlin wrote:
+> On Mon, May 11, 2026 at 01:10:02AM -0400, Waiman Long wrote:
+>> On 5/9/26 12:48 PM, Aaron Tomlin wrote:
+>>> During a cgroup migration, cpuset_can_attach() iterates over the
+>>> provided taskset. If a task within the batch is a deadline (DL) task,
+>>> the destination cpuset's DL metrics (i.e., nr_migrate_dl_tasks and
+>>> sum_migrate_dl_bw) are appropriately incremented.
+>>>
+>>> However, if a subsequent task in the same migration batch fails the
+>>> task_can_attach() check, the loop aborts and jumps directly to
+>>> out_unlock. Consequently, any DL metrics accumulated from previously
+>>> processed tasks in the batch remain permanently inflated in the
+>>> destination cpuset. Because the migration is subsequently aborted by the
+>>> cgroup core, cpuset_cancel_attach() is never invoked to unwind these
+>>> specific increments.
+>>>
+>>> This behaviour results in a permanent leak of deadline bandwidth, which
+>>> incorrectly restricts the admission control capacity of the destination
+>>> cpuset.
+>>>
+>>> To resolve this, introduce an out_unlock_reset failure path that
+>>> conditionally invokes reset_migrate_dl_data(). This guarantees that if a
+>>> batch migration is aborted for any reason, the pending DL metrics are
+>>> safely reset before returning the error.
+>>>
+>>> Fixes: 0a67b847e1f06 ("cpuset: Allow setscheduler regardless of manipulated task")
+>> That is not the commit that introduced the bug. Anyway, there is already
+>> another patch sent recently to fix this bug. See
+>>
+>> https://lore.kernel.org/lkml/20260509102031.97608-2-zhangguopeng@kylinos.cn/
+>>
+> Hi Waiman,
+>
+> Thank you for the follow up.
+>
+> Acknowledged. I will drop this patch in the next iteration due to [1].
+>
+> Please note, the sashiko AI Review bot reported: cpuset_can_attach()
+> incorrectly assumes all migrating tasks originate from the same source
+> cpuset. At first glance, this feedback is valid. I plan to submit a patch,
+> if no solution was already proposed.
+>
+> [1]: https://lore.kernel.org/lkml/20260509102031.97608-2-zhangguopeng@kylinos.cn/
 
-On 5/7/2026 9:47 AM, steven chen wrote:
->>
->> Usage
->> =====
->>
->> The IMA staging mechanism can be enabled from the kernel configuration
->> with the CONFIG_IMA_STAGING option.
->>
->> If it is enabled, IMA duplicates the current measurements interfaces
->> (both binary and ASCII), by adding the _staged file suffix. Both the
->> original and the staging interfaces gain the write permission for the
->> root user and group, but require the process to have CAP_SYS_ADMIN set.
->>
->> The staging mechanism supports two flavors.
->>
->> Staging with prompt
->> ~~~~~~~~~~~~~~~~~~~
->>
->> The current measurements list is moved to a temporary staging area, and
->> staged measurements are deleted upon confirmation.
->>
->> This staging process is achieved with the following steps.
->>
->>    1.  echo A > <original interface>: the user requests IMA to stage the
->>        entire measurements list;
->>    2.  cat <_staged interface>: the user reads the staged measurements;
->>    3.  echo D > <_staged interface>: the user requests IMA to delete
->>        staged measurements.
->>
->> Staging and deleting
->> ~~~~~~~~~~~~~~~~~~~~
->>
->> N measurements are staged to a temporary staging area, and immediately
->> deleted without further confirmation.
->>
->> This staging process is achieved with the following steps.
->>
->>    1.  cat <original interface>: the user reads the current measurements
->>        list and determines what the value N for staging should be;
->>    2.  echo N > <original interface>: the user requests IMA to delete N
->>        measurements from the current measurements list.
-> 
-> This submission proposes two ways for log trimming:
-> 
-> *Flavor 1:* Staging with prompt
-> *Flavor 2:* stage and delete N
-> 
-> Functionally, both approaches address the same problem, but *Favour 2 
-> *is the
-> stronger design and should be preferred. There is no good reason to keep 
-> *Flavor 1.*
-> 
->  From a kernel implementation perspective, *Flavor 2 *is more efficient 
-> because it
-> minimizes the time spent holding the list lock (can’t be shorter). It 
-> also substantially
-> reduces the amount of kernel-side logic, removing nearly half of the 
-> code required
-> by the alternative approach.
-> 
->  From a user-space perspective, *Flavor 2 *results in a much cleaner 
-> model. It avoids
-> the need to track and reconcile both old and staged lists in user space 
-> as well as
-> two lists (cur and staged) in the kernel space, which simplifies log 
-> trimming logic
-> and reduces maintenance overhead. In addition, it preserves the existing 
-> external
-> behavior by not exposing any staged list to user space.
-> 
-> Overall, *Flavor 2 *provides the same functional result with lower 
-> kernel complexity,
-> shorter kernel list lock hold time, and a simpler user-space interface. 
-> For those
-> reasons, it is the preferable approach and *Favour 1* does not appear to 
-> offer sufficient
-> justification to keep both implementations.
-> 
-> Steven
+Yes, it does look like the AI feedback is valid. I will take a further 
+look into this.
 
-Roberto, Mimi:
-
-I want to add on to the point Steven has brought up.
-
-With "Stage and Delete N" approach, we have the following sequence of 
-tasks for trimming the IMA log:
-
-	1. User mode locks the IMA measurement list through the "write interface".
-		a. While this prevents any other user mode process from updating the 
-IMA log, kernel can still add new IMA events to the measurement log
-	2. User mode reads the TPM Quote and the IMA measurement events and 
-sends it to the remote attestation service
-	3. Once the remote service has successfully processed the IMA events, 
-the user mode determines the number of IMA events "N" to be removed from 
-the measurement list maintained in the kernel
-	4. User mode provides the value "N" to the kernel
-	5. Kernel now determines the point at which to snap the IMA measurement 
-list using "N" - without holding a lock
-	6. Then, the kernel lock is held and the list is snapped at the point 
-determined in the previous step thus keeping the kernel lock time to the 
-minimum.
-	7. Now, user mode removes the "write" lock on the IMA measurement list
-
-With the above, we believe "Stage and Delete N" alone is sufficient to 
-trim IMA log.
-
-  -lakshmi
-
->>   .../admin-guide/kernel-parameters.txt         |   4 +
->>   Documentation/security/IMA-staging.rst        | 163 +++++++++
->>   Documentation/security/index.rst              |   1 +
->>   MAINTAINERS                                   |   2 +
->>   security/integrity/ima/Kconfig                |  16 +
->>   security/integrity/ima/ima.h                  |  32 +-
->>   security/integrity/ima/ima_api.c              |   2 +-
->>   security/integrity/ima/ima_fs.c               | 315 ++++++++++++++++--
->>   security/integrity/ima/ima_init.c             |   5 +
->>   security/integrity/ima/ima_kexec.c            |  53 ++-
->>   security/integrity/ima/ima_queue.c            | 283 ++++++++++++++--
->>   11 files changed, 803 insertions(+), 73 deletions(-)
->>   create mode 100644 Documentation/security/IMA-staging.rst
->>
+Thanks,
+Longman
 
