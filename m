@@ -1,214 +1,177 @@
-Received: from LO2P265CU024.outbound.protection.outlook.com (mail-uksouthazon11021105.outbound.protection.outlook.com [52.101.95.105])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F367A3630A9;
-	Mon, 11 May 2026 11:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.95.105
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778497735; cv=fail; b=ovtQemJQXyiNeftofEKOXj3ReJlYd/0nvHBdUD0i/OB80+IgQwIlxPaCgfZyc1mjY/tRLAk2mgW3/jr/itpwIGkvWDJZmpxeVG970G/FtGxfMeRwhxkE9Ai8ySd9Zw9fgPinxKm7afo74KeyTHBgxXWlYnlPV6ZuAazHlydqq6M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778497735; c=relaxed/simple;
-	bh=mXBacL2oEggFrNHuEUSCEndhkqPPWvGDzHk0v0lmO6w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=rcvloaLwTQD2/BgXHEuofPcD8o6rNp8xYmpYSNWqefd6uXuQqFCkQW/mtNVisyCdQewvW9EKPBA+klTXK4DpQBoIPH20ifTvyTxDVGh+YzaDc6XVn/V/0Uu2CqXPaxAwtmIsZp1qQXZoudSSWj2tmaHV8/GjBS357kcfQn0TtY8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com; spf=pass smtp.mailfrom=atomlin.com; arc=fail smtp.client-ip=52.101.95.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atomlin.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wGmSGrM6PgITfIcUAkBmJYvZBNjS+HR42Nmh1lwVh1sQFhUA8rplBcKpx/cVsNA8jB8UYvicHxTtidjirR+k1lnAMJHEBtP9VkhTiBxM5rVNXFpvSLMnqu5uME+RP2+i2jXreuPw4CkV6qZmJ41+SBZNl+gEYsHIeB50QgWSZ1rceSpIhxQBO3xkbLcwfmp0VmgUHujwSinfoQp7XNQCLAeiDsuEoRCKz/xN5cTdDjTpGOnofhmrKNSyoRx56BToXuOcyqz+zuqSFfyIkE+TdCx4xDfijioJcQvi5hf9VP4u7bxTnM2Sve+RgwyoQiTv0l4ToVfz5XIAzbvw2LJGsA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mXBacL2oEggFrNHuEUSCEndhkqPPWvGDzHk0v0lmO6w=;
- b=iw6Ys615R7YE9El9u5Gu/2AAsOdCEOyD2JXiOiUCC0Oep4tgzQhq71kmKU2hs6Z3HaIPpg50YRLFTS4QTw+Wx8d+4XuXeoadirNEl4A166RYi6rGRZd/0MlzVtgkD2wyEohpQiHak19nC7KS9IhdGPWvPMKEMRwZQ+Qdc0aL1UClS6yzjSAYKFasRav9QN7K7FEiXP0Dzec2KM+exnTLFZtT7Mmm4Iwx3UOgqdPe/kWO0hbp+m+eHQbqNGHw+le3rAL0hcss3KaPhytOhOqZrHWKNmC52KSWVz4kcmDHk6Ne9f//pHkDnclrYUlNO5WfZ5yGIDvKXJVEKMnizS4maQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=atomlin.com; dmarc=pass action=none header.from=atomlin.com;
- dkim=pass header.d=atomlin.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=atomlin.com;
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:70::10)
- by LO7P123MB7647.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:411::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.23; Mon, 11 May
- 2026 11:08:50 +0000
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::de8e:2e4f:6c6:f3bf]) by CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::de8e:2e4f:6c6:f3bf%2]) with mapi id 15.20.9846.025; Mon, 11 May 2026
- 11:08:49 +0000
-Date: Mon, 11 May 2026 07:08:45 -0400
-From: Aaron Tomlin <atomlin@atomlin.com>
-To: Waiman Long <longman@redhat.com>
-Cc: tsbogend@alpha.franken.de, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	vincent.guittot@linaro.org, stephen.smalley.work@gmail.com, casey@schaufler-ca.com, 
-	tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com, chenridong@huaweicloud.com, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, 
-	vschneid@redhat.com, kprateek.nayak@amd.com, omosnace@redhat.com, kees@kernel.org, 
-	neelx@suse.com, sean@ashe.io, chjohnst@gmail.com, steve@abita.co, 
-	mproche@gmail.com, nick.lange@gmail.com, cgroups@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] cgroup/cpuset: Fix deadline bandwidth leak in
- cpuset_can_attach()
-Message-ID: <aihz6zlfmcaxwb3ef4luisfpwqibwsajpphy5vzuksy3ftfkms@whhv2ax5plpb>
-References: <20260509164847.939294-1-atomlin@atomlin.com>
- <20260509164847.939294-2-atomlin@atomlin.com>
- <8aaa7dd9-2426-475c-af64-85ef5f2aa855@redhat.com>
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="34mfdjxs7nhcxtld"
-Content-Disposition: inline
-In-Reply-To: <8aaa7dd9-2426-475c-af64-85ef5f2aa855@redhat.com>
-X-ClientProxiedBy: BL1P223CA0033.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:208:5b6::8) To CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:400:70::10)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CB3423A6B;
+	Mon, 11 May 2026 17:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778520568; cv=none; b=VSqGk/CMLnM09sLdfKkAI7t13p690q0HTI1BRh7eNTlKU3xXXa2ez6dATCvniVSoojcPqXicBzL1jYOD+O7RzGPay7TJOSV5VEOiBLwvRuY/1cPZfSWX6nd89tlyscjjbVDgnqCizWJhCLtrzc/x4cU3u5xpAvMdAozUBTPgMIQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778520568; c=relaxed/simple;
+	bh=yMWBpNUT5aNuw3V9XIZoorQgUxmjks1iackgkJ/snl8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BDXc7WUA/UWNvGzD8L2LbaZlpW51BJjm2JvKWkox+j9flsln4yphfFkP1PJDw+SDb7BNaMutvC/Ag51NpFEi7Du1/iv8x+9BOqxneXdxPYMansWERtYpk7WgxHVfijx6rgkFUsqWsXtFXlCLw6hcqeB8/kyjPBJfuZBQm+/SAAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qPr3GfIA; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qPr3GfIA"
+Received: from [10.2.212.4] (unknown [131.107.8.4])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 0EC9B20B7166;
+	Mon, 11 May 2026 10:29:24 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0EC9B20B7166
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1778520564;
+	bh=EY/LhrL3JM0ElRC6pWR4zlZABquSUEPTVPGME7ilfAE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qPr3GfIAExhTrBx+vW6z04VEtwuHufnzKC2Cuobqhgi+jXK8B5WJn5U/8AuY4IuR1
+	 gctDJYqvaGxDiuM3sdUmiMnyj8eQav91qWB47p3T2RM2WYl1MYeUYAcqhOAWOjKQ64
+	 3wnHZX/hx0hhTM8+aGFGvVBJXMR24gFYj+iX5v54=
+Message-ID: <aaed52cf-26e1-4c40-812d-3788024ce5b5@linux.microsoft.com>
+Date: Mon, 11 May 2026 10:29:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CWLP123MB3523:EE_|LO7P123MB7647:EE_
-X-MS-Office365-Filtering-Correlation-Id: d7f18010-87f7-42a6-44ab-08deaf4dada2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|13003099007|3023799003|18002099003|56012099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	AlcqtfPgtZUAVDnEkc/91P3vzIKDLRoL1N/Oveyi3hklcNvgQhTJjRs+rEMSI2JvPDmyz/wNlgFAY+qLoyDEAhb8MvS26wqxT/VfwbzZhSNxVOLellJddgtNj2UaBDgsDQmbsEm2d95UjjVBqA1M+cpoCZ+GsqYcIxvnqGD5KWympSIFBOzYVqu09YBIUkzJXjucUNKkBuPY2/04vYW6J3YwfSHMbCztfSn5/q6gRChGrmgxMsrpLzqo7XInb0iG6+lRa3HvI2RnmOOoz5UXqlQbJOb4gcDQbK4gZbU93Ti6IsALLXpV8kX9JeHEIcWofQVbf640pKsjBoY4tmXyjN87bGm3ER1XFdtR17BVenbJlaJk7cs9N6bQGB0GwrDDW+qOlRlFK1NBNsMMTMYTZTzhMLIcAOCdymbQexlpJMlNT9km+Jv5YaPKH6bkq6RQ854OCNhZNtbePrp6EencTHV4Jc0i+9Wsho/I30aNgGjSooIA92ew9j2PumWA3CLCIYuJWogXiy2HSYZNlJc6YeViiAhPu+alm+YQZYfpB61lhNezIexiTXOIRnwXtwmxmiKnc99LE6ykj3cORH8D7UVRZPCocYJovC0EQNocOCl6doPJGFVp7fYw704Ofi+E3qQ76+jNEb+mI9+Mj1vf3/Ui1Nh1w7CJlldtnHipebCZ7MWn099C2aqNmyobY5OB1BPqMXK1aYh91ERBdDcQjQ==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(13003099007)(3023799003)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bVc5cHplUU40aTNLNW1hSnlxanV1RlQydGN4TW8wRmJrMUZ5eDZPUzVyZmZx?=
- =?utf-8?B?RU53ZDFGRk1ieG1hYUVCYVVUcFR3MVNJdTRjUzh0WG5BajBPenN5Y3hvUTkr?=
- =?utf-8?B?Um9id29QaFNlaGtSZzM1U3BBK0FNR21SQUdYTFl1ejZYQ3FwSFh6WktRY1Ft?=
- =?utf-8?B?MVVtS3YvT21EVmVQNThYbWpmU1kvOWxtWGNtalNVZzBkTExqOVJIdlBmK3Ri?=
- =?utf-8?B?VDJhWXlyQkxRbml5N3BJRDZ1WFR6bGJiZHJTcjQ0NjRQMk5kUDIwQjV5TEFR?=
- =?utf-8?B?WUladHRLWVMrN29tTVlESTZkRy8ydS8rdjZ3QjYvNUZrczd0VVlNVUtzUG1L?=
- =?utf-8?B?RHRQL0kxY0d6aFJiNkhYY05UeDkwK3ZvNVBRZ2lxZDBXSVBaRWV6dTViMWYw?=
- =?utf-8?B?d1RZakg2ak1vMEM4TVhiYUE2RFJ3SGVielR5UVZsR25NeHpVWGU1bFcwRlJR?=
- =?utf-8?B?djlaMXNDMlNmRmxHTzNJdkYwTHVYWEtOdllpSVlUWHFVSzJLM3M0R0xsdnUw?=
- =?utf-8?B?aHVBcWxXbTNySkw0MENSRXBleEZXb3VQWEdzUjJpemh4NWRqUmtIbXo2dzRn?=
- =?utf-8?B?TDBmUnl0Ri9ZQUV0dUUrakEyajFRcmtaNmNrdXROcHdLWmpTR1NxUHdtYjUw?=
- =?utf-8?B?WkJjNjRDS2dES201QTlpblFiREpUSjBTc0NvS09FeTVDem0xQ1dtTG9HV2NY?=
- =?utf-8?B?RkJ0cGhXNTVqK2FsejB3RHdvUkJNL2hTK3h5NEFNVWFNUTIzeE1KS21oNDFw?=
- =?utf-8?B?d21ncUtWYlgwM1E5RXIvSW1iTSsxRHlZdWlicEc0NDFrNVNYZVZKeGsrVXpF?=
- =?utf-8?B?Sm5JWmo4UFIvZDVNbWZrdjVxQy9rd2tPU3JwbkxUQklOb0xEMGQ5VE5BQ0xZ?=
- =?utf-8?B?QWdNRWtiekJPcGRrdzNtZjNtR0N4bUVnR0JGcGVjN29jL0ZxbnZwVVBXWmpD?=
- =?utf-8?B?OHdSNzdIZzR5NGQyME8yWmpOS2ZDRWJWWXZPWG5uYTNRUG9PenpwVVBETVBS?=
- =?utf-8?B?WHM1WFZ5RWxZTU8zRlBLcmcxem1rRUorRlNLRkV3V3U4R3NCNVpWYlpXMSsr?=
- =?utf-8?B?Y0MwSmJEVlF6a1JBdVNFbjFURmlVQ2xkUE5rU3JVRVFiZjAxbGFFVGRWb1Bs?=
- =?utf-8?B?dmFSVDZCY0Ixc2RnTmI1TnVtTlA1ZnZ4VFRTUHo2R1h1ZERuU0l0bmVvRmx2?=
- =?utf-8?B?R296ZjNNbFppRDlSaTNwSFR1S3dQbkdRdjRQSlVhc0NIL05WMmdnNWJKQThU?=
- =?utf-8?B?MXpPa1FKcEcwSCs3WUplcytOYjlDdVh1TmtBVFdYRTVZd0RvTk9jL01xTTlO?=
- =?utf-8?B?Vy9oeXZWYTVuZG1IN1VXN1QwWVVReXN3QkR4MDFSM0IwNmNvN1g3bEZ6bWdp?=
- =?utf-8?B?VHJZMy96Mkp2VWZ2bGdmMkp5UFJVNEs3TXlOSkNTdTQvZy9JU1IvNGtzaWht?=
- =?utf-8?B?djMvR0tLUmVCUzk0cm9PUlhudGlZSVZaN3Q3dVZQQVRmb1ZkNlQrQTlVUGY1?=
- =?utf-8?B?enB0NWF3VzlKOVN2d0RscG1nZTJNa0Vvc3NqaXM3bE9TQ1Q2MjZVeXA1RHRB?=
- =?utf-8?B?UnYxamlORmZJd3dUTFJ5QlM5aDNodUF2M08vbHZGVkkxczh6T1d3c1Robmtx?=
- =?utf-8?B?dkRsWGk5R0dYN0pibWRibVlHT2VEbkkraHlmYW9QcC85bElFNVlqamxIUzQz?=
- =?utf-8?B?VlRvTzdseEtHL3NUc29KTkgwY0V1eHpGWFlidjV4akpKNTBYdE9nbVZsS2ht?=
- =?utf-8?B?UTk4dnJpdWxUM01GOG0zS1VJRDUwMUNGSnlabEI3SXRhMjh3ZEFDV1hEdXVj?=
- =?utf-8?B?eVFWdk9zaXJNTHE4RGNwN3FtZXBhbXduZ1Rjb0c1a0pQKzYvSnhjR2tZZ2hR?=
- =?utf-8?B?NlJhdFRBbkNWby9PSUtzVHZjUWtnZ0NQK2VGYk9pV2lyM2JwRDdlT0xxMWFz?=
- =?utf-8?B?Y1hZNDVvTzNNa2E2RlVMamRobUlpTHZVaGhXaXF4MTUvTFJqR0dSZ3lnYkUz?=
- =?utf-8?B?Ym8zRHVrYVFET3VmT204K3puTmNMZUtNS3dXZlZtMldkZHdLMkJDK3VHTi82?=
- =?utf-8?B?aXF6VEZJTGtpNXJkbzdyMjZzUHlIK1dQWWhGb3U0SDd1aTZrZjBlN3gvby9r?=
- =?utf-8?B?Q1p1aE1DSUl0QjJZamhuSHRlMlNkSjdGN2pLU0FYRnc3QU5tRkFhaFBkcjU0?=
- =?utf-8?B?T3RFQTZXbHdhekNnWGxyc3Bwbm12L1dLMk5pZ0FFczI1WDlWLytlcThOQjB3?=
- =?utf-8?B?Zjdydkd3V1djaHJYTDgxTUVickV4ZU0yY0NIWHJnbk92R2xvd0k0UERySVVx?=
- =?utf-8?B?anZCYWRXaHVueTg5VjB3K2ZqbXRxSis1VVZsenlyNkNKcm9NZXBYdz09?=
-X-OriginatorOrg: atomlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d7f18010-87f7-42a6-44ab-08deaf4dada2
-X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2026 11:08:49.8036
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: e6a32402-7d7b-4830-9a2b-76945bbbcb57
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rVqJ3ajHA/79KQJUj9AgQO0wYpi9H+afQh5/R+nKV3l8TYaEoFuksVfN8nNRceTf9pWLQvKiNJZX+hrGOm1lrg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO7P123MB7647
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 00/13] ima: Introduce staging mechanism
+To: steven chen <chenste@linux.microsoft.com>,
+ Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
+ skhan@linuxfoundation.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+ gregorylumen@linux.microsoft.com, Roberto Sassu <roberto.sassu@huawei.com>
+References: <20260429160319.4162918-1-roberto.sassu@huaweicloud.com>
+ <99c30be6-8b0f-486a-890c-cf74c5930726@linux.microsoft.com>
+Content-Language: en-US
+From: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+In-Reply-To: <99c30be6-8b0f-486a-890c-cf74c5930726@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---34mfdjxs7nhcxtld
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/3] cgroup/cpuset: Fix deadline bandwidth leak in
- cpuset_can_attach()
-MIME-Version: 1.0
 
-On Mon, May 11, 2026 at 01:10:02AM -0400, Waiman Long wrote:
->=20
-> On 5/9/26 12:48 PM, Aaron Tomlin wrote:
-> > During a cgroup migration, cpuset_can_attach() iterates over the
-> > provided taskset. If a task within the batch is a deadline (DL) task,
-> > the destination cpuset's DL metrics (i.e., nr_migrate_dl_tasks and
-> > sum_migrate_dl_bw) are appropriately incremented.
-> >=20
-> > However, if a subsequent task in the same migration batch fails the
-> > task_can_attach() check, the loop aborts and jumps directly to
-> > out_unlock. Consequently, any DL metrics accumulated from previously
-> > processed tasks in the batch remain permanently inflated in the
-> > destination cpuset. Because the migration is subsequently aborted by the
-> > cgroup core, cpuset_cancel_attach() is never invoked to unwind these
-> > specific increments.
-> >=20
-> > This behaviour results in a permanent leak of deadline bandwidth, which
-> > incorrectly restricts the admission control capacity of the destination
-> > cpuset.
-> >=20
-> > To resolve this, introduce an out_unlock_reset failure path that
-> > conditionally invokes reset_migrate_dl_data(). This guarantees that if a
-> > batch migration is aborted for any reason, the pending DL metrics are
-> > safely reset before returning the error.
-> >=20
-> > Fixes: 0a67b847e1f06 ("cpuset: Allow setscheduler regardless of manipul=
-ated task")
->=20
-> That is not the commit that introduced the bug. Anyway, there is already
-> another patch sent recently to fix this bug. See
->=20
-> https://lore.kernel.org/lkml/20260509102031.97608-2-zhangguopeng@kylinos.=
-cn/
->=20
-Hi Waiman,
+On 5/7/2026 9:47 AM, steven chen wrote:
+>>
+>> Usage
+>> =====
+>>
+>> The IMA staging mechanism can be enabled from the kernel configuration
+>> with the CONFIG_IMA_STAGING option.
+>>
+>> If it is enabled, IMA duplicates the current measurements interfaces
+>> (both binary and ASCII), by adding the _staged file suffix. Both the
+>> original and the staging interfaces gain the write permission for the
+>> root user and group, but require the process to have CAP_SYS_ADMIN set.
+>>
+>> The staging mechanism supports two flavors.
+>>
+>> Staging with prompt
+>> ~~~~~~~~~~~~~~~~~~~
+>>
+>> The current measurements list is moved to a temporary staging area, and
+>> staged measurements are deleted upon confirmation.
+>>
+>> This staging process is achieved with the following steps.
+>>
+>>    1.  echo A > <original interface>: the user requests IMA to stage the
+>>        entire measurements list;
+>>    2.  cat <_staged interface>: the user reads the staged measurements;
+>>    3.  echo D > <_staged interface>: the user requests IMA to delete
+>>        staged measurements.
+>>
+>> Staging and deleting
+>> ~~~~~~~~~~~~~~~~~~~~
+>>
+>> N measurements are staged to a temporary staging area, and immediately
+>> deleted without further confirmation.
+>>
+>> This staging process is achieved with the following steps.
+>>
+>>    1.  cat <original interface>: the user reads the current measurements
+>>        list and determines what the value N for staging should be;
+>>    2.  echo N > <original interface>: the user requests IMA to delete N
+>>        measurements from the current measurements list.
+> 
+> This submission proposes two ways for log trimming:
+> 
+> *Flavor 1:* Staging with prompt
+> *Flavor 2:* stage and delete N
+> 
+> Functionally, both approaches address the same problem, but *Favour 2 
+> *is the
+> stronger design and should be preferred. There is no good reason to keep 
+> *Flavor 1.*
+> 
+>  From a kernel implementation perspective, *Flavor 2 *is more efficient 
+> because it
+> minimizes the time spent holding the list lock (can’t be shorter). It 
+> also substantially
+> reduces the amount of kernel-side logic, removing nearly half of the 
+> code required
+> by the alternative approach.
+> 
+>  From a user-space perspective, *Flavor 2 *results in a much cleaner 
+> model. It avoids
+> the need to track and reconcile both old and staged lists in user space 
+> as well as
+> two lists (cur and staged) in the kernel space, which simplifies log 
+> trimming logic
+> and reduces maintenance overhead. In addition, it preserves the existing 
+> external
+> behavior by not exposing any staged list to user space.
+> 
+> Overall, *Flavor 2 *provides the same functional result with lower 
+> kernel complexity,
+> shorter kernel list lock hold time, and a simpler user-space interface. 
+> For those
+> reasons, it is the preferable approach and *Favour 1* does not appear to 
+> offer sufficient
+> justification to keep both implementations.
+> 
+> Steven
 
-Thank you for the follow up.
+Roberto, Mimi:
 
-Acknowledged. I will drop this patch in the next iteration due to [1].
+I want to add on to the point Steven has brought up.
 
-Please note, the sashiko AI Review bot reported: cpuset_can_attach()
-incorrectly assumes all migrating tasks originate from the same source
-cpuset. At first glance, this feedback is valid. I plan to submit a patch,
-if no solution was already proposed.
+With "Stage and Delete N" approach, we have the following sequence of 
+tasks for trimming the IMA log:
 
-[1]: https://lore.kernel.org/lkml/20260509102031.97608-2-zhangguopeng@kylin=
-os.cn/
+	1. User mode locks the IMA measurement list through the "write interface".
+		a. While this prevents any other user mode process from updating the 
+IMA log, kernel can still add new IMA events to the measurement log
+	2. User mode reads the TPM Quote and the IMA measurement events and 
+sends it to the remote attestation service
+	3. Once the remote service has successfully processed the IMA events, 
+the user mode determines the number of IMA events "N" to be removed from 
+the measurement list maintained in the kernel
+	4. User mode provides the value "N" to the kernel
+	5. Kernel now determines the point at which to snap the IMA measurement 
+list using "N" - without holding a lock
+	6. Then, the kernel lock is held and the list is snapped at the point 
+determined in the previous step thus keeping the kernel lock time to the 
+minimum.
+	7. Now, user mode removes the "write" lock on the IMA measurement list
 
-Kind regards,
---=20
-Aaron Tomlin
+With the above, we believe "Stage and Delete N" alone is sufficient to 
+trim IMA log.
 
---34mfdjxs7nhcxtld
-Content-Type: application/pgp-signature; name="signature.asc"
+  -lakshmi
 
------BEGIN PGP SIGNATURE-----
+>>   .../admin-guide/kernel-parameters.txt         |   4 +
+>>   Documentation/security/IMA-staging.rst        | 163 +++++++++
+>>   Documentation/security/index.rst              |   1 +
+>>   MAINTAINERS                                   |   2 +
+>>   security/integrity/ima/Kconfig                |  16 +
+>>   security/integrity/ima/ima.h                  |  32 +-
+>>   security/integrity/ima/ima_api.c              |   2 +-
+>>   security/integrity/ima/ima_fs.c               | 315 ++++++++++++++++--
+>>   security/integrity/ima/ima_init.c             |   5 +
+>>   security/integrity/ima/ima_kexec.c            |  53 ++-
+>>   security/integrity/ima/ima_queue.c            | 283 ++++++++++++++--
+>>   11 files changed, 803 insertions(+), 73 deletions(-)
+>>   create mode 100644 Documentation/security/IMA-staging.rst
+>>
 
-iQIzBAEBCgAdFiEEeQaE6/qKljiNHm6b4t6WWBnMd9YFAmoBuL0ACgkQ4t6WWBnM
-d9bsww//Xwh+Wwf6l9x/WxaqjQG+15NRi711h1Q2u+jCojNhOzmupUhEngRTlL50
-mJ8UXgEFkIicGL9POYhvUVzRcv+xa3/vRqG7O26Ruxk4Xtv+7iNf7B3ye6OZ0eKd
-HvKkaPxkhok4B2xIa3Vycx/lepgwTKqZ3ChHS7h/b0Z1aalK7TifwipOqmUdqYLk
-z8CYfQwwaKo3lMY2EE+iiwWui+i3ImJ3nH1PFLPoeYMEsWs3g7Yi+WJYaDtI5vbN
-bKbMKvb1tH7DpGNmxtyKWVKM4EBSxpUmqa5vDeZO+mXD0gLK/y8Zq5FPwNrGlEqZ
-glRvYu3xhF2tgtYYP2CvHDdHR8zZONkihkgx7/6gEWBBY5iH920MD9lz2wzvA8N0
-buDBQHpVphCsGeKAbIpRsK/ZVRam5q2X93pLYZOvLZq52Mh7Do+l2rZjZoIcWnaa
-Hs0823Jb/Ls+zT6Hf3FRPNlWKkeBSvqPjXPKvXFIkPGQpG+ZEYoybhAY94tErf5o
-3ficumJeXB4+TA+A1HHuKfxDFoGwdk0D8AcbPMwUKrMVQEQzeGwXyzEdAOYWcAsv
-TyodxBXm4iqHElbsLogZQ7VkGI3LlOxxzvmpv8jpGVDUR5LQA3oaoBOGSk+3uCA/
-PYJNO4je5KCys/K2EYObAy84d4riVFIJZ8JFSSJaYMTAGr5DMmA=
-=gQ4g
------END PGP SIGNATURE-----
-
---34mfdjxs7nhcxtld--
