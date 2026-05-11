@@ -1,66 +1,66 @@
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28FA37E304
-	for <linux-security-module@vger.kernel.org>; Mon, 11 May 2026 19:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329E437BE6A
+	for <linux-security-module@vger.kernel.org>; Mon, 11 May 2026 19:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778529169; cv=none; b=BjtffzBQDmdfg91sCNDSas+wRIeIYEqTab1eGWtJHpJVaT4a85RqassvOuJ3TLzv9izz/Bxmb2+CPCKqFSNx2lM6c3lSs3Rj3G+U8+LlKxIBWP9UZzv69ql6O5Sq1UyogGWI7EpprVwLdMS8i+HLsPhYFS2KkasgVi/PIpi/xfU=
+	t=1778529173; cv=none; b=fWDfBzcHg9C7zf/2LmFIBp7DyxXg3um8kcJquMiBw9VLi2IYrUgkrHdzw8+pVj9FmN2BM54fmDATmf0QvzdTKhqHHrNcARVQdkR3xG81x1l9ilmfmWXQ/71JfDDMkFbdbyDoF4V4pfymOlAurEb+Cc7eoG4hpB8y90J9ATfVjUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778529169; c=relaxed/simple;
-	bh=VcQxfTFcZTn9ONn/zVhnpsD0/DB1MuCe94obAIHqHbM=;
+	s=arc-20240116; t=1778529173; c=relaxed/simple;
+	bh=0tf1vl0SQGqUQbLj6jwYNf1qsghLHDsVRNEO69K9iPw=;
 	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=KFeSKxzvB911tu92Z+GiFjXMo31RTk85PNJXqip0QMk402C9JTuW+FsVpSZAuoeHJIWABAN6R1EG+9DViXLs/8bQYGGheCtagB+VvS10IUDohPBWgfsnKyq1M005hQS3wlmsZlrnfnp0Lue4XJ33OtIHYkxZ73uj6Ox6lYkJQBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=O1dCdV6b; arc=none smtp.client-ip=209.85.222.170
+	 References:In-Reply-To; b=cWpRgpkthuiJ0y1gRronBHLMKittkEgE5QvllAncgNAtGIjkJShULxQOmUi26vmuNH79jsEbvKPmKjonb2os5ChUreDl74hxZcy5jyXDvJo4MVNB5HwxVk5ftg5H5dvVqvBculM26D9ysoDwzsHEOXsUR5vqZkjcdHBVFwHwdFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=biyWdz0x; arc=none smtp.client-ip=209.85.222.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="O1dCdV6b"
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-900fa9f178dso513314785a.1
-        for <linux-security-module@vger.kernel.org>; Mon, 11 May 2026 12:52:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="biyWdz0x"
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-90ce49af8easo8609885a.3
+        for <linux-security-module@vger.kernel.org>; Mon, 11 May 2026 12:52:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1778529167; x=1779133967; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1778529171; x=1779133971; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LL+UPYnZCOjrePrtqK6xOAZ5G7o1QmvEfzGseYDEIaM=;
-        b=O1dCdV6bVCNE0S2myy/TKrzkIxIwfCo/LphzIaKwCvVQeB+DzL4643965DQCBP4/OL
-         UA2ARqxufDGtcWp73ZPeUbFdiEuAv6eaHc+UR8k/qQSQb3FKvmZQ6T1MPDkXjIRcbL/W
-         e9x3gemRAy+fVWrZ1pXRYxd44F+8/HuoDe528Mxq/P9pFaQDxqAkMZ9NSMponXPGQKRw
-         SXYZ+0xIMxGVKNuvOC7zOM51JfdDgEXdAmwVbXtzD2TuPhG7onHGUhCpVSMNfWarhFdG
-         8o83kvZHZ9OwUNAq6CaF9Om9E+QlEL4KKmMYKwepIMqeabRywZ1/DVdgA6EelFx/f1SV
-         KMkA==
+        bh=DkJDSYXLDBh3wMcKjMLlLmxdhkbb1kc+xmdwPKDFOfA=;
+        b=biyWdz0xBCqjy+IfyiVgCjYv1+E6xKH7Pn/z6rpid7y6nDkJvy2rty9GGpqO5x5uzg
+         kdGplr9BasU6iasMX0EGI7BSesr189NpyJN9lDwJ2GgECV0HIVHVYJqrE6g9Uws1/D+z
+         q/FW8fwydK1s+IVrhG8x5DAWKLLowphUDJPER4Wq9DbAad/9ylgG70WS31OS4noz0CgQ
+         cGiCdNU3rY/OAwru59eIXBZO4CEsJqAvnybTIddF01nER1QeLX1eb/Mbo8kErJt2FKZx
+         k8zJX0pnmbtmYmsQrdO7mzzlU6NbaFwhmhZNMinf8K1vBkfwk2/HcatFKKNuCl41ozaL
+         T6Xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778529167; x=1779133967;
+        d=1e100.net; s=20251104; t=1778529171; x=1779133971;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LL+UPYnZCOjrePrtqK6xOAZ5G7o1QmvEfzGseYDEIaM=;
-        b=QSlMPRe+sOSqz4E12TRnS2yd+jHga2sPQv7/s1NlBdT/6zQ4F1K0ij+JSOd3q8nrmO
-         avTuLZvfgoP0oasoHceR/P+fQdzOVa6wqzJUazt8G7sHQaqo8H+BFKqr6yy5v+KTBSRG
-         iYMe0rZ6SiROeXkPRkNSslSEPkHhhP+TxhzoCm8roKkPnzN0/edcRIPg70bqhOiF8/WO
-         ACiJo7OfsTzUIsDCQv9XyhjKEKWmwgxT032OA0c8lRcat4V6Ng8wABXtxomjGriS7nL3
-         Zs0mDsd5xf0mA9GE3FXt4zQ2UVUPf9ewCrmVvTyAMQqprduTlN/AJQONnL0obVbgBmb0
-         XUlg==
-X-Forwarded-Encrypted: i=1; AFNElJ+knGICTfeD6/3YsJUqTNtpS3tKxuhX7F20IwbDl3EkpiCQs2xbzwkU+lFtpoHZgq23P5YtNpWr3Si0TIT0p0c4Fs0H+6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEnnGvA3c2YvTWzUQSxVTsGn2vO3erwz57agSNHoErzvcqEPe3
-	vdmIv7dyTZ0a+Cbk8iLxzCcXuBnT7J6EnHJtfkJFLPhKWkHxy6z7dpZMljVVLG35Sg==
-X-Gm-Gg: Acq92OFwOc8SxS8X7IeX7csAFPDfIqUwGmWqUhotso0lHuMNILMdCXNf6LcnY8DwSzG
-	UBwsQVVRss59x2Y63MaBTRP5pYiK/sLeU4jqyKZV6YonwiyUno/KLuw/o1PKmYuV4RO5Gl4fG8P
-	jnkXBzbBf8ncG9HeP+GUDaUNrmeYu8pNpYzqher0z9+uLaYMd2BSEWHHd3uKdKf0FqP+4Of8RiY
-	dqf7cO2EIEpe1GN1hYXOwVsK+7+8anFTKOdUb9uH3mlsG8N17UNs4x0ghrngjW0ZPGb/6Yscgew
-	Yt27IgutyhIM2ks9OtLlFvr4yMe3OyGYh/RaDv+u18bofDM4hNihienqSswqxf+A7Stn7TdeMRh
-	oe+pbAQ7bpjfsURS1DkoIQXDmvOz+DMrooAvdKyPZ6oYNaWyal7ipbb7pDWl1omSStEvZkCv2ld
-	0ECLVY3gbfH8p2icxBUgSEF6km5yDmZjefL3ndks2d+AHBevY9NVDY/nN6SzLkbhLHzcVQhjrFc
-	jTTvT8=
-X-Received: by 2002:a05:6214:2301:b0:8b5:e126:e77d with SMTP id 6a1803df08f44-8c1a2531e7emr167597196d6.8.1778529166775;
-        Mon, 11 May 2026 12:52:46 -0700 (PDT)
+        bh=DkJDSYXLDBh3wMcKjMLlLmxdhkbb1kc+xmdwPKDFOfA=;
+        b=qhI7SlotgcJJUHS2x3DMscydzmP2Hxzf5QEsKLiGp5aeKfxlRwERdCpkTENk905nNv
+         y/LFfncxv8ssUCkBhDWnx2HU+cisHOT6BnqkmJxgCGVXMqwYqFr1YQ/cUAN5rNlPmwSp
+         6+fyhVIDy5yW5L9JijLRIlLno8L7XpBAEQbhttjtgj/SxxSY2XeDUX/FRbNC9PoVoHqf
+         XLEGzqqeEvaCqjVAtRtYo4wQsyO2ybmEjmc3xFRnx6td/Eg7oDktKuQnIH3/0YF4EzbZ
+         mXRBposadld2InXRJVBbZ8G0SFlzrGFrekubugkPsyVqaJMFwX03+LjMTfG5qmVTn1Sb
+         IVcw==
+X-Forwarded-Encrypted: i=1; AFNElJ9u1bgp/kLx10qokpOWB0gbB3Yz1rUDxhjXodlrpWgBNt35qcHI+qtg3GWyNB4PCm/aASKOHx8n93Mu8jyWTOQ3tM2HqfU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCmp/Gmk8rUntg1nZNcLTmoS6UubHScifRO7mdNgsn/XlV/Fma
+	psV/ETLV1DhEzClLG5AGSfjy7LMlAk0VtCdss+7ROYl4bOAqwbb68W2iwcytpzsrUA==
+X-Gm-Gg: Acq92OFVFQb+wkyuoyPxmBuBBVfujpZD5aIfuszGBYDVMhAR7aUh2Do+288XDkJP5gP
+	bbgtBoKtYD/El/rLEaNbxKettxYW8Z0y5tIolypLiGSmc66cl1biog3T5s3LKlMWSdiVj0jiCae
+	2LikDrX7GAdYIFt5UKqp0h5yhaPDJxmFeILweCCPZkXNtzOp2gyYfRy1ANpQaBOasZuCdYrDheS
+	gzHj3WRika4N4XaMJrnK83CrBtnbob4pOQxfjnpB4g7+CXPY2IQxSIFxX4jkAQUzx5yMipk5nW9
+	gXkfDkIIyFE8Nv200SfNzmcADz7TreWYx1SvLo67ysDZCu51hpZZ70+NpwGxVaxQXjqrc6Wzi2j
+	BweK9IC++Wyj9WlbQrR27qck5lS9Lo4re9aCK1cirLNHwITF4bQ81mSaEPqDcfG7FKXHnzeCFzI
+	ORwKHaRKwXpuOaPcmezEo1gqUvxyTWSe3oRVQ2k1aHnFhuE6Nh2gHI9R23c19lSa/G82LLLE8S1
+	bQ+43dofRIgi3Vp1Q==
+X-Received: by 2002:a05:620a:2954:b0:8ed:d6df:c778 with SMTP id af79cd13be357-907badfc044mr2333240085a.37.1778529170980;
+        Mon, 11 May 2026 12:52:50 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8b53d450dcbsm322404436d6.45.2026.05.11.12.52.44
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-904f810e354sm1742542385a.45.2026.05.11.12.52.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2026 12:52:45 -0700 (PDT)
-Date: Mon, 11 May 2026 15:52:44 -0400
-Message-ID: <ce407923a8717656e21a9f59b45043d4@paul-moore.com>
+        Mon, 11 May 2026 12:52:47 -0700 (PDT)
+Date: Mon, 11 May 2026 15:52:46 -0400
+Message-ID: <eb3d42b49940d9ecdc4ef384989d8f8d@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -71,45 +71,27 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit 
 X-Mailer: pstg-pwork:20260511_1539/pstg-lib:20260511_1103/pstg-pwork:20260511_1539
 From: Paul Moore <paul@paul-moore.com>
-To: john.johansen@canonical.com, georgia.garcia@canonical.com, Song Liu <song@kernel.org>, linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org, apparmor@lists.ubuntu.com
-Cc: jmorris@namei.org, serge@hallyn.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, stephen.smalley.work@gmail.com, omosnace@redhat.com, mic@digikod.net, gnoack@google.com, takedakn@nttdata.co.jp, penguin-kernel@I-love.SAKURA.ne.jp, herton@canonical.com, kernel-team@meta.com, Song Liu <song@kernel.org>
-Subject: Re: [PATCH v3 3/7] apparmor: Convert from sb_mount to granular mount  hooks
-References: <20260509015208.3853132-4-song@kernel.org>
-In-Reply-To: <20260509015208.3853132-4-song@kernel.org>
+To: mic@digikod.net, gnoack@google.com, Song Liu <song@kernel.org>, linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org, apparmor@lists.ubuntu.com
+Cc: jmorris@namei.org, serge@hallyn.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, john.johansen@canonical.com, stephen.smalley.work@gmail.com, omosnace@redhat.com, takedakn@nttdata.co.jp, penguin-kernel@I-love.SAKURA.ne.jp, herton@canonical.com, kernel-team@meta.com, Song Liu <song@kernel.org>
+Subject: Re: [PATCH v3 5/7] landlock: Convert from sb_mount to granular mount  hooks
+References: <20260509015208.3853132-6-song@kernel.org>
+In-Reply-To: <20260509015208.3853132-6-song@kernel.org>
 
 On May  8, 2026 Song Liu <song@kernel.org> wrote:
 > 
-> Replace AppArmor's monolithic apparmor_sb_mount() with granular
-> mount hooks.
-> 
-> Key changes:
-> - mount_bind: uses the pre-resolved struct path from VFS instead of
->   re-resolving dev_name via kern_path(), eliminating a TOCTOU
->   vulnerability. aa_bind_mount() now takes a struct path instead of
->   a string for the source.
-> - mount_new, mount_remount: receive the original mount(2) flags and
->   data parameters for policy matching via match_mnt_flags() and
->   AA_MNT_CONT_MATCH data matching.
-> - mount_reconfigure: handles MS_REMOUNT|MS_BIND (mount attribute
->   reconfiguration) which was previously handled as a remount.
-> - mount_move: reuses apparmor_move_mount() which already handles
->   pre-resolved paths.
-> - mount_change_type: propagation type changes.
-> 
-> aa_move_mount_old() is removed since move mounts now go through
-> security_mount_move() with pre-resolved struct path pointers for
-> both the old mount(2) and new move_mount(2) APIs.
+> Replace hook_sb_mount() with granular mount hooks. Landlock denies
+> all mount operations for sandboxed processes regardless of flags,
+> so all new hooks share a common hook_mount_deny() helper. The
+> mount_move hook reuses hook_move_mount().
 > 
 > Code generated with the assistance of Claude, reviewed by human.
 > 
 > Signed-off-by: Song Liu <song@kernel.org>
 > ---
->  security/apparmor/include/mount.h |  5 +-
->  security/apparmor/lsm.c           | 99 ++++++++++++++++++++++++-------
->  security/apparmor/mount.c         | 37 ++----------
->  3 files changed, 83 insertions(+), 58 deletions(-)
+>  security/landlock/fs.c | 40 ++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 36 insertions(+), 4 deletions(-)
 
-John, Georgia, are you guys okay with this patch?
+Mickaël, Günther, are you okay with this patch?
 
 --
 paul-moore.com
