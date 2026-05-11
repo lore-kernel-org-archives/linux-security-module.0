@@ -1,37 +1,37 @@
 Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC161B652E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC661BD9D0
 	for <linux-security-module@vger.kernel.org>; Mon, 11 May 2026 00:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778459188; cv=none; b=kDOBDPw7ZabxwSZBrSuiMLULGYYi5O1bv4V3YwsJTuUqrWbJc97Ddm72dEJ5Ne+jlpOjnTa08JHX6vbOpH0vDMytcplxonMASlgP+0THRtMiUrOs7+SprqV+IkyX6TgYwaYw68RxY5hutqPVuAEwGsMFYNTe5RKmZyzHgz/PnBI=
+	t=1778459189; cv=none; b=lAlIxw6ffTDpPYqSkcUOF59+q7i1J52D16SETat2yuwlX23OsSdJCDy886U/oP0W4FnQ3sXTqzdEDsYILToN2j7O9RgzGOVvk5InKfsQL78e91LfTGrOYyrUVx0zRbooO8CEYpaz+IdDF5IVJhCoxzttkuNpWVUM4JOWzwMwOAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778459188; c=relaxed/simple;
-	bh=Gc4BjbjAkK3FN//bnqQVa2VmsEh7oqkZB4y9TzGJOhQ=;
+	s=arc-20240116; t=1778459189; c=relaxed/simple;
+	bh=HHGfQno/UCVi95/j7POsermtpEcJBAfSS76g/Tckooo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K/e5qcp+GE3IgMOFSqfs9Zw+CW1aj8E1fgVtJf0QcHgtxoS222ci5TKWvFxcxOk3rhTOvfNxenxMWz2B07AC0Uql8LcuDP1lWYV+NHPTE+5B9HbKB+XUfl5+2r/aXvgTD/TGVpRZvIio8Qtv+gbB1pRseOsvfRvV4qygDMOAPHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=MLA4d7+6; arc=none smtp.client-ip=95.143.211.150
+	 MIME-Version:Content-Type; b=KnbTPKmKRvof0YeHfqm8bgCMflgmnm6VFYZJ1rN2+lHg1fKPGP7Gg0uGAfSCu3cXb9l+OFdX7Sq/9BuQ+cjwLsoC2Yc2k/i/t9dK6SqI/uWEL4+jtiIr0nTHDwGaDH1GQQtKQRBJ/XKI0M5oCAzrmIQ2ttYRcW9lOuPTIhT9zrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=dKkaXsfa; arc=none smtp.client-ip=95.143.211.150
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="MLA4d7+6"
+	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="dKkaXsfa"
 From: Konstantin Andreev <andreev@swemel.ru>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1778458642;
+	t=1778458638;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Sy+plRig+Tn3dZToCkzxhLMm5c6emJqjSL3afGeeR10=;
-	b=MLA4d7+6rXpBHQep60/3ItVCZivDQ6utxtIBy61+Jpr0OD1mAGM0YLx+xPK3lI6lIsiHm9
-	SaXP6pPFOhYyeWHVhBNmFUE15u6jaw5fcFtWrWy8XZfHa//m/7s+rk2Vx79VVPNPsR8Q14
-	ovCRnItAqalgqaHEXI5H8RQtQShRalk=
+	bh=Voqs+D/YxK+2FppjCEsG0gdSqgatbUbn4dzi7srOrb4=;
+	b=dKkaXsfaAsaiXLBOjPRKSEnwaDOehPUuhQO681G5Dt6Lc1/yCMpNJpCQluYdOedHL9YjUt
+	L27h2kUYwXHzDr+C04E3vNcjyV1zPYZPNN1r3nNMZ6Wn8RUrwC1PvIkmoYT5xWq4OXiemM
+	ZH8iF4bhxe7lCU2zbLDjq9ROk/uskc0=
 To: casey@schaufler-ca.com
 Cc: linux-security-module@vger.kernel.org
-Subject: [PATCH 2/2] smack: show msgrcv() subject task in audit
-Date: Mon, 11 May 2026 03:17:17 +0300
-Message-ID: <20260511001717.3522345-3-andreev@swemel.ru>
+Subject: [PATCH 1/2] smack: fix incorrect task context in smack_msg_queue_msgrcv
+Date: Mon, 11 May 2026 03:17:16 +0300
+Message-ID: <20260511001717.3522345-2-andreev@swemel.ru>
 In-Reply-To: <20260511001717.3522345-1-andreev@swemel.ru>
 References: <20260511001717.3522345-1-andreev@swemel.ru>
 Precedence: bulk
@@ -43,86 +43,182 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-When a task msgrcv()'es some message the SMACK audit log message
-looks like:
+The smack_msg_queue_msgrcv() function incorrectly checks
+the permissions of the 'current' task instead of the
+'target' task.
 
-  fn=smk_tskacc_msq action=denied subject="bar" object="foo" requested=rw
-	pid=456 comm="mrcv" ipc_key=2
-  fn=smk_tskacc_msq action=granted subject="bar" object="foo" requested=rw
-	pid=519 comm="mrcv" ipc_key=2
+In the msgsnd() syscall path, if a receiver is already waiting,
+the pipelined_send() optimization is used to push the message
+directly to the receiver task:
 
-where pid= is a pid of a “current” task which calls smk_tskacc_msq().
-Usually, the caller of smk_tskacc_msq() is also a subject task
-which determines its own permission. In the example above
-the 'mrcv' process has label 'bar' and wants "rw" for label "foo".
+    ipc/msg.c`pipelined_send():
+    ` smp_store_release(&msr->r_msg, msg)
 
-However, when sender task delivers message using
+In this case, the 'sender' (current) task performs the check
+on behalf of the 'receiver' task (msr->r_tsk, passed as the
+'target' parameter):
 
   ipc/msg.c`pipelined_send():
-  ` security_msg_queue_msgrcv(,, msr->r_tsk,,)
-  ` smp_store_release(&msr->r_msg, msg)
+  ` security_msg_queue_msgrcv(,, target := msr->r_tsk,,)
 
-“current” task and “subject” task differ, and
-the “subject” task is missed from the audit message.
+However, smack_msg_queue_msgrcv() ignores the 'target' and
+checks 'current':
 
-This patch adds two fields, subj_pid and subj_comm,
-into the audit message:
+  smack_msg_queue_msgrcv(…)
+  ` smk_curacc_msq(isp, MAY_READWRITE); // current task
 
-  fn=smk_tskacc_msq action=granted subject="bar" object="foo" requested=rw
-	subj_pid=564 subj_comm="mrcv" pid=577 comm="msnd" ipc_key=2
+'current' MAY satisfy smack_msg_queue_msgrcv r/w requirement,
+but 'target' (the receiver task) might NOT;
+as a result, an unauthorized receiver gets the message,
+violating MAC policy.
+
+Test:
+1) create a sysv message queue with label “foo”
+2) echo "bar foo r" >/smack/load2
+3) msgrcv(,,,0,MSG_NOERROR) in "bar"-labeled task.
+    The task is waiting for the messages ...
+4) msgsnd() from a "foo"-labeled task:
+"bar"-labeled task gets the message.
+
+This patch fixes the issue by checking permission on the
+'target' task instead of 'current'.
+
+(2008-02-04, Casey Schaufler)
+Fixes: e114e473771c ("Smack: Simplified Mandatory Access Control Kernel")
 
 Signed-off-by: Konstantin Andreev <andreev@swemel.ru>
 ---
- security/smack/smack.h        | 1 +
- security/smack/smack_access.c | 9 +++++++++
- security/smack/smack_lsm.c    | 2 ++
- 3 files changed, 12 insertions(+)
+ security/smack/smack_lsm.c | 65 +++++++++++++++++++++++++++-----------
+ 1 file changed, 47 insertions(+), 18 deletions(-)
 
-diff --git a/security/smack/smack.h b/security/smack/smack.h
-index 9b9eb262fe33..551fcf2a1832 100644
---- a/security/smack/smack.h
-+++ b/security/smack/smack.h
-@@ -261,6 +261,7 @@ struct smack_audit_data {
- 	char *subject;
- 	char *object;
- 	char *request;
-+	struct task_struct *subj_tsk;
- 	int result;
- };
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index f4ef840b203e..3146fa83c2f1 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -130,12 +130,13 @@ static int smk_bu_note(char *note, struct smack_known *sskp,
+ #define smk_bu_note(note, sskp, oskp, mode, RC) (RC)
+ #endif
  
-diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
-index 350b88d582b3..fb85356266e5 100644
---- a/security/smack/smack_access.c
-+++ b/security/smack/smack_access.c
-@@ -331,6 +331,15 @@ static void smack_log_callback(struct audit_buffer *ab, void *a)
- 		audit_log_format(ab, " labels_differ");
- 	else
- 		audit_log_format(ab, " requested=%s", sad->request);
+-#ifdef CONFIG_SECURITY_SMACK_BRINGUP
+-static int smk_bu_current(char *note, struct smack_known *oskp,
+-			  int mode, int rc)
++static int
++smk_bu_tsk_to_obj(struct task_struct *tsk, const struct task_smack *tsp,
++		  char *note, struct smack_known *oskp, int mode, int rc)
+ {
+-	struct task_smack *tsp = smack_cred(current_cred());
++#ifdef CONFIG_SECURITY_SMACK_BRINGUP
+ 	char acc[SMK_NUM_ACCESS_TYPE + 1];
++	char comm[TASK_COMM_LEN];
+ 
+ 	if (rc <= 0)
+ 		return rc;
+@@ -143,14 +144,22 @@ static int smk_bu_current(char *note, struct smack_known *oskp,
+ 		rc = 0;
+ 
+ 	smk_bu_mode(mode, acc);
 +
-+	if (sad->subj_tsk) {
-+		char comm[TASK_COMM_LEN];
+ 	pr_info("Smack %s: (%s %s %s) %s %s\n", smk_bu_mess[rc],
+-		tsp->smk_task->smk_known, oskp->smk_known,
+-		acc, current->comm, note);
++		smk_of_task(tsp)->smk_known, oskp->smk_known,
++		acc, get_task_comm(comm, tsk), note);
+ 	return 0;
+-}
+ #else
+-#define smk_bu_current(note, oskp, mode, RC) (RC)
++	return rc;
+ #endif
++}
 +
-+		audit_log_format(ab, " subj_pid=%d subj_comm=",
-+			task_tgid_nr(sad->subj_tsk));
-+		audit_log_untrustedstring(ab,
-+			get_task_comm(comm, sad->subj_tsk));
-+	}
++static int smk_bu_current(char *note, struct smack_known *oskp,
++			  int mode, int rc)
++{
++	return smk_bu_tsk_to_obj(current, smack_cred(current_cred()),
++				 note, oskp, mode, rc);
++}
+ 
+ #ifdef CONFIG_SECURITY_SMACK_BRINGUP
+ static int smk_bu_task(struct task_struct *otp, int mode, int rc)
+@@ -3353,14 +3362,20 @@ static int smack_sem_semop(struct kern_ipc_perm *isp, struct sembuf *sops,
  }
  
  /**
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 3146fa83c2f1..6f6ff9b20981 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -3383,6 +3383,8 @@ smk_tskacc_msq(struct task_struct *tsk, struct kern_ipc_perm *isp, int access)
- #ifdef CONFIG_AUDIT
+- * smk_curacc_msq : helper to check if current has access on msq
+- * @isp : the msq
++ * smk_tskacc_msq : helper to check if tsk has access on msq
++ * @tsk: the task that requests access
++ * @isp : the sysv msg queue permissions
+  * @access : access requested
+  *
+- * return 0 if current has access, error otherwise
++ * return 0 if tsk has access, error otherwise
+  */
+-static int smk_curacc_msq(struct kern_ipc_perm *isp, int access)
++static int
++smk_tskacc_msq(struct task_struct *tsk, struct kern_ipc_perm *isp, int access)
+ {
++	const bool tsk_is_current = (tsk == current);
++	const struct cred * const tsk_cred =
++			(tsk_is_current ? current_cred() : get_task_cred(tsk));
++	struct task_smack * const tsp = smack_cred(tsk_cred);
+ 	struct smack_known *msp = smack_of_ipc(isp);
+ 	struct smk_audit_info ad;
+ 	int rc;
+@@ -3369,11 +3384,25 @@ static int smk_curacc_msq(struct kern_ipc_perm *isp, int access)
  	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_IPC);
  	ad.a.u.ipc_id = isp->id;
-+	if (!tsk_is_current)
-+		ad.sad.subj_tsk = tsk;
  #endif
- 	rc = smk_tskacc(tsp, msp, access, &ad);
- 	rc = smk_bu_tsk_to_obj(tsk, tsp, "msq", msp, access, rc);
+-	rc = smk_curacc(msp, access, &ad);
+-	rc = smk_bu_current("msq", msp, access, rc);
++	rc = smk_tskacc(tsp, msp, access, &ad);
++	rc = smk_bu_tsk_to_obj(tsk, tsp, "msq", msp, access, rc);
++	if (!tsk_is_current)
++		put_cred(tsk_cred);
+ 	return rc;
+ }
+ 
++/**
++ * smk_curacc_msq : helper to check if current has access on msq
++ * @isp : the sysv msg queue permissions
++ * @access : access requested
++ *
++ * return 0 if current has access, error otherwise
++ */
++static int smk_curacc_msq(struct kern_ipc_perm *isp, int access)
++{
++	return smk_tskacc_msq(current, isp, access);
++}
++
+ /**
+  * smack_msg_queue_associate - Smack access check for msg_queue
+  * @isp: the object
+@@ -3441,21 +3470,21 @@ static int smack_msg_queue_msgsnd(struct kern_ipc_perm *isp, struct msg_msg *msg
+ }
+ 
+ /**
+- * smack_msg_queue_msgrcv - Smack access check for msg_queue
++ * smack_msg_queue_msgrcv - check it target has r/w access to msg_queue
+  * @isp: the object
+  * @msg: unused
+- * @target: unused
++ * @target: the task that msgrcv() from the queue
+  * @type: unused
+  * @mode: unused
+  *
+- * Returns 0 if current has read and write access, error code otherwise
++ * Returns 0 if target has read and write access, error code otherwise
+  */
+ static int smack_msg_queue_msgrcv(struct kern_ipc_perm *isp,
+ 				  struct msg_msg *msg,
+ 				  struct task_struct *target, long type,
+ 				  int mode)
+ {
+-	return smk_curacc_msq(isp, MAY_READWRITE);
++	return smk_tskacc_msq(target, isp, MAY_READWRITE);
+ }
+ 
+ /**
 -- 
 2.47.3
 
