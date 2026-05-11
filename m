@@ -1,154 +1,172 @@
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7424237DEBA
-	for <linux-security-module@vger.kernel.org>; Mon, 11 May 2026 19:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778529182; cv=none; b=fBT1OIX4jqwsaB8vobGMtMW3ipVQdUmatsZQF4InYdFjsS2fNBnv9PKS6Q8TjuTuqWmW0sE1AtCIfWf5XNH2UJamJ+F+1m5HZsDyO8Bskvdhg21vSR0Ci4raAycCsf9zdBq1dlSJtECocEdDITec2VAKBukDxPkNPYyYhg4q3LI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778529182; c=relaxed/simple;
-	bh=0WCJDrovG+9Ixg/ZDeUHkV8CFYfHBfClr3tW4/3vGfk=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=rkmY5HffPFmT5o4GcwzWg38wlMOt0762+FDKokOR2Xrp1+OGH+fwhCjBmjiQ7zTLN+29auXdZY69m6KAVnC9foDEDJO4VY9f3aCgTJkoeRQvHvVeWAnJzsJ5o1CB4FF5lfBNee6fsaGNwg5lOJdC3eI//3JtGj3CWz3EzSek6ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dgfw5eky; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F07837F75E
+	for <linux-security-module@vger.kernel.org>; Mon, 11 May 2026 20:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778530788; cv=pass; b=uE1V4GSRo3Ho6pLW1GifdwwQ/Gq+26sYigVcjlbDAHav8yJNfsTKJ9A+UJPBy+zTst5P4LClGNEN3L90Q6fNYZQBoFUvrnU2Lmfw22pUtYrCU3+k7vGg43yNIW76jus9Yp7Jn8UjTAZfKbZDCI0rfzsdFvxcPzzmEEVNwx6zdXY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778530788; c=relaxed/simple;
+	bh=K6ahRJJ0e5KDfR/InW9PQmfCdOV/MMnKBcw/HB3afOk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZkfMLKuxCefXSDONQSmRUdFtJax7egf+XxW15cAulxdBJ+p+YmZHIS46UjQBGsXUaiVoCO9HLxzjAWjRadZitinYTTEsSKkz40/ITQyHG26KFvVn9VkCe7r38EjKNhSDtlMwTk8qjJEmZWg/F6FmT8NSWMPWFkR/xAii5d9d5AM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZOasl4M0; arc=pass smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dgfw5eky"
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-8ee62a19730so544030685a.3
-        for <linux-security-module@vger.kernel.org>; Mon, 11 May 2026 12:53:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZOasl4M0"
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-3684a6f3b0bso696608a91.1
+        for <linux-security-module@vger.kernel.org>; Mon, 11 May 2026 13:19:47 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1778530787; cv=none;
+        d=google.com; s=arc-20240605;
+        b=PLTyy6MIChURU8g33B+Z6nV5E4o99X1aNJpDr/lzpvP+6VygGn4D6USZm3inqCbhFt
+         ruWWhKFiXDK4+MTu1NGm2/Kwz6q70VX9v42ChX1X1D10TSQVJ6XXFy4gK4qj0cEO+zpd
+         U93oBA6oFr8jKwvW18lyeGFoUSWrZD6b1JXHG1K+McpW3l+MPYY6e8oGkrZufy8dEXep
+         1gHPi7mpssBLhuoDHRHiNMw1E9EX5ElhWDU+caGPhffRxF5ul+JEkIfsZZ3BEA9TVJL6
+         /yFYprrtdX8YjoapDlP1hu8rNbDyfWM5YrN6Q3/zMdETaaQv/Yc+qZ33Gg6Aeub0jJgV
+         toTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=0JbAuhTmAUh8SFVng/KsaglWkjU1Cv2MgFsZRvohMws=;
+        fh=PjYz1zP15p3gecshlIro6ts6WCNzcjo7DF0D5JS6pPo=;
+        b=Hh3XyQxjl08cS2MJTlqErKMgo1vMJme+buKH1yzx79+xbeYheAqNeOQ3iT/9630pKv
+         A/Nm7F9hCoJNrdFshh+BmWMPiRwq+/txBXQmu76lPGZuacCmReF96ydMckxSkALFCP3r
+         hB+rxg0aCtjkbw4P/RcbJ+4cVBGw5OK4nNvDOKw5yL+cTuVf/nji+iHUtHUKgXwFobKO
+         h0NPMrPcYWjwYjSkYlDIenf4b/dZpN/OR91uU5vz2ajruSdTUDrV8VOhwE+KNPguK/N1
+         NEWJdO2AbtC3HwOS+FmmqBpaKUcaaGLNN2LHziyeQ1mr6wFWgaEtd58N/DWnYt1op+ON
+         HB9g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1778529180; x=1779133980; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZOo8mqYuky3aS2A2U/I/xcFROUzPmcuioh4GJDlL7KI=;
-        b=dgfw5eky/vNSYe7KOPr0mC/55FldRPmK6JpEUGd04ANvzHrZ3Oq9jyDs8GRC1v82WJ
-         bgqFWZwHhQSZiIJvz6D3M5PYY5kULi0uZgu1XK0AckylhVRSL9v4RYU0XLr6tOWhNGAx
-         RA/DjGOxaBYVWlodjur0Rk/Zovo/XXYHCkLburqQrDmBR8sj1XQJ2FKzLg8UUi9YUm8m
-         z0e9ttjsVe2Z8vM4bgmjSIjs1Rmrto+LX1ODdwGKGTgdcYrIXgQUGLq2y/uyQSlOgrWS
-         JcbbsB4Imt4+hemmAspE8biI/nEuPnDRMqi2DoxtnI3VW52Z7jw270TxkoUOlrneZliZ
-         4uyA==
+        d=paul-moore.com; s=google; t=1778530787; x=1779135587; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0JbAuhTmAUh8SFVng/KsaglWkjU1Cv2MgFsZRvohMws=;
+        b=ZOasl4M02vdGq0CtzjM+mJSdzkG+WbWS2zDRXeT3zlmdySNNaKpsmRKaj/NozMmeeA
+         4FBuv5gCY/kAmyaFd19D6aKtGP1akbARVnR3WlhARcP+pM+vtL0vvCRp5Z8/hbhuxB8Y
+         G25Ai9ebx5/Uy9l2NuYRFOfPdTHbkJWrI3UVd0a6SROG+u1qQ6YchySwuAjbQ+7knXFd
+         7wK44M85G5C1WR9QFG5q67FP4m9IbeW/mFVm+deCjCzVbIihKkm6VztMdE3nepc82M43
+         S63Y911yCQ8vTV+FZpZ0ZL8BXXU8x+sHK/XrLzZHerG+If8gkHtfX4r0oEAmSymTw77x
+         SLbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778529180; x=1779133980;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZOo8mqYuky3aS2A2U/I/xcFROUzPmcuioh4GJDlL7KI=;
-        b=L8SFcfl9LU8OJejNCzAORfN/yS4GC8l147DUnUEvvrEkvyWt/PigODqWxr4VETzvYz
-         qCAIw+Da+EyK3oeFEuCmCXW453dBjm/eobUuzeDNh/s8oKFuKzD9RcFYOdRrkMGkd4r3
-         6WlNqTeAwdtnoUQvCDhfuwrUQW1fvJiZLJPVSGTndwfLZOUdG3wbcEP6Y7OTgJMWV7IN
-         +6F98yL6zUNDGVXwV3PYdKJELKHb+BYNv9E29zAY0wIoKZiTsTAnyTQfKvU31LYYketC
-         pOWPez/K9/pIrbeTSeNc461TYreW4+PA0ZjULedlbXR0koLuuC7JYTKSqpq7VMPiXHov
-         nuBg==
-X-Forwarded-Encrypted: i=1; AFNElJ/9DpWvfH1F0hA/D/8ErhEi+cDbbjsyXBEphQUx3QBaM+xCpRmkDSsxauFqgiV6J4cYX/XRv+ljlwIrRxeGM/pHeUgJQfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwytXtyyKOlbArMlrddqMsumPlG10Pg+wW3oibzWux9dZWAmIrp
-	Y1/GwYXjqINstuSJ6uH259b1IymQSkQN9A/6mofMvNTO5rWeetW/Gwf53sVYccn2BQ==
-X-Gm-Gg: Acq92OHodB+yWUsfIvFyZOjkwqMxr4K+ejPfoOVa28bsrgjmCy8AuKRFJHCrkSqXAPv
-	2nlIj08Fa8aPZ8uc+QKCg/Ztfq/EULJ+n0WFFQNSyGXZi1Dvwr/4iaOYVKMD2y1ih6g/8dmdsFm
-	CxXUzLQOII2x0wzMivLXvozhxKQWITG/403gaxXi81cvzbJakhqa5Xfwq39MtRoSHLC2iHBbIhD
-	1wUFpUQQgsCeJADC7Z4jtaGzp7SZJbYWhy3afw+IJz0Gs6GyI1qjCYDbUlP7UexJIkRyeEJ0Phm
-	kWYJswEHqUGdfrOkPUxygyYC9E465GZZTCGWmCXWITno7ysXuTzX2LpG+vIinFYOrnfqbkInG6a
-	bi659o3t8g8QGB9jPjY5JrzES0g50Qa6h6Bb9OoECWA5Dn0MZLN1qagPO+y0nO2jGt7TEJ3p1cL
-	V7VT2vgbRDuiduol+AzVDUBOiMnpUyENOifdJK6jCUKegonwXD0OGZJz6Ts64n548uSNZs
-X-Received: by 2002:a05:620a:698c:b0:8d9:3cb9:9905 with SMTP id af79cd13be357-904d6fcb765mr3693957985a.54.1778529180332;
-        Mon, 11 May 2026 12:53:00 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-907b918cffesm1179663385a.14.2026.05.11.12.52.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2026 12:52:56 -0700 (PDT)
-Date: Mon, 11 May 2026 15:52:56 -0400
-Message-ID: <37ceb04c4c37370a2359f73a24b9c07b@paul-moore.com>
+        d=1e100.net; s=20251104; t=1778530787; x=1779135587;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=0JbAuhTmAUh8SFVng/KsaglWkjU1Cv2MgFsZRvohMws=;
+        b=AXFrsxyntsz3yn6uBbYPo5fV/3UhpD4yrW2DOtOr2rgAPTW4tjjaV3tE14exYexFYX
+         0QkbRcz2aCWoaBADguJqu0R3+/oVh9eRqsqOu/ak39DNHwD+jkh/2/jNA+NLaH6Jl5Wh
+         ipSzxL8yFnP3tPgn5497A9jNzG/YvYrCsYjLbwUOQ2tPc5MwbF4hRMfj/YxhdCr7F+IQ
+         LR4iiYoPYn+EsQG9yPai1UpXFoa5jcfsLNbTw1l9SuoAA9Io4MlcoaomQgcMyIUSsBB/
+         A4GGUvVrpDs4XXWhdtPBsC9YNP2IUuWWzXHFv9TNmyndDOKJnNV0eCC0pOn6yMeRYrfw
+         nveA==
+X-Gm-Message-State: AOJu0Yx4ZfVsIko/Peyt1xgWS1Zm1aOu6il1LqTriGb8ncRhrxV4nVZZ
+	ptbMua/fvuPmM03idaVPaKb36fHVtTPLQz5ZD0tDr/P3OI1BCvsH8v/lRwbVFTV9t/i94kclbsT
+	3fByKpKLGN9+5iUlET43nVgSdp1WOJYRyGZQI0bgkDL/r3XyzTp4=
+X-Gm-Gg: Acq92OG4kNTIcc6WxiMxkBS5JQqAesb+uVwdQwWqNyAcMHOGSfzVbpVShMeiZNGxsk/
+	AJAaxBewImYsN+stDoVyoKTI4f5bdrxrPtd9sd4xHBE7EqKGN06DmhpCojf4dCFCM6/LUj6W54Z
+	LcojgRe5yyUan4v59cMrPMwHqTIGnYiPJ3OyMOuVCrIQlQ94zB6GEVCOY5noAv0+ZMR29C1oN7X
+	L5qaSG8uMXFspxS0dy0dq1PTI4+gDH0CUH026x9JxU8VEUr+1XFHPnxCzMXCqGR4wjlN94dXGJ/
+	wfH1Ctc=
+X-Received: by 2002:a17:902:d294:b0:2b2:ec33:cf15 with SMTP id
+ d9443c01a7336-2bcfcc3cdd5mr5383065ad.7.1778530786540; Mon, 11 May 2026
+ 13:19:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20260511_1539/pstg-lib:20260511_1103/pstg-pwork:20260511_1539
+MIME-Version: 1.0
+References: <agDuCdGIeM-6z-j-@altlinux.org>
+In-Reply-To: <agDuCdGIeM-6z-j-@altlinux.org>
 From: Paul Moore <paul@paul-moore.com>
-To: Song Liu <song@kernel.org>, linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org, apparmor@lists.ubuntu.com
-Cc: jmorris@namei.org, serge@hallyn.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, john.johansen@canonical.com, stephen.smalley.work@gmail.com, omosnace@redhat.com, mic@digikod.net, gnoack@google.com, takedakn@nttdata.co.jp, penguin-kernel@I-love.SAKURA.ne.jp, herton@canonical.com, kernel-team@meta.com, Song Liu <song@kernel.org>
-Subject: Re: [PATCH v3 7/7] lsm: Remove security_sb_mount and  security_move_mount
-References: <20260509015208.3853132-8-song@kernel.org>
-In-Reply-To: <20260509015208.3853132-8-song@kernel.org>
+Date: Mon, 11 May 2026 16:19:34 -0400
+X-Gm-Features: AVHnY4I9tIhrxU9BB89LwwsmZTDJPrnnYPaBxKCsIK682ecgTABjXJE_lLrFyyA
+Message-ID: <CAHC9VhQ4VyAvG-z2h2NFpPx9PcJP4Ot2Ap=MPbCRk2TosJWOTA@mail.gmail.com>
+Subject: Re: [BUG] lsm= with bpf before selinux breaks fscreate with EINVAL
+To: Vitaly Chikunov <vt@altlinux.org>
+Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
+	selinux@vger.kernel.org, KP Singh <kpsingh@kernel.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On May  8, 2026 Song Liu <song@kernel.org> wrote:
-> 
-> Now that all LSMs have been converted to granular mount hooks,
-> remove the old hooks:
-> 
-> - security_sb_mount(): removed from lsm_hook_defs.h, security.h,
->   security.c, and its call in path_mount().
-> - security_move_mount(): removed and replaced by security_mount_move()
->   in do_move_mount(). All LSMs now use mount_move exclusively.
-> 
-> Code generated with the assistance of Claude, reviewed by human.
-> 
-> Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> Tested-by: Stephen Smalley <stephen.smalley.work@gmail.com> # for selinux only
-> Signed-off-by: Song Liu <song@kernel.org>
-> ---
->  fs/namespace.c                |  8 --------
->  include/linux/lsm_hook_defs.h |  4 ----
->  include/linux/security.h      | 16 ---------------
->  kernel/bpf/bpf_lsm.c          |  2 --
->  security/apparmor/lsm.c       |  1 -
->  security/landlock/fs.c        |  1 -
->  security/security.c           | 38 -----------------------------------
->  security/selinux/hooks.c      |  2 --
->  8 files changed, 72 deletions(-)
+On Sun, May 10, 2026 at 5:17=E2=80=AFPM Vitaly Chikunov <vt@altlinux.org> w=
+rote:
+>
+> Hi,
+>
+> We have boot failure when CONFIG_LSM has "bpf" listed before "selinux"
+> (without bpf lsm scripts loaded). (This also happens with a boot with
+> "security=3Dselinux" if selinux was not in LSM=3D list but bpf is.)
+>
+> systemd reports on the failing boot attempt:
+>
+>   Failed to set SELinux security context generic_u:object_r:device:s0 for=
+ /dev/shm: Invalid argument
+>   Mounting tmpfs to /dev/shm of type tmpfs with options mode=3D01777.
+>   Mounting tmpfs (tmpfs) on /dev/shm (MS_NOSUID|MS_NODEV|MS_STRICTATIME "=
+mode=3D01777")...
+>   Failed to mount tmpfs (type tmpfs) on /dev/shm (MS_NOSUID|MS_NODEV|MS_S=
+TRICTATIME "mode=3D01777"): No such file or directory
+>   Failed to set SELinux security context generic_u:object_r:device:s0 for=
+ /dev/pts: Invalid argument
+>   Mounting devpts to /dev/pts of type devpts with options mode=3D0620,gid=
+=3D5.
+>   Mounting devpts (devpts) on /dev/pts (MS_NOSUID|MS_NOEXEC "mode=3D0620,=
+gid=3D5")...
+>   Failed to mount devpts (type devpts) on /dev/pts (MS_NOSUID|MS_NOEXEC "=
+mode=3D0620,gid=3D5"): No such file or directory
+>   No filesystem is currently mounted on /sys/fs/cgroup.
+>   Failed to set SELinux security context generic_u:object_r:def_t:s0 for =
+/sys/fs/cgroup: Invalid argument
+>   Mounting cgroup2 to /sys/fs/cgroup of type cgroup2 with options nsdeleg=
+ate,memory_recursiveprot.
+>   Mounting cgroup2 (cgroup2) on /sys/fs/cgroup (MS_NOSUID|MS_NODEV|MS_NOE=
+XEC "nsdelegate,memory_recursiveprot")...
+>   Failed to set SELinux security context generic_u:object_r:def_t:s0 for =
+/sys/fs/pstore: Invalid argument
+>   Mounting pstore to /sys/fs/pstore of type pstore with options n/a.
+>   Mounting pstore (pstore) on /sys/fs/pstore (MS_NOSUID|MS_NODEV|MS_NOEXE=
+C "")...
+>   Failed to set SELinux security context generic_u:object_r:def_t:s0 for =
+/sys/fs/bpf: Invalid argument
+>   Mounting bpf to /sys/fs/bpf of type bpf with options mode=3D0700.
+>   Mounting bpf (bpf) on /sys/fs/bpf (MS_NOSUID|MS_NODEV|MS_NOEXEC "mode=
+=3D0700")...
+>   [!!!!!!] Failed to mount API filesystems.
+>   Freezing execution
+>
+> 'Invalid arguments' seems from setfscreatecon_raw.
+>
+> Reproducer:
+>
+>   Boot with lsm=3Dlockdown,capability,landlock,yama,safesetid,bpf,selinux=
+,ima,evm
+>
+>   (none):~# cat /proc/thread-self/attr/current
+>   cat: /proc/thread-self/attr/current: Invalid argument
+>   (none):~# echo > /proc/thread-self/attr/fscreate
+>   bash: echo: write error: Invalid argument
+>
+> This appears to be caused by security_getprocattr / security_setprocattr
+> iterating until the first hook defined (which is bpf) and returning with
+> default value -EINVAL before selinux even sees them.
 
-...
+Thanks for the problem report, the general recommendation is to place
+the BPF LSM towards the end of the list (see the CONFIG_LSM Kconfig
+help text), but we're trying to ensure that the BPF LSM works properly
+when placed anywhere in that list.
 
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index e0a8a44c95aa..b0de7f316f51 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -1705,7 +1705,6 @@ static struct security_hook_list apparmor_hooks[] __ro_after_init = {
->  	LSM_HOOK_INIT(capget, apparmor_capget),
->  	LSM_HOOK_INIT(capable, apparmor_capable),
->  
-> -	LSM_HOOK_INIT(move_mount, apparmor_move_mount),
+My apologies if you're abilities are well beyond this, but if you are
+familiar with patching and building your own kernel, have you tried
+changing the LSM_RET_DEFAULT value for those functions to zero/0?
+Assuming userspace is happy with that, I believe it may solve this
+problem.
 
-This should be in patch 3/7 when you convert AppArmor over to the new
-hooks.
-
->  	LSM_HOOK_INIT(mount_bind, apparmor_mount_bind),
->  	LSM_HOOK_INIT(mount_new, apparmor_mount_new),
->  	LSM_HOOK_INIT(mount_remount, apparmor_mount_remount),
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 4547e736e496..7377f22a165e 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -1983,7 +1983,6 @@ static struct security_hook_list landlock_hooks[] __ro_after_init = {
->  	LSM_HOOK_INIT(mount_reconfigure, hook_mount_reconfigure),
->  	LSM_HOOK_INIT(mount_change_type, hook_mount_change_type),
->  	LSM_HOOK_INIT(mount_move, hook_move_mount),
-> -	LSM_HOOK_INIT(move_mount, hook_move_mount),
-
-This should be in patch 5/7 when you convert Landlock.
-
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 864a3ca772c9..c8de175bde04 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -7586,8 +7586,6 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
->  	LSM_HOOK_INIT(sb_set_mnt_opts, selinux_set_mnt_opts),
->  	LSM_HOOK_INIT(sb_clone_mnt_opts, selinux_sb_clone_mnt_opts),
->  
-> -	LSM_HOOK_INIT(move_mount, selinux_move_mount),
-
-This should be in patch 4/7 when you convert SELinux.
-
->  	LSM_HOOK_INIT(dentry_init_security, selinux_dentry_init_security),
->  	LSM_HOOK_INIT(dentry_create_files_as, selinux_dentry_create_files_as),
->  
-> -- 
-> 2.53.0-Meta
-
---
+--=20
 paul-moore.com
