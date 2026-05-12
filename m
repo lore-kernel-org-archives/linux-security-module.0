@@ -1,182 +1,246 @@
-Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA0635675E;
-	Mon, 11 May 2026 22:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3960D29BD82;
+	Tue, 12 May 2026 08:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778539412; cv=none; b=XH+C5Y5YCbQGJQ5kw0mRN/WuwYm2/qlQcjXAzyRVdXob6C1l0BplOsd7ix5+sg8VYKDPcQF/Y9A4f4X4BjV6Qm+JH/aIZVmby3Vou7mg2fTELJma4KM9Zn747mjsHjBJ8NB3mnC6iipdIJRUI3KvoaW2CeAEqCPvVO65pR2lr5o=
+	t=1778573901; cv=none; b=bONN+XCu30sMBHh+2jHRg927ic+AEKNfvzbn+Tm8+asSz9Vncm6N8/T2qJ0m1itdrcm2Ko2Oqw5Qq4hgw18+pdrvGN+vtMO/8mq46PRvsMMbvj3+VCbyhstQgyLkgqbHZ4LGhxJhwNjLIQI+sTykrigCgVtBDo+6go/AtJcSkFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778539412; c=relaxed/simple;
-	bh=vdQIJIYlf56t9ak7ABaKlG7aKUUD3JExwr5e4ZpbG3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y6aa0/n2bvSISyP/5ruWoM/0yMd64ep57pYkRwAy641HR368EjLHa/xR98a9nRBRAdq7j+L7TTbO8DlGLHeAWq1rBhs21gw3nVd7bgDHYh0D40SmVZn38n4p+YSLyT8ne28KnFIs+IJoJrSHr2dWdOGhG7H5yjK6J0zPf3XPFg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-	by vmicros1.altlinux.org (Postfix) with ESMTP id 8AA0F72C8CC;
-	Tue, 12 May 2026 01:43:28 +0300 (MSK)
-Received: from altlinux.org (unknown [193.43.10.9])
-	by imap.altlinux.org (Postfix) with ESMTPSA id 755B636D016E;
-	Tue, 12 May 2026 01:43:28 +0300 (MSK)
-Date: Tue, 12 May 2026 01:43:28 +0300
-From: Vitaly Chikunov <vt@altlinux.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
-	selinux@vger.kernel.org, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [BUG] lsm= with bpf before selinux breaks fscreate with EINVAL
-Message-ID: <agJajS11YK1XGB-y@altlinux.org>
-References: <agDuCdGIeM-6z-j-@altlinux.org>
- <CAHC9VhQ4VyAvG-z2h2NFpPx9PcJP4Ot2Ap=MPbCRk2TosJWOTA@mail.gmail.com>
- <agI9Rdi-72f8dNbB@altlinux.org>
- <CAHC9VhRWNEzYx3Xxtxv_0BBkM7skisVdnKXx3CGn3S=aoBCiyQ@mail.gmail.com>
- <agJPqiSKvHrrg6Qn@altlinux.org>
+	s=arc-20240116; t=1778573901; c=relaxed/simple;
+	bh=Kk5Il7+9Z1Ur24aGWBRquaBy1XtTuRa0+pxsahwPl7I=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ugBoj7Hb8vGynOH80oHl3oRYivjPoQjNb0pYyL1dgHiiFdmpceFzYZ3/+IA9qh4vrdo1gzWBuUDxKb9GdzgFKLfDABRhB81WD7UBHyZ6+Cub4AxW8Qv8eZsF0aNElLaepZjbKHFBsyI4XXnffLnSBEwEQ3/Lu+oshUvujmR5+64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.196])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4gF8VV30N7z1HCcQ;
+	Tue, 12 May 2026 16:13:22 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id A101A40565;
+	Tue, 12 May 2026 16:18:09 +0800 (CST)
+Received: from [10.204.63.22] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwAnjKU34gJqEyMEAQ--.40892S2;
+	Tue, 12 May 2026 09:18:09 +0100 (CET)
+Message-ID: <2302296a13b847960dbdbab3cf5518b275938838.camel@huaweicloud.com>
+Subject: Re: [PATCH v5 00/13] ima: Introduce staging mechanism
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, steven chen
+	 <chenste@linux.microsoft.com>, corbet@lwn.net, skhan@linuxfoundation.org, 
+	zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	gregorylumen@linux.microsoft.com, Roberto Sassu <roberto.sassu@huawei.com>
+Date: Tue, 12 May 2026 10:17:55 +0200
+In-Reply-To: <aaed52cf-26e1-4c40-812d-3788024ce5b5@linux.microsoft.com>
+References: <20260429160319.4162918-1-roberto.sassu@huaweicloud.com>
+	 <99c30be6-8b0f-486a-890c-cf74c5930726@linux.microsoft.com>
+	 <aaed52cf-26e1-4c40-812d-3788024ce5b5@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <agJPqiSKvHrrg6Qn@altlinux.org>
+X-CM-TRANSID:LxC2BwAnjKU34gJqEyMEAQ--.40892S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Wr1UAr18Aw48tw1DAF4DXFb_yoW7Zr17pa
+	ykt3WjkrWkJ34xCrn7Jr18CryFkrWxJ3WDGrnxJa48AFs8Aryjvr4Yvw1Y9FnxJr48tr1U
+	tr15t343Z3WqyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFk
+	u4UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgALBGoBvDMJrgABsP
 
-Paul,
+On Mon, 2026-05-11 at 10:29 -0700, Lakshmi Ramasubramanian wrote:
+> On 5/7/2026 9:47 AM, steven chen wrote:
+> > >=20
+> > > Usage
+> > > =3D=3D=3D=3D=3D
+> > >=20
+> > > The IMA staging mechanism can be enabled from the kernel configuratio=
+n
+> > > with the CONFIG_IMA_STAGING option.
+> > >=20
+> > > If it is enabled, IMA duplicates the current measurements interfaces
+> > > (both binary and ASCII), by adding the _staged file suffix. Both the
+> > > original and the staging interfaces gain the write permission for the
+> > > root user and group, but require the process to have CAP_SYS_ADMIN se=
+t.
+> > >=20
+> > > The staging mechanism supports two flavors.
+> > >=20
+> > > Staging with prompt
+> > > ~~~~~~~~~~~~~~~~~~~
+> > >=20
+> > > The current measurements list is moved to a temporary staging area, a=
+nd
+> > > staged measurements are deleted upon confirmation.
+> > >=20
+> > > This staging process is achieved with the following steps.
+> > >=20
+> > > =C2=A0=C2=A0 1.=C2=A0 echo A > <original interface>: the user request=
+s IMA to stage the
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 entire measurements list;
+> > > =C2=A0=C2=A0 2.=C2=A0 cat <_staged interface>: the user reads the sta=
+ged measurements;
+> > > =C2=A0=C2=A0 3.=C2=A0 echo D > <_staged interface>: the user requests=
+ IMA to delete
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 staged measurements.
+> > >=20
+> > > Staging and deleting
+> > > ~~~~~~~~~~~~~~~~~~~~
+> > >=20
+> > > N measurements are staged to a temporary staging area, and immediatel=
+y
+> > > deleted without further confirmation.
+> > >=20
+> > > This staging process is achieved with the following steps.
+> > >=20
+> > > =C2=A0=C2=A0 1.=C2=A0 cat <original interface>: the user reads the cu=
+rrent measurements
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 list and determines what the val=
+ue N for staging should be;
+> > > =C2=A0=C2=A0 2.=C2=A0 echo N > <original interface>: the user request=
+s IMA to delete N
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 measurements from the current me=
+asurements list.
+> >=20
+> > This submission proposes two ways for log trimming:
+> >=20
+> > *Flavor 1:* Staging with prompt
+> > *Flavor 2:* stage and delete N
+> >=20
+> > Functionally, both approaches address the same problem, but *Favour 2=
+=20
+> > *is the
+> > stronger design and should be preferred. There is no good reason to kee=
+p=20
+> > *Flavor 1.*
+> >=20
+> >  From a kernel implementation perspective, *Flavor 2 *is more efficient=
+=20
+> > because it
+> > minimizes the time spent holding the list lock (can=E2=80=99t be shorte=
+r). It=20
+> > also substantially
+> > reduces the amount of kernel-side logic, removing nearly half of the=
+=20
+> > code required
+> > by the alternative approach.
+> >=20
+> >  From a user-space perspective, *Flavor 2 *results in a much cleaner=
+=20
+> > model. It avoids
+> > the need to track and reconcile both old and staged lists in user space=
+=20
+> > as well as
+> > two lists (cur and staged) in the kernel space, which simplifies log=
+=20
+> > trimming logic
+> > and reduces maintenance overhead. In addition, it preserves the existin=
+g=20
+> > external
+> > behavior by not exposing any staged list to user space.
+> >=20
+> > Overall, *Flavor 2 *provides the same functional result with lower=20
+> > kernel complexity,
+> > shorter kernel list lock hold time, and a simpler user-space interface.=
+=20
+> > For those
+> > reasons, it is the preferable approach and *Favour 1* does not appear t=
+o=20
+> > offer sufficient
+> > justification to keep both implementations.
+> >=20
+> > Steven
+>=20
+> Roberto, Mimi:
+>=20
+> I want to add on to the point Steven has brought up.
+>=20
+> With "Stage and Delete N" approach, we have the following sequence of=20
+> tasks for trimming the IMA log:
+>=20
+> 	1. User mode locks the IMA measurement list through the "write interface=
+".
+> 		a. While this prevents any other user mode process from updating the=
+=20
+> IMA log, kernel can still add new IMA events to the measurement log
+> 	2. User mode reads the TPM Quote and the IMA measurement events and=20
+> sends it to the remote attestation service
+> 	3. Once the remote service has successfully processed the IMA events,=
+=20
+> the user mode determines the number of IMA events "N" to be removed from=
+=20
+> the measurement list maintained in the kernel
+> 	4. User mode provides the value "N" to the kernel
+> 	5. Kernel now determines the point at which to snap the IMA measurement=
+=20
+> list using "N" - without holding a lock
+> 	6. Then, the kernel lock is held and the list is snapped at the point=
+=20
+> determined in the previous step thus keeping the kernel lock time to the=
+=20
+> minimum.
+> 	7. Now, user mode removes the "write" lock on the IMA measurement list
+>=20
+> With the above, we believe "Stage and Delete N" alone is sufficient to=
+=20
+> trim IMA log.
 
-On Tue, May 12, 2026 at 12:54:21AM +0300, Vitaly Chikunov wrote:
-> On Mon, May 11, 2026 at 05:49:39PM -0400, Paul Moore wrote:
-> > On Mon, May 11, 2026 at 5:03 PM Vitaly Chikunov <vt@altlinux.org> wrote:
-> > > On Mon, May 11, 2026 at 04:19:34PM -0400, Paul Moore wrote:
-> > > > On Sun, May 10, 2026 at 5:17 PM Vitaly Chikunov <vt@altlinux.org> wrote:
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > We have boot failure when CONFIG_LSM has "bpf" listed before "selinux"
-> > > > > (without bpf lsm scripts loaded). (This also happens with a boot with
-> > > > > "security=selinux" if selinux was not in LSM= list but bpf is.)
-> > > > >
-> > > > > systemd reports on the failing boot attempt:
-> > > > >
-> > > > >   Failed to set SELinux security context generic_u:object_r:device:s0 for /dev/shm: Invalid argument
-> > > > >   Mounting tmpfs to /dev/shm of type tmpfs with options mode=01777.
-> > > > >   Mounting tmpfs (tmpfs) on /dev/shm (MS_NOSUID|MS_NODEV|MS_STRICTATIME "mode=01777")...
-> > > > >   Failed to mount tmpfs (type tmpfs) on /dev/shm (MS_NOSUID|MS_NODEV|MS_STRICTATIME "mode=01777"): No such file or directory
-> > > > >   Failed to set SELinux security context generic_u:object_r:device:s0 for /dev/pts: Invalid argument
-> > > > >   Mounting devpts to /dev/pts of type devpts with options mode=0620,gid=5.
-> > > > >   Mounting devpts (devpts) on /dev/pts (MS_NOSUID|MS_NOEXEC "mode=0620,gid=5")...
-> > > > >   Failed to mount devpts (type devpts) on /dev/pts (MS_NOSUID|MS_NOEXEC "mode=0620,gid=5"): No such file or directory
-> > > > >   No filesystem is currently mounted on /sys/fs/cgroup.
-> > > > >   Failed to set SELinux security context generic_u:object_r:def_t:s0 for /sys/fs/cgroup: Invalid argument
-> > > > >   Mounting cgroup2 to /sys/fs/cgroup of type cgroup2 with options nsdelegate,memory_recursiveprot.
-> > > > >   Mounting cgroup2 (cgroup2) on /sys/fs/cgroup (MS_NOSUID|MS_NODEV|MS_NOEXEC "nsdelegate,memory_recursiveprot")...
-> > > > >   Failed to set SELinux security context generic_u:object_r:def_t:s0 for /sys/fs/pstore: Invalid argument
-> > > > >   Mounting pstore to /sys/fs/pstore of type pstore with options n/a.
-> > > > >   Mounting pstore (pstore) on /sys/fs/pstore (MS_NOSUID|MS_NODEV|MS_NOEXEC "")...
-> > > > >   Failed to set SELinux security context generic_u:object_r:def_t:s0 for /sys/fs/bpf: Invalid argument
-> > > > >   Mounting bpf to /sys/fs/bpf of type bpf with options mode=0700.
-> > > > >   Mounting bpf (bpf) on /sys/fs/bpf (MS_NOSUID|MS_NODEV|MS_NOEXEC "mode=0700")...
-> > > > >   [!!!!!!] Failed to mount API filesystems.
-> > > > >   Freezing execution
-> > > > >
-> > > > > 'Invalid arguments' seems from setfscreatecon_raw.
-> > > > >
-> > > > > Reproducer:
-> > > > >
-> > > > >   Boot with lsm=lockdown,capability,landlock,yama,safesetid,bpf,selinux,ima,evm
-> > > > >
-> > > > >   (none):~# cat /proc/thread-self/attr/current
-> > > > >   cat: /proc/thread-self/attr/current: Invalid argument
-> > > > >   (none):~# echo > /proc/thread-self/attr/fscreate
-> > > > >   bash: echo: write error: Invalid argument
-> > > > >
-> > > > > This appears to be caused by security_getprocattr / security_setprocattr
-> > > > > iterating until the first hook defined (which is bpf) and returning with
-> > > > > default value -EINVAL before selinux even sees them.
-> > > >
-> > > > Thanks for the problem report, the general recommendation is to place
-> > > > the BPF LSM towards the end of the list (see the CONFIG_LSM Kconfig
-> > > > help text), but we're trying to ensure that the BPF LSM works properly
-> > > > when placed anywhere in that list.
-> > >
-> > > I think if the order is important it should be handled in the code like
-> > > for capabilities and ima/evm LSMs, not by forcing the user to discover
-> > > the correct order with trial and error.
-> > 
-> > Patches are always welcome, although as I mentioned to you previously
-> > we are working towards supporting arbitrary ordering for BPF LSMs.
-> > 
-> > > > My apologies if you're abilities are well beyond this, but if you are
-> > > > familiar with patching and building your own kernel, have you tried
-> > > > changing the LSM_RET_DEFAULT value for those functions to zero/0?
-> > > > Assuming userspace is happy with that, I believe it may solve this
-> > > > problem.
-> > >
-> > > I can patch and test if this is useful to find the correct solution, but
-> > > the description is a bit vague. Did you mean
-> > >
-> > >   include/linux/lsm_hook_defs.h:301:LSM_HOOK(int, -EINVAL, getprocattr, struct task_struct *p, const char *name,
-> > >   include/linux/lsm_hook_defs.h:303:LSM_HOOK(int, -EINVAL, setprocattr, const char *name, void *value, size_t size)
-> > >
-> > > In these lines to replace -EINVAL with 0?
-> > 
-> > The patch below is what I had in mind (although be warned that was
-> > just a cut-n-paste into this email so it is likely whitespace
-> > damaged).  If you are able to give that a test it would be great, if
-> > not, I can throw it on the todo pile.
-> > 
-> > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> > index 2b8dfb35caed..12724e259900 100644
-> > --- a/include/linux/lsm_hook_defs.h
-> > +++ b/include/linux/lsm_hook_defs.h
-> > @@ -298,9 +298,9 @@ LSM_HOOK(int, -EOPNOTSUPP, getselfattr, unsigned int attr,
-> >         struct lsm_ctx __user *ctx, u32 *size, u32 flags)
-> > LSM_HOOK(int, -EOPNOTSUPP, setselfattr, unsigned int attr,
-> >         struct lsm_ctx *ctx, u32 size, u32 flags)
-> > -LSM_HOOK(int, -EINVAL, getprocattr, struct task_struct *p, const char *name,
-> > +LSM_HOOK(int, 0, getprocattr, struct task_struct *p, const char *name,
-> >         char **value)
-> > -LSM_HOOK(int, -EINVAL, setprocattr, const char *name, void *value, size_t size)
-> > +LSM_HOOK(int, 0, setprocattr, const char *name, void *value, size_t size)
-> > LSM_HOOK(int, 0, ismaclabel, const char *name)
-> > LSM_HOOK(int, -EOPNOTSUPP, secid_to_secctx, u32 secid, struct lsm_context *cp)
-> > LSM_HOOK(int, -EOPNOTSUPP, lsmprop_to_secctx, struct lsm_prop *prop,
-> 
-> We will test it and report, but this may take some time.
+Hi Lakshmi
 
-Before trying the full system boot test, I tried to reproducer I posted
-before. With this patch applied (just ensure it's correct) over v6.12.87:
+I'm happy to support your trimming method. Just does not fit with my
+use case. I would like to keep both.
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 9eca013aa5e1..b38f6194699b 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -288,9 +288,9 @@ LSM_HOOK(int, -EOPNOTSUPP, getselfattr, unsigned int attr,
-          struct lsm_ctx __user *ctx, u32 *size, u32 flags)
- LSM_HOOK(int, -EOPNOTSUPP, setselfattr, unsigned int attr,
-          struct lsm_ctx *ctx, u32 size, u32 flags)
--LSM_HOOK(int, -EINVAL, getprocattr, struct task_struct *p, const char *name,
-+LSM_HOOK(int, 0, getprocattr, struct task_struct *p, const char *name,
-          char **value)
--LSM_HOOK(int, -EINVAL, setprocattr, const char *name, void *value, size_t size)
-+LSM_HOOK(int, 0, setprocattr, const char *name, void *value, size_t size)
- LSM_HOOK(int, 0, ismaclabel, const char *name)
- LSM_HOOK(int, -EOPNOTSUPP, secid_to_secctx, u32 secid, char **secdata,
-          u32 *seclen)
+Thanks
 
-1. `cat /proc/thread-self/attr/current` does not report `kernel` as before.
-2. `echo > /proc/thread-self/attr/fscreate` process hangs in R state, with strace
-showing infinite loop of
-  write(1, "\n", 1)                       = 0
-  write(1, "\n", 1)                       = 0
-  write(1, "\n", 1)                       = 0
+Roberto
 
-Thanks,
+>   -lakshmi
+>=20
+> > > =C2=A0 .../admin-guide/kernel-parameters.txt=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 4 +
+> > > =C2=A0 Documentation/security/IMA-staging.rst=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | 163 +++++++++
+> > > =C2=A0 Documentation/security/index.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> > > =C2=A0 MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0=C2=A0 2 +
+> > > =C2=A0 security/integrity/ima/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 16 +
+> > > =C2=A0 security/integrity/ima/ima.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
+=A0 32 +-
+> > > =C2=A0 security/integrity/ima/ima_api.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +-
+> > > =C2=A0 security/integrity/ima/ima_fs.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 315 ++++++++++++++=
+++--
+> > > =C2=A0 security/integrity/ima/ima_init.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 5 +
+> > > =C2=A0 security/integrity/ima/ima_kexec.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 53 ++-
+> > > =C2=A0 security/integrity/ima/ima_queue.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 283 ++++++++++++++--
+> > > =C2=A0 11 files changed, 803 insertions(+), 73 deletions(-)
+> > > =C2=A0 create mode 100644 Documentation/security/IMA-staging.rst
+> > >=20
 
-> 
-> Thanks,
-> 
-> > 
-> > -- 
-> > paul-moore.com
