@@ -1,108 +1,175 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54961392829;
-	Tue, 12 May 2026 08:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623C43AB260
+	for <linux-security-module@vger.kernel.org>; Tue, 12 May 2026 09:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778575885; cv=none; b=AfEthh0db28xeLBHK1oYREWvwB66jBjyakufVFh8GtXR0+Mi8cjgEwkd2vzwtfOvMtbGfOG6U3Nw7cH6VQokxEiraOii900lSV72kAmdshQ9jh1zhQrWYTLhZ4/NUMeC+poF0YNXlglq4IdukrDPB+PKxMqjmn0Zgl7WELeBeoA=
+	t=1778577098; cv=none; b=kfCUDUWi+B3lbzqmKyo6pZz1Z/r5sjk9kcqoybkDe14bXYfW2yFVMgbUhazZgmW3z8GCHtxilGzNujls2bOgzg6N9w+Nf+ii68x1bh8ZLhXxV3fB3Cx+Um28ggeSFmfSsAtAfnYJSvNTa398RWT7t86qag+yBANn860uzBkXexI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778575885; c=relaxed/simple;
-	bh=Wt32r9HqTnmChyHNUvyBHP0cnR5+BSMvmBHSczvrJoc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=StqXp7FxXpFY0/LnprFnqSDphyOiPAOkuXqY6GnoZQ86Ct5xu1VmqM93r4FqM2VdT1CK86WzpNEzv6HJ7PX9wDQZB1hHHJe2Qq2u4SHZJp60WRyOq/x1dQ2xiaOQLSuckz+WGQUFx4sIeWy/I/BJ0dgSqfsdO9sjWeiVS33TEPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gpVwbLMw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778577098; c=relaxed/simple;
+	bh=J/qTQA7WOSp0NDpJTrrE9CeifCSS0KYK7Fhqb5IuZRE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:To:Cc:Content-Type; b=sZT3LXV03Fmb3l8f3ZzpVlZmW8Ti8j426/nzCyLv7h5oDMhz9Z3sJHSv2WEW5yaIUQwPcZ0rfRot+zoo/paKSLqU6e9YvHwBbiTX+IJufNo/xhE025X7CH+IeL8SoyRd/IBQuy4x6c+C0YRFf2mHwldAYc+eXqT+1I5vlTViG10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PWHZXjeI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gpVwbLMw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7B5CC2BCB0;
-	Tue, 12 May 2026 08:51:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778575884;
-	bh=Wt32r9HqTnmChyHNUvyBHP0cnR5+BSMvmBHSczvrJoc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gpVwbLMwNfdLpdSY7fNpWhpdW/X5XTGl0Oeb8wUNbwBSpkUthjBoWYQeNh48cWMZ5
-	 goDoE0i3QnfiRzR+2MJq6c0MQIWWK3xM7ROSMekRm12lBmvaXyE43pZih47ptZ9R+S
-	 PDdULsdVV7kwx9lNWNz5zMgwdTBQHdY/5cmqr1BjPvxXIiMDyqNd/Mq1PXlbAx0MfV
-	 Mk6uHGyhGluXCTdftSM1NPR5c7VN+aW/QekePdpHiEHsmHReAbVmshmE/Jj5WmkffZ
-	 rxnDddH520MD51johZ9H444ms3wVVgMAIy039yiMXyqYoznak8DKUlwQJieJM4ablg
-	 tUzJyKrgr7+5w==
-Date: Tue, 12 May 2026 11:51:18 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-	Roberto Sassu <roberto.sassu@huaweicloud.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Itay Avraham <itayavr@nvidia.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-rdma@vger.kernel.org, Chiara Meiohas <cmeiohas@nvidia.com>,
-	Maher Sanalla <msanalla@nvidia.com>,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] Firmware LSM hook
-Message-ID: <20260512085118.GP15586@unreal>
-References: <20260413231920.GS3694781@ziepe.ca>
- <CAHC9VhTLamfe4C81ZNRVT=H32x+KLxSqH3o0eBfrHsWAgAqxCA@mail.gmail.com>
- <20260415134705.GG2577880@ziepe.ca>
- <CAHC9VhSECYihup=tURo_Qk__xUdYYPkHgnz5CWA0BrRAkvwbog@mail.gmail.com>
- <20260417191749.GK2577880@ziepe.ca>
- <CAHC9VhQbpS9XpO6dWu7gOiX=ppjtAxnNBOFe6s5wjEZNpMRjgw@mail.gmail.com>
- <20260424143603.GB3611611@ziepe.ca>
- <CAHC9VhR++21SD+v4Bb16SQmYHgJYZ0ytQ+BecGPNK+fEOe4G7g@mail.gmail.com>
- <20260424221310.GA804026@ziepe.ca>
- <CAHC9VhTsx6cpKMP8nVgK4F=drXTFJtK3_D9k9pmKr56+ZFUu9w@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PWHZXjeI"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1778577095;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=p80uB9ppx8DS0thaGwc0VH0L36R/21WsbTghYE9KDbw=;
+	b=PWHZXjeIrSy+VsffKsMKeLjOC3+O1hMqczZMEHI3xV7U2mDBv55yFhaytySeHU9aIoKVEN
+	WY5rd8KpaGkNsJy7CB0fH/XRZzX7GVM+y4MMdkyOYIFwv4oM94ihSGdUsdjbXV6kPtNXbA
+	SrlVIiwKWZdxavxnvlw88cTfuc1L2pA=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-540-EieOxPp9O_ajxHZeof5XwA-1; Tue,
+ 12 May 2026 05:11:32 -0400
+X-MC-Unique: EieOxPp9O_ajxHZeof5XwA-1
+X-Mimecast-MFC-AGG-ID: EieOxPp9O_ajxHZeof5XwA_1778577088
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 228A618005B4;
+	Tue, 12 May 2026 09:11:27 +0000 (UTC)
+Received: from [192.168.1.153] (headnet01.pony-001.prod.iad2.dc.redhat.com [10.2.32.101])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 09A6130001BB;
+	Tue, 12 May 2026 09:11:17 +0000 (UTC)
+From: Albert Esteve <aesteve@redhat.com>
+Subject: [PATCH RFC 0/5] memcg: dma-buf per-cgroup accounting via pid_fd
+Date: Tue, 12 May 2026 11:10:42 +0200
+Message-Id: <20260512-v2_20230123_tjmercier_google_com-v1-0-6326701c3691@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhTsx6cpKMP8nVgK4F=drXTFJtK3_D9k9pmKr56+ZFUu9w@mail.gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x2NQQqDMBAAvyJ7bmCTqEivhT7Aa5HQxk3cUk3Zi
+ BTEvzd4m7nM7JBJmDJcqx2ENs6cliL6UoGfnkskxWNxMGhabLBTm3GFLWpj3fqeSTyTuJhS/JD
+ zaVahroMPL902FqFkvkKBf+fiAf39BsNx/AFCOWAcdwAAAA==
+X-Change-ID: 20260508-v2_20230123_tjmercier_google_com-f44fcfb16530
+To: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+ =?utf-8?q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+ Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+ Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+ "T.J. Mercier" <tjmercier@google.com>, 
+ Christian Brauner <brauner@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+ Stephen Smalley <stephen.smalley.work@gmail.com>, 
+ Ondrej Mosnacek <omosnace@redhat.com>, Shuah Khan <shuah@kernel.org>
+Cc: cgroups@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+ linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+ selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ Albert Esteve <aesteve@redhat.com>, mripard@kernel.org, echanude@redhat.com
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1778577077; l=4167;
+ i=aesteve@redhat.com; s=20260303; h=from:subject:message-id;
+ bh=J/qTQA7WOSp0NDpJTrrE9CeifCSS0KYK7Fhqb5IuZRE=;
+ b=w9BOSU+QzmBOQFJx39er3JufOMU+NTrwANFwrY1GjbF+ilD6YeDqgSMvjLwB7Lz3uKINM9vQE
+ qrkVFKK2zfBDqr0ZUk82SaBAThNIU7vg1o9c6Q1zxh0DX4Y13wK5MeR
+X-Developer-Key: i=aesteve@redhat.com; a=ed25519;
+ pk=YSFz6sOHd2L45+Fr8DIvHTi6lSIjhLZ5T+rkxspJt1s=
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Mimecast-MFC-PROC-ID: ZHUIV_222n6wFYGHF_GxbeHukvllc_Hpy4Zjldyo3Xk_1778577088
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 04, 2026 at 06:33:45PM -0400, Paul Moore wrote:
-> On Fri, Apr 24, 2026 at 6:13 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> >
-> > ... I wonder if we are even speaking the same language.
-> 
-> Let's reset the conversation.
-> 
-> As I understand it, based on our discussion in this thread and Leon's
-> previous patchsets, the basic idea is to enable LSMs to enforce access
-> control over fwctl requests/commands sent from userspace.  I'm going
-> to start with that as a basis.
+This RFC builds on T.J. Mercier's earlier series [1] which added
+a memory.stat counter for exported dma-bufs and a binder-backed
+mechanism to transfer charges between cgroups.
 
-Yes, we proposed two users: FWCTL and RDMA DevX. Both are relevant, but
-FWCTL is the higher priority.
+The first commit is taken almost verbatim from TJ's series:
+it introduces MEMCG_DMABUF as a dedicated per-cgroup stat, so that
+the total exported dma-buf footprint is visible both system-wide
+(via the root cgroup) and per-application (via per-process cgroups).
+This avoids the overhead of DMABUF_SYSFS_STATS and integrates
+naturally into the existing cgroup memory hierarchy.
 
-> 
-> Using the kernel's docs on fwctl, the userspace API appears to consist
-> mostly of ioctls with some basic sysfs interfaces.  It looks like we
-> can mostly ignore the sysfs interface and focus on the ioctl side of
-> the API, do you agree?
+The rest of the series departs from TJ's approach. While the first
+commit introduces the memcg stat infrastructure for dmabufs, the
+export-time charging it introduces in dma_buf_export() is then
+superseded: we charge at dma_heap_ioctl_allocate() time, using a
+new charge_pid_fd field in struct dma_heap_allocation_data. The
+allocator opens a pidfd for its client (e.g., from binder's
+sender_pid), passes it to the ioctl, and the kernel charges the
+buffer directly to the client's cgroup at allocation time, so no
+transfer step is needed.
 
-Yes, all FW commands are routed through ioctls.
+This decouples the accounting path from binder entirely:
+any allocator that knows its client's PID can use the pid_fd
+mechanism regardless of the IPC transport in use.
 
-> 
-> https://docs.kernel.org/userspace-api/fwctl/fwctl.html
-> 
-> While normally I would suggest simply using the existing
-> security_file_ioctl() hook, Leon previously mentioned that the hook is
-> too early for fwctl as the userspace copy happens much later.
+The cross-cgroup charging capability requires access control.
+Patches #3 and #4 add a generic LSM hook (security_dma_heap_alloc)
+and an SELinux implementation based on a new dma_heap object class
+with a charge_to permission, so policy authors can express which
+domains are allowed to charge memory to another domain's cgroup.
 
-I talked about general verbs interface in RDMA.
+Last patch adds some tests to verify the new charge_pid_fd field.
 
-Thanks
+We are sending it as an RFC to spark broader discussion. It may or
+may not be the right path forward, and we welcome feedback on the
+trade-offs.
+
+Collision note: Eric Chanudet's series [2] adds __GFP_ACCOUNT to
+system_heap page allocations as an opt-in module parameter. That
+approach charges pages to the allocator's own kmem, which overlaps with
+MEMCG_DMABUF. This series explicitly removes __GFP_ACCOUNT from system
+heap allocations and routes all accounting through the MEMCG_DMABUF
+path to avoid double-counting.
+
+[1] https://lore.kernel.org/cgroups/20230109213809.418135-1-tjmercier@google.com/
+[2] https://lore.kernel.org/r/20260113-dmabuf-heap-system-memcg-v2-0-e85722cc2f24@redhat.com
+
+Signed-off-by: Albert Esteve <aesteve@redhat.com>
+---
+Albert Esteve (4):
+      dma-heap: charge dma-buf memory via explicit memcg
+      security: dma-heap: Add dma_heap_alloc LSM hook
+      selinux: Restrict cross-cgroup dma-heap charging
+      selftests/dmabuf-heaps: Add dma-buf memcg accounting tests
+
+T.J. Mercier (1):
+      memcg: Track exported dma-buffers
+
+ Documentation/admin-guide/cgroup-v2.rst            |   5 +
+ drivers/dma-buf/dma-buf.c                          |   7 +
+ drivers/dma-buf/dma-heap.c                         |  54 +++++-
+ drivers/dma-buf/heaps/system_heap.c                |   2 -
+ include/linux/dma-buf.h                            |   4 +
+ include/linux/lsm_hook_defs.h                      |   1 +
+ include/linux/memcontrol.h                         |  37 ++++
+ include/linux/security.h                           |   7 +
+ include/uapi/linux/dma-heap.h                      |   6 +
+ mm/memcontrol.c                                    |  19 ++
+ security/security.c                                |  16 ++
+ security/selinux/hooks.c                           |   7 +
+ security/selinux/include/classmap.h                |   1 +
+ tools/testing/selftests/cgroup/Makefile            |   2 +-
+ tools/testing/selftests/cgroup/test_memcontrol.c   | 143 +++++++++++++-
+ tools/testing/selftests/dmabuf-heaps/config        |   1 +
+ tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c | 126 ++++++++++++-
+ tools/testing/selftests/dmabuf-heaps/vmtest.sh     | 205 +++++++++++++++++++++
+ 18 files changed, 633 insertions(+), 10 deletions(-)
+---
+base-commit: 74fe02ce122a6103f207d29fafc8b3a53de6abaf
+change-id: 20260508-v2_20230123_tjmercier_google_com-f44fcfb16530
+
+Best regards,
+-- 
+Albert Esteve <aesteve@redhat.com>
+
