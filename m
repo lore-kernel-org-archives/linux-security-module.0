@@ -1,460 +1,122 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52B240FDA0
-	for <linux-security-module@vger.kernel.org>; Wed, 13 May 2026 16:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778690367; cv=pass; b=ajLorlEwtr/ruFYm4dNxEoh/aZfMosRnZveT6CvwcF0sdLkW2Rr1yXiaiDXP9JZ5d4NBC0fk6BXePjEB0s+TtoNQ7VTDrxUp3oKt7uBo3iWrWnL+Fk47FYtsH7sepRiF1rWEgobFJqiemRLFqfmc8v2P3mAMLnp7qvTaiwWt4lI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778690367; c=relaxed/simple;
-	bh=AbizP6UXRbboqpNTNkCFhXS8zLUX4kpj1t0M3DjuAhs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rI45puVQPNgBatgY1B5wQuzg8hnp4Xk7ngy5TIlj201W1QOvsG7sIr9EbnsxGdLmuAKEM1PTVIlZmKbHUXaLXkDxALccubDZu65zOmahCLfRon/lQZ4CIS237BxDTwTk91qg+ekZQS0/65vk/XoIgkiW8Q5hbIgqkR+jx/qMGEE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HVll0sAx; arc=pass smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6F13624DB
+	for <linux-security-module@vger.kernel.org>; Wed, 13 May 2026 18:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778695411; cv=none; b=XXUnU6YnwloNZTHmVQU3z824BLwZrX5H22N38dmm20p5nxXO8gP7sOK79HKE09KiwtfDg8HF/MgYdwN6sKSYF/Qg99XIRWkeLLyxxJq2ZgSHG4tVqvZK5yBsn8NehNECDWL28PwZKlIk6h/h4i0d8RO1+G0G3AWDZrDzyl8rWZc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778695411; c=relaxed/simple;
+	bh=nVeEY7FRd4AY2RLYTPe4T8xN/Znz0QrKvGOA0BYyTLg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Tpa4gJSMRy8OqMcty7+3xQjFq5BwiJ787TPMby/TGlY9UgKF2pEhBheGdLHQ4gaTFzP2wVutEP2XNjg5SFnkkq8S32yAAsYcVnXzpqlX0/FxSXhgKEmwtOpGytbvNb6traahNGw9gDzWs1Wx0KTw1KWWdizsSIyE/9f6ovdwh4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ZPCUlHfb; arc=none smtp.client-ip=185.125.25.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HVll0sAx"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-488940ccfa6so2095e9.1
-        for <linux-security-module@vger.kernel.org>; Wed, 13 May 2026 09:39:24 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1778690363; cv=none;
-        d=google.com; s=arc-20240605;
-        b=VoHqOP2GaY3m8iK86Tu25qS4vCbVrhmBXo+xo5FqAQ4QvyIcPtjG5Y4Em2Z5d1YGj2
-         sa73u/2Zy6gDYtzJZmhzosA4xoM+rxNrCv/PqSWG8mD73aos/Fsb6JcriHirrMPYjfo0
-         0QbE6G/2y1d8t98D4a8uDaLQBCv7ec0CShFXg2ehO/18eATVCKnYWDwpehRfduUZAcwr
-         uBuQjG88XuLatcpFUV4dTIGvroTc9xoR4vRuW9VTdQSUM//iAJ/1xhrWzdH68jgBAhUH
-         p0xOTk3HNK6LIIIPSU3cMw+QtEJmYmosWjlxMTlDh8tnC9P342zZ5x7X4uuAdlyLVqSf
-         vang==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=hOVJmPkMMtutEBgPE85iBoY/7XAmkTfBx4YFHq1zHJQ=;
-        fh=cEKwpmn0X5DezO+OfATV0YSLWvp+8nkhOp0j+UgpiNQ=;
-        b=G4m/CMzJuHo5sJC/vVAsUBlt4dAdjNIAQTNKMlO9YNUN9FYgQ3ByrrJp8uoBU0+ugx
-         bIwtrDLR9fQjN3mS9+6EK/Oi+N7maYyTvPtubhb/eMXsS0pd2G8NGL4jVAwEUiJ6o60g
-         bcwZdTgid7LL6B8eKSrj7qsvD9sRIKl9ZwNC5MdjP55LVGMkknC92JgseXbKoTOCPXgL
-         zx3N8Eyem6igKhukUQ1AvRQYgbJHn6j40vkQbx/Snh+DZ9eVy1Jq/kIlTBmfl1I0VL7P
-         vbQzStkxDNmiP+6F7O/LiXXeg3gSMb3Ji49pFFn9p/ib8GOZvs2bVQxEGAVtI+qsjt4l
-         RoJg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1778690363; x=1779295163; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hOVJmPkMMtutEBgPE85iBoY/7XAmkTfBx4YFHq1zHJQ=;
-        b=HVll0sAxKJNgA57mG2alJfrid/1eqs9flEP951wsVGIJpq/S94+EQZChY3q3vDolqo
-         XYn9ClHcGryhSMozX21U6bdSxVWgejhrm7/xWyccD8kTnrqMMmmdnGl9Z4a8GZ/sFvev
-         VStL86i8rLO5bowITRE/CXKuuq20H7Lqd+okEBemmVctr1TNbakgShR9YiiXXQ2alXpO
-         oRBuILMAYVwmZW1FiQXx8IDDPkWWspBfUUowV4REHJWBtvW61P6SqmhDsknMOWAuNzWW
-         8PwVL5dOpRsj8/ckc/0RQKxKa15kjEjLq+j555KmNwAhBF/sFcQZWKAFyrQab8cqVcG7
-         1w4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778690363; x=1779295163;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=hOVJmPkMMtutEBgPE85iBoY/7XAmkTfBx4YFHq1zHJQ=;
-        b=mBvXoKM4JeAEXT7/1bt1rELLkoDy48p5DiZvjx+dIqLLxUtr6Bo0L8VTNbkI76AcGE
-         RtNx07udH7xL54fSzmc5s9twJtRQPDbk8cn8zCQWnl6uRpmD9GvtH4xNR/MBoD+ew8uV
-         B7SX/b+rwbcrDNXb8Ie/sUIMzeOBb5tbQUJ5ykCHFyuLdjSd02e0JJSh73MU2m2ZjIfD
-         ywYx5IWu+igc+pfBkYGGPmSlDc/KdleAQJ/uFdDeE/CZ39wqLYr1cnxicbFB4UGHSPdc
-         1UCgVic2If9ImJSCiKl64FLC81Mrea/GH7tBgNA6Kih+qwHUwjrmBiFAIDm7qhqjZ8UT
-         Ttjw==
-X-Forwarded-Encrypted: i=1; AFNElJ/ogpLVL9K7fDUOVWVTQyXJry+92X6fuIXxyCw++j6YDykvh6defspaOgyxrTwDrZMp5Fbt3gX20aCIDkDGEmBwCb5DR/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvRsrE0ddwa4w3SGS0AbaKHsCFwQj+IEWeY1XGGpOJLTOP6SBx
-	4b3O57W/ccSMADnGjt4oX25+imaC8EU8OGFVgMlzGy7eE25wvUqXRp7M3/a7g/v/BGofMCKzSu8
-	8CUT9w8hNv+UBEYr4lR+NFJ4BfnrqjlUDhF2+JkSL
-X-Gm-Gg: Acq92OFGAh3t8yxRUwTSRa+z4qYiXK01TXhoa+TNTqZTTwyBawds3RQVk+M5UTGUPlQ
-	/QEdjNRbcP7/GCIvDuQscdB4f9Rrh8wmwvU1DZXtYfGL2n4Aoh0Ebs12GMcYxKkvDc6aVlPKcqw
-	W9Zbzp5gk1dGWOnyWWhxr1+MuAm5QNaOVlMBuyFFv4wMCQqiRYVAQ9jtPD0EpJ/4Uyfljrdj4QD
-	96iMtDdHSBMtnIHOZI9XbKSIYLOnRyjR3JgYxqfGW9dNRPbaoaQo1A2XwNWKnFIkuEd1q63bbji
-	1YjZZ2NRpCVBUlHmwyls7f8fm24bH2fL9iwpcR7lU3xQ6CXuMFr+nAOSiu1++gyHLdXgFXXiXx6
-	45skn
-X-Received: by 2002:a05:600d:8486:20b0:477:86fd:fb49 with SMTP id
- 5b1f17b1804b1-48fc919a43dmr965705e9.10.1778690362738; Wed, 13 May 2026
- 09:39:22 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ZPCUlHfb"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gG1Xn6QQLzwSh;
+	Wed, 13 May 2026 20:03:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1778695401;
+	bh=mclFFKGGnbizHqmLBIHp3Fcf5dqJ+s7rVzaIH0vByhM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZPCUlHfbpFTOxFuK6DgPBvQBCic0eprYaVFU/1KWotdo1ZD0+NkIvsqtYGi6uZg2Y
+	 BzHMLrBrFxpFvt2jLYtnB5RqEAq6T3pGH1xR9+jSJSkT+L/ZByI8oem1iovUL1hgl5
+	 E/TrPSHbihMIILci7XKdKwBY+a2NJQmA1tZLRA1Q=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4gG1Xl50qZzCpy;
+	Wed, 13 May 2026 20:03:19 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org,
+	Paul Moore <paul@paul-moore.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v1] landlock: Account all audit data allocations to user space
+Date: Wed, 13 May 2026 20:03:08 +0200
+Message-ID: <20260513180309.165840-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260512-v2_20230123_tjmercier_google_com-v1-0-6326701c3691@redhat.com>
- <20260512-v2_20230123_tjmercier_google_com-v1-2-6326701c3691@redhat.com>
- <8ef38815-6ae9-4359-86d4-042554357639@amd.com> <CADSE00KZMJFYJ92XZa=r9EeJJRGT=SNChwOW-_jTznc7F79xGw@mail.gmail.com>
-In-Reply-To: <CADSE00KZMJFYJ92XZa=r9EeJJRGT=SNChwOW-_jTznc7F79xGw@mail.gmail.com>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Wed, 13 May 2026 09:39:10 -0700
-X-Gm-Features: AVHnY4Le2GUGE4TjoBj6HdQ1GbUQChjLautyZmM4nJTx4rLM4Wl1vLSY-yCAZrQ
-Message-ID: <CABdmKX3R5faNgFva-HHVhtTcxJ0_BK9Rei3iTQcA+SRwdKv1Aw@mail.gmail.com>
-Subject: Re: [PATCH RFC 2/5] dma-heap: charge dma-buf memory via explicit memcg
-To: Albert Esteve <aesteve@redhat.com>
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, Christian Brauner <brauner@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Shuah Khan <shuah@kernel.org>, cgroups@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, mripard@kernel.org, echanude@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Wed, May 13, 2026 at 5:41=E2=80=AFAM Albert Esteve <aesteve@redhat.com> =
-wrote:
->
-> On Tue, May 12, 2026 at 12:14=E2=80=AFPM Christian K=C3=B6nig
-> <christian.koenig@amd.com> wrote:
-> >
-> > On 5/12/26 11:10, Albert Esteve wrote:
-> > > On embedded platforms a central process often allocates dma-buf
-> > > memory on behalf of client applications. Without a way to
-> > > attribute the charge to the requesting client's cgroup, the
-> > > cost lands on the allocator, making per-cgroup memory limits
-> > > ineffective for the actual consumers.
-> > >
-> > > Add charge_pid_fd to struct dma_heap_allocation_data. When set to
-> > > a valid pidfd, DMA_HEAP_IOCTL_ALLOC resolves the target task's
-> > > memcg and charges the buffer there via mem_cgroup_charge_dmabuf()
-> > > inside dma_heap_buffer_alloc(). Without charge_pid_fd, and with
-> > > the mem_accounting module parameter enabled, the buffer is charged
-> > > to the allocator's own cgroup.
-> > >
-> > > Additionally, commit 3c227be90659 ("dma-buf: system_heap: account for
-> > > system heap allocation in memcg") adds __GFP_ACCOUNT to system-heap
-> > > page allocations. Keeping __GFP_ACCOUNT would charge the same pages
-> > > twice (once to kmem, once to MEMCG_DMABUF), thus remove it and route
-> > > all accounting through a single MEMCG_DMABUF path.
-> > >
-> > > Usage examples:
-> > >
-> > >   1. Central allocator charging to a client at allocation time.
-> > >      The allocator knows the client's PID (e.g., from binder's
-> > >      sender_pid) and uses pidfd to attribute the charge:
-> > >
-> > >        pid_t client_pid =3D txn->sender_pid;
-> > >        int pidfd =3D pidfd_open(client_pid, 0);
-> > >
-> > >        struct dma_heap_allocation_data alloc =3D {
-> > >            .len             =3D buffer_size,
-> > >            .fd_flags        =3D O_RDWR | O_CLOEXEC,
-> > >            .charge_pid_fd   =3D pidfd,
-> > >        };
-> > >        ioctl(heap_fd, DMA_HEAP_IOCTL_ALLOC, &alloc);
-> > >        close(pidfd);
-> > >        /* alloc.fd is now charged to client's cgroup */
-> > >
-> > >   2. Default allocation (no pidfd, mem_accounting=3D1).
-> > >      When charge_pid_fd is not set and the mem_accounting module
-> > >      parameter is enabled, the buffer is charged to the allocator's
-> > >      own cgroup:
-> > >
-> > >        struct dma_heap_allocation_data alloc =3D {
-> > >            .len      =3D buffer_size,
-> > >            .fd_flags =3D O_RDWR | O_CLOEXEC,
-> > >        };
-> > >        ioctl(heap_fd, DMA_HEAP_IOCTL_ALLOC, &alloc);
-> > >        /* charged to current process's cgroup */
-> > >
-> > > Current limitations:
-> > >
-> > >  - Single-owner model: a dma-buf carries one memcg charge regardless =
-of
-> > >    how many processes share it. Means only the first owner (and expor=
-ter)
-> > >    of the shared buffer bears the charge.
-> > >  - Only memcg accounting supported. While this makes sense for system
-> > >    heap buffers, other heaps (e.g., CMA heaps) will require selective=
-ly
-> > >    charging also for the dmem controller.
-> >
-> > Well that doesn't looks soo bad, it at least seems to tackle the proble=
-m at hand for Android and some of other embedded use cases.
-> >
-> > I'm just not sure if this is future prove and will work for all use cas=
-es, e.g. cloud gaming, native context for automotive etc...
-> >
-> > Essentially the problem boils down to two limitations:
-> > 1) a piece of memory can only be charged to one cgroup, the framework d=
-oesn't has a concept of charging shared memory to multiple groups
-> > 2) when memory references in the form of file descriptors are passed be=
-tween applications we have no way of changing the accounting to a different=
- cgroup
-> >
-> > The passing of the memory reference already has a well defined uAPI and=
- if we could solve those two limitations we not only solve the problem with=
-out introducing new uAPI (with potential new security risks) but also solve=
- it for all other use cases which uses file descriptors as well as. E.g. me=
-mfd, accel and GPU drivers etc...
->
-> Honestly, adding a hook to fd-passing uAPI to manage charge transfers
-> sounds like a promising solution requiring no uAPI changes. However,
-> it still does not cover all paths, e.g., dup() or fork(). And shared
-> memory sounds like a hard one to tackle, where deciding the best
-> policy is more a per-usecase thing and would probably require
-> userspace configuration.
+Mark the kzalloc_flex() of struct landlock_details with
+GFP_KERNEL_ACCOUNT so the allocation is charged to the calling task,
+like the other Landlock per-domain allocations which have used
+GFP_KERNEL_ACCOUNT forever.
 
-I'm curious if anyone knows of a use case where FDs aren't involved at
-all? It's possible to fork() or clone() with only a dmabuf mapping and
-no FD. That sounds strange, and I'm not sure there's a real usecase
-for transferring ownership with that approach, but figured I'd at
-least pose the question.
+Every property of landlock_details is caller-attributable: allocated by
+landlock_restrict_self(2), owned by the caller's landlock_hierarchy,
+contents are the caller's pid, uid, comm, and exe_path, lifetime bounded
+by the caller's domain.  While the caller may not know nor control the
+size of this allocation (i.e. exe_path), this data should still be
+accounted for it.
 
-> All in all, charge_pid_fd covers a
-> well-defined and immediately practical subset. The UAPI cost is small
-> and the mechanism is explicit about what it does and doesn't solve. A
-> general solution, if it ever converges, would likely supersede
-> charge_pid_fd for most cases, which is a fine outcome if it solves the
-> problem more completely.
->
-> Either way, if you have a specific approach in mind for solving any of
-> the above limitations, I'd be happy to look into it further.
->
-> BR,
-> Albert.
->
-> >
-> > On the other hand it is really nice to finally see this tackled for at =
-least DMA-buf heaps. On the GPU side I have seen just another try of a driv=
-er doing some kind of special driver specific accounting to solve this just=
- a few weeks ago. And to be honest such single driver island approach have =
-the tendency to break more often that they are working correctly.
-> >
-> > Regards,
-> > Christian.
-> >
-> > >
-> > > Signed-off-by: Albert Esteve <aesteve@redhat.com>
-> > > ---
-> > >  Documentation/admin-guide/cgroup-v2.rst |  5 ++--
-> > >  drivers/dma-buf/dma-buf.c               | 16 ++++---------
-> > >  drivers/dma-buf/dma-heap.c              | 42 +++++++++++++++++++++++=
-+++++++---
-> > >  drivers/dma-buf/heaps/system_heap.c     |  2 --
-> > >  include/uapi/linux/dma-heap.h           |  6 +++++
-> > >  5 files changed, 53 insertions(+), 18 deletions(-)
-> > >
-> > > diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/=
-admin-guide/cgroup-v2.rst
-> > > index 8bdbc2e866430..824d269531eb1 100644
-> > > --- a/Documentation/admin-guide/cgroup-v2.rst
-> > > +++ b/Documentation/admin-guide/cgroup-v2.rst
-> > > @@ -1636,8 +1636,9 @@ The following nested keys are defined.
-> > >               structures.
-> > >
-> > >         dmabuf (npn)
-> > > -             Amount of memory used for exported DMA buffers allocate=
-d by the cgroup.
-> > > -             Stays with the allocating cgroup regardless of how the =
-buffer is shared.
-> > > +             Amount of memory used for exported DMA buffers allocate=
-d by or on
-> > > +             behalf of the cgroup. Stays with the allocating cgroup =
-regardless
-> > > +             of how the buffer is shared.
-> > >
-> > >         workingset_refault_anon
-> > >               Number of refaults of previously evicted anonymous page=
-s.
-> > > diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-> > > index ce02377f48908..23fb758b78297 100644
-> > > --- a/drivers/dma-buf/dma-buf.c
-> > > +++ b/drivers/dma-buf/dma-buf.c
-> > > @@ -181,8 +181,11 @@ static void dma_buf_release(struct dentry *dentr=
-y)
-> > >        */
-> > >       BUG_ON(dmabuf->cb_in.active || dmabuf->cb_out.active);
-> > >
-> > > -     mem_cgroup_uncharge_dmabuf(dmabuf->memcg, PAGE_ALIGN(dmabuf->si=
-ze) / PAGE_SIZE);
-> > > -     mem_cgroup_put(dmabuf->memcg);
-> > > +     if (dmabuf->memcg) {
-> > > +             mem_cgroup_uncharge_dmabuf(dmabuf->memcg,
-> > > +                                       PAGE_ALIGN(dmabuf->size) / PA=
-GE_SIZE);
-> > > +             mem_cgroup_put(dmabuf->memcg);
-> > > +     }
-> > >
-> > >       dmabuf->ops->release(dmabuf);
-> > >
-> > > @@ -764,13 +767,6 @@ struct dma_buf *dma_buf_export(const struct dma_=
-buf_export_info *exp_info)
-> > >               dmabuf->resv =3D resv;
-> > >       }
-> > >
-> > > -     dmabuf->memcg =3D get_mem_cgroup_from_mm(current->mm);
-> > > -     if (!mem_cgroup_charge_dmabuf(dmabuf->memcg, PAGE_ALIGN(dmabuf-=
->size) / PAGE_SIZE,
-> > > -                                   GFP_KERNEL)) {
-> > > -             ret =3D -ENOMEM;
-> > > -             goto err_memcg;
-> > > -     }
-> > > -
-> > >       file->private_data =3D dmabuf;
-> > >       file->f_path.dentry->d_fsdata =3D dmabuf;
-> > >       dmabuf->file =3D file;
-> > > @@ -781,8 +777,6 @@ struct dma_buf *dma_buf_export(const struct dma_b=
-uf_export_info *exp_info)
-> > >
-> > >       return dmabuf;
-> > >
-> > > -err_memcg:
-> > > -     mem_cgroup_put(dmabuf->memcg);
-> > >  err_file:
-> > >       fput(file);
-> > >  err_module:
-> > > diff --git a/drivers/dma-buf/dma-heap.c b/drivers/dma-buf/dma-heap.c
-> > > index ac5f8685a6494..ff6e259afcdc0 100644
-> > > --- a/drivers/dma-buf/dma-heap.c
-> > > +++ b/drivers/dma-buf/dma-heap.c
-> > > @@ -7,13 +7,17 @@
-> > >   */
-> > >
-> > >  #include <linux/cdev.h>
-> > > +#include <linux/cgroup.h>
-> > >  #include <linux/device.h>
-> > >  #include <linux/dma-buf.h>
-> > >  #include <linux/dma-heap.h>
-> > > +#include <linux/memcontrol.h>
-> > > +#include <linux/sched/mm.h>
-> > >  #include <linux/err.h>
-> > >  #include <linux/export.h>
-> > >  #include <linux/list.h>
-> > >  #include <linux/nospec.h>
-> > > +#include <linux/pidfd.h>
-> > >  #include <linux/syscalls.h>
-> > >  #include <linux/uaccess.h>
-> > >  #include <linux/xarray.h>
-> > > @@ -55,10 +59,12 @@ MODULE_PARM_DESC(mem_accounting,
-> > >                "Enable cgroup-based memory accounting for dma-buf hea=
-p allocations (default=3Dfalse).");
-> > >
-> > >  static int dma_heap_buffer_alloc(struct dma_heap *heap, size_t len,
-> > > -                              u32 fd_flags,
-> > > -                              u64 heap_flags)
-> > > +                              u32 fd_flags, u64 heap_flags,
-> > > +                              struct mem_cgroup *charge_to)
-> > >  {
-> > >       struct dma_buf *dmabuf;
-> > > +     unsigned int nr_pages;
-> > > +     struct mem_cgroup *memcg =3D charge_to;
-> > >       int fd;
-> > >
-> > >       /*
-> > > @@ -73,6 +79,22 @@ static int dma_heap_buffer_alloc(struct dma_heap *=
-heap, size_t len,
-> > >       if (IS_ERR(dmabuf))
-> > >               return PTR_ERR(dmabuf);
-> > >
-> > > +     nr_pages =3D len / PAGE_SIZE;
-> > > +
-> > > +     if (memcg)
-> > > +             css_get(&memcg->css);
-> > > +     else if (mem_accounting)
-> > > +             memcg =3D get_mem_cgroup_from_mm(current->mm);
-> > > +
-> > > +     if (memcg) {
-> > > +             if (!mem_cgroup_charge_dmabuf(memcg, nr_pages, GFP_KERN=
-EL)) {
-> > > +                     mem_cgroup_put(memcg);
-> > > +                     dma_buf_put(dmabuf);
-> > > +                     return -ENOMEM;
-> > > +             }
-> > > +             dmabuf->memcg =3D memcg;
-> > > +     }
-> > > +
-> > >       fd =3D dma_buf_fd(dmabuf, fd_flags);
-> > >       if (fd < 0) {
-> > >               dma_buf_put(dmabuf);
-> > > @@ -102,6 +124,9 @@ static long dma_heap_ioctl_allocate(struct file *=
-file, void *data)
-> > >  {
-> > >       struct dma_heap_allocation_data *heap_allocation =3D data;
-> > >       struct dma_heap *heap =3D file->private_data;
-> > > +     struct mem_cgroup *memcg =3D NULL;
-> > > +     struct task_struct *task;
-> > > +     unsigned int pidfd_flags;
-> > >       int fd;
-> > >
-> > >       if (heap_allocation->fd)
-> > > @@ -113,9 +138,20 @@ static long dma_heap_ioctl_allocate(struct file =
-*file, void *data)
-> > >       if (heap_allocation->heap_flags & ~DMA_HEAP_VALID_HEAP_FLAGS)
-> > >               return -EINVAL;
-> > >
-> > > +     if (heap_allocation->charge_pid_fd) {
-> > > +             task =3D pidfd_get_task(heap_allocation->charge_pid_fd,=
- &pidfd_flags);
-> > > +             if (IS_ERR(task))
-> > > +                     return PTR_ERR(task);
-> > > +
-> > > +             memcg =3D get_mem_cgroup_from_mm(task->mm);
-> > > +             put_task_struct(task);
-> > > +     }
-> > > +
-> > >       fd =3D dma_heap_buffer_alloc(heap, heap_allocation->len,
-> > >                                  heap_allocation->fd_flags,
-> > > -                                heap_allocation->heap_flags);
-> > > +                                heap_allocation->heap_flags,
-> > > +                                memcg);
-> > > +     mem_cgroup_put(memcg);
-> > >       if (fd < 0)
-> > >               return fd;
-> > >
-> > > diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/he=
-aps/system_heap.c
-> > > index 03c2b87cb1112..95d7688167b93 100644
-> > > --- a/drivers/dma-buf/heaps/system_heap.c
-> > > +++ b/drivers/dma-buf/heaps/system_heap.c
-> > > @@ -385,8 +385,6 @@ static struct page *alloc_largest_available(unsig=
-ned long size,
-> > >               if (max_order < orders[i])
-> > >                       continue;
-> > >               flags =3D order_flags[i];
-> > > -             if (mem_accounting)
-> > > -                     flags |=3D __GFP_ACCOUNT;
-> > >               page =3D alloc_pages(flags, orders[i]);
-> > >               if (!page)
-> > >                       continue;
-> > > diff --git a/include/uapi/linux/dma-heap.h b/include/uapi/linux/dma-h=
-eap.h
-> > > index a4cf716a49fa6..e02b0f8cbc6a1 100644
-> > > --- a/include/uapi/linux/dma-heap.h
-> > > +++ b/include/uapi/linux/dma-heap.h
-> > > @@ -29,6 +29,10 @@
-> > >   *                   handle to the allocated dma-buf
-> > >   * @fd_flags:                file descriptor flags used when allocat=
-ing
-> > >   * @heap_flags:              flags passed to heap
-> > > + * @charge_pid_fd:   optional pidfd of the process whose cgroup shou=
-ld be
-> > > + *                   charged for this allocation; 0 means charge the=
- calling
-> > > + *                   process's cgroup
-> > > + * @__padding:               reserved, must be zero
-> > >   *
-> > >   * Provided by userspace as an argument to the ioctl
-> > >   */
-> > > @@ -37,6 +41,8 @@ struct dma_heap_allocation_data {
-> > >       __u32 fd;
-> > >       __u32 fd_flags;
-> > >       __u64 heap_flags;
-> > > +     __u32 charge_pid_fd;
-> > > +     __u32 __padding;
-> > >  };
-> > >
-> > >  #define DMA_HEAP_IOC_MAGIC           'H'
-> > >
-> >
->
+The deciding factor is whether userspace can trigger the allocation, not
+whether the size of the data is known nor controlled by the caller.
+This aligns with the kmemcg accounting policy established by commit
+5d097056c9a0 ("kmemcg: account certain kmem allocations to memcg").
+
+No new failure modes: the hierarchy and ruleset are allocated before
+details and are already accounted, so landlock_restrict_self(2) already
+returns -ENOMEM under memcg pressure.  This change widens that existing
+failure window slightly; it does not introduce a new error code.
+
+Cc: Günther Noack <gnoack@google.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: stable@vger.kernel.org
+Fixes: 1d636984e088 ("landlock: Add AUDIT_LANDLOCK_DOMAIN and log domain status")
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+ security/landlock/domain.c | 9 +++++----
+ security/landlock/domain.h | 5 +----
+ 2 files changed, 6 insertions(+), 8 deletions(-)
+
+diff --git a/security/landlock/domain.c b/security/landlock/domain.c
+index 06b6bd845060..5dd06f7c2312 100644
+--- a/security/landlock/domain.c
++++ b/security/landlock/domain.c
+@@ -90,11 +90,12 @@ static struct landlock_details *get_current_details(void)
+ 		return ERR_CAST(buffer);
+ 
+ 	/*
+-	 * Create the new details according to the path's length.  Do not
+-	 * allocate with GFP_KERNEL_ACCOUNT because it is independent from the
+-	 * caller.
++	 * Create the new details according to the path's length.  Account
++	 * to the calling task's memcg, like the other Landlock per-domain
++	 * allocations, even if it may not control the related size.
+ 	 */
+-	details = kzalloc_flex(*details, exe_path, path_size);
++	details =
++		kzalloc_flex(*details, exe_path, path_size, GFP_KERNEL_ACCOUNT);
+ 	if (!details)
+ 		return ERR_PTR(-ENOMEM);
+ 
+diff --git a/security/landlock/domain.h b/security/landlock/domain.h
+index a9d57db0120d..35cac8f6daee 100644
+--- a/security/landlock/domain.h
++++ b/security/landlock/domain.h
+@@ -33,10 +33,7 @@ enum landlock_log_status {
+  * Rarely accessed, mainly when logging the first domain's denial.
+  *
+  * The contained pointers are initialized at the domain creation time and never
+- * changed again.  Contrary to most other Landlock object types, this one is
+- * not allocated with GFP_KERNEL_ACCOUNT because its size may not be under the
+- * caller's control (e.g. unknown exe_path) and the data is not explicitly
+- * requested nor used by tasks.
++ * changed again.
+  */
+ struct landlock_details {
+ 	/**
+-- 
+2.54.0
+
