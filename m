@@ -1,65 +1,65 @@
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CDD3A783A
-	for <linux-security-module@vger.kernel.org>; Wed, 13 May 2026 18:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103AF3AB271
+	for <linux-security-module@vger.kernel.org>; Wed, 13 May 2026 18:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778697366; cv=none; b=liJuSBG0zeSt2mtGkbUoplmqNOGEZ4NO3BssmHD/EaKl+WfIDVgNcBTOqvDHitrjKT8mvNlzjhQ/2aB+R++PlCP02kO10j7/YSA0e+ErC7BEF9AmAgrjgFnR6NUpOYJqwaZJlkFtOk/HrrfRV9K3gl/07dwOGYOAU3uHapjd980=
+	t=1778697368; cv=none; b=BdoLpqSRkhcUamz8FmKpN4nI5dP/0zmmW3G+o6cTar1hOQu125p+ur4ly3LfmI9znWMxTM+kbmB4quY9SXs/4lBYSQ/pU1akgrNxkO+bqNEZOxliJ0zTRKcjDphK2zaoffaqDZFFHu821ks1CT+xsGhqyWFsIl6cIAKDrLfEe0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778697366; c=relaxed/simple;
-	bh=yqydc2BAvs/EEy/vMFDPydcYDh+gc6ICoo3g/wT4z8M=;
+	s=arc-20240116; t=1778697368; c=relaxed/simple;
+	bh=+TqM+PtcKsHz4Xzb0T/t9rjYOVVf8Wg55mJJ72MLd6A=;
 	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Subject:
-	 References:In-Reply-To; b=urleWDyvLfWbFrKntm0NzDRDJrnxW4wI9XRdEmXKd467pfXC+XdycF8OEPSiMNuDAk3us73Iuk71L59hXYDjCUpcszK3ci9E3jFQ3r5RiPDxiNIE4gSUWOxBE7BRa6c/gxVrss8121uRfj01ggDxcuO5j761suHOb1b97eBWaL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Ef+MNUdg; arc=none smtp.client-ip=209.85.160.171
+	 References:In-Reply-To; b=koGTdTXP0tZZH9H0R8XjNNYW2HLrMTo76WrpTXWsB7j7+Mn36t+lT2gLbK6KI/Y48l3SYMhXpsPeLOsNtz5ggW+bXpyiNg6iKX9ZvRxe7swPbK6/I0s7otfOAor9CEDbHV+XE338kf9gHq4XQBNRFHHhFtSxhzuzhRvHhdu5v44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZIKMEq8x; arc=none smtp.client-ip=209.85.222.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Ef+MNUdg"
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-50fc496c8baso67227111cf.3
-        for <linux-security-module@vger.kernel.org>; Wed, 13 May 2026 11:36:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZIKMEq8x"
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-90fc979d84cso76681785a.1
+        for <linux-security-module@vger.kernel.org>; Wed, 13 May 2026 11:36:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1778697363; x=1779302163; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1778697365; x=1779302165; darn=vger.kernel.org;
         h=in-reply-to:references:subject:to:from:content-transfer-encoding
          :mime-version:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=aQ2lrl+/gKDcPyuGztAL7xFoyeibd4FccB/Ub7cgd0c=;
-        b=Ef+MNUdg2cj68iOeUx6W6u5nft19c9Bx8d31j7AN3WybWxNHZBb6dan2SqkNlVXciP
-         Rbh3XdOv6EcXFPhbjOXlFJQg4RASegCNS6fiX35hq4YDmPc9DD1j0t8dcKFrbcPPlwNV
-         kVy83zVUPu8M9skQHx3H0MKHLsULiQ88MjIerFZQile5SP/YeSExIhjHindyS+CNmTuP
-         lhXjJo17EHoJ0/2lx7J90ZH2pHXasPeLJyzy2X3qK3FjSF3JJsfo8i2N9EHVbE9VIsDT
-         Jx4cZGLBAcVUmRjrZ+iqVRWmq2sDmlZAvdXVDhKeP/5/u8qp2+OQOIOUYSjHuIQr8GCR
-         qmTw==
+        bh=xmWhw8+BzycLbCZdUGo17yGhh7wc4olKhqN+RMzekS4=;
+        b=ZIKMEq8xkGrjNG30QC3AIMbJd4ZWWAHLxvfJ94Q6RCyNGZd9fwLroog1punB40QvFw
+         h8KizRwT7DCSOqhahlu5AoaV+rubVpQRLjun/HFcvoTThml4QjLWlRQoJ5hnpDsmTHE/
+         Gv5QJwFxNbvZpBjI46IdVB9Aao7868mlGoIKkjM5khsE8oQ6T9Ln5Zg9TYWPUXmtcW8V
+         vdYwMl3mbr/4A3Zr2aXuX6gpQOzHHZ/+i0IgjYz+Y0zCB3fwyhxIT0i2WmCRsL6dOeH9
+         /9fDED+mzZLL5XvzHn6CW3wb7jj7pt1a8irMpLgDj7cT9O0VSwV1DbsmhhA6TU4UJ0CJ
+         EMMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778697363; x=1779302163;
+        d=1e100.net; s=20251104; t=1778697365; x=1779302165;
         h=in-reply-to:references:subject:to:from:content-transfer-encoding
          :mime-version:message-id:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aQ2lrl+/gKDcPyuGztAL7xFoyeibd4FccB/Ub7cgd0c=;
-        b=dBT91lV3IfoZhOHnuf1M3j8Ov+kAFilfekRWVg44hpeQJmneFxjWBlOq+LtkHMGzLs
-         lxksMRqVBYUPsdkyYAd4oR+uXxHR0imyKagTxvmgH1BluJ1ssk/qRPY+pixsVziVn27N
-         qbpxc/s6PjAjMV+XWLNFXVYAoFkEIZl+7C5pBmW3T2MUg5RWuds62CUlOk4wX3HPdygC
-         AJnjQxHqMJAM7Ne8BMHnesP/pi6JMNMkG2fphjOBVRf81AKPxJ908p0HwqnKtN03aWDf
-         X8LdT+mKe2f8dyOpd+oFdKz/hyqaSNd4YQZ2N1+MkkXv/Fvw0bEzxJRZiTfCe7dH7UxR
-         vtuA==
-X-Forwarded-Encrypted: i=1; AFNElJ/h8G15aUlq3D3IJF6ExGWVsnJef4o3g1lT1BziWx2pMnHjQkBjqje/WM8yIv0RlRN99b4n7/aqe1r/Q2dWGRXkgIQLg9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhCwZDWnGfMNbYxN31BX9bF3M1el7EamYRSizDbC//L6tENaMe
-	HQUp8jazjvpD+4D3RK9sZyTi31DKJHMvJYCzZ876hu5OX4EydLY2AKKkDnNJFQZd7A==
-X-Gm-Gg: Acq92OHOiidUbi4jLucc750sb7jEE9QOWHVPDhh0VNMaYqTe97VQmz1D6TRqtYDI42s
-	dYytDgVjk2SfbtVtoSBopxuYFaaXz2ViVVR71dUWN4qBgndi3ZlxWv5b2vYmoan2PSj7zu1iDQD
-	dUai2UITki+CULB0q2fQEAX2w3FDIYDREH6DRl9/oOo/6/vCpIgHv0tLEJXnNrwp722QF+vgAyw
-	9ne2xwEUH+GoXGzj/EZnWnl45g7l08BPi8JrI+ZaTD9NXzvk/1l9zAgXlrGFrGOO4KzuPdTQ5eg
-	oFn46uJWXZr/A4NGbfBbBa7LB0ED0jWkC13XTvDeKCK+bhBo6lZ0cDwd+vf0+/VJKXi+EjxG3UR
-	aeHKhVswgvhrhafpmVPe6A2W/ijVr6We+jdwZWwNv5OooS6cMtvkaJjVl8lF6o/3xBQbE2hXj2y
-	W8BwVPly05OjPgI+CKyUhHorlF6mpSlkTF90Dli3z6c7GhlAY7FMJMGSS7moKqcXaVqNbf
-X-Received: by 2002:a05:622a:5:b0:509:965f:888f with SMTP id d75a77b69052e-5162f2a4b4dmr62133441cf.0.1778697362725;
-        Wed, 13 May 2026 11:36:02 -0700 (PDT)
+        bh=xmWhw8+BzycLbCZdUGo17yGhh7wc4olKhqN+RMzekS4=;
+        b=IgaILwGI9ZPlOUWmHAaK376btfWxwCY4W3Y3Frto/37+id6GIZmCzoQ8XedzN5i4v4
+         qa4eD2LFtNiaHFeMkawPT3r6TsnXhmBXjquYUourOjXGulL75QgJhaiLSMh1qAI+5GwZ
+         4QqIHvQwO6h/Ng/pFVaf2eQDvM+ZzghQDuNlKWYr2isi+limvDZEO5iDf7XqX0zMd8fB
+         NmTd5ZpinBK0mouoYrfecg2W0KuF/2Xq3B3cXa804euN5GCE2YniSJTWc8f9w5/t/Gdz
+         jdzSQhJbU49EteGh/xTbJnymKKyNJyy/TFerEpYQK4SO1FX+1gY5peejJrVUGTbUHXow
+         KODg==
+X-Forwarded-Encrypted: i=1; AFNElJ8QoXjs+DfqGttNiYO3kx+U4RGBO6rg33UiHjsaGf4yAqQF2o6AXbYEyTwde5gPW/deGjC59BHlCw1O3NGLgt0HG+Gsu98=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwlJhamJuvnDAnFw+xnwoGB4lVJXbC793FGAb7S5zyPOtmZGIp
+	aCpmyBLg6obBWgU7nCqXFf0E4e4r3dmIj5UeE/PPra6Z5JdU9wg49/HDU14nEKA3cg==
+X-Gm-Gg: Acq92OFzk0syvgX12YepLO7jLiPPfVj+qweYTOZvvSyMlsZV4ZD5o/A/TDX4w4Wyjm+
+	1MyBU3CuNV+UmmQ6lQYMfSsH4yQ4S4Ocu6+U+jf8ncL8XGHQaKrxgqVHLS/0ir2BOAYpe4gHSkm
+	FbktSPRdeBA4RmnleYgvnnwb+UyHDL6bTrqBbIhnkPMo2yIknG6kD/lZ90DJ9jZ5Hs1K3iaE1y/
+	BrL8cuoKVZzu1yTt6/ROjV+KuXcLj+lJbkSilyts9eYyW3W4akut9wIfDHn3O/tyCw7pzfdOyP6
+	+DSXLnXFdjIiSkowkuD9iDoKoapPhLvTb4uMLfbYp7fnmdcc9SEe+0N2xbuwp4t7gTelFmz8lpP
+	rqBuZvgMftePX6qnsTwQtiMzMx4RYVXBzF2B8h1Pr2t9xa+FpGyQxD9b7pEkDosE9Pj39bQVCMx
+	+YBCzoBdyQ71/KFnEdXMg3VZtUOkwe2PLlcv/wATeZD5A00N7+aZEXt/eZQSwhUy1cxUlA
+X-Received: by 2002:a05:620a:290d:b0:90b:9dca:2187 with SMTP id af79cd13be357-90fad385651mr655950285a.38.1778697364951;
+        Wed, 13 May 2026 11:36:04 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-5148e82579fsm151609761cf.24.2026.05.13.11.36.01
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-910bcf3732dsm28874785a.33.2026.05.13.11.36.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 May 2026 11:36:01 -0700 (PDT)
-Date: Wed, 13 May 2026 14:36:01 -0400
-Message-ID: <fed9fdbba52e91a15597b3eeb79c9d2c@paul-moore.com>
+        Wed, 13 May 2026 11:36:03 -0700 (PDT)
+Date: Wed, 13 May 2026 14:36:02 -0400
+Message-ID: <64548a3cec806e2080ce4515777b4a39@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -71,26 +71,28 @@ Content-Transfer-Encoding: 8bit
 X-Mailer: pstg-pwork:20260512_1604/pstg-lib:20260513_1343/pstg-pwork:20260512_1604
 From: Paul Moore <paul@paul-moore.com>
 To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, "Blaise Boscaccy" <bboscaccy@linux.microsoft.com>, "Jonathan Corbet" <corbet@lwn.net>, "" , "James Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, "Andrew Morton" <akpm@linux-foundation.org>, James.Bottomley@HansenPartnership.com, dhowells@redhat.com, "Fan Wu" <wufan@kernel.org>, "Ryan Foster" <foster.ryan.r@gmail.com>, "Randy Dunlap" <rdunlap@infradead.org>, linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, "Song Liu" <song@kernel.org>
-Subject: Re: [PATCH v7 1/10] crypto: pkcs7: add flag for validated trust on a  signed info block
-References: <20260507191416.2984054-2-bboscaccy@linux.microsoft.com>
-In-Reply-To: <20260507191416.2984054-2-bboscaccy@linux.microsoft.com>
+Subject: Re: [PATCH v7 2/10] crypto: pkcs7: add ability to extract signed  attributes by OID
+References: <20260507191416.2984054-3-bboscaccy@linux.microsoft.com>
+In-Reply-To: <20260507191416.2984054-3-bboscaccy@linux.microsoft.com>
 
 On May  7, 2026 Blaise Boscaccy <bboscaccy@linux.microsoft.com> wrote:
 > 
-> Allow consumers of struct pkcs7_message to tell if any of the sinfo
-> fields has passed a trust validation.  Note that this does not happen
-> in parsing, pkcs7_validate_trust() must be explicitly called or called
-> via validate_pkcs7_trust().  Since the way to get this trusted pkcs7
-> object is via verify_pkcs7_message_sig, export that so modules can use
-> it.
+> Signers may add any information they like in signed attributes and
+> sometimes this information turns out to be relevant to specific
+> signing cases, so add an api pkcs7_get_authattr() to extract the value
+> of an authenticated attribute by specific OID.  The current
+> implementation is designed for the single signer use case and simply
+> terminates the search when it finds the relevant OID.
 > 
 > Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
 > Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 > ---
->  certs/system_keyring.c                | 1 +
->  crypto/asymmetric_keys/pkcs7_parser.h | 1 +
->  crypto/asymmetric_keys/pkcs7_trust.c  | 1 +
->  3 files changed, 3 insertions(+)
+>  crypto/asymmetric_keys/Makefile       |  4 +-
+>  crypto/asymmetric_keys/pkcs7_aa.asn1  | 18 ++++++
+>  crypto/asymmetric_keys/pkcs7_parser.c | 81 +++++++++++++++++++++++++++
+>  include/crypto/pkcs7.h                |  4 ++
+>  4 files changed, 106 insertions(+), 1 deletion(-)
+>  create mode 100644 crypto/asymmetric_keys/pkcs7_aa.asn1
 
 Merged into lsm/dev, thanks.
 
