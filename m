@@ -1,150 +1,132 @@
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF524472797
-	for <linux-security-module@vger.kernel.org>; Wed, 13 May 2026 15:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF087429831;
+	Wed, 13 May 2026 15:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778685558; cv=none; b=heFDUZtg7LzLeiuUgLcLlOqBbOXaXmdS9X4WsVYFiiXKTJn1oA7B6BFim6UlBCk/mcMssZr4I/6rL4YtWpQWI7qqV3AzmpOXbA5i60GGHCIhsoSOPxnhYvaVNDshc/io/mzWFSGQA2Hx90Y5tHGpsYv20cbkm8DbdwO/9RqjNPs=
+	t=1778686849; cv=none; b=tobOR3UFw/BFWgkBdVmoMI4S+j0zTotNcB8MqVg4LegA2n5BEx7RIfOZrAM4EQtO6qOpz1JyymIA5nRPG0dN0G7X6O/U8wMukee4YYt+S/PyOIst5UmSkCXIlf0Aq4/kUm1KRMOrZ2St8vVI00sJs1cQSmm6AM1R/pfw376TtV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778685558; c=relaxed/simple;
-	bh=F2TFb4Z42bx5xaV7l9uHeBfZgp9K7v67oCblzjTp5aM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qlTCq6wrDUrhzsl+CFm4yxeqTKzHWpoNbkUsQ3p8Vz5J2IZ2BsZQOW6wDtp3IJUmvOmDr8Hyc7QMWqXJo+CHmuS9trWbpZ8PCp9phgng3jNTVA+dVvprixuDbR8F7u/NPj9lhqCwAvtRe9XSYquKk4EfbCv2MV4YbA/L26NPY3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=oj2expOS; arc=none smtp.client-ip=84.16.66.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1778686849; c=relaxed/simple;
+	bh=wo5C+2xZzhw8VcUkpdZeDHv9USz6c+kDxkR+x31Bfzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UN+e4Z5DK6XL4ka/OtcXc1LO4otDc6NWaxwi0DRdCXNgmipqrkUQUD0slZRPrBSyrIgY0jdyUuJ3BY3e9RWlWR9i6URVl7LG0Eb16og/2nTtT6EDJNWCamyBrJyCAEyEkA2yZN/10QSXXW2VFRYT8X7l428mS6DpDVG79erfRsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nk+pzxGg; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="oj2expOS"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gFxvN63KWzrdk;
-	Wed, 13 May 2026 17:19:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1778685552;
-	bh=kw6g95iI3Skj55YIFmqak/gFqvDfPK0OOJbem/UFILU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=oj2expOSjWRohAZ4PvvAsy4nZQNqgLa3BzIA+jPFALXL7wDdO0X3Gdk/KmrunEaqs
-	 Xsyezpou2Bt+9Sj7v5BVLkwzmCHJ2H6tmnAQJQzJ5M+YsVfuN37APvtJ1+v1tL10+d
-	 JQSNjF2VnoABZWTZ+ZsE+ZGGgZ3YN2r/wxmWZYho=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4gFxvN1Xyyz36n;
-	Wed, 13 May 2026 17:19:12 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nk+pzxGg"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1778686847; x=1810222847;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wo5C+2xZzhw8VcUkpdZeDHv9USz6c+kDxkR+x31Bfzg=;
+  b=Nk+pzxGgrjr49PxwwG0NnBuUQjYdhQzfR4ebqdQOc7xEqzAQVmE9eBdA
+   AYWENjBld5ERokqbFyZz5cbC/9MoKauRHlmEaPk51q+Ee3Sjdopllcv4p
+   3y1gbCmXv3zAZF0z+SyRnNkUE6bqenqoNcqWcofyC3E5BXS1ZfDW1DaiG
+   tCELwwsKK1Z0OTyf8mPDWZWbLtlNfMMlTl/brJk60zf++a8E4e4hspoXa
+   6kLomb9P1l5dnh2JkhIVp0vsETZLUGa49kTDfWmnD2YIuHtBUHX10sPLH
+   aJuksbkKL+RVeTjsQGOpuf0tLmc/DPMCA/PzD27x2FeCqlzgXILS8RevB
+   g==;
+X-CSE-ConnectionGUID: kxIJuMPORmy5lY38LTfYaw==
+X-CSE-MsgGUID: uRLuc32vQVykAf20N5F0Tg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11785"; a="83231335"
+X-IronPort-AV: E=Sophos;i="6.23,233,1770624000"; 
+   d="scan'208";a="83231335"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2026 08:40:47 -0700
+X-CSE-ConnectionGUID: PmjlhOTpT5ePkzrqqjg1tw==
+X-CSE-MsgGUID: pDAHxIbmQtSwxFJbIiGiKA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,233,1770624000"; 
+   d="scan'208";a="242122923"
+Received: from igk-lkp-server01.igk.intel.com (HELO bdf09bfdbd5f) ([10.211.93.152])
+  by orviesa003.jf.intel.com with ESMTP; 13 May 2026 08:40:44 -0700
+Received: from kbuild by bdf09bfdbd5f with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1wNBhR-000000008Zd-3Fow;
+	Wed, 13 May 2026 15:40:41 +0000
+Date: Wed, 13 May 2026 17:39:41 +0200
+From: kernel test robot <lkp@intel.com>
+To: Arnav Sharma <arnav4324@gmail.com>, ojeda@kernel.org,
+	paul@paul-moore.com
+Cc: oe-kbuild-all@lists.linux.dev, Arnav Sharma <arnav4324@gmail.com>,
+	Serge Hallyn <sergeh@kernel.org>, Boqun Feng <boqun@kernel.org>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
 	linux-security-module@vger.kernel.org,
-	Justin Suess <utilityemal77@gmail.com>,
-	Tingmao Wang <m@maowtm.org>
-Subject: [PATCH v1] landlock: Demonstrate best-effort allowed_access filtering
-Date: Wed, 13 May 2026 17:18:53 +0200
-Message-ID: <20260513151856.148423-1-mic@digikod.net>
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: cred: add safe abstractions for capable() and
+ ns_capable()
+Message-ID: <202605131729.NXF18q0f-lkp@intel.com>
+References: <20260506204913.26022-1-arnav4324@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260506204913.26022-1-arnav4324@gmail.com>
 
-Landlock provides best-effort sandboxing across ABI versions:
-applications request the rights they need, and on older kernels the
-unsupported rights are silently dropped from handled_access_* by the
-documented compatibility switch.  The recommended pattern for
-landlock_add_rule(2) calls is to mirror this filtering at the rule
-level, which wasn't explicitly described in the exemple.
+Hi Arnav,
 
-Show the pattern explicitly in the filesystem and network rule examples
-by masking each rule's allowed_access against the ruleset's
-handled_access_* and adding the rule only when at least one bit remains
-set.  This makes the recommended best-effort pattern self-documenting.
+kernel test robot noticed the following build errors:
 
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
----
- Documentation/userspace-api/landlock.rst | 48 +++++++++++++-----------
- 1 file changed, 27 insertions(+), 21 deletions(-)
+[auto build test ERROR on rust/rust-next]
+[also build test ERROR on linus/master v7.1-rc3 next-20260508]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index fd8b78c31f2f..45861fa75685 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -8,7 +8,7 @@ Landlock: unprivileged access control
- =====================================
- 
- :Author: Mickaël Salaün
--:Date: March 2026
-+:Date: May 2026
- 
- The goal of Landlock is to enable restriction of ambient rights (e.g. global
- filesystem or network access) for a set of processes.  Because Landlock
-@@ -155,7 +155,7 @@ this file descriptor.
- 
- .. code-block:: c
- 
--    int err;
-+    int err = 0;
-     struct landlock_path_beneath_attr path_beneath = {
-         .allowed_access =
-             LANDLOCK_ACCESS_FS_EXECUTE |
-@@ -163,25 +163,29 @@ this file descriptor.
-             LANDLOCK_ACCESS_FS_READ_DIR,
-     };
- 
--    path_beneath.parent_fd = open("/usr", O_PATH | O_CLOEXEC);
--    if (path_beneath.parent_fd < 0) {
--        perror("Failed to open file");
--        close(ruleset_fd);
--        return 1;
--    }
--    err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
--                            &path_beneath, 0);
--    close(path_beneath.parent_fd);
--    if (err) {
--        perror("Failed to update ruleset");
--        close(ruleset_fd);
--        return 1;
-+    path_beneath.allowed_access &= ruleset_attr.handled_access_fs;
-+    if (path_beneath.allowed_access) {
-+        path_beneath.parent_fd = open("/usr", O_PATH | O_CLOEXEC);
-+        if (path_beneath.parent_fd < 0) {
-+            perror("Failed to open file");
-+            close(ruleset_fd);
-+            return 1;
-+        }
-+        err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
-+                                &path_beneath, 0);
-+        close(path_beneath.parent_fd);
-+        if (err) {
-+            perror("Failed to update ruleset");
-+            close(ruleset_fd);
-+            return 1;
-+        }
-     }
- 
--It may also be required to create rules following the same logic as explained
--for the ruleset creation, by filtering access rights according to the Landlock
--ABI version.  In this example, this is not required because all of the requested
--``allowed_access`` rights are already available in ABI 1.
-+As shown above, masking the rule's ``allowed_access`` against the ruleset's
-+``handled_access_*`` is the recommended best-effort pattern: rights the running
-+kernel does not support are dropped (the compatibility switch above already
-+cleared them in ``handled_access_*``), and the rule is skipped if no supported
-+right remains.
- 
- For network access-control, we can add a set of rules that allow to use a port
- number for a specific action: HTTPS connections.
-@@ -193,8 +197,10 @@ number for a specific action: HTTPS connections.
-         .port = 443,
-     };
- 
--    err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
--                            &net_port, 0);
-+    net_port.allowed_access &= ruleset_attr.handled_access_net;
-+    if (net_port.allowed_access)
-+        err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
-+                                &net_port, 0);
- 
- When passing a non-zero ``flags`` argument to ``landlock_restrict_self()``, a
- similar backwards compatibility check is needed for the restrict flags
--- 
-2.54.0
+url:    https://github.com/intel-lab-lkp/linux/commits/Arnav-Sharma/rust-cred-add-safe-abstractions-for-capable-and-ns_capable/20260513-154340
+base:   https://github.com/Rust-for-Linux/linux rust-next
+patch link:    https://lore.kernel.org/r/20260506204913.26022-1-arnav4324%40gmail.com
+patch subject: [PATCH] rust: cred: add safe abstractions for capable() and ns_capable()
+config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20260513/202605131729.NXF18q0f-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260513/202605131729.NXF18q0f-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202605131729.NXF18q0f-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   PATH=/opt/cross/clang-20/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+   INFO PATH=/opt/cross/rustc-1.88.0-bindgen-0.72.1/cargo/bin:/opt/cross/clang-20/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+   /usr/bin/timeout -k 100 12h /usr/bin/make KCFLAGS=\ -fno-crash-diagnostics\ -Wno-error=return-type\ -Wreturn-type\ -funsigned-char\ -Wundef\ -falign-functions=64 W=1 --keep-going LLVM=1 -j384 -C source O=/kbuild/obj/consumer/x86_64-rhel-9.4-rust ARCH=x86_64 SHELL=/bin/bash rustfmtcheck 
+   make: Entering directory '/kbuild/src'
+   make[1]: Entering directory '/kbuild/obj/consumer/x86_64-rhel-9.4-rust'
+>> Diff in rust/kernel/cred.rs:168:
+        // the specified capability is granted.
+        unsafe { bindings::ns_capable(ns, cap as i32) }
+    }
+   -
+    
+>> Diff in rust/kernel/cred.rs:168:
+        // the specified capability is granted.
+        unsafe { bindings::ns_capable(ns, cap as i32) }
+    }
+   -
+    
+   make[2]: *** [Makefile:1954: rustfmt] Error 123
+   make[2]: Target 'rustfmtcheck' not remade because of errors.
+   make[1]: Leaving directory '/kbuild/obj/consumer/x86_64-rhel-9.4-rust'
+   make[1]: *** [Makefile:248: __sub-make] Error 2
+   make[1]: Target 'rustfmtcheck' not remade because of errors.
+   make: *** [Makefile:248: __sub-make] Error 2
+   make: Target 'rustfmtcheck' not remade because of errors.
+   make: Leaving directory '/kbuild/src'
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
