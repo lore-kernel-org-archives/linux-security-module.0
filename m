@@ -1,55 +1,55 @@
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDF9386C3E
-	for <linux-security-module@vger.kernel.org>; Wed, 13 May 2026 16:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3C2318EC1
+	for <linux-security-module@vger.kernel.org>; Wed, 13 May 2026 16:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778688365; cv=none; b=dgw1TeRSp4G/c4EEduPoa5Xpj8hqe422YgQfhlWIazRI0HGBQzSWHIe6YHMxRVfBKKwntiquRs5fT3alNRoc82a3vbe9pAI6pR/VHn+i2QtK0dw+QIQszZeslKC4YKcrRMXMurCQdPP3+axIVCxdExsxUpBe7BOTD3iGZUKfTdE=
+	t=1778688367; cv=none; b=WhUkNc/OiqHqU1RyRKdsWadk5r6AY/P+FWutRyvEOCP94AEF74BFUDk505ZLThSmNFPmMzwOTUA55Q9flUiexZ2rjd34L8Jtplf5UsFx2ir2gaDmEnAFRKTKlx3c7HXWCG+IuN8efUGR7IfvZpwg0DcCljKorSKK4WHR/DfbA84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778688365; c=relaxed/simple;
-	bh=JAwX3AkvZkfbKbJuGfYQKegG4J7hYKkEoeJo8zYNXSo=;
+	s=arc-20240116; t=1778688367; c=relaxed/simple;
+	bh=LtQu5Ts6FLQCutyYUK191hDauphYdyu8JnCc1b1kd6c=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=liSO/Uye+zlKUbDeTlaJDuaq7ojaDswnBX9CNoxgyweibw4RL0x7yUhlJ/OIEOtrTz+7NMaqeVb3IMApvfjqSwnmzCNUngqVYxDYElbsB7wo228zBiGEDasB4+1z0+60evalBfHrDt8lDSfm6FfMWoGwyBLQPNkqnVgSb8T89F8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YURroP7S; arc=none smtp.client-ip=209.85.221.74
+	 To:Cc:Content-Type; b=LClrNNSa2S7qa1FuhFJI3cTMLJ9Z0EbwQhOZWRUJD/LgH1lcnyYhOBBFjx2x4gCl4LnvQtgHeEH5u/FtrqvFzGZX/mAz0j8lxir0Cq8PaFivI/+AKfLDQ499NNgMjFXQl8X2PDS2fhNz8ChN/HRxn+AoFeIO26qGguUAToul6Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cKcBeXIj; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YURroP7S"
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-43d7b7bacddso4640089f8f.0
-        for <linux-security-module@vger.kernel.org>; Wed, 13 May 2026 09:06:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cKcBeXIj"
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-48eb0da933fso12479925e9.0
+        for <linux-security-module@vger.kernel.org>; Wed, 13 May 2026 09:06:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1778688360; x=1779293160; darn=vger.kernel.org;
+        d=google.com; s=20251104; t=1778688362; x=1779293162; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DVDXO5pYVsq4eoZ/zimi9NTOwyUpdlLrzvrvR+5Dm08=;
-        b=YURroP7SBAOat1fEVqm+ywZYpHbZPaSfgH0iTil4iGuYGuxBmqqaCFEYZstumcReUR
-         wCJU+TDBn+dbPcyMs9p/a7D3ibob0HatXOhhh6sBM0LXMQCs3ZNv0TAxdlcyax1kj0iA
-         HNMxK774EKA3jnXT3a3g+i14SPqvuUDKfadqjFAIflDIrURdU2v4reJ7pjkVZvbmmReX
-         uW4H/XCUlvvgHvFe09O6u++twketl1ngdrRVERjrbQ83/p3AC+bNS5jvdK8ucJW59UaF
-         Hv4q000VDc03tDu0qocOKM369gT7Xv9zUnRhfSrtZWYNtrVKrHqk57wLiVT2BqYqslF9
-         oNQg==
+        bh=v6iLgg2IwhGx4Px+veoUITyB5prKW5l88fpsVHcBhkk=;
+        b=cKcBeXIjmAy77C3t/U1S7tu/1aCEzI0uwwL4UG+5BF3IldbFc3DhA64/K7v8mCq5Jt
+         rzjuUH4BcZvvyeeDpjX5EoDOkN+atEZWf+1Lw768+cV9yJrDiVBh1wJQUlXat0wPIRkm
+         Go9zSHva4Mn/6/9SQ3RSNgXFV4shjqaUxLhLJvYNFg3CtIcgT6yJ6QDa9UpVtpcPQrk9
+         GXEkNT1zb+hoZ60MZTtxgDrc/NznYtnvPzpvTYvbnf9gr6RDdhoH9VQbPGn1+CXNeXng
+         xjqbijz5aUmZYjIUDVH124xNfrq3u/dueZyqqOvrjU0eXxAl0C698Q2z9x7Z4luNlv/V
+         YFMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778688360; x=1779293160;
+        d=1e100.net; s=20251104; t=1778688362; x=1779293162;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=DVDXO5pYVsq4eoZ/zimi9NTOwyUpdlLrzvrvR+5Dm08=;
-        b=q+VsQa/nMohCUmQZMvzJSkkyE/W0Il902lrWVvdqDDQtFo0inDCNG0s/yJ8Dde6sa7
-         XTXey2XnoPRoq0J/OAHlcWUwia96yVcpcylNJ+SiM8djZ7k7eE+9aAnr+aZoOFON70ZJ
-         j0IA07YR2jXHwM4Zc1q3jC6NEgjBwBOgdf38ekDRLY/YnJ2H3wIGYqyX4Q9Fs93gqCMN
-         FSHpj0D7Dbph1/8okgaT6Mn5ZlAsImf12Vpboi+cvaOcmRRTiT+9WrRp0z7zuPDOhflN
-         nq3t/dh8caz+svTT03aibEcx7fJuG9FZcO+KrJAQTQcHu0VgfVYnZhnQG5iKkuIEtn7l
-         avGw==
-X-Gm-Message-State: AOJu0YxJepojVJtUb/P1V/P/49jXFHz8QNxIIlhCewZ4vhJwfq7Uuthu
-	EYYaCRbiBynRiuOl9lf7Jeu2mDwOx10yHcN6h9LZHuEnyDHxfAax6Clje33E9/ss+63h/y5NfUe
-	seJId8Q==
-X-Received: from wrvc16.prod.google.com ([2002:a5d:5290:0:b0:439:b9ad:6599])
- (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:24c6:b0:45c:154d:6387
- with SMTP id ffacd0b85a97d-45c7a7dc6a2mr6051437f8f.37.1778688359013; Wed, 13
- May 2026 09:05:59 -0700 (PDT)
-Date: Wed, 13 May 2026 18:05:50 +0200
+        bh=v6iLgg2IwhGx4Px+veoUITyB5prKW5l88fpsVHcBhkk=;
+        b=p7Bsc+gTTN2rJBoT8zBkvzQdwWCLmxH7Xyad3xNlOA6l/Qb1gBH9EQoFlPF5pzIv0F
+         +utw/P15tKsvdmd0Im1lI1mtrPS5Vdr6jfZnAQmEaY81/mQSnYzQi9I8zYgxEBdngyZJ
+         eeEaBvvPVjVWhysEXZz63k1YINXlpNbQ7mP2uvGA0//hE3dqDoIYN6UG6QBEkrIUs9Vg
+         qxnLyJpoXcdeh6q8psutQWW2EIPXuif5+tKdG5+viXSsWqICwonP7h3Lii+IDueebEZa
+         MLIhYhExM+i0Pf6nbwM8nzyB3cHlAXrbAoUQDu329O9abRvduORzwHQsMkzVq7Q1MbUU
+         x3aA==
+X-Gm-Message-State: AOJu0YzVCEF1+hy0Gtj355AFF7DFPr3x54htLN4wIsA4+pSA6UHZ+fGB
+	yHGT/4Rcz3h3WkNq91uev3vQKLRqAz5sh+Z2kbdtIFSs9z//8JBqE9c3a6gEzXQXGlmcqQzxzVe
+	S5NyEBg==
+X-Received: from wmbjx7.prod.google.com ([2002:a05:600c:5787:b0:489:1ad9:4a6b])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:5010:b0:48a:53ea:13eb
+ with SMTP id 5b1f17b1804b1-48fc9a021bfmr55133765e9.5.1778688362146; Wed, 13
+ May 2026 09:06:02 -0700 (PDT)
+Date: Wed, 13 May 2026 18:05:51 +0200
 In-Reply-To: <20260513160552.4022649-1-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -59,8 +59,8 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20260513160552.4022649-1-gnoack@google.com>
 X-Mailer: git-send-email 2.54.0.563.g4f69b47b94-goog
-Message-ID: <20260513160552.4022649-2-gnoack@google.com>
-Subject: [PATCH v2 1/3] landlock: Require LANDLOCK_ACCESS_FS_MAKE_WHITEOUT for RENAME_WHITEOUT
+Message-ID: <20260513160552.4022649-3-gnoack@google.com>
+Subject: [PATCH v2 2/3] selftests/landlock: Add test for RENAME_WHITEOUT denial
 From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
 To: "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, Christian Brauner <brauner@kernel.org>
 Cc: linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
@@ -70,162 +70,48 @@ Cc: linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-renameat2(2) with the RENAME_WHITEOUT flag places a whiteout character
-device file in the source file location in place of the moved file.
-This creates a directory entry even in cases where all
-LANDLOCK_ACCESS_FS_MAKE_* rights are denied.
+Add a test to check that renames with RENAME_WHITEOUT are guarded by
+LANDLOCK_ACCESS_FS_MAKE_WHITEOUT.
 
-Introduce the LANDLOCK_ACCESS_FS_MAKE_WHITEOUT right, which is checked
-for the origin directory if RENAME_WHITEOUT is passed.
-
-This does not affect normal renames within layered OverlayFS mounts:
-When OverlayFS invokes rename with RENAME_WHITEOUT as part of a
-"normal" rename operation, it does so in ovl_rename() using the
-credentials that were set at the time of mounting the OverlayFS.
-
-Bump the Landlock ABI version to 10.
-
-Suggested-by: Christian Brauner <brauner@kernel.org>
-Suggested-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
 Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
 ---
- include/uapi/linux/landlock.h                |  3 +++
- security/landlock/audit.c                    |  1 +
- security/landlock/fs.c                       | 15 +++++++++++++++
- security/landlock/limits.h                   |  2 +-
- security/landlock/syscalls.c                 |  2 +-
- tools/testing/selftests/landlock/base_test.c |  4 ++--
- tools/testing/selftests/landlock/fs_test.c   |  5 +++--
- 7 files changed, 26 insertions(+), 6 deletions(-)
+ tools/testing/selftests/landlock/fs_test.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-index 10a346e55e95..1f8a1d6d25f1 100644
---- a/include/uapi/linux/landlock.h
-+++ b/include/uapi/linux/landlock.h
-@@ -328,6 +328,8 @@ struct landlock_net_port_attr {
-  *
-  *   If multiple requirements are not met, the ``EACCES`` error code takes
-  *   precedence over ``EXDEV``.
-+ * - %LANDLOCK_ACCESS_FS_MAKE_WHITEOUT: Create a whiteout object through
-+ *   :manpage:`rename(2)` with ``RENAME_WHITEOUT``.
-  *
-  * .. warning::
-  *
-@@ -356,6 +358,7 @@ struct landlock_net_port_attr {
- #define LANDLOCK_ACCESS_FS_TRUNCATE			(1ULL << 14)
- #define LANDLOCK_ACCESS_FS_IOCTL_DEV			(1ULL << 15)
- #define LANDLOCK_ACCESS_FS_RESOLVE_UNIX			(1ULL << 16)
-+#define LANDLOCK_ACCESS_FS_MAKE_WHITEOUT		(1ULL << 17)
- /* clang-format on */
-=20
- /**
-diff --git a/security/landlock/audit.c b/security/landlock/audit.c
-index 8d0edf94037d..09c97083f599 100644
---- a/security/landlock/audit.c
-+++ b/security/landlock/audit.c
-@@ -38,6 +38,7 @@ static const char *const fs_access_strings[] =3D {
- 	[BIT_INDEX(LANDLOCK_ACCESS_FS_TRUNCATE)] =3D "fs.truncate",
- 	[BIT_INDEX(LANDLOCK_ACCESS_FS_IOCTL_DEV)] =3D "fs.ioctl_dev",
- 	[BIT_INDEX(LANDLOCK_ACCESS_FS_RESOLVE_UNIX)] =3D "fs.resolve_unix",
-+	[BIT_INDEX(LANDLOCK_ACCESS_FS_MAKE_WHITEOUT)] =3D "fs.make_whiteout",
- };
-=20
- static_assert(ARRAY_SIZE(fs_access_strings) =3D=3D LANDLOCK_NUM_ACCESS_FS)=
-;
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index c1ecfe239032..09de6ba5c3a3 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -1519,6 +1519,21 @@ static int hook_path_rename(const struct path *const=
- old_dir,
- 			    const unsigned int flags)
- {
- 	/* old_dir refers to old_dentry->d_parent and new_dir->mnt */
-+	if (flags & RENAME_WHITEOUT) {
-+		int err;
-+
-+		/*
-+		 * Rename with RENAME_WHITEOUT creates a whiteout object in the
-+		 * old location, so we check the access right for creating that.
-+		 *
-+		 * See Documentation/filesystems/overlayfs.rst and renameat2(2).
-+		 */
-+		err =3D current_check_access_path(
-+			old_dir, LANDLOCK_ACCESS_FS_MAKE_WHITEOUT);
-+		if (err)
-+			return err;
-+	}
-+
- 	return current_check_refer_path(old_dentry, new_dir, new_dentry, true,
- 					!!(flags & RENAME_EXCHANGE));
- }
-diff --git a/security/landlock/limits.h b/security/landlock/limits.h
-index b454ad73b15e..e59378e8e897 100644
---- a/security/landlock/limits.h
-+++ b/security/landlock/limits.h
-@@ -19,7 +19,7 @@
- #define LANDLOCK_MAX_NUM_LAYERS		16
- #define LANDLOCK_MAX_NUM_RULES		U32_MAX
-=20
--#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_RESOLVE_UNIX
-+#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_MAKE_WHITEOUT
- #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
- #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
-=20
-diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-index accfd2e5a0cd..d45469d5d464 100644
---- a/security/landlock/syscalls.c
-+++ b/security/landlock/syscalls.c
-@@ -166,7 +166,7 @@ static const struct file_operations ruleset_fops =3D {
-  * If the change involves a fix that requires userspace awareness, also up=
-date
-  * the errata documentation in Documentation/userspace-api/landlock.rst .
-  */
--const int landlock_abi_version =3D 9;
-+const int landlock_abi_version =3D 10;
-=20
- /**
-  * sys_landlock_create_ruleset - Create a new ruleset
-diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/s=
-elftests/landlock/base_test.c
-index 30d37234086c..6c8113c2ded1 100644
---- a/tools/testing/selftests/landlock/base_test.c
-+++ b/tools/testing/selftests/landlock/base_test.c
-@@ -76,8 +76,8 @@ TEST(abi_version)
- 	const struct landlock_ruleset_attr ruleset_attr =3D {
- 		.handled_access_fs =3D LANDLOCK_ACCESS_FS_READ_FILE,
- 	};
--	ASSERT_EQ(9, landlock_create_ruleset(NULL, 0,
--					     LANDLOCK_CREATE_RULESET_VERSION));
-+	ASSERT_EQ(10, landlock_create_ruleset(NULL, 0,
-+					      LANDLOCK_CREATE_RULESET_VERSION));
-=20
- 	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
- 					      LANDLOCK_CREATE_RULESET_VERSION));
 diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/sel=
 ftests/landlock/fs_test.c
-index cdb47fc1fc0a..53d1b659849f 100644
+index 53d1b659849f..bdad92195f62 100644
 --- a/tools/testing/selftests/landlock/fs_test.c
 +++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -579,7 +579,7 @@ TEST_F_FORK(layout1, inval)
- 	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
- 	LANDLOCK_ACCESS_FS_RESOLVE_UNIX)
+@@ -2248,6 +2248,19 @@ TEST_F_FORK(layout1, rename_file)
+ 			       RENAME_EXCHANGE));
+ }
 =20
--#define ACCESS_LAST LANDLOCK_ACCESS_FS_RESOLVE_UNIX
-+#define ACCESS_LAST LANDLOCK_ACCESS_FS_MAKE_WHITEOUT
++TEST_F_FORK(layout1, rename_whiteout_denied)
++{
++	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_MAKE_WHITEOUT, NULL);
++
++	/*
++	 * Try to rename a file with RENAME_WHITEOUT.
++	 * file1_s3d3 is in dir_s3d2 (tmpfs), so it supports RENAME_WHITEOUT.
++	 */
++	EXPECT_EQ(-1, renameat2(AT_FDCWD, file1_s3d3, AT_FDCWD,
++				TMP_DIR "/s3d1/s3d2/s3d3/f2", RENAME_WHITEOUT));
++	EXPECT_EQ(EACCES, errno);
++}
++
+ TEST_F_FORK(layout1, rename_dir)
+ {
+ 	const struct rule rules[] =3D {
+@@ -6950,6 +6963,7 @@ TEST_F_FORK(layout2_overlay, same_content_different_f=
+ile)
+ 	}
+ }
 =20
- #define ACCESS_ALL ( \
- 	ACCESS_FILE | \
-@@ -593,7 +593,8 @@ TEST_F_FORK(layout1, inval)
- 	LANDLOCK_ACCESS_FS_MAKE_FIFO | \
- 	LANDLOCK_ACCESS_FS_MAKE_BLOCK | \
- 	LANDLOCK_ACCESS_FS_MAKE_SYM | \
--	LANDLOCK_ACCESS_FS_REFER)
-+	LANDLOCK_ACCESS_FS_REFER | \
-+	LANDLOCK_ACCESS_FS_MAKE_WHITEOUT)
-=20
- /* clang-format on */
-=20
++
+ FIXTURE(layout3_fs)
+ {
+ 	bool has_created_dir;
 --=20
 2.54.0.563.g4f69b47b94-goog
 
