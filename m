@@ -1,153 +1,163 @@
-Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1550BE56A
-	for <linux-security-module@vger.kernel.org>; Thu, 14 May 2026 17:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.89
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778779923; cv=none; b=IlGaKrA3osVWhNozFEHhVmQT6uFB3UaZiI3i54wanBm5XpH/oqvEGWpfGpfvnhFpiNeB3hhFMHkhr7lRowpMEe64ySUT7nRx3npW3L3r8p2UDyPCajjQ6BiB1Y4+swC1EcqCBiJWieNw1YVtH4GouH1Szdwjy96uOYKco/+CN0s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778779923; c=relaxed/simple;
-	bh=e4j8oDUo7SMDEd23DYNwxIvhF/0Xnmro6uA3NQyoq98=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hxOjZzQP6w/K0mbl0bJZ7zK5d8pV7AihJKir33Gq6GYPjUFGDdsTPjbsHIIR1w8/E2Jzgbk6AWbEVkX943zm6L1G3mGZsGTVcFaJl2FoBw+Lhtg3CuKl8lHo1Xy4eyZzoiGlBjIiPVq/FB6liwgveCufniHf76jNT3f3Yn1AWOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=YA6PRnw9; arc=none smtp.client-ip=66.163.189.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278CA31B131
+	for <linux-security-module@vger.kernel.org>; Thu, 14 May 2026 20:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.175
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778789731; cv=pass; b=aVCOFSFQSUkWYviwUs2Ym/oerVUpGWo4BxlZ7kmHSumZHSOzySckSWoizEvukXdnI512oQqVaHzYalb6Q2VRwjnxzxaYA1LoZJMDYTZsGtkwwfKAuYM4bdLIp67R7UwDgAlo6tw5NvEH/xLJkNYLRPOR5sQNPfYRp9k4NmmmFd4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778789731; c=relaxed/simple;
+	bh=L23g/GV6s5dbwKzNwqZYuRfdnx5W42pO/aIZUxIvmnc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gs5jHh8McRUAJMAkKtrs9vMx0h0KwYyG30hw92u0v9eys2wc9SO1ZRwFWTKktP+fBceatusu0oBLCa50kFrtm27pHKy6+CfZpRv+/ErkRleJlW80AkHTUQ0E31j2ketsVV7jqo7g5tXoSJFLR6TR0rxVeBIoYdQCCpSDLkyCJP0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SStkBo0I; arc=pass smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="YA6PRnw9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1778779921; bh=i2vPqlj8KNEnBhS+nIteciS3u9mAPHOTQVqdtjqlIDw=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=YA6PRnw94aXjkR2z/5ZzyYS3rY2FoJ+f0yUT0OJI4dkRQ5dWh+nNekjXxcFl0noIBDUOAkj7R7zOpIfhEEI00Vt19eGQO4HRGK4gfYfm5hyFFHmOE2Dz0VgZoN7PUXG4/4Q9LtWr2q3wrQ2W9e/7VWVzaOckWRSZQcLjXFUeLerOVIm0QYMFcTmeQjgpsHKAvCrm7/4QR0HP1EpfZ3qwuRKkkJxOUx1uOoZ3GzYicgMzuhEbjZaTCIg8kYlbaI+9XFH18pc6O2qRprgfMjtMvxFoK6qGApbB0N998NtqrgG+0O4ZuhIoRr6ruW9cqqKm89kNu5hCAcpiPzTmtQtSPA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1778779921; bh=+hq7NPkEmzkJcfWgUsNNEZrt9TX6V5GG93tLmJe4Pj9=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ZXCbPejebsNA/6tpAFzuIEMuJDuc9a11LmHv4Y2vSjd41sQlEYmsLsQxrWx+j5VNwc+UKxkZHv/zPo7VhXxTkV2oqBn2iLkn78FRe7M9MWcobYbjnvpixkw5voZzCw7IFz+xdKnKl2yxy1WmEU966srN2CQIERqSIK00XBwv2YC38WJ4u3W+CAA2oxghHOuWmgSMG2l+SFYJQG/hnsDaPODOay33ml1AdzZqPTrUhtSWR1AhKuy+y/eCrUPrHH9yxzjJ52wmrl+rX6fQ7eT2Fe5lSPsmxXqg9jbGU51VJtqekEaDSkGa2Z5Rr+CuF6fqoTGXHxqLQO5oT2rW/GqXLg==
-X-YMail-OSG: ooYDRH0VM1mKc9T21LCAtyC_UUWWtrXGzBx1v5sn0QBPV8HXXO9dUEvYScTNBFz
- oKY_JbcYUBDeEBuBnpQ3YfrXiBh5neanPQazFb5v7OWhOC7JqEMtA0N.ssWfUSxazZsQ3lAJlPdE
- IHJdfvC3elw9_3up2arVvtOZyjoOOYnLiMZxPA2MnGDJuVP7uVmRmHxGowGotEiAjpHNPzgVgcod
- yiLj4AVSS.YSc.tRi8OeJUdJch4DrsSnqBhBxGOOppUws88alWWrlmTZSWr5ke67kghPQuKvCAWy
- NxnKgY_qvpVuxBS_scWXW.eQAXwYYavEeePgo0fM_GVoZEGakPSxmG1YFK7Uh5adn4IAFHKd5G1A
- PF1UQon0lpI59C2YGbSrijR4ct2uzmgFTfFJwc1mfu0_7oDdK25d.hsZW_RyOSFgF4fKliuSZEwe
- zfs6TrBitJwOKRT4a7P1HgWWHtKqO.rD6uaxK1V8iFHfy7VSXK7Xh0_YU508CggwdKrAS22Sf520
- WKNaeBAzpub9Gn6UEtJ1zyn2tNxAldXX.ic0oL7wvpxyA05bbjlWYibuA7928C5IC2vyUeE_Sdxm
- qRVeXF7ak_VM.M7QcFV8jv1cYxXK4YwApupRJtal1494xApO1dKaNEp0KG6iQ5nCei5TVPuDSf91
- .peBCUF_UdhIiqAk2xfNYiDUeTIDrf6sjkiVGhQpjUnI23kcXcEOEsGpBWFimhiZenDZ76kdMwqR
- 6Dt4oLISVF0TwmluWmZWLqENSRm.m7s4J7BtxWZgNOQrDViPbrGzo9ZGT40WIAxcQpiZhWqycvmf
- m0T5tLzEX_q3UBRYedsFpbnFJiUcoomkvbZ5iBIaFh96apD_R2SajTSwCoK8PGApuAsqLh7hDYRj
- MKGpmpTUfaioSqcd0uRXgooh9LZeOBXVOORfwdiqK3rpid_V4t.IY2LtbeAmzd0uW0d7HnFLl8LW
- 65C84RVGYYG82V_dmnXxE1d907XLfdcEKW6NFlzxVYK7WF5Fs5IYZvvwyEHI_GueKsSePSo0GCRG
- zYfnjlj9FYRqlPTPQE.wST6xmaILgKKqXZY2m1C3grxqHRkC3oLMSMjEuAo8xZK16dUxGxzG0TdB
- ki2Xo4c0TwPUwRsTH6_dLLsqYkqmMe6gfH79sCG8MPK4B94Z07KUtTGcEhOb7BXXsKTkC3TJ9oWr
- ObnARfphyXRrZ08JN38KbNeleFCBZ_4ZhGlxj8xEvQWR5duh_0F3OrRoAiGWLQh4wjyl9iXJ3Bke
- YQwBTt9P2_ZxuHFxjhKcv1RZszjiq0mpt6wfZsm6fBAaCWg._MCHB2hzfZjqHIm5wii7LGUk2r8F
- OAL3NXAChCBdhU1UlwJhoPVGeLPz2NaS5u_HZjD5XQPjRjkuMXPUTTEMQ46rO04OliE4lC8AlWW6
- w79ZrWJmRF3_9ceQwY3EMnjDNcxMU.S3zJ2PXi_vub41D_SG2HyWjJeYhSs47zgZQmZFevoUNgbu
- Y793zB9Q6NPeceGQQSTJOEqxtYv91iKHsLLKQ5vbwUZFKwN6AppBm.ZSjNPK4fJCCRsKzJZtpvXu
- xi_J.ScZGpx478qjcjej0ulbrJrqLX7LRF0e_06MaeCY3.JTdwUPqPW1MaQdfq1zyh4CkOnIad3K
- 6ufarr9AcHf9cDcgoXVD6sxRJD15hErKiDma5vN.hi7utJTKWQi3baiXDiRaNlvs5EBo40U9HKVM
- fFB9AFdBfkEOsN4bamGo6ygkGqvIzatC1kTSmxs1tKgmaAhSZOS4Af_cUlbITO2_fh1PB7zcF_AO
- cadDvt9nxmJ_DfMabJwv8QE4tJGAXaurae.VgSGwJaRYGeUcEBSAftM_0LJZ1AWvs.zNaQkcaEl_
- aCsfdAza9l6wmAKl7xWNjGerDmXGa24C4O2PQv72znRZQAgWwdcuLVVI76j4C1lpwUnQDFBazWJ2
- u.PqAT9.ti3bOr8qcsL_0QNnZSfYp.RY87eVOOxylc8BtX8Px3F2_oH2VXRaKL2FdNYvPaz_gfc.
- GHGAfsHtDOjkEsVjkBNQPp91h6au7yoeGN33evu7WkOB9cJW1.GSACdFd3mlIgGl_cOVc9b9VmMC
- DnzzgwPLD2FyW7by0ssSFVY4w.TFLVhDnSXGuBrG5PpyeC5GFbBThSa1jiSlqJRih26eRqs0Zj0K
- rJi.AjEpObhDw.uIQjRDaoNbO.q27jnmyX225FVpy9oSQDe96msp5mCQ7o6WwxyGNa9cEi.cmDtr
- 6ssgDS0WczxD7OI1buA6jo.k9kNOhtBeS6bPZf_cMNIvFWtuPWQ.mi_wnzbE3YQrRpyo.zcGZrDk
- 21n8T
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: d8367289-f829-468e-8bda-437b31d418e6
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Thu, 14 May 2026 17:32:01 +0000
-Received: by hermes--production-gq1-7bb7df5c46-zj6qc (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ee76f6b666610504e63d45a3cfbbc655;
-          Thu, 14 May 2026 17:11:19 +0000 (UTC)
-Message-ID: <7e165421-a688-4025-a33a-8eefbb84c4b5@schaufler-ca.com>
-Date: Thu, 14 May 2026 10:11:18 -0700
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SStkBo0I"
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2baca4df358so51361245ad.2
+        for <linux-security-module@vger.kernel.org>; Thu, 14 May 2026 13:15:30 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1778789729; cv=none;
+        d=google.com; s=arc-20240605;
+        b=YDn9HFCHkkV2b2rCVh1w2Jenajk/Ozcpf27xxxxxN+BNKy+0KCeubUHhngd8UhtdHF
+         +ycQvYTnGQpDWN74i8dOID2iaMNqSkABDj3nTg8j+MMiJkE92FcKb8mUYqgYlioHJHsV
+         ycGw2dYxFsGauYq/4gQS+es/qDDgG0HrSblrNI6MjnFz1lsuq26RwdljTrkyE7XqKcTs
+         lgK9XkrdVWEWHjsUAZfa2g+IrM6lJKKz6fX8QQoa3aUPGiEW5gUXPhpZ/ogn0Em6ZxsT
+         U10eS0m4puqSutDEMzDRlwt8W6LM9l0hhl+XxBY4/dK9lFU0zjFzNQqxjDU3SQe7Ajd5
+         M9Tg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=dSkJycESPksBK1TkswZjGhIZC6pa0KpxZLEtY/1MYi0=;
+        fh=DQNEOSRO1ABSt8BT+s9V9Rt3n8fjlDnqRsGPoMGIwis=;
+        b=fbKxDB9sMVRXLruYWPD+m27cmx1AytzusoJFdSJvMAPbRVJ4AbYAFtnua9DDIm5pFy
+         QuiQXV9OKrBYjp0tYoAXKHF3xRvcHklKH+5HV8nmSnd70OegoLMOBZBuJQkNvV+dhZSb
+         96zQ3+hj0rzrFQMtfEy/X4sIJ3zAFRY9nzqNLGEkVmQzUWFN59KdOhe0Z+z879h2u4yW
+         i9mBjWAXqjypHtmiaFjNQFVxE5pCZ58pgzG3ERVUK8P9p8fSp9nPaIhFcKFnuk+ylrxE
+         4lxSOhTuISuUPDowo5+SBsa8UsiHVhMFPq80+KCb/3rzOyUQ1GhBR0Gs0KtwT5vJ9iCh
+         AJuA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1778789729; x=1779394529; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dSkJycESPksBK1TkswZjGhIZC6pa0KpxZLEtY/1MYi0=;
+        b=SStkBo0IShj1FOW3eRP8bphCx31rwPomyT0tK1vnCXpmXw6GbWsLjbQEgsuTL4gScK
+         Zc63iWvd8FUZnFbJgiBATeHv1WghGA6K0K3zXq/hXAZ1a3x+ZSJFla8HTcY+9Gi33Gbe
+         yS01HZO6xnl9qE6yXWUyO/AMo7NeFEx2RdcsXemZN7yG3S8wJj4PpDZ674ai2m9NskSI
+         0eh+s65GGN2XVjxHZzXKRmBpFLcNuE8gHuNVs+XfQ/f6TfoK1/Caf7zUaaLVp3c+lo4p
+         4LS6fMy24yVMGLL00PTiNpzIFLBP24rkRShcLT1rBkkNcZAEKlmADhrtn3zisrPMTngl
+         qGuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778789729; x=1779394529;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=dSkJycESPksBK1TkswZjGhIZC6pa0KpxZLEtY/1MYi0=;
+        b=CaMpOX7UkXpNQiBuHU7hjNvp2s+YQgWb/bmRdNn0ciW4RzWurthIOaEIVNs65oo5KH
+         41zQmrHYnZz9f4wqigdAd7fvdOSUaOYM22nw0JtzyUFQdy2iX43DisUBVBKupt0AQpmP
+         /6F/5d45zfxE+tBJ6tCptySqSYRgKJ2RdPtRvpO0qI9IlX2uhJX/pJD/qi9/T8djoFBD
+         +cueulXbyUI4lBPm5SQoVy2lqH1AZSidx4ao50WZv9nVstzSBK1PBS+ublnw8AnjjF5z
+         PkVT0nfeep/GLVs8ZyKc53OrDSgrOddMGAUv/X3sMdLE5iMxaPpLjOP/xs6bZ9mQujpU
+         paaA==
+X-Forwarded-Encrypted: i=1; AFNElJ+8YBgAX40pbWANwOkTZHFjvORPj13XFGyaCNkeI98O9WQ75nTKczsd+AEiILOWWiDDqojYAsHwoKoS8rsx1/Jw8Hab1cA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaWcJF3djQA2uLk3rNiy03KMwenVTy08eKlsawF6z7hmokFWx4
+	syLbQ3Mo9ICxodbeLzjyQF8M4uhp/fZO+tUNBewTII2jpNMoNuRMkJI4sCoRC/Bqdz4cWlsG3bJ
+	zEm3yh8QEwP9GXF5KluQFBIxw9BERVkMtyj/0kGOt
+X-Gm-Gg: Acq92OE9p5fmTJZ1brWas3ScvWQuuQSPYyUsCn66X5PaNdNh61yZYA6pqPjQEjRFAaV
+	kXmhqL2cMAicGNsKV2z6TKZsjgYHcvD+plyPGXpcuZNDrgmCHRv4IEcoKWxM5NJBmtkU1ruUYLo
+	QXbz1VdhNOIi8B/AcFg5TrQGPnJnPtjNc+yXB3mDnBOK3+9W7yz7rWgPpqTUr3L4bwbozyeBBOH
+	F2TRmc0X3yFLtqm0lnCzfWOiG6FBva/jmQbl2i6EIg5eKtBW8CIbj9pPKqRqto8aIQqR/aakLMq
+	5RtD4cg=
+X-Received: by 2002:a17:903:94e:b0:2b9:f59e:aca5 with SMTP id
+ d9443c01a7336-2bd7e9e7777mr8938935ad.39.1778789727707; Thu, 14 May 2026
+ 13:15:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 3/4] netlabel: validate CALIPSO option against skb
- tail in netlbl_skbuff_getattr
-To: Qi Tang <tpluszz77@gmail.com>, davem@davemloft.net, kuba@kernel.org,
- pabeni@redhat.com, edumazet@google.com
-Cc: netdev@vger.kernel.org, lyutoon@gmail.com, stable@vger.kernel.org,
- Paul Moore <paul@paul-moore.com>, Simon Horman <horms@kernel.org>,
- Huw Davies <huw@codeweavers.com>, linux-security-module@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20260514165139.436961-4-tpluszz77@gmail.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20260514165139.436961-4-tpluszz77@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.25725 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20260509213803.968464-1-atomlin@atomlin.com> <20260509213803.968464-4-atomlin@atomlin.com>
+ <CAHC9VhQthq7y2akbQSdJwBEex1MQYWG49wcJK3b8gSQuQ_d1cQ@mail.gmail.com> <bscbywzzx4nmxzbuw2bkzltb7rrmgmzy5u4gqy5pfpmafcnlto@eznniiguusqb>
+In-Reply-To: <bscbywzzx4nmxzbuw2bkzltb7rrmgmzy5u4gqy5pfpmafcnlto@eznniiguusqb>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 14 May 2026 16:15:15 -0400
+X-Gm-Features: AVHnY4J6HtYDS9Lrpjl43i8SgHkaXzBYbs_PTjoO3Mw_C9TveMyo-g1mcK1Gb3Q
+Message-ID: <CAHC9VhSWrJc=aE1Sg4xfv1ZMmh=JqZFLWGeG2SnzOFqXxcUbtQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] security: Expand task_setscheduler LSM hook to
+ include CPU affinity mask
+To: Aaron Tomlin <atomlin@atomlin.com>
+Cc: tsbogend@alpha.franken.de, jmorris@namei.org, serge@hallyn.com, 
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, stephen.smalley.work@gmail.com, 
+	casey@schaufler-ca.com, longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org, 
+	mkoutny@suse.com, chenridong@huaweicloud.com, dietmar.eggemann@arm.com, 
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+	kprateek.nayak@amd.com, omosnace@redhat.com, kees@kernel.org, neelx@suse.com, 
+	sean@ashe.io, chjohnst@gmail.com, steve@abita.co, mproche@gmail.com, 
+	nick.lange@gmail.com, cgroups@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/14/2026 9:51 AM, Qi Tang wrote:
-> netlbl_skbuff_getattr() locates the CALIPSO option in the IPv6 HBH
-> header via calipso_optptr() and hands the bare pointer to
-> calipso_getattr() -> calipso_opt_getattr().  The consumer re-reads
-> calipso[1] (option data length) and calipso[6] (cat_len/4) and walks
-> calipso + 10 for cat_len bytes via netlbl_bitmap_walk().
+On Tue, May 12, 2026 at 3:49=E2=80=AFPM Aaron Tomlin <atomlin@atomlin.com> =
+wrote:
+> On Mon, May 11, 2026 at 04:28:09PM -0400, Paul Moore wrote:
+> [ ... ]
+> > > Signed-off-by: Aaron Tomlin <atomlin@atomlin.com>
+> > > ---
+> > >  arch/mips/kernel/mips-mt-fpaff.c | 30 +++++++++++++++++-------------
+> > >  fs/proc/base.c                   |  2 +-
+> > >  include/linux/lsm_hook_defs.h    |  3 ++-
+> > >  include/linux/security.h         | 11 +++++++----
+> > >  kernel/cgroup/cpuset.c           |  4 ++--
+> > >  kernel/sched/syscalls.c          |  4 ++--
+> > >  security/commoncap.c             |  7 +++++--
+> > >  security/security.c              | 11 ++++++-----
+> > >  security/selinux/hooks.c         |  3 ++-
+> > >  security/smack/smack_lsm.c       | 11 +++++++++--
+> > >  10 files changed, 53 insertions(+), 33 deletions(-)
+> >
+> > I haven't looked too closely at this patch yet, but based on a quick
+> > glance, can you help me understand why it is included with the other
+> > two patches in one patchset?  The other two patches look like stable
+> > level kernel bug fixes, while this patch introduces functionality to
+> > an existing LSM hook; one of these is not like the others :)
+> >
+> > Unless there is something critical that I'm missing here, I would
+> > suggest splitting this patch out from the other two bugfixes for
+> > separate handling.  If there is a patch dependency issue you can
+> > always mention that in the cover letter.
 >
-> ipv6_hop_calipso() validates these bytes only at parse time inside
-> ipv6_parse_hopopts().  An nftables PRE_ROUTING payload write
-> reachable from an unprivileged user namespace can rewrite both bytes
-> between parse and the SELinux/Smack peer-label consume path
-> (selinux_sock_rcv_skb_compat -> selinux_netlbl_sock_rcv_skb ->
-> netlbl_skbuff_getattr).  The self-consistency check
-> (cat_len + 8 > len) inside calipso_opt_getattr() is defeated by
-> mutating both bytes consistently, allowing a ~232-byte
-> slab-out-of-bounds read from calipso + 10 whose set bits become MLS
-> categories driving the access decision.
+> Hi Paul,
 >
-> netlbl_skbuff_getattr() has the skb; gate the consume on the option
-> fitting within skb_tail_pointer().  The IPv6 option layout is
-> type(1) + length(1) + length bytes of data, so requiring
-> ptr + 2 + ptr[1] <= skb_tail covers the option and its embedded
-> bitmap.
+> Thank you for taking the time to have a look.
 >
-> Runtime confirmation (Smack peer-label policy + nft HBH mutation):
+> You raise a perfectly valid point.
+>
+> Please note, the cgroup-related BUG fix will be dropped from the next
+> iteration of this series. As per Waiman Long (on Cc), a solution for the
+> BUG was already proposed here [1].
 
-I'm the Smack maintainer and do not understand what you are trying
-to say. Smack does not use CALIPSO, although support is on the
-wish list.
+That's good news.  I saw some discussion on that but didn't follow it
+very closely.
 
-> Udp6InDatagrams increments to 1 with the mutated cat_len, showing
-> selinux/smack_socket_sock_rcv_skb -> netlbl_skbuff_getattr ->
-> calipso_opt_getattr -> netlbl_bitmap_walk runs end-to-end past the
-> option's true bound; with this patch the consume path short-circuits
-> at the bounds check and the counter stays 0.
->
-> Reported-by: Qi Tang <tpluszz77@gmail.com>
-> Reported-by: Tong Liu <lyutoon@gmail.com>
-> Fixes: 2917f57b6bc1 ("calipso: Allow the lsm to label the skbuff directly.")
-> Signed-off-by: Qi Tang <tpluszz77@gmail.com>
-> ---
->  net/netlabel/netlabel_kapi.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
->
-> diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-> index 3583fa63dd01f..4af8ab76964e0 100644
-> --- a/net/netlabel/netlabel_kapi.c
-> +++ b/net/netlabel/netlabel_kapi.c
-> @@ -1399,11 +1399,20 @@ int netlbl_skbuff_getattr(const struct sk_buff *skb,
->  			return 0;
->  		break;
->  #if IS_ENABLED(CONFIG_IPV6)
-> -	case AF_INET6:
-> +	case AF_INET6: {
-> +		const unsigned char *tail = skb_tail_pointer(skb);
-> +		u8 opt_data_len;
-> +
->  		ptr = calipso_optptr(skb);
-> -		if (ptr && calipso_getattr(ptr, secattr) == 0)
-> +		if (!ptr || ptr + 2 > tail)
-> +			break;
-> +		opt_data_len = ptr[1];	/* IPv6 option data length */
-> +		if (ptr + 2 + opt_data_len > tail)
-> +			break;
-> +		if (calipso_getattr(ptr, secattr) == 0)
->  			return 0;
->  		break;
-> +	}
->  #endif /* IPv6 */
->  	}
->  
+> However, I suspect the MIPS-related patch will need to remain coupled wit=
+h
+> this feature patch. Because the first patch fundamentally alters the
+> signature of the security_task_setscheduler() hook, the MIPS FPU affinity
+> code must be updated concurrently to accommodate the new parameter.
+
+I generally dislike when bug fixes depend on new functionality; it's
+backwards in my opinion.  I would much rather see the MIPS bug fix
+patch submitted as a standalone patch and then have the LSM hook
+modification patch come separately, perhaps with a note that it
+depends on the bug fix patch.
+
+--=20
+paul-moore.com
