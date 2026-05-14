@@ -1,94 +1,153 @@
-Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
+Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AC4361DC1
-	for <linux-security-module@vger.kernel.org>; Thu, 14 May 2026 17:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1550BE56A
+	for <linux-security-module@vger.kernel.org>; Thu, 14 May 2026 17:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778778382; cv=none; b=jTama4W40N0MZD775hwuG7REpn/iPKY/u+XGpDwm4kzXeGBaM83c/6EAVZsw2QBS/ZU8jrJLoncYrlNv/M2rseScrnjV8MZuav4Aara+oyTNIeIQM8PaXS8nBnekHuoPeyFKs3vPhKlY38I2L+raQsZbqySpIxDJ+MziOGiusOQ=
+	t=1778779923; cv=none; b=IlGaKrA3osVWhNozFEHhVmQT6uFB3UaZiI3i54wanBm5XpH/oqvEGWpfGpfvnhFpiNeB3hhFMHkhr7lRowpMEe64ySUT7nRx3npW3L3r8p2UDyPCajjQ6BiB1Y4+swC1EcqCBiJWieNw1YVtH4GouH1Szdwjy96uOYKco/+CN0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778778382; c=relaxed/simple;
-	bh=J+qjlNG7yCfPi70a30kgJbcx9ouEfqYTcUcggQ3HxqE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LGpWkXeIIf4EeJnBDmBqY5colS5QHvjPd5FztLClyrY8w04iCvxmXD/YTZoohUE2Ca/ltLw4LFaARP+wLdBSJ2C+Mxegnskddjd9i6ARK9ZUh1iR0kZYlW4zl2mAdv63UZA9+VqJOOmtiACVHycll1HlKhNcGYUMpY8UrPPuUP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g5EPzIWT; arc=none smtp.client-ip=74.125.82.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1778779923; c=relaxed/simple;
+	bh=e4j8oDUo7SMDEd23DYNwxIvhF/0Xnmro6uA3NQyoq98=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hxOjZzQP6w/K0mbl0bJZ7zK5d8pV7AihJKir33Gq6GYPjUFGDdsTPjbsHIIR1w8/E2Jzgbk6AWbEVkX943zm6L1G3mGZsGTVcFaJl2FoBw+Lhtg3CuKl8lHo1Xy4eyZzoiGlBjIiPVq/FB6liwgveCufniHf76jNT3f3Yn1AWOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=YA6PRnw9; arc=none smtp.client-ip=66.163.189.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g5EPzIWT"
-Received: by mail-dl1-f53.google.com with SMTP id a92af1059eb24-12c19d23b19so13727392c88.0
-        for <linux-security-module@vger.kernel.org>; Thu, 14 May 2026 10:06:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778778381; x=1779383181; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xsBBm4ZuQ5MGBzgA0ddyoKX5Ai5E3Bfgkd3FNlRPfrc=;
-        b=g5EPzIWTEnYC9BWKWbN0rt6f3IbnYn4vkaTKUumPdGr2nICHJaiBUBbFwPTb0YPaqp
-         6DcJBg2tkjj0D+6PBWCmjOnHN71B+p/mp+1yeOdlL1wcaXzUuAr4JHta6uIYMZG7nS3n
-         WTQZuEeSY+mILnc28yeFy22gpbPCnQAr8WotDeR52/78ll2oiKiUckoeymGvVIMsNxqF
-         IqXX+zDvLFrMMpoZeozoKPuEWckySWE9kUlysrrSlF35/JN9D6dgXLAI/B9ZKYxZxILb
-         WZyFHoVbbiocMDbUD5QYEHV42t/CoLdbgEPRgm1KvWt5et7dB8LBYrKi7v1+Xem/LU1i
-         Frmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778778381; x=1779383181;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=xsBBm4ZuQ5MGBzgA0ddyoKX5Ai5E3Bfgkd3FNlRPfrc=;
-        b=E4EtoFZacivuhfERYw27J9bS+ZR/6A8zj6NbbqCOf1GloqExA+iq6wsfQHUx/StMgL
-         uNPvXB+MmTAIEQm7l8tmxME3qjaWK7s9LPNxfIfJW1Uo2WpUO9Ozt1jZDCVr9nfTp4WS
-         pNmu27kPUVTTPyzeiTFNGLi7auno+lDive14H+OJrij8JselluzObktU3OL0nf/zoXJN
-         7sIZ5hevpXnMoT458bqjq8gy2eBCHp9bVLBiXOYtjKlEE2QdVamRqAcftX0J2PMk/szs
-         fzv7Fn/OQOVzbWnIWjYhqyMTVlqB5KXZnRZ4l1fzuHQUPSdTen8+axbWSeohL06hCntI
-         JHuQ==
-X-Forwarded-Encrypted: i=1; AFNElJ9BE737ElmYgTUNKXHfap9myuQl6bQJPmGUq9R0h2I9PZn4PY6Uy7r2WJrDAPQgYuCccf5wETCMuwUH0psPMmRmzIQXE3M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTGmTjbUQ6BHNJgFmCuMO6o0OXUFAcjfgMm/j/jDszNRqCH1QP
-	kATcJLM5A0zcosMrSCLtnzKa2KXyVEGIrV+av67k59D0OOC7GStvtUpp
-X-Gm-Gg: Acq92OG0VIzDv44Dhsu7yik6PNfp/O/ql6JSJ2o5HMa25sAe1qLR0nAiUHQ1Cood3O9
-	ci0A1bc4fjirOTaEVNdiG9W+JTE8HMS8AX/U8euZ2sufU/c7Lb09iIPWtFvUyph4Z1OoGqnoY17
-	gqj8/gWxNkSCc2dfSwR9hLbH/3QiFc8nX9ndsTb6VFi+bD0HicT7UeKEwJFAjShpKX7+LYnQhb6
-	jUE169wk8GlVk93Yucq/98WobTnZpxAIacuYM8Bh8UJjM75seiZJMFa/i0AzSWDtXQ5VBhMtNCN
-	nuzpg7Ya4n+9wHxo4zceKEw3CPEpkyNiU1c9c2UJKCx7WtOc0d4/cLznEDAwXtZumRQ7jOyeW7Y
-	spBQ/2yG3NrAULZMNgYrNobESW3aI3zhg+3e/x+g42sZX4YIhdG6ngcbU8oyijq7ejShrMJpuTi
-	lvAjzb0Xj6jJ1thZeoincs/9QTVU4kcLMf4Q==
-X-Received: by 2002:a05:7022:670e:b0:130:c9cc:3384 with SMTP id a92af1059eb24-1349ac64a08mr4862213c88.30.1778778380849;
-        Thu, 14 May 2026 10:06:20 -0700 (PDT)
-Received: from localhost.localdomain ([148.135.103.3])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-134cbed531esm5349141c88.8.2026.05.14.10.06.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 May 2026 10:06:20 -0700 (PDT)
-From: Qi Tang <tpluszz77@gmail.com>
-To: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	edumazet@google.com
-Cc: netdev@vger.kernel.org,
-	lyutoon@gmail.com,
-	dsahern@kernel.org,
-	idosch@nvidia.com,
-	horms@kernel.org,
-	paul@paul-moore.com,
-	huw@codeweavers.com,
-	linux-security-module@vger.kernel.org,
-	Qi Tang <tpluszz77@gmail.com>
-Subject: Re: [PATCH net 0/4] net: trust-after-modification fixes for IPv4 options + netlabel
-Date: Fri, 15 May 2026 01:06:13 +0800
-Message-ID: <20260514170613.4098569-1-tpluszz77@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260514165139.436961-1-tpluszz77@gmail.com>
-References: <20260514165139.436961-1-tpluszz77@gmail.com>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="YA6PRnw9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1778779921; bh=i2vPqlj8KNEnBhS+nIteciS3u9mAPHOTQVqdtjqlIDw=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=YA6PRnw94aXjkR2z/5ZzyYS3rY2FoJ+f0yUT0OJI4dkRQ5dWh+nNekjXxcFl0noIBDUOAkj7R7zOpIfhEEI00Vt19eGQO4HRGK4gfYfm5hyFFHmOE2Dz0VgZoN7PUXG4/4Q9LtWr2q3wrQ2W9e/7VWVzaOckWRSZQcLjXFUeLerOVIm0QYMFcTmeQjgpsHKAvCrm7/4QR0HP1EpfZ3qwuRKkkJxOUx1uOoZ3GzYicgMzuhEbjZaTCIg8kYlbaI+9XFH18pc6O2qRprgfMjtMvxFoK6qGApbB0N998NtqrgG+0O4ZuhIoRr6ruW9cqqKm89kNu5hCAcpiPzTmtQtSPA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1778779921; bh=+hq7NPkEmzkJcfWgUsNNEZrt9TX6V5GG93tLmJe4Pj9=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ZXCbPejebsNA/6tpAFzuIEMuJDuc9a11LmHv4Y2vSjd41sQlEYmsLsQxrWx+j5VNwc+UKxkZHv/zPo7VhXxTkV2oqBn2iLkn78FRe7M9MWcobYbjnvpixkw5voZzCw7IFz+xdKnKl2yxy1WmEU966srN2CQIERqSIK00XBwv2YC38WJ4u3W+CAA2oxghHOuWmgSMG2l+SFYJQG/hnsDaPODOay33ml1AdzZqPTrUhtSWR1AhKuy+y/eCrUPrHH9yxzjJ52wmrl+rX6fQ7eT2Fe5lSPsmxXqg9jbGU51VJtqekEaDSkGa2Z5Rr+CuF6fqoTGXHxqLQO5oT2rW/GqXLg==
+X-YMail-OSG: ooYDRH0VM1mKc9T21LCAtyC_UUWWtrXGzBx1v5sn0QBPV8HXXO9dUEvYScTNBFz
+ oKY_JbcYUBDeEBuBnpQ3YfrXiBh5neanPQazFb5v7OWhOC7JqEMtA0N.ssWfUSxazZsQ3lAJlPdE
+ IHJdfvC3elw9_3up2arVvtOZyjoOOYnLiMZxPA2MnGDJuVP7uVmRmHxGowGotEiAjpHNPzgVgcod
+ yiLj4AVSS.YSc.tRi8OeJUdJch4DrsSnqBhBxGOOppUws88alWWrlmTZSWr5ke67kghPQuKvCAWy
+ NxnKgY_qvpVuxBS_scWXW.eQAXwYYavEeePgo0fM_GVoZEGakPSxmG1YFK7Uh5adn4IAFHKd5G1A
+ PF1UQon0lpI59C2YGbSrijR4ct2uzmgFTfFJwc1mfu0_7oDdK25d.hsZW_RyOSFgF4fKliuSZEwe
+ zfs6TrBitJwOKRT4a7P1HgWWHtKqO.rD6uaxK1V8iFHfy7VSXK7Xh0_YU508CggwdKrAS22Sf520
+ WKNaeBAzpub9Gn6UEtJ1zyn2tNxAldXX.ic0oL7wvpxyA05bbjlWYibuA7928C5IC2vyUeE_Sdxm
+ qRVeXF7ak_VM.M7QcFV8jv1cYxXK4YwApupRJtal1494xApO1dKaNEp0KG6iQ5nCei5TVPuDSf91
+ .peBCUF_UdhIiqAk2xfNYiDUeTIDrf6sjkiVGhQpjUnI23kcXcEOEsGpBWFimhiZenDZ76kdMwqR
+ 6Dt4oLISVF0TwmluWmZWLqENSRm.m7s4J7BtxWZgNOQrDViPbrGzo9ZGT40WIAxcQpiZhWqycvmf
+ m0T5tLzEX_q3UBRYedsFpbnFJiUcoomkvbZ5iBIaFh96apD_R2SajTSwCoK8PGApuAsqLh7hDYRj
+ MKGpmpTUfaioSqcd0uRXgooh9LZeOBXVOORfwdiqK3rpid_V4t.IY2LtbeAmzd0uW0d7HnFLl8LW
+ 65C84RVGYYG82V_dmnXxE1d907XLfdcEKW6NFlzxVYK7WF5Fs5IYZvvwyEHI_GueKsSePSo0GCRG
+ zYfnjlj9FYRqlPTPQE.wST6xmaILgKKqXZY2m1C3grxqHRkC3oLMSMjEuAo8xZK16dUxGxzG0TdB
+ ki2Xo4c0TwPUwRsTH6_dLLsqYkqmMe6gfH79sCG8MPK4B94Z07KUtTGcEhOb7BXXsKTkC3TJ9oWr
+ ObnARfphyXRrZ08JN38KbNeleFCBZ_4ZhGlxj8xEvQWR5duh_0F3OrRoAiGWLQh4wjyl9iXJ3Bke
+ YQwBTt9P2_ZxuHFxjhKcv1RZszjiq0mpt6wfZsm6fBAaCWg._MCHB2hzfZjqHIm5wii7LGUk2r8F
+ OAL3NXAChCBdhU1UlwJhoPVGeLPz2NaS5u_HZjD5XQPjRjkuMXPUTTEMQ46rO04OliE4lC8AlWW6
+ w79ZrWJmRF3_9ceQwY3EMnjDNcxMU.S3zJ2PXi_vub41D_SG2HyWjJeYhSs47zgZQmZFevoUNgbu
+ Y793zB9Q6NPeceGQQSTJOEqxtYv91iKHsLLKQ5vbwUZFKwN6AppBm.ZSjNPK4fJCCRsKzJZtpvXu
+ xi_J.ScZGpx478qjcjej0ulbrJrqLX7LRF0e_06MaeCY3.JTdwUPqPW1MaQdfq1zyh4CkOnIad3K
+ 6ufarr9AcHf9cDcgoXVD6sxRJD15hErKiDma5vN.hi7utJTKWQi3baiXDiRaNlvs5EBo40U9HKVM
+ fFB9AFdBfkEOsN4bamGo6ygkGqvIzatC1kTSmxs1tKgmaAhSZOS4Af_cUlbITO2_fh1PB7zcF_AO
+ cadDvt9nxmJ_DfMabJwv8QE4tJGAXaurae.VgSGwJaRYGeUcEBSAftM_0LJZ1AWvs.zNaQkcaEl_
+ aCsfdAza9l6wmAKl7xWNjGerDmXGa24C4O2PQv72znRZQAgWwdcuLVVI76j4C1lpwUnQDFBazWJ2
+ u.PqAT9.ti3bOr8qcsL_0QNnZSfYp.RY87eVOOxylc8BtX8Px3F2_oH2VXRaKL2FdNYvPaz_gfc.
+ GHGAfsHtDOjkEsVjkBNQPp91h6au7yoeGN33evu7WkOB9cJW1.GSACdFd3mlIgGl_cOVc9b9VmMC
+ DnzzgwPLD2FyW7by0ssSFVY4w.TFLVhDnSXGuBrG5PpyeC5GFbBThSa1jiSlqJRih26eRqs0Zj0K
+ rJi.AjEpObhDw.uIQjRDaoNbO.q27jnmyX225FVpy9oSQDe96msp5mCQ7o6WwxyGNa9cEi.cmDtr
+ 6ssgDS0WczxD7OI1buA6jo.k9kNOhtBeS6bPZf_cMNIvFWtuPWQ.mi_wnzbE3YQrRpyo.zcGZrDk
+ 21n8T
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: d8367289-f829-468e-8bda-437b31d418e6
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Thu, 14 May 2026 17:32:01 +0000
+Received: by hermes--production-gq1-7bb7df5c46-zj6qc (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ee76f6b666610504e63d45a3cfbbc655;
+          Thu, 14 May 2026 17:11:19 +0000 (UTC)
+Message-ID: <7e165421-a688-4025-a33a-8eefbb84c4b5@schaufler-ca.com>
+Date: Thu, 14 May 2026 10:11:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 3/4] netlabel: validate CALIPSO option against skb
+ tail in netlbl_skbuff_getattr
+To: Qi Tang <tpluszz77@gmail.com>, davem@davemloft.net, kuba@kernel.org,
+ pabeni@redhat.com, edumazet@google.com
+Cc: netdev@vger.kernel.org, lyutoon@gmail.com, stable@vger.kernel.org,
+ Paul Moore <paul@paul-moore.com>, Simon Horman <horms@kernel.org>,
+ Huw Davies <huw@codeweavers.com>, linux-security-module@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20260514165139.436961-4-tpluszz77@gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20260514165139.436961-4-tpluszz77@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.25725 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Sorry, v1 went out unthreaded and 1/4 was duplicated.  I will
-resend properly as [PATCH net v2 0/4] in ~24h.  Please ignore
-the v1 thread.
+On 5/14/2026 9:51 AM, Qi Tang wrote:
+> netlbl_skbuff_getattr() locates the CALIPSO option in the IPv6 HBH
+> header via calipso_optptr() and hands the bare pointer to
+> calipso_getattr() -> calipso_opt_getattr().  The consumer re-reads
+> calipso[1] (option data length) and calipso[6] (cat_len/4) and walks
+> calipso + 10 for cat_len bytes via netlbl_bitmap_walk().
+>
+> ipv6_hop_calipso() validates these bytes only at parse time inside
+> ipv6_parse_hopopts().  An nftables PRE_ROUTING payload write
+> reachable from an unprivileged user namespace can rewrite both bytes
+> between parse and the SELinux/Smack peer-label consume path
+> (selinux_sock_rcv_skb_compat -> selinux_netlbl_sock_rcv_skb ->
+> netlbl_skbuff_getattr).  The self-consistency check
+> (cat_len + 8 > len) inside calipso_opt_getattr() is defeated by
+> mutating both bytes consistently, allowing a ~232-byte
+> slab-out-of-bounds read from calipso + 10 whose set bits become MLS
+> categories driving the access decision.
+>
+> netlbl_skbuff_getattr() has the skb; gate the consume on the option
+> fitting within skb_tail_pointer().  The IPv6 option layout is
+> type(1) + length(1) + length bytes of data, so requiring
+> ptr + 2 + ptr[1] <= skb_tail covers the option and its embedded
+> bitmap.
+>
+> Runtime confirmation (Smack peer-label policy + nft HBH mutation):
 
-Qi Tang <tpluszz77@gmail.com>
-Tong Liu <lyutoon@gmail.com>
+I'm the Smack maintainer and do not understand what you are trying
+to say. Smack does not use CALIPSO, although support is on the
+wish list.
+
+> Udp6InDatagrams increments to 1 with the mutated cat_len, showing
+> selinux/smack_socket_sock_rcv_skb -> netlbl_skbuff_getattr ->
+> calipso_opt_getattr -> netlbl_bitmap_walk runs end-to-end past the
+> option's true bound; with this patch the consume path short-circuits
+> at the bounds check and the counter stays 0.
+>
+> Reported-by: Qi Tang <tpluszz77@gmail.com>
+> Reported-by: Tong Liu <lyutoon@gmail.com>
+> Fixes: 2917f57b6bc1 ("calipso: Allow the lsm to label the skbuff directly.")
+> Signed-off-by: Qi Tang <tpluszz77@gmail.com>
+> ---
+>  net/netlabel/netlabel_kapi.c | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
+>
+> diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
+> index 3583fa63dd01f..4af8ab76964e0 100644
+> --- a/net/netlabel/netlabel_kapi.c
+> +++ b/net/netlabel/netlabel_kapi.c
+> @@ -1399,11 +1399,20 @@ int netlbl_skbuff_getattr(const struct sk_buff *skb,
+>  			return 0;
+>  		break;
+>  #if IS_ENABLED(CONFIG_IPV6)
+> -	case AF_INET6:
+> +	case AF_INET6: {
+> +		const unsigned char *tail = skb_tail_pointer(skb);
+> +		u8 opt_data_len;
+> +
+>  		ptr = calipso_optptr(skb);
+> -		if (ptr && calipso_getattr(ptr, secattr) == 0)
+> +		if (!ptr || ptr + 2 > tail)
+> +			break;
+> +		opt_data_len = ptr[1];	/* IPv6 option data length */
+> +		if (ptr + 2 + opt_data_len > tail)
+> +			break;
+> +		if (calipso_getattr(ptr, secattr) == 0)
+>  			return 0;
+>  		break;
+> +	}
+>  #endif /* IPv6 */
+>  	}
+>  
