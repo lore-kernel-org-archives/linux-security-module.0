@@ -1,105 +1,187 @@
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA022E1C4E
-	for <linux-security-module@vger.kernel.org>; Thu, 14 May 2026 02:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7FB3B9D98;
+	Thu, 14 May 2026 12:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778726208; cv=none; b=EU5pleYOzq8lVY5k2TVvrRKEU83n9FUo1/9p1TKlCP4Q9PdZl7htmMjrEdRSYALTfqJzB6OL2kMG+I2I0m4oAg3LEvguglMl0t2ekLlCiSc7ks9gLuT4seGMGvKCSImf9vkgy6lsFrMgm8twC4dBwEO+8Kd+TDOGH15WTML/dj8=
+	t=1778762571; cv=none; b=ifgNyYMPUAOGuqvdOCk0we4KaqXAG6RRvh52jTe5pMzL7sDXljGBZuIjn0wJas4vKqOkp1gjXivV1j52pTyrAzijdOtzNiZSNQLvCFBFPloi5ucfSJ0Pn/s9W6exhqU5viIZ39mL3HdcbT+NS28gN5FoUkECtMlcZQrSNf+Wd2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778726208; c=relaxed/simple;
-	bh=WMhniOJSWPxMGmlQegkClDH6ch6QzSrRNimBuWfzuBI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XDDMQqd7MlI0KLksZMZJm3zfJX24tq2+HK7MMpZvyJqmWvmLMro7MFSHoIKBT501qJMRnDg8Pb0Cj4PybEf/AqrhnWSylrPOAdjrZNf8vc0M6X+wHg8iQmN4bwMxZrHS0ZXHuLXlBspRVw8eOjNavl62Iq5BSglMXIuSA+KILpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Rom0diOT; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1778762571; c=relaxed/simple;
+	bh=CSZGuhEMgcVv+yjLSc1VRGD3BlRDfXMIcohRaOGnXhU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d6V/+anddmB21EX8HgH8WscNssjFu06XcOcnjrF2mHoX68qMyiOolXh0tH4hlq00vVDJ37z5B4/uVb2zWgFXQT85MViaOzWguKNYzPuAIpCa0xM0tlcAYL9jHgxoJ0M9ITPgHt+NjmJbP4gqOOczHjkKImGFMjCVRBcVUSec20M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=YLD8FxWG; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Rom0diOT"
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-8b5cda2dab9so69491816d6.0
-        for <linux-security-module@vger.kernel.org>; Wed, 13 May 2026 19:36:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1778726205; x=1779331005; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=myRSXff2zZ7XyiQQfJfIlOKKngpbcODuIS6F/L0JmT4=;
-        b=Rom0diOT8xIL5sa/U6b3Gg+GUhoBBVSoeqWxZKla8S0Z9gUH7GtCARxYktroxYWW3v
-         dTLl/qdcOm5WP+JG/A0ytpuSQZQ9vMw35GaZa+Sb+DuVL6URO6787MiZgRm6TsRNrLYn
-         Vtar9sFwndF3uBAgLV9/p9DGcWGscHFnrHsxlocq7fT1GcB0g49w+NcsvqOjNhlpNVK+
-         9KBvV9R17iZuE3bWyW2HpXzweSkTYO3lJ88iX3oKRZnEoAxsg2sPHyNcIQN2BWsgdBY4
-         P2+HMxALvWW2LlNBPY3GwJIIVLEsq/jZIE2x9o3yCNdksgM3oE/WXDq63YBANMblqlF6
-         IkQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778726205; x=1779331005;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=myRSXff2zZ7XyiQQfJfIlOKKngpbcODuIS6F/L0JmT4=;
-        b=V3CQ8KHaqkUxSLL8C1Tx+Fp7qGz0E9GIrvddTWfp0cB4vvLTXRaQ/2mvSysjxWfz6C
-         VpYjxcvH0dlRg+gUDekdB5lZEVtjAiVrzCJr1dnBogx6pL00lYauu4M3Mj+acm9MtLyq
-         ZR1t0EUkSVClXFsJIyCJGVd9prRocIn/K+rwEUjKgWqwEu9S0ydB1nBv8aKADIVAFiML
-         yaFbvBjk7m0Ff0wlmFd91/LXL+Buel4c1wLi4SOWV+Yys1Hk3hNc3quICHGF/7mFEyH4
-         ahizNtOOybCcrBP3Cl9L56yRAPTo/MJLY1hbYTnGycQOaTQGEN/pL+SQPoMX0LvOkh1c
-         5TrA==
-X-Gm-Message-State: AOJu0Yx8NCUtWVNzt60g5EOYAMD9HN0TcNsnARgINpgK0DFoXUSK/NZg
-	ALIB+vp4MIFt1c4XPF3gm32Ni3Yi9SxLNX08OkvRSLJt6dS3aeNPIZFfYyAQ4+MrdT5demgNGWw
-	Dtgs=
-X-Gm-Gg: Acq92OGVh23MGrlyUz/EMmjTWN9W8ZvJl0Ltk17ePIDyNV6rvT/c35B0lQBf87ApqVR
-	e3kYuApLk9djdPvLjzrKQXGU7KqvmeUv2KFJ5yPDsJ8QraAvDykQuWV0UEHA29G8lqWT75Vm8/J
-	0eD0AGMQ1Cpgoq2lNkI2uHGwEkxXx83mK11FLHT5SEo1mPdA7/SnjGkCAMZKYw1Up7qwmYhau7d
-	8KuedksDgBMPTosjzyDmoq9axbq0Fs4G6IbcSs+Bfh+iJO/cRNh9OcFg8z2vm8sHNYo/GjpWgHJ
-	dBvx2sxEEb9/6A6VipW2Z7UHvfV0DTPYKXQyJ59CLs6SemnrLUrdHu1HLbwbuofERPb3TDfvTIM
-	8hVA6iq6ANij9Jugr7YXY/HN7mUjH0YhCGkhbaXl7GpcjsoZX/0mAGBuXru4dDwtlp1Z65CA4o7
-	vF4TbodopGgNwOj0NtDMWYjpguetPqn55zZiF+3Awkjk3fvTiVoqWRVOOl4/w+lnQDRg/EB7g+p
-	XQQuhQ=
-X-Received: by 2002:a05:6214:4801:b0:8ba:d36a:8b0c with SMTP id 6a1803df08f44-8c8fbd05f71mr27017326d6.12.1778726204949;
-        Wed, 13 May 2026 19:36:44 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8c90874d869sm12080766d6.7.2026.05.13.19.36.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 May 2026 19:36:44 -0700 (PDT)
-From: Paul Moore <paul@paul-moore.com>
-To: linux-security-module@vger.kernel.org
-Cc: Fan Wu <wufan@kernel.org>,
-	Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Subject: [PATCH] ipe: restore the kdoc comments for evaluate_property()
-Date: Wed, 13 May 2026 22:36:41 -0400
-Message-ID: <20260514023640.574020-2-paul@paul-moore.com>
-X-Mailer: git-send-email 2.54.0
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="YLD8FxWG"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 78EB8244B;
+	Thu, 14 May 2026 05:42:42 -0700 (PDT)
+Received: from e129823.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A1A283F7B4;
+	Thu, 14 May 2026 05:42:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1778762567; bh=CSZGuhEMgcVv+yjLSc1VRGD3BlRDfXMIcohRaOGnXhU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YLD8FxWG6lmZaF+56qA4ExHRj6gmec4W4Jy6zLkG6oqEGkL02iZdRMKmMRRZjCR0U
+	 xVNyfG7Hlzpevqw0I2XS7WY265pckgOkpMzxKPGXjvD5U9THwi517swXo7gmN3Lc01
+	 lO/Kf4a3JDrJykgmj9Ar3XiURm1HGddmuTvrsPkk=
+Date: Thu, 14 May 2026 13:42:42 +0100
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: David Safford <david.safford@gmail.com>,
+	Jonathan McDowell <noodles@earth.li>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com, jarkko@kernel.org, jgg@ziepe.ca,
+	sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org,
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org, noodles@meta.com,
+	sebastianene@google.com
+Subject: Re: [PATCH] ima: debugging late_initcall_sync measurements
+Message-ID: <agXDQhREKIpN7mKX@e129823.arm.com>
+References: <aftIuPwNeuzc9nY1@e129823.arm.com>
+ <9d1af933ef218b159762884357d127e3644dfe2c.camel@linux.ibm.com>
+ <afwoDgaJxmKwOhXp@e129823.arm.com>
+ <f19081f1eda19d6d1ae133d8ec93e779ab1a25e5.camel@linux.ibm.com>
+ <afyIbW5cljh5ZvTL@e129823.arm.com>
+ <afzwJn+5r15jFxrB@e129823.arm.com>
+ <77ad49cca1acf707f4152ed3e2066b2f24c90c16.camel@linux.ibm.com>
+ <af2nhZyyNaP7LM3w@e129823.arm.com>
+ <2b3782398cc17ce9d355490a0c42ebce9120a9ae.camel@linux.ibm.com>
+ <af3oFfdSMUglZVHa@e129823.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=921; i=paul@paul-moore.com; h=from:subject; bh=WMhniOJSWPxMGmlQegkClDH6ch6QzSrRNimBuWfzuBI=; b=owEBbQKS/ZANAwAKAeog8tqXN4lzAcsmYgBqBTU44FhylTyessKOIkmPgqrBH4BKo7y+axapo XinLBYjOhqJAjMEAAEKAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCagU1OAAKCRDqIPLalzeJ cwtQD/9bzB1c+jlZxAbvKc31AMXEU9c8yAZkxVBGuvfoe/JkMZEAoHRuD/ckBCXvW0/1s2yNNC5 ZaxMnRVIJa0i56vihp/+pQPh9ZvyVrjAecbKGkc3Y4lO6zCeQrbFPzax1VwPEUyVVGzyHkguu8Y 17IRRmGikNOVA0RK/TrPpwZi7Dwv/OWzyt8YbeOa6bvNcOHmC+oe/zX/aiPMhcWnXQXfbAyZGXW vE1Wi8gUrdslHqh+5aVObJ2NO8f3RubzTv5eOPBEShrQ5j/kUqxqR3KmGyHKEDi0yXGSgf3Cc1T NMB/RDhYWVeKH3VSNRV9mr/rCTZRbG7Fxkglv7Pa6vTMKbIkho4LmUUDtDIVvpEjKndbzVeYg9J m63V/M998oW5QacEcpPWiAlDY8wLvOcjhPiTYp9miJTaSI9SyLTbmishf5DWvc8lvT7H9lq8b/Z Wt9mRf3s/YVWbxMeaC1MnFnM2dFfiobnNwDjhopFPQ0j0h/DsqFiFuWuTNU64RxBN4TPpXKyJXW eRsybQBqmF4z5NewOOf9wHu5oCMW6IsWuoNpUdIGRlECYeOB4E/LVhMg7COZnWhg/U95uceBlzC iP9bapMOi4a04s+guZmln3Q/uLSy93pcNRo3wha0iW7Yvh5ryJEQhZnZmgKVfeGFxGK4uBz3Uke p46qA0evgLBeWEQ==
-X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <af3oFfdSMUglZVHa@e129823.arm.com>
 
-The Hornet integration patch mistakenly munged the kdoc comment block
-for the evaluate_property() function, this patch restores that
-comment.
+Hi Mimi,
+> > On Fri, 2026-05-08 at 10:06 +0100, Yeoreum Yun wrote:
+> > 
+> > > > The kernel selftests caused the measurements between late_initcall and
+> > > > late_initcall_sync.  After disabling all of the kernel selftests, there weren't
+> > > > any measurements. Re-enabling the FIPS selftests on PowerVM LPAR resulted in
+> > > > measurements.  (I didn't try re-enabling any of the other selftests.)
+> > > > 
+> > > > CONFIG_FIPS_SIGNATURE_SELFTEST=y
+> > > > CONFIG_FIPS_SIGNATURE_SELFTEST_RSA=y
+> > > > CONFIG_FIPS_SIGNATURE_SELFTEST_ECDSA=y
+> > > 
+> > > Thanks for shraring this ;)
+> > > 
+> > > I found the reason for those mesaurements. Those come from the
+> > > request_module() and usermode-thread generates them while handling module
+> > > loading request for crypto-x962(ecdsa-nist-p256).
+> > > Since it's not a real kernel module,
+> > > I confirmed file measurements between late_initcall and
+> > > late_initcall_sync are gone for modeprobe with below change:
+> > > 
+> > > @@ -1246,9 +1250,14 @@ EXPORT_SYMBOL_GPL(ima_measure_critical_data);
+> > >   */
+> > >  static int ima_kernel_module_request(char *kmod_name)
+> > >  {
+> > >         if (strncmp(kmod_name, "crypto-pkcs1(rsa,", 17) == 0)
+> > >                 return -EINVAL;
+> > > 
+> > > +       if (IS_BUILTIN(CONFIG_CRYPTO_ECDSA) &&
+> > > +           (strncmp(kmod_name, "crypto-x962(ecdsa", 17) == 0))
+> > > +               return -EINVAL;
+> > > +
+> > >         return 0;
+> > >  }
+> > > 
+> > >  Though this is the only request_module() call between
+> > >  late_initcall and late_initcall_sync, but I also confirmed there're
+> > >  request_modules() call before ima initalisation before "late_initcall":
+> > > 
+> > > /*
+> > >  * NOTE: kmod_name is printed on ima_kernel_module_request()
+> > >  */
+> > > 
+> > > // This is called from module_init(stm_core_init) -> device_initcall()
+> > > // which is in driver/hwtracing/stm/core.c (built-in)
+> > > [    1.421986] ima: kmod_name: stm_p_basic
+> > > ...
+> > > [    1.444900] ima: kmod_name: crypto-pkcs1(rsa,sha512)
+> > > [    1.444903] ima: kmod_name: crypto-pkcs1(rsa,sha512)-all
+> > > ...
+> > > [    1.452029] ima: kmod_name: crypto-cbc(aes)
+> > > [    1.465321] ima: kmod_name: crypto-cbc(aes)-all
+> > > ...
+> > > [    1.467845] Key type encrypted registered
+> > > [    1.467848] AppArmor: AppArmor sha256 policy hashing enabled
+> > > 
+> > >  // IMA is initailised at late_initcall level.
+> > > [    1.467850] ima: [init_ima_late:1336]
+> > > 
+> > > If IMA should care request_module() from kernel before IMA init,
+> > > I think there is no way to solve except queuing those events
+> > > (kernel_load_data/kernel_load_post_data and open for module binary etc.)
+> > > though it breaks "measure before use" principle since IMA couldn't
+> > > measure at that time.
+> > > 
+> > > But if you don't care about those things -- some events happend before
+> > > IMA init, I think your suggestion -- controlling the init time of ima_init()
+> > > via a Kconfig option is good and ignoring some usermodehelper request
+> > > including request_module() before IMA initialisation upto user by that option.
+> > 
+> > Thank you for the complete analysis.  The early measurements before the TPM is
+> > initialized is a problem that needs to be addressed.  As to whether the solution
+> > will require queueing is yet to be determined. (Roberto has some thoughts on
+> > addressing it.) This discussion makes it clear that simply delaying IMA
+> > initialization by moving it from late_initcall to late_initcall_sync could miss
+> > measurements.  That said, exposing it as an opt-in Kconfig for those who accept
+> > the risk is a sensible pragmatic compromise.
+> 
+> I think once we address ealry measurements before intialising TPM,
+> It doesn't matter when IMA is initialissed since they're considered as
+> ealry measurements anyway.
+> 
+> BTW, I'm not sure whether we should take pragmatic compromise first to
+> support deferred TPM initialisation or solving it together via solution
+> of ealry measurements (whatever it is) in now.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202605141037.VVorBhvP-lkp@intel.com/
-Signed-off-by: Paul Moore <paul@paul-moore.com>
----
- security/ipe/eval.c | 2 ++
- 1 file changed, 2 insertions(+)
+I wonder what's going on for discussion to resolve these problem:
+  1) measurement event (via file operation)  before IMA initialisation.
+  2) deferred TPM device initailisation and IMA.
 
-diff --git a/security/ipe/eval.c b/security/ipe/eval.c
-index 705c4ecfda69..23ae1edf896b 100644
---- a/security/ipe/eval.c
-+++ b/security/ipe/eval.c
-@@ -331,7 +331,9 @@ static bool evaluate_bpf_kernel(const struct ipe_eval_ctx *const ctx)
- 	return false;
- }
- #endif /* CONFIG_IPE_PROP_BPF_SIGNATURE */
-+
- /**
-+ * evaluate_property() - Analyze @ctx against a rule property.
-  * @ctx: Supplies a pointer to the context to be evaluated.
-  * @p: Supplies a pointer to the property to be evaluated.
-  *
+Might someone could think it wouldn't be a problem since initrd is
+measuared in PCR9 by boot loader (e.x) grub, but it still has a problem
+for the case uses root= boot option where it doesn't use initrd
+but use specified block dev with a filesystem.
+
+I think soluation would be determined whether IMA neglects the
+measurement event before its initialisation or not in current state:
+
+  a) Case for neglecting measurement event before IMA initailisation.
+
+    In this case, As you suggeested, IMA initialisation should be
+    determined by build config whether it initialises at late_initcall
+    or late_initcall_sync so that make user can choice upto their
+    platform.
+
+  b) Case for considering measurement event event before IMA
+     initialisation.
+
+    I couldn't image any other solution except queuing those event
+    and extend them after generating boot_aggregate log and if those
+    event can be queued, it wouldn't a problem to move IMA initialisation
+    to late_initcall_sync.
+
+But you mention there are some thoughts from Roberto, might there was
+some discussion with him. If you don't mind, would you let me know
+how the discussion is going on and your thought to fix this all?
+
+Thanks!
+
 -- 
-2.54.0
-
+Sincerely,
+Yeoreum Yun
