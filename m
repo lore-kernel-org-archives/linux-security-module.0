@@ -1,147 +1,135 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CC531E830
-	for <linux-security-module@vger.kernel.org>; Thu, 14 May 2026 16:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778777530; cv=none; b=ZrbTtc10QBeTIloDNLpRO3p6XFOh7DifMuOhz4dU11xLuUidR2jTtw5AB8lHe/ljzXbyUU6V1Ogv3V/M0kqPMxNxUt0doX371NVVancJxCh9Hsy5LzD0OpUAjAAwM25qJkU479e2Jfn3nO1jUsYouDnS+cg7ey3DFvIZEpAmv54=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778777530; c=relaxed/simple;
-	bh=3EPvR1ScT1B0f5NL80yDzKu7nP5JRSuTf0PXBGwV2lo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lP6VCH/+npR98tteDXmBITSGr284hNVgAAZP1n25pTlegIgbY9yVoYQD4+s8Obg2Ifktcd/KjnH8CQEB+kS48xu0Q8WczUaV4a2wh8IlJk7k+ciQgjY/tfP6lBs9rPkNjcYSIDX6riqwBhb1p9JFsldMX7cn8OUi1BzEpjGbcls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lXAkRKMd; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1881C34B192
+	for <linux-security-module@vger.kernel.org>; Thu, 14 May 2026 16:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.174
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778777844; cv=pass; b=YwURn6hDAlemJjBCs3bq7abUp46LEl6543sXmv+ai1n8SHj0fvvcOeXI4J8RQa6waMRJ50Jq8OJq9hN7jm3Oq+32CIWHrVZ6MzBxD0sSs/PLJnVo9oXpMCz23AU9tLPfip7DmnIuu8cvqj0396oJUpLTivBG5DYf+8nJkkudNOI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778777844; c=relaxed/simple;
+	bh=gTLzk65Wlq7iBwMKl3jnKKhunklTk1bYtsmu8SZML0E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HizLSHVUN1854b2ijPoRKK6trcqq0NblHlHPrXxYRSGzFyarn1JqQIZf1JcVGW4sLh7wWMc5RVxjzlpiwP/0Hf2NqW20uJFc66K0V9duWyX5h3Q1myanW1jSPyemBfu58YFxbzVazDGPDTF6xkttn1RHT033Oeh2Ub2l8n65Xmo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Ov7LMCC4; arc=pass smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lXAkRKMd"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2b45cb89f7eso52731275ad.0
-        for <linux-security-module@vger.kernel.org>; Thu, 14 May 2026 09:52:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Ov7LMCC4"
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2b45cb89f7eso52784765ad.0
+        for <linux-security-module@vger.kernel.org>; Thu, 14 May 2026 09:57:20 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1778777839; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Evq83VP2WWH+lKjQxev7z1CHo1TbV/vcSDBm6v7iY/gUCV/AszVwPA4c2DQNhs1OZs
+         4FzCjTA/6pl1GVWTXhJZu55gbLNuPiBS0a7252Q9KVN1lFf4HwGLKBPi2VVejWBlj2Jf
+         ojgAxgXCMjLMNNbBaHW0fc2nu1rnmh/aoRGhQGjGsGMaAb3SdU9A1AayFwR33u30s6NV
+         /7nq3GyAblSVjXWeryKEWyO1Ejob0L/Ehdj299W6VpIu6dzTy1sSNA6FDbVdPlvwqhaa
+         rts5sA2mtUuFALkOcYRWhuNBSvTyxf6hrFirKBYy3DpW73I/dp919t5IiUId5MjmQ3vf
+         IYxw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=5jJK7BgqyarUsPKvk9VN44OC2exHpd5VUzVJYJ7s6AA=;
+        fh=GFBaop2R3GDr/Ojxg8k5XzSiX3sUG6zNbZPZPxSdKeE=;
+        b=XXcHUAPwj0JAbuMcUKqO+9GrRgsRgk1qA0w4JNkrV0YG214XCstNoctr3oEX1yDlsz
+         qLr1MNfANK3GfDkJ/+L3MuoZOZC2mFRApHcEUl2DUJNArUM6YOgEkXsAA6c5H/3DjUrP
+         H6icfIK+dGZG/L435Q8QRFhdb04ePkptIbxZmaU8D88a/60s1AH+oIPKc+llTao1LMTw
+         QJK+FGdqy9Zh90aQeF0euli7P0oBXtdKt5eHVuDeXTzzNQ0AkcEsPg0Yvs9Tw2Ys9O2u
+         FtGS3elIwqh3eBz2KU1GCj9d6beR88bplwAKq138TVs7MMSr7QjxhdHvbkAHme7QRu8T
+         yFfw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778777528; x=1779382328; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GwRQjyq3ZOtr85xXuZw5Nv7geOh6ncaBN6Zn+7ncG30=;
-        b=lXAkRKMdHAhoZ0VoElce6HoTabmLMhQ6cyZSgGmude2x4xovzRMmk8+BYDOsXuipBK
-         oekH0NCebx6pFss8Ap0vV0LyWCQ/4YGrWtL/pKKAHWaBpepdxhYMVJBja/rxQMDfKNYe
-         /xQkZ6ARfR/AfXG3z28OG1md0CLTySY9L2dWa+GTvBEuv5t1BRsc3b446KHRMmKXGr9D
-         hhUvoqzN5Sz5PqIsjFObX756EyRQNuMTm9CxvAh52SWUZG1CdaedjlF931LUd8B/Z+Dw
-         sLaWzjc5XTlAEw/ImEMm6K6wTBqVCQQGIlef65pjBIlI7NdSAJecEhp4GxRS+5l5mW+6
-         Aaew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778777528; x=1779382328;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1778777839; x=1779382639; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GwRQjyq3ZOtr85xXuZw5Nv7geOh6ncaBN6Zn+7ncG30=;
-        b=LJDvdT1d5Ktrk9T7j6tvhyTYII5vMCGMr75nC4EglYw5nxAlSGwj0iM50YNzyWX5gC
-         WfVMtpbtsz6cpLiTS+2liHNbPE+nCFT1oP0Hu//UK6NHLwx8FZVRIUWUAISgWJ9ohbfL
-         1H7+AOYDvcTu/sjYbmLKdtzTgWeoA1qsmxXPQsepEZ8QRFLVvbHTrneu63c2qjpwgLZ3
-         quQD39GeuWaTJS371tHh769L8XV5V7ZeRlyXti+5UVm8im0cIH0Hp0hIVfeHVCND0ALt
-         vXEeekQl5cZtoD0ICxR+6xfV0S2vkDtIC3PK3hxlnoUoa7GeMSChhOkN9UrLahELq7XZ
-         w/4A==
-X-Forwarded-Encrypted: i=1; AFNElJ9gO1YdY290uMoByO5rUzmReLBM8QCaLZZtLugppBPG/WpA+X+QVgPmZw5++B025A2CH0GDys0MoKo48oqzQR4ghHIG/js=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEYcGhUxSA/gNLsp50xhTDbXoHbEZOcDU4lLkmasarDp/qt7e7
-	5w4ogBliTuwzYWeBqjDZo+4pt76lA4D4in0cxZTZFxdeFxdWoh7P3fLK
-X-Gm-Gg: Acq92OGRn+ASrvvKJw4owXoUThvM8gXJveoT0mw/MF3/+BUSVC+gMY2cbj+jgmXXnXG
-	oyz23UMyodmuwglLTo5v3tgHi9o9ssrIKY3cdt4AXqLl2y92loW6eLpNu2UacrNrV8UVg+yMd0n
-	WY1ghuCd5QayTaE3BL3oZJ+4ZHeTTp2EAv3S1HMRiYM2g3kq/90/czMTrdFecgQDI7hIjDe1ETB
-	4NajPWWsqVjK8jMQ9c304h290AGRFY6QnplP3M3PeweHqFVMC1dxFf8veQcvBZ3v41a+No5hSuV
-	H9MlrXKiH2CXmHcSwOi4ZpQeY2WTIZtZnXCU10169iTtQBQ/pls0oNcMZ/cEJARXnzH9SRTSgkF
-	lUhpgvuRlk41C3gpZqhqT3Cw7dBRs9le9acLh2Sr0XRxZ+ZEtDTtmGHLHMQf95H/vrIPVigjBWb
-	UPqwBuWA+zdUw4odqThnU3LYsupXUQKg==
-X-Received: by 2002:a17:902:7d95:b0:2bd:3bfd:22c3 with SMTP id d9443c01a7336-2bd7e88ee80mr2444355ad.24.1778777528083;
-        Thu, 14 May 2026 09:52:08 -0700 (PDT)
-Received: from Tplus.localdomain ([114.243.117.21])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2bd5c2631basm27937825ad.34.2026.05.14.09.52.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 May 2026 09:52:07 -0700 (PDT)
-From: Qi Tang <tpluszz77@gmail.com>
-To: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	edumazet@google.com
-Cc: netdev@vger.kernel.org,
-	lyutoon@gmail.com,
-	stable@vger.kernel.org,
-	Qi Tang <tpluszz77@gmail.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Simon Horman <horms@kernel.org>,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH net 4/4] netlabel: validate CIPSO option against skb tail in netlbl_skbuff_getattr
-Date: Fri, 15 May 2026 00:51:34 +0800
-Message-ID: <20260514165139.436961-5-tpluszz77@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        bh=5jJK7BgqyarUsPKvk9VN44OC2exHpd5VUzVJYJ7s6AA=;
+        b=Ov7LMCC4FU1FnsHaAT0wCzJFWC81iDNKwQZ2k6k4ZgGq8b2kDz/xemXds2WFQR5EcL
+         LzvJX7pdIVOLDOcV68aQTZiZMH7QaFJ5maOIUDhTojqTE4vW+zA2IwIUGWoEAt0+EQC8
+         4U7tVWvEm81hhr5RfKvj6Hs4iaMAN9orVJ/rx5rqLtPtH4oj5mFZvLiuVwMteJDQoqUB
+         CiK35gpBnvFo2o7Hlp2BF03zWxKPeeVFSxd+VRA2dkK6Xp/nTKFdIqDaE92u/M8KRrT0
+         D1QHkb2utxpRsjvYD21h6jn63ZMO0tcJgAuGhaaJElfgB6QSExy5CKTy2n50HrMseggK
+         XBVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778777839; x=1779382639;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=5jJK7BgqyarUsPKvk9VN44OC2exHpd5VUzVJYJ7s6AA=;
+        b=onnLjWZSwQQWMqzuJpr8itYJWeXUmYzJIvm08IPyW/IPEr9Ba6piC5vUydBUdB+H17
+         MsH9DwVCra4/5fbovd3Fvyx9vUt/mvh1bq/1Qo/6IVfxAElRbRQ7pFt72vUvtt5OBHhR
+         sg0D/vK6SRA2evkWJYecJxH6UEfMXZfP4yYxuw5YIJZGDgn6DgGJnj2f8cBUJJymu0Hi
+         FuWlEgWypix+h2uLCBPgDeTJrFle5Sor0LAI5g/oCEf1KvtKkxwc6QPU0zLj+dD/IqgF
+         V3LV1HNS0QtoMmY7fa641xg7xhBHYEbgTa5FCSRggzKHcBpwoPjuD3ezvw3jQD48VtpL
+         YcsA==
+X-Gm-Message-State: AOJu0YxORjSwlhNoVN/u0VbufFtWiGgtUqcAqOja4FkoGCS4u19jqJ2+
+	LabUoQO3wVDqpoJgWdZc6un+pNbVz8CzcrGiKV9Sqm2iTtAUqmCAiZgKqXipJi1A92GmKOkHJvg
+	8J6XnpxVknU0uTioEcsqjzktlBeTaJT9Yvo8s+XKA
+X-Gm-Gg: Acq92OEjltfUlOobewQVfjSX8xL3MUQcmb6tq7zEwlV2KO7bf4L9zrsMBDfpXclr/Hu
+	54rfpowWzOZhlx3Otq7PHwoENWDov4m6gYVQa63/FEpfR3oyWsp51cotB54N5WASV6W+ARyiCIW
+	a18FiqnyG6Fg4a8PQF8wOvw3MG09g92+W3TL5q/BKI0zI2cUwtx0m0BEGX4eeIpY7tuQmX7B7wv
+	UxZGHf9OhBLT80YE7TF3FZeZtE7MBUE3zarP5prdig6NFWjChHsCXB7P8VAWRMFQT/NFMpoHcL1
+	4i8V4nnjMPZ49apIQg==
+X-Received: by 2002:a17:903:3c30:b0:2bd:7ff4:ab0b with SMTP id
+ d9443c01a7336-2bd7ff4b216mr942485ad.39.1778777839419; Thu, 14 May 2026
+ 09:57:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260514023640.574020-2-paul@paul-moore.com> <CAKtyLkF87QGh2PKjkhnD7XgsM_sDoDOrFq9v4tk7n7tTbggsng@mail.gmail.com>
+In-Reply-To: <CAKtyLkF87QGh2PKjkhnD7XgsM_sDoDOrFq9v4tk7n7tTbggsng@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 14 May 2026 12:57:07 -0400
+X-Gm-Features: AVHnY4KYHJaL1r6CIFPXikcE8UPl98ituaGYOgLGJtA9vwhTanORPT36v1NKo8Q
+Message-ID: <CAHC9VhRbgbMuUO=2n7CQ+fLoZux5YWmthOPp9aPUUa7XD-o+xg@mail.gmail.com>
+Subject: Re: [PATCH] ipe: restore the kdoc comments for evaluate_property()
+To: Fan Wu <wufan@kernel.org>
+Cc: linux-security-module@vger.kernel.org, 
+	Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-netlbl_skbuff_getattr() locates the CIPSO option in the IPv4 IP header
-via cipso_v4_optptr() and hands the bare pointer to cipso_v4_getattr().
-The consumer re-reads cipso[1] (option length), cipso[6] (tag type),
-and then cipso_v4_parsetag_*() re-reads further bytes from the skb.
+On Thu, May 14, 2026 at 10:19=E2=80=AFAM Fan Wu <wufan@kernel.org> wrote:
+> On Wed, May 13, 2026 at 7:36=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> >
+> > The Hornet integration patch mistakenly munged the kdoc comment block
+> > for the evaluate_property() function, this patch restores that
+> > comment.
+> >
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202605141037.VVorBhvP-lkp=
+@intel.com/
+> > Signed-off-by: Paul Moore <paul@paul-moore.com>
+> > ---
+> >  security/ipe/eval.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/security/ipe/eval.c b/security/ipe/eval.c
+> > index 705c4ecfda69..23ae1edf896b 100644
+> > --- a/security/ipe/eval.c
+> > +++ b/security/ipe/eval.c
+> > @@ -331,7 +331,9 @@ static bool evaluate_bpf_kernel(const struct ipe_ev=
+al_ctx *const ctx)
+> >         return false;
+> >  }
+> >  #endif /* CONFIG_IPE_PROP_BPF_SIGNATURE */
+> > +
+> >  /**
+> > + * evaluate_property() - Analyze @ctx against a rule property.
+> >   * @ctx: Supplies a pointer to the context to be evaluated.
+> >   * @p: Supplies a pointer to the property to be evaluated.
+> >   *
+> > --
+> > 2.54.0
+>
+> Acked-by: Fan Wu <wufan@kernel.org>
 
-__ip_options_compile() validates these bytes only at parse time.  An
-nftables LOCAL_IN payload write reachable from an unprivileged user
-namespace can rewrite them after parse and before the SELinux/Smack
-peer-label consume path (selinux_sock_rcv_skb_compat ->
-selinux_netlbl_sock_rcv_skb -> netlbl_skbuff_getattr).  This is the
-IPv4 analogue of the CALIPSO IPv6 trust-after-modification fixed in
-the previous patch: the tag parsers walk the option using attacker-
-controlled length bytes, producing slab-out-of-bounds reads whose
-contents feed into the MLS access decision.
+Merged into lsm/dev.
 
-Validate the option fits within skb_tail_pointer(skb) before invoking
-cipso_v4_getattr().
-
-Runtime confirmation (Smack peer-label policy + nft LOCAL_IN
-mutation of tag_len): UdpInDatagrams increments to 1 and recvfrom
-returns the payload, showing netlbl_skbuff_getattr ->
-cipso_v4_getattr -> cipso_v4_parsetag_rbm -> netlbl_bitmap_walk runs
-end-to-end past the option's true bound; with this patch the
-consume path short-circuits at the bounds check and the counter
-stays 0.
-
-Reported-by: Qi Tang <tpluszz77@gmail.com>
-Reported-by: Tong Liu <lyutoon@gmail.com>
-Fixes: 04f81f0154e4 ("cipso: don't use IPCB() to locate the CIPSO IP option")
-Signed-off-by: Qi Tang <tpluszz77@gmail.com>
----
- net/netlabel/netlabel_kapi.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-index 4af8ab76964e0..ace561a2904a4 100644
---- a/net/netlabel/netlabel_kapi.c
-+++ b/net/netlabel/netlabel_kapi.c
-@@ -1393,11 +1393,21 @@ int netlbl_skbuff_getattr(const struct sk_buff *skb,
- 	unsigned char *ptr;
- 
- 	switch (family) {
--	case AF_INET:
-+	case AF_INET: {
-+		const unsigned char *tail = skb_tail_pointer(skb);
-+		u8 opt_len, tag_len;
-+
- 		ptr = cipso_v4_optptr(skb);
--		if (ptr && cipso_v4_getattr(ptr, secattr) == 0)
-+		if (!ptr || ptr + 8 > tail)
-+			break;
-+		opt_len = ptr[1];	/* total CIPSO option length */
-+		tag_len = ptr[7];	/* first tag length */
-+		if (ptr + opt_len > tail || ptr + 6 + tag_len > tail)
-+			break;
-+		if (cipso_v4_getattr(ptr, secattr) == 0)
- 			return 0;
- 		break;
-+	}
- #if IS_ENABLED(CONFIG_IPV6)
- 	case AF_INET6: {
- 		const unsigned char *tail = skb_tail_pointer(skb);
--- 
-2.47.3
-
+--=20
+paul-moore.com
