@@ -1,198 +1,331 @@
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BC4315D33
-	for <linux-security-module@vger.kernel.org>; Fri, 15 May 2026 05:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E749C2DEA6B;
+	Fri, 15 May 2026 13:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778821296; cv=none; b=NjYn98erJIsOU53CoT9Ve1CxerdYOqGoQuM1/pNB8oASNLVePHQoL8M3gG76nhhaz5A7BXrskmPl/OZt6zBQfbX4vRBmTzacZKFKz6uNFwxCGPoSLF+aH0PtVrzpO0Jp7E8GlUSbLLyD5c5zb+3F+R3zezZ++tUlS7plQlvAUQ4=
+	t=1778853234; cv=none; b=Emm0QtJyao7D0sMO/LN7JWIojhOHYwlJLPsSRI8DVJ6RBihcEf75j+IW/HLDUvb4q1q26XUkHz67ewFDRamj9jExMS+PXk6qFtYfhMxBkChSq3a604H2BPIC+aGRr9fVE40riJpu9+y+CiIk54jKQQQ/i1RzIXjhz0VAPvajj04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778821296; c=relaxed/simple;
-	bh=JNY1W3dItPtvZ7Cceml3Tw2uFnJbYV/RyiE34VbFyM4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nnuB5C8MQL5d2YpTGzNlmuNxsVP5wlBd0g8pbZ8wP+Ui05Iua2NbnHPj+oYcwc52YcaDFja/ZvpigJn0e+0cFO5K5E/NfXVCDjycfzfjRpjGBhCf+pcZsx2xACwhVv46z09cSo6v7mamrWF9WYVVE5zF+29eJANaRwVrlTOITnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m1CsIjdD; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1778853234; c=relaxed/simple;
+	bh=Y1gyeosz2qkHMid+rX2ftXz6wmVUtQk3hZVNk9+H5Ew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VCJmx+BWP4QOgVFq8b64jVrdWSnYonVSsX2t7CBdSps4MZN2XfYuNdr5pXVeSgQqBLiGwt42BQKJDto94UOJ/sbtUmpb2MuT8olrrTTG+7dhGmiA6vFn4XtYiXq3x/c0vUmHjDzV5787naX7lHmyV3/SCwnf8tzDy60DWvqXU7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A1yx1trM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m1CsIjdD"
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-2b9fcf7c91bso87420345ad.0
-        for <linux-security-module@vger.kernel.org>; Thu, 14 May 2026 22:01:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778821295; x=1779426095; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gqboflgAQ/qafTTrlWTn23PBzb00+Q5WROmi07sXKXI=;
-        b=m1CsIjdDWxH1lwqhAEbsBMX/hX6Vo3eFnFTfM37VWsRJ3xmYf16WOkCAxzD0JiEQT9
-         YBbUWP/a20IZJuz+2j/t3E+U+EZ+VgTi7yGsalEcUYc3xtj/T/5XtTxjqxrYruK8ytPu
-         xiqDxEMlFMsRIV+DBynHx5AEchGsbzFxE4SdHITfZyCNbsUT+m2DvxTqA7JloNcyzH65
-         upsb15B8nXEyF6nQ4G96uYg31B/t2WSqz+f9TxJcekCr38eVdjVC0+3DCc1TFP86JP4b
-         NZrXAQ+rjrNJMvr7QlWCecNDZExhn12enXpBq05WbFZfiKLall6T5PX4IcLpB5/kKPa/
-         HJgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778821295; x=1779426095;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gqboflgAQ/qafTTrlWTn23PBzb00+Q5WROmi07sXKXI=;
-        b=Q0ke9nyY8/i4vnOUfeXUSknaEuTvcoDuzz8Qya/5FElLpmx5WfjE6RnDlnEtS5/iyS
-         UqPx/JZsHF0Zg6pIotJ5vKKzRMsgldmZRv1MyC7IKbLE8JTTWh+1bUVCcA5mkh2uaSUZ
-         ZbBHJKwvrypbsvU/AqSSzyOeAkTgKTzm65MTjPSLL8QKERsn6LQMzEEJMe+otljn4rqM
-         zloG6/rICdLZEWrpsuGgqsNAYi3FFGU3tcK8FPKgJqAD2hdKk9OPiEGO2Mz/TPq29Ook
-         69eH2HWcBCzyJEk3fRNwY63gn7IjUb2RLZkf3fqAiD6Ru4aKxSkU6Vdt7gtSLOiDeQak
-         g1gQ==
-X-Forwarded-Encrypted: i=1; AFNElJ+sxArooi0LC9L4FwrSijpvtLa4DYPPbdCS+64Uh+Asxv3oZDSa444VjBr0KtZIv6YARKcWWSxwGai0PAUKeyAO1+Cf5BU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYJbwhLQilIeE5P+fvFnbMDD0UY9esAkBzjwo8KFZA1bVcbSJ9
-	vJzroXwCzkMm1Km6YytoOayMhkPhQZCEK+VBHrQOH/+w/sdNSnsnF3yp
-X-Gm-Gg: Acq92OHqIEJzz53DN1OfO8g/EcHz4lftLblguMulkelep+5uTo9i2nKF5VK2Ga2t/HR
-	q2RFwL9zZrtnAEiPsmg/tLGBt3B2I9H+Zwl1tt9WmnFwaTHixSZUIXuNUAX+AEtf8R/yaTTe5wb
-	VR/EQPKO0rfnzFOX/y4m94rY0CFrFQiR5GP1TTLTFVBrdHPUmLJ7pmpsBOnrLawYyQdsEXqc0N0
-	Y63QU001a4qDZbY6T2mwfDh2Ylmyphxd9YsDB4s9pzH+CK+DB/xKECUBx1eNoEZkSRip9XdZsZc
-	hTqZn2Xpf+XiDWCp8UHUMCSHCLX0ihTZFwZ5jsjzrvT8fsHl8lVC8veBCvWaaxzY7lhfmB9qkn9
-	005nTZHUn4BciY42EtyqF5KAsdWB8fNhzvi5CJAyeBFAY+MClOp/6O5yqiFe1bc5BZfdpfK76Nn
-	Cg5hf67HEwgp4NylNN0PlieX1b4TJ5PkwKFQvcRT0E9g==
-X-Received: by 2002:a17:902:b181:b0:2bc:6784:5260 with SMTP id d9443c01a7336-2bd7e966018mr20182025ad.37.1778821294496;
-        Thu, 14 May 2026 22:01:34 -0700 (PDT)
-Received: from localhost ([111.228.63.84])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2bd5bd5ef1bsm55532965ad.4.2026.05.14.22.01.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 May 2026 22:01:34 -0700 (PDT)
-From: Zhang Cen <rollkingzzc@gmail.com>
-To: John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zerocling0077@gmail.com,
-	2045gemini@gmail.com,
-	Zhang Cen <rollkingzzc@gmail.com>
-Subject: [PATCH] apparmor: hold peer path references in aa_unix_file_perm()
-Date: Fri, 15 May 2026 13:01:16 +0800
-Message-Id: <20260515050116.95754-1-rollkingzzc@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A1yx1trM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33BFFC2BCB0;
+	Fri, 15 May 2026 13:53:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778853233;
+	bh=Y1gyeosz2qkHMid+rX2ftXz6wmVUtQk3hZVNk9+H5Ew=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A1yx1trMAuX4uPgzq30KugkFgBWvGkQ00OTXt4fD7QZY9PIT7MWK279StfLyH0/ZK
+	 wR0mCQGAASYvb7XRaKka7b3eG8xalsI55aG1urnDe8Xf2zeqgl1tKvsweZ6RBSz4du
+	 Q3dLgvgGJpG//hSbnYPnx4RlJvQyFnt4udgMSCIdKH90bPm2vP3+wpECg63GzaGLE/
+	 Ckf/8qWWNBeLmb5/xKUFUR/o+ko9JQJ1t42RauAVv7nFmWoC3C+QX/AZ5TCI9Y/omB
+	 70ruKCdTp3nOv0v8ubEIYX1iGJeLH0F4V/f3kALZbYJe19fguIjBCczEgBZZxKDaAz
+	 1ZHsw2Kh1vAlg==
+Date: Fri, 15 May 2026 15:53:42 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Albert Esteve <aesteve@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Shuah Khan <shuah@kernel.org>, cgroups@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	mripard@kernel.org, echanude@redhat.com
+Subject: Re: [PATCH RFC 2/5] dma-heap: charge dma-buf memory via explicit
+ memcg
+Message-ID: <20260515-hinschauen-effizient-9e3a05a94f2e@brauner>
+References: <20260512-v2_20230123_tjmercier_google_com-v1-0-6326701c3691@redhat.com>
+ <20260512-v2_20230123_tjmercier_google_com-v1-2-6326701c3691@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260512-v2_20230123_tjmercier_google_com-v1-2-6326701c3691@redhat.com>
 
-aa_unix_file_perm() keeps the connected peer alive with sock_hold(peer_sk),
-but it then carries unix_sk(peer_sk)->path outside the peer socket state
-lock without taking a path reference. That copied peer_path can race with
-unix_release_sock(), which clears u->path under unix_state_lock(peer_sk)
-and drops the socket-owned path reference with path_put() before the final
-sock_put(peer_sk).
+On Tue, May 12, 2026 at 11:10:44AM +0200, Albert Esteve wrote:
+> On embedded platforms a central process often allocates dma-buf
+> memory on behalf of client applications. Without a way to
+> attribute the charge to the requesting client's cgroup, the
+> cost lands on the allocator, making per-cgroup memory limits
+> ineffective for the actual consumers.
+> 
+> Add charge_pid_fd to struct dma_heap_allocation_data. When set to
 
-Take peer_sk's unix_state_lock() long enough to snapshot peer_path,
-cache whether the peer is filesystem-bound, and path_get() a non-NULL
-path before dropping the lock. Drop that path reference after the last
-AppArmor peer path check. This restores the ownership invariant for
-peer_path without changing AF_UNIX shutdown semantics once the peer path
-has already been cleared.
+Please be aware that pidfds come in two flavors:
 
-The buggy scenario involves two paths, with each column showing the
-order within that path:
+thread-group pidfds and thread-specific pidfds. Make sure that your API
+doesn't implicitly depend on this distinction not existing.
 
-aa_unix_file_perm() [borrower]:        unix_release_sock() [peer close]:
-1. unix_state_lock(sock->sk)           1. unix_state_lock(peer_sk)
-2. peer_sk = unix_peer(sock->sk)       2. Save path = u->path
-3. sock_hold(peer_sk)                  3. Clear u->path.dentry/mnt
-4. unix_state_unlock(sock->sk)         4. unix_state_unlock(peer_sk)
-5. peer_path = unix_sk(peer_sk)->path  5. path_put(&path)
-6. unix_fs_perm(&peer_path)            6. sock_put(peer_sk)
 
-KASAN reported a slab-use-after-free in unix_fs_perm() at
-security/apparmor/af_unix.c:46, with the free side in
-unix_release_sock() -> path_put() at net/unix/af_unix.c:730.
+> a valid pidfd, DMA_HEAP_IOCTL_ALLOC resolves the target task's
+> memcg and charges the buffer there via mem_cgroup_charge_dmabuf()
+> inside dma_heap_buffer_alloc(). Without charge_pid_fd, and with
+> the mem_accounting module parameter enabled, the buffer is charged
+> to the allocator's own cgroup.
+> 
+> Additionally, commit 3c227be90659 ("dma-buf: system_heap: account for
+> system heap allocation in memcg") adds __GFP_ACCOUNT to system-heap
+> page allocations. Keeping __GFP_ACCOUNT would charge the same pages
+> twice (once to kmem, once to MEMCG_DMABUF), thus remove it and route
+> all accounting through a single MEMCG_DMABUF path.
+> 
+> Usage examples:
+> 
+>   1. Central allocator charging to a client at allocation time.
+>      The allocator knows the client's PID (e.g., from binder's
+>      sender_pid) and uses pidfd to attribute the charge:
+> 
+>        pid_t client_pid = txn->sender_pid;
+>        int pidfd = pidfd_open(client_pid, 0);
+> 
+>        struct dma_heap_allocation_data alloc = {
+>            .len             = buffer_size,
+>            .fd_flags        = O_RDWR | O_CLOEXEC,
+>            .charge_pid_fd   = pidfd,
+>        };
+>        ioctl(heap_fd, DMA_HEAP_IOCTL_ALLOC, &alloc);
+>        close(pidfd);
+>        /* alloc.fd is now charged to client's cgroup */
+> 
+>   2. Default allocation (no pidfd, mem_accounting=1).
+>      When charge_pid_fd is not set and the mem_accounting module
+>      parameter is enabled, the buffer is charged to the allocator's
+>      own cgroup:
+> 
+>        struct dma_heap_allocation_data alloc = {
+>            .len      = buffer_size,
+>            .fd_flags = O_RDWR | O_CLOEXEC,
+>        };
+>        ioctl(heap_fd, DMA_HEAP_IOCTL_ALLOC, &alloc);
+>        /* charged to current process's cgroup */
+> 
+> Current limitations:
+> 
+>  - Single-owner model: a dma-buf carries one memcg charge regardless of
+>    how many processes share it. Means only the first owner (and exporter)
+>    of the shared buffer bears the charge.
+>  - Only memcg accounting supported. While this makes sense for system
+>    heap buffers, other heaps (e.g., CMA heaps) will require selectively
+>    charging also for the dmem controller.
+> 
+> Signed-off-by: Albert Esteve <aesteve@redhat.com>
+> ---
+>  Documentation/admin-guide/cgroup-v2.rst |  5 ++--
+>  drivers/dma-buf/dma-buf.c               | 16 ++++---------
+>  drivers/dma-buf/dma-heap.c              | 42 ++++++++++++++++++++++++++++++---
+>  drivers/dma-buf/heaps/system_heap.c     |  2 --
+>  include/uapi/linux/dma-heap.h           |  6 +++++
+>  5 files changed, 53 insertions(+), 18 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+> index 8bdbc2e866430..824d269531eb1 100644
+> --- a/Documentation/admin-guide/cgroup-v2.rst
+> +++ b/Documentation/admin-guide/cgroup-v2.rst
+> @@ -1636,8 +1636,9 @@ The following nested keys are defined.
+>  		structures.
+>  
+>  	  dmabuf (npn)
+> -		Amount of memory used for exported DMA buffers allocated by the cgroup.
+> -		Stays with the allocating cgroup regardless of how the buffer is shared.
+> +		Amount of memory used for exported DMA buffers allocated by or on
+> +		behalf of the cgroup. Stays with the allocating cgroup regardless
+> +		of how the buffer is shared.
+>  
+>  	  workingset_refault_anon
+>  		Number of refaults of previously evicted anonymous pages.
+> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+> index ce02377f48908..23fb758b78297 100644
+> --- a/drivers/dma-buf/dma-buf.c
+> +++ b/drivers/dma-buf/dma-buf.c
+> @@ -181,8 +181,11 @@ static void dma_buf_release(struct dentry *dentry)
+>  	 */
+>  	BUG_ON(dmabuf->cb_in.active || dmabuf->cb_out.active);
+>  
+> -	mem_cgroup_uncharge_dmabuf(dmabuf->memcg, PAGE_ALIGN(dmabuf->size) / PAGE_SIZE);
+> -	mem_cgroup_put(dmabuf->memcg);
+> +	if (dmabuf->memcg) {
+> +		mem_cgroup_uncharge_dmabuf(dmabuf->memcg,
+> +					  PAGE_ALIGN(dmabuf->size) / PAGE_SIZE);
+> +		mem_cgroup_put(dmabuf->memcg);
+> +	}
+>  
+>  	dmabuf->ops->release(dmabuf);
+>  
+> @@ -764,13 +767,6 @@ struct dma_buf *dma_buf_export(const struct dma_buf_export_info *exp_info)
+>  		dmabuf->resv = resv;
+>  	}
+>  
+> -	dmabuf->memcg = get_mem_cgroup_from_mm(current->mm);
+> -	if (!mem_cgroup_charge_dmabuf(dmabuf->memcg, PAGE_ALIGN(dmabuf->size) / PAGE_SIZE,
+> -				      GFP_KERNEL)) {
+> -		ret = -ENOMEM;
+> -		goto err_memcg;
+> -	}
+> -
+>  	file->private_data = dmabuf;
+>  	file->f_path.dentry->d_fsdata = dmabuf;
+>  	dmabuf->file = file;
+> @@ -781,8 +777,6 @@ struct dma_buf *dma_buf_export(const struct dma_buf_export_info *exp_info)
+>  
+>  	return dmabuf;
+>  
+> -err_memcg:
+> -	mem_cgroup_put(dmabuf->memcg);
+>  err_file:
+>  	fput(file);
+>  err_module:
+> diff --git a/drivers/dma-buf/dma-heap.c b/drivers/dma-buf/dma-heap.c
+> index ac5f8685a6494..ff6e259afcdc0 100644
+> --- a/drivers/dma-buf/dma-heap.c
+> +++ b/drivers/dma-buf/dma-heap.c
+> @@ -7,13 +7,17 @@
+>   */
+>  
+>  #include <linux/cdev.h>
+> +#include <linux/cgroup.h>
+>  #include <linux/device.h>
+>  #include <linux/dma-buf.h>
+>  #include <linux/dma-heap.h>
+> +#include <linux/memcontrol.h>
+> +#include <linux/sched/mm.h>
+>  #include <linux/err.h>
+>  #include <linux/export.h>
+>  #include <linux/list.h>
+>  #include <linux/nospec.h>
+> +#include <linux/pidfd.h>
+>  #include <linux/syscalls.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/xarray.h>
+> @@ -55,10 +59,12 @@ MODULE_PARM_DESC(mem_accounting,
+>  		 "Enable cgroup-based memory accounting for dma-buf heap allocations (default=false).");
+>  
+>  static int dma_heap_buffer_alloc(struct dma_heap *heap, size_t len,
+> -				 u32 fd_flags,
+> -				 u64 heap_flags)
+> +				 u32 fd_flags, u64 heap_flags,
+> +				 struct mem_cgroup *charge_to)
+>  {
+>  	struct dma_buf *dmabuf;
+> +	unsigned int nr_pages;
+> +	struct mem_cgroup *memcg = charge_to;
+>  	int fd;
+>  
+>  	/*
+> @@ -73,6 +79,22 @@ static int dma_heap_buffer_alloc(struct dma_heap *heap, size_t len,
+>  	if (IS_ERR(dmabuf))
+>  		return PTR_ERR(dmabuf);
+>  
+> +	nr_pages = len / PAGE_SIZE;
+> +
+> +	if (memcg)
+> +		css_get(&memcg->css);
+> +	else if (mem_accounting)
+> +		memcg = get_mem_cgroup_from_mm(current->mm);
+> +
+> +	if (memcg) {
+> +		if (!mem_cgroup_charge_dmabuf(memcg, nr_pages, GFP_KERNEL)) {
+> +			mem_cgroup_put(memcg);
+> +			dma_buf_put(dmabuf);
+> +			return -ENOMEM;
+> +		}
+> +		dmabuf->memcg = memcg;
+> +	}
+> +
+>  	fd = dma_buf_fd(dmabuf, fd_flags);
+>  	if (fd < 0) {
+>  		dma_buf_put(dmabuf);
+> @@ -102,6 +124,9 @@ static long dma_heap_ioctl_allocate(struct file *file, void *data)
+>  {
+>  	struct dma_heap_allocation_data *heap_allocation = data;
+>  	struct dma_heap *heap = file->private_data;
+> +	struct mem_cgroup *memcg = NULL;
+> +	struct task_struct *task;
+> +	unsigned int pidfd_flags;
+>  	int fd;
+>  
+>  	if (heap_allocation->fd)
+> @@ -113,9 +138,20 @@ static long dma_heap_ioctl_allocate(struct file *file, void *data)
+>  	if (heap_allocation->heap_flags & ~DMA_HEAP_VALID_HEAP_FLAGS)
+>  		return -EINVAL;
+>  
+> +	if (heap_allocation->charge_pid_fd) {
+> +		task = pidfd_get_task(heap_allocation->charge_pid_fd, &pidfd_flags);
 
-Signed-off-by: Zhang Cen <rollkingzzc@gmail.com>
+Will always get a thread-group leader pidfd and will fail if this is a
+thread-specific pidfd. pidfd_open(1234, PIDFD_THREAD) can be used to
+open a thread-specific pidfd.
 
----
- security/apparmor/af_unix.c | 31 ++++++++++++++++++-------------
- 1 file changed, 18 insertions(+), 13 deletions(-)
-
-diff --git a/security/apparmor/af_unix.c b/security/apparmor/af_unix.c
-index fdb4a9f21..7a1562f6f 100644
---- a/security/apparmor/af_unix.c
-+++ b/security/apparmor/af_unix.c
-@@ -716,7 +716,8 @@ int aa_unix_file_perm(const struct cred *subj_cred, struct aa_label *label,
- 	struct sock *peer_sk = NULL;
- 	u32 sk_req = request & ~NET_PEER_MASK;
- 	struct path path;
--	bool is_sk_fs;
-+	struct path peer_path = {};
-+	bool is_sk_fs, is_peer_fs = false;
- 	int error = 0;
- 
- 	AA_BUG(!label);
-@@ -724,9 +725,8 @@ int aa_unix_file_perm(const struct cred *subj_cred, struct aa_label *label,
- 	AA_BUG(!sock->sk);
- 	AA_BUG(sock->sk->sk_family != PF_UNIX);
- 
--	/* investigate only using lock via unix_peer_get()
--	 * addr only needs the memory barrier, but need to investigate
--	 * path
-+	/* addr only needs the memory barrier; hold a peer path reference
-+	 * under peer_sk's state lock after sock_hold(peer_sk)
- 	 */
- 	unix_state_lock(sock->sk);
- 	peer_sk = unix_peer(sock->sk);
-@@ -749,14 +749,18 @@ int aa_unix_file_perm(const struct cred *subj_cred, struct aa_label *label,
- 		goto out;
- 
- 	peer_addr = aa_sunaddr(unix_sk(peer_sk), &peer_addrlen);
--
--	struct path peer_path;
--
--	peer_path = unix_sk(peer_sk)->path;
--	if (!is_sk_fs && is_unix_fs(peer_sk)) {
-+	if (!is_sk_fs) {
-+		unix_state_lock(peer_sk);
-+		is_peer_fs = is_unix_fs(peer_sk);
-+		peer_path = unix_sk(peer_sk)->path;
-+		if (peer_path.dentry)
-+			path_get(&peer_path);
-+		unix_state_unlock(peer_sk);
-+	}
-+	if (!is_sk_fs && is_peer_fs) {
- 		last_error(error,
- 			   unix_fs_perm(op, request, subj_cred, label,
--					is_unix_fs(peer_sk) ? &peer_path : NULL));
-+					&peer_path));
- 	} else if (!is_sk_fs) {
- 		struct aa_label *plabel;
- 		struct aa_sk_ctx *pctx = aa_sock(peer_sk);
-@@ -772,12 +776,12 @@ int aa_unix_file_perm(const struct cred *subj_cred, struct aa_label *label,
- 					      MAY_READ | MAY_WRITE, sock->sk,
- 					      is_sk_fs ? &path : NULL,
- 					      peer_addr, peer_addrlen,
--					      is_unix_fs(peer_sk) ?
-+					      is_peer_fs ?
- 							&peer_path : NULL,
- 					      plabel),
- 			       unix_peer_perm(file->f_cred, plabel, op,
- 					      MAY_READ | MAY_WRITE, peer_sk,
--					      is_unix_fs(peer_sk) ?
-+					      is_peer_fs ?
- 							&peer_path : NULL,
- 					      addr, addrlen,
- 					      is_sk_fs ? &path : NULL,
-@@ -785,6 +789,8 @@ int aa_unix_file_perm(const struct cred *subj_cred, struct aa_label *label,
- 		if (!error && !__aa_subj_label_is_cached(plabel, label))
- 			update_peer_ctx(peer_sk, pctx, label);
- 	}
-+	if (peer_path.dentry)
-+		path_put(&peer_path);
- 	sock_put(peer_sk);
- 
- out:
-@@ -796,4 +802,3 @@ int aa_unix_file_perm(const struct cred *subj_cred, struct aa_label *label,
- 
- 	return error;
- }
--
--- 
-2.43.0
+> +		if (IS_ERR(task))
+> +			return PTR_ERR(task);
+> +
+> +		memcg = get_mem_cgroup_from_mm(task->mm);
+> +		put_task_struct(task);
+> +	}
+> +
+>  	fd = dma_heap_buffer_alloc(heap, heap_allocation->len,
+>  				   heap_allocation->fd_flags,
+> -				   heap_allocation->heap_flags);
+> +				   heap_allocation->heap_flags,
+> +				   memcg);
+> +	mem_cgroup_put(memcg);
+>  	if (fd < 0)
+>  		return fd;
+>  
+> diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heaps/system_heap.c
+> index 03c2b87cb1112..95d7688167b93 100644
+> --- a/drivers/dma-buf/heaps/system_heap.c
+> +++ b/drivers/dma-buf/heaps/system_heap.c
+> @@ -385,8 +385,6 @@ static struct page *alloc_largest_available(unsigned long size,
+>  		if (max_order < orders[i])
+>  			continue;
+>  		flags = order_flags[i];
+> -		if (mem_accounting)
+> -			flags |= __GFP_ACCOUNT;
+>  		page = alloc_pages(flags, orders[i]);
+>  		if (!page)
+>  			continue;
+> diff --git a/include/uapi/linux/dma-heap.h b/include/uapi/linux/dma-heap.h
+> index a4cf716a49fa6..e02b0f8cbc6a1 100644
+> --- a/include/uapi/linux/dma-heap.h
+> +++ b/include/uapi/linux/dma-heap.h
+> @@ -29,6 +29,10 @@
+>   *			handle to the allocated dma-buf
+>   * @fd_flags:		file descriptor flags used when allocating
+>   * @heap_flags:		flags passed to heap
+> + * @charge_pid_fd:	optional pidfd of the process whose cgroup should be
+> + *			charged for this allocation; 0 means charge the calling
+> + *			process's cgroup
+> + * @__padding:		reserved, must be zero
+>   *
+>   * Provided by userspace as an argument to the ioctl
+>   */
+> @@ -37,6 +41,8 @@ struct dma_heap_allocation_data {
+>  	__u32 fd;
+>  	__u32 fd_flags;
+>  	__u64 heap_flags;
+> +	__u32 charge_pid_fd;
+> +	__u32 __padding;
+>  };
+>  
+>  #define DMA_HEAP_IOC_MAGIC		'H'
+> 
+> -- 
+> 2.53.0
+> 
