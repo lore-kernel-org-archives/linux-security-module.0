@@ -1,63 +1,63 @@
-Received: from mail-dy1-f178.google.com (mail-dy1-f178.google.com [74.125.82.178])
+Received: from mail-dl1-f44.google.com (mail-dl1-f44.google.com [74.125.82.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A531C3C2777
-	for <linux-security-module@vger.kernel.org>; Fri, 15 May 2026 02:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4685C3C3457
+	for <linux-security-module@vger.kernel.org>; Fri, 15 May 2026 02:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778812944; cv=none; b=i4pSb1LDpkQITu5viVVrOj3waeJJFJM0U4XxNjDSbBaTUUM849jhMjL0rfeczEO2rtwaBijQ9GVkOLIHn6jDGTrdDmtB2RDFemY5dqjHxW8WtWOMfGCtMagxFEDVpJIuE+aj/GPrIjHpU1uJbHVIH2A6dydOhyFXCutTCAgHdpE=
+	t=1778812961; cv=none; b=gUQkx6bZnL17LIfpjo+H4gJg8CLxVVjf0FzQX5FFcq87IjD5XvdZknaVs8O2/Mu9tE34c66EU/IRBEZWDJWS2osxHfJzR9KdFFUwHkt3NAMDp2IucIRMCTxvF11XOLvMPfpsBxUj+bGkWDSLXBzn87FCCmq0uqXoWxbjaovI+Lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778812944; c=relaxed/simple;
-	bh=s84cgZU+PxOHkFtUEmCMt5cz6GMpjzxhGUeHp5kdZHY=;
+	s=arc-20240116; t=1778812961; c=relaxed/simple;
+	bh=rWHGbHohgOySE830gytKZX7gqDyKkLV843P8Qr3kaT0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QTRDosaR42XkyYQhwTYohRhUoxWAchrzsqPYoJfkrgYn4gSRmlRa42JLMge4pawGzhe9YPej5AqX7JdFfwWqlGmhPqCw48bqINYkpC7/cW8BAsVsrVeKD8o37ZIdFd9wPX3S+XjHdOQXutE2+H0iN7uqVwg+kZKXq8IcQFvoNgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=n2m2i4bv; arc=none smtp.client-ip=74.125.82.178
+	 MIME-Version; b=iGkOqxTdNhUCF2g4+pj3g624dv2r7b192t5dklUGd5GySCRagVOoboTwC+ZUi4ExVPwP1mPCG3zkvhFijkOqlQs/VoE14QVWBd+ldhQyJrsZGUMT5isGfVT6atFpccYUFaL/4B9C6QHZWg7doOAHti6vKzmYd+yrnlc0/EeFgsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FkZYetKT; arc=none smtp.client-ip=74.125.82.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n2m2i4bv"
-Received: by mail-dy1-f178.google.com with SMTP id 5a478bee46e88-2f3c623322bso14710881eec.0
-        for <linux-security-module@vger.kernel.org>; Thu, 14 May 2026 19:42:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FkZYetKT"
+Received: by mail-dl1-f44.google.com with SMTP id a92af1059eb24-13317450f83so3774286c88.0
+        for <linux-security-module@vger.kernel.org>; Thu, 14 May 2026 19:42:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778812943; x=1779417743; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1778812959; x=1779417759; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8rLW09dDhgcqjvD8OY2KOZGl5mvXel79GUCzEbR1uwA=;
-        b=n2m2i4bvX66bDIjR34Ue2gm9m78aBax4qkKlKqWNdPk7BQ6vJGv+wt7GbZGXLlflW5
-         n8Eab0nblFoc6FvrkeFC35CpCZm8Ccf4n+Xabc7pNFxtegFk6uHuv/vUCQmTp7znP0Pu
-         EjQSTLsq9055ojgmHtn3jDsvazgabo+lcQJG0vkR2g0/iIDVARmTQmgiRag4wXBmloQi
-         zB4CASi75DQ0kz2bxDnEaKnlRWq72AWZsl+oSfOaMgJbDl6XKr+PZzo6MqGehx5C77d5
-         sNnoO4LN+6KFX1OVGmB/iRMgPRpL4pe+3zAS/VoDerDPmGzYttcbqjcbTblKT73J9mHn
-         LDLg==
+        bh=cIp3iYXnXNMmxZZYnuz+1KU87Bfjlx2A8Ev02qeKxgs=;
+        b=FkZYetKT6Em0BHjsLVIielo0vCfbyQ4tQt3qxIyE+/RYdR+6iNYe7wC/Vxx/zWY9XU
+         aFOXS3mPn48zYhb7tJ6+p69nHWihJ+RCHdrEZrCGHRNKZbtvlkwENs0Nh7MpF/f4ZLS8
+         0pO9Yr1iQD9/b3fbVhmC2xZXMQafkKUiL4lYamTAPkPa/l882TSpFAqgg4aUoCx/79Db
+         /L14f3XMS+ZlLlmC93IdDRrCoFWUKAbfWS+W2h82KO/spP0WIKuYUB4vzoS8M+jrTikt
+         2p4qmmXpcD+GeXc0KfwmQ6KtXrD+HNJ+IX5Cwt8O/KGOAeZuI/3wYgXp5YtIqBCiZ6Br
+         nVIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778812943; x=1779417743;
+        d=1e100.net; s=20251104; t=1778812959; x=1779417759;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=8rLW09dDhgcqjvD8OY2KOZGl5mvXel79GUCzEbR1uwA=;
-        b=aL/1NCq0KEA8TMuz009/gM7UKDYbw7UXC7GUH177o/XtbkNUlROkKRTOn/nvYy4apc
-         eD8QyTKcLhPIOwj2OSj3+Zg3aCSnOLNejHhTyg/dys7VgDFeYtAyNEB77fe+kaRmOfoN
-         c6oYyxDM67Hq4A1E5fIt+SPDpC+msZxSriWibN+dmqt/EjJopq8lxLRyYrDeoKPNd/Rp
-         5dJRYaTxun7VK7QZCDfk/Rc48S3TphOqTQpn4FmQ+SQZoHlcyTaVe62a0+GVDD11mOWl
-         DFuGZAUED/SDVaQovIPaC8VThHJW4kOMoPkiqZHkP1vI/+j7kP3TYcqBqceWg1opfg11
-         F34g==
-X-Forwarded-Encrypted: i=1; AFNElJ8wXWjtwy5jOjytsDjykfFvOIHwn1pPE4HB/Qkg88DfSE9N7WASLC8XHCiVptWQPcL30e9dLO5F+3UGoIq4xjomM5ll1A4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxgl81qhteBRupsJKA+cOuM3Sl246Nf65VJqCQGyxnUC0pp/WcV
-	uIswefYYHCsPi7r3sfBpMXQ3FD1f9XmIEcbJk+GfFOtyRln7ef5omhI1
-X-Gm-Gg: Acq92OGQ3NJYmSuktXTvp5YVqpiN/HvcfbSuqQNjqXRiRLSH3ztchHyfUSzpcw1FsaC
-	KmyYRvBtPR6nG9Rmk7977WC2Wj/9l0Jb1S4W17CE+jJDMLyJSpFUoGN3nKd84U7GajRr1DDVMvV
-	lSGG2ck3aG/P8PKyhgrDHUIrWuLh6jDBks8q0TK2E/mVZiw0ayiZ4WtPK84+xcbiuJBsZl5ajko
-	0P56slgSvkFLp1HtKZW7tyNeMWJAXc8TuDam/3phZttL/erR0tSheqi74bz8VQp00s4c3l03Zqo
-	pHaN+85+wk83YoPKn7mUer3SUC/3r2PjlwaX+DUCpQ2QGv3Fn1T4m5YU3+xfS5SBuwUGrAgyKJF
-	mkDrwPzLhQWNtJdn0YJx15V5wvTxbUzE408b+Kn2tmxLyzA7xjxngaCyPwXXSQwDPMVsFNrV1ah
-	ErOgdyJmlkCpQz8gTg3IofvjdPMMmarTcd9sf7j8g/9b89
-X-Received: by 2002:a05:7300:dc97:b0:2de:c5ca:c1f3 with SMTP id 5a478bee46e88-3039818a6damr1107563eec.4.1778812942627;
-        Thu, 14 May 2026 19:42:22 -0700 (PDT)
+        bh=cIp3iYXnXNMmxZZYnuz+1KU87Bfjlx2A8Ev02qeKxgs=;
+        b=LsgTnZpbAMinS/X0qTbC3OKEVSX7qcmmGPy3CCp8XpvUszQNdnzPLZ28b+V9vUK2Vh
+         yEopf1DvR9z0VmGttPDSbF6GH9H9Z+rx9FYSMSXW1Kf0Tk8TCdVxmjenx+EUhsTcE6iz
+         SaFcmi8yivYO2GlBHVm0DqV9qbyK7F/7618CeTFzC76zW7n/J4cGjt/RPM28+xLP0Mcx
+         e9V6FZuzvm7lVIWn+mrSCf8lzjpTrydr9+etzA3umtcqOmvVdDgYy34WZCtDRje+KTRc
+         pYrYdCG+X8iHRh9fxMVzgmB6NNtYyEScqQ8VkScg833f029aOXhEHYRFzhXO5C3gqj75
+         5dOA==
+X-Forwarded-Encrypted: i=1; AFNElJ+xP6DkdxIZRbIiGAJXPErTPDUZbvYtY/bWE6FRmeWYD53eA5hB3qLp6xAtkXy/XhhrQgQW0yE1io4YeJX256vR2uFQLNM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+W4qqNOYtubq8734f5SENp10W0GJp3BvBP72RUmGCGJ4YpSEC
+	1DxX7Fzj4kPxAC/QUJ9hHjY0P5Ly7e3Yuw31sAL+7LaowS4ArnU0Tsf9
+X-Gm-Gg: Acq92OG+fsZrW6NtlGRkokHHroDqz/6kheaWOOgXZ3qfTvSfZk/u6R7vouJmubX2Btl
+	gFATFFhDjBw/9JUHRxN0XRncPQnlr52zm/rzNZZUwfiRQWcHe3b4IA3MkQY/uRk4fLoPSl9HipB
+	giixX8BGHkgSJLdVNpxayag0GAVkaXin3lIjHo7GkV73g/RG7aw4p73x6SIXiXQ+WaRwwi7EZG3
+	U+hy3KHUj+kEqr5T5NM8ZJUdudQnsRBSiLTGJPEH57Hl4+DCHDSTD2DReZdj7+A+tHEQlW3yJE9
+	+aYtqIrzTGkfEb1KyXlkfU6CzbOEwNCKj7GrGT5pf5+0uvjpISWvggt79gjHEwan8krZnX148P0
+	lRgld4MsGnrpV1UUiDvprC7xv25yZ3F5Zdhsl/St5YrBQjNJ/VwwoW6NpfD59yVgjiCiE2EEpd0
+	pbyWSgUSnnDaQvAomIelli+bOmjhp+ThBUXg==
+X-Received: by 2002:a05:7022:6612:b0:12d:ce34:3f92 with SMTP id a92af1059eb24-1350552c4c6mr924814c88.31.1778812959442;
+        Thu, 14 May 2026 19:42:39 -0700 (PDT)
 Received: from localhost.localdomain ([148.135.103.3])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30296dcb6f6sm6288605eec.17.2026.05.14.19.42.18
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-134cbed531esm7328271c88.8.2026.05.14.19.42.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 May 2026 19:42:22 -0700 (PDT)
+        Thu, 14 May 2026 19:42:38 -0700 (PDT)
 From: Qi Tang <tpluszz77@gmail.com>
 To: paul@paul-moore.com
 Cc: davem@davemloft.net,
@@ -67,16 +67,14 @@ Cc: davem@davemloft.net,
 	netdev@vger.kernel.org,
 	lyutoon@gmail.com,
 	horms@kernel.org,
-	huw@codeweavers.com,
-	casey@schaufler-ca.com,
 	linux-security-module@vger.kernel.org,
 	Qi Tang <tpluszz77@gmail.com>
-Subject: Re: [PATCH net 3/4] netlabel: validate CALIPSO option against skb tail in netlbl_skbuff_getattr
-Date: Fri, 15 May 2026 10:42:16 +0800
-Message-ID: <20260515024216.203957-1-tpluszz77@gmail.com>
+Subject: Re: [PATCH net 4/4] netlabel: validate CIPSO option against skb tail in netlbl_skbuff_getattr
+Date: Fri, 15 May 2026 10:42:33 +0800
+Message-ID: <20260515024233.204019-1-tpluszz77@gmail.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <CAHC9VhR52b2FbD-aiMFsaXwwRrUGTLSdRFzWcVAZjUm-K3qgkw@mail.gmail.com>
-References: <CAHC9VhR52b2FbD-aiMFsaXwwRrUGTLSdRFzWcVAZjUm-K3qgkw@mail.gmail.com>
+In-Reply-To: <CAHC9VhS63xq5Pja2iA4DEkRU5sqpQ8ozXzgLBaE6Ck4PDCKpMQ@mail.gmail.com>
+References: <CAHC9VhS63xq5Pja2iA4DEkRU5sqpQ8ozXzgLBaE6Ck4PDCKpMQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -85,13 +83,15 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Agreed, -EINVAL is right.  The bytes passed parse-time
-validation, so hitting either bounds check at consume time means
-they were mutated after parse.  Treating such a packet as "no
-label" via netlbl_unlabel_getattr() drops it into the wrong
-default.  v2 returns -EINVAL on both checks.
+Agreed on the return value, same reasoning as on 3/4: a length
+mismatch here means post-parse mutation, and the unlabeled
+fallback is the wrong default for that.  v2 returns -EINVAL on
+all three CIPSO bounds checks.
 
-Will also drop the Smack mention from the commit message (Casey
-flagged that separately).
+The 8 is the offset of the first tag's length byte.  CIPSO option
+header is type(1) + length(1) + DOI(4) = 6, plus the first tag
+header type(1) + length(1) = 2.  We need ptr+8 readable before
+dereferencing ptr[7].  v2 will document this inline, and use
+CIPSO_V4_HDR_LEN if it's exposed in the header.
 
 Qi
