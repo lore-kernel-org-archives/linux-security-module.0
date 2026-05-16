@@ -1,266 +1,112 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D7038D3ED;
-	Fri, 15 May 2026 20:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BAC24CEEA
+	for <linux-security-module@vger.kernel.org>; Sat, 16 May 2026 07:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778875363; cv=none; b=DPlyCF8POp8gDm9eWgY3u652q2KnsEjMnZuP0xz4ld8UFk0LMyBaVR90HmMqIpEY2XJ1WYKiB6u1PlkFGEaI7XrKfKIZCuJ6AoP7swaoduTMLHcj3HYQfpnOuPXyZMgPdzX+wkZ6Yr0NBJF7mY6SAQONlLvN98ikVRA6+Xgn0kI=
+	t=1778917028; cv=none; b=RU4GY4ioTV5UPCox464pTQ9wliYeLuUJfFD96E+Ysq8lndwqLEUR2/NnrdPbWxzXGni0pprh4Skt5GeXgQn4N2MqOcTxODFgvigqeSYwRpduJhneun71jbyXIYrKh2nk1G2ojrxPPdMtNQugnAGJ9afUdPLHdMAxdq2r5RguBkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778875363; c=relaxed/simple;
-	bh=cR3wh/wZldxor/U/wloaVqGPfeyIVbFmZyecLzQWXHc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RoJDN8jTsNzYcQNTgMhCOYFCumkG4078K5F7+Sjc+uVQ2Cy8KoyIQP5teAW5eYOgUsvbZcAeijlWF0+31T9CYv7giH/r5qY8GpzpX1GNpYntdlGuVhUEqaRjWkbNK5KQ3N5aakpis1lYWWo1FkAX1uxzioVFMs7Mao2KVulUHTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WoCDOq+g; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778917028; c=relaxed/simple;
+	bh=P3vqgwHwD6iLuiEKYHBc9rKUdaJI1VWv+dxZinDZG8M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f7s8yj97p0DECCbosMDEoA7SxlBwZd/W/QV2UHVkohlad3SMMi27EyXXYYHaW513XPp5swXv22R+X4y+UFBlHReiRAaUaFjIj+XWzdE0mT3DD2MJ22mR9ez7sV1SN8d+TCqbAiq6B+NDRLvqtLwfrXfZUn20d9cvzH3dh3El2fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i7R1aIVG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WoCDOq+g"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C663C2BCB3;
-	Fri, 15 May 2026 20:02:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i7R1aIVG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4C7FC2BCFD
+	for <linux-security-module@vger.kernel.org>; Sat, 16 May 2026 07:37:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778875362;
-	bh=cR3wh/wZldxor/U/wloaVqGPfeyIVbFmZyecLzQWXHc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WoCDOq+goSrz8869cpT9DxEqg622RF9dCVj1v6L9zFeKrqDR1r7ww9qDJvzS0id2r
-	 h6MU093kckiujXO5lhf6SuHGu+zDe1NybWvxzylgfgolNPlt63vgccpTDLSA+uwHao
-	 wmXss0l6HpeGvf0UdO8IaWxZTRHArBpgEYS4XYjQ5QFSZhEHPAccR0hdrBsch0mtTl
-	 AHL9doZ6RC2TtnbLE71RuCnCeVj67myY30eFzAypT5VfNl+GdndUOW8CqD4u9HziXW
-	 xaubUv1qwIpVeJZH6aWpP8ANYAMVfQWUKvtbQs7UlK1HSMov31M8yb9dzApt4TynZ8
-	 cmNcSDMf4ibhA==
-From: Song Liu <song@kernel.org>
-To: linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	selinux@vger.kernel.org,
-	apparmor@lists.ubuntu.com
-Cc: paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	john.johansen@canonical.com,
-	stephen.smalley.work@gmail.com,
-	omosnace@redhat.com,
-	mic@digikod.net,
-	gnoack@google.com,
-	takedakn@nttdata.co.jp,
-	penguin-kernel@I-love.SAKURA.ne.jp,
-	herton@canonical.com,
-	kernel-team@meta.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH v4 7/7] lsm: Remove security_sb_mount and security_move_mount
-Date: Fri, 15 May 2026 13:01:58 -0700
-Message-ID: <20260515200158.4081915-8-song@kernel.org>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260515200158.4081915-1-song@kernel.org>
-References: <20260515200158.4081915-1-song@kernel.org>
+	s=k20201202; t=1778917027;
+	bh=P3vqgwHwD6iLuiEKYHBc9rKUdaJI1VWv+dxZinDZG8M=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=i7R1aIVGsMYbnDNR9Y4iM9e7YLGciHIqwRzponJOzvq4Q2bQiFl5XO4b4zz0lfpCk
+	 FdwpXxyEomVT95DiWXYgaxVTtRL3TPX7NbZyFfELPI+/u4FtNnCwdWHgdk88M/loIY
+	 OujMxtPlkQ3lzK5Eo4u3WJuus1zbIKiTsK4NxymlluJyXaWpsnKqLq1JENmxvin0T7
+	 L7NoIr/5IBtdcHUj6KyyHBFhMizH5BzijjJZeRLbHh8dw2ssRlQgKT1hS9cgaPVg9N
+	 qmLcSgEYwqUK5AoIl4+3q5gb2+RuWCvzlwdOBQFySOlgsNZKKq+Tjr36BZxxxWUYrW
+	 AnZPfx8HvpHYA==
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-8b1f2b7f1bcso10984796d6.1
+        for <linux-security-module@vger.kernel.org>; Sat, 16 May 2026 00:37:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ8mNftFNwiQOucSHU8b8PdIAMx7Jx9ZepavLiG7qh6S7zbadOzHx2QbhEFY/+HSLtD192fRs9EmGYKw6EgksWKhnhDVpF0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2wdv+rcCI4DOgwWEqE7Jrl5FMmxuwyEFwcfpDdi2Hr5t/SGLm
+	2YjKV0zgXE8IiIGVKOstDdrQDunU4AA2oVxEgkK9A7k00XjBOvhS1Rhnt88apTvO855bacPsnv5
+	EPKMqYgVma+OiXL/yXHxwpKbU3POQgCo=
+X-Received: by 2002:a05:6214:29ce:b0:8b3:ff3f:5d61 with SMTP id
+ 6a1803df08f44-8c8fda1ccbbmr178745586d6.22.1778917027156; Sat, 16 May 2026
+ 00:37:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260512-v2_20230123_tjmercier_google_com-v1-0-6326701c3691@redhat.com>
+ <20260512-v2_20230123_tjmercier_google_com-v1-2-6326701c3691@redhat.com>
+In-Reply-To: <20260512-v2_20230123_tjmercier_google_com-v1-2-6326701c3691@redhat.com>
+From: Barry Song <baohua@kernel.org>
+Date: Sat, 16 May 2026 15:36:56 +0800
+X-Gmail-Original-Message-ID: <CAGsJ_4xfznffbjOaNKwnN6oZk_H6pqOzYqd1zx4Q9XrocdzV8A@mail.gmail.com>
+X-Gm-Features: AVHnY4L9M-s1Neba6WebvB2EkXnslTMMIykTYPVPE3skCvVx5rzQK6ntLSW6W0w
+Message-ID: <CAGsJ_4xfznffbjOaNKwnN6oZk_H6pqOzYqd1zx4Q9XrocdzV8A@mail.gmail.com>
+Subject: Re: [PATCH RFC 2/5] dma-heap: charge dma-buf memory via explicit memcg
+To: Albert Esteve <aesteve@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>, 
+	Christian Brauner <brauner@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, cgroups@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, mripard@kernel.org, 
+	echanude@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now that all LSMs have been converted to granular mount hooks,
-remove the old hooks:
+On Tue, May 12, 2026 at 5:18=E2=80=AFPM Albert Esteve <aesteve@redhat.com> =
+wrote:
+>
+> On embedded platforms a central process often allocates dma-buf
+> memory on behalf of client applications. Without a way to
+> attribute the charge to the requesting client's cgroup, the
+> cost lands on the allocator, making per-cgroup memory limits
+> ineffective for the actual consumers.
+>
+> Add charge_pid_fd to struct dma_heap_allocation_data. When set to
+> a valid pidfd, DMA_HEAP_IOCTL_ALLOC resolves the target task's
+> memcg and charges the buffer there via mem_cgroup_charge_dmabuf()
+> inside dma_heap_buffer_alloc(). Without charge_pid_fd, and with
+> the mem_accounting module parameter enabled, the buffer is charged
+> to the allocator's own cgroup.
+>
+> Additionally, commit 3c227be90659 ("dma-buf: system_heap: account for
+> system heap allocation in memcg") adds __GFP_ACCOUNT to system-heap
+> page allocations. Keeping __GFP_ACCOUNT would charge the same pages
+> twice (once to kmem, once to MEMCG_DMABUF), thus remove it and route
+> all accounting through a single MEMCG_DMABUF path.
+>
+[...]
 
-- security_sb_mount(): removed from lsm_hook_defs.h, security.h,
-  security.c, and its call in path_mount().
-- security_move_mount(): removed and replaced by security_mount_move()
-  in do_move_mount(). All LSMs now use mount_move exclusively.
+> -               if (mem_accounting)
+> -                       flags |=3D __GFP_ACCOUNT;
 
-Code generated with the assistance of Claude, reviewed by human.
+Hi Albert,
 
-Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-Tested-by: Stephen Smalley <stephen.smalley.work@gmail.com> # for selinux only
-Signed-off-by: Song Liu <song@kernel.org>
----
- fs/namespace.c                |  8 --------
- include/linux/lsm_hook_defs.h |  4 ----
- include/linux/security.h      | 16 ---------------
- kernel/bpf/bpf_lsm.c          |  2 --
- security/security.c           | 38 -----------------------------------
- 5 files changed, 68 deletions(-)
+would it be better to move this and its description to patch 1? It
+looks like patch 1 already introduces the double accounting changes,
+and patch 2 is mainly just supporting remote charging.
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 04e3bd7f6336..43f22c5e2bf4 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -4103,7 +4103,6 @@ int path_mount(const char *dev_name, const struct path *path,
- 		const char *type_page, unsigned long flags, void *data_page)
- {
- 	unsigned int mnt_flags = 0, sb_flags;
--	int ret;
- 
- 	/* Discard magic */
- 	if ((flags & MS_MGC_MSK) == MS_MGC_VAL)
-@@ -4116,9 +4115,6 @@ int path_mount(const char *dev_name, const struct path *path,
- 	if (flags & MS_NOUSER)
- 		return -EINVAL;
- 
--	ret = security_sb_mount(dev_name, path, type_page, flags, data_page);
--	if (ret)
--		return ret;
- 	if (!may_mount())
- 		return -EPERM;
- 	if (flags & SB_MANDLOCK)
-@@ -4568,10 +4564,6 @@ static inline int vfs_move_mount(const struct path *from_path,
- {
- 	int ret;
- 
--	ret = security_move_mount(from_path, to_path);
--	if (ret)
--		return ret;
--
- 	ret = security_mount_move(from_path, to_path);
- 	if (ret)
- 		return ret;
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 98f0fe382665..c870260bf402 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -69,8 +69,6 @@ LSM_HOOK(int, 0, sb_remount, struct super_block *sb, void *mnt_opts)
- LSM_HOOK(int, 0, sb_kern_mount, const struct super_block *sb)
- LSM_HOOK(int, 0, sb_show_options, struct seq_file *m, struct super_block *sb)
- LSM_HOOK(int, 0, sb_statfs, struct dentry *dentry)
--LSM_HOOK(int, 0, sb_mount, const char *dev_name, const struct path *path,
--	 const char *type, unsigned long flags, void *data)
- LSM_HOOK(int, 0, sb_umount, struct vfsmount *mnt, int flags)
- LSM_HOOK(int, 0, sb_pivotroot, const struct path *old_path,
- 	 const struct path *new_path)
-@@ -79,8 +77,6 @@ LSM_HOOK(int, 0, sb_set_mnt_opts, struct super_block *sb, void *mnt_opts,
- LSM_HOOK(int, 0, sb_clone_mnt_opts, const struct super_block *oldsb,
- 	 struct super_block *newsb, unsigned long kern_flags,
- 	 unsigned long *set_kern_flags)
--LSM_HOOK(int, 0, move_mount, const struct path *from_path,
--	 const struct path *to_path)
- LSM_HOOK(int, 0, mount_bind, const struct path *from, const struct path *to,
- 	 bool recurse)
- LSM_HOOK(int, 0, mount_new, struct fs_context *fc, const struct path *mp,
-diff --git a/include/linux/security.h b/include/linux/security.h
-index b1b3da51a88d..f1dcfc569cf2 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -373,8 +373,6 @@ int security_sb_remount(struct super_block *sb, void *mnt_opts);
- int security_sb_kern_mount(const struct super_block *sb);
- int security_sb_show_options(struct seq_file *m, struct super_block *sb);
- int security_sb_statfs(struct dentry *dentry);
--int security_sb_mount(const char *dev_name, const struct path *path,
--		      const char *type, unsigned long flags, void *data);
- int security_sb_umount(struct vfsmount *mnt, int flags);
- int security_sb_pivotroot(const struct path *old_path, const struct path *new_path);
- int security_sb_set_mnt_opts(struct super_block *sb,
-@@ -385,7 +383,6 @@ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
- 				struct super_block *newsb,
- 				unsigned long kern_flags,
- 				unsigned long *set_kern_flags);
--int security_move_mount(const struct path *from_path, const struct path *to_path);
- int security_mount_bind(const struct path *from, const struct path *to,
- 			bool recurse);
- int security_mount_new(struct fs_context *fc, const struct path *mp,
-@@ -825,13 +822,6 @@ static inline int security_sb_statfs(struct dentry *dentry)
- 	return 0;
- }
- 
--static inline int security_sb_mount(const char *dev_name, const struct path *path,
--				    const char *type, unsigned long flags,
--				    void *data)
--{
--	return 0;
--}
--
- static inline int security_sb_umount(struct vfsmount *mnt, int flags)
- {
- 	return 0;
-@@ -859,12 +849,6 @@ static inline int security_sb_clone_mnt_opts(const struct super_block *oldsb,
- 	return 0;
- }
- 
--static inline int security_move_mount(const struct path *from_path,
--				      const struct path *to_path)
--{
--	return 0;
--}
--
- static inline int security_mount_bind(const struct path *from,
- 				      const struct path *to, bool recurse)
- {
-diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-index aa228372cfb4..77371ca25d09 100644
---- a/kernel/bpf/bpf_lsm.c
-+++ b/kernel/bpf/bpf_lsm.c
-@@ -350,7 +350,6 @@ BTF_ID(func, bpf_lsm_release_secctx)
- BTF_ID(func, bpf_lsm_sb_alloc_security)
- BTF_ID(func, bpf_lsm_sb_eat_lsm_opts)
- BTF_ID(func, bpf_lsm_sb_kern_mount)
--BTF_ID(func, bpf_lsm_sb_mount)
- BTF_ID(func, bpf_lsm_sb_remount)
- BTF_ID(func, bpf_lsm_sb_set_mnt_opts)
- BTF_ID(func, bpf_lsm_sb_show_options)
-@@ -382,7 +381,6 @@ BTF_ID(func, bpf_lsm_task_setscheduler)
- BTF_ID(func, bpf_lsm_userns_create)
- BTF_ID(func, bpf_lsm_bdev_alloc_security)
- BTF_ID(func, bpf_lsm_bdev_setintegrity)
--BTF_ID(func, bpf_lsm_move_mount)
- BTF_ID(func, bpf_lsm_mount_bind)
- BTF_ID(func, bpf_lsm_mount_new)
- BTF_ID(func, bpf_lsm_mount_remount)
-diff --git a/security/security.c b/security/security.c
-index b7ec0ec7af26..bc55ee588c59 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1065,29 +1065,6 @@ int security_sb_statfs(struct dentry *dentry)
- 	return call_int_hook(sb_statfs, dentry);
- }
- 
--/**
-- * security_sb_mount() - Check permission for mounting a filesystem
-- * @dev_name: filesystem backing device
-- * @path: mount point
-- * @type: filesystem type
-- * @flags: mount flags
-- * @data: filesystem specific data
-- *
-- * Check permission before an object specified by @dev_name is mounted on the
-- * mount point named by @nd.  For an ordinary mount, @dev_name identifies a
-- * device if the file system type requires a device.  For a remount
-- * (@flags & MS_REMOUNT), @dev_name is irrelevant.  For a loopback/bind mount
-- * (@flags & MS_BIND), @dev_name identifies the	pathname of the object being
-- * mounted.
-- *
-- * Return: Returns 0 if permission is granted.
-- */
--int security_sb_mount(const char *dev_name, const struct path *path,
--		      const char *type, unsigned long flags, void *data)
--{
--	return call_int_hook(sb_mount, dev_name, path, type, flags, data);
--}
--
- /**
-  * security_sb_umount() - Check permission for unmounting a filesystem
-  * @mnt: mounted filesystem
-@@ -1167,21 +1144,6 @@ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
- }
- EXPORT_SYMBOL(security_sb_clone_mnt_opts);
- 
--/**
-- * security_move_mount() - Check permissions for moving a mount
-- * @from_path: source mount point
-- * @to_path: destination mount point
-- *
-- * Check permission before a mount is moved.
-- *
-- * Return: Returns 0 if permission is granted.
-- */
--int security_move_mount(const struct path *from_path,
--			const struct path *to_path)
--{
--	return call_int_hook(move_mount, from_path, to_path);
--}
--
- /**
-  * security_mount_bind() - Check permissions for a bind mount
-  * @from: source path
--- 
-2.53.0-Meta
+Also, mem_accounting is only used by system_heap.c; has this patchset
+also eliminated its need?
 
+Thanks
+Barry
