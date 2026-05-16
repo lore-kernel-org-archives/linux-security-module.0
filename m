@@ -1,116 +1,157 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD36934F48D
-	for <linux-security-module@vger.kernel.org>; Sat, 16 May 2026 19:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F01129C35A;
+	Sat, 16 May 2026 19:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778958093; cv=none; b=ay7edogpu1g1H+63RLvMcGXkZZ+Dkv358ul0aTzg/HWTcc67Mbr7w9V32ZSaA1CaeDh1xysNNjLMEiMPHFoqK0WppU2mZMC+s8feQU4zAAEkYCgSdcOQJDH2BxqGPF8PdvQI/L9G9czbMDB9cK7MBiSYxjR3n/ZD3azqMwB1H3g=
+	t=1778959156; cv=none; b=ZjiiAopBK6pdJKBVy6qwoA35MlrDeklz9QwAS7GQD8C+on3HyTPLMW31wzUU4wiu+CO/eqUdSdUJJ5K2yYS9l6Imbkdtytukf9x5rr8+nZKhw1lpOMwhFzCRhO78ld3mXJACXOrrK5Duyj8V7uSJy3TY+RdUBRmWzNUuUisNRn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778958093; c=relaxed/simple;
-	bh=Q7hjCK61LwuTQY6yskK+p+41m4W+x20RkOQH4/PG+CQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GlavYvqLv8bg3LjMlwSQzh1dlUkaH6IEGUyke4LfWg/zZxNzyzpNQ5b9Z/uAPgYfbBBK3hi6AA/Zn/4dbuOmGhMP/xuajqvziQhXT4cD4fyM0v5/+QSZXqj+zQz8z2X2CoxJbexCSeOS9pZprTm4Y2FYMl6+Bu1V1oJv1Bdggzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z4cnHym+; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1778959156; c=relaxed/simple;
+	bh=ftfldjVo82GvKdRrIhImiH0wSu5UwkvKcH8WnBsL2j4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DFsiulKq/mab3AQ54o3xaPb1xmciwoWEyDTUWLiVWFXEwLLQxE2Z9yAMEYdNzma2jpxSuvuItYl4T1J9QMwjfW4wfTvLL5MXJqLqscCnFMJmuY4pQPAs3CGLaW8M2/kq0a86jPwrPh8RqwnorElmoyebAcbdUbGebG39bme8dYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ezlIFUQ8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z4cnHym+"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-488af96f6b2so10350825e9.0
-        for <linux-security-module@vger.kernel.org>; Sat, 16 May 2026 12:01:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778958090; x=1779562890; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SGHSLr5Q+XDF70m5E5RqpezGDL6n6KDUo6T4Dn6m/jo=;
-        b=Z4cnHym+Xz9wylFWNGaA59njZ60zDBghEiGBO5M76J8QS3x2xFNZf+MjEeEhvxUFgh
-         +EdWFJfjs5+oEp6W5RHDbJ+s7xiBRrrnROZ3hUa5GNh5z4aKzgAs6pSnnjninHdI2DOX
-         r6BQ9BNxKf9yLeWzD09XD73retwWBVFs39zjyP1kF6CpIxvFQ9x+IDMfopLVo9fM8mCB
-         cbU1Q4korU30UilNBdsi2BMwsUdEkNOfnGtxIrVbYNLxfTMpTNmIC5jV8ODQuSXIYAs9
-         W/bUIV4FCRTXU7epFF89lZo74IpCpogpzRZptrabvlJrJqx/DUCwMbjV+nys1QmUWCrb
-         mrsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778958090; x=1779562890;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SGHSLr5Q+XDF70m5E5RqpezGDL6n6KDUo6T4Dn6m/jo=;
-        b=Ngl/lJXbN38i0+wmxqIq6Kp7vIyK/4xmeqo/+PBVe5zJSbOwegrpTDplHniF75iwWl
-         EKiEW1QEh8bybFfzVtpCRSkSFAZYAK4Bq8WnJaFUStxIJZNz2C1cdEO1YIu/FnrTzyEi
-         wpdhze8GUU9KEpBcuHxYxPQ/YhyxzeCApu3RjcgFpFK6w9qCbbR/SO3p4OYnjxcIQLIj
-         AwrY3KZi8rg+Sj/1jUbiOUb2qTX3PdDfmYrhMQoK5D+pgSgfJAKt4DguFIxtf6wWS8nk
-         lX1CKJt2lc7jbR7Rhg4NdJDODkNSmnX9XB14+qeFDw1frnIDqoOmsjKU5ptyqKog3Ua7
-         /ivA==
-X-Forwarded-Encrypted: i=1; AFNElJ8edh42iGlRfOeu7MYDITVfnvyYAS36QwbhKAV6xg4jf9PKgkayid0avIdhq4L6sjdBw74GRVVAlHTCwS4kGEEeWlt+wnY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUvfCU786BOQDR0Pw3OEh+G8C81rpN/F5mCLszbbM26SwJK11B
-	j2gNi4R3NPIvB7XYbitYN9ebiJJGCqsjB6zgR9fSEe5hgqWVawrhWgP/
-X-Gm-Gg: Acq92OHIgV495bE2xlbQujy/RbbAJYMpo47HEsJq3ewVMm0fFPiKHMSzGlK3Z2dZPIJ
-	QNP4cPt5xahN7cNCWoG7WMx8WV1MYawXlTjRRrDKQ7+TGlXukkVmxKPZT+REq+Y07ofTZHNveHX
-	Vv8MqaTYxhyewyKosV8w0vJkAQOkKrUYWU4J1XDwdizAFHCcxeWt1C1hahLdya5w/b+uCewDOsE
-	P/uwrwEZwOo+kMpAoZ1l1nakhV2UXpLVAupPDzowMcqgZpbCARg/j5Gy6p3IKFcNGbH2655AFbP
-	uSVguLVYdwMwP29BRWDUmq3Pop+bRQuKqG6Nuo6SvyO1aOVEdn79d1K2SJVmAjnnkfEVYlym49/
-	DoLf66Av0UzGwU1Qpn069sgKk8jU69c9fYITNYprOaLcfEmYZdJy64j9AFDiA0sM2XMErSC9muN
-	3imh3vmOYPntmJxn1IU+4yCdieTZJw0Zl6mF2dRMcfpW1RUg+3QqAVJpR13ygptE0YiMq2QQ==
-X-Received: by 2002:a05:600c:a406:b0:489:e126:b757 with SMTP id 5b1f17b1804b1-48fe63297b9mr106298385e9.25.1778958089810;
-        Sat, 16 May 2026 12:01:29 -0700 (PDT)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48fe53804aesm138278265e9.15.2026.05.16.12.01.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 May 2026 12:01:29 -0700 (PDT)
-From: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: linux-doc@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Alejandro Colomar <alx.manpages@gmail.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
-	Alejandro Colomar <alx@kernel.org>
-Subject: [PATCH] landlock: Documentation wording cleanups
-Date: Sat, 16 May 2026 21:01:12 +0200
-Message-ID: <20260516190112.4924-1-gnoack3000@gmail.com>
-X-Mailer: git-send-email 2.54.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ezlIFUQ8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60002C19425;
+	Sat, 16 May 2026 19:19:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778959155;
+	bh=ftfldjVo82GvKdRrIhImiH0wSu5UwkvKcH8WnBsL2j4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ezlIFUQ8sUTJkd1PnAHWM40f6VGFQl/6xDZibb9lmgD+jGZh9dkevA30ebON4X0QM
+	 KOIUTbFW6rgf7iWdNKdOUExcLl3tmGyRJIIWhWtvRFQih3SUOeeEdJ0FpqLi32rxTB
+	 2mPtcPI+HM3EwXsDtx7R4bhocX7gC4PdPWUiygFn9omFTn4JOAZSJ6jSczl4sSfNpa
+	 FfhtxkT5ataezrAXPD/CQ0dhsc5z95v/+3lusvFd8KdaZq9W9X4/WCjmiJTw7Fqyuo
+	 xtUkC+p6HVKX/jj8aMumWLjIhNxrNpYhvqiHWdQoo5NI9shAi4bgvhZ9XW95dxft1E
+	 MFyLyn31Bkg1Q==
+Date: Sat, 16 May 2026 21:19:11 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+	linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] landlock: Documentation wording cleanups
+Message-ID: <agjBUgqr1b908oWn@devuan>
+References: <20260516190112.4924-1-gnoack3000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bbzhlxjnnqmvezvb"
+Content-Disposition: inline
+In-Reply-To: <20260516190112.4924-1-gnoack3000@gmail.com>
 
-Documentation cleanups suggested by Alejandro Colomar,
-which we have also applied in the man pages.
 
-Link: https://lore.kernel.org/all/agW4yMK6CinJGqXt@devuan/
-Suggested-by: Alejandro Colomar <alx@kernel.org>
-Signed-off-by: Günther Noack <gnoack3000@gmail.com>
----
- include/uapi/linux/landlock.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+--bbzhlxjnnqmvezvb
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+	linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] landlock: Documentation wording cleanups
+Message-ID: <agjBUgqr1b908oWn@devuan>
+References: <20260516190112.4924-1-gnoack3000@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20260516190112.4924-1-gnoack3000@gmail.com>
 
-diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-index 10a346e55e95..48c12ddf1108 100644
---- a/include/uapi/linux/landlock.h
-+++ b/include/uapi/linux/landlock.h
-@@ -255,16 +255,16 @@ struct landlock_net_port_attr {
-  *   :manpage:`connect(2)` as well as calls to :manpage:`sendmsg(2)` with an
-  *   explicit recipient address.
-  *
-- *   This access right only applies to connections to UNIX server sockets which
-+ *   This access right applies only to connections to UNIX server sockets which
-  *   were created outside of the newly created Landlock domain (e.g. from within
-  *   a parent domain or from an unrestricted process).  Newly created UNIX
-  *   servers within the same Landlock domain continue to be accessible.  In this
-  *   regard, %LANDLOCK_ACCESS_FS_RESOLVE_UNIX has the same semantics as the
-  *   ``LANDLOCK_SCOPE_*`` flags.
-  *
-- *   If a resolve attempt is denied, the operation returns an ``EACCES`` error,
-- *   in line with other filesystem access rights (but different to denials for
-- *   abstract UNIX domain sockets).
-+ *   If a resolution attempt is denied, the operation returns an ``EACCES``
-+ *   error, in line with other filesystem access rights (but different to
-+ *   denials for abstract UNIX domain sockets).
-  *
-  *   This access right is available since the ninth version of the Landlock ABI.
-  *
--- 
-2.54.0
+Hi G=C3=BCnther,
 
+> Cc: Alejandro Colomar <alx.manpages@gmail.com>
+
+I don't use that address anymore.  (The gmail account still exists, but
+I'll eventually remove it.)
+
+On 2026-05-16T21:01:12+0200, G=C3=BCnther Noack wrote:
+> Documentation cleanups suggested by Alejandro Colomar,
+> which we have also applied in the man pages.
+>=20
+> Link: https://lore.kernel.org/all/agW4yMK6CinJGqXt@devuan/
+> Suggested-by: Alejandro Colomar <alx@kernel.org>
+> Signed-off-by: G=C3=BCnther Noack <gnoack3000@gmail.com>
+> ---
+>  include/uapi/linux/landlock.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 10a346e55e95..48c12ddf1108 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -255,16 +255,16 @@ struct landlock_net_port_attr {
+>   *   :manpage:`connect(2)` as well as calls to :manpage:`sendmsg(2)` wit=
+h an
+>   *   explicit recipient address.
+>   *
+> - *   This access right only applies to connections to UNIX server socket=
+s which
+> + *   This access right applies only to connections to UNIX server socket=
+s which
+
+Yup.  As a reminder, 'only' applies to whatever comes immediately after
+it.
+
+>   *   were created outside of the newly created Landlock domain (e.g. fro=
+m within
+>   *   a parent domain or from an unrestricted process).  Newly created UN=
+IX
+>   *   servers within the same Landlock domain continue to be accessible. =
+ In this
+>   *   regard, %LANDLOCK_ACCESS_FS_RESOLVE_UNIX has the same semantics as =
+the
+>   *   ``LANDLOCK_SCOPE_*`` flags.
+>   *
+> - *   If a resolve attempt is denied, the operation returns an ``EACCES``=
+ error,
+> - *   in line with other filesystem access rights (but different to denia=
+ls for
+> - *   abstract UNIX domain sockets).
+> + *   If a resolution attempt is denied, the operation returns an ``EACCE=
+S``
+> + *   error, in line with other filesystem access rights (but different to
+> + *   denials for abstract UNIX domain sockets).
+
+I.e.: s/resolve/resolution/
+
+I miss semantic newlines!  :)
+
+
+Have a lovely day!
+Alex
+
+>   *
+>   *   This access right is available since the ninth version of the Landl=
+ock ABI.
+>   *
+> --=20
+> 2.54.0
+>=20
+
+--=20
+<https://www.alejandro-colomar.es>
+
+--bbzhlxjnnqmvezvb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmoIwycACgkQ64mZXMKQ
+wqmQgQ//d1Zjm4nq4I64zFgwLViUIPtmBPuV5AAA/PKh8FlnvwFUYXqhOVioK6wK
+cUsFOAliFNSfOB6fYNWR3qxOE4l+79/3VrEbxKdgeqfN6wZD6g7pVJAew/7SyV1K
+R40Gknn0FfoPgyL2eCVjkegI/eyDa/lZKa8O1MFkoDHsfmB0CKeJ/nc6ZfTOs/yk
+p1UyGoBs1YEm4nQj163lkAUrhpJsH2qCnLiuBDq1+wBTghmSHrhiMUU1Qn++2i6o
+k7GIb5F2kQa7RpVehEZDaWChWNye8URZ2K857fVwVDWi/KX6pncspM+BkfuTHMRP
+rgSgvhX1TSqZ2O9vt4gOr9rK/6RpA7o7OwF4Rsh0jzHwBnAaxqg0NMaUizCgaxL1
+M/QWQj3dw8yH/KKUepk120sChiT8n6CfBd2fB0KWcs6mvORwwD7eJkyEUFrHGWUq
+4CkA+OuzmVFvMnMGAvamHTwkYwdeeXl85YPAM8PFZcUQDCoAB+hYKvbRQk3P7mfe
+qKJY5I5JV3NSSYv9NgnFtW98XiNx89bBKp4W1+Iu0aho79tlmINCPHAyw9pRKcqY
+gln+U3lD31WctKNMTSQjdj2ldnmm0AD8HLkpRcR1JxH/NzHA6E4n6KnAb4scjsY1
+2+ga0J0XWC5PGSi/BVQvGj8qNwQ54tWGppPsELBUnjKx6dtCSfw=
+=DZlG
+-----END PGP SIGNATURE-----
+
+--bbzhlxjnnqmvezvb--
