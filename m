@@ -1,126 +1,131 @@
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A6B346770;
-	Mon, 18 May 2026 07:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D318426B973;
+	Mon, 18 May 2026 08:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779090551; cv=none; b=TZh24yNHaz+TZKDdjA+VsJ9JGoKsiaKbZveZJQEkjLbDNEE5vjm/NSfgLIF2SN2bGoOnPV8j9s9fSA8tmaCBtjPUPXHilSY5EAJuNYSmb40iG8SPBu/iSkzi6gv0NwIv+m9ugvWLNuJENbK970ks0c4jiPvEpRIGOIJcXTL4O4A=
+	t=1779094117; cv=none; b=hSkL7Jd0BPzJB+PEn5Ty/cNUJqADHmJady9JIzOTSJbUcj+1i3RgkIxmOd4zupmHHAht9JbxF0CN4wAeuLLbNIY67DFqqwdeqzVD/adZKzgqX237RnbVO7pn42lhs3zH7MbUJK1FGkr+f0xrACPk2+B1lP2tg6twdpzTyGDBPzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779090551; c=relaxed/simple;
-	bh=ni66H/HXr0umGNjhD/kth7RF0nubzm0rW6EGgyR/pus=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=rRgN/O9D7vbue/GEXKW/cRv/ZJm5kde2Gub9RiA2SzS+O6FMPrds2aOpgzvyAIwXXJPVvvm2duemRZ4k+qA9HFx9t6vwxPmJKFVsQcHEGiQh220cnvZCFZ1TyOC1AaUKGYoguSpqbPE0M8qhkOWm/BRJSblJFsHNrFQOrmY5wLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=DCrjwSSn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XRwCoXAP; arc=none smtp.client-ip=202.12.124.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1779094117; c=relaxed/simple;
+	bh=9t5KxgZSvMy4+PrO7AcN8zNi278O5hkk/AIOuTQgGLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LJgFRxZDAkevPoPLKBRFgohT3VXWAOswBA60Mit0ebSOe/gajVtEoE7nIwaWUMUjBaS5AUihi+EKHJMHV+XRCvcoBzn0nlew31st3kHJ1B/yFjoARbgpfQVSjhy/gd8Xx+PPMH7dtqPBXo11XQNKrHtpbZ9yn5pwl7ghWzs/91I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QixhRBsf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rCb8Hd6j; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="DCrjwSSn";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XRwCoXAP"
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 5EDC77A007F;
-	Mon, 18 May 2026 03:49:08 -0400 (EDT)
-Received: from phl-imap-05 ([10.202.2.95])
-  by phl-compute-04.internal (MEProxy); Mon, 18 May 2026 03:49:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1779090548;
-	 x=1779176948; bh=825z3tcv64EKbJtcUvuJYFiBQTsyBbCrWpsHI1IqtBU=; b=
-	DCrjwSSnV0LyndbKDWhyPXEj5Mivi7N+fm/SgL90OShNC8DrdxhfuaYGd4E4N6HJ
-	qnWmCu4M7ymXMA0Dy0D5uo2idXRdaqJf2ime2N+6O6ZpX7CzoPytZhjUpzTFj7Ph
-	uQTXHBhW4cyLx4CBweZGBoYNUlARevP5v3WOPrzoPe1Bty+GCfkmGjiEX/uhHvhx
-	pKYoZLbtVIFFg8bngCKx3pCGLDsQGy8vBe7VtHSVEvNViUbMhpdEfirrWnV2h+8Z
-	APOMgi+H9UlJeXiML+JQRhsvBaLMldlkO+Nu+05YmesPL6IFb+QyNFJ0hyHGeQaT
-	k+8/mOq4USyS84I2QPQSRA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1779090548; x=
-	1779176948; bh=825z3tcv64EKbJtcUvuJYFiBQTsyBbCrWpsHI1IqtBU=; b=X
-	RwCoXAPA7CdW4xROBXsUBAdSKLtpuJa/QAAwS+2RuaIMc4RCKP4B9FzQIs7Ynf6V
-	W/+7T4aWGbl8KjRspxqWXNd+bzXizsSdC9CZDPyFLwXwLySha1MDUojZ+m+onfUf
-	oszAOVkWdMmO4tVPTHsxtCSu8JVBkec146Kxpz2f8hZxTvr7pUDoGQLjwa38Sael
-	nZGxajb/8YyBt2FbtqUJAPjonnVgVPaZ54Y/f1xbvLVd5fCqq3rINUzQXYHbl522
-	CWAcuMxjOu7LUDQfrHof7sEvhPrqhbo53BJpO5GtWkhyJdbOcHcz3M7w+HDZ7Tst
-	lANnR43eikw4Wj/tdw6BQ==
-X-ME-Sender: <xms:c8QKaqMAoWxoo8o-9AxCX0Gthh-Au_-TcFcovGPfgjXZSsUlSJWQ_Q>
-    <xme:c8QKajyL8rIQdJ0tPu5nM4Z4Mhz2niL1vIlsI50p_lBQkbHreGsCMbayPfwnrk_Gh
-    D2zNGvzTMeqjIqWbqfmnSqxbpkcJ6G_v9j0zwte-Hpvm1bpklHq6qo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddufeekfeduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhepgefgjedujedvieejgeelgfdthfduffeiteefudeghfffkeejfeehtdejfeejteef
-    necuffhomhgrihhnpehgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgt
-    phhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepnhhitghkrdguvg
-    hsrghulhhnihgvrhhsodhlkhhmlhesghhmrghilhdrtghomhdprhgtphhtthhopehjuhhs
-    thhinhhsthhithhtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehmohhrsghosehgoh
-    hoghhlvgdrtghomhdprhgtphhtthhopehguhhsthgrvhhorghrsheskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnrg
-    hthhgrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhhstgeskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtoheplhhlvhhmsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpth
-    htoheplhhinhhugidqhhgrrhguvghnihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:c8QKaqBnNO3BoGYxlPneNMwHAA8KmnqJkIydaEJfJQe6CJPzxX2uCg>
-    <xmx:c8QKahMrlGkcZezZwYXAnHw2o5Bu3tjGJ87EQIuf7j8n1x80MnV_kQ>
-    <xmx:c8QKahdMO7xVG5TYUFPFMDxMEiWHFEy-x4j-f0PgFifTtnX0AcVoaA>
-    <xmx:c8QKai4DliDZNhCHAHshyXQOAFymy_1AEJ8kSl4PF0JZXAToeoEk7w>
-    <xmx:dMQKalOg9UkpuTBleAp0GqS41lGgIoeP-3KeLvMAv7dQbBl9w605fHJg>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id CBEFE182007A; Mon, 18 May 2026 03:49:07 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QixhRBsf";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rCb8Hd6j"
+Date: Mon, 18 May 2026 10:48:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1779094113;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8NmoyZjWMcQlJ+wu8nb9k9PXQ/vBAKzFMTW/kF6RHyw=;
+	b=QixhRBsfT4Zq9oBQC1PdPmHgj5oPrfyE0MAuOUnGr5C7Q/D/a4WLXRuZGfVo7yRPxZbu5P
+	Lt0X2/x52cBqxISi6FmcGAe4FwIcImR7vjhdiIApPYOItJYfZ3l35llnJoxFJhENpBAte6
+	Xz/GhEyfUZkex/WfpQJCGg3B4PsQ0BTiOXfCye2/ojX5mZo4nYUevJIw+VoTaLN2B0/gaG
+	MBTbIGimRsFOJDLBst9n3zGH1aIdl8+SfS7gqd7yN9zEfxILPDPTFPWw5oetTEqqPgL1mL
+	713K9cGfkycxklwrKpPwhHFsd+KdmNEyT1tdmWZfaMWq/ZUdTU4EWL+A/sOKig==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1779094113;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8NmoyZjWMcQlJ+wu8nb9k9PXQ/vBAKzFMTW/kF6RHyw=;
+	b=rCb8Hd6jfN5h+IrZLnNTt6Q80Vty9DBmxOpBnIG+y15r3587Y2WVmdFD4r/9BZPhAdDA5z
+	kmUvLUuASGkzLZCg==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	kernel test robot <oliver.sang@intel.com>, linux-security-module@vger.kernel.org, oe-lkp@lists.linux.dev, 
+	lkp@intel.com, linux-kernel@vger.kernel.org, 
+	Shuah Khan <skhan@linuxfoundation.org>, Kees Cook <kees@kernel.org>, linux-kselftest@vger.kernel.org
+Subject: Re: [linus:master] [selftests]  465b05bae5:
+ kernel-selftests.landlock.audit_test.audit.tsync_override_log_subdomains_off.fail
+Message-ID: <20260518100602-5b161e99-83fa-4170-bb7b-1642df6b5a3d@linutronix.de>
+References: <202605111649.a8b30a62-lkp@intel.com>
+ <20260512112054-0a5c7cad-c8c6-4745-a765-0780a3bd2dab@linutronix.de>
+ <20260513.eeboh9zooQuu@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AEmuO4rsN4-N
-Date: Mon, 18 May 2026 09:48:47 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Nathan Chancellor" <nathan@kernel.org>,
- "Nicolas Schier" <nsc@kernel.org>, "Bill Wendling" <morbo@google.com>,
- "Justin Stitt" <justinstitt@google.com>,
- "Nick Desaulniers" <nick.desaulniers+lkml@gmail.com>
-Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
- linux-kbuild@vger.kernel.org, "Kees Cook" <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- linux-hardening@vger.kernel.org, linux-security-module@vger.kernel.org
-Message-Id: <55186588-0cff-4908-923a-d5611707a3b0@app.fastmail.com>
-In-Reply-To: 
- <20260517-bump-minimum-supported-llvm-version-to-17-v2-2-b3b8cda46bdd@kernel.org>
-References: 
- <20260517-bump-minimum-supported-llvm-version-to-17-v2-0-b3b8cda46bdd@kernel.org>
- <20260517-bump-minimum-supported-llvm-version-to-17-v2-2-b3b8cda46bdd@kernel.org>
-Subject: Re: [PATCH v2 02/16] security/Kconfig.hardening: Remove tautological condition
- from CC_HAS_ZERO_CALL_USED_REGS
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260513.eeboh9zooQuu@digikod.net>
 
-On Mon, May 18, 2026, at 01:05, Nathan Chancellor wrote:
-> Now that the minimum supported version of LLVM for building the kernel
-> has been raised to 17.0.1, the '!Clang || Clang > 15.0.6' dependency for
-> CONFIG_CC_HAS_ZERO_CALL_USED_REGS is always true, so it can be removed.
->
-> Reviewed-by: Nicolas Schier <nsc@kernel.org>
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+On Wed, May 13, 2026 at 12:52:35PM +0200, Mickaël Salaün wrote:
+(...)
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-
->  config CC_HAS_ZERO_CALL_USED_REGS
->  	def_bool $(cc-option,-fzero-call-used-regs=used-gpr)
-> -	# https://github.com/ClangBuiltLinux/linux/issues/1766
-> -	# https://github.com/llvm/llvm-project/issues/59242
-> -	depends on !CC_IS_CLANG || CLANG_VERSION > 150006
+> > > config: x86_64-rhel-9.4-kselftests
+> > > compiler: gcc-14
+> > > test machine: 16 threads Intel(R) Core(TM) i7-13620H (Raptor Lake) with 32G memory
+> > > 
+> > > (please refer to attached dmesg/kmsg for entire log/backtrace)
+> > > 
+> > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > > the same patch/commit), kindly add following tags
+> > > | Reported-by: kernel test robot <oliver.sang@intel.com>
+> > > | Closes: https://lore.kernel.org/oe-lkp/202605111649.a8b30a62-lkp@intel.com
+> > 
+> > I was unable to run the landlock selftests myself, on my machines they are
+> > failing at runtime with all kinds of colorful errors. Are the requirements
+> > explained somewhere?
 > 
+> I'm curious about the errors you get.  They are standard kselftests that
+> should work following this workflow:
+> 
+>   make TARGETS=landlock O=build kselftest-gen_tar
+> 
+> and then running ./build/kselftests/kselftest_install/run_kselftest.sh
+> as root in a VM.  The required kernel configuration is listed in
+> tools/testing/selftests/landlock/config
 
-Maybe add a comment to mention that this now requires gcc-11,
-that way we have it easier to remove the check when that becomes
-the minimum version.
+So there are two root issues I ran into:
 
-       Arnd
+1) The tests can not be executed from virtiofs (as set up by virtme-ng):
+
+ #  RUN           audit.layers ...
+# audit_test.c:52:layers:Expected 0 (0) <= self->audit_fd (-13)
+# audit_test.c:61:layers:Failed to initialize audit: Permission denied
+# layers: Test failed
+#          FAIL  audit.layers
+not ok 1 audit.layers
+
+(The same for all other testcases)
+
+2) $PWD needs to be the test binary directory for "./wait-pipe-sandbox" to work.
+
+> To make it easier, we wrote a wrapper to test everything with UML:
+> https://github.com/landlock-lsm/landlock-test-tools (see check-linux.sh)
+> 
+> > 
+> > > # #  RUN           audit.tsync_override_log_subdomains_off ...
+> > > # # audit_test.c:591:tsync_override_log_subdomains_off:Expected 0 (0) == matches_log_signal(_metadata, self->audit_fd, child_data.parent_pid, NULL) (-11)
+> > 
+> > This error number means "EAGAIN 11 Resource temporarily unavailable",
+> > so it could be a temporary error.
+> 
+> Yes, the test is flaky under pressure.
+> 
+> > 
+> > Can you reproduce this issue? Is it really dependent on my patch as
+> > blamed above? If so, does the selftest rely on the previous, incorrect order?
+> 
+> I don't think it directly depends on your patch but it might be a side
+> effect.  Anyway, I've been working on fixing this kind of issue and just
+> sent a fix:
+> https://lore.kernel.org/r/20260513105112.140137-2-mic@digikod.net
+
+Thanks, unfortunately I can't validate that it will fix the issue at hand.
+
+
+Thomas
