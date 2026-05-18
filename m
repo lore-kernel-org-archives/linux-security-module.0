@@ -1,199 +1,131 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E054334681
-	for <linux-security-module@vger.kernel.org>; Mon, 18 May 2026 23:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92A7337BA4
+	for <linux-security-module@vger.kernel.org>; Mon, 18 May 2026 23:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.54
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779147572; cv=pass; b=NeJx/cCzXujSbwYp6ptxj3tRBtj5XBb3KFxNczy4cIfsiPE7rGWDP5WsWv8+ujR2K2DU9DJjIfGLY/7U9bWerpWl/xvZuAe4hNhOzm0hx1k77ar/FNduDIGvwfZe9wGesIBq52XlfAfnypPurzuI3ligCZ0DsZ3uObze/WOjPJI=
+	t=1779148672; cv=pass; b=UtaKoej6ybOIVHLBp4FBrNxLyGPmSFeHXATSfrvzdtcuXgX+z4flBIc8joKQHZ3exkaHcRyca9WwvKV8PwXiwvNV9wTl8YkmHXFEpR/j9f+RZZ9UutU5zaLIwRAVxigjG119LCw2NSgnH1bVEO7ZV+g0TLs/157BAWNa3+IpEYA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779147572; c=relaxed/simple;
-	bh=MVyBd8P8ZHPDO43tWlBSuB0zkMXQCxdJ+/go03Ht3bo=;
+	s=arc-20240116; t=1779148672; c=relaxed/simple;
+	bh=unqEGZFYSyCBmS401bO5UPSCWFKfUOAKb+T3Y4jxQe0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GRvT457OsUbu8ZYzgBgTwGY9VwHL4vZKNMOyy1xnMRO+oEzc9TShpCI/5fP/I8uzpBHis+8xcxhna4nutnVTuptc2JrE7bTbWml4aP6sxQorpaXIJuFTCmfqmLseEhamn6ClK//AoYokBRz/xVlWXbmvEkV29WE+eZn8Kxvbtmw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WHSbLGwp; arc=pass smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 To:Cc:Content-Type; b=OYjowG9lh5YVDLUyzjmkgf3Up6jpSSJmu782cv1N0MjzyPc7wVGPxWztphvAnkfLMNOSRffGCCO39cSfpUFIHlfA29KXCDkCH7pGlkWMeyark6lK2U9LB77ZXyei/HoButRgtbNKafWRmN+HqIuU1W0+UC6yr76q8joYmq73NxU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=YW1xiazA; arc=pass smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WHSbLGwp"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-488940ccfa6so995e9.1
-        for <linux-security-module@vger.kernel.org>; Mon, 18 May 2026 16:39:30 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1779147569; cv=none;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="YW1xiazA"
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-36643b96b99so2720409a91.0
+        for <linux-security-module@vger.kernel.org>; Mon, 18 May 2026 16:57:50 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1779148670; cv=none;
         d=google.com; s=arc-20240605;
-        b=Z7AVq/e6MboeA2jT8I3EwpaD50QTDChQA+uGAKL+/rvScWkch4rIADUJkY0yhLaB3n
-         9Akd8IJ/54S7YnNBB8F7ZG6UESZ7dqcsccRdOLlsI4rkNuT4UbtFeWihY+7u8MuW25Bd
-         TxM00B/haFh7gjqXTPWRPpc6NzQ1V/R2CFNlRHq1NAZNjOEfGVNZaKCNfagCw6vXQrqL
-         E3BymRAWCXvSAHKJL01Q0HPxK8qDP6pFarrZ8tWkO+9D0XirnVAMD6oVPNxUDL4s02Rn
-         YnIWtA0V1EbFaYsJofvT8r6b/FVuGHRFMZweCZlLKb6xaPGPCSTQ9kA4e8ycYcs+upYI
-         0F3g==
+        b=CVnFJbLk4w+Q2S9ucQlMJD45fsTMLW/1CaT8JaVYdOPFvzTkvalZhIa1sIzUGK06AP
+         uA9nG1aEjM5pAFCHVj3YBsxIBpS3qDHw8yfpIvvdhrpfv6Qh0vkZvdXJnmooIRdNOLwT
+         eL6PKEU2Ll6xE3aDPoCUSbj1ielBC+IFZNjVrkH7rhgj0EtWkz3jr11D6UosoxP5QNiC
+         PN6TwjKKuLH1I4WUGNbt7eMJqGyrggtl7ljclFMJ/X53482E0Fvr4uBsz35lKkd0+QPe
+         YOKic620xiTNuqzAgl8nHg59ss0F1UTW2Y2/grfMfZt+HFAW4FZQqirCyYa+En/dDUZn
+         q+Ww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=itOYKoJgfjMZD3HtReaYbMSuntrxVom1KXxY5d6gQNg=;
-        fh=RI77yDkHw668GdOe8DfsryijZuRWSWUWC0EFSyqoIQs=;
-        b=BnUKir6PA66edyFVdb5vpXEZtraaMP2Wl/w5aXQ1Tj4gPws/PoDMuZFteaDws5k8OJ
-         4OzUlP7kfKdwxqOBk1zQz7IZ417lnv/6E48oCx8apEnqKuhWBUAOijt7f2gTaBWbGl0W
-         eT2MzEQ0xV5FPYD3qhXZSSZ1iUbrtDjif6HjFJYalKdOnHnpRFVs9AdJhH18rkl1DcWO
-         KTV3woOTSAwvHYcT0PujQcnS5OoWnJsHAjR8gP1I3oTLsHB25vGltWiv9ifNxpth8YQl
-         30UyW4Xx7mmzbCUCN06/WQuFcQuDh02dcg5lYJyedXIf4FEDnCtwEw+GWOibBIU5xfWj
-         4FFQ==;
+        bh=yQIzRVdOE5dF5raU9qEOWy4pjYF2amwoUhs+1RS7QM4=;
+        fh=37oZ2REzBooDuVXVbEgcExiHVrgtMSX3rd1DtjBHQ+s=;
+        b=hZz85s0R34p539GVAJRIgKeBcKgdZMelPv8NpR5hRXpkNAlcbvSamRYw3wmn68Bl4b
+         l0YocncEpnFpeMUuAQxC4zLxIi076Ixh4PkMC70OtGAQB5NYqiNw0gWJvMU79YQU528G
+         kV27I63UsofvZx71Sa9vpihphrUj1xmniMPLeHikzcEQqsf3rMF4spNvNMojqyR3tYom
+         tPW35NJM7o8/gONoRS/Pu5RCPJyOTMVMpKcLzxDb4MmBufxPKurqNCJ5zQBOhDs0OBpY
+         cJxbZ29AOOnlsKazyJeVfMheCJUn1xRyr2Inrav2c2aqX1RueDBIP4Hi48pQbHiqzDMw
+         iZhw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1779147569; x=1779752369; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1779148670; x=1779753470; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=itOYKoJgfjMZD3HtReaYbMSuntrxVom1KXxY5d6gQNg=;
-        b=WHSbLGwp9dzHm/Ck5v7yRf5STkpaQFc89CC3BbVSTDlpg14DuO4gO+VVBVOPT5M14h
-         KfqufuMH5sVR/bEsVqq6bJ/gUyg+om+Jqv6ikla3l+2RLeFwKCXZ1EJocfxdaXYkNi3I
-         6u3OwoSXpMmpQ4ny+ZIRYuq37zpcWUZ2i7uhxq3znLQsukNatjHZgVbjrH8CsnxTah9O
-         kFDsCLjtiqeeCX9KzZIrpsVPVTOCcou2lWUDo6i+lnpZxpAofY7TA9U6mJx1TBxSoqck
-         P+wHE7LPCr96YN3EQCd4PyXP1lTWx/uxIyX1xZ9du1HCQsLrvscFYe5vUnvAbnbWAGVX
-         xNFQ==
+        bh=yQIzRVdOE5dF5raU9qEOWy4pjYF2amwoUhs+1RS7QM4=;
+        b=YW1xiazAIuoO9uzWuY8PqoK6SOdp7+AQBjShSj8YTFGoQR3wR6bW5nFHEGj7Lav0df
+         371Iaezpn7zqcLSmiRbT/LfnDxDSWJIP1r9ISLxB/GdZAN8zjmyHF1MYQKW6A/gBrv9I
+         4L8gjS8H+H40H8waQIhbxIsIllLqY/uEqsrvQGIsAD3FV3EbMMkON2FFZr+X1MIAuope
+         +XppFw06GE7AMWQJaiF/SC66WOVHKImIN0C37Bk+9rjk70Wb1VjogJNnTSVIS2TCJA86
+         HdqITE68CdCVz2ZfHjuYhUvr8NTvbUxNtJgRhUacgXWXp/QAkMNxVBuxXNvmZPP0B5v6
+         lNKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779147569; x=1779752369;
+        d=1e100.net; s=20251104; t=1779148670; x=1779753470;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=itOYKoJgfjMZD3HtReaYbMSuntrxVom1KXxY5d6gQNg=;
-        b=d3Xb70//cASzCDwczncbBiYgT/MWT1IrbJj5EEQowU5nzXSIkh5Jsubq+H1YhGpFL5
-         /97gTbjdtgekgD4vODwrShwr4dt0mRC94TX/z0oqQ1DpYEUguJ8hsWl4bv4WJF24Ttgy
-         eghzbpASWqrS0Hw3kxB/doHrfobRBxIzGdCW/kObBb933mJz7U2SkLpW+4wokL1CWbNO
-         KM2RawUlo7MKKOEO1s6XibMj9AxOIPYyEw8Xf2nDAmR9uUIz4JY3qHgU7mnIlczQV/Sq
-         H9fBLBRn48Fap4VbOuLcgjFlU44hMG7tFPyZVctPFR5yKap9zqueHCjgjQJK1IUteiZ1
-         yIUQ==
-X-Forwarded-Encrypted: i=1; AFNElJ9OK0UkEF+FjdrFmTWSOj/JP0rz+TmYNVY/mboLZ1ifqqPj5xSniN9M+0HIud5As2vzv7T0L+G6I4dq32N1aO9rSSa01VQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd9uEIqeocUP/MWF+rkh+ly8cm9u1M41R0gvVq1GkHkVJnseAn
-	6DjprDT3h3oDqkgF3V+boeEBzE7I6D3EnG1FeFrbFGPtTWcjO3/t0JnvE0gmLMROGrOKbGAgZys
-	4MSQ8DL7z9LC5d8VKBCI1QcWyWzpQVHfW6hB8qvSW
-X-Gm-Gg: Acq92OG85alaToJkFl84gOKAmiLZ8cSeAgV6VdgdTnGMu0OgmLWLaWxeDvi4A8tlvZZ
-	g9PdFeXTnFXwjud6g4d4BegHXKDHrgTIUbDHftC6zt9Z34AAHJXk9Gc/0rXWuQTTPDTS6vX4aeu
-	wgz1FgbIm6EUdyl2S2eI5P0BzKAvO8OAvz8OS4GT28oijTqQlGKvpTPlC7VYWRweFkrK8NSMfsj
-	DLeakbK1XBmMdw+AEMPPJQf+YV4Jd/yzUPSNUHbhDZs611ksuj1/i1dmKZXdrPcv4PUezd9Rg+N
-	789AOi06XDRa2+AUubfEYLFzow/Zrh/FOpXltD+qVvpOlwHg
-X-Received: by 2002:a05:600c:828f:b0:485:1a54:9407 with SMTP id
- 5b1f17b1804b1-48ffa06d607mr3320695e9.0.1779147569161; Mon, 18 May 2026
- 16:39:29 -0700 (PDT)
+        bh=yQIzRVdOE5dF5raU9qEOWy4pjYF2amwoUhs+1RS7QM4=;
+        b=qWS/787r05odOQWfPVFHs9kK+C2vT/DH1vk7VpBtdG2sbtonxAdhlB9l8xQNJ7zx90
+         N/+mkRZdNgx4MRLCYD7zpPMEMuVhy8ixUvOSTVwi9rbU/NGxCrI1pxH8rCOrDE/iIzGk
+         bIcFxfaHzyjAjLu+Nj9IxGZclAGw3q3+nxORT7kG/5hwWG6kiEomx585mApyMuLZRKlC
+         UXn5J80rrczFPF+M4KgjVKsoRJfGq7M40tdHzSUF9/RQ2ObiSLsOXZkMniFjIJv0tPUT
+         cLTbiDO1w1/tJ6ZSQMtDOVT7IrTcpZMN1weEUGXl3FXCG+bCWOwcOgwoSAHMKRfJgy7a
+         aWhA==
+X-Forwarded-Encrypted: i=1; AFNElJ99MmQgMxrHZ7NHdUpHnEOKwqu+UqW3bXAexsQxjFAhbZzqmCgDIVXlwssdJ5sTEZeXSLzJ6j9sVK4sYLgyfqwI0XIkhCI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDDcBypClPH4/i4HNMLNvFxBqiskLGRt9juidwpe7LA0ybyqQm
+	tbesnLBkoMepfnvri/t36cux8OKUSU9TFSUDtx6sLC115DkVepAZrPOv/jtmG3GKzKjkcZjUBg8
+	05/l+KMhwmd0qh3TxbNpLq5SRjM7AOZy5DxS80XWA
+X-Gm-Gg: Acq92OGNfCpxlPbs1LGTapTPKTAYU6KZQXLyCmaCbeDmPtKdB5hluYnb56yOrl6RbQG
+	cZKHs+u68AeLb54BNjCCbgZ9ZYNjdd+pILilO1If5v0V7TX2P8Lg3ShywKX6RnGkMFdkHXjrE9O
+	d13E8QXkvK7YnVMTP/UL/4wV1fP2z/Gapws6pSPWdlJfCfcSeiYByDFYUMuC8ZaG7mPwveHasp1
+	Qpz9lzizVPm6/eFsXlZl0Nk9zlf99fj+iaR7h1st+W78gr9q1nw7530ZHUYVsvtvCKoOnHqXJBr
+	KRLgXso=
+X-Received: by 2002:a17:90b:5486:b0:35f:c729:de9b with SMTP id
+ 98e67ed59e1d1-36951cabdd1mr17237144a91.20.1779148670183; Mon, 18 May 2026
+ 16:57:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260512-v2_20230123_tjmercier_google_com-v1-0-6326701c3691@redhat.com>
- <20260512-v2_20230123_tjmercier_google_com-v1-2-6326701c3691@redhat.com>
- <CAGsJ_4xfznffbjOaNKwnN6oZk_H6pqOzYqd1zx4Q9XrocdzV8A@mail.gmail.com>
- <CADSE00LjJcL8P5M-UPEpzZijU70uEmUirnin29N8YR5W5D-oFg@mail.gmail.com> <CAGsJ_4xwJ7SAhKPJyRtMTw6psTO7H1EcFFpDw0po1W8PX4FE8g@mail.gmail.com>
-In-Reply-To: <CAGsJ_4xwJ7SAhKPJyRtMTw6psTO7H1EcFFpDw0po1W8PX4FE8g@mail.gmail.com>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Mon, 18 May 2026 16:39:14 -0700
-X-Gm-Features: AVHnY4JenMsTlW8PdrNyXvGhnvZE3E4HsfXXDBDrw2kB1e9N8h1WWqyjOLM9WZU
-Message-ID: <CABdmKX2+PqZJc588dL7Yp7hYDnfXw7LRCKfLJ6n5=faKBvWBWg@mail.gmail.com>
-Subject: Re: [PATCH RFC 2/5] dma-heap: charge dma-buf memory via explicit memcg
-To: Barry Song <baohua@kernel.org>
-Cc: Albert Esteve <aesteve@redhat.com>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, Christian Brauner <brauner@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Shuah Khan <shuah@kernel.org>, cgroups@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, mripard@kernel.org, echanude@redhat.com
+References: <20260507070547.2268452-1-sashal@kernel.org> <CAHC9VhTwDt2Bx8n0io9Qge_fUEnrHsxrFAQY+KaemKWqJqBQxw@mail.gmail.com>
+ <CAPhsuW4TJRqQKXgcBYog8YgFLU2h2Zq9ReahxTYp_zpDyvO8AA@mail.gmail.com>
+ <CAHC9VhS1DJNs9gDB6gD9WKhL08giSVajBskZ+=mY0AWRCAsw7Q@mail.gmail.com> <CAPhsuW5jQOzRTi1ea+=UPhx5W9bkBdivPagRE=O=nx0zf_vb8w@mail.gmail.com>
+In-Reply-To: <CAPhsuW5jQOzRTi1ea+=UPhx5W9bkBdivPagRE=O=nx0zf_vb8w@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 18 May 2026 19:57:37 -0400
+X-Gm-Features: AVHnY4Ju9QhtCnU9X4q0Y1FoqKmXLcQYabAg7vghJP1SBxCLhKOLIiAM2oGfePM
+Message-ID: <CAHC9VhTGDOJZDzEA31qc0S6FJpYNC4oD__HQ-65wqqwhng=V9Q@mail.gmail.com>
+Subject: Re: [PATCH] killswitch: add per-function short-circuit mitigation primitive
+To: Song Liu <song@kernel.org>
+Cc: Sasha Levin <sashal@kernel.org>, corbet@lwn.net, akpm@linux-foundation.org, 
+	skhan@linuxfoundation.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	gregkh@linuxfoundation.org, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 18, 2026 at 3:43=E2=80=AFPM Barry Song <baohua@kernel.org> wrot=
-e:
->
-> On Mon, May 18, 2026 at 8:16=E2=80=AFPM Albert Esteve <aesteve@redhat.com=
-> wrote:
-> >
-> > On Sat, May 16, 2026 at 9:37=E2=80=AFAM Barry Song <baohua@kernel.org> =
+On Mon, May 18, 2026 at 7:23=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+> On Mon, May 18, 2026 at 2:29=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
 wrote:
-> > >
-> > > On Tue, May 12, 2026 at 5:18=E2=80=AFPM Albert Esteve <aesteve@redhat=
-.com> wrote:
-> > > >
-> > > > On embedded platforms a central process often allocates dma-buf
-> > > > memory on behalf of client applications. Without a way to
-> > > > attribute the charge to the requesting client's cgroup, the
-> > > > cost lands on the allocator, making per-cgroup memory limits
-> > > > ineffective for the actual consumers.
-> > > >
-> > > > Add charge_pid_fd to struct dma_heap_allocation_data. When set to
-> > > > a valid pidfd, DMA_HEAP_IOCTL_ALLOC resolves the target task's
-> > > > memcg and charges the buffer there via mem_cgroup_charge_dmabuf()
-> > > > inside dma_heap_buffer_alloc(). Without charge_pid_fd, and with
-> > > > the mem_accounting module parameter enabled, the buffer is charged
-> > > > to the allocator's own cgroup.
-> > > >
-> > > > Additionally, commit 3c227be90659 ("dma-buf: system_heap: account f=
-or
-> > > > system heap allocation in memcg") adds __GFP_ACCOUNT to system-heap
-> > > > page allocations. Keeping __GFP_ACCOUNT would charge the same pages
-> > > > twice (once to kmem, once to MEMCG_DMABUF), thus remove it and rout=
-e
-> > > > all accounting through a single MEMCG_DMABUF path.
-> > > >
-> > > [...]
-> > >
-> > > > -               if (mem_accounting)
-> > > > -                       flags |=3D __GFP_ACCOUNT;
-> > >
-> > > Hi Albert,
-> > >
-> > > would it be better to move this and its description to patch 1? It
-> > > looks like patch 1 already introduces the double accounting changes,
-> > > and patch 2 is mainly just supporting remote charging.
+> [...]
+> > In my opinion, making killswitch an LSM is more of a procedural item
+> > that deals with how we view a capability like killswitch.  I
+> > personally view killswitch as somewhat similar to Lockdown, which is
+> > why I made the suggestion.
 > >
-> > Hi Barry,
+> > The use of kprobes, while an interesting idea, presents problems as
+> > allowing any kernel symbol to be killed introduces the potential for
+> > security regressions.  As a reminder, some LSMs, as well as other
+> > kernel subsystems, have mechanisms in place to restrict root and/or
+> > enforce one-way configuration locks; while many people equate "root"
+> > with full control, in many cases today that is not strictly correct.
 > >
-> > Thanks for looking into this series! Yes, in my head I was trying to
-> > keep patch 1, which was taken from a previous, different series, and
-> > then diverge from it starting with patch 2. This would clarify the
-> > difference between the two. But I can see it just added some confusion
-> > (for example, patch 1 charges on dma_buf_export() and then it is moved
-> > to dma_heap_buffer_alloc() in patch 2). I will reorganize it better
-> > for the next version, including your suggestion.
+> > Yes, kprobes have been around for some time, this is not a new
+> > problem, but killswitch makes it far more convenient and accessible to
+> > do dangerous things with kprobes.  If killswitch makes it past the RFC
+> > stage without any significant changes to its kill mechanism, we may
+> > need to start considering more liberal usage of NOKPROBE_SYMBOL()
+> > which I think would be an unfortunate casualty.
 >
-> Yep, I understand the situation now. I also understand
-> that you were referring to T.J.'s patch, which caused
-> some back-and-forth confusion for readers when reading
-> patches 1 and 2.
+> I don't think we can use NOKPROBE_SYMBOL(). There are functions
+> that we don't want to killswitch, but still want to trace.
 
-Albert, please don't feel obligated to keep my patch intact if
-integrating it into other patches simplifies the series.
+That was exactly my point, but we need to figure something out so
+killswitch doesn't make it easier to cause a regression.
 
-> > > Also, mem_accounting is only used by system_heap.c; has this patchset
-> > > also eliminated its need?
-> >
-> > No, mem_accounting is still handled in this patch for the general case
-> > where no `charge_pid_fd` is used. See dma_heap_buffer_alloc() code:
-> >
-> > +       if (memcg)
-> > +               css_get(&memcg->css);
-> > +       else if (mem_accounting)
-> > +               memcg =3D get_mem_cgroup_from_mm(current->mm);
->
-> I see. What feels a bit odd to me is that mem_accounting
-> could either be dropped (with unconditional charging), or
-> it should cover both remote and local charge cases.
->
-> I don=E2=80=99t have a strong opinion here=E2=80=94it just feels a bit
-> strange, since its description is quite generic for memcg:
->
-> "Enable cgroup-based memory accounting for dma-buf heap
-> allocations (default=3Dfalse)."
->
-> Best Regards
-> Barry
+--=20
+paul-moore.com
