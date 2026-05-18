@@ -1,159 +1,193 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9373E326923;
-	Mon, 18 May 2026 10:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB463E6399
+	for <linux-security-module@vger.kernel.org>; Mon, 18 May 2026 10:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779098516; cv=none; b=s37XI5cvIlCr7BeCBy5toNBs7dQ1FjQUfU0r/4A0jGoCijUX0J0N5RcCLIkq0anrBcONNYYk7m0ZYL1Tu8SAQAczqH44qFErNUIKNYY4Uh1p/i91/4/dkPRPqlBbPpnK7OSP0F83QjX8csHZHaTKEWl1g2ia+PgVos3/wQz6FKE=
+	t=1779100016; cv=none; b=C8OhGzqIwTGlVqpUmHxWzp4ZhLrnwxRJQxmDAAoenM4T9z/SoOTE84Qg05QMKJn8w+FdlkfU99jgS/9S9F7v2kAhZ+A0JYFRlfdFAkX/Q3jEToYcBsCtD2VKR4dCRNPCUqAPSKp9T0PxNLe0pGlCFdZONtl2fjPblEdn282DJBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779098516; c=relaxed/simple;
-	bh=L3f1Vp/n/cdeEMDV5sI+sXWwZyj64HpcGqTJbxUOe/c=;
+	s=arc-20240116; t=1779100016; c=relaxed/simple;
+	bh=X9AZk6ouA560VchecOEmVZBrcgzrfZoBE0QGMf0Aezc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WIj66h3xkxXanHOAg+kyTy3ZVbYSiXbE9M7L3fHWZtdKlEpDnXGXoJaXTthA/3bwSGUqzJk0kCH0RC7LnpyRrTlyI6PSAa6ZJ5ewtpYbvTe6GEMAwSN5lyU3A425/DNCvO9EyWsS8fIZ599TVwB9bHwlbpzgu3I+59BSjEDTF/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ONuaZYUV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TtYKiEHJ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	 Content-Type:Content-Disposition:In-Reply-To; b=ox7F6I4AxVVlhEonQJoYvuG8Rj+krLtKzkyVIykRQt0mcJRyGwrA0ZqM8Wf7/vsu+M+7DnUxr5h9VqDiIQELZg1xdufETAmpCQtWXM+XPJ7VLXfWEP2YjVilcfT6cuHvQt/do9e2XxWvQcQcSbvXb9ejJ7lwsfZVGXYLP7x8Tog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=rFN0Zqxk; arc=none smtp.client-ip=185.125.25.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ONuaZYUV";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TtYKiEHJ"
-Date: Mon, 18 May 2026 12:01:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1779098512;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9R7iXz/vKaTcboM4y0DO/8RfZsBrVr/cAx9OLOYE8Gc=;
-	b=ONuaZYUVIkb276hiZPlFFmhvaLFa/bK+n7SlrA5ctGJPIA5YkCVGuYwzhz2ZW/SyAyv5oo
-	aaUJqL12sz8f5Nwa91tIg2eX/9BhWYN3X0ksKJnyXz76C4pIHu1KM45RsMDgE5lMNhAiP8
-	yz5PLSjdOOIbWnbRLxY7FNjpdYhyVmDwNgW/dTlmV0HjH4HL7QZ417qq2sXRKJ6pr0qdjR
-	pHnUolSLoBGcRYo9b3mbBW4/8dAVL7ZqBdV9njAa/McuvhkKFDhTFZ4MzT1Mw/wjig4bzC
-	aZXvYcaZBZc1xoYB2XES6X5L0nVL/vHsLAiPmXD5JMCdX5adCLodYpmBoNKJJA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1779098512;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9R7iXz/vKaTcboM4y0DO/8RfZsBrVr/cAx9OLOYE8Gc=;
-	b=TtYKiEHJSRwK6P/AZOSUveWrHARGDTNzttlc+E8rKl+7jbMwXJb/u8f73ElG68742EWq4e
-	pJnWpBb7w23P94Aw==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	kernel test robot <oliver.sang@intel.com>, linux-security-module@vger.kernel.org, oe-lkp@lists.linux.dev, 
-	lkp@intel.com, linux-kernel@vger.kernel.org, 
-	Shuah Khan <skhan@linuxfoundation.org>, Kees Cook <kees@kernel.org>, linux-kselftest@vger.kernel.org
-Subject: Re: [linus:master] [selftests]  465b05bae5:
- kernel-selftests.landlock.audit_test.audit.tsync_override_log_subdomains_off.fail
-Message-ID: <20260518115330-2156280f-0a6e-4d82-bbf5-13ad7052bafc@linutronix.de>
-References: <202605111649.a8b30a62-lkp@intel.com>
- <20260512112054-0a5c7cad-c8c6-4745-a765-0780a3bd2dab@linutronix.de>
- <20260513.eeboh9zooQuu@digikod.net>
- <20260518100602-5b161e99-83fa-4170-bb7b-1642df6b5a3d@linutronix.de>
- <20260518.ohn9DahGhui6@digikod.net>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="rFN0Zqxk"
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gJv9Z6t4GzGRt;
+	Mon, 18 May 2026 12:26:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1779100002;
+	bh=DqZGfXeHDKO3ofh3dXhJEMakdrjyJnKc8lUuhZhQRpM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rFN0ZqxkORmS6NBKTiy6Bep834N1w5tA1lY7HuC5xXh8t1BsuHpYLHnbl37ooS22d
+	 b3AzbkPdBWYZSUwNHitCTHusZQoQcoD7HlrLQxDRdtIZHdM2DbZbzIjdklpSy7FQDK
+	 pJSoBKc5f9lkJn3yOsTKWOjhP0pk+bGfBF/Oqo64=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4gJv9Y34wgzMmR;
+	Mon, 18 May 2026 12:26:38 +0200 (CEST)
+Date: Mon, 18 May 2026 12:26:34 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Justin Suess <utilityemal77@gmail.com>, Kees Cook <kees@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Matthieu Buffet <matthieu@buffet.re>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Tingmao Wang <m@maowtm.org>, kernel-team@cloudflare.com, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, Andrii Nakryiko <andrii@kernel.org>
+Subject: Re: [PATCH v2 05/17] tracing: Add __print_untrusted_str()
+Message-ID: <20260518.eZ8gaiyoh3re@digikod.net>
+References: <20260406143717.1815792-1-mic@digikod.net>
+ <20260406143717.1815792-6-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260518.ohn9DahGhui6@digikod.net>
+In-Reply-To: <20260406143717.1815792-6-mic@digikod.net>
+X-Infomaniak-Routing: alpha
 
-On Mon, May 18, 2026 at 11:30:42AM +0200, Mickaël Salaün wrote:
-> On Mon, May 18, 2026 at 10:48:27AM +0200, Thomas Weißschuh wrote:
-> > On Wed, May 13, 2026 at 12:52:35PM +0200, Mickaël Salaün wrote:
-> > (...)
-> > 
-> > > > > config: x86_64-rhel-9.4-kselftests
-> > > > > compiler: gcc-14
-> > > > > test machine: 16 threads Intel(R) Core(TM) i7-13620H (Raptor Lake) with 32G memory
-> > > > > 
-> > > > > (please refer to attached dmesg/kmsg for entire log/backtrace)
-> > > > > 
-> > > > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > > > > the same patch/commit), kindly add following tags
-> > > > > | Reported-by: kernel test robot <oliver.sang@intel.com>
-> > > > > | Closes: https://lore.kernel.org/oe-lkp/202605111649.a8b30a62-lkp@intel.com
-> > > > 
-> > > > I was unable to run the landlock selftests myself, on my machines they are
-> > > > failing at runtime with all kinds of colorful errors. Are the requirements
-> > > > explained somewhere?
-> > > 
-> > > I'm curious about the errors you get.  They are standard kselftests that
-> > > should work following this workflow:
-> > > 
-> > >   make TARGETS=landlock O=build kselftest-gen_tar
-> > > 
-> > > and then running ./build/kselftests/kselftest_install/run_kselftest.sh
-> > > as root in a VM.  The required kernel configuration is listed in
-> > > tools/testing/selftests/landlock/config
-> > 
-> > So there are two root issues I ran into:
-> > 
-> > 1) The tests can not be executed from virtiofs (as set up by virtme-ng):
+Steve, Masami, Mathieu, are you ok with this new helper?
+
+On Mon, Apr 06, 2026 at 04:37:03PM +0200, MickaÃ«l SalaÃ¼n wrote:
+> Landlock tracepoints expose filesystem paths and process names
+> that may contain spaces, equal signs, or other characters that
+> break ftrace field parsing.
 > 
-> Most filesystem tests initially set up tmpfs and then use it.
+> Add a new __print_untrusted_str() helper to safely print strings after
+> escaping all special characters, including common separators (space,
+> equal sign), quotes, and backslashes.  This transforms a string from an
+> untrusted source (e.g. user space) to make it:
+> - safe to parse,
+> - easy to read (for simple strings),
+> - easy to get back the original.
 > 
-> I'm using virtme-ng too, see the
-> https://github.com/landlock-lsm/landlock-test-tools
+> Cc: GÃ¼nther Noack <gnoack@google.com>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Tingmao Wang <m@maowtm.org>
+> Signed-off-by: MickaÃ«l SalaÃ¼n <mic@digikod.net>
+> ---
 > 
->  ARCH=x86_64 .../check-linux.sh build_light kselftest
+> Changes since v1:
+> https://lore.kernel.org/r/20250523165741.693976-4-mic@digikod.net
+> - Remove WARN_ON() (pointed out by Steven Rostedt).
+> ---
+>  include/linux/trace_events.h               |  2 ++
+>  include/trace/stages/stage3_trace_output.h |  4 +++
+>  include/trace/stages/stage7_class_define.h |  1 +
+>  kernel/trace/trace_output.c                | 41 ++++++++++++++++++++++
+>  4 files changed, 48 insertions(+)
 > 
-> > 
-> >  #  RUN           audit.layers ...
-> > # audit_test.c:52:layers:Expected 0 (0) <= self->audit_fd (-13)
-> > # audit_test.c:61:layers:Failed to initialize audit: Permission denied
-> > # layers: Test failed
-> > #          FAIL  audit.layers
-> > not ok 1 audit.layers
-> > 
-> > (The same for all other testcases)
+> diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+> index 37eb2f0f3dd8..7f4325d327ee 100644
+> --- a/include/linux/trace_events.h
+> +++ b/include/linux/trace_events.h
+> @@ -57,6 +57,8 @@ trace_print_hex_dump_seq(struct trace_seq *p, const char *prefix_str,
+>  			 int prefix_type, int rowsize, int groupsize,
+>  			 const void *buf, size_t len, bool ascii);
+>  
+> +const char *trace_print_untrusted_str_seq(struct trace_seq *s, const char *str);
+> +
+>  int trace_raw_output_prep(struct trace_iterator *iter,
+>  			  struct trace_event *event);
+>  extern __printf(2, 3)
+> diff --git a/include/trace/stages/stage3_trace_output.h b/include/trace/stages/stage3_trace_output.h
+> index fce85ea2df1c..62e98babb969 100644
+> --- a/include/trace/stages/stage3_trace_output.h
+> +++ b/include/trace/stages/stage3_trace_output.h
+> @@ -133,6 +133,10 @@
+>  	trace_print_hex_dump_seq(p, prefix_str, prefix_type,		\
+>  				 rowsize, groupsize, buf, len, ascii)
+>  
+> +#undef __print_untrusted_str
+> +#define __print_untrusted_str(str)							\
+> +		trace_print_untrusted_str_seq(p, __get_str(str))
+> +
+>  #undef __print_ns_to_secs
+>  #define __print_ns_to_secs(value)			\
+>  	({						\
+> diff --git a/include/trace/stages/stage7_class_define.h b/include/trace/stages/stage7_class_define.h
+> index fcd564a590f4..1164aacd550f 100644
+> --- a/include/trace/stages/stage7_class_define.h
+> +++ b/include/trace/stages/stage7_class_define.h
+> @@ -24,6 +24,7 @@
+>  #undef __print_array
+>  #undef __print_dynamic_array
+>  #undef __print_hex_dump
+> +#undef __print_untrusted_str
+>  #undef __get_buf
+>  
+>  /*
+> diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+> index 1996d7aba038..9d14c7cc654d 100644
+> --- a/kernel/trace/trace_output.c
+> +++ b/kernel/trace/trace_output.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/btf.h>
+>  #include <linux/bpf.h>
+>  #include <linux/hashtable.h>
+> +#include <linux/string_helpers.h>
+>  
+>  #include "trace_output.h"
+>  #include "trace_btf.h"
+> @@ -321,6 +322,46 @@ trace_print_hex_dump_seq(struct trace_seq *p, const char *prefix_str,
+>  }
+>  EXPORT_SYMBOL(trace_print_hex_dump_seq);
+>  
+> +/**
+> + * trace_print_untrusted_str_seq - print a string after escaping characters
+> + * @s: trace seq struct to write to
+> + * @src: The string to print
+> + *
+> + * Prints a string to a trace seq after escaping all special characters,
+> + * including common separators (space, equal sign), quotes, and backslashes.
+> + * This transforms a string from an untrusted source (e.g. user space) to make
+> + * it:
+> + * - safe to parse,
+> + * - easy to read (for simple strings),
+> + * - easy to get back the original.
+> + */
+> +const char *trace_print_untrusted_str_seq(struct trace_seq *s,
+> +					   const char *src)
+> +{
+> +	int escaped_size;
+> +	char *buf;
+> +	size_t buf_size = seq_buf_get_buf(&s->seq, &buf);
+> +	const char *ret = trace_seq_buffer_ptr(s);
+> +
+> +	/* Buffer exhaustion is normal when the trace buffer is full. */
+> +	if (!src || buf_size == 0)
+> +		return NULL;
+> +
+> +	escaped_size = string_escape_mem(src, strlen(src), buf, buf_size,
+> +		ESCAPE_SPACE | ESCAPE_SPECIAL | ESCAPE_NAP | ESCAPE_APPEND |
+> +		ESCAPE_OCTAL, " ='\"\\");
+> +	if (unlikely(escaped_size >= buf_size)) {
+> +		/* We need some room for the final '\0'. */
+> +		seq_buf_set_overflow(&s->seq);
+> +		s->full = 1;
+> +		return NULL;
+> +	}
+> +	seq_buf_commit(&s->seq, escaped_size);
+> +	trace_seq_putc(s, 0);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(trace_print_untrusted_str_seq);
+> +
+>  int trace_raw_output_prep(struct trace_iterator *iter,
+>  			  struct trace_event *trace_event)
+>  {
+> -- 
+> 2.53.0
 > 
-> It looks like the tests are not run with enough privileges.  Do you run
-> them as root?  Does the kernel has the required config set?
-
-Yes. The exact same setup works when executed from a tmpfs.
-
-> > 2) $PWD needs to be the test binary directory for "./wait-pipe-sandbox" to work.
 > 
-> Yes.  run_kselftest.sh should handle that.
-
-Fair enough. The selftests I used so far worked just fine when executed directly.
-Maybe only I am using them this way. Some better diagnostics would have saved
-me some time. Consider it a suggestion.
-
-> > > To make it easier, we wrote a wrapper to test everything with UML:
-> > > https://github.com/landlock-lsm/landlock-test-tools (see check-linux.sh)
-> > > 
-> > > > 
-> > > > > # #  RUN           audit.tsync_override_log_subdomains_off ...
-> > > > > # # audit_test.c:591:tsync_override_log_subdomains_off:Expected 0 (0) == matches_log_signal(_metadata, self->audit_fd, child_data.parent_pid, NULL) (-11)
-> > > > 
-> > > > This error number means "EAGAIN 11 Resource temporarily unavailable",
-> > > > so it could be a temporary error.
-> > > 
-> > > Yes, the test is flaky under pressure.
-> > > 
-> > > > 
-> > > > Can you reproduce this issue? Is it really dependent on my patch as
-> > > > blamed above? If so, does the selftest rely on the previous, incorrect order?
-> > > 
-> > > I don't think it directly depends on your patch but it might be a side
-> > > effect.  Anyway, I've been working on fixing this kind of issue and just
-> > > sent a fix:
-> > > https://lore.kernel.org/r/20260513105112.140137-2-mic@digikod.net
-> > 
-> > Thanks, unfortunately I can't validate that it will fix the issue at hand.
-> 
-> I pushed it to -next, we'll see but I'm pretty sure this is the issue.
-
-Nice. I justed wanted to make clear that I won't be able to provide a Tested-by.
-
-
-Thanks again,
-Thomas
