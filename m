@@ -1,142 +1,159 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E987C39B963
-	for <linux-security-module@vger.kernel.org>; Mon, 18 May 2026 21:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702763AB284
+	for <linux-security-module@vger.kernel.org>; Mon, 18 May 2026 22:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779141352; cv=none; b=TACSfALbOR9Nd+XrvTWQcq7omTkTjgww6TNjz9Nx9HGpaFs51GT7ASH8NCYg59a3wX0XU5nBwlIpfwihCXO3ZunECfn9swuaCNddhe6LOWJOXL954fX4H9KbQth5Wt1TIKklzwZmMc58s5w6ijUz6W/tlS0STyGhLaaRcCkUnEg=
+	t=1779142756; cv=none; b=Svys5JdLR9+hSHW9JnzkZnt+mX++cmR9ppettzMu+qxSZkht/go0i0VpfIjkQwWdCmJd3iD+9koWNfQzhGlno5MCfganlNN/jJOl/KNaindoGkxVuIyPCJaRRHyUevnadFKEj7IPYlDGnO8lUxS2OFxbt+Puz6yFZnZ7r9KJ1qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779141352; c=relaxed/simple;
-	bh=WhaVFwVRm1Wf4thmzuA0e0qjOQLT9x+04R1dduxYWzY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LPIUVyhvg4b/nFmMwm+ybax3d0ciGsRDD94O9xYhnTsm6ihuj4dYg4Q3Nsf8inAHPWoGhiPEikNpGKshpRs9x2v/SbqHMuhjkjRQfxxO53XFXkMJbN04OULEUuIJ2n3s+xTfvTeD7JospRXrnwoMU8L9jPSCxO40UEDlNyZCWfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IvoDbo4V; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1779142756; c=relaxed/simple;
+	bh=QwPwsIbtmpQIwK98XGhoY5fkgFLxHo2PkgkWS665XEM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hHuB9XUMVOajVDRsNf6kW6KaXLVXW83zg0naroR1SEFgS1+DJHXefy9d+R6NFsuDfIvFv2PumcSBRK/Z3CNrwNIkDvQqaiqOufLruuMbsEgILNwA9sv+U6b0IIqGTc6eWTbqT/zdH4zPsP3hndGkxgfDnPSgrnieXgsaQvfZHzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I2DT7leN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IvoDbo4V"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2b46da8c48eso1585ad.1
-        for <linux-security-module@vger.kernel.org>; Mon, 18 May 2026 14:55:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1779141350; x=1779746150; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=eATlafWR2CpUln9HSfV3CyzBd2Vyaqeh6UVZyYqlodE=;
-        b=IvoDbo4V1nj4Q9OWvBMcUPpA6eDFfBAFbu4ry1ujeKWH4fYBAFNjP7BApepEoXKgFW
-         echIH2GbEhb+kGhHlHfftLXlBnHDih1oHm9UtaSSK5CAFRUvXh1PCqOj+XI9wKqJnmv9
-         BdHZsxEJDc6k4l629t6bytiQfWInZt6CAKX455PJMRgqGvsL+3fHb7ubaoj1OjP5TMpJ
-         apWTAqJbeutKX9DtvRx+hRvKlId5JUFry4JYzoUpiHudyEvfAoPlfnA1GOb/KpKOehgq
-         VY2sjO/zadidGT8zNRrbzepfosggp1gNZrno+6RpVU2wOW8V9Y0N7qAHPHbOdQPTZ4W2
-         afYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779141350; x=1779746150;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eATlafWR2CpUln9HSfV3CyzBd2Vyaqeh6UVZyYqlodE=;
-        b=ohUocfvn9S5xe5SGOa0A+S1huuW2pIrQ4/wE0THNuK8w0kB5izgGYKmKDP05eH/AGh
-         ThTFWyj1iSG1DSeMyBultGdJzZ/zMS4HHrEQZgzVLM+FXWZO/JPr0xdd//Ix9F2v64/S
-         XT0DAtBC+3zkTC9Ti0YRJQMOaGyfImHba9iGAX+hOlx0Gz5zkH7OFPzo2rr7oBl/qKL2
-         bs8Dk8R9hh7Y4E23jHAYlF8BlGbO8+kFVaEC1gI4z5ArsTtCnGJa9Ty6jxacD7fzqfGh
-         fD1Dwy8gb0SQwMEmNL9spfIGTOzA4508FXb6RzW5hyPquGvW+BMkWiaxgCm4Hu5Q1yoH
-         Nynw==
-X-Forwarded-Encrypted: i=1; AFNElJ8Z3pp9oFsK2EInVo23V3e7JXy8k9e2K22z2EYl+mige8i24as4BUFeFC5NMbkT/mXUB3cHsMzYSjqHKhIFWxD3zQhFvKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbNy0ezQM6CdMMBMjwNIZmbwWjKhn+aXU2JC3t0wylAw/EhIRx
-	0H8W5wJr0OSuh147BEViYUtNvC9YlivfejDuBGc4xR8RL77zJjFdLVaSOEkbUnZvyA==
-X-Gm-Gg: Acq92OFcZotki7NL5riGTbtW3K39cqiR243OWB6Lp5xVG8tgkJyi+6coYNSz2wS/cNJ
-	fSiCESJWcjj1lhnbIJEx9wE68cO0exOdCPMRcFMXct+lvSW/6TSfDMDk/5hyrf9oS1UHQrk1ZYI
-	RQDEJb2t9fw3DGwmVry9CHHX3ti9CZBb83XiQBOzfuy5fbjzcNSAlXdImSiMDei3OZAFRPfOX3k
-	eRK8IJq7M3CiYZr8Hr6n9db6rWxcZsAeVtvaBPDQEqCRsbPEQcYFelJDbuBe9w/0UsloUOv6o/x
-	t4WOIaRIZ5IwY7pqw/WBCYe/hSaIx99zhI0uYFCt6VOfdvJ+8z6oYsInd9/RJsV/AM+65VcHXkc
-	VwERd6kI14KiZbrXKY3ZRuBYn+iiMT9Kvlo4dkqJGDNo54Pei2UsB8H56t6fZyv8+20QHfVhznD
-	LnvcnR/0rY/vfF55DwHxcXp2ZF2qQ5+7ruKn1i8/Bj0bp/HSlLkDCmY6UKSovYEhT8PR3fiope1
-	pAb1gFtCnD5fi/R
-X-Received: by 2002:a17:902:d512:b0:2bc:dc0b:ab29 with SMTP id d9443c01a7336-2bdb0109472mr3880435ad.0.1779141349445;
-        Mon, 18 May 2026 14:55:49 -0700 (PDT)
-Received: from google.com (171.46.125.34.bc.googleusercontent.com. [34.125.46.171])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2bd5cfe498asm164380125ad.39.2026.05.18.14.55.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 May 2026 14:55:48 -0700 (PDT)
-Date: Mon, 18 May 2026 21:55:43 +0000
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nsc@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Aaron Tomlin <atomlin@atomlin.com>,
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
-	Xiu Jianfeng <xiujianfeng@huawei.com>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org,
-	Fabian =?iso-8859-1?Q?Gr=FCnbichler?= <f.gruenbichler@proxmox.com>,
-	Arnout Engelen <arnout@bzzt.net>,
-	Mattia Rizzolo <mattia@mapreri.org>, kpcyrd <kpcyrd@archlinux.org>,
-	Christian Heusel <christian@heusel.eu>,
-	=?iso-8859-1?Q?C=E2ju?= Mihai-Drosi <mcaju95@gmail.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org,
-	debian-kernel@lists.debian.org
-Subject: Re: [PATCH v5 00/14] module: Introduce hash-based integrity checking
-Message-ID: <20260518215543.GA1878854@google.com>
-References: <20260505-module-hashes-v5-0-e174a5a49fce@weissschuh.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I2DT7leN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53F16C2BCFA
+	for <linux-security-module@vger.kernel.org>; Mon, 18 May 2026 22:19:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1779142756;
+	bh=QwPwsIbtmpQIwK98XGhoY5fkgFLxHo2PkgkWS665XEM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=I2DT7leNuntNS4Fb0mktVNPyw8Rbhs+gVWTrg1CstO4ifg9+fbn19Tgwwb5RQu6SJ
+	 oVl76IdmVMFtIEEqI2x/Xk3A/Wht7NKh8NtrVe0yXfXVmjnNq8YVf80fCSmSQB/9Sl
+	 z6dIrXGO3QMeh0NMXNp52X2Z9+LN7pXlOPxNah+bZ6rTc1cHUpk0as9s2igql3GoOc
+	 Nn3oJzn+lUOR2SS9p5bZeS83tU/OhQ+WnZftbPwcS04E1pQZCCdT8Su+w/1iajXGdX
+	 Bukvz/pnRIlUSoqf23mMiKaFEZErMrH8ypf7E0ZiSE4XanK5S8CzjuMpKgvtHduVrO
+	 pN/VlZ1JtpNSg==
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-56f72d27e7eso4436287e0c.0
+        for <linux-security-module@vger.kernel.org>; Mon, 18 May 2026 15:19:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9tBUcyrjny+K6HqMijsTwuOSWyDmnBTzC7llwbZMEEdwYEdBJRXHX1zi7ZvAHikW36XNmSEFt1WDtXkTxh6NsunOv5SvQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3t686iJ30zeZ8aMvCb9Mg2n49b+mx6UFXEEV3lQwhWFXOcFbA
+	oH4j/fpBJ1Zl3V2qbzVmYnZsaKW9D4gTYpp92oa4eDfkH4roOcj9l8cP1eNATHMNdjYl9SHUoIC
+	RRRrFCY8Bc0MBJKm5k12FMbLBtfztsPw=
+X-Received: by 2002:a05:6102:6:b0:65a:fec7:137b with SMTP id
+ ada2fe7eead31-65afec72d9emr1102084137.0.1779142755093; Mon, 18 May 2026
+ 15:19:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260505-module-hashes-v5-0-e174a5a49fce@weissschuh.net>
+References: <20260512-v2_20230123_tjmercier_google_com-v1-0-6326701c3691@redhat.com>
+ <20260512-v2_20230123_tjmercier_google_com-v1-2-6326701c3691@redhat.com>
+ <8ef38815-6ae9-4359-86d4-042554357639@amd.com> <CABdmKX2uwZ12kYJYPJGfWxuMBOJS=64b1GRj72tfB5D=NKM22w@mail.gmail.com>
+ <CAGsJ_4zjrFJYQQsLThTGXR6g+2PXzeAhjyDpLHfDFqVViWvyBQ@mail.gmail.com>
+ <CABdmKX0gqg309hcXcOHSj_yTg0h1zwDL34GDk8mX3wp4YoyfDg@mail.gmail.com> <CABdmKX3wwgovwS-V8rVC3=+EZcTvPs_cttpQb1w6WemwLAVhsw@mail.gmail.com>
+In-Reply-To: <CABdmKX3wwgovwS-V8rVC3=+EZcTvPs_cttpQb1w6WemwLAVhsw@mail.gmail.com>
+From: Barry Song <baohua@kernel.org>
+Date: Tue, 19 May 2026 06:19:03 +0800
+X-Gmail-Original-Message-ID: <CAGsJ_4y=Gsv=FSUjJ5+99Gg6ULUnv0LRexCGOGetzChR3YA44Q@mail.gmail.com>
+X-Gm-Features: AVHnY4I1qEOEZQdYFnOfKNfIzm2SBPuZfZoateaLto4Ne3PZjITQyUeamdYuj98
+Message-ID: <CAGsJ_4y=Gsv=FSUjJ5+99Gg6ULUnv0LRexCGOGetzChR3YA44Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 2/5] dma-heap: charge dma-buf memory via explicit memcg
+To: "T.J. Mercier" <tjmercier@google.com>
+Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Albert Esteve <aesteve@redhat.com>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, Christian Brauner <brauner@kernel.org>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Shuah Khan <shuah@kernel.org>, cgroups@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, mripard@kernel.org, echanude@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Thomas,
+On Tue, May 19, 2026 at 5:17=E2=80=AFAM T.J. Mercier <tjmercier@google.com>=
+ wrote:
+[...]
+> > > > Yeah I think this might work. I know of 3 cases, and it trivially
+> > > > solves the first two. The third requires some work on our end to
+> > > > extend our userspace interfaces to include the pidfd but it seems
+> > > > doable. I'm checking with our graphics folks.
+> > > >
+> > > > 1) Direct allocation from user (e.g. app -> allocation ioctl on
+> > > > /dev/dma_heap/foo)
+> > > > No changes required to userspace. mem_accounting=3D1 charges the ap=
+p.
+> > > >
+> > > > 2) Single hop remote allocation (e.g. app -> AHardwareBuffer_alloca=
+te
+> > > > -> gralloc)
+> > > > gralloc has the caller's pid as described in the commit message. Op=
+en
+> > > > a pidfd and pass it in the dma_heap_allocation_data.
+> > > >
+> > > > 3) Double hop remote allocation (e.g. app -> dequeueBuffer ->
+> > > > SurfaceFlinger -> gralloc)
+> > > > In this case gralloc knows SurfaceFlinger's pid, but not the app's.=
+ So
+> > > > we need to add the app's pidfd to the SurfaceFlinger -> gralloc
+> > > > interface, or transfer the memcg charge from SurfaceFlinger to the =
+app
+> > > > after the allocation.
+> > > > It'd be nice to avoid the charge transfer option entirely, but if w=
+e
+> > > > need it that doesn't seem so bad in this case because it's a bulk
+> > > > charge for the entire dmabuf rather than per-page. So the exporter
+> > > > doesn't need to get involved (we wouldn't need a new dma_buf_op) an=
+d
+> > > > we wouldn't have to worry about looping and locking for each page.
+> > > >
+> > >
+> > > Hi T.J.,
+> > >
+> > > Your description of the three different cases sounds very interesting=
+.
+> > > It helps me understand how difficult it can be to correctly charge
+> > > dma-buf in the current user scenarios.
+> > >
+> > > I=E2=80=99m wondering where I can find Android userspace code that tr=
+ansfers
+> > > the PID of RPC callers. Do we have any existing sample code in Androi=
+d
+> > > for this?
+> >
+> > Hi Barry,
+> >
+> > In Java android.os.Binder.getCallingPid() will provide it. Here
+>
+> ... let me try again
+>
+> Here are some examples from the framework code:
+>
+> https://cs.android.com/search?q=3DgetCallingPid%20f:ActivityManager&sq=3D=
+&ss=3Dandroid%2Fplatform%2Fsuperproject
+>
+> In native code we have AIBinder_getCallingPid and
+> android::IPCThreadState::self()->getCallingPid() (or
+> android::hardware::IPCThreadState::self()->getCallingPid() for HIDL)
+>
+> https://cs.android.com/search?q=3DgetCallingPid%20l:cpp%20-f:prebuilt&ss=
+=3Dandroid%2Fplatform%2Fsuperproject
 
-On Tue, May 05, 2026 at 11:05:04AM +0200, Thomas Weißschuh wrote:
-> The current signature-based module integrity checking has some drawbacks
-> in combination with reproducible builds. Either the module signing key
-> is generated at build time, which makes the build unreproducible, or a
-> static signing key is used, which precludes rebuilds by third parties
-> and makes the whole build and packaging process much more complicated.
-> 
-> The goal is to reach bit-for-bit reproducibility. Excluding certain
-> parts of the build output from the reproducibility analysis would be
-> error-prone and force each downstream consumer to introduce new tooling.
-> 
-> Introduce a new mechanism to ensure only well-known modules are loaded
-> by embedding a merkle tree root of all modules built as part of the full
-> kernel build into vmlinux.
+Thanks very much, T.J. That is very helpful. I guess
+that would require user space to understand the RPC
+procedure, including single-hop and two-hop cases, and
+make the corresponding changes.
 
-I noticed Sashiko had a few concerns about the build changes. Would you
-mind taking a look to see if they're valid?
+You pointed out the SurfaceFlinger cases, which are
+two hops. It seems that AI models are also using
+dma_heap, at least from what I have observed on MTK
+and Qualcomm phones. Likely, we need to understand
+those RPC relationships in userspace and make the
+corresponding changes.
+I assume AI models are a single-hop case?
 
-https://sashiko.dev/#/patchset/20260505-module-hashes-v5-0-e174a5a49fce%40weissschuh.net
-
-Sami
+Best Regards
+Barry
