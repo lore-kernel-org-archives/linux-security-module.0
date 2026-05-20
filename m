@@ -1,77 +1,91 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30B61CDFCA;
-	Wed, 20 May 2026 03:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF003A8FE9;
+	Wed, 20 May 2026 08:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779247795; cv=none; b=RttbFcw6WdtAIb9H38DdppBwpjWw78QH9Mp5VyIWhQf03a7o/+hmjneYNaYzv8ghIGRKYRIiWST6zMhqymgJEk77CaGijHar1/44sGbXHSm/lvlyFOY+0RdlkrQ1GXo+RmADO/sUlbzPgeZ0qLCaXEOk9dZCv2SZI5q4SXbpbNQ=
+	t=1779265156; cv=none; b=jsU4i5e1ZnhTqIaDCdVh8UlEnIXvP/qeHmWuYYx6JrNFGZP8KuX/V9eFUAwOdHm4q4m5cYXQhFG4SPuPT2wuBwLyg0dJJvj4CGB4uMpFQoRGoum42hd0IGjr25IXHxAg8zHOqduHZP8dleUICcrWodlouf2SSlF42ICIvDiqevM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779247795; c=relaxed/simple;
-	bh=1dKEWOWNgDrx2Aayec82qKnctaqlT/mMVt+kcY/FUVY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=u5tIVPO6ZmPMItCn14MNdwZkuZgL4JDz1gw8h5KI0MJqCGMvyEGnYgtWwCtxnXaSpXWgRRcvuQ3PMOjKIHRe/TqqJNRbO5zSv/8oEZydvFjqnB8TXu860EDHilvxv7Qhi9DchDbsZuAt0xnoCa8WjiC6ef3foCaAsKDVqHwscF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ftR1GRJ/; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779265156; c=relaxed/simple;
+	bh=8sDsVcUg45SCDAbOd4Qy+nlWe7vZVoKzJPYWNem4zG4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nnGyr7EX8xUwfpIYB7C2LIPS//iDrvCZa3NQ4eb4ZJUujy2IdnYkkxCiw+IEuPlJScOp74Iw4SDkf6ZoR6zpfrdRlwX6NWR0emSSKcWHRtWKPEqt914DX2BAMDELRzpevKvVW4V1h4r7+i+MjFddBZuWOQfSZDcryWvT/mn9AEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oqb6SkS5; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ftR1GRJ/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 900781F000E9;
-	Wed, 20 May 2026 03:29:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oqb6SkS5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3794C1F000E9;
+	Wed, 20 May 2026 08:19:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779247794;
-	bh=ClBedztygYFy0+zbbDihS07Ab/Sg/1+RrxUh0aeyxlE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc;
-	b=ftR1GRJ/Y5mbsm1aTjcJ8TwqkbZBrCEI4pd459vWTrajSDHTs5XdSfvU5oJSD+K4P
-	 YfZBuz4ajBOHnIwZ4E3+20OnDpI7c024W3GE9I7bZb8gXhuWah+WgFXpybnR9y14dm
-	 aDcMgr/glXd2Ky6PsZbccQDWExn3O1y0b1BcNcVHzvChyTfu6A1Mu12wAANXFDiOuy
-	 lqqfcB+gVIYRSgRak/ZxAmweuRYeuVhgJw6IFPkiNpD5Ci1cCQUVUQjHX+abI7g19a
-	 v+9TK1cz74svt77oNLSBcYNuoZvOpGVCt9ZYEWLKqdRHiKxugxmqHFK/wJixjwH7ir
-	 XmB5ahpolhHlw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 939E93930186;
-	Wed, 20 May 2026 03:30:06 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20260515; t=1779265154;
+	bh=tJOszf5ccvQ8Uj34Ns+l0JyEoj1luDQ1JSgscLEUjH8=;
+	h=From:Subject:Date:To:Cc;
+	b=oqb6SkS5YytIpVTUQsjo2xHQ4SS571cAqH37sjtk3n5/2i0pUW5fADVVxvUdkIAgo
+	 Ei/YzX4Stje++RmND/Sxw+GgF8GkC2YAKmsKtBKgIidtQ3Lnh/GOV8qbAUxWGtMSXM
+	 lArDAXrc0inMaKNgo1ea/d6dZqCLBG03ZFePlkMmRKxUhrbFQqPPJeix9ku4CUhHB0
+	 Sb1SCaw6Q9oKG7uzDNy2Bu9C/uFTiFz7SA1od/3QLL1sWK+kuQhsseNWJtZvEY8AeV
+	 VAb9otpjpJ9Mf2ht2E7QfZB0sMJDWaA2FxwHg9a7aiS1369hhwS97doRMt9y3pWb2V
+	 arJKoZ/lAdSrA==
+From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+Subject: [PATCH 0/3] security: replace __get_free_pages() call with
+ kmalloc()
+Date: Wed, 20 May 2026 11:18:54 +0300
+Message-Id: <20260520-security-v1-0-831bd8e21dd0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] bpf: reject NULL data/sig in
- bpf_verify_pkcs7_signature
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <177924780515.2971098.5196189504345300156.git-patchwork-notify@kernel.org>
-Date: Wed, 20 May 2026 03:30:05 +0000
-References: <20260520024059.313468-1-kpsingh@kernel.org>
-In-Reply-To: <20260520024059.313468-1-kpsingh@kernel.org>
-To: KP Singh <kpsingh@kernel.org>
-Cc: bpf@vger.kernel.org, linux-security-module@vger.kernel.org,
- ast@kernel.org, daniel@iogearbox.net, dongxianrui1@gmail.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG5uDWoC/yWM0QrCMAxFf2Xk2WJXtKK/Into0ugiUiXZRBn7d
+ 1t9PJdz7gLGKmxw6hZQfonJo1ToNx3QmMqVneTKEHyIfh+8M6ZZZfq4SDlHn9OhD0eo+lP5Iu/
+ f1Xn4s814Y5pa3wxMxg41FRrbhLvtXRDW9QtMxMJyhQAAAA==
+X-Change-ID: 20260520-security-6cdd60da7129
+To: James Morris <jmorris@namei.org>, 
+ John Johansen <john.johansen@canonical.com>, 
+ Ondrej Mosnacek <omosnace@redhat.com>, Paul Moore <paul@paul-moore.com>, 
+ "Serge E. Hallyn" <serge@hallyn.com>, 
+ Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Mike Rapoport <rppt@kernel.org>, apparmor@lists.ubuntu.com, 
+ selinux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+ linux-security-module@vger.kernel.org
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=818; i=rppt@kernel.org;
+ h=from:subject:message-id; bh=8sDsVcUg45SCDAbOd4Qy+nlWe7vZVoKzJPYWNem4zG4=;
+ b=owEBbQGS/pANAwAKATkDhibLDv2RAcsmYgBqDW5yZa7B7j3ohKSc2JgmRG/bo7d/2fltrRWB+
+ SeIMUzfGumJATMEAAEKAB0WIQR45VhVpZkvn3TRr+k5A4Ymyw79kQUCag1ucgAKCRA5A4Ymyw79
+ kfc/B/4uBqwgyaoh4EWczWSCvk4YvrDw+P5GIcZkmNuCZQCZgn2Hx05kpDcm+rYUwU39QhN7JvA
+ tgMGPGR88/BwX8R27raP67u6j1ETp4W+lZ1idGU+icFaOpOgkAUJhNMnoaD/AYaSMcNJIZk5CIr
+ dg5H160CUyvtcCaHO7sCSGKOxTBqqG1Qb8w0Dw+ZWEDuplwxznqiP/VegbHSKV8nw60H6hitxX/
+ +WYSMij90yhsivt8xYrlLro5YpMLv+Emy4CxwBnYAAtGzmsSjY2kRashqG5odUQ+sRifrYPPbgs
+ qiubvcrUP21lk5w02frOGk4LnKpN/uDysCVOPUN4MSQ1pdt1
+X-Developer-Key: i=rppt@kernel.org; a=openpgp;
+ fpr=B8E96E880C4A40C3C1255AA8C532392DE6DA7CE9
 
-Hello:
+This is a (tiny) part of larger work of replacing page allocator calls
+with kmalloc:
 
-This patch was applied to bpf/bpf.git (master)
-by Kumar Kartikeya Dwivedi <memxor@gmail.com>:
+Also in git:
+https://git.kernel.org/pub/scm/linux/kernel/git/rppt/linux.git gfp-to-kmalloc/security
 
-On Wed, 20 May 2026 04:40:59 +0200 you wrote:
-> __bpf_dynptr_data() can return NULL (FILE dynptrs, any non-contiguous
-> backing). bpf_verify_pkcs7_signature() forwards the pointer to
-> verify_pkcs7_signature() unchecked, causing a NULL deref in
-> asn1_ber_decoder() reachable from a sleepable BPF LSM at lsm.s/bpf.
-> 
-> NULL-check both pointers and reject with -EINVAL. Mirrors the guards
-> already in kernel/bpf/crypto.c.
-> 
-> [...]
+Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+---
+Mike Rapoport (Microsoft) (3):
+      selinux: use k[mz]alloc() to allocate temporary buffers
+      selinux: hooks: use __getname() to allocate path buffer
+      apparmor: replace get_zeroed_page() with kzalloc()
 
-Here is the summary with links:
-  - [v2] bpf: reject NULL data/sig in bpf_verify_pkcs7_signature
-    https://git.kernel.org/bpf/bpf/c/49b18315be4e
+ security/apparmor/apparmorfs.c |  5 +++--
+ security/selinux/hooks.c       |  4 ++--
+ security/selinux/selinuxfs.c   | 12 ++++++------
+ 3 files changed, 11 insertions(+), 10 deletions(-)
+---
+base-commit: 5d6919055dec134de3c40167a490f33c74c12581
+change-id: 20260520-security-6cdd60da7129
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Best regards,
+--  
+Sincerely yours,
+Mike.
 
