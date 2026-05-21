@@ -1,170 +1,212 @@
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBA5384CCD
-	for <linux-security-module@vger.kernel.org>; Thu, 21 May 2026 16:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3654383305
+	for <linux-security-module@vger.kernel.org>; Thu, 21 May 2026 16:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779379634; cv=none; b=GroGbSOM3minHiwQWRlBPfFdZzHRa+O4gmR05V9OKKqi6C/zIPk+FYhkFvG1pIbMU5F2ZE9MskAj39pTebRmHXh7/OuZyTKVzJaYsJGNXR+dik+EM6qj7Cx4xTpcDEA3F6SP15bFSF2AfsGFRfOu3dHXkv+UKViY3i/OGK0eWfY=
+	t=1779382000; cv=none; b=anv8z3Gl+ZY0VzktW8V9+4N71Ii7X3hgaMI3g/bUAVH8+JvlGCO9CmlyaKYE2FaIfoKVxrhR4MrKbiBxAwfL3gwEmnriVBrzEUEqxNe/3cmDKHyC4nrLfyDw/5ecJGw1vEl4FcJkQOv2SXvmk8aVRbZKluC4FdpFnhSZbwe6bHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779379634; c=relaxed/simple;
-	bh=nGhsmtgWyFPjr/aq1yL0y+wlRu69TvN1tcwIESDlxZg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AYKsfSdgZDGI7KvbHnt5ZlMhmvnNroRKj1Hy6W6Xo9wW7AI1w2tATRf3zgv+b8F0lc6oV/InoXlzOgBvpoBx5yQSc2Yl7Za7mMBv3nW0hCh2lCu/kF4HFvmgZ1ulCxwFsYFC7b/2tWaiKXxoqIh7lFt8n/epZDsyjvPo8ngia10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G2pPvKIj; arc=none smtp.client-ip=209.85.128.178
+	s=arc-20240116; t=1779382000; c=relaxed/simple;
+	bh=55HpdrZ1XWqM3uwC+a47+vakAvshOA/Toys7NpGVJzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LP3Yop5iXcI+xc/vYXgK/hCBa7PAWdOQLPE2JAcibmkws/H+TWIJHQjV7MhOITPljVAGMGtNG3e1mPrwiCs4+kcOJrPVoKRAkFAp14xxhnwWId8Qx4zwLayvLSvZMQNtpc++0t0muNgfCFnvuRZgCCOHCKqBUA8jAu+5X0OYOhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hAiFXflX; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G2pPvKIj"
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-7b41fdf9de2so45832557b3.0
-        for <linux-security-module@vger.kernel.org>; Thu, 21 May 2026 09:07:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hAiFXflX"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4903997fcb5so9530825e9.2
+        for <linux-security-module@vger.kernel.org>; Thu, 21 May 2026 09:46:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779379632; x=1779984432; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1779381995; x=1779986795; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kpCxEzWYsgGR14o06zRZo2uJlStV20Rqwj1IODcyfdc=;
-        b=G2pPvKIjkUj57Pgrp1NTxwuwJOPd4gZJFmZAVqZ63lNOaD2oIk7GYdVr57vmd+NU66
-         Trf7TpuQ3ehueGLtcRCyEdrryjVQkMlNIJPAl7KckASzKy40HzpSWzOyTIJZVlGvmEY1
-         aYHs0r1fEHz6e0MiW4DxbVAieO4Ujc05olMnGqspvEZ5Q6gCUsklgZUr6U+DMABo7aQj
-         t+dZoPcm+jjpW0ETb764GWfaPsUsmQL+nDoiO77jfJ4FCa1vw/Fa1JAkQN+pfvHfmiyN
-         ckMlMK8UWhdcZz0/Uh4P3meYGk73vNCIWJImLCaUS1eVl6yl7sQyscX7zEZ8jR5o3lEN
-         5seQ==
+        bh=NA/nM16UoxaTsk3A7SWQL7q3HkgK647mNtY2rDcRyyc=;
+        b=hAiFXflXTEbRl6U5Air/vBGryJ1P7DUwv5y5hFcBfrvyOOjvwLAPWk6boHEMfrP+03
+         djrSF/MmhRRc4oKAARffcHojm9lrMfH/yxDwEmaCsT4BFCL3flmfjoZXGq6TFSC3TeHl
+         JsiTufiR6et1mz+pI8XV2U+9x+ymMfxMCAW0bX+y+95+67AVxLZvt8B0iLXkU9d/aiqe
+         9TLZTYgekPiyf54s88p+J1C3j1Lc4MyofWrYIv5jQC1MQsWTxKDTJulTH9sW3bkKM6Er
+         8ENfEnS8Rye+RBlr7U5dk7H7qISkWK2Sz6IRcVfJFcdljcS2gaAHhL/dDTECxI2slWnI
+         yang==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779379632; x=1779984432;
+        d=1e100.net; s=20251104; t=1779381995; x=1779986795;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=kpCxEzWYsgGR14o06zRZo2uJlStV20Rqwj1IODcyfdc=;
-        b=aCUsbKVJhAB78g+NStBRZVEzrXKvpWGXbpOgtXXh3Zx8ZQX6B8v2YRbw12WRbopjOY
-         YLN38ZKUvu+5EsYBBVAFfQfXGdlwyxaEYlh9LrKgUY+ngweKXbBJpbILX/w+a2Y3nC3Z
-         iBpdp2/xz5hbl5cv7FfZAOpKkqVJ0cFoKDXrP1oGje39M3F0NgP0JG9KbUuCklASRr1b
-         lcMB1ZUBhD5M8HyeiJYbgewtvEJdSoEmEu34oq3es0be4UbLXLuV9G25l7rRiEx/wwTN
-         S7rNWID2lJmUUDoVVVFeAUIsuD0YNkBF5fBr/ayh9zg/chUENnXWHjEgKonbLcBObjJ9
-         9JQQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/VD7WlLBYsHOKvjV08QG1RpksphQppxoyI6rk5i1u5aJotv+wDG7hUZ9HN3gAe5aTnh/64ahldayNoBIu4xz6qOn826dg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsCAjMyX2gkHlm2ZbW9qhxhFOkQvcKOPvpmp8XxxTL0Di+S9YH
-	e/K4OMy5o9SVoLjAjJ+3jONjIzNafTuPxpCKwskH02OJROfLZbbBamZk
-X-Gm-Gg: Acq92OE6BpSan8pleVXBQFU9nA9pUyuBpoolUKtnI+CzQaVVmBLhl9FmrQkHv1drTJR
-	g0Hv8bZ3v0C3jhmIg6CXfi3hkQyScTUNKl65Jkp0/FMcPtno7LlcHInwBN6BG+4vINbj7vFxKny
-	dUlqKGTl0WxAXRrkrthm1ybv4jZE/2tGrqeu5aZcQuuFKasRXiDN9PymxbWtW3hXu92NU6DswJq
-	hwRbIf0W55KRhUZJt37TLLQhk1rWZ1TuDhI2n07CMd9ht0g6ak65bGKHv/LR0ntDsSW5VT7fzMi
-	rvvqoIQCf7od2YybtKt1JluW7JyY8x3y9IG1i1hf0G7dneAnltuficI3Q29vgTuhNSANZ3Tl9lw
-	yR2VkIgB9+imWYoYB2QLUiQUxq8S6c0Fo7mgswCXqD9b9BLMBuppn3G5QAw/EyKfZC2U2ER6Bd1
-	3d6Y5TIjYoOONwk78A/0J6WUt3SQ6vvsX+htiNZHazkjPcmGhhLOvHZo/fATXR9ov12xQu7g4=
-X-Received: by 2002:a05:690c:4442:b0:7d1:cd93:c8e4 with SMTP id 00721157ae682-7d20ad8f545mr36338967b3.18.1779379631731;
-        Thu, 21 May 2026 09:07:11 -0700 (PDT)
-Received: from zenbox.prizrak.me ([2600:1700:18fb:6011:c2cf:2e92:9a48:97a])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-7d2c7abad87sm4657587b3.2.2026.05.21.09.07.10
+        bh=NA/nM16UoxaTsk3A7SWQL7q3HkgK647mNtY2rDcRyyc=;
+        b=lIa6UNmqRzmt/KKItjwayqxy3ISJxag3Fl9ETZsWTxQwRjE5B7ER05DlNdNDG6WXBt
+         tsOiN06rxW70BntRoIGZLCyOEfMG7ynvZaDJTISmnOPdeCD6Gc8TpZSYUxx2nudRYazN
+         5Vc2+fClSxNcOmUnwI4xgQLZ8omC+hZXcuE3X/HoAKIgokm8rB2mvh9s0NxCA6LnaUWz
+         etIXKrelMhVXeMCkFBSD1vRO02Hl4iPXsbqlI2Xz6U5wV0ykqFQq+gyfvaQ3BDi+FtsZ
+         SHic6VFj4oSzP54q/wh3ROCsXERPN8Z1jleqTaOwYH+QAuVSMhmG9HFJTrud8792vmRH
+         ZXJg==
+X-Forwarded-Encrypted: i=1; AFNElJ9+Py/+oy6yxsp4gbNqbUGRlEfcZnYZDdhZrj0jwEzF8oFHSWvvFSvUeF3+ROcK8YNOK0QgFmZjZN++Y7X/JaWO3d8dwO0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTriOZiMCj63cJlSzpEntxl4NqTJHDLJQ7BA5vy6da/iudunip
+	vSiddsVo1KAS2S5Ud8tnqG5053vu6TpRCebMy5b8d4pLXoBFDDKIVf1N
+X-Gm-Gg: Acq92OET51rOQuewsVxP+l1Qt7wFquwFngfUsbW26JkLGDYlQicwsN581GdYF1wmpbQ
+	fTiC2yq4pOxoYltGKCmj613Np9ExyHI8Mg6/LSe050+AjoXMR+RaUTCzAZkKQIUT2pZXrdy2ehF
+	maZWVhl1YfhUa8PajXyeF41dUwnq9Xx6JSSxA6jQE/QVQlblypJDwSh3tt6pjQRYWCIEcobbf+T
+	xewkgAh0MzTIZOWaEgdYEHedoZSok/iFVVV1u6rIHc+rBJ65qFxfnrw9aflpEfhVvCYK4TMXyAS
+	FeMy5ceE7IKzno7bCvPpEF4JcD+Or1vqLDpLSWizvq0bXP+2Zx0TV/pyk3c1U8GgpcJojASTbBn
+	S9BUgjnvV4zZ/hKJ088UaqV2GVcB5G2hQGmWbxUNE9skX4Ex9FfCWAI4zzVopwbW2XvpeM1l0Ly
+	c0DwPgFwK4lr/gATqY5GDKQiiQy1Scx0+mozxBkT3oCwzJf7jQ2UfE/V3wp5j+cLTi
+X-Received: by 2002:a05:600c:45c6:b0:488:ac01:72de with SMTP id 5b1f17b1804b1-49036033502mr53623425e9.5.1779381994891;
+        Thu, 21 May 2026 09:46:34 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49035ecac15sm31613075e9.6.2026.05.21.09.46.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 May 2026 09:07:11 -0700 (PDT)
-From: Justin Suess <utilityemal77@gmail.com>
-To: gnoack3000@gmail.com,
-	mic@digikod.net
-Cc: linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Justin Suess <utilityemal77@gmail.com>
-Subject: [PATCH 6/6] landlock: Document LANDLOCK_SCOPE_SYSV_MESSAGE_QUEUE
-Date: Thu, 21 May 2026 12:06:40 -0400
-Message-ID: <20260521160640.1716746-7-utilityemal77@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260521160640.1716746-1-utilityemal77@gmail.com>
-References: <20260521160640.1716746-1-utilityemal77@gmail.com>
+        Thu, 21 May 2026 09:46:34 -0700 (PDT)
+Date: Thu, 21 May 2026 17:46:31 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Pengpeng Hou
+ <pengpeng@iscas.ac.cn>, stable@vger.kernel.org, Petr Pavlu
+ <petr.pavlu@suse.com>, Richard Weinberger <richard@nod.at>, Anton Ivanov
+ <anton.ivanov@cambridgegreys.com>, Johannes Berg
+ <johannes@sipsolutions.net>, "Rafael J. Wysocki" <rafael@kernel.org>, Len
+ Brown <lenb@kernel.org>, Corey Minyard <corey@minyard.net>, Gabriel Somlo
+ <somlo@cmu.edu>, "Michael S. Tsirkin" <mst@redhat.com>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Bart Van Assche <bvanassche@acm.org>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, Laurent
+ Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede
+ <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Bjorn
+ Helgaas <bhelgaas@google.com>, Hannes Reinecke <hare@suse.de>, "James E.J.
+ Bottomley" <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
+ <martin.petersen@oracle.com>, Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, Jason Wang
+ <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio
+ =?UTF-8?B?UMOpcmV6?= <eperezma@redhat.com>, Jason Baron
+ <jbaron@akamai.com>, Jim Cromie <jim.cromie@gmail.com>, Tiwei Bie
+ <tiwei.btw@antgroup.com>, Benjamin Berg <benjamin.berg@intel.com>, Ilpo
+ =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, "David E. Box"
+ <david.e.box@linux.intel.com>, "Maciej W. Rozycki" <macro@orcam.me.uk>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Peter Zijlstra
+ <peterz@infradead.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
+ <gor@linux.ibm.com>, Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Thomas Gleixner <tglx@kernel.org>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Vinod Koul <vkoul@kernel.org>, Frank Li
+ <Frank.Li@kernel.org>, Daniel Gomez <da.gomez@kernel.org>, Sami Tolvanen
+ <samitolvanen@google.com>, Aaron Tomlin <atomlin@atomlin.com>, Alexander
+ Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Dmitry
+ Vyukov <dvyukov@google.com>, Andrew Morton <akpm@linux-foundation.org>,
+ John Johansen <john.johansen@canonical.com>, Paul Moore
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn"
+ <serge@hallyn.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Georgia Garcia <georgia.garcia@canonical.com>, kvm@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-modules@vger.kernel.org,
+ kasan-dev@googlegroups.com, linux-mm@kvack.org, apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org, linux-um@lists.infradead.org,
+ linux-acpi@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+ qemu-devel@nongnu.org, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-pm@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-serial@vger.kernel.org,
+ linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+ virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, netdev@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 01/11] params: bound array element output to the
+ caller's page buffer
+Message-ID: <20260521174631.71a06440@pumpkin>
+In-Reply-To: <20260521133326.2465264-1-kees@kernel.org>
+References: <20260521133315.work.845-kees@kernel.org>
+	<20260521133326.2465264-1-kees@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Document the new SysV message queue scope restriction.  Make clear
-that because these queues do not use persistent handles, subsequent
-operations on a queue already obtained via msgget (or any other
-means) may be restricted once this right is enforced.  Also note
-that denials surface as -EACCES rather than -EPERM, since the
-generic SysV IPC permission path maps every LSM denial to -EACCES.
+On Thu, 21 May 2026 06:33:14 -0700
+Kees Cook <kees@kernel.org> wrote:
 
-Signed-off-by: Justin Suess <utilityemal77@gmail.com>
----
- Documentation/admin-guide/LSM/landlock.rst |  1 +
- Documentation/userspace-api/landlock.rst   | 30 +++++++++++++++++++++-
- 2 files changed, 30 insertions(+), 1 deletion(-)
+> From: Pengpeng Hou <pengpeng@iscas.ac.cn>
+> 
+> param_array_get() appends each element's string representation into the
+> shared sysfs page buffer by passing buffer + off to the element getter.
+> 
+> That works for getters that only write a small bounded string, but
+> param_get_charp() and similar helpers format against PAGE_SIZE from the
+> pointer they receive. Once off is non-zero, an element getter can
+> therefore write past the end of the original sysfs page buffer.
+> 
+> Collect each element into a temporary PAGE_SIZE buffer first and then
+> copy only the remaining space into the caller's page buffer.
 
-diff --git a/Documentation/admin-guide/LSM/landlock.rst b/Documentation/admin-guide/LSM/landlock.rst
-index 9923874e2156..e983d903bdf9 100644
---- a/Documentation/admin-guide/LSM/landlock.rst
-+++ b/Documentation/admin-guide/LSM/landlock.rst
-@@ -58,6 +58,7 @@ AUDIT_LANDLOCK_ACCESS
-     **scope.*** - IPC scoping restrictions (ABI 6+):
-         - scope.abstract_unix_socket - Abstract UNIX socket connection denied
-         - scope.signal - Signal sending denied
-+        - scope.sysv_msg_queue - SysV message queue operation denied (ABI 10+)
- 
-     Multiple blockers can appear in a single event (comma-separated) when
-     multiple access rights are missing. For example, creating a regular file
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index 45861fa75685..933b2994fec4 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -84,7 +84,8 @@ to be explicit about the denied-by-default access rights.
-             LANDLOCK_ACCESS_NET_CONNECT_TCP,
-         .scoped =
-             LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
--            LANDLOCK_SCOPE_SIGNAL,
-+            LANDLOCK_SCOPE_SIGNAL |
-+            LANDLOCK_SCOPE_SYSV_MSG_QUEUE,
-     };
- 
- Because we may not know which kernel version an application will be executed
-@@ -132,6 +133,10 @@ version, and only use the available subset of access rights:
-     case 6 ... 8:
-         /* Removes LANDLOCK_ACCESS_FS_RESOLVE_UNIX for ABI < 9 */
-         ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_RESOLVE_UNIX;
-+        __attribute__((fallthrough));
-+    case 9:
-+        /* Removes LANDLOCK_SCOPE_SYSV_MSG_QUEUE for ABI < 10 */
-+        ruleset_attr.scoped &= ~LANDLOCK_SCOPE_SYSV_MSG_QUEUE;
-     }
- 
- This enables the creation of an inclusive ruleset that will contain our rules.
-@@ -380,6 +385,22 @@ The operations which can be scoped are:
-     A :manpage:`sendto(2)` on a socket which was previously connected will not
-     be restricted.  This works for both datagram and stream sockets.
- 
-+``LANDLOCK_SCOPE_SYSV_MSG_QUEUE``
-+    This limits the set of System V message queues to which we can perform
-+    :manpage:`msgget(2)`, :manpage:`msgrcv(2)`, :manpage:`msgsnd(2)`, and
-+    :manpage:`msgctl(2)` calls to only message queues which were created by a
-+    process in the same or a nested Landlock domain.
-+
-+    Since System V message queues are IPC namespace global constructs and do
-+    not use file descriptors, enforcement of a ruleset with this scoping may
-+    cause subsequent operations on an msqid that were allowed prior to
-+    enforcement to be denied.
-+
-+    Denials are reported as ``EACCES``.  Unlike other Landlock scopes,
-+    the check shares the generic SysV IPC permission path
-+    (``ipcperms(3)``), which maps every denial to ``EACCES`` before it
-+    reaches user space.
-+
- IPC scoping does not support exceptions via :manpage:`landlock_add_rule(2)`.
- If an operation is scoped within a domain, no rules can be added to allow access
- to resources or processes outside of the scope.
-@@ -722,6 +743,13 @@ Starting with the Landlock ABI version 9, it is possible to restrict
- connections to pathname UNIX domain sockets (:manpage:`unix(7)`) using
- the new ``LANDLOCK_ACCESS_FS_RESOLVE_UNIX`` right.
- 
-+System V message queue (ABI < 10)
-+---------------------------------
-+
-+Starting with the Landlock ABI version 10, it is possible to restrict
-+operations on System V message queues by setting
-+``LANDLOCK_SCOPE_SYSV_MSG_QUEUE`` to the ``scoped`` ruleset attribute.
-+
- .. _kernel_support:
- 
- Kernel support
--- 
-2.53.0
+Should this be using a 4k buffer on all architectures?
+Initially perhaps just using a different name for the constant until
+all the associated PAGE_SIZE limits have been removed.
+
+-- David
+
+> 
+> Cc: stable@vger.kernel.org
+> Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
+> Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+>  kernel/params.c | 26 ++++++++++++++++++++------
+>  1 file changed, 20 insertions(+), 6 deletions(-)
+> 
+> diff --git a/kernel/params.c b/kernel/params.c
+> index 74d620bc2521..752721922a15 100644
+> --- a/kernel/params.c
+> +++ b/kernel/params.c
+> @@ -475,22 +475,36 @@ static int param_array_set(const char *val, const struct kernel_param *kp)
+>  static int param_array_get(char *buffer, const struct kernel_param *kp)
+>  {
+>  	int i, off, ret;
+> +	char *elem_buf;
+>  	const struct kparam_array *arr = kp->arr;
+>  	struct kernel_param p = *kp;
+>  
+> +	elem_buf = kmalloc(PAGE_SIZE, GFP_KERNEL);
+> +	if (!elem_buf)
+> +		return -ENOMEM;
+> +
+>  	for (i = off = 0; i < (arr->num ? *arr->num : arr->max); i++) {
+> -		/* Replace \n with comma */
+> -		if (i)
+> -			buffer[off - 1] = ',';
+>  		p.arg = arr->elem + arr->elemsize * i;
+>  		check_kparam_locked(p.mod);
+> -		ret = arr->ops->get(buffer + off, &p);
+> +		ret = arr->ops->get(elem_buf, &p);
+>  		if (ret < 0)
+> -			return ret;
+> +			goto out;
+> +		ret = min(ret, (int)(PAGE_SIZE - 1 - off));
+> +		if (!ret)
+> +			break;
+> +		/* Replace the previous element's trailing newline with a comma. */
+> +		if (i)
+> +			buffer[off - 1] = ',';
+> +		memcpy(buffer + off, elem_buf, ret);
+>  		off += ret;
+> +		if (off == PAGE_SIZE - 1)
+> +			break;
+>  	}
+>  	buffer[off] = '\0';
+> -	return off;
+> +	ret = off;
+> +out:
+> +	kfree(elem_buf);
+> +	return ret;
+>  }
+>  
+>  static void param_array_free(void *arg)
 
