@@ -1,120 +1,128 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from flow-a3-smtp.messagingengine.com (flow-a3-smtp.messagingengine.com [103.168.172.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D49319601;
-	Thu, 21 May 2026 02:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646C9385D93;
+	Thu, 21 May 2026 06:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779329283; cv=none; b=XeFxqYdqO0CULAWyiYmB3GScZouE0roww5F7yYVqiCpZ5acDy2Jt3RwGCriF1sBQ6zzODfv8Du7BDT2Y+vBB1sj1TZRBTcv3G2vSI1GWPTeeJ9TvQaAt89kRc+08dk+yLIzlkXfkAMacAaapMU4U1MHskT7rTkqkneA5Q8EK444=
+	t=1779346702; cv=none; b=bvNQjYDmMN9jjpoW225ByxOCXJOW4Xm7XsBxUUcxROhNqOU0gAVkWijk0R/yZZiIBBAGc9PeaKv4wLpUNL7CGPaj8ZfzU9+BIX6z59ZCmbzCOqn1/1fu9ugPnn1YDEY9CXBcCt/V0gHrg0S9fvSqm93BeUZGSGTmLLZZ5Clbd30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779329283; c=relaxed/simple;
-	bh=vqw1bAHhTOr2QUk6EvDUyoK2Ln7dQd1QaTuNg7SAYhk=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=UOIuFY/Or+V1jWMvdmMNlel4zSCI0eusJ9KFswjRZSUrv+SE02AkXWfzepmF9aue79NJ8WJ5iWXG7M5YSS5ThSqtRBzyY5JX8SDY67KoWFw9o6feScx1Cq0NwE0jSRCxfspfOnz7shFsM8i5zWVlJbuy92XHfpk2WIBKl93IzvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ioLSKPOl; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1779346702; c=relaxed/simple;
+	bh=LNdNykvRPLHdfRVcmX0+iCj9WrM+E4PlicJ+dGsSA/c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PI1j7lBLWi235fGG3PGQoPs6jOPuJZBTi5rXN7L6KKBtiRi9A36Urqd7eKZn0cF6BAvFIzWP+g19WqraNibYUIIFs/4ZuMxv5WMD7ke+/PmEjAp3LKJTFrAIMnHT9eRxDntfAApdAWkYRnJ1zLiDp712s+Zrn8BJxk/WmKiG7Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eduardovasconcelos.com; spf=pass smtp.mailfrom=eduardovasconcelos.com; dkim=pass (2048-bit key) header.d=eduardovasconcelos.com header.i=@eduardovasconcelos.com header.b=YROikU3p; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RBbvRLu2; arc=none smtp.client-ip=103.168.172.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eduardovasconcelos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eduardovasconcelos.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ioLSKPOl"
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64KJZC8C2191659;
-	Thu, 21 May 2026 02:07:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=vqw1bA
-	HhTOr2QUk6EvDUyoK2Ln7dQd1QaTuNg7SAYhk=; b=ioLSKPOlGN/SffPhxuwRKL
-	HIq0gYB4W8QY02xqUKvXKlSxEWjL/P+x8lnumsIoTfuVKxfiJCYew/qzUn6f+JYN
-	GSKDCiFaxC+GWz6pKwoVUgVC3MlWCtgajsMsH3YykevkAmz8H3OkWbh+6kuT94PS
-	f4WIiTZ8cxSXYc6WR0sYUHq3c00JeLUOHumlahjrXuOUc2oUTK4yR6xLSGE9OXba
-	4UtQYiF+VFKIPVhkMWLbC4Jm7pttsuKGEbq4O2djF/nyBzFGkPMrZeXwPaNw5m8Q
-	grkqYkGCXV684jdrSCQXOSM1rkQJGl7wb2rOjBe3KOKzHP94pBd4A2Cz60WH5uLQ
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4e6hawbnx0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 May 2026 02:07:42 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 64L1sAxF008029;
-	Thu, 21 May 2026 02:07:41 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4e739w25ge-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 May 2026 02:07:41 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 64L27f7L41157336
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 May 2026 02:07:41 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 37F1F58055;
-	Thu, 21 May 2026 02:07:41 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3F3AB58043;
-	Thu, 21 May 2026 02:07:40 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.96.83])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 21 May 2026 02:07:40 +0000 (GMT)
-Message-ID: <82a948ee4ab80e303ed25065a17c96dfc5e9e588.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 08/13] ima: Introduce ima_dump_measurement()
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
-        skhan@linuxfoundation.org, dmitry.kasatkin@gmail.com,
-        eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        gregorylumen@linux.microsoft.com, chenste@linux.microsoft.com,
-        nramas@linux.microsoft.com, Roberto Sassu <roberto.sassu@huawei.com>
-In-Reply-To: <20260429160319.4162918-9-roberto.sassu@huaweicloud.com>
-References: <20260429160319.4162918-1-roberto.sassu@huaweicloud.com>
-	 <20260429160319.4162918-9-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 20 May 2026 22:07:39 -0400
+	dkim=pass (2048-bit key) header.d=eduardovasconcelos.com header.i=@eduardovasconcelos.com header.b="YROikU3p";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RBbvRLu2"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailflow.phl.internal (Postfix) with ESMTP id EC35F138027F;
+	Thu, 21 May 2026 02:58:17 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Thu, 21 May 2026 02:58:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	eduardovasconcelos.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:from:from:in-reply-to:message-id
+	:mime-version:reply-to:subject:subject:to:to; s=fm1; t=
+	1779346697; x=1779350297; bh=8KKk4OstiZD1mRxwYz1AQFEeysiHg2heUSn
+	DHuC1LuA=; b=YROikU3pH27BEfuvHGZWQcua54t9lJ+0ejva5hp6j3rpacbrOQI
+	nUBY/MPr3GbWB1K4lUR4AFfKWtFiIUdpGecqqlewxQYG64VkBCntq58AZZFLEUzO
+	/w1DuKhKi+xrhk3uBPCdAmLgZg2n4Y48eIVP5jFYCdFsIoNNAxTfHZ8TOYRX5GyB
+	f7Z9USQ/I0/0raYeM3KUGKG+aRhhUaImszwxif96kF0aX+qidt5Lpxs4LApdgpMz
+	ONMcSVi+1/7bU79SiMIjntf/hadPbfX5kmsEt8a66UWzKQMbcsIUYuTPAPar4bF1
+	L9rk1V5xDAyKKgF20U9dGlIB5C4i81fBC1A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1779346697; x=1779350297; bh=8KKk4OstiZD1mRxwYz1AQFEeysiHg2heUSn
+	DHuC1LuA=; b=RBbvRLu2WNa2/BZb3XIg0Xtgigv5l84bG9GyQXthmqcGeI7bsQC
+	tjz2nIiq/7T3sMK8uHqonOAE4ONuPPh3RZHahHSqfN2iMLrIp4ryhnnMKBHnYnkr
+	MpF86arRkC6VRGbRe/HyBw8FYiD2bordRtehGJtSk1vA2fsMzNCdqa0Y82BxFzF8
+	/gQuoV4zqzT+hk0hz2OW2O52T1UAeMUB/zQ7ENb94y2Fs8VHfHo+Qiw6n0obYmAi
+	IeWC6gsCCZbEOuKBWMmrLRXMfPqrZbWqBpfvVhiLOwnNN4ykANWnAXJlRc0EaQpa
+	+M1+a1NJsNurAA8SVr7kN1FNxGiwfUnYDLw==
+X-ME-Sender: <xms:CK0OagdBpGDenSU-jKcodHXLgtGPJJN8Sq41vTflZTcOS52lymH12Q>
+    <xme:CK0OauP3h52P7pf6vc2hdDLqsyh6kdqc1ujUSsAeWi_xvsJ7JsNyIJaJk7UvmmbbR
+    sM5cJs5NokMdwkjc1A4zpJ2HF2D0l4XVWqVIPac-NQhX5h20FdMNiU>
+X-ME-Received: <xmr:CK0OajvOoR25JvWNTt0eOXHu1msEhGP5YE43GwXkFgqS81mYdNzGp2o2R2YXXA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddugeeikeehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertdertd
+    dtnecuhfhrohhmpefgughurghrughoucggrghstghonhgtvghlohhsuceovgguuhgrrhgu
+    ohesvgguuhgrrhguohhvrghstghonhgtvghlohhsrdgtohhmqeenucggtffrrghtthgvrh
+    hnpedutdeuffehveeguddugeefffejveevueeggeejuedvleehgfekueejgffghfffueen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegvughurg
+    hrughosegvughurghrughovhgrshgtohhntggvlhhoshdrtghomhdpnhgspghrtghpthht
+    ohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhohhhnrdhjohhhrghnsh
+    gvnhestggrnhhonhhitggrlhdrtghomhdprhgtphhtthhopehprghulhesphgruhhlqdhm
+    ohhorhgvrdgtohhmpdhrtghpthhtohepjhhmohhrrhhishesnhgrmhgvihdrohhrghdprh
+    gtphhtthhopehsvghrghgvsehhrghllhihnhdrtghomhdprhgtphhtthhopegvughurghr
+    ughosegvughurghrughovhgrshgtohhntggvlhhoshdrtghomhdprhgtphhtthhopegrph
+    hprghrmhhorheslhhishhtshdruhgsuhhnthhurdgtohhmpdhrtghpthhtoheplhhinhhu
+    gidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:CK0OanCxRXjwszm_Kx9GvCOVbVkRijYM8eD3-aC8l2nE9j-r9C757g>
+    <xmx:CK0OaqYBdQ3n_v-A_iqtmW-9HH3QInlbE8Q3-Cq3pcwBKD89ujLiYw>
+    <xmx:CK0OaiWN4WBhgzfSpM6dFN3FZFSN4zZ8RSD-qM3bZ_X7bSjqWP24IA>
+    <xmx:CK0OapOGdJoQO0dRAdkaV7mOmcxDfTebHjcaqt6Ap_9Sq9ap8-Iwgg>
+    <xmx:Ca0OajhlSpA3-u7jJ0hAKqBf8IPj2Sqon8iZ6G36UikUEtnVr5xYCusj>
+Feedback-ID: iac1e4b6b:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 21 May 2026 02:58:13 -0400 (EDT)
+From: Eduardo Vasconcelos <eduardo@eduardovasconcelos.com>
+To: john.johansen@canonical.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: Eduardo Vasconcelos <eduardo@eduardovasconcelos.com>,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] apparmor: Fix inverted comparison in cache_hold_inc()
+Date: Thu, 21 May 2026 03:57:24 -0300
+Message-ID: <20260521065731.6888-1-eduardo@eduardovasconcelos.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTIxMDAxOCBTYWx0ZWRfX60HtXsYQRo06
- Umru3kV/WBv0aWcQhRBJ/3xj0qHFPSlN5MTtKnH/yHumDcjf52S40vqtXgs6XzV5NBd3dYx+dbL
- BXTSPxiwg9S0uPzT7wgbPJko0+hMj0/6LrWzBRUnGHboofZI0drvfdqED/0+iGkg5indCy3voO/
- sFn5OiyzTCevc3pzhZtcveaReLdy64tDushTyigePtwcB5WlKY5TsXxA7lyDC8s4gjkjoQijOFT
- FL20Igq8gxdDxwSzlfIPlNw/PDdOHglVNvL3KDlfS2MJ7DbgxhU7XmD0yddRsIrD86YfuKU7kYr
- /+BVASL1JwC7ylVACLyEdZGeumJNQq+oN5YVGzKSUsZeHe+WAcp/MDVX2bK0CZfN42I4+h8N8hE
- Z0r8C+dI/5Ms8eqqovSNN0EWkevm4IkyOnS6jY9KmxuuJnX5qPlMNErabp5Th+Ovzs95h2UVZ7m
- 1Ti66prTL4kQqfXou+g==
-X-Authority-Analysis: v=2.4 cv=Np/htcdJ c=1 sm=1 tr=0 ts=6a0e68ef cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=RzCfie-kr_QcCd8fBx8p:22 a=NEAV23lmAAAA:8
- a=i0EeH86SAAAA:8 a=VnNF1IyMAAAA:8 a=3t8diSVONHxdbtUu-HYA:9 a=QEXdDO2ut3YA:10
- a=zZCYzV9kfG8A:10
-X-Proofpoint-ORIG-GUID: XAY20XtEsyEWjfYTRN5dv2-3Zr1_T8ii
-X-Proofpoint-GUID: f7ZKAXmnQKsO_yk6gWOvu0smBSZGt2U3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-05-20_03,2026-05-18_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 spamscore=0 clxscore=1011 priorityscore=1501 impostorscore=0
- lowpriorityscore=0 suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2605130000 definitions=main-2605210018
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2026-04-29 at 18:03 +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->=20
-> Introduce ima_dump_measurement() to simplify the code of
-> ima_dump_measurement_list() and to avoid repeating the
-> ima_dump_measurement() code block if iteration occurs on multiple lists.
->=20
-> No functional change: only code moved to a separate function.
->=20
-> Link: https://github.com/linux-integrity/linux/issues/1
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+cache_hold_inc() prevents the per-CPU cache hold counter from
+rising above MAX_HOLD_COUNT, but the comparison is inverted
+(> MAX_HOLD_COUNT instead of <), so the counter never rises
+above 0.
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+This breaks the cache mechanism because since the hold counter
+is always 0, the global pool is always attempted first before
+falling back to the local cache. The decrement also never occurs,
+thus the hold counter is effectively dead.
+
+Fix by changing > to < in cache_hold_inc().
+
+Signed-off-by: Eduardo Vasconcelos <eduardo@eduardovasconcelos.com>
+---
+ security/apparmor/lsm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 3491e9f60194..b7c19805a216 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -2129,7 +2129,7 @@ static int param_set_mode(const char *val, const struct kernel_param *kp)
+  */
+ static void cache_hold_inc(unsigned int *hold)
+ {
+-	if (*hold > MAX_HOLD_COUNT)
++	if (*hold < MAX_HOLD_COUNT)
+ 		(*hold)++;
+ }
+ 
+-- 
+2.54.0
 
