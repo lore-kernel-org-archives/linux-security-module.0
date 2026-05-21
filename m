@@ -1,142 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F215736896D;
-	Thu, 21 May 2026 16:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C12236C0AC;
+	Thu, 21 May 2026 16:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779379408; cv=none; b=qVsuHdI2/VEqI6Ajiy6EmefI+q97rlNQxVB7Fp2wyF08qCFxScWfJgAbRBn9FVTq+w/aywv5QZ1vOwvWjhcmuIqB4uJNW7/UnKoiTatWwvpyIB88mzRNG80vD7taxoTRPbkLAA6K7Z/FcpSPwixC3x1FZOp1Q5cSKSuO4yJv7WU=
+	t=1779379612; cv=none; b=b3hyMM8bD3LnCLZiRblIZWFYbEqjF/ZJ60cqVgOeo/YLsuu1Ro7qChHoo8NVlORxHIy4zRXy6rAPoOEwgtgRR2YSvvGemPiTiozC27w0me38vlm728IdLU8rvclF6SHG56fJiS5lYIabfiTjYR2v3M06uYoDwvVr0nkPcirusDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779379408; c=relaxed/simple;
-	bh=1dnmh8xogi5NWZrg1ekb4PvjpkiCj37/yUJi67sS9A4=;
-	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
-	 Subject:From:To:Cc:Date; b=s9k5uI4KhYdlgKKqwqbnTtCCBEnFO0JRACAPFnWW055ry5swxLZd3MQ1yvM5p1ZUUcTzDWbjyExTr1dJW3N0MiyA9wzLtqlEehr5iX0bDs+DvBt/PBF0f7aONdVEAb7/68rA5uoT7ZbjpD5kcmYodXso53mv9ieBB4ubAJZZbq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nO4T5T3i; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779379612; c=relaxed/simple;
+	bh=F+h9A4DIYpq1O/RX6QOqxkjZmifyrZ3T+wElt+iDwoE=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=RkMKlKsVccvW+UZ3ssiOuBtoOD9e2x4Lei+jL68WZpeYGg1Qi2eh9t11EXjf7RTO78Z1iLLrKQV9Q/eDVo9LwboKVliYXf+XhV3lqRBaejQhZWtcB8Ucd71VMsFfOM9xbaxfY5x0TtUDW7Smc3Xr++d1Okf/gWTOZQd9J64XHfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fEDWx77C; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nO4T5T3i"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 799641F000E9;
-	Thu, 21 May 2026 16:03:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779379406;
-	bh=5nJ80421wV3UxtJpKcwIrzMmrkGpKYFW2EvDCz9f2HU=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date;
-	b=nO4T5T3iREq6OgMEra1das9TuMhUElw1cLqLvRtTTCGtE2rbRv4OPrG6WlaXEOvnO
-	 NFjbyEJawcCU9kK65tG0CHPAocdbt48Lihh56N3smvpSDDGH7f7ZwFaZB195W8JVPx
-	 ElMyrwBHjq6Pqrhxm2XleEyT2/5IhlAXgXgcH0HYTLzCC3g8+l40Kzx2wtLtS7v5Ih
-	 2DjBoba6j1r3vJNMHGSlw2YCX9PDm5J60rWnuKAPqXZKkoTd1h6w1ZapzeKwnDtfei
-	 kbgv1PF1P0Zxcig4dli55Ehiy8ucKZz2hzGj83Glq+dJ7rtA0wfjoGjn6ENcen1iye
-	 Q1j3/z79spplw==
-Content-Type: multipart/mixed; boundary="===============6055013505125852880=="
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fEDWx77C"
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64LA6Nap764296;
+	Thu, 21 May 2026 16:06:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=qTaNXW
+	TikQqOePAqk42SMJotrFg8rUHuYpCOrc6eva8=; b=fEDWx77CCDQjYPM9hiTTnR
+	nuCUpeXCoGDSG5qIWuZHb2HEWFy3H3xF5a5R/Pwdj7+IN+MuY6CUfoH63iP35tFA
+	dIST1ssE80m8hXQkv0NkoJoI81n1YawGt2BqrgojvMUwoT16XinpD0AbjIAKcoLT
+	5MANpd5cACERs4SzW0mAToLgOug0WftBT+5dbphjBURmmy7wpcERMNmfo5iawjYD
+	Auz6pdeKt06P7RUXbtRuugO99AYoGnpy5O24dmHJf06fy4o9wiGxk7NiQILtsavy
+	yQxiIqN/+u8Lx9l2RKSqHkX8ArAtVt+tdFZTqmPWXozfEOY5EOqE+mFG4kN7xqug
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4e6hawesr6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 May 2026 16:06:26 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 64LFs60A012857;
+	Thu, 21 May 2026 16:06:25 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4e72wqda41-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 May 2026 16:06:25 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 64LG5tDR27656772
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 21 May 2026 16:05:55 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7B43C58052;
+	Thu, 21 May 2026 16:06:24 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DB52A58045;
+	Thu, 21 May 2026 16:06:22 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.146.128])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 21 May 2026 16:06:22 +0000 (GMT)
+Message-ID: <51b452d09199374a74d713ff8e8cd44150a59867.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 10/13] ima: Add support for flushing the hash table
+ when staging measurements
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
+        skhan@linuxfoundation.org, dmitry.kasatkin@gmail.com,
+        eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        gregorylumen@linux.microsoft.com, chenste@linux.microsoft.com,
+        nramas@linux.microsoft.com, Roberto Sassu <roberto.sassu@huawei.com>
+In-Reply-To: <20260429160319.4162918-11-roberto.sassu@huaweicloud.com>
+References: <20260429160319.4162918-1-roberto.sassu@huaweicloud.com>
+	 <20260429160319.4162918-11-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 21 May 2026 12:06:22 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <175434ddb7a67a9b1b6fcbd284a7ce5c41e9372658573faf7afbfac8f499a893@mail.kernel.org>
-In-Reply-To: <20260521152217.2345235-3-kpsingh@kernel.org>
-References: <20260521152217.2345235-3-kpsingh@kernel.org>
-Subject: Re: [PATCH v2 2/2] bpf, libbpf: reject non-exclusive metadata maps in the signed loader
-From: bot+bpf-ci@kernel.org
-To: kpsingh@kernel.org,bpf@vger.kernel.org,linux-security-module@vger.kernel.org
-Cc: ast@kernel.org,daniel@iogearbox.net,memxor@gmail.com,kpsingh@kernel.org,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
-Date: Thu, 21 May 2026 16:03:26 +0000 (UTC)
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTIxMDE2MiBTYWx0ZWRfX7Wrra6AWT7c0
+ 9O7K3x9cqFyeJ1gbRAdz1XZMMbWjgQ6jCQvatmF3KxjrT/QkIIXwKrsFM2SLqjIS5Jfgw8v6Z3H
+ 5rEjtBjAH6/Wfki9bbFEgd+zHGUEULAN/2ndsyPaVhhK1DbngwTSqmq6Wsvy5wVA6XSlsE3nZro
+ 2S6KUiPwjOO5XJLwX8OK4yO6ISCvDOvHqzB2U65CsLagBLrnfH6BupRSV/bZyK3gJKKU3ihVyQQ
+ mIW7XZyC/2tLKSjk6z1Bq6PA7w2DrPjEiBMNX6t7oOopwqhnVIrnXJtHlBBAZmF7tr+Q/LctLZs
+ ku0lMDBlVRF0PqSCDtSyJgVN7Co7uRms+EGgk7FfiiDr/NLGNgMQURH1ILl2AMltAvyob3s/n3f
+ dV0loCj8F4pulM055iuXfEEj7AQyce7qnXw67ffZ9G2IIpXYvNfdyDMuDokBEJX0o1uvKVcKueq
+ g72F9PxHbMp/C5d+E/Q==
+X-Authority-Analysis: v=2.4 cv=Np/htcdJ c=1 sm=1 tr=0 ts=6a0f2d82 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=RzCfie-kr_QcCd8fBx8p:22 a=NEAV23lmAAAA:8
+ a=i0EeH86SAAAA:8 a=jVX5zv5zQ3_5VHjuTu4A:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: rLNEtsnc1riP4Js2UoSFzkYXbat_2Ili
+X-Proofpoint-GUID: CVW9GPJ-laOE7SM3E5PwCd_-sze2Yl-Z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-21_03,2026-05-18_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 spamscore=0 clxscore=1015 priorityscore=1501 impostorscore=0
+ lowpriorityscore=0 suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2605130000 definitions=main-2605210162
 
---===============6055013505125852880==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+On Wed, 2026-04-29 at 18:03 +0200, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>=20
+> Introduce the new kernel option ima_flush_htable to decide whether or not
+> the digests of staged measurement entries are flushed from the hash table=
+,
+> when they are deleted.
 
-> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> index 1b28cacc3075..5f1ed0823892 100644
-> --- a/include/linux/bpf.h
-> +++ b/include/linux/bpf.h
-> @@ -295,6 +295,7 @@ struct bpf_map_owner {
->
->  struct bpf_map {
->  	u8 sha[SHA256_DIGEST_SIZE];
-> +	__bpf_md_ptr(char *, excl_prog_sha);
->  	const struct bpf_map_ops *ops;
->  	struct bpf_map *inner_map_meta;
->  #ifdef CONFIG_SECURITY
-> @@ -335,7 +336,6 @@ struct bpf_map {
->  	atomic64_t sleepable_refcnt;
->  	s64 __percpu *elem_count;
->  	u64 cookie; /* write-once */
-> -	char *excl_prog_sha;
->  };
+Unless explicitly requested, the existing hash table is not cleared after
+exporting the measurement list. Why is clearing the hash table configurable=
+? =C2=A0
+The boot command line option does not provide enough information to decide =
+why
+you would or wouldn't want to clear the hash table.  Please update the patc=
+h
+description and the boot command line option.
 
-[ ... ]
+thanks,
 
-> diff --git a/tools/lib/bpf/gen_loader.c b/tools/lib/bpf/gen_loader.c
-> index 9478b8f78f26..fee35c26deb8 100644
-> --- a/tools/lib/bpf/gen_loader.c
-> +++ b/tools/lib/bpf/gen_loader.c
-> @@ -600,6 +600,22 @@ static void emit_signature_match(struct bpf_gen *gen)
->  			gen->error = -ERANGE;
->  		}
->  	}
-> +
-> +	/* Reject if the metadata map is not exclusive. Without exclusivity
-> +	 * the cached map->sha[] verified above can be stale: another BPF
-> +	 * program with map access could have mutated the contents between
-> +	 * BPF_OBJ_GET_INFO_BY_FD and loader execution.
-> +	 */
+Mimi
 
-This isn't a bug, but the multi-line comment opening should follow the
-BPF subsystem style with /* on its own line.
-
-> +	emit2(gen, BPF_LD_IMM64_RAW_FULL(BPF_REG_1, BPF_PSEUDO_MAP_IDX,
-> +					 0, 0, 0, 0));
-> +	emit(gen, BPF_LDX_MEM(BPF_DW, BPF_REG_2, BPF_REG_1, SHA256_DWORD_SIZE * sizeof(__u64)));
-> +	off = -(gen->insn_cur - gen->insn_start - gen->cleanup_label) / 8 - 2;
-> +	if (is_simm16(off)) {
-> +		emit(gen, BPF_MOV64_IMM(BPF_REG_7, -EINVAL));
-> +		emit(gen, BPF_JMP_IMM(BPF_JEQ, BPF_REG_2, 0, off));
-> +	} else {
-> +		gen->error = -ERANGE;
-> +	}
->  }
-
-[ ... ]
-
-> diff --git a/tools/testing/selftests/bpf/progs/verifier_map_ptr.c b/tools/testing/selftests/bpf/progs/verifier_map_ptr.c
-> index e2767d27d8aa..baef2e93cb41 100644
-> --- a/tools/testing/selftests/bpf/progs/verifier_map_ptr.c
-> +++ b/tools/testing/selftests/bpf/progs/verifier_map_ptr.c
-> @@ -70,13 +70,15 @@ __naked void bpf_map_ptr_write_rejected(void)
->  	: __clobber_all);
->  }
->
-> -/* The first element of struct bpf_map is a SHA256 hash of 32 bytes, accessing
-> - * into this array is valid. The opts field is now at offset 33.
-> +/* The first 32 bytes of struct bpf_map are the SHA256 hash; accessing into
-> + * this array is valid. excl_prog_sha follows at offset 32 (8 bytes via
-> + * __bpf_md_ptr), then ops at offset 40. Reading at offset 41 crosses into
-> + * the ops pointer and must be rejected.
->   */
->  SEC("socket")
->  __description("bpf_map_ptr: read non-existent field rejected")
->  __failure
-> -__msg("cannot access ptr member ops with moff 32 in struct bpf_map with off 33 size 4")
-> +__msg("cannot access ptr member ops with moff 40 in struct bpf_map with off 41 size 4")
->  __failure_unpriv
->  __msg_unpriv("access is allowed only to CAP_PERFMON and CAP_SYS_ADMIN")
->  __flag(BPF_F_ANY_ALIGNMENT)
-> @@ -85,7 +87,7 @@ __naked void read_non_existent_field_rejected(void)
->  	asm volatile ("					\
->  	r6 = 0;						\
->  	r1 = %[map_array_48b] ll;			\
-> -	r6 = *(u32*)(r1 + 33);				\
-> +	r6 = *(u32*)(r1 + 41);				\
->  	r0 = 1;						\
->  	exit;						\
->  "	:
-
-
----
-AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
-
-CI run summary: https://github.com/kernel-patches/bpf/actions/runs/26236267798
---===============6055013505125852880==--
+>=20
+> When the option is enabled, replace the old hash table with a new one,
+> by calling ima_alloc_replace_htable(), and completely delete the
+> measurements entries.
+>=20
+> Note: This code derives from the Alt-IMA Huawei project, whose license is
+>       GPL-2.0 OR MIT.
+>=20
+> Link: https://github.com/linux-integrity/linux/issues/1
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
