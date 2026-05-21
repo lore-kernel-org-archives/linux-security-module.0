@@ -1,132 +1,134 @@
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from flow-b1-smtp.messagingengine.com (flow-b1-smtp.messagingengine.com [202.12.124.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C413C4B91
-	for <linux-security-module@vger.kernel.org>; Thu, 21 May 2026 13:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8C033A71A;
+	Thu, 21 May 2026 15:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779371978; cv=none; b=IMceeDozDKU/qE4zek7XpRrjhS4oAjGVlbKtE1yjlowIzkjuFnN6ls0nPVN82XfOyxA3ot7GpR/Ol0X+4r00gRFsHta78GrhigPgxHjFfWtCfSlPAdnNf/U/AbSPQjEUrcga5LLZJTPOTCGbrQV+ieXViTgPqBcfE5sYyG7wEB0=
+	t=1779376581; cv=none; b=kB2zUDPLy5J/Kmk8FCtpYvvWOzLK+RXpAi3rObbt11dmPa3hxkunqFJaimIb4b1x5jcXa3gDeipjSLJlYMfUGfFTKqPKhOyq8S3BdA2/VOi6T83CCwkNJrBczIGYwriADVVUDDYTFAfTtzaZp6Gk95WXu70GNInOr6lGPyr/xB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779371978; c=relaxed/simple;
-	bh=h+4NVJo3wpAjspHwkhwsyzZn+zEl2CEEOehXzRGNdBY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=EoxfIGRzz36W2jApkK06MMxYSNbnEQzDLGpPHFCS438yPnrljADBHpIcBMDT0Nnvh++rKIWmMtkSX2JoIW1Tu0jEyC0z5YHyfaMGRtxXF8Tlju6lYbXFHBe/c1QM8vgRO8AlaZHuc4fOu2QfubS6Tmw0NNa29hAe+HlJlv+mk5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jodHEZLM; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+	s=arc-20240116; t=1779376581; c=relaxed/simple;
+	bh=XMaiFRdfWXMwTrsnzo2uMLmxDTTwoGSwePT6jiZKWxw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dBj43TDmIBzEn/I1CwU8UXY9pvvGAaeAL1NX1q7VtOfFfS3VsE567wsKFkNZbygzwsz7/WzBRXbHuwHfUut4ah6p7ti+Dd3NE+GHetr5TpTXgIUniBwwmlG8XaUz65wlFpRL7GnL4O1OKz8moE3J4X0V7f7aXKPs2nvifob/7BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eduardovasconcelos.com; spf=pass smtp.mailfrom=eduardovasconcelos.com; dkim=pass (2048-bit key) header.d=eduardovasconcelos.com header.i=@eduardovasconcelos.com header.b=oDzFJx5I; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eTz1+3KS; arc=none smtp.client-ip=202.12.124.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eduardovasconcelos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eduardovasconcelos.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jodHEZLM"
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-c82ba4715b6so6744130a12.2
-        for <linux-security-module@vger.kernel.org>; Thu, 21 May 2026 06:59:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1779371975; x=1779976775; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tqeEG6FXEKElqAGUt/Z2qfbIbuB++N7b4Fh1Zt6D5dk=;
-        b=jodHEZLMnrXvcr0U+8aiQ3+8HMthO764B3RtgzEf+7ztkCNfkmkIlQBTfUmc0CO1Gm
-         znKHCX5+9bAECaG80vh/IPP806tKIqZE2l7HZLe1YU0HCE1c+TVzdByotFkWkoU+YEws
-         qLgdufxQuD2gsyG2s9NK2v18HBYBS1w+SMsS+Qi6jr0LEmhA4R7O7tZpYus8VaPMyFeG
-         15VYXBj+eYi7/OswJ5AioWab2qhZVYFRjyf4SpApvc+UkSyiNxbsaWg55EmuzRTPh+T9
-         X183BhHSUrQrVCzdTIOykwkJ84D445JXsSdEAvmO37Cr/WfIjw3mclOhGc8OX4c80G1x
-         Di8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779371975; x=1779976775;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tqeEG6FXEKElqAGUt/Z2qfbIbuB++N7b4Fh1Zt6D5dk=;
-        b=q3SPgmC1zENWUDm3iBq2dKolSRwwS36xlhWcdcHZ19sghoLkxaRay8k6YcT8YAs/hL
-         GzcKu0Aq/pX0GDHQt+M2Ra3xGKNqh7f9VAIUnQXXyG5cWs9x5ev3UL3hST9YdTAr81Xl
-         x0YwpZEhpxQsR4bJFtFynu3WEtP5dslvvp6mv9hit8PVKAFpGgM4J1+C0kbwh7WZLpLL
-         e/d1fvSQl/TIjGasDTLuKZITf/GJGSTZxlzHPrwsS3JzpMKv7kzE2GS771pC1E7xpQIk
-         ga7NNUJ0iehQkkxaJ7W1KaFqpHx8KAMgp4qjO/h84RPj2yD5VRXR5PGwkkI0Lm1QBECV
-         yZrg==
-X-Forwarded-Encrypted: i=1; AFNElJ8I39lIObxQKVEVsiioX0etE4jEPSNmI+akwr3z4maYAt+GFhNyE+ZvngERWiKTFVtgXwfMJx2TWB/0lbWElHgpYF5sE3I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt6TANnbRKO3mS9439yY9Vt7rVd/AWFgd+7HeJrZOtw2/bJm8T
-	RCk5eMzXtSBkBqCyWLB2q0TPxT0/kJlhzXvlLYx2IfQArfjdCxJD5z6SbODky9esSYiB5+AaBG1
-	DHZsK4w==
-X-Received: from pge1.prod.google.com ([2002:a05:6a02:2d01:b0:c79:83b3:cdf8])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:431a:b0:39c:a78e:dba9
- with SMTP id adf61e73a8af0-3b308ac1b14mr3725831637.40.1779371973881; Thu, 21
- May 2026 06:59:33 -0700 (PDT)
-Date: Thu, 21 May 2026 06:59:33 -0700
-In-Reply-To: <20260521133326.2465264-4-kees@kernel.org>
+	dkim=pass (2048-bit key) header.d=eduardovasconcelos.com header.i=@eduardovasconcelos.com header.b="oDzFJx5I";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eTz1+3KS"
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailflow.stl.internal (Postfix) with ESMTP id B005A1300D58;
+	Thu, 21 May 2026 11:16:18 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Thu, 21 May 2026 11:16:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	eduardovasconcelos.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:from:from:in-reply-to:message-id
+	:mime-version:reply-to:subject:subject:to:to; s=fm1; t=
+	1779376578; x=1779380178; bh=VlREViZVwVWezytnhlvlcYEa6W7KUthVxEO
+	CdcP2j1g=; b=oDzFJx5IGPPOEYirRi3TtY/phXLgGfii8V3tGXzm9fyXMHALkIT
+	LzMk47xD/of7e9xGQ+mRuQyfmaIzVjXcxRuB9iOX/9q4HKu3xHnPh2d5t/1lRdAe
+	//hqRz6pfOOhjFumRoYEzloxpDL0/ztX1aZpNjazcwU7ZneXkS4Qi+S4pb+m74BF
+	0yloa2pR/1GyKtsCzKDVcvaMw7UWV3Wgq7IbR90DkvWjn2Dnf0e0ZI4CFOJbt3Ud
+	6xIRbiwgWB0Tgv4APDPKKdt+1AWoBJt2dB/0dq9SYzluqSytxsWmOeQ+RKGCYWA7
+	odTxzU9jHcDJeuPY4dFbqZhjA0Rr5E7UQGA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1779376578; x=1779380178; bh=VlREViZVwVWezytnhlvlcYEa6W7KUthVxEO
+	CdcP2j1g=; b=eTz1+3KSBGFWkeKf5SEcZevM4gr0SnW+vzZ4C8ElspJz0V8VEyx
+	C1KDRDKqge44yztY9n5sO/C7befMSOmk1OXZHXs95AK0PExhCoFd9K5Vzq/hwk3H
+	uiZW6fxbnMIe+H56F7S02IG5Dh6hUvWY4EVw20C0L2gbXpohUN/KV945NQb9UUbe
+	Vm3fdO/NMqrXiKtaYIyxHFsn40wzpDGapoJj0X6FihEk//x0Yo6eOtCtk89x+VaX
+	NTTMMQRHfNDDPHvNUuwMdwdzIL0GV6W1cne79mKutY9df9U0ni0sY4h1EjLBSNyS
+	Wg6nIEJG7y4z3lt1hG1rwi2kNcnPoxj/YIg==
+X-ME-Sender: <xms:wSEPapJ7Eq531YWJkqe5sb_R0Om6UrNjEGKhSFmuBF2YhgogN4IcGQ>
+    <xme:wSEPahLHMyC9E4n55uzuSldl5F-kB57cUdhV2fVyyTPnEVZYOe141PbRBU-HY49LM
+    vX1nydjMadP967_HT-Uk9tNiMkhWoxdDNx7HV_JxCf6ODDSVR4hrQ>
+X-ME-Received: <xmr:wSEPaj4_Qd5y4QvRMD7IvpRKSwWxfgS9J0l5H0NH-QNrN13YYbcPBRAwlKnePw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddugeejkeehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertdertd
+    dtnecuhfhrohhmpefgughurghrughoucggrghstghonhgtvghlohhsuceovgguuhgrrhgu
+    ohesvgguuhgrrhguohhvrghstghonhgtvghlohhsrdgtohhmqeenucggtffrrghtthgvrh
+    hnpeevffetffegkeetleejfeevkeeihfffueeitdekkeekkedvudegjeeivdeutefhieen
+    ucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomhepvgguuhgrrhguohesvgguuhgrrhguohhvrghstgho
+    nhgtvghlohhsrdgtohhmpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuth
+    dprhgtphhtthhopehjohhhnhdrjhhohhgrnhhsvghnsegtrghnohhnihgtrghlrdgtohhm
+    pdhrtghpthhtohepphgruhhlsehprghulhdqmhhoohhrvgdrtghomhdprhgtphhtthhope
+    hjmhhorhhrihhssehnrghmvghirdhorhhgpdhrtghpthhtohepshgvrhhgvgeshhgrlhhl
+    hihnrdgtohhmpdhrtghpthhtohepvgguuhgrrhguohesvgguuhgrrhguohhvrghstghonh
+    gtvghlohhsrdgtohhmpdhrtghpthhtoheprghpphgrrhhmohhrsehlihhsthhsrdhusghu
+    nhhtuhdrtghomhdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulh
+    gvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
+    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:wSEPareBdYRZq-TYEGiJ6l1g8CO6AojzQOZJ2iW43HibMWg9Y6GpcQ>
+    <xmx:wSEPauF5ZMY07ltuXSCv78VaeKcdZaPxT7ly_nnvpbng9-hH15BoqA>
+    <xmx:wSEPakTAQEWKYi5gv4l-ZhvyMnYuoOc8G-aIfZkmeDtU2YntLUyuEA>
+    <xmx:wSEPasYkf2HObQ1Sjj2BPXFDfySkr2NGFnYjQM06_C-9ELDu9KJslg>
+    <xmx:wiEPaqcI0gi1hxnoLaKN9UVx5Us_FKndQOzRY9ZxbhKannS8VVq2qO1b>
+Feedback-ID: iac1e4b6b:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 21 May 2026 11:16:15 -0400 (EDT)
+From: Eduardo Vasconcelos <eduardo@eduardovasconcelos.com>
+To: john.johansen@canonical.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: Eduardo Vasconcelos <eduardo@eduardovasconcelos.com>,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] apparmor: Fix inverted comparison in cache_hold_inc()
+Date: Thu, 21 May 2026 12:13:06 -0300
+Message-ID: <20260521151314.8683-1-eduardo@eduardovasconcelos.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20260521133315.work.845-kees@kernel.org> <20260521133326.2465264-4-kees@kernel.org>
-Message-ID: <ag8PxTTi5NxT51EW@google.com>
-Subject: Re: [PATCH 04/11] treewide: Convert struct kernel_param_ops
- initializers to DEFINE_KERNEL_PARAM_OPS
-From: Sean Christopherson <seanjc@google.com>
-To: Kees Cook <kees@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Pengpeng Hou <pengpeng@iscas.ac.cn>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Richard Weinberger <richard@nod.at>, 
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Corey Minyard <corey@minyard.net>, 
-	Gabriel Somlo <somlo@cmu.edu>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Bart Van Assche <bvanassche@acm.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Leon Romanovsky <leon@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Hannes Reinecke <hare@suse.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Alan Stern <stern@rowland.harvard.edu>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	"Eugenio =?utf-8?B?UMOpcmV6?=" <eperezma@redhat.com>, Jason Baron <jbaron@akamai.com>, 
-	Jim Cromie <jim.cromie@gmail.com>, Tiwei Bie <tiwei.btw@antgroup.com>, 
-	Benjamin Berg <benjamin.berg@intel.com>, 
-	"Ilpo =?utf-8?B?SsOkcnZpbmVu?=" <ilpo.jarvinen@linux.intel.com>, 
-	"David E. Box" <david.e.box@linux.intel.com>, "Maciej W. Rozycki" <macro@orcam.me.uk>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Vinod Koul <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, 
-	Daniel Gomez <da.gomez@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
-	Aaron Tomlin <atomlin@atomlin.com>, Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	John Johansen <john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Georgia Garcia <georgia.garcia@canonical.com>, kvm@vger.kernel.org, 
-	dmaengine@vger.kernel.org, linux-modules@vger.kernel.org, 
-	kasan-dev@googlegroups.com, linux-mm@kvack.org, apparmor@lists.ubuntu.com, 
-	linux-security-module@vger.kernel.org, linux-um@lists.infradead.org, 
-	linux-acpi@vger.kernel.org, openipmi-developer@lists.sourceforge.net, 
-	qemu-devel@nongnu.org, intel-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-serial@vger.kernel.org, 
-	linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 21, 2026, Kees Cook wrote:
-> Using Coccinelle, rewrite every struct kernel_param_ops initializer that
-> sets .get into a DEFINE_KERNEL_PARAM_OPS-family macro invocation,
-> for example:
-> 
-> @@
-> declarer name DEFINE_KERNEL_PARAM_OPS;
-> identifier OPS;
-> expression SET, GET;
-> @@
-> - const struct kernel_param_ops OPS = {
-> -       .set = SET,
-> -       .get = GET,
-> - };
-> + DEFINE_KERNEL_PARAM_OPS(OPS, SET, GET);
+cache_hold_inc() prevents the per-CPU cache hold counter from
+rising above MAX_HOLD_COUNT, but the comparison is inverted
+(> MAX_HOLD_COUNT instead of <), so the counter never rises
+above 0.
 
-IMO, "OPS, GET, SET" is more intuitive, especially since that's the order used
-by DEFINE_SIMPLE_ATTRIBUTE and DEFINE_DEBUGFS_ATTRIBUTE.
+This breaks the cache mechanism because since the hold counter
+is always 0, the global pool is always attempted first before
+falling back to the local cache. The decrement also never occurs,
+thus the hold counter is effectively dead.
+
+Fix by changing > to < in cache_hold_inc().
+
+Fixes: 0b6a6b72b329 ("apparmor: document the buffer hold, add an overflow guard")
+Signed-off-by: Eduardo Vasconcelos <eduardo@eduardovasconcelos.com>
+---
+Changes in v2:
+- Add Fixes: tag
+- Link fo v1: https://lore.kernel.org/all/20260521065731.6888-1-eduardo@eduardovasconcelos.com/
+
+ security/apparmor/lsm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 3491e9f60194..b7c19805a216 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -2129,7 +2129,7 @@ static int param_set_mode(const char *val, const struct kernel_param *kp)
+  */
+ static void cache_hold_inc(unsigned int *hold)
+ {
+-	if (*hold > MAX_HOLD_COUNT)
++	if (*hold < MAX_HOLD_COUNT)
+ 		(*hold)++;
+ }
+ 
+-- 
+2.54.0
+
