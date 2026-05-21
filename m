@@ -1,128 +1,104 @@
-Received: from flow-a3-smtp.messagingengine.com (flow-a3-smtp.messagingengine.com [103.168.172.138])
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646C9385D93;
-	Thu, 21 May 2026 06:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389ED2853E0;
+	Thu, 21 May 2026 08:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779346702; cv=none; b=bvNQjYDmMN9jjpoW225ByxOCXJOW4Xm7XsBxUUcxROhNqOU0gAVkWijk0R/yZZiIBBAGc9PeaKv4wLpUNL7CGPaj8ZfzU9+BIX6z59ZCmbzCOqn1/1fu9ugPnn1YDEY9CXBcCt/V0gHrg0S9fvSqm93BeUZGSGTmLLZZ5Clbd30=
+	t=1779351323; cv=none; b=kV7NIoBbQb7/ainITT8MxzVm6SbB4bITSoEFcAJa+brPxzw+g2rlxUmuRTRZYxb1enAEhxTWSHYmnJiLwAL8dj0fr90uU1iECTXcVXOzUsh69mxtFsjoWKdEIR/Vrr68Tyujey04YPKey2q58Gy5iXgR02qjqLioZnr1rsKJEcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779346702; c=relaxed/simple;
-	bh=LNdNykvRPLHdfRVcmX0+iCj9WrM+E4PlicJ+dGsSA/c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PI1j7lBLWi235fGG3PGQoPs6jOPuJZBTi5rXN7L6KKBtiRi9A36Urqd7eKZn0cF6BAvFIzWP+g19WqraNibYUIIFs/4ZuMxv5WMD7ke+/PmEjAp3LKJTFrAIMnHT9eRxDntfAApdAWkYRnJ1zLiDp712s+Zrn8BJxk/WmKiG7Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eduardovasconcelos.com; spf=pass smtp.mailfrom=eduardovasconcelos.com; dkim=pass (2048-bit key) header.d=eduardovasconcelos.com header.i=@eduardovasconcelos.com header.b=YROikU3p; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RBbvRLu2; arc=none smtp.client-ip=103.168.172.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eduardovasconcelos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eduardovasconcelos.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=eduardovasconcelos.com header.i=@eduardovasconcelos.com header.b="YROikU3p";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RBbvRLu2"
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailflow.phl.internal (Postfix) with ESMTP id EC35F138027F;
-	Thu, 21 May 2026 02:58:17 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Thu, 21 May 2026 02:58:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	eduardovasconcelos.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:from:from:in-reply-to:message-id
-	:mime-version:reply-to:subject:subject:to:to; s=fm1; t=
-	1779346697; x=1779350297; bh=8KKk4OstiZD1mRxwYz1AQFEeysiHg2heUSn
-	DHuC1LuA=; b=YROikU3pH27BEfuvHGZWQcua54t9lJ+0ejva5hp6j3rpacbrOQI
-	nUBY/MPr3GbWB1K4lUR4AFfKWtFiIUdpGecqqlewxQYG64VkBCntq58AZZFLEUzO
-	/w1DuKhKi+xrhk3uBPCdAmLgZg2n4Y48eIVP5jFYCdFsIoNNAxTfHZ8TOYRX5GyB
-	f7Z9USQ/I0/0raYeM3KUGKG+aRhhUaImszwxif96kF0aX+qidt5Lpxs4LApdgpMz
-	ONMcSVi+1/7bU79SiMIjntf/hadPbfX5kmsEt8a66UWzKQMbcsIUYuTPAPar4bF1
-	L9rk1V5xDAyKKgF20U9dGlIB5C4i81fBC1A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1779346697; x=1779350297; bh=8KKk4OstiZD1mRxwYz1AQFEeysiHg2heUSn
-	DHuC1LuA=; b=RBbvRLu2WNa2/BZb3XIg0Xtgigv5l84bG9GyQXthmqcGeI7bsQC
-	tjz2nIiq/7T3sMK8uHqonOAE4ONuPPh3RZHahHSqfN2iMLrIp4ryhnnMKBHnYnkr
-	MpF86arRkC6VRGbRe/HyBw8FYiD2bordRtehGJtSk1vA2fsMzNCdqa0Y82BxFzF8
-	/gQuoV4zqzT+hk0hz2OW2O52T1UAeMUB/zQ7ENb94y2Fs8VHfHo+Qiw6n0obYmAi
-	IeWC6gsCCZbEOuKBWMmrLRXMfPqrZbWqBpfvVhiLOwnNN4ykANWnAXJlRc0EaQpa
-	+M1+a1NJsNurAA8SVr7kN1FNxGiwfUnYDLw==
-X-ME-Sender: <xms:CK0OagdBpGDenSU-jKcodHXLgtGPJJN8Sq41vTflZTcOS52lymH12Q>
-    <xme:CK0OauP3h52P7pf6vc2hdDLqsyh6kdqc1ujUSsAeWi_xvsJ7JsNyIJaJk7UvmmbbR
-    sM5cJs5NokMdwkjc1A4zpJ2HF2D0l4XVWqVIPac-NQhX5h20FdMNiU>
-X-ME-Received: <xmr:CK0OajvOoR25JvWNTt0eOXHu1msEhGP5YE43GwXkFgqS81mYdNzGp2o2R2YXXA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddugeeikeehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertdertd
-    dtnecuhfhrohhmpefgughurghrughoucggrghstghonhgtvghlohhsuceovgguuhgrrhgu
-    ohesvgguuhgrrhguohhvrghstghonhgtvghlohhsrdgtohhmqeenucggtffrrghtthgvrh
-    hnpedutdeuffehveeguddugeefffejveevueeggeejuedvleehgfekueejgffghfffueen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegvughurg
-    hrughosegvughurghrughovhgrshgtohhntggvlhhoshdrtghomhdpnhgspghrtghpthht
-    ohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhohhhnrdhjohhhrghnsh
-    gvnhestggrnhhonhhitggrlhdrtghomhdprhgtphhtthhopehprghulhesphgruhhlqdhm
-    ohhorhgvrdgtohhmpdhrtghpthhtohepjhhmohhrrhhishesnhgrmhgvihdrohhrghdprh
-    gtphhtthhopehsvghrghgvsehhrghllhihnhdrtghomhdprhgtphhtthhopegvughurghr
-    ughosegvughurghrughovhgrshgtohhntggvlhhoshdrtghomhdprhgtphhtthhopegrph
-    hprghrmhhorheslhhishhtshdruhgsuhhnthhurdgtohhmpdhrtghpthhtoheplhhinhhu
-    gidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:CK0OanCxRXjwszm_Kx9GvCOVbVkRijYM8eD3-aC8l2nE9j-r9C757g>
-    <xmx:CK0OaqYBdQ3n_v-A_iqtmW-9HH3QInlbE8Q3-Cq3pcwBKD89ujLiYw>
-    <xmx:CK0OaiWN4WBhgzfSpM6dFN3FZFSN4zZ8RSD-qM3bZ_X7bSjqWP24IA>
-    <xmx:CK0OapOGdJoQO0dRAdkaV7mOmcxDfTebHjcaqt6Ap_9Sq9ap8-Iwgg>
-    <xmx:Ca0OajhlSpA3-u7jJ0hAKqBf8IPj2Sqon8iZ6G36UikUEtnVr5xYCusj>
-Feedback-ID: iac1e4b6b:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 21 May 2026 02:58:13 -0400 (EDT)
-From: Eduardo Vasconcelos <eduardo@eduardovasconcelos.com>
-To: john.johansen@canonical.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: Eduardo Vasconcelos <eduardo@eduardovasconcelos.com>,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] apparmor: Fix inverted comparison in cache_hold_inc()
-Date: Thu, 21 May 2026 03:57:24 -0300
-Message-ID: <20260521065731.6888-1-eduardo@eduardovasconcelos.com>
-X-Mailer: git-send-email 2.54.0
+	s=arc-20240116; t=1779351323; c=relaxed/simple;
+	bh=EWQ0CX0ltnO0DbWI+6/zlhkgYo4oLRVUk3SuwSeNXoA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=sA09THlYPXtNkhnA0YoUeRhsK0SIVJXdc4NahorpZ9Ea1vC8ixDuIwPeIOzs7AgaYvDmoWSvH5dfMv+oEMOX8up1XdPCpkep2yakFHgq0fjVItX0UDuwT20i5QywZMyhVZysstmo8UCgHcnxzWgir1vGt+s2c2WdyApdDVTcY1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.235])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4gLgfL6JnQzwb6L;
+	Thu, 21 May 2026 15:54:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 03FEC40573;
+	Thu, 21 May 2026 15:59:00 +0800 (CST)
+Received: from [10.204.63.22] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwDHeKIyuw5qLFiOAQ--.43055S2;
+	Thu, 21 May 2026 08:58:51 +0100 (CET)
+Message-ID: <97d4e0989fb84ed85475920c3e00320a45c3afda.camel@huaweicloud.com>
+Subject: Re: [PATCH v5 04/13] ima: Introduce per binary measurements list
+ type binary_runtime_size value
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Mimi Zohar <zohar@linux.ibm.com>, corbet@lwn.net,
+ skhan@linuxfoundation.org,  dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com, paul@paul-moore.com,  jmorris@namei.org,
+ serge@hallyn.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	gregorylumen@linux.microsoft.com, chenste@linux.microsoft.com, 
+	nramas@linux.microsoft.com, Roberto Sassu <roberto.sassu@huawei.com>
+Date: Thu, 21 May 2026 09:58:39 +0200
+In-Reply-To: <b7f97a0a3b79b72a014d12514febc338d1ecd038.camel@linux.ibm.com>
+References: <20260429160319.4162918-1-roberto.sassu@huaweicloud.com>
+	 <20260429160319.4162918-5-roberto.sassu@huaweicloud.com>
+	 <b7f97a0a3b79b72a014d12514febc338d1ecd038.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:LxC2BwDHeKIyuw5qLFiOAQ--.43055S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tFy7AryfJw1xXF1UXryUGFg_yoW8JFWkpF
+	WfZw1Fkr4kXa4xGrWDKa97WFWru34rJ34Dtr4DWF1kuFs5A34Fy3WUKF1rKFZ09r1kta4U
+	Zw40gr4fA3WYvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFk
+	u4UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAABGoNmbsKMgACs6
 
-cache_hold_inc() prevents the per-CPU cache hold counter from
-rising above MAX_HOLD_COUNT, but the comparison is inverted
-(> MAX_HOLD_COUNT instead of <), so the counter never rises
-above 0.
+On Wed, 2026-05-20 at 22:06 -0400, Mimi Zohar wrote:
+> On Wed, 2026-04-29 at 18:03 +0200, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> >=20
+> > Make binary_runtime_size as an array, to have separate counters per bin=
+ary
+> > measurements list type. Currently, define the BINARY type for the exist=
+ing
+> > binary measurements list.
+> >=20
+> > Introduce ima_update_binary_runtime_size() to facilitate updating a
+> > binary_runtime_size value with a given binary measurement list type.
+> >=20
+> > Also add the binary measurements list type parameter to
+> > ima_get_binary_runtime_size(), to retrieve the desired value. Retrievin=
+g
+> > the value is now done under the ima_extend_list_mutex, since there can =
+be
+> > concurrent updates.
+> >=20
+> > No functional change (except for the mutex usage, that fixes the
+> > concurrency issue): the BINARY array element is equivalent to the old
+> > binary_runtime_size.
+>=20
+> The patch is really clear and well written, but I don't see a concurrency=
+ issue
+> requiring taking the ima_extend_list_mutex at least in this patch.
 
-This breaks the cache mechanism because since the hold counter
-is always 0, the global pool is always attempted first before
-falling back to the local cache. The decrement also never occurs,
-thus the hold counter is effectively dead.
+binary_runtime_size is not an atomic variable. It is updated under the
+ima_extend_list_mutex lock in ima_add_digest_entry(). The same lock
+must be taken on the reader side, ima_get_binary_runtime_size().
 
-Fix by changing > to < in cache_hold_inc().
-
-Signed-off-by: Eduardo Vasconcelos <eduardo@eduardovasconcelos.com>
----
- security/apparmor/lsm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 3491e9f60194..b7c19805a216 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -2129,7 +2129,7 @@ static int param_set_mode(const char *val, const struct kernel_param *kp)
-  */
- static void cache_hold_inc(unsigned int *hold)
- {
--	if (*hold > MAX_HOLD_COUNT)
-+	if (*hold < MAX_HOLD_COUNT)
- 		(*hold)++;
- }
- 
--- 
-2.54.0
+Roberto
 
