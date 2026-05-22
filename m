@@ -1,115 +1,122 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC19414B950
-	for <linux-security-module@vger.kernel.org>; Fri, 22 May 2026 03:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.174
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779421829; cv=pass; b=slBhfABbQEqvRdIihBcDegU+34Q15QWka/kfrXnyL2hZoXeitLRBzg1V5uwarDz/CHx0erqNJ6WHmr5PeBnUB9nana6UJ8/vpuH9+zvXBlfZj3Ol+Upg/AJt4USQAZpM8G+pI57ByXCflEJ1rkPK8/PGh6BIQzux1QRKR7pi9fc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779421829; c=relaxed/simple;
-	bh=Cj/i9ELpLcaBpb/0YFBTwcsXmhZ4kU5PDvYEIlXh9kM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QKlHXcJNQ6vWF/MrBRsnop2GBm3KAKWMTdYeHfqi5EIfSstV1iS8MYNhiplkcFwNs8TZpRxhRR87Nik0tsJcNVOWGNZdXR+wLpkjVtgyQXXBL4cdmtivGIWoA5tEhsCoIyKpi/LoAKTQvpznStJ7Jpgl77E+nnC/aPogwUujsBY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BvYuDdYf; arc=pass smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BvYuDdYf"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2bd80b3aa13so44526755ad.0
-        for <linux-security-module@vger.kernel.org>; Thu, 21 May 2026 20:50:26 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1779421826; cv=none;
-        d=google.com; s=arc-20240605;
-        b=UbBcT9Ol6TlY1kaZ2FYjVkYpL3S8BuhZmiICv8NvxdmtTEKWxU3HG8ArMAO1i0DcMJ
-         ePIFeUwDAaDiNi++EzXFrEaq7TNtokacYyvA2Nl4jv2UqeLFxDdp43NsmFhiEP4eFwnI
-         s0C16Y84RsCix3B/R2G/gC36WagM6LgePiMxW4eiI7ZAGZ/tCYeiHq3yDomwd5h/mMUT
-         c8lC0G7ADVOwYDCd2YtJoyePFlHb0gdfMpUd1q2cSZ3li2ciNbsg8NRrsRF2Ncg9VSyW
-         UqJvk8+eP1nrR5FfrMQZjJ1wIV8rWNq3pSDZRdRS8Ursst/MR0Rbj2Z6b6TMvDalJSiu
-         8IiQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=mJtD4yG4pQtpmZFI4sg7XbvqjUAopoqZlfXkYohTNJg=;
-        fh=Km3NeNvkjUMnlluk9iO/dnVhVjileIwKo0yrw1Q2tDk=;
-        b=SncKVI6eINQzCCIBFrFnSvXlr3yXtstfoVTHCClE7XEegvlRlSqGLuZODWY5nlpYAj
-         4KzKowYFltqhhyuBvaKzHAC28QKH9hCwDsg47gnajuwKo0dRY8O17K3AazkWx958mQYE
-         y4c+I3bxu0CqHN7cCc0V0jRayZX9GgdTQEayOL7kPCQ6BW+FNGp87gFEjYbLLGUOY0Xw
-         QyxbqKNR3V92YUvsvbsn4WEQa18WSIm9rW6LDSzUAJO3hbNYoHXX82xBzVaMslWuc6uI
-         qvhxjvxWA8er2MXITczSx5eHJ4aHKJViNHO/qqwGAlahlbXOO2Jc63N3/ihBAW8K4QwC
-         bGEA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1779421826; x=1780026626; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mJtD4yG4pQtpmZFI4sg7XbvqjUAopoqZlfXkYohTNJg=;
-        b=BvYuDdYfGImF7ZvIUY2X/gKGOtrGSw8ruAlrCBdSyQG23Pha8SwK0hATY4inEcpTxC
-         WfDUDczbjFyAdrcNovUqWHTyLENcklZHbv2hGwOuHnR/675kGIeNnjsnzNPeyQ97zpTD
-         bGYm7ti8oAEcfdOkPG0T63MckBCVTJr7dIELEJI+/VAVXtS2oA7OgGgl+OwERwzZAiIW
-         WiCyOFBBXJLcX8bYX8oylykAilS5CrehPtCLR3v/X1BWrDC+EhKC9HTcPl43uHHKKttv
-         yBUIxEwgNQHEbG5pAyKqQsQi8WBYhxmW1f6pc/fkt3JWQx1Q4LqZekvKgiBfqhEMd6XG
-         YZwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779421826; x=1780026626;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=mJtD4yG4pQtpmZFI4sg7XbvqjUAopoqZlfXkYohTNJg=;
-        b=oKG9O0OmxoL2Aig6UdPlT+TqesQmjRRaF7aMNn2kJWzgOqjDXTII9lRdsaobF9FoOY
-         nf6PZxsDAYXBOaztpSER8rVD+6X6mqfJYNwLBf4+C1mZ7umJosiATZhlycHBOmpuWsi1
-         tsudniexYUx1fb5hAxADPmWf7Y8vLAhHqeNdBULC7C73BF/vRAbzeoiCamgA0PMHpQLt
-         VLHiRGuoKzT2uVI3ic/K0k2CCSb+OQqrsU16W3GLPsMR7wSxw2eFRrsmInVKurVIZle2
-         ejtpgDmS41Xxczxl7ZDC/AUenSsYbvMZYZMWJlgRLe/vZPbwitDpngTftk96ogIIdWaN
-         92AQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/sda5e0kHWP3tPi1TEw+l9uwOG6dWYnXMukHnMdok9DELvT2LthURtVRHeIMBFY5T2Ym/6/0nbLGpQ9bTu7SB/ZScQPUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUPaWvYb/tHANvPeNKtjXY0Nv3i5lZ1dqzpQrD276gVLuAomya
-	aF3ET5YPsHypzql8IvVDgHWv1UXmJl8zEoTutb59mVnr8GHy3YFluw8yNoc3g4WV/9GHmoBOzL/
-	29g3af4T4wpD1WwwyqT3JAc9CsVaNEcxvYkGB7mfTEmTi4YBukxk8lGNZ
-X-Gm-Gg: Acq92OF5vA8iAbb4Gif9PTiVOiVwpoMtWHVSVevyAe7PJExOkTXXjGpWU1GUxWFfwOK
-	KtmGijsb4yfdkaercQLSH4/VIDVdYRpl/kxzOGYNqiHHbBxbVav/6J0QKbrblSph2Gh0hT4H4O5
-	6xTOmnlYy3KqVmlS4E4CVc1FB603ppMJiRuHz9CSrKoXs3h7kO6Id0a0nzIT+ugcWmyGgxT0cL9
-	P0JeUKg3CWN6dJya8djXyiB96mi/++9Vql6DXBnuqG2Jk9nIXpVpRFS+5lmSRFgbri528DoLzJ2
-	aNby
-X-Received: by 2002:a17:903:1247:b0:2bc:8f9a:3642 with SMTP id
- d9443c01a7336-2beb0758d9emr18659005ad.16.1779421825760; Thu, 21 May 2026
- 20:50:25 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA39D2798EA;
+	Fri, 22 May 2026 05:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779428737; cv=none; b=eBVlgtE5X+iCzOpCQrJIcRQztYDe2eL+Y+i1ePe0RFossFNf9eWAQgzTS36LwkYko2dDvEospt61TeiDhAYmeAWcyVujKgCzCP9oXTkjXZrYEHn6Ua7DKugd7CLA1HQR+fAwRLt3Lb2u9/Z5ksl7glQyp4g8uAG8c8GmIUBoJ2E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779428737; c=relaxed/simple;
+	bh=0K5A/ruP5UrkNJqmfuwS4+kotrCLrDY+WPoeAfoHO0Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=na4gV+wortx9y/NDPPyyjhjBuFlJHFmwS9dpZ1z+OQMJMwkzVRMUE1qW2Pi+4UUJANd39so4eO3Xw3IoddZyBpwvMZAbAvDJp9UIv06LeBQ+IrgrdmvsTsKLKZSIrNUuP+TALhiMMPoYaHH6rMOB7AfbdOf9oTnyupeo6GBDcBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 6e794dd655a111f1aa26b74ffac11d73-20260522
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
+	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NAME
+	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_TRUSTED, SA_EXISTED
+	SN_TRUSTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
+	CIE_BAD, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO
+	GTI_C_BU, AMN_GOOD, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.12,REQID:f35d8322-6281-4179-9be0-8fb81fc34a12,IP:20,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:20
+X-CID-INFO: VERSION:1.3.12,REQID:f35d8322-6281-4179-9be0-8fb81fc34a12,IP:20,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:20
+X-CID-META: VersionHash:e7bac3a,CLOUDID:fc70776e237d96691339ebe2bfd9d07b,BulkI
+	D:260522134527GME2P24M,BulkQuantity:0,Recheck:0,SF:10|38|66|78|102|127|850
+	|865|898|915,TC:nil,Content:0|15|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bul
+	k:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0
+	,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 6e794dd655a111f1aa26b74ffac11d73-20260522
+X-User: zhaochenguang@kylinos.cn
+Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
+	(envelope-from <zhaochenguang@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1544990104; Fri, 22 May 2026 13:45:25 +0800
+From: Chenguang Zhao <zhaochenguang@kylinos.cn>
+To: Paul Moore <paul@paul-moore.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Cc: Chenguang Zhao <zhaochenguang@kylinos.cn>,
+	netdev@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [net-next] netlabel: validate unlabeled mask attribute length
+Date: Fri, 22 May 2026 13:45:21 +0800
+Message-Id: <20260522054521.1169755-1-zhaochenguang@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260522022910.398416-1-zhaochenguang@kylinos.cn>
-In-Reply-To: <20260522022910.398416-1-zhaochenguang@kylinos.cn>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 21 May 2026 23:50:12 -0400
-X-Gm-Features: AVHnY4KHmISMm1IYd6RPTq4MlDMEp6cvrOPadkJFFg-dlbft7CyMJhlb9mqPZRA
-Message-ID: <CAHC9VhSzAmZKqcOca+6UoTAJ+XrbFC8S18f+iPjL=2bHjz_YTw@mail.gmail.com>
-Subject: Re: [net-next] netlabel: fix IPv6 unlabeled address add error handling
-To: Chenguang Zhao <zhaochenguang@kylinos.cn>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	netdev@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 21, 2026 at 10:30=E2=80=AFPM Chenguang Zhao
-<zhaochenguang@kylinos.cn> wrote:
->
-> netlbl_unlhsh_add_addr6() always returned zero after
-> netlbl_af6list_add(), masking failures such as duplicate
-> IPv6 static label entries.
->
-> Signed-off-by: Chenguang Zhao <zhaochenguang@kylinos.cn>
-> ---
->  net/netlabel/netlabel_unlabeled.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+netlbl_unlabel_addrinfo_get() checked the address length
+but allowed shorter mask attributes to pass through to
+fixed-size address reads.
 
-Nice catch, thanks!
+Signed-off-by: Chenguang Zhao <zhaochenguang@kylinos.cn>
+---
+ netlbl_unlabel_addrinfo_get() only rejected a mask
+ length mismatch when the address attribute length
+ was also invalid.  A crafted Generic Netlink request
+ could therefore provide a valid IPv4/IPv6 address
+ attribute with a shorter mask attribute.
+ 
+ NLA_BINARY policy lengths are maximum lengths,
+ not exact lengths, so the short mask can pass
+ policy validation.  The mask is later read as
+ a full struct in_addr or struct in6_addr.
+ Require both address and mask attributes to
+ have the exact expected size.
+---
+ net/netlabel/netlabel_unlabeled.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
+index ca7a9e2a3de7..c1b7e0061886 100644
+--- a/net/netlabel/netlabel_unlabeled.c
++++ b/net/netlabel/netlabel_unlabeled.c
+@@ -762,8 +762,9 @@ static int netlbl_unlabel_addrinfo_get(struct genl_info *info,
+ 	if (info->attrs[NLBL_UNLABEL_A_IPV4ADDR] &&
+ 	    info->attrs[NLBL_UNLABEL_A_IPV4MASK]) {
+ 		addr_len = nla_len(info->attrs[NLBL_UNLABEL_A_IPV4ADDR]);
+-		if (addr_len != sizeof(struct in_addr) &&
+-		    addr_len != nla_len(info->attrs[NLBL_UNLABEL_A_IPV4MASK]))
++		if (addr_len != sizeof(struct in_addr) ||
++		    nla_len(info->attrs[NLBL_UNLABEL_A_IPV4MASK]) !=
++		    sizeof(struct in_addr))
+ 			return -EINVAL;
+ 		*len = addr_len;
+ 		*addr = nla_data(info->attrs[NLBL_UNLABEL_A_IPV4ADDR]);
+@@ -771,8 +772,9 @@ static int netlbl_unlabel_addrinfo_get(struct genl_info *info,
+ 		return 0;
+ 	} else if (info->attrs[NLBL_UNLABEL_A_IPV6ADDR]) {
+ 		addr_len = nla_len(info->attrs[NLBL_UNLABEL_A_IPV6ADDR]);
+-		if (addr_len != sizeof(struct in6_addr) &&
+-		    addr_len != nla_len(info->attrs[NLBL_UNLABEL_A_IPV6MASK]))
++		if (addr_len != sizeof(struct in6_addr) ||
++		    nla_len(info->attrs[NLBL_UNLABEL_A_IPV6MASK]) !=
++		    sizeof(struct in6_addr))
+ 			return -EINVAL;
+ 		*len = addr_len;
+ 		*addr = nla_data(info->attrs[NLBL_UNLABEL_A_IPV6ADDR]);
+-- 
+2.25.1
 
---=20
-paul-moore.com
