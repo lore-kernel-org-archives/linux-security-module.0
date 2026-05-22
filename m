@@ -1,253 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4FD314A90;
-	Fri, 22 May 2026 02:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779417184; cv=none; b=T1kBSL6qVyqEtI/ExD5X0XfYcqP+GWFn/2oHf50QSCeOn4DRlAIbWIbpyiMxPKw/JmaSi1qjjaiSLFR88ZGnvb57Dueg7mYS2ZxAmnAkBbKq4366VRQsIgofRwJgAkRdIIXA6SlYInPSJkEUMjgMGTdp9bLef7O+S1KkyqAg2i8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779417184; c=relaxed/simple;
-	bh=YpX0IuU6uad++fQtai4BUCTVNCZue4EbKyrGLOL+2gg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jnQa9kONbvHIDnQ1reoi1EsHIcirQul9iQbQ3IxhmDqwiOImkQfLBy08M/ka4++jht3n+uAERW1DuR2rCSajTt6S9VkGz/N60I1HpAIueuCdfmc6oF+UWXbHzJ4yNmz9i/8NWfP2Xt189F8Cbk4yC9UU7rN2FEZAnQLQfWzyZ+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QWqDWNW6; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC19414B950
+	for <linux-security-module@vger.kernel.org>; Fri, 22 May 2026 03:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.174
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779421829; cv=pass; b=slBhfABbQEqvRdIihBcDegU+34Q15QWka/kfrXnyL2hZoXeitLRBzg1V5uwarDz/CHx0erqNJ6WHmr5PeBnUB9nana6UJ8/vpuH9+zvXBlfZj3Ol+Upg/AJt4USQAZpM8G+pI57ByXCflEJ1rkPK8/PGh6BIQzux1QRKR7pi9fc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779421829; c=relaxed/simple;
+	bh=Cj/i9ELpLcaBpb/0YFBTwcsXmhZ4kU5PDvYEIlXh9kM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QKlHXcJNQ6vWF/MrBRsnop2GBm3KAKWMTdYeHfqi5EIfSstV1iS8MYNhiplkcFwNs8TZpRxhRR87Nik0tsJcNVOWGNZdXR+wLpkjVtgyQXXBL4cdmtivGIWoA5tEhsCoIyKpi/LoAKTQvpznStJ7Jpgl77E+nnC/aPogwUujsBY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BvYuDdYf; arc=pass smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QWqDWNW6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D9011F00A3D;
-	Fri, 22 May 2026 02:33:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779417183;
-	bh=E3TmmLfniL0rHf0KLHL+HUN0NFX4Y12fyjg3C7NkEpg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=QWqDWNW62T8VQBlZWXGQpzzfU1dInbAlq1ZLjPfErRYlaB1z23F8IQViDKDJLEgbu
-	 duIC0oypZgmquAwK6q9ZjT4iMNe+AQxWuA5dZFko2saVG2N+3aKKNfaTK58qmDzAjU
-	 bgqC6+9qT4wV+vfyJ/WQFDtR1cBR80jVvkTyTUXbDrF1/FVqXHXH0jHmvm6wYotNc7
-	 +4Pe4YtMDWwlDAFrWtY/m1Uky4J0k1EvXPu131fCmbcHAc68tFUwjDLPMORz2GnRMb
-	 fktw3hODnj6OrWjv5Ogj/GLyF/oVDn037eo4dhIqC9zoKh1zjspMYv/1XmDcEOcM43
-	 tNwrj8kvCcrpw==
-From: KP Singh <kpsingh@kernel.org>
-To: linux-security-module@vger.kernel.org,
-	bpf@vger.kernel.org
-Cc: ast@kernel.org,
-	daniel@iogearbox.net,
-	memxor@gmail.com,
-	James.Bottomley@HansenPartnership.com,
-	paul@paul-moore.com,
-	KP Singh <kpsingh@kernel.org>
-Subject: [PATCH bpf-next 13/13] selftests/bpf: add IPE BPF policy integration tests
-Date: Fri, 22 May 2026 04:32:33 +0200
-Message-ID: <20260522023234.3778588-14-kpsingh@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260522023234.3778588-1-kpsingh@kernel.org>
-References: <20260522023234.3778588-1-kpsingh@kernel.org>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BvYuDdYf"
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2bd80b3aa13so44526755ad.0
+        for <linux-security-module@vger.kernel.org>; Thu, 21 May 2026 20:50:26 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1779421826; cv=none;
+        d=google.com; s=arc-20240605;
+        b=UbBcT9Ol6TlY1kaZ2FYjVkYpL3S8BuhZmiICv8NvxdmtTEKWxU3HG8ArMAO1i0DcMJ
+         ePIFeUwDAaDiNi++EzXFrEaq7TNtokacYyvA2Nl4jv2UqeLFxDdp43NsmFhiEP4eFwnI
+         s0C16Y84RsCix3B/R2G/gC36WagM6LgePiMxW4eiI7ZAGZ/tCYeiHq3yDomwd5h/mMUT
+         c8lC0G7ADVOwYDCd2YtJoyePFlHb0gdfMpUd1q2cSZ3li2ciNbsg8NRrsRF2Ncg9VSyW
+         UqJvk8+eP1nrR5FfrMQZjJ1wIV8rWNq3pSDZRdRS8Ursst/MR0Rbj2Z6b6TMvDalJSiu
+         8IiQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=mJtD4yG4pQtpmZFI4sg7XbvqjUAopoqZlfXkYohTNJg=;
+        fh=Km3NeNvkjUMnlluk9iO/dnVhVjileIwKo0yrw1Q2tDk=;
+        b=SncKVI6eINQzCCIBFrFnSvXlr3yXtstfoVTHCClE7XEegvlRlSqGLuZODWY5nlpYAj
+         4KzKowYFltqhhyuBvaKzHAC28QKH9hCwDsg47gnajuwKo0dRY8O17K3AazkWx958mQYE
+         y4c+I3bxu0CqHN7cCc0V0jRayZX9GgdTQEayOL7kPCQ6BW+FNGp87gFEjYbLLGUOY0Xw
+         QyxbqKNR3V92YUvsvbsn4WEQa18WSIm9rW6LDSzUAJO3hbNYoHXX82xBzVaMslWuc6uI
+         qvhxjvxWA8er2MXITczSx5eHJ4aHKJViNHO/qqwGAlahlbXOO2Jc63N3/ihBAW8K4QwC
+         bGEA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1779421826; x=1780026626; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mJtD4yG4pQtpmZFI4sg7XbvqjUAopoqZlfXkYohTNJg=;
+        b=BvYuDdYfGImF7ZvIUY2X/gKGOtrGSw8ruAlrCBdSyQG23Pha8SwK0hATY4inEcpTxC
+         WfDUDczbjFyAdrcNovUqWHTyLENcklZHbv2hGwOuHnR/675kGIeNnjsnzNPeyQ97zpTD
+         bGYm7ti8oAEcfdOkPG0T63MckBCVTJr7dIELEJI+/VAVXtS2oA7OgGgl+OwERwzZAiIW
+         WiCyOFBBXJLcX8bYX8oylykAilS5CrehPtCLR3v/X1BWrDC+EhKC9HTcPl43uHHKKttv
+         yBUIxEwgNQHEbG5pAyKqQsQi8WBYhxmW1f6pc/fkt3JWQx1Q4LqZekvKgiBfqhEMd6XG
+         YZwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779421826; x=1780026626;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=mJtD4yG4pQtpmZFI4sg7XbvqjUAopoqZlfXkYohTNJg=;
+        b=oKG9O0OmxoL2Aig6UdPlT+TqesQmjRRaF7aMNn2kJWzgOqjDXTII9lRdsaobF9FoOY
+         nf6PZxsDAYXBOaztpSER8rVD+6X6mqfJYNwLBf4+C1mZ7umJosiATZhlycHBOmpuWsi1
+         tsudniexYUx1fb5hAxADPmWf7Y8vLAhHqeNdBULC7C73BF/vRAbzeoiCamgA0PMHpQLt
+         VLHiRGuoKzT2uVI3ic/K0k2CCSb+OQqrsU16W3GLPsMR7wSxw2eFRrsmInVKurVIZle2
+         ejtpgDmS41Xxczxl7ZDC/AUenSsYbvMZYZMWJlgRLe/vZPbwitDpngTftk96ogIIdWaN
+         92AQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/sda5e0kHWP3tPi1TEw+l9uwOG6dWYnXMukHnMdok9DELvT2LthURtVRHeIMBFY5T2Ym/6/0nbLGpQ9bTu7SB/ZScQPUM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUPaWvYb/tHANvPeNKtjXY0Nv3i5lZ1dqzpQrD276gVLuAomya
+	aF3ET5YPsHypzql8IvVDgHWv1UXmJl8zEoTutb59mVnr8GHy3YFluw8yNoc3g4WV/9GHmoBOzL/
+	29g3af4T4wpD1WwwyqT3JAc9CsVaNEcxvYkGB7mfTEmTi4YBukxk8lGNZ
+X-Gm-Gg: Acq92OF5vA8iAbb4Gif9PTiVOiVwpoMtWHVSVevyAe7PJExOkTXXjGpWU1GUxWFfwOK
+	KtmGijsb4yfdkaercQLSH4/VIDVdYRpl/kxzOGYNqiHHbBxbVav/6J0QKbrblSph2Gh0hT4H4O5
+	6xTOmnlYy3KqVmlS4E4CVc1FB603ppMJiRuHz9CSrKoXs3h7kO6Id0a0nzIT+ugcWmyGgxT0cL9
+	P0JeUKg3CWN6dJya8djXyiB96mi/++9Vql6DXBnuqG2Jk9nIXpVpRFS+5lmSRFgbri528DoLzJ2
+	aNby
+X-Received: by 2002:a17:903:1247:b0:2bc:8f9a:3642 with SMTP id
+ d9443c01a7336-2beb0758d9emr18659005ad.16.1779421825760; Thu, 21 May 2026
+ 20:50:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260522022910.398416-1-zhaochenguang@kylinos.cn>
+In-Reply-To: <20260522022910.398416-1-zhaochenguang@kylinos.cn>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 21 May 2026 23:50:12 -0400
+X-Gm-Features: AVHnY4KHmISMm1IYd6RPTq4MlDMEp6cvrOPadkJFFg-dlbft7CyMJhlb9mqPZRA
+Message-ID: <CAHC9VhSzAmZKqcOca+6UoTAJ+XrbFC8S18f+iPjL=2bHjz_YTw@mail.gmail.com>
+Subject: Re: [net-next] netlabel: fix IPv6 unlabeled address add error handling
+To: Chenguang Zhao <zhaochenguang@kylinos.cn>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	netdev@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Smoke test for the IPE BPF signing properties and ops added in the
-preceding patches. The test primes the kernel config with IPE
-knobs, writes a boot policy, and boots vmtest.sh to verify that
-signed lskels load, unsigned loads are denied, and the policy
-audit lines match.
+On Thu, May 21, 2026 at 10:30=E2=80=AFPM Chenguang Zhao
+<zhaochenguang@kylinos.cn> wrote:
+>
+> netlbl_unlhsh_add_addr6() always returned zero after
+> netlbl_af6list_add(), masking failures such as duplicate
+> IPv6 static label entries.
+>
+> Signed-off-by: Chenguang Zhao <zhaochenguang@kylinos.cn>
+> ---
+>  net/netlabel/netlabel_unlabeled.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Manual only for now, not wired into the selftests Makefile.
+Nice catch, thanks!
 
-Signed-off-by: KP Singh <kpsingh@kernel.org>
----
- .../selftests/bpf/test_signed_bpf_ipe.sh      | 156 ++++++++++++++++++
- tools/testing/selftests/bpf/vmtest.sh         |   4 +-
- 2 files changed, 158 insertions(+), 2 deletions(-)
- create mode 100755 tools/testing/selftests/bpf/test_signed_bpf_ipe.sh
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-diff --git a/tools/testing/selftests/bpf/test_signed_bpf_ipe.sh b/tools/testing/selftests/bpf/test_signed_bpf_ipe.sh
-new file mode 100755
-index 000000000000..aaa259ddb917
---- /dev/null
-+++ b/tools/testing/selftests/bpf/test_signed_bpf_ipe.sh
-@@ -0,0 +1,156 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# IPE BPF policy integration tests.
-+
-+if [ "${1:-}" = "--in-vm" ]; then
-+	set -u
-+	fail=0
-+	record() {
-+		id=$1; verdict=$2; shift 2
-+		printf '%s %s %s\n' "$verdict" "$id" "$*"
-+		[ "$verdict" = FAIL ] && fail=$((fail + 1))
-+		return 0
-+	}
-+
-+	mountpoint -q /sys/kernel/security 2>/dev/null \
-+		|| mount -t securityfs none /sys/kernel/security 2>/dev/null || true
-+	if [ -d /sys/kernel/security/ipe ]; then
-+		record T0 PASS "securityfs/ipe present"
-+	elif grep -qw ipe /sys/kernel/security/lsm 2>/dev/null; then
-+		record T0 PASS "ipe in /sys/kernel/security/lsm"
-+	elif [ -r /sys/module/ipe/parameters/enforce ]; then
-+		record T0 PASS "ipe module parameters present"
-+	else
-+		record T0 FAIL "no sign that IPE LSM is loaded"
-+	fi
-+
-+	if ./test_progs -t atomics 2>&1 | grep -qE '^#[0-9]+[[:space:]]+atomics:OK$'; then
-+		record T1 PASS "atomics signed lskel loaded"
-+	else
-+		record T1 FAIL "atomics signed lskel did not load"
-+	fi
-+
-+	if dmesg | grep -q 'ipe_op=BPF_PROG_LOAD ipe_hook=BPF_PROG_LOAD'; then
-+		record T2 PASS "ipe_op=BPF_PROG_LOAD audit line found"
-+	else
-+		record T2 FAIL "no ipe_op=BPF_PROG_LOAD audit lines in dmesg"
-+	fi
-+
-+	if dmesg | grep 'ipe_op=BPF_PROG_LOAD' \
-+		| grep -q 'bpf_signature=UNSIGNED action=DENY'; then
-+		record T3 PASS "deny-UNSIGNED rule matched"
-+	else
-+		record T3 FAIL "deny-UNSIGNED rule never matched"
-+	fi
-+
-+	mountpoint -q /sys/kernel/security 2>/dev/null \
-+		|| mount -t securityfs none /sys/kernel/security 2>/dev/null || true
-+	content=
-+	for d in /sys/kernel/security/ipe/policies/*/; do
-+		[ -d "$d" ] || continue
-+		if [ -r "$d/policy" ]; then
-+			content=$(cat "$d/policy" 2>/dev/null || true)
-+			break
-+		fi
-+	done
-+	if [ -z "$content" ]; then
-+		record T5 SKIP "could not read /sys/kernel/security/ipe/policies/*/policy"
-+	elif echo "$content" | grep -q '^op=BPF_PROG_LOAD_POST_INTEGRITY'; then
-+		record T5 PASS "post-integrity rule present in active policy"
-+	else
-+		record T5 FAIL "active policy does not contain a BPF_PROG_LOAD_POST_INTEGRITY rule"
-+	fi
-+
-+	ENFORCE=/sys/kernel/security/ipe/enforce
-+	mountpoint -q /sys/kernel/security 2>/dev/null \
-+		|| mount -t securityfs none /sys/kernel/security 2>/dev/null || true
-+
-+	if [ ! -w "$ENFORCE" ]; then
-+		record T4 SKIP "$ENFORCE not writable"
-+	elif ! echo 1 > "$ENFORCE" 2>/dev/null; then
-+		record T4 SKIP "could not toggle IPE to enforce=1"
-+	else
-+		out=$(./test_progs -t bind_perm 2>&1 || true)
-+		if echo "$out" | grep -q -- '-EACCES\|errno 13'; then
-+			record T4 PASS "unsigned load denied with -EACCES under enforce=1"
-+		else
-+			record T4 FAIL "no -EACCES seen from unsigned load under enforce=1"
-+			echo "$out" | tail -10 | sed 's/^/  T4: /'
-+		fi
-+		echo 0 > "$ENFORCE" 2>/dev/null || true
-+	fi
-+
-+	if [ "$fail" -eq 0 ]; then
-+		echo ALL_TESTS_PASSED
-+	else
-+		echo FAIL_COUNT "$fail"
-+	fi
-+	exit 0
-+fi
-+
-+set -euo pipefail
-+
-+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-+KERNEL_DIR=$(cd "$SCRIPT_DIR/../../../.." && pwd)
-+VMTEST="$SCRIPT_DIR/vmtest.sh"
-+
-+POLICY_PATH=${IPE_TEST_POLICY:-/tmp/ipe_bpf_test_policy}
-+
-+red()   { printf '\033[31m%s\033[0m\n' "$*"; }
-+green() { printf '\033[32m%s\033[0m\n' "$*"; }
-+bold()  { printf '\033[1m%s\033[0m\n' "$*"; }
-+
-+bold "=== IPE BPF policy integration tests ==="
-+
-+tmpfile=$(mktemp -p "$(dirname "$POLICY_PATH")" \
-+		  ".$(basename "$POLICY_PATH").XXXXXX")
-+cat > "$tmpfile" <<EOF
-+policy_name="ipe_bpf_test" policy_version=0.0.1
-+op=BPF_PROG_LOAD bpf_signature=OK                action=ALLOW
-+op=BPF_PROG_LOAD bpf_signature=UNSIGNED          action=DENY
-+op=BPF_PROG_LOAD_POST_INTEGRITY                  action=ALLOW
-+DEFAULT op=BPF_PROG_LOAD                         action=ALLOW
-+DEFAULT op=BPF_PROG_LOAD_POST_INTEGRITY          action=ALLOW
-+DEFAULT action=ALLOW
-+EOF
-+mv "$tmpfile" "$POLICY_PATH"
-+echo "policy written to $POLICY_PATH"
-+
-+export OUTPUT_DIR=${OUTPUT_DIR:-$HOME/.bpf_selftests_ipe}
-+CFG="$OUTPUT_DIR/latest.config"
-+mkdir -p "$OUTPUT_DIR"
-+if [ ! -f "$CFG" ]; then
-+	PLATFORM=$(uname -m)
-+	for src in "$KERNEL_DIR/tools/testing/selftests/bpf/config" \
-+		   "$KERNEL_DIR/tools/testing/selftests/bpf/config.vm" \
-+		   "$KERNEL_DIR/tools/testing/selftests/bpf/config.$PLATFORM"; do
-+		[ -f "$src" ] && cat "$src" >> "$CFG"
-+	done
-+fi
-+"$KERNEL_DIR/scripts/config" --file "$CFG" \
-+	--enable SECURITY_IPE \
-+	--enable IPE_PROP_BPF_SIGNATURE \
-+	--set-str IPE_BOOT_POLICY "$POLICY_PATH"
-+lsm=$("$KERNEL_DIR/scripts/config" --file "$CFG" --state LSM 2>/dev/null)
-+if [ -z "$lsm" ] || [ "$lsm" = "undef" ]; then
-+	"$KERNEL_DIR/scripts/config" --file "$CFG" --set-str LSM "bpf,ipe"
-+elif ! echo ",${lsm}," | grep -q ',ipe,'; then
-+	"$KERNEL_DIR/scripts/config" --file "$CFG" --set-str LSM "${lsm},ipe"
-+fi
-+touch "$CFG"
-+
-+RUN_OUT=$(mktemp -t ipe_test_run.XXXXXX)
-+trap 'rm -f "$RUN_OUT"' EXIT
-+export VMTEST_EXTRA_CMDLINE="ipe.enforce=0 ipe.success_audit=1"
-+"$VMTEST" -- ./test_signed_bpf_ipe.sh --in-vm 2>&1 | tee "$RUN_OUT"
-+
-+if grep -q 'ALL_TESTS_PASSED' "$RUN_OUT"; then
-+	green "=== all IPE policy integration tests PASSED ==="
-+	grep -E '^(PASS|FAIL|SKIP) T[0-9]+' "$RUN_OUT" || true
-+	exit 0
-+else
-+	red "=== IPE policy integration tests FAILED ==="
-+	grep -E '^(PASS|FAIL|SKIP) T[0-9]+' "$RUN_OUT" || true
-+	exit 1
-+fi
-diff --git a/tools/testing/selftests/bpf/vmtest.sh b/tools/testing/selftests/bpf/vmtest.sh
-index 2f869daf8a06..b30e2b359413 100755
---- a/tools/testing/selftests/bpf/vmtest.sh
-+++ b/tools/testing/selftests/bpf/vmtest.sh
-@@ -61,7 +61,7 @@ DEFAULT_COMMAND="./test_progs"
- MOUNT_DIR="mnt"
- LOCAL_ROOTFS_IMAGE=""
- ROOTFS_IMAGE="root.img"
--OUTPUT_DIR="$HOME/.bpf_selftests"
-+OUTPUT_DIR="${OUTPUT_DIR:-$HOME/.bpf_selftests}"
- KCONFIG_REL_PATHS=("tools/testing/selftests/bpf/config"
- 	"tools/testing/selftests/bpf/config.vm"
- 	"tools/testing/selftests/bpf/config.${PLATFORM}")
-@@ -294,7 +294,7 @@ EOF
- 		-m 4G \
- 		-drive file="${rootfs_img}",format=raw,index=1,media=disk,if=virtio,cache=none \
- 		-kernel "${kernel_bzimage}" \
--		-append "root=/dev/vda rw console=${QEMU_CONSOLE}"
-+		-append "root=/dev/vda rw console=${QEMU_CONSOLE} ${VMTEST_EXTRA_CMDLINE:-}"
- }
- 
- copy_logs()
--- 
-2.53.0
-
+--=20
+paul-moore.com
