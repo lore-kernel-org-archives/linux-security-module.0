@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12197310651;
-	Fri, 22 May 2026 02:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E1F311969;
+	Fri, 22 May 2026 02:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779417163; cv=none; b=lfEf0a+Ei5JeoVLWxPPIPYAbu2oga13msPryq497AyTI+ttz0GyIROVYDi78hvhX98xbSmlhdD7xbwbnTaT4MRoDzclJzkFdZ4YJWYHNraexTM/LOeXYVifrXlnZAn7/WJVOQjkEgPi/Baz1MlVkQ1KCiws11PIEMyqGv7pL9QM=
+	t=1779417165; cv=none; b=RAHRcxS8y1BJoBtTGw/VF1NVlKCsR9/r7IWUez+AUf6ePybywBy45cuGfQJOAf4FDEQcHoIkBBMDR+aQtHCUnGvrT0x+TawiMNm7QHHwFl8Bf3iK7GA/lMgJEyswwUcqMlX7kJ6cvp59zwhhAr1LwZ78IqId1/zFUuh7KZrpnRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779417163; c=relaxed/simple;
-	bh=/1S6kTTpiq+atZi7BmLhEq2RSmMbRmRP0cRoe7WbVfw=;
+	s=arc-20240116; t=1779417165; c=relaxed/simple;
+	bh=ox3NwoY8hYsenj5Vw6ksn7w4vO0OZ/gwqo2mrfqtpFg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TElHvkRLBT89IG4/QCzwLLOFWh1Yk+ICwEtLfyRUDRcSdnwh44v9xxuXpLD8kwvzSVggQPIM4C9OG5Js86sgXyocoRwsd3i6WR3xZi/itFMCQjZiAw9FV/MiNywYpG1WdMXIFMEv1a0ImlsIaec8wi4NKOtSkqKEs84B+NFSe44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZMdsIn8I; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version; b=qR/OOyb+kRrFfFI0VNYVhWy75psVyBxBNuIvf0LxeuZvc51oN1hGm2wN6bUtU8dlADwMkZGFrSEvnU95FO1iQ0sbvyx3QW0chn7ZrewjJ8zvBNlRGimrz5O+YR5V7SrrOFBFWA9l08bGxee2CQn7soVXIFCcnbE70VBDuQuMwT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C8zEuwJC; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZMdsIn8I"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48D0F1F000E9;
-	Fri, 22 May 2026 02:32:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C8zEuwJC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 356021F00A3D;
+	Fri, 22 May 2026 02:32:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779417161;
-	bh=ttamW1ksl8Wv9KlaHuSdcczarxSX0ini4s/BXsHg/QE=;
+	s=k20260515; t=1779417163;
+	bh=PFHR39TgzypNAcr42X6/YPw7VXLaKpTiRBiY1gZpkRQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ZMdsIn8IXarpjRH/0iruC5PxJ/7VOYm8iwZpOnzp6qSXsRoGVbqWS1AxtmpEAKzs/
-	 pgFKvaWxBZ0RnlE5iGcxmJ73up5sDzzURb99ezciyi0L/w4qgsCDi1MazC8dJgkfjJ
-	 jKRu74DSYVABmtyaC6YFYuoaxNM/BP2O2i4r+XOxGTUzLZHq60FlrQpGWHRz/5+NAo
-	 ypPm3cDTgYdZIwe1OFrNBJ1lSWKDWw8I9Ft0RIQRaLlcB0eeahAS4d/xosKxRmdyQs
-	 B3sV7Jwn9gzHqvYqLLM2O6Iu/6uQJx1va0CvoBSN8+xKOXSU46prNvDyZu8rSHuxQt
-	 +9QPS3a9na79w==
+	b=C8zEuwJC0CRT5DxgG6dwYoHOyX/8xW8yfNJDeessbw0zl7dni7rjiuzzpqMKOx3CV
+	 k936Bg1p6gQB//EVkDszbriYHCpChTGuPiIC6/gePDVTiyv0mL1BkZM6r4bkgvcrpz
+	 2wVM0mHB+xrTlW0PH2WM1ZevdrKxpDGy4fYCQ8B4x4XO0Zx7p5WwpSP6wHNra66RlP
+	 Bc1jF1rXR7W0G6MXkd5QikN7IXq1QXgJcju8pVke7AeyISNWoJjOaYw3xCu+xIIyfC
+	 raBd1qemLpUvNkbCQohUJHqrzzgOM7GJv6Itl/mA/8V9bPAaOdp8mOOuAQcF7q7lUv
+	 aRb09v9s6pjaA==
 From: KP Singh <kpsingh@kernel.org>
 To: linux-security-module@vger.kernel.org,
 	bpf@vger.kernel.org
@@ -35,9 +35,9 @@ Cc: ast@kernel.org,
 	James.Bottomley@HansenPartnership.com,
 	paul@paul-moore.com,
 	KP Singh <kpsingh@kernel.org>
-Subject: [PATCH bpf-next 02/13] bpf: include prog BTF in the signed loader signature scope
-Date: Fri, 22 May 2026 04:32:22 +0200
-Message-ID: <20260522023234.3778588-3-kpsingh@kernel.org>
+Subject: [PATCH bpf-next 03/13] bpf, libbpf: load prog BTF in the skel_internal loader
+Date: Fri, 22 May 2026 04:32:23 +0200
+Message-ID: <20260522023234.3778588-4-kpsingh@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260522023234.3778588-1-kpsingh@kernel.org>
 References: <20260522023234.3778588-1-kpsingh@kernel.org>
@@ -49,184 +49,118 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-bpf_prog_verify_signature hashes only prog->insnsi, so FUNC names
-in prog BTF are not covered by the signature. Since we need to
-support kfuncs for loader programs with prog BTF information, the
-signature needs to cover BTF so that it can be trusted.
+bpf_load_and_run loads only the loader insns and the metadata map.
+To match the kernel's extended signature scope (insns || btf), the
+loader needs to BPF_BTF_LOAD the prog BTF before BPF_PROG_LOAD so
+attr->prog_btf_fd can be filled in.
 
-When attr->prog_btf_fd is set, build the verify dynptr over
-insns || raw_btf so the signature covers both. Fall back to insns-only
-otherwise so existing signed lskels keep loading. Hoist the
-prog_btf_fd resolution into bpf_prog_load so the BTF is available
-before signature verification.
+Add btf and btf_sz to bpf_load_and_run_opts; when set, do the
+BPF_BTF_LOAD before BPF_PROG_LOAD and pass the resulting fd as
+attr->prog_btf_fd.
 
 Signed-off-by: KP Singh <kpsingh@kernel.org>
 ---
- include/linux/btf.h    |  1 +
- kernel/bpf/btf.c       |  8 +++++++
- kernel/bpf/check_btf.c | 18 +++-------------
- kernel/bpf/syscall.c   | 49 +++++++++++++++++++++++++++++++++++++-----
- 4 files changed, 56 insertions(+), 20 deletions(-)
+ tools/lib/bpf/skel_internal.h | 44 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 43 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/btf.h b/include/linux/btf.h
-index 48108471c5b1..ab1fe7c8df20 100644
---- a/include/linux/btf.h
-+++ b/include/linux/btf.h
-@@ -216,6 +216,7 @@ int btf_type_snprintf_show(const struct btf *btf, u32 type_id, void *obj,
- int btf_get_fd_by_id(u32 id);
- u32 btf_obj_id(const struct btf *btf);
- bool btf_is_kernel(const struct btf *btf);
-+const void *btf_get_raw_data(const struct btf *btf, u32 *data_size);
- bool btf_is_module(const struct btf *btf);
- bool btf_is_vmlinux(const struct btf *btf);
- struct module *btf_try_get_module(const struct btf *btf);
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index a62d78581207..6f1d9b3ba6a3 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -8322,11 +8322,19 @@ u32 btf_obj_id(const struct btf *btf)
- 	return READ_ONCE(btf->id);
+diff --git a/tools/lib/bpf/skel_internal.h b/tools/lib/bpf/skel_internal.h
+index 6a8f5c7a02eb..0b6b1ecedd45 100644
+--- a/tools/lib/bpf/skel_internal.h
++++ b/tools/lib/bpf/skel_internal.h
+@@ -11,6 +11,8 @@
+ #include <linux/bpf.h>
+ #else
+ #include <unistd.h>
++#include <fcntl.h>
++#include <errno.h>
+ #include <sys/syscall.h>
+ #include <sys/mman.h>
+ #include <linux/keyctl.h>
+@@ -66,8 +68,10 @@ struct bpf_load_and_run_opts {
+ 	struct bpf_loader_ctx *ctx;
+ 	const void *data;
+ 	const void *insns;
++	const void *btf;
+ 	__u32 data_sz;
+ 	__u32 insns_sz;
++	__u32 btf_sz;
+ 	const char *errstr;
+ 	void *signature;
+ 	__u32 signature_sz;
+@@ -88,6 +92,22 @@ static inline int skel_sys_bpf(enum bpf_cmd cmd, union bpf_attr *attr,
+ #endif
  }
  
-+const void *btf_get_raw_data(const struct btf *btf, u32 *data_size)
++#ifndef __KERNEL__
++static inline int skel_sys_btf_load(union bpf_attr *attr, unsigned int size)
 +{
-+	if (data_size)
-+		*data_size = btf->data_size;
-+	return btf->data;
++	int fd;
++
++	fd = skel_sys_bpf(BPF_BTF_LOAD, attr, size);
++	if (fd >= 0 && fd < 3) {
++		int new_fd = fcntl(fd, F_DUPFD_CLOEXEC, 3);
++
++		close(fd);
++		fd = new_fd;
++	}
++	return fd;
 +}
++#endif
 +
- bool btf_is_kernel(const struct btf *btf)
+ #ifdef __KERNEL__
+ static inline int close(int fd)
  {
- 	return btf->kernel_btf;
- }
+@@ -353,8 +373,9 @@ static inline int skel_map_freeze(int fd)
+ static inline int bpf_load_and_run(struct bpf_load_and_run_opts *opts)
+ {
+ 	const size_t prog_load_attr_sz = offsetofend(union bpf_attr, keyring_id);
++	const size_t btf_load_attr_sz = offsetofend(union bpf_attr, btf_token_fd);
+ 	const size_t test_run_attr_sz = offsetofend(union bpf_attr, test);
+-	int map_fd = -1, prog_fd = -1, key = 0, err;
++	int map_fd = -1, prog_fd = -1, btf_fd = -1, key = 0, err;
+ 	union bpf_attr attr;
  
-+
- bool btf_is_module(const struct btf *btf)
- {
- 	return btf->kernel_btf && strcmp(btf->name, "vmlinux") != 0;
-diff --git a/kernel/bpf/check_btf.c b/kernel/bpf/check_btf.c
-index 93bebe6fe12e..c52cc859abac 100644
---- a/kernel/bpf/check_btf.c
-+++ b/kernel/bpf/check_btf.c
-@@ -411,28 +411,16 @@ int bpf_check_btf_info_early(struct bpf_verifier_env *env,
- 			     const union bpf_attr *attr,
- 			     bpfptr_t uattr)
- {
--	struct btf *btf;
--	int err;
--
- 	if (!attr->func_info_cnt && !attr->line_info_cnt) {
- 		if (check_abnormal_return(env))
- 			return -EINVAL;
- 		return 0;
+ 	err = map_fd = skel_map_create(BPF_MAP_TYPE_ARRAY, "__loader.map", 4, opts->data_sz, 1,
+@@ -387,11 +408,30 @@ static inline int bpf_load_and_run(struct bpf_load_and_run_opts *opts)
  	}
+ #endif
  
--	btf = btf_get_by_fd(attr->prog_btf_fd);
--	if (IS_ERR(btf))
--		return PTR_ERR(btf);
--	if (btf_is_kernel(btf)) {
--		btf_put(btf);
--		return -EACCES;
--	}
--	env->prog->aux->btf = btf;
-+	if (env->prog->aux->btf)
-+		return check_btf_func_early(env, attr, uattr);
- 
--	err = check_btf_func_early(env, attr, uattr);
--	if (err)
--		return err;
--	return 0;
-+	return -EINVAL;
- }
- 
- int bpf_check_btf_info(struct bpf_verifier_env *env,
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 51fe8d77bb39..6d1db5eaad3c 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -2816,9 +2816,11 @@ static int bpf_prog_verify_signature(struct bpf_prog *prog, union bpf_attr *attr
- 				     bool is_kernel)
- {
- 	bpfptr_t usig = make_bpfptr(attr->signature, is_kernel);
--	struct bpf_dynptr_kern sig_ptr, insns_ptr;
-+	struct bpf_dynptr_kern sig_ptr, data_ptr;
- 	struct bpf_key *key = NULL;
--	void *sig;
-+	u32 insns_sz, btf_sz = 0;
-+	const void *btf_data = NULL;
-+	void *sig, *data = NULL;
- 	int err = 0;
- 
- 	/*
-@@ -2842,14 +2844,34 @@ static int bpf_prog_verify_signature(struct bpf_prog *prog, union bpf_attr *attr
- 		return PTR_ERR(sig);
- 	}
- 
-+	insns_sz = prog->len * sizeof(struct bpf_insn);
-+
-+	if (prog->aux->btf)
-+		btf_data = btf_get_raw_data(prog->aux->btf, &btf_sz);
-+
-+	if (bpf_dynptr_check_size(insns_sz + btf_sz)) {
-+		err = -E2BIG;
-+		goto out;
++#ifndef __KERNEL__
++	if (opts->btf && opts->btf_sz) {
++		memset(&attr, 0, btf_load_attr_sz);
++		attr.btf = (long) opts->btf;
++		attr.btf_size = opts->btf_sz;
++		attr.btf_log_level = opts->ctx->log_level;
++		attr.btf_log_size = opts->ctx->log_size;
++		attr.btf_log_buf = opts->ctx->log_buf;
++		err = btf_fd = skel_sys_btf_load(&attr, btf_load_attr_sz);
++		if (btf_fd < 0) {
++			opts->errstr = "failed to load loader BTF";
++			set_err;
++			goto out;
++		}
 +	}
-+	data = kvmalloc(insns_sz + btf_sz, GFP_KERNEL);
-+	if (!data) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+	memcpy(data, prog->insnsi, insns_sz);
-+	if (btf_sz)
-+		memcpy(data + insns_sz, btf_data, btf_sz);
++#endif
 +
-+	bpf_dynptr_init(&data_ptr, data, BPF_DYNPTR_TYPE_LOCAL, 0,
-+			insns_sz + btf_sz);
- 	bpf_dynptr_init(&sig_ptr, sig, BPF_DYNPTR_TYPE_LOCAL, 0,
- 			attr->signature_size);
--	bpf_dynptr_init(&insns_ptr, prog->insnsi, BPF_DYNPTR_TYPE_LOCAL, 0,
--			prog->len * sizeof(struct bpf_insn));
- 
--	err = bpf_verify_pkcs7_signature((struct bpf_dynptr *)&insns_ptr,
-+	err = bpf_verify_pkcs7_signature((struct bpf_dynptr *)&data_ptr,
- 					 (struct bpf_dynptr *)&sig_ptr, key);
- 
-+out:
-+	kvfree(data);
- 	bpf_key_put(key);
- 	kvfree(sig);
+ 	memset(&attr, 0, prog_load_attr_sz);
+ 	attr.prog_type = BPF_PROG_TYPE_SYSCALL;
+ 	attr.insns = (long) opts->insns;
+ 	attr.insn_cnt = opts->insns_sz / sizeof(struct bpf_insn);
+ 	attr.license = (long) "Dual BSD/GPL";
++	if (btf_fd >= 0)
++		attr.prog_btf_fd = btf_fd;
+ #ifndef __KERNEL__
+ 	attr.signature = (long) opts->signature;
+ 	attr.signature_size = opts->signature_sz;
+@@ -437,6 +477,8 @@ static inline int bpf_load_and_run(struct bpf_load_and_run_opts *opts)
+ 		close(map_fd);
+ 	if (prog_fd >= 0)
+ 		close(prog_fd);
++	if (btf_fd >= 0)
++		close(btf_fd);
  	return err;
-@@ -3037,6 +3059,21 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
- 	/* eBPF programs must be GPL compatible to use GPL-ed functions */
- 	prog->gpl_compatible = license_is_gpl_compatible(license) ? 1 : 0;
+ }
  
-+	if (attr->prog_btf_fd) {
-+		struct btf *btf = btf_get_by_fd(attr->prog_btf_fd);
-+
-+		if (IS_ERR(btf)) {
-+			err = PTR_ERR(btf);
-+			goto free_prog;
-+		}
-+		if (btf_is_kernel(btf)) {
-+			btf_put(btf);
-+			err = -EACCES;
-+			goto free_prog;
-+		}
-+		prog->aux->btf = btf;
-+	}
-+
- 	if (attr->signature) {
- 		err = bpf_prog_verify_signature(prog, attr, uattr.is_kernel);
- 		if (err)
-@@ -3148,6 +3185,8 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
- 	free_uid(prog->aux->user);
- 	if (prog->aux->attach_btf)
- 		btf_put(prog->aux->attach_btf);
-+	if (prog->aux->btf)
-+		btf_put(prog->aux->btf);
- 	bpf_prog_free(prog);
- put_token:
- 	bpf_token_put(token);
 -- 
 2.53.0
 
