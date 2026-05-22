@@ -1,46 +1,46 @@
 Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747AF34E75D;
-	Fri, 22 May 2026 21:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67BED38C2B8;
+	Fri, 22 May 2026 21:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779484871; cv=none; b=DlOcEz+pJDshyiJ3j99Cy+hUV11cbeRFf1vLgjsK6CUFAC94E+PJ/gfeghtRcFRqSwQBzzxRT13GTXXOFyEorHLGGbZbHBdkZIv1e/kgXtb7YhITTvzgHRqeXHcOjT/6w/qfYHACE5OqesmS9Hm5LjOGyspXabwhDlTMNqLH0vE=
+	t=1779486277; cv=none; b=XyKJ6LgsC2UUyWAdqi0UBneuQ3Syzb+Ds1pWfC9/rU8t1pOwYeDsrMqfxbEssdgklmSMiN8jG8HE/Xs2EacuKNXVY39W84i7Kt4l9sRl6IxBCPoJm+t2UZYhGE0uVfEzwE9zfwhJoCCkIh39RxYUwVdrjrZAFjp9VdefYNESFYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779484871; c=relaxed/simple;
-	bh=KX+UGJxvACTM0XgxhWcXHcJQR/Qgp9qgAFdqLjEC4eo=;
+	s=arc-20240116; t=1779486277; c=relaxed/simple;
+	bh=6B49KJeSmyDlaJsaYT7PxMnukkQ2VTElGL9lgXPtWnc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oEpMAW7qTuPJSwZF/5PvSaEWqSDu94dnSXgGMjTJUiLcC3eQ/MyjWuxIbG3qhy/UHZHkBV069aSc3ZkK15lnHufGB+vWGgSpwg1ykiS/ziSENMPy4QtJ3r4alg7aYAIbnFs07iFXsTuKElrATaDGtysNourFE8cc1BJh0ilmgfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=K8urikE/; arc=none smtp.client-ip=213.133.104.62
+	 In-Reply-To:Content-Type; b=qmfGUs0AxRWBqFQmg4UipeiuKgc035iaZj9gLDP0ytLGefCl/bpXUGmk1YJ1KKTNhf7B/AnfNy1dh3F/8ASXyTvlucamvbgsbubA0Eghe1aGTcgDI+ZBXVBKsr0/BcGHR91pwcqfYAE55oAUGoGncdccCX+Ct/GxrtlYQHfHjTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=N81vJOAn; arc=none smtp.client-ip=213.133.104.62
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="K8urikE/"
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="N81vJOAn"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
 	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
 	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=8UdR20fVEbdrOYeVfjj1eEdjlIDyN73OPZeHlIip6fg=; b=K8urikE/ondsbqWeQ1JLSXAtpn
-	fUeOu/LzCGtS3G0qeEgxou5+VKmS2zHawD+xUUurcoPXQALEwOcc3xp3ZqnaiMc1Wg4h6Jt7Se03H
-	ALgGvOiege7SzonPiphDDRDZPwnEg8ue/CLvQhVEo71d9fGoH6wdMsiaZL/FmtBZpXo85gtFT0hAz
-	Xw1nxHcAmuJqvKQBnpKyhjJ5H8fVaCuGItrdk8ewves321PBqIqY7xRubbBd99wDxTXdztIrUGgrE
-	/LLflo7IOtgupo+I1nN/XtPl/Ru8p5vplToZX3/ORyDrWSD4N8lcUvBYrcNrXdDsSgRp0USe+CF4P
-	DSVh0iCQ==;
-Received: from sslproxy01.your-server.de ([78.46.139.224])
+	bh=gzMDsSQkmv9gwI+vWdybfZph3FTIubmd34fX4WDQhgU=; b=N81vJOAnhY3CINF65PRXIN/l+u
+	DoTtDYa9hN5q10bPZMr1dkEqkTnpa4K1JTWojkYWrVL8Zo84A6SESptx1xC5g+jybrz6L5WjbhfNb
+	H7mwLzi506lVax+eNPCii2HcdFU3kSEclH+BEqRkcBJmX9hBXiGEMTC9dJktcuTWGBwtd3X97eomB
+	20+SsLrg/d+urmHG1z14QLDHulMOouxUjBCHXyDu+2TCJhuY61twKBUetWoyav4M5OWG9+lJxrp8z
+	a66SZpiSHlqz7y0HHNLyLXSlNiZ2EcVaWfqBkXkxduiDpVwU8Nops2GbxDXspWpEAdFDgWkExUDZs
+	uzV+XVfw==;
+Received: from sslproxy06.your-server.de ([78.46.172.3])
 	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <daniel@iogearbox.net>)
-	id 1wQXIn-000KvG-1f;
-	Fri, 22 May 2026 23:21:05 +0200
+	id 1wQXfV-000Mtj-0E;
+	Fri, 22 May 2026 23:44:33 +0200
 Received: from localhost ([127.0.0.1])
-	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <daniel@iogearbox.net>)
-	id 1wQXIn-000Gv6-0T;
-	Fri, 22 May 2026 23:21:05 +0200
-Message-ID: <a9345efb-b691-4fc1-9bad-d571bd324c25@iogearbox.net>
-Date: Fri, 22 May 2026 23:21:04 +0200
+	id 1wQXfU-0009aR-0O;
+	Fri, 22 May 2026 23:44:32 +0200
+Message-ID: <dcc02e2d-58dd-46eb-9b72-54cd8465fb64@iogearbox.net>
+Date: Fri, 22 May 2026 23:44:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -48,13 +48,13 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] libbpf: fix off-by-one in emit_signature_match
- jump offset
+Subject: Re: [PATCH v2 2/2] bpf, libbpf: reject non-exclusive metadata maps in
+ the signed loader
 To: KP Singh <kpsingh@kernel.org>, bpf@vger.kernel.org,
  linux-security-module@vger.kernel.org
 Cc: ast@kernel.org, memxor@gmail.com
 References: <20260521152217.2345235-1-kpsingh@kernel.org>
- <20260521152217.2345235-2-kpsingh@kernel.org>
+ <20260521152217.2345235-3-kpsingh@kernel.org>
 Content-Language: en-US
 From: Daniel Borkmann <daniel@iogearbox.net>
 Autocrypt: addr=daniel@iogearbox.net; keydata=
@@ -100,55 +100,89 @@ Autocrypt: addr=daniel@iogearbox.net; keydata=
  rUD9YI1Je/WifL/HbIubHCCdK8/N7rblgUrZJMG3W+7vAvZsOh/6VTZeP4wCe7Gs/cJhE2gI
  DmGcR+7rQvbFQC4zQxEjo8fNaTwjpzLM9NIp4vG9SDIqAm20MXzLBAeVkofixCsosUWUODxP
  owLbpg7pFRJGL9YyEHpS7MGPb3jSLzucMAFXgoI8rVqoq6si2sxr2l0VsNH5o3NgoAgJNIg=
-In-Reply-To: <20260521152217.2345235-2-kpsingh@kernel.org>
+In-Reply-To: <20260521152217.2345235-3-kpsingh@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Virus-Scanned: Clear (ClamAV 1.4.3/28008/Fri May 22 08:24:46 2026)
 
 On 5/21/26 5:22 PM, KP Singh wrote:
-> The offset for the cleanup-label jump is computed before the MOV R7
-> instruction is emitted, but the JMP lands after it. Account for the
-> extra insn in the offset calculation (-2 instead of -1). Drop the
-> redundant self-loop in the else branch; gen->error = -ERANGE already
-> marks the generation as failed.
+> The loader verifies map->sha against the metadata hash in its
+> instructions. map->sha is calculated when BPF_OBJ_GET_INFO_BY_FD is called
+> on the frozen map.
+> 
+> While the map is frozen, the loader must also ensure the map is
+> exclusive, as, without exclusivity, another BPF program with map access
+> can mutate the contents afterwards, so the check passes on stale data.
+> 
+> Place excl_prog_sha right after sha[] in struct bpf_map and have
+> gen_loader bail with -EINVAL when it is NULL, via BPF_PSEUDO_MAP_IDX at
+> fixed offset 32. Declare excl_prog_sha with __bpf_md_ptr so the
+> 8-byte BPF_LDX_MEM read works on 32-bit kernels.
 > 
 > Fixes: fb2b0e290147 ("libbpf: Update light skeleton for signing")
-
-Fixes: ea923080c145 ("libbpf: Embed and verify the metadata hash in the loader")
-
-The fb2b0e290147 does not touch emit_signature_match as pointed out.
-
 > Signed-off-by: KP Singh <kpsingh@kernel.org>
-
-Other than that, lgtm:
-
-Acked-by: Daniel Borkmann <daniel@iogearbox.net>
-
 > ---
->   tools/lib/bpf/gen_loader.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
+>   include/linux/bpf.h                              |  2 +-
+>   tools/lib/bpf/gen_loader.c                       | 16 ++++++++++++++++
+>   .../selftests/bpf/progs/verifier_map_ptr.c       | 10 ++++++----
+>   3 files changed, 23 insertions(+), 5 deletions(-)
 > 
+> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> index cd191c5fdb0a..ea9bd24f82c0 100644
+> --- a/include/linux/bpf.h
+> +++ b/include/linux/bpf.h
+> @@ -295,6 +295,7 @@ struct bpf_map_owner {
+>   
+>   struct bpf_map {
+>   	u8 sha[SHA256_DIGEST_SIZE];
+> +	__bpf_md_ptr(char *, excl_prog_sha);
+>   	const struct bpf_map_ops *ops;
+>   	struct bpf_map *inner_map_meta;
+>   #ifdef CONFIG_SECURITY
+> @@ -335,7 +336,6 @@ struct bpf_map {
+>   	atomic64_t sleepable_refcnt;
+>   	s64 __percpu *elem_count;
+>   	u64 cookie; /* write-once */
+> -	char *excl_prog_sha;
+>   };
+>   
+>   static inline const char *btf_field_type_name(enum btf_field_type type)
 > diff --git a/tools/lib/bpf/gen_loader.c b/tools/lib/bpf/gen_loader.c
-> index cd5c2543f54d..9478b8f78f26 100644
+> index 9478b8f78f26..fee35c26deb8 100644
 > --- a/tools/lib/bpf/gen_loader.c
 > +++ b/tools/lib/bpf/gen_loader.c
-> @@ -592,13 +592,12 @@ static void emit_signature_match(struct bpf_gen *gen)
->   		gen->hash_insn_offset[i] = gen->insn_cur - gen->insn_start;
->   		emit2(gen, BPF_LD_IMM64_RAW_FULL(BPF_REG_3, 0, 0, 0, 0, 0));
->   
-> -		off =  -(gen->insn_cur - gen->insn_start - gen->cleanup_label) / 8 - 1;
-> +		off = -(gen->insn_cur - gen->insn_start - gen->cleanup_label) / 8 - 2;
->   		if (is_simm16(off)) {
->   			emit(gen, BPF_MOV64_IMM(BPF_REG_7, -EINVAL));
->   			emit(gen, BPF_JMP_REG(BPF_JNE, BPF_REG_2, BPF_REG_3, off));
->   		} else {
+> @@ -600,6 +600,22 @@ static void emit_signature_match(struct bpf_gen *gen)
 >   			gen->error = -ERANGE;
-> -			emit(gen, BPF_JMP_IMM(BPF_JA, 0, 0, -1));
-
-It would make sense to move this into a separate commit, and then also clean
-up the same in emit_check_err() in one go?
-
 >   		}
 >   	}
->   }
+> +
+> +	/* Reject if the metadata map is not exclusive. Without exclusivity
+> +	 * the cached map->sha[] verified above can be stale: another BPF
+> +	 * program with map access could have mutated the contents between
+> +	 * BPF_OBJ_GET_INFO_BY_FD and loader execution.
+> +	 */
 
+We could probably add sth like this somewhere in the bpf kernel side :
+
+         /* See: emit_signature_match() in tools/lib/bpf/gen_loader.c */
+         BUILD_BUG_ON(offsetof(struct bpf_map, sha) != 0);
+         BUILD_BUG_ON(offsetof(struct bpf_map, excl_prog_sha) != SHA256_DIGEST_SIZE);
+         BUILD_BUG_ON(sizeof_field(struct bpf_map, excl_prog_sha) != sizeof(__u64));
+
+> +	emit2(gen, BPF_LD_IMM64_RAW_FULL(BPF_REG_1, BPF_PSEUDO_MAP_IDX,
+> +					 0, 0, 0, 0));
+> +	emit(gen, BPF_LDX_MEM(BPF_DW, BPF_REG_2, BPF_REG_1, SHA256_DWORD_SIZE * sizeof(__u64)));
+
+nit: SHA256_DWORD_SIZE is SHA256_DIGEST_LENGTH / sizeof(__u64), can we just use
+      SHA256_DIGEST_LENGTH ?
+
+> +	off = -(gen->insn_cur - gen->insn_start - gen->cleanup_label) / 8 - 2;
+> +	if (is_simm16(off)) {
+> +		emit(gen, BPF_MOV64_IMM(BPF_REG_7, -EINVAL));
+> +		emit(gen, BPF_JMP_IMM(BPF_JEQ, BPF_REG_2, 0, off));
+> +	} else {
+> +		gen->error = -ERANGE;
+> +	}
+>   }
+>   
+>   void bpf_gen__record_attach_target(struct bpf_gen *gen, const char *attach_name,
