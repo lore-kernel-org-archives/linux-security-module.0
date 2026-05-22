@@ -1,43 +1,43 @@
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2911027AC31
-	for <linux-security-module@vger.kernel.org>; Fri, 22 May 2026 21:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFCD1225788
+	for <linux-security-module@vger.kernel.org>; Fri, 22 May 2026 21:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779484283; cv=none; b=LcpksOfmmJo4VH+Ix10CEJ7Y36Cu4G/oVS7PBIaUv9/7mU7gX1azealIpuIxde5/Ox4SxqvOQehCgrlqPZ2VtZAIlInk35ZwXpdRCljtrBQGMXshNkErup10QhS3s3CLgAx1zBNDasK6A9wFEUxMHtGjM8+gjM5rm4tOFWHVCkE=
+	t=1779484599; cv=none; b=LeCIRAw9UufHfi/o1gGavbTZc9iPWutjRlGtKZAahXSTJuPt7UophsBqnCo8EpXOrmbwUyl49t9cgR7xol6ML64+KfPsF+2GLUAzXOz7AEmRpt30V5wxRnITS1+blhlUiZ9BtaN4uFYOyr2B4K1T7i/5EsL1k5eggj7t0MKV9J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779484283; c=relaxed/simple;
-	bh=h2GFs1INwVAMS2sqRnj9t3IUItHFsf2ChtRROEDhMw8=;
+	s=arc-20240116; t=1779484599; c=relaxed/simple;
+	bh=1NBAGMqZSxE6KPNyiTXQbGmjAAYbhI49dLJb2u3kCHg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FXcWtQcQ+sbFRcWYydx7y8746BnjnlIyaBCkFSiLwRpV4sKB3MK8AdlsfwQevAYKOR+9UQ0JbwVqjTwk7IP1CD/Gurxvv/EMx4jWhPEXC9p+wBv8vb6Zm/QzEWmn2KezUp5+jiVO/tIxOZ1SCTN0n7tVZOJJejw6irZUEXbcJaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=saTeML+n; arc=none smtp.client-ip=185.125.25.10
+	 Content-Type:Content-Disposition:In-Reply-To; b=qXlxthugTTKXRWt4GYfDgxy28Q/4bxn9Qsi0efDoRlWxsj3MYcjBqykFqak571QgX+NmNOaWQIZUR3EG8luHJBFuD28/sZv0pQ9ghrjYR5fG4LFWMjRpGdipFrWfR5027xPdPo4HesD4xqmxHth8pacd0aXj8QVuQDbs9VJh4IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=NjXxJjy9; arc=none smtp.client-ip=84.16.66.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="saTeML+n"
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gMdHP3bnJz9RW;
-	Fri, 22 May 2026 23:11:13 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="NjXxJjy9"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gMdGN2k27zrPx;
+	Fri, 22 May 2026 23:10:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1779484273;
-	bh=FwPqpug3mhni2511ExYt2r69AMlAupYN5pc73wELsto=;
+	s=20191114; t=1779484220;
+	bh=ZPSXiynGA0vhXn9kvmqPudDBcHCUdcRnayzOKtuO5AI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=saTeML+nuZCuAyauazFcabFoMzaeykq4Qd4aOnXSEMOjb4LIOkDZ3TfN8NXU1M9G7
-	 2sG5TH+n3fVq2+v2six5/7P+qpLzPV8ZGsHwpu3EqPNsTexpKoUvnbx8ILn5uLCJkq
-	 dbu5285sJ02D2i+iB+HcsU4gqe5GAmqTFEwC/sw8=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4gMdHN58qdzmTp;
-	Fri, 22 May 2026 23:11:12 +0200 (CEST)
-Date: Fri, 22 May 2026 23:11:11 +0200
+	b=NjXxJjy9q8B24g321FB5yOWAb0jghqdewVm2/ODH8ISdO+uxJ5V7lek4ySA7Unb0D
+	 kdVQe4FgAc/LM/rxnP8hzY6CYW9GnnGvZBJ/18YHu7FvTgfaTQngInRQQRMzRKpXzD
+	 U9Nwwq/iy9EHiP7Hj5Mudt49okWpsOvxV8N0HAOw=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4gMdGM5FTMzNfL;
+	Fri, 22 May 2026 23:10:19 +0200 (CEST)
+Date: Fri, 22 May 2026 23:10:17 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 To: Matthieu Buffet <matthieu@buffet.re>
 Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
 	linux-security-module@vger.kernel.org, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
 	konstantin.meskhidze@huawei.com, Tingmao Wang <m@maowtm.org>, netdev@vger.kernel.org
-Subject: Re: [PATCH v4 7/7] landlock: Add documentation for UDP support
-Message-ID: <20260522.ieng0AeLahx1@digikod.net>
+Subject: Re: [PATCH v4 2/7] landlock: Add UDP connect() access control
+Message-ID: <20260522.reif5feiX0Ce@digikod.net>
 References: <20260502124306.3975990-1-matthieu@buffet.re>
- <20260502124306.3975990-8-matthieu@buffet.re>
+ <20260502124306.3975990-3-matthieu@buffet.re>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -46,188 +46,275 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260502124306.3975990-8-matthieu@buffet.re>
+In-Reply-To: <20260502124306.3975990-3-matthieu@buffet.re>
 X-Infomaniak-Routing: alpha
 
-On Sat, May 02, 2026 at 02:43:06PM +0200, Matthieu Buffet wrote:
-> Add example of UDP usage, without detailing the two access right.
-> Slightly change the example used in code blocks: build a ruleset for a
-> DNS client, so that it uses both TCP and UDP.
+On Sat, May 02, 2026 at 02:43:01PM +0200, Matthieu Buffet wrote:
+> Add support for a second fine-grained UDP access right.
+> This first half of LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP controls the
+> ability to set the remote port of a socket (via connect()). It will be
+> useful for applications that send datagrams, and for some servers too
+> (those creating per-client sockets, which want to receive traffic only
+> from a specific address).
+> 
+> Similarly as for bind(), this access control is performed when
+> configuring sockets, not in hot code paths.
+> 
+> Include detection of when autobind is about to be required, and check if
+> the process would be allowed to call bind(0) explicitly. Autobind can
+> only be performed when sending a first datagram, when connect()ing, and
+> in some splice() EOF edge case which, afaiu, can only happen after a
+> remote peer has been set (which is already covered).
 > 
 > Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
 > ---
->  Documentation/userspace-api/landlock.rst | 89 ++++++++++++++++++------
->  1 file changed, 68 insertions(+), 21 deletions(-)
+>  include/uapi/linux/landlock.h               | 19 +++++
+>  security/landlock/audit.c                   |  2 +
+>  security/landlock/limits.h                  |  2 +-
+>  security/landlock/net.c                     | 79 +++++++++++++++++----
+>  tools/testing/selftests/landlock/net_test.c |  5 +-
+>  5 files changed, 92 insertions(+), 15 deletions(-)
 > 
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index fd8b78c31f2f..9d5da9896628 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
-> @@ -40,8 +40,8 @@ Filesystem rules
->      and the related filesystem actions are defined with
->      `filesystem access rights`.
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 045b251ff1b4..22c8cc63f30e 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -378,11 +378,30 @@ struct landlock_net_port_attr {
+>   *
+>   * - %LANDLOCK_ACCESS_NET_BIND_UDP: Bind UDP sockets to the given local
+>   *   port. Support added in Landlock ABI version 10.
+> + * - %LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP: Set the remote port of UDP
+> + *   sockets to the given port, or send datagrams to the given remote port
+> + *   ignoring any destination pre-set on a socket. Support added in
+> + *   Landlock ABI version 10.
+> + *
+> + * .. note:: Setting a remote address or sending a first datagram
+> + *   auto-binds UDP sockets to an ephemeral local source port if not
+> + *   already bound. To allow this if both %LANDLOCK_ACCESS_NET_BIND_UDP
+> + *   and %LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP are handled, you need to
+> + *   either:
+> + *
+> + *   - use a socket already bound to a port before the ruleset started
+> + *     being enforced;
+> + *   - or grant %LANDLOCK_ACCESS_NET_BIND_UDP on port 0, meaning "any
+> + *     port in the ephemeral port range";
+> + *   - or grant %LANDLOCK_ACCESS_NET_BIND_UDP on a specific port, and
+> + *     call :manpage:`bind(2)` on that port before trying to
+> + *     :manpage:`connect(2)` or send datagrams.
+>   */
+>  /* clang-format off */
+>  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+>  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
+>  #define LANDLOCK_ACCESS_NET_BIND_UDP			(1ULL << 2)
+> +#define LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP		(1ULL << 3)
+>  /* clang-format on */
 >  
-> -Network rules (since ABI v4)
-> -    For these rules, the object is a TCP port,
-> +Network rules (since ABI v4 for TCP and v10 for UDP)
-> +    For these rules, the object is a TCP or UDP port,
->      and the related actions are defined with `network access rights`.
+>  /**
+> diff --git a/security/landlock/audit.c b/security/landlock/audit.c
+> index e676ebffeebe..851647197a01 100644
+> --- a/security/landlock/audit.c
+> +++ b/security/landlock/audit.c
+> @@ -46,6 +46,8 @@ static const char *const net_access_strings[] = {
+>  	[BIT_INDEX(LANDLOCK_ACCESS_NET_BIND_TCP)] = "net.bind_tcp",
+>  	[BIT_INDEX(LANDLOCK_ACCESS_NET_CONNECT_TCP)] = "net.connect_tcp",
+>  	[BIT_INDEX(LANDLOCK_ACCESS_NET_BIND_UDP)] = "net.bind_udp",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP)] =
+> +		"net.connect_send_udp",
+>  };
 >  
->  Defining and enforcing a security policy
-> @@ -49,11 +49,11 @@ Defining and enforcing a security policy
+>  static_assert(ARRAY_SIZE(net_access_strings) == LANDLOCK_NUM_ACCESS_NET);
+> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> index c0f30a4591b8..a4d908b240a2 100644
+> --- a/security/landlock/limits.h
+> +++ b/security/landlock/limits.h
+> @@ -23,7 +23,7 @@
+>  #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
+>  #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
 >  
->  We first need to define the ruleset that will contain our rules.
+> -#define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_BIND_UDP
+> +#define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP
+>  #define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
+>  #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
 >  
-> -For this example, the ruleset will contain rules that only allow filesystem
-> -read actions and establish a specific TCP connection. Filesystem write
-> -actions and other TCP actions will be denied.
-> +For this example, the ruleset will contain rules that only allow some
-> +filesystem read actions and some specific UDP and TCP actions. Filesystem
-> +write actions and other TCP/UDP actions will be denied.
+> diff --git a/security/landlock/net.c b/security/landlock/net.c
+> index f9ccb52e7d45..045881f81295 100644
+> --- a/security/landlock/net.c
+> +++ b/security/landlock/net.c
+> @@ -68,16 +68,17 @@ static int current_check_access_socket(struct socket *const sock,
 >  
-> -The ruleset then needs to handle both these kinds of actions.  This is
-> +The ruleset then needs to handle all these kinds of actions.  This is
->  required for backward and forward compatibility (i.e. the kernel and user
->  space may not know each other's supported restrictions), hence the need
->  to be explicit about the denied-by-default access rights.
-> @@ -81,7 +81,9 @@ to be explicit about the denied-by-default access rights.
->              LANDLOCK_ACCESS_FS_RESOLVE_UNIX,
->          .handled_access_net =
->              LANDLOCK_ACCESS_NET_BIND_TCP |
-> -            LANDLOCK_ACCESS_NET_CONNECT_TCP,
-> +            LANDLOCK_ACCESS_NET_CONNECT_TCP |
-> +            LANDLOCK_ACCESS_NET_BIND_UDP |
-> +            LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP,
->          .scoped =
->              LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
->              LANDLOCK_SCOPE_SIGNAL,
-> @@ -132,6 +134,12 @@ version, and only use the available subset of access rights:
->      case 6 ... 8:
->          /* Removes LANDLOCK_ACCESS_FS_RESOLVE_UNIX for ABI < 9 */
->          ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_RESOLVE_UNIX;
-> +        __attribute__((fallthrough));
-> +    case 9:
-> +        /* Removes LANDLOCK_ACCESS_*_UDP for ABI < 10 */
-> +        ruleset_attr.handled_access_net &=
-> +            ~(LANDLOCK_ACCESS_NET_BIND_UDP |
-> +              LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP);
->      }
+>  	switch (address->sa_family) {
+>  	case AF_UNSPEC:
+> -		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP) {
+> +		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP ||
+> +		    access_request == LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP) {
+>  			/*
+>  			 * Connecting to an address with AF_UNSPEC dissolves
+> -			 * the TCP association, which have the same effect as
+> -			 * closing the connection while retaining the socket
+> -			 * object (i.e., the file descriptor).  As for dropping
+> -			 * privileges, closing connections is always allowed.
+> -			 *
+> -			 * For a TCP access control system, this request is
+> -			 * legitimate. Let the network stack handle potential
+> +			 * the remote association while retaining the socket
+> +			 * object (i.e., the file descriptor). For TCP, it has
+> +			 * the same effect as closing the connection. For UDP,
+> +			 * it removes any preset remote address. As for
+> +			 * dropping privileges, these actions are always
+> +			 * allowed.
+> +			 * Let the network stack handle potential
+>  			 * inconsistencies and return -EINVAL if needed.
+>  			 */
+>  			return 0;
+> @@ -134,7 +135,8 @@ static int current_check_access_socket(struct socket *const sock,
+>  		addr4 = (struct sockaddr_in *)address;
+>  		port = addr4->sin_port;
 >  
->  This enables the creation of an inclusive ruleset that will contain our rules.
-> @@ -180,21 +188,50 @@ this file descriptor.
+> -		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP) {
+> +		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP ||
+> +		    access_request == LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP) {
+>  			audit_net.dport = port;
+>  			audit_net.v4info.daddr = addr4->sin_addr.s_addr;
+>  		} else if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP ||
+> @@ -157,7 +159,8 @@ static int current_check_access_socket(struct socket *const sock,
+>  		addr6 = (struct sockaddr_in6 *)address;
+>  		port = addr6->sin6_port;
 >  
->  It may also be required to create rules following the same logic as explained
->  for the ruleset creation, by filtering access rights according to the Landlock
-> -ABI version.  In this example, this is not required because all of the requested
-> -``allowed_access`` rights are already available in ABI 1.
-> +ABI version.  So far, this was not required because all of the requested
-> +``allowed_access`` rights have always been available, from ABI 1.
+> -		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP) {
+> +		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP ||
+> +		    access_request == LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP) {
+>  			audit_net.dport = port;
+>  			audit_net.v6info.daddr = addr6->sin6_addr;
+>  		} else if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP ||
+> @@ -213,6 +216,50 @@ static int current_check_access_socket(struct socket *const sock,
+>  	return -EACCES;
+>  }
 >  
-> -For network access-control, we can add a set of rules that allow to use a port
-> -number for a specific action: HTTPS connections.
-> +For network access-control, we will add a set of rules to allow DNS
-> +queries, which requires both UDP and TCP. For TCP, we need to allow
-> +outbound connections to port 53, which can be handled and granted starting
-> +with ABI 4:
->  
->  .. code-block:: c
->  
-> -    struct landlock_net_port_attr net_port = {
-> -        .allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
-> -        .port = 443,
-> -    };
-> +    if (ruleset_attr.handled_access_net & LANDLOCK_ACCESS_NET_CONNECT_TCP) {
-> +        struct landlock_net_port_attr net_port = {
-> +            .allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
-> +            .port = 53,
-> +        };
->  
-> -    err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
-> -                            &net_port, 0);
-> +        err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
-> +                                &net_port, 0);
-> +
-> +We also need to be able to send UDP datagrams to port 53, which requires
-> +granting ``LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP``. Since our DNS client will
-> +emit datagrams without explicitly binding to a specific source port, its UDP
-> +socket will automatically bind an ephemeral port. To allow this behaviour,
-> +we also need to grant ``LANDLOCK_ACCESS_NET_BIND_UDP`` on port 0, as if
-> +the program explicitly called :manpage:`bind(2)` on port 0.
+> +static int current_check_autobind_udp_socket(struct socket *const sock)
+> +{
+> +	struct sockaddr_storage port0 = { 0 };
 
-Please follow the pattern in this new patch (already in my next branch):
-https://lore.kernel.org/all/20260513151856.148423-1-mic@digikod.net/
+unsigned short num;
+bool slow;
 
 > +
-> +.. code-block:: c
-> +
-> +    if (ruleset_attr.handled_access_net & LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP) {
-> +        const struct landlock_net_port_attr send_dst_port = {
-> +            .allowed_access = LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP,
-> +            .port = 53,
-> +        };
-> +        err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
-> +                                &send_dst_port, 0);
-> +        [...]
-> +
-> +    if (ruleset_attr.handled_access_net & LANDLOCK_ACCESS_NET_BIND_UDP) {
-> +        const struct landlock_net_port_attr bind_src_port = {
-> +            .allowed_access = LANDLOCK_ACCESS_NET_BIND_UDP,
-> +            .port = 0,
-> +        };
-> +        err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
-> +                                &bind_src_port, 0);
->  
->  When passing a non-zero ``flags`` argument to ``landlock_restrict_self()``, a
->  similar backwards compatibility check is needed for the restrict flags
-> @@ -228,7 +265,7 @@ similar backwards compatibility check is needed for the restrict flags
->  The next step is to restrict the current thread from gaining more privileges
->  (e.g. through a SUID binary).  We now have a ruleset with the first rule
->  allowing read and execute access to ``/usr`` while denying all other handled
-> -accesses for the filesystem, and a second rule allowing HTTPS connections.
-> +accesses for the filesystem, and two more rules allowing DNS queries.
->  
->  .. code-block:: c
->  
-> @@ -716,6 +753,16 @@ Starting with the Landlock ABI version 9, it is possible to restrict
->  connections to pathname UNIX domain sockets (:manpage:`unix(7)`) using
->  the new ``LANDLOCK_ACCESS_FS_RESOLVE_UNIX`` right.
->  
-> +UDP bind, connect, sendto, sendmsg and sendmmsg (ABI < 10)
+> +	/*
+> +	 * On UDP sockets, if a local port has not already been bound,
+> +	 * calling connect() or sending a first datagram has the side
+> +	 * effect of autobinding an ephemeral port: we also have to check
+> +	 * that the process would have had the right to bind(0) explicitly.
 
-nit: Make it a bit shorter because it is also use in link (#).  Maybe
-something like this:
 
-  UDP bind, connect and send* (ABI < 10)
+> +	 * Note: socket is not locked, so another thread could do an
+> +	 * explicit bind(!=0) on this socket, changing inet_num to non-zero
+> +	 * after we read it, but this would only have us enforce an
+> +	 * additional bind(0) access check and would not bypass policy.
+> +	 */
+> +	if (inet_sk(sock->sk)->inet_num != 0)
 
-...and specifying each syscall in the text below.
+There is still a race condition, this should fix it:
 
-> +----------------------------------------------------------
+ *
+ * Hold the socket lock around the inet_num read to exclude
+ * udp_lib_get_port()'s transient inet_num = snum write that is reverted
+ * to 0 on a failing reuseport bind.
+ */
+if (inet_sk(sock->sk)->inet_num != 0)
+slow = lock_sock_fast(sock->sk);
+num = inet_sk(sock->sk)->inet_num;
+unlock_sock_fast(sock->sk, slow);
+if (num != 0)
+	return 0;
+
+
+> +		return 0;
 > +
-> +Starting with the Landlock ABI version 10, it is possible to restrict
-> +setting the local port of UDP sockets with the
-> +``LANDLOCK_ACCESS_NET_BIND_UDP`` right.
-> +The ``LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP`` right controls setting the
-> +remote port of UDP sockets, and sending datagrams to an explicit remote
-> +port (ignoring any destination set on UDP sockets).
+> +	/*
+> +	 * Construct a struct sockaddr* with port 0 to pretend the
+> +	 * process tried to bind() on that address.
+> +	 */
+> +	port0.ss_family = sock->sk->__sk_common.skc_family;
+
+Looking at net/, __sk_common.skc_family (and other __sk_common.* fields)
+should be replaced by sk_family (see #define in include/net/sock.h).
+Same for all other __sk_common.
+
+In fact, it should be READ_ONCE(sock->sk->sk_family) for consistency
+with the net/ code and because the socket are not locked when the LSM
+hooks are called.  I realized that the existing Landlock code have the
+same issue...  Could you please add a new patch (to be backported) to
+always use this pattern?
+
+> +	switch (port0.ss_family) {
+> +	case AF_INET: {
+> +		((struct sockaddr_in *)&port0)->sin_port = 0;
+> +		break;
+> +	}
 > +
->  .. _kernel_support:
+> +#if IS_ENABLED(CONFIG_IPV6)
+> +	case AF_INET6: {
+> +		((struct sockaddr_in6 *)&port0)->sin6_port = 0;
+> +		break;
+> +	}
+> +#endif /* IS_ENABLED(CONFIG_IPV6) */
+> +
+> +	default:
+> +		return 0;
+> +	}
+> +
+> +	return current_check_access_socket(sock, (struct sockaddr *)&port0,
+> +					   sizeof(port0),
+> +					   LANDLOCK_ACCESS_NET_BIND_UDP);
+> +}
+> +
+>  static int hook_socket_bind(struct socket *const sock,
+>  			    struct sockaddr *const address, const int addrlen)
+>  {
+> @@ -234,14 +281,22 @@ static int hook_socket_connect(struct socket *const sock,
+>  			       const int addrlen)
+>  {
+>  	access_mask_t access_request;
+> +	int ret = 0;
 >  
->  Kernel support
-> @@ -778,10 +825,10 @@ the boot loader.
->  Network support
->  ---------------
+>  	if (sk_is_tcp(sock->sk))
+>  		access_request = LANDLOCK_ACCESS_NET_CONNECT_TCP;
+> +	else if (sk_is_udp(sock->sk))
+> +		access_request = LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP;
+>  	else
+>  		return 0;
 >  
-> -To be able to explicitly allow TCP operations (e.g., adding a network rule with
-> -``LANDLOCK_ACCESS_NET_BIND_TCP``), the kernel must support TCP
-> +To be able to explicitly allow TCP or UDP operations (e.g., adding a network rule with
-> +``LANDLOCK_ACCESS_NET_BIND_TCP``), the kernel must support the TCP/IP protocol suite
->  (``CONFIG_INET=y``).  Otherwise, sys_landlock_add_rule() returns an
-> -``EAFNOSUPPORT`` error, which can safely be ignored because this kind of TCP
-> +``EAFNOSUPPORT`` error, which can safely be ignored because this kind of TCP or UDP
->  operation is already not possible.
+> -	return current_check_access_socket(sock, address, addrlen,
+> -					   access_request);
+> +	ret = current_check_access_socket(sock, address, addrlen,
+> +					  access_request);
+> +
+> +	if (ret == 0 && sk_is_udp(sock->sk))
+> +		ret = current_check_autobind_udp_socket(sock);
+> +
+> +	return ret;
+>  }
 >  
->  Questions and answers
+>  static struct security_hook_list landlock_hooks[] __ro_after_init = {
+> diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
+> index ec392d971ea3..016c7277e370 100644
+> --- a/tools/testing/selftests/landlock/net_test.c
+> +++ b/tools/testing/selftests/landlock/net_test.c
+> @@ -1326,12 +1326,13 @@ FIXTURE_TEARDOWN(mini)
+>  
+>  /* clang-format off */
+>  
+> -#define ACCESS_LAST LANDLOCK_ACCESS_NET_BIND_UDP
+> +#define ACCESS_LAST LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP
+>  
+>  #define ACCESS_ALL ( \
+>  	LANDLOCK_ACCESS_NET_BIND_TCP | \
+>  	LANDLOCK_ACCESS_NET_CONNECT_TCP | \
+> -	LANDLOCK_ACCESS_NET_BIND_UDP)
+> +	LANDLOCK_ACCESS_NET_BIND_UDP | \
+> +	LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP)
+>  
+>  /* clang-format on */
+>  
 > -- 
 > 2.39.5
-> 
 > 
