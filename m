@@ -1,249 +1,225 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0262110E
-	for <linux-security-module@vger.kernel.org>; Fri, 22 May 2026 20:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9E027AC31
+	for <linux-security-module@vger.kernel.org>; Fri, 22 May 2026 21:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779482802; cv=none; b=IAsHVSjcVxrJFMP47CJxdCTsf2nrrX48tG1LLOGMnViYxQbgA0+KIqt4DD+IG3xHbpiXjk3M33KFCAq6UKmSEZBGVy07Yip7zJGxGSC37nyCcp3VZg9dL2TIOYzJtI1BCTCzYkKY7IsZAtpCue/DRlb2Uq/aHIiKbBrnOU52vrI=
+	t=1779484261; cv=none; b=SVAIjRVaR77My0L8PqViyaNyGTQBqIqVCjcjWl1AzxH2VFn+BwWwNWPy7uiTgaX66xFVIpnmC20k3Lh7joTTCi76xBFL7vGBC0uJEMR+rYf3YTKGZbB254gwnoTf1ddFq9M0ee/54nkkFr9mYcTzRSxJkbLed06R3GRnTjNuSdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779482802; c=relaxed/simple;
-	bh=52xt7vuU2JG0TOmgOrSTavEwSsSlhZuzRqZBSXbS6T0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oTEG4eb2JZ5HqNXQgI86QHeHUglwNc+eTF9uaeIP8UeR1N2HWxQratserT9TTNe7aiYx/2/lITInRqIGPfr4hZPqqAx/9RfI4OGgEgpz7gFpCDnMFTPE/1pjnvUO2YINqal9hujxOyMZNlwGdMnOuKgeXLrVrYVKTQJ6el+5wmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YO9XymAL; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779484261; c=relaxed/simple;
+	bh=06HJRSrrUMzj7DL8RB8Ye1eXAEUrNCre6d9ye2wUcpk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f2ls44WoNcz8/UImdF/5PYjPsHZ3GQyIVW9rUfa+Jo7o3gqL2lrx6iWG9BSil5TLwQJe2aw0EDRAplF3oBycQxSQCMZq8LVm7Lu3lwSCr2uUZpLddDzj/QoYrNvLrTTUoj4P1KGd3ipjAZhYzC0nINIfY7n4O0yaGikbc+IndG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=1Ktj+xl/; arc=none smtp.client-ip=185.125.25.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YO9XymAL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81C1F1F00A3E
-	for <linux-security-module@vger.kernel.org>; Fri, 22 May 2026 20:46:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779482800;
-	bh=UnmDdNzc53Xwm3qgMWerKXv7o4bwIrYGe6AUevDriuk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=YO9XymALv6vAJGRZzp7tp2PPNncbjhV4E76w1Lec+vtf5B+mn/OHuASb1wkxgMm1O
-	 65a4gWr8mlSQfkG1Y9/9e4rDqv2rs3KJ2ANT7pqiiCT/C1ZZG7AjI36pLxG83VUAds
-	 Csclete5FewFQ0j+dG0VLS1KYIL8Hi0/O0tUpclzgxzeXCTnX++RBGYjpF29rcP8bW
-	 Y9XTZIVBboJ7yw9x9lxYMZR+5RZrub7OSUaCcSiaYiNYAYziuo3XLbOkTPdv3GC665
-	 oxMWM8sEv2gwcu+BN23Ax9UTgIN7Dardptg//qkC0VkXlwRam66hFsuhZTuC6oe/+/
-	 rSIniHJdwiE/w==
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-452169ae568so5082285f8f.3
-        for <linux-security-module@vger.kernel.org>; Fri, 22 May 2026 13:46:40 -0700 (PDT)
-X-Gm-Message-State: AOJu0YzZkJAzvB8ZKlUD+7Z5pBnk9PjBm0FefeJdVwUKTAFyzIAW5BeE
-	FcxQ7X+yZ773hEgSlyJyVMxzW9pZwWTRiktZMSq5kzMehwcp/w3/T0YIKCzFoAGQbao20/9XWFT
-	Lvek6RTmi1mArx9QUXV6mfXdhLhqMWVMCNQeYiLfr
-X-Received: by 2002:a05:6000:4305:b0:45e:73b9:e996 with SMTP id
- ffacd0b85a97d-45eb38b7e16mr8421074f8f.32.1779482799070; Fri, 22 May 2026
- 13:46:39 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="1Ktj+xl/"
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gMdH45TSBz87P;
+	Fri, 22 May 2026 23:10:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1779484256;
+	bh=vpUyp6y8XSLwq9yCGVBTPnQHDjNH3wqxIcnZsgeppeg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1Ktj+xl/yykYj/fFkvKVEUrCd7y2PfIBuaA/hp19qCeaoK53pjyjzjHFMgbHgNw3N
+	 CsGknSbeiYMktDmQbTt/vY9ANDfDUMQ5Lh7lN3UTkYevCg0VD3/PyA+6iveT7ogJqG
+	 vhNiPRj66Lb7+a5N/vGFoYGTQmhBqoYO9f8ChgL0=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4gMdH365QBzLxd;
+	Fri, 22 May 2026 23:10:55 +0200 (CEST)
+Date: Fri, 22 May 2026 23:10:53 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Matthieu Buffet <matthieu@buffet.re>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	konstantin.meskhidze@huawei.com, Tingmao Wang <m@maowtm.org>, netdev@vger.kernel.org, 
+	Paul Moore <paul@paul-moore.com>
+Subject: Re: [PATCH v4 3/7] landlock: Add UDP send access control
+Message-ID: <20260522.Shi4UuKeH6ch@digikod.net>
+References: <20260502124306.3975990-1-matthieu@buffet.re>
+ <20260502124306.3975990-4-matthieu@buffet.re>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260522023234.3778588-1-kpsingh@kernel.org> <CAHC9VhTk3qovnQQjK0C_FWU605j6Yi+-poMVVMS8WycRFg9xhQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhTk3qovnQQjK0C_FWU605j6Yi+-poMVVMS8WycRFg9xhQ@mail.gmail.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Fri, 22 May 2026 22:46:28 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ6e4LSPr9pbjAMze9-CpXvFMKdm9xXHepvjhMxMAw+=RQ@mail.gmail.com>
-X-Gm-Features: AVHnY4Jh9kG_eX5Gxd4g_2JGkJNfRTrov9ULJS8sVZxuRe_XEupQeK9n-Spm5Ms
-Message-ID: <CACYkzJ6e4LSPr9pbjAMze9-CpXvFMKdm9xXHepvjhMxMAw+=RQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 00/13] Signed BPF + IPE Policies
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org, ast@kernel.org, 
-	daniel@iogearbox.net, memxor@gmail.com, James.Bottomley@hansenpartnership.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260502124306.3975990-4-matthieu@buffet.re>
+X-Infomaniak-Routing: alpha
 
-On Fri, May 22, 2026 at 8:56=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Thu, May 21, 2026 at 10:32=E2=80=AFPM KP Singh <kpsingh@kernel.org> wr=
-ote:
-> >
-> > This series continues the "Signed BPF programs" work and adds
-> > the missing pieces needed for an LSM to do policy enforcement
-> > and addresses the concerns raised by the developers of Hornet.
-> >
-> > One signing scheme, please.
->
-> This is why we tried working with you and Alexei for quite some time,
-> providing requirements, patches, reviews, and code suggestions.
-> Unfortunately, our input was not reflected in the signing scheme that
-> was merged into Linus' tree, so we have had to get creative to meet
-> our our needs and those of others.
+On Sat, May 02, 2026 at 02:43:02PM +0200, Matthieu Buffet wrote:
+> Add the second half of LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP: control the
+> ability to specify an explicit destination when sending a datagram, to
+> override any remote peer set on a UDP socket (in sendto(), sendmsg(), and
+> sendmmsg()). It will make the right useful for clients which want to
+> send datagrams while specifying a destination address each time.
+> 
+> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
+> ---
+>  include/uapi/linux/landlock.h |  4 ++
+>  security/landlock/net.c       | 70 ++++++++++++++++++++++++++++++++---
+>  2 files changed, 68 insertions(+), 6 deletions(-)
+> 
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 22c8cc63f30e..b147223efc97 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -396,6 +396,10 @@ struct landlock_net_port_attr {
+>   *   - or grant %LANDLOCK_ACCESS_NET_BIND_UDP on a specific port, and
+>   *     call :manpage:`bind(2)` on that port before trying to
+>   *     :manpage:`connect(2)` or send datagrams.
+> + *
+> + * .. note:: Sending datagrams to an ``AF_UNSPEC`` destination address
+> + *   family is not supported for IPv6 UDP sockets: you will need to use a
+> + *   ``NULL`` address instead.
+>   */
+>  /* clang-format off */
+>  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+> diff --git a/security/landlock/net.c b/security/landlock/net.c
+> index 045881f81295..8a53aebdb8c6 100644
+> --- a/security/landlock/net.c
+> +++ b/security/landlock/net.c
+> @@ -44,7 +44,8 @@ int landlock_append_net_rule(struct landlock_ruleset *const ruleset,
+>  static int current_check_access_socket(struct socket *const sock,
+>  				       struct sockaddr *const address,
+>  				       const int addrlen,
+> -				       access_mask_t access_request)
+> +				       access_mask_t access_request,
+> +				       bool connecting)
+>  {
+>  	__be16 port;
+>  	struct layer_access_masks layer_masks = {};
+> @@ -69,7 +70,8 @@ static int current_check_access_socket(struct socket *const sock,
+>  	switch (address->sa_family) {
+>  	case AF_UNSPEC:
+>  		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP ||
+> -		    access_request == LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP) {
+> +		    (access_request == LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP &&
+> +		     connecting)) {
+>  			/*
+>  			 * Connecting to an address with AF_UNSPEC dissolves
+>  			 * the remote association while retaining the socket
+> @@ -82,6 +84,35 @@ static int current_check_access_socket(struct socket *const sock,
+>  			 * inconsistencies and return -EINVAL if needed.
+>  			 */
+>  			return 0;
+> +		} else if (access_request ==
+> +			   LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP) {
+> +			if (sock->sk->__sk_common.skc_family == AF_INET6) {
+> +				/*
+> +				 * We cannot allow sending UDP datagrams to an
+> +				 * explicit AF_UNSPEC address on IPv6 sockets,
+> +				 * even if AF_UNSPEC is treated as "no address"
+> +				 * on such sockets (so it should always be allowed).
+> +				 * That's because the socket's family can change under
+> +				 * our feet (if another thread calls setsockopt(IPV6_ADDRFORM))
+> +				 * to IPv4, which would then treat AF_UNSPEC as
+> +				 * AF_INET.
+> +				 */
+> +				audit_net.family = AF_UNSPEC;
 
-Is your idea of creativity to circumvent working with the BPF
-maintainers and community?
+I sent this patch and I just merged it in my tree:
+https://lore.kernel.org/all/20260406143717.1815792-11-mic@digikod.net/
 
->
-> The good news is that the Hornet signatures are compatible with the
-> existing BPF signing scheme; a Hornet signed BPF program can be
-> successfully verified by your signing scheme, in current kernels, as
-> well as the Hornet LSM.  Which, while were on the topic of
-> compatibility, it looks like your proposed changes in this patchset
-> would break compatibility with existing signed BPF programs, am I
-> reading the patchset right in this regard?
+Günther, could you please take a look at this patch too?
 
-No, they won't.
+For consistency, we need to add `audit_net.sk = sock->sk;` here.
 
->
-> > BPF does not need a second signing scheme. It needs a policy
-> > framework that consumes the verdict the existing signing pipeline
-> > produces. Two parallel signing stacks is harmful UX for Cilium,
-> > bpftrace, systemd, distros, and everyone shipping signed lskels.
->
-> Once again, if one signs BPF programs using the Hornet signing tools
-> provided in Blaise's patches, the resulting signed BPF can be loaded
-> and verified using both the existing BPF signature verification code
-> and Hornet.  It is also easy to disable Hornet and/or IPE at kernel
-> boot using the "lsm=3D" command line parameter, and of course one can
-> always tailor the IPE policy to meet specific needs.  Although you
-> surely must be aware of that as your own patchset borrows heavily from
-> Blaise's original code, albeit without any attribution.
->
-> > Hornet has been NACK'd repeatedly by the BPF maintainers [1][2]
-> > on layering and TOCTOU grounds.
->
-> Blaise has recorded Alexei's NACK on the Hornet patchset and addressed
-
-Please record the NACK from Daniel and me.
-
-> the TOCTOU that Alexei identified.  On a related note, Blaise and I
-> were working with Eric Biggers today - thank you again Eric! - on
-> identifying some additional issues and I expect Blaise will have
-> another patch early next week which leverages security_bpf_prog() to
-> simplify the Hornet code and address some additional issues.
->
-> > What this series adds
-> >
-> > - prog->aux->sig (verdict + keyring) and prog->aux->is_kernel,
-> >   populated by the syscall path before security_bpf_prog_load
-> >   fires.
-> > - bpf_loader_verify_metadata kfunc -- the metadata check is now
-> >   kernel C code, not BPF bytecode. The verifier injects the
-> >   calling prog->aux as an implicit argument via KF_IMPLICIT_ARGS.
->
-> I think there may have been a misunderstanding regarding the "kernel
-> C" comments.  Our desire was to not have to trust the lskel loader to
-> do any of the BPF signature verification; perfoming the verification
-> of both the lskel loader and the original BPF program map in the
-> native kernel's C code flows, without relying on triggering by the
-> loader.  This greatly simplifies things from a security perspective.
->
-> > - Loader-side prog BTF with BPF_PSEUDO_KFUNC_CALL_PROG_BTF so
-> >   the kfunc CALL is reproducible across build hosts and resolved
-> >   at load time.
-> > - security_bpf_prog_load_post_integrity LSM hook, fired by the
-> >   kfunc on a successful metadata check.
->
-> Does a kfunc calling a LSM hook open the door to a potential recursion
-> issue involving a BPF LSM?
-
-What's the concern here? LSM hooks can fire from BPF kfuncs and
-helpers for a while now.
-
->
-> > - IPE properties (bpf_signature, bpf_keyring, bpf_kernel) and
-> >   two ops (BPF_PROG_LOAD, BPF_PROG_LOAD_POST_INTEGRITY).
-> >
-> > This series address concerns raised by the Hornet developers:
-> >
-> > * The metadata hash check should be in kernel C, not BPF
-> >   bytecode -- Blaise Boscaccy [3]:
-> >
-> >   The bpf_loader_verify_metadata kfunc moves the hash check from
-> >   inline BPF instructions into kernel C code.
->
-> Please see my comments above.  While the kfunc is written in C, it is
-> still reliant on the loader calling that kfunc.
-
-Yes, that's the idea of transitive trust here. Ultimately you signed
-the loader with your key. The mechanism proposed here allows
-verification of any dynamic metadata, it does not need to be hermetic
-to the loader, provided the digest of the metadata is incorporated
-into the loader's signed payload.
-
-- KP
-
->
-> Of course there is still also the usbility issue of not being able to
-> return an error status to userspace at load time regarding the
-> verification success of both the loader and the original BPF program
-> map.
->
-> > * LSMs cannot observe the verification result at hook time --
-> >   Paul Moore [4]:
-> >
-> >   prog->aux->sig.verdict and sig.keyring are populated before any
-> >   LSM hook runs. Furthermore, security_bpf_prog_load_post_integrity
-> >   hook fires after the in-kernel hash check for consumers that want
-> >   to observe or gate the post-integrity transition.
-> >
-> > [1] Alexei Starovoitov, NACK on Hornet (TOCTOU + layering),
-> >     https://lore.kernel.org/all/CAADnVQJ1CRvTXBU771KaYzrx-vRaWF+k164DcF=
-OqOsCxmuL+ig@mail.gmail.com/
-> > [2] Daniel Borkmann, NACK on Hornet v3,
-> >     https://lore.kernel.org/all/798dba24-b5a7-4584-a1f6-793883fe9b5e@io=
-gearbox.net/
-> > [3] Blaise Boscaccy, Hornet v6 (C-side hash verification rationale),
-> >     https://lore.kernel.org/all/20260429191431.2345448-1-bboscaccy@linu=
-x.microsoft.com/
-> > [4] Paul Moore, push for post-verifier observability,
-> >     https://lore.kernel.org/all/CACYkzJ4+=3D3owK+ELD9Nw7Rrm-UajxXEw8kVt=
-OTJJ+SNAXpsOpw@mail.gmail.com/
-> >
-> >
-> > KP Singh (13):
-> >   bpf: expose signature verdict to LSMs via bpf_prog_aux
-> >   bpf: include prog BTF in the signed loader signature scope
-> >   bpf, libbpf: load prog BTF in the skel_internal loader
-> >   bpf: add bpf_loader_verify_metadata kfunc
-> >   bpf: compute prog->digest at BPF_PROG_LOAD entry
-> >   bpf: resolve loader-style kfunc CALLs against prog BTF
-> >   libbpf: generate prog BTF for loader programs
-> >   bpftool gen: embed loader prog BTF in the lskel header
-> >   lsm: add bpf_prog_load_post_integrity hook
-> >   bpf: invoke security_bpf_prog_load_post_integrity from the metadata
-> >     kfunc
-> >   ipe: add BPF program signature properties
-> >   ipe: gate post-integrity BPF program loads
-> >   selftests/bpf: add IPE BPF policy integration tests
-> >
-> >  include/linux/bpf.h                           |  19 +++
-> >  include/linux/bpf_verifier.h                  |   6 +
-> >  include/linux/btf.h                           |   1 +
-> >  include/linux/lsm_hook_defs.h                 |   1 +
-> >  include/linux/security.h                      |   6 +
-> >  include/uapi/linux/bpf.h                      |   5 +
-> >  kernel/bpf/btf.c                              |   8 +
-> >  kernel/bpf/check_btf.c                        |  18 +-
-> >  kernel/bpf/helpers.c                          |  65 ++++++++
-> >  kernel/bpf/syscall.c                          |  76 ++++++++-
-> >  kernel/bpf/verifier.c                         |  58 ++++++-
-> >  security/ipe/Kconfig                          |  14 ++
-> >  security/ipe/audit.c                          |  13 ++
-> >  security/ipe/eval.c                           |  57 +++++++
-> >  security/ipe/eval.h                           |   5 +
-> >  security/ipe/hooks.c                          |  42 +++++
-> >  security/ipe/hooks.h                          |   9 +
-> >  security/ipe/ipe.c                            |   4 +
-> >  security/ipe/policy.h                         |  11 ++
-> >  security/ipe/policy_parser.c                  |  20 +++
-> >  security/security.c                           |  17 ++
-> >  tools/bpf/bpftool/gen.c                       |  21 +++
-> >  tools/bpf/bpftool/sign.c                      |  17 +-
-> >  tools/include/uapi/linux/bpf.h                |   5 +
-> >  tools/lib/bpf/bpf_gen_internal.h              |   2 +
-> >  tools/lib/bpf/gen_loader.c                    | 127 +++++++++++---
-> >  tools/lib/bpf/libbpf.h                        |   4 +-
-> >  tools/lib/bpf/skel_internal.h                 |  67 +++++---
-> >  .../selftests/bpf/test_signed_bpf_ipe.sh      | 156 ++++++++++++++++++
-> >  tools/testing/selftests/bpf/vmtest.sh         |   4 +-
-> >  30 files changed, 775 insertions(+), 83 deletions(-)
-> >  create mode 100755 tools/testing/selftests/bpf/test_signed_bpf_ipe.sh
-> >
-> > --
-> > 2.53.0
->
-> --
-> paul-moore.com
+> +				landlock_init_layer_masks(
+> +					subject->domain, access_request,
+> +					&layer_masks, LANDLOCK_KEY_NET_PORT);
+> +				landlock_log_denial(
+> +					subject,
+> +					&(struct landlock_request){
+> +						.type = LANDLOCK_REQUEST_NET_ACCESS,
+> +						.audit.type =
+> +							LSM_AUDIT_DATA_NET,
+> +						.audit.u.net = &audit_net,
+> +						.access = access_request,
+> +						.layer_masks = &layer_masks,
+> +					});
+> +				return -EACCES;
+> +			}
+>  		} else if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP ||
+>  			   access_request == LANDLOCK_ACCESS_NET_BIND_UDP) {
+>  			/*
+> @@ -124,7 +155,10 @@ static int current_check_access_socket(struct socket *const sock,
+>  		} else {
+>  			WARN_ON_ONCE(1);
+>  		}
+> -		/* Only for bind(AF_UNSPEC+INADDR_ANY) on IPv4 socket. */
+> +		/*
+> +		 * For bind(AF_UNSPEC+INADDR_ANY) on IPv4 socket and
+> +		 * for sending to AF_UNSPEC addresses on IPv4 socket.
+> +		 */
+>  		fallthrough;
+>  	case AF_INET: {
+>  		const struct sockaddr_in *addr4;
+> @@ -257,7 +291,7 @@ static int current_check_autobind_udp_socket(struct socket *const sock)
+>  
+>  	return current_check_access_socket(sock, (struct sockaddr *)&port0,
+>  					   sizeof(port0),
+> -					   LANDLOCK_ACCESS_NET_BIND_UDP);
+> +					   LANDLOCK_ACCESS_NET_BIND_UDP, false);
+>  }
+>  
+>  static int hook_socket_bind(struct socket *const sock,
+> @@ -273,7 +307,7 @@ static int hook_socket_bind(struct socket *const sock,
+>  		return 0;
+>  
+>  	return current_check_access_socket(sock, address, addrlen,
+> -					   access_request);
+> +					   access_request, false);
+>  }
+>  
+>  static int hook_socket_connect(struct socket *const sock,
+> @@ -291,7 +325,7 @@ static int hook_socket_connect(struct socket *const sock,
+>  		return 0;
+>  
+>  	ret = current_check_access_socket(sock, address, addrlen,
+> -					  access_request);
+> +					  access_request, true);
+>  
+>  	if (ret == 0 && sk_is_udp(sock->sk))
+>  		ret = current_check_autobind_udp_socket(sock);
+> @@ -299,9 +333,33 @@ static int hook_socket_connect(struct socket *const sock,
+>  	return ret;
+>  }
+>  
+> +static int hook_socket_sendmsg(struct socket *const sock,
+> +			       struct msghdr *const msg, const int size)
+> +{
+> +	struct sockaddr *const address = msg->msg_name;
+> +	const int addrlen = msg->msg_namelen;
+> +	access_mask_t access_request;
+> +	int ret = 0;
+> +
+> +	if (sk_is_udp(sock->sk))
+> +		access_request = LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP;
+> +	else
+> +		return 0;
+> +
+> +	if (address != NULL)
+> +		ret = current_check_access_socket(sock, address, addrlen,
+> +						  access_request, false);
+> +
+> +	if (ret == 0)
+> +		ret = current_check_autobind_udp_socket(sock);
+> +
+> +	return ret;
+> +}
+> +
+>  static struct security_hook_list landlock_hooks[] __ro_after_init = {
+>  	LSM_HOOK_INIT(socket_bind, hook_socket_bind),
+>  	LSM_HOOK_INIT(socket_connect, hook_socket_connect),
+> +	LSM_HOOK_INIT(socket_sendmsg, hook_socket_sendmsg),
+>  };
+>  
+>  __init void landlock_add_net_hooks(void)
+> -- 
+> 2.39.5
+> 
