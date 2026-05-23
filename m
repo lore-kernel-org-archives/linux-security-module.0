@@ -1,202 +1,181 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66A235972;
-	Sat, 23 May 2026 00:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779497156; cv=none; b=LShcHICzLdcR75EwljIPg1iq8uncAxzvSDUI9WCcRZeH8VxdFbGf2rPbv3HY9tECq/CXY7uPUvvCU+RL+HdSDRrYYxF95Io1TNV89Lv+ivZDE6X84E2ichW9I7Uf0oRDyf56anJPEXDK4Hh/O0GlnghBTKCpq35dp+ijYPlKtyc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779497156; c=relaxed/simple;
-	bh=DqeXOCZ0TXIcigSWsRqnJQXcvPDVQzLlWv2CI6safo4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=us74pcfi2l8+92P5YS3giAS6E89XloG4EJTCJncQNsrcv7nmuJHLFI/MTLcbqkjeTsid5P7Cxi+zUORbmHhoWNHeAdZNfse/Flnttbrva3J3o+sxYi5ylhnqcBVFWSqWGkJJ//OPySSEiJCD22I4zgnVqGgjLxv2ER1xPJsS5R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AYrP9ADM; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57667263F34
+	for <linux-security-module@vger.kernel.org>; Sat, 23 May 2026 04:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.170
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779509275; cv=pass; b=OJQVlezbMJAo1ndY10ETZe1m0ekwcxsuXLCFKXwaLLDJzQfyztzEwjg3HT9csHfUEMRNXhiivsP+7PPMfGJAxZbUnfpWiyvnfqFYPd2I+JODbuKOLd8kjyTIiTuux150/dlAaqFv8EzpvY1hMJQ2yYCpCMjSewcDps0BNT4Qv6Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779509275; c=relaxed/simple;
+	bh=vGEb5VSmkEMcF3xQd5x9evuFv/txRodMq6g69B9qaM0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rZbG0sui9ru7UC74WyR4OR/j84eez0DbNmvrKO7jBUB+bM1jj+/N+RFJl1SipW6wGPK3/LwlEoeN1J5WthTWfi6mro2r5GUfinYsJicr+5Z6EWtpO3tQzif0TeOlz1WDdIhbE+1yYptHSr21gXH8E+4pMzyxRXCJ2GDvCHtBNxI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=aAZG2YcH; arc=pass smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AYrP9ADM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D8D01F000E9;
-	Sat, 23 May 2026 00:45:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779497154;
-	bh=Z9Ii4kFnGASPrJVUv4pLJyz9ASaQSsUSFT2aMNSnQpw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=AYrP9ADMMstpZMK07X7RJX7Vi+LssxAckCYKP0qcdmy4tA9a9uGeNKXekQFeMbDY2
-	 LDBidZU8qfyCeiIO2lTcwcq4IenY+1Wd9qlBghobsMk+v2M/w+YRP79CHe0dVbDprH
-	 6m4cKDcu9eoRxsj9K8pW3klTEaPK47F9haaWHiA44qhhUhE1d+q0p7agQTc1CqKY7Y
-	 TIm3cavZyfg5Ocnp8Ulrf7LvNxFf6kEk1G4wZqQ5n3xAgZSAUkznMwff7nIEvl1Awg
-	 MCkN/vkTJiTtDyoIlmLFKVmTKKTBPE0rS5dN7mvUamAdq3cIcL7ggZ6AdKA3393vQz
-	 kGvcVXqs9FgPQ==
-From: SeongJae Park <sj@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Pengpeng Hou <pengpeng@iscas.ac.cn>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Corey Minyard <corey@minyard.net>,
-	Gabriel Somlo <somlo@cmu.edu>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Hannes Reinecke <hare@suse.de>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Jason Baron <jbaron@akamai.com>,
-	Jim Cromie <jim.cromie@gmail.com>,
-	Tiwei Bie <tiwei.btw@antgroup.com>,
-	Benjamin Berg <benjamin.berg@intel.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"David E. Box" <david.e.box@linux.intel.com>,
-	"Maciej W. Rozycki" <macro@orcam.me.uk>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Frank Li <Frank.Li@kernel.org>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Aaron Tomlin <atomlin@atomlin.com>,
-	Alexander Potapenko <glider@google.com>,
-	Marco Elver <elver@google.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Georgia Garcia <georgia.garcia@canonical.com>,
-	kvm@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-modules@vger.kernel.org,
-	kasan-dev@googlegroups.com,
-	linux-mm@kvack.org,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	linux-acpi@vger.kernel.org,
-	openipmi-developer@lists.sourceforge.net,
-	qemu-devel@nongnu.org,
-	intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-rdma@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	damon@lists.linux.dev
-Subject: Re: [PATCH 09/11] treewide: Convert custom kernel_param_ops .get callbacks to seq_buf via cocci
-Date: Fri, 22 May 2026 17:45:43 -0700
-Message-ID: <20260523004543.86540-1-sj@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260521133326.2465264-9-kees@kernel.org>
-References: 
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="aAZG2YcH"
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-82fbf5d4dc2so5672370b3a.1
+        for <linux-security-module@vger.kernel.org>; Fri, 22 May 2026 21:07:54 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1779509273; cv=none;
+        d=google.com; s=arc-20240605;
+        b=C2mf2Z6YhDxGQnLc0UUSJ77XL5++9oSSNhjMeokfMLHNRAhwtwWkqc0cyqsG4iWm05
+         d6Q9+vHRVXoR3MRQ6irM9ttdAVO1PSiV6bE/14I6J9VUO/iIoFgogMojj7v0tJfXFdE0
+         WSTfvEDv7wQZugPkMUFL7pAEZihbzhy8PbIE3QJm9Q451mwJxO+smCoxeOl4k94lJtfA
+         51lTmrgI5DIKSLJi2AyFsWx/7sodZMuyZe+mBrarkheTzNNM22gHANhaVKvEnMD4oXGq
+         KurX/VDmfX4fIcrvUEdc4YAuQON5JioxmN1t8w+wQsMFecOCWi/ZSciWd4NuHhSazRhK
+         I4vQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=NN+b2sfzxNXDXzV7TDm7hE5fzlrLYeypS0aOQYewte0=;
+        fh=S5FTryvHQD8giRZI57jd0FM1Li6tdC7LBpwa1SFcmmw=;
+        b=Ypg5+bJvk9cIDBjzBYpkuChErmEcWtxbIhzJafSic14YZhiX+C7Aph+5zCRGwsXhiv
+         Uj2z3MkYnQ8xDrI10ROj7lwf+2W4OGyAmTZEZRk7tqo51IUkeA+Pqktdc+ZkP7x5ZsMv
+         YmTzyMkiE/Vm+u+S/IpxE+xIX5pj6/fFDIEl/5yqdehh1+IfcYEg6h5mRyNe/AypvfMD
+         imy2Ep1ScARbNTeOSkvmT2p9frxtrkQC3RXXpt1fP3Z2dpWw/kVGf9zY+uEPrRvC1NRl
+         zc7EBO/roc5VVXezynOJtM2RVvZBXMcB+0N3JpZBOMBk0tfUj64+chGN5QKKfKVk679c
+         /9cA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1779509273; x=1780114073; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NN+b2sfzxNXDXzV7TDm7hE5fzlrLYeypS0aOQYewte0=;
+        b=aAZG2YcHkvqZqx0R9D0Yf8PAwjGMvjS2Q1yXVnZW/QcJsKG7e7u2yVJTQ8LkSA59RK
+         x8cEgwwrfmdg0/TgovS8Ius8gJ3nLsQXfsLvtSnSarEwXINoIe8WW8u5dMG/Q3Gs0t27
+         JIx5mMP3RoexXDAht1bfIXw/UxDlBD0ZC9tjzBGKFU0oKCfd8au0OqXSCOX8/ycnec8x
+         iiK4R9DSnGW+v1feM6/VKFF03/29HQx72XTBbg/SJdhRqE7NLtQN4ti+C+rSOdfeNHaJ
+         5A0nX6RXQkPzQPNPQZpCAGd5BS4OQFhJkQfuTFhCOO/fsFj3CJk/rIkZE1n1f+AMt6+N
+         CdLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779509273; x=1780114073;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=NN+b2sfzxNXDXzV7TDm7hE5fzlrLYeypS0aOQYewte0=;
+        b=G+xonXRiRhbkwl9DJvJta6/sdSq/fz0bv+J2InHMu3x2ZvKJfzrTlh+2EE/9kXvc6V
+         Pj/qJxSbWN/kQe3d0WqyJYgdIiu3TdhBjZb6lXuyvaakYQIICmli3no+e63AVkeKjo8W
+         UKb0FnAFzM6qCaY6CTVNTJXX9GaHzOufn17n0UsjtE1PXzT7U0LHneyxlIhB2natKY2e
+         jiakWmqicL0d6g9doJdAfS70ItAjEpSqdgowRVECVsWLJDuhy6a/IkSMCrJB4/7HSVj1
+         BiJ+tgtSmekb/+6DK7rLkcqtwnAsT77u5rTxpJewH30wXTfaTjWROKq5OQ1dVvE7zk1u
+         7GBQ==
+X-Gm-Message-State: AOJu0YyHvfIeop2yrVOlHYy4ucHDz3MoMlbXNnHbagZNuxE3iFXscsC+
+	c6oXZUQMMsUGydLyv6AXNwqCqerKJNmPc3dtl/+b5vPOCuQ4sfg+j5adBPpaEcCxAQE76V5agPp
+	AtHiPn5OQRQsJs0R42hCyt7l5dr/7CuOkvTwkWfCF
+X-Gm-Gg: Acq92OELsP4zJmTjkb41YWqxCKrsu5oqFlTs+7TQpMVxd2DHRtcPBdwjYdNqAY2VtYT
+	CuIZi5CUcldpEMEJondI9jDbwdP+3BKML+wN/sH/yOFTaSRzpnKXTCNzyoPmEkscpftPk86HEmp
+	wpmD599D6HZtr0wjfo8tReOu2Szinayv1UTNzSHf0woz3dAOFUgsz5UszEo+Ce60BWbcYPwlupw
+	Z3WwXOuvNYszfM16qoToRWNxtq+suqyN8TK468LMLg+rV+kx+YUZG2Z9EcErVfMNtYPKtJ9l+rx
+	Uke/
+X-Received: by 2002:a05:6a00:2da4:b0:82a:6ef8:cb43 with SMTP id
+ d2e1a72fcca58-8415f53dbe4mr6009724b3a.19.1779509273360; Fri, 22 May 2026
+ 21:07:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260522023234.3778588-1-kpsingh@kernel.org> <CAHC9VhTk3qovnQQjK0C_FWU605j6Yi+-poMVVMS8WycRFg9xhQ@mail.gmail.com>
+ <CACYkzJ6e4LSPr9pbjAMze9-CpXvFMKdm9xXHepvjhMxMAw+=RQ@mail.gmail.com>
+In-Reply-To: <CACYkzJ6e4LSPr9pbjAMze9-CpXvFMKdm9xXHepvjhMxMAw+=RQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sat, 23 May 2026 00:07:41 -0400
+X-Gm-Features: AVHnY4LH13W4v-QECn_JRP_dXtczIsWCYDboQl6EfJ4JTRf8VAQqGMzOrZLpzzg
+Message-ID: <CAHC9VhToAU=pj3eFsNswot_JAmujguuUCArHAhpqvqjmSJxPSg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 00/13] Signed BPF + IPE Policies
+To: KP Singh <kpsingh@kernel.org>
+Cc: linux-security-module@vger.kernel.org, bpf@vger.kernel.org, ast@kernel.org, 
+	daniel@iogearbox.net, memxor@gmail.com, James.Bottomley@hansenpartnership.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-+ damon@lists.linux.dev
+On Fri, May 22, 2026 at 4:46=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote=
+:
+> On Fri, May 22, 2026 at 8:56=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> > On Thu, May 21, 2026 at 10:32=E2=80=AFPM KP Singh <kpsingh@kernel.org> =
+wrote:
+> > >
+> > > This series continues the "Signed BPF programs" work and adds
+> > > the missing pieces needed for an LSM to do policy enforcement
+> > > and addresses the concerns raised by the developers of Hornet.
+> > >
+> > > One signing scheme, please.
+> >
+> > This is why we tried working with you and Alexei for quite some time,
+> > providing requirements, patches, reviews, and code suggestions.
+> > Unfortunately, our input was not reflected in the signing scheme that
+> > was merged into Linus' tree, so we have had to get creative to meet
+> > our our needs and those of others.
+>
+> Is your idea of creativity to circumvent working with the BPF
+> maintainers and community?
 
-On Thu, 21 May 2026 06:33:22 -0700 Kees Cook <kees@kernel.org> wrote:
+My previous comment should answer that.
 
-> Using the following Coccinelle script, convert struct kernel_param_ops
-> .get callbacks from "char *" to "struct seq_buf *" when the only write
-> to the buffer is via a final call of scnprintf(), snprintf(), sprintf(),
-> or sysfs_emit().
-> 
-> Since seq_buf_printf() will return -1 on overflow, and struct
-> kernel_param_ops .get callbacks are expected to truncate without error,
-> we must ignore the return value from seq_buf_print() and always return 0
-> (as the length is calculated in the common dispatcher code).
-> 
-> @@
-> identifier FN, BUF, KP;
-> expression FMT;
-> expression list ARGS;
-> @@
->  int FN(
-> -               char *BUF
-> +               struct seq_buf *BUF
->                 , const struct kernel_param *KP)
->  {
->         ... when any
-> (
-> -       return scnprintf(BUF, PAGE_SIZE, FMT, ARGS);
-> |
-> -       return snprintf(BUF, PAGE_SIZE, FMT, ARGS);
-> |
-> -       return sprintf(BUF, FMT, ARGS);
-> |
-> -       return sysfs_emit(BUF, FMT, ARGS);
-> )
-> +       seq_buf_printf(BUF, FMT, ARGS);
-> +       return 0;
->  }
-> 
-> No struct kernel_param_ops initializations need changing since
-> DEFINE_KERNEL_PARAM_OPS already routes the pointer to .get or .get_str
-> via _Generic based on the function signature, so converted callbacks
-> are automatically moved from the .get_str to the .get callback.
-> 
-> Signed-off-by: Kees Cook <kees@kernel.org>
-[...]
->  mm/damon/lru_sort.c                           | 14 +++---
->  mm/damon/reclaim.c                            | 14 +++---
->  mm/damon/stat.c                               | 10 ++--
+> > Once again, if one signs BPF programs using the Hornet signing tools
+> > provided in Blaise's patches, the resulting signed BPF can be loaded
+> > and verified using both the existing BPF signature verification code
+> > and Hornet.  It is also easy to disable Hornet and/or IPE at kernel
+> > boot using the "lsm=3D" command line parameter, and of course one can
+> > always tailor the IPE policy to meet specific needs.  Although you
+> > surely must be aware of that as your own patchset borrows heavily from
+> > Blaise's original code, albeit without any attribution.
+> >
+> > > Hornet has been NACK'd repeatedly by the BPF maintainers [1][2]
+> > > on layering and TOCTOU grounds.
+> >
+> > Blaise has recorded Alexei's NACK on the Hornet patchset and addressed
+>
+> Please record the NACK from Daniel and me.
 
-For the above DAMON changes,
+Send me the commit IDs of the patch(es) you wish to NACK and I'll add
+it.  Daniel will need to do the same; I generally don't accept
+metadata tags from third parties, whether positive or negative.
 
-Reviewed-by: SeongJae Park <sj@kernel.org>
+> > > - security_bpf_prog_load_post_integrity LSM hook, fired by the
+> > >   kfunc on a successful metadata check.
+> >
+> > Does a kfunc calling a LSM hook open the door to a potential recursion
+> > issue involving a BPF LSM?
+>
+> What's the concern here? LSM hooks can fire from BPF kfuncs and
+> helpers for a while now.
 
+I was under the impression that BPF wanted to prevent things like
+infinite recursion, from a safety/security perspective, perhaps not.
 
-Thanks,
-SJ
+> > > - IPE properties (bpf_signature, bpf_keyring, bpf_kernel) and
+> > >   two ops (BPF_PROG_LOAD, BPF_PROG_LOAD_POST_INTEGRITY).
+> > >
+> > > This series address concerns raised by the Hornet developers:
+> > >
+> > > * The metadata hash check should be in kernel C, not BPF
+> > >   bytecode -- Blaise Boscaccy [3]:
+> > >
+> > >   The bpf_loader_verify_metadata kfunc moves the hash check from
+> > >   inline BPF instructions into kernel C code.
+> >
+> > Please see my comments above.  While the kfunc is written in C, it is
+> > still reliant on the loader calling that kfunc.
+>
+> Yes, that's the idea of transitive trust here. Ultimately you signed
+> the loader with your key. The mechanism proposed here allows
+> verification of any dynamic metadata, it does not need to be hermetic
+> to the loader, provided the digest of the metadata is incorporated
+> into the loader's signed payload.
 
-[...]
+We've talked about this many, many times already and the differences
+in our security requirements are well established.  You've satisfied
+your security goals with the signing scheme Alexei merged, we are
+working to satisfy our security requirements with Hornet.  While
+Hornet requires compliance with your signing scheme, there is no
+requirement for you to use Hornet to utilize your signing scheme.
+
+--=20
+paul-moore.com
