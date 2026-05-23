@@ -1,321 +1,112 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C73DB640
-	for <linux-security-module@vger.kernel.org>; Sat, 23 May 2026 00:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFA2EEBB;
+	Sat, 23 May 2026 00:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779494992; cv=none; b=YrgzCpiBxpABtXBTUPAuLhpYfSfeNpHi21hKLK1tzs2mLl1wfIWaA4mg5LU7hune5STYZffmiIpwkxLZqXs/R/B3G6Y2Q4z5ydocELky5w5z541a6clvfeqyg9bZVV6uK9qjHkUh0sCeXI6aHstfR8p+ym7dfbIQreTx5HN6X6g=
+	t=1779495114; cv=none; b=kCTOAKmw+1Rb+avNcLFitXVAn1grBmzbulAHyRj9HrtQR0obaCsgPiYhvu1Vxila0IQmPuYKQDZ64ToLy5S8qooOq5XstOtdBx1lPe9so35EheYBndsB36EBWH7kfdrfEo8LHbziV+h/ATPs55C1M3sNmDs/OUuLqjDQJkT901g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779494992; c=relaxed/simple;
-	bh=vJJU4GmTY9jmtg0yrZYpivbpmWBSMIctI21fyZ7o2PM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sBB0qTf/YMJoEompUjDd6s+leMA/Fzg5PViNQHvbwVxzI5oXOvQsZpPF5qJyH3w1ONHJygg7MCuzm/LFyr/aFs27WlP+cumUdshdFTYqFarWWfDwuSgo4q2nSQpA/aVtr8TXrA1Ar8gXbDdBedAQq5emYcaG+n4/9//KYOTswQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LLz6OJ2G; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779495114; c=relaxed/simple;
+	bh=4gyir+4v/cozik3PIc8+RTGqZfUKwoEQ7fgVVJgADsg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jFCj3u8FgrSpuw4u2fX/GIKEBIwaFxSuXziLZCRcLluxySI7GLQ0fvZy9s1zqEDXnt61XTUdYiCU39V8n4NRk57RqX4fRLUDVcUlD31ONw30CHNnkmVW82DtTTYhEqG0kOxjbJEqj/bMUVgZfdrLlNlyzjRApWSLO80ObDjBw2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QfQZM2qZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LLz6OJ2G"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC5B21F000E9
-	for <linux-security-module@vger.kernel.org>; Sat, 23 May 2026 00:09:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QfQZM2qZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D45F1F000E9;
+	Sat, 23 May 2026 00:11:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779494990;
-	bh=3ETkiHyHX86gwae5asX1X/o+svz9W8wf7RwScqd1OB0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=LLz6OJ2G5VcEwhJ2/c8K+iMqFijT6OnrEV48gzINVrS4k/r+ulK4Q7YINQvQxJaXQ
-	 xrJeY31VCURhP233+u4suSIxLCh3ogsJE3FCGmaFiWWN0O+8ulzprV9okn3Ft+KLFe
-	 dgmPxI0HYxlzuEVTct4whUgy7ntJl6KNaPW5PfOFx4ZJA5Vn163MRAztJYLmz59hew
-	 dxijwqWdlVayWVwLLUlmWVbergjZeABI4ib5iTDnjDruK5jwReWHP92aBQIBPq66KR
-	 HDZ+2aUIP9YQ3PpMClQj8zP/3f2SoXnUPDwO8M+lsu+ojg0/C9vpYJ0X1yzJNS7IfJ
-	 q8YLhxPAHDDUw==
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-911449d9d03so913600485a.1
-        for <linux-security-module@vger.kernel.org>; Fri, 22 May 2026 17:09:50 -0700 (PDT)
-X-Gm-Message-State: AOJu0Yw026/lDZtRWDRv5M5x0c2FwVYrxT1MkbVGCE5LO0zfwoLSIfqm
-	s+tJaoNkZ5PQ7IYe95VEfpbw/0W4XzMso0lrZNYsBlUH7x/fLQe4WUMLFTLyv/GHoLyJDDLR0fj
-	GQZNqzBoU23RppZXinon4eQyB7Ybn2vY=
-X-Received: by 2002:a05:620a:1a19:b0:914:c48c:4ac4 with SMTP id
- af79cd13be357-914c48c4e17mr197578085a.15.1779494989957; Fri, 22 May 2026
- 17:09:49 -0700 (PDT)
+	s=k20260515; t=1779495113;
+	bh=UOdjcdrieoIVhDjSmGmUc8dVnOKSpLVQHovlfDmXAb4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=QfQZM2qZToodXI72EM2dRbFKuAXhioJ6ijpdSXMpkvZbzz8PQPYBYLax+Z8+Pn9H8
+	 B8LN5btyBUxe/KdCJZtqNnyccSPo8SXTGk7JhaiV7unVL9vO4pNsKGH9UQJYZm9MZv
+	 GNbJiWozXu3o+djzKrAa0nuO6ROYrHeGyn49ZxyYZhW9j67RCwr0HjD14c9TblisKT
+	 v++jtLxD4fuxf3NPQjUleVqlXUklC2odqo+kEi7mVQ0GtS7CtSO3vXXSkuYL0w6YMt
+	 7AZPriv2QJ6YfznX+yej7YTtSlB1u2T735aKrmNhnFk5d9YyLTvCM4Kkhf0HAo5h0p
+	 k0b2g5+g+t/Tw==
+Date: Fri, 22 May 2026 17:11:48 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Sudeep Holla <sudeep.holla@kernel.org>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: Re: [PATCH 2/4] firmware: arm_ffa: Register core as a platform driver
+Message-ID: <20260523001148.GA1319283@ax162>
+References: <20260508-b4-ffa_plat_dev-v1-0-c5a30f8cf7b8@kernel.org>
+ <20260508-b4-ffa_plat_dev-v1-2-c5a30f8cf7b8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260515200158.4081915-1-song@kernel.org> <20260515200158.4081915-2-song@kernel.org>
- <177944135249.2871055.11361892114499566606.b4-review@b4>
-In-Reply-To: <177944135249.2871055.11361892114499566606.b4-review@b4>
-From: Song Liu <song@kernel.org>
-Date: Fri, 22 May 2026 17:09:38 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW4BVSQ6oqyk=kExuZUkB9PWRRqUf_EJ=x3mNmtkT4oH4g@mail.gmail.com>
-X-Gm-Features: AVHnY4LT2cV2r2zWcbI0oZ727WxL46ft_rV_sB6qqeKVssDd55dfD2nDOQXPZeA
-Message-ID: <CAPhsuW4BVSQ6oqyk=kExuZUkB9PWRRqUf_EJ=x3mNmtkT4oH4g@mail.gmail.com>
-Subject: Re: [PATCH v4 1/7] lsm: Add granular mount hooks to replace security_sb_mount
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	selinux@vger.kernel.org, apparmor@lists.ubuntu.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	john.johansen@canonical.com, stephen.smalley.work@gmail.com, 
-	omosnace@redhat.com, mic@digikod.net, gnoack@google.com, 
-	takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp, 
-	herton@canonical.com, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260508-b4-ffa_plat_dev-v1-2-c5a30f8cf7b8@kernel.org>
 
-On Fri, May 22, 2026 at 2:16=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Fri, 15 May 2026 13:01:52 -0700, Song Liu <song@kernel.org> wrote:
-> > [...]
-> >
-> > Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > Tested-by: Stephen Smalley <stephen.smalley.work@gmail.com> # for selin=
-ux only
-> > Signed-off-by: Song Liu <song@kernel.org>
-> > Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
+Hi Sudeep,
 
-^^^^^ I assume you didn't mean to add this SoB yet.
+On Fri, May 08, 2026 at 06:54:16PM +0100, Sudeep Holla wrote:
+> Move the FF-A core bring-up and teardown paths into platform driver
+> probe and remove callbacks, and register a synthetic arm-ffa platform
+> device to bind the driver.
+> 
+> This makes the FF-A core lifetime follow the driver model while keeping
+> the device creation internal to the FF-A core. Use normal platform driver
+> registration so the probe path has standard driver-core semantics.
+> 
+> The synthetic platform device is a temporary bridge until ACPI and
+> devicetree describe the FF-A core device or object. Once those firmware
+> description paths are defined, the internal platform device creation can
+> be dropped and the driver can bind to the firmware-described device
+> directly.
+> 
+> Since the transport selection now happens from the platform probe path,
+> drop the __init annotation from ffa_transport_init().
+> 
+> Signed-off-by: Sudeep Holla <sudeep.holla@kernel.org>
 
->
-> Please cleanly separate the preparatory work for introducing the new
-> hooks from any changes to fs/namespace.c
->
-> Once you have all of the new machinery in place, switch fs/namespace.c
-> over to the new hooks.
+I am seeing
 
-Could you please be more specific on how to arrange these changes?
-Currently, we have
+  arm-ffa arm-ffa: probe with driver arm-ffa failed with error -95
 
-1/7 adds new hooks:
-  lsm: Add granular mount hooks to replace security_sb_mount
-2/7 through 6/7 migrate LSMs from old hooks to new hooks:
-  apparmor: Remove redundant MS_MGC_MSK stripping in apparmor_sb_mount
-  apparmor: Convert from sb_mount to granular mount hooks
-  selinux: Convert from sb_mount to granular mount hooks
-  landlock: Convert from sb_mount to granular mount hooks
-  tomoyo: Convert from sb_mount to granular mount hooks
-7/7 removes old hooks:
-  lsm: Remove security_sb_mount and security_move_mount
+on my two arm64 test machines after this change landed in -next as
+commit e659fc8e537c ("firmware: arm_ffa: Register core as a platform
+driver"), is this expected? If so, perhaps it should be silenced?
 
-Some ideas to change this:
+Cheers,
+Nathan
 
-Idea #1:
-Do you mean to split 1/7 and 7/7 into two patches each: one
-for changes in fs/namespace.c, the other for everything else?
-IOW, the set of 9 patches will look like:
-
-1/9 adds new hooks in security/ core code
-2/9 adds calls to new hooks to fs/namespace.c
-3/9 through 7/9 migrate LSMs from old hooks to new hooks
-8/9 removes calls to old hooks from s/namespace.c
-9/9 removes old hooks from security/ core code
-
-Idea #2:
-Or do you mean all the changes to fs/namespace.c have to
-stay in one commit? I am not sure how we can make the
-whole patchset clean with this approach. We will probably
-need 2+ commits for each of the 4 LSMs we update. IOW,
-the set will look like:
-
-Add new hooks in security core code
-Add new hooks in selinux
-Add new hooks in apparmor
-Add new hooks in landlock
-Add new hooks in tamoyo
-Replace old hooks with new hooks in fs/namespace.c
-Remove old hooks from selinux
-Remove old hooks from apparmor
-Remove old hooks from landlock
-Remove old hooks from tamoyo
-Remove old hooks in security core code
-
-This will require at least 11 patches, and it is not
-really clean.
-
-Idea #3:
-Did I miss any other solutions?
-
-> This will make it way easier to review and easier to distribute the
-
-This sentence appears to be incomplete. Do you mean to distribute
-different patches in the patchset to different trees and merge them
-separately?
-
-I actually think the patchset is clean as-is.
-
-The overall change in fs/namespace.c is really minimal:
-    fs/namespace.c                    |  41 +++++++---
-
-We can clearly see what it changed in fs/namespace.c with
-"git diff HEAD~7 -- fs/" (attached below).
-
-Therefore, I don't see a way to make the whole patchset more
-clean. If I missed anything, please let me know.
-
-Thanks,
-Song
-
-
-$ git diff HEAD~7 -- fs/
-diff --git c/fs/namespace.c w/fs/namespace.c
-index fe919abd2f01..43f22c5e2bf4 100644
---- c/fs/namespace.c
-+++ w/fs/namespace.c
-@@ -2888,6 +2888,10 @@ static int do_change_type(const struct path
-*path, int ms_flags)
-        if (!type)
-                return -EINVAL;
-
-+       err =3D security_mount_change_type(path, ms_flags);
-+       if (err)
-+               return err;
-+
-        guard(namespace_excl)();
-
-        err =3D may_change_propagation(mnt);
-@@ -3006,6 +3010,10 @@ static int do_loopback(const struct path *path,
-const char *old_name,
-        if (err)
-                return err;
-
-+       err =3D security_mount_bind(&old_path, path, recurse);
-+       if (err)
-+               return err;
-+
-        if (mnt_ns_loop(old_path.dentry))
-                return -EINVAL;
-
-@@ -3328,7 +3336,8 @@ static void mnt_warn_timestamp_expiry(const
-struct path *mountpoint,
-  * superblock it refers to.  This is triggered by specifying MS_REMOUNT|MS=
-_BIND
-  * to mount(2).
-  */
--static int do_reconfigure_mnt(const struct path *path, unsigned int mnt_fl=
-ags)
-+static int do_reconfigure_mnt(const struct path *path, unsigned int mnt_fl=
-ags,
-+                             unsigned long flags)
- {
-        struct super_block *sb =3D path->mnt->mnt_sb;
-        struct mount *mnt =3D real_mount(path->mnt);
-@@ -3343,6 +3352,10 @@ static int do_reconfigure_mnt(const struct path
-*path, unsigned int mnt_flags)
-        if (!can_change_locked_flags(mnt, mnt_flags))
-                return -EPERM;
-
-+       ret =3D security_mount_reconfigure(path, mnt_flags, flags);
-+       if (ret)
-+               return ret;
-+
-        /*
-         * We're only checking whether the superblock is read-only not
-         * changing it, so only take down_read(&sb->s_umount).
-@@ -3366,7 +3379,7 @@ static int do_reconfigure_mnt(const struct path
-*path, unsigned int mnt_flags)
-  * on it - tough luck.
-  */
- static int do_remount(const struct path *path, int sb_flags,
--                     int mnt_flags, void *data)
-+                     int mnt_flags, void *data, unsigned long flags)
- {
-        int err;
-        struct super_block *sb =3D path->mnt->mnt_sb;
-@@ -3393,6 +3406,9 @@ static int do_remount(const struct path *path,
-int sb_flags,
-        fc->oldapi =3D true;
-
-        err =3D parse_monolithic_mount_data(fc, data);
-+       if (!err)
-+               err =3D security_mount_remount(fc, path, mnt_flags, flags,
-+                                           data);
-        if (!err) {
-                down_write(&sb->s_umount);
-                err =3D -EPERM;
-@@ -3708,6 +3724,10 @@ static int do_move_mount_old(const struct path
-*path, const char *old_name)
-        if (err)
-                return err;
-
-+       err =3D security_mount_move(&old_path, path);
-+       if (err)
-+               return err;
-+
-        return do_move_mount(&old_path, path, 0);
- }
-
-@@ -3786,7 +3806,7 @@ static int do_new_mount_fc(struct fs_context
-*fc, const struct path *mountpoint,
-  */
- static int do_new_mount(const struct path *path, const char *fstype,
-                        int sb_flags, int mnt_flags,
--                       const char *name, void *data)
-+                       const char *name, void *data, unsigned long flags)
- {
-        struct file_system_type *type;
-        struct fs_context *fc;
-@@ -3830,6 +3850,9 @@ static int do_new_mount(const struct path *path,
-const char *fstype,
-                err =3D parse_monolithic_mount_data(fc, data);
-        if (!err && !mount_capable(fc))
-                err =3D -EPERM;
-+
-+       if (!err)
-+               err =3D security_mount_new(fc, path, mnt_flags, flags, data=
-);
-        if (!err)
-                err =3D do_new_mount_fc(fc, path, mnt_flags);
-
-@@ -4080,7 +4103,6 @@ int path_mount(const char *dev_name, const
-struct path *path,
-                const char *type_page, unsigned long flags, void *data_page=
-)
- {
-        unsigned int mnt_flags =3D 0, sb_flags;
--       int ret;
-
-        /* Discard magic */
-        if ((flags & MS_MGC_MSK) =3D=3D MS_MGC_VAL)
-@@ -4093,9 +4115,6 @@ int path_mount(const char *dev_name, const
-struct path *path,
-        if (flags & MS_NOUSER)
-                return -EINVAL;
-
--       ret =3D security_sb_mount(dev_name, path, type_page, flags, data_pa=
-ge);
--       if (ret)
--               return ret;
-        if (!may_mount())
-                return -EPERM;
-        if (flags & SB_MANDLOCK)
-@@ -4141,9 +4160,9 @@ int path_mount(const char *dev_name, const
-struct path *path,
-                            SB_I_VERSION);
-
-        if ((flags & (MS_REMOUNT | MS_BIND)) =3D=3D (MS_REMOUNT | MS_BIND))
--               return do_reconfigure_mnt(path, mnt_flags);
-+               return do_reconfigure_mnt(path, mnt_flags, flags);
-        if (flags & MS_REMOUNT)
--               return do_remount(path, sb_flags, mnt_flags, data_page);
-+               return do_remount(path, sb_flags, mnt_flags, data_page, fla=
-gs);
-        if (flags & MS_BIND)
-                return do_loopback(path, dev_name, flags & MS_REC);
-        if (flags & (MS_SHARED | MS_PRIVATE | MS_SLAVE | MS_UNBINDABLE))
-@@ -4152,7 +4171,7 @@ int path_mount(const char *dev_name, const
-struct path *path,
-                return do_move_mount_old(path, dev_name);
-
-        return do_new_mount(path, type_page, sb_flags, mnt_flags, dev_name,
--                           data_page);
-+                           data_page, flags);
- }
-
- int do_mount(const char *dev_name, const char __user *dir_name,
-@@ -4545,7 +4564,7 @@ static inline int vfs_move_mount(const struct
-path *from_path,
- {
-        int ret;
-
--       ret =3D security_move_mount(from_path, to_path);
-+       ret =3D security_mount_move(from_path, to_path);
-        if (ret)
-                return ret;
+# bad: [c1ecb239fa3456529a32255359fc78b69eb9d847] Add linux-next specific files for 20260522
+# good: [6779b50faa562e6cca1aa6a4649a4d764c6c7e28] Merge tag 'pci-v7.1-fixes-2' of git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci
+git bisect start 'c1ecb239fa3456529a32255359fc78b69eb9d847' '6779b50faa562e6cca1aa6a4649a4d764c6c7e28'
+# bad: [c09bb0d7c56d56daed51e374409472c3fece9931] Merge branch 'for-next' of https://git.kernel.org/pub/scm/linux/kernel/git/ath/ath.git
+git bisect bad c09bb0d7c56d56daed51e374409472c3fece9931
+# bad: [42b0664d6f7b3d04f961e0709811280e52d4d39c] Merge branch 'for-next' of https://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git
+git bisect bad 42b0664d6f7b3d04f961e0709811280e52d4d39c
+# good: [63775c4b77cf7ac5863ae0e76f8626b80d217562] Merge branch 'mm-nonmm-unstable' of https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+git bisect good 63775c4b77cf7ac5863ae0e76f8626b80d217562
+# good: [f437936af5c74fddfdfcd2388a5f1eec2f9a105b] Merge branch 'for-next' of https://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-omap.git
+git bisect good f437936af5c74fddfdfcd2388a5f1eec2f9a105b
+# good: [01bf3f256f1ed15fa3884e4893e5a9d78fdfb2d6] Merge branch 'for-next' of https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git
+git bisect good 01bf3f256f1ed15fa3884e4893e5a9d78fdfb2d6
+# bad: [bee649097c8de82d9dccd3660c41163a6507e3d4] Merge branch 'next' of https://git.kernel.org/pub/scm/linux/kernel/git/jenswi/linux-tee.git
+git bisect bad bee649097c8de82d9dccd3660c41163a6507e3d4
+# bad: [82ccfdd8dd1e29229a3ed7c95a76578706fc4a1d] Merge branch 'for-next' of https://github.com/sophgo/linux.git
+git bisect bad 82ccfdd8dd1e29229a3ed7c95a76578706fc4a1d
+# good: [32bc5496b48174dbca1f187f710955ee4d9527a1] firmware: arm_scmi: Validate SENSOR_UPDATE payload size
+git bisect good 32bc5496b48174dbca1f187f710955ee4d9527a1
+# bad: [64251369d33884b431a52b89c60fabf466f3913c] Merge branches 'for-next/scmi/updates' and 'for-next/ffa/updates' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux into for-linux-next
+git bisect bad 64251369d33884b431a52b89c60fabf466f3913c
+# bad: [70492cfce2a4d41e87bf46989028a90f4bc6b38f] firmware: smccc: Fix Arm SMCCC SOC_ID name call
+git bisect bad 70492cfce2a4d41e87bf46989028a90f4bc6b38f
+# bad: [7fe2ec9fb8e9a78dad8d6b1e551cb4d126e36f1e] firmware: arm_ffa: Set the core device as FF-A device parent
+git bisect bad 7fe2ec9fb8e9a78dad8d6b1e551cb4d126e36f1e
+# bad: [e659fc8e537c7a21d5d693d6f30d8852f2fa8d91] firmware: arm_ffa: Register core as a platform driver
+git bisect bad e659fc8e537c7a21d5d693d6f30d8852f2fa8d91
+# good: [cc7e8f21b9f0c229d68cf19a837cba82b5ac2d87] Revert "firmware: arm_ffa: Change initcall level of ffa_init() to rootfs_initcall"
+git bisect good cc7e8f21b9f0c229d68cf19a837cba82b5ac2d87
+# first bad commit: [e659fc8e537c7a21d5d693d6f30d8852f2fa8d91] firmware: arm_ffa: Register core as a platform driver
