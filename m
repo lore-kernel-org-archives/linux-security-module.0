@@ -1,108 +1,116 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DED234964
-	for <linux-security-module@vger.kernel.org>; Sat, 23 May 2026 16:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779554965; cv=pass; b=NdV5vGlxcs/LxYnvQWQRkelBtQREVTfi3ZAWRn50tdk/HP7ZlmavZ1QiWYpbDllTgK7pnmONteuk+Q6Tn2G8dvrv7bwQ1ssimZg6pXrM/zisrSKkLQUUuHYeg2Z1Ia2OU/IqFfDF3+W1hhRHAHvIWsQhqq18oHk64kOu2luTZvE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779554965; c=relaxed/simple;
-	bh=EIa8bm3wefqdftkj44KMQX6I0eapyj2RnpgMUVefGr0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kr+22rZCGRsILBEn0GuKwfv60nKgX8ROs/DI5bsUxp4dwjuA+rinsGj3VJ2QxiieKEjawdn2VjrZLrZRtj94DcCKdonoLuLF0xUG0xOSQJLlMkWDhtBGyOQSqgLmvKXdXo1HUCxVtvsOkzdTzDwkEo6EV/WfGFeSgE2437cdsrs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gMphvjga; arc=pass smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932EF322533
+	for <linux-security-module@vger.kernel.org>; Sat, 23 May 2026 16:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779555225; cv=none; b=PKfAkJCmYpdowXnmbqR4IaGhopFRXGSgcA0g6rhLLEVbN1mWPS8Rv+b1CisINBfBTVOoDOEAbGF6er6KWeueDK9EHWg8kTg/HKRezrPqQg4PGWkNgjY22GURspMlJ/25O2bTJv4Zr4Dik9lHrcNA+pET6Z/nYemlEObB7vhYuC8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779555225; c=relaxed/simple;
+	bh=MtqifYllkoj5l3UV1nR9ImSBD7av3EJIAelE4M0QQmo=;
+	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=LEf1OEbg6cs5h7J00itO7KKNX45j7/B2GwbZD9QK5357DsgzcPJwkMPGcWssLyZ3O3TykGKuqQGnOMqeYP4rflsohq0I8YRkKazI0oPHz0mMZZNS3fV5s6UB1RiJLzYx+fLMmtrUiv2RJSzifRZsCSuMam6OXOSs7qi+a9GNgxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=a9/1q2H4; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gMphvjga"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-48d146705b4so88313875e9.3
-        for <linux-security-module@vger.kernel.org>; Sat, 23 May 2026 09:49:23 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1779554962; cv=none;
-        d=google.com; s=arc-20240605;
-        b=FjJ2JgXLcMLgnP/0VPbR5u062Fwj8eHUPLoYldk5MCaNSwApsjhbFRpQeb155KJwiL
-         pO58320Egl1OW3LiLrM/hdKrAyeSidf7k6tXNyjpocZ5XagZAe5kD3AkzRsLBhxrWUwg
-         dpsubr6mXSGYOGlhF4Qz8urUTcRCKonIBLnTT9wF5t6LKuaskRGpXhHLb5RU3hcDYQSU
-         St1CWxJq+c31za5Su41ER0+fKUP8jKAIjdHeCQRe+4Ww0UenDHG4jLRiVLbwkTW2qAk4
-         2sTrsoA2hsMqI7v7aW7I+5hXJaU5PXH2By1n00Fi3IratuT8NgPIWk5q5kmZdIgAIxF/
-         tdYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=EIa8bm3wefqdftkj44KMQX6I0eapyj2RnpgMUVefGr0=;
-        fh=bN4nGiGVMoYvaEVGV0iOqumB+ukS2TASSPIMWw11zK8=;
-        b=GI3aNz8RJal67/SUCNmAb30Qfnq+DbM3InycknWVugRB36RFyN8whdmBBTZXzX5YFn
-         45QCZk4BcQht8JrJlw8pSk9wakHYyPvWC+jnc5FCfqFcKfjL4cVxgZiyOzW86mamTXND
-         Dmax1wyDeEdPfzKaS+CRM3vvXHw8KL2Sb8oA2jUVFIwllX+0u1WjS/GTOHgkf1Wdu/br
-         3eI3QCSyy7200GbznvzM1Ofjiy2oTs42OqJcpenSv0hfl9V7nMyKvTF5l1BhED8GAc/u
-         txm/JrzXq5hH8sP7enytiD3qwRkI/PGFXckAyGKh8hqGOrgOQKC316XDXkNN35mkVHTz
-         lbBQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="a9/1q2H4"
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-5148cbdea08so70083361cf.2
+        for <linux-security-module@vger.kernel.org>; Sat, 23 May 2026 09:53:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779554962; x=1780159762; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EIa8bm3wefqdftkj44KMQX6I0eapyj2RnpgMUVefGr0=;
-        b=gMphvjgaFstTp34uoGnV1dbF6GiURqLPxX3ljzQUDBuTARAIjVwi9w5U5KvFmyL1Ot
-         6EHLL8E+307uPfMhVDZCX1Eqjd6Qa9yWExfIAvgIb1oDFo/xWETMPuGMhE3NKgtFiLjW
-         FWe39RnLbl7wLT1ve/cAaWEpNTX+oRZVu/lzpPAPT8BdLDmfm1zuLJjyQKJv2qq/kXvx
-         vDjCK3OeLLDq5hBgKzeYagVeVTYuC4U138PgmiJQYu9QWMG4RjMAZ5x37gaCkRpuxJ9+
-         hldDUk9tcQmCsxGsHc5KkUoKpIyrUZy1Y+G3Flc79DRn+Je/ccF2sNkPE6nGWIcvBQIp
-         Tjmg==
+        d=paul-moore.com; s=google; t=1779555223; x=1780160023; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9ocLvTQonLjBSevx07KXv0YQMai11QYlv30lGksLKoU=;
+        b=a9/1q2H4rTtC0ts/DN6DFYNnSvtwGgtoLUmQZezbBbZeb4BRSyGbojOwDzCT8hAU0p
+         vPEi2p2UqRUh32lEYSklT7Hx53+vW02RVV8ejb+rUpcqn5LWNdCtZE0tJOF+HxHuXwkd
+         boGB0//XjWojkDxIxQY22sW4KxG+j636eoJKC521t4N/YL0HEVIz4dt66Ro1Dd29gicX
+         gOX79248IjbPuJmip7qjEs7bXG9I/EkKnYBAB8QS/WA51C1aojsTWitbC7+iDzqbufgI
+         m6zQ0sX/MZyKmuA1I/RL9hrtRtO2MRHCSydjbNPwDXum1UC9pwahrnzMdSLSVwHkvG86
+         7ImA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779554962; x=1780159762;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=EIa8bm3wefqdftkj44KMQX6I0eapyj2RnpgMUVefGr0=;
-        b=h+/9SouW7vAM7AADgP6HkvxtmSLaAFK1bdzXN3+48buC5xs5PwCk088CkL+ixZ8AJo
-         TuI+4axrYzjV0iTHPy0iyQAF7byqmCmDr6cmvnHIBmukA+D++DNcMzP4UNlBNjnNvh1v
-         WSjfB4F86KxcY5obdjnnwfEJZl5T3kDGoxiLJzquWnjQegb0AFGNYO+nGNlr5uRpaOo0
-         2IfUDzZyIGhDWtWxl5MjnPonCFPPGHtMH85ZNAshA+WjHHSb6Kv/7grPDFq7eehnJFRc
-         6VElkrJVh+LrSaatLnvT7jhJPyqQoiRarhryHOKtNumiEZXPtXjQZxjakJ21SGSvGpmm
-         TlhQ==
-X-Gm-Message-State: AOJu0Yy8QovSWpmzfUF4oUlfVflvG3vl1O+MXqWR1RPzXmnPKdnzZHWh
-	LDXR3dJKCMz/vrzmBwxit/SfnM4OeSuWem1TKR24iuSouDdvpKVAw+VcwGchbQ8KI/+dDsxH5ya
-	jhZVB5aNS3qaj+Z3mlD3LP4WpujKtcp4=
-X-Gm-Gg: Acq92OEcSyY2z25foW8Kk1mYrK6ul33+7NrQu1vv3MJtiWo1QWqoitz+RdrGELjBa1H
-	YK7vX05TusXmjz+wdGwX7Ed3Km4DhaRAPBqjENkw2O4HfqFMjs/JCYXF0qbgAWeY/U8TpES9sXS
-	6HkKImXG+AfBDRB3XRPypHgEzmJManr9OqR2dACHk9nQS47dr28X7rNmmiNUwu8Xmo919Lgt/fU
-	NzePuSrCVkO7RT9y6pKL9MadiX8/4ucZE6Q0GIKg3MHHScxvJpR25l7BH6XQ71v74jL48FSDjUh
-	3pMP/M8t/bTdYjUhFToKZx9fUg/lX4MXJyfmtozrGPfyMQIfNtJmBJUWRJNcTqGkpiHS
-X-Received: by 2002:a05:600c:4e0c:b0:489:1a63:509c with SMTP id
- 5b1f17b1804b1-490422608cemr136597435e9.0.1779554962257; Sat, 23 May 2026
- 09:49:22 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1779555223; x=1780160023;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9ocLvTQonLjBSevx07KXv0YQMai11QYlv30lGksLKoU=;
+        b=BMnXqQmxsieHTILvzUFfLggiUf5w21MRzMII5cGjjeBPbFErXKniS0AKTz+rKFYtP2
+         GqOd2HKda2vK67eVzTbnBOSMuaFWGkcK+G56Lr+kKEv2CrzqfdtfyS915V2KwkgxKtuB
+         UZSbftlmT5t6EfnEbyJjgo42zaAnEHS0x/vCfykL4CP8CvGnm//CFCdSpYmhPvBaSrze
+         0PSQL4OZSJ1TAvHgyEJGepD/1trlAQRLjZfbtQ3zkZDTklDIwRUZ3sIs2huA75UujeZc
+         zzqeR9EU9ydyUYRCUPq1opJWnza2YVB2mdWlqP9yqFSJMTrVxG6SFuiTFCFaDWjbn8G/
+         lolw==
+X-Forwarded-Encrypted: i=1; AFNElJ+ngqO6xLGE7WzH1kYC7VskS11fjBV4E8gSBixN37PCS8pBgIMoe9i4Uy0eNayUyNjKUKkL+B17ytvqVFOthrhDXZEoWcw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq/L9iCpxfRputJvH6yCI2hpFJDYzTrylAG2jSydx+/rFAghKJ
+	IPIRIoRj06mcRdoIhObSFyJiZ5RaGyLGmPlSSuiHGBm+0CahTh/b58s3+wxpou+sMg==
+X-Gm-Gg: Acq92OE2m3pXU5WsgQN/LLtyxtzP5TdQdPbDV/ILdE+BnQui6tj7HxjOkHYaURF1p1G
+	fIgLwy1HEzLXYmZX2L/rn5EG4Yqgbx2YFQGzWFOHORwLFLb6Pxo78TTMh5C+UYfkv4qHR7lTq2T
+	lH2nslahAp7xeKsYQUT4Vl0p0IkkSKzKjZioar4viYlrhNdkle4FzgwqveMZSM1S1JFkZKKfrLg
+	TeCMHaLfy/ntnh8CtIlj0/1+91h8o9GNwj6iaFtTUQdrLl/aRdtnr/nRBRt1J0EgCOV1lMNm0qt
+	0DlZ6jnxmERIkGWkauiABCt2VeNV7wycThx0n2qkcQz7S/MxOOXJOm2MJwoMpaPsg3NG8y+wY4D
+	ehgpf7ZH77+hFVVREeJ2QMM1tUjqyQEnjKn493u8nvUJeGKMyqoxMu6y2KncIxEFokALa1O/Egs
+	xtis379FQ/uuF1+SJd9eWohhQ=
+X-Received: by 2002:a05:622a:480f:b0:516:e047:2f2b with SMTP id d75a77b69052e-516e04730edmr66664531cf.58.1779555223507;
+        Sat, 23 May 2026 09:53:43 -0700 (PDT)
+Received: from [10.234.26.20] ([108.147.98.162])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8cc81306d70sm49760846d6.35.2026.05.23.09.53.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 23 May 2026 09:53:42 -0700 (PDT)
+From: Paul Moore <paul@paul-moore.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+CC: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>
+Date: Sat, 23 May 2026 11:53:42 -0500
+Message-ID: <19e55c1c1f0.2843.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+In-Reply-To: <CAADnVQ+WTfgO636GqgxzJ6r=jENpG704kmNAsy-X8=WyjMOV+g@mail.gmail.com>
+References: <20260523160025.16363-2-paul@paul-moore.com>
+ <CAHC9VhR6RSq1TUgAyvHmaF01h87Cazy=BNJhk654BP8yfeSwng@mail.gmail.com>
+ <CAADnVQ+WTfgO636GqgxzJ6r=jENpG704kmNAsy-X8=WyjMOV+g@mail.gmail.com>
+User-Agent: AquaMail/1.58.1 (build: 105801620)
+Subject: Re: [PATCH] lsm,bpf: fix security_bpf_prog_load() error handling
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260522023234.3778588-1-kpsingh@kernel.org> <20260522023234.3778588-6-kpsingh@kernel.org>
-In-Reply-To: <20260522023234.3778588-6-kpsingh@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Sat, 23 May 2026 18:49:11 +0200
-X-Gm-Features: AVHnY4LErFJSCm8vXvIVuhSpX1QDsKcWsBatlBn4YeIC0InaTOnQJ0A0Ch0pTNM
-Message-ID: <CAADnVQL4ZXwGwxBb-Z6W1m3K8+Vs8HYUZQa5-dvpqpy-8p0cgQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 05/13] bpf: compute prog->digest at BPF_PROG_LOAD entry
-To: KP Singh <kpsingh@kernel.org>
-Cc: LSM List <linux-security-module@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Paul Moore <paul@paul-moore.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; format=flowed; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 22, 2026 at 4:32=E2=80=AFAM KP Singh <kpsingh@kernel.org> wrote=
-:
+On May 23, 2026 11:25:55 AM Alexei Starovoitov 
+<alexei.starovoitov@gmail.com> wrote:
+> On Sat, May 23, 2026 at 6:06 PM Paul Moore <paul@paul-moore.com> wrote:
+>> On Sat, May 23, 2026 at 12:00 PM Paul Moore <paul@paul-moore.com> wrote:
+>>>
+>>> If security_bpf_prog_load() fails there is no need to call into
+>>> security_bpf_prog_free() as the LSM will handle the cleanup of any partial
+>>> LSM state before returning to the caller with an error.  Thankfully this
+>>> isn't an issue with any of the existing code as the LSMs which currently
+>>> provide BPF hook callback implementations don't allocate any internal
+>>> state, but this is something we want to fix for potential future users.
+>>>
+>>> Cc: bpf@vger.kernel.org
+>>> Cc: linux-security-module@vger.kernel.org
+>>> Signed-off-by: Paul Moore <paul@paul-moore.com>
+>>> ---
+>>> kernel/bpf/syscall.c | 4 +---
+>>> 1 file changed, 1 insertion(+), 3 deletions(-)
+>>
+>> Alexei, I'm assuming you would prefer to take this via the BPF tree?
 >
-> add_subprog_and_kfunc relocates kfunc CALLs by patching insn->imm
-> and src_reg, and bpf_prog_calc_tag has no rule to mask kfunc CALL
-> fields.
+> Paul, I see that you're intentionally trying to piss me off.
+> It's not going to work :)
 
-add_subprog_and_kfunc() doesn't modify the insn stream afaict.
-Do you mean that bpf_check_btf_info() resolves CO-RE relos?
-but loader prog doesn't use CO-RE.
-I don't quite see the point of the patch.
+I promise you that is not the case. I was looking at the sashiko results of 
+the latest Hornet patch and it identified this potential issue in the error 
+handling code that is an issue independent of Hornet. I posted the quick 
+little patch above to fix the issue, and since the diffstat is solely in 
+kernel/bpf/syscall.c I figured you would want to merge it via the BPF tree; 
+if that is not the case let me know.
+
+--
+paul-moore.com
+
+
+
