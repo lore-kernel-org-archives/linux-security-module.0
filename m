@@ -1,132 +1,321 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC373391851;
-	Fri, 22 May 2026 22:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C73DB640
+	for <linux-security-module@vger.kernel.org>; Sat, 23 May 2026 00:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779489692; cv=none; b=g3QOz5/Er/bO2iTOkfzQIOWoLwe8v/gBzU4/IJkzpwO3jm9OO6rJ9Gu9G/NsKuiI+c2YpLFAWeKsFKKedFc5qtDzt5ca/5xJTMp4ZyXdrlZKWEreRsE8/G8Vx99biVzJXPmUR22RoFs3O1fotE1wdURx3Ne+RaVCd7iBRNHRh94=
+	t=1779494992; cv=none; b=YrgzCpiBxpABtXBTUPAuLhpYfSfeNpHi21hKLK1tzs2mLl1wfIWaA4mg5LU7hune5STYZffmiIpwkxLZqXs/R/B3G6Y2Q4z5ydocELky5w5z541a6clvfeqyg9bZVV6uK9qjHkUh0sCeXI6aHstfR8p+ym7dfbIQreTx5HN6X6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779489692; c=relaxed/simple;
-	bh=pZke+IVMt8oCaCV7MpkA3p+Ni22gDPUzdWZu4B3C/DE=;
-	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
-	 Subject:From:To:Cc:Date; b=D802WwyZNSO0UUZQfSoNCARZXNrS99oMhcQCsvXrTEG2SC44UtpcMgBtN2BDAqwDS1j7/WlMnXVnBPriHd3bG0JDPNyTv8Fasvwo+Lf5rPcveA3vGepsihH8iZ0duJRYYpG0K54MCl77zzBKTQgGVUOJnlhoBE0EvkYT1CEep00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FmBNBX88; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779494992; c=relaxed/simple;
+	bh=vJJU4GmTY9jmtg0yrZYpivbpmWBSMIctI21fyZ7o2PM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sBB0qTf/YMJoEompUjDd6s+leMA/Fzg5PViNQHvbwVxzI5oXOvQsZpPF5qJyH3w1ONHJygg7MCuzm/LFyr/aFs27WlP+cumUdshdFTYqFarWWfDwuSgo4q2nSQpA/aVtr8TXrA1Ar8gXbDdBedAQq5emYcaG+n4/9//KYOTswQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LLz6OJ2G; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FmBNBX88"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59C1E1F000E9;
-	Fri, 22 May 2026 22:41:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LLz6OJ2G"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC5B21F000E9
+	for <linux-security-module@vger.kernel.org>; Sat, 23 May 2026 00:09:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779489690;
-	bh=+9B1KgSR5HXxdioJsjoITH3Qkcn/wKgVGsFeHFUyjBs=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date;
-	b=FmBNBX88nyS2L4/hpjC1OhhnpK16Vjit3GbUql+sxWZINKEwl4CSQtlF3DTyk7i4f
-	 jAc2A2XQaugDSDJAPb0At/QUMBBDr3hQ8cvCkIYmHVPaApgpikT962eEczut1g2pKf
-	 OiLj5iQNSFDQUF1i8bWRn8MT6STfNvzXiJjLd4UNzSeNBrYmHPqQLyH+EJC1+149Qx
-	 /tJzgCKfQB270Fey8C+vJBaoNni9wDhGgz42tdcXCf8SKDjlQ4Vwf5dudS3W15A2Ob
-	 DvDSyWQfx+A21l2Bp4Zs+vllxOoJNhz9qIvMrE69O8CZqm8QWl8yD+c21VQIX2ATUf
-	 DGu9xEURhFDmw==
-Content-Type: multipart/mixed; boundary="===============0407177260780052583=="
+	s=k20260515; t=1779494990;
+	bh=3ETkiHyHX86gwae5asX1X/o+svz9W8wf7RwScqd1OB0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=LLz6OJ2G5VcEwhJ2/c8K+iMqFijT6OnrEV48gzINVrS4k/r+ulK4Q7YINQvQxJaXQ
+	 xrJeY31VCURhP233+u4suSIxLCh3ogsJE3FCGmaFiWWN0O+8ulzprV9okn3Ft+KLFe
+	 dgmPxI0HYxlzuEVTct4whUgy7ntJl6KNaPW5PfOFx4ZJA5Vn163MRAztJYLmz59hew
+	 dxijwqWdlVayWVwLLUlmWVbergjZeABI4ib5iTDnjDruK5jwReWHP92aBQIBPq66KR
+	 HDZ+2aUIP9YQ3PpMClQj8zP/3f2SoXnUPDwO8M+lsu+ojg0/C9vpYJ0X1yzJNS7IfJ
+	 q8YLhxPAHDDUw==
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-911449d9d03so913600485a.1
+        for <linux-security-module@vger.kernel.org>; Fri, 22 May 2026 17:09:50 -0700 (PDT)
+X-Gm-Message-State: AOJu0Yw026/lDZtRWDRv5M5x0c2FwVYrxT1MkbVGCE5LO0zfwoLSIfqm
+	s+tJaoNkZ5PQ7IYe95VEfpbw/0W4XzMso0lrZNYsBlUH7x/fLQe4WUMLFTLyv/GHoLyJDDLR0fj
+	GQZNqzBoU23RppZXinon4eQyB7Ybn2vY=
+X-Received: by 2002:a05:620a:1a19:b0:914:c48c:4ac4 with SMTP id
+ af79cd13be357-914c48c4e17mr197578085a.15.1779494989957; Fri, 22 May 2026
+ 17:09:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <353cdf9930517e168ad8ca869faddae35855a57380c02c320c63409fccfb1e63@mail.kernel.org>
-In-Reply-To: <20260522215337.662271-3-kpsingh@kernel.org>
-References: <20260522215337.662271-3-kpsingh@kernel.org>
-Subject: Re: [PATCH bpf v3 2/2] bpf, libbpf: reject non-exclusive metadata maps in the signed loader
-From: bot+bpf-ci@kernel.org
-To: kpsingh@kernel.org,bpf@vger.kernel.org,linux-security-module@vger.kernel.org
-Cc: ast@kernel.org,daniel@iogearbox.net,memxor@gmail.com,kpsingh@kernel.org,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
-Date: Fri, 22 May 2026 22:41:30 +0000 (UTC)
+References: <20260515200158.4081915-1-song@kernel.org> <20260515200158.4081915-2-song@kernel.org>
+ <177944135249.2871055.11361892114499566606.b4-review@b4>
+In-Reply-To: <177944135249.2871055.11361892114499566606.b4-review@b4>
+From: Song Liu <song@kernel.org>
+Date: Fri, 22 May 2026 17:09:38 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW4BVSQ6oqyk=kExuZUkB9PWRRqUf_EJ=x3mNmtkT4oH4g@mail.gmail.com>
+X-Gm-Features: AVHnY4LT2cV2r2zWcbI0oZ727WxL46ft_rV_sB6qqeKVssDd55dfD2nDOQXPZeA
+Message-ID: <CAPhsuW4BVSQ6oqyk=kExuZUkB9PWRRqUf_EJ=x3mNmtkT4oH4g@mail.gmail.com>
+Subject: Re: [PATCH v4 1/7] lsm: Add granular mount hooks to replace security_sb_mount
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	selinux@vger.kernel.org, apparmor@lists.ubuntu.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	john.johansen@canonical.com, stephen.smalley.work@gmail.com, 
+	omosnace@redhat.com, mic@digikod.net, gnoack@google.com, 
+	takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp, 
+	herton@canonical.com, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
---===============0407177260780052583==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-
-> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> index cd191c5fdb0a..11bec73db199 100644
-> --- a/include/linux/bpf.h
-> +++ b/include/linux/bpf.h
-> @@ -295,6 +295,7 @@ struct bpf_map_owner {
+On Fri, May 22, 2026 at 2:16=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
 >
->  struct bpf_map {
->  	u8 sha[SHA256_DIGEST_SIZE];
-> +	char *excl_prog_sha;
+> On Fri, 15 May 2026 13:01:52 -0700, Song Liu <song@kernel.org> wrote:
+> > [...]
+> >
+> > Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > Tested-by: Stephen Smalley <stephen.smalley.work@gmail.com> # for selin=
+ux only
+> > Signed-off-by: Song Liu <song@kernel.org>
+> > Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
 
-Daniel Borkmann suggested adding BUILD_BUG_ON checks to validate the
-struct layout assumptions that gen_loader relies on. Specifically:
+^^^^^ I assume you didn't mean to add this SoB yet.
 
-  BUILD_BUG_ON(offsetof(struct bpf_map, sha) != 0);
-  BUILD_BUG_ON(offsetof(struct bpf_map, excl_prog_sha) != SHA256_DIGEST_SIZE);
-  BUILD_BUG_ON(sizeof_field(struct bpf_map, excl_prog_sha) != sizeof(__u64));
+>
+> Please cleanly separate the preparatory work for introducing the new
+> hooks from any changes to fs/namespace.c
+>
+> Once you have all of the new machinery in place, switch fs/namespace.c
+> over to the new hooks.
 
-Would this make the code more robust against future struct layout changes?
+Could you please be more specific on how to arrange these changes?
+Currently, we have
 
->  	const struct bpf_map_ops *ops;
->  	struct bpf_map *inner_map_meta;
->  #ifdef CONFIG_SECURITY
+1/7 adds new hooks:
+  lsm: Add granular mount hooks to replace security_sb_mount
+2/7 through 6/7 migrate LSMs from old hooks to new hooks:
+  apparmor: Remove redundant MS_MGC_MSK stripping in apparmor_sb_mount
+  apparmor: Convert from sb_mount to granular mount hooks
+  selinux: Convert from sb_mount to granular mount hooks
+  landlock: Convert from sb_mount to granular mount hooks
+  tomoyo: Convert from sb_mount to granular mount hooks
+7/7 removes old hooks:
+  lsm: Remove security_sb_mount and security_move_mount
 
-[ ... ]
+Some ideas to change this:
 
-> diff --git a/tools/lib/bpf/gen_loader.c b/tools/lib/bpf/gen_loader.c
-> index 9478b8f78f26..5077472b9fd2 100644
-> --- a/tools/lib/bpf/gen_loader.c
-> +++ b/tools/lib/bpf/gen_loader.c
-> @@ -600,6 +600,23 @@ static void emit_signature_match(struct bpf_gen *gen)
->  			gen->error = -ERANGE;
->  		}
->  	}
-> +
-> +	/*
-> +	 * Reject if the metadata map is not exclusive. Without exclusivity
-> +	 * the cached map->sha[] verified above can be stale: another BPF
-> +	 * program with map access could have mutated the contents between
-> +	 * BPF_OBJ_GET_INFO_BY_FD and loader execution.
-> +	 */
-> +	emit2(gen, BPF_LD_IMM64_RAW_FULL(BPF_REG_1, BPF_PSEUDO_MAP_IDX,
-> +					 0, 0, 0, 0));
-> +	emit(gen, BPF_LDX_MEM(BPF_DW, BPF_REG_2, BPF_REG_1, SHA256_DWORD_SIZE * sizeof(__u64)));
+Idea #1:
+Do you mean to split 1/7 and 7/7 into two patches each: one
+for changes in fs/namespace.c, the other for everything else?
+IOW, the set of 9 patches will look like:
 
-Will this BPF_DW (8-byte) read pass the BPF verifier on 32-bit
-architectures?
+1/9 adds new hooks in security/ core code
+2/9 adds calls to new hooks to fs/namespace.c
+3/9 through 7/9 migrate LSMs from old hooks to new hooks
+8/9 removes calls to old hooks from s/namespace.c
+9/9 removes old hooks from security/ core code
 
-Sashiko AI flagged this in v2, and you confirmed through testing on a
-32-bit kernel that the verifier rejects this with 'cannot access ptr
-member excl_prog_sha with moff 0 in struct (anon) with off 0 size 8'.
-The issue is that __bpf_md_ptr doesn't emit padding in BTF; the kernel's
-BTF represents the pointer member with a size of 4 bytes on 32-bit
-systems, while btf_struct_walk() enforces exact size matching.
+Idea #2:
+Or do you mean all the changes to fs/namespace.c have to
+stay in one commit? I am not sure how we can make the
+whole patchset clean with this approach. We will probably
+need 2+ commits for each of the 4 LSMs we update. IOW,
+the set will look like:
 
-The commit message acknowledges this: 'The 8-byte read of the pointer
-field limits this to 64-bit kernels; gen_loader needs target pointer
-size tracking to emit the right sized read on 32-bit (follow-up).'
+Add new hooks in security core code
+Add new hooks in selinux
+Add new hooks in apparmor
+Add new hooks in landlock
+Add new hooks in tamoyo
+Replace old hooks with new hooks in fs/namespace.c
+Remove old hooks from selinux
+Remove old hooks from apparmor
+Remove old hooks from landlock
+Remove old hooks from tamoyo
+Remove old hooks in security core code
 
-This means the security check will be silently bypassed on 32-bit
-systems until the follow-up is implemented.
+This will require at least 11 patches, and it is not
+really clean.
 
-Could SHA256_DIGEST_SIZE be used here instead of 'SHA256_DWORD_SIZE *
-sizeof(__u64)'? Daniel Borkmann pointed out that SHA256_DWORD_SIZE is
-already SHA256_DIGEST_SIZE / sizeof(__u64), so the multiplication
-essentially reconstructs SHA256_DIGEST_SIZE.
+Idea #3:
+Did I miss any other solutions?
 
-> +	off = -(gen->insn_cur - gen->insn_start - gen->cleanup_label) / 8 - 2;
-> +	if (is_simm16(off)) {
-> +		emit(gen, BPF_MOV64_IMM(BPF_REG_7, -EINVAL));
-> +		emit(gen, BPF_JMP_IMM(BPF_JEQ, BPF_REG_2, 0, off));
-> +	} else {
-> +		gen->error = -ERANGE;
-> +	}
->  }
+> This will make it way easier to review and easier to distribute the
 
-[ ... ]
+This sentence appears to be incomplete. Do you mean to distribute
+different patches in the patchset to different trees and merge them
+separately?
 
----
-AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
+I actually think the patchset is clean as-is.
 
-CI run summary: https://github.com/kernel-patches/bpf/actions/runs/26314489328
---===============0407177260780052583==--
+The overall change in fs/namespace.c is really minimal:
+    fs/namespace.c                    |  41 +++++++---
+
+We can clearly see what it changed in fs/namespace.c with
+"git diff HEAD~7 -- fs/" (attached below).
+
+Therefore, I don't see a way to make the whole patchset more
+clean. If I missed anything, please let me know.
+
+Thanks,
+Song
+
+
+$ git diff HEAD~7 -- fs/
+diff --git c/fs/namespace.c w/fs/namespace.c
+index fe919abd2f01..43f22c5e2bf4 100644
+--- c/fs/namespace.c
++++ w/fs/namespace.c
+@@ -2888,6 +2888,10 @@ static int do_change_type(const struct path
+*path, int ms_flags)
+        if (!type)
+                return -EINVAL;
+
++       err =3D security_mount_change_type(path, ms_flags);
++       if (err)
++               return err;
++
+        guard(namespace_excl)();
+
+        err =3D may_change_propagation(mnt);
+@@ -3006,6 +3010,10 @@ static int do_loopback(const struct path *path,
+const char *old_name,
+        if (err)
+                return err;
+
++       err =3D security_mount_bind(&old_path, path, recurse);
++       if (err)
++               return err;
++
+        if (mnt_ns_loop(old_path.dentry))
+                return -EINVAL;
+
+@@ -3328,7 +3336,8 @@ static void mnt_warn_timestamp_expiry(const
+struct path *mountpoint,
+  * superblock it refers to.  This is triggered by specifying MS_REMOUNT|MS=
+_BIND
+  * to mount(2).
+  */
+-static int do_reconfigure_mnt(const struct path *path, unsigned int mnt_fl=
+ags)
++static int do_reconfigure_mnt(const struct path *path, unsigned int mnt_fl=
+ags,
++                             unsigned long flags)
+ {
+        struct super_block *sb =3D path->mnt->mnt_sb;
+        struct mount *mnt =3D real_mount(path->mnt);
+@@ -3343,6 +3352,10 @@ static int do_reconfigure_mnt(const struct path
+*path, unsigned int mnt_flags)
+        if (!can_change_locked_flags(mnt, mnt_flags))
+                return -EPERM;
+
++       ret =3D security_mount_reconfigure(path, mnt_flags, flags);
++       if (ret)
++               return ret;
++
+        /*
+         * We're only checking whether the superblock is read-only not
+         * changing it, so only take down_read(&sb->s_umount).
+@@ -3366,7 +3379,7 @@ static int do_reconfigure_mnt(const struct path
+*path, unsigned int mnt_flags)
+  * on it - tough luck.
+  */
+ static int do_remount(const struct path *path, int sb_flags,
+-                     int mnt_flags, void *data)
++                     int mnt_flags, void *data, unsigned long flags)
+ {
+        int err;
+        struct super_block *sb =3D path->mnt->mnt_sb;
+@@ -3393,6 +3406,9 @@ static int do_remount(const struct path *path,
+int sb_flags,
+        fc->oldapi =3D true;
+
+        err =3D parse_monolithic_mount_data(fc, data);
++       if (!err)
++               err =3D security_mount_remount(fc, path, mnt_flags, flags,
++                                           data);
+        if (!err) {
+                down_write(&sb->s_umount);
+                err =3D -EPERM;
+@@ -3708,6 +3724,10 @@ static int do_move_mount_old(const struct path
+*path, const char *old_name)
+        if (err)
+                return err;
+
++       err =3D security_mount_move(&old_path, path);
++       if (err)
++               return err;
++
+        return do_move_mount(&old_path, path, 0);
+ }
+
+@@ -3786,7 +3806,7 @@ static int do_new_mount_fc(struct fs_context
+*fc, const struct path *mountpoint,
+  */
+ static int do_new_mount(const struct path *path, const char *fstype,
+                        int sb_flags, int mnt_flags,
+-                       const char *name, void *data)
++                       const char *name, void *data, unsigned long flags)
+ {
+        struct file_system_type *type;
+        struct fs_context *fc;
+@@ -3830,6 +3850,9 @@ static int do_new_mount(const struct path *path,
+const char *fstype,
+                err =3D parse_monolithic_mount_data(fc, data);
+        if (!err && !mount_capable(fc))
+                err =3D -EPERM;
++
++       if (!err)
++               err =3D security_mount_new(fc, path, mnt_flags, flags, data=
+);
+        if (!err)
+                err =3D do_new_mount_fc(fc, path, mnt_flags);
+
+@@ -4080,7 +4103,6 @@ int path_mount(const char *dev_name, const
+struct path *path,
+                const char *type_page, unsigned long flags, void *data_page=
+)
+ {
+        unsigned int mnt_flags =3D 0, sb_flags;
+-       int ret;
+
+        /* Discard magic */
+        if ((flags & MS_MGC_MSK) =3D=3D MS_MGC_VAL)
+@@ -4093,9 +4115,6 @@ int path_mount(const char *dev_name, const
+struct path *path,
+        if (flags & MS_NOUSER)
+                return -EINVAL;
+
+-       ret =3D security_sb_mount(dev_name, path, type_page, flags, data_pa=
+ge);
+-       if (ret)
+-               return ret;
+        if (!may_mount())
+                return -EPERM;
+        if (flags & SB_MANDLOCK)
+@@ -4141,9 +4160,9 @@ int path_mount(const char *dev_name, const
+struct path *path,
+                            SB_I_VERSION);
+
+        if ((flags & (MS_REMOUNT | MS_BIND)) =3D=3D (MS_REMOUNT | MS_BIND))
+-               return do_reconfigure_mnt(path, mnt_flags);
++               return do_reconfigure_mnt(path, mnt_flags, flags);
+        if (flags & MS_REMOUNT)
+-               return do_remount(path, sb_flags, mnt_flags, data_page);
++               return do_remount(path, sb_flags, mnt_flags, data_page, fla=
+gs);
+        if (flags & MS_BIND)
+                return do_loopback(path, dev_name, flags & MS_REC);
+        if (flags & (MS_SHARED | MS_PRIVATE | MS_SLAVE | MS_UNBINDABLE))
+@@ -4152,7 +4171,7 @@ int path_mount(const char *dev_name, const
+struct path *path,
+                return do_move_mount_old(path, dev_name);
+
+        return do_new_mount(path, type_page, sb_flags, mnt_flags, dev_name,
+-                           data_page);
++                           data_page, flags);
+ }
+
+ int do_mount(const char *dev_name, const char __user *dir_name,
+@@ -4545,7 +4564,7 @@ static inline int vfs_move_mount(const struct
+path *from_path,
+ {
+        int ret;
+
+-       ret =3D security_move_mount(from_path, to_path);
++       ret =3D security_mount_move(from_path, to_path);
+        if (ret)
+                return ret;
