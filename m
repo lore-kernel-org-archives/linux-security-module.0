@@ -1,169 +1,116 @@
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD1333B6F6
-	for <linux-security-module@vger.kernel.org>; Sun, 24 May 2026 22:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178202F8E81;
+	Sun, 24 May 2026 23:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779662286; cv=none; b=Mnvuv/32b+5Y1xgy+Y8apXdJtxVO1sPsDj/SX7K/u6+4cMPzuB7xAGirIP0WGlMtsEL7ItuWggz2DA0rHc1HC+KI1wvXbP4M6D4N3rafOcHmog2D+/RbIEpYUe/N6g+dn5KFhGnyej0cVGs19ABG+UfHW70SMnz7cD1ZuBFT81U=
+	t=1779664686; cv=none; b=M4KMtKI3g3BrPymYWYJDzVcI7F1tL2yZqbpLqVAg7pJRq+3yh5Bx0Q9NB6ZUKv/VEL2UnMqGPF78lkOeSOXt+Kjpp61vaKlZaMsKmnUwXkdXvNdTXwAjDGdQBX5zdX0m9r9IaFtY459PTRj/+ZdGbNykwL6NBT/V1Xu5uHST9t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779662286; c=relaxed/simple;
-	bh=7xtQnTLPrzXEqZE2sb7ryywLaz3T4dSZwA5Nxn2A6nk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GDCdaGBb7glf5XI/l9np2RcbZ9w3qDIdX8FAqn2UEiAdtBSk7gFwLTEQPw8OghHo9hNvFaQAneP7qNDj+fVORh8nLrrLur+CWCbc4LQ4uBA9bk6Pb8Ml18kB6AZzdtlomwQNxorMKl0lAoUSglc/JWM6wK28FeVzCmMeX1U3X0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=ZC+LtQZh; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+	s=arc-20240116; t=1779664686; c=relaxed/simple;
+	bh=YJhg6GOqfyRedY5GFa5yafRycTGCF64EpHZC5q7jRUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VLeNZxhzl+v7Qrgg+oTFn+xOk0n/XtGX3+wvD1zdNVpp25SehGnF41udTEayc5JgJ6dsj0n6WsskihijhzBi7TrGaC8+98WDHRWfKDYFseOyAU6ywOX6m2C6w0ehs13NHDdG+DHTdAZdiy1m/qHStPVPbxU+dh+uLMbWWHigOHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hT0ORmQh; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="ZC+LtQZh"
-From: Konstantin Andreev <andreev@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1779662275;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xWxjFt3RRD38zWlcF3CUE6PNXEoXLhl9gnFkegGv5wI=;
-	b=ZC+LtQZhHHTjMnXY+7zxfmPGOeIdFqFXUgxFNqVKMGLvXSQQoiQ0PqPmddmzIjbTwzXQGK
-	F+5MYzCmbiyJb9ZrbEMerzsMISIDhSmXYj1HCpvi18ZBTZOrevHmFXjygNsSZvIFhuw45F
-	IluRF1xZDGitM2ladS6Lp446khJmPT8=
-To: casey@schaufler-ca.com
-Cc: linux-security-module@vger.kernel.org
-Subject: [PATCH 2/2] smack: restrict smackfs/{direct,mapped} values to 0-255
-Date: Mon, 25 May 2026 01:37:49 +0300
-Message-ID: <20260524223749.50874-3-andreev@swemel.ru>
-In-Reply-To: <20260524223749.50874-1-andreev@swemel.ru>
-References: <20260524223749.50874-1-andreev@swemel.ru>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hT0ORmQh"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 248DA1F000E9;
+	Sun, 24 May 2026 23:18:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1779664684;
+	bh=1xKIl/BuAuJsq4s2VZpmIoNUIWA260ZKZNWVIohy8/8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=hT0ORmQhFD00JDG5rjED9RwJyvhDpVhAoSRhyuD7Zmgdox8/45CLciCiffcc8e5SA
+	 zOoipZJe6mLbCUK1ABJj7/0VWlzt8BXeiIwjoNyq9lbSphGiaxUUr52b4r7+1KdceM
+	 RYAhtBtNtyll1Ojd/7Rb1z6KT9aKvMU7bbWEENFlqd5rhe999C3CWC0jJSjPA2xb8R
+	 myNOAJzuINvbtmXXNLNilOShBa5P+Fv5PU6Zg+gj/w+sqSPWq/UWL0FG/UibnGbazM
+	 BDmkZf+uJwUHholZuiQBjhL/z5Fv2/6M7axWSjou9xV8X7LU9e6U/Jaa253wP1WEyd
+	 /y9Y7m04vew3A==
+Date: Mon, 25 May 2026 02:18:00 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: keyrings@vger.kernel.org
+Cc: David Howells <dhowells@redhat.com>, linux-crypto@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	David Woodhouse <dwmw2@infradead.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 0/3]
+Message-ID: <ahOHKJOllqX5dxym@kernel.org>
+References: <20260524051519.3708075-1-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260524051519.3708075-1-jarkko@kernel.org>
 
-Both smackfs/direct and smackfs/mapped incorrectly accept
-the full range of integer values. For example:
+On Sun, May 24, 2026 at 08:15:11AM +0300, Jarkko Sakkinen wrote:
+> This series introduces key type for operating with asymmetric keys using
+> a TPM2 chip.
+> 
+> Change Log
+> ==========
+> 
+> v8:
+> - Reset patch change logs given the overhaul of the code and patches.
+> - Have only single new subkey type.
+> - Make key type only use TPM operations.
+> - Use TPM2_Sign for both ECC and RSA keys.
+> - Align key descriptions with other key types.
+> 
+> Previous versions
+> =================
+> 
+> * v7: https://lore.kernel.org/linux-integrity/20240528210823.28798-1-jarkko@kernel.org/
+> * v6: https://lore.kernel.org/linux-integrity/20240528035136.11464-1-jarkko@kernel.org/
+> * v5: https://lore.kernel.org/linux-integrity/20240523212515.4875-1-jarkko@kernel.org/
+> * v4: https://lore.kernel.org/linux-integrity/20240522005252.17841-1-jarkko@kernel.org/
+> * v3: https://lore.kernel.org/linux-integrity/20240521152659.26438-1-jarkko@kernel.org/
+> * v2: https://lore.kernel.org/linux-integrity/336755.1716327854@warthog.procyon.org.uk/
+> * v1: https://lore.kernel.org/linux-integrity/20240520184727.22038-1-jarkko@kernel.org/
+> * Derived from https://lore.kernel.org/all/20200518172704.29608-1-prestwoj@gmail.com/
+> 
+> 
+> Jarkko Sakkinen (3):
+>   lib/asn1_encoder: Add asn1_encode_integer_bytes()
+>   crypto: Migrate TPMKey ASN.1 objects from trusted-keys
+>   keys: asymmetric: tpm2_asymmetric
+> 
+>  crypto/Kconfig                            |    7 +
+>  crypto/Makefile                           |    6 +
+>  crypto/asymmetric_keys/Kconfig            |   17 +
+>  crypto/asymmetric_keys/Makefile           |    1 +
+>  crypto/asymmetric_keys/tpm2_asymmetric.c  | 1096 +++++++++++++++++++++
+>  crypto/tpm2_key.asn1                      |   11 +
+>  crypto/tpm2_key.c                         |  150 +++
+>  include/crypto/tpm2_key.h                 |   46 +
+>  include/linux/asn1_encoder.h              |    3 +
+>  include/linux/tpm.h                       |   10 +
+>  lib/asn1_encoder.c                        |   62 ++
+>  security/keys/trusted-keys/Kconfig        |    2 +-
+>  security/keys/trusted-keys/Makefile       |    2 -
+>  security/keys/trusted-keys/tpm2key.asn1   |   11 -
+>  security/keys/trusted-keys/trusted_tpm2.c |  119 +--
+>  15 files changed, 1421 insertions(+), 122 deletions(-)
+>  create mode 100644 crypto/asymmetric_keys/tpm2_asymmetric.c
+>  create mode 100644 crypto/tpm2_key.asn1
+>  create mode 100644 crypto/tpm2_key.c
+>  create mode 100644 include/crypto/tpm2_key.h
+>  delete mode 100644 security/keys/trusted-keys/tpm2key.asn1
+> 
+> -- 
+> 2.47.3
+> 
 
-    # cd /sys/fs/smackfs/
-    # cat direct ; echo
-    250
+Oops, I deleted the subject line, it was unintentional :-)
 
-    # cat cipso2
-    @ 250/2
-    _ 250/2,4,5,6,7,8
-    * 250/3,5,7
-    ^ 250/2,4,5,6,7
-    ? 250/3,4,5,6,7,8
-
-    # echo -1234 >direct ; cat direct ; echo
-    -1234
-    # cat cipso2
-    @ -1234/2
-    _ -1234/2,4,5,6,7,8
-    * -1234/3,5,7
-    ^ -1234/2,4,5,6,7
-    ? -1234/3,4,5,6,7,8
-    #
-
-I noticed two things regarding this:
-
-1) sensitivity levels are truncated to 8 bits when labeling
-   outgoing packets (0x2e = 46 for the -1234 example above)
-
-2) the reverse process fails: incoming packets with sensitivity
-   level 46 do not match these smackfs/cipso2 entries.
-
-Even observation (1) on its own warrants a fix.
-
-This patch restricts smackfs/direct and smackfs/mapped
-accepted values to the 0-255 range.
-
-Fixes: e114e473771c ("Smack: Simplified Mandatory Access Control Kernel")
-Signed-off-by: Konstantin Andreev <andreev@swemel.ru>
----
- security/smack/smack.h   |  2 +-
- security/smack/smackfs.c | 26 ++++++++++++++------------
- 2 files changed, 15 insertions(+), 13 deletions(-)
-
-diff --git a/security/smack/smack.h b/security/smack/smack.h
-index 6febc2ecdfe8..fe6a49820014 100644
---- a/security/smack/smack.h
-+++ b/security/smack/smack.h
-@@ -317,7 +317,7 @@ int smack_populate_secattr(struct smack_known *skp);
-  * Shared data.
-  */
- extern int smack_enabled __initdata;
--extern int smack_cipso_auto_level[2];
-+extern u8  smack_cipso_auto_level[2];
- #define smack_cipso_direct (+smack_cipso_auto_level[0])
- #define smack_cipso_mapped (+smack_cipso_auto_level[1])
- extern struct smack_known *smack_net_ambient;
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index 946405645d5a..c7eae7c6427f 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -94,7 +94,7 @@ struct smack_known *smack_net_ambient;
-  * secid is contained directly in the category set.
-  * It can be reset via smackfs/mapped
-  */
--int smack_cipso_auto_level[2] = {
-+u8 smack_cipso_auto_level[2] = {
- 	SMACK_CIPSO_DIRECT_DEFAULT,
- 	SMACK_CIPSO_MAPPED_DEFAULT,
- };
-@@ -1641,17 +1641,15 @@ static const struct file_operations smk_doi_ops = {
- static ssize_t smk_read_cipso_auto_level(struct file *filp, char __user *buf,
- 			       size_t count, loff_t *ppos)
- {
--	char temp[80];
--	ssize_t rc;
-+	char temp[sizeof "255"];
-+	int n;
- 
- 	if (*ppos != 0)
- 		return 0;
- 
--	sprintf(temp, "%d", smack_cipso_auto_level[
--			      smk_cipso_auto_level_idx(filp)]);
--	rc = simple_read_from_buffer(buf, count, ppos, temp, strlen(temp));
--
--	return rc;
-+	n = sprintf(temp, "%u", (unsigned int)smack_cipso_auto_level[
-+		smk_cipso_auto_level_idx(filp)]);
-+	return simple_read_from_buffer(buf, count, ppos, temp, n);
- }
- 
- /**
-@@ -1667,13 +1665,16 @@ static ssize_t
- smk_write_cipso_auto_level(struct file *filp, const char __user *buf,
- 			   size_t count, loff_t *ppos)
- {
--	struct smack_known *skp;
--	int i, ret, idx, old_lvl;
-+	int ret, idx;
-+	u8  i, old_lvl;
- 
- 	if (!smack_privileged(CAP_MAC_ADMIN))
- 		return -EPERM;
--
--	ret = kstrtos32_from_user(buf, count, 10, &i);
-+	/*
-+	 * draft-ietf-cipso-ipsecurity-01 (CIPSO 2.2), 3.4.2.4:
-+	 * "Sensitivity Level is 1 octet in length. Its value is from 0 to 255"
-+	 */
-+	ret = kstrtou8_from_user(buf, count, 10, &i);
- 	if (unlikely(ret))
- 		return ret;
- 
-@@ -1686,6 +1687,7 @@ smk_write_cipso_auto_level(struct file *filp, const char __user *buf,
- 	old_lvl = smack_cipso_auto_level[idx];
- 
- 	if (old_lvl != i) {
-+		struct smack_known *skp;
- 		mutex_lock(&smack_known_lock);
- 		list_for_each_entry_rcu(skp, &smack_known_list, list)
- 			if (skp->smk_netlabel.attr.mls.lvl ==
--- 
-2.47.3
-
+BR, Jarkko
