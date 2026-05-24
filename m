@@ -1,231 +1,212 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f51.google.com (mail-yx1-f51.google.com [74.125.224.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB25156F45;
-	Sun, 24 May 2026 11:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349D425B085
+	for <linux-security-module@vger.kernel.org>; Sun, 24 May 2026 14:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779622488; cv=none; b=pz6Erd7S3yXwlCchKz7lDbJXdp5IlQARKB7KxXra7DN4B3qNpvESAPy5Tgzj5W9uU/91D1b9CbG1MUCy47HQvmP4x9t9/ARpO44bXJtiwIya7Q58zSEflYLYXajtOFOcOigFaGzcTn1U2RAwKl2GFPGsoELCmbdcErgYugEINeo=
+	t=1779633968; cv=none; b=euilrtvfA1aALZMP+qtWz7w31rGac8Ac9xuEPlU5BGIEQmKrdm5j/G5rXkoBpz1o0eJAW8qI4UA761Y2FxQ17cikgl9Orf0fpjXWHDCD0imTzVOXUMNM6H8aGxL2hf2sPT4JwBIyxyaUlaYk7UxzbNvB2tqgXxvQorM+iViWrMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779622488; c=relaxed/simple;
-	bh=QlKOJbqBHMkp5yok8GwG9K1fe+Q2ZyMLV8PNa5TCu0Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gnbSIsxXyGE3d0oYBwDyIZYPFuZrvN/aNrjqvrDM33ei33hQbo6UGr+QKrJ5fsOIiSxaOGbDObo8lH2o9IG1gw3Nmnp1nSHrmj9F/rOxuyO3rsU275o8RpXAsLGKqJk0xaV6ZyF20paCr/SWH0RXXcuqSsEhggKuYYjbxp13taw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.us; spf=pass smtp.mailfrom=gmx.us; dkim=pass (2048-bit key) header.d=gmx.us header.i=len.bao@gmx.us header.b=EgoC132O; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.us
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.us
+	s=arc-20240116; t=1779633968; c=relaxed/simple;
+	bh=MQ3t4gwQj5eUvk0EqiJtMxfRsy0THlimC/ELRbfgu6I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JXVOyGGJsem97XBpE9ApQWqmzzJOkVnaEUCyz6RcAghPpBV0aYP2RRUeNIEv3QjZTn17AJvmZqNVIzogLd68/MZ1qNVAlvJDJ5qMp2q3Fk2KBfM6DQotO3PwIwcWbtMvRZrn687AkPjU/ytAkegq+l5k2PtXKMPdEBM7iKIoBQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KhRj0iee; arc=none smtp.client-ip=74.125.224.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.us header.i=len.bao@gmx.us header.b="EgoC132O"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.us;
-	s=s31663417; t=1779622480; x=1780227280; i=len.bao@gmx.us;
-	bh=zwQLOlv6R781x8zVaxH5i71/pIscEup8xPaotjDX7Sk=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=EgoC132OGOfX1RYa8CNv2SXzs32nljJq4KzJC0LBPSUcV0dOgj+VZFl9BoMyBxKW
-	 Lc0yA/izFOcPXdXhH7zHwDJmV7w+6LWvCMi0HOSZcw3HWobTYVNqinbmW7WstrkKl
-	 6fIs2A8Xh63LlOA3gRFGQBxMaFNYMIG2YqBXINo/zqew9ZDFjBv4FdQg4zMOe1AUw
-	 9EVfvldPh5aI89flexfGpWEMz+KeBBxeRWmUlwJFrxzzMQqSsbvW6Uj7ImTTP+bxq
-	 N4dGu2xhUvBJkEDU24dFt+msyX3CO+ECyE+InYWFzePdp4NMIIyCctL97KSdX7WQm
-	 nJTwfIW+ZPRJ/3CK2A==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from client.hidden.invalid by mail.gmx.net (mrgmx004
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1MZktZ-1wnr1l2ti3-00RIAd; Sun, 24
- May 2026 13:34:39 +0200
-From: Len Bao <len.bao@gmx.us>
-To: John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: Len Bao <len.bao@gmx.us>,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] apparmor: Constify 'nulldfa_src' and 'stacksplitdfa_src' arrays
-Date: Sun, 24 May 2026 11:34:11 +0000
-Message-ID: <20260524113412.48050-1-len.bao@gmx.us>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KhRj0iee"
+Received: by mail-yx1-f51.google.com with SMTP id 956f58d0204a3-6530287803cso8853711d50.1
+        for <linux-security-module@vger.kernel.org>; Sun, 24 May 2026 07:46:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1779633964; x=1780238764; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HDlPr4FBvDjIjS+3E+sSPHDYvjA2zegNPbMF8QfBjp4=;
+        b=KhRj0ieeI5m+9W1fRoNuUV83oPvwO4i7Q5zj/eSNDcn9mQbQILDFam+JAJ7zEtFIG4
+         q+0EbA3fb+DRMfWX5cAAEjhGJyHO2eWY6l+Gk/CPnHo922Djsse+IJU/q1kV09k3qV6Q
+         qrCLy+RRcXeqZqaNfJUwrxuPr/7FDTBYWfHerLGS8/EddwoFBnMKuEGDm+Js+g3aDd7s
+         I5d8kz3p/V4+kvSXM8BfkIEq0qj8LYVnzGwv5F6Zj2va6om7aikUnxWwlcTEHEJyFIpF
+         cJK+oHpq8Z22TmdcU69Rq8WWhkdpVyJV4Gw9HcAkk9dQVxoMpnitbATgLxtHOk5IpeTD
+         n28A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779633964; x=1780238764;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HDlPr4FBvDjIjS+3E+sSPHDYvjA2zegNPbMF8QfBjp4=;
+        b=PEN4MKn6bxzOFEC9lhSdTdpjAJlueH8xcoU0uBC+1+6r6SQq3mULDG5YueZFGesnEq
+         oSXziyx+Lgh9M5KrbIlnafYw0EJcJBCkVdvX0314css4nZ1332+BkEFqADBdNoloojqk
+         MCjogMMAhzJN+3gDxUutWb7dnYT9Yde3lH7sQGrEUdfPWN/Zm5x0SzJIqlEyfMiBRmiK
+         ukzdU0z2CPN6aNJoHYIlj8LTHRTFoG3jvutPjHv/JvXF61oVhnpODrOH6cnV+xueRabL
+         +JDqv68Sau/0F+vNfVTF5q7zfXMdhjKdjDKM6xVveTQCPJsimZHZdJd7qHGItklpsp7X
+         39gw==
+X-Forwarded-Encrypted: i=1; AFNElJ/P1un7tzvojhonIU+taETy8BTnjJUy0D8ADn9s8vXcd4y9SuIFsfSbo8QT/P8UuwY+8FMU4jr/ZcIxd2zi5lrSizCgOkc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTyx2beCTvV0nvheVxF4HPz/6FkfX3+xuq16GYmK2pICifPmZg
+	PMAg0Ma1TVaGZDdLafMLk/wlSAQgOyEjhH3HOWU584W362gLh9Q+XYPigMB+JA==
+X-Gm-Gg: Acq92OFUD9oeEsCrtX6Od+ctKGk9LE36dHQvs2zvWxuoW9qiAnEBy4IDu7vLt+f1Bg3
+	vNXg4IPZCrAoQFPtcHIEd0K7SCa2PtsVn85UCY/McUBwXeWAPJmykVwmUPb5bIHHww/paIAHY29
+	dwtuEBAFtPt84h2jdWkqzpBOxTt1cH2YEKwJWG4SP2IfwIFwQgIOTK1CRgKPXWg8CFwseaOCtK0
+	fNv3ryOkJt0vny0aAu2Ci3wcYL+UobZ3wI/QLt66iRRYf0bS4CMj6AdtEcWpWQO3NtuXxP8HzYx
+	yV9/ePjOHehlpzFjoaqVTfuPVizMFqbMEsyYm01NKkSR3WDav+7EThnaYBYJZEKdIIudddZtnly
+	DwKYcnrjI68Or58HjaI9cqwSB8taGhYFZ0+6DWNqIv7EL+Zh5yQKaN0wmKP25P9iV6kQACrOqNa
+	EPQfIJ8wfBujBaL3Ig7xya20JA4cBPDb5ezYrfsBe/P/4a2jsJ/500tBtnHEe3HtYig0E4
+X-Received: by 2002:a05:690c:c9b:b0:7bd:6a98:58d7 with SMTP id 00721157ae682-7d3361b9144mr123074587b3.38.1779633964056;
+        Sun, 24 May 2026 07:46:04 -0700 (PDT)
+Received: from zenbox ([2600:1700:18fb:6011:cf18:78cf:cf2b:a481])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7d38c4363e7sm33426907b3.39.2026.05.24.07.46.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 May 2026 07:46:03 -0700 (PDT)
+Date: Sun, 24 May 2026 10:46:03 -0400
+From: Justin Suess <utilityemal77@gmail.com>
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>, Jan Kara <jack@suse.cz>, Abhinav Saxena <xandfury@gmail.com>, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v8 1/9] landlock: Add a place for flags to layer rules
+Message-ID: <ahMLLwnDO7g64h63@zenbox>
+References: <cover.1775490344.git.m@maowtm.org>
+ <6f418b431ccf88636ea3a1b930d14bfdcd420233.1775490344.git.m@maowtm.org>
+ <20260523.Uephughee8as@digikod.net>
+ <617fdd53-6612-4f6f-b0e0-16d85985487b@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:w6gKEymJSOgqTwgme9ap2S2uOw4FHwR1tq0XBU9yVetuA3lX/EJ
- cAQMvPYXD5BJy+Hh/TmlFpd75qtAPWYeURnOMnP5qkynaPe9/FrGTrhMY6red123sxcMAqY
- UJ7NaxOWuWpOsiYzsvs/5d2SxXHbTwHwFgGCIu+TUXvSlPIVPvFrLb1YSJqKBR7Atwwe2Z8
- upmQpoGJUgh3NVmZwnOnA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Ua7PlJpwaIM=;oEd9WRZny5wcdJPY2MAqXqqn3rc
- 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
- N9g6xm4FUsBh7ngC+TUnKmJOY+w=
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <617fdd53-6612-4f6f-b0e0-16d85985487b@maowtm.org>
 
-The 'nulldfa_src' and 'stacksplitdfa_src' arrays are initialized in
-their declarations and never changed. So, constify them to reduce the
-attack surface.
+On Sun, May 24, 2026 at 02:29:40AM +0100, Tingmao Wang wrote:
+> On 5/23/26 21:48, Mickaël Salaün wrote:
+> > This patch doesn't build.
+> 
+> Missed a hunk in this patch (ended up in the next one), will add.
+> 
+> >> @@ -797,20 +803,28 @@ is_access_to_paths_allowed(const struct landlock_ruleset *const domain,
+> >>  	}
+> >>  
+> >>  	if (unlikely(dentry_child1)) {
+> >> +		/*
+> >> +		 * Get the layer masks for the child dentries for use by domain
+> >> +		 * check later.  The rule_flags for child1 should have been
+> >> +		 * included in rule_flags_parent1 already (cf.
+> >> +		 * collect_domain_accesses), and is not relevant for domain check,
+> >> +		 * so we don't have to pass it to landlock_unmask_layers.
+> >> +		 */
+> >>  		if (landlock_init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
+> >>  					      &_layer_masks_child1,
+> >>  					      LANDLOCK_KEY_INODE))
+> >>  			landlock_unmask_layers(find_rule(domain, dentry_child1),
+> >> -					       &_layer_masks_child1);
+> >> +					       &_layer_masks_child1, NULL);
+> >>  		layer_masks_child1 = &_layer_masks_child1;
+> >>  		child1_is_directory = d_is_dir(dentry_child1);
+> >>  	}
+> >>  	if (unlikely(dentry_child2)) {
+> >> +		/* See above comment for why NULL is passed as rule_flags_masks. */
+> > 
+> > rule_flags_masks doesn't exist.
+> 
+> I guess I was probably referring to the rule_flags argument - will fix.
+> 
+> >> [...]
+> >> @@ -647,9 +648,14 @@ bool landlock_unmask_layers(const struct landlock_rule *const rule,
+> >>  	 */
+> >>  	for (size_t i = 0; i < rule->num_layers; i++) {
+> >>  		const struct landlock_layer *const layer = &rule->layers[i];
+> >> +		const layer_mask_t layer_bit = BIT_ULL(layer->level - 1);
+> >>  
+> > 
+> >>  		/* Clear the bits where the layer in the rule grants access. */
+> >>  		masks->access[layer->level - 1] &= ~layer->access;
+> >> +
+> >> +		/* Collect rule flags for each layer. */
+> >> +		if (rule_flags && layer->flags.quiet)
+> >> +			rule_flags->quiet_masks |= layer_bit;
+> > 
+> > Why not store the quiet bit in masks?  That would not only be "access"
+> > bits anymore but it makes sense to store all this bits it the same
+> > place.
+> > 
+> > We should then probably rename struct layer_access_masks to just struct
+> > layer_masks.
+> > 
+> > We need to be careful to not increase too much the size of this struct
+> > though while keeping the [LANDLOCK_MAX_NUM_LAYERS] approach if possible
+> > (see Günther's commit that added it).
+> 
+> Most uses of struct layer_access_masks do not actually care about the rule
+> flags tho, e.g. in unmask_scoped_access, scope_to_request, or may_refer.
+> Such a rename would touch 31 places (and only a few of them would actually
+> touch the quiet flag).
+> 
+> If we want to refactor to make this be in the layer_access_masks (then
+> rename it), I guess there are 3 options, which do you prefer?
+> 
+> 1. Add a u16 bitfield for which layers are quieted.  Future rule flags
+>    will be additional bitfields.  struct layer_masks becomes 68 bytes (+4).
+> 
+> struct layer_masks {
+> 	access_mask_t access[LANDLOCK_MAX_NUM_LAYERS];
+> 	layer_mask_t quiet_layers;
+> };
+> 
+> 2. Make the [LANDLOCK_MAX_NUM_LAYERS] array store both the access mask and
+>    the quiet bit (or more bits for future rule flags).  Size of struct stays
+>    the same.
+> 
+This approach seems best.
+> static_assert(LANDLOCK_NUM_ACCESS_NET <= LANDLOCK_NUM_ACCESS_FS);
+> static_assert(LANDLOCK_NUM_SCOPE <= LANDLOCK_NUM_ACCESS_FS);
+> struct layer_mask {
+> 	access_mask_t access:LANDLOCK_NUM_ACCESS_FS;
+> 	bool quiet:1;
+> };
 
-To make this possible, it is also necessary to change the 'unpack_table'
-and 'aa_dfa_unpack' function prototypes to pass, as a first argument, a
-pointer to a 'const' blob. At the same type, define the blob exact
-pointer type (pointer to const char) since all the calls to the
-mentioned functions use this same type.
+Other way to do it could be an (anonymous?) union.
 
-Before the patch (size lsm.o):
+union {
+  access_mask_t fs_access:LANDLOCK_NUM_ACCESS_FS;
+  access_mask_t net_access:LANDLOCK_NUM_ACCESS_NET;
+  access_mask_t scope_access:LANDLOCK_NUM_SCOPE;
+}
 
-  text	   data	    bss	    dec	    hex
-128768	  28028	    704	 157500	  2673c
+The union should be sized to fit the largest field automatically.
 
-After the patch (size lsm.o):
+That way you don't have to change this when adding new access rights
+and avoid the brittle static_asserts.
 
-  text	   data	    bss	    dec	    hex
-131264	  25532	    704	 157500	  2673c
+Not sure about the alignment implications here though.
+> struct layer_masks {
+> 	struct layer_mask layer[LANDLOCK_MAX_NUM_LAYERS];
+> };
+> 
+>    (Maybe we can just make struct layer_masks a typedef to
+>    layer_mask[LANDLOCK_MAX_NUM_LAYERS] instead?  But currently not sure if
+>    there are any gotchas with a typedef like that)
+> 
+Typedefs are generally discouraged for structs and pointers in the
+kernel coding style.
 
-Signed-off-by: Len Bao <len.bao@gmx.us>
-=2D--
- security/apparmor/include/match.h | 2 +-
- security/apparmor/lsm.c           | 4 ++--
- security/apparmor/match.c         | 6 +++---
- 3 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/security/apparmor/include/match.h b/security/apparmor/include=
-/match.h
-index 7accb1c39..4a92cd044 100644
-=2D-- a/security/apparmor/include/match.h
-+++ b/security/apparmor/include/match.h
-@@ -125,7 +125,7 @@ static inline size_t table_size(size_t len, size_t el_=
-size)
-=20
- #define aa_state_t unsigned int
-=20
--struct aa_dfa *aa_dfa_unpack(void *blob, size_t size, int flags);
-+struct aa_dfa *aa_dfa_unpack(const char *blob, size_t size, int flags);
- aa_state_t aa_dfa_match_len(struct aa_dfa *dfa, aa_state_t start,
- 			    const char *str, int len);
- aa_state_t aa_dfa_match(struct aa_dfa *dfa, aa_state_t start,
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 3491e9f60..3f995b6a7 100644
-=2D-- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -2432,12 +2432,12 @@ static int __init apparmor_nf_ip_init(void)
- }
- #endif
-=20
--static char nulldfa_src[] __aligned(8) =3D {
-+static const char nulldfa_src[] __aligned(8) =3D {
- 	#include "nulldfa.in"
- };
- static struct aa_dfa *nulldfa;
-=20
--static char stacksplitdfa_src[] __aligned(8) =3D {
-+static const char stacksplitdfa_src[] __aligned(8) =3D {
- 	#include "stacksplitdfa.in"
- };
- struct aa_dfa *stacksplitdfa;
-diff --git a/security/apparmor/match.c b/security/apparmor/match.c
-index 3a2c6cf02..c6f7bea1e 100644
-=2D-- a/security/apparmor/match.c
-+++ b/security/apparmor/match.c
-@@ -31,7 +31,7 @@
-  *
-  * NOTE: must be freed by kvfree (not kfree)
-  */
--static struct table_header *unpack_table(char *blob, size_t bsize)
-+static struct table_header *unpack_table(const char *blob, size_t bsize)
- {
- 	struct table_header *table =3D NULL;
- 	struct table_header th;
-@@ -311,11 +311,11 @@ static struct table_header *remap_data16_to_data32(s=
-truct table_header *old)
-  *
-  * Returns: an unpacked dfa ready for matching or ERR_PTR on failure
-  */
--struct aa_dfa *aa_dfa_unpack(void *blob, size_t size, int flags)
-+struct aa_dfa *aa_dfa_unpack(const char *blob, size_t size, int flags)
- {
- 	int hsize;
- 	int error =3D -ENOMEM;
--	char *data =3D blob;
-+	const char *data =3D blob;
- 	struct table_header *table =3D NULL;
- 	struct aa_dfa *dfa =3D kzalloc_obj(struct aa_dfa);
- 	if (!dfa)
-=2D-=20
-2.43.0
-
+https://docs.kernel.org/process/coding-style.html
+> 3. Mirror layer_access_masks::access[] - add a
+>    rule_flags[LANDLOCK_MAX_NUM_LAYERS] too.  struct layer_masks becomes 80
+>    bytes (+16).
+> 
+> struct rule_flags {
+> 	bool quiet:1;
+> };
+> struct layer_masks {
+> 	/**
+> 	 * @access: The unfulfilled access rights for each layer.
+> 	 */
+> 	access_mask_t access[LANDLOCK_MAX_NUM_LAYERS];
+> 	struct rule_flags rule_flags[LANDLOCK_MAX_NUM_LAYERS];
+> };
+> 
+> (3 seems very wasteful to me)
