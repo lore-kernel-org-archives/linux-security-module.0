@@ -1,82 +1,51 @@
-Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com [74.125.82.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560CB2BEFEB
-	for <linux-security-module@vger.kernel.org>; Sun, 24 May 2026 04:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD7C2F7478;
+	Sun, 24 May 2026 05:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779596113; cv=none; b=TGoKgYlMZAgHxHdlZUsXqU65TmZVy9Yw6nAOHKbNCUFx5MQQHSN4kK4Nh/plKXZOHYXN1ukw5OXvi6FXaYCuPFLzXeWXoKarKnG+k3U5/D0IPdQJv9vDJbshiWv7Pyvf9c/ZD4jeQ4HPJgX+aBe6hzZMIOVTJt0t4VfXeGFou/w=
+	t=1779599729; cv=none; b=U0BPH5EO9wVLqRkPJXdZZZpNQCt1DC3JOGSrJUGseKg00P0p2SLD7ylTZ1yWK20uAmPv441daYqZal3g+byYbYEg0ZkJpCuqFgy2yH9a8TLhIB2+LFVGJCsAvU+Ya12EUQ5EIoknuN80vgho7aN+J0ExghE7uUoY6RZ5sT7exd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779596113; c=relaxed/simple;
-	bh=KH3T/whTjIb1nZ/b0yTDsfG9KkcuwAxRR09DzkU+xNQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iz10lSaG6l+BPUct0bx4aHyIyNBNV91xHxPTnNNBYmG1k3aHBM0O9320ALj//CFPeSxey2PPHi+6TUJwt5Wv3/WVoreTM7kkgBCd2MgDo9WFjLJjShTKK4PqZ8JJIXWZ3mAkU0QvKhL+wigBNhtkKEeGVbcXeGykw8iq9qKLgB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H7RoGsNK; arc=none smtp.client-ip=74.125.82.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1779599729; c=relaxed/simple;
+	bh=fHWc8nAYAz7OPYn3/irAz5Zps16T5mscYvl+m9RoEZY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WG/X+9ZQJk8ku/eljNB7aU/2gxftReiL3S7TQAOzqXX3pMulGw0tmKn2Xd59vLoTvXGz5yQWCkHzJtz+CM/pIybWpnOK/d0qWfi9ZpbJXwRqdxbpogjKf/OI4WIWN0Cl9oNa7vYduO8b7EePBb14tTS5Dca0nV4A4GZwPtpeDWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wk9eNaJU; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H7RoGsNK"
-Received: by mail-dy1-f173.google.com with SMTP id 5a478bee46e88-3044857f09aso3540135eec.1
-        for <linux-security-module@vger.kernel.org>; Sat, 23 May 2026 21:15:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779596111; x=1780200911; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A9LtOZi90LiMAb4rReSd7b/FTuCWT41FjVk4dArDYLo=;
-        b=H7RoGsNKfHksixA8fGglZ21fsi0pPZayRJANuBU/FgXkN29yOahhFYOQCuUZYo6YMr
-         1imFmsl++Jc+UgZnhOsg4qz4aBxJbWqJeIOAGtP9d+Ik4ELufuThbu6bU/1MR6gt4cJb
-         ouSZMdF/HnFAfZH0PX2px+eb++y4cCzDtM9oQxK5JXUTH8QGgfgLmFlaURz2sU3ewyv2
-         fD2O1sVsQfCVa3C6wKtqvC9ZiVxfZXCwl0LWcGOzMLNObiMA1BUERsqOVsSqsZBLuBhN
-         vQt1p1uhprDRHwxxLHdLY0ZhBmksbiuCs3kKY2EMxaRK1jLpBaxD55TLjxzs1Xvq4SFI
-         kVrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779596111; x=1780200911;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=A9LtOZi90LiMAb4rReSd7b/FTuCWT41FjVk4dArDYLo=;
-        b=b52t9CL2/0MQdGtxY5qVc8DO0Zh7yZndBainrmh56C6KLT32m0wzx8pdb7BI8tfjeR
-         8PtXJ9iYaH70t9923MfWTBwtN/ca4XPyMblrFbJieQy4UiaIpxNNKvYHODV1CyVsSDUz
-         T/OBS4EucPET7+amcEjG4Y2V+Ge+oL/cI1yUwJ60GOQjrX7n9r5k7OjJcwhVALVcF9rb
-         OXCFvG1Avmbja/OftHaY9Cr6oucr3bCfqw16g7elzdJllgL4kPJ+NkMdESjiwbTeMU0k
-         PY0suvueJyhwpPFDs/T2QDqRNXRnjnXRcNxF1LRob45OcpYwjgUyVheOx6kjql2KfjRD
-         ehtQ==
-X-Forwarded-Encrypted: i=1; AFNElJ9m313+D567DWDmmbEqbP4CxoGq8NOtZtZydoaQwmDuz3tj2S/JL4mYWUUiqcJD+uBGcP2u1IjSe+agQEmGsO3XHDkWuuM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTpBrKUb7YQS8OQrg6yRq2C+/x0aVoYsN1idSbF8Skb052V3iA
-	6rFJtjlG77m8srL+5VWv8zd/LRKSic4Foz+nNGKTX9hZoCcJ3HFOBhFb
-X-Gm-Gg: Acq92OHRRjqRCrCCjtDKsMFVZFArlNgIBrLgFackFK3ZTwiF0OQaM/L38dv3oeKF6oT
-	xqS95Cp4FGtHueh6h0Fh2fORgxkcpCotKnzI8u99dPkfvfFzUE33VKVTLRe/rUJ7B6zo0IJ2yhw
-	F64ztLXREj4mTBm3TFq7Jlkj8aq0KQ89DLOTJdy4dh3qEufLwU/ePUT5HlqfAF8aMHsrhp12uXS
-	TuRUjQwJ21mIyvGcn+GoH+i9odG49tNmJSmoPr2q8sSicyV5tazRsaFg2lptGVmVoT2Z406Rowe
-	b/61TvNiq4Vnp1LMi6hDj1cN0V2GH259ZhFJwpjqHuiHKYsYGHOqMyPWA2rSKKYRJDcR9XLeTnu
-	LNdI9LvlsmLfdjAesesZaYydbaRuOjZ4TRwXqS5LZywHmcLUCetAWP91VCsi5N+cWnr8cTNAXL1
-	2kH0hYCWZ6SeOJCbRjjp23S/sT9fvJUhc0ROYf76Hr1iN0
-X-Received: by 2002:a05:7301:608e:b0:2f2:b544:2fca with SMTP id 5a478bee46e88-304490e65femr4581119eec.33.1779596111441;
-        Sat, 23 May 2026 21:15:11 -0700 (PDT)
-Received: from localhost.localdomain ([148.135.103.3])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3045245d6aesm4522133eec.26.2026.05.23.21.15.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 May 2026 21:15:10 -0700 (PDT)
-From: Qi Tang <tpluszz77@gmail.com>
-To: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	edumazet@google.com
-Cc: netdev@vger.kernel.org,
-	fw@strlen.de,
-	lyutoon@gmail.com,
-	stable@vger.kernel.org,
-	Qi Tang <tpluszz77@gmail.com>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wk9eNaJU"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 6CC361F000E9;
+	Sun, 24 May 2026 05:15:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1779599728;
+	bh=S2EiS1f01ryjm2Z8gBccKQbpE/j6NghwVq278P3vsdk=;
+	h=From:To:Cc:Subject:Date;
+	b=Wk9eNaJU8xlbXe8SagSUSUQQjTC50r8gbhA0p9LXeIVeq96+POQEj8oo+PAysX3cm
+	 tw4hMvZAjWwNjSd67a4/0s8TCzwonShYPDLAzIcEsrD5yfk2gIaAT7znPe0vzUaPv5
+	 UV1MME/TD7CxrB79BedOZE8qvDvyUHdYeFAnlyPdZNGmiHfnGd4VHUV/BADpUw7uuS
+	 PbSTw83K99U+AZeC27sWol4xIy1D2YQszYQ6AAOrmVR8Ol8uxJ0VJEPrICtx5vVxir
+	 qkFf8tIYXyjDCCVoekQqrTNXqP1cVxU3I53AvzDk84/g86XQocsl+f+vIImIQPwDzO
+	 TYHgIG5KZUTog==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: keyrings@vger.kernel.org
+Cc: David Howells <dhowells@redhat.com>,
+	linux-crypto@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	David Woodhouse <dwmw2@infradead.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
 	Paul Moore <paul@paul-moore.com>,
-	Simon Horman <horms@kernel.org>,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH net v2 4/4] netlabel: validate CIPSO option against skb tail in netlbl_skbuff_getattr
-Date: Sun, 24 May 2026 12:14:38 +0800
-Message-ID: <20260524041442.2432071-5-tpluszz77@gmail.com>
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v8 0/3]
+Date: Sun, 24 May 2026 08:15:11 +0300
+Message-ID: <20260524051519.3708075-1-jarkko@kernel.org>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260524041442.2432071-1-tpluszz77@gmail.com>
-References: <20260524041442.2432071-1-tpluszz77@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -85,77 +54,59 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-netlbl_skbuff_getattr() locates the CIPSO option in the IPv4 IP header
-via cipso_v4_optptr() and hands the bare pointer to cipso_v4_getattr().
-The consumer re-reads cipso[1] (option length), cipso[6] (tag type),
-and then cipso_v4_parsetag_*() re-reads further bytes from the skb.
+This series introduces key type for operating with asymmetric keys using
+a TPM2 chip.
 
-__ip_options_compile() validates these bytes only at parse time.  An
-nftables LOCAL_IN payload write reachable from an unprivileged user
-namespace can rewrite them after parse and before the SELinux/Smack
-peer-label consume path (selinux_sock_rcv_skb_compat ->
-selinux_netlbl_sock_rcv_skb -> netlbl_skbuff_getattr).  This is the
-IPv4 analogue of the CALIPSO IPv6 trust-after-modification fixed in
-the previous patch: the tag parsers walk the option using attacker-
-controlled length bytes, producing slab-out-of-bounds reads whose
-contents feed into the MLS access decision.
+Change Log
+==========
 
-Validate the option fits within skb_tail_pointer(skb) before invoking
-cipso_v4_getattr().  The pre-tag-walk guard "ptr + 8 > tail" covers
-the CIPSO option header (type + length + DOI = 6 bytes) plus the
-first tag header (type + length = 2 bytes), which are the bytes
-cipso_v4_getattr() reads to dispatch on the tag.  When the bounds
-check fails the packet has been mutated after parse, so return
--EINVAL rather than fall through to the unlabeled path.
+v8:
+- Reset patch change logs given the overhaul of the code and patches.
+- Have only single new subkey type.
+- Make key type only use TPM operations.
+- Use TPM2_Sign for both ECC and RSA keys.
+- Align key descriptions with other key types.
 
-Runtime confirmation (Smack peer-label policy + nft LOCAL_IN
-mutation of tag_len): UdpInDatagrams increments to 1 and recvfrom
-returns the payload, showing netlbl_skbuff_getattr ->
-cipso_v4_getattr -> cipso_v4_parsetag_rbm -> netlbl_bitmap_walk runs
-end-to-end past the option's true bound; with this patch the
-consume path returns -EINVAL at the bounds check and the counter
-stays 0.
+Previous versions
+=================
 
-Cc: stable@vger.kernel.org
-Reported-by: Qi Tang <tpluszz77@gmail.com>
-Reported-by: Tong Liu <lyutoon@gmail.com>
-Fixes: 04f81f0154e4 ("cipso: don't use IPCB() to locate the CIPSO IP option")
-Signed-off-by: Qi Tang <tpluszz77@gmail.com>
----
- net/netlabel/netlabel_kapi.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+* v7: https://lore.kernel.org/linux-integrity/20240528210823.28798-1-jarkko@kernel.org/
+* v6: https://lore.kernel.org/linux-integrity/20240528035136.11464-1-jarkko@kernel.org/
+* v5: https://lore.kernel.org/linux-integrity/20240523212515.4875-1-jarkko@kernel.org/
+* v4: https://lore.kernel.org/linux-integrity/20240522005252.17841-1-jarkko@kernel.org/
+* v3: https://lore.kernel.org/linux-integrity/20240521152659.26438-1-jarkko@kernel.org/
+* v2: https://lore.kernel.org/linux-integrity/336755.1716327854@warthog.procyon.org.uk/
+* v1: https://lore.kernel.org/linux-integrity/20240520184727.22038-1-jarkko@kernel.org/
+* Derived from https://lore.kernel.org/all/20200518172704.29608-1-prestwoj@gmail.com/
 
-diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-index d0d6220b8d59d..c2d3ea751f4e1 100644
---- a/net/netlabel/netlabel_kapi.c
-+++ b/net/netlabel/netlabel_kapi.c
-@@ -1393,11 +1393,24 @@ int netlbl_skbuff_getattr(const struct sk_buff *skb,
- 	unsigned char *ptr;
- 
- 	switch (family) {
--	case AF_INET:
-+	case AF_INET: {
-+		const unsigned char *tail = skb_tail_pointer(skb);
-+		u8 opt_len, tag_len;
-+
- 		ptr = cipso_v4_optptr(skb);
--		if (ptr && cipso_v4_getattr(ptr, secattr) == 0)
-+		if (!ptr)
-+			break;
-+		/* CIPSO header (type+len+DOI = 6) + first tag header (type+len = 2) */
-+		if (ptr + 8 > tail)
-+			return -EINVAL;
-+		opt_len = ptr[1];	/* total CIPSO option length */
-+		tag_len = ptr[7];	/* first tag length */
-+		if (ptr + opt_len > tail || ptr + 6 + tag_len > tail)
-+			return -EINVAL;
-+		if (cipso_v4_getattr(ptr, secattr) == 0)
- 			return 0;
- 		break;
-+	}
- #if IS_ENABLED(CONFIG_IPV6)
- 	case AF_INET6: {
- 		const unsigned char *tail = skb_tail_pointer(skb);
+
+Jarkko Sakkinen (3):
+  lib/asn1_encoder: Add asn1_encode_integer_bytes()
+  crypto: Migrate TPMKey ASN.1 objects from trusted-keys
+  keys: asymmetric: tpm2_asymmetric
+
+ crypto/Kconfig                            |    7 +
+ crypto/Makefile                           |    6 +
+ crypto/asymmetric_keys/Kconfig            |   17 +
+ crypto/asymmetric_keys/Makefile           |    1 +
+ crypto/asymmetric_keys/tpm2_asymmetric.c  | 1096 +++++++++++++++++++++
+ crypto/tpm2_key.asn1                      |   11 +
+ crypto/tpm2_key.c                         |  150 +++
+ include/crypto/tpm2_key.h                 |   46 +
+ include/linux/asn1_encoder.h              |    3 +
+ include/linux/tpm.h                       |   10 +
+ lib/asn1_encoder.c                        |   62 ++
+ security/keys/trusted-keys/Kconfig        |    2 +-
+ security/keys/trusted-keys/Makefile       |    2 -
+ security/keys/trusted-keys/tpm2key.asn1   |   11 -
+ security/keys/trusted-keys/trusted_tpm2.c |  119 +--
+ 15 files changed, 1421 insertions(+), 122 deletions(-)
+ create mode 100644 crypto/asymmetric_keys/tpm2_asymmetric.c
+ create mode 100644 crypto/tpm2_key.asn1
+ create mode 100644 crypto/tpm2_key.c
+ create mode 100644 include/crypto/tpm2_key.h
+ delete mode 100644 security/keys/trusted-keys/tpm2key.asn1
+
 -- 
 2.47.3
 
