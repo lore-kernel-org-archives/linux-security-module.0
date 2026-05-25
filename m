@@ -1,114 +1,204 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19BD3D5258;
-	Mon, 25 May 2026 07:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8446B385520
+	for <linux-security-module@vger.kernel.org>; Mon, 25 May 2026 13:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779695661; cv=none; b=nmmBGgmP/HqaIwGv7FkFAmfo/EIL1rhMFxCH5dwg4kxdg/7GF+mrf2iyERts23NSgLWmZb/6qiYxDabDwvADd+qrXbAcf1rJgmMTUG6xiQ4mSW8md1mJYc2m93jA/fI5LJGlnkDGP+UxyfZK4pUxDOsoCaNqEp/fQ6pH4Wj5d9M=
+	t=1779715640; cv=none; b=Vx4wvFtdLAsbZjEfzHnJloNa+zBSuCoHcoufaGlLH3I180Jp2w1cZDz5xGctzjh0qJZmcNLu427VHXhO0buMFHaNVBKAT1Q3lWJrvXpZKasmwhwzb/WkIzkbJ94iwiQBvEeie+clBfn+b8SUwb7f2Q4vbx8M9zW8RYjdB7Gdnt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779695661; c=relaxed/simple;
-	bh=rBODykKI1i7KPE4SMWeAh+EbtRDRsTpf+aHtEHim1nc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GxOR+qepRcdQZip+GwF8cBwhgLjFG2uEbxxWLKtqAngG7Qx7WfFZxwuEjUxb05gszYi/nVnYv4yYmRuT8UpwVVV3MXF1SFRKzl1kktPjjhhABXIui7JT9dKQHzB2qjRasLcn6aj892MdVK/T3UhDgIYeBfd5GgdReWg88R0/kGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=fTrXbm09; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1779715640; c=relaxed/simple;
+	bh=C94U0R51pf0+NwK55ZN6EU/K9cssUS28krlgs1NAXvo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V/g4uZt5TIhRfv7cxwTpqQKCKTb/ypVU1XGpGWhqINtKPyb9zM9VV2VfCBVrKcH/GYV+Q2UlGU9KZdhP5EbKs31vs0z3OxWSc6zU7Fgl5DsBnFvuMeu8dB7ORGIy5lI4kH97ecSpt/il6ivFnD2gCwQ8I9yNJk7P/OVAoQpRsAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aQ7LUXtW; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="fTrXbm09"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 43696354D;
-	Mon, 25 May 2026 00:54:14 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 330393F7D8;
-	Mon, 25 May 2026 00:54:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1779695659; bh=rBODykKI1i7KPE4SMWeAh+EbtRDRsTpf+aHtEHim1nc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fTrXbm09Jc1Z3VME96YPHpvsBIpOdwlgPTAVwcLONPWFzFqaQ6/uQdzJNy+MFpYCK
-	 gIf9GmY9hlpXrT3FmKXBLC6LgEH+Qz2rFwUDj2HnqtxDr0VDW4SSjciwPYEiQGQ+/5
-	 /WCojZz4uuLORL4smDBmGs0ZZ1k2agy7smlbx760=
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org
-Cc: paul@paul-moore.com,
-	zohar@linux.ibm.com,
-	roberto.sassu@huaweicloud.com,
-	noodles@earth.li,
-	jarkko@kernel.org,
-	sudeep.holla@kernel.org,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	jgg@ziepe.ca,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v4 3/3] tpm: tpm_crb_ffa: revert defered_probed when tpm_crb_ffa is built-in
-Date: Mon, 25 May 2026 08:54:04 +0100
-Message-Id: <20260525075404.3480282-4-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260525075404.3480282-1-yeoreum.yun@arm.com>
-References: <20260525075404.3480282-1-yeoreum.yun@arm.com>
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aQ7LUXtW"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-49056b9f04aso23538895e9.0
+        for <linux-security-module@vger.kernel.org>; Mon, 25 May 2026 06:27:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1779715637; x=1780320437; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ij+l12dR+ISDUAaA9eJOw0SDQ47xwS4UQDqlRXMB76c=;
+        b=aQ7LUXtW5bxOb+tWWbnJ9LI9Hu4ho2cWZv/3AUVlb7neykv3e+8w6/VBaL6Xr0dGge
+         z1KK2LMTAA72OCAu5AxD12Qy5s1M0/sw9ULxv7vFq7+upKOnBYr2wRR1ZvodcmgkysM4
+         sWabOR3Ubm2vqDtISC9F8a7yRMxFSNpxL+BvdxucPoZsLwmwpi+VqhZI8mUejTHqAsHt
+         us9KcbeyES8MwfL9wN5iAnDDh83sw6VahdIZeophjTkDCT9NWqrub1WwEH9gCU2y0gYZ
+         Rh2ajrWgiGd+BqSe3mipr5Mst8DS1o2/LF66I805h9zC41cP2I0l1MO9ZLDfwi8MxZFB
+         EZDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779715637; x=1780320437;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ij+l12dR+ISDUAaA9eJOw0SDQ47xwS4UQDqlRXMB76c=;
+        b=PyAX6ZlJq5MPBoPz3YXXcZGBaw/ebQy2EYFTC9+wcQOX+t45S3cvEjsareeM9xGqLm
+         JZ6gkPCY5sY+2EPagpgBF+0Wwvt3dyj/hMo81bLBDHVmx9d9NiFGill/RNx/2us2wTLx
+         JpaBDrzS3RlKTvC8zz9mzBwpAUsvasxMM3ftYRRLdeFb5u+Y5NP0W27vmGNZG5f8ZUd1
+         JNpeC1ZTfHGbDKpEEYiEAo9hJwbTkmPCIJd4MYqhn10KpY+XfBD6fTJKdlCFujGr2N75
+         Lv4BMjT1QW1xAsChAM/O+pUk/79ngefHLxhY+8VVEAcmKeqor5e7uKhJx8NHWlb9fXvA
+         tAag==
+X-Forwarded-Encrypted: i=1; AFNElJ/RjrAH8GLXiNtiUXUlWVz1gmjloo404WAFebNiQdZ1AR7DbYYzrrnJu4215SQXoikzuwgrS+aw5L1ymTydj1L9kzW3LgY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0O5M1aSis8gRudNfqyA+hzjVUdie+ns4Vc1L9I3bDJEcU9cbB
+	E7x0PPQn9yoiZn0ZrmqSzxoSxpb1oWf2I7RdvKqj7Onfj1pqyXi/lBDCbNHp/JotDQ4=
+X-Gm-Gg: Acq92OFWf7ByQ3WT7e0Jd2ReGIPA88EoabR9+zjduhz1CqgCa6MOKOETOxJRdLo9YWC
+	J6YHu6yjFKUxE4MejWppcPTwl9Z0595a/n2cr5rdbktmSP1HI7hZKjnawp6pBjyMEQ1AcY+NBlR
+	Zk595F1uA5nUvjQaDgfvJnGFiOZvdBiEO7wok3PYqdbIniDo0xp180maFbghu/Llk0djZSXtxKi
+	n07HIR2FkzWQFj1gCnZYRhddId4FCDFuZAKv5+tzvL0HFkBEtev9rgBdSYqPPQQvdXYXivtVQzx
+	f8gPzwRUE4dSgVYtTG95XWHf7RPKl7P7Vj/HKZVSh0AF/fcATnogmY08YtaFLKnl53CDKJAlgaA
+	EbtK7K831rU1mFvP2mqghmP+8FYPJx6IbYjX7HEXxzOWGvMK5PkJAlSyFRx3Z87ekuw0rfgAmIy
+	L3PnZhA3gGV6JBj2FttHMDuGBjMQYr1WSuLCrzWgkK3HfQhiZjgniLxAhAI/HGyhmTZf5GHkMvz
+	9UHC9xOST5adlXW2B63SJoaOjwi9kke8vqFGDd8pLKz25gymxOZ+Xb+QL+kFvc6sKT41Psa5HqZ
+	rXs8
+X-Received: by 2002:a05:600c:3b02:b0:48f:e1ac:c94f with SMTP id 5b1f17b1804b1-490424b3938mr247672645e9.10.1779715636631;
+        Mon, 25 May 2026 06:27:16 -0700 (PDT)
+Received: from ?IPV6:2a00:1028:838d:271e:8e3b:4aff:fe4c:a100? (dynamic-2a00-1028-838d-271e-8e3b-4aff-fe4c-a100.ipv6.o2.cz. [2a00:1028:838d:271e:8e3b:4aff:fe4c:a100])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490454b1ab3sm284841905e9.14.2026.05.25.06.27.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 May 2026 06:27:16 -0700 (PDT)
+Message-ID: <1c21f66f-0d0f-4a8b-835b-23408242cff1@suse.com>
+Date: Mon, 25 May 2026 15:27:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/11] moduleparam: Add DEFINE_KERNEL_PARAM_OPS macro
+ family
+To: Kees Cook <kees@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Pengpeng Hou
+ <pengpeng@iscas.ac.cn>, Richard Weinberger <richard@nod.at>,
+ Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+ Johannes Berg <johannes@sipsolutions.net>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Corey Minyard <corey@minyard.net>, Gabriel Somlo <somlo@cmu.edu>,
+ "Michael S. Tsirkin" <mst@redhat.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Bart Van Assche <bvanassche@acm.org>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Hannes Reinecke <hare@suse.de>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Alan Stern <stern@rowland.harvard.edu>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Jason Baron <jbaron@akamai.com>, Jim Cromie <jim.cromie@gmail.com>,
+ Tiwei Bie <tiwei.btw@antgroup.com>, Benjamin Berg <benjamin.berg@intel.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ "David E. Box" <david.e.box@linux.intel.com>,
+ "Maciej W. Rozycki" <macro@orcam.me.uk>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Vinod Koul <vkoul@kernel.org>,
+ Frank Li <Frank.Li@kernel.org>, Daniel Gomez <da.gomez@kernel.org>,
+ Sami Tolvanen <samitolvanen@google.com>, Aaron Tomlin <atomlin@atomlin.com>,
+ Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>, Andrew Morton
+ <akpm@linux-foundation.org>, John Johansen <john.johansen@canonical.com>,
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Georgia Garcia <georgia.garcia@canonical.com>, kvm@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-modules@vger.kernel.org,
+ kasan-dev@googlegroups.com, linux-mm@kvack.org, apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org, linux-um@lists.infradead.org,
+ linux-acpi@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+ qemu-devel@nongnu.org, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-pm@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-serial@vger.kernel.org,
+ linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+ virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, netdev@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20260521133315.work.845-kees@kernel.org>
+ <20260521133326.2465264-3-kees@kernel.org>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20260521133326.2465264-3-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-commit 746d9e9f62a6 ("tpm: tpm_crb_ffa: try to probe tpm_crb_ffa when it's build_in")
-probe tpm_crb_ffa forcefully when it's built-in to integrate with IMA.
+On 5/21/26 3:33 PM, Kees Cook wrote:
+> Add macros that define a struct kernel_param_ops initializer through a
+> macro so the underlying field layout can evolve without touching every
+> call site. Three variants cover the three cases:
+> 
+>  DEFINE_KERNEL_PARAM_OPS(name, set, get) // basic
+>  DEFINE_KERNEL_PARAM_OPS_NOARG(name, set, get) // set KERNEL_PARAM_OPS_FL_NOARG
+>  DEFINE_KERNEL_PARAM_OPS_FREE(name, set, get, free) // also set .free
+> 
+> Callers prefix their own visibility qualifiers, e.g.:
+> 
+>   static DEFINE_KERNEL_PARAM_OPS(my_ops, my_set, my_get);
+> 
+> Also update module_param_call() and STANDARD_PARAM_DEF() to use
+> DEFINE_KERNEL_PARAM_OPS internally so the generated ops table will go
+> through the same macro as everything else.
+> 
+> Subsequent commits convert all open-coded struct kernel_param_ops
+> definitions to use these macros, in preparation for migrating to a
+> seq_buf .get API.
+> 
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+>  include/linux/moduleparam.h | 36 ++++++++++++++++++++++++++++++++++--
+>  kernel/params.c             |  6 ++----
+>  2 files changed, 36 insertions(+), 6 deletions(-)
+> 
+> diff --git a/include/linux/moduleparam.h b/include/linux/moduleparam.h
+> index 075f28585074..26bf45b36d02 100644
+> --- a/include/linux/moduleparam.h
+> +++ b/include/linux/moduleparam.h
+> @@ -68,6 +68,39 @@ struct kernel_param_ops {
+>  	void (*free)(void *arg);
+>  };
+>  
+> +/*
+> + * Define a const struct kernel_param_ops initializer. Callers prefix with
+> + * any required visibility qualifiers (typically "static"):
+> + *
+> + *   static DEFINE_KERNEL_PARAM_OPS(my_ops, my_set, my_get);
+> + *
+> + * Routing the @_set and @_get function pointers through the macro
+> + * (rather than naming the struct fields at every call site) lets the
+> + * field layout change in one place when callbacks are migrated to a
+> + * new signature.
+> + */
 
-However, IMA now provides the IMA_INIT_LATE_SYNC build option, which
-initialises IMA at the late_initcall_sync level, so this change is no
-longer required.
+Nit: The newly introduced DEFINE_KERNEL_PARAM_OPS*() macros remain in
+place at the end of the series after the migration is complete and this
+comment is removed in patch 7. It would be helpful to describe in the
+commit message why these macros are generally preferable to defining
+kernel_param_ops instances directly.
 
-Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
----
- drivers/char/tpm/tpm_crb_ffa.c | 18 +++---------------
- 1 file changed, 3 insertions(+), 15 deletions(-)
+I assume the motivation is that the structure is simple enough and using
+macros then makes defining kernel_param_ops instances a bit more
+concise. A minor disadvantage is that some analysis tools, such as
+ctags, may no longer see the generated definition, but that is also the
+case for DEFINE_MUTEX() and other similar macros.
 
-diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
-index 99f1c1e5644b..025c4d4b17ca 100644
---- a/drivers/char/tpm/tpm_crb_ffa.c
-+++ b/drivers/char/tpm/tpm_crb_ffa.c
-@@ -177,23 +177,13 @@ static int tpm_crb_ffa_to_linux_errno(int errno)
-  */
- int tpm_crb_ffa_init(void)
- {
--	int ret = 0;
--
--	if (!IS_MODULE(CONFIG_TCG_ARM_CRB_FFA)) {
--		ret = ffa_register(&tpm_crb_ffa_driver);
--		if (ret) {
--			tpm_crb_ffa = ERR_PTR(-ENODEV);
--			return ret;
--		}
--	}
--
- 	if (!tpm_crb_ffa)
--		ret = -ENOENT;
-+		return -ENOENT;
- 
- 	if (IS_ERR_VALUE(tpm_crb_ffa))
--		ret = -ENODEV;
-+		return -ENODEV;
- 
--	return ret;
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(tpm_crb_ffa_init);
- 
-@@ -405,9 +395,7 @@ static struct ffa_driver tpm_crb_ffa_driver = {
- 	.id_table = tpm_crb_ffa_device_id,
- };
- 
--#ifdef MODULE
- module_ffa_driver(tpm_crb_ffa_driver);
--#endif
- 
- MODULE_AUTHOR("Arm");
- MODULE_DESCRIPTION("TPM CRB FFA driver");
 -- 
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
-
+Thanks,
+Petr
