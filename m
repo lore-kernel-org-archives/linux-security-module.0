@@ -1,67 +1,61 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69010305689
-	for <linux-security-module@vger.kernel.org>; Mon, 25 May 2026 16:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114A81EF09B
+	for <linux-security-module@vger.kernel.org>; Mon, 25 May 2026 16:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779726256; cv=none; b=iY4TwODAytvdMrTpN71QYQc4cADVrpoizPN21M3kh/wVNdL3OLh+4ZcVZXyTq5xAj7NplQiiTlHUxmmMb/+m7Kd3qi3kUuCHmzFOviH2h6v/E383f3jtgB9nzzup3tWwOKsZyLMU4r+v5nHQb9W3bYucVVJJjzt9bLcB9MbgnRo=
+	t=1779726434; cv=none; b=JJEFujhsWhJTiU5pN+MDN3BBOREw4hmULUmCmA6eTMCnQozjyNZ4FywfvME77+P88fqzgmxpnwC6CiitsPZOlv1BCnesAVZGiZnOYH2L9DJr035cmtAx0pm9r0fdgiTIoRXGeTrKTvcnhXIpbAIpCYUyy7egXnYGR3Jhl8WKK68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779726256; c=relaxed/simple;
-	bh=Ix5V9VVReiSoQo6AB3QETxLfhu0cCyAdGQjvJGHnDxc=;
+	s=arc-20240116; t=1779726434; c=relaxed/simple;
+	bh=PdUJOavhmJRM+J1wFlbP0xXH4QUtlbSIwvFlB8LDfC8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=srFebzD2cwf2OBp3GUVoit8qp9rud/IXAsMjuE9K8t0lG889C8yvLRUkcJC8GluRlNsAYUVrzODFP5sjT01++GrjmPT0FpPflfUTBgONTf6a5U1Gvf7wwxgkrJD6kILkqz0zhhuC+SydpOOg2ig+Zyw9VD/qokQM+l5o4RqlSfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VdZk1QbN; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	 In-Reply-To:Content-Type; b=LZ+B4AaLFK4WxK8u4aLD47CxqBtT7O3MOP/zH6ECuMCs0RlA4DSIoIIf90kPM1cgKnBICDfH99VInfZlAwfd5tmNyijoqQs5lDJc1pkY34rb5WQFiOf43lpur8xaDRnkj3IyoqqLluQiOQsGF3r8o+J5InAUJcnHWIkQF+xMIg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=LszskoCu; arc=none smtp.client-ip=66.163.187.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VdZk1QbN"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-43d73422431so6868191f8f.2
-        for <linux-security-module@vger.kernel.org>; Mon, 25 May 2026 09:24:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1779726251; x=1780331051; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WThGrJlj0+d9TTzzXLAp8aZigkvM5HszOOE/MfwSIgg=;
-        b=VdZk1QbNytpFbuiKsbE3wW+kpdUiwO8Oy0pgmIL3aXlcs3cEHrAyW3jehgTlLTi83n
-         wNh17lNTxLLkgF2MNP6aUmiJt0rCd+jWtZnbWylWlzXlbassqIWZOQCLLOffSEkhSbua
-         +xQlxnJ9qX8lxTNaTtv21kd2cKIugw5nnDeVK3GmUj9N/fqumL9jVllnCfVPprFZDh/q
-         LoGx1NaFUjwhYiOVtB2Bo+Ks5HuJmMsqFtXlcMGYkbS3CeNG7DthkcDMBrct+OJR510y
-         SClO2VskO/kDqNdoapbvTguZijtUGevTSuelHBqTta1LS7zaFq3R8yRear0hL0uSsY1S
-         vaYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779726251; x=1780331051;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WThGrJlj0+d9TTzzXLAp8aZigkvM5HszOOE/MfwSIgg=;
-        b=i1g5u6lMdbFgSo1m0Lk6/ZD2eCdVYcbdCAIGV8j2Yfl3qbL36lvC/Yh+ogjlTeGYnS
-         kBbUGbA9ghIISGjPrDoV1FLTeGb3I3o2OYrGolwP8NawuU4M2VM/PQbfRM35qR+P0TET
-         0jV8ZX/2iQ4Dm9x5qsGvzba3kOqojfWauyPY3bkYUS7aLweH6rGgd7r6arlWwfWIV8C3
-         4XO0c+9VDnjiH/PXwERHAw1pdM5nU/ElkmsaQjz8IWLRdDcIARddrNqdsqIx1JliXRbL
-         Xf+jsuZZE2gTR58S5YU9XzzycHNRWj6Klk2+3XREbkyWjHmy8Kta9dCMEcqrsHO0dbsM
-         KMgA==
-X-Forwarded-Encrypted: i=1; AFNElJ/Ka6mxZogMOd+AWd9pU3HQzaGnifmEnBVrSc6CAkIFkCeg1zIinwbYqA1YMYUv9X0OdcBm+CQ7aXwwRC9sbygpy5u9A1U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyE0VR9w11Fg6ZwVnTon4XmuNVuGPIzFvgzEMA8k/RznGYjKKw4
-	iePjbXiCXkUMuWTc9J4vHfZ2JKyi5gMp5yPIjC8zr0aGucT0ixFiDxbn9q84gG5Lw+A=
-X-Gm-Gg: Acq92OFIK6g8Ys9XARSD1HLRriFuuAGAVhZhKV04QRH416swQrQRNvKir29OkWjbCtA
-	A0sa51Lk8zFrtQBa/SehaOyU64V1ph1jjkuxaJ+x5aJPQkI1DNydUBrz1sqL5zP7r1v2z5PBJ/t
-	27Bz0A0kUGM9/EgMmTBCyb5syYBl8TYuN3r/HiQhR1PLzbn8TNC+YIiygMnmZcyD4KbMIAoFla/
-	4YGvb2L4eR9CIVFu5PrqhybWipYylG0ohAhZ6zRRHekJ9onvB1nXvplL1/ZVGoIVP2CZSr4/b46
-	VIZsW25RmbmbtVI6j5SrZ3bRo5hpm5HRNziV3VZ5dxShqS0Ue+ZORPkII8IHN1E2l2COiTDuOeZ
-	twAkpxy4B84p9XNTAbtLxGNrnChAOXeZq8ueP+5IbqwDaRZsNTOt3FrmdTRPCW25hKx7I4bQDze
-	QriFaFVyMmYEYqH6R6l5KhbVV/zhhP6LcxSAozCRmCHduMl9QKWvoqPZxKhjtXFT2W/TAOeEnjv
-	0wlCOR/9IW0UyzbSth/pi6gqnw63fJXFXILwVqmFxvFghdrXc5DTQHKxHGn7y3aCN81UA==
-X-Received: by 2002:a05:6000:26cf:b0:45e:b215:12e9 with SMTP id ffacd0b85a97d-45eb368903emr24724531f8f.6.1779726250728;
-        Mon, 25 May 2026 09:24:10 -0700 (PDT)
-Received: from ?IPV6:2a00:1028:838d:271e:8e3b:4aff:fe4c:a100? (dynamic-2a00-1028-838d-271e-8e3b-4aff-fe4c-a100.ipv6.o2.cz. [2a00:1028:838d:271e:8e3b:4aff:fe4c:a100])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45eb6d47b82sm28202483f8f.19.2026.05.25.09.24.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 May 2026 09:24:10 -0700 (PDT)
-Message-ID: <4e54ae4a-4f7b-451d-9b37-97f30b8fefba@suse.com>
-Date: Mon, 25 May 2026 18:24:07 +0200
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="LszskoCu"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1779726432; bh=YiMRe1V101hFNQA5Jro1sQyfqTYKyxdHuyGQs/zGI/c=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=LszskoCuYAW7W+zoIkV9Qjy6uyD6TCMPIo2TLdyuVxR9xXbg0m+nWhPwy5Q/Uu2OSe2AZ06BCDMmumFnA9iKSElh5Bh0mlOPrijd5BEYlmlqEu9tmkesQzuatgunTKwgazRS1x9R64rBwQR+acxVpkNW2ZPx4wFVN8VJsx0SrhptrRqwix3aeCy3X0Ac4ab9ucd/rxOVVXSPi2PTIkxphoHgrG9eYJYlCzjMIWNjhpv0pMpcwt+2Kt0gzq3Ny8P071AfvfENW7pf87CfdrwyzkypytJdKRLV9q7PysNfP1gexHWZBE/8NE8a3L1lpRRtOIwU4SuFupEj7gw2x7ZOEg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1779726432; bh=M588I5gNGhsNMcALEbSdpSers3chAGlp3y+ehKKN5br=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=m5f3RdC7PSPjRE+69wZVf3vxC7DXZ6dBD/GT90vsPMK55aHErod2bnK9bzhxeQUqNa+jbzUyzcgKWUqUoME5+vrtox8HLsDF2EqJWgLegQgsElbRF9sshI4uTN2cRDWlZZq5OV2wiFUNSYw+91Zdk0XRd6aymNrhfTvbsTUqCStW31Kj/k+m2dRVpHFvhh83N/H6qRL2xLWrYkURKG6Zpx8SCk/C3ZrjUq9d824DuDUQqW7oQ4qUiaFSY8uNAbdKmszhs8YAYBlgd8LUQ9S+xZcUDYPtaAmNG+DgZfNJ7+VolGRzDuaB409V9PVHKeVcM20LtA83/R8lBZG5ToY/2A==
+X-YMail-OSG: MepryfIVM1nIFUDlU3Oca8Vwr33Xx19STG1ImxKkVkoyHw883GWn9sQ1VIP2RYZ
+ zuS41KsTAt.BLB1BugyiJYABcfX3jkYCbVyCJxw.QodsExZQExktcSaJsba3NxVAemjnj00CSyxu
+ ZtNM7FDO9hLQIkQsAKykXzS7hu9XdrFsbR1DhtIEgCTFZDuowiOP9JyuKrJZQ8scQcb4yGJbYOqz
+ OfrwE3UWUrvOxQ7YYPoWyQF97UZY5ociH9dND2v5B7Y77FcSNYfLG2HgGUFd4V2Kpx.H86sX6hO3
+ 1h73dD1hooOQ5jxPe4Ff9unAMHuYO0.aH61I0UOKRGnvG7tEuxDKRaXNKiz4c.IVRzBofrcXAOKs
+ 7Opyj76dLqpBRprB87_6eg6EvwkyiD2CRs6_P_XTxZk6tCypPu3sHhej64oAb7bm4mm9QPy2ZaG.
+ w7iioNvZn4dheirYVzMJ6e17HH3xmzx_VSym_lZQPffus.V2C64IJUqDuCIVAQeKD2A9Anf9lu4Y
+ jivJ2M2xxz2UP94DQqXgQ8iK35GUHwAuNk4h8xFgvMx_nDvRDTn9RsN8Y6NAIX93HvMYtZDwsCIo
+ CIUgpox1YC3YLFeCy0toMDPFHILg1CtxTwlMxqQQbf1hGlEC626c04xhUk4kyFkzcxTnCf4M0PJA
+ 4_Mmt.x8C9Z58cUuqe5bHN6xoopppO8EJK7gdBmlOXfRCEHO3DfA_CVgcLQzA6j2Z36ebOA7x8gb
+ wYJbkr2wsZn8VVfwhQSsJDTAw5kkG.itm1xNTy_xmvmK7uSiWEX7CIIkB7stJuGaHUzHkKd5oE6U
+ S7eYpmw3SkiSvBosDAGS4qkf9sU8uvdyAv3maTJPIdvPXRf57yQF_kWjBHgKBa0riKFhMaH_AXtm
+ f2AmLYAYSBDh25EPBaztn8NZt3kZGj6tWcByyoZR5t..j3hkpP7YkBMrzf12ROX9CFPgPBhshEbU
+ TX0Btri2YsKqZ4tY5dtTETxgTUyUxmP7Oog92xon3yt5dg18zxEs3uvGh7_SsAw4XwW1H5uUldzh
+ ZUYWEo.7gaAQJvGf4fNrO6e6CzH7ekfuG0iTwSETCOuZY6PZiAjIkpUeLppOih5oScxq4.emSHBu
+ qx9w_9SQMzn5cTz3XBYRN8TT.DeFQqRHf.VBvfahAAfh7OmAXZT2xsii6CK5Ptr34lBGnXaZsXoG
+ aW5IkSGuAMNf8xg3qmy43afBCoTd02PUh98LyVehNb5vQYMfzX6TfHeXphVSFUsIWWQ9sIpP_eBl
+ VZDeC1T8NZz69YfIGCPn2krYmPPLJ7vt2EJn.k5lNCT8bbMMFJXAAw_fbHYqq_k.g3LKXAgYubVC
+ ASr9.t.bWTtFCuoQocTQG8F7RbWMyfyhzwOR66vhKHv7Co4kNa8D5_j5Ns1NFJrMMdBjTcSy1NMi
+ 1BpkfUqckg5SSgOBZK6tIOKAoKskDX5NG193i9GRHmJwWUOiDIb9wDuA044Z6qR5D.cE3aRfe0Uk
+ yZD0FHUJ3J9XHBqIrxAWIDI6qriC3H628iGd4vRYQvdg6m1xmVablz9oacFyD13QDCdQC5XnLszI
+ .rFmGluN7b5FXYDVgOEd1MlpCS64CmUHhcoGpADnwH3QioCl.vLUhC1sw5OlDsRYNe.bZ3EhYuvW
+ .M8We_HJHKoBPxN3fnPIeEwLUYQuFOMsq9AmIQ1D1Bje28NeDWul_WOSRnrxOI0yfZ3mI3sHxZud
+ lHWLxMe4roAto9Npg598L0alS86OFM_gOF0nuDCcubvQzO61QjFX3aBqx342p4kNVqpckxg4aLl2
+ VptGnlVCZa6VdjEc3vbdjKWcgfGfJ.DFR_IDhc.ox3f1HTqvKJOSOax7iSqQIRooHLYwBeFA_K_I
+ gcr5pjuKq.zKq7mP_Q8CW4wxk5wOS.Z8_2f4nOmBZnSDJM8HY6W0Ssdprf.5ZSBH99BMJJPPLWI.
+ GeHChcE6KNDrw_3fo8f9fRUvoIPi3aejYCHs1RFf7aZ7GXoTBxNK5b7Vx8zlp6Eh7rpt_ZOMT6J1
+ F69s64QxUfCoVN9Iz.NrBy1lu.NmZ7RW2_3wFkpiOarm4lc6WMZ05F0WXoXErEM2ClPhYn20Q4oZ
+ D3Y5fTV1_4W_S8a7FqT9VoD3IAl5W4mzDLmxhiIjL32K.bxomNDkQNbxfMHaQupuBD1TmIBInD8t
+ EFTGrN_YMlbuJbcHO46zrRal6a6YjLsTK2cutmX4zTFUGu8z5Pa8_Wnph3ov7itsYPdjKi_Rh2Vg
+ 0cTcVZiE0ZQmgu476UI9OfsKOxYNV7gjvwUgyRv8LMkDgCcgXJBWooLB6PbkIqv3_LpXr86E-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 61dea198-c48f-49e7-8e8c-770407ce6dd7
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Mon, 25 May 2026 16:27:12 +0000
+Received: by hermes--production-gq1-7bb7df5c46-m46kc (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 1ca323068d261e5b9c520f511b34023e;
+          Mon, 25 May 2026 16:06:31 +0000 (UTC)
+Message-ID: <dc8631eb-17f1-4272-b4be-07318636d968@schaufler-ca.com>
+Date: Mon, 25 May 2026 09:06:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -69,162 +63,79 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/11] moduleparam: Route DEFINE_KERNEL_PARAM_OPS get
- pointer via _Generic
-To: Kees Cook <kees@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Pengpeng Hou
- <pengpeng@iscas.ac.cn>, Richard Weinberger <richard@nod.at>,
- Anton Ivanov <anton.ivanov@cambridgegreys.com>,
- Johannes Berg <johannes@sipsolutions.net>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Corey Minyard <corey@minyard.net>, Gabriel Somlo <somlo@cmu.edu>,
- "Michael S. Tsirkin" <mst@redhat.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Bart Van Assche <bvanassche@acm.org>,
- Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Hannes Reinecke <hare@suse.de>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Alan Stern <stern@rowland.harvard.edu>,
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Jason Baron <jbaron@akamai.com>, Jim Cromie <jim.cromie@gmail.com>,
- Tiwei Bie <tiwei.btw@antgroup.com>, Benjamin Berg <benjamin.berg@intel.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "David E. Box" <david.e.box@linux.intel.com>,
- "Maciej W. Rozycki" <macro@orcam.me.uk>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Vinod Koul <vkoul@kernel.org>,
- Frank Li <Frank.Li@kernel.org>, Daniel Gomez <da.gomez@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, Aaron Tomlin <atomlin@atomlin.com>,
- Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
- Dmitry Vyukov <dvyukov@google.com>, Andrew Morton
- <akpm@linux-foundation.org>, John Johansen <john.johansen@canonical.com>,
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Georgia Garcia <georgia.garcia@canonical.com>, kvm@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-modules@vger.kernel.org,
- kasan-dev@googlegroups.com, linux-mm@kvack.org, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, linux-um@lists.infradead.org,
- linux-acpi@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
- qemu-devel@nongnu.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
- linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-pm@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-serial@vger.kernel.org,
- linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
- virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, netdev@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20260521133315.work.845-kees@kernel.org>
- <20260521133326.2465264-7-kees@kernel.org>
+Subject: Re: [PATCH] Fix various spelling mistakes
+To: fffsqian@163.com, john.johansen@canonical.com
+Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Qingshuang Fu <fuqingshuang@kylinos.cn>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20260525021500.47667-1-fffsqian@163.com>
 Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20260521133326.2465264-7-kees@kernel.org>
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20260525021500.47667-1-fffsqian@163.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.25725 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 5/21/26 3:33 PM, Kees Cook wrote:
-> Make the DEFINE_KERNEL_PARAM_OPS family route their _get argument to
-> either .get (struct seq_buf *) or .get_str (char *) at compile time
-> based on the pointer's actual function signature. Two helper macros
-> do the routing:
-> 
->   _KERNEL_PARAM_OPS_GET     - return the pointer if it has the seq_buf
->                               signature, otherwise NULL of that type
->   _KERNEL_PARAM_OPS_GET_STR - mirror image for the char * signature
-> 
-> Both use _Generic; only the two valid function-pointer types are
-> listed, so any third-party type is a compile error rather than
-> silently falling through.
-> 
-> Now a callback whose body has been migrated from char * to struct
-> seq_buf * needs no change at its kernel_param_ops initialization site,
-> because the macro picks up the new type automatically and assigns to
-> the correct field.
-> 
-> Signed-off-by: Kees Cook <kees@kernel.org>
+On 5/24/2026 7:15 PM, fffsqian@163.com wrote:
+> From: Qingshuang Fu <fuqingshuang@kylinos.cn>
+>
+> Fix three spelling errors found in code comments:
+>
+> - overriden  →  overridden
+> - interated  →  interacted
+> - dont      →  don't
+>
+> Signed-off-by: Qingshuang Fu <fuqingshuang@kylinos.cn>
+
+The AppArmor and Smack changes go in through different trees.
+You should split this into two patches and submit them to the
+appropriate maintainers.
+
 > ---
->  include/linux/moduleparam.h | 33 ++++++++++++++++++++++++++-------
->  1 file changed, 26 insertions(+), 7 deletions(-)
-> 
-> diff --git a/include/linux/moduleparam.h b/include/linux/moduleparam.h
-> index c52120f6ac28..795bc7c654ef 100644
-> --- a/include/linux/moduleparam.h
-> +++ b/include/linux/moduleparam.h
-> @@ -85,15 +85,32 @@ struct kernel_param_ops {
+>  security/apparmor/domain.c | 2 +-
+>  security/apparmor/lsm.c    | 2 +-
+>  security/smack/smackfs.c   | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+> index f02bf770f638..7e097c40720a 100644
+> --- a/security/apparmor/domain.c
+> +++ b/security/apparmor/domain.c
+> @@ -135,7 +135,7 @@ static int label_compound_match(struct aa_profile *profile,
+>  	struct label_it i;
+>  	struct path_cond cond = { };
+>  
+> -	/* find first subcomponent that is in view and going to be interated with */
+> +	/* find first subcomponent that is in view and going to be interacted with */
+>  	label_for_each(i, label, tp) {
+>  		if (!aa_ns_visible(profile->ns, tp->ns, inview))
+>  			continue;
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index 3491e9f60194..51a388cfea11 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -1493,7 +1493,7 @@ static int apparmor_socket_shutdown(struct socket *sock, int how)
 >   *
->   *   static DEFINE_KERNEL_PARAM_OPS(my_ops, my_set, my_get);
+>   * Note: can not sleep may be called with locks held
 >   *
-> - * Routing the @_set and @_get function pointers through the macro
-> - * (rather than naming the struct fields at every call site) lets the
-> - * field layout change in one place when callbacks are migrated to a
-> - * new signature.
-> + * @_get may be either of:
-> + *   int (*)(struct seq_buf *, const struct kernel_param *) (seq_buf)
-> + *   int (*)(char *, const struct kernel_param *)           (legacy)
-> + *
-> + * The macro uses _Generic to route the function pointer to the
-> + * matching field (.get or .get_str) at compile time, leaving the
-> + * other field NULL. Each helper matches the wrong prototype signature
-> + * and returns NULL, falling through to the default branch otherwise;
-> + * if @_get has neither expected signature the assignment to the
-> + * fields gets a normal compile-time type-mismatch error.
+> - * dont want protocol specific in __skb_recv_datagram()
+> + * don't want protocol specific in __skb_recv_datagram()
+>   * to deny an incoming connection  socket_sock_rcv_skb()
 >   */
-> +#define _KERNEL_PARAM_OPS_GET(_get)					\
-> +	_Generic((_get),						\
-> +	    int (*)(char *, const struct kernel_param *): NULL,		\
-> +	    default: (_get))
-> +
-> +#define _KERNEL_PARAM_OPS_GET_STR(_get)					\
-> +	_Generic((_get),						\
-> +	    int (*)(struct seq_buf *, const struct kernel_param *): NULL, \
-> +	    default: (_get))
-> +
->  #define DEFINE_KERNEL_PARAM_OPS(_name, _set, _get)			\
->  	const struct kernel_param_ops _name = {				\
->  		.set = (_set),						\
-> -		.get_str = (_get),					\
-> +		.get = _KERNEL_PARAM_OPS_GET(_get),			\
-> +		.get_str = _KERNEL_PARAM_OPS_GET_STR(_get),		\
->  	}
->  
->  /* As DEFINE_KERNEL_PARAM_OPS, with KERNEL_PARAM_OPS_FL_NOARG set. */
-> @@ -101,14 +118,16 @@ struct kernel_param_ops {
->  	const struct kernel_param_ops _name = {				\
->  		.flags = KERNEL_PARAM_OPS_FL_NOARG,			\
->  		.set = (_set),						\
-> -		.get_str = (_get),					\
-> +		.get = _KERNEL_PARAM_OPS_GET(_get),			\
-> +		.get_str = _KERNEL_PARAM_OPS_GET_STR(_get),		\
->  	}
->  
->  /* As DEFINE_KERNEL_PARAM_OPS, with an additional .free callback. */
->  #define DEFINE_KERNEL_PARAM_OPS_FREE(_name, _set, _get, _free)		\
->  	const struct kernel_param_ops _name = {				\
->  		.set = (_set),						\
-> -		.get_str = (_get),					\
-> +		.get = _KERNEL_PARAM_OPS_GET(_get),			\
-> +		.get_str = _KERNEL_PARAM_OPS_GET_STR(_get),		\
->  		.free = (_free),					\
->  	}
->  
-
-Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
-
--- Petr
+>  static int apparmor_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+> index 6e62dcb36f74..2820bd3ee72e 100644
+> --- a/security/smack/smackfs.c
+> +++ b/security/smack/smackfs.c
+> @@ -115,7 +115,7 @@ struct smack_known *smack_syslog_label;
+>  /*
+>   * Ptrace current rule
+>   * SMACK_PTRACE_DEFAULT    regular smack ptrace rules (/proc based)
+> - * SMACK_PTRACE_EXACT      labels must match, but can be overriden with
+> + * SMACK_PTRACE_EXACT      labels must match, but can be overridden with
+>   *			   CAP_SYS_PTRACE
+>   * SMACK_PTRACE_DRACONIAN  labels must match, CAP_SYS_PTRACE has no effect
+>   */
+>
+> base-commit: e7ae89a0c97ce2b68b0983cd01eda67cf373517d
