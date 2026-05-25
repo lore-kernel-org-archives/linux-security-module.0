@@ -1,61 +1,68 @@
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114A81EF09B
-	for <linux-security-module@vger.kernel.org>; Mon, 25 May 2026 16:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D50B3F7A90
+	for <linux-security-module@vger.kernel.org>; Mon, 25 May 2026 17:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779726434; cv=none; b=JJEFujhsWhJTiU5pN+MDN3BBOREw4hmULUmCmA6eTMCnQozjyNZ4FywfvME77+P88fqzgmxpnwC6CiitsPZOlv1BCnesAVZGiZnOYH2L9DJr035cmtAx0pm9r0fdgiTIoRXGeTrKTvcnhXIpbAIpCYUyy7egXnYGR3Jhl8WKK68=
+	t=1779729011; cv=none; b=Fl5/KqCB1xHm3pDFExCEP0Ajr/dea3QgLGeGIkEcQwy1kh5XF0SXQJppQTIaRMKyiOtJljlEouxteoVd80WEWpDT7RaMHuoy/z7/Hyt3zUiWuqkVcu16yLdBG910v7DG6TE9uZX1369tEst7KC0R9dP516orLcHNGw7uBG4LNt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779726434; c=relaxed/simple;
-	bh=PdUJOavhmJRM+J1wFlbP0xXH4QUtlbSIwvFlB8LDfC8=;
+	s=arc-20240116; t=1779729011; c=relaxed/simple;
+	bh=PTNg3RyBjtWL4NnI8O0q7hXUoY8uPF4RaVnZMbEInR0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LZ+B4AaLFK4WxK8u4aLD47CxqBtT7O3MOP/zH6ECuMCs0RlA4DSIoIIf90kPM1cgKnBICDfH99VInfZlAwfd5tmNyijoqQs5lDJc1pkY34rb5WQFiOf43lpur8xaDRnkj3IyoqqLluQiOQsGF3r8o+J5InAUJcnHWIkQF+xMIg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=LszskoCu; arc=none smtp.client-ip=66.163.187.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	 In-Reply-To:Content-Type; b=K473DSweVzCAiFdlBfVDXebvFZvizbvnINNoIIbOitJp+qY9GlUx0n96Z2Aq1+/tMTnH63dwJKb80Hk2VrSiDaKIYOk8hJrFQBdM0g7dJwac8uARA72FwYAOldVwbiA7jYeTydpfn75/Y/ytdzlcrVQNyVypQJDECGACF3mFGm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GQr1PYm1; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="LszskoCu"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1779726432; bh=YiMRe1V101hFNQA5Jro1sQyfqTYKyxdHuyGQs/zGI/c=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=LszskoCuYAW7W+zoIkV9Qjy6uyD6TCMPIo2TLdyuVxR9xXbg0m+nWhPwy5Q/Uu2OSe2AZ06BCDMmumFnA9iKSElh5Bh0mlOPrijd5BEYlmlqEu9tmkesQzuatgunTKwgazRS1x9R64rBwQR+acxVpkNW2ZPx4wFVN8VJsx0SrhptrRqwix3aeCy3X0Ac4ab9ucd/rxOVVXSPi2PTIkxphoHgrG9eYJYlCzjMIWNjhpv0pMpcwt+2Kt0gzq3Ny8P071AfvfENW7pf87CfdrwyzkypytJdKRLV9q7PysNfP1gexHWZBE/8NE8a3L1lpRRtOIwU4SuFupEj7gw2x7ZOEg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1779726432; bh=M588I5gNGhsNMcALEbSdpSers3chAGlp3y+ehKKN5br=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=m5f3RdC7PSPjRE+69wZVf3vxC7DXZ6dBD/GT90vsPMK55aHErod2bnK9bzhxeQUqNa+jbzUyzcgKWUqUoME5+vrtox8HLsDF2EqJWgLegQgsElbRF9sshI4uTN2cRDWlZZq5OV2wiFUNSYw+91Zdk0XRd6aymNrhfTvbsTUqCStW31Kj/k+m2dRVpHFvhh83N/H6qRL2xLWrYkURKG6Zpx8SCk/C3ZrjUq9d824DuDUQqW7oQ4qUiaFSY8uNAbdKmszhs8YAYBlgd8LUQ9S+xZcUDYPtaAmNG+DgZfNJ7+VolGRzDuaB409V9PVHKeVcM20LtA83/R8lBZG5ToY/2A==
-X-YMail-OSG: MepryfIVM1nIFUDlU3Oca8Vwr33Xx19STG1ImxKkVkoyHw883GWn9sQ1VIP2RYZ
- zuS41KsTAt.BLB1BugyiJYABcfX3jkYCbVyCJxw.QodsExZQExktcSaJsba3NxVAemjnj00CSyxu
- ZtNM7FDO9hLQIkQsAKykXzS7hu9XdrFsbR1DhtIEgCTFZDuowiOP9JyuKrJZQ8scQcb4yGJbYOqz
- OfrwE3UWUrvOxQ7YYPoWyQF97UZY5ociH9dND2v5B7Y77FcSNYfLG2HgGUFd4V2Kpx.H86sX6hO3
- 1h73dD1hooOQ5jxPe4Ff9unAMHuYO0.aH61I0UOKRGnvG7tEuxDKRaXNKiz4c.IVRzBofrcXAOKs
- 7Opyj76dLqpBRprB87_6eg6EvwkyiD2CRs6_P_XTxZk6tCypPu3sHhej64oAb7bm4mm9QPy2ZaG.
- w7iioNvZn4dheirYVzMJ6e17HH3xmzx_VSym_lZQPffus.V2C64IJUqDuCIVAQeKD2A9Anf9lu4Y
- jivJ2M2xxz2UP94DQqXgQ8iK35GUHwAuNk4h8xFgvMx_nDvRDTn9RsN8Y6NAIX93HvMYtZDwsCIo
- CIUgpox1YC3YLFeCy0toMDPFHILg1CtxTwlMxqQQbf1hGlEC626c04xhUk4kyFkzcxTnCf4M0PJA
- 4_Mmt.x8C9Z58cUuqe5bHN6xoopppO8EJK7gdBmlOXfRCEHO3DfA_CVgcLQzA6j2Z36ebOA7x8gb
- wYJbkr2wsZn8VVfwhQSsJDTAw5kkG.itm1xNTy_xmvmK7uSiWEX7CIIkB7stJuGaHUzHkKd5oE6U
- S7eYpmw3SkiSvBosDAGS4qkf9sU8uvdyAv3maTJPIdvPXRf57yQF_kWjBHgKBa0riKFhMaH_AXtm
- f2AmLYAYSBDh25EPBaztn8NZt3kZGj6tWcByyoZR5t..j3hkpP7YkBMrzf12ROX9CFPgPBhshEbU
- TX0Btri2YsKqZ4tY5dtTETxgTUyUxmP7Oog92xon3yt5dg18zxEs3uvGh7_SsAw4XwW1H5uUldzh
- ZUYWEo.7gaAQJvGf4fNrO6e6CzH7ekfuG0iTwSETCOuZY6PZiAjIkpUeLppOih5oScxq4.emSHBu
- qx9w_9SQMzn5cTz3XBYRN8TT.DeFQqRHf.VBvfahAAfh7OmAXZT2xsii6CK5Ptr34lBGnXaZsXoG
- aW5IkSGuAMNf8xg3qmy43afBCoTd02PUh98LyVehNb5vQYMfzX6TfHeXphVSFUsIWWQ9sIpP_eBl
- VZDeC1T8NZz69YfIGCPn2krYmPPLJ7vt2EJn.k5lNCT8bbMMFJXAAw_fbHYqq_k.g3LKXAgYubVC
- ASr9.t.bWTtFCuoQocTQG8F7RbWMyfyhzwOR66vhKHv7Co4kNa8D5_j5Ns1NFJrMMdBjTcSy1NMi
- 1BpkfUqckg5SSgOBZK6tIOKAoKskDX5NG193i9GRHmJwWUOiDIb9wDuA044Z6qR5D.cE3aRfe0Uk
- yZD0FHUJ3J9XHBqIrxAWIDI6qriC3H628iGd4vRYQvdg6m1xmVablz9oacFyD13QDCdQC5XnLszI
- .rFmGluN7b5FXYDVgOEd1MlpCS64CmUHhcoGpADnwH3QioCl.vLUhC1sw5OlDsRYNe.bZ3EhYuvW
- .M8We_HJHKoBPxN3fnPIeEwLUYQuFOMsq9AmIQ1D1Bje28NeDWul_WOSRnrxOI0yfZ3mI3sHxZud
- lHWLxMe4roAto9Npg598L0alS86OFM_gOF0nuDCcubvQzO61QjFX3aBqx342p4kNVqpckxg4aLl2
- VptGnlVCZa6VdjEc3vbdjKWcgfGfJ.DFR_IDhc.ox3f1HTqvKJOSOax7iSqQIRooHLYwBeFA_K_I
- gcr5pjuKq.zKq7mP_Q8CW4wxk5wOS.Z8_2f4nOmBZnSDJM8HY6W0Ssdprf.5ZSBH99BMJJPPLWI.
- GeHChcE6KNDrw_3fo8f9fRUvoIPi3aejYCHs1RFf7aZ7GXoTBxNK5b7Vx8zlp6Eh7rpt_ZOMT6J1
- F69s64QxUfCoVN9Iz.NrBy1lu.NmZ7RW2_3wFkpiOarm4lc6WMZ05F0WXoXErEM2ClPhYn20Q4oZ
- D3Y5fTV1_4W_S8a7FqT9VoD3IAl5W4mzDLmxhiIjL32K.bxomNDkQNbxfMHaQupuBD1TmIBInD8t
- EFTGrN_YMlbuJbcHO46zrRal6a6YjLsTK2cutmX4zTFUGu8z5Pa8_Wnph3ov7itsYPdjKi_Rh2Vg
- 0cTcVZiE0ZQmgu476UI9OfsKOxYNV7gjvwUgyRv8LMkDgCcgXJBWooLB6PbkIqv3_LpXr86E-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 61dea198-c48f-49e7-8e8c-770407ce6dd7
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Mon, 25 May 2026 16:27:12 +0000
-Received: by hermes--production-gq1-7bb7df5c46-m46kc (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 1ca323068d261e5b9c520f511b34023e;
-          Mon, 25 May 2026 16:06:31 +0000 (UTC)
-Message-ID: <dc8631eb-17f1-4272-b4be-07318636d968@schaufler-ca.com>
-Date: Mon, 25 May 2026 09:06:29 -0700
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GQr1PYm1"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4903997fcb5so40910635e9.2
+        for <linux-security-module@vger.kernel.org>; Mon, 25 May 2026 10:10:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1779729007; x=1780333807; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=izugkSqOYsBmSyQ8jfD9m1SVj73YG14U78pRBc6Lai0=;
+        b=GQr1PYm1QRIrfgBC/EILAtR9O17tFRT933ldDJCayUjXIyRMiDnumrFP9i4iPLQuP/
+         bWYj6u/50hd5AlTl8fnNFXZxscNWQsfvT08lWT2g7USA76CFTeDeB9CAGnGBLt+Jk5Kd
+         lX3x9dDR55Y2wg8pVl8cBGmVyZoFj8APvHLhilXEkRN6z7J5HsqQkRDuiJpcpmZ76bBE
+         nunnNO0efpqrh3Mg+srvekhGI13bTspzjyxHMZeoT7BQvRd6lyijtBc2rfmKjAaENr6C
+         i+8SY1MRgNki/ClY1lWgGG4FXSsH+ZhGYZ0VK7FSfIVhFbKqAWGdmu0VyhcviooSpQ7X
+         9jYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779729007; x=1780333807;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=izugkSqOYsBmSyQ8jfD9m1SVj73YG14U78pRBc6Lai0=;
+        b=OOdXdVVG4b5KZ+Mp8pdFE+dgZ5/nPtxbjcpfeeDDwWcDXZKfQbtWy6U5mjWpVesIAa
+         X0jP68w8TA+0oXVhIVkYw+LrfXCds2ia+1yHbubO2LIcPOI4KGsIU52EV9OGwQ4vjkMH
+         xkxfEyM7bxCaw3SfSW7XvgVkb+txuVTPx4w2Tjno1quYQd5+nQGTX8KssjAx73lLeAyk
+         GbEN9wiKOGhqo+LW7vm8Nllhft9ZPNVTrXtJtiJkTnMwTsWi5L3PHVikrL5tSpNVsoi4
+         bnHqrWTqGpHtIpzF0hvn2J94QTuHI5+fbwuxRtiswDIaXA4i/7E1qN+MeggyWQKU9X5X
+         wB0w==
+X-Forwarded-Encrypted: i=1; AFNElJ9PleavOpP7nEK7eeSOP3k4lWH0fV4yh2R5Ek2OclyOkigx8UcwBsqMFIPZUAYxtl78u+3dLV+EHxJWKeXfb1z0rqEZ2PU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHxlNkl51l1A96l3VuxjzykEDO3a4GB5HJnOG3kr7o26EBHoIN
+	ofzvaXKB8PBsSayBK3a7/zfXLd5cATdN1lARq4icXQS07noBzxT6NZxWGeeWoTgmRsw=
+X-Gm-Gg: Acq92OFQe5TWDAHEHANxuJyuCSmSJNHb5uTi2Kubg21o7qlXG2sRGFyTaKQwYwfD3fY
+	Rrn/aco4XONFj8mlaQJbBzivfBfgtmHlPhJBX3Gw014Rw+YQ6+LBcDM3i87KoXBTUddLySFJCJf
+	x8LdqArp6L7BE8pkJzusNACJaN+LDl7VXSE2IZda1JMBvZqbT+lhX9c77aNW115kR1uhNfgc1uC
+	A/kl/eIgJk9DTbIaJL3LfNmiVtMP94CmmdJG8/gR9EDjA23Q4eqMkqjtDSrqf1JQ8l+Cs4Uq3NP
+	Zwj18tloWKFZbT0dVugOH6lLYvOY1/sIJVFAlaT5EvvK+E5xNaO7RLSeRhYYh7ATQfxK1X3ecnu
+	Rb6Z+RTDp5dkMONCF4BMgGJ0Dpc5Ul0yWx2ui0f1wCoF6TkWIJ4912UnQ0EjJiW+pLzb4/xsGzo
+	ze6STEu0tqJTZsun9lAwKwjjs8b6UpOszy9ESTH5umcD3HFPSVcH5nUBxggW92fmmFeWVtf/1m2
+	o4JuCnoaFkKloLTE1pAjcQntz+7lAYdrDLxT1scIz8ByLjfAlVADMlV+qzgtXEg7LP03X3fjDAi
+	yLuDbBYs+H4Jcrk=
+X-Received: by 2002:a05:600c:35cf:b0:490:44eb:c1e5 with SMTP id 5b1f17b1804b1-49044ebc257mr277307095e9.31.1779729006482;
+        Mon, 25 May 2026 10:10:06 -0700 (PDT)
+Received: from ?IPV6:2a00:1028:838d:271e:8e3b:4aff:fe4c:a100? (dynamic-2a00-1028-838d-271e-8e3b-4aff-fe4c-a100.ipv6.o2.cz. [2a00:1028:838d:271e:8e3b:4aff:fe4c:a100])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4904526c926sm456877405e9.1.2026.05.25.10.10.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 May 2026 10:10:06 -0700 (PDT)
+Message-ID: <a192eb5c-5d16-483d-862e-d937fa1b8269@suse.com>
+Date: Mon, 25 May 2026 19:10:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -63,79 +70,193 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Fix various spelling mistakes
-To: fffsqian@163.com, john.johansen@canonical.com
-Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- Qingshuang Fu <fuqingshuang@kylinos.cn>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20260525021500.47667-1-fffsqian@163.com>
+Subject: Re: [PATCH 08/11] params: Convert generic kernel_param_ops .get
+ helpers to seq_buf
+To: Kees Cook <kees@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Pengpeng Hou
+ <pengpeng@iscas.ac.cn>, Richard Weinberger <richard@nod.at>,
+ Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+ Johannes Berg <johannes@sipsolutions.net>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Corey Minyard <corey@minyard.net>, Gabriel Somlo <somlo@cmu.edu>,
+ "Michael S. Tsirkin" <mst@redhat.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Bart Van Assche <bvanassche@acm.org>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Hannes Reinecke <hare@suse.de>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Alan Stern <stern@rowland.harvard.edu>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Jason Baron <jbaron@akamai.com>, Jim Cromie <jim.cromie@gmail.com>,
+ Tiwei Bie <tiwei.btw@antgroup.com>, Benjamin Berg <benjamin.berg@intel.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ "David E. Box" <david.e.box@linux.intel.com>,
+ "Maciej W. Rozycki" <macro@orcam.me.uk>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Vinod Koul <vkoul@kernel.org>,
+ Frank Li <Frank.Li@kernel.org>, Daniel Gomez <da.gomez@kernel.org>,
+ Sami Tolvanen <samitolvanen@google.com>, Aaron Tomlin <atomlin@atomlin.com>,
+ Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>, Andrew Morton
+ <akpm@linux-foundation.org>, John Johansen <john.johansen@canonical.com>,
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Georgia Garcia <georgia.garcia@canonical.com>, kvm@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-modules@vger.kernel.org,
+ kasan-dev@googlegroups.com, linux-mm@kvack.org, apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org, linux-um@lists.infradead.org,
+ linux-acpi@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+ qemu-devel@nongnu.org, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-pm@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-serial@vger.kernel.org,
+ linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+ virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, netdev@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20260521133315.work.845-kees@kernel.org>
+ <20260521133326.2465264-8-kees@kernel.org>
 Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20260525021500.47667-1-fffsqian@163.com>
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20260521133326.2465264-8-kees@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.25725 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 5/24/2026 7:15 PM, fffsqian@163.com wrote:
-> From: Qingshuang Fu <fuqingshuang@kylinos.cn>
->
-> Fix three spelling errors found in code comments:
->
-> - overriden  →  overridden
-> - interated  →  interacted
-> - dont      →  don't
->
-> Signed-off-by: Qingshuang Fu <fuqingshuang@kylinos.cn>
-
-The AppArmor and Smack changes go in through different trees.
-You should split this into two patches and submit them to the
-appropriate maintainers.
-
+On 5/21/26 3:33 PM, Kees Cook wrote:
+> Convert the generic struct kernel_param_ops .get helpers in
+> kernel/params.c directly to the seq_buf signature, drop their legacy
+> "char *" form, and refresh prototypes in <linux/moduleparam.h>:
+> 
+>   param_get_byte/short/ushort/int/uint/long/ulong/ullong/hexint
+>   param_get_charp/bool/invbool/string
+>   param_array_get
+> 
+> The STANDARD_PARAM_DEF() macro expands to a seq_buf body for every
+> numeric helper. param_array_get() now writes element output directly
+> into the parent seq_buf when the element ops provide .get; it only
+> allocates the per-call PAGE_SIZE bounce buffer when the element ops
+> still use the legacy .get_str path. The common "rewrite the prior
+> element's trailing newline as a comma" step lives outside both
+> branches so the two paths share it.
+> 
+> The non-core changes in this commit (arch/x86/kvm, mm/kfence,
+> drivers/dma/dmatest, security/apparmor) are the small set of callers that
+> directly invoke one of the converted generic helpers from their own .get
+> callback (e.g. an apparmor wrapper that adds a capability check and then
+> delegates to param_get_bool()). Because the helpers' signature changes
+> here, these wrappers must move in lockstep. Each of them is updated
+> to take "struct seq_buf *" and pass it through; param_get_debug() in
+> apparmor also pulls aa_print_debug_params() (and its val_mask_to_str()
+> helper, in security/apparmor/lib.c) over to seq_buf, since that is the
+> only consumer. No other behavioural change is intended.
+> 
+> Custom .get callbacks that do not delegate to a generic helper (and
+> therefore still match the .get_str signature) are routed automatically
+> to the .get_str field by the DEFINE_KERNEL_PARAM_OPS _Generic dispatcher
+> and are deliberately left alone here, to be changed separately within
+> their respective subsystems.
+> 
+> Signed-off-by: Kees Cook <kees@kernel.org>
 > ---
->  security/apparmor/domain.c | 2 +-
->  security/apparmor/lsm.c    | 2 +-
->  security/smack/smackfs.c   | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-> index f02bf770f638..7e097c40720a 100644
-> --- a/security/apparmor/domain.c
-> +++ b/security/apparmor/domain.c
-> @@ -135,7 +135,7 @@ static int label_compound_match(struct aa_profile *profile,
->  	struct label_it i;
->  	struct path_cond cond = { };
+> [...]
+> @@ -453,36 +457,46 @@ static int param_array_set(const char *val, const struct kernel_param *kp)
+>  			   arr->num ?: &temp_num);
+>  }
 >  
-> -	/* find first subcomponent that is in view and going to be interated with */
-> +	/* find first subcomponent that is in view and going to be interacted with */
->  	label_for_each(i, label, tp) {
->  		if (!aa_ns_visible(profile->ns, tp->ns, inview))
->  			continue;
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index 3491e9f60194..51a388cfea11 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -1493,7 +1493,7 @@ static int apparmor_socket_shutdown(struct socket *sock, int how)
->   *
->   * Note: can not sleep may be called with locks held
->   *
-> - * dont want protocol specific in __skb_recv_datagram()
-> + * don't want protocol specific in __skb_recv_datagram()
->   * to deny an incoming connection  socket_sock_rcv_skb()
->   */
->  static int apparmor_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
-> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-> index 6e62dcb36f74..2820bd3ee72e 100644
-> --- a/security/smack/smackfs.c
-> +++ b/security/smack/smackfs.c
-> @@ -115,7 +115,7 @@ struct smack_known *smack_syslog_label;
->  /*
->   * Ptrace current rule
->   * SMACK_PTRACE_DEFAULT    regular smack ptrace rules (/proc based)
-> - * SMACK_PTRACE_EXACT      labels must match, but can be overriden with
-> + * SMACK_PTRACE_EXACT      labels must match, but can be overridden with
->   *			   CAP_SYS_PTRACE
->   * SMACK_PTRACE_DRACONIAN  labels must match, CAP_SYS_PTRACE has no effect
->   */
->
-> base-commit: e7ae89a0c97ce2b68b0983cd01eda67cf373517d
+> -static int param_array_get(char *buffer, const struct kernel_param *kp)
+> +static int param_array_get(struct seq_buf *s, const struct kernel_param *kp)
+>  {
+> -	int i, off, ret;
+> -	char *elem_buf;
+>  	const struct kparam_array *arr = kp->arr;
+>  	struct kernel_param p = *kp;
+> +	char *elem_buf = NULL;
+> +	int i, ret = 0;
+>  
+> -	elem_buf = kmalloc(PAGE_SIZE, GFP_KERNEL);
+> -	if (!elem_buf)
+> -		return -ENOMEM;
+> +	for (i = 0; i < (arr->num ? *arr->num : arr->max); i++) {
+> +		size_t before = s->len;
+>  
+> -	for (i = off = 0; i < (arr->num ? *arr->num : arr->max); i++) {
+>  		p.arg = arr->elem + arr->elemsize * i;
+>  		check_kparam_locked(p.mod);
+> -		ret = arr->ops->get_str(elem_buf, &p);
+> -		if (ret < 0)
+> -			goto out;
+> -		ret = min(ret, (int)(PAGE_SIZE - 1 - off));
+> -		if (!ret)
+> +
+> +		if (arr->ops->get) {
+> +			ret = arr->ops->get(s, &p);
+> +			if (ret < 0)
+> +				goto out;
+> +		} else {
+> +			if (!elem_buf) {
+> +				elem_buf = kmalloc(PAGE_SIZE, GFP_KERNEL);
+> +				if (!elem_buf) {
+> +					ret = -ENOMEM;
+> +					goto out;
+> +				}
+> +			}
+> +			ret = arr->ops->get_str(elem_buf, &p);
+> +			if (ret < 0)
+> +				goto out;
+> +			seq_buf_putmem(s, elem_buf, ret);
+> +		}
+> +
+> +		/* Nothing got written (e.g. overflow) — stop. */
+> +		if (s->len == before)
+>  			break;
+> +
+>  		/* Replace the previous element's trailing newline with a comma. */
+> -		if (i)
+> -			buffer[off - 1] = ',';
+> -		memcpy(buffer + off, elem_buf, ret);
+> -		off += ret;
+> -		if (off == PAGE_SIZE - 1)
+> -			break;
+> +		if (i && s->buffer[before - 1] == '\n')
+> +			s->buffer[before - 1] = ',';
+>  	}
+> -	buffer[off] = '\0';
+> -	ret = off;
+> +	ret = 0;
+>  out:
+>  	kfree(elem_buf);
+>  	return ret;
+
+Since you're almost completely rewriting the logic in param_array_get(),
+I suggest tightening it up a bit. The function could warn or return an
+error when a kernel_param_ops::get/get_str() call adds a string that
+doesn't terminate with '\n', specifically, when the call adds either
+a zero-length string or a non-zero-length string that ends with
+a different character (unless an overflow occurred).
+
+The updated code silently stops the loop when a get call returns
+a zero-length string. Similarly, handling of a string not terminated by
+'\n' is halfway there because of the added check
+"s->buffer[before - 1] == '\n'".
+
+-- 
+Thanks,
+Petr
