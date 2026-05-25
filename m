@@ -1,42 +1,50 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F7013B293;
-	Mon, 25 May 2026 02:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B0A3D1706;
+	Mon, 25 May 2026 07:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779675356; cv=none; b=MJX0PkoXBDJEkpwJ177Sweall/RUBPC8l69Cfd2YRGPyy9FNEPFHT0CBAVfTLEp4MKEkAl8rrF0LDIy7gDBCdKQC+Dm49ryiJDsqO2zWI9JdiVKnXKZT4CHtUdBGmOzWpyYMsx5EVqOBODtpXNvp4LkkDKuDLqh+ux4j5vfZC5Y=
+	t=1779695654; cv=none; b=VZexVEimQpPYRtNDb4zgSAdj9jD1Q+n0HoWJ7bboHioC+4VexfvFWZIoMoMgl3rWR47wnMQ3L1lsW4ESgAfvUp1ed247P5KBvic16fraCPkEIq+lRIAP07btkv49dTL7rm4j1lkfKrM40eKO769i0mTUCm5tpu1312SfUZFgxpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779675356; c=relaxed/simple;
-	bh=cfXYwQbwtsMnXS31mlf4l1AI1zDPDw7tS1CvKdIv37c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=W1UgXEM4SJYhj9NPoWRymi0txqfWZ581Ek6ZZcogMxL1EkNcZf/liat2SfcEuZofQ4Rdp8RfZ/6vm33eMgWHTyk5za2E1Q00OVnaJcnuTk+WF9oeDDXpradKI8TnOGhbiRq/q3Bqo1/YSzVuYBXwAJE/SB94z4JojZT18NSjYNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WumluXXo; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1779695654; c=relaxed/simple;
+	bh=irMduKgaG0+E5hOjs8Hx9fmDyL4PqS4kMRNA3KBCc0c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=FyZZ8oz+KIuJzDSWF0IEG0PaPTkLv8mtQ50+jla5WCNGHhAgN9tCfJ4dH7JgC7Inp0nG8qRU2eSh5RLus1S5pExvUD9cXeciG9RIbOWMqtElMyCdspYWBjn7SOSJuS8Tl0wzpvlVIGAo3je9X4B+NXNmkAnniQ2geSfwRYO6kl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=lPJAJ7Er; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WumluXXo"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
-	Content-Type; bh=gEERWc0jBVDWNAZQVeEY8xiybeET2JoKedTCCduHqsw=;
-	b=WumluXXo9Lc6mctIlXruENSMDgm0u/WVTwmhPDcm2FiQVC8PJnK5zmOr1DoHrM
-	i7w0A9ikvPr6TyuTI2DytR/noUj+Hj/RHlfnUDHorSu1mHm3UcZmIz26GpfirSbC
-	yFU9Gx/l5uhO5bpcQIlm7eZuRFW/F7bet1+HN3+ith0sY=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wAnhMqosBNqTIpRDQ--.1404S2;
-	Mon, 25 May 2026 10:15:06 +0800 (CST)
-From: fffsqian@163.com
-To: john.johansen@canonical.com,
-	casey@schaufler-ca.com
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="lPJAJ7Er"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E0BAB1A9A;
+	Mon, 25 May 2026 00:54:06 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CC9503F7D8;
+	Mon, 25 May 2026 00:54:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1779695651; bh=irMduKgaG0+E5hOjs8Hx9fmDyL4PqS4kMRNA3KBCc0c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lPJAJ7ErdWWWjyEScpiAg9zLqg9pKYp/zd2lXLTbjvQ3zPQTqUjlA02vuQogq2394
+	 CA5crt1OgdR0rwtNGpd/OSUU5c+sM/YLLC/esTHkejhBBbDR/myAxay89rZEEd+TRq
+	 Nfy0Jbz6r/9db63lB6a/7ek/XYUbWW7Vy1zLiC28=
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org
 Cc: paul@paul-moore.com,
+	zohar@linux.ibm.com,
+	roberto.sassu@huaweicloud.com,
+	noodles@earth.li,
+	jarkko@kernel.org,
+	sudeep.holla@kernel.org,
 	jmorris@namei.org,
 	serge@hallyn.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Qingshuang Fu <fuqingshuang@kylinos.cn>
-Subject: [PATCH] Fix various spelling mistakes
-Date: Mon, 25 May 2026 10:15:00 +0800
-Message-Id: <20260525021500.47667-1-fffsqian@163.com>
-X-Mailer: git-send-email 2.25.1
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	jgg@ziepe.ca,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH v4 0/3] introduce IMA_INIT_LATE_SYNC option
+Date: Mon, 25 May 2026 08:54:01 +0100
+Message-Id: <20260525075404.3480282-1-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -45,69 +53,90 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAnhMqosBNqTIpRDQ--.1404S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uw4xGr4rXF4kXFWfWry7trb_yoW8trWxpF
-	4DKFZrKF40yFyIvF1qyayUWF4rK3y5GrWaqay3uw40yFnxJrW8Xr1Svr4j9Fy5Xw1DAF1j
-	qFnFvrs0v3sFkFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jFYLkUUUUU=
-X-CM-SenderInfo: 5iii21xldqqiywtou0bp/xtbCwQq1gGoTsKpGlQAA3O
 
-From: Qingshuang Fu <fuqingshuang@kylinos.cn>
+To generate the boot_aggregate log in the IMA subsystem with TPM PCR values,
+the TPM driver must be built as built-in and
+must be probed before the IMA subsystem is initialized.
 
-Fix three spelling errors found in code comments:
+However, when the TPM device operates over the FF-A protocol using
+the CRB interface, probing fails and returns -EPROBE_DEFER if
+the tpm_crb_ffa device — an FF-A device that provides the communication
+interface to the tpm_crb driver — has not yet been probed.
 
-- overriden  →  overridden
-- interated  →  interacted
-- dont      →  don't
+To ensure the TPM device operating over the FF-A protocol with
+the CRB interface is probed before IMA initialization,
+the following conditions must be met:
 
-Signed-off-by: Qingshuang Fu <fuqingshuang@kylinos.cn>
----
- security/apparmor/domain.c | 2 +-
- security/apparmor/lsm.c    | 2 +-
- security/smack/smackfs.c   | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+1. The corresponding ffa_device must be registered,
+   which is done via ffa_init().
 
-diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index f02bf770f638..7e097c40720a 100644
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -135,7 +135,7 @@ static int label_compound_match(struct aa_profile *profile,
- 	struct label_it i;
- 	struct path_cond cond = { };
- 
--	/* find first subcomponent that is in view and going to be interated with */
-+	/* find first subcomponent that is in view and going to be interacted with */
- 	label_for_each(i, label, tp) {
- 		if (!aa_ns_visible(profile->ns, tp->ns, inview))
- 			continue;
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 3491e9f60194..51a388cfea11 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1493,7 +1493,7 @@ static int apparmor_socket_shutdown(struct socket *sock, int how)
-  *
-  * Note: can not sleep may be called with locks held
-  *
-- * dont want protocol specific in __skb_recv_datagram()
-+ * don't want protocol specific in __skb_recv_datagram()
-  * to deny an incoming connection  socket_sock_rcv_skb()
-  */
- static int apparmor_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index 6e62dcb36f74..2820bd3ee72e 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -115,7 +115,7 @@ struct smack_known *smack_syslog_label;
- /*
-  * Ptrace current rule
-  * SMACK_PTRACE_DEFAULT    regular smack ptrace rules (/proc based)
-- * SMACK_PTRACE_EXACT      labels must match, but can be overriden with
-+ * SMACK_PTRACE_EXACT      labels must match, but can be overridden with
-  *			   CAP_SYS_PTRACE
-  * SMACK_PTRACE_DRACONIAN  labels must match, CAP_SYS_PTRACE has no effect
-  */
+2. The tpm_crb_driver must successfully probe this device via
+   tpm_crb_ffa_init().
+
+3. The tpm_crb driver using CRB over FF-A can then
+   be probed successfully. (See crb_acpi_add() and
+   tpm_crb_ffa_init() for reference.)
+
+Unfortunately, ffa_init(), tpm_crb_ffa_init(), and crb_acpi_driver_init() are
+all registered with device_initcall, which means crb_acpi_driver_init() may
+be invoked before ffa_init() and tpm_crb_ffa_init() are completed.
+
+When this occurs, probing the TPM device is deferred.
+However, the deferred probe can happen after the IMA subsystem
+has already been initialized, since IMA initialization is performed
+during late_initcall, and deferred_probe_initcall() is performed
+at the same level.
+
+And the similar situation is reported on TPM devices attached on SPI
+bus[0].
+
+To resolve this, introduce IMA_INIT_LATE_SYNC option to initialise
+IMA at late_inicall_sync so that IMA is initialized with the TPM
+device probed defered.
+
+When this option is enabled, modules that access files in the
+initramfs through usermode helper calls such as request_module()
+during initcall must not be built-in. Otherwise, IMA may miss
+measuring those files since they're the file accesses before the
+initialisation of IMA [1].
+
+Link: https://lore.kernel.org/all/aYXEepLhUouN5f99@earth.li/ [0]
+Link: https://lore.kernel.org/all/2b3782398cc17ce9d355490a0c42ebce9120a9ae.camel@linux.ibm.com/ [1]
+
+Patch history
+=============
+from v3 to v4:
+  - rebase on v7.1-rc5
+  - introduce IMA_INIT_LATE_SYNC option to control IMA initailisation.
+  - https://lore.kernel.org/all/cover.1777036497.git.noodles@meta.com/
+
+from v2 to v3:
+  - Drop ff-a/pKVM diff (this seems to have a separate set of
+    discussion)
+  - Rework IMA delayed initialisation to avoid delaying when unnecessary
+  - Ensure IMA log clearly indicates when we've initialised late
+  - https://lore.kernel.org/all/20260422162449.1814615-1-yeoreum.yun@arm.com/
+
+from v1 to v2:
+  - add notifier to make ffa-driver pkvm initialised.
+  - modify to try initailisation again when IMA coudln't find proper TPM device.
+  - https://lore.kernel.org/all/20260417175759.3191279-1-yeoreum.yun@arm.com/#t
+
+
+Yeoreum Yun (3):
+  security: lsm: Allow LSMs to register for late_initcall_sync init
+  security: ima: introduce IMA_INIT_LATE_SYNC option
+  tpm: tpm_crb_ffa: revert defered_probed when tpm_crb_ffa is built-in
+
+ drivers/char/tpm/tpm_crb_ffa.c    | 18 +++---------------
+ include/linux/lsm_hooks.h         |  2 ++
+ security/integrity/ima/Kconfig    | 10 ++++++++++
+ security/integrity/ima/ima_main.c |  4 ++++
+ security/lsm_init.c               | 13 +++++++++++--
+ 5 files changed, 30 insertions(+), 17 deletions(-)
+
 
 base-commit: e7ae89a0c97ce2b68b0983cd01eda67cf373517d
 -- 
-2.25.1
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
