@@ -1,68 +1,67 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8446B385520
-	for <linux-security-module@vger.kernel.org>; Mon, 25 May 2026 13:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720E9385D99
+	for <linux-security-module@vger.kernel.org>; Mon, 25 May 2026 13:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779715640; cv=none; b=Vx4wvFtdLAsbZjEfzHnJloNa+zBSuCoHcoufaGlLH3I180Jp2w1cZDz5xGctzjh0qJZmcNLu427VHXhO0buMFHaNVBKAT1Q3lWJrvXpZKasmwhwzb/WkIzkbJ94iwiQBvEeie+clBfn+b8SUwb7f2Q4vbx8M9zW8RYjdB7Gdnt8=
+	t=1779716114; cv=none; b=dMeGvdfac2a65DZH+Xvo7Kwl+5bzk6qamb8bvQ6ki3jwXx8/J9fe5qpfhvmHbbLiY+VlzLqBxSqTr/8b34R4WTXSlJw0RcL4UAcSVsyoyRQMSsoV73ignZHDwpmO2z1u2n3Z0Z6VSBNEl29t43bW1E/1KtKb6I8KdpHNlPF88ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779715640; c=relaxed/simple;
-	bh=C94U0R51pf0+NwK55ZN6EU/K9cssUS28krlgs1NAXvo=;
+	s=arc-20240116; t=1779716114; c=relaxed/simple;
+	bh=s/CzDsE1zdMqB98tClQW/DiNhe7WU760fn0iU6bx43Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V/g4uZt5TIhRfv7cxwTpqQKCKTb/ypVU1XGpGWhqINtKPyb9zM9VV2VfCBVrKcH/GYV+Q2UlGU9KZdhP5EbKs31vs0z3OxWSc6zU7Fgl5DsBnFvuMeu8dB7ORGIy5lI4kH97ecSpt/il6ivFnD2gCwQ8I9yNJk7P/OVAoQpRsAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aQ7LUXtW; arc=none smtp.client-ip=209.85.128.52
+	 In-Reply-To:Content-Type; b=LlX5szibuxVUuHvktqo385vFtVlFECJovYzUeDJLW1rDRpE6TnukYpS+qCxdHqubfKz5UuwuddycR58P/CkJhv0EPP5HoFCy55B+HDTv4WCueDS2VX51tqmmEBUUH2m2WI6MP4+kv9+uW8tZQMB4YUbm+Vihd0GsG9nAC0UC8fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BpUH14EG; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aQ7LUXtW"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-49056b9f04aso23538895e9.0
-        for <linux-security-module@vger.kernel.org>; Mon, 25 May 2026 06:27:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BpUH14EG"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-43d75312379so8030419f8f.1
+        for <linux-security-module@vger.kernel.org>; Mon, 25 May 2026 06:35:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1779715637; x=1780320437; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1779716110; x=1780320910; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ij+l12dR+ISDUAaA9eJOw0SDQ47xwS4UQDqlRXMB76c=;
-        b=aQ7LUXtW5bxOb+tWWbnJ9LI9Hu4ho2cWZv/3AUVlb7neykv3e+8w6/VBaL6Xr0dGge
-         z1KK2LMTAA72OCAu5AxD12Qy5s1M0/sw9ULxv7vFq7+upKOnBYr2wRR1ZvodcmgkysM4
-         sWabOR3Ubm2vqDtISC9F8a7yRMxFSNpxL+BvdxucPoZsLwmwpi+VqhZI8mUejTHqAsHt
-         us9KcbeyES8MwfL9wN5iAnDDh83sw6VahdIZeophjTkDCT9NWqrub1WwEH9gCU2y0gYZ
-         Rh2ajrWgiGd+BqSe3mipr5Mst8DS1o2/LF66I805h9zC41cP2I0l1MO9ZLDfwi8MxZFB
-         EZDA==
+        bh=9XVHRPBSt9KXo5wrulw6nEDVPqzcFN/DF35DZwL4F0c=;
+        b=BpUH14EGnlm4UYZVu9foBdalLVCHK55wdvwsZK81HpX2SG6MTxvw/kc4VaJeXSjZQs
+         3eTBMqQvcMIzwXiWfi3KT13WN+SRW8QHICGRtWD6SY/UWm63k8eQp79rk6d0NGLAc1qv
+         WjIAbFurjt3Rkm4z1tsFPUIrIEG7MyEpyocm02DR2uAkfQIxvmO2cNTG+McK3R2XH7Rj
+         7AUUX8rh2epSIAQYE8gycCnQ+260SuVSBqvdVV4OrRcaJMwiZDn6IsIj94PggCttQSXr
+         UHNrnpG4ko2zTsVOvv0b7M9hyRTdGQZQuFT25cBFZjgK3I+CYbhCVOqZqdeTrTSrkrDJ
+         92RA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779715637; x=1780320437;
+        d=1e100.net; s=20251104; t=1779716110; x=1780320910;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Ij+l12dR+ISDUAaA9eJOw0SDQ47xwS4UQDqlRXMB76c=;
-        b=PyAX6ZlJq5MPBoPz3YXXcZGBaw/ebQy2EYFTC9+wcQOX+t45S3cvEjsareeM9xGqLm
-         JZ6gkPCY5sY+2EPagpgBF+0Wwvt3dyj/hMo81bLBDHVmx9d9NiFGill/RNx/2us2wTLx
-         JpaBDrzS3RlKTvC8zz9mzBwpAUsvasxMM3ftYRRLdeFb5u+Y5NP0W27vmGNZG5f8ZUd1
-         JNpeC1ZTfHGbDKpEEYiEAo9hJwbTkmPCIJd4MYqhn10KpY+XfBD6fTJKdlCFujGr2N75
-         Lv4BMjT1QW1xAsChAM/O+pUk/79ngefHLxhY+8VVEAcmKeqor5e7uKhJx8NHWlb9fXvA
-         tAag==
-X-Forwarded-Encrypted: i=1; AFNElJ/RjrAH8GLXiNtiUXUlWVz1gmjloo404WAFebNiQdZ1AR7DbYYzrrnJu4215SQXoikzuwgrS+aw5L1ymTydj1L9kzW3LgY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0O5M1aSis8gRudNfqyA+hzjVUdie+ns4Vc1L9I3bDJEcU9cbB
-	E7x0PPQn9yoiZn0ZrmqSzxoSxpb1oWf2I7RdvKqj7Onfj1pqyXi/lBDCbNHp/JotDQ4=
-X-Gm-Gg: Acq92OFWf7ByQ3WT7e0Jd2ReGIPA88EoabR9+zjduhz1CqgCa6MOKOETOxJRdLo9YWC
-	J6YHu6yjFKUxE4MejWppcPTwl9Z0595a/n2cr5rdbktmSP1HI7hZKjnawp6pBjyMEQ1AcY+NBlR
-	Zk595F1uA5nUvjQaDgfvJnGFiOZvdBiEO7wok3PYqdbIniDo0xp180maFbghu/Llk0djZSXtxKi
-	n07HIR2FkzWQFj1gCnZYRhddId4FCDFuZAKv5+tzvL0HFkBEtev9rgBdSYqPPQQvdXYXivtVQzx
-	f8gPzwRUE4dSgVYtTG95XWHf7RPKl7P7Vj/HKZVSh0AF/fcATnogmY08YtaFLKnl53CDKJAlgaA
-	EbtK7K831rU1mFvP2mqghmP+8FYPJx6IbYjX7HEXxzOWGvMK5PkJAlSyFRx3Z87ekuw0rfgAmIy
-	L3PnZhA3gGV6JBj2FttHMDuGBjMQYr1WSuLCrzWgkK3HfQhiZjgniLxAhAI/HGyhmTZf5GHkMvz
-	9UHC9xOST5adlXW2B63SJoaOjwi9kke8vqFGDd8pLKz25gymxOZ+Xb+QL+kFvc6sKT41Psa5HqZ
-	rXs8
-X-Received: by 2002:a05:600c:3b02:b0:48f:e1ac:c94f with SMTP id 5b1f17b1804b1-490424b3938mr247672645e9.10.1779715636631;
-        Mon, 25 May 2026 06:27:16 -0700 (PDT)
+        bh=9XVHRPBSt9KXo5wrulw6nEDVPqzcFN/DF35DZwL4F0c=;
+        b=CcggcyvFlPfljuMU2udSwKBk+Y14K6dSvut9EZl5tPvFKdxY6xUHy7lbxQh/0fWVSf
+         dFLBqDJKXEJj4xosLGonUfclxd3Xc5L9mFHWRAZ9uLG4szmUhbvmljMwKfSfAYxlP/dT
+         s9/2fwO4li2cLi3AlRLygJcuml5atDZVwJiVMOszjoz4ob8W/OgSQLca6oJbAp71nDBp
+         Uw+fRvGN2i8LDxmXb6IqeOjG12sUoOQXEab+GIGxVKMXFBj6xVIuzYqSv3AgoIIw6D4U
+         D7H8hDzDceXd2NKCHUzMWuO151KHMPrQo0SqgihzZjrtnK96f7f74VWIh0qFZv0CosgW
+         2/jw==
+X-Forwarded-Encrypted: i=1; AFNElJ8XO0sS28OQW8k+XKhuhWrTm9W3Bz0pl00Xp5kdvR3LLnrSgBDiNCOERKt51OtCx7m7Xx0x/kQp2QM0s7Ie9lpcn3cnUgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwJit0QaAPzzP6a7mN6+/Ersw+CXzXCh7gVrxUZ9KrDBR18R21
+	bCgA3hbSo1tzoMq5DRWnEkfPXcpUXfxGmynrGAKiaiMnr8vSuJT59j74myiplw4q9J8=
+X-Gm-Gg: Acq92OGYbF+4t+pgJFPPGKAZV37xq/1URMkndWSyVeWRpR1Kr1lPd1szUuQDoZktw+F
+	BtmkHxxF4zgsdxcv73vbMAKFGZ/pi5ZiOWl81++CIIiNSI1OHekeNtYFvzItT5g4iAHiDfi2Zu+
+	E4XRqV3+0hK8nxEc8XwgH54tyW7RvaSVqpubT4SQfCKWRnlr1hgwOVmVT3derwh0lMj4fYrUuVm
+	/y4zuDdNDNHpty3wHtP75ujsGts3KGVok413QrZx/SAc2+ETZTJdiTI6HxFBkuHdy40RsBrkWHV
+	aQwoJdUtc24egmkBoN3GawnTyhKCNgBJdQwiLEanV8tvPSJ5vDhvXSICnD0P0X4Jgf885rmT5m3
+	sA8BBWGwxhUvQd7XVdMcz55Qy1OdZT5Rjg48WZA5JrgRa41kusomTKCweOWjgO7PLu10H4PmP1z
+	wRZBUU9z9PGsp0NoFqvivCav18mBmCvtS/WQfVZ8Q9h8UsQGaz0ghifNZdmRgavOt9vAZwagO7A
+	lGyPU/AczoOruXClWzSgwNmn909giQXy7c5wJsMzhRf8Gb1NyD1ZC+OpECjK1rb1uPIFA==
+X-Received: by 2002:a05:6000:2008:b0:45e:8cdc:4ee8 with SMTP id ffacd0b85a97d-45ea3128ccdmr31052715f8f.6.1779716109692;
+        Mon, 25 May 2026 06:35:09 -0700 (PDT)
 Received: from ?IPV6:2a00:1028:838d:271e:8e3b:4aff:fe4c:a100? (dynamic-2a00-1028-838d-271e-8e3b-4aff-fe4c-a100.ipv6.o2.cz. [2a00:1028:838d:271e:8e3b:4aff:fe4c:a100])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490454b1ab3sm284841905e9.14.2026.05.25.06.27.13
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45eb6d5cb9asm29456456f8f.27.2026.05.25.06.35.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 May 2026 06:27:16 -0700 (PDT)
-Message-ID: <1c21f66f-0d0f-4a8b-835b-23408242cff1@suse.com>
-Date: Mon, 25 May 2026 15:27:13 +0200
+        Mon, 25 May 2026 06:35:09 -0700 (PDT)
+Message-ID: <da358ae1-91b4-4a16-ac76-ffab99c230b9@suse.com>
+Date: Mon, 25 May 2026 15:35:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -70,8 +69,8 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/11] moduleparam: Add DEFINE_KERNEL_PARAM_OPS macro
- family
+Subject: Re: [PATCH 04/11] treewide: Convert struct kernel_param_ops
+ initializers to DEFINE_KERNEL_PARAM_OPS
 To: Kees Cook <kees@kernel.org>
 Cc: Luis Chamberlain <mcgrof@kernel.org>, Pengpeng Hou
  <pengpeng@iscas.ac.cn>, Richard Weinberger <richard@nod.at>,
@@ -133,71 +132,36 @@ Cc: Luis Chamberlain <mcgrof@kernel.org>, Pengpeng Hou
  linux-arch@vger.kernel.org, netdev@vger.kernel.org,
  linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
 References: <20260521133315.work.845-kees@kernel.org>
- <20260521133326.2465264-3-kees@kernel.org>
+ <20260521133326.2465264-4-kees@kernel.org>
 Content-Language: en-US
 From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20260521133326.2465264-3-kees@kernel.org>
+In-Reply-To: <20260521133326.2465264-4-kees@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 5/21/26 3:33 PM, Kees Cook wrote:
-> Add macros that define a struct kernel_param_ops initializer through a
-> macro so the underlying field layout can evolve without touching every
-> call site. Three variants cover the three cases:
+> Using Coccinelle, rewrite every struct kernel_param_ops initializer that
+> sets .get into a DEFINE_KERNEL_PARAM_OPS-family macro invocation,
+> for example:
 > 
->  DEFINE_KERNEL_PARAM_OPS(name, set, get) // basic
->  DEFINE_KERNEL_PARAM_OPS_NOARG(name, set, get) // set KERNEL_PARAM_OPS_FL_NOARG
->  DEFINE_KERNEL_PARAM_OPS_FREE(name, set, get, free) // also set .free
+> @@
+> declarer name DEFINE_KERNEL_PARAM_OPS;
+> identifier OPS;
+> expression SET, GET;
+> @@
+> - const struct kernel_param_ops OPS = {
+> -       .set = SET,
+> -       .get = GET,
+> - };
+> + DEFINE_KERNEL_PARAM_OPS(OPS, SET, GET);
 > 
-> Callers prefix their own visibility qualifiers, e.g.:
-> 
->   static DEFINE_KERNEL_PARAM_OPS(my_ops, my_set, my_get);
-> 
-> Also update module_param_call() and STANDARD_PARAM_DEF() to use
-> DEFINE_KERNEL_PARAM_OPS internally so the generated ops table will go
-> through the same macro as everything else.
-> 
-> Subsequent commits convert all open-coded struct kernel_param_ops
-> definitions to use these macros, in preparation for migrating to a
-> seq_buf .get API.
-> 
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
->  include/linux/moduleparam.h | 36 ++++++++++++++++++++++++++++++++++--
->  kernel/params.c             |  6 ++----
->  2 files changed, 36 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/linux/moduleparam.h b/include/linux/moduleparam.h
-> index 075f28585074..26bf45b36d02 100644
-> --- a/include/linux/moduleparam.h
-> +++ b/include/linux/moduleparam.h
-> @@ -68,6 +68,39 @@ struct kernel_param_ops {
->  	void (*free)(void *arg);
->  };
->  
-> +/*
-> + * Define a const struct kernel_param_ops initializer. Callers prefix with
-> + * any required visibility qualifiers (typically "static"):
-> + *
-> + *   static DEFINE_KERNEL_PARAM_OPS(my_ops, my_set, my_get);
-> + *
-> + * Routing the @_set and @_get function pointers through the macro
-> + * (rather than naming the struct fields at every call site) lets the
-> + * field layout change in one place when callbacks are migrated to a
-> + * new signature.
-> + */
+> Using the macro for initialization means future changes can manipulate
+> the struct layout and callback prototypes without having to change every
+> initializer.
 
-Nit: The newly introduced DEFINE_KERNEL_PARAM_OPS*() macros remain in
-place at the end of the series after the migration is complete and this
-comment is removed in patch 7. It would be helpful to describe in the
-commit message why these macros are generally preferable to defining
-kernel_param_ops instances directly.
-
-I assume the motivation is that the structure is simple enough and using
-macros then makes defining kernel_param_ops instances a bit more
-concise. A minor disadvantage is that some analysis tools, such as
-ctags, may no longer see the generated definition, but that is also the
-case for DEFINE_MUTEX() and other similar macros.
+Nit: For consistency, I suggest also converting the few remaining
+kernel_param_ops instances that specify only .set and no .get, such as
+simdisk_param_ops_filename.
 
 -- 
 Thanks,
