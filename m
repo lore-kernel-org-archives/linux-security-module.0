@@ -1,82 +1,63 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AAA5280A58;
-	Tue, 26 May 2026 01:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689662C21F1;
+	Tue, 26 May 2026 02:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779759560; cv=none; b=gFUABwT1sOpQ6AAl2ie1Cy9y6nBRPIETq9AejRQY9AeRNcgKCXZAzBW/1L70qfKTh9zKKa1XdcIFVjKbKRABa+LnBXkJ9t17/KLb72qBcCOKuP6xbl8LiXju/Wwlxs8CGOdd0zYjE65SmShxO43/puYEPZ65Ka7XrkR++bbY1us=
+	t=1779761120; cv=none; b=bcNqVK6Je0QmmaVN0bl37HtUM8bRfloofEH96NRgUJIIzxco3ydXlk55TyARtqmwG7IBXOdDQElwv0m5Cabg6ghMmWxrrF36GgYi1nMTP8ikPS5fyBSXzyvZ2J2jWuG+yar0SYBKYQJ3df8l/5ZfppQauOmpCIQvVs1oqMxMpiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779759560; c=relaxed/simple;
-	bh=A0oSMeqJRMYjlcAN0Rx3mrD4kFwYrk2pdAD1aAWXZjY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=gkYQ/FAAP/3dPsUV7bwEBOebezrHGV5AhzHoAPfmP4JNEG1QyAWAjOYUfCt0iVXqO3ZK/1sk19XCngeoRrUHDsUaDRwrBaVSNieq0He66YAKmZaP8vVePaCx83/KlttBkHGUagYqFsXLCOTbYt5937EzP9wnwN0m2xpATAeMq9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=FsgAalqW; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="FsgAalqW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
-	Content-Type; bh=t5cHYAv92QcWPYeMgV7iJstQ1cbWYimjSVQwo6nNDIQ=;
-	b=FsgAalqWo+BT6EeeBeCraCbwSuKnyinWc5tnn5hYHiaaHsfeAGwuDAHd4SpU9O
-	7BMncIAbKFnimqrQ3YUDCL7p6Mp8VHsresvN8EtBiWHigbCfpjTblMFx6PINZwO0
-	ku2GGmC8ENSIf4eo+O8IWXTKCUsP/EszKb3wH4BOUTHCA=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wCHFdyc+RRqZ26iDQ--.39799S2;
-	Tue, 26 May 2026 09:38:36 +0800 (CST)
-From: fffsqian@163.com
-To: casey@schaufler-ca.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Qingshuang Fu <fuqingshuang@kylinos.cn>
-Subject: [PATCH v2 2/2] security: smack: fix spelling mistake
-Date: Tue, 26 May 2026 09:38:34 +0800
-Message-Id: <20260526013834.399816-1-fffsqian@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1779761120; c=relaxed/simple;
+	bh=9Wc5mzKmHVv7kPhEsGiEGPZKOOkKCsfZe76yVzvQJ2E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FNIkp1nWvXBn+kpCx+XPtje6n63y8FHQ5ArtPpZqUuEI2Vv0B/p5j8QMLhMwhkxxwpChKjhshaEvvu/HCA01IOYDvGRmaDgWAUnrQ+7BT6j4jjZWiGdiurW3pmmP3aqqDFff3vfeSP/nHpWBa6lJzp9HEu2dB4aPGMdtqNrwBxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 64Q24krU023940;
+	Tue, 26 May 2026 11:04:46 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.5] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 64Q24kut023936
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 26 May 2026 11:04:46 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <814a7f61-67b2-49e9-b5bf-fd049b458079@I-love.SAKURA.ne.jp>
+Date: Tue, 26 May 2026 11:04:46 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tomoyo: Fix NULL pointer dereference in
+ tomoyo_init_request_info() when domain is NULL
+To: Jiakai Xu <xujiakai24@mails.ucas.ac.cn>
+Cc: "Serge E . Hallyn" <serge@hallyn.com>, James Morris <jmorris@namei.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20260526012315.762144-1-xujiakai24@mails.ucas.ac.cn>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20260526012315.762144-1-xujiakai24@mails.ucas.ac.cn>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCHFdyc+RRqZ26iDQ--.39799S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrtry5tr1xXFW3WFyUWF4DArb_yoWDGrg_Xw
-	1kCan7GFnrAw1DCw47Ar18Ars2g340gr4UuF1rtr1fAa45urW5GrZ8Grn2yFyjy3WYyFn8
-	C3ZxG3y3tF1SvjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU1G2M5UUUUU==
-X-CM-SenderInfo: 5iii21xldqqiywtou0bp/xtbCwRxFEGoU+ZzTrgAA3u
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav205.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-From: Qingshuang Fu <fuqingshuang@kylinos.cn>
+Thank you for a patch, but I don't think we need this change.
 
-Fix misspelling: overriden → overridden
+TOMOYO's initial domain is &tomoyo_kernel_domain, and each thread belongs to
+a non-NULL domain. Therefore, tomoyo_domain() is not supposed to return NULL.
 
-Signed-off-by: Qingshuang Fu <fuqingshuang@kylinos.cn>
+> Found by fuzzing. Here is the report:
+> 
+> Unable to handle kernel paging request at virtual address dfffffff00000003
 
-Changes since v1:
-- Split original single patch into two standalone patches,
-  separate AppArmor and Smack changes for different maintainer trees.
----
- security/smack/smackfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index 6e62dcb36f74..2820bd3ee72e 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -115,7 +115,7 @@ struct smack_known *smack_syslog_label;
- /*
-  * Ptrace current rule
-  * SMACK_PTRACE_DEFAULT    regular smack ptrace rules (/proc based)
-- * SMACK_PTRACE_EXACT      labels must match, but can be overriden with
-+ * SMACK_PTRACE_EXACT      labels must match, but can be overridden with
-  *			   CAP_SYS_PTRACE
-  * SMACK_PTRACE_DRACONIAN  labels must match, CAP_SYS_PTRACE has no effect
-  */
--- 
-2.25.1
+Is this a NULL pointer dereference?
+It seems to me that this is just a random memory corruption.
 
