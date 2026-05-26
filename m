@@ -1,88 +1,135 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7BFB3D3328;
-	Tue, 26 May 2026 09:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6EF3D7A15
+	for <linux-security-module@vger.kernel.org>; Tue, 26 May 2026 09:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779788494; cv=none; b=A0igZwwmlajPA0mdBC2iISpyfC2BetmGi2G1r6lvhrk+hq1DdriKQsK6ZZUVJv5tRemO7oxyP8+gLNPu6FEIZuezkt40CHBaiT6Unv69M8r3Sirt+8xwDG96tcpYJnZJCt8Ta3vj2RjsxOzYyTeDXGu6/XZ9+ivIR1sGg22/rjU=
+	t=1779788835; cv=none; b=n/qyYG1DN+P2fgVRRVJOwEKDnNd1VV6ccUvGFOaJp1jEZhmtZThTGUsAIU95dyG8UhZIl1oyesHo62CdknwqGTwqZz2/x6+7Vuk/QEHo9Jws2MoG9pS5AifT3Ymv45ej+SvDuWUVSQHsuRHMOb7+Mv2n1VsC27YEsPS83bmaF4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779788494; c=relaxed/simple;
-	bh=Gz4q5QgFQbnOnnEUIl7EeAovXaR6hiGdxtHZjlMHF3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gsI6d3sY7+4yV91YNqrwsvRPzBxgbyXd4DVLKRTNp+Yh6HyPpjCHXEu/qHG5HA6As2c24/T/COqL8xbvwMppyFgxs1jP8wGtnC8xTb4PuVNmzZcD26Uw1LM2c5y7OxvNZf5Y/SNrJIqZmG7kv5p2Uk8nyjxHjdBZQ9AAUMyXH7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IHS2tBhC; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779788835; c=relaxed/simple;
+	bh=8+nGGSKlUH2wqELDfgHiAT/VMPWJ2mHhPQF2ouWQF0w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kDosrStafxCl5+Qz0nlYKweKqxYXHYFAMb3Wz7uyHcFfCA4Xg84HpUEArrCCzX+kECzLmZUAlWaZWqucxkJ/L5SxC39cbxET8f7LZrHHJykShQ+iIda6u8187JRa9tuarysjP/wV5rR51Fgylhnouq8DsgoL5cZyElBzeSYX3wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EjQTkHLZ; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IHS2tBhC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F77F1F000E9;
-	Tue, 26 May 2026 09:41:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779788492;
-	bh=1cPnc2HBwlXfOQHf4P6mq2XSBykV+yW2Sb/oJ4JFuHQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=IHS2tBhCEydy2L07hJTcjM2HawQ0ovbNQl+hx4PVNB71ZoA4rTE3d7lLKy9yIRyIu
-	 94wJnUs5fypXA1knSNnpU6ScReOv1Cms6BmxmsUyf46hOfqGrbl5srN+zUcsLGJd8n
-	 3lhLvDF+2+rgiwlfPw3lbIWelm1siCxGBWv0+R5vn7UepsFhGsHCwfca70VLpAPJ9B
-	 TXyzPQbD2hj21Rdz94XxI1F8rpVRMzD66kWE4TTkYUmpgoVVBE11fQUFNvTJWZJFxv
-	 rzgJHG0HviKrOetFrQpWZ4KSQ2kT812y1ppJNnmxiJp3LJNdNz2RwTYMxmj2ML1N+P
-	 JjkSSUTNGAKsw==
-Date: Tue, 26 May 2026 10:41:29 +0100
-From: Sudeep Holla <sudeep.holla@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: Re: [PATCH 2/4] firmware: arm_ffa: Register core as a platform driver
-Message-ID: <20260526-ancient-bulky-numbat-915f10@sudeepholla>
-References: <20260508-b4-ffa_plat_dev-v1-0-c5a30f8cf7b8@kernel.org>
- <20260508-b4-ffa_plat_dev-v1-2-c5a30f8cf7b8@kernel.org>
- <20260523001148.GA1319283@ax162>
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EjQTkHLZ"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4903f7a90d1so35150835e9.2
+        for <linux-security-module@vger.kernel.org>; Tue, 26 May 2026 02:47:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1779788832; x=1780393632; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=R17d81rZFtdCmrvPdq6FOwdkUs8CSvLL3BM8+TQqKKA=;
+        b=EjQTkHLZWZ8pVUg9gk59c/Y6msmKTq3bu4UiXtP0lNvzAnW1HzNIQOI+8h362r8uOz
+         65J1roOpeed/GO/dcNRKF4mcOqiVwLlqNNBvo5kKdzC6J9wILMHJ9BvPhY9ry3PrsA4i
+         n4rqddafwx34au/rxzpyxQdfV+/h8Wumnpkqoei2H9VUro489toB9gas7h1XDJkUk8CH
+         O+9MN48NZdDBK0b+NhQ0p8I8EarJxSJgpWwmOXqd9qDajMs394MTLqyIaOkGFsYIRRjm
+         3rP/59t6+CkpeqFn2g9Jsq3yp1J79p7PG+5nH+WBxj0dEoelXcyuvD+avrfoVM++dNME
+         5pWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779788832; x=1780393632;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R17d81rZFtdCmrvPdq6FOwdkUs8CSvLL3BM8+TQqKKA=;
+        b=rlEUlBENOSHPO1lt5eDb9Mk0r4au/lMgvCWJyKv85Oel/mjc7LSr4oVhvK2OW8iw7B
+         wZyAwSO7HAcjZrgA02zUVCtM0u7P82Iby6PDmDVWAI5n1vyyjoVwdVCtZaUKZTYWUUYg
+         3JMnttx+AYzSuL/+fsTnAna3kDmNjBDcafgEyLqlrEaLml2hWyViZ7iutxi8jySKxkWX
+         p2xFri8iC4awsD5AaJF0tfk3M0f6APQ+ISo4oHUhzIY88P+cS/KH+zXT0zIMCVGP7ERF
+         xm4dQOlGZ4k3xV0bnJBThzDj/RbjfqM7IjAta4vZLW6jY2yZ4vGm6DjF2Ya2E5iOqr9j
+         clZw==
+X-Forwarded-Encrypted: i=1; AFNElJ+Jd1TzY3MTf+/F8nFu8tD9ZfHjgeSXtffvTaFkl+6ThicrG0JU4nN0bFff/405+dJOW3PHSiFdaNRqhiFSRjv9v/omngE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwTm85mv/j7agGNJ5NnACO7LzZ3XcAN1zdK83oVC45Yv21yt8e
+	oPKMSXzQ37B6PXB0KJJWHNlS5C5ZHj2STHQA5s6tpeiARaoSbI6DY+a2ZHSaJzKjwjk=
+X-Gm-Gg: Acq92OG9aBTtbzQlXomJOoLpNh3b5SLoDreM3OADZ2FydQY6Gs7wIzGkGLdBzmqHqqU
+	nRINk1mma5lTZLW6c8rvwPqyOmefPjZ4Wh+yOPqqU9R+q/KjFGuPPranURidTndvCRCT63jtiHq
+	O1gYz799hOpfEdApRV8DD3OunPDYnVfZAQqLbuYqNoZAulMFMArLsjRa+b281cJxf20EW5lEjnr
+	9EJeQE44OQxRqR15dcys3A8aOcSPBnJVoXJiskQHxSuUi1eDoOeHG9zfd7j5HJ9kaRn6W5iGsjk
+	PXwARIIghQ4Jg6q3NL5MKrbhN2mT/zDlV5bkipRFr83r63RoL7ngje4BxKgDtyUaELrvQWxZ/8N
+	N/gELUUi+8JON4hzZJn73eC6AGDySw2TJbYNfzFVa+bZSg7hzL5ftQg6uEMNOHa1M9/7+PwMt3L
+	OwFIB4VjmcOF7t5h0TC+LqfqJfyDVdCFPVUjFBbaO9RTkbzj2GKl3KeTqSorNhLmGtcTUWlwZbc
+	PDpIj52iHnMqlJdJosFiL5BlhWbZ31lSl9lAay7fCGa05LHap7XslvvI+q0nUXtOosmuXHYAw6p
+	Tp9B
+X-Received: by 2002:a05:600c:6209:b0:490:601f:d776 with SMTP id 5b1f17b1804b1-490601fd9admr168561055e9.3.1779788832071;
+        Tue, 26 May 2026 02:47:12 -0700 (PDT)
+Received: from ?IPV6:2a00:1028:838d:271e:8e3b:4aff:fe4c:a100? (dynamic-2a00-1028-838d-271e-8e3b-4aff-fe4c-a100.ipv6.o2.cz. [2a00:1028:838d:271e:8e3b:4aff:fe4c:a100])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490454a0b9asm307921735e9.11.2026.05.26.02.47.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 May 2026 02:47:11 -0700 (PDT)
+Message-ID: <8de0e6ad-987a-4729-bbd0-8399968dbb48@suse.com>
+Date: Tue, 26 May 2026 11:47:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260523001148.GA1319283@ax162>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 06/14] module: Switch load_info::len to size_t
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Eduard Zingerman <eddyz87@gmail.com>,
+ Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Jonathan Corbet <corbet@lwn.net>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Eric Snowberg <eric.snowberg@oracle.com>,
+ Nicolas Schier <nicolas.schier@linux.dev>, Daniel Gomez
+ <da.gomez@kernel.org>, Aaron Tomlin <atomlin@atomlin.com>,
+ "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+ Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
+ Xiu Jianfeng <xiujianfeng@huawei.com>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>, Jiri Olsa <jolsa@kernel.org>,
+ bpf@vger.kernel.org, =?UTF-8?Q?Fabian_Gr=C3=BCnbichler?=
+ <f.gruenbichler@proxmox.com>, Arnout Engelen <arnout@bzzt.net>,
+ Mattia Rizzolo <mattia@mapreri.org>, kpcyrd <kpcyrd@archlinux.org>,
+ Christian Heusel <christian@heusel.eu>, =?UTF-8?Q?C=C3=A2ju_Mihai-Drosi?=
+ <mcaju95@gmail.com>, Eric Biggers <ebiggers@kernel.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+ linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org,
+ debian-kernel@lists.debian.org
+References: <20260505-module-hashes-v5-0-e174a5a49fce@weissschuh.net>
+ <20260505-module-hashes-v5-6-e174a5a49fce@weissschuh.net>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20260505-module-hashes-v5-6-e174a5a49fce@weissschuh.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 22, 2026 at 05:11:48PM -0700, Nathan Chancellor wrote:
-> Hi Sudeep,
-> 
-> On Fri, May 08, 2026 at 06:54:16PM +0100, Sudeep Holla wrote:
-> > Move the FF-A core bring-up and teardown paths into platform driver
-> > probe and remove callbacks, and register a synthetic arm-ffa platform
-> > device to bind the driver.
-> > 
-> > This makes the FF-A core lifetime follow the driver model while keeping
-> > the device creation internal to the FF-A core. Use normal platform driver
-> > registration so the probe path has standard driver-core semantics.
-> > 
-> > The synthetic platform device is a temporary bridge until ACPI and
-> > devicetree describe the FF-A core device or object. Once those firmware
-> > description paths are defined, the internal platform device creation can
-> > be dropped and the driver can bind to the firmware-described device
-> > directly.
-> > 
-> > Since the transport selection now happens from the platform probe path,
-> > drop the __init annotation from ffa_transport_init().
-> > 
-> > Signed-off-by: Sudeep Holla <sudeep.holla@kernel.org>
-> 
-> I am seeing
-> 
->   arm-ffa arm-ffa: probe with driver arm-ffa failed with error -95
-> 
-> on my two arm64 test machines after this change landed in -next as
-> commit e659fc8e537c ("firmware: arm_ffa: Register core as a platform
-> driver"), is this expected? If so, perhaps it should be silenced?
-> 
+On 5/5/26 11:05 AM, Thomas Weißschuh wrote:
+> Switching the types will make some later changes cleaner.
 
-Yes it should be silenced, I will see how it can be done. Thanks for the
-report.
+Since the updated version drops the patch "module: Deduplicate signature
+extraction", I believe this change is no longer necessary.
+
+> size_t is also the semantically correct type for this field.
+> 
+> As both 'size_t' and 'unsigned long' are always the same size, this
+> should be risk-free.
+
+The module 'len' would now start in init_module() as 'unsigned long',
+then change in copy_module_from_user() to size_t, and then back to
+'unsigned long' when calling copy_chunked_from_user(). The current code
+is more consistent and mostly uses 'unsigned long', matching the syscall
+interface.
 
 -- 
-Regards,
-Sudeep
+Thanks,
+Petr
