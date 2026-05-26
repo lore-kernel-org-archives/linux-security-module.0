@@ -1,125 +1,120 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FFC3F58CE
-	for <linux-security-module@vger.kernel.org>; Tue, 26 May 2026 13:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F212F8E80;
+	Tue, 26 May 2026 13:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779801293; cv=none; b=PbCJM7C0FdsDCbYeWHqupuJkQf539jnns278ZwdE35408P/tk9kqNG4FkcA6iodisDMWBKeqx5aiyj07an14XynnFS/uDAxzA4+p2u2kfTzABA/2RI6wPXn4PcJFT3ytjh3iV36NFNL7wxkvmkzqrFobcqc8Ixvi9iZ4aHQI60E=
+	t=1779803961; cv=none; b=PvGkeLKCldqPrYua3D/Z7LCHbDMlFB6g7ZrnWVu4+IsH0QAqtjozPSklAtQmtw3iih1hdI70Sa53ilOn37vqYLlnWYpgFOhQfbnp7yd2FLQqfzdx03W77exK6x4FrykddZFWDl7iOEt9vpMQFu2zRfAl+KEh+x+TPjL2gK7CJS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779801293; c=relaxed/simple;
-	bh=/+TDbtQdoXZLR15lIobccDcb+fb9SD6eVXuxnbR2M98=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tc0MFSkfAR6RM+nQFtBL494Ey/9ZRVFzV+a/kc9TK/tkJGSMrWrwJIBBLps2QzR83mCdVQX9aKjzj3GPgcLgpYUlE8g6ipIRNZ0hKAV153X99lQFYtbcTKSdxPV8VRZ1VEbavHkFURZuVRAfCgcHG3GLFzx0Of3B04K3vo1j0IA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WgInIwyk; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WgInIwyk"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-48984d29fe3so111324425e9.0
-        for <linux-security-module@vger.kernel.org>; Tue, 26 May 2026 06:14:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1779801290; x=1780406090; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=P15uXtg9HdllBQIu/ZsCrfbcDnCOaC1HB3obrbgjmNc=;
-        b=WgInIwykVVoaGAUgaZcwBgPb2XaDQMvOOS2HFW9/o0cQ0HUO1ZApKEHQ8RW4TtLo7Q
-         P0mg/PO6DDRxxTinG9zEP4hYMAMIYBNCHzD2gC9d4XHrk533aUfTsOUTxQ2cT77UpFzy
-         7WI917lhsD43I1Zvr1pMY+XEkFOvYej7aY4h2sc1In8bxj5qJnjlQTbeSV+whjwcW8L3
-         rl4d80CAUdQZmrA25YMNaSrUK3qshiAwA1BJCR4uxhTmL5xmDiKmWxnta6B6HjsCkV6Y
-         nrrS/j/5mHD2Ug5dyQvXBvTz6pC9OMDa7i/iry8dzDHSmtWjgBoG+UCFGAFxHKmGuQV5
-         K/4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779801290; x=1780406090;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P15uXtg9HdllBQIu/ZsCrfbcDnCOaC1HB3obrbgjmNc=;
-        b=NY+A8hyHoxpjvs+b5seUdpzSQgX7HvBmY2rEjwKI36Ok5+bnH/Viz6J6RULWOlSgbz
-         iLXL42nGUXiYr1u+9XfM+I8SCGCvN/MlpuggLUPL5j8IvgsaRrxYL+z8ilmPQLdZXy1W
-         H01gasX8nCnb0THZl2GTlOC01r7syPWUpvhVBRao7Lal4+jhYz1HCTfT0ac4yYO1I482
-         zh0Xp9t35ME5OUzuo5YJVMcwRbrfO5sTtBbHgl9aiqKQzznd3zwAAOTjmsGA3B/9fQ9C
-         qo0pE4ytkX3R9kKr/WwM2nbyw+toupqn0gFkVv3G8frf2teob9HmhDnw3LGIFyBkkohY
-         Xrzg==
-X-Forwarded-Encrypted: i=1; AFNElJ8bRJpWp6FV4Mr1x9SGgblF1UgDqXcHCa0zoJtfuTpwg1TVOOaM5NqBQxOjP7LUC1vHeLwHl960vffCHAq1T1WjhSp7zqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0PrTfB61+UCjzyIYMcbLyVWKyvrSeO8FWUUrSdgqYPFe3AZL6
-	ELe8TYYIkdy8KP4CeO84Az0GEoW6Uo+EXTempuY5G/DkGtcT3Aw08HjDlBMhK0aym5A=
-X-Gm-Gg: Acq92OF7NWNdYd4RngBUhuElKOU6aNoYaJI2vT1UDZO7wxDdUFpQf9hL/Dc3gzF4xXD
-	uWhgObTLYHsGgwZGqMTihaBA5a+ECuHfu/bgA3/gYsxiRIWn69K3rFJnyAPzYeh2fEjP+37Qots
-	mXLL1uOFTOycTjxCfFQxOD0A9Amhe48JCl+DcXW7g+y/owSW2Ze1ZmQRWhE1Uzb+LN5AUZdsYZk
-	HC4GT6syzQ0vJ6Nf+M3BZCkxe1lur+J8zy2Qd/KXKcUAHNfPPUkytC32Idh6xkGrJzos4DPinV7
-	yYQjvcclIAeHl0wWJK4XdUvaviPmFH/ZxRYrIQLDPm+kviqrDTpGnL1IfEt2qxIblaRclieRWqD
-	Lo0ADzvc77EInuq+2RHEpUfJOUyYDW4DxnipGmO3jAuRIXLJrm/dohDPbPPUHTzeW+JbHmbWKQM
-	yvgrrBlUK+lMY+cnBYxA/ALTdr9DY/9iD9Pf1TLcteNJjs
-X-Received: by 2002:a05:600c:4f91:b0:490:6e12:5418 with SMTP id 5b1f17b1804b1-4906e12552emr91630705e9.23.1779801289895;
-        Tue, 26 May 2026 06:14:49 -0700 (PDT)
-Received: from [192.168.42.79] (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45eb6c9f58dsm34868452f8f.5.2026.05.26.06.14.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 May 2026 06:14:49 -0700 (PDT)
-Message-ID: <a050130e-d354-411a-bfcd-afcfde4cafdc@suse.com>
-Date: Tue, 26 May 2026 15:14:47 +0200
+	s=arc-20240116; t=1779803961; c=relaxed/simple;
+	bh=RnN0j7pi3mmQyWPIBquEzKiilJBUPPQC8QFkR638DCo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=EeYr8dVqFtj817N/8hVvRYNE1OxQbTe+l7XIO8mNrOASphcS6VjVwoISupTnVrhUHkSM2uHWuto11+cYu11+7nCBgUopcjXrazTPT7ai3DwQXu3/xUcKVqYQcFVhpy+nU2FqfRVayajgF7tLkIGCZwC1a/0GMT7/wBbl+YI5TW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mails.ucas.ac.cn; spf=pass smtp.mailfrom=mails.ucas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mails.ucas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mails.ucas.ac.cn
+Received: from fric.. (unknown [36.110.52.2])
+	by APP-03 (Coremail) with SMTP id rQCowABng9ojpxVq0OhwEg--.2821S2;
+	Tue, 26 May 2026 21:58:59 +0800 (CST)
+From: Jiakai Xu <xujiakai24@mails.ucas.ac.cn>
+To: penguin-kernel@i-love.sakura.ne.jp
+Cc: jmorris@namei.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	paul@paul-moore.com,
+	serge@hallyn.com,
+	takedakn@nttdata.co.jp,
+	xujiakai24@mails.ucas.ac.cn
+Subject: Re: [PATCH] tomoyo: Fix NULL pointer dereference in tomoyo_init_request_info() when domain is NULL
+Date: Tue, 26 May 2026 13:58:59 +0000
+Message-Id: <20260526135859.3211799-1-xujiakai24@mails.ucas.ac.cn>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <814a7f61-67b2-49e9-b5bf-fd049b458079@I-love.SAKURA.ne.jp>
+References: <814a7f61-67b2-49e9-b5bf-fd049b458079@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 10/14] module: Prepare for additional module
- authentication mechanisms
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Eduard Zingerman <eddyz87@gmail.com>,
- Kumar Kartikeya Dwivedi <memxor@gmail.com>,
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Jonathan Corbet <corbet@lwn.net>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
- Roberto Sassu <roberto.sassu@huawei.com>,
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Eric Snowberg <eric.snowberg@oracle.com>,
- Nicolas Schier <nicolas.schier@linux.dev>, Daniel Gomez
- <da.gomez@kernel.org>, Aaron Tomlin <atomlin@atomlin.com>,
- "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
- Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
- Xiu Jianfeng <xiujianfeng@huawei.com>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>, Jiri Olsa <jolsa@kernel.org>,
- bpf@vger.kernel.org, =?UTF-8?Q?Fabian_Gr=C3=BCnbichler?=
- <f.gruenbichler@proxmox.com>, Arnout Engelen <arnout@bzzt.net>,
- Mattia Rizzolo <mattia@mapreri.org>, kpcyrd <kpcyrd@archlinux.org>,
- Christian Heusel <christian@heusel.eu>, =?UTF-8?Q?C=C3=A2ju_Mihai-Drosi?=
- <mcaju95@gmail.com>, Eric Biggers <ebiggers@kernel.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org,
- debian-kernel@lists.debian.org
-References: <20260505-module-hashes-v5-0-e174a5a49fce@weissschuh.net>
- <20260505-module-hashes-v5-10-e174a5a49fce@weissschuh.net>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20260505-module-hashes-v5-10-e174a5a49fce@weissschuh.net>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowABng9ojpxVq0OhwEg--.2821S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF4fWw18Kw47tr1UJFW3trb_yoW8Kr43pF
+	W3JF1j9r48JF4Sv3yUCw43Wry09ryrGas8G3s8Kws5CFs0grn2gF1agFW5uFn8Ar4ftw12
+	yw17Z3ySgFWDJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
+	YxC7MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
+	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUjPEfUUUUUU==
+X-CM-SenderInfo: 50xmxthndljko6pdxz3voxutnvoduhdfq/
 
-On 5/5/26 11:05 AM, Thomas Weißschuh wrote:
-> Reorganize the code to make it easier to add the new hash-based module
-> authentication.
+> Thank you for a patch, but I don't think we need this change.
+
+Thanks for your review! I understand your perspective, but I believe
+the crash is a real NULL pointer dereference, and I'd like to explain
+why the defensive check is warranted.
+
+> TOMOYO's initial domain is &tomoyo_kernel_domain, and each thread belongs to
+> a non-NULL domain. Therefore, tomoyo_domain() is not supposed to return NULL.
+
+While tomoyo_domain() is not supposed to return NULL under normal
+operation, there are code paths that leave s->domain_info == NULL:
+
+  a) Pre-init window (security/tomoyo/tomoyo.c, lines 598-612):
+     The task security blob is zero-allocated via kzalloc(), and
+     security_add_hooks() at line 603 is called BEFORE
+     s->domain_info = &tomoyo_kernel_domain at line 606. If any LSM
+     hook fires during that window, tomoyo_domain() returns NULL.
+
+  b) tomoyo_task_free() (tomoyo.c, lines 533-545) explicitly sets
+     s->domain_info = NULL after decrementing the refcount.
+
+  c) tomoyo_find_next_domain() (domain.c, lines 876-883) writes
+     s->domain_info = NULL when the domain transition fails.
+
+> > Found by fuzzing. Here is the report:
+> > 
+> > Unable to handle kernel paging request at virtual address dfffffff00000003
 > 
-> Also drop the now unnecessary stub for module_sig_check().
-> 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> Is this a NULL pointer dereference?
+> It seems to me that this is just a random memory corruption.
 
-Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
+This address is the KASAN shadow byte for memory access at offset 0x18
+(24), not a random corrupted value. On RISC-V with sv57 page table,
+KASAN_SHADOW_BASE is `0xdfffffff00000000`, and the shadow address is
+computed as:
 
--- Petr
+    shadow_addr = (access_addr >> 3) + KASAN_SHADOW_BASE
+                = (24 >> 3) + 0xdfffffff00000000
+                = 0xdfffffff00000003
+
+In `struct tomoyo_domain_info` (security/tomoyo/common.h, lines
+680-693), the layout is:
+
+    offset 0:  struct list_head list;          // 16 bytes
+    offset 16: struct list_head acl_info_list; // 16 bytes (next at 16, prev at 24)
+    offset 32: domainname;                     // 8 bytes
+    ...
+
+Offset 24 from NULL is `domain->acl_info_list.prev`, which is
+dereferenced by the `list_for_each_entry_rcu()` loop in
+`tomoyo_check_acl()` at security/tomoyo/domain.c:171 when `domain` is
+NULL. This is KASAN catching a NULL pointer dereference in action, not
+random memory corruption.
+
+I think adding a NULL check makes the code more robust. What do you 
+think?
+
+Best regards,
+Jiakai
+
