@@ -1,68 +1,73 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6EF3D7A15
-	for <linux-security-module@vger.kernel.org>; Tue, 26 May 2026 09:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0E83DCDBE
+	for <linux-security-module@vger.kernel.org>; Tue, 26 May 2026 10:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779788835; cv=none; b=n/qyYG1DN+P2fgVRRVJOwEKDnNd1VV6ccUvGFOaJp1jEZhmtZThTGUsAIU95dyG8UhZIl1oyesHo62CdknwqGTwqZz2/x6+7Vuk/QEHo9Jws2MoG9pS5AifT3Ymv45ej+SvDuWUVSQHsuRHMOb7+Mv2n1VsC27YEsPS83bmaF4E=
+	t=1779791766; cv=none; b=k0h69fhq2b4xssnUJ0huJNUYCjRhPOwDXK5B1GHFOOo41opVlOZW4N/qLMJFq+pUP4MajQ3CuD6YNhE6uXwh8ZTzsO5D6pZ0Pz94Wl8P8mYbDiBRNqlWBekoP/Ud4kRDd+IcpzeDJLsIT48xlNW/EFA3ZSnwudyJRmgjQObOPeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779788835; c=relaxed/simple;
-	bh=8+nGGSKlUH2wqELDfgHiAT/VMPWJ2mHhPQF2ouWQF0w=;
+	s=arc-20240116; t=1779791766; c=relaxed/simple;
+	bh=OP8gQgKmrgNl/Tv4qmsTuHrpVfsW/1y26zRhKFHkGG4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kDosrStafxCl5+Qz0nlYKweKqxYXHYFAMb3Wz7uyHcFfCA4Xg84HpUEArrCCzX+kECzLmZUAlWaZWqucxkJ/L5SxC39cbxET8f7LZrHHJykShQ+iIda6u8187JRa9tuarysjP/wV5rR51Fgylhnouq8DsgoL5cZyElBzeSYX3wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EjQTkHLZ; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	 In-Reply-To:Content-Type; b=owz1cQUWS1wYWmBb7P1GkMpHIeXHgu+gWhRU7ZyBBxeAQfeIMtWZ9azu5WccA38iBTNLszLuL2HUCDefBah8CNpaY51n9XUCZTWW2T2UIcQYkFF4wHRmOEXBLoeONt3AHwk44w6CE3ZH7yLpY+1zaRkfN+0+OWq/qx0e2GxJtxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PY2O3RnD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EjQTkHLZ"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4903f7a90d1so35150835e9.2
-        for <linux-security-module@vger.kernel.org>; Tue, 26 May 2026 02:47:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1779788832; x=1780393632; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=R17d81rZFtdCmrvPdq6FOwdkUs8CSvLL3BM8+TQqKKA=;
-        b=EjQTkHLZWZ8pVUg9gk59c/Y6msmKTq3bu4UiXtP0lNvzAnW1HzNIQOI+8h362r8uOz
-         65J1roOpeed/GO/dcNRKF4mcOqiVwLlqNNBvo5kKdzC6J9wILMHJ9BvPhY9ry3PrsA4i
-         n4rqddafwx34au/rxzpyxQdfV+/h8Wumnpkqoei2H9VUro489toB9gas7h1XDJkUk8CH
-         O+9MN48NZdDBK0b+NhQ0p8I8EarJxSJgpWwmOXqd9qDajMs394MTLqyIaOkGFsYIRRjm
-         3rP/59t6+CkpeqFn2g9Jsq3yp1J79p7PG+5nH+WBxj0dEoelXcyuvD+avrfoVM++dNME
-         5pWA==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PY2O3RnD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1779791764;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xKCnyq8WGI8GQIs4WPayrwC5+jOUXUYoU+B/AmoRgVk=;
+	b=PY2O3RnDCAC/UxlPX35SoxYby9DT9kFROTLPAzxGtQusw/UEJ1OTQ2GyIUvCIC++eh/9H1
+	oHMSRXQGHaYoPzLKTD0K/OI4bDVLQFFuo62286IHGQZkjXFrBU2mmL4SkRFPuXpt9DbqOw
+	OaNVX0KFXEe9q0jMjHMoFLxlYBu+Ug4=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-553-MpMBNlTPNjGLd6YynayJPA-1; Tue, 26 May 2026 06:36:02 -0400
+X-MC-Unique: MpMBNlTPNjGLd6YynayJPA-1
+X-Mimecast-MFC-AGG-ID: MpMBNlTPNjGLd6YynayJPA_1779791761
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-49048e21ea7so17774495e9.1
+        for <linux-security-module@vger.kernel.org>; Tue, 26 May 2026 03:36:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779788832; x=1780393632;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=1e100.net; s=20251104; t=1779791761; x=1780396561;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=R17d81rZFtdCmrvPdq6FOwdkUs8CSvLL3BM8+TQqKKA=;
-        b=rlEUlBENOSHPO1lt5eDb9Mk0r4au/lMgvCWJyKv85Oel/mjc7LSr4oVhvK2OW8iw7B
-         wZyAwSO7HAcjZrgA02zUVCtM0u7P82Iby6PDmDVWAI5n1vyyjoVwdVCtZaUKZTYWUUYg
-         3JMnttx+AYzSuL/+fsTnAna3kDmNjBDcafgEyLqlrEaLml2hWyViZ7iutxi8jySKxkWX
-         p2xFri8iC4awsD5AaJF0tfk3M0f6APQ+ISo4oHUhzIY88P+cS/KH+zXT0zIMCVGP7ERF
-         xm4dQOlGZ4k3xV0bnJBThzDj/RbjfqM7IjAta4vZLW6jY2yZ4vGm6DjF2Ya2E5iOqr9j
-         clZw==
-X-Forwarded-Encrypted: i=1; AFNElJ+Jd1TzY3MTf+/F8nFu8tD9ZfHjgeSXtffvTaFkl+6ThicrG0JU4nN0bFff/405+dJOW3PHSiFdaNRqhiFSRjv9v/omngE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwTm85mv/j7agGNJ5NnACO7LzZ3XcAN1zdK83oVC45Yv21yt8e
-	oPKMSXzQ37B6PXB0KJJWHNlS5C5ZHj2STHQA5s6tpeiARaoSbI6DY+a2ZHSaJzKjwjk=
-X-Gm-Gg: Acq92OG9aBTtbzQlXomJOoLpNh3b5SLoDreM3OADZ2FydQY6Gs7wIzGkGLdBzmqHqqU
-	nRINk1mma5lTZLW6c8rvwPqyOmefPjZ4Wh+yOPqqU9R+q/KjFGuPPranURidTndvCRCT63jtiHq
-	O1gYz799hOpfEdApRV8DD3OunPDYnVfZAQqLbuYqNoZAulMFMArLsjRa+b281cJxf20EW5lEjnr
-	9EJeQE44OQxRqR15dcys3A8aOcSPBnJVoXJiskQHxSuUi1eDoOeHG9zfd7j5HJ9kaRn6W5iGsjk
-	PXwARIIghQ4Jg6q3NL5MKrbhN2mT/zDlV5bkipRFr83r63RoL7ngje4BxKgDtyUaELrvQWxZ/8N
-	N/gELUUi+8JON4hzZJn73eC6AGDySw2TJbYNfzFVa+bZSg7hzL5ftQg6uEMNOHa1M9/7+PwMt3L
-	OwFIB4VjmcOF7t5h0TC+LqfqJfyDVdCFPVUjFBbaO9RTkbzj2GKl3KeTqSorNhLmGtcTUWlwZbc
-	PDpIj52iHnMqlJdJosFiL5BlhWbZ31lSl9lAay7fCGa05LHap7XslvvI+q0nUXtOosmuXHYAw6p
-	Tp9B
-X-Received: by 2002:a05:600c:6209:b0:490:601f:d776 with SMTP id 5b1f17b1804b1-490601fd9admr168561055e9.3.1779788832071;
-        Tue, 26 May 2026 02:47:12 -0700 (PDT)
-Received: from ?IPV6:2a00:1028:838d:271e:8e3b:4aff:fe4c:a100? (dynamic-2a00-1028-838d-271e-8e3b-4aff-fe4c-a100.ipv6.o2.cz. [2a00:1028:838d:271e:8e3b:4aff:fe4c:a100])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490454a0b9asm307921735e9.11.2026.05.26.02.47.10
+        bh=xKCnyq8WGI8GQIs4WPayrwC5+jOUXUYoU+B/AmoRgVk=;
+        b=BHr/POtn4KtXBsgwuKqE8e1IBdDKoN7G1odgL2jRVBvLgwEuTLY8pZuVLkgMPoWTvK
+         DswMlzgEZvUQ849NOlZMqHW2A0nt05BSnMB3Wc7EMoS+/jOLuJginBp2oXpx4n5NdEoR
+         wzRA0KGOXej03cCpF05AMkTZmprb8nowz/jyfkU5s+UEMJH4vwEbcZ5JkSQqAekrY6F9
+         Pn60qV1fj93t4D8k8UdYGr1K0BjNXVKE4Xyk7yFmfJpOOktwnj5Bu2BYRHFh67/MD8NK
+         xzj2NyaBLogXgRmi7+pSBo1qHf8yYLl6K+h0VdQLU+q30s0CtUPFxqxt3YB7SLjHbYKp
+         WDYg==
+X-Forwarded-Encrypted: i=1; AFNElJ9UVYTzgztMOxXVMpXoZLaYq2GpRwf71Rezv3a8EdTFeuP6NIcTWj63TVP0Z0hZZv1U9zehYNySg/Q8gaSn8y0wgnkjsxU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwknwfslVAXBipb3nsoudTZEOxEsi23q6nakuNSymnoWBSlhpnG
+	JWY5dMfJAYt42hxcEikWiTtDzZi3dadaGA2+p/OO53I2fjT97HfU+qGY/iXdXZz881ZybhWX7Mw
+	NawLG822gI8NoacCIM2hSjz3IZq2yEh9qtnnQvbaoGF+1kcxNQZLOyX6XcrqTfNIGICo5ImBC7C
+	74kA==
+X-Gm-Gg: Acq92OGzPGNIawbZ7d1A5NG/EkR8GUAHt4qb4wwsUqvbghAPCr/M8J977+poqYxuyFt
+	rgv/7oEnJts6EJAUez2CWNs+RyHlmpKG7Ia2GGB0rBFGQmMLgiA5Qcortwpl62qNNH9RDEq+tg9
+	gW63CBG251wkaYWbEr2LcewycL6Pusfhmh0uOyEUmYpiYkQAKo/wsTVTHG0SoNjT30haDwtrKfH
+	1q0NCtcSAI2Is1jzlzAon94MlB3bTy+ecvRSUWgjPBtn1w7ZYHajke/PBIcWlci80edkrA4CtFM
+	VhBSHWgd3RZZ3N7N0S4lDDGK2Cc90966wkTjXzIISHT3V1jQzQ710366VfShcEq3G2+4L0IbEdu
+	ib8ojRo5rBwtfmDiO0G9sz0Bo5G583NM4YWuZUuTcYuvXuvTGzPlTZAssO5sjGZYWsdYO
+X-Received: by 2002:a05:600c:46d1:b0:490:3d3d:805a with SMTP id 5b1f17b1804b1-4903d3d823bmr305095775e9.12.1779791761365;
+        Tue, 26 May 2026 03:36:01 -0700 (PDT)
+X-Received: by 2002:a05:600c:46d1:b0:490:3d3d:805a with SMTP id 5b1f17b1804b1-4903d3d823bmr305095295e9.12.1779791761010;
+        Tue, 26 May 2026 03:36:01 -0700 (PDT)
+Received: from [192.168.88.32] ([212.105.155.152])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45eb6d49132sm34527634f8f.24.2026.05.26.03.35.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 May 2026 02:47:11 -0700 (PDT)
-Message-ID: <8de0e6ad-987a-4729-bbd0-8399968dbb48@suse.com>
-Date: Tue, 26 May 2026 11:47:09 +0200
+        Tue, 26 May 2026 03:36:00 -0700 (PDT)
+Message-ID: <bc518fbc-5593-4084-b712-a5346367680c@redhat.com>
+Date: Tue, 26 May 2026 12:35:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -70,66 +75,46 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/14] module: Switch load_info::len to size_t
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Eduard Zingerman <eddyz87@gmail.com>,
- Kumar Kartikeya Dwivedi <memxor@gmail.com>,
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Jonathan Corbet <corbet@lwn.net>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
- Roberto Sassu <roberto.sassu@huawei.com>,
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Eric Snowberg <eric.snowberg@oracle.com>,
- Nicolas Schier <nicolas.schier@linux.dev>, Daniel Gomez
- <da.gomez@kernel.org>, Aaron Tomlin <atomlin@atomlin.com>,
- "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
- Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
- Xiu Jianfeng <xiujianfeng@huawei.com>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>, Jiri Olsa <jolsa@kernel.org>,
- bpf@vger.kernel.org, =?UTF-8?Q?Fabian_Gr=C3=BCnbichler?=
- <f.gruenbichler@proxmox.com>, Arnout Engelen <arnout@bzzt.net>,
- Mattia Rizzolo <mattia@mapreri.org>, kpcyrd <kpcyrd@archlinux.org>,
- Christian Heusel <christian@heusel.eu>, =?UTF-8?Q?C=C3=A2ju_Mihai-Drosi?=
- <mcaju95@gmail.com>, Eric Biggers <ebiggers@kernel.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org,
- debian-kernel@lists.debian.org
-References: <20260505-module-hashes-v5-0-e174a5a49fce@weissschuh.net>
- <20260505-module-hashes-v5-6-e174a5a49fce@weissschuh.net>
+Subject: Re: [net-next] netlabel: validate unlabeled mask attribute length
+To: Chenguang Zhao <zhaochenguang@kylinos.cn>,
+ Paul Moore <paul@paul-moore.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20260522054521.1169755-1-zhaochenguang@kylinos.cn>
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20260522054521.1169755-1-zhaochenguang@kylinos.cn>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: PMYki4vxCdWWsDXhVNGUtS_k32dFv4d97Hoz9nKIy2Y_1779791761
+X-Mimecast-Originator: redhat.com
 Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20260505-module-hashes-v5-6-e174a5a49fce@weissschuh.net>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 5/5/26 11:05 AM, Thomas Weißschuh wrote:
-> Switching the types will make some later changes cleaner.
-
-Since the updated version drops the patch "module: Deduplicate signature
-extraction", I believe this change is no longer necessary.
-
-> size_t is also the semantically correct type for this field.
+On 5/22/26 7:45 AM, Chenguang Zhao wrote:
+> netlbl_unlabel_addrinfo_get() checked the address length
+> but allowed shorter mask attributes to pass through to
+> fixed-size address reads.
 > 
-> As both 'size_t' and 'unsigned long' are always the same size, this
-> should be risk-free.
+> Signed-off-by: Chenguang Zhao <zhaochenguang@kylinos.cn>
+> ---
+>  netlbl_unlabel_addrinfo_get() only rejected a mask
+>  length mismatch when the address attribute length
+>  was also invalid.  A crafted Generic Netlink request
+>  could therefore provide a valid IPv4/IPv6 address
+>  attribute with a shorter mask attribute.
+>  
+>  NLA_BINARY policy lengths are maximum lengths,
+>  not exact lengths, so the short mask can pass
+>  policy validation.  The mask is later read as
+>  a full struct in_addr or struct in6_addr.
+>  Require both address and mask attributes to
+>  have the exact expected size.
 
-The module 'len' would now start in init_module() as 'unsigned long',
-then change in copy_module_from_user() to size_t, and then back to
-'unsigned long' when calling copy_chunked_from_user(). The current code
-is more consistent and mostly uses 'unsigned long', matching the syscall
-interface.
+The above should be part of the commit message. Also this looks like a
+fix that should target the 'net' tree and include a 'Fixes:' tag.
 
--- 
 Thanks,
-Petr
+
+Paolo
+
