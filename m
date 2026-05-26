@@ -1,120 +1,131 @@
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F212F8E80;
-	Tue, 26 May 2026 13:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977253FD941;
+	Tue, 26 May 2026 14:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779803961; cv=none; b=PvGkeLKCldqPrYua3D/Z7LCHbDMlFB6g7ZrnWVu4+IsH0QAqtjozPSklAtQmtw3iih1hdI70Sa53ilOn37vqYLlnWYpgFOhQfbnp7yd2FLQqfzdx03W77exK6x4FrykddZFWDl7iOEt9vpMQFu2zRfAl+KEh+x+TPjL2gK7CJS0=
+	t=1779804186; cv=none; b=kbSd0FuRK9xu7w9yX7mfPDX09aWl2EwkbAzF1vH0UAVcuGiPzjDIfN+73Ing7jnGTv0xXrondkdM4rPHE0qGeMrgTWnytEcoggZ/JKrv2QrG/p3xoIJ0umeCgCO4rclXuw3TlpWOSZTj03vbSokTozzviDwu2wurd7Q7r6RGogo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779803961; c=relaxed/simple;
-	bh=RnN0j7pi3mmQyWPIBquEzKiilJBUPPQC8QFkR638DCo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EeYr8dVqFtj817N/8hVvRYNE1OxQbTe+l7XIO8mNrOASphcS6VjVwoISupTnVrhUHkSM2uHWuto11+cYu11+7nCBgUopcjXrazTPT7ai3DwQXu3/xUcKVqYQcFVhpy+nU2FqfRVayajgF7tLkIGCZwC1a/0GMT7/wBbl+YI5TW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mails.ucas.ac.cn; spf=pass smtp.mailfrom=mails.ucas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mails.ucas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mails.ucas.ac.cn
-Received: from fric.. (unknown [36.110.52.2])
-	by APP-03 (Coremail) with SMTP id rQCowABng9ojpxVq0OhwEg--.2821S2;
-	Tue, 26 May 2026 21:58:59 +0800 (CST)
-From: Jiakai Xu <xujiakai24@mails.ucas.ac.cn>
-To: penguin-kernel@i-love.sakura.ne.jp
-Cc: jmorris@namei.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	paul@paul-moore.com,
-	serge@hallyn.com,
-	takedakn@nttdata.co.jp,
-	xujiakai24@mails.ucas.ac.cn
-Subject: Re: [PATCH] tomoyo: Fix NULL pointer dereference in tomoyo_init_request_info() when domain is NULL
-Date: Tue, 26 May 2026 13:58:59 +0000
-Message-Id: <20260526135859.3211799-1-xujiakai24@mails.ucas.ac.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <814a7f61-67b2-49e9-b5bf-fd049b458079@I-love.SAKURA.ne.jp>
-References: <814a7f61-67b2-49e9-b5bf-fd049b458079@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1779804186; c=relaxed/simple;
+	bh=t5xw9LJjkBj+ypCFdHXKNrc+fuw2ZnYcp/JPKXg8Qnk=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=i2g+0uSapBY58AnaYSQ2zAgWH5BXuwSgQb4J462e2jj1jLkUgAOgsGWHpG0ZsnEX2PPFhBqO39n8IsNLiepWj0dKuso3BAKrFrbTeYDmnSVS9kyRSljnQivZ+OA8dKtrh8tNu4XUkKJA3sF1eKep56G0C8d7dUKPL+Zz7AsqgLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ApeOM2Jg; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ApeOM2Jg"
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64Q1EAEb3938045;
+	Tue, 26 May 2026 14:02:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=OVSHyb
+	RARqv6qeKU358Dv996FmOqA6kpbGSnXc/6dh4=; b=ApeOM2JgBhG97YqqmVq1vA
+	uW3+ODYnwlOwSXYPk3ABbaJ+8JGDtXMMjQ6lATL8k6JNP0vsILcDvGNMDzuJ0pX/
+	HzTlPFKL9s0UYmf4IsrtS5KmZi0toV8X/p2XQrzZRikULR2Sjvb4UJrTVCZwg6B3
+	yUMU9ClFYaCF0na6kX+ievHwD6TbPVHJrXF3SO78E6CvspW79UYeYSGVouGLl4vR
+	gax2kEQS52V16Ce9YjcWbdcJsyx7kPgJiFqpY+mkeGQPq6fQQQ1Y+BVxJxZJ9jmc
+	EqLL0OWaT3PCAiccaeA4AKHLn1xRj1Ae/dLSy8NCYrbfiWb1KQITDVu0W3ZCUXcw
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4eb4s2cdxw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 May 2026 14:02:39 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 64QDsFrP010217;
+	Tue, 26 May 2026 14:02:38 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4ebpxw1qxp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 May 2026 14:02:38 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 64QE2ckF37749292
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 May 2026 14:02:38 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1C7DC58064;
+	Tue, 26 May 2026 14:02:38 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 290A058052;
+	Tue, 26 May 2026 14:02:37 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.63.240])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 26 May 2026 14:02:37 +0000 (GMT)
+Message-ID: <ea886419ef3047ede1885504fad8f865cdcc5ce3.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 12/13] ima: Return error on deleting measurements
+ already copied during kexec
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
+        skhan@linuxfoundation.org, dmitry.kasatkin@gmail.com,
+        eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        gregorylumen@linux.microsoft.com, chenste@linux.microsoft.com,
+        nramas@linux.microsoft.com, Roberto Sassu <roberto.sassu@huawei.com>
+In-Reply-To: <20260429160319.4162918-13-roberto.sassu@huaweicloud.com>
+References: <20260429160319.4162918-1-roberto.sassu@huaweicloud.com>
+	 <20260429160319.4162918-13-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 26 May 2026 10:02:36 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowABng9ojpxVq0OhwEg--.2821S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7CF4fWw18Kw47tr1UJFW3trb_yoW8Kr43pF
-	W3JF1j9r48JF4Sv3yUCw43Wry09ryrGas8G3s8Kws5CFs0grn2gF1agFW5uFn8Ar4ftw12
-	yw17Z3ySgFWDJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VUjPEfUUUUUU==
-X-CM-SenderInfo: 50xmxthndljko6pdxz3voxutnvoduhdfq/
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-GUID: Bt2M4F3zVq5rPeWk7bo51CXNf2qBiY3I
+X-Authority-Analysis: v=2.4 cv=Sq2gLvO0 c=1 sm=1 tr=0 ts=6a15a800 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=U7nrCbtTmkRpXpFmAIza:22 a=i0EeH86SAAAA:8
+ a=uIBYqjL5AI_LJtRyct0A:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI2MDExOCBTYWx0ZWRfX91i9/+0QiPY7
+ Hy9XdjmcMU6QDtO2IpgatIpKynyhzZKFIZ6n7O0jdCxFhrPBy5A/OBXKtl+OUHkIJbA0gW5eciM
+ duRO7/+kssygkfeOMsuQq7v/jc9RFsMU451njoI8chD76jW1HkIMpBmtpf6TIUSpGScFqztS7x/
+ Mb3V9Vbypf3kYMxqqZBi5mm0N+XsZ0S6M4npuy3nJb9a0huaoONxyDQxtzmfuFWdLNBvIW5sOjY
+ DcLrdKXdfb6On9hxSk1abvCKdUy3D6Z0RxTtBg+O8c0doHZ5N0b7rSNvSq3lgbMXvKrNnqJXUfp
+ 3DIUTyX5TSmZY7PoPpYnexhIbQf8RSW/1iBqLRbYMqRx3wYzO/Lhd+VBs+4WP3ZVoXLbsQ4sHzF
+ x2/N1OWx3uS42PlhfBLcCSa88bOxrUmA0uQ313y3qm1mscW8yY7NQWmH38uC2rg1RHkqZSZOuZK
+ Ee1mVu3cLnzRo+k/5fA==
+X-Proofpoint-ORIG-GUID: mDlI4sDPjAyCtgp0Cq6g3LsSl4l3Uu0k
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-05-26_03,2026-05-26_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 phishscore=0 impostorscore=0 malwarescore=0
+ lowpriorityscore=0 adultscore=0 clxscore=1015 suspectscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2605130000 definitions=main-2605260118
 
-> Thank you for a patch, but I don't think we need this change.
+On Wed, 2026-04-29 at 18:03 +0200, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>=20
+> Refuse to delete staged or active list measurements, if a kexec racing wi=
+th
+> the deletion already copied those measurements in the kexec buffer. In th=
+is
+> way, user space becomes aware that those measurements are going to appear
+> in the secondary kernel, and thus they don't have to be saved twice.
 
-Thanks for your review! I understand your perspective, but I believe
-the crash is a real NULL pointer dereference, and I'd like to explain
-why the defensive check is warranted.
+There are two reboot notifiers: one to prevent additional measurements exte=
+nding
+the TPM, while the other copies the measurements for kexec.  This patch pre=
+vents
+deleting the staged measurements after the latter notifier.
 
-> TOMOYO's initial domain is &tomoyo_kernel_domain, and each thread belongs to
-> a non-NULL domain. Therefore, tomoyo_domain() is not supposed to return NULL.
+Instead of introducing a specific method for detecting whether the measurem=
+ent
+list has been copied, rely on one of the two existing reboot notifiers. The
+simplest method would test "ima_measurements_suspended", which would preven=
+t
+deleting the staged measurements a bit earlier.
 
-While tomoyo_domain() is not supposed to return NULL under normal
-operation, there are code paths that leave s->domain_info == NULL:
-
-  a) Pre-init window (security/tomoyo/tomoyo.c, lines 598-612):
-     The task security blob is zero-allocated via kzalloc(), and
-     security_add_hooks() at line 603 is called BEFORE
-     s->domain_info = &tomoyo_kernel_domain at line 606. If any LSM
-     hook fires during that window, tomoyo_domain() returns NULL.
-
-  b) tomoyo_task_free() (tomoyo.c, lines 533-545) explicitly sets
-     s->domain_info = NULL after decrementing the refcount.
-
-  c) tomoyo_find_next_domain() (domain.c, lines 876-883) writes
-     s->domain_info = NULL when the domain transition fails.
-
-> > Found by fuzzing. Here is the report:
-> > 
-> > Unable to handle kernel paging request at virtual address dfffffff00000003
-> 
-> Is this a NULL pointer dereference?
-> It seems to me that this is just a random memory corruption.
-
-This address is the KASAN shadow byte for memory access at offset 0x18
-(24), not a random corrupted value. On RISC-V with sv57 page table,
-KASAN_SHADOW_BASE is `0xdfffffff00000000`, and the shadow address is
-computed as:
-
-    shadow_addr = (access_addr >> 3) + KASAN_SHADOW_BASE
-                = (24 >> 3) + 0xdfffffff00000000
-                = 0xdfffffff00000003
-
-In `struct tomoyo_domain_info` (security/tomoyo/common.h, lines
-680-693), the layout is:
-
-    offset 0:  struct list_head list;          // 16 bytes
-    offset 16: struct list_head acl_info_list; // 16 bytes (next at 16, prev at 24)
-    offset 32: domainname;                     // 8 bytes
-    ...
-
-Offset 24 from NULL is `domain->acl_info_list.prev`, which is
-dereferenced by the `list_for_each_entry_rcu()` loop in
-`tomoyo_check_acl()` at security/tomoyo/domain.c:171 when `domain` is
-NULL. This is KASAN catching a NULL pointer dereference in action, not
-random memory corruption.
-
-I think adding a NULL check makes the code more robust. What do you 
-think?
-
-Best regards,
-Jiakai
+Mimi
 
