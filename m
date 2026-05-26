@@ -1,165 +1,408 @@
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27A536AB6B
-	for <linux-security-module@vger.kernel.org>; Tue, 26 May 2026 15:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933E738D3FB;
+	Tue, 26 May 2026 15:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779809752; cv=none; b=tPE4zCe9GQRvG0U8/eU20M0LniXCJN7ZVW+M192D/EVzY/5oyZNcxPX/6Oez8Gma369kpkf7I6t0uqgECzeKjSDku3+Odbr+cYSwVgq9wH6X/1iD3CvBYbRgXTWRxh8mPuCnmfsPtzl+oVWfTZJscW1VZchuqJL8YRE0GlZGeXg=
+	t=1779810824; cv=none; b=OHOLoOoPsHsLQw+hbDKo+fi5EMM4L1Jj6IcQlZzcaKDhAn41TilKdcZHJI740oti87HqsdfVxCVyHjL8wRzCeI6KG8/o+hioZM3icdLYEgsj8FH+IqcnrHGqSQnCca88fH0f1TM5cqAaPiJ1/cW4tpGKo/dCNaEjXPAGHva2rLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779809752; c=relaxed/simple;
-	bh=BdrCyzbp+2MqB2Q45Ge3JlLUe63MVsEBUoIfS6DNtWo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=m3SuqUay5ggacMqyjP6nWPi7gqSnCKxXQqUTihEu0SqG2HYbPa/mQL/kRbt379UAP/xgRrm1IszmmJ2gBomFEtbqGEhA2NWHYGmF199GlAdBoq62xK42xQVOrt14s3B3JndOOgZqvTibHN+v9aV6UsHJVuUGl8bfaSSDffJh5O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=Pus19jnN; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=zetier.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zetier.com
+	s=arc-20240116; t=1779810824; c=relaxed/simple;
+	bh=flxaglZfHiOD94CaHEK91bF8xE2z/fiF0zmU4cfjKnc=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=WHcmtWP3EyohE4RR6hlQTj8d6+WOiR8gvFyBxVWl8iGLJ9x0VhAB4OITYjgUFHpCMO4rzTo0rwNWUlnL6Y+mJH0oQN4N+AJx5HKaFml9ooCjXZK414PfjK8N0fecFuu/XOxLXsDBs0OmcLYTUK+RZf+yp/d2KWe7YQJoP7cdKjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VJ442wSP; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="Pus19jnN"
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-91080895355so1223521285a.3
-        for <linux-security-module@vger.kernel.org>; Tue, 26 May 2026 08:35:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=zetier.com; s=gm; t=1779809746; x=1780414546; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FaDmpgG4YmKy0EzLVmDS2/ARG0WGlq46PT9Krk/q/WA=;
-        b=Pus19jnNWL+jgBZsnVAC/QriICxVXNYCkJ/1EbAFpa7cjpYKFLaTao9qJD5mGnOb1P
-         aGJ8EHyl4CG9wyvp8Sn5TcOfnaCQz3P+EbEyxtriUH5d/4SdknWFRDCemRLa9FEMm7DD
-         U4uaM9cckmgmJ9ROTrx/zuZG5XqAYieYfTPT6GwkvC/XCrc1GKLDbavUeO07MtVxBFhH
-         sH/QtyBD3SzKpAi11SEqQA0/hPq8lHw/AOCnk49DKj5aCSTZg2hJfWWnyzw13XKGZOxk
-         WTXJ4H0pVAvjFbWA+LThoeqW7S3bZ4OyD0iyFxHSJyL6QzwL3V1Ic5JGm2FmsAgcbCRE
-         lNnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779809746; x=1780414546;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=FaDmpgG4YmKy0EzLVmDS2/ARG0WGlq46PT9Krk/q/WA=;
-        b=Bx3WLZCdiMHneHjHdhfiPqGNQ/QBPjEc8ZIFARm5uBpWe1M9NVMhUKqWfHRAm9sPmw
-         jVVteZ5+CQxtQwgDwszo3VQk2vRh/sUGwG3nJiJTRxcfK3viL8DChGvSoIqz3UsHF7pJ
-         1Hjx/731nA9uda+4tfbCs48qKFlv1uAnE355iraJ7LudCyQuGONoec+kqv0fZP8eGjII
-         bNdZWUMvd52oXS0dLUl64M4TZH5OmrEMbEyyy1WurD8AvvHewt7+AYXq5ZOo2uF8X19j
-         7JZg0RuRicl/9l1REFCZm/lelJuh+nUZ5AL76yEFg4kdL2jCorNnMQmf88gOtEByTKAu
-         QOxA==
-X-Gm-Message-State: AOJu0YwaHWSQrE1QQf/exwwtO3oJSN1yWgu0aj1P0ko+8wx1FTvpFOU9
-	1f/trx2CMrRF6v3DEeYdfEO8USVmwiYlz0GpIt1KX5Uk3lSd8fqPsRO/AEP4aN3xwqGHwj38Ubp
-	1XqFRTCU=
-X-Gm-Gg: Acq92OFuynkeJBT76jJPoxeF+SoohM65TXmWbVEJ0fbPbGy9IaIhQvjyfZQ3udsM2je
-	nJ99RvDQOygeEf8Sw1hqIeYHuBLQ4+O93NNpE6DiGKargfCoYpPAKBufBQbmmBwuRd7P/D7e2Yh
-	XM6iQHjriylZaMuicq9bz62TOSL92AZFx21jMlrB70GJXzs4PRxD+y2RBrAddV7vHD2aTJrVBmZ
-	kq9SNf5yX7NIFP0GZlv1D30luEKYcoR7DO8eZ+krl8pXF70T15OFk3rCgLRGg3MtQ9MM44C5fVf
-	YxZMjSEVvumBHTL8tYSXBl1BfzU4r8wIwYZOSIrdqznrHr/DXKNEmA0kBAB0auOv1P7zxs6vgu4
-	GjzA5bQFbAWQ/a+mlX9BsjOZnGDLlWCGbeURWIhr0BhlTQYN/PTxs89EdhgaPzLvds3N9NRekeT
-	v9Z9iIQDvAeB7ofjHmhYrig4Mu6RdCzybaN+h54WFxX48IAJFsn2q3b18qJ+m61JdGyrWUtMJY6
-	0ubnovDWg==
-X-Received: by 2002:a05:6214:5c01:b0:8cc:ec7:72c9 with SMTP id 6a1803df08f44-8cc7b550894mr321270736d6.19.1779809746352;
-        Tue, 26 May 2026 08:35:46 -0700 (PDT)
-Received: from warpstation.incus (107.191.145.34.bc.googleusercontent.com. [34.145.191.107])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8cc80dd02c1sm145053886d6.6.2026.05.26.08.35.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 May 2026 08:35:46 -0700 (PDT)
-From: Ethan Ferguson <ethan.ferguson@zetier.com>
-To: kees@kernel.org,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ethan Ferguson <ethan.ferguson@zetier.com>
-Subject: [PATCH RESEND 1/1] yama: clean-up ptrace relations upon activating YAMA_SCOPE_NO_ATTACH
-Date: Tue, 26 May 2026 11:35:42 -0400
-Message-ID: <20260526153542.105483-2-ethan.ferguson@zetier.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260526153542.105483-1-ethan.ferguson@zetier.com>
-References: <20260526153542.105483-1-ethan.ferguson@zetier.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VJ442wSP"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64QBJfDu2678824;
+	Tue, 26 May 2026 15:53:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=KL4xFE
+	SqBTmI7g4zeMcj/1QMLNo0qqoM3qkESn6OWN8=; b=VJ442wSPyqwR1MyXI7AVIS
+	kv8DI7HOGwHEdA1BbI2RQjiZrObSt9lwQN6tZWl9oNuWUdlGKwjo7OjMWMUg4KdV
+	HQ/jxWJfz/cdOhd6DL3ZJ2jLI+wblNy8qQ9yzezQD0N9W6oDqNS3gVsrvWcY/s+w
+	TG3I8SDr8VKHhuffFUDlqL71Hf5/C8mgeRNv/K0E3GEtZi61AlQWGgtpggpgXN82
+	v/pnOicFmk+ig61TLa0pN3miYH0bwg33TKcdO7oq+tNPtpTFTJZcq1X+1VLev2hI
+	i67CsZlYH4OZDJkhxhhn2DbvCEZ+IH05y7rMNOtdiaCPbSlq6GQmCuTkAMO2bd6Q
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4eb4nun42j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 May 2026 15:53:20 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 64QFdf03020502;
+	Tue, 26 May 2026 15:53:19 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4ebpjqa8yw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 May 2026 15:53:19 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 64QFrJYF29688326
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 May 2026 15:53:19 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0DA165804B;
+	Tue, 26 May 2026 15:53:19 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 653FE58055;
+	Tue, 26 May 2026 15:53:17 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.63.240])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 26 May 2026 15:53:17 +0000 (GMT)
+Message-ID: <34e13ef20eb507f6025dd9f1138df0a862f5110e.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 13/13] doc: security: Add documentation of the IMA
+ staging mechanism
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
+        skhan@linuxfoundation.org, dmitry.kasatkin@gmail.com,
+        eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        gregorylumen@linux.microsoft.com, chenste@linux.microsoft.com,
+        nramas@linux.microsoft.com, Roberto Sassu <roberto.sassu@huawei.com>
+In-Reply-To: <20260429160319.4162918-14-roberto.sassu@huaweicloud.com>
+References: <20260429160319.4162918-1-roberto.sassu@huaweicloud.com>
+	 <20260429160319.4162918-14-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 26 May 2026 11:53:16 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI2MDEzNCBTYWx0ZWRfX0AKKSIYvJKZf
+ IxHJVY6hUKPfn30s6VfOyfpj6s07Z6e9oghkaayJxSZOUXXCkBw6gLaMVE50/HdAWi9Zg0EVS8S
+ LyBMFKaNUYLsJc05CLgj9IjQOOFljEXmI5M7bqQfYJFVMDirtssX/3Z1QK+8P3QlgHwJRPNCmrU
+ xFMgtYzt4o+fzksCiS7gCQOdlqKK/v0jki1qYA4vFS2LCtHoihNr6K2kpWrXO6IndL7sdreX6dC
+ r3v/Dyy0gUHRkTpujhsr0u1S+Hm2KWGAbaWtf2HfbNy8PU/RIf+SPWybQzb8gEuivWA+BnW6VO/
+ kWgMgK4eAMeHUv9Eou820dPyrANjvMyz0OrI89g9x2f4CFttNyQuavjJho9u21NuxiMkVohxSe2
+ EErR0d/40roewsVY/oCvgRG/0P6UNqOcZdpUCax5FVd9xMfBcA9vt7RTRoCG3wxRsUfvdo8Ydi9
+ xTt+F78EYgsQjE78naw==
+X-Authority-Analysis: v=2.4 cv=UtJT8ewB c=1 sm=1 tr=0 ts=6a15c1f1 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=iQ6ETzBq9ecOQQE5vZCe:22 a=NEAV23lmAAAA:8
+ a=i0EeH86SAAAA:8 a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=2gXG2BVIBEAsA41MxPYA:9
+ a=QEXdDO2ut3YA:10 a=O8hF6Hzn-FEA:10
+X-Proofpoint-ORIG-GUID: suwDQ4wSlnnFpe9LsUMFlGpKwBTjS-R0
+X-Proofpoint-GUID: F4514dJzlJB76a9Vi21YBxWgrvlwJg1W
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-05-26_03,2026-05-26_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 suspectscore=0 adultscore=0 clxscore=1015 bulkscore=0
+ phishscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2605130000
+ definitions=main-2605260134
 
-Clean up ptracer_relations upon YAMA_SCOPE_NO_ATTACH, and prevent
-further modification by processes.
+"staging" is a method of exporting and deleting IMA measurement list record=
+s
+from kernel memory. The Subject line and document should be more generic. P=
+lease
+update the Subject line to something like "ima: exporting and deleting IMA
+measurement records from kernel memory".
 
-Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
+On Wed, 2026-04-29 at 18:03 +0200, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>=20
+> Add the documentation of the IMA staging mechanism in
+> Documentation/security/IMA-staging.rst.
 
----
- security/yama/yama_lsm.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+Please update the name.
 
-diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-index cef3776cf3b2..3b7c5384e6bc 100644
---- a/security/yama/yama_lsm.c
-+++ b/security/yama/yama_lsm.c
-@@ -26,6 +26,7 @@
- #define YAMA_SCOPE_NO_ATTACH	3
- 
- static int ptrace_scope = YAMA_SCOPE_RELATIONAL;
-+static int max_scope = YAMA_SCOPE_NO_ATTACH;
- 
- /* describe a ptrace relationship for potential exception */
- struct ptrace_relation {
-@@ -119,7 +120,7 @@ static void yama_relation_cleanup(struct work_struct *work)
- 	spin_lock(&ptracer_relations_lock);
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(relation, &ptracer_relations, node) {
--		if (relation->invalid) {
-+		if (relation->invalid || ptrace_scope == max_scope) {
- 			list_del_rcu(&relation->node);
- 			kfree_rcu(relation, rcu);
- 		}
-@@ -204,7 +205,8 @@ static void yama_ptracer_del(struct task_struct *tracer,
-  */
- static void yama_task_free(struct task_struct *task)
- {
--	yama_ptracer_del(task, task);
-+	if (ptrace_scope <= max_scope)
-+		yama_ptracer_del(task, task);
- }
- 
- /**
-@@ -224,6 +226,9 @@ static int yama_task_prctl(int option, unsigned long arg2, unsigned long arg3,
- 	int rc = -ENOSYS;
- 	struct task_struct *myself;
- 
-+	if (ptrace_scope == max_scope)
-+		return -EPERM;
-+
- 	switch (option) {
- 	case PR_SET_PTRACER:
- 		/* Since a thread can call prctl(), find the group leader
-@@ -432,6 +437,7 @@ static struct security_hook_list yama_hooks[] __ro_after_init = {
- static int yama_dointvec_minmax(const struct ctl_table *table, int write,
- 				void *buffer, size_t *lenp, loff_t *ppos)
- {
-+	int ret;
- 	struct ctl_table table_copy;
- 
- 	if (write && !capable(CAP_SYS_PTRACE))
-@@ -442,10 +448,17 @@ static int yama_dointvec_minmax(const struct ctl_table *table, int write,
- 	if (*(int *)table_copy.data == *(int *)table_copy.extra2)
- 		table_copy.extra1 = table_copy.extra2;
- 
--	return proc_dointvec_minmax(&table_copy, write, buffer, lenp, ppos);
--}
-+	ret = proc_dointvec_minmax(&table_copy, write, buffer, lenp, ppos);
-+	if (ret < 0)
-+		return ret;
- 
--static int max_scope = YAMA_SCOPE_NO_ATTACH;
-+	/* If max_scope was just activated in this call */
-+	if (*(int *)table_copy.data == *(int *)table_copy.extra2 &&
-+	    table_copy.extra1 != table_copy.extra2)
-+		schedule_work(&yama_relation_work);
-+
-+	return 0;
-+}
- 
- static const struct ctl_table yama_sysctl_table[] = {
- 	{
--- 
-2.43.0
+>=20
+> Also add the missing Documentation/security/IMA-templates.rst file in
+> MAINTAINERS.
+>=20
+> Link: https://github.com/linux-integrity/linux/issues/1
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  Documentation/security/IMA-staging.rst | 163 +++++++++++++++++++++++++
+>  Documentation/security/index.rst       |   1 +
+>  MAINTAINERS                            |   2 +
+>  3 files changed, 166 insertions(+)
+>  create mode 100644 Documentation/security/IMA-staging.rst
+>=20
+> diff --git a/Documentation/security/IMA-staging.rst b/Documentation/secur=
+ity/IMA-staging.rst
+> new file mode 100644
+> index 000000000000..de6428893f0e
+> --- /dev/null
+> +++ b/Documentation/security/IMA-staging.rst
+> @@ -0,0 +1,163 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +IMA Measurements Staging Mechanism
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
 
+Please update the name here as well.  The introduction describes the motiva=
+tion
+for the feature of exporting and deleting measurement records.  The concept=
+ of
+"staging" measurement records to be deleted should be described later.
+
+> +
+> +Introduction
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +The IMA measurements list is currently stored in the kernel memory. Memo=
+ry
+> +occupation grows linearly with the number of entries, and can become a
+> +problem especially in environments with reduced resources.
+> +
+> +While there is an advantage in keeping the IMA measurements list in kern=
+el
+> +memory, so that it is always available for reading from the securityfs
+> +interfaces, storing it elsewhere would make it possible to free precious
+> +memory for other kernel components.
+> +
+> +Storing the IMA measurements list outside the kernel does not introduce
+> +security issues, since its integrity is anyway protected by the TPM.
+> +
+> +Hence, the new IMA staging mechanism is introduced to allow user space
+> +to remove the desired portion of the measurements list from the kernel.
+
+Please incorporate my previous comments on 00/13 here and, perhaps, add mor=
+e
+details (e.g. userspace application for saving and returning the complete
+measurement list).
+
+Introduce the concept of "staging" here. (There's quite a bit of code neede=
+d for
+staging the measurement list.)  Please include an explanation of the stagin=
+g
+benefits (e.g. locking).
+
+> +
+> +
+> +Usage
+> +=3D=3D=3D=3D=3D
+
+Readers need to understand the implications of enabling the CONFIG_IMA_STAG=
+ING
+feature, before telling them how to enable it.  Either move the "Usage" sec=
+tion
+to after "Management of Staged Measurements" and "Remote Attestation Agent
+Workflow" or introduce the concepts here would be better.
+
+> +
+> +The IMA staging mechanism can be enabled from the kernel configuration w=
+ith
+> +the CONFIG_IMA_STAGING option.
+
+Referring to exporting and deleting mechanism from here on as "staging" is =
+fine.
+
+thanks,
+
+Mimi
+
+> +
+> +If it is enabled, IMA duplicates the current measurements interfaces (bo=
+th
+> +binary and ASCII), by adding the ``_staged`` file suffix. Both the origi=
+nal
+> +and the staging interfaces gain the write permission for the root user a=
+nd
+> +group, but require the process to have CAP_SYS_ADMIN set.
+> +
+> +The staging mechanism supports two flavors.
+> +
+> +
+> +Staging with prompt
+> +~~~~~~~~~~~~~~~~~~~
+> +
+> +The current measurements list is moved to a temporary staging area, and
+> +staged measurements are deleted upon confirmation.
+> +
+> +This staging process is achieved with the following steps.
+> +
+> + 1. ``echo A > <original interface>``: the user requests IMA to stage th=
+e
+> +    entire measurements list;
+> + 2. ``cat <_staged interface>``: the user reads the staged measurements;
+> + 3. ``echo D > <_staged interface>``: the user requests IMA to delete
+> +    staged measurements.
+> +
+> +
+> +Staging and deleting
+> +~~~~~~~~~~~~~~~~~~~~
+> +
+> +N measurements are staged to a temporary staging area, and immediately
+> +deleted without further confirmation.
+> +
+> +This staging process is achieved with the following steps.
+> +
+> + 1. ``cat <original interface>``: the user reads the current measurement=
+s
+> +    list and determines what the value N for staging should be;
+> + 2. ``echo N > <original interface>``: the user requests IMA to delete N
+> +    measurements from the current measurements list.
+> +
+> +
+> +Interface Access
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +In order to avoid the IMA measurements list be suddenly truncated by the
+> +staging mechanism during a read, or having multiple concurrent staging, =
+a
+> +semaphore-like locking scheme has been implemented on all the measuremen=
+ts
+> +list interfaces.
+> +
+> +Multiple readers can access concurrently the original and staged
+> +interfaces, and they can be in mutual exclusion with one writer.
+> +
+> +If an illegal access occurs, the open to the measurements list interface=
+ is
+> +denied.
+> +
+> +
+> +Management of Staged Measurements
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Since with the staging mechanism measurement entries are removed from th=
+e
+> +kernel, the user needs to save the staged ones in a storage and concaten=
+ate
+> +them together, so that it can present them to remote attestation agents =
+as
+> +if staging was never done.
+> +
+> +Coordination is necessary in the case where there are multiple actors
+> +requesting measurements to be staged.
+> +
+> +In the staging with prompt case, the measurement interfaces can be acces=
+sed
+> +only by one actor (writer) at a time, so the others will get an error un=
+til
+> +the former closes it. Since the actors don't care about N, when they gai=
+n
+> +access to the interface, they will get all the staged measurements at th=
+e
+> +time of their request.
+> +
+> +In the case of staging and deleting, coordination is more important, sin=
+ce
+> +there is the risk that two actors unaware of each other compute the valu=
+e N
+> +on the current measurements list and request IMA to stage N twice.
+> +
+> +
+> +Remote Attestation Agent Workflow
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Users can choose the staging method they find more appropriate for their
+> +workflow.
+> +
+> +If, as an example, a remote attestation agent would like to present to t=
+he
+> +remote attestation server only the measurements that are required to
+> +verify the TPM quote, its workflow would be the following.
+> +
+> +With staging with prompt, the agent stages the current measurements list=
+,
+> +reads and stores the measurements in a storage and immediately requests
+> +IMA to delete the staged measurements from kernel memory. Afterwards, it
+> +calculates N by replaying the PCR extend on the stored measurements unti=
+l
+> +the calculated PCRs match the quoted PCRs. It then keeps the measurement=
+s
+> +in excess for the next attestation request.
+> +
+> +At the next attestation request, the agent performs the same steps above=
+,
+> +and concatenates the new measurements to the ones in excess from the
+> +previous request. Also in this case, the agent replays the PCR extend un=
+til
+> +it matches the currently quoted PCRs, keeps the measurements in excess a=
+nd
+> +presents the new N measurements entries to the remote attestation server=
+.
+> +
+> +With the staging and deleting method, the agent reads the current
+> +measurements list, calculates N and requests IMA to delete only those. T=
+he
+> +measurements in excess are kept in the IMA measurements list and can be
+> +retrieved at the next remote attestation request.
+> +
+> +Kexec
+> +=3D=3D=3D=3D=3D
+> +
+> +In the event a kexec() system call occurs between staging and deleting, =
+the
+> +staged measurements entries are prepended to the current measurements li=
+st,
+> +so that they are both available when the secondary kernel starts. In tha=
+t
+> +case, IMA returns an error to the user when attempting to delete staged
+> +measurements to notify about their copy to the kexec buffer, so that the
+> +user does not store them twice.
+> +
+> +
+> +Hash table
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +By default, the template digest of staged measurement entries are kept i=
+n
+> +kernel memory (only template data are freed), to be able to detect
+> +duplicate entries independently of staging.
+> +
+> +The new kernel option ``ima_flush_htable`` has been introduced to
+> +explicitly request a complete deletion of the staged measurements, for
+> +maximum kernel memory saving. If the option has been specified, duplicat=
+e
+> +entries are still avoided on entries of the current measurements list,
+> +but there can be duplicates between different groups of staged
+> +measurements.
+> +
+> +Flushing the hash table is supported only for the staging with prompt
+> +flavor. For the staging and deleting flavor, it would have been necessar=
+y
+> +to lock the hot path adding new measurements for the time needed to remo=
+ve
+> +each selected measurement individually.
+> diff --git a/Documentation/security/index.rst b/Documentation/security/in=
+dex.rst
+> index 3e0a7114a862..cec064dc1c83 100644
+> --- a/Documentation/security/index.rst
+> +++ b/Documentation/security/index.rst
+> @@ -8,6 +8,7 @@ Security Documentation
+>     credentials
+>     snp-tdx-threat-model
+>     IMA-templates
+> +   IMA-staging
+>     keys/index
+>     lsm
+>     lsm-development
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 2fb1c75afd16..5bc816ab4a5b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12740,6 +12740,8 @@ R:	Eric Snowberg <eric.snowberg@oracle.com>
+>  L:	linux-integrity@vger.kernel.org
+>  S:	Supported
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integri=
+ty.git
+> +F:	Documentation/security/IMA-staging.rst
+> +F:	Documentation/security/IMA-templates.rst
+>  F:	include/linux/secure_boot.h
+>  F:	security/integrity/
+>  F:	security/integrity/ima/
