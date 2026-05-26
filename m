@@ -1,77 +1,34 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A0F3542D1
-	for <linux-security-module@vger.kernel.org>; Mon, 25 May 2026 22:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7080D280318;
+	Tue, 26 May 2026 01:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779746691; cv=none; b=fA28HR4i3R/Rs80NOqOdQZXJPEItIBIyVHlkJTlxqjg8s3enS2fzJyeOU3VYw3L/E0eWvKb/4mYcDN/aIeIj9i1QgAbS0Ewhmu6+MMNUu5GcVO+zKcqGtGlH27mBocVlD6K+9HTJEj8+x3iP1z45FoR8wmKHkuaxykBNZPlcFaU=
+	t=1779758624; cv=none; b=g2o9kEOnADr4Yrcj6ptFC9xd5he7LejbxuwLKnauOE2vkd0H42p7rbYhFNLtUwYDV8G14Z8zqRx9T0n//MPTPqwgQYwj8Wo1NjKFZad5aTSZQx7yeBIrF00+e+C7AkUbxzwdTK62tRePMYy0jDDM+Apa+p3kmtgK9aCF6wHDEdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779746691; c=relaxed/simple;
-	bh=n7UWqtzQfSDd8ke2zpsyNz1xMduyOx0o5jQ/AXwR+Uo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fapu2A3w2/x9ibx/M7Cg8tRGjIhzULxQe88tBRdVLQCfHokPrJBZKkC6cdR7r1SV9WWeDZ1bQK6VZ+IIUt8/fH+5s5vpYjYTn+1tylQ2Tq+4YmGVgcC35TKsc7GCJnqIBql2BSKy4cqyurmqL0pe8wZpY903HedG09ubpSTtoEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bWipLrsv; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bWipLrsv"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4905e190c71so17049855e9.3
-        for <linux-security-module@vger.kernel.org>; Mon, 25 May 2026 15:04:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779746688; x=1780351488; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7RTCGCGe4Su+57ooJAGzTmDyHCOTy856CxFupslfh74=;
-        b=bWipLrsv5cnAe/5CxBnqkmhH/zaUiiitF3vX99KLGSiaIoMQvfaJoTUUTBwVV0esrT
-         OcYHmWrAr5+tRvfh+F/SP/+A+IoH4QUICezkKUb37Rarl5FciRRDDGNAA/MjKAoT5/uv
-         SFw0AgQO4qqcxEP0HwXxMi31u/ajm5lyVrVJbKmGZ1MtO8xOrWDLSlkbrJoPhYA7qPUV
-         IXrT7J/ibBPh0V8hwEwnWBoUH0Tf0iF4KYffP1CTU2ENpjX41zfyV9TdDctvCJpxcCFw
-         BKAw1nGfEN3dPdnt1SFoJjmxnRFxGcAV0NOeQ04MXDp0HjgvRDuqCUN12AxiYi0k6wiM
-         Dn5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779746688; x=1780351488;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7RTCGCGe4Su+57ooJAGzTmDyHCOTy856CxFupslfh74=;
-        b=jANby6asATCADZkf+bZ3sAfNKV1kcJgvEygCCROp52x84vLIP4GNaCwXGEw3IOvqD2
-         6UtpMnufUgrvFNSKwCWyoykD16FYTT/F8LnWLAAqrXz8B+TV5FCUMktP0iw5Gp8Guly1
-         IMg8iz76tp7pg/eQ2LJ/iaq9RX3xLPnW0k326d8WaAjOclpbgWwlRyFda15G+x/VEyaz
-         Kz4GfBdx5snGJtZ1uNI8wRx+zCgT/nNP93u4hA3DECdzT2GYHpod18P0jIENTd1l/cii
-         2AJT7RQoGiVQF1Sd0M74UurwIztACCVNU0xrh+khQP6GyYzUQDuEL+3xOP/RagF1uJsz
-         5/cQ==
-X-Forwarded-Encrypted: i=1; AFNElJ84MslmpWgpGko4qHV2SWj9riBni20uXDbd40AtySmokyx98Ah5xVbQEv7PCROvayxqHeT6rWNlHQyEv2eG2YOWGzl0HBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUh2pujYyY5vL+84f2/C/5jIldo3RAP9cFuR7ycS/rdprPbpVR
-	xdVDd3eiukkBFIrqMGKv4y9iTlysWmVyB9y8i6yO27JfIzqekOrsRk1E
-X-Gm-Gg: Acq92OGudLyOVLIy1jT71RvlJRpwMF6Dx6I7Q03EtAFb2+Wrnra8e4M0vC2MZ/98vaJ
-	Q9uT4ofy81GphpfRFVcljTkq4mOrt2LkSUIX04nuNIf6Teb1DrNOO0igYNfK75dti/zWjFm2rxm
-	pDyNOH4vWZCbMcuLAYOtTuTOeuFMRHmjwz6YO6H1j/Jra90V4Wox/NFeEqpcImwdG6D079SDo0j
-	wSCs7hiN3Qz/XIOD0ipyLPj5tz9DL4tyutMoUtYbrgR7RTPrz+JGp4w01haS+Wx5QFLasPYtaom
-	snPMXiibLAU7s8YANPDuJbsN6lgXivMPYRoKowsGGG3534VCPhr1qrJK+yGGhkHk+G3JIAlEH7A
-	T2q1vv1J5tRx0zFoGCfz+vM6zZZTn9vnONQwy1gkopPvDsAAMc6HxkGJiixH4TarGkOM1PU2WTW
-	kBtqwxwl3Iu751B8e6OnA0NiaLFr1XynU=
-X-Received: by 2002:a05:600d:4453:20b0:490:2238:4021 with SMTP id 5b1f17b1804b1-49042494fe3mr189225585e9.8.1779746688062;
-        Mon, 25 May 2026 15:04:48 -0700 (PDT)
-Received: from x1.tail0e71db.ts.net ([46.140.7.198])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49048f70f55sm80501465e9.17.2026.05.25.15.04.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 May 2026 15:04:47 -0700 (PDT)
-From: Ruslan Valiyev <linuxoid@gmail.com>
-To: John Johansen <john.johansen@canonical.com>
-Cc: Paul Moore <paul@paul-moore.com>,
+	s=arc-20240116; t=1779758624; c=relaxed/simple;
+	bh=ptaZMqRoKRah2EWEYFI3B99xkjghr5huwIqwCjuwQzw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oP4fQRtWzGe1OLD3hn1dEmleN278gE5ES6XirSBxVZxOK78IC/Pgu2h6uY/TLp2xyqMqkpzoiaTZi+1mTEKC33H/LnU7k94ID8V/52uyDncOfDq4w/VxEdTF7kNSxZplhRwgHz8a9WEbYzucMsu9NKeCj6DBfce15ZDOAbmDYIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mails.ucas.ac.cn; spf=pass smtp.mailfrom=mails.ucas.ac.cn; arc=none smtp.client-ip=159.226.251.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mails.ucas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mails.ucas.ac.cn
+Received: from fric.. (unknown [36.110.52.2])
+	by APP-05 (Coremail) with SMTP id zQCowABXr9IG9hRqaX5zEQ--.4180S2;
+	Tue, 26 May 2026 09:23:18 +0800 (CST)
+From: Jiakai Xu <xujiakai24@mails.ucas.ac.cn>
+To: linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: "Serge E . Hallyn" <serge@hallyn.com>,
 	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	Georgia Garcia <georgia.garcia@canonical.com>,
-	Cengiz Can <cengiz.can@canonical.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] apparmor: fix use-after-free in rawdata dedup loop
-Date: Tue, 26 May 2026 00:04:46 +0200
-Message-ID: <20260525220446.975352-1-linuxoid@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	Kentaro Takeda <takedakn@nttdata.co.jp>,
+	Paul Moore <paul@paul-moore.com>,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	Jiakai Xu <xujiakai24@mails.ucas.ac.cn>
+Subject: [PATCH] tomoyo: Fix NULL pointer dereference in tomoyo_init_request_info() when domain is NULL
+Date: Tue, 26 May 2026 01:23:15 +0000
+Message-Id: <20260526012315.762144-1-xujiakai24@mails.ucas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -79,109 +36,103 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowABXr9IG9hRqaX5zEQ--.4180S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWFWrGF13CFW5GrW3XFy8Grg_yoWrWryDpF
+	43tF1UGr48JFnrtFs7JFy5WryUtry5Ca47GrsxJr18JF1Duw4kJr17Jr4fur98Jr4UJFy7
+	trnFqrWFgr1DGaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9j14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+	1j6F4UJwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
+	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
+	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
+	x2IErcIFxwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvf
+	C2KfnxnUUI43ZEXa7VUbsYFJUUUUU==
+X-CM-SenderInfo: 50xmxthndljko6pdxz3voxutnvoduhdfq/
 
-aa_replace_profiles() walks ns->rawdata_list to dedup the incoming
-policy blob against entries already attached to existing profiles.
-Per the kernel-doc on struct aa_loaddata, list membership does not
-hold a reference: profiles hold pcount, and when the last pcount
-drops, do_ploaddata_rmfs() is queued on a workqueue that takes
-ns->lock and removes the entry. Between dropping the last pcount
-and the workqueue running, an entry remains on the list with
-pcount == 0.
+tomoyo_domain() can return NULL when the current task has no TOMOYO
+domain_info set.  When this happens, tomoyo_init_request_info() sets 
+r->domain = NULL and then dereferences the NULL domain via 
+domain->profile and later domain->acl_info_list in tomoyo_check_acl(), 
+causing a kernel page fault.
 
-aa_get_profile_loaddata() is an unconditional kref_get() on
-pcount, so when the dedup loop hits such an entry, refcount
-hardening reports
+Add a NULL check after tomoyo_domain() and return TOMOYO_CONFIG_DISABLED
+when domain is NULL.  All callers that can reach this path already check
+for TOMOYO_CONFIG_DISABLED and bail out, so this prevents the crash
+without changing the control flow for those callers.
 
-  refcount_t: addition on 0; use-after-free.
-
-inside aa_replace_profiles(), and the poisoned counter then
-trips "saturated" and "underflow" warnings on the subsequent
-uses of the same loaddata.
-
-Before commit a0b7091c4de4 ("apparmor: fix race on rawdata
-dereference") the dedup path used a get_unless_zero-style helper
-on a single counter, so the existing "if (tmp)" guard was
-meaningful. The split-refcount refactor introduced
-aa_get_profile_loaddata(), which has plain kref_get() semantics,
-and the guard quietly became a no-op.
-
-Introduce aa_get_profile_loaddata_not0(), matching the existing
-_not0 convention used by aa_get_profile_not0(), and use it for
-the rawdata_list dedup lookup so dying entries are skipped.
-
-Reproduced on x86_64 with v7.1-rc5 in QEMU+KVM running Ubuntu
-24.04 + stress-ng 0.17.06:
-
-  stress-ng --apparmor 1 --klog-check --timeout 60s
-
-Without this patch the three refcount_t warnings fire within a
-few seconds. With it the same 60 s run is clean. Coverage is a
-smoke-test only; a longer soak with CONFIG_KASAN, CONFIG_KCSAN
-and CONFIG_PROVE_LOCKING would be welcome from anyone with the
-cycles.
-
-Fixes: a0b7091c4de4 ("apparmor: fix race on rawdata dereference")
-Reported-by: Colin Ian King <colin.i.king@gmail.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=221513
-Cc: stable@vger.kernel.org
-Signed-off-by: Ruslan Valiyev <linuxoid@gmail.com>
+Fixes: c3ef1500ec8338 ("TOMOYO: Split files into some pieces.")
+Signed-off-by: Jiakai Xu <xujiakai24@mails.ucas.ac.cn>
 ---
- security/apparmor/include/policy_unpack.h | 19 +++++++++++++++++++
- security/apparmor/policy.c                |  8 ++++++--
- 2 files changed, 25 insertions(+), 2 deletions(-)
+ security/tomoyo/util.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/security/apparmor/include/policy_unpack.h b/security/apparmor/include/policy_unpack.h
-index e5a95dc4da1f..b9de0fdf9ee5 100644
---- a/security/apparmor/include/policy_unpack.h
-+++ b/security/apparmor/include/policy_unpack.h
-@@ -163,6 +163,25 @@ aa_get_profile_loaddata(struct aa_loaddata *data)
- 	return data;
- }
- 
-+/**
-+ * aa_get_profile_loaddata_not0 - get a profile reference count if not zero
-+ * @data: reference to get a count on
-+ *
-+ * Like aa_get_profile_loaddata(), but safe to call on an entry that may
-+ * be on a list (e.g. ns->rawdata_list) where the last pcount has already
-+ * dropped and the deferred cleanup has not yet run.
-+ *
-+ * Returns: pointer to reference, or %NULL if @data is NULL or its
-+ *          profile refcount has already reached zero.
-+ */
-+static inline struct aa_loaddata *
-+aa_get_profile_loaddata_not0(struct aa_loaddata *data)
-+{
-+	if (data && kref_get_unless_zero(&data->pcount))
-+		return data;
-+	return NULL;
-+}
-+
- void __aa_loaddata_update(struct aa_loaddata *data, long revision);
- bool aa_rawdata_eq(struct aa_loaddata *l, struct aa_loaddata *r);
- void aa_loaddata_kref(struct kref *kref);
-diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
-index b6a5eb4021db..e103cce6f4af 100644
---- a/security/apparmor/policy.c
-+++ b/security/apparmor/policy.c
-@@ -1223,8 +1223,12 @@ ssize_t aa_replace_profiles(struct aa_ns *policy_ns, struct aa_label *label,
- 			if (aa_rawdata_eq(rawdata_ent, udata)) {
- 				struct aa_loaddata *tmp;
- 
--				tmp = aa_get_profile_loaddata(rawdata_ent);
--				/* check we didn't fail the race */
-+				/*
-+				 * Entries remain on rawdata_list with
-+				 * pcount == 0 until do_ploaddata_rmfs()
-+				 * runs; only take a live profile ref.
-+				 */
-+				tmp = aa_get_profile_loaddata_not0(rawdata_ent);
- 				if (tmp) {
- 					aa_put_profile_loaddata(udata);
- 					udata = tmp;
-
-base-commit: e7ae89a0c97ce2b68b0983cd01eda67cf373517d
+diff --git a/security/tomoyo/util.c b/security/tomoyo/util.c
+index 6799b1122c9d8..cdc085390949c 100644
+--- a/security/tomoyo/util.c
++++ b/security/tomoyo/util.c
+@@ -1024,6 +1024,8 @@ int tomoyo_init_request_info(struct tomoyo_request_info *r,
+ 	memset(r, 0, sizeof(*r));
+ 	if (!domain)
+ 		domain = tomoyo_domain();
++	if (!domain)
++		return TOMOYO_CONFIG_DISABLED;
+ 	r->domain = domain;
+ 	profile = domain->profile;
+ 	r->profile = profile;
 -- 
-2.43.0
+2.34.1
+
+Found by fuzzing. Here is the report:
+
+Unable to handle kernel paging request at virtual address dfffffff00000003
+Current syz-executor pgtable: 4K pagesize, 57-bit VAs, pgdp=0x000000012edec000
+[dfffffff00000003] pgd=000000005fffe401, p4d=000000005fffe001, pud=0000000000000000
+Oops [#1]
+Modules linked in:
+CPU: 0 UID: 0 PID: 3126 Comm: syz-executor Tainted: G        W           7.1.0-rc1-gdb909bd7986c #1 PREEMPT 
+Tainted: [W]=WARN
+Hardware name: riscv-virtio,qemu (DT)
+epc : tomoyo_check_acl+0x90/0x4bc security/tomoyo/domain.c:173
+ ra : tomoyo_check_acl+0x86/0x4bc security/tomoyo/domain.c:173
+epc : ffffffff8149cf64 ra : ffffffff8149cf5a sp : ff200000040c7a90
+ gp : ffffffff8a395420 tp : ff60000089d05040 t0 : ff200000040c7960
+ t1 : 000000000000000f t2 : ffffffff86c068b0 s0 : ff200000040c7b10
+ s1 : 0000000000000000 a0 : 0000000000000018 a1 : 0000000000000000
+ a2 : 0000000000000002 a3 : ffffffff8149cf5a a4 : 0000000000000000
+ a5 : dfffffff00000003 a6 : 0000000000000003 a7 : 000000003dfe34af
+ s2 : dfffffff00000000 s3 : ff200000040c7b80 s4 : ff600000872a1510
+ s5 : ffe3ffff00818f79 s6 : 0000000000000000 s7 : ffffffff814a2e18
+ s8 : ff600000872a1500 s9 : ff200000040c7bc8 s10: 0000000000000002
+ s11: 0000000000000000 t3 : 6a92f41f00000000 t4 : 0000000000001fff
+ t5 : 00000000000000c8 t6 : 0000000000000002 ssp : 0000000000000000
+status: 0000000200000120 badaddr: dfffffff00000003 cause: 000000000000000d
+[<ffffffff8149cf64>] tomoyo_check_acl+0x90/0x4bc security/tomoyo/domain.c:173
+[<ffffffff814a4108>] tomoyo_path_number_perm+0x384/0x5a4 security/tomoyo/file.c:738
+[<ffffffff814b0cc4>] tomoyo_file_ioctl+0x28/0x34 security/tomoyo/tomoyo.c:350
+[<ffffffff81454e8c>] security_file_ioctl+0xaa/0x2c2 security/security.c:2512
+[<ffffffff80d45c5e>] __do_sys_ioctl fs/ioctl.c:591 [inline]
+[<ffffffff80d45c5e>] __se_sys_ioctl fs/ioctl.c:583 [inline]
+[<ffffffff80d45c5e>] __riscv_sys_ioctl+0xae/0x1e4 fs/ioctl.c:583
+[<ffffffff80078fb2>] syscall_handler+0x94/0x118 arch/riscv/include/asm/syscall.h:112
+[<ffffffff866fa9ea>] do_trap_ecall_u+0x43e/0x5de arch/riscv/kernel/traps.c:342
+[<ffffffff867267f6>] handle_exception+0x15e/0x16a arch/riscv/kernel/entry.S:232
+Code: 2544 1097 ff0a 80e7 e9c0 8513 0184 5793 0035 97ca (8703) 0007 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	2544                	fld	fs1,136(a0)
+   2:	ff0a1097          	auipc	ra,0xff0a1
+   6:	e9c080e7          	jalr	-356(ra) # 0xffffffffff0a0e9e
+   a:	01848513          	addi	a0,s1,24
+   e:	00355793          	srli	a5,a0,0x3
+  12:	97ca                	add	a5,a5,s2
+* 14:	00078703          	lb	a4,0(a5) <-- trapping instruction
+
+<<<<<<<<<<<<<<< tail report >>>>>>>>>>>>>>>
 
