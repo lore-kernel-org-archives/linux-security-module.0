@@ -1,178 +1,220 @@
-Received: from mail-yx1-f54.google.com (mail-yx1-f54.google.com [74.125.224.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from LO3P265CU004.outbound.protection.outlook.com (mail-uksouthazon11020113.outbound.protection.outlook.com [52.101.196.113])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90ECF3803D9
-	for <linux-security-module@vger.kernel.org>; Wed, 27 May 2026 16:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFDC271464;
+	Wed, 27 May 2026 17:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.196.113
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779897969; cv=pass; b=Cc5sk8NKZw9Z5QzhUSBh4sSRJ+1YfOlW7fdW7YaILuzfJ1glYOaoD9NTG8nfUZm7LpJnJ+hncO6JNLO5rP/p9ZSw4afYSdNKnPVO3gAChHeGzyqfdy6Qg8tw6YLCmyV3gpgSuMaGIFKvio7Owhco21EHBY0KYZuKpT6MFPWVXjg=
+	t=1779903741; cv=fail; b=ByAXLO2aeEh28x5gbnsAVs3iW72j/FWKeFLMe0lIYNzPyX5Gbo+FcQKQRXfai1ZGW/PpIxh0p1xn05KpofKEFlpgwkWcJMhe1xACCuvH/OLiIshkyttlBacAfw3i5YmTheMk4/mu36PI1SJmYLIblSRqU1xY8uDhhNxGoqnSYKc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779897969; c=relaxed/simple;
-	bh=i1icdQSbLVKb84W8T5OLxldeI4K9rAc4DdjpT+GW458=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T9XngvPBAQ/uuvBIWTbwIObWH2Kq672ZjA/nEXjPYQ9BQFI3OcV8sTlli950oGcU/0BRNvBi+mf1asO5rRbjEzcGArdGUIxUXpNEzwHVpcDcwJVFvwmFphyh4Or5BacZlBsZLZnO/LQ9PXhNb6eaus1fVngaSy3aRGDDyUVBoDg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GLNhVbzy; arc=pass smtp.client-ip=74.125.224.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GLNhVbzy"
-Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-65e15fb394bso8345597d50.2
-        for <linux-security-module@vger.kernel.org>; Wed, 27 May 2026 09:06:08 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1779897968; cv=none;
-        d=google.com; s=arc-20240605;
-        b=YwDOzvD8cDNyh2helOdMorYetY/JcdvE+ST8/BvBHbDyvCuT3PEGRHttTh974mA3rg
-         S/dFo0uwfMfBZ86gmRPkKWq6IJPAXfUHkoXtMvSQwgg1FVz8GFtft9IvuEGQw8TTYGe+
-         Br331RPZpPMQ0gY5M+yQ0Ur3TvbVPSYlDzDCS8bRbPaVrRtaMJlrWDIC2dsdGPiOoJp0
-         AkOgJwhknZbCz6rCW+O2VnxtmHc57nFT3I6eeVex/27lQ9bUqQadBRj0RlrbWh7WZpnG
-         Q6j50+Ich4YJcoRzMtmKQ6IpzFkz8YWPrbMaNR+qfNlnFedRhvPPL7HOSzUQPQ7ZsqTE
-         3t+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=MFz0JpS9h6a1QbnwdkkCkC2M7duzoq5zRNrxnxL5G8E=;
-        fh=v3sFyMpNy+PUwMeVLu+TvApJNU8B6DaqrM8svjMxbfw=;
-        b=WECMJGoEWdy4EhLPk0bidPhHYhi20m6rPNeqYHRvfHQOEBSi30/uG4UeLuuCRGrpN9
-         60v+tIA6S9v8U+vIuYMrtLOB/dtbfMnMfHM2FSFqfmZnYAflFMmhvGVvYKvjBvW9obwM
-         7xidTgcLPwACkwVfwbu26L0muBrcymOhQUNH4C3lAV3r5HsMhfPsyZ3xUfMW1b4/dbdY
-         cOOw+0vV40WHmbYFHAuB07HJANzXNFWLr83LDEeZiTR6y7TGeB8MwsBd45MBzI8DusGT
-         Wt1n3Nz51yNXT9kccnhdPSCtDJyX1PUi5Ye7v1+PF/W3ghqCfK1IHY8VDKSoCY6xFdlP
-         E85w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779897968; x=1780502768; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MFz0JpS9h6a1QbnwdkkCkC2M7duzoq5zRNrxnxL5G8E=;
-        b=GLNhVbzykXj1By6sKduBzX9bIuxZq5cstweJmApT0hJhUcQpJRvziX/u8gC443JLNB
-         Pn+KEPB94oam3RA6eAdMdxdQNsmoxr84pxJaQaixP9gnNX1lIw16oChbRDrmZeWiLyUW
-         Q688DPqK9kBgxpql0x+243bTUa8+kCRJvPC4liYwizU7hq4ywc/imzcZ1y93d2Mde7ah
-         sz5q9ULQgWaxxyR+19TBo4mYqHrwYCGCfKJGHlo7K/WMCR/3Ow05mgv80a0sQi1AGcC+
-         BXaLV9wHgtS5wvxehcsoA3c7Ce8H2I2x9OW83keOPYLBXVxMrGnVBvDlkNqqacZjfID7
-         GUQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779897968; x=1780502768;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=MFz0JpS9h6a1QbnwdkkCkC2M7duzoq5zRNrxnxL5G8E=;
-        b=CyCD3+0phPSrE2lXeJS1v2oX41XFKnUzpxATeUrpzFZQVoBijFMYSxNDYV3QSzyAI3
-         bOqoZHeV3H/j2SYh9W0qOxlR/0Pi+zRoZhmM3cmS7eGrYQVDslzrHa2wWFvI05tlI0Rp
-         ss0CiqLtvoKPilN9Ft5IFva001PQEkl50hPrVxw9OGH2FxmEwYkBroaweLN95pGjYHmF
-         elxP6YPxcDXsW+7cfcKH4lGSRFzE30QQAr020hsGnQcNOdBI6gLhRf77DRHssXoPZmbj
-         G1enHX8Y+liRIbcJ89wg8G7BDKiAvUkmkX0IPNVpsO6pvYboxxjvLZNu6Q80nCmYrsem
-         fWXg==
-X-Gm-Message-State: AOJu0YyRKmpRcxkhqYgh8uRejb1WKoApLHY3y1zCAI7h5v3mv+gjhfoN
-	yX+aG8hSiMwivNEy9u/+tRCkEAo6OSzwEGTrkt+K2pK/U65d3XketzzC/R1iS+77KFZBzM7uKGa
-	9HbH3Y+0+c7laze4YzbWX/k+Yga77gV5XZ5yg
-X-Gm-Gg: Acq92OEYbYvzFTnV6sDeLxaF87LjPN99Tm6WtOMuZovnCc3CNCBkSTH/aP7+amI8T4l
-	ZQVkB6Kcd+W/f0WfEYEiS5K6cjEI6l0Up5nIzxroYHLmWZxZHjqHZMn/lig8qrw++S4XbdaHoRC
-	Ja47eJp1MLBYgzGS07APVp83aJoYmUrgAFf87wzbS/XLF3JbnlqPaT5prwCBZf+7yzTVNZLzjVj
-	J+okU9Gd2Bw3uUP+84jqFvQ6/ZLILEVe1UVGVYe0JmhXcV0Q9JPHprHgZ9zPbs3z51S8u099SyW
-	+WpHoGlwbUin8G0OVg==
-X-Received: by 2002:a05:690e:480d:b0:657:a0f4:ac1d with SMTP id
- 956f58d0204a3-65ec95f0ae3mr18086212d50.12.1779897967362; Wed, 27 May 2026
- 09:06:07 -0700 (PDT)
+	s=arc-20240116; t=1779903741; c=relaxed/simple;
+	bh=51KEw5JIIpVSfO5JRdr69EJzCHa5boQogQyJVUpZlgE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=oGQ3byWAlUCPbyKzwqI9rdxzdUyBEb6Qh+bfWv3Y7jFBcxMUqgmEgTyYLhwQWc28apMeb6bNcCqxrNeYdwhdh/z9Tn4upGiB1tDGvSFyrqCk2ViHrNO6jQ6tdiR9A5vVBcd/xEbqCs9vfPYxbPlTtXMIIrI/q+TqpngsTnkFD50=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com; spf=pass smtp.mailfrom=atomlin.com; arc=fail smtp.client-ip=52.101.196.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atomlin.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BXT5dZNfmru2NbynLnjA6WgKLxlH9BMQByVbuWnKSqC8L/hZO997Vv15w53FO0y754tpoUuT0jqeVrx/CIm6KfelxLWC4u7NIDBh+vG4qBbCDxEiuaYKqCAgwBsPVEe7tvItrC/jHCvXrJgK+aRZwBqs0m77J7gVY69u+szE3PQ7aGIhzjMEcUWIpcWyt1dszvL4JuYkPq8eluIaUvWcbEqpMafSHunCzOjlav/ETUKOsMXzuhYbqrj7yO9Cni5qH/mnGay58HXMtDfo3mMwgi9k2oUJfhQlYie5KpRz984xph3pld8M4JpJetP6fejj9ld3RnJAe1tuDBnRt5tOGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001; h=From:Date:Subject:Message-ID:MIME-Version;
+ bh=51KEw5JIIpVSfO5JRdr69EJzCHa5boQogQyJVUpZlgE=;
+ b=MrCXcsSSTOQGjncwBEqWK4F6Ezw2zfoZhsB30vLieyAstTiKvVveX/JSxlsWc+3ucVn8jERoo75ZkQmVIXKzgGsfmo9yD98HnQ6XAefWuZqr8UKl73E+YgC2XfZ5JPBzC/ISIaQOocpOEj8gwZNm1POkYlGcpaHOXxlW5e9DwzGp2RgM7X9t5zaGg6YaK6PhwXb4LatuI0eSfPPENjegK56IGa/UIwzBnNMSVTeEjQeac/SOvuMvHeordwPb6wijLq38R/9/SzlozFY6WrBD52L3eo/ihZIVvnH7EYg+79CmP4NB9/csNB3r74NXJggbEsg+RN4iTXnrTAEpCAwlcw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=atomlin.com; dmarc=pass action=none header.from=atomlin.com;
+ dkim=pass header.d=atomlin.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=atomlin.com;
+Received: from LO6P123MB6616.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:2b2::11)
+ by LO8P123MB7758.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:3da::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.12; Wed, 27 May
+ 2026 17:42:15 +0000
+Received: from LO6P123MB6616.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::3975:c5e7:bc1a:f383]) by LO6P123MB6616.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::3975:c5e7:bc1a:f383%4]) with mapi id 15.21.0071.011; Wed, 27 May 2026
+ 17:42:15 +0000
+Date: Wed, 27 May 2026 13:41:52 -0400
+From: Aaron Tomlin <atomlin@atomlin.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: tsbogend@alpha.franken.de, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, mingo@redhat.com, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, stephen.smalley.work@gmail.com, casey@schaufler-ca.com, 
+	longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com, 
+	chenridong@huaweicloud.com, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, kprateek.nayak@amd.com, 
+	omosnace@redhat.com, kees@kernel.org, neelx@suse.com, sean@ashe.io, 
+	chjohnst@gmail.com, steve@abita.co, mproche@gmail.com, nick.lange@gmail.com, 
+	cgroups@vger.kernel.org, linux-mips@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] security: Expand task_setscheduler LSM hook to
+ include CPU affinity mask
+Message-ID: <ov33cu2wosubbfufcmfyoinfatecskjgmkvqyit33komlcla2d@2qgj45724bql>
+References: <20260526142838.774711-1-atomlin@atomlin.com>
+ <20260527085221.GQ3126523@noisy.programming.kicks-ass.net>
+ <bgjagepcfb7gz6jawatu6kpfmecw46gwg5cvb6r7dl3dn7bt4l@rtymdaslx7ef>
+ <20260527155404.GV3126523@noisy.programming.kicks-ass.net>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ez7qyus47kipbfhs"
+Content-Disposition: inline
+In-Reply-To: <20260527155404.GV3126523@noisy.programming.kicks-ass.net>
+X-ClientProxiedBy: BN0PR07CA0002.namprd07.prod.outlook.com
+ (2603:10b6:408:141::17) To CWLP123MB6607.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:400:183::5)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFftDdrzV2xC7HBcgS8EPb-YewJyCK9uos4crXOCh5ONm6SxSg@mail.gmail.com>
- <CAFftDdqp8b5n21hdEP6w0-PK+CoG7mmQxgrnhpBLU7-1GZxniw@mail.gmail.com> <090a355d-3680-4113-a542-ff3b1c565f58@schaufler-ca.com>
-In-Reply-To: <090a355d-3680-4113-a542-ff3b1c565f58@schaufler-ca.com>
-From: William Roberts <bill.c.roberts@gmail.com>
-Date: Wed, 27 May 2026 11:05:56 -0500
-X-Gm-Features: AVHnY4K9DobnEhOiqOKEKCFAfQjNn8RffoFCvgjm5aUjo7D7Cai83DC0JmhlLS8
-Message-ID: <CAFftDdqvvqrbm=+XsDdkJHdm12jxK9799_A=Txz6Q5goYC2ALQ@mail.gmail.com>
-Subject: Re: security_task_prctl: why -ENOSYS
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: LSM <linux-security-module@vger.kernel.org>, 
-	SElinux list <selinux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO6P123MB6616:EE_|LO8P123MB7758:EE_
+X-MS-Office365-Filtering-Correlation-Id: 47fa8bb1-f61e-4095-baf5-08debc17411a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|4143699003|5023799004|56012099006|6133799003|22082099003|18002099003|3023799007;
+X-Microsoft-Antispam-Message-Info:
+	fD9HcbxGd8o7qN8mejBXwW5s31x+ObUwWxy/rSbLloVYmgz9426VV8duSnxnonUZQhacohFQ7RmerUXmVcM3ZvMcRUE5S8f8a5HfIxy8dl2TYxLwE3lOC6cZP/EcDCW9z6EoVTYMN4ghUJddkQIv2YlV+zePjDpes4dqEa33lZB/VfsOMaBJPAPRodAsXOZMfU/AnsYLj+QfO1JkV8pNg5vldVe3UuvoXLY9oOWbaOK9/ZndEeRlhWDv0PwTPRuLulziFs/SgyVU0qc348BDqaUTQp+Gc8jurVzxUrT1mFHGkme1mqOOB4q0DifL3hWIdcFp+VxXIxUN8+Pmn4jsTdqQB998gBrwN/Y2VdpeUmqyFYQ5Kce0AJoZh2VHa480p0xapVAecn2ifAcU5Y5ReE6lvpTmZI/iQx74TlGdNBZleg/ZioatHC6QeCnkmyAlPBxW96smKwhJ7vmxGVIcXgqnwR+tE7ud6ViN0fJzBTGkwTWhzXw4rTwqV2t8KI4cLCFTx1AA0PdS3cbuA2qhSSlPtikPiEK6KlzieSoLzFI12IAaJiNWMqNKxNd/U/R07chv7D5ihfLE/aPqI0/NW7j/FLHlx6o1tnnJ373QkrtckRW6TsfWWuFXUel1a4A66gcotq4iZJoi+qGT6wM0wZ9VY7BPAFWK4Dq6GRo7QThXAfm5hYUIx98zbKApV+Ju
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO6P123MB6616.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(4143699003)(5023799004)(56012099006)(6133799003)(22082099003)(18002099003)(3023799007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MHBkOE5nVjNnK0t0K2xtdVJUTkF2UENVR2xHWnRCZ0dNMm8vSjRRY0pVSk1X?=
+ =?utf-8?B?YjdjNng3VHdoWVdsNmFPbzVyTnVoTms0blRNaFFsODNCbEpqdHYwQTVkdlJv?=
+ =?utf-8?B?Y1hOd0hiMmpFcVp3MmxUVVNiNGxIdDVrbGd2NkxjL0kxZTUvcWdtVGhhUTJR?=
+ =?utf-8?B?T2VjZjkzRnd5bkcvb1BRaGY5QlYxaXhGbUExVm1remV6MmdBbDRVR0ovTFU5?=
+ =?utf-8?B?U0NQdEkwMVFkOUgzNnlyYXZZS29peGtpTEdkbk95d0Q3QSs1eHQ2d0JBUTBU?=
+ =?utf-8?B?ZXZRaTA2SnQ4WlYyWWFtNGQ3cjZGVXp2NkhENE5EQXBoNExzQlFZMHZCbWk5?=
+ =?utf-8?B?ZGFrUWR6ZU9oZjhaU3pZUGRZL2prMEFXS2NqMjdaS3RYZDMxUVBxK1RFWVov?=
+ =?utf-8?B?c1BnVEtHTU1PcngyMzBFcUw1cGtLcjJFcjJsVUZTSkplRWZ3eVJ0MnZ5YnRG?=
+ =?utf-8?B?WllxYi9kU3NsWGlRcS80TEZWYThsRHFtaWwxczlEMGhjNkV1TVFzalYxanRU?=
+ =?utf-8?B?ZjIzU0o5M1BqNFF0N01HOVVIRTh5ZTJ2dkhlWHZJOUhQZnQvS0VRbjFueXg0?=
+ =?utf-8?B?a1I3MDZJVHdhc0JwT25ZWk5zeWNpN3puNWdEbVpnS2pwemo4dG9YUURYaloz?=
+ =?utf-8?B?ZktadjlrNlR5QlR5TmpKR1A0cE9SZkRhYW9lR0VQWGMyZ21YSkpHU29OUVRL?=
+ =?utf-8?B?UEZmb01mUDNJeitTdVZGZ2tqWWU2SnhQcTFaQVUxcW9OUklmbWw4UlhHcDlv?=
+ =?utf-8?B?eTNzdFdpNm9lTFl2bzJoWjdnS1NjajBtNDJhU05FZTdxeGRtcndHcEhZT2ZP?=
+ =?utf-8?B?aXJWdXdURzd1azVETmoxQVdTdVJXYjJmZ0tjN1c2QXlGVU5VbHdqNjNqVHJw?=
+ =?utf-8?B?N1hTci95T1hXaXdmazJUMlk1WEtLajBkOUYyV2NKU3ltYnNCSm1hSW5wdmhL?=
+ =?utf-8?B?amVQOUxkWDlEUHVjc25vQk42VlJMOXRTWERwTVdrVDREbW92NEpUQm5yeUFv?=
+ =?utf-8?B?YnJYWFMvM1lhTHVtNnQxcjIzOG9mS09TOVRTV0liTXFmY2NaUG96cld5a1ky?=
+ =?utf-8?B?UFAyRnU3NlFsZE9tb3I0WlVBVGVKdlFHWHVUeFR5OEZaRDdwNG5iZzVGSVdp?=
+ =?utf-8?B?TjljaGhvcFFjdHF6VGR3Mk52UWNjL1ZhWmxUNGE1ZVB6NWhpWVFmMm55RmZF?=
+ =?utf-8?B?UnIrRDJqZnN2NnJxTjN0N3M3TmtQbFpneGpvS2N4dXBoTXNHOHV1TkRYRmor?=
+ =?utf-8?B?dU1UQXdJWjA0VHE1YjZTUGNvK0FIazJGN3k5QzZBS1NIRkxCZG9UVmxWcnN4?=
+ =?utf-8?B?aTFVS0hkektqV1NyZVd3czJiTi9RMlZnUHZnOTJ6NVBzbjg4YjlBTUVNL0hr?=
+ =?utf-8?B?Y00zSUlNZzBZMHZ3RXpjSTR6RlVlNkJjRFRwTmtaTGNVQXhRNGg2WHFBMjBT?=
+ =?utf-8?B?SFhOQS9KUW5wQ1VNSnFrTGJocldVaVpSMWduNHh3UVVEUGtac1ZmN1pXb1Ay?=
+ =?utf-8?B?RHhCeitueFB4L1FDYUZVOWNvMWNRT05ZMEtwSDRuMDdiaWd2WGlENUJ4UDN6?=
+ =?utf-8?B?WDN0Q2ZiUXlYV2lXOVdsSUFLNkUvaGRoelNHUGwwbHNxL2poOHFNMWo1T3p5?=
+ =?utf-8?B?YVEyNWdwZUE3N2J0dWN5cWZzeSs4eFlJSzVlYWNnK1A4V3RKdUxBcHI4bkRM?=
+ =?utf-8?B?c2NxeUpvZlZoS3JnZlFwaWVPS1VsTGt2em43TTNLQVlTc0g4ME9Ga1BmSGdD?=
+ =?utf-8?B?bTd5WG53VjFJa1JVZlZDRDRDbGZRcVVraVh0NVRrbGI4eHYvVVdlSUl4TDJE?=
+ =?utf-8?B?RTM0azFGSzExdk01empNV3lmaUY1Ky9UL1RSMU5xSGtmTHY3WlhTSzllUUdQ?=
+ =?utf-8?B?ZURuemJPengwdU03LzIyWkFzM01Ba2p2RmdYVGhmTzB1aFRwQ29NRTgyR1Rl?=
+ =?utf-8?B?NGt3TkppNElXbFAxN0FZR09EdTU4eUxYOGUzVWF4UGxJMTYyQnRzSStncEZ3?=
+ =?utf-8?B?L1pNbTZJUTRhSzIyVzI5blQrbnpxd1VSRVFqV0drQXBmbkNCTEtUNXdGTHky?=
+ =?utf-8?B?czZaNmJZT3ljQnRuc3JNNkJNNWJTZHBaMHRmS3hhUXAvY1l6ZHdTb3B6K2RH?=
+ =?utf-8?B?eFU1dXgvenpOZGJBT1J1Q0pneWk2T3NTWFVibSs3RUd0R0hWVmNCTkl0VFBR?=
+ =?utf-8?B?d1NlM2crdnVCd2UveTlVZDFjckpIeksxZ1QrMHdJU05Uajc1eHRpS24xRzZZ?=
+ =?utf-8?B?RUhHYWlEY1cxRTIvN2E3U3FrbkluTmdaS2lRWlZwRmpPUmtxcWJqVGgwd3ZH?=
+ =?utf-8?B?aWUzOFZpeWUvblJqMnR5dzF4WHdjWDZMdDg5cFozNFVSaitVdlVtQT09?=
+X-OriginatorOrg: atomlin.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 47fa8bb1-f61e-4095-baf5-08debc17411a
+X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB6607.GBRP123.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2026 17:42:15.1754
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: e6a32402-7d7b-4830-9a2b-76945bbbcb57
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ph9FMByP1QvwkDKgk1QqJuKAiIUWJGgUsGUIz+IOkoItThowB0kLcRRRQC1krKRsXYlHaqkpUrh6JkQWb/dJcQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO8P123MB7758
+
+--ez7qyus47kipbfhs
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3] security: Expand task_setscheduler LSM hook to
+ include CPU affinity mask
+MIME-Version: 1.0
 
-On Tue, May 26, 2026 at 6:42=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
-.com> wrote:
->
-> On 5/26/2026 4:21 PM, William Roberts wrote:
-> > On Tue, May 26, 2026 at 5:39=E2=80=AFPM William Roberts
-> > <bill.c.roberts@gmail.com> wrote:
-> >> Hello,
-> >>
-> >> I am trying to understand the motivation behind having
-> >> security_task_prctl only continue if the return value is -ENOSYS. This
-> >> seems to be very different from other LSM hooks I have investigated.
-> >> For example, in other hooks, the value from SE Linux avc_has_perms is
-> >> used directly. This essentially means that a 0 will cause the check to
-> >> pass, and anything < 0 usually an error.
-> >>
-> >> In commit:
-> >> ----
-> >> commit d84f4f992cbd76e8f39c488cf0c5d123843923b1 ("CRED: Inaugurate COW
-> >> credentials")
-> >>
-> >> (8) security_task_prctl() and cap_task_prctl().
-> >>
-> >>          security_task_prctl() has been modified to return -ENOSYS if =
-it doesn't
-> >>          want to handle a function, or otherwise return the return
-> >> value directly
-> >>          rather than through an argument.
-> >>
-> >>          Additionally, cap_task_prctl() now prepares a new set of
-> >> credentials, even
-> >>          if it doesn't end up using it.
-> >> ----
-> >>
-> >> The check in kernel/sys.c is currently:
-> >>         error =3D security_task_prctl(option, arg2, arg3, arg4, arg5);
-> >>         if (error !=3D -ENOSYS)
-> >>                 return error;
-> >>
-> >> Should this be something like, "error && error !=3D -ENOSYS"?
-> >>
-> >> I ask because I am looking to leverage this hook in SE Linux, and it's
-> >> annoying to have to coerce all 0 returns to -ENOSYS.
-> > Of course after hours of banging my head and one email sent, it's more =
-clear to
-> > me now WHY. This hook isn't meant for making yes or no decisions on an =
-operation
-> > but rather to also handle special prctl flags for an LSM in question.
-> >
-> > I guess with the said, do we want this interface to be used for both
-> > a, let the lsm handle
-> > this prctl flag directed to me, as well as a yes/no security decision
-> > or do we want to split
-> > this out into two hooks?
->
-> The task_prctl hook is used in capability and yama. It is only used to
-> provide a place to process LSM specific prctl options. It is not used to
-> make security decisions outside of processing the LSM's options. If you
-> want to make security decisions on general prctl options you will need
-> a new hook.
+On Wed, May 27, 2026 at 05:54:04PM +0200, Peter Zijlstra wrote:
+> > The LSM hook is currently the only infrastructure positioned to do
+> > this safely for eBPF-driven security policies.
+>=20
+> But is that correct use of LSM? Or is that working around short comings
+> elsewhere?
 
-Yeah I finally saw that after I sent the email, as always :-p, but thanks
-Casey for confirming my understanding.
+Hi Peter,
 
-So now for naming... We have security_task_prctl for handling random
-prctl interface calls into LSMs. So what should this hook be called?
-Perhaps security_task_prctl_check? Should we rename the old hook to
-something else?
+I am in complete agreement that we should avoid indiscriminately grafting
+hooks onto the kernel simply to accommodate BPF. Nevertheless, I would
+argue that this represents a textbook application of LSM.
 
-For now, I will just pick a name, but suggestions are welcome.
+> I realize that bpf people rarely care about things like this, they just
+> want to hack their thing and will take any hook they can get. But I feel
+> people *should* care.
+>=20
+> > The actual use case here is multi-tenant workload isolation and visibil=
+ity.
+> > Passing the evaluated cpumask to the BPF LSM allows operators to write a
+> > simple eBPF program to detect spatial boundary overlaps (e.g., logging =
+an
+> > event if a requested mask intersects with platform-reserved cores).
+> >=20
+> > If this justification makes more sense, I will focus strictly on the
+> > seccomp pointer limitations and multi-tenant workload isolation.
+>=20
+> I suppose it does, my only remaining question is if that is indeed
+> proper use of LSM -- I really don't know much about that.
+>=20
 
-As an aside, any lore as to why go through generic prctl vs an
-LSM specific filesystem or an lsm specific prctl (we already
-have arch_prctl why not lsm_prctl)?
+We are not creating a bespoke BPF hook here; rather, we are rectifying a
+historical blind spot within the API. The existing LSM hook is invoked
+during sched_setaffinity(), yet it presently receives only the task_struct
+pointer. Consequently, the security module is essentially asked, "Should
+Process A be permitted to alter Process B's affinity?" without being
+informed of the proposed affinity itself. Providing in_mask simply
+furnishes the existing hook with the requisite payload to make an informed
+decision.
+
+Were the objective solely one of observability, a tracepoint would indeed
+be the most suitable mechanism. However, if the aim within multi-tenant
+environments is active enforcement (namely, safely returning -EPERM to deny
+the pinning request before the scheduler applies it), the LSM layer remains
+the standard, architecturally supported gateway for returning syscall
+errors in accordance with administrative policy.
+
+I shall defer to Paul Moore and the LSM maintainers for their final
+blessing on the LSM API semantics.
+
+Thank you once again for the thorough review and for keeping the
+architectural boundaries honest.
 
 
+Kind regards,
+--=20
+Aaron Tomlin
 
+--ez7qyus47kipbfhs
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
->
-> >
-> >> Thanks,
-> >> Bill
+iQIzBAEBCgAdFiEEeQaE6/qKljiNHm6b4t6WWBnMd9YFAmoXLNsACgkQ4t6WWBnM
+d9bMFA/+LafSwwUtJWzhoOqq39YL0SkkvF754SG0T8pzLrNuaeXENJ+cXH9paD52
+9XYCQXQ6HjZjq9YgwfMiNyvEbEVO9IRW1q5tO7U7oJ9H/RKGK8Bj5HzZeBjWXHYl
+GStoOaeBoKc7BYZzhNXQaGc99eIrz7gOPRze1fVpSMSn/me1/t9SvWAre2C3qTb6
+alGg94VQYyPACPntMGonZTHlcSMBNVC3aYEuGiCYCv6NXmnKkrlOFDyZXm0IwPlp
+7Pi8t7xNcDphBtiME5jUTod9Vr5BGBp7l3vB3M0Rt+yubrbLbjv3QdmSEmtdZreg
+MgGHhwmV2xJ0Ue4kGDAkcTXTugShgmLUEtyvJoJsx9FnbMQQIQ9qgWi1ENjN1FMP
+GFzaWsdQg20zwpWqBqRZNTSMRA27pX/GRlR0Va0KD5Uvnvu1M6WVYMS7uLEzec8G
+ggUtQLHd08j65IZXEQpS/HwN13NszEIjkG8hWMkLonE4cCxe9BcGBs5rplT7zHBU
+fNPDq3IRqKhwDEXq45XdVQVcWVg5g+HB9iehwU2FpbLzwJtHpyTe9bKhTjlWjnTM
+O3scEz9gUXBHqiN5Z3wm0c1tpKPLCOQiBYswxJ4ge3PLe5yHDRoD/WYVyOOu0uNK
+Ath3+2ImjfYo7b/Z7mYN2fZx0bGCcNANse4BBDLKNlhZBsC+eFk=
+=8gKr
+-----END PGP SIGNATURE-----
+
+--ez7qyus47kipbfhs--
