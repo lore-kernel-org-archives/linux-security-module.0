@@ -1,82 +1,102 @@
-Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB2823909F
-	for <linux-security-module@vger.kernel.org>; Wed, 27 May 2026 04:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1325A3E2768;
+	Wed, 27 May 2026 08:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779856354; cv=none; b=NzbonaN72CphjpDN3wwo3fNuMVgCGyBnmy4nL0HXa7+sqKwxniHtfaH2/4OgMeA4LxxhTt+HAkP6+xKeJHUezCob+vPOtBK4eBb5UJZKjcgvv9bVa6OzWxRwGllpblhY665LWQ1oN+Bppcp2nWECYkmfivJWX5REs/R1NvYDZrs=
+	t=1779871972; cv=none; b=V73Laogp+s0b/jFzzaIiw/E/Tj4Ro5QMUigwk3ytir0usa41Vivau5F9+81afdG9Kl/LAfQfEilwVsxzS6NByWSuH3yIJdmJ+hl4DfZpyBGwUz2WxpMMBHHFxI1t+rtMsVsjalKK5D2Gs76gsYTHyTsZ9lRYeptb9lI68CndHj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779856354; c=relaxed/simple;
-	bh=RBQYg9ZxqkiAImJ1l0+Jvv16Bb/NC7hbGq6dwhqiA9k=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=U1fDFcke9n1YAeIAY3vY6AuuMyjVnEqqRHPfA4EwjhZeh915xxaxqT0ucbYOcTP06NhiL6ngBcTeBNNX4bvKTOyUWwh24T1lj5Eh9AScw9/K+23vLAuO6zngc5WHDHn5xGbqjvQAvN165LRccTzeDWeFa7fFUGFtQIjKkmSqm1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-4829686bb2cso9536543b6e.3
-        for <linux-security-module@vger.kernel.org>; Tue, 26 May 2026 21:32:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779856352; x=1780461152;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LePfFoLPucBDkzYYJ7RrJMLy09HSh2TgRAEageXops4=;
-        b=n6SHd5LKdxo9d8dyt1jg5c4niFOTV//IXHrSRZXkJcjp84ogdIR52Y5haL5PisrojL
-         AkQnanihq0b+pn0kskcdxPc6hpWNoQPl2uEBzfklS8GZ1tqqMTHCPZpTcMsBD+QSIgdh
-         0JjoRqzFsba2YpxFU9/g6zGOMnqrj44q1eQfRja2pBZPoCMyOur2FziaSlezD49GbqWH
-         i/VVZ1eeSQRBkpukNqt66BGjmYXsLvINKPWiaonWvc6WxSygjU2OV9ntJm0SdgEYiMW5
-         W6OZab7kX0NvmOmcj2MzUFbW/aqn7hx6QbFpl2kPUpe8IY4jEZ2Yfjh2wU3W5jP9NvF/
-         JwAA==
-X-Forwarded-Encrypted: i=1; AFNElJ/ygynLHA5RVT0iZiWcwIg8PQqGGb1aHdTnzlDACtkjs9C6PpQ07xfi2mRDO6UJs48v39bRaaTdxyAZG1OsESxLCJ3ffbk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiOzBu3SJtnJdDaZLIx95qbj3QPS9nyZCE1lo2Xx/ESRiKTWXT
-	srcE1ZcxZwLQ8/St0JjKBUZf1TnII/KNmf9ZHSKv3wMSTmbdNFrl+pvCt+UwE3QStP2Z3+Osgq2
-	pYwc4mLqQpqI48TKKKuJp2RUOREA5HOzGvmpEuc+Wn0cCXxseEomF6TUPkpo=
+	s=arc-20240116; t=1779871972; c=relaxed/simple;
+	bh=0vP6dAM0qtYEDeOo7lT2iXRxIT57lFamfuJ6xdotRDw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kugm2MBQJeIktBoecjw/ASngDlElxhJ21P7jpULhIZUTwaSk+5qOtrePcNqJdx6LnSsywnD+ZZTSsnVig/6YJfFVJcfaVQGui09c4/kbwOr7TDFeD4K7TbtCKbRjRYtz8uNLqUzgmGbzi414e7DvnNevJrEQObj7q8HihbKpzRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sF9XrJaE; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sF9XrJaE"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5SrhJd8D5kdySamJgDjj4vcaR6oJNFYx6iGp8z9Ljdo=; b=sF9XrJaEIa3q2QUrVJVXpFkrkJ
+	+VEb7zw04rbo+YGauRNWAGaqofL2ZmjQkNVqLfDFRE/slMRdhN7woW1SGlwXk7RrrhN8jgM5kSNcD
+	U1KuBHgMP9JOihHIWcqbZXXaTi2gZJxhz4fI+OVLKxtibDYeUTB/GGm2t48P967isrtfDSNfe6Ir9
+	sfT0oOmpU7rltytq+hA5xXy6cHFCk2TmwrPy3/66VFIxTJTl8EianR0qwL29d8o8aNx45atJrDI25
+	DIpbgBaFSEA7wjVCBACAAgm0/ckup9yvsEF5IsmxQCgeXedwymdEntAHQW8KGIBNJB427Cunfovzi
+	0wDVOKRg==;
+Received: from 2001-1c00-8d85-4b00-266e-96ff-fe07-7dcc.cable.dynamic.v6.ziggo.nl ([2001:1c00:8d85:4b00:266e:96ff:fe07:7dcc] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1wS9zy-000000028Ul-0UWa;
+	Wed, 27 May 2026 08:52:22 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7BB34300673; Wed, 27 May 2026 10:52:21 +0200 (CEST)
+Date: Wed, 27 May 2026 10:52:21 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Aaron Tomlin <atomlin@atomlin.com>
+Cc: tsbogend@alpha.franken.de, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, stephen.smalley.work@gmail.com,
+	casey@schaufler-ca.com, longman@redhat.com, tj@kernel.org,
+	hannes@cmpxchg.org, mkoutny@suse.com, chenridong@huaweicloud.com,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, kprateek.nayak@amd.com,
+	omosnace@redhat.com, kees@kernel.org, neelx@suse.com, sean@ashe.io,
+	chjohnst@gmail.com, steve@abita.co, mproche@gmail.com,
+	nick.lange@gmail.com, cgroups@vger.kernel.org,
+	linux-mips@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] security: Expand task_setscheduler LSM hook to
+ include CPU affinity mask
+Message-ID: <20260527085221.GQ3126523@noisy.programming.kicks-ass.net>
+References: <20260526142838.774711-1-atomlin@atomlin.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:3090:b0:69d:959e:3fca with SMTP id
- 006d021491bc7-69d959e45b6mr8694420eaf.57.1779856352019; Tue, 26 May 2026
- 21:32:32 -0700 (PDT)
-Date: Tue, 26 May 2026 21:32:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6a1673df.05351e09.16fcdb.0000.GAE@google.com>
-Subject: [syzbot] Monthly lsm report (May 2026)
-From: syzbot <syzbot+lista27026af8cf5d32f63f8@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260526142838.774711-1-atomlin@atomlin.com>
 
-Hello lsm maintainers/developers,
+On Tue, May 26, 2026 at 10:28:38AM -0400, Aaron Tomlin wrote:
+> At present, the task_setscheduler LSM hook provides security modules
+> with the opportunity to mediate changes to a task's scheduling policy.
+> However, when invoked via sched_setaffinity(), the hook lacks
+> visibility into the actual CPU affinity mask being requested.
+> Consequently, BPF-based security modules are entirely blind to the
+> target CPUs and cannot make granular access control decisions based on
+> spatial isolation.
+> 
+> In modern multi-tenant and real-time environments, CPU isolation is a
+> critical boundary. The inability to audit or restrict specific CPU
+> pinning requests limits the effectiveness of eBPF-driven security
+> policies, particularly when attempting to shield isolated or
+> cryptographic cores from unprivileged or compromised tasks.
+> 
+> This patch expands the security_task_setscheduler() hook signature to
+> include a pointer to the requested cpumask. Because this is a shared
+> hook used for multiple scheduling attribute changes, call sites that do
+> not modify CPU affinity are updated to safely pass NULL.
+> To protect against unverified dereferences, the parameter is annotated
+> with __nullable in the LSM hook definition, ensuring the BPF verifier
+> mandates explicit NULL checks for attached eBPF programs.
+> 
+> This change updates all in-tree security modules (SELinux and Smack) to
+> accommodate the new parameter mechanically, whilst providing BPF LSMs
+> with the necessary context to enforce strict affinity policies.
 
-This is a 31-day syzbot report for the lsm subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/lsm
+I'm not sure I really buy the Real-Time argument here; that really feels
+like a straw man. Real-Time will need to account for the shared resource
+usage inherent in using a single kernel image across the CPUs, affinity
+alone does not Real-Time make in any way shape or form.
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 5 issues are still open and 45 have already been fixed.
+And the compromised task vs crypto thing feels like it wants sandboxing,
+but wasn't that what seccomp is for, rather than lsm?
 
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 77      Yes   possible deadlock in keyring_clear (3)
-                  https://syzkaller.appspot.com/bug?extid=f55b043dacf43776b50c
-<2> 33      Yes   INFO: task hung in ima_file_free (4)
-                  https://syzkaller.appspot.com/bug?extid=8036326eebe7d0140944
-<3> 130     Yes   INFO: rcu detected stall in NF_HOOK (2)
-                  https://syzkaller.appspot.com/bug?extid=34c2df040c6cfa15fdfe
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+So while I don't think I object very much to the patch, I do find the
+whole Changelog to be utterly questionable. Which makes me very
+suspicious as to wtf this is actually for.
