@@ -1,66 +1,66 @@
-Received: from mail-qk1-f194.google.com (mail-qk1-f194.google.com [209.85.222.194])
+Received: from mail-qv1-f68.google.com (mail-qv1-f68.google.com [209.85.219.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20451315D33
-	for <linux-security-module@vger.kernel.org>; Wed, 27 May 2026 23:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B963B8BC5
+	for <linux-security-module@vger.kernel.org>; Wed, 27 May 2026 23:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779925357; cv=none; b=T4kkP6RWFrgVA6B9UoAbPmpxDwp4fFOwtCm/LZ7BmdrZJciMs3m2xrn2UI4cKo0fq65qcrwJS6Te1FmTwWsFgPaxb3Q28E3SaQHXPgfCQfeCZynbI4kXoig1QHu1oNQfhM5/ATutzWC65cDdZ1VXy1NySey2RamWCScoBoVRkd8=
+	t=1779925358; cv=none; b=ury/U3Ph8I8tt8gIdtTHHAjZDEQ33gSqRepOUwSWJZsC77Sge4HKNxyIYcMrTkLA6tixP+E+Xs3RGquxO3ptYSWLWsc+ZqSfc0/ME0SGNt8GxBdEXtsZK34YsnAmGrxtxyApDnMJaBkauD+VjA4FRhJipm748MfvdGXu3GqIRvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779925357; c=relaxed/simple;
-	bh=bFhoZtKMfAkJEwxLgJ6/oZuzCLxHsvUxFVvVuDQhd20=;
+	s=arc-20240116; t=1779925358; c=relaxed/simple;
+	bh=+5VIL+Lx+4gWaHoEtMRjLIDQqQ755A0ekMnhYaccrBw=;
 	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=c99A8/QHal6AYLMzo3kgUNeowPxdRuywpV5e/INh/Nx8MBX2JY4ziG2uZnRftKMrpxlFGoMyrbTeNAko6UoCqjHCl5kF5aNSIn4vFS7IhKy42kNu+G7TX48HG/hrJ618lo3lIHUTgK6M1mmROJVy/HHUJuFc2/2QYIA61FiL2qI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MDbxYhSU; arc=none smtp.client-ip=209.85.222.194
+	 References:In-Reply-To; b=Hp9WAs5jPxhPOqlTvpSoLBsQyw+L+nJNLU8C3ShsaAoQsM1S8cMhROrqEx/a1XOv/eO6QKmfdVbBpmhJ/yhKxwUYuvPD34rRUiXIFw2Go7ESWkIjKDhaoTUTuJ7lgvdMHMm64wHihkjVpG4lWohYjIWUAsJZpeYcJoK7YOpgIQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=TjIdmBUU; arc=none smtp.client-ip=209.85.219.68
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MDbxYhSU"
-Received: by mail-qk1-f194.google.com with SMTP id af79cd13be357-914ae4101b4so814133585a.2
-        for <linux-security-module@vger.kernel.org>; Wed, 27 May 2026 16:42:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="TjIdmBUU"
+Received: by mail-qv1-f68.google.com with SMTP id 6a1803df08f44-8b3fe2f19a4so133970056d6.2
+        for <linux-security-module@vger.kernel.org>; Wed, 27 May 2026 16:42:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1779925355; x=1780530155; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1779925356; x=1780530156; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=vWtSF+ZdJPKnDl6l0dlAcmnN+0WDS6LYwhPmb91DFEM=;
-        b=MDbxYhSU8a1NXFKJ4BLckTioTxA6dz/9OKssB30bXmIC2aX9PwG3sb6SyK5dQhT378
-         eYEB4iLolxeC/kIUfeQxaujeoq4VG30rDG2P/wo8uAdSYLUIZSLoDM5y0TSoY5kJmNJx
-         oHsdLuJ6DLJbjnq0DhSuvJgkgjhf5R0bYUXsmpq9Qd7K2Yy7LrjjTKeFpVW5AkstFf/F
-         rbfkEzac9Ci0TFwoxMSQNKaXTrO/Fmekpng+MeiWgmgMzXqgTBYUxNEaocn8shyzyfWI
-         3+lb0W2OqCyTfZK9gT7QNFaGHXB2ZpFOP9lGyGUcwoBV7VEpf4vto10jc1qN7MYeK9tU
-         CLNQ==
+        bh=HU5mpIp08+v7UC4VxJJIUTVB47HlzTm6rBp+W/xs8cI=;
+        b=TjIdmBUUR/kAmZij2ZUYDg+zXYadCf+EXj8LEjiiCFnAXXNgk1x0rFvrtVNZqEiQDg
+         BoAgYEUB2MsFzam5uOpYwlBEJ4+GhN09t7aJKrvYWnFdasdzrWIV3wmaQ7HbwhX2Wn3h
+         CITwBj2foOwxKhItnLqydT3qQIMMMI0PNpK2NQgEdbD7cz25lHB57yDV1uHwK4DYeY1M
+         c6uRNb61qjne6opSn4+LhNvm3n9SeUkvHmwknMtuBcbFnDaWANh3xYg7yYknBkQlXWeF
+         k2odnW6JC1gXDjY8hMK8FXmNU7XpIT/7gnPM2ZLRMhehCKd41P2hKl7UaGDK+BGjY3Oh
+         hVlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779925355; x=1780530155;
+        d=1e100.net; s=20251104; t=1779925356; x=1780530156;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vWtSF+ZdJPKnDl6l0dlAcmnN+0WDS6LYwhPmb91DFEM=;
-        b=jeC2erPyC0Zri3+cqyDblzNIK2b1AayGFltwDB7d08ZrytS30lsJuwjeAEb7AlyT3O
-         egDET0At00uMip5DthJ4yVyOimbNRgha0AaN3fVZfr8m7ufFxtxtDtXM1wDlIStgEJ5V
-         2FAxZpwZTnVbi4d6TTpspleuedJS3QL578+bJj3gt8Ae2sJkUCaYj56V9g6bFXkcIHPM
-         /vcZprka+LC6xB1u5Opyte9Dqk4qMn6giwVmOUUWZWHUt85SyHx/OkyhYqgET/ZBpBYt
-         KJ4+qth0vDAX9fnSUP5gdXuOBz1hOTz9GjfDdZ6zQcNoV2EIYjkKNULmorStDarishQ4
-         zquQ==
-X-Forwarded-Encrypted: i=1; AFNElJ8GU++9rJY3a0ULcl2oD21WZUpe/pptcN1p2ePcISXyorzw8T78udUsXJjuws0pqYlGv8LnmMpiYg1nLmwvfYiis1gtzHE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5amDicNAD0rof639c+fVmfqphAPkEMkmANvlO9ZTg7VsfT8eJ
-	fXpGe2h4eW7bo9mWK74aKAjuzwParA9xJy3aTuiSQe6VszHd8yvVUsDmdBI2inJB+A==
-X-Gm-Gg: Acq92OFOYIntVRl7KjdboaXkX0silm2A41Ri1B60y+CL0U8qymTmFYK72JA5Q4FTzmr
-	bkzt2N05ajD595Ew4BQGh7lZ0xnSWlvuQLFfPflV2JpHifoKRcmOpBrM+OEISPqtIEIakpO6hBq
-	xSGwP2UfWi3c8oILrDWb4yC1Zp1cp/yYJkK9ykfkTaQpq53xiLxyoPQNDJQifZWyWsUSFE/bA5x
-	2uT4VD58ASFPk2CnoXCL4EJj64mN2QUF2NPlS6QjuqWOuRTAvjzR9EA8mibk8G/T60Z2RaMrv3k
-	Uj1YZoVG3HuhJoAGLlH61W//HWhz0THyk3Ody6S6xbuN6zAcY9p2XnZoLWl4h9qUtijHuYW+bJI
-	wAqI/PzGBcrin1C0paCJsPYPY2VyDYBPPIRMzLVwnFL9Hs2OPAAbVXG5ZH//tdE0vm0LLb6lU9y
-	flk6lOtaPfu9PJ3UVWlv5HMQGr062qjvKvuY777usmwR8JSv/JY6s+HfOZg6SFjGOb1Oq+mDIz0
-	IXcGB2qNHsJsETSzw==
-X-Received: by 2002:a05:620a:290b:b0:910:87f4:9a26 with SMTP id af79cd13be357-914b49937b6mr3695400885a.41.1779925354972;
-        Wed, 27 May 2026 16:42:34 -0700 (PDT)
+        bh=HU5mpIp08+v7UC4VxJJIUTVB47HlzTm6rBp+W/xs8cI=;
+        b=dwPSyaxup9jabGUm5hxjcxZ+yh7J/maqgyWCxN/EcTVwE+wVdZv59T7zw4yVavCCpC
+         ucY13lFCbpGUW3UbrytcHDPaB+35nHjBSV4kTI/nh+cG6PpdYDJEnHs33PUXJ4k5DdQ4
+         4gq9vLsNIFJECpwkoAHaobjtfnibWnqxYMyfO8QU+KA5Rjb9ObLsuzXCOLuXlzip6sZa
+         o4k8PeBZFooq7az1U0LBp5r8M18AVU2dqr1557RZTVNe6sTW+NISbm0sJeUqfMyk9c5e
+         3n2ouoiWBeIoHH6AtDoWe+TS6lIeBZAWarFZ5It+MilhFWAAiKBzFk31u+dzltUJ6MqU
+         5JeQ==
+X-Forwarded-Encrypted: i=1; AFNElJ+zaDz1+nOBKFSNw0AKWFNWgNRGTWseSXGqERSoONelbYJje5BPmjP7IBbkBMOC1LbKkw68SdDYh9euyz0MqIQXwEsEpWE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykNbpbALYZn30kFhzstwA4m9g7ZMeoJiFz+ypBXQIzHl4ksgMy
+	TdLvitDpDmGfkDYud6sih8EhUW244XMWgSGNcZmlrsu6FuTTUG+y/snOxzzihG3/1g==
+X-Gm-Gg: Acq92OGfAtYOuEr7G5r5WdQ/00YJSbUkObi+oJKhlczAYIY8YdqV3UD4vbckFaC36OK
+	kpr+JL1Py/04XKgfjo9jhF5DeWuk9uDh+D1IjA50/lJZ0FgpYIz6t7HHgBrBM8HTTECWfMiG6sx
+	SJMQW+rHj8IvOqCz/9CmJbJ981rm7EM38m59al5J2T8vSCTyd/uLeHCkZHJoYkruO6hrrpWeauS
+	rRJt11PVWk7FfJ049QeWxken+UKRt8IVtcnNpD5075WVSIVZSCmww7dpG/jzUtxAK6pRdvY2VMv
+	kKWK3hjXJmUUBDpqNlo7IkqK7JRSOc64eCzPkoeQhMAxGBp/SZBQK+cED1hy5pNpak5g0gGczuj
+	sY8gaB656mp+p8CcKJCcs4z/jG5Q7hPVe1c0ZW5HcNU0hgtJm8IdzT+K96MCYxh9nfJbgdx3vjv
+	C+OemsyihO1GFHmH/yEKe6DSYZWX1445OwGCRwy+23I1xEEkOhHLkrbcGSxRofhcKaQl7bUbu9y
+	N+j3Fk=
+X-Received: by 2002:a05:6214:3bc7:b0:8cc:15e4:1208 with SMTP id 6a1803df08f44-8cc7b65aa0dmr409956706d6.32.1779925356424;
+        Wed, 27 May 2026 16:42:36 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-914f8706968sm615403785a.17.2026.05.27.16.42.33
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8cc80ffca70sm181789696d6.22.2026.05.27.16.42.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 May 2026 16:42:34 -0700 (PDT)
-Date: Wed, 27 May 2026 19:42:33 -0400
-Message-ID: <c8fb6387f3c1efa126013090f45528c6@paul-moore.com>
+        Wed, 27 May 2026 16:42:35 -0700 (PDT)
+Date: Wed, 27 May 2026 19:42:35 -0400
+Message-ID: <4aac8924f51f66daa69acd50d8b89f3a@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -73,36 +73,24 @@ X-Mailer: pstg-pwork:20260527_1931/pstg-lib:20260527_1608/pstg-pwork:20260527_19
 From: Paul Moore <paul@paul-moore.com>
 To: "Mike Rapoport (Microsoft)" <rppt@kernel.org>, James Morris <jmorris@namei.org>, John Johansen <john.johansen@canonical.com>, Ondrej Mosnacek <omosnace@redhat.com>, "Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>
 Cc: Mike Rapoport <rppt@kernel.org>, apparmor@lists.ubuntu.com, selinux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 1/3] selinux: use k[mz]alloc() to allocate temporary  buffers
-References: <20260520-security-v1-1-831bd8e21dd0@kernel.org>
-In-Reply-To: <20260520-security-v1-1-831bd8e21dd0@kernel.org>
+Subject: Re: [PATCH 2/3] selinux: hooks: use __getname() to allocate path  buffer
+References: <20260520-security-v1-2-831bd8e21dd0@kernel.org>
+In-Reply-To: <20260520-security-v1-2-831bd8e21dd0@kernel.org>
 
 On May 20, 2026 "Mike Rapoport (Microsoft)" <rppt@kernel.org> wrote:
 > 
-> Several functions in selinuxfs.c allocate temporary buffers using
-> __get_free_page() or get_zeroed_page().
+> selinux_genfs_get_sid() allocates memory for a path with __get_free_page()
+> although there is a dedicated helper for allocation of file paths:
+> __getname().
 > 
-> These buffers are used either to store a string generated by snprintf() (in
-> sel_make_bools()) or to copy data from user (sel_read_avc_hash_stats() and
-> sel_read_sidtab_hash_stats()).
+> Replace __get_free_page() for allocation of a path buffer with __getname().
 > 
-> Such usage does not require struct page access and it is better to allocate
-> these buffers with kzalloc()/kmalloc() that provide better scalability and
-> more debugging possibilities.
-> 
-> Replace use of get_zeroed_page() with kzalloc() and usage of
-> __get_free_page() with kmalloc().
-> 
-> Link: https://lore.kernel.org/all/635405e4-9423-4a25-a6e7-e03c8ea0bcbe@redhat.com
 > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 > ---
->  security/selinux/selinuxfs.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+>  security/selinux/hooks.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-I suspect if we look closer we can probably also trim some of those
-allocations to less then a page, but that can be work for another day.
-
-Merged into selinux/dev, thanks Mike.
+Merged into selinux/dev, thanks.
 
 --
 paul-moore.com
