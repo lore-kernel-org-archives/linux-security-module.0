@@ -1,317 +1,145 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5041F03D7;
-	Wed, 27 May 2026 12:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6DAA3148D3;
+	Wed, 27 May 2026 13:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779884230; cv=none; b=jhIz8l85Ah25Kjmd9pqaRvkeEleYN0xM+RYt827hHBddn0TIc3nasHcVO6PwyBkQUwCLWvQxschn0R4XZ8t9q0v3tKHVcZ8oE2oGZkhvUhQ8ZM5Lce+yYLid7OVwjAemTjNoeoEnCjTjcKqZgOalA0Br8RP1/ZpdJNi50zaNu9s=
+	t=1779890253; cv=none; b=UUcekBjDEorr2ERfemo+gdxRlZL8SmrY4S6hclqpumgTG+gKGFyjbs+edei6j5OIKwAis7/ZgT6NxYHCnQTcJea04ZM0xUxLkpwANabC728OZLPoAVGC5oSgHltmrXJRlf7yXD4rlpcuf+72vz55jWLF18kXTRTQPMlNJRw01Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779884230; c=relaxed/simple;
-	bh=hMoxHrL9hGk1h3fBM47pA8HrWGVJrHdvg76nGjVVfI8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TTeWkWK5HUzi+vHcLDX7xuybYyLMN9pkoikdv5BK4D44kYOE5rfsoL3oRVt5/36mlrjPRZGyl4t1GWrQfHCgN6DB3MjV5TCT1lnHvoGKhOyqszVX9thVLJgZg44VUTrjVhLLNhVVSiq244AN8HEUwB8qfWWd80rbLqbPdytwMnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gRhRA60+; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779890253; c=relaxed/simple;
+	bh=zvlOlKFO5Ea8ZWoxLGLkvjRdz6BrBzYnlRX14u+yQ3M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fKt9SQDogvpjW1n8da3UTeD3nxjqwhPEXDmbYThtvK7UlFXqGOCJlAiMjYp3wmar4PTva9YByOULwP/KX+3Fjqlt3Qww0r3DtFJFz7EyuJP+Z4WDNx6l49zc2HskwifFbFhDKi3C6L2d6Xu8oe5ideIJbtFZ0zmTb+tTjRi17zI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EQHtVPcI; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gRhRA60+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B76691F000E9;
-	Wed, 27 May 2026 12:17:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779884228;
-	bh=27eUkOPplgujxD4Wm3AOdfFuGwJ2ngxUt70Ukl38SJE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=gRhRA60+ah5zMUYBT6Xqe467Jv9mn0ZQv2Se3QG2+n00/H1mN2xuzyBAkJGvTml6J
-	 3pbyXst4Mm75iGSJO0idMd6zLNTS3KOks0NSNKBZ7Ulclf52TWT4vSVx6D9q0xL8pa
-	 DC8iM2lB1D7tABLpyMM3XAawqjF2qf9zJecCOzEE4I+hLZYcoFSUcakGWDGYD7FL+U
-	 1Ne+jobnthqmrxuMO7UkwFz9OfLxaeK+WlcaPJyxEZ4YFYO5gQjIPaO1aw8gOuRc3O
-	 JPoGauubx2XnbNCmgY6VImoZrxDMKQf9I1BRwKY2bZayCD6LK+X+uUZaFE+PfhslZI
-	 Cf1fNAeM6lNbA==
-Date: Wed, 27 May 2026 14:17:01 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Song Liu <song@kernel.org>
-Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	selinux@vger.kernel.org, apparmor@lists.ubuntu.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	john.johansen@canonical.com, stephen.smalley.work@gmail.com, omosnace@redhat.com, 
-	mic@digikod.net, gnoack@google.com, takedakn@nttdata.co.jp, 
-	penguin-kernel@i-love.sakura.ne.jp, herton@canonical.com, kernel-team@meta.com
-Subject: Re: [PATCH v4 1/7] lsm: Add granular mount hooks to replace
- security_sb_mount
-Message-ID: <20260527-landen-bahnfahren-eckpfeiler-c1e1e9cb73aa@brauner>
-References: <20260515200158.4081915-1-song@kernel.org>
- <20260515200158.4081915-2-song@kernel.org>
- <177944135249.2871055.11361892114499566606.b4-review@b4>
- <CAPhsuW4BVSQ6oqyk=kExuZUkB9PWRRqUf_EJ=x3mNmtkT4oH4g@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EQHtVPcI"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64QNtAf2686076;
+	Wed, 27 May 2026 13:57:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=XmuqR0
+	b41raTzm3aWHkmUjaUX9RCWIBNdoHdims9XLM=; b=EQHtVPcIq62ecBESz9VdAj
+	U6i0R3TLcWmeerRAxT+Akz8cgGIJsZO9yHMPTJcXvRQgC5cFfhAVsk3bfVfczqSR
+	qSfTtZu54+4YjHumGmjfk3NpGDD+lq4xOdzSFnVXTZGxCZ4/BqZ+j5cx7yYNDNVr
+	V3EZhrYeX3NmZCWfdbTRPQl5PqV8cmGazPCm/DIaehjWu3H857JCsd8htBf/3NmU
+	LoP+cz26KxteFn6irSTPYQhJX9m8+3La/GfrLF5F6ME54sqXhCjZRdf1Wa2u1mcb
+	IwJ9PJO85CXxyVmj5VTvhxmyCWHAMawFuws7NQ2z98A4t2zRJS1cgXZva+CrHXBQ
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4eb4nusqhc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 May 2026 13:57:06 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 64RDsHUl019929;
+	Wed, 27 May 2026 13:57:05 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4edjrb391u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 27 May 2026 13:57:05 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 64RDv4SK29295182
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 27 May 2026 13:57:04 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 708925804B;
+	Wed, 27 May 2026 13:57:04 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F1F3A58055;
+	Wed, 27 May 2026 13:57:02 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 27 May 2026 13:57:02 +0000 (GMT)
+Message-ID: <23a3b9bb-af97-4285-a03d-7b6e7ccb274e@linux.ibm.com>
+Date: Wed, 27 May 2026 09:57:02 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPhsuW4BVSQ6oqyk=kExuZUkB9PWRRqUf_EJ=x3mNmtkT4oH4g@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 00/13] ima: Introduce staging mechanism
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
+        skhan@linuxfoundation.org, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        gregorylumen@linux.microsoft.com, chenste@linux.microsoft.com,
+        nramas@linux.microsoft.com, Roberto Sassu <roberto.sassu@huawei.com>
+References: <20260429160319.4162918-1-roberto.sassu@huaweicloud.com>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20260429160319.4162918-1-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI3MDEzMyBTYWx0ZWRfX5fBf/K24EuzO
+ nsdv6eYPHATZbMRT5JqGcW9mfVnSbQgMnV33bmFilJ4hC0Qx03ABlxrUxBnoRtK4FMi7eHJdD23
+ DS3XntGu4apmc9wMjiR9Ip2toZOoV1OGZcWC+tnleDmZEEp6HClwlCav9pCl51R+pqDcj0Weycx
+ tMh82DTwRb2jIFk/Tmosd+VY1CXNQrqxkcknn1MHAqk38MUDBAd8AdAsc3t2Ku/rMoeu0o1sqfV
+ mY6tn8CZhPwa/lrR4fcy0C6Bpaiubtpq6/g4sy4VDZOv2VzuFbOnKHHHM+Iy3VWJUENY+lI5sUD
+ exVajXD669sqWHoqpGL3/8/ypKn7n0Me9B2sOwZ/RmGaQkZ20mGWFc4k4ULdqJd4vXmQuVIP8sT
+ LVbLzSeJdbE+v7WVIfp+gS17M7UlwbLOh/NrHGuw7E3PSAGwPCzI+QfcRkuppOvFmBSPCfpiKuC
+ HHYM681UH4uzBrOlzzA==
+X-Authority-Analysis: v=2.4 cv=UtJT8ewB c=1 sm=1 tr=0 ts=6a16f832 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=iQ6ETzBq9ecOQQE5vZCe:22 a=i0EeH86SAAAA:8
+ a=VnNF1IyMAAAA:8 a=0HL81np-4nXxjsgZigQA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: _8K7wRkzeIx9ZU8S6Hmi0OD4GBlx-QKK
+X-Proofpoint-GUID: RBiMu1fVFZe6KM06mXCyXsRsp6HhymSv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-05-27_02,2026-05-26_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 suspectscore=0 adultscore=0 clxscore=1011 bulkscore=0
+ phishscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2605130000
+ definitions=main-2605270133
 
-On Fri, May 22, 2026 at 05:09:38PM -0700, Song Liu wrote:
-> On Fri, May 22, 2026 at 2:16 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Fri, 15 May 2026 13:01:52 -0700, Song Liu <song@kernel.org> wrote:
-> > > [...]
-> > >
-> > > Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > > Tested-by: Stephen Smalley <stephen.smalley.work@gmail.com> # for selinux only
-> > > Signed-off-by: Song Liu <song@kernel.org>
-> > > Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
-> 
-> ^^^^^ I assume you didn't mean to add this SoB yet.
 
-No, the my SoB hook was run during b4 review apparently...
 
-> > Please cleanly separate the preparatory work for introducing the new
-> > hooks from any changes to fs/namespace.c
-> >
-> > Once you have all of the new machinery in place, switch fs/namespace.c
-> > over to the new hooks.
+On 4/29/26 12:03 PM, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
 > 
-> Could you please be more specific on how to arrange these changes?
-> Currently, we have
-> 
-> 1/7 adds new hooks:
->   lsm: Add granular mount hooks to replace security_sb_mount
-> 2/7 through 6/7 migrate LSMs from old hooks to new hooks:
->   apparmor: Remove redundant MS_MGC_MSK stripping in apparmor_sb_mount
->   apparmor: Convert from sb_mount to granular mount hooks
->   selinux: Convert from sb_mount to granular mount hooks
->   landlock: Convert from sb_mount to granular mount hooks
->   tomoyo: Convert from sb_mount to granular mount hooks
-> 7/7 removes old hooks:
->   lsm: Remove security_sb_mount and security_move_mount
-> 
-> Some ideas to change this:
 
-My thought had been:
+> Usage
+> =====
+> 
+> The IMA staging mechanism can be enabled from the kernel configuration
+> with the CONFIG_IMA_STAGING option.
+> 
+> If it is enabled, IMA duplicates the current measurements interfaces
+> (both binary and ASCII), by adding the _staged file suffix. Both the
+> original and the staging interfaces gain the write permission for the
+> root user and group, but require the process to have CAP_SYS_ADMIN set.
+> 
+> The staging mechanism supports two flavors.
+> 
+> Staging with prompt
+> ~~~~~~~~~~~~~~~~~~~
+> 
+> The current measurements list is moved to a temporary staging area, and
+> staged measurements are deleted upon confirmation.
+> 
+> This staging process is achieved with the following steps.
+> 
+>    1.  echo A > <original interface>: the user requests IMA to stage the
+>        entire measurements list;
+>    2.  cat <_staged interface>: the user reads the staged measurements;
+>    3.  echo D > <_staged interface>: the user requests IMA to delete
+>        staged measurements.
+> 
 
-* Add the new hooks to security/.
-* add the individual lsm implementations.
-* Now replace the old hooks with the new hooks in fs/namespace.c
-* Delete the old hooks in security/
+I have a IMA log sharder (based on FUSE; does more 'copying' than 
+'sharding') that successfully uses this method.
 
-IOW, why the migration step? It is a full replacement anyway.
+Tested-by: Stefan Berger <stefanb@linux.ibm.com>
 
-> 
-> Idea #1:
-> Do you mean to split 1/7 and 7/7 into two patches each: one
-> for changes in fs/namespace.c, the other for everything else?
-> IOW, the set of 9 patches will look like:
-> 
-> 1/9 adds new hooks in security/ core code
-> 2/9 adds calls to new hooks to fs/namespace.c
-> 3/9 through 7/9 migrate LSMs from old hooks to new hooks
-> 8/9 removes calls to old hooks from s/namespace.c
-> 9/9 removes old hooks from security/ core code
-> 
-> Idea #2:
-> Or do you mean all the changes to fs/namespace.c have to
-> stay in one commit? I am not sure how we can make the
-> whole patchset clean with this approach. We will probably
-> need 2+ commits for each of the 4 LSMs we update. IOW,
-> the set will look like:
-> 
-> Add new hooks in security core code
-> Add new hooks in selinux
-> Add new hooks in apparmor
-> Add new hooks in landlock
-> Add new hooks in tamoyo
-> Replace old hooks with new hooks in fs/namespace.c
-> Remove old hooks from selinux
-> Remove old hooks from apparmor
-> Remove old hooks from landlock
-> Remove old hooks from tamoyo
-> Remove old hooks in security core code
-> 
-> This will require at least 11 patches, and it is not
-> really clean.
-> 
-> Idea #3:
-> Did I miss any other solutions?
-> 
-> > This will make it way easier to review and easier to distribute the
-> 
-> This sentence appears to be incomplete. Do you mean to distribute
-> different patches in the patchset to different trees and merge them
-> separately?
-> 
-> I actually think the patchset is clean as-is.
-> 
-> The overall change in fs/namespace.c is really minimal:
->     fs/namespace.c                    |  41 +++++++---
-> 
-> We can clearly see what it changed in fs/namespace.c with
-> "git diff HEAD~7 -- fs/" (attached below).
-> 
-> Therefore, I don't see a way to make the whole patchset more
-> clean. If I missed anything, please let me know.
-> 
-> Thanks,
-> Song
-> 
-> 
-> $ git diff HEAD~7 -- fs/
-> diff --git c/fs/namespace.c w/fs/namespace.c
-> index fe919abd2f01..43f22c5e2bf4 100644
-> --- c/fs/namespace.c
-> +++ w/fs/namespace.c
-> @@ -2888,6 +2888,10 @@ static int do_change_type(const struct path
-> *path, int ms_flags)
->         if (!type)
->                 return -EINVAL;
-> 
-> +       err = security_mount_change_type(path, ms_flags);
-> +       if (err)
-> +               return err;
-> +
->         guard(namespace_excl)();
-> 
->         err = may_change_propagation(mnt);
-> @@ -3006,6 +3010,10 @@ static int do_loopback(const struct path *path,
-> const char *old_name,
->         if (err)
->                 return err;
-> 
-> +       err = security_mount_bind(&old_path, path, recurse);
-> +       if (err)
-> +               return err;
-> +
->         if (mnt_ns_loop(old_path.dentry))
->                 return -EINVAL;
-> 
-> @@ -3328,7 +3336,8 @@ static void mnt_warn_timestamp_expiry(const
-> struct path *mountpoint,
->   * superblock it refers to.  This is triggered by specifying MS_REMOUNT|MS_BIND
->   * to mount(2).
->   */
-> -static int do_reconfigure_mnt(const struct path *path, unsigned int mnt_flags)
-> +static int do_reconfigure_mnt(const struct path *path, unsigned int mnt_flags,
-> +                             unsigned long flags)
->  {
->         struct super_block *sb = path->mnt->mnt_sb;
->         struct mount *mnt = real_mount(path->mnt);
-> @@ -3343,6 +3352,10 @@ static int do_reconfigure_mnt(const struct path
-> *path, unsigned int mnt_flags)
->         if (!can_change_locked_flags(mnt, mnt_flags))
->                 return -EPERM;
-> 
-> +       ret = security_mount_reconfigure(path, mnt_flags, flags);
-> +       if (ret)
-> +               return ret;
-> +
->         /*
->          * We're only checking whether the superblock is read-only not
->          * changing it, so only take down_read(&sb->s_umount).
-> @@ -3366,7 +3379,7 @@ static int do_reconfigure_mnt(const struct path
-> *path, unsigned int mnt_flags)
->   * on it - tough luck.
->   */
->  static int do_remount(const struct path *path, int sb_flags,
-> -                     int mnt_flags, void *data)
-> +                     int mnt_flags, void *data, unsigned long flags)
->  {
->         int err;
->         struct super_block *sb = path->mnt->mnt_sb;
-> @@ -3393,6 +3406,9 @@ static int do_remount(const struct path *path,
-> int sb_flags,
->         fc->oldapi = true;
-> 
->         err = parse_monolithic_mount_data(fc, data);
-> +       if (!err)
-> +               err = security_mount_remount(fc, path, mnt_flags, flags,
-> +                                           data);
->         if (!err) {
->                 down_write(&sb->s_umount);
->                 err = -EPERM;
-> @@ -3708,6 +3724,10 @@ static int do_move_mount_old(const struct path
-> *path, const char *old_name)
->         if (err)
->                 return err;
-> 
-> +       err = security_mount_move(&old_path, path);
-> +       if (err)
-> +               return err;
-> +
->         return do_move_mount(&old_path, path, 0);
->  }
-> 
-> @@ -3786,7 +3806,7 @@ static int do_new_mount_fc(struct fs_context
-> *fc, const struct path *mountpoint,
->   */
->  static int do_new_mount(const struct path *path, const char *fstype,
->                         int sb_flags, int mnt_flags,
-> -                       const char *name, void *data)
-> +                       const char *name, void *data, unsigned long flags)
->  {
->         struct file_system_type *type;
->         struct fs_context *fc;
-> @@ -3830,6 +3850,9 @@ static int do_new_mount(const struct path *path,
-> const char *fstype,
->                 err = parse_monolithic_mount_data(fc, data);
->         if (!err && !mount_capable(fc))
->                 err = -EPERM;
-> +
-> +       if (!err)
-> +               err = security_mount_new(fc, path, mnt_flags, flags, data);
->         if (!err)
->                 err = do_new_mount_fc(fc, path, mnt_flags);
-> 
-> @@ -4080,7 +4103,6 @@ int path_mount(const char *dev_name, const
-> struct path *path,
->                 const char *type_page, unsigned long flags, void *data_page)
->  {
->         unsigned int mnt_flags = 0, sb_flags;
-> -       int ret;
-> 
->         /* Discard magic */
->         if ((flags & MS_MGC_MSK) == MS_MGC_VAL)
-> @@ -4093,9 +4115,6 @@ int path_mount(const char *dev_name, const
-> struct path *path,
->         if (flags & MS_NOUSER)
->                 return -EINVAL;
-> 
-> -       ret = security_sb_mount(dev_name, path, type_page, flags, data_page);
-> -       if (ret)
-> -               return ret;
->         if (!may_mount())
->                 return -EPERM;
->         if (flags & SB_MANDLOCK)
-> @@ -4141,9 +4160,9 @@ int path_mount(const char *dev_name, const
-> struct path *path,
->                             SB_I_VERSION);
-> 
->         if ((flags & (MS_REMOUNT | MS_BIND)) == (MS_REMOUNT | MS_BIND))
-> -               return do_reconfigure_mnt(path, mnt_flags);
-> +               return do_reconfigure_mnt(path, mnt_flags, flags);
->         if (flags & MS_REMOUNT)
-> -               return do_remount(path, sb_flags, mnt_flags, data_page);
-> +               return do_remount(path, sb_flags, mnt_flags, data_page, flags);
->         if (flags & MS_BIND)
->                 return do_loopback(path, dev_name, flags & MS_REC);
->         if (flags & (MS_SHARED | MS_PRIVATE | MS_SLAVE | MS_UNBINDABLE))
-> @@ -4152,7 +4171,7 @@ int path_mount(const char *dev_name, const
-> struct path *path,
->                 return do_move_mount_old(path, dev_name);
-> 
->         return do_new_mount(path, type_page, sb_flags, mnt_flags, dev_name,
-> -                           data_page);
-> +                           data_page, flags);
->  }
-> 
->  int do_mount(const char *dev_name, const char __user *dir_name,
-> @@ -4545,7 +4564,7 @@ static inline int vfs_move_mount(const struct
-> path *from_path,
->  {
->         int ret;
-> 
-> -       ret = security_move_mount(from_path, to_path);
-> +       ret = security_mount_move(from_path, to_path);
->         if (ret)
->                 return ret;
