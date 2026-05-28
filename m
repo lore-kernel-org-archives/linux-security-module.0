@@ -1,128 +1,103 @@
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4B22D3A7B;
-	Thu, 28 May 2026 01:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F6D1DE3DC
+	for <linux-security-module@vger.kernel.org>; Thu, 28 May 2026 03:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779933558; cv=none; b=Tj5W4TUNcKGELpt5/CDWqCov4PCiH1I621b3Pvn4GOdDWOrUHtxDtM2nV6iWUovO/uo6Mw/NwpOSmu81al/8KQFNcVYFhtMWat610VXWtclzt0KCsc+Cpenw0R1dyYKO90CNNCc3fiQfAQT7UXcqyjc4PeqiSdszfxFUlQV6JX4=
+	t=1779937769; cv=none; b=SCHsIMYLQoxYpGEgAFfUFQ3QfDeSxezi48Q45ei13cf08UCtACSd2dvttqSJeEIUW0/AlGPMb2YH1obMaolkiBoEzQyl8Vt67P8dTm20fAhxWGvqyYfI6xzYddLVbtkZwIO6IYGCEBD5mHo0k+wsyIhkdO2TQhEP36CvwOD0n2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779933558; c=relaxed/simple;
-	bh=We4bb5BqYPJYD/T+DwC2+AFyyBXduUFwhx3N+yQ4W4Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rQtxl+5YuKnZ9D+lPl+v3NJo+P+rPC5Zrgc9rFmJ9yJ501DhEu4LRiFmngzGYaw8sxQddTivWKqrc6eFznqc3ZxryTQ60T1LV0Q3Td9f9mhXbL+7BIDVnYPTSnSqFfYd+6aGmo55RZJOk/iz7LT16CmVoAdUD/WEUh/WI+89kto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: d15136c65a3811f1aa26b74ffac11d73-20260528
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
-	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
-	HR_TO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_TRUSTED
-	SA_EXISTED, SN_TRUSTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS
-	DMARC_NOPASS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.12,REQID:7c8715f3-45fc-4703-aae6-ebeaed92eee4,IP:20,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:20
-X-CID-INFO: VERSION:1.3.12,REQID:7c8715f3-45fc-4703-aae6-ebeaed92eee4,IP:20,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:20
-X-CID-META: VersionHash:e7bac3a,CLOUDID:1898d4141d1edd792a1bae13b934cb12,BulkI
-	D:260528095913HGMTIMCZ,BulkQuantity:0,Recheck:0,SF:10|38|66|78|102|127|850
-	|865|898|915,TC:nil,Content:0|15|50,EDM:-3,IP:-2,URL:99|1,File:nil,RT:nil,
-	Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BR
-	R:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: d15136c65a3811f1aa26b74ffac11d73-20260528
-X-User: zhaochenguang@kylinos.cn
-Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
-	(envelope-from <zhaochenguang@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1261235197; Thu, 28 May 2026 09:59:10 +0800
-From: Chenguang Zhao <zhaochenguang@kylinos.cn>
-To: Paul Moore <paul@paul-moore.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Chenguang Zhao <zhaochenguang@kylinos.cn>,
-	Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org,
+	s=arc-20240116; t=1779937769; c=relaxed/simple;
+	bh=WK4+3KCn4Vh9YzJinK4scBz33DK1YCO+/GoEgzuuZtA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qm9FSh+stgKitQEjeRNUh3whtUEjOF8CccbDPmZ8vH0mBGYd6dT/J1rAZAjx5gf+JYRuPo9BvK4T4Z9I4GeX9qAgPipiHmoVBj6E2z/+yrwCh50svrF5x2j21V4nbRjGGy1MEkpL5DfmGtQMwqseOilkic2JRvAb+FjdEa9O9IE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=VUiGUUl/; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VUiGUUl/"
+Received: from narnia.corp.microsoft.com (unknown [40.78.13.147])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 54E1E20B7167;
+	Wed, 27 May 2026 20:09:11 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 54E1E20B7167
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1779937752;
+	bh=D6CNSALyPv7xmr6yrBr28CsTLCUjCoExXbaNWGGToTE=;
+	h=From:To:Subject:Date:From;
+	b=VUiGUUl/NQ7cAA5kl75iYu0Qp/Jp83XxPAOvoefyE9l+qoMgM3k6oKMm4mzFowASJ
+	 gNsa03jL/TVn4xhAbIRqCdMjct3Kx7KkiWmDNwT2ETK7LKlhS78CEI4Cm5cN0heHby
+	 da+J38lUnR+dxz04IQtXHp4MaAcvV2tySf0f285A=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: "Jonathan Corbet" <corbet@lwn.net>,
+	"Shuah Khan" <skhan@linuxfoundation.org>,
+	"Paul Moore" <paul@paul-moore.com>,
+	"James Morris" <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"Eric Biggers" <ebiggers@kernel.org>,
+	"Fan Wu" <wufan@kernel.org>,
+	James.Bottomley@HansenPartnership.com,
+	"Blaise Boscaccy" <bboscaccy@linux.microsoft.com>,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH net v2] netlabel: validate unlabeled mask attribute length
-Date: Thu, 28 May 2026 09:59:13 +0800
-Message-Id: <20260528015913.190970-1-zhaochenguang@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+Subject: [PATCH 00/11] hornet: security, tooling and selftest fixes
+Date: Wed, 27 May 2026 20:08:09 -0700
+Message-ID: <20260528030915.2654994-1-bboscaccy@linux.microsoft.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-netlbl_unlabel_addrinfo_get() checked the address length
-but allowed shorter mask attributes to pass through to
-fixed-size address reads.
+Patch 1 closes a TOCTOU race in signature verification. Map
+contents were hashed at the program-load hook and re-hashed at
+the program-run hook, leaving a window in which a sufficiently
+privileged attacker could mutate a map between the two checks
+and run a program whose maps no longer matched what was signed.
+The fix records the verified hashes on the prog at load time
+and, in security_bpf_prog, checks them against
+prog->aux->used_maps — the same map set the verifier and
+runtime resolve against — so the verified and executed sets
+cannot diverge. The per-map index in the signature format is no
+longer needed and is dropped; the check becomes a subset test.
+Reported by Eric Biggers.
 
-netlbl_unlabel_addrinfo_get() only rejected a mask
-length mismatch when the address attribute length
-was also invalid.  A crafted Generic Netlink request
-could therefore provide a valid IPv4/IPv6 address
-attribute with a shorter mask attribute.
+Patches 2-3 fix two counting bugs in the same area: duplicate maps
+could satisfy the required hash count, and an off-by-one capped
+accepted maps at MAX_USED_MAPS.
 
-NLA_BINARY policy lengths are maximum lengths,
-not exact lengths, so the short mask can pass
-policy validation.  The mask is later read as
-a full struct in_addr or struct in6_addr.
-Require both address and mask attributes to
-have the exact expected size.
+Patches 4-11 are in response to sashiko feedback found here:
+https://sashiko.dev/#/patchset/20260507191416.2984054-1-bboscaccy%40linux.microsoft.com
 
-Fixes: 8cc44579d1bd ("NetLabel: Introduce static network labels for unlabeled connections")
-Signed-off-by: Chenguang Zhao <zhaochenguang@kylinos.cn>
----
-v2:
- - Adjust commit message 
- - Add Fixes and 'net' subject prefix.
-v1:
- https://lore.kernel.org/all/20260522054521.1169755-1-zhaochenguang@kylinos.cn/
----
- net/netlabel/netlabel_unlabeled.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+They provide some correctness fixes in the hornet tooling along with
+making the selftest behave under cross-compilation and skip cleanly
+when signing keys / bpftool / vmlinux BTF are unavailable, instead of
+breaking the global selftest build.
 
-diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
-index ca7a9e2a3de7..c1b7e0061886 100644
---- a/net/netlabel/netlabel_unlabeled.c
-+++ b/net/netlabel/netlabel_unlabeled.c
-@@ -762,8 +762,9 @@ static int netlbl_unlabel_addrinfo_get(struct genl_info *info,
- 	if (info->attrs[NLBL_UNLABEL_A_IPV4ADDR] &&
- 	    info->attrs[NLBL_UNLABEL_A_IPV4MASK]) {
- 		addr_len = nla_len(info->attrs[NLBL_UNLABEL_A_IPV4ADDR]);
--		if (addr_len != sizeof(struct in_addr) &&
--		    addr_len != nla_len(info->attrs[NLBL_UNLABEL_A_IPV4MASK]))
-+		if (addr_len != sizeof(struct in_addr) ||
-+		    nla_len(info->attrs[NLBL_UNLABEL_A_IPV4MASK]) !=
-+		    sizeof(struct in_addr))
- 			return -EINVAL;
- 		*len = addr_len;
- 		*addr = nla_data(info->attrs[NLBL_UNLABEL_A_IPV4ADDR]);
-@@ -771,8 +772,9 @@ static int netlbl_unlabel_addrinfo_get(struct genl_info *info,
- 		return 0;
- 	} else if (info->attrs[NLBL_UNLABEL_A_IPV6ADDR]) {
- 		addr_len = nla_len(info->attrs[NLBL_UNLABEL_A_IPV6ADDR]);
--		if (addr_len != sizeof(struct in6_addr) &&
--		    addr_len != nla_len(info->attrs[NLBL_UNLABEL_A_IPV6MASK]))
-+		if (addr_len != sizeof(struct in6_addr) ||
-+		    nla_len(info->attrs[NLBL_UNLABEL_A_IPV6MASK]) !=
-+		    sizeof(struct in6_addr))
- 			return -EINVAL;
- 		*len = addr_len;
- 		*addr = nla_data(info->attrs[NLBL_UNLABEL_A_IPV6ADDR]);
+
+Blaise Boscaccy (11):
+  hornet: fix TOCTOU in signed program verification
+  hornet: invert map set check logic
+  hornet: fix off-by-one bug in max used maps check
+  selftests: hornet: handle cross compilation and test skipping
+  hornet: gen_sig: fix off-by-one check for used maps
+  hornet: gen_sig: fix error string allocations
+  hornet: gen_sig: check for bad allocations
+  hornet: gen_sig: fix missing command line switches
+  hornet: scripts: set a non-zero error code for usage
+  hornet: scripts: harden scripts to handle trailing whitespace
+  hornet: scripts: Improve argument handling and error messages
+
+ Documentation/admin-guide/LSM/Hornet.rst |  39 +++---
+ scripts/hornet/extract-insn.sh           |  24 ++--
+ scripts/hornet/extract-map.sh            |  25 ++--
+ scripts/hornet/extract-skel.sh           |  35 ++++--
+ scripts/hornet/gen_sig.c                 |  61 ++++++----
+ scripts/hornet/write-sig.sh              |  10 +-
+ security/hornet/hornet.asn1              |   1 -
+ security/hornet/hornet_lsm.c             | 148 ++++-------------------
+ tools/testing/selftests/hornet/Makefile  | 114 +++++++++++++----
+ 9 files changed, 235 insertions(+), 222 deletions(-)
+
 -- 
-2.25.1
+2.53.0
 
