@@ -1,232 +1,141 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail-24427.protonmail.ch (mail-24427.protonmail.ch [109.224.244.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752CE38AC65;
-	Thu, 28 May 2026 18:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE84733F390
+	for <linux-security-module@vger.kernel.org>; Thu, 28 May 2026 21:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779992825; cv=none; b=iHc07/JRXNvZIudKDf8Rd6iUXRtLZ9SabwecFxZDyLS4ikjeoxMmk+NIEvUDSOKvXbRlwpgyiTbuUPfqtYNQIt5dNOye8aUUfBcT/03AUbG59u6QlG421e3Xo5mMcwy65S8rJgLCGoQQCh5eeDPfzWdBBUvob82UFnA5iBfPQxs=
+	t=1780003329; cv=none; b=NPynDofyOGDo3En0w/pIEZr7NFcEldDeuMRjck+b/6mnC5cO1pv8n5azAVGP/pse3JaqBFhgmzG3uLFAn4V5qEO5qBdLzqGmwl0Y2QCilHEfHsfBf/2sYjL21LblCDDMAwohd/+uKj6vk+oRG0VHIXrBjHVdU4sXVgDZ530CXuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779992825; c=relaxed/simple;
-	bh=Z0NDacAmJgk3FOTd1uiQcVNN3eCFMFphcW/nPPy4mzU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=npbmLltciNb/ZSZXZkrVU8v30xWOBPyies7wexVZE5LS3FXPDDllyMXEap3xXfW2ad39DZ9koZYqnG0hg97UOhK4Z/Evtn86AP0uyXhnnxytYkomVAwzTug9wKoAC35IRpCx9ZhxOCcTNEUl4lSL9EK1cxSKQIzxKIsbkHKFHpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=REl/TSE3; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780003329; c=relaxed/simple;
+	bh=8anQ8x+9w88e/HCIFKHmvRQZ82fYS9BPTNKdMKd1o80=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=t7lRlmSRr0U9tXBsKlYFdgSxtEITjxKFpg4++CR584gAwGlfMca1fesdFpt78aVUwvM7cSy6XkBzeKhZrBVKqlcf0LQn1FgyrNc6E/UpM3ztlEofOlITkRDunk04qfpDffEO7VX0+S+GzmCwgDtEHzlbXaRHnm9njNgyH5Badfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=frzfSGVF; arc=none smtp.client-ip=109.224.244.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="REl/TSE3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 444A81F00A3A;
-	Thu, 28 May 2026 18:27:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779992824;
-	bh=+hRJlrl7e1QIbtRZfpQ9G5PzzXMJjzBa7MKIONMnGy0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=REl/TSE3dXLslmUmYMOrcoH4xnvumFe2m4CLKENCiBDf9qwUQm7E9YINqUgQF+Wlb
-	 SbKPQ8Fs47D8KPRUqcSN9c8Th+8wPLlmLd9oVzbbB481jUyM+6UMmPd5TaZM80THqe
-	 /VnSCPgL5EKLBI5zhpg6SGnZk63lNVhuSZb+BQsojB3ZFnrczmwBi5mu8xSFsQClKE
-	 Yu36RSjrT6c8sQGAt8BGQebZlX1pB4T3URLtdnXGyIzmywhxlejODku3+Nftkqax4g
-	 jHNpT/DsoCEJtkl8Z0+nmMR4F+/tHQNFR3YIr2PdfW4ZsXJdppTjHfAQs4gvd8x6sL
-	 qy438Qh7gdxWw==
-From: Song Liu <song@kernel.org>
-To: linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	selinux@vger.kernel.org,
-	apparmor@lists.ubuntu.com
-Cc: paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	john.johansen@canonical.com,
-	stephen.smalley.work@gmail.com,
-	omosnace@redhat.com,
-	mic@digikod.net,
-	gnoack@google.com,
-	takedakn@nttdata.co.jp,
-	penguin-kernel@I-love.SAKURA.ne.jp,
-	herton@canonical.com,
-	kernel-team@meta.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH v5 8/8] lsm: Remove security_sb_mount and security_move_mount
-Date: Thu, 28 May 2026 11:26:07 -0700
-Message-ID: <20260528182607.3150386-9-song@kernel.org>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260528182607.3150386-1-song@kernel.org>
-References: <20260528182607.3150386-1-song@kernel.org>
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="frzfSGVF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1780003314; x=1780262514;
+	bh=Ocdwdp818KRICNMyNvofIyBu1lbIAUpLoNWLdxSoG9A=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=frzfSGVFpxmfP2Yl9o3tW3+t+5upmWxviQP7kamMuTKSEUyt0XeHp21lE1v0FdviI
+	 SYzKI66MZTXMb3UvwG7a5HQvY3jbQ69u+Op86GwKP+412kRiqWNwoEIERC+5+X/sGt
+	 xsTmK/7M3ckh5XArqs7BsjBmhz8jiYCFslWnISKJ6dx/pdgColYzB8rfK4aTQHxpwI
+	 YYdm6TrkaZXkswFuVYD4uP3QgWUrHgTaq3dBsybFqLbMtOOGMXL2uS1R7AsNhZLg8Z
+	 /S2Kg4uo8V1dbQ01sk8/IyBFklnslK2N5ahb5et01K6f4PlWZAube1QPpaGyfB5d/R
+	 1TtEeRVRVAvQQ==
+Date: Thu, 28 May 2026 21:21:50 +0000
+To: "mic@digikod.net" <mic@digikod.net>
+From: hexlabsecurity@proton.me
+Cc: "gnoack@google.com" <gnoack@google.com>, "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: [PATCH] landlock: fix LANDLOCK_SCOPE_SIGNAL bypass via F_SETOWN to invoker's pgid
+Message-ID: <cFjmBkbTY-D5pYl66NixBeqbhWBzS7kBEUHCWbhTQwkiuvKg8xNkSEf9rYqDQiD76er1gK8Q6t1YOJ4nIPuvILuwG42d8_rfMZpQ5VmJru0=@proton.me>
+Feedback-ID: 199661219:user:proton
+X-Pm-Message-ID: 0a30a4b1ef55abd0ca2fc1993287d9fade02e02c
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Now that all LSMs have been converted to granular mount hooks and
-fs/namespace.c calls the new hooks, remove the old hooks:
+From 22a0086b44beaaef01883e047dd4a8b8bc3153e9 Mon Sep 17 00:00:00 2001
+From: Bryam Vargas <hexlabsecurity@proton.me>
+Date: Thu, 28 May 2026 01:30:00 -0500
+Subject: [PATCH] landlock: fix LANDLOCK_SCOPE_SIGNAL bypass via F_SETOWN to
+ invoker's pgid
 
-- security_sb_mount(): removed from lsm_hook_defs.h, security.h,
-  security.c.
-- security_move_mount(): removed from lsm_hook_defs.h, security.h,
-  security.c, and bpf_lsm.c.
+A Landlock-restricted process can bypass LANDLOCK_SCOPE_SIGNAL on the
+SIGIO delivery path and deliver arbitrary signals (including SIGKILL via
+F_SETSIG) to non-Landlocked targets that share its pgid, by exploiting a
+producer-side cache-vs-live evaluation gap.
 
-Code generated with the assistance of Claude, reviewed by human.
+The SIGIO path in hook_file_send_sigiotask() consults a cached subject
+stored in landlock_file(file)->fown_subject at fcntl(F_SETOWN) time
+(via hook_file_set_fowner()), instead of evaluating the live Landlock
+domain of the invoking task at signal-send time. The capture is gated
+by control_current_fowner(), which returns false (skipping capture)
+when pid_task(fown->pid, fown->pid_type) is in current's thread group.
 
-Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-Tested-by: Stephen Smalley <stephen.smalley.work@gmail.com> # for selinux only
-Signed-off-by: Song Liu <song@kernel.org>
+This is correct for PIDTYPE_TGID / PIDTYPE_PID, where the target is a
+single thread or thread-group leader sharing current's cred. It is
+unsafe for PIDTYPE_PGID and PIDTYPE_SID: when current is at the head
+of its pgid hlist -- the default placement after fork(),
+hlist_add_head_rcu() in kernel/fork.c -- pid_task(pgid, PIDTYPE_PGID)
+resolves to current itself, same_thread_group(current, current) is
+true, the capture is skipped, and fown_subject.domain stays NULL.
+
+hook_file_send_sigiotask() then short-circuits at
+"if (!subject->domain) return 0;", allowing the kernel to fan the
+signal out to every member of the group, including tasks outside
+current's Landlock domain that the SCOPE_SIGNAL contract is supposed
+to protect.
+
+The direct kill() path (hook_task_kill) is unaffected: it evaluates
+current's live domain on every call. Only the cached SIGIO path is
+broken.
+
+Repro (ordinary unprivileged user; sandbox active in the child):
+
+  int pfd[2]; pipe(pfd);
+  landlock_create_ruleset(&{.scoped =3D LANDLOCK_SCOPE_SIGNAL},
+                          sizeof(attr), 0);
+  prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+  landlock_restrict_self(rfd, 0);
+  fcntl(pfd[0], F_SETSIG, SIGKILL);
+  fcntl(pfd[0], F_SETOWN, -getpgrp());           /* PIDTYPE_PGID */
+  fcntl(pfd[0], F_SETFL, O_ASYNC);
+  write(pfd[1], "X", 1);                         /* trigger SIGIO  */
+  /* every pgid member receives SIGKILL, including non-sandboxed
+   * parent / supervisor / sibling workers */
+
+Tighten control_current_fowner() to apply the thread-group exemption
+only when the target identifies a SINGLE task whose Landlock cred is
+necessarily shared with current (PIDTYPE_TGID, PIDTYPE_PID). For
+PIDTYPE_PGID and PIDTYPE_SID, always capture the current Landlock
+subject so the consumer's scope check runs against every member of
+the group at delivery time.
+
+Empirically A/B-verified on a 6.12.90 lab kernel (same .config, only
+the patch hunk differs): pre-fix build exits with "BUG PRESENT --
+SCOPE_SIGNAL BYPASSED", post-fix build exits with "SANDBOX HELD".
+hook_task_kill's direct-kill enforcement and the intra-thread-group
+F_SETOWN cases continue to work post-patch.
+
+Reported-by: Bryam Vargas <hexlabsecurity@proton.me>
+Signed-off-by: Bryam Vargas <hexlabsecurity@proton.me>
 ---
- include/linux/lsm_hook_defs.h |  4 ----
- include/linux/security.h      | 16 ---------------
- kernel/bpf/bpf_lsm.c          |  2 --
- security/security.c           | 38 -----------------------------------
- 4 files changed, 60 deletions(-)
+ security/landlock/fs.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 98f0fe382665..c870260bf402 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -69,8 +69,6 @@ LSM_HOOK(int, 0, sb_remount, struct super_block *sb, void *mnt_opts)
- LSM_HOOK(int, 0, sb_kern_mount, const struct super_block *sb)
- LSM_HOOK(int, 0, sb_show_options, struct seq_file *m, struct super_block *sb)
- LSM_HOOK(int, 0, sb_statfs, struct dentry *dentry)
--LSM_HOOK(int, 0, sb_mount, const char *dev_name, const struct path *path,
--	 const char *type, unsigned long flags, void *data)
- LSM_HOOK(int, 0, sb_umount, struct vfsmount *mnt, int flags)
- LSM_HOOK(int, 0, sb_pivotroot, const struct path *old_path,
- 	 const struct path *new_path)
-@@ -79,8 +77,6 @@ LSM_HOOK(int, 0, sb_set_mnt_opts, struct super_block *sb, void *mnt_opts,
- LSM_HOOK(int, 0, sb_clone_mnt_opts, const struct super_block *oldsb,
- 	 struct super_block *newsb, unsigned long kern_flags,
- 	 unsigned long *set_kern_flags)
--LSM_HOOK(int, 0, move_mount, const struct path *from_path,
--	 const struct path *to_path)
- LSM_HOOK(int, 0, mount_bind, const struct path *from, const struct path *to,
- 	 bool recurse)
- LSM_HOOK(int, 0, mount_new, struct fs_context *fc, const struct path *mp,
-diff --git a/include/linux/security.h b/include/linux/security.h
-index b1b3da51a88d..f1dcfc569cf2 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -373,8 +373,6 @@ int security_sb_remount(struct super_block *sb, void *mnt_opts);
- int security_sb_kern_mount(const struct super_block *sb);
- int security_sb_show_options(struct seq_file *m, struct super_block *sb);
- int security_sb_statfs(struct dentry *dentry);
--int security_sb_mount(const char *dev_name, const struct path *path,
--		      const char *type, unsigned long flags, void *data);
- int security_sb_umount(struct vfsmount *mnt, int flags);
- int security_sb_pivotroot(const struct path *old_path, const struct path *new_path);
- int security_sb_set_mnt_opts(struct super_block *sb,
-@@ -385,7 +383,6 @@ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
- 				struct super_block *newsb,
- 				unsigned long kern_flags,
- 				unsigned long *set_kern_flags);
--int security_move_mount(const struct path *from_path, const struct path *to_path);
- int security_mount_bind(const struct path *from, const struct path *to,
- 			bool recurse);
- int security_mount_new(struct fs_context *fc, const struct path *mp,
-@@ -825,13 +822,6 @@ static inline int security_sb_statfs(struct dentry *dentry)
- 	return 0;
- }
- 
--static inline int security_sb_mount(const char *dev_name, const struct path *path,
--				    const char *type, unsigned long flags,
--				    void *data)
--{
--	return 0;
--}
--
- static inline int security_sb_umount(struct vfsmount *mnt, int flags)
- {
- 	return 0;
-@@ -859,12 +849,6 @@ static inline int security_sb_clone_mnt_opts(const struct super_block *oldsb,
- 	return 0;
- }
- 
--static inline int security_move_mount(const struct path *from_path,
--				      const struct path *to_path)
--{
--	return 0;
--}
--
- static inline int security_mount_bind(const struct path *from,
- 				      const struct path *to, bool recurse)
- {
-diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-index aa228372cfb4..77371ca25d09 100644
---- a/kernel/bpf/bpf_lsm.c
-+++ b/kernel/bpf/bpf_lsm.c
-@@ -350,7 +350,6 @@ BTF_ID(func, bpf_lsm_release_secctx)
- BTF_ID(func, bpf_lsm_sb_alloc_security)
- BTF_ID(func, bpf_lsm_sb_eat_lsm_opts)
- BTF_ID(func, bpf_lsm_sb_kern_mount)
--BTF_ID(func, bpf_lsm_sb_mount)
- BTF_ID(func, bpf_lsm_sb_remount)
- BTF_ID(func, bpf_lsm_sb_set_mnt_opts)
- BTF_ID(func, bpf_lsm_sb_show_options)
-@@ -382,7 +381,6 @@ BTF_ID(func, bpf_lsm_task_setscheduler)
- BTF_ID(func, bpf_lsm_userns_create)
- BTF_ID(func, bpf_lsm_bdev_alloc_security)
- BTF_ID(func, bpf_lsm_bdev_setintegrity)
--BTF_ID(func, bpf_lsm_move_mount)
- BTF_ID(func, bpf_lsm_mount_bind)
- BTF_ID(func, bpf_lsm_mount_new)
- BTF_ID(func, bpf_lsm_mount_remount)
-diff --git a/security/security.c b/security/security.c
-index b7ec0ec7af26..bc55ee588c59 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1065,29 +1065,6 @@ int security_sb_statfs(struct dentry *dentry)
- 	return call_int_hook(sb_statfs, dentry);
- }
- 
--/**
-- * security_sb_mount() - Check permission for mounting a filesystem
-- * @dev_name: filesystem backing device
-- * @path: mount point
-- * @type: filesystem type
-- * @flags: mount flags
-- * @data: filesystem specific data
-- *
-- * Check permission before an object specified by @dev_name is mounted on the
-- * mount point named by @nd.  For an ordinary mount, @dev_name identifies a
-- * device if the file system type requires a device.  For a remount
-- * (@flags & MS_REMOUNT), @dev_name is irrelevant.  For a loopback/bind mount
-- * (@flags & MS_BIND), @dev_name identifies the	pathname of the object being
-- * mounted.
-- *
-- * Return: Returns 0 if permission is granted.
-- */
--int security_sb_mount(const char *dev_name, const struct path *path,
--		      const char *type, unsigned long flags, void *data)
--{
--	return call_int_hook(sb_mount, dev_name, path, type, flags, data);
--}
--
- /**
-  * security_sb_umount() - Check permission for unmounting a filesystem
-  * @mnt: mounted filesystem
-@@ -1167,21 +1144,6 @@ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
- }
- EXPORT_SYMBOL(security_sb_clone_mnt_opts);
- 
--/**
-- * security_move_mount() - Check permissions for moving a mount
-- * @from_path: source mount point
-- * @to_path: destination mount point
-- *
-- * Check permission before a mount is moved.
-- *
-- * Return: Returns 0 if permission is granted.
-- */
--int security_move_mount(const struct path *from_path,
--			const struct path *to_path)
--{
--	return call_int_hook(move_mount, from_path, to_path);
--}
--
- /**
-  * security_mount_bind() - Check permissions for a bind mount
-  * @from: source path
--- 
-2.53.0-Meta
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index c1ecfe239032..edaa52572cbd 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -1909,6 +1909,18 @@ static bool control_current_fowner(struct fown_struc=
+t *const fown)
+ =09if (!p)
+ =09=09return true;
 
++=09/*
++=09 * For PIDTYPE_PGID and PIDTYPE_SID, signal delivery fans out to
++=09 * every member of the group at SIGIO time. Even when pid_task()
++=09 * resolves to current itself (e.g., current is the pgid hlist
++=09 * head post-fork), non-current members of the group are still
++=09 * valid targets that must be checked by hook_file_send_sigiotask().
++=09 * Always capture the current subject for those types so the
++=09 * consumer scope check runs against the live fown_subject.
++=09 */
++=09if (fown->pid_type =3D=3D PIDTYPE_PGID || fown->pid_type =3D=3D PIDTYPE=
+_SID)
++=09=09return true;
++
+ =09return !same_thread_group(p, current);
+ }
+
+--
+2.43.0
