@@ -1,30 +1,30 @@
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7962A25F7B9
-	for <linux-security-module@vger.kernel.org>; Thu, 28 May 2026 03:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4FA279DCC
+	for <linux-security-module@vger.kernel.org>; Thu, 28 May 2026 03:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779937794; cv=none; b=cPF5AggF0t+OGFD++V9a3z301vrtLrqCKN893XpzsqJhz0w+TLlgcLqTR9ATQ1neCbXuseJKA6ThdxuTVqo6lbT0qvgRKw4gfrZ+bFW8t6HY0dOlp84YshqDdb8qwxpEkq+YvxZg1jcPsf4Zi+PF7rQVZdBpzgmGDu8KtiRTfns=
+	t=1779937799; cv=none; b=i0jsc7iMdGyCLLRWSEDUfHTfTIB7DQOAcp8f4BLk8Q3FKvhQ51628PfA+M0NWo10ZpedNl/q6SMXJZFT5E8Auc+CNE1pK9j5kMjmTo/mqPax5YGBp9k73IX1vbRisWbf48MHfbYeEwKGkzpI3nVe3GgocmMOMxguUbEjOb1MgkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779937794; c=relaxed/simple;
-	bh=M4246Foy9SiVCJiqMaScTWRSze1OBsXaq4pcQXTRdtw=;
+	s=arc-20240116; t=1779937799; c=relaxed/simple;
+	bh=oyLAHKof3hQNq3WtGbHXF9CqeiS7sP5O3FJhUJv0Cfc=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kk2Ur30GM4gtDX6PKZWwktINT1PwbqgNUBgGLw3m88hSs9tTPNFrc6lTAXh0qox+vN8E7UZzhSk5R9B4SltI4CydmUcz/DFrRuz5ivfz0UHF2mOhV7WjY6EcYmLWfqnudDJQYczzPuusYOMFPRsYEwGe6Fhsw5lTADSGXGCLMJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=fjo2elFt; arc=none smtp.client-ip=13.77.154.182
+	 MIME-Version; b=nhnEKOPvrdL8wb20uyE0C0OQPzseDDiO9EgVh5V8JgsTyOxQFz+3GN2X33iAcvkF+AuMBBub3SCIhe0KK2EnhoClyx2dgDB4j1S8Xsn+GGjtLYlXuYcDhKxv5JfrzZoFn4vXQSKRfc+xbZHs4VHHjaIf47JHA600ie1l3FF3BeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=SYCJyRs+; arc=none smtp.client-ip=13.77.154.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="fjo2elFt"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SYCJyRs+"
 Received: from narnia.corp.microsoft.com (unknown [40.78.13.147])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 4B3FA20B7168;
-	Wed, 27 May 2026 20:09:40 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4B3FA20B7168
+	by linux.microsoft.com (Postfix) with ESMTPSA id 0094A20B7167;
+	Wed, 27 May 2026 20:09:42 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0094A20B7167
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1779937781;
-	bh=D/NE6Q3mTOkTVJy3yzOSIvLF7grxD5shoTPvbyj8PNI=;
+	s=default; t=1779937783;
+	bh=ZwYC+qBl3xFXY/Wn+bhnP9euMCnV4Ivuo8C9GCo8lkI=;
 	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=fjo2elFtf9NghXESuOYxMv1j5WF6a3LQmaHg4czMciIxB7yX6DvoEB237K7PwKRme
-	 QoI3usEyszvz0faSZIf5e0BKPy3seJowAAd5Amo1zsjySWoBw6DH28+pUEgPiXky1O
-	 RYDvlTmI2p8ous+f3x9WGy5Fzb0rXfJt/+gcHAmg=
+	b=SYCJyRs+pjhO5cbi8+9m5du5U4ewyEcmCCQYjzBBW2f/w9vM/yxXQvz9eBYpNd1cz
+	 5x9drf8MXEkiHKQrhkJTMBwtVq1EUVWjI2AJfLFEVB3luxnK6cUnUHcUsuxUqFeuLB
+	 jl8F0prj2fBbdcob7v6B/TwLD5dsRAXnq/vx1nN0=
 From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 To: "Jonathan Corbet" <corbet@lwn.net>,
 	"Shuah Khan" <skhan@linuxfoundation.org>,
@@ -36,9 +36,9 @@ To: "Jonathan Corbet" <corbet@lwn.net>,
 	James.Bottomley@HansenPartnership.com,
 	"Blaise Boscaccy" <bboscaccy@linux.microsoft.com>,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH 09/11] hornet: scripts: set a non-zero error code for usage
-Date: Wed, 27 May 2026 20:08:18 -0700
-Message-ID: <20260528030915.2654994-10-bboscaccy@linux.microsoft.com>
+Subject: [PATCH 10/11] hornet: scripts: harden scripts to handle trailing whitespace
+Date: Wed, 27 May 2026 20:08:19 -0700
+Message-ID: <20260528030915.2654994-11-bboscaccy@linux.microsoft.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260528030915.2654994-1-bboscaccy@linux.microsoft.com>
 References: <20260528030915.2654994-1-bboscaccy@linux.microsoft.com>
@@ -50,101 +50,50 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It was possible that build scripts may continue if arguments were
-missing.
+Trailing whitespace after the semicolon in the header files may have
+caused the binary extracted payload to be corrupted due to a missing
+anchor.
 
 Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 ---
- scripts/hornet/extract-insn.sh | 10 +++++-----
- scripts/hornet/extract-map.sh  | 10 +++++-----
- scripts/hornet/extract-skel.sh | 10 +++++-----
- scripts/hornet/write-sig.sh    | 10 +++++-----
- 4 files changed, 20 insertions(+), 20 deletions(-)
+ scripts/hornet/extract-insn.sh | 2 +-
+ scripts/hornet/extract-map.sh  | 2 +-
+ scripts/hornet/extract-skel.sh | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/scripts/hornet/extract-insn.sh b/scripts/hornet/extract-insn.sh
-index 52338f057ff6b..e136932275aa5 100755
+index e136932275aa5..3e7bed049acb6 100755
 --- a/scripts/hornet/extract-insn.sh
 +++ b/scripts/hornet/extract-insn.sh
-@@ -8,11 +8,11 @@
- # License as published by the Free Software Foundation.
- 
- function usage() {
--    echo "Sample script for extracting instructions"
--    echo "autogenerated eBPF lskel headers"
--    echo ""
--    echo "USAGE: header_file"
--    exit
-+    echo "Sample script for extracting instructions" >&2
-+    echo "autogenerated eBPF lskel headers" >&2
-+    echo "" >&2
-+    echo "USAGE: header_file" >&2
-+    exit 1
- }
- 
- ARGC=$#
+@@ -23,5 +23,5 @@ if [ $ARGC -ne $EXPECTED_ARGS ] ; then
+     usage
+ else
+     printf $(gcc -E $1 | grep "opts_insn" | \
+-		 awk -F"=" '{print $2}' | sed 's/;\+$//' | sed 's/\"//g')
++		 awk -F"=" '{print $2}' | sed 's/[[:space:];]*$//' | sed 's/\"//g')
+ fi
 diff --git a/scripts/hornet/extract-map.sh b/scripts/hornet/extract-map.sh
-index c309f505c6238..058ac1b32d743 100755
+index 058ac1b32d743..1d92ebe1a04b5 100755
 --- a/scripts/hornet/extract-map.sh
 +++ b/scripts/hornet/extract-map.sh
-@@ -8,11 +8,11 @@
- # License as published by the Free Software Foundation.
- 
- function usage() {
--    echo "Sample script for extracting instructions"
--    echo "autogenerated eBPF lskel headers"
--    echo ""
--    echo "USAGE: header_file"
--    exit
-+    echo "Sample script for extracting instructions" >&2
-+    echo "autogenerated eBPF lskel headers" >&2
-+    echo "" >&2
-+    echo "USAGE: header_file" >&2
-+    exit 1
- }
- 
- ARGC=$#
+@@ -23,5 +23,5 @@ if [ $ARGC -ne $EXPECTED_ARGS ] ; then
+     usage
+ else
+     printf $(gcc -E $1 | grep "opts_data" | \
+-		 awk -F"=" '{print $2}' | sed 's/;\+$//' | sed 's/\"//g')
++		 awk -F"=" '{print $2}' | sed 's/[[:space:];]*$//' | sed 's/\"//g')
+ fi
 diff --git a/scripts/hornet/extract-skel.sh b/scripts/hornet/extract-skel.sh
-index 6550a86b89917..abc435e2bcd4e 100755
+index abc435e2bcd4e..e115f4b7fdf74 100755
 --- a/scripts/hornet/extract-skel.sh
 +++ b/scripts/hornet/extract-skel.sh
-@@ -8,11 +8,11 @@
- # License as published by the Free Software Foundation.
- 
- function usage() {
--    echo "Sample script for extracting instructions and map data out of"
--    echo "autogenerated eBPF lskel headers"
--    echo ""
--    echo "USAGE: header_file field"
--    exit
-+    echo "Sample script for extracting instructions and map data out of" >&2
-+    echo "autogenerated eBPF lskel headers" >&2
-+    echo "" >&2
-+    echo "USAGE: header_file field" >&2
-+    exit 1
- }
- 
- ARGC=$#
-diff --git a/scripts/hornet/write-sig.sh b/scripts/hornet/write-sig.sh
-index 7eaabe3bab9aa..ad2b65761c282 100755
---- a/scripts/hornet/write-sig.sh
-+++ b/scripts/hornet/write-sig.sh
-@@ -8,11 +8,11 @@
- # License as published by the Free Software Foundation.
- 
- function usage() {
--    echo "Sample for rewriting an autogenerated eBPF lskel headers"
--    echo "with a new signature"
--    echo ""
--    echo "USAGE: header_file sig"
--    exit
-+    echo "Sample for rewriting an autogenerated eBPF lskel headers" >&2
-+    echo "with a new signature" >&2
-+    echo "" >&2
-+    echo "USAGE: header_file sig" >&2
-+    exit 1
- }
- 
- ARGC=$#
+@@ -23,5 +23,5 @@ if [ $ARGC -ne $EXPECTED_ARGS ] ; then
+     usage
+ else
+     printf $(gcc -E $1 | grep "static const char opts_$2" | \
+-		 awk -F"=" '{print $2}' | sed 's/;\+$//' | sed 's/\"//g')
++		 awk -F"=" '{print $2}' | sed 's/[[:space:];]*$//' | sed 's/\"//g')
+ fi
 -- 
 2.53.0
 
