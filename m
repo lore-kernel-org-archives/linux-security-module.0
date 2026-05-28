@@ -1,30 +1,30 @@
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF3D81732
-	for <linux-security-module@vger.kernel.org>; Thu, 28 May 2026 03:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69CE81732
+	for <linux-security-module@vger.kernel.org>; Thu, 28 May 2026 03:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779937777; cv=none; b=BXZ7r7eaCQgQ8/Fs5cYWjPe1meC54G2hbzPYfylMiGlOt/GM193FrhdxcqRUhBWPliO+YPgL0t6oMDP4KMQj9z0GlTPNjg660hik2/ON6/Me1DgNEp1nFljeQQFFzRQxbdQPUxtjVKewGBirQgvvmF/aq0K+yir1vhIpZdTiHVc=
+	t=1779937783; cv=none; b=hKTzCetRucUIbRH5q0To1375EERTdOBUHl+ILvYb+7M+3T75Kg8DpvXDsbd+Dvmmeat/DoE9o85gTe5INR+DX7MkqiMTrq400xlEf7fCDxPw7MRmC0otyY3rvCy79cPWXTO3Ocp2cZQmvD8dDKzqrlpg5m91+jScnvhXP9ze07E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779937777; c=relaxed/simple;
-	bh=nIF2n6UPAkUTad5yKYQV+FJyQZ+7Y4Sg6SJFQ7lLp7M=;
+	s=arc-20240116; t=1779937783; c=relaxed/simple;
+	bh=v6oWtISHuXL6tAJTbGL/JIPutmLYJHJEQzmlLfiFmOY=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Jiasqr1qz6GVdPb9K16ddFUh+deu/3MKqnkmtLVG1pQQBo6+sI4nKqdi7nl4B/7zn7MZrS78mlBxCL+Rm28jlAU4v+YAapC0riB/N2hYlOXtSPpPOGgshhBh+lmj594E/xCXBIFVIGDI1XgMwLVTHip60jjWy/zA9J7Qc8IFGiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=bOMuVWU+; arc=none smtp.client-ip=13.77.154.182
+	 MIME-Version; b=ck5SM0PPZEG2kObKwI2T55IoqCmfZiP1/755CSWGJKsWhTYtiSCHpNhiDYwKyTvbbs+x/kr4tI1Wbkch0IIlq0pQz33RdX2P+fvHihrYaaI0xOpqeX907DfwKW9eZPSrasVrD2YK5IXhcyJQIqsXBZfpB5kskN/tOXxlL0sJeCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=irJl4C69; arc=none smtp.client-ip=13.77.154.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="bOMuVWU+"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="irJl4C69"
 Received: from narnia.corp.microsoft.com (unknown [40.78.13.147])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 81B9920B716A;
-	Wed, 27 May 2026 20:09:23 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 81B9920B716A
+	by linux.microsoft.com (Postfix) with ESMTPSA id 5E1B220B7167;
+	Wed, 27 May 2026 20:09:26 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5E1B220B7167
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1779937764;
-	bh=vhfBcWnPKqH4slvsvSEA0CjcPSoU2t8eoY55vnYH5/0=;
+	s=default; t=1779937767;
+	bh=a83yqeH8T01DgQPOZIsxaSX8ExU7TvVGfhRQtthLacg=;
 	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=bOMuVWU+TJuVtxcI8v1ZBwBrXSecSNR0e7lOfy9isc7tMOIPxTAGumu9W5+44NOTL
-	 gGVc0/nQDUnMbhiXbc+s4LYBGKXkCLwPPOU9HgCAjR+SIPn/NwGDz8mbvK/0r51+PY
-	 Trr81ThZMXRLKFbbAv0+XK/J3XUw/Aa7eowH86ks=
+	b=irJl4C69Q72hhz61wTyTN7ZZFgCVlJNKIUZxooxbQutaq3uUpRnRIiz9CLoLQa2CY
+	 P95XHAzEVz5mS33DboC2qhP0xXBj+4GMjV8z8dN+QpMkxlsBjGcQyPovAs6GXCRSpi
+	 vT/DKxST5PhGUJnyICn1csxlBK/DpUmDI2Ff/I34=
 From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 To: "Jonathan Corbet" <corbet@lwn.net>,
 	"Shuah Khan" <skhan@linuxfoundation.org>,
@@ -36,9 +36,9 @@ To: "Jonathan Corbet" <corbet@lwn.net>,
 	James.Bottomley@HansenPartnership.com,
 	"Blaise Boscaccy" <bboscaccy@linux.microsoft.com>,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH 03/11] hornet: fix off-by-one bug in max used maps check
-Date: Wed, 27 May 2026 20:08:12 -0700
-Message-ID: <20260528030915.2654994-4-bboscaccy@linux.microsoft.com>
+Subject: [PATCH 04/11] selftests: hornet: handle cross compilation and test skipping
+Date: Wed, 27 May 2026 20:08:13 -0700
+Message-ID: <20260528030915.2654994-5-bboscaccy@linux.microsoft.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260528030915.2654994-1-bboscaccy@linux.microsoft.com>
 References: <20260528030915.2654994-1-bboscaccy@linux.microsoft.com>
@@ -50,38 +50,169 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Sashiko correctly reported an off-by-one logic error checking against
-the maximum number of used maps.  Removing the index constraint allows
-us to simplify the check logic.
+There were a few spots in the hornet selftest makefile where some host
+resources were assumed to be used. Additionally add proper skip
+detection for scenarios where the autogenerated signing keys don't
+exist.
 
 Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 ---
- security/hornet/hornet_lsm.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ tools/testing/selftests/hornet/Makefile | 114 ++++++++++++++++++------
+ 1 file changed, 89 insertions(+), 25 deletions(-)
 
-diff --git a/security/hornet/hornet_lsm.c b/security/hornet/hornet_lsm.c
-index 35d9522d6bc72..eeb422db1092d 100644
---- a/security/hornet/hornet_lsm.c
-+++ b/security/hornet/hornet_lsm.c
-@@ -49,8 +49,7 @@ int hornet_next_map(void *context, size_t hdrlen,
- {
- 	struct hornet_parse_context *ctx = (struct hornet_parse_context *)context;
+diff --git a/tools/testing/selftests/hornet/Makefile b/tools/testing/selftests/hornet/Makefile
+index 316364f95f28c..460adab35e238 100644
+--- a/tools/testing/selftests/hornet/Makefile
++++ b/tools/testing/selftests/hornet/Makefile
+@@ -5,59 +5,123 @@ include ../../../scripts/Makefile.include
  
--	if (++ctx->security->signed_hash_count >= MAX_USED_MAPS)
--		return -EINVAL;
-+	ctx->security->signed_hash_count++;
- 	return 0;
- }
+ CLANG ?= clang
+ CFLAGS := -g -O2 -Wall
++TOOLSDIR := $(abspath ../../..)
+ BPFTOOL ?= $(TOOLSDIR)/bpf/bpftool/bpftool
+ SCRIPTSDIR := $(abspath ../../../../scripts/hornet)
+-TOOLSDIR := $(abspath ../../..)
+ LIBDIR := $(TOOLSDIR)/lib
+ BPFDIR := $(LIBDIR)/bpf
+ TOOLSINCDIR := $(TOOLSDIR)/include
+ APIDIR := $(TOOLSINCDIR)/uapi
+ CERTDIR := $(abspath ../../../../certs)
+-PKG_CONFIG ?= $(CROSS_COMPILE)pkg-config
++HOSTPKG_CONFIG ?= pkg-config
++
++SIGNING_KEY  := $(CERTDIR)/signing_key.pem
++SIGNING_CERT := $(CERTDIR)/signing_key.x509
++
++VMLINUX_BTF_PATHS ?= $(if $(O),$(O)/vmlinux)				\
++		     $(if $(KBUILD_OUTPUT),$(KBUILD_OUTPUT)/vmlinux)	\
++		     ../../../../vmlinux				\
++		     /sys/kernel/btf/vmlinux				\
++		     /boot/vmlinux-$(shell uname -r)
++VMLINUX_BTF ?= $(abspath $(firstword $(wildcard $(VMLINUX_BTF_PATHS))))
++
++# The hornet selftest needs the kernel module signing key/cert (generated when
++# the kernel is built with CONFIG_MODULE_SIG=y), a bpftool binary, and a
++# vmlinux with BTF for trivial.bpf.o. If any of those are missing (cross-build
++# without artifacts, container CI, CONFIG_MODULE_SIG disabled, etc.) skip the
++# targets rather than failing the global selftests build.
++hornet_skip_reason :=
++ifeq ($(wildcard $(SIGNING_KEY)),)
++hornet_skip_reason := module signing key not found at $(SIGNING_KEY) (build the kernel with CONFIG_MODULE_SIG=y first)
++else ifeq ($(wildcard $(SIGNING_CERT)),)
++hornet_skip_reason := module signing cert not found at $(SIGNING_CERT)
++else ifeq ($(wildcard $(BPFTOOL)),)
++hornet_skip_reason := bpftool not found at $(BPFTOOL) (build it under tools/bpf/bpftool first)
++else ifeq ($(VMLINUX_BTF),)
++hornet_skip_reason := no vmlinux with BTF found; tried $(VMLINUX_BTF_PATHS) (build the kernel with CONFIG_DEBUG_INFO_BTF=y or set VMLINUX_BTF=)
++endif
++
++ifneq ($(hornet_skip_reason),)
++$(warning Skipping hornet selftests: $(hornet_skip_reason))
++TEST_GEN_PROGS :=
++TEST_GEN_FILES :=
++
++include ../lib.mk
++
++else
  
-@@ -63,6 +62,8 @@ int hornet_map_hash(void *context, size_t hdrlen,
+ TEST_GEN_PROGS := loader
+ TEST_GEN_FILES := vmlinux.h loader.h trivial.bpf.o map.bin sig.bin insn.bin signed_loader.h
+-$(TEST_GEN_PROGS): LDLIBS += -lbpf
+-$(TEST_GEN_PROGS): $(TEST_GEN_FILES)
  
- 	if (vlen != SHA256_DIGEST_SIZE && vlen != 0)
- 		return -EINVAL;
-+	if (ctx->security->signed_hash_count >= MAX_USED_MAPS)
-+		return -EINVAL;
+ include ../lib.mk
  
- 	memcpy(&ctx->security->signed_hashes[ctx->security->signed_hash_count * SHA256_DIGEST_SIZE],
- 	       value, vlen);
+-BPF_CFLAGS := -target bpf \
+-	-D__TARGET_ARCH_$(ARCH) \
+-	-I/usr/include/$(shell uname -m)-linux-gnu \
++define get_sys_includes
++$(shell $(1) $(2) -v -E - </dev/null 2>&1 \
++	| sed -n '/<...> search starts here:/,/End of search list./{ s| \(/.*\)|-idirafter \1|p }') \
++$(shell $(1) $(2) -dM -E - </dev/null | grep '__riscv_xlen ' | awk '{printf("-D__riscv_xlen=%d -D__BITS_PER_LONG=%d", $$3, $$3)}') \
++$(shell $(1) $(2) -dM -E - </dev/null | grep '__loongarch_grlen ' | awk '{printf("-D__BITS_PER_LONG=%d", $$3)}') \
++$(shell $(1) $(2) -dM -E - </dev/null | grep -E 'MIPS(EL|EB)|_MIPS_SZ(PTR|LONG) |_MIPS_SIM |_ABI(O32|N32|64) ' | awk '{printf("-D%s=%s ", $$2, $$3)}')
++endef
++
++ifneq ($(CROSS_COMPILE),)
++CLANG_TARGET_ARCH = --target=$(notdir $(CROSS_COMPILE:%-=%))
++endif
++CLANG_SYS_INCLUDES = $(call get_sys_includes,$(CLANG),$(CLANG_TARGET_ARCH))
++
++IS_LITTLE_ENDIAN := $(shell $(CC) -dM -E - </dev/null | \
++			grep 'define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__')
++BPF_TARGET_ENDIAN := $(if $(IS_LITTLE_ENDIAN),--target=bpfel,--target=bpfeb)
++
++BPF_CFLAGS := $(BPF_TARGET_ENDIAN) \
++	-D__TARGET_ARCH_$(SRCARCH) \
++	$(CLANG_SYS_INCLUDES) \
+ 	$(KHDR_INCLUDES)
+ 
+-vmlinux.h:
+-	$(BPFTOOL) btf dump file /sys/kernel/btf/vmlinux format c > vmlinux.h
++$(OUTPUT)/vmlinux.h: $(VMLINUX_BTF) $(BPFTOOL)
++	$(BPFTOOL) btf dump file $(VMLINUX_BTF) format c > $@
+ 
+-trivial.bpf.o: trivial.bpf.c vmlinux.h
+-	$(CLANG) $(CFLAGS) $(BPF_CFLAGS) -c $< -o $@
++$(OUTPUT)/trivial.bpf.o: trivial.bpf.c $(OUTPUT)/vmlinux.h
++	$(CLANG) $(CFLAGS) $(BPF_CFLAGS) -I$(OUTPUT) -c $< -o $@
+ 
+-loader.h: trivial.bpf.o
+-	$(BPFTOOL) gen skeleton -S -k $(CERTDIR)/signing_key.pem -i $(CERTDIR)/signing_key.x509 \
++$(OUTPUT)/loader.h: $(OUTPUT)/trivial.bpf.o
++	$(BPFTOOL) gen skeleton -S -k $(SIGNING_KEY) -i $(SIGNING_CERT) \
+ 		-L $< name trivial > $@
+ 
+-insn.bin: loader.h
++$(OUTPUT)/insn.bin: $(OUTPUT)/loader.h
+ 	$(SCRIPTSDIR)/extract-insn.sh $< > $@
+ 
+-map.bin: loader.h
++$(OUTPUT)/map.bin: $(OUTPUT)/loader.h
+ 	$(SCRIPTSDIR)/extract-map.sh $< > $@
+ 
+ $(OUTPUT)/gen_sig: ../../../../scripts/hornet/gen_sig.c
+ 	$(call msg,GEN_SIG,,$@)
+-	$(Q)$(CC) $(shell $(PKG_CONFIG) --cflags libcrypto 2> /dev/null) \
++	$(Q)$(HOSTCC) $(shell $(HOSTPKG_CONFIG) --cflags libcrypto 2> /dev/null) \
+ 		  $< -o $@ \
+-		  $(shell $(PKG_CONFIG) --libs libcrypto 2> /dev/null || echo -lcrypto)
++		  $(shell $(HOSTPKG_CONFIG) --libs libcrypto 2> /dev/null || echo -lcrypto)
++
++$(OUTPUT)/sig.bin: $(OUTPUT)/insn.bin $(OUTPUT)/map.bin $(OUTPUT)/gen_sig
++	$(OUTPUT)/gen_sig --key $(SIGNING_KEY) --cert $(SIGNING_CERT) \
++		--data $(OUTPUT)/insn.bin --add $(OUTPUT)/map.bin --out $@
++
++$(OUTPUT)/signed_loader.h: $(OUTPUT)/sig.bin $(OUTPUT)/loader.h
++	$(SCRIPTSDIR)/write-sig.sh $(OUTPUT)/loader.h $(OUTPUT)/sig.bin > $@
++
++BPFOBJ := $(OUTPUT)/libbpf/libbpf.a
++
++$(OUTPUT)/libbpf:
++	$(Q)mkdir -p $@
+ 
+-sig.bin: insn.bin map.bin $(OUTPUT)/gen_sig
+-	$(OUTPUT)/gen_sig --key $(CERTDIR)/signing_key.pem --cert $(CERTDIR)/signing_key.x509 \
+-		--data insn.bin --add map.bin --out sig.bin
++$(BPFOBJ): $(wildcard $(BPFDIR)/*.[ch] $(BPFDIR)/Makefile) \
++	   $(APIDIR)/linux/bpf.h | $(OUTPUT)/libbpf
++	$(Q)$(MAKE) -C $(BPFDIR) OUTPUT=$(OUTPUT)/libbpf/ \
++		    DESTDIR=$(OUTPUT) prefix= \
++		    $(BPFOBJ) install_headers
+ 
+-signed_loader.h: sig.bin
+-	$(SCRIPTSDIR)/write-sig.sh loader.h sig.bin > $@
++$(OUTPUT)/loader: loader.c $(OUTPUT)/signed_loader.h $(BPFOBJ)
++	$(CC) $(CFLAGS) -I$(LIBDIR) -I$(APIDIR) -I$(OUTPUT) \
++		$< $(BPFOBJ) -o $@ -lelf -lz
+ 
+-loader: loader.c signed_loader.h
+-	$(CC) $(CFLAGS) -I$(LIBDIR) -I$(APIDIR) $< -o $@ -lbpf
+ 
++EXTRA_CLEAN = $(OUTPUT)/gen_sig $(OUTPUT)/libbpf
+ 
+-EXTRA_CLEAN = $(OUTPUT)/gen_sig
++endif
 -- 
 2.53.0
 
