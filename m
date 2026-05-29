@@ -1,163 +1,160 @@
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7193DDDD0
-	for <linux-security-module@vger.kernel.org>; Fri, 29 May 2026 20:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.179
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780088193; cv=pass; b=PZl38DlTGIRSR29R6G1IWU8f6ghuT0lys4vOMij55JTkA6tJsOGyV8+1YQJkqUjaQisVk9+Wfhvl8ywhoFinYroIt7DxX6FI6/mFD+EwpV6AMcqlDcZB55+Sxc5qz4wTYtVVMMGBBn/hYJFqBgfX0waWt10PXXvogHO8/PWosq8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780088193; c=relaxed/simple;
-	bh=smTzgLunUme0eoIvUNmix5Dg0CIit+hiYdX4wzwspKQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t3fnVTe9DmeRdCj8spgAFWrdpSTbXLeoWBeis0YRyvk9srC3hcSs+RZVIYXuFsng2cEX0AP2gH4YgH2aN5RthBHrkyE7oCsStXPLLhIezkF5GQ788oeqKJ5YBusS3lKCpNSS2Y+kFuQHNRiB3oG0sJD1AaU7ilEXieR/1ClMi48=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RZQ9SUcL; arc=pass smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8C23630BF;
+	Fri, 29 May 2026 22:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780093991; cv=none; b=e6M/MCMJjMvosnKCwK4ZUL515HUD3YKCBcZ4CD/k9KO+qmww2Pb6srD1FT0KFhzrlLLrIvMlajX0Ubc5ntd3dCTuPOPsL64avaQ2CUEcTfAYMbmM66j8CvvrtJfM4gpWhOO7wuxRwNFvk6HkKIiAhycfYYy1f64wKdB2QkaYxHM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780093991; c=relaxed/simple;
+	bh=BMJTQbmjtk56nbc5+Uf9UPPM8WVufIXj5mJ052tqzM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OlJPqYeNRO7sxPxjEPU6a6hB7jYxuPkskmLAy6SdnkkjVumUK15jrQASiisNxrNfIoI1Ls85UU9yzmICGgNO7b/vwN3eKHQ7AGaCm4OtcCVqmXqOvMjr9Jhfdzjcx7iQvkXsKxDiSBidpXqkBbNgm0X+ZjJXQ+KTgzgsb5gXVeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NgMsLZB7; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RZQ9SUcL"
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-c85773f46b5so467234a12.0
-        for <linux-security-module@vger.kernel.org>; Fri, 29 May 2026 13:56:29 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780088189; cv=none;
-        d=google.com; s=arc-20240605;
-        b=NCA+YrWdhTzZKt/W/K7iBJgnWaCGvdoYh56cIH+tE3HFtRxyYHDyY3SxVJPN/nfZxk
-         0qnbbsI5LFL6v5n7gc7ZXUM7MZl9AW56ufQxMY3Ar+vNHxTWbIAhWsuBVUXYQxIf4YqR
-         B5gfC6ZLeXmWPEWauU6wjEsqqnJvIunAAxrPBDNU8kuQAbkn2DJhmxZN254xaVNRKhXd
-         nxlqBfTGCepfhRYPAQmLAZgibwpMHMkkHXk2EGedB8BRt8jie8Ha9TkKyzUw2tySiBXE
-         d+DKBZZv3CCwyvIi/Cc7CZHXN02nkx1VEdd8JDGiTetJHd2v2TZ2CI5tfhtf0VwzZ9HW
-         FROw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=gp17DDHpDrQCYtkBO9wV4U/G41EKHx7vsZ5TJQ15dv4=;
-        fh=H0UPvU64rYsOHFbmMPhqJgGHg2feECvC3N/d54GOdP8=;
-        b=LfTVSms4Ejg/5Y4AW9j/orh5ixnz4WFSAVE7Z8nMtug13WsTGwpeG96yWyWc2/YUHl
-         0N1TXaJH3yOr9OGLf+yZVKabpfbAjfVqT4zpFxK2SnjRnZCB8vYGSa5ogssM8a826IKc
-         1L8lWQC2fot65f1oUfXljzkURWxKWs5L7qUHgodqyOGf88XfeDHi4kkhSvpQu2Gw+AHD
-         cLu0/C/91F3PokZsA8B64nyeslQrcaKWh3fLFUINcCVCfzBiIX75pHN9iTtEmarXKSVz
-         196fy0hlhLDGMkjEnUu8wVNkoZ/Nx0MDy0U6vCM+9n/Yxf1TUJe5/fM/Y8joaS3avQic
-         owIA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1780088189; x=1780692989; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gp17DDHpDrQCYtkBO9wV4U/G41EKHx7vsZ5TJQ15dv4=;
-        b=RZQ9SUcLnNnGI0993ldelv45UxNt24LfHHnZWoZb7pvmVAp05pfQf7qwHrmFT0KO5l
-         7k6S2PSm9gp7tO7oBd4QT1xrpUiU5i7b5UeEGiDVPccb6URREc+ZOmi7Xmr7CF8V313K
-         KaE5OAsMcnno2czGllh+/C4ZsMQvDq7P5+xhD9ZY+nWTH7EDT8KJdUldS59keHjHb5Qd
-         vz0mVTJ7fBQ3Z2zje4zx8172f4KhsGICbtxYsHqQrHQNXJXlBNf7ousgrPGVqoOPgUek
-         f8nqqqil9I+cUP90HDmuNNFSubYGY3vPkZSh01e4bK1oqGidpF75h4i32y0wLFake329
-         ShJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780088189; x=1780692989;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=gp17DDHpDrQCYtkBO9wV4U/G41EKHx7vsZ5TJQ15dv4=;
-        b=UEGfMsvYwryZxKnY/80bugDVdqNEOmg10Z8v9VCUpbMtjLUbtpTv3YkzrCTRO0bs5+
-         um/V7EvzIcWnUsKJGltYzA7+PWQVd8bXS9yxXc5tTCPvN6u55S1djmrDtYRgkd7C8vEp
-         lvfZwBsicc824qCa4HDGzAp4Sgm0ZMoyjINZ13rViu4sk1E8J7DS66SqZ+urVSTMhw9r
-         k3Zrg+dcE52oIW10lwUTC6Df8Zr2Ca/43qbse6N0h3pFELmT2j4Hge/FQX2VCkhNpMcg
-         b8dlJG3Fs3kcu9/LDcr1PIcfnK/5evI4TQwATqKhqPBoT3gdNfGr9iNZGidbvvhtO3iH
-         679A==
-X-Forwarded-Encrypted: i=1; AFNElJ8acgwCbUD2UWqApDJqroXgMLrvXPCyBFHE5uFD3xlBDth5pPFiuxnUu6vTSNBNoLQ3dxJxT0CIAHRGb8Y32gq3VLZnpYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfqNyu6qVbSRKh2HXyTCIkQYGlZiR/GWq44+hC4YD74Bb7+ZAL
-	ntENiizoMQpOcDYJq0EVk41Hs+UiEfzf1xZmx9ucQY8k9gBrKuBlb6cAblJ+XgfGgOkvF8ou8sU
-	tqQUIzqfJ3b7u/qy6DfYwOWBIJ64cTDa5VwsNl0AVdcHeZ3YseJnTwQ==
-X-Gm-Gg: Acq92OFFq86p2JOKZGLenI0K2cK1Ar5Q+VACrrh/WXiS2gT7MKNjS1jBnJaMH5Ohrqa
-	HZybmcPUlm2oL4+Ly5nB1F2uQ8Bc995QJ4jvWp1Z5vwyT3cRNWt6Ljo8Ujl/6c9WSjMJcjf6ajP
-	ULUOxM/+hxymao2UM7k70np1BQnw3MRgBppVmVv0SqJVr4zLnXlu3aFuCvfPK5SfkN0dEs83RG+
-	i4u2vgrbWkbTCa6FC5jkXBeaTh0yjgPLxPGaEHI/aV8OkKn9DaK95AOEqB2V4XbDQ5VP7/FW5mR
-	0PiRwcntoLYosZZWWg==
-X-Received: by 2002:a05:6a21:492:b0:3b3:edf:9efc with SMTP id
- adf61e73a8af0-3b426ae88cfmr937037637.21.1780088189259; Fri, 29 May 2026
- 13:56:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NgMsLZB7"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 808CF1F00893;
+	Fri, 29 May 2026 22:33:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780093990;
+	bh=kjpDzPjEODq7Ts9oiQp8TP0Hsn5YrdFOZnqRGmiIHrI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=NgMsLZB7khjmOWa3syHZ2cVMOcLaJ9WoyuzMvt3jYpS6BOfWpPUB4egVbL73lexFP
+	 3z3lx4++4XB+6IlFj9tDXaDI9IIpHNOpS/Xyos+RnPXQHQMyE9r8yEiUozgAkxOWml
+	 qDwRiLGwT8PrtGPVpzhHB0apfuIIFEdypXQVWNfPL+5PhlzpNKQlD48JttJH2cSu37
+	 rdsgtfbjTUZC2qBd9AKiMKaVe1rOnDnmvpEvPkf8YtwFHEjmbnJOTSAVi9xbJZ02rE
+	 NcP5vWi+/NLtMoiGJwD2sruzGn30Q42+Z7nWTWm43jQtv5GqShYURH/Oxo9mWQhT5l
+	 jaeXmOUJIc2Ug==
+Date: Sat, 30 May 2026 01:33:06 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: linux-integrity@vger.kernel.org,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	Arun Menon <armenon@redhat.com>,
+	"Daniel P. Smith" <dpsmith@apertussolutions.com>,
+	Alec Brown <alec.r.brown@oracle.com>,
+	Ross Philipson <ross.philipson@gmail.com>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] tpm-buf: memory-safe allocations
+Message-ID: <ahoUItv3BMEYT0oM@kernel.org>
+References: <20260522013555.1063716-1-jarkko@kernel.org>
+ <33b4a34ceea0934e238c08e0256b975511ef99c8.camel@HansenPartnership.com>
+ <ahVRefyT4BTKOu0m@kernel.org>
+ <27db53d88a44e057c2f0ed5a637f65e4e18c8c3d.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260528030915.2654994-1-bboscaccy@linux.microsoft.com> <CAHC9VhSQzV0xZPFwkNdUJ5Lz8Mw6gppBhR6QyRdrY8xCTohHDw@mail.gmail.com>
-In-Reply-To: <CAHC9VhSQzV0xZPFwkNdUJ5Lz8Mw6gppBhR6QyRdrY8xCTohHDw@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 29 May 2026 16:56:17 -0400
-X-Gm-Features: AVHnY4InBv2VNLG7wcVKejjs8IJRkz7oJuZoqfyR3Kf35dBYrfX9C0d5V81Tzh8
-Message-ID: <CAHC9VhShFjEMyN7Z878j437_c6toLZrhgxrag88U795jAA+2Nw@mail.gmail.com>
-Subject: Re: [PATCH 00/11] hornet: security, tooling and selftest fixes
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Fan Wu <wufan@kernel.org>, James.Bottomley@hansenpartnership.com, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <27db53d88a44e057c2f0ed5a637f65e4e18c8c3d.camel@HansenPartnership.com>
 
-On Thu, May 28, 2026 at 9:39=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> On Wed, May 27, 2026 at 11:09=E2=80=AFPM Blaise Boscaccy
-> <bboscaccy@linux.microsoft.com> wrote:
-> >
-> > Patch 1 closes a TOCTOU race in signature verification. Map
-> > contents were hashed at the program-load hook and re-hashed at
-> > the program-run hook, leaving a window in which a sufficiently
-> > privileged attacker could mutate a map between the two checks
-> > and run a program whose maps no longer matched what was signed.
-> > The fix records the verified hashes on the prog at load time
-> > and, in security_bpf_prog, checks them against
-> > prog->aux->used_maps =E2=80=94 the same map set the verifier and
-> > runtime resolve against =E2=80=94 so the verified and executed sets
-> > cannot diverge. The per-map index in the signature format is no
-> > longer needed and is dropped; the check becomes a subset test.
-> > Reported by Eric Biggers.
-> >
-> > Patches 2-3 fix two counting bugs in the same area: duplicate maps
-> > could satisfy the required hash count, and an off-by-one capped
-> > accepted maps at MAX_USED_MAPS.
-> >
-> > Patches 4-11 are in response to sashiko feedback found here:
-> > https://sashiko.dev/#/patchset/20260507191416.2984054-1-bboscaccy%40lin=
-ux.microsoft.com
-> >
-> > They provide some correctness fixes in the hornet tooling along with
-> > making the selftest behave under cross-compilation and skip cleanly
-> > when signing keys / bpftool / vmlinux BTF are unavailable, instead of
-> > breaking the global selftest build.
-> >
-> > Blaise Boscaccy (11):
-> >   hornet: fix TOCTOU in signed program verification
-> >   hornet: invert map set check logic
-> >   hornet: fix off-by-one bug in max used maps check
-> >   selftests: hornet: handle cross compilation and test skipping
-> >   hornet: gen_sig: fix off-by-one check for used maps
-> >   hornet: gen_sig: fix error string allocations
-> >   hornet: gen_sig: check for bad allocations
-> >   hornet: gen_sig: fix missing command line switches
-> >   hornet: scripts: set a non-zero error code for usage
-> >   hornet: scripts: harden scripts to handle trailing whitespace
-> >   hornet: scripts: Improve argument handling and error messages
-> >
-> >  Documentation/admin-guide/LSM/Hornet.rst |  39 +++---
-> >  scripts/hornet/extract-insn.sh           |  24 ++--
-> >  scripts/hornet/extract-map.sh            |  25 ++--
-> >  scripts/hornet/extract-skel.sh           |  35 ++++--
-> >  scripts/hornet/gen_sig.c                 |  61 ++++++----
-> >  scripts/hornet/write-sig.sh              |  10 +-
-> >  security/hornet/hornet.asn1              |   1 -
-> >  security/hornet/hornet_lsm.c             | 148 ++++-------------------
-> >  tools/testing/selftests/hornet/Makefile  | 114 +++++++++++++----
-> >  9 files changed, 235 insertions(+), 222 deletions(-)
->
-> Aside from a possible (?) typo in patch 5/11, this patchset looks okay
-> to me so I'm going to merge it to lsm/dev-staging now with the idea of
-> moving it to lsm/dev once Blaise provides some clarity on patch-5.
+On Fri, May 29, 2026 at 10:08:52AM -0400, James Bottomley wrote:
+> On Tue, 2026-05-26 at 10:53 +0300, Jarkko Sakkinen wrote:
+> > On Mon, May 25, 2026 at 01:50:51PM -0400, James Bottomley wrote:
+> > > On Fri, 2026-05-22 at 04:35 +0300, Jarkko Sakkinen wrote:
+> > > > Decouple kzalloc from buffer creation, so that a managed
+> > > > allocation
+> > > > can be
+> > > > used:
+> > > > 
+> > > > 	struct tpm_buf *buf __free(kfree) buf =
+> > > > kzalloc(TPM_BUFSIZE,
+> > > > 						GFP_KERNEL);
+> > > > 	if (!buf)
+> > > > 		return -ENOMEM;
+> > > > 
+> > > > 	tpm_buf_init(buf, TPM_BUFSIZE);
+> > > > 
+> > > > Alternatively, stack allocations are also possible:
+> > > > 
+> > > > 	u8 buf_data[512];
+> > > > 	struct tpm_buf *buf = (struct tpm_buf *)buf_data;
+> > > > 	tpm_buf_init(buf, sizeof(buf_data));
+> > > 
+> > > This isn't really a good idea from a security point of view.
+> > >  Remember the buffer has to be big enough for both the sent and the
+> > > received data.  Today we simply set TPM_BUFSIZE to the maximum
+> > > amount a TPM requires and all the send and receives just work.  If
+> > > we let callers set this size, we're asking for them to get it wrong
+> > > (or at least forget about the receive part) and for us to get a DMA
+> > > overrun from the TPM ... which might be potentially exploitable
+> > > depending on how it occurs (think of an unseal of user chosen data
+> > > overrunning).
+> > 
+> > It's one patch so you're free to remark the call sites where this
+> > happens. This is not a majorn concern at all.
+> 
+> Nearly twenty years ago, when the kernel was a lot smaller, a then
+> kernel luminary called Rusty Russell realized we needed to pay much
+> more attention to how we design APIs inside the kernel if we wanted it
+> to grow successfully.  He published his initial thoughts and gave talks
+> at both the kernel summit and OLS on it:
+> 
+> https://ozlabs.org/~rusty/index.cgi/tech/2008-03-18.html
+> 
+> The key point that's always stuck with me is "hard to misuse beats easy
+> to use". Later he came up with a rating scale (now known as the Rusty
+> API classification):
+> 
+> https://ozlabs.org/~rusty/index.cgi/tech/2008-03-30.html
+> 
+> and for chuckles and grins on April fools day he came up with a
+> negative rating ridiculing some of our dafter API choices:
+> 
+> https://ozlabs.org/~rusty/index.cgi/tech/2008-04-01.html
+> 
+> The point for this patch set is that the sizing of the original tpm_buf
+> interface scores 10/10 on the Rusty scale (it's impossible to get
+> wrong).  Simply threading size through the whole API, as this patch
+> does, may look like the right answer, but it causes a massive reduction
+> in API score.  In fact, since the buffer has to be sized not only
+> according to what goes in, but also what gets returned and this is
+> nowhere mentioned in the new documentation it scores -3 (read the
+> documentation and you can still get it wrong).  Now by mentioning the
+> sizing problems in the doc, you can probably get it up to +3 (read the
+> documentation and you'll get it right) but my question was not if you
+> got it wrong somewhere in the patch but whether we couldn't do a whole
+> lot better in terms of API score by designing a better API.
+> 
+> A key point about the 185 version of the TPM spec is that it's really
+> only a few commands that need larger buffers (the Post Quantum ML-KEM
+> keys) which doesn't apply to most of the in-kernel TPM callsites. 
+> Since tpm_buf_init takes the ordinal, we can actually tell at runtime
+> (or compile time if the ordinal is a constant) if the command would
+> need a larger buffer.  We can also tell from the TPM properties whether
+> the TPM itself can take a larger buffer, so for every current TPM we
+> could retain the original score 10/10 API and warn at runtime if there
+> might be a problem.  Then the larger keys seem to fit into 8k, so we
+> could still retain most of the original API properties of being
+> difficult to misuse simply by having an 8k size flag (which we could
+> ignore if the TPM doesn't support it) and warn at runtime if
+> tpm_buf_init sends an ordinal which might need a larger buffer.  At
+> worst we should be able to get to an API which scores 5/10 (do it right
+> or it will break at runtime).
+> 
+> Regards,
+> 
+> James
 
-With the typo in 5/11 sorted out, I've gone ahead and moved these
-fixes over to lsm/dev.  I also took the liberty of adding the
-associated 'Fixes:' tags, not critical in this case, but nice to have.
+This patch has pre-existed long before any of this post-quantum stuff,
+and there are good reasons so to have buffers managed given e.g., 
+complexity of tpm2-sessions code. It prevents any major risk for
+memory leaks.
 
---=20
-paul-moore.com
+Trenchboot extends the use buffers to early boot and we want a robust
+structure. I'm not going to spend my time reading about philosophical
+aspects of API design. There are quantitative reasons to decrease
+the risk of memory leaks.
+
+BR, Jarkko
