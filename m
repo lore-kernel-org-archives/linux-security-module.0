@@ -1,222 +1,155 @@
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786BF369D77;
-	Fri, 29 May 2026 12:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6E83403FD;
+	Fri, 29 May 2026 14:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780057552; cv=none; b=s7p8GL/+T/S66+Mt2KDVPtiTyFxNxe0kf0sEPfwg6nWF7q7t5tmzz5k5gn5rD4M7gLzHVjN7a4KIjY2Wtb2Itqhq5KaKB7vBK5a+wWFUikUDdnrv8p94ylT/ue0ZoP4xSoSid0mquxChUU2aUXfV1Oj3ddHegO+7nEKTjBoieaA=
+	t=1780063737; cv=none; b=ZRBVApCdVZNdgg3C7N05iUjTDCTGrWHyHgb8iGwcaPHaq1RG24TON8bFUCy879si2TNtlZmIFg8P1rmLHO6cXZImB3q8+ciZG1u9AagowvC+cPY1KghgXOOLkV7Q+h1Bj5RoOi8YLANV7nUU0n+3v7IqrdWV7B64aPOsFZGI/mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780057552; c=relaxed/simple;
-	bh=N6sVf38+FHJduniGZ0W3fwFzekBcrJr4FsogusoV7Fo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BUpZYHBTPg41pSEeElINbp4Xct/shIBbMRQK/KFo5OGVSuT2emrY+ciPILUj9vDAYeEcZZJy6l2IBY3zy/EHWGJldJVYDUKZo+OmwH55qY+e6U99+Dn9DVHsGC4EzwWHEb251ea3SnU67o51bRiMHDQDupiPzxVCON1e5X1GNOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=P68p2Ixu; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+	s=arc-20240116; t=1780063737; c=relaxed/simple;
+	bh=Bmm7xx0AU1UJVdCUceNEBHC2cQOLU9KmXpJK3I0DQzU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=N3UoUWlGpk6eN4gxtbcWKPHil92Zt08MeZCR+MX+HQZKrGlGywwe+MhQWvBnHK/qnbAkSnNFRoBBwGXNfxuNYUIERsnLVT8pZLgYjejYvShW95Xe9dgQykIJdtO8lPambOnJnnYOULyLbUJK6NAWhK2Z2X0rPbWRC49k9fmNKX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=Ffu1Tcoi; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="P68p2Ixu"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=cDRm8FJe+A1DHHSWj+EE8qVw4sy3yXZrJY0jrv55lAU=; b=P68p2Ixuvnc2jQSglPNMrAzAuS
-	grWG4jqN2n0JB6uVtk5qaOYu+jleFw+/Tt1aZlRG6SvDNIEQ8Gk78OoasUXJxRKVGTbf+T1CJJlVP
-	dc7Vd9D1cNEeYmPrmwTPEeFqgz7h6NcLfWYvcOYQ4r5qlGGq3uFvadu/+ZjAg+9ZvcZtn+YjmFcQX
-	6H5dpuFZGYLKRIxAZOSm3cuv50eXoanlH1Z9KNKOy+la5/a1LhrvRMZ91lurCo3bRfX5QTDUvJytt
-	N+cxYdjXAG8Kwbl7qN8f5UjchJ53bsnxC6oZI7WWcSoQSQnZkyXreGEdzr5dxoeDv0ZTf+9dho6zu
-	KRMvweFw==;
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1wSwHa-000FmU-1z;
-	Fri, 29 May 2026 14:25:46 +0200
-Received: from localhost ([127.0.0.1])
-	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1wSwHZ-0008gK-0Z;
-	Fri, 29 May 2026 14:25:45 +0200
-Message-ID: <544dbc0d-24d2-423f-9db4-07976d67a9d0@iogearbox.net>
-Date: Fri, 29 May 2026 14:25:45 +0200
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Ffu1Tcoi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1780063733;
+	bh=Bmm7xx0AU1UJVdCUceNEBHC2cQOLU9KmXpJK3I0DQzU=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=Ffu1TcoiiHvUQIS/XhIaiVlQN0ts6wlg6x4vmT/+aqJpN3TZwRnTqlqTIN6oe0J/Y
+	 Loraq1S09iiPreTV54Qq30lto6NJNek0TspAL4+yDR+zWP3egmbOkBoLcdyUETSq1k
+	 z2Ikep27s0flQMetpJgJkUMNLznRFZzIv4w6GB6g=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4300:d341::8c71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 5A3611C01C5;
+	Fri, 29 May 2026 10:08:53 -0400 (EDT)
+Message-ID: <27db53d88a44e057c2f0ed5a637f65e4e18c8c3d.camel@HansenPartnership.com>
+Subject: Re: [PATCH] tpm-buf: memory-safe allocations
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org, Jarkko Sakkinen
+ <jarkko.sakkinen@opinsys.com>, Arun Menon <armenon@redhat.com>, "Daniel P.
+ Smith" <dpsmith@apertussolutions.com>, Alec Brown
+ <alec.r.brown@oracle.com>, Ross Philipson <ross.philipson@gmail.com>,
+ Stefan Berger <stefanb@linux.ibm.com>, Peter Huewe <peterhuewe@gmx.de>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Mimi Zohar <zohar@linux.ibm.com>, David
+ Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James
+ Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, 
+ linux-security-module@vger.kernel.org
+Date: Fri, 29 May 2026 10:08:52 -0400
+In-Reply-To: <ahVRefyT4BTKOu0m@kernel.org>
+References: <20260522013555.1063716-1-jarkko@kernel.org>
+	 <33b4a34ceea0934e238c08e0256b975511ef99c8.camel@HansenPartnership.com>
+	 <ahVRefyT4BTKOu0m@kernel.org>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf v3 2/2] bpf, libbpf: reject non-exclusive metadata
- maps in the signed loader
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- KP Singh <kpsingh@kernel.org>
-Cc: bpf <bpf@vger.kernel.org>,
- LSM List <linux-security-module@vger.kernel.org>,
- Alexei Starovoitov <ast@kernel.org>,
- Kumar Kartikeya Dwivedi <memxor@gmail.com>
-References: <20260522215337.662271-1-kpsingh@kernel.org>
- <20260522215337.662271-3-kpsingh@kernel.org>
- <CAADnVQLJsvCfRxyLT-NJRubwSPTNd0k5bEp45Zyu9q1B_3oG+A@mail.gmail.com>
-Content-Language: en-US
-From: Daniel Borkmann <daniel@iogearbox.net>
-Autocrypt: addr=daniel@iogearbox.net; keydata=
- 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
-In-Reply-To: <CAADnVQLJsvCfRxyLT-NJRubwSPTNd0k5bEp45Zyu9q1B_3oG+A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: Clear (ClamAV 1.4.3/28015/Fri May 29 08:24:51 2026)
 
-On 5/23/26 5:12 PM, Alexei Starovoitov wrote:
-> On Fri, May 22, 2026 at 11:53 PM KP Singh <kpsingh@kernel.org> wrote:
->>
->> The loader verifies map->sha against the metadata hash in its
->> instructions. map->sha is calculated when BPF_OBJ_GET_INFO_BY_FD is called
->> on the frozen map.
->>
->> While the map is frozen, the loader must also ensure the map is
->> exclusive, as, without exclusivity, another BPF program with map access
->> can mutate the contents afterwards, so the check passes on stale data.
-> 
-> Hold on. How is this an issue? excl_prog_sha guarantees
-> that only loader prog can use this map.
-> Are you saying the same loader prog will use the same map
-> for the 2nd time. Ok. I still don't see a problem.
-> 
->> Place excl_prog_sha right after sha[] in struct bpf_map and have
->> gen_loader bail with -EINVAL when it is NULL, via BPF_PSEUDO_MAP_IDX at
->> fixed offset 32. The 8-byte read of the pointer field limits this to
->> 64-bit kernels; gen_loader needs target pointer size tracking to emit
->> the right sized read on 32-bit (follow-up).
-> 
-> I don't think we can go from maybe-racy to certainly-broken-on-32-bit.
-> So only applied patch 1.
+On Tue, 2026-05-26 at 10:53 +0300, Jarkko Sakkinen wrote:
+> On Mon, May 25, 2026 at 01:50:51PM -0400, James Bottomley wrote:
+> > On Fri, 2026-05-22 at 04:35 +0300, Jarkko Sakkinen wrote:
+> > > Decouple kzalloc from buffer creation, so that a managed
+> > > allocation
+> > > can be
+> > > used:
+> > >=20
+> > > 	struct tpm_buf *buf __free(kfree) buf =3D
+> > > kzalloc(TPM_BUFSIZE,
+> > > 						GFP_KERNEL);
+> > > 	if (!buf)
+> > > 		return -ENOMEM;
+> > >=20
+> > > 	tpm_buf_init(buf, TPM_BUFSIZE);
+> > >=20
+> > > Alternatively, stack allocations are also possible:
+> > >=20
+> > > 	u8 buf_data[512];
+> > > 	struct tpm_buf *buf =3D (struct tpm_buf *)buf_data;
+> > > 	tpm_buf_init(buf, sizeof(buf_data));
+> >=20
+> > This isn't really a good idea from a security point of view.
+> > =C2=A0Remember the buffer has to be big enough for both the sent and th=
+e
+> > received data.=C2=A0 Today we simply set TPM_BUFSIZE to the maximum
+> > amount a TPM requires and all the send and receives just work.=C2=A0 If
+> > we let callers set this size, we're asking for them to get it wrong
+> > (or at least forget about the receive part) and for us to get a DMA
+> > overrun from the TPM ... which might be potentially exploitable
+> > depending on how it occurs (think of an unseal of user chosen data
+> > overrunning).
+>=20
+> It's one patch so you're free to remark the call sites where this
+> happens. This is not a majorn concern at all.
 
-I've looked a bit more into it with regards to above question from Alexei
-as well as the __bpf_md_ptr issue.
+Nearly twenty years ago, when the kernel was a lot smaller, a then
+kernel luminary called Rusty Russell realized we needed to pay much
+more attention to how we design APIs inside the kernel if we wanted it
+to grow successfully.  He published his initial thoughts and gave talks
+at both the kernel summit and OLS on it:
 
-Imho, KP is correct that the extra check/enforcement is needed. So Alice
-as a trusted signer generates the loader program (loader_insns + data_blob)
-and signs it. The loader program contains the below enforcement to reject
-if the metadata map was not exclusive.
+https://ozlabs.org/~rusty/index.cgi/tech/2008-03-18.html
 
-Now the (untrusted) host that wants to load the program, it holds a signed
-loader where they can't change a byte of it without breaking the signature.
+The key point that's always stuck with me is "hard to misuse beats easy
+to use". Later he came up with a rating scale (now known as the Rusty
+API classification):
 
-However, it could simply omit excl_prog_hash on BPF_MAP_CREATE for the data
-map (which would "normally" be bound exclusively to the loader).
+https://ozlabs.org/~rusty/index.cgi/tech/2008-03-30.html
 
-Then check_map_prog_compatibility() enforcement is skipped on verifier side
-given excl_prog_sha is not set. The loader loads fine, the fingerprint check
-can then pass against a stale snapshot while a different program mangled the
-data_blob underneath.
+and for chuckles and grins on April fools day he came up with a
+negative rating ridiculing some of our dafter API choices:
 
-Regarding __bpf_md_ptr, I would solve it differently via fixed size, see below
-together with the excl check coming before the signature check in the loader
-and the build bug assertions, and a jmp not eq to 1.
+https://ozlabs.org/~rusty/index.cgi/tech/2008-04-01.html
 
-  include/linux/bpf.h        |  1 +
-  kernel/bpf/syscall.c       |  5 +++++
-  tools/lib/bpf/gen_loader.c | 17 +++++++++++++++++
-  3 files changed, 23 insertions(+)
+The point for this patch set is that the sizing of the original tpm_buf
+interface scores 10/10 on the Rusty scale (it's impossible to get
+wrong).  Simply threading size through the whole API, as this patch
+does, may look like the right answer, but it causes a massive reduction
+in API score.  In fact, since the buffer has to be sized not only
+according to what goes in, but also what gets returned and this is
+nowhere mentioned in the new documentation it scores -3 (read the
+documentation and you can still get it wrong).  Now by mentioning the
+sizing problems in the doc, you can probably get it up to +3 (read the
+documentation and you'll get it right) but my question was not if you
+got it wrong somewhere in the patch but whether we couldn't do a whole
+lot better in terms of API score by designing a better API.
 
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index cd191c5fdb0a..487f4653d8a6 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -295,6 +295,7 @@ struct bpf_map_owner {
-  
-  struct bpf_map {
-  	u8 sha[SHA256_DIGEST_SIZE];
-+	u32 excl;
-  	const struct bpf_map_ops *ops;
-  	struct bpf_map *inner_map_meta;
-  #ifdef CONFIG_SECURITY
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 630d530782fe..37dacdbc5c01 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -1572,6 +1572,11 @@ static int map_create(union bpf_attr *attr, bpfptr_t uattr)
-  			err = -EFAULT;
-  			goto free_map;
-  		}
-+
-+		/* See libbpf: emit_signature_match() */
-+		BUILD_BUG_ON(offsetof(struct bpf_map, excl) != SHA256_DIGEST_SIZE);
-+		BUILD_BUG_ON(offsetof(struct bpf_map, sha)  != 0);
-+		map->excl = 1;
-  	} else if (attr->excl_prog_hash_size) {
-  		err = -EINVAL;
-  		goto free_map;
-diff --git a/tools/lib/bpf/gen_loader.c b/tools/lib/bpf/gen_loader.c
-index bcea21c3b7bb..cd8d7df94ac7 100644
---- a/tools/lib/bpf/gen_loader.c
-+++ b/tools/lib/bpf/gen_loader.c
-@@ -586,6 +586,23 @@ static void emit_signature_match(struct bpf_gen *gen)
-  	__s64 off;
-  	int i;
-  
-+	/*
-+	 * Reject if the metadata map is not exclusive. Without exclusivity
-+	 * the cached map->sha[] verified above can be stale: another BPF
-+	 * program with map access could have mutated the contents between
-+	 * BPF_OBJ_GET_INFO_BY_FD and loader execution.
-+	 */
-+	emit2(gen, BPF_LD_IMM64_RAW_FULL(BPF_REG_1, BPF_PSEUDO_MAP_IDX,
-+					 0, 0, 0, 0));
-+	emit(gen, BPF_LDX_MEM(BPF_W, BPF_REG_2, BPF_REG_1, SHA256_DIGEST_LENGTH));
-+	off = -(gen->insn_cur - gen->insn_start - gen->cleanup_label) / 8 - 2;
-+	if (is_simm16(off)) {
-+		emit(gen, BPF_MOV64_IMM(BPF_REG_7, -EINVAL));
-+		emit(gen, BPF_JMP_IMM(BPF_JNE, BPF_REG_2, 1, off));
-+	} else {
-+		gen->error = -ERANGE;
-+	}
-+
-  	for (i = 0; i < SHA256_DWORD_SIZE; i++) {
-  		emit2(gen, BPF_LD_IMM64_RAW_FULL(BPF_REG_1, BPF_PSEUDO_MAP_IDX,
-  						 0, 0, 0, 0));
--- 
-2.43.0
+A key point about the 185 version of the TPM spec is that it's really
+only a few commands that need larger buffers (the Post Quantum ML-KEM
+keys) which doesn't apply to most of the in-kernel TPM callsites.=20
+Since tpm_buf_init takes the ordinal, we can actually tell at runtime
+(or compile time if the ordinal is a constant) if the command would
+need a larger buffer.  We can also tell from the TPM properties whether
+the TPM itself can take a larger buffer, so for every current TPM we
+could retain the original score 10/10 API and warn at runtime if there
+might be a problem.  Then the larger keys seem to fit into 8k, so we
+could still retain most of the original API properties of being
+difficult to misuse simply by having an 8k size flag (which we could
+ignore if the TPM doesn't support it) and warn at runtime if
+tpm_buf_init sends an ordinal which might need a larger buffer.  At
+worst we should be able to get to an API which scores 5/10 (do it right
+or it will break at runtime).
+
+Regards,
+
+James
+
