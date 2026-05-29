@@ -1,170 +1,136 @@
-Received: from mail-06.mail-europe.com (mail-06.mail-europe.com [85.9.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72B133BBD0;
-	Fri, 29 May 2026 04:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.9.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007053BAD94
+	for <linux-security-module@vger.kernel.org>; Fri, 29 May 2026 09:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780029808; cv=none; b=esoOZzhlRll3ZsfwG7v51ZFShyW2HjdP8J4CAt2Zv2nO4IZK4nEw2kRaRjGoyGMQTyADGcxjPr+EuH4uub0JTvCF7rh8hbyjiuGqMzErcPoASiDrTbHs2cf9rampGWI4UcKJ1rUElNp5LaOWq2eLkbSDF43L+wHKqQPZ38Zul0Y=
+	t=1780047195; cv=none; b=VNW+SPulAw3G0jUSpFwak66Lqho1xVuQnguIX+DA2QN6KhkN2vUPKGHHyoSnzEjtqMP4kALIEpjmXTPSJBEMGlaTgliKIoYDWUpHq17Ysb8b3LeKNqiFnDh/DAj3qT74N1pZ3RbxfJhdI0zgQmcVdM+pCX22s7AzoCn+X6lX+FE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780029808; c=relaxed/simple;
-	bh=9QsG94ozGLcVgTXSGl+5HJtA6MOC8d987DuLlCfjuGQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ClUjZPUsIa+fBVhffVusnsE3Sb/S9C+0MbuTAbS+k0YnhtcK4M376v8y8wjLTPKCKVWcyVnfBIvQF/NHr622X7u2eb8yNFbA3Uw1/hcPI9W3lQOseQdeewZzN/bj85vG5U9TkuYcuV3G9x0byWh+W3qnNhg50JZS7JSzsWEJ05g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=nre+ebtF; arc=none smtp.client-ip=85.9.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+	s=arc-20240116; t=1780047195; c=relaxed/simple;
+	bh=oJBnS25vuN7if7mJFXm+R7eCRJTbzv2vvslR9lOBWAI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Hbdp0ba2hbpNFXKYwjhsY850c0L6GV8k/bn7TyTHP+XtXgInXcFbrv1DVRj/c2KjLfwX4lsh6+DOH4j826XqaE1b6taozzpvAlOrWXOyXdjgBSXJIoDZ8qcEd/U5xwmYpDPYXZoxLk8M427JVQk1/rWhNW37L5j5aj9zMYIFFjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WYarOVqS; arc=none smtp.client-ip=209.85.208.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="nre+ebtF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1780029787; x=1780288987;
-	bh=NLDGejXulI3vKNIGZvvVuiMBMn/rItJ+RB1Daevmvdo=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=nre+ebtFoxQBcQ0ow/kK8wcTPpR4hoifJbImdXm1/qwVSZtzxKLNZG62IpS8RHRME
-	 2nG9WWSfDo0rzK1QTEOaGHcXwMVlTMMXYi9X4AZqYiuLNHQbhxDO4szl8eScbcGbJB
-	 Ikrb0iWsKtA4Qy01Jtvg5MV2cGwettKqH6Ob/TwkBwOmVr333osXw0E/Ip1ziUEbzZ
-	 9dO2gDmCUk/oq7wL9uH8zRvSjPS0OLzNg4ktoDmfj/j7QE0LZSAESHI/5tiEd42psy
-	 S+hjQB3DiQNMNLHt23StHuVTs/AkwpvjePH+uKGJ/IdDpej8SWILef1ut1ig4Ega0/
-	 moIGSRPk7SYgw==
-Date: Fri, 29 May 2026 04:43:02 +0000
-To: Justin Suess <utilityemal77@gmail.com>
-From: hexlabsecurity@proton.me
-Cc: "mic@digikod.net" <mic@digikod.net>, "gnoack@google.com" <gnoack@google.com>, "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [REPORT] landlock: SCOPE_SIGNAL bypass via F_SETOWN to invoker pgid -> SIGIO/SIGKILL to non-sandboxed targets
-Message-ID: <TSwHGN3I-u6p6xv7CqnvDOhR3la_kQWq0rdjBdA0gt30AsYLwddoxjCCFmqXcQMxWHS4ShULEp7sO_8HdFRGPLk30rIQHy3EurwJyrjP3NQ=@proton.me>
-Feedback-ID: 199661219:user:proton
-X-Pm-Message-ID: 238a1234b7e8ff5b1822e53dd20a613b6a6d40c1
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WYarOVqS"
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-680308c6c62so11756789a12.1
+        for <linux-security-module@vger.kernel.org>; Fri, 29 May 2026 02:33:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1780047192; x=1780651992; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=cWB8AxuhflmNGkthEv8fqT0Ix6HH05iWrOSrTCpjrKE=;
+        b=WYarOVqSKW2lzxtiGKmVxCzKFWn7AHkwuMXGMfkxylQCkjzaT7z2YHBMWrssPDBB+N
+         wxMH7dHmoR0W9V3hpzN/rj2sK9KPJ5QwTn6DGRoLka7eByBlbLC83WguDymkNJsUkmo0
+         z4Ma4VuqgES7xkzC2JqRGH+tOhP9HuqBCxck0Cir2IUy+zvzuezEXlu1Z8X+Q3J3Co0z
+         wH3VmnstCLsaRM8jLFG2mpW7HK1ST75zxPDYYi+r+2Hov9zac2JQ3nqWTKCyzbEHuMKf
+         i2cjmHx/sWhoZvwGmwpW82MNWArO12V4eAMxmIU18XTpbj953mDg9qo0/UR8D+xKNeC/
+         +70w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780047192; x=1780651992;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cWB8AxuhflmNGkthEv8fqT0Ix6HH05iWrOSrTCpjrKE=;
+        b=ll5Lv8/HL0yRrEVb95+Q1o4yn0IJlLU/4W6I8+AQ05NIO24zZQoJFKygFBwsvrDUBk
+         SF4dsPrvqkK29HXdIJbyTCu7rr7QUVGOIjCRGpzz2FbRb6du58YVbyRawbKid2gZHx2Q
+         97plFUcixZSFzx/eVpQXv7iwd3wPhzrV4NWkcYClODIctYW8GFEqgaP4669kFQUOmjV3
+         hQmMdYfsXPrEpM2KHgBrrbtTvtKaEjZ9n7JBtftUCUbi+CHS4rGlufkaghZvIQTjKgMd
+         95S0BaBfmriMc0yEMleWJxDZRKI66UfCKtHNJOb5nkFNft60J9pbVR13T2AmzSOzy+uQ
+         J+2A==
+X-Forwarded-Encrypted: i=1; AFNElJ+cAcnxZKaHSbxZ8dpegUhkmuxaVQPUjsLbWt1MvzsaB55BXe+dpE1KNgnJjCTg/wJYl2+mslyFMhZ1i7yjKmug/yD63g0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTVygwYhwNxS7ZAK2FQA15GpdKHZPKxN7g1QuxDPB/dFeSUX5D
+	rarbP9rPkmSIUZXEG1V/TUoj0oyRzSSbapx4AjFnHi5QqYf4IpQGjJRQdvl+MAWdio92+wy/6ru
+	fY+25NC3UBCLgmXdbUg==
+X-Received: from eddf19.prod.google.com ([2002:a05:6402:3553:b0:68b:6e75:543a])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6402:3783:b0:683:c39d:4da9 with SMTP id 4fb4d7f45d1cf-68c11361896mr1067288a12.25.1780047191812;
+ Fri, 29 May 2026 02:33:11 -0700 (PDT)
+Date: Fri, 29 May 2026 09:33:00 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAExdGWoC/33NzQ6CMBAE4FchPbtmu/x78j2MBygLNgrVFhoN4
+ d0FPajReJxJ5ptROLaandgEo7DstdOmm0O0CoQ6FF3DoKs5C0JKkGQOllvjGfrCHYEHXYHMOSo
+ RS+aSxTw7W6719UHu9s9s+TLMcv8qD9r1xt4et14u7Z8HL0FCjhEmmFHCmG4bY5oTr5VpxaJ5e hMo/SHQIhS5yrDIiMvkSwhfQoy/hBAQKK2J6jCMFakPYZqmO+919ydKAQAA
+X-Change-Id: 20260219-remove-task-euid-19e4b00beebe
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1662; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=oJBnS25vuN7if7mJFXm+R7eCRJTbzv2vvslR9lOBWAI=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBqGV1Sao7MrLYahIMOWG7jT0fWqoePyPKo4J17C
+ p1zE3aGxWCJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCahldUgAKCRAEWL7uWMY5
+ Rmi1EACOyB448LMR7/KyCIEQvFcWXStiVk3Q1yU/7O6vayGXczY4d2ulBrgFHzJc+Kyh+voTWfz
+ FGw/Sf2Y/IwmioZL8MSDA9Fbv4Dy2ew5/iXB02+cGa+olrN9UT7T231nhSZJrkyE8gFCV8iw4xX
+ +hKKxJd/COEkktGnNWXbwHsnBSrxoWYIzbB0nKftKE3YLbGlTC3koTPNCHgiycLrEvbuEuIvqiK
+ rRl1DQXQrEaQeONY6vobUrMRhiuEie+WBVzcL90jQBdtzg6nVeu+w/M9KHPnzS8U5OAE51qFx3H
+ ON5t+XRIEtkjEZbS+LnBfBaNt4DHB8W4tzLXkljgEPSh1SPFm7RqWRXYjQz0YRFvWNtaA2Rq9ds
+ /vj3VLkk1GVkWfcmI27JEU4j5ZcsMu4zYhDabVEIkcPZpEs2EO9krx4M7YiweOnCStQEuHQMdjY
+ VUsNyRIMNmeZhfFZaUFIrL1+TfARXKuYFPXkHLGQwb+HGnikDafZfxSV9M9tXYZ05gxL45mE7rO
+ +qrpOJbGhsH1r6GIxMb+fJfSH7mDk4zvVSsgmrAfYDfQ8C1uwWA8UX+J2DvLek3iCs6C44x1b9j
+ 8CMtPsT/nP95t4/+EeIFqSgQlY+XOByStFOh/32g6fMeICdFcGYw9lHTwmHmtSXIUyE2dX6+cv3 2cymArrf/j11c8Q==
+X-Mailer: b4 0.14.3
+Message-ID: <20260529-remove-task-euid-v4-0-07cbdf3af980@google.com>
+Subject: [PATCH v4 0/2] Delete task_euid()
+From: Alice Ryhl <aliceryhl@google.com>
+To: Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Alex Shi <alexs@kernel.org>, 
+	Yanteng Si <si.yanteng@linux.dev>, Dongliang Mu <dzm91@hust.edu.cn>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Jann Horn <jannh@google.com>, 
+	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-Thanks Justin -- much appreciated for reproducing on mic/next and for the
-Tested-by.
+The task_euid() method is a very weird method, and Binder was the only
+user. As of commit 65b672152289 ("binder: use current_euid() for
+transaction sender identity") Binder doesn't use task_euid() anymore,
+so we can delete this method.
 
-v2 below addresses your review:
-  - the commit message is trimmed to just the bug and the fix;
-  - the reproducer and the A/B verification are moved below the --- so
-    they become git notes, not part of the commit;
-  - added your Tested-by.
+My suggestion would be to merge this through the LSM tree.
 
-The fix hunk is unchanged. I agree the concise statement of the defect is
-"we fail to check the subject on fan-out signal types (PIDTYPE_PGID and
-PIDTYPE_SID, i.e. type > PIDTYPE_TGID)". The patch keeps the explicit
-PIDTYPE_PGID / PIDTYPE_SID test for readability and to stay robust if the
-enum is ever reordered -- happy to switch to "> PIDTYPE_TGID" if you
-prefer. I'll follow up separately on the erratum entry and a regression
-test, as you suggested.
-
-Independent security researcher. HEXLAB SAS (registration pending) --
-Cali, Colombia.
-
-Thanks,
-Bryam Vargas
-
------ v2 patch (inline, plain text) -----
-
-From 75f801309cd64f74d04ef86236bd973314dd7d94 Mon Sep 17 00:00:00 2001
-From: Bryam Vargas <hexlabsecurity@proton.me>
-Date: Thu, 28 May 2026 23:33:13 -0500
-Subject: [PATCH v2] landlock: fix LANDLOCK_SCOPE_SIGNAL bypass via F_SETOWN=
- to
- invoker's pgid
-
-A Landlock-restricted process can bypass LANDLOCK_SCOPE_SIGNAL on the
-SIGIO delivery path and deliver arbitrary signals (including SIGKILL via
-F_SETSIG) to non-Landlocked targets that share its pgid, by exploiting a
-producer-side cache-vs-live evaluation gap.
-
-The SIGIO path in hook_file_send_sigiotask() consults a cached subject
-stored in landlock_file(file)->fown_subject at fcntl(F_SETOWN) time
-(via hook_file_set_fowner()), instead of evaluating the live Landlock
-domain of the invoking task at signal-send time. The capture is gated
-by control_current_fowner(), which returns false (skipping capture)
-when pid_task(fown->pid, fown->pid_type) is in current's thread group.
-
-This is correct for PIDTYPE_TGID / PIDTYPE_PID, where the target is a
-single task sharing current's cred. It is unsafe for PIDTYPE_PGID and
-PIDTYPE_SID: when current is at the head of its pgid hlist -- the
-default placement after fork(), hlist_add_head_rcu() in kernel/fork.c --
-pid_task(pgid, PIDTYPE_PGID) resolves to current itself,
-same_thread_group(current, current) is true, the capture is skipped, and
-fown_subject.domain stays NULL. hook_file_send_sigiotask() then
-short-circuits at "if (!subject->domain) return 0;", letting the kernel
-fan the signal out to every member of the group, including tasks outside
-current's Landlock domain that SCOPE_SIGNAL is supposed to protect.
-
-The direct kill() path (hook_task_kill) is unaffected: it evaluates
-current's live domain on every call. Only the cached SIGIO path is
-broken.
-
-Tighten control_current_fowner() to apply the thread-group exemption
-only when the target identifies a single task whose Landlock cred is
-necessarily shared with current (PIDTYPE_TGID, PIDTYPE_PID). For
-PIDTYPE_PGID and PIDTYPE_SID, always capture the current Landlock
-subject so the consumer's scope check runs against every member of the
-group at delivery time.
-
-Reported-by: Bryam Vargas <hexlabsecurity@proton.me>
-Tested-by: Justin Suess <utilityemal77@gmail.com>
-Signed-off-by: Bryam Vargas <hexlabsecurity@proton.me>
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
-v2: per review, the commit message is trimmed to the bug + the fix; the
-    reproducer and the A/B verification are moved below the --- so they
-    stay out of the commit. Added Tested-by. The hunk is unchanged from
-    v1 (v1 sent to security@kernel.org 2026-05-28, embargoed -- not yet
-    in a public archive).
+Changes in v4:
+- Reword 'euid' -> 'effective UID' in 'Kuid::current_euid()' docs.
+- Link to v3: https://lore.kernel.org/r/20260507-remove-task-euid-v3-0-27f22f335c2c@google.com
 
-Reproducer (ordinary unprivileged user; sandbox active in the child):
+Changes in v3:
+- Include 'task' clarification commit in series.
+- Rebase and resend.
+- Link to v2: https://lore.kernel.org/r/20260227-remove-task-euid-v2-1-9a9c80a82eb6@google.com
 
-  int pfd[2]; pipe(pfd);
-  landlock_create_ruleset(&{.scoped =3D LANDLOCK_SCOPE_SIGNAL},
-                          sizeof(attr), 0);
-  prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-  landlock_restrict_self(rfd, 0);
-  fcntl(pfd[0], F_SETSIG, SIGKILL);
-  fcntl(pfd[0], F_SETOWN, -getpgrp());           /* PIDTYPE_PGID */
-  fcntl(pfd[0], F_SETFL, O_ASYNC);
-  write(pfd[1], "X", 1);                         /* trigger SIGIO */
-  /* every pgid member receives SIGKILL, including the non-sandboxed
-   * parent / supervisor / sibling workers */
+Changes in v2:
+- Update translation as per Alex Shi.
+- Pick up Reviewed-by Gary.
+- Update commit title to use cred: prefix.
+- Link to v1: https://lore.kernel.org/r/20260219-remove-task-euid-v1-1-904060826e07@google.com
 
-A/B-verified on a 6.12.90 lab kernel (same .config, only this hunk
-differs): pre-fix the sandboxed child's SIGKILL reaches the
-non-sandboxed parent (SCOPE_SIGNAL bypassed); post-fix it is blocked.
-hook_task_kill's direct-kill enforcement and the intra-thread-group
-F_SETOWN cases continue to work post-patch.
+---
+Alice Ryhl (1):
+      cred: delete task_euid()
 
- security/landlock/fs.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Jann Horn (1):
+      rust: task: clarify comments on task UID accessors
 
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index c1ecfe239032..edaa52572cbd 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -1909,6 +1909,18 @@ static bool control_current_fowner(struct fown_struc=
-t *const fown)
- =09if (!p)
- =09=09return true;
+ Documentation/security/credentials.rst                    |  6 ++----
+ Documentation/translations/zh_CN/security/credentials.rst |  4 +---
+ include/linux/cred.h                                      |  1 -
+ rust/helpers/task.c                                       |  5 -----
+ rust/kernel/task.rs                                       | 11 ++---------
+ 5 files changed, 5 insertions(+), 22 deletions(-)
+---
+base-commit: 7fd2df204f342fc17d1a0bfcd474b24232fb0f32
+change-id: 20260219-remove-task-euid-19e4b00beebe
 
-+=09/*
-+=09 * For PIDTYPE_PGID and PIDTYPE_SID, signal delivery fans out to
-+=09 * every member of the group at SIGIO time. Even when pid_task()
-+=09 * resolves to current itself (e.g., current is the pgid hlist
-+=09 * head post-fork), non-current members of the group are still
-+=09 * valid targets that must be checked by hook_file_send_sigiotask().
-+=09 * Always capture the current subject for those types so the
-+=09 * consumer scope check runs against the live fown_subject.
-+=09 */
-+=09if (fown->pid_type =3D=3D PIDTYPE_PGID || fown->pid_type =3D=3D PIDTYPE=
-_SID)
-+=09=09return true;
-+
- =09return !same_thread_group(p, current);
- }
---
-2.43.0
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
+
