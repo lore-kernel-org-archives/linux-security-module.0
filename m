@@ -1,43 +1,39 @@
-Received: from mail-24425.protonmail.ch (mail-24425.protonmail.ch [109.224.244.25])
+Received: from mail-10696.protonmail.ch (mail-10696.protonmail.ch [79.135.106.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4333E8C56
-	for <linux-security-module@vger.kernel.org>; Fri, 29 May 2026 19:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77A73812CD
+	for <linux-security-module@vger.kernel.org>; Fri, 29 May 2026 19:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780081413; cv=none; b=Qqz9oAw2VPYUrd8Dj6rI5wbNaocg8QGviMsmnobFUMH/S7GFV9odwUfAjeey7BZs3Dzy+nzXhTBDNbfLk3nYHs/vn4jqeWKMuLdOlvGliCqv+sn/ZdZJyRFGXRNSN23yC0z9quue0LLObV7GeZcaMpvNj+zYGGlBUdQf2+Ux8Pg=
+	t=1780081668; cv=none; b=huCMfZjj8tW+s3bNEagUNAswItFVWLfhJv6tmgyPZv1pArqhDK7SAtYSm7UmaizVbzEek7KWIkqxXi2PN883qfcp08lx2kEvKV7O2bcoCtkuupWXmFJr4mcCJE/EtstF8UyS3dN3lceDptA9nGmuVv42fvsaSgk9KpDhdDgrpn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780081413; c=relaxed/simple;
-	bh=swipAQJGsymOXQRCYCRtnSYJ2ZKD88VZmePVBMviK98=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EWJVCQk4MYqobONauDs6/v2QAuF0Srwh993DCPIbMTwVEyZVyQmTp63+7NeUDgVDU/Tq8hMWA4heSCd3YNrXPWK5sHowcM1oqEHvVjWJlL5DEej5dxyNKSkGiP36i58FSx6zN+qRQk6FUkXCVA42tXSHtCYGZuIMl4beJYYbsRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=bUYYfvmY; arc=none smtp.client-ip=109.224.244.25
+	s=arc-20240116; t=1780081668; c=relaxed/simple;
+	bh=9Knp7eknG8Hf0NCMMDVCwin6Qa9hITGRKVhniVc+xt8=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=XQHROdi7JVO5oWCP1zrrTXRrNkvEpIFg2PFIgURXn1lGkGOMrwVUDR9PrXuA3m7UWN5FNye1an121wwODnzPSVDqYdQxP5/nlGQELQcLMcQIhrEDLqvZBp2xx6zgNDkQT7oLqo0JHVyxTrM+jJuGJmmHkpoR8GEL1QZYHZtn52Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=VdevuVAs; arc=none smtp.client-ip=79.135.106.96
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="bUYYfvmY"
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="VdevuVAs"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1780081401; x=1780340601;
-	bh=dvB/3QyedObdEd0vUZp5FaAP+aJh2ZYKSH7sTm+EfQk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=bUYYfvmYMc6S4MxvcfWmvLl/pJakR8e4yjIBGLmXiRr5QWXmSgaWakrhulNPRd+D0
-	 Ihpoat7/6JjzlHSwPECXTC49Uuc8pzqUB1Uw7WsJC+IJ/1/JomvxqNd8nVMFJ+wQZj
-	 9mtmRQM4TPdnHLr2fDTHE7lLPOvvjepypm99q8l5d9ZcSmAnGBIMM1H431GCun2dev
-	 wQ+LfUPGMVjRhQDjCawsAptgPaoRyCSy+5TUN9pe7Jgqg1YtIH8+SHxQtWzPkvnLjb
-	 27LBOXXkTjSuJ+ata20j+BZ2ytkyvBdIvFpSGLxtmceSS4EZXb/9ZZCIyC7837eyvg
-	 l+D/Y3jp0thhQ==
-Date: Fri, 29 May 2026 19:03:18 +0000
+	s=o2cwkjzz2zemxbfasfglysqqvy.protonmail; t=1780081656; x=1780340856;
+	bh=9Knp7eknG8Hf0NCMMDVCwin6Qa9hITGRKVhniVc+xt8=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=VdevuVAsQm1f/41th3gpmNf3jFrhSJcdT1lXG+/OaKr1oB6+dTEppDGg87rlJLDoN
+	 YCDWghgqmvUXwwCHpxWgOu0Jacsm/d4qWEofhYPRgaAEO4kyqibAmfYuavZrhLjglm
+	 t1FbfJhYmrr6NE2dCcqYGo4Uk/MwpA663IeYeY8VwJyJge37/7tDSA+XNjwoUuwUax
+	 ZZKI/+/2oJXS7kKDKY1MDvFATzPeKHcMO8OU/tH3t2sH7DjUYQwQEvmVfoDimgWD49
+	 AZjimqRPpwnuz+CfYx8gihzhik3V5eu8QNmhctAyEtbVICijfX/tHz8VmPKxOWHcKX
+	 pvSricqt4p7ow==
+Date: Fri, 29 May 2026 19:07:30 +0000
 To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 From: hexlabsecurity@proton.me
 Cc: Justin Suess <utilityemal77@gmail.com>, "gnoack@google.com" <gnoack@google.com>, "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [REPORT] landlock: SCOPE_SIGNAL bypass via F_SETOWN to invoker pgid -> SIGIO/SIGKILL to non-sandboxed targets
-Message-ID: <YKesampb9JYT6cYp0iFbzuxr6hCIaFu-9YhkphsUJ1l8ktqIUpjeBictEvT74GFc0RwQ6WVNcKyVWuOskeQJPhWGhOOB6BUJiff_UXfzm_g=@proton.me>
-In-Reply-To: <20260529.li6kaiDaim4B@digikod.net>
-References: <TSwHGN3I-u6p6xv7CqnvDOhR3la_kQWq0rdjBdA0gt30AsYLwddoxjCCFmqXcQMxWHS4ShULEp7sO_8HdFRGPLk30rIQHy3EurwJyrjP3NQ=@proton.me> <20260529.li6kaiDaim4B@digikod.net>
+Subject: [PATCH v3 1/2] landlock: fix LANDLOCK_SCOPE_SIGNAL bypass via F_SETOWN to invoker's pgid
+Message-ID: <7rvmLIHR1Zh8RDF1IY1-SYRHzErgw9gPHq0k98RLYVsmHqAejjxcuJi8V3QaSbW-SnNvY5tfM2Xn_S1dEajKV_f7iyitoPwJgOSTZQ0nytc=@proton.me>
 Feedback-ID: 199661219:user:proton
-X-Pm-Message-ID: 15b272239d115edf4f07f7b2aec89dc502a73ad4
+X-Pm-Message-ID: b9b20d077289ff690bb836e70c188ab1ae8e0ba4
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -47,103 +43,85 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Micka=C3=ABl,
+From b5fdc79ce1cb2881d59dfed01d3d9170306be9e8 Mon Sep 17 00:00:00 2001
+From: Bryam Vargas <hexlabsecurity@proton.me>
+Date: Fri, 29 May 2026 12:49:41 -0500
+Subject: [PATCH v3 1/2] landlock: fix LANDLOCK_SCOPE_SIGNAL bypass via
+ F_SETOWN to invoker's pgid
 
-> Could you please replace the reproducer code with a proper kselftest?
-> That would need to be a new email patch (v3) [...]
+A Landlock-restricted process can bypass LANDLOCK_SCOPE_SIGNAL on the
+SIGIO delivery path and deliver arbitrary signals (including SIGKILL via
+F_SETSIG) to non-Landlocked targets that share its pgid, by exploiting a
+producer-side cache-vs-live evaluation gap.
 
-Done -- v3 is a two-patch series:
+The SIGIO path in hook_file_send_sigiotask() consults a cached subject
+stored in landlock_file(file)->fown_subject at fcntl(F_SETOWN) time
+(via hook_file_set_fowner()), instead of evaluating the live Landlock
+domain of the invoking task at signal-send time. The capture is gated
+by control_current_fowner(), which returns false (skipping capture)
+when pid_task(fown->pid, fown->pid_type) is in current's thread group.
 
-  [PATCH v3 1/2] landlock: fix LANDLOCK_SCOPE_SIGNAL bypass via F_SETOWN to=
- invoker's pgid
-  [PATCH v3 2/2] selftests/landlock: test SCOPE_SIGNAL on the SIGIO/fowner =
-pgid path
+This is correct for PIDTYPE_TGID / PIDTYPE_PID, where the target is a
+single task sharing current's cred. It is unsafe for PIDTYPE_PGID and
+PIDTYPE_SID: when current is at the head of its pgid hlist -- the
+default placement after fork(), hlist_add_head_rcu() in kernel/fork.c --
+pid_task(pgid, PIDTYPE_PGID) resolves to current itself,
+same_thread_group(current, current) is true, the capture is skipped, and
+fown_subject.domain stays NULL. hook_file_send_sigiotask() then
+short-circuits at "if (!subject->domain) return 0;", letting the kernel
+fan the signal out to every member of the group, including tasks outside
+current's Landlock domain that SCOPE_SIGNAL is supposed to protect.
 
-Patch 2 replaces the informal reproducer with a regression test in
-scoped_signal_test.c, reusing the existing fown/SIGURG idiom. It adds
-TEST(sigio_to_pgid_members): a sandboxed child at the head of its pgid hlis=
-t
-arms F_SETSIG(SIGURG) / F_SETOWN(-pgrp) / O_ASYNC and triggers the fan-out;=
- the
-in-domain child must be signaled (positive control) and the non-sandboxed
-parent must not.
+The direct kill() path (hook_task_kill) is unaffected: it evaluates
+current's live domain on every call. Only the cached SIGIO path is
+broken.
 
-I also added the Fixes: tag and Cc: stable that v2 was missing:
+Tighten control_current_fowner() to apply the thread-group exemption
+only when the target identifies a single task whose Landlock cred is
+necessarily shared with current (PIDTYPE_TGID, PIDTYPE_PID). For
+PIDTYPE_PGID and PIDTYPE_SID, always capture the current Landlock
+subject so the consumer's scope check runs against every member of the
+group at delivery time.
 
-  Fixes: 18eb75f3af40 ("landlock: Always allow signals between threads of t=
-he same process")
+Stable kernels before the fown_subject conversion store the domain in
+landlock_file(file)->fown_domain; control_current_fowner() is identical
+there, so the same exemption and the same fix apply.
 
-That is where the same-thread-group exemption on the fowner path was
-introduced (v6.15; backported to 6.12.y/6.13.y/6.14.y -- the original v6.12
-signal scoping captured the subject unconditionally and was not affected).
-The fix hunk itself is unchanged from v1/v2 and keeps Justin's Tested-by.
+Fixes: 18eb75f3af40 ("landlock: Always allow signals between threads of the=
+ same process")
+Cc: stable@vger.kernel.org
+Reported-by: Bryam Vargas <hexlabsecurity@proton.me>
+Tested-by: Justin Suess <utilityemal77@gmail.com>
+Signed-off-by: Bryam Vargas <hexlabsecurity@proton.me>
+---
+ security/landlock/fs.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-A/B on 6.12.90 + CONFIG_SECURITY_LANDLOCK (same .config, only the hunk
-differs): without patch 1 the new test fails (the parent is signaled); with=
- it
-the test passes and the landlock signal-scoping suite is 20/20. checkpatch =
-is
-clean except one expected Reported-by/Closes warning -- the original report=
- was
-sent to security@kernel.org, so there is no public URL to point Closes: at.
-
-Thanks,
-Bryam Vargas
-
-Independent security researcher. HEXLAB SAS (registration pending) -- Cali,=
- Colombia.
-
-This series fixes a LANDLOCK_SCOPE_SIGNAL bypass on the asynchronous SIGIO
-(fcntl(F_SETOWN)) delivery path and adds the kselftest requested in review.
-
-Patch 1 narrows the same-thread-group exemption in control_current_fowner()
-so that F_SETOWN to a process group (or session) always captures the caller=
-'s
-Landlock subject. Without it, a sandboxed task at the head of its pgid hlis=
-t
-(the default position after fork()) skips the capture, and the SIGIO fan-ou=
-t
-reaches non-sandboxed members of the process group, defeating SCOPE_SIGNAL.
-The direct kill() path (hook_task_kill) is unaffected.
-
-Patch 2 adds a regression test to scoped_signal_test.c, replacing the infor=
-mal
-reproducer that previously accompanied the fix.
-
-The defect was introduced by commit 18eb75f3af40 ("landlock: Always allow
-signals between threads of the same process") in v6.15, and is present in t=
-he
-stable branches that backported it (6.12.y, 6.13.y, 6.14.y).
-control_current_fowner() is identical across those branches, so patch 1 app=
-lies
-as-is (stable kernels before the fown_subject conversion store the domain i=
-n
-landlock_file(file)->fown_domain; the exemption and the fix are the same).
-
-A/B verified on 6.12.90 + CONFIG_SECURITY_LANDLOCK (same .config, only the =
-fix
-hunk differs):
-  - without patch 1: the new test fails -- the non-sandboxed parent receive=
-s
-    the signal (SCOPE_SIGNAL bypassed);
-  - with patch 1: the new test passes, and the whole landlock signal-scopin=
-g
-    suite passes 20/20 (no regression).
-
-v2 -> v3:
-  - patch 1: add Fixes: tag and Cc: stable; the fix hunk is unchanged from =
-v1/v2.
-  - patch 2 (new): replace the git-notes reproducer with a kselftest.
-  - v1/v2 were sent to security@kernel.org (embargoed; not in a public arch=
-ive).
-
-Bryam Vargas (2):
-  landlock: fix LANDLOCK_SCOPE_SIGNAL bypass via F_SETOWN to invoker's pgid
-  selftests/landlock: test SCOPE_SIGNAL on the SIGIO/fowner pgid path
-
- security/landlock/fs.c                        | 12 +++
- .../selftests/landlock/scoped_signal_test.c   | 97 +++++++++++++++++++
- 2 files changed, 109 insertions(+)
-
-base-commit: 27fa82620cbaa89a7fc11ac3057701d598813e87
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index c1ecfe239032..edaa52572cbd 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -1909,6 +1909,18 @@ static bool control_current_fowner(struct fown_struc=
+t *const fown)
+ =09if (!p)
+ =09=09return true;
+=20
++=09/*
++=09 * For PIDTYPE_PGID and PIDTYPE_SID, signal delivery fans out to
++=09 * every member of the group at SIGIO time. Even when pid_task()
++=09 * resolves to current itself (e.g., current is the pgid hlist
++=09 * head post-fork), non-current members of the group are still
++=09 * valid targets that must be checked by hook_file_send_sigiotask().
++=09 * Always capture the current subject for those types so the
++=09 * consumer scope check runs against the live fown_subject.
++=09 */
++=09if (fown->pid_type =3D=3D PIDTYPE_PGID || fown->pid_type =3D=3D PIDTYPE=
+_SID)
++=09=09return true;
++
+ =09return !same_thread_group(p, current);
+ }
+=20
+--=20
+2.43.0
 
