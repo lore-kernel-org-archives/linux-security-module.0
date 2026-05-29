@@ -1,115 +1,170 @@
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-06.mail-europe.com (mail-06.mail-europe.com [85.9.210.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF0D306B31
-	for <linux-security-module@vger.kernel.org>; Fri, 29 May 2026 03:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72B133BBD0;
+	Fri, 29 May 2026 04:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.9.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780025670; cv=none; b=Y0e6pHVlweC1cND4NlWys41srylcRbCJjCpUgBwnjv/aFS3o/HHMenSnU9ooFW+BfRwwgJKCLrR8/9SDS3KblUiZD2FdYS/w15ouXmND42qSJiFWZ8T5wt58t/Ba1p4S7HStedyDylPQ1IavdfoHVWghzPCBSH+ukj1CAuGi8ZI=
+	t=1780029808; cv=none; b=esoOZzhlRll3ZsfwG7v51ZFShyW2HjdP8J4CAt2Zv2nO4IZK4nEw2kRaRjGoyGMQTyADGcxjPr+EuH4uub0JTvCF7rh8hbyjiuGqMzErcPoASiDrTbHs2cf9rampGWI4UcKJ1rUElNp5LaOWq2eLkbSDF43L+wHKqQPZ38Zul0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780025670; c=relaxed/simple;
-	bh=/X9Gx9nrlqqYvQNamVBrEU//0++TS8PHZQfk3nvxaZQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p8vJaolQyD/LjaeqaVvHeaUquoATmyPU8M6qmxtQrr9MxY6YcSy8x7qRH97++ewB95d/k4nQ5JxkdAd49f6+FSKxtFwzFP/pybkRcu8mqNjRmcTS5X6frFxOBQkVmMnkGW1wtYd/hEk7cXcUWziwEhSpE9hz9SOp0lt+U6ghljo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=khzVJKIy; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1780029808; c=relaxed/simple;
+	bh=9QsG94ozGLcVgTXSGl+5HJtA6MOC8d987DuLlCfjuGQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ClUjZPUsIa+fBVhffVusnsE3Sb/S9C+0MbuTAbS+k0YnhtcK4M376v8y8wjLTPKCKVWcyVnfBIvQF/NHr622X7u2eb8yNFbA3Uw1/hcPI9W3lQOseQdeewZzN/bj85vG5U9TkuYcuV3G9x0byWh+W3qnNhg50JZS7JSzsWEJ05g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=nre+ebtF; arc=none smtp.client-ip=85.9.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="khzVJKIy"
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-c80167f56cdso5706461a12.3
-        for <linux-security-module@vger.kernel.org>; Thu, 28 May 2026 20:34:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780025669; x=1780630469; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3sgklvG/C53PAwo2/sITXhbGcqoDKxJ+Vu3aUEy7pgU=;
-        b=khzVJKIyzoldyqXjx0vtdgTgVinGQXl+ICHzf/maHvnabr/BCEJRjSMdvIW0FboD6L
-         PysVk3ByfyB5OK8viJ4yUvE+jeN8b5aWR5GBV1d/FbU0bL9NvC0+HVeMr4YYY04KwKOw
-         UXpKvGNDavxIRffcKjR1unIrKcB632gFyRcXGnRuM0PlzFR31wsJ9pdXt7o1cit7/4Q8
-         eCJZp1okJdc925AdpEWGNcuoo1aAS+voGAhPNqwtjzEmtzzEOXVhH7EQFFgFcHj961rG
-         UPkqPbbTxswj5GKFmchNN1qPUGR1dxuj9G3COzQZBFJoXoEnypNd4F0fqVttlAw5ufu6
-         E61A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780025669; x=1780630469;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3sgklvG/C53PAwo2/sITXhbGcqoDKxJ+Vu3aUEy7pgU=;
-        b=o43kV/sU6hHGHAxCpzIx+giCLaDBhNWVpgQYPGXMKFTrFI6O9VR6zlx3sYBaRSVhW+
-         AamjXigFX7qtpml85SoMs/XGLcEldcuvKAaXd7ecbSrxfOdjZY2hRXD+owwI3TNElKWM
-         bfy5RpyFQKRUo2p2JuTSC+nRTNgnhC62ObHkG7lwbWUMaHWsfrZnnFtnstqnU8HxjGFT
-         kN3IyRPPo1dk6HdphBt2cbNW9E6dQ45WsoXPxS9SMhmEbtgxvZcBMzZZ33HvpBU+O3bN
-         H/4/2bExO53hTnwQUhc8mZkvzDD02CaLicIotg5r0nYl7+t87zk9mlqM9WEy1DuGQxa4
-         qmbQ==
-X-Forwarded-Encrypted: i=1; AFNElJ9Fc84psqOgDUOvsxqmA1Ak/rwGSUsV+2CbLa8vS3gfzIc+r1nPCAyrKYEoJ3hqxg/EgYtgbh6mSUuh0nynpB+NKHzKoC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBQyllB8xC7lLhHR0LrT6JaA7CTxpHuNizm1EDsaXybKGbuo8w
-	6SKShWQhDcq2JWAegV1R/CzpQ0PzZGZCHevhiT7tiWGn1Ke7YqL4qpNK
-X-Gm-Gg: Acq92OH+8OL8Vmy8HCse3TpP0B/SZGmT8DuItnPwHRW7XEn/KbmpjGKLlbSXG22FyMS
-	J6Kgbeat5sGx0/2oTlDZnoOWnk9NAq3O7eDXbJIw3r0zL9tifqVWMoKA4+pAz8tQL8otL1FpvmW
-	6GC7TX3W6C4eNGDFrAnZvBVvLVmd45FUSl45uyerS9MI+ki1EyNE17RbvJc89RNH6ScQqVPsXfJ
-	honyKg2iUE/LcNJSFTCRZQg7KX7Tz69/aDX427MLfMFZoYJJfJRl6WVlG4hmHyuhvf/gFTNgd+J
-	dGNJr2G7RDBQ0i1I1MLuiw+XPCKTq9lvYLMDip20yEMpcJPHCKMjARkAbJ++Zzq+JkJXknenm8h
-	asWerMnV+U68qXx7JbrAOIvE70ikTmzFgxkZ7eob6acOy/kYYQIY8SxHJU4/1g8uhFYctTCaPP1
-	F8667lDSDNSIvmOSMpI21UsN82YucqWGqQIsip9KAc/sNVMnrJeuAEGKzW2pyEhSWK+7EAwLLO2
-	G8b1n1e7mQ8MKHv4yH2AfBhQOXBYRpR5O855QH2Wm7lXo9a4u3OCuwj6ok9KiwgPOyRLeAskZia
-X-Received: by 2002:a05:6a21:1519:b0:3a2:d79c:4149 with SMTP id adf61e73a8af0-3b412314c2fmr1086635637.28.1780025668501;
-        Thu, 28 May 2026 20:34:28 -0700 (PDT)
-Received: from bass-virtual-machine.. ([163.61.198.39])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c85771a7c04sm306821a12.1.2026.05.28.20.34.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 May 2026 20:34:28 -0700 (PDT)
-From: Gui-Dong Han <hanguidong02@gmail.com>
-To: keyrings@vger.kernel.org,
-	dhowells@redhat.com,
-	jarkko@kernel.org
-Cc: ebiggers@google.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com,
-	Gui-Dong Han <hanguidong02@gmail.com>
-Subject: [PATCH] KEYS: Use acquire when reading state in keyring search
-Date: Fri, 29 May 2026 11:34:06 +0800
-Message-Id: <20260529033406.20673-1-hanguidong02@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="nre+ebtF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1780029787; x=1780288987;
+	bh=NLDGejXulI3vKNIGZvvVuiMBMn/rItJ+RB1Daevmvdo=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=nre+ebtFoxQBcQ0ow/kK8wcTPpR4hoifJbImdXm1/qwVSZtzxKLNZG62IpS8RHRME
+	 2nG9WWSfDo0rzK1QTEOaGHcXwMVlTMMXYi9X4AZqYiuLNHQbhxDO4szl8eScbcGbJB
+	 Ikrb0iWsKtA4Qy01Jtvg5MV2cGwettKqH6Ob/TwkBwOmVr333osXw0E/Ip1ziUEbzZ
+	 9dO2gDmCUk/oq7wL9uH8zRvSjPS0OLzNg4ktoDmfj/j7QE0LZSAESHI/5tiEd42psy
+	 S+hjQB3DiQNMNLHt23StHuVTs/AkwpvjePH+uKGJ/IdDpej8SWILef1ut1ig4Ega0/
+	 moIGSRPk7SYgw==
+Date: Fri, 29 May 2026 04:43:02 +0000
+To: Justin Suess <utilityemal77@gmail.com>
+From: hexlabsecurity@proton.me
+Cc: "mic@digikod.net" <mic@digikod.net>, "gnoack@google.com" <gnoack@google.com>, "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [REPORT] landlock: SCOPE_SIGNAL bypass via F_SETOWN to invoker pgid -> SIGIO/SIGKILL to non-sandboxed targets
+Message-ID: <TSwHGN3I-u6p6xv7CqnvDOhR3la_kQWq0rdjBdA0gt30AsYLwddoxjCCFmqXcQMxWHS4ShULEp7sO_8HdFRGPLk30rIQHy3EurwJyrjP3NQ=@proton.me>
+Feedback-ID: 199661219:user:proton
+X-Pm-Message-ID: 238a1234b7e8ff5b1822e53dd20a613b6a6d40c1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The negative-key race fix added release/acquire ordering for key use.
+Thanks Justin -- much appreciated for reproducing on mic/next and for the
+Tested-by.
 
-Publish payload before state; read state before payload.
+v2 below addresses your review:
+  - the commit message is trimmed to just the bug and the fix;
+  - the reproducer and the A/B verification are moved below the --- so
+    they become git notes, not part of the commit;
+  - added your Tested-by.
 
-keyring_search_iterator() still uses READ_ONCE() before match callbacks.
-An asymmetric match callback calls asymmetric_key_ids(), which reads
-key->payload.data[asym_key_ids].
+The fix hunk is unchanged. I agree the concise statement of the defect is
+"we fail to check the subject on fan-out signal types (PIDTYPE_PGID and
+PIDTYPE_SID, i.e. type > PIDTYPE_TGID)". The patch keeps the explicit
+PIDTYPE_PGID / PIDTYPE_SID test for readability and to stay robust if the
+enum is ever reordered -- happy to switch to "> PIDTYPE_TGID" if you
+prefer. I'll follow up separately on the erratum entry and a regression
+test, as you suggested.
 
-Use key_read_state() there to complete that ordering.
+Independent security researcher. HEXLAB SAS (registration pending) --
+Cali, Colombia.
 
-Fixes: 363b02dab09b ("KEYS: Fix race between updating and finding a negative key")
-Signed-off-by: Gui-Dong Han <hanguidong02@gmail.com>
+Thanks,
+Bryam Vargas
+
+----- v2 patch (inline, plain text) -----
+
+From 75f801309cd64f74d04ef86236bd973314dd7d94 Mon Sep 17 00:00:00 2001
+From: Bryam Vargas <hexlabsecurity@proton.me>
+Date: Thu, 28 May 2026 23:33:13 -0500
+Subject: [PATCH v2] landlock: fix LANDLOCK_SCOPE_SIGNAL bypass via F_SETOWN=
+ to
+ invoker's pgid
+
+A Landlock-restricted process can bypass LANDLOCK_SCOPE_SIGNAL on the
+SIGIO delivery path and deliver arbitrary signals (including SIGKILL via
+F_SETSIG) to non-Landlocked targets that share its pgid, by exploiting a
+producer-side cache-vs-live evaluation gap.
+
+The SIGIO path in hook_file_send_sigiotask() consults a cached subject
+stored in landlock_file(file)->fown_subject at fcntl(F_SETOWN) time
+(via hook_file_set_fowner()), instead of evaluating the live Landlock
+domain of the invoking task at signal-send time. The capture is gated
+by control_current_fowner(), which returns false (skipping capture)
+when pid_task(fown->pid, fown->pid_type) is in current's thread group.
+
+This is correct for PIDTYPE_TGID / PIDTYPE_PID, where the target is a
+single task sharing current's cred. It is unsafe for PIDTYPE_PGID and
+PIDTYPE_SID: when current is at the head of its pgid hlist -- the
+default placement after fork(), hlist_add_head_rcu() in kernel/fork.c --
+pid_task(pgid, PIDTYPE_PGID) resolves to current itself,
+same_thread_group(current, current) is true, the capture is skipped, and
+fown_subject.domain stays NULL. hook_file_send_sigiotask() then
+short-circuits at "if (!subject->domain) return 0;", letting the kernel
+fan the signal out to every member of the group, including tasks outside
+current's Landlock domain that SCOPE_SIGNAL is supposed to protect.
+
+The direct kill() path (hook_task_kill) is unaffected: it evaluates
+current's live domain on every call. Only the cached SIGIO path is
+broken.
+
+Tighten control_current_fowner() to apply the thread-group exemption
+only when the target identifies a single task whose Landlock cred is
+necessarily shared with current (PIDTYPE_TGID, PIDTYPE_PID). For
+PIDTYPE_PGID and PIDTYPE_SID, always capture the current Landlock
+subject so the consumer's scope check runs against every member of the
+group at delivery time.
+
+Reported-by: Bryam Vargas <hexlabsecurity@proton.me>
+Tested-by: Justin Suess <utilityemal77@gmail.com>
+Signed-off-by: Bryam Vargas <hexlabsecurity@proton.me>
 ---
-Found by auditing READ_ONCE() used for synchronization.
-A similar fix can be found in 8df672bfe3ec.
----
- security/keys/keyring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: per review, the commit message is trimmed to the bug + the fix; the
+    reproducer and the A/B verification are moved below the --- so they
+    stay out of the commit. Added Tested-by. The hunk is unchanged from
+    v1 (v1 sent to security@kernel.org 2026-05-28, embargoed -- not yet
+    in a public archive).
 
-diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index b39038f7dd31..243fb1636f10 100644
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -576,7 +576,7 @@ static int keyring_search_iterator(const void *object, void *iterator_data)
- 	struct keyring_search_context *ctx = iterator_data;
- 	const struct key *key = keyring_ptr_to_key(object);
- 	unsigned long kflags = READ_ONCE(key->flags);
--	short state = READ_ONCE(key->state);
-+	short state = key_read_state(key);
- 
- 	kenter("{%d}", key->serial);
- 
--- 
-2.34.1
+Reproducer (ordinary unprivileged user; sandbox active in the child):
 
+  int pfd[2]; pipe(pfd);
+  landlock_create_ruleset(&{.scoped =3D LANDLOCK_SCOPE_SIGNAL},
+                          sizeof(attr), 0);
+  prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+  landlock_restrict_self(rfd, 0);
+  fcntl(pfd[0], F_SETSIG, SIGKILL);
+  fcntl(pfd[0], F_SETOWN, -getpgrp());           /* PIDTYPE_PGID */
+  fcntl(pfd[0], F_SETFL, O_ASYNC);
+  write(pfd[1], "X", 1);                         /* trigger SIGIO */
+  /* every pgid member receives SIGKILL, including the non-sandboxed
+   * parent / supervisor / sibling workers */
+
+A/B-verified on a 6.12.90 lab kernel (same .config, only this hunk
+differs): pre-fix the sandboxed child's SIGKILL reaches the
+non-sandboxed parent (SCOPE_SIGNAL bypassed); post-fix it is blocked.
+hook_task_kill's direct-kill enforcement and the intra-thread-group
+F_SETOWN cases continue to work post-patch.
+
+ security/landlock/fs.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index c1ecfe239032..edaa52572cbd 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -1909,6 +1909,18 @@ static bool control_current_fowner(struct fown_struc=
+t *const fown)
+ =09if (!p)
+ =09=09return true;
+
++=09/*
++=09 * For PIDTYPE_PGID and PIDTYPE_SID, signal delivery fans out to
++=09 * every member of the group at SIGIO time. Even when pid_task()
++=09 * resolves to current itself (e.g., current is the pgid hlist
++=09 * head post-fork), non-current members of the group are still
++=09 * valid targets that must be checked by hook_file_send_sigiotask().
++=09 * Always capture the current subject for those types so the
++=09 * consumer scope check runs against the live fown_subject.
++=09 */
++=09if (fown->pid_type =3D=3D PIDTYPE_PGID || fown->pid_type =3D=3D PIDTYPE=
+_SID)
++=09=09return true;
++
+ =09return !same_thread_group(p, current);
+ }
+--
+2.43.0
