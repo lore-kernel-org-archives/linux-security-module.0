@@ -1,118 +1,149 @@
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-24425.protonmail.ch (mail-24425.protonmail.ch [109.224.244.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612FE3F20EF
-	for <linux-security-module@vger.kernel.org>; Fri, 29 May 2026 18:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780080904; cv=pass; b=XE+IjWO+TXodxFlJE//JjA4xYmFXdqpAho2NhlCLWi3wC1aNwG6tArTzcdmGsUMq2CDL0Dzl1dsPWujD/qeOAxh8C0niJmgjUY7kGd+mcDRKnmpcMpW20TojbhXt9oqGhbBOUx/0Y0Cm03XboqOPbsJ9WK3ughV5pQ7Hg8nDGKE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780080904; c=relaxed/simple;
-	bh=cTXlDf9jOALiAn1emZFOKYMHNYXoVW69uOSJhAaBdDM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cHUFchdIu/4JPq5EdJMctSK5J0Uai1PNvWS8AsNjuv5P1rtxZU/y0QdPMdQTc09scO6G7IJEoxLAJf35raRlSnPNv3jxwAG3ES2vPjkGtFMIJjlaYBqQQcV/Y//wpCAs/5S/aMNfQEQ7vsFaveiVXEGrjBf48nMAFXHa8WerK6I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=b1/6DCHv; arc=pass smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4333E8C56
+	for <linux-security-module@vger.kernel.org>; Fri, 29 May 2026 19:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.25
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780081413; cv=none; b=Qqz9oAw2VPYUrd8Dj6rI5wbNaocg8QGviMsmnobFUMH/S7GFV9odwUfAjeey7BZs3Dzy+nzXhTBDNbfLk3nYHs/vn4jqeWKMuLdOlvGliCqv+sn/ZdZJyRFGXRNSN23yC0z9quue0LLObV7GeZcaMpvNj+zYGGlBUdQf2+Ux8Pg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780081413; c=relaxed/simple;
+	bh=swipAQJGsymOXQRCYCRtnSYJ2ZKD88VZmePVBMviK98=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EWJVCQk4MYqobONauDs6/v2QAuF0Srwh993DCPIbMTwVEyZVyQmTp63+7NeUDgVDU/Tq8hMWA4heSCd3YNrXPWK5sHowcM1oqEHvVjWJlL5DEej5dxyNKSkGiP36i58FSx6zN+qRQk6FUkXCVA42tXSHtCYGZuIMl4beJYYbsRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=bUYYfvmY; arc=none smtp.client-ip=109.224.244.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="b1/6DCHv"
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-36baec934b6so801921a91.0
-        for <linux-security-module@vger.kernel.org>; Fri, 29 May 2026 11:55:01 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780080900; cv=none;
-        d=google.com; s=arc-20240605;
-        b=NLWqOtkU/4qJBQTqCVjiE0pgSSrx4I7fbiMosmrjsxoURIvUY/wMZC02hJbrSL73XB
-         OLswEqHyQMSgHYXn1okki6Oae5usJYL1qbKYGuOLsgZSNG3nDf91TPzcAbuyjlpaN3YZ
-         92UmaLf951SvaiBJKLqDZrwgUiiZrX93Bbfq57LJpYsy3rD3lkf4+/uhLztHsQ5C+2qw
-         mosEyzNjdqExiGfgjj4yjtaL5DhpqbT+8lRtpVmgARfc1MI6svaQigF+T2LdepjFMYju
-         UCmQxwaXJMO5B1phnIQyQvlkIyuiDwe0xPHVbRbU/HLH08DpIOhAbIMNDEVO9CDgvh16
-         fwuw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=cTXlDf9jOALiAn1emZFOKYMHNYXoVW69uOSJhAaBdDM=;
-        fh=ROMvVfbZEuNx7Ispo3UU2hlvrHthaxtT3DKCBD8sxGE=;
-        b=bIoa5qA+bv/9Frfd4003cq14oGj+H2N/W+GUNi31PAm9AeO9grsHGS4acCU1hdhQE8
-         t1OM7XJzMPj6qXSRgjyewrD8ECjCRK7Gg+q42jGyL7zjqUdMPu19eToUcJLQZ3LtszEx
-         IrZtesneIUqD1iIMxH02ig27BeaTzbiiYo2zjjbf3vEdDAni/FobbIzvuJ+xYNzFbLDe
-         P+x3HMyl7fyVexTvKEXVLDe/JOJs0I6XDKEELwdeCUvF+f+TWF9kskMR/44O+Tds6xVY
-         S7pcIpy0J09Nid4puNkVlP1LHHQnHKhJwTZJ0ytl0llovzJkqkJ5J5u4fENAUUxlN7+H
-         St5A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1780080900; x=1780685700; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cTXlDf9jOALiAn1emZFOKYMHNYXoVW69uOSJhAaBdDM=;
-        b=b1/6DCHvcOarhTjWWPLLUIrKu96zL6IRSpUw6d6E0ukGWxkuQvyCk5xGNNtLqsZFFL
-         PWObLCf0dmV47iJD/Ai0hBd2JBzQ/Il/MwuZTAkCuMt+/wb4B+OqpyJq6KuPmJyf3ZIO
-         FqD2KOdAPDbkKmBwewOb9vW12Lw/v+sHtvsMEOzLATLLP1rBGjm5e3PwyuCErk8i45lj
-         +U00S9JV4xgoyrWdzQurOeVuoFvJpodOI+JvPr4gHAOIgnl0uwfFpsf0qo12IZ4diLla
-         JfGRYABOug/fJccRjAlHxeIYtKa/tTB85MAIzZo6E5gbQ1q/F3g7Url+odsdP4xv9Z3u
-         Rp8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780080900; x=1780685700;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=cTXlDf9jOALiAn1emZFOKYMHNYXoVW69uOSJhAaBdDM=;
-        b=bNgejI1GBhFfPZWDhvnc1Oe/5jvyHbMXwouKdVYlWyPmLnm1s4eFBfcXpEmxuQ7xjt
-         vv0zuhfOIFtUJVMd8rPPb2zINdpMhhkUXT30MnKgss1Hui7Av3vrrsOHVREw/b8grPGM
-         tTWMHkUfzbJLNT/m6Z18SZ+XtT0nb8Q4dLgewHHtMC420w5bfNeUDfW0dwuNh+hwFtSs
-         fbgPZpcahCwZ32JIPvm0AZ/TXqKvG3S1pjOHqvnUHxMjLgVaVwUMgvDzmePkLFqVAPB8
-         XicQLRJeErRfsT8FED3CnQS3OXqf7n7NQFf8xQH5Wwffzj5Ms8p5FcwRznGtDmBXhOSC
-         vTEA==
-X-Forwarded-Encrypted: i=1; AFNElJ+NbgOnGnKMluH3sz9X9M6WHj66+b3QB9atqNUNHNRJGXM3aTlf1+QY/Z6/sg7MfeCU9i2DunLFqvYrNyrFA8a6n1uLRns=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKvwDD5dRjpgdNIhgBEde0msmxAF9kF+V+AmfkYQa6ZuHSrxXb
-	sLgJgcwjLu8/1IkM37tnL2Vds6+5ck5KtJLHjSK1CBTrDMMUtSO8tACoRkxCrxphcB1xIh9I498
-	ewqrQ45AypJRhLts5tGqEYEuR/HTrAn/N3pE3uhws
-X-Gm-Gg: Acq92OG/8fxR2vLxnayZSvV8nsA05ODQwturDMcMxGGG9pPvjuzp3emOzDuJDOGjX8H
-	AnqpN/qRxfeRcO5KwtrUBmX7bf7xUWdRa84y76KBgeNMTiYI/XqdoUAzkF0Ro1LNA/eRqk4Wk31
-	O3bw/v/IEIlDFP6Y0jW/9vpEp6XcrJbsA/lXsLo9iKAUbeO548LypvZ5am0gXbJaohhXO9j0YIX
-	CFnSFKT3IhF8TaZ4Y7crwI2KoGYvpIBF1Z7W1+b09j0ZhelTM/HyAADPFZXJzAiYA21ur0vaOYw
-	wUTbJSNhdFRSfWgDqA==
-X-Received: by 2002:a17:90b:2cc6:b0:369:e9a2:6b with SMTP id
- 98e67ed59e1d1-36beb5d69d4mr501933a91.13.1780080900476; Fri, 29 May 2026
- 11:55:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="bUYYfvmY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1780081401; x=1780340601;
+	bh=dvB/3QyedObdEd0vUZp5FaAP+aJh2ZYKSH7sTm+EfQk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=bUYYfvmYMc6S4MxvcfWmvLl/pJakR8e4yjIBGLmXiRr5QWXmSgaWakrhulNPRd+D0
+	 Ihpoat7/6JjzlHSwPECXTC49Uuc8pzqUB1Uw7WsJC+IJ/1/JomvxqNd8nVMFJ+wQZj
+	 9mtmRQM4TPdnHLr2fDTHE7lLPOvvjepypm99q8l5d9ZcSmAnGBIMM1H431GCun2dev
+	 wQ+LfUPGMVjRhQDjCawsAptgPaoRyCSy+5TUN9pe7Jgqg1YtIH8+SHxQtWzPkvnLjb
+	 27LBOXXkTjSuJ+ata20j+BZ2ytkyvBdIvFpSGLxtmceSS4EZXb/9ZZCIyC7837eyvg
+	 l+D/Y3jp0thhQ==
+Date: Fri, 29 May 2026 19:03:18 +0000
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+From: hexlabsecurity@proton.me
+Cc: Justin Suess <utilityemal77@gmail.com>, "gnoack@google.com" <gnoack@google.com>, "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [REPORT] landlock: SCOPE_SIGNAL bypass via F_SETOWN to invoker pgid -> SIGIO/SIGKILL to non-sandboxed targets
+Message-ID: <YKesampb9JYT6cYp0iFbzuxr6hCIaFu-9YhkphsUJ1l8ktqIUpjeBictEvT74GFc0RwQ6WVNcKyVWuOskeQJPhWGhOOB6BUJiff_UXfzm_g=@proton.me>
+In-Reply-To: <20260529.li6kaiDaim4B@digikod.net>
+References: <TSwHGN3I-u6p6xv7CqnvDOhR3la_kQWq0rdjBdA0gt30AsYLwddoxjCCFmqXcQMxWHS4ShULEp7sO_8HdFRGPLk30rIQHy3EurwJyrjP3NQ=@proton.me> <20260529.li6kaiDaim4B@digikod.net>
+Feedback-ID: 199661219:user:proton
+X-Pm-Message-ID: 15b272239d115edf4f07f7b2aec89dc502a73ad4
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260528030915.2654994-1-bboscaccy@linux.microsoft.com>
- <20260528030915.2654994-6-bboscaccy@linux.microsoft.com> <CAHC9VhR6G5qmd3kXPas_L_SiJx=6J=wUw80xxL9Eu4=tSjMAoQ@mail.gmail.com>
- <87tsrqxfdc.fsf@microsoft.com>
-In-Reply-To: <87tsrqxfdc.fsf@microsoft.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 29 May 2026 14:54:47 -0400
-X-Gm-Features: AVHnY4KV6D6YvRHanQxEbvDpCbql19hyTKeLutgK-EPgQAJGsY29ejnHS07L2Is
-Message-ID: <CAHC9VhRmf6=ffJ8tgWTP_mamTYXbp-__w92r4i-FMcchGzkGdA@mail.gmail.com>
-Subject: Re: [PATCH 05/11] hornet: gen_sig: fix off-by-one check for used maps
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Fan Wu <wufan@kernel.org>, James.Bottomley@hansenpartnership.com, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 29, 2026 at 2:03=E2=80=AFPM Blaise Boscaccy
-<bboscaccy@linux.microsoft.com> wrote:
-> Paul Moore <paul@paul-moore.com> writes:
->
-> > On Wed, May 27, 2026 at 11:09=E2=80=AFPM Blaise Boscaccy
-> > <bboscaccy@linux.microsoft.com> wrote:
-> >>
-> >> A logic bug limited the maximum number of used maps to
-> >> MAX_USED_MAPS-1.
-> >
-> > Should this be MAX_HASHES-1 and not MAX_USED_MAPS-1?
->
-> Good eye. Yes that should be MAX_HASHES-1 in the commit message.
+Hi Micka=C3=ABl,
 
-Okay, I'll fix that up when merging.
+> Could you please replace the reproducer code with a proper kselftest?
+> That would need to be a new email patch (v3) [...]
 
---=20
-paul-moore.com
+Done -- v3 is a two-patch series:
+
+  [PATCH v3 1/2] landlock: fix LANDLOCK_SCOPE_SIGNAL bypass via F_SETOWN to=
+ invoker's pgid
+  [PATCH v3 2/2] selftests/landlock: test SCOPE_SIGNAL on the SIGIO/fowner =
+pgid path
+
+Patch 2 replaces the informal reproducer with a regression test in
+scoped_signal_test.c, reusing the existing fown/SIGURG idiom. It adds
+TEST(sigio_to_pgid_members): a sandboxed child at the head of its pgid hlis=
+t
+arms F_SETSIG(SIGURG) / F_SETOWN(-pgrp) / O_ASYNC and triggers the fan-out;=
+ the
+in-domain child must be signaled (positive control) and the non-sandboxed
+parent must not.
+
+I also added the Fixes: tag and Cc: stable that v2 was missing:
+
+  Fixes: 18eb75f3af40 ("landlock: Always allow signals between threads of t=
+he same process")
+
+That is where the same-thread-group exemption on the fowner path was
+introduced (v6.15; backported to 6.12.y/6.13.y/6.14.y -- the original v6.12
+signal scoping captured the subject unconditionally and was not affected).
+The fix hunk itself is unchanged from v1/v2 and keeps Justin's Tested-by.
+
+A/B on 6.12.90 + CONFIG_SECURITY_LANDLOCK (same .config, only the hunk
+differs): without patch 1 the new test fails (the parent is signaled); with=
+ it
+the test passes and the landlock signal-scoping suite is 20/20. checkpatch =
+is
+clean except one expected Reported-by/Closes warning -- the original report=
+ was
+sent to security@kernel.org, so there is no public URL to point Closes: at.
+
+Thanks,
+Bryam Vargas
+
+Independent security researcher. HEXLAB SAS (registration pending) -- Cali,=
+ Colombia.
+
+This series fixes a LANDLOCK_SCOPE_SIGNAL bypass on the asynchronous SIGIO
+(fcntl(F_SETOWN)) delivery path and adds the kselftest requested in review.
+
+Patch 1 narrows the same-thread-group exemption in control_current_fowner()
+so that F_SETOWN to a process group (or session) always captures the caller=
+'s
+Landlock subject. Without it, a sandboxed task at the head of its pgid hlis=
+t
+(the default position after fork()) skips the capture, and the SIGIO fan-ou=
+t
+reaches non-sandboxed members of the process group, defeating SCOPE_SIGNAL.
+The direct kill() path (hook_task_kill) is unaffected.
+
+Patch 2 adds a regression test to scoped_signal_test.c, replacing the infor=
+mal
+reproducer that previously accompanied the fix.
+
+The defect was introduced by commit 18eb75f3af40 ("landlock: Always allow
+signals between threads of the same process") in v6.15, and is present in t=
+he
+stable branches that backported it (6.12.y, 6.13.y, 6.14.y).
+control_current_fowner() is identical across those branches, so patch 1 app=
+lies
+as-is (stable kernels before the fown_subject conversion store the domain i=
+n
+landlock_file(file)->fown_domain; the exemption and the fix are the same).
+
+A/B verified on 6.12.90 + CONFIG_SECURITY_LANDLOCK (same .config, only the =
+fix
+hunk differs):
+  - without patch 1: the new test fails -- the non-sandboxed parent receive=
+s
+    the signal (SCOPE_SIGNAL bypassed);
+  - with patch 1: the new test passes, and the whole landlock signal-scopin=
+g
+    suite passes 20/20 (no regression).
+
+v2 -> v3:
+  - patch 1: add Fixes: tag and Cc: stable; the fix hunk is unchanged from =
+v1/v2.
+  - patch 2 (new): replace the git-notes reproducer with a kselftest.
+  - v1/v2 were sent to security@kernel.org (embargoed; not in a public arch=
+ive).
+
+Bryam Vargas (2):
+  landlock: fix LANDLOCK_SCOPE_SIGNAL bypass via F_SETOWN to invoker's pgid
+  selftests/landlock: test SCOPE_SIGNAL on the SIGIO/fowner pgid path
+
+ security/landlock/fs.c                        | 12 +++
+ .../selftests/landlock/scoped_signal_test.c   | 97 +++++++++++++++++++
+ 2 files changed, 109 insertions(+)
+
+base-commit: 27fa82620cbaa89a7fc11ac3057701d598813e87
+
