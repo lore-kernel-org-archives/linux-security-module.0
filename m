@@ -1,153 +1,163 @@
-Received: from pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.77.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F373382C7;
-	Fri, 29 May 2026 20:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.246.77.92
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780085051; cv=none; b=hlE//RKz3xsezKlBGyvgk4zWkzCRyQr5r8z61WxT9uehFDXalRyGJeGCX+ajTSqoTmy172HXSBymFy0Ob+QJ/xVKXYjjXbTHF48diBiFaXAbEXj6Bj21scW7Pl+CMSCHmGSnWaLAAJIBIj161yfl6nck9Di1/D3guWWSYz/Jbt4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780085051; c=relaxed/simple;
-	bh=zGw+kIvSx41Cdv3aLqZU53FgvvEH4b7LmIt2nGC1v+M=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HSGvqYwYwkxp/UC4hQrW1IXsOPdeCf+t+m0SfpcAJxBfNB8u1/vL2alE8x11QQqm9ovW4If+5kKh4JYTdOMuTjOgiNpbJsdgrSMVfBkgsqDRfQodLt0+7zHc3xpkgLKwYSQmZSkHIEMyOXSi+sEqNeWKvsRn1aSLhd69cR3YjZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=Ks8XCAmi; arc=none smtp.client-ip=44.246.77.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7193DDDD0
+	for <linux-security-module@vger.kernel.org>; Fri, 29 May 2026 20:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.179
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780088193; cv=pass; b=PZl38DlTGIRSR29R6G1IWU8f6ghuT0lys4vOMij55JTkA6tJsOGyV8+1YQJkqUjaQisVk9+Wfhvl8ywhoFinYroIt7DxX6FI6/mFD+EwpV6AMcqlDcZB55+Sxc5qz4wTYtVVMMGBBn/hYJFqBgfX0waWt10PXXvogHO8/PWosq8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780088193; c=relaxed/simple;
+	bh=smTzgLunUme0eoIvUNmix5Dg0CIit+hiYdX4wzwspKQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t3fnVTe9DmeRdCj8spgAFWrdpSTbXLeoWBeis0YRyvk9srC3hcSs+RZVIYXuFsng2cEX0AP2gH4YgH2aN5RthBHrkyE7oCsStXPLLhIezkF5GQ788oeqKJ5YBusS3lKCpNSS2Y+kFuQHNRiB3oG0sJD1AaU7ilEXieR/1ClMi48=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RZQ9SUcL; arc=pass smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="Ks8XCAmi"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RZQ9SUcL"
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-c85773f46b5so467234a12.0
+        for <linux-security-module@vger.kernel.org>; Fri, 29 May 2026 13:56:29 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780088189; cv=none;
+        d=google.com; s=arc-20240605;
+        b=NCA+YrWdhTzZKt/W/K7iBJgnWaCGvdoYh56cIH+tE3HFtRxyYHDyY3SxVJPN/nfZxk
+         0qnbbsI5LFL6v5n7gc7ZXUM7MZl9AW56ufQxMY3Ar+vNHxTWbIAhWsuBVUXYQxIf4YqR
+         B5gfC6ZLeXmWPEWauU6wjEsqqnJvIunAAxrPBDNU8kuQAbkn2DJhmxZN254xaVNRKhXd
+         nxlqBfTGCepfhRYPAQmLAZgibwpMHMkkHXk2EGedB8BRt8jie8Ha9TkKyzUw2tySiBXE
+         d+DKBZZv3CCwyvIi/Cc7CZHXN02nkx1VEdd8JDGiTetJHd2v2TZ2CI5tfhtf0VwzZ9HW
+         FROw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=gp17DDHpDrQCYtkBO9wV4U/G41EKHx7vsZ5TJQ15dv4=;
+        fh=H0UPvU64rYsOHFbmMPhqJgGHg2feECvC3N/d54GOdP8=;
+        b=LfTVSms4Ejg/5Y4AW9j/orh5ixnz4WFSAVE7Z8nMtug13WsTGwpeG96yWyWc2/YUHl
+         0N1TXaJH3yOr9OGLf+yZVKabpfbAjfVqT4zpFxK2SnjRnZCB8vYGSa5ogssM8a826IKc
+         1L8lWQC2fot65f1oUfXljzkURWxKWs5L7qUHgodqyOGf88XfeDHi4kkhSvpQu2Gw+AHD
+         cLu0/C/91F3PokZsA8B64nyeslQrcaKWh3fLFUINcCVCfzBiIX75pHN9iTtEmarXKSVz
+         196fy0hlhLDGMkjEnUu8wVNkoZ/Nx0MDy0U6vCM+9n/Yxf1TUJe5/fM/Y8joaS3avQic
+         owIA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
-  t=1780085050; x=1811621050;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=q1or6XUc2xvLIFww3vzaG2BUmcXyxmaO3nDz0H1yzeg=;
-  b=Ks8XCAmilBqVbnK+YancEagsrAwJU2ks2bG+pD/fjyAXNxJyb/IV8Et4
-   6cui6BCb9C4/nCXv+gDtDu2H0VeRriV+28C79pPFU4Fo+N6iRFsbRE6o6
-   x1xLJ+RFwnmdsFgaYDJWFzv7iOtAM4FINzQYbhwRro2falpGMa8y/8qvE
-   eQFdlIKjAm63AaF+m2Iwp/qe5LB25pnVa1CWUBmttyq/vCToPPmBpA0bF
-   5nVvE9xoxRU0fSoRb2P6El30IR5rgqST/Mg6OBP7CflA2HXPq5CvkumlF
-   v+GeI/ZnPxcSE24MGvuilWCvHANB2YvfuckYFB/Z1o0iKgdZhB2SBN/33
-   Q==;
-X-CSE-ConnectionGUID: eBDACEm+TCyS8LJNrRXPpg==
-X-CSE-MsgGUID: XXJFaV0SQsmK+LdFZHNp5g==
-X-IronPort-AV: E=Sophos;i="6.24,176,1774310400"; 
-   d="scan'208";a="20729283"
-Received: from ip-10-5-12-219.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.12.219])
-  by internal-pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2026 20:04:07 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [205.251.233.111:13799]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.19.88:2525] with esmtp (Farcaster)
- id 3ae9febb-b541-41a9-b367-03e1c4ec2983; Fri, 29 May 2026 20:04:06 +0000 (UTC)
-X-Farcaster-Flow-ID: 3ae9febb-b541-41a9-b367-03e1c4ec2983
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.37;
- Fri, 29 May 2026 20:04:06 +0000
-Received: from dev-dsk-mheyne-1b-8cc83676.eu-west-1.amazon.com (10.13.235.223)
- by EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.37;
- Fri, 29 May 2026 20:04:04 +0000
-From: Maximilian Heyne <mheyne@amazon.de>
-To: <stable@vger.kernel.org>
-CC: Maximilian Heyne <mheyne@amazon.de>,
-	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, Shuah Khan
-	<shuah@kernel.org>, <linux-security-module@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] selftests/landlock: explicitly disable audit
-Date: Fri, 29 May 2026 20:03:41 +0000
-Message-ID: <20260529-welsh-nagoya-b4d9ca60@mheyne-amazon>
-X-Mailer: git-send-email 2.50.1
+        d=paul-moore.com; s=google; t=1780088189; x=1780692989; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gp17DDHpDrQCYtkBO9wV4U/G41EKHx7vsZ5TJQ15dv4=;
+        b=RZQ9SUcLnNnGI0993ldelv45UxNt24LfHHnZWoZb7pvmVAp05pfQf7qwHrmFT0KO5l
+         7k6S2PSm9gp7tO7oBd4QT1xrpUiU5i7b5UeEGiDVPccb6URREc+ZOmi7Xmr7CF8V313K
+         KaE5OAsMcnno2czGllh+/C4ZsMQvDq7P5+xhD9ZY+nWTH7EDT8KJdUldS59keHjHb5Qd
+         vz0mVTJ7fBQ3Z2zje4zx8172f4KhsGICbtxYsHqQrHQNXJXlBNf7ousgrPGVqoOPgUek
+         f8nqqqil9I+cUP90HDmuNNFSubYGY3vPkZSh01e4bK1oqGidpF75h4i32y0wLFake329
+         ShJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780088189; x=1780692989;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=gp17DDHpDrQCYtkBO9wV4U/G41EKHx7vsZ5TJQ15dv4=;
+        b=UEGfMsvYwryZxKnY/80bugDVdqNEOmg10Z8v9VCUpbMtjLUbtpTv3YkzrCTRO0bs5+
+         um/V7EvzIcWnUsKJGltYzA7+PWQVd8bXS9yxXc5tTCPvN6u55S1djmrDtYRgkd7C8vEp
+         lvfZwBsicc824qCa4HDGzAp4Sgm0ZMoyjINZ13rViu4sk1E8J7DS66SqZ+urVSTMhw9r
+         k3Zrg+dcE52oIW10lwUTC6Df8Zr2Ca/43qbse6N0h3pFELmT2j4Hge/FQX2VCkhNpMcg
+         b8dlJG3Fs3kcu9/LDcr1PIcfnK/5evI4TQwATqKhqPBoT3gdNfGr9iNZGidbvvhtO3iH
+         679A==
+X-Forwarded-Encrypted: i=1; AFNElJ8acgwCbUD2UWqApDJqroXgMLrvXPCyBFHE5uFD3xlBDth5pPFiuxnUu6vTSNBNoLQ3dxJxT0CIAHRGb8Y32gq3VLZnpYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfqNyu6qVbSRKh2HXyTCIkQYGlZiR/GWq44+hC4YD74Bb7+ZAL
+	ntENiizoMQpOcDYJq0EVk41Hs+UiEfzf1xZmx9ucQY8k9gBrKuBlb6cAblJ+XgfGgOkvF8ou8sU
+	tqQUIzqfJ3b7u/qy6DfYwOWBIJ64cTDa5VwsNl0AVdcHeZ3YseJnTwQ==
+X-Gm-Gg: Acq92OFFq86p2JOKZGLenI0K2cK1Ar5Q+VACrrh/WXiS2gT7MKNjS1jBnJaMH5Ohrqa
+	HZybmcPUlm2oL4+Ly5nB1F2uQ8Bc995QJ4jvWp1Z5vwyT3cRNWt6Ljo8Ujl/6c9WSjMJcjf6ajP
+	ULUOxM/+hxymao2UM7k70np1BQnw3MRgBppVmVv0SqJVr4zLnXlu3aFuCvfPK5SfkN0dEs83RG+
+	i4u2vgrbWkbTCa6FC5jkXBeaTh0yjgPLxPGaEHI/aV8OkKn9DaK95AOEqB2V4XbDQ5VP7/FW5mR
+	0PiRwcntoLYosZZWWg==
+X-Received: by 2002:a05:6a21:492:b0:3b3:edf:9efc with SMTP id
+ adf61e73a8af0-3b426ae88cfmr937037637.21.1780088189259; Fri, 29 May 2026
+ 13:56:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D031UWA002.ant.amazon.com (10.13.139.96) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <20260528030915.2654994-1-bboscaccy@linux.microsoft.com> <CAHC9VhSQzV0xZPFwkNdUJ5Lz8Mw6gppBhR6QyRdrY8xCTohHDw@mail.gmail.com>
+In-Reply-To: <CAHC9VhSQzV0xZPFwkNdUJ5Lz8Mw6gppBhR6QyRdrY8xCTohHDw@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 29 May 2026 16:56:17 -0400
+X-Gm-Features: AVHnY4InBv2VNLG7wcVKejjs8IJRkz7oJuZoqfyR3Kf35dBYrfX9C0d5V81Tzh8
+Message-ID: <CAHC9VhShFjEMyN7Z878j437_c6toLZrhgxrag88U795jAA+2Nw@mail.gmail.com>
+Subject: Re: [PATCH 00/11] hornet: security, tooling and selftest fixes
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Fan Wu <wufan@kernel.org>, James.Bottomley@hansenpartnership.com, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I'm seeing sporadic selftest failures, such as
+On Thu, May 28, 2026 at 9:39=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+> On Wed, May 27, 2026 at 11:09=E2=80=AFPM Blaise Boscaccy
+> <bboscaccy@linux.microsoft.com> wrote:
+> >
+> > Patch 1 closes a TOCTOU race in signature verification. Map
+> > contents were hashed at the program-load hook and re-hashed at
+> > the program-run hook, leaving a window in which a sufficiently
+> > privileged attacker could mutate a map between the two checks
+> > and run a program whose maps no longer matched what was signed.
+> > The fix records the verified hashes on the prog at load time
+> > and, in security_bpf_prog, checks them against
+> > prog->aux->used_maps =E2=80=94 the same map set the verifier and
+> > runtime resolve against =E2=80=94 so the verified and executed sets
+> > cannot diverge. The per-map index in the signature format is no
+> > longer needed and is dropped; the check becomes a subset test.
+> > Reported by Eric Biggers.
+> >
+> > Patches 2-3 fix two counting bugs in the same area: duplicate maps
+> > could satisfy the required hash count, and an off-by-one capped
+> > accepted maps at MAX_USED_MAPS.
+> >
+> > Patches 4-11 are in response to sashiko feedback found here:
+> > https://sashiko.dev/#/patchset/20260507191416.2984054-1-bboscaccy%40lin=
+ux.microsoft.com
+> >
+> > They provide some correctness fixes in the hornet tooling along with
+> > making the selftest behave under cross-compilation and skip cleanly
+> > when signing keys / bpftool / vmlinux BTF are unavailable, instead of
+> > breaking the global selftest build.
+> >
+> > Blaise Boscaccy (11):
+> >   hornet: fix TOCTOU in signed program verification
+> >   hornet: invert map set check logic
+> >   hornet: fix off-by-one bug in max used maps check
+> >   selftests: hornet: handle cross compilation and test skipping
+> >   hornet: gen_sig: fix off-by-one check for used maps
+> >   hornet: gen_sig: fix error string allocations
+> >   hornet: gen_sig: check for bad allocations
+> >   hornet: gen_sig: fix missing command line switches
+> >   hornet: scripts: set a non-zero error code for usage
+> >   hornet: scripts: harden scripts to handle trailing whitespace
+> >   hornet: scripts: Improve argument handling and error messages
+> >
+> >  Documentation/admin-guide/LSM/Hornet.rst |  39 +++---
+> >  scripts/hornet/extract-insn.sh           |  24 ++--
+> >  scripts/hornet/extract-map.sh            |  25 ++--
+> >  scripts/hornet/extract-skel.sh           |  35 ++++--
+> >  scripts/hornet/gen_sig.c                 |  61 ++++++----
+> >  scripts/hornet/write-sig.sh              |  10 +-
+> >  security/hornet/hornet.asn1              |   1 -
+> >  security/hornet/hornet_lsm.c             | 148 ++++-------------------
+> >  tools/testing/selftests/hornet/Makefile  | 114 +++++++++++++----
+> >  9 files changed, 235 insertions(+), 222 deletions(-)
+>
+> Aside from a possible (?) typo in patch 5/11, this patchset looks okay
+> to me so I'm going to merge it to lsm/dev-staging now with the idea of
+> moving it to lsm/dev once Blaise provides some clarity on patch-5.
 
-  #  RUN           scoped_audit.connect_to_child ...
-  # scoped_abstract_unix_test.c:314:connect_to_child:Expected 0 (0) == records.access (8)
-  # connect_to_child: Test failed
-  #          FAIL  scoped_audit.connect_to_child
-  not ok 19 scoped_audit.connect_to_child
+With the typo in 5/11 sorted out, I've gone ahead and moved these
+fixes over to lsm/dev.  I also took the liberty of adding the
+associated 'Fixes:' tags, not critical in this case, but nice to have.
 
-This seems similar to what commit 3647a4977fb73d ("selftests/landlock:
-Drain stale audit records on init") tried to fix. However, the added
-drain loop is not effective. When setting the AUDIT_STATUS_PID, the
-kauditd_thread is woken up starting to send messages from the hold queue
-to the netlink. Depending on scheduling of this kthread not all messages
-might be send via the netlink in the 1 us interval.
-
-Therefore, instead of trying to drain the queue, let's just disable
-audit when running non-audit tests or more precisely disable it after
-audit-tests. This way we won't generate any new audit message that could
-interfere with the other tests.
-
-The comment saying that on process exit audit will be disabled is wrong.
-The closed file descriptor just causes an auditd_reset(), not a
-disablement. So future messages will be queued in the hold queue.
-
-Cc: stable@vger.kernel.org
-Fixes: 6a500b22971c ("selftests/landlock: Add tests for audit flags and domain IDs")
-Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
----
-
-I've seen the failures on the 6.18 kernels but haven't tested on latest
-upstream. However, I still think this is an issue.
-
----
- tools/testing/selftests/landlock/audit.h | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
-
-diff --git a/tools/testing/selftests/landlock/audit.h b/tools/testing/selftests/landlock/audit.h
-index 834005b2b0f09..7842330875f53 100644
---- a/tools/testing/selftests/landlock/audit.h
-+++ b/tools/testing/selftests/landlock/audit.h
-@@ -494,10 +494,9 @@ static int audit_init_filter_exe(struct audit_filter *filter, const char *path)
- static int audit_cleanup(int audit_fd, struct audit_filter *filter)
- {
- 	struct audit_filter new_filter;
-+	int err;
- 
- 	if (audit_fd < 0 || !filter) {
--		int err;
--
- 		/*
- 		 * Simulates audit_init_with_exe_filter() when called from
- 		 * FIXTURE_TEARDOWN_PARENT().
-@@ -518,12 +517,10 @@ static int audit_cleanup(int audit_fd, struct audit_filter *filter)
- 	audit_filter_exe(audit_fd, filter, AUDIT_DEL_RULE);
- 	audit_filter_drop(audit_fd, AUDIT_DEL_RULE);
- 
--	/*
--	 * Because audit_cleanup() might not be called by the test auditd
--	 * process, it might not be possible to explicitly set it.  Anyway,
--	 * AUDIT_STATUS_ENABLED will implicitly be set to 0 when the auditd
--	 * process will exit.
--	 */
-+	err = audit_set_status(audit_fd, AUDIT_STATUS_ENABLED, 0);
-+	if (err)
-+		return err;
-+
- 	return close(audit_fd);
- }
- 
--- 
-2.50.1
-
-
-
-
-Amazon Web Services Development Center Germany GmbH
-Tamara-Danz-Str. 13
-10243 Berlin
-Geschaeftsfuehrung: Christof Hellmis, Andreas Stieger
-Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-Sitz: Berlin
-Ust-ID: DE 365 538 597
-
+--=20
+paul-moore.com
