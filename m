@@ -1,44 +1,46 @@
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A8236D9FA
-	for <linux-security-module@vger.kernel.org>; Sun, 31 May 2026 10:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4FC1A9FBC;
+	Sun, 31 May 2026 17:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780224111; cv=none; b=rSpX7LxidY7vZC4aVPlqStB6ArWkklh02uz1QvKT7BosBsJb2XJEfwkSOIrufH2P5FMK9vvf09d5b3TpdWpudJU9+cdINu7iGtOJ36G6P/1ehAiG8KW+H8CJnh9saxz6mEI/Bj0Ch9WXx+znCUMup0MD2J3gQ5BkpZGxdHBRClg=
+	t=1780247096; cv=none; b=mixGAzQIx1RcC/QKM6IBCZVdts9RYm/5SU10pj2+sPXMu0bn1U1IQwnK4CmQJ4sP6FgF+4fj05Bypcs4uU9ut0zatV4ZlKglSCgyMyZV3aWA/7e7fV+tObNcVAs/xviR3yttq5zQH9FGYzrROhPD7BUvvHcegG93puIrmBQIlIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780224111; c=relaxed/simple;
-	bh=Wcx9iLblDp4hblQ+ibXg4HnEYwY70izi+BxL3C+KWI0=;
+	s=arc-20240116; t=1780247096; c=relaxed/simple;
+	bh=jngPp+w7Ksu7gsTnfGygZDL4tF+S1G+/zkSdXoYzJ1c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dcKkuI4cuu/7fE9M28reNx0WQtePlhF1nC6ZgkS7eSL+vn5qsqpTwEKxGuTM0leN4HrtOqo292x+Dmx09/rU2RBGi+R4hhLHZFO7AZzz42f1K8saAw+Z4UD8OTN/j9MebR/9hUAxoyoD5PUk834p8uOjyaKfJqVYsNOZ84yEgso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=G0OU4NmU; arc=none smtp.client-ip=84.16.66.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=JQZ1SgN3JtbSLo6t97C8dHjuyj3bZGjMhB82imReLJSDAnmyyXb3dHN18C4O8rbZvQjTAVVabQ1FYANOA9LYnz0bkF8ELwmp3R2A9MCCoJUW80O4giVTd+3J/sGPqWNNKWpJefSlJ0dD0KMUJwI4qLMYMvznAjUbWlmyx2w5Tao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dwJ4pCvr; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="G0OU4NmU"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gSttq74bTzY7c;
-	Sun, 31 May 2026 12:41:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1780224099;
-	bh=LTPyEEY0B3ySg8X1BcNaRZY61/WIhBEjhdVchJdIjTY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G0OU4NmUv6zHih8zeIu6GZiCHjUBARFKuHd6Vl3Pu3ftAbFT0jBz3klv4iXwwcMBn
-	 dZmrAf3nma6uE53BtgCClRj9QdsYJzmc2PAQoem5u/7O7c/ACpEvIHtO0F3NhMvOT0
-	 v51d1OZZPk3obY4A4BvdABo7KgaGg/cFEdi1DZCs=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4gSttq2Dzlz7gL;
-	Sun, 31 May 2026 12:41:39 +0200 (CEST)
-Date: Sun, 31 May 2026 12:41:35 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: hexlabsecurity@proton.me
-Cc: Justin Suess <utilityemal77@gmail.com>, 
-	"gnoack@google.com" <gnoack@google.com>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>, 
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v3 1/2] landlock: fix LANDLOCK_SCOPE_SIGNAL bypass via
- F_SETOWN to invoker's pgid
-Message-ID: <20260531.irah0eiM3Chi@digikod.net>
-References: <7rvmLIHR1Zh8RDF1IY1-SYRHzErgw9gPHq0k98RLYVsmHqAejjxcuJi8V3QaSbW-SnNvY5tfM2Xn_S1dEajKV_f7iyitoPwJgOSTZQ0nytc=@proton.me>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dwJ4pCvr"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 2BF101F00893;
+	Sun, 31 May 2026 17:04:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780247094;
+	bh=vmVcttHD8U/PDaD7LLGhIcJvfJteRmIRh1ozj2XkBLY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=dwJ4pCvrtNRcPsZbpOLZT80KHltJ4bE1PaxdZ6TF/j/vRwWX6pTmn0gBfCZFdVnR1
+	 m2tRqEL+XEHUl/E3EtFJiAqVo1tKfM0RjaqDc8PrEp9HeVPZUea6XQ6SuKNG9rCFl5
+	 6az83l2/n7mIawRdwJs7uVzgfH9Uznd+G7QLn0/UxQ9xTb10TMvnZUxijVM75wzZG+
+	 I64RNhtEvcjYPCpzydqgrY8umqHclesW1JwK1PbfRH0xDBtrPhBnYtB8nJDxAWURWA
+	 PWdEo9bRC19cnyGXLzgDi/nRGu8SZjv7cOJUrCtFUlOZSMlEKpoGGiuwA21SjQ4Soo
+	 qmEQ1WHz2Iqpw==
+Date: Sun, 31 May 2026 20:04:50 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Alessandro G <ale.grpp@gmail.com>
+Cc: keyringsy@vger.kernel.org, stable@vger.kernel.org,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Denis Kenzior <denkenz@gmail.com>,
+	Marcel Holtmann <marcel@holtmann.org>, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KEYS: fix overflow in keyctl_pkey_params_get_2()
+Message-ID: <ahxqMocnAcWY7Hn9@kernel.org>
+References: <20260531024914.3712130-1-jarkko@kernel.org>
+ <ahuqIqUninpjqfpF@kernel.org>
+ <CAJXJp6jMLQvYi6rpt31hO0O5WwLipSihT9PxFJu1bvtfUS2CBw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -47,125 +49,46 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7rvmLIHR1Zh8RDF1IY1-SYRHzErgw9gPHq0k98RLYVsmHqAejjxcuJi8V3QaSbW-SnNvY5tfM2Xn_S1dEajKV_f7iyitoPwJgOSTZQ0nytc=@proton.me>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJXJp6jMLQvYi6rpt31hO0O5WwLipSihT9PxFJu1bvtfUS2CBw@mail.gmail.com>
 
-On Fri, May 29, 2026 at 07:07:30PM +0000, hexlabsecurity@proton.me wrote:
-> From b5fdc79ce1cb2881d59dfed01d3d9170306be9e8 Mon Sep 17 00:00:00 2001
-> From: Bryam Vargas <hexlabsecurity@proton.me>
-> Date: Fri, 29 May 2026 12:49:41 -0500
-> Subject: [PATCH v3 1/2] landlock: fix LANDLOCK_SCOPE_SIGNAL bypass via
->  F_SETOWN to invoker's pgid
+On Sun, May 31, 2026 at 09:23:11AM +0200, Alessandro G wrote:
+> Hi Jarkko,
+> 
+> The surname is “Groppo” instead of “Grupp”, don’t worry and thanks for asking!
+> 
+> Thanks also for the fix!
+> 
+> BR,
+> Alessandro
 
-Please send proper threaded emails.  Sending two unrelated
-emails/patches and with additional headers in the body makes it more
-difficult to handle and ignored by reviewer bots.
+Thank you! This was a super good bug report.
+
+Since I cannot do it without permission, can I add your tested-by to the
+patch?
+
+BR, Jarkko
 
 > 
-> A Landlock-restricted process can bypass LANDLOCK_SCOPE_SIGNAL on the
-> SIGIO delivery path and deliver arbitrary signals (including SIGKILL via
-> F_SETSIG) to non-Landlocked targets that share its pgid, by exploiting a
-> producer-side cache-vs-live evaluation gap.
-
-What does mean: "producer-side cache-vs-live evaluation gap"?
-
-It looks like the "cache" here is the fowner data, which is not a cache.
-
-Could you please make it clear in the commit message what is the threat
-(e.g. real-life scenario of a signal control bypass)?
-
+> Il giorno dom 31 mag 2026 alle 05:25 Jarkko Sakkinen <jarkko@kernel.org> ha
+> scritto:
 > 
-> The SIGIO path in hook_file_send_sigiotask() consults a cached subject
-> stored in landlock_file(file)->fown_subject at fcntl(F_SETOWN) time
-> (via hook_file_set_fowner()), instead of evaluating the live Landlock
-> domain of the invoking task at signal-send time. The capture is gated
-> by control_current_fowner(), which returns false (skipping capture)
-> when pid_task(fown->pid, fown->pid_type) is in current's thread group.
-
-Commit messages should mostly explain the "why", and only the minimal
-"what".
-
-A simpler commit message would be useful.
-
+>     On Sun, May 31, 2026 at 05:49:13AM +0300, Jarkko Sakkinen wrote:
+>     > The length for the internal output buffer is calculated incorrectly,
+>     which
+>     > can result overflow when a too small buffer is provided.
+>     >
+>     > Fix the bug by allocating internal output with the size of the maximum
+>     > length of the cryptographic primitive instead of caller provided size.
+>     >
+>     > Cc: stable@vger.kernel.org # v4.20+
+>     > Fixes: 00d60fd3b932 ("KEYS: Provide keyctls to drive the new key type ops
+>     for asymmetric keys [ver #2]")
+>     > Reported-by: Alessandro Grupp <ale.grpp@gmail.com>
+>     > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 > 
-> This is correct for PIDTYPE_TGID / PIDTYPE_PID, where the target is a
-> single task sharing current's cred. It is unsafe for PIDTYPE_PGID and
-
-By "task" do you mean "process"?
-
-> PIDTYPE_SID: when current is at the head of its pgid hlist -- the
-> default placement after fork(), hlist_add_head_rcu() in kernel/fork.c --
-> pid_task(pgid, PIDTYPE_PGID) resolves to current itself,
-> same_thread_group(current, current) is true, the capture is skipped, and
-> fown_subject.domain stays NULL. hook_file_send_sigiotask() then
-> short-circuits at "if (!subject->domain) return 0;", letting the kernel
-> fan the signal out to every member of the group, including tasks outside
-> current's Landlock domain that SCOPE_SIGNAL is supposed to protect.
+>     Should be available in -next within a day or along the lines so please
+>     be quick with tags/feedback. I'll forward a PR as soon as all is good.
 > 
-> The direct kill() path (hook_task_kill) is unaffected: it evaluates
-> current's live domain on every call. Only the cached SIGIO path is
-> broken.
-> 
-> Tighten control_current_fowner() to apply the thread-group exemption
-> only when the target identifies a single task whose Landlock cred is
-> necessarily shared with current (PIDTYPE_TGID, PIDTYPE_PID). For
-> PIDTYPE_PGID and PIDTYPE_SID, always capture the current Landlock
-> subject so the consumer's scope check runs against every member of the
-> group at delivery time.
-
-PIDTYPE_SID doesn't seem possible.
-
-> 
-> Stable kernels before the fown_subject conversion store the domain in
-> landlock_file(file)->fown_domain; control_current_fowner() is identical
-> there, so the same exemption and the same fix apply.
-> 
-> Fixes: 18eb75f3af40 ("landlock: Always allow signals between threads of the same process")
-> Cc: stable@vger.kernel.org
-> Reported-by: Bryam Vargas <hexlabsecurity@proton.me>
-
-You should remove Reported-by because it is implicit when you also add a
-Signed-off-by with the same value.
-
-> Tested-by: Justin Suess <utilityemal77@gmail.com>
-> Signed-off-by: Bryam Vargas <hexlabsecurity@proton.me>
-> ---
->  security/landlock/fs.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index c1ecfe239032..edaa52572cbd 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -1909,6 +1909,18 @@ static bool control_current_fowner(struct fown_struct *const fown)
->  	if (!p)
->  		return true;
->  
-> +	/*
-> +	 * For PIDTYPE_PGID and PIDTYPE_SID, signal delivery fans out to
-> +	 * every member of the group at SIGIO time. Even when pid_task()
-> +	 * resolves to current itself (e.g., current is the pgid hlist
-> +	 * head post-fork), non-current members of the group are still
-> +	 * valid targets that must be checked by hook_file_send_sigiotask().
-> +	 * Always capture the current subject for those types so the
-> +	 * consumer scope check runs against the live fown_subject.
-
-This looks good but could be simplified.
-
-> +	 */
-> +	if (fown->pid_type == PIDTYPE_PGID || fown->pid_type == PIDTYPE_SID)
-
-PIDTYPE_SID is not possible for fowner, and I'd prefer a defensive
-programming approach:
-
-  fown->pid_type != PIDTYPE_PID && fown->pid_type != PIDTYPE_TGID
-
-> +		return true;
-> +
->  	return !same_thread_group(p, current);
->  }
->  
-> -- 
-> 2.43.0
-> 
+>     BR, Jarkko
 > 
