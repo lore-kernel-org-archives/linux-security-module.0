@@ -1,187 +1,124 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C006D1A6839
-	for <linux-security-module@vger.kernel.org>; Mon,  1 Jun 2026 22:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780351738; cv=none; b=i85KsVN4GKDOzqqsxbMOza0287PovMkwXzy2QM7Stnrag+dwr2BB3vcgQwLFsNFDxaErrH9YvIlTCZMu5uTTfKb7uWbATqGALni8K+5svWJny/mRCxUZZXzJSj1E9AQaJKZrpV2BfJ+Rn8RHXsrtz+DOUm9jLFPiXRCQa8xM/xw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780351738; c=relaxed/simple;
-	bh=zZ1OG+0BsRnJQ+8GlFp/Ufe3W6tMC4asQu6TyQBTSsM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ps80gdAf9gcYIBeRGNxWo5F+j6rzmqbSwnKhNTpn/05VOnqZvS8jnKh0pvG61XqKBPDuqKxladD7durLGRrUuCA9fOnBMa5LaG6ssrTkW8EBxUL20BlpWGC1kVGAkDaMbSJB+wuHpHrqrsPpZYx6rKgXl5s3rWxIPTb0OYnmvCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TR92kAN5; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBE636A354
+	for <linux-security-module@vger.kernel.org>; Mon,  1 Jun 2026 23:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.177
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780355631; cv=pass; b=AAqG/UfJzOOCtpZjfyHIqKBSBmTHs6yQbp3Tq2PT1cRckF1jw8ycxuIfajwkIJUcXJ/xkLfwgr85Dku/3SYG7HBN4w+F4pzkwGRTXT0A9qoKFyDYJSqV0stQxrkvF7sEAvY1obaCBSmzZ6Z0Agz1Z9uorH96VD2xUoMYDYVoegg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780355631; c=relaxed/simple;
+	bh=aHqU/GAv+Kwj1BqBbcVETpbD87Fi+TBisbMXFFy+wTs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i7/dv4DCffpk2HGir+WWBdOLvEq6uioJ7k1b3/3wl+OYJ3THJNvVGpaBHuruEahOWnUOtUxQ/nV2iqj67tniWYTNLj7OmZItMGF7qDJRw4l3r6I5QY5hxx0323CF62E8Hmm3clYkrpKdXHqHdbZgeMKU7sDb8BelXYL+dTAgAWs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=LnIjykco; arc=pass smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TR92kAN5"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-46013161068so668226f8f.2
-        for <linux-security-module@vger.kernel.org>; Mon, 01 Jun 2026 15:08:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="LnIjykco"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2c0bb4a94b8so14521975ad.2
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Jun 2026 16:13:49 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780355629; cv=none;
+        d=google.com; s=arc-20240605;
+        b=RfKhUOfkovBHJ6qshF9lkd3gJv/vYw82tjnTTbyfgrO47a97p7Gbn4JEi3Cz6FzXfQ
+         uvoZYFjgFrItbB2jE2d4r6EYkvAoNblMONjf9S3hvPMiObXSp5g4l4hsr4iHQzRXIubO
+         /o4S2v3a5hCloBMEyK3QrzmYK5xnD2V9VfBz53/xFtJyt/eGwC807iG/Cm0nLoz+SHOf
+         kr1FGnh5hguE07RssK/N64thl0zV3fR+Nv5tXm2oMct9T/QZ66YPm1FwXCFQ6Lp8ec7K
+         GCP4l+eH6LmFuktdUa2FxuXxJJgBUuYzVjxRSivcyTYZRUQDwOQVeUWVoGFk+n6oe05F
+         9pXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=Vz7MwT4u5UsOtiG3xQsmDxW+jD8LsxAD2bqnbWJgenk=;
+        fh=0xLuOxb51Wr+LnIdV5coCfFs12kNc3JH5aM5z4bZF4M=;
+        b=j7xPlXGH+gwbxvsz2sJG6u1XEXAqAyGbvIPtUYaU3JyBgODmFoGfa+6UN9PKbzzrEy
+         DrtTD8H6UkRwV17sI8OfH68I38PcbTstDRKEMOygvlJ0QQuaBw2lczjc1bqpfeH9gaz0
+         sfnBj3NlPdVQBHZQkYGSLNpjC2ECPBbPRsP7jjQw87HU9jweP5Z2mD+mxNwhcOvjOjk9
+         ftdTyZTjif1vYJz1Umihn547n1JYGsUXE4TR3qbEwWgkM0f37o/8ZYt04P7ARomsDOBY
+         yI4Hg/2RZwfbT4J5LBUlc748TV8l0AWOuCXD6RpU4ZyUq06iokoO0QmtD43Et2mDXmz3
+         twrQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780351735; x=1780956535; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rAhp16dJFI2PsFp27rrivudvE8RRL21MgbXmfxm8dus=;
-        b=TR92kAN5S8AyJ+2+8rGr/hSDA2jcW0WollYVAWrfQlB4BtDhNslfiRPnAsdtw0USZt
-         xPPWuwV8FV76B+3vEkoCn0edrrVH/z/eFqj6HMkNoDc+45Poy2tjZRoE38deznOGYKol
-         Q9NmcD/U3EN42E1Y7xjoVhTrPHMnQBH75vim5tLUOVJFhuCG3YCqKsQ+zo/SewMM4Pwx
-         RHz/mx0xG4H1Lw/7l0I8zhK3qLhVJtr7ptWRg+lDUGVBTFRQUivPP8ai4liPC7Cvh7uv
-         o1I6sx15otP7siICTAs8YFHN8ehbz/2RAxa3j4rkhXYAPoR+JW/KcBiyq9knY8FPpbLB
-         juiA==
+        d=paul-moore.com; s=google; t=1780355629; x=1780960429; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vz7MwT4u5UsOtiG3xQsmDxW+jD8LsxAD2bqnbWJgenk=;
+        b=LnIjykcojR6vyy08kHpOWVWsSFeDXGxpMMVde26QTGOjhFB60YFvmGgjCjuRfUuzFS
+         J4NUevoyFi7xAgvDJeQjjRAuB3AxsbOb8aEkXZomD5dsOvR0G+tPFCCr9dkq0SLSz9TF
+         YxhMcpdgKDKOjSdPI4sB4izsz9o7enwjLhNnEs9sdz8UGE5UEYeImQiB0DoIuLBf2iy/
+         sRwWZKExf4h6mEZ92zOV9P5qXShSzvqGWFBpwPO7+a1/jXhmZuDSd9dsufalQP7hokiQ
+         g771zr6u0J+RySuiC3tKdFp86Hg1O+1juFHYhY8i2pM8vKXcpaw/69fa7eG//m8ITQkp
+         nA/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780351735; x=1780956535;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rAhp16dJFI2PsFp27rrivudvE8RRL21MgbXmfxm8dus=;
-        b=pdN21KegEcIh0nwOa+KgP79MgQImkpqUHFMn0oFevClExwhOKOQeiaWZ2oF9zUiYT7
-         mcJBIfJ7XuyJrTIIbr6c/K2kxheymGuf2Sg9uGK46IWv6s8jleY7F6L/rntLmdlPtyAy
-         oZlLlsIETdHmrrQjx9Z8VsJN2Q/xXfgrrkfZR4yVmOoazhpj91+2PgeiBeypFgfyYXpj
-         Bv5PlSQAf8m53xlCAvosOCCgGDcSqEi1yKHIDq9tmTvxIvkdPiMFP3nVldrqaqg1QupL
-         nep4c0WPukuuU1lSxjGMSsTLYE8UWd5wwGv6hDcYqM5s1vzqAlJnDy39u2llDg65gdms
-         TAvQ==
-X-Forwarded-Encrypted: i=1; AFNElJ99tRaIEZy3rVMr9vc6cGpQrUUXsiyv7S+QDlBuSMqrSt/j6Ktr/EucT9mVXV8QgarrnyoQ1xOVGU83zK8KIa1kJRaB1rM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7lSnIxHqKF/oUsTNR3YRTI/gqlJTEk8Z0qjmuycMIkBt6u4lc
-	u7Pq9LjP0muZ09LKbl0vpRygRco7m0VuW1Gn/CsHHXa/raJ7vwDI+/Pd
-X-Gm-Gg: Acq92OF6XJMPwUuOaWdWYxTkZmdjXxFyTxJhXhSQ6eXkHWkQeRX7fiHNiu8iWZ9mx8B
-	EiEH2eOMpwgWExzAkRkKl44LTr/xMDDZjKSJz4l7dP130BqxO/KjonIbXgtHwOJveJMr5ewiw0E
-	TH4TDnwNKnxJ8+xEeXAvW6jzHygIuiWnxjcYdkbhIeGn6/DwBe+EJxHwKOsI38chN1eyv9Lwmns
-	bXfLWbsvCFnXynfoAa+rxrPjPH8O0ES2n+ocfZHVOqSBRO9PjEJRdkbEOCiIMBwo6SFnIDdpBOO
-	kKWvOwNJ5rbXcSyd4fnd5EBlkmEcXK47jtvV1AE23Daz85+n8zPGld0lcrBoBPcu6AWJSz//vRC
-	ufwxKqeZgyDHd/Ak89cRaqW0+4XaI7F7bkPf+7GJgXdFLUpogVxMTA+UyU3AB50o90QN+wEc9wT
-	41QX0MsUhzh9Zo9YGN0KCJypldkFiKAnXgJ09ahCpUXoM/hZ5UFtw+GvfH5h3cmgVFVB2Wzg==
-X-Received: by 2002:a05:6000:41f9:b0:460:ff2:63e5 with SMTP id ffacd0b85a97d-4600ff2650emr12534219f8f.18.1780351734962;
-        Mon, 01 Jun 2026 15:08:54 -0700 (PDT)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45ef354c682sm26914936f8f.23.2026.06.01.15.08.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jun 2026 15:08:54 -0700 (PDT)
-Date: Tue, 2 Jun 2026 00:08:47 +0200
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: hexlabsecurity@proton.me
-Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Justin Suess <utilityemal77@gmail.com>,
-	"gnoack@google.com" <gnoack@google.com>,
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] landlock: fix LANDLOCK_SCOPE_SIGNAL bypass via
- F_SETOWN to invoker's pgid
-Message-ID: <20260601.aebdd5a9ecc6@gnoack.org>
-References: <7rvmLIHR1Zh8RDF1IY1-SYRHzErgw9gPHq0k98RLYVsmHqAejjxcuJi8V3QaSbW-SnNvY5tfM2Xn_S1dEajKV_f7iyitoPwJgOSTZQ0nytc=@proton.me>
+        d=1e100.net; s=20251104; t=1780355629; x=1780960429;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Vz7MwT4u5UsOtiG3xQsmDxW+jD8LsxAD2bqnbWJgenk=;
+        b=I7O81N8YPsy0LZwaKIxmUcHwtJA/imZG+dUp344kBJCpuwDZ6LT0b/jipJzFIPS5m8
+         zv+SGFqZryiCXX/5Vs8e41Qg64aS1yD96PgYneQiMrcehysCGZP5hB3NAXVJBqDbYxfB
+         bjKyKyasy9jplzK7KIJL4/UWRMnh4qp54k7pqVa4DBo/z+TkgT9xDMo9jeEamEv6vzt+
+         9hk1A3WI96qs9q9UPuj09gnv+NqebyD44SrV6Yn0b9kDJZQ9Cst1g/ldHDyO1Wlo9u4F
+         X49+qCRb0ghbhuHUUC3itujNN2I/Qesil9UeujEtMpLVzfX7Vij4SmHDxJ/lpeLRRZ/B
+         oQCg==
+X-Forwarded-Encrypted: i=1; AFNElJ8lGChTjTkfaYzgN2vAVc4dGqV2eYUZqrT0P7Pjrg4yOWpU/xwhEF4PxOv+wO0LiNl8KaWVinXqOPO4jYfOrwyiwaC2zoM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVWWjLGWrEZ4gmE1cnqymRwdUe7c8TSAp9gq8qJ0Uf4aXhWygg
+	BQv1NmWG1DFBsEf8Vy34wg2bxvLOYBF+JI5xYcpt++uMnQvVAf46jv7hWUqOSc1pNz6SezZzO7/
+	u13LKw0IlpnPvNT9NLkpzjbhfN/5jkuCNBQq0t8xJ
+X-Gm-Gg: Acq92OH2mAq6vQC1ttE+F2lAYHv2a1srF9rfxRYuwgKAWMneZgqvfob1FWb3rcvUpHv
+	mYCVeVQ6p0vTGMjIa9d6c1nhEL8EorZI4grcnSmV7BnHbAQCZsEdE8GkHABJJdmfr01ZwN6+zC7
+	N9PPh2sKOtzBI7/lvwefqGOMYQplB0Tuv3QYoALZ5PGEKtEYeJSpONG8ZOylxJU8Va5V7tu3uj5
+	3RvUEBUnfx6rvRAaE8HL8c8cDpljFzmOo8RPmcXKbXH6YdIVk7Pb0Nlqm6kN2CBo9/5EaECe3I/
+	xqFyaGiyOWl5wiJXn8KcFRnStpx7
+X-Received: by 2002:a17:902:f64a:b0:2c0:c940:dc1e with SMTP id
+ d9443c01a7336-2c0c940e206mr79129685ad.20.1780355629409; Mon, 01 Jun 2026
+ 16:13:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7rvmLIHR1Zh8RDF1IY1-SYRHzErgw9gPHq0k98RLYVsmHqAejjxcuJi8V3QaSbW-SnNvY5tfM2Xn_S1dEajKV_f7iyitoPwJgOSTZQ0nytc=@proton.me>
+References: <20260529-remove-task-euid-v4-0-07cbdf3af980@google.com>
+In-Reply-To: <20260529-remove-task-euid-v4-0-07cbdf3af980@google.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 1 Jun 2026 19:13:37 -0400
+X-Gm-Features: AVHnY4L0VLMjaF6hJi9yQFqw7kmnIWO5yk2GkkTGfjEcklH1ybYU-qiacr6meWU
+Message-ID: <CAHC9VhR5Ca+WyP2OiNGtL1SqHn0SwLe=M9SB8D2bxtdS52quhg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/2] Delete task_euid()
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Serge Hallyn <sergeh@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>, 
+	Dongliang Mu <dzm91@hust.edu.cn>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jann Horn <jannh@google.com>, 
+	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 29, 2026 at 07:07:30PM +0000, hexlabsecurity@proton.me wrote:
-> From b5fdc79ce1cb2881d59dfed01d3d9170306be9e8 Mon Sep 17 00:00:00 2001
-> From: Bryam Vargas <hexlabsecurity@proton.me>
-> Date: Fri, 29 May 2026 12:49:41 -0500
-> Subject: [PATCH v3 1/2] landlock: fix LANDLOCK_SCOPE_SIGNAL bypass via
->  F_SETOWN to invoker's pgid
-> 
-> A Landlock-restricted process can bypass LANDLOCK_SCOPE_SIGNAL on the
-> SIGIO delivery path and deliver arbitrary signals (including SIGKILL via
-> F_SETSIG) to non-Landlocked targets that share its pgid, by exploiting a
-> producer-side cache-vs-live evaluation gap.
-> 
-> The SIGIO path in hook_file_send_sigiotask() consults a cached subject
-> stored in landlock_file(file)->fown_subject at fcntl(F_SETOWN) time
-> (via hook_file_set_fowner()), instead of evaluating the live Landlock
-> domain of the invoking task at signal-send time. The capture is gated
-> by control_current_fowner(), which returns false (skipping capture)
-> when pid_task(fown->pid, fown->pid_type) is in current's thread group.
-> 
-> This is correct for PIDTYPE_TGID / PIDTYPE_PID, where the target is a
-> single task sharing current's cred. It is unsafe for PIDTYPE_PGID and
-> PIDTYPE_SID: when current is at the head of its pgid hlist -- the
-> default placement after fork(), hlist_add_head_rcu() in kernel/fork.c --
-> pid_task(pgid, PIDTYPE_PGID) resolves to current itself,
-> same_thread_group(current, current) is true, the capture is skipped, and
-> fown_subject.domain stays NULL. hook_file_send_sigiotask() then
-> short-circuits at "if (!subject->domain) return 0;", letting the kernel
-> fan the signal out to every member of the group, including tasks outside
-> current's Landlock domain that SCOPE_SIGNAL is supposed to protect.
-> 
-> The direct kill() path (hook_task_kill) is unaffected: it evaluates
-> current's live domain on every call. Only the cached SIGIO path is
-> broken.
-> 
-> Tighten control_current_fowner() to apply the thread-group exemption
-> only when the target identifies a single task whose Landlock cred is
-> necessarily shared with current (PIDTYPE_TGID, PIDTYPE_PID). For
-> PIDTYPE_PGID and PIDTYPE_SID, always capture the current Landlock
-> subject so the consumer's scope check runs against every member of the
-> group at delivery time.
-> 
-> Stable kernels before the fown_subject conversion store the domain in
-> landlock_file(file)->fown_domain; control_current_fowner() is identical
-> there, so the same exemption and the same fix apply.
-> 
-> Fixes: 18eb75f3af40 ("landlock: Always allow signals between threads of the same process")
-> Cc: stable@vger.kernel.org
-> Reported-by: Bryam Vargas <hexlabsecurity@proton.me>
-> Tested-by: Justin Suess <utilityemal77@gmail.com>
-> Signed-off-by: Bryam Vargas <hexlabsecurity@proton.me>
-> ---
->  security/landlock/fs.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index c1ecfe239032..edaa52572cbd 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -1909,6 +1909,18 @@ static bool control_current_fowner(struct fown_struct *const fown)
->  	if (!p)
->  		return true;
->  
-> +	/*
-> +	 * For PIDTYPE_PGID and PIDTYPE_SID, signal delivery fans out to
-> +	 * every member of the group at SIGIO time. Even when pid_task()
-> +	 * resolves to current itself (e.g., current is the pgid hlist
-> +	 * head post-fork), non-current members of the group are still
-> +	 * valid targets that must be checked by hook_file_send_sigiotask().
-> +	 * Always capture the current subject for those types so the
-> +	 * consumer scope check runs against the live fown_subject.
-> +	 */
-> +	if (fown->pid_type == PIDTYPE_PGID || fown->pid_type == PIDTYPE_SID)
-> +		return true;
-> +
->  	return !same_thread_group(p, current);
->  }
+On Fri, May 29, 2026 at 5:33=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> The task_euid() method is a very weird method, and Binder was the only
+> user. As of commit 65b672152289 ("binder: use current_euid() for
+> transaction sender identity") Binder doesn't use task_euid() anymore,
+> so we can delete this method.
 
-The reason why the same_thread_group() check exists is so that Go
-programs that had to use libpsx instead of TSYNC had a way to signal
-their own OS threads at the C level (a feature used by linked C
-libraries and specifically by libpsx itself, so it prevented nested
-Landlock domains).
+Given the problems from last time, it seems like it might be prudent
+to let the commit have some time to "breathe" in a proper release, I'd
+suggest merging this not for the upcoming v7.2 merge window but
+instead waiting for v7.3.
 
-(a) On Linux 7.0, the Go-Landlock library automatically uses TSYNC so
-    this is not a problem any more.
+> My suggestion would be to merge this through the LSM tree.
 
-(b) On earlier Linux versions
+That's fine with me.  I'd also suggest updating the commit description
+in patch 1/2 to indicate that binder is no longer using task_euid();
+it currently reads like it is still being used.
 
-    * libpsx signaling is also going to continue working,
-      because it uses normal signals instead of SIGIO
-
-    * other libraries are also likely to continue working, unless they
-      use the somewhat obscure SIGIO with PIDTYPE_PGID or PIDTYPE_SID.
-
-    There is little incentive to use SIGIO in a pure Go program, as
-    the runtime already implements file descriptor polling logic (with
-    epoll, which is anyway a better choice)
-
-So, this looks fine from the Go perspective; I doubt that this has
-practical implications for Go.
-
-Thank you for spotting this and providing a fix! 🙏
-
-–Günther
+--=20
+paul-moore.com
