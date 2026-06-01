@@ -1,171 +1,156 @@
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CAB2E3FE
-	for <linux-security-module@vger.kernel.org>; Mon,  1 Jun 2026 00:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780272073; cv=none; b=VOTpOJi5s0bECqblUQNKp+KInGLa+pLNL0UZZntR4hipZMwKjfUsH7AXKY4Dfb88oUBvXJfzMApJU6zGsFH8HoRWGo7wPWkXRXebngW32JLgHsS13Ma2LQV+9wCuLWLFFKPiYua1WOBCKjMahryQv4DoMZIamqm2B8tBlvwt18Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780272073; c=relaxed/simple;
-	bh=9N6zzB9mXk16GtjpBV816jTS8lEv9EPIHfNYHFoiQ3o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JyKayHuK/CJ8RJrikXSIrMWGnqdTq2Sdk4ZgJ4ru6ZSfrubHEE+8JCxSp5eAeX5Y1L5S7vePE886WHeftF1IfTwZF7dg9DB9Bf6R5xemqVTWv/ZRMqpcv80nZjqNDyfpp+9sW0s6c57zdCXSpVd0INZAPeuSEfSkVdVq8HTaUPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=cV4vILAX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kx3Qsgyl; arc=none smtp.client-ip=202.12.124.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930AA17BA6
+	for <linux-security-module@vger.kernel.org>; Mon,  1 Jun 2026 01:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780278173; cv=pass; b=gpcUWi9A7rzN9z5wt8oy6I3ItxefKOW8z4pLEzvN6Xp+Cj5Wup2cF7qkybtLZT2rQFmISbXwE1ZuDuU58iGhnwYMi9QctcGnZzd5oEWZeNEYQtBbkeixKqcfaEkoMzFiT/I1v5yLXUK+Sx11gwFntIrZxLIpQg5juIsXuPNVmcE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780278173; c=relaxed/simple;
+	bh=1SQw3rHHmwJUM/B/fNJMq+S/nMdmh2BRJEnqOmPw2as=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WDK5/PtR2mYAUC+ps0XUQpE3YcXFDcxXRiHTnM5RDA9zaUq2JBrN9C2YDm6ZHoSAbAUGiM35OBsmHAQOf/pCfZfXH59YckE7abyAPmwqP0vB2io6k8uh1EdIqV+BsMhQlJp0hLQqj3m1IdV0Iur1nvWJpkWJXzxWrhH2fHwnGBA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cdXvrHXG; arc=pass smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="cV4vILAX";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kx3Qsgyl"
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 375837A008F;
-	Sun, 31 May 2026 20:01:11 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Sun, 31 May 2026 20:01:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1780272071; x=
-	1780358471; bh=pN0biZiDBPffyN9eoonbLnxlt+UVNV3ujcYIXXqhR14=; b=c
-	V4vILAXwlO0orrUqweLpfR4bV+eXqXqCoh26922ix/IPEweifElxfsPhcbzSeImS
-	jP59N18l5uiYdAc07hKZrXheG28rbtSmUO20ePr9VmkZnxNgcNq8AEFg1lQof/d3
-	G6/O35McJRI+r2gq7+Dsf21vykRN8cJPFfOdibQVWJBRclV/G+5+1+eHN1HzyKx4
-	VGDj6yL4kZ3AlFa1ztse6Go5NIkwZkUty9F7aoaZbRrIzYW9uWK8m1qN9TnKC6t7
-	ZDbcEL/9PSG10L0whz9z7QqBXDM02yEPQkEVnMItLTwWDV9qT+mhrZZkQuFnTmgB
-	syffhqeMCKuwxgvFslIDg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1780272071; x=1780358471; bh=p
-	N0biZiDBPffyN9eoonbLnxlt+UVNV3ujcYIXXqhR14=; b=kx3Qsgylmwxb2InX9
-	bRrTB9sRXuRKlhZdHuEWN/1ZGVdeTe6qx3NZGx+cAXIcu6YW/+D0tPfKxkyybcrA
-	JD78LL0592uK2HfJUwFiqsSffaY+donNC1gr7jBCmz67LBMmYHRr8QnyV/MwH9wP
-	dncGycY0dwch/ax0FYX4aR1yLdj66PSb6lqnOXY+Te+goktRpiUqZhUd4p1BCmN2
-	gBVpkdbxV/5qLFYJsutpEDKQ5wbjjg8ULOf1Q1zVcu0w8rgG2tUq43JTy98NKSk+
-	WrEDaEI0Qtml7/KnmXwp5BVcHP1381ouJY5Ea1+ScanS/HBXA0OVD/OIgU/naCwG
-	nHUtA==
-X-ME-Sender: <xms:x8scamUwahAZj-sttBCeoPlRwLl9FXuYJSgnS5zHk5em7m8PzsatAg>
-    <xme:x8scak1dm5b0IkDk2U0hin1h7u3_x2ZzQz_9oglucn6IMFiZ3jqWDEqM69xnkB8bC
-    atJha2j2rKdJG6qA3J4jD8MTJvO2iXX47K8dYQE95S_lH1gaGsr3cg>
-X-ME-Received: <xmr:x8scasrDOWrSv8Q_i2S6EpqyyirJq5nWS4qV7Rpa0nkXnF3WDbK6FFays6b2AFHkdWM>
-X-ME-Proxy-Cause: dmFkZTFdvInY70kURnUCfKLYaCaykxu4LL1YtluT4AUkIC4NABNzVKhsvUmfXMXCQVB1Od
-    SIsDxPE7K4hcNAjitVx+OxpJplumsMZEK/XMin0zATGGpQYE+onMtG+HalOLgNxkKgJsW3
-    F4k7bntDUXB7q//Vc9n+PSMzuliqSvna9VOTWR4jEso6YSxtj79EeHk2RYI3ZFvwpwNMB4
-    w5Zv51hC3apNjHa0By5pzX9z3J2+nVr8013d7XNZDDBiKfeftChOTXc5fDDwr919RhizQ6
-    d0AGUZ8DxQanjVjYBTu26hK+38ZdNQDSe9/IiqilLy/Zcn0mX2lNmWlUIeEci41ZeiXSEK
-    gQ2QDRIAEpdEmii767O6cV3F/R/wV3+GcgdZ/62x/9ik9ys2g5PfpX/0idsHH4zkn7Wwm1
-    VRVWD6nxVTo5UmgrtGF9Ab5/0Vkk7Fc9GL0C3LyortLs9i++VH+mnkcQKx+t0aO+Ij0asJ
-    Pavg0vVcyjUwOnM5oVEbPAGbUiYiPM6gfoRxF5RcprGPA3EnFUMSo4srEqRhV0gb5TOuTS
-    /KbjzNOVq9ogQl6Hwa9dN6UwN++qJXXrhPVE0Vgkb5rpXS0GFLcoxPyqCgjhIH/4Pw/4qw
-    gW0fRa+vfRPM51tQmE8ifP/oTxlM0wNsdHH/nAhqADMUNIhE+1U9xw6xFeMw
-X-ME-Proxy: <xmx:x8scajVHZ1mpIwSxFo90GiSzuAA5vJX21f55fTs9oj5KBSitwQcNTg>
-    <xmx:x8scavbDg73UfsA5XAKKU3hdNJ1znQSWEfeXOc0B1EhZG9g2I8Q39g>
-    <xmx:x8scaofTPmD9XsGM8WHSwECE8pfZLDdqSGR12zzQItnnIpgpa3Zh-Q>
-    <xmx:x8scah22GfPY2LE6xG6OoH24Ah8eO8xrjCuHG2oqns2iuemiMKB6qA>
-    <xmx:x8scahBYggM6Iso6WBArA98ZgYjFJJeAElMQGxNaizr1m0z4cZ3NwaVk>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 31 May 2026 20:01:09 -0400 (EDT)
-From: Tingmao Wang <m@maowtm.org>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: Tingmao Wang <m@maowtm.org>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
-	Justin Suess <utilityemal77@gmail.com>,
-	Jan Kara <jack@suse.cz>,
-	Abhinav Saxena <xandfury@gmail.com>,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH v10 9/9] selftests/landlock: Add tests for invalid use of quiet flag
-Date: Mon,  1 Jun 2026 01:00:43 +0100
-Message-ID: <99587e6f737a425d18fda31649edf304f74f3567.1780272022.git.m@maowtm.org>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <cover.1780272022.git.m@maowtm.org>
-References: <cover.1780272022.git.m@maowtm.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cdXvrHXG"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-45efa0326fdso1108985f8f.1
+        for <linux-security-module@vger.kernel.org>; Sun, 31 May 2026 18:42:51 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780278170; cv=none;
+        d=google.com; s=arc-20240605;
+        b=kuKmaEQaWOgAnVki+iU36vm/gOSFs8kdRng6v/HBLE/63HAWk9GCZwO4V6RenmcUQH
+         ysKxvcPj8vYsaADuWEAf0mTCJuX7O5H+AMb1m0mBG6JYWwgpO/zTc4q9nsR4qZwLc3uf
+         ibEy7+I+EaPB7oloPVWrk03sOvRekfCIletoKr3GVzBIznsSmba/qpGz+kQH/c5+bvX9
+         qdAoattXCW5zHiGtd8GrVGBuy/Q5ahfIfPHtuMG1sZub9PIFYMLxDLJhGpleNwVhbhQh
+         Hz4yHZgOJCB1xR5yJOAtXHWblKVuaHKRujvOg7wcaF5HTLMu0ggPbNoSoFInd3KveuFJ
+         KcGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=fI9AGBHWrCu/vWdIzq4GOSmcoyxsFLE6j/7qelnpJcI=;
+        fh=3rDqkAMtLbHUEoAKwEI9HbJD9yr4uzIigy+xp0dX750=;
+        b=b+mahTV5hKWRIekw4dq613e1E6l9QWE8/fbDmL4U4kpq295Q6MOVE++Gw3TS01hJBD
+         BWKC0x5Shx42Gf40+kTC1LWXkV/4SGeNmgNAWSalHEQrYD7Z1J+1agQjBpTO3IvI7+cK
+         DmSzC0xlL82bhWg/oAdB7Ho9YfqS9W8dZ4xv24NMxoQl0DMM9+PN2avGppVv1mtmap1n
+         21Wlh2bKW8c4+LZzHVI5wqwvleeJuj2A+/Kh6UDHT6/CiKxKKeZJDmhsdPBesybLTTAf
+         VIwDlHe7ADkjWcn5UJIJTjzMHN7mJvTBxlKdQLE8dfgj6XGue7L1ezG25g9WeAhBKu0c
+         IbuQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1780278170; x=1780882970; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fI9AGBHWrCu/vWdIzq4GOSmcoyxsFLE6j/7qelnpJcI=;
+        b=cdXvrHXG/GZjnDDOA9uUrJbSiKS/nq6dRpO7y+NnnE+xYbcu+GyoKlvGQp/dcG4VKb
+         Zd6QVc9VzkQ3bPQNqh7KQMckS677FGduTHjVsJ4lca12X2Df0qt9NdlZFB+xaDdE8Rrm
+         FKzltMp6wF+Yv+sB1Ghs3SwxLla+dDpSt7Ptldg6Y4/ZIC/GmaTMa2SscMrJYnlnDrjr
+         zCnIT7Fb+bT39xYS9cPC5vMItjdkkygbg3hZn4zN7NnO45g4p8t/Fd624xpsjbuudxzU
+         1ViwBzfPzUqx7U8xdYPouEsKp9IxepTmpDk2uqyaN/iXMbSMDTsyJtA5lsWkK674Fbmk
+         kWOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780278170; x=1780882970;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=fI9AGBHWrCu/vWdIzq4GOSmcoyxsFLE6j/7qelnpJcI=;
+        b=T9CgVqX7fzc1aKSmwpXXqbwiGzV6yRlIL4iLvQlssY44TYEXH3MocCIGGooyqso+y/
+         vkLJv+3Tc7RVBgsKbU8KerO0b8A+kIBODDj1+ck2nBXiArDr5DtqCRUFeZh1Mskj/kcb
+         n7ykXVsrCs9j//i7n4UAuNXblps8/z0Q2Egz48woEJ+uXuka31CIzr2PMytWyAacPaCq
+         RSjj621RVSA45tP5yc8Cg1r8EhZjc1yvGHkBZ4K93S+B9jtnk9p8EX58m+UKsDUBnpXV
+         q/By+PKhT1HmTizPr2Azg2Vo0uhGSNLaAZ78dzm5W1gB42Z8c8c45w+ffr5soiEDMGB1
+         7DiA==
+X-Forwarded-Encrypted: i=1; AFNElJ9dnTx4+Vbrw3xLKDQlIWmS+3UjWBYWdIyUV0YDEbVSLRdUOg1JRf/MtG7kTk2ndCTEj/ue+uiH8OaBGkEjCUlThUYQc34=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf1fUYy8dc/mWn0Ql43K/in5cnQvBnssSv8C4nQWltVa3xOhNy
+	Tq9hlts81dffJQSvfAM0MqHCIDqavNPwmgVNjG2CGSO7TB6qI6ax/J0uQquQvv3pDOXo+zi4Nxj
+	DpknnMR+XVDEoGjIdE5D5TLkK4OTeaRM=
+X-Gm-Gg: Acq92OF5APBphiTAeZKSmw+QiPDogUKPI+CezH/e+0w3sNR+DfwOEM1HKvMCSv6ALMd
+	iWFWRLxySRCwq7YYPzFRHhN6eiTZxaMeuD9L3PXMwFYOjuZJmrzSV2CS2kr6LSXBCX60jN+k/0Y
+	K2TxdhA4WTrmVsT1JqpkDis3F8v0sEijOVkcC7tt6j5btr09yBlymAwCBPXFX4bjdUqXEnzFMu1
+	oD+luGLFAVGSAtfe623KCGdGhbTqHouJyX/7TdBbfJIWoF5mgBio3JHrU42aXlOSQdwEcWKf7pZ
+	W4vh2Zy/E7lKJwAxNEsXSEVD7Uz8vIZDypv97luG6yXzJ0sR2Ll61flIIRLWQ+eEqoadtMEZSuS
+	9b4PW
+X-Received: by 2002:a05:6000:5c3:b0:45e:fa4c:47c8 with SMTP id
+ ffacd0b85a97d-45efa4c4bbbmr13291146f8f.27.1780278169823; Sun, 31 May 2026
+ 18:42:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260523160025.16363-2-paul@paul-moore.com> <CAHC9VhR6RSq1TUgAyvHmaF01h87Cazy=BNJhk654BP8yfeSwng@mail.gmail.com>
+ <CAADnVQ+WTfgO636GqgxzJ6r=jENpG704kmNAsy-X8=WyjMOV+g@mail.gmail.com>
+ <19e55c1c1f0.2843.85c95baa4474aabc7814e68940a78392@paul-moore.com> <CAADnVQ+JDtc_GdxCv6tWAT03k85PTc0+zdcpCQ6NU-T8yJcu0A@mail.gmail.com>
+In-Reply-To: <CAADnVQ+JDtc_GdxCv6tWAT03k85PTc0+zdcpCQ6NU-T8yJcu0A@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Sun, 31 May 2026 18:42:38 -0700
+X-Gm-Features: AVHnY4KyQFn04X4dWlQGyHLkT-INPicXgTz14ihkeRdjdGaPQttUsvgaZ_6DhR0
+Message-ID: <CAADnVQKwxeunxW3iedoaquGAEvO+2jO5fpgbvxMGW_UvWzpdJw@mail.gmail.com>
+Subject: Re: [PATCH] lsm,bpf: fix security_bpf_prog_load() error handling
+To: Paul Moore <paul@paul-moore.com>
+Cc: bpf <bpf@vger.kernel.org>, LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Make sure that these calls return EINVAL.
+On Sat, May 23, 2026 at 10:19=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Sat, May 23, 2026 at 6:53=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> >
+> > On May 23, 2026 11:25:55 AM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > > On Sat, May 23, 2026 at 6:06=E2=80=AFPM Paul Moore <paul@paul-moore.c=
+om> wrote:
+> > >> On Sat, May 23, 2026 at 12:00=E2=80=AFPM Paul Moore <paul@paul-moore=
+.com> wrote:
+> > >>>
+> > >>> If security_bpf_prog_load() fails there is no need to call into
+> > >>> security_bpf_prog_free() as the LSM will handle the cleanup of any =
+partial
+> > >>> LSM state before returning to the caller with an error.  Thankfully=
+ this
+> > >>> isn't an issue with any of the existing code as the LSMs which curr=
+ently
+> > >>> provide BPF hook callback implementations don't allocate any intern=
+al
+> > >>> state, but this is something we want to fix for potential future us=
+ers.
+> > >>>
+> > >>> Cc: bpf@vger.kernel.org
+> > >>> Cc: linux-security-module@vger.kernel.org
+> > >>> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> > >>> ---
+> > >>> kernel/bpf/syscall.c | 4 +---
+> > >>> 1 file changed, 1 insertion(+), 3 deletions(-)
+> > >>
+> > >> Alexei, I'm assuming you would prefer to take this via the BPF tree?
+> > >
+> > > Paul, I see that you're intentionally trying to piss me off.
+> > > It's not going to work :)
+> >
+> > I promise you that is not the case. I was looking at the sashiko result=
+s of
+> > the latest Hornet patch and it identified this potential issue in the e=
+rror
+> > handling code that is an issue independent of Hornet. I posted the quic=
+k
+> > little patch above to fix the issue, and since the diffstat is solely i=
+n
+> > kernel/bpf/syscall.c I figured you would want to merge it via the BPF t=
+ree;
+> > if that is not the case let me know.
+>
+> It's in a queue. You can monitor it here:
+> https://patchwork.kernel.org/project/netdevbpf/list/?series=3D&submitter=
+=3D&state=3D&q=3D&archive=3D&delegate=3D121173
+>
+> But please be advised that when submitters ignore issues
+> found by bots and maintainers agree with bot findings
+> we mark patches as changes requested.
 
-Signed-off-by: Tingmao Wang <m@maowtm.org>
----
-
-Changes in v4:
-- New patch
-
- tools/testing/selftests/landlock/base_test.c | 57 ++++++++++++++++++++
- 1 file changed, 57 insertions(+)
-
-diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
-index 84e91fcaa1b2..af9ad822a444 100644
---- a/tools/testing/selftests/landlock/base_test.c
-+++ b/tools/testing/selftests/landlock/base_test.c
-@@ -526,4 +526,61 @@ TEST(cred_transfer)
- 	EXPECT_EQ(EACCES, errno);
- }
- 
-+TEST(useless_quiet_rule)
-+{
-+	struct landlock_ruleset_attr ruleset_attr = {
-+		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_DIR,
-+		.quiet_access_fs = 0,
-+	};
-+	struct landlock_path_beneath_attr path_beneath_attr = {
-+		.allowed_access = LANDLOCK_ACCESS_FS_READ_DIR,
-+	};
-+	int ruleset_fd, root_fd;
-+
-+	drop_caps(_metadata);
-+	ruleset_fd =
-+		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-+	ASSERT_LE(0, ruleset_fd);
-+
-+	root_fd = open("/", O_PATH | O_CLOEXEC);
-+	ASSERT_LE(0, root_fd);
-+	path_beneath_attr.parent_fd = root_fd;
-+	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
-+					&path_beneath_attr,
-+					LANDLOCK_ADD_RULE_QUIET));
-+	ASSERT_EQ(EINVAL, errno);
-+
-+	/* Check that the rule had not been added. */
-+	ASSERT_EQ(0, close(root_fd));
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	ASSERT_EQ(0, close(ruleset_fd));
-+
-+	ASSERT_EQ(-1, open("/", O_RDONLY | O_DIRECTORY | O_CLOEXEC));
-+	ASSERT_EQ(EACCES, errno);
-+}
-+
-+TEST(invalid_quiet_bits_1)
-+{
-+	struct landlock_ruleset_attr ruleset_attr = {
-+		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_DIR,
-+		.quiet_access_fs = LANDLOCK_ACCESS_FS_WRITE_FILE,
-+	};
-+
-+	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr,
-+					      sizeof(ruleset_attr), 0));
-+	ASSERT_EQ(EINVAL, errno);
-+}
-+
-+TEST(invalid_quiet_bits_2)
-+{
-+	struct landlock_ruleset_attr ruleset_attr = {
-+		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_DIR,
-+		.quiet_access_fs = 1ULL << 63,
-+	};
-+
-+	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr,
-+					      sizeof(ruleset_attr), 0));
-+	ASSERT_EQ(EINVAL, errno);
-+}
-+
- TEST_HARNESS_MAIN
--- 
-2.54.0
+Applied.
