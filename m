@@ -1,47 +1,109 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC65382381;
-	Mon,  1 Jun 2026 19:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D035E3ADBAF;
+	Mon,  1 Jun 2026 19:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780342439; cv=none; b=V2fXAaoThjskQRN//oeNssFXtBSuoxkRVA0eRashb78RZONjKq/9rn/j602wenC0df2GuV6nvnkLczj8Md+eks97C4nW4Kw/o23NmAgSnQaknsiA5Zpy9iFUCh2c8d3EZjEAtO7zv2g3KTnbC/gdhb6ywmfoQxbrKRhNNpuSBNc=
+	t=1780343993; cv=none; b=d/14E24sRTgRlzKDWGaFYz0V+XwfPEEaJwl5JrCtVY2iNwg69bHOkp5icX6CPL93fSDtqtgTfv+O0le9Lk2Tu2ljUt8f6gnPbx3GPBMa+ExV5kR2QiK15egkD5xDsLg+3NLRow5HNOTcQ/oGtpZJbT7wCLyxJ7sgryM1yTQCJEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780342439; c=relaxed/simple;
-	bh=D1fkIzQZJO47jC7y/OevTQFQuDvcmhOoPQIfTQu2beQ=;
+	s=arc-20240116; t=1780343993; c=relaxed/simple;
+	bh=mqezQcqx9istaPeCmmXZaMwR719orDM1w23ry+SfsJU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sqJHxYnLftBYORoMtCl1XOC31lh2kyUzgjt8JYPnfXyZ32IxETYSiXj/n/Jd7ndyW9OF0GgWIxCa2APlHLHtXq6Oqr3V8D+hRVw2YWfhAGP2CaKn34ZujSOp+ixKynxCDkY2d05PtB/+KBG/oe6e7aMy2B2px/OrPEtpnutdjM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b=G3gG00ZV; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=XhtjzjjnZCvHpCBSexyKH1ukDjjZx+ob50B13ShpY/D5MJad40tq/6eMrxGF/3zDBprT/rTURA2QSZD9uQUvOTuGvJwC57gwawuTZuuAYsdCa3e9mMUCSNvdPKQhh1GFxwomn2ucfeJrw86MECp49KuOcRvKBd0ZbxrwGHbmsiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jPPf1HSE; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b="G3gG00ZV"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
-	t=1780342426; bh=D1fkIzQZJO47jC7y/OevTQFQuDvcmhOoPQIfTQu2beQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G3gG00ZVQUC8388zGT/IntiBJWEv36GQ2xAcD8ZQLpN4P3VZCGWNj49CGcxw6cvhP
-	 9OQbpb78za2sNNdbYmR1yyL6ezx7ExiL4JrvgqFk4CanZYxfNgqWQe3wwLMkWfyfSC
-	 E7PqSeXs4B9vY8j0W8VfkdXewYz9ApCJeYDrzBeT6zmbTxStuVMBcxvCAljTaedyih
-	 vYutv8ggDLiduK4b30nAbUjs402QUl36aH0t59Nt1HD5YJ2jG89yKG9ZfHU8fNGQ+n
-	 mNegTTSWRzL42AeELlUf6k7Cn6m6N4cGpLenWnB3Xbheiq6ILtFEYzT/TYQuD1TCfI
-	 D76NYGHLt7wfg==
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id E3C93481; Mon,  1 Jun 2026 14:33:46 -0500 (CDT)
-Date: Mon, 1 Jun 2026 14:33:46 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: William Roberts <bill.c.roberts@gmail.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	LSM <linux-security-module@vger.kernel.org>,
-	SElinux list <selinux@vger.kernel.org>
-Subject: Re: security_task_prctl: why -ENOSYS
-Message-ID: <ah3emjW3jOzQEX0/@mail.hallyn.com>
-References: <CAFftDdrzV2xC7HBcgS8EPb-YewJyCK9uos4crXOCh5ONm6SxSg@mail.gmail.com>
- <CAFftDdqp8b5n21hdEP6w0-PK+CoG7mmQxgrnhpBLU7-1GZxniw@mail.gmail.com>
- <090a355d-3680-4113-a542-ff3b1c565f58@schaufler-ca.com>
- <CAFftDdqvvqrbm=+XsDdkJHdm12jxK9799_A=Txz6Q5goYC2ALQ@mail.gmail.com>
- <ahoaFz8DMMvWgqL+@mail.hallyn.com>
- <CAFftDdqyTrr=wS2hUT1EvAqVsbegPRh9Y-rH5S3VEpvXbJ6QRg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jPPf1HSE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D6831F00893;
+	Mon,  1 Jun 2026 19:59:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780343990;
+	bh=XNCn/hiuq2TSQD0/7268qMBjDGPldqx55TcTTgULBQo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=jPPf1HSEtTmrOkKgXG7yZ4L4yWlXriv9f4UInH3EUjfr7uRqEixqsswHEVJD66e/i
+	 UYMnZm3AwHRFYgRV2ih8KtH9UMVsaXegF2blXd/AV6FabDLb+h4l5NmMOw9ZVrD++N
+	 KcX2jHWXOHM02LWFJzDj4MfNwHTR6omd404TzjNZvpI6ZIAf59Yvhv/clTseKbIOtO
+	 ETM1funcq4ukCXv67pvcGJzgYBqL/gNfgi123wCjIaYqeaTkJBGmaBAvvqiI5vVIDR
+	 F9G7b/Sg9jjyGT7K98XQKfJ06MeRLxen4rImVcQChLpFwv+lALs23w52eL46/a7lq6
+	 WVHwgppy+tSkw==
+Date: Mon, 1 Jun 2026 12:59:49 -0700
+From: Kees Cook <kees@kernel.org>
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+	Pengpeng Hou <pengpeng@iscas.ac.cn>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Corey Minyard <corey@minyard.net>,
+	Gabriel Somlo <somlo@cmu.edu>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Hannes Reinecke <hare@suse.de>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Jason Baron <jbaron@akamai.com>, Jim Cromie <jim.cromie@gmail.com>,
+	Tiwei Bie <tiwei.btw@antgroup.com>,
+	Benjamin Berg <benjamin.berg@intel.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"David E. Box" <david.e.box@linux.intel.com>,
+	"Maciej W. Rozycki" <macro@orcam.me.uk>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Vinod Koul <vkoul@kernel.org>,
+	Frank Li <Frank.Li@kernel.org>, Daniel Gomez <da.gomez@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Aaron Tomlin <atomlin@atomlin.com>,
+	Alexander Potapenko <glider@google.com>,
+	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Georgia Garcia <georgia.garcia@canonical.com>, kvm@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-modules@vger.kernel.org,
+	kasan-dev@googlegroups.com, linux-mm@kvack.org,
+	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+	linux-um@lists.infradead.org, linux-acpi@vger.kernel.org,
+	openipmi-developer@lists.sourceforge.net, qemu-devel@nongnu.org,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+	usb-storage@lists.one-eyed-alien.net,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, netdev@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 00/11] Convert moduleparams to seq_buf
+Message-ID: <202606011259.CE6E74CE@keescook>
+References: <20260521133315.work.845-kees@kernel.org>
+ <88c5ca1d-eeda-4023-bc7a-397b92780db9@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -50,23 +112,40 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFftDdqyTrr=wS2hUT1EvAqVsbegPRh9Y-rH5S3VEpvXbJ6QRg@mail.gmail.com>
+In-Reply-To: <88c5ca1d-eeda-4023-bc7a-397b92780db9@suse.com>
 
-On Mon, Jun 01, 2026 at 02:01:07PM -0500, William Roberts wrote:
-> <snip>
-> >
-> > How about security_task_prctl_allowed()?  (Mirroring security_uring_*)
-> >
-> > Renaming the existing hook security_task_prctl_handle() also wouldn't
-> > be too bad, but that's probably more churn than it's worth.
-> >
+On Tue, May 26, 2026 at 08:53:06AM +0200, Petr Pavlu wrote:
+> On 5/21/26 3:33 PM, Kees Cook wrote:
+> > Hi,
+> > 
+> > I tried to trim the CC list here, but it's still pretty huge...
+> > 
+> > We've had a long-standing issue with "write to a string pointer" callbacks
+> > that don't bounds check the destination (and for which the bounds is
+> > also not part of the callback prototype, even if it is "known" to be
+> > PAGE_SIZE, which sysfs_emit() depends on). Both moduleparams and sysfs
+> > use this pattern. As a first step, and to test the migration method,
+> > migrate moduleparams first.
+> > 
+> > There are 2 "mechanical" treewide patches that are handled by Coccinelle:
+> > - treewide: Convert struct kernel_param_ops initializers to DEFINE_KERNEL_PARAM_OPS
+> > - treewide: Convert custom kernel_param_ops .get callbacks to seq_buf via cocci
+> > 
+> > The last treewide patch is manual, and may need to be broken up into
+> > per-subsystem patches, though I'd prefer to avoid this, as it would
+> > extend the migration from 1 relase to at least 2 releases. (1 to
+> > release the migration infrastructure, then 1 release to collect all the
+> > subsystem changes, and possibly 1 more release to remove the migration
+> > infrastructure.)
+> > 
+> > Thoughts, questions?
 > 
-> Yeah if something else is already done, I'll just copy their
-> convention. I went with suffix _check for now.
-> 
-> Another possible issue that I think other upstream communities may
-> have with adding an additional hook, is that there will be two hooks
-> in the prctl syscall path,
-> I am not sure if that's a show stopper?
+> This looks reasonable to me. I added a few minor comments on the patches
+> but they already look solid.
 
-It's not a hot path, so I wouldn't think so.
+Thanks for the review! I'll get a v2 prepared with your notes addressed. :)
+
+-Kees
+
+-- 
+Kees Cook
