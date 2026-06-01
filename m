@@ -1,107 +1,134 @@
-Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.67.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE2629D26E;
-	Mon,  1 Jun 2026 06:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.67.179
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D6F3438AA;
+	Mon,  1 Jun 2026 07:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780295682; cv=none; b=XH9CxsFDVk2E9j2eBrhExo5v1jJWEjL9WrjbRIslxUaqBSrde5WE5bZ2EivcO1l0eHiqLdt7NMmQZsKnNuKiWcKKPVifgDZTbFbe53zQrRzh+Jl4a22BltnY1gclo5zyv+A0NDbrdTrqPOBSUPNallKKXy2zjYjnQPxXg/9Qimc=
+	t=1780298239; cv=none; b=gvl6sJ2cxmByUPT7wFj+hnOeIpzzj9ynV+Skzbt2ofwtqzHJBF7ywdn//ksPyNVyWQWBp6TiOIWgclQBH/BJC9evUqBj9hQrL0HGAlIJURx0WA87yTwhvfZj01gBfJTkzFgoXsKjSBK64aiUqbBpwFjogk3MJMFrVpK9Xyd9noY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780295682; c=relaxed/simple;
-	bh=mSrf/R2wyHFDHEO472ySgeqp9iRKsHdlQgrj43CETto=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uLQrKg+Moapr0lk+bWP8ceTMircG51sbDEivk0nLZ10Nkfmm40Y+bu/gv6ZJIupglJIvGkbSHz6kqDWUQmAkIFYNhsTDF4NvUJWsu6EfL7XfaURCOk6IKyBPpIhzURzs5Syci2LP5OyQDfqT6TQ49BdEkQAf4+PcMWceu+7C4so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=T6KbjBKM; arc=none smtp.client-ip=114.132.67.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+	s=arc-20240116; t=1780298239; c=relaxed/simple;
+	bh=DO4msaOqvF3H3bb+laz9ttCBKElD4pZtlseR0ijQPVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gVmBQ2ZKjMzlJhaOm4u4ovx8YGUZkh43YbZcNj/bKokS8GibZNvEAgVl0gay9G5bPNhIwgPHxCL0AV0pq/qI0ByUulsuyOC2WE60DSV0y3qYhk69yk1iJH++tJIx6HEToDHBNEOv7Hj4ASGl+nIZIujL3VQph1tmu1QQC/BOYXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=M95KQeCI; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="T6KbjBKM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1780295660;
-	bh=Pa6uM69zAhT8Ksi94xXsM/bpX6DRtWUW4iiySLcqwrQ=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=T6KbjBKMV0/j2zLh+Jp189o+0QFhwY6MWZo+lIxCvplk9QcM8hOB1Iu0TMBrHUJgs
-	 mjokCJ6vZUVEU09qwRnRFIb0iqHehp84HqPPLqtXkJevGysniMKqV22lUQYv3Ck4pu
-	 xArfuII/08qwuAIRTBE8Gz5LxSSBZhKbuBwMUX9A=
-X-QQ-mid: esmtpsz17t1780295650tb6ae4d84
-X-QQ-Originating-IP: /Er2uKdRF2ClQCcCIflW8DJzaoIWDrcea6D7ndD6tHM=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 01 Jun 2026 14:33:49 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 5380624521232554661
-EX-QQ-RecipientCnt: 17
-From: Shijia Hu <hushijia1@uniontech.com>
-To: alexei.starovoitov@gmail.com
-Cc: 2022090917019@std.uestc.edu.cn,
-	M202472210@hust.edu.cn,
-	akpm@linux-foundation.org,
-	andrii@kernel.org,
-	ast@kernel.org,
-	bpf@vger.kernel.org,
-	daniel@iogearbox.net,
-	david@kernel.org,
-	dddddd@hust.edu.cn,
-	hushijia1@uniontech.com,
-	kees@kernel.org,
-	kernel@uniontech.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org,
-	paul@paul-moore.com
-Subject: Re: [PATCH] fork: Ensure copy_process() returns a valid error pointer on failure
-Date: Mon,  1 Jun 2026 14:33:49 +0800
-Message-Id: <20260601063349.2524658-1-hushijia1@uniontech.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <CAADnVQ+=-UM-JC4eM=vqvgK2tLt6PwmDjOcrrDG9kz8BV6n49Q@mail.gmail.com>
-References: <CAADnVQ+=-UM-JC4eM=vqvgK2tLt6PwmDjOcrrDG9kz8BV6n49Q@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="M95KQeCI"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D779267F;
+	Mon,  1 Jun 2026 00:17:12 -0700 (PDT)
+Received: from e129823.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5D7283F93E;
+	Mon,  1 Jun 2026 00:17:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1780298237; bh=DO4msaOqvF3H3bb+laz9ttCBKElD4pZtlseR0ijQPVM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M95KQeCIlLPF7OhDaVJJv5gCMWpS5dcnDQmYVPxaImLK2BCBRNd2t/5fQ/91yzHVR
+	 7k/QgIRh/jS9NjROhLHKtgVlyeDwIsQMeyB3mTJzniGBXCFohl+S4fNVD5FR1jBpbi
+	 X53f5BMyexI2gWbAeo9OUSqoYh/15o0zgOUMECd8=
+Date: Mon, 1 Jun 2026 08:17:13 +0100
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org, paul@paul-moore.com,
+	zohar@linux.ibm.com, roberto.sassu@huaweicloud.com,
+	noodles@earth.li, sudeep.holla@kernel.org, jmorris@namei.org,
+	serge@hallyn.com, dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com, jgg@ziepe.ca
+Subject: Re: [PATCH v4 3/3] tpm: tpm_crb_ffa: revert defered_probed when
+ tpm_crb_ffa is built-in
+Message-ID: <ah0x+YDypYFzpFqt@e129823.arm.com>
+References: <20260525075404.3480282-1-yeoreum.yun@arm.com>
+ <20260525075404.3480282-4-yeoreum.yun@arm.com>
+ <ahoXUjbsPmKxfV_R@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz3a-1
-X-QQ-XMAILINFO: N5TO0aYJJX6YQmwDo6Tu5DLQ3GUrNZfek1SULcnvvojfRN4Q7+wbES7Y
-	b1AU22OOgqF7pGhZYv9NQotrTzw6CdQMZdmclkSoMgvm71Di4mPPUc58HZ1DGZyu/Rqr+zp
-	eJDeNkiSrJXjWQt7Fmf3VM8Al7ti0ZX0pWQ/06AGXhJBv+goAwQVLWdVe3Ppgmsds9yZNt/
-	Z1idfrnPNi5AT1Y7MmDYITnSKKP5GDLjkUhCxwtZHkF/zBKyJOHBSsV1GJOVl2hWEBnfFWn
-	iabHkOudTZeKgpx0MeyOcJ01ggW2+TVvu6fYmBomFyXjGKBTAK+tHlctodJhXV53wPS6gnn
-	oHokPN4unQLAa8bgb0L2ftvcxVHfGjYh8HWU/iUKYLMKTdUjbsbf0meLl7V48nbGp1RumV1
-	wp3FEB7uvNIeAgg9giyvBVzUkqh6GM2HbY3lxfy/24rUDg5BLcRmVOmnhY5dyhqrWc4OrlJ
-	xzLwkWk44Rb1Cipipz3g1uo/STBAI8MpNEAby2a5VGJDwbrwIYzXEQB8OEPx2Cnc+F5OryC
-	XWqJJPt1Vvv1p909zzfyX1pMlCOSbkqf4gL7uv5P3zPL7oVwqLdnA5kaxM+ae6W+JwCpMXu
-	Pr+CnXHFXG43mJe62Pi+mi82P+ZyzvvrzdWyq02AbP494jaTsUUkKKiGSQZfJN/ROWdTqJG
-	fXOBqFrZII/hodTbmirh8Aw9GO1cDmLcoOesAx8qQzCom1ORpac98Ye1NJs/ZuxF5GNgxnA
-	ERXcQvxLZ719z6bZKwN0eGzv7RoZrDiq78dnrnCGb355im6dfb8/3aTW1G9oSOlEftiqFHX
-	qhTm62AbVMO9Q6D2m9Oz9y6F8RXD7UbeaAyS4GB7oYiUNWFDTSW3asi8IerUWS6ou3r1Rid
-	VfQJkKIHwXCpgs+EWROKzlp1gSm/BInskr/NtYD0BanzsWluxAlETLam+oY2mi31yHtYpQI
-	OT+SFjHeFI+9PLy/aqYNynKXQggRiCDrxLRD57lY/9h/cmBOjhnvx9Wrgk8s/iGiUYHc5XU
-	uJtKN482V7YcwVdDVkTLXGEFFuelElEK9XMq7nuuvVyEyw9LA10LPmavVkvGolw886BihIm
-	TAO6Fv91ED4iLfLFACz1pVn80cIf7WhGA==
-X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ahoXUjbsPmKxfV_R@kernel.org>
 
-On Sun, 31 May 2026 20:58:49 -0700, Alexei Starovoitov wrote:
-> This was reported earlier and there is a fix in the works.
-> This approach is incorrect.
-> You have to fix the root cause, not the symptom.
->
-> pw-bot: cr
+Hi Jarkko,
 
-Thanks for taking a look.
+Sorry for late answer.
 
-I'll drop this copy_process() approach for upstream.
- 
-Is the follow-up fix still being tracked in this thread?
+> On Mon, May 25, 2026 at 08:54:04AM +0100, Yeoreum Yun wrote:
+> > commit 746d9e9f62a6 ("tpm: tpm_crb_ffa: try to probe tpm_crb_ffa when it's build_in")
+> > probe tpm_crb_ffa forcefully when it's built-in to integrate with IMA.
+> > 
+> > However, IMA now provides the IMA_INIT_LATE_SYNC build option, which
+> > initialises IMA at the late_initcall_sync level, so this change is no
+> > longer required.
+> > 
+> > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+> > ---
+> >  drivers/char/tpm/tpm_crb_ffa.c | 18 +++---------------
+> >  1 file changed, 3 insertions(+), 15 deletions(-)
+> > 
+> > diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
+> > index 99f1c1e5644b..025c4d4b17ca 100644
+> > --- a/drivers/char/tpm/tpm_crb_ffa.c
+> > +++ b/drivers/char/tpm/tpm_crb_ffa.c
+> > @@ -177,23 +177,13 @@ static int tpm_crb_ffa_to_linux_errno(int errno)
+> >   */
+> >  int tpm_crb_ffa_init(void)
+> >  {
+> > -	int ret = 0;
+> > -
+> > -	if (!IS_MODULE(CONFIG_TCG_ARM_CRB_FFA)) {
+> > -		ret = ffa_register(&tpm_crb_ffa_driver);
+> > -		if (ret) {
+> > -			tpm_crb_ffa = ERR_PTR(-ENODEV);
+> > -			return ret;
+> > -		}
+> > -	}
+> > -
+> >  	if (!tpm_crb_ffa)
+> > -		ret = -ENOENT;
+> > +		return -ENOENT;
+> >  
+> >  	if (IS_ERR_VALUE(tpm_crb_ffa))
+> > -		ret = -ENODEV;
+> > +		return -ENODEV;
+> >  
+> > -	return ret;
+> > +	return 0;
+> >  }
+> >  EXPORT_SYMBOL_GPL(tpm_crb_ffa_init);
+> >  
+> > @@ -405,9 +395,7 @@ static struct ffa_driver tpm_crb_ffa_driver = {
+> >  	.id_table = tpm_crb_ffa_device_id,
+> >  };
+> >  
+> > -#ifdef MODULE
+> >  module_ffa_driver(tpm_crb_ffa_driver);
+> > -#endif
+> >  
+> >  MODULE_AUTHOR("Arm");
+> >  MODULE_DESCRIPTION("TPM CRB FFA driver");
+> > -- 
+> > LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+> > 
+> 
+> How we would sync up this patch? Through which tree etc.
 
-  https://lore.kernel.org/all/20260411163556.8567-1-yangfeng59949@163.com/
+IMHO, the IMA relevant thing would be into IMA tree,
+However I think this patch would be much easier to sync into Sudeep's
+FF-A tree where ff-a initilisation is reverted to device_initcall
+unless you're uncomfortable.
 
-If so, I can follow the progress there and help test the fix with the
-security_* fmod_ret reproducer once it is available.
+For this, It might be better to split this patch from this series
+since by above and defer probe of ff-a would make a register failure
+of registering tpm_crb_ffa driver which is built-in.
 
-Thanks,
-Shijia
+@Sudeep what do you think?
+
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux.git/commit/?h=for-next/ffa/updates&id=cc7e8f21b9f0c229d68cf19a837cba82b5ac2d87 [0]
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux.git/commit/?h=for-next/ffa/updates&id=e659fc8e537c7a21d5d693d6f30d8852f2fa8d91 [1]
+
+-- 
+Sincerely,
+Yeoreum Yun
