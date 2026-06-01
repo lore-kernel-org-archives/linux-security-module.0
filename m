@@ -1,135 +1,187 @@
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEA337E30F;
-	Mon,  1 Jun 2026 20:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C006D1A6839
+	for <linux-security-module@vger.kernel.org>; Mon,  1 Jun 2026 22:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780345463; cv=none; b=JO064iHtiRGhJk9CJ4YVy46rjntTacS25eTJ07t9K8lFea9Zul7ipvEaYd3kc1mNZSou95kS2n6JrECnIp28EFG7gy1OylAKMmcpcmQzmnWe+A/l/mD8j212K/AFIp6LcF6k6loDmeBIe6J7XfrRI0sbkZzG19SSZ/YrW3BvIQk=
+	t=1780351738; cv=none; b=i85KsVN4GKDOzqqsxbMOza0287PovMkwXzy2QM7Stnrag+dwr2BB3vcgQwLFsNFDxaErrH9YvIlTCZMu5uTTfKb7uWbATqGALni8K+5svWJny/mRCxUZZXzJSj1E9AQaJKZrpV2BfJ+Rn8RHXsrtz+DOUm9jLFPiXRCQa8xM/xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780345463; c=relaxed/simple;
-	bh=l3dLCfo8STCCjPr/FqdtQ/3GS1wUw1HahkL+2RftIZg=;
+	s=arc-20240116; t=1780351738; c=relaxed/simple;
+	bh=zZ1OG+0BsRnJQ+8GlFp/Ufe3W6tMC4asQu6TyQBTSsM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UKPrEQh6Hps01Kb1Y3KPK/oWFn31YcWM9+QDtgSb9mSjBJ1PNpVBSf7I/+diJFqLeJ8hN4t9rehpbW+p8R3slESZqltvauOcgj3SYTlPnXHJSnqjStNlCx+FNG7vVkVdnBSYlDCvy9QStDile0PiVm+V09+876wSH+sMVXiveYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JD/rgItE; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ps80gdAf9gcYIBeRGNxWo5F+j6rzmqbSwnKhNTpn/05VOnqZvS8jnKh0pvG61XqKBPDuqKxladD7durLGRrUuCA9fOnBMa5LaG6ssrTkW8EBxUL20BlpWGC1kVGAkDaMbSJB+wuHpHrqrsPpZYx6rKgXl5s3rWxIPTb0OYnmvCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TR92kAN5; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JD/rgItE"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=6/5W0G6Gs1Q9GB3IxcldPERQvThA7tz7U249bqa4a9U=; b=JD/rgItEItTF3waKZU0fyhZfOO
-	p6KhOF2dIKsWbBlXDH6Szda6v6pwxYE0KSLQ6p9Jvu4aC0kMd1Jp91bHbXXGW1JY4kLAuzDZFSXs9
-	P7bQk5/xrqJRa6GrGWdxnMhnM9cOr/Mh7DhOreUlDgBnF2TcRdtGfQbRd9WsBVDwHFqfKKNmW2p+o
-	Eq81r5ZCto6v0j62Ti/4LX0nmYsBAqhcbZ6JenvK3VL8pcuJJabuzAf2wJL1ohACsCSDs/sp5+nbD
-	m2tuZulS6JhmLQAZ2oWemvoJrOfuaHp1Sctzmp2YTWfFeramTBO8sylg/IQVtL1hc2i3NQH4Kt9qQ
-	+ovW+CfA==;
-Received: from willy by casper.infradead.org with local (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wU9Av-00000000iHG-2DOC;
-	Mon, 01 Jun 2026 20:23:53 +0000
-Date: Mon, 1 Jun 2026 21:23:53 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
-	Pengpeng Hou <pengpeng@iscas.ac.cn>, stable@vger.kernel.org,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Corey Minyard <corey@minyard.net>,
-	Gabriel Somlo <somlo@cmu.edu>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Hannes Reinecke <hare@suse.de>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Jason Baron <jbaron@akamai.com>, Jim Cromie <jim.cromie@gmail.com>,
-	Tiwei Bie <tiwei.btw@antgroup.com>,
-	Benjamin Berg <benjamin.berg@intel.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"David E. Box" <david.e.box@linux.intel.com>,
-	"Maciej W. Rozycki" <macro@orcam.me.uk>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Vinod Koul <vkoul@kernel.org>,
-	Frank Li <Frank.Li@kernel.org>, Daniel Gomez <da.gomez@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Aaron Tomlin <atomlin@atomlin.com>,
-	Alexander Potapenko <glider@google.com>,
-	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Georgia Garcia <georgia.garcia@canonical.com>, kvm@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-modules@vger.kernel.org,
-	kasan-dev@googlegroups.com, linux-mm@kvack.org,
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-	linux-um@lists.infradead.org, linux-acpi@vger.kernel.org,
-	openipmi-developer@lists.sourceforge.net, qemu-devel@nongnu.org,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, netdev@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 01/11] params: bound array element output to the caller's
- page buffer
-Message-ID: <ah3qWZ4cqhrbHZcl@casper.infradead.org>
-References: <20260521133315.work.845-kees@kernel.org>
- <20260521133326.2465264-1-kees@kernel.org>
- <20260521174631.71a06440@pumpkin>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TR92kAN5"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-46013161068so668226f8f.2
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Jun 2026 15:08:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1780351735; x=1780956535; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rAhp16dJFI2PsFp27rrivudvE8RRL21MgbXmfxm8dus=;
+        b=TR92kAN5S8AyJ+2+8rGr/hSDA2jcW0WollYVAWrfQlB4BtDhNslfiRPnAsdtw0USZt
+         xPPWuwV8FV76B+3vEkoCn0edrrVH/z/eFqj6HMkNoDc+45Poy2tjZRoE38deznOGYKol
+         Q9NmcD/U3EN42E1Y7xjoVhTrPHMnQBH75vim5tLUOVJFhuCG3YCqKsQ+zo/SewMM4Pwx
+         RHz/mx0xG4H1Lw/7l0I8zhK3qLhVJtr7ptWRg+lDUGVBTFRQUivPP8ai4liPC7Cvh7uv
+         o1I6sx15otP7siICTAs8YFHN8ehbz/2RAxa3j4rkhXYAPoR+JW/KcBiyq9knY8FPpbLB
+         juiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780351735; x=1780956535;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rAhp16dJFI2PsFp27rrivudvE8RRL21MgbXmfxm8dus=;
+        b=pdN21KegEcIh0nwOa+KgP79MgQImkpqUHFMn0oFevClExwhOKOQeiaWZ2oF9zUiYT7
+         mcJBIfJ7XuyJrTIIbr6c/K2kxheymGuf2Sg9uGK46IWv6s8jleY7F6L/rntLmdlPtyAy
+         oZlLlsIETdHmrrQjx9Z8VsJN2Q/xXfgrrkfZR4yVmOoazhpj91+2PgeiBeypFgfyYXpj
+         Bv5PlSQAf8m53xlCAvosOCCgGDcSqEi1yKHIDq9tmTvxIvkdPiMFP3nVldrqaqg1QupL
+         nep4c0WPukuuU1lSxjGMSsTLYE8UWd5wwGv6hDcYqM5s1vzqAlJnDy39u2llDg65gdms
+         TAvQ==
+X-Forwarded-Encrypted: i=1; AFNElJ99tRaIEZy3rVMr9vc6cGpQrUUXsiyv7S+QDlBuSMqrSt/j6Ktr/EucT9mVXV8QgarrnyoQ1xOVGU83zK8KIa1kJRaB1rM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7lSnIxHqKF/oUsTNR3YRTI/gqlJTEk8Z0qjmuycMIkBt6u4lc
+	u7Pq9LjP0muZ09LKbl0vpRygRco7m0VuW1Gn/CsHHXa/raJ7vwDI+/Pd
+X-Gm-Gg: Acq92OF6XJMPwUuOaWdWYxTkZmdjXxFyTxJhXhSQ6eXkHWkQeRX7fiHNiu8iWZ9mx8B
+	EiEH2eOMpwgWExzAkRkKl44LTr/xMDDZjKSJz4l7dP130BqxO/KjonIbXgtHwOJveJMr5ewiw0E
+	TH4TDnwNKnxJ8+xEeXAvW6jzHygIuiWnxjcYdkbhIeGn6/DwBe+EJxHwKOsI38chN1eyv9Lwmns
+	bXfLWbsvCFnXynfoAa+rxrPjPH8O0ES2n+ocfZHVOqSBRO9PjEJRdkbEOCiIMBwo6SFnIDdpBOO
+	kKWvOwNJ5rbXcSyd4fnd5EBlkmEcXK47jtvV1AE23Daz85+n8zPGld0lcrBoBPcu6AWJSz//vRC
+	ufwxKqeZgyDHd/Ak89cRaqW0+4XaI7F7bkPf+7GJgXdFLUpogVxMTA+UyU3AB50o90QN+wEc9wT
+	41QX0MsUhzh9Zo9YGN0KCJypldkFiKAnXgJ09ahCpUXoM/hZ5UFtw+GvfH5h3cmgVFVB2Wzg==
+X-Received: by 2002:a05:6000:41f9:b0:460:ff2:63e5 with SMTP id ffacd0b85a97d-4600ff2650emr12534219f8f.18.1780351734962;
+        Mon, 01 Jun 2026 15:08:54 -0700 (PDT)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45ef354c682sm26914936f8f.23.2026.06.01.15.08.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jun 2026 15:08:54 -0700 (PDT)
+Date: Tue, 2 Jun 2026 00:08:47 +0200
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: hexlabsecurity@proton.me
+Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Justin Suess <utilityemal77@gmail.com>,
+	"gnoack@google.com" <gnoack@google.com>,
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v3 1/2] landlock: fix LANDLOCK_SCOPE_SIGNAL bypass via
+ F_SETOWN to invoker's pgid
+Message-ID: <20260601.aebdd5a9ecc6@gnoack.org>
+References: <7rvmLIHR1Zh8RDF1IY1-SYRHzErgw9gPHq0k98RLYVsmHqAejjxcuJi8V3QaSbW-SnNvY5tfM2Xn_S1dEajKV_f7iyitoPwJgOSTZQ0nytc=@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260521174631.71a06440@pumpkin>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7rvmLIHR1Zh8RDF1IY1-SYRHzErgw9gPHq0k98RLYVsmHqAejjxcuJi8V3QaSbW-SnNvY5tfM2Xn_S1dEajKV_f7iyitoPwJgOSTZQ0nytc=@proton.me>
 
-On Thu, May 21, 2026 at 05:46:31PM +0100, David Laight wrote:
-> On Thu, 21 May 2026 06:33:14 -0700
-> Kees Cook <kees@kernel.org> wrote:
-> > Collect each element into a temporary PAGE_SIZE buffer first and then
-> > copy only the remaining space into the caller's page buffer.
+On Fri, May 29, 2026 at 07:07:30PM +0000, hexlabsecurity@proton.me wrote:
+> From b5fdc79ce1cb2881d59dfed01d3d9170306be9e8 Mon Sep 17 00:00:00 2001
+> From: Bryam Vargas <hexlabsecurity@proton.me>
+> Date: Fri, 29 May 2026 12:49:41 -0500
+> Subject: [PATCH v3 1/2] landlock: fix LANDLOCK_SCOPE_SIGNAL bypass via
+>  F_SETOWN to invoker's pgid
 > 
-> Should this be using a 4k buffer on all architectures?
-> Initially perhaps just using a different name for the constant until
-> all the associated PAGE_SIZE limits have been removed.
+> A Landlock-restricted process can bypass LANDLOCK_SCOPE_SIGNAL on the
+> SIGIO delivery path and deliver arbitrary signals (including SIGKILL via
+> F_SETSIG) to non-Landlocked targets that share its pgid, by exploiting a
+> producer-side cache-vs-live evaluation gap.
+> 
+> The SIGIO path in hook_file_send_sigiotask() consults a cached subject
+> stored in landlock_file(file)->fown_subject at fcntl(F_SETOWN) time
+> (via hook_file_set_fowner()), instead of evaluating the live Landlock
+> domain of the invoking task at signal-send time. The capture is gated
+> by control_current_fowner(), which returns false (skipping capture)
+> when pid_task(fown->pid, fown->pid_type) is in current's thread group.
+> 
+> This is correct for PIDTYPE_TGID / PIDTYPE_PID, where the target is a
+> single task sharing current's cred. It is unsafe for PIDTYPE_PGID and
+> PIDTYPE_SID: when current is at the head of its pgid hlist -- the
+> default placement after fork(), hlist_add_head_rcu() in kernel/fork.c --
+> pid_task(pgid, PIDTYPE_PGID) resolves to current itself,
+> same_thread_group(current, current) is true, the capture is skipped, and
+> fown_subject.domain stays NULL. hook_file_send_sigiotask() then
+> short-circuits at "if (!subject->domain) return 0;", letting the kernel
+> fan the signal out to every member of the group, including tasks outside
+> current's Landlock domain that SCOPE_SIGNAL is supposed to protect.
+> 
+> The direct kill() path (hook_task_kill) is unaffected: it evaluates
+> current's live domain on every call. Only the cached SIGIO path is
+> broken.
+> 
+> Tighten control_current_fowner() to apply the thread-group exemption
+> only when the target identifies a single task whose Landlock cred is
+> necessarily shared with current (PIDTYPE_TGID, PIDTYPE_PID). For
+> PIDTYPE_PGID and PIDTYPE_SID, always capture the current Landlock
+> subject so the consumer's scope check runs against every member of the
+> group at delivery time.
+> 
+> Stable kernels before the fown_subject conversion store the domain in
+> landlock_file(file)->fown_domain; control_current_fowner() is identical
+> there, so the same exemption and the same fix apply.
+> 
+> Fixes: 18eb75f3af40 ("landlock: Always allow signals between threads of the same process")
+> Cc: stable@vger.kernel.org
+> Reported-by: Bryam Vargas <hexlabsecurity@proton.me>
+> Tested-by: Justin Suess <utilityemal77@gmail.com>
+> Signed-off-by: Bryam Vargas <hexlabsecurity@proton.me>
+> ---
+>  security/landlock/fs.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index c1ecfe239032..edaa52572cbd 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -1909,6 +1909,18 @@ static bool control_current_fowner(struct fown_struct *const fown)
+>  	if (!p)
+>  		return true;
+>  
+> +	/*
+> +	 * For PIDTYPE_PGID and PIDTYPE_SID, signal delivery fans out to
+> +	 * every member of the group at SIGIO time. Even when pid_task()
+> +	 * resolves to current itself (e.g., current is the pgid hlist
+> +	 * head post-fork), non-current members of the group are still
+> +	 * valid targets that must be checked by hook_file_send_sigiotask().
+> +	 * Always capture the current subject for those types so the
+> +	 * consumer scope check runs against the live fown_subject.
+> +	 */
+> +	if (fown->pid_type == PIDTYPE_PGID || fown->pid_type == PIDTYPE_SID)
+> +		return true;
+> +
+>  	return !same_thread_group(p, current);
+>  }
 
-If we're acually going to think about this, even 4KiB is too big.
-An 80x25 terminal is 2000 bytes (assuming no utf8), so 4KiB is two
-entire screenfuls.  Limiting to 2048 would seem reasonable to me.
+The reason why the same_thread_group() check exists is so that Go
+programs that had to use libpsx instead of TSYNC had a way to signal
+their own OS threads at the C level (a feature used by linked C
+libraries and specifically by libpsx itself, so it prevented nested
+Landlock domains).
+
+(a) On Linux 7.0, the Go-Landlock library automatically uses TSYNC so
+    this is not a problem any more.
+
+(b) On earlier Linux versions
+
+    * libpsx signaling is also going to continue working,
+      because it uses normal signals instead of SIGIO
+
+    * other libraries are also likely to continue working, unless they
+      use the somewhat obscure SIGIO with PIDTYPE_PGID or PIDTYPE_SID.
+
+    There is little incentive to use SIGIO in a pure Go program, as
+    the runtime already implements file descriptor polling logic (with
+    epoll, which is anyway a better choice)
+
+So, this looks fine from the Go perspective; I doubt that this has
+practical implications for Go.
+
+Thank you for spotting this and providing a fix! 🙏
+
+–Günther
