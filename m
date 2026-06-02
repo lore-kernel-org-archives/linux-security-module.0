@@ -1,169 +1,155 @@
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9206F3D16FC
-	for <linux-security-module@vger.kernel.org>; Tue,  2 Jun 2026 09:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.172
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780393357; cv=pass; b=XG1rVsBEaW2B38WoTmiP7iPdDnkFNfgTVCFk0u8qNT6WGfyZthzSG03XakWyYoh6fdnSZN7ziR6CcBRlVP9H7gOmbTjxw2N2yf9bOmN1LFZUckemFsCtfgrRr6H7CcqRAhzAKihFZ/Xp+CTRYqw4A4PJGBsWla15LEm3wqyD9Pw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780393357; c=relaxed/simple;
-	bh=AhL326c1YdAwbi5q6PvrTRQ6TefqA6HxsocAsD+zo5U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lp077cKj0Uyz7ZTqimFCOU1LZxuawzU0/V8yR2Ea0HZz1zevBDq5o0NySREtNGuRVP26FBhIHPQZ4AmNsvSXHMPO8WXGPqnmKeRp8PHttXisp87ueztDMWffQwaVAF7BcpdoDwnjgQO68bZhRJE5fsg9mkoc4KBE79CGpllfQvw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ctWka/32; arc=pass smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99746286D5E;
+	Tue,  2 Jun 2026 09:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780394251; cv=none; b=josCSqgsUuHLpzbDNwoaaEDlAvKL2EwSJTYtpDWGcOaQdeSblO/w1B2XwsokxOJ1HIk/HZiIZvJenlpIPIITyOxvq5371zc0n/Lu0t/njDlEcGWptohCQ9V0vIfYZpu3XZ9AwhwpCvDkhqtoPc/A/A70oSwZl50hptfmJNyKfuM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780394251; c=relaxed/simple;
+	bh=wMKlGVx2MnyptDjsVMHQ+hlIQD9/WeC/bmFF/ihPQls=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f1lQE6cmmOBjdw6IuXPWsFoKsled/DaerTK+6kKbVldts95+RFSaRa6bpzCeXHVqeN/g2L9G3UGYOdWYDPUIV8KW4wnLYo81evmhAk0BLJTy7qduSJtceIKm5Ge+Kp6niyr56znQXAHhBX5WCrrBgkLqCdIqusVbubbGPuwxu9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bQ4HSQir; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ctWka/32"
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-4864abba33fso153321b6e.0
-        for <linux-security-module@vger.kernel.org>; Tue, 02 Jun 2026 02:42:35 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780393354; cv=none;
-        d=google.com; s=arc-20240605;
-        b=PAbxy5cUfPnyaCaVrraiNq1+EaYnCZ11rNesNdKZ1wob+4uPVi4ck0n5Y2F1KWFVRV
-         u1W6GferJxgCYmOF4gCfFkpZp4OXDWhoO9P/cxCmX83hXYTRay1Y2qIzdBFdvVaLmu7I
-         Fzh4pbwabxgMY3WKJsx+XyXX6tP+Kwiz9tIC5Vf61g7xwe70zbcSXyZ6Y0eHersHkgNl
-         mP4GuQEYsxl2dSbiQ8woP7ToAcgucGrTzSa4C2VXejBXI31Ki7Pmt8WhhApzDt1qvfAF
-         Uzt5BxE6rISP7l43qHKUXOo+cg2xuKkxKo9QID2NASw98f5JoOWPTVYRxWNdxFA43XLD
-         9+6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=2WN709sXoGtblvRyrImhrRUuQENQMA3uMpblskCxCeI=;
-        fh=er7XJLEyXb1uFmkh55gpSZl1Sfj6JtncwwDZpyDWfy4=;
-        b=ajq8Yb+RdKL4Cx+7cl8VBmNyaP4q4fU6x7uBlzMc8ijzSrR99FFivS68wL0mkTPefE
-         jXxln3Fpeifxld0iGpSweNZDy7wsxtAl7WINBRroOrqUi1JQmHlcdydoN6YoAhq8WzoE
-         9hTShGvTWKJl2Bsf6HgGMpbly6/tcjVJtU5lYqJpzxQt6JJuPwPNEzKoM/bqicdndulF
-         iVM6kIZeUZn4kKDQtsdaccKKqGIKR/7KG/8skhz9vHIQ31G9zkw4N4j9gMEoall0zhAt
-         vAu0NNQCLkkB5W2IvCBV9C2n831/U6pf+hCtqk5nHvgrX5EcV4Y6Lv0XglMzTbnkwB+8
-         2h8g==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780393354; x=1780998154; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2WN709sXoGtblvRyrImhrRUuQENQMA3uMpblskCxCeI=;
-        b=ctWka/32L0p9k9rRF89Abbcq4eFeaMTFfzDIYlQ1ye1U7jMF80LqjJqMFlFUf2Esaf
-         7bA02vZfCW0AkXNgJMGBzlbmv2Z4i1bXrhWR8jbjd9WQv1JKE1w2XJk06P3xuWB1zR2v
-         JoaGqOrwEJuTrFPJLXAe1tG7tb2ircWgiRdqqDFS7MkE3z65hAzJMIPab4B5JMzCe/QH
-         tKYdCeX4aWK904g0qxJuoic5LwlHDAJvsEgTguYTHqhqEcfOsmXTFLoZw2N0er8d9THx
-         ZzrXfzojP4kiTcLMRquOIuytExLNseKC5zX6JOQXuEv2+kJ5LA7AjLI8mLAFiS8EiHQH
-         0P2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780393354; x=1780998154;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=2WN709sXoGtblvRyrImhrRUuQENQMA3uMpblskCxCeI=;
-        b=XHvqFCkiofLsBeY7wxUawB1ijDRS24QIfKCpp+jeYUds+Q1gWn8X+mVwcH4q3SPVK3
-         QRrTcljE7o4dnV5I1//tshacTlCDghbv0un1wOvBmwLeNZ5dO7A7Qpz2A+6lYRUdvoOJ
-         GzO920NZPLv9uPf4FW1iqvb3xUVF25t4VbGH+58wKM7/xungldMGXdBuYUkj2YxdI5lB
-         XdthwMxtVe4oTuwRBFKMdu+ag+BxUWZUszlK1dWC7B5H90nH9TaQNf/fSuWt2HsWiq/x
-         AlsKSe5ITzkCxcIb5XDeKwkcqB1ZhLAcuoNzae20MHwqO8InvjoJVX9lMg8lfA/Kf3IK
-         K+kA==
-X-Forwarded-Encrypted: i=1; AFNElJ+svbeJjlWMHatKEcoSSWi6rEQkvPUyqYa7btFu1lJbly5xMsaB4OJhH8S5Yp5cciat8DuZsyIUnxeQd30pHV9jesqVqBo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVWhck0mCPRtvrq2Ru2c2Ls515RD8T40ddIOonSfvpPYg6Vdts
-	t/D9uDaLSOA8nX9W4IH51c3X0BMUGXPmo9O2yC2QzUNhi3VacqAX472zGqJx1YKeqzauFLTzqMK
-	DLcdasJDsyJUNYwJevxnnIc7aBqv6OK8=
-X-Gm-Gg: Acq92OHkObpHl2NbN4LmFohDDsnYOdoRBuvEadrSklBiZ87bpzoFUFphNJEWw050+dH
-	YzWRvWM16T7C/blnnj0PL/GvujTYhapGZwHgEUNVLQ6cpFmYLJeLGCUW/QQXS6/Wn57W2J4eEqo
-	TtzsFs2uZlhsNpNgDD0Ma+XH72zitiwNirso4SFmFdkXineI2F+GV16L/n/TFSu4q0kVYUJisvd
-	RSn4WDdGMuFmjeDg8kHDJwKGw+qITiMU55vO259Zpae7A+JwMBoN69OxfLlrtgpRO2jHJgQuC2l
-	fj6DvH7i3T/D6+xF6R6WzzU99bF9Uo9P00P939lMFVd0LKCA0NYTV68WgK+O2G+BFfCjPpUmO5E
-	BocEY/RCbeOTG01Q+0Hm1ZRduVZHN/h8=
-X-Received: by 2002:a05:6808:e86:b0:46a:17b8:bd7f with SMTP id
- 5614622812f47-4863e7c2d94mr1611036b6e.19.1780393354616; Tue, 02 Jun 2026
- 02:42:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bQ4HSQir"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D06821F00893;
+	Tue,  2 Jun 2026 09:57:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780394250;
+	bh=lJValK5+2Z0irO1NxpbHzVkGyPU3KW03yPIO5crgh6o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=bQ4HSQirP4TEA6BQpNPg8Ekem7iWsEKWgec5Vppj+TeoVi4BVIKwzIvLgvXMtPnWL
+	 7KChEMIEN51A/EtZY4RhRBChzYZea3UwIt0vRWB9Q0cDssDLoyLgzZ9bUwZ1C893Ix
+	 OkuDWMWX/dLtBTv3e9LUx5RRForgUSXJyPyoYUjm/gNWSv01GmJWEP/7GI8+yIO9EL
+	 bguhRRGwzBHOaI4+RWJxd/5MlsCAuYOnz0RWvAyP+esMtAmEP9ayYqocGpGlVy6duX
+	 fc3PYoSA6yhXmChXdHmBja7LH9dsHXi+v6esAXOSqaCjnrBjfoM8BOc6YTrGCKfgXE
+	 LUrIzdkndO4fA==
+Date: Tue, 2 Jun 2026 10:57:25 +0100
+From: Sudeep Holla <sudeep.holla@kernel.org>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Yeoreum Yun <yeoreum.yun@arm.com>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org, paul@paul-moore.com,
+	zohar@linux.ibm.com, roberto.sassu@huaweicloud.com,
+	noodles@earth.li, jmorris@namei.org, serge@hallyn.com,
+	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jgg@ziepe.ca
+Subject: Re: [PATCH v4 3/3] tpm: tpm_crb_ffa: revert defered_probed when
+ tpm_crb_ffa is built-in
+Message-ID: <20260602-vague-proficient-gibbon-b005c0@sudeepholla>
+References: <20260525075404.3480282-1-yeoreum.yun@arm.com>
+ <20260525075404.3480282-4-yeoreum.yun@arm.com>
+ <ahoXUjbsPmKxfV_R@kernel.org>
+ <ah0x+YDypYFzpFqt@e129823.arm.com>
+ <20260601-shiny-steel-jellyfish-b38b6e@sudeepholla>
+ <ah428rLnpoIersnQ@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260529033406.20673-1-hanguidong02@gmail.com> <aho3CYdv8lQd2s85@kernel.org>
-In-Reply-To: <aho3CYdv8lQd2s85@kernel.org>
-From: Gui-Dong Han <hanguidong02@gmail.com>
-Date: Tue, 2 Jun 2026 17:42:26 +0800
-X-Gm-Features: AVHnY4J3U44_QK8F7qYis9j67ueNmOkF5BG_lTDT6BBkwq5FJDnvTbsRP1vkKJE
-Message-ID: <CALbr=LYaca4+=hTsZJORQfrtzyUAGo8c+4ZEgkzgkFWQDWNJBA@mail.gmail.com>
-Subject: Re: [PATCH] KEYS: Use acquire when reading state in keyring search
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: dhowells@redhat.com, keyrings@vger.kernel.org, ebiggers@google.com, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	baijiaju1990@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ah428rLnpoIersnQ@kernel.org>
 
-On Sat, May 30, 2026 at 9:02=E2=80=AFAM Jarkko Sakkinen <jarkko@kernel.org>=
- wrote:
->
-> On Fri, May 29, 2026 at 11:34:06AM +0800, Gui-Dong Han wrote:
-> > The negative-key race fix added release/acquire ordering for key use.
-> >
-> > Publish payload before state; read state before payload.
-> >
-> > keyring_search_iterator() still uses READ_ONCE() before match callbacks=
-.
-> > An asymmetric match callback calls asymmetric_key_ids(), which reads
-> > key->payload.data[asym_key_ids].
-> >
-> > Use key_read_state() there to complete that ordering.
->
-> OK, so... I'm having a bit trouble understanding the exact concurrency
-> scenario you're trying to describe despite I think I get the fix itself
-> i.e. it is not pairing with mark_key_instantiated?
+On Tue, Jun 02, 2026 at 04:50:42AM +0300, Jarkko Sakkinen wrote:
+> On Mon, Jun 01, 2026 at 09:54:08AM +0100, Sudeep Holla wrote:
+> > On Mon, Jun 01, 2026 at 08:17:13AM +0100, Yeoreum Yun wrote:
+> > > Hi Jarkko,
+> > > 
+> > > Sorry for late answer.
+> > > 
+> > > > On Mon, May 25, 2026 at 08:54:04AM +0100, Yeoreum Yun wrote:
+> > > > > commit 746d9e9f62a6 ("tpm: tpm_crb_ffa: try to probe tpm_crb_ffa when it's build_in")
+> > > > > probe tpm_crb_ffa forcefully when it's built-in to integrate with IMA.
+> > > > > 
+> > > > > However, IMA now provides the IMA_INIT_LATE_SYNC build option, which
+> > > > > initialises IMA at the late_initcall_sync level, so this change is no
+> > > > > longer required.
+> > > > > 
+> > > > > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+> > > > > ---
+> > > > >  drivers/char/tpm/tpm_crb_ffa.c | 18 +++---------------
+> > > > >  1 file changed, 3 insertions(+), 15 deletions(-)
+> > > > > 
+> > > > > diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
+> > > > > index 99f1c1e5644b..025c4d4b17ca 100644
+> > > > > --- a/drivers/char/tpm/tpm_crb_ffa.c
+> > > > > +++ b/drivers/char/tpm/tpm_crb_ffa.c
+> > > > > @@ -177,23 +177,13 @@ static int tpm_crb_ffa_to_linux_errno(int errno)
+> > > > >   */
+> > > > >  int tpm_crb_ffa_init(void)
+> > > > >  {
+> > > > > -	int ret = 0;
+> > > > > -
+> > > > > -	if (!IS_MODULE(CONFIG_TCG_ARM_CRB_FFA)) {
+> > > > > -		ret = ffa_register(&tpm_crb_ffa_driver);
+> > > > > -		if (ret) {
+> > > > > -			tpm_crb_ffa = ERR_PTR(-ENODEV);
+> > > > > -			return ret;
+> > > > > -		}
+> > > > > -	}
+> > > > > -
+> > > > >  	if (!tpm_crb_ffa)
+> > > > > -		ret = -ENOENT;
+> > > > > +		return -ENOENT;
+> > > > >  
+> > > > >  	if (IS_ERR_VALUE(tpm_crb_ffa))
+> > > > > -		ret = -ENODEV;
+> > > > > +		return -ENODEV;
+> > > > >  
+> > > > > -	return ret;
+> > > > > +	return 0;
+> > > > >  }
+> > > > >  EXPORT_SYMBOL_GPL(tpm_crb_ffa_init);
+> > > > >  
+> > > > > @@ -405,9 +395,7 @@ static struct ffa_driver tpm_crb_ffa_driver = {
+> > > > >  	.id_table = tpm_crb_ffa_device_id,
+> > > > >  };
+> > > > >  
+> > > > > -#ifdef MODULE
+> > > > >  module_ffa_driver(tpm_crb_ffa_driver);
+> > > > > -#endif
+> > > > >  
+> > > > >  MODULE_AUTHOR("Arm");
+> > > > >  MODULE_DESCRIPTION("TPM CRB FFA driver");
+> > > > > -- 
+> > > > > LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+> > > > > 
+> > > > 
+> > > > How we would sync up this patch? Through which tree etc.
+> > > 
+> > > IMHO, the IMA relevant thing would be into IMA tree,
+> > > However I think this patch would be much easier to sync into Sudeep's
+> > > FF-A tree where ff-a initilisation is reverted to device_initcall
+> > > unless you're uncomfortable.
+> > > 
+> > > For this, It might be better to split this patch from this series
+> > > since by above and defer probe of ff-a would make a register failure
+> > > of registering tpm_crb_ffa driver which is built-in.
+> > > 
+> > > @Sudeep what do you think?
+> > > 
+> > 
+> > IIRC, there is/was no dependency between these and FF-A patches that are
+> > queued in terms of build. I agree there may be dependency to get all the
+> > functionality but we can resort to linux-next for that. FF-A is not enabled
+> > in the defconfig, so anyone working on FF-A + TPM must enable then and can
+> > rely on -next IMHO.
+> > 
+> > That said, I have already sent PR for FF-A to SoC team and it is already
+> > queued for v7.2. I don't have any other plans unless they are fixes.
+> 
+> Works for me.
+> 
 
-Yes, it is intended to pair with mark_key_instantiated().
+Sorry if I was not clear. I haven't included any TPM patches in this series
+as part of my FF-A pull request queued for v7.2. So I was asking to route this
+via your tree.
 
->
-> I'm a bit puzzled too why this was not done already in the original
-> commit despite introducing all the primitives.
-
-The original commit added the right primitives, but this site was easy to
-miss because the payload access is hidden behind ctx->match_data.cmp().
-For example, the asymmetric match callbacks call asymmetric_key_ids(),
-which reads key->payload.data[asym_key_ids].
-
-I also checked the two pre-existing issues reported by Sashiko [1].
-The uninitialized-read case does not look possible from the code, but the
-cached-error issue is real and was dynamically reproduced.  I can send a
-separate patch for that if useful.
-
-Thanks.
-
-[1] https://sashiko.dev/#/patchset/20260529033406.20673-1-hanguidong02%40gm=
-ail.com
-
->
-> >
-> > Fixes: 363b02dab09b ("KEYS: Fix race between updating and finding a neg=
-ative key")
-> > Signed-off-by: Gui-Dong Han <hanguidong02@gmail.com>
-> > ---
-> > Found by auditing READ_ONCE() used for synchronization.
-> > A similar fix can be found in 8df672bfe3ec.
-> > ---
-> >  security/keys/keyring.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-> > index b39038f7dd31..243fb1636f10 100644
-> > --- a/security/keys/keyring.c
-> > +++ b/security/keys/keyring.c
-> > @@ -576,7 +576,7 @@ static int keyring_search_iterator(const void *obje=
-ct, void *iterator_data)
-> >       struct keyring_search_context *ctx =3D iterator_data;
-> >       const struct key *key =3D keyring_ptr_to_key(object);
-> >       unsigned long kflags =3D READ_ONCE(key->flags);
-> > -     short state =3D READ_ONCE(key->state);
-> > +     short state =3D key_read_state(key);
-> >
-> >       kenter("{%d}", key->serial);
-> >
-> > --
-> > 2.34.1
-> >
->
-> BR, Jarkko
+-- 
+Regards,
+Sudeep
