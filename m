@@ -1,111 +1,209 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2893C2799;
-	Tue,  2 Jun 2026 12:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA6C3939BF
+	for <linux-security-module@vger.kernel.org>; Tue,  2 Jun 2026 13:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780405140; cv=none; b=iZ8Bi/AuQCEBuxVTOHbjS0Sp5iFmWRJLhr5LBahWByYEPevwkmwT+50JBp6ZcqnTURWpayYak1s0uWk25h7DNLeTF7IcGF+gOoGcREoY8dbbWaU7GncE43/rn5eyPtFre/it/6Ni0nIAKn9r7Qj09m7EhDgM00biGA0ElZOoWXE=
+	t=1780405498; cv=none; b=eYPawK577Rz9LKQDIdJ+ThaXgsGduucaJxQZYSAhK0gdAe7WxrKR0GR4mIgQameXrBVO7kks0n+e7yqrBS0tgN5NM+b1WKYfMt8Uf008yGr5Gfig2+49kJEWJkcITk39kPwWO6f6YS2fVb4kQzmSPtHaoBQEduvxrdtgEPNmeLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780405140; c=relaxed/simple;
-	bh=Y0GQNFYOedy21MCKtWpt6MqIuBGco1GIXaca2/Mu3ck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JJKPify1myJ/v+CKuUDf6IJhI5lKuhmmHXtZS6RPiXgNckzncunGQXVlSlQJNHJJxnPS7dmUkdHrgmrYWLo0ogYCr5IWezEVoVFD/flsFbU358t4ED9W7u772Yqf6GYaXhVxnX8E4IfHY+HGn958ta0UX/mmXVKjHRv5M6yu7pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=iZROQl4o; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1780405498; c=relaxed/simple;
+	bh=Lv88enNvVjptEHx4RPDpSYkoiYl4NHCAht/k1YwYRy4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CgzmWeCfhvXcKbw7ARnTK2va1j2OgZTrmafnhH1G99D3ErgQkFNVsmA4jCfMF3G31wSknCDGk8x7I+Peg+QIlGJUqxxSUHQVXInLH758wMSQdUFu6rW6updCXnR9ngkwb6dMXOlL0eWS1gC6qudZXD4zco9CPSG2w/H5BZxH6cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oYCy8oWL; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="iZROQl4o"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F70E169C;
-	Tue,  2 Jun 2026 05:58:53 -0700 (PDT)
-Received: from e129823.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2C4B63F632;
-	Tue,  2 Jun 2026 05:58:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1780405138; bh=Y0GQNFYOedy21MCKtWpt6MqIuBGco1GIXaca2/Mu3ck=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iZROQl4oHi6gzkkEuq55AQvvdOHbqENrH+Qw3bvvQzXLUMV+7VsxLvhYDVhVYbZWE
-	 0gPKw3iS0CzIco0por6kzUw3AEJLV6f+lIZl5PpzIysMRqx703HhdLr23FFFuEqSVr
-	 u/wTUHk2R7ZyZ0e1TXQ+dNk+USY8mwdSJf93VgS4=
-Date: Tue, 2 Jun 2026 13:58:53 +0100
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org, paul@paul-moore.com,
-	roberto.sassu@huaweicloud.com, noodles@earth.li, jarkko@kernel.org,
-	sudeep.holla@kernel.org, jmorris@namei.org, serge@hallyn.com,
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jgg@ziepe.ca
-Subject: Re: [PATCH v5 2/4] security: ima: introduce IMA_INIT_LATE_SYNC option
-Message-ID: <ah7Tjcm4CBEoDzIu@e129823.arm.com>
-References: <20260601142749.3379697-1-yeoreum.yun@arm.com>
- <20260601142749.3379697-3-yeoreum.yun@arm.com>
- <1cb6e74f1d63bd256d70e5c026234d4535acb662.camel@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oYCy8oWL"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4906238c62eso93031265e9.3
+        for <linux-security-module@vger.kernel.org>; Tue, 02 Jun 2026 06:04:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1780405496; x=1781010296; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H/8nMdqnIqVIuE86ZCCEmz0EQ1iXOszPXfKX9VZoGH4=;
+        b=oYCy8oWLEOXs3ZZpnQ8VOQHoNFjKZT62/QUyW3df6kxvDecqCOK07UnU98cT9bih7d
+         QifFlcWIr+EJiA3Y4YekpYVbMWMA0XqQZb9m0aNzEy+n6CZ9KNJxUBct5gbgm0d6jBJX
+         4RYm7cSM4Fa+MgP775wpjzUTJB2NacljxFREy0lFq+bJunDJIYp2ZV4sTIDkO+Vc1xr7
+         FpcRQcE1R3qM6zq5aytz97WBpu5zXpd39pgEA0GnDnl2ujkjmEdAdRZhqHjKWr+k4Lc4
+         ry5o67NwkoWSsT9Lap7TwhGHQwNn20aUpkBNKTwaaKQ1kQ2Jb1T0oTaxOfTVux7BZHHQ
+         5nZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780405496; x=1781010296;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=H/8nMdqnIqVIuE86ZCCEmz0EQ1iXOszPXfKX9VZoGH4=;
+        b=KXtriMqgneBxE+tvhNBp+v8/qtMaVxC6wSz3AK3ynUcjWE7Xf7vh4LKaHxx0hGh+vN
+         4Pp1x1KvBNpuHyc9oSOdcz45fn0v5JcNRSP2QfMs4nJUUyCtn70NO5++h6eEKs8PzodS
+         QEJGa6hW55TFj9K3OpvUSZ26kf/s5xg781YLTZeMlIanPdozwLTbregGpNq83wYTEQ8l
+         OBZaLEhGeMSEwRQXzYfV6WwATyoJyaaaAuSlu9N9K1JjIc8RUEoowkXkAdLBvwsmTH0w
+         XQBf2oXuOGsLH5YjffKw52VvO4oz14zLEf5c/7JRNHh02l9LQlFEjYGVlQzu7AI27roe
+         XNcg==
+X-Forwarded-Encrypted: i=1; AFNElJ9l+3ZqtJxc2JwZN3hxbdlYV4vT7CsaISrY4Wfv50gT+bfvOzycd5zVYGFUPZMfLxdFhB17vdYtX6XkP5Q0Vmy2qusE6q8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuEAXejOrA5/Tbel3Bo3+/Q9KXKaHAJ69UUwQy08YfcERO6JSw
+	IZNHxzhgOpsBmaynaovc0VSTLz8YMQrTdY1cx/tM9e2yTOY9/6Lujxkk
+X-Gm-Gg: Acq92OGQxZHTqOTnzy7BjFXZQY1lOeQ+6yEoPerPbSxqZLoNSx3AUKPw/IcHJdPZx+s
+	lyzK9p7kIxVIqC0kWz9MJhFg/agAhY+Z01fnKGJqjDG0ucoa9fTmY9yDuv0CQn36lrKfhOz+dN0
+	Jp/MF+EKUrUZEyxmfJ0+P+priRZy0YrrVawGdxoIxYedB5jNUbsLsFjyDv6PUzjvFrQ0G66CBHx
+	D/tvIpVF3z7qE6jZBmeEKFfuORTACe2Pc9OCXjF36/saLfKGDFLcRFtP3kNy0RJMGhAKtZJVRQz
+	n4Kt+GJ3sRzu+76Ohq9P66AQf1XAzAo5yGIYYfEtb/vBl8cLffKcw8FUTcPGlt4drgprMTyfnIl
+	ow3i1gEEyJ8QVJ+vbw4XydyoufWkrxomIsWSTclwiua5OwsvO18v3A373D1KlACyOs0vCNBIkk2
+	XKokysYCcA5Ogq0Kng+WQ1Lj/fpAj03gxjaXWnkt6S4JpgoYYYKTFI7DO82k3MjlxFixS7sE3QV
+	SsnOGDSZA==
+X-Received: by 2002:a05:600c:8105:b0:490:b072:1be6 with SMTP id 5b1f17b1804b1-490b0721e0amr76565325e9.25.1780405495119;
+        Tue, 02 Jun 2026 06:04:55 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45ef34b834esm33184301f8f.11.2026.06.02.06.04.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jun 2026 06:04:54 -0700 (PDT)
+Date: Tue, 2 Jun 2026 14:04:51 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
+ Pengpeng Hou <pengpeng@iscas.ac.cn>, stable@vger.kernel.org, Petr Pavlu
+ <petr.pavlu@suse.com>, Richard Weinberger <richard@nod.at>, Anton Ivanov
+ <anton.ivanov@cambridgegreys.com>, Johannes Berg
+ <johannes@sipsolutions.net>, "Rafael J. Wysocki" <rafael@kernel.org>, Len
+ Brown <lenb@kernel.org>, Corey Minyard <corey@minyard.net>, Gabriel Somlo
+ <somlo@cmu.edu>, "Michael S. Tsirkin" <mst@redhat.com>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Bart Van Assche <bvanassche@acm.org>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, Laurent
+ Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede
+ <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Bjorn
+ Helgaas <bhelgaas@google.com>, Hannes Reinecke <hare@suse.de>, "James E.J.
+ Bottomley" <James.Bottomley@hansenpartnership.com>, "Martin K. Petersen"
+ <martin.petersen@oracle.com>, Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, Jason Wang
+ <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio
+ =?UTF-8?B?UMOpcmV6?= <eperezma@redhat.com>, Jason Baron
+ <jbaron@akamai.com>, Jim Cromie <jim.cromie@gmail.com>, Tiwei Bie
+ <tiwei.btw@antgroup.com>, Benjamin Berg <benjamin.berg@intel.com>, Ilpo
+ =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, "David E. Box"
+ <david.e.box@linux.intel.com>, "Maciej W. Rozycki" <macro@orcam.me.uk>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Peter Zijlstra
+ <peterz@infradead.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
+ <gor@linux.ibm.com>, Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Thomas Gleixner <tglx@kernel.org>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Vinod Koul <vkoul@kernel.org>, Frank Li
+ <Frank.Li@kernel.org>, Daniel Gomez <da.gomez@kernel.org>, Sami Tolvanen
+ <samitolvanen@google.com>, Aaron Tomlin <atomlin@atomlin.com>, Alexander
+ Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Dmitry
+ Vyukov <dvyukov@google.com>, Andrew Morton <akpm@linux-foundation.org>,
+ John Johansen <john.johansen@canonical.com>, Paul Moore
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn"
+ <serge@hallyn.com>, Georgia Garcia <georgia.garcia@canonical.com>,
+ kvm@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
+ linux-mm@kvack.org, apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org, linux-um@lists.infradead.org,
+ linux-acpi@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+ qemu-devel@nongnu.org, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-pm@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-serial@vger.kernel.org,
+ linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+ virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, netdev@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 01/11] params: bound array element output to the
+ caller's page buffer
+Message-ID: <20260602140451.2e3e6622@pumpkin>
+In-Reply-To: <ah699hwLxIIOZ0-7@ashevche-desk.local>
+References: <20260521133315.work.845-kees@kernel.org>
+	<20260521133326.2465264-1-kees@kernel.org>
+	<ah699hwLxIIOZ0-7@ashevche-desk.local>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1cb6e74f1d63bd256d70e5c026234d4535acb662.camel@linux.ibm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 02, 2026 at 08:35:52AM -0400, Mimi Zohar wrote:
-> On Mon, 2026-06-01 at 15:27 +0100, Yeoreum Yun wrote:
-> > To generate the boot_aggregate log in the IMA subsystem with TPM PCR values,
-> > the TPM driver must be built as built-in and
-> > must be probed before the IMA subsystem is initialized.
+On Tue, 2 Jun 2026 14:26:46 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+
+> On Thu, May 21, 2026 at 06:33:14AM -0700, Kees Cook wrote:
 > > 
-> > However, when the TPM device operates over the FF-A protocol using
-> > the CRB interface, probing fails and returns -EPROBE_DEFER if
-> > the tpm_crb_ffa device — an FF-A device that provides the communication
-> > interface to the tpm_crb driver — has not yet been probed.
+> > param_array_get() appends each element's string representation into the
+> > shared sysfs page buffer by passing buffer + off to the element getter.
 > > 
-> > To ensure the TPM device operating over the FF-A protocol with
-> > the CRB interface is probed before IMA initialization,
-> > the following conditions must be met:
+> > That works for getters that only write a small bounded string, but
+> > param_get_charp() and similar helpers format against PAGE_SIZE from the
+> > pointer they receive. Once off is non-zero, an element getter can
+> > therefore write past the end of the original sysfs page buffer.
 > > 
-> > 1. The corresponding ffa_device must be registered,
-> >    which is done via ffa_init().
-> > 
-> > 2. The tpm_crb_driver must successfully probe this device via
-> >    tpm_crb_ffa_init().
-> > 
-> > 3. The tpm_crb driver using CRB over FF-A can then
-> >    be probed successfully. (See crb_acpi_add() and
-> >    tpm_crb_ffa_init() for reference.)
-> > 
-> > Unfortunately, ffa_init(), tpm_crb_ffa_init(), and crb_acpi_driver_init() are
-> > all registered with device_initcall, which means crb_acpi_driver_init() may
-> > be invoked before ffa_init() and tpm_crb_ffa_init() are completed.
-> > 
-> > When this occurs, probing the TPM device is deferred.
-> > However, the deferred probe can happen after the IMA subsystem
-> > has already been initialized, since IMA initialization is performed
-> > during late_initcall, and deferred_probe_initcall() is performed
-> > at the same level.
-> > 
-> > And the similar situation is reported on TPM devices attached on SPI
-> > bus[0].
-> > 
-> > To resolve this, introduce IMA_INIT_LATE_SYNC option to initialise
-> > IMA at late_inicall_sync so that IMA is initialized with the TPM
-> > device probed deferred.
-> > 
-> > When this option is enabled, modules that access files in the
-> > initramfs through usermode helper calls such as request_module()
-> > during initcall must not be built-in. Otherwise, IMA may miss
-> > measuring those files [1].
-> > 
-> > Link: https://lore.kernel.org/all/aYXEepLhUouN5f99@earth.li/ [0]
-> > Link: https://lore.kernel.org/all/2b3782398cc17ce9d355490a0c42ebce9120a9ae.camel@linux.ibm.com/ [1]
-> > Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-> > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+> > Collect each element into a temporary PAGE_SIZE buffer first and then
+> > copy only the remaining space into the caller's page buffer.  
 > 
-> Reviewed-by:  Mimi Zohar <zohar@linux.ibm.com>
+> ...
+> 
+> > +	elem_buf = kmalloc(PAGE_SIZE, GFP_KERNEL);  
+> 
+> get_free_page() (or how it is called)?
 
-Thanks!
+The kmalloc() should be faster and I think has to be aligned.
+There is another patch set to replace get_free_pages() with kmalloc().
 
--- 
-Sincerely,
-Yeoreum Yun
+Although all these 'show' functions should really head to using a safer
+interface.
+Although, at the moment, it is really difficult to find the ones that
+are guaranteed to be passed a page aligned buffer.
+
+-- David
+
+> 
+> > +	if (!elem_buf)
+> > +		return -ENOMEM;
+> > +
+> >  	for (i = off = 0; i < (arr->num ? *arr->num : arr->max); i++) {
+> > -		/* Replace \n with comma */
+> > -		if (i)
+> > -			buffer[off - 1] = ',';
+> >  		p.arg = arr->elem + arr->elemsize * i;
+> >  		check_kparam_locked(p.mod);
+> > -		ret = arr->ops->get(buffer + off, &p);
+> > +		ret = arr->ops->get(elem_buf, &p);
+> >  		if (ret < 0)
+> > -			return ret;
+> > +			goto out;
+> > +		ret = min(ret, (int)(PAGE_SIZE - 1 - off));  
+> 
+> It's usually discouraged to use castings in min/max/clamp. Can we make ret long
+> or do something different here?
+> 
+> > +		if (!ret)
+> > +			break;  
+> 
+> > +		/* Replace the previous element's trailing newline with a comma. */
+> > +		if (i)
+> > +			buffer[off - 1] = ',';  
+> 
+> Can't we do this after with help of strreplace()?
+> 
+> > +		memcpy(buffer + off, elem_buf, ret);
+> >  		off += ret;
+> > +		if (off == PAGE_SIZE - 1)
+> > +			break;
+> >  	}
+> >  	buffer[off] = '\0';
+> > -	return off;
+> > +	ret = off;
+> > +out:
+> > +	kfree(elem_buf);
+> > +	return ret;  
+> 
+
