@@ -1,188 +1,198 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42B6373C00
-	for <linux-security-module@vger.kernel.org>; Tue,  2 Jun 2026 03:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C060235B137
+	for <linux-security-module@vger.kernel.org>; Tue,  2 Jun 2026 03:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.51
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780370259; cv=pass; b=D5LX3O16IzxvFB0TY+2GTuab6J6UZKcm6lSa/e8lDBgCnqUA0GWEF90/xqBk4/X7AOlsz8Mv1jaSX3Ycvr9kzKbF3kRrQNvHYmdTOWBruvOkIfDEGhjFTERN3tt/Z1YWQlKaQzXnxzOg/ZP5Owjp5BLj0fECCCvIh3jrdyJcn1s=
+	t=1780370766; cv=pass; b=hHdk0E4oR4ffrVYybX2p39T5OobX+NRSu8WMZPXcjQ81afEA1Qo8KAi/y+53o19/mHW0c19PF3ODegks7hKdatFyXpCWlo4E/3BOMsQ2N1VtylG1RwGMk9bFIVFvbVhp7dgXClr7eD0KuVyE/4Cm52VqTtOqVbFnMH1vh4BTBoU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780370259; c=relaxed/simple;
-	bh=NrNtds7Xu9hVrX2Bnojh/FQca01+7oLkxZWeAGFo1N8=;
+	s=arc-20240116; t=1780370766; c=relaxed/simple;
+	bh=Olae448LRXRz/0p4H3v/zJJ4AUHMR3A3/XiUmgCy0t8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l4Xh8i1K3xeCD9n+vuJT7EYmn3VDj6pYYhYwWhjiHOUDfGQZVwscHg/sOqVJNi4uvH3qYpK9/O6GvLynRxoc2IOKPZmsFZFh5bm4XI7MoGDv1HxIv8inc+lBDJaR3yTY4N9FuqD0eustN7ueaVdkv0a/UwND57fL5eKPnhhVCYU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Bcf3oh79; arc=pass smtp.client-ip=209.85.214.178
+	 To:Cc:Content-Type; b=q7HfJRTYL6O4SmZhqYvonctmkIHs7WqCqcsoBJGH9CSi82Froky0NH0q0tTH+fVnAlGuEK3lMZ89q/qEbC/ccWqwd4JYOj+XuejberTIfvj9nb6Nc4aUFP8NM/QxewaazVd42S0VZSf5O9xJv997v3wU4SQ7guHrPFbRrSkhNaI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZX1c27NL; arc=pass smtp.client-ip=209.85.216.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Bcf3oh79"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2bf1cda2b17so29354215ad.1
-        for <linux-security-module@vger.kernel.org>; Mon, 01 Jun 2026 20:17:34 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780370254; cv=none;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZX1c27NL"
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-36dac5d5d05so801375a91.2
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Jun 2026 20:26:05 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780370765; cv=none;
         d=google.com; s=arc-20240605;
-        b=F6gv+dBQxGMpw0WJoR7uhfCWdDWYiyP2nlgkOGpIVAw1LfnIX3duLMES8JxKv0y79v
-         4O34Jk2GF+nAuJndYbECUcAhadqtKOk9A79vaa8Og0AuqUex1/9FooMJiMdRD8A4WLfU
-         dPeyXoT9ManaqfaRV2pIy/55lSnWdLzjqDAVuH3MiTG8edSjNU2G3D0d32vxrJbJMS0h
-         tn57rcekuz3KPZtPaP4lGj8Qk2NlNUBAkM/ah9NFmJrJ4tWJ2nhKin9prYtd0RmBLvYx
-         rDY7P+kr6j3JtW0xtv40JsBUjCxYagt+AzYWAX4o+mX9sKIThhRjHwwdRQLTuBAIdz+5
-         vgQA==
+        b=PoxtDkFA0hLydAYtVt3U20J3g0RPSDJUui588+v0S5JXi1qRDoFGBXj4EWIXgbJR4K
+         4K+tzEtvMIZyPsIziWuKnfGXXTl6YzqQmvEt1b8J+v8QWn5YiIWewq2dCmueXPh9P4dK
+         riYpt/epFQCQapGcYIHz/oYHrJFEVvbEJ0l/UVP4HKEVZIzJL6+G4njq6Wo6yJsQpG0K
+         3zc6CsVOVYymaaT0/dcR4hmx4FVnFrzC+KOw/+UaGPoTB3IVGaRVFhQ8cHJtqrfT84YV
+         qUZGeOm67ggyumgARkuGiRHWcRP+GQlrrBOqbBEwgtEhe8mhZYcKJqzMljR99aAxf9G8
+         N4Og==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=yRbGrDPr8/1rgB/5c9BpqqyHTaNQfsdpMIViVvNKLvo=;
-        fh=zsgwLSpN4+L/IBYaabGsCCdJdwtdv2JodzWvTAWrA3w=;
-        b=kA/bVP5fb3UxaL9cCcalwrJ6+S/MtBF5lr7X5Hzly9fbB+x8OEJgNvKTIwzCENOnbd
-         0awQmVsPNXD3typb0u7lLzU3Aq2u2S9vRn99EOmXue6G0uG8TQw/3w72TuIxIHlCXXw8
-         fcIsgjiN0ptrDNDvzFE068z1AC3E/Jzn6zpL9C99ufZ8XvpqG8iZ8D/92APWnj3RhlEE
-         NnHsSMp11AYIm3zlJ3wJyAI/yDqJpQNzbZmcWEGRdVpgKhi09CQU3OEhTGUhuA55AdUO
-         jr6wZYAQRIyWslGucDP3GNUea9DvEFSgCr8Ei7oHkSRQh1Wm2OEmuqcFiChFDVLvSy8E
-         i2DQ==;
+        bh=rJZmPOPJOUIzpL+LB1fJWKE2/HEKwbS2/rXfRMCp6eU=;
+        fh=ghI5SPQo11AdLtto17J+rgwg4/+tb2tOsIfacDqUlfI=;
+        b=abX7RLezCFKEasf+wvMiP0pEBEW6aJj/vfWqWanSvdFDCB3M8t8z/W96UsLOBs10I3
+         LEosQOEoLPKzXH+Bta6qCzxjDwsEXjKGMxQFVSw5pnI7WhvVS040ovV16C5y+MBmvELd
+         TcUxo9b+NMjE2bL2zL2DTB09N1o2CLAL7lamxPwi2Y5bNnHrbHPk3QIfgWg2kOl+p7l4
+         NnHgd1QvfXVa60XZfCuiL4DXpGbwPkc96ZIA6THYOcAJf9xgagKA13zQ60eajM5QrOQT
+         RHwNMWN4yA3fnj9hAt8fV+red1f4W70nkOqbeKDxIWcit+r3jbnEFkHjLMAArjzIz0Do
+         rSXQ==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1780370254; x=1780975054; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1780370765; x=1780975565; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yRbGrDPr8/1rgB/5c9BpqqyHTaNQfsdpMIViVvNKLvo=;
-        b=Bcf3oh79gvB1y1h6vk6ljHru9+bI24G7Wt0cxnV3x2oqt4H+GGZ4DFS9ILOrcW4dP6
-         V0p3wzXsBwZszoOzXJhS+v7nMMJIGcjNFtDp9hwFrp90GciKOsTBjMWlmb6QFTBE3kpK
-         ylYebVEOBN9LgI50lyAo2D5aUQv64AsXOr6jnbF3lbFZ3PmYla5HfXVUlQp0N/JGBWGT
-         iKbrbYNcVvp2TZIpzqvNgzxL0S/6nPrzo+BrNRwScJtbnMJRFnnMm3J9JDtUFrpmCKpT
-         UrxKsuk06jXGm9Bs9FINYcVXGGmlp/VBOseRSLqWXEJQK6kEaXUYFVN1Y2Lgs1a1da6Z
-         9TTw==
+        bh=rJZmPOPJOUIzpL+LB1fJWKE2/HEKwbS2/rXfRMCp6eU=;
+        b=ZX1c27NLMiU9AEnYGxYnduog1rIPBVqqttV4r+A2e41pBLvoEABZ/B4NWi/OF6v6ns
+         plKGldKfSKiOpSi1OCIn9++WkfKPzTOZwrj4RvZGnNNrvDfYYEOykecDfscNzcc5tEpZ
+         ulnd+Fp3vixfmBDhr5CsT8X9GujfB5h4EAI5A6fQv/j6EjbZAp9m6DMa7cjvJjh/PaHb
+         Ebm3ZwWemzA4AUS5wkRq+TDDMxsZ9iE5OhQuGi3COnaBrb17gQ70i/SSB0LAYlw4XGPX
+         E4FYHpcJ9UhJX+99PH9D7g6tp61+MT+P0QgFEdeLWqsBVZtvftLuVXGGC6TWNyyV+J2S
+         iDSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780370254; x=1780975054;
+        d=1e100.net; s=20251104; t=1780370765; x=1780975565;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=yRbGrDPr8/1rgB/5c9BpqqyHTaNQfsdpMIViVvNKLvo=;
-        b=l9QMvKEiLJ1qw42et0vARu2TyWqYkxrEo1jezPXXlgzewAdyHtSJy4IR2Ei0aD9sva
-         Uf88H5mSWYM5iUsJ11slfhCUlmvLz67sVuyOPS8Jdoq7R0CfHbbCKsngvnUgcfrKUK4B
-         FCfLDPwhSUemn9tGRJEwE+oUqfbZzwBS01OskZk8VFbcTdH4H+xQjTDedFsb1STNvg0F
-         XTJSJd6ibK64LGqvCNdNmBO8lopLwuLBZebfjMTIRFhN1zWWS8XxISgnfIlHscjCQVuM
-         wUaHFVQ3eX/Cd9ziF8w3xnAnEBc6IbywfDdQtSnZy0YZdl+N4+xGEiyMO8Ba7OJUZPbL
-         Y9Fg==
-X-Forwarded-Encrypted: i=1; AFNElJ/GgtGHuGixNrbn5AIgP6HHb70+H+e6b0FYDROBx8tr1cyF0EK3arMV+Jv9i79r0dRbITAJtOFaYHlohQwFcNhzvMF6DZo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4R/J+B8LRcyU5QMfRtevCWZwvMHwUMpj+yErJ5MS/Q3jHTLul
-	6b/9JBEC2c+qJaioUVGv8zQB+wczm6UJOPWugHu+W/PPp4ZbR9bIHwkOuFAXtaOgr4yR4u6520N
-	Wg15A0iISP1vZTnLq5Wr/fB9m/5zaXtN4pDYwSnkE
-X-Gm-Gg: Acq92OFHNKJVaFGc87VRYkBwza0K7aGunivqO2s575dwtR2FHwyykv4lzsPASo/n/kG
-	Mti0yEf9pcHL1YufeYWtaBsDcNxUYmno6iyAvmXWTXpXmgQGd3mmoPgBkTYUBDgvGzpGlMTM3wq
-	SOHOZoyMpQerowoYIfUtGrTXs1VdhDjQIb1xmz9UCc/+g/djKmJZCzGgQmanzr/aXujXun8O94o
-	Nx9fgrdzlx0ncLqh82u8Nd+yIfcNhQQIav3E9In5oGYnOQb/nqjjYVtM4o/jtpL+k8DVGMvJuV7
-	+AlCvp3cGiZHpl0X6A==
-X-Received: by 2002:a17:902:fc8d:b0:2bd:9b0e:b43a with SMTP id
- d9443c01a7336-2c10cc48783mr20042485ad.7.1780370253972; Mon, 01 Jun 2026
- 20:17:33 -0700 (PDT)
+        bh=rJZmPOPJOUIzpL+LB1fJWKE2/HEKwbS2/rXfRMCp6eU=;
+        b=AB2kRn5K272IdVxDD1qx9MPSzwXTfUsYGRLfsisFY6dvJsoq2btHXTBI1ZCZAjvyKO
+         bMoiBMYr3G+6LdQIUF1a3oZny3GAqU78ZuCMF9sNhkopcvnIOuhbGfwVaRsBXHEnaDzm
+         CUjuT7oxK594S97dAs02ApBnsDqA1W1K74wz6wFCUuYqRiLF1QGuXhh7ZY5AEkp0tWBq
+         Pern9rej+T/NW/ngLtqyl2pwvRh7SUnfK5xZC0wJFXBsU2XJQHTeduO8hILwwWvExzQh
+         zfhkZyV/bg8dOyFKdBPijpuHa7tjisZZutHsJG3JhXv9drJxHSKbKajTpTWVVnxGakOz
+         /A0g==
+X-Forwarded-Encrypted: i=1; AFNElJ82uRpYmUCWFkiUvpYGLkkOqGu29Tq4zWRQYov+EQc/ccDV+dyWItGuYFzoHQiZ7BM4bpw+8kHQRpx5pCZ/Jjk0V5OBzj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvBQvqN3vQ5J/36EGxmZmcfcarjFMPXzdS+XEP3mgcZQOuD5OX
+	j/mrgjEPkX41WiIdlUnBU2E7jgiV3x7bRU9qPDgimwXlfgIONhiendlz3N0Pn+frilPj1VsYM/p
+	qQ1dlIdUsLsrnCK+A9qcYe5zoiD/ZVA7uwPb7uirH
+X-Gm-Gg: Acq92OFbTYd8s9PVLLhr0YX+94vqp/DV5wpA2uMr5yiKAOTQv3pAOYlaIz03o/Hc/Q4
+	0AhM2aoRn7V3GDAKW5tseLTwyg8TiWqZkSWV4uWF2L7uJ9C09yvovhkJDeMDsxcJbfPISMOdnIA
+	p90YmAiPrDJyt14uwFGmk+516llYIM+Ic0bzt/SfwM/7SdmFdmbu9Zs8WbLyKH7uzzMGwq+qj0I
+	RezYEnOQnn2VjZWAg7oWToE7N/g5mXeLZiyGeGcmuygq7oupC7yXd7nLNTqKDP8W/kLnTQyLDUZ
+	QxHB2IVb1fKt0hSPFg==
+X-Received: by 2002:a17:903:15cf:b0:2c0:c3ac:4af3 with SMTP id
+ d9443c01a7336-2c0c3ac4e7cmr107290575ad.15.1780370765003; Mon, 01 Jun 2026
+ 20:26:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260524041442.2432071-1-tpluszz77@gmail.com> <20260524041442.2432071-5-tpluszz77@gmail.com>
-In-Reply-To: <20260524041442.2432071-5-tpluszz77@gmail.com>
+References: <20260528030915.2654994-1-bboscaccy@linux.microsoft.com>
+ <20260528030915.2654994-2-bboscaccy@linux.microsoft.com> <CAKtyLkEy5QeWmozTr8v_CEFfJTK3WJq3CBr3h_T2=HMr9YfCFA@mail.gmail.com>
+In-Reply-To: <CAKtyLkEy5QeWmozTr8v_CEFfJTK3WJq3CBr3h_T2=HMr9YfCFA@mail.gmail.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 1 Jun 2026 23:17:22 -0400
-X-Gm-Features: AVHnY4I4W9V-dv4I-l2LKCn8EXbQx2RA0Mt-m8Ql8JMgxlHNkMBkt_pweVb2PlI
-Message-ID: <CAHC9VhQikjqG_CZfXy3vJP3Os0xNw9jjGoMdLmWiy5epU3gxcA@mail.gmail.com>
-Subject: Re: [PATCH net v2 4/4] netlabel: validate CIPSO option against skb
- tail in netlbl_skbuff_getattr
-To: Qi Tang <tpluszz77@gmail.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	edumazet@google.com, netdev@vger.kernel.org, fw@strlen.de, lyutoon@gmail.com, 
-	stable@vger.kernel.org, Simon Horman <horms@kernel.org>, 
-	linux-security-module@vger.kernel.org
+Date: Mon, 1 Jun 2026 23:25:53 -0400
+X-Gm-Features: AVHnY4Luf4wKfT5m7FIOq7efIuUna2VuWCCDDMsqTG6Ml8jbgyyoAzuceKSLttc
+Message-ID: <CAHC9VhSt1_XmKfO7SA_5qiUUpq5RWa98yACHSwh9KMMGQTJjbg@mail.gmail.com>
+Subject: Re: [PATCH 01/11] hornet: fix TOCTOU in signed program verification
+To: Fan Wu <wufan@kernel.org>
+Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <skhan@linuxfoundation.org>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Eric Biggers <ebiggers@kernel.org>, 
+	James.Bottomley@hansenpartnership.com, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, May 24, 2026 at 12:15=E2=80=AFAM Qi Tang <tpluszz77@gmail.com> wrot=
-e:
->
-> netlbl_skbuff_getattr() locates the CIPSO option in the IPv4 IP header
-> via cipso_v4_optptr() and hands the bare pointer to cipso_v4_getattr().
-> The consumer re-reads cipso[1] (option length), cipso[6] (tag type),
-> and then cipso_v4_parsetag_*() re-reads further bytes from the skb.
->
-> __ip_options_compile() validates these bytes only at parse time.  An
-> nftables LOCAL_IN payload write reachable from an unprivileged user
-> namespace can rewrite them after parse and before the SELinux/Smack
-> peer-label consume path (selinux_sock_rcv_skb_compat ->
-> selinux_netlbl_sock_rcv_skb -> netlbl_skbuff_getattr).  This is the
-> IPv4 analogue of the CALIPSO IPv6 trust-after-modification fixed in
-> the previous patch: the tag parsers walk the option using attacker-
-> controlled length bytes, producing slab-out-of-bounds reads whose
-> contents feed into the MLS access decision.
->
-> Validate the option fits within skb_tail_pointer(skb) before invoking
-> cipso_v4_getattr().  The pre-tag-walk guard "ptr + 8 > tail" covers
-> the CIPSO option header (type + length + DOI =3D 6 bytes) plus the
-> first tag header (type + length =3D 2 bytes), which are the bytes
-> cipso_v4_getattr() reads to dispatch on the tag.  When the bounds
-> check fails the packet has been mutated after parse, so return
-> -EINVAL rather than fall through to the unlabeled path.
->
-> Runtime confirmation (Smack peer-label policy + nft LOCAL_IN
-> mutation of tag_len): UdpInDatagrams increments to 1 and recvfrom
-> returns the payload, showing netlbl_skbuff_getattr ->
-> cipso_v4_getattr -> cipso_v4_parsetag_rbm -> netlbl_bitmap_walk runs
-> end-to-end past the option's true bound; with this patch the
-> consume path returns -EINVAL at the bounds check and the counter
-> stays 0.
->
-> Cc: stable@vger.kernel.org
-> Reported-by: Qi Tang <tpluszz77@gmail.com>
-> Reported-by: Tong Liu <lyutoon@gmail.com>
-> Fixes: 04f81f0154e4 ("cipso: don't use IPCB() to locate the CIPSO IP opti=
-on")
-> Signed-off-by: Qi Tang <tpluszz77@gmail.com>
-> ---
->  net/netlabel/netlabel_kapi.c | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
->
-> diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-> index d0d6220b8d59d..c2d3ea751f4e1 100644
-> --- a/net/netlabel/netlabel_kapi.c
-> +++ b/net/netlabel/netlabel_kapi.c
-> @@ -1393,11 +1393,24 @@ int netlbl_skbuff_getattr(const struct sk_buff *s=
-kb,
->         unsigned char *ptr;
->
->         switch (family) {
-> -       case AF_INET:
-> +       case AF_INET: {
-> +               const unsigned char *tail =3D skb_tail_pointer(skb);
-> +               u8 opt_len, tag_len;
-> +
->                 ptr =3D cipso_v4_optptr(skb);
-> -               if (ptr && cipso_v4_getattr(ptr, secattr) =3D=3D 0)
-> +               if (!ptr)
-> +                       break;
-> +               /* CIPSO header (type+len+DOI =3D 6) + first tag header (=
-type+len =3D 2) */
-> +               if (ptr + 8 > tail)
-> +                       return -EINVAL;
-> +               opt_len =3D ptr[1];       /* total CIPSO option length */
-> +               tag_len =3D ptr[7];       /* first tag length */
-> +               if (ptr + opt_len > tail || ptr + 6 + tag_len > tail)
-> +                       return -EINVAL;
-> +               if (cipso_v4_getattr(ptr, secattr) =3D=3D 0)
->                         return 0;
+On Fri, May 29, 2026 at 9:11=E2=80=AFPM Fan Wu <wufan@kernel.org> wrote:
+> On Wed, May 27, 2026 at 8:09=E2=80=AFPM Blaise Boscaccy
+> <bboscaccy@linux.microsoft.com> wrote:
+> >
+> > The signature verification path was vulnerable to a time-of-check vs
+> > time-of-use race at both the program load and program run hook sites:
+> > between the moment a map's contents were hashed for signature
+> > verification and the moment the program run hook re-verified them, an
+> > attacker with sufficient privileges could swap or mutate the map
+> > contents.
+> >
+> > Close the race by snapshotting the map hashes during program load,
+> > attaching them to the program, and re-verifying them from the
+> > security_bpf_prog hook against prog->aux->used_maps. Because used_maps
+> > is the same map set the verifier and runtime resolve against, there is
+> > no longer a window in which the verified set and the executed set can
+> > diverge.
+> >
+> > Since we are no longer targeting the fd_array passed in, drop the map
+> > index data entirely and check for whether or not the set of requested
+> > map hashes is a subset of prog->aux->used_maps.
+> >
+> > Reported-by: Eric Biggers <ebiggers@kernel.org>
+> > Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+> > ---
+> >  Documentation/admin-guide/LSM/Hornet.rst |  39 +++-----
+> >  scripts/hornet/gen_sig.c                 |  17 +---
+> >  security/hornet/hornet.asn1              |   1 -
+> >  security/hornet/hornet_lsm.c             | 121 +++--------------------
+> >  tools/testing/selftests/hornet/Makefile  |   2 +-
+> >  5 files changed, 35 insertions(+), 145 deletions(-)
 
-I'd strongly prefer if you moved the tag length check into
-cipso_v4_getattr().  As you've already validated the CIPSO option
-length field it should be a fairly easy check, no need to test it
-against the skb's tail pointer, just ensure the tag length doesn't go
-past the end of the CIPSO option.
+A reminder to please trim your replies.
 
->                 break;
-> +       }
->  #if IS_ENABLED(CONFIG_IPV6)
->         case AF_INET6: {
->                 const unsigned char *tail =3D skb_tail_pointer(skb);
-> --
-> 2.47.3
+> > -static int hornet_verify_hashes(struct hornet_maps *maps,
+> > -                               struct hornet_parse_context *ctx,
+> > -                               struct bpf_prog *prog)
+> > -{
+> > -       int map_fd;
+> > -       u32 i;
+> > -       struct bpf_map *map;
+> > -       int err =3D 0;
+> > -       unsigned char hash[SHA256_DIGEST_SIZE];
+> > -       struct hornet_prog_security_struct *security =3D hornet_bpf_pro=
+g_security(prog);
+> > -
+> > -       for (i =3D 0; i < ctx->hash_count; i++) {
+> > -               if (ctx->skips[i])
+> > -                       continue;
+> > -
+> > -               err =3D copy_from_bpfptr_offset(&map_fd, maps->fd_array=
+,
+> > -                                             ctx->indexes[i] * sizeof(=
+map_fd),
+> > -                                             sizeof(map_fd));
+> > -               if (err !=3D 0)
+> > -                       return LSM_INT_VERDICT_FAULT;
+>
+> It seems this verdict is no longer used.
+>
+> > -
+> > -               CLASS(fd, f)(map_fd);
+> > -               if (fd_empty(f))
+> > -                       return LSM_INT_VERDICT_FAULT;
+> > -               if (unlikely(fd_file(f)->f_op !=3D &bpf_map_fops))
+> > -                       return LSM_INT_VERDICT_FAULT;
+> > -
+> > -               map =3D fd_file(f)->private_data;
+> > -               if (!READ_ONCE(map->frozen))
+> > -                       return LSM_INT_VERDICT_FAULT;
+> > -
+> > -               if (!map->ops->map_get_hash)
+> > -                       return LSM_INT_VERDICT_FAULT;
+> > -
+> > -               if (map->ops->map_get_hash(map, SHA256_DIGEST_SIZE, has=
+h))
+> > -                       return LSM_INT_VERDICT_FAULT;
+> > -
+> > -               err =3D memcmp(hash, &ctx->hashes[i * SHA256_DIGEST_SIZ=
+E],
+> > -                             SHA256_DIGEST_SIZE);
+> > -               if (err)
+> > -                       return LSM_INT_VERDICT_UNEXPECTED;
+>
+> similar above, they should be removed for the header and for the ipe poli=
+cy.
+
+I would prefer to see LSM_INT_VERDICT_FAULT preserved as I think it is
+good to have a verdict indicating a general error in the integrity
+verification code, but I do agree with Fan that removing
+VERDICT_UNEXPECTED is probably a good thing to do.
+
+If Fan is insistent on removal of VERDICT_FAULT from the IPE code
+that's fine, just leave it in the LSM header.
+
+Can you get a patch out for this ASAP Blaise?
 
 --=20
 paul-moore.com
