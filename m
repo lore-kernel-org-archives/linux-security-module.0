@@ -1,154 +1,108 @@
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+Received: from mail-106118.protonmail.ch (mail-106118.protonmail.ch [79.135.106.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9731EF09B;
-	Wed,  3 Jun 2026 01:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7FE37C11D
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Jun 2026 01:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780449268; cv=none; b=UEjcXEFWSEhnz5gGyjEMNsQ0IC9uhdsxFjQbEbjBAqcgM1ddb1R4cOwA4QrQwgcyYO2gwFZnzrP4TiMfSrJQJlkDXndRt+W4zmUz0zPy4WXZG/1HXsk9qygerQoY8Bq04JXlNEl2ACmHUrPc1hY8BHK6QylFJSJYArl67mPd3b8=
+	t=1780450700; cv=none; b=CVrQqSmbXFubsQnq7kTYYIkAtvr91U68gNZ03fSWOA3x9UhU8VFcWKMMLspaeWk/hSEf/DLLyr3IFbJdEbB85vT/cWi8r7EoPBc6NgBwICNlSXQCYbgbzB7lKRAX6HYXgEr+fgcuUOo7vMbam+CR/TOSAAxr6tDcQQWOf46wLgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780449268; c=relaxed/simple;
-	bh=Y+SbZnvOY4DMnp2Isj68xNWBDizdK7mDS0Mm8JfSqC0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OBZvm7t/mR7702VGBCxE5NOwXi/3J2QFUprcnufuTfhklF+q8ZtocjBj1UOWliA8rt9wkOKl+BA2BEODpkJ9ss9omw0E4kA4RPaBTDbvEoiavEPnbPkG2VEaJLjIxAgXeTphpo+9vMkrDMlPw/DqwElMnMK7l8IDKJbibATRe4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 8d534b485ee911f1aa26b74ffac11d73-20260603
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
-	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
-	HR_TO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_TRUSTED
-	SA_EXISTED, SN_TRUSTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS
-	DMARC_NOPASS, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_C_CI
-	GTI_FG_IT, GTI_RG_INFO, GTI_C_BU, AMN_GOOD, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.12,REQID:0d694747-0911-46f5-b171-59a97b40f4e9,IP:10,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:10
-X-CID-INFO: VERSION:1.3.12,REQID:0d694747-0911-46f5-b171-59a97b40f4e9,IP:10,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:10
-X-CID-META: VersionHash:e7bac3a,CLOUDID:a5e38d7ed08b0984efdfcaa3d78922c6,BulkI
-	D:2606030914220HKU4ZBV,BulkQuantity:0,Recheck:0,SF:10|38|66|78|102|127|850
-	|865|898|915,TC:nil,Content:0|15|50,EDM:-3,IP:-2,URL:99|1,File:nil,RT:nil,
-	Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BR
-	R:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 8d534b485ee911f1aa26b74ffac11d73-20260603
-X-User: zhaochenguang@kylinos.cn
-Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
-	(envelope-from <zhaochenguang@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1496129554; Wed, 03 Jun 2026 09:14:21 +0800
-From: Chenguang Zhao <zhaochenguang@kylinos.cn>
-To: Paul Moore <paul@paul-moore.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Chenguang Zhao <zhaochenguang@kylinos.cn>,
-	Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [net v3] netlabel: validate unlabeled address and mask attribute lengths
-Date: Wed,  3 Jun 2026 09:13:53 +0800
-Message-Id: <20260603011353.101776-1-zhaochenguang@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1780450700; c=relaxed/simple;
+	bh=6K4kwWVj+MVW/8WTrSVGKkdwyz8YfNbYNzUN2tzQ5YY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XGZY2wZp62BK2SnCWp89815eHvFl1tUeg76DO5iwc/y4rLGqQ65v7WGxwxuSa9ROcmHoEbwBp/H0yeveWRmpG3xsaGDtjn0lrII+yHFvglj9nLJ8a4gvr8gAPOefnplulFbBr0LUlWF0O31ZGykUf09Ao6bgl+J93znGxiTi0EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=ZxOK2uCq; arc=none smtp.client-ip=79.135.106.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="ZxOK2uCq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1780450687; x=1780709887;
+	bh=V4RAZ7YsxCmaPJkYuxbidNGulBV6q3DaB47ubschr+A=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=ZxOK2uCqHVInKh0XmtoOTk2Y+FABI8H3O9i84g/rzLu2QCHdSn16CBQpvCLL4CPJY
+	 QvG1tZZIju/WdQ/ponqN00a707kw5Jy2AnqnBrFyJP1a6ryKguG7RqTwacnExHoYY9
+	 5hs0QNvsKM1T07ySA6VbqrSeiiaqnFxL9U2RZs9jmd3igVSsHd2LNk3IElIqoliAet
+	 ZeMfLCX5YLZy3x+denNS7IXN244H6VuMKkhOab7W7fr5J/3qFGVQu1JxaABoJPKb/O
+	 9if9b6X62R6HHe7y8OhDVHQNy9WLABD1ZE38IwyBbZMBsGJzTayivSAgZof4nPRR1Y
+	 iLvRbMxmqnlXQ==
+Date: Tue, 02 Jun 2026 17:27:47 +0000
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
+From: Bryam Vargas <hexlabsecurity@proton.me>
+Cc: Justin Suess <utilityemal77@gmail.com>, Christian Brauner <brauner@kernel.org>, Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/2] landlock: fix SCOPE_SIGNAL bypass on the SIGIO/fowner path
+Message-ID: <20260602172741.18760-1-hexlabsecurity@proton.me>
+In-Reply-To: <20260531.irah0eiM3Chi@digikod.net>
+References: <7rvmLIHR1Zh8RDF1IY1-SYRHzErgw9gPHq0k98RLYVsmHqAejjxcuJi8V3QaSbW-SnNvY5tfM2Xn_S1dEajKV_f7iyitoPwJgOSTZQ0nytc=@proton.me> <20260531.irah0eiM3Chi@digikod.net>
+Feedback-ID: 199661219:user:proton
+X-Pm-Message-ID: dd76b6c270b492527521f76e045ccb5f6023a19d
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-netlbl_unlabel_addrinfo_get() used the address attribute length to
-determine whether the attribute data could be read as an IPv4 or IPv6
-address, but did not independently validate the corresponding mask
-attribute length.  A crafted Generic Netlink request could therefore
-provide a valid IPv4/IPv6 address attribute with a shorter mask
-attribute, which would later be read as a full struct in_addr or
-struct in6_addr.
+This series fixes a LANDLOCK_SCOPE_SIGNAL bypass on the asynchronous SIGIO
+(fcntl(F_SETOWN)) delivery path, and adds a regression test.
 
-NLA_BINARY policy lengths are maximum lengths by default, so use
-NLA_POLICY_EXACT_LEN() for the unlabeled IPv4/IPv6 address and mask
-attributes.  This rejects short attributes during policy validation and
-also exposes the exact length requirements through policy introspection.
+A sandboxed process that owns a file or socket can request a signal
+(F_SETSIG, e.g. SIGKILL) to be delivered to a whole process group on I/O
+readiness (F_SETOWN(-pgid) + O_ASYNC).  When it is the head of its own
+process group -- the default after fork() -- that group still contains the
+non-sandboxed process that launched it (a supervisor, a security monitor),
+so the sandbox can signal processes that SCOPE_SIGNAL is meant to protect
+from it.
 
-Fixes: 8cc44579d1bd ("NetLabel: Introduce static network labels for unlabeled connections")
-Signed-off-by: Chenguang Zhao <zhaochenguang@kylinos.cn>
----
-v3:
- Use NLA_POLICY_EXACT_LEN() as suggested by Jakub
+Patch 1 narrows the same-thread-group exemption in control_current_fowner()
+so a process-group fowner always records the caller's Landlock domain; the
+delivery-time check in hook_file_send_sigiotask() then runs against every
+group member.  The direct kill() path (hook_task_kill) is unaffected.
 
-v2:
- https://lore.kernel.org/all/20260528015913.190970-1-zhaochenguang@kylinos.cn/
+Patch 2 adds the regression test in scoped_signal_test.c.
 
-v1:
- https://lore.kernel.org/all/20260522054521.1169755-1-zhaochenguang@kylinos.cn/
----
- net/netlabel/netlabel_unlabeled.c | 30 ++++++++++--------------------
- 1 file changed, 10 insertions(+), 20 deletions(-)
+The defect was introduced by commit 18eb75f3af40 ("landlock: Always allow
+signals between threads of the same process") in v6.15, and is present in t=
+he
+stable branches that backported it (6.12.y, 6.13.y, 6.14.y).
+control_current_fowner() is identical across those branches.
 
-diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
-index ca7a9e2a3de7..870e7699326a 100644
---- a/net/netlabel/netlabel_unlabeled.c
-+++ b/net/netlabel/netlabel_unlabeled.c
-@@ -114,14 +114,14 @@ static struct genl_family netlbl_unlabel_gnl_family;
- /* NetLabel Netlink attribute policy */
- static const struct nla_policy netlbl_unlabel_genl_policy[NLBL_UNLABEL_A_MAX + 1] = {
- 	[NLBL_UNLABEL_A_ACPTFLG] = { .type = NLA_U8 },
--	[NLBL_UNLABEL_A_IPV6ADDR] = { .type = NLA_BINARY,
--				      .len = sizeof(struct in6_addr) },
--	[NLBL_UNLABEL_A_IPV6MASK] = { .type = NLA_BINARY,
--				      .len = sizeof(struct in6_addr) },
--	[NLBL_UNLABEL_A_IPV4ADDR] = { .type = NLA_BINARY,
--				      .len = sizeof(struct in_addr) },
--	[NLBL_UNLABEL_A_IPV4MASK] = { .type = NLA_BINARY,
--				      .len = sizeof(struct in_addr) },
-+	[NLBL_UNLABEL_A_IPV6ADDR] =
-+		NLA_POLICY_EXACT_LEN(sizeof(struct in6_addr)),
-+	[NLBL_UNLABEL_A_IPV6MASK] =
-+		NLA_POLICY_EXACT_LEN(sizeof(struct in6_addr)),
-+	[NLBL_UNLABEL_A_IPV4ADDR] =
-+		NLA_POLICY_EXACT_LEN(sizeof(struct in_addr)),
-+	[NLBL_UNLABEL_A_IPV4MASK] =
-+		NLA_POLICY_EXACT_LEN(sizeof(struct in_addr)),
- 	[NLBL_UNLABEL_A_IFACE] = { .type = NLA_NUL_STRING,
- 				   .len = IFNAMSIZ - 1 },
- 	[NLBL_UNLABEL_A_SECCTX] = { .type = NLA_BINARY }
-@@ -757,24 +757,14 @@ static int netlbl_unlabel_addrinfo_get(struct genl_info *info,
- 				       void **mask,
- 				       u32 *len)
- {
--	u32 addr_len;
--
- 	if (info->attrs[NLBL_UNLABEL_A_IPV4ADDR] &&
- 	    info->attrs[NLBL_UNLABEL_A_IPV4MASK]) {
--		addr_len = nla_len(info->attrs[NLBL_UNLABEL_A_IPV4ADDR]);
--		if (addr_len != sizeof(struct in_addr) &&
--		    addr_len != nla_len(info->attrs[NLBL_UNLABEL_A_IPV4MASK]))
--			return -EINVAL;
--		*len = addr_len;
-+		*len = sizeof(struct in_addr);
- 		*addr = nla_data(info->attrs[NLBL_UNLABEL_A_IPV4ADDR]);
- 		*mask = nla_data(info->attrs[NLBL_UNLABEL_A_IPV4MASK]);
- 		return 0;
- 	} else if (info->attrs[NLBL_UNLABEL_A_IPV6ADDR]) {
--		addr_len = nla_len(info->attrs[NLBL_UNLABEL_A_IPV6ADDR]);
--		if (addr_len != sizeof(struct in6_addr) &&
--		    addr_len != nla_len(info->attrs[NLBL_UNLABEL_A_IPV6MASK]))
--			return -EINVAL;
--		*len = addr_len;
-+		*len = sizeof(struct in6_addr);
- 		*addr = nla_data(info->attrs[NLBL_UNLABEL_A_IPV6ADDR]);
- 		*mask = nla_data(info->attrs[NLBL_UNLABEL_A_IPV6MASK]);
- 		return 0;
--- 
-2.25.1
+A/B verified on 6.12.90 + CONFIG_SECURITY_LANDLOCK (same .config, only the =
+fix
+hunk differs): without patch 1 the new test fails (the non-sandboxed parent=
+ is
+signaled, SCOPE_SIGNAL bypassed); with patch 1 the new test passes and the
+landlock signal-scoping suite is 20/20.
+
+v3 -> v4 (review feedback from Micka=C3=ABl Sala=C3=BCn):
+  - patch 1: rewrite the commit message -- drop the "cache" framing, lead w=
+ith
+    the threat scenario, mostly "why" and minimal "what", "process" not "ta=
+sk";
+  - patch 1: drop PIDTYPE_SID (not possible for an fowner) and use the defe=
+nsive
+    condition "!=3D PIDTYPE_PID && !=3D PIDTYPE_TGID"; simplify the in-code=
+ comment;
+  - patch 1: remove Reported-by (implicit with the same Signed-off-by);
+  - send as a proper git send-email threaded series.
+  - v1/v2 were sent to security@kernel.org (embargoed; not in a public arch=
+ive).
+
+Bryam Vargas (2):
+  landlock: fix LANDLOCK_SCOPE_SIGNAL bypass on the SIGIO path
+  selftests/landlock: test SCOPE_SIGNAL on the SIGIO/fowner pgid path
+
+ security/landlock/fs.c                        |  9 ++
+ .../selftests/landlock/scoped_signal_test.c   | 97 +++++++++++++++++++
+ 2 files changed, 106 insertions(+)
+
+
+base-commit: 6f3ed7fec72fc8979b2a8c7219c0a9fcfc8d07b5
+--=20
+2.43.0
+
 
