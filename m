@@ -1,106 +1,169 @@
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7CC2EAD1B
-	for <linux-security-module@vger.kernel.org>; Tue,  2 Jun 2026 06:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780380945; cv=none; b=PFRNKNtkKSJ5wia1PbiEsnQRi3Ud/gQmGjM8WYXjPUJ8IGJJin3rb16mhRijIUZWc7HGZGwC0jOisJ/AZW0/91i/lBPNdkFMnTAaFQeRIENeK/rdVcadHtHSme/P77uEvUeMgycHmi0N9MMfsFRV81CH+tTUmkFSTJb7G6FEQa0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780380945; c=relaxed/simple;
-	bh=1X/bccwOfssWIS6ajyQ189AljJH2LtuBT18CMIZ+1Ls=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kcrP/5oisw7dHv3lgDVaYgaxcTVoYHc3Gn5xL4WCR18zQFFQZHNy1K3aImYN4Oc2CL3rm9psmRFaGMNGzJ+9iXXrhZgIHOkv8zazh9pRoRV+k5SKqHdsz9oyhAsg3wNhwpLA3StTYt6x68WrcqnvXjB0KiU5q9zx/nHU1N6e8Q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZXNPCuao; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9206F3D16FC
+	for <linux-security-module@vger.kernel.org>; Tue,  2 Jun 2026 09:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.172
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780393357; cv=pass; b=XG1rVsBEaW2B38WoTmiP7iPdDnkFNfgTVCFk0u8qNT6WGfyZthzSG03XakWyYoh6fdnSZN7ziR6CcBRlVP9H7gOmbTjxw2N2yf9bOmN1LFZUckemFsCtfgrRr6H7CcqRAhzAKihFZ/Xp+CTRYqw4A4PJGBsWla15LEm3wqyD9Pw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780393357; c=relaxed/simple;
+	bh=AhL326c1YdAwbi5q6PvrTRQ6TefqA6HxsocAsD+zo5U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lp077cKj0Uyz7ZTqimFCOU1LZxuawzU0/V8yR2Ea0HZz1zevBDq5o0NySREtNGuRVP26FBhIHPQZ4AmNsvSXHMPO8WXGPqnmKeRp8PHttXisp87ueztDMWffQwaVAF7BcpdoDwnjgQO68bZhRJE5fsg9mkoc4KBE79CGpllfQvw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ctWka/32; arc=pass smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZXNPCuao"
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-49045f93baeso74088765e9.1
-        for <linux-security-module@vger.kernel.org>; Mon, 01 Jun 2026 23:15:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ctWka/32"
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-4864abba33fso153321b6e.0
+        for <linux-security-module@vger.kernel.org>; Tue, 02 Jun 2026 02:42:35 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780393354; cv=none;
+        d=google.com; s=arc-20240605;
+        b=PAbxy5cUfPnyaCaVrraiNq1+EaYnCZ11rNesNdKZ1wob+4uPVi4ck0n5Y2F1KWFVRV
+         u1W6GferJxgCYmOF4gCfFkpZp4OXDWhoO9P/cxCmX83hXYTRay1Y2qIzdBFdvVaLmu7I
+         Fzh4pbwabxgMY3WKJsx+XyXX6tP+Kwiz9tIC5Vf61g7xwe70zbcSXyZ6Y0eHersHkgNl
+         mP4GuQEYsxl2dSbiQ8woP7ToAcgucGrTzSa4C2VXejBXI31Ki7Pmt8WhhApzDt1qvfAF
+         Uzt5BxE6rISP7l43qHKUXOo+cg2xuKkxKo9QID2NASw98f5JoOWPTVYRxWNdxFA43XLD
+         9+6w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=2WN709sXoGtblvRyrImhrRUuQENQMA3uMpblskCxCeI=;
+        fh=er7XJLEyXb1uFmkh55gpSZl1Sfj6JtncwwDZpyDWfy4=;
+        b=ajq8Yb+RdKL4Cx+7cl8VBmNyaP4q4fU6x7uBlzMc8ijzSrR99FFivS68wL0mkTPefE
+         jXxln3Fpeifxld0iGpSweNZDy7wsxtAl7WINBRroOrqUi1JQmHlcdydoN6YoAhq8WzoE
+         9hTShGvTWKJl2Bsf6HgGMpbly6/tcjVJtU5lYqJpzxQt6JJuPwPNEzKoM/bqicdndulF
+         iVM6kIZeUZn4kKDQtsdaccKKqGIKR/7KG/8skhz9vHIQ31G9zkw4N4j9gMEoall0zhAt
+         vAu0NNQCLkkB5W2IvCBV9C2n831/U6pf+hCtqk5nHvgrX5EcV4Y6Lv0XglMzTbnkwB+8
+         2h8g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1780380943; x=1780985743; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XgRgw1IKC03OLwNyxPDI58QMkRMSvSCj4bII0pkMkMw=;
-        b=ZXNPCuaoeorrH6dKoluuANYDEtScJKv3GR58TIMUYz7vkUv8hE3oA/Avwdg4Ejr2IC
-         mSMqLHA5t3OEfRMWxFI/euhVIDH6hO+N5OTkJCSsuiNMEFfyjTE9a2enEaA9ttmirwCn
-         G+omSuOWWaaye4QbjW3MQ6MmxIAZFULSpxQ3PAP4lTo2IVobfM5v+9za5QYi+hb+ko7S
-         QlDW5caSFfqEmsQbBis9rkG3jv54us8ejPlWQOYLk6OKmy6ZXRh86e9Oj7I554ZBtT14
-         sOIYqSvSCwOyZQwuw3tunwdg0rhTYzNcRe2nDpeZ9QmFAjJ+dXhwFY6+4CszCj3Gyk8n
-         AovQ==
+        d=gmail.com; s=20251104; t=1780393354; x=1780998154; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2WN709sXoGtblvRyrImhrRUuQENQMA3uMpblskCxCeI=;
+        b=ctWka/32L0p9k9rRF89Abbcq4eFeaMTFfzDIYlQ1ye1U7jMF80LqjJqMFlFUf2Esaf
+         7bA02vZfCW0AkXNgJMGBzlbmv2Z4i1bXrhWR8jbjd9WQv1JKE1w2XJk06P3xuWB1zR2v
+         JoaGqOrwEJuTrFPJLXAe1tG7tb2ircWgiRdqqDFS7MkE3z65hAzJMIPab4B5JMzCe/QH
+         tKYdCeX4aWK904g0qxJuoic5LwlHDAJvsEgTguYTHqhqEcfOsmXTFLoZw2N0er8d9THx
+         ZzrXfzojP4kiTcLMRquOIuytExLNseKC5zX6JOQXuEv2+kJ5LA7AjLI8mLAFiS8EiHQH
+         0P2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780380943; x=1780985743;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XgRgw1IKC03OLwNyxPDI58QMkRMSvSCj4bII0pkMkMw=;
-        b=a54JdJFtqjgoYjbyweLSL+V7zrkdna8KecVdxXcePbEMyDvG2348mhvJxwetkoTEOr
-         BSa714oM55YmfzvoU3qnRPBxdgo5CdRBvELga8LDsaus6ObaVc/qtyubP7yr26jnd5e+
-         2npW6uXCws+fxM2pghYyBixgtjAGPZt+1xCcTrDZeIcpZkV216SX3io1iEF4mpDVk69T
-         oPUNPqi5H2Sf8eTMKu3lE/XbO8MKNcFrqRZnRGMTaXKVBdB9+mpCsayE2gnT/y26SGyp
-         PsggLP60bP6GHub/GeImDaoSfAyhCrlCC58o5HTG5GVyjphNglqcDXXFKImcnhXiV5UF
-         SVTQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/9IBjFcwhhfOyObhehRzAPKvj6F/L7P+bU9iENFxfSzKzgctzItAOt21rdDGgX3CnLKgRIgrkros00p2sieWjntPAK7oE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNCtSyUojsWaNbaUHhXONhAhD1fhXA54Tk2pJd3SuCp3QmFa9L
-	2RGzKeUtSUCaoEOfrjlOHn/2dk/0pu7bUwTVnC7h97ZOzVJvA9G3rP8Bgov+QJxPMRmIPzoYiYr
-	G8+NAuiqRiuMQpMSeKA==
-X-Received: from wmaw13.prod.google.com ([2002:a05:600c:6d4d:b0:490:b22d:da02])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:c0d2:10b0:48e:7854:1608 with SMTP id 5b1f17b1804b1-490a2938f7cmr185302145e9.25.1780380942885;
- Mon, 01 Jun 2026 23:15:42 -0700 (PDT)
-Date: Tue, 2 Jun 2026 06:15:41 +0000
-In-Reply-To: <CAHC9VhR5Ca+WyP2OiNGtL1SqHn0SwLe=M9SB8D2bxtdS52quhg@mail.gmail.com>
+        d=1e100.net; s=20251104; t=1780393354; x=1780998154;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=2WN709sXoGtblvRyrImhrRUuQENQMA3uMpblskCxCeI=;
+        b=XHvqFCkiofLsBeY7wxUawB1ijDRS24QIfKCpp+jeYUds+Q1gWn8X+mVwcH4q3SPVK3
+         QRrTcljE7o4dnV5I1//tshacTlCDghbv0un1wOvBmwLeNZ5dO7A7Qpz2A+6lYRUdvoOJ
+         GzO920NZPLv9uPf4FW1iqvb3xUVF25t4VbGH+58wKM7/xungldMGXdBuYUkj2YxdI5lB
+         XdthwMxtVe4oTuwRBFKMdu+ag+BxUWZUszlK1dWC7B5H90nH9TaQNf/fSuWt2HsWiq/x
+         AlsKSe5ITzkCxcIb5XDeKwkcqB1ZhLAcuoNzae20MHwqO8InvjoJVX9lMg8lfA/Kf3IK
+         K+kA==
+X-Forwarded-Encrypted: i=1; AFNElJ+svbeJjlWMHatKEcoSSWi6rEQkvPUyqYa7btFu1lJbly5xMsaB4OJhH8S5Yp5cciat8DuZsyIUnxeQd30pHV9jesqVqBo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVWhck0mCPRtvrq2Ru2c2Ls515RD8T40ddIOonSfvpPYg6Vdts
+	t/D9uDaLSOA8nX9W4IH51c3X0BMUGXPmo9O2yC2QzUNhi3VacqAX472zGqJx1YKeqzauFLTzqMK
+	DLcdasJDsyJUNYwJevxnnIc7aBqv6OK8=
+X-Gm-Gg: Acq92OHkObpHl2NbN4LmFohDDsnYOdoRBuvEadrSklBiZ87bpzoFUFphNJEWw050+dH
+	YzWRvWM16T7C/blnnj0PL/GvujTYhapGZwHgEUNVLQ6cpFmYLJeLGCUW/QQXS6/Wn57W2J4eEqo
+	TtzsFs2uZlhsNpNgDD0Ma+XH72zitiwNirso4SFmFdkXineI2F+GV16L/n/TFSu4q0kVYUJisvd
+	RSn4WDdGMuFmjeDg8kHDJwKGw+qITiMU55vO259Zpae7A+JwMBoN69OxfLlrtgpRO2jHJgQuC2l
+	fj6DvH7i3T/D6+xF6R6WzzU99bF9Uo9P00P939lMFVd0LKCA0NYTV68WgK+O2G+BFfCjPpUmO5E
+	BocEY/RCbeOTG01Q+0Hm1ZRduVZHN/h8=
+X-Received: by 2002:a05:6808:e86:b0:46a:17b8:bd7f with SMTP id
+ 5614622812f47-4863e7c2d94mr1611036b6e.19.1780393354616; Tue, 02 Jun 2026
+ 02:42:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20260529-remove-task-euid-v4-0-07cbdf3af980@google.com> <CAHC9VhR5Ca+WyP2OiNGtL1SqHn0SwLe=M9SB8D2bxtdS52quhg@mail.gmail.com>
-Message-ID: <ah51DY5yfaNZejBd@google.com>
-Subject: Re: [PATCH v4 0/2] Delete task_euid()
-From: Alice Ryhl <aliceryhl@google.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Serge Hallyn <sergeh@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>, 
-	Dongliang Mu <dzm91@hust.edu.cn>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Jann Horn <jannh@google.com>, 
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20260529033406.20673-1-hanguidong02@gmail.com> <aho3CYdv8lQd2s85@kernel.org>
+In-Reply-To: <aho3CYdv8lQd2s85@kernel.org>
+From: Gui-Dong Han <hanguidong02@gmail.com>
+Date: Tue, 2 Jun 2026 17:42:26 +0800
+X-Gm-Features: AVHnY4J3U44_QK8F7qYis9j67ueNmOkF5BG_lTDT6BBkwq5FJDnvTbsRP1vkKJE
+Message-ID: <CALbr=LYaca4+=hTsZJORQfrtzyUAGo8c+4ZEgkzgkFWQDWNJBA@mail.gmail.com>
+Subject: Re: [PATCH] KEYS: Use acquire when reading state in keyring search
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: dhowells@redhat.com, keyrings@vger.kernel.org, ebiggers@google.com, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	baijiaju1990@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 01, 2026 at 07:13:37PM -0400, Paul Moore wrote:
-> On Fri, May 29, 2026 at 5:33=E2=80=AFAM Alice Ryhl <aliceryhl@google.com>=
+On Sat, May 30, 2026 at 9:02=E2=80=AFAM Jarkko Sakkinen <jarkko@kernel.org>=
  wrote:
+>
+> On Fri, May 29, 2026 at 11:34:06AM +0800, Gui-Dong Han wrote:
+> > The negative-key race fix added release/acquire ordering for key use.
 > >
-> > The task_euid() method is a very weird method, and Binder was the only
-> > user. As of commit 65b672152289 ("binder: use current_euid() for
-> > transaction sender identity") Binder doesn't use task_euid() anymore,
-> > so we can delete this method.
->=20
-> Given the problems from last time, it seems like it might be prudent
-> to let the commit have some time to "breathe" in a proper release, I'd
-> suggest merging this not for the upcoming v7.2 merge window but
-> instead waiting for v7.3.
+> > Publish payload before state; read state before payload.
+> >
+> > keyring_search_iterator() still uses READ_ONCE() before match callbacks=
+.
+> > An asymmetric match callback calls asymmetric_key_ids(), which reads
+> > key->payload.data[asym_key_ids].
+> >
+> > Use key_read_state() there to complete that ordering.
+>
+> OK, so... I'm having a bit trouble understanding the exact concurrency
+> scenario you're trying to describe despite I think I get the fix itself
+> i.e. it is not pairing with mark_key_instantiated?
 
-Sure, that makes sense. I'll resend after the merge window.
+Yes, it is intended to pair with mark_key_instantiated().
 
-> > My suggestion would be to merge this through the LSM tree.
->=20
-> That's fine with me.  I'd also suggest updating the commit description
-> in patch 1/2 to indicate that binder is no longer using task_euid();
-> it currently reads like it is still being used.
+>
+> I'm a bit puzzled too why this was not done already in the original
+> commit despite introducing all the primitives.
 
-I guess this occurred because when patch 1 was written, it really *was*
-still being used. Perhaps we could pick up only patch 1 now since even
-if we run into problems and Binder has to go back to using task_euid(),
-clarifying the docs is still useful.
+The original commit added the right primitives, but this site was easy to
+miss because the payload access is hidden behind ctx->match_data.cmp().
+For example, the asymmetric match callbacks call asymmetric_key_ids(),
+which reads key->payload.data[asym_key_ids].
 
-Alice
+I also checked the two pre-existing issues reported by Sashiko [1].
+The uninitialized-read case does not look possible from the code, but the
+cached-error issue is real and was dynamically reproduced.  I can send a
+separate patch for that if useful.
+
+Thanks.
+
+[1] https://sashiko.dev/#/patchset/20260529033406.20673-1-hanguidong02%40gm=
+ail.com
+
+>
+> >
+> > Fixes: 363b02dab09b ("KEYS: Fix race between updating and finding a neg=
+ative key")
+> > Signed-off-by: Gui-Dong Han <hanguidong02@gmail.com>
+> > ---
+> > Found by auditing READ_ONCE() used for synchronization.
+> > A similar fix can be found in 8df672bfe3ec.
+> > ---
+> >  security/keys/keyring.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+> > index b39038f7dd31..243fb1636f10 100644
+> > --- a/security/keys/keyring.c
+> > +++ b/security/keys/keyring.c
+> > @@ -576,7 +576,7 @@ static int keyring_search_iterator(const void *obje=
+ct, void *iterator_data)
+> >       struct keyring_search_context *ctx =3D iterator_data;
+> >       const struct key *key =3D keyring_ptr_to_key(object);
+> >       unsigned long kflags =3D READ_ONCE(key->flags);
+> > -     short state =3D READ_ONCE(key->state);
+> > +     short state =3D key_read_state(key);
+> >
+> >       kenter("{%d}", key->serial);
+> >
+> > --
+> > 2.34.1
+> >
+>
+> BR, Jarkko
