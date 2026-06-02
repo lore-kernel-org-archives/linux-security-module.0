@@ -1,195 +1,137 @@
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E8527442
-	for <linux-security-module@vger.kernel.org>; Tue,  2 Jun 2026 01:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1E6306764
+	for <linux-security-module@vger.kernel.org>; Tue,  2 Jun 2026 02:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.49
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780365599; cv=pass; b=BvcR5POIHCkNVGpgSKxMzHQsRmKYG/5T8pGy3T9jZ6NqkYcJLA+hpgKlTGRgrx0gKB6HJCFYBegRB/jLQ3Twpo668PSu7ownMtCvEeQSkW5e6Jk26FOW74Vr/3DI/ivICYA0UVXie67MDhnIDlJV0yMfqu4DCXPkl9Ndi/z13Fo=
+	t=1780367158; cv=pass; b=pS0PTD/Ei/UNYQZcdUDcGKPxC8bbG2NZQvIO7QwsT9K6v4eOvf4aJM9QVCRwbSkaxm+ZoOkk5/r6SeZCtb0xw1s3QuOMcXq/euT951ykDkd6C6UO2ECQLq1QE2EaFlD2hCtYaYhQq76SVLSqnhoQiO4CHrgiK5XlNOHQOqcqn6Y=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780365599; c=relaxed/simple;
-	bh=aKSmv1zJjEzb0yNeulxtjZ3gJVs03YKp9+1MDN8O8ec=;
+	s=arc-20240116; t=1780367158; c=relaxed/simple;
+	bh=SHfdS2VEWAub4TyYyXoE7ajtUpi3U0jl7n1AyOddBXk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tFzWGlV2CeNU7BpXs4OjWkv5TfIjb07fYWUTenr42yY+ylJGwhvalWVxaZjEtUtOxtm+yLHsV4LOQCrL3gF9+xHnZh1BKlJ/nK7bb23Wy8usU70owxN6J+8aUmtfJxGFie2vy1WPhyvSJRibA3bchGoqDipbr5xF/trz+xW1B2U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=aBPBfR+A; arc=pass smtp.client-ip=209.85.215.180
+	 To:Cc:Content-Type; b=YIOSvqRwNdV33CWG6mkyJBPG7TcWEcWO95PX1dVzjk3hk99c6UWKQKgycuZPggddD4kSKUnEDUbeGwKhH4+KUiIFAB3axm6O1WVcNiwlIE2t9+ennyKd5Wyl6GMFdJyfSwspCwexnzGKEyPnE3m/Bf79tfd7I+hkN1yLU3XweRI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Hy41QQgt; arc=pass smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="aBPBfR+A"
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-c8584e80bd9so996834a12.3
-        for <linux-security-module@vger.kernel.org>; Mon, 01 Jun 2026 18:59:58 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780365598; cv=none;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Hy41QQgt"
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-36b9ec98144so3079067a91.1
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Jun 2026 19:25:57 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780367157; cv=none;
         d=google.com; s=arc-20240605;
-        b=Zfo8jL6LjyKtBdVrZ0DtxHip6+h0Rpk+WJxdF57TW8O/60c1ealVIIqXTOH8KSJ1O4
-         2Gf7L/QAQKdtHtauZhAoItvQgdmFy5YIXo2ywnM9gtyzCBP4zTuETE71SCFwiGdkcB2y
-         1kZ+tiHaRGj5+geyKENyxY362XpQfk7+h7OrZE1c+nspfBOluOoibiy/z+1zmpvghx/f
-         KcEgecYpw9oJw+qQIoMPhg8dQ9VDlVZr5z4sUToFc3HS/7jfqdMJx09lXYwD1YMh8tyc
-         Fxjh7uvXB28Btg6igUjNDlqad41+s7XyQKXyK7yepIP+NG1HWQTcF1W+HFsM/6tG9WBQ
-         aatg==
+        b=EI6Tap8voBzHmiJW9G5/wC40KeK5ZNIY+Z6zm/OKl6MYHL/K3Ln+uDRDI8raydub++
+         3iBYzSP7fQ08wWZs4cPzIfqSFuLpfeaM+fw4JBqfuU4M9+tRedR2hm0QimfaQ7HMNnBk
+         feaNHL9ukzqhSlnAv1oyKQY0z5/R0jjskP2TfkYgakm7M0rB9DfYIi5DosNl881z0XxS
+         9/mR7UJgBFKM7YKRWXzve0ipDqITU0DeMMRlj7+BEkp5LgT7g/NXwv8nhoErFPQDEE+J
+         R+5EGbg0PRo026+zUuqmxvbObWYvEqVZ1VVmaYECk627Q1A3F2QVyvD/2Y0AcM8cc9Pb
+         0uww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=C1nxm1W1tNWkw2g36V2zj1adnGyyifhC8OviE5jCXp8=;
-        fh=b+LL+FRpTAdYXCJr2AXSyFq/lZSxnG3tX10Rledw+7Y=;
-        b=ELH/E+UbnICnQ+FB+WibURNIC8f7uem41XdmWmPGqeR2okXOcuPz8R+0K95VXbPFdt
-         WErnCjCeOGHGS0OClKFnVEAcJwi7Qc/ta0V/TOJnbRgy1itQkYfyBImiV8D9jhVL02vP
-         pfIOCFi+rOeXqD2hYQhS9O9YWuWrFZey6/EmbcTrxr5AR1ydqVeK5OEiZ7jBz0VOnzE9
-         vcfh0E1cA5RmhsC+nE8k5fQMixkIYz1KUapIUfK+AbTpacgDeO4wZ3h73y9vZYSovKi2
-         gWNMnl4NXHVKY7LGejVxL2QJMWpiw9mgKXh9BOjbksc81gKkpJDXEhuOJ81rF/NM4CWs
-         wVSg==;
+        bh=S0Z1nJtgWy+a38xLnHO1hVIRfg2cTqLRzxBCr4E8BSQ=;
+        fh=72uGn3ZXOlirR+WZj9+/JYLzOJh6X08XkjEIfxr3vbs=;
+        b=ejhYMPQMySf+65hRJsyqXadwwCRe18z0wNW87oeSz7kJJ31GlNxmIlqXv4WQPq7vik
+         1cpKEpHdEdpKry92x9souxhO3Q7+Z5jI18UcX0AqaOmlZzLv8xpaohRYZQ1Gh6efB2tg
+         lcJ6+q218WOmMZsrTZ/ZkxG82jipB3ppVHCjDGcFYA4e6fYh98dJYAvq340BsSFFn0MD
+         b3zlH64xXLqEJ1Ke03j9xc4anGM6iTK1/yGfOE64wR0p2gH1qkAJVlUvNwjrhPdBdf9h
+         temGuMJsvo1yt4+r/r22xjFrl/0CfcDr9LivTm73IXrmFIuf7A6ZF5e2+zZaT5SVC8BG
+         iBTQ==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1780365598; x=1780970398; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1780367157; x=1780971957; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=C1nxm1W1tNWkw2g36V2zj1adnGyyifhC8OviE5jCXp8=;
-        b=aBPBfR+AHNrTPy7ShbyGsCwAyot6xOv79GvNEN7/YGYgC7KyAqIj1knK5gq3BGCNiC
-         dC7Ut8JHJE2IYZ6THvGDmrU0eubvoXSVJOkvVz1bsyNcQDbKWaaK+lXAPZtpvxt2t9bu
-         grKlmQ4H3VN4bm0pfMR3uZPDEOW5+a+hyj/pN5nBCxMH0KCJoMB9VI4Hwa9Ear+VKnfJ
-         ZL/duAW/osLUpwQtJCm+hKvg74OK4ccZDlEx4m2vQ1RDpk2ZX4kfvO6SX+xYnTQjhLp5
-         uKkTxLqa6aLXxvEtpAb+8xShgB04dl+j1uYQKLFNjFuV4U9E/N3dlGBgTitzQdNh7KYM
-         kW2w==
+        bh=S0Z1nJtgWy+a38xLnHO1hVIRfg2cTqLRzxBCr4E8BSQ=;
+        b=Hy41QQgtm4LHC0BkWBuC7zmrfKiGZVGcNEZcTj1ohBYWlMZ8rIj95OlPqefxtiB121
+         v/UXCmDPUicVucAGuAU/8Acy09ylN2cgMBQQsL6sJL5LVjMmYINJOuzVgO7Xu+99dXK1
+         JyWqanz7UKuM7QeMrIAdRQqFzTxhIelWOr2OskNSVN7Ka+FwG+n+HwRbrOQT1MAly+RE
+         MeAOCWDPZ/IFFvOlF6dzVbJGbtqw0KReP5KeXGxU6SDdF0SE2M9p561vtP8upPY1XUhH
+         aNo22xa1SVLB9Q2Of7FGEaKl7hSaYV5D1OUhM6sm/8P07lY8LZ2lIbtnEK0jxtLejOhv
+         YPzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780365598; x=1780970398;
+        d=1e100.net; s=20251104; t=1780367157; x=1780971957;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=C1nxm1W1tNWkw2g36V2zj1adnGyyifhC8OviE5jCXp8=;
-        b=lGOfWWNsyRY7qEDhq8N7euFwUH+74wFXXquF9kz/EwBsnUrd7FZYAeD4qPpU6Mh7gk
-         k9Cef4sDVg6fJvGSA8X0XJ67iESsPWelx0A7GsMg8mwXKcZdCxz9qMvJmrdiTcWpPZU4
-         vzeHwj6VfpGHSBksE2ixBisCdhakwz32m0gaNV2VYWDKFK60EQ2U9n6leu3LvuAKvJ6K
-         2Gzte8x3mRZfPeBmflg7DGg9DZTpNm2TZN3+MuUdZ2xlqnb1GJSFh51NyUprs3DY1zEg
-         VHgyVeF2iCvhWp8xxj+AIJpbddRDwhg8qWmsbyYtALpTWo+hcLjAEo2j4eXRI7OtN3eQ
-         2qTQ==
-X-Forwarded-Encrypted: i=1; AFNElJ8AN4Ld9DAIihRfw3vHVoFIV3fhrUrgqzaDrTmQycnHKnTUJA6kzISwAq2xxFVovSuALszZrK+RmclLat8yYuF3qKl4/YE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDeXMQXzw+hC72wd1dI/aqzhqkBcMbpHGWbTKxOfGBlBj7JGCW
-	w6EfSkfrliAXqzNnZcI3wpYVzGqVZP3da9g2wONwBfWEYA8fS81WjMxBvwy5gLBRpCBuz6fFzhq
-	axcPFusIqjYNW+ZQXV+bgiC+TdrSSLGgXqp/cZHwt
-X-Gm-Gg: Acq92OGB8pxLFtz+kk53Ctee03hKC+Cqilu1PyabjgBblnLnEdwNDfJgrHFiu4eVEYQ
-	p6eVfCwfiVf2dVXosYNFpjs+k0FmnkY/urDyOXbDabzS4SafDi3NgVrtMEUh8qs5hluntQ+ma28
-	vkn+ToAR5v9FyZxC7ucQyTttKW+jUgYZhbRdme27cso/qkYgs0Iu9UKtTY3T1p1MFfw8+ZJMefL
-	OveyP/sAtQ9l9D67KrFoc8IsfmeudGs8Tcp1Cj4M0EcYjydk3iakALYnfnBaJbdH7aX/KJVaIrQ
-	dUy4Ey9I2LFqutNNdA==
-X-Received: by 2002:a05:6a20:d709:b0:398:9662:10ff with SMTP id
- adf61e73a8af0-3b427e7bcc0mr14933199637.4.1780365597844; Mon, 01 Jun 2026
- 18:59:57 -0700 (PDT)
+        bh=S0Z1nJtgWy+a38xLnHO1hVIRfg2cTqLRzxBCr4E8BSQ=;
+        b=qXKKrJfW0YfYjWGfpgF0Nwb4wZWWX1KoilvZKvZWsR+5W86Pv043rZokvJgD1wnlqc
+         25+ECF4ROEhd3tQ72JW7a2vOIN2Pzmgh7tRPVAhwSEfRSsscMziFGnPaNVqxGluIwABD
+         fGLLrQJ2HW/iH32LuNtQKMHc+GOsWtvNxxCKDpJyVGaS8g2SEsN6XM6cMKu7/CPTGsTP
+         R6tPm/wlObQhKzZLYZIKIfRSVtdvxrbdcTHYSNQ6sr4d0/c2AEZV0Jdfnk1nyhZ67g+Z
+         4xml18fMNfYMjHSCpVhVNRgUFppGXhy9sKD0KSNwMvb7tgqrDBwOJkcKh3s1oIWzCfbw
+         6GLw==
+X-Forwarded-Encrypted: i=1; AFNElJ8j4Zc05YEp4EmXG3DrCIsy/fzmzcLWG2JLB6/tUsOsoyd7TIlSBjUz0sz6l6jgEeRrxZ+V6MdurKrAZx6+tUj7lJsL0+Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0FI2tYb3nhSgtfOziSZjqfRjq7kLMfVzRe0mFFg9Yv/SbCX93
+	hGhYqH51klCON2iU53t/435SQUzLi37LPwNd6xCa2niL2mHr0QDGVPywc/djzCFmTbJYUvpw5aA
+	cdwZAkRLD1S7Vm9R9TVDhYw5HzPOZCveMXP0fxCl1FnGuEYV6BWWx/A==
+X-Gm-Gg: Acq92OHSdPBNgAdEj5s40lr3SqYWaI2l8Ao1DlmM3uJjskzw+NgRBlBwsa0qcP4e7G0
+	eR7dsWBl3Tb8RZvvXAMBT2eetIS9MUFla4ZM4bVttyg35mQtg7UldfXi2iPIRDe1xEaCgWWPwUw
+	pUlwNsSxa2dpXiRDx1mgiHJ13lLzsafX6EsxhlmyU9dD21e1ukm1IYoB7Z6rPwWBUGJzk2/4jzn
+	w7HvYpnWq2ia6CvqhrnREJQoF5cC0Ovfznx+Si5GvkwPx9UvOPC1YAxu0seUqxVzT30v+HuO9pr
+	NeX/V96tmC53nOmUvQ==
+X-Received: by 2002:a17:90b:190c:b0:36d:689a:cb27 with SMTP id
+ 98e67ed59e1d1-36d689ad524mr7937838a91.24.1780367157009; Mon, 01 Jun 2026
+ 19:25:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260526153542.105483-1-ethan.ferguson@zetier.com> <20260526153542.105483-2-ethan.ferguson@zetier.com>
-In-Reply-To: <20260526153542.105483-2-ethan.ferguson@zetier.com>
+References: <20260528015913.190970-1-zhaochenguang@kylinos.cn>
+In-Reply-To: <20260528015913.190970-1-zhaochenguang@kylinos.cn>
 From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 1 Jun 2026 21:59:45 -0400
-X-Gm-Features: AVHnY4LYLppJyI0GtT2L1ntX5d_bjbORH0XJS4JbcbvJff3aZf6CLkC7y5OdIYY
-Message-ID: <CAHC9VhR+x7nKM5khLtLArUseCQ+sw3C+bNO9DB16BC9mtq1NRg@mail.gmail.com>
-Subject: Re: [PATCH RESEND 1/1] yama: clean-up ptrace relations upon
- activating YAMA_SCOPE_NO_ATTACH
-To: Ethan Ferguson <ethan.ferguson@zetier.com>, kees@kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Date: Mon, 1 Jun 2026 22:25:44 -0400
+X-Gm-Features: AVHnY4LEslACqmhRDmjIDxORWlDmheu5ptft12NvTVjJPoPavYK0NILJ_kRg5ow
+Message-ID: <CAHC9VhThD1mhAZDwkirTOnYxycSAghW4RxyF9DZxOH-=TUgS3w@mail.gmail.com>
+Subject: Re: [PATCH net v2] netlabel: validate unlabeled mask attribute length
+To: Chenguang Zhao <zhaochenguang@kylinos.cn>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	netdev@vger.kernel.org, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 26, 2026 at 11:35=E2=80=AFAM Ethan Ferguson
-<ethan.ferguson@zetier.com> wrote:
+On Wed, May 27, 2026 at 9:59=E2=80=AFPM Chenguang Zhao <zhaochenguang@kylin=
+os.cn> wrote:
 >
-> Clean up ptracer_relations upon YAMA_SCOPE_NO_ATTACH, and prevent
-> further modification by processes.
+> netlbl_unlabel_addrinfo_get() checked the address length
+> but allowed shorter mask attributes to pass through to
+> fixed-size address reads.
 >
-> Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
+> netlbl_unlabel_addrinfo_get() only rejected a mask
+> length mismatch when the address attribute length
+> was also invalid.  A crafted Generic Netlink request
+> could therefore provide a valid IPv4/IPv6 address
+> attribute with a shorter mask attribute.
 >
+> NLA_BINARY policy lengths are maximum lengths,
+> not exact lengths, so the short mask can pass
+> policy validation.  The mask is later read as
+> a full struct in_addr or struct in6_addr.
+> Require both address and mask attributes to
+> have the exact expected size.
+>
+> Fixes: 8cc44579d1bd ("NetLabel: Introduce static network labels for unlab=
+eled connections")
+> Signed-off-by: Chenguang Zhao <zhaochenguang@kylinos.cn>
 > ---
->  security/yama/yama_lsm.c | 23 ++++++++++++++++++-----
->  1 file changed, 18 insertions(+), 5 deletions(-)
+> v2:
+>  - Adjust commit message
+>  - Add Fixes and 'net' subject prefix.
+> v1:
+>  https://lore.kernel.org/all/20260522054521.1169755-1-zhaochenguang@kylin=
+os.cn/
+> ---
+>  net/netlabel/netlabel_unlabeled.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 
-Kees, I've got no comment on the patch itself, just wanted to make
-sure you saw the resend.
+Looks good to me, thanks!
 
-> diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-> index cef3776cf3b2..3b7c5384e6bc 100644
-> --- a/security/yama/yama_lsm.c
-> +++ b/security/yama/yama_lsm.c
-> @@ -26,6 +26,7 @@
->  #define YAMA_SCOPE_NO_ATTACH   3
->
->  static int ptrace_scope =3D YAMA_SCOPE_RELATIONAL;
-> +static int max_scope =3D YAMA_SCOPE_NO_ATTACH;
->
->  /* describe a ptrace relationship for potential exception */
->  struct ptrace_relation {
-> @@ -119,7 +120,7 @@ static void yama_relation_cleanup(struct work_struct =
-*work)
->         spin_lock(&ptracer_relations_lock);
->         rcu_read_lock();
->         list_for_each_entry_rcu(relation, &ptracer_relations, node) {
-> -               if (relation->invalid) {
-> +               if (relation->invalid || ptrace_scope =3D=3D max_scope) {
->                         list_del_rcu(&relation->node);
->                         kfree_rcu(relation, rcu);
->                 }
-> @@ -204,7 +205,8 @@ static void yama_ptracer_del(struct task_struct *trac=
-er,
->   */
->  static void yama_task_free(struct task_struct *task)
->  {
-> -       yama_ptracer_del(task, task);
-> +       if (ptrace_scope <=3D max_scope)
-> +               yama_ptracer_del(task, task);
->  }
->
->  /**
-> @@ -224,6 +226,9 @@ static int yama_task_prctl(int option, unsigned long =
-arg2, unsigned long arg3,
->         int rc =3D -ENOSYS;
->         struct task_struct *myself;
->
-> +       if (ptrace_scope =3D=3D max_scope)
-> +               return -EPERM;
-> +
->         switch (option) {
->         case PR_SET_PTRACER:
->                 /* Since a thread can call prctl(), find the group leader
-> @@ -432,6 +437,7 @@ static struct security_hook_list yama_hooks[] __ro_af=
-ter_init =3D {
->  static int yama_dointvec_minmax(const struct ctl_table *table, int write=
-,
->                                 void *buffer, size_t *lenp, loff_t *ppos)
->  {
-> +       int ret;
->         struct ctl_table table_copy;
->
->         if (write && !capable(CAP_SYS_PTRACE))
-> @@ -442,10 +448,17 @@ static int yama_dointvec_minmax(const struct ctl_ta=
-ble *table, int write,
->         if (*(int *)table_copy.data =3D=3D *(int *)table_copy.extra2)
->                 table_copy.extra1 =3D table_copy.extra2;
->
-> -       return proc_dointvec_minmax(&table_copy, write, buffer, lenp, ppo=
-s);
-> -}
-> +       ret =3D proc_dointvec_minmax(&table_copy, write, buffer, lenp, pp=
-os);
-> +       if (ret < 0)
-> +               return ret;
->
-> -static int max_scope =3D YAMA_SCOPE_NO_ATTACH;
-> +       /* If max_scope was just activated in this call */
-> +       if (*(int *)table_copy.data =3D=3D *(int *)table_copy.extra2 &&
-> +           table_copy.extra1 !=3D table_copy.extra2)
-> +               schedule_work(&yama_relation_work);
-> +
-> +       return 0;
-> +}
->
->  static const struct ctl_table yama_sysctl_table[] =3D {
->         {
-> --
-> 2.43.0
+Acked-by: Paul Moore <paul@paul-moore.com>
 
 --=20
 paul-moore.com
