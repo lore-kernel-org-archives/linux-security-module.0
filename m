@@ -1,111 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09147356768
-	for <linux-security-module@vger.kernel.org>; Tue,  2 Jun 2026 04:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7CC2EAD1B
+	for <linux-security-module@vger.kernel.org>; Tue,  2 Jun 2026 06:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780372907; cv=none; b=M+0Z+DnbXOVxJZTeIve5PmPl67KF3Q7jLq1z+XezsA0ImiGOxjF5E0ENZn4MxOk6j4opnlNxVMf4pEl1wYbtBQHJGCkjrG9S4w9eI/3aPVIXhlvA7TgStpKtoiyjhQNm0C/HGw38YDvAX38NOLbYI/VII7ZMsB7Csi5FZ/LzPU0=
+	t=1780380945; cv=none; b=PFRNKNtkKSJ5wia1PbiEsnQRi3Ud/gQmGjM8WYXjPUJ8IGJJin3rb16mhRijIUZWc7HGZGwC0jOisJ/AZW0/91i/lBPNdkFMnTAaFQeRIENeK/rdVcadHtHSme/P77uEvUeMgycHmi0N9MMfsFRV81CH+tTUmkFSTJb7G6FEQa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780372907; c=relaxed/simple;
-	bh=gHusxryaWNI8rZYOJ+OP/qxOHsGLOR5VwLH2Gn4uitM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XZKicWJG2wdSBlZhEzbhMbC9pnnx1xGR/ag+KIxuvciBoLs15Ifez/+3EjY8waFdqB/EsXBaaM36HfbJTMG0eDymInuYld+tRlGSaGZ4LLRb/CwiQ7E5z93i0DKSYLcnrHbKGyuU8VAf4ufB68jPgnxCw9Qk99fbZXLfj3KVIZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=clTGIzEF; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780380945; c=relaxed/simple;
+	bh=1X/bccwOfssWIS6ajyQ189AljJH2LtuBT18CMIZ+1Ls=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=kcrP/5oisw7dHv3lgDVaYgaxcTVoYHc3Gn5xL4WCR18zQFFQZHNy1K3aImYN4Oc2CL3rm9psmRFaGMNGzJ+9iXXrhZgIHOkv8zazh9pRoRV+k5SKqHdsz9oyhAsg3wNhwpLA3StTYt6x68WrcqnvXjB0KiU5q9zx/nHU1N6e8Q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZXNPCuao; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="clTGIzEF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBA6F1F008A0
-	for <linux-security-module@vger.kernel.org>; Tue,  2 Jun 2026 04:01:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780372905;
-	bh=gHusxryaWNI8rZYOJ+OP/qxOHsGLOR5VwLH2Gn4uitM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=clTGIzEFTy5ehVG8l0Psa/o8ZX9ztugpOK43M3tyZlHebt8LUKH5HShcNERkuHBgM
-	 TORFBulkC58jPkxSBRTWBfRc27yaTV6mAlkWkr/WSq1F7hzN44RpraA0/YjNbli9nE
-	 twul1KA+dGYidzVgmSylMN9C05pAj7fCB4roaw8fe7TP2Hz3VYro4d4VNL5MCz1k4H
-	 V2xLUZpY8gC4rXiJNF+EXxf9b4NM72zVtZbecdC+gJtgdusjdwrd2GaC0sAgwssFdk
-	 jnMbJTw0nsu57kBnFam0FuKNtnwol0WhiWxHgWCBXwnojazQtTu8zHkYM5ryShcCtE
-	 AUgvq5vsU5+rA==
-Received: by mail-dl1-f49.google.com with SMTP id a92af1059eb24-137dd523634so3210226c88.1
-        for <linux-security-module@vger.kernel.org>; Mon, 01 Jun 2026 21:01:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/RF7y+bLkLchicTHISioPBSDHpepUp0fCU6TysCJ1dB/b0Sk/F6obEjkmr/U3+h1RIUYVzWh5XXhFTaKtZYBkUfiRvzpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFf+OOtTtWcpD6VYX+K55NxeY1RT8hFm3nsvSKf9EoYY67gMEk
-	+jA/EOQww3CIZmdHzDlW/M35gMuCAyeEv2TzV8i95f3GRHBY5aDGiI2VsdDcwpXTU3p3DiSmM3h
-	XbqrzZiEoeVaBaKDIxDU+xOTyU5J2LzA=
-X-Received: by 2002:a05:7022:61b:b0:137:546:9e9d with SMTP id
- a92af1059eb24-137d402821amr5714259c88.23.1780372905239; Mon, 01 Jun 2026
- 21:01:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZXNPCuao"
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-49045f93baeso74088765e9.1
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Jun 2026 23:15:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1780380943; x=1780985743; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XgRgw1IKC03OLwNyxPDI58QMkRMSvSCj4bII0pkMkMw=;
+        b=ZXNPCuaoeorrH6dKoluuANYDEtScJKv3GR58TIMUYz7vkUv8hE3oA/Avwdg4Ejr2IC
+         mSMqLHA5t3OEfRMWxFI/euhVIDH6hO+N5OTkJCSsuiNMEFfyjTE9a2enEaA9ttmirwCn
+         G+omSuOWWaaye4QbjW3MQ6MmxIAZFULSpxQ3PAP4lTo2IVobfM5v+9za5QYi+hb+ko7S
+         QlDW5caSFfqEmsQbBis9rkG3jv54us8ejPlWQOYLk6OKmy6ZXRh86e9Oj7I554ZBtT14
+         sOIYqSvSCwOyZQwuw3tunwdg0rhTYzNcRe2nDpeZ9QmFAjJ+dXhwFY6+4CszCj3Gyk8n
+         AovQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780380943; x=1780985743;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XgRgw1IKC03OLwNyxPDI58QMkRMSvSCj4bII0pkMkMw=;
+        b=a54JdJFtqjgoYjbyweLSL+V7zrkdna8KecVdxXcePbEMyDvG2348mhvJxwetkoTEOr
+         BSa714oM55YmfzvoU3qnRPBxdgo5CdRBvELga8LDsaus6ObaVc/qtyubP7yr26jnd5e+
+         2npW6uXCws+fxM2pghYyBixgtjAGPZt+1xCcTrDZeIcpZkV216SX3io1iEF4mpDVk69T
+         oPUNPqi5H2Sf8eTMKu3lE/XbO8MKNcFrqRZnRGMTaXKVBdB9+mpCsayE2gnT/y26SGyp
+         PsggLP60bP6GHub/GeImDaoSfAyhCrlCC58o5HTG5GVyjphNglqcDXXFKImcnhXiV5UF
+         SVTQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/9IBjFcwhhfOyObhehRzAPKvj6F/L7P+bU9iENFxfSzKzgctzItAOt21rdDGgX3CnLKgRIgrkros00p2sieWjntPAK7oE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNCtSyUojsWaNbaUHhXONhAhD1fhXA54Tk2pJd3SuCp3QmFa9L
+	2RGzKeUtSUCaoEOfrjlOHn/2dk/0pu7bUwTVnC7h97ZOzVJvA9G3rP8Bgov+QJxPMRmIPzoYiYr
+	G8+NAuiqRiuMQpMSeKA==
+X-Received: from wmaw13.prod.google.com ([2002:a05:600c:6d4d:b0:490:b22d:da02])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:c0d2:10b0:48e:7854:1608 with SMTP id 5b1f17b1804b1-490a2938f7cmr185302145e9.25.1780380942885;
+ Mon, 01 Jun 2026 23:15:42 -0700 (PDT)
+Date: Tue, 2 Jun 2026 06:15:41 +0000
+In-Reply-To: <CAHC9VhR5Ca+WyP2OiNGtL1SqHn0SwLe=M9SB8D2bxtdS52quhg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260528030915.2654994-1-bboscaccy@linux.microsoft.com>
- <20260528030915.2654994-2-bboscaccy@linux.microsoft.com> <CAKtyLkEy5QeWmozTr8v_CEFfJTK3WJq3CBr3h_T2=HMr9YfCFA@mail.gmail.com>
- <CAHC9VhSt1_XmKfO7SA_5qiUUpq5RWa98yACHSwh9KMMGQTJjbg@mail.gmail.com>
-In-Reply-To: <CAHC9VhSt1_XmKfO7SA_5qiUUpq5RWa98yACHSwh9KMMGQTJjbg@mail.gmail.com>
-From: Fan Wu <wufan@kernel.org>
-Date: Mon, 1 Jun 2026 21:01:34 -0700
-X-Gmail-Original-Message-ID: <CAKtyLkGQgy63gkC6XXK2UZeAa-sq7szV5MhOWQc1tX+dMMQgKw@mail.gmail.com>
-X-Gm-Features: AVHnY4Jispc7iq1bNtcfM1iMpCJBMl00ETRVmFzhhHIH6Q7qlNBbKTj_rYy4tE0
-Message-ID: <CAKtyLkGQgy63gkC6XXK2UZeAa-sq7szV5MhOWQc1tX+dMMQgKw@mail.gmail.com>
-Subject: Re: [PATCH 01/11] hornet: fix TOCTOU in signed program verification
+Mime-Version: 1.0
+References: <20260529-remove-task-euid-v4-0-07cbdf3af980@google.com> <CAHC9VhR5Ca+WyP2OiNGtL1SqHn0SwLe=M9SB8D2bxtdS52quhg@mail.gmail.com>
+Message-ID: <ah51DY5yfaNZejBd@google.com>
+Subject: Re: [PATCH v4 0/2] Delete task_euid()
+From: Alice Ryhl <aliceryhl@google.com>
 To: Paul Moore <paul@paul-moore.com>
-Cc: Fan Wu <wufan@kernel.org>, Blaise Boscaccy <bboscaccy@linux.microsoft.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Eric Biggers <ebiggers@kernel.org>, 
-	James.Bottomley@hansenpartnership.com, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Cc: Serge Hallyn <sergeh@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>, 
+	Dongliang Mu <dzm91@hust.edu.cn>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Jann Horn <jannh@google.com>, 
+	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 1, 2026 at 8:26=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
-te:
->
-> On Fri, May 29, 2026 at 9:11=E2=80=AFPM Fan Wu <wufan@kernel.org> wrote:
-> > On Wed, May 27, 2026 at 8:09=E2=80=AFPM Blaise Boscaccy
-> > <bboscaccy@linux.microsoft.com> wrote:
-> > >
-> > > The signature verification path was vulnerable to a time-of-check vs
-> > > time-of-use race at both the program load and program run hook sites:
-> > > between the moment a map's contents were hashed for signature
-> > > verification and the moment the program run hook re-verified them, an
-> > > attacker with sufficient privileges could swap or mutate the map
-> > > contents.
-> > >
-> > > Close the race by snapshotting the map hashes during program load,
-> > > attaching them to the program, and re-verifying them from the
-> > > security_bpf_prog hook against prog->aux->used_maps. Because used_map=
-s
-> > > is the same map set the verifier and runtime resolve against, there i=
-s
-> > > no longer a window in which the verified set and the executed set can
-> > > diverge.
-> > >
-> > > Since we are no longer targeting the fd_array passed in, drop the map
-> > > index data entirely and check for whether or not the set of requested
-> > > map hashes is a subset of prog->aux->used_maps.
-> > >
-> > > Reported-by: Eric Biggers <ebiggers@kernel.org>
-> > > Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-> > > ---
-...
-> > similar above, they should be removed for the header and for the ipe po=
-licy.
->
-> I would prefer to see LSM_INT_VERDICT_FAULT preserved as I think it is
-> good to have a verdict indicating a general error in the integrity
-> verification code, but I do agree with Fan that removing
-> VERDICT_UNEXPECTED is probably a good thing to do.
->
-> If Fan is insistent on removal of VERDICT_FAULT from the IPE code
-> that's fine, just leave it in the LSM header.
->
-> Can you get a patch out for this ASAP Blaise?
->
-> --
-> paul-moore.com
+On Mon, Jun 01, 2026 at 07:13:37PM -0400, Paul Moore wrote:
+> On Fri, May 29, 2026 at 5:33=E2=80=AFAM Alice Ryhl <aliceryhl@google.com>=
+ wrote:
+> >
+> > The task_euid() method is a very weird method, and Binder was the only
+> > user. As of commit 65b672152289 ("binder: use current_euid() for
+> > transaction sender identity") Binder doesn't use task_euid() anymore,
+> > so we can delete this method.
+>=20
+> Given the problems from last time, it seems like it might be prudent
+> to let the commit have some time to "breathe" in a proper release, I'd
+> suggest merging this not for the upcoming v7.2 merge window but
+> instead waiting for v7.3.
 
-I'm good with keeping LSM_INT_VERDICT_FAULT.
+Sure, that makes sense. I'll resend after the merge window.
 
--Fan
+> > My suggestion would be to merge this through the LSM tree.
+>=20
+> That's fine with me.  I'd also suggest updating the commit description
+> in patch 1/2 to indicate that binder is no longer using task_euid();
+> it currently reads like it is still being used.
+
+I guess this occurred because when patch 1 was written, it really *was*
+still being used. Perhaps we could pick up only patch 1 now since even
+if we run into problems and Binder has to go back to using task_euid(),
+clarifying the docs is still useful.
+
+Alice
