@@ -1,209 +1,85 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA6C3939BF
-	for <linux-security-module@vger.kernel.org>; Tue,  2 Jun 2026 13:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496D03630B9
+	for <linux-security-module@vger.kernel.org>; Tue,  2 Jun 2026 16:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780405498; cv=none; b=eYPawK577Rz9LKQDIdJ+ThaXgsGduucaJxQZYSAhK0gdAe7WxrKR0GR4mIgQameXrBVO7kks0n+e7yqrBS0tgN5NM+b1WKYfMt8Uf008yGr5Gfig2+49kJEWJkcITk39kPwWO6f6YS2fVb4kQzmSPtHaoBQEduvxrdtgEPNmeLs=
+	t=1780419471; cv=none; b=rZwJFTD9vy4ctqTTHd59Hd4gY9zhKnThh3EZEZVQ8I6Ua+R3gh/lb7E5q63pa/PN5IVtpRL2rlh0uHeSymvL/hZzphqaCP6bgCQsnUFjt9IAx+KTvoj1O6nyNj7zotJ1QGWLVv74ARhfxlLWlkTAhcoWXW6e9jMUCkSwAg/P+To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780405498; c=relaxed/simple;
-	bh=Lv88enNvVjptEHx4RPDpSYkoiYl4NHCAht/k1YwYRy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CgzmWeCfhvXcKbw7ARnTK2va1j2OgZTrmafnhH1G99D3ErgQkFNVsmA4jCfMF3G31wSknCDGk8x7I+Peg+QIlGJUqxxSUHQVXInLH758wMSQdUFu6rW6updCXnR9ngkwb6dMXOlL0eWS1gC6qudZXD4zco9CPSG2w/H5BZxH6cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oYCy8oWL; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1780419471; c=relaxed/simple;
+	bh=6b4nAaQxphKIEBnQj1A2hRi1RU8/Z36cXPPJ/HHyDxM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=aCDv3NhRj4hIpsXL7tfirdldtUhk2B9FSe/grfWBXk+CpFyHEut8S59Z4KOInkvYrd5F12sjkkg3sMG0XFNkEvNxIabtkl4ECu4MaEqiaYX3r7GzcX8rSo4ojkXp6WsjUHQ4YtdCVszmR/LH7+luRKqAMHP2jbSiQ4jdxNvBTUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=hxygyWJq; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oYCy8oWL"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4906238c62eso93031265e9.3
-        for <linux-security-module@vger.kernel.org>; Tue, 02 Jun 2026 06:04:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780405496; x=1781010296; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H/8nMdqnIqVIuE86ZCCEmz0EQ1iXOszPXfKX9VZoGH4=;
-        b=oYCy8oWLEOXs3ZZpnQ8VOQHoNFjKZT62/QUyW3df6kxvDecqCOK07UnU98cT9bih7d
-         QifFlcWIr+EJiA3Y4YekpYVbMWMA0XqQZb9m0aNzEy+n6CZ9KNJxUBct5gbgm0d6jBJX
-         4RYm7cSM4Fa+MgP775wpjzUTJB2NacljxFREy0lFq+bJunDJIYp2ZV4sTIDkO+Vc1xr7
-         FpcRQcE1R3qM6zq5aytz97WBpu5zXpd39pgEA0GnDnl2ujkjmEdAdRZhqHjKWr+k4Lc4
-         ry5o67NwkoWSsT9Lap7TwhGHQwNn20aUpkBNKTwaaKQ1kQ2Jb1T0oTaxOfTVux7BZHHQ
-         5nZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780405496; x=1781010296;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=H/8nMdqnIqVIuE86ZCCEmz0EQ1iXOszPXfKX9VZoGH4=;
-        b=KXtriMqgneBxE+tvhNBp+v8/qtMaVxC6wSz3AK3ynUcjWE7Xf7vh4LKaHxx0hGh+vN
-         4Pp1x1KvBNpuHyc9oSOdcz45fn0v5JcNRSP2QfMs4nJUUyCtn70NO5++h6eEKs8PzodS
-         QEJGa6hW55TFj9K3OpvUSZ26kf/s5xg781YLTZeMlIanPdozwLTbregGpNq83wYTEQ8l
-         OBZaLEhGeMSEwRQXzYfV6WwATyoJyaaaAuSlu9N9K1JjIc8RUEoowkXkAdLBvwsmTH0w
-         XQBf2oXuOGsLH5YjffKw52VvO4oz14zLEf5c/7JRNHh02l9LQlFEjYGVlQzu7AI27roe
-         XNcg==
-X-Forwarded-Encrypted: i=1; AFNElJ9l+3ZqtJxc2JwZN3hxbdlYV4vT7CsaISrY4Wfv50gT+bfvOzycd5zVYGFUPZMfLxdFhB17vdYtX6XkP5Q0Vmy2qusE6q8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuEAXejOrA5/Tbel3Bo3+/Q9KXKaHAJ69UUwQy08YfcERO6JSw
-	IZNHxzhgOpsBmaynaovc0VSTLz8YMQrTdY1cx/tM9e2yTOY9/6Lujxkk
-X-Gm-Gg: Acq92OGQxZHTqOTnzy7BjFXZQY1lOeQ+6yEoPerPbSxqZLoNSx3AUKPw/IcHJdPZx+s
-	lyzK9p7kIxVIqC0kWz9MJhFg/agAhY+Z01fnKGJqjDG0ucoa9fTmY9yDuv0CQn36lrKfhOz+dN0
-	Jp/MF+EKUrUZEyxmfJ0+P+priRZy0YrrVawGdxoIxYedB5jNUbsLsFjyDv6PUzjvFrQ0G66CBHx
-	D/tvIpVF3z7qE6jZBmeEKFfuORTACe2Pc9OCXjF36/saLfKGDFLcRFtP3kNy0RJMGhAKtZJVRQz
-	n4Kt+GJ3sRzu+76Ohq9P66AQf1XAzAo5yGIYYfEtb/vBl8cLffKcw8FUTcPGlt4drgprMTyfnIl
-	ow3i1gEEyJ8QVJ+vbw4XydyoufWkrxomIsWSTclwiua5OwsvO18v3A373D1KlACyOs0vCNBIkk2
-	XKokysYCcA5Ogq0Kng+WQ1Lj/fpAj03gxjaXWnkt6S4JpgoYYYKTFI7DO82k3MjlxFixS7sE3QV
-	SsnOGDSZA==
-X-Received: by 2002:a05:600c:8105:b0:490:b072:1be6 with SMTP id 5b1f17b1804b1-490b0721e0amr76565325e9.25.1780405495119;
-        Tue, 02 Jun 2026 06:04:55 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45ef34b834esm33184301f8f.11.2026.06.02.06.04.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jun 2026 06:04:54 -0700 (PDT)
-Date: Tue, 2 Jun 2026 14:04:51 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
- Pengpeng Hou <pengpeng@iscas.ac.cn>, stable@vger.kernel.org, Petr Pavlu
- <petr.pavlu@suse.com>, Richard Weinberger <richard@nod.at>, Anton Ivanov
- <anton.ivanov@cambridgegreys.com>, Johannes Berg
- <johannes@sipsolutions.net>, "Rafael J. Wysocki" <rafael@kernel.org>, Len
- Brown <lenb@kernel.org>, Corey Minyard <corey@minyard.net>, Gabriel Somlo
- <somlo@cmu.edu>, "Michael S. Tsirkin" <mst@redhat.com>, Jani Nikula
- <jani.nikula@linux.intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Bart Van Assche <bvanassche@acm.org>,
- Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, Laurent
- Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede
- <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Bjorn
- Helgaas <bhelgaas@google.com>, Hannes Reinecke <hare@suse.de>, "James E.J.
- Bottomley" <James.Bottomley@hansenpartnership.com>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, Daniel Lezcano <daniel.lezcano@kernel.org>,
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
- <jirislaby@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, Jason Wang
- <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio
- =?UTF-8?B?UMOpcmV6?= <eperezma@redhat.com>, Jason Baron
- <jbaron@akamai.com>, Jim Cromie <jim.cromie@gmail.com>, Tiwei Bie
- <tiwei.btw@antgroup.com>, Benjamin Berg <benjamin.berg@intel.com>, Ilpo
- =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, "David E. Box"
- <david.e.box@linux.intel.com>, "Maciej W. Rozycki" <macro@orcam.me.uk>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Peter Zijlstra
- <peterz@infradead.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
- <gor@linux.ibm.com>, Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>, Thomas Gleixner <tglx@kernel.org>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, Vinod Koul <vkoul@kernel.org>, Frank Li
- <Frank.Li@kernel.org>, Daniel Gomez <da.gomez@kernel.org>, Sami Tolvanen
- <samitolvanen@google.com>, Aaron Tomlin <atomlin@atomlin.com>, Alexander
- Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Dmitry
- Vyukov <dvyukov@google.com>, Andrew Morton <akpm@linux-foundation.org>,
- John Johansen <john.johansen@canonical.com>, Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn"
- <serge@hallyn.com>, Georgia Garcia <georgia.garcia@canonical.com>,
- kvm@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
- linux-mm@kvack.org, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, linux-um@lists.infradead.org,
- linux-acpi@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
- qemu-devel@nongnu.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
- linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-pm@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-serial@vger.kernel.org,
- linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
- virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, netdev@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 01/11] params: bound array element output to the
- caller's page buffer
-Message-ID: <20260602140451.2e3e6622@pumpkin>
-In-Reply-To: <ah699hwLxIIOZ0-7@ashevche-desk.local>
-References: <20260521133315.work.845-kees@kernel.org>
-	<20260521133326.2465264-1-kees@kernel.org>
-	<ah699hwLxIIOZ0-7@ashevche-desk.local>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="hxygyWJq"
+Received: from narnia (unknown [35.132.143.199])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 9ECBA20B7167;
+	Tue,  2 Jun 2026 09:57:29 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9ECBA20B7167
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1780419449;
+	bh=ChU+UZA2V2CG8/mx9yKG2UQc+COHM2k0Y60siUpVQkE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=hxygyWJq152MkbmY5U3g1z2GPz2Y/uyU5VNfiMcHH1lbfQWIklHTVDSxHKOF0y0RG
+	 kkvY8yOgTD1Kj5VJIOERFMbr0VIdAIcf+V/yLimnKe6eth9m74dXYAGrIjmfwvd8VL
+	 meeI/Zu0oGrBujL+hYdMEtFfeqJy1PaMquuevT+Q=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: Paul Moore <paul@paul-moore.com>, Fan Wu <wufan@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Shuah Khan
+ <skhan@linuxfoundation.org>, James Morris <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, Eric Biggers <ebiggers@kernel.org>,
+ James.Bottomley@hansenpartnership.com,
+ linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 02/11] hornet: invert map set check logic
+In-Reply-To: <CAHC9VhQ_c9BOLXbYRk3+9_TPHbFW93-NeTe3fypxnkQOif69TQ@mail.gmail.com>
+References: <20260528030915.2654994-1-bboscaccy@linux.microsoft.com>
+ <20260528030915.2654994-3-bboscaccy@linux.microsoft.com>
+ <CAKtyLkHtjzP3YsDr5-Gw0GRFB7Ch2h1amZzxy5taTt_+3gSzwQ@mail.gmail.com>
+ <CAHC9VhQ_c9BOLXbYRk3+9_TPHbFW93-NeTe3fypxnkQOif69TQ@mail.gmail.com>
+Date: Tue, 02 Jun 2026 09:57:42 -0700
+Message-ID: <87o6hsyj5l.fsf@microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2 Jun 2026 14:26:46 +0300
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+Paul Moore <paul@paul-moore.com> writes:
 
-> On Thu, May 21, 2026 at 06:33:14AM -0700, Kees Cook wrote:
-> > 
-> > param_array_get() appends each element's string representation into the
-> > shared sysfs page buffer by passing buffer + off to the element getter.
-> > 
-> > That works for getters that only write a small bounded string, but
-> > param_get_charp() and similar helpers format against PAGE_SIZE from the
-> > pointer they receive. Once off is non-zero, an element getter can
-> > therefore write past the end of the original sysfs page buffer.
-> > 
-> > Collect each element into a temporary PAGE_SIZE buffer first and then
-> > copy only the remaining space into the caller's page buffer.  
-> 
-> ...
-> 
-> > +	elem_buf = kmalloc(PAGE_SIZE, GFP_KERNEL);  
-> 
-> get_free_page() (or how it is called)?
+> On Fri, May 29, 2026 at 8:57=E2=80=AFPM Fan Wu <wufan@kernel.org> wrote:
+>>
+>> On Wed, May 27, 2026 at 8:09=E2=80=AFPM Blaise Boscaccy
+>> <bboscaccy@linux.microsoft.com> wrote:
+>> >
+>> > In a multi-map hash verification scenario, a logic bug may have
+>> > allowed an attacker to provide duplicate maps to satisfy the hash
+>> > check count. Instead, invert the logic to verify each map discretely
+>> >
+>> > Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+>> > ---
+>>
+>> I just realized there is no audit event if hornet_check_prog_maps()
+>> fails, probably should add one.
+>
+> Maybe, but I think it is important to remember that not all LSMs use
+> audit for reporting, and Hornet is doing some new things from an LSM
+> perspective.  I think for right now it would be sufficient to use a
+> pr_notice() or a pr_notice_ratelimited() (if we are worried about
+> unpriv log spam) message in hornet_check_prog_maps().  Hornet can
+> always add proper audit support at a later date if deemed necessary.
+>
+> Blaise, do you want to submit a patch to add pr_notice{_ratelimited}()
+> in the case of denial in hornet_check_prog_maps()?
+>
 
-The kmalloc() should be faster and I think has to be aligned.
-There is another patch set to replace get_free_pages() with kmalloc().
+Yeah, that works.
 
-Although all these 'show' functions should really head to using a safer
-interface.
-Although, at the moment, it is really difficult to find the ones that
-are guaranteed to be passed a page aligned buffer.
+-blaise
 
--- David
-
-> 
-> > +	if (!elem_buf)
-> > +		return -ENOMEM;
-> > +
-> >  	for (i = off = 0; i < (arr->num ? *arr->num : arr->max); i++) {
-> > -		/* Replace \n with comma */
-> > -		if (i)
-> > -			buffer[off - 1] = ',';
-> >  		p.arg = arr->elem + arr->elemsize * i;
-> >  		check_kparam_locked(p.mod);
-> > -		ret = arr->ops->get(buffer + off, &p);
-> > +		ret = arr->ops->get(elem_buf, &p);
-> >  		if (ret < 0)
-> > -			return ret;
-> > +			goto out;
-> > +		ret = min(ret, (int)(PAGE_SIZE - 1 - off));  
-> 
-> It's usually discouraged to use castings in min/max/clamp. Can we make ret long
-> or do something different here?
-> 
-> > +		if (!ret)
-> > +			break;  
-> 
-> > +		/* Replace the previous element's trailing newline with a comma. */
-> > +		if (i)
-> > +			buffer[off - 1] = ',';  
-> 
-> Can't we do this after with help of strreplace()?
-> 
-> > +		memcpy(buffer + off, elem_buf, ret);
-> >  		off += ret;
-> > +		if (off == PAGE_SIZE - 1)
-> > +			break;
-> >  	}
-> >  	buffer[off] = '\0';
-> > -	return off;
-> > +	ret = off;
-> > +out:
-> > +	kfree(elem_buf);
-> > +	return ret;  
-> 
-
+> --=20
+> paul-moore.com
