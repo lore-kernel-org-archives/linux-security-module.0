@@ -1,328 +1,200 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A183CE4B2;
-	Tue,  2 Jun 2026 11:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C4B36A03A;
+	Tue,  2 Jun 2026 11:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780399349; cv=none; b=etpTg+bXClVwhTfH+UwTAMchwBCM7dhN4cUbbsA+KsJ9ShCdEonqS1B9/pfTAfiECxOnhPQqiH37pE3+0rIMaoFyasNKcE/BBHYNGDCHGzEV0SJRSH+BwvE2Zf3gOQ1nOchOok47bxLefhPMf4WqNxRj6V3zRbKhLTwWsQTeVwg=
+	t=1780399631; cv=none; b=YGSKUDZVmOvrSjOK37t8/orP7PGEimetOYIVjhZTXRwprO81+zT5ZhH+pEsysVq8bF/O76rMGd+JJKO8h6mc1yopRItik2yxTvHO7MVqf6/iESuWJV/oEFiI5/P0bI8+B34GlQNSg85fYw5jlDv8Oe9lMiCB4XPWDgryfyKnKFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780399349; c=relaxed/simple;
-	bh=H2xn7edZmPZo6zeSVFyNSc+mBX9WUrPVviBV2JeWq2M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=b0vmjKwmPedEnBKUFmy4BNJ0bK72PPbyUu3zGvdNbJ2ETYmcyC0asXyqA6W1U2U2CJr4N6XHe11PSa2tZH/GkRy9HempnaiAPjiu70A8XXSPAGrxmsbF1YQZK2hRT5WRrcOI+WJR+Pf+o524DN95z+WaZpcs1aSEYMCkE3LIF0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.196])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4gV7bC4Kg4zxYQT;
-	Tue,  2 Jun 2026 19:17:27 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id EDA4E4056F;
-	Tue,  2 Jun 2026 19:22:22 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwCH9M_lvB5qBy8zAA--.58518S2;
-	Tue, 02 Jun 2026 12:22:22 +0100 (CET)
-Message-ID: <e8951439c59864ecec2dd21392ca442eebc06d7b.camel@huaweicloud.com>
-Subject: Re: [PATCH v6 11/12] ima: Support staging and deleting N
- measurements records
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: corbet@lwn.net, skhan@linuxfoundation.org, zohar@linux.ibm.com, 
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	gregorylumen@linux.microsoft.com, chenste@linux.microsoft.com, 
-	nramas@linux.microsoft.com, Roberto Sassu <roberto.sassu@huawei.com>
-Date: Tue, 02 Jun 2026 13:22:11 +0200
-In-Reply-To: <20260602111401.1706052-12-roberto.sassu@huaweicloud.com>
-References: <20260602111401.1706052-1-roberto.sassu@huaweicloud.com>
-	 <20260602111401.1706052-12-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1780399631; c=relaxed/simple;
+	bh=vFe0YHJbZeLES+sUauMUh5hZ46dD8ew9Ej6lDFLoT9Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rr6jO1fByXYRx+tKEK7oTG4goSfF7waXcXdlLuctriRPjvmmYXgrxRRMfeZmLjnhcsB26z04C5zk7rXis6u4wOAZSP+LWrbDBXU493YwRtXD1OrEKJ9qdFg/28FfxBFreuc3DLPZS1xXWQ44/bD7tNJ5VtEr6kS4PNen2nqbcK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OpuvB+TC; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OpuvB+TC"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1780399630; x=1811935630;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vFe0YHJbZeLES+sUauMUh5hZ46dD8ew9Ej6lDFLoT9Q=;
+  b=OpuvB+TCFOlrTj1dTsQq4IO6bT0RYvhdqKiNi7guAfItcI40qmxJuR+2
+   JxfSI7H8Vs0pb6lSzui2MNNzEWzxhK2dqWRYpbiEiVo05UowkhP/brLIc
+   ZVeqrXsY/GHqe3VM+ZWp1v4ClJFL3WOZdAoNffJszSxQymB3W2SmL0kdn
+   EoTQOQCHyRV6IH4CmL1hEzveBQPF06YlAMtiXnjfxI7VYYLoSP3+xGnlr
+   LFm/IXvUvXoEkVqVbja68afnmQGU98K68zOP52EZcPPPHvMGyw+ljzTra
+   1vViH6ezFD00NvPoMZN+e9EIaC8+Q8JOgg1j4bdpBSO6q8EyVZiF5BWXP
+   A==;
+X-CSE-ConnectionGUID: oIlO4b2fRxuCw2x5D/ONOg==
+X-CSE-MsgGUID: uezSZkyoSk+dL6kVsxakLg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11804"; a="84804995"
+X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; 
+   d="scan'208";a="84804995"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2026 04:27:07 -0700
+X-CSE-ConnectionGUID: 57WJuzJhQk+bJIT4F8AZnw==
+X-CSE-MsgGUID: InV+5AxmRSKrEz4WoNh7bQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; 
+   d="scan'208";a="240879149"
+Received: from mkosciow-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.229])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2026 04:26:48 -0700
+Date: Tue, 2 Jun 2026 14:26:46 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+	Pengpeng Hou <pengpeng@iscas.ac.cn>, stable@vger.kernel.org,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Corey Minyard <corey@minyard.net>,
+	Gabriel Somlo <somlo@cmu.edu>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Hannes Reinecke <hare@suse.de>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Jason Baron <jbaron@akamai.com>, Jim Cromie <jim.cromie@gmail.com>,
+	Tiwei Bie <tiwei.btw@antgroup.com>,
+	Benjamin Berg <benjamin.berg@intel.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"David E. Box" <david.e.box@linux.intel.com>,
+	"Maciej W. Rozycki" <macro@orcam.me.uk>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Vinod Koul <vkoul@kernel.org>,
+	Frank Li <Frank.Li@kernel.org>, Daniel Gomez <da.gomez@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Aaron Tomlin <atomlin@atomlin.com>,
+	Alexander Potapenko <glider@google.com>,
+	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Georgia Garcia <georgia.garcia@canonical.com>, kvm@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-modules@vger.kernel.org,
+	kasan-dev@googlegroups.com, linux-mm@kvack.org,
+	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+	linux-um@lists.infradead.org, linux-acpi@vger.kernel.org,
+	openipmi-developer@lists.sourceforge.net, qemu-devel@nongnu.org,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+	usb-storage@lists.one-eyed-alien.net,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, netdev@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 01/11] params: bound array element output to the caller's
+ page buffer
+Message-ID: <ah699hwLxIIOZ0-7@ashevche-desk.local>
+References: <20260521133315.work.845-kees@kernel.org>
+ <20260521133326.2465264-1-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwCH9M_lvB5qBy8zAA--.58518S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Wr1UuFW5tF4UCw1DGFy5CFg_yoWfWr47pa
-	9aga4fCry8JryfKr1kGa4Durs5u3ykKF4UWr45J342yFn3Xryq9r45Cry2kFsYkryrtr18
-	tw4aqrs8Can0yaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x
-	0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02
-	F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4I
-	kC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
-	w2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
-	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE
-	14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyT
-	uYvjxUruWlDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAMBGoeRrcEtwAAs8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260521133326.2465264-1-kees@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, 2026-06-02 at 13:14 +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->=20
-> Add support for sending a value N between 1 and ULONG_MAX to the IMA
-> original measurement interface. This value represents the number of
-> measurements that should be deleted from the current measurements list. I=
-n
-> this case, measurements are staged in an internal non-user visible list,
-> and immediately deleted.
->=20
-> This staging method allows the remote attestation agents to easily separa=
-te
-> the measurements that were verified (staged and deleted) from those that
-> weren't due to the race between taking a TPM quote and reading the
-> measurements list.
->=20
-> In order to minimize the locking time of ima_extend_list_mutex, deleting
-> N records is realized by doing a lockless walk in the current measurement=
-s
-> list to determine the N-th entry to cut, to cut the current measurements
-> list under the lock, and by deleting the excess records after releasing t=
-he
-> lock.
->=20
-> Flushing the hash table is not supported for N records, since it would
-> require removing the N records one by one from the hash table under the
-> ima_extend_list_mutex lock, which would increase the locking time.
->=20
-> Link: https://github.com/linux-integrity/linux/issues/1
-> Co-developed-by: Steven Chen <chenste@linux.microsoft.com>
+On Thu, May 21, 2026 at 06:33:14AM -0700, Kees Cook wrote:
+> 
+> param_array_get() appends each element's string representation into the
+> shared sysfs page buffer by passing buffer + off to the element getter.
+> 
+> That works for getters that only write a small bounded string, but
+> param_get_charp() and similar helpers format against PAGE_SIZE from the
+> pointer they receive. Once off is non-zero, an element getter can
+> therefore write past the end of the original sysfs page buffer.
+> 
+> Collect each element into a temporary PAGE_SIZE buffer first and then
+> copy only the remaining space into the caller's page buffer.
 
-Hi Steven
+...
 
-I did see your tags, but since I added a Co-developed-by, probably they
-are redundant. If you agree, please reply with your Signed-off-by, so
-that the tags are complete.
+> +	elem_buf = kmalloc(PAGE_SIZE, GFP_KERNEL);
 
-Thanks
+get_free_page() (or how it is called)?
 
-Roberto
+> +	if (!elem_buf)
+> +		return -ENOMEM;
+> +
+>  	for (i = off = 0; i < (arr->num ? *arr->num : arr->max); i++) {
+> -		/* Replace \n with comma */
+> -		if (i)
+> -			buffer[off - 1] = ',';
+>  		p.arg = arr->elem + arr->elemsize * i;
+>  		check_kparam_locked(p.mod);
+> -		ret = arr->ops->get(buffer + off, &p);
+> +		ret = arr->ops->get(elem_buf, &p);
+>  		if (ret < 0)
+> -			return ret;
+> +			goto out;
+> +		ret = min(ret, (int)(PAGE_SIZE - 1 - off));
 
-> Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  security/integrity/ima/Kconfig     |  3 ++
->  security/integrity/ima/ima.h       |  1 +
->  security/integrity/ima/ima_fs.c    | 32 +++++++++++++--
->  security/integrity/ima/ima_queue.c | 63 ++++++++++++++++++++++++++++++
->  4 files changed, 96 insertions(+), 3 deletions(-)
->=20
-> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kcon=
-fig
-> index 02436670f746..f4d25e045808 100644
-> --- a/security/integrity/ima/Kconfig
-> +++ b/security/integrity/ima/Kconfig
-> @@ -341,6 +341,9 @@ config IMA_STAGING
->  	  It allows user space to stage the measurements list for deletion and
->  	  to delete the staged measurements after confirmation.
-> =20
-> +	  Or, alternatively, it allows user space to specify N measurements
-> +	  records to stage internally, so that they can be immediately deleted.
-> +
->  	  On kexec, staging is aborted and any staged measurement records are
->  	  copied to the secondary kernel.
-> =20
-> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index d2e740c8ff75..7a1b2d6a8b59 100644
-> --- a/security/integrity/ima/ima.h
-> +++ b/security/integrity/ima/ima.h
-> @@ -320,6 +320,7 @@ struct ima_template_desc *lookup_template_desc(const =
-char *name);
->  bool ima_template_has_modsig(const struct ima_template_desc *ima_templat=
-e);
->  int ima_queue_stage(void);
->  int ima_queue_staged_delete_all(void);
-> +int ima_queue_delete_partial(unsigned long req_value);
->  int ima_restore_measurement_entry(struct ima_template_entry *entry);
->  int ima_restore_measurement_list(loff_t bufsize, void *buf);
->  int ima_measurements_show(struct seq_file *m, void *v);
-> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima=
-_fs.c
-> index 96d7503a605b..174a94740da1 100644
-> --- a/security/integrity/ima/ima_fs.c
-> +++ b/security/integrity/ima/ima_fs.c
-> @@ -28,6 +28,7 @@
->   * Requests:
->   * 'A\n': stage the entire measurements list
->   * 'D\n': delete all staged measurements
-> + * '[1, ULONG_MAX]\n' delete N measurements records
->   */
->  #define STAGED_REQ_LENGTH 21
-> =20
-> @@ -343,6 +344,7 @@ static ssize_t _ima_measurements_write(struct file *f=
-ile,
->  				       loff_t *ppos, bool staged_interface)
->  {
->  	char req[STAGED_REQ_LENGTH];
-> +	unsigned long req_value;
->  	int ret;
-> =20
->  	if (datalen < 2 || datalen > STAGED_REQ_LENGTH)
-> @@ -370,7 +372,24 @@ static ssize_t _ima_measurements_write(struct file *=
-file,
->  		ret =3D ima_queue_staged_delete_all();
->  		break;
->  	default:
-> -		ret =3D -EINVAL;
-> +		if (staged_interface)
-> +			return -EINVAL;
-> +
-> +		if (ima_flush_htable) {
-> +			pr_debug("Deleting staged N measurements not supported when flushing =
-the hash table is requested\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		ret =3D kstrtoul(req, 10, &req_value);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		if (req_value =3D=3D 0) {
-> +			pr_debug("Must delete at least one entry\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		ret =3D ima_queue_delete_partial(req_value);
->  	}
-> =20
->  	if (ret < 0)
-> @@ -379,6 +398,12 @@ static ssize_t _ima_measurements_write(struct file *=
-file,
->  	return datalen;
->  }
-> =20
-> +static ssize_t ima_measurements_write(struct file *file, const char __us=
-er *buf,
-> +				      size_t datalen, loff_t *ppos)
-> +{
-> +	return _ima_measurements_write(file, buf, datalen, ppos, false);
-> +}
-> +
->  static ssize_t ima_measurements_staged_write(struct file *file,
->  					     const char __user *buf,
->  					     size_t datalen, loff_t *ppos)
-> @@ -389,6 +414,7 @@ static ssize_t ima_measurements_staged_write(struct f=
-ile *file,
->  static const struct file_operations ima_measurements_ops =3D {
->  	.open =3D ima_measurements_open,
->  	.read =3D seq_read,
-> +	.write =3D ima_measurements_write,
->  	.llseek =3D seq_lseek,
->  	.release =3D ima_measurements_release,
->  };
-> @@ -470,6 +496,7 @@ static int ima_ascii_measurements_open(struct inode *=
-inode, struct file *file)
->  static const struct file_operations ima_ascii_measurements_ops =3D {
->  	.open =3D ima_ascii_measurements_open,
->  	.read =3D seq_read,
-> +	.write =3D ima_measurements_write,
->  	.llseek =3D seq_lseek,
->  	.release =3D ima_measurements_release,
->  };
-> @@ -603,14 +630,13 @@ static int __init create_securityfs_measurement_lis=
-ts(bool staging)
->  {
->  	const struct file_operations *ascii_ops =3D &ima_ascii_measurements_ops=
-;
->  	const struct file_operations *binary_ops =3D &ima_measurements_ops;
-> -	umode_t permissions =3D (S_IRUSR | S_IRGRP);
-> +	umode_t permissions =3D (S_IRUSR | S_IRGRP | S_IWUSR | S_IWGRP);
->  	const char *file_suffix =3D "";
->  	int count =3D NR_BANKS(ima_tpm_chip);
-> =20
->  	if (staging) {
->  		ascii_ops =3D &ima_ascii_measurements_staged_ops;
->  		binary_ops =3D &ima_measurements_staged_ops;
-> -		permissions |=3D (S_IWUSR | S_IWGRP);
->  		file_suffix =3D "_staged";
->  	}
-> =20
-> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/=
-ima_queue.c
-> index af0502f27d57..718991ba8bcd 100644
-> --- a/security/integrity/ima/ima_queue.c
-> +++ b/security/integrity/ima/ima_queue.c
-> @@ -405,6 +405,69 @@ int ima_queue_staged_delete_all(void)
->  	return 0;
->  }
-> =20
-> +/**
-> + * ima_queue_delete_partial - Delete current measurements
-> + * @req_value: Number of measurements to delete
-> + *
-> + * Delete the requested number of measurements from the current measurem=
-ents
-> + * list, and update the number of records and the binary run-time size
-> + * accordingly.
-> + *
-> + * Refuse to delete current measurements if measurement is suspended, so=
- that
-> + * dump can be done in a lockless way and user space is notified about c=
-urrent
-> + * measurements being carried over to the secondary kernel, so that it d=
-oes not
-> + * save them twice.
-> + *
-> + * Return: Zero on success, a negative value otherwise.
-> + */
-> +int ima_queue_delete_partial(unsigned long req_value)
-> +{
-> +	unsigned long req_value_copy =3D req_value;
-> +	unsigned long size_to_remove =3D 0, num_to_remove =3D 0;
-> +	LIST_HEAD(ima_measurements_trim);
-> +	struct ima_queue_entry *qe;
-> +	int ret =3D 0;
-> +
-> +	/*
-> +	 * list_for_each_entry_rcu() without rcu_read_lock() is fine because
-> +	 * only list append can happen concurrently. No list replace due to the
-> +	 * staging/delete writers mutual exclusion.
-> +	 */
-> +	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
-> +		size_to_remove +=3D get_binary_runtime_size(qe->entry);
-> +		num_to_remove++;
-> +
-> +		if (--req_value_copy =3D=3D 0)
+It's usually discouraged to use castings in min/max/clamp. Can we make ret long
+or do something different here?
+
+> +		if (!ret)
 > +			break;
-> +	}
-> +
-> +	/* Not enough records to delete. */
-> +	if (req_value_copy > 0)
-> +		return -ENOENT;
-> +
-> +	mutex_lock(&ima_extend_list_mutex);
-> +	if (ima_measurements_suspended) {
-> +		mutex_unlock(&ima_extend_list_mutex);
-> +		return -ESTALE;
-> +	}
-> +
-> +	/*
-> +	 * qe remains valid because ima_fs.c enforces single-writer exclusion.
-> +	 */
-> +	__list_cut_position(&ima_measurements_trim, &ima_measurements,
-> +			    &qe->later);
-> +
-> +	atomic_long_sub(num_to_remove, &ima_num_records[BINARY]);
-> +
-> +	if (IS_ENABLED(CONFIG_IMA_KEXEC))
-> +		binary_runtime_size[BINARY] -=3D size_to_remove;
-> +
-> +	mutex_unlock(&ima_extend_list_mutex);
-> +
-> +	ima_queue_delete(&ima_measurements_trim, false);
+
+> +		/* Replace the previous element's trailing newline with a comma. */
+> +		if (i)
+> +			buffer[off - 1] = ',';
+
+Can't we do this after with help of strreplace()?
+
+> +		memcpy(buffer + off, elem_buf, ret);
+>  		off += ret;
+> +		if (off == PAGE_SIZE - 1)
+> +			break;
+>  	}
+>  	buffer[off] = '\0';
+> -	return off;
+> +	ret = off;
+> +out:
+> +	kfree(elem_buf);
 > +	return ret;
-> +}
-> +
->  /**
->   * ima_queue_delete - Delete measurements
->   * @head: List head measurements are deleted from
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
