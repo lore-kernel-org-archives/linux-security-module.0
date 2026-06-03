@@ -1,183 +1,84 @@
-Received: from mail-24416.protonmail.ch (mail-24416.protonmail.ch [109.224.244.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7A737B3F6
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Jun 2026 01:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B186739A063
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Jun 2026 15:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780450711; cv=none; b=ar7qY/U/B5qrFSt7FDBRoV2N/2SvH1Yv3fn+u+h5/mfVuDSTyBaZuSYJC4DB4eEHx+q/XescRLvwBRKlQjpaPu73gJBols8SXfA6jf5csdwnSzEfVfo6Bq1d9iWRGH4qaxwZlMZAviF7QvTFnQSHLe14fqp11xW7zxU+rXNz8po=
+	t=1780501381; cv=none; b=rSlrT4X9nuMfhpLMOrv/F9O8XAbP38HeiK4ulK9622+qtMmWrN6cLLcb34t/dKHyRRAuGxpLTFdumFZQjDIODKY8N8+VAJ6uCGH27Udm4RUIh1bi695BekaOkeNKQkcnFvct6YIdWffeeVDDXMicXQRad71U4rZHAe6GwsXykXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780450711; c=relaxed/simple;
-	bh=QxrzYeHZ9k2TdtXLJ7NosY0R953zUVso6EmSGeoENEE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u2oi+zfoJGhmg1xM1cYXoY07gejJE4FXcQnNdu+2LSgxlkn3gDrfdKB4atMAn04jl3eHJD4XmSIrmFvhwLheEPuqk0kNveo/gOFaVY1vocMHEd30jxL3IVn9kStEraPksKbn7AtunvtF8OEFXzcqdUlLrwA8TtGXzoBx+sAJX4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=dGlHD/3/; arc=none smtp.client-ip=109.224.244.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+	s=arc-20240116; t=1780501381; c=relaxed/simple;
+	bh=061crZWIN4JKB/NKMoAVGl/u2RMCMW22NC/f5SkO7CU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KqaLhVZcBeb2Yn/C7xbCnYiLphlZJIhVfFsb0dPSJB8CZDXw/rFDSkNO1MOvcElTL4i3laQ0VKE5taq0AtOo0dW9xOVWkBw6oS0nTjWIW5X1501xkE7eJqlSAmMbyvFHgDJF2wEtX21xLH4Ij8BGXHFALrh83mUIiT0JYZAuadI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WNu3b+MO; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="dGlHD/3/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1780450706; x=1780709906;
-	bh=cRGdVuL25/+8RzBGzRV7c+495EWiR/Aa1Z4J451vdts=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=dGlHD/3/ghgt39AJb2Ixbo7JOiaPweeFmEAwkwquDb4jCwLzWaPvckLeR+H2U+0Uy
-	 mNHflpTf5Pg5HvN0AdP1xGz2BmapYjtAFlrHZAJPE+86Ly8O2ERQlbd//sj3RmSDeD
-	 LAEAWILtnYnjJMcRq0r2vcWm6SuH0e6YNbJSBchcJZB3bxoWoAp13ACQPm08jNMqzL
-	 O51seE2IvBH5pKyH2OUxEe3jnF7f56TOwWdj8WPDRENShwEv0verZkY2OUF1Yi1izT
-	 dqJOY8ZH6rtAn8nw8hYwPO01wjZpgSDKZJWC7OfRiAVERDGSCzCqpktZJseEK+iFKy
-	 BsOblr/Rbzh7A==
-Date: Tue, 02 Jun 2026 17:28:05 +0000
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
-From: Bryam Vargas <hexlabsecurity@proton.me>
-Cc: Justin Suess <utilityemal77@gmail.com>, Christian Brauner <brauner@kernel.org>, Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] selftests/landlock: test SCOPE_SIGNAL on the SIGIO/fowner pgid path
-Message-ID: <20260602172741.18760-3-hexlabsecurity@proton.me>
-In-Reply-To: <20260602172741.18760-1-hexlabsecurity@proton.me>
-References: <7rvmLIHR1Zh8RDF1IY1-SYRHzErgw9gPHq0k98RLYVsmHqAejjxcuJi8V3QaSbW-SnNvY5tfM2Xn_S1dEajKV_f7iyitoPwJgOSTZQ0nytc=@proton.me> <20260531.irah0eiM3Chi@digikod.net> <20260602172741.18760-1-hexlabsecurity@proton.me>
-Feedback-ID: 199661219:user:proton
-X-Pm-Message-ID: 335be816ca89f676268cd269abca1c33a7fd1f39
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNu3b+MO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82D091F008A5
+	for <linux-security-module@vger.kernel.org>; Wed,  3 Jun 2026 15:43:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780501380;
+	bh=C/uz9F7OyXwuFmXOiV8vOXW9WBcEn1NRJwfFJ+RdluE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=WNu3b+MOyQDTn7OM2WU3wWMvNk0C0cnIm0Z/+5WZtkGaVQnyMqPQ2rvhIJts5kqLo
+	 PJMvgXHYSc0HBp1hB2AY/z/e8K8c6akBfd9OPWK/7A1pdVMHLvpWMfEkELyOA8zqm5
+	 ZEG4SUvFxef8xoa8nLq7nXvDSnPNS6PBjuSVwVM6LNqRtr0SkGGHP/dSjnbNo1PkUr
+	 ZpGO7xFA93IsSDIEEgHCjSCnbPVmLqW7NtDaoJl00q14ZRVSybOpSsQGfQA4uMGK5w
+	 C3CJbA2/pgcOK8BQydPI0kDsnVuFWSQ88Jgrt0zfpGyx6JmrhWRCFEXvtlNFDxTdei
+	 I/aE/MupGHQEQ==
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-9154ca1aa1dso118252385a.0
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Jun 2026 08:43:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ/hcv5WS6ZPF/FwiPeifMITldMFEpK292qyHjg6Y/IlYzVVyq9SfGv0ZCbcIko23IcsMcVYiPWTAy1ITD1sbneJc2Q276A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTxmJcKB+wbJCGI7Z4yG3FoLxFVCQKDEdoubjkktWVP3HKKiQ2
+	aIAhIspADvUzSuvZw0vGdf/Q5kBZKu6xZknSn6jppyOYKg/zwX+SxtjOhQi3E35r6ODDXKwnrLG
+	Jm1FHqcgG2/vCsVLKr8/6SDPwi2t1Ru8=
+X-Received: by 2002:a05:620a:6601:b0:915:83b1:fc43 with SMTP id
+ af79cd13be357-9158b62262amr449090185a.12.1780501379724; Wed, 03 Jun 2026
+ 08:42:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20260528182607.3150386-1-song@kernel.org> <20260528182607.3150386-8-song@kernel.org>
+In-Reply-To: <20260528182607.3150386-8-song@kernel.org>
+From: Song Liu <song@kernel.org>
+Date: Wed, 3 Jun 2026 08:42:48 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW6VJ_yuxatCUQRxxVAYZeT-5JH_AytaTh6grBHLYmDeLQ@mail.gmail.com>
+X-Gm-Features: AVHnY4Lc1ww09mSIZr5MM1D79LnYMeu-2aFD4AFO_M0ImtWHpVW8yDfo1wjCppo
+Message-ID: <CAPhsuW6VJ_yuxatCUQRxxVAYZeT-5JH_AytaTh6grBHLYmDeLQ@mail.gmail.com>
+Subject: Re: [PATCH v5 7/8] vfs: Replace security_sb_mount/security_move_mount
+ with granular hooks
+To: brauner@kernel.org
+Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
+	viro@zeniv.linux.org.uk, jack@suse.cz, john.johansen@canonical.com, 
+	stephen.smalley.work@gmail.com, omosnace@redhat.com, mic@digikod.net, 
+	gnoack@google.com, takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp, 
+	herton@canonical.com, kernel-team@meta.com, 
+	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	apparmor@lists.ubuntu.com, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Add a regression test for the LANDLOCK_SCOPE_SIGNAL bypass on the
-asynchronous SIGIO delivery path.  A sandboxed process that owns a file
-via fcntl(F_SETOWN, -pgrp) while sitting at the head of its process
-group's PID hlist (the default position after fork()) used to have its
-Landlock domain recording skipped, letting the SIGIO fan-out reach
-non-sandboxed members of the process group.
+Hi Christian,
 
-The test creates a dedicated process group, sandboxes the (hlist-head)
-child with LANDLOCK_SCOPE_SIGNAL, arms F_SETSIG(SIGURG) / F_SETOWN(-pgrp)
-/ O_ASYNC on a pipe and triggers the fan-out.  The in-domain child must
-receive the signal (proving the trigger fired); the non-sandboxed parent,
-which is outside the child's domain, must not.  Without the fix the parent
-is signaled and the test fails.
+On Thu, May 28, 2026 at 11:26=E2=80=AFAM Song Liu <song@kernel.org> wrote:
+>
+> Replace the monolithic security_sb_mount() call in path_mount() and
+> security_move_mount() in vfs_move_mount() with the new granular mount
+> hooks:
+>
+> - do_loopback(): call security_mount_bind()
+> - do_new_mount(): call security_mount_new()
+> - do_remount(): call security_mount_remount()
+> - do_reconfigure_mnt(): call security_mount_reconfigure()
+> - do_move_mount_old(): call security_mount_move()
+> - do_change_type(): call security_mount_change_type()
+> - vfs_move_mount(): replace security_move_mount() with
+>   security_mount_move()
 
-Signed-off-by: Bryam Vargas <hexlabsecurity@proton.me>
----
- .../selftests/landlock/scoped_signal_test.c   | 97 +++++++++++++++++++
- 1 file changed, 97 insertions(+)
+Does this version look good to you?
 
-diff --git a/tools/testing/selftests/landlock/scoped_signal_test.c b/tools/=
-testing/selftests/landlock/scoped_signal_test.c
-index d8bf33417619..62d86a115775 100644
---- a/tools/testing/selftests/landlock/scoped_signal_test.c
-+++ b/tools/testing/selftests/landlock/scoped_signal_test.c
-@@ -559,4 +559,101 @@ TEST_F(fown, sigurg_socket)
- =09=09_metadata->exit_code =3D KSFT_FAIL;
- }
-=20
-+/*
-+ * Checks that LANDLOCK_SCOPE_SIGNAL is enforced on the asynchronous SIGIO
-+ * delivery path (fcntl(F_SETOWN)) when the file owner is a process group.
-+ *
-+ * A sandboxed process sitting at the head of its process group's PID hlis=
-t
-+ * (the default position right after fork()) used to escape the
-+ * fcntl(F_SETOWN, -pgrp) domain recording: pid_task(pgrp, PIDTYPE_PGID)
-+ * resolved to the process itself, so the same-thread-group exemption skip=
-ped
-+ * recording its Landlock domain.  At SIGIO time that domain was then unse=
-t
-+ * and the signal fanned out to every group member, including non-sandboxe=
-d
-+ * processes outside the domain.
-+ */
-+TEST(sigio_to_pgid_members)
-+{
-+=09int trigger[2], sync_child[2];
-+=09char buf;
-+=09pid_t child;
-+=09int status, i;
-+
-+=09drop_caps(_metadata);
-+
-+=09/*
-+=09 * Isolates the test in its own process group so the SIGIO fan-out
-+=09 * stays bounded to this parent and the child forked below.
-+=09 */
-+=09ASSERT_EQ(0, setpgid(0, 0));
-+
-+=09/* The non-sandboxed parent is the protected (out-of-domain) target. */
-+=09ASSERT_EQ(0, setup_signal_handler(SIGURG));
-+=09signal_received =3D 0;
-+
-+=09ASSERT_EQ(0, pipe2(trigger, O_CLOEXEC));
-+=09ASSERT_EQ(0, pipe2(sync_child, O_CLOEXEC));
-+
-+=09child =3D fork();
-+=09ASSERT_LE(0, child);
-+=09if (child =3D=3D 0) {
-+=09=09/*
-+=09=09 * The child inherits the parent's new process group and, just
-+=09=09 * attached with hlist_add_head_rcu(), is now the head of the
-+=09=09 * pgid hlist: this is the case that used to skip the recording.
-+=09=09 */
-+=09=09EXPECT_EQ(0, close(sync_child[0]));
-+
-+=09=09/* In-domain positive control: the child must be signaled. */
-+=09=09ASSERT_EQ(0, setup_signal_handler(SIGURG));
-+=09=09signal_received =3D 0;
-+
-+=09=09create_scoped_domain(_metadata, LANDLOCK_SCOPE_SIGNAL);
-+
-+=09=09/* Owns the SIGIO source for the whole process group. */
-+=09=09ASSERT_EQ(0, fcntl(trigger[0], F_SETSIG, SIGURG));
-+=09=09ASSERT_EQ(0, fcntl(trigger[0], F_SETOWN, -getpgrp()));
-+=09=09ASSERT_EQ(0, fcntl(trigger[0], F_SETFL, O_ASYNC));
-+
-+=09=09/* Fans SIGURG out to every member of the process group. */
-+=09=09ASSERT_EQ(1, write(trigger[1], ".", 1));
-+
-+=09=09/*
-+=09=09 * The sandboxed child is in its own domain and must always be
-+=09=09 * signaled: this proves the SIGIO actually fired.
-+=09=09 */
-+=09=09for (i =3D 0; i < 1000 && !signal_received; i++)
-+=09=09=09usleep(1000);
-+=09=09EXPECT_EQ(1, signal_received);
-+
-+=09=09ASSERT_EQ(1, write(sync_child[1], ".", 1));
-+=09=09EXPECT_EQ(0, close(sync_child[1]));
-+
-+=09=09_exit(_metadata->exit_code);
-+=09=09return;
-+=09}
-+=09EXPECT_EQ(0, close(sync_child[1]));
-+=09EXPECT_EQ(0, close(trigger[0]));
-+=09EXPECT_EQ(0, close(trigger[1]));
-+
-+=09/* Waits for the child to generate the SIGIO. */
-+=09ASSERT_EQ(1, read(sync_child[0], &buf, 1));
-+=09EXPECT_EQ(0, close(sync_child[0]));
-+
-+=09/* Lets a delivered-but-pending signal run our handler, if any. */
-+=09for (i =3D 0; i < 100 && !signal_received; i++)
-+=09=09usleep(1000);
-+
-+=09/*
-+=09 * SCOPE_SIGNAL must block the fan-out to this non-sandboxed parent,
-+=09 * which is outside the child's Landlock domain.  Before the fix the
-+=09 * parent was signaled here.
-+=09 */
-+=09EXPECT_EQ(0, signal_received);
-+
-+=09ASSERT_EQ(child, waitpid(child, &status, 0));
-+=09if (WIFSIGNALED(status) || !WIFEXITED(status) ||
-+=09    WEXITSTATUS(status) !=3D EXIT_SUCCESS)
-+=09=09_metadata->exit_code =3D KSFT_FAIL;
-+}
-+
- TEST_HARNESS_MAIN
---=20
-2.43.0
-
-
+Thanks,
+Song
