@@ -1,126 +1,217 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A5B4A2E22;
-	Thu,  4 Jun 2026 20:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EB04C9008
+	for <linux-security-module@vger.kernel.org>; Thu,  4 Jun 2026 20:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780604099; cv=none; b=alLoDP2x03ZYEXuT9eMI2Q12NoBgacbaU5Yx2xjUW9gC20+Wda2AdOTk+lmKb6TM+UGcbFgZZ/jBdeO6Y8cdr+NwLjbep+fipQ9tCrVHZ5bTedpwOEgqejKE6SpyOhMlxG+1Pgj34Rd92usN4j/Rq7yRxCcRvqVVnikQ3yTxiZk=
+	t=1780606085; cv=none; b=outI6pzsETfQ/2HEyPlmf2eupzmlPgbIi32M5jP02pJuPzucQFaVLAUMXNjBjTiWai8/3jyJJvvE502OW3I39Oa+/4+weCATjz2RCuFjpDYcoJcaBs5UMJb//Q3DtYq0cH3oKqPghi438NAyY/iATcAR5iyM3GpchBwXoHppHMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780604099; c=relaxed/simple;
-	bh=Yk6QSotN2tq3Mqa2udN0WeFejqVXfRoesEZYyBbnFJ8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gaPt8Wb/ILejREQmFoy8H+KUrilO5ZYtopbazn5r78gu4L6eC8bO3+cmI+z7eKsM33mmg/H5rRJuYjblDJkMPufUEiRZx77n+ATWs+VJa4dKtXJiVJ3BdvAb2AW4bDi6/95cZ1SKu7nQbP4O3IOLLd3HQYj/HT9gFeCs4SlLO5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=emyi1bE3; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780606085; c=relaxed/simple;
+	bh=6hGQLbsaDeyUM+nnzCDhG50UBs91b9ghew0II57BQ6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PyLhOUK5+OGZH3N1fz+AOKYo1yLTrNqsdoV4cTQa7UYG7TddbO5e3jDVWDBToXxd22ft2a5YFEFxAqxIrEIMTPzJ67FjqOmWAsCqRUdgXwgI4p8/qM/nTLoTwJNzQaBcoGm6I8apHSXbDnz4e763wtpIxlR4PxYDCIqcmyEB/Ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lD+TVf/f; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="emyi1bE3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 946FA1F00898;
-	Thu,  4 Jun 2026 20:14:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780604095;
-	bh=t4H8eqNZN4/mIO1u313XVeuHkqdUneIpioBG/gGEBMQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=emyi1bE3lT84UiMs0H/e5sWLBpipKD8aP4rx9nCFc5ww2rHWzTrNroixBU1R1eW3k
-	 VvDyq+Y9/EKTN5YutDxaS2ya7aaz09ocK8otk3HD4GePbWSC8Nq3UzR3jpHPJsKnlW
-	 D+G1ixqQ2oKb5RLaZIvJKK62Ge4aMEzL6NR04y47K5UJ14jmX8IhLAu4hN5UEpcV0p
-	 QeUQfwkvgeuV7wWv1oUW5AiTbIKO9lPOEnLAnAOPOPK8bI7//XDk5clHDilppzR/TY
-	 GZxIkL2upvxl1wSbQAKqhnKfs+Sb4dtPjK9uSDcEaZPvRLUc9O84wyUuh3WcYXZw+B
-	 dXBq+GQKoz+hA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Thu, 04 Jun 2026 22:11:22 +0200
-Subject: [PATCH v17 10/10] rust: page: add `from_raw()`
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lD+TVf/f"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-45ef29c5561so703041f8f.0
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Jun 2026 13:48:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1780606082; x=1781210882; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tvYftNrs5kAZ/e9l/bRPV9TOjx9gdfGqGwbPpzRf47A=;
+        b=lD+TVf/f7E450z2GFtI5D4IckqnbYIobPaHeoGbGjPKdgM3+kEaU8UHWgCYsF/VtT8
+         fcwC4MmexblK5+7R5VQuiTWgeqZM7QqxI5LjALmSjgQOf/J+d0joblfOnbe/s8E4v+v3
+         ztA03kVOIS5XcrEQFuOlrHOePjkHj34QEmsgBZcbjjr/Zrh62jZIxFcv29fVl1wqB8IQ
+         j7QeTFnAdxL2qxMuvk3et8f2O+bgU6kjK+Soya41O+ckxPnkZaHx2RBwpS1w+oGkkXLN
+         owpNpjxNzMB8O/Rbd4I7B4Fi7IQIXBOhV48abavILVcySHzB3nBHnhhxQRpQc21mbzDk
+         anzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780606082; x=1781210882;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tvYftNrs5kAZ/e9l/bRPV9TOjx9gdfGqGwbPpzRf47A=;
+        b=TKXTvJiNRXZ7eh7IDAcaRbfCCl0Fr5Yo6e1n5wmVJFmLfftqZ5zxwNGI1z7ucAt2TA
+         veoUK36CoJR2hefRvWRGltPO5Cy1KweBAusq82IQWaBvRzs/uuUx7bZX9/wg1qo8jqIP
+         AXg+GV3K1zH7z29Iwqc+B7sxIuhzonXQVOs+7xGyCHlaQFVf8mqiSpCcPAKf6RjArUYx
+         L//NZ9WsI4UlrMvdf7Miuk41R9U5+V16g2bsNqDaq+Vzc4vFCXVyeIFJ83iKGladauVm
+         EBiZIEg51LSLa0dGjhQhv+iG1WaKUz+vfNORopKjtoWf5ItJJybR1+wf08z3YRpVOHr/
+         K0Mw==
+X-Forwarded-Encrypted: i=1; AFNElJ+dU0Xb26vj38GwPAp3em1YqWy1J0EkaLA6zEtKBZ+Y0uttLrJSIdkMDYE3EV/fa7/76MJMJGwkwIvY/d8SRGcQxAn73Ww=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgaWM1B9iOzLbGDg728TB2NfIMfrA3dFUO4M40rt/zx9ezfnx2
+	RqFS+ChvmbaY2WNjrTmNcl0Rb7XuoNp4SohxJg+XytfbTgKQleRmvYBN
+X-Gm-Gg: Acq92OFF7pPSpMaGTtYP4ADIIUBDpZrmd2jeMvWO8c7kFMMoHbth+yytnuZHndNpGM4
+	nHftGU2hx+0V6MUrWER7CCh/FDvnRAzQbAPQ7Hh2vKb3jPw922HUFGB+lJbOFwmpDVCaG50HRq1
+	20fBl6JGY9570heDRC3NZlo6k2DmKOL4LTu8sJFgQepOJ0c+v1AhMPHagYN3hqlf1OoDBmdHABk
+	o/oTZ+hu99YEUyikKHdcIdeJXBAhk3UOR9e4ww2aAedbdPPYI0ZefmebeOL3d/1YrprUr17vmkq
+	gVnSEtOM5P+du9HxbcmAkmRhMfcNqCpfv4KLhwjzSBt6hJtQ2my5uFwgetoojk19o96KU27Rudk
+	oTWQl1tRZpZ8dRWPU3f/gVXVyg+smutWLPSxbN4k9Xd2QsTVWH/GgwIo7HTf7A3GqqSzPpZf18e
+	bI9GgUZaDBcv05U+2W8ak79yXRm3kkQ74qcb7mk6xOYsOkNFMCgHR821bVR+w=
+X-Received: by 2002:a05:6000:18a5:b0:460:1967:abed with SMTP id ffacd0b85a97d-4603063c55dmr1042701f8f.39.1780606081674;
+        Thu, 04 Jun 2026 13:48:01 -0700 (PDT)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4601f344558sm19171848f8f.18.2026.06.04.13.48.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jun 2026 13:48:01 -0700 (PDT)
+Date: Thu, 4 Jun 2026 22:47:56 +0200
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: Bryam Vargas <hexlabsecurity@proton.me>
+Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Justin Suess <utilityemal77@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] landlock: fix LANDLOCK_SCOPE_SIGNAL bypass on the
+ SIGIO path
+Message-ID: <20260604.e8a19bf4e0ed@gnoack.org>
+References: <7rvmLIHR1Zh8RDF1IY1-SYRHzErgw9gPHq0k98RLYVsmHqAejjxcuJi8V3QaSbW-SnNvY5tfM2Xn_S1dEajKV_f7iyitoPwJgOSTZQ0nytc=@proton.me>
+ <20260531.irah0eiM3Chi@digikod.net>
+ <20260602172741.18760-1-hexlabsecurity@proton.me>
+ <20260602172741.18760-2-hexlabsecurity@proton.me>
+ <20260604.f1cb6ce9cd6b@gnoack.org>
+ <20260604102707.133997-1-hexlabsecurity@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260604-unique-ref-v17-10-7b4c3d2930b9@kernel.org>
-References: <20260604-unique-ref-v17-0-7b4c3d2930b9@kernel.org>
-In-Reply-To: <20260604-unique-ref-v17-0-7b4c3d2930b9@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
- Leon Romanovsky <leon@kernel.org>, Paul Moore <paul@paul-moore.com>, 
- Serge Hallyn <sergeh@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Daniel Almeida <daniel.almeida@collabora.com>, 
- Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
- Stephen Boyd <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Boqun Feng <boqun@kernel.org>, Uladzislau Rezki <urezki@gmail.com>, 
- Lorenzo Stoakes <ljs@kernel.org>, Vlastimil Babka <vbabka@kernel.org>, 
- "Liam R. Howlett" <liam@infradead.org>, 
- Igor Korotin <igor.korotin@linux.dev>, 
- Pavel Tikhomirov <ptikhomirov@virtuozzo.com>, Boqun Feng <boqun@kernel.org>, 
- Igor Korotin <igor.korotin@linux.dev>, Lorenzo Stoakes <ljs@kernel.org>, 
- "Liam R. Howlett" <liam@infradead.org>, Vlastimil Babka <vbabka@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- linux-block@vger.kernel.org, linux-security-module@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, 
- linux-mm@kvack.org, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, 
- Andreas Hindborg <a.hindborg@kernel.org>, driver-core@lists.linux.dev, 
- Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1098; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=MTxQNyPl556p/37N9iYrjSR5gCSkwSCTZpMY90B8pEY=;
- b=owEBbQKS/ZANAwAKAfpQKQiqxb3QAcsmYgBqIdvvpNub7j04mvxMdRLdPaAd/MQZCqnEQ9G7x
- 6NHPMMF+bKJAjMEAAEKAB0WIQRXitnI2WZ2JirAaob6UCkIqsW90AUCaiHb7wAKCRD6UCkIqsW9
- 0MI+D/0QPO+RBFAbjZRXC9pKgYwjFXnKxpO8ZzAKgdud2wdZcrmS6XnxjFCuPYPaFQ93AhOYZJa
- 4HV8ITv5TB34RklZib+C1ex0+Q7HyqZjU22svIR16LfDNFX/PzVeBvcMhmc1WvMZxfKE72VeYMD
- lG1FuQHv/rWnofDymriWJ1qTmmIh7KcWTZTBWOBoRgKjjYMflJitin0NXq39YIxXu1MqcEGW20v
- ceF6r4JVyWfA1qLVdGeuXR56Z/tP/9demSf0WEz4n/JNfPwSO2fQGqgHU5Wl5QkOeyepnUg4nCf
- V7AX9lwpje33yM15jdHfXun61mNZa7LYV/QZyVny/IV39nPfxrEMJMFFzFZhx3H9v6+wmG7Rl7h
- cOtjeMyzfmUxEJ95Tx/gR6H9Lv9v03K0ZTh/L5YdaCZvaNDy0gi0KOnWUL1eP93qbY2kiyZmE5f
- t+Xfj7TX4TebKhIwyEuO/uBVPqXJyZTHt2mkjJ2wP+OAjZlc3btrRL3brJE0UGHxHzedtn8XHk8
- TyidsBvAMRGQ+VtyZO8Vi+OXdrfsKfO4XV4jyBjM1uPFGEafgzam59BvvN/aO0sZQB62OEFCXKc
- SQoUbEQRjie1O1BooUeWFUAPW1OpcbGv5nlsQmCDSxE49cATUzyJjv+bd3ihJjA8yLKgc8vmC5j
- m2qAWViBmLjYVlA==
-X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
- fpr=3108C10F46872E248D1FB221376EB100563EF7A7
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260604102707.133997-1-hexlabsecurity@proton.me>
 
-From: Andreas Hindborg <a.hindborg@samsung.com>
+Hello Bryam,
 
-Add a method to `Page` that allows construction of an instance from `struct
-page` pointer.
+Just a brief mail to confirm the approach; this makes sense to me.
 
-Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
----
- rust/kernel/page.rs | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On Thu, Jun 04, 2026 at 10:27:13AM +0000, Bryam Vargas wrote:
+> > I believe the result after this patch is:
+> >  - No threads receive the SIGIO at all.
+> >
+> > This is because we have been setting T2.2's Landlock domain as the
+> > "sending domain" for the hook_file_sigiotask(), and that hook does on
+> > its own not do the "same_thread_group()" check [...]
+> 
+> Confirmed -- I traced the delivery path and your analysis holds.
+> 
+> For a PGID owner the signal is anchored per process on its thread-group
+> leader: a task is attached to pid->tasks[PIDTYPE_PGID] only in the
+> thread_group_leader() branch of copy_process(), so send_sigio()'s
+> do_each_pid_task(pid, PIDTYPE_PGID, p) walk visits exactly T2.1 for P2,
+> never the non-leader T2.2.  hook_file_send_sigiotask() then runs
+> domain_is_scoped(recorded T2.2 domain, T2.1's live domain, SIGNAL) and,
+> having no same_thread_group() exemption of its own (unlike
+> hook_task_kill()), denies it -- even though T2.1 and T2.2 share P2's
+> signal_struct and 18eb75f3af40 mandates that same-process delivery always
+> be allowed.  T2.1 is P2's only entry on the PGID list, so P2 receives
+> nothing.  You are right.
+> 
+> One thing worth putting on the record: this over-block is not introduced
+> by the patch.  In unpatched control_current_fowner() the PGID case already
+> resolves through pid_task(fown->pid, PIDTYPE_PGID), which returns an
+> arbitrary hlist head -- one representative leader.  Whenever that head is
+> outside the caller's thread group, the domain is already recorded today and
+> the same delivery-time denial of the registrant's own leader already fires.
+> The patch only makes domain recording for PGID unconditional, i.e. it turns
+> that order-dependent behaviour into a deterministic one while closing the
+> order-dependent bypass.  So the corner you describe is a pre-existing gap in
+> the delivery hook, not a regression in v4.
+> 
+> That points at the real root cause: same_thread_group is a *per-recipient*
+> property, but control_current_fowner() approximates it once, at F_SETOWN
+> time, against a single pid_task() representative.  hook_task_kill() gets
+> this right because it evaluates same_thread_group(p, current) live, per
+> actual recipient.  hook_file_send_sigiotask() is the SIGIO analogue but
+> delegates the whole thread-group decision to that one registration-time
+> check, which a PGID delivery set simply cannot be captured by.
+> 
+> So the fully-correct fix is to move the same-process exemption to delivery
+> time, keyed to the *registrant* rather than to current (at SIGIO time
+> current is the fd writer, not the task that armed F_SETOWN).  Concretely:
+> when hook_file_set_fowner() records the domain, also pin
+> get_pid(task_tgid(current)) in struct landlock_file_security; in
+> hook_file_send_sigiotask(), before domain_is_scoped(), return 0 when
+> task_tgid(tsk) == that recorded pid.  PGID owners still record the domain
+> (so P1 stays blocked -- the bypass fix), but the registrant's own process,
+> including T2.1, is always allowed -- restoring 18eb75f3af40 exactly.  The
+> new pid is taken/put in lockstep with fown_subject.domain under the same
+> file->f_owner->lock and freed in hook_file_free_security(); the equality
+> test follows neither pid, so there is no extra RCU surface.  Sketch:
+> 
+>     /* struct landlock_file_security */
+>     struct pid *fown_tg;   /* registrant's thread group; NULL if no domain */
+> 
+>     /* hook_file_set_fowner(), where fown_subject is recorded */
+>     fown_tg = get_pid(task_tgid(current));
+>     ...
+>     put_pid(landlock_file(file)->fown_tg);     /* release previous */
+>     landlock_file(file)->fown_tg = fown_tg;
+> 
+>     /* hook_file_free_security() */
+>     put_pid(landlock_file(file)->fown_tg);
+> 
+>     /* hook_file_send_sigiotask(), after the !subject->domain quick return */
+>     if (task_tgid(tsk) == landlock_file(fown->file)->fown_tg)
+>             return 0;   /* same process as the registrant: always allowed */
+n> 
+> I do not see a correct fix that avoids recording the registrant's identity:
+> the registrant task is deliberately discarded after set_fowner (only its
+> domain is kept), and exempting on a shared *domain* instead would be
+> insecure -- sibling threads can hold different domains, and a different
+> process could share one.
 
-diff --git a/rust/kernel/page.rs b/rust/kernel/page.rs
-index 844c75e54134..d56ae597f692 100644
---- a/rust/kernel/page.rs
-+++ b/rust/kernel/page.rs
-@@ -214,6 +214,18 @@ pub fn nid(&self) -> i32 {
-         unsafe { bindings::page_to_nid(self.as_ptr()) }
-     }
- 
-+    /// Create a `&Page` from a raw `struct page` pointer.
-+    ///
-+    /// # Safety
-+    ///
-+    /// `ptr` must be convertible to a shared reference with a lifetime of `'a`.
-+    #[inline]
-+    pub unsafe fn from_raw<'a>(ptr: *const bindings::page) -> &'a Self {
-+        // SAFETY: By function safety requirements, `ptr` is not null and is convertible to a shared
-+        // reference.
-+        unsafe { &*ptr.cast() }
-+    }
-+
-     /// Runs a piece of code with this page mapped to an address.
-     ///
-     /// The page is unmapped when this call returns.
-
--- 
-2.51.2
+Yes, your approach checks out for me; I also think that storing this
+additional information is the best approach; we need to know during
+hook_file_send_sigiotask() what the TGID of the registering task was,
+in order to tell apart signals within the same process from signals
+going outwards of that process.
 
 
+> > To be clear, the patch is still obviously an improvement [...] it just
+> > seems to block it slightly too broadly in this corner scenario?
+> > [...] Mickaël, maybe you have some thoughts on the tradeoff?
+> 
+> Agreed on both counts.  Mickaël -- two ways to land this:
+> 
+>   (a) keep v4 as is.  It closes the bypass; the residual same-process
+>       over-block is pre-existing, deterministic only under the stacked
+>       conditions Günther listed (already-multithreaded enforce, no TSYNC,
+>       SIGIO to a PGID that includes self, registered from a non-leader
+>       thread in a per-thread signal-scoped domain), and arguably tolerable.
+> 
+>   (b) v5 = v4 + the delivery-time exemption above.  Strictly more correct:
+>       it also closes the pre-existing delivery-hook gap and restores
+>       18eb75f3af40's same-process invariant, at the cost of one struct pid*
+>       in landlock_file_security.
+> 
+> I lean (b) -- it fixes the actual root cause rather than the one reachable
+> instance -- and I am happy to spin it (with an added selftest covering the
+> PGID-includes-self / non-leader-registrant case, A/B verified) or to hold at
+> v4 if you would rather keep the change minimal.  Your call on whether the
+> corner warrants the extra state.
+
++1, I also think that the approach is quite clean.  Some checks would
+happen at a later time, but it seems unavoidable in the generic case.
+Checking TGID during hook_file_send_sigiotask() sounds reasonably
+cheap.  (I suspect that trying to do that check early during
+hook_file_set_fowner() would not save us much.)
+
+
+> > P.S: [...] new patchset versions are posted at the top (no Reply-To
+> >      header in the cover letter) [...]
+> 
+> Will do -- v5 (whichever option) goes out as a fresh top-level thread, no
+> In-Reply-To/Reply-To pointing back at this review.
+
+Awesome, thank you very much for looking into patching this! :)
+
+–Günther
