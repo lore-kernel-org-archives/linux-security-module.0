@@ -1,283 +1,142 @@
-Received: from mail-24416.protonmail.ch (mail-24416.protonmail.ch [109.224.244.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9022EEE7A
-	for <linux-security-module@vger.kernel.org>; Thu,  4 Jun 2026 23:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4240A334C39
+	for <linux-security-module@vger.kernel.org>; Thu,  4 Jun 2026 23:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780615034; cv=none; b=sCsYo3Cw6qeKwT5Z2d5IUggawfo8aFx3k8cbtZFl8ZoDrauw3plgdFXiF+wn/PHqaj13L0Ws4p9KYjI0f/r2x76uqnSPr9/dK1YMkiyiGJNG7gDb3+0eiEfxj302PYiJZyDyjarZ93vJ+oJxHwmJ/fS+JWS2TTCUBLbF5+TJfhU=
+	t=1780615148; cv=none; b=JuqTH//fsD21LX6oq6MTLBM2AW4L85zhNxr3d8a6Gtcp/W8rOE5/q2gCZJnFeZB2OJMLgDN1BfcZK+zTIsvCHElAHOuztlN/T0YRcpXUDRmEEzjyMQvRIp91C6ySXxyM6y9WiSvnpkfB1zrga2swbN01Aq+yVZT1/kiwvd7OKFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780615034; c=relaxed/simple;
-	bh=9Y9Q3Oq/g2HsbSWx5NVzvzfWZLMDBobgubpbg/JDEYs=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jHGGUutp0spTN4DVoncUOSj50uOl6cheBLG5qihC01NUdiZf7YIS6Dlh+d4QQTJt/bGKzH5qDBCYDu2sFU9rcxvF5UhB6t9Uq+kBbD29D6lKuO+97LKw0H6l9T/J4ZeNzRtcwerfA5LirKeQMbal2k+t17Nx4U/FsZQcM4Ds56M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=IXImmDNk; arc=none smtp.client-ip=109.224.244.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+	s=arc-20240116; t=1780615148; c=relaxed/simple;
+	bh=e+wiQFodefn4hcPnRr+g1nn8jYvYfVdxnZZL8PqQPNE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PsEtY0sY14odgVuIgNIZAeV70+os59jFfaw1QaaTJq/0hW1ww67y8kk2FT0JiKewlzSyg8P7WkjTWh1zKVI+o+QwDDPChC/Wf3MdvwelarlztmDcIkxbGGHkpEcv5a+CcVjMOhuF0BKIQYfQ63FOhcB/nCFJ2CyFWCXJUSLmMl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ATUITxFo; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="IXImmDNk"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1780615030; x=1780874230;
-	bh=LXhUaratdOjfuU2bCMULOdZjqvbpqRpbGJZQuxWj6C0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=IXImmDNkVEwpwxQS0+ErAYFnisgPyEz6hXK5p1nfNAqQHQe2Fm83KgewFIS862o8E
-	 geF2kU5zU/GtpBhtWJYAEIj/hM1P/WnSA6dXLoerjKyg1czZwPfQnsirxjIXvoUB4L
-	 jOjfhus8DdU2vI/DQz3qBbqr7lUd3IXl1Pc4B+DyU00X0811tg9OlXMcQoXdg9Axr1
-	 mv9m8V1/V/NuVLX8nOIfij2R+N/DF3LDzta8ayCcHcf4ZKw+t2Lj6L/ovXfsVWAN0f
-	 dOl8bUVkYmtK1F0gpft6KuhhllyCwvhZRP97i3jvfAgahyEFKS0kTMHuXYNyQXm3aW
-	 sX05uWMKg60Pg==
-Date: Thu, 04 Jun 2026 23:17:05 +0000
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
-From: Bryam Vargas <hexlabsecurity@proton.me>
-Cc: Justin Suess <utilityemal77@gmail.com>, Christian Brauner <brauner@kernel.org>, Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/2] selftests/landlock: test SCOPE_SIGNAL on the SIGIO/fowner pgid path
-Message-ID: <43370e89f7a896a583bf33d1cd171d02630e61bf.1780614610.git.hexlabsecurity@proton.me>
-In-Reply-To: <cover.1780614610.git.hexlabsecurity@proton.me>
-References: <cover.1780614610.git.hexlabsecurity@proton.me>
-Feedback-ID: 199661219:user:proton
-X-Pm-Message-ID: 11b9b891da285b59e3bd5d7a4ca76dcedfdc361b
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ATUITxFo"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-beb7f26ed62so140730666b.0
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Jun 2026 16:19:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1780615145; x=1781219945; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1t03YMole+ly6+fJzmqkdJokSNqVZigB4RGvlZCSlLc=;
+        b=ATUITxFogD8HCV2O7l4LS+CCO4NC4YeesW/jNwP3qANKIrNJO1Es50W0a+jEuncpNY
+         gVkhQ0oevCrsP+lvVYB75iVEqb5J5Raugr9WHWoQNaRRxgR7bcCNNflWsmapzR6+d05h
+         uvaSAyHq+/80VHG25Kiu4MjEDm+Mbr10hPPT4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780615145; x=1781219945;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1t03YMole+ly6+fJzmqkdJokSNqVZigB4RGvlZCSlLc=;
+        b=b8lHvJ2Bn+nUnWzk1Jo5qMIPFBr2JtUPpOYafM7BGrs1RH/wLPlWOZ0BZFp7joG1ou
+         M5xY3C3FOFToPIM+Ay+vOmltKqZtYfJsoqF1204QZ57WNuu8r1EuRJcTuFp4Krd0l9+1
+         tweq+C+Ofdkp1DYwOqmDHvugmvYgURIFs/3Lx9SduBgD4lhyOfrD+D1GfRJ3VlF46/3+
+         eLQv40hluqN/1uVKQPlK2lnwPlVcRsp+zq/5xSSqS92J/XkpK/lXvTepLpu7ecdbMOBz
+         AlziaMhcQAgdoM91dlDh6wMLTWiO6dfuZk4iaygDkdnQno06pAxcvKrvbvv5zWGP2O0s
+         enAw==
+X-Gm-Message-State: AOJu0YzHOL0eXkQTR+2AAP5nlEZ7VpQYJ/3HOkj9ZtwdA9QM8M7+/ShF
+	qbBkHnwxD7+ouqNTHz2QDSUC7/8XJ0TYfB0QoeWkSEWKntB6ADQLe8Dzp9B6RrrW05MCXoylscz
+	LY27gpzRDcg==
+X-Gm-Gg: Acq92OFfUzGY9Zlf8kTKF+2fBHLuay4vVZec7fx3C5m3BZ7qRxgqZJhS5kpggdnwV6f
+	hUbYnYOF3smLSDR4xrgTTFXcDePLGbP1vjT0pAsfrs/SelvGvsGzQdRY6RuDw5tCJWWvPjUTuD/
+	cJ3p1zj9dUBhXlYStph+YF+KqnnAtanqnyHA9vSTzjZQdTiOWabJ9QrXyFtTLDTVuwlRaRYDBue
+	Bk3ncz6tzIR4aFXncMStEhEBmuN2Yjwp89hifi3sqvFCj95H1IN6CtPb0LNpCiTM1REAVldNa5x
+	rLzM0RmS35uMYcmj/BSck5v3rnXCHDfqtNBRzCyGJN1Mp7YwvlLkjZRuIcH+TSmUCmFM1w4Dfil
+	kCF5AX3zU/o5mEhkolZ7M/nKG673jxkK26fgjz74Psu3on/v9AM8cu0CiMGi9BHDuz3OAqbucaj
+	VCBjxorBi0Si9U5j62H4zQBpdVIm3/HaEKYU2Rnftr1jbsbV6Dlq24hDQrtJFPqhHVYUr+LbSWp
+	WNLc2SL5OoIMmZAn0SMkw==
+X-Received: by 2002:a17:907:a315:b0:bec:ab0c:2442 with SMTP id a640c23a62f3a-bf36fd9c7e8mr36405066b.2.1780615144586;
+        Thu, 04 Jun 2026 16:19:04 -0700 (PDT)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bf051b8c7efsm363072766b.14.2026.06.04.16.19.03
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Jun 2026 16:19:03 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-68d23396ed3so2302730a12.1
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Jun 2026 16:19:03 -0700 (PDT)
+X-Received: by 2002:a05:6402:40d2:b0:68b:5e48:750f with SMTP id
+ 4fb4d7f45d1cf-68fa525ad77mr439899a12.25.1780615143537; Thu, 04 Jun 2026
+ 16:19:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <83f77b2b-8c00-424d-b6f9-b044e7ea1ee7@sirena.org.uk>
+ <CAHk-=wj6CtZS9hbwFjQcoNkPwQLoyKmk8czaBF6=bBOCYuXEUQ@mail.gmail.com>
+ <CAHC9VhRX1=tx4+arzuH76kirYFFJozexa5L=41Bb2QbgWZXOkQ@mail.gmail.com>
+ <CAHk-=wj_rtiufEEVudMCSbh86HYrnmEa9NhYfKeWHs1SOzJVnA@mail.gmail.com> <CAHC9VhRXW_kyWXgYBqW3K-jSr5yN9wp1EPos1c=BFmiebxLiUQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhRXW_kyWXgYBqW3K-jSr5yN9wp1EPos1c=BFmiebxLiUQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 4 Jun 2026 16:18:46 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wij4nkMRcshzEGsxvjwP2RBQyaiQ4-vQrYTOqvQusxu9g@mail.gmail.com>
+X-Gm-Features: AVVi8CcZbp6oblGDP2dwW15N5QHkOyIDDcZIe3k_o9LsAC_bkAWxdIwmjPOUXmo
+Message-ID: <CAHk-=wij4nkMRcshzEGsxvjwP2RBQyaiQ4-vQrYTOqvQusxu9g@mail.gmail.com>
+Subject: Re: -next status as at v7.1-rc6
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
+	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, 
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>, linux-next@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add regression tests for the LANDLOCK_SCOPE_SIGNAL handling of the
-asynchronous SIGIO delivery path (fcntl(F_SETOWN)) with a process-group
-owner.
+On Thu, 4 Jun 2026 at 15:23, Paul Moore <paul@paul-moore.com> wrote:
+>
+> While you didn't reply to any of my comments explaining how Hornet
+> works, specifically how it ties into the kernel, I'm assuming you've
+> read the overview.  Can you help those of us in the LSM space
+> understand why a BPF dev's NACK on code that lives strictly under
+> security/ is sufficient grounds to reject an LSM patch?
 
-sigio_to_pgid_members covers the bypass: a sandboxed process at the head
-of its process group's PID hlist (the default after fork()) arms
-F_SETOWN(-pgrp) + O_ASYNC and triggers the fan-out; the in-domain owner
-must be signaled (proving the trigger fired) while the non-sandboxed
-member of the group, outside the domain, must not.
+Honestly, I'm not competent to make a judgment call between two
+different models for hash chain verification, so I basically *have* to
+go by maintainer opinions.
 
-sigio_to_pgid_self covers the same-process guarantee: the owner is
-registered from a sandboxed non-leader thread, whose domain differs from
-the thread-group leader the kernel signals for a process-group owner.
-That leader belongs to the owner's own process and must still be signaled.
+And the discussions I have been cc'd on have not been what I'd call
+enlightening.
 
-Without the fix the first test sees the out-of-domain member signaled and
-the second sees the owner's own leader denied.
+But people have pointed out that the LSM code mucks around with bpf
+internals, and those NAK's have had reasons for them.
 
-Signed-off-by: Bryam Vargas <hexlabsecurity@proton.me>
----
- .../selftests/landlock/scoped_signal_test.c   | 183 ++++++++++++++++++
- 1 file changed, 183 insertions(+)
+And honestly, I don't understand *why* Hornet does what it does - and
+does it in ways that obviously annoy the bpf people. There is no
+*reason* to look at the bpf maps that I can see, and from my
+understanding of Alexei's arguments (which may be lacking), the fact
+that Hornet does that is the main reason for the NAK.
 
-diff --git a/tools/testing/selftests/landlock/scoped_signal_test.c b/tools/=
-testing/selftests/landlock/scoped_signal_test.c
-index d8bf33417619..4359e0262dcf 100644
---- a/tools/testing/selftests/landlock/scoped_signal_test.c
-+++ b/tools/testing/selftests/landlock/scoped_signal_test.c
-@@ -559,4 +559,187 @@ TEST_F(fown, sigurg_socket)
- =09=09_metadata->exit_code =3D KSFT_FAIL;
- }
-=20
-+/*
-+ * Checks that LANDLOCK_SCOPE_SIGNAL is enforced on the asynchronous SIGIO
-+ * delivery path (fcntl(F_SETOWN)) when the file owner is a process group.
-+ *
-+ * A sandboxed process sitting at the head of its process group's PID hlis=
-t
-+ * (the default position right after fork()) used to escape the
-+ * fcntl(F_SETOWN, -pgrp) domain recording: pid_task(pgrp, PIDTYPE_PGID)
-+ * resolved to the process itself, so the same-thread-group exemption skip=
-ped
-+ * recording its Landlock domain.  At SIGIO time that domain was then unse=
-t and
-+ * the signal fanned out to every group member, including non-sandboxed
-+ * processes outside the domain.
-+ */
-+TEST(sigio_to_pgid_members)
-+{
-+=09int trigger[2], sync_child[2];
-+=09char buf;
-+=09pid_t child;
-+=09int status, i;
-+
-+=09drop_caps(_metadata);
-+
-+=09/*
-+=09 * Isolates the test in its own process group so the SIGIO fan-out stay=
-s
-+=09 * bounded to this parent and the child forked below.
-+=09 */
-+=09ASSERT_EQ(0, setpgid(0, 0));
-+
-+=09/* The non-sandboxed parent is the protected (out-of-domain) target. */
-+=09ASSERT_EQ(0, setup_signal_handler(SIGURG));
-+=09signal_received =3D 0;
-+
-+=09ASSERT_EQ(0, pipe2(trigger, O_CLOEXEC));
-+=09ASSERT_EQ(0, pipe2(sync_child, O_CLOEXEC));
-+
-+=09child =3D fork();
-+=09ASSERT_LE(0, child);
-+=09if (child =3D=3D 0) {
-+=09=09/*
-+=09=09 * The child inherits the parent's new process group and, just
-+=09=09 * attached with hlist_add_head_rcu(), is now the head of the
-+=09=09 * pgid hlist: this is the case that used to skip the recording.
-+=09=09 */
-+=09=09EXPECT_EQ(0, close(sync_child[0]));
-+
-+=09=09/* In-domain positive control: the child must be signaled. */
-+=09=09ASSERT_EQ(0, setup_signal_handler(SIGURG));
-+=09=09signal_received =3D 0;
-+
-+=09=09create_scoped_domain(_metadata, LANDLOCK_SCOPE_SIGNAL);
-+
-+=09=09/* Owns the SIGIO source for the whole process group. */
-+=09=09ASSERT_EQ(0, fcntl(trigger[0], F_SETSIG, SIGURG));
-+=09=09ASSERT_EQ(0, fcntl(trigger[0], F_SETOWN, -getpgrp()));
-+=09=09ASSERT_EQ(0, fcntl(trigger[0], F_SETFL, O_ASYNC));
-+
-+=09=09/* Fans SIGURG out to every member of the process group. */
-+=09=09ASSERT_EQ(1, write(trigger[1], ".", 1));
-+
-+=09=09/*
-+=09=09 * The sandboxed child is in its own domain and must always be
-+=09=09 * signaled: this proves the SIGIO actually fired.
-+=09=09 */
-+=09=09for (i =3D 0; i < 1000 && !signal_received; i++)
-+=09=09=09usleep(1000);
-+=09=09EXPECT_EQ(1, signal_received);
-+
-+=09=09ASSERT_EQ(1, write(sync_child[1], ".", 1));
-+=09=09EXPECT_EQ(0, close(sync_child[1]));
-+
-+=09=09_exit(_metadata->exit_code);
-+=09=09return;
-+=09}
-+=09EXPECT_EQ(0, close(sync_child[1]));
-+=09EXPECT_EQ(0, close(trigger[0]));
-+=09EXPECT_EQ(0, close(trigger[1]));
-+
-+=09/* Waits for the child to generate the SIGIO. */
-+=09ASSERT_EQ(1, read(sync_child[0], &buf, 1));
-+=09EXPECT_EQ(0, close(sync_child[0]));
-+
-+=09/* Lets a delivered-but-pending signal run our handler, if any. */
-+=09for (i =3D 0; i < 100 && !signal_received; i++)
-+=09=09usleep(1000);
-+
-+=09/*
-+=09 * SCOPE_SIGNAL must block the fan-out to this non-sandboxed parent,
-+=09 * which is outside the child's Landlock domain.  Before the fix the
-+=09 * parent was signaled here.
-+=09 */
-+=09EXPECT_EQ(0, signal_received);
-+
-+=09ASSERT_EQ(child, waitpid(child, &status, 0));
-+=09if (WIFSIGNALED(status) || !WIFEXITED(status) ||
-+=09    WEXITSTATUS(status) !=3D EXIT_SUCCESS)
-+=09=09_metadata->exit_code =3D KSFT_FAIL;
-+}
-+
-+static void *thread_setown_scoped(void *arg)
-+{
-+=09const int fd =3D *(int *)arg;
-+=09int ruleset_fd;
-+=09const struct landlock_ruleset_attr ruleset_attr =3D {
-+=09=09.scoped =3D LANDLOCK_SCOPE_SIGNAL,
-+=09};
-+
-+=09/* Sandboxes only this non-leader thread (no thread syncing). */
-+=09ruleset_fd =3D
-+=09=09landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-+=09if (ruleset_fd < 0)
-+=09=09return (void *)THREAD_ERROR;
-+=09if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) ||
-+=09    landlock_restrict_self(ruleset_fd, 0)) {
-+=09=09close(ruleset_fd);
-+=09=09return (void *)THREAD_ERROR;
-+=09}
-+=09close(ruleset_fd);
-+
-+=09/* Makes this process group own the SIGIO source. */
-+=09if (fcntl(fd, F_SETSIG, SIGURG) || fcntl(fd, F_SETOWN, -getpgrp()) ||
-+=09    fcntl(fd, F_SETFL, O_ASYNC))
-+=09=09return (void *)THREAD_ERROR;
-+
-+=09return (void *)THREAD_SUCCESS;
-+}
-+
-+/*
-+ * Checks that the SIGIO fan-out is still delivered to the file owner's ow=
-n
-+ * process when fcntl(F_SETOWN, -pgrp) was issued from a sandboxed non-lea=
-der
-+ * thread.
-+ *
-+ * The Landlock domain is recorded for a process-group owner (so out-of-do=
-main
-+ * members stay blocked, see sigio_to_pgid_members), but the kernel signal=
-s a
-+ * process group through its members' thread-group leaders.  Here the lead=
-er is
-+ * not sandboxed and thus has a different domain than the registering thre=
-ad, so
-+ * the registration-time check cannot tell that it belongs to the owner's =
-own
-+ * process.  hook_file_send_sigiotask() must recognize it through the reco=
-rded
-+ * thread group and allow the delivery, matching the same-process guarante=
-e of
-+ * commit 18eb75f3af40.  Without that exemption the leader is wrongly deni=
-ed and
-+ * never signaled.
-+ */
-+TEST(sigio_to_pgid_self)
-+{
-+=09int trigger[2];
-+=09pthread_t thread;
-+=09enum thread_return ret =3D THREAD_INVALID;
-+=09int i;
-+
-+=09drop_caps(_metadata);
-+
-+=09/* Bounds the SIGIO fan-out to this process. */
-+=09ASSERT_EQ(0, setpgid(0, 0));
-+
-+=09/* The non-sandboxed thread-group leader is the SIGIO target. */
-+=09ASSERT_EQ(0, setup_signal_handler(SIGURG));
-+=09signal_received =3D 0;
-+
-+=09ASSERT_EQ(0, pipe2(trigger, O_CLOEXEC));
-+
-+=09/*
-+=09 * Registers the process-group fowner from a sibling thread that
-+=09 * sandboxes only itself, so its domain differs from the leader's.
-+=09 */
-+=09ASSERT_EQ(0, pthread_create(&thread, NULL, thread_setown_scoped,
-+=09=09=09=09    &trigger[0]));
-+=09ASSERT_EQ(0, pthread_join(thread, (void **)&ret));
-+=09ASSERT_EQ(THREAD_SUCCESS, ret);
-+
-+=09/* Fans SIGURG out to the process group. */
-+=09ASSERT_EQ(1, write(trigger[1], ".", 1));
-+
-+=09for (i =3D 0; i < 1000 && !signal_received; i++)
-+=09=09usleep(1000);
-+
-+=09/*
-+=09 * Same-process delivery must always be allowed, even though the owner
-+=09 * was registered from a sandboxed sibling thread.
-+=09 */
-+=09EXPECT_EQ(1, signal_received);
-+
-+=09EXPECT_EQ(0, close(trigger[0]));
-+=09EXPECT_EQ(0, close(trigger[1]));
-+}
-+
- TEST_HARNESS_MAIN
---=20
-2.43.0
+But instead of working with the bpf people on coming up with some
+model that does *not* do that, it all seems to have become a "we'll do
+it anyway, despite maintainer complaints".
 
+And I *did* see the bpf people pointing to "this would be an
+acceptable alternative" with KP Singh outlining something that *had*
+been discussed.
 
+But I never actually saw anybody say "ok, we'll try that instead".
+
+Maybe I missed it.
+
+But from what I saw, it really looked like "I see NAK's from three
+different bpf maintainers, with suggested alternate approaches". None
+of which resulted in anything that looked like "ok, we'll try to
+follow your guidance", only more of the same.
+
+Why would *my* input then make any difference?
+
+The bpf people's arguments resonated more with me. For example, the
+whole "we need to know if it passed the bpf signature" seems to be
+complate pointless silliness, and the bpf peoples responses to that
+resonated with me. There's *no* point in any LSM check whether the
+signature passed or not, since if it didn't pass, it's not getting
+loaded.
+
+So that's basically where I stand - I've seen disagreement, and I've
+seen what looks to me like reasonable push-back, and I've not really
+seen the LSM response as taking it into account.
+
+           Linus
