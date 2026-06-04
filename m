@@ -1,217 +1,189 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EB04C9008
-	for <linux-security-module@vger.kernel.org>; Thu,  4 Jun 2026 20:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780606085; cv=none; b=outI6pzsETfQ/2HEyPlmf2eupzmlPgbIi32M5jP02pJuPzucQFaVLAUMXNjBjTiWai8/3jyJJvvE502OW3I39Oa+/4+weCATjz2RCuFjpDYcoJcaBs5UMJb//Q3DtYq0cH3oKqPghi438NAyY/iATcAR5iyM3GpchBwXoHppHMY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780606085; c=relaxed/simple;
-	bh=6hGQLbsaDeyUM+nnzCDhG50UBs91b9ghew0II57BQ6w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PyLhOUK5+OGZH3N1fz+AOKYo1yLTrNqsdoV4cTQa7UYG7TddbO5e3jDVWDBToXxd22ft2a5YFEFxAqxIrEIMTPzJ67FjqOmWAsCqRUdgXwgI4p8/qM/nTLoTwJNzQaBcoGm6I8apHSXbDnz4e763wtpIxlR4PxYDCIqcmyEB/Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lD+TVf/f; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D86A30D3F6
+	for <linux-security-module@vger.kernel.org>; Thu,  4 Jun 2026 22:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.174
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780611799; cv=pass; b=Y3yPBs1vlom0vo3snuQWVjmEsltjrBpR6LJn/NChp58+GIEY3G0f6zPbrgn5K5TQRAryiTxSFh5cBBiydjIriGHiapHy1lmad8Bjmaph15cb/gKX9qMtU0ASqV37bXlRLz6sDsoBPsfJRdbTVfJ9xR6L07Q8QfS5qYsuKEpiq7w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780611799; c=relaxed/simple;
+	bh=sv7u946dDPt6bQWxS+BMmnxYNE48PGMJ11+6cCv1z7g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aBbUQtyndd+/HZRCgAlR2HCAnBJm4yO5O4+ZvJw6ySHC8Vbn2Ssnlb49XXTf9tXkI0H0+Ql+c4Zf/koUB899RDmbLzf7G6VfU6VuVQVHXEgg2iAKE6vI/6sUtXeuXD5d1dSbKfpiX7nPIDyouWoBlUmw3iVd9RGsiYQ4sOdv9Mc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MHJzxE0+; arc=pass smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lD+TVf/f"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-45ef29c5561so703041f8f.0
-        for <linux-security-module@vger.kernel.org>; Thu, 04 Jun 2026 13:48:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MHJzxE0+"
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-841882f8f4bso552633b3a.0
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Jun 2026 15:23:17 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780611797; cv=none;
+        d=google.com; s=arc-20240605;
+        b=NW7UgSrJ0okYTsWkwZeL0feXOKJxh4PERvgfrIhKfcO1tvEZnAEN2PmcbrK/UFcR1s
+         0fhyqYSJATNLbDhnet12yIV9G/Z0G7X8krnMSXxvaeT/kZu2DHnGzFl90xLG9ZevnBeY
+         mOHa/gWknwhW8G6qCvH2zn7E9BqElOH5WwNsmIL5lxA/sQmRB5xk26DOeuH6J7DcmsOY
+         5XybSt1aJysW9twJTttWGW9ui9ZZNF+qI37OniLNSfTKp/laYFctsRps3jF87NdV5jjo
+         +HHQDOJkC3icPszhz1DKuwhcbiqN+DndG5MNN4d3YIUKq1PVOA1UNgnDlAIYAs/LG4Yq
+         K+Ew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=pihXm2znUTB2Pr0aH9CbpJxNZjUXIGY7ehFMK0p5h+I=;
+        fh=/xaH0XAXfxmZ3p4tN06SRmUz9b0W7YCNeLuwhGO5uVM=;
+        b=SpC30qQzSXRy1uYIHYTPOCqqvx1/RYo0mP7o82AnIf2VZGUYSotwQ1K/W643vqFiIV
+         B9G/FmyornTNZW006DXdkVagz2nB7MalaXxAcyUS3tMXuaZbOeWHd6VX6/Qmb7qi00Hs
+         B34DvjutrII7nDDqrCGhjiowmWya19WAhLsAVs+LWrF+O6Wv+zUtH8z6X5mjTZbfyiyL
+         3VJPJBm8Kdx4qMIAdLCVf7LCkED4BU2sajyICYRlvfjpsp7tHzup0CvMBuFqgwqAIUKi
+         9dWBaKJw3S7QvJpDLZ2oVbe8qvq7IABUhVhNjGIudo//Zb2tBhSMhHLngrt1gTkNWaoQ
+         yp2A==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780606082; x=1781210882; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tvYftNrs5kAZ/e9l/bRPV9TOjx9gdfGqGwbPpzRf47A=;
-        b=lD+TVf/f7E450z2GFtI5D4IckqnbYIobPaHeoGbGjPKdgM3+kEaU8UHWgCYsF/VtT8
-         fcwC4MmexblK5+7R5VQuiTWgeqZM7QqxI5LjALmSjgQOf/J+d0joblfOnbe/s8E4v+v3
-         ztA03kVOIS5XcrEQFuOlrHOePjkHj34QEmsgBZcbjjr/Zrh62jZIxFcv29fVl1wqB8IQ
-         j7QeTFnAdxL2qxMuvk3et8f2O+bgU6kjK+Soya41O+ckxPnkZaHx2RBwpS1w+oGkkXLN
-         owpNpjxNzMB8O/Rbd4I7B4Fi7IQIXBOhV48abavILVcySHzB3nBHnhhxQRpQc21mbzDk
-         anzQ==
+        d=paul-moore.com; s=google; t=1780611797; x=1781216597; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pihXm2znUTB2Pr0aH9CbpJxNZjUXIGY7ehFMK0p5h+I=;
+        b=MHJzxE0+OskseWSqPOkWLUBwXAQQ4gpWuCxTsWv4CUA7QwW2RSIX+8Pl0vN0D/ImFL
+         6IvWjFlQsqfs9F4Emas2/LrjHlWdepmvTMXS5FbUPzUhhfDOlZ6c6Qt6uv4cGIWpoXy/
+         U8hRFioZDLAcMrX9AwG5Cj895YVI4LuS6kAyb+ubli+BiJ5dKcwZgHGlIDcH0FaMBTU4
+         fMQq1IV7y7X6yDKnwwbWgr3txDOmy0HVM0PPIX6O2s4pLKeoDofNYSDdVfxS5ouSJbhm
+         W5H8npJ2oVN8s/QShpYNhydCNzmDu0EZ0OsXAo8MiixUBv1cLBOegzXQb5qpe/+LEztx
+         n3Tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780606082; x=1781210882;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tvYftNrs5kAZ/e9l/bRPV9TOjx9gdfGqGwbPpzRf47A=;
-        b=TKXTvJiNRXZ7eh7IDAcaRbfCCl0Fr5Yo6e1n5wmVJFmLfftqZ5zxwNGI1z7ucAt2TA
-         veoUK36CoJR2hefRvWRGltPO5Cy1KweBAusq82IQWaBvRzs/uuUx7bZX9/wg1qo8jqIP
-         AXg+GV3K1zH7z29Iwqc+B7sxIuhzonXQVOs+7xGyCHlaQFVf8mqiSpCcPAKf6RjArUYx
-         L//NZ9WsI4UlrMvdf7Miuk41R9U5+V16g2bsNqDaq+Vzc4vFCXVyeIFJ83iKGladauVm
-         EBiZIEg51LSLa0dGjhQhv+iG1WaKUz+vfNORopKjtoWf5ItJJybR1+wf08z3YRpVOHr/
-         K0Mw==
-X-Forwarded-Encrypted: i=1; AFNElJ+dU0Xb26vj38GwPAp3em1YqWy1J0EkaLA6zEtKBZ+Y0uttLrJSIdkMDYE3EV/fa7/76MJMJGwkwIvY/d8SRGcQxAn73Ww=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgaWM1B9iOzLbGDg728TB2NfIMfrA3dFUO4M40rt/zx9ezfnx2
-	RqFS+ChvmbaY2WNjrTmNcl0Rb7XuoNp4SohxJg+XytfbTgKQleRmvYBN
-X-Gm-Gg: Acq92OFF7pPSpMaGTtYP4ADIIUBDpZrmd2jeMvWO8c7kFMMoHbth+yytnuZHndNpGM4
-	nHftGU2hx+0V6MUrWER7CCh/FDvnRAzQbAPQ7Hh2vKb3jPw922HUFGB+lJbOFwmpDVCaG50HRq1
-	20fBl6JGY9570heDRC3NZlo6k2DmKOL4LTu8sJFgQepOJ0c+v1AhMPHagYN3hqlf1OoDBmdHABk
-	o/oTZ+hu99YEUyikKHdcIdeJXBAhk3UOR9e4ww2aAedbdPPYI0ZefmebeOL3d/1YrprUr17vmkq
-	gVnSEtOM5P+du9HxbcmAkmRhMfcNqCpfv4KLhwjzSBt6hJtQ2my5uFwgetoojk19o96KU27Rudk
-	oTWQl1tRZpZ8dRWPU3f/gVXVyg+smutWLPSxbN4k9Xd2QsTVWH/GgwIo7HTf7A3GqqSzPpZf18e
-	bI9GgUZaDBcv05U+2W8ak79yXRm3kkQ74qcb7mk6xOYsOkNFMCgHR821bVR+w=
-X-Received: by 2002:a05:6000:18a5:b0:460:1967:abed with SMTP id ffacd0b85a97d-4603063c55dmr1042701f8f.39.1780606081674;
-        Thu, 04 Jun 2026 13:48:01 -0700 (PDT)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4601f344558sm19171848f8f.18.2026.06.04.13.48.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jun 2026 13:48:01 -0700 (PDT)
-Date: Thu, 4 Jun 2026 22:47:56 +0200
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: Bryam Vargas <hexlabsecurity@proton.me>
-Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Justin Suess <utilityemal77@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org, stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] landlock: fix LANDLOCK_SCOPE_SIGNAL bypass on the
- SIGIO path
-Message-ID: <20260604.e8a19bf4e0ed@gnoack.org>
-References: <7rvmLIHR1Zh8RDF1IY1-SYRHzErgw9gPHq0k98RLYVsmHqAejjxcuJi8V3QaSbW-SnNvY5tfM2Xn_S1dEajKV_f7iyitoPwJgOSTZQ0nytc=@proton.me>
- <20260531.irah0eiM3Chi@digikod.net>
- <20260602172741.18760-1-hexlabsecurity@proton.me>
- <20260602172741.18760-2-hexlabsecurity@proton.me>
- <20260604.f1cb6ce9cd6b@gnoack.org>
- <20260604102707.133997-1-hexlabsecurity@proton.me>
+        d=1e100.net; s=20251104; t=1780611797; x=1781216597;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=pihXm2znUTB2Pr0aH9CbpJxNZjUXIGY7ehFMK0p5h+I=;
+        b=Z4sVeQMDqdWcpNzCEeUTWEBAPb5xFU2COBEfOVA4K5NmR5klaUBBKSpUxzdwixWCeY
+         YPdfoSwzjSTIRBGscwLPrda29GKEPcV7SBk8iorrIacxCETMBcZcZZtgmQEGlEdlOUVj
+         lFDrvnXV8UkjuiZLj8KjtP3coVq11rFWeGH6MXecZUndy/WccBeBoC7nob/bTpYK9r/a
+         NPaeXtLAGC/mxXOtzTyDolgY09eRbQsyfHjD0Hl3Q+4pXwDYMcLwCPenCVsAi3JkCJ0I
+         fvPJkgroc4EspA221Q6YogTr9FlL1O0xdTVQBXFRQv7tUfziP31tkB1xZqS9PMZdNsHA
+         MF4g==
+X-Gm-Message-State: AOJu0YyAsUaNVSRHnJKiN7hCLZroAoWwA9ZLHXEyQ+dggXWl0W5Gynrl
+	V29wAuJ14+HbqGkWwTqb7dL7mDenoCgYKORhUTcrX2bzQ22Po4qxrhSX4mgIp6ZVHUH/oKqtUeu
+	OpUJ/2gLmg8LSTPUV7OYhJDr4T88Y2K+EzMDhWZ8c
+X-Gm-Gg: Acq92OEhIcjhoMHDvrwb4Sq+x+uBO3o66qtNNZQskI/H9T0Upi+XR4Sb6leHh5gOzHS
+	53Ph8n3DTRZzgghWoIhim8jrmjmYp9LzPlgWyR0ryX7aWJFpV02RVbXAlG1ecnEKWm5+hJG66Kt
+	z8YdJkkPjuQ1yDnYcMKiBuqUk06NJdkFyOz7/F3QbgZ4ifUqq60hqIU0l+zYAsdgwMbFpKh6heh
+	kIKfpxX1jb8GJ6zKVKvxrEbTRn6lUaMtrMs0y+MXnvEgNhaI54ay0NZjHPXeD4b2NMx5bCiw+Qa
+	GQyVpAtAZxeVz0NL5w==
+X-Received: by 2002:a05:6a00:9a6:b0:842:3aee:12c0 with SMTP id
+ d2e1a72fcca58-842b0f4d125mr572659b3a.23.1780611797364; Thu, 04 Jun 2026
+ 15:23:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260604102707.133997-1-hexlabsecurity@proton.me>
+References: <83f77b2b-8c00-424d-b6f9-b044e7ea1ee7@sirena.org.uk>
+ <CAHk-=wj6CtZS9hbwFjQcoNkPwQLoyKmk8czaBF6=bBOCYuXEUQ@mail.gmail.com>
+ <CAHC9VhRX1=tx4+arzuH76kirYFFJozexa5L=41Bb2QbgWZXOkQ@mail.gmail.com> <CAHk-=wj_rtiufEEVudMCSbh86HYrnmEa9NhYfKeWHs1SOzJVnA@mail.gmail.com>
+In-Reply-To: <CAHk-=wj_rtiufEEVudMCSbh86HYrnmEa9NhYfKeWHs1SOzJVnA@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 4 Jun 2026 18:23:04 -0400
+X-Gm-Features: AVHnY4IWCLJ4YD6K4pLZd33BtQj_cRah5eC6RDvamIb2F_A5rRJQWkfp4uHn4XY
+Message-ID: <CAHC9VhRXW_kyWXgYBqW3K-jSr5yN9wp1EPos1c=BFmiebxLiUQ@mail.gmail.com>
+Subject: Re: -next status as at v7.1-rc6
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-security-module@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
+	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, 
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>, linux-next@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Bryam,
-
-Just a brief mail to confirm the approach; this makes sense to me.
-
-On Thu, Jun 04, 2026 at 10:27:13AM +0000, Bryam Vargas wrote:
-> > I believe the result after this patch is:
-> >  - No threads receive the SIGIO at all.
+On Wed, Jun 3, 2026 at 8:32=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Wed, 3 Jun 2026 at 17:04, Paul Moore <paul@paul-moore.com> wrote:
 > >
-> > This is because we have been setting T2.2's Landlock domain as the
-> > "sending domain" for the hook_file_sigiotask(), and that hook does on
-> > its own not do the "same_thread_group()" check [...]
-> 
-> Confirmed -- I traced the delivery path and your analysis holds.
-> 
-> For a PGID owner the signal is anchored per process on its thread-group
-> leader: a task is attached to pid->tasks[PIDTYPE_PGID] only in the
-> thread_group_leader() branch of copy_process(), so send_sigio()'s
-> do_each_pid_task(pid, PIDTYPE_PGID, p) walk visits exactly T2.1 for P2,
-> never the non-leader T2.2.  hook_file_send_sigiotask() then runs
-> domain_is_scoped(recorded T2.2 domain, T2.1's live domain, SIGNAL) and,
-> having no same_thread_group() exemption of its own (unlike
-> hook_task_kill()), denies it -- even though T2.1 and T2.2 share P2's
-> signal_struct and 18eb75f3af40 mandates that same-process delivery always
-> be allowed.  T2.1 is P2's only entry on the PGID list, so P2 receives
-> nothing.  You are right.
-> 
-> One thing worth putting on the record: this over-block is not introduced
-> by the patch.  In unpatched control_current_fowner() the PGID case already
-> resolves through pid_task(fown->pid, PIDTYPE_PGID), which returns an
-> arbitrary hlist head -- one representative leader.  Whenever that head is
-> outside the caller's thread group, the domain is already recorded today and
-> the same delivery-time denial of the registrant's own leader already fires.
-> The patch only makes domain recording for PGID unconditional, i.e. it turns
-> that order-dependent behaviour into a deterministic one while closing the
-> order-dependent bypass.  So the corner you describe is a pre-existing gap in
-> the delivery hook, not a regression in v4.
-> 
-> That points at the real root cause: same_thread_group is a *per-recipient*
-> property, but control_current_fowner() approximates it once, at F_SETOWN
-> time, against a single pid_task() representative.  hook_task_kill() gets
-> this right because it evaluates same_thread_group(p, current) live, per
-> actual recipient.  hook_file_send_sigiotask() is the SIGIO analogue but
-> delegates the whole thread-group decision to that one registration-time
-> check, which a PGID delivery set simply cannot be captured by.
-> 
-> So the fully-correct fix is to move the same-process exemption to delivery
-> time, keyed to the *registrant* rather than to current (at SIGIO time
-> current is the fd writer, not the task that armed F_SETOWN).  Concretely:
-> when hook_file_set_fowner() records the domain, also pin
-> get_pid(task_tgid(current)) in struct landlock_file_security; in
-> hook_file_send_sigiotask(), before domain_is_scoped(), return 0 when
-> task_tgid(tsk) == that recorded pid.  PGID owners still record the domain
-> (so P1 stays blocked -- the bypass fix), but the registrant's own process,
-> including T2.1, is always allowed -- restoring 18eb75f3af40 exactly.  The
-> new pid is taken/put in lockstep with fown_subject.domain under the same
-> file->f_owner->lock and freed in hook_file_free_security(); the equality
-> test follows neither pid, so there is no extra RCU surface.  Sketch:
-> 
->     /* struct landlock_file_security */
->     struct pid *fown_tg;   /* registrant's thread group; NULL if no domain */
-> 
->     /* hook_file_set_fowner(), where fown_subject is recorded */
->     fown_tg = get_pid(task_tgid(current));
->     ...
->     put_pid(landlock_file(file)->fown_tg);     /* release previous */
->     landlock_file(file)->fown_tg = fown_tg;
-> 
->     /* hook_file_free_security() */
->     put_pid(landlock_file(file)->fown_tg);
-> 
->     /* hook_file_send_sigiotask(), after the !subject->domain quick return */
->     if (task_tgid(tsk) == landlock_file(fown->file)->fown_tg)
->             return 0;   /* same process as the registrant: always allowed */
-n> 
-> I do not see a correct fix that avoids recording the registrant's identity:
-> the registrant task is deliberately discarded after set_fowner (only its
-> domain is kept), and exempting on a shared *domain* instead would be
-> insecure -- sibling threads can hold different domains, and a different
-> process could share one.
+> > It's worth mentioning that resolving the merge issue was relatively
+> > straightforward and we had a tested patch ready in a few hours
+>
+> This is not the reason I'm not going to pull it ...
 
-Yes, your approach checks out for me; I also think that storing this
-additional information is the best approach; we need to know during
-hook_file_send_sigiotask() what the TGID of the registering task was,
-in order to tell apart signals within the same process from signals
-going outwards of that process.
+I didn't assume the merge issue was the reason, but you felt it was
+worth mentioning so I figured it deserved a response.
 
+> ...  the merge issue was
+> just the reminder I got about an earlier email that I had dropped on
+> the floor.
+>
+> No, the reason I won't pull it is that the main developer I pull bpf
+> code NAK'ed it.
 
-> > To be clear, the patch is still obviously an improvement [...] it just
-> > seems to block it slightly too broadly in this corner scenario?
-> > [...] Mickaël, maybe you have some thoughts on the tradeoff?
-> 
-> Agreed on both counts.  Mickaël -- two ways to land this:
-> 
->   (a) keep v4 as is.  It closes the bypass; the residual same-process
->       over-block is pre-existing, deterministic only under the stacked
->       conditions Günther listed (already-multithreaded enforce, no TSYNC,
->       SIGIO to a PGID that includes self, registered from a non-leader
->       thread in a per-thread signal-scoped domain), and arguably tolerable.
-> 
->   (b) v5 = v4 + the delivery-time exemption above.  Strictly more correct:
->       it also closes the pre-existing delivery-hook gap and restores
->       18eb75f3af40's same-process invariant, at the cost of one struct pid*
->       in landlock_file_security.
-> 
-> I lean (b) -- it fixes the actual root cause rather than the one reachable
-> instance -- and I am happy to spin it (with an added selftest covering the
-> PGID-includes-self / non-leader-registrant case, A/B verified) or to hold at
-> v4 if you would rather keep the change minimal.  Your call on whether the
-> corner warrants the extra state.
+I would like to clarify some things, not necessarily for Hornet's
+sake, but because they have implications moving forward.  As much as I
+*love* our little chats, I think we both would prefer not to repeat
+this discussion in the future.
 
-+1, I also think that the approach is quite clean.  Some checks would
-happen at a later time, but it seems unavoidable in the generic case.
-Checking TGID during hook_file_send_sigiotask() sounds reasonably
-cheap.  (I suspect that trying to do that check early during
-hook_file_set_fowner() would not save us much.)
+While you didn't reply to any of my comments explaining how Hornet
+works, specifically how it ties into the kernel, I'm assuming you've
+read the overview.  Can you help those of us in the LSM space
+understand why a BPF dev's NACK on code that lives strictly under
+security/ is sufficient grounds to reject an LSM patch?
 
+Disagreement about what access controls an LSM is allowed to enforce?
 
-> > P.S: [...] new patchset versions are posted at the top (no Reply-To
-> >      header in the cover letter) [...]
-> 
-> Will do -- v5 (whichever option) goes out as a fresh top-level thread, no
-> In-Reply-To/Reply-To pointing back at this review.
+Disagreement about using LSMs for additional signature verification,
+despite compatibility (although one could argue we already do this
+with IMA)?
 
-Awesome, thank you very much for looking into patching this! :)
+Use of the bpf_map_ops::map_get_hash() method?
 
-–Günther
+Other things ... ?  I'm genuinely not trying to be antagonistic; I'm
+trying to understand your thinking in rejecting Hornet and take some
+lessons away from it.  I'm currently stuck with (pardon the
+paraphrase) "because Alexei said-so", and while I'm certain Alexei
+would be happy to have that codified, I'd like to believe there is
+more to your rejection than that.
+
+> My tree is *not* some kind of "we are bypassing developers by sending
+> a pull request directly to Linus" tree.
+
+I've been sending you pull requests for a while now, and as you know
+I'm always very upfront in the email if any of the commits contain a
+NACK or even the absence of a cross-subsystem ACK.  My intention is
+never to deceive anyone, my goal is always to make you aware of the
+situation so that you can decide what to merge into your tree.
+
+That was why I decided to merge Hornet into the LSM dev/next branch in
+preparation for the upcoming merge window.  You had been CC'd on
+several threads regarding the BPF signature verification work and
+hadn't provided guidance on the cross-subsystem issues.  Even an
+off-list email I sent you received what could best be described as a
+shrug.  My plan was to present Hornet to you with an explanation,
+likely similar to my last reply in this thread, detailing that we had
+worked with the BPF devs for over a year and their solution actively
+ignored our requirements (despite their claims otherwise).  Hornet,
+while NACK'd by Alexei, did not touch any code under kernel/bpf/, was
+compatible with the existing BPF verification code, and solved real
+user problems.
+
+While I was not looking forward to the discussion, I felt responsible
+for trying one last time to bring this to your attention and make a
+case for the signature verification requirements the BPF community has
+chosen to reject.  It appears a private, off-list email from the BPF
+devs preempted this, which is unfortunate regarding both visibility
+and timing, but at least we are still having a discussion of sorts.
+
+> And honestly, I also have two+ decades of history of "LSM people
+> cannot agree on a single thing".
+
+You've repeated this enough that I worry your opinion has ossified,
+but I can promise you the reality is that the LSM maintainer community
+is a reasonably tight knit group and has been for quite some time.
+I'm laughing a bit as I write this (I know ...), but I would encourage
+you to drop by the Linux Security Summit in Prague this fall; I
+believe you'll already be in town for the Maintainer Summit and it
+might be an opportunity to see some of us and realize we agree far
+more than you envision.  You might particularly enjoy our "working
+with Linus" support group that meets in the evening at a local bar ;)
+
+--=20
+paul-moore.com
