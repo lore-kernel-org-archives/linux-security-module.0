@@ -1,165 +1,216 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2363DDDD4
-	for <linux-security-module@vger.kernel.org>; Wed,  3 Jun 2026 17:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D87C14A
+	for <linux-security-module@vger.kernel.org>; Thu,  4 Jun 2026 00:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.175
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780506343; cv=pass; b=cwqWDMPZbcLiCIOP8Q8Mttd5V03OVGB0aRo6viCAy6igLTrqdFOXXO2OP0aTFX/wtVcVCpqe9yvqlyi8seyWcsjNny2S9ATT18sXIi77TKOLDxhlJuadyhcZHRhtgBttNCQjp5sjOZ0yPlOln0BJrMPojCefoTC1Q5biQP6RpS0=
+	t=1780531495; cv=pass; b=P4oWsx+d7WYKaT7lUplgBqXoAbz1RJiO+l++90p2tNToyWdvAc6MfW+XyqR9WtTGXh3gk5dypqzPceNmPsEXqsysq7y5bqnTEigOaqc7CBKgiDDKw45Rd+d2n/1HIzmsuaVMotnSl4Zco6/KAgyFMUo2/4xAAxxWLh6neQP0gFQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780506343; c=relaxed/simple;
-	bh=OIFhnEobWG3e0FwGwtUj3ntnAyj3+THBltmf4yuxkmY=;
+	s=arc-20240116; t=1780531495; c=relaxed/simple;
+	bh=8gLkhsCYt/EbyDOL8oOaoehbmrqMGROQA7+3J8nc+jY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xf71wH6SWIGYoWxpT1lopzrAzbsZwxk9AR73U85e3AXwJIvuUDh0tTibiPbd4OUg7bhcgk4Dy9THbx50CtPbjqfbBvyDzyxxFCFVZKZzizvYeUfOp0rkOWXo+KtK5vI89SaBpDiMn1FoBjT4AwsyXoXsfTr0gXCZZPM1pqSBAi4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kVC8Ys4p; arc=pass smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 To:Cc:Content-Type; b=ZL4H8c/TymXr9gpzFLc+on9e1r1guS7PBr+zLgXAL8IKmbQlK/UqeKSImHzA4v/KlCF3Hqc+iNV8X4J8YsXH9LXy1741HRP8KWVMCeGF5UAFkwyiqtLH9ojEIqEQZsfF5bjTwu50VM2wvLqvdMMNZpbyiTOOaLY+BRqEtGa5wwg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DBzyQEnP; arc=pass smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kVC8Ys4p"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-45eec22fab7so3685586f8f.3
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Jun 2026 10:05:41 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780506340; cv=none;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DBzyQEnP"
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-84234c83142so33408b3a.1
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Jun 2026 17:04:54 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780531493; cv=none;
         d=google.com; s=arc-20240605;
-        b=JWSdZHECMKYs6h1n6mXtL/r7kGaB2SQvezqUB7+qtEhgbWX7PNAOaNcuQhp+TIbtnt
-         hN+Z4gykrM28g0F0YvBozpYfhEsAjHujerpwz3vemWcay2QKDCTmbFSNnJ48dxrPf+rp
-         rXwqH1SIANielDrYsQJVWcILnvPYJBKe4V6SXFcfAF1d9oAE3TjBg1K0VPME/DRGZ4rR
-         nAYl/ZraOuSaqQahgZQvc1ZSGbCAYo5slEk/OKqT9CTQbyrx6KvmTTn/BdnNmLtkEEle
-         FxS8siioNf+uxdN4guRrqOEq3HgyW/YgJPRdEr8KugVRFc4YrX5M2pQfj899BDlL2vv9
-         Kg8g==
+        b=B61WPiHwwfHBe1vO6AnW0UcXqfBmaILuuciYZX58hwAJgLxAtaF3vop13RWz8HrR3N
+         daunz+AqOXxv5YYkhfTbaDjS4aqtcO1FvGgBaccbLSh9ZckX6rRJ439Y3EpGKSIvKsh8
+         rDUfwYijXf5jItcBt9xw0BHggMxJiS6tzkK0INb8xCO8GxY+vWDO3/gcyOZp44WMQVE+
+         hnQfRyht4Xb0Dfgt+WQ5bTROvIOJhxNJky8G2Nl938yv+f/n0Dxdw5Z8DvcMk6uYwQll
+         EEP7QLx39SqsEvUhKKwxrryfC/ztWADH6PupkZ9mFPMHsWE42TZ+A48NVNd2K8JQ+W8y
+         8xpA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=99P4LWdJbcDOrL41XNBsTy6LKaWjY+F5jM0t0IHW7Zo=;
-        fh=7m2rMVz1RiayesdCCm3g0/D3fgzOWcMYoJO2aIMFatE=;
-        b=dLpc7K4nvR0ieA1nvUgXKHBwgxBttHuhfOXHLOert/QquDuA6BZsVyY0+7or/LZhBm
-         duGsm9idb6uGnJbtxRS4XnYoyEsDmL0ha45LanIdWcobCbzNbEYeAWP9GQt6M1fD7Nv+
-         c9H3s8sKlHalbYcVDzSCngsMceG8FZcP6cYJyOGwjuXQaC7Znauc//A+A/nanfW4/PSF
-         HKtqlTnJ70f1OYR4j3sUNWF4f/C6CDMfP3PXWRxKHyr/JtMcMBWzuIOtAQYu/j01hv+h
-         lNDRUBwgGZo8TVel7oueeK2SEiCI3PC8Duc/u5enj248/4TbLym2rq+Uu1l5lq5jMK1N
-         /cNw==;
+        bh=w2kRTTiGEA9fSwm4VcnJewLOTBIpuhWKQa3sVuOIwjo=;
+        fh=/xaH0XAXfxmZ3p4tN06SRmUz9b0W7YCNeLuwhGO5uVM=;
+        b=fBARnT8iHHQjLoxTCU0TvwqROpamNpS1hg8jJUGMLRxhfl2u+LHrUnHqc7JQ+zXkys
+         EzidGlZs1m5ecWGnP8xcF6bg6EB3lt2g2SGfQZWI+cbOz/ymdANkv8H4Jlzid0HJVyoY
+         Esg2jPgZZ8ZPC7oou6bhwKyubNOVMypFN1dBWbqJUP5RF33eMcJANyrfZd+E+1JEi+hr
+         L/xN2OZ0hvTko1lMcvrmFSXID+Gi5I1/LQfo/8ZP90WAe6nb64B7VLikaOyIQ1hX4WQl
+         xWmFKG/cpCP/UzxvCsOqSfFYmaSpUe09d+nZk5oDXpYylfpP+ZAk209v1IWnb5xs/6tB
+         0FlA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1780506340; x=1781111140; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1780531493; x=1781136293; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=99P4LWdJbcDOrL41XNBsTy6LKaWjY+F5jM0t0IHW7Zo=;
-        b=kVC8Ys4pAwxEGhxkNwtJR/HxDxgr1AR/tcyYd0m9iE38HEDmFv8C8Mm0b6OZHSLHUN
-         M80h517YCEmDFGMOriZi472k0vQos9vDTxcwHPUcFIpiThl8koty9ppMht1Qi0EQzMje
-         0weykO51ZpMJ5HkaYDdefsQtIBee43c2tBnn4nyA0RN9+A2iN1yPjKjbt74mvzxDGvXw
-         a7x0VhXfm+0/0WOWiDRRGzPzEQON905hp/g9F/4Cqn2DtrizPk5urL/GF2vIxXNPbh80
-         QYlvROesl0toC0QSIxR4784bcLKRPrS2h0I2GGkpqqVXRMGrzOkaXD+Fwz92Rmm6pFQE
-         nblg==
+        bh=w2kRTTiGEA9fSwm4VcnJewLOTBIpuhWKQa3sVuOIwjo=;
+        b=DBzyQEnPbqMER4P8taw7BIErjwO43/oQVlQjII2JQmeeAAwKZSla5VEB+bHZYSw6Pv
+         Cp+tFLhbyWfEuGrmYflTqA6LNz+Cty/jkPy+7+Svnd8KKyaznRhxD8PK0QzG7TfWTW7m
+         Zlm1FAYY7WmKbN7f65ZsK4SFhSw+/gz+fk8PIogfPJn0iYYSi3gg7Gu3sNoVchf4Xv2d
+         OJ5x3ufTyrescPH1oASv6ja+c/czGMKwUEWCagbv+hiA3cdiQ6YU0Fx7b6/wIfN3YYLT
+         w8u2hhWRqlWHJsWAGT/0jm3VEdRvzSSXR7bIAJeBadG7rxcQHuS7JHpA2sfTgt7HyY/h
+         YiaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780506340; x=1781111140;
+        d=1e100.net; s=20251104; t=1780531493; x=1781136293;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=99P4LWdJbcDOrL41XNBsTy6LKaWjY+F5jM0t0IHW7Zo=;
-        b=Q8B/goXtyFumXzblOZDan6v1ca/wirKjEA9CHGY11gX3wEUHtUb10PjfIYR9o4G1fk
-         43OwlYUS4WtG0fxEwCMoh4kE+0U2nSDF1ilun4CrBzfYMFTWy7mZreGn7rpbMUeHQfLX
-         owSnaFsvt72UeMnMis8ZQs1mUZiSqTCXEp+M7ihia/sWbF3lKg2A7B4KDEXkCvzLdRFz
-         of75wtxlsP2LyIk/SpoMl/ePJYSeVQfJc/pHUIY8nHkB7wSvmbJKM7pXk2Wzw3NzCtoH
-         6IeO5n6fmdrL2WK5NoxT/bm4kHzRc97U+/Wnn6kX2VE1mKUyE58gscnRxPypK/4dzBNS
-         B6Bg==
-X-Forwarded-Encrypted: i=1; AFNElJ99mTl4qRTdLwKIYxypWDToKZOQuCa3dnmtQ9HOSXOqnVKGXd2H+JliVZZI3A+JC7N7zN5sKK1E6kuW8pIGVQhIebJmbbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnXOt5Gjs4qaeTjWEZjRB4lAOueGMcbP2BSbEkkn1wMvsjpe2s
-	iQsGWECcinRAVzVXeq3zG60yuUN1/q68o/cfQhMLOVilVQQ8ZU7+Eq2WZxREFRdUanK5P6KwScs
-	3hClN6TFPkVPNLiEP3G5V5g1ZQy7xCujETnVn9T3W
-X-Gm-Gg: Acq92OHjATdW8V/A2KKPDVjKmfRteefFGRi9DNp6KwVXK89ei1FcygTaqL8nMbcWErY
-	xbtJ6eq0FUMz3bPM+fG0X1ciiL+0nPJ5ndJPoK1nikPwAM+Qy5xDWvIY4VmkL16ELH2Zp1vHrYA
-	9SqLrgc39Ma/W3b0kpffPc3WMwSi2PnDe27YYtqLsBvEfta+X+t2SV42D69kxasYzNcwPAp97Sb
-	opQm78YMrLjPmB2R9CBkfgFLN+BZB21eZ6zrEYo5LBMbZPydrfaZ5fT40Kl0kXr4Tci7vTGee2L
-	d4LV1k29h3UcTLBdlo8lzGqnRSLCCMyK7Ct0b3B70b3tHw60W7LwiKAVs24=
-X-Received: by 2002:a5d:5d0c:0:b0:45e:b99d:dad with SMTP id
- ffacd0b85a97d-46021872abamr6655166f8f.38.1780506340089; Wed, 03 Jun 2026
- 10:05:40 -0700 (PDT)
+        bh=w2kRTTiGEA9fSwm4VcnJewLOTBIpuhWKQa3sVuOIwjo=;
+        b=Wi+xHFjfUHrbLPkGlHkmH6zQetAuvjWlLmCZU55YPKILLd0wEm+4wpC+UmIS4ok+8t
+         oY0twOXAP1+HpZIBnlMtnE2EqBk1EmQ/OTruCWV26x8tvqWyS9zRsmhNgOpyHFoFWwpx
+         Q34el3JGCdSzSwzTQs2ODoP4O2IY5q3IEXOQnlDEwrdWuEjcHnxqZBd5p8DBnWYKKCoT
+         z23JEBybi54AWntBhdcPvLKndt31WHRbDenkhjxcmgR4fbmImAEhTJfsLTC+ZAt3PxFf
+         sYSoPZluDt8kvUg6UdvhvLYKooHVh0sYecRtKFAlC1aua5WVHMech9fhX22qSaZjmmt+
+         dhPw==
+X-Gm-Message-State: AOJu0Yw7pYyV1baT6lAqwS+tyyePelZghIICFeNqiSwjilgf/1gCRlr/
+	4pxkRxUbFWKX2s/VPpcnjCRhyLT3GIo8hExZJLa4S+YmTWGO+8UyfzFa//v5Q9KG9xlJAGJy+8V
+	BoLnedCUCheO8IevSi1/54MSqe43AeP/SA93f8iz+
+X-Gm-Gg: Acq92OFtFKiqNx9gd9eviyh+XR8N84jM+1+aU3xF489wI2a1hZM1ro+JVrd8y71cADW
+	zxZfJ6MsrREs8nB6KbhKudNSv++VFJo9perjAPuvZ5z92NiJ+uGtTm7KZqEG+XjWi0d8PFWOZ/a
+	RoDUSmDWKacsUiZJDmh/NL22oL/7mAjgskyB6/tNE17O7ND32MMZ7EDBxo6r04UzUKcR2L0b6CB
+	VHT1S4khVT/vSEHc23Qe5JhDn+FZrTE/1COqq/2uNr7+LiSdfDF1pDeSF4xsXRWQIFInSXkWhkd
+	YkAZ7ByPb7jTm2KSfA==
+X-Received: by 2002:a05:6a00:2d20:b0:842:7476:236e with SMTP id
+ d2e1a72fcca58-84284f4c05fmr5480130b3a.41.1780531493481; Wed, 03 Jun 2026
+ 17:04:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260529-remove-task-euid-v4-0-07cbdf3af980@google.com>
- <CAHC9VhR5Ca+WyP2OiNGtL1SqHn0SwLe=M9SB8D2bxtdS52quhg@mail.gmail.com>
- <ah51DY5yfaNZejBd@google.com> <CAHC9VhQyNzxJgdMkmEsOeAQ7Wt2L+eW6aNLjeoYmnCQLmcYRnw@mail.gmail.com>
-In-Reply-To: <CAHC9VhQyNzxJgdMkmEsOeAQ7Wt2L+eW6aNLjeoYmnCQLmcYRnw@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 3 Jun 2026 19:05:27 +0200
-X-Gm-Features: AVHnY4IAFJzjseBdCskbFEe5vMc_zEyWRD54e3gHX3Gz-NxzZYa3Jh-vbKd5Q9c
-Message-ID: <CAH5fLghJaFXheAZqKyM9Cdo6iqTw1W=haA79POhmZWEfuKujRA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] Delete task_euid()
-To: Paul Moore <paul@paul-moore.com>
-Cc: Serge Hallyn <sergeh@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>, 
-	Dongliang Mu <dzm91@hust.edu.cn>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jann Horn <jannh@google.com>, 
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+References: <83f77b2b-8c00-424d-b6f9-b044e7ea1ee7@sirena.org.uk> <CAHk-=wj6CtZS9hbwFjQcoNkPwQLoyKmk8czaBF6=bBOCYuXEUQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wj6CtZS9hbwFjQcoNkPwQLoyKmk8czaBF6=bBOCYuXEUQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 3 Jun 2026 20:04:41 -0400
+X-Gm-Features: AVHnY4KaJ8WCn01L0UzL3_uET6QLUt3oIjUBay34hOt2VgXCAmRWl97braE7GJw
+Message-ID: <CAHC9VhRX1=tx4+arzuH76kirYFFJozexa5L=41Bb2QbgWZXOkQ@mail.gmail.com>
+Subject: Re: -next status as at v7.1-rc6
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-security-module@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
+	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, 
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>, linux-next@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 3, 2026 at 6:05=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
-te:
+On Tue, Jun 2, 2026 at 4:20=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> On Tue, Jun 2, 2026 at 2:15=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
-> > On Mon, Jun 01, 2026 at 07:13:37PM -0400, Paul Moore wrote:
-> > > On Fri, May 29, 2026 at 5:33=E2=80=AFAM Alice Ryhl <aliceryhl@google.=
-com> wrote:
-> > > >
-> > > > The task_euid() method is a very weird method, and Binder was the o=
-nly
-> > > > user. As of commit 65b672152289 ("binder: use current_euid() for
-> > > > transaction sender identity") Binder doesn't use task_euid() anymor=
-e,
-> > > > so we can delete this method.
-> > >
-> > > Given the problems from last time, it seems like it might be prudent
-> > > to let the commit have some time to "breathe" in a proper release, I'=
-d
-> > > suggest merging this not for the upcoming v7.2 merge window but
-> > > instead waiting for v7.3.
+> On Mon, 1 Jun 2026 at 11:22, Mark Brown <broonie@kernel.org> wrote:
 > >
-> > Sure, that makes sense. I'll resend after the merge window.
+> > We're reaching the peak of conflicts for this release cycle but
+> > fundamentally everything is pretty quiet at the minute.
 >
-> No need to resend if there are no changes (see below), it's in
-> patchwork and I'm tracking it so you're all set.  I'll send another
-> notice when I merge it.
+> So the "Hornet" LSM thing needs to bve removed from linux-next.
 >
-> > > > My suggestion would be to merge this through the LSM tree.
-> > >
-> > > That's fine with me.  I'd also suggest updating the commit descriptio=
-n
-> > > in patch 1/2 to indicate that binder is no longer using task_euid();
-> > > it currently reads like it is still being used.
-> >
-> > I guess this occurred because when patch 1 was written, it really *was*
-> > still being used.
->
-> Yeah, I understand the world has changed since patch 1/2 was written,
-> which is okay, we just need to update the commit description ... which
-> should be a trivial task.
->
-> > Perhaps we could pick up only patch 1 now since even
-> > if we run into problems and Binder has to go back to using task_euid(),
-> > clarifying the docs is still useful.
->
-> I assumed that was one of the reasons for splitting the changes across
-> two patches (reverting patch 2/2 leaves patch 1/2 intact).
-> Regardless, we're at -rc6 and with patch 1/2 being purely a comment
-> update I don't see an urgent rush on this, especially considering that
-> if I did pick it up now, it would be for the v7.2 merge window and the
-> binder/current_euid() change will ship in v7.1.
->
-> Let's update the commit description - you've got a couple of weeks to
-> do that - and then we'll merge everything once the v7.2 merge window
-> closes.
+> I'm not ever going to pull it - it has been NAK'ed by the developers
+> of the actual BPF code, and now it apparently causes merge problems
+> too.
 
-Sounds good, thanks!
+It's worth mentioning that resolving the merge issue was relatively
+straightforward and we had a tested patch ready in a few hours; I was
+in the process of merging it when your mail hit my inbox.  We see
+cross-subsystem issues like this every couple of months. The good news
+is that the linux-next process works well and we are usually able to
+resolve the problems quickly.
 
-Alice
+I'll touch on the NACK below.
+
+> The LSM people need to realize that they cannot override the people
+> who actually write the real code.
+>
+> The security layer is not boss in the relationship. It's the
+> subservient party. Security is important, but LSM's are not.
+
+[NOTE: adding the LSM list to the CC line since I just realized you
+didn't include it]
+
+At this point I believe we are all aware of your dislike of LSMs, but
+I once again feel compelled to speak out against the disrespect you
+have shown towards the LSM developers and users.  Most (all?) of the
+major Linux distributions rely on at least one LSM to meet the needs
+of their users.  We've seen the importance of LSMs to Android, and the
+real impact they have had on defending against vulnerabilities.  We
+also know, oddly enough in this particular case, the importance of the
+LSM framework to the BPF ecosystem; the BPF LSM attach points are
+critical for many BPF use cases.
+
+LSMs may not be important to you, but they are very important for a
+very large number of Linux users.
+
+> When the maintainer of a codebase NAK's a security model, and explains
+> that the code has different needs and different security models, the
+> LSM people don't just ignore that and go do their thing despite the
+> NAK.
+
+I think there may be some confusion about how Hornet works and
+interacts with the existing BPF subsystem.  Hornet does not touch any
+code inside the BPF subsystem, and outside of some minor PKCS7 patches
+to enable some things from the PKCS specs, it doesn't touch any code
+outside of security/.  Hornet's design criteria required it to work
+within the existing LSM hooks and remain compatible with the existing
+BPF signature verification code.  Hornet follows the traditional LSM
+design pattern: it works within the LSM framework, building upon the
+security functionality in other subsystems to satisfy user security
+needs that have otherwise been ignored.
+
+A BPF light skeleton signed with the Hornet tools passes both the
+existing BPF signature verification code and Hornet's verification.
+Hornet allows signature verification using arbitrary keys/keyrings,
+just like the existing BPF signature code, enabling support for
+dynamically generated/signed BPF programs.  In mixed environments,
+Hornet can verify the loader portion of BPF light skeletons signed
+with the existing BPF signing tools, distinguishing between existing
+Alexei/KP signatures and a full Hornet signature.  Hornet also
+supports unsigned BPF programs when needed.
+
+As an LSM, Hornet can be enabled/disabled at build time, kernel boot,
+and at runtime (subject to the LSM providing enforcement).  If a user
+is required to run a specific kernel build, e.g. an "enterprise" Linux
+distro support situation, the admin has multiple ways to disable
+Hornet if it is not desired.  Any Hornet signed BPF light skeletons
+will load without issue on a system without Hornet and Hornet's
+presence does not block the existing BPF signature verification
+mechanisms.
+
+The BPF developers will quickly point out, if they haven't mentioned
+it to you already, that Hornet calls into a 'bpf_map_ops' function.
+This is true, Hornet calls the map_get_hash() method to get the hash
+of a BPF map so it can be verified.  The BPF devs will argue this
+presents a layering violation, but I would counter that several users
+in the networking stack go much further than Hornet in their use of
+'bpf_map_ops'; I find it difficult to see 'bpf_map_ops' as a private
+API at this point.  It is also important to mention that Hornet does
+not manipulate or modify the BPF program or map state in any way
+beyond storing some state in a Hornet specific LSM blob, similar to
+what other LSMs have done.
+
+We've done this work, and tried collaborating with the BPF devs for
+over a year, because we believe the kernel should verify the integrity
+of both the BPF light skeleton loader and the associated maps.  While
+the existing BPF signature verification scheme verifies the light
+skeleton loader, it requires the loader to self-verify its associated
+maps.  Relying on the loader to self-verify maps is problematic
+because it adds an additional burden on system builders and admins who
+must now also manage and verify the signature verification in every
+BPF light skeleton loader on the system (how does one know if a
+specific light skeleton loader suffers from a verification bug? what
+additional steps need to be added to the deployment of third-party,
+binary only BPF light skeletons?).  At the very least Hornet can
+ensure the integrity of both the BPF light skeleton loader and the
+signed maps without requiring prior analysis of the light skeleton
+loader.  That is a big win for admins who care about what code is
+loaded into their kernel.
+
+Hornet lives entirely within the LSM framework, adds no additional LSM
+hooks, remains compatible with the existing BPF signature verification
+code, can be disabled in multiple ways if required, provides the
+verification flexibility needed to support the existing BPF ecosystem,
+and helps satisfy the needs of real users.  Why can't we support
+Hornet alongside the existing BPF signature verification code and let
+the users employ the mechanism that works best for them?
+
+--
+paul-moore.com
