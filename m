@@ -1,286 +1,140 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78FF199D8;
-	Thu,  4 Jun 2026 00:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA1118BC3D
+	for <linux-security-module@vger.kernel.org>; Thu,  4 Jun 2026 00:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780532760; cv=none; b=u3KIZ8JEDXUsG8A5jFi/eiaY5uzxWa4SL7/UYlGz/5oOmegYBnU+SieJv2SOz33quHLlkE1rAq40PQmgEjTtajt9u5vSAMFCflW9omD0kEq/GY2drpsk4bzUvFPEuBvGzUCj5Mp8UQYPcZkWrrVZte2ukcPqIGYYC5Ox23CbZ3Q=
+	t=1780533127; cv=none; b=FLy5On5lN3zu2Na9fmjD/i0KgdX/IbOw8RE6wzso1/BAIZuM34Hzul3ZiHmEnSyhRL7dpfC/UxCKzWwdyzdeNx4O9rT0fEy5rxx82f8G2lB53TtI0BrwnTniTttSMnoQ9VuoBojyayQk1rKAozYSBXiyCFB9w0zPkaJlRITHMQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780532760; c=relaxed/simple;
-	bh=kQplzmUkmr5e23A2MPsZ+2RVvXH5iEjjuq60aSGEbso=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CZ62UN9Q0HDzajVJMzzzwhs/lzJ+DqDFzzgGMeqEwTSQ0YKIw4ugN5A8ixA2UN4NYGJvMqHlwsDUVsBzDvZk7Ib33373l4EVLaJWhSupofqwvXCNuSd7rA19V8Zm2UR48oECrVX0SZIK8TjNvTzBXSk7rpxTDdR8f8KKWFPJpwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=TOkxpyDI; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1780533127; c=relaxed/simple;
+	bh=jZoIBQxjQ7P3tlUSk0EEmDO+cPHIkeVPtdsxpvA+jEM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DEFAdpcrTs507uVDbqGC40RUwjno1O8v2tOtrsC1DNEKlEW18P97cTfLpMP99nZ+1xPkKRfD+tovSkK4xGO3F9ByEKV4LTQ1FEuFjo+8aJihMTyM8NtbQB/FOBHD5/EkMZCEabrBy71e8LtxabH4UnbbDhcPeEBpa2by1pfSLpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NguiVgiX; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="TOkxpyDI"
-Received: from [100.65.233.38] (unknown [20.236.10.163])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 9F59020B7168;
-	Wed,  3 Jun 2026 17:25:42 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9F59020B7168
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1780532743;
-	bh=KSBysOBtgIjCR6JuPwdx2qXhRPAwOLWIc0hEopuQHGQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TOkxpyDIuucbmb6HPl9pwW4OpNTtGtBlb9u+5PYbiNLarmuHNJTYKU8C7CE2ZkdKZ
-	 Xz5AfPnyBm/nkAZ+DiNeVIiOwtCMJog8wRIR0JY7oz4sXG016wOHyZW3R0QKMXCUmb
-	 qusCP1dMewNqAcYZuDRLLxUVTqRrBudWh/sH2U5s=
-Message-ID: <880b0541-71e3-4676-9036-0597eacf45a6@linux.microsoft.com>
-Date: Wed, 3 Jun 2026 17:25:54 -0700
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NguiVgiX"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2bf22d29dabso841625ad.2
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Jun 2026 17:32:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1780533125; x=1781137925; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oKGAYmkPB1Hr3YB+iaIUqqiRIAjAPxQPvI1HFGUlMt0=;
+        b=NguiVgiXmRyttKiiYfJ4KugCmIXvrh5mhlV/6TVijBT/B05/KbU2qgpZyClNMGVJFi
+         R1zQP7T9O0xuOiGsWsVL3wXs49viFcSNNvLh+ceVngdeW+eEQOLP6s0SMzhb0ezdAx7v
+         QXlWkEdVpzyhwQtlqhFhG2+YsXY/DB6IqE0/I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780533125; x=1781137925;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oKGAYmkPB1Hr3YB+iaIUqqiRIAjAPxQPvI1HFGUlMt0=;
+        b=GEkDdAGTkNR87+UVtTrxhaJ0bg/AVvbEpcoDdKxlcfqjp8XN5a9o+vpK4C0zO0d0Xo
+         +t6Ex357GTO9+KPHm15csYrn1PQbk4K3/vTK9hjdjvIkFKBVgixDB50CBfFW2bFDLhtD
+         Qn//bOpI+6YXDLlVMUOE2robXgsJB85EAwukCk2i/m6wrRIvof0NO4zkFIRziKsmFf91
+         louNlsIJ5kg90S1yGhWL7ei+Ebo11FidgOx7M8dIt3HaCzg4Va/oMBvqA5hY1By/D7NV
+         VlIt1axiHV7VGwPFhkFFJjh45M/4jQLlUKe1cBmzUeiGgonMnlKNCwN6e1LsTlsCWYG3
+         5dMg==
+X-Gm-Message-State: AOJu0Yx9f1T9o84X95B/ziqfFVA0cRK7nsnEhdzZNkKvieBzpR3AOIsl
+	WzZEga2HLmPgVVy7oLYlw1lIliFb0kLYmwOJrkaO03UptwtLA60/sd5Nl7tSw47otwPmqfZ1WTL
+	TaQ64+hKJfw==
+X-Gm-Gg: Acq92OF2g64+js6hx0CNBP9CoxTTchNURJtScJLGCqg4NSFamslkkmhxAlYO+NzKcmH
+	z2Z0/Q2gQLRzl88SRSktDkrCFmj+wMlPaw78g+9P+KdNo2y4LrmcVt7T1nE6VZI+y9es6QoMrLf
+	MNHP8nAaXPa9/IDOlCPOt+SHZahJNY7oDXi8DKIO7D8jZf4COm79JtnRg0mWliow1tCgnPISNuE
+	BhXmyNHag8tADCMCF5LwMPCuR2Pc9MtclTtvqHGJDrsQMlgMM4adGV84i3K7UAy79mm+YAG160f
+	+wmHCLRHjXdp7KXopVldjqSCYPl7XRZMW2w+XA8AwV34Erz0RGV6j4yb0kyy/lsLN7Rcs5YlQmc
+	n5h3R487qGwjSkf8IT9BvJ+47aDKpDVlpB/fqn9ctp5NNYwe9RVXFxas8RY7sP81HBvS2MX89NP
+	hQIJbHYu6BWUoUG+5MXTHj3mjZ2U8+J4eoh4xmuBvfCSRgC39bo20gCydVc6+nyQ2DL9z7hVOi7
+	EwrG+n/UyCw3ZU=
+X-Received: by 2002:a17:903:289:b0:2bf:372a:830c with SMTP id d9443c01a7336-2c163a43306mr64393435ad.11.1780533125182;
+        Wed, 03 Jun 2026 17:32:05 -0700 (PDT)
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com. [209.85.210.177])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c164f8429fsm45820735ad.18.2026.06.03.17.32.03
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jun 2026 17:32:04 -0700 (PDT)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-842848fd613so65608b3a.3
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Jun 2026 17:32:03 -0700 (PDT)
+X-Received: by 2002:a05:6a21:3989:b0:3b4:8ba9:4d8e with SMTP id
+ adf61e73a8af0-3b4979a4e44mr6703825637.23.1780533123566; Wed, 03 Jun 2026
+ 17:32:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 11/12] ima: Support staging and deleting N measurements
- records
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
- skhan@linuxfoundation.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
- gregorylumen@linux.microsoft.com, nramas@linux.microsoft.com,
- Roberto Sassu <roberto.sassu@huawei.com>,
- steven chen <chenste@linux.microsoft.com>
-References: <20260602111401.1706052-1-roberto.sassu@huaweicloud.com>
- <20260602111401.1706052-12-roberto.sassu@huaweicloud.com>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <20260602111401.1706052-12-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <83f77b2b-8c00-424d-b6f9-b044e7ea1ee7@sirena.org.uk>
+ <CAHk-=wj6CtZS9hbwFjQcoNkPwQLoyKmk8czaBF6=bBOCYuXEUQ@mail.gmail.com> <CAHC9VhRX1=tx4+arzuH76kirYFFJozexa5L=41Bb2QbgWZXOkQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhRX1=tx4+arzuH76kirYFFJozexa5L=41Bb2QbgWZXOkQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 3 Jun 2026 17:31:43 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj_rtiufEEVudMCSbh86HYrnmEa9NhYfKeWHs1SOzJVnA@mail.gmail.com>
+X-Gm-Features: AVHnY4LFh1aPXsQ6zdDL4_HlTChSE-hAiyStcDf8UlBB35Dp83kOTZRnA_qQqTs
+Message-ID: <CAHk-=wj_rtiufEEVudMCSbh86HYrnmEa9NhYfKeWHs1SOzJVnA@mail.gmail.com>
+Subject: Re: -next status as at v7.1-rc6
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
+	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, 
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>, linux-next@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/2/2026 4:14 AM, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+On Wed, 3 Jun 2026 at 17:04, Paul Moore <paul@paul-moore.com> wrote:
 >
-> Add support for sending a value N between 1 and ULONG_MAX to the IMA
-> original measurement interface. This value represents the number of
-> measurements that should be deleted from the current measurements list. In
-> this case, measurements are staged in an internal non-user visible list,
-> and immediately deleted.
->
-> This staging method allows the remote attestation agents to easily separate
-> the measurements that were verified (staged and deleted) from those that
-> weren't due to the race between taking a TPM quote and reading the
-> measurements list.
->
-> In order to minimize the locking time of ima_extend_list_mutex, deleting
-> N records is realized by doing a lockless walk in the current measurements
-> list to determine the N-th entry to cut, to cut the current measurements
-> list under the lock, and by deleting the excess records after releasing the
-> lock.
->
-> Flushing the hash table is not supported for N records, since it would
-> require removing the N records one by one from the hash table under the
-> ima_extend_list_mutex lock, which would increase the locking time.
->
-> Link: https://github.com/linux-integrity/linux/issues/1
-> Co-developed-by: Steven Chen <chenste@linux.microsoft.com>
+> It's worth mentioning that resolving the merge issue was relatively
+> straightforward and we had a tested patch ready in a few hours
 
-Signed-off-by: Steven Chen <chenste@linux.microsoft.com>
+This is not the reason I'm not going to pull it - the merge issue was
+just the reminder I got about an earlier email that I had dropped on
+the floor.
 
-> Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->   security/integrity/ima/Kconfig     |  3 ++
->   security/integrity/ima/ima.h       |  1 +
->   security/integrity/ima/ima_fs.c    | 32 +++++++++++++--
->   security/integrity/ima/ima_queue.c | 63 ++++++++++++++++++++++++++++++
->   4 files changed, 96 insertions(+), 3 deletions(-)
->
-> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-> index 02436670f746..f4d25e045808 100644
-> --- a/security/integrity/ima/Kconfig
-> +++ b/security/integrity/ima/Kconfig
-> @@ -341,6 +341,9 @@ config IMA_STAGING
->   	  It allows user space to stage the measurements list for deletion and
->   	  to delete the staged measurements after confirmation.
->   
-> +	  Or, alternatively, it allows user space to specify N measurements
-> +	  records to stage internally, so that they can be immediately deleted.
-> +
->   	  On kexec, staging is aborted and any staged measurement records are
->   	  copied to the secondary kernel.
->   
-> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index d2e740c8ff75..7a1b2d6a8b59 100644
-> --- a/security/integrity/ima/ima.h
-> +++ b/security/integrity/ima/ima.h
-> @@ -320,6 +320,7 @@ struct ima_template_desc *lookup_template_desc(const char *name);
->   bool ima_template_has_modsig(const struct ima_template_desc *ima_template);
->   int ima_queue_stage(void);
->   int ima_queue_staged_delete_all(void);
-> +int ima_queue_delete_partial(unsigned long req_value);
->   int ima_restore_measurement_entry(struct ima_template_entry *entry);
->   int ima_restore_measurement_list(loff_t bufsize, void *buf);
->   int ima_measurements_show(struct seq_file *m, void *v);
-> diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-> index 96d7503a605b..174a94740da1 100644
-> --- a/security/integrity/ima/ima_fs.c
-> +++ b/security/integrity/ima/ima_fs.c
-> @@ -28,6 +28,7 @@
->    * Requests:
->    * 'A\n': stage the entire measurements list
->    * 'D\n': delete all staged measurements
-> + * '[1, ULONG_MAX]\n' delete N measurements records
->    */
->   #define STAGED_REQ_LENGTH 21
->   
-> @@ -343,6 +344,7 @@ static ssize_t _ima_measurements_write(struct file *file,
->   				       loff_t *ppos, bool staged_interface)
->   {
->   	char req[STAGED_REQ_LENGTH];
-> +	unsigned long req_value;
->   	int ret;
->   
->   	if (datalen < 2 || datalen > STAGED_REQ_LENGTH)
-> @@ -370,7 +372,24 @@ static ssize_t _ima_measurements_write(struct file *file,
->   		ret = ima_queue_staged_delete_all();
->   		break;
->   	default:
-> -		ret = -EINVAL;
-> +		if (staged_interface)
-> +			return -EINVAL;
-> +
-> +		if (ima_flush_htable) {
-> +			pr_debug("Deleting staged N measurements not supported when flushing the hash table is requested\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		ret = kstrtoul(req, 10, &req_value);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		if (req_value == 0) {
-> +			pr_debug("Must delete at least one entry\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		ret = ima_queue_delete_partial(req_value);
->   	}
->   
->   	if (ret < 0)
-> @@ -379,6 +398,12 @@ static ssize_t _ima_measurements_write(struct file *file,
->   	return datalen;
->   }
->   
-> +static ssize_t ima_measurements_write(struct file *file, const char __user *buf,
-> +				      size_t datalen, loff_t *ppos)
-> +{
-> +	return _ima_measurements_write(file, buf, datalen, ppos, false);
-> +}
-> +
->   static ssize_t ima_measurements_staged_write(struct file *file,
->   					     const char __user *buf,
->   					     size_t datalen, loff_t *ppos)
-> @@ -389,6 +414,7 @@ static ssize_t ima_measurements_staged_write(struct file *file,
->   static const struct file_operations ima_measurements_ops = {
->   	.open = ima_measurements_open,
->   	.read = seq_read,
-> +	.write = ima_measurements_write,
->   	.llseek = seq_lseek,
->   	.release = ima_measurements_release,
->   };
-> @@ -470,6 +496,7 @@ static int ima_ascii_measurements_open(struct inode *inode, struct file *file)
->   static const struct file_operations ima_ascii_measurements_ops = {
->   	.open = ima_ascii_measurements_open,
->   	.read = seq_read,
-> +	.write = ima_measurements_write,
->   	.llseek = seq_lseek,
->   	.release = ima_measurements_release,
->   };
-> @@ -603,14 +630,13 @@ static int __init create_securityfs_measurement_lists(bool staging)
->   {
->   	const struct file_operations *ascii_ops = &ima_ascii_measurements_ops;
->   	const struct file_operations *binary_ops = &ima_measurements_ops;
-> -	umode_t permissions = (S_IRUSR | S_IRGRP);
-> +	umode_t permissions = (S_IRUSR | S_IRGRP | S_IWUSR | S_IWGRP);
->   	const char *file_suffix = "";
->   	int count = NR_BANKS(ima_tpm_chip);
->   
->   	if (staging) {
->   		ascii_ops = &ima_ascii_measurements_staged_ops;
->   		binary_ops = &ima_measurements_staged_ops;
-> -		permissions |= (S_IWUSR | S_IWGRP);
->   		file_suffix = "_staged";
->   	}
->   
-> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-> index af0502f27d57..718991ba8bcd 100644
-> --- a/security/integrity/ima/ima_queue.c
-> +++ b/security/integrity/ima/ima_queue.c
-> @@ -405,6 +405,69 @@ int ima_queue_staged_delete_all(void)
->   	return 0;
->   }
->   
-> +/**
-> + * ima_queue_delete_partial - Delete current measurements
-> + * @req_value: Number of measurements to delete
-> + *
-> + * Delete the requested number of measurements from the current measurements
-> + * list, and update the number of records and the binary run-time size
-> + * accordingly.
-> + *
-> + * Refuse to delete current measurements if measurement is suspended, so that
-> + * dump can be done in a lockless way and user space is notified about current
-> + * measurements being carried over to the secondary kernel, so that it does not
-> + * save them twice.
-> + *
-> + * Return: Zero on success, a negative value otherwise.
-> + */
-> +int ima_queue_delete_partial(unsigned long req_value)
-> +{
-> +	unsigned long req_value_copy = req_value;
-> +	unsigned long size_to_remove = 0, num_to_remove = 0;
-> +	LIST_HEAD(ima_measurements_trim);
-> +	struct ima_queue_entry *qe;
-> +	int ret = 0;
-> +
-> +	/*
-> +	 * list_for_each_entry_rcu() without rcu_read_lock() is fine because
-> +	 * only list append can happen concurrently. No list replace due to the
-> +	 * staging/delete writers mutual exclusion.
-> +	 */
-> +	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
-> +		size_to_remove += get_binary_runtime_size(qe->entry);
-> +		num_to_remove++;
-> +
-> +		if (--req_value_copy == 0)
-> +			break;
-> +	}
-> +
-> +	/* Not enough records to delete. */
-> +	if (req_value_copy > 0)
-> +		return -ENOENT;
-> +
-> +	mutex_lock(&ima_extend_list_mutex);
-> +	if (ima_measurements_suspended) {
-> +		mutex_unlock(&ima_extend_list_mutex);
-> +		return -ESTALE;
-> +	}
-> +
-> +	/*
-> +	 * qe remains valid because ima_fs.c enforces single-writer exclusion.
-> +	 */
-> +	__list_cut_position(&ima_measurements_trim, &ima_measurements,
-> +			    &qe->later);
-> +
-> +	atomic_long_sub(num_to_remove, &ima_num_records[BINARY]);
-> +
-> +	if (IS_ENABLED(CONFIG_IMA_KEXEC))
-> +		binary_runtime_size[BINARY] -= size_to_remove;
-> +
-> +	mutex_unlock(&ima_extend_list_mutex);
-> +
-> +	ima_queue_delete(&ima_measurements_trim, false);
-> +	return ret;
-> +}
-> +
->   /**
->    * ima_queue_delete - Delete measurements
->    * @head: List head measurements are deleted from
+No, the reason I won't pull it is that the main developer I pull bpf
+code NAK'ed it.
 
+Now, I will cdertainly sometimes override maintainers, so it's not
+like a NAK is always some final thing.
 
+I don't _like_ overriding developers, but I'll do it when I feel it is
+necessary to make forward progress.
+
+But I also have to  feel people have been unnecessarily difficult, and
+I have been extensively informed about the decision and I feel like I
+can make a reasonable judgement on it.
+
+So it happens, but it happens with my explicit understanding.
+
+My tree is *not* some kind of "we are bypassing developers by sending
+a pull request directly to Linus" tree.
+
+NEVER is that the way things get done.
+
+[ Yes, that too has happened, and I have done that unwittingly because
+I didn't realize what was going on ]
+
+So I will not pull this tree. End of story.
+
+The way to get me to override developers is to make me aware of the
+conflict and convince me that yes, something needs overriding - but it
+is typically not very easy to do with active developers.
+
+And honestly, I also have two+ decades of history of "LSM people
+cannot agree on a single thing".
+
+That is _literally_ why the LSM layer exists in the first place.
+
+So when LSM people then disagree with _other_ developers, quite
+frankly my immediate and visceral reaction then is "oh, these people
+who have decades of history of not being able to even agree amongst
+themselves are now disagreeing with outsiders too".
+
+Put another way: LSM people have a  higher barrier to convince me that
+I should take their disagreements seriously.
+
+And no, I'm afraid that may not be entirely fair.  But "history of
+being disagreeable" is a thing.
+
+              Linus
