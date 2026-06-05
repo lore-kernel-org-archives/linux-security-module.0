@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373F83290D9;
-	Fri,  5 Jun 2026 16:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194D23B42FC;
+	Fri,  5 Jun 2026 16:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780675482; cv=none; b=tmbkyqEcpxAb5t42dpIJju2+YG2rVZeIWZhhYgLdMsVUhy6wPHK5RcGx00dEIgwX97D22gy0gCHZ9ypc3x6U0HlUPo4K3UbAfVPkg3dys3qRwKQF692GK+x0iMU7o3BrJO0JyY+50V8MFuBlcIUuKM0GUlcYZSSjvIy+XPnpddM=
+	t=1780678295; cv=none; b=ZCC/zWMFDSvlsE+6bZ3fJdxqQuXsZP6NXFWb4NclDcjZaBP4H2rYczBwNVlf0X1dcjMaUr5w46IFXiTzJm0wafRY8uYNScsICHFq32MtL4b9ZqnEbqGBvgo5ItXArtkl0bRY29cN/AC0RJjOZuFZaV4trfHrnxypaiumy1lxRbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780675482; c=relaxed/simple;
-	bh=vsWbROpEGJwiAO9+bBrEo9kJ1z4oHpqhUD/sImXNRZs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Nod1lvtnf91xnT5oBL7ULu6n7njzKOBKwEiYPJ7FRstqTmC9ecAzq2OsXXY549DhvxX/FiVN07LYSMzpvIvUJk4OfzbIO/uoDuKvBn7GRQHIaidx5bwzKgtK9Rnm73n88/vaJSFbUa5mToQ5ZcfHIOdF4tmOFdVFaTh/aWvyrFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iBEKf9d6; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780678295; c=relaxed/simple;
+	bh=cEFtr8AJVQkFY0Wmeq9R9uWufFD1HDHWT0PNYLE4W+o=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KPhnCdNZbjnWsEf07WsSKyVsFpLvtCBbLbcyv3nH1bZLRKUB8Nvyt6jgco+5yCJa0M0DZBHosTf/6PwDthT/QKSiyRbJ3k+dB/creNmtn0hTT22V3hNvH/4OEDdq97/htWyaNUyj3j0qCsU4dxQ3dg0ijAgt4IU9I66f79/MX4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LszpehQp; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iBEKf9d6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7240F1F00898;
-	Fri,  5 Jun 2026 16:04:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LszpehQp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EAFC1F00893;
+	Fri,  5 Jun 2026 16:51:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780675481;
-	bh=ZvME5Cm5EErC2myByVcBHi0I0/kiVKGqTYnETmbRSoA=;
+	s=k20260515; t=1780678292;
+	bh=kaueAH1A28I4mzPHTO+5deaEulFLg4/sn6wuA9JZiDg=;
 	h=From:Date:Subject:To:Cc;
-	b=iBEKf9d60dSA4dypE6a+c8hXSnazzq/WNUxVZyZQ4xCWnJxNKOIcse2nz3yY5lkd8
-	 2HaDGDhoHOkYhmdzzNrLxJrwaHvmanZzrFK1ea24OE08d/fHyhqiWs/qMmNI2lqhF2
-	 kpofPfsnbJdRpJq1kOlNWQW4yCruGHscz/ULVC5O5KEbQUm6ODzZRfS3kVUZpVtflL
-	 14XFZRravr+JZyk/SmdnaQFnP0P0Pwl+VRrkjY4CtRIbiDBmDi0xD5SoWFsHJQgmgT
-	 dQ9xQdSR3X1F8rbb1nbLa2kFWFpybWRy+mRLyPzS4TH/yCdAngDnzV/HwcT7pG3qMC
-	 lEn/fwrBZ7A1g==
+	b=LszpehQpSUZ58UA4ZLLpQNsf421FFVITyvks0m3oR5+I2Y7/M+fcsDu59NrEiWZCC
+	 O46uqu6w4uUoKWEmPWAyApuuy3i/MZkq+5r+/Qxag/5+q6sXTNB4UU5GWUK7uEeHxw
+	 VP1LYm5gbfBrlUsdjGVBOjvBrn7o9ZGoJK8KzBC0GAGccK+OLJDopptO6zS3Sft6dO
+	 1YjGudBF6NS7pJIiJS4YkffySrgAZMctd2HxfaJph0OlDC/4sydfuzLFCP0beBzzQ3
+	 0Fk7vElnkWPa6rcbpsC0jcA0a8jRbMbY3T2kWlJ1WT0hxRc0ErLbvYcCyQ68TU9+He
+	 EtDI0MKNr0oEw==
 From: Mark Brown <broonie@kernel.org>
-Date: Fri, 05 Jun 2026 17:01:46 +0100
-Subject: [PATCH] hardening: Default randstruct off with rust for better
+Date: Fri, 05 Jun 2026 17:50:58 +0100
+Subject: [PATCH v2] hardening: Default randstruct off with rust for better
  allmodconfig support
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -37,10 +37,11 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260605-rust-reverse-randstruct-dep-v1-1-45ce9ee8d0d1@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAOnyImoC/yXMQQrDIBBA0auEWXdApUroVUoXRqfJdGHDjIZAy
- N1r2+WDzz9ASZgUbsMBQhsrv0uHvQyQllhmQs7d4IwLJhiP0rRiL0mUUGLJWqWliplW9NGbaxq
- DtW6EfliFnrz/7vfH39qmF6X6XcJ5fgBYH1/vfwAAAA==
+Message-Id: <20260605-rust-reverse-randstruct-dep-v2-1-93d38023b6f9@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAHH+ImoC/42NQQ6CMBAAv0L27Jq2oQQ9+Q/DAdsVqqaQ3UI0h
+ L9b8AMeJ5nMLCDEgQTOxQJMc5AwxAzmUIDr29gRBp8ZjDKVqpRFniRhNomFkNvoJfHkEnoa0bZ
+ Wla6utDY15MLIdA/vvX5tfizT7UEubcnN6IOkgT/7ftab999p1qixtI5ORLVXXl+exJFex4E7a
+ NZ1/QKQwurn2QAAAA==
 X-Change-ID: 20260605-rust-reverse-randstruct-dep-5a504c861128
 To: Kees Cook <kees@kernel.org>, 
  "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
@@ -55,15 +56,15 @@ Cc: linux-hardening@vger.kernel.org, linux-security-module@vger.kernel.org,
  linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
  Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1538; i=broonie@kernel.org;
- h=from:subject:message-id; bh=vsWbROpEGJwiAO9+bBrEo9kJ1z4oHpqhUD/sImXNRZs=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqIvOU7rsREQBrBgaLVObPVoOmwh6ZV2gPw6wyE
- GM//x8lSh6JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaiLzlAAKCRAk1otyXVSH
- 0NiVB/4pkPcGI1PaYfctTQLODF2WwN4ST9lqeJpqNKWRD/kk9+PtsDnCn2drbxEDKIaMrnXN/ya
- 221utBsZ1sRTlMapPtKL2jJo6YxPFeSEZP8EKeTz6g7fN0XDKE/0QDdfDPCN8AKK1S5Ld/Nh/LE
- HYIAuvGyM9AHS4DEmtQUu4qAQuZIFjUqMHIyZ3/cQ8wmaC9XrRlHLGUg9LKK9N22b/ozFwstf1V
- KV6BUfDZt49dnICSNpnLHL1yZlcio0pW7VME3zT5cYB1iNxcaN4/bOx9kPI5od7Gy+5gzDINucM
- b+7fYEeMDdrWswaxAPrlF+UFWD2clAP0Aya2G2KzVmIWfcGW
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1751; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=cEFtr8AJVQkFY0Wmeq9R9uWufFD1HDHWT0PNYLE4W+o=;
+ b=kA0DAAoBJNaLcl1Uh9AByyZiAGoi/pCipoFr56drgbeCJWZbNTxfMocnV34HVchyDxMS/Dxab
+ okBMwQAAQoAHRYhBK3maKpnVxi1n+Kf6iTWi3JdVIfQBQJqIv6QAAoJECTWi3JdVIfQrxEH/2yb
+ bxt8J5e5p5v5U7rkQbhF/i84hLlkAjYytJesidSziHfchHL+1Y3X3nyvHiuZt0lJzu27sbLJPVk
+ wBRrFi1pxs5nEyceeomEyG0cbSlUwyVqgfSW3LSwMlHLyP7jbRJVyAiyRRaAj5a1hjeiBhNXjVl
+ ihSEF1bmrRMK3D6jmFXhAgD3KZOAuozo+/OQ5AoT4GWGPGFPRtHeDYPlLZ8Br43+ZzO6J8anUyp
+ mO+MdOBelrE1u/H+q0SpEsptswJuG00XJnT+QQo10lYrX8qVhVLZ2DXCNPmRb2ftqrJccYMTN1x
+ ZjHNkD28rR18z/OE6UAnl3vl0bOVB5tuUwPMh1s=
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
@@ -74,18 +75,22 @@ randstruct gets turned on by default, then the dependency on !RANDSTRUCT
 causes rust to get disabled.
 
 Work around this by disabling randstruct by default if we have a usable
-rust toolchain, circular dependencies prevent us directly depending on
-!RUST. This means we might end up with a configuration that disables both
-rust and randstruct but hopefully it's more likely go give the expected
-result.
+rust toolchain and rust support for the architecture, circular
+dependencies prevent us directly depending on !RUST. This means we might
+end up with a configuration that disables both rust and randstruct but
+hopefully it's more likely go give the expected result.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v2:
+- Add a HAVE_RUST in there too.
+- Link to v1: https://patch.msgid.link/20260605-rust-reverse-randstruct-dep-v1-1-45ce9ee8d0d1@kernel.org
 ---
  security/Kconfig.hardening | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-index 86f8768c63d4..1677c4f9637b 100644
+index 86f8768c63d4..923e7710f005 100644
 --- a/security/Kconfig.hardening
 +++ b/security/Kconfig.hardening
 @@ -285,7 +285,7 @@ config CC_HAS_RANDSTRUCT
@@ -93,7 +98,7 @@ index 86f8768c63d4..1677c4f9637b 100644
  choice
  	prompt "Randomize layout of sensitive kernel structures"
 -	default RANDSTRUCT_FULL if COMPILE_TEST && (GCC_PLUGINS || CC_HAS_RANDSTRUCT)
-+	default RANDSTRUCT_FULL if !RUST_IS_AVAILABLE && COMPILE_TEST && (GCC_PLUGINS || CC_HAS_RANDSTRUCT)
++	default RANDSTRUCT_FULL if !(RUST_IS_AVAILABLE && HAVE_RUST) && COMPILE_TEST && (GCC_PLUGINS || CC_HAS_RANDSTRUCT)
  	default RANDSTRUCT_NONE
  	help
  	  If you enable this, the layouts of structures that are entirely
