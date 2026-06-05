@@ -1,329 +1,125 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C092F7EE1;
-	Fri,  5 Jun 2026 17:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66CC3806B8
+	for <linux-security-module@vger.kernel.org>; Fri,  5 Jun 2026 17:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780680355; cv=none; b=kRzgDWwo52p816CCBg+MlZLjG6xJ7zhFO6yyDWyboO4QCNewjtH8kP5mLKJttwOqeK9S3KBdviOsEuWLDD9f7htmGuYbPKsc+5UhgP7hS5iOopeiuoLNd5At4ovLIsAldpgykbGcMZsDIo10Xt7bpfGCAHYFblPPJjn0cRgxwbs=
+	t=1780680359; cv=none; b=pf4/eJwUY1GcPwA05labLadn0XLFy9XQfSiseU6h5VUPo7eyyzmTILcojqXig5rotresQX1iT9RVOC11KGspOhqQo5zzTPEjURWCSSpK+QMQAzhkg/zkjsl6rRY//NjYV0V8GND5WEW94gtm/f/sioNJRfrXl56fnVquw/QwoS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780680355; c=relaxed/simple;
-	bh=L0gUMkOe3CEUdn9+ggxOpmkji8Fi1cuMFRNBlHHMXgs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Kx7KxEIAxNJK56YQoBL+u4/c205v8nU80K19n5Hdy1UyvsKdXncuPkNXO1nXmCAbS7HamViQQsPY9crgGBxyVhBWt0vytmGOafz9rENvmIyCj3p0MbIQUVmeYelblS+tHq+0RATTh1InFsJJQxzkkMC7e7o8e0bnXBKXsAB+bJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.235])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4gX7W20GvKzsT0g;
-	Sat,  6 Jun 2026 01:20:46 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 35BFA40572;
-	Sat,  6 Jun 2026 01:25:45 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwCXWY9+BiNqCg9lAA--.44013S4;
-	Fri, 05 Jun 2026 18:25:44 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: corbet@lwn.net,
-	skhan@linuxfoundation.org,
-	zohar@linux.ibm.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	gregorylumen@linux.microsoft.com,
-	chenste@linux.microsoft.com,
-	nramas@linux.microsoft.com,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v7 12/12] doc: security: Add documentation of exporting and deleting IMA measurements
-Date: Fri,  5 Jun 2026 19:22:36 +0200
-Message-ID: <20260605172236.2042045-13-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260605172236.2042045-1-roberto.sassu@huaweicloud.com>
-References: <20260605172236.2042045-1-roberto.sassu@huaweicloud.com>
+	s=arc-20240116; t=1780680359; c=relaxed/simple;
+	bh=HdIZAQh/9RFpUDLiDHRlKc6fZPdDRKlHrJyvQhmJD6o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RfsllLsS6wkF1V+9FqfBWIwH1yRvvEyCUUt6NCVWlXFvKqX3RVc3NeEnXGgvdJaGamZPhY//cEf1yY0Q5b74VpjFLMYT0eO0l9jH4dEGowy3OfWhm9Vd7fCtIOHHL/OHxQVahfS01CM7b9V93TtVo0yiAwcDDvAL2lBlUSfyppo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Yst11GOQ; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Yst11GOQ"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-bec3f69d343so337275366b.0
+        for <linux-security-module@vger.kernel.org>; Fri, 05 Jun 2026 10:25:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1780680356; x=1781285156; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=eClztFfJ+DkV18cFEkoMrmwHyQzCIK0BXK6wGWgeyF4=;
+        b=Yst11GOQQVVuCP6r7ByVJkGVFpO9E/xzY3xT3EVMuAaeDy/oWbAVKzNi/uZhSzGzFq
+         g/800g4fuPMiU3DWXijkKsWlMCfpqb+yAkXv2Kd7rrVofmNBsXR05f9nY4ofr/zhJbL3
+         ZlbuFVK8xHhPEO1uqhS86kvg06V43jpDpIQTE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780680356; x=1781285156;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eClztFfJ+DkV18cFEkoMrmwHyQzCIK0BXK6wGWgeyF4=;
+        b=i0NSIqanPdT6xB/8GY/9kFKZgXtnnfpNBgKE7Dq+Bqt9wBn/8D7qanUROBrmV/sQhr
+         yl4E7H2MKkv+LKV9RffuuZdcMOObP7P1yCNeDTTROFx3Zgg+nj0OJput+mXIj4ao0MfQ
+         y2mEMq3w4rf5PSvi2EexzPpnVFG/iuHTcHLjwfBL4YnSD890tQMiT9NReSJhus9g+h57
+         CTCD7uce/ti7cewnhZln4diNMRD03q8FPgAqEicIXCCg1fGIPQzZ2CKUaLTxVsoX9ijV
+         xokZXfLEBPBNS1IGiOmZ85p27c6lA7DcT9SZGYIkAwTVu8YCD37Znu8NWVpdMT68YrrJ
+         2xiQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/KukLrlL5zZIv5mt5Q/BZcZPzH8bSspsLVEXixCkNX8yFJRbTCKfm6u1C5cL6GrTEnO78DIfQK5eT8bjjz/RhMO1736N0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzhrd0f2M+TrozDSCuIdQHV8+32YS1NQD3vvQWQuUaQuyhGsfvD
+	crCc7+eLL3BEY13NZjkaZtO7l5lYGnSQXegM/Ip5AxupMSD2EUfVzBCz5jCXQhhvCt+xZQPc3Lw
+	Wqawip2MCWQ==
+X-Gm-Gg: Acq92OGD5WBzEuqHjMtZGE4Lj50iDh6/FHkx0EDhp3F3V5VwAQVQFDkHCWhpE/GaQ2G
+	aueOZ6vZwwhjAONudh1+UEeUKwpwhEPH9lVYHh+LkjGkj85fg+fwymVmBrkst3SCAzzkVQWIuZb
+	e7EZFB7HbudjsVicxmtAmVe0aOgYhWml988wlBoNRBnaCZG+eQVeAUTwD/wgdhX6lu58tHk2Ie0
+	L01u5VCPz1YCcLItdCjsL1iBWtmuqyrTZrKQiLWD4Q+rjTj5LO7zPHFxcTlTwOLBvjzBSNyIUiw
+	SCeaReJeREeuMU+kKuvjJqyPA24/DDHRcciCou1AkZNK7EeYk2QlYcQcGeUX364CG/ppQmwZ9jH
+	LEVjocUKgiibXGeARG5ZN00cLNU0PF7rn0YeP5ncQ9CHqwrORmihqx3y/e6b9FQ1mzRZRIbJGfA
+	TMnMo84+oEiXg825Aqcn8ECsR92/mWXbTQLRvEYBgM23VRQh/BiJugLxaZ4tggs6IGJnCbExf7Y
+	bcodC4q5gk=
+X-Received: by 2002:a17:906:d552:b0:bf1:1d19:cf95 with SMTP id a640c23a62f3a-bf37077232cmr291487566b.12.1780680356056;
+        Fri, 05 Jun 2026 10:25:56 -0700 (PDT)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bf055500875sm479022866b.53.2026.06.05.10.25.54
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Jun 2026 10:25:55 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-bec3f69d343so337272366b.0
+        for <linux-security-module@vger.kernel.org>; Fri, 05 Jun 2026 10:25:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ/BfqPuK5BDQvl1qACcDfh1sn+y2RV4DZtXmZz3zRNWxYBGK8hWTlQmXIY+VzAykx2OhbXM70REd/DNWoZF5hPqlexW390=@vger.kernel.org
+X-Received: by 2002:a17:907:cf8c:b0:bf1:7897:9477 with SMTP id
+ a640c23a62f3a-bf370b6008dmr245196866b.18.1780680354400; Fri, 05 Jun 2026
+ 10:25:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwCXWY9+BiNqCg9lAA--.44013S4
-X-Coremail-Antispam: 1UD129KBjvJXoW3Cr48GrW7JFWrJF4UJFW8JFb_yoWDKw1rpa
-	9aga4Ikwn5Ja4fAw1kJw1xJr4rZ3yrKa1UGrn3Jw1xAFn8Wryvyr4akrWY9FZxKr1vvryj
-	v3ZFvr45Aa1qqaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPqb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
-	A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2
-	WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkE
-	bVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7
-	AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wr
-	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
-	0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x
-	07Ud5rcUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAPBGoiOzcKlQAAsS
+References: <83f77b2b-8c00-424d-b6f9-b044e7ea1ee7@sirena.org.uk>
+ <CAHk-=wj6CtZS9hbwFjQcoNkPwQLoyKmk8czaBF6=bBOCYuXEUQ@mail.gmail.com>
+ <CAHC9VhRX1=tx4+arzuH76kirYFFJozexa5L=41Bb2QbgWZXOkQ@mail.gmail.com>
+ <CAHk-=wj_rtiufEEVudMCSbh86HYrnmEa9NhYfKeWHs1SOzJVnA@mail.gmail.com>
+ <CAHC9VhRXW_kyWXgYBqW3K-jSr5yN9wp1EPos1c=BFmiebxLiUQ@mail.gmail.com>
+ <CAHk-=wij4nkMRcshzEGsxvjwP2RBQyaiQ4-vQrYTOqvQusxu9g@mail.gmail.com> <aiLS4wOtpqrpw4pA@mail.hallyn.com>
+In-Reply-To: <aiLS4wOtpqrpw4pA@mail.hallyn.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 5 Jun 2026 10:25:38 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh7Zk0X=FyYc8gJpR1=U0wWJiiOzNzpDUj5PdJHd=ryiQ@mail.gmail.com>
+X-Gm-Features: AVVi8CcLuRe75DJKrgOu14xG1-XM3Ks93m94kU_UVSFKHwmay-oxCn6KrAS5ua4
+Message-ID: <CAHk-=wh7Zk0X=FyYc8gJpR1=U0wWJiiOzNzpDUj5PdJHd=ryiQ@mail.gmail.com>
+Subject: Re: -next status as at v7.1-rc6
+To: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org, 
+	Mark Brown <broonie@kernel.org>, Blaise Boscaccy <bboscaccy@linux.microsoft.com>, 
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>, linux-next@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On Fri, 5 Jun 2026 at 06:45, Serge E. Hallyn <serge@hallyn.com> wrote:
+>
+> The two most useful threads I believe were from a year ago,
+> 20250502184421.1424368-1-bboscaccy@linux.microsoft.com
+> and
+> 20250528215037.2081066-1-bboscaccy@linux.microsoft.com
+> which includes the proposal by the BPF side:
+> https://lore.kernel.org/linux-security-module/CACYkzJ6VQUExfyt0=-FmXz46GHJh3d=FXh5j4KfexcEFbHV-vg@mail.gmail.com/
 
-Add the documentation of exporting and deleting IMA measurements in
-Documentation/security/IMA-export-delete.rst.
+Ok, so that's not a thread I was cc'd on (and I'm not complaining -
+this is not code that I *should* be cc'd on), but that does seem to
+match what I saw in email discussions I've seen.
 
-Also add the missing Documentation/security/IMA-templates.rst file in
-MAINTAINERS.
+There clearly *have* been alternative proposals by the bpf people for
+signed unprivileged eBPF.
 
-Link: https://github.com/linux-integrity/linux/issues/1
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- Documentation/security/IMA-export-delete.rst | 203 +++++++++++++++++++
- Documentation/security/index.rst             |   1 +
- MAINTAINERS                                  |   2 +
- 3 files changed, 206 insertions(+)
- create mode 100644 Documentation/security/IMA-export-delete.rst
+And they have apparently been ignored for various reasons. And it's
+not clear to me why LSM people think they can just ignore maintainers
+in the subsystems they want to then check.
 
-diff --git a/Documentation/security/IMA-export-delete.rst b/Documentation/security/IMA-export-delete.rst
-new file mode 100644
-index 000000000000..1600ead03b03
---- /dev/null
-+++ b/Documentation/security/IMA-export-delete.rst
-@@ -0,0 +1,203 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+==================================
-+IMA Measurements Export and Delete
-+==================================
-+
-+
-+Introduction
-+============
-+
-+The IMA measurements list is currently stored in the kernel memory. Memory
-+occupation grows linearly with the number of records, and can become a
-+problem especially in environments with reduced resources.
-+
-+While there is an advantage in keeping the IMA measurements list in kernel
-+memory, so that it is always available for reading from the securityfs
-+interfaces, storing it elsewhere would make it possible to free precious
-+memory for other kernel usage.
-+
-+The IMA measurements list needs to be retained and safely stored for new
-+attestation servers to validate it. Assuming the IMA measurements list is
-+properly saved, storing it outside the kernel does not introduce security
-+issues, since its integrity is anyway protected by the TPM.
-+
-+Hence, the new IMA staging mechanism is introduced to export IMA
-+measurements to user space and delete them from kernel space.
-+
-+Staging consists in atomically moving the current measurements list to a
-+temporary list, so that measurements can be deleted afterwards. The staging
-+operation locks the hot path (racing with addition of new measurements) for
-+a very short time, only for swapping the list pointers. Deletion of the
-+measurements instead is done locklessly, away from the hot path.
-+
-+There are two flavors of the staging mechanism. In the staging with prompt,
-+all current measurements are staged, read and deleted upon confirmation. In
-+the staging and deleting flavor, N measurements are staged from the
-+beginning of the current measurements list and immediately deleted without
-+confirmation.
-+
-+
-+Management of Staged Measurements
-+=================================
-+
-+Since with the staging mechanism measurement records are removed from the
-+kernel, the staged measurements need to be saved in a storage and
-+concatenated together, so that they can be presented during remote
-+attestation as if staging was never done. This task can be accomplished by
-+a remote attestation agent modified to support staging, or a system
-+service.
-+
-+Coordination is necessary in the case where there are multiple actors
-+requesting measurements to be staged.
-+
-+In the staging with prompt case, the measurement interfaces can be accessed
-+only by one actor (writer) at a time, so the others will get an error until
-+the former closes it. Since the actors don't care about N, when they gain
-+access to the interface, they will get all the staged measurements at the
-+time of their request.
-+
-+In the case of staging and deleting, coordination is more important, since
-+there is the risk that two actors unaware of each other compute the value N
-+on the current measurements list and request IMA to stage N twice.
-+
-+
-+Remote Attestation Agent Workflow
-+=================================
-+
-+Remote attestation agents can be configured to always present all the
-+measurements to the remote verifiers or, alternatively, to only provide the
-+measurements that have not been verified yet by the remote verifiers.
-+
-+In the latter case, determining which measurements need to be sent and
-+verified must solely depend on the remote verifier. The remote attestation
-+agent can proactively send partial measurements, at the condition that they
-+are the ones that the remote verifier needs.
-+
-+An agent can rely on one of the supported staging methods to proactively
-+send to a remote verifier the measurements since the previous request up
-+to the ones that verify the TPM quote obtained in the current request.
-+The workflow with each staging method is the following.
-+
-+With staging with prompt, the agent stages the current measurements list,
-+reads and stores the measurements in a storage and immediately requests
-+IMA to delete the staged measurements from kernel memory. Afterwards, it
-+calculates N by replaying the PCR extend on the stored measurements until
-+the calculated PCRs match the quoted PCRs. It then keeps the measurements
-+in excess for the next attestation request.
-+
-+At the next attestation request, the agent performs the same steps above,
-+and concatenates the new measurements to the ones in excess from the
-+previous request. Also in this case, the agent replays the PCR extend until
-+it matches the currently quoted PCRs, keeps the measurements in excess and
-+presents the new N measurement records to the remote attestation server.
-+
-+With the staging and deleting method, the agent reads the current
-+measurements list, calculates N and requests IMA to delete only those. The
-+measurements in excess are kept in the IMA measurements list and can be
-+retrieved at the next remote attestation request.
-+
-+While keeping only the excess measurements in the storage could be
-+sufficient to serve the requests of a remote verifier, it is advised to
-+keep all the obtained measurements locally, as they might be needed for the
-+attestation with a different remote verifier.
-+
-+
-+Usage
-+=====
-+
-+The IMA staging mechanism can be enabled from the kernel configuration with
-+the CONFIG_IMA_STAGING option. This option prevents inadvertently removing
-+the IMA measurement list on systems which do not properly save it.
-+
-+If the option is enabled, IMA duplicates the current securityfs
-+measurements interfaces (both binary and ASCII), by adding the ``_staged``
-+file suffix. Both the original and the staging interfaces gain the write
-+permission for the root user and group, but require the process to have
-+CAP_SYS_ADMIN set.
-+
-+The staging mechanism supports two flavors.
-+
-+
-+Staging with prompt
-+~~~~~~~~~~~~~~~~~~~
-+
-+The current measurements list is moved to a temporary staging area,
-+allowing it to be saved to external storage, before being deleted upon
-+confirmation.
-+
-+This staging process is achieved with the following steps.
-+
-+ 1. ``echo A > <_staged interface>``: the user requests IMA to stage the
-+    entire measurements list;
-+ 2. ``cat <_staged interface>``: the user reads the staged measurements;
-+ 3. ``echo D > <_staged interface>``: the user requests IMA to delete
-+    staged measurements.
-+
-+
-+Staging and deleting
-+~~~~~~~~~~~~~~~~~~~~
-+
-+N measurements are staged to a temporary staging area, and immediately
-+deleted without further confirmation.
-+
-+This staging process is achieved with the following steps.
-+
-+ 1. ``cat <original interface>``: the user reads the current measurements
-+    list and determines what the value N for staging should be;
-+ 2. ``echo N > <original interface>``: the user requests IMA to delete N
-+    measurements from the current measurements list.
-+
-+
-+Interface Access
-+================
-+
-+In order to avoid the IMA measurements list being suddenly truncated by the
-+staging mechanism during a read, or having multiple concurrent staging, a
-+semaphore-like locking scheme has been implemented on all the measurements
-+list interfaces.
-+
-+Multiple readers can access concurrently the original and staged
-+interfaces, and they can be in mutual exclusion with one writer. In order
-+to see the same state across all the measurement interfaces, the same
-+writer is allowed to open multiple interfaces for write or read/write.
-+
-+If an illegal access occurs, the open to the measurements list interface is
-+denied.
-+
-+
-+Kexec
-+=====
-+
-+In the event a kexec() system call occurs between staging and deleting, the
-+staged measurement records are marshalled before the current measurements
-+list, so that they are both available when the secondary kernel starts.
-+
-+If measurement is suspended before requesting to delete staged or current
-+measurements, IMA returns an error to user space to let it know that
-+marshalling is already in progress, so that it does not save the
-+measurements twice.
-+
-+IMA also disallows staging when suspending measurement, to avoid the
-+situation where neither measurements are carried over to the secondary
-+kernel, nor they are saved by user space to the storage.
-+
-+
-+Hash table
-+==========
-+
-+By default, the template digest of staged measurement records are kept in
-+kernel memory (only template data are freed), to be able to detect
-+duplicate records independently of staging.
-+
-+The new kernel option ``ima_flush_htable`` has been introduced to
-+explicitly request a complete deletion of the staged measurements, for
-+maximum kernel memory saving. If the option has been specified, duplicate
-+records are still avoided on records of the current measurements list,
-+but there can be duplicates between different groups of staged
-+measurements.
-+
-+Flushing the hash table is supported only for the staging with prompt
-+flavor. For the staging and deleting flavor, it would have been necessary
-+to lock the hot path adding new measurements for the time needed to remove
-+each selected measurement individually.
-diff --git a/Documentation/security/index.rst b/Documentation/security/index.rst
-index 3e0a7114a862..00650dcf38cb 100644
---- a/Documentation/security/index.rst
-+++ b/Documentation/security/index.rst
-@@ -8,6 +8,7 @@ Security Documentation
-    credentials
-    snp-tdx-threat-model
-    IMA-templates
-+   IMA-export-delete
-    keys/index
-    lsm
-    lsm-development
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 461a3eed6129..70ff6bae3493 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12752,6 +12752,8 @@ R:	Eric Snowberg <eric.snowberg@oracle.com>
- L:	linux-integrity@vger.kernel.org
- S:	Supported
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
-+F:	Documentation/security/IMA-export-delete.rst
-+F:	Documentation/security/IMA-templates.rst
- F:	include/linux/secure_boot.h
- F:	security/integrity/
- F:	security/integrity/ima/
--- 
-2.43.0
+Now, again - I'm not claiming to be a subject expert, so I have to go
+by maintainership trust. But as it stands now, I really don't see why
+I would override the bpf maintainers' NAKs.
 
+And that "as it stands now" obviously very much includes a "maybe in
+the future I can be convinced that the bpf people are just being wrong
+and overly difficult".
+
+It certainly wouldn't be the first time kernel people have been ornery
+and strongly opinionated and just loved arguing.
+
+That's the kind of people we are.
+
+                    Linus
