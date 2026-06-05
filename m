@@ -1,141 +1,127 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039C62B9BA;
-	Fri,  5 Jun 2026 12:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A0C2116F4;
+	Fri,  5 Jun 2026 13:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780661765; cv=none; b=g3yfzxKpMnZY21WHrLk3/1/O70/oSEF1JQ3HDr8244hQP5rRR5UG25E1xzqszageJd4WRq3oX7iDfHVoV+COh6+6/JKH8F880EOf2iqO0vaNR5MMoBvYC+lO1+FrnZj7bFO/Lru8TUFEctibmcOhNvG6xGLTqbpwqI2cbrQLDvY=
+	t=1780667118; cv=none; b=H8/nJC+2f4foDUW29G2oXcXp2GWjR7GQFqUTXrUe8pi5MhAOpsBezhyEvMCKfz9pTVkDHuAHlfPak/QGeNJaGv6JdICWHtlzExgnEmkhp56cd3CHZ0nfxuxhEzna2tEdZKEmftoK9kmsoQ7a5knHu7S8fwJnnkeOs9Hmg5Bg0oE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780661765; c=relaxed/simple;
-	bh=M1RLUPjQMkUazGK5E9j4rCdECXoPVJZ/G4Z0NlllhDM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D68y2l5FxOmTOOt72J+CLkV/7CM8iz+jEvOaEm0B1vJe1gyQJiLDcmXJC5cHnWbaRWMPUiNDca6J8lkk9jvbSggheysmxSfExr3K6hyJLnhVX8cKaZt5ND5EWuGphqCJfgvJfzfI12sR6XjkOHsZxABDOEH1ZCM7Imu7LdVOitE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TBTzWS6l; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780667118; c=relaxed/simple;
+	bh=56LzANDXLeGt3Cb3NBq35BfCpKLrBNw7dddTSmki2EU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ipNACXukckHZlZrapc1lTAc+5kZfC3FFRsleYFyTuzv6Zc3XP6PtgMlBh6cT8+holpr4yBkr0+7nNyF7yjGOCk4y3/MMmM1Lhcif8jLSlOvKtN41H6QY2CZdiEalU5TGfIlH7FkQETQ7edIOB3UJprXZbKtP635nXr9uKNNRwZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b=n0ZpP+Te; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TBTzWS6l"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AFF81F00893;
-	Fri,  5 Jun 2026 12:16:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780661763;
-	bh=beptNeEzJHYQ+94+I0PQKTOh5JgCPrdUPqAq2RLiN3U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=TBTzWS6lRNEwNkUDoBT0wNjbMt5k+ani9mSxO7Ld9Djhx/+L5Cl5oShp9gA69YFWq
-	 JN8qr7qbtXCQeGPG8paeMz7NQ4wsiFgMjqcuXY5wW4fgvXCO4237v3aUXQRRHxVcAU
-	 AwBUpeFyCHlWJJs1/RYRCVK1AaSOz0O7ymqLEDBYW0oom309b3UCNjdCJLHZ/i+biP
-	 egVR7v4mXRTTKxXq/uvndoxK7FaUnqm+Z4mAAUzA1TAnD5QSTVdV1T6ymKqcwIj7kz
-	 fhFIWe5/x6U3kaQ4i5+u10Eevk3Wg/hIuQM8AGskZhKATFSqeIlYgvimchxzrQ/eWs
-	 f/mM/FESXe1XA==
-Message-ID: <19fb9d38-fe02-4653-bbad-58806e55ca84@kernel.org>
-Date: Fri, 5 Jun 2026 14:16:00 +0200
+	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b="n0ZpP+Te"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
+	t=1780667108; bh=56LzANDXLeGt3Cb3NBq35BfCpKLrBNw7dddTSmki2EU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n0ZpP+Te0X9SSmdWCcprwUqZWAkVwIqSTx3ZKwkDyKkvpcRN7+apUNjlqMLp7PsT+
+	 mfFmEqr8YIjYvxF1rpOMZXjuv6seUp77+IstHYHv3IWYzJgAHOon3TEF3YhGn8XWP/
+	 XcL4L7thXDOq4Yh5TeGEJjeFkX+zx4ApvuXHHeW11oRCykTFVv301Xs7WgDrGMQPJ3
+	 2Q8wgQI5QIXO1CuZ+BI1kpv5QbgByeFz66jCMaM+WWm4c9KXMwYrVCpgh3YGct71Al
+	 B2HDVOnOmc2cGfmnqKWPmAwxwUrWidE8KStjWqWQ9XBE4jhFwx7tH6ubOQhxeziHU9
+	 K0GPkbyr4E0qg==
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 069C1432; Fri,  5 Jun 2026 08:45:07 -0500 (CDT)
+Date: Fri, 5 Jun 2026 08:45:07 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: -next status as at v7.1-rc6
+Message-ID: <aiLS4wOtpqrpw4pA@mail.hallyn.com>
+References: <83f77b2b-8c00-424d-b6f9-b044e7ea1ee7@sirena.org.uk>
+ <CAHk-=wj6CtZS9hbwFjQcoNkPwQLoyKmk8czaBF6=bBOCYuXEUQ@mail.gmail.com>
+ <CAHC9VhRX1=tx4+arzuH76kirYFFJozexa5L=41Bb2QbgWZXOkQ@mail.gmail.com>
+ <CAHk-=wj_rtiufEEVudMCSbh86HYrnmEa9NhYfKeWHs1SOzJVnA@mail.gmail.com>
+ <CAHC9VhRXW_kyWXgYBqW3K-jSr5yN9wp1EPos1c=BFmiebxLiUQ@mail.gmail.com>
+ <CAHk-=wij4nkMRcshzEGsxvjwP2RBQyaiQ4-vQrYTOqvQusxu9g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] keys: prevent slab cache merging for key_jar
-Content-Language: en-US
-To: Mohammed EL Kadiri <med08elkadiri@gmail.com>,
- David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E . Hallyn" <serge@hallyn.com>, Kees Cook <kees@kernel.org>,
- Vlastimil Babka <vbabka@suse.cz>, keyrings@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-hardening@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260604125034.13757-1-med08elkadiri@gmail.com>
-From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-Autocrypt: addr=vbabka@kernel.org; keydata=
- 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
-In-Reply-To: <20260604125034.13757-1-med08elkadiri@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wij4nkMRcshzEGsxvjwP2RBQyaiQ4-vQrYTOqvQusxu9g@mail.gmail.com>
 
-On 6/4/26 14:50, Mohammed EL Kadiri wrote:
-> The key_jar slab cache holds struct key objects containing cryptographic
-> keys, authentication tokens, and keyring linkage. This cache currently
-> lacks merge prevention, allowing the SLUB allocator to merge it with
-> other similarly-sized caches.
+On Thu, Jun 04, 2026 at 04:18:46PM -0700, Linus Torvalds wrote:
+> On Thu, 4 Jun 2026 at 15:23, Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > While you didn't reply to any of my comments explaining how Hornet
+> > works, specifically how it ties into the kernel, I'm assuming you've
+> > read the overview.  Can you help those of us in the LSM space
+> > understand why a BPF dev's NACK on code that lives strictly under
+> > security/ is sufficient grounds to reject an LSM patch?
 > 
-> On a default Ubuntu 6.17.0-23-generic system, key_jar has 5 aliases,
-> meaning 5 unrelated object types share its slab pages. struct key is
-> 224 bytes, placed in 256-byte slabs alongside biovec-16, maple_node,
-> ip6_dst_cache, task_delay_info, and kmalloc-256 users.
+> Honestly, I'm not competent to make a judgment call between two
+> different models for hash chain verification, so I basically *have* to
+> go by maintainer opinions.
 > 
-> Cross-cache heap exploitation is a well-documented attack class
-> (CVE-2022-29582, CVE-2022-2588, CVE-2021-22555) where slab cache
-> merging enables type confusion between unrelated kernel objects. A
-> use-after-free in any subsystem sharing slab pages with key_jar could
-> allow an attacker to reclaim a freed slot as a struct key, or corrupt
-> an existing key through a dangling pointer to a different type.
+> And the discussions I have been cc'd on have not been what I'd call
+> enlightening.
 > 
-> Add SLAB_NO_MERGE to ensure key_jar receives dedicated slab pages,
-> eliminating cross-cache attacks targeting struct key. The memory
-> overhead is minimal: with 32 objects per slab page and typical key
-> usage bounded by system keyring size, the cost of dedicated pages is
-> negligible. There is zero performance impact on the allocation hot
-> path.
+> But people have pointed out that the LSM code mucks around with bpf
+> internals, and those NAK's have had reasons for them.
 > 
-> This follows the precedent set by skbuff_head_cache (net/core/skbuff.c)
-> which uses SLAB_NO_MERGE for similar isolation requirements.
-> 
-> Signed-off-by: Mohammed EL Kadiri <med08elkadiri@gmail.com>
+> And honestly, I don't understand *why* Hornet does what it does - and
+> does it in ways that obviously annoy the bpf people. There is no
+> *reason* to look at the bpf maps that I can see, and from my
+> understanding of Alexei's arguments (which may be lacking), the fact
+> that Hornet does that is the main reason for the NAK.
 
-Acked-by: Vlastimil Babka (SUSE) <vbabka@kernel.org>
+The two most useful threads I believe were from a year ago,
+20250502184421.1424368-1-bboscaccy@linux.microsoft.com
+and
+20250528215037.2081066-1-bboscaccy@linux.microsoft.com
+which includes the proposal by the BPF side:
+https://lore.kernel.org/linux-security-module/CACYkzJ6VQUExfyt0=-FmXz46GHJh3d=FXh5j4KfexcEFbHV-vg@mail.gmail.com/
 
-> ---
->  security/keys/key.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+There were 2 or three objections from each side iiuc, but the main ones
+that stuck in my mind were
+
+1. whether it is ok to rely on a signed userspace bpf verifier program to
+   verify the signature.
+2. objection by James Bottomley 
+   (2f71d6c03698eb17d51f7247efde777627ee578a.camel@HansenPartnership.com)
+   about the verifiability of the hash chain link.
+
+> But instead of working with the bpf people on coming up with some
+> model that does *not* do that, it all seems to have become a "we'll do
+> it anyway, despite maintainer complaints".
 > 
-> diff --git a/security/keys/key.c b/security/keys/key.c
-> index 3bbdde778631..592b65cf8539 100644
-> --- a/security/keys/key.c
-> +++ b/security/keys/key.c
-> @@ -1275,7 +1275,7 @@ void __init key_init(void)
->  {
->  	/* allocate a slab in which we can store keys */
->  	key_jar = kmem_cache_create("key_jar", sizeof(struct key),
-> -			0, SLAB_HWCACHE_ALIGN|SLAB_PANIC, NULL);
-> +			0, SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_NO_MERGE, NULL);
->  
->  	/* add the special key types */
->  	list_add_tail(&key_type_keyring.link, &key_types_list);
-
+> And I *did* see the bpf people pointing to "this would be an
+> acceptable alternative" with KP Singh outlining something that *had*
+> been discussed.
+> 
+> But I never actually saw anybody say "ok, we'll try that instead".
+> 
+> Maybe I missed it.
+> 
+> But from what I saw, it really looked like "I see NAK's from three
+> different bpf maintainers, with suggested alternate approaches". None
+> of which resulted in anything that looked like "ok, we'll try to
+> follow your guidance", only more of the same.
+> 
+> Why would *my* input then make any difference?
+> 
+> The bpf people's arguments resonated more with me. For example, the
+> whole "we need to know if it passed the bpf signature" seems to be
+> complate pointless silliness, and the bpf peoples responses to that
+> resonated with me. There's *no* point in any LSM check whether the
+> signature passed or not, since if it didn't pass, it's not getting
+> loaded.
+> 
+> So that's basically where I stand - I've seen disagreement, and I've
+> seen what looks to me like reasonable push-back, and I've not really
+> seen the LSM response as taking it into account.
+> 
+>            Linus
