@@ -1,138 +1,248 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28EAE165F16
-	for <linux-security-module@vger.kernel.org>; Fri,  5 Jun 2026 02:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.176
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780628042; cv=pass; b=r1yenT/xGBmJbxLc//JsXqP2N8LrUiYK3vQJSvIbtTbIo+MllOOW3MpDiBgDA/A2fqRNEVQ58iBJ5YOUayvDBp+8kxKIDYpciIawVC0G+2Al6N//Nthn1v8L8YRS05IRoM47DwVmwHlweXp/i9SuwB5+a5qzhOIdMzNy19rtSHM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780628042; c=relaxed/simple;
-	bh=ME43NpyRYHdtufwk/rMYavSDkIRCYV716D75fzY8bgQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rwDwo9pJFDbq09Yz7efCv2UeX0cXl3456ov0vZEKMKlIOivtqoyO04ZG1lno+l7m4EJ/X2LowfDVuRrV/ZSSkzR7bSc7xfK9kjn9bp+n+WE9cW5x5AsQ3iYhRA3fRU1+WuMY/y+KiiaAw8hrc5sGRGAKzkdj3033yab9ouTy2EQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AbbeEFJU; arc=pass smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394014D2EE7
+	for <linux-security-module@vger.kernel.org>; Fri,  5 Jun 2026 11:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780657895; cv=none; b=E9U7yG07KpOx961vMpjz+GbaEPcB7HcYQHhEBsB8QsjKldmHL8st8sD7U22RrdsdGlW2jMNDRDHo6sIxAJgLkTupfcCQrTJQN+SqjNS+ORF2tfssGkN7QSBedo2z42RUuSZBrko8FVzrxKr5NPJT4yrwKKpgD36EY4mfemb5a14=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780657895; c=relaxed/simple;
+	bh=NzXUcDwqkS4QUba0RK4Z+8RdDly35ObmbNBSFZcPT5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OgrAp3+IdqbEyTh0Z2XKfyqrl7xHk6eA3YldM4gKJrDkubSyeaRlQ/iEXH8Hk7lPS4fw3lT7QqeL7Bso2zaaX5Oc4sB6MCnEoPQ4ZJMJMfS+RQzfH2fRUv5kipBLsPAibwM+WJ37JK4HRSrskbfTCosVTRspO+pHmhqJpqVjHd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YYWYRe9y; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AbbeEFJU"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2c0c2a68d01so9802825ad.1
-        for <linux-security-module@vger.kernel.org>; Thu, 04 Jun 2026 19:53:57 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780628037; cv=none;
-        d=google.com; s=arc-20240605;
-        b=CnoedX7RpXG0Aknbgmr6ycQo6pGUnoWfeFhfRWiQBBwgjTNN81HY9MJeKkmNGiQGkB
-         uBjsisf7RzTPD7BR8MxtpAV9WN5FM1I4u/Zx6M3hXbCENA48EEPMME5J8JwXja97Z9fc
-         7mCdwCSvEa/pwb+eQHn9eFfKD/3zPxCkABKGNMI/RbXLSMqaDvKLD3YXNn6br7/erFho
-         OVEz4ZUpjJemyWpKeOqBfQwRtouVkydl2mBjj3R5+6AqU78jYoieWCTq5Xa7tdFbFH5E
-         YB6nKK5Dz0qt6Xd63dISirJeYZrFcNUXyJ/9PTrgaZuWk6T3kxb+PIWAo+iplpNMhAxz
-         CMdg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=zVKdyiFZUuhwgR/wN5SQI+AZRhERkIUiyYokvuYk4uo=;
-        fh=/xaH0XAXfxmZ3p4tN06SRmUz9b0W7YCNeLuwhGO5uVM=;
-        b=AqQb7VR+qyK2oCaUYmDCCYJPM4ImWXd36IJ8PcePKP5A8Ay2iqlUxmVlatUOU8jN81
-         scUYtw1MHPrIYm2lv5FpmA9SFQdk9V2r8FAE/O3mp/Fv98FnxaMC7nmZM4Tvk5QQixzQ
-         bM4xL/cmI1gOhRya2m0fAJbmxTd6RtskQ6Zehy1GZXHy9byzWN6a2x+DRE4Y6cZNtAOF
-         SI+T9XfhClvSaa/QPH9G1saMYICKgJf/ZOKFBRWbdRbAFCZcO0qx+ybZyza5JNlCmAEU
-         Np3m02LCqHntozpTP9cv21noc0UvwHwqO2KdQn5bvmETA1Kf/m4U36SCK/GuWWkxzWv1
-         sjGg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YYWYRe9y"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-490b12270b3so10966335e9.1
+        for <linux-security-module@vger.kernel.org>; Fri, 05 Jun 2026 04:11:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1780628037; x=1781232837; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zVKdyiFZUuhwgR/wN5SQI+AZRhERkIUiyYokvuYk4uo=;
-        b=AbbeEFJUJqAtMTEVvCxsy+DkX8j3uXUg+GDc3FCMPBgL/3MjTyjXQA/46H3WZoukwf
-         Pk3LBJMjgby5iJLdzR97iq90rUBGv1pUhUVU/WpDFR/KB0rAhhoClMhTIzRAqkQi2gIg
-         L/ujM2v6mPLc+mZd+P/gzlLGXvP7hIAgUKaFLKNbcrRmZttZWamNCn8Fa9jGvs1tNwTx
-         AyRfCHYWpTvmKq0Ffq01XSiipgCw3OldNFGKKULzpQn3XiRndOAkrz2Ckgcblk5st0Dm
-         hK/wqwr06MVs3rV3eA35rTGR/fWsFK+Od8Os5VK9NOEdOm7/7hE/NPiJA/GFub5LPr5A
-         yQ/g==
+        d=gmail.com; s=20251104; t=1780657886; x=1781262686; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NP8UmE1JJTaZ1ok4zYbN2k3div/k4FL0sO/lWo9YA80=;
+        b=YYWYRe9yDyhz7sSrTZtyFgLxQHHw/3ldxZbu4Wu2HpgZSPqkwYym7Tb7jHTJXCmUKg
+         ln0tr2Mp86n/aOfD78bPNFOJtAOCnY0cWXxss1CjovyRBoIXGIA1MXhqPe4hwBTi09q1
+         43nkvHpLZvO0Hw3onDPUE6e1mg1VwJ9Mf6OvrUIaV34ivasEP1KEAJDW9Z0qiYQc0UrM
+         ykKg6owwO/XdRUNpM9aQEazFSyvOt5JgnZYrAQEoGFJ6/w1wSyguIsFy9CcF781B/YX1
+         Ad8ESsI/4xQclaQn1dTliAODMJ7+mWxlG6T4QKaNBwnhaCYY+iGFPTaRNpq7yzB6l1ZE
+         twHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780628037; x=1781232837;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zVKdyiFZUuhwgR/wN5SQI+AZRhERkIUiyYokvuYk4uo=;
-        b=BONnmDwg0UI6avBkKwpXXB/Qyt1wqgJ/ilIvdrTeCMUz3N19HOYkdxZrwhbZoMBFff
-         3c6hkmvP5RDXLl5nwdM7vdxz4viaoDyuyGblmRGaBhHPvNXVXgg14ddZUiLWYzadBEG+
-         B6dDntwyyroald4nE0j9G6CwEVoC+PBByjVcnn9494AaZ3eOAw42Ixl3rkMkVwKT0jjI
-         JiK2dsAWMgDhXkwm7FyMtEqzF32+HMp6Wz0k+9l8tSory4ps5DQB7JQ+/uzsJsU7s5kT
-         VZCVoqIaXs4cr9O7wPu4YmsTLi0tEOMsTiIv4w5pGBJhlgUBkMYhjoFJD5j7bwQWzO1O
-         2pxw==
-X-Gm-Message-State: AOJu0YyUh5ACNl5LG59S7FjSKlTTjdKx/FuUvA1+d5FSJF90XYbkYVQR
-	hthIgbOz3hHI0f80BPpiZgUUrud4f5tw1NFV86FVFsL3gB63rGmVuoVqjIqG+Yolx6t9k2VHLBO
-	C0rwbDG+vcbWickR7S9PlH186aEgO6DckntciTr9m
-X-Gm-Gg: Acq92OFifySFVh6VcXuscx50atrHCwCpPvksv/nY+9PFvLTf5L9jsVWmNDZLoi3E1NZ
-	1DqVMFV9Pv8JgzhHTpCAsUsOkbFB9fz7YQjOoRLOV399zt0BAJzWARIoauOx6HoQPvud5MIfJVL
-	c+mjPUHjgLf2a+/Q7Ap4xiE0BPitpGbgX1YXxmgAq0mLaKEKsDEQ10Gc2jKKteGFiLCsENvuL2D
-	SyO5rc4u4NcBn7QoKDf3sbR0GKDI98NczGb87NOlKoweoPi6GJrlv3ZxXUA/2Tbv9JmVztN6ZUK
-	LUPqL+w4jhAVKwH2ew==
-X-Received: by 2002:a17:903:3807:b0:2bf:281c:d2d3 with SMTP id
- d9443c01a7336-2c1e7b073eemr13561925ad.9.1780628037130; Thu, 04 Jun 2026
- 19:53:57 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1780657886; x=1781262686;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NP8UmE1JJTaZ1ok4zYbN2k3div/k4FL0sO/lWo9YA80=;
+        b=kOhqXqZJB3gs61wW3JRCLhdNET54FXE0DTMW/ANgWVe9+KPo+u1cpKPLu/MRJTIrdN
+         pjsg8GDh+TjzTYVnZ4R1k+v/fPm9WsrC94bxvt6AQ0muNSpvNFdHvdIkBjCYbrO+1O9v
+         KVqsFKmKKm3NjAw9aIhJ/vbr6D5sokbqsZcHNpAVyUiYnw1oyfDCKf2UFP+2n8UUaWw8
+         bwvS9EGGiqS5oXxC1kbOlJ+a/3tZ+6xdco2XsO9II7nJuMaKgqm1PAdSW6katX3d55MA
+         Swcf7RmKckz7Ag4Em800SQe3BLFPrcndPFQRCXnDcRLYJIPigECyAgI2IJCjyi8sXJS3
+         r+ug==
+X-Forwarded-Encrypted: i=1; AFNElJ/CSlA/astJyEyt7PHK61nClX4A/k0C+inXHCjQI7aXrreF7sxI5IbGU2Mmkg23vJpRCYpd8L4gNrvCcmbx9UCQc7pVofg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwU3h5bm9/VKSAAyrJEct25OHYFTRLDX+grMSz0kUq41I5hjs1+
+	wI1yHz1iJteNVt0fKP/LMniz2yxd/M8xaS4BxkEqiO5++IyIy67FZ9zi
+X-Gm-Gg: Acq92OEi7B4SBzzmhvb5ITyR5VcFdIHCQ7YNlLxXUz/dfnlN8FYDKiYd2FLSIVn/BSg
+	tYC20dnAGOkieS+8l0EDRBkvlDXBaTZlOJKpYzH5SeFtP8xxHsjVMJ99cYPbtzLZy6i/9sliBUd
+	AGZYpU4b+u7WCig92oIWhU44oni/+vGEqIn2ing24CQKPdVzXNLXQwEQDjgSpdmBAVuqonsThf7
+	3a7lVSQagdmlyaZE9dpoCeDFw58s/EBVvKA/vKIx0QV7bbAHbwCRCYP1iON4WcfpKim6qdyAkJe
+	G6nY5yHTuzmIyOCt+vEwD99MK6N3279XnubIcBA+XnKINmelaJqUg9mcSDf8i9ZNDdSbAe33FiL
+	9jMyFRSnveSALffbOE+R7WXuQ9SQRebkajnv6zNhQN5yxo4gJBn5qSX+XRGNylLlmtnx0Fo5JQG
+	jOYexF1HZdT0ASv8Aumif/j9QqmArSFvxIQWuzfReS6iJMmsMqK0+0poyM7Z0=
+X-Received: by 2002:a05:600c:530d:b0:490:b92f:ef5b with SMTP id 5b1f17b1804b1-490c25d4cfcmr51953845e9.13.1780657886089;
+        Fri, 05 Jun 2026 04:11:26 -0700 (PDT)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4601f344762sm26586232f8f.23.2026.06.05.04.11.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jun 2026 04:11:25 -0700 (PDT)
+Date: Fri, 5 Jun 2026 13:11:10 +0200
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: Bryam Vargas <hexlabsecurity@proton.me>
+Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Justin Suess <utilityemal77@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] landlock: fix LANDLOCK_SCOPE_SIGNAL bypass on the
+ SIGIO path
+Message-ID: <20260605.ed2bc08adf71@gnoack.org>
+References: <cover.1780614610.git.hexlabsecurity@proton.me>
+ <56bffc24f3d0d08b45a686a48e99766b0a0821fa.1780614610.git.hexlabsecurity@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <83f77b2b-8c00-424d-b6f9-b044e7ea1ee7@sirena.org.uk>
- <CAHk-=wj6CtZS9hbwFjQcoNkPwQLoyKmk8czaBF6=bBOCYuXEUQ@mail.gmail.com>
- <CAHC9VhRX1=tx4+arzuH76kirYFFJozexa5L=41Bb2QbgWZXOkQ@mail.gmail.com>
- <CAHk-=wj_rtiufEEVudMCSbh86HYrnmEa9NhYfKeWHs1SOzJVnA@mail.gmail.com>
- <CAHC9VhRXW_kyWXgYBqW3K-jSr5yN9wp1EPos1c=BFmiebxLiUQ@mail.gmail.com> <CAHk-=wij4nkMRcshzEGsxvjwP2RBQyaiQ4-vQrYTOqvQusxu9g@mail.gmail.com>
-In-Reply-To: <CAHk-=wij4nkMRcshzEGsxvjwP2RBQyaiQ4-vQrYTOqvQusxu9g@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 4 Jun 2026 22:53:44 -0400
-X-Gm-Features: AVHnY4INK8NtMj-R7SeMSEzhh7NqBFWKeHLFLV-z5CLbKKoFGl6DKtLxUhuZ0k0
-Message-ID: <CAHC9VhTsqVSxog5xZm994kUDa2-LgAQu7uaLyrQU2F11J7ZuNA@mail.gmail.com>
-Subject: Re: -next status as at v7.1-rc6
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-security-module@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
-	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, 
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>, linux-next@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <56bffc24f3d0d08b45a686a48e99766b0a0821fa.1780614610.git.hexlabsecurity@proton.me>
 
-On Thu, Jun 4, 2026 at 7:19=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Thu, 4 Jun 2026 at 15:23, Paul Moore <paul@paul-moore.com> wrote:
-> >
-> > While you didn't reply to any of my comments explaining how Hornet
-> > works, specifically how it ties into the kernel, I'm assuming you've
-> > read the overview.  Can you help those of us in the LSM space
-> > understand why a BPF dev's NACK on code that lives strictly under
-> > security/ is sufficient grounds to reject an LSM patch?
->
-> Honestly, I'm not competent to make a judgment call between two
-> different models for hash chain verification, so I basically *have* to
-> go by maintainer opinions.
+On Thu, Jun 04, 2026 at 11:16:56PM +0000, Bryam Vargas wrote:
+> LANDLOCK_SCOPE_SIGNAL must prevent a sandboxed process from signaling
+> processes outside its Landlock domain.  It can be bypassed through the
+> asynchronous SIGIO delivery path.
+> 
+> A sandboxed process that owns any file or socket can arm it with
+> fcntl(F_SETOWN, fd, -pgid), fcntl(F_SETSIG, fd, SIGKILL) and O_ASYNC, so
+> that an I/O event makes the kernel deliver the chosen signal to the whole
+> process group.  As the head of its own process group -- the default right
+> after fork() -- that group also holds the non-sandboxed process that
+> launched it, e.g. a supervisor or a security monitor.  The sandbox can
+> thus kill or repeatedly signal exactly the processes SCOPE_SIGNAL is meant
+> to protect from it.
+> 
+> The scope is enforced in hook_file_send_sigiotask() against the Landlock
+> domain recorded at F_SETOWN time, not the live domain of the sender.
+> control_current_fowner() decides whether to record that domain and skips
+> recording it when the fowner target is in the caller's thread group --
+> safe only when the target is a single process sharing the caller's
+> credentials (PIDTYPE_PID, PIDTYPE_TGID).  For a process group
+> (PIDTYPE_PGID) the target resolves to the caller itself when it is the
+> group head, recording is skipped, and hook_file_send_sigiotask() then lets
+> the signal fan out to the whole group unchecked.
+> 
+> Record the domain for every non single-process target so the scope is
+> enforced against each group member at delivery time.
+> 
+> That recording is necessary but not sufficient on its own: the kernel
+> signals a process group through its members' thread-group leaders, and the
+> leader of the registrant's own process can carry a different Landlock
+> domain than the sibling thread that armed the owner.  domain_is_scoped()
+> would then deny that leader, even though commit 18eb75f3af40 ("landlock:
+> Always allow signals between threads of the same process") requires
+> same-process delivery to be allowed.  hook_task_kill() avoids this by
+> evaluating same_thread_group() live, per recipient; the SIGIO path instead
+> delegates the whole decision to a single registration-time check, which a
+> process-group fan-out cannot honor.
+> 
+> So also record the registrant's thread group next to its domain and exempt
+> it at delivery: hook_file_send_sigiotask() allows the signal whenever the
+> recipient belongs to the registrant's own process, restoring the
+> same-process guarantee while keeping out-of-domain group members blocked.
+> The direct kill() path (hook_task_kill) already evaluates the live domain
+> and is unaffected.
+> 
+> Fixes: 18eb75f3af40 ("landlock: Always allow signals between threads of the same process")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Bryam Vargas <hexlabsecurity@proton.me>
+> ---
+>  security/landlock/fs.c   | 15 +++++++++++++++
+>  security/landlock/fs.h   | 10 ++++++++++
+>  security/landlock/task.c | 11 +++++++++++
+>  3 files changed, 36 insertions(+)
+> 
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index c1ecfe239032..ff2c12e38bfc 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -1909,6 +1909,15 @@ static bool control_current_fowner(struct fown_struct *const fown)
+>  	if (!p)
+>  		return true;
+>  
+> +	/*
+> +	 * A process-group fowner fans the signal out to every member at
+> +	 * delivery time, so record the domain for any non single-process
+> +	 * target -- even when it resolves to current as the group head -- and
+> +	 * let hook_file_send_sigiotask() check the live scope per recipient.
+> +	 */
+> +	if (fown->pid_type != PIDTYPE_PID && fown->pid_type != PIDTYPE_TGID)
+> +		return true;
+> +
+>  	return !same_thread_group(p, current);
+>  }
+>  
+> @@ -1916,6 +1925,7 @@ static void hook_file_set_fowner(struct file *file)
+>  {
+>  	struct landlock_ruleset *prev_dom;
+>  	struct landlock_cred_security fown_subject = {};
+> +	struct pid *prev_tg, *fown_tg = NULL;
+>  	size_t fown_layer = 0;
+>  
+>  	if (control_current_fowner(file_f_owner(file))) {
+> @@ -1928,21 +1938,26 @@ static void hook_file_set_fowner(struct file *file)
+>  		if (new_subject) {
+>  			landlock_get_ruleset(new_subject->domain);
+>  			fown_subject = *new_subject;
+> +			fown_tg = get_pid(task_tgid(current));
+>  		}
+>  	}
+>  
+>  	prev_dom = landlock_file(file)->fown_subject.domain;
+> +	prev_tg = landlock_file(file)->fown_tg;
+>  	landlock_file(file)->fown_subject = fown_subject;
+> +	landlock_file(file)->fown_tg = fown_tg;
+>  #ifdef CONFIG_AUDIT
+>  	landlock_file(file)->fown_layer = fown_layer;
+>  #endif /* CONFIG_AUDIT*/
+>  
+>  	/* May be called in an RCU read-side critical section. */
+>  	landlock_put_ruleset_deferred(prev_dom);
+> +	put_pid(prev_tg);
+>  }
+>  
+>  static void hook_file_free_security(struct file *file)
+>  {
+> +	put_pid(landlock_file(file)->fown_tg);
+>  	landlock_put_ruleset_deferred(landlock_file(file)->fown_subject.domain);
+>  }
+>  
+> diff --git a/security/landlock/fs.h b/security/landlock/fs.h
+> index bf9948941f2f..911b83669e20 100644
+> --- a/security/landlock/fs.h
+> +++ b/security/landlock/fs.h
+> @@ -78,6 +78,16 @@ struct landlock_file_security {
+>  	 * euid.
+>  	 */
+>  	struct landlock_cred_security fown_subject;
+> +	/**
+> +	 * @fown_tg: Thread group of the task that set the file owner, pinned
+> +	 * while @fown_subject holds a domain.  It lets
+> +	 * hook_file_send_sigiotask() always allow a SIGIO delivered to the
+> +	 * owner's own process -- e.g. the thread-group leader reached through a
+> +	 * process-group owner -- matching the same-process exemption of
+> +	 * hook_task_kill().  NULL when no domain is recorded.  Protected by
+> +	 * file->f_owner->lock, like @fown_subject.
+> +	 */
+> +	struct pid *fown_tg;
+>  };
+>  
+>  #ifdef CONFIG_AUDIT
+> diff --git a/security/landlock/task.c b/security/landlock/task.c
+> index 6d46042132ce..7ddf211f75c3 100644
+> --- a/security/landlock/task.c
+> +++ b/security/landlock/task.c
+> @@ -411,6 +411,17 @@ static int hook_file_send_sigiotask(struct task_struct *tsk,
+>  	if (!subject->domain)
+>  		return 0;
+>  
+> +	/*
+> +	 * Always allow delivery to the file owner's own process, including a
+> +	 * thread-group leader reached through a process-group owner.  This
+> +	 * mirrors hook_task_kill()'s same-process exemption and preserves the
+> +	 * guarantee of commit 18eb75f3af40 ("landlock: Always allow signals
+> +	 * between threads of the same process"), which the registration-time
+> +	 * check cannot honor for a process-group target.
+> +	 */
+> +	if (task_tgid(tsk) == landlock_file(fown->file)->fown_tg)
+> +		return 0;
+> +
+>  	scoped_guard(rcu)
+>  	{
+>  		is_scoped = domain_is_scoped(subject->domain,
+> -- 
+> 2.43.0
+> 
+> 
 
-I appreciate the explanation, thank you.
+Reviewed-by: Günther Noack <gnoack3000@gmail.com>
 
-I'll admit it's not particularly satisfying, as it doesn't appear to
-identify any specific failing other than two groups having differing
-opinions.
-
-> So that's basically where I stand - I've seen disagreement, and I've
-> seen what looks to me like reasonable push-back, and I've not really
-> seen the LSM response as taking it into account.
-
-I would point out the several different attempts Blaise made to work
-and compromise with the BPF devs before Hornet was even an idea.
-Hornet came into existence only because the BPF devs refused to accept
-any use cases other than their own.
-
-Regardless, I think that's about it on this topic.  Thanks for the discussi=
-on.
-
-... and of course the invitation to the security summit in Prague (or
-any future instance for that matter) still stands.
-
---=20
-paul-moore.com
+Thank you, this looks good!
+–Günther
