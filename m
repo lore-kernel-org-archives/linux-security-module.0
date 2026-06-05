@@ -1,127 +1,159 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A0C2116F4;
-	Fri,  5 Jun 2026 13:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D067368299;
+	Fri,  5 Jun 2026 14:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780667118; cv=none; b=H8/nJC+2f4foDUW29G2oXcXp2GWjR7GQFqUTXrUe8pi5MhAOpsBezhyEvMCKfz9pTVkDHuAHlfPak/QGeNJaGv6JdICWHtlzExgnEmkhp56cd3CHZ0nfxuxhEzna2tEdZKEmftoK9kmsoQ7a5knHu7S8fwJnnkeOs9Hmg5Bg0oE=
+	t=1780670622; cv=none; b=i3XEXRcsbnrS216OqY5mP7KDH4LpVGjPBGn8dj/mtEtROQevDl77DixVZM24t4DE7CbIqQLQntUFt7Uy9wYYlSNbeeimbB8yjWYJjWPfJYw8Xw30lxN9FIwX98EBUKSfkKJ8w/ix7HTLAdykYYBN4Rly9cOR9nZFSXRmzlAqViI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780667118; c=relaxed/simple;
-	bh=56LzANDXLeGt3Cb3NBq35BfCpKLrBNw7dddTSmki2EU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ipNACXukckHZlZrapc1lTAc+5kZfC3FFRsleYFyTuzv6Zc3XP6PtgMlBh6cT8+holpr4yBkr0+7nNyF7yjGOCk4y3/MMmM1Lhcif8jLSlOvKtN41H6QY2CZdiEalU5TGfIlH7FkQETQ7edIOB3UJprXZbKtP635nXr9uKNNRwZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b=n0ZpP+Te; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+	s=arc-20240116; t=1780670622; c=relaxed/simple;
+	bh=OMQjeAoCepwlcTOllxIGRjOyfmXjVBQjlhbICvD3SAQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=o5hORbMXy+RA9LXEVqg0dZ/sITJyDoMT4Qz/3NHwRwdLtZVJsyV+zzgS9bshwsPH56BvnFiOTyOXNQaghKbmEF6lV4FO3MNt4gL4mfgGxX/rLLDURdysOuWSLF2jlEwrPcW95DUzJe1xNEsKSV/z/m8zuGSp3wWyUeLxnISSt30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=LQ/Yoc1o; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b="n0ZpP+Te"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
-	t=1780667108; bh=56LzANDXLeGt3Cb3NBq35BfCpKLrBNw7dddTSmki2EU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n0ZpP+Te0X9SSmdWCcprwUqZWAkVwIqSTx3ZKwkDyKkvpcRN7+apUNjlqMLp7PsT+
-	 mfFmEqr8YIjYvxF1rpOMZXjuv6seUp77+IstHYHv3IWYzJgAHOon3TEF3YhGn8XWP/
-	 XcL4L7thXDOq4Yh5TeGEJjeFkX+zx4ApvuXHHeW11oRCykTFVv301Xs7WgDrGMQPJ3
-	 2Q8wgQI5QIXO1CuZ+BI1kpv5QbgByeFz66jCMaM+WWm4c9KXMwYrVCpgh3YGct71Al
-	 B2HDVOnOmc2cGfmnqKWPmAwxwUrWidE8KStjWqWQ9XBE4jhFwx7tH6ubOQhxeziHU9
-	 K0GPkbyr4E0qg==
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 069C1432; Fri,  5 Jun 2026 08:45:07 -0500 (CDT)
-Date: Fri, 5 Jun 2026 08:45:07 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: -next status as at v7.1-rc6
-Message-ID: <aiLS4wOtpqrpw4pA@mail.hallyn.com>
-References: <83f77b2b-8c00-424d-b6f9-b044e7ea1ee7@sirena.org.uk>
- <CAHk-=wj6CtZS9hbwFjQcoNkPwQLoyKmk8czaBF6=bBOCYuXEUQ@mail.gmail.com>
- <CAHC9VhRX1=tx4+arzuH76kirYFFJozexa5L=41Bb2QbgWZXOkQ@mail.gmail.com>
- <CAHk-=wj_rtiufEEVudMCSbh86HYrnmEa9NhYfKeWHs1SOzJVnA@mail.gmail.com>
- <CAHC9VhRXW_kyWXgYBqW3K-jSr5yN9wp1EPos1c=BFmiebxLiUQ@mail.gmail.com>
- <CAHk-=wij4nkMRcshzEGsxvjwP2RBQyaiQ4-vQrYTOqvQusxu9g@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="LQ/Yoc1o"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7EB56237B;
+	Fri,  5 Jun 2026 07:43:33 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3F7293F7D8;
+	Fri,  5 Jun 2026 07:43:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1780670618; bh=OMQjeAoCepwlcTOllxIGRjOyfmXjVBQjlhbICvD3SAQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LQ/Yoc1oX020uC06MsmCzMuwvoLO75RatEVWIl8KrXjqJVsgK4GP8O5nKdqglzkj0
+	 45saIGgOCkllw6LgERHphTDGDWxja1IOaHgJ3T+7R4MNf5Qd2PAnOd2QM1n2BkwFyL
+	 3nZQfqPb/GkshatfXjdDDOad4hC79o6hKcCc/594=
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org
+Cc: paul@paul-moore.com,
+	zohar@linux.ibm.com,
+	roberto.sassu@huaweicloud.com,
+	noodles@earth.li,
+	jarkko@kernel.org,
+	sudeep.holla@kernel.org,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	jgg@ziepe.ca,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH v6 0/4] introduce IMA_INIT_LATE_SYNC option
+Date: Fri,  5 Jun 2026 15:43:21 +0100
+Message-Id: <20260605144325.434436-1-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wij4nkMRcshzEGsxvjwP2RBQyaiQ4-vQrYTOqvQusxu9g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 04, 2026 at 04:18:46PM -0700, Linus Torvalds wrote:
-> On Thu, 4 Jun 2026 at 15:23, Paul Moore <paul@paul-moore.com> wrote:
-> >
-> > While you didn't reply to any of my comments explaining how Hornet
-> > works, specifically how it ties into the kernel, I'm assuming you've
-> > read the overview.  Can you help those of us in the LSM space
-> > understand why a BPF dev's NACK on code that lives strictly under
-> > security/ is sufficient grounds to reject an LSM patch?
-> 
-> Honestly, I'm not competent to make a judgment call between two
-> different models for hash chain verification, so I basically *have* to
-> go by maintainer opinions.
-> 
-> And the discussions I have been cc'd on have not been what I'd call
-> enlightening.
-> 
-> But people have pointed out that the LSM code mucks around with bpf
-> internals, and those NAK's have had reasons for them.
-> 
-> And honestly, I don't understand *why* Hornet does what it does - and
-> does it in ways that obviously annoy the bpf people. There is no
-> *reason* to look at the bpf maps that I can see, and from my
-> understanding of Alexei's arguments (which may be lacking), the fact
-> that Hornet does that is the main reason for the NAK.
+To generate the boot_aggregate log in the IMA subsystem with TPM PCR values,
+the TPM driver must be built as built-in and
+must be probed before the IMA subsystem is initialized.
 
-The two most useful threads I believe were from a year ago,
-20250502184421.1424368-1-bboscaccy@linux.microsoft.com
-and
-20250528215037.2081066-1-bboscaccy@linux.microsoft.com
-which includes the proposal by the BPF side:
-https://lore.kernel.org/linux-security-module/CACYkzJ6VQUExfyt0=-FmXz46GHJh3d=FXh5j4KfexcEFbHV-vg@mail.gmail.com/
+However, when the TPM device operates over the FF-A protocol using
+the CRB interface, probing fails and returns -EPROBE_DEFER if
+the tpm_crb_ffa device — an FF-A device that provides the communication
+interface to the tpm_crb driver — has not yet been probed.
 
-There were 2 or three objections from each side iiuc, but the main ones
-that stuck in my mind were
+To ensure the TPM device operating over the FF-A protocol with
+the CRB interface is probed before IMA initialization,
+the following conditions must be met:
 
-1. whether it is ok to rely on a signed userspace bpf verifier program to
-   verify the signature.
-2. objection by James Bottomley 
-   (2f71d6c03698eb17d51f7247efde777627ee578a.camel@HansenPartnership.com)
-   about the verifiability of the hash chain link.
+1. The corresponding ffa_device must be registered,
+   which is done via ffa_init().
 
-> But instead of working with the bpf people on coming up with some
-> model that does *not* do that, it all seems to have become a "we'll do
-> it anyway, despite maintainer complaints".
-> 
-> And I *did* see the bpf people pointing to "this would be an
-> acceptable alternative" with KP Singh outlining something that *had*
-> been discussed.
-> 
-> But I never actually saw anybody say "ok, we'll try that instead".
-> 
-> Maybe I missed it.
-> 
-> But from what I saw, it really looked like "I see NAK's from three
-> different bpf maintainers, with suggested alternate approaches". None
-> of which resulted in anything that looked like "ok, we'll try to
-> follow your guidance", only more of the same.
-> 
-> Why would *my* input then make any difference?
-> 
-> The bpf people's arguments resonated more with me. For example, the
-> whole "we need to know if it passed the bpf signature" seems to be
-> complate pointless silliness, and the bpf peoples responses to that
-> resonated with me. There's *no* point in any LSM check whether the
-> signature passed or not, since if it didn't pass, it's not getting
-> loaded.
-> 
-> So that's basically where I stand - I've seen disagreement, and I've
-> seen what looks to me like reasonable push-back, and I've not really
-> seen the LSM response as taking it into account.
-> 
->            Linus
+2. The tpm_crb_driver must successfully probe this device via
+   tpm_crb_ffa_init().
+
+3. The tpm_crb driver using CRB over FF-A can then
+   be probed successfully. (See crb_acpi_add() and
+   tpm_crb_ffa_init() for reference.)
+
+Unfortunately, ffa_init(), tpm_crb_ffa_init(), and crb_acpi_driver_init() are
+all registered with device_initcall, which means crb_acpi_driver_init() may
+be invoked before ffa_init() and tpm_crb_ffa_init() are completed.
+
+When this occurs, probing the TPM device is deferred.
+However, the deferred probe can happen after the IMA subsystem
+has already been initialized, since IMA initialization is performed
+during late_initcall, and deferred_probe_initcall() is performed
+at the same level.
+
+And the similar situation is reported on TPM devices attached on SPI
+bus[0].
+
+To resolve this, introduce IMA_INIT_LATE_SYNC option to initialise
+IMA at late_inicall_sync so that IMA is initialized with the TPM
+device probed defered.
+
+When this option is enabled, modules that access files in the
+initramfs through usermode helper calls such as request_module()
+during initcall must not be built-in. Otherwise, IMA may miss
+measuring those files since they're the file accesses before the
+initialisation of IMA [1].
+
+Link: https://lore.kernel.org/all/aYXEepLhUouN5f99@earth.li/ [0]
+Link: https://lore.kernel.org/all/2b3782398cc17ce9d355490a0c42ebce9120a9ae.camel@linux.ibm.com/ [1]
+
+Patch history
+=============
+from v5 to v6:
+  - add rb tag and missing SOB.
+  - https://lore.kernel.org/all/20260601142749.3379697-1-yeoreum.yun@arm.com/
+
+from v4 to v5:
+  - rebase on v7.1-rc6
+  - apply boot_aggreate name patch from @Jonathan and align it with
+    IMA_INIT_LATE_SYNC option.
+  - https://lore.kernel.org/all/20260525075404.3480282-1-yeoreum.yun@arm.com/
+
+from v3 to v4:
+  - rebase on v7.1-rc5
+  - introduce IMA_INIT_LATE_SYNC option to control IMA initailisation.
+  - https://lore.kernel.org/all/cover.1777036497.git.noodles@meta.com/
+
+from v2 to v3:
+  - Drop ff-a/pKVM diff (this seems to have a separate set of
+    discussion)
+  - Rework IMA delayed initialisation to avoid delaying when unnecessary
+  - Ensure IMA log clearly indicates when we've initialised late
+  - https://lore.kernel.org/all/20260422162449.1814615-1-yeoreum.yun@arm.com/
+
+from v1 to v2:
+  - add notifier to make ffa-driver pkvm initialised.
+  - modify to try initailisation again when IMA coudln't find proper TPM device.
+  - https://lore.kernel.org/all/20260417175759.3191279-1-yeoreum.yun@arm.com/#t
+
+
+Jonathan McDowell (1):
+  security: ima: rename boot_aggregate when ima is initialised at
+    late_sync
+
+Yeoreum Yun (3):
+  security: lsm: allow LSMs to register for late_initcall_sync init
+  security: ima: introduce IMA_INIT_LATE_SYNC option
+  tpm: tpm_crb_ffa: revert defered_probed when tpm_crb_ffa is built-in
+
+ drivers/char/tpm/tpm_crb_ffa.c            | 18 +++---------------
+ include/linux/lsm_hooks.h                 |  2 ++
+ security/integrity/ima/Kconfig            | 10 ++++++++++
+ security/integrity/ima/ima.h              |  1 +
+ security/integrity/ima/ima_init.c         | 15 +++++++++++----
+ security/integrity/ima/ima_main.c         |  4 ++++
+ security/integrity/ima/ima_template_lib.c |  3 ++-
+ security/lsm_init.c                       | 13 +++++++++++--
+ 8 files changed, 44 insertions(+), 22 deletions(-)
+
+
+base-commit: e43ffb69e0438cddd72aaa30898b4dc446f664f8
+-- 
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+
