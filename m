@@ -1,309 +1,141 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BEB54D2EDA
-	for <linux-security-module@vger.kernel.org>; Fri,  5 Jun 2026 11:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039C62B9BA;
+	Fri,  5 Jun 2026 12:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780660222; cv=none; b=Hv2yj3ZbImHzrr/nBicPlXVW0B0RaamZ1iFJMz7zbhoA5XF98fA5QrmXa6mosJsLiOIlW953wB9FYWB8JQTOKrJ+qBawpyVyllfbXP4d/MBu09lxSzWEQT5xpN1ukpyCgQ1EzvbnN0538HyXjlKRntdyuG/7XkDhaiEmTFFVV50=
+	t=1780661765; cv=none; b=g3yfzxKpMnZY21WHrLk3/1/O70/oSEF1JQ3HDr8244hQP5rRR5UG25E1xzqszageJd4WRq3oX7iDfHVoV+COh6+6/JKH8F880EOf2iqO0vaNR5MMoBvYC+lO1+FrnZj7bFO/Lru8TUFEctibmcOhNvG6xGLTqbpwqI2cbrQLDvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780660222; c=relaxed/simple;
-	bh=mCXKkkhnaPjdHayDuK/2yUynf4W6NwP8p7Q3PEvX+C8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LeBnwLmosqqRyudMNuZ6xxwS7UQRlkPuq7FHrHzodXuNd0YzbrcotCx6hajqMFxLsj36H0/2pxAq7v1M20zShfUj6uLQb0v9UGOa2lSEDnrj14b3moCHW+/bb+Xoojgu+CuJh6OKF95AdfDJTudrdMcqJYXrNqlnH08ljiFVhJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G5+0CGjw; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1780661765; c=relaxed/simple;
+	bh=M1RLUPjQMkUazGK5E9j4rCdECXoPVJZ/G4Z0NlllhDM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D68y2l5FxOmTOOt72J+CLkV/7CM8iz+jEvOaEm0B1vJe1gyQJiLDcmXJC5cHnWbaRWMPUiNDca6J8lkk9jvbSggheysmxSfExr3K6hyJLnhVX8cKaZt5ND5EWuGphqCJfgvJfzfI12sR6XjkOHsZxABDOEH1ZCM7Imu7LdVOitE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TBTzWS6l; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G5+0CGjw"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-45efa80e0afso1451373f8f.2
-        for <linux-security-module@vger.kernel.org>; Fri, 05 Jun 2026 04:50:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780660219; x=1781265019; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EgtDIubqbZvCNM5YYIDrDCWKvXHiZQSJQvsolhx0YGw=;
-        b=G5+0CGjwPxzGC/cSabtBwi/zykISJ2c76/dNWLB9z7OCqjVuolQSVOzuuVdy3It9cH
-         J5xNUlsE/BDAeJgleHUx1AgjaIei7fn2bTbI7yj8vxCk3bpzgGydJq109NgzCNKP6yAs
-         QSo6Z+bXfjj0er+PNcdsW2yQRLQfyHOJlrPT3Y/0KwhfpXvbzLzItiTyWF5zkPaSPNx/
-         MfM8C+vfctBIOKe0mTmiiKHwXPvRewWYE+h7ROG0QYlJXzCfVuTHY3L9kpiQssrmlEPf
-         rggcBVMEnaEI7T0yq8Hfp12kjVeWJHLzvsNKC+MMJcSlrHPv3MG92/zm91hBRGO6/LEU
-         3YLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780660219; x=1781265019;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EgtDIubqbZvCNM5YYIDrDCWKvXHiZQSJQvsolhx0YGw=;
-        b=mbtx93J8/Jf3gdYxaaqdirDJiHSOhJBWBHCVuFsU6zAqM8pBnk3uhhSDZkHDhWWMkj
-         K2hUeV2pGeVNde/GwtiLWjyJXqHq70iaABX3gMPdzX9KLkqVZgaTn7Zb8nP+l1Jf5iri
-         sIfv/ZD2wHkkqdvabU69Tc/GQOblbuQWBs3yGzuB22JsnLfv5bngmyTU1/QX3c4GHtDz
-         n5TCgFNvlFPk4FKQR+K+LuBJmHxnbYNiN+7Ye7ITgxi6MhTMTD24wSO0em6tfutZ8F8v
-         C+5kntQRQyoPf8vAlWCSFu7iE5j+8wrnSo8NsMIOWP9VzZ+nhpbSnmpk/bjjnfFoEyt4
-         QZhQ==
-X-Forwarded-Encrypted: i=1; AFNElJ+CfnDxUJmv6n8+eVrlanhDThyCF/qajQU0W3p7LTTs9FSZYCROIWkb1c/v5vvhkFQp/Q1cPWG1izXJiy0Sf09FG/qB99c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4+k1oPLen1rOad5SLFPlrW3a9gIYGpaUYTKcBXcfn66pXeKNd
-	w1rfWhmLK3EwSfuLnDOHZSrL2h2x+nCOQ+cz5ZjZ7Pqajznv4BngyiBk
-X-Gm-Gg: Acq92OGosK0u5U/kaCsz1lHomCTz28z88Pw0FfWwHMTYwVShQKoeffqVErej+YXQjjM
-	HC8O0GgCdy32CWTEKnHi9C1Ao25EznSjk/OZAtnsVnzvi4OVPR/IAgitH8JOVw5FdZJc2wqm4pC
-	lu8j3tcmzOBNHr/jhHWwJFFIruAT41uPWGS1b04KRrw9FcBL460EaCwiCVAt2LgnbhDLtDJ03eD
-	9ZwrZZGt1BLZg8/9iHG3ZE158b/o4/kSvbOgMhg1s+FfIBSZ8znkcbne15rBmATG8nwkI3HuPQe
-	CgL5TmOMMRVPByeQmKadaRtL61tPKyyH0A25jcFIPKejA3K67h2hcq/xjLgP3OM+qj+RMwRRhPv
-	n24Z+ZwnbcVgHp1pRdVRznIQ2y24TCjgXLv2tmfHb58wBApbfrK8mG1EW8KkyogB3Wyq9JRNaqC
-	90HJLXnSF5J2wQp7ZgQUkNsjED4SaBs/hcWgEIPXgZJnTqPXal+3AL86TQnII=
-X-Received: by 2002:a05:600d:8486:10b0:490:c2a2:e91c with SMTP id 5b1f17b1804b1-490c2a2ea20mr33466435e9.34.1780660219017;
-        Fri, 05 Jun 2026 04:50:19 -0700 (PDT)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4601f351ac0sm41857850f8f.27.2026.06.05.04.50.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jun 2026 04:50:18 -0700 (PDT)
-Date: Fri, 5 Jun 2026 13:50:01 +0200
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: Bryam Vargas <hexlabsecurity@proton.me>
-Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Justin Suess <utilityemal77@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org, stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] selftests/landlock: test SCOPE_SIGNAL on the
- SIGIO/fowner pgid path
-Message-ID: <20260605.b1f90e8b16bd@gnoack.org>
-References: <cover.1780614610.git.hexlabsecurity@proton.me>
- <43370e89f7a896a583bf33d1cd171d02630e61bf.1780614610.git.hexlabsecurity@proton.me>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TBTzWS6l"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AFF81F00893;
+	Fri,  5 Jun 2026 12:16:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780661763;
+	bh=beptNeEzJHYQ+94+I0PQKTOh5JgCPrdUPqAq2RLiN3U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=TBTzWS6lRNEwNkUDoBT0wNjbMt5k+ani9mSxO7Ld9Djhx/+L5Cl5oShp9gA69YFWq
+	 JN8qr7qbtXCQeGPG8paeMz7NQ4wsiFgMjqcuXY5wW4fgvXCO4237v3aUXQRRHxVcAU
+	 AwBUpeFyCHlWJJs1/RYRCVK1AaSOz0O7ymqLEDBYW0oom309b3UCNjdCJLHZ/i+biP
+	 egVR7v4mXRTTKxXq/uvndoxK7FaUnqm+Z4mAAUzA1TAnD5QSTVdV1T6ymKqcwIj7kz
+	 fhFIWe5/x6U3kaQ4i5+u10Eevk3Wg/hIuQM8AGskZhKATFSqeIlYgvimchxzrQ/eWs
+	 f/mM/FESXe1XA==
+Message-ID: <19fb9d38-fe02-4653-bbad-58806e55ca84@kernel.org>
+Date: Fri, 5 Jun 2026 14:16:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <43370e89f7a896a583bf33d1cd171d02630e61bf.1780614610.git.hexlabsecurity@proton.me>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] keys: prevent slab cache merging for key_jar
+Content-Language: en-US
+To: Mohammed EL Kadiri <med08elkadiri@gmail.com>,
+ David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E . Hallyn" <serge@hallyn.com>, Kees Cook <kees@kernel.org>,
+ Vlastimil Babka <vbabka@suse.cz>, keyrings@vger.kernel.org,
+ linux-security-module@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260604125034.13757-1-med08elkadiri@gmail.com>
+From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+Autocrypt: addr=vbabka@kernel.org; keydata=
+ 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
+In-Reply-To: <20260604125034.13757-1-med08elkadiri@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 04, 2026 at 11:17:05PM +0000, Bryam Vargas wrote:
-> Add regression tests for the LANDLOCK_SCOPE_SIGNAL handling of the
-> asynchronous SIGIO delivery path (fcntl(F_SETOWN)) with a process-group
-> owner.
+On 6/4/26 14:50, Mohammed EL Kadiri wrote:
+> The key_jar slab cache holds struct key objects containing cryptographic
+> keys, authentication tokens, and keyring linkage. This cache currently
+> lacks merge prevention, allowing the SLUB allocator to merge it with
+> other similarly-sized caches.
 > 
-> sigio_to_pgid_members covers the bypass: a sandboxed process at the head
-> of its process group's PID hlist (the default after fork()) arms
-> F_SETOWN(-pgrp) + O_ASYNC and triggers the fan-out; the in-domain owner
-> must be signaled (proving the trigger fired) while the non-sandboxed
-> member of the group, outside the domain, must not.
+> On a default Ubuntu 6.17.0-23-generic system, key_jar has 5 aliases,
+> meaning 5 unrelated object types share its slab pages. struct key is
+> 224 bytes, placed in 256-byte slabs alongside biovec-16, maple_node,
+> ip6_dst_cache, task_delay_info, and kmalloc-256 users.
 > 
-> sigio_to_pgid_self covers the same-process guarantee: the owner is
-> registered from a sandboxed non-leader thread, whose domain differs from
-> the thread-group leader the kernel signals for a process-group owner.
-> That leader belongs to the owner's own process and must still be signaled.
+> Cross-cache heap exploitation is a well-documented attack class
+> (CVE-2022-29582, CVE-2022-2588, CVE-2021-22555) where slab cache
+> merging enables type confusion between unrelated kernel objects. A
+> use-after-free in any subsystem sharing slab pages with key_jar could
+> allow an attacker to reclaim a freed slot as a struct key, or corrupt
+> an existing key through a dangling pointer to a different type.
 > 
-> Without the fix the first test sees the out-of-domain member signaled and
-> the second sees the owner's own leader denied.
+> Add SLAB_NO_MERGE to ensure key_jar receives dedicated slab pages,
+> eliminating cross-cache attacks targeting struct key. The memory
+> overhead is minimal: with 32 objects per slab page and typical key
+> usage bounded by system keyring size, the cost of dedicated pages is
+> negligible. There is zero performance impact on the allocation hot
+> path.
 > 
-> Signed-off-by: Bryam Vargas <hexlabsecurity@proton.me>
+> This follows the precedent set by skbuff_head_cache (net/core/skbuff.c)
+> which uses SLAB_NO_MERGE for similar isolation requirements.
+> 
+> Signed-off-by: Mohammed EL Kadiri <med08elkadiri@gmail.com>
+
+Acked-by: Vlastimil Babka (SUSE) <vbabka@kernel.org>
+
 > ---
->  .../selftests/landlock/scoped_signal_test.c   | 183 ++++++++++++++++++
->  1 file changed, 183 insertions(+)
+>  security/keys/key.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/tools/testing/selftests/landlock/scoped_signal_test.c b/tools/testing/selftests/landlock/scoped_signal_test.c
-> index d8bf33417619..4359e0262dcf 100644
-> --- a/tools/testing/selftests/landlock/scoped_signal_test.c
-> +++ b/tools/testing/selftests/landlock/scoped_signal_test.c
-> @@ -559,4 +559,187 @@ TEST_F(fown, sigurg_socket)
->  		_metadata->exit_code = KSFT_FAIL;
->  }
+> diff --git a/security/keys/key.c b/security/keys/key.c
+> index 3bbdde778631..592b65cf8539 100644
+> --- a/security/keys/key.c
+> +++ b/security/keys/key.c
+> @@ -1275,7 +1275,7 @@ void __init key_init(void)
+>  {
+>  	/* allocate a slab in which we can store keys */
+>  	key_jar = kmem_cache_create("key_jar", sizeof(struct key),
+> -			0, SLAB_HWCACHE_ALIGN|SLAB_PANIC, NULL);
+> +			0, SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_NO_MERGE, NULL);
 >  
-> +/*
-> + * Checks that LANDLOCK_SCOPE_SIGNAL is enforced on the asynchronous SIGIO
-> + * delivery path (fcntl(F_SETOWN)) when the file owner is a process group.
-> + *
-> + * A sandboxed process sitting at the head of its process group's PID hlist
-> + * (the default position right after fork()) used to escape the
-> + * fcntl(F_SETOWN, -pgrp) domain recording: pid_task(pgrp, PIDTYPE_PGID)
-> + * resolved to the process itself, so the same-thread-group exemption skipped
-> + * recording its Landlock domain.  At SIGIO time that domain was then unset and
-> + * the signal fanned out to every group member, including non-sandboxed
-> + * processes outside the domain.
-> + */
-> +TEST(sigio_to_pgid_members)
-> +{
-> +	int trigger[2], sync_child[2];
-> +	char buf;
-> +	pid_t child;
-> +	int status, i;
-> +
-> +	drop_caps(_metadata);
-> +
-> +	/*
-> +	 * Isolates the test in its own process group so the SIGIO fan-out stays
-> +	 * bounded to this parent and the child forked below.
-> +	 */
-> +	ASSERT_EQ(0, setpgid(0, 0));
-> +
-> +	/* The non-sandboxed parent is the protected (out-of-domain) target. */
-> +	ASSERT_EQ(0, setup_signal_handler(SIGURG));
-> +	signal_received = 0;
-> +
-> +	ASSERT_EQ(0, pipe2(trigger, O_CLOEXEC));
-> +	ASSERT_EQ(0, pipe2(sync_child, O_CLOEXEC));
-> +
-> +	child = fork();
-> +	ASSERT_LE(0, child);
-> +	if (child == 0) {
-> +		/*
-> +		 * The child inherits the parent's new process group and, just
-> +		 * attached with hlist_add_head_rcu(), is now the head of the
-> +		 * pgid hlist: this is the case that used to skip the recording.
-> +		 */
-> +		EXPECT_EQ(0, close(sync_child[0]));
-> +
-> +		/* In-domain positive control: the child must be signaled. */
-> +		ASSERT_EQ(0, setup_signal_handler(SIGURG));
-> +		signal_received = 0;
-> +
-> +		create_scoped_domain(_metadata, LANDLOCK_SCOPE_SIGNAL);
-> +
-> +		/* Owns the SIGIO source for the whole process group. */
-> +		ASSERT_EQ(0, fcntl(trigger[0], F_SETSIG, SIGURG));
-> +		ASSERT_EQ(0, fcntl(trigger[0], F_SETOWN, -getpgrp()));
-> +		ASSERT_EQ(0, fcntl(trigger[0], F_SETFL, O_ASYNC));
-> +
-> +		/* Fans SIGURG out to every member of the process group. */
-> +		ASSERT_EQ(1, write(trigger[1], ".", 1));
-> +
-> +		/*
-> +		 * The sandboxed child is in its own domain and must always be
-> +		 * signaled: this proves the SIGIO actually fired.
-> +		 */
-> +		for (i = 0; i < 1000 && !signal_received; i++)
-> +			usleep(1000);
-> +		EXPECT_EQ(1, signal_received);
-> +
-> +		ASSERT_EQ(1, write(sync_child[1], ".", 1));
-> +		EXPECT_EQ(0, close(sync_child[1]));
-> +
-> +		_exit(_metadata->exit_code);
-> +		return;
-> +	}
-> +	EXPECT_EQ(0, close(sync_child[1]));
-> +	EXPECT_EQ(0, close(trigger[0]));
-> +	EXPECT_EQ(0, close(trigger[1]));
-> +
-> +	/* Waits for the child to generate the SIGIO. */
-> +	ASSERT_EQ(1, read(sync_child[0], &buf, 1));
-> +	EXPECT_EQ(0, close(sync_child[0]));
-> +
-> +	/* Lets a delivered-but-pending signal run our handler, if any. */
-> +	for (i = 0; i < 100 && !signal_received; i++)
-> +		usleep(1000);
-> +
-> +	/*
-> +	 * SCOPE_SIGNAL must block the fan-out to this non-sandboxed parent,
-> +	 * which is outside the child's Landlock domain.  Before the fix the
-> +	 * parent was signaled here.
-> +	 */
-> +	EXPECT_EQ(0, signal_received);
-> +
-> +	ASSERT_EQ(child, waitpid(child, &status, 0));
-> +	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
-> +	    WEXITSTATUS(status) != EXIT_SUCCESS)
-> +		_metadata->exit_code = KSFT_FAIL;
-> +}
-> +
-> +static void *thread_setown_scoped(void *arg)
-> +{
-> +	const int fd = *(int *)arg;
-> +	int ruleset_fd;
-> +	const struct landlock_ruleset_attr ruleset_attr = {
-> +		.scoped = LANDLOCK_SCOPE_SIGNAL,
-> +	};
-> +
-> +	/* Sandboxes only this non-leader thread (no thread syncing). */
-> +	ruleset_fd =
-> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-> +	if (ruleset_fd < 0)
-> +		return (void *)THREAD_ERROR;
-> +	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) ||
-> +	    landlock_restrict_self(ruleset_fd, 0)) {
-> +		close(ruleset_fd);
-> +		return (void *)THREAD_ERROR;
-> +	}
-> +	close(ruleset_fd);
-> +
-> +	/* Makes this process group own the SIGIO source. */
-> +	if (fcntl(fd, F_SETSIG, SIGURG) || fcntl(fd, F_SETOWN, -getpgrp()) ||
-> +	    fcntl(fd, F_SETFL, O_ASYNC))
-> +		return (void *)THREAD_ERROR;
-> +
-> +	return (void *)THREAD_SUCCESS;
-> +}
-> +
-> +/*
-> + * Checks that the SIGIO fan-out is still delivered to the file owner's own
-> + * process when fcntl(F_SETOWN, -pgrp) was issued from a sandboxed non-leader
-> + * thread.
-> + *
-> + * The Landlock domain is recorded for a process-group owner (so out-of-domain
-> + * members stay blocked, see sigio_to_pgid_members), but the kernel signals a
-> + * process group through its members' thread-group leaders.  Here the leader is
-> + * not sandboxed and thus has a different domain than the registering thread, so
-> + * the registration-time check cannot tell that it belongs to the owner's own
-> + * process.  hook_file_send_sigiotask() must recognize it through the recorded
-> + * thread group and allow the delivery, matching the same-process guarantee of
-> + * commit 18eb75f3af40.  Without that exemption the leader is wrongly denied and
-> + * never signaled.
-> + */
-> +TEST(sigio_to_pgid_self)
-> +{
-> +	int trigger[2];
-> +	pthread_t thread;
-> +	enum thread_return ret = THREAD_INVALID;
-> +	int i;
-> +
-> +	drop_caps(_metadata);
-> +
-> +	/* Bounds the SIGIO fan-out to this process. */
-> +	ASSERT_EQ(0, setpgid(0, 0));
-> +
-> +	/* The non-sandboxed thread-group leader is the SIGIO target. */
-> +	ASSERT_EQ(0, setup_signal_handler(SIGURG));
-> +	signal_received = 0;
-> +
-> +	ASSERT_EQ(0, pipe2(trigger, O_CLOEXEC));
-> +
-> +	/*
-> +	 * Registers the process-group fowner from a sibling thread that
-> +	 * sandboxes only itself, so its domain differs from the leader's.
-> +	 */
-> +	ASSERT_EQ(0, pthread_create(&thread, NULL, thread_setown_scoped,
-> +				    &trigger[0]));
-> +	ASSERT_EQ(0, pthread_join(thread, (void **)&ret));
-> +	ASSERT_EQ(THREAD_SUCCESS, ret);
-> +
-> +	/* Fans SIGURG out to the process group. */
-> +	ASSERT_EQ(1, write(trigger[1], ".", 1));
-> +
-> +	for (i = 0; i < 1000 && !signal_received; i++)
-> +		usleep(1000);
-> +
-> +	/*
-> +	 * Same-process delivery must always be allowed, even though the owner
-> +	 * was registered from a sandboxed sibling thread.
-> +	 */
-> +	EXPECT_EQ(1, signal_received);
-> +
-> +	EXPECT_EQ(0, close(trigger[0]));
-> +	EXPECT_EQ(0, close(trigger[1]));
-> +}
-> +
->  TEST_HARNESS_MAIN
-> -- 
-> 2.43.0
-> 
-> 
+>  	/* add the special key types */
+>  	list_add_tail(&key_type_keyring.link, &key_types_list);
 
-Reviewed-by: Günther Noack <gnoack3000@gmail.com>
