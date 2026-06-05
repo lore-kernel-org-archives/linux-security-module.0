@@ -1,141 +1,288 @@
-Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com [74.125.82.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED6E31352B
-	for <linux-security-module@vger.kernel.org>; Fri,  5 Jun 2026 17:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.174
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780680189; cv=pass; b=K2FOHC+sCvV0TDaIsrvlD2/m+103yZgJC3+1MEucqEMc8FRaM43zO+PONzMIB2//yfWcAlZMyEtrtZdqGcDRiVTYtf6+7+62tdE+c0w1ELXCWyw7DsVNfa6zWZ6QS7IT4VBEZt6agJPjnCDb2hGTt7+WPdxCQMR7foSf4eA7aLg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780680189; c=relaxed/simple;
-	bh=i7KgJLF9GZ/FwqQM8eGgUNDLnwbwVyWRy6mn5814iEY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jXFQMAX9vd0rHSSB7nIyi7Do5lDtp90Y/QJ1ofEMXVZEY6o5wbnEEHutqwdOH8uvoqM2Ji7VHjiU7tn7powcPlC+YICS1kOGyUKiihaNtt7N1Kh5J31lp8POv64wvbmSZVL53N/IAJQ7Nds7vaa8QJHkYITHaWYpEwEEu8g4IE4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oDrf5ME+; arc=pass smtp.client-ip=74.125.82.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oDrf5ME+"
-Received: by mail-dy1-f174.google.com with SMTP id 5a478bee46e88-30741f821cfso259588eec.1
-        for <linux-security-module@vger.kernel.org>; Fri, 05 Jun 2026 10:23:07 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780680187; cv=none;
-        d=google.com; s=arc-20240605;
-        b=ZGrj9YOhjYNFJGddQ0EWztO3vcUo/IFL3cUuhzny1ukTCyKpgvilNtszP/PXnUZTuL
-         fkSCvKWfF+0el1BpyCQuJ8hBmapxV5AN90bAF1ipmkgYXlniiS+dl3Uca8pHvwrhJj9H
-         NKjGALaj+ZXKAngDdWJTUoue2O/i0f6Hy0ZA4oIbVrgS05hNzFYVe1/wbHDO1b4M5Qjd
-         KCYJDAMxegG/IWL95JqOTMZj6gRp56vrtDt4LyX5FudHZtsRK/nJlNKEbo4dXwYRdjZv
-         iBXo1zfuVzGAKqQ9qkL3MZ3cKelcufeU0Y0QUSX1w+9SY/AZoBMD3ci8mxub6QsovqQn
-         9P9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=uSx8CCu2zO3nvn/ay1oOlG5l2f1ymr7/7z56E0ctASc=;
-        fh=vUyDJYajhqFr6BrY8jFyo9xmUQQEWnxaQOuJpPUM7n0=;
-        b=amqT35Vqa6zgsWv/zcoT/wO1P9NwULbhwAVw2p1j+mWg1s4j+YvP1JNSeZTk1LOSyI
-         6HJ1Ozl3Xt/R7bqsTc2tu5DFHUK1Qo0HvcJkIddCdYHIS/ZHO0lG261F8BL9AeHxYN8h
-         kWFGi8yoRc8u8WP2xS+wgf01Ihu3aFR+lSSB8My5VVYiFbCsQAOxlpBblnEkUswSMa37
-         1Me8vLcqXGbQC6BomDyTeUaa7DnRS95qKkRBpGMD9ZWlChAGwzq5/8OVVrWXdGrSafAS
-         P0O2TsWY7+tzQbwzekSF2Lp/j3SSlejL/oRmt51N96F5nWdJObB0xL9aPXAT7ivMlncA
-         YDmA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780680187; x=1781284987; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uSx8CCu2zO3nvn/ay1oOlG5l2f1ymr7/7z56E0ctASc=;
-        b=oDrf5ME+Uw9oOKiSlgKV+3uY7yFSRFQO4epLArS8lYZ701xu2n3dBKlXBhDKc2s9/I
-         FPqXbEOzhAUx+VZYCDVwpucOUkSgj3tU9LUR57fpi8jPkIHPsqKrAWQO9RjwIEBZ7g74
-         IHIqiAXm2iFnyV/B0gWHVdXw03KpAnnf+gchylsUPeCA8Yriqns4i0QxzONwHtfyjV4U
-         Ck5w3+SXVHKlYbTepz4ZDA7FZni+HRC6Hr3jLn7xhjH0YKmF/jHx4md2ahGc2VmepvLK
-         5shQyOngqVA4MFGB60bZNZqU4X/+J9iUfxWtcxEPP+raEUTsIzZ74Ne7iZ8tebQyiU2s
-         TBUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780680187; x=1781284987;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=uSx8CCu2zO3nvn/ay1oOlG5l2f1ymr7/7z56E0ctASc=;
-        b=dqtUbV5/LvmkzaFXUylAUHRXqvIg1NwyGrRGF9abDTUNSgSGukzgzC59DH3yC2VpM3
-         gEbUUfpQHiPD+hVUtDyJY3uvqKB+xMV6YZSzJjpdrB1acnxVsWAR0310+W2gwXqzAqvL
-         WB0eH3t5pNeMCdXKMmQvRqAAWjghEQfmECbwumVwkXEPRGwZXmuJO0KmZSth0J71PKle
-         Uq/aPAC7dTYslaaJVryTxtu1/8Dhe4UDQlpbC7YZWnsvGW58sqj9ZSN4USu/q7gKN9Zl
-         0X7zcwYQ0pRnZzw3DMJwTDZyv4hStsPADfZQE0HJTySQZUSiG69xzIZA6aHa3steDg6a
-         HBrw==
-X-Forwarded-Encrypted: i=1; AFNElJ8ORdaj6vfujvMsyib7OPv7rZuZlT5P3HzMhgUui4Qe5+pVtKB2PB9a6l7c+Rt2uvy9uaCMHcW1pqNZQLBgU/4WqBs+wbk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx05MpYC4OEhxa+eR7iOBrL8FOcQeUUrkVpHfnypoxRuPGjaKqO
-	zOvuAI0LGLR2vw3dN4Sr2YqMgCon+7ROxXf8+tESLkLaeBkplcqvYKBjFjlnCO7JmxHXtNp+cho
-	e3MTum7F6+9GDvdZjaqwY7j7k3xoywUo=
-X-Gm-Gg: Acq92OFfY2YWOUP0AwfZF6RBf250JcujxrwJJ18Btyfv5RE0tX5aRu9YJHbi7xUirK0
-	V3YL4n1Y/weHxh+bY5gYWiUaGNHbNVYWo75CuRTAdrhTgePUKCv/i/hLyg1aoxWod4m4Zl89N7m
-	jhxF5HEehUoyy0VXdhXvzWuAbYFRfJgV/suvQE21Fq7xJivWq1XqmUfG1pqREnQtiwZdT+P3FcI
-	jxwe18uYfQufpH6JgLh6dqO4VSxDGQwnxfWkRNSUfZG0PSqMu3dAdD2cWxlZrErsf0YI0/ArJzA
-	brrpr+9zn+YmHMIoXSbyYJT+bhM45zthFDXTryDi4ljnJwz+fYoA3+/4WgPleELHOU5ygUdjPG0
-	v4Wd1E7/0SV7pZqiTKngSCXngIBw0yzoG/g==
-X-Received: by 2002:a05:7300:5723:b0:2ea:5057:a320 with SMTP id
- 5a478bee46e88-3077af4a612mr1071744eec.2.1780680187196; Fri, 05 Jun 2026
- 10:23:07 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA32330CD9E;
+	Fri,  5 Jun 2026 17:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780680192; cv=none; b=iuqJH2Hpva8mV0onJZDNNiRLACM3AAtgJZBOSPX/fPuzT9XIf3noznSgCT4549ohMkJosmhMp5oA6StC0bzLp8z29sBo7mbD+m2J2O6il6wW4EQ+3Nw9mRThNBFHsOLisGKR4rHaeL9DFmb3fKhRt24gRRDe6uxlJD0NMMD56B0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780680192; c=relaxed/simple;
+	bh=hfpDS268L20nSYLvYiQ2jzFnFR8t3uEl6pCp/0cfsQc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bDhp0+BvIG1QtpxnCe7R76dW0q0zCxwt/EsCx8ijFbBg/YpCnqsBgpwy/VDr1l4O1pEf+D8o48qelcdnK/ABHCj6kKSb4b5trP4QkbnMz86CR69SOg5prYaTXQNeu9VbDBPcZvT672YBs2dhmVApWqxm3S9ajZ5+99cgU4s/yW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.196])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4gX7RT4zLCz1HCn5;
+	Sat,  6 Jun 2026 01:17:41 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 8BFF740565;
+	Sat,  6 Jun 2026 01:23:00 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwBHV43pBSNqZAhlAA--.46721S2;
+	Fri, 05 Jun 2026 18:23:00 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: corbet@lwn.net,
+	skhan@linuxfoundation.org,
+	zohar@linux.ibm.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	gregorylumen@linux.microsoft.com,
+	chenste@linux.microsoft.com,
+	nramas@linux.microsoft.com,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v7 00/12] ima: Exporting and deleting IMA measurement records from kernel memory
+Date: Fri,  5 Jun 2026 19:22:24 +0200
+Message-ID: <20260605172236.2042045-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260605-rust-reverse-randstruct-dep-v2-1-93d38023b6f9@kernel.org>
-In-Reply-To: <20260605-rust-reverse-randstruct-dep-v2-1-93d38023b6f9@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 5 Jun 2026 19:22:54 +0200
-X-Gm-Features: AVVi8CeXM8Ynb9CW_RjnoK-g1D5_BN8EaZTX5irzVwTw1c48nPyBVyCslPxXk1Q
-Message-ID: <CANiq72mmzfBg0_y+TMTsUUuO0cJFE0=n60-ttwOynai06_y=zg@mail.gmail.com>
-Subject: Re: [PATCH v2] hardening: Default randstruct off with rust for better
- allmodconfig support
-To: Mark Brown <broonie@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-hardening@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwBHV43pBSNqZAhlAA--.46721S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3XF1xWFWUCw1xCr4fWF1ftFb_yoWfurWfpa
+	9ag34xCwn5Ja4Syw1xJw1xCr4ru393Ka1DGrn7J34xJF15WFyvvr4YkrWYkFnxKryFyr1j
+	yw12qr45ua1qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
+	w2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xUFku4UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAPBGoiOzcKfgABs4
 
-On Fri, Jun 5, 2026 at 6:51=E2=80=AFPM Mark Brown <broonie@kernel.org> wrot=
-e:
->
-> Currently randstruct does not support rust so we have Kconfig dependencie=
-s
-> which prevent rust being enabled when randstruct is. Unfortunately this
-> prevents rust being enabled in allmodconfig, our standard coverage build.
-> randstruct gets turned on by default, then the dependency on !RANDSTRUCT
-> causes rust to get disabled.
->
-> Work around this by disabling randstruct by default if we have a usable
-> rust toolchain and rust support for the architecture, circular
-> dependencies prevent us directly depending on !RUST. This means we might
-> end up with a configuration that disables both rust and randstruct but
-> hopefully it's more likely go give the expected result.
->
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Thanks Mark!
+Introduction
+============
 
-Kees, Gustavo: applying this would help Mark's testing of Rust in
-linux-next, which is important to keep.
+The IMA measurements list is currently stored in the kernel memory.
+Memory occupation grows linearly with the number of records, and can
+become a problem especially in environments with reduced resources.
 
-An alternative would be to move forward with `RANDSTRUCT` support:
+While there is an advantage in keeping the IMA measurements list in
+kernel memory, so that it is always available for reading from the
+securityfs interfaces, storing it elsewhere would make it possible to
+free precious memory for other kernel usage.
 
-  https://lore.kernel.org/rust-for-linux/20260323130224.165738-1-ojeda@kern=
-el.org/
+The IMA measurements list needs to be retained and safely stored for new
+attestation servers to validate it. Assuming the IMA measurements list
+is properly saved, storing it outside the kernel does not introduce
+security issues, since its integrity is anyway protected by the TPM.
 
-Either the conditional (on the Rust side) or the unconditional
-approaches (modifying the C side) should be fine, i.e. whatever
-Kees/Gustavo think is best. The unconditional one would make things
-easier on the Rust side, but it is a "bigger" change in terms of
-impact. We can always start with the conditional one instead.
+Hence, the new IMA staging mechanism is introduced to export IMA
+measurements to user space and delete them from kernel space.
 
-Cheers,
-Miguel
+Staging consists in atomically moving the current measurements list to a
+temporary list, so that measurements can be deleted afterwards. The
+staging operation locks the hot path (racing with addition of new
+measurements) for a very short time, only for swapping the list
+pointers. Deletion of the measurements instead is done locklessly, away
+from the hot path.
+
+There are two flavors of the staging mechanism. In the staging with
+prompt, all current measurements are staged, read and deleted upon
+confirmation. In the staging and deleting flavor, N measurements are
+staged from the beginning of the current measurements list and
+immediately deleted without confirmation.
+
+
+Usage
+=====
+
+The IMA staging mechanism can be enabled from the kernel configuration
+with the CONFIG_IMA_STAGING option. This option prevents inadvertently
+removing the IMA measurement list on systems which do not properly save
+it.
+
+If the option is enabled, IMA duplicates the current securityfs
+measurements interfaces (both binary and ASCII), by adding the _staged
+file suffix. Both the original and the staging interfaces gain the write
+permission for the root user and group, but require the process to have
+CAP_SYS_ADMIN set.
+
+The staging mechanism supports two flavors.
+
+Staging with prompt
+~~~~~~~~~~~~~~~~~~~
+
+The current measurement list is moved to a temporary staging area,
+allowing it to be saved to external storage, before being deleted upon
+confirmation.
+
+This staging process is achieved with the following steps.
+
+  1.  echo A > <_staged interface>: the user requests IMA to stage the
+      entire measurements list;
+  2.  cat <_staged interface>: the user reads the staged measurements;
+  3.  echo D > <_staged interface>: the user requests IMA to delete
+      staged measurements.
+
+Staging and deleting
+~~~~~~~~~~~~~~~~~~~~
+
+N measurements are staged to a temporary staging area, and immediately
+deleted without further confirmation.
+
+This staging process is achieved with the following steps.
+
+  1.  cat <original interface>: the user reads the current measurements
+      list and determines what the value N for staging should be;
+  2.  echo N > <original interface>: the user requests IMA to delete N
+      measurements from the current measurements list.
+
+
+Management of Staged Measurements
+=================================
+
+Since with the staging mechanism measurement records are removed from
+the kernel, the staged measurements need to be saved in a storage and
+concatenated together, so that they can be presented during remote
+attestation as if staging was never done. This task can be accomplished
+by a remote attestation agent modified to support staging, or a system
+service.
+
+
+Patch set content
+=================
+
+Patches 1-8 are preparatory patches to quickly replace the hash table,
+maintain separate counters for the different measurements list types,
+mediate access to the measurements list interface, and simplify the staging
+patches.
+
+Patch 9 introduces the staging with prompt flavor. Patch 10 makes it
+possible to flush the hash table when deleting all the staged measurements.
+Patch 11 introduces the staging and deleting flavor. Patch 12 adds the
+documentation of the staging mechanism.
+
+
+Changelog
+=========
+
+v6:
+ - Make ima_extend_list_mutex as static since it is not needed anymore by
+   ima_dump_measurement_list() (suggested by Mimi)
+ - Export ima_flush_htable in patch 11 instead of 10 (suggested by Mimi)
+ - Add clarification in the documentation regarding a proactive remote
+   attestation agent, and storing all the measurements in the storage
+   (suggested by Mimi)
+
+v5:
+ - Add motivation for the ima_flush_htable= kernel option (suggested by
+   Mimi)
+ - New documentation title and fixes (suggested by Mimi)
+ - Allow stage all command on the _staged interface instead of the original
+ - Set CONFIG_IMA_STAGING default to n (suggested by Mimi)
+ - Rename ima_num_entries to ima_num_records (suggested by Mimi)
+ - Comment for ima_num_records and ima_num_violations (suggested by Mimi)
+ - Add overflow check in ima_measure_lock()
+ - Allow a writer to open for write or read/write the other staging
+   interfaces
+ - Ignore ppos in _ima_measurements_write()
+ - Implement lockless kexec measurement lists dump by denying
+   staging/delete after measurement suspend (collapse patch 12 into 9 and
+   11)
+ - Refuse delete based on measurement suspend instead of using
+   ima_copied_flags (suggested by Mimi)
+ - Add staging/deleting functions documentation
+
+v4:
+ - Add write permission to the original measurement interface, and move
+   the A and N staging commands to that interface
+ - Explain better the two staging flavors and highlight that the staging
+   and delete only stages measurements internally
+ - Rename ima_queue_staged_delete_partial() to ima_queue_delete_partial()
+ - Replace ima_staged_measurements_prepended with per measurements list
+   flag to avoid copying staged and active list measurements twice
+ - Optimize the staging and deleting flavor by locklessly determining the
+   cut position in the active list, and immediately deleting entries
+   without explicit staging and splicing (suggested by Steven Chen)
+
+v3:
+ - Add Kconfig option to enable the staging mechanism (suggested by Mimi)
+ - Change the meaning of BINARY_STAGED to be just the staged measurements
+ - Separate the two staging flavors in two different functions:
+   ima_queue_staged_delete_all() for staging with prompt,
+   ima_queue_staged_delete_partial() for staging and deleting
+ - Delete N entries without staging first (suggested by Mimi)
+ - Avoid duplicate staged entries if there is contention between the
+   measurements list interfaces and kexec
+
+v2:
+ - New patch to move measurements and violation counters outside the
+   ima_h_table structure
+ - New patch to quickly replace the hash table
+ - Forbid partial deletion when flushing hash table (suggested by Mimi)
+ - Ignore ima_flush_htable if CONFIG_IMA_DISABLE_HTABLE is enabled
+ - BINARY_SIZE_* renamed to BINARY_* for better clarity
+ - Removed ima_measurements_staged_exist and testing list empty instead
+ - ima_queue_stage_trim() and ima_queue_delete_staged_trimmed() renamed to
+   ima_queue_stage() and ima_queue_delete_staged()
+ - New delete interval [1, ULONG_MAX - 1]
+ - Rename ima_measure_lock to ima_measure_mutex
+ - Move seq_open() and seq_release() outside the ima_measure_mutex lock
+ - Drop ima_measurements_staged_read() and use seq_read() instead
+ - Optimize create_securityfs_measurement_lists() changes
+ - New file name format with _staged suffix at the end of the file name
+ - Use _rcu list variant in ima_dump_measurement_list()
+ - Remove support for direct trimming and splice the remaining entries to
+   the active list (suggested by Mimi)
+ - Hot swap the hash table if flushing is requested
+
+v1:
+ - Support for direct trimming without staging
+ - Support unstaging on kexec (requested by Gregory Lumen)
+
+Roberto Sassu (12):
+  ima: Remove ima_h_table structure
+  ima: Replace static htable queue with dynamically allocated array
+  ima: Introduce per binary measurements list type ima_num_records
+    counter
+  ima: Introduce per binary measurements list type binary_runtime_size
+    value
+  ima: Introduce _ima_measurements_start() and _ima_measurements_next()
+  ima: Mediate open/release method of the measurements list
+  ima: Use snprintf() in create_securityfs_measurement_lists
+  ima: Introduce ima_dump_measurement()
+  ima: Add support for staging measurements with prompt
+  ima: Add support for flushing the hash table when staging measurements
+  ima: Support staging and deleting N measurements records
+  doc: security: Add documentation of exporting and deleting IMA
+    measurements
+
+ .../admin-guide/kernel-parameters.txt         |   6 +
+ Documentation/security/IMA-export-delete.rst  | 203 ++++++++++
+ Documentation/security/index.rst              |   1 +
+ MAINTAINERS                                   |   2 +
+ security/integrity/ima/Kconfig                |  15 +
+ security/integrity/ima/ima.h                  |  28 +-
+ security/integrity/ima/ima_api.c              |   2 +-
+ security/integrity/ima/ima_fs.c               | 346 ++++++++++++++++--
+ security/integrity/ima/ima_init.c             |   5 +
+ security/integrity/ima/ima_kexec.c            |  42 ++-
+ security/integrity/ima/ima_queue.c            | 327 ++++++++++++++++-
+ 11 files changed, 905 insertions(+), 72 deletions(-)
+ create mode 100644 Documentation/security/IMA-export-delete.rst
+
+-- 
+2.43.0
+
