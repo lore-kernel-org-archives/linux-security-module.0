@@ -1,30 +1,31 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D067368299;
-	Fri,  5 Jun 2026 14:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CAB30BB8C;
+	Fri,  5 Jun 2026 14:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780670622; cv=none; b=i3XEXRcsbnrS216OqY5mP7KDH4LpVGjPBGn8dj/mtEtROQevDl77DixVZM24t4DE7CbIqQLQntUFt7Uy9wYYlSNbeeimbB8yjWYJjWPfJYw8Xw30lxN9FIwX98EBUKSfkKJ8w/ix7HTLAdykYYBN4Rly9cOR9nZFSXRmzlAqViI=
+	t=1780670624; cv=none; b=rmGwwa/F0rp2Kq3gSsit9wRUUZMp/OTlnOpQON+3yKZoQ8pVbcs+gq/KWS+7FSqZW2WJwGkyVth6zrjf/o0iF8zT4ltrRcB4tcqHWrGyLJ1KWshZ3K2s4RvEZhVeHEyohp3AAOqdGg++E6pPbJFV58tXGMJeU2/nnk2nSBobKJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780670622; c=relaxed/simple;
-	bh=OMQjeAoCepwlcTOllxIGRjOyfmXjVBQjlhbICvD3SAQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=o5hORbMXy+RA9LXEVqg0dZ/sITJyDoMT4Qz/3NHwRwdLtZVJsyV+zzgS9bshwsPH56BvnFiOTyOXNQaghKbmEF6lV4FO3MNt4gL4mfgGxX/rLLDURdysOuWSLF2jlEwrPcW95DUzJe1xNEsKSV/z/m8zuGSp3wWyUeLxnISSt30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=LQ/Yoc1o; arc=none smtp.client-ip=217.140.110.172
+	s=arc-20240116; t=1780670624; c=relaxed/simple;
+	bh=GLjR0pOZvKp6t4lRJ9X/m4e9jLFN4QEWM1Bm7UejT0s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=d3JfcXEedWA02VWqpfbVB4rkoZMw6Aw5+vdwGcQG3SrIyHG4pW+WznCdQKiq3LiptYj++jMMPE89TPLc+0bDTJs3PvhcSQvEAmC5CAQQp2S/Sf6VnVD5/y63iyN//2DtoqhAbWn3zzyKyI/F1pATgnt3IIhgV8xjsKEGee4WVrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=u7xXUjP5; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="LQ/Yoc1o"
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="u7xXUjP5"
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7EB56237B;
-	Fri,  5 Jun 2026 07:43:33 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ECA13244C;
+	Fri,  5 Jun 2026 07:43:35 -0700 (PDT)
 Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3F7293F7D8;
-	Fri,  5 Jun 2026 07:43:36 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AFF543F7D8;
+	Fri,  5 Jun 2026 07:43:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1780670618; bh=OMQjeAoCepwlcTOllxIGRjOyfmXjVBQjlhbICvD3SAQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=LQ/Yoc1oX020uC06MsmCzMuwvoLO75RatEVWIl8KrXjqJVsgK4GP8O5nKdqglzkj0
-	 45saIGgOCkllw6LgERHphTDGDWxja1IOaHgJ3T+7R4MNf5Qd2PAnOd2QM1n2BkwFyL
-	 3nZQfqPb/GkshatfXjdDDOad4hC79o6hKcCc/594=
+	t=1780670620; bh=GLjR0pOZvKp6t4lRJ9X/m4e9jLFN4QEWM1Bm7UejT0s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=u7xXUjP5NO3nanxL9uolUpsFVGHgVo0s7Rn0s4ZvqwqaEOi3YJHWsYTXZwKKMwQMz
+	 hrZsj/nlgcJmvErsEZ6N1kyNqppEeN6Vv7gbwVx2JBQulyS74WhEzPLJm0xgVhOl0Z
+	 LfzjhDfPVA9ZglVf7srMImqoYkA2RtoKur7DofLo=
 From: Yeoreum Yun <yeoreum.yun@arm.com>
 To: linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -41,119 +42,83 @@ Cc: paul@paul-moore.com,
 	eric.snowberg@oracle.com,
 	jgg@ziepe.ca,
 	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v6 0/4] introduce IMA_INIT_LATE_SYNC option
-Date: Fri,  5 Jun 2026 15:43:21 +0100
-Message-Id: <20260605144325.434436-1-yeoreum.yun@arm.com>
+Subject: [PATCH v6 1/4] security: lsm: allow LSMs to register for late_initcall_sync init
+Date: Fri,  5 Jun 2026 15:43:22 +0100
+Message-Id: <20260605144325.434436-2-yeoreum.yun@arm.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260605144325.434436-1-yeoreum.yun@arm.com>
+References: <20260605144325.434436-1-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-To generate the boot_aggregate log in the IMA subsystem with TPM PCR values,
-the TPM driver must be built as built-in and
-must be probed before the IMA subsystem is initialized.
+There are situations where LSMs have dependencies that might mean they
+want to be initialised later in the boot process, to ensure those
+dependencies are available. In particular there are some TPM setups (Arm
+FF-A devices, SPI attached TPMs) required by IMA which are not
+guaranteed to be initialised for regular initcall_late.
 
-However, when the TPM device operates over the FF-A protocol using
-the CRB interface, probing fails and returns -EPROBE_DEFER if
-the tpm_crb_ffa device — an FF-A device that provides the communication
-interface to the tpm_crb driver — has not yet been probed.
+Add an initcall_late_sync option that can be used in these situations.
 
-To ensure the TPM device operating over the FF-A protocol with
-the CRB interface is probed before IMA initialization,
-the following conditions must be met:
+Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+---
+ include/linux/lsm_hooks.h |  2 ++
+ security/lsm_init.c       | 13 +++++++++++--
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
-1. The corresponding ffa_device must be registered,
-   which is done via ffa_init().
-
-2. The tpm_crb_driver must successfully probe this device via
-   tpm_crb_ffa_init().
-
-3. The tpm_crb driver using CRB over FF-A can then
-   be probed successfully. (See crb_acpi_add() and
-   tpm_crb_ffa_init() for reference.)
-
-Unfortunately, ffa_init(), tpm_crb_ffa_init(), and crb_acpi_driver_init() are
-all registered with device_initcall, which means crb_acpi_driver_init() may
-be invoked before ffa_init() and tpm_crb_ffa_init() are completed.
-
-When this occurs, probing the TPM device is deferred.
-However, the deferred probe can happen after the IMA subsystem
-has already been initialized, since IMA initialization is performed
-during late_initcall, and deferred_probe_initcall() is performed
-at the same level.
-
-And the similar situation is reported on TPM devices attached on SPI
-bus[0].
-
-To resolve this, introduce IMA_INIT_LATE_SYNC option to initialise
-IMA at late_inicall_sync so that IMA is initialized with the TPM
-device probed defered.
-
-When this option is enabled, modules that access files in the
-initramfs through usermode helper calls such as request_module()
-during initcall must not be built-in. Otherwise, IMA may miss
-measuring those files since they're the file accesses before the
-initialisation of IMA [1].
-
-Link: https://lore.kernel.org/all/aYXEepLhUouN5f99@earth.li/ [0]
-Link: https://lore.kernel.org/all/2b3782398cc17ce9d355490a0c42ebce9120a9ae.camel@linux.ibm.com/ [1]
-
-Patch history
-=============
-from v5 to v6:
-  - add rb tag and missing SOB.
-  - https://lore.kernel.org/all/20260601142749.3379697-1-yeoreum.yun@arm.com/
-
-from v4 to v5:
-  - rebase on v7.1-rc6
-  - apply boot_aggreate name patch from @Jonathan and align it with
-    IMA_INIT_LATE_SYNC option.
-  - https://lore.kernel.org/all/20260525075404.3480282-1-yeoreum.yun@arm.com/
-
-from v3 to v4:
-  - rebase on v7.1-rc5
-  - introduce IMA_INIT_LATE_SYNC option to control IMA initailisation.
-  - https://lore.kernel.org/all/cover.1777036497.git.noodles@meta.com/
-
-from v2 to v3:
-  - Drop ff-a/pKVM diff (this seems to have a separate set of
-    discussion)
-  - Rework IMA delayed initialisation to avoid delaying when unnecessary
-  - Ensure IMA log clearly indicates when we've initialised late
-  - https://lore.kernel.org/all/20260422162449.1814615-1-yeoreum.yun@arm.com/
-
-from v1 to v2:
-  - add notifier to make ffa-driver pkvm initialised.
-  - modify to try initailisation again when IMA coudln't find proper TPM device.
-  - https://lore.kernel.org/all/20260417175759.3191279-1-yeoreum.yun@arm.com/#t
-
-
-Jonathan McDowell (1):
-  security: ima: rename boot_aggregate when ima is initialised at
-    late_sync
-
-Yeoreum Yun (3):
-  security: lsm: allow LSMs to register for late_initcall_sync init
-  security: ima: introduce IMA_INIT_LATE_SYNC option
-  tpm: tpm_crb_ffa: revert defered_probed when tpm_crb_ffa is built-in
-
- drivers/char/tpm/tpm_crb_ffa.c            | 18 +++---------------
- include/linux/lsm_hooks.h                 |  2 ++
- security/integrity/ima/Kconfig            | 10 ++++++++++
- security/integrity/ima/ima.h              |  1 +
- security/integrity/ima/ima_init.c         | 15 +++++++++++----
- security/integrity/ima/ima_main.c         |  4 ++++
- security/integrity/ima/ima_template_lib.c |  3 ++-
- security/lsm_init.c                       | 13 +++++++++++--
- 8 files changed, 44 insertions(+), 22 deletions(-)
-
-
-base-commit: e43ffb69e0438cddd72aaa30898b4dc446f664f8
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index b4f8cad53ddb..c4488c4a6d8a 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -167,6 +167,7 @@ enum lsm_order {
+  * @initcall_fs: LSM callback for fs_initcall setup, optional
+  * @initcall_device: LSM callback for device_initcall() setup, optional
+  * @initcall_late: LSM callback for late_initcall() setup, optional
++ * @initcall_late_sync: LSM callback for late_initcall_sync() setup, optional
+  */
+ struct lsm_info {
+ 	const struct lsm_id *id;
+@@ -182,6 +183,7 @@ struct lsm_info {
+ 	int (*initcall_fs)(void);
+ 	int (*initcall_device)(void);
+ 	int (*initcall_late)(void);
++	int (*initcall_late_sync)(void);
+ };
+ 
+ #define DEFINE_LSM(lsm)							\
+diff --git a/security/lsm_init.c b/security/lsm_init.c
+index 7c0fd17f1601..a1ad641811de 100644
+--- a/security/lsm_init.c
++++ b/security/lsm_init.c
+@@ -556,13 +556,22 @@ device_initcall(security_initcall_device);
+  * security_initcall_late - Run the LSM late initcalls
+  */
+ static int __init security_initcall_late(void)
++{
++	return lsm_initcall(late);
++}
++late_initcall(security_initcall_late);
++
++/**
++ * security_initcall_late_sync - Run the LSM late initcalls sync
++ */
++static int __init security_initcall_late_sync(void)
+ {
+ 	int rc;
+ 
+-	rc = lsm_initcall(late);
++	rc = lsm_initcall(late_sync);
+ 	lsm_pr_dbg("all enabled LSMs fully activated\n");
+ 	call_blocking_lsm_notifier(LSM_STARTED_ALL, NULL);
+ 
+ 	return rc;
+ }
+-late_initcall(security_initcall_late);
++late_initcall_sync(security_initcall_late_sync);
 -- 
 LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
