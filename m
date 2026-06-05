@@ -1,116 +1,133 @@
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3182EC0A4
-	for <linux-security-module@vger.kernel.org>; Fri,  5 Jun 2026 18:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.177
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780682895; cv=pass; b=e+R7injYnRV+tbon137Pc55DG7knfNlstuGB2mxbu3FPO0V3WF/hkBTN42NxU5ZZRgxW8sIykl2iteD/4K9FH5YeJmfkwUUHar8UE7TuqWUPrAikLK/Ovr6oDbhaiHEKr98zX2PCARrUG8u/Fwx/BpWs/AjzaAluv1aDu7DJ8dw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780682895; c=relaxed/simple;
-	bh=8ilDxhAiB32IqOC3th8HmSfbryjwzjesS/MpZwszFms=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MDT90smuLfs4bGDD0W6LMOwB6tkdokYEsF1nxKz3xYKEHMHo+kGaVs6YWG9rmHJjYEBaTBPSsiZlWuGOKNcWAMe+xtVd1uPgTQ0WaGhAOOFoVAyCwgBZdslDlDaGc/ZKN0MnDa75cW6WsjTQSDH8+8TfcymXz4uvhrezrD6Nr1Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ag6bubmy; arc=pass smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF81B37DEB5;
+	Fri,  5 Jun 2026 18:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780684156; cv=none; b=XugMuQFceTIiecJFAissiKkHZoMx6gYUG9iNt/lEcceDPP/OlAhiR4un/B91CEYuxrgbJgg/hUl09kz06C6QzW1N1b9zTO9iqR1rJVVb8yZ1RmrR5Qpyd6kCBkopaAV+dICWUSfX7XQPd1N1ST4hwEmJVib3zWcJHm2d6VVPhAM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780684156; c=relaxed/simple;
+	bh=pxXyFkSQfVEU4LrpYBw4Ws5o0ixDm2veIsC0NFL41xM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oKkX3lq5zAzj/TkLEbhwQptBO6x9ObGCTpmIqA9fGjZZlg3sU8tc/AzbwcQ2uqzKkJUlEw6z4FSdz4xfwVKuZmN141bjJmctfDyEpDsLxHoR6ieenJbq9BN9fWQnHLYiQW6nxv07YqS7xQ7B1aAYjccl01eO9nUV5lnp+Qcf+98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=vsbUWacv; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ag6bubmy"
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-c8571db044eso1435487a12.2
-        for <linux-security-module@vger.kernel.org>; Fri, 05 Jun 2026 11:08:13 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780682893; cv=none;
-        d=google.com; s=arc-20240605;
-        b=eyUkwaT4+9np47VcK0BYO3mAjsQVmMayG0Nsw0p0ufnnylqOCPrCWqqm0ZLd3vu02K
-         CguuONfPfZ/ptIjXFM6KslVukCp4Pyb+WKnYyTFcroQ7zSauilAP5wcURlm+UtZMY96D
-         Z8HpRNVk4x+Bcse8IWmMt3tAb8lAprZH4qeSbEGqK6Y6jwTBWxBecRYxa5+X4LsJxm0E
-         4B0a2Z+r0HaZratNCaDZ/lGDA42L4oUoEXR6hLTv8LwrMkRDbJJ/yeTHteqaQ6tPiBpH
-         bkGBDJkB2kxreQY4C8XPAxeU+zq/ZIeR14lDu3Me0x0StOjHSD0AAPnucEgSp5lAL/ht
-         Nilg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=V1+sYntU5WFVxPkxcqomQF7fzW4LgZDONPtKqmZffiA=;
-        fh=c9wLcdqvghJwOfQb9joumefpJSBpSbBF7P7qx8AyaRc=;
-        b=Xe3P/GOa50dQiY02NNADfrec4TCtaEDbO1TPQu8lDdfRS7h3zazOG+TDqFOXdXG5nG
-         bXQ46g9Xc23g0aFSvEIwk6LCyW3rUrhFlQ/fXBo9oNE3MWXH4G4FFSvNyzXl/7ZJknp7
-         xk+gVrHhUceAAY8toJDkgqrPO4+bEaMWcTD3aTrvENlwJ82MioRTBhTdtbEfcp1HtLxb
-         9oIQmABznii3FIosY929wiOfeE7Or6RI/qMooZVuLoY/BBTNN8j+AKJk0+5ZIf0+H0xf
-         79jRX+DYWxhzcuLmL9TUVWoHnEUP+RkLe0G2XKQpByp3iEfTyIBjpDcS2WvnFqWnGmss
-         kwDw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1780682893; x=1781287693; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V1+sYntU5WFVxPkxcqomQF7fzW4LgZDONPtKqmZffiA=;
-        b=ag6bubmyV1LSITsOZ18m+UPiFqAyqHSUlSrkViApHk4nrY7QQ4nL/ZA1gxLW8aKFxm
-         Pew83nPhwuU2sUvTBYuKuIWanVJp2/Vic8YGdvzdOmVIzddRpAAEW+Nehi3m7SslhxpG
-         89EAKVSK3X/QQ8FffyXFtUL9mDF5DozMxgVzBvtu1ZR3bbvV18YPNOKBWlsDRDUgWtek
-         vOaL986Iy4It4J8QLbuzaRGjs5M0sa3Zrhh01GYoOparU4uhhuYabStPGD4HhOU1ht5o
-         qEx5Z2h9USPgNqLx2XYCbjmqc+whoS0wmeA67NgHvbvAZz/SODOYbYGOhs1BIzHb3WdH
-         hPTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780682893; x=1781287693;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=V1+sYntU5WFVxPkxcqomQF7fzW4LgZDONPtKqmZffiA=;
-        b=qhlAU5MTyc8+LzYhRoJb5YOabqtiJcJ6qvaBFDk2HI/MhjopZB/OrIwupWne9oQsSa
-         RvECsw4lfsDzBY6Yi02Trn2MKO1l9+h+G2y2mQbUMNVL4Iwsun6+jCu0MDuoCPmhEr9l
-         OEYsjDM8o3MDBw28ymVMK/+2FKwKdLJn21RvsczCBfCzHf893zeTwQSiVGRP1alu5ONu
-         9LnVgsosfA3ZebmcdkwOkCXrgbxYdkxlO7rZSQqPeSt6A9N3yb3dadsIQ5J4IJsNBbti
-         oJifuCI4yBrcxOyjRjhnzRJ0cLDr/rQsemy5o7hNhLtUcWs36MkzsG5Uqf8wU6YZ1LVp
-         dMMA==
-X-Forwarded-Encrypted: i=1; AFNElJ9NxtryTxv2LGrBP7DNf1kEhUWZs8EISiIUN5i/uRdvq6c0jgIBp0yTGg1Taa1bbW0IwuoqxwerPSb5c12wPycs70sYejw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxU//AvNd0lf0rTZCau7HxgLBDz1gIfkRAoe85S6BOphn8UFZN
-	s5YpuAZTY8v3iURCw3Zuk40iuX0Rf6G4gc8ijALrRXxZSgoTYN0dTbF7StwoF+OmI17N1UqKSlj
-	UyE0S+ik118d+6PUtRR/mivqFLoDCWQ9ROHwtyWPv
-X-Gm-Gg: Acq92OEbckNNN9MBbqCv9FXkGGSnfF+renDAIcZYHMQjKZoxc0P5SG6Njpysx+Hb6op
-	dZ+hBG/iZ/aiDjc5dP+UMXVk8kVykgz9kh41JZio53WEFIakibnl6/XjT/ZU5d1sDKTBfMDY3Zq
-	DMlOnjZhJ9mfLMkN8+w7CnbL59ZYkoePf9022WUzSiOKaB6sE3IqmtJ7sSdmX8cgWJKOHMhkCaj
-	lT4/654tsYQHN/pWpuslJa0R9P0wITRPeXYK0wREZo4WruvxbsZZ3uL43mdGvUTTTTA/EL15S7E
-	UIacsl4CEOhKPgjrUQ==
-X-Received: by 2002:a05:6a20:c70b:b0:3b4:8fb2:a350 with SMTP id
- adf61e73a8af0-3b4cd03dd88mr6135775637.34.1780682893128; Fri, 05 Jun 2026
- 11:08:13 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="vsbUWacv"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1780684153;
+	bh=pxXyFkSQfVEU4LrpYBw4Ws5o0ixDm2veIsC0NFL41xM=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=vsbUWacvMUDvItE1V8UkTCKLvEcTavyW7UMKZgDQc34vThJDYWfgk0xodAZ5NuNxZ
+	 FeUuE3DJ41bMY9p+wPVkCrzEZAMAuzQYP+t9AEViCpwSnrenevhSxjF61wlvGgUKAB
+	 ow74SSxIjj0bksu3ESP3s3TK3GPT96UhW9Y9UJZU=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4300:d341::8c71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 2B4951C0400;
+	Fri, 05 Jun 2026 14:29:13 -0400 (EDT)
+Message-ID: <ecf0521ed302db672672ebfbc670ecfba36a6e00.camel@HansenPartnership.com>
+Subject: Re: -next status as at v7.1-rc6
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: "Serge E. Hallyn" <serge@hallyn.com>, Linus Torvalds
+	 <torvalds@linux-foundation.org>
+Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
+  Mark Brown <broonie@kernel.org>, Blaise Boscaccy
+ <bboscaccy@linux.microsoft.com>, Alexei Starovoitov
+ <alexei.starovoitov@gmail.com>, linux-next@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Date: Fri, 05 Jun 2026 14:29:12 -0400
+In-Reply-To: <aiLS4wOtpqrpw4pA@mail.hallyn.com>
+References: <83f77b2b-8c00-424d-b6f9-b044e7ea1ee7@sirena.org.uk>
+	 <CAHk-=wj6CtZS9hbwFjQcoNkPwQLoyKmk8czaBF6=bBOCYuXEUQ@mail.gmail.com>
+	 <CAHC9VhRX1=tx4+arzuH76kirYFFJozexa5L=41Bb2QbgWZXOkQ@mail.gmail.com>
+	 <CAHk-=wj_rtiufEEVudMCSbh86HYrnmEa9NhYfKeWHs1SOzJVnA@mail.gmail.com>
+	 <CAHC9VhRXW_kyWXgYBqW3K-jSr5yN9wp1EPos1c=BFmiebxLiUQ@mail.gmail.com>
+	 <CAHk-=wij4nkMRcshzEGsxvjwP2RBQyaiQ4-vQrYTOqvQusxu9g@mail.gmail.com>
+	 <aiLS4wOtpqrpw4pA@mail.hallyn.com>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260527181127.879771-1-mic@digikod.net> <20260527181127.879771-2-mic@digikod.net>
- <20260605.ieZ1hei8Ahna@digikod.net>
-In-Reply-To: <20260605.ieZ1hei8Ahna@digikod.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 5 Jun 2026 14:08:00 -0400
-X-Gm-Features: AVHnY4IwAntIgRXRqihwKQ6FMjOdPIE04f8IHhmR8rRKjjx-CP4eO6M-6Q_FY58
-Message-ID: <CAHC9VhQdT7Jh_dXPk4PMSomZ1JPPsm6ouE7cHQb_3=BdY37j6w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/9] security: add LSM blob and hooks for namespaces
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Daniel Durning <danieldurning.work@gmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Justin Suess <utilityemal77@gmail.com>, 
-	Lennart Poettering <lennart@poettering.net>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
-	Shervin Oloumi <enlightened@google.com>, Tingmao Wang <m@maowtm.org>, kernel-team@cloudflare.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 5, 2026 at 11:07=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
->
-> Paul, could you please take a look at this patch and the next one? I'd
-> like to push it to linux-next to get more feedback.
+On Fri, 2026-06-05 at 08:45 -0500, Serge E. Hallyn wrote:
+> On Thu, Jun 04, 2026 at 04:18:46PM -0700, Linus Torvalds wrote:
+> > On Thu, 4 Jun 2026 at 15:23, Paul Moore <paul@paul-moore.com>
+> > wrote:
+> > >=20
+> > > While you didn't reply to any of my comments explaining how
+> > > Hornet works, specifically how it ties into the kernel, I'm
+> > > assuming you've read the overview.=C2=A0 Can you help those of us in
+> > > the LSM space understand why a BPF dev's NACK on code that lives
+> > > strictly under security/ is sufficient grounds to reject an LSM
+> > > patch?
+> >=20
+> > Honestly, I'm not competent to make a judgment call between two
+> > different models for hash chain verification, so I basically *have*
+> > to go by maintainer opinions.
+> >=20
+> > And the discussions I have been cc'd on have not been what I'd call
+> > enlightening.
+> >=20
+> > But people have pointed out that the LSM code mucks around with bpf
+> > internals, and those NAK's have had reasons for them.
+> >=20
+> > And honestly, I don't understand *why* Hornet does what it does -
+> > and does it in ways that obviously annoy the bpf people. There is
+> > no *reason* to look at the bpf maps that I can see, and from my
+> > understanding of Alexei's arguments (which may be lacking), the
+> > fact that Hornet does that is the main reason for the NAK.
+>=20
+> The two most useful threads I believe were from a year ago,
+> 20250502184421.1424368-1-bboscaccy@linux.microsoft.com
+> and
+> 20250528215037.2081066-1-bboscaccy@linux.microsoft.com
+> which includes the proposal by the BPF side:
+> https://lore.kernel.org/linux-security-module/CACYkzJ6VQUExfyt0=3D-FmXz46=
+GHJh3d=3DFXh5j4KfexcEFbHV-vg@mail.gmail.com/
+>=20
+> There were 2 or three objections from each side iiuc, but the main
+> ones that stuck in my mind were
+>=20
+> 1. whether it is ok to rely on a signed userspace bpf verifier
+> program to
+> =C2=A0=C2=A0 verify the signature.
+> 2. objection by James Bottomley=20
+> =C2=A0=C2=A0
+> (2f71d6c03698eb17d51f7247efde777627ee578a.camel@HansenPartnership.com
+> )
+> =C2=A0=C2=A0 about the verifiability of the hash chain link.
 
-I saw the patches Micka=C3=ABl, they are in the queue and will be reviewed
-in due time.  Considering the delay in getting this revision out after
-my last review, another week or two shouldn't pose a problem.
+My objection to the upstream signature scheme in that email was that if
+you hand me a lskel consisting of a loader and a map and ask me to sign
+it, how do I know the loader actually verifies the hash of the map
+without having to disassemble and analyze it.
 
---=20
-paul-moore.com
+I think the second patch set (not yet upstream) makes that task easier
+because it now calls out to the bpf_loader_verify_metadata() kfunc to
+verify the map.  That means I can run the loader in a sandbox and see
+if it makes the call, which is way easier than having to disassemble
+and analyse its byte code.  Note: it's still not as easy as the hornet
+method of simply having the map hash as a signed attribute I can
+extract and verify, though.  However, the required task has gone from
+pretty impossible to doable.
+
+Regards,
+
+James
+
