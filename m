@@ -1,416 +1,108 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CBF38B12F;
-	Fri,  5 Jun 2026 16:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373F83290D9;
+	Fri,  5 Jun 2026 16:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780675219; cv=none; b=CDFp2fFiw8DUp/9HEgvA8uLvOexp5ccXMVxm+HhOp6u1Moc7vrOvYYRzkTdonhTvdD5bek+X30eAK30qTMnTWkJHwdh17bl0SyMKNYMzuCjWaaM5ZLXq312do8VVdy/TVHg3ox63wyVdlM6Hbz4rJIlcZ0xky8kaOeLblKLLysg=
+	t=1780675482; cv=none; b=tmbkyqEcpxAb5t42dpIJju2+YG2rVZeIWZhhYgLdMsVUhy6wPHK5RcGx00dEIgwX97D22gy0gCHZ9ypc3x6U0HlUPo4K3UbAfVPkg3dys3qRwKQF692GK+x0iMU7o3BrJO0JyY+50V8MFuBlcIUuKM0GUlcYZSSjvIy+XPnpddM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780675219; c=relaxed/simple;
-	bh=qNiHxQTcd5GWsdF+i/kdaV7pHhTcsPfOYVuWJthh8KM=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=nDhb0+H3zAQ/PVIjX1SnxRUveCKfmgoUY8XILhPRmJtbq5zQFyxwUY45vToOIMHrI+jqC/3kRWIwfCrides5Mr0fTqhGzk2fui3dOM+hecvR+TkRi5dEIyfDyS10q1OVgwuJA3cwkc/tfyf7aaWsWp2qUDYeXIolaKq0QUC1vs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=a6qgwb8M; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1780675482; c=relaxed/simple;
+	bh=vsWbROpEGJwiAO9+bBrEo9kJ1z4oHpqhUD/sImXNRZs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Nod1lvtnf91xnT5oBL7ULu6n7njzKOBKwEiYPJ7FRstqTmC9ecAzq2OsXXY549DhvxX/FiVN07LYSMzpvIvUJk4OfzbIO/uoDuKvBn7GRQHIaidx5bwzKgtK9Rnm73n88/vaJSFbUa5mToQ5ZcfHIOdF4tmOFdVFaTh/aWvyrFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iBEKf9d6; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="a6qgwb8M"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6554KD0s2223981;
-	Fri, 5 Jun 2026 15:59:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=i07pDU
-	z035M602FZ/BVBaNfVaEKYL5dRuQapQ+N7sDM=; b=a6qgwb8MRygaH8Ng2oE/nI
-	D0GwVYYV+7EAmAZh+lGaH/oJGvWfrabjrV0k+25wNeacXav7YA96fOrdksyWS2pK
-	yILK8EqeaxT++KLc21A/mUxgnN9BYpQhEP1c7Ehdzvt3nTiPNbufcyKA+TKJ1opc
-	e4VkENgebcXArKeXgeSC3K7b+v0TeKfsbioAduP1XVdP0m2YVKHihj7hgx9Jh1yM
-	ryacSZ+1CKNuRb5FidqHn+CxCKTFJgOetb1hNLJvWWWDxEjAVpUT50D1DB2cHf6Z
-	qCmE6OIlTaRtmSqq3VXe6e2cNA3EcktFCNDOkMVNWNUjUUnoz4bHUifMriA/Lqvg
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4efqd4n9m3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Jun 2026 15:59:52 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 655Fs7ew014062;
-	Fri, 5 Jun 2026 15:59:52 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4egceh25dp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 05 Jun 2026 15:59:52 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 655Fxp6215598280
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 5 Jun 2026 15:59:51 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 537B35805C;
-	Fri,  5 Jun 2026 15:59:51 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DC87058054;
-	Fri,  5 Jun 2026 15:59:49 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.67.126])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  5 Jun 2026 15:59:49 +0000 (GMT)
-Message-ID: <fb9de334db1eb72de58d55f5b95a60be189e4856.camel@linux.ibm.com>
-Subject: Re: [PATCH v6 12/12] doc: security: Add documentation of exporting
- and deleting IMA measurements
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
-        skhan@linuxfoundation.org, dmitry.kasatkin@gmail.com,
-        eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        gregorylumen@linux.microsoft.com, chenste@linux.microsoft.com,
-        nramas@linux.microsoft.com, Roberto Sassu <roberto.sassu@huawei.com>
-In-Reply-To: <20260602111401.1706052-13-roberto.sassu@huaweicloud.com>
-References: <20260602111401.1706052-1-roberto.sassu@huaweicloud.com>
-	 <20260602111401.1706052-13-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 05 Jun 2026 11:59:49 -0400
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iBEKf9d6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7240F1F00898;
+	Fri,  5 Jun 2026 16:04:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780675481;
+	bh=ZvME5Cm5EErC2myByVcBHi0I0/kiVKGqTYnETmbRSoA=;
+	h=From:Date:Subject:To:Cc;
+	b=iBEKf9d60dSA4dypE6a+c8hXSnazzq/WNUxVZyZQ4xCWnJxNKOIcse2nz3yY5lkd8
+	 2HaDGDhoHOkYhmdzzNrLxJrwaHvmanZzrFK1ea24OE08d/fHyhqiWs/qMmNI2lqhF2
+	 kpofPfsnbJdRpJq1kOlNWQW4yCruGHscz/ULVC5O5KEbQUm6ODzZRfS3kVUZpVtflL
+	 14XFZRravr+JZyk/SmdnaQFnP0P0Pwl+VRrkjY4CtRIbiDBmDi0xD5SoWFsHJQgmgT
+	 dQ9xQdSR3X1F8rbb1nbLa2kFWFpybWRy+mRLyPzS4TH/yCdAngDnzV/HwcT7pG3qMC
+	 lEn/fwrBZ7A1g==
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 05 Jun 2026 17:01:46 +0100
+Subject: [PATCH] hardening: Default randstruct off with rust for better
+ allmodconfig support
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjA1MDE1NCBTYWx0ZWRfX3BPELvGqJnXK
- MXZCwJA8ES2NadCtSRJ9kviLSI9R7Zd2A5Sy1Y5/Fwzsf/91Bz/CSdfyotNkdWZZGuZKT3IMe0s
- WGKDdSMWihl0HvBKQ0sXSrUtmFbu8ASHPvO/wbMLkXZIcMJA2etVCp1qOxpXIEXY2/Qu1T9l5G+
- 4MLCOG6+Mb306cu2yP9/tzkRwLWdJab2PM9A015ZbzgKJ8rN6pLnOrFiIJ8YuxcXc5/RBqwFUwa
- NKZYzAPpbWBCXeiknG5g/aUCPWg+iyMEdJCC1znzpkrVExjkiJt/LhJ+gn/M+PwMe3XklkZDwbO
- 0iHLkXPBd6C0OF9C9Z45TFfESnIgamiLlz0kNlpuxAvM38oQDvG0IwJq+seudME1whk9aXgLbaQ
- nrloNo+ZFoFbafWtwv2c4xU/Y+tm+71do08XUEYDHi3LAIbJZymIzycc9Ua0RYRm7+G2u9VmfRr
- VhXFgpM1WWv/hcxP2YA==
-X-Proofpoint-GUID: 3rK2jKOvVejQxW3pOkZasrh_rmD811cC
-X-Proofpoint-ORIG-GUID: j30XuGIhpgLw3qeuTEtRW2TA0bdZAO-Y
-X-Authority-Analysis: v=2.4 cv=DZknbPtW c=1 sm=1 tr=0 ts=6a22f279 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=iQ6ETzBq9ecOQQE5vZCe:22 a=NEAV23lmAAAA:8
- a=i0EeH86SAAAA:8 a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=2gXG2BVIBEAsA41MxPYA:9
- a=QEXdDO2ut3YA:10 a=O8hF6Hzn-FEA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-05_02,2026-06-05_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 clxscore=1015 suspectscore=0 impostorscore=0 lowpriorityscore=0
- phishscore=0 malwarescore=0 priorityscore=1501 bulkscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2605210000 definitions=main-2606050154
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260605-rust-reverse-randstruct-dep-v1-1-45ce9ee8d0d1@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAOnyImoC/yXMQQrDIBBA0auEWXdApUroVUoXRqfJdGHDjIZAy
+ N1r2+WDzz9ASZgUbsMBQhsrv0uHvQyQllhmQs7d4IwLJhiP0rRiL0mUUGLJWqWliplW9NGbaxq
+ DtW6EfliFnrz/7vfH39qmF6X6XcJ5fgBYH1/vfwAAAA==
+X-Change-ID: 20260605-rust-reverse-randstruct-dep-5a504c861128
+To: Kees Cook <kees@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+ "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
+ Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>
+Cc: linux-hardening@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.16-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1538; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=vsWbROpEGJwiAO9+bBrEo9kJ1z4oHpqhUD/sImXNRZs=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqIvOU7rsREQBrBgaLVObPVoOmwh6ZV2gPw6wyE
+ GM//x8lSh6JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaiLzlAAKCRAk1otyXVSH
+ 0NiVB/4pkPcGI1PaYfctTQLODF2WwN4ST9lqeJpqNKWRD/kk9+PtsDnCn2drbxEDKIaMrnXN/ya
+ 221utBsZ1sRTlMapPtKL2jJo6YxPFeSEZP8EKeTz6g7fN0XDKE/0QDdfDPCN8AKK1S5Ld/Nh/LE
+ HYIAuvGyM9AHS4DEmtQUu4qAQuZIFjUqMHIyZ3/cQ8wmaC9XrRlHLGUg9LKK9N22b/ozFwstf1V
+ KV6BUfDZt49dnICSNpnLHL1yZlcio0pW7VME3zT5cYB1iNxcaN4/bOx9kPI5od7Gy+5gzDINucM
+ b+7fYEeMDdrWswaxAPrlF+UFWD2clAP0Aya2G2KzVmIWfcGW
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Tue, 2026-06-02 at 13:14 +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
->=20
-> Add the documentation of exporting and deleting IMA measurements in
-> Documentation/security/IMA-export-delete.rst.
->=20
-> Also add the missing Documentation/security/IMA-templates.rst file in
-> MAINTAINERS.
->=20
-> Link: https://github.com/linux-integrity/linux/issues/1
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Currently randstruct does not support rust so we have Kconfig dependencies
+which prevent rust being enabled when randstruct is. Unfortunately this
+prevents rust being enabled in allmodconfig, our standard coverage build.
+randstruct gets turned on by default, then the dependency on !RANDSTRUCT
+causes rust to get disabled.
 
-Thanks, Roberto!  Other than the section titled "Remote Attestation Agent
-Workflow", the documentation is well written and flows nicely.  More detail=
-s in
-the "Remote Attestation Agent Workflow" section.
+Work around this by disabling randstruct by default if we have a usable
+rust toolchain, circular dependencies prevent us directly depending on
+!RUST. This means we might end up with a configuration that disables both
+rust and randstruct but hopefully it's more likely go give the expected
+result.
 
-> ---
->  Documentation/security/IMA-export-delete.rst | 190 +++++++++++++++++++
->  Documentation/security/index.rst             |   1 +
->  MAINTAINERS                                  |   2 +
->  3 files changed, 193 insertions(+)
->  create mode 100644 Documentation/security/IMA-export-delete.rst
->=20
-> diff --git a/Documentation/security/IMA-export-delete.rst b/Documentation=
-/security/IMA-export-delete.rst
-> new file mode 100644
-> index 000000000000..a9e1d3f8ed47
-> --- /dev/null
-> +++ b/Documentation/security/IMA-export-delete.rst
-> @@ -0,0 +1,190 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +IMA Measurements Export and Delete
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +
-> +Introduction
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +The IMA measurements list is currently stored in the kernel memory. Memo=
-ry
-> +occupation grows linearly with the number of records, and can become a
-> +problem especially in environments with reduced resources.
-> +
-> +While there is an advantage in keeping the IMA measurements list in kern=
-el
-> +memory, so that it is always available for reading from the securityfs
-> +interfaces, storing it elsewhere would make it possible to free precious
-> +memory for other kernel usage.
-> +
-> +The IMA measurements list needs to be retained and safely stored for new
-> +attestation servers to validate it. Assuming the IMA measurements list i=
-s
-> +properly saved, storing it outside the kernel does not introduce securit=
-y
-> +issues, since its integrity is anyway protected by the TPM.
-> +
-> +Hence, the new IMA staging mechanism is introduced to export IMA
-> +measurements to user space and delete them from kernel space.
-> +
-> +Staging consists in atomically moving the current measurements list to a
-> +temporary list, so that measurements can be deleted afterwards. The stag=
-ing
-> +operation locks the hot path (racing with addition of new measurements) =
-for
-> +a very short time, only for swapping the list pointers. Deletion of the
-> +measurements instead is done locklessly, away from the hot path.
-> +
-> +There are two flavors of the staging mechanism. In the staging with prom=
-pt,
-> +all current measurements are staged, read and deleted upon confirmation.=
- In
-> +the staging and deleting flavor, N measurements are staged from the
-> +beginning of the current measurements list and immediately deleted witho=
-ut
-> +confirmation.
-> +
-> +
-> +Management of Staged Measurements
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Since with the staging mechanism measurement records are removed from th=
-e
-> +kernel, the staged measurements need to be saved in a storage and
-> +concatenated together, so that they can be presented to remote attestati=
-on
-> +agents as if staging was never done. This task can be accomplished by a
-> +system service.
-> +
-> +Coordination is necessary in the case where there are multiple actors
-> +requesting measurements to be staged.
-> +
-> +In the staging with prompt case, the measurement interfaces can be acces=
-sed
-> +only by one actor (writer) at a time, so the others will get an error un=
-til
-> +the former closes it. Since the actors don't care about N, when they gai=
-n
-> +access to the interface, they will get all the staged measurements at th=
-e
-> +time of their request.
-> +
-> +In the case of staging and deleting, coordination is more important, sin=
-ce
-> +there is the risk that two actors unaware of each other compute the valu=
-e N
-> +on the current measurements list and request IMA to stage N twice.
-> +
-> +
-> +Remote Attestation Agent Workflow
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ security/Kconfig.hardening | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The example below illustrates a narrow use case in which only a single
-attestation server is present, eliminating the need to retain the measureme=
-nt
-list records. The recommended general case, however, involves multiple
-attestation servers and requires the system service to retain all measureme=
-nt
-records since boot, with the ability to respond with records from any speci=
-fied
-point onward.
+diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+index 86f8768c63d4..1677c4f9637b 100644
+--- a/security/Kconfig.hardening
++++ b/security/Kconfig.hardening
+@@ -285,7 +285,7 @@ config CC_HAS_RANDSTRUCT
+ 
+ choice
+ 	prompt "Randomize layout of sensitive kernel structures"
+-	default RANDSTRUCT_FULL if COMPILE_TEST && (GCC_PLUGINS || CC_HAS_RANDSTRUCT)
++	default RANDSTRUCT_FULL if !RUST_IS_AVAILABLE && COMPILE_TEST && (GCC_PLUGINS || CC_HAS_RANDSTRUCT)
+ 	default RANDSTRUCT_NONE
+ 	help
+ 	  If you enable this, the layouts of structures that are entirely
 
-Mimi
+---
+base-commit: e43ffb69e0438cddd72aaa30898b4dc446f664f8
+change-id: 20260605-rust-reverse-randstruct-dep-5a504c861128
 
-> +
-> +Users can choose the staging method they find more appropriate for their
-> +workflow.
-> +
-> +If, as an example, a remote attestation agent would like to present to t=
-he
-> +remote attestation server only the measurements that are required to
-> +verify the TPM quote, its workflow would be the following.
-> +
-> +With staging with prompt, the agent stages the current measurements list=
-,
-> +reads and stores the measurements in a storage and immediately requests
-> +IMA to delete the staged measurements from kernel memory. Afterwards, it
-> +calculates N by replaying the PCR extend on the stored measurements unti=
-l
-> +the calculated PCRs match the quoted PCRs. It then keeps the measurement=
-s
-> +in excess for the next attestation request.
+Best regards,
+--  
+Mark Brown <broonie@kernel.org>
 
-
-
-> +
-> +At the next attestation request, the agent performs the same steps above=
-,
-> +and concatenates the new measurements to the ones in excess from the
-> +previous request. Also in this case, the agent replays the PCR extend un=
-til
-> +it matches the currently quoted PCRs, keeps the measurements in excess a=
-nd
-> +presents the new N measurement records to the remote attestation server.
-> +
-> +With the staging and deleting method, the agent reads the current
-> +measurements list, calculates N and requests IMA to delete only those. T=
-he
-> +measurements in excess are kept in the IMA measurements list and can be
-> +retrieved at the next remote attestation request.
-> +
-> +
-> +Usage
-> +=3D=3D=3D=3D=3D
-> +
-> +The IMA staging mechanism can be enabled from the kernel configuration w=
-ith
-> +the CONFIG_IMA_STAGING option. This option prevents inadvertently removi=
-ng
-> +the IMA measurement list on systems which do not properly save it.
-> +
-> +If the option is enabled, IMA duplicates the current securityfs
-> +measurements interfaces (both binary and ASCII), by adding the ``_staged=
-``
-> +file suffix. Both the original and the staging interfaces gain the write
-> +permission for the root user and group, but require the process to have
-> +CAP_SYS_ADMIN set.
-> +
-> +The staging mechanism supports two flavors.
-> +
-> +
-> +Staging with prompt
-> +~~~~~~~~~~~~~~~~~~~
-> +
-> +The current measurements list is moved to a temporary staging area,
-> +allowing it to be saved to external storage, before being deleted upon
-> +confirmation.
-> +
-> +This staging process is achieved with the following steps.
-> +
-> + 1. ``echo A > <_staged interface>``: the user requests IMA to stage the
-> +    entire measurements list;
-> + 2. ``cat <_staged interface>``: the user reads the staged measurements;
-> + 3. ``echo D > <_staged interface>``: the user requests IMA to delete
-> +    staged measurements.
-> +
-> +
-> +Staging and deleting
-> +~~~~~~~~~~~~~~~~~~~~
-> +
-> +N measurements are staged to a temporary staging area, and immediately
-> +deleted without further confirmation.
-> +
-> +This staging process is achieved with the following steps.
-> +
-> + 1. ``cat <original interface>``: the user reads the current measurement=
-s
-> +    list and determines what the value N for staging should be;
-> + 2. ``echo N > <original interface>``: the user requests IMA to delete N
-> +    measurements from the current measurements list.
-> +
-> +
-> +Interface Access
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +In order to avoid the IMA measurements list being suddenly truncated by =
-the
-> +staging mechanism during a read, or having multiple concurrent staging, =
-a
-> +semaphore-like locking scheme has been implemented on all the measuremen=
-ts
-> +list interfaces.
-> +
-> +Multiple readers can access concurrently the original and staged
-> +interfaces, and they can be in mutual exclusion with one writer. In orde=
-r
-> +to see the same state across all the measurement interfaces, the same
-> +writer is allowed to open multiple interfaces for write or read/write.
-> +
-> +If an illegal access occurs, the open to the measurements list interface=
- is
-> +denied.
-> +
-> +
-> +Kexec
-> +=3D=3D=3D=3D=3D
-> +
-> +In the event a kexec() system call occurs between staging and deleting, =
-the
-> +staged measurement records are marshalled before the current measurement=
-s
-> +list, so that they are both available when the secondary kernel starts.
-> +
-> +If measurement is suspended before requesting to delete staged or curren=
-t
-> +measurements, IMA returns an error to user space to let it know that
-> +marshalling is already in progress, so that it does not save the
-> +measurements twice.
-> +
-> +IMA also disallows staging when suspending measurement, to avoid the
-> +situation where neither measurements are carried over to the secondary
-> +kernel, nor they are saved by user space to the storage.
-> +
-> +
-> +Hash table
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +By default, the template digest of staged measurement records are kept i=
-n
-> +kernel memory (only template data are freed), to be able to detect
-> +duplicate records independently of staging.
-> +
-> +The new kernel option ``ima_flush_htable`` has been introduced to
-> +explicitly request a complete deletion of the staged measurements, for
-> +maximum kernel memory saving. If the option has been specified, duplicat=
-e
-> +records are still avoided on records of the current measurements list,
-> +but there can be duplicates between different groups of staged
-> +measurements.
-> +
-> +Flushing the hash table is supported only for the staging with prompt
-> +flavor. For the staging and deleting flavor, it would have been necessar=
-y
-> +to lock the hot path adding new measurements for the time needed to remo=
-ve
-> +each selected measurement individually.
-> diff --git a/Documentation/security/index.rst b/Documentation/security/in=
-dex.rst
-> index 3e0a7114a862..00650dcf38cb 100644
-> --- a/Documentation/security/index.rst
-> +++ b/Documentation/security/index.rst
-> @@ -8,6 +8,7 @@ Security Documentation
->     credentials
->     snp-tdx-threat-model
->     IMA-templates
-> +   IMA-export-delete
->     keys/index
->     lsm
->     lsm-development
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 461a3eed6129..70ff6bae3493 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12752,6 +12752,8 @@ R:	Eric Snowberg <eric.snowberg@oracle.com>
->  L:	linux-integrity@vger.kernel.org
->  S:	Supported
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integri=
-ty.git
-> +F:	Documentation/security/IMA-export-delete.rst
-> +F:	Documentation/security/IMA-templates.rst
->  F:	include/linux/secure_boot.h
->  F:	security/integrity/
->  F:	security/integrity/ima/
