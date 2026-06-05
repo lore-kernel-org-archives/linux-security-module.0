@@ -1,31 +1,31 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8693D301D;
-	Fri,  5 Jun 2026 14:43:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939FC3D0C17;
+	Fri,  5 Jun 2026 14:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780670630; cv=none; b=sDoyZmT9Ub1JeKcnYs/8wsdOBZ2yGrhNJRSzwvKqb+pnjcUQb9yzyNH9HtdMWP5KdFJj5rUvT8KaWFdZVChxxpTk/I5RSK0cCPvIpwsr02YfNRur5ewfQV/F4iWi+rLXC5CVq/WTBLWJ0FmWNHoDnanQUfTr6ID2cQ1vQA+nroc=
+	t=1780670631; cv=none; b=KBn8LXdFG3M7ZV4uHpBSOA8+qN4sgCJadCyU8loK7axQY8yIVPFT8DteZ3eKAZ4zPcfQRNc++Cm1KYfEDfBXPdaW0dhWLztZTh1jM5vIh7poHZIMZzjwne19zblYimIaSfo4TFS4UZfbxrYOGcq9hnzwtgJiR5nzlCB3LiYbR+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780670630; c=relaxed/simple;
-	bh=0e1tArr4D65iO+TSEhMNej6FQnO7u5ews7Lm9qq1iZQ=;
+	s=arc-20240116; t=1780670631; c=relaxed/simple;
+	bh=89AoJatEzNGhZ8P3NpK73/gHwNaQ1811DMSbBBQix/U=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VXclFsuJnBc/ZUH/zvect9CZ83BttAMA7cjWM5bvQPHJ+kZY7HIEJ6Q59c9mNnxsTCrngVN0jXPh1/CxymVqSrQHVcJzUmoUT4xrhPqZ5vrVqmCntB7bGLp5A6Ze98jDZ1pXycoOUmmMq0K324qZgjbWs6YGw3UROeTbALN6T8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=h2BsyMvR; arc=none smtp.client-ip=217.140.110.172
+	 MIME-Version; b=LZZelEPgzTH0SQJyAS6RYb6mLEWrDr41j7oNLBPUTk92ZguDfmXi3NpBGPmdcj80rDGQdVce+AYRO3LsVvH/y6cVDPWM+IhQsPsp0EkyUG4uFlAQO7nbT7HXQhsYT8k1qbt63vT+iVx38p8SuvtpGcOHUjtyWjhoazgbH3rU0Lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=ah1pfGCl; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="h2BsyMvR"
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="ah1pfGCl"
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F26182C34;
-	Fri,  5 Jun 2026 07:43:40 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 98E463F7D8;
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6D8F4237B;
 	Fri,  5 Jun 2026 07:43:43 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 31F1D3F7D8;
+	Fri,  5 Jun 2026 07:43:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1780670625; bh=0e1tArr4D65iO+TSEhMNej6FQnO7u5ews7Lm9qq1iZQ=;
+	t=1780670628; bh=89AoJatEzNGhZ8P3NpK73/gHwNaQ1811DMSbBBQix/U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=h2BsyMvRR7CIgjpf3cnGnQzbSgtJWtLA3QvMuxVXcGdBBcqLgn5voAXXN3PtxvQ6t
-	 +zidQ07W6H03SyGl+31Tbzjp7Q25NI05Y4WH3bzHEdickSAwagCxlMPMHSqtGXrdYz
-	 aaArlK2oFJqjCmXpMnlCz0vNgAqBEA0S0Ie/Cy+8=
+	b=ah1pfGClri3U5Sw30ICpHlpa7EpLjXxcd5QRwRahQ5ulAQQl2k+xRuKLPy6HVOGKI
+	 /Tuh03zHLNiLetXUgcQCIPJbchjFYkNdGGnur/OTKoj4Bhn30nCcsqftjJcnpEoE/G
+	 Np2tFFWkGuMDDmWrfsJtyOk3e58VJKXz7zZ5qxzo=
 From: Yeoreum Yun <yeoreum.yun@arm.com>
 To: linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -41,11 +41,10 @@ Cc: paul@paul-moore.com,
 	dmitry.kasatkin@gmail.com,
 	eric.snowberg@oracle.com,
 	jgg@ziepe.ca,
-	Jonathan McDowell <noodles@meta.com>,
 	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v6 3/4] security: ima: rename boot_aggregate when ima is initialised at late_sync
-Date: Fri,  5 Jun 2026 15:43:24 +0100
-Message-Id: <20260605144325.434436-4-yeoreum.yun@arm.com>
+Subject: [PATCH v6 4/4] tpm: tpm_crb_ffa: revert defered_probed when tpm_crb_ffa is built-in
+Date: Fri,  5 Jun 2026 15:43:25 +0100
+Message-Id: <20260605144325.434436-5-yeoreum.yun@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260605144325.434436-1-yeoreum.yun@arm.com>
 References: <20260605144325.434436-1-yeoreum.yun@arm.com>
@@ -55,140 +54,62 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Jonathan McDowell <noodles@meta.com>
+commit 746d9e9f62a6 ("tpm: tpm_crb_ffa: try to probe tpm_crb_ffa when it's built-in")
+probe tpm_crb_ffa forcefully when it's built-in to integrate with IMA.
 
-The Linux IMA (Integrity Measurement Architecture) subsystem used for
-secure boot, file integrity, or remote attestation cannot be a loadable
-module for few reasons listed below:
+However, IMA now provides the IMA_INIT_LATE_SYNC build option, which
+initialises IMA at the late_initcall_sync level, so this change is no
+longer required.
 
- o Boot-Time Integrity: IMA’s main role is to measure and appraise files
-   before they are used. This includes measuring critical system files
-   during early boot (e.g., init, init scripts, login binaries). If IMA
-   were a module, it would be loaded too late to cover those.
-
- o TPM Dependency: IMA integrates tightly with the TPM to record
-   measurements into PCRs. The TPM must be initialized early (ideally
-   before init_ima()), which aligns with IMA being built-in.
-
- o Security Model: IMA is part of a Trusted Computing Base (TCB). Making
-   it a module would weaken the security model, as a potentially
-   compromised system could delay or tamper with its initialization.
-
-IMA must be built-in to ensure it starts measuring from the earliest
-possible point in boot which inturn implies TPM must be initialised and
-ready to use before IMA.
-
-Unfortunately some TPM drivers (such as Arm FF-A, or SPI attached TPM
-devices) are not reliably available during the initcall_late stage,
-resulting in a log error:
-
-  ima: No TPM chip found, activating TPM-bypass!
-
-To address this issue, IMA_INIT_LATE_SYNC is introduced.
-However, a remote attestation service cannot determine when IMA has been
-initialized because the boot_aggregate measurement name remains unchanged,
-even though IMA is initialized later at late_initcall_sync when
-IMA_INIT_LATE_SYNC is enabled.
-
-Therefore, use a distinct boot_aggregate name when IMA_INIT_LATE_SYNC
-is enabled, allowing the remote attestation service to identify
-when IMA has been initialized.
-
-Signed-off-by: Jonathan McDowell <noodles@meta.com>
-[yeoreum.yun@arm.com: modified to align with the IMA_INIT_LATE_SYNC change]
 Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- security/integrity/ima/ima.h              |  1 +
- security/integrity/ima/ima_init.c         | 15 +++++++++++----
- security/integrity/ima/ima_template_lib.c |  3 ++-
- 3 files changed, 14 insertions(+), 5 deletions(-)
+ drivers/char/tpm/tpm_crb_ffa.c | 18 +++---------------
+ 1 file changed, 3 insertions(+), 15 deletions(-)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 69e9bf0b82c6..194b195cec1e 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -66,6 +66,7 @@ extern struct ima_algo_desc *ima_algo_array __ro_after_init;
- extern int ima_appraise;
- extern struct tpm_chip *ima_tpm_chip;
- extern const char boot_aggregate_name[];
-+extern const char boot_aggregate_late_name[];
+diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
+index 99f1c1e5644b..025c4d4b17ca 100644
+--- a/drivers/char/tpm/tpm_crb_ffa.c
++++ b/drivers/char/tpm/tpm_crb_ffa.c
+@@ -177,23 +177,13 @@ static int tpm_crb_ffa_to_linux_errno(int errno)
+  */
+ int tpm_crb_ffa_init(void)
+ {
+-	int ret = 0;
+-
+-	if (!IS_MODULE(CONFIG_TCG_ARM_CRB_FFA)) {
+-		ret = ffa_register(&tpm_crb_ffa_driver);
+-		if (ret) {
+-			tpm_crb_ffa = ERR_PTR(-ENODEV);
+-			return ret;
+-		}
+-	}
+-
+ 	if (!tpm_crb_ffa)
+-		ret = -ENOENT;
++		return -ENOENT;
  
- /* IMA event related data */
- struct ima_event_data {
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index a2f34f2d8ad7..4c24bd535466 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -22,6 +22,7 @@
+ 	if (IS_ERR_VALUE(tpm_crb_ffa))
+-		ret = -ENODEV;
++		return -ENODEV;
  
- /* name for boot aggregate entry */
- const char boot_aggregate_name[] = "boot_aggregate";
-+const char boot_aggregate_late_name[] = "boot_aggregate_late";
- struct tpm_chip *ima_tpm_chip;
- 
- /* Add the boot aggregate to the IMA measurement list and extend
-@@ -45,11 +46,11 @@ static int __init ima_add_boot_aggregate(void)
- 	const char *audit_cause = "ENOMEM";
- 	struct ima_template_entry *entry;
- 	struct ima_iint_cache tmp_iint, *iint = &tmp_iint;
--	struct ima_event_data event_data = { .iint = iint,
--					     .filename = boot_aggregate_name };
-+	struct ima_event_data event_data = { .iint = iint };
- 	struct ima_max_digest_data hash;
- 	struct ima_digest_data *hash_hdr = container_of(&hash.hdr,
- 						struct ima_digest_data, hdr);
-+	const char *filename;
- 	int result = -ENOMEM;
- 	int violation = 0;
- 
-@@ -59,6 +60,12 @@ static int __init ima_add_boot_aggregate(void)
- 	iint->ima_hash->algo = ima_hash_algo;
- 	iint->ima_hash->length = hash_digest_size[ima_hash_algo];
- 
-+	if (IS_ENABLED(CONFIG_IMA_INIT_LATE_SYNC))
-+		filename = boot_aggregate_late_name;
-+	else
-+		filename = boot_aggregate_name;
-+	event_data.filename = filename;
-+
- 	/*
- 	 * With TPM 2.0 hash agility, TPM chips could support multiple TPM
- 	 * PCR banks, allowing firmware to configure and enable different
-@@ -86,7 +93,7 @@ static int __init ima_add_boot_aggregate(void)
- 	}
- 
- 	result = ima_store_template(entry, violation, NULL,
--				    boot_aggregate_name,
-+				    filename,
- 				    CONFIG_IMA_MEASURE_PCR_IDX);
- 	if (result < 0) {
- 		ima_free_template_entry(entry);
-@@ -95,7 +102,7 @@ static int __init ima_add_boot_aggregate(void)
- 	}
- 	return 0;
- err_out:
--	integrity_audit_msg(AUDIT_INTEGRITY_PCR, NULL, boot_aggregate_name, op,
-+	integrity_audit_msg(AUDIT_INTEGRITY_PCR, NULL, filename, op,
- 			    audit_cause, result, 0);
- 	return result;
+-	return ret;
++	return 0;
  }
-diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-index 0e627eac9c33..8a89236f926c 100644
---- a/security/integrity/ima/ima_template_lib.c
-+++ b/security/integrity/ima/ima_template_lib.c
-@@ -363,7 +363,8 @@ int ima_eventdigest_init(struct ima_event_data *event_data,
- 		goto out;
- 	}
+ EXPORT_SYMBOL_GPL(tpm_crb_ffa_init);
  
--	if ((const char *)event_data->filename == boot_aggregate_name) {
-+	if ((const char *)event_data->filename == boot_aggregate_name ||
-+	    (const char *)event_data->filename == boot_aggregate_late_name) {
- 		if (ima_tpm_chip) {
- 			hash.hdr.algo = HASH_ALGO_SHA1;
- 			result = ima_calc_boot_aggregate(hash_hdr);
+@@ -405,9 +395,7 @@ static struct ffa_driver tpm_crb_ffa_driver = {
+ 	.id_table = tpm_crb_ffa_device_id,
+ };
+ 
+-#ifdef MODULE
+ module_ffa_driver(tpm_crb_ffa_driver);
+-#endif
+ 
+ MODULE_AUTHOR("Arm");
+ MODULE_DESCRIPTION("TPM CRB FFA driver");
 -- 
 LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
