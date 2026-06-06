@@ -1,35 +1,35 @@
 Received: from mx1.buffet.re (mx1.buffet.re [51.83.41.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F3C23505E
-	for <linux-security-module@vger.kernel.org>; Sat,  6 Jun 2026 17:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD4C2AD0C
+	for <linux-security-module@vger.kernel.org>; Sat,  6 Jun 2026 17:11:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.83.41.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780765715; cv=none; b=iOXRJSsOMV67/Ki2Emi44XiYnWkazk17jTJYCdEC1iynlGVCyKXm/lTKYWh/bl4SpJ0IQT1/Wotp0YoPoXlNgpz4fHIsc6Vuwn6xiW336ha1q92YmurP25C864hz3tp1rrMA2pQ3WRHeCFNoUtRqgS6ts+YlOJ5SPdS6Oi2f3qM=
+	t=1780765891; cv=none; b=U7cnNrt0dtCdWe6E4vjqfy1HfHlCAaYesgsRZ9eJsovlcCL3wPzN7kSY81m8f+JJq7eisyycWkJegHFC5Oh92YMHd8XYqXDftCx+JHLJK33sxaJRnkMv2b3KnKLhlVLzhM6smCx+P9/SVT8rKa9A8WdDmvWiY8Se9ZJpItIjX8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780765715; c=relaxed/simple;
-	bh=0BGFgo6g03rQAvNYENOa43LF7fzZBnIwtU201XixPa8=;
+	s=arc-20240116; t=1780765891; c=relaxed/simple;
+	bh=3Z2UAsY1LZlww6K2mN0japDUEvT0Ef8G9Gu18DtW9S4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jcspAor7dTlaVrtMPiI7K668fCjjS1uTCMtw73acxzxfXJZp+rUIIyyxgpnHClBwvvOWG6kJ/j7tf+MqpVg3labyBcMHTcXXQsygx/6CgT7uNmTBqQdrkevG9sNhecvIzl1UogVB9+N8JdCKu9z+0nqid4iFzdCuWTIVZos/eAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re; spf=pass smtp.mailfrom=buffet.re; dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b=Wq8nfyX+; arc=none smtp.client-ip=51.83.41.69
+	 In-Reply-To:Content-Type; b=QIFZR3kdV9sg3tEDjdkBGH0xhj4paYwXPOW/VxZmSR5IPXZSuMf1S3dVV2umgDVNNmiDgVJyPOEnmHb3eprVSjMIhCj8fvCbcLuZC2grO3l3nuQq0jlVwNJ8mihqS3FqrksdRqILeG9JLv/gU5gwP+fnGDIQY1InHPS1VLd80mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re; spf=pass smtp.mailfrom=buffet.re; dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b=IJu4uxmS; arc=none smtp.client-ip=51.83.41.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buffet.re
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b="Wq8nfyX+"
+	dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b="IJu4uxmS"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=buffet.re; s=mx1;
-	t=1780765284; bh=0BGFgo6g03rQAvNYENOa43LF7fzZBnIwtU201XixPa8=;
+	t=1780765887; bh=3Z2UAsY1LZlww6K2mN0japDUEvT0Ef8G9Gu18DtW9S4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Wq8nfyX+nsj7U3W9XDd/RozAgXtw2uEBSGoKYn4sHGQRsU6GzXLMBrccPmY8xqhVy
-	 ytHxpaaLqDHJgfxIgHoTy3dqv3xAyzi1Fatba9bcHrdwpVbXn0RKb1E2lpB2dN4Akn
-	 3p+ghBbix2VsRFMFzPtmRPlbf3qzwDDc/gQYM1poD5q70nCY84dXlHDF9tIQyXZuTA
-	 hj+4Zn9uJz6K0Mr6URCtwwZbOkGf6LvKpuB/8zyq+f8Mu/+D1N8WVlyv/0aUrXF3fJ
-	 hansPeSlk5+s00/2/IAgSFZrr86cFqK1gjM+/yzTkJf7c16rT6X50UCf76tkRFsCJ3
-	 hUDgTUXHGn6Iw==
+	b=IJu4uxmSn/EBZV9Ipk5D2ieC7zl+SgOuQjETxBHePErm6VMnvOanMKl1MTQdaR3OH
+	 B9Fr9Da57tKYsCAcPn9kLmHf2wSpC45bcNgw8hNYlvnOJGJcwRGZvjEgarCbwkgM9M
+	 BIn5oh3Ak07SvU4VO0zN5i97mJPZALAKrAXQefUlfGdHaTrF5jBj+Mz63afVbfPc1i
+	 lbOFJkHpDtsfFVVyMvNqvIa3R04bgHwf+YdCaOZf4Ad3gZarHKfgQKSwZlQSFN1Wo2
+	 TIZcbnRwpONKcl7qSWj85o3B4/UsNj324TIdWzKLCOPxXU540BQkT06uLbILv3UPDM
+	 40LjqZVUn9kwQ==
 Received: from [192.168.100.2] (unknown [10.0.1.3])
-	by mx1.buffet.re (Postfix) with ESMTPSA id 7B3F5125930;
-	Sat,  6 Jun 2026 19:01:24 +0200 (CEST)
-Message-ID: <ed2805ed-72cf-4277-993e-8a0ca73e65ee@buffet.re>
-Date: Sat, 6 Jun 2026 19:01:24 +0200
+	by mx1.buffet.re (Postfix) with ESMTPSA id 2E775125930;
+	Sat,  6 Jun 2026 19:11:27 +0200 (CEST)
+Message-ID: <e561a8c3-de10-45ba-a931-27b9a5751dc9@buffet.re>
+Date: Sat, 6 Jun 2026 19:11:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -37,50 +37,61 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/7] landlock: Add UDP access control support
+Subject: Re: [PATCH v4 2/7] landlock: Add UDP connect() access control
 To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
  linux-security-module@vger.kernel.org,
  Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
  konstantin.meskhidze@huawei.com, Tingmao Wang <m@maowtm.org>
 References: <20260502124306.3975990-1-matthieu@buffet.re>
- <20260522.saibiuZ5ailo@digikod.net>
+ <20260502124306.3975990-3-matthieu@buffet.re>
+ <20260522.reif5feiX0Ce@digikod.net>
 Content-Language: en-US
 From: Matthieu Buffet <matthieu@buffet.re>
-In-Reply-To: <20260522.saibiuZ5ailo@digikod.net>
+In-Reply-To: <20260522.reif5feiX0Ce@digikod.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Mickaël, Günther,
-
-Thank you both for your reviews, I will follow up with these last fixes 
-in a v5.
-
-On 5/22/2026 11:08 PM, Mickaël Salaün wrote:
->> I'm just not super happy about the clarity of logs generated for denied
->> autobinds ("domain=xxxxxx blockers=net.bind_udp"), due to the fact that
->> addresses and ports are currently only logged if they are non-0. A later
->> (coordinated LSM-wide) patch could improve readability by replacing != 0
->> checks with new booleans in struct lsm_network_audit.
+On 5/22/2026 11:10 PM, Mickaël Salaün wrote:
+>> +	 * Note: socket is not locked, so another thread could do an
+>> +	 * explicit bind(!=0) on this socket, changing inet_num to non-zero
+>> +	 * after we read it, but this would only have us enforce an
+>> +	 * additional bind(0) access check and would not bypass policy.
+>> +	 */
+>> +	if (inet_sk(sock->sk)->inet_num != 0)
 > 
-> Do you plan to send such patch after this series?  I guess we could add
-> has_{port,addr} fields to lsm_network_audit and handle AF_UNSPEC too?
-
-I have not come up with anything better than adding boolean fields, so 
-if you're in, I will draft a proposition along these lines (and cc: LSM 
-subsystem maintainers to synchronize the change across LSMs, I guess)
-
->> I'm also not
->> exactly happy with the integration in existing TCP selftests, but
->> refactoring them has already been discussed earlier.
+> There is still a race condition, this should fix it:
 > 
-> Can you remind us what was your concern and the potential fix?
+>   *
+>   * Hold the socket lock around the inet_num read to exclude
+>   * udp_lib_get_port()'s transient inet_num = snum write that is reverted
+>   * to 0 on a failing reuseport bind.
+>   */
+> if (inet_sk(sock->sk)->inet_num != 0)
+> slow = lock_sock_fast(sock->sk);
+> num = inet_sk(sock->sk)->inet_num;
+> unlock_sock_fast(sock->sk, slow);
+> if (num != 0)
+> 	return 0;
 
-Regarding TCP selftests, I was referencing that discussion about 
-readability (length, and usage of conditionals in what are already test 
-variants) :
-https://lore.kernel.org/linux-security-module/22dcebae-dc5d-0bf1-c686-d2f444558106@huawei-partners.com/
-Nothing blocking, refactoring can be done when things are less busy.
+Oh wow, nice catch. The transient write in udp_lib_get_port() indeed 
+requires locking, a READ_ONCE would not even be enough.
+
+>> +	port0.ss_family = sock->sk->__sk_common.skc_family;
+> 
+> Looking at net/, __sk_common.skc_family (and other __sk_common.* fields)
+> should be replaced by sk_family (see #define in include/net/sock.h).
+> Same for all other __sk_common.
+> 
+> In fact, it should be READ_ONCE(sock->sk->sk_family) for consistency
+> with the net/ code and because the socket are not locked when the LSM
+> hooks are called.  I realized that the existing Landlock code have the
+> same issue...  Could you please add a new patch (to be backported) to
+> always use this pattern?
+Indeed, setsockopt(IPV6_ADDRFORM) could mess with these too, I can send 
+a separate fix patch for that.
+
+Thanks!
 
 -- 
 Matthieu
