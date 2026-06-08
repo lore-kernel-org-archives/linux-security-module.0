@@ -1,106 +1,147 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568F620010A
-	for <linux-security-module@vger.kernel.org>; Mon,  8 Jun 2026 05:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E7D379C36;
+	Mon,  8 Jun 2026 05:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780896706; cv=none; b=b1Hb0jxq0+ZtPi9RthMkQ42fj4W1+H4SL4IvNKDJqIX/RZVqaZDOR2bCgRq616aETFRAJPiopUcBk9UvBan0Zsz+i7HXU76DoaPHxa2igp2CyhchdFHCnRA4lgbO0Fs2m1TJrjdsJVeTO0kinBaY3enJXU/F9s56LUcPknu1R9k=
+	t=1780897347; cv=none; b=SQemMhzbuDzwXffdLCO2W/FN6zX/5g21vsLCz2aMh1MVDFUAtl3NnfuJtx2wJeJFxWAeyhKAyDiuSohxQG40nY5/mXS6mUPr5rBrp2ZnOkveSTHQ0MgPJ3T323LT96GRXY/j4jSb59j2sS8Otr6bqtlGBYOk2L23Mm6nf+HLsyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780896706; c=relaxed/simple;
-	bh=9ppVgDZ+U7TaJUies9zDuhV2krfxFDCefrzMocA3Pro=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FkiKsqeTntXTDJnYAIN/8/7VH4jJCSy29tR0YND3Vsy1sjxE38hByGmPJMwMn4tedrUPmF5xV6hV6tTSHkTuuuFd5JoEVvFEHVLuW1jy/a8nzv+KneBZDB9lvW0fvk4ZMw9PEfIkulYs5G3zu6M3/3TOiOseUT6XwevjBJaVcKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BfHGR0Vv; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1780897347; c=relaxed/simple;
+	bh=MEjPnWtGpVZNRYXWxeJkRixxzKCy8kVEe/W+C9geg9Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GXEegfywmzyakWldwbDCLErExS322C30fpLqHx2D1uBDrt4lbnBTv1Xy+Tu2LaTYB59/qGardk9aZ/qIdCvHr8fekpOweL2awxB6I4KU8Ca103Zr4sY64Lfv+R2ykhMBxAkvpwx1+vtt47UKjgQ/128jKPPdIGGNgbPmQGmYTiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OVni01hY; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BfHGR0Vv"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-45ef4223be7so1948379f8f.2
-        for <linux-security-module@vger.kernel.org>; Sun, 07 Jun 2026 22:31:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780896704; x=1781501504; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9ppVgDZ+U7TaJUies9zDuhV2krfxFDCefrzMocA3Pro=;
-        b=BfHGR0VvynO3NRE4POLJpC3e/XGiQ+nhGiO7Txg2LgNGhg0Q4fhNz3Chxpha+KYv/j
-         ghV92s6w6RbcNmJQGvE6qzg4qENvR0QGnwqDNFGrvuqxt92ogTKFJMT00FnxO0AZENm0
-         w3fMx1t7e1smKHDy/vSFibRTNyprp+SPVb7pgQfDfNjaYHCDCpA+EEd+lM0AvlkSJRTY
-         +lUT348cVvGaTCm4IWNJlLsCGBPrI/9OblwegFQiW26PM/nH3zJ0+L4f42ReYj5zyxEY
-         rpMI47SSvS2JabmM+lPMEjWMIZqup9FyrzPrrVEsrMcQe0FWrpSZ+Ua+tV/NlerZnelA
-         K17Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780896704; x=1781501504;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9ppVgDZ+U7TaJUies9zDuhV2krfxFDCefrzMocA3Pro=;
-        b=tJRNHXgXDnQ23QuGfM+gtcTnO1Ghl+/zkLLwoojYU5VWa7cB8Fu27ATk25rcff1Rin
-         Tn/ND/zrVGTFOycwVx7zUg8WeenZ+3OLVRLDsx2kIf/YP7M6hVQ/xGODvbL/Ecppu+Rq
-         ciHJOU1d/aI7HPIsT2zcaw40Q2ySmkG6t4DfmV7umA/WMe1GEwRnSvHoviWDSqHN1Lku
-         Oykk/8EdaVfRSP6IINyxC68OEde9y7dThnFkAP9ivlZWIZ4d6UwJR59MjoWWO0Y0y2fN
-         A288aJqRMrpngQh3v91RVqRC2paH6fmstn5AQCsq+sCBZZ7f4KfKvUq+kjeOuVhTl0o+
-         asZw==
-X-Forwarded-Encrypted: i=1; AFNElJ9JSKMPfmZT3bkRJQ7ZMtB9M/yzDhu+4crP1x2D5bqjjCvluPDFFAsNaXEMzyz+1JPl2dNS4dXjz4jgqEl66sSw5/rtPKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNo5B12lceDuKB5qkEJoZ0+PE2ZhpAaoLZtPk0L3I3oe8hzNp6
-	QmekeTnJRoqDmGYmLZnEtF2IH4HyfNTkOr40tJYRMCfEjhRpH4MFoXDm
-X-Gm-Gg: Acq92OF7lpGjvs4kT1aeEM17lehjcOzIEcRmlwFa1yoBocHj6ysbC5iKvcLyeeOTU+Z
-	GNWGZLK9+xdYg2tnO9wCqtVwKecFd9RgaNKTUD6EEGIUhazj7cKNgwkPoTQKuIf3SBL4czCHpV1
-	Kd+OWpuPqyeqd/iaEIYVOj5YXLTT5tSHv0ZnK1PfsboY6Zi0OYut0b9CkKBTAa1Tbav3y8KhZs3
-	1061HLO+S+5Ds00qct7GoC5+cDI0g3WHM1Drd9c99fwvCrGMqyeAUKjBvERGluxrRsfbOZpJK6q
-	kQKozRJEsO0GYyumFdTN2eqbEsq9RkUPcdf1jfUq4Ey0Bg+HqBV/j8GuET4bxRC2te66oyI0Gif
-	Z51BNi8DiUb1V/baz70pjG2+uJ//bpbdWIhSljQy0v7I0asy5STytOVWubcdk2HEHgNAYtywLc6
-	yT0kOqeqvKfomTrHAGCcZKzYfDMcJKf+KjRFBXL9c+g2VqbM2Uwz8kw88Wzei9uCC8HJxWYASmN
-	ExQmCwjkdTj4WPv+2NKSN/A421SH/jz6atVg8F2/zyDHeYLjV1qP1396oPWGdbGg42pjsnhAuhc
-	N2jtmf9hlnJxc9xTULfA
-X-Received: by 2002:adf:f5c5:0:b0:460:18cb:8f9e with SMTP id ffacd0b85a97d-460304fec20mr17569371f8f.12.1780896703405;
-        Sun, 07 Jun 2026 22:31:43 -0700 (PDT)
-Received: from instance-20260604-012959.europe-west1-b.c.project-2c9d95d2-bf4e-4d5a-ac6.internal (250.69.76.34.bc.googleusercontent.com. [34.76.69.250])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4601f2dc577sm49241280f8f.3.2026.06.07.22.31.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Jun 2026 22:31:43 -0700 (PDT)
-From: David Maximiliano Hermitte <davemadmaxxx@gmail.com>
-To: paul@paul-moore.com
-Cc: jmorris@namei.org,
-	serge@hallyn.com,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	David Maximiliano Hermitte <davemadmaxxx@gmail.com>
-Subject: security_inode_follow_link: KASAN UAF localization report
-Date: Mon,  8 Jun 2026 05:31:25 +0000
-Message-ID: <20260608053125.1088564-1-davemadmaxxx@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OVni01hY"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 2F2EF1F00893;
+	Mon,  8 Jun 2026 05:42:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780897345;
+	bh=UBNnGQ0T1BWreuftPNz+nOZHEQDwImLWdEn6blL5Bxc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=OVni01hY9euV7LHXmS1Gjdb98jIyqhlLne5dQ+YEEyAauKixarBw4jjoh/lPLqDLk
+	 srCv17RhLoxI8pBcQqdBmU5jKkZdObJ6AbmnRRjVk+IVt7bRDBz/1jkgocx+MdO+UU
+	 PsCHUnp7S3UxqtEssad7679p4i1YKs1z7vo3jjDcXpAaVG70h6XXNBVpo5WixQmzTm
+	 ogkEynj1qV+sQlXuR6dcCXaBtB4r4TwLrNANOeTXwJI+bT5KE92ZYPxm3dghWWrSQL
+	 3zkHabHxdERBrwjYZwT1TlFdgQo6GFVFdstKMGarnq4OeigYZ0BrlyOtm/ExdUIAbi
+	 bB6u5Av5Viivw==
+Date: Mon, 8 Jun 2026 08:42:21 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Shaomin Chen <eeesssooo020@gmail.com>
+Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH] keys: Pin request_key_auth payload in instantiate paths
+Message-ID: <aiZWPSJZyFq4nmxf@kernel.org>
+References: <20260526024838.3368409-1-eeesssooo020@gmail.com>
+ <aiYxqTyfHwrDOTCs@kernel.org>
+ <aiYynOxFk3LuK4LA@kernel.org>
+ <aiZTIzGg_peDVo1M@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aiZTIzGg_peDVo1M@kernel.org>
 
-Hello,
+On Mon, Jun 08, 2026 at 08:29:11AM +0300, Jarkko Sakkinen wrote:
+> On Mon, Jun 08, 2026 at 06:10:23AM +0300, Jarkko Sakkinen wrote:
+> > On Mon, Jun 08, 2026 at 06:06:21AM +0300, Jarkko Sakkinen wrote:
+> > > On Tue, May 26, 2026 at 10:48:38AM +0800, Shaomin Chen wrote:
+> > > > keyctl_instantiate_key_common() reads request_key_auth from the assumed
+> > > > auth key before copying an instantiation payload from userspace.  The copy
+> > > > can fault and sleep.  If the request completes and revokes the auth key in
+> > > > that window, the auth payload can be detached and freed before the
+> > > > instantiate path uses it again.
+> > > > 
+> > > > A request-key helper reproducer can trigger this race.  One helper child
+> > > > blocks in KEYCTL_INSTANTIATE_IOV while the original helper instantiates the
+> > > > requested key and returns.  KASAN then reports a use-after-free from the
+> > > > stale request_key_auth payload in keyctl_instantiate_key_common().
+> > > > 
+> > > > Give request_key_auth payloads a refcount.  Take a payload reference while
+> > > 
+> > > Please, name concrete things accurately. I.e. 'usage' in this case. If
+> > > you have a name, use it instead of obfuscating generalizations.
+> > > 
+> > > > authkey->sem stabilizes the payload and revocation state.  Hold that
+> > > > reference across the instantiate and reject paths.  Drop the auth key
+> > > > owning reference from revoke and destroy.
+> > > > 
+> > > > Reported-by: Shaomin Chen <eeesssooo020@gmail.com>
+> > > > Closes: https://lore.kernel.org/r/20260519144403.436694-1-eeesssooo020@gmail.com
+> > > > Signed-off-by: Shaomin Chen <eeesssooo020@gmail.com>
+> > > > ---
+> > > >  include/keys/request_key_auth-type.h |  2 ++
+> > > >  security/keys/internal.h             |  2 ++
+> > > >  security/keys/keyctl.c               | 24 +++++++++++++++-----
+> > > >  security/keys/request_key_auth.c     | 33 ++++++++++++++++++++++++++--
+> > > >  4 files changed, 53 insertions(+), 8 deletions(-)
+> > > 
+> > > So first, couple of things.
+> > > 
+> > > I'm not going to test not that well documented involving OOT driver.
+> > 
+> > Oops, sorry typo. "not that well documented reproducer" :-)
+> > 
+> > But it is cool we just then need to draw the picture.
+> 
+> I think I got this:
+> 
+> A: request_key()       B: KEYCTL_INSTANTIATE_IOV
+> ----------------       -------------------------
+> create auth key
+> store rka in auth key
+> wait for helper
+>                        get auth key
+>                        load rka from auth key
+>                        copy user payload
+>                        sleep on #PF
+> helper completed
+> detach and free rka
+> destroy auth key
+>                        wake up
+>                        use rka->target_key
+>                        **USE-AFTER-FREE**
+> 
+> So nothing really complicated here, is there?
 
-I reproduced this issue locally in a QEMU/TCG VM and I can confirm a valid BEFORE signal.
+Send v2 with the code changes that I proposed as we want to the change
+as ergonomic as possible.
 
-Summary of the local evidence:
+Use this as the commit message:
 
-- Reproducer started: yes
-- KASAN seen: yes
-- use-after-free seen: yes
-- target function seen: security_inode_follow_link
-- target file seen: security/security.c
-- Call Trace seen: yes
-- RIP seen: yes
-- BEFORE validation: true
+    keys: Pin request_key_auth payload in instantiate paths
 
-At this point I am treating this as a localization report, not as a final patch submission.
+    A: request_key()       B: KEYCTL_INSTANTIATE_IOV
+    ----------------       -------------------------
+    create auth key
+    store rka in auth key
+    wait for helper
+                           get auth key
+                           load rka from auth key
+                           copy user payload
+                           sleep on #PF
 
-The trace points to the security_inode_follow_link / link-follow path. I would prefer not to guess the final fix, since I do not yet have a validated AFTER patch for this issue.
+    helper completed
+    detach and free rka
+    destroy auth key
+                           wake up
+                           use rka->target_key
+                           **USE-AFTER-FREE**
 
-I can provide the reproducer evidence and retest any proposed patch if helpful.
+    Give request_key_auth payloads a refcount.  Take a payload reference while
+    authkey->sem stabilizes the payload and revocation state.  Hold that
+    reference across the instantiate and reject paths.  Drop the auth key
+    owning reference from revoke and destroy.
 
-Thanks,
-David
+    [jarkko: Replaced the first two paragraphs of text with a concurrency scenario.]
+
+And it includes also the remark at the end.
+
+BR, Jarkko
