@@ -1,130 +1,294 @@
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDD210F0
-	for <linux-security-module@vger.kernel.org>; Mon,  8 Jun 2026 01:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8DE282F09;
+	Mon,  8 Jun 2026 03:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780882269; cv=none; b=O/UXVh+BSNVOTdl0bQLiWspEYuNaqBvCtdDBCjwb2btWIV614/cRy79qPuPjZjIB03MN/NBDlIb4K8wcZ1PypLrG+xXs0DeWPmEm/GYfJvfUohX1bFzt6l5g62A5qyShRzOjyu/IAv70Ir+N9dCOcgGpaEpjB0dQDdq65chXKdo=
+	t=1780887983; cv=none; b=fknnrlpNN0C0u2gLXJAD4DIW7Pzqjv0etGY/TrneG2CmhVN+T+86vo/s7UO9aKG2bqmId0EyzO0hYeXPrDnvczt8r4M1xl5pWQLBZLOuge5djIyxGDjXZo8LssIBSEm2N5nkauXd93vEST7qqwLIOvJdb0x/5pQeNHx/J6PlMrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780882269; c=relaxed/simple;
-	bh=Gy05Xt+WiUzQmWNHJR2G04BK5wgl0aWZ3LDZnJ65ekA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hhYs9XynGJIwf7wFK53AasVzXxFXc9LEpD9WswCIqRYiSuzw/X7HOrnUlCvcAZqsM6NDQba04QpU1qh7VBdMBZn4wWR21fwlouAx1d7g0coajjbqRa1PfdVtae9E+/Rvhx11qGFj1eq+pUUXPI5O1ZgChCvrH6qrLIwKHoeVJQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=cks0xG/J; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dOhSJkQT; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	s=arc-20240116; t=1780887983; c=relaxed/simple;
+	bh=OPemLf/Cp+gPaBEDcGVjjv8y09tB2RMi2EllBfW+SMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QioZwvP9EuIfq3e0vWTOWiY1gTINXlOSkYHMSaW5+BOo38aOTwRv76vTRRf0aeJZkfES6RVO9ZU9HmJGACzI8IFAMW1F/ecHaaJP+T650s3V6u+VejHJwS0O5YvCK8bJX+HIBHNARETwKdiDgs8L2TSelUYpEUFmqB02PzzDx1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iZTmZC9B; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="cks0xG/J";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dOhSJkQT"
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfout.phl.internal (Postfix) with ESMTP id 6E284EC0077;
-	Sun,  7 Jun 2026 21:31:06 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Sun, 07 Jun 2026 21:31:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1780882266;
-	 x=1780968666; bh=hRRqP3zmI7aVPNYFhbC98dJ2jTmFsEwd4lKoAjavDns=; b=
-	cks0xG/J7LBxDzhjNDpHUjXiJKEiv2tBGE+2DvNaSrelxksOrHCIbs6p7Nn+xqIF
-	Mk43AEPn/iqRgTj5mgAcfvTej8+fLDpqAzOfHD5c547EXw9gEmGApGxaBW9GKVO8
-	2GfIAlzMU7PpbSK85+2wOAO4+7zrOxizgR4a0eEsYi+wVtMhnlYq4YzUUh9VcgLf
-	Ent+LkmelyrrfB6nvK477niXO0w/uiMvoGEE+tf7uvfsRCuQ56pSCshpRUtJtwDR
-	o3V6b7+L+y/a+jQHz93vr6HUcKJfyqKbsRcTXA6vk2dZ8DJlSvZ1U40xhjX2uoUc
-	z8QaKTnEMsEKCgJ4PrcDzA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780882266; x=
-	1780968666; bh=hRRqP3zmI7aVPNYFhbC98dJ2jTmFsEwd4lKoAjavDns=; b=d
-	OhSJkQTX1QTYZccEXwjUzj7+4dOkRUMkGWmRGXlEfKrwOJdKh8wF3AGtPeblyRAQ
-	w7YCxqnqINf0SzxVtQL+2H3A1u4GOhpP/aByNoiY4o5LyciXgKCbS+yaTYZshKND
-	N0L4k7Y87BUK+9zWbu32QtUZwHFqYeb1wZ3assfji6OrhgiRAcRa8LCCALYdnh4p
-	ADiPkxMPbRnwYoNalSc2hGtO3K5MSTvpAyOkPX7a+NF/QWbLw5PE66GtlPeK0Gqe
-	G+MUdCrfyWsnHtKDtrn0GnEPuBcRzQZsRvdMaO4is9c8OH8PsmnIwtuatp7Y5qsE
-	z7DrvYcmBG2UwtMeE3d1g==
-X-ME-Sender: <xms:WRsmap7A3_FcSRCCrufbi5tGlCn8NKopHQckR67ADYwvH8zNDFkSmw>
-    <xme:WRsmaqk4bJAQUrxa3VLuWjFZX9JjxSnDqW71xzPv1E7xFFoZCHyqUVzkQIw9OEChd
-    JjCNuu-3_V-zIQtry6iSTAPKLPxraTL65snab1MupRASJFnh7pN34of>
-X-ME-Received: <xmr:WRsmaqRQi8tsYzsf3szlHL1XfsAL3NnuXU-R14iHgfvf-Guqyb_xZ5KCcSue6ulu_z7g5NzQEVVUNYyQRA>
-X-ME-Proxy-Cause: dmFkZTF0IQBILUwW/+O31QOGJx2zUK/MxxP1aGBde++3FP4M5zc0SuR/Uc2z1t5CBiiSGh
-    rx4drP05u6eWJvAToEeI9Py185axPH2OemebU9tCIwxq6s8aKlyWNl1LOpAo1y23zVCqFW
-    u7xRb5iMm2EkxQt/hXwEyRPVVkilRHiwK1J0u9DNNCelIjwZvTY+ZGL7wdYviYhZ5FYHZ1
-    flCvvc4KImDwYGefI31ad/jnBFeWozluTwiK3OHQUMVwwWpP0WQftQvneCKs+i4OxlL3jy
-    3f1BDhuGbuMusdthF6AnjZzkR8iVWsTTKGG58seNDnbkuHbrve88vqIFHgqoDW+lQf4onl
-    VBAfflu+ACEAZPpJcBcN7b51TnFmORLDfZZqmsRsBDlR+PjbmUWEqmT8N2mywd5iCdpDe5
-    laMTelBHbVrmDwjetZ2SmT88rh3v/adCN8wDpdJ8CykQfm+Ayb8jXUbWLbRbg+qM/wv14e
-    gThGZYa8xA1gNAvfalm+tVXRUoi5NTxP5dUXe7c+YAlWKafrpV/idIs3zTf1j+TF7vWJnt
-    j5vvmvuHQHpXSCkl8W1sYIp1Z700sZUBdwq49U2y/N5ae201wRWtdVN2K0SsemjgT8eZQW
-    NryKdUEmh+AgeRxd0RTJ9L4/x/sLYS580CL3pcAxWzBUefoHQciY05bkTyVw
-X-ME-Proxy: <xmx:WRsmapEd4kdie-In1O9V7u92XPpJK8Le--VE2zYKWYNDcd6DCpVGNQ>
-    <xmx:WRsmavGr-CdCxzmnljf_1p_OM-qTm5ZfYTe8bb-nSwhNo19NMIWVdQ>
-    <xmx:WRsmanTat34nL6XFyOcavkJ-2MSOupabm46fPrEuCMAm7HNupwvlmQ>
-    <xmx:WRsmagKyhCsuKc8GqdYBtV4buWGeYiVwQb_XlP0GWZYsRdKuFZJQkg>
-    <xmx:WhsmamG4WZkHKUQX-SmpUbyFAtL67FIK4pp2lJyvf6sHrzncwBMkeiWW>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 7 Jun 2026 21:31:04 -0400 (EDT)
-Message-ID: <84f468de-6d36-4131-aa16-6dd3e0846fbb@maowtm.org>
-Date: Mon, 8 Jun 2026 02:31:03 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iZTmZC9B"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 75C231F00893;
+	Mon,  8 Jun 2026 03:06:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780887981;
+	bh=BgehQ2hxI799VtQ6jFnldS7TjxvN8d0UDYYkiNF9vRQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=iZTmZC9BjJ5WWRBe1qAmI9zp9Jkeqs/kvpD82nkxpXsbZJRA+mHsSW5tH5BjZah6+
+	 JFa2VY9kJDdW6rZvzGRTH4vj39PsYKYxG273Lbg/MaJ1Tw0DBPoJdsGN/CPmsOsxR4
+	 VyQDIGMK9OmPAn3Cf4Q4e7rXxy9acKXvgGKVULnWkNuoYqi5OgsIAuWWe5MtpRrz9k
+	 bWMiVFGru5DCX0wvaCZZW9Sv3bUkHLZSgR8eLkZ8Zp4Cgma7zEmrDS/QF5ehni03xp
+	 L/po+dNUuB+oWXWIBC48NC1NqkCQjL1GW0h6qKhv7LtLxUaQJOsQiSQBXdfIVLTqaH
+	 8Rp+hZI+ZNc4w==
+Date: Mon, 8 Jun 2026 06:06:17 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Shaomin Chen <eeesssooo020@gmail.com>
+Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH] keys: Pin request_key_auth payload in instantiate paths
+Message-ID: <aiYxqTyfHwrDOTCs@kernel.org>
+References: <20260526024838.3368409-1-eeesssooo020@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 6/9] selftests/landlock: add tests for quiet flag with
- fs rules
-To: Justin Suess <utilityemal77@gmail.com>
-Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
- Jan Kara <jack@suse.cz>, Abhinav Saxena <xandfury@gmail.com>,
- linux-security-module@vger.kernel.org
-References: <cover.1780272022.git.m@maowtm.org>
- <9208d19c3aeba778f317defcfee9c62c44600e3b.1780272022.git.m@maowtm.org>
- <aiMciEe6zVnisbQJ@zenbox>
-Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <aiMciEe6zVnisbQJ@zenbox>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260526024838.3368409-1-eeesssooo020@gmail.com>
 
-On 6/5/26 20:04, Justin Suess wrote:
-> On Mon, Jun 01, 2026 at 01:00:40AM +0100, Tingmao Wang wrote:
->> [...]
->> +				if (target->expect_ioctl_allowed)
->> +					ASSERT_NE(EACCES, ret);
->> +				else
->> +					ASSERT_EQ(EACCES, ret);
-> This doesn't compile.
+On Tue, May 26, 2026 at 10:48:38AM +0800, Shaomin Chen wrote:
+> keyctl_instantiate_key_common() reads request_key_auth from the assumed
+> auth key before copying an instantiation payload from userspace.  The copy
+> can fault and sleep.  If the request completes and revokes the auth key in
+> that window, the auth payload can be detached and freed before the
+> instantiate path uses it again.
 > 
->   make: Entering directory '/home/justin/Code/linux-next/tools/testing/selftests'
->     CC       fs_test
->   fs_test.c: In function ‘audit_quiet_layout1_test_body’:
->   fs_test.c:8456:33: error: expected ‘}’ before ‘else’
->    8456 |                                 else
->         |                                 ^~~~
->   fs_test.c: At top level:
->   fs_test.c:8474:1: error: expected identifier or ‘(’ before ‘}’ token
->    8474 | }
->         | ^
->   make[1]: *** [../lib.mk:225: /home/justin/Code/linux-next/.out-landlock_archlinux-base-devel/kselftest/landlock/fs_test] Error 1
->   
-> The ASSERT_* macros doen't properly handle braceless if statements...
+> A request-key helper reproducer can trigger this race.  One helper child
+> blocks in KEYCTL_INSTANTIATE_IOV while the original helper instantiates the
+> requested key and returns.  KASAN then reports a use-after-free from the
+> stale request_key_auth payload in keyctl_instantiate_key_common().
 > 
-> (easy to miss if you forget to recompile after clang format and/or
-> checkpatch --fix...)
-> 
-> Adding braces to this as with previous versions of this series should
-> fix it.
-> 
-> Justin
+> Give request_key_auth payloads a refcount.  Take a payload reference while
 
-Thanks for spotting!  I forgot and was wondering why I didn't fix this
-checkpatch lint earlier, turns out there is a reason why :)
+Please, name concrete things accurately. I.e. 'usage' in this case. If
+you have a name, use it instead of obfuscating generalizations.
 
-Will fix in next version, after Mickaël's review.
+> authkey->sem stabilizes the payload and revocation state.  Hold that
+> reference across the instantiate and reject paths.  Drop the auth key
+> owning reference from revoke and destroy.
+> 
+> Reported-by: Shaomin Chen <eeesssooo020@gmail.com>
+> Closes: https://lore.kernel.org/r/20260519144403.436694-1-eeesssooo020@gmail.com
+> Signed-off-by: Shaomin Chen <eeesssooo020@gmail.com>
+> ---
+>  include/keys/request_key_auth-type.h |  2 ++
+>  security/keys/internal.h             |  2 ++
+>  security/keys/keyctl.c               | 24 +++++++++++++++-----
+>  security/keys/request_key_auth.c     | 33 ++++++++++++++++++++++++++--
+>  4 files changed, 53 insertions(+), 8 deletions(-)
+
+So first, couple of things.
+
+I'm not going to test not that well documented involving OOT driver.
+
+That does necessarily mean same as NAK but we need much more clarity
+here. 
+
+You should start off not mentioning 'reproducer'. If it does not
+exist in public, it does not exist. It's not good for anything
+here.
+
+Then, put a concurrency scenario with A/B sidecars.
+
+Some comments below.
+
+> 
+> diff --git a/include/keys/request_key_auth-type.h b/include/keys/request_key_auth-type.h
+> index 36b89a933310..01e42ee5f409 100644
+> --- a/include/keys/request_key_auth-type.h
+> +++ b/include/keys/request_key_auth-type.h
+> @@ -9,12 +9,14 @@
+>  #define _KEYS_REQUEST_KEY_AUTH_TYPE_H
+>  
+>  #include <linux/key.h>
+> +#include <linux/refcount.h>
+
+BTW, did you test compilation w/o adding this? Just potential
+low-hanging fruit diff to remove.
+
+>  
+>  /*
+>   * Authorisation record for request_key().
+>   */
+>  struct request_key_auth {
+>  	struct rcu_head		rcu;
+> +	refcount_t		usage;
+>  	struct key		*target_key;
+>  	struct key		*dest_keyring;
+>  	const struct cred	*cred;
+> diff --git a/security/keys/internal.h b/security/keys/internal.h
+> index 2cffa6dc8255..b7b622bc36a1 100644
+> --- a/security/keys/internal.h
+> +++ b/security/keys/internal.h
+> @@ -208,6 +208,8 @@ extern struct key *request_key_auth_new(struct key *target,
+>  					const void *callout_info,
+>  					size_t callout_len,
+>  					struct key *dest_keyring);
+> +struct request_key_auth *request_key_auth_get(struct key *authkey);
+> +void request_key_auth_put(struct request_key_auth *rka);
+>  
+>  extern struct key *key_get_instantiation_authkey(key_serial_t target_id);
+>  
+> diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+> index ef855d69c97a..d14ace88e529 100644
+> --- a/security/keys/keyctl.c
+> +++ b/security/keys/keyctl.c
+> @@ -1197,9 +1197,13 @@ static long keyctl_instantiate_key_common(key_serial_t id,
+>  	if (!instkey)
+>  		goto error;
+>  
+> -	rka = instkey->payload.data[0];
+> -	if (rka->target_key->serial != id)
+> +	rka = request_key_auth_get(instkey);
+> +	if (!rka) {
+> +		ret = -EKEYREVOKED;
+>  		goto error;
+> +	}
+> +	if (rka->target_key->serial != id)
+> +		goto error_put_rka;
+
+This label should not be introduced and generally please do everything
+not add extra fat to diff. This is already fat for a claiming to be
+bug fix.
+
+>  
+>  	/* pull the payload in if one was supplied */
+>  	payload = NULL;
+> @@ -1208,7 +1212,7 @@ static long keyctl_instantiate_key_common(key_serial_t id,
+>  		ret = -ENOMEM;
+>  		payload = kvmalloc(plen, GFP_KERNEL);
+>  		if (!payload)
+> -			goto error;
+> +			goto error_put_rka;
+>  
+>  		ret = -EFAULT;
+>  		if (!copy_from_iter_full(payload, plen, from))
+> @@ -1234,6 +1238,8 @@ static long keyctl_instantiate_key_common(key_serial_t id,
+>  
+>  error2:
+>  	kvfree_sensitive(payload, plen);
+> +error_put_rka:
+> +	request_key_auth_put(rka);
+>  error:
+>  	return ret;
+>  }
+> @@ -1358,15 +1364,19 @@ long keyctl_reject_key(key_serial_t id, unsigned timeout, unsigned error,
+>  	if (!instkey)
+>  		goto error;
+>  
+> -	rka = instkey->payload.data[0];
+> -	if (rka->target_key->serial != id)
+> +	rka = request_key_auth_get(instkey);
+> +	if (!rka) {
+> +		ret = -EKEYREVOKED;
+>  		goto error;
+> +	}
+> +	if (rka->target_key->serial != id)
+> +		goto error_put_rka;
+>  
+>  	/* find the destination keyring if present (which must also be
+>  	 * writable) */
+>  	ret = get_instantiation_keyring(ringid, rka, &dest_keyring);
+>  	if (ret < 0)
+> -		goto error;
+> +		goto error_put_rka;
+>  
+>  	/* instantiate the key and link it into a keyring */
+>  	ret = key_reject_and_link(rka->target_key, timeout, error,
+> @@ -1379,6 +1389,8 @@ long keyctl_reject_key(key_serial_t id, unsigned timeout, unsigned error,
+>  	if (ret == 0)
+>  		keyctl_change_reqkey_auth(NULL);
+>  
+> +error_put_rka:
+> +	request_key_auth_put(rka);
+>  error:
+>  	return ret;
+>  }
+> diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
+> index a7d7538c1f70..282e09d8fa46 100644
+> --- a/security/keys/request_key_auth.c
+> +++ b/security/keys/request_key_auth.c
+> @@ -23,6 +23,7 @@ static void request_key_auth_describe(const struct key *, struct seq_file *);
+>  static void request_key_auth_revoke(struct key *);
+>  static void request_key_auth_destroy(struct key *);
+>  static long request_key_auth_read(const struct key *, char *, size_t);
+> +static void request_key_auth_rcu_disposal(struct rcu_head *);
+>  
+>  /*
+>   * The request-key authorisation key type definition.
+> @@ -115,6 +116,31 @@ static void free_request_key_auth(struct request_key_auth *rka)
+>  	kfree(rka);
+>  }
+>  
+> +/*
+> + * Take a reference to the request-key authorisation payload so callers can
+> + * drop authkey->sem before doing operations that may sleep.
+> + */
+> +struct request_key_auth *request_key_auth_get(struct key *authkey)
+> +{
+> +	struct request_key_auth *rka;
+> +
+> +	down_read(&authkey->sem);
+> +	rka = dereference_key_locked(authkey);
+> +	if (rka && !test_bit(KEY_FLAG_REVOKED, &authkey->flags))
+> +		refcount_inc(&rka->usage);
+> +	else
+> +		rka = NULL;
+> +	up_read(&authkey->sem);
+> +
+> +	return rka;
+> +}
+
+Instead add fast-path return here. Then request_key_auth can be called
+called in keyctl_instantiate_key_common and all that extra cruft in
+this patch won't be needed.
+
+> +
+> +void request_key_auth_put(struct request_key_auth *rka)
+> +{
+> +	if (rka && refcount_dec_and_test(&rka->usage))
+> +		call_rcu(&rka->rcu, request_key_auth_rcu_disposal);
+> +}
+> +
+>  /*
+>   * Dispose of the request_key_auth record under RCU conditions
+>   */
+> @@ -136,8 +162,10 @@ static void request_key_auth_revoke(struct key *key)
+>  	struct request_key_auth *rka = dereference_key_locked(key);
+>  
+>  	kenter("{%d}", key->serial);
+> +	if (!rka)
+> +		return;
+>  	rcu_assign_keypointer(key, NULL);
+> -	call_rcu(&rka->rcu, request_key_auth_rcu_disposal);
+> +	request_key_auth_put(rka);
+>  }
+>  
+>  /*
+> @@ -150,7 +178,7 @@ static void request_key_auth_destroy(struct key *key)
+>  	kenter("{%d}", key->serial);
+>  	if (rka) {
+>  		rcu_assign_keypointer(key, NULL);
+> -		call_rcu(&rka->rcu, request_key_auth_rcu_disposal);
+> +		request_key_auth_put(rka);
+>  	}
+>  }
+>  
+> @@ -174,6 +202,7 @@ struct key *request_key_auth_new(struct key *target, const char *op,
+>  	rka = kzalloc_obj(*rka);
+>  	if (!rka)
+>  		goto error;
+> +	refcount_set(&rka->usage, 1);
+>  	rka->callout_info = kmemdup(callout_info, callout_len, GFP_KERNEL);
+>  	if (!rka->callout_info)
+>  		goto error_free_rka;
+> -- 
+> 2.47.3
+
+Looking forward for v2. These requests are for being able to make
+reasonable review for the actual logical change. Now there's
+that and "decorations".
+
+Thanks!
+
+BR, Jarkko
