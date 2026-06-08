@@ -1,147 +1,147 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E7D379C36;
-	Mon,  8 Jun 2026 05:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF8031E842
+	for <linux-security-module@vger.kernel.org>; Mon,  8 Jun 2026 06:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780897347; cv=none; b=SQemMhzbuDzwXffdLCO2W/FN6zX/5g21vsLCz2aMh1MVDFUAtl3NnfuJtx2wJeJFxWAeyhKAyDiuSohxQG40nY5/mXS6mUPr5rBrp2ZnOkveSTHQ0MgPJ3T323LT96GRXY/j4jSb59j2sS8Otr6bqtlGBYOk2L23Mm6nf+HLsyI=
+	t=1780900599; cv=none; b=mqUbZvzXcURwzf+6S1m4ck5fgyJ55S+4ZZ6W44Y46oH7ID7apA/Z5ChKb8643wla4n6Vznxz+Zyysik2jK7UOxJ+d9XLmyL8ehYg2b6CyNM7Ek2uP8fYXLaz3Q3vPN33a7hXM586OP139st7sjJGBplbR4wFNeYPTy1hQUPpZ/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780897347; c=relaxed/simple;
-	bh=MEjPnWtGpVZNRYXWxeJkRixxzKCy8kVEe/W+C9geg9Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GXEegfywmzyakWldwbDCLErExS322C30fpLqHx2D1uBDrt4lbnBTv1Xy+Tu2LaTYB59/qGardk9aZ/qIdCvHr8fekpOweL2awxB6I4KU8Ca103Zr4sY64Lfv+R2ykhMBxAkvpwx1+vtt47UKjgQ/128jKPPdIGGNgbPmQGmYTiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OVni01hY; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780900599; c=relaxed/simple;
+	bh=85GIeYlRtIVw5fo/uWEqa/Od5gLR3z/2GhTv8spsaU4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KKVc4WkRTD8sPnsn3Zid2iy09y24UqjpvVbxb84d25ErWN0WPQFC77s6YpThCkcQNY24J6QP45mW45aw8BTcNSGE9tkZG3jqipCAh0qqJ3iCoBiGu+D6zJL0yCN+D72Miy6tPyckdUTFHMyyPPJP2o0rdQSmU/yGAeHmlYzTy1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R28fsS5Q; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OVni01hY"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 2F2EF1F00893;
-	Mon,  8 Jun 2026 05:42:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780897345;
-	bh=UBNnGQ0T1BWreuftPNz+nOZHEQDwImLWdEn6blL5Bxc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=OVni01hY9euV7LHXmS1Gjdb98jIyqhlLne5dQ+YEEyAauKixarBw4jjoh/lPLqDLk
-	 srCv17RhLoxI8pBcQqdBmU5jKkZdObJ6AbmnRRjVk+IVt7bRDBz/1jkgocx+MdO+UU
-	 PsCHUnp7S3UxqtEssad7679p4i1YKs1z7vo3jjDcXpAaVG70h6XXNBVpo5WixQmzTm
-	 ogkEynj1qV+sQlXuR6dcCXaBtB4r4TwLrNANOeTXwJI+bT5KE92ZYPxm3dghWWrSQL
-	 3zkHabHxdERBrwjYZwT1TlFdgQo6GFVFdstKMGarnq4OeigYZ0BrlyOtm/ExdUIAbi
-	 bB6u5Av5Viivw==
-Date: Mon, 8 Jun 2026 08:42:21 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Shaomin Chen <eeesssooo020@gmail.com>
-Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH] keys: Pin request_key_auth payload in instantiate paths
-Message-ID: <aiZWPSJZyFq4nmxf@kernel.org>
-References: <20260526024838.3368409-1-eeesssooo020@gmail.com>
- <aiYxqTyfHwrDOTCs@kernel.org>
- <aiYynOxFk3LuK4LA@kernel.org>
- <aiZTIzGg_peDVo1M@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R28fsS5Q"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2bf125989f2so27548405ad.3
+        for <linux-security-module@vger.kernel.org>; Sun, 07 Jun 2026 23:36:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1780900598; x=1781505398; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XJdK+wFJTLh6vJvwVPBKkL/MaKsEcyHpUO9XLN9CTgM=;
+        b=R28fsS5QtZc/mbhGx7l+RxrGHCvmYjMTVaAS82DxsXmJtJ3HBpD5hCw2azDGHemBkY
+         jv3csLanNOAD+zlBwmEvD0bmF9fJEJUDi1tJish2nJ2stztrZxbbhKLRYX7ZXsy+8XQD
+         Pqke3SRwNLiPNZ4i8ljD9LdiXrQZnjbCgkE0fs6ceuyJiwJN6T5rb7CGeYxfxxudjs64
+         trVsd3+NjuNd2rRmtT0ePMGAM/JyAtECrtbbRQ5r8kaLyAGYBk6aEUe/wKnjhqsLkexB
+         S6dIBdWJ52O5yYpRp79mtgeCWSZuQi1MkWciwqQk6flUfseOoFGck8LdSEXK9vnOJD31
+         Z+fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780900598; x=1781505398;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XJdK+wFJTLh6vJvwVPBKkL/MaKsEcyHpUO9XLN9CTgM=;
+        b=glL95qQI1povD62a4FbYSpswA7e+Tmgvq1FLHiAr1+hMqyMofXT6PIx4IduGKssw9e
+         /H2VIS3p5a7aTmB3NVao2IrzAMTqhDkMlmrGRLPXTPR2oLwA0/wLvCV1Z0cf/NwQL1Ic
+         U8Cb2Aw0vvicdg6lfpe/jXg57gsu86FJeJgsHLuXBLY7hn9UeqAyf3bEiMy5ZHwcdgqr
+         cbrzlvRBFvNY00et2tj5kq6IlPJFs5VLIUPypnr76Sx87rXWbIjcIJ3G4nwOqPZJUSz3
+         czXkHrb3cwmyqMEWKMVCorC7oHfgAd6UGJGGn3q/7zG70lRZ1pI2B/IcBDGMxS6pTCZr
+         g7mw==
+X-Forwarded-Encrypted: i=1; AFNElJ/vjezRwrbjOHury0w38lgxRyzU3dly4PWdbT5eCzlAfZK6NWJaXsDrvCA0X84zhz7IHObu8OXY2vf6zxY0LhAp/igFTfY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwobBjuNhWkSizDMTggqMig2VXaoluIoKL9zbGpjjqZgGvFsJ8z
+	1SaKsS4YZ/IUM2Wp19/HDJ1f7EoKS50l+FEg8ct1u1BpGmDSoryaxuBn
+X-Gm-Gg: Acq92OEtduUtTLPyiDOGyUcACiUFaBuOvh0BEMaIxdECeRIYRxJzBvOQ5R11j4LDo4o
+	t8MXDiOOIlxhVzro9KZ9wvqHiV8SiCAzimn7mVTbUgRtXYr5B7LBVBVloBlOiSpYAY6FtUSZj1q
+	fTplglgfFgrIv5oYXxtGO2zQs4Xpjjh8yuV3jCOZyYx9JpTPYDnEl+tzQwF2QoPcGO9eaclotqd
+	kjKTrRLTd/YtW1nunaZ6y3ghC7od7hwhntyisbDwyOypWeWbnDOtLi/RBa2eYYj7zfamZWE/KUi
+	cdG3ImT+Mh/N4VNecTYZXIA2ph0AhqlDS3wSKbX7I6frIlpkkgFk9s1pJUjeOVNiz38RBkikDWp
+	RZnEON2iH0xyPXuG1WkIIhVy6eVqOHfP/Mgzu3CFSNp3JzeTRrJD91MMEVpq7z8EUvoyfZJfijF
+	IoccZzloHbmPZyIu7OKZ/jALBYM2qHzmiSj7V2CkrnUMI9NgZlI62A
+X-Received: by 2002:a17:902:cf11:b0:2c1:ea95:8297 with SMTP id d9443c01a7336-2c1ea958447mr162487235ad.7.1780900597708;
+        Sun, 07 Jun 2026 23:36:37 -0700 (PDT)
+Received: from haichao.tail057a43.ts.net ([2001:da8:e000:1206:9a2:954d:67fe:d9c2])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c16629d55esm171037655ad.63.2026.06.07.23.36.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 Jun 2026 23:36:37 -0700 (PDT)
+From: Ruoyu Wang <ruoyuw560@gmail.com>
+To: John Johansen <john.johansen@canonical.com>
+Cc: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ruoyu Wang <ruoyuw560@gmail.com>
+Subject: [PATCH] apparmor: check label build before no_new_privs test
+Date: Mon,  8 Jun 2026 14:36:31 +0800
+Message-ID: <20260608063631.9-1-ruoyuw560@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aiZTIzGg_peDVo1M@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 08, 2026 at 08:29:11AM +0300, Jarkko Sakkinen wrote:
-> On Mon, Jun 08, 2026 at 06:10:23AM +0300, Jarkko Sakkinen wrote:
-> > On Mon, Jun 08, 2026 at 06:06:21AM +0300, Jarkko Sakkinen wrote:
-> > > On Tue, May 26, 2026 at 10:48:38AM +0800, Shaomin Chen wrote:
-> > > > keyctl_instantiate_key_common() reads request_key_auth from the assumed
-> > > > auth key before copying an instantiation payload from userspace.  The copy
-> > > > can fault and sleep.  If the request completes and revokes the auth key in
-> > > > that window, the auth payload can be detached and freed before the
-> > > > instantiate path uses it again.
-> > > > 
-> > > > A request-key helper reproducer can trigger this race.  One helper child
-> > > > blocks in KEYCTL_INSTANTIATE_IOV while the original helper instantiates the
-> > > > requested key and returns.  KASAN then reports a use-after-free from the
-> > > > stale request_key_auth payload in keyctl_instantiate_key_common().
-> > > > 
-> > > > Give request_key_auth payloads a refcount.  Take a payload reference while
-> > > 
-> > > Please, name concrete things accurately. I.e. 'usage' in this case. If
-> > > you have a name, use it instead of obfuscating generalizations.
-> > > 
-> > > > authkey->sem stabilizes the payload and revocation state.  Hold that
-> > > > reference across the instantiate and reject paths.  Drop the auth key
-> > > > owning reference from revoke and destroy.
-> > > > 
-> > > > Reported-by: Shaomin Chen <eeesssooo020@gmail.com>
-> > > > Closes: https://lore.kernel.org/r/20260519144403.436694-1-eeesssooo020@gmail.com
-> > > > Signed-off-by: Shaomin Chen <eeesssooo020@gmail.com>
-> > > > ---
-> > > >  include/keys/request_key_auth-type.h |  2 ++
-> > > >  security/keys/internal.h             |  2 ++
-> > > >  security/keys/keyctl.c               | 24 +++++++++++++++-----
-> > > >  security/keys/request_key_auth.c     | 33 ++++++++++++++++++++++++++--
-> > > >  4 files changed, 53 insertions(+), 8 deletions(-)
-> > > 
-> > > So first, couple of things.
-> > > 
-> > > I'm not going to test not that well documented involving OOT driver.
-> > 
-> > Oops, sorry typo. "not that well documented reproducer" :-)
-> > 
-> > But it is cool we just then need to draw the picture.
-> 
-> I think I got this:
-> 
-> A: request_key()       B: KEYCTL_INSTANTIATE_IOV
-> ----------------       -------------------------
-> create auth key
-> store rka in auth key
-> wait for helper
->                        get auth key
->                        load rka from auth key
->                        copy user payload
->                        sleep on #PF
-> helper completed
-> detach and free rka
-> destroy auth key
->                        wake up
->                        use rka->target_key
->                        **USE-AFTER-FREE**
-> 
-> So nothing really complicated here, is there?
+aa_change_profile() builds a replacement label with
+fn_label_build_in_scope() before the no_new_privs subset check. The build
+helper can fail and return NULL or an ERR_PTR, but the result was passed
+to aa_label_is_unconfined_subset() before the existing IS_ERR_OR_NULL()
+check.
 
-Send v2 with the code changes that I proposed as we want to the change
-as ergonomic as possible.
+Reuse the existing target-label build failure handling immediately after
+the build. This preserves the current audit handling while preventing the
+subset helper from dereferencing an invalid label.
 
-Use this as the commit message:
+Signed-off-by: Ruoyu Wang <ruoyuw560@gmail.com>
+---
+ security/apparmor/domain.c | 25 +++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
 
-    keys: Pin request_key_auth payload in instantiate paths
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index f02bf770f6385..6748ac74b060b 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -1527,6 +1527,8 @@ int aa_change_profile(const char *fqname, int flags)
+ 		new = fn_label_build_in_scope(label, profile, GFP_KERNEL,
+ 					   aa_get_label(target),
+ 					   aa_get_label(&profile->label));
++		if (IS_ERR_OR_NULL(new))
++			goto build_fail;
+ 		/*
+ 		 * no new privs prevents domain transitions that would
+ 		 * reduce restrictions.
+@@ -1545,16 +1547,8 @@ int aa_change_profile(const char *fqname, int flags)
+ 		/* only transition profiles in the current ns */
+ 		if (stack)
+ 			new = aa_label_merge(label, target, GFP_KERNEL);
+-		if (IS_ERR_OR_NULL(new)) {
+-			info = "failed to build target label";
+-			if (!new)
+-				error = -ENOMEM;
+-			else
+-				error = PTR_ERR(new);
+-			new = NULL;
+-			perms.allow = 0;
+-			goto audit;
+-		}
++		if (IS_ERR_OR_NULL(new))
++			goto build_fail;
+ 		error = aa_replace_current_label(new);
+ 	} else {
+ 		if (new) {
+@@ -1566,6 +1560,17 @@ int aa_change_profile(const char *fqname, int flags)
+ 		aa_set_current_onexec(target, stack);
+ 	}
+ 
++	goto audit;
++
++build_fail:
++	info = "failed to build target label";
++	if (!new)
++		error = -ENOMEM;
++	else
++		error = PTR_ERR(new);
++	new = NULL;
++	perms.allow = 0;
++
+ audit:
+ 	error = fn_for_each_in_scope(label, profile,
+ 			aa_audit_file(subj_cred,
+-- 
+2.51.0
 
-    A: request_key()       B: KEYCTL_INSTANTIATE_IOV
-    ----------------       -------------------------
-    create auth key
-    store rka in auth key
-    wait for helper
-                           get auth key
-                           load rka from auth key
-                           copy user payload
-                           sleep on #PF
-
-    helper completed
-    detach and free rka
-    destroy auth key
-                           wake up
-                           use rka->target_key
-                           **USE-AFTER-FREE**
-
-    Give request_key_auth payloads a refcount.  Take a payload reference while
-    authkey->sem stabilizes the payload and revocation state.  Hold that
-    reference across the instantiate and reject paths.  Drop the auth key
-    owning reference from revoke and destroy.
-
-    [jarkko: Replaced the first two paragraphs of text with a concurrency scenario.]
-
-And it includes also the remark at the end.
-
-BR, Jarkko
