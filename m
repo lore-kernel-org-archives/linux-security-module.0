@@ -1,117 +1,130 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313AC27A123;
-	Sun,  7 Jun 2026 19:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDD210F0
+	for <linux-security-module@vger.kernel.org>; Mon,  8 Jun 2026 01:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780862111; cv=none; b=Bkt+izekD6DabeRADyuahD3J/PSrg2iv2EP/oI7uRXB1zlTG/YMcTQdXeX+HPQYVgmgUJ7nGlR1Y4hAeR8f8+4ibdkwCb0430L4CUteaO5kGAx1JDSieQo1pTFp1xOhpFxmioaSHV8Z6o1eB6dG5cqCKaCRyhQzyPUx0Gvx6cfc=
+	t=1780882269; cv=none; b=O/UXVh+BSNVOTdl0bQLiWspEYuNaqBvCtdDBCjwb2btWIV614/cRy79qPuPjZjIB03MN/NBDlIb4K8wcZ1PypLrG+xXs0DeWPmEm/GYfJvfUohX1bFzt6l5g62A5qyShRzOjyu/IAv70Ir+N9dCOcgGpaEpjB0dQDdq65chXKdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780862111; c=relaxed/simple;
-	bh=mpVvvdu39f3e9QGpdhuNdovvOEnND/EbDt7YM4OjMUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KE++9YvN39SYS+a+8TX7YJ2mYNnqu8+N6PAMOpyAGQeQdk/s9/wRotyHnegkGECW2USqjCAVlZxoonDuRA0ISIys/EhAZhGAU0u1kIaoFWbrZ5rSOp7Iu/0vduA1kB5JLg8yldpHBMPb4Y21/71nPIjVm+/pgkYuF7eZaptFsRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b=bAPfQ/tu; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+	s=arc-20240116; t=1780882269; c=relaxed/simple;
+	bh=Gy05Xt+WiUzQmWNHJR2G04BK5wgl0aWZ3LDZnJ65ekA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hhYs9XynGJIwf7wFK53AasVzXxFXc9LEpD9WswCIqRYiSuzw/X7HOrnUlCvcAZqsM6NDQba04QpU1qh7VBdMBZn4wWR21fwlouAx1d7g0coajjbqRa1PfdVtae9E+/Rvhx11qGFj1eq+pUUXPI5O1ZgChCvrH6qrLIwKHoeVJQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=cks0xG/J; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dOhSJkQT; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b="bAPfQ/tu"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
-	t=1780862101; bh=mpVvvdu39f3e9QGpdhuNdovvOEnND/EbDt7YM4OjMUc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bAPfQ/tuB+7bR+T/kj0gFoU9/nw2Itma3ZQUT3QQjsdCcJMP9RX0WFPYCi6WrZMQC
-	 ob7V2JUrzqpR2bYXr3gOqx8d4ixeI9hQ1QlwvEj0fe/bwzSHwoTJCs0TvbNf4jNNWr
-	 wglYTRBXMIhRGS+TBGPFfRhZFz/sw7F53fuiFK39gHo15PEjRhFHucy1eBlgkj/V40
-	 TLKbLW1S17CYMK0yGoRaacciY3/3qeXsHIqgwFqd3pzlX1jGEhqkpIbH7YVLrXP4hr
-	 WoQ6hW1UTlrww0l15zKzbNmvY4ZhU2lp3vapYrTaJ3LvdSTulcz4XQ3lT7lhleWOjx
-	 m7iHRcJHWDwRQ==
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 44EABCEA; Sun,  7 Jun 2026 14:55:01 -0500 (CDT)
-Date: Sun, 7 Jun 2026 14:55:01 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Gary Guo <gary@garyguo.net>
-Cc: David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] keys: allow request-key path to be configured via Kconfig
-Message-ID: <aiXMlSqJtZdZqwJ2@mail.hallyn.com>
-References: <20260607134928.2832202-1-gary@kernel.org>
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="cks0xG/J";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dOhSJkQT"
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfout.phl.internal (Postfix) with ESMTP id 6E284EC0077;
+	Sun,  7 Jun 2026 21:31:06 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Sun, 07 Jun 2026 21:31:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1780882266;
+	 x=1780968666; bh=hRRqP3zmI7aVPNYFhbC98dJ2jTmFsEwd4lKoAjavDns=; b=
+	cks0xG/J7LBxDzhjNDpHUjXiJKEiv2tBGE+2DvNaSrelxksOrHCIbs6p7Nn+xqIF
+	Mk43AEPn/iqRgTj5mgAcfvTej8+fLDpqAzOfHD5c547EXw9gEmGApGxaBW9GKVO8
+	2GfIAlzMU7PpbSK85+2wOAO4+7zrOxizgR4a0eEsYi+wVtMhnlYq4YzUUh9VcgLf
+	Ent+LkmelyrrfB6nvK477niXO0w/uiMvoGEE+tf7uvfsRCuQ56pSCshpRUtJtwDR
+	o3V6b7+L+y/a+jQHz93vr6HUcKJfyqKbsRcTXA6vk2dZ8DJlSvZ1U40xhjX2uoUc
+	z8QaKTnEMsEKCgJ4PrcDzA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1780882266; x=
+	1780968666; bh=hRRqP3zmI7aVPNYFhbC98dJ2jTmFsEwd4lKoAjavDns=; b=d
+	OhSJkQTX1QTYZccEXwjUzj7+4dOkRUMkGWmRGXlEfKrwOJdKh8wF3AGtPeblyRAQ
+	w7YCxqnqINf0SzxVtQL+2H3A1u4GOhpP/aByNoiY4o5LyciXgKCbS+yaTYZshKND
+	N0L4k7Y87BUK+9zWbu32QtUZwHFqYeb1wZ3assfji6OrhgiRAcRa8LCCALYdnh4p
+	ADiPkxMPbRnwYoNalSc2hGtO3K5MSTvpAyOkPX7a+NF/QWbLw5PE66GtlPeK0Gqe
+	G+MUdCrfyWsnHtKDtrn0GnEPuBcRzQZsRvdMaO4is9c8OH8PsmnIwtuatp7Y5qsE
+	z7DrvYcmBG2UwtMeE3d1g==
+X-ME-Sender: <xms:WRsmap7A3_FcSRCCrufbi5tGlCn8NKopHQckR67ADYwvH8zNDFkSmw>
+    <xme:WRsmaqk4bJAQUrxa3VLuWjFZX9JjxSnDqW71xzPv1E7xFFoZCHyqUVzkQIw9OEChd
+    JjCNuu-3_V-zIQtry6iSTAPKLPxraTL65snab1MupRASJFnh7pN34of>
+X-ME-Received: <xmr:WRsmaqRQi8tsYzsf3szlHL1XfsAL3NnuXU-R14iHgfvf-Guqyb_xZ5KCcSue6ulu_z7g5NzQEVVUNYyQRA>
+X-ME-Proxy-Cause: dmFkZTF0IQBILUwW/+O31QOGJx2zUK/MxxP1aGBde++3FP4M5zc0SuR/Uc2z1t5CBiiSGh
+    rx4drP05u6eWJvAToEeI9Py185axPH2OemebU9tCIwxq6s8aKlyWNl1LOpAo1y23zVCqFW
+    u7xRb5iMm2EkxQt/hXwEyRPVVkilRHiwK1J0u9DNNCelIjwZvTY+ZGL7wdYviYhZ5FYHZ1
+    flCvvc4KImDwYGefI31ad/jnBFeWozluTwiK3OHQUMVwwWpP0WQftQvneCKs+i4OxlL3jy
+    3f1BDhuGbuMusdthF6AnjZzkR8iVWsTTKGG58seNDnbkuHbrve88vqIFHgqoDW+lQf4onl
+    VBAfflu+ACEAZPpJcBcN7b51TnFmORLDfZZqmsRsBDlR+PjbmUWEqmT8N2mywd5iCdpDe5
+    laMTelBHbVrmDwjetZ2SmT88rh3v/adCN8wDpdJ8CykQfm+Ayb8jXUbWLbRbg+qM/wv14e
+    gThGZYa8xA1gNAvfalm+tVXRUoi5NTxP5dUXe7c+YAlWKafrpV/idIs3zTf1j+TF7vWJnt
+    j5vvmvuHQHpXSCkl8W1sYIp1Z700sZUBdwq49U2y/N5ae201wRWtdVN2K0SsemjgT8eZQW
+    NryKdUEmh+AgeRxd0RTJ9L4/x/sLYS580CL3pcAxWzBUefoHQciY05bkTyVw
+X-ME-Proxy: <xmx:WRsmapEd4kdie-In1O9V7u92XPpJK8Le--VE2zYKWYNDcd6DCpVGNQ>
+    <xmx:WRsmavGr-CdCxzmnljf_1p_OM-qTm5ZfYTe8bb-nSwhNo19NMIWVdQ>
+    <xmx:WRsmanTat34nL6XFyOcavkJ-2MSOupabm46fPrEuCMAm7HNupwvlmQ>
+    <xmx:WRsmagKyhCsuKc8GqdYBtV4buWGeYiVwQb_XlP0GWZYsRdKuFZJQkg>
+    <xmx:WhsmamG4WZkHKUQX-SmpUbyFAtL67FIK4pp2lJyvf6sHrzncwBMkeiWW>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 7 Jun 2026 21:31:04 -0400 (EDT)
+Message-ID: <84f468de-6d36-4131-aa16-6dd3e0846fbb@maowtm.org>
+Date: Mon, 8 Jun 2026 02:31:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260607134928.2832202-1-gary@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 6/9] selftests/landlock: add tests for quiet flag with
+ fs rules
+To: Justin Suess <utilityemal77@gmail.com>
+Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
+ Jan Kara <jack@suse.cz>, Abhinav Saxena <xandfury@gmail.com>,
+ linux-security-module@vger.kernel.org
+References: <cover.1780272022.git.m@maowtm.org>
+ <9208d19c3aeba778f317defcfee9c62c44600e3b.1780272022.git.m@maowtm.org>
+ <aiMciEe6zVnisbQJ@zenbox>
+Content-Language: en-US
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <aiMciEe6zVnisbQJ@zenbox>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jun 07, 2026 at 02:49:27PM +0100, Gary Guo wrote:
-> From: Gary Guo <gary@garyguo.net>
+On 6/5/26 20:04, Justin Suess wrote:
+> On Mon, Jun 01, 2026 at 01:00:40AM +0100, Tingmao Wang wrote:
+>> [...]
+>> +				if (target->expect_ioctl_allowed)
+>> +					ASSERT_NE(EACCES, ret);
+>> +				else
+>> +					ASSERT_EQ(EACCES, ret);
+> This doesn't compile.
 > 
-> Some Linux distributions (e.g. NixOS) does not have /sbin present, and they
-> currently carry patches to replace /sbin/request-key to some other path.
+>   make: Entering directory '/home/justin/Code/linux-next/tools/testing/selftests'
+>     CC       fs_test
+>   fs_test.c: In function ‘audit_quiet_layout1_test_body’:
+>   fs_test.c:8456:33: error: expected ‘}’ before ‘else’
+>    8456 |                                 else
+>         |                                 ^~~~
+>   fs_test.c: At top level:
+>   fs_test.c:8474:1: error: expected identifier or ‘(’ before ‘}’ token
+>    8474 | }
+>         | ^
+>   make[1]: *** [../lib.mk:225: /home/justin/Code/linux-next/.out-landlock_archlinux-base-devel/kselftest/landlock/fs_test] Error 1
+>   
+> The ASSERT_* macros doen't properly handle braceless if statements...
 > 
-> Follow the way modprobe handles this by making this a Kconfig option which
-> defaults to the current /sbin/request-key.
+> (easy to miss if you forget to recompile after clang format and/or
+> checkpatch --fix...)
 > 
-> Also changed "char const" to "const char" as checkpatch complains
-> otherwise.
+> Adding braces to this as with previous versions of this series should
+> fix it.
 > 
-> Link: https://github.com/NixOS/nixpkgs/blob/6b316287bae2ee04c9b93c8c858d930fd07d7338/pkgs/os-specific/linux/kernel/request-key-helper.patch
-> Signed-off-by: Gary Guo <gary@garyguo.net>
+> Justin
 
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
+Thanks for spotting!  I forgot and was wondering why I didn't fix this
+checkpatch lint earlier, turns out there is a reason why :)
 
-> ---
-> I did not update mentions of /sbin/request-key in documentation and
-> elsewhere, as "/sbin/request-key" is concise while "request-key UMH" is
-> more mouthful and less clear.
-> 
-> Number of distros that doesn't have /sbin is limited so I think it wouldn't
-> create much confusion. Similarly, there are a lot of places where
-> /sbin/modprobe is mentioned despite it is technically configurable.
-> ---
->  security/keys/Kconfig       | 9 +++++++++
->  security/keys/request_key.c | 2 +-
->  2 files changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/security/keys/Kconfig b/security/keys/Kconfig
-> index f4510d8cb485..ee3c3d85fc03 100644
-> --- a/security/keys/Kconfig
-> +++ b/security/keys/Kconfig
-> @@ -40,6 +40,15 @@ config KEYS_REQUEST_CACHE
->  	  key.  Pathwalk will call multiple methods for each dentry traversed
->  	  (permission, d_revalidate, lookup, getxattr, getacl, ...).
->  
-> +config REQUEST_KEY_PATH
-> +	string "Path to the request-key binary"
-> +	default "/sbin/request-key"
-> +	help
-> +	  Path of the request-key usermode helper binary.
-> +
-> +	  This program is invoked by the kernel when the kernel is asked for
-> +	  a key that it doesn't have immediately available.
-> +
->  config PERSISTENT_KEYRINGS
->  	bool "Enable register of persistent per-UID keyrings"
->  	help
-> diff --git a/security/keys/request_key.c b/security/keys/request_key.c
-> index a7673ad86d18..ac8f9d1a87ad 100644
-> --- a/security/keys/request_key.c
-> +++ b/security/keys/request_key.c
-> @@ -117,7 +117,7 @@ static int call_usermodehelper_keys(const char *path, char **argv, char **envp,
->   */
->  static int call_sbin_request_key(struct key *authkey, void *aux)
->  {
-> -	static char const request_key[] = "/sbin/request-key";
-> +	static const char request_key[] = CONFIG_REQUEST_KEY_PATH;
->  	struct request_key_auth *rka = get_request_key_auth(authkey);
->  	const struct cred *cred = current_cred();
->  	key_serial_t prkey, sskey;
-> 
-> base-commit: 6e845bcb78c95af935094040bd4edc3c2b6dd784
-> -- 
-> 2.54.0
+Will fix in next version, after Mickaël's review.
