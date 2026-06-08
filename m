@@ -1,77 +1,121 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3911F168BD;
-	Mon,  8 Jun 2026 04:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C624D19005E;
+	Mon,  8 Jun 2026 04:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780891300; cv=none; b=q+lSB5WvcYogi4bJ8JdQcO9uWa//RMDAf90FD9h36mcyP0aoTFNnBZnx53Wnhxs+/nVkJuqypD9WGF4ckKlQLjWuSO4naPK6I6P1eMawum2Wm2wEDrSzxuaDxXYGkzHHSZaLM2NEvx/IpWGAW6NHMXNL/ifCwN+6pACuj/QdL9M=
+	t=1780892570; cv=none; b=ubkuHEIraGtfnCXhTjSlVku4GLBz0kmYgLd+ODYvU31CYcfYXFtgKSj3CqIT2HiGr8A33jThLgE6X37AAHDoEBZH399tAFTmayeLzgPL5/dsYdA/nWt9y07hGbQzZOKgXnLZ/uVdrqm4L4ROgfJKhqrMyzc4cCe4OWcbeZqtBnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780891300; c=relaxed/simple;
-	bh=RaLnUnhwbfFEjvT/vf9CjJ+x30/U7OhK+WtQuIcKdwc=;
+	s=arc-20240116; t=1780892570; c=relaxed/simple;
+	bh=AqlobgsVyy/Y78M67+4dKR8yHJRrpvCcyHxjZnuKKW4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R6lFp6fKQ0Bbr7AtPnVdMlUlASZjmCAaYkxm+o7RUQirXoZlKpbJnJZPVI4G91N64oj+ljRdEvb68nM0ko2oe4ztnnq5iBNAtJfOKiyO6kndjb1ORLcYEYm7E5AMDrWZbrTyC/FkID13WOXufHauHmrX/2MZY44vEHNd0dK3+mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fM84IcI/; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=ssN69tk9YoekVIOUPtVc+uF7o8RFeag0sk3KpDsluEEv6PEqBXfqSj/6OX0eJ6Qz225EY9+5RjI+bJopyFJShRjnFZkdHN6RrwxZ4FYiXXwhNkivJ4pJ5Ls5vW7zy+hzqE7gNIxO5bdDgAyJrXH8ThioJeHOSYNDNIjbwxjX1KA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f+CEk9QK; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fM84IcI/"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 3CCB01F00893;
-	Mon,  8 Jun 2026 04:01:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+CEk9QK"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id D03801F00893;
+	Mon,  8 Jun 2026 04:22:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780891298;
-	bh=Lvr28qF/drqKhq4fyZYhBGe9uFTF2BdFmLtuvMB+Q4c=;
+	s=k20260515; t=1780892569;
+	bh=+S3w8xELlZXCispRs1d2z4HUq4Ur88+AmZo/T6VgGBc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=fM84IcI/EOI4v3nKftD2Rs9cvyevsMhpsJlaEwfSs5YhZfucAm6S8o0zzfI2LVzMY
-	 OkLUINhlV6KCosD9E/dBlVmrBw7SWS1oS/VS82D3GIvfLUP0zJT4xuz/13gu9xBapP
-	 qJ0XbUBYQzqEGk3Mnhfo+bN7CQnLMRnXz5Xz3yFinNyrVPIZgjNkkufsehOycV06RQ
-	 MWo8XtaaoII0Q1rvtjCsVlVzhMAgxZsC+VonWpJlDC99LJDaBS3BUQ2uHpSswQVBE/
-	 tAndm7gf8Ggs+GUpBPg+XWnaoUdtTZypo7/FZhImkyYQwRoedQY7N5IECNAuoTQ4va
-	 6/y2I0v253NcQ==
-Date: Mon, 8 Jun 2026 07:01:34 +0300
+	b=f+CEk9QKNrABKlbnOUl/dqKzTOO0OKaCknb+Rd8F198XQt4TbB7klIx2rAtCJd1G4
+	 NP78lqZroNmkzoIpgCdLFbpVMzi/M5eQ5BNB9459vJpzXAeVEP3peXABkWKO2ys6l6
+	 M8bjqPn0MEswm94w+Lz2MXSc1qw8zmii8DkWmPUGzqfm5KSav6Zy4Dvqi+o0C6yu9h
+	 kZ/Rhv/BHw991K4pyyFv4uTSG09F3njrNcQCdE+RM4DQfGKgPW+cLaPZ08x33a5xwo
+	 DgKDtaVe3FkmCVaw915GtzhRSZlKzXGrYTLTeggEDi6iHUXxZJoi7UWteCj5/arby7
+	 O+Y6YvurLAxmQ==
+Date: Mon, 8 Jun 2026 07:22:45 +0300
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org, paul@paul-moore.com,
-	zohar@linux.ibm.com, roberto.sassu@huaweicloud.com,
-	noodles@earth.li, sudeep.holla@kernel.org, jmorris@namei.org,
-	serge@hallyn.com, dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com, jgg@ziepe.ca
-Subject: Re: [PATCH v5 4/4] tpm: tpm_crb_ffa: revert defered_probed when
- tpm_crb_ffa is built-in
-Message-ID: <aiY-nvx96uQtJOxP@kernel.org>
-References: <20260601142749.3379697-1-yeoreum.yun@arm.com>
- <20260601142749.3379697-5-yeoreum.yun@arm.com>
- <ah5AD69RNBdE1BvO@kernel.org>
- <ah7TAk3iItltddzT@e129823.arm.com>
+To: Mohammed EL Kadiri <med08elkadiri@gmail.com>
+Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>, Kees Cook <kees@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] keys: prevent slab cache merging for key_jar
+Message-ID: <aiZDlSTqaQTcvLBl@kernel.org>
+References: <20260604125034.13757-1-med08elkadiri@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ah7TAk3iItltddzT@e129823.arm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260604125034.13757-1-med08elkadiri@gmail.com>
 
-On Tue, Jun 02, 2026 at 01:56:34PM +0100, Yeoreum Yun wrote:
-> > On Mon, Jun 01, 2026 at 03:27:49PM +0100, Yeoreum Yun wrote:
-> > > commit 746d9e9f62a6 ("tpm: tpm_crb_ffa: try to probe tpm_crb_ffa when it's build_in")
-> > > probe tpm_crb_ffa forcefully when it's built-in to integrate with IMA.
-> > > 
-> > > However, IMA now provides the IMA_INIT_LATE_SYNC build option, which
-> > > initialises IMA at the late_initcall_sync level, so this change is no
-> > > longer required.
-> > > 
-> > > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+On Thu, Jun 04, 2026 at 01:50:34PM +0100, Mohammed EL Kadiri wrote:
+> The key_jar slab cache holds struct key objects containing cryptographic
+> keys, authentication tokens, and keyring linkage. This cache currently
+> lacks merge prevention, allowing the SLUB allocator to merge it with
+> other similarly-sized caches.
 > 
-> Might be rb tag?. Thanks!
+> On a default Ubuntu 6.17.0-23-generic system, key_jar has 5 aliases,
+> meaning 5 unrelated object types share its slab pages. struct key is
+> 224 bytes, placed in 256-byte slabs alongside biovec-16, maple_node,
+> ip6_dst_cache, task_delay_info, and kmalloc-256 users.
 > 
+> Cross-cache heap exploitation is a well-documented attack class
+> (CVE-2022-29582, CVE-2022-2588, CVE-2021-22555) where slab cache
+> merging enables type confusion between unrelated kernel objects. A
+> use-after-free in any subsystem sharing slab pages with key_jar could
+> allow an attacker to reclaim a freed slot as a struct key, or corrupt
+> an existing key through a dangling pointer to a different type.
+> 
+> Add SLAB_NO_MERGE to ensure key_jar receives dedicated slab pages,
+> eliminating cross-cache attacks targeting struct key. The memory
+> overhead is minimal: with 32 objects per slab page and typical key
+> usage bounded by system keyring size, the cost of dedicated pages is
+> negligible. There is zero performance impact on the allocation hot
+> path.
+> 
+> This follows the precedent set by skbuff_head_cache (net/core/skbuff.c)
+> which uses SLAB_NO_MERGE for similar isolation requirements.
+> 
+
+~/work/kernel.org/jarkko/linux-tpmdd master*
+❯ git log --oneline -1 d0bf7d5759c1d89fb013aa41cca5832e00b9632a
+d0bf7d5759c1 mm/slab: introduce kmem_cache flag SLAB_NO_MERGE
+
+~/work/kernel.org/jarkko/linux-tpmdd master*
+❯ git describe --contains d0bf7d5759c1d89fb013aa41cca5832e00b9632a
+v6.5-rc1~137^2^3~1
+
+So we could probably forward to stable's starting from v6.6+ if that
+is necessary / makes sense?
+
+It's not a bug fix but kind of still I think would be a change that
+stable kernels are better off with it than without it.
+
+What do you think?
+
+> Signed-off-by: Mohammed EL Kadiri <med08elkadiri@gmail.com>
+> ---
+>  security/keys/key.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/keys/key.c b/security/keys/key.c
+> index 3bbdde778631..592b65cf8539 100644
+> --- a/security/keys/key.c
+> +++ b/security/keys/key.c
+> @@ -1275,7 +1275,7 @@ void __init key_init(void)
+>  {
+>  	/* allocate a slab in which we can store keys */
+>  	key_jar = kmem_cache_create("key_jar", sizeof(struct key),
+> -			0, SLAB_HWCACHE_ALIGN|SLAB_PANIC, NULL);
+> +			0, SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_NO_MERGE, NULL);
+>  
+>  	/* add the special key types */
+>  	list_add_tail(&key_type_keyring.link, &key_types_list);
 > -- 
-> Sincerely,
-> Yeoreum Yun
+> 2.43.0
+> 
 
-SOB is enough information as it is a small change. I pushed it to
-for-next-tpm.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 BR, Jarkko
