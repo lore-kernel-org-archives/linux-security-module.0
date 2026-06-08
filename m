@@ -1,90 +1,75 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001B233A9E2;
-	Mon,  8 Jun 2026 03:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A95970808;
+	Mon,  8 Jun 2026 03:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780888226; cv=none; b=ujsJQk356ZU56ud/DqdDChUmBxSnqpOPSUV0IFPLBJmTfWn5dqtHMrbkeFa3WRb9/08Bc+BTZyBzoNsPFURK72qbi6//4zhoewP13wR6m1h/RG4n9p0iDgkJhiRSm/svEPRnEPv7jzsV6dwVri8cqMU1IdkEvy9G5/rK4d9VYpo=
+	t=1780890543; cv=none; b=OEFbRBfud2tA3VAnflGC6KDRoFtDJBCNA1cpQe7mgMndO/YOam0/JNRJ4NsPomGfYIWDWqym2Yq7XAklsKCwYCDrn+AYWR9vZwEL8Gz8Iz3X/FoXAZoT7hOWm29DALep6XVtTDUPnA6ok/h898IW/YaW8qt44OnfDgKI6QTKmsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780888226; c=relaxed/simple;
-	bh=314N4xIF/AM3aKGkbqzE1Durjlre7Kfr/a9D1sS+XzI=;
+	s=arc-20240116; t=1780890543; c=relaxed/simple;
+	bh=NHvv1C9nD5fi6ecrpB8JZZnGPsOr7l7jPJQ+ny+Ejao=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RhldleOyfFM2DnXLyOsWeMw/pzhPwl3jQyuk/Yu5jJIAPrdrafdGfYz42Eqx6NB9MhjkTSjBbLj15fvKYYJGE0fMukIQObsTtG47yjhqKoDIuLRotUsKbTA8T27nfPUjRsr9UKtTTUI4r0/80rvyJD21X0A3estL280IrU0/7xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wp1PH//L; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=UjZyA2+vaH1mMDtWtrAz4v667odiAxoiXkVgPDUmrEpIJyiEu189mWL75/T2mdZBbBPPLX0WDMZdsu90LYnIzg7QKGzpjiI1DN/AGBAAMhB2oJoed3Cu7SWLMI8s1DL5UeeQ+Niu2bm140Wda+7v9npzkGV84QcOGHEJqDdq1sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ISjI26et; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wp1PH//L"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 0379F1F00893;
-	Mon,  8 Jun 2026 03:10:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ISjI26et"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id B14DD1F00893;
+	Mon,  8 Jun 2026 03:49:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780888223;
-	bh=1QNLvALZ2xHt07Yzqvk61g6MFBIA9nBKDFMWDxQX1xg=;
+	s=k20260515; t=1780890542;
+	bh=7pUp3OJR2R30yLjkoMrfjrkuj3wqfZLCawbD/bNLgc0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Wp1PH//L38M6cyhYXN/B5NqTgR5HQQsb1sYRekmIQ6aUNcsOlm9LR5U/rixVXFC9N
-	 v7IcHsXr6gd/53cLHknEaK4s3XgYcNOYQxisiAaTfe3UWJMCpy/bbHY6dKpMQtxlz3
-	 40RMwXCMmVlYhyS6ObfxuPkEDR4bt2dy1RqhfZuObjmWcdP3O8tPyifWhhwwcjEOm/
-	 0IPIpYT1Q1o0MKNsv3xGqTH7pnIXZuH0m6gOn3KYVZmm+1k0R0BTwhx0Sb92wI1vgy
-	 eWvvKk3ZJVq64efFwzghqxiWzq3vaqVD7OhgSIc3jBRDSMU3wyyo9L4C3qe8s6OmD7
-	 jEkW4PLI776cw==
-Date: Mon, 8 Jun 2026 06:10:20 +0300
+	b=ISjI26etW4rh3io/3Jd36iTWmwREu5TTaV1JCKIZmUEVWaP3rvnTgHu7FdYo2sUdM
+	 logZiiTinVZyN1JiFwcX0c3AqjDbIBcW951cDZ3cBgwRC2MeWAeIbNSq233hV+I+5T
+	 WvkNZ+PSYoWb2pnySGcSBSYSpOyybh7M2x4Vpgnth91sdcqDUE3SA7WSZ7RtZ/0L93
+	 oPVMX26gmUVeRDxQhTAul9PB/fQdK3uVxO3W5GZ9bM79BftaMDNovgXy0lHgXwwGf1
+	 9d4rcrZNHv4rDf8VsyvMnULQBsMRGosmgb8yDcthwFF/Pk5JUZwHqLU2ZMSRwGmvjC
+	 DYW2t4PCfRDyg==
+Date: Mon, 8 Jun 2026 06:48:58 +0300
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Shaomin Chen <eeesssooo020@gmail.com>
-Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH] keys: Pin request_key_auth payload in instantiate paths
-Message-ID: <aiYynOxFk3LuK4LA@kernel.org>
-References: <20260526024838.3368409-1-eeesssooo020@gmail.com>
- <aiYxqTyfHwrDOTCs@kernel.org>
+To: Gui-Dong Han <hanguidong02@gmail.com>
+Cc: dhowells@redhat.com, keyrings@vger.kernel.org, ebiggers@google.com,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com
+Subject: Re: [PATCH] KEYS: Use acquire when reading state in keyring search
+Message-ID: <aiY7qqDGdfketqqP@kernel.org>
+References: <20260529033406.20673-1-hanguidong02@gmail.com>
+ <aho3CYdv8lQd2s85@kernel.org>
+ <CALbr=LYaca4+=hTsZJORQfrtzyUAGo8c+4ZEgkzgkFWQDWNJBA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aiYxqTyfHwrDOTCs@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALbr=LYaca4+=hTsZJORQfrtzyUAGo8c+4ZEgkzgkFWQDWNJBA@mail.gmail.com>
 
-On Mon, Jun 08, 2026 at 06:06:21AM +0300, Jarkko Sakkinen wrote:
-> On Tue, May 26, 2026 at 10:48:38AM +0800, Shaomin Chen wrote:
-> > keyctl_instantiate_key_common() reads request_key_auth from the assumed
-> > auth key before copying an instantiation payload from userspace.  The copy
-> > can fault and sleep.  If the request completes and revokes the auth key in
-> > that window, the auth payload can be detached and freed before the
-> > instantiate path uses it again.
-> > 
-> > A request-key helper reproducer can trigger this race.  One helper child
-> > blocks in KEYCTL_INSTANTIATE_IOV while the original helper instantiates the
-> > requested key and returns.  KASAN then reports a use-after-free from the
-> > stale request_key_auth payload in keyctl_instantiate_key_common().
-> > 
-> > Give request_key_auth payloads a refcount.  Take a payload reference while
+On Tue, Jun 02, 2026 at 05:42:26PM +0800, Gui-Dong Han wrote:
+> On Sat, May 30, 2026 at 9:02 AM Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> >
+> > On Fri, May 29, 2026 at 11:34:06AM +0800, Gui-Dong Han wrote:
+> > > The negative-key race fix added release/acquire ordering for key use.
+> > >
+> > > Publish payload before state; read state before payload.
+> > >
+> > > keyring_search_iterator() still uses READ_ONCE() before match callbacks.
+> > > An asymmetric match callback calls asymmetric_key_ids(), which reads
+> > > key->payload.data[asym_key_ids].
+> > >
+> > > Use key_read_state() there to complete that ordering.
+> >
+> > OK, so... I'm having a bit trouble understanding the exact concurrency
+> > scenario you're trying to describe despite I think I get the fix itself
+> > i.e. it is not pairing with mark_key_instantiated?
 > 
-> Please, name concrete things accurately. I.e. 'usage' in this case. If
-> you have a name, use it instead of obfuscating generalizations.
-> 
-> > authkey->sem stabilizes the payload and revocation state.  Hold that
-> > reference across the instantiate and reject paths.  Drop the auth key
-> > owning reference from revoke and destroy.
-> > 
-> > Reported-by: Shaomin Chen <eeesssooo020@gmail.com>
-> > Closes: https://lore.kernel.org/r/20260519144403.436694-1-eeesssooo020@gmail.com
-> > Signed-off-by: Shaomin Chen <eeesssooo020@gmail.com>
-> > ---
-> >  include/keys/request_key_auth-type.h |  2 ++
-> >  security/keys/internal.h             |  2 ++
-> >  security/keys/keyctl.c               | 24 +++++++++++++++-----
-> >  security/keys/request_key_auth.c     | 33 ++++++++++++++++++++++++++--
-> >  4 files changed, 53 insertions(+), 8 deletions(-)
-> 
-> So first, couple of things.
-> 
-> I'm not going to test not that well documented involving OOT driver.
+> Yes, it is intended to pair with mark_key_instantiated().
 
-Oops, sorry typo. "not that well documented reproducer" :-)
+OK, right. I'll apply this.
 
-But it is cool we just then need to draw the picture.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 BR, Jarkko
