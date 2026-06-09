@@ -1,51 +1,45 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D4D43C06C;
-	Tue,  9 Jun 2026 15:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC407370AF8
+	for <linux-security-module@vger.kernel.org>; Tue,  9 Jun 2026 16:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781019861; cv=none; b=sYEmjzTq3wCTZwMDN8ixFY9W8ToaQL74EWQ2pmjlurnRyAld8iZZPfXN5ApY7H6j4OcEEBLROQHXlYc4m2iVTF6mwF4/nN82iTW2GCl81r1HNHWLSx2+7UOgvkYjM8RsPuzs2J9fTSKy2GFVh2oZoHj3IeECuGRLbXQKMPAaF40=
+	t=1781021402; cv=none; b=hVsIb7zDS64FcB9PhAPHKjHDpwxg43rOPB8cuczFzeuQ8loQ0G1Cj4MQoT/dbUr/RLK+oapwgfYedKMZow7jvjZWqi58G1RtnTvOcaBPqyH3s9/F9A+bysFoO5UjMT+tGA/urIFr/ht9pzHUcBax9u6K6b2Xy7gMS/u5YzomcnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781019861; c=relaxed/simple;
-	bh=+dAUjj6vNE3Mt200Mcrwkt02kuAG1stb/QoD0y/CywY=;
+	s=arc-20240116; t=1781021402; c=relaxed/simple;
+	bh=b5Ng9zKFrDNDJKyThyckMG0zSSTU1a9U6PXK4/0rZJ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ckW75gwbQU6+/ON6vA2udru0IHOBw8R6fzARxlfQKQ9Xcx7qx3l1wLrz8br+nDPLTQ24X9zbv2YI23deDoxubTbXeYmQcG86rZ8xeiluu5JzpYPnDYCYcfS26t26j0b3McPCNuen8vJ+gFeWN2IH6+TKyDzL4omcohKbixUFT3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eXYsraaB; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=BvkrMYtLNUIvB78g+p0rOxlZim4alxcaGmycukw8X2FA01Pp0XkoZg4xBmVbQj95UjDNozEzt9+4pUG5K8Tc2H1JfTNE6tlDUeBp/NLjoBZHUlF5pNq7IFpReDJiDVHAaPnRWudpzwmv8RTfqJwkyb264O1GSj9BLTskFyHXCYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=HGuc/Meu; arc=none smtp.client-ip=84.16.66.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eXYsraaB"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 046FC1F00893;
-	Tue,  9 Jun 2026 15:44:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781019859;
-	bh=ce8L9DISpwG1PJQJprZn1hYi7eQgp6fXvlvdL6UkEEw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=eXYsraaBQI6xIRRnyvAoBPsxOwFBxKoQiCFLppBLREP3vijfvXtA83w/mxmGr15h5
-	 BprZwK55p5JKm/Ao1aWvcaJnl7qBIww8MWrh4qXxyOSAERHx1JvFOIJjQUpW49iFDY
-	 a4yh0FYYGaUhTt4MXGhK69bQw238STV6P+KPVfU1vK3hFcNPcvZTcOcE0kbBQGeLWk
-	 4BmiUbiAez+t6nUNbCqYFLXVVafyirojstjbo8PoS+F/FXyv02plVJ2BwmxV/4HHet
-	 0GyrAEANN1n89tmvp6vapE9+4dvOBA7xVuMGGPumkeO6ExTE5CTnL6EWkno07Jujut
-	 ehaf98HpJhPYg==
-Date: Tue, 9 Jun 2026 18:44:15 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Benoit HOUYERE <benoit.houyere@st.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>,
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-	=?iso-8859-1?Q?Fr=E9d=E9ric?= Jouen <fjouen@sealsq.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-	Laurent CHARPENTIER <laurent.charpentier@st.com>
-Subject: Re: [PATCH v2] tpm: use a map for tpm2_calc_ordinal_duration()
-Message-ID: <aig0zxWAvbrQuQnQ@kernel.org>
-References: <20250918193019.4018706-1-jarkko@kernel.org>
- <aMzSyCQks3NlMhPI@mail.hallyn.com>
- <DB5PR10MB766844D5478D63272584A12AFE1C2@DB5PR10MB7668.EURPRD10.PROD.OUTLOOK.COM>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="HGuc/Meu"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gZYlS6xbgzS0C;
+	Tue,  9 Jun 2026 18:09:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1781021396;
+	bh=lR+iiy1KlmORrLOLM88wLPKChs0lEm2FTswEKEr4m1k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HGuc/MeumYiqNu373iat2m2X9x0fmYGEbxIATw7TW7PHuuJwVb4uojL9+B+mYyPuv
+	 ZiU9hWpx+SAummQTY+QvI4mOvHpUa9T5Q9RrjRTLZME1JfQIhmy3Tf6B+l2xakyEwI
+	 TWQsLY0lnnfuTCPERur9KiFvN2rgTa1fAydAVYh4=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4gZYlR5n76zR2M;
+	Tue,  9 Jun 2026 18:09:55 +0200 (CEST)
+Date: Tue, 9 Jun 2026 18:09:51 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Serge Hallyn <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: Re: [PATCH v2 1/3] landlock: Require
+ LANDLOCK_ACCESS_FS_MAKE_WHITEOUT for RENAME_WHITEOUT
+Message-ID: <20260609.pait5oaTheHi@digikod.net>
+References: <20260513160552.4022649-1-gnoack@google.com>
+ <20260513160552.4022649-2-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -55,290 +49,166 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <DB5PR10MB766844D5478D63272584A12AFE1C2@DB5PR10MB7668.EURPRD10.PROD.OUTLOOK.COM>
+In-Reply-To: <20260513160552.4022649-2-gnoack@google.com>
+X-Infomaniak-Routing: alpha
 
-On Mon, Jun 08, 2026 at 02:46:28PM +0000, Benoit HOUYERE wrote:
-> Hello Serge and Jarkko,
+On Wed, May 13, 2026 at 06:05:50PM +0200, Günther Noack wrote:
+> renameat2(2) with the RENAME_WHITEOUT flag places a whiteout character
+> device file in the source file location in place of the moved file.
+> This creates a directory entry even in cases where all
+> LANDLOCK_ACCESS_FS_MAKE_* rights are denied.
 > 
+> Introduce the LANDLOCK_ACCESS_FS_MAKE_WHITEOUT right, which is checked
+> for the origin directory if RENAME_WHITEOUT is passed.
 > 
-> We have detected a regression with this fix. Indeed, it miss one zero on TPM_LONG_LONG. Initial value was 300000 and not 30000.
+> This does not affect normal renames within layered OverlayFS mounts:
+> When OverlayFS invokes rename with RENAME_WHITEOUT as part of a
+> "normal" rename operation, it does so in ovl_rename() using the
+> credentials that were set at the time of mounting the OverlayFS.
 > 
-> > +	{TPM2_CC_CREATE_PRIMARY, 30000},
-> > +	{TPM2_CC_CREATE, 30000},
-> > +	{TPM2_CC_CREATE_LOADED, 30000},
+> Bump the Landlock ABI version to 10.
 > 
-> > +enum tpm2_durations {
-> >  	TPM2_DURATION_SHORT     =     20,
-> > -	TPM2_DURATION_MEDIUM    =    750,
-> >  	TPM2_DURATION_LONG      =   2000,
-> > -	TPM2_DURATION_LONG_LONG = 300000,
-> >  	TPM2_DURATION_DEFAULT   = 120000,
-> >  };
+> Suggested-by: Christian Brauner <brauner@kernel.org>
+> Suggested-by: Mickaël Salaün <mic@digikod.net>
+> Signed-off-by: Günther Noack <gnoack@google.com>
+> ---
+>  include/uapi/linux/landlock.h                |  3 +++
+>  security/landlock/audit.c                    |  1 +
+>  security/landlock/fs.c                       | 15 +++++++++++++++
+>  security/landlock/limits.h                   |  2 +-
+>  security/landlock/syscalls.c                 |  2 +-
+>  tools/testing/selftests/landlock/base_test.c |  4 ++--
+>  tools/testing/selftests/landlock/fs_test.c   |  5 +++--
+>  7 files changed, 26 insertions(+), 6 deletions(-)
 > 
-> Best Regards,  Cordialement, Cordialmente, Hälsningar, 最好的问候, Mit besten Grüßen, 真心を込めて, 진심으로
-> 
-> 
-> Benoit HOUYERE | Tel: +33 6 14 22 81 30
-> TPM specialist
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 10a346e55e95..1f8a1d6d25f1 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -328,6 +328,8 @@ struct landlock_net_port_attr {
+>   *
+>   *   If multiple requirements are not met, the ``EACCES`` error code takes
+>   *   precedence over ``EXDEV``.
+> + * - %LANDLOCK_ACCESS_FS_MAKE_WHITEOUT: Create a whiteout object through
+> + *   :manpage:`rename(2)` with ``RENAME_WHITEOUT``.
+>   *
+>   * .. warning::
+>   *
+> @@ -356,6 +358,7 @@ struct landlock_net_port_attr {
+>  #define LANDLOCK_ACCESS_FS_TRUNCATE			(1ULL << 14)
+>  #define LANDLOCK_ACCESS_FS_IOCTL_DEV			(1ULL << 15)
+>  #define LANDLOCK_ACCESS_FS_RESOLVE_UNIX			(1ULL << 16)
+> +#define LANDLOCK_ACCESS_FS_MAKE_WHITEOUT		(1ULL << 17)
+>  /* clang-format on */
+>  
+>  /**
+> diff --git a/security/landlock/audit.c b/security/landlock/audit.c
+> index 8d0edf94037d..09c97083f599 100644
+> --- a/security/landlock/audit.c
+> +++ b/security/landlock/audit.c
+> @@ -38,6 +38,7 @@ static const char *const fs_access_strings[] = {
+>  	[BIT_INDEX(LANDLOCK_ACCESS_FS_TRUNCATE)] = "fs.truncate",
+>  	[BIT_INDEX(LANDLOCK_ACCESS_FS_IOCTL_DEV)] = "fs.ioctl_dev",
+>  	[BIT_INDEX(LANDLOCK_ACCESS_FS_RESOLVE_UNIX)] = "fs.resolve_unix",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_MAKE_WHITEOUT)] = "fs.make_whiteout",
+>  };
+>  
+>  static_assert(ARRAY_SIZE(fs_access_strings) == LANDLOCK_NUM_ACCESS_FS);
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index c1ecfe239032..09de6ba5c3a3 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -1519,6 +1519,21 @@ static int hook_path_rename(const struct path *const old_dir,
+>  			    const unsigned int flags)
+>  {
+>  	/* old_dir refers to old_dentry->d_parent and new_dir->mnt */
+> +	if (flags & RENAME_WHITEOUT) {
+> +		int err;
+> +
+> +		/*
+> +		 * Rename with RENAME_WHITEOUT creates a whiteout object in the
+> +		 * old location, so we check the access right for creating that.
+> +		 *
+> +		 * See Documentation/filesystems/overlayfs.rst and renameat2(2).
+> +		 */
+> +		err = current_check_access_path(
+> +			old_dir, LANDLOCK_ACCESS_FS_MAKE_WHITEOUT);
 
-This has been fixed in 478a3f949a43822dc6ce089345ae80e8dcde3300.
+We should not need a second path walk, even if whiteouts are rare.
+Please propose another way.
 
+> +		if (err)
+> +			return err;
+> +	}
+> +
+>  	return current_check_refer_path(old_dentry, new_dir, new_dentry, true,
+>  					!!(flags & RENAME_EXCHANGE));
+>  }
+> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> index b454ad73b15e..e59378e8e897 100644
+> --- a/security/landlock/limits.h
+> +++ b/security/landlock/limits.h
+> @@ -19,7 +19,7 @@
+>  #define LANDLOCK_MAX_NUM_LAYERS		16
+>  #define LANDLOCK_MAX_NUM_RULES		U32_MAX
+>  
+> -#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_RESOLVE_UNIX
+> +#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_MAKE_WHITEOUT
+>  #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
+>  #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
+>  
+> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> index accfd2e5a0cd..d45469d5d464 100644
+> --- a/security/landlock/syscalls.c
+> +++ b/security/landlock/syscalls.c
+> @@ -166,7 +166,7 @@ static const struct file_operations ruleset_fops = {
+>   * If the change involves a fix that requires userspace awareness, also update
+>   * the errata documentation in Documentation/userspace-api/landlock.rst .
+>   */
+> -const int landlock_abi_version = 9;
+> +const int landlock_abi_version = 10;
+>  
+>  /**
+>   * sys_landlock_create_ruleset - Create a new ruleset
+> diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
+> index 30d37234086c..6c8113c2ded1 100644
+> --- a/tools/testing/selftests/landlock/base_test.c
+> +++ b/tools/testing/selftests/landlock/base_test.c
+> @@ -76,8 +76,8 @@ TEST(abi_version)
+>  	const struct landlock_ruleset_attr ruleset_attr = {
+>  		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
+>  	};
+> -	ASSERT_EQ(9, landlock_create_ruleset(NULL, 0,
+> -					     LANDLOCK_CREATE_RULESET_VERSION));
+> +	ASSERT_EQ(10, landlock_create_ruleset(NULL, 0,
+> +					      LANDLOCK_CREATE_RULESET_VERSION));
+>  
+>  	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
+>  					      LANDLOCK_CREATE_RULESET_VERSION));
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index cdb47fc1fc0a..53d1b659849f 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -579,7 +579,7 @@ TEST_F_FORK(layout1, inval)
+>  	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
+>  	LANDLOCK_ACCESS_FS_RESOLVE_UNIX)
+>  
+> -#define ACCESS_LAST LANDLOCK_ACCESS_FS_RESOLVE_UNIX
+> +#define ACCESS_LAST LANDLOCK_ACCESS_FS_MAKE_WHITEOUT
+>  
+>  #define ACCESS_ALL ( \
+>  	ACCESS_FILE | \
+> @@ -593,7 +593,8 @@ TEST_F_FORK(layout1, inval)
+>  	LANDLOCK_ACCESS_FS_MAKE_FIFO | \
+>  	LANDLOCK_ACCESS_FS_MAKE_BLOCK | \
+>  	LANDLOCK_ACCESS_FS_MAKE_SYM | \
+> -	LANDLOCK_ACCESS_FS_REFER)
+> +	LANDLOCK_ACCESS_FS_REFER | \
+> +	LANDLOCK_ACCESS_FS_MAKE_WHITEOUT)
+>  
+>  /* clang-format on */
+>  
+> -- 
+> 2.54.0.563.g4f69b47b94-goog
 > 
-> -----Original Message-----
-> From: Serge E. Hallyn <serge@hallyn.com> 
-> Sent: Friday, September 19, 2025 5:49 AM
-> To: Jarkko Sakkinen <jarkko@kernel.org>
-> Cc: linux-integrity@vger.kernel.org; Frédéric Jouen <fjouen@sealsq.com>; Peter Huewe <peterhuewe@gmx.de>; Jason Gunthorpe <jgg@ziepe.ca>; James Bottomley <James.Bottomley@hansenpartnership.com>; Mimi Zohar <zohar@linux.ibm.com>; David Howells <dhowells@redhat.com>; Paul Moore <paul@paul-moore.com>; James Morris <jmorris@namei.org>; Serge E. Hallyn <serge@hallyn.com>; open list <linux-kernel@vger.kernel.org>; open list:KEYS-TRUSTED <keyrings@vger.kernel.org>; open list:SECURITY SUBSYSTEM <linux-security-module@vger.kernel.org>
-> Subject: Re: [PATCH v2] tpm: use a map for tpm2_calc_ordinal_duration()
 > 
-> On Thu, Sep 18, 2025 at 10:30:18PM +0300, Jarkko Sakkinen wrote:
-> > The current shenanigans for duration calculation introduce too much 
-> > complexity for a trivial problem, and further the code is hard to 
-> > patch and maintain.
-> > 
-> > Address these issues with a flat look-up table, which is easy to 
-> > understand and patch. If leaf driver specific patching is required in 
-> > future, it is easy enough to make a copy of this table during driver 
-> > initialization and add the chip parameter back.
-> > 
-> > 'chip->duration' is retained for TPM 1.x.
-> > 
-> > As the first entry for this new behavior address TCG spec update 
-> > mentioned in this issue:
-> > 
-> > https://github.com/raspberrypi/linux/issues/7054
-> > 
-> > Therefore, for TPM_SelfTest the duration is set to 3000 ms.
-> > 
-> > This does not categorize a as bug, given that this is introduced to 
-> > the spec after the feature was originally made.
-> > 
-> > Cc: Frédéric Jouen <fjouen@sealsq.com>
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> 
-> fwiw (which shouldn't be much) looks good to me, but two questions, one here and one below.
-> 
-> First, it looks like in the existing code it is possible for a tpm2 chip to set its own timeouts and then set the TPM_CHIP_FLAG_HAVE_TIMEOUTS flag to avoid using the defaults, but I don't see anything using that in-tree.  Is it possible that there are out of tree drivers that will be sabotaged here?  Or am I misunderstanding that completely?
-> 
-> > ---
-> > v2:
-> > - Add the missing msec_to_jiffies() calls.
-> > - Drop redundant stuff.
-> > ---
-> >  drivers/char/tpm/tpm-interface.c |   2 +-
-> >  drivers/char/tpm/tpm.h           |   2 +-
-> >  drivers/char/tpm/tpm2-cmd.c      | 127 ++++++++-----------------------
-> >  include/linux/tpm.h              |   5 +-
-> >  4 files changed, 37 insertions(+), 99 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm-interface.c 
-> > b/drivers/char/tpm/tpm-interface.c
-> > index b71725827743..c9f173001d0e 100644
-> > --- a/drivers/char/tpm/tpm-interface.c
-> > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -52,7 +52,7 @@ MODULE_PARM_DESC(suspend_pcr,  unsigned long 
-> > tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)  {
-> >  	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-> > -		return tpm2_calc_ordinal_duration(chip, ordinal);
-> > +		return tpm2_calc_ordinal_duration(ordinal);
-> >  	else
-> >  		return tpm1_calc_ordinal_duration(chip, ordinal);  } diff --git 
-> > a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h index 
-> > 7bb87fa5f7a1..2726bd38e5ac 100644
-> > --- a/drivers/char/tpm/tpm.h
-> > +++ b/drivers/char/tpm/tpm.h
-> > @@ -299,7 +299,7 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 
-> > property_id,  ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip);  
-> > int tpm2_auto_startup(struct tpm_chip *chip);  void 
-> > tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type); -unsigned 
-> > long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
-> > +unsigned long tpm2_calc_ordinal_duration(u32 ordinal);
-> >  int tpm2_probe(struct tpm_chip *chip);  int 
-> > tpm2_get_cc_attrs_tbl(struct tpm_chip *chip);  int tpm2_find_cc(struct 
-> > tpm_chip *chip, u32 cc); diff --git a/drivers/char/tpm/tpm2-cmd.c 
-> > b/drivers/char/tpm/tpm2-cmd.c index 524d802ede26..7d77f6fbc152 100644
-> > --- a/drivers/char/tpm/tpm2-cmd.c
-> > +++ b/drivers/char/tpm/tpm2-cmd.c
-> > @@ -28,120 +28,57 @@ static struct tpm2_hash tpm2_hash_map[] = {
-> >  
-> >  int tpm2_get_timeouts(struct tpm_chip *chip)  {
-> > -	/* Fixed timeouts for TPM2 */
-> >  	chip->timeout_a = msecs_to_jiffies(TPM2_TIMEOUT_A);
-> >  	chip->timeout_b = msecs_to_jiffies(TPM2_TIMEOUT_B);
-> >  	chip->timeout_c = msecs_to_jiffies(TPM2_TIMEOUT_C);
-> >  	chip->timeout_d = msecs_to_jiffies(TPM2_TIMEOUT_D);
-> > -
-> > -	/* PTP spec timeouts */
-> > -	chip->duration[TPM_SHORT] = msecs_to_jiffies(TPM2_DURATION_SHORT);
-> > -	chip->duration[TPM_MEDIUM] = msecs_to_jiffies(TPM2_DURATION_MEDIUM);
-> > -	chip->duration[TPM_LONG] = msecs_to_jiffies(TPM2_DURATION_LONG);
-> > -
-> > -	/* Key creation commands long timeouts */
-> > -	chip->duration[TPM_LONG_LONG] =
-> > -		msecs_to_jiffies(TPM2_DURATION_LONG_LONG);
-> > -
-> >  	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
-> > -
-> >  	return 0;
-> >  }
-> >  
-> > -/**
-> > - * tpm2_ordinal_duration_index() - returns an index to the chip 
-> > duration table
-> > - * @ordinal: TPM command ordinal.
-> > - *
-> > - * The function returns an index to the chip duration table
-> > - * (enum tpm_duration), that describes the maximum amount of
-> > - * time the chip could take to return the result for a  particular ordinal.
-> > - *
-> > - * The values of the MEDIUM, and LONG durations are taken
-> > - * from the PC Client Profile (PTP) specification (750, 2000 msec)
-> > - *
-> > - * LONG_LONG is for commands that generates keys which empirically 
-> > takes
-> > - * a longer time on some systems.
-> > - *
-> > - * Return:
-> > - * * TPM_MEDIUM
-> > - * * TPM_LONG
-> > - * * TPM_LONG_LONG
-> > - * * TPM_UNDEFINED
-> > +/*
-> > + * Contains the maximum durations in milliseconds for TPM2 commands.
-> >   */
-> > -static u8 tpm2_ordinal_duration_index(u32 ordinal) -{
-> > -	switch (ordinal) {
-> > -	/* Startup */
-> > -	case TPM2_CC_STARTUP:                 /* 144 */
-> > -		return TPM_MEDIUM;
-> > -
-> > -	case TPM2_CC_SELF_TEST:               /* 143 */
-> > -		return TPM_LONG;
-> > -
-> > -	case TPM2_CC_GET_RANDOM:              /* 17B */
-> > -		return TPM_LONG;
-> > -
-> > -	case TPM2_CC_SEQUENCE_UPDATE:         /* 15C */
-> > -		return TPM_MEDIUM;
-> > -	case TPM2_CC_SEQUENCE_COMPLETE:       /* 13E */
-> > -		return TPM_MEDIUM;
-> > -	case TPM2_CC_EVENT_SEQUENCE_COMPLETE: /* 185 */
-> > -		return TPM_MEDIUM;
-> > -	case TPM2_CC_HASH_SEQUENCE_START:     /* 186 */
-> > -		return TPM_MEDIUM;
-> > -
-> > -	case TPM2_CC_VERIFY_SIGNATURE:        /* 177 */
-> > -		return TPM_LONG_LONG;
-> > -
-> > -	case TPM2_CC_PCR_EXTEND:              /* 182 */
-> > -		return TPM_MEDIUM;
-> > -
-> > -	case TPM2_CC_HIERARCHY_CONTROL:       /* 121 */
-> > -		return TPM_LONG;
-> > -	case TPM2_CC_HIERARCHY_CHANGE_AUTH:   /* 129 */
-> > -		return TPM_LONG;
-> > -
-> > -	case TPM2_CC_GET_CAPABILITY:          /* 17A */
-> > -		return TPM_MEDIUM;
-> > -
-> > -	case TPM2_CC_NV_READ:                 /* 14E */
-> > -		return TPM_LONG;
-> > -
-> > -	case TPM2_CC_CREATE_PRIMARY:          /* 131 */
-> > -		return TPM_LONG_LONG;
-> > -	case TPM2_CC_CREATE:                  /* 153 */
-> > -		return TPM_LONG_LONG;
-> > -	case TPM2_CC_CREATE_LOADED:           /* 191 */
-> > -		return TPM_LONG_LONG;
-> > -
-> > -	default:
-> > -		return TPM_UNDEFINED;
-> > -	}
-> > -}
-> > +static const struct {
-> > +	unsigned long ordinal;
-> > +	unsigned long duration;
-> > +} tpm2_ordinal_duration_map[] = {
-> > +	{TPM2_CC_STARTUP, 750},
-> > +	{TPM2_CC_SELF_TEST, 3000},
-> 
-> I assume you intended to increase TPM2_CC_SELF_TEST from 2000 to 3000 here?  But it's not mentioned in the commit, so making sure...
-> 
-> > +	{TPM2_CC_GET_RANDOM, 2000},
-> > +	{TPM2_CC_SEQUENCE_UPDATE, 750},
-> > +	{TPM2_CC_SEQUENCE_COMPLETE, 750},
-> > +	{TPM2_CC_EVENT_SEQUENCE_COMPLETE, 750},
-> > +	{TPM2_CC_HASH_SEQUENCE_START, 750},
-> > +	{TPM2_CC_VERIFY_SIGNATURE, 30000},
-> > +	{TPM2_CC_PCR_EXTEND, 750},
-> > +	{TPM2_CC_HIERARCHY_CONTROL, 2000},
-> > +	{TPM2_CC_HIERARCHY_CHANGE_AUTH, 2000},
-> > +	{TPM2_CC_GET_CAPABILITY, 750},
-> > +	{TPM2_CC_NV_READ, 2000},
-> > +	{TPM2_CC_CREATE_PRIMARY, 30000},
-> > +	{TPM2_CC_CREATE, 30000},
-> > +	{TPM2_CC_CREATE_LOADED, 30000},
-> > +};
-> >  
-> >  /**
-> > - * tpm2_calc_ordinal_duration() - calculate the maximum command duration
-> > - * @chip:    TPM chip to use.
-> > + * tpm2_calc_ordinal_duration() - Calculate the maximum command 
-> > + duration
-> >   * @ordinal: TPM command ordinal.
-> >   *
-> > - * The function returns the maximum amount of time the chip could 
-> > take
-> > - * to return the result for a particular ordinal in jiffies.
-> > - *
-> > - * Return: A maximal duration time for an ordinal in jiffies.
-> > + * Returns the maximum amount of time the chip is expected by kernel 
-> > + to
-> > + * take in jiffies.
-> >   */
-> > -unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 
-> > ordinal)
-> > +unsigned long tpm2_calc_ordinal_duration(u32 ordinal)
-> >  {
-> > -	unsigned int index;
-> > +	int i;
-> >  
-> > -	index = tpm2_ordinal_duration_index(ordinal);
-> > +	for (i = 0; i < ARRAY_SIZE(tpm2_ordinal_duration_map); i++)
-> > +		if (ordinal == tpm2_ordinal_duration_map[i].ordinal)
-> > +			return msecs_to_jiffies(tpm2_ordinal_duration_map[i].duration);
-> >  
-> > -	if (index != TPM_UNDEFINED)
-> > -		return chip->duration[index];
-> > -	else
-> > -		return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
-> > +	return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
-> >  }
-> >  
-> > -
-> >  struct tpm2_pcr_read_out {
-> >  	__be32	update_cnt;
-> >  	__be32	pcr_selects_cnt;
-> > diff --git a/include/linux/tpm.h b/include/linux/tpm.h index 
-> > b0e9eb5ef022..dc0338a783f3 100644
-> > --- a/include/linux/tpm.h
-> > +++ b/include/linux/tpm.h
-> > @@ -228,10 +228,11 @@ enum tpm2_timeouts {
-> >  	TPM2_TIMEOUT_B          =   4000,
-> >  	TPM2_TIMEOUT_C          =    200,
-> >  	TPM2_TIMEOUT_D          =     30,
-> > +};
-> > +
-> > +enum tpm2_durations {
-> >  	TPM2_DURATION_SHORT     =     20,
-> > -	TPM2_DURATION_MEDIUM    =    750,
-> >  	TPM2_DURATION_LONG      =   2000,
-> > -	TPM2_DURATION_LONG_LONG = 300000,
-> >  	TPM2_DURATION_DEFAULT   = 120000,
-> >  };
-> >  
-> > --
-> > 2.39.5
-> 
-
-BR, Jarkko
