@@ -1,129 +1,122 @@
-Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com [74.125.82.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23BCD329367
-	for <linux-security-module@vger.kernel.org>; Tue,  9 Jun 2026 14:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.175
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781014276; cv=pass; b=lIS7rzL4uNJircyA2OmBfvgRESYwrxOM3XhNAF6JfbD6NJSf8cOdSML/ZtFt1acVSnDv+vXpFjDQGnkhiaRm7dVycl1Y3DOsvBwyoPFHVP7zhwxuQT5U69Qk9MJ2y9iFSf4/Qc2xXQ9b+1RQ40w4c0KVOhFu8G6QDpvY9fkg+Hc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781014276; c=relaxed/simple;
-	bh=O7/vXOHmBuDEN6iYoEcXZX9SQVUOxuFM9K3LUsWI6j0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZIcn2G9x/RP+cJTydHerC33qcXMZPz583ccjkspcxoe7wOAtyN3kFg1/Mw2yRM/CKZHMVMz1hlPZIlI67E7Z5hc+yOsAgNGPNedA+gXc4rDtvk0ZXhpbGgkLLgHAliRiHzB0eZZEbyUYuTiG2gcX1gZTVixq5qUf4YtOFahV4Ws=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pO6mb/Mj; arc=pass smtp.client-ip=74.125.82.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48163570C8;
+	Tue,  9 Jun 2026 14:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781016768; cv=none; b=H2SXaE876CeO9fC3DKU6G0FjonIOcQRRO2D4f0LXq/1k135bPj4N50RodxmUaOAmdIgmndqeVnZE+db8lJz3jwZqYgJAd8dTbj6pvCm/bNQhPTdbJgUSlmTEWB+z20Xes0YymNQf0328WVuQQ/skIEW69pH038J+PkkKT3dgtYs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781016768; c=relaxed/simple;
+	bh=kg6lTBBcz0J0AeRp6/oenGKb2pjka0fVQojVriKu+JY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I634JdmexPsTDY9iqc0iaDL5bKs5t5MTcsMYeM9qCjUd2bP/AkRpUd/Ksfj1TosSQnoJ/xdfuhCyfL9di4gubEpYaK9lq7HfmLQwJqDstEMNkso4EsPJDLZIxREK6ZRleh8gNw7TMHjW7fOCnZDxgBdVa2vVtZLPIfexJtHAung=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tenw/uDr; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pO6mb/Mj"
-Received: by mail-dy1-f175.google.com with SMTP id 5a478bee46e88-3042a99f0ceso652514eec.0
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Jun 2026 07:11:14 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781014274; cv=none;
-        d=google.com; s=arc-20240605;
-        b=aVBZF/Hs6kR+iyEWu1hpwc5rp0pofcSeDeQGKlb76QWout8UsY75Bys6q3ZRhcWz5s
-         cU2Hi5m+u0IkyHvKYX7u8b3RPn3zu9ghhqjekqjeggZbwrM7iScWiWrHJzXSkfHdGKRK
-         vheNR7+30FSNMfeDUx+x5/X9NA2oAv8ti3GKkP3AKsuKbZGTcMzoxyg45GBMpXobMWfz
-         qPFTtIHoYK3IMCR4h9HYRiuDMijLl2Gsh8GqAtZGHi3eA56DsT+etj3qO8nNek1BAESY
-         xRg3HBTDwH457i1djio6Iy23YwEmRBtLMUY4Ims8pIKsboXQrMh6blIZatmEVk88/WGp
-         RwoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=nhjDW0OszKJAGtPcPLD3bV8YMBm1E7bkkVTPi52pFmI=;
-        fh=D5jRLbeJN/lzyPUeeHgm9NH/6u9eRxzdPoRW7EePKB0=;
-        b=Og8RSMjRo9S3mvxhuH+CasIg3Dj9AT2J5JV6IR/8+TRPM7WxM1JSCFTcyFO0fYhJn1
-         wwwBRTUmZFA/fMM5kVKU9ttR6sEFbuNM3RSe/i+w8AkX+oSnsC7Beo3TJKER19BatxIm
-         fYWLwsazxjBvQL3gEP1QHuiW0hNpnFEg7gDXTPAOBtbJkS5nDSS/8FD4JReQD3gXereH
-         T9d2671PmSfIm6Wid16Gu7aYciwa2P1h/4P3QT2C/MBZotAC84vin+tqsavFTtdw438w
-         KQFcLJG01RazGNKv0tnmsfy/uo+5K+2D1mynbSSOt0z13El42JhLUYY3XMxWisYsoCkd
-         ICjA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781014274; x=1781619074; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nhjDW0OszKJAGtPcPLD3bV8YMBm1E7bkkVTPi52pFmI=;
-        b=pO6mb/MjV7+9Lyoy7qKEe8jyrmAVmp1sVk9ZAQekGJY/qcYqRSPwEAedKazW1YDjAo
-         daWkJzVnMyQBtO7fmggjHQ1cPEQGXHlt3VIr6I1Kj1CO/2HtnymY1aGpvzlRB8OH+ilA
-         890WtpQyksZUJj37x9K37O3XCrrKWsg/O8Y8q+MGEolHuY3O9nF+Mz46OcSl6XEeAyYn
-         PpKFuaWCdq+j/LCZ8xHOrMCCjyi8dyUYIO1ZCC3Qs9hwAGz+a0asgrLpY7oQ6QrXmnr+
-         SzEi2Ndcvrsr6lg0pp6Uccf0k7gE8QI2hRsXCNfmZx5mer8km0ZAI5cl8BunKE5GWZwg
-         VvlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781014274; x=1781619074;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=nhjDW0OszKJAGtPcPLD3bV8YMBm1E7bkkVTPi52pFmI=;
-        b=UAS23tUpwUOliEwu3eV8f+TxLF0Vwj3ZvTSZhvCaEU4f7mnuSiz6pY/+4BrdoOeKrq
-         aWN54as6KCgMKa3fguv8OEDsv6pVAxo0zLJCIsuq0otnF8XLVIYDuGtQGXK3baSIANEH
-         Rp1dkUZYiF8S/dSURPJ/1P9butiOby0cgkriKIFRUULcgf4+JFUs6UIhV76w3yz8Rm3r
-         UQ/hmto1bV/GUykAtsDV5YO3tiUMtTu/16syheMiz6tUvluqBPhnvx7kRXZyQmrB9wBX
-         zLIYtMprjjz4plX5z2BsUEwtS04QcjHl5AOm3xku607OSpZ+gXk+NwyHVovk2R4izZDY
-         HjPg==
-X-Forwarded-Encrypted: i=1; AFNElJ/cCDCcOeD62mKtZ2LgPxuIIfmWFf376pqCrHhej+NGdOE18yOtfdEeTdf8NF3/5p7Ifo8MziCz+0TGcvxgsPE/YMuHExw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTp6osLmv+sOozWhlU2A7fxg9L/njjCTyTaI+dSNBmpM24b5i9
-	EQgYHmuDfqQcIyOIj3qsIXj7IXQ28tnWPM6ouBlbxrNx5SYH+/oqE21jy653SMH3R2cz6Z7/jDv
-	QEsc8Pr0ekqlha5I/52aAO/+Fc2rTNl4=
-X-Gm-Gg: Acq92OHqCOdgx4L2a+WAm7OEDDYc//BqMKp8jAKYwhKzhvsG3BtnPpNnr3AcOACGP+2
-	pqJ0xr2+drQm5n/Goo2a7QGLkejdoXPjlrN4zihd9vT7wWxpYyU/R8GYhpGLUolthbpPB+JDwJa
-	uILEXHD9jUzZ11oqi+mbNSSzgIN/IRPwxjPkQ+NLgeGM2LhdYkJqhOgy41RxO0ly62iHNRESfC1
-	d2m2rZuI6JNaNzLSLErXnKMHA+qJYp45DrPHkByo2RM/3neSskCuOE9/XmEFRWo6A/AzAipv/Ly
-	F2epPGB1OyB4mJ2Qj7AsA8KkCIuxUeOEVgtbDlAhgqN+FGs9+RAd4FyIXkCMUSBIY+c2RGKKHhb
-	s0p9icQKDUo6dBSYoTTnKZTG+tLuM/pHcDw==
-X-Received: by 2002:a05:693c:3749:b0:304:8860:74d6 with SMTP id
- 5a478bee46e88-3077b21ea10mr6213247eec.1.1781014274135; Tue, 09 Jun 2026
- 07:11:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tenw/uDr"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id F03BC1F00899;
+	Tue,  9 Jun 2026 14:52:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781016767;
+	bh=+anADvK5mgnjZez4qo9D0EoExS+gbDwofiWW81SIumU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Tenw/uDrjCQBq4hTcbXFdasirqCMUa6+f7tYyBupvnaS1w9WNO5l9XokILMEktmS/
+	 YI90nq5pkjEaSi1sllJHZkyjPB+eB/YqOgMMuOZhDKGLVtHxUZj9j4dovEIOgUgV5a
+	 YH2wBvB2a7SPWTams0PuZDjdFRIRKyBKk2hVpq4OA6xCKjzt7adzDHa59bo+SCVYpC
+	 rK4ht+WXnja43SxwYo2lc+gEb9H1VRRUlCnlquxDkMwEitrvbHtrL92gGNXpzHXre9
+	 Oy7hIslPisO+pAhWCjGWVV9AM6MKqCuWZkaEQtqPVmm6kuF2q8Uncw/Wlq0jYVW7ty
+	 fJI8HlHGcB4sQ==
+Date: Tue, 9 Jun 2026 17:52:43 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+Cc: Mohammed EL Kadiri <med08elkadiri@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>, Kees Cook <kees@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] keys: prevent slab cache merging for key_jar
+Message-ID: <aigoZeoqygyBYCbR@kernel.org>
+References: <20260604125034.13757-1-med08elkadiri@gmail.com>
+ <aiZDlSTqaQTcvLBl@kernel.org>
+ <85a686a6-7fcc-4a1d-8574-0fc7c2f84bc8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260604-unique-ref-v17-0-7b4c3d2930b9@kernel.org>
-In-Reply-To: <20260604-unique-ref-v17-0-7b4c3d2930b9@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 9 Jun 2026 16:11:01 +0200
-X-Gm-Features: AVVi8CfNPwpEZxw0N5nqXBfBlOCze0ATuinL6YIsUVP51KJlhLB9xVsEvEDqHhw
-Message-ID: <CANiq72nkYJnztntLzB5jNwi_oRY+V7UMpf6AuKM07aGH9FwPdg@mail.gmail.com>
-Subject: Re: [PATCH v17 00/10] rust: add `Ownable` trait and `Owned` type
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	Serge Hallyn <sergeh@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Viresh Kumar <vireshk@kernel.org>, 
-	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Boqun Feng <boqun@kernel.org>, Uladzislau Rezki <urezki@gmail.com>, Lorenzo Stoakes <ljs@kernel.org>, 
-	Vlastimil Babka <vbabka@kernel.org>, "Liam R. Howlett" <liam@infradead.org>, 
-	Igor Korotin <igor.korotin@linux.dev>, Pavel Tikhomirov <ptikhomirov@virtuozzo.com>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, 
-	driver-core@lists.linux.dev, Asahi Lina <lina+kernel@asahilina.net>, 
-	Oliver Mangold <oliver.mangold@pm.me>, Viresh Kumar <viresh.kumar@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <85a686a6-7fcc-4a1d-8574-0fc7c2f84bc8@kernel.org>
 
-On Thu, Jun 4, 2026 at 10:13=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel=
-.org> wrote:
->
->       rust: page: update formatting of `use` statements
->       rust: aref: update formatting of use statements
+On Mon, Jun 08, 2026 at 09:20:39AM +0200, Vlastimil Babka (SUSE) wrote:
+> On 6/8/26 06:22, Jarkko Sakkinen wrote:
+> > On Thu, Jun 04, 2026 at 01:50:34PM +0100, Mohammed EL Kadiri wrote:
+> >> The key_jar slab cache holds struct key objects containing cryptographic
+> >> keys, authentication tokens, and keyring linkage. This cache currently
+> >> lacks merge prevention, allowing the SLUB allocator to merge it with
+> >> other similarly-sized caches.
+> >> 
+> >> On a default Ubuntu 6.17.0-23-generic system, key_jar has 5 aliases,
+> >> meaning 5 unrelated object types share its slab pages. struct key is
+> >> 224 bytes, placed in 256-byte slabs alongside biovec-16, maple_node,
+> >> ip6_dst_cache, task_delay_info, and kmalloc-256 users.
+> >> 
+> >> Cross-cache heap exploitation is a well-documented attack class
+> >> (CVE-2022-29582, CVE-2022-2588, CVE-2021-22555) where slab cache
+> >> merging enables type confusion between unrelated kernel objects. A
+> >> use-after-free in any subsystem sharing slab pages with key_jar could
+> >> allow an attacker to reclaim a freed slot as a struct key, or corrupt
+> >> an existing key through a dangling pointer to a different type.
+> >> 
+> >> Add SLAB_NO_MERGE to ensure key_jar receives dedicated slab pages,
+> >> eliminating cross-cache attacks targeting struct key. The memory
+> >> overhead is minimal: with 32 objects per slab page and typical key
+> >> usage bounded by system keyring size, the cost of dedicated pages is
+> >> negligible. There is zero performance impact on the allocation hot
+> >> path.
+> >> 
+> >> This follows the precedent set by skbuff_head_cache (net/core/skbuff.c)
+> >> which uses SLAB_NO_MERGE for similar isolation requirements.
+> 
+> I just realized this part is somewhat misleading, because it's done there
+> for performance reasons, so I wouldn't say "similar".
 
-Applied these to `rust-next` to get them out of the way already since
-I have another similar one for `str` I am applying too -- thanks!
+Mohammed, could you at least send v2, which does not emphasize on
+CVEs? It's better the use no_merge for sake of hardnening but some
+risk is not same as vulnerability.
 
-    [ Picked from larger series and reworded. - Miguel ]
+I'll replace the patch in my tree with updated once I get it.
 
-Cheers,
-Miguel
+Or I can strip off the parts myself, whatever goes...
+
+> 
+> > 
+> > ~/work/kernel.org/jarkko/linux-tpmdd master*
+> > ❯ git log --oneline -1 d0bf7d5759c1d89fb013aa41cca5832e00b9632a
+> > d0bf7d5759c1 mm/slab: introduce kmem_cache flag SLAB_NO_MERGE
+> > 
+> > ~/work/kernel.org/jarkko/linux-tpmdd master*
+> > ❯ git describe --contains d0bf7d5759c1d89fb013aa41cca5832e00b9632a
+> > v6.5-rc1~137^2^3~1
+> > 
+> > So we could probably forward to stable's starting from v6.6+ if that
+> > is necessary / makes sense?
+> 
+> It won't hurt, but I doubt it's "necessary" per stable rules. But stable
+> maintainers ignore those themselves anyway, so whatever.
+> 
+> > It's not a bug fix but kind of still I think would be a change that
+> > stable kernels are better off with it than without it.
+> > 
+> > What do you think?
+> 
+> Won't object.
+
+Yeah, I agree, and yeah I think commit message goes over the top, while
+the change is for better.
+
+BR, Jarkko
