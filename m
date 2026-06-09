@@ -1,42 +1,44 @@
-Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [45.157.188.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896BF3B42D2
-	for <linux-security-module@vger.kernel.org>; Mon,  8 Jun 2026 22:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.15
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA493FA5FC;
+	Tue,  9 Jun 2026 11:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780959067; cv=none; b=jpecauGLrAU38CozS23aOm2dseHlGr3LeAv8YiIkT9SmAefIXs5oCoSe7d5JueM4rSx1yIqEWQ6bGb7TobpRqrAX4CL+zZ1hHGwjdS104DTuo6yjdVsczVRTpWOUUIVL84g8xlbC02rYBPJAoiiX+pbzG6acMgAQG6UsTATS9QQ=
+	t=1781003597; cv=none; b=n+KxnVi3Yn7V3lMgfFQCxWhavB1Qs/9drIXYtjeSHxsq1ObM4fhxsAGiRdo22VQth0dDA5VUuHcU24YkViPvxMUU4eVxV7aSEKEcoxYZHJNCWDZjOK7AR6i2FETwXIwpj9tsRAh6e+RxDp6+ahHA2/RUt7IuQun54l2s6PQc9D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780959067; c=relaxed/simple;
-	bh=tcojNWyZlA4hOL9PXkaYaUZBxwMZ3D8jqxSv4YkHmM8=;
+	s=arc-20240116; t=1781003597; c=relaxed/simple;
+	bh=Vjz2+iFZYdlo2OYyffu2Q1yRZUsz6tff/8vuVOxBg14=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j4iD7z+QBcJ3gJL6SnK0m+3HKd5aM390yUWf5cTbO5WNZGtW2jQdey/nOTMtOFZZg9eFHfF3PPNjtpTNsDfTUFzeEZCX6x3UUyqzj1hnMslNGOKr6YFIRW/HlhbHDPPRLZz3tv63i7VlLHfFJeHjiA5B9iHbIwBBild/wR9k+q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=rBBtcnRo; arc=none smtp.client-ip=45.157.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=naoWyMqsdqU3yyJeQfA36WuM9dJEGu9BEhEUHFvlbzGpDBfhZw9oQMVTn8T0yQxmhRr6LJN61DrA6Sy4xOQqrm0ha1kvKznFPpmbdF5sr+61dgAfa+snyDWXSWbMWIUvMxPkbZSeWtC6/b/Ioak/Th8N1HY4D8TEK9gbDKzolmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=AKirKuQg; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="rBBtcnRo"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gZ6hm00m7z954;
-	Tue,  9 Jun 2026 00:51:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1780959063;
-	bh=Ihp2DWwa5XBMw5A0wiUqR5CUCI5kU3bO6aS6PO85JbY=;
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="AKirKuQg"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0C4CE1691;
+	Tue,  9 Jun 2026 04:13:09 -0700 (PDT)
+Received: from e129823.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2C1103FE53;
+	Tue,  9 Jun 2026 04:13:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1781003593; bh=Vjz2+iFZYdlo2OYyffu2Q1yRZUsz6tff/8vuVOxBg14=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rBBtcnRoo0EGvKWh39HYPlkpgOTsZiU5rD5UO4iRGLDKJkIwUCeLsj8Japl7ptpZx
-	 zZLX5iN5ShYj2kyFdGnzjuwFqELOw2OQ+hl1GJg6chCBvyo5X3iEH7YwnNrKUKNdSu
-	 Omp7bAEvuNNY6O/ngF4OrCrL1lpn3E+Vfe+pyIiU=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4gZ6hl1WW0zBTN;
-	Tue,  9 Jun 2026 00:51:03 +0200 (CEST)
-Date: Tue, 9 Jun 2026 00:51:02 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Maximilian Heyne <mheyne@amazon.de>
-Cc: stable@vger.kernel.org, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Shuah Khan <shuah@kernel.org>, 
-	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests/landlock: explicitly disable audit
-Message-ID: <20260604.Gee4caexei8o@digikod.net>
-References: <20260529-welsh-nagoya-b4d9ca60@mheyne-amazon>
+	b=AKirKuQgdFr2TWO3EGe38IPJQWWhQwgKDsDT5waP46HdEFeZxvWm/3mPWayiVNvgn
+	 WIrRlZ8R088NMQWpF7Aw1HRnsL/usY+KOOZxPZO+YNYsfK5HfjjTIr9T5bmMWOfNEc
+	 y9tn9JiDfqt+XlWokvVE0QudlT1b8csFhyWYBgho=
+Date: Tue, 9 Jun 2026 12:13:09 +0100
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org, paul@paul-moore.com,
+	roberto.sassu@huaweicloud.com, noodles@earth.li, jarkko@kernel.org,
+	sudeep.holla@kernel.org, jmorris@namei.org, serge@hallyn.com,
+	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jgg@ziepe.ca
+Subject: Re: [PATCH v6 2/4] security: ima: introduce IMA_INIT_LATE_SYNC option
+Message-ID: <aif1RaFsRvipxEDr@e129823.arm.com>
+References: <20260605144325.434436-1-yeoreum.yun@arm.com>
+ <20260605144325.434436-3-yeoreum.yun@arm.com>
+ <f135eab04611432040e4ba66cef2786424af8cc8.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -45,106 +47,95 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260529-welsh-nagoya-b4d9ca60@mheyne-amazon>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f135eab04611432040e4ba66cef2786424af8cc8.camel@linux.ibm.com>
 
-Thanks for this patch.  I merged a few fixes and I'd be interested to
-know if this one fix the issue you spotted:
-https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/commit/?h=next&id=d8dfb4c7faa87c3e41a8678f38f136c2c7c036fa
+On Mon, Jun 08, 2026 at 01:40:00PM -0400, Mimi Zohar wrote:
+> On Fri, 2026-06-05 at 15:43 +0100, Yeoreum Yun wrote:
+> > To generate the boot_aggregate log in the IMA subsystem with
+> > TPM PCR values, the TPM driver must be built as built-in and
+> > must be probed before the IMA subsystem is initialized.
+> > 
+> > However, when the TPM device operates over the FF-A protocol using
+> > the CRB interface, probing fails and returns -EPROBE_DEFER if
+> > the tpm_crb_ffa device — an FF-A device that provides the communication
+> > interface to the tpm_crb driver — has not yet been probed.
+> > 
+> > To ensure the TPM device operating over the FF-A protocol with
+> > the CRB interface is probed before IMA initialization,
+> > the following conditions must be met:
+> > 
+> > 1. The corresponding ffa_device must be registered,
+> >    which is done via ffa_init().
+> > 
+> > 2. The tpm_crb_driver must successfully probe this device via
+> >    tpm_crb_ffa_init().
+> > 
+> > 3. The tpm_crb driver using CRB over FF-A can then
+> >    be probed successfully. (See crb_acpi_add() and
+> >    tpm_crb_ffa_init() for reference.)
+> > 
+> > Unfortunately, ffa_init(), tpm_crb_ffa_init(), and crb_acpi_driver_init()
+> > are all registered with device_initcall, which means
+> > crb_acpi_driver_init() may be invoked before ffa_init() and
+> > tpm_crb_ffa_init() are completed.
+> > 
+> > When this occurs, probing the TPM device is deferred.
+> > However, the deferred probe can happen after the IMA subsystem
+> > has already been initialized, since IMA initialization is performed
+> > during late_initcall, and deferred_probe_initcall() is performed
+> > at the same level.
+> > 
+> > And the similar situation is reported on TPM devices attached on SPI
+> > bus[0].
+> > 
+> > To resolve this, introduce IMA_INIT_LATE_SYNC option to initialise
+> > IMA at late_inicall_sync so that IMA is initialized with the TPM
+> > device probed deferred.
+> > 
+> > When this option is enabled, modules that access files in the
+> > initramfs through usermode helper calls such as request_module()
+> > during initcall must not be built-in. Otherwise, IMA may miss
+> > measuring those files [1].
+> > 
+> > Link: https://lore.kernel.org/all/aYXEepLhUouN5f99@earth.li/ [0]
+> > Link: https://lore.kernel.org/all/2b3782398cc17ce9d355490a0c42ebce9120a9ae.camel@linux.ibm.com/ [1]
+> > Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+> > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+> > ---
+> >  security/integrity/ima/Kconfig    | 10 ++++++++++
+> >  security/integrity/ima/ima_main.c |  4 ++++
+> >  2 files changed, 14 insertions(+)
+> > 
+> > diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+> > index 862fbee2b174..75f71401fba3 100644
+> > --- a/security/integrity/ima/Kconfig
+> > +++ b/security/integrity/ima/Kconfig
+> > @@ -332,4 +332,14 @@ config IMA_KEXEC_EXTRA_MEMORY_KB
+> >  	  If set to the default value of 0, an extra half page of memory for those
+> >  	  additional measurements will be allocated.
+> >  
+> > +config IMA_INIT_LATE_SYNC
+> > +	bool "Initialise IMA at late_initcall_sync"
+> > +	default n
+> > +	help
+> > +	  This option initialises IMA at late_initcall_sync for platforms
+> > +	  where TPM device probing is deferred.
+> > +	  When this option is enabled, modules that access files in the
+> > +	  initramfs through usermode helper calls such as request_module()
+> > +	  during initcall must not be built-in. Otherwise, IMA may miss
+> > +	  file measurements for them.
+> >  endif
+> 
+> I fixed the merge conflict with the "ima: Exporting and deleting IMA measurement
+> records from kernel memory" patch set.  These patches are now queued in next-
+> integrity-testing awaiting Paul's Ack.
 
+Thanks!
 
-On Fri, May 29, 2026 at 08:03:41PM +0000, Maximilian Heyne wrote:
-> I'm seeing sporadic selftest failures, such as
-> 
->   #  RUN           scoped_audit.connect_to_child ...
->   # scoped_abstract_unix_test.c:314:connect_to_child:Expected 0 (0) == records.access (8)
->   # connect_to_child: Test failed
->   #          FAIL  scoped_audit.connect_to_child
->   not ok 19 scoped_audit.connect_to_child
-> 
-> This seems similar to what commit 3647a4977fb73d ("selftests/landlock:
-> Drain stale audit records on init") tried to fix. However, the added
-> drain loop is not effective. When setting the AUDIT_STATUS_PID, the
-> kauditd_thread is woken up starting to send messages from the hold queue
-> to the netlink. Depending on scheduling of this kthread not all messages
-> might be send via the netlink in the 1 us interval.
-> 
-> Therefore, instead of trying to drain the queue, let's just disable
-> audit when running non-audit tests or more precisely disable it after
-> audit-tests. This way we won't generate any new audit message that could
-> interfere with the other tests.
-> 
-> The comment saying that on process exit audit will be disabled is wrong.
-> The closed file descriptor just causes an auditd_reset(), not a
-> disablement. So future messages will be queued in the hold queue.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 6a500b22971c ("selftests/landlock: Add tests for audit flags and domain IDs")
-> Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
-> ---
-> 
-> I've seen the failures on the 6.18 kernels but haven't tested on latest
-> upstream. However, I still think this is an issue.
-> 
-> ---
->  tools/testing/selftests/landlock/audit.h | 13 +++++--------
->  1 file changed, 5 insertions(+), 8 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/landlock/audit.h b/tools/testing/selftests/landlock/audit.h
-> index 834005b2b0f09..7842330875f53 100644
-> --- a/tools/testing/selftests/landlock/audit.h
-> +++ b/tools/testing/selftests/landlock/audit.h
-> @@ -494,10 +494,9 @@ static int audit_init_filter_exe(struct audit_filter *filter, const char *path)
->  static int audit_cleanup(int audit_fd, struct audit_filter *filter)
+[...]
 
-audit_cleanup() should be called for audit_exec tests too.
-
->  {
->  	struct audit_filter new_filter;
-> +	int err;
->  
->  	if (audit_fd < 0 || !filter) {
-> -		int err;
-> -
->  		/*
->  		 * Simulates audit_init_with_exe_filter() when called from
->  		 * FIXTURE_TEARDOWN_PARENT().
-> @@ -518,12 +517,10 @@ static int audit_cleanup(int audit_fd, struct audit_filter *filter)
->  	audit_filter_exe(audit_fd, filter, AUDIT_DEL_RULE);
->  	audit_filter_drop(audit_fd, AUDIT_DEL_RULE);
->  
-> -	/*
-> -	 * Because audit_cleanup() might not be called by the test auditd
-> -	 * process, it might not be possible to explicitly set it.  Anyway,
-> -	 * AUDIT_STATUS_ENABLED will implicitly be set to 0 when the auditd
-> -	 * process will exit.
-> -	 */
-
-Please add a comment that explains that the audit state is not restored
-but just disabled.
-
-> +	err = audit_set_status(audit_fd, AUDIT_STATUS_ENABLED, 0);
-> +	if (err)
-> +		return err;
-> +
->  	return close(audit_fd);
-
-FDs should always be closed.
-
->  }
->  
-> -- 
-> 2.50.1
-> 
-> 
-> 
-> 
-> Amazon Web Services Development Center Germany GmbH
-> Tamara-Danz-Str. 13
-> 10243 Berlin
-> Geschaeftsfuehrung: Christof Hellmis, Andreas Stieger
-> Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-> Sitz: Berlin
-> Ust-ID: DE 365 538 597
-> 
-> 
+-- 
+Sincerely,
+Yeoreum Yun
