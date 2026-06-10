@@ -1,136 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DED370ACE;
-	Tue,  9 Jun 2026 23:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B732737472F
+	for <linux-security-module@vger.kernel.org>; Wed, 10 Jun 2026 06:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781048437; cv=none; b=NePIdc0MdxMw343bAj+Y4AIG9RBmG845L1EYdNQ9Jtp8UKYQeK5XkYqOIoadUbi5lHytupleCBBcK8P/gwt/PJjazs33/l2ap2OFl3vxjGb5fkt6lbf7pENA3kmC3/Qc4X4v8FUAmwTmCMkfa6GdWg1kS2PJySsklFRXzCU/54Q=
+	t=1781074259; cv=none; b=bR3cj33lXC/FA5NvuuLfn3qupyTSdsqoB1/b8De7Mg0j1+Nd/x142Rm0DgrGgGv1rww2L/QTZUOk00yrpM6eYD6cbUDw9Z+Dwjbced+gpOaFaQLDbPXYkoqs+UDyigGxwuG0l+VOeHoigfUScp9VZJP3DKRk5DBLV11DkTSzAWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781048437; c=relaxed/simple;
-	bh=cUPl6GbgtHpFAbSkmB2tZ0f6uqr9N/6A5bxVPT1xDF4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=u3zNgUr72HnmdkhuXa2wnfsG4Dc5VA4d+0Jt8EsgUBPY3wwGtrY5H4xRcTP8DGyxm+BJICIJOINbXvSJwV4/Gya+/7dTLVffbkDk30N5dJ9YIiRhgqFTGvJFLTglAcpQhDobMYAdrMyE2h3w5vSbN5dUk5rCZSVaDbbQvEoC3T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jo25DLt8; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781074259; c=relaxed/simple;
+	bh=79DnwxJFzJS6ztuiCswAItKY/iEYoA/hB5xT9+mHBVA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hhPGdA2Ss/EmeaqXWdmp2clw1O3DanTN6yoReSGt78OKddOZG4AsCilPQs8KydxiBCU57s/cCttS1ADBe//ZWrlzdkYkUkm8EFuVQhPoYHegdgOzsmoewmgTs3r2YUnzXbFzDkrd0kP+SMbbmHiusAAWwFX9rNeWXhWBhXoOFA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=frYluLQZ; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jo25DLt8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FF901F00893;
-	Tue,  9 Jun 2026 23:40:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781048436;
-	bh=zWbtTasqHYZ22NTZEvHP2JSPQq6kl25q5C50kDsT+E4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=Jo25DLt8y/eYZGx0wVxq7hpF3pDLq+GnWrC0/AO0oUfdJjL9ndIfdKOcT4FBZx/5P
-	 Z2tWoUIJPdOyfiKe2Kg9bTRRL6aK7ryLKnaJ69A4M6216UkUP7pvN7lvgDUq50MRYg
-	 /1rzeVP2M62oMtjXZsIH7cm+nmEUuuULWhh4AZTGg/0csLMisbFoowh0pI2hVqexIp
-	 jGwKY11YAMv8chHr6RmC/+12KP6fKFd3HoyD7Uweg9aQ7z/OzimqiStVy4QfII5CYq
-	 6sDd/+XD1sjXTmpeaGzC33yqbz35gRFaIsn2o12RwX3kaQInYNdLtUevamI2Mhtb4B
-	 oaOF3cMYwPJpg==
-From: Nathan Chancellor <nathan@kernel.org>
-To: Nicolas Schier <nsc@kernel.org>, Bill Wendling <morbo@google.com>, 
- Justin Stitt <justinstitt@google.com>, 
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
- Nathan Chancellor <nathan@kernel.org>
-Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
- linux-kbuild@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, 
- Shuah Khan <skhan@linuxfoundation.org>, linux-doc@vger.kernel.org, 
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
- linux-hardening@vger.kernel.org, linux-security-module@vger.kernel.org, 
- Rong Xu <xur@google.com>, Han Shen <shenhan@google.com>, 
- Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>, 
- linux-arm-kernel@lists.infradead.org, Paul Walmsley <pjw@kernel.org>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org, 
- Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Ard Biesheuvel <ardb@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-In-Reply-To: <20260517-bump-minimum-supported-llvm-version-to-17-v2-0-b3b8cda46bdd@kernel.org>
-References: <20260517-bump-minimum-supported-llvm-version-to-17-v2-0-b3b8cda46bdd@kernel.org>
-Subject: Re: [PATCH v2 00/16] Bump minimum version of LLVM for building the
- kernel to 17.0.1
-Message-Id: <178104773630.2704789.17858317658280322569.b4-ty@b4>
-Date: Tue, 09 Jun 2026 16:28:56 -0700
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="frYluLQZ"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-45efa80e0afso4961389f8f.2
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Jun 2026 23:50:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1781074257; x=1781679057; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y/bLIEy6KRuoctCkoU9/pMoqja9vj+0u1Pq617vGiJU=;
+        b=frYluLQZzpCw9Qj/omMLQTkeKDWA4SMnJEtf5l215JOPpOQV2iTX0ieWjG5q/47url
+         ZJu3UffCYf9M6rrmyvf8EYF2eQSCoWQbRZu2Y0AxZ7a8Lcc99Klty7BLxu87G2OgoewP
+         huH8o+9oxy7HsDwtce46voYMOSpQOfqxcIt5XF0uBU4CXHKgvGe7B+NO9HvWhwcusbhx
+         6mh/pyblwobPdgzpv4VuMWwTNQjMsRWTZT/1J8xeZbFq/+Bo1SSNFflXfKxk6GKgoEtW
+         fC1CKednRHA3GaittscWbT37SY9hzqADCcDgNNmF1SqQu5+DiuNZuf6Hl9O0rX6xsR9H
+         qs3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781074257; x=1781679057;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y/bLIEy6KRuoctCkoU9/pMoqja9vj+0u1Pq617vGiJU=;
+        b=MRUOG1OBrPjY97zutnKkPKf2OYnyX7BL8roXhHzcI3Z1S5rKXCLkn/GdR8DX150dI6
+         QVCE88VQH7Talm8g7oMEvHAGyg9lZFJ00fr0xvC4JTUf8DMDghfWM5cHxyDkdjjtXLn+
+         OXeQLURTBt8Y7A7BKrZN7IXKrHd48Qa48Edr78j4Rhgner1TvQfrKWgfP5YpMLeZ3u82
+         /SgLz5PVgkzyZMAKV7mWW3EY90ZWt23PW98WHQZiQb/JctWfW1rcw7lCwClKYJe9axcJ
+         VBqPWoRSXEYhEiUBAcEeuTl+whBBs11DgEl1LsrMGULI0GbfbgIHEkvIANIU19kx4AXF
+         A0cQ==
+X-Forwarded-Encrypted: i=1; AFNElJ97gSYiGm2LlmupgVFQaW6BvlNy2HN2ttVX1I3iMkYzNZeco7gZFyZsKkZ0fkvsZwkUIrKt+5GnnbyzEgM+sB81RAMcFH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKiFoMTkVWgVrdU+CFI36ywIZCzENBU1jpHnb9Wslswu+DW9A5
+	CTBEw2TSUGPTQffqZveLicDmxTntWPnXzrkm5MnW5BrNWSRsOA39eFs=
+X-Gm-Gg: Acq92OFW1VEbwXoy7s9AkoADzS967+HPSZXe2ZJYPKnJ07pLGX8z+OSqmQqMSHbcVIm
+	KLwzOD7mKuIVMQ1aKvRA7fUZbO3fn/qQL3JeZkca793ZyI6ATNX9eJjpkb/mo/Z6siKKJSLWN6w
+	sBkpbDtwDys4fHIKDU2YguBpIWxPNr6B9ikMgz8yfFnko3koMczIyQnGXEoI1GlwLYnNBGbcSf9
+	o9h1yBJtK/sSgXfWPmmG3XGxp99Xbur/dXouDPKqUmT6hvXPVqKFrxUD+krIDwgtSwOigvmBgFe
+	R7MtZhK6Zl7vSvn+/Vub5htacG8Q+yMIWM0EQ2pWLXpZy27jCZW6QyYZTtQpCBUu8UiTBwauCOu
+	abJAuVlecAeavvxEp/5fo+EWSun8xf6Ev8GRCVutv6h0Z8jri/pCYy6uaScHWD7mg6/LTuqeBEt
+	7XrZyQ37vTqtZ5Vu3iNh8XWKSrKoTKenbtZZUWH3V+KjqE6wbkkZXA5x3aRO35LaM9NvEGD7Vib
+	xlYta3w2UuucSpC0eTpbIWWZP09hM0b9w/aiRayNMY=
+X-Received: by 2002:a5d:4b41:0:b0:45e:f3b2:122a with SMTP id ffacd0b85a97d-46030652fcemr28960085f8f.26.1781074256955;
+        Tue, 09 Jun 2026 23:50:56 -0700 (PDT)
+Received: from hp-ubuntu.. ([105.158.214.102])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4601f2e4004sm69539946f8f.9.2026.06.09.23.50.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jun 2026 23:50:56 -0700 (PDT)
+From: Mohammed EL Kadiri <med08elkadiri@gmail.com>
+To: dhowells@redhat.com,
+	jarkko@kernel.org
+Cc: paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	kees@kernel.org,
+	vbabka@kernel.org,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mohammed EL Kadiri <med08elkadiri@gmail.com>
+Subject: [PATCH v2] keys: prevent slab cache merging for key_jar
+Date: Wed, 10 Jun 2026 07:50:52 +0100
+Message-ID: <20260610065052.9120-1-med08elkadiri@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3318; i=nathan@kernel.org;
- h=from:subject:message-id; bh=cUPl6GbgtHpFAbSkmB2tZ0f6uqr9N/6A5bxVPT1xDF4=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDFkaS3IPsivujN14IlVvd5DxTcUlU/e9+jdRk8kvq+dbf
- cHdx/90O0pZGMS4GGTFFFmqH6seNzScc5bxxqlJMHNYmUCGMHBxCsBEdr5mZNiTt59J7VTM/K2v
- O/fyv5M5fzHhZbORdoB/UO3ffVtuSXszMvwzu30mYUfBRMtKrwu9x/rrlisuX/pr+9lt+mEBEj8
- MOVkB
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+Content-Transfer-Encoding: 8bit
 
-On Sun, 17 May 2026 13:05:03 -1000, Nathan Chancellor wrote:
-> Bump minimum version of LLVM for building the kernel to 17.0.1
-> 
-> The current minimum version of LLVM for building the kernel is 15.0.0.
-> However, there are two deficiencies compared to GCC that were fixed in
-> LLVM 17 that are starting to become more noticeable.
-> 
-> The first was a bug in LLVM's scope checker [1], where all labels in a
-> function were validated as potential targets of an asm goto statement,
-> even if they were not listed in the asm goto statement as targets. This
-> becomes particularly problematic when the cleanup attribute is used, as
-> 
-> [...]
+Add SLAB_NO_MERGE to key_jar to prevent the allocator from merging it
+with other similarly-sized caches. This hardens struct key isolation by
+ensuring dedicated slab pages.
 
-Applied to
+Acked-by: Vlastimil Babka (SUSE) <vbabka@kernel.org>
+Signed-off-by: Mohammed EL Kadiri <med08elkadiri@gmail.com>
+---
+ security/keys/key.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux.git kbuild-next
-
-Thanks!
-
-[01/16] kbuild: Bump minimum version of LLVM for building the kernel to 17.0.1
-        https://git.kernel.org/kbuild/c/ce3267a39a92b
-[02/16] security/Kconfig.hardening: Remove tautological condition from CC_HAS_ZERO_CALL_USED_REGS
-        https://git.kernel.org/kbuild/c/813fe686e90b4
-[03/16] security/Kconfig.hardening: Remove tautological condition from FORTIFY_SOURCE
-        https://git.kernel.org/kbuild/c/8ad2017578c99
-[04/16] security/Kconfig.hardening: Remove tautological condition from CC_HAS_RANDSTRUCT
-        https://git.kernel.org/kbuild/c/9331258bc129a
-[05/16] arch/Kconfig: Remove tautological conditions from HAS_LTO_CLANG
-        https://git.kernel.org/kbuild/c/2189cb1a80f06
-[06/16] arch/Kconfig: Remove tautological condition from AUTOFDO_CLANG
-        https://git.kernel.org/kbuild/c/de0bf1e138fcd
-[07/16] ARM: Drop tautological ld.lld conditions from ARCH_MULTI_V4{,T}
-        https://git.kernel.org/kbuild/c/48d229b6a48ae
-[08/16] riscv: Remove tautological condition from selection of ARCH_SUPPORTS_CFI
-        https://git.kernel.org/kbuild/c/62c4af8689511
-[09/16] riscv: Drop tautological condition from TOOLCHAIN_NEEDS_OLD_ISA_SPEC
-        https://git.kernel.org/kbuild/c/7e279976cf2a2
-[10/16] scripts/Makefile.warn: Drop -Wformat handling for clang < 16
-        https://git.kernel.org/kbuild/c/2a35c63c6bc42
-[11/16] x86/build: Drop unnecessary '-ffreestanding' addition to KBUILD_CFLAGS
-        https://git.kernel.org/kbuild/c/7b3281fcb43c5
-[12/16] x86/module: Revert "Deal with GOT based stack cookie load on Clang < 17"
-        https://git.kernel.org/kbuild/c/12b7bf92bddd4
-[13/16] x86/entry/vdso32: Remove conditional omission of '.cfi_offset eflags'
-        https://git.kernel.org/kbuild/c/4e7af20d0d104
-[14/16] kbuild: Remove check for broken scoping with clang < 17 in CC_HAS_ASM_GOTO_OUTPUT
-        https://git.kernel.org/kbuild/c/f3de78cb19d12
-[15/16] compiler-clang.h: Remove __cleanup -Wunused-variable workaround
-        https://git.kernel.org/kbuild/c/c69eaa687667e
-[16/16] compiler-clang.h: Drop explicit version number from "all" diagnostic macro
-        https://git.kernel.org/kbuild/c/c919893eabb43
-
-Please look out for regression or issue reports or other follow up
-comments, as they may result in the patch/series getting dropped or
-reverted. Patches applied to an "unstable" branch are accepted pending
-wider testing in -next and any post-commit review; they will generally
-be moved to the main branch in a week if no issues are found.
-
-Best regards,
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 3bbdde778631..592b65cf8539 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -1275,7 +1275,7 @@ void __init key_init(void)
+ {
+ 	/* allocate a slab in which we can store keys */
+ 	key_jar = kmem_cache_create("key_jar", sizeof(struct key),
+-			0, SLAB_HWCACHE_ALIGN|SLAB_PANIC, NULL);
++			0, SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_NO_MERGE, NULL);
+ 
+ 	/* add the special key types */
+ 	list_add_tail(&key_type_keyring.link, &key_types_list);
 -- 
-Cheers,
-Nathan
-
+2.43.0
 
