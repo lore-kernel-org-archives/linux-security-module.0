@@ -1,111 +1,116 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855BF1A6806;
-	Wed, 10 Jun 2026 22:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF823009E2;
+	Wed, 10 Jun 2026 23:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781129497; cv=none; b=AwLXwpwC4gmXWJH+raFynaiEcbS7COGnFjgTGVO9+xpGhJ/7zte/R7LfogAQKFWvuIYPR6Ya9PIUB3DO9ooYrWfgg5aZeQj6N1s5Nn5nlgONt1S6v1VXQrgp5rNlrW4RrthAzfvuHGUXLnA0Ojb8vBoOhIlO2BuC2UDiZovGO2E=
+	t=1781132621; cv=none; b=VP+qzTVErkFoYe8SHNIFM0yLJqwmdJKH76dQSZjCVnze/cpc7wbk4QMlMuY9lYhPgklG1r7ZqZ60MRTfjVQMpVUf7fSqKlQxeB6tuVszgkD8EseTVlX307fWeiQp4nYTUpsbi0CbbvFpOOZtgV1C7KL/p1NYQvp2iTksXgUlJJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781129497; c=relaxed/simple;
-	bh=xF+48qVtle438MW1KRajLhHeNxcY6i9Z/XjwfCxfzLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mxZhXMY8/YH3jbZyU73O0gWGzPXGPwYIJdN3ue4jz4IGn8BUq+psqTR6RQnRGJbFDfxl3/RxGtiB8iBOUiDkS8OL2lpnRwLnNxeMuywNNciYb92exCBPoI1hiUT9K/n+KG/j7NQsyoP4cC73Km7G2o8AN7VXucerVcQikY5s7T8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M9VI3DIU; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781132621; c=relaxed/simple;
+	bh=vsgJakhjCDDlsUm5r+TjFtWawxnV+ycHBNL5H+iwP94=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dVKV/zIQApT1hkrg7RpWTijVUL9KY/ZPJXyJGLCIlvj33jj+scNM1/s0/VUDASUwK8QeHeTKh6QZqgiyw0Wqz5KDZTVGUq3A9VQyP3ORqRNhM4ylwL1KFGE0B9sGkSO0FkBJPWD28b1AJgEEAgoLUOAVZPfarDNY/s8GNAesyfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=peGxU9hd; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M9VI3DIU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29E411F00893;
-	Wed, 10 Jun 2026 22:11:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781129496;
-	bh=ktUakYQu5MH9dAuUQxQWwYgXWoKAT9adYy2tQZq3QDE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=M9VI3DIUDEq0chQveTtskz2xh/5weU+6t/Aq1Nkv9ZVxUo6yvIAiUDQZEKioU6cKj
-	 E+Z3cHlnv9UFNZb+HwJdLqxPDNKDN3wfKw79cGKujJ2ucPkKKk9c6b4lvmNRUuQEmB
-	 z96R53uWbuSCRt0+mNG6rZ5Eb9tZ7XkePkTj+WDmFrW4d9djLp83L/mr892sTpNBg1
-	 SoTGs8ivHBKp0CgtgNTheENkR/ZiSG6yxCICFL/sB13LJeCEWlLHSm5fRrwQQGH0ii
-	 uF3+jYnCRehCdWzL9WEnfZPNKm7IYXtyX0YGVSd/aI4I+BbtgsUh0oHh+NxP1JKEqq
-	 qMxeVb6kNobMQ==
-Date: Wed, 10 Jun 2026 15:11:36 -0700
-From: Kees Cook <kees@kernel.org>
-To: Mohammed EL Kadiri <med08elkadiri@gmail.com>
-Cc: Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	linux-security-module@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cred: prevent slab cache merging for cred_jar
-Message-ID: <202606101510.7F6F4118@keescook>
-References: <20260606142558.13809-1-med08elkadiri@gmail.com>
- <202606101345.D1BDA8BBE2@keescook>
- <CAAMeuQSZdNiCaAMYOnQE3q-Y9325PAbwVsJmTmKSS9a=NG7wcQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="peGxU9hd"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=191TKGWsKI049ZZwfHI9VYOs/rKO43O/3MnQ0/mdOD0=; b=peGxU9hdqRjfJRrjTeGetbbbb2
+	evAyLE3MPquAUoC/psvDxS+LLJS5Iwa/nr+ebFwliqe3n+EtwGyQJZ+nfcLMHTDqoq1mMuE4Wctje
+	W6AChVP8rINvb7kJ9IDLbfBq8zJiGCtKwfXi2HbuEt5Y22EBs/oftv9q9MY/RtIjWfV2pfWWQ8/c7
+	LWh+D+89ji0bYKsQyvnhE4KtJcM4+Ro9x4/V+f7u4sqbF0gLicJkw9Gt/hD/ycLyvS6Cv/0OpMRW0
+	ZT9UzQ7B2qJ/H39bb8i6UcqdXevZtFL0CXdlQNq40bk9Tez4kkQp9HoNlmsczKV29gC6wc0UM8tCW
+	UYIlQ8cw==;
+Received: from localhost ([127.0.0.1])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1wXRxK-0008QL-0l;
+	Thu, 11 Jun 2026 01:03:30 +0200
+From: Daniel Borkmann <daniel@iogearbox.net>
+To: ast@kernel.org
+Cc: kpsingh@kernel.org,
+	James.Bottomley@hansenpartnership.com,
+	paul@paul-moore.com,
+	bboscaccy@linux.microsoft.com,
+	memxor@gmail.com,
+	torvalds@linux-foundation.org,
+	bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH bpf-next 0/5] Verify BPF signed loader at load time
+Date: Thu, 11 Jun 2026 01:03:24 +0200
+Message-ID: <20260610230329.727075-1-daniel@iogearbox.net>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAMeuQSZdNiCaAMYOnQE3q-Y9325PAbwVsJmTmKSS9a=NG7wcQ@mail.gmail.com>
+X-Virus-Scanned: Clear (ClamAV 1.4.3/28027/Wed Jun 10 08:29:13 2026)
 
-On Wed, Jun 10, 2026 at 10:07:24PM +0100, Mohammed EL Kadiri wrote:
-> Hi Kees,
-> 
-> Thanks for the review!
-> Following Vlastimil and Jarkko's feedback on the key_jar patch, should
-> I send a v2 here as well with similar commit message modification:
-> removing CVE references, dropping the skbuff comparison, and framing
-> it as hardening?
+The BPF signing scheme signs a light skeleton's loader program and lets
+the loader vouch for everything else: bpftool bakes the SHA256 of the
+metadata map into the loader's instructions, signs the instructions, and
+the loader compares the (frozen, exclusive) map against that hash from
+within BPF once it runs. The construction is sound as a trusted hash
+chain, but the kernel itself never attests the metadata, and that split
+has been the recurring objection from the LSM / integrity side since the
+scheme was proposed.
 
-It wouldn't hurt, yeah. I have that kind of already in my head while I
-read these patches, but it would be better for other folks to see it
-framed more accurately.
+This proposal closes both gaps by having the kernel verify the metadata
+at BPF_PROG_LOAD time, before the LSM admission hook and before the
+verifier, /without/ growing the UAPI. A signed loader binds its metadata
+map(s) through the existing fd_array/fd_array_cnt, and exclusive maps
+are already bound to the loader's digest via excl_prog_hash. When a
+signature is present, the kernel collects the exclusive maps from the
+fd_array and appends their frozen contents to the instructions before
+PKCS#7 verification, so the signature covers ...
 
--Kees
+    insns || metadata_0 || metadata_1 || [...]
 
-> 
-> Thanks,
-> Mohammed
-> 
-> On Wed, Jun 10, 2026 at 9:45 PM Kees Cook <kees@kernel.org> wrote:
-> >
-> > On Sat, Jun 06, 2026 at 03:25:58PM +0100, Mohammed EL Kadiri wrote:
-> > > The cred_jar slab cache holds struct cred objects, which contain
-> > > process credentials: uid, gid, euid, egid, and capability sets.
-> > > Overwriting any of these fields is sufficient for privilege escalation.
-> > >
-> > > On a default Ubuntu 6.17.0-23-generic system, cred_jar (named "cred"
-> > > in sysfs) has 2 aliases, meaning 2 unrelated object types share its
-> > > slab pages (object_size=184, objs_per_slab=42).
-> > >
-> > > Cross-cache heap exploitation relies on slab cache merging to achieve
-> > > type confusion between unrelated kernel objects. CVE-2022-29582
-> > > demonstrates this technique: an io_uring use-after-free is leveraged
-> > > across cache boundaries through page-level reallocation, ultimately
-> > > achieving root. struct cred is a primary target in this class of
-> > > attacks due to the direct privilege escalation that results from
-> > > corrupting any of its identity or capability fields.
-> > >
-> > > Add SLAB_NO_MERGE to ensure cred_jar receives dedicated slab pages,
-> > > so that freed credential slots can only be reallocated as struct cred
-> > > objects. The memory overhead is minimal: one struct cred exists per
-> > > task, and with 42 objects per slab page, the cost of dedicated pages
-> > > is negligible. There is zero performance impact on the allocation
-> > > hot path.
-> > >
-> > > This follows the precedent set by skbuff_head_cache (net/core/skbuff.c)
-> > > and key_jar (security/keys/key.c) which use SLAB_NO_MERGE for similar
-> > > isolation requirements.
-> > >
-> > > Signed-off-by: Mohammed EL Kadiri <med08elkadiri@gmail.com>
-> >
-> > Yes please. :)
-> >
-> > Reviewed-by: Kees Cook <kees@kernel.org>
-> >
-> > --
-> > Kees Cook
+... in fd_array order. The in-loader hash check is dropped from the
+gen_loader entirely: generated loaders carry no verification logic
+anymore, and signing or verifying a skeleton becomes an ordinary CMS
+operation over bytes that sit verbatim in the skeleton, reproducible
+offline. A signed program is either BPF_SIG_UNSIGNED or BPF_SIG_VERIFIED
+with nothing in between.
+
+There is no new UAPI, we now have a single signature scheme, no LSM
+code reaching into BPF internals, no new LSM hook, and unsigned loads
+are completely unaffected. It is also less complex since the loader
+does not need to deal with BTF, an extra kfunc, etc, as proposed in
+an earlier series [0]. Tested against full BPF CI which came back
+green. For more details and examples, see the documentation patch in
+this series.
+
+  [0] https://lore.kernel.org/bpf/20260522023234.3778588-1-kpsingh@kernel.org/
+
+Daniel Borkmann (5):
+  bpf: Verify signed loader metadata at load time
+  libbpf: Drop in-loader metadata check for load-time verification
+  bpftool: Cover loader metadata with the program signature
+  selftests/bpf: Verify load-time signed loader metadata
+  Documentation/bpf: Add BPF signing and enforcement doc
+
+ Documentation/bpf/index.rst                   |   1 +
+ Documentation/bpf/signing.rst                 | 537 ++++++++++++++++++
+ kernel/bpf/syscall.c                          | 169 +++++-
+ tools/bpf/bpftool/gen.c                       |   2 +
+ tools/bpf/bpftool/sign.c                      |  15 +-
+ tools/lib/bpf/bpf_gen_internal.h              |   1 -
+ tools/lib/bpf/gen_loader.c                    |  76 +--
+ tools/lib/bpf/skel_internal.h                 |  27 +-
+ .../selftests/bpf/prog_tests/signed_loader.c  | 460 +++++++++------
+ 9 files changed, 994 insertions(+), 294 deletions(-)
+ create mode 100644 Documentation/bpf/signing.rst
 
 -- 
-Kees Cook
+2.43.0
+
