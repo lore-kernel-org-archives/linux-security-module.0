@@ -1,84 +1,164 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7DF529B228;
-	Wed, 10 Jun 2026 23:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781135300; cv=none; b=cauF8R+HmDkEn3660cf1yCnGGwCV8DzGDBjvboTBE+yKWvPHQjgo5g3Ao70aN/8ctYLc5HLuuW0LHhgeOpIuzGJvLoAmNVp2ZPi1HBcjVSQEwQT5HeCdpKqV+3MYaG16L1TGuOzDnBVszBPacN9LjonWmAisrhuh0eVSQ9pSNfY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781135300; c=relaxed/simple;
-	bh=txrw+D81HZEGFl1Vf9TS619X42vwoHqpSYn6M6I85q8=;
-	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
-	 Subject:From:To:Cc:Date; b=WgHYNY4HWP9+E2pVyPpn77aGZvUt4us3Bbholr699+JiUibYqR0Czy6WEDvDqNnMazoJ63XkYVbxyerSUNvSsYLUMGn5xF+L29SsMrWuKDoQ2xwG8rZSEBTzw5zYeitII3L9xKUpjinkxZbq7FKgL2P10FCqLEdHYhUV1feDgzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YaMZNenr; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB8B3AB29E
+	for <linux-security-module@vger.kernel.org>; Wed, 10 Jun 2026 23:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781135607; cv=pass; b=cc/3oN6wFGbAc5cas4JguOJYFFwsTqrJ9xfErZt6gtxoMq5qpMDx5xRzmhfyuj/uhgsqWAC6qy3LBktqouQH4V8F5PGTeUAAbGUPUrhQhLoehT2MkrQzP70DSUlPPmS2tfcYL0wOQmYqqf43dXnuRdOhIzAcYCRyUAY0OR0Juj4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781135607; c=relaxed/simple;
+	bh=GzqYRdAmyRinDIbNNPgcUhS0qYvCzRmkXn2WfVxMh+Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oU5Z9QCVIxYvPRgwaFo4D4s5qMgjHqTbzh70Oq3HADKY4VgH+YMLtKlryd1dzAISAQow1jTAqvUTG8/vR8HyQyRA46Ym4kUBKfgEvWvqh6h5D3kbK0Og2E2gU7Kz3kZuBJmNbk3nDgZOdQt8fK4pfe9r9fihzJyX7dbQSBREfQI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=N2nMlXdN; arc=pass smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YaMZNenr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FAB21F00893;
-	Wed, 10 Jun 2026 23:48:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781135299;
-	bh=CipF9A3gfrHphLRf0QX+lIslSp8tKH7k4N7NF3mNvV0=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date;
-	b=YaMZNenrB6P+OuXYjDINwwcyoTZdeDq+A1fgt1j3RaVV/IRjjUB9D2CKFJxpJVqg4
-	 eGPCJhLnD+CxIJdMR7UnmS01XmaQwpiEq1aClPo163koLgU8NMeyVz3uNJkrlndwU/
-	 wvX2/DHVUBWJljLB9DoVssiANycB2q59U0HDEg5QZp5tfW/5yzQ4m720JXFJ/rL/6t
-	 cA4K/VqDq1BnJihdd2pxXoQEP9xNDNrU6AIj2nxkrRUvWpQmCzFqmA0vYcdO/gbcoF
-	 XZgMxWORr7uCqFoBeU8zOr5dMYQRbmJ0jN6m40qPXxjm2uiF+sW7ODVoCGAJVeR0+3
-	 uJhzF4grcHlOw==
-Content-Type: multipart/mixed; boundary="===============3421189048308312154=="
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="N2nMlXdN"
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-36d98b68d68so4715962a91.2
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Jun 2026 16:53:24 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1781135604; cv=none;
+        d=google.com; s=arc-20240605;
+        b=fN63Etfcbgp+MacGsZftX1u4KDPc9PcsFH6Ee8zEZZgxEnal8Zm7Z/nkn66anGWJVv
+         bc3ke5B9+wjaoAwv2CCYeY8GOU0hLhIKABSzYtNBpXfQF7MzEcTYLXbGn5lXwfkhHEK7
+         Ai0yEAbTztJq3zW+oTnnv8U6UuCKhQLM+PhgKPcNudElDc/gfe4pPTaRERXqNwMYGHXV
+         doFB1RCMNHnD7+RPXkS8TrT/hs2qcigGOODhrFhLJK/2ySZDwH7krkC+gINQCjEmtNsM
+         D9FGhUUHwhlDpVzQ1wNYDcLotQDQn21TqIYxwqlwc2kRNswD6whZ+3OqUFt0Fw2H1vii
+         2CNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=GzqYRdAmyRinDIbNNPgcUhS0qYvCzRmkXn2WfVxMh+Y=;
+        fh=as82g7q4ZmIw7hNMfBVOZTxxkO6DEbwlv5hsqsfQo1g=;
+        b=BG/UiNQzB1BsWY+P3qzQgl0gfxr9RWK9nN3gpZO96hBpBX7+oTqY4LQ80PJcocycnD
+         SuNmTC0unS6H3SYrJE+SMBQdGLTzEFih69V6JA4fQHTgGAD5CaSIB8C25IOGgwr1NHYT
+         Ux0mFDbp50uFR/QJktQbOpHpgmIcA4PX8NI5WTDzhg7myrVLs+AFr2w0Q4FRRpHHsqZI
+         wHaECjA5/uLOb0AD4gEsaVECuAKADlcZ7OprU5NTMHrHvqMGdmyXQmEddzFiUSKqIinP
+         O2hdG9hr/YFvieIsfHScgw+H5onwO7U4XLeMfLRglJvK7HCqEhuEzUS6Qdq6ndmDFZRp
+         BBNw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1781135604; x=1781740404; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GzqYRdAmyRinDIbNNPgcUhS0qYvCzRmkXn2WfVxMh+Y=;
+        b=N2nMlXdNNsHpZGpD1vL3fKsW/gzyHSalppG23OiDdGPJTz7MMhcB52njuEdpwl5Em1
+         XGW2+2Ju9CWrgZ0JdejqFvBNYqc+xVo/B8nKVjekgE9eZAz/zFFUvrBJn36kEtHsxJ9a
+         Y3bOlrCvYx2IE5L11UMMC0T0+z/AzAQriA9q3nl0qbH6kqkeTDdTHmEaZT1zTLUaYPZ8
+         YrMCeZWi0V/5wWaSazcKVr1L+8s3k8YqYwoAk6Yy05WB9PmlM9xKIPLfN4wc7gi18vTV
+         lWH8B+8UIOnZx1IwVCfFxEoPDZD8ACFi5c+uwX1N3CFW8RxOeuFTwy25w+A8Cxv4+IFs
+         uc9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781135604; x=1781740404;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=GzqYRdAmyRinDIbNNPgcUhS0qYvCzRmkXn2WfVxMh+Y=;
+        b=fqXiD1qjGrr3W5BZi64U0Rho4R4A94vdGyU9mFU1Kb2AmpoCcG4z+4SK0/CWMjSzoS
+         wmMRWZDx1qqDZ6IwVxPAFeZuYsKWLhL4f4DPaOT97xYhXlF3uMrGdC81EtPdbzz88IMJ
+         fmI2xBtLLFe0ykAlAnUWfjG9rF7t2mQwtgrx/yff2tHNz89JqjWisuhit2blPOyjRthd
+         DybYYt/kkpi+Fu/3NKDkJnObGxiqMAFUEs3sP+5CUPRQLXZzfqLOK4Nov3U3ZEx9Raxu
+         EPjzXwqoW3bboMeYg86rWkNo3J476ETDUSysSB4Pqtc3tnXgrVnlE+oLQiPiVc2mQjtm
+         sGTQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9tEcPB56PAGhzkWydd0Ab70CGqFmDrrD7avAhuHGyWnrHvfN6X7JONpwO65UZyN6csWza0Zc2IAlMmmCao7cDRfq8bo4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJoRaBM8zNs6kM0BpAV2vcz9xBEGo3JXATo9CrJnQrjqhjAY6c
+	aZE6fzeBW5QXDPHyuleHbzftN84j9d+SXwirHAIPnDpCOaV9D8uM/pSkuwQcT9miELKr2czB27l
+	mqdaNurLj/oo3Z+J3X1AJQKYR2Z/75MJfmJRWelvz
+X-Gm-Gg: Acq92OFm1G665Nr8x34gACQp2xyp8wEQzfU4vobeGxP4s6H4SHBbpRqGABapQvxEv7A
+	J7q0E7npdXYHTubWaAx5WLHr8AiBEy4PQbS3R/hY2nxdGPH/w4oAuyRn0ohItSw+nRerG1/74vY
+	6n5HmEBLzmjaFwhYNvhbOSWyoW8Lyqxp143HXoyfbjLfxca4UjKuJytc0dQ+1INFZDinn3ZCFd8
+	Yem7yUNPfaKhB8y26YNumAi0T7oaTcTfeZ35cSRD9NnLMn7GBDl/f93Jwye8G8eAhrSyMC29UnE
+	7eNvmuyfM0b6y8+O7A==
+X-Received: by 2002:a17:90a:e7ce:b0:36a:3176:ad08 with SMTP id
+ 98e67ed59e1d1-377a88f36f7mr462729a91.25.1781135604415; Wed, 10 Jun 2026
+ 16:53:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <b632af6b40610fe3296b0b6cdd160c98596f81649817f23a3b63595ce4f1f103@mail.kernel.org>
-In-Reply-To: <20260610230329.727075-4-daniel@iogearbox.net>
-References: <20260610230329.727075-4-daniel@iogearbox.net>
-Subject: Re: [PATCH bpf-next 3/5] bpftool: Cover loader metadata with the program signature
-From: bot+bpf-ci@kernel.org
-To: daniel@iogearbox.net,ast@kernel.org
-Cc: kpsingh@kernel.org,James.Bottomley@hansenpartnership.com,paul@paul-moore.com,bboscaccy@linux.microsoft.com,memxor@gmail.com,torvalds@linux-foundation.org,bpf@vger.kernel.org,linux-security-module@vger.kernel.org,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
-Date: Wed, 10 Jun 2026 23:48:19 +0000 (UTC)
+References: <20260606142558.13809-1-med08elkadiri@gmail.com>
+ <202606101345.D1BDA8BBE2@keescook> <CAAMeuQSZdNiCaAMYOnQE3q-Y9325PAbwVsJmTmKSS9a=NG7wcQ@mail.gmail.com>
+ <202606101510.7F6F4118@keescook>
+In-Reply-To: <202606101510.7F6F4118@keescook>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 10 Jun 2026 19:53:10 -0400
+X-Gm-Features: AVVi8CeOOqdcqGiFd33pM820VoFXm9ZxQxdj69FsQwoNu813yloEA_3c0GRimBA
+Message-ID: <CAHC9VhTnPK8rkoCtNuvSG+nteGc_Cg4DgnyWyRnUb5h_o7ic5A@mail.gmail.com>
+Subject: Re: [PATCH] cred: prevent slab cache merging for cred_jar
+To: Mohammed EL Kadiri <med08elkadiri@gmail.com>, Kees Cook <kees@kernel.org>
+Cc: Serge Hallyn <sergeh@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	linux-security-module@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
---===============3421189048308312154==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-
-> bpftool: Cover loader metadata with the program signature
+On Wed, Jun 10, 2026 at 6:11=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
+> On Wed, Jun 10, 2026 at 10:07:24PM +0100, Mohammed EL Kadiri wrote:
+> > Hi Kees,
+> >
+> > Thanks for the review!
+> > Following Vlastimil and Jarkko's feedback on the key_jar patch, should
+> > I send a v2 here as well with similar commit message modification:
+> > removing CVE references, dropping the skbuff comparison, and framing
+> > it as hardening?
 >
->     bpftool_prog_sign() signed only the loader instructions. The metadata
->     blob the loader installs was left to an in-loader hash check, which
->     the kernel now performs at load time over insns || metadata.
->
->     Sign that same concatenation: pass the metadata blob (gen_loader_opts
->     data) through to bpftool_prog_sign() and feed insns || metadata to
->     CMS_final(). The excl_prog_hash stays a digest of the instructions
->     alone; it binds the metadata map to the loader and is matched against
->     prog->digest by the verifier, independent of what the signature covers.
->
->     The signed artifact is now plain data: both bytes the signature
->     covers are embedded verbatim in the generated skeleton, so signing
->     and verifying an lskel is an ordinary CMS operation that a signer or
->     auditor can perform (or reproduce) offline, without analyzing loader
->     bytecode to establish what the signature actually attests to [0].
->
->     Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+> It wouldn't hurt, yeah. I have that kind of already in my head while I
+> read these patches, but it would be better for other folks to see it
+> framed more accurately.
 
-This closes a gap where the loader metadata was left outside the program
-signature. The signing path in bpftool_prog_sign() was introduced by commit
-40863f4d6ef2 ("bpftool: Add support for signing BPF programs"), which fed
-only opts->insns to the signature and set only sopts.insns/sopts.insns_sz in
-gen_trace(). Should this carry a Fixes: tag?
+Just as an FYI, the patch seems reasonable to me, but considering
+where we are in the dev cycle I figured it best to wait until after
+the upcoming merge window to do anything with it.
 
-  Fixes: 40863f4d6ef2 ("bpftool: Add support for signing BPF programs")
+> > On Wed, Jun 10, 2026 at 9:45=E2=80=AFPM Kees Cook <kees@kernel.org> wro=
+te:
+> > >
+> > > On Sat, Jun 06, 2026 at 03:25:58PM +0100, Mohammed EL Kadiri wrote:
+> > > > The cred_jar slab cache holds struct cred objects, which contain
+> > > > process credentials: uid, gid, euid, egid, and capability sets.
+> > > > Overwriting any of these fields is sufficient for privilege escalat=
+ion.
+> > > >
+> > > > On a default Ubuntu 6.17.0-23-generic system, cred_jar (named "cred=
+"
+> > > > in sysfs) has 2 aliases, meaning 2 unrelated object types share its
+> > > > slab pages (object_size=3D184, objs_per_slab=3D42).
+> > > >
+> > > > Cross-cache heap exploitation relies on slab cache merging to achie=
+ve
+> > > > type confusion between unrelated kernel objects. CVE-2022-29582
+> > > > demonstrates this technique: an io_uring use-after-free is leverage=
+d
+> > > > across cache boundaries through page-level reallocation, ultimately
+> > > > achieving root. struct cred is a primary target in this class of
+> > > > attacks due to the direct privilege escalation that results from
+> > > > corrupting any of its identity or capability fields.
+> > > >
+> > > > Add SLAB_NO_MERGE to ensure cred_jar receives dedicated slab pages,
+> > > > so that freed credential slots can only be reallocated as struct cr=
+ed
+> > > > objects. The memory overhead is minimal: one struct cred exists per
+> > > > task, and with 42 objects per slab page, the cost of dedicated page=
+s
+> > > > is negligible. There is zero performance impact on the allocation
+> > > > hot path.
+> > > >
+> > > > This follows the precedent set by skbuff_head_cache (net/core/skbuf=
+f.c)
+> > > > and key_jar (security/keys/key.c) which use SLAB_NO_MERGE for simil=
+ar
+> > > > isolation requirements.
+> > > >
+> > > > Signed-off-by: Mohammed EL Kadiri <med08elkadiri@gmail.com>
+> > >
+> > > Yes please. :)
+> > >
+> > > Reviewed-by: Kees Cook <kees@kernel.org>
 
-
----
-AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
-
-CI run summary: https://github.com/kernel-patches/bpf/actions/runs/27312517811
---===============3421189048308312154==--
+--=20
+paul-moore.com
