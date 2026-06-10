@@ -1,162 +1,253 @@
-Received: from CWXP265CU010.outbound.protection.outlook.com (mail-ukwestazon11022091.outbound.protection.outlook.com [52.101.101.91])
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEB340FD87;
-	Wed, 10 Jun 2026 13:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.101.91
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781098672; cv=fail; b=lm0jYmg4kHDtG7I5S7rOVd4jQDY9j+ocpSF6Az6CrMvGB7WG8WKZE00hU26RGCdC9+HVaVJ4/Lw3sT61x+q2Zh2Ccy2M/oBMCHztf4Ai7kgDtdxlxmhFzT2P9j0gyiIeAlR6PLJsk1k49pcUQ8Llz1Y38ukxMLvTU2KI2rtf1x4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781098672; c=relaxed/simple;
-	bh=1B67xZ+pE8Rj0uZyoNz7diP3HQRqUfrBf50Jc7FGNzk=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=qbJVD7NjAglSsM42sZQ0Ig8rZm9d0xv7rXCj6Zx2zqHD1E37A2HBq3TxgRBXX4uCwHljwrXdmufUGEK07ImAUFnFLt5hBaPdu0gCx4MqpPjxmk9XmzsZQbi6QuuITVs6Tfr/K/f4EXCdNw6af5M2DeOTmilwvfZuzoUXqMfo2mc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=re7dAGUM; arc=fail smtp.client-ip=52.101.101.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F65D30C35C
+	for <linux-security-module@vger.kernel.org>; Wed, 10 Jun 2026 13:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781098754; cv=none; b=ARhuKbDj+VMwz/azG5VkmRorK3NpV36oI3zDm6kcixCEJddzXUW51ylR18O+cENZ0T9sCiHEgBFHeVVIx/ORj7ijvc6ZCRkZLsIurEpBrN+DabCWrvsThSkzCpPZSbIEWMfbwhJINUN3YCHzMoO+bLTZBel6ys2M3EIAykA1cGs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781098754; c=relaxed/simple;
+	bh=xyirM9JYeuWy58K586Ld9PiD+foLazEMeL1AVtZXnpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e97ZTuTBeFPUI+JRiY6ArbQxGWQm6K2RRyETiTgH7CvZDbNs9OFm7bSFfLWmLR343ZBwS5whHQhUHLl6mD7t33zfobG3T7cpo10hZMZKHjqpToO4r04Jc5bZKeEgO6BpXH9UbKCoi4MwsGiHsVdxu7FqnTDrlJYZUuQpgY1/ZJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Jab3FV7q; arc=none smtp.client-ip=84.16.66.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="re7dAGUM"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qds3QH9/NIulGPoaFP6R1rhdXtUjY2A/UbXXcGwF3fX418CIKQIF/HmmQiXJfK2tkx0lqlU0eUGOfYONCpSnRP5dgw0NYAfMdPZJv2puncDnuGwDQPNYBBiEliKyW+tzyptfzzTciEbSWc8mKmGUR9E6MSAWA5BAVIL4vh3LFQGqKmIhMx13Zrjmz6E/N/q7Y81hyAI18UsPTbnXG4eqMa8cmD7WEiBokbyHznLSjDnSzW7ddPyfKZMAwUgnxOKJEdI3kQrvPdGZWbxzj2BDeDvKOBEeaYoFh/O4lXo87Yrlgtt39hSMskK6YDBoVXJnXPJuuB5My1OWpG/bDaupTg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1B67xZ+pE8Rj0uZyoNz7diP3HQRqUfrBf50Jc7FGNzk=;
- b=lokiBGqHjWiBehPgyMd/MHA/4TZXf3jE0ha6DP50qsHz13TPIOoCfZvGrfTm51MVDmjO8Tb6/PZO0c4I+W6vxBcGr10+frXisltMQf2BvKHylVTW3PiLYO02azoUc5RPpnPJ+hfvtMCNlU++rpWxj9Q1BjjlCQ/nYPb/poLzINY9e5+aHwEQDX/0NL+ujfO5eKm5UkXsX8vZibOVwz58U4B7+TE57KHjlECfhgDX5t+5NFgoJrK3XSG+uqZdXUxR5t80KqndlDAsVgjV7sgI7W9ftO4fmNjWhWo+azjgASbCiJh1iRHsxOEykbxr4pSZ4XlalUfnOEe8XQmGbRA6AA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1B67xZ+pE8Rj0uZyoNz7diP3HQRqUfrBf50Jc7FGNzk=;
- b=re7dAGUMFMI4/6gZe2A/VtsK+iDzhEJ6k3n7gAGUEytm7z/qbFmS2eqxZ+grEpgzpUCUeXl0Y6REFFl77buJHdUE/IUuVSLEjV+CKG81xcLzTeK0ilDZ1z6WeDxKkK7zV96qWmvvD49SmyOGQWB9oFpaQxT+vuaebAAnUBNh7Dw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from CW1P265MB8877.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:27c::13)
- by CWLP265MB2035.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:67::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.92.8; Wed, 10 Jun 2026
- 13:37:42 +0000
-Received: from CW1P265MB8877.GBRP265.PROD.OUTLOOK.COM
- ([fe80::6c9e:93c8:10db:e995]) by CW1P265MB8877.GBRP265.PROD.OUTLOOK.COM
- ([fe80::6c9e:93c8:10db:e995%6]) with mapi id 15.21.0113.011; Wed, 10 Jun 2026
- 13:37:42 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 10 Jun 2026 14:37:41 +0100
-Message-Id: <DJ5ES5DZ15W8.2KLL7VS1JMQOE@garyguo.net>
-Cc: "David Howells" <dhowells@redhat.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, <keyrings@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] keys: allow request-key path to be configured via
- Kconfig
-From: "Gary Guo" <gary@garyguo.net>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Gary Guo" <gary@garyguo.net>
-X-Mailer: aerc 0.21.0
-References: <20260607134928.2832202-1-gary@kernel.org>
- <aiZJ94eugtNHcILD@kernel.org> <aiZMT5UYhVDlLVHq@kernel.org>
- <DJ3LJFFPMAOW.QA3EZSAB2S5A@garyguo.net> <ailfPUbn8gbUqB1D@kernel.org>
-In-Reply-To: <ailfPUbn8gbUqB1D@kernel.org>
-X-ClientProxiedBy: LO4P302CA0013.GBRP302.PROD.OUTLOOK.COM
- (2603:10a6:600:2c2::20) To CW1P265MB8877.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:400:27c::13)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Jab3FV7q"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gb6Ls1v68zSC9;
+	Wed, 10 Jun 2026 15:39:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1781098741;
+	bh=USuC7NRonVBgUloLi4FSyuFH2OeXPDqa2TXlZ4jmlWw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jab3FV7qxTjVwb4ROsvQ1vmL9SiyT5ZEsOhtVcCFSo7USOj8pqGr8TfYHn90TD6oR
+	 1hjzAhswIvAkS9/pxOYJk6tkQUpke1nCO2Yzc8c6idZy8dW5bmx1rTE0DJyMbM8osf
+	 2teVfZ89R6q5pCLi1RejeMS1cEZP6+iDA7jK1fVw=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4gb6Lr1khVzNmg;
+	Wed, 10 Jun 2026 15:39:00 +0200 (CEST)
+Date: Wed, 10 Jun 2026 15:38:56 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Serge Hallyn <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: Re: [PATCH v3 1/3] landlock: Require
+ LANDLOCK_ACCESS_FS_MAKE_WHITEOUT for RENAME_WHITEOUT
+Message-ID: <20260610.uoMee2quoo9k@digikod.net>
+References: <20260610092318.3868884-1-gnoack@google.com>
+ <20260610092318.3868884-2-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CW1P265MB8877:EE_|CWLP265MB2035:EE_
-X-MS-Office365-Filtering-Correlation-Id: c6575b64-f3b0-4926-c955-08dec6f57249
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|366016|1800799024|10070799003|376014|22082099003|18002099003|4143699003|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	gKTsZzZ8Ev+eKCXfN3mrL4FK7Ls3OxOTToql2wME3cHAXKs5+UcSr3KMD8huSqI8EOrjn8O6/wPImBqMhG5AjwyrhGUxm5iE8/mFSIPs+oDNx70Qc74Rt3ayEfJskWaOi4mTvn4X9coy7FKXvMdemQYtqyY+GmMdhjmOJ60AEkLNx7IeeNTwAlmR3bM1uXkxvsHo17xkTySDMXiYfLDEr1LuU98F2yKQOVrkItgaa+2r0L+hUghCbnjOTex79qVYupcw7qmzNb54rIbnr3Ji3tPCwbxCd5Djjnpe/O4g2pZQw65wNGQb9ZXf3VtXEHzOHv/jQVehCx9VyCJSx028aDuWRkJp9+uHS4feWU7FH5z8Y1oKLLtqZLv/s32nNX+2XvTqIaN/boL7DVk1L9IRYWPcqLECgfuag9OSvp/PerYHZu3RPQlbVt1If+eiaa2GxRoGPhD0oOUMG25LEvcK3Mq0WB4fEEjUlptnbGG0ccc00rfE/0ltxIRQzZEty2RSswuUMJNnmlVNZHPuFIxPJFs89A58OMXrIbYSeUD7ulILvXtt11SZT2oV5d8u1wDQa7xcJQog4+55m88be5UxFSzg13PMR0T3EY19vzi1qkMOaOON6Wsftv6btLJyroAd2pWDtk0qJky9AnJ9qd0lOHZB06rUwkaS9/ExgveOlAqoAWtf5QcJCTMaDnz9ylFm
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CW1P265MB8877.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(1800799024)(10070799003)(376014)(22082099003)(18002099003)(4143699003)(56012099006);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?S3ZSZFJWU0ZGUTJhdWJNZGFQQm5JbFB1bHAwdHYydGZnV2tqRGtubEd2S3NJ?=
- =?utf-8?B?aDlJZ1B6SUdPbUZBbkVIN3RobkpHdGFoWVNpU1FLUFgxbHJTVi9Lb1M0L2xq?=
- =?utf-8?B?N3FEclVIQUNPL2RDNHJBTzZyQmFjSDlCT09QU3A4Z3NXRGVlRDFiR29CMk1Y?=
- =?utf-8?B?UTNER1JMR2lqVWhXWXFzTDJzOHpKTnljcklBWURPMVhISG5kSjlKUnZiU3BZ?=
- =?utf-8?B?aTdvM3RYSVRQMW9wL0hhNWxmZHFQVWNFNmU4eUhrMEp6K3FKTS91b2YzaFZr?=
- =?utf-8?B?c1JpZ1lhK0owWC9hTVB0Z2QrNDhVdExUYmZReXR3a0g3aUpxaHNqeGtDN0Mx?=
- =?utf-8?B?UktaWnBWK3d6QWdzWWhDU080N0VYdVJBbGIwdVA5SFV1ck5KejVVOWZTVTJH?=
- =?utf-8?B?R2xDZ1hieDQwRFkvOERMbzFRMmNSbjBTdVczMzc2ZVdwTWMvS2U2OFpITE1U?=
- =?utf-8?B?U29RTmxreWFWN3diSmVQcHpvQ1I3c3ZkVW9EcVNIa016Mlg5cEc0blVORVho?=
- =?utf-8?B?WEltaGpaUTRyNVEvRUhjRGtRUm9pd3E0YUJTR2JZb2RSVVh6QTJvdDFqSzFH?=
- =?utf-8?B?c00rS0VuUXVOWVVkdmI1OGFZTDRESUI1Ym16SVFxRlFBNjdlL3NEc1ZWQkFP?=
- =?utf-8?B?N2VpejBIbHpmb2dxT2VYdXY2d1VaNkFkWm5RMUo0TlRIZFIvMmJiMlRKWUNH?=
- =?utf-8?B?VkdYYWRoZ1JUcW9YTmxGVHRDZUJEdzBGOVpkWEF3TlQ5cFVkQ3ZZdEZzTjFQ?=
- =?utf-8?B?a1ZFc25oQk1TZnN3RFYvOW92S3BrM0NKTmw2TVpqbFZFT2hJTC9qNnhBVndk?=
- =?utf-8?B?djQ0UXFIS2hPWXZHTjJUbFY5bW5lR09YdW9uVis0aTBYekZNV3NRc2h1Zzc5?=
- =?utf-8?B?UWp6UmcxVGpzaVNkeWNwcW1MSGt3Z2R1ZVRKUXprY1R4OFNQSnpEaFhRNWtG?=
- =?utf-8?B?WENwL2N2Tk4vMnVGVTRsdHhrandmUUhndzZIQkR4anhsWE5MdVRYWkRIN2NE?=
- =?utf-8?B?L0JsYXgxV3NvR2dqQ05zK09JbUQrSUVlMUc5aHI5WC9LR2Y5ejRzSU1FdW82?=
- =?utf-8?B?d1FqaDVKRDNsUy81cTBQVmlFRHdYYXd4VUZYdzQyby9CcDhLdG9jRXUxZTg2?=
- =?utf-8?B?K1BGKzZ1ZDZqZFVEaGR3WHNycVFYQ0gzQ3pWNGZzRDBZZUN0YWNYcElYaEYz?=
- =?utf-8?B?THR4WEY5SzJxdFFsOXNQTWhaWWtFSTFNWnE3bEpUTUp1YmZTUzdQdC85ejYz?=
- =?utf-8?B?Q2U4cStBV2xJenJFaFlzeGx0ajlXZW5RNjcxcHNXcjMreWxHM2xVMHBaeHZa?=
- =?utf-8?B?YTlnOXhEN3ZqYWJ2ZjF2QnZheTFza3dJR1B4NGM5d1pVS0hUcDRxVUNzZUVk?=
- =?utf-8?B?aFkvRVgybzdRSGVkdnZBU0RNY2dnaW5CY1EwVXpIdXNZV0RxbW5seS85bUt6?=
- =?utf-8?B?WVNmRXpyWDJJTlhkL2plVHRnWHBLRCtYc01rQXFITnVyVlIwQ3Nsd1BVSWdJ?=
- =?utf-8?B?Q2o5bFhzWXJPeVV6bVQ3ZTllMENrVDV5QjREQnlPRllzbUZrWlNybmxzWkFS?=
- =?utf-8?B?Y2JwVUtvc3dKdkE1WGlGWWt1MjFJMUNqZHdsOWowZE5NaEJ0eEljK0lEUVRr?=
- =?utf-8?B?Z0ZHZkQ1M25NT0liU2Jqa1FBUDJQZDczM05CYnJuR2ZleXArczRQV3c1V0pE?=
- =?utf-8?B?Z0d4ZHhiUFpid1ZoZ3ZhSkFVY0F3TXFDOWpVRXJzSDhoVll2MEtMVlZNTTYv?=
- =?utf-8?B?NWRmemg3NFRybEVubnBZbnhBU3BYdEE3OUxha3ZmUlc4RUtBMUthaWt5QUtr?=
- =?utf-8?B?SjdTWXRQYzU0SDNkR045eXNsOGVWL3NFQm10YjhVM2o2UURJc09VaXRvOHph?=
- =?utf-8?B?ZDlaMnBvRW5VUlZudk83NkNmMHl1M1FBdmVHOTAvTmpoM2g2ZVFJbzlnSHBY?=
- =?utf-8?B?OHdQZlRyS0VGSytUR3ExN0cxOTFGVDVwa2xhcEwwVGUrdlZXdEZwaW44QmVv?=
- =?utf-8?B?M3A1NSszV29mTnU5K1ZBQ3hBUkVwZUYwaEYrNUJidHhrZUJtNkJjWVBOOHBU?=
- =?utf-8?B?NXZiVEk3akpXN29Od3JRNEQ5aU1xNEJrR1ZXNHpSZUNkSVN1K3AxbmlLYi8v?=
- =?utf-8?B?S3JtdHp4T2N5NWZYLy9CcGJicGdvMnN6VCtobmUrNS9uOW9hazdTQmQvajMr?=
- =?utf-8?B?RFk5emxtdnRYRW5Rc2xKUmZ4VXhSb250TmYraHNnR1JpMHVERlQ0SFNodWpI?=
- =?utf-8?B?aW0wc0dNWGp2bG9ycEp2amFLZDJkR2FGZE9BcnhvNTBEQjZBYVVyTlpMMmlC?=
- =?utf-8?B?WGxZU0JPaGxUYXZLVE5VUHBlckM1ZjNIQksxamtiK0x5RFFHY2VBUT09?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6575b64-f3b0-4926-c955-08dec6f57249
-X-MS-Exchange-CrossTenant-AuthSource: CW1P265MB8877.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2026 13:37:42.0790
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: z3SdyvaVOXpnOfxORm1Tvkm5tvqsmWIIiJoFsrTcViFZN3booMwVL0IHQXWh8XQmg64HduOJ6/d9LOMwUChsCQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP265MB2035
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260610092318.3868884-2-gnoack@google.com>
+X-Infomaniak-Routing: alpha
 
-On Wed Jun 10, 2026 at 1:57 PM BST, Jarkko Sakkinen wrote:
-> On Mon, Jun 08, 2026 at 11:30:06AM +0100, Gary Guo wrote:
->>=20
->> This is really just for distros to be able to configure where /sbin is l=
-ocated.
->> Given usr merge and (some distros) bin/sbin merge, the canonical path of
->> request-key binary is very likely not /sbin/request-key anymore, so it s=
-eems to
->> make sense to me to allow this to be changed rather than always go throu=
-gh
->> compatibility symlinks.
->
-> I doubt there's a huge demand other than NixOS. Just basing this on that
-> no other noise have been made so far.
+Making MAKE_CHAR not covering MAKE_WHITEOUT is not addressed (see
+previous discussion).  MAKE_CHAR should not restrict whiteout creation
+*if* MAKE_WHITEOUT is handled.  Specific tests should check that all
+these cases are proprely handled.
 
-Just to add on this, both Fedora and openSUSE for example changes their
-CONFIG_MODPROBE_PATH to be /usr/sbin/modprobe after /usr merge. They still =
-have
-the /sbin -> /usr/sbin symlink available, so it's not like they cannot work=
- with
-/sbin/request-key, but I would think that if the option is available then t=
-hey
-might switch to use /usr/sbin/request-key, too.
+There is no documentation update related to the new feature.  A note
+should also explain what exactly is a whiteout and why it is not
+considered a character device (see previous discussions).
 
-After all, why would one perform a symlink walk for no reason?
+The sandboxer is not updated.
 
-Best,
-Gary
+There is no audit tests.
+
+
+On Wed, Jun 10, 2026 at 11:23:16AM +0200, Günther Noack wrote:
+> renameat2(2) with the RENAME_WHITEOUT flag places a whiteout character
+> device file in the source file location in place of the moved file.
+> This creates a directory entry even in cases where all
+> LANDLOCK_ACCESS_FS_MAKE_* rights are denied.
+> 
+> Introduce the LANDLOCK_ACCESS_FS_MAKE_WHITEOUT right, which is checked
+> for the origin directory if RENAME_WHITEOUT is passed.
+> 
+> This does not affect normal renames within layered OverlayFS mounts:
+> When OverlayFS invokes rename with RENAME_WHITEOUT as part of a
+> "normal" rename operation, it does so in ovl_rename() using the
+> credentials that were set at the time of mounting the OverlayFS.
+> 
+> Bump the Landlock ABI version to 10.
+> 
+> Suggested-by: Christian Brauner <brauner@kernel.org>
+> Suggested-by: Mickaël Salaün <mic@digikod.net>
+> Signed-off-by: Günther Noack <gnoack@google.com>
+> ---
+>  include/uapi/linux/landlock.h                |  3 +++
+>  security/landlock/audit.c                    |  1 +
+>  security/landlock/fs.c                       | 17 ++++++++++++++---
+>  security/landlock/limits.h                   |  2 +-
+>  security/landlock/syscalls.c                 |  2 +-
+>  tools/testing/selftests/landlock/base_test.c |  4 ++--
+>  tools/testing/selftests/landlock/fs_test.c   |  5 +++--
+>  7 files changed, 25 insertions(+), 9 deletions(-)
+> 
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 10a346e55e95..1f8a1d6d25f1 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -328,6 +328,8 @@ struct landlock_net_port_attr {
+>   *
+>   *   If multiple requirements are not met, the ``EACCES`` error code takes
+>   *   precedence over ``EXDEV``.
+> + * - %LANDLOCK_ACCESS_FS_MAKE_WHITEOUT: Create a whiteout object through
+> + *   :manpage:`rename(2)` with ``RENAME_WHITEOUT``.
+>   *
+>   * .. warning::
+>   *
+> @@ -356,6 +358,7 @@ struct landlock_net_port_attr {
+>  #define LANDLOCK_ACCESS_FS_TRUNCATE			(1ULL << 14)
+>  #define LANDLOCK_ACCESS_FS_IOCTL_DEV			(1ULL << 15)
+>  #define LANDLOCK_ACCESS_FS_RESOLVE_UNIX			(1ULL << 16)
+> +#define LANDLOCK_ACCESS_FS_MAKE_WHITEOUT		(1ULL << 17)
+>  /* clang-format on */
+>  
+>  /**
+> diff --git a/security/landlock/audit.c b/security/landlock/audit.c
+> index 8d0edf94037d..09c97083f599 100644
+> --- a/security/landlock/audit.c
+> +++ b/security/landlock/audit.c
+> @@ -38,6 +38,7 @@ static const char *const fs_access_strings[] = {
+>  	[BIT_INDEX(LANDLOCK_ACCESS_FS_TRUNCATE)] = "fs.truncate",
+>  	[BIT_INDEX(LANDLOCK_ACCESS_FS_IOCTL_DEV)] = "fs.ioctl_dev",
+>  	[BIT_INDEX(LANDLOCK_ACCESS_FS_RESOLVE_UNIX)] = "fs.resolve_unix",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_MAKE_WHITEOUT)] = "fs.make_whiteout",
+>  };
+>  
+>  static_assert(ARRAY_SIZE(fs_access_strings) == LANDLOCK_NUM_ACCESS_FS);
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index c1ecfe239032..67810d5242b2 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -1080,6 +1080,7 @@ static bool collect_domain_accesses(const struct landlock_ruleset *const domain,
+>   * @new_dentry: Destination file or directory.
+>   * @removable: Sets to true if it is a rename operation.
+>   * @exchange: Sets to true if it is a rename operation with RENAME_EXCHANGE.
+> + * @whiteout: Sets to true if it is a rename operation with RENAME_WHITEOUT.
+>   *
+>   * Because of its unprivileged constraints, Landlock relies on file hierarchies
+>   * (and not only inodes) to tie access rights to files.  Being able to link or
+> @@ -1127,7 +1128,8 @@ static bool collect_domain_accesses(const struct landlock_ruleset *const domain,
+>  static int current_check_refer_path(struct dentry *const old_dentry,
+>  				    const struct path *const new_dir,
+>  				    struct dentry *const new_dentry,
+> -				    const bool removable, const bool exchange)
+> +				    const bool removable, const bool exchange,
+> +				    const bool whiteout)
+>  {
+>  	const struct landlock_cred_security *const subject =
+>  		landlock_get_applicable_subject(current_cred(), any_fs, NULL);
+> @@ -1159,6 +1161,14 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+>  		access_request_parent2 |= maybe_remove(new_dentry);
+>  	}
+>  
+> +	/*
+> +	 * In case of renameat2(2) with RENAME_WHITEOUT, a whiteout object is
+> +	 * created in the source location, so we require an additional access
+> +	 * right there.
+> +	 */
+> +	if (whiteout)
+> +		access_request_parent1 |= LANDLOCK_ACCESS_FS_MAKE_WHITEOUT;
+> +
+>  	/* The mount points are the same for old and new paths, cf. EXDEV. */
+>  	if (old_dentry->d_parent == new_dir->dentry) {
+>  		/*
+> @@ -1509,7 +1519,7 @@ static int hook_path_link(struct dentry *const old_dentry,
+>  			  struct dentry *const new_dentry)
+>  {
+>  	return current_check_refer_path(old_dentry, new_dir, new_dentry, false,
+> -					false);
+> +					false, false);
+>  }
+>  
+>  static int hook_path_rename(const struct path *const old_dir,
+> @@ -1520,7 +1530,8 @@ static int hook_path_rename(const struct path *const old_dir,
+>  {
+>  	/* old_dir refers to old_dentry->d_parent and new_dir->mnt */
+>  	return current_check_refer_path(old_dentry, new_dir, new_dentry, true,
+> -					!!(flags & RENAME_EXCHANGE));
+> +					!!(flags & RENAME_EXCHANGE),
+> +					!!(flags & RENAME_WHITEOUT));
+>  }
+>  
+>  static int hook_path_mkdir(const struct path *const dir,
+> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> index b454ad73b15e..e59378e8e897 100644
+> --- a/security/landlock/limits.h
+> +++ b/security/landlock/limits.h
+> @@ -19,7 +19,7 @@
+>  #define LANDLOCK_MAX_NUM_LAYERS		16
+>  #define LANDLOCK_MAX_NUM_RULES		U32_MAX
+>  
+> -#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_RESOLVE_UNIX
+> +#define LANDLOCK_LAST_ACCESS_FS		LANDLOCK_ACCESS_FS_MAKE_WHITEOUT
+>  #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
+>  #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
+>  
+> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> index accfd2e5a0cd..d45469d5d464 100644
+> --- a/security/landlock/syscalls.c
+> +++ b/security/landlock/syscalls.c
+> @@ -166,7 +166,7 @@ static const struct file_operations ruleset_fops = {
+>   * If the change involves a fix that requires userspace awareness, also update
+>   * the errata documentation in Documentation/userspace-api/landlock.rst .
+>   */
+> -const int landlock_abi_version = 9;
+> +const int landlock_abi_version = 10;
+>  
+>  /**
+>   * sys_landlock_create_ruleset - Create a new ruleset
+> diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
+> index 30d37234086c..6c8113c2ded1 100644
+> --- a/tools/testing/selftests/landlock/base_test.c
+> +++ b/tools/testing/selftests/landlock/base_test.c
+> @@ -76,8 +76,8 @@ TEST(abi_version)
+>  	const struct landlock_ruleset_attr ruleset_attr = {
+>  		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
+>  	};
+> -	ASSERT_EQ(9, landlock_create_ruleset(NULL, 0,
+> -					     LANDLOCK_CREATE_RULESET_VERSION));
+> +	ASSERT_EQ(10, landlock_create_ruleset(NULL, 0,
+> +					      LANDLOCK_CREATE_RULESET_VERSION));
+>  
+>  	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
+>  					      LANDLOCK_CREATE_RULESET_VERSION));
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index cdb47fc1fc0a..53d1b659849f 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -579,7 +579,7 @@ TEST_F_FORK(layout1, inval)
+>  	LANDLOCK_ACCESS_FS_IOCTL_DEV | \
+>  	LANDLOCK_ACCESS_FS_RESOLVE_UNIX)
+>  
+> -#define ACCESS_LAST LANDLOCK_ACCESS_FS_RESOLVE_UNIX
+> +#define ACCESS_LAST LANDLOCK_ACCESS_FS_MAKE_WHITEOUT
+>  
+>  #define ACCESS_ALL ( \
+>  	ACCESS_FILE | \
+> @@ -593,7 +593,8 @@ TEST_F_FORK(layout1, inval)
+>  	LANDLOCK_ACCESS_FS_MAKE_FIFO | \
+>  	LANDLOCK_ACCESS_FS_MAKE_BLOCK | \
+>  	LANDLOCK_ACCESS_FS_MAKE_SYM | \
+> -	LANDLOCK_ACCESS_FS_REFER)
+> +	LANDLOCK_ACCESS_FS_REFER | \
+> +	LANDLOCK_ACCESS_FS_MAKE_WHITEOUT)
+>  
+>  /* clang-format on */
+>  
+> -- 
+> 2.54.0.1099.g489fc7bff1-goog
+> 
