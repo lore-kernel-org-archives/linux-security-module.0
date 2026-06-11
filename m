@@ -1,96 +1,148 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx1.buffet.re (mx1.buffet.re [51.83.41.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D563D2FD681;
-	Thu, 11 Jun 2026 09:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E534266B1;
+	Thu, 11 Jun 2026 16:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.83.41.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781169828; cv=none; b=bBqSKcSQABUjhNHRoZsgZyrj1A5/9rwX8b3jEx/i9SiG8T7Y3ixWIMbuSnz3HZc8qu6DznneTFu5xhNUqX4JwPfqHBfXk8TGDNCfgqlZMplJEtYypKc4NkrLK5K157N38hp+r/H4xI3/6iRyTPnhyQHW4+mdySjrCGGQPfslbYs=
+	t=1781194911; cv=none; b=fwimyRFzozv7jnxPc5N+GMdP4f63WhCGCBhH/9Z8Zxhex4+8/ISdJyAE+poiY8mBkwiEpATkAb438LEpxMaB+HwAvZtRbTyT9Ta5p1nBZBG6xEj+U2N8a+cr5QzoJPyCMKHJX3zswvAJvXJ94sI+VGDzuJ/GMkLHlMm9EbvixYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781169828; c=relaxed/simple;
-	bh=n4QyMGbFQbeSogIxTyg8g3splgIaIsH26BzlrHn773A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IvURTLBsrM8KpKxyf9Dcag9Z+YFLByf9ltiO4/mOby8PlIL/TLbt/hzCVIzptqYG9CD9uBaC6IPxK8Fg/LfhX/fxPd4hjdT/xHhSYIMz4Cra5oaQ+PIed7+dGNnwSXAL70R+fBRODZ1SUAV2bmbmUNhk6CX7Ra+Bm/xK7Z2b/f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JZOu5gQL; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781194911; c=relaxed/simple;
+	bh=Sy/uyKwIT7avvnKqBnGYYgmi6B/oKwD7z26mUetEzUY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QLRJZNwZCFWmNm/AyxX/ql5X4M16A1vRNMbBW11vVkCbJyPW5nhESnYBTDTJfA9qDAgpAj8eEJKV77T9sjyimBMPfMzaxJ8HUKxNYrre1oRBeGbLQjt60NXD1GR99ikddffwkGjiFY7cnqw/gj3QRE10sRRsXChylM9ByqohzLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re; spf=pass smtp.mailfrom=buffet.re; dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b=RJ/YF946; arc=none smtp.client-ip=51.83.41.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buffet.re
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZOu5gQL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 550271F00898;
-	Thu, 11 Jun 2026 09:23:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781169827;
-	bh=SLJxYuWn1JgaTUqmkYqvt9u1o2uLPDb56mE2MLV5Y8o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=JZOu5gQLyWUjcPodEFU369f++53aZ7WVUSj3nBTCo4m50DID9bK6QSwQEunjMzqbh
-	 IcZI7EzXcc1ulbDg73BaXe58hx0fNo9EhIT0NEFpffu2NNd9369h5sfQEqRnp8SnyE
-	 s1Gi62pU8yqneYYzZh+QRdq3ro6pt7Y22N3DWoPgiJL4QwDKbRZ1ZWWVy98OEGvV0H
-	 +rKnux9Cn681B+NieJsRKF34cv3Zc04zJhaAv6Bzi268J1iERVubctNW1fKCvcbeMz
-	 75FB6KPEPWCIWUUS2CL06vszvJmZryK2z7mSJogxHGILGmy4FZVpmQsyDIW9mJLata
-	 2tYb8Gwp18OOQ==
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-	id F0D4D1AC56C6; Thu, 11 Jun 2026 10:23:44 +0100 (BST)
-Date: Thu, 11 Jun 2026 10:23:44 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, linux-hardening@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2] hardening: Default randstruct off with rust for
- better allmodconfig support
-Message-ID: <aip-oMvL_8zxRssJ@sirena.co.uk>
-References: <20260605-rust-reverse-randstruct-dep-v2-1-93d38023b6f9@kernel.org>
- <CANiq72mmzfBg0_y+TMTsUUuO0cJFE0=n60-ttwOynai06_y=zg@mail.gmail.com>
- <202606101339.66BFE3AA67@keescook>
+	dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b="RJ/YF946"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=buffet.re; s=mx1;
+	t=1781194905; bh=Sy/uyKwIT7avvnKqBnGYYgmi6B/oKwD7z26mUetEzUY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RJ/YF946MP4a9c8apnOjFEnP9/G7JjVMTTXBtYX6k7yCkf3tvzTzLEGdk7JHLXKQq
+	 qrng/nK/zI+bT2bw7bkIQLsEVpcAaeT9S8bkUvHe0D3pg/obglCxj/sPHJLAZ0cLo1
+	 gZ9wXFS6zY5kt4ZkHD741Lc6lCm3TfNeeQAesBfbvgdv/K7RsL9uWzllOk/w1C2jOY
+	 fDPgD67AZrG2XX8gl7dD5rAEO/1L3W+UebSqmh/Ch2iVlsbwPD/SmkV1ffGKJXNFNG
+	 phX0eSfDwh9GNLNQDFLcq4a9L9Ex59+Ih2AjAUgJk8yX51htPbZwcu1Xw1zd7pvhzf
+	 j5HBpj+wY6+Ag==
+Received: from localhost.localdomain (unknown [10.0.1.3])
+	by mx1.buffet.re (Postfix) with ESMTPSA id 7E0691253FC;
+	Thu, 11 Jun 2026 18:21:44 +0200 (CEST)
+From: Matthieu Buffet <matthieu@buffet.re>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	konstantin.meskhidze@huawei.com,
+	Tingmao Wang <m@maowtm.org>,
+	netdev@vger.kernel.org,
+	Matthieu Buffet <matthieu@buffet.re>
+Subject: [PATCH v5 0/6] landlock: Add UDP access control support
+Date: Thu, 11 Jun 2026 18:21:00 +0200
+Message-ID: <20260611162107.49278-1-matthieu@buffet.re>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8Pab7+dFsmnpIdTp"
-Content-Disposition: inline
-In-Reply-To: <202606101339.66BFE3AA67@keescook>
-X-Cookie: Leave no stone unturned.
+Content-Transfer-Encoding: 8bit
+
+Hi,
+
+This is V5 (hopefully final) of UDP access control in Landlock. It has
+very few changes compared to v4, described below, all feedback given so
+far should be in there (if not that's a mistake on my part). It adds
+only two access rights, to restrict configuring local and remote
+addresses on UDP sockets. The one that restricts setting a remote
+address also controls sending datagrams to explicit remote addresses
+-ignoring any remote address preset on the socket-. The one that
+restricts binding to a local port also applies when the kernel
+auto-binds an ephemeral port.
+
+Changes v1->v2
+==============
+- recvmsg hook is gone and sendmsg hook doesn't apply when sending to a
+  remote address pre-set on socket, to improve performance
+- don't add a get_addr_port() helper function, which required a weird
+  "am I in IPv4 or IPv6 context"
+- reorder hook prologue for consistency: check domain, then type and
+  family
+
+Changes v2->v3
+==============
+- removed support for sending datagrams with explicit destination
+  address of family AF_UNSPEC, which allowed to bypass restrictions with
+  a race condition
+- rebased on linux-mic/next => add support for auditing
+- fixed mistake in selftests when using unspec_srv variables, which were
+  implicitly of type SOCK_STREAM and did not actually test UDP code
+- add tests for IPPROTO_IP
+- improved docs, split off TCP-related refactoring
+
+Changes v3->v4
+==============
+- merge LANDLOCK_ACCESS_NET_CONNECT_UDP and
+  LANDLOCK_ACCESS_NET_SENDTO_UDP into
+  LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP (everything that might set the
+  destination of a datagram)
+- make LANDLOCK_ACCESS_NET_BIND_UDP apply when kernel is about to
+  auto-bind an ephemeral port for the caller. Block it if policy would
+  not allow an explicit call to bind(0)
+- only deny sending AF_UNSPEC datagrams on IPv6 sockets, where there is
+  a risk of the address family changing midway
+
+Changes v4->v5
+==============
+- fix unmarked racy socket address family accesses
+- fix improper bind(0) autobind access check when connecting to AF_UNSPEC
+- fix example code structure in documentation to match pattern of usage
+  used in the rest of the code
+- fix bad copy-pastes in selftests, and some unimportant variable types
+- squash LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP commits
+- add a small help note in sandboxer to point out the need to allow
+  binding a source port when emitting, to reduce surprises if people
+  try to get a feeling of the feature through sandboxer before reading
+  the docs
+
+v1:
+Link: https://lore.kernel.org/all/20240916122230.114800-1-matthieu@buffet.re/
+v2:
+Link: https://lore.kernel.org/all/20241214184540.3835222-1-matthieu@buffet.re/
+v3:
+Link: https://lore.kernel.org/all/20251212163704.142301-1-matthieu@buffet.re/
+v4:
+Link: https://lore.kernel.org/all/20260502124306.3975990-1-matthieu@buffet.re/
+
+Based on https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git
+9ea6fb415fc8 ("selftests/landlock: Explicitly disable audit in teardowns")
+from branch next.
+All lines added are covered with selftests (net.c goes from 93.1% to 95.3%
+line coverage).
+
+Closes: https://github.com/landlock-lsm/linux/issues/10
+
+Matthieu Buffet (6):
+  landlock: Add UDP bind() access control
+  landlock: Add UDP send+connect access control
+  selftests/landlock: Add tests for UDP bind/connect
+  selftests/landlock: Add tests for UDP send
+  samples/landlock: Add sandboxer UDP access control
+  landlock: Add documentation for UDP support
+
+ Documentation/userspace-api/landlock.rst     |   91 +-
+ include/uapi/linux/landlock.h                |   35 +-
+ samples/landlock/sandboxer.c                 |   41 +-
+ security/landlock/audit.c                    |    3 +
+ security/landlock/limits.h                   |    2 +-
+ security/landlock/net.c                      |  155 ++-
+ security/landlock/syscalls.c                 |    2 +-
+ tools/testing/selftests/landlock/base_test.c |    4 +-
+ tools/testing/selftests/landlock/net_test.c  | 1166 ++++++++++++++++--
+ 9 files changed, 1353 insertions(+), 146 deletions(-)
 
 
---8Pab7+dFsmnpIdTp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+base-commit: 9ea6fb415fc8b535da91dadd74f948d96ba3d41d
+-- 
+2.47.3
 
-On Wed, Jun 10, 2026 at 01:41:19PM -0700, Kees Cook wrote:
-
-> For the linux-next testing, are you doing GCC + llvm rustc builds? IIUC,
-> then the support patch mentioned, I think, doesn't actually solve the
-> problem?
-
-No, the allmodconfig builds are currently using LLVM - there's other
-issues with rust+GCC, right now KASAN IIRC, and it generally seems like
-it'll be more reliable to use LLVM to get the coverage.  Both compilers
-need to work anyway.
-
---8Pab7+dFsmnpIdTp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmoqfqAACgkQJNaLcl1U
-h9AxcAf9E/oP1ZL3Gu06qhTqh4nYLlsl2eB2tx/jFQdSn1OKhVsmDjbjczaKsgZy
-LHqGmINsqxdstTNwEx+dR+afTJbZApGKGddu2tiEsfvP0bptDaymDHebd1lVt5bG
-g/Hr00vkEXyGOMK+M3BuIkZyiooP+5q02FZK/MbBRMN7yPTpJa6ldkeYxQXN4PWR
-z0ValSlPt8JYhmZ7R2sHu62S7q962NfPx41a/6B4wk3vbcboSupITED6RKbjaBUO
-wGUwmj+NFXHC5ZSy/JAFwI+JEM7eglgRC+L/aKUFfDLmVC4nGRuSflrf7RBGU5D4
-XmLT0VzVKwbCySWEyK+zoLmP9sQK8w==
-=fG0k
------END PGP SIGNATURE-----
-
---8Pab7+dFsmnpIdTp--
