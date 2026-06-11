@@ -1,233 +1,216 @@
-Received: from mx1.buffet.re (mx1.buffet.re [51.83.41.69])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DA247ECE1;
-	Thu, 11 Jun 2026 16:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.83.41.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE20648AE33;
+	Thu, 11 Jun 2026 18:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781194927; cv=none; b=FN1WEBs+iZOL9DUTRXB1zUf1F1v6ePR+qjHg0J+EDM/lx/ojaBRlIbWL9qLf1v0/ym5+/vFpPRa1rQrOcHjC0nD4pA/jL3DRoDokqoT1hln2zTp6EBGzKfFFbapDJICKy1w5EP3OkRMtrjBFbbZJdbStHfNf/V0cf+NlJaGZCl4=
+	t=1781204355; cv=none; b=C4+znNMI0qBXb0gfzaCtqDe4i9pO1yQbZPHCN64qnln1Zn5XCIAJkPAzHbVMHEEjJ9eDsbiVc+7qZ9wYvog83E3v90J+6xcJitT26mlzQ7pnR2cghfxiRF3PlZsuOH+EM86XXLHi/pU9p4Apxp3HTaQUPE7iu7wmOHuSIdBCRwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781194927; c=relaxed/simple;
-	bh=32DTtbncqLOKunhSApTn8IyZxuTnNOgKWpIEaQeBkOM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qTeQgi8RLxi0iSvetzzphuAdYyijMDb6gEOGf4jTKYKqTWMc8WmiBHLLtFD+s57YR9pICxikY1Ef/6hZMc43dQZd0P9DuIKYWdQdRNNMIbBt13v27wDcUK0olNrsLtaCidwJ3GsP6CcYkAdPbYBGCSwpXOocje1GApaL5A+Epao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re; spf=pass smtp.mailfrom=buffet.re; dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b=QPDrUPSB; arc=none smtp.client-ip=51.83.41.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buffet.re
+	s=arc-20240116; t=1781204355; c=relaxed/simple;
+	bh=CycKIp2LRSIA7ajOQ2jNYyVfWjLBvkvz00XEN6t4V8M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ry/QVbX0WCImreKdlYK7EdKwppHcsM/jVdPfuGUel7EckDpEiAnRSAaFf0Ht9q4wbD3P9BRPXwzW13GHuQTTnI5C8z+HTO0+kefbSuovmNW2S289K4GmBvBUyetFWgE4zq4jzclDubiQsW7qmbd0Z2Zvlubg7rw1+JlRLogBWZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XcPD2boL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b="QPDrUPSB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=buffet.re; s=mx1;
-	t=1781194923; bh=32DTtbncqLOKunhSApTn8IyZxuTnNOgKWpIEaQeBkOM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QPDrUPSBJOvXutXd3QS0+Wtx/sTjuP1BzdFIxHFSnZJ+qui3bj+k43a5VvlSvjaEF
-	 UoLqimQ3wxhjqQRBa7HAYWjbMCxzko98hvximsaL2d5fqSfUAY0284Yd0CIrAGu5Dw
-	 LXZfNH/KZkDOXPIYMaUgx57U38kBVwnu8YiBHP14OrFtRm/Dg5TDLNtoXTHH4+te54
-	 frTMgBYyldlV3P9O5m6I5hYEi0G8vN3Dtq+mwvVqW5fX8kXeSz5puVoa8RvnK6p6ug
-	 +KBlvBdZQUzwnNOFSViX1XFzcelcWj8cGpiTz8I4UhC3o8sLdAl/Z4gbK78aG0GxP0
-	 khcmCbbUMJXeQ==
-Received: from localhost.localdomain (unknown [10.0.1.3])
-	by mx1.buffet.re (Postfix) with ESMTPSA id B713E125982;
-	Thu, 11 Jun 2026 18:22:02 +0200 (CEST)
-From: Matthieu Buffet <matthieu@buffet.re>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
-Cc: linux-security-module@vger.kernel.org,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	konstantin.meskhidze@huawei.com,
-	Tingmao Wang <m@maowtm.org>,
-	netdev@vger.kernel.org,
-	Matthieu Buffet <matthieu@buffet.re>
-Subject: [PATCH v5 6/6] landlock: Add documentation for UDP support
-Date: Thu, 11 Jun 2026 18:21:06 +0200
-Message-ID: <20260611162107.49278-7-matthieu@buffet.re>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260611162107.49278-1-matthieu@buffet.re>
-References: <20260611162107.49278-1-matthieu@buffet.re>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XcPD2boL"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 58969C2BCB0;
+	Thu, 11 Jun 2026 18:59:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1781204355;
+	bh=CycKIp2LRSIA7ajOQ2jNYyVfWjLBvkvz00XEN6t4V8M=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=XcPD2boLxdlPfsIgk/hAYSmSpLqRTZwCtbrqyqOedNIhvZtTaOWG8+GOP9hkV5U3d
+	 k5TiASvI/ksC/hJD3SNs8sJQQnU/8v+sMQMRIE+SmgOD9tMVFOA0zJAECNO3fxBK1N
+	 J/hnUEUOKgqzLNDFlEsGVN0yLrTtReY0NOp2i8WQ2yFVkUrA4rPj9MW3xamOt1y+BI
+	 R+10B1XnQBGMf6U7zy9bbzj0SIHv8kwsaeCAZ08rZyBM0YbHGIty/gOLoWcqVR5Irr
+	 URD5mK++HNW6LMcbrNo/0qDEQoS71Rzj/6mKl7DJ2KFR24oR7P8V5MWD1xouVToofk
+	 eGEih1ArkmjKQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B3F5CD8C9D;
+	Thu, 11 Jun 2026 18:59:15 +0000 (UTC)
+From: Alex Roberts via B4 Relay <devnull+alex.roberts109.outlook.com@kernel.org>
+Date: Thu, 11 Jun 2026 13:59:10 -0500
+Subject: [PATCH] Add LoadPin support for eBPF program loading
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20260611-b4-rfc-loadpin-ebpf-v1-1-11a6c8e6170d@outlook.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yWNQQrCMBBFr1Jm7UBSaxCvIi4yk4kdCWlIrAild
+ zfq8n1472/QpKo0uAwbVHlp0yV3sIcBePb5LqihM4xmdMZZizRhjYxp8aFoRqES0ZwdTzYIncw
+ Rukm+CVL1mefu5jWlPpYqUd+/q+vtz22lh/Dz24d9/wBoSuMPjAAAAA==
+X-Change-ID: 20260611-b4-rfc-loadpin-ebpf-086c41deb503
+To: Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ bpf@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
+ KP Singh <kpsingh@kernel.org>, Alex Roberts <alex.roberts109@outlook.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6115;
+ i=alex.roberts109@outlook.com; h=from:subject:message-id;
+ bh=kja/4mgWlMnUqr7hZArx3pkWuFe/YGd2AE8OlioL1Yg=;
+ b=owGbwMvMwCEWzZjUEpRpN5nxtFoSQ5Y2a1Py18mKdw6lNof73xXkv/9m/qsTW2v/MIZvU2wrS
+ fmo4+3UUcrCIMbBICumyMKnyPP7sYle/asFy6Nh5rAygQxh4OIUgIkIrmZkmCmpFbGhfarsP8mL
+ Gx9ynfE+kfGx+UXSqwYTw+15E3WtjRgZjvWZHJCX+HfK+2vSt7Ajv72Wa6s8dT2+o/LWF+OU115
+ H2QE=
+X-Developer-Key: i=alex.roberts109@outlook.com; a=openpgp;
+ fpr=0E210CFBE3342E7FEAA0A75B5B01628452693E93
+X-Endpoint-Received: by B4 Relay for alex.roberts109@outlook.com/default
+ with auth_id=817
+X-Original-From: Alex Roberts <alex.roberts109@outlook.com>
+Reply-To: alex.roberts109@outlook.com
 
-Add example of UDP usage, without detailing the two access right.
-Slightly change the example used in code blocks: build a ruleset for a
-DNS client, so that it uses both TCP and UDP.
+From: Alex Roberts <alex.roberts109@outlook.com>
 
-Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
+Add LoadPin LSM hook to bpf_prog_load to prevent loading of BPF
+programs from untrusted filesystems
+
 ---
- Documentation/userspace-api/landlock.rst | 91 +++++++++++++++++++-----
- 1 file changed, 72 insertions(+), 19 deletions(-)
+There have been several efforts to provide a trust mechanism for eBPF programs –
+particularly in the form of a signed program. After many discussions, BPF
+Signing became supported [1].
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index 45861fa75685..0ea55c2c732c 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -8,7 +8,7 @@ Landlock: unprivileged access control
- =====================================
+This patch series intends to provide an alternative trust mechanism for eBPF
+programs using LoadPin and the LoadPin dm-verity support. The approach is to pin
+eBPF userspace loaders to a single filesystem or to one or more dm-verity
+integrity protected filesystems. This is similar to the existing  Loadpin+verity
+implementation and approach of e.g., loading unsigned kernel modules or kexec
+images from a pinned trusted filesystem [2].
+
+When a userspace application attempts to load a BPF program, LoadPin
+first checks whether the exe_file is located on the pinned root, if so
+bpf_prog_load is allowed. Otherwise, Loadpin denies bpf_prog_load. Additionally,
+if verity support is enabled, LoadPin determines whether the exe_file is located
+on a verity backed device and whether the root digest of that device is in the
+list of trusted digests. bpf_prog_load is allowed if the verity device has a
+trusted root digest.
+
+Background:
+In a secure boot environment, secure boot can be extended to the root filesystem
+by means of dm-verity. Placing userspace eBPF programs on trusted filesystems
+and restricting their use to a trusted filesystem implicitly extends the trust
+to the underlying BPF program itself, without having to sign the bytecode.
+Rather than sign each program and load keys into the kernel keyring, it can be
+sufficient to sign the filesystem.
+
+Additional Considerations:
+Because the userspace loader itself defines the filesystem to pin from, it
+should be acknowledged that this does not necessarily solve the dynamically
+generated eBPF usecase. For example, if the pinned filesystem includes bpftrace
+or other userspace applications that dynamically generate and load eBPF
+bytecode, this trust mechanism does not apply. But for systems that either
+   1) remove/do-not-provide dynamically generating programs or
+   2) loadpin filesystem(s) that exclude such programs,
+then it can be reasoned that only trusted bytecode is loaded.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/commit/?h=for-next&id=58a5820582e4c809dd26b3f2d396cf072411d6e8
+[2] https://lore.kernel.org/lkml/20220517163437.v4.2.I01c67af41d2f6525c6d023101671d7339a9bc8b5@changeid/
+
+Signed-off-by: Alex Roberts <alex.roberts109@outlook.com>
+---
+ include/linux/kernel_read_file.h |  1 +
+ security/loadpin/Kconfig         | 12 ++++++++++++
+ security/loadpin/loadpin.c       | 29 +++++++++++++++++++++++++++++
+ 3 files changed, 42 insertions(+)
+
+diff --git a/include/linux/kernel_read_file.h b/include/linux/kernel_read_file.h
+index d613a7b4dd35..75cbd514562f 100644
+--- a/include/linux/kernel_read_file.h
++++ b/include/linux/kernel_read_file.h
+@@ -15,6 +15,7 @@
+ 	id(POLICY, security-policy)		\
+ 	id(X509_CERTIFICATE, x509-certificate)	\
+ 	id(MODULE_COMPRESSED, kernel-module-compressed) \
++	id(EBPF, ebpf) \
+ 	id(MAX_ID, )
  
- :Author: Mickaël Salaün
--:Date: May 2026
-+:Date: June 2026
+ #define __fid_enumify(ENUM, dummy) READING_ ## ENUM,
+diff --git a/security/loadpin/Kconfig b/security/loadpin/Kconfig
+index aef63d3e30df..be0754735d5d 100644
+--- a/security/loadpin/Kconfig
++++ b/security/loadpin/Kconfig
+@@ -42,3 +42,15 @@ config SECURITY_LOADPIN_VERITY
  
- The goal of Landlock is to enable restriction of ambient rights (e.g. global
- filesystem or network access) for a set of processes.  Because Landlock
-@@ -40,8 +40,8 @@ Filesystem rules
-     and the related filesystem actions are defined with
-     `filesystem access rights`.
- 
--Network rules (since ABI v4)
--    For these rules, the object is a TCP port,
-+Network rules (since ABI v4 for TCP and v10 for UDP)
-+    For these rules, the object is a TCP or UDP port,
-     and the related actions are defined with `network access rights`.
- 
- Defining and enforcing a security policy
-@@ -49,11 +49,11 @@ Defining and enforcing a security policy
- 
- We first need to define the ruleset that will contain our rules.
- 
--For this example, the ruleset will contain rules that only allow filesystem
--read actions and establish a specific TCP connection. Filesystem write
--actions and other TCP actions will be denied.
-+For this example, the ruleset will contain rules that only allow some
-+filesystem read actions and some specific UDP and TCP actions. Filesystem
-+write actions and other TCP/UDP actions will be denied.
- 
--The ruleset then needs to handle both these kinds of actions.  This is
-+The ruleset then needs to handle all these kinds of actions.  This is
- required for backward and forward compatibility (i.e. the kernel and user
- space may not know each other's supported restrictions), hence the need
- to be explicit about the denied-by-default access rights.
-@@ -81,7 +81,9 @@ to be explicit about the denied-by-default access rights.
-             LANDLOCK_ACCESS_FS_RESOLVE_UNIX,
-         .handled_access_net =
-             LANDLOCK_ACCESS_NET_BIND_TCP |
--            LANDLOCK_ACCESS_NET_CONNECT_TCP,
-+            LANDLOCK_ACCESS_NET_CONNECT_TCP |
-+            LANDLOCK_ACCESS_NET_BIND_UDP |
-+            LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP,
-         .scoped =
-             LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
-             LANDLOCK_SCOPE_SIGNAL,
-@@ -132,6 +134,12 @@ version, and only use the available subset of access rights:
-     case 6 ... 8:
-         /* Removes LANDLOCK_ACCESS_FS_RESOLVE_UNIX for ABI < 9 */
-         ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_RESOLVE_UNIX;
-+        __attribute__((fallthrough));
-+    case 9:
-+        /* Removes LANDLOCK_ACCESS_NET_*_UDP for ABI < 10 */
-+        ruleset_attr.handled_access_net &=
-+            ~(LANDLOCK_ACCESS_NET_BIND_UDP |
-+              LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP);
-     }
- 
- This enables the creation of an inclusive ruleset that will contain our rules.
-@@ -187,20 +195,52 @@ kernel does not support are dropped (the compatibility switch above already
- cleared them in ``handled_access_*``), and the rule is skipped if no supported
- right remains.
- 
--For network access-control, we can add a set of rules that allow to use a port
--number for a specific action: HTTPS connections.
-+For network access-control, we will add a set of rules to allow DNS
-+queries, which requires both UDP and TCP. For TCP, we need to allow
-+outbound connections to port 53, which can be handled and granted starting
-+with ABI 4:
- 
- .. code-block:: c
- 
--    struct landlock_net_port_attr net_port = {
-+    struct landlock_net_port_attr tcp_conn = {
-         .allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
--        .port = 443,
-+        .port = 53,
-+    };
+ 	  This is followed by the verity digests, with one digest per
+ 	  line.
 +
-+    tcp_conn.allowed_access &= ruleset_attr.handled_access_net;
-+    if (tcp_conn.allowed_access)
-+        err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
-+                                &tcp_conn, 0);
++config SECURITY_LOADPIN_EBPF
++	bool "Pin ebpf programs to one filesystem"
++	depends on SECURITY_LOADPIN
++	help
++	  eBPF program loading is pinned to the first filesystem from which the
++	  application loading the progam resides. When enabled, applications on
++	  other filesystems that attempt to load an eBPF program will be rejected.
++	  This is best used when applications that load eBPF programs reside on a
++	  read-only filesystem from which tools for dynamically generating eBPF
++	  programs such as bpftrace are not installed. This will not restrict the
++	  kernel from loading a bpf program.
+\ No newline at end of file
+diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
+index f71861f98e1a..47fd7e247edb 100644
+--- a/security/loadpin/loadpin.c
++++ b/security/loadpin/loadpin.c
+@@ -23,6 +23,10 @@
+ #include <uapi/linux/loadpin.h>
+ #include <uapi/linux/lsm.h>
+ 
++#ifdef CONFIG_SECURITY_LOADPIN_EBPF
++#include <linux/bpf.h>
++#endif /* CONFIG_SECURITY_LOADPIN_BPF */
 +
-+We also need to be able to send UDP datagrams to port 53, which requires
-+granting ``LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP``. Since our DNS client will
-+emit datagrams without explicitly binding to a specific source port, its UDP
-+socket will automatically bind an ephemeral port. To allow this behaviour,
-+we also need to grant ``LANDLOCK_ACCESS_NET_BIND_UDP`` on port 0, as if
-+the program explicitly called :manpage:`bind(2)` on port 0.
+ #define VERITY_DIGEST_FILE_HEADER "# LOADPIN_TRUSTED_VERITY_ROOT_DIGESTS"
+ 
+ static void report_load(const char *origin, struct file *file, char *operation)
+@@ -204,6 +208,28 @@ static int loadpin_load_data(enum kernel_load_data_id id, bool contents)
+ 	return loadpin_check(NULL, (enum kernel_read_file_id) id);
+ }
+ 
++#ifdef CONFIG_SECURITY_LOADPIN_EBPF
++static int loadpin_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
++				  struct bpf_token *token, bool is_kernel)
++{
++	int res = 0;
++	struct file *exe_file = NULL;
++	struct mm_struct *mm = current->mm;
 +
-+.. code-block:: c
++	if (is_kernel || !mm)
++		return 0;
 +
-+    struct landlock_net_port_attr udp_send = {
-+        .allowed_access = LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP,
-+        .port = 53,
-+    };
++	exe_file = get_mm_exe_file(mm);
++	if (!exe_file)
++		return 0;
 +
-+    udp_send.allowed_access &= ruleset_attr.handled_access_net;
-+    if (udp_send.allowed_access)
-+        err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
-+                                &udp_send, 0);
-+    [...]
++	res = loadpin_check(exe_file, READING_EBPF);
++	fput(exe_file);
 +
-+    struct landlock_net_port_attr udp_bind = {
-+        .allowed_access = LANDLOCK_ACCESS_NET_BIND_UDP,
-+        .port = 0,
-     };
- 
--    net_port.allowed_access &= ruleset_attr.handled_access_net;
--    if (net_port.allowed_access)
-+    udp_bind.allowed_access &= ruleset_attr.handled_access_net;
-+    if (udp_bind.allowed_access)
-         err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
--                                &net_port, 0);
-+                                &udp_bind, 0);
- 
- When passing a non-zero ``flags`` argument to ``landlock_restrict_self()``, a
- similar backwards compatibility check is needed for the restrict flags
-@@ -234,7 +274,7 @@ similar backwards compatibility check is needed for the restrict flags
- The next step is to restrict the current thread from gaining more privileges
- (e.g. through a SUID binary).  We now have a ruleset with the first rule
- allowing read and execute access to ``/usr`` while denying all other handled
--accesses for the filesystem, and a second rule allowing HTTPS connections.
-+accesses for the filesystem, and two more rules allowing DNS queries.
- 
- .. code-block:: c
- 
-@@ -722,6 +762,19 @@ Starting with the Landlock ABI version 9, it is possible to restrict
- connections to pathname UNIX domain sockets (:manpage:`unix(7)`) using
- the new ``LANDLOCK_ACCESS_FS_RESOLVE_UNIX`` right.
- 
-+UDP bind, connect and send* (ABI < 10)
-+--------------------------------------
++	return res;
++}
++#endif /* CONFIG_SECURITY_LOADPIN_EBPF */
 +
-+Starting with the Landlock ABI version 10, it is possible to restrict
-+setting the local port of UDP sockets with the
-+``LANDLOCK_ACCESS_NET_BIND_UDP`` right. This includes restricting the
-+ability to trigger autobind of an ephemeral port by the kernel by e.g.
-+sending a first datagram or setting the remote peer of a socket.
-+The ``LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP`` right controls setting the
-+remote port of UDP sockets (via :manpage:`connect(2)), and sending
-+datagrams to an explicit remote port (ignoring any destination set on
-+UDP sockets, via e.g. :manpage:`sendto(2)).
-+
- .. _kernel_support:
+ static const struct lsm_id loadpin_lsmid = {
+ 	.name = "loadpin",
+ 	.id = LSM_ID_LOADPIN,
+@@ -213,6 +239,9 @@ static struct security_hook_list loadpin_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(sb_free_security, loadpin_sb_free_security),
+ 	LSM_HOOK_INIT(kernel_read_file, loadpin_read_file),
+ 	LSM_HOOK_INIT(kernel_load_data, loadpin_load_data),
++#ifdef CONFIG_SECURITY_LOADPIN_EBPF
++	LSM_HOOK_INIT(bpf_prog_load, loadpin_bpf_prog_load),
++#endif /* CONFIG_SECURITY_LOADPIN_EBPF */
+ };
  
- Kernel support
-@@ -784,10 +837,10 @@ the boot loader.
- Network support
- ---------------
- 
--To be able to explicitly allow TCP operations (e.g., adding a network rule with
--``LANDLOCK_ACCESS_NET_BIND_TCP``), the kernel must support TCP
-+To be able to explicitly allow TCP or UDP operations (e.g., adding a network rule with
-+``LANDLOCK_ACCESS_NET_BIND_TCP``), the kernel must support the TCP/IP protocol suite
- (``CONFIG_INET=y``).  Otherwise, sys_landlock_add_rule() returns an
--``EAFNOSUPPORT`` error, which can safely be ignored because this kind of TCP
-+``EAFNOSUPPORT`` error, which can safely be ignored because this kind of TCP or UDP
- operation is already not possible.
- 
- Questions and answers
--- 
-2.47.3
+ static void __init parse_exclude(void)
+
+---
+base-commit: 122b52f0bab007ebeb414c8280c1def17b9ed1f4
+change-id: 20260611-b4-rfc-loadpin-ebpf-086c41deb503
+
+Best regards,
+--  
+Alex Roberts <alex.roberts109@outlook.com>
+
 
