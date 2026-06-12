@@ -1,73 +1,73 @@
-Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F04328E0
-	for <linux-security-module@vger.kernel.org>; Fri, 12 Jun 2026 01:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E072C3255
+	for <linux-security-module@vger.kernel.org>; Fri, 12 Jun 2026 01:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781228958; cv=none; b=j864XZDS5caZfIu2i23URAK+UTDFVbiH7/o2ADT3C0TLzzG0QP/QtDwUEEKQ1hau8Tf1vjSUJKsXNJiRh+hRFmQknA/hhYI5lffvBZSK05MkfEsA9SnB91tMWMmJji5iAtzwiWcaH8YoDUKrKFGAJwUGYFmQyuPRm0DOQ0uJ3pQ=
+	t=1781228960; cv=none; b=kyRuic6ui/4/kd+cqgd0dZQ/N1jvkTImYOQcrI40UNjgU1kZDFrlF9OMsjwFvexhuSqIKG2T9+96GZ962XiwjlP/QNTKN9S8o1reIu0RL6Qp2kDb2TxL0MdMIYzX+szMOaKwVz41C/m9Ni9bYJcgycMdItgvYTehHrSq/TEjjMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781228958; c=relaxed/simple;
-	bh=64bjon/EiE/GSW/lEOKPEG0rVTbvD3BIRtlHlFG93fk=;
+	s=arc-20240116; t=1781228960; c=relaxed/simple;
+	bh=7xsrfzKRGdO+rhyAUhEWe9iKMYQ5raV8L8BZN2OuIaI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XFOJI+mbIBSCNcVI4UAh084icSY8vSGg/wCK4VVpQFgCKrKoo0KrgnfZ6T5ns4wnUWLdOAnfN9VOOJuzPv/GO4W3GcaowM1uGE7xvA6HuTLBCVPo3PCqD/drw47JQEy4TvSolQ/yjsWO0QWwQ4o/1MWEtQOF/7vixX5jyVa+bXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=L+suxnvV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KjFP/EQe; arc=none smtp.client-ip=202.12.124.145
+	 MIME-Version; b=mRF3hau5C2+o+HknT6W2CHWvNL8G4u5Y6mHxMcJKfF+tvRmUVoGWXeu+pHuxBJBnECitInNaBMojU2pxB2IyXmusHayuPYwdAXOMBdkn3vCHjPEde0lIkaNtn25jGBO1YZMZlV6U3/SEhi5yihV0852/wYHqRwtKb1BEm+DCmX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=hhE4Y1Fk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bRLXTX+Y; arc=none smtp.client-ip=202.12.124.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="L+suxnvV";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KjFP/EQe"
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfout.stl.internal (Postfix) with ESMTP id 547661D00130;
-	Thu, 11 Jun 2026 21:49:16 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="hhE4Y1Fk";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bRLXTX+Y"
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id ECAED7A00F6;
+	Thu, 11 Jun 2026 21:49:17 -0400 (EDT)
 Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Thu, 11 Jun 2026 21:49:16 -0400
+  by phl-compute-06.internal (MEProxy); Thu, 11 Jun 2026 21:49:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
 	:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1781228956; x=
-	1781315356; bh=5+fBskpVMNLsQg60PFGNLwiQhJ621OqbBihqwCQw9AY=; b=L
-	+suxnvVZPtK2sg9OsoJcIw6DaZ7V1Z1G9vJi9kQSscMTSspUMh08trwwIo3VKfCp
-	CHOr3kTWzaqwIH1Y470l2F7sPFQiKmdyiZM6fAX8eiZNKa9QkC07cJXGXDLCFoDA
-	8WHS7R0VHb9Vt5UQ7HG3t3NZRoDaaF10huST+RyieSBUTRLtIYnVjZoYxH6sc2Tp
-	qCr5aBshOrGQubInE2p4hjksD7gkK5kdqMIFXwFZUZTQPDW8h6h6mJ3B0i28iECD
-	f9mjWCKcR18esd+gVLnAOPvlcirCfF6i6+F74FBPlrJloWI4IqoD3aIiIBb0UJ3M
-	r6QK1D25o2M8low3nTBqw==
+	:reply-to:subject:subject:to:to; s=fm1; t=1781228957; x=
+	1781315357; bh=joYU0zsdtBQwtwDwsiIHjqp9S4Gtq4ZTJB4E6RCOJd8=; b=h
+	hE4Y1Fkbw7pVUuZPuBReE7kfS8h908qn/Rdh6S89wVcwchMPaORMSeJziOxaacDF
+	Fo027DGevSl5LU2HSvEHaz+OgENfSyGLwhCzISuicfxJsD3o+qiAZePnIsjXccKh
+	W4bIau76k0G2R88UZAfJOPkqWpnzU43lXPRVFRNkW2g1+wbw9SNt2Ei8kci8Fj9X
+	kf8/fcCgn1WQ6VX3wWlPaHaznFz0aUK0ZvmGN0Wqzduy1eJlAZtQdWu+hgrpCLYv
+	P7+J7SUNzYPXQI4L+WyWIc8PpzK4OWeqo/ENSIOi9fzt2lQQknsqyRLkOfY7toiN
+	JTMlr5HvkRs6Vb26e08Tw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1781228956; x=1781315356; bh=5
-	+fBskpVMNLsQg60PFGNLwiQhJ621OqbBihqwCQw9AY=; b=KjFP/EQeGwT5rOryh
-	j2Qqo2lSAY1Mo+QeuJRRRmFMRMIbq1QtgwnV4e7eDJfA9GE0MR3hzLtWcYypZUs1
-	RGjrOF7b3H6NKdwvZldehHzBB9RLvMytGZ9BRMM5ypq/MFvWuz0qNYvGStUTU4jL
-	3CRSQF/zrl8ePzeiUjI6RotYZDr9BbAYZPC789jXiRvczW+ur4XqpWYLMeXKmZwf
-	bZ0srIXCrKLFXEyPYrAXaDUiDH9U34ki38BXR90iFVOqclDpyna13sQuk9mWScIS
-	Nazn9qeVEkg6JT2i4jn26CN6vgRUXgPvER8bNPUgfVbHHGy/ficUkuXmKXWgoK4X
-	q+OJA==
-X-ME-Sender: <xms:m2UratS-o5WTYrljGCEtsREcYGFd2y6nx9JLDTxCYGG4s7gUMDz4rA>
-    <xme:m2UrapC8aJbNCnSo8qs2yX9KOHnP3dZVEjaWfFY13Z-u3EN2gc_4Y-Ergih9g_Fra
-    8YfFKvHv_8L6GP65GvjXeGRcDIm30zY40wU9R0sxcIo7aUMI8-sFGc>
-X-ME-Received: <xmr:m2UralGFBcS2RypHMBCW1TpkBiMB6Zcx_wEzZUuYxazMiKsjF1CJHSKki_mZVsYGFMaNCm6pOHuCYLMZnMRCU-9UqHzva7H_jO6ykwtLXqRLlAE5I7rWDXdRZXg>
+	:x-me-sender:x-sasl-enc; s=fm1; t=1781228957; x=1781315357; bh=j
+	oYU0zsdtBQwtwDwsiIHjqp9S4Gtq4ZTJB4E6RCOJd8=; b=bRLXTX+YtHlcqukSD
+	zRF7s5pQMgcmlBPmmz8NjLzgM4nS+Bl/APBiqZfzKqOvgb8xW0swExXeXf8/leVl
+	FI2bEwA9GdVDqW0V340pobee8TytEqEoyD2f5DL92qHMEDoqCUA13jSFKGZNFq8M
+	kc39OdtfnDd7J7fGPxp0qUOtSPXm6Qf64nQL3sfKJ2nrVXbn2BNlJZVMYvKmNqH0
+	N/hwYwcmh+U85JjHlie5H/p5+LNp+AdPiGGiDHFrsjsAHxvfT3a/oMjpjbD+FoAP
+	wRO5apmVAHoztt4/CzpwBx7wY+KTc4SrHnHmZbDVa0lHCiMnbmPSzYdieFpD45Zz
+	iB7OA==
+X-ME-Sender: <xms:nWUraqPWH5EFj-III-FS9lyk5eeN3V6GaeIZdB-mRQqZI9N6Ykhe3w>
+    <xme:nWUrarPZdpzcTeSWbh68BKZQjQ-WLEjiMiJzD_xszntzi4RFaQN4mfufaiYWO8Qr_
+    0op9O9mWNa2q9799nakhsF6DQj7Lq5zo1ouwyq9IhWQBG1PeWaEIX0>
+X-ME-Received: <xmr:nWUrajhfeTwuuGY8S9WaqTflDIN88YqWtuchaEhgdHZF3itv9xurkBTYzBWeZL4st1-Dp7J_6kFvEs0MpkYmeChPWcfB_Fb56ctEGzC6Ay730ZndmYb68nA14Oo>
 X-ME-Proxy-Cause: dmFkZTErrYj+6BPPVz1/IV8jcji/YbJf7tNmbzKUklDVBw37Mo5r82nPd5buxFHV4OrxKd
     +00SDQV9sSVg4R4yvs2QLHos0drG5qYNr6GNhg9D8ngYxfJUcCtRRhPXhE6kz5yGXnYKMY
     oJHiB0gAaPzyeGZH5d5BTyheBut4xCTujqDHaTful/fQaUhKYSKVr/XYUjihn5pTjMkS8X
     sKVE+fTH1iGH2FWO/9EBeuJFKXH3xovFqufQzUi7llGvIp9TU54IXL348v2qQAgPhg5ZW1
-    SUBEtCpHKVb2aYxBd3Ta7zLOiViueqFsE4VHkel083qbKxQFVcQ42U+V55ljlncHcKp7eG
-    nvveNfYBLqk6fNoxtesXRDpatI4KMdCxuOW2c1pmo3pvq+lKT1iaXQC5qDI4fcIs8MD+Mh
-    kIJYBgSSxeEhrhdut+LLOr69e1oOhE8MjyBCArAHwCQ6v/BghvzEgZCuOteuFZDlo7UY/4
-    IYZPaXfRYLjZRj/BaX913lGoRj6s4n44JzxRNDorMLNxUy+k/WJ0yaayUYGJATTjzRQeOK
-    GIhDQh4WfkgXpC6qXNIxAmknTXLeMbULolh9Hr7XO/pShzMAjMdN5Vq9vPTq3Kqa8kxYah
-    hPv7RGH5tIqTqpOb24ENnTqGF9qwZxaWI3l7cg0Jq0gq7MOMAJbBH/mOF5cQ
-X-ME-Proxy: <xmx:m2UrarD3ex-uHzAuXLH8s4-rKQUgSxyG8iDRVLitHjJaxtYmayd6oA>
-    <xmx:m2UralVqRQZYB0w3nQpyZxscGN6GPR5vxVKTgo3FFFCLOzuHYDB9WQ>
-    <xmx:m2UravoDwBdaZwqQkfftThfklRcq_6J8rm6cqFtMGTpY1Q5ybeHcFA>
-    <xmx:m2UrahSppoqKjhZaVPBbVoBvL4E-4hHcNWoFnyJNoFdcCtAnSjuvaA>
-    <xmx:nGUrarvJtreWhDo1onFeRFQRhm6ZiyyNoC4UrEtn4qC5oRtS58EhR0co>
+    SUBEtCpHKVb2aYxBd3Ta7zLOiViueqFsE4VHkel083qbKxQFVcQ42U+V55ljlncHcKp7X9
+    Dd36Fd1JlOEAoQOGEuRJcXpulliW68O7hgXkMqj4h8TDp4cHpxw92dPB2b99M0FQuF4E58
+    zFmFKtQLQOx5Q1xBBIqEZ5Yh7nTPLfkRrR6ub85nFSXN8ngRSQcs/qk4dmtErX/2AbdlnW
+    khsbkINIGE+EKVlBN/qeVLheqNg5xo6bi4kTvQ+9LTB6mc4zdBJe0xBaVQGX7sHKpDPEyN
+    R2/+pzWDQNc9hg0VfjfFvMmj65XwzzAM5aNSB763oL2yxsh3a3wTbzU7J4tg5A3U6E9YBq
+    UM0oEZuDJlRfgPYlvEd4ruAuC7y1Sz+d30rdg7LH3s33xiUyGMkEM3p/EgJA
+X-ME-Proxy: <xmx:nWUragtJibHZtyYfaameMWrMqrQ5HA4B0TT21yTNAki_XCqu7rpLZw>
+    <xmx:nWUrahTQ7BbpxyhyJnokl9btiXhLMUg_OKfBClrZ7RT-vsFjGHNDRg>
+    <xmx:nWUrak3wgwKRPu8gsJ1w84-EP8wXZHMX1pucmUcQ8MLbpFIKmBbflg>
+    <xmx:nWUramva6FyhX9_NONxqG5bhCE6Wo6hDdSM8FUn8r9_9a05Iio27vg>
+    <xmx:nWUrakbam6wvLtpIdbeBWgOuf81MB2L4BCrBoKIxoqft9YufHlG_hAHN>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 11 Jun 2026 21:49:14 -0400 (EDT)
+ 11 Jun 2026 21:49:16 -0400 (EDT)
 From: Tingmao Wang <m@maowtm.org>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 Cc: Tingmao Wang <m@maowtm.org>,
@@ -76,9 +76,9 @@ Cc: Tingmao Wang <m@maowtm.org>,
 	Jan Kara <jack@suse.cz>,
 	Abhinav Saxena <xandfury@gmail.com>,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v11 4/9] samples/landlock: Add quiet flag support to sandboxer
-Date: Fri, 12 Jun 2026 02:48:50 +0100
-Message-ID: <59b94997565032bc9870044f021214a2ed6df213.1781228815.git.m@maowtm.org>
+Subject: [PATCH v11 5/9] selftests/landlock: Replace hard-coded 16 with a constant
+Date: Fri, 12 Jun 2026 02:48:51 +0100
+Message-ID: <eff35caa9b4ac51aa83a88d67c4dd67f4f8b3a4a.1781228815.git.m@maowtm.org>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <cover.1781228815.git.m@maowtm.org>
 References: <cover.1781228815.git.m@maowtm.org>
@@ -90,290 +90,58 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Adds ability to set which access bits to quiet via LL_*_QUIET_ACCESS (FS,
-NET or SCOPED), and attach quiet flags to individual objects via
-LL_*_QUIET for FS and NET.
+The next commit will reuse this number.  Make it a shared constant to
+future-proof changes.
 
-Assisted-by: GitHub-Copilot:claude-opus-4.8 copilot-reviepickw
 Signed-off-by: Tingmao Wang <m@maowtm.org>
 ---
 
-Changes in v11:
-- Error if quiet flags not supported by current kernel but quiet envs provided
-- Fix comment
-- Refactor env vars in sandboxer: LL_{FS,NET,SCOPED}_QUIET_ACCESS are
-  merged into one LL_QUIET_ACCESS, and used more sensible names.
-
-Changes in v10:
-- Remove stray __attribute__((fallthrough)); (Thanks Justin for
-  spotting)
-
-Changes in v9:
-- Add udp connect / bind quiet flag support
-
-Changes in v8:
-- Rebase on top of mic/next
-- populate_ruleset_net() already does not require the env var to be
-  present, so remove redundant comment and check above
-  populate_ruleset_net(ENV_NET_QUIET_NAME, ...).
-
-Changes in v6:
-- Make populate_ruleset_{fs,net} take a flags argument instead of a bool
-  quiet (suggested by Justin Suess)
-- Fix if braces style
-
 Changes in v3:
-- Minor change to the above commit message.
+- New patch
 
-Changes in v2:
-- Added new environment variables to control which quiet access bits to
-  set on the rule, and populate quiet_access_* from it.
-- Added support for quieting net rules and scoped access.  Renamed patch
-  title.
-- Increment ABI version
+ tools/testing/selftests/landlock/audit_test.c | 2 +-
+ tools/testing/selftests/landlock/common.h     | 2 ++
+ tools/testing/selftests/landlock/fs_test.c    | 2 +-
+ 3 files changed, 4 insertions(+), 2 deletions(-)
 
- samples/landlock/sandboxer.c | 138 ++++++++++++++++++++++++++++++++---
- 1 file changed, 127 insertions(+), 11 deletions(-)
-
-diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-index f44db2857bbf..f18228ccf66a 100644
---- a/samples/landlock/sandboxer.c
-+++ b/samples/landlock/sandboxer.c
-@@ -58,9 +58,12 @@ static inline int landlock_restrict_self(const int ruleset_fd,
- 
- #define ENV_FS_RO_NAME "LL_FS_RO"
- #define ENV_FS_RW_NAME "LL_FS_RW"
-+#define ENV_FS_QUIET_NAME "LL_FS_QUIET"
- #define ENV_TCP_BIND_NAME "LL_TCP_BIND"
- #define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
-+#define ENV_NET_QUIET_NAME "LL_NET_QUIET"
- #define ENV_SCOPED_NAME "LL_SCOPED"
-+#define ENV_QUIET_ACCESS_NAME "LL_QUIET_ACCESS"
- #define ENV_FORCE_LOG_NAME "LL_FORCE_LOG"
- #define ENV_UDP_BIND_NAME "LL_UDP_BIND"
- #define ENV_UDP_CONNECT_SEND_NAME "LL_UDP_CONNECT_SEND"
-@@ -119,7 +122,7 @@ static int parse_path(char *env_path, const char ***const path_list)
- /* clang-format on */
- 
- static int populate_ruleset_fs(const char *const env_var, const int ruleset_fd,
--			       const __u64 allowed_access)
-+			       const __u64 allowed_access, __u32 flags)
- {
- 	int num_paths, i, ret = 1;
- 	char *env_path_name;
-@@ -169,7 +172,7 @@ static int populate_ruleset_fs(const char *const env_var, const int ruleset_fd,
- 		if (!S_ISDIR(statbuf.st_mode))
- 			path_beneath.allowed_access &= ACCESS_FILE;
- 		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
--				      &path_beneath, 0)) {
-+				      &path_beneath, flags)) {
- 			fprintf(stderr,
- 				"Failed to update the ruleset with \"%s\": %s\n",
- 				path_list[i], strerror(errno));
-@@ -187,7 +190,7 @@ static int populate_ruleset_fs(const char *const env_var, const int ruleset_fd,
- }
- 
- static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
--				const __u64 allowed_access)
-+				const __u64 allowed_access, __u32 flags)
- {
- 	int ret = 1;
- 	char *env_port_name, *env_port_name_next, *strport;
-@@ -215,7 +218,7 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
- 		}
- 		net_port.port = port;
- 		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
--				      &net_port, 0)) {
-+				      &net_port, flags)) {
- 			fprintf(stderr,
- 				"Failed to update the ruleset with port \"%llu\": %s\n",
- 				net_port.port, strerror(errno));
-@@ -303,6 +306,69 @@ static bool check_ruleset_scope(const char *const env_var,
- 
- /* clang-format on */
- 
-+/*
-+ * Parses ENV_QUIET_ACCESS_NAME and sets the quiet_access_fs,
-+ * quiet_access_net and quiet_scoped masks of @ruleset_attr accordingly.
-+ */
-+static int add_quiet_access(const char *const env_var,
-+			    struct landlock_ruleset_attr *const ruleset_attr)
-+{
-+	char *env_quiet_access, *env_quiet_access_next, *str_access;
-+
-+	env_quiet_access = getenv(env_var);
-+	if (!env_quiet_access)
-+		return 0;
-+
-+	env_quiet_access = strdup(env_quiet_access);
-+	env_quiet_access_next = env_quiet_access;
-+	unsetenv(env_var);
-+
-+	while ((str_access = strsep(&env_quiet_access_next, ENV_DELIMITER))) {
-+		if (strcmp(str_access, "") == 0)
-+			continue;
-+		else if (strcmp(str_access, "all") == 0) {
-+			ruleset_attr->quiet_access_fs =
-+				ruleset_attr->handled_access_fs;
-+			ruleset_attr->quiet_access_net =
-+				ruleset_attr->handled_access_net;
-+			ruleset_attr->quiet_scoped = ruleset_attr->scoped;
-+		} else if (strcmp(str_access, "read") == 0)
-+			ruleset_attr->quiet_access_fs |= ACCESS_FS_ROUGHLY_READ;
-+		else if (strcmp(str_access, "write") == 0)
-+			ruleset_attr->quiet_access_fs |=
-+				ACCESS_FS_ROUGHLY_WRITE;
-+		else if (strcmp(str_access, "tcp_bind") == 0)
-+			ruleset_attr->quiet_access_net |=
-+				LANDLOCK_ACCESS_NET_BIND_TCP;
-+		else if (strcmp(str_access, "tcp_connect") == 0)
-+			ruleset_attr->quiet_access_net |=
-+				LANDLOCK_ACCESS_NET_CONNECT_TCP;
-+		else if (strcmp(str_access, "udp_bind") == 0)
-+			ruleset_attr->quiet_access_net |=
-+				LANDLOCK_ACCESS_NET_BIND_UDP;
-+		else if (strcmp(str_access, "udp_connect") == 0)
-+			ruleset_attr->quiet_access_net |=
-+				LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP;
-+		else if (strcmp(str_access, "abstract_unix_socket") == 0)
-+			ruleset_attr->quiet_scoped |=
-+				LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET;
-+		else if (strcmp(str_access, "signal") == 0)
-+			ruleset_attr->quiet_scoped |= LANDLOCK_SCOPE_SIGNAL;
-+		else {
-+			fprintf(stderr, "Unknown quiet access \"%s\"\n",
-+				str_access);
-+			free(env_quiet_access);
-+			return -1;
-+		}
-+	}
-+
-+	free(env_quiet_access);
-+	ruleset_attr->quiet_access_fs &= ruleset_attr->handled_access_fs;
-+	ruleset_attr->quiet_access_net &= ruleset_attr->handled_access_net;
-+	ruleset_attr->quiet_scoped &= ruleset_attr->scoped;
-+	return 0;
-+}
-+
- #define LANDLOCK_ABI_LAST 10
- 
- #define XSTR(s) #s
-@@ -337,6 +403,19 @@ static const char help[] =
- 	"\n"
- 	"A sandboxer should not log denied access requests to avoid spamming logs, "
- 	"but to test audit we can set " ENV_FORCE_LOG_NAME "=1\n"
-+	ENV_FS_QUIET_NAME " and " ENV_NET_QUIET_NAME ", both optional, can then be used "
-+	"to make access to some denied paths or network ports not trigger audit logging.\n"
-+	ENV_QUIET_ACCESS_NAME " can be used to specify which accesses should be quieted "
-+	"(required when " ENV_FS_QUIET_NAME " or " ENV_NET_QUIET_NAME " is set):\n"
-+	"  - \"all\" to quiet all of the accesses below\n"
-+	"  - \"read\" to quiet all file/dir read accesses\n"
-+	"  - \"write\" to quiet all file/dir write accesses\n"
-+	"  - \"tcp_bind\" to quiet tcp bind denials\n"
-+	"  - \"tcp_connect\" to quiet tcp connect denials\n"
-+	"  - \"udp_bind\" to quiet udp bind denials\n"
-+	"  - \"udp_connect\" to quiet udp connect / send denials\n"
-+	"  - \"abstract_unix_socket\" to quiet abstract unix socket denials\n"
-+	"  - \"signal\" to quiet signal denials\n"
- 	"\n"
- 	"Example:\n"
- 	ENV_FS_RO_NAME "=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
-@@ -369,7 +448,11 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 				      LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP,
- 		.scoped = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
- 			  LANDLOCK_SCOPE_SIGNAL,
-+		.quiet_access_fs = 0,
-+		.quiet_access_net = 0,
-+		.quiet_scoped = 0,
+diff --git a/tools/testing/selftests/landlock/audit_test.c b/tools/testing/selftests/landlock/audit_test.c
+index 376931511629..d55fe4c5b531 100644
+--- a/tools/testing/selftests/landlock/audit_test.c
++++ b/tools/testing/selftests/landlock/audit_test.c
+@@ -79,7 +79,7 @@ TEST_F(audit, layers)
+ 		.scoped = LANDLOCK_SCOPE_SIGNAL,
  	};
-+	bool quiet_supported = true;
- 	int supported_restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON;
- 	int set_restrict_flags = 0;
+ 	int status, ruleset_fd, i;
+-	__u64(*domain_stack)[16];
++	__u64(*domain_stack)[LANDLOCK_MAX_NUM_LAYERS];
+ 	__u64 prev_dom = 3;
+ 	pid_t child;
  
-@@ -460,6 +543,8 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 		ruleset_attr.handled_access_net &=
- 			~(LANDLOCK_ACCESS_NET_BIND_UDP |
- 			  LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP);
-+		/* Removes quiet flags for ABI < 10 later on. */
-+		quiet_supported = false;
+diff --git a/tools/testing/selftests/landlock/common.h b/tools/testing/selftests/landlock/common.h
+index 90551650299c..7206d5105d66 100644
+--- a/tools/testing/selftests/landlock/common.h
++++ b/tools/testing/selftests/landlock/common.h
+@@ -25,6 +25,8 @@
+ /* TEST_F_FORK() should not be used for new tests. */
+ #define TEST_F_FORK(fixture_name, test_name) TEST_F(fixture_name, test_name)
  
- 		/* Must be printed for any ABI < LANDLOCK_ABI_LAST. */
- 		fprintf(stderr,
-@@ -526,6 +611,25 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 		unsetenv(ENV_FORCE_LOG_NAME);
- 	}
- 
-+	/* Set the quiet access masks. */
-+	if (quiet_supported) {
-+		if ((getenv(ENV_FS_QUIET_NAME) || getenv(ENV_NET_QUIET_NAME)) &&
-+		    !getenv(ENV_QUIET_ACCESS_NAME)) {
-+			fprintf(stderr,
-+				"%s must be set (e.g. to \"all\") when %s or %s is used\n",
-+				ENV_QUIET_ACCESS_NAME, ENV_FS_QUIET_NAME,
-+				ENV_NET_QUIET_NAME);
-+			return 1;
-+		}
-+		if (add_quiet_access(ENV_QUIET_ACCESS_NAME, &ruleset_attr))
-+			return 1;
-+	} else if (getenv(ENV_FS_QUIET_NAME) || getenv(ENV_NET_QUIET_NAME) ||
-+		   getenv(ENV_QUIET_ACCESS_NAME)) {
-+		fprintf(stderr,
-+			"Quiet flags not supported by current kernel\n");
-+		return 1;
-+	}
++#define LANDLOCK_MAX_NUM_LAYERS 16
 +
- 	ruleset_fd =
- 		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
- 	if (ruleset_fd < 0) {
-@@ -533,30 +637,42 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 		return 1;
- 	}
+ static const char bin_sandbox_and_launch[] = "./sandbox-and-launch";
+ static const char bin_wait_pipe[] = "./wait-pipe";
+ static const char bin_wait_pipe_sandbox[] = "./wait-pipe-sandbox";
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+index cdb47fc1fc0a..10d9355ade5f 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -1441,7 +1441,7 @@ TEST_F_FORK(layout0, max_layers)
+ 	};
+ 	const int ruleset_fd = create_ruleset(_metadata, ACCESS_RW, rules);
  
--	if (populate_ruleset_fs(ENV_FS_RO_NAME, ruleset_fd, access_fs_ro)) {
-+	if (populate_ruleset_fs(ENV_FS_RO_NAME, ruleset_fd, access_fs_ro, 0))
- 		goto err_close_ruleset;
--	}
--	if (populate_ruleset_fs(ENV_FS_RW_NAME, ruleset_fd, access_fs_rw)) {
-+	if (populate_ruleset_fs(ENV_FS_RW_NAME, ruleset_fd, access_fs_rw, 0))
- 		goto err_close_ruleset;
-+
-+	/* Don't require this env to be present. */
-+	if (quiet_supported && getenv(ENV_FS_QUIET_NAME)) {
-+		if (populate_ruleset_fs(ENV_FS_QUIET_NAME, ruleset_fd, 0,
-+					LANDLOCK_ADD_RULE_QUIET))
-+			goto err_close_ruleset;
- 	}
+-	for (i = 0; i < 16; i++)
++	for (i = 0; i < LANDLOCK_MAX_NUM_LAYERS; i++)
+ 		enforce_ruleset(_metadata, ruleset_fd);
  
- 	if (populate_ruleset_net(ENV_TCP_BIND_NAME, ruleset_fd,
--				 LANDLOCK_ACCESS_NET_BIND_TCP)) {
-+				 LANDLOCK_ACCESS_NET_BIND_TCP, 0)) {
- 		goto err_close_ruleset;
- 	}
- 	if (populate_ruleset_net(ENV_TCP_CONNECT_NAME, ruleset_fd,
--				 LANDLOCK_ACCESS_NET_CONNECT_TCP)) {
-+				 LANDLOCK_ACCESS_NET_CONNECT_TCP, 0)) {
- 		goto err_close_ruleset;
- 	}
- 	if (populate_ruleset_net(ENV_UDP_BIND_NAME, ruleset_fd,
--				 LANDLOCK_ACCESS_NET_BIND_UDP)) {
-+				 LANDLOCK_ACCESS_NET_BIND_UDP, 0)) {
- 		goto err_close_ruleset;
- 	}
- 	if (populate_ruleset_net(ENV_UDP_CONNECT_SEND_NAME, ruleset_fd,
--				 LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP)) {
-+				 LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP, 0)) {
- 		goto err_close_ruleset;
- 	}
- 
-+	if (quiet_supported) {
-+		if (populate_ruleset_net(ENV_NET_QUIET_NAME, ruleset_fd, 0,
-+					 LANDLOCK_ADD_RULE_QUIET)) {
-+			goto err_close_ruleset;
-+		}
-+	}
-+
- 	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
- 		perror("Failed to restrict privileges");
- 		goto err_close_ruleset;
+ 	for (i = 0; i < 2; i++) {
 -- 
 2.54.0
