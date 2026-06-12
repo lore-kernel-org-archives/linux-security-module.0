@@ -1,178 +1,226 @@
-Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC8A406287
-	for <linux-security-module@vger.kernel.org>; Fri, 12 Jun 2026 17:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781285299; cv=none; b=WQS6H4eLpjW+8N3XLE9wLR2khw6Z1p3EQQcK8MaiM5XNbgyYZQgtDP8mRaQSspIXEYUsX2B9d9xLwHZ8hFyj09Za5QNPseq7fw/dZRIV05cAYq+oHGX4WNzvjeQvX6xF6zH5jB4IWiBfkxXDuNYVDjTl4pv1T15lg9Iw+trwshE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781285299; c=relaxed/simple;
-	bh=UlvAvuQWbi916cPi3vd2hGdWyMhMGyJ8nVfPJ8HJzUw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u5pWMvRdyPJZQuwNFrYwIuDXTCddPpvFUY9bZf0hTNEapWn9KOsa3EmOEowcO72nG+0qTUfmni4e4pIZJUOFxJMNsTfpxYp2p2tUY6pUAKiOz6jQU2gn2IcbKIuKJJj1K+lRXt+mu5KVpzVbmUouz46ZN0AwGXOJHVvP1as4xps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=jJjUIBYn; arc=none smtp.client-ip=45.157.188.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6C237106A
+	for <linux-security-module@vger.kernel.org>; Fri, 12 Jun 2026 20:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781297788; cv=pass; b=eyB9s7npEfonuLmYRNx61xY4icKUD76ZirLIdkv3W6Ra817aIe4aJLSvHTFWwGC0EYVRWggak8/l3MkeIBFBXQXM/LItjd66WVmBUzKbhH7T1EfbjiGyQhtg5dhL2mlQyhxF9MBaa3bcHIr4zeEXphN5QgP2f+3n+8ymGNyQBfA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781297788; c=relaxed/simple;
+	bh=o1Z98/nJ7jVyyyICngZF6anNq9+HcVEdZSRIzTbN7QE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FWz3lBG/b2JvvbPKThUL7njA6yie9qX56CKCGH6IyclQbZS1cOvb2WOaTVXxcMNHQhxAf/b/p8fKTy65rXcLV2/q6jTderePpTkI58ln6RYe7vXFtFbrjpJ4PfW3cClWBU9gJFO02AdZRZNGDW/LtXmwBYYBVW66yMUEL6xXvIs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Quenqe3n; arc=pass smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="jJjUIBYn"
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gcRLH1NkMzFfP;
-	Fri, 12 Jun 2026 19:28:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1781285287;
-	bh=sDCihnMM6e2PYF53CG6R2LkXlUSqFxRVN5xeVo/MXqs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jJjUIBYnhlYxMkejfqsj9acvWky3jud1X62xkUDGHdnq475Q8TDkAMcAZeQwrob0u
-	 PAplumpngjg/Fd/gRK/A516vTctbU7dVBnI3j/W5GOnyOEXEA1XjHkMPYco2YV9pG7
-	 KzTeIK7c1QQy1/NAeVBb9J5dfOBX6+EOqmbebF+U=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4gcRLG3QkmzK5Q;
-	Fri, 12 Jun 2026 19:28:06 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	linux-security-module@vger.kernel.org,
-	Tingmao Wang <m@maowtm.org>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] landlock: Set audit_net.sk for socket access checks
-Date: Fri, 12 Jun 2026 19:27:55 +0200
-Message-ID: <20260612172757.1003481-1-mic@digikod.net>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Quenqe3n"
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-36bb3551f6eso1218806a91.1
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Jun 2026 13:56:25 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1781297785; cv=none;
+        d=google.com; s=arc-20240605;
+        b=AejdvT6QhxkigqHrbfVXp4kXHrShUaVTzeWm8lBCHRxPdk5ObNxwB2xjK0msdxJfVq
+         hveWmrmBPfZHkWhqp8Ab7g8OotXq1xPcp2C8+3lQA+YRrvppbJo1l4c9ZHddci1N9Cky
+         kfqd4TcUs30TWdujGuJEjQP/MThvy9MSQzS5hIddOmEqAk8jzKqsEq7A58F6lnPKFNaq
+         d0f8ipj9VcrFa/siX6cTgYYTC07cp6mG8ekl+hK7AhKINgQy5iEIybseY5AHJtWNwqhJ
+         SCfXxyEgkGdETSjVvFVqEfQdWa1ks1ghrz9M9tMvVE/LkjmsDo/giT2gDJDofQdzp6RQ
+         GffA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=kwWtRMuNkx5q5TeW2ZFjJWS5b24tyd1OJxYTwdo74f4=;
+        fh=443548ZdYOa/lNKAthP9i+lTDfCW2BLCMRwxpD1ehFU=;
+        b=LO97m2Erv3M/8EWLh7lQdMgk6iRhKhurjmbu239fwhWShXHNZGX0/AJ9Z11xXFmc3q
+         1EzimW+nexceFXeE6bS9JOFSpYT3QBeXI346lxUwBK8Xnaj/NBXeSej6Dik6lKfvkir+
+         Zyzc5CpWCsf80gszscb+Vth+fR5VfYpp38xHl7x10liqYFpoYHP1E+JegMBIhFR/SdZS
+         Xf1aw2zNIo7Tnetj8NGkWOvy4mbWdA5Mw/9D6YPFZOobZhwW26ZfFxHazEnl0OY1pVMj
+         5LqSC/t/ugVtdX3R84hH3NGh49IpVF9nGc/wGLF0pCeb6smHi6PaaU/jS/0cf6GZCBCN
+         0PEw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1781297785; x=1781902585; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kwWtRMuNkx5q5TeW2ZFjJWS5b24tyd1OJxYTwdo74f4=;
+        b=Quenqe3nKOIvR/4gjT63yxMHWUINrfZymwxRJAi3G66786g556xI6M17mzCnm9goYO
+         bQlTFlpLpSaRGhypv7adpK5+gl2nv3UkYiJ/Oi148FfZ+YQaa2YVF4E/sExf9x0cIfFQ
+         VwQwG8/I9rmfIlKhdUz/oyc7VgAEVT10G+w3wKXHaIBn01YPH8F4imWruhz1swsxu9Ng
+         KCAB/MqOvinyTSt/wP2kRMwfdU657slXAIPGH/jVh9g6ZM7e4V/4g3pW5wNBKr4Mk7D1
+         8VZcKsVYR32ivYerhgWM9DRJtkKf7Af0LsuwEAJiP+Up2z3ZrIfjEx27Ji2W+YBfqQ0/
+         MNZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781297785; x=1781902585;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=kwWtRMuNkx5q5TeW2ZFjJWS5b24tyd1OJxYTwdo74f4=;
+        b=IJK9hcV6JvR0YOMga2qOsaO9rxdLL2kLTkUswymbZTslDHXYT+YX6zZHoq48UTmglZ
+         ae7pK5Cw7fTdg7pZci7eubxCNHjcxCCUIxoj5ylvgzdx9dcfaXcc9SQIuyJMmz3QQqxt
+         0gZU7AGSmoltwtdVJfwH92yelEkEBWmVM1MFFTQnFd1h9XXBEpctgAw6c747KcLnHScC
+         oeg05UYtvFWGQs1d9q33Zt26n9YHghK/dSP1oHZ9d/VtKJIgWnHLfSKlbVDSRKWlpCk8
+         wHlkldvPqWecdymM9RES81b9c1WkWXNDjkfK+rkOpbwSnmNjDKzMbBbP1/O8nfA2cjd6
+         fgGg==
+X-Forwarded-Encrypted: i=1; AFNElJ9ehVWDxASeYUkTd3BEJHtxoysHUzuKVoG2ORjdGUG+tlldCknvfsN2ixfwB76UQsiEe9/VOH45EW/Bum2MIX+BBaCPZvQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztItCIxaL6MCYqGseVHwjqJ59BhNGYYFzDV2Sb952T4KK+uUp0
+	ITmUIwQZv9Ud7eSkBsoRdBXD2QRBTp2XuR3dVeixAa6NMGQOM9x8r8IQ8jA72c10SuvjgTmEC9r
+	jApVHNJwYvL8s1KL8dNbePnKkzoG2NUL1R+75W7Tk
+X-Gm-Gg: Acq92OFBbITERK8sL5yNAdWEWrCCxXfoI2JRhl8BP9Eg2xcUmrtQ2UYlIvhX0Bo/NcV
+	UMswxppR8Hsv/jUdUPUayyJbE5yul4tZCwW6Q3ufyCvNunp7KwjaIx3YXmNMsM4Uq0GA44wZZeE
+	DvVcZ4znJ0ZNOjXTNlMLmwarSDu+J+os805J0bK7HjP7EmYf87lEPeYxUQBLojG+zkTtRvD78CJ
+	gAXxYWbg0wUFWxCCygIMbdrZErmCoNKdPdUttrvH4EGAJsIC+qAfr1dt293iljB5GZMQFp2C4aP
+	LHdPi6axLoJeWGCM5w==
+X-Received: by 2002:a17:90b:5588:b0:367:d850:6a5f with SMTP id
+ 98e67ed59e1d1-37c2bd79bc6mr790240a91.25.1781297784696; Fri, 12 Jun 2026
+ 13:56:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+References: <20260610230329.727075-1-daniel@iogearbox.net> <CAHC9VhTA7tOp16wGzb1QYnkJsVz1X3oNcmT6bb_9334=B2smEw@mail.gmail.com>
+ <78107b57-5f4e-42b8-b780-5aebf7362de2@iogearbox.net>
+In-Reply-To: <78107b57-5f4e-42b8-b780-5aebf7362de2@iogearbox.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 12 Jun 2026 16:56:13 -0400
+X-Gm-Features: AVVi8CdDtTUe3VufUawx7sJnkop42oj_PCA47xW0_AHIqO4_wsh5Db2iGbZWPGc
+Message-ID: <CAHC9VhQQKNvP1Who0DdUc0EsVYd_JoSneyzOHZ=Q0MP2qQndCw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 0/5] Verify BPF signed loader at load time
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: ast@kernel.org, kpsingh@kernel.org, James.Bottomley@hansenpartnership.com, 
+	bboscaccy@linux.microsoft.com, memxor@gmail.com, 
+	torvalds@linux-foundation.org, bpf@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Set audit_net.sk in current_check_access_socket() to provide the socket
-object to audit_log_lsm_data().  This makes Landlock consistent with
-AppArmor, which always sets .sk for socket operations, and with
-SELinux's generic socket permission checks.
+On Fri, Jun 12, 2026 at 5:33=E2=80=AFAM Daniel Borkmann <daniel@iogearbox.n=
+et> wrote:
+> On 6/12/26 12:56 AM, Paul Moore wrote:
+> > On Wed, Jun 10, 2026 at 7:03=E2=80=AFPM Daniel Borkmann <daniel@iogearb=
+ox.net> wrote:
+> >>
+> >> The BPF signing scheme signs a light skeleton's loader program and let=
+s
+> >> the loader vouch for everything else: bpftool bakes the SHA256 of the
+> >> metadata map into the loader's instructions, signs the instructions, a=
+nd
+> >> the loader compares the (frozen, exclusive) map against that hash from
+> >> within BPF once it runs. The construction is sound as a trusted hash
+> >> chain, but the kernel itself never attests the metadata, and that spli=
+t
+> >> has been the recurring objection from the LSM / integrity side since t=
+he
+> >> scheme was proposed.
+> >>
+> >> This proposal closes both gaps by having the kernel verify the metadat=
+a
+> >> at BPF_PROG_LOAD time, before the LSM admission hook and before the
+> >> verifier, /without/ growing the UAPI. A signed loader binds its metada=
+ta
+> >> map(s) through the existing fd_array/fd_array_cnt, and exclusive maps
+> >> are already bound to the loader's digest via excl_prog_hash. When a
+> >> signature is present, the kernel collects the exclusive maps from the
+> >> fd_array and appends their frozen contents to the instructions before
+> >> PKCS#7 verification, so the signature covers ...
+> >>
+> >>      insns || metadata_0 || metadata_1 || [...]
+> >>
+> >> ... in fd_array order. The in-loader hash check is dropped from the
+> >> gen_loader entirely: generated loaders carry no verification logic
+> >> anymore, and signing or verifying a skeleton becomes an ordinary CMS
+> >> operation over bytes that sit verbatim in the skeleton, reproducible
+> >> offline. A signed program is either BPF_SIG_UNSIGNED or BPF_SIG_VERIFI=
+ED
+> >> with nothing in between.
+> >
+> > I'll be honest and say I'm a bit surprised to see this patchset,
+> > especially since KP and Alexei argued so strongly against this
+> > signature scheme, preferring KP's scheme where the loader verified the
+> > maps.  I'd be curious to hear the reason for the change of heart if
+> > you can share it.  Regardless of the motivation for this change, I
+> > obviously think this is a significant improvement over KP's signature
+> > scheme which shipped in Linux v6.18.
+> >
+> > I also think it is worth mentioning the similarities to work Blaise
+> > did before the most recent Hornet version:
+> >
+> > https://lore.kernel.org/linux-security-module/20250929213520.1821223-1-=
+bboscaccy@linux.microsoft.com/
+> >
+> > While Blaise's patchset added to the UAPI, that was done simply to
+> > retain compatibility with KP's signature scheme; your patchset does
+> > without any UAPI additions, but loses compatibility with existing
+> > signed lskels.  Beyond that, the basic signature scheme between
+> > Blaise's patchset and what you are proposing appears the same ...
+> > which is a good thing as far as I'm concerned.
+>
+> For the rework, I've mainly been looking at KP's most recent series as
+> well as some of the past discussions. Mainly trying to see if we can get
+> away with a simpler model and without having to pull in BTF support for
+> the signed loader just for the extra kfunc. Over the last couple of weeks=
+,
+> I've also build user space tooling on my side to experiment with some
+> real world application which the signed loader would have to deal with.
 
-The socket's local and foreign address information (laddr, lport, faddr,
-fport) is logged by the shared lsm_audit.c infrastructure when the
-socket has bound or connected state.  Fields with zero values are
-suppressed by print_ipv4_addr()/print_ipv6_addr(), so the audit output
-is unchanged for the common case of bind denials on unbound sockets.
-For connect denials after a prior bind, the bound local address (laddr,
-lport) appears before the existing sockaddr fields (daddr, dest).
+Out of curiosity, have you discussed these changes with Alexei and/or
+KP?  You surely know the history here, and as I mentioned above,
+you're basically proposing the same signature scheme that Blaise
+proposed last September and we all know how Alexei and KP reacted.  I
+believe that Blaise's signature scheme, which you've adopted, is the
+better option so I'm happy to see you move forward with this patchset.
+However, I don't want to see you spend a lot of time on this if Alexei
+and KP are going to react with the same attacks as last September.
 
-No existing fields are removed or reordered, and the new field names
-(laddr, lport, faddr, fport) are standard audit fields already emitted
-by other LSMs through the same lsm_audit.c code path.
+> For sending a v2, I'll have to move this slightly deeper into verifier
+> side but before the main verifier work happens in order to solve the
+> exclusive map race issue, and additionally we could also utilize the
+> verifier log to tell the user that the signature validation failed.
+>
+> I think a couple of things would still stand out imo: i) we sign over the
+> raw bytes, not the derived hash anymore, so the hashing is only used in t=
+he
+> context to tie the map to the loader prog, but not anymore for the signat=
+ure.
 
-Add a connect_tcp_bound audit test that binds to an allowed port and
-then connects to a denied one, verifying that the denial record reports
-laddr/lport from the bound socket in addition to the connect
-destination.
+The important part is that the PKCS7 signature covers both the loader
+and the maps and it is verified in the native kernel code without
+relying on any actions in the loader.
 
-Cc: Günther Noack <gnoack@google.com>
-Cc: Tingmao Wang <m@maowtm.org>
-Cc: stable@vger.kernel.org
-Fixes: 9f74411a40ce ("landlock: Log TCP bind and connect denials")
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
----
+> ii) its one single scheme and not a parallel branch, so the main loader i=
+s
+> built upon the updated signing scheme rather than having this as an optio=
+n
+> on the side; iow this replaces the in-loader check and there's a single P=
+KCS#7-
+> over-bytes path, not an 'if (signature_maps_size)' fork
 
-Changes since v1:
-https://lore.kernel.org/r/20260406143717.1815792-11-mic@digikod.net
-- Move the new socket-audit coverage into the network test fixture,
-  which sets up an isolated network namespace with a configured
-  loopback interface; the previous location ran without a network
-  namespace (reported by Tingmao Wang).  Cover the enriched laddr/lport
-  via a connect-after-bind denial.
----
- security/landlock/net.c                     |  1 +
- tools/testing/selftests/landlock/net_test.c | 62 +++++++++++++++++++++
- 2 files changed, 63 insertions(+)
+I think if you look back at Blaise's early efforts you will see that
+we've always favored a single signature scheme.  Blaise's various
+patchsets only shifted to parallel/compatible mechanisms when it
+became clear that Alexei had no interest in anything other than KP's
+signature scheme.  We didn't want to remove KP's signature scheme
+because we believed that would be a non-starter for any patchset; this
+is one of the reasons why I'm so surprised to see KP's signature
+scheme completely removed in your patchset.
 
-diff --git a/security/landlock/net.c b/security/landlock/net.c
-index c368649985c5..a38bdfcffc22 100644
---- a/security/landlock/net.c
-+++ b/security/landlock/net.c
-@@ -198,6 +198,7 @@ static int current_check_access_socket(struct socket *const sock,
- 		return 0;
- 
- 	audit_net.family = address->sa_family;
-+	audit_net.sk = sock->sk;
- 	landlock_log_denial(subject,
- 			    &(struct landlock_request){
- 				    .type = LANDLOCK_REQUEST_NET_ACCESS,
-diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
-index 4c528154ea92..0c256e7c8675 100644
---- a/tools/testing/selftests/landlock/net_test.c
-+++ b/tools/testing/selftests/landlock/net_test.c
-@@ -2026,4 +2026,66 @@ TEST_F(audit, connect)
- 	EXPECT_EQ(0, close(sock_fd));
- }
- 
-+static int matches_log_tcp_bound(int audit_fd, const char *const addr,
-+				 __u16 lport, __u16 dport)
-+{
-+	static const char log_template[] = REGEX_LANDLOCK_PREFIX
-+		" blockers=net\\.connect_tcp laddr=%s lport=%u daddr=%s dest=%u$";
-+	/* Slack for two addresses and two port numbers. */
-+	char log_match[sizeof(log_template) + 40];
-+	int log_match_len;
-+
-+	log_match_len = snprintf(log_match, sizeof(log_match), log_template,
-+				 addr, lport, addr, dport);
-+	if (log_match_len > sizeof(log_match))
-+		return -E2BIG;
-+
-+	return audit_match_record(audit_fd, AUDIT_LANDLOCK_ACCESS, log_match,
-+				  NULL);
-+}
-+
-+/*
-+ * After a bind() to an allowed port, a denied connect must report laddr/lport
-+ * from the bound socket (made available through audit_net.sk) in addition to
-+ * the connect sockaddr's daddr/dest.
-+ */
-+TEST_F(audit, connect_tcp_bound)
-+{
-+	const struct landlock_ruleset_attr ruleset_attr = {
-+		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
-+				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
-+	};
-+	const struct landlock_net_port_attr rule_bind = {
-+		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
-+		.port = self->srv0.port,
-+	};
-+	struct service_fixture srv_remote;
-+	struct audit_records records;
-+	int ruleset_fd, sock_fd;
-+
-+	/* Uses a second port as the denied connect target. */
-+	ASSERT_EQ(0, set_service(&srv_remote, variant->prot, 1));
-+
-+	ruleset_fd =
-+		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-+	ASSERT_LE(0, ruleset_fd);
-+	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
-+				       &rule_bind, 0));
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	EXPECT_EQ(0, close(ruleset_fd));
-+
-+	sock_fd = socket_variant(&self->srv0);
-+	ASSERT_LE(0, sock_fd);
-+	EXPECT_EQ(0, bind_variant(sock_fd, &self->srv0));
-+	EXPECT_EQ(-EACCES, connect_variant(sock_fd, &srv_remote));
-+	EXPECT_EQ(0, matches_log_tcp_bound(self->audit_fd, variant->addr,
-+					   self->srv0.port, srv_remote.port));
-+
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	EXPECT_EQ(0, records.access);
-+	EXPECT_EQ(1, records.domain);
-+
-+	EXPECT_EQ(0, close(sock_fd));
-+}
-+
- TEST_HARNESS_MAIN
+I'm happy to see someone in BPF land come around to supporting
+Blaise's signature scheme, I only wish it happened a little sooner, we
+likely could have saved everyone a lot of time and stress.
 
-base-commit: d8dfb4c7faa87c3e41a8678f38f136c2c7c036fa
--- 
-2.54.0
+> iii) given we
+> expose the verification result in the BPF prog, we also don't need a new =
+LSM
+> hook and can just piggy back on the existing security_bpf_prog() which al=
+so
+> has the possibility to still reject late at this point.
 
+If you look at Blaise's patchset from last September (the one I linked
+in my previous email) you will notice he didn't add any additional
+hooks either.
+
+--=20
+paul-moore.com
