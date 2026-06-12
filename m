@@ -1,50 +1,49 @@
 Received: from out203-205-221-153.mail.qq.com (out203-205-221-153.mail.qq.com [203.205.221.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C070388E76;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFD53876A9;
 	Fri, 12 Jun 2026 15:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781279982; cv=none; b=pdF5XPGlVx5o0mPqNCqXjf9KJMce6kj4RjxglRoHVev/hAei+d5t1rh//zklQdOr1o5oFJueJ+dZWckIqmoL6vJxFeH1uCW4yjbhffqf7wEi20p5gEBrL5NfMeW1B/v0Pkkez3tdXlsf0oxzT5KX7gMnkIHZ35p9car3uTTQcNE=
+	t=1781279982; cv=none; b=rhUPloVgb03CpCq9995pSs42q5ddm+7kVCqZQvCIMN7eg8MmIA08ATBc+OcOSEWljumyH9EwSE629LcZDT5mdnic1AKMjwC09PDgD8LmyVSUlGXXemYnTr4ZDC/mu19VQIFa86YfQw80b040EehvO4LgVamTE2jYN1vnVRUZ1ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1781279982; c=relaxed/simple;
-	bh=X2j8Hvg55PXpymBqpwRjgcvgVDeZUuLo2fkF3uSc6Xs=;
+	bh=jVQUnmMlqBvxVmfxOoPWYL1MattybvdDlNA4Iz015lQ=;
 	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Frxzx8nfb4fXp8/PBRRPmo9EHPrti3FJ1WpIkoNaSkNi6S7tRzlU/JJdLm/ZM5+8keXb935yybHnZGWv2zCUC5foOT2NjVT2nKbnoEZt8xyDM7qr2NR8Go3T8uvbqhrIdSTk5CabxBD0T525w21xjVT+xCmti3GR35f14Ym2kCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=MXd8BkE+; arc=none smtp.client-ip=203.205.221.153
+	 MIME-Version:Content-Type; b=UMUY5LYCD96mRTzFsESjug3b8jKI+8ckK7NKIQm2kY8puuqT/F+TFpY5+8XDNjQ+1re+YX7E2AkFehSFqS6MlWe8TGNs1CuGYqZcgf77OrPPIajYfHKZKRECBhQtFaTInXFwUqw6heMrYtbzB6eYIrA0SwRS0U6Jszq3XmSmOjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ImgVhXPP; arc=none smtp.client-ip=203.205.221.153
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="MXd8BkE+"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ImgVhXPP"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1781279978; bh=T+6BpMARKOgVqqiEy09AK2gyXoxhZAWYzWNi6O1fhV8=;
+	t=1781279978; bh=0PANv8T8h90ZbIlyN/IEyMg70LoIbnAv57ZiFsopnkg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=MXd8BkE+sH8ACN3Zfa5sOGv73b8a1xOr+bgbpXUzGOUEdtg8t66eray+qHaSXvtzW
-	 IcOOrIg8frDzf44It5tMgNsO9mhDXBs6xTwNXDW7xN3GTn432PZ0heYgf5f0miDSRP
-	 YyfyXm7wjVElj3Uc/+M3mI23gGzYVlz17Csk/XZA=
+	b=ImgVhXPPM+lHTV5NoWYZz5O2mTWY9nCVZ4Z8gPJUbYPGHJFrCpgLCDjiBy5oTn2Ia
+	 QkBls6ua/46PhzhQS/e39iXBc67B09HErqwgqoi3t8GOQBKqQSflz5Fdodm2Q00iE7
+	 hhDbj5yuBP9tcDcCyvahlYJH3AL29Lvbxjn8Milk=
 Received: from 172-1-1-128.lightspeed.hstntx.sbcglobal.net.localdomain ([27.38.179.189])
 	by newxmesmtplogicsvrszc43-0.qq.com (NewEsmtp) with SMTP
 	id EDDB30C4; Fri, 12 Jun 2026 23:59:29 +0800
-X-QQ-mid: xmsmtpt1781279975t9yphjsh5
-Message-ID: <tencent_584BF9CEE8686B0C1981EF5DCDE5CAB22005@qq.com>
-X-QQ-XMAILINFO: MWpGaJ0Epp2gD2Dnudg2BYQENjzGnXX/lE0BcE5FZIfyMdvhBglmWZ/WkXYyRn
-	 uOqgA7NyWA6sn2q27evGq+3+HpqdLRDnnFOGi7mZdEtacIxPzRdJMa6HfOSqey7nQeTCNJMzSOl0
-	 mWMBtZV19pJmcqSyc84PUhB0IBO1teg98tbcI4vNTcpHQSeRNiinzX7LC2xQv50CkX9Sm7cK6FDY
-	 nFOiFRSlGBcFSES4U21ssJutfz5QfmYHpqVGTqwUZgn5FoTPFm0lzvQlmLeUYuAwqOCteEkdqlzV
-	 0qQWZTyEerrK62nqeZv/jIpVD/ZY2RUR9NeE+F4hG09a9caYU6F4+FrHKj1OE9deXh7p/8zs8nSb
-	 rWcx6kkBjK9pgAZaVKxGc9f63+1aRit8pE4ElkppnHdyHUXpeCQpWF2INut55mJARzp/GEbUpLl2
-	 1WKADj/iWrQbVZPRuuQrrpgTN2dawMjrzxhY3El7T7127JgJY+NlyPqsmJRXj+DP6WE1179DEbDw
-	 Sgcubke/M4YHDtf9ojrHPNjr1VJ1I5Kjl7E0WNVEF1uVp7u1/vRtafT89YJWFCTSywo3w32rJ+vw
-	 LF0Kw1hOOtJQ4y4Jf8UfL7MXpEL6LFL5WiKjnI+t1brndAtajzfvUR9UpZkmsUQzkqsANyUgriI+
-	 zoi0yihp4JRkgFRDr3lC7TFDiqSq2YJ0KBvYRaXi4Kb9EL0dBp4MWyyM0uUsjt0r7GA4R7kgGAIK
-	 ZIJoldkxKdtfvMWgDgS61UQVxz5oh/mNB7QE1lz7UqxyK+5FXCDFv9Jx+8vBvAKaIWkUEhLuezk2
-	 lpBzulUm1q8CIkQmvWRfDNN7oqTEGsIhIuwQ3IrGlFdHYRq9XWhtpvKUsdrN4sm6Vx4yxwYDoAai
-	 H4HDW5kpydzeYozwekWldMZo3k6OF4Y/oqLWSiOhG9cDsmMSdAPc/Zcf0/t2NywxA3Sco/bb9TZ2
-	 Mx07XIAJMo+U4Ukw5rn4F23UT4HQ3WUN2Of328HgaV8n+0ewub60PDm1PfK72JGMQ2xqVWgcGG5V
-	 U9fZIAEpm8WxX7J6Fy8Te1aE2233rBFZEs3IKjwTYrwQFaKjSNZV49ZENbFDxvo6lQK+qEwRjFjb
-	 2FhyG+5S/CAquXEPAqcccYayi2vBqQ2o1knyS05FuXq1KER5aR1i1hkcdUmX0BzJIO3kKhIbziPB
-	 pCobU=
-X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
+X-QQ-mid: xmsmtpt1781279976tdix2g0b0
+Message-ID: <tencent_D565966559E777D84773634D0813EFD52E08@qq.com>
+X-QQ-XMAILINFO: NepF8YL2AyLPTmPPh+6NEsV3p7tbeIN38dkWZMRm2o9i0TYFEdjo8rWj1kDb4N
+	 /otf/le53gCSWDs4xqjznPQE6mCfbG16+VMpjmi6nF1zXLBTL5ux8x70m0qEfgAESfpVkV2R+N0r
+	 LlqAfelj6jHYy9bWRtC8RUZGwNpo+C5acdVUJcfLZfTvlAK99pY3W6w9RXC2zo9TdfgTNSzk+Vcu
+	 Z21glDoG/ma/UhUbcvnaQYjE0pEoQA1MhKJAlpKc8dMhs8ro0vudwojkU/QPsMw9tGkcF5WFTEuf
+	 jaFP3AAKRgFeJ+R2C8S5SjW9zFzxJtOaXntgsEaQHTTGScorJyC9G0Rp1ib7FewdCyU4Ji8oZyd5
+	 7mi2T/LYVN3/qiLJdvhWbfgA8uodwdpcPSSO4AGnbmz0R+9s84HQdkslXqc87NskE6WlxiN1kEXt
+	 /NipBHHCSI1sBUDEwtNNBu5N4oEF5CQoo5tdRJz+4YOlylcyibj5IrM7TCmcJx1rXRLqLQyD1rT8
+	 xvprg3eFJsIpcZtM7a37mmxlEzMxcT+oGMvO6LyPKFgqXl8V3Aa/x7amEIp0Rrzp81pbHNbOkkLX
+	 VUWL/F7X5p7ARaQwO/NHgvskYXHrcm06NLNBFYvoqB8tpGrT62ftl2jrG25Y8s4jP3tiBegxluJ4
+	 AMnvmt2iG2PPR5Wzp4BOPoVRhXScsMd/YUofCe/ZTNt6kwfN77xZoWAyKdr0+XW+zosEHnEULnEj
+	 0Sc5U/5DZiEcSvczfQzSVq38t2Xk1cAqX7bB09FPEGjeiqD2znkQEXV3GvAWwH9lTwy39aEeIAIW
+	 HA/yt1HocYhP2B+5icTqjgGZef7dZd+y985kozlnOkYCkF2JfotKCLxAsqQY3t+Y+2yLLzcA3pVh
+	 ZSj32hAR/8y42i7JjccY6w8ufTv2ZUkTy5vCPZ/Zai3d06CuCJe/IvagiROaFebwxRvq1YMXHFEZ
+	 j6E1vJ42aGjz9kLYo5MBx2uIp3vTkwazVSYCFo3J7msOEkCyKQDrTeEqtL7aAFxqaIxS7tr6nYan
+	 h4D94BRcbEf0LYPI03RbQprSZbOePBq9x1FqfB/bPJLHHMUVS5neOZM8JintlxWZ3Nw9vW4GzcSX
+	 J5kKUtkjlIneT0RZ88rjjOQRKDwAgpcMrP/hFQy2FqLZEfW79Eqapdkm7oTY7BjSINs7sc
+X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
 From: Yan Zhu <zhuyan2015@qq.com>
 To: alexs@kernel.org,
 	si.yanteng@linux.dev,
@@ -56,9 +55,9 @@ Cc: dzm91@hust.edu.cn,
 	zhuyan2015@qq.com,
 	linux-doc@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH 06/10] docs/zh_CN: add LSM/tomoyo Chinese translation
-Date: Fri, 12 Jun 2026 23:58:25 +0800
-X-OQ-MSGID: <78fd946c52763b1ffea59f45b890c3b62556c201.1781105672.git.zhuyan2015@qq.com>
+Subject: [PATCH 07/10] docs/zh_CN: add LSM/Yama Chinese translation
+Date: Fri, 12 Jun 2026 23:58:26 +0800
+X-OQ-MSGID: <cdb20531b4be633a8dc14f047914f460dfcab5f8.1781105672.git.zhuyan2015@qq.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1781105672.git.zhuyan2015@qq.com>
 References: <cover.1781105672.git.zhuyan2015@qq.com>
@@ -71,87 +70,95 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Translate Documentation/admin-guide/LSM/tomoyo.rst into Chinese.
+Translate Documentation/admin-guide/LSM/Yama.rst into Chinese.
 
-Update the translation through commit c6144a21169f
-("tomoyo: update project links")
+Update the translation through commit 9d1bd9e8e028
+("doc: yama: Swap HTTP for HTTPS and replace dead link")
 
 Assisted-by: Claude:deepseek-4-pro
 Signed-off-by: Yan Zhu <zhuyan2015@qq.com>
 ---
- .../zh_CN/admin-guide/LSM/tomoyo.rst          | 63 +++++++++++++++++++
- 1 file changed, 63 insertions(+)
- create mode 100644 Documentation/translations/zh_CN/admin-guide/LSM/tomoyo.rst
+ .../zh_CN/admin-guide/LSM/Yama.rst            | 71 +++++++++++++++++++
+ 1 file changed, 71 insertions(+)
+ create mode 100644 Documentation/translations/zh_CN/admin-guide/LSM/Yama.rst
 
-diff --git a/Documentation/translations/zh_CN/admin-guide/LSM/tomoyo.rst b/Documentation/translations/zh_CN/admin-guide/LSM/tomoyo.rst
+diff --git a/Documentation/translations/zh_CN/admin-guide/LSM/Yama.rst b/Documentation/translations/zh_CN/admin-guide/LSM/Yama.rst
 new file mode 100644
-index 000000000000..a354c2ee1b35
+index 000000000000..ada3ec079432
 --- /dev/null
-+++ b/Documentation/translations/zh_CN/admin-guide/LSM/tomoyo.rst
-@@ -0,0 +1,63 @@
++++ b/Documentation/translations/zh_CN/admin-guide/LSM/Yama.rst
+@@ -0,0 +1,71 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +.. include:: ../../disclaimer-zh_CN.rst
 +
-+:Original: Documentation/admin-guide/LSM/tomoyo.rst
++:Original: Documentation/admin-guide/LSM/Yama.rst
 +:翻译:
 + 朱岩 Yan Zhu <zhuyan2015@qq.com>
 +
 +
-+======
-+TOMOYO
-+======
++====
++Yama
++====
 +
-+TOMOYO 是什么?
-+==============
++Yama 是一种 Linux 安全模块（LSM），用于收集系统范围内的 DAC（自主访问控制）
++安全保护，这些保护并不是由内核本身直接处理的。在编译时可通过
++``CONFIG_SECURITY_YAMA`` 选择，并可在运行时通过 ``/proc/sys/kernel/yama``
++中的 sysctl 接口控制：
 +
-+TOMOYO 是 Linux 内核中一种基于名称的 MAC（强制访问控制）扩展（LSM 模块）。
++ptrace_scope
++============
 +
-+LiveCD 示例教程可在以下地址获取：
++随着 Linux 的流行度提升，它将成为更大的恶意软件攻击目标。Linux 进程接口的一个
++突出弱点是单个用户能够检查其拥有的任意进程的内存和运行状态。例如，若 Pidgin
++被入侵，攻击者即可附加到其他运行中的进程（如 Firefox、SSH 会话、GPG 代理等），
++提取更多凭证，并在不依赖用户钓鱼的情况下扩大攻击范围。
 +
-+https://tomoyo.sourceforge.net/1.8/ubuntu12.04-live.html
-+https://tomoyo.sourceforge.net/1.8/centos6-live.html
++这不是理论上的问题。已有文献记载 `SSH 会话劫持 <yama_ssh_hijack_>`_ 和
++`任意代码注入 <yama_code_injection_>`_ 攻击，这些攻击在允许 ptrace 如前所述
++时仍然可能发生。由于 ptrace 并不是非开发者和非管理员常用的功能，系统构建者应
++当能够选择关闭此调试机制。
 +
-+虽然这些教程使用的是非 LSM 版本的 TOMOYO，但对理解 TOMOYO 的概念仍有帮助。
++一种解决方案是某些应用使用 ``prctl(PR_SET_DUMPABLE, ...)`` 明确禁止 ptrace
++附加（如 ssh‑agent），但大多数并未如此。更通用的方案是仅允许父进程向子进程的
++ptrace（即 ``gdb <child>``、``strace <child>`` 仍可工作），或通过
++``CAP_SYS_PTRACE``（即 root 仍可使用 ``gdb --pid=PID``、``strace -p PID``）。
 +
-+如何启用 TOMOYO?
-+================
++在模式 1 中，软件可以通过 ``prctl(PR_SET_PTRACER, pid, ...)`` 为调试进程与其
++子进程之间定义特定关系。子进程可声明哪些进程（及其后代）被允许调用
++``PTRACE_ATTACH``。每个子进程同一时间只能有一个此类声明的调试进程。例如 KDE、
++Chromium、Firefox 的崩溃处理器以及 Wine 用于相互 ptrace 的进程均采用此方式。
++若进程希望完全禁用这些限制，可调用
++``prctl(PR_SET_PTRACER, PR_SET_PTRACER_ANY, ...)``，从而允许任何已被允许的进
++程（即使在外部 pid 命名空间）进行附加。
 +
-+构建内核时启用 ``CONFIG_SECURITY_TOMOYO=y``，并在内核命令行加入
-+``security=tomoyo`` 参数。
++sysctl 配置如下（仅在拥有 ``CAP_SYS_PTRACE`` 时可写）：
 +
-+详情请参阅 https://tomoyo.sourceforge.net/2.6/ 。
++0 - 经典 ptrace 权限：
++    一个进程可以对任何在相同 uid 下运行的其他进程执行 `PTRACE_ATTACH`
++    操作，只要目标进程是可转储的（即未转换 uid、未以特权启动或未调用过
++    `prctl(PR_SET_DUMPABLE...)`）。同样，`PTRACE_TRACEME` 保持不变。
 +
-+文档在哪里?
-+===========
++1 - 限制性 ptrace：
++    进程必须与其欲 attach 的子进程预先建立关系。默认关系为仅限其后代，且满
++    足上述经典条件。若要更改这种关系，子进程可以调用
++    ``prctl(PR_SET_PTRACER, debugger, ...)`` 来声明允许的调试器 PID，以便在
++    该子进程上调用 ``PTRACE_ATTACH``。使用 ``PTRACE_TRACEME`` 则保持不变。
 +
-+用户 ↔ 内核接口文档位于：
++2 - 仅管理员可 attach：
++    只有具备 ``CAP_SYS_PTRACE`` 权限的进程才能使用 ptrace，无论是通过
++    ``PTRACE_ATTACH`` 还是通过子进程调用 ``PTRACE_TRACEME``）。
 +
-+https://tomoyo.sourceforge.net/2.6/policy-specification/index.html
++3 - 禁止 attach：
++    任意进程不可使用 ``PTRACE_ATTACH`` 或 ``PTRACE_TRACEME``。一旦设定，此值
++    不可更改。
 +
-+我们为研讨会和会议准备的材料可在以下地址获取：
++最初的仅限于子进程的逻辑源自 grsecurity 中的限制条件制定的。
 +
-+https://sourceforge.net/projects/tomoyo/files/docs/
++.. _yama_ssh_hijack:
++ https://www.blackhat.com/presentations/bh-usa-05/bh-us-05-boileau.pdf
 +
-+
-+以下列出了三个方面精选的资料：
-+
-+TOMOYO 是什么?
-+  TOMOYO Linux Overview
-+    https://sourceforge.net/projects/tomoyo/files/docs/lca2009-takeda.pdf
-+  TOMOYO Linux: pragmatic and manageable security for Linux
-+    https://sourceforge.net/projects/tomoyo/files/docs/freedomhectaipei-tomoyo.pdf
-+  TOMOYO Linux: A Practical Method to Understand and Protect Your Own Linux Box
-+    https://sourceforge.net/projects/tomoyo/files/docs/PacSec2007-en-no-demo.pdf
-+
-+TOMOYO 能干什么?
-+  Deep inside TOMOYO Linux
-+    https://sourceforge.net/projects/tomoyo/files/docs/lca2009-kumaneko.pdf
-+  The role of "pathname based access control" in security.
-+    https://sourceforge.net/projects/tomoyo/files/docs/lfj2008-bof.pdf
-+
-+TOMOYO 的历史?
-+  Realities of Mainlining
-+    https://sourceforge.net/projects/tomoyo/files/docs/lfj2008.pdf
++.. _yama_code_injection:
++ https://c-skills.blogspot.com/2007/05/injectso.html
 -- 
 2.43.0
 
