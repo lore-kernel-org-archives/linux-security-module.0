@@ -1,49 +1,50 @@
-Received: from out203-205-221-209.mail.qq.com (out203-205-221-209.mail.qq.com [203.205.221.209])
+Received: from out203-205-221-153.mail.qq.com (out203-205-221-153.mail.qq.com [203.205.221.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505B933D4EE;
-	Fri, 12 Jun 2026 15:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C070388E76;
+	Fri, 12 Jun 2026 15:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781279979; cv=none; b=Fr+PXGT8+DVWs1Dj7YgSNTosLhvwOrioc4lQ3AmNCXnWCd2x3w4Eum+yEsIUQnKIxWPnhr9Cds9P45lWkB9DRJD8JzpKjJGPTLAyFqXXNINpe07/7wyvVGSKuxa2OcuvfEsjNBavciQ9k0Eb0ZF19uEeT2hXuqxalIhkv5ddOVg=
+	t=1781279982; cv=none; b=pdF5XPGlVx5o0mPqNCqXjf9KJMce6kj4RjxglRoHVev/hAei+d5t1rh//zklQdOr1o5oFJueJ+dZWckIqmoL6vJxFeH1uCW4yjbhffqf7wEi20p5gEBrL5NfMeW1B/v0Pkkez3tdXlsf0oxzT5KX7gMnkIHZ35p9car3uTTQcNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781279979; c=relaxed/simple;
-	bh=Q+ANZXSOm/DZJP1jNI3nH8wxdIEcS2BoPF7hnwAchBY=;
+	s=arc-20240116; t=1781279982; c=relaxed/simple;
+	bh=X2j8Hvg55PXpymBqpwRjgcvgVDeZUuLo2fkF3uSc6Xs=;
 	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jx1lNEmgBdoWzK6BMfDqzdqdjsvQYBqHoorEDQyxjEXaLF+GLde46CgvuSrEeNAvVTFS2uw66NOL8NRyXMmguWXfbpXU+foLHXsEveJt3W6Pu6qYWQNUcwpG9+w4XsEPkxc7paWgZkzEggVZnBWC1LI+9CDAII+xYsyWJEZTR5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=BA92haYo; arc=none smtp.client-ip=203.205.221.209
+	 MIME-Version:Content-Type; b=Frxzx8nfb4fXp8/PBRRPmo9EHPrti3FJ1WpIkoNaSkNi6S7tRzlU/JJdLm/ZM5+8keXb935yybHnZGWv2zCUC5foOT2NjVT2nKbnoEZt8xyDM7qr2NR8Go3T8uvbqhrIdSTk5CabxBD0T525w21xjVT+xCmti3GR35f14Ym2kCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=MXd8BkE+; arc=none smtp.client-ip=203.205.221.153
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="BA92haYo"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="MXd8BkE+"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1781279974; bh=gnXYqDOPnoHixd3+zglNjsCbuKCRPQbq/Mhkt4+mJdg=;
+	t=1781279978; bh=T+6BpMARKOgVqqiEy09AK2gyXoxhZAWYzWNi6O1fhV8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=BA92haYogqRDmj7J6f/+ET5rAFErYGhLM+eapw1eQ1LA51ghlZiH7K3AxSMwghgU2
-	 TpfO0iPqUEEXArZMUj4939C94sDdbsReA4gGKqJDK+kdYRGNn83ZOvBCOyMBwLN6l/
-	 7U20l2z8JBIY6eCoISbfujiggjrX1MzZuTWM7x8c=
+	b=MXd8BkE+sH8ACN3Zfa5sOGv73b8a1xOr+bgbpXUzGOUEdtg8t66eray+qHaSXvtzW
+	 IcOOrIg8frDzf44It5tMgNsO9mhDXBs6xTwNXDW7xN3GTn432PZ0heYgf5f0miDSRP
+	 YyfyXm7wjVElj3Uc/+M3mI23gGzYVlz17Csk/XZA=
 Received: from 172-1-1-128.lightspeed.hstntx.sbcglobal.net.localdomain ([27.38.179.189])
 	by newxmesmtplogicsvrszc43-0.qq.com (NewEsmtp) with SMTP
 	id EDDB30C4; Fri, 12 Jun 2026 23:59:29 +0800
-X-QQ-mid: xmsmtpt1781279972tf9kxqqm2
-Message-ID: <tencent_F3D55D1A2C8FB266EE628EF8C68C10DEDF09@qq.com>
-X-QQ-XMAILINFO: Od8VqZhFMB3NK9jNUI+6TH09d4hkjGfskg+Z8iQ+mJrEhtaK4j8XshKzi4B30v
-	 DnNwKVi+RI+HuJIebPB172J4YkPo2oyyKdZQ7sMJQxJFvmd1zIN23D6N3tBOzXRvpV0oig+6ITWo
-	 0d8aQE28wjgew/5b/r/8tEDljp6NqNrgKpgtS1ZcJ2GN4P/cmeQh4VlX85bYWsyvmih8P6T39mn3
-	 p6o+BjOnzlSCErw1nBIp8QknEyVNTFyQ6xKqAureK1aAjLXLIoGF3iTv7Io8xWbw3cQx7w4W7Zyd
-	 q678uZBWCUOTCbTtGgYyQyIg7PhPLQpv96se/8C/cpcuLNHtw06o8UZ81R25mlX6YZguo8UoQlYV
-	 qTDwqhEdqixU2nOhEt/S63xxKnCJbma0MKXAtP7ac8hWJT4gwemxau13tEon2PgJztFPXLRiRhfe
-	 35r1jLy1vfp2OUQojbU54SwIy8X/Ivbsa4c3K5gSHsAPqut8RGmp0lrkaOmULBtkb95jUw6PMrNa
-	 sm42ne/bTG97dIu0vADM5DtZGexydIFeKRljm8wincX6xSPCj9HsSMaxPGjp5beQJNC2REefiaHm
-	 q7SQdjZ9QnnCBaBmnGImAS3TRbloBMAJCxzv7c1kBMXZdN3nCTTHgCRaWBmAfCpxdihsGyou8hp0
-	 DBqLUBGCIMC1xuqfH+vQya7wvOyx1WhDba4KT9DuefbU1XwW1JjYiL1cuGlWVM+LPk0hhpV8hyL3
-	 HBKh1jJD3548sxiAZDZB9X6EO1OPwBM5bacvFdeQJojxZnNtH6hPrIIX5HpHLlyWjHA3XR14ebkr
-	 v3lwCQ7MM1Pd6Z/0uszP4uZwjrR7eiSZ6SMdRcsPrd1jiyoK5rcXDoQcKrpk2gLu1qAZA4ENGCn8
-	 6+TptJOqxGIcjo2RMBqJ4lE6y+6ILqL4eMX4ZtThqUsrxykd4zQnUPyGIIMzKl6wcVKRZO8p/t4D
-	 thfpAfoh9V6tDHcpl3EDANA+/NKz9oGsQIS+1Jl9stDDoqf5j2ztIJ5vi8I9vwVmhZKYfFAkMh6K
-	 4VJ5UbmAmCYyVo0viUbg7TEzoeadQksdJBGyItqMquT9+PnGxX5GQ4a5VB4Y7tva+z3T9VFhUfGK
-	 s5WTGx/5tGINrMcfJi4QeRVZJOoTN8yoBQ2yp4
-X-QQ-XMRINFO: NS+P29fieYNwqS3WCnRCOn9D1NpZuCnCRA==
+X-QQ-mid: xmsmtpt1781279975t9yphjsh5
+Message-ID: <tencent_584BF9CEE8686B0C1981EF5DCDE5CAB22005@qq.com>
+X-QQ-XMAILINFO: MWpGaJ0Epp2gD2Dnudg2BYQENjzGnXX/lE0BcE5FZIfyMdvhBglmWZ/WkXYyRn
+	 uOqgA7NyWA6sn2q27evGq+3+HpqdLRDnnFOGi7mZdEtacIxPzRdJMa6HfOSqey7nQeTCNJMzSOl0
+	 mWMBtZV19pJmcqSyc84PUhB0IBO1teg98tbcI4vNTcpHQSeRNiinzX7LC2xQv50CkX9Sm7cK6FDY
+	 nFOiFRSlGBcFSES4U21ssJutfz5QfmYHpqVGTqwUZgn5FoTPFm0lzvQlmLeUYuAwqOCteEkdqlzV
+	 0qQWZTyEerrK62nqeZv/jIpVD/ZY2RUR9NeE+F4hG09a9caYU6F4+FrHKj1OE9deXh7p/8zs8nSb
+	 rWcx6kkBjK9pgAZaVKxGc9f63+1aRit8pE4ElkppnHdyHUXpeCQpWF2INut55mJARzp/GEbUpLl2
+	 1WKADj/iWrQbVZPRuuQrrpgTN2dawMjrzxhY3El7T7127JgJY+NlyPqsmJRXj+DP6WE1179DEbDw
+	 Sgcubke/M4YHDtf9ojrHPNjr1VJ1I5Kjl7E0WNVEF1uVp7u1/vRtafT89YJWFCTSywo3w32rJ+vw
+	 LF0Kw1hOOtJQ4y4Jf8UfL7MXpEL6LFL5WiKjnI+t1brndAtajzfvUR9UpZkmsUQzkqsANyUgriI+
+	 zoi0yihp4JRkgFRDr3lC7TFDiqSq2YJ0KBvYRaXi4Kb9EL0dBp4MWyyM0uUsjt0r7GA4R7kgGAIK
+	 ZIJoldkxKdtfvMWgDgS61UQVxz5oh/mNB7QE1lz7UqxyK+5FXCDFv9Jx+8vBvAKaIWkUEhLuezk2
+	 lpBzulUm1q8CIkQmvWRfDNN7oqTEGsIhIuwQ3IrGlFdHYRq9XWhtpvKUsdrN4sm6Vx4yxwYDoAai
+	 H4HDW5kpydzeYozwekWldMZo3k6OF4Y/oqLWSiOhG9cDsmMSdAPc/Zcf0/t2NywxA3Sco/bb9TZ2
+	 Mx07XIAJMo+U4Ukw5rn4F23UT4HQ3WUN2Of328HgaV8n+0ewub60PDm1PfK72JGMQ2xqVWgcGG5V
+	 U9fZIAEpm8WxX7J6Fy8Te1aE2233rBFZEs3IKjwTYrwQFaKjSNZV49ZENbFDxvo6lQK+qEwRjFjb
+	 2FhyG+5S/CAquXEPAqcccYayi2vBqQ2o1knyS05FuXq1KER5aR1i1hkcdUmX0BzJIO3kKhIbziPB
+	 pCobU=
+X-QQ-XMRINFO: NI4Ajvh11aEjEMj13RCX7UuhPEoou2bs1g==
 From: Yan Zhu <zhuyan2015@qq.com>
 To: alexs@kernel.org,
 	si.yanteng@linux.dev,
@@ -55,9 +56,9 @@ Cc: dzm91@hust.edu.cn,
 	zhuyan2015@qq.com,
 	linux-doc@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH 02/10] docs/zh_CN: add LSM/apparmor Chinese translation
-Date: Fri, 12 Jun 2026 23:58:21 +0800
-X-OQ-MSGID: <f875040e30fac487c8d539a9b4cb40544da5841f.1781105672.git.zhuyan2015@qq.com>
+Subject: [PATCH 06/10] docs/zh_CN: add LSM/tomoyo Chinese translation
+Date: Fri, 12 Jun 2026 23:58:25 +0800
+X-OQ-MSGID: <78fd946c52763b1ffea59f45b890c3b62556c201.1781105672.git.zhuyan2015@qq.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1781105672.git.zhuyan2015@qq.com>
 References: <cover.1781105672.git.zhuyan2015@qq.com>
@@ -70,84 +71,87 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Translate Documentation/admin-guide/LSM/apparmor.rst into Chinese.
+Translate Documentation/admin-guide/LSM/tomoyo.rst into Chinese.
 
-Update the translation through commit d00c2359fc18
-("Docs: Update LSM/apparmor.rst")
+Update the translation through commit c6144a21169f
+("tomoyo: update project links")
 
 Assisted-by: Claude:deepseek-4-pro
 Signed-off-by: Yan Zhu <zhuyan2015@qq.com>
 ---
- .../zh_CN/admin-guide/LSM/apparmor.rst        | 59 +++++++++++++++++++
- 1 file changed, 59 insertions(+)
- create mode 100644 Documentation/translations/zh_CN/admin-guide/LSM/apparmor.rst
+ .../zh_CN/admin-guide/LSM/tomoyo.rst          | 63 +++++++++++++++++++
+ 1 file changed, 63 insertions(+)
+ create mode 100644 Documentation/translations/zh_CN/admin-guide/LSM/tomoyo.rst
 
-diff --git a/Documentation/translations/zh_CN/admin-guide/LSM/apparmor.rst b/Documentation/translations/zh_CN/admin-guide/LSM/apparmor.rst
+diff --git a/Documentation/translations/zh_CN/admin-guide/LSM/tomoyo.rst b/Documentation/translations/zh_CN/admin-guide/LSM/tomoyo.rst
 new file mode 100644
-index 000000000000..6b0638aedacb
+index 000000000000..a354c2ee1b35
 --- /dev/null
-+++ b/Documentation/translations/zh_CN/admin-guide/LSM/apparmor.rst
-@@ -0,0 +1,59 @@
++++ b/Documentation/translations/zh_CN/admin-guide/LSM/tomoyo.rst
+@@ -0,0 +1,63 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +.. include:: ../../disclaimer-zh_CN.rst
 +
-+:Original: Documentation/admin-guide/LSM/apparmor.rst
++:Original: Documentation/admin-guide/LSM/tomoyo.rst
 +:翻译:
 + 朱岩 Yan Zhu <zhuyan2015@qq.com>
 +
 +
-+========
-+AppArmor
-+========
++======
++TOMOYO
++======
 +
-+AppArmor 是什么?
-+================
-+
-+AppArmor 是 Linux 内核的 MAC（强制访问控制）安全扩展。它实现了一个基于任务
-+（profile）的策略，即从用户空间创建并加载任务的配置文件。系统中未为任务定义
-+profile 的进程将在 unconfined（未限制）状态下运行，这相当于标准的 Linux DAC
-+权限。
-+
-+如何启用和禁用
++TOMOYO 是什么?
 +==============
 +
-+设置 ``CONFIG_SECURITY_APPARMOR=y``
++TOMOYO 是 Linux 内核中一种基于名称的 MAC（强制访问控制）扩展（LSM 模块）。
 +
-+如果希望将 AppArmor 设为默认的安全模块，请使用以下配置::
++LiveCD 示例教程可在以下地址获取：
 +
-+   CONFIG_DEFAULT_SECURITY_APPARMOR=y
++https://tomoyo.sourceforge.net/1.8/ubuntu12.04-live.html
++https://tomoyo.sourceforge.net/1.8/centos6-live.html
 +
-+``CONFIG_LSM`` 参数用于管理 LSM（Linux Security Module）的顺序和选择。请在列
-+表中将 apparmor 指定为第一个 “主要” 模块（例如 AppArmor、SELinux、Smack）。
++虽然这些教程使用的是非 LSM 版本的 TOMOYO，但对理解 TOMOYO 的概念仍有帮助。
 +
-+构建内核
-+--------
++如何启用 TOMOYO?
++================
 +
-+如果 AppArmor 不是默认的安全模块，可以在内核命令行上添加
-+``security=apparmor`` 来启用。
++构建内核时启用 ``CONFIG_SECURITY_TOMOYO=y``，并在内核命令行加入
++``security=tomoyo`` 参数。
 +
-+如果 AppArmor 是默认的安全模块，则可以在内核命令行上添加
-+``apparmor=0, security=XXXX``（其中 ``XXXX`` 为有效的安全模块）来禁用它。
++详情请参阅 https://tomoyo.sourceforge.net/2.6/ 。
 +
-+要让 AppArmor 在标准的 Linux DAC 权限之外施加任何限制，必须从用户空间向内核
-+加载策略，具体请参阅文档和工具链接。
++文档在哪里?
++===========
 +
-+文档
-+====
++用户 ↔ 内核接口文档位于：
 +
-+文档可在 wiki 上找到，链接如下。
++https://tomoyo.sourceforge.net/2.6/policy-specification/index.html
 +
-+链接
-+====
++我们为研讨会和会议准备的材料可在以下地址获取：
 +
-+Mailing List - apparmor@lists.ubuntu.com
++https://sourceforge.net/projects/tomoyo/files/docs/
 +
-+Wiki - http://wiki.apparmor.net
 +
-+User space tools - https://gitlab.com/apparmor
++以下列出了三个方面精选的资料：
 +
-+Kernel module - git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor
++TOMOYO 是什么?
++  TOMOYO Linux Overview
++    https://sourceforge.net/projects/tomoyo/files/docs/lca2009-takeda.pdf
++  TOMOYO Linux: pragmatic and manageable security for Linux
++    https://sourceforge.net/projects/tomoyo/files/docs/freedomhectaipei-tomoyo.pdf
++  TOMOYO Linux: A Practical Method to Understand and Protect Your Own Linux Box
++    https://sourceforge.net/projects/tomoyo/files/docs/PacSec2007-en-no-demo.pdf
++
++TOMOYO 能干什么?
++  Deep inside TOMOYO Linux
++    https://sourceforge.net/projects/tomoyo/files/docs/lca2009-kumaneko.pdf
++  The role of "pathname based access control" in security.
++    https://sourceforge.net/projects/tomoyo/files/docs/lfj2008-bof.pdf
++
++TOMOYO 的历史?
++  Realities of Mainlining
++    https://sourceforge.net/projects/tomoyo/files/docs/lfj2008.pdf
 -- 
 2.43.0
-
 
