@@ -1,75 +1,75 @@
 Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B217D2288CB
-	for <linux-security-module@vger.kernel.org>; Fri, 12 Jun 2026 01:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDE325228C
+	for <linux-security-module@vger.kernel.org>; Fri, 12 Jun 2026 01:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781226684; cv=none; b=VLritBYTCTFBTTfXHTYzD4OPARbMWGlp+8x5b+A+GsdXqYv5ViF4/udKTyBg5zIOBT2/2VCJk/1uqrNO/ufVra6sw3o3yBsJleKM9uqrriGySZ+O5nM57Ax8dDnG1g8K5yAtNjoYa/+q9cySC+QZA+7VrX7ZiWt+OZuOMOM9y5k=
+	t=1781226699; cv=none; b=t/HJ8GEsg4pLw143TpeN30DzGGHNCqdt2uUhILkizUy9M9D3qKB2kUBX0gbFXcCA4QE3KjkjAnonutbIAJ6C5La8lrzaqrLm+xolA0t/O73Z5NmdDzSdBkakZQttjoIjuB4K7tfKsX1be1s5xL1sN7b7/NfkM+3svzWUqZITQdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781226684; c=relaxed/simple;
-	bh=2g+sJPJKfhVb0nJtLgB1yVbdVcFn4C1Jxj0LPu6QHCM=;
+	s=arc-20240116; t=1781226699; c=relaxed/simple;
+	bh=KvbWwydzakxnJX3U9otcQnxNaQMFLfmetPQxNO6tJnk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sS4UeZH4/Xm1TOXlby/LEHDK/LlvQRJOSLUvDnrJIHCKIkhbCHF27IVD1eU+coujUfOLBmKuzw0Ynr7GrkgqGMmU55lT1C3RMlWxzlEY6T2VaYZuJoNRVVUNY4iR5PYbyBDlxKyEzIaaETKslsJ4rmHqPd0E9RSjDMQC5QBVBeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=xHqWDGcS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MBwSJJnm; arc=none smtp.client-ip=202.12.124.145
+	 In-Reply-To:Content-Type; b=irlrEWdcZ/yuiVZoIrcsc5N0HuG7cqEw00YgW+5K9NE5XjHOtOgQy9aPtChhNLyQfnWNiyifX9Ici1jZeTApy2MI7+xV9BnOTPq5TxudT3YdmctndoyncbbozihJQPHiDR2oUGBaL0tvwAsLAKW2UUm532S3J/gZEEmgU9eo5XE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=IYhx+BOq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Sx4vPnF0; arc=none smtp.client-ip=202.12.124.145
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="xHqWDGcS";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MBwSJJnm"
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailfout.stl.internal (Postfix) with ESMTP id 8AF5F1D0014A;
-	Thu, 11 Jun 2026 21:11:21 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="IYhx+BOq";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Sx4vPnF0"
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfout.stl.internal (Postfix) with ESMTP id DAEBC1D00162;
+	Thu, 11 Jun 2026 21:11:36 -0400 (EDT)
 Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Thu, 11 Jun 2026 21:11:21 -0400
+  by phl-compute-01.internal (MEProxy); Thu, 11 Jun 2026 21:11:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
 	:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1781226681;
-	 x=1781313081; bh=UwMsejahkjSgTEcXYmUdZyYBnrQI3urqemZMcqrSYk8=; b=
-	xHqWDGcSB6gTYeq8ltPMELhjt9qjJD4EbPr//j6OAQ9hU3UzVefXJ6WNaCODVwpn
-	6Arid/8KrpmzEYhhCbOuCNP2Yh2rRBOTtlcB9JMM01SZIiEIMllMxLYoMdu/EFvg
-	jY5WlKTHuiQbIIc8fF4l6zITJMrTP8g7v7RqLuRZdQQN8H3JkjImb4ZjJA5aP8Km
-	6R3rV5IMRJTBBfheoNW/oG3AcIrBtU/zwgkfSKnEl78vszlirPzTfBOGxQjRQeIw
-	kEldPQkNH6UaRMVApdRXYTXK84YqHEj7G6i7o536cilA5qlkq1SvgdnhGH602J9A
-	CZE5mndVvTCC1NpIKPNhmw==
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1781226696;
+	 x=1781313096; bh=DtQzSwFawxnv1vpuRVvtqeow/jl6goAWGvJ9FcFLBb4=; b=
+	IYhx+BOqWkl4hSTxQzlA8/UZ4yXqf1jSR7/4IArNyFJiO2X8WPm8pEt+xvvnIJvP
+	6MoBvIuJsjgXjiwoKzePIUDfXKfpJioNrtC/20CAtC1VC6hTx8B6s6gVoCOr0Lpx
+	MwobBUnygrdEudhlEcYmt6hzCh9uV86DkZXWHDtzG1VtSfIURyKz5utj4sciBorU
+	Z1X5udkCtNMypDKZj6olQ1D1ybv0k03b811tSWRwOMxonA+o14GvfHmdi5U+d9JI
+	HSfw4MVz1Y2Kp+gz3ndSPASeLeHWfG8D1H2SNHpMuWXGRdM04A+7s9Blyt294i52
+	OlEGN6UKtfsl8bojaAkkhg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1781226681; x=
-	1781313081; bh=UwMsejahkjSgTEcXYmUdZyYBnrQI3urqemZMcqrSYk8=; b=M
-	BwSJJnmI/ogERZtACLhJkzOlqx32xHPzJQFuyqAgxRtz2wyxijCcAJspsOvTcBwj
-	Abc82+YtNeNc6clptvzKdFOUDrewGCrbmVP+PgP07D+2EyMPjSsQAfYZyXSGgKvR
-	PIyjtMlvoCUfC+eHx5M7qCzhYcXOzOOJs3FnnZUeewFdfTFQZepY/pebHGw49PzB
-	fENTh1gXkeXgoH/RyBb+cdXjoKG80CsJEdb6klckuEzL0rjSPaRkaAX7DNIPOokk
-	9rUQPch5Jc2YUM2HbGmHYPYIimqAv6XZ5WfSVgxSBXUrUXEmqnURdC/0Z/KWvv0w
-	T0KA0dtAzHmy+m+m2K1lQ==
-X-ME-Sender: <xms:uFwratC2v11RW8t8gN9PY2YLmp3Uvre83unbgTNt0QjR8k6sbjWvBw>
-    <xme:uFwravP3EAhrOq_iEsv2xau4_9hASsBtDKMx2m3gfCLkhHIpX1GlxycY3xiN9oupQ
-    2STc4zsa_HKUryPcJ9nY1eJ9GZFFdj636yMKmLrH3iVR3yBBF62d0Y>
-X-ME-Received: <xmr:uFwraiY_xURPUwvIuEiPO_obrtP0SVyB9CdpGMf_1y7eZo5SAqiBYEgLpeoJmU_uh4Ru6uqd8wt3FP4Ldg>
-X-ME-Proxy-Cause: dmFkZTGuga57ASTq1XCY0k5QTsU5YfQb+RgKw69heux2FNzmis6sCx04mcMQu9epbO+3qR
-    myxehSa3IYDPWeHYfmXzrbvnIBJX2jM6MxxNzH1bmcaMNCz59zUEICOCizN4pi/BLzpQ1k
-    WcOmS21lZF/JnLtaAhhM+JaQ7g1EZEPJ7sjwQlfbvHlgT31GYaEd5WCfdCCKWrX/7GLH3b
-    sv8dTeojzl4dKhAq7g3q2LroUyO/KW6+xj/LK66D4UYT7FPb76AKpzBM1SY+ITaSgHwfug
-    2C4QVoXXO8aI+/XGZ+02Wn/x7vVF2WWOBso5vhaC2CZj1FrkAiqW64X4xt2KROLW7mUwCY
-    kGD5uePgmPV9u9gOiSKyY9drmeT/MaW82L72MiCOJo/cADKV+A47QUqk9Rmo/JuKWj4+Fd
-    EhM/RUYTzJtVDL1IxznsRAgQqby/AmAM2JyFfZtabsnZe6zOC1NMEO6B4ltRkhOz4+oYM/
-    y0zE92tbVfnut+lp6UhbS/9OWxMwTbge+A3QYBzfJkXCD7tcPP1NR6kIX+JJsz5pAFAg55
-    mCx9974Wm8mNBeB5oJM6sJ2TNCuGzHWsMqSz+LBwaRTr0JQKe6LlkleT50E2LYD7EYUO/O
-    fT2nqUo2yynZhCSMpmrZmd01AELAwQ0etUO3u4ujJ3KehmekKbqGaSny1yfQ
-X-ME-Proxy: <xmx:uFwraut2rY00DRUXY2Pj_8O3CqamsrX0eX8_R9yM41K4hk17T4tjtA>
-    <xmx:uFwrakOTzPx53OQzTV2LTwOx0WAkohgEgGVZp7QQjVY-6hhS_-lcKw>
-    <xmx:uFwral4EXdpdZlJnCj18xy1kOymG_vGmR7p_T-LJFIfX4CMIviRfsQ>
-    <xmx:uFwraqTGNyQ324-14B2Gq8X2N4lpI9fZuMrFybR31bNWBRSEW1S5bw>
-    <xmx:uVwraqP7bu3ccGZJef3uTP8P3aI-yRy37Z-E7ORUpb8FFziDp1TCeDlm>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1781226696; x=
+	1781313096; bh=DtQzSwFawxnv1vpuRVvtqeow/jl6goAWGvJ9FcFLBb4=; b=S
+	x4vPnF0mTtJlQFr80kVgsxBBMOHE7g46DJ/M2qwzTkFaH7T6FXALMy1+k/e10845
+	2W1jbxTqvYeNrafkjaFygOZdQblNFtXkTMvf37xW1LvOL7DtnxoRHEpPgR1bMhaM
+	gzCEee31IcePznemTvQ+FroZxQhMJj8KtTpSfpG2Jv19HCC78e8O+ltHw94KEjcn
+	kmVE0sCDF9Il+3T61MAeQj2v/+o/bdawxmiOgrzCvyfRKbqg3UFdjMskcAR8wFla
+	UZ4r+1LedJ1KQlalx4iDvXpGBsAnGX7f4P37LX1k96prpoIPyTSenH9DpVuFVUEr
+	iizAGJoPh01Czori4cXsw==
+X-ME-Sender: <xms:yFwravQgoFUZYkR0Hhh_7yn52nZfC2ihM0oj2TbyNFT9bymm6UszAQ>
+    <xme:yFwrakeBKkMVDJKcx2E_G1dR4xw-m_Px8dx7fCjALEkpSpcamZJw2oRVXwljx1lGH
+    csGeA6XH7XnAZHN-0GQrz24jjRUs3aaAG_rCtPS4LTA6bixbcIQag>
+X-ME-Received: <xmr:yFwrauovdtFxQtWFbC8LZiMZ4ZbonwYcvzWohGNFZmVdgm9dup4rtsltjAl70aY7lKmRhL0hm-jHVFgXZg>
+X-ME-Proxy-Cause: dmFkZTF/ZzgcodfEGQOF/MA31cvgKlhVRzO9QKpJ9lmdpMV6t0KvYkRCHp+UVlhNEGz1oC
+    WavJaJ5lCNnpogyn0GW5jV4y+9SYDKjWvslEHaH5HDMwgclbf5gW4mue7/lCbwBdnsAxq9
+    79jK3E+FaB7FwZoiygqbEebKcPKGRRBB184g43KpdOtgi37o47cTVGoTjtZBNRjwaKdXei
+    Bhik+pcQUXUTvsNXnUNt2dHV9jGfzjM3vZ5i1ijjMzmUyhQuikko8AYwPMmdckfNCpFbS8
+    idfDsMMhXtS+K0ii3o/PXKZsNleHUgPYuZQAdB2SXIg71oHY47wcQ1N8J/+0fxFjVj0QTn
+    snMGTflVUDXRMNmz3FGN1jCeqjc+hdzuWOcZ3Xwrt5+HEWZfKAl3lg1BOyeFePOn7TZ9Gn
+    poMShnMFxqw5JCWbH+reFwGWH53LnI2eXZQ0TkfxsqTz/aSHkMT4Lhgu+InvF7zquNhE4y
+    8mVZ/p6tLWA63ifHA/CwBi59eElICKqCjSFuE3Xi1Fk/iCnBq2gbkWtcLqfe1lU3J5ElAf
+    UPRzLkMS5KXZNgCBXU/twjb5qLvCqTPdlVBtCen4P8vHplGDg0JtsOo+irdplkWMC+dtLu
+    WeipM/k0DHMtUf1OLrWEocm76Tl5vU7g1M2u7ysDxNubc9HCcPx6pFWU30gA
+X-ME-Proxy: <xmx:yFwral8SBFp8yDvtJVtHn09XO__HkPiEYQTTTD4ET-H3lB2Lh1lciQ>
+    <xmx:yFwraqf7RrSZ4G_Qcwv2QCGM7__31jSR-TnvikQuFKnui25D0IcCLQ>
+    <xmx:yFwravJOdef9pzqqvZHvZGkWYjYNeu0l3LFInH110CKP3RReXr2vqQ>
+    <xmx:yFwraqh_AKOm0xATdyz4jvSv9G_HnMlKuwBnE8QIiZKljx3xjcCkmQ>
+    <xmx:yFwraud9CTThQOIRmYJhsYpnzd0UizuG1von6aidCOD8ZfkDpew4imAY>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 11 Jun 2026 21:11:19 -0400 (EDT)
-Message-ID: <791c7404-6481-42d3-be8c-dc8bafde0054@maowtm.org>
-Date: Fri, 12 Jun 2026 02:11:17 +0100
+ 11 Jun 2026 21:11:35 -0400 (EDT)
+Message-ID: <f969cd40-95da-45e0-8fc1-dfdf43bb887b@maowtm.org>
+Date: Fri, 12 Jun 2026 02:11:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -77,42 +77,129 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 1/9] landlock: Add a place for flags to layer rules
+Subject: Re: [PATCH v10 3/9] landlock: Suppress logging when quiet flag is
+ present
 To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>,
  Justin Suess <utilityemal77@gmail.com>, Jan Kara <jack@suse.cz>,
  Abhinav Saxena <xandfury@gmail.com>, linux-security-module@vger.kernel.org
 References: <cover.1780272022.git.m@maowtm.org>
- <676e38f1c2d3f6445bdcd45be043e514f6509a3a.1780272022.git.m@maowtm.org>
- <20260608.ni6daelae9Qu@digikod.net>
+ <d208c793ac5d5f45bd1bbf87f57d9cc3ab47d6a7.1780272022.git.m@maowtm.org>
+ <20260608.daeshu7Leequ@digikod.net>
 Content-Language: en-US
 From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <20260608.ni6daelae9Qu@digikod.net>
+In-Reply-To: <20260608.daeshu7Leequ@digikod.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 6/8/26 23:40, Mickaël Salaün wrote:
-> On Mon, Jun 01, 2026 at 01:00:35AM +0100, Tingmao Wang wrote:
+On 6/8/26 23:41, Mickaël Salaün wrote:
+> On Mon, Jun 01, 2026 at 01:00:37AM +0100, Tingmao Wang wrote:
 >> [...]
->> diff --git a/security/landlock/access.h b/security/landlock/access.h
->> index c19d5bc13944..42d8b5134358 100644
->> --- a/security/landlock/access.h
->> +++ b/security/landlock/access.h
->> @@ -62,18 +62,39 @@ static_assert(sizeof(typeof_member(union access_masks_all, masks)) ==
->>  	      sizeof(typeof_member(union access_masks_all, all)));
+>> @@ -265,20 +268,33 @@ get_layer_from_deny_masks(access_mask_t *const access_request,
+>>  			 BITS_PER_TYPE(access_mask_t)) {
+>>  		if (access_req & BIT(access_bit)) {
+>>  			const size_t layer =
+>> -				(deny_masks >> (access_index * 4)) &
+>> +				(deny_masks >>
+>> +				 (access_index *
+>> +				  HWEIGHT(LANDLOCK_MAX_NUM_LAYERS - 1))) &
+>>  				(LANDLOCK_MAX_NUM_LAYERS - 1);
+>> +			const bool layer_has_quiet =
+>> +				!!(quiet_optional_accesses & BIT(access_index));
 >>  
->>  /**
->> - * struct layer_access_masks - A boolean matrix of layers and access rights
->> - *
->> - * This has a bit for each combination of layer numbers and access rights.
->> - * During access checks, it is used to represent the access rights for each
->> - * layer which still need to be fulfilled.  When all bits are 0, the access
->> - * request is considered to be fulfilled.
->> + * struct layer_mask - The unfulfilled access rights and rule flags for
+>>  			if (layer > youngest_layer) {
+>>  				youngest_layer = layer;
+>>  				missing = BIT(access_bit);
+>> +				should_quiet = layer_has_quiet;
+>>  			} else if (layer == youngest_layer) {
+>>  				missing |= BIT(access_bit);
+>> +				/*
+>> +				 * Whether the layer has rules with quiet flag covering
+>> +				 * the file accessed does not depend on the access, and so
+>> +				 * the following WARN_ON_ONCE() should not fail.
+>> +				 */
+>> +				WARN_ON_ONCE(should_quiet && !layer_has_quiet);
 > 
-> This struct could be used to store "fulfilled" access rights too.  The
-> previous description is more accurate.  Please keep most of the previous
-> description too and adjust as needed.
+> WARN_ON_ONCE(should_quiet != layer_has_quiet);
 
-In v10 I attempted to move this description to the doc strings for the
-fields, but happy to move back (done in v11).
+That will fail when layer 0 has quiet flag on the object, at which point
+since youngest_layer starts from 0, we will reach this branch with
+should_quiet initialized earlier to false, but layer_has_quiet == true.
+
+Also, if should_quiet != layer_has_quiet is always false here, then the
+next line is not necessary.
+
+> 
+>> +				should_quiet = layer_has_quiet;
+
+Would it be clearer to do should_quiet |= layer_has_quiet, mimicking the
+"missing |= BIT(access_bit)"? (The result is the same)
+
+>>  			}
+>>  		}
+>>  		access_index++;
+>>  	}
+>>  
+>>  	*access_request = missing;
+>> +	*quiet = should_quiet;
+>>  	return youngest_layer;
+>>  }
+>>  
+>> [...]
+>> diff --git a/security/landlock/fs.h b/security/landlock/fs.h
+>> index cb7e654933ac..d0fca7da2466 100644
+>> --- a/security/landlock/fs.h
+>> +++ b/security/landlock/fs.h
+>> @@ -63,11 +63,20 @@ struct landlock_file_security {
+>>  	 * _LANDLOCK_ACCESS_FS_OPTIONAL).
+>>  	 */
+>>  	deny_masks_t deny_masks;
+>> +	/**
+>> +	 * @quiet_optional_accesses: Stores which optional accesses are
+>> +	 * covered by quiet rules within the layer referred to in deny_masks,
+>> +	 * one access per bit.  Does not take into account whether the quiet
+>> +	 * access bits are actually set in the layer's corresponding
+>> +	 * landlock_hierarchy.
+>> +	 */
+>> +	optional_access_t quiet_optional_accesses
+>> +		: HWEIGHT(_LANDLOCK_ACCESS_FS_OPTIONAL);
+>>  	/**
+>>  	 * @fown_layer: Layer level of @fown_subject->domain with
+>>  	 * LANDLOCK_SCOPE_SIGNAL.
+>>  	 */
+>> -	u8 fown_layer;
+>> +	u8 fown_layer : 4;
+> 
+> Please don't hardcode such size.
+> 
+> Anyway, fown_layer can be updated concurrently (holding a lock), so we
+> should not convert it to a bitfield.
+> 
+>>  #endif /* CONFIG_AUDIT */
+>>  
+>>  	/**
+> 
+>> @@ -82,12 +91,6 @@ struct landlock_file_security {
+>>  
+>>  #ifdef CONFIG_AUDIT
+>>  
+>> -/* Makes sure all layers can be identified. */
+>> -/* clang-format off */
+>> -static_assert((typeof_member(struct landlock_file_security, fown_layer))~0 >=
+>> -	      LANDLOCK_MAX_NUM_LAYERS);
+>> -/* clang-format off */
+>> -
+>>  #endif /* CONFIG_AUDIT */
+> 
+> Remaining useless ifdef/endif.
+
+Since we are not using bitfield for fown_layer anymore, I've also turned
+quiet_optional_accesses (u8) into a non-bitfield.  Then I reverted this
+deletion and added
+
+    static_assert((typeof_member(struct landlock_file_security,
+    			     quiet_optional_accesses)) ~0 >=
+    	      HWEIGHT(_LANDLOCK_ACCESS_FS_OPTIONAL));
+
+> 
+>> [...]
