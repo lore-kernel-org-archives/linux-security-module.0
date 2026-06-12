@@ -1,67 +1,42 @@
-Received: from out203-205-221-242.mail.qq.com (out203-205-221-242.mail.qq.com [203.205.221.242])
+Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A695282F06;
-	Fri, 12 Jun 2026 16:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.242
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC8A406287
+	for <linux-security-module@vger.kernel.org>; Fri, 12 Jun 2026 17:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781280498; cv=none; b=Bqz/ZMyv8+srTckm4dKr6Xr9Y1BMQJwMeieoIuNJZo6htuTp+3CM7TWIg1Qw/peVYVMtQbzec6iBjXwA0cyDflhEr7YCvt5+dgF4xDqLy5yP+L4aKZawydOVZ01pGJjdvQyCuUsxAmCw5yy0tqwKN2uZTp5vZ0hEDAYxKwa7x9A=
+	t=1781285299; cv=none; b=WQS6H4eLpjW+8N3XLE9wLR2khw6Z1p3EQQcK8MaiM5XNbgyYZQgtDP8mRaQSspIXEYUsX2B9d9xLwHZ8hFyj09Za5QNPseq7fw/dZRIV05cAYq+oHGX4WNzvjeQvX6xF6zH5jB4IWiBfkxXDuNYVDjTl4pv1T15lg9Iw+trwshE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781280498; c=relaxed/simple;
-	bh=C4yDMJ/YOtLv28/s4/Pf+JBqBSSwrKjndXwButUTlqo=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NTJzFYQIoGj7Dg3i4fRHXxGYsHtyAtS7mNFJQxb5JKP62dVJ71WUxQvoTLiFhBd42aECnb3lkS54ypGqs7QZWQ53EHJeKPsxcbfAWSgdwYfnaOJUx+f4zNWN4Q0Qu2AaFnpMFqUT0n41nn6pi960njpbRHHzkDZEZC3U79AnRV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=An2VG86X; arc=none smtp.client-ip=203.205.221.242
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+	s=arc-20240116; t=1781285299; c=relaxed/simple;
+	bh=UlvAvuQWbi916cPi3vd2hGdWyMhMGyJ8nVfPJ8HJzUw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u5pWMvRdyPJZQuwNFrYwIuDXTCddPpvFUY9bZf0hTNEapWn9KOsa3EmOEowcO72nG+0qTUfmni4e4pIZJUOFxJMNsTfpxYp2p2tUY6pUAKiOz6jQU2gn2IcbKIuKJJj1K+lRXt+mu5KVpzVbmUouz46ZN0AwGXOJHVvP1as4xps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=jJjUIBYn; arc=none smtp.client-ip=45.157.188.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="An2VG86X"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1781280486; bh=UQp8VX9JypZ6E6O1OqUQjFmFxUx8YP9qAGPt+56zDhY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=An2VG86X3EQ90g20+bcqcsw39Es0lz4u1b9mCgDUyA7XWZF+I28sxwT7xs9oU5B4B
-	 dvXhA6VUdAdJ5x9i8IAi3+wE6Z5Gv8iYOnB+dNn28HfSCR1QYZCdBocCZEEzU8c0bS
-	 Gf6Yf/TGMceF9yIjuR6gnD/xrg/TAejuquZI51+4=
-Received: from 172-1-1-128.lightspeed.hstntx.sbcglobal.net.localdomain ([27.38.179.189])
-	by newxmesmtplogicsvrszb51-1.qq.com (NewEsmtp) with SMTP
-	id F4B72B6; Sat, 13 Jun 2026 00:03:52 +0800
-X-QQ-mid: xmsmtpt1781280232taf7h5xff
-Message-ID: <tencent_F5C99221ABE8EEE4A8610C0DE1E1BDD8E505@qq.com>
-X-QQ-XMAILINFO: N6IfSeM/PG+tR7SiFRbKESHf2jgLdxAzdRFrx5jg1EiRiDaePdyaG45GBeNKva
-	 FP5tl7hGSmBMkLESnZHMOrT5T6ICpM+bGy7m/HnIkA6JzZf9sdVZhkAlvwT1J8k/T+VK1gxYZlha
-	 mRpL7uPmBVCSy0PBMrO7Hp/quvx/M08WopCTppfxmb1SsEUP8J7BiGrqc6sAbSKvL/UNXTGjyGdD
-	 Fu78OwC4BdaPbrUagnhL1Lyj0X6SSST6e2BnIC37nTWU8ymGqlvdgZYr4FYy6T3hUptDJdO2bWna
-	 DAh1iQBzwS1TtoYTjtDAITV78Aj+kasq5GdbR9bmWM7AQdOckd6bbcQ65DyZFR+kUwQMwUNKoO9k
-	 n4Wy6vekCgrKn37IrYHoKZuJz76NWLTZQul/zmc7pWcszCEL+b2GfcBD2qATNWJ4ilF3jbIxvr3p
-	 KyHyORqixr1RYAnYN5YaJjHQd5YQbV/qKXzJVQZh8iypF/zF1iP59HBcLFRNbxKMyO1DQZ6PXyTP
-	 iQGJL5jCSkyKfsRGyyq08H7bvEEMizevDAwW2KiYo/d8GWL+y34Fk0K2SSY854nVokp+AEAigeYz
-	 FhvL876IxNs/yz52/8C5CqfoGdaowYkuaWWHYWYHPbsnbn02cEI+w3CzIVuZGgUe66Pe/rK6a1xP
-	 nZ48FnXgj+3iazYtSnwILSIKe1ujd4TZ/MECIrpvbhzuDuBs/6FnY2R8fEhNYxE/RzKeHCsdaeQf
-	 gmQ6UaYlj1PCNb5rqfvQJ1x1UZpxTfRu2r6r6Xme3GFtATcFXRacdAUEpv2BdRzH+m/odPOmxNtF
-	 nMnS2SEqkedrCbi/DWMsESkuoRbh1y5cv5ZybODpntUeX/lUYz725BnE4yljk/etW9pSap8+Hjxs
-	 Wet+HHaj4qkDTWarlBP7sEfL2e11EaQ0LtQqZJTbClmtM+Gy7rcbrQGiZB8n+WnEe/HiG3Nv0eEW
-	 +AuY1kFgFnFxvlduW5ek6cocwY+klh1YNW1NVDG/mcBRenR4Jex36fxhtmLpn7Kbm19DimY75Qr/
-	 vbIfYylXMhdGFDBjshqXK+NU43bsP/m9ejBskOP12tsmFkQ1S8f5IBviwhCKwKMpoYOzAgNbZPyb
-	 DuEVftjlelVUf5X+sKz9BM8bL/rW4GnDQgGoydlwEuh+wu5reJ+GobfcNY8vu4pyb6DqsBZRKCGS
-	 wJKnA=
-X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
-From: Yan Zhu <zhuyan2015@qq.com>
-To: alexs@kernel.org,
-	si.yanteng@linux.dev,
-	corbet@lwn.net,
-	mic@digikod.net
-Cc: dzm91@hust.edu.cn,
-	skhan@linuxfoundation.org,
-	gnoack@google.com,
-	zhuyan2015@qq.com,
-	linux-doc@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH 03/10] docs/zh_CN: add LSM/LoadPin Chinese translation
-Date: Sat, 13 Jun 2026 00:03:39 +0800
-X-OQ-MSGID: <3c91369ba21c1bfab48f8dd49f04629128d97057.1781105672.git.zhuyan2015@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1781105672.git.zhuyan2015@qq.com>
-References: <cover.1781105672.git.zhuyan2015@qq.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="jJjUIBYn"
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gcRLH1NkMzFfP;
+	Fri, 12 Jun 2026 19:28:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1781285287;
+	bh=sDCihnMM6e2PYF53CG6R2LkXlUSqFxRVN5xeVo/MXqs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jJjUIBYnhlYxMkejfqsj9acvWky3jud1X62xkUDGHdnq475Q8TDkAMcAZeQwrob0u
+	 PAplumpngjg/Fd/gRK/A516vTctbU7dVBnI3j/W5GOnyOEXEA1XjHkMPYco2YV9pG7
+	 KzTeIK7c1QQy1/NAeVBb9J5dfOBX6+EOqmbebF+U=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4gcRLG3QkmzK5Q;
+	Fri, 12 Jun 2026 19:28:06 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org,
+	Tingmao Wang <m@maowtm.org>,
+	Matthieu Buffet <matthieu@buffet.re>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] landlock: Set audit_net.sk for socket access checks
+Date: Fri, 12 Jun 2026 19:27:55 +0200
+Message-ID: <20260612172757.1003481-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -70,58 +45,134 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-Translate Documentation/admin-guide/LSM/LoadPin.rst into Chinese.
+Set audit_net.sk in current_check_access_socket() to provide the socket
+object to audit_log_lsm_data().  This makes Landlock consistent with
+AppArmor, which always sets .sk for socket operations, and with
+SELinux's generic socket permission checks.
 
-Update the translation through commit 0860b72d535f
-("security/loadpin: Update the changing interface in the source code.")
+The socket's local and foreign address information (laddr, lport, faddr,
+fport) is logged by the shared lsm_audit.c infrastructure when the
+socket has bound or connected state.  Fields with zero values are
+suppressed by print_ipv4_addr()/print_ipv6_addr(), so the audit output
+is unchanged for the common case of bind denials on unbound sockets.
+For connect denials after a prior bind, the bound local address (laddr,
+lport) appears before the existing sockaddr fields (daddr, dest).
 
-Assisted-by: Claude:deepseek-4-pro
-Signed-off-by: Yan Zhu <zhuyan2015@qq.com>
+No existing fields are removed or reordered, and the new field names
+(laddr, lport, faddr, fport) are standard audit fields already emitted
+by other LSMs through the same lsm_audit.c code path.
+
+Add a connect_tcp_bound audit test that binds to an allowed port and
+then connects to a denied one, verifying that the denial record reports
+laddr/lport from the bound socket in addition to the connect
+destination.
+
+Cc: Günther Noack <gnoack@google.com>
+Cc: Tingmao Wang <m@maowtm.org>
+Cc: stable@vger.kernel.org
+Fixes: 9f74411a40ce ("landlock: Log TCP bind and connect denials")
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
- .../zh_CN/admin-guide/LSM/LoadPin.rst         | 33 +++++++++++++++++++
- 1 file changed, 33 insertions(+)
- create mode 100644 Documentation/translations/zh_CN/admin-guide/LSM/LoadPin.rst
 
-diff --git a/Documentation/translations/zh_CN/admin-guide/LSM/LoadPin.rst b/Documentation/translations/zh_CN/admin-guide/LSM/LoadPin.rst
-new file mode 100644
-index 000000000000..d75a06f515f6
---- /dev/null
-+++ b/Documentation/translations/zh_CN/admin-guide/LSM/LoadPin.rst
-@@ -0,0 +1,33 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+.. include:: ../../disclaimer-zh_CN.rst
+Changes since v1:
+https://lore.kernel.org/r/20260406143717.1815792-11-mic@digikod.net
+- Move the new socket-audit coverage into the network test fixture,
+  which sets up an isolated network namespace with a configured
+  loopback interface; the previous location ran without a network
+  namespace (reported by Tingmao Wang).  Cover the enriched laddr/lport
+  via a connect-after-bind denial.
+---
+ security/landlock/net.c                     |  1 +
+ tools/testing/selftests/landlock/net_test.c | 62 +++++++++++++++++++++
+ 2 files changed, 63 insertions(+)
+
+diff --git a/security/landlock/net.c b/security/landlock/net.c
+index c368649985c5..a38bdfcffc22 100644
+--- a/security/landlock/net.c
++++ b/security/landlock/net.c
+@@ -198,6 +198,7 @@ static int current_check_access_socket(struct socket *const sock,
+ 		return 0;
+ 
+ 	audit_net.family = address->sa_family;
++	audit_net.sk = sock->sk;
+ 	landlock_log_denial(subject,
+ 			    &(struct landlock_request){
+ 				    .type = LANDLOCK_REQUEST_NET_ACCESS,
+diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
+index 4c528154ea92..0c256e7c8675 100644
+--- a/tools/testing/selftests/landlock/net_test.c
++++ b/tools/testing/selftests/landlock/net_test.c
+@@ -2026,4 +2026,66 @@ TEST_F(audit, connect)
+ 	EXPECT_EQ(0, close(sock_fd));
+ }
+ 
++static int matches_log_tcp_bound(int audit_fd, const char *const addr,
++				 __u16 lport, __u16 dport)
++{
++	static const char log_template[] = REGEX_LANDLOCK_PREFIX
++		" blockers=net\\.connect_tcp laddr=%s lport=%u daddr=%s dest=%u$";
++	/* Slack for two addresses and two port numbers. */
++	char log_match[sizeof(log_template) + 40];
++	int log_match_len;
 +
-+:Original: Documentation/admin-guide/LSM/LoadPin.rst
-+:翻译:
-+ 朱岩 Yan Zhu <zhuyan2015@qq.com>
++	log_match_len = snprintf(log_match, sizeof(log_match), log_template,
++				 addr, lport, addr, dport);
++	if (log_match_len > sizeof(log_match))
++		return -E2BIG;
 +
++	return audit_match_record(audit_fd, AUDIT_LANDLOCK_ACCESS, log_match,
++				  NULL);
++}
 +
-+=======
-+LoadPin
-+=======
++/*
++ * After a bind() to an allowed port, a denied connect must report laddr/lport
++ * from the bound socket (made available through audit_net.sk) in addition to
++ * the connect sockaddr's daddr/dest.
++ */
++TEST_F(audit, connect_tcp_bound)
++{
++	const struct landlock_ruleset_attr ruleset_attr = {
++		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
++				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
++	};
++	const struct landlock_net_port_attr rule_bind = {
++		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
++		.port = self->srv0.port,
++	};
++	struct service_fixture srv_remote;
++	struct audit_records records;
++	int ruleset_fd, sock_fd;
 +
-+LoadPin 是一种 Linux 安全模块（LSM），保证所有内核加载的文件（模块、固件等）
-+均来自同一文件系统，并且该文件系统应当以只读设备（如 dm-verity 或 CDROM）为后
-+端存储。这使得在拥有经过验证和/或不可更改的文件系统的系统上，能够在不对每个文
-+件单独签名的前提下，强制模块和固件的加载限制。
++	/* Uses a second port as the denied connect target. */
++	ASSERT_EQ(0, set_service(&srv_remote, variant->prot, 1));
 +
-+该 LSM 在编译时通过 ``CONFIG_SECURITY_LOADPIN`` 进行选择，并且可以在启动时通
-+过内核命令行参数 ``loadpin.enforce`` 进行控制。默认情况下该功能是启用的，亦可
-+在启动时通过 ``loadpin.enforce=0`` 将其关闭。
++	ruleset_fd =
++		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
++	ASSERT_LE(0, ruleset_fd);
++	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
++				       &rule_bind, 0));
++	enforce_ruleset(_metadata, ruleset_fd);
++	EXPECT_EQ(0, close(ruleset_fd));
 +
-+LoadPin 会在检测到首个文件被加载时开始生效。如果承载该文件系统的块设备不是只
-+读的，系统会创建一个 sysctl 条目 ``/proc/sys/kernel/loadpin/enabled`` 用于切
-+换锁定功能。可写的文件系统意味着锁定功能亦可被修改，但通过 sysctl 可以在可
-+写文件系统上便捷地进行测试。
++	sock_fd = socket_variant(&self->srv0);
++	ASSERT_LE(0, sock_fd);
++	EXPECT_EQ(0, bind_variant(sock_fd, &self->srv0));
++	EXPECT_EQ(-EACCES, connect_variant(sock_fd, &srv_remote));
++	EXPECT_EQ(0, matches_log_tcp_bound(self->audit_fd, variant->addr,
++					   self->srv0.port, srv_remote.port));
 +
-+也可以使用内核命令行参数 ``loadpin.exclude`` 将特定文件类型从 LoadPin 中排除。
-+默认情况下所有文件均被包含，但可以通过
-+``loadpin.exclude=kernel-module,kexec-image`` 等方式排除相应类型。这允许在使
-+用 ``CONFIG_MODULE_SIG``、``CONFIG_KEXEC_VERIFY_SIG`` 等机制对内核模块和内核
-+镜像进行校验的同时，仍然利用 LoadPin 保护其他内核加载文件的完整性。有效文件类
-+型的完整列表可在 ``include/linux/kernel_read_file.h`` 中的
-+``kernel_read_file_str`` 找到。
++	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
++	EXPECT_EQ(0, records.access);
++	EXPECT_EQ(1, records.domain);
++
++	EXPECT_EQ(0, close(sock_fd));
++}
++
+ TEST_HARNESS_MAIN
+
+base-commit: d8dfb4c7faa87c3e41a8678f38f136c2c7c036fa
 -- 
-2.43.0
+2.54.0
 
