@@ -1,73 +1,73 @@
-Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9633F17A2EA
-	for <linux-security-module@vger.kernel.org>; Fri, 12 Jun 2026 01:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49D6390CB5
+	for <linux-security-module@vger.kernel.org>; Fri, 12 Jun 2026 01:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781228964; cv=none; b=FTCIPqsfd7LAReYNYwV1o4HQlnsPncLsIBozD9HRaFbQvv5VY8RndYF3lVSOr2cKclaXWinzhvsodpfnRlZub7+zGwCxp2BH4RTqzOg9+lqCOCo6WG4pFS1cQNhL6FACfm8xEq7Uelwe9t7E1jTzp8phIaLaHjc9ptgykAVZ6jo=
+	t=1781228965; cv=none; b=G8Mch2FaKJzk8OKI8MYgQglW0GqOr8nVl+ZHnntTVsWoPwBP93VWC9nUPgqolYTLwmGriTAdhIBmqQQeCEzv5bMpho1J6jBsCHPtZBE88VbYkbs+BDXjwRkKNo5qiei7wH47tgCeD/zZEtedHY7FZRjxOUzWtdQSZDpLNzR37yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781228964; c=relaxed/simple;
-	bh=g14zms/99coiRyDl4s4F3MI87GLt7x/NX1Bt2oYshI0=;
+	s=arc-20240116; t=1781228965; c=relaxed/simple;
+	bh=r9vhHgtvVr/u3l4g8zzg724Xt7TxALLAFe4g58Elnds=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OU1h2E5UMlnm8rGKoT/uRi5Sxapetbo76MyCod49iwb106TdA4vevOR07fvSRZfEKDgCtRPo54rrMfdJuBqF7ljLY7iisP1VI72YDYsgkLWxVrmC23BZ6VFpx2gvlKSwmtJFtejy/Czyj9GtDeeqpcLGr4fNkCddodi5+uYLlBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=AOgZhT5w; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LCyK0Vg+; arc=none smtp.client-ip=202.12.124.145
+	 MIME-Version; b=YG8+sr9iXwQH0LaGDtQLxxQqsfhSgtnLlFsFHyiQcN6bFBPjdNSlSjAT6Z3bcKPnA2fBbXmPGP/XzRuKjNufWwMm1OluMCEEmbZ+ikP9IbK9VYBiRZEYD7+9rFZbdN1MRDH7HkaTmybQgiV7D5VldvF8ppnxeEfHofDznu/ZPWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=IqQr6VJF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RCkbS4q7; arc=none smtp.client-ip=202.12.124.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="AOgZhT5w";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LCyK0Vg+"
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfout.stl.internal (Postfix) with ESMTP id D18821D000CD;
-	Thu, 11 Jun 2026 21:49:19 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="IqQr6VJF";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RCkbS4q7"
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 411C37A016C;
+	Thu, 11 Jun 2026 21:49:23 -0400 (EDT)
 Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Thu, 11 Jun 2026 21:49:20 -0400
+  by phl-compute-03.internal (MEProxy); Thu, 11 Jun 2026 21:49:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
 	:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1781228959; x=
-	1781315359; bh=fcApw7S+qc/sIzwI91Gxh7kxdsaip34gw7IafEVfrQg=; b=A
-	OgZhT5wfmlnK//r3zWrKcm6cb/4fe653DqiDuZZL62mAuPMataRGVwaotgMS0H1X
-	Rw+vut38t2MMTMQEUJFMCPyYbzlkdo2NmcxkPNAXIBUjOdmzpKFHG7STsuZREkmy
-	CGR68wN0uOBYHrTXYhZjvYq3shOvRKFJ8Ysd7aGswcesnhaW5s7Uu2gPqH4mVkjY
-	SqVoctyM/spd9bN2lGwekwsU4f6NirfQh8rl/RjgCAJp9MdyBN3Equ8hDRtHnH1U
-	S1TDtpY9u1Atn6LEpb64niLXhcpYoOPVVLaJuedvagQ5CTmg/uZvw96lR5Th3W2k
-	upCdRFQj3MmKByvWRRT6g==
+	:reply-to:subject:subject:to:to; s=fm1; t=1781228963; x=
+	1781315363; bh=z5L901vizGOjYKl+FSeLFLUF+dEmsko1f/QnqVzlpJU=; b=I
+	qQr6VJFhz8+lTiYqNS4wwTjQ2TVd+DGqKXb2ZozlFAGkeM5JzsLKL0SmOoQK8mph
+	8qnjZYKynFhwVqTEdXUFayy7v5Xh/a2tC9PxxAwE2zdjTXOL30mpPf2VUeJbWH0X
+	hixZKFwIBv1kUjS8Li836ZPdABK+lMk00eyD3jD2+JOjDJl38b0QToGkIC5qtyds
+	Xk5NuVG0JCD6VnDXvyI6MYPmjW13XNMQ+ioMLIziFfqSog+2uTkz7HvcoZOwgC14
+	P7F3ltWrIJ/oTEpl8XnyJIsUSmum+3O0CzJHXOTGqVSZQgCUJCcDxyysSESP4/px
+	PSqFJsZZvBh7eOYUi7goQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1781228959; x=1781315359; bh=f
-	cApw7S+qc/sIzwI91Gxh7kxdsaip34gw7IafEVfrQg=; b=LCyK0Vg+bqOcCAYya
-	gLkEZ9T3jp0necR3Itd6pzPbj7AGLYc6+HcADCBg7CLuvPy2J6nwQb67z7oDRdU7
-	PYa5/nzAwYer+G7NceFjFIJ9uXF4wpqe1/u8zQZkpfMe8WYBBRV6wlq+H2xHQAju
-	ejkpuIEVEDp0TfZnBzlBAkb0Db4QuFia8AC4oIk0VzYjFMQ4IbBUc0e9bjYcIAju
-	lOShPwMo15OsF7ny5t+ZxsoWkJEwjOPtUVc22N9VaZxkRI5pqPcvNhZpSODFyqlY
-	lYbgM4vzTDlbIJ72tMbfTURHyQWl0Wp/fo25gZg1TsRi0peD7BK0hlI3UMcO6HaW
-	aYYtw==
-X-ME-Sender: <xms:n2UratwLQ7wYiwKNHB-f9Fg2SUVkU22p6m8XveboKfTZ-lUkN1A4jg>
-    <xme:n2Uravi40RrO15cuArG6kpDCJPONvIP2Ssx1kBo6BfS4zaLnoNpAZWoQNPu8XUNZO
-    38-_6TmZj1guPsGD96CBcEjuYNskYNuqh9MmtAJhQHsoKCFOp61lluu>
-X-ME-Received: <xmr:n2UrapltXlfj0q4-e-w83bRVOEZeDJ50BFaSkHOnF0TjQB9Ni1Wqu51U7sMC3jvcSnKiIKIoAW74c_BG4iMwqF70jx3Lfga4sy8oFtq6CQMCjv2iskcedpTg3GE>
+	:x-me-sender:x-sasl-enc; s=fm1; t=1781228963; x=1781315363; bh=z
+	5L901vizGOjYKl+FSeLFLUF+dEmsko1f/QnqVzlpJU=; b=RCkbS4q7u5QmE6W/Z
+	jJK89ffjZrbVrBk5sMdPBc72AJWP31vwzWbVu+cHyYaUwHS4pPBb4k+gZE67GaDZ
+	UypspymGL8fc5/lD7g02y9jpvWBfilFH0Vb/NJFdP0zcNeFkAIS6vq4HFwtJZlrx
+	C8VN3KjiOF9v1QrSd/uxMOmzxNcimFSQkofy6g44N3Uk4hC585rLFemnPAE8c5PM
+	mmX+alto3pW5s/vP5u6R0OgdLQCnzFSV+resWPQe03y/ZKIOZOMUkE3YGjZltJzp
+	iRD8HTiBQuNYkHB/imuVee3UooZ6FAIN11y2CtJQMlEYkv6Quh+5nn46SK6X/g2O
+	McKAg==
+X-ME-Sender: <xms:o2Uran54WisxD9ed0fGeYF5sj9rmrNyFDlCo5puo8xYU0IryA_uUTg>
+    <xme:o2UravKFvBRMMU-gm9cKbJ5wKuqoZom6meKMwvpu0Bv8JR5IqeyO2Qd0dPIpkOKGv
+    KnPU-f1sCOaJb8fqjWRCnc7robrItJHQ3bny574Yvc3Nxzd-u4mJg>
+X-ME-Received: <xmr:o2UragtQ-HbqflPutFSEcT-rv-t6V6U6uTU49hH3z6LCUPuTsCeXTqH8N1pB2JMdF4Xd9WsLUV9dAfOcjO2Ru5JptazYLV9mLrwBqVhKUVbR7exyAsKjkSVHElI>
 X-ME-Proxy-Cause: dmFkZTErrYj+6BPPVz1/IV8jcji/YbJf7tNmbzKUklDVBw37Mo5r82nPd5buxFHV4OrxKd
     +00SDQV9sSVg4R4yvs2QLHos0drG5qYNr6GNhg9D8ngYxfJUcCtRRhPXhE6kz5yGXnYKMY
     oJHiB0gAaPzyeGZH5d5BTyheBut4xCTujqDHaTful/fQaUhKYSKVr/XYUjihn5pTjMkS8X
     sKVE+fTH1iGH2FWO/9EBeuJFKXH3xovFqufQzUi7llGvIp9TU54IXL348v2qQAgPhg5ZW1
-    SUBEtCpHKVb2aYxBd3Ta7zLOiViueqFsE4VHkel083qbKxQFVcQ42U+V55ljlncHcKp7GE
-    jj21RSgmnZj+GS6eaOBX+mmM8zoUUZApPx6LnUyKHsALtV6Ct4kxEMV0/pj9pY9qIT/WPK
-    FP7Diw/iifQEXP8kmGB8IMO2z116YaKOSp+y4r2R8RV5ttFfCYXiORNQPrJ/I8lkwS2Cbr
-    z14IpES+pdZP4cNk5kaLPiBtPUwmJU/PbWztIPJcTBT97w7T0Kv19w6zlD/kDD95jujC+N
-    d/5wOAEOg/KGAxQOBaoq7b+p8it86ABns3DYGECd5/8ajpfiZPriu/tdKGxxfr8LZaPNBj
-    Es8S2RtDYopRirOaLLjqJ2CBXlQSINrbb3IpfQ8eMu1RdxazqQrbly9VLAyQ
-X-ME-Proxy: <xmx:n2UraliOZ0-1WAApM4HgvPwmX0TnJT7cgy4Sv1LVxEhUsDxUhHllcg>
-    <xmx:n2Urat1_z6lYAuHAEUHKzMz9jwET6gar_NMt1-TPVslLfd5ds1Dygg>
-    <xmx:n2UrauJeQ5JaY0nx6bKYO90p7NIW0f8snJsxO06YiDMdsYgVKfUYQw>
-    <xmx:n2UratzNILbXYV1U4TWQqoTCI5vEQhpeLYSfzDh0rIQuZPb39tw7Vg>
-    <xmx:n2UrauM-5cv0_yDZvWz9wJd44LqX6q_CtCogmcQArACdFrc_vDyP2IJx>
+    SUBEtCpHKVb2aYxBd3Ta7zLOiViueqFsE4VHkel083qbKxQFVcQ42U+V55ljlncHcKp7Mx
+    8Oe6zQVR8ZYp9AUML1ipdMfcmDNtHg3BJNjtQjNMswV7Ef2XBIHjB/rxRwSfH+Tv2mF5Ax
+    rehcU05kHNnFkmSCZ8q2CtWwXVF7bQU74FWew+wmZkgkC9StjHIjyOmpFWIjFgkyqJuxaC
+    pxIAdB1Qc2mKUqOpXbbttML5hHd/E4PlFqH7u4dUkqoYmSayaEI3EsBgYo8IDsQby1hr8K
+    5DlyIchChfGWd6KmfAr3BTa5AmLhjR5HAl6Tw8dpr8s2QnOHmV7icLHGgZko6vim6BGFE6
+    hjfr6PzszOUm9yz71WvOKo/gYoPXokAXh8S30/9V8uhdIkOMCZX3gtUTz6Rw
+X-ME-Proxy: <xmx:o2UrauJkd6IOVh-rS6G8xTL1hRkCwUbf-rHvGdd-iXQeyMzCKl4GBA>
+    <xmx:o2Urap_UhbVC-fdR1lhOCCIAzdNRITwT1_0EpiUjxRyjLy-RPrWw0w>
+    <xmx:o2UranzB473kwoLPtdLbo-QO2xhibSHc8Hi5cKHkDJq5yZOlBsQOWw>
+    <xmx:o2Uram4l-dMkyuifEVb0mRODz4YiFi1J_gF2fq54RxfwO141zN789w>
+    <xmx:o2Urag3L6lRpZ2Y2T37z4qHj5OCguKooUR8m6-o5f8LNvrsKbPLE44jm>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 11 Jun 2026 21:49:18 -0400 (EDT)
+ 11 Jun 2026 21:49:21 -0400 (EDT)
 From: Tingmao Wang <m@maowtm.org>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 Cc: Tingmao Wang <m@maowtm.org>,
@@ -76,9 +76,9 @@ Cc: Tingmao Wang <m@maowtm.org>,
 	Jan Kara <jack@suse.cz>,
 	Abhinav Saxena <xandfury@gmail.com>,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v11 6/9] selftests/landlock: add tests for quiet flag with fs rules
-Date: Fri, 12 Jun 2026 02:48:52 +0100
-Message-ID: <0f304507dd3ebccc753e1580456bdfc909012357.1781228815.git.m@maowtm.org>
+Subject: [PATCH v11 8/9] selftests/landlock: Add tests for quiet flag with scope
+Date: Fri, 12 Jun 2026 02:48:54 +0100
+Message-ID: <032849ca97bd45b2e14f96192b61537ed9405a0d.1781228815.git.m@maowtm.org>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <cover.1781228815.git.m@maowtm.org>
 References: <cover.1781228815.git.m@maowtm.org>
@@ -90,2581 +90,221 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Test various interactions of the quiet flag with filesystem rules:
-- Non-optional access (tested with open and rename).
-- Optional access (tested with truncate and ioctl).
-- Behaviour around mounts matches with normal Landlock rules.
-- Behaviour around disconnected directories matches with normal Landlock
-  rules (test expected behaviour of 9a868cdbe66a ("landlock: Fix handling of
-  disconnected directories") applied to the collected quiet flag).
-- Multiple layers works as expected.
+Enhance scoped_audit.connect_to_child and audit_flags.signal to test
+interaction with various quiet flag settings.
 
-Assisted-by: GitHub-Copilot:claude-opus-4.6 copilot-review
 Signed-off-by: Tingmao Wang <m@maowtm.org>
 ---
 
-Changes in v11:
-- Remove broken if brackets change
-
-Changes in v10:
-- Fix grammar in some comments
-- if brackets
-
-Changes in v8:
-- Rebase, resolve conflict, then clang-format
-- Remove previously added comment about domain allocation record leakage -
-  this is now documented properly by 239fd9a6f948 ("selftests/landlock:
-  Drain stale audit records on init")
-- Fix missing EXPECT_EQ on audit_count_records() return value
-
-Changes in v6:
-- Change quiet bool argument of add_path_beneath into a __u32 flags
-  (suggested by Justin Suess)
-- Rename quiet_behind_mountpoint_ignored_disconnected to
-  quiet_behind_mountpoint_disconnected and fix test due to disconnected
-  directory handling changes
-
-Changes in v5:
-- Add quiet_two_layers_different_handled_{1,2,3} variants.
-
-Changes in v3:
+Changes in v4:
 - New patch
 
- tools/testing/selftests/landlock/fs_test.c | 2448 +++++++++++++++++++-
- 1 file changed, 2439 insertions(+), 9 deletions(-)
+ tools/testing/selftests/landlock/audit_test.c | 25 ++++--
+ .../landlock/scoped_abstract_unix_test.c      | 77 ++++++++++++++++---
+ 2 files changed, 87 insertions(+), 15 deletions(-)
 
-diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-index 10d9355ade5f..702f0dba462e 100644
---- a/tools/testing/selftests/landlock/fs_test.c
-+++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -720,7 +720,7 @@ TEST_F_FORK(layout1, rule_with_unhandled_access)
- 
- static void add_path_beneath(struct __test_metadata *const _metadata,
- 			     const int ruleset_fd, const __u64 allowed_access,
--			     const char *const path)
-+			     const char *const path, __u32 flags)
+diff --git a/tools/testing/selftests/landlock/audit_test.c b/tools/testing/selftests/landlock/audit_test.c
+index d55fe4c5b531..3b344b03199e 100644
+--- a/tools/testing/selftests/landlock/audit_test.c
++++ b/tools/testing/selftests/landlock/audit_test.c
+@@ -794,30 +794,42 @@ FIXTURE(audit_flags)
+ FIXTURE_VARIANT(audit_flags)
  {
- 	struct landlock_path_beneath_attr path_beneath = {
- 		.allowed_access = allowed_access,
-@@ -733,7 +733,7 @@ static void add_path_beneath(struct __test_metadata *const _metadata,
- 		       strerror(errno));
- 	}
- 	ASSERT_EQ(0, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
--				       &path_beneath, 0))
-+				       &path_beneath, flags))
- 	{
- 		TH_LOG("Failed to update the ruleset with \"%s\": %s", path,
- 		       strerror(errno));
-@@ -780,7 +780,7 @@ static int create_ruleset(struct __test_metadata *const _metadata,
- 				continue;
+ 	const int restrict_flags;
++	const __u64 quiet_scoped;
+ };
  
- 			add_path_beneath(_metadata, ruleset_fd, rules[i].access,
--					 rules[i].path);
-+					 rules[i].path, 0);
- 		}
- 	return ruleset_fd;
+ /* clang-format off */
+ FIXTURE_VARIANT_ADD(audit_flags, default) {
+ 	/* clang-format on */
+ 	.restrict_flags = 0,
++	.quiet_scoped = 0,
+ };
+ 
+ /* clang-format off */
+ FIXTURE_VARIANT_ADD(audit_flags, same_exec_off) {
+ 	/* clang-format on */
+ 	.restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF,
++	.quiet_scoped = 0,
+ };
+ 
+ /* clang-format off */
+ FIXTURE_VARIANT_ADD(audit_flags, subdomains_off) {
+ 	/* clang-format on */
+ 	.restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF,
++	.quiet_scoped = 0,
+ };
+ 
+ /* clang-format off */
+ FIXTURE_VARIANT_ADD(audit_flags, cross_exec_on) {
+ 	/* clang-format on */
+ 	.restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON,
++	.quiet_scoped = 0,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(audit_flags, signal_quieted) {
++	/* clang-format on */
++	.restrict_flags = 0,
++	.quiet_scoped = LANDLOCK_SCOPE_SIGNAL,
+ };
+ 
+ FIXTURE_SETUP(audit_flags)
+@@ -861,12 +873,16 @@ TEST_F(audit_flags, signal)
+ 	pid_t child;
+ 	struct audit_records records;
+ 	__u64 deallocated_dom = 2;
++	bool expect_audit = !(variant->restrict_flags &
++			      LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF) &&
++			    !(variant->quiet_scoped & LANDLOCK_SCOPE_SIGNAL);
+ 
+ 	child = fork();
+ 	ASSERT_LE(0, child);
+ 	if (child == 0) {
+ 		const struct landlock_ruleset_attr ruleset_attr = {
+ 			.scoped = LANDLOCK_SCOPE_SIGNAL,
++			.quiet_scoped = variant->quiet_scoped,
+ 		};
+ 		int ruleset_fd;
+ 
+@@ -883,8 +899,7 @@ TEST_F(audit_flags, signal)
+ 		EXPECT_EQ(-1, kill(getppid(), 0));
+ 		EXPECT_EQ(EPERM, errno);
+ 
+-		if (variant->restrict_flags &
+-		    LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF) {
++		if (!expect_audit) {
+ 			EXPECT_EQ(-EAGAIN, matches_log_signal(
+ 						   _metadata, self->audit_fd,
+ 						   getppid(), self->domain_id));
+@@ -911,8 +926,7 @@ TEST_F(audit_flags, signal)
+ 
+ 		/* Makes sure there is no superfluous logged records. */
+ 		EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
+-		if (variant->restrict_flags &
+-		    LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF) {
++		if (!expect_audit) {
+ 			EXPECT_EQ(0, records.access);
+ 		} else {
+ 			EXPECT_EQ(1, records.access);
+@@ -936,8 +950,7 @@ TEST_F(audit_flags, signal)
+ 	    WEXITSTATUS(status) != EXIT_SUCCESS)
+ 		_metadata->exit_code = KSFT_FAIL;
+ 
+-	if (variant->restrict_flags &
+-	    LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF) {
++	if (!expect_audit) {
+ 		/*
+ 		 * No deallocation record: denials=0 never matches a real
+ 		 * record.
+diff --git a/tools/testing/selftests/landlock/scoped_abstract_unix_test.c b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
+index 72f97648d4a7..d16555f7b0d3 100644
+--- a/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
++++ b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
+@@ -293,6 +293,45 @@ FIXTURE_TEARDOWN_PARENT(scoped_audit)
+ 	EXPECT_EQ(0, audit_cleanup(-1, NULL));
  }
-@@ -1310,7 +1310,7 @@ TEST_F_FORK(layout1, inherit_subset)
- 	 * ANDed with the previous ones.
- 	 */
- 	add_path_beneath(_metadata, ruleset_fd, LANDLOCK_ACCESS_FS_WRITE_FILE,
--			 dir_s1d2);
-+			 dir_s1d2, 0);
- 	/*
- 	 * According to ruleset_fd, dir_s1d2 should now have the
- 	 * LANDLOCK_ACCESS_FS_READ_FILE and LANDLOCK_ACCESS_FS_WRITE_FILE
-@@ -1342,7 +1342,7 @@ TEST_F_FORK(layout1, inherit_subset)
- 	 * Try to get more privileges by adding new access rights to the parent
- 	 * directory: dir_s1d1.
- 	 */
--	add_path_beneath(_metadata, ruleset_fd, ACCESS_RW, dir_s1d1);
-+	add_path_beneath(_metadata, ruleset_fd, ACCESS_RW, dir_s1d1, 0);
- 	enforce_ruleset(_metadata, ruleset_fd);
  
- 	/* Same tests and results as above. */
-@@ -1365,7 +1365,7 @@ TEST_F_FORK(layout1, inherit_subset)
- 	 * that there was no rule tied to it before.
- 	 */
- 	add_path_beneath(_metadata, ruleset_fd, LANDLOCK_ACCESS_FS_WRITE_FILE,
--			 dir_s1d3);
-+			 dir_s1d3, 0);
- 	enforce_ruleset(_metadata, ruleset_fd);
- 	ASSERT_EQ(0, close(ruleset_fd));
- 
-@@ -1417,7 +1417,7 @@ TEST_F_FORK(layout1, inherit_superset)
- 	add_path_beneath(_metadata, ruleset_fd,
- 			 LANDLOCK_ACCESS_FS_READ_FILE |
- 				 LANDLOCK_ACCESS_FS_READ_DIR,
--			 dir_s1d2);
-+			 dir_s1d2, 0);
- 	enforce_ruleset(_metadata, ruleset_fd);
- 	EXPECT_EQ(0, close(ruleset_fd));
- 
-@@ -3970,7 +3970,7 @@ static int ioctl_error(struct __test_metadata *const _metadata, int fd,
- 		       unsigned int cmd)
- {
- 	char buf[128]; /* sufficiently large */
--	int res, stdinbak_fd;
-+	int res, stdinbak_fd, err;
- 
- 	/*
- 	 * Depending on the IOCTL command, parts of the zeroed-out buffer might
-@@ -3985,13 +3985,14 @@ static int ioctl_error(struct __test_metadata *const _metadata, int fd,
- 	/* Invokes the IOCTL with a zeroed-out buffer. */
- 	bzero(&buf, sizeof(buf));
- 	res = ioctl(fd, cmd, &buf);
-+	err = errno;
- 
- 	/* Restores the old FD 0 and closes the backup FD. */
- 	ASSERT_EQ(0, dup2(stdinbak_fd, 0));
- 	ASSERT_EQ(0, close(stdinbak_fd));
- 
- 	if (res < 0)
--		return errno;
-+		return err;
- 
- 	return 0;
- }
-@@ -4789,6 +4790,7 @@ FIXTURE(layout1_bind) {};
- 
- static const char bind_dir_s1d3[] = TMP_DIR "/s2d1/s2d2/s1d3";
- static const char bind_file1_s1d3[] = TMP_DIR "/s2d1/s2d2/s1d3/f1";
-+static const char bind_file2_s1d3[] = TMP_DIR "/s2d1/s2d2/s1d3/f2";
- 
- /* Move targets for disconnected path tests. */
- static const char dir_s4d1[] = TMP_DIR "/s4d1";
-@@ -7764,4 +7766,2432 @@ TEST_F(audit_layout1, mount)
- 	EXPECT_EQ(1, records.domain);
- }
- 
-+static bool debug_quiet_tests;
-+
-+FIXTURE(audit_quiet_layout1)
++FIXTURE_VARIANT(scoped_audit)
 +{
-+	struct audit_filter audit_filter;
-+	int audit_fd;
++	const __u64 scoped;
++	const __u64 quiet_scoped;
 +};
 +
-+FIXTURE_SETUP(audit_quiet_layout1)
++// clang-format off
++FIXTURE_VARIANT_ADD(scoped_audit, no_quiet)
 +{
-+	prepare_layout(_metadata);
-+	create_layout1(_metadata);
-+
-+	set_cap(_metadata, CAP_AUDIT_CONTROL);
-+	self->audit_fd = audit_init_with_exe_filter(&self->audit_filter);
-+	EXPECT_LE(0, self->audit_fd);
-+	clear_cap(_metadata, CAP_AUDIT_CONTROL);
-+
-+	if (getenv("DEBUG_QUIET_TESTS"))
-+		debug_quiet_tests = true;
-+}
-+
-+FIXTURE_TEARDOWN_PARENT(audit_quiet_layout1)
-+{
-+	remove_layout1(_metadata);
-+	cleanup_layout(_metadata);
-+
-+	set_cap(_metadata, CAP_AUDIT_CONTROL);
-+	EXPECT_EQ(0, audit_cleanup(-1, NULL));
-+	clear_cap(_metadata, CAP_AUDIT_CONTROL);
-+}
-+
-+struct a_rule {
-+	const char *path;
-+	__u64 access;
-+	bool quiet;
++	// clang-format on
++	.scoped = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET,
++	.quiet_scoped = 0,
 +};
 +
-+struct a_layer {
-+	__u64 handled_access_fs;
-+	__u64 quiet_access_fs;
-+	struct a_rule rules[6];
-+	__u64 restrict_flags;
++// clang-format off
++FIXTURE_VARIANT_ADD(scoped_audit, quiet_abstract_socket)
++{
++	// clang-format on
++	.scoped = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET,
++	.quiet_scoped = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET,
 +};
 +
-+struct a_target {
-+	/* File/dir to try open. */
-+	const char *target;
-+	/* Open mode (one of O_RDONLY, O_WRONLY, or O_RDWR). */
-+	int open_mode;
-+	/* Should open succeed? */
-+	bool expect_open_success;
-+	/* If open fails, whether to expect an audit log for read. */
-+	bool audit_read_blocked;
-+	/* If open fails, whether to expect an audit log for write. */
-+	bool audit_write_blocked;
-+	/* If ftruncate() is expected to be allowed. */
-+	bool expect_truncate_success;
-+	/* If ftruncate fails, whether to expect an audit log. */
-+	bool audit_truncate;
-+	/*
-+	 * If ioctl() is expected to be allowed (ioctl not attempted if
-+	 * neither this nor expect_ioctl_denied is set).
-+	 */
-+	bool expect_ioctl_allowed;
-+	/* If ioctl() is expected to be denied. */
-+	bool expect_ioctl_denied;
-+	/* If ioctl fails, whether to expect an audit log. */
-+	bool audit_ioctl;
++// clang-format off
++FIXTURE_VARIANT_ADD(scoped_audit, quiet_abstract_socket_2)
++{
++	// clang-format on
++	.scoped = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET | LANDLOCK_SCOPE_SIGNAL,
++	.quiet_scoped = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
++			LANDLOCK_SCOPE_SIGNAL,
 +};
 +
-+#define AUDIT_QUIET_MAX_TARGETS 10
-+
-+FIXTURE_VARIANT(audit_quiet_layout1)
++// clang-format off
++FIXTURE_VARIANT_ADD(scoped_audit, quiet_unrelated)
 +{
-+	struct a_layer layers[3];
-+	struct a_target targets[AUDIT_QUIET_MAX_TARGETS];
++	// clang-format on
++	.scoped = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET | LANDLOCK_SCOPE_SIGNAL,
++	.quiet_scoped = LANDLOCK_SCOPE_SIGNAL,
 +};
 +
-+#define FS_R LANDLOCK_ACCESS_FS_READ_FILE
-+#define FS_W LANDLOCK_ACCESS_FS_WRITE_FILE
-+#define FS_TRUNC LANDLOCK_ACCESS_FS_TRUNCATE
-+#define FS_IOCTL LANDLOCK_ACCESS_FS_IOCTL_DEV
-+
-+static int sprint_access_bits(char *buf, size_t buflen, __u64 access)
-+{
-+	size_t offset = 0;
-+
-+	if (buflen < strlen("rwti make_reg remove_file refer") + 1)
-+		abort();
-+
-+	buf[0] = '\0';
-+	if (access & FS_R)
-+		offset += snprintf(buf + offset, buflen - offset, "r");
-+	if (access & FS_W)
-+		offset += snprintf(buf + offset, buflen - offset, "w");
-+	if (access & FS_TRUNC)
-+		offset += snprintf(buf + offset, buflen - offset, "t");
-+	if (access & FS_IOCTL)
-+		offset += snprintf(buf + offset, buflen - offset, "i");
-+	if (access & LANDLOCK_ACCESS_FS_MAKE_REG)
-+		offset += snprintf(buf + offset, buflen - offset, ",make_reg");
-+	if (access & LANDLOCK_ACCESS_FS_REMOVE_FILE)
-+		offset +=
-+			snprintf(buf + offset, buflen - offset, ",remove_file");
-+	if (access & LANDLOCK_ACCESS_FS_REFER)
-+		offset += snprintf(buf + offset, buflen - offset, ",refer");
-+
-+	if (buf[0] == ',') {
-+		offset--;
-+		memmove(buf, buf + 1, offset);
-+		buf[offset] = '\0';
-+	}
-+
-+	return offset;
-+}
-+
-+static int apply_a_layer(struct __test_metadata *const _metadata,
-+			 const struct a_layer *l)
-+{
-+	struct landlock_ruleset_attr rs_attr = {
-+		.handled_access_fs = l->handled_access_fs,
-+		.quiet_access_fs = l->quiet_access_fs,
+ /* python -c 'print(b"\0selftests-landlock-abstract-unix-".hex().upper())' */
+ #define ABSTRACT_SOCKET_PATH_PREFIX \
+ 	"0073656C6674657374732D6C616E646C6F636B2D61627374726163742D756E69782D"
+@@ -308,6 +347,13 @@ TEST_F(scoped_audit, connect_to_child)
+ 	char buf;
+ 	int dgram_client;
+ 	struct audit_records records;
++	int ruleset_fd;
++	const struct landlock_ruleset_attr ruleset_attr = {
++		.scoped = variant->scoped,
++		.quiet_scoped = variant->quiet_scoped,
 +	};
-+	int rs_fd;
-+	int i;
-+	const struct a_rule *r;
-+	char handled_access_s[33], quiet_access_s[33], rule_access_s[33];
-+
-+	if (!l->handled_access_fs)
-+		return 0;
-+
-+	rs_fd = landlock_create_ruleset(&rs_attr, sizeof(rs_attr), 0);
-+	ASSERT_LE(0, rs_fd);
-+
-+	for (i = 0; i < ARRAY_SIZE(l->rules); i++) {
-+		r = &l->rules[i];
-+		if (!r->path)
-+			continue;
-+
-+		add_path_beneath(_metadata, rs_fd, r->access, r->path,
-+				 r->quiet ? LANDLOCK_ADD_RULE_QUIET : 0);
-+	}
-+
-+	ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
-+	ASSERT_EQ(0, landlock_restrict_self(rs_fd, l->restrict_flags))
++	bool should_audit =
++		!(variant->quiet_scoped & LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
+ 
+ 	/* Makes sure there is no superfluous logged records. */
+ 	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
+@@ -345,7 +391,14 @@ TEST_F(scoped_audit, connect_to_child)
+ 	EXPECT_EQ(0, close(pipe_child[1]));
+ 	EXPECT_EQ(0, close(pipe_parent[0]));
+ 
+-	create_scoped_domain(_metadata, LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
++	ruleset_fd =
++		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
++	ASSERT_LE(0, ruleset_fd)
 +	{
-+		TH_LOG("Failed to enforce ruleset: %s", strerror(errno));
++		TH_LOG("Failed to create a ruleset: %s", strerror(errno));
 +	}
-+	ASSERT_EQ(0, close(rs_fd));
-+
-+	if (debug_quiet_tests) {
-+		sprint_access_bits(handled_access_s, sizeof(handled_access_s),
-+				   l->handled_access_fs);
-+		sprint_access_bits(quiet_access_s, sizeof(quiet_access_s),
-+				   l->quiet_access_fs);
-+		TH_LOG("applied layer: handled=%s quiet=%s restrict_flags=0x%llx",
-+		       handled_access_s, quiet_access_s,
-+		       (unsigned long long)l->restrict_flags);
-+		for (i = 0; i < ARRAY_SIZE(l->rules); i++) {
-+			r = &l->rules[i];
-+			if (!r->path)
-+				continue;
-+
-+			sprint_access_bits(rule_access_s, sizeof(rule_access_s),
-+					   r->access);
-+			TH_LOG("  rule[%d]: path=%s access=%s quiet=%d", i,
-+			       r->path, rule_access_s, r->quiet);
-+		}
++	enforce_ruleset(_metadata, ruleset_fd);
++	EXPECT_EQ(0, close(ruleset_fd));
+ 
+ 	/* Signals that the parent is in a domain, if any. */
+ 	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
+@@ -360,14 +413,20 @@ TEST_F(scoped_audit, connect_to_child)
+ 	EXPECT_EQ(-1, err_dgram);
+ 	EXPECT_EQ(EPERM, errno);
+ 
+-	EXPECT_EQ(
+-		0,
+-		audit_match_record(
+-			self->audit_fd, AUDIT_LANDLOCK_ACCESS,
+-			REGEX_LANDLOCK_PREFIX
+-			" blockers=scope\\.abstract_unix_socket path=" ABSTRACT_SOCKET_PATH_PREFIX
+-			"[0-9A-F]\\+$",
+-			NULL));
++	if (should_audit) {
++		EXPECT_EQ(
++			0,
++			audit_match_record(
++				self->audit_fd, AUDIT_LANDLOCK_ACCESS,
++				REGEX_LANDLOCK_PREFIX
++				" blockers=scope\\.abstract_unix_socket path=" ABSTRACT_SOCKET_PATH_PREFIX
++				"[0-9A-F]\\+$",
++				NULL));
 +	}
-+	return 0;
-+}
-+
-+void audit_quiet_layout1_test_body(struct __test_metadata *const _metadata,
-+				   FIXTURE_DATA(audit_quiet_layout1) * self,
-+				   const struct a_target *targets)
-+{
-+	struct audit_records records = {};
-+	int i;
-+	const struct a_target *target;
-+	int fd = -1;
-+	int open_mode;
-+	int ret;
-+	bool expect_audit;
-+	const char *blocker;
-+
-+	for (i = 0; i < AUDIT_QUIET_MAX_TARGETS; i++) {
-+		target = &targets[i];
-+		if (!target->target)
-+			continue;
-+
-+		open_mode = target->open_mode & (O_RDONLY | O_WRONLY | O_RDWR);
-+
-+		EXPECT_TRUE(open_mode == O_RDONLY || open_mode == O_WRONLY ||
-+			    open_mode == O_RDWR);
-+
-+		if (target->expect_open_success) {
-+			EXPECT_FALSE(target->audit_read_blocked);
-+			EXPECT_FALSE(target->audit_write_blocked);
-+		}
-+		if (target->expect_truncate_success)
-+			EXPECT_TRUE(target->expect_open_success &&
-+				    !target->audit_truncate);
-+
-+		if (debug_quiet_tests)
-+			TH_LOG("Try open \"%s\" with %s%s", target->target,
-+			       open_mode != O_WRONLY ? "r" : "",
-+			       open_mode != O_RDONLY ? "w" : "");
-+
-+		fd = openat(AT_FDCWD, target->target, open_mode | O_CLOEXEC);
-+		if (target->expect_open_success) {
-+			ASSERT_LE(0, fd)
-+			{
-+				TH_LOG("Failed to open \"%s\": %s",
-+				       target->target, strerror(errno));
-+			};
-+		} else {
-+			ASSERT_EQ(-1, fd);
-+			ASSERT_EQ(EACCES, errno);
-+		}
-+
-+		expect_audit = true;
-+
-+		if (target->audit_read_blocked && target->audit_write_blocked)
-+			blocker = "fs\\.write_file,fs\\.read_file";
-+		else if (target->audit_read_blocked)
-+			blocker = "fs\\.read_file";
-+		else if (target->audit_write_blocked)
-+			blocker = "fs\\.write_file";
-+		else
-+			expect_audit = false;
-+
-+		if (expect_audit)
-+			ASSERT_EQ(0, matches_log_fs(_metadata, self->audit_fd,
-+						    blocker, target->target));
-+
-+		/* Check that we see no (other) logs. */
-+		EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+		ASSERT_EQ(0, records.access);
-+
-+		if (target->expect_open_success && fd >= 0) {
-+			if (debug_quiet_tests)
-+				TH_LOG("Try ftruncate \"%s\"", target->target);
-+
-+			ret = ftruncate(fd, 0);
-+			if (target->expect_truncate_success) {
-+				ASSERT_EQ(0, ret);
-+			} else {
-+				ASSERT_EQ(-1, ret);
-+				if (open_mode != O_RDONLY)
-+					ASSERT_EQ(EACCES, errno);
-+			}
-+
-+			if (target->audit_truncate)
-+				ASSERT_EQ(0, matches_log_fs(_metadata,
-+							    self->audit_fd,
-+							    "fs\\.truncate",
-+							    target->target));
-+
-+			if (target->expect_ioctl_allowed ||
-+			    target->expect_ioctl_denied) {
-+				if (debug_quiet_tests)
-+					TH_LOG("Try ioctl FIONREAD on \"%s\"",
-+					       target->target);
-+
-+				ret = ioctl_error(_metadata, fd, FIONREAD);
-+				if (target->expect_ioctl_allowed) {
-+					ASSERT_NE(EACCES, ret);
-+				} else {
-+					ASSERT_EQ(EACCES, ret);
-+				}
-+			}
-+
-+			if (target->audit_ioctl)
-+				ASSERT_EQ(0, matches_log_fs_extra(
-+						     _metadata, self->audit_fd,
-+						     "fs\\.ioctl_dev",
-+						     target->target,
-+						     " ioctlcmd=0x541b\\+"));
-+
-+			/* Check that we see no other logs. */
-+			EXPECT_EQ(0, audit_count_records(self->audit_fd,
-+							 &records));
-+			ASSERT_EQ(0, records.access);
-+			ASSERT_EQ(0, close(fd));
-+		}
-+	}
-+}
-+
-+TEST_F(audit_quiet_layout1, base)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(variant->layers); i++)
-+		ASSERT_EQ(0, apply_a_layer(_metadata, &variant->layers[i]));
-+
-+	audit_quiet_layout1_test_body(_metadata, self, variant->targets);
-+}
-+
-+FIXTURE_VARIANT_ADD(audit_quiet_layout1, quiet_simple) {
-+	.layers = {
-+		{
-+			.handled_access_fs = FS_R | FS_W | FS_TRUNC,
-+			.quiet_access_fs = FS_R,
-+			.rules = {
-+				{ .path = dir_s1d1, .access = 0, .quiet = true },
-+			},
-+		},
-+	},
-+	.targets = {
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDONLY,
-+		},
-+		/* Not covered by quiet */
-+		{
-+			.target = file1_s2d1,
-+			.open_mode = O_RDONLY,
-+			.audit_read_blocked = true,
-+		},
-+		/* Access not quieted */
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_WRONLY,
-+			.audit_write_blocked = true,
-+		},
-+		/*
-+		 * Quiet flag only takes effect if all blocked access bits are
-+		 * quieted, otherwise audit log emitted as normal (with all blockers)
-+		 */
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDWR,
-+			.audit_read_blocked = true,
-+			.audit_write_blocked = true,
-+		},
-+	},
-+};
-+
-+FIXTURE_VARIANT_ADD(audit_quiet_layout1, quiet_allow_read) {
-+	.layers = {
-+		{
-+			.handled_access_fs = FS_R | FS_W | FS_TRUNC,
-+			.quiet_access_fs = FS_W,
-+			.rules = {
-+				{ .path = dir_s1d1, .access = FS_R, .quiet = true },
-+				/* Quiet flags inherit down and are not overridden */
-+				{ .path = file1_s1d1, .access = FS_R, .quiet = false },
-+				{ .path = file1_s2d3, .access = 0, .quiet = true },
-+			},
-+		},
-+	},
-+	.targets = {
-+		/* Read ok */
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDONLY,
-+			.expect_open_success = true,
-+		},
-+		/* Write quieted */
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_WRONLY,
-+		},
-+		/* Read allowed, write quieted so no audit */
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDWR,
-+		},
-+		/* Not covered by quiet */
-+		{
-+			.target = file1_s2d2,
-+			.open_mode = O_WRONLY,
-+			.audit_write_blocked = true,
-+		},
-+		{
-+			.target = file1_s2d2,
-+			.open_mode = O_RDWR,
-+			.audit_read_blocked = true,
-+			.audit_write_blocked = true,
-+		},
-+		/* Single file quiet */
-+		{
-+			.target = file1_s2d3,
-+			.open_mode = O_WRONLY,
-+		},
-+		/* Wrong file */
-+		{
-+			.target = file2_s2d3,
-+			.open_mode = O_WRONLY,
-+			.audit_write_blocked = true,
-+		},
-+		/* Access not quieted */
-+		{
-+			.target = file1_s2d3,
-+			.open_mode = O_RDONLY,
-+			.audit_read_blocked = true,
-+		},
-+		/* Some access not quieted */
-+		{
-+			.target = file1_s2d3,
-+			.open_mode = O_RDWR,
-+			.audit_read_blocked = true,
-+			.audit_write_blocked = true,
-+		},
-+	},
-+};
-+
-+FIXTURE_VARIANT_ADD(audit_quiet_layout1, quiet_allow_write) {
-+	.layers = {
-+		{
-+			.handled_access_fs = FS_R | FS_W | FS_TRUNC,
-+			.quiet_access_fs = FS_R,
-+			.rules = {
-+				{ .path = dir_s1d1, .access = FS_W, .quiet = true },
-+			},
-+		},
-+	},
-+	.targets = {
-+		/* Read quieted */
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDONLY,
-+		},
-+		/* Truncate not quieted */
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_WRONLY,
-+			.expect_open_success = true,
-+			.audit_truncate = true,
-+		},
-+		/* Not covered by quiet */
-+		{
-+			.target = file1_s2d1,
-+			.open_mode = O_RDONLY,
-+			.audit_read_blocked = true,
-+		},
-+		/* Write allowed, read quieted so no audit */
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDWR,
-+		},
-+	},
-+};
-+
-+FIXTURE_VARIANT_ADD(audit_quiet_layout1, allow_write_quiet_trunc) {
-+	.layers = {
-+		{
-+			.handled_access_fs = FS_R | FS_W | FS_TRUNC,
-+			.quiet_access_fs = FS_TRUNC,
-+			.rules = {
-+				{ .path = dir_s1d1, .access = FS_W, .quiet = true },
-+				{ .path = dir_s2d1, .access = FS_W, .quiet = false },
-+			},
-+		},
-+	},
-+	.targets = {
-+		/* Read not allowed and not quieted */
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDONLY,
-+			.audit_read_blocked = true,
-+		},
-+		/* Truncate quieted */
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_WRONLY,
-+			.expect_open_success = true,
-+		},
-+		/* Not covered by quiet (truncate) */
-+		{
-+			.target = file1_s2d1,
-+			.open_mode = O_WRONLY,
-+			.expect_open_success = true,
-+			.audit_truncate = true,
-+		},
-+		/* Not covered by quiet (read/write) */
-+		{
-+			.target = file1_s3d1,
-+			.open_mode = O_RDWR,
-+			.audit_read_blocked = true,
-+			.audit_write_blocked = true,
-+		},
-+	},
-+};
-+
-+FIXTURE_VARIANT_ADD(audit_quiet_layout1, allow_rw_quiet_trunc) {
-+	.layers = {
-+		{
-+			.handled_access_fs = FS_R | FS_W | FS_TRUNC,
-+			.quiet_access_fs = FS_TRUNC,
-+			.rules = {
-+				{ .path = dir_s1d1, .access = FS_R | FS_W, .quiet = true },
-+				{ .path = dir_s2d1, .access = FS_R | FS_W, .quiet = false },
-+			},
-+		},
-+	},
-+	.targets = {
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDWR,
-+			.expect_open_success = true,
-+		},
-+		{
-+			.target = file1_s2d1,
-+			.open_mode = O_RDWR,
-+			.expect_open_success = true,
-+			.audit_truncate = true,
-+		},
-+	},
-+};
-+
-+FIXTURE_VARIANT_ADD(audit_quiet_layout1, quiet_all) {
-+	.layers = {
-+		{
-+			.handled_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.quiet_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.rules = {
-+				{ .path = dir_s1d1, .access = 0, .quiet = true },
-+				{ .path = file1_s2d1, .access = FS_R | FS_W, .quiet = true },
-+				{ .path = file1_s2d3, .access = 0, .quiet = true },
-+				{ .path = dir_s3d1, .access = FS_W, .quiet = false },
-+				{ .path = "/dev/zero", .access = FS_R, .quiet = false },
-+				{ .path = "/dev/null", .access = FS_R, .quiet = true },
-+			},
-+		},
-+	},
-+	.targets = {
-+		/* No logs */
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDONLY,
-+		},
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_WRONLY,
-+		},
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDWR,
-+		},
-+		/* Truncate quieted - no log */
-+		{
-+			.target = file1_s2d1,
-+			.open_mode = O_RDWR,
-+			.expect_open_success = true,
-+		},
-+		/* Truncate not covered by quiet */
-+		{
-+			.target = file1_s3d1,
-+			.open_mode = O_WRONLY,
-+			.expect_open_success = true,
-+			.audit_truncate = true,
-+		},
-+		/* Not covered by quiet */
-+		{
-+			.target = file1_s3d1,
-+			.open_mode = O_RDONLY,
-+			.audit_read_blocked = true,
-+		},
-+		/* Single file quiet */
-+		{
-+			.target = file1_s2d3,
-+			.open_mode = O_RDWR,
-+		},
-+		/* Wrong file */
-+		{
-+			.target = file2_s2d3,
-+			.open_mode = O_RDWR,
-+			.audit_read_blocked = true,
-+			.audit_write_blocked = true,
-+		},
-+		/* Ioctl quieted */
-+		{
-+			.target = "/dev/null",
-+			.open_mode = O_RDONLY,
-+			.expect_open_success = true,
-+			.expect_ioctl_denied = true,
-+		},
-+		/* Ioctl not quieted */
-+		{
-+			.target = "/dev/zero",
-+			.open_mode = O_RDONLY,
-+			.expect_open_success = true,
-+			.expect_ioctl_denied = true,
-+			.audit_ioctl = true,
-+		},
-+	},
-+};
-+
-+FIXTURE_VARIANT_ADD(audit_quiet_layout1, quiet_across_mountpoint) {
-+	.layers = {
-+		{
-+			.handled_access_fs = FS_R | FS_W | FS_TRUNC,
-+			.quiet_access_fs = FS_R,
-+			.rules = {
-+				{ .path = dir_s3d1, .access = 0, .quiet = true },
-+			},
-+		},
-+	},
-+	.targets = {
-+		{
-+			.target = file1_s3d3,
-+			.open_mode = O_RDONLY,
-+		},
-+		/* Not covered by quiet */
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDONLY,
-+			.audit_read_blocked = true,
-+		},
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDWR,
-+			.audit_read_blocked = true,
-+			.audit_write_blocked = true,
-+		},
-+		/* Access not quieted */
-+		{
-+			.target = file1_s3d3,
-+			.open_mode = O_WRONLY,
-+			.audit_write_blocked = true,
-+		},
-+	},
-+};
-+
-+FIXTURE_VARIANT_ADD(audit_quiet_layout1, allow_all_quiet) {
-+	.layers = {
-+		{
-+			.handled_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.quiet_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.rules = {
-+				{
-+					.path = dir_s1d1,
-+					.access = FS_R | FS_W | FS_TRUNC,
-+					.quiet = true
-+				},
-+				{
-+					.path = "/dev/null",
-+					.access = FS_R | FS_W | FS_IOCTL,
-+					.quiet = true
-+				},
-+			},
-+		},
-+	},
-+	.targets = {
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDWR,
-+			.expect_open_success = true,
-+			.expect_truncate_success = true,
-+		},
-+		{
-+			.target = "/dev/null",
-+			.open_mode = O_RDONLY,
-+			.expect_open_success = true,
-+			.expect_ioctl_allowed = true,
-+		},
-+	},
-+};
-+
-+/*
-+ * With LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF, it doesn't matter what
-+ * the quiet flags below the layer say.
-+ */
-+FIXTURE_VARIANT_ADD(audit_quiet_layout1, subdomains_off) {
-+	.layers = {
-+		{
-+			.handled_access_fs = FS_R,
-+			.restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF,
-+			.rules = {
-+				{ .path = "/", .access = FS_R, .quiet = false },
-+			}
-+		},
-+		{
-+			.handled_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.quiet_access_fs = FS_R,
-+			.rules = {
-+				{ .path = dir_s1d1, .access = 0, .quiet = true },
-+				{ .path = file1_s2d2, .access = FS_R | FS_W, .quiet = true },
-+				{ .path = file1_s2d3, .access = FS_R | FS_W, .quiet = false },
-+				{ .path = "/dev/null", .access = FS_R | FS_W, .quiet = true },
-+				{ .path = "/dev/zero", .access = FS_R | FS_W, .quiet = false },
-+			},
-+		},
-+	},
-+	.targets = {
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDWR,
-+		},
-+		{
-+			.target = file1_s2d1,
-+			.open_mode = O_RDWR,
-+		},
-+		{
-+			.target = file1_s2d2,
-+			.open_mode = O_RDWR,
-+			.expect_open_success = true,
-+			/* No audit_truncate */
-+		},
-+		{
-+			.target = file1_s2d3,
-+			.open_mode = O_RDWR,
-+			.expect_open_success = true,
-+			/* No audit_truncate */
-+		},
-+		{
-+			.target = "/dev/null",
-+			.open_mode = O_RDONLY,
-+			.expect_open_success = true,
-+			.expect_ioctl_denied = true,
-+			/* No audit_ioctl */
-+		},
-+		{
-+			.target = "/dev/zero",
-+			.open_mode = O_RDONLY,
-+			.expect_open_success = true,
-+			.expect_ioctl_denied = true,
-+			/* No audit_ioctl */
-+		},
-+	},
-+};
-+
-+/*
-+ * With LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF, it doesn't matter what
-+ * the quiet flags on the layer say.
-+ */
-+FIXTURE_VARIANT_ADD(audit_quiet_layout1, same_exec_off) {
-+	.layers = {
-+		{
-+			.handled_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.quiet_access_fs = FS_R,
-+			.restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF,
-+			.rules = {
-+				{ .path = dir_s1d1, .access = 0, .quiet = true },
-+				{ .path = file1_s2d2, .access = FS_R | FS_W, .quiet = true },
-+				{ .path = file1_s2d3, .access = FS_R | FS_W, .quiet = false },
-+				{ .path = "/dev/null", .access = FS_R | FS_W, .quiet = true },
-+				{ .path = "/dev/zero", .access = FS_R | FS_W, .quiet = false },
-+			},
-+		},
-+	},
-+	.targets = {
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDWR,
-+		},
-+		{
-+			.target = file1_s2d1,
-+			.open_mode = O_RDWR,
-+		},
-+		{
-+			.target = file1_s2d2,
-+			.open_mode = O_RDWR,
-+			.expect_open_success = true,
-+			/* No audit_truncate */
-+		},
-+		{
-+			.target = file1_s2d3,
-+			.open_mode = O_RDWR,
-+			.expect_open_success = true,
-+			/* No audit_truncate */
-+		},
-+		{
-+			.target = "/dev/null",
-+			.open_mode = O_RDONLY,
-+			.expect_open_success = true,
-+			.expect_ioctl_denied = true,
-+			/* No audit_ioctl */
-+		},
-+		{
-+			.target = "/dev/zero",
-+			.open_mode = O_RDONLY,
-+			.expect_open_success = true,
-+			.expect_ioctl_denied = true,
-+			/* No audit_ioctl */
-+		},
-+	},
-+};
-+
-+FIXTURE_VARIANT_ADD(audit_quiet_layout1, quiet_two_layers_1) {
-+	/* Here, rules that deny access are always quiet. */
-+	.layers = {
-+		{
-+			.handled_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.quiet_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.rules = {
-+				{
-+					.path = dir_s1d1,
-+					.access = FS_W,
-+					.quiet = true,
-+				},
-+				{
-+					.path = dir_s2d1,
-+					.access = FS_R | FS_W | FS_TRUNC,
-+					.quiet = false,
-+				},
-+				{
-+					.path = "/dev/null",
-+					.access = FS_R,
-+					.quiet = true,
-+				},
-+				{
-+					.path = "/dev/zero",
-+					.access = FS_R | FS_W | FS_IOCTL,
-+					.quiet = false,
-+				},
-+			},
-+		},
-+		{
-+			.handled_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.quiet_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.rules = {
-+				{
-+					.path = dir_s1d1,
-+					.access = FS_R | FS_W | FS_TRUNC,
-+					.quiet = false,
-+				},
-+				{
-+					.path = dir_s2d1,
-+					.access = FS_W,
-+					.quiet = true,
-+				},
-+				{
-+					.path = "/dev/null",
-+					.access = FS_R | FS_W | FS_IOCTL,
-+					.quiet = false,
-+				},
-+				{
-+					.path = "/dev/zero",
-+					.access = FS_R,
-+					.quiet = true,
-+				},
-+			},
-+		},
-+	},
-+	.targets = {
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDONLY,
-+		},
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_WRONLY,
-+			.expect_open_success = true,
-+		},
-+		{
-+			.target = file1_s2d1,
-+			.open_mode = O_RDONLY,
-+		},
-+		{
-+			.target = file1_s2d1,
-+			.open_mode = O_WRONLY,
-+			.expect_open_success = true,
-+		},
-+		{
-+			.target = "/dev/null",
-+			.open_mode = O_RDONLY,
-+			.expect_open_success = true,
-+			.expect_ioctl_denied = true,
-+		},
-+		{
-+			.target = "/dev/zero",
-+			.open_mode = O_RDONLY,
-+			.expect_open_success = true,
-+			.expect_ioctl_denied = true,
-+		},
-+	},
-+};
-+
-+FIXTURE_VARIANT_ADD(audit_quiet_layout1, quiet_two_layers_2) {
-+	/* Here, rules that deny access are never quiet. */
-+	.layers = {
-+		{
-+			.handled_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.quiet_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.rules = {
-+				{
-+					.path = dir_s1d1,
-+					.access = FS_W,
-+					.quiet = false
-+				},
-+				{
-+					.path = dir_s2d1,
-+					.access = FS_R | FS_W | FS_TRUNC,
-+					.quiet = true
-+				},
-+				{
-+					.path = "/dev/null",
-+					.access = FS_R,
-+					.quiet = false
-+				},
-+				{
-+					.path = "/dev/zero",
-+					.access = FS_R | FS_W | FS_IOCTL,
-+					.quiet = true
-+				},
-+			},
-+		},
-+		{
-+			.handled_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.quiet_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.rules = {
-+				{
-+					.path = dir_s1d1,
-+					.access = FS_R | FS_W | FS_TRUNC,
-+					.quiet = true
-+				},
-+				{
-+					.path = dir_s2d1,
-+					.access = FS_W,
-+					.quiet = false
-+				},
-+				{
-+					.path = "/dev/null",
-+					.access = FS_R | FS_W | FS_IOCTL,
-+					.quiet = true
-+				},
-+				{
-+					.path = "/dev/zero",
-+					.access = FS_R,
-+					.quiet = false
-+				},
-+			},
-+		},
-+	},
-+	.targets = {
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDONLY,
-+			.audit_read_blocked = true,
-+		},
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_WRONLY,
-+			.expect_open_success = true,
-+			.audit_truncate	= true,
-+		},
-+		{
-+			.target = file1_s2d1,
-+			.open_mode = O_RDONLY,
-+			.audit_read_blocked = true,
-+		},
-+		{
-+			.target = file1_s2d1,
-+			.open_mode = O_WRONLY,
-+			.expect_open_success = true,
-+			.audit_truncate	= true,
-+		},
-+		{
-+			.target = "/dev/null",
-+			.open_mode = O_RDONLY,
-+			.expect_open_success = true,
-+			.expect_ioctl_denied = true,
-+			.audit_ioctl = true,
-+		},
-+		{
-+			.target = "/dev/zero",
-+			.open_mode = O_RDONLY,
-+			.expect_open_success = true,
-+			.expect_ioctl_denied = true,
-+			.audit_ioctl = true,
-+		},
-+	},
-+};
-+
-+FIXTURE_VARIANT_ADD(audit_quiet_layout1, quiet_two_layers_3) {
-+	/* This time only the second layer quiets things. */
-+	.layers = {
-+		{
-+			.handled_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.quiet_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.rules = {
-+				{
-+					.path = dir_s1d1,
-+					.access = FS_W,
-+					.quiet = false,
-+				},
-+				{
-+					.path = dir_s2d1,
-+					.access = FS_R | FS_W | FS_TRUNC,
-+					.quiet = false,
-+				},
-+				{
-+					.path = "/dev/null",
-+					.access = FS_R,
-+					.quiet = false,
-+				},
-+				{
-+					.path = "/dev/zero",
-+					.access = FS_R | FS_W | FS_IOCTL,
-+					.quiet = false,
-+				},
-+			},
-+		},
-+		{
-+			.handled_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.quiet_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.rules = {
-+				{
-+					.path = dir_s1d1,
-+					.access = FS_R | FS_W | FS_TRUNC,
-+					.quiet = false,
-+				},
-+				{
-+					.path = dir_s2d1,
-+					.access = FS_W,
-+					.quiet = true,
-+				},
-+				{
-+					.path = "/dev/null",
-+					.access = FS_R | FS_W | FS_IOCTL,
-+					.quiet = false,
-+				},
-+				{
-+					.path = "/dev/zero",
-+					.access = FS_R,
-+					.quiet = true,
-+				},
-+			},
-+		},
-+	},
-+	.targets = {
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDONLY,
-+			.audit_read_blocked = true,
-+		},
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_WRONLY,
-+			.expect_open_success = true,
-+			.audit_truncate = true,
-+		},
-+		{
-+			.target = file1_s2d1,
-+			.open_mode = O_RDONLY,
-+		},
-+		{
-+			.target = file1_s2d1,
-+			.open_mode = O_WRONLY,
-+			.expect_open_success = true,
-+		},
-+		{
-+			.target = "/dev/null",
-+			.open_mode = O_RDONLY,
-+			.expect_open_success = true,
-+			.expect_ioctl_denied = true,
-+			.audit_ioctl = true,
-+		},
-+		{
-+			.target = "/dev/zero",
-+			.open_mode = O_RDONLY,
-+			.expect_open_success = true,
-+			.expect_ioctl_denied = true,
-+		},
-+	},
-+};
-+
-+FIXTURE_VARIANT_ADD(audit_quiet_layout1, quiet_two_layers_different_quiet_access) {
-+	/* Here, rules that deny access are always quiet. */
-+	.layers = {
-+		{
-+			.handled_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.quiet_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.rules = {
-+				{
-+					.path = dir_s1d1,
-+					.access = FS_W,
-+					.quiet = true,
-+				},
-+				{
-+					.path = dir_s2d1,
-+					.access = FS_R | FS_W | FS_TRUNC,
-+					.quiet = false,
-+				},
-+				{
-+					.path = "/dev/null",
-+					.access = FS_R,
-+					.quiet = true,
-+				},
-+				{
-+					.path = "/dev/zero",
-+					.access = FS_R | FS_W | FS_IOCTL,
-+					.quiet = false,
-+				},
-+			},
-+		},
-+		{
-+			.handled_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+			.quiet_access_fs = FS_IOCTL,
-+			.rules = {
-+				{
-+					.path = dir_s1d1,
-+					.access = FS_R | FS_W | FS_TRUNC,
-+					.quiet = false,
-+				},
-+				{
-+					.path = dir_s2d1,
-+					.access = FS_W,
-+					.quiet = true,
-+				},
-+				{
-+					.path = "/dev/null",
-+					.access = FS_R | FS_W | FS_IOCTL,
-+					.quiet = false,
-+				},
-+				{
-+					.path = "/dev/zero",
-+					.access = FS_R,
-+					.quiet = true,
-+				},
-+			},
-+		},
-+	},
-+	.targets = {
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDONLY,
-+		},
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_WRONLY,
-+			.expect_open_success = true,
-+		},
-+		{
-+			.target = file1_s2d1,
-+			.open_mode = O_RDONLY,
-+			.audit_read_blocked = true,
-+		},
-+		{
-+			.target = file1_s2d1,
-+			.open_mode = O_WRONLY,
-+			.expect_open_success = true,
-+			.audit_truncate	= true,
-+		},
-+		{
-+			.target = "/dev/null",
-+			.open_mode = O_RDONLY,
-+			.expect_open_success = true,
-+			.expect_ioctl_denied = true,
-+		},
-+		{
-+			.target = "/dev/zero",
-+			.open_mode = O_RDONLY,
-+			.expect_open_success = true,
-+			.expect_ioctl_denied = true,
-+		},
-+	},
-+};
-+
-+FIXTURE_VARIANT_ADD(audit_quiet_layout1, quiet_two_layers_different_handled_1) {
-+	/* Quiet from layer 1 */
-+	.layers = {
-+		{
-+			.handled_access_fs = FS_R,
-+			.quiet_access_fs = FS_R,
-+			.rules = {
-+				{
-+					.path = file1_s1d1,
-+					.access = FS_R,
-+					.quiet = true,
-+				},
-+				{
-+					.path = file2_s1d1,
-+					.access = 0,
-+					.quiet = true,
-+				},
-+				{
-+					.path = file1_s1d2,
-+					.access = 0,
-+					.quiet = true,
-+				},
-+				{
-+					.path = file2_s1d2,
-+					.access = FS_R,
-+					.quiet = true,
-+				},
-+			},
-+		},
-+		{
-+			.handled_access_fs = FS_W,
-+			.quiet_access_fs = FS_W,
-+			.rules = {
-+				{
-+					.path = file1_s1d1,
-+					.access = FS_W,
-+					.quiet = false,
-+				},
-+				/* Nothing for file2_s1d1 */
-+				{
-+					.path = file1_s1d2,
-+					.access = FS_W,
-+					.quiet = false,
-+				},
-+				/* Nothing for file2_s1d2 */
-+			},
-+		},
-+	},
-+	.targets = {
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDWR,
-+			.expect_open_success = true,
-+			.expect_truncate_success = true,
-+		},
-+		/* Missing both, youngest layer denies write, not quiet */
-+		{
-+			.target = file2_s1d1,
-+			.open_mode = O_RDWR,
-+			.audit_write_blocked = true,
-+		},
-+		/* Missing read, denied and quieted by layer 1 */
-+		{
-+			.target = file1_s1d2,
-+			.open_mode = O_RDWR,
-+		},
-+		/* Missing write, denied and not quieted by layer 2 */
-+		{
-+			.target = file2_s1d2,
-+			.open_mode = O_RDWR,
-+			.audit_write_blocked = true,
-+		},
-+	},
-+};
-+
-+FIXTURE_VARIANT_ADD(audit_quiet_layout1, quiet_two_layers_different_handled_2) {
-+	/* Quiet from layer 2 */
-+	.layers = {
-+		{
-+			.handled_access_fs = FS_R,
-+			.quiet_access_fs = FS_R,
-+			.rules = {
-+				{
-+					.path = file1_s1d1,
-+					.access = FS_R,
-+					.quiet = false,
-+				},
-+				/* Nothing for file2_s1d1 and file1_s1d2 */
-+				{
-+					.path = file2_s1d2,
-+					.access = FS_R,
-+					.quiet = false,
-+				},
-+			},
-+		},
-+		{
-+			.handled_access_fs = FS_W,
-+			.quiet_access_fs = FS_W,
-+			.rules = {
-+				{
-+					.path = file1_s1d1,
-+					.access = FS_W,
-+					.quiet = true,
-+				},
-+				{
-+					.path = file2_s1d1,
-+					.access = 0,
-+					.quiet = true,
-+				},
-+				{
-+					.path = file1_s1d2,
-+					.access = FS_W,
-+					.quiet = true,
-+				},
-+				{
-+					.path = file2_s1d2,
-+					.access = 0,
-+					.quiet = true,
-+				},
-+			},
-+		},
-+	},
-+	.targets = {
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDWR,
-+			.expect_open_success = true,
-+			.expect_truncate_success = true,
-+		},
-+		/* Missing both, youngest layer denies write, quiet */
-+		{
-+			.target = file2_s1d1,
-+			.open_mode = O_RDWR,
-+		},
-+		/* Missing read, denied and not quieted by layer 1 */
-+		{
-+			.target = file1_s1d2,
-+			.open_mode = O_RDWR,
-+			.audit_read_blocked = true,
-+		},
-+		/* Missing write, denied and quieted by layer 2 */
-+		{
-+			.target = file2_s1d2,
-+			.open_mode = O_RDWR,
-+		},
-+	},
-+};
-+
-+FIXTURE_VARIANT_ADD(audit_quiet_layout1, quiet_two_layers_different_handled_3) {
-+	/* Quiet from both layers */
-+	.layers = {
-+		{
-+			.handled_access_fs = FS_R,
-+			.quiet_access_fs = FS_R,
-+			.rules = {
-+				{
-+					.path = file1_s1d1,
-+					.access = FS_R,
-+					.quiet = true,
-+				},
-+				{
-+					.path = file2_s1d1,
-+					.access = 0,
-+					.quiet = true,
-+				},
-+				{
-+					.path = file1_s1d2,
-+					.access = 0,
-+					.quiet = true,
-+				},
-+				{
-+					.path = file2_s1d2,
-+					.access = FS_R,
-+					.quiet = true,
-+				},
-+			},
-+		},
-+		{
-+			.handled_access_fs = FS_W,
-+			.quiet_access_fs = FS_W,
-+			.rules = {
-+				{
-+					.path = file1_s1d1,
-+					.access = FS_W,
-+					.quiet = true,
-+				},
-+				{
-+					.path = file2_s1d1,
-+					.access = 0,
-+					.quiet = true,
-+				},
-+				{
-+					.path = file1_s1d2,
-+					.access = FS_W,
-+					.quiet = true,
-+				},
-+				{
-+					.path = file2_s1d2,
-+					.access = 0,
-+					.quiet = true,
-+				},
-+			},
-+		},
-+	},
-+	.targets = {
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDWR,
-+			.expect_open_success = true,
-+			.expect_truncate_success = true,
-+		},
-+		{
-+			.target = file2_s1d1,
-+			.open_mode = O_RDWR,
-+		},
-+		{
-+			.target = file1_s1d2,
-+			.open_mode = O_RDWR,
-+		},
-+		{
-+			.target = file2_s1d2,
-+			.open_mode = O_RDWR,
-+		},
-+	},
-+};
-+
-+FIXTURE_VARIANT_ADD(audit_quiet_layout1, without_quiet_then_with_quiet) {
-+	.layers = {
-+		{
-+			.handled_access_fs = FS_R | FS_W,
-+			.quiet_access_fs = FS_R,
-+			.rules = {
-+				{ .path = dir_s1d1, .access = FS_W, .quiet = false },
-+				{ .path = dir_s1d1, .access = 0, .quiet = true },
-+			},
-+		},
-+	},
-+	.targets = {
-+		/* Read denied and quieted */
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDONLY,
-+		},
-+		/* Write ok */
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_WRONLY,
-+			.expect_open_success = true,
-+			.expect_truncate_success = true,
-+		},
-+		/* Write ok, read denied and quieted */
-+		{
-+			.target = file1_s1d1,
-+			.open_mode = O_RDWR,
-+		},
-+		/* Not covered by quiet */
-+		{
-+			.target = file1_s2d1,
-+			.open_mode = O_RDONLY,
-+			.audit_read_blocked = true,
-+		},
-+	},
-+};
-+
-+/*
-+ * The following TEST_F extend the above test cases to test more layers,
-+ * with the inserted layers having varying configurations.
-+ */
-+
-+/* Extra allow all layers, quiet or not, does not change any behaviour. */
-+TEST_F(audit_quiet_layout1, allow_all_layer)
-+{
-+	struct a_layer allow_all_layer = {
-+		.handled_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+		.quiet_access_fs = 0,
-+		.rules = {
-+			{
-+				.path = "/",
-+				.access = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+				.quiet = false,
-+			},
-+		},
-+	};
-+	int i;
-+
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &allow_all_layer));
-+	for (i = 0; i < ARRAY_SIZE(variant->layers); i++)
-+		ASSERT_EQ(0, apply_a_layer(_metadata, &variant->layers[i]));
-+
-+	audit_quiet_layout1_test_body(_metadata, self, variant->targets);
-+
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &allow_all_layer));
-+
-+	audit_quiet_layout1_test_body(_metadata, self, variant->targets);
-+
-+	/*
-+	 * SELF_LOG flags or quiet bits from inner allowing layers should not
-+	 * affect behaviour.
-+	 */
-+	allow_all_layer.quiet_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL;
-+	allow_all_layer.rules[0].quiet = true;
-+	/*
-+	 * Note: this only works because we're not checking counts of domain
-+	 * alloc/dealloc logs
-+	 */
-+	allow_all_layer.restrict_flags =
-+		LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF |
-+		LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF;
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &allow_all_layer));
-+
-+	audit_quiet_layout1_test_body(_metadata, self, variant->targets);
-+}
-+
-+/*
-+ * Add useless outer layers until we reach the layer limit.  Should not
-+ * change anything.
-+ */
-+TEST_F(audit_quiet_layout1, many_outer_layers)
-+{
-+	struct a_layer useless_layer = {
-+		.handled_access_fs = FS_R | FS_W | FS_TRUNC,
-+		.quiet_access_fs = FS_R | FS_W | FS_TRUNC,
-+		.rules = {
-+			{ .path = "/", .access = FS_R | FS_W | FS_TRUNC, .quiet = true },
-+		},
-+	};
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(variant->layers); i++) {
-+		if (variant->layers[i].handled_access_fs == 0)
-+			break;
-+	}
-+
-+	for (; i < LANDLOCK_MAX_NUM_LAYERS; i++)
-+		ASSERT_EQ(0, apply_a_layer(_metadata, &useless_layer));
-+
-+	for (i = 0; i < ARRAY_SIZE(variant->layers); i++)
-+		ASSERT_EQ(0, apply_a_layer(_metadata, &variant->layers[i]));
-+
-+	audit_quiet_layout1_test_body(_metadata, self, variant->targets);
-+}
-+
-+/*
-+ * An inner layer that denies and quiets everything should result in no
-+ * logs.
-+ */
-+TEST_F(audit_quiet_layout1, deny_all_quiet_layer)
-+{
-+	struct a_layer deny_all_layer = {
-+		.handled_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+		.quiet_access_fs = FS_R | FS_W | FS_TRUNC | FS_IOCTL,
-+		.rules = {
-+			{ .path = "/", .access = 0, .quiet = true },
-+		},
-+	};
-+	int i;
-+	FIXTURE_VARIANT(audit_quiet_layout1) variant_2 = {};
-+
-+	/* Any open should fail with no logs. */
-+	for (i = 0; i < ARRAY_SIZE(variant->targets); i++) {
-+		const struct a_target *target = &variant->targets[i];
-+
-+		variant_2.targets[i] = (struct a_target){
-+			.target = target->target,
-+			.open_mode = target->open_mode,
-+			/* We denied everything, open should always fail. */
-+			.expect_open_success = false,
-+		};
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(variant->layers); i++)
-+		ASSERT_EQ(0, apply_a_layer(_metadata, &variant->layers[i]));
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &deny_all_layer));
-+
-+	audit_quiet_layout1_test_body(_metadata, self, variant_2.targets);
-+}
-+
-+/*
-+ * An inner layer that denies everything without quiet should produce logs
-+ * for all access.
-+ */
-+TEST_F(audit_quiet_layout1, deny_all_layer)
-+{
-+	struct a_layer deny_all_layer = {
-+		.handled_access_fs = FS_R | FS_W,
-+		.quiet_access_fs = FS_R | FS_W,
-+	};
-+	int i;
-+	FIXTURE_VARIANT(audit_quiet_layout1) variant_2 = {};
-+	bool test_has_subdomains_off = false;
-+
-+	for (i = 0; i < ARRAY_SIZE(variant->layers); i++) {
-+		if (variant->layers[i].restrict_flags &
-+		    LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF) {
-+			test_has_subdomains_off = true;
-+			break;
-+		}
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(variant->targets); i++) {
-+		const struct a_target *target = &variant->targets[i];
-+
-+		variant_2.targets[i] = (struct a_target){
-+			.target = target->target,
-+			.open_mode = target->open_mode,
-+
-+			/* We denied everything, open should always fail. */
-+			.expect_open_success = false,
-+			/* Audit should always happen as long as open request contains read. */
-+			.audit_read_blocked = !test_has_subdomains_off &&
-+					      target->open_mode != O_WRONLY,
-+			/* Audit should always happen as long as open request contains write. */
-+			.audit_write_blocked = !test_has_subdomains_off &&
-+					       target->open_mode != O_RDONLY,
-+		};
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(variant->layers); i++)
-+		ASSERT_EQ(0, apply_a_layer(_metadata, &variant->layers[i]));
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &deny_all_layer));
-+
-+	audit_quiet_layout1_test_body(_metadata, self, variant_2.targets);
-+}
-+
-+/* Uses layout1_bind hierarchy */
-+FIXTURE(audit_quiet_rename)
-+{
-+	struct audit_filter audit_filter;
-+	int audit_fd;
-+};
-+
-+FIXTURE_SETUP(audit_quiet_rename)
-+{
-+	prepare_layout(_metadata);
-+	create_layout1(_metadata);
-+
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	ASSERT_EQ(0, mount(dir_s1d2, dir_s2d2, NULL, MS_BIND, NULL));
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+
-+	set_cap(_metadata, CAP_AUDIT_CONTROL);
-+	self->audit_fd = audit_init_with_exe_filter(&self->audit_filter);
-+	EXPECT_LE(0, self->audit_fd);
-+	clear_cap(_metadata, CAP_AUDIT_CONTROL);
-+
-+	if (getenv("DEBUG_QUIET_TESTS"))
-+		debug_quiet_tests = true;
-+}
-+
-+FIXTURE_TEARDOWN_PARENT(audit_quiet_rename)
-+{
-+	remove_layout1(_metadata);
-+	cleanup_layout(_metadata);
-+
-+	/* umount(dir_s2d2)) is handled by namespace lifetime. */
-+
-+	remove_path(file1_s4d1);
-+	remove_path(file2_s4d1);
-+
-+	set_cap(_metadata, CAP_AUDIT_CONTROL);
-+	EXPECT_EQ(0, audit_cleanup(-1, NULL));
-+	clear_cap(_metadata, CAP_AUDIT_CONTROL);
-+}
-+
-+static void simple_quiet_rename(struct __test_metadata *const _metadata,
-+				FIXTURE_DATA(audit_quiet_rename) *const self,
-+				__u64 handled_access, __u64 quiet_access,
-+				bool source_allow, bool dest_allow,
-+				bool source_quiet, bool dest_quiet,
-+				const char *source_blockers,
-+				const char *dest_blockers)
-+{
-+	/* We will move file1_s1d1 to file1_s2d1 */
-+	struct a_layer layer = {
-+		.handled_access_fs = handled_access,
-+		.quiet_access_fs = quiet_access,
-+		.rules = {
-+			{
-+				.path = dir_s1d1,
-+				.access = source_allow ? handled_access : 0,
-+				.quiet = source_quiet,
-+			},
-+			{
-+				.path = dir_s2d1,
-+				.access = dest_allow ? handled_access : 0,
-+				.quiet = dest_quiet,
-+			},
-+		},
-+	};
-+	struct audit_records records = {};
-+	int ret, err;
-+
-+	/* Skip landlock_add_rule for useless rules. */
-+	if (!source_allow && !source_quiet)
-+		layer.rules[0].path = NULL;
-+	if (!dest_allow && !dest_quiet)
-+		layer.rules[1].path = NULL;
-+
-+	EXPECT_EQ(0, unlink(file1_s2d1));
-+	EXPECT_EQ(0, apply_a_layer(_metadata, &layer));
-+
-+	if (debug_quiet_tests)
-+		TH_LOG("Try renameat \"%s\" to \"%s\"", file1_s1d1, file1_s2d1);
-+	ret = renameat(AT_FDCWD, file1_s1d1, AT_FDCWD, file1_s2d1);
-+	err = errno;
-+	if (ret != 0 && debug_quiet_tests) {
-+		TH_LOG("renameat error: %s", err == EXDEV  ? "EXDEV" :
-+					     err == EACCES ? "EACCES" :
-+							     strerror(err));
-+	}
-+	if (source_allow && dest_allow) {
-+		ASSERT_EQ(0, ret);
-+	} else {
-+		ASSERT_EQ(-1, ret);
-+		if (handled_access & (LANDLOCK_ACCESS_FS_MAKE_REG |
-+				      LANDLOCK_ACCESS_FS_REMOVE_FILE)) {
-+			ASSERT_EQ(EACCES, err);
-+		} else {
-+			ASSERT_EQ(EXDEV, err);
-+		}
-+
-+		if (source_blockers)
-+			ASSERT_EQ(0, matches_log_fs(_metadata, self->audit_fd,
-+						    source_blockers, dir_s1d1));
-+		if (dest_blockers)
-+			ASSERT_EQ(0, matches_log_fs(_metadata, self->audit_fd,
-+						    dest_blockers, dir_s2d1));
-+	}
-+	/*
-+	 * No other logs. records.domain not checked per reasoning in
-+	 * audit_quiet_layout1_test_body.
-+	 */
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	ASSERT_EQ(0, records.access);
-+}
-+
-+TEST_F(audit_quiet_rename, rename_ok)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+
-+	simple_quiet_rename(_metadata, self, access, access, true, true, false,
-+			    false, NULL, NULL);
-+}
-+
-+TEST_F(audit_quiet_rename, no_quiet)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+
-+	simple_quiet_rename(_metadata, self, access, access, false, false,
-+			    false, false, "fs\\.remove_file,fs\\.refer",
-+			    "fs\\.make_reg,fs\\.refer");
-+}
-+
-+TEST_F(audit_quiet_rename, quiet)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+
-+	simple_quiet_rename(_metadata, self, access, access, false, false, true,
-+			    true, NULL, NULL);
-+}
-+
-+TEST_F(audit_quiet_rename, source_no_quiet_dest_quiet)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+
-+	simple_quiet_rename(_metadata, self, access, access, false, false,
-+			    false, true, "fs\\.remove_file,fs\\.refer", NULL);
-+}
-+
-+TEST_F(audit_quiet_rename, source_quiet_dest_no_quiet)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+
-+	simple_quiet_rename(_metadata, self, access, access, false, false, true,
-+			    false, NULL, "fs\\.make_reg,fs\\.refer");
-+}
-+
-+TEST_F(audit_quiet_rename, only_quiet_refer)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+
-+	simple_quiet_rename(_metadata, self, access, LANDLOCK_ACCESS_FS_REFER,
-+			    false, false, true, true,
-+			    "fs\\.remove_file,fs\\.refer",
-+			    "fs\\.make_reg,fs\\.refer");
-+}
-+
-+TEST_F(audit_quiet_rename, source_allow_dest_quiet)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+
-+	simple_quiet_rename(_metadata, self, access, access, true, false, false,
-+			    true, NULL, NULL);
-+}
-+
-+TEST_F(audit_quiet_rename, source_quiet_dest_allow)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+
-+	simple_quiet_rename(_metadata, self, access, access, false, true, true,
-+			    false, NULL, NULL);
-+}
-+
-+TEST_F(audit_quiet_rename, handle_all_deny_quiet_refer)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+	struct a_layer layer = {
-+		.handled_access_fs = access,
-+		.quiet_access_fs = LANDLOCK_ACCESS_FS_REFER,
-+		.rules = {
-+			{
-+				.path = dir_s1d1,
-+				.access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+					LANDLOCK_ACCESS_FS_REMOVE_FILE,
-+				.quiet = true,
-+			},
-+			{
-+				.path = dir_s2d1,
-+				.access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+					LANDLOCK_ACCESS_FS_REMOVE_FILE,
-+				.quiet = true,
-+			},
-+		},
-+	};
-+	struct audit_records records = {};
-+
-+	EXPECT_EQ(0, unlink(file1_s2d1));
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer));
-+
-+	ASSERT_EQ(-1, renameat(AT_FDCWD, file1_s1d1, AT_FDCWD, file1_s2d1));
-+	ASSERT_EQ(EXDEV, errno);
-+
-+	/* No logs */
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	ASSERT_EQ(0, records.access);
-+}
-+
-+TEST_F(audit_quiet_rename, handle_all_deny_not_quiet_refer)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+	struct a_layer layer = {
-+		.handled_access_fs = access,
-+		.quiet_access_fs = 0,
-+		.rules = {
-+			{
-+				.path = dir_s1d1,
-+				.access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+					LANDLOCK_ACCESS_FS_REMOVE_FILE,
-+				.quiet = false,
-+			},
-+			{
-+				.path = dir_s2d1,
-+				.access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+					LANDLOCK_ACCESS_FS_REMOVE_FILE,
-+				.quiet = false,
-+			},
-+		},
-+	};
-+	struct audit_records records = {};
-+
-+	EXPECT_EQ(0, unlink(file1_s2d1));
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer));
-+
-+	ASSERT_EQ(-1, renameat(AT_FDCWD, file1_s1d1, AT_FDCWD, file1_s2d1));
-+	ASSERT_EQ(EXDEV, errno);
-+
-+	ASSERT_EQ(0, matches_log_fs(_metadata, self->audit_fd, "fs\\.refer",
-+				    dir_s1d1));
-+	ASSERT_EQ(0, matches_log_fs(_metadata, self->audit_fd, "fs\\.refer",
-+				    dir_s2d1));
 +
 +	/* No other logs */
 +	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	ASSERT_EQ(0, records.access);
-+}
-+
-+TEST_F(audit_quiet_rename, handle_all_deny_refer_quiet_source_not_quiet_dest)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+	struct a_layer layer = {
-+		.handled_access_fs = access,
-+		.quiet_access_fs = LANDLOCK_ACCESS_FS_REFER,
-+		.rules = {
-+			{
-+				.path = dir_s1d1,
-+				.access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+					LANDLOCK_ACCESS_FS_REMOVE_FILE,
-+				.quiet = true,
-+			},
-+			{
-+				.path = dir_s2d1,
-+				.access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+					LANDLOCK_ACCESS_FS_REMOVE_FILE,
-+				.quiet = false,
-+			},
-+		},
-+	};
-+	struct audit_records records = {};
-+
-+	EXPECT_EQ(0, unlink(file1_s2d1));
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer));
-+
-+	ASSERT_EQ(-1, renameat(AT_FDCWD, file1_s1d1, AT_FDCWD, file1_s2d1));
-+	ASSERT_EQ(EXDEV, errno);
-+
-+	ASSERT_EQ(0, matches_log_fs(_metadata, self->audit_fd, "fs\\.refer",
-+				    dir_s2d1));
-+
-+	/* No other logs */
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	ASSERT_EQ(0, records.access);
-+}
-+
-+TEST_F(audit_quiet_rename, quiet_same_dir)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+	struct a_layer layer = {
-+		.handled_access_fs = access,
-+		.quiet_access_fs = access,
-+		.rules = {
-+			{
-+				.path = dir_s1d1,
-+				.access = 0,
-+				.quiet = true,
-+			},
-+		},
-+	};
-+	struct audit_records records = {};
-+
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer));
-+
-+	ASSERT_EQ(-1, renameat(AT_FDCWD, file1_s1d1, AT_FDCWD, file2_s1d1));
-+	ASSERT_EQ(EACCES, errno);
-+
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	ASSERT_EQ(0, records.access);
-+}
-+
-+TEST_F(audit_quiet_rename, quiet_flag_on_file_ignored)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+	struct a_layer layer = {
-+		.handled_access_fs = access,
-+		.quiet_access_fs = access,
-+		.rules = {
-+			{
-+				.path = file1_s1d1,
-+				.access = 0,
-+				.quiet = true,
-+			},
-+			{
-+				.path = file1_s2d1,
-+				.access = 0,
-+				.quiet = true,
-+			},
-+		},
-+	};
-+	struct audit_records records = {};
-+
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer));
-+
-+	ASSERT_EQ(-1, renameat(AT_FDCWD, file1_s1d1, AT_FDCWD, file1_s2d1));
-+	ASSERT_EQ(EACCES, errno);
-+
-+	ASSERT_EQ(0, matches_log_fs(_metadata, self->audit_fd,
-+				    "fs\\.remove_file,fs\\.refer", dir_s1d1));
-+	/* We didn't unlink destination file */
-+	ASSERT_EQ(0, matches_log_fs(_metadata, self->audit_fd,
-+				    "fs\\.remove_file,fs\\.make_reg,fs\\.refer",
-+				    dir_s2d1));
-+
-+	/* No other logs */
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	ASSERT_EQ(0, records.access);
-+}
-+
-+TEST_F(audit_quiet_rename, quiet_flag_on_file_ignored_same_dir)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+	struct a_layer layer = {
-+		.handled_access_fs = access,
-+		.quiet_access_fs = access,
-+		.rules = {
-+			{
-+				.path = file1_s1d1,
-+				.access = 0,
-+				.quiet = true,
-+			},
-+			{
-+				.path = file2_s1d1,
-+				.access = 0,
-+				.quiet = true,
-+			},
-+		},
-+	};
-+	struct audit_records records = {};
-+
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer));
-+
-+	ASSERT_EQ(-1, renameat(AT_FDCWD, file1_s1d1, AT_FDCWD, file2_s1d1));
-+	ASSERT_EQ(EACCES, errno);
-+
-+	ASSERT_EQ(0,
-+		  matches_log_fs(_metadata, self->audit_fd,
-+				 "fs\\.remove_file,fs\\.make_reg", dir_s1d1));
-+
-+	/* No other logs */
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	ASSERT_EQ(0, records.access);
-+}
-+
-+TEST_F(audit_quiet_rename, two_layers_different_quiet1)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+	struct a_layer layer1 = {
-+		.handled_access_fs = access,
-+		.quiet_access_fs = access,
-+		.rules = {
-+			{
-+				.path = dir_s1d1,
-+				.access = access,
-+				.quiet = false,
-+			},
-+			{
-+				.path = dir_s2d1,
-+				.access = 0,
-+				.quiet = true,
-+			},
-+		},
-+	};
-+	struct a_layer layer2 = {
-+		.handled_access_fs = access,
-+		.quiet_access_fs = LANDLOCK_ACCESS_FS_REFER,
-+		.rules = {
-+			{
-+				.path = dir_s1d1,
-+				.access = 0,
-+				.quiet = true,
-+			},
-+			{
-+				.path = dir_s2d1,
-+				.access = access,
-+				.quiet = false,
-+			},
-+		},
-+	};
-+	struct audit_records records = {};
-+
-+	EXPECT_EQ(0, unlink(file1_s2d1));
-+
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer1));
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer2));
-+
-+	ASSERT_EQ(-1, renameat(AT_FDCWD, file1_s1d1, AT_FDCWD, file1_s2d1));
-+	ASSERT_EQ(EACCES, errno);
-+
-+	/*
-+	 * The youngest denial will be layer 2.  Refer is quieted but we are
-+	 * also missing remove_file on source.
-+	 */
-+	ASSERT_EQ(0, matches_log_fs(_metadata, self->audit_fd,
-+				    "fs\\.remove_file,fs\\.refer", dir_s1d1));
-+	/* No other logs */
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	ASSERT_EQ(0, records.access);
-+}
-+
-+TEST_F(audit_quiet_rename, two_layers_different_quiet2)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+	struct a_layer layer1 = {
-+		.handled_access_fs = access,
-+		.quiet_access_fs = access,
-+		.rules = {
-+			{
-+				.path = dir_s1d1,
-+				.access = access,
-+				.quiet = false,
-+			},
-+			{
-+				.path = dir_s2d1,
-+				.access = 0,
-+				.quiet = true,
-+			},
-+		},
-+	};
-+	struct a_layer layer2 = {
-+		.handled_access_fs = LANDLOCK_ACCESS_FS_REFER,
-+		.quiet_access_fs = LANDLOCK_ACCESS_FS_REFER,
-+		.rules = {
-+			{
-+				.path = dir_s1d1,
-+				.access = 0,
-+				.quiet = true,
-+			},
-+			{
-+				.path = dir_s2d1,
-+				.access = LANDLOCK_ACCESS_FS_REFER,
-+				.quiet = false,
-+			},
-+		},
-+	};
-+	struct audit_records records = {};
-+
-+	EXPECT_EQ(0, unlink(file1_s2d1));
-+
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer1));
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer2));
-+
-+	ASSERT_EQ(-1, renameat(AT_FDCWD, file1_s1d1, AT_FDCWD, file1_s2d1));
-+	ASSERT_EQ(EACCES, errno);
-+
-+	/*
-+	 * The youngest denial will be layer 2, but refer is quieted (and that
-+	 * layer does not handle any other accesses).
-+	 */
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	ASSERT_EQ(0, records.access);
-+}
-+
-+TEST_F(audit_quiet_rename, two_layers_different_quiet3)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+	struct a_layer layer1 = {
-+		.handled_access_fs = access,
-+		.quiet_access_fs = access,
-+		.rules = {
-+			{
-+				.path = dir_s1d1,
-+				.access = access,
-+				.quiet = false,
-+			},
-+			{
-+				.path = dir_s2d1,
-+				.access = 0,
-+				.quiet = true,
-+			},
-+		},
-+	};
-+	struct a_layer layer2 = {
-+		.handled_access_fs = access,
-+		.quiet_access_fs = access,
-+		.rules = {
-+			{
-+				.path = dir_s1d1,
-+				.access = 0,
-+				.quiet = true,
-+			},
-+			{
-+				.path = dir_s2d1,
-+				.access = access,
-+				.quiet = false,
-+			},
-+		},
-+	};
-+	struct audit_records records = {};
-+
-+	EXPECT_EQ(0, unlink(file1_s2d1));
-+
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer1));
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer2));
-+
-+	ASSERT_EQ(-1, renameat(AT_FDCWD, file1_s1d1, AT_FDCWD, file1_s2d1));
-+	ASSERT_EQ(EACCES, errno);
-+
-+	/*
-+	 * The youngest denial will be layer 2, in which everything is
-+	 * quieted.
-+	 */
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	ASSERT_EQ(0, records.access);
-+}
-+
-+TEST_F(audit_quiet_rename,
-+       first_layer_quiet_deny_all_second_layer_not_quiet_deny_all)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+	struct a_layer layer1 = {
-+		.handled_access_fs = access,
-+		.quiet_access_fs = access,
-+		.rules = {
-+			{
-+				.path = dir_s1d1,
-+				.access = 0,
-+				.quiet = true,
-+			},
-+			{
-+				.path = dir_s2d1,
-+				.access = 0,
-+				.quiet = true,
-+			},
-+		},
-+	};
-+	struct a_layer layer2 = {
-+		.handled_access_fs = access,
-+		.quiet_access_fs = access,
-+		.rules = {},
-+	};
-+	struct audit_records records = {};
-+
-+	EXPECT_EQ(0, unlink(file1_s2d1));
-+
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer1));
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer2));
-+
-+	ASSERT_EQ(-1, renameat(AT_FDCWD, file1_s1d1, AT_FDCWD, file1_s2d1));
-+	ASSERT_EQ(EACCES, errno);
-+
-+	ASSERT_EQ(0, matches_log_fs(_metadata, self->audit_fd,
-+				    "fs\\.remove_file,fs\\.refer", dir_s1d1));
-+	ASSERT_EQ(0, matches_log_fs(_metadata, self->audit_fd,
-+				    "fs\\.make_reg,fs\\.refer", dir_s2d1));
-+	/* No other logs. */
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	ASSERT_EQ(0, records.access);
-+}
-+
-+TEST_F(audit_quiet_rename,
-+       first_layer_quiet_deny_all_second_layer_dest_not_quiet)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+	struct a_layer layer1 = {
-+		.handled_access_fs = access,
-+		.quiet_access_fs = access,
-+		.rules = {
-+			{
-+				.path = dir_s1d1,
-+				.access = 0,
-+				.quiet = true,
-+			},
-+			{
-+				.path = dir_s2d1,
-+				.access = 0,
-+				.quiet = true,
-+			},
-+		},
-+	};
-+	struct a_layer layer2 = {
-+		.handled_access_fs = access,
-+		.quiet_access_fs = access,
-+		.rules = {
-+			{
-+				.path = dir_s1d1,
-+				.access = 0,
-+				.quiet = true,
-+			},
-+		},
-+	};
-+	struct audit_records records = {};
-+
-+	EXPECT_EQ(0, unlink(file1_s2d1));
-+
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer1));
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer2));
-+
-+	ASSERT_EQ(-1, renameat(AT_FDCWD, file1_s1d1, AT_FDCWD, file1_s2d1));
-+	ASSERT_EQ(EACCES, errno);
-+
-+	/*
-+	 * Source is quieted but destination is not.
-+	 */
-+	ASSERT_EQ(0, matches_log_fs(_metadata, self->audit_fd,
-+				    "fs\\.make_reg,fs\\.refer", dir_s2d1));
-+	/* No other logs. */
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	ASSERT_EQ(0, records.access);
-+}
-+
-+TEST_F(audit_quiet_rename, rename_xchg)
-+{
-+	struct a_layer layer = {
-+		.handled_access_fs = LANDLOCK_ACCESS_FS_MAKE_REG |
-+				     LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+				     LANDLOCK_ACCESS_FS_REFER,
-+		.quiet_access_fs = LANDLOCK_ACCESS_FS_MAKE_REG,
-+		.rules = { {
-+				   .path = dir_s1d1,
-+				   .access = LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+					     LANDLOCK_ACCESS_FS_REFER,
-+				   .quiet = true,
-+			   },
-+			   {
-+				   .path = dir_s2d1,
-+				   .access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+					     LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+					     LANDLOCK_ACCESS_FS_REFER,
-+				   .quiet = false,
-+			   } },
-+	};
-+	struct audit_records records = {};
-+
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer));
-+
-+	ASSERT_EQ(-1, renameat2(AT_FDCWD, file1_s1d1, AT_FDCWD, file1_s2d1,
-+				RENAME_EXCHANGE));
-+	ASSERT_EQ(EACCES, errno);
-+
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	ASSERT_EQ(0, records.access);
-+}
-+
-+TEST_F(audit_quiet_rename, quiet_on_parent_mount)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+	struct a_layer layer = {
-+		.handled_access_fs = access,
-+		.quiet_access_fs = access,
-+		.rules = {
-+			{
-+				.path = dir_s2d1,
-+				.access = 0,
-+				.quiet = true,
-+			},
-+		},
-+	};
-+	struct audit_records records = {};
-+
-+	EXPECT_EQ(0, unlink(file2_s1d3));
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer));
-+
-+	ASSERT_EQ(-1, renameat(AT_FDCWD, bind_file1_s1d3, AT_FDCWD,
-+			       bind_file2_s1d3));
-+	ASSERT_EQ(EACCES, errno);
-+
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	ASSERT_EQ(0, records.access);
-+}
-+
-+TEST_F(audit_quiet_rename, quiet_behind_mountpoint_ignored)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+	struct a_layer layer = {
-+		.handled_access_fs = access,
-+		.quiet_access_fs = access,
-+		.rules = {
-+			{
-+				.path = dir_s1d1,
-+				.access = 0,
-+				.quiet = true,
-+			},
-+		},
-+	};
-+	struct audit_records records = {};
-+
-+	EXPECT_EQ(0, unlink(file2_s1d3));
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer));
-+
-+	ASSERT_EQ(-1, renameat(AT_FDCWD, bind_file1_s1d3, AT_FDCWD,
-+			       bind_file2_s1d3));
-+	ASSERT_EQ(EACCES, errno);
-+	ASSERT_EQ(0, matches_log_fs(_metadata, self->audit_fd,
-+				    "fs\\.remove_file,fs\\.make_reg",
-+				    bind_dir_s1d3));
-+
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	ASSERT_EQ(0, records.access);
-+}
-+
-+TEST_F(audit_quiet_rename, quiet_on_parent_mount_disconnected)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+	struct a_layer layer = {
-+		.handled_access_fs = access,
-+		.quiet_access_fs = access,
-+		.rules = {
-+			{
-+				.path = dir_s2d1,
-+				.access = 0,
-+				.quiet = true,
-+			},
-+		},
-+	};
-+	struct audit_records records = {};
-+	int bind_s1d3_fd;
-+
-+	EXPECT_EQ(0, unlink(file2_s1d3));
-+
-+	bind_s1d3_fd = open(bind_dir_s1d3, O_PATH | O_DIRECTORY);
-+	ASSERT_GE(bind_s1d3_fd, 0);
-+
-+	/* Make s1d3 disconnected. */
-+	create_directory(_metadata, dir_s4d1);
-+	ASSERT_EQ(0, renameat(AT_FDCWD, dir_s1d3, AT_FDCWD, dir_s4d2));
-+
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer));
-+
-+	ASSERT_EQ(-1,
-+		  renameat(bind_s1d3_fd, file1_name, bind_s1d3_fd, file2_name));
-+	ASSERT_EQ(EACCES, errno);
-+
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	ASSERT_EQ(0, records.access);
-+}
-+
-+TEST_F(audit_quiet_rename, quiet_behind_mountpoint_disconnected)
-+{
-+	__u64 access = LANDLOCK_ACCESS_FS_MAKE_REG |
-+		       LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+		       LANDLOCK_ACCESS_FS_REFER;
-+	struct a_layer layer = {
-+		.handled_access_fs = access,
-+		.quiet_access_fs = access,
-+		.rules = {
-+			{
-+				.path = dir_s4d1,
-+				.access = 0,
-+				.quiet = true,
-+			},
-+		},
-+	};
-+	struct audit_records records = {};
-+	int bind_s1d3_fd;
-+
-+	EXPECT_EQ(0, unlink(file2_s1d3));
-+
-+	bind_s1d3_fd = open(bind_dir_s1d3, O_PATH | O_DIRECTORY);
-+	ASSERT_GE(bind_s1d3_fd, 0);
-+
-+	/* Make s1d3 disconnected. */
-+	create_directory(_metadata, dir_s4d1);
-+	ASSERT_EQ(0, renameat(AT_FDCWD, dir_s1d3, AT_FDCWD, dir_s4d2));
-+
-+	ASSERT_EQ(0, apply_a_layer(_metadata, &layer));
-+
-+	ASSERT_EQ(-1,
-+		  renameat(bind_s1d3_fd, file1_name, bind_s1d3_fd, file2_name));
-+	ASSERT_EQ(EACCES, errno);
-+
-+	EXPECT_EQ(0, audit_count_records(self->audit_fd, &records));
-+	ASSERT_EQ(0, records.access);
-+}
-+
- TEST_HARNESS_MAIN
++	EXPECT_EQ(0, records.access);
+ 
+ 	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
+ 	EXPECT_EQ(0, close(dgram_client));
 -- 
 2.54.0
