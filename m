@@ -1,151 +1,109 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1094339D3D9
-	for <linux-security-module@vger.kernel.org>; Thu, 11 Jun 2026 22:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.182
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781218616; cv=pass; b=GudPShsGG9Dv5gx+2GJp0gBSEOV5Sj0cicZTPCzcLINOrzGBGC4nWwYkuyGaG9OFP+us/x6Z8DBPFZ7SbIoPmx9WTBZUY2li6OmCxrp1I1lz1OQufcQMScGy9RVZX5MEfRvu3lIjybD/TJb6/XpmZ+831q5VnoHPm1ZM4dKQ+qI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781218616; c=relaxed/simple;
-	bh=80IYC70Oqf5mkhaHEMZbvU5upw4Wm2QTz2Iwsnv8oa4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aAiCKHtTjgfGE85iDWwXKgZqjCCdy/b+0mr3wehjOYk9ylnzK2le1nTh9PIZqCmgRNDVcFO8p5M4ukES6N2T+7J+SZuB2C1etYHD/pF+/0Xb6W2TnLkrIYYiSrZT9lokYkJr/udYjpWdAJ6bPXJCn2M4EyYlk6XyrTNGci7MrEk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Uvf95QhK; arc=pass smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73BD0153BE9
+	for <linux-security-module@vger.kernel.org>; Fri, 12 Jun 2026 00:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781222910; cv=none; b=MAzuWdVM4YZJGxNB86cNhGyt/2u3snQAjVThaYlxs3Pk8pOZSrVfDmcr5MZ05JyIwsi3S3RpRkJAw0EpUf3FY4EUB0cXIRmAlB1jal58V5ZrwytGCscJa1sThcIyANH6vvdUk90ymcVdfz5H9droebrv7Nopvyw65qKVfmFJ/L8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781222910; c=relaxed/simple;
+	bh=CdX8Qwb4P1o/hcHptjiAg9CZgwE1KcXgvFcvzc961dA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gtp0/g5oq8EYbzVTMDssL2CH0IzfjFPLkGCynUv1FLLFQTunbPK7QCPWTxzyTePgiUqbUuALtd4xzmwrya4vdTp8cwYGpITE9I5OphNxPfmg+Zh6ZGDSGmii4x1UV05nC21q/sen3PyFpuW0olP/cvVPElcbrwqAv8FZnaUYX6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IQYdYFyl; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Uvf95QhK"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2bf18c30bb2so3187685ad.0
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Jun 2026 15:56:53 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781218613; cv=none;
-        d=google.com; s=arc-20240605;
-        b=gu/Q/ymJyfEMNZ/VMgtBlRIJilBGHSxp4gi9liuO4xMk0Sm4ofTUJn2J6kCe4uO3Xy
-         hcf0kOVjykIY+9oUVwFHb5s/Jid//VMqr0wAQny+FMZZgUOH3iOZM0oYDWLD4u3CW9qz
-         MctyU7Q/mMarup13o8Tt12D9DbCtFnMMQB3l0N+0FDzUsAHF5qRTSx+b5rAaYHcvucch
-         Xc6tlLi8tEJCssL0rjSZ1ZqF5bskbe05Ftcg0EapfH53+d0bttS5xi0Es6O3I7J9j1Ng
-         CVNE5dUWgpwIFKdeJ1OllkIw1WJDBO5H9R13KSy89t5VDDPtZ587TwdQ935z7PWMH1od
-         pOWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=sGYX8yE3GouSmB36dE4d3FWlMSjRjKMWRg/5nxp8fB8=;
-        fh=0400/Wn07BzaZZuHmIJldEQ4lIMPPOlFyhpg6dMP+Bg=;
-        b=DnQ3NnEgIiMxQk9IhJm6TiMD4nsrM30YBctcHNbGkjGvsIly3kKV1XQrECMnMwfRP7
-         tO0gIIcqdlxs9gzkn5ejKLTn6h4DdBUgwX09QNaFLrYUEA9WmfsUQSm290sXcCa7nWUY
-         jGzXyPQ38k4tNQpGmGlJt7SHEKiQHXqWMpysO6ACjCQ4sXh47ru+EYJv0bpTDx4mDFOL
-         45Z+3DlOn1wtc+OmrNfMeXf61aFZkoIlcFY19mRB8cprZseI+1IQ6b1tRt3RMX5Jolxl
-         9WRlLLvCdh1Nky+nzfUKPpUAvh2c9Y6G57QvzoCIukB0o2UanPI0SbZ+coppfpXPNtVH
-         YrbA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IQYdYFyl"
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-5177945a279so3761781cf.0
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Jun 2026 17:08:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1781218613; x=1781823413; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1781222908; x=1781827708; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sGYX8yE3GouSmB36dE4d3FWlMSjRjKMWRg/5nxp8fB8=;
-        b=Uvf95QhKe8gsE507vXK4mzeblnXg7tk9VfD49UfRShWQGtWCXXjk054NlyEz4g4FSs
-         FSAU2N7j9bswIIDgbxyjpQmtoJBjXDUeCQ+MBmN8AIqBBoqPTVbY4h+a+tBEDjaqGBhH
-         lGyGIy2ugrZx+hoqee+0a9Oy6781Kscl9DECIaTEKivo9FCDgrry6rA3wO2etmUP8rEx
-         J2VNKhZ8HKzijzndbQnZtS5GjKrQtCYHPtv8W0QoyuK41yE9z4QYFsJHmCohs6vgyXdc
-         e9okEfh6U6Gq29IOISlSSzL33GgzIPy3PDkcnMMwTVdcNi6pLKA/S/k6Jgn4K3/xg8V1
-         tPJQ==
+        bh=yKG4KW6S/RXhkFtQLuUCBdwnT8PSZQpyI8y4jFz+S04=;
+        b=IQYdYFyl5haIjJPowgCvMDhVmGhtOlKqPrIZwLERV+tl6jHyj6ISRn57hCkZTTpLzs
+         JzLps3HqWFoOAr2raldq8vDOgdAE5Kq5VvjYqsmNKJV6OPfYgQ781t7tclzV4LB6gCQW
+         kLPlEaMUon4Mmg7AlbmECD2tvq51cCpQtznOYNnmD70zH4AxA1JYDfQk3JNYPmX4q1SE
+         P6ADQudmVeMRITf+sSgHlbBnfjyyiwyfvbicNFD9ak16OjZxTxZ3cJbxVcG/iPRWwexU
+         7lDd4el6GkSzywOJSC76M7VGV5bNSNOy5EtwErIPUDDwZdYOkQq3NOvguXeI/ouSB7FF
+         vC5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781218613; x=1781823413;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20251104; t=1781222908; x=1781827708;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=sGYX8yE3GouSmB36dE4d3FWlMSjRjKMWRg/5nxp8fB8=;
-        b=eVezaxZuY90Z3VtT7nnCneVTiyciSmBVhv05zQ635m8XgEN7hcJuOzXFRPjrusKVLd
-         FPEmXJa79lbrAULhnmB4d4r2znAojv6zDd+UApqzXw84KKQF3DMSnydBzu7ZYo1CmEhA
-         YaEoJX0RcK5UqFeZ10cJPjoBzgvWU/hOeCTBcr3Bh78vFNCGp2wtgjQlPxynrlrdFcPL
-         Q3joXinYKS/gFmwT2MIhVwmhJxoX47yW847FMEpeDcd2CNbMYjFqxj1KvK3A0xMlJYIx
-         eJn1FPmLlfNDRNQy0f9O0ld+Xa1k/ka6St/UDyL/MsjWFAxu+IMUKgXSaqw4xUX1BZ71
-         07Mw==
-X-Forwarded-Encrypted: i=1; AFNElJ8ZE6zPKiU5zbWLDpa5J/499Xap8ZgidiI0JnLUEn+sgri7+oNlEA58x5HQMOStG7rVDSig191GrUbc700IGuXkFvw6BjU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFpQ1U44ASOTwDohHuzp1H92sGdQBg8fB0yWaxk4BV5CJaIWSY
-	9+DNtgKGeta4XGLkbEXgPNUmJHWUTR4RvbSl4tyglZ1UmzVMokX+8UpRHOgeZfHMHxeeL6V0WKr
-	jbXTaCipFUEzX95C3PdsgriD2yHuMuokn814RzEUZwriZ8hHz/eHYeA==
-X-Gm-Gg: Acq92OE4/ZWyT2iJ3Gnc86ZcGnWTZ8ZBfi96HR1GZjFFbTU1Vn6PfmRxnY3BY3RaG9t
-	8XIvHd0o943NWDZCYOIJbhGuENpGGXlHhOwubN33wek7YswqrhRxSalGWLjzjxdhyVoJCNrh38+
-	uszWQdITqmSJGEve5mO1A0srQwTL5Eyqt+iXO/jFgpIBOytcrlQmH/Amr10KAfqnZ0LjnGfTkIe
-	No748tLEq0Gn/gvqUBR5wchD7/PCa+JqgLU65QDL27W5PjTDosBsB9Lthj0OUMtI6+IPBZgjx0+
-	F5Rt+Ko=
-X-Received: by 2002:a17:903:1b23:b0:2c0:b19b:ef0d with SMTP id
- d9443c01a7336-2c41255f24bmr4235855ad.19.1781218613229; Thu, 11 Jun 2026
- 15:56:53 -0700 (PDT)
+        bh=yKG4KW6S/RXhkFtQLuUCBdwnT8PSZQpyI8y4jFz+S04=;
+        b=Q7qrCDm2w/jtb3zJ36+yG5ExP0/mGgCg3rr2u2KuU11/Ta0Lzs4QSDrdu6HG3llu8s
+         qu8SchpCQVXtB1UxH1erWZrBr0eSiKVInJTYyMTx5TtT+eHYA7wkSYgfC2MPi1KjM3eo
+         W7jPp5wWu4jBiF5GYygWNY/a6Ciw7bY91vvAEESUVrgjG/efILQpUK0UXtbgFAgsO8qw
+         KnNGgfdXTYY1ys5JcC4bgLge/OPBTYB9US6WrSDE4uVFCEnV+AbWMcSf4dQTOII/HIHB
+         M4smnXp6Xt9JB8BXnP87oK1h3GF1fzwzVRWmaYSoSyYgX0/PWvKxQxMfspTHjcWCcHmy
+         4y9w==
+X-Forwarded-Encrypted: i=1; AFNElJ/ajVSPpTk0fewgOnCyZRfPhClazncy2hXhll0VR3Y7w3oE/0/J4osavjkauf+yyHvUK9wTRW3QWGHOw+mB59LQ+pbCwm8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywjiq04VV9OfwvleJmeWGA5XPgNH7GY0nmTQ2e20Whm5VuF9CXz
+	odlMVOTXMhNEUUR5SHFYupwAd9+0d5tBjoZwbMPE5LUlolUvXzDlTIwe
+X-Gm-Gg: Acq92OF4FzqCGDjySdLymS75h3r1TcMjZyuMNTh7ey+VV4TNNCgk2RujguWtVU2+KhB
+	l9mA2FlJuf7O5YfoRISBEAWgjhw0WfAGrGohBgL17qVxCcfAiAWTaJbMh0pdE5Iz6Y+DV4yk8pj
+	AlxF3YTQryXz9x3R+MyKN50Y8KfhsVvXyyewBLbf6dQgHT9aUQ3ghrzTIapTdHlslWh5GvdDEdt
+	FV2/smbaxyHUbkhQH897a76MLeVVloU4VqB6aFPI8rX+vpRemclnp6S72qG6dmFiB4/l5j0JVMz
+	vKLYPXyg6DNCSfSkYC+CkMuD5HPym1XQ3IRyRlpkQgYtl+uG6UoGJCg26PpRDDHyZ9ZZ5XqMlNC
+	KFt9USOv2uJn7TJCiAo6DEe69WNmoIcHCgdy+NDVB47R2yJW5138FfpAuKs4q1hcDLJeCGitcZo
+	nao1r4fXWHnAcUsOEbLT1v18sHDhGecww71g/44C/yfX2r5TLp0qfsbg7/FCRPpN9I1pTzQeLKi
+	CH+aPkeCiok1AnZA2ooI4BCjA==
+X-Received: by 2002:a05:622a:8c1b:b0:517:c65c:3dba with SMTP id d75a77b69052e-517fe5edd81mr5583751cf.38.1781222908419;
+        Thu, 11 Jun 2026 17:08:28 -0700 (PDT)
+Received: from battery.lan (pool-138-88-31-60.washdc.fios.verizon.net. [138.88.31.60])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-517fb79df4dsm6590911cf.15.2026.06.11.17.08.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jun 2026 17:08:27 -0700 (PDT)
+From: David Windsor <dwindsor@gmail.com>
+To: alex.roberts109@outlook.com,
+	Kees Cook <kees@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Alexei Starovoitov <ast@kernel.org>,
+	KP Singh <kpsingh@kernel.org>,
+	David Windsor <dwindsor@gmail.com>
+Subject: Re: [PATCH] Add LoadPin support for eBPF program loading
+Date: Thu, 11 Jun 2026 20:08:25 -0400
+Message-ID: <20260612000825.105100-1-dwindsor@gmail.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260611-b4-rfc-loadpin-ebpf-v1-1-11a6c8e6170d@outlook.com>
+References: <20260611-b4-rfc-loadpin-ebpf-v1-1-11a6c8e6170d@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260610230329.727075-1-daniel@iogearbox.net>
-In-Reply-To: <20260610230329.727075-1-daniel@iogearbox.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 11 Jun 2026 18:56:40 -0400
-X-Gm-Features: AVVi8Ce4dPShB80KHWBIUCrtea8Uet8pr9jdlDCau5GkiPWMBa1JwKrUn85Nfmg
-Message-ID: <CAHC9VhTA7tOp16wGzb1QYnkJsVz1X3oNcmT6bb_9334=B2smEw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 0/5] Verify BPF signed loader at load time
-To: Daniel Borkmann <daniel@iogearbox.net>
-Cc: ast@kernel.org, kpsingh@kernel.org, James.Bottomley@hansenpartnership.com, 
-	bboscaccy@linux.microsoft.com, memxor@gmail.com, 
-	torvalds@linux-foundation.org, bpf@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 10, 2026 at 7:03=E2=80=AFPM Daniel Borkmann <daniel@iogearbox.n=
-et> wrote:
->
-> The BPF signing scheme signs a light skeleton's loader program and lets
-> the loader vouch for everything else: bpftool bakes the SHA256 of the
-> metadata map into the loader's instructions, signs the instructions, and
-> the loader compares the (frozen, exclusive) map against that hash from
-> within BPF once it runs. The construction is sound as a trusted hash
-> chain, but the kernel itself never attests the metadata, and that split
-> has been the recurring objection from the LSM / integrity side since the
-> scheme was proposed.
->
-> This proposal closes both gaps by having the kernel verify the metadata
-> at BPF_PROG_LOAD time, before the LSM admission hook and before the
-> verifier, /without/ growing the UAPI. A signed loader binds its metadata
-> map(s) through the existing fd_array/fd_array_cnt, and exclusive maps
-> are already bound to the loader's digest via excl_prog_hash. When a
-> signature is present, the kernel collects the exclusive maps from the
-> fd_array and appends their frozen contents to the instructions before
-> PKCS#7 verification, so the signature covers ...
->
->     insns || metadata_0 || metadata_1 || [...]
->
-> ... in fd_array order. The in-loader hash check is dropped from the
-> gen_loader entirely: generated loaders carry no verification logic
-> anymore, and signing or verifying a skeleton becomes an ordinary CMS
-> operation over bytes that sit verbatim in the skeleton, reproducible
-> offline. A signed program is either BPF_SIG_UNSIGNED or BPF_SIG_VERIFIED
-> with nothing in between.
+On Thu, Jun 11, 2026 at 01:59:10PM -0500, Alex Roberts wrote:
+> +static int loadpin_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
+> +				  struct bpf_token *token, bool is_kernel)
+> +{
+> +	int res = 0;
+> +	struct file *exe_file = NULL;
+> +	struct mm_struct *mm = current->mm;
+> +
+> +	if (is_kernel || !mm)
+> +		return 0;
+> +
+> +	exe_file = get_mm_exe_file(mm);
+> +	if (!exe_file)
+> +		return 0;
+> +
+> +	res = loadpin_check(exe_file, READING_EBPF);
 
-I'll be honest and say I'm a bit surprised to see this patchset,
-especially since KP and Alexei argued so strongly against this
-signature scheme, preferring KP's scheme where the loader verified the
-maps.  I'd be curious to hear the reason for the change of heart if
-you can share it.  Regardless of the motivation for this change, I
-obviously think this is a significant improvement over KP's signature
-scheme which shipped in Linux v6.18.
+Why are we checking current here? IIUC this will be whoever calls
+bpf(2), which would be the loader, which would then be able to load bpf
+programs from an untrusted source.
 
-I also think it is worth mentioning the similarities to work Blaise
-did before the most recent Hornet version:
-
-https://lore.kernel.org/linux-security-module/20250929213520.1821223-1-bbos=
-caccy@linux.microsoft.com/
-
-While Blaise's patchset added to the UAPI, that was done simply to
-retain compatibility with KP's signature scheme; your patchset does
-without any UAPI additions, but loses compatibility with existing
-signed lskels.  Beyond that, the basic signature scheme between
-Blaise's patchset and what you are proposing appears the same ...
-which is a good thing as far as I'm concerned.
-
---=20
-paul-moore.com
+In the kmod case loadpin_check() sees the .ko itself.
