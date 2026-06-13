@@ -1,79 +1,79 @@
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAE9370ACA
-	for <linux-security-module@vger.kernel.org>; Sat, 13 Jun 2026 07:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA2D3939BF
+	for <linux-security-module@vger.kernel.org>; Sat, 13 Jun 2026 09:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781334796; cv=none; b=FO02bXkzFc1rN1Ho2xqZDUJEkevPCD7LNVLmb8+BIzwNi4vaiX0O7zdug10FBvBh8/7BQ4WIi3AuaybuNfuROzyhqF7VdNWPlxC3F16OREOvbnzm0q/or80jrpaadh0crlJg6GJgqgsr7i3ve01iwf8h7xJS0ZMyJQX4VnALmFw=
+	t=1781343761; cv=none; b=aayLaI++eJTL0kSOWBLXJbY5CenPTLHFiZf6w3U5zhnFFwSAk6ZvLcFou+Q9xoF9zOms/wVJ2+IZSHrFmlZb9+bCj5MFIJVzsOJ71SBneTUnTArnYnpMAaJ/e/x7LWloYnd+zL1ZnuzlhhTvPSB5Dd/Ytf8gwN+d7hprk60oPbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781334796; c=relaxed/simple;
-	bh=WCr9OO/1p459hxYJsgQFhaP+PWlj+JvLVnNJGjSgRBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ItmoHIwCiMFCjklSLUo/btzR0nz6+lJML3pX+yySYspJX0CkNTQdDjz9ct9arMxvKoljhtwhEaPHLrgj7XytB/4kjXRnPjNnNvuAugIh1kdhXCoh6wyuEcq4e6pg64ZSWLf9gi21r2g9V3wu7LdTuTz40qPCudRg+b/dZulIW5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=Yjap1WA7; arc=none smtp.client-ip=185.125.188.123
+	s=arc-20240116; t=1781343761; c=relaxed/simple;
+	bh=Rye3VhjpNkav1PlLlnVkrNM/UHF2yFX7Ra/n7Fxk8Z0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NJyK+oEFtDglcNlfsJHFvSSN4bJWwpLWJpEwpWT+bQXqdfg0lvXo10S6RVTj2hZWuuHfiFqTR0IqHHsxM4iTGPjCx6NJjqNSXnuVsfDq+H+zEKqkfTMc28xIbthMFqxtavWJvxVoJAkjdae8ZtaEFsRIdTYaYTDQ56QTSyJ90Bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=V+BEh9F8; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="Yjap1WA7"
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="V+BEh9F8"
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 41B9E3F867
-	for <linux-security-module@vger.kernel.org>; Sat, 13 Jun 2026 07:13:12 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 3AB1A3F60E
+	for <linux-security-module@vger.kernel.org>; Sat, 13 Jun 2026 09:42:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1781334792;
-	bh=n9wC9N11IWejja/NrlLdSDt9GWEelDFusP9beswEFvw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	s=20251003; t=1781343755;
+	bh=3cNWgxOsVXXusBlgwT5EOutzJoWn3PYwrKdwFsGdgcU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
 	 In-Reply-To:Content-Type;
-	b=Yjap1WA7Jhi3yoCld8cUGERVx8LIwDOcRH/FaKWfXGBKbfeXbG7TH+Jcpc+kVcy3h
-	 u4WdBtwo6SHAg+zZgA1xukCnJT3FLw/czw3WJbtFhIsKZk/4fwZBbEbRo+pcwGzI5S
-	 D5CF8bs0x+Ww254LWTAdAc27bXrZflQdNRJor8rUigdA8V9uC4xox+ceRMIShYH8Lc
-	 Ew0DCESNTGAOJVnw8PE100vVKvHmfA64v83pH5H3PyU1OWXjpVm2pOGlD4atD3MsQQ
-	 KzBcN6JR1y0ceN2cnTJVdkyOkWRrOsu9zsm3jeqpv7h5+ppfQc0lncSFij6n9Mhh0m
-	 jOh8rGh0VB2uhTxu199jHR8ZS6WqbOSagOPSe4ICw6S8wUntqUCR9Yi5titajIBdwG
-	 CGbYv2LM8GOIr9AM3fdF9wAXJ4N25t4scNvG7FE8XB5FXeMAOy8HpzvR6zdC3/Z7OG
-	 oDizW0Lnm1U9Lr9Sz5PraGmyEtN533nOeFHbFeiOXAQ+rnbcABuwZ0QpRqoGYlcJVW
-	 DyjO16Bw2wE0dc8dEh29BHWNmRsYl13q+xUV7Z7P22/EC8hV9wuj/Bqd0sCxzio3+I
-	 21N3c8QTxE+B5WQU5rbEB//Vz6m0RLp9++173vekwTIKHUsIvEkM43prtxpmSlZKha
-	 jnwHu3v3sV3LSbj4utkfPE/g=
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-36bbcd40642so1283779a91.0
-        for <linux-security-module@vger.kernel.org>; Sat, 13 Jun 2026 00:13:12 -0700 (PDT)
+	b=V+BEh9F8FWzHSykE8aef9rqErrCHFDG27g5WtRhTprjhQEoboUx+US9zsg43clfVx
+	 Wb9dNIzgsuS7zN0e6etNh1NKYRNxolIUg/NDGZBOhNWTvH3DR8JGHlYHYAB5LCGEtn
+	 CMf56igm1jH1lWmMCR/Vuxz/k1gGZhBMYlxykpLgUqaiUCcYSY6JOR0nZ/zwIAI2j3
+	 /FAnIiguxPRsY/4D5eKobWszqh59zZluf2JQ81LtqfQNEevopwaM02STrWNSyLbkXN
+	 poTbYvUKS08TTjPXyBZYTntvpP4+R31glg1HALhUr5CxMRQ6SdX9pWAY61kgg5fkKg
+	 Kkk9hiWhMS5o7XrxKGqd1CjsHDWX7SW4ehe2vbhsIz+3XA6G9+8MHBZkQ0XTprhgQf
+	 /3TiihVIqpFuMvqPuegQsAxQyYj800Fxf05uQS5V7gOIdc43jHl+xQdayDwcC0LbHv
+	 t9PxZXIbtnbo35GcyDUPf23XE0cSa8TxvdxvHwFwDJlUJOsus0ayRUbIL2ZAcjn7V+
+	 eec01GW6wncVKugZbfTyvuVuWF3TQyNUjJrIeqPgNwGWVekhPISFvHpMtUjuE2LHco
+	 bSRyynOe/jyEbtBlo4lVXS9V4UQaNNJ5JXGFidrts+25yzSruN20D2o8vlmCnuDBvX
+	 lLUtLk+deEi5pq4DWeMicxX8=
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-c85a2cde332so820768a12.3
+        for <linux-security-module@vger.kernel.org>; Sat, 13 Jun 2026 02:42:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781334790; x=1781939590;
+        d=1e100.net; s=20251104; t=1781343753; x=1781948553;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=n9wC9N11IWejja/NrlLdSDt9GWEelDFusP9beswEFvw=;
-        b=fJA1CLLggcBcOR3nhUD0BHRa6cP1/we7wrODhV+v7JaSCvyaSnE0M7c3IirLJQsTzI
-         N71EjusAZ6Z4PnMMD0ZSMYLL2EpCHNzNIyyJRl593TnTur2hcs50yZlWld6UQGiH4rkK
-         Z9CdH36nKY8+VV6lXpyPaGJYI0qCR3dJuZgB0faMOI4v0fjYORRIzqPv0sjfhfi5Xrbb
-         5+9sMKpF/b4o6JpYlvxapUWwVL8RX/Mgb+s0NSXakd6C9MrbBRYDXZQ6rAKTGFMmMOs3
-         u2S+rk9qjsDev69ig/hJJ7gWNZvh5Gw9WkphQ//ty04HmEMuAcfwqKAsy6OHmswKP792
-         VxUQ==
-X-Forwarded-Encrypted: i=1; AFNElJ9Yz/bpD+VKwBD7x/nGlTat6FecK7P98btBRf0rtbzxRLP5Ef2LNBVRM5W7NxETZxDBvx8OdM57mmjiuvqsAYMzW4PFIbc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+ZaW+VkLo3M+hgvZi8RtXBtTIvLXjtUD1HX26KZN7+sf0xwU0
-	3rRo5mz53dnFixube4u1V034Txtbj14Oz4ZER9QfLRv5fZ7ljDPW6xCsuGbILwo1MY1KEpteqFP
-	dXyz8fhyVNrEgnRfVqIr5xldfDjoQ8ye4wHwfjlWeromm25uHh4Fh1HVSqot0UEFrbKUFHJl7ZX
-	ndoO8d7Y080i/8kWf6hA==
-X-Gm-Gg: Acq92OE7HLbBWrv9aosduPEbO5mqpYLAmYek61TUlFZl4KQC0log5DgoSs90crMIewv
-	nMkj38u/5M4vfjiLaHlc9NeRqPtgm2aup8Lc1VZzNzPx0gKVyBvtIAfvxWimpIEJnGjv0dhhY8u
-	4ikC+eMfn3xi6PT0meicZ2gp/ArErU0l+pSMkQ4Ta7F+grUNVhmq2e2Ix6hU2WAYu0IPbBPA+RK
-	rxB/tjrAL42Wt6OPpJMarbySc+B/HnIkO+CotFSAp2NW4PBwpWH0EwonAAY6P07mtOPCLa0HKwm
-	/GFxtY8XmcEMYKfagZ7jRknWIhMk0JzX+KGCdxAviAge5L322Oh/Tlh+b5x1AvreKUNzT7iNGfx
-	2EfbarFd0j+iljS2Pa0i4euA+V+7QlHOUW+ZJ
-X-Received: by 2002:a17:90b:4fd0:b0:36d:9ea4:d0b with SMTP id 98e67ed59e1d1-37a041a878cmr6964869a91.24.1781334790374;
-        Sat, 13 Jun 2026 00:13:10 -0700 (PDT)
-X-Received: by 2002:a17:90b:4fd0:b0:36d:9ea4:d0b with SMTP id 98e67ed59e1d1-37a041a878cmr6964848a91.24.1781334790048;
-        Sat, 13 Jun 2026 00:13:10 -0700 (PDT)
+        bh=3cNWgxOsVXXusBlgwT5EOutzJoWn3PYwrKdwFsGdgcU=;
+        b=OdBvY9tqmJGEmBsWw3cJIGwxzGDHNK3itfaCg3tyoIOOVBDPENKgW+7TsxoP/MK82A
+         CRDTRp1sloW2j6amoduiMddF4PwSHP9zi2aTfGQ8Q0f1h5hOj8cnqKtQact41o7iUxpU
+         hhr0cZuDQZnsZzngfKTBsXQPOqI88TapsZXCmsjUmhnQtVjgjWJDh0Q/44EfNY1d/w/O
+         KTBnbqcc4bFj5EW8Z1YiqDfKNhgKJMl+pQwREa6Pp9WlhpQ82MM/uOWiVyykYSK1J/iD
+         hTFe6cgOPViuEEd8xdNUmgnJOPYWMptMIo6Tn6+CUbES9y4QCh9an6dlHmVbxFlFWr5C
+         kUxA==
+X-Forwarded-Encrypted: i=1; AFNElJ+0BQAnAqo3jI/6p1Eo7vbUgSL9KdCGt2yvCQamE0MaTOQN8DQuAQJp+TXe6mKO7mcXe5G9r/7uOteb4cEVq7yEGQsb6Ys=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYQ76jiJSC+UsIo7hlCdHfawJqt5DHPbXqjUTXMy6/M3TRPomC
+	HikKx3gwIJNQIETLRmsyx3ss4QJ4H39dzcIJzoP4dXjjgNwH/5A4o4E8g1A6VReX8ly/TqiM4Fr
+	IZ16VDR6OFr3c/22n/TR1KAnYb/9EnUM4NsO6P5xC/KoovAtH2BigejqY8gzbRkEZA5cK2G/VuD
+	ztQ3VRlOoUgvzrGVgTXA==
+X-Gm-Gg: Acq92OEn61ZZIHoWl1A909+UlzVlI5U9lTmSIhHKCCY1Ukl5lE6RTTUGWWWOe8iGygY
+	qYJbg9fp9exbuYPQEWkJ8fRL2jGxEGfkhYXNKrcdP28VEJcD1ZVZUKPBx83wtr5LRjtWi9sSWFK
+	eqkgUruTiuQuHSnc5vsx842ZU1wQFG9NIALuzbjkqwD76Z6xizcX9ZQ1DIcP2qf7aGhFiUHY8G2
+	NeuzBx53FcqGnXsbekv+IiLY/rWWmGzCQHK4u2piFyFTV91dma2w6SIuPDdFXLaf7RHUezMHzEn
+	DnF5dFzswCX+ogVa0NIWLTvUTC4UjaaRwmobdCkgNCRncVazwTK9mH7v19XsGHCZ6wh0ioFXjh6
+	4t33bRBh8eJQ7ukeGdk9R7c6UE3JG6L20vp3q
+X-Received: by 2002:a05:6a21:6da4:b0:3b1:80c7:5f8c with SMTP id adf61e73a8af0-3b783f3c781mr8077334637.28.1781343753522;
+        Sat, 13 Jun 2026 02:42:33 -0700 (PDT)
+X-Received: by 2002:a05:6a21:6da4:b0:3b1:80c7:5f8c with SMTP id adf61e73a8af0-3b783f3c781mr8077307637.28.1781343753109;
+        Sat, 13 Jun 2026 02:42:33 -0700 (PDT)
 Received: from [192.168.192.71] ([50.47.147.90])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-37a1f176e92sm5215838a91.7.2026.06.13.00.13.08
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-c8661b5d505sm3958420a12.1.2026.06.13.02.42.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 13 Jun 2026 00:13:09 -0700 (PDT)
-Message-ID: <8d7701ab-52a4-4c86-9519-959c806ecf04@canonical.com>
-Date: Sat, 13 Jun 2026 00:13:08 -0700
+        Sat, 13 Jun 2026 02:42:32 -0700 (PDT)
+Message-ID: <c1bd4bd4-26d9-49d7-9989-2609493c2410@canonical.com>
+Date: Sat, 13 Jun 2026 02:42:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -81,13 +81,11 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] apparmor: Fix return in ns_mkdir_op
-To: Hongling Zeng <zenghongling@kylinos.cn>, paul@paul-moore.com,
- jmorris@namei.org, serge@hallyn.com, neil@brown.name, brauner@kernel.org,
- jlayton@kernel.org, jack@suse.cz
-Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, zhongling0719@126.com
-References: <20260503041243.200895-1-zenghongling@kylinos.cn>
+Subject: Re: [PATCH] apparmor: fix use-after-free in policy replacement path
+To: Junxiao Chang <junxiao.chang@intel.com>, paul@paul-moore.com,
+ jmorris@namei.org, serge@hallyn.com, apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260613060424.2213712-1-junxiao.chang@intel.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -133,38 +131,61 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20260503041243.200895-1-zenghongling@kylinos.cn>
+In-Reply-To: <20260613060424.2213712-1-junxiao.chang@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 5/2/26 21:12, Hongling Zeng wrote:
-> Return NULL instead of passing to ERR_PTR while error is zero.
->    Fixes smatch warning:
->      - security/apparmor/apparmorfs.c:1846 ns_mkdir_op() warn:
->        passing zero to 'ERR_PTR'
+On 6/12/26 23:04, Junxiao Chang wrote:
+> A use-after-free issue can be triggered when running the
+> following stress-ng workload:
 > 
-> Fixes: 88d5baf69082 ("Change inode_operations.mkdir to return struct dentry *")
-> Signed-off-by: Hongling Zeng <zenghongling@kylinos.cn>
+> ```
+> sudo stress-ng --apparmor 0 --timeout 30 \
+>      --oom-avoid-bytes 10% --skip-silent --verbose
+> ```
+> 
+> The warning looks like:
+> 
+> ```
+> refcount_t: addition on 0; use-after-free
+> aa_replace_profiles+0xbe5/0x12a0
+> policy_update+0xdb/0x170
+> profile_replace+0x4b/0xb0
+> ```
+> 
+> The issue can be reproduced on both v7.1-rc7 and Ubuntu
+> 6.17.0-35-generic kernels.
+> 
+> aa_get_profile_loaddata() requires the supplied loaddata object
+> to hold a valid reference. However, the loaddata reference count
+> may already have reached zero in the replacement loop, resulting
+> in a use-after-free condition.
+> 
+> Avoid calling aa_get_profile_loaddata() on loaddata objects with
+> a zero reference count and skip those entries instead.
+> 
+> Fixes: a0b7091c4de4 ("apparmor: fix race on rawdata dereference")
+> Signed-off-by: Junxiao Chang <junxiao.chang@intel.com>
 
-Acked-by: John Johansen <john.johansen@canonical.com>
-
-this has been pulled in to my tree
+sorry I went with Ruslan Valiyev's earlier patch that fixes the same
+issue
+    apparmor: fix use-after-free in rawdata dedup loop
 
 > ---
->   security/apparmor/apparmorfs.c | 2 +-
+>   security/apparmor/policy.c | 2 +-
 >   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-> index ededaf46f3ca..1d7b1c70f22a 100644
-> --- a/security/apparmor/apparmorfs.c
-> +++ b/security/apparmor/apparmorfs.c
-> @@ -1922,7 +1922,7 @@ static struct dentry *ns_mkdir_op(struct mnt_idmap *idmap, struct inode *dir,
->   	mutex_unlock(&parent->lock);
->   	aa_put_ns(parent);
+> diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
+> index b6a5eb4021dbd..98f84d4552697 100644
+> --- a/security/apparmor/policy.c
+> +++ b/security/apparmor/policy.c
+> @@ -1220,7 +1220,7 @@ ssize_t aa_replace_profiles(struct aa_ns *policy_ns, struct aa_label *label,
+>   	/* check for duplicate rawdata blobs: space and file dedup */
+>   	if (!list_empty(&ns->rawdata_list)) {
+>   		list_for_each_entry(rawdata_ent, &ns->rawdata_list, list) {
+> -			if (aa_rawdata_eq(rawdata_ent, udata)) {
+> +			if (kref_read(&rawdata_ent->pcount) && aa_rawdata_eq(rawdata_ent, udata)) {
+>   				struct aa_loaddata *tmp;
 >   
-> -	return ERR_PTR(error);
-> +	return error ? ERR_PTR(error) : NULL;
->   }
->   
->   static int ns_rmdir_op(struct inode *dir, struct dentry *dentry)
+>   				tmp = aa_get_profile_loaddata(rawdata_ent);
 
