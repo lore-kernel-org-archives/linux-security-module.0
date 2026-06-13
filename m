@@ -1,196 +1,436 @@
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazolkn19011003.outbound.protection.outlook.com [52.103.1.3])
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB742F7F1C;
-	Sat, 13 Jun 2026 18:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.1.3
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781377202; cv=fail; b=FLvR/DOYl4IsHLmw/I3dGoD80f4j2RdNA1Ktd+TZRKDebWankYlsJUnGJisQ3UWWmdmRcRsW4GnTbJbniFkf9Ehv8+AzE1C9FmKl4PH3yf6wZ8EIRC8fIdcl4zOA5k8f+jny7FIk6Mg0OUNDefqQ8/CttGsKSdX+xy+zMbQeWeY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781377202; c=relaxed/simple;
-	bh=mjSYyiFMskg3S2X4PenGlKSwfaclQmVgQUI9tED5sqQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Dg/w2LN1f6E3uiYIIoztgvSq9/PtthOrXHz3SPQmK8PdDBYzxUpof041vSQAj9eQ3/iX+DtP48cbTWksJ6iPh0nE2GSMxsEmn+CP62E945euQAbb1bipxdA0m7+KLISkxE91r0XHp5Z3i9RLpW42TBM0BtTswlaHO+rUBmCZuWk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=tFn5PU5F; arc=fail smtp.client-ip=52.103.1.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5809B344DA0
+	for <linux-security-module@vger.kernel.org>; Sat, 13 Jun 2026 20:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781384173; cv=none; b=opRNCwprwHEJTTL2EXf6M5LwG4g8lnUoXeN1fFAH2+0x4PhE02Tm7sTb6HGpnIqWhlURTVSyfHMTO0tDPOo8xQB5AqfBExrnHBBgROLHVa/ZdkaZQ8JMQVlVtysLEc5+f0U5dDHZPD/vqiCihOcmF3lWb8VD4Iei4R513ny0114=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781384173; c=relaxed/simple;
+	bh=hGr+h6spCkUT5CZRkyIkjFITmIsGA0Z7PiXFRIZ94+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jtISuhqiC+O77GpHDT3zkxuySK+JQ629LhSzUg53EHt1BOq+oJFCsQS7CuProph9EYxAQqjPsnExni9osNnv2C0PCcJxc9W2ws6WG1tPujjtBAyiQizHSNF7LxobIYGbbexEouSIrYmPXMdKsIAU/eneQg+3AdIMngHSUu4ESUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=zLErSww5; arc=none smtp.client-ip=45.157.188.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="tFn5PU5F"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QUsH0zx6RF8xSZbG8yGN8g9hsWuFfB00C2twRaLvthw4mVDacHvDid4VjkvLGslS2oknt0Rb8iiLA/47hDGlEciWLG97uJks58APO2wXeY/GOtksVanoMGTNPSD8CSqX6jlhKeKiyWShDhuZcRIXDpeGjBXkXIkHCysmtyGPT3qEgFIf8Lh1CeNW+ChP/uoUOjXFI0akKRWtwWz+lsZULuUV1H75exU2vkJOpywxpx1WJlo6NpUuPJ7lhWTJXfTJ/P/hvulMfTxp8cqUyjyA3xSfhVIigoRpUhRFeqGIWaooGBIm9Nep3clhQD0d6YRnouWgzgoxeS60s4OAxEz4wg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mjSYyiFMskg3S2X4PenGlKSwfaclQmVgQUI9tED5sqQ=;
- b=WZqoVih9UfsJ8HvsWH7UQBF3GPBDoKMrt2r01EE1k0roiccC/kteKH6SA6aXoMfspK19l7Whq/o1cVovaWCEtruLF0oWM1VXXaHKW3gzz3rBKQR5s9tFE/rZzDXn2RMTLCWOecXnSpxFU9m5P+jQ+Zqk5zyRL75uwdrV4gJQA7PPKhR48y/lth4tOmS2+8Jyq7aOM0E9QLpueCFTTa4OgHCoDNtce8L1GHgu++3TAwA8tr5UVTkBdEo7jE6I2lvx+KwlBojMDFPnRwR43s9ThlOtZ1ayTXZTYTgw60inuoQw6QcudCsos/4nfklJRh2fuJEIfvc1uPqNLpVik9+hBA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mjSYyiFMskg3S2X4PenGlKSwfaclQmVgQUI9tED5sqQ=;
- b=tFn5PU5FnufZ6Wun4owftXtryfX6NbLj1jSUye+Qsdl7i/NH9ZLoe8JxR04MyO9ASepc+m+qDmtcYhlFNigzR7mzU+afYlliVE3gF9I5faPiyalncxKpI420zSu6e1QvkstcC5RujDlFAMSKqG+tdBQUuqB6GgAlt4b/Cvqa5gWdb2wQIC3ovk1rfaWXuYwdyxvM3hgLC7AMKbIg0QsplBWrWr2S4EJzKXdsdOZS5hdNeEo7+Sh7UUr3/ibHUhy7F0TME4duv8M9QxG4UUcYzluEOOBaok32MMAZGHMr69SrN8h/VUwMvXm1j9MUfsoRE2fYpS6bvzfb44kAnIsJpw==
-Received: from MN2PR16MB2846.namprd16.prod.outlook.com (2603:10b6:208:de::27)
- by IA1PR16MB5383.namprd16.prod.outlook.com (2603:10b6:208:450::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.113.16; Sat, 13 Jun
- 2026 18:59:55 +0000
-Received: from MN2PR16MB2846.namprd16.prod.outlook.com
- ([fe80::7ec5:b268:36be:b5c2]) by MN2PR16MB2846.namprd16.prod.outlook.com
- ([fe80::7ec5:b268:36be:b5c2%3]) with mapi id 15.21.0113.013; Sat, 13 Jun 2026
- 18:59:55 +0000
-From: Alex Roberts <alex.roberts109@outlook.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, David Windsor
-	<dwindsor@gmail.com>
-CC: Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, James
- Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, LKML
-	<linux-kernel@vger.kernel.org>, LSM List
-	<linux-security-module@vger.kernel.org>, bpf <bpf@vger.kernel.org>, Alexei
- Starovoitov <ast@kernel.org>, KP Singh <kpsingh@kernel.org>
-Subject: Re: [PATCH] Add LoadPin support for eBPF program loading
-Thread-Topic: [PATCH] Add LoadPin support for eBPF program loading
-Thread-Index: AQHc+dRphx/14SwKVkqVH/9fQj/eUbY6C4SAgAD+z4CAAc454g==
-Date: Sat, 13 Jun 2026 18:59:55 +0000
-Message-ID:
- <MN2PR16MB2846E30475B1CB10CC3CDC60B5192@MN2PR16MB2846.namprd16.prod.outlook.com>
-References: <20260611-b4-rfc-loadpin-ebpf-v1-1-11a6c8e6170d@outlook.com>
- <20260612000825.105100-1-dwindsor@gmail.com>
- <CAADnVQL9CJMY9h8haj5+99x-0GmiaHv3wDWuZ_YCYETKTznBbw@mail.gmail.com>
-In-Reply-To:
- <CAADnVQL9CJMY9h8haj5+99x-0GmiaHv3wDWuZ_YCYETKTznBbw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN2PR16MB2846:EE_|IA1PR16MB5383:EE_
-x-ms-office365-filtering-correlation-id: 9c9fe3a3-1800-4de6-33b9-08dec97df53f
-x-microsoft-antispam:
- BCL:0;ARA:14566002|51005399006|15030799006|37011999003|15080799012|12121999013|19110799012|8060799015|41001999006|8062599012|24021099003|31061999003|40105399003|102099032|3412199025|440099028;
-x-microsoft-antispam-message-info:
- =?utf-8?B?TDFxN1VHNTRzUG5tSDdmU0cvWmI5OWlJRkIzZVRySXVCTHZvdk52a0pwQWVX?=
- =?utf-8?B?Y2N3dnhUS2o0bG9sUkNNODBrYmZqREZFMm4zYTRLbjY5QXBLZHJuamNCeVgw?=
- =?utf-8?B?WkxWN0ZocVRtaEoyKzh0b2dIMnQwdGgrTzc5SXR0WG5hVXo1Uk1aV05JV3Js?=
- =?utf-8?B?eVJhL1N1RzB6aXBoNEhwNy9DRmZtS091KzJ3Y2FoU3R6QnpZbzZGS253TFFM?=
- =?utf-8?B?NnFNS1dJUmRYc2RaemtLNGxKbHk2ZDJyNnRlYllmbVVPY015UDdjbDVHck01?=
- =?utf-8?B?bFNJRzZEcU54VXpVSFhZdDFVUDdNY0JWTVh5VGh1RVB5VElMVWlaNVlpZTRD?=
- =?utf-8?B?WHE5SGlwYTdYcGJiZ3M2U0IwY0REWDNpMmRWQ1RiZG9veXdaemFxcE1WS1Nt?=
- =?utf-8?B?YzNiUUpOOE1pSU9rTmNVOENlQ1cwcFFzUVZISFUrUGdmY0dZcGRTRlIrQUR6?=
- =?utf-8?B?R2dTcEpQQnRqYStjbmJwRUhkQURZUUl6eThoY3ZIMzFqOUlLUXZ6T2hNVGxH?=
- =?utf-8?B?Z2huY3NmM0tML3U2cHBrRDcrVVUwWmFmbGlsS0p4NFhDczhCMlpHRUh0V05H?=
- =?utf-8?B?eEV5clc3eGg2ODgxQkhuLzVzeWxaWEFvK3VaVnUrZEFlNjF5MGRoVmNNOW9u?=
- =?utf-8?B?WWREVGtNOTVuVnY4aHpqMlNhWVVWcEJTdm1pUzNsMG1iaDk4SGlVcVdiTS9R?=
- =?utf-8?B?OTlEdUUzUE5kMGRyZEt5YWhGR0FCdkQzUGhDR0lrQ01wMTdmZHRrUldSSTd2?=
- =?utf-8?B?RFZHWGlZbWxoVnNkeFczZFNIQXJlWERFY052NzFtNTlHeDlqTC95THVlWHNy?=
- =?utf-8?B?SVNiQkcwNDV0Q2RRWVczdTB3eGJJYlpXcmpqV3BqSTRZTjRkaUVNRDhwajVi?=
- =?utf-8?B?V2lQTlQ1QUk4UUdqdmFGejMzaVVRc2FyVUljQ1paYlNMbVBlaEw4a1BTWXhS?=
- =?utf-8?B?RE84bWJSTGtiWkFHVW9VRkUrVFhyRkhwSTVZSzJTeXdUUlRNbUYvWDVxM0s5?=
- =?utf-8?B?L1BtdUFMOGk1bFRZcHRqR1B6V2JTVE12WWZlUWhEZVFhcWNrc29YN0ZsYlJF?=
- =?utf-8?B?Tko3K2gzOGk5M1lCVUNlNVZRYkp4b1hYREFZRDNTMGdGYWw5UWtpRWloUDEv?=
- =?utf-8?B?a0VpL2h2OWRrRHRuclhTWG9KbkhabmprNnB3UjA0QXRrdTFjUS9rV2JoUk9S?=
- =?utf-8?B?UlBFYUJ0UGxLaTR2YnhKVHlVTUtONEphbTAyLzE5NjVjTS9YL0d5RFNGMm4w?=
- =?utf-8?B?Smg1ZC9LalBUczM0SzVhamJtRG40ci8vSm9tRkhXOGJUdHBHUDJmbVJDSXhs?=
- =?utf-8?B?RlFycFdsWEh4SDhkNHlnbnE0VHpSbFBmVHJrdkwrQlNsWGtKdnMyeURMZVZv?=
- =?utf-8?B?Tk5aaUFhRnpGYTBwdXRrVTcxcFBRR2ZublcrWWpiakxNNkNDaExBTU82T3Rk?=
- =?utf-8?Q?PbR4R66X?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?MEhDWmNJZ1hBa0kxZUFFdXdWeS9ZVStQNy9wcVl3czR0dmxRWG5ta1RRbzQz?=
- =?utf-8?B?RDd0Z1JnTVhEMG9EYmxFNUg0THpEWWZLd2hpYktxZ2svZ3FLSTJLcXZoSHhs?=
- =?utf-8?B?dTl5VHE4VmxLWm83OU51MDJjWFVBMC9TUHNCZ1NSMWtUOFJ4NWdsSVEvVHBv?=
- =?utf-8?B?U1FVSHJUVE5XbEliUXpDbnlvaHRBNG5lZlZ3bC8yTHcwUk5yTGNOYmZ1RG9i?=
- =?utf-8?B?OGROM1F0UlRyOGNoSUgyempIYjk4WFBleWEwbkJFZXpCNzNnbDdrelc5b05F?=
- =?utf-8?B?NjFJYVJEN05VUy8zRmJKYjNuWjVjOFZxSEZTeHczVGxDUlc3VEVMRVU4M0VE?=
- =?utf-8?B?d3ZreW5xTkdyeUtleVRWZ1RhWTFOVVpza0RYVjNnaWpZeXFJRUNhYnNWU0k3?=
- =?utf-8?B?Y3J0MU0xUk1OVW1icHQwRXo4VlMxNDAvcUE3K1ZRcHEzWUFOVXZFSlhPbm5h?=
- =?utf-8?B?cXIvNlJIeFJldnZidHFURi9QSi8xVTVhcEplbkpNNGs0ZlFQSWl6KzgwbG95?=
- =?utf-8?B?NnJ2bzFVZG1zWW5neVI0TDFzOFQ3Wmppcy92QmhKS1JQTmtISnNsRm91Tmo5?=
- =?utf-8?B?RUJYbXQrbHF5KzYvdUNYWnY4WXBWZjZROHFaWEZWUXRHS0VBbmIrU3pYYytM?=
- =?utf-8?B?OWpnak05UlhaWWJUMDdoclU4Vkc4V1ludjF3MVZQNkd6ZG5pcmpGZnArUlVC?=
- =?utf-8?B?d3ZKV3Q5NXhmalJweEtvbUFsM2dsN2JlK05WS1c2eTBLSVBQSlg4QlBmUmdQ?=
- =?utf-8?B?QW9mdVY1a2dIS1htSjdGckQ5eExocHEyTnlGczFtWTlBN0VxR3pQRHhMOHNu?=
- =?utf-8?B?d0t6ekpGeWZSenl4YnhMZ2w5TlFqMlFDSm9IWlFESXBYaVlWY2Q5S2JFUnkz?=
- =?utf-8?B?ZW1VVkZQYko2K01tR1ozdGt1d3YxS1E2eU5nYjZDWDh5U0l3ZityQW8wS3hR?=
- =?utf-8?B?Tm1LUWRuMk9IaS9CazBPNzRBcHI3aTNuU0xma2ZLeGFjcSt5d3B3K1ZiSThj?=
- =?utf-8?B?RWZ2T051c2hDYy9WV2U4UnFVb3YrYkMydFMzUmFSSXE1bGFqK0hjZEcyMnRM?=
- =?utf-8?B?VURHLzY2M2VWQllEWVZNRXpxUjVJeS8yU0tvU3lvZUt4SEVRZ0JHMXBROXlu?=
- =?utf-8?B?ZEhTQWJ1YUN4WGI0NjZtbURDL2pmVkVadExwSGVWQ2I0bUFubHFLL0xoQkQr?=
- =?utf-8?B?bjNMam9RT3ZPZVl2dVVVRDdZZStzbUdKU2NEWDArbUNXQkM5VWFPWk9CQ1Q5?=
- =?utf-8?B?MmxKM2hkcy9jcGFIOWZRSmFZTTJrT2x6bzBWTGplUUp3RzFUcDRHMWhZL3Z1?=
- =?utf-8?B?dklRUnN0RU9kWXE4VkY1SS9IN0tVWE5nVW12UkVGamtKVFNGSktwK09STnlN?=
- =?utf-8?B?UUFxZUxWUmVjV3JtMG5ueEVCYkhtT2xhbDRlZGplcGZiWndzUEQ2Z0ZVQ093?=
- =?utf-8?B?U3ovOFZ5b1hpcHUrU1QzaWNsMGRVQm50amRxL1g1dzh2TktrWk9UUTMzWElX?=
- =?utf-8?B?ZVVIRDd2ZmVrSkJCY09KZUVmR25QZnkwVVl4UWs1b3cxTnlxM0d3WTdvZ2Jz?=
- =?utf-8?B?d2pxeWs0N2RSNUdtWmhZRExmOUFFZkZDcVh1Z0hsblM2Q2NsZVpUREhYbUJJ?=
- =?utf-8?B?UjVKMHZhV0ZWMkMxWFZzcjN0ek9wK1I4TVltbHdNdG5UckZXZDdYckdjVHJI?=
- =?utf-8?B?RkVnOFBBQmRVSC8wR2pMUFVoMDlxSk9Kc0tIZmlPK2ZNcjYxVnJGeWhpc0lu?=
- =?utf-8?B?UllxWG9nS3c1cHdNTVJ3M0dCR0h2WE1VRmdXdEdrdzZ2YkRxTE5LSHV3YzN5?=
- =?utf-8?B?U1dhd05kRm9QdzlidmN6YkZCRzlyYzRoUmNQSlNlNnloR051VGZKUGtjUzNJ?=
- =?utf-8?Q?v2lX4aRQIt87o?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="zLErSww5"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gd7vh6DNFzXqj;
+	Sat, 13 Jun 2026 22:56:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1781384160;
+	bh=Q0kJJUoiZCmP/sIpP04fpOoepySYT52l9jt2tcq/VvY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=zLErSww5lDsxxZ6+Aum4zOOazNTGdZAgh4Kmyc2/gO02Uv3sxymqKRdAbt3atTKie
+	 bXlI8S7oGJLNkpCGwn0BXT1zq8z3a0ghl9BvUbV6B/oEcUsVK/dOyjoSuNTwmjuO8H
+	 RO2uyn5j+BYmmLIgTV3MCC2uy2WQ8kMKrIQhp5h4=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4gd7vg3d2BzHxy;
+	Sat, 13 Jun 2026 22:55:59 +0200 (CEST)
+Date: Sat, 13 Jun 2026 22:55:58 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Matthieu Buffet <matthieu@buffet.re>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	konstantin.meskhidze@huawei.com, Tingmao Wang <m@maowtm.org>, netdev@vger.kernel.org
+Subject: Re: [PATCH v5 2/6] landlock: Add UDP send+connect access control
+Message-ID: <20260613.aiteizei1aiJ@digikod.net>
+References: <20260611162107.49278-1-matthieu@buffet.re>
+ <20260611162107.49278-3-matthieu@buffet.re>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR16MB2846.namprd16.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c9fe3a3-1800-4de6-33b9-08dec97df53f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2026 18:59:55.5465
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR16MB5383
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260611162107.49278-3-matthieu@buffet.re>
+X-Infomaniak-Routing: alpha
 
-PlRoaXMgcGF0Y2ggaXMgcG9pbnRsZXNzLgpUaGlzIHdhcyBzdXBwb3NlZCB0byBhbiBSRkMsIGJ1
-dCBiNCBjb21wbGFpbmVkIHdoZW4gYWRkaW5nIHByZXN1YmplY3QgIltSRkNdIi4KClNvcnJ5IGFi
-b3V0IHRoZSBib3QgYnVpbGQgZXJyb3JzLCB0ZXN0ZWQgYWdhaW5zdCBXU0wgY29uZmlnLiBJcyB0
-aGVyZSBhIHN0YW5kYXJkIGNvbmZpZyB0byBidWlsZCBhZ2FpbnN0IGZvciBwYXRjaGVzPwoKPi0g
-W0hpZ2hdIFRoZSBMb2FkUGluIGVCUEYgdHJ1c3QgbWVjaGFuaXNtIGNhbiBiZSB0cml2aWFsbHkg
-YnlwYXNzZWQKPnVzaW5nIHN0YW5kYXJkIHN5c3RlbSBpbnRlcnByZXRlcnMgbGlrZSB0aGUgZHlu
-YW1pYyBsaW5rZXIgKGBsZC5zb2ApLgo+LSBbSGlnaF0gVGhlIExvYWRQaW4gZUJQRiB0cnVzdCBt
-ZWNoYW5pc20gY2FuIGJlIGJ5cGFzc2VkIGJ5IGEKPnByaXZpbGVnZWQgYXR0YWNrZXIgdXNpbmcg
-cHJjdGwoUFJfU0VUX01NX0VYRV9GSUxFKS4KCkFzIHRoZSBpbnRlbnQgd2FzIGFuIFJGQywgaXMg
-dGhlcmUgYW55IHZhbHVlIGluIHB1cnN1aW5nIExvYWRQaW4gZm9yIGVCUEYgb3IgaXMgaXQgc28g
-dHJpdmlhbGx5IGJ5cGFzc2FibGUgaXRzIG5vdCB3b3J0aCBpdD8KCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KRnJvbTrCoEFsZXhlaSBTdGFyb3ZvaXRvdiA8YWxleGVp
-LnN0YXJvdm9pdG92QGdtYWlsLmNvbT4KU2VudDrCoEZyaWRheSwgSnVuZSAxMiwgMjAyNiAxMDoy
-MCBBTQpUbzrCoERhdmlkIFdpbmRzb3IgPGR3aW5kc29yQGdtYWlsLmNvbT4KQ2M6wqBhbGV4LnJv
-YmVydHMxMDlAb3V0bG9vay5jb20gPGFsZXgucm9iZXJ0czEwOUBvdXRsb29rLmNvbT47IEtlZXMg
-Q29vayA8a2Vlc0BrZXJuZWwub3JnPjsgUGF1bCBNb29yZSA8cGF1bEBwYXVsLW1vb3JlLmNvbT47
-IEphbWVzIE1vcnJpcyA8am1vcnJpc0BuYW1laS5vcmc+OyBTZXJnZSBFIC4gSGFsbHluIDxzZXJn
-ZUBoYWxseW4uY29tPjsgTEtNTCA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz47IExTTSBM
-aXN0IDxsaW51eC1zZWN1cml0eS1tb2R1bGVAdmdlci5rZXJuZWwub3JnPjsgYnBmIDxicGZAdmdl
-ci5rZXJuZWwub3JnPjsgQWxleGVpIFN0YXJvdm9pdG92IDxhc3RAa2VybmVsLm9yZz47IEtQIFNp
-bmdoIDxrcHNpbmdoQGtlcm5lbC5vcmc+ClN1YmplY3Q6wqBSZTogW1BBVENIXSBBZGQgTG9hZFBp
-biBzdXBwb3J0IGZvciBlQlBGIHByb2dyYW0gbG9hZGluZwrCoApPbiBUaHUsIEp1biAxMSwgMjAy
-NiBhdCA1OjA44oCvUE0gRGF2aWQgV2luZHNvciA8ZHdpbmRzb3JAZ21haWwuY29tPiB3cm90ZToK
-Pgo+IE9uIFRodSwgSnVuIDExLCAyMDI2IGF0IDAxOjU5OjEwUE0gLTA1MDAsIEFsZXggUm9iZXJ0
-cyB3cm90ZToKPiA+ICtzdGF0aWMgaW50IGxvYWRwaW5fYnBmX3Byb2dfbG9hZChzdHJ1Y3QgYnBm
-X3Byb2cgKnByb2csIHVuaW9uIGJwZl9hdHRyICphdHRyLAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgYnBmX3Rv
-a2VuICp0b2tlbiwgYm9vbCBpc19rZXJuZWwpCj4gPiArewo+ID4gK8KgwqDCoMKgIGludCByZXMg
-PSAwOwo+ID4gK8KgwqDCoMKgIHN0cnVjdCBmaWxlICpleGVfZmlsZSA9IE5VTEw7Cj4gPiArwqDC
-oMKgwqAgc3RydWN0IG1tX3N0cnVjdCAqbW0gPSBjdXJyZW50LT5tbTsKPiA+ICsKPiA+ICvCoMKg
-wqDCoCBpZiAoaXNfa2VybmVsIHx8ICFtbSkKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-cmV0dXJuIDA7Cj4gPiArCj4gPiArwqDCoMKgwqAgZXhlX2ZpbGUgPSBnZXRfbW1fZXhlX2ZpbGUo
-bW0pOwo+ID4gK8KgwqDCoMKgIGlmICghZXhlX2ZpbGUpCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgIHJldHVybiAwOwo+ID4gKwo+ID4gK8KgwqDCoMKgIHJlcyA9IGxvYWRwaW5fY2hlY2so
-ZXhlX2ZpbGUsIFJFQURJTkdfRUJQRik7Cj4KPiBXaHkgYXJlIHdlIGNoZWNraW5nIGN1cnJlbnQg
-aGVyZT8gSUlVQyB0aGlzIHdpbGwgYmUgd2hvZXZlciBjYWxscwo+IGJwZigyKSwgd2hpY2ggd291
-bGQgYmUgdGhlIGxvYWRlciwgd2hpY2ggd291bGQgdGhlbiBiZSBhYmxlIHRvIGxvYWQgYnBmCj4g
-cHJvZ3JhbXMgZnJvbSBhbiB1bnRydXN0ZWQgc291cmNlLgo+Cj4gSW4gdGhlIGttb2QgY2FzZSBs
-b2FkcGluX2NoZWNrKCkgc2VlcyB0aGUgLmtvIGl0c2VsZi4KClNlZSBzYXNoaWtvIGNvbW1lbnRz
-OgotIFtIaWdoXSBUaGUgTG9hZFBpbiBlQlBGIHRydXN0IG1lY2hhbmlzbSBjYW4gYmUgdHJpdmlh
-bGx5IGJ5cGFzc2VkCnVzaW5nIHN0YW5kYXJkIHN5c3RlbSBpbnRlcnByZXRlcnMgbGlrZSB0aGUg
-ZHluYW1pYyBsaW5rZXIgKGBsZC5zb2ApLgotIFtIaWdoXSBUaGUgTG9hZFBpbiBlQlBGIHRydXN0
-IG1lY2hhbmlzbSBjYW4gYmUgYnlwYXNzZWQgYnkgYQpwcml2aWxlZ2VkIGF0dGFja2VyIHVzaW5n
-IHByY3RsKFBSX1NFVF9NTV9FWEVfRklMRSkuCgphbmQgdGhlIGJvdCBpcyBjb3JyZWN0LgpUaGlz
-IHBhdGNoIGlzIHBvaW50bGVzcy4=
+A few issues were identified by Sashiko:
+https://sashiko.dev/#/patchset/20260611162107.49278-1-matthieu%40buffet.re
+
+I squashed this patch:
+
+diff --git a/security/landlock/net.c b/security/landlock/net.c
+index 9273cdbbf844..b12568666a9e 100644
+--- a/security/landlock/net.c
++++ b/security/landlock/net.c
+@@ -261,10 +261,17 @@ static int current_check_access_socket(struct socket *const sock,
+ 
+ static int current_check_autobind_udp_socket(struct socket *const sock)
+ {
++	const struct access_masks bind_udp = {
++		.net = LANDLOCK_ACCESS_NET_BIND_UDP,
++	};
+ 	struct sockaddr_storage port0 = {};
+ 	unsigned short num;
+ 	bool slow;
+ 
++	/* Quick return for non-Landlocked tasks. */
++	if (!landlock_get_applicable_subject(current_cred(), bind_udp, NULL))
++		return 0;
++
+ 	/*
+ 	 * On UDP sockets, if a local port has not already been bound, calling
+ 	 * connect() or sending a first datagram has the side effect of
+@@ -287,8 +294,7 @@ static int current_check_autobind_udp_socket(struct socket *const sock)
+ 	port0.ss_family = READ_ONCE(sock->sk->sk_family);
+ 
+ 	return current_check_access_socket(sock, (struct sockaddr *)&port0,
+-					   sizeof(port0),
+-					   LANDLOCK_ACCESS_NET_BIND_UDP, false);
++					   sizeof(port0), bind_udp.net, false);
+ }
+ 
+ static int hook_socket_bind(struct socket *const sock,
+@@ -328,7 +334,9 @@ static int hook_socket_connect(struct socket *const sock,
+ 	 * connect()ing to an AF_UNSPEC address does not trigger an autobind and
+ 	 * should never be restricted.
+ 	 */
+-	if (ret == 0 && sk_is_udp(sock->sk) && address->sa_family != AF_UNSPEC)
++	if (ret == 0 && sk_is_udp(sock->sk) &&
++	    addrlen >= offsetofend(typeof(*address), sa_family) &&
++	    address->sa_family != AF_UNSPEC)
+ 		ret = current_check_autobind_udp_socket(sock);
+ 
+ 	return ret;
+
+
+We might want to factor out some code, but that should be good for now.
+
+
+On Thu, Jun 11, 2026 at 06:21:02PM +0200, Matthieu Buffet wrote:
+> Add support for a second fine-grained UDP access right.
+> LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP controls the ability to set the
+> remote port of a socket (via connect()) and to specify an explicit
+> destination when sending a datagram, to override any remote peer set on
+> a UDP socket (e.g. in sendto() or sendmsg()).
+> It will be useful for applications that send datagrams, and for some
+> servers too (those creating per-client sockets, which want to receive
+> traffic only from a specific address).
+> 
+> Similarly as for bind(), this access control is performed when
+> configuring sockets, not in hot code paths.
+> 
+> Add detection of when autobind is about to be required, and deny the
+> operation if the process would not be allowed to call bind(0)
+> explicitly. Autobind can only be performed in udp_lib_get_port() from
+> code paths already controlled by LSM hooks: when connect()ing,
+> sending a first datagram, and in some splice() EOF edge case which,
+> afaiu, can only happen after a remote peer has been set. This invariant
+> needs to be preserved to keep bind policies actually enforced.
+> 
+> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
+> ---
+>  include/uapi/linux/landlock.h               |  23 ++++
+>  security/landlock/audit.c                   |   2 +
+>  security/landlock/limits.h                  |   2 +-
+>  security/landlock/net.c                     | 137 +++++++++++++++++---
+>  tools/testing/selftests/landlock/net_test.c |   5 +-
+>  5 files changed, 151 insertions(+), 18 deletions(-)
+> 
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 045b251ff1b4..b147223efc97 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -378,11 +378,34 @@ struct landlock_net_port_attr {
+>   *
+>   * - %LANDLOCK_ACCESS_NET_BIND_UDP: Bind UDP sockets to the given local
+>   *   port. Support added in Landlock ABI version 10.
+> + * - %LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP: Set the remote port of UDP
+> + *   sockets to the given port, or send datagrams to the given remote port
+> + *   ignoring any destination pre-set on a socket. Support added in
+> + *   Landlock ABI version 10.
+> + *
+> + * .. note:: Setting a remote address or sending a first datagram
+> + *   auto-binds UDP sockets to an ephemeral local source port if not
+> + *   already bound. To allow this if both %LANDLOCK_ACCESS_NET_BIND_UDP
+> + *   and %LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP are handled, you need to
+> + *   either:
+> + *
+> + *   - use a socket already bound to a port before the ruleset started
+> + *     being enforced;
+> + *   - or grant %LANDLOCK_ACCESS_NET_BIND_UDP on port 0, meaning "any
+> + *     port in the ephemeral port range";
+> + *   - or grant %LANDLOCK_ACCESS_NET_BIND_UDP on a specific port, and
+> + *     call :manpage:`bind(2)` on that port before trying to
+> + *     :manpage:`connect(2)` or send datagrams.
+> + *
+> + * .. note:: Sending datagrams to an ``AF_UNSPEC`` destination address
+> + *   family is not supported for IPv6 UDP sockets: you will need to use a
+> + *   ``NULL`` address instead.
+>   */
+>  /* clang-format off */
+>  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+>  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
+>  #define LANDLOCK_ACCESS_NET_BIND_UDP			(1ULL << 2)
+> +#define LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP		(1ULL << 3)
+>  /* clang-format on */
+>  
+>  /**
+> diff --git a/security/landlock/audit.c b/security/landlock/audit.c
+> index e676ebffeebe..851647197a01 100644
+> --- a/security/landlock/audit.c
+> +++ b/security/landlock/audit.c
+> @@ -46,6 +46,8 @@ static const char *const net_access_strings[] = {
+>  	[BIT_INDEX(LANDLOCK_ACCESS_NET_BIND_TCP)] = "net.bind_tcp",
+>  	[BIT_INDEX(LANDLOCK_ACCESS_NET_CONNECT_TCP)] = "net.connect_tcp",
+>  	[BIT_INDEX(LANDLOCK_ACCESS_NET_BIND_UDP)] = "net.bind_udp",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP)] =
+> +		"net.connect_send_udp",
+>  };
+>  
+>  static_assert(ARRAY_SIZE(net_access_strings) == LANDLOCK_NUM_ACCESS_NET);
+> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> index c0f30a4591b8..a4d908b240a2 100644
+> --- a/security/landlock/limits.h
+> +++ b/security/landlock/limits.h
+> @@ -23,7 +23,7 @@
+>  #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
+>  #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
+>  
+> -#define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_BIND_UDP
+> +#define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP
+>  #define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
+>  #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
+>  
+> diff --git a/security/landlock/net.c b/security/landlock/net.c
+> index 8da40614c452..0e697403eca9 100644
+> --- a/security/landlock/net.c
+> +++ b/security/landlock/net.c
+> @@ -44,7 +44,8 @@ int landlock_append_net_rule(struct landlock_ruleset *const ruleset,
+>  static int current_check_access_socket(struct socket *const sock,
+>  				       struct sockaddr *const address,
+>  				       const int addrlen,
+> -				       access_mask_t access_request)
+> +				       access_mask_t access_request,
+> +				       bool connecting)
+>  {
+>  	unsigned short sock_family;
+>  	__be16 port;
+> @@ -75,19 +76,51 @@ static int current_check_access_socket(struct socket *const sock,
+>  
+>  	switch (address->sa_family) {
+>  	case AF_UNSPEC:
+> -		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP) {
+> +		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP ||
+> +		    (access_request == LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP &&
+> +		     connecting)) {
+>  			/*
+>  			 * Connecting to an address with AF_UNSPEC dissolves
+> -			 * the TCP association, which have the same effect as
+> -			 * closing the connection while retaining the socket
+> -			 * object (i.e., the file descriptor).  As for dropping
+> -			 * privileges, closing connections is always allowed.
+> -			 *
+> -			 * For a TCP access control system, this request is
+> -			 * legitimate. Let the network stack handle potential
+> +			 * the remote association while retaining the socket
+> +			 * object (i.e., the file descriptor). For TCP, it has
+> +			 * the same effect as closing the connection. For UDP,
+> +			 * it removes any preset remote address. As for
+> +			 * dropping privileges, these actions are always
+> +			 * allowed.
+> +			 * Let the network stack handle potential
+>  			 * inconsistencies and return -EINVAL if needed.
+>  			 */
+>  			return 0;
+> +		} else if (access_request ==
+> +			   LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP) {
+> +			if (sock_family == AF_INET6) {
+> +				/*
+> +				 * We cannot allow sending UDP datagrams to an
+> +				 * explicit AF_UNSPEC address on IPv6 sockets,
+> +				 * even if AF_UNSPEC is treated as "no address"
+> +				 * on such sockets (so it should always be allowed).
+> +				 * That's because the socket's family can change under
+> +				 * our feet (if another thread calls setsockopt(IPV6_ADDRFORM))
+> +				 * to IPv4, which would then treat AF_UNSPEC as
+> +				 * AF_INET.
+> +				 */
+> +				audit_net.family = AF_UNSPEC;
+> +				audit_net.sk = sock->sk;
+> +				landlock_init_layer_masks(
+> +					subject->domain, access_request,
+> +					&layer_masks, LANDLOCK_KEY_NET_PORT);
+> +				landlock_log_denial(
+> +					subject,
+> +					&(struct landlock_request){
+> +						.type = LANDLOCK_REQUEST_NET_ACCESS,
+> +						.audit.type =
+> +							LSM_AUDIT_DATA_NET,
+> +						.audit.u.net = &audit_net,
+> +						.access = access_request,
+> +						.layer_masks = &layer_masks,
+> +					});
+> +				return -EACCES;
+> +			}
+>  		} else if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP ||
+>  			   access_request == LANDLOCK_ACCESS_NET_BIND_UDP) {
+>  			/*
+> @@ -130,7 +163,11 @@ static int current_check_access_socket(struct socket *const sock,
+>  		} else {
+>  			WARN_ON_ONCE(1);
+>  		}
+> -		/* Only for bind(AF_UNSPEC+INADDR_ANY) on IPv4 socket. */
+> +		/*
+> +		 * AF_UNSPEC is treated as AF_INET only in
+> +		 * bind(AF_UNSPEC+INADDR_ANY) on IPv4 sockets and
+> +		 * when sending to AF_UNSPEC addresses on IPv4 sockets.
+> +		 */
+>  		fallthrough;
+>  	case AF_INET: {
+>  		const struct sockaddr_in *addr4;
+> @@ -141,7 +178,8 @@ static int current_check_access_socket(struct socket *const sock,
+>  		addr4 = (struct sockaddr_in *)address;
+>  		port = addr4->sin_port;
+>  
+> -		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP) {
+> +		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP ||
+> +		    access_request == LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP) {
+>  			audit_net.dport = port;
+>  			audit_net.v4info.daddr = addr4->sin_addr.s_addr;
+>  		} else if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP ||
+> @@ -164,7 +202,8 @@ static int current_check_access_socket(struct socket *const sock,
+>  		addr6 = (struct sockaddr_in6 *)address;
+>  		port = addr6->sin6_port;
+>  
+> -		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP) {
+> +		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP ||
+> +		    access_request == LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP) {
+>  			audit_net.dport = port;
+>  			audit_net.v6info.daddr = addr6->sin6_addr;
+>  		} else if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP ||
+> @@ -221,6 +260,38 @@ static int current_check_access_socket(struct socket *const sock,
+>  	return -EACCES;
+>  }
+>  
+> +static int current_check_autobind_udp_socket(struct socket *const sock)
+> +{
+> +	struct sockaddr_storage port0 = {};
+> +	unsigned short num;
+> +	bool slow;
+> +
+> +	/*
+> +	 * On UDP sockets, if a local port has not already been bound,
+> +	 * calling connect() or sending a first datagram has the side
+> +	 * effect of autobinding an ephemeral port: we also have to check
+> +	 * that the process would have had the right to bind(0) explicitly.
+> +	 * Hold the socket lock around the inet_num read to exclude
+> +	 * udp_lib_get_port()'s transient inet_num = snum write that is
+> +	 * reverted to 0 on a failing reuseport bind.
+> +	 */
+> +	slow = lock_sock_fast(sock->sk);
+> +	num = inet_sk(sock->sk)->inet_num;
+> +	unlock_sock_fast(sock->sk, slow);
+> +	if (num != 0)
+> +		return 0;
+> +
+> +	/*
+> +	 * Construct a struct sockaddr* with port 0 to pretend the
+> +	 * process tried to bind() on that address.
+> +	 */
+> +	port0.ss_family = READ_ONCE(sock->sk->sk_family);
+> +
+> +	return current_check_access_socket(sock, (struct sockaddr *)&port0,
+> +					   sizeof(port0),
+> +					   LANDLOCK_ACCESS_NET_BIND_UDP, false);
+> +}
+> +
+>  static int hook_socket_bind(struct socket *const sock,
+>  			    struct sockaddr *const address, const int addrlen)
+>  {
+> @@ -234,7 +305,7 @@ static int hook_socket_bind(struct socket *const sock,
+>  		return 0;
+>  
+>  	return current_check_access_socket(sock, address, addrlen,
+> -					   access_request);
+> +					   access_request, false);
+>  }
+>  
+>  static int hook_socket_connect(struct socket *const sock,
+> @@ -242,19 +313,55 @@ static int hook_socket_connect(struct socket *const sock,
+>  			       const int addrlen)
+>  {
+>  	access_mask_t access_request;
+> +	int ret = 0;
+>  
+>  	if (sk_is_tcp(sock->sk))
+>  		access_request = LANDLOCK_ACCESS_NET_CONNECT_TCP;
+> +	else if (sk_is_udp(sock->sk))
+> +		access_request = LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP;
+>  	else
+>  		return 0;
+>  
+> -	return current_check_access_socket(sock, address, addrlen,
+> -					   access_request);
+> +	ret = current_check_access_socket(sock, address, addrlen,
+> +					  access_request, true);
+> +
+> +	/*
+> +	 * connect()ing to an AF_UNSPEC address does not trigger an
+> +	 * autobind and should never be restricted.
+> +	 */
+> +	if (ret == 0 && sk_is_udp(sock->sk) && address->sa_family != AF_UNSPEC)
+> +		ret = current_check_autobind_udp_socket(sock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int hook_socket_sendmsg(struct socket *const sock,
+> +			       struct msghdr *const msg, const int size)
+> +{
+> +	struct sockaddr *const address = msg->msg_name;
+> +	const int addrlen = msg->msg_namelen;
+> +	access_mask_t access_request;
+> +	int ret = 0;
+> +
+> +	if (sk_is_udp(sock->sk))
+> +		access_request = LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP;
+> +	else
+> +		return 0;
+> +
+> +	if (address != NULL)
+> +		ret = current_check_access_socket(sock, address, addrlen,
+> +						  access_request, false);
+> +
+> +	if (ret == 0)
+> +		ret = current_check_autobind_udp_socket(sock);
+> +
+> +	return ret;
+>  }
+>  
+>  static struct security_hook_list landlock_hooks[] __ro_after_init = {
+>  	LSM_HOOK_INIT(socket_bind, hook_socket_bind),
+>  	LSM_HOOK_INIT(socket_connect, hook_socket_connect),
+> +	LSM_HOOK_INIT(socket_sendmsg, hook_socket_sendmsg),
+>  };
+>  
+>  __init void landlock_add_net_hooks(void)
+> diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
+> index ec392d971ea3..016c7277e370 100644
+> --- a/tools/testing/selftests/landlock/net_test.c
+> +++ b/tools/testing/selftests/landlock/net_test.c
+> @@ -1326,12 +1326,13 @@ FIXTURE_TEARDOWN(mini)
+>  
+>  /* clang-format off */
+>  
+> -#define ACCESS_LAST LANDLOCK_ACCESS_NET_BIND_UDP
+> +#define ACCESS_LAST LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP
+>  
+>  #define ACCESS_ALL ( \
+>  	LANDLOCK_ACCESS_NET_BIND_TCP | \
+>  	LANDLOCK_ACCESS_NET_CONNECT_TCP | \
+> -	LANDLOCK_ACCESS_NET_BIND_UDP)
+> +	LANDLOCK_ACCESS_NET_BIND_UDP | \
+> +	LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP)
+>  
+>  /* clang-format on */
+>  
+> -- 
+> 2.47.3
+> 
+> 
