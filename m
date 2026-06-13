@@ -1,78 +1,258 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095851EEE6
-	for <linux-security-module@vger.kernel.org>; Sat, 13 Jun 2026 02:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC3D346E56
+	for <linux-security-module@vger.kernel.org>; Sat, 13 Jun 2026 04:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781319290; cv=none; b=beEEll6xS0wMdHxbVhAlVVMvnGaOVJiFpF19Uy+O2T8OYL6PySrs7ot2ZG8n/n96xcJoDsjNihTCCHO3iik1s4meH7DLraExlSGEuUIvAYWccTMR8BxaTmI6VtIwU23TY7P6P2Qxb9Oea5FLVXbx1Vtg3crfmZcgC3IBv+f1uwU=
+	t=1781325643; cv=none; b=eLSN3rtbCr3Pd2ON5wtZfXEoK3Ecy8D1Ty5m//Sn9viaebXVVsG9yWwPTd4k6qbgLoOlQVf6y+d06SQvF/ejCCArQgwpQhJhxOjQTp6I3RXGD8yh+orMGFKk0cHOwuZL2XnicJKMGAZcS7zyA3TYB4TL4HWbvvxAj5eGS3jYHh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781319290; c=relaxed/simple;
-	bh=dTQtBMDvmSV2r4k7FWElep648Zj5VqCzYNr5DQhz+P8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bYnDbbTYYED5KAjqtM3U243RTdQ3WgqwvNHw2aRm4ZVlkytDqnyKSaFu9i/pFx5h8w5BMaObKv6r/aYOE2V1xRblFW/xbObWO8P4x/54ASytaYY4mQewyhCEyxjSO7RZl7DBy82BjjR9XOo4nUmIH+qK+aP5HEIECE1bCHC0Gs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Owfy+vSC; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781325643; c=relaxed/simple;
+	bh=zRBTu1A0Be6ZKXrsy73gH2oh0g2kPc7iIlvK97Liljs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q7/EdCaMM5+MlGtcIDSQ8bNCJ7Oq7BYfGP7xHu1HTvuZdou30mCov6UPwJ6e06WN1KJF2wlZuS9M3gy5iXiwAEKXxSxnngtR2sDoZMgfiYWph7M1vwSaUA5cZ79/zRsFuNKqI675ELkeISyO11CGa3w8gvzTSzA5qtkPwLwNhu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=sHWbWL03; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Owfy+vSC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C56021F00A3E
-	for <linux-security-module@vger.kernel.org>; Sat, 13 Jun 2026 02:54:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781319289;
-	bh=dTQtBMDvmSV2r4k7FWElep648Zj5VqCzYNr5DQhz+P8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Owfy+vSCyVQUlgV04dfjl+8LW5A5WC3GJNASX92KGrdoOv8HiHWqbtc0aQe7dtpz9
-	 u/ahTDFObSPsF7Gmv8TYekvLWOvWFW9Ze2H5OAW/7lkaq3Oq8sJE6qxWOGi0n6xPu8
-	 2SdUUqgUdfhOVfzdpHnlqs30dUi5YL4t9Yl0zL4brrQxUa6ccEYgJ583+xHp/ed+eP
-	 Rz6zjE5dnRxFzrz8CI1p/eqmcN9jwnyU8gltzQV5PcKdoMwgNrWPMMVmKo6t7syPl9
-	 zuwBhHUm9clses25TtSJw+UJWAPl9TAGTkUKse1WnhmbXl2q1YhZZwzMf+Au45af3u
-	 ic6iEw8AvaKsA==
-Received: by mail-dl1-f54.google.com with SMTP id a92af1059eb24-13721dfd471so1875846c88.1
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Jun 2026 19:54:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ+TlamuekCp+eDit1PSG5KkIxRVHCOh5lYNDU9J/ADkLYF30+s/nyHZLC6w3V4hM+nbG/BGOWG/1WL8dlvU/WBroeNfM0g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/HfZkqaoQmK1JHlf5BjA/oiGEPpidWydCU59OuqoNAVDWllmD
-	3bOHBHJrL0q367o8LikUi8uF27qEBGjYRtvaqO8E9A9wNM6k+qhjQt4dhvTmz1vz6wXfkjudFwf
-	8+8+z5qbyNnGHFg32Dl3YukIE7d9yJtE=
-X-Received: by 2002:a05:7022:3d0c:b0:138:4fc9:160d with SMTP id
- a92af1059eb24-138790227dbmr942234c88.35.1781319289300; Fri, 12 Jun 2026
- 19:54:49 -0700 (PDT)
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="sHWbWL03"
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id B42373F861
+	for <linux-security-module@vger.kernel.org>; Sat, 13 Jun 2026 04:40:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20251003; t=1781325631;
+	bh=7D/U3m+0FGnBHJREEG6qJ7+tzxYRCsOc5bWJ6KTvx3c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=sHWbWL03tP9MEVAf8ypKafyGm7oXcDjXKGu0+AcG/YX+33C814UAbJwZVfpGSlzA+
+	 PyUnxIp7c+yJ81FMJGzxXpaBTvGbH+Z9BjBzZT9WfMkDHXMol0NWVZzb3DaS50+00s
+	 PIqHcrm3GLNSj/ZCAKqD99VqYPBLnwzRhkxM8t0uRlUn5HGLxLgcIaiZGCU/qbfj7M
+	 liSeRSxb1HkT4mj8riGCPYQ2I9uG2ZGEGRR9p657rZDTyQzsHrAY1o2qi3BQh+1nPU
+	 loYNDiv7mAj0VMHs5KnX7mH0cbL9+8UojZsaH3fx+qZceulcF+ktzdJxnVMuzV5TL2
+	 2UjYrCebFw1r0hK0YgMTsOaHR8tKQP1cx5oStEiIhTec8mrCYEiovx6a77SOujbRse
+	 hAzkugT0XL1dfCz/ZQNS5MIS9T1QTdI24OOQtcJTRf2z2sE+5v3H/3Qkzjfx47XhPR
+	 cWBlEls0dF62DVO7ocbdyaNijVH857onGm3JF+IcU8MBiHE2wmxXz+PQpRbS8OJ9eP
+	 xKM+qCEKu2VNS4jXcCTO8jz9jB4fSyWjJTgYBAT6WhQ/IcX/9EEx1/sHDQGXAdaZHU
+	 mw0lGt+o/q7esjuwAXA3B1Od1TvEChWzwmMEXcspKcNYNC4n9Y1XS7iGYsjEyQWCXy
+	 SK/6hHAoXCqC0cpkWgUrcssQ=
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2c0c32f4b1bso16162075ad.2
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Jun 2026 21:40:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781325630; x=1781930430;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7D/U3m+0FGnBHJREEG6qJ7+tzxYRCsOc5bWJ6KTvx3c=;
+        b=SArFZIriaUIuvARjuQpUkXbf/uKfArdLQWcyNCde6wYnVtDQmQ0AfW06PP9K/kRoQ9
+         KcFQksqqjV/t4d4OmGlbER967EnBVTB6aYJyHB1xqr5DkcUYXQuUXPGL6k3mB42nv+sq
+         24y8q8A+5YEFvD82BxiZjHNF2Z2/D6+lO3TaJavJOF8Njzdy4eXvh/8658lYjjjQ1wXV
+         E/MTwuV+T+E5QbHADlNL6yDGnEyDI1BEGyuVUkV8f+gPn9wIPvU/7rHAVZjMPVLPSzo2
+         Dc647YeutONOCqKuHBjulwORa0q0uFiwU0FdQ+MDwAJA6/ht7O2kW2+qyGln5dhzra+D
+         XCXQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9S5yzMigsTwPSAeF3NF4jTO8AFmFhHd/GXy8+R1yEJatC6X5TSCqZQLecrLaIF8jLskv4Zkz2rpyODtHEc5G5m/F6LtKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFXqW+CLseMzGWedLpwB8aY1jn1Af3Xc/bKeJgSXwXX4R7qokP
+	2u1uIdANpZSmVWT4hwrAkMDBlzoMw++2KIiKHX5t0r82hJTOmo/piy15cncGvriUJvBs7l404uH
+	7GfsJgV3DNasK9dYnl205mpT7UZPg9r/nNVtiegFufwo/Qj757tzwGQhtaGhKDh2tsOLn4apzoj
+	l8DsPLOXp5Ob5KXZx2rg==
+X-Gm-Gg: Acq92OGrgllU1B+mTkU0rKKzu6Hg8I/Lp3fs4OaY9h7PHpAOEoL5yX/2EOQ3w+KP1nl
+	Djo3x/FcyT43YXtBK/FyZTUF6DM9bdsJ01SQAYMKoWiTD9PpF0pQfxP+sfLd8IrsGhWjaAbSeyH
+	vtg2HKKb2Fno7pdgjK1f36gLtBI0sYsLUa15otGwcp9lMJKqG6Vz0HRTo2n/2hs82KkPJJ2jaRU
+	DNwYn/bB/O8wJiNa83AoXYYRPAceZE/jx/hj6HUZ6ZEIpXJVpIsdM8ix5G0buJuK1t8QjmcRxhx
+	akl8w+6Mylp2qh+mT6nksGSsZCR0BYhwyK8MrA2ABfEyEWkcBi/ZzY5G8txzoWntgmLEWxkdFFG
+	oGa0MpjptvZSHKQCo5XUV/Gqd05QqvK0fKJkG
+X-Received: by 2002:a17:90b:3a81:b0:36d:633a:e7e5 with SMTP id 98e67ed59e1d1-37c2bc5d64bmr2065401a91.3.1781325629878;
+        Fri, 12 Jun 2026 21:40:29 -0700 (PDT)
+X-Received: by 2002:a17:90b:3a81:b0:36d:633a:e7e5 with SMTP id 98e67ed59e1d1-37c2bc5d64bmr2065385a91.3.1781325629470;
+        Fri, 12 Jun 2026 21:40:29 -0700 (PDT)
+Received: from [192.168.192.71] ([50.47.147.90])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-c8665186828sm3051436a12.21.2026.06.12.21.40.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jun 2026 21:40:28 -0700 (PDT)
+Message-ID: <847161f0-7c76-4765-bd2d-dbdda242e2a8@canonical.com>
+Date: Fri, 12 Jun 2026 21:40:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1781105672.git.zhuyan2015@qq.com> <tencent_DADDE291CA580302EB7BB40B83A552D6F006@qq.com>
-In-Reply-To: <tencent_DADDE291CA580302EB7BB40B83A552D6F006@qq.com>
-From: Fan Wu <wufan@kernel.org>
-Date: Fri, 12 Jun 2026 19:54:38 -0700
-X-Gmail-Original-Message-ID: <CAKtyLkE3unhxMsH1LpqvjHQoKVgz1tcTsZWUxNHs+R6v2amf6w@mail.gmail.com>
-X-Gm-Features: AVVi8CftctKBny0jAU4ifk3qIkc0KbuixpNCAMW7ye9rflDa0lxZ53ouLeLjJ4U
-Message-ID: <CAKtyLkE3unhxMsH1LpqvjHQoKVgz1tcTsZWUxNHs+R6v2amf6w@mail.gmail.com>
-Subject: Re: [PATCH 09/10] docs/zh_CN: add LSM/ipe Chinese translation
-To: Yan Zhu <zhuyan2015@qq.com>
-Cc: alexs@kernel.org, si.yanteng@linux.dev, corbet@lwn.net, mic@digikod.net, 
-	dzm91@hust.edu.cn, skhan@linuxfoundation.org, gnoack@google.com, 
-	linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] apparmor: Fix string overrun due to missing
+ termination
+To: Daniel J Blueman <daniel@quora.org>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Thorsten Blum <thorsten.blum@linux.dev>, apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20260327115833.7572-1-daniel@quora.org>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20260327115833.7572-1-daniel@quora.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 12, 2026 at 8:59=E2=80=AFAM Yan Zhu <zhuyan2015@qq.com> wrote:
->
-> Translate Documentation/admin-guide/LSM/ipe.rst into Chinese.
->
-> Update the translation through commit d7ba853c0e47
-> ("ipe: Update documentation for script enforcement")
->
-> Assisted-by: Claude:deepseek-4-pro
-> Signed-off-by: Yan Zhu <zhuyan2015@qq.com>
+On 3/27/26 04:58, Daniel J Blueman wrote:
+> When booting Ubuntu 26.04 with Linux 7.0-rc4 on an ARM64 Qualcomm
+> Snapdragon X1 we see a string buffer overrun:
+> 
+> BUG: KASAN: slab-out-of-bounds in aa_dfa_match (security/apparmor/match.c:535)
+> Read of size 1 at addr ffff0008901cc000 by task snap-update-ns/2120
+> 
+> CPU: 5 UID: 60578 PID: 2120 Comm: snap-update-ns Not tainted 7.0.0-rc4+ #22 PREEMPTLAZY
+> Hardware name: LENOVO 83ED/LNVNB161216, BIOS NHCN60WW 09/11/2025
+> Call trace:
+> show_stack (arch/arm64/kernel/stacktrace.c:501) (C)
+> dump_stack_lvl (lib/dump_stack.c:122)
+> print_report (mm/kasan/report.c:379 mm/kasan/report.c:482)
+> kasan_report (mm/kasan/report.c:597)
+> __asan_report_load1_noabort (mm/kasan/report_generic.c:378)
+> aa_dfa_match (security/apparmor/match.c:535)
+> match_mnt_path_str (security/apparmor/mount.c:244 security/apparmor/mount.c:336)
+> match_mnt (security/apparmor/mount.c:371)
+> aa_bind_mount (security/apparmor/mount.c:447 (discriminator 4))
+> apparmor_sb_mount (security/apparmor/lsm.c:719 (discriminator 1))
+> security_sb_mount (security/security.c:1062 (discriminator 31))
+> path_mount (fs/namespace.c:4101)
+> __arm64_sys_mount (fs/namespace.c:4172 fs/namespace.c:4361 fs/namespace.c:4338 fs/namespace.c:4338)
+> invoke_syscall.constprop.0 (arch/arm64/kernel/syscall.c:35 arch/arm64/kernel/syscall.c:49)
+> el0_svc_common.constprop.0 (./include/linux/thread_info.h:142 (discriminator 2) arch/arm64/kernel/syscall.c:140 (discriminator 2))
+> do_el0_svc (arch/arm64/kernel/syscall.c:152)
+> el0_svc (arch/arm64/kernel/entry-common.c:80 arch/arm64/kernel/entry-common.c:725)
+> el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:744)
+> el0t_64_sync (arch/arm64/kernel/entry.S:596)
+> 
+> Allocated by task 2120:
+> kasan_save_stack (mm/kasan/common.c:58)
+> kasan_save_track (./arch/arm64/include/asm/current.h:19 mm/kasan/common.c:70 mm/kasan/common.c:79)
+> kasan_save_alloc_info (mm/kasan/generic.c:571)
+> __kasan_kmalloc (mm/kasan/common.c:419)
+> __kmalloc_noprof (./include/linux/kasan.h:263 mm/slub.c:5260 mm/slub.c:5272)
+> aa_get_buffer (security/apparmor/lsm.c:2201)
+> aa_bind_mount (security/apparmor/mount.c:442)
+> apparmor_sb_mount (security/apparmor/lsm.c:719 (discriminator 1))
+> security_sb_mount (security/security.c:1062 (discriminator 31))
+> path_mount (fs/namespace.c:4101)
+> __arm64_sys_mount (fs/namespace.c:4172 fs/namespace.c:4361 fs/namespace.c:4338 fs/namespace.c:4338)
+> invoke_syscall.constprop.0 (arch/arm64/kernel/syscall.c:35 arch/arm64/kernel/syscall.c:49)
+> el0_svc_common.constprop.0 (./include/linux/thread_info.h:142 (discriminator 2) arch/arm64/kernel/syscall.c:140 (discriminator 2))
+> do_el0_svc (arch/arm64/kernel/syscall.c:152)
+> el0_svc (arch/arm64/kernel/entry-common.c:80 arch/arm64/kernel/entry-common.c:725)
+> el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:744)
+> el0t_64_sync (arch/arm64/kernel/entry.S:596)
+> 
+> The buggy address belongs to the object at ffff0008901ca000
+> which belongs to the cache kmalloc-rnd-06-8k of size 8192
+> The buggy address is located 0 bytes to the right of
+> allocated 8192-byte region [ffff0008901ca000, ffff0008901cc000)
+> 
+> The buggy address belongs to the physical page:
+> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x9101c8
+> head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:-1 pincount:0
+> flags: 0x8000000000000040(head|zone=2)
+> page_type: f5(slab)
+> raw: 8000000000000040 ffff000800016c40 fffffdffe2d14e10 ffff000800015c70
+> raw: 0000000000000000 0000000800010001 00000000f5000000 0000000000000000
+> head: 8000000000000040 ffff000800016c40 fffffdffe2d14e10 ffff000800015c70
+> head: 0000000000000000 0000000800010001 00000000f5000000 0000000000000000
+> head: 8000000000000003 fffffdffe2407201 fffffdffffffffff 00000000ffffffff
+> head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
+> page dumped because: kasan: bad access detected
+> 
+> Memory state around the buggy address:
+> ffff0008901cbf00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ffff0008901cbf80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>> ffff0008901cc000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ^
+> ffff0008901cc080: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff0008901cc100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> 
+> This was introduced by previous incorrect conversion from strcpy(). Fix it
+> by adding the missing terminator.
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Daniel J Blueman <daniel@quora.org>
+> Fixes: 93d4dbdc8da0 ("apparmor: Replace deprecated strcpy in d_namespace_path")
+
+sorry for the lateness of my reply, my email wasn't working when I pulled this
+in for 7.1
+
+just for the record
+
+Acked-by: John Johansen <john.johansen@canonical.com>
+
 > ---
+>   security/apparmor/path.c | 8 +++++---
+>   1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/security/apparmor/path.c b/security/apparmor/path.c
+> index 65a0ca5cc1bd..2494e8101538 100644
+> --- a/security/apparmor/path.c
+> +++ b/security/apparmor/path.c
+> @@ -164,14 +164,16 @@ static int d_namespace_path(const struct path *path, char *buf, char **name,
+>   	}
+>   
+>   out:
+> -	/* Append "/" to directory paths, except for root "/" which
+> -	 * already ends in a slash.
+> +	/* Append "/" to directory paths and reterminate string, except for
+> +	 * root "/" which already ends in a slash.
+>   	 */
+>   	if (!error && isdir) {
+>   		bool is_root = (*name)[0] == '/' && (*name)[1] == '\0';
+>   
+> -		if (!is_root)
+> +		if (!is_root) {
+>   			buf[aa_g_path_max - 2] = '/';
+> +			buf[aa_g_path_max - 1] = '\0';
+> +		}
+>   	}
+>   
+>   	return error;
 
-Have you tried to refine the AI translation? IMO some are really bad transl=
-ated.
-
-Also how does the doc translation project work? I do notice there is
-another IPE design doc translation,
-https://docs.kernel.org/next/translations/zh_CN/security/ipe.html
-which has a wrong "original link".
-
--Fan
