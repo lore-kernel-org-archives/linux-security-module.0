@@ -1,87 +1,60 @@
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DA02C21D8
-	for <linux-security-module@vger.kernel.org>; Fri, 12 Jun 2026 01:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A6634405B;
+	Fri, 12 Jun 2026 06:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781228966; cv=none; b=i/5CJNFMgFavZJnV0F7cREHvZ1y9p3O8Jn9jheK6MshTv7R3svzhz8auENHoAfAdSUDOONa6i5xZUA4MYtdeig54hIc/+46CS0fO4VkbcGB/+lAt/b8ubtQwe9+jmrV8L17ApbrNYXLYDGpdWWac6cvqfd/wx9LEAjmRbAuIVV8=
+	t=1781244625; cv=none; b=RrATlrDT2GLvqOQe7e95xFK2AXKVBvLJpFv9ocykzVjYc0kmEFRKoS1KC5VqUJRV0Ba2pQWdhuyQrBwlM7OC3H4+nHZV8j7uo0uknWds9qUXb+T5EZ5rSQQ69dB01ueSDE2E5CSGBeQtSD1YwXgOtESxgOrroux9P8u1ExDBT5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781228966; c=relaxed/simple;
-	bh=Ru2a86M2fqoXWMHWzLgSsXr9za/N81B7hojsocd5Gdc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XYyR2XbmVLkzp2nsWgbZHCgYMF5+MAUW+pCLD+6m6id3VNfIxmR/mO0/jwWmeMVSiItTKmyqKW8k3wl+OOPm5c/jDwEM2Fh5kBy0vJiRd9TKY+8p0d+sBjyz67tOUdG/frghKdVpMmKOnxIc8e76QOdiOCVrIIXg9SVwyL8kxN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=l1+WJPNL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JpyWe8oT; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	s=arc-20240116; t=1781244625; c=relaxed/simple;
+	bh=/pnmg4b6IbGgKPW95mtpYJMdXdq9qWFLslJWXAfkC98=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rx+JmJQ7hNALO5U6V8SObhp/PawBZVTHhKGFcXmLwRVaDaATROu25hpOlZ5h1bNUylnnzvo+SXyjOjblaee8yXAnyFz+L2Lz1P3RLP6yOCNf+TFbptz7G5S2TD6gzEXY8DALrearWBIQnoXe1mmpKSIZtBpY5ybPc1zfvhzGgY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q4jbyr2F; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="l1+WJPNL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JpyWe8oT"
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id EACFF7A00F6;
-	Thu, 11 Jun 2026 21:49:24 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Thu, 11 Jun 2026 21:49:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1781228964; x=
-	1781315364; bh=oTuzTq8Yho+CQijMGMVhKlGaJlQ+kGouoR0/M7tPdxA=; b=l
-	1+WJPNLPqGtsINL50LbDxiFl+RscV3kg3C95sYh6sk2ML79D/hfyjZyp/paor7Zk
-	tKdwSKN9tf2EpThhpq2vrosj4lkFEL49SlnsA3uuuYKJS+qoVKzt74ZH6C6L+5RI
-	QgJGdEJz2hJjaF4H+Z16+/qgB4Lery9wHUSvrt7raSshS623/rMWNuPEXM8D/uu/
-	57V/KuJjJ5YQivzvRyUTNR11Uhhjo73Sm4ki+tGdtzaJJtow2n7SjzL1QKjwELIO
-	+KwekYbGZPLC8W7gFTpA4DNbSIOZopGSvKr0pEiOEfGXezEw0nxucx1dCG7aute/
-	G/Ru0otmPTOr8/iTfnJ3A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1781228964; x=1781315364; bh=o
-	TuzTq8Yho+CQijMGMVhKlGaJlQ+kGouoR0/M7tPdxA=; b=JpyWe8oTdHnOlxhHJ
-	0ypQoqQ6uAQJc218Osx+D2xp0Ty/T/sREui7nO2UT6CSOzHGmcT3XLElJ3dYl1Ar
-	poftwjQkoUF6+np6YUSqWNuKg2CD1v0C9KHxmbAW6lkzgDWn0tKCnirxwirfQ2mh
-	CrtTEIkwhAQR+2asp67titD8pCexrVlFwUvgMPTusyHW897txpqpWYb9tL21Bsct
-	g07dspZaX6TiYZx1DD2dP4UgY5AiRfoeQKxI6BFSvtm08Fwi/ZWw439x/lwj2NXy
-	C84phgWd9yoD3GeZQqUW6LTPb86qCn6ztPzJB/gkVmdIE+1/7cYhIzvZSt7hzQIY
-	DM8nw==
-X-ME-Sender: <xms:pGUravDH8IFTVFyrnwKv10y55u9jRmeLHGCYpvSR1pBr5ERUFYNWRg>
-    <xme:pGUranzFNBdsaoyDAcA_EmGH0uxj0MeS-HGrrXCCRFXAamjJJws5zfYRidXI8lXPg
-    TyWUy9wWbIgNOJcqYkUSNvSVGzukSd6QCmAnLx-Rh7v4jVtpCmxU9g>
-X-ME-Received: <xmr:pGUras1ZeczhhwHlYtc-WpETsFhtMBe2uNxaEkrpYQX2nQ8jDCpmavJdmC8ZGYu6R8a8-BmtC36oJqPRrzkI-NQmuJl38m2vh_o5p6STr0dZcVwtcplvSVVZH28>
-X-ME-Proxy-Cause: dmFkZTErrYj+6BPPVz1/IV8jcji/YbJf7tNmbzKUklDVBw37Mo5r82nPd5buxFHV4OrxKd
-    +00SDQV9sSVg4R4yvs2QLHos0drG5qYNr6GNhg9D8ngYxfJUcCtRRhPXhE6kz5yGXnYKMY
-    oJHiB0gAaPzyeGZH5d5BTyheBut4xCTujqDHaTful/fQaUhKYSKVr/XYUjihn5pTjMkS8X
-    sKVE+fTH1iGH2FWO/9EBeuJFKXH3xovFqufQzUi7llGvIp9TU54IXL348v2qQAgPhg5ZW1
-    SUBEtCpHKVb2aYxBd3Ta7zLOiViueqFsE4VHkel083qbKxQFVcQ42U+V55ljlncHcKp7NP
-    ecciijLFa3Ipt6XjqLiIiSixeG8SK8WmloesLN5OOJ8VGEyRMn4mYkjtz1HkOf7a1iQ7mc
-    utTiFK8iVSekhdvdVifcbJpY5mLRtFivO5CFHlWvNX11LaPjzNY8GZ1uxnZ9E3kfXmH+np
-    dq9ldADxw/csYkDCWkZ1gT+v0ms0k0L0CWxKl1OVbjMzte4yR/9iqLAO89DGA7yCuCLo+9
-    TczoobwC21PwC8NcO3BNG9tRjmFtDzzX4myaqKAVLY33NyxTBhzsAceEO8sPB/KXRS8gfA
-    JqBxF+Bpqevuivguaz+PXdTgQHVI6JemuWecDCB6nj1qtXUR3IdYSeC41dvw
-X-ME-Proxy: <xmx:pGUranzYBDRAgsU6ZRPP6whsaMzBIO1qlphw-VFkPJJr4udbzmtV2g>
-    <xmx:pGUrajFplOKV8nV_PmwvQ_Y1S8BGZTmcKj0YWukschaBgn-HhABYFA>
-    <xmx:pGUraqYvLJl7xeLxOdJdoEZhGkbxVQw9UeRtylPegYtiHTR4ig-p0A>
-    <xmx:pGUralDJgT-rJD6pVOUZiIHqQxxOw1OGPzWJWQjxinfeurfvW5JW-A>
-    <xmx:pGUrakeNpbRS1IKGx4r0oUDj33rt5AwLoA5CQZnt6U29Tsgi6XsSYhNe>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 11 Jun 2026 21:49:23 -0400 (EDT)
-From: Tingmao Wang <m@maowtm.org>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: Tingmao Wang <m@maowtm.org>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
-	Justin Suess <utilityemal77@gmail.com>,
-	Jan Kara <jack@suse.cz>,
-	Abhinav Saxena <xandfury@gmail.com>,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH v11 9/9] selftests/landlock: Add tests for invalid use of quiet flag
-Date: Fri, 12 Jun 2026 02:48:55 +0100
-Message-ID: <9401d5c6468675863d944d6c26640d97db1a1f31.1781228815.git.m@maowtm.org>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <cover.1781228815.git.m@maowtm.org>
-References: <cover.1781228815.git.m@maowtm.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q4jbyr2F"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1781244623; x=1812780623;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=/pnmg4b6IbGgKPW95mtpYJMdXdq9qWFLslJWXAfkC98=;
+  b=Q4jbyr2FFRUT7zK9SOuugXNgFmP8NxB4eLWpBHXXTiflrkj4Ny/ymTFR
+   VU5dBaAwVKS8xqS150shrWrg7qTTGxlG18HebIxlOb+nm9mJOdwkQpPQv
+   fBu0q5u0Vtt5R/B3rQHE5BbI/h9QBE4B+kbrvALuMAelelcw3WP5zC8ZD
+   ZJUN3+lgPaPYDmI+M/urkv2QGjXNWO+t85749kJPmK95LRCWeLW05KCbB
+   QUAu+k2MlU1disXs3S7migVbUu411srTFmM1Ybi9atq63ePyh+fa+ONaG
+   FLJlN0KitOFh8LpDkS1I2/BU61Qy0n4Je7nF9xR7MbNUKgg0/bjn3Mq1b
+   w==;
+X-CSE-ConnectionGUID: UFs3O/ogQQGuhWSCePN/rg==
+X-CSE-MsgGUID: 3LyLgCZySOuRjc9T69/gDA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11813"; a="81813398"
+X-IronPort-AV: E=Sophos;i="6.24,200,1774335600"; 
+   d="scan'208";a="81813398"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2026 23:10:18 -0700
+X-CSE-ConnectionGUID: WKbNtLBQQ/2A+My/OUI1Mw==
+X-CSE-MsgGUID: xT8M6QAgS+amg3Sgb4sgYQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,200,1774335600"; 
+   d="scan'208";a="245633328"
+Received: from junxiao.bj.intel.com ([10.238.152.69])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2026 23:10:15 -0700
+From: Junxiao Chang <junxiao.chang@intel.com>
+To: john.johansen@canonical.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: junxiao.chang@intel.com
+Subject: [PATCH] apparmor: fix use-after-free in policy replacement path
+Date: Sat, 13 Jun 2026 14:04:24 +0800
+Message-ID: <20260613060424.2213712-1-junxiao.chang@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -90,145 +63,53 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make sure that these calls return EINVAL.
+A use-after-free issue can be triggered when running the
+following stress-ng workload:
 
-Assisted-by: GitHub-Copilot:claude-opus-4.8
-Signed-off-by: Tingmao Wang <m@maowtm.org>
+```
+sudo stress-ng --apparmor 0 --timeout 30 \
+    --oom-avoid-bytes 10% --skip-silent --verbose
+```
+
+The warning looks like:
+
+```
+refcount_t: addition on 0; use-after-free
+aa_replace_profiles+0xbe5/0x12a0
+policy_update+0xdb/0x170
+profile_replace+0x4b/0xb0
+```
+
+The issue can be reproduced on both v7.1-rc7 and Ubuntu
+6.17.0-35-generic kernels.
+
+aa_get_profile_loaddata() requires the supplied loaddata object
+to hold a valid reference. However, the loaddata reference count
+may already have reached zero in the replacement loop, resulting
+in a use-after-free condition.
+
+Avoid calling aa_get_profile_loaddata() on loaddata objects with
+a zero reference count and skip those entries instead.
+
+Fixes: a0b7091c4de4 ("apparmor: fix race on rawdata dereference")
+Signed-off-by: Junxiao Chang <junxiao.chang@intel.com>
 ---
+ security/apparmor/policy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v11:
-- Test net/scope quiet fields too
-
-Changes in v4:
-- New patch
-
- tools/testing/selftests/landlock/base_test.c | 116 +++++++++++++++++++
- 1 file changed, 116 insertions(+)
-
-diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
-index 84e91fcaa1b2..cbd3c1669951 100644
---- a/tools/testing/selftests/landlock/base_test.c
-+++ b/tools/testing/selftests/landlock/base_test.c
-@@ -526,4 +526,120 @@ TEST(cred_transfer)
- 	EXPECT_EQ(EACCES, errno);
- }
+diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
+index b6a5eb4021dbd..98f84d4552697 100644
+--- a/security/apparmor/policy.c
++++ b/security/apparmor/policy.c
+@@ -1220,7 +1220,7 @@ ssize_t aa_replace_profiles(struct aa_ns *policy_ns, struct aa_label *label,
+ 	/* check for duplicate rawdata blobs: space and file dedup */
+ 	if (!list_empty(&ns->rawdata_list)) {
+ 		list_for_each_entry(rawdata_ent, &ns->rawdata_list, list) {
+-			if (aa_rawdata_eq(rawdata_ent, udata)) {
++			if (kref_read(&rawdata_ent->pcount) && aa_rawdata_eq(rawdata_ent, udata)) {
+ 				struct aa_loaddata *tmp;
  
-+TEST(useless_quiet_rule_fs)
-+{
-+	struct landlock_ruleset_attr ruleset_attr = {
-+		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_DIR,
-+		.quiet_access_fs = 0,
-+	};
-+	struct landlock_path_beneath_attr path_beneath_attr = {
-+		.allowed_access = LANDLOCK_ACCESS_FS_READ_DIR,
-+	};
-+	int ruleset_fd, root_fd;
-+
-+	drop_caps(_metadata);
-+	ruleset_fd =
-+		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-+	ASSERT_LE(0, ruleset_fd);
-+
-+	root_fd = open("/", O_PATH | O_CLOEXEC);
-+	ASSERT_LE(0, root_fd);
-+	path_beneath_attr.parent_fd = root_fd;
-+	ASSERT_EQ(-1, landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
-+					&path_beneath_attr,
-+					LANDLOCK_ADD_RULE_QUIET));
-+	ASSERT_EQ(EINVAL, errno);
-+
-+	/* Check that the rule had not been added. */
-+	ASSERT_EQ(0, close(root_fd));
-+	enforce_ruleset(_metadata, ruleset_fd);
-+	ASSERT_EQ(0, close(ruleset_fd));
-+
-+	ASSERT_EQ(-1, open("/", O_RDONLY | O_DIRECTORY | O_CLOEXEC));
-+	ASSERT_EQ(EACCES, errno);
-+}
-+
-+TEST(useless_quiet_rule_net)
-+{
-+	struct landlock_ruleset_attr ruleset_attr = {
-+		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP,
-+		.quiet_access_net = 0,
-+	};
-+	struct landlock_net_port_attr net_port_attr = {
-+		.allowed_access = LANDLOCK_ACCESS_NET_BIND_TCP,
-+		.port = 1024,
-+	};
-+	int ruleset_fd;
-+
-+	drop_caps(_metadata);
-+	ruleset_fd =
-+		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-+	ASSERT_LE(0, ruleset_fd);
-+
-+	ASSERT_EQ(-1,
-+		  landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
-+				    &net_port_attr, LANDLOCK_ADD_RULE_QUIET));
-+	ASSERT_EQ(EINVAL, errno);
-+
-+	ASSERT_EQ(0, close(ruleset_fd));
-+}
-+
-+TEST(invalid_quiet_bits_1)
-+{
-+	const struct landlock_ruleset_attr ruleset_attr_fs = {
-+		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_DIR,
-+		.quiet_access_fs = LANDLOCK_ACCESS_FS_WRITE_FILE,
-+	};
-+	const struct landlock_ruleset_attr ruleset_attr_net = {
-+		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP,
-+		.quiet_access_net = LANDLOCK_ACCESS_NET_CONNECT_TCP,
-+	};
-+	const struct landlock_ruleset_attr ruleset_attr_scoped = {
-+		.scoped = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET,
-+		.quiet_scoped = LANDLOCK_SCOPE_SIGNAL,
-+	};
-+
-+	/* Quiet bit set but not part of the handled mask. */
-+	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr_fs,
-+					      sizeof(ruleset_attr_fs), 0));
-+	ASSERT_EQ(EINVAL, errno);
-+
-+	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr_net,
-+					      sizeof(ruleset_attr_net), 0));
-+	ASSERT_EQ(EINVAL, errno);
-+
-+	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr_scoped,
-+					      sizeof(ruleset_attr_scoped), 0));
-+	ASSERT_EQ(EINVAL, errno);
-+}
-+
-+TEST(invalid_quiet_bits_2)
-+{
-+	const struct landlock_ruleset_attr ruleset_attr_fs = {
-+		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_DIR,
-+		.quiet_access_fs = 1ULL << 63,
-+	};
-+	const struct landlock_ruleset_attr ruleset_attr_net = {
-+		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP,
-+		.quiet_access_net = 1ULL << 63,
-+	};
-+	const struct landlock_ruleset_attr ruleset_attr_scoped = {
-+		.scoped = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET,
-+		.quiet_scoped = 1ULL << 63,
-+	};
-+
-+	/* Quiet bit outside of the valid access range. */
-+	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr_fs,
-+					      sizeof(ruleset_attr_fs), 0));
-+	ASSERT_EQ(EINVAL, errno);
-+
-+	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr_net,
-+					      sizeof(ruleset_attr_net), 0));
-+	ASSERT_EQ(EINVAL, errno);
-+
-+	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr_scoped,
-+					      sizeof(ruleset_attr_scoped), 0));
-+	ASSERT_EQ(EINVAL, errno);
-+}
-+
- TEST_HARNESS_MAIN
+ 				tmp = aa_get_profile_loaddata(rawdata_ent);
 -- 
-2.54.0
+2.43.0
+
