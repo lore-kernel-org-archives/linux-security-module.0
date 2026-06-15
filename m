@@ -1,110 +1,83 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23FC274FD1;
-	Mon, 15 Jun 2026 07:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A607133065D;
+	Mon, 15 Jun 2026 11:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781509422; cv=none; b=rFOYsXh5+ESArMXD/FT+PfAHPWBStwMTQt3C27S6HrZipK03r/zWiuM/aC2RV2n9uRU+nG/stxK+OBEOlpNRsI0gIMD+dhOCPYWRCWcjbcKNmTczMfh6Ukcx7xLlfvpcKdouLFnBjHanIzX6FDNeVfcZnPgGagEvecEgz3Sxbrk=
+	t=1781524198; cv=none; b=RhlLwgsMeblo+TTutaSGSjoZUSeDmORUKslKzIAEpeDPm98BJrql3OCKS80ht5ShhS2fbhIda7CX9PVp8mDgq/vvIlIguFnPfbiUgC/u35JYwdvm+zkIx/8wdReS3Z6/l5SRjzrDBF8yS6SOSUrVyIcb/edRwmCNChUTU8Ao4U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781509422; c=relaxed/simple;
-	bh=28K2j26aCqXtjw5gXz4mCkYmJ6UK5OnO/rXxJMgdvLU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hrGla1c+DeFyUYt2vWfJ4qwWDqiWcVG71abKO1yJmHYAtyzjfxRBwtMq9dn5WWvMTwfVbZrM7Os//NouCy35do8jayJYUGIbfCSh+2VXSAU0snB/yxv7A7nz6u/YFFHhgvLDwNcPOM6twbt/k+eReMD0qtPCzKDkeJGFZuiL4zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.235])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4gf1jc2WPTzsWPl;
-	Mon, 15 Jun 2026 15:20:20 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id BCE2140572;
-	Mon, 15 Jun 2026 15:25:30 +0800 (CST)
-Received: from [10.81.207.22] (unknown [10.81.207.22])
-	by APP1 (Coremail) with SMTP id LxC2BwBn087WqC9qE+P7AA--.50004S2;
-	Mon, 15 Jun 2026 08:25:30 +0100 (CET)
-Message-ID: <d86a9834-5f0e-4e6c-a181-0b6bd81caec5@huaweicloud.com>
-Date: Mon, 15 Jun 2026 09:25:23 +0200
+	s=arc-20240116; t=1781524198; c=relaxed/simple;
+	bh=OQ5HvODVnmopJa7d4VK6L/T/SWRPhMJ8Xgu5e9hVisc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n3gIMU5KxirBUH69/A/drwbR2eTsrc1mGh0EuNwzmpo/R2Ax2y2BvkmNYJRr1YZg3LFXo4gM+KcaDU9hinGfb3raJ+aCfdnQU60jEj7j/aPLlW6GrqUUnDgSrQO1uNdUgtLLiFoZjbWgFWN4DX43wW5fMSj1z5LK5Q4JzbVF4e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AKo1BzUX; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AKo1BzUX"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id BB0661F000E9;
+	Mon, 15 Jun 2026 11:49:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781524197;
+	bh=LVL8fBjSIGxZf9QPFsVEA2k93KAySQM8VorbCXzgt1c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=AKo1BzUXICbzsWUpk8seVrxj/oVw/XFdXBHz6F48colNV+SbuhHAow5LIgRbivHar
+	 0XC9mIRZV6KSDF6Bl4EqA0oYKmpRmissTpoHq46NFrAifhgPiNg3r9PW6EyzqE1/el
+	 XzxFmENo9gWh4zIqFrnHkj2gDBar6BEDdOEI5GkfCQifgHMZ6zhUqqnFdR2hDDCk3T
+	 MooKW64NYjKEnDpHqJd/2n2mHo4hxFuQaB22Z5axrkHTZ6oqoehntFEpJJ8/YkC/Hf
+	 uUFCFaAYbuyYEScaTqy4FVqE0dCP9TtkZl2CfUmPNOoj0cc4wbILrwffKu/0cDTuSu
+	 /zXIZStx0tt4Q==
+Date: Mon, 15 Jun 2026 14:49:53 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Gary Guo <gary@garyguo.net>
+Cc: David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] keys: allow request-key path to be configured via Kconfig
+Message-ID: <ai_m4RPDpT1N75if@kernel.org>
+References: <20260607134928.2832202-1-gary@kernel.org>
+ <aiZJ94eugtNHcILD@kernel.org>
+ <aiZMT5UYhVDlLVHq@kernel.org>
+ <DJ3LJFFPMAOW.QA3EZSAB2S5A@garyguo.net>
+ <ailfPUbn8gbUqB1D@kernel.org>
+ <DJ5ES5DZ15W8.2KLL7VS1JMQOE@garyguo.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 v2] evm: check return values of crypto_shash functions
-To: Mimi Zohar <zohar@linux.ibm.com>, Daniel Hodges <git@danielhodges.dev>
-Cc: roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com, linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <aYNprpzxppKE0Gf2@fb.com>
- <20260206024240.19059-1-git@danielhodges.dev>
- <6ce273a26b396232f3ee64a980575562e766c501.camel@huaweicloud.com>
- <c1d570271884159e6c14617fa7dcd39bc2103e45.camel@linux.ibm.com>
-Content-Language: en-US
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-In-Reply-To: <c1d570271884159e6c14617fa7dcd39bc2103e45.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:LxC2BwBn087WqC9qE+P7AA--.50004S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF4UGFyxCw1xGr18Kw1ftFb_yoW8AFWxpF
-	WrWayDtrWDKFyUCFnxt3Z5ZrykC3ySkw15Jry8GryYva9FvFsYqr4xC3WFga4kGr18Gw1Y
-	qr4ay39xZ3WqvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrs
-	qXDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBGovakYaugABsI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DJ5ES5DZ15W8.2KLL7VS1JMQOE@garyguo.net>
 
-On 3/9/2026 4:03 PM, Mimi Zohar wrote:
-> On Thu, 2026-02-19 at 10:26 +0100, Roberto Sassu wrote:
->> On Thu, 2026-02-05 at 21:42 -0500, Daniel Hodges wrote:
->>> The crypto_shash_update() and crypto_shash_final() functions can fail
->>> and return error codes, but their return values were not being checked
->>> in several places in security/integrity/evm/evm_crypto.c:
->>>
->>> - hmac_add_misc() ignored returns from crypto_shash_update() and
->>>    crypto_shash_final()
->>> - evm_calc_hmac_or_hash() ignored returns from crypto_shash_update()
->>> - evm_init_hmac() ignored returns from crypto_shash_update()
->>>
->>> If these hash operations fail silently, the resulting HMAC could be
->>> invalid or incomplete, which could weaken the integrity verification
->>> security that EVM provides.
->>>
->>> This patch converts hmac_add_misc() from void to int return type and
->>> adds proper error checking and propagation for all crypto_shash_*
->>> function calls. All callers are updated to handle the new return values.
->>> Additionally, error messages are logged when cryptographic operations
->>> fail to provide visibility into the failure rather than silently
->>> returning error codes.
->>>
->>> Fixes: 66dbc325afce ("evm: re-release")
->>> Signed-off-by: Daniel Hodges <git@danielhodges.dev>
->>
->> After fixing the minor issue below:
->>
->> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+On Wed, Jun 10, 2026 at 02:37:41PM +0100, Gary Guo wrote:
+> On Wed Jun 10, 2026 at 1:57 PM BST, Jarkko Sakkinen wrote:
+> > On Mon, Jun 08, 2026 at 11:30:06AM +0100, Gary Guo wrote:
+> >> 
+> >> This is really just for distros to be able to configure where /sbin is located.
+> >> Given usr merge and (some distros) bin/sbin merge, the canonical path of
+> >> request-key binary is very likely not /sbin/request-key anymore, so it seems to
+> >> make sense to me to allow this to be changed rather than always go through
+> >> compatibility symlinks.
+> >
+> > I doubt there's a huge demand other than NixOS. Just basing this on that
+> > no other noise have been made so far.
 > 
-> Thanks Daniel, Roberto.  Daniel there are a couple of places where the line
-> length is greater than 80.  To see them, add "--max-line-length=80" to
-> scripts/checkpatch.pl.  I'd appreciate your fixing them.  Otherwise, the patch
-> looks good.
+> Just to add on this, both Fedora and openSUSE for example changes their
+> CONFIG_MODPROBE_PATH to be /usr/sbin/modprobe after /usr merge. They still have
+> the /sbin -> /usr/sbin symlink available, so it's not like they cannot work with
+> /sbin/request-key, but I would think that if the option is available then they
+> might switch to use /usr/sbin/request-key, too.
+> 
+> After all, why would one perform a symlink walk for no reason?
+> 
+> Best,
+> Gary
 
-Daniel, do you have time to fix the style issues, so that we upstream 
-your patch?
+It's not who is right or who is wrong. "The representation
+of the argument" is not working here.
 
-Thanks
+Back to the drawing board...
 
-Roberto
-
+BR, Jarkko
