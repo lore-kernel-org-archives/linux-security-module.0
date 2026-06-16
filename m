@@ -1,65 +1,66 @@
-Received: from mail-qv1-f68.google.com (mail-qv1-f68.google.com [209.85.219.68])
+Received: from mail-qt1-f194.google.com (mail-qt1-f194.google.com [209.85.160.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8D33B2FC7
-	for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2026 02:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129D13C4167
+	for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2026 02:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781578543; cv=none; b=o0/Eh1FTvnFuFtpSzka/ymFBPewglwI2Xedyvw/5bjb3KpYeOmFRtXuhxw2mvP3+6IH8xpQfSYDF/z/gyOi5faPycw+b1vDW9OW9DLwz1vvAAsCru8B9MjIsxz3KafbO35H5U8M5EJAm9pbw/M3+5Z5YA4epjzz3WpOYyL4Uczs=
+	t=1781578546; cv=none; b=G/fC6nj16VyC+SPzy46SHhbldijU4T4OuEw0IMzxtBr7ckht57iB9x53YL+7kZF6DlcYwCnQNiu4sig+KxRJI8ZC84pwqIx203r19qbNxGBd4pAsOOMEeVmHOU6ltMhVjxCiqZVfpeOrYvW0ei4aeZj5im0JP90+Rsa6wzX35gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781578543; c=relaxed/simple;
-	bh=oEcdHMTdPZgU194AHy5ee4wdXYDUNOIYFkGQvFp4CKA=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=ndcHYZ8l84v+ZH/VOHYFCQuWSbYG3TiIN/s79w2rxmKrMV3A6hWOB0MgRUxrSQfuWE0UKLLUskOFvHXwbFUJwfrV/E0b7E5vxfSS2jGJf33FRM8zpbMkDjcPa2GSGUjXCwZE5ZcpyG/SDGtffC5y2gwgatGn1VVKL7TssNjwKXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Icqku+a/; arc=none smtp.client-ip=209.85.219.68
+	s=arc-20240116; t=1781578546; c=relaxed/simple;
+	bh=UIJdGw5UtCnNa+ICdlphlCumkYyyM9SuVvKUcxoMaUw=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=Qz9EJ6Zy1nPqXw0DdkuVzY2Larwmuh4FoYUBe0oAjbrcLp7kQqRZthbpsVwAWuy2Po/0jZHEU+Tvj0/qR5cpNO8kYcRskDbge5Xnxo2q3a4iAe82iACcoWskY4iZpDMMg+OgAvZa3fUCqT4rJPjXKRR7Na4Sho1MzeQTvYwXP0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QYGswcfx; arc=none smtp.client-ip=209.85.160.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Icqku+a/"
-Received: by mail-qv1-f68.google.com with SMTP id 6a1803df08f44-8ce9df49c5fso64013836d6.1
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Jun 2026 19:55:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QYGswcfx"
+Received: by mail-qt1-f194.google.com with SMTP id d75a77b69052e-51776b4de37so35693121cf.1
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Jun 2026 19:55:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1781578539; x=1782183339; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1781578544; x=1782183344; darn=vger.kernel.org;
         h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=l0uDegzg5yPNGy1FcFP4w5AeRJEMJy/aOyyQvYzv9XY=;
-        b=Icqku+a/uYgyF0cTandpZXwcDJtNRkJXUjw3mkDTBXwsd/b74G59oVXojtI47mE6t0
-         XvKrdmbajSCSWrMARNaWzFy76CnjMOTrJK5ZqoKP3riLATpTjN2vj+AA9P/50ZpoJoFJ
-         LvACsxlHdhdgpHqecp+NSxwC1sTEi3Z5aNLaqBr7rlKcEG2P+iZSaXXabZPYoQP5yDSE
-         hojEbJC0JXRjfH5hIffnVp5bOpdA01Jgq3DoGzNAqybLxoWEKr8b/aMq0NWWFdoonPcp
-         esIP5eM5Aolim50kLhzQXcSiOSk13rY4sH0jyPsSFCXeiTcWru9VkiH2mIENdwj+HUSW
-         CzYw==
+        bh=TXwlGxhzf+32k+zkMy6zWi+hjqqLA4HJgxUXiPX+O54=;
+        b=QYGswcfxbmNRHt2d6GM8F3hShQQPy1OnbQUBWWQZKSkbklp31K/5m6kw69UXvcmXDJ
+         Gdt+kPKP+p1VGnqn9pZ+oekzkTjBEEeJR91M7fEZYESe9vMwJRQL6sLbAsxzJ8M9Vw6M
+         XGe1I309eYQYAeRY/ljzg/958W/4/P6fuRvIzPUhEvTbOJS+vfsdEAPW7p4kHI/bZ6/m
+         ad77KEHLyEVOo14ZJTW0jTYRAhBAqscUxq8XztsevQdyrpVqABfzCuYM4RbUzuH42jrD
+         1gkVxM8jDW7lFwaclQqDV5k6OIeDWryJeV0ycCJrNKfAZHpO9YGbbmEZOo3EN71QZ4H7
+         KvSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781578539; x=1782183339;
+        d=1e100.net; s=20251104; t=1781578544; x=1782183344;
         h=subject:cc:to:from:message-id:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=l0uDegzg5yPNGy1FcFP4w5AeRJEMJy/aOyyQvYzv9XY=;
-        b=nIa/mKSP7vRoNCYibfrO4CIbkKp4GWCBCZPtBOmOOi3Byc7CjN8aBik0o1vFDsZTcI
-         crtBU6Q7E/xpAbcWiDfHpiQ9tspa2tagDFiIUJt6ZFqt0mWiBrLOCsFYJsnL4n+Jbk3M
-         d4tx0/N5djdPe7LaNBVN7q4Bse8UhJi/QhLapdzXg7MMB6lXV3eU4LqBMaJj+EmE07HE
-         PMv01Xe1LBkpKB8HBnzUBwAN+DFR9jQ/kYv3rVhTJZRBf3ciJjjjOykWIqTnp9xQYsdN
-         cI0vJkg1VxwDpsaiACtZL3zNFgIYKmT+zJyg3QBF3sUM2T0K2w6tNSCgUIunoO6T/2qW
-         rvng==
-X-Gm-Message-State: AOJu0Yy/mxG4SRi+TmyVuGXSvAvD0m8MjpMIl3ocHKHVZJ61lPQcLJ9d
-	jsvLda2DQnTZudHY06cwwoB4cVocqfnRxDHNIzbsL1lyn5Uv8wc8XtpFU5m75lnOcg==
-X-Gm-Gg: Acq92OHnt46/njO2fCjAlph1Cc2ILHLCiCbsrlouOB2E43FGNqS6pntOcFjimRCpttf
-	FmUQ8lAkSej6Qh6puTi7unWFg5CTOUnhgXMBYEunFbTX8YC2qByIJd2b2IKS/JkNSLVnIpxh433
-	XB+BTaZgWud2ebOkO8lO2MIa/11NN6nCyIG0V3YN/del889X4/b4sN/lwUugLqO4fpgHSujBsml
-	iReNgnYr5csewHeps4ZrA3CzPbOycIcrd3ftI9AsTHlcTCLoWjqywxzj/R0WbnA1VhxngybjTP8
-	KR0V4Kcg6mMEn5YEsTE8TaXyVJUILFSEfJZwAYS4g3vxo5b8GhG8ULoNHXEYzSnK19jfKtqTXUk
-	HrRQ3UoQGrS1NsvcabU7I/9pwik4dUBIMAkHrDqsM6lWjq2kWA6vrRqkLavdS5sNNc8siNF5p0x
-	ZCWh3c0DLJdUE0fIVes+4vthOhiaQ0uoeeZ/5cmoOmgdQutLT7BIRPKf1GUSYw2H5ciX8x
-X-Received: by 2002:a05:6214:1c8a:b0:8a1:8b0a:6678 with SMTP id 6a1803df08f44-8d44f045b60mr214117586d6.31.1781578539357;
-        Mon, 15 Jun 2026 19:55:39 -0700 (PDT)
+        bh=TXwlGxhzf+32k+zkMy6zWi+hjqqLA4HJgxUXiPX+O54=;
+        b=jKtTfSnaXDtZP+PtuK7UIefYJdFNsvGuI7s/4ABmFizIfwAwPKbXSkLWlLbjdn9cqK
+         +t+dPPNfujNV2MKk9ewkHI0nyfgzUm9edKZ5+633Fz1q31QHY1LQJxGp5RUTPuLqpIA2
+         0vTVCrKWecDCRhaTIwfgMBFnw/6GXl2S1/MuJ2GIUUnN2lbG1L4m5qfwsYh4cUTBjbgH
+         f/Uf3wjP1to4YHmcUqvr+jNBhQYr0saUHEaaHA10oHmen/MzCqNNQ7BQnZyK3qVgERQM
+         e3UBaTxLL5KogXlVqVQQSwKsnipT0KJPnnwmXOgmo/WJuq6F50zgwFfTc6hgsAvb7iZl
+         5EEw==
+X-Forwarded-Encrypted: i=1; AFNElJ+gSFZP9EuAwADyLEf7CNx5odfzvkMMOXNKNXgDIf+ZL/e2S3GPgo0RZYCTIed/p07TXEOoqCTLksyV2Egle0bHD0Elh9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr0nHanLndpSPy0CmOtigva2yydqKOJSJYETiQ7Ik53cdTIGIy
+	s/vBElbodaN4Zf08vyLGLIsRL0W+ZxP6oV9rYijf6znv+VanMm/Gbt0MX9lZPBp2MQ==
+X-Gm-Gg: Acq92OGJau+S9cGXcZTjD/cyuRlfARTXiBXG6Tc+nggTAbqN37UFP6TAhcO0AxOx+sn
+	c5SNxJ7HkJn+Zzt4Bqe75FSQrFcydeN5AaToevg06n6347kFE9L+Vok8nj1bTqD4xGhhrkgrgx6
+	plTh91nyxytDZ6Ks4N2PW+SQ2enDjO+cDIVnb/WJFwUWslkoLTvJ4vMS3yANStysh+cADZqW/7t
+	WRcyJyrh2FVd+2p6I45T+Rc4/dPgFfb/rPG4AH93xJJ8BhwsOVuCDJbQ1fKHQlI5t4rgIk+tlAf
+	EjZ2KA0h/0O/GxkiUdvtOf95qSKEd52DtJgaZQG0eMS8Z/Dhp3GxNLM1sWnmqUEI+iRh16rDQ+p
+	3zjCza7x05ygH4TTjxdWIsvwClzLvwigJgP55a7pYEZkH/JYcodKIwpTdIIMqHDsYtJ0943G3B3
+	OhxUMoBuGho6BU74VFKJ2L6MQnIEB6I9ZdiKLGZlwa/lwbFrfXf2mawZWcLQDHEl0VadM9
+X-Received: by 2002:a05:622a:5916:b0:517:760d:48ea with SMTP id d75a77b69052e-5195339bd2dmr218963441cf.18.1781578543930;
+        Mon, 15 Jun 2026 19:55:43 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8d9f4d0f4d4sm19021286d6.34.2026.06.15.19.55.38
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-517fb7a00desm137115621cf.19.2026.06.15.19.55.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jun 2026 19:55:38 -0700 (PDT)
-Date: Mon, 15 Jun 2026 22:55:38 -0400
-Message-ID: <9b359189953cc739f62fc94af4c24a27@paul-moore.com>
+        Mon, 15 Jun 2026 19:55:43 -0700 (PDT)
+Date: Mon, 15 Jun 2026 22:55:42 -0400
+Message-ID: <577e6fb29cf0b9c335748aa5fa026275@paul-moore.com>
 From: Paul Moore <paul@paul-moore.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] lsm/lsm-pr-20260615
+Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] selinux/selinux-pr-20260615
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -68,11 +69,35 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
 Linus,
 
-A single LSM framework patch to update the security_inode_listsecurity()
-hook to be able to leverage the xattr_list_one() helper function.  We
-wanted to do this for a while, but we needed to fixup the callers in the
-NFS code first.  With the NFS code changes shipping in Linux v7.0 and
-no one complaining, it seemed a good time to complete the shift.
+A number of SELinux patches for Linux v7.2, almost all of which are
+either minor fixes or hardening patches.
+
+- Additional verifications when loading new SELinux policy
+
+Multiple patches by Christian Göttsche to add additional validations to
+the code responsible for loading and parsing SELinux policy as it is
+loaded into the kernel.
+
+- Avoid nontransitive comparisons comparisons in our sorting code
+
+Done to prevent unexpected sorting results due to overflow.  Qualys
+documented a similar issue with glibc:
+https://www.qualys.com/2024/01/30/qsort.txt
+
+- Consistently use u16 for SELinux security classes
+
+- Move from page allocations to kmalloc() based allocations
+
+Unfortunately one of these patches had to be reverted, but you should
+see a fixed version during the next merge window.
+
+- Move from kmalloc_objs() to kzalloc_objs() in the policy load code
+
+- Reorder sel_kill_sb() slightly to match other pseudo filesystems
+
+- Simplify things with QSTR() instead of QSTR_INIT()
+
+- Minor comment typo fixes
 
 Paul
 
@@ -83,30 +108,65 @@ The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e731:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
-    tags/lsm-pr-20260615
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+    tags/selinux-pr-20260615
 
-for you to fetch changes up to f71ece9712b7712df98871eea9aeb60e49ca5239:
+for you to fetch changes up to 033182baeab63ce96a6eb8aef1a6cd444fcf9519:
 
-  security,fs,nfs,net: update security_inode_listsecurity() interface
-    (2026-05-01 11:29:33 -0400)
+  selinux: revert use of __getname() in selinux_genfs_get_sid()
+    (2026-05-29 11:24:37 -0400)
 
 ----------------------------------------------------------------
-lsm/stable-7.2 PR 20260615
+selinux/stable-7.2 PR 20260615
 ----------------------------------------------------------------
 
-Stephen Smalley (1):
-      security,fs,nfs,net: update security_inode_listsecurity()
-         interface
+Christian Göttsche (9):
+      selinux: avoid nontransitive comparison
+      selinux: use u16 for security classes
+      selinux: more strict policy parsing
+      selinux: check length fields in policies
+      selinux: check type attr map overflows
+      selinux: reorder policydb_index()
+      selinux: beef up isvalid checks
+      selinux: more strict bounds check
+      selinux: check for simple types
 
- fs/nfs/nfs4proc.c             |    7 ++-----
- fs/xattr.c                    |   11 +++++++----
- include/linux/lsm_hook_defs.h |    4 ++--
- include/linux/security.h      |    5 +++--
- security/security.c           |   16 ++++++++--------
- security/selinux/hooks.c      |   10 +++-------
- security/smack/smack_lsm.c    |   13 ++++---------
- 7 files changed, 29 insertions(+), 37 deletions(-)
+Kalevi Kolttonen (2):
+      selinux: comment typo fix in selinuxfs.c
+      selinux: comment spelling fix in ibpkey.c
+
+Mike Rapoport (Microsoft) (2):
+      selinux: use k[mz]alloc() to allocate temporary buffers
+      selinux: hooks: use __getname() to allocate path buffer
+
+Paul Moore (1):
+      selinux: revert use of __getname() in selinux_genfs_get_sid()
+
+Stephen Smalley (2):
+      selinux: fix sel_kill_sb()
+      selinux: switch two allocations to use kzalloc_objs()
+
+Thorsten Blum (1):
+      selinux: use QSTR() instead of QSTR_INIT() in init_sel_fs
+
+ security/selinux/ibpkey.c           |    2 
+ security/selinux/include/security.h |    1 
+ security/selinux/selinuxfs.c        |   27 +-
+ security/selinux/ss/avtab.c         |   49 +++
+ security/selinux/ss/avtab.h         |   13 +
+ security/selinux/ss/conditional.c   |   39 ++-
+ security/selinux/ss/constraint.h    |    1 
+ security/selinux/ss/ebitmap.c       |   27 ++
+ security/selinux/ss/ebitmap.h       |    1 
+ security/selinux/ss/hashtab.h       |    4 
+ security/selinux/ss/mls.c           |   66 +++--
+ security/selinux/ss/mls.h           |    6 
+ security/selinux/ss/policydb.c      |  358 ++++++++++++++++++++++------
+ security/selinux/ss/policydb.h      |   56 +++-
+ security/selinux/ss/services.c      |   13 -
+ security/selinux/ss/symtab.c        |    2 
+ security/selinux/ss/symtab.h        |    2 
+ 17 files changed, 512 insertions(+), 155 deletions(-)
 
 --
 paul-moore.com
