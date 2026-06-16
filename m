@@ -1,219 +1,117 @@
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A48E26B0A9
-	for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2026 15:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781623449; cv=pass; b=Iw/ydxRw2DBEhafDHKtfhE50p9bfPWxR3ivbYj+qseoG1k5Unjphy6+qT0yEjzWmCDYWn73SrdYULOwRqOzTq82fMJX7vDNELq1zb4nynZ2v4hW598TJsqJrJGu96lTIAj/1JuBJJaz8bsnQBw+2UByYwueOKBiqVIOe/YBPcf4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781623449; c=relaxed/simple;
-	bh=ySVzSsVakcVFE2wtn9xhAfZhLDXQYnYd2gsVEtuaNQg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p7BRURcsPTrqTkEQLJrq7A7PUykY6zzJ+Ze9gtCajGhUKEVINIBo2W0gIO3Q7Fv2aA2lMHbVpmWM0MqyL8WRabs8tmhm1r9OXB1hggxWRnQx3BsNEbjQ7Q2mHaCZm3NvM0XMibtWnx7GSbQ7qKS7WvEBk6cq+PxUAvbmGIYCxqU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=NkOaPe+C; arc=pass smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C885747AF65
+	for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2026 16:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.211
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781628615; cv=none; b=pGpTPwFPt+gr9zm1X28jN4vDP44ioPmBraN8+R9XvuWdfqZyeJNCUoTVmx0Enzh0Ac48E86V0h06/BwOK8FbTAEUF4d4CWLOAIW7VcEl6ogVailg1wcrsk9bhTy0nZ0DL6QjH4fU6rrmhbPti76PGbGF/YN0WpE+w0UItI1JR3w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781628615; c=relaxed/simple;
+	bh=ImIcxQ1lO7vglwNUFmFOoPLvf6mp9Zz6Hrna2keTfq0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O20Ah+jXf/QJjUOGNRZdmahrx3jNHwV3Xf7ivdjJEs4WGWPi7RpdQTcWBeTaPXvejDIAlKCYMySYxLXgnrTw4peGwfbrJO7VC6BdIh54bFzyyKwbmkSfJn8/8gQn1KFYCwV0q8BIzRJII/v1rpNFarlq+HbZuuXbGQJw1BsId5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=T4Wlvfwt; arc=none smtp.client-ip=66.163.186.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="NkOaPe+C"
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-36b8e1760ccso2938902a91.0
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2026 08:24:07 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781623447; cv=none;
-        d=google.com; s=arc-20240605;
-        b=ZFdbevgXdtaINys2BwFRL1N3pm6xBQV7qJJ9qiGRHv12yAX7vTDUx+s+7P04ncY/Md
-         mVWsz1PEGMkaOIvkoY6MXfX8vWjn7YB+dKCCXcbuibdb/ekCn1rPX9fkSN37uOiBw1Im
-         vcf6YEPy23oML+WZYM+z/sakIGeB+NW9UKD+fvil0JVag0p2LJuo+n0FFdElb2sNkDFU
-         +R9/aqraqQ2UxXdtj1pIzj8w6BwAeE/BC9rx0udysperi0Ic1UlXluEHoBlQjkhPsss1
-         s7mpJ9VwQMXkOOmSTRBNd1noJryuyaDafEVbwow9ie1rzAIenyNzfkdQW569dHShAkeq
-         9KEw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=l9DyvKp5GlTfWCFl+DPg3gMJrNtSEWY6qdSng3vxqLU=;
-        fh=hm+nMgha4rJFSOb5yMah6dR3pg56JC7AuYuwY8bQGwY=;
-        b=Iz5nrzJUZm1PYjGn+oevbNuNtJON/iNH/3/X0AN1lN2HIWgshtmL/kAX/o8FQrfZB/
-         Ft0XwWgR/GdRT55ZyKffjL+nA0Ata1TY9TnL1Ug0PhtE66Jjv9t1srP5NmBUD6eVmcfR
-         FnTvIlGXJ/IMjOIfjg82nDzhEADE6yyWih5SjNS9rs/+oBVNN3qwQityBWGFfEff5J8/
-         ULh0WY55fFU4uRoqG+wTDlj+2drx13Tar9waRKPSIPlpw1QLvHpymM++n5kK1CqXGiLt
-         ugq6HBhQNqY+88AhKOfgHPzFL8kU09UOic47dvIPPISInjqWjcp6EWhrTn4Qp3AgWMut
-         c3vA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1781623447; x=1782228247; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l9DyvKp5GlTfWCFl+DPg3gMJrNtSEWY6qdSng3vxqLU=;
-        b=NkOaPe+C8q0JTTo6iV9E0lA1H9OdjR2pRSFjnIRXlX5czwvIqqkVDTd5ovTbLOM0Jq
-         RGjP1ir+uD2vVcmYx6SYni9bjTdRSC0byYSmUlKMrCExkEjDTq5SQIalxuuCsUE2bpE9
-         vQcNF24y6gZNc0TOlpREu101/36t3Z8pVk/YOezQd2GLtk9jHB6s8EultO3RbQHSVKC9
-         +bZ1RJNrD3y+E060rS3vUGSNxFZazo0xT1KwGZi8s8JY6w2qgZArMJf4UFNnhNKq9VML
-         8VUGoG94vhzhZ8tU7BUz91theSgbswO9JqvEH+gfmvb1a2kKxfDuVnOHriq9pNIt9+Nu
-         /eTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781623447; x=1782228247;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=l9DyvKp5GlTfWCFl+DPg3gMJrNtSEWY6qdSng3vxqLU=;
-        b=bGElukykGVRL5t8v42XQYxE2bvNAAKbbKfizrcP9QR5575SYKY1+Rm+FAkSuH+wi2J
-         VGTApIoRKYArUVYfF2xdFfY9oEMFUeQs+LzE4CuGppYLhmWbkkoeNGetIwwwWRxFWXRg
-         RRZijFtv3SKt5qii8kaBEZp5qA3Y0Zzwk/t6Mfb2nBUKX2RMUDXXTW3aZmv0eMuel6kT
-         uN7citUIycp4UOHDayNDWjKXEgEVZGih88VNkifq4/KHPkB+0zU92mGObQlAMxsaVhCX
-         puE+NwMnQQz5NjW0nTwXj/jbJzqug2S/81wWJVxUxiBgd7hetyyMKbftmC6e+C3TWJLK
-         BJWg==
-X-Gm-Message-State: AOJu0YzsDBrL4iFzYi4x+0lNlqiXW+i5/OQTCBm0ncsSCTUz5lG/NrWx
-	yVvg423YgUDZhmGghugt+IiCp5Y6MccZSKmRkdHceyLHvMQJf1l/I+WQ4NyakhiIPojyzVuhonY
-	XdHUNoDKzo7bEQJGNDUVw3VQPVaf8em5ql0e6UPxP
-X-Gm-Gg: Acq92OFL1FQzxyz2GvYBswzqm9QcvK0IYuqmnToupip50RLQbzDmBD7l7stD+3RxRl8
-	D4n+IiE6p3YD6UxyCfFo0ZoxMW2ben6Yh/cazceBu5yyqGKWNPYiOq/OEFSO8n/CYKvNIM4Vjhk
-	DUZuR/pGtm8gd9se8ynSnjHtnmwZdBv8go+kGkb+pce7oBfvvoh8prlDbeRDM0E0wUhmgmLJ07H
-	POYRAfG/c0l6STHu0dBJurzNNNtrQ8jJaF9yjZYT21v8lGskkMP5iUn8L3+ZaB4MXxTHMY0XEL2
-	RFyu0RI=
-X-Received: by 2002:a17:90b:3e8d:b0:36b:77b9:5c8c with SMTP id
- 98e67ed59e1d1-37c528ff244mr4243093a91.17.1781623446649; Tue, 16 Jun 2026
- 08:24:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="T4Wlvfwt"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1781628613; bh=RjH6q/VAmfDckDgGVvVDnZpxbzBTJaKLcX5yiUcnRkc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=T4WlvfwtUUk65W4VIdjq0TyryIvqeDvRY+IgemeMyCrFQwtYyWJhJ01VRREEyjHIfZDKfCX4tGaJrExCs+3rEf0IfVYXLE1RkCXysMMG6TbF3mVhP+94IWg878C9XRlH6VqMqMc/qhsPJBvMIy+o0Li/fT7fl1IiNfzienKsSOD9csa8hgdSIb4cZDS3dj4BlGddsEKnBq6d0DmnLQLYtHo1VtDxIdGlUsv+c5B14ala8rEf43lHRPEeYg1nKIfa2pmguoC+aNa6jnKbc4dmd6X1PIsv+pw9lM6WqXD51H9LsCvg+FrwlwcKAbaysRMDwatrfBgYmWvidPOfC2Jvng==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1781628613; bh=W2I+8GDWonOYVuWrl6owXE6eMhnVUwRDnPeq050hVBF=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=jt8qVAsStYXvqZOHkRiULtZMG0/Xxsf1phdHFuEhr9ysmmRWzI0NiGsdG/bLNIwhgfrvd34sh5gfXFj0pcxnysspqqjs35C+gfQlYaj5y3Jw4O0wNDUSveiAuk1SPmxizL6Odb54oPBcRE095XgQli9MljlgECTTI5dXrA9oAgxXECMRbpuxBU05bRHvbh+xetK0bw0eV1xYeYe7eKme3qarD/l+zDOXw407w1/85R9s0u6AwkHg60fF6b7v2c7H1o1mkE5/VZPgBenX0egoQIdoTySvcZ4YOrMzk1kh2rnmC9d3AEpJHUD+lwaiV0O/Am8mWBtcuqgUI852WtfuyA==
+X-YMail-OSG: qtqXdUMVM1lkF8a.8D.lDR4cvbL7q1AR2YUGmtciTaFtND62g1rZDEmvFMI68Fr
+ FMYQeYElTAgBD.dbgCqWDzTxNw1LKOj8t0vN3GKeg6FiaaXaF._VIDEojnzwjHnKu2qhmxgVy2If
+ L20y9GmEYoOiVl.S1RjfPV_Cl9oA2SSlN7QZNWzee6Qi0QtalXTGEXduu1ky4DPStqgZU6lLhcTw
+ c9QTWW2HPSUB8fvRVlBZUdnGaqRdoxJ9kQlBMEZoU0Z6qQB.AdFJYhsLRBLM3efK4mIyO9hhvSQb
+ V49l6T9YHY6UOSLtndfL_lTUKpAmAI9azgYIJrkW5L8d8iPDjTB6Jl81Fo3B5TAaJdx9IqbfQS8n
+ nQZn_B_q4yTi_2i2Iivyi1mDTfPFkEIqJXt08YLaOUrkIzK2i_OiNBLwzDkClOOEzTs3U3hu3nQa
+ UKsfzI1IWR4hDg6ajSQar_HdDgW3MGFzeGhVnpeNHayogFiUcdUu25FTB_szbnqa_A.zcxiFXE5d
+ kR9zAel2SRLq6Kdi18WgkwabLRkPPK49cHL4gQBtXaEsHsB0MP9J_G.W1vM.ms1a8.doVPJ3Jn5e
+ RBYB3uXZX2KglSuweovscAvkL541YeY21YlrDicbd2oqKJQI0h8GQh1gDpwym26yB9ru9YsQkvNz
+ c5eQd0U8sxhb_pC.PsoBIIJrKRKng4Bo62h6jC9vjOpP530g0o92aXtKDN.d.rDZkACRDbl7TtAJ
+ wSbakSQPK6MNAPS3201QyIG7rJ0fEKXUx9_tQj0Bb51Ifv0gL5J_0yDhgWWOikZ3yPc6a.vu5GrD
+ igcF6XSvOEv4hAxKzafHUaJKr6KLRuzyVNqnNpmahGH8bo79WY2RW8ng9IXSMsnMggXc9UeU24vk
+ cHgY2nS2Gint6Hvl9yNaHDbaVRy7_cpHz5mojqJ9pr87ja4NAKhRt01bZnu_d_U7W1kfdpj41STH
+ hf6J5QwpaCzHuHtzotdwInc8u6pJtDIqpq9i0Uva0ZkD_9If7wgTSge0R.PMY207JP82Sur.5v_p
+ nsPMq6t1vVrpEtmcCyiLLBJQA1zI3UHb9cFZGpiw7TrC9mMxnuHruOGROycQjoCTnwsHu39QOQ4P
+ ds93Gsz_2Z0Kpa1tKEWNgE4KYP16xqEw9MtPxMA546ka91nBt7nNLg7mGTytVUFS9_3Q5665Z.FT
+ Nzz1G8.Yh6X1qUtL4HeYZl82A.4o0vACHgImn.z1caonh_7CGlp1jRbl00OSNgedXn.UoMeFQj4J
+ MlnmdkHNjUiBEhR9IZrzMUCNhpDuRKc0_pETiSfoXKHayvS5FDqWcMTCOrUPcjoGpn1EOC0ZFuhh
+ f4ZbagfjkK7oB5IO47PW6SmlXn_vTbYw0uyvr0OeOF6_eLRJhfAgr2DvQPFT2K90EGDkbzNp8dQi
+ gg6OaoWZSXffUn1CVgQ7X91PA7.E7owX9dejahTG4_4l6XOt0ajdPgGQHNzJe3.dFQsT2DN7c4sV
+ SVn6o1tv2vZb1ayUgmEcHID16BNKut5BhuVRjPbQCOF04d9cFfbJx9.3GKQ0Qwl7eQymz_kHeVV6
+ TdCVfljJK.XFU.UaA7jnZ0083TSCKOz899tMaBM.np2l_Ptrx8jn3p1u5mcoUOO83D4sYmtrnk3W
+ Lnl4QEz2H1.jEW7ioS1VwIEDTqeiwVi2A1v0lmTAQfpHwFkQTaIli1vYNwgzyn8m6rFhub1HjfmK
+ HGfwbOlf_ZcK6tiIiYa2AqfAzH47Ef1lKVpNyQPIq0jfDTQAYvXqqHqUJTecfCmN2.D5.dMwgUVE
+ GFUySsJCspP1mnWZe_vud6jjVV2g5FjzpK_jggqoKQdQF.sIwXiA3KisP3QKHTjjKZcrHKlhNSgX
+ JbfobTUEfBcenPnTirzRpN_Ia9oAy_VB1iN7Gxb1clKtG11vnm.tOgAj7s.FJGGo4GveQOoNRKnc
+ vTXfMuUvdeosoJWpBMOUJXOAOnsisIkphVbLWXWKsuKWuQu_3ZNPk0UiZ33QlISJjpIn.VF9Zgbf
+ CxglBEJrg9O1ewIHpeLwlceAMCJpQkee.Fgyz4XI0lHGUndnuZxcXHnV1NcZDvkonWJxhzGJIzf_
+ i2TyvfC6yalubbfvQa4Gupi4ZpBxZB286dkXf_Olh4wkBjS7Gr4zZQp1ND7tnGxZ6o5.EF3KlcpW
+ naldB9l53mBQxyWoYO26ik_DEpRjf9vTe7nxA5xJayIpZNjglegbZkmE5KaizVKZb5l1HuepsMRJ
+ ozQGqjoZ89UjqpULv58XwneG5O9SU3F2WDI8-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 81ae825c-c7b0-4e57-91df-11909a2c5115
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Tue, 16 Jun 2026 16:50:13 +0000
+Received: by hermes--production-gq1-7bb7df5c46-qhlmr (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 7ab7d828c5c18897186b4b93afee53e9;
+          Tue, 16 Jun 2026 16:07:43 +0000 (UTC)
+Message-ID: <bdf7591c-4078-4ee5-9e63-e5dc27602fb6@schaufler-ca.com>
+Date: Tue, 16 Jun 2026 09:07:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260615.zeinurej8oZ9@digikod.net> <CAHC9VhQxHEuznN-xiMJ-LCsz2z-UB0ri6MeMn+Ajyn1WUTDNDw@mail.gmail.com>
- <20260616.EPh8ked0niko@digikod.net> <CAHC9VhRa8DQ-ekrmPQSg2pO9pBFj6GA9DO=x5kguGFTbKKyv7Q@mail.gmail.com>
- <20260616.aiGaim8xie8z@digikod.net>
-In-Reply-To: <20260616.aiGaim8xie8z@digikod.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 16 Jun 2026 11:23:54 -0400
-X-Gm-Features: AVVi8CfG7acvH-660edmw_6INQnGnywkelyYTrpO4uSRVLA0B8-F6MPHkQIkf5E
-Message-ID: <CAHC9VhQyN3CczsTHG=sJF8G=MqxGL6NO7assuAjuF9K1t-qDmQ@mail.gmail.com>
-Subject: Re: Sashiko reviews for the LSM mailing list
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: linux-security-module@vger.kernel.org, sashiko@lists.linux.dev, 
-	Roman Gushchin <roman.gushchin@linux.dev>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] security: clarify task_prctl hook documentation
+To: Bill Roberts <bill.roberts@arm.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20260615200325.260057-1-bill.roberts@arm.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20260615200325.260057-1-bill.roberts@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.25942 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Tue, Jun 16, 2026 at 10:59=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digi=
-kod.net> wrote:
-> On Tue, Jun 16, 2026 at 10:11:42AM -0400, Paul Moore wrote:
-> > On Tue, Jun 16, 2026 at 4:49=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > > On Mon, Jun 15, 2026 at 04:13:59PM -0400, Paul Moore wrote:
-> > > > On Mon, Jun 15, 2026 at 11:41=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <=
-mic@digikod.net> wrote:
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > I've been reading Sashiko's (AI bot) reviews wrt Landlock patches=
-, and
-> > > > > most of them were valuable.  It found issues (security or not), b=
-ut it
-> > > > > requires to go to https://sashiko.dev to find them, which is too =
-easy to
-> > > > > forget, and requires additional work from maintainers to copy or =
-point
-> > > > > to these reviews.  I sent a PR (currently in draft) to enable ema=
-il
-> > > > > replies from Sashiko to the Linux Security Module mailing list (m=
-ost
-> > > > > patches are already reviewed anyway):
-> > > > > https://github.com/sashiko-dev/sashiko/pull/278
-> > > > >
-> > > > > Making such reviews broadly available can improve the quality of =
-patches
-> > > > > we receive without much noise, helping for all LSM-related code. =
- We can
-> > > > > fine tune some email-related settings if needed.
-> > > > >
-> > > > > If there are any concern or question, this is the right time to s=
-tart a
-> > > > > discussion.
-> > > >
-> > > > I recently enabled Sashiko for the SELinux list to trial it there
-> > > > first, with the goal of eventually bringing this topic up for the r=
-est
-> > > > of the LSM folks on the LSM list.
-> > > >
-> > > > While I think Sashiko's review comments are generally okay, you sho=
-uld
-> > > > have contacted the LSM mailing list folks *before* submitting a PR
-> > > > that would cause an automated bot to send email to the LSM list (th=
-is
-> > > > applies to all automated emails, not just LLM reviews).  Please hol=
-d
-> > > > the PR until you have given people a chance to comment on the issue=
-.
-> > >
-> > > As I explained just above, the PR is a draft (GitHub specific state f=
-or
-> > > WIP), so it cannot be merged as-is, but it is useful for reviews and =
-for
-> > > LSM folks to get a look if they are interested.
-> > >
-> > > > Personally, I'm okay with it.
-> > >
-> > > Looks good.  What about waiting a week to get some feedback here and
-> > > then ask for a merge of the PR?
-> >
-> > I would suggest enabling Sashiko for the LSM list, but not enabling
-> > the email replies at first.  This would allow people to view the
-> > reviews and perhaps make a better informed decision.
+On 6/15/2026 1:03 PM, Bill Roberts wrote:
+> The task_prctl hook comment incorrectly described the hook as checking
+> whether a prctl operation is allowed. In reality, the hook exists for
+> LSMs to handle LSM-specific prctl operations.
 >
-> The point of this PR and the related discussion is to enable email
-> replies ...
-
-... and you've heard my opinions on that.
-
-> the reviews are already there.
-
-I don't believe the LSM list is being directly reviewed by sashiko.dev
-at the moment (check the lists drop-down in the web UI).  Any
-LSM-posted patches being reviewed are being reviewed due to a CC to a
-sashiko.dev monitored list.
-
-> As explained, my motivation for
-> this change is to get reviews, and without emails I suspect almost nobody
-> (will) take a look and that would not even be an experiment.  I'm saying
-> that because I forgot several times to take a look and it adds more work
-> to the review/maintenance.
-
-I think it's important to allow people a chance to see what the
-reviews are like before you enable an automated bot on the mailing
-list.  I'm sorry you found it cumbersome to check the web UI, but a
-change to what is sent to the mailing list affects more than just you.
-
-Perhaps we do eventually enable sashiko.dev to post to the LSM list,
-as I said before I have no problem with that, but I want to give
-people a chance to look at the Sashiko reviews first and make a more
-informed decision.
-
-> FWIW, there are currently 41 kernel mailing lists registered:
-> https://github.com/sashiko-dev/sashiko/blob/main/sashiko.dev/email_policy=
-.toml
-
-Yes, I think we can all read a configuration file.
-
-> > > Anyway, it would not be written in
-> > > stone, we can update Sashiko config with new PRs.
-> >
-> > It is worth noting that sashiko.dev updates are not immediate, so
-> > there is a delay between a PR being merged and it taking effect.
+> Update the function description and kernel-doc comment to reflect the
+> actual behavior. The old wording appears to have been copied from other
+> permission-check hooks despite differing semantics.
 >
-> Sure and I don't think it's an issue.  It's really easy to filter
-> emails on any MUA if really needed, and I'm sure the Sashiko maintainers
-> would be able to fix things quickly if needed.
+> Signed-off-by: Bill Roberts <bill.roberts@arm.com>
 
-I think it's important to understand that not everyone approaches the
-email lists the same way, and something that is a non-issue for you
-might be a larger issue for someone else.
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 
-As a reminder, you are always welcome to create your own list for
-Landlock if you find that the LSM list no longer meets your needs.
-The only thing I ask is that any patches touching/affecting the LSM
-framework are sent to the LSM list and of course any pull requests
-sent to Linus should CC the LSM list.
-
---=20
-paul-moore.com
+> ---
+>  security/security.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/security/security.c b/security/security.c
+> index 4e999f023651..96e6ef088801 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -3301,15 +3301,14 @@ int security_task_kill(struct task_struct *p, struct kernel_siginfo *info,
+>  }
+>  
+>  /**
+> - * security_task_prctl() - Check if a prctl op is allowed
+> + * security_task_prctl() - Handle an LSM specific prctl call
+>   * @option: operation
+>   * @arg2: argument
+>   * @arg3: argument
+>   * @arg4: argument
+>   * @arg5: argument
+>   *
+> - * Check permission before performing a process control operation on the
+> - * current process.
+> + * Handle lsm specific prctl operations.
+>   *
+>   * Return: Return -ENOSYS if no-one wanted to handle this op, any other value
+>   *         to cause prctl() to return immediately with that value.
