@@ -1,46 +1,39 @@
-Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8323F34751B
-	for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2026 19:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442A735DA78;
+	Tue, 16 Jun 2026 20:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781636995; cv=none; b=oiHk9kFLU7cFXyWnSD3qais+xTDmOz2bEyTPz56OlovtxcXMnKu9Txu0abHxg7MI2u9q8+FljzzW5An+bv9dlzGWoVCs/Z5BgxlZsnJXHBKglJ9OEGcpVfxT1sUvLaMm9OvOuDv/lIa1Atb0PwnNvvCKMAzHMzeQ+kFFl4ZWzc4=
+	t=1781640996; cv=none; b=fiWqlH+G4H5ciXQ26fDohZbJS2qS48HETHF/mZp22lrTHyxe8clcjlmmz+k2z0JX6tXUTjZSk5ciKJ+/VJFTyaCh9HfNE+xgwRdcloa6jiu1EAnS0ox6GPsNFE4ZtiWlQvMiPe/tsv4YkujFw9Km6l7AHvKOau5pCts6q4qN1Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781636995; c=relaxed/simple;
-	bh=YuTMsk3SzAf870WHdlfdjC3bLmpJC1PrJNwwYBkyu7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h8Ayqrg6MFkUINGnOcGb8772IMneZi+Sbk8pUt6kTzcZm+gsy4C1GCe5TRA0AMPOnsxzBpp/oCJ/OFr5r8fAztdGSlOCdXM2rd3UcjCKd//R0kJNBfyaA3LOZsy1yZQuMlztxOAmnOtYPwwU3sQlqdRJ2KekMJMvErjZRdWjFo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=i21vltDX; arc=none smtp.client-ip=45.157.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1781640996; c=relaxed/simple;
+	bh=db3qSJli4jDRZof723oGb/+ks3Jt+72/lbJ9c8+t6vE=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=UvUPBZ2IIa3JQcun7v6Yci6AsR8E/dyAHYiIjcYGqa1GsQRNMPtElSOCdWukM8gc1aqyAxjBos4chyiLl/fJOEsQuMABPyqjkEx/QcfuFUCS30GlkgJV9p7BmSXAKkvAmiD+zp9TzSFeNb5K+AjCjioJ6A7tZF+w++NoBsAvhRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Hrj1CtZu; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="i21vltDX"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gfxGk2Q04zVZX;
-	Tue, 16 Jun 2026 21:03:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1781636622;
-	bh=bK9mMydwdUZO110dKDxOPkPMIkKaLqwVFPP/lQAQyVo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i21vltDXuFrTG98Y64Y8XMzSvg3AEfdeEbvcBNbXU5eNDOnFXOB22fLBFMVQqWC31
-	 7mL0L2kiRy41ctl4TYFo2LKSQe1HpFHXk91dwPHiehe78xSYl9VYAcQcNHxjQ8y561
-	 0dGx7rkCgueSQUbhPqjAu1IpWFrHwwPCMz2PeIHQ=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4gfxGj31WjzK7F;
-	Tue, 16 Jun 2026 21:03:41 +0200 (CEST)
-Date: Tue, 16 Jun 2026 21:03:35 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, sashiko@lists.linux.dev, 
-	Roman Gushchin <roman.gushchin@linux.dev>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Subject: Re: Sashiko reviews for the LSM mailing list
-Message-ID: <20260616.odush7Poos1A@digikod.net>
-References: <20260615.zeinurej8oZ9@digikod.net>
- <CAHC9VhQxHEuznN-xiMJ-LCsz2z-UB0ri6MeMn+Ajyn1WUTDNDw@mail.gmail.com>
- <20260616.EPh8ked0niko@digikod.net>
- <CAHC9VhRa8DQ-ekrmPQSg2pO9pBFj6GA9DO=x5kguGFTbKKyv7Q@mail.gmail.com>
- <20260616.aiGaim8xie8z@digikod.net>
- <CAHC9VhQyN3CczsTHG=sJF8G=MqxGL6NO7assuAjuF9K1t-qDmQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Hrj1CtZu"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1781640990; x=1781900190;
+	bh=Tyu4xAn0C8J9jySsHHCTPZlC9QmtEw5NEsTGCRFwJYE=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=Hrj1CtZuEcPFlA13UBav/ma3CMPBpI/O0G3g7nft3pwgQ2y9l0TTH3HZYrP+S0v8t
+	 dv/NG7bWZmcK4BM5ZxOl+BgOzYwj3wUzN0FDPxGP/MhRnB8SMRS6fLJDtCwfw5R6mX
+	 nEx1bSJto7bh7SWqhMUUfwFF5phgLPKE4iLiseAqSlvFR/9O+ze6UaOqVZI4HWlSlj
+	 4+DAoADzQFNnnduM4SoXnLNdNdLdSFMUTq1WsLD3uMUbUvUNLkGyf+XiKbWSt8Hw2r
+	 fMXLXxJhKvzkQAAxcAHzihLhabmmzR7drGh/k6ChOLMIVBPFWlZR86Bv0sMQR0VVj9
+	 DPnt1ixL4v3zQ==
+Date: Tue, 16 Jun 2026 20:16:22 +0000
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+From: Bryam Vargas <hexlabsecurity@proton.me>
+Cc: =?utf-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, Matthieu Buffet <matthieu@buffet.re>, Paul Moore <paul@paul-moore.com>, Eric Dumazet <edumazet@google.com>, Neal Cardwell <ncardwell@google.com>, linux-security-module@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Landlock: LANDLOCK_ACCESS_NET_CONNECT_TCP bypass via TCP Fast Open
+Message-ID: <20260616201615.275032-1-hexlabsecurity@proton.me>
+Feedback-ID: 199661219:user:proton
+X-Pm-Message-ID: 7635c85011b3c8fa2ca156887e0c834759c13cf8
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -48,128 +41,146 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhQyN3CczsTHG=sJF8G=MqxGL6NO7assuAjuF9K1t-qDmQ@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 16, 2026 at 11:23:54AM -0400, Paul Moore wrote:
-> On Tue, Jun 16, 2026 at 10:59 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > On Tue, Jun 16, 2026 at 10:11:42AM -0400, Paul Moore wrote:
-> > > On Tue, Jun 16, 2026 at 4:49 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > On Mon, Jun 15, 2026 at 04:13:59PM -0400, Paul Moore wrote:
-> > > > > On Mon, Jun 15, 2026 at 11:41 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > >
-> > > > > > Hi,
-> > > > > >
-> > > > > > I've been reading Sashiko's (AI bot) reviews wrt Landlock patches, and
-> > > > > > most of them were valuable.  It found issues (security or not), but it
-> > > > > > requires to go to https://sashiko.dev to find them, which is too easy to
-> > > > > > forget, and requires additional work from maintainers to copy or point
-> > > > > > to these reviews.  I sent a PR (currently in draft) to enable email
-> > > > > > replies from Sashiko to the Linux Security Module mailing list (most
-> > > > > > patches are already reviewed anyway):
-> > > > > > https://github.com/sashiko-dev/sashiko/pull/278
-> > > > > >
-> > > > > > Making such reviews broadly available can improve the quality of patches
-> > > > > > we receive without much noise, helping for all LSM-related code.  We can
-> > > > > > fine tune some email-related settings if needed.
-> > > > > >
-> > > > > > If there are any concern or question, this is the right time to start a
-> > > > > > discussion.
-> > > > >
-> > > > > I recently enabled Sashiko for the SELinux list to trial it there
-> > > > > first, with the goal of eventually bringing this topic up for the rest
-> > > > > of the LSM folks on the LSM list.
-> > > > >
-> > > > > While I think Sashiko's review comments are generally okay, you should
-> > > > > have contacted the LSM mailing list folks *before* submitting a PR
-> > > > > that would cause an automated bot to send email to the LSM list (this
-> > > > > applies to all automated emails, not just LLM reviews).  Please hold
-> > > > > the PR until you have given people a chance to comment on the issue.
-> > > >
-> > > > As I explained just above, the PR is a draft (GitHub specific state for
-> > > > WIP), so it cannot be merged as-is, but it is useful for reviews and for
-> > > > LSM folks to get a look if they are interested.
-> > > >
-> > > > > Personally, I'm okay with it.
-> > > >
-> > > > Looks good.  What about waiting a week to get some feedback here and
-> > > > then ask for a merge of the PR?
-> > >
-> > > I would suggest enabling Sashiko for the LSM list, but not enabling
-> > > the email replies at first.  This would allow people to view the
-> > > reviews and perhaps make a better informed decision.
-> >
-> > The point of this PR and the related discussion is to enable email
-> > replies ...
-> 
-> ... and you've heard my opinions on that.
-> 
-> > the reviews are already there.
-> 
-> I don't believe the LSM list is being directly reviewed by sashiko.dev
-> at the moment (check the lists drop-down in the web UI).  Any
-> LSM-posted patches being reviewed are being reviewed due to a CC to a
-> sashiko.dev monitored list.
+Hello Micka=C3=ABl, and Landlock folks,
 
-I reiterate my claim that the LSM list is already being reviewed.  You
-just need to enter an LSM name in the search box to see the reviewed
-patch series.  They are already categorized by mailing list, only the
-drop-down menu doesn't list all of them.  For instance, the latest for
-AppArmor (neither the LKML nor the LSM mailing list are being explicitly
-registered for Sashiko):
-https://sashiko.dev/#/patchset/20260613060424.2213712-1-junxiao.chang%40intel.com
+A task confined by a Landlock ruleset that handles
+LANDLOCK_ACCESS_NET_CONNECT_TCP and is denied connecting to a given port ca=
+n
+still establish a TCP connection to that port by using TCP Fast Open, i.e.
+sendto(fd, ..., MSG_FASTOPEN, &dst, dstlen) on a fresh stream socket. The
+network-egress confinement for TCP connect is silently bypassed.
 
-> 
-> > As explained, my motivation for
-> > this change is to get reviews, and without emails I suspect almost nobody
-> > (will) take a look and that would not even be an experiment.  I'm saying
-> > that because I forgot several times to take a look and it adds more work
-> > to the review/maintenance.
-> 
-> I think it's important to allow people a chance to see what the
-> reviews are like before you enable an automated bot on the mailing
-> list.  I'm sorry you found it cumbersome to check the web UI, but a
-> change to what is sent to the mailing list affects more than just you.
-> 
-> Perhaps we do eventually enable sashiko.dev to post to the LSM list,
-> as I said before I have no problem with that, but I want to give
-> people a chance to look at the Sashiko reviews first and make a more
-> informed decision.
+Affected
+--------
+Any kernel with CONFIG_SECURITY_LANDLOCK=3Dy and Landlock enabled that supp=
+orts
+the TCP network access rights (Landlock ABI >=3D 4, since Linux 6.7). Confi=
+rmed by
+source inspection on mainline (v7.1-rc7) and reproduced on Linux 7.0.11
+(Landlock ABI 8). No CONFIG beyond Landlock + IPv4/IPv6 TCP; TCP Fast Open =
+client
+is enabled by the per-netns default (net.ipv4.tcp_fastopen has TFO_CLIENT_E=
+NABLE
+set), so no sysctl change and no setsockopt are required.
 
-Sure, I sent this emails to start this discussion, and we can already
-take a look, but I guess a drop-down menu will help.  Are you OK to
-start with this drop-down menu?
+Root cause
+----------
+LANDLOCK_ACCESS_NET_CONNECT_TCP is enforced only by the socket_connect LSM =
+hook
+(hook_socket_connect -> current_check_access_socket). security_socket_conne=
+ct()
+has exactly one call site in the tree, net/socket.c (the connect(2) syscall=
+).
 
-> 
-> > FWIW, there are currently 41 kernel mailing lists registered:
-> > https://github.com/sashiko-dev/sashiko/blob/main/sashiko.dev/email_policy.toml
-> 
-> Yes, I think we can all read a configuration file.
-> 
-> > > > Anyway, it would not be written in
-> > > > stone, we can update Sashiko config with new PRs.
-> > >
-> > > It is worth noting that sashiko.dev updates are not immediate, so
-> > > there is a delay between a PR being merged and it taking effect.
-> >
-> > Sure and I don't think it's an issue.  It's really easy to filter
-> > emails on any MUA if really needed, and I'm sure the Sashiko maintainers
-> > would be able to fix things quickly if needed.
-> 
-> I think it's important to understand that not everyone approaches the
-> email lists the same way, and something that is a non-issue for you
-> might be a larger issue for someone else.
+TCP Fast Open performs an implicit connect inside sendmsg:
 
-I know, it's not about me.
+  tcp_sendmsg_locked()            net/ipv4/tcp.c  (MSG_FASTOPEN branch)
+   -> tcp_sendmsg_fastopen()      net/ipv4/tcp.c
+   -> __inet_stream_connect(..., is_sendmsg=3D1)  net/ipv4/af_inet.c
+   -> sk->sk_prot->connect()      net/ipv4/af_inet.c  -> tcp_v4_connect()
 
-> 
-> As a reminder, you are always welcome to create your own list for
-> Landlock if you find that the LSM list no longer meets your needs.
-> The only thing I ask is that any patches touching/affecting the LSM
-> framework are sent to the LSM list and of course any pull requests
-> sent to Linus should CC the LSM list.
+This path establishes the connection to the address taken from msg_name but
+never calls security_socket_connect(). The only LSM hook fired on the sendm=
+sg
+path is security_socket_sendmsg(), and Landlock registers no socket_sendmsg
+hook, so LANDLOCK_ACCESS_NET_CONNECT_TCP is never re-checked. __inet_stream=
+_connect()
+itself carries no LSM hook (only the cgroup-BPF pre_connect, a different
+mechanism).
 
-That would be easier, but that's an option I would prefer to avoid
-because I want everyone to benefit form these reviews.
+Notably the kernel already mediates the analogous AF_UNIX implicit-connect =
+on the
+send path via the unix_may_send hook, which Landlock does register
+(hook_unix_may_send) -- so the sendmsg-implies-connect pattern is recognize=
+d, but
+the TCP Fast Open case has no equivalent coverage. The MPTCP fast-open path
+(mptcp_sendmsg_fastopen -> __inet_stream_connect) is a second producer of t=
+he
+same unmediated connect (by source inspection; not separately reproduced).
+
+Reproducer
+----------
+A self-contained, fully unprivileged PoC is available on request. It forks =
+an
+unconfined TFO-capable loopback listener, then in a child applies a Landloc=
+k
+ruleset handling LANDLOCK_ACCESS_NET_CONNECT_TCP with no allow rule
+(landlock_create_ruleset() with handled_access_net =3D
+LANDLOCK_ACCESS_NET_CONNECT_TCP, no landlock_add_rule(), then
+landlock_restrict_self(); every TCP connect is denied) and tries the forbid=
+den
+port two ways:
+
+  (1) connect(fd, &dst)                 -> -EACCES   (Landlock enforces CON=
+NECT_TCP)
+  (2) sendto(fd2, buf, len, MSG_FASTOPEN, &dst, dstlen)
+                                        -> succeeds; the listener accepts t=
+he
+                                           connection and reads the payload=
+.
+
+Observed on Linux 7.0.11 (Landlock ABI 8):
+
+  [1] connect(2)            -> ret=3D-1 errno=3D13 (Permission denied)
+  [2] sendto(MSG_FASTOPEN)  -> ret=3D14 errno=3D0 (OK/queued)
+  [+] listener ACCEPTED the confined child's connection; payload=3D"..."
+
+connect(2) to the port is denied while sendto(MSG_FASTOPEN) reaches the ide=
+ntical
+port and delivers data.
+
+Impact
+------
+A sandbox that uses LANDLOCK_ACCESS_NET_CONNECT_TCP to restrict outbound TC=
+P
+(e.g. to keep a confined component from reaching an internal service or a
+metadata endpoint) can be escaped by an unprivileged, self-confined task wi=
+th no
+CAP and no namespace transition -- for any destination port, since the
+implicit-connect path never consults the connect hook regardless of address=
+ (the
+run above shows one port). It is an integrity
+bypass of the network-confinement property; no memory safety is involved.
+I score it CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:N/I:H/A:N (6.5 Medium) -- the
+confined task escapes the policy authority that defined its sandbox, a scop=
+e
+change; 5.5 if you treat the Landlock boundary as the same authority (S:U).
+
+Note on the in-flight UDP series
+--------------------------------
+The "landlock: Add UDP access control support" series (v5, Matthieu Buffet,
+https://lore.kernel.org/r/20260611162107.49278-3-matthieu@buffet.re) adds a
+socket_sendmsg hook, hook_socket_sendmsg(), but it returns 0 for non-UDP
+sockets:
+
+    if (sk_is_udp(sock->sk))
+            access_request =3D LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP;
+    else
+            return 0;
+
+so a TCP socket using MSG_FASTOPEN still bypasses LANDLOCK_ACCESS_NET_CONNE=
+CT_TCP
+even after that series lands. It may be most convenient to fix this there.
+
+Suggested direction
+-------------------
+Re-check LANDLOCK_ACCESS_NET_CONNECT_TCP on the implicit-connect path: eith=
+er have
+the socket_sendmsg hook evaluate CONNECT_TCP for stream sockets when the ca=
+ll
+performs an implicit connect (mirroring the AF_UNIX unix_may_send handling)=
+, or
+place the check inside __inet_stream_connect() so a single chokepoint cover=
+s
+connect(2), TCP Fast Open, and the MPTCP fast-open sibling.
+
+I am happy to send a patch for this if you would like me to.
+
+Best regards,
+
+Bryam Vargas
+Independent security researcher, HEXLAB S.A.S., Cali, Colombia
+hexlabsecurity@proton.me
+
