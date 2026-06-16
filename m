@@ -1,97 +1,91 @@
-Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD26930AD0A
-	for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2026 08:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2745143CEC2
+	for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2026 11:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781599806; cv=none; b=Hh46jxfCdLHzvti62gVfE49TuS7pF0grwLAkXDNAoy3fd2NKlkPr9pf6xyPnmwXbAETvYGpARkK+C5HrXa1W6V5quti7sNzi2hRdGSSk3nG1W8/EChY6epIDrmfeZmOl4pavUR161cSY/bXnjTULMyWTzFArfoKg9lSnEcdNa0c=
+	t=1781610632; cv=none; b=Zkj5wVTWkrd47EN4RQi/4Q/BlueEv6mJuCaJVZjEY+WOovjM4k9XjF1idOMDX+uu8eapnh23tQ9W4B2hoMTd5W1LHjTdLDg83uMkRgsSkNeTu2FtLHI7ZWAKKx4xicfVBa24vWgdjL6eHpMbBnVSinaxY7u0gvvlHDCkCsj7R2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781599806; c=relaxed/simple;
-	bh=uGieTqiWAYjeIR92NQ4M3tFxM0kmXf3nWH4SXSKoXss=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j1P6XyNQtYQxm1UtkmKEl6VQ8Ln8zJdW0Rmtn10b8dbwcLQJj0dD/g5dACMW3FevQVSo2rmYRiJw+Qb4+Wzqo6YDOlxO+kb+lMVxZO1hRnix9pqyxLYJaNtU1CnBKjcTzFaGlvuE+G7rNxYGTP5QgIJI/XAb1PSsbEEcnBt0Rfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=RG8Hkbta; arc=none smtp.client-ip=83.166.143.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1781610632; c=relaxed/simple;
+	bh=TObrEHhKuPNM42P0oLKIGdOx5sA4x16gAm9/x6UBmOw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=gSzP4vtn0LXY670dlhaGW7+oUc3zc88JU76ANViT6N+F84amiw/cs4fboveMP8L/V2eW6CdEZibc4s8Rl1bxv2HkfYgv4KgDo+9dBZxkqbnyUZmwJ9/HihVqLm8uuZrJezIi2WEB1Au/ZFCGutf86Q3u1rWmE7SqjMFvUCy0Rmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NuZOhfcZ; arc=none smtp.client-ip=209.85.218.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="RG8Hkbta"
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gfgfT5wH9zfYS;
-	Tue, 16 Jun 2026 10:49:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1781599793;
-	bh=+FmqWYCTPnBUhtjFsDkCf2D0Q6mewo7WFk3/+e78ytk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RG8HkbtahZmqOaiDbAvsDIk4eG+8AwxnaCwhltw4frOyBNrGP7mRNrcMBmXe+PWh3
-	 kwHD8q/fYHzNpLvBH0Weq+BvWqATQl0fdr47f65qVX/heYyxfYUz2PZoCgBqizy5Tw
-	 3EZoLkGtP00IANpCu0sFWtHekvnxQZTJyzSXGO/M=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4gfgfS5sv3zGfM;
-	Tue, 16 Jun 2026 10:49:52 +0200 (CEST)
-Date: Tue, 16 Jun 2026 10:49:51 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, sashiko@lists.linux.dev, 
-	Roman Gushchin <roman.gushchin@linux.dev>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Subject: Re: Sashiko reviews for the LSM mailing list
-Message-ID: <20260616.EPh8ked0niko@digikod.net>
-References: <20260615.zeinurej8oZ9@digikod.net>
- <CAHC9VhQxHEuznN-xiMJ-LCsz2z-UB0ri6MeMn+Ajyn1WUTDNDw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NuZOhfcZ"
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-beb6d964066so262041366b.3
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2026 04:50:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1781610629; x=1782215429; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hcH8wbzZOm8yn4lLoAkAwb8V6hZltU+bJ+2UV9XpA9s=;
+        b=NuZOhfcZrHteFgg+qVuJKf/u2zYwxMNt7M/+3Kh2WGKDHOK0XbwQU4TtUudSmIqfHp
+         3d512sWF3YSKCtWQ4TZV5MeKudggeHCDoqM2kGKSS/6vct350HmOXUvKVfl2WpMkekLC
+         zToUW0w6iHcPVj0SumIP+N2aMhFr8Fc4DCVBRZeUMJce0W0vsLnNpyaNYZOpNvfxOGkR
+         n/gnavsNlF7llBohUYrKUQmn4UGZBkm4RxyM+ZAD8yOKsL03u8u2+w0jF76KFxxuDvGe
+         vfBu/tdAI/YA/CfT/0uP87PxyZVwq1No+5SIzDm1wxIn8DsB15iFz9+PGgfao4J+51Qz
+         gdnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781610629; x=1782215429;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hcH8wbzZOm8yn4lLoAkAwb8V6hZltU+bJ+2UV9XpA9s=;
+        b=mjkHhdKxtYNgtu374SaEZ3eviCc5RifKj0Ex9JPCzyrj7PCuwm8rAjdecAo7ufiQ3M
+         KU7tmqdOnGFNQL1aPTJGfdEpNBjDMM/xK/MojG0V4LWLVkZUHbV/GUyQKny29D31uxdC
+         qTr9qzcS8I5vSC6xSqq6SUHMz1Fg4fQfd78oRQiSimAf93xK0LmTejIdvXDsFF5ydZKm
+         ABOtIv2mPQ4zVyfVGXan5EbGN46RmBOIvlFsFJt9N+BBT83uj+F0g9ashFJ+zEd09H3l
+         jpaa+3w8RdenSg1FyQAVn0nkW6r9LH5hkWVEHMyzRKIHns65NkOIdQKntGBh1aybtml7
+         LMoQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/Hxj9NV+b0ds469lzbsD+zHqDTemUqxkvdHvBIuKA0yLjDgenQfQmYv+NCpdnkQ0YtS2Xdj3GBOlkaOpJlDSOwv7hvwYM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYpm8r2pgOh5TQZbd2SMHLyly3H0sXv9XZHxb/Wi4zChCXrb1i
+	uaX14ow2SSmZlEsGoKTJr31YTRnfsriemHN34CRgHJ2a3d+AuiSI4x8fHVdgcIKeot3SMThioyl
+	6etQs3jqHw+uCeqoV2Q==
+X-Received: from ejfp18.prod.google.com ([2002:a17:906:e92:b0:beb:c99:aa2])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:907:1dd6:b0:bed:9a7:5ed1 with SMTP id a640c23a62f3a-c043a477df5mr130254166b.5.1781610629337;
+ Tue, 16 Jun 2026 04:50:29 -0700 (PDT)
+Date: Tue, 16 Jun 2026 11:50:27 +0000
+In-Reply-To: <20260604-unique-ref-v17-1-7b4c3d2930b9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhQxHEuznN-xiMJ-LCsz2z-UB0ri6MeMn+Ajyn1WUTDNDw@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+Mime-Version: 1.0
+References: <20260604-unique-ref-v17-0-7b4c3d2930b9@kernel.org> <20260604-unique-ref-v17-1-7b4c3d2930b9@kernel.org>
+Message-ID: <ajE4g7JsM6bnpEOu@google.com>
+Subject: Re: [PATCH v17 01/10] rust: alloc: add `KBox::into_non_null`
+From: Alice Ryhl <aliceryhl@google.com>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <sergeh@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Viresh Kumar <vireshk@kernel.org>, 
+	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	"Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, Boqun Feng <boqun@kernel.org>, 
+	Uladzislau Rezki <urezki@gmail.com>, Lorenzo Stoakes <ljs@kernel.org>, Vlastimil Babka <vbabka@kernel.org>, 
+	"Liam R. Howlett" <liam@infradead.org>, Igor Korotin <igor.korotin@linux.dev>, 
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-pm@vger.kernel.org, 
+	linux-pci@vger.kernel.org, driver-core@lists.linux.dev
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Jun 15, 2026 at 04:13:59PM -0400, Paul Moore wrote:
-> On Mon, Jun 15, 2026 at 11:41 AM Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > Hi,
-> >
-> > I've been reading Sashiko's (AI bot) reviews wrt Landlock patches, and
-> > most of them were valuable.  It found issues (security or not), but it
-> > requires to go to https://sashiko.dev to find them, which is too easy to
-> > forget, and requires additional work from maintainers to copy or point
-> > to these reviews.  I sent a PR (currently in draft) to enable email
-> > replies from Sashiko to the Linux Security Module mailing list (most
-> > patches are already reviewed anyway):
-> > https://github.com/sashiko-dev/sashiko/pull/278
-> >
-> > Making such reviews broadly available can improve the quality of patches
-> > we receive without much noise, helping for all LSM-related code.  We can
-> > fine tune some email-related settings if needed.
-> >
-> > If there are any concern or question, this is the right time to start a
-> > discussion.
+On Thu, Jun 04, 2026 at 10:11:13PM +0200, Andreas Hindborg wrote:
+> Add a method to consume a `Box<T, A>` and return a `NonNull<T>`. This
+> is a convenience wrapper around `Self::into_raw` for callers that need
+> a `NonNull` pointer rather than a raw pointer.
 > 
-> I recently enabled Sashiko for the SELinux list to trial it there
-> first, with the goal of eventually bringing this topic up for the rest
-> of the LSM folks on the LSM list.
-> 
-> While I think Sashiko's review comments are generally okay, you should
-> have contacted the LSM mailing list folks *before* submitting a PR
-> that would cause an automated bot to send email to the LSM list (this
-> applies to all automated emails, not just LLM reviews).  Please hold
-> the PR until you have given people a chance to comment on the issue.
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-As I explained just above, the PR is a draft (GitHub specific state for
-WIP), so it cannot be merged as-is, but it is useful for reviews and for
-LSM folks to get a look if they are interested.
-
-> 
-> Personally, I'm okay with it.
-
-Looks good.  What about waiting a week to get some feedback here and
-then ask for a merge of the PR?  Anyway, it would not be written in
-stone, we can update Sashiko config with new PRs.
-
-> 
-> --
-> paul-moore.com
-> 
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
