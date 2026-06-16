@@ -1,39 +1,39 @@
 Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442A735DA78;
-	Tue, 16 Jun 2026 20:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81F138D3E5;
+	Tue, 16 Jun 2026 20:16:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781640996; cv=none; b=fiWqlH+G4H5ciXQ26fDohZbJS2qS48HETHF/mZp22lrTHyxe8clcjlmmz+k2z0JX6tXUTjZSk5ciKJ+/VJFTyaCh9HfNE+xgwRdcloa6jiu1EAnS0ox6GPsNFE4ZtiWlQvMiPe/tsv4YkujFw9Km6l7AHvKOau5pCts6q4qN1Qs=
+	t=1781641014; cv=none; b=LkS36JAUVAAzxRaeJed/N+/wAvSwIiIPvRloLa0uHtEYBVEgB2lc9msmOXneSKLQZK1FIKOkOXqbsPOUMa8ZaTe2NeblIwHQYEjOboUQM42sIgIuqqHLOHX4zwuRSyb58lo0z6sNs2JKMadJJ/tBg2H86d4UZKTQ1TtoS2fu8wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781640996; c=relaxed/simple;
-	bh=db3qSJli4jDRZof723oGb/+ks3Jt+72/lbJ9c8+t6vE=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=UvUPBZ2IIa3JQcun7v6Yci6AsR8E/dyAHYiIjcYGqa1GsQRNMPtElSOCdWukM8gc1aqyAxjBos4chyiLl/fJOEsQuMABPyqjkEx/QcfuFUCS30GlkgJV9p7BmSXAKkvAmiD+zp9TzSFeNb5K+AjCjioJ6A7tZF+w++NoBsAvhRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Hrj1CtZu; arc=none smtp.client-ip=185.70.43.22
+	s=arc-20240116; t=1781641014; c=relaxed/simple;
+	bh=V1NLVnV77x1FwzmeepuZ5M0qTAvv7JRkHF4W5JsQSXo=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=EuoApc8nL9yWi0JnQ0soMuS6f4JZx4jckK3za3FYbn1FyoivKqh93jVCyL5LiAf8l/3jjEIVa4eDvmpVEriP6yBdlV3BlKEHrt0DuuzQ7kHDDpHM44VaoZBHLzQ/Iav+Eq/dNzyUpgs8VF6SnZAmo0m22e2KrbSqZ5/0lJ9qgKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=ZSqXwoP1; arc=none smtp.client-ip=185.70.43.22
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Hrj1CtZu"
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="ZSqXwoP1"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1781640990; x=1781900190;
-	bh=Tyu4xAn0C8J9jySsHHCTPZlC9QmtEw5NEsTGCRFwJYE=;
+	s=protonmail; t=1781641008; x=1781900208;
+	bh=H3Goi+Y+UYTPjsaFMxwCKhXsIsypsit8EhU2bFsQTZ8=;
 	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
 	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=Hrj1CtZuEcPFlA13UBav/ma3CMPBpI/O0G3g7nft3pwgQ2y9l0TTH3HZYrP+S0v8t
-	 dv/NG7bWZmcK4BM5ZxOl+BgOzYwj3wUzN0FDPxGP/MhRnB8SMRS6fLJDtCwfw5R6mX
-	 nEx1bSJto7bh7SWqhMUUfwFF5phgLPKE4iLiseAqSlvFR/9O+ze6UaOqVZI4HWlSlj
-	 4+DAoADzQFNnnduM4SoXnLNdNdLdSFMUTq1WsLD3uMUbUvUNLkGyf+XiKbWSt8Hw2r
-	 fMXLXxJhKvzkQAAxcAHzihLhabmmzR7drGh/k6ChOLMIVBPFWlZR86Bv0sMQR0VVj9
-	 DPnt1ixL4v3zQ==
-Date: Tue, 16 Jun 2026 20:16:22 +0000
+	b=ZSqXwoP18j95VEpeIPuJrId4YQp29HTTpm39pM4v+fM4XP33kyZUmEu2wzTuoDYLu
+	 vFSNW4xOrw0N24Afqk6Fo3+Vkl18qSjujUAiK1/hNYIOS889a9itxmVlcnrm8TF4Af
+	 7giJ3PN9MxzKPnw4TfXrhbEgCqDdPA12VfvyZlug20gYFsXH8CjkBAtHH0MduT6G6q
+	 6fEzS5XFR6q7Ujq3uOZOcYJ6mZwcBs8gVNFDa5KegSVOhmtC5LGUkpA/iwKXGNfMaP
+	 VgcZxB3NfyA/SC5L8hVen29zPm6czIiC99C3o6Oy7Bp0P9iP/Kh+M0GUFy1sfd1xWK
+	 Gl+tpnYLLcf+Q==
+Date: Tue, 16 Jun 2026 20:16:41 +0000
 To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 From: Bryam Vargas <hexlabsecurity@proton.me>
-Cc: =?utf-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, Matthieu Buffet <matthieu@buffet.re>, Paul Moore <paul@paul-moore.com>, Eric Dumazet <edumazet@google.com>, Neal Cardwell <ncardwell@google.com>, linux-security-module@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Landlock: LANDLOCK_ACCESS_NET_CONNECT_TCP bypass via TCP Fast Open
-Message-ID: <20260616201615.275032-1-hexlabsecurity@proton.me>
+Cc: =?utf-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, Paul Moore <paul@paul-moore.com>, Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, linux-security-module@vger.kernel.org, io-uring@vger.kernel.org, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Landlock: LANDLOCK_ACCESS_FS_IOCTL_DEV bypass via io_uring IORING_OP_URING_CMD
+Message-ID: <20260616201633.275067-1-hexlabsecurity@proton.me>
 Feedback-ID: 199661219:user:proton
-X-Pm-Message-ID: 7635c85011b3c8fa2ca156887e0c834759c13cf8
+X-Pm-Message-ID: 3e618764aa8d1c1ba3df37c48f031a42fe7e9e1c
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -43,140 +43,163 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hello Micka=C3=ABl, and Landlock folks,
+Hello Micka=C3=ABl, and Landlock / io_uring folks,
 
-A task confined by a Landlock ruleset that handles
-LANDLOCK_ACCESS_NET_CONNECT_TCP and is denied connecting to a given port ca=
-n
-still establish a TCP connection to that port by using TCP Fast Open, i.e.
-sendto(fd, ..., MSG_FASTOPEN, &dst, dstlen) on a fresh stream socket. The
-network-egress confinement for TCP connect is silently bypassed.
+A task confined by a Landlock ruleset that grants READ_FILE/WRITE_FILE on a=
+ block
+or NVMe character device but withholds LANDLOCK_ACCESS_FS_IOCTL_DEV can sti=
+ll
+reach the device-command surface through io_uring IORING_OP_URING_CMD with =
+the
+IOCTL_DEV check bypassed: the request enters the device-command handler (bl=
+ock
+discard, or the NVMe char-device passthrough) where the equivalent ioctl(2)=
+ is
+denied. The destructive completion and the NVMe-admin surface follow from t=
+he
+code -- see Impact.
 
 Affected
 --------
 Any kernel with CONFIG_SECURITY_LANDLOCK=3Dy and Landlock enabled that supp=
 orts
-the TCP network access rights (Landlock ABI >=3D 4, since Linux 6.7). Confi=
-rmed by
-source inspection on mainline (v7.1-rc7) and reproduced on Linux 7.0.11
-(Landlock ABI 8). No CONFIG beyond Landlock + IPv4/IPv6 TCP; TCP Fast Open =
-client
-is enabled by the per-netns default (net.ipv4.tcp_fastopen has TFO_CLIENT_E=
-NABLE
-set), so no sysctl change and no setsockopt are required.
+LANDLOCK_ACCESS_FS_IOCTL_DEV (Landlock ABI >=3D 5, since Linux 6.8) and io_=
+uring
+uring_cmd for the device class (block BLOCK_URING_CMD_DISCARD; NVMe passthr=
+ough).
+Confirmed by source inspection on mainline (v7.1-rc7) and reproduced on Lin=
+ux
+7.0.11 (Landlock ABI 8). The confined task needs a writable fd to a device =
+it is
+legitimately allowed to use (e.g. a partition/loop device or an NVMe namesp=
+ace
+passed into a container or granted by the ruleset); no CAP is required to r=
+each
+the io_uring path. The gap is structural -- Landlock has never registered a
+uring_cmd hook -- so it is present from ABI 5 (Linux 6.8) through current
+mainline (v7.1-rc7) and is not a regression tied to a single Fixes: commit.
 
 Root cause
 ----------
-LANDLOCK_ACCESS_NET_CONNECT_TCP is enforced only by the socket_connect LSM =
-hook
-(hook_socket_connect -> current_check_access_socket). security_socket_conne=
-ct()
-has exactly one call site in the tree, net/socket.c (the connect(2) syscall=
-).
+On the ioctl(2) path, the syscall handler in fs/ioctl.c calls
+security_file_ioctl() (its only call site on the ioctl(2) path) before
+dispatching to do_vfs_ioctl(); that reaches Landlock hook_file_ioctl_common=
+(),
+which denies a device ioctl unless the file's
+allowed_access holds LANDLOCK_ACCESS_FS_IOCTL_DEV (BLKDISCARD/BLKSECDISCARD=
+/
+BLKZEROOUT and NVMe passthrough are not in the is_masked_device_ioctl()
+allow-list, so they require the right).
 
-TCP Fast Open performs an implicit connect inside sendmsg:
+io_uring reaches the same device-command surface by a different producer:
 
-  tcp_sendmsg_locked()            net/ipv4/tcp.c  (MSG_FASTOPEN branch)
-   -> tcp_sendmsg_fastopen()      net/ipv4/tcp.c
-   -> __inet_stream_connect(..., is_sendmsg=3D1)  net/ipv4/af_inet.c
-   -> sk->sk_prot->connect()      net/ipv4/af_inet.c  -> tcp_v4_connect()
+  IORING_OP_URING_CMD -> io_uring_cmd()   io_uring/uring_cmd.c
+   -> security_uring_cmd(ioucmd)          (the ONLY LSM gate on this path)
+   -> file->f_op->uring_cmd()             e.g. blkdev_uring_cmd() / nvme_ns=
+_chr_uring_cmd()
 
-This path establishes the connection to the address taken from msg_name but
-never calls security_socket_connect(). The only LSM hook fired on the sendm=
-sg
-path is security_socket_sendmsg(), and Landlock registers no socket_sendmsg
-hook, so LANDLOCK_ACCESS_NET_CONNECT_TCP is never re-checked. __inet_stream=
-_connect()
-itself carries no LSM hook (only the cgroup-BPF pre_connect, a different
-mechanism).
+Landlock's LSM_HOOK_INIT list (security/landlock/fs.c, net.c, task.c) regis=
+ters
+file_ioctl/file_ioctl_compat but no uring_cmd hook -- only SELinux
+(selinux_uring_cmd) and Smack (smack_uring_cmd) gate this surface -- so
+security_uring_cmd() returns 0 for a Landlocked task and hook_file_ioctl /
+IOCTL_DEV is never consulted. For block, blkdev_cmd_discard() is then gated=
+ only
+by BLK_OPEN_WRITE; for NVMe, nvme_ns_chr_uring_cmd() reaches the admin/IO
+passthrough with no security_file_ioctl on the path. There is no shared hel=
+per
+that re-applies the IOCTL_DEV check.
 
-Notably the kernel already mediates the analogous AF_UNIX implicit-connect =
-on the
-send path via the unix_may_send hook, which Landlock does register
-(hook_unix_may_send) -- so the sendmsg-implies-connect pattern is recognize=
-d, but
-the TCP Fast Open case has no equivalent coverage. The MPTCP fast-open path
-(mptcp_sendmsg_fastopen -> __inet_stream_connect) is a second producer of t=
-he
-same unmediated connect (by source inspection; not separately reproduced).
+SELinux and Smack hooking uring_cmd while Landlock does not is the coverage
+asymmetry; the Landlock documentation describes IOCTL_DEV as gating ioctl(2=
+) but
+does not mention io_uring.
 
 Reproducer
 ----------
-A self-contained, fully unprivileged PoC is available on request. It forks =
-an
-unconfined TFO-capable loopback listener, then in a child applies a Landloc=
-k
-ruleset handling LANDLOCK_ACCESS_NET_CONNECT_TCP with no allow rule
-(landlock_create_ruleset() with handled_access_net =3D
-LANDLOCK_ACCESS_NET_CONNECT_TCP, no landlock_add_rule(), then
-landlock_restrict_self(); every TCP connect is denied) and tries the forbid=
-den
-port two ways:
+A self-contained PoC is available on request (it needs root only to set up =
+a loop
+block device and open it; Landlock enforcement is uid-independent, so the
+confined child demonstrates the gap regardless of the setup uid). The child
+applies a Landlock ruleset handling READ_FILE|WRITE_FILE|IOCTL_DEV with a r=
+ule
+granting only READ_FILE|WRITE_FILE on the device, then:
 
-  (1) connect(fd, &dst)                 -> -EACCES   (Landlock enforces CON=
-NECT_TCP)
-  (2) sendto(fd2, buf, len, MSG_FASTOPEN, &dst, dstlen)
-                                        -> succeeds; the listener accepts t=
-he
-                                           connection and reads the payload=
-.
+  (1) ioctl(fd, BLKDISCARD, range)        -> -EACCES  (Landlock enforces IO=
+CTL_DEV)
+  (2) IORING_OP_URING_CMD,
+      cmd_op =3D BLOCK_URING_CMD_DISCARD     -> reaches the block command h=
+andler
 
 Observed on Linux 7.0.11 (Landlock ABI 8):
 
-  [1] connect(2)            -> ret=3D-1 errno=3D13 (Permission denied)
-  [2] sendto(MSG_FASTOPEN)  -> ret=3D14 errno=3D0 (OK/queued)
-  [+] listener ACCEPTED the confined child's connection; payload=3D"..."
+  [1] ioctl(BLKDISCARD)   -> ret=3D-1 errno=3D13 (Permission denied)
+  [2] uring_cmd(DISCARD)  -> cqe.res=3D-22 (Invalid argument)
 
-connect(2) to the port is denied while sendto(MSG_FASTOPEN) reaches the ide=
-ntical
-port and delivers data.
+A Landlock denial is always -EACCES; the io_uring path returned -EINVAL, wh=
+ich
+originates in a post-authorization check inside the block command handler
+(blk_validate_byte_range() in blkdev_cmd_discard()), reached only after
+security_uring_cmd() returned 0. So this run demonstrates the authorization
+bypass -- the request traversed the LSM gate into the block device-command
+handler with no IOCTL_DEV check -- and then failed a parameter check, not a=
+n
+authorization check. The destructive completion (an authorized discard with=
+ a
+granularity-aligned range) is the expected behaviour but was not exercised =
+in
+this run.
 
 Impact
 ------
-A sandbox that uses LANDLOCK_ACCESS_NET_CONNECT_TCP to restrict outbound TC=
-P
-(e.g. to keep a confined component from reaching an internal service or a
-metadata endpoint) can be escaped by an unprivileged, self-confined task wi=
-th no
-CAP and no namespace transition -- for any destination port, since the
-implicit-connect path never consults the connect hook regardless of address=
- (the
-run above shows one port). It is an integrity
-bypass of the network-confinement property; no memory safety is involved.
-I score it CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:N/I:H/A:N (6.5 Medium) -- the
-confined task escapes the policy authority that defined its sandbox, a scop=
+Demonstrated: the LANDLOCK_ACCESS_FS_IOCTL_DEV authorization is bypassed. T=
+he
+device-command request reaches the block command handler with no Landlock c=
+heck;
+the only remaining gate is BLK_OPEN_WRITE (held, since the policy granted w=
+rite).
+Inferred from the code, not exercised here: an authorized DISCARD with a va=
+lid
+range completes (DISCARD/secure-erase semantics, destroying on-device data)=
+, and
+the same missing hook leaves the NVMe char-device uring_cmd surface ungated=
+ --
+nvme_ns_chr_uring_cmd (namespace device /dev/nvmeXnY) -> nvme_ns_uring_cmd =
+for
+NVME_URING_CMD_IO/IO_VEC passthrough, and nvme_dev_uring_cmd (controller de=
+vice
+/dev/nvmeX) for NVME_URING_CMD_ADMIN (format, sanitize, firmware download,
+security send) -- both reach f_op->uring_cmd with no Landlock/IOCTL_DEV gat=
+e.
+
+So the confirmed finding is a missing authorization (the confined task esca=
+pes
+its own IOCTL_DEV restriction); the destructive data effect and the NVMe-ad=
+min
+high-water-mark follow from the code but are not shown in the run above. Th=
 e
-change; 5.5 if you treat the Landlock boundary as the same authority (S:U).
-
-Note on the in-flight UDP series
---------------------------------
-The "landlock: Add UDP access control support" series (v5, Matthieu Buffet,
-https://lore.kernel.org/r/20260611162107.49278-3-matthieu@buffet.re) adds a
-socket_sendmsg hook, hook_socket_sendmsg(), but it returns 0 for non-UDP
-sockets:
-
-    if (sk_is_udp(sock->sk))
-            access_request =3D LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP;
-    else
-            return 0;
-
-so a TCP socket using MSG_FASTOPEN still bypasses LANDLOCK_ACCESS_NET_CONNE=
-CT_TCP
-even after that series lands. It may be most convenient to fix this there.
+proven authorization bypass alone scores CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C=
+:N/I:H/A:N
+(6.5 Medium) -- S:C because the confined task crosses the Landlock policy
+boundary it was placed under, I:H because the bypassed path reaches a handl=
+er
+whose authorized completion modifies device data. With the device command
+completing destructively the projected ceiling is
+CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:N/I:H/A:H (8.4 High), the A:H component
+reasoned from the source rather than executed. No memory safety is involved=
+.
 
 Suggested direction
 -------------------
-Re-check LANDLOCK_ACCESS_NET_CONNECT_TCP on the implicit-connect path: eith=
-er have
-the socket_sendmsg hook evaluate CONNECT_TCP for stream sockets when the ca=
-ll
-performs an implicit connect (mirroring the AF_UNIX unix_may_send handling)=
-, or
-place the check inside __inet_stream_connect() so a single chokepoint cover=
-s
-connect(2), TCP Fast Open, and the MPTCP fast-open sibling.
+Have Landlock register a uring_cmd hook that maps the device command to the=
+ same
+checks the ioctl path applies (IOCTL_DEV, and truncate where relevant), so =
+a
+single chokepoint covers every f_op->uring_cmd provider (block, NVMe, ublk,=
+ and
+any future one). Mirrors how SELinux/Smack already gate this surface.
 
-I am happy to send a patch for this if you would like me to.
+I am happy to send a patch for this if you would like.
 
 Best regards,
 
