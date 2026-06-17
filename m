@@ -1,87 +1,104 @@
-Received: from mx1.buffet.re (mx1.buffet.re [51.83.41.69])
+Received: from mail-106121.protonmail.ch (mail-106121.protonmail.ch [79.135.106.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA9A371890;
-	Wed, 17 Jun 2026 18:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.83.41.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F5337B00F
+	for <linux-security-module@vger.kernel.org>; Wed, 17 Jun 2026 23:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781719528; cv=none; b=Ik5v9yZ2IRI1kKeRyPlOntTMOPw7dX6BSlBVT/4Ow1eZvD/idc5FZI2o1otvaN1xNNSVubDONVQgc0UAyiVWKgyEubQTSYDvcWxrwl8GigBFE6Ldvy2dtvdxKPV0QkT1kbyc6v2AASjC2q2esvk/ZWkn5Oh1rbezQWFT+9m9J1A=
+	t=1781737378; cv=none; b=aGnygSFnuzWPnpw9iJfoiHxZc64sfdooVfxjrgN4Hcpb0Tm3sX77h5Zs+5misXmqk3IzP8v+Dx1pIWA7sRCg9IY3O34CTY3/lYOesmjtHMX1pj65TEPgk4Pa9kxqJDxlYRN/djrTJkcB8lpovxBwk46CJcMrHjffIEw3kC9ESdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781719528; c=relaxed/simple;
-	bh=/FgkYP9syTYmexU5LLVTc9MZQDepe9QOqP1BEKT3OPI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eSzLQrdziT6l2n78DKOiiFsTLjiM8lX5MZUDykOMKkYjMoPEuxF3NTopCAAZfOIIDFv28pwtZPoaxKSuF+Ljm0icPfbCTTd2PE0qpyXmobIsjNdFi/kK1VsYjXngmXJ7we+Ig10AAsPwIP56ndTxKWivnFE8ey4ErwaopKhiuQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re; spf=pass smtp.mailfrom=buffet.re; dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b=aKj6d2ZE; arc=none smtp.client-ip=51.83.41.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buffet.re
+	s=arc-20240116; t=1781737378; c=relaxed/simple;
+	bh=goMpKc20WWLgp813XRXVBkIwuN4QUKh7e/eWkucNL0Y=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nN25eonhrcKODbLqQBvN/vYC+uTwczfNoxMQSq0cRHTPHmWI70BUlAc2zY6ehGYNfJ05m6dd0MhfhWNeavoRe9mqdyieAEL/f6GTCdc4pwGkHpDeu3sedONc1es9IrgtNS6eOOETHUILch5ZEcaJaRBfWMqRfkIXntIPBeeXuwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=WGT5OvGw; arc=none smtp.client-ip=79.135.106.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b="aKj6d2ZE"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=buffet.re; s=mx1;
-	t=1781719516; bh=/FgkYP9syTYmexU5LLVTc9MZQDepe9QOqP1BEKT3OPI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aKj6d2ZEg4bn7e5Um68yvmRh3hRcvUk+nYwcRhoGLyZP0D28hCrn7oAm/beri55yQ
-	 S36NdWeq0UEUpNC173NWEPc0uv7RRFrdFNyB6QF7HxIurGE8VoUYt2wMU+Qs5zF8jy
-	 pvogavh+aP7mEqxniUegBEXjPujlMepP0cHuDIdKSy+U5re07NpmyPo25GN1Z4OD5q
-	 AgBWi/DW7xd+epaOYZRL+11Kd02fEhYB3RJsQecpDIBgRul/DB06A+4JYg6wMFSEmH
-	 xyFKZ7b9Ad6VfcowIZfUJQF/Q77GtRpPPSihuzPsZLpv7g4N949SXSDUREXNL5/pbL
-	 1UUVX99kKdRtQ==
-Received: from localhost.localdomain (unknown [10.0.1.3])
-	by mx1.buffet.re (Postfix) with ESMTPSA id 0F41F12593E;
-	Wed, 17 Jun 2026 20:05:16 +0200 (CEST)
-From: Matthieu Buffet <matthieu@buffet.re>
-To: Bryam Vargas <hexlabsecurity@proton.me>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	linux-security-module@vger.kernel.org,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Neal Cardwell <ncardwell@google.com>,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Matthieu Buffet <matthieu@buffet.re>
-Subject: Re: Landlock: LANDLOCK_ACCESS_NET_CONNECT_TCP bypass via TCP Fast Open
-Date: Wed, 17 Jun 2026 20:05:22 +0200
-Message-ID: <20260617180526.15627-1-matthieu@buffet.re>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260617.eemahv8ui7Ee@digikod.net>
-References: <20260617.eemahv8ui7Ee@digikod.net>
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="WGT5OvGw"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1781737365; x=1781996565;
+	bh=T+JJartZWEPH3a3kFKvYUz17r/3Fi9cItcUnsl8qV4M=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=WGT5OvGwJIjqE3xl0m42QvBttLtp6PFxwy5gLCDwNy4cx/xDVFOyFTSWM6uap9sFv
+	 LtypYZADuF5hhha2sjVv1p+JVfHWHioHHR+C78VW1tTKh+oOr+bSFgTEr8fTcwrjco
+	 oXwFcPT8GKgMwn/1LOOdKwFoqhFoiGBuvS0a4Ed3XGOSwNhuF4W+eZaI0nWt2/tLI9
+	 cmCBWBYj/u0A/ox0xFtXi9vRbhk2r6T8HB70fRzOVxImefiTnEFnwvzK1lh+vMoh/r
+	 SHmvB11lSfE3+B+xs4jHzGXYd2m/+MPLHmFVXiZjwNc9QDuNLCCZxWnLGmDG0CAm2b
+	 0gv7u9CNbbX7Q==
+Date: Wed, 17 Jun 2026 23:02:41 +0000
+To: =?utf-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
+From: Bryam Vargas <hexlabsecurity@proton.me>
+Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, linux-security-module@vger.kernel.org
+Subject: Re: Landlock: LANDLOCK_ACCESS_FS_IOCTL_DEV bypass via io_uring IORING_OP_URING_CMD
+Message-ID: <20260617230237.14718-1-hexlabsecurity@proton.me>
+In-Reply-To: <ajJtTHyqWTmX7lHo@google.com>
+References: <20260616201633.275067-1-hexlabsecurity@proton.me> <ajJtTHyqWTmX7lHo@google.com>
+Feedback-ID: 199661219:user:proton
+X-Pm-Message-ID: 1609b76f19771bb6944c2ebd5f4fa15f3c915e21
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Thanks G=C3=BCnther, and thanks for filing #64.
 
-On 6/17/2026 4:22 PM, Mickaël Salaün wrote:
-> Thanks for the report.  This was previously identified by Mikhail and
-> Matthieu, see the related issue:
-> https://github.com/landlock-lsm/linux/issues/41
+Straight to your two questions:
 
-(I worked on a v0 patch for that issue after I first reported it to
-Mickaël, missing the fact that it was already documented as a github
-issue. Then tried a more generic approach that failed. Here's the v0,
-rebased on the beggining of -next to ease backporting, it might be a
-good start. For instance, someone with more performance/benchmarking
-background might want to add an unlikely() around the MSG_FASTOPEN
-condition in the hot code path?)
+1. Block: you're right. blkdev_uring_cmd() has a single case, BLOCK_URING_C=
+MD_DISCARD,
+   and the blkdev.h note that it's a separate number space is fair, so I'm =
+not arguing
+   it should be a generic ioctl multiplexer. The "others, through other dev=
+ices" are on
+   NVMe: the namespace char dev takes NVME_URING_CMD_IO / _IO_VEC, and AFAI=
+CT a
+   write-capable confined task can reach IO passthrough (write, DSM/discard=
+) with no
+   capability, since nvme_cmd_allowed() only wants FMODE_WRITE there.
 
-Have a nice day!
+   Correction to my own report: I overstated the ceiling. The NVMe admin op=
+s
+   (format, sanitize, firmware, security-send) sit behind capable(CAP_SYS_A=
+DMIN)
+   in nvme_cmd_allowed(), so a Landlocked unprivileged task can't reach the=
+m. The
+   A:H / 8.4 figure was wrong; only namespace IO is in scope for a confined=
+ task.
 
-Matthieu Buffet (2):
-  landlock: fix TCP Fast Open connection bypass
-  selftests/landlock: Add test for TCP fast open
+2. Truncate: correct, no sidestep, and none looks possible. I went through =
+every
+   f_op->uring_cmd provider (block, NVMe, btrfs encoded I/O, FUSE, ublk, so=
+ckets, ...)
+   and none change file size; truncate(2)/ftruncate(2) keep their own hook.=
+ Please
+   ignore the "and truncate where relevant" line in my suggested direction,=
+ it was
+   speculative.
 
- security/landlock/net.c                     |  17 +++
- tools/testing/selftests/landlock/net_test.c | 155 ++++++++++++++++++++
- 2 files changed, 172 insertions(+)
+On framing: I'm happy to call this a coverage gap rather than a bypass. IOC=
+TL_DEV was
+never documented to cover io_uring, so nothing it promised is broken. The o=
+ne hard fact
+is the asymmetry: ioctl(2) BLKDISCARD is denied (IOCTL_DEV, and it's not in
+is_masked_device_ioctl()), the same op via uring_cmd isn't, and SELinux/Sma=
+ck already
+hook security_uring_cmd while Landlock doesn't. Whether that's worth a hook=
+ or just the
+doc clarification Micka=C3=ABl mentioned is your call.
 
+If you do want one, I can send an RFC for an all-or-nothing "IOCTL_DEV for =
+any uring_cmd
+on a device file" hook (cmd_op is a private number space, so porting
+is_masked_device_ioctl() wouldn't be right). Otherwise I'll drop the provid=
+er detail
+into #64 and leave it at the doc fix.
 
-base-commit: 0ce4243509d1580349dd0d50624036d6b097e958
--- 
-2.47.3
+Bryam
 
