@@ -1,133 +1,173 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179631F91E3
-	for <linux-security-module@vger.kernel.org>; Wed, 17 Jun 2026 13:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FB630DD2A;
+	Wed, 17 Jun 2026 13:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781701592; cv=none; b=HDB4Hle96dccxp3bknNis1OBYjvfiLGa3Q6SZJQUGilEOwewA+x+W+8qYRRryvVfnONWNRsVOjdU/1035xGabRzONsNyDiynE/hWzVH1EJiNoQ40W/Jj1bLh9JImwfWcamNv0wLBSK8Z3O5PGzHseSlGyOaVmgY7UY+KQN9UMs4=
+	t=1781704436; cv=none; b=Bz+vNdXAPH9AnlIb80YoKO/NaradZfqnOSSoETSVr8rTmU/NK/in6vSStF+5X8//E1CbWHUFkz+jOeuFN4Y3ahgcnic2dYjxNjkgW3UIS8A+MxL2stpRrTKYGXDMM3E8h4nrTIBMx6wugL1hkNncYkm/5sjlBInM9tjUemRuofg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781701592; c=relaxed/simple;
-	bh=fQA3SZcb+tlnWKQWCDvyhHCoMZ57g4heUx3qYEQSOJA=;
+	s=arc-20240116; t=1781704436; c=relaxed/simple;
+	bh=zhiyo3I4lnsfuBisfCoJPx76lFPu28y1Vtp6C7z0hmE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NAF9og0cQ/JC36Zh2p2SSaAn/aw1tkq9f/t83MrcWznaseKL7DjhelEDGjTRCI9LJFgy3d7NEXei43mdunT/QXPq6QWpxZoAVyPcXC4xvxgwUCw1UVES33QRLmdUO5h6vN2FM4Xyk2x0AeM2gwTtavecwaZzQlNa0zceTn/vi+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BhkdNTfE; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=XiiPjOu1jsh+pF+ZTtCYQ0jGYegBB4GbqvALmRkWqeZuR9tN3RSgvANE2aveQuwCOKKwfTwZmxEtLtIctFuWXY6sU1NQ4LikWwzkeAX4PiHKGEb6gen74BtSnexHfMp4Zg7f77cOHXAfe4f9h9zH6e23go4qfEF5dehELx2vzVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GbHPGPt7; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BhkdNTfE"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2c0c1e0d00bso51361515ad.0
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Jun 2026 06:06:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781701590; x=1782306390; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4kNqZDm5RU/19gyqz05jvC/W8nKC6gtuqov40cnaXYA=;
-        b=BhkdNTfEC1GowtpGBdBcH2ZJE+EEvrSztaMxamZu0dHHqdWkjIIeY+5Zw+J4aeiLzQ
-         6h5YpkWbS1NMV2hhj+7l//yl3jFBsQIH6tmwy0yPIqK8uDl45PfJT6TfMILl8xx68d1U
-         V47qLijVtXJV50VMickOrjB1auxsh6zXO7UsYSvW9V6hyNGrUnRWgw5OD2yHAnl0YqFG
-         wQ6nx0LoAxeh4H+HjbK5TAdCXbhW4tlYGXCYIZdRNp3jb7NjZvhGY4mJEEghGnhye8nw
-         bzEAB/sCN/0/lyHr6r5DK+kbek5ILI5qavGigroQPTCoJxREQbT5ydOeUQD1Y2RzgpCB
-         wA0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781701590; x=1782306390;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4kNqZDm5RU/19gyqz05jvC/W8nKC6gtuqov40cnaXYA=;
-        b=AbAo/e5z+C/3QUpwMEbm+kMIA8qsrUyjOl1tcbxbr+F8LVJ1FkaUBqIsZUEhI/xNky
-         p3H/MYnr64PHz6i9WYpogKo69d1w+RcKnR4Hw28kjUKhxoDQHwyo9SkjdurBMVMO37Xw
-         rfVC8e2H/SGVzkRqDf8aX2A0o/ZF2ik5Jb4y3VkYTnuPqTiNxWDmgwp0F/qG/XVECMIY
-         fXVTDb+NeW1RE48eDx71txXwqUNT1cVF7xvEctkJlnxhko9JAbuaJtOtEDimOf3CNdIf
-         JXgsqba6uD0wYvZ5mDU2EY3SjbceRRhlydfnn4zeDeTKs7T9Qy8+ixrdUO97s4khk4xT
-         GNpw==
-X-Forwarded-Encrypted: i=1; AFNElJ/Qx/ot0A4U8HqQAyfRUenC8VBb/KT2GI7yR6KN+7w8u98QrOWjdzj7Cnlf99EMdGjhSFZx2+Uh8O0cktVfXzCuU/qpnZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw23aYslYOZKhFKAvQ7EGxsld+UBzFDm+wGcZJuU/OTdY4IgLt/
-	FCFgG7/55RepY67IKM/E1sTXu5vJu54oYsNHv82u8T60Yu6uqV5Ed2JeKfmbbw==
-X-Gm-Gg: AfdE7cnqd1t1oA26SsHcdk+lBR9QbhVdTM19k1hUm75CuDctecCvE+FdpJXcoyXh3yc
-	+he7feSRLN3ezgEG6TNdh9u2jljF+IdY4crYxoRAgbZjnSnvEZClBDN+Ip+RY3V9EwwR1M5DgcQ
-	jPX64l5PDHeADhP1H5Xw+CzmYraYys8q3AWw7Fch7MOrYMgEWmzDOzJDJlzGgaCE9S8pxoYgUtd
-	RHYdSca9oFhIjJLTOa7uWEjzjjVxDwY6PfJIeyShyhNo3uu/+xKBzb7XJc+TUh+/Axa+/JyvlAF
-	2BsbiNdO3AQeF7q+RuO4f4Zu1E9bP0ALznB+2bE5lCXE9oysfcvXWrWUnpv02aAY7HV+aE7Dxf3
-	8Gj8+uDgI/Ib3q+ffZ6dKq5LJGwnYKoaIyrQuRNTn0k9Ia9CDdvtjqKgmUPgLfWexIpGwGxL5WP
-	HHTwPy4m7aQum8
-X-Received: by 2002:a17:903:19ed:b0:2c6:937a:249 with SMTP id d9443c01a7336-2c6bc22aa18mr37133905ad.29.1781701590198;
-        Wed, 17 Jun 2026 06:06:30 -0700 (PDT)
-Received: from google.com ([118.150.148.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c4327acca5sm149137845ad.51.2026.06.17.06.06.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jun 2026 06:06:29 -0700 (PDT)
-Date: Wed, 17 Jun 2026 21:06:26 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>, jserv@ccns.ncku.edu.tw,
-	marscheng@google.com
-Subject: Re: [GIT PULL] selinux/selinux-pr-20260615
-Message-ID: <ajKb0oiem8TUEJM8@google.com>
-References: <577e6fb29cf0b9c335748aa5fa026275@paul-moore.com>
- <CAHk-=wjBF1ZXNRRqnA+KDFzqxZaXPgmDc8=Ly3+RdxUXWuve9Q@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GbHPGPt7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33E311F000E9;
+	Wed, 17 Jun 2026 13:53:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781704435;
+	bh=/hRzRcazcgW6UzRMoZOpE2oQpA4bv1K6thJ9xBlKqaI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=GbHPGPt7QBOO3IZKdFSPplDPlNfvpOOVuo4grFmU8zqbdkrxSFMNxe6V/uZmXD6h0
+	 45q/quLEO02Fm8Hp6f5Yp7MMAvBXrE8jm6lmmHBDT9Tipq+dsXPFRM7JOMLmtzWft+
+	 BgZzc7a12aAn+2oGTjdRbHVXkQRn5BVyLDRYSHaO5OP2uklxKWx7XIenuWnKRq4XNb
+	 OLJt9gUwBQ1vTlbh0zioBh280s3YqtY9uEGkJPOb8YBnUBA4YwmH4HlhjxOjVN0Pem
+	 SAIzaN86MykxasONdwUE64BUmas+5l7gCO6AqiAXRYH2F5mkOEwZEd6PEGMqRXTqYK
+	 lAb2Zyuu3OrTQ==
+Date: Wed, 17 Jun 2026 15:53:48 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Song Liu <song@kernel.org>
+Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	selinux@vger.kernel.org, apparmor@lists.ubuntu.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	john.johansen@canonical.com, stephen.smalley.work@gmail.com, omosnace@redhat.com, 
+	mic@digikod.net, gnoack@google.com, takedakn@nttdata.co.jp, 
+	penguin-kernel@i-love.sakura.ne.jp, herton@canonical.com, kernel-team@meta.com
+Subject: Re: [PATCH v5 7/8] vfs: Replace
+ security_sb_mount/security_move_mount with granular hooks
+Message-ID: <20260617-laufbahn-eifrig-charmant-a48f357a0c52@brauner>
+References: <20260528182607.3150386-1-song@kernel.org>
+ <20260528182607.3150386-8-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjBF1ZXNRRqnA+KDFzqxZaXPgmDc8=Ly3+RdxUXWuve9Q@mail.gmail.com>
+In-Reply-To: <20260528182607.3150386-8-song@kernel.org>
 
-Hi Linus,
-
-On Wed, Jun 17, 2026 at 12:54:44PM +0100, Linus Torvalds wrote:
-> On Tue, 16 Jun 2026 at 03:55, Paul Moore <paul@paul-moore.com> wrote:
-> >
-> > - Avoid nontransitive comparisons comparisons in our sorting code
-> >
-> > Done to prevent unexpected sorting results due to overflow.  Qualys
-> > documented a similar issue with glibc:
-> > https://www.qualys.com/2024/01/30/qsort.txt
+On Thu, May 28, 2026 at 11:26:06AM -0700, Song Liu wrote:
+> Replace the monolithic security_sb_mount() call in path_mount() and
+> security_move_mount() in vfs_move_mount() with the new granular mount
+> hooks:
 > 
-> So this is clearly worth fixing in the selinux code regardless, but
-> did anybody check whether our sorting routines in lib/sort.c actually
-> have any overflow issues with non-transitive comparison functions?
+> - do_loopback(): call security_mount_bind()
+> - do_new_mount(): call security_mount_new()
+> - do_remount(): call security_mount_remount()
+> - do_reconfigure_mnt(): call security_mount_reconfigure()
+> - do_move_mount_old(): call security_mount_move()
+> - do_change_type(): call security_mount_change_type()
+> - vfs_move_mount(): replace security_move_mount() with
+>   security_mount_move()
 > 
-> Strange sort order may be confusing but tends to be largely harmless
-> (the confusion might then obviously cause other issues)
+> The new hooks are called at the individual operation level with
+> appropriate context (resolved paths, fs_context), rather than at
+> the top of path_mount() with raw string arguments.
 > 
->  The whole "confuses the sort function enough to result in bad
-> accesses" might be worth fixing in lib/sort.c if somebody looked into
-> it...
+> Code generated with the assistance of Claude, reviewed by human.
 > 
-Since I made most of the recent changes to lib/sort.c, I can
-hopefully shed some light on this.
+> Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> Tested-by: Stephen Smalley <stephen.smalley.work@gmail.com> # for selinux only
+> Signed-off-by: Song Liu <song@kernel.org>
+> ---
+>  fs/namespace.c | 41 ++++++++++++++++++++++++++++++-----------
+>  1 file changed, 30 insertions(+), 11 deletions(-)
+> 
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index fe919abd2f01..43f22c5e2bf4 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -2888,6 +2888,10 @@ static int do_change_type(const struct path *path, int ms_flags)
+>  	if (!type)
+>  		return -EINVAL;
+>  
+> +	err = security_mount_change_type(path, ms_flags);
+> +	if (err)
+> +		return err;
+> +
+>  	guard(namespace_excl)();
+>  
+>  	err = may_change_propagation(mnt);
+> @@ -3006,6 +3010,10 @@ static int do_loopback(const struct path *path, const char *old_name,
+>  	if (err)
+>  		return err;
+>  
+> +	err = security_mount_bind(&old_path, path, recurse);
+> +	if (err)
+> +		return err;
 
-With the current Linux lib/sort.c implementation, passing a compare
-function that lacks transitivity will absolutely **not** lead to any
-out-of-bounds memory accesses. Unlike glibc which defaults to merge
-sort and falls back to heapsort if malloc fails, the kernel uses a
-strict in-place heapsort. Because of this, the compare and swap
-operations will always operate safely within the boundaries of the
-provided array.
+This again is racy as it is called outside of the namespace semaphore:
 
-However, it still inevitably leads to unexpected sorting results. This
-has caused actual user-visible issues in the past (the previous acpi
-breakage being an example [1][2]). It turns out it is easy for people
-to accidentally write comparators that violate transitivity, which is
-why I submitted a patch previously to emphasize the properties a
-comparator must satisfy. [3]
+        err = security_mount_bind(&old_path, path, recurse);
+        if (err)
+                return err;
 
-I have actually thought about whether we could detect transitivity
-violations at runtime. But if we map this to graph theory: treating
-each element as a node and the comparison results as directed edges,
-detecting a violation is equivalent to finding a cycle in the graph.
-Doing this would require an O(n^2) time complexity, which is obviously
-unacceptable at runtime.
+        if (mnt_ns_loop(old_path.dentry))
+                return -EINVAL;
 
-[1]: https://lore.kernel.org/lkml/70674dc7-5586-4183-8953-8095567e73df@gmail.com/
-[2]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=233323f9b9f828cd7cd5145ad811c1990b692542
-[3]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=4e0a15f8b4bd47548032acccdbeb5b9083b3675e
+        LOCK_MOUNT(mp, path);
+        if (IS_ERR(mp.parent))
+                return PTR_ERR(mp.parent);
 
-Regards,
-Kuan-Wei
+After LOCK_MOUNT @path might point to a completely different mount then
+the one you performed your security checks on.
+
+> +
+>  	if (mnt_ns_loop(old_path.dentry))
+>  		return -EINVAL;
+>  
+> @@ -3328,7 +3336,8 @@ static void mnt_warn_timestamp_expiry(const struct path *mountpoint,
+>   * superblock it refers to.  This is triggered by specifying MS_REMOUNT|MS_BIND
+>   * to mount(2).
+>   */
+> -static int do_reconfigure_mnt(const struct path *path, unsigned int mnt_flags)
+> +static int do_reconfigure_mnt(const struct path *path, unsigned int mnt_flags,
+> +			      unsigned long flags)
+>  {
+>  	struct super_block *sb = path->mnt->mnt_sb;
+>  	struct mount *mnt = real_mount(path->mnt);
+> @@ -3343,6 +3352,10 @@ static int do_reconfigure_mnt(const struct path *path, unsigned int mnt_flags)
+>  	if (!can_change_locked_flags(mnt, mnt_flags))
+>  		return -EPERM;
+>  
+> +	ret = security_mount_reconfigure(path, mnt_flags, flags);
+> +	if (ret)
+> +		return ret;
+> +
+>  	/*
+>  	 * We're only checking whether the superblock is read-only not
+>  	 * changing it, so only take down_read(&sb->s_umount).
+> @@ -3366,7 +3379,7 @@ static int do_reconfigure_mnt(const struct path *path, unsigned int mnt_flags)
+>   * on it - tough luck.
+>   */
+>  static int do_remount(const struct path *path, int sb_flags,
+> -		      int mnt_flags, void *data)
+> +		      int mnt_flags, void *data, unsigned long flags)
+>  {
+>  	int err;
+>  	struct super_block *sb = path->mnt->mnt_sb;
+> @@ -3393,6 +3406,9 @@ static int do_remount(const struct path *path, int sb_flags,
+>  	fc->oldapi = true;
+>  
+>  	err = parse_monolithic_mount_data(fc, data);
+> +	if (!err)
+> +		err = security_mount_remount(fc, path, mnt_flags, flags,
+> +					    data);
+>  	if (!err) {
+>  		down_write(&sb->s_umount);
+>  		err = -EPERM;
+> @@ -3708,6 +3724,10 @@ static int do_move_mount_old(const struct path *path, const char *old_name)
+>  	if (err)
+>  		return err;
+>  
+> +	err = security_mount_move(&old_path, path);
+> +	if (err)
+> +		return err;
+
+Placement of this hook suffers from the same issue as the bind mount
+hook. Here it's worse because the security layer isn't even informed
+about MOVE_MOUNT_BENEATH which completely alters the mount relationship.
