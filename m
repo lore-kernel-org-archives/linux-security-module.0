@@ -1,45 +1,47 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FB630DD2A;
-	Wed, 17 Jun 2026 13:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F5E217F27
+	for <linux-security-module@vger.kernel.org>; Wed, 17 Jun 2026 14:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781704436; cv=none; b=Bz+vNdXAPH9AnlIb80YoKO/NaradZfqnOSSoETSVr8rTmU/NK/in6vSStF+5X8//E1CbWHUFkz+jOeuFN4Y3ahgcnic2dYjxNjkgW3UIS8A+MxL2stpRrTKYGXDMM3E8h4nrTIBMx6wugL1hkNncYkm/5sjlBInM9tjUemRuofg=
+	t=1781705811; cv=none; b=Olg5hV13jeGdYUJniSqT+qLYDk+cNAqDAGsmPpqKgPLpGXnB2K6ISgInoRtDtgqbgqe5y/MJZ4Gm65obmUb6qL9S6Iwj5ALunJ8/35PR2f+THmwP2QO2TWsbaZyLEHiKBa1htQbaBdlY1OyvGgjAJtxS4x2nlmbZti0bSK63mas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781704436; c=relaxed/simple;
-	bh=zhiyo3I4lnsfuBisfCoJPx76lFPu28y1Vtp6C7z0hmE=;
+	s=arc-20240116; t=1781705811; c=relaxed/simple;
+	bh=LuBV8z5mdVB/JfGpOaXk7lFVIERKcoGMtDps9ge/6e0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XiiPjOu1jsh+pF+ZTtCYQ0jGYegBB4GbqvALmRkWqeZuR9tN3RSgvANE2aveQuwCOKKwfTwZmxEtLtIctFuWXY6sU1NQ4LikWwzkeAX4PiHKGEb6gen74BtSnexHfMp4Zg7f77cOHXAfe4f9h9zH6e23go4qfEF5dehELx2vzVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GbHPGPt7; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wts8oX2KqP/H/HXfF2gi+ze8+/YfK1HAvazHDDPEOFPbv5idKdG5ZoRZ0ujxaWKnhANvZdHM0wmn46Adcy9hyCR1yBMj7UPvt5IBgPXJcl9qbhBIRDs6rpdhxa1BRF4Q2TSOuUj82DMAmL/3vG6FZqT+xvJrcioi8WDW6lGYfz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=p5XmuOST; arc=none smtp.client-ip=45.157.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GbHPGPt7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33E311F000E9;
-	Wed, 17 Jun 2026 13:53:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781704435;
-	bh=/hRzRcazcgW6UzRMoZOpE2oQpA4bv1K6thJ9xBlKqaI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=GbHPGPt7QBOO3IZKdFSPplDPlNfvpOOVuo4grFmU8zqbdkrxSFMNxe6V/uZmXD6h0
-	 45q/quLEO02Fm8Hp6f5Yp7MMAvBXrE8jm6lmmHBDT9Tipq+dsXPFRM7JOMLmtzWft+
-	 BgZzc7a12aAn+2oGTjdRbHVXkQRn5BVyLDRYSHaO5OP2uklxKWx7XIenuWnKRq4XNb
-	 OLJt9gUwBQ1vTlbh0zioBh280s3YqtY9uEGkJPOb8YBnUBA4YwmH4HlhjxOjVN0Pem
-	 SAIzaN86MykxasONdwUE64BUmas+5l7gCO6AqiAXRYH2F5mkOEwZEd6PEGMqRXTqYK
-	 lAb2Zyuu3OrTQ==
-Date: Wed, 17 Jun 2026 15:53:48 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Song Liu <song@kernel.org>
-Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	selinux@vger.kernel.org, apparmor@lists.ubuntu.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	john.johansen@canonical.com, stephen.smalley.work@gmail.com, omosnace@redhat.com, 
-	mic@digikod.net, gnoack@google.com, takedakn@nttdata.co.jp, 
-	penguin-kernel@i-love.sakura.ne.jp, herton@canonical.com, kernel-team@meta.com
-Subject: Re: [PATCH v5 7/8] vfs: Replace
- security_sb_mount/security_move_mount with granular hooks
-Message-ID: <20260617-laufbahn-eifrig-charmant-a48f357a0c52@brauner>
-References: <20260528182607.3150386-1-song@kernel.org>
- <20260528182607.3150386-8-song@kernel.org>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="p5XmuOST"
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ggQs80F91zksB;
+	Wed, 17 Jun 2026 16:16:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1781705803;
+	bh=0az5TrG/tZ45K/qE3BmGVAeEOhBxKzwnVtxEjeZhnhk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p5XmuOSTXMpkue7+1y+zZUJiXQDF1q9mYQxNz4dszA/FQhEwyw+m+hJCtTl4yoURC
+	 5/CnsSF7/a7IgBs9NviVH8k1MWUf8mTTk3Bm6+PYjKSoM3uwiP0mcLley5shLxAZtW
+	 abUD9KiSalLXQydYPPle2Xju6qGVZxPYXV4QL2GE=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ggQs70T1LzTTl;
+	Wed, 17 Jun 2026 16:16:42 +0200 (CEST)
+Date: Wed, 17 Jun 2026 16:16:38 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Bryam Vargas <hexlabsecurity@proton.me>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+	linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>
+Subject: Re: Landlock: LANDLOCK_ACCESS_FS_IOCTL_DEV bypass via io_uring
+ IORING_OP_URING_CMD
+Message-ID: <20260617.aeNg7Aeseez4@digikod.net>
+References: <20260616201633.275067-1-hexlabsecurity@proton.me>
+ <fcfa9bc9-4f7d-478c-90a2-ec4efd4c7d43@kernel.dk>
+ <20260617022541.328550-1-hexlabsecurity@proton.me>
+ <209b76b4-e028-4af7-bdcb-b5813fef32fc@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -48,126 +50,75 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260528182607.3150386-8-song@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <209b76b4-e028-4af7-bdcb-b5813fef32fc@kernel.dk>
+X-Infomaniak-Routing: alpha
 
-On Thu, May 28, 2026 at 11:26:06AM -0700, Song Liu wrote:
-> Replace the monolithic security_sb_mount() call in path_mount() and
-> security_move_mount() in vfs_move_mount() with the new granular mount
-> hooks:
+On Tue, Jun 16, 2026 at 08:44:55PM -0600, Jens Axboe wrote:
+> On 6/16/26 8:25 PM, Bryam Vargas wrote:
+> > Thanks Jens ? noted, the fix belongs in Landlock. Micka?l has the full
+> > report.
 > 
-> - do_loopback(): call security_mount_bind()
-> - do_new_mount(): call security_mount_new()
-> - do_remount(): call security_mount_remount()
-> - do_reconfigure_mnt(): call security_mount_reconfigure()
-> - do_move_mount_old(): call security_mount_move()
-> - do_change_type(): call security_mount_change_type()
-> - vfs_move_mount(): replace security_move_mount() with
->   security_mount_move()
+> Indeed - and hence no need to bother anyone else with it by blasting it
+> wide. I've already explained this multiple times, but on the private
+> security list, when the occasional AI report comes in on things like
+> this. Hence why it's a bit tiring to see the same stuff come across,
+> once again.
 > 
-> The new hooks are called at the individual operation level with
-> appropriate context (resolved paths, fs_context), rather than at
-> the top of path_mount() with raw string arguments.
-> 
-> Code generated with the assistance of Claude, reviewed by human.
-> 
-> Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> Tested-by: Stephen Smalley <stephen.smalley.work@gmail.com> # for selinux only
-> Signed-off-by: Song Liu <song@kernel.org>
-> ---
->  fs/namespace.c | 41 ++++++++++++++++++++++++++++++-----------
->  1 file changed, 30 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index fe919abd2f01..43f22c5e2bf4 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -2888,6 +2888,10 @@ static int do_change_type(const struct path *path, int ms_flags)
->  	if (!type)
->  		return -EINVAL;
->  
-> +	err = security_mount_change_type(path, ms_flags);
-> +	if (err)
-> +		return err;
-> +
->  	guard(namespace_excl)();
->  
->  	err = may_change_propagation(mnt);
-> @@ -3006,6 +3010,10 @@ static int do_loopback(const struct path *path, const char *old_name,
->  	if (err)
->  		return err;
->  
-> +	err = security_mount_bind(&old_path, path, recurse);
-> +	if (err)
-> +		return err;
+> For the landlock folks, I'd suggest taking a look at what hooks already
+> exists (and existed, when landlock was merged) for selinux etc, that'd
+> be a really good hint on the existing surface covered.
 
-This again is racy as it is called outside of the namespace semaphore:
+As I explained in previous (private) reports, there is currently no
+io_uring hooks implemented for Landlock because there is no use for
+them.
 
-        err = security_mount_bind(&old_path, path, recurse);
-        if (err)
-                return err;
+io_uring "bypass" was already mentioned to us two times in March but
+io_uring personality credential is not a Landlock bypass.  The Landlock
+threat model is about enforcing restrictions when accessing new kernel
+resources, on a sandboxed subject.  The credential identifies a set of
+access rights, so in the case of io_uring, the subject is inherited by
+the io_uring personality (i.e. the file descriptor).  If a sandboxed
+task creates an io_uring personality, it will be sandboxed with the same
+restrictions, which is BTW an interesting property (e.g.  pass a
+restricted io_uring FD to processes)
 
-        if (mnt_ns_loop(old_path.dentry))
-                return -EINVAL;
+A sandboxed process cannot create an io_uring personality that would
+bypass its own restrictions, so there is no Landlock bypass.  Inheriting
+or receiving a file descriptor is not restricted by Landlock because
+these are operations from outside (or before) the sandbox.  If we want
+to restrict them, we need to restrict the processes creating such file
+descriptor.
 
-        LOCK_MOUNT(mp, path);
-        if (IS_ERR(mp.parent))
-                return PTR_ERR(mp.parent);
+Inherited or passed file descriptors are outside the Landlock threat
+model because Landlock is only one part of the security policy when
+(willingly) interacting with other processes.  In a nutshell, it's the
+security capability model (where an object has some associated rights).
+For instance, if a process willingly passes a file descriptor tied to a
+secret file, then the receiving side can (and should be able to) read
+it, being sandboxed with Landlock or not.  The scope of Landlock is to
+drop ambient rights, but if an *unsandboxed* process is OK to pass a
+sensitive resource, then that's a security architecture issue (i.e. a
+confused deputy attack).
 
-After LOCK_MOUNT @path might point to a completely different mount then
-the one you performed your security checks on.
+A nice side effect of this approach is that a process can sandbox itself
+with a specific Landlock security policy and create an io_uring file
+descriptor that will inherit the Landlock restrictions.  It can then
+pass this FD to other processes with the guarantee that this FD will
+only give access to resources allowed by the Landlock policy.
 
-> +
->  	if (mnt_ns_loop(old_path.dentry))
->  		return -EINVAL;
->  
-> @@ -3328,7 +3336,8 @@ static void mnt_warn_timestamp_expiry(const struct path *mountpoint,
->   * superblock it refers to.  This is triggered by specifying MS_REMOUNT|MS_BIND
->   * to mount(2).
->   */
-> -static int do_reconfigure_mnt(const struct path *path, unsigned int mnt_flags)
-> +static int do_reconfigure_mnt(const struct path *path, unsigned int mnt_flags,
-> +			      unsigned long flags)
->  {
->  	struct super_block *sb = path->mnt->mnt_sb;
->  	struct mount *mnt = real_mount(path->mnt);
-> @@ -3343,6 +3352,10 @@ static int do_reconfigure_mnt(const struct path *path, unsigned int mnt_flags)
->  	if (!can_change_locked_flags(mnt, mnt_flags))
->  		return -EPERM;
->  
-> +	ret = security_mount_reconfigure(path, mnt_flags, flags);
-> +	if (ret)
-> +		return ret;
-> +
->  	/*
->  	 * We're only checking whether the superblock is read-only not
->  	 * changing it, so only take down_read(&sb->s_umount).
-> @@ -3366,7 +3379,7 @@ static int do_reconfigure_mnt(const struct path *path, unsigned int mnt_flags)
->   * on it - tough luck.
->   */
->  static int do_remount(const struct path *path, int sb_flags,
-> -		      int mnt_flags, void *data)
-> +		      int mnt_flags, void *data, unsigned long flags)
->  {
->  	int err;
->  	struct super_block *sb = path->mnt->mnt_sb;
-> @@ -3393,6 +3406,9 @@ static int do_remount(const struct path *path, int sb_flags,
->  	fc->oldapi = true;
->  
->  	err = parse_monolithic_mount_data(fc, data);
-> +	if (!err)
-> +		err = security_mount_remount(fc, path, mnt_flags, flags,
-> +					    data);
->  	if (!err) {
->  		down_write(&sb->s_umount);
->  		err = -EPERM;
-> @@ -3708,6 +3724,10 @@ static int do_move_mount_old(const struct path *path, const char *old_name)
->  	if (err)
->  		return err;
->  
-> +	err = security_mount_move(&old_path, path);
-> +	if (err)
-> +		return err;
+Landlock could implement the security_uring_sqpoll() hook, but for now
+the use case is not clear to me.  We are working on controling socket
+creation according to they properties and I think the same approach
+would be useful for IO_URING:
+https://lore.kernel.org/r/20251118134639.3314803-1-ivanov.mikhail1@huawei-partners.com
 
-Placement of this hook suffers from the same issue as the bind mount
-hook. Here it's worse because the security layer isn't even informed
-about MOVE_MOUNT_BENEATH which completely alters the mount relationship.
+I agree that this might be confusing and I plan to improve Landlock
+documentation to make this clear and simpler for AI to take into
+account.
+
+BTW, we also have an opened issue to add io_uring tests:
+https://github.com/landlock-lsm/linux/issues/23
+
+Regards,
+ Mickaël
