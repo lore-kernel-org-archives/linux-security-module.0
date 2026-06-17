@@ -1,124 +1,124 @@
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09E23B2FF9
-	for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2026 23:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781651175; cv=none; b=kqRRzhxHR2/YfJujVA+U0KS6T6vic57H9U26xW4l0qnj54eo+Gbrcr6nv/SI5li8nPBFsMor+HRPH/DnIJg+S3dHsxB61VMDDLj4hP6pqd19G+4Ip2uyNJB0hQ+9Oo3vdICrNhKlg6pENIVnkgo7JzX5shLl4ltJEY4dztFLSXk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781651175; c=relaxed/simple;
-	bh=7BoAeYvyM/ShmVhwe1Bya42w86ZTb2iV4bXaLbdDHaA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iItF2RgGEJcH3oxRHddrVxUdh8Zk+FNm7hYPPRHgiDb38YUzn/uizgKjWgjUX2N5vQOQdRh6IhFoGHtdpLGqdcYknntOL2564h5Qiz22hU3jVywI2pNDdE6UqMCKyAjD13qkJowFRm5S1TEZqk4zANwVCVw930JP36zpdpUtEgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DWAuO+2l; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3B33B1B4
+	for <linux-security-module@vger.kernel.org>; Wed, 17 Jun 2026 02:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781662844; cv=pass; b=qp2a2lFNgO6GfyYz5wj0z0+GhFwlJRFP/kZeMZ/yKzrOd1k0NhTkjULdib3sqyW2GsTwHD6x/OvY7eKgNqOJ3H0TJs4sYfcZc92K5oRAjgIR5VWDcZPOTRSovUJc9I4cOsWaxsfve6rv6sb+nrjBDT3AKVoJJqIhaYd01Esm5+o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781662844; c=relaxed/simple;
+	bh=AMPQnUYpygK6FIcZ14/7t5A8fOJ+npmCw9faJljwUGE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m5oEJUik7hwig2f01J1/j6tqsMXGreOAqgRqN7L5glKpegTaWAZD3q+HQ/j0SCcGXd1JekKPSwuVpfmOe0tM9wJBrCMDi15uPeMxdsdAtf7Y6OV27bL3P60aP3hMMYnqp+wph20LTEeWNDAeCLxiD8Cz6ZzEZHm+pDsi7DoVxQU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=T8ci2bLR; arc=pass smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DWAuO+2l"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1781651160;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f10e25rh2kh/32mqIoWdgyM3DhEAHTmgbvyfq30e+iw=;
-	b=DWAuO+2lcSdAS9nlYs/y13xDgnlv8PiB6qDurLWvIDvhvvZlDDeR6PTGgQNvegkzMZfg1H
-	Q+pPY1p9WKvMk6G6ks4/GO4WkOM2sS8RELhpPRWtrN/hUlkdADuvDx3Z/7Sn3yBGSfneSB
-	dRT34aMYAftyHdbV6FmylhU0avSvWso=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Paul Moore <paul@paul-moore.com>,
-  linux-security-module@vger.kernel.org,  sashiko@lists.linux.dev,
-  =?utf-8?Q?G=C3=BCnther?=
- Noack <gnoack3000@gmail.com>
-Subject: Re: Sashiko reviews for the LSM mailing list
-In-Reply-To: <20260616.aiGaim8xie8z@digikod.net> (=?utf-8?Q?=22Micka=C3=AB?=
- =?utf-8?Q?l_Sala=C3=BCn=22's?= message
-	of "Tue, 16 Jun 2026 16:59:03 +0200")
-References: <20260615.zeinurej8oZ9@digikod.net>
-	<CAHC9VhQxHEuznN-xiMJ-LCsz2z-UB0ri6MeMn+Ajyn1WUTDNDw@mail.gmail.com>
-	<20260616.EPh8ked0niko@digikod.net>
-	<CAHC9VhRa8DQ-ekrmPQSg2pO9pBFj6GA9DO=x5kguGFTbKKyv7Q@mail.gmail.com>
-	<20260616.aiGaim8xie8z@digikod.net>
-Date: Tue, 16 Jun 2026 23:05:39 +0000
-Message-ID: <7ia4v7biqe64.fsf@castle.c.googlers.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="T8ci2bLR"
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-36ba285e98bso5308544a91.2
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2026 19:20:43 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1781662843; cv=none;
+        d=google.com; s=arc-20240605;
+        b=EXpVj7Z2tXqpyqdMFXUfiVp1WdTiBIENT1eDi2FylNWUYyoMXVnIQb0tJrbWcQ+fAU
+         0pyNuc1qlGhNcXeSQBoC1anTH5orUru21uUHqSNlcs9lAybckXOLuYUcsc+1yWAosMiI
+         wEaVgd8lAwqxQn7ktvH+DFL7pJTAqkv7bR6FLqL7Ps1gD6ymtvjUxmEPPaSR2d6uALCu
+         rTRwOJwK591WUWrXNPmGV5XXDPxeRIMwHk0GhZmQUwYEfzr8oRre3lXvOB+wBAwDRGIu
+         qTdhZtxxJ4rgnw5xqaky76oJ4d3XCGJmR/Ya8MApLJJ+EAT2IeVst8CCdperT2pE4foJ
+         L2dg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=xnCH2xzLuqc+3Jfi7d5JBNf1kt13tjywRYwCEyR5/Qg=;
+        fh=0s1Ud5b1Wc5thEQTc+a/unA4LClgZ+iWtADFDk2XNig=;
+        b=AuKNg2cdx5eq2zXnwzwH/EsRgdaVKdyHnNjx2nRMMZY7x/ZrKE2AOSxqvt4rJL1NH4
+         KwJC/8ZIKyugxo7kNBXj4wOw+EXPq06OQAvBt6vay2yb/rs1FadTcv+uDKkzILLsOEjc
+         t+YaPiOTjoUPfIIjcBORGdIvjh3/II0Fn76pJzqdTlRRUrhc2k8Z4cRFeWwBSM/M0s7P
+         HXTkTKSc41Y4QbA2oCn+DF7t4djBgtflpsNxYR4s/R8QsaW3z1fM71BUSJ0IgBJwuhRa
+         ytxHLhMfuezc25hyzuiMTIGrT6+bowyq95owNbhiy9VskEW0W8GESbQShMovDaF0O390
+         ntqA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1781662843; x=1782267643; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xnCH2xzLuqc+3Jfi7d5JBNf1kt13tjywRYwCEyR5/Qg=;
+        b=T8ci2bLRgnYSxg6YWsQXmFInUvhjcRJ0el2oCX4yxxXHnfxLckkyNCVMMiYm4FZY9Q
+         R3TQOHfLlQA2QJ5Gjzq2BnOkRMQnJMYHf9boPY2R6lBoOrm6aqM6zH4fCZcmSHrQUUDU
+         RimoC49GqYuwDCCjiv+ha80O1FFWnV729wyAg2wmYsqQC3glm7rIIDtHDG2MRy7e94vc
+         ZP6ISoMCO/GOMhsZF3Fk4pEBMwiW7o6twIrYsbuuv9T4KrJXmdwHaF5zUAWp2NRdhDfD
+         pU/mggJRlztfcBvlcC2tNbuMh1iyKme9s0g9V2Yyn8IAl6fuUQGocZG1rymee6ZEuYA6
+         M1FA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781662843; x=1782267643;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xnCH2xzLuqc+3Jfi7d5JBNf1kt13tjywRYwCEyR5/Qg=;
+        b=C5prHfno5dD20tCjRbMLaoKFTO9mLBwPgTlJP9z7WXt6TTEJ4ectMx0W1WRDgsfG8p
+         UnrQEeuzNyxwb8I5m3HHV0O6y33Wj1Rhc0qLWlrR5kT+NwKryWEWCWFZVGOlEz3lF9V7
+         gFA8GxqRQzPYd6CUEnfX3FBKBX3+MWAe5iVQNqjaVoFlXhw12tyicBKWZXTn9GVdppE8
+         23Goy67fGxprtT9lcdZR2bwPPTs+zbSmPcoul4ovQ1C/5w5UMwukDBXjPS9QeyQqPZ/A
+         8j2NZraAp3uXVc2Q5xP6dUpMEOQ1kzJivwIwDdKIUUeTLrQ+TyE7gmiHLsWRp8YD42BD
+         2a7Q==
+X-Forwarded-Encrypted: i=1; AFNElJ8Sbbx5UGPNUTUhQWoloZLZm/lMVN0ey4VX0LBcC4u2WuMjUVw4LjWMZVQRQjqjlRHT/lnGV6jSR2kd63XKw3U0TwDVDqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpWErYd3xb5NAx7orrJ107bGb0y7ImwIQG36+GGl6MWYsi9/S7
+	8lSWHrCely3aaECfe9r8+TixxRdig1cwArfZWypxQFTu9CHkUfyIn6DAAFddeLasawtQWybbXNC
+	1EXjiv5VEo0W17fOowAf4HmDN+rM5tV6IS+IAV2Hx
+X-Gm-Gg: AfdE7cmPVWVOSFrEAg2HhU5gNSzn5/ELiHorUGmh2ruomyJlCcdT9yy7mKPFXOTyDmi
+	JSlY0Mt9q2xkBIlkf48NQeygbEz27ST6SyXOQnwuCvN0hko5yotgijn7q3I/IIcsvqcdyYd106D
+	2hFuAvQcy8HzBryPze0b0kH6v/hzlywpZlH/2AAU60haOUw1muaw3TRS1P46p1jfMpH186iIBMR
+	k9c/0lPoOcrcwbFEJL5AdBY+3Qam0UDmWez9exFiSpFtyj4/nwrurBqvXYWpjdW0xYVi2vK
+X-Received: by 2002:a17:90a:ec87:b0:36d:ae6a:22f0 with SMTP id
+ 98e67ed59e1d1-37c9e9c8c71mr1394485a91.14.1781662842958; Tue, 16 Jun 2026
+ 19:20:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20260615.zeinurej8oZ9@digikod.net> <CAHC9VhQxHEuznN-xiMJ-LCsz2z-UB0ri6MeMn+Ajyn1WUTDNDw@mail.gmail.com>
+ <20260616.EPh8ked0niko@digikod.net> <CAHC9VhRa8DQ-ekrmPQSg2pO9pBFj6GA9DO=x5kguGFTbKKyv7Q@mail.gmail.com>
+ <20260616.aiGaim8xie8z@digikod.net> <7ia4v7biqe64.fsf@castle.c.googlers.com>
+In-Reply-To: <7ia4v7biqe64.fsf@castle.c.googlers.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 16 Jun 2026 22:20:31 -0400
+X-Gm-Features: AVVi8CcLmT2NiJnxN0ELE51mZvuIEGkps9HXU2nQpLi2RgQNJurQjCV5pgbJtRk
+Message-ID: <CAHC9VhQ7Oj8v7D1EzkgdCHvMKxo_Jxxr0AzrDB519PHBsrq7qw@mail.gmail.com>
+Subject: Re: Sashiko reviews for the LSM mailing list
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	linux-security-module@vger.kernel.org, sashiko@lists.linux.dev, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
 
-Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> writes:
+On Tue, Jun 16, 2026 at 7:06=E2=80=AFPM Roman Gushchin <roman.gushchin@linu=
+x.dev> wrote:
+> Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> writes:
+> > On Tue, Jun 16, 2026 at 10:11:42AM -0400, Paul Moore wrote:
+> >> On Tue, Jun 16, 2026 at 4:49=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@=
+digikod.net> wrote:
+> >> > On Mon, Jun 15, 2026 at 04:13:59PM -0400, Paul Moore wrote:
+> >> > > On Mon, Jun 15, 2026 at 11:41=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn =
+<mic@digikod.net> wrote:
 
-> On Tue, Jun 16, 2026 at 10:11:42AM -0400, Paul Moore wrote:
->> On Tue, Jun 16, 2026 at 4:49=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@di=
-gikod.net> wrote:
->> > On Mon, Jun 15, 2026 at 04:13:59PM -0400, Paul Moore wrote:
->> > > On Mon, Jun 15, 2026 at 11:41=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <m=
-ic@digikod.net> wrote:
->> > > >
->> > > > Hi,
->> > > >
->> > > > I've been reading Sashiko's (AI bot) reviews wrt Landlock patches,=
- and
->> > > > most of them were valuable.  It found issues (security or not), bu=
-t it
->> > > > requires to go to https://sashiko.dev to find them, which is too e=
-asy to
->> > > > forget, and requires additional work from maintainers to copy or p=
-oint
->> > > > to these reviews.  I sent a PR (currently in draft) to enable email
->> > > > replies from Sashiko to the Linux Security Module mailing list (mo=
-st
->> > > > patches are already reviewed anyway):
->> > > > https://github.com/sashiko-dev/sashiko/pull/278
->> > > >
->> > > > Making such reviews broadly available can improve the quality of p=
-atches
->> > > > we receive without much noise, helping for all LSM-related code.  =
-We can
->> > > > fine tune some email-related settings if needed.
->> > > >
->> > > > If there are any concern or question, this is the right time to st=
-art a
->> > > > discussion.
->> > >
->> > > I recently enabled Sashiko for the SELinux list to trial it there
->> > > first, with the goal of eventually bringing this topic up for the re=
-st
->> > > of the LSM folks on the LSM list.
->> > >
->> > > While I think Sashiko's review comments are generally okay, you shou=
-ld
->> > > have contacted the LSM mailing list folks *before* submitting a PR
->> > > that would cause an automated bot to send email to the LSM list (this
->> > > applies to all automated emails, not just LLM reviews).  Please hold
->> > > the PR until you have given people a chance to comment on the issue.
->> >
->> > As I explained just above, the PR is a draft (GitHub specific state for
->> > WIP), so it cannot be merged as-is, but it is useful for reviews and f=
-or
->> > LSM folks to get a look if they are interested.
->> >
->> > > Personally, I'm okay with it.
->> >
->> > Looks good.  What about waiting a week to get some feedback here and
->> > then ask for a merge of the PR?
->>=20
->> I would suggest enabling Sashiko for the LSM list, but not enabling
->> the email replies at first.  This would allow people to view the
->> reviews and perhaps make a better informed decision.
+...
 
-I just did this: 611f4cd410d9a7f7ad923a068a6ced455e3a244e , for enabling
-reviews I don't really need maintainers consensus. (I might roll it out
-a bit later)
+> >> I would suggest enabling Sashiko for the LSM list, but not enabling
+> >> the email replies at first.  This would allow people to view the
+> >> reviews and perhaps make a better informed decision.
+>
+> I just did this: 611f4cd410d9a7f7ad923a068a6ced455e3a244e , for enabling
+> reviews I don't really need maintainers consensus. (I might roll it out
+> a bit later)
+>
+> But when it comes to email policy I do, so I'll just sit and wait here.
 
-But when it comes to email policy I do, so I'll just sit and wait here.
+Thanks Roman.
 
-Thanks
+--=20
+paul-moore.com
