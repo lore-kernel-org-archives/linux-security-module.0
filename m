@@ -1,232 +1,128 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6303CA4AF
-	for <linux-security-module@vger.kernel.org>; Wed, 17 Jun 2026 09:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781689685; cv=none; b=c4PWTOZfgKKbxyvmJQxRhkaURd3B+sQ9T/T+NX0Cj/6oV0AgRnDablz5ihg8d2O11CLWKmJ3Fpw+3tYCyInuHPp394Gk/SyQlkuXFr12dBIRqJ0rSwbfG5Jwgb3pj7X3JduYc8xL9oW1V3qxZ5ZqCn6vgS+HVu69adYapmEx59c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781689685; c=relaxed/simple;
-	bh=wV59S+24SkoudTTg5Z0iOXTtP9iydoFQW4GbxHpzTJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gWmrW19WV6VELY6lcb6yFNyGXr088/Cl6WU4BOEVgvPWh4fT0KrtVBgsxvuUzqsv8R0Ub9p2rucCli23CHwraSdax647ZfgEJcaeUxq/XVciCqGAvmLQYVItF4ZxERZ/XQVsV3lQZJfhHbFfCBdP4f5oSIBrw7pOjHLT9LBWY8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MNt+f7qi; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB0F3A0EA5
+	for <linux-security-module@vger.kernel.org>; Wed, 17 Jun 2026 09:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781690093; cv=pass; b=tEzdKD816m/jh4fRIFYwodM49n0O+XaqS0qXWf16jc/I4GGO6AYDM3zGtHYyehkzi7njSj/S4VpTxKwMoC1R8ogx56XcM/WCcm1wbcPqlY/NrIv4cuBgHGOVPwp72Pwkl+3SOJgeTmI8dZ3A9e10KA4JuSYkTikhciCyNkGyxhc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781690093; c=relaxed/simple;
+	bh=WKF34iFNpf0eQktLcuPksLJYduBCknZ/BznJRp3knLU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ODzeDld0WEffQn9Kwmbsxs+5A+PpkVm7Vj1XthMZ7E7kHVIt5vs45WgijFw0wY2z1VU//xomS6TWa9yc5OT00jOfxnZhz9DFDgQfzS4ccpOU3Kz6HLvI38/P+V298LjaW1r/JvvSi+KM4A7vQbawz99ohXTiWpXvMbYUrFZmcrw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P5uxNMeG; arc=pass smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MNt+f7qi"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-68d233bf083so7896933a12.1
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Jun 2026 02:48:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P5uxNMeG"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-460166910e6so2987437f8f.2
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Jun 2026 02:54:51 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1781690090; cv=none;
+        d=google.com; s=arc-20240605;
+        b=I57wcWRpmg/N3A6kmSzlj6JxGDO4NmwUYt+X6pro97ZlNdbbDftRVqWCRY5X7TV4uS
+         8FEECL0QgkrPLoSgjLXij9bTkyOu5e7uP0JYoGLRN+an4Ej7kvFmJwiA8HQCdhzf99YG
+         0xf6QtEw1AuigoWJiMlKArbXthx/9LoeeS7issE9ydpYU/SJrEmdBfQ8BJXlku49sZNg
+         517zrw+5dCenlr5nPyvFZQWfFByY63Jd8Juot6f25rnxDnlR3ACPCS0FYNvKeuVGz95f
+         JA3bzikjzeO8fRlZBW5yuyqBVV9/7JutPkuLmu6/AYr7nJtS1N7P8KpHcPjCAT19PhT+
+         FRQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=WKF34iFNpf0eQktLcuPksLJYduBCknZ/BznJRp3knLU=;
+        fh=sPFSSeWZvgIVlbbaajsi/GAgSn6XnxfznfSMoL/XOII=;
+        b=ZOY/iLf8beYdNQ6ZyUTf2xjFR31k6rKLqX6FFiQNQmRjts68lEf1CDumYtfR3tO3kZ
+         mJ1fVJIHPLRONEZPO4VH78AUxnXY9mKRVvnKGHHMgFrZ8cV80zxUtJ75Vzjb6bf+KJt9
+         6tpziL0S/LWzsOz99qaIQM1sXVIlo2urL0sCdJRWq8LtvKimzQIJ1+2ua75ekFR2Qi+Y
+         5qA/KDmwoUr7d76x42hV+M+7oU3qHYWl5UVcVvwKuMrDVDCFXuKTfUXcJ6jV8m2HFDGh
+         7vmfTVI/R8+KWFoI0AxjIBJV+1OmEwuE0QQKSRLhJSvrcdA6GkmLKYBzW1mkYoPHXYk4
+         AXLA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1781689683; x=1782294483; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=QdQf/PXmxwBxJEfIxvzXn7CE5/BE6Ix7pQBqOp/bi/o=;
-        b=MNt+f7qimkg84VIlsyYGR0SjoNvJiwmuHIkprTYRF4aajYUS9BG7VwIOUf5nMTUcLc
-         YvlOd1oImn6vpCJ0N+Jk7of2jQxWWkYA2yQq3F1rtJL36sje/R+W4lSWrntnEoBrzZrl
-         Wc430PTNEVCQ2HwJOVyqPUfc0sgdjNUd0iW3gyBYnVZhUSrOba/cXkw9riXfZY5LUyum
-         uiqBN18mOosPrQ2VxJvAgvOMUVOdkXaYaUzZA+ykScnMs68pY61kRuXG+MtDMEbhlDdb
-         0oQs6sS2EkGWH1FMtml5Bx/Xk1PBC5mIPPyha+l0809/7yCCqlOU5bJ+AuZ1nygDkYlc
-         hRCQ==
+        d=google.com; s=20251104; t=1781690090; x=1782294890; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WKF34iFNpf0eQktLcuPksLJYduBCknZ/BznJRp3knLU=;
+        b=P5uxNMeGcDIN8llkO0LerOZseMvI0xoedivCJ9FZTvVkZQDpB2XH0vEThBBsXiWG9u
+         sffI4uZumgWiX1nzBNMDek3/+k765xSl2pY7u/w/2RicT1DEfhmO3fV0tSyaaYwcGcUW
+         sDIXq7Nca7LlV1xIEunZuyJ9m1LZ+oEW7N8dbZE1czoJgFmOXyNTjsG/v55Westq675s
+         acUzZoCXnMYEzFXbS8+neVOK/fnhKQe+EzbGYwDbJeOrcvNmrqkC4agNzuQkCHFs6iTV
+         ZeHsur1G/4T4lhO749KNW2vcfZXCrVawQX8QPjkJVWTDVb+5i/q9LvGGwrB4P6paWDbi
+         4AHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781689683; x=1782294483;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QdQf/PXmxwBxJEfIxvzXn7CE5/BE6Ix7pQBqOp/bi/o=;
-        b=B5bbnHbKh7+PMGskS3FVp6rZaFp0F3F1lSB7b2/UkIYhui46OnRvasKHPG1uezpQT3
-         rVBaYCwOyvcndNa9+BND/pslOmQetdFr6WD9VN45pqLWrOSIWq6pT51AuFmUTOXo2o+4
-         cD0NdkPdtysJGk9zcic8KbBbwLGXbXCdrsMLadbEJmY4q+v4O9ActZ0GRJ68vycVswX4
-         tJsvxoyqRnStsekU9ZBTLGQdEdCO05GbMrRov/k9o4K+eiH9qMGOm7CfS6gjuLAa51x4
-         p/Z8hzWEfSerw7cGekHUF3WUWK6AsL+KgYc1vqkCHGEv6y4gRiMtQd5s/uRsD/knF9ZN
-         DD4A==
-X-Forwarded-Encrypted: i=1; AFNElJ8EG8hq2NcWtPxOTvwMfmm0Sv01qklO0H/RV3NEYj3J2RfzTmCq7+6k9N7ZzkW/IZ8e7FGx4W0gBqFTghAmM4q7kAFCSPU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLyy/tzki025+iV0FQhsafgoUO8lA8NuFDPY5d2Vd0JVkNhljB
-	9jwLP1FEaPKbjhbPtNsBo2tFWiFBnh+2JlTb97ro5k9bU51FJMRvgI0dNcWqzFsF6w==
-X-Gm-Gg: AfdE7cmGx1D0b7644okhFmAtsCTCXL4iBJJaIAXYH6DnLBNhmNnfaBS3hVexHmhlBcI
-	WHYAR+4pgHFFsyShUyRUfqvBn/30h+fW/zO+jX/iemEYLwe7ZHksQthX7LPT1u435iz+xxuMav5
-	fowy1KvxjajSOFHckpp/PJyuzAk2IX/59hoVbZyzlNGWf33tuD1n64nmKiP+CtMvk9JH55yS20o
-	31QvvUh4E43okC72205mSCTz0vr0zSINHntEQNRp36ErcDCwtrNMiaJQRQ25499ySO6bJYygXH1
-	E9A43cRw1jVNUkgx1vcOEwf3QHEWd7Z2lf+aL/b6KjMdLAZ3qClpHBRAY4IcYXLNjGiDnVC0VzD
-	y4f5wCfsx6sqFystJYQoN7wwSHnDO/Y/FGDpJnrXxcXWrXxd+GI2H1X5IkZ6MJDaWlU2iyz6iCD
-	02yjTxLdmxktOfMEJN8o1T/A4dLn4I7ftYWQjqb56UXPw=
-X-Received: by 2002:a05:6402:354b:b0:691:55d9:fff5 with SMTP id 4fb4d7f45d1cf-695475802dfmr1517281a12.10.1781689681924;
-        Wed, 17 Jun 2026 02:48:01 -0700 (PDT)
-Received: from google.com ([2a00:79e0:288a:8:6052:259b:70e8:45e8])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-693794b36d7sm6592057a12.31.2026.06.17.02.48.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jun 2026 02:48:01 -0700 (PDT)
-Date: Wed, 17 Jun 2026 11:47:56 +0200
-From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: Bryam Vargas <hexlabsecurity@proton.me>
-Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	Paul Moore <paul@paul-moore.com>, Jens Axboe <axboe@kernel.dk>,
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	linux-security-module@vger.kernel.org, io-uring@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Landlock: LANDLOCK_ACCESS_FS_IOCTL_DEV bypass via io_uring
- IORING_OP_URING_CMD
-Message-ID: <ajJtTHyqWTmX7lHo@google.com>
-References: <20260616201633.275067-1-hexlabsecurity@proton.me>
+        d=1e100.net; s=20251104; t=1781690090; x=1782294890;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=WKF34iFNpf0eQktLcuPksLJYduBCknZ/BznJRp3knLU=;
+        b=D9EpBUnckupxd11rro30dDtLf6DDveXp6A+t4QldAx5P4ofqPkIG+uZDqzay3hWQGZ
+         uUSyLrLNcJT9vN8GXztlq0B4F68S8UTrlHoGkCHfdUZ7T+K7k+OQdvZJ2fQkbHTin9Ua
+         ixpcPjQlZ5pM5bT3PvL3hplfQ6Z4dggx5GNbtrsFabo7o7dBSxQDgBcMynFfMsgZtz6S
+         1bF8ftbHDGhkkTPAeveJA0DLJSNJjuL49I8M0OYrEP98gE43ZGlcJfst213iKyS9OSdU
+         jERedh60mHD9XquEoy/+mWctqUWoXa3k/ZhRphhO2RUlibA+mkZ2OEEHM3MaXf9TAx/L
+         9iXQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9fOgFsejIlHUxeaion7yUHQjV1LklakKwp2cHe8Z5jeaWQDdEOtZi+14Hz/vgg8ZEM1q9fsyIM6wGcBpjr1ZSRfQkvo4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywlj+0MCywHJyQ68C7n6srwYi1DspYcNhmnXjsqZwZDssin7WyB
+	7+2X+xH1JcqYpvJ61eox/rLoiS0pVk6uZBYEgqfO54JKFmyGZEbxpGQQWDwEyYouOvrjZs200rc
+	5fc+iBrsKr0KmDwethiXuT6zPxApNd24NYO0T9CGd
+X-Gm-Gg: AfdE7ckmiGSWNQvr0AP97aF0gRK5TGl9SkT61PvqxbwlbB8d5C2gyAK2g/zymkOJo00
+	5HkZ5CHSBFCQ2lSTgUzEY2WBIB/diL41skPdBR9F0buCWxteKnUXSK1Z8jlSVJ6J9o/SQxcUdCP
+	DopFndPGQe3SE4INZhVSAE92aRY0rl3sOtOhXyj42N6JtvIzbNV8c7cbxVAFV8ZpZc8UXbF31eP
+	ud3pIF6rbwdFkeL/RZtT5yUdlvpb9vatHeTlwLh0/5eMmoxngxntuihVP+LAgTDtQ+vOl8cxC8x
+	9JM8oxE6/I0TvqQFNAZ84yuE9jT2nUufLMccu+HcLWEhUCibJoAKQifdJkE=
+X-Received: by 2002:a5d:4a91:0:b0:460:f36:79b0 with SMTP id
+ ffacd0b85a97d-462376a4df0mr4361735f8f.19.1781690089839; Wed, 17 Jun 2026
+ 02:54:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260616201633.275067-1-hexlabsecurity@proton.me>
+References: <20260604-unique-ref-v17-0-7b4c3d2930b9@kernel.org> <20260604-unique-ref-v17-5-7b4c3d2930b9@kernel.org>
+In-Reply-To: <20260604-unique-ref-v17-5-7b4c3d2930b9@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 17 Jun 2026 11:54:37 +0200
+X-Gm-Features: AVVi8CfPlpZsDlv9ciJ6wpjG8CPXMs720UTUcxwfh8qgpqFIXUpU1m_9T99wYrA
+Message-ID: <CAH5fLgggdf0CM0o4Oa1VbY+y8gQxrU0VU5z_yB4GWCxnbqsFuQ@mail.gmail.com>
+Subject: Re: [PATCH v17 05/10] rust: page: convert to `Ownable`
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Leon Romanovsky <leon@kernel.org>, Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Viresh Kumar <vireshk@kernel.org>, 
+	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Boqun Feng <boqun@kernel.org>, Uladzislau Rezki <urezki@gmail.com>, Lorenzo Stoakes <ljs@kernel.org>, 
+	Vlastimil Babka <vbabka@kernel.org>, "Liam R. Howlett" <liam@infradead.org>, 
+	Igor Korotin <igor.korotin@linux.dev>, Pavel Tikhomirov <ptikhomirov@virtuozzo.com>, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, 
+	driver-core@lists.linux.dev, Asahi Lina <lina+kernel@asahilina.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Bryam!
+On Thu, Jun 4, 2026 at 10:14=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel=
+.org> wrote:
+>
+> From: Asahi Lina <lina@asahilina.net>
+>
+> This allows Page references to be returned as borrowed references,
+> without necessarily owning the struct page.
+>
+> Signed-off-by: Asahi Lina <lina@asahilina.net>
+> [ Andreas: Fix formatting and add a safety comment. ]
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-Thanks for the report!
+This will not compile unless Rust Binder is also updated.
 
-On Tue, Jun 16, 2026 at 08:16:41PM +0000, Bryam Vargas wrote:
-> Hello Mickaël, and Landlock / io_uring folks,
-> 
-> A task confined by a Landlock ruleset that grants READ_FILE/WRITE_FILE on a block
-> or NVMe character device but withholds LANDLOCK_ACCESS_FS_IOCTL_DEV can still
-> reach the device-command surface through io_uring IORING_OP_URING_CMD with the
-> IOCTL_DEV check bypassed: the request enters the device-command handler (block
-> discard, or the NVMe char-device passthrough) where the equivalent ioctl(2) is
-> denied. The destructive completion and the NVMe-admin surface follow from the
-> code -- see Impact.
-> 
-> Affected
-> --------
-> Any kernel with CONFIG_SECURITY_LANDLOCK=y and Landlock enabled that supports
-> LANDLOCK_ACCESS_FS_IOCTL_DEV (Landlock ABI >= 5, since Linux 6.8) and io_uring
-> uring_cmd for the device class (block BLOCK_URING_CMD_DISCARD; NVMe passthrough).
-> Confirmed by source inspection on mainline (v7.1-rc7) and reproduced on Linux
-> 7.0.11 (Landlock ABI 8). The confined task needs a writable fd to a device it is
-> legitimately allowed to use (e.g. a partition/loop device or an NVMe namespace
-> passed into a container or granted by the ruleset); no CAP is required to reach
-> the io_uring path. The gap is structural -- Landlock has never registered a
-> uring_cmd hook -- so it is present from ABI 5 (Linux 6.8) through current
-> mainline (v7.1-rc7) and is not a regression tied to a single Fixes: commit.
-> 
-> Root cause
-> ----------
-> On the ioctl(2) path, the syscall handler in fs/ioctl.c calls
-> security_file_ioctl() (its only call site on the ioctl(2) path) before
-> dispatching to do_vfs_ioctl(); that reaches Landlock hook_file_ioctl_common(),
-> which denies a device ioctl unless the file's
-> allowed_access holds LANDLOCK_ACCESS_FS_IOCTL_DEV (BLKDISCARD/BLKSECDISCARD/
-> BLKZEROOUT and NVMe passthrough are not in the is_masked_device_ioctl()
-> allow-list, so they require the right).
-> 
-> io_uring reaches the same device-command surface by a different producer:
-> 
->   IORING_OP_URING_CMD -> io_uring_cmd()   io_uring/uring_cmd.c
->    -> security_uring_cmd(ioucmd)          (the ONLY LSM gate on this path)
->    -> file->f_op->uring_cmd()             e.g. blkdev_uring_cmd() / nvme_ns_chr_uring_cmd()
-> 
-> Landlock's LSM_HOOK_INIT list (security/landlock/fs.c, net.c, task.c) registers
-> file_ioctl/file_ioctl_compat but no uring_cmd hook -- only SELinux
-> (selinux_uring_cmd) and Smack (smack_uring_cmd) gate this surface -- so
-> security_uring_cmd() returns 0 for a Landlocked task and hook_file_ioctl /
-> IOCTL_DEV is never consulted. For block, blkdev_cmd_discard() is then gated only
-> by BLK_OPEN_WRITE; for NVMe, nvme_ns_chr_uring_cmd() reaches the admin/IO
-> passthrough with no security_file_ioctl on the path. There is no shared helper
-> that re-applies the IOCTL_DEV check.
-> 
-> SELinux and Smack hooking uring_cmd while Landlock does not is the coverage
-> asymmetry; the Landlock documentation describes IOCTL_DEV as gating ioctl(2) but
-> does not mention io_uring.
-> 
-> Reproducer
-> ----------
-> A self-contained PoC is available on request (it needs root only to set up a loop
-> block device and open it; Landlock enforcement is uid-independent, so the
-> confined child demonstrates the gap regardless of the setup uid). The child
-> applies a Landlock ruleset handling READ_FILE|WRITE_FILE|IOCTL_DEV with a rule
-> granting only READ_FILE|WRITE_FILE on the device, then:
-> 
->   (1) ioctl(fd, BLKDISCARD, range)        -> -EACCES  (Landlock enforces IOCTL_DEV)
->   (2) IORING_OP_URING_CMD,
->       cmd_op = BLOCK_URING_CMD_DISCARD     -> reaches the block command handler
-> 
-> Observed on Linux 7.0.11 (Landlock ABI 8):
-> 
->   [1] ioctl(BLKDISCARD)   -> ret=-1 errno=13 (Permission denied)
->   [2] uring_cmd(DISCARD)  -> cqe.res=-22 (Invalid argument)
-> 
-> A Landlock denial is always -EACCES; the io_uring path returned -EINVAL, which
-> originates in a post-authorization check inside the block command handler
-> (blk_validate_byte_range() in blkdev_cmd_discard()), reached only after
-> security_uring_cmd() returned 0. So this run demonstrates the authorization
-> bypass -- the request traversed the LSM gate into the block device-command
-> handler with no IOCTL_DEV check -- and then failed a parameter check, not an
-> authorization check. The destructive completion (an authorized discard with a
-> granularity-aligned range) is the expected behaviour but was not exercised in
-> this run.
-> 
-> Impact
-> ------
-> Demonstrated: the LANDLOCK_ACCESS_FS_IOCTL_DEV authorization is bypassed. The
-> device-command request reaches the block command handler with no Landlock check;
-> the only remaining gate is BLK_OPEN_WRITE (held, since the policy granted write).
-> Inferred from the code, not exercised here: an authorized DISCARD with a valid
-> range completes (DISCARD/secure-erase semantics, destroying on-device data), and
-> the same missing hook leaves the NVMe char-device uring_cmd surface ungated --
-> nvme_ns_chr_uring_cmd (namespace device /dev/nvmeXnY) -> nvme_ns_uring_cmd for
-> NVME_URING_CMD_IO/IO_VEC passthrough, and nvme_dev_uring_cmd (controller device
-> /dev/nvmeX) for NVME_URING_CMD_ADMIN (format, sanitize, firmware download,
-> security send) -- both reach f_op->uring_cmd with no Landlock/IOCTL_DEV gate.
-> 
-> So the confirmed finding is a missing authorization (the confined task escapes
-> its own IOCTL_DEV restriction); the destructive data effect and the NVMe-admin
-> high-water-mark follow from the code but are not shown in the run above. The
-> proven authorization bypass alone scores CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:N/I:H/A:N
-> (6.5 Medium) -- S:C because the confined task crosses the Landlock policy
-> boundary it was placed under, I:H because the bypassed path reaches a handler
-> whose authorized completion modifies device data. With the device command
-> completing destructively the projected ceiling is
-> CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:N/I:H/A:H (8.4 High), the A:H component
-> reasoned from the source rather than executed. No memory safety is involved.
-> 
-> Suggested direction
-> -------------------
-> Have Landlock register a uring_cmd hook that maps the device command to the same
-> checks the ioctl path applies (IOCTL_DEV, and truncate where relevant), so a
-> single chokepoint covers every f_op->uring_cmd provider (block, NVMe, ublk, and
-> any future one). Mirrors how SELinux/Smack already gate this surface.
-> 
-> I am happy to send a patch for this if you would like.
-
-I have read through the code a bit, but I am not sure I follow the argument of
-this report. Let me paraphrase my understanding --
-
-* LANDLOCK_ACCESS_FS_IOCTL_DEV is documented as blocking ioctl(2)
-  commands on opened character and block devices.
-  (c.f. https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags)
-
-* One of many block-device IOCTL operations is BLKDISCARD.
-
-* Block devices offer BLKDISCARD over io_uring as well,
-  but io_uring does *not* offer a generic interface through which you
-  can do IOCTLs.  It *only* implements BLOCK_URING_CMD_DISCARD in that
-  place.  The header where that constant is defined happens to use one
-  of the ioctl macros to construct the number, but points out that "It's
-  a different number space from ioctl()" (see
-  include/uapi/linux/blkdev.h).
-
-So... while this is similar to IOCTL, and while this block device operation is
-also available through ioctl(2), this is a different command multiplexer
-than IOCTL and I am not convinced that that namespace should be guarded with
-the same LANDLOCK_ACCESS_FS_IOCTL_DEV access right.
-
-Do I understand correctly that the only operation affected in this report is
-BLOCK_URING_CMD_DISCARD?  Or are there other operations affected by this
-(through other devices)?  I saw you also mentioned the truncate right above,
-but I assume that for this access right you have not found a way to side-step
-it (assuming that this calls the more specific LSM hooks).
-
-Thanks,
-—Günther
+Alice
