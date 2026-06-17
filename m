@@ -1,120 +1,112 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx1.buffet.re (mx1.buffet.re [51.83.41.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C012149550F
-	for <linux-security-module@vger.kernel.org>; Wed, 17 Jun 2026 15:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DBB374E71;
+	Wed, 17 Jun 2026 18:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.83.41.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781710306; cv=none; b=qwAexw7i4bIf2jYvWzfSQhuDfBct72zzovN2zwccCasC8Zz+Yv8kvdbcEi2HCvKbAyEP5ySeQNg+t2okhui57futB/PNgI71mlQOtpFGdD8PtvUPQHcchuNWB+/ooDvOBuCygQClUIiZP+c2yYRNEKtTGEcY1cS3tobKiNa/Fwk=
+	t=1781719527; cv=none; b=oF4m+p+QEaqKaZCdWyqCRVSwMckT18lC1t9a0fT/0BcpFioMX6O7oHDTnO9+0hqHegK49khrDoKqYHveRkkpFf/QkmMb/dk4DSjLIbemUbWfqIKcnc5eAaYJQz0EMGsN/VZwvNxdSXqx/vW+wAMETugkopoxLAXHDZNEBx49l7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781710306; c=relaxed/simple;
-	bh=TF8haHqenKUXIWHSQKRQ1srO2K3Otd+/f299io38fCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DzKrus89bnDxDM1L4UwMgXKfBba6qp/1hO6efYux2wveAyH2Wh9AjvRgnq0iU7Q6bKUOVHueZtUi/sqilRQHcKWQuuZhB0wyW/W4aIjf7D7daghWPqFsA7UL/phdIy6m14/zvjyTWRCsnxi4JQ9YXyT7Nfhr6b/mj8Wu1HcOG5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DKMJg4wg; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1781719527; c=relaxed/simple;
+	bh=9xp0Kk5bUmkF0PPUbgqTGcLbD87miuDQAR9pgS/9kXY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pZ1Wnd+8Or0ZQgx5QzEVFeq7goGB5KfTffvMHqszMdy6UT2Ihd0fZiASW3V6XCzfeIb9sCvtJZOlDkG9awZUsADLAT/hM8AQ7ZIlNVo+cSypo2gGfrKXM73JcF+HyPcM4Qpo0Hv+fnIV2DVxy1pvv4OW/APBKlLHcrsaBUhUSw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re; spf=pass smtp.mailfrom=buffet.re; dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b=o277kNkP; arc=none smtp.client-ip=51.83.41.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buffet.re
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DKMJg4wg"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-bed2b9bfa02so779175866b.1
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Jun 2026 08:31:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1781710295; x=1782315095; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=e/a3Ufu/P5FaF0fwJEuA4Rhhg7h705NuCKml4gOAODg=;
-        b=DKMJg4wgOeGbX5JPf42ghg0Zz+JZY0Ot2X2aMy8boI+x7T2WX1BqMb6AW8YSGWeW/o
-         XarLXnYRlM2hofjsMvEgHJT6DNzpfND/xTnWBX3gI3xBAkOH/R5YLS18luWwcJS+0Wa8
-         ECqjY5YbsQo9qlSAZ8Kch07tFltpFxQdU84hAOErl1veAxYI3gCYHCXEStJZgBLperew
-         98Ub+RfaQBRkxHzSD8P+5p4xX2LzbKhdwE9IHHOPV1u2Tqm/tAgBVap3pF60yETLEiLc
-         PbGyh12eLRbtVi4Qzv8XSjya/TtMh9GfAbzHqGlW1qSYaRbmWW4sUuBDlSRlEFsLRCrD
-         Zq/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781710295; x=1782315095;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e/a3Ufu/P5FaF0fwJEuA4Rhhg7h705NuCKml4gOAODg=;
-        b=mBjP10FLu1KWsEHhLBI2uar036rdeytXuJftUmW9RPc+/6oekcD1EMV444pdFUU7Bw
-         AmMJpfVy+LQI+rWfoq3Oxd+rfuN5BawsOjPjWOPf6U4NU8cPiCFWRWx+t4yU+5UChN53
-         mQ3LC+n3jGC6nlcv8ar9jnsY1A9Sc9zUdJMUFvzzHU+OxCuViIPT0B+l1GK4EFtBlxOl
-         FSH72EeKlXdTwWE5+caiV1eG88ro27wz94FmURsaDKkuM5JoJTgMFRNCGcOLqBFduNIQ
-         TBoa7n1mQGGkjkW2msM0+vny+vDEs917aPi9XrUvY++rcPOauAEd9DKgY4U73XWwa3S7
-         jF5g==
-X-Forwarded-Encrypted: i=1; AFNElJ/RNSU6J9nSxf9Yi/MotZVPr+NZrClesL/hZzKYYjSTdMWEQ7aJcwW+XfmCbD6zt6OOPWMmwsioMoPHukcpeV1O5ATLEL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxemPDE3Xsm5P5uBH0Uc3jaZP6kvz/U9OeKKoi4YnXuu2sWV94B
-	eRzisCmgOu418VoPHdwrax/cTSR6CmB4T+7o75VwWWKKwpqEikGsGWUvj43CDgoeNK6c9jSdZZS
-	L/HLHjovx
-X-Gm-Gg: Acq92OFZMtkjc0vCM3H9KNqj0/Sa+qE9Ply/8tLC+QEkL/8PNLPLby67lbPOQABVyIB
-	4TxV9P15DzKFPh73wGQj6q8YFwSfYjGilETzmTTRok1ca3tPqY77gfIZjDxolUXh5EpDI5MSMHt
-	fEt90pMl3QRmhL9YACU6SWC9BXPMzE/218NxovhXAYYA3Dth5kkTvDcPwriIjkYZkgSpe/0INj3
-	zG94iYFrudyu8CK3JBUvHjZp3LOngoglazFm9jRGV3ioY5ElyvoPGYMZpjq7QOblno27wSRj8Vh
-	4xoE55VVdUcDxMimUzVmU7mBBDKdcOcymazEu7SmJ94TBiEGvZih7iIQ3gl2h/1p0dakO9g2e0b
-	FcmJeUNVAxf32lJxOgrtW7G1cE32EVb46oHG1O+qu7xC4nVY8R0ZuYNRUpGEMAlnTNVle/By3dC
-	rdkJmZphf9xgWs4YzJaNoA0AnKQFX9WF/5d36Goy0Sa6YLCx48umCqcw==
-X-Received: by 2002:a17:906:730f:b0:bfc:3a81:514 with SMTP id a640c23a62f3a-c05a1e4b56cmr317176266b.9.1781710291364;
-        Wed, 17 Jun 2026 08:31:31 -0700 (PDT)
-Received: from google.com ([2a00:79e0:288a:8:9fb7:e73d:434b:bf08])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bfdb7b6e6c9sm828974966b.39.2026.06.17.08.31.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jun 2026 08:31:30 -0700 (PDT)
-Date: Wed, 17 Jun 2026 17:31:26 +0200
-From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Jens Axboe <axboe@kernel.dk>, Bryam Vargas <hexlabsecurity@proton.me>,
-	Paul Moore <paul@paul-moore.com>, Keith Busch <kbusch@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	linux-security-module@vger.kernel.org, Tingmao Wang <m@maowtm.org>
-Subject: Re: Landlock: LANDLOCK_ACCESS_FS_IOCTL_DEV bypass via io_uring
- IORING_OP_URING_CMD
-Message-ID: <ajK9zjmNHGw81alz@google.com>
-References: <20260616201633.275067-1-hexlabsecurity@proton.me>
- <fcfa9bc9-4f7d-478c-90a2-ec4efd4c7d43@kernel.dk>
- <20260617022541.328550-1-hexlabsecurity@proton.me>
- <209b76b4-e028-4af7-bdcb-b5813fef32fc@kernel.dk>
- <20260617.aeNg7Aeseez4@digikod.net>
+	dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b="o277kNkP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=buffet.re; s=mx1;
+	t=1781719517; bh=9xp0Kk5bUmkF0PPUbgqTGcLbD87miuDQAR9pgS/9kXY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=o277kNkP2Uq/D87XMTSu6aPrtO5+3cSQii5IjWlg4W7Aa55jN7h2MsmEEwgB+ZlQy
+	 92RnoDGQ8xqTCzKDx2K+8Xl6cFzW6bKOvTIl5IlLoNEa3Q1JQYqr7WDOKyjgAA0Y/x
+	 FFQU2NLPaPEO3FwVvQcKJ6v7uWhYLZzNKTAazV36nx8B0AnqMCvAGUkiVLgdFGw+3r
+	 Uxn0PJPnoDwpuOEfCxzwZSFYnYWtsx/dVA9+YxXBY/kPUZTgbMtobYalqecD5FtFQ8
+	 fp19SGM8wQwfcJMBfkFM+3k0TEPozrfRxKVX/q4mxUWgvjmm1AwWTJgxPqd1mYjl50
+	 1l068AIh494HA==
+Received: from localhost.localdomain (unknown [10.0.1.3])
+	by mx1.buffet.re (Postfix) with ESMTPSA id 428841263DD;
+	Wed, 17 Jun 2026 20:05:17 +0200 (CEST)
+From: Matthieu Buffet <matthieu@buffet.re>
+To: Bryam Vargas <hexlabsecurity@proton.me>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	linux-security-module@vger.kernel.org,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Matthieu Buffet <matthieu@buffet.re>
+Subject: [RFC PATCH 1/2] landlock: fix TCP Fast Open connection bypass
+Date: Wed, 17 Jun 2026 20:05:23 +0200
+Message-ID: <20260617180526.15627-2-matthieu@buffet.re>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260617180526.15627-1-matthieu@buffet.re>
+References: <20260617.eemahv8ui7Ee@digikod.net>
+ <20260617180526.15627-1-matthieu@buffet.re>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260617.aeNg7Aeseez4@digikod.net>
 
-On Wed, Jun 17, 2026 at 04:16:38PM +0200, Mickaël Salaün wrote:
-> As I explained in previous (private) reports, there is currently no
-> io_uring hooks implemented for Landlock because there is no use for
-> them.
-> 
-> io_uring "bypass" was already mentioned to us two times in March but
-> io_uring personality credential is not a Landlock bypass.  The Landlock
-> threat model is about enforcing restrictions when accessing new kernel
-> resources, on a sandboxed subject.  The credential identifies a set of
-> access rights, so in the case of io_uring, the subject is inherited by
-> the io_uring personality (i.e. the file descriptor).  If a sandboxed
-> task creates an io_uring personality, it will be sandboxed with the same
-> restrictions, which is BTW an interesting property (e.g.  pass a
-> restricted io_uring FD to processes)
+The documentation of the socket_connect() LSM hook states that it
+controls connecting a socket to a remote address. It has not been the
+case since the addition of TCP Fast Open (RFC 7413) support, which allows
+opening a TCP connection (thus, setting a socket's destination address)
+via the MSG_FASTOPEN flag passed to sendto()/sendmsg()/sendmmsg(). The
+problem then got duplicated into MPTCP.
 
-Remark on the side: We have previously received bug reports due to
-io_uring using different credentials, but this report is not about that.
+Landlock did not take it into account when its TCP support was added,
+leaving a bypass of TCP connect policy.
 
-Instead, it is about the block device "discard" operation, which is
-accessible through both (a) the ioctl() interface and (b) an io_uring
-interface.  The report is, in my reading, about the fact that the access
-through (a) can be blocked with Landlock, while the access through (b)
-can not be blocked through Landlock.  (See the other answer I sent.)
+Ideally a call to the LSM hook would be added in the fastopen code path,
+in order to fix this generically. But connect() hooks are designed to run
+with the socket locked, unlike sendmsg() hooks.
 
-But either way, as you are also saying here, we should probably document
-better what the threat model for Landlock is, so that security
-researchers (and AI models) can refer to that.  It'll result in less
-work for everyone.
+Closes: https://github.com/landlock-lsm/linux/issues/41
+Fixes: fff69fb03dde ("landlock: Support network rules with TCP bind and connect")
+Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
+---
+ security/landlock/net.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-I opened https://github.com/landlock-lsm/linux/issues/64 to track it and
-collected some notes.
+diff --git a/security/landlock/net.c b/security/landlock/net.c
+index 4ee4002a8f56..a2375762c18b 100644
+--- a/security/landlock/net.c
++++ b/security/landlock/net.c
+@@ -246,9 +246,26 @@ static int hook_socket_connect(struct socket *const sock,
+ 					   access_request);
+ }
+ 
++static int hook_socket_sendmsg(struct socket *const sock,
++			       struct msghdr *const msg, const int size)
++{
++	struct sockaddr *const address = msg->msg_name;
++	const int addrlen = msg->msg_namelen;
++
++	if (sk_is_tcp(sock->sk) && address != NULL &&
++	    (msg->msg_flags & MSG_FASTOPEN) != 0) {
++		return current_check_access_socket(
++			sock, address, addrlen,
++			LANDLOCK_ACCESS_NET_CONNECT_TCP);
++	}
++
++	return 0;
++}
++
+ static struct security_hook_list landlock_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(socket_bind, hook_socket_bind),
+ 	LSM_HOOK_INIT(socket_connect, hook_socket_connect),
++	LSM_HOOK_INIT(socket_sendmsg, hook_socket_sendmsg),
+ };
+ 
+ __init void landlock_add_net_hooks(void)
+-- 
+2.47.3
 
-—Günther
