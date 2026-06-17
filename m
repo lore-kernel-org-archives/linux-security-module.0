@@ -1,101 +1,118 @@
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+Received: from mail-oi1-f206.google.com (mail-oi1-f206.google.com [209.85.167.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD16286D60
-	for <linux-security-module@vger.kernel.org>; Wed, 17 Jun 2026 02:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADADD39C012
+	for <linux-security-module@vger.kernel.org>; Wed, 17 Jun 2026 08:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781664301; cv=none; b=Q16JBV2Gx1X+ofna4wxz0992tSoLgjGQ2O9o0b+TZVQAtt2HfxTiHnYOIr0EhguDdc/tExS2HVElzwSUtjmecene1Xl42sNJzGWZx+H0GiYR8CPkPy++67k/F3qfv1nMMlEP6VPDREvUVqtJ0iyJnDu8JD7fzle9ARcNB1KRPmM=
+	t=1781685697; cv=none; b=odPzdv7SpiJKTZnEa+7OymUgXVt/Qk/ejL6frubkLMUYNcm+9f4YNdyFWPdp22//gKdJ53kM+MQT/LvMjQ469gFFRkyeZIXz85fiLlZoMtCsA4LD7Cy14X8U33+k1NuWpa5C1iIdJrItrwoBWlcl++SHx1mk8jfZXSaxZ2p8+as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781664301; c=relaxed/simple;
-	bh=V5Lj0a8nSmlkBIMP6eQIAf74fBET5cZyYPV0CAI0UIs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KfFwCbTHnnxaxSUsDEAQOlZZYTZpOwxlexmTW6wdStUyx4YIOYXUV2K5/kEwsnwVibD45fdwe7SrgDGPLqBlQNxdWaPtR/UtKhHAmPMEX7bnoiP6QkQplYYuHSueAhu0rHnmw8aYZFWzGKUVtTm/kbGoDSwEEdmuOtlvExpZVhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=CGrNHpc0; arc=none smtp.client-ip=209.85.161.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="CGrNHpc0"
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-69e8a8608d7so3137392eaf.0
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Jun 2026 19:44:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1781664298; x=1782269098; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=A+ij2DnbBH9qYHL3SbwUU73OxRWd82W4gvllOMbdGj8=;
-        b=CGrNHpc09mV92OTUvFYs8OUNtlaVCkJZr1dIMDF/ob7wEtsm0KkuJG4HNzNu1EN1GW
-         LRo3OU+qAYTl5uErF7sxhVapWWk1t1/6xp2+2O9rtKyukkzQd+mlIDWz2fT+mViL2/mQ
-         BBBwJOzS18F+1N6PJeyIIktfLCHJUMq2miDFCKq8YgMY363zpFBfzBpOL2lW2zclVuba
-         5zGy8Rdv5xH1fKV32Vx01lpeRXvsRwfo05GRuh8Yy2P+5/yV1GbVEk8Ho2fObpzHjgZZ
-         eGWRLZe9pscnEFrxReUKwj27t1Q5n+JXRmkZ9tYRewIFQZwBbDMxMeJX6UczT4JDz9JI
-         4shg==
+	s=arc-20240116; t=1781685697; c=relaxed/simple;
+	bh=VXS6XudEQAPjMBd/7aKbTLEixeQJWMYmcVf/vQFJn58=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=X546GX7tqFi5y2ac4cQIsSIT3MlTEF0l6nQznc+98BU9CEZX4BOjkAVnhqolWKBjj/JoIZSMXwoWZQmkkMDfOdhhZ50q8XTV/BwiFvvS7Z33ygstguxIRT9nu+Rgfq1uzEdGoLqrFvhruil1zg8YlJXkaXHY+oaGALWi3VRR0UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oi1-f206.google.com with SMTP id 5614622812f47-48679a595e2so8187067b6e.3
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Jun 2026 01:41:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781664298; x=1782269098;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=A+ij2DnbBH9qYHL3SbwUU73OxRWd82W4gvllOMbdGj8=;
-        b=dLWf69y/K1ZqnPjiwnyNpiDxtwTYQu+GrxR8r9ir1AZ5E/upChJ/TBbJ8KyT4JPphq
-         ugWs0FKx19NCzM25+qtfHY9ZW2gPIkNWMV5Ssv3YSWjPbbXeJy6LYvg2xXH0LGyC+10I
-         yTYV+ZJf4/DSVdbDTbruaxQXrOT2qj3TI/wCQbUAXW5FEwdGkk98sVUsgrl2HtvY2LUH
-         RoWhOWDN7HQJlLYhNp75abQY1iEmiJJWADBWNuRI7yR5t+9QzlzlcSCjWvj+ONo+d6RI
-         8TU6qa6233S5blVHUQdjC89RDUQdep1+feB/5q7xlt5qSSi0CddDfEZjg1DcTFAufDRm
-         Rheg==
-X-Forwarded-Encrypted: i=1; AFNElJ8PBAeRrQ/IVOCExMNB6xznG+HlJurn8ofrSd/eh3y+Lv4gbvJA6bSdI0ac9XMJscBv1fAlSs8fMFNob/lSyHI551LZqNQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxh3ZmAXkX7/8TiYLdsqe76QQQQInADx5sIrJd/T70hH/cT686t
-	bb/A42zWijvRJxyenfQzIT/kVyzFBTRH1/gvQBfkmRDpQyxVb1RoFyLM4P0aqGKibFY=
-X-Gm-Gg: Acq92OFJyufMycYfKindQbAIHXZCleVlB9qJrQBOZleaWrQOsIM2doI6qtVklrH3EmE
-	l5X+WRcnkPAcZqQgdB0pAtK14NTLjkM9VA4hQN7bOA1Ll0ea3/z7Nu+U9B7iFpBNm81ywQxEM9v
-	dvA+o2bKh8AyTG478Dk4hMU+Bo8HkbADUpDDAj0nh9ZxV4xi8WUzkmtrDru38oz9oQRHwvoUgZa
-	H3b5nWic8olEZTc2AKlsyeROoHz7Ry2+Rn3nURiIJG0c0NGlJJoNdUWtCp6wEYcTlamfH3AWkzE
-	lA20KmhM3JixQK/dqI+w7Yk6U+or33zSKQ1Z2qlHZwUdlkYSr7F2zSd5uUC8znmroiNo1FeOfU/
-	vhxym2TtOFYnP7vRiWNFT+WfsgpyxamuMUqdaWpdQzJotoG04ketzvv0HXgWHrs8yqLYaMArsmT
-	JyICR3GXPao4cJHUB3RE6eFYONYBmPplTbDKYRZYZq6woG8k+DIKIshr+CatQ0eYrZXxdN1g8=
-X-Received: by 2002:a05:6820:220c:b0:69d:82e6:69d8 with SMTP id 006d021491bc7-6a0b624b4a3mr1347275eaf.52.1781664298162;
-        Tue, 16 Jun 2026 19:44:58 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-69f00ce1f67sm6138199eaf.2.2026.06.16.19.44.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jun 2026 19:44:57 -0700 (PDT)
-Message-ID: <209b76b4-e028-4af7-bdcb-b5813fef32fc@kernel.dk>
-Date: Tue, 16 Jun 2026 20:44:55 -0600
+        d=1e100.net; s=20251104; t=1781685693; x=1782290493;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=P6PXUHS/IFR4w+OORuxpA79Vor0EvBF7s+4hHeE2tas=;
+        b=HobOkixi3DKGcNiXs0jpIfF44iEB080Hvdq2gLlQFJij58Ez0UYpe2nqEzCB3yPNKD
+         /KpvLjK0z6MQkpnvmeJNBRa4wriIkIePk3DE3tJNMSHFg695ixFZAvEMs+4BeNxL0xqX
+         B9E0axI5TKMVdt6/WcK4+3pvO/TEvAARqTJC5kRm+539lC2nT8YZW6LONzvbO9IhntP2
+         yn1DAwiEotyhC7JEhVTYfx2gnttJ++yBRjPGBxCm8ZCM6qqmZIBIBoPn0OpBXZw2JvQD
+         UMc3z3RITGQ8Eyrb8pvaLcV9NHya3PcH5MGLN7r+BJPpRJm9AIlkk7tW2oB2wD7JMNJY
+         GWhw==
+X-Forwarded-Encrypted: i=1; AFNElJ+oUE0WcDPwpuCEgOwrncxZKoZUCiVIbU/jw1tENfz8XDx2fU6RnTrG8MvBuTepSxdft9lg3g5MRrAhyYWKEOWhiwUmLeU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiAzT2BlEX8VGnU61meIVnmTbe0o/cIcKX9bOIoUYrh4p0d9oV
+	E4xXufVAMYbjKEmB65WTy3LJ7mQp5cUubPbEoVA4chXAyj9TdjXdh1zYm0SZDKrGJIcWW0lLWDP
+	QY8cdxNYTT5INq/3hi0mZPsflv7ckYnaDCGj7oPSyvohuX1sJpQUVcXILv78=
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Landlock: LANDLOCK_ACCESS_FS_IOCTL_DEV bypass via io_uring
- IORING_OP_URING_CMD
-To: Bryam Vargas <hexlabsecurity@proton.me>
-Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- linux-security-module@vger.kernel.org
-References: <20260616201633.275067-1-hexlabsecurity@proton.me>
- <fcfa9bc9-4f7d-478c-90a2-ec4efd4c7d43@kernel.dk>
- <20260617022541.328550-1-hexlabsecurity@proton.me>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20260617022541.328550-1-hexlabsecurity@proton.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6808:1692:b0:486:39db:ebfd with SMTP id
+ 5614622812f47-48942aafea7mr2550142b6e.33.1781685693573; Wed, 17 Jun 2026
+ 01:41:33 -0700 (PDT)
+Date: Wed, 17 Jun 2026 01:41:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6a325dbd.dc986f81.2c135.0008.GAE@google.com>
+Subject: [syzbot] [tomoyo?] KMSAN: uninit-value in tomoyo_path_chown (3)
+From: syzbot <syzbot+eaae8fa60ce81f1e4eeb@syzkaller.appspotmail.com>
+To: jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
+	penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp, 
+	tomoyo-users_en@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/16/26 8:25 PM, Bryam Vargas wrote:
-> Thanks Jens ? noted, the fix belongs in Landlock. Micka?l has the full
-> report.
+Hello,
 
-Indeed - and hence no need to bother anyone else with it by blasting it
-wide. I've already explained this multiple times, but on the private
-security list, when the occasional AI report comes in on things like
-this. Hence why it's a bit tiring to see the same stuff come across,
-once again.
+syzbot found the following issue on:
 
-For the landlock folks, I'd suggest taking a look at what hooks already
-exists (and existed, when landlock was merged) for selinux etc, that'd
-be a really good hint on the existing surface covered.
+HEAD commit:    2b414a95b8f7 Merge tag 's390-7.1-5' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12cff156580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a0ca3b8cb3875012
+dashboard link: https://syzkaller.appspot.com/bug?extid=eaae8fa60ce81f1e4eeb
+compiler:       Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
 
--- 
-Jens Axboe
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d7dcdf890eed/disk-2b414a95.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/214784598f3b/vmlinux-2b414a95.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/403c25c5a3db/bzImage-2b414a95.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+eaae8fa60ce81f1e4eeb@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in tomoyo_path_chown+0x128/0x270 security/tomoyo/tomoyo.c:380
+ tomoyo_path_chown+0x128/0x270 security/tomoyo/tomoyo.c:380
+ security_path_chown+0x1c0/0x710 security/security.c:1598
+ chown_common+0x69f/0xcb0 fs/open.c:771
+ do_fchownat+0x20f/0x490 fs/open.c:804
+ __do_sys_chown fs/open.c:824 [inline]
+ __se_sys_chown fs/open.c:822 [inline]
+ __x64_sys_chown+0x9d/0x110 fs/open.c:822
+ x64_sys_call+0x30cc/0x3ea0 arch/x86/include/generated/asm/syscalls_64.h:93
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x15d/0x3c0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Local variable newattrs created at:
+ chown_common+0xbc/0xcb0 fs/open.c:746
+ do_fchownat+0x20f/0x490 fs/open.c:804
+
+CPU: 1 UID: 0 PID: 4943 Comm: udevd Not tainted syzkaller #0 PREEMPT(lazy) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/09/2026
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
