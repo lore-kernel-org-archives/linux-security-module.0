@@ -1,123 +1,75 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail-07.mail-europe.com (mail-07.mail-europe.com [188.165.51.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800BA3ECBE4;
-	Thu, 18 Jun 2026 14:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BF4326941
+	for <linux-security-module@vger.kernel.org>; Thu, 18 Jun 2026 19:34:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781791351; cv=none; b=eykZ2NyqJf8L4BO8Aev4ajzp6SktNxjnXdqesRTNyMzUgsow6babm2SBNBxbO8hmbXtHI6+UgGC4szlGzERWakn5pjRemyOW7j1JeI8D4GBkZ6/eEkVoPFkTztdp9Rw2/5yYCJinpNnQrfWIrGIUlj9edgDgnToG23pJbji6JzU=
+	t=1781811249; cv=none; b=jWKvicqz9G/mCA60D50HNueNv+1IZcDyEGuYA0gDoGtVPmBiDobIQR6OWX+eyzbxpJPkho8Y3nJ0OoBmu8UBO+Zi//rFo3jHXPG8n9ZvVxiCgr9ymPhiArjfh3H+I2vROE+iZ3Ru6f0bgMRbtjWgmjdsVf1C4iUzWToqSFYpQ5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781791351; c=relaxed/simple;
-	bh=k916pKxaOf7B4P3yVTWLlngVhVyPkDIXI52B9aGPc2I=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=mu6edqh2ffhmVScuI6Ie0PdoBe7fJqL2JJpUS0fVY914PWf5I5iatc7fxMB05KkWTi4QoS5Cj/qOfGcwfP/BCj+RBTskp9KeajQ4BrJTv7mx4J+Tm3o6CRKHhu6pmILt6vgGt1lvWWUqZoHg+1vBYa9dRC779+NF5l9mMkxvVWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkPjyfEd; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781811249; c=relaxed/simple;
+	bh=zJpLfMJZdepvRseZ7w4ZXSq6kJ0W3aoRJz67L83CCrc=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=L5ph3qFpssl/e9qsTj+Vo23GxYLDyk6xFoDIMW58oASgsJyeXysFH2riHWFy8vSSRv4TCZH4BHBp1zXLsha3+izZzQpalqJyMmHYnd5vGwfNUn7lYz8h68gngfERUmorT72lhNjHNUA1ScTwecG2bPU3GFCAdaqVqLEbn1tF0dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=P5WXhk61; arc=none smtp.client-ip=188.165.51.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkPjyfEd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3E061F000E9;
-	Thu, 18 Jun 2026 14:02:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781791349;
-	bh=h1CrjMVgL61vHQAx/k3CKSIoS+lyuffNF+8YaZzYJCU=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=SkPjyfEd483/P4oAEKKdfulBkJCesajLx1yvEchJNOpmI0OYmMXwKuMGiLwhC6JPG
-	 wrdV3lG/GXsNtgm1AnZ9gJ455vGwp2LDMTAJpIKdM51+qwtF/TuPfv75nhq1SpzMH+
-	 jmf0xK+HgWk7YkhpMaQyB1ZZHRO/YeFB0cj5enxH8K7LL5JmtEGlszCU5/+7rx7E0I
-	 Ougi6eKHe8+HdcE1HZx4GRy9oT0lvK7aEVZoDjyOpDjSgoDToadlsY13Nj/fNNizrj
-	 doz1Ev+vlIMiu76T92za6fX3tMVz0Zk8JZTwfEMkkYV3PzmPqwzaE+I/AklevIvxXy
-	 Vhwie4wT6MWPA==
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="P5WXhk61"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1781811230; x=1782070430;
+	bh=zJpLfMJZdepvRseZ7w4ZXSq6kJ0W3aoRJz67L83CCrc=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=P5WXhk61tEy2ymXVb5VpOrWrdVuSvPQKtBmjjaF2XUp2flYuWOHMz2/1iZmFhh5X6
+	 b9CKSgfnQHMaaydyC7E8cR3A+kC6NS9pwRWScyo/ELKsRyUFZFtYBUy9zTRts9JVOL
+	 AwDjFgnwTkuejHT/yIzDm8yfg/trEkchs/qWcH6rcJDuowVJ3WDfbgIopvibq6jloi
+	 nc5nHTUFNyAZ27qWOfgNO751H+3d6VP4HyLjUv8GlEKliJHeMpjSeguyCM3ZEb2q+k
+	 kGC08xG3hKp41o1+1jiQbjmMosHWduEFtFvgcLoYJdXvnErRtNSORCFzBxnwX6h989
+	 jG9i+cO7PH/TA==
+Date: Thu, 18 Jun 2026 19:33:41 +0000
+To: Song Liu <song@kernel.org>
+From: Bryam Vargas <hexlabsecurity@proton.me>
+Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, John Johansen <john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, Serge Hallyn <serge@hallyn.com>, linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 7/8] vfs: Replace security_sb_mount/security_move_mount with granular hooks
+Message-ID: <20260618193336.214276-1-hexlabsecurity@proton.me>
+Feedback-ID: 199661219:user:proton
+X-Pm-Message-ID: 4daec48a73870feca77879a104fb21824743f168
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v5 7/8] vfs: Replace
- security_sb_mount/security_move_mount with granular hooks
-From: Christian Brauner <brauner@kernel.org>
-To: Song Liu <song@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, 
- linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- selinux@vger.kernel.org, apparmor@lists.ubuntu.com, paul@paul-moore.com, 
- jmorris@namei.org, serge@hallyn.com, viro@zeniv.linux.org.uk, jack@suse.cz, 
- john.johansen@canonical.com, stephen.smalley.work@gmail.com, 
- omosnace@redhat.com, mic@digikod.net, gnoack@google.com, 
- takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp, 
- herton@canonical.com, kernel-team@meta.com
-In-Reply-To: <CAPhsuW7Wn8GYrsrRhEFXQH5buaP+pdTKc0UV8Mn0B3OnNN-44g@mail.gmail.com>
-References: <20260528182607.3150386-1-song@kernel.org>
- <20260528182607.3150386-8-song@kernel.org>
- <20260617-laufbahn-eifrig-charmant-a48f357a0c52@brauner>
- <CAPhsuW7Wn8GYrsrRhEFXQH5buaP+pdTKc0UV8Mn0B3OnNN-44g@mail.gmail.com>
-Date: Thu, 18 Jun 2026 16:02:22 +0200
-Message-Id: <178179134209.111814.12159888808546010170.b4-reply@b4>
-X-Mailer: b4 0.16-dev-0da26
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2545; i=brauner@kernel.org;
- h=from:subject:message-id; bh=k916pKxaOf7B4P3yVTWLlngVhVyPkDIXI52B9aGPc2I=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQZ/yow6Ga3kMuWmrPTxLe7b9H59axHFWxW88/YuycrV
- e72CmX+jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIk4tDD8rxds9eNp5fLjyxZ2
- u+ay/eXhTSq+lwVWr7ZRn8VufDhgKiPDvVWiUetmq3U9/cNY4S4sniIZ92axwwnxl8+Vdqzj2vO
- REwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2026-06-18 18:56:42+08:00, Song Liu wrote:
-> On Wed, Jun 17, 2026 at 9:53 PM Christian Brauner <brauner@kernel.org> wrote:
-> 
-> > On Thu, May 28, 2026 at 11:26:06AM -0700, Song Liu wrote:
-> 
-> [...]
-> 
-> > >
-> >
-> > This again is racy as it is called outside of the namespace semaphore:
-> >
-> >         err = security_mount_bind(&old_path, path, recurse);
-> >         if (err)
-> >                 return err;
-> >
-> >         if (mnt_ns_loop(old_path.dentry))
-> >                 return -EINVAL;
-> >
-> >         LOCK_MOUNT(mp, path);
-> >         if (IS_ERR(mp.parent))
-> >                 return PTR_ERR(mp.parent);
-> >
-> > After LOCK_MOUNT @path might point to a completely different mount then
-> > the one you performed your security checks on.
-> 
-> I thought we agreed at LSF/MM/BPF 2026 to add the LSM hooks
-> before taking namespace semaphore, so that it is possible for LSMs
-> to defend against DoS attacks on namespace semaphore? Did I
-> miss/misunderstand something?
+Song,
 
-I think there was a misunderstanding. What I pointed out was that it's a
-trade-off. If we do call security hooks under the namespace semaphore or
-mount lock than anything that's called under there must take care to not
-cause deadlocks - which is especially easy to do with mount lock and
-even with the namespace semaphore it may get hairy (automounts etc). The
-dos thing is another worry but if an LSM does stupid things we tell it
-to not do stupid things and to go away.
+> +=09err =3D security_mount_change_type(path, ms_flags);
 
-But as the hooks are done right now they are meaningless from a security
-perspective. You might have a policy that allows mounting on dentry_a
-and deny mounting on dentry_b: before LOCK_MOUNT*() you may see dentry_a
-and allow the mount but after LOCK_MOUNT*() someone raced you and shoved
-a dentry_b mount onto dentry_b and now you allow overmounting dentry_b
-which your policy didn't allow -> hosed.
+This gates the propagation change on the mount(2) path. The same change on
+the newer mount_setattr(2)/open_tree_attr(2) path is left open:
+do_mount_setattr() -> mount_setattr_commit() calls change_mnt_propagation()
+for the propagation and writes the MNT_NOEXEC/NOSUID/NODEV/READONLY flags -=
+-
+the same work do_change_type() and do_reconfigure_mnt() do, but with no
+hook. security_sb_mount() never reached that path either, so the gap isn't
+new. But once this series checks the mount(2) propagation and remount
+paths, mount_setattr(2) is the one path left without a check.
 
-> > Placement of this hook suffers from the same issue as the bind mount
-> > hook. Here it's worse because the security layer isn't even informed
-> > about MOVE_MOUNT_BENEATH which completely alters the mount relationship.
-> 
-> Current hook security_move_mount doesn't handle
-> MOVE_MOUNT_BENEATH. But we can add mflags to security_mount_move().
-> Do we need anything other than mflags?
+It's reachable. A Landlock domain denies mount(2) for the confined task, so
+mount(MS_PRIVATE) and a remount clearing noexec both return -EPERM -- but
+mount_setattr(propagation=3DMS_PRIVATE) and
+mount_setattr(attr_clr=3DMOUNT_ATTR_NOEXEC) succeed, and the task then runs=
+ a
+binary on a mount the policy marked noexec. A SELinux/AppArmor policy that
+denies the mount has the same gap. With this series applied,
+do_mount_setattr() still carries no security_ call, so the divergence
+stands.
 
-I think you either need to pass three mounts (source, target, top_mnt)
-where for non-mount beneath target == top_mnt or you need two separate
-hooks. Because for MOVE_MOUNT_BENEATH you may want to have a tri-part
-policy: source, target, top_mnt.
+Adding the propagation hook and a reconfigure hook in
+mount_setattr_commit() would cover mount_setattr too. Happy to send that as
+a patch if you want it folded in.
+
+Bryam
 
