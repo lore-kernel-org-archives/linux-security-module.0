@@ -1,127 +1,151 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4543EBF02
-	for <linux-security-module@vger.kernel.org>; Thu, 18 Jun 2026 10:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648873E9588
+	for <linux-security-module@vger.kernel.org>; Thu, 18 Jun 2026 12:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781780219; cv=none; b=p2fAGAsbmb2Q8n13KygivKBG53fkhrWfxnC2PnGeOGWYtXuantj9SF5rR74g58InZEypy9ALjxGkGOKekDdCfswr+3OYTZvO4yxbxnh+/NcjXq7QPzkTkfx/H27rhIDKj6RwFLTShI7NWg5ekbuDFkgKWTiJwQwQp9XK0qz4Sfs=
+	t=1781784992; cv=none; b=N6zUN1cXvNDd0U3bt3l88SwL0yN22a7Vh9tRYrBthFB3Empn4VN+xolzzR3P1SOBihnXPdWEE4kjB7ubQ/Tp0eMuInQGHSmBy4py3f20khP1cN9U2NO5TkDYHgLFJZE7ZJG1sS6PWFm6oOYq/VqqeYL150NiUJtIfSwVk3W/jEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781780219; c=relaxed/simple;
-	bh=qQdotgGscA6opjcuxC4Up5QVUCY1vyFuwJmwatHokyc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=It83Z+j3RVpEZ58sobanI/PW1YwY86gCfyeDnJiIjiSx2n+UZkqBWU81gynDvU+XLXNFB/GyKegc/QB3wmiZFe+tOacYWr5AukXpRSkE22m12IaFd/X4Ni1/czZvNV8VMOgE08anY6OU9Z8rkVXvDuST++xdTTBCIK1Dq9qknZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KausSAjq; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781784992; c=relaxed/simple;
+	bh=alYxmbcQkRLnus6HzAReH0YS6FmyBajG1qbZ4SROazk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W2E/FfymQPv42M3drzipRK0opMhCV4bqSWVU+atca4djEi9mm1T/3wB1xtpJEBm8XHgC4k/Y2z/YDNSsNDISJ/Wzmt5duD5xLqx9ENvxM2sD8pbr+I8UEzNZulcOY2kqBbwAQ+I7ZerjF854SvVdkhE6zF2vdz47lPzKBZB+WB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hOMKWb8C; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KausSAjq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 255451F00ACF
-	for <linux-security-module@vger.kernel.org>; Thu, 18 Jun 2026 10:56:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781780216;
-	bh=2E/2JIqLB4ksBgWPBo43Ny8WcobpWESfD8u96j+vkuE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=KausSAjq/gG/n4m9EVaAp11Z/mDN7wDR+FlCTHVF+V5rcL+dtACUywY0Co3uZzKg+
-	 gLB9yfTtjkk5Gjz7Vkd5/SCS7wcwcyLuvZhVopSVRyJXWhsfrC6CM8sxLv5+f106ng
-	 qDcociUXofs++ILwCnPwIVADpqAw+6lJrvBDr/qjDgF7PiIrOK97mESwUmy3uUPDB6
-	 PgDkPCK/89iv/LEEkQIy2W0LyH72Vvr7dggW4d0BT4kKxRWTD0f2dGSTJJpN3yG0kO
-	 4GD+XQZadeP3ucXBc0yzdFeHVlvsaBFDMsP1C9gcr33kyC8dOzhrcgXV6VrLC65bR3
-	 wm8hwJD1A7AjQ==
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-91ae31bbaa9so85952485a.1
-        for <linux-security-module@vger.kernel.org>; Thu, 18 Jun 2026 03:56:56 -0700 (PDT)
-X-Gm-Message-State: AOJu0YzL0cyQh6JxHIrabxg4YGSEGpnLsppHI2IhXjqpTrCKTOCjJHyY
-	2URyjGhVsw/KADOlYwYfu+vtiXnW+2mBb0E76mMCJteXnLRfdPXllr2++/1S6qqQo5GNc0VKZ6l
-	IFZUcGtkqzcMPjhfkR2xui/pKZyp5BH8=
-X-Received: by 2002:a05:620a:1a12:b0:914:cf92:46fb with SMTP id
- af79cd13be357-91dbc52c23cmr1206914385a.32.1781780215358; Thu, 18 Jun 2026
- 03:56:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hOMKWb8C"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-490b8ac62baso19606425e9.0
+        for <linux-security-module@vger.kernel.org>; Thu, 18 Jun 2026 05:16:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1781784987; x=1782389787; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Sv/Jb9vWD96CsEgS7PRGucKzFMQgwXYk5KDmj/DVT58=;
+        b=hOMKWb8CVagKAo1+d+dIY9a0CXNgu5uQGcB4caCtu6Lr8RyOx3WeI7txfkKS+GNCGl
+         sHpAM1TxXWecNLwi9gEmEYqL40H750SONiBYAJKoYj9LD0oYJoQ0ECmYcJxx8e56Uw7q
+         kA2Seo0yIQh5p92/CwSEiisseZPOL6Sp+xETX+xwQgkd+x7wxSxsHHreQ/itQCVDqC+q
+         Y3lGKHr134bPD2mv73LlaFsWqX6QoJmqbO2fWstecfOQJXhxgTQoOtypQbdZ5LCcxdq9
+         HtskdVM6e/4fJ90KmYTWYqQpZwMWt426r2Tv6yAKujXa0RDlZXp3nZicp7BugsiC83cs
+         abZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781784987; x=1782389787;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sv/Jb9vWD96CsEgS7PRGucKzFMQgwXYk5KDmj/DVT58=;
+        b=M8Mzo+BV7H/mxGIYzBg7vGnSwdBsW5w5Jlt4KJtxyixUB6HnNx5KHil5hOf/I6H8Z6
+         cIBHn1zmMmfPyt6doB3odVCp1D06gRVf/rZGRLtzzW44f/QWEUWrhrlimlPEkglXddGi
+         wu4uBpvnHiR3bVvo+nbmYU95jmecC0tXmciBIVcJfeYL6nx/krJGJKg91yE66kHpZFvq
+         ZOA2L/GeA2UNyvCbiYRNmBk2385B2GbCxWjHpwkeqBUf8xmleQyB4lQWgyTMlLOb2fyK
+         6COgIA/6FcjgEUDbC0lBroAzZxy9yKkqQ4BEvIoRVXWC+SmAukOtQrNckvaMZNcoYLUd
+         MCvw==
+X-Forwarded-Encrypted: i=1; AFNElJ+keHWU+xYvFcbyhNydV88o42QYsUCV5o2CYqsR5lGh+24w7/6+h39mPb2dMW3ipUtVxWTb246UNp7pwFO0qJWdMdF5aH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX+M+UZ6z6vHraSL4uwgudDqSiEiqSFulGBetZOlecvoUYHwZ3
+	BYkzvLQAzgX9Ku1yRK4Ht2KzDO5803uP/Kl33+RnL08nFAq+Tg6nT2QW1S8Nl2iOlA==
+X-Gm-Gg: AfdE7cnXjwe3O7gdyT0gCjknFn7SDDN8isEGu15WihkuBvZSFlMhbdnw/QjAXqD4Qwq
+	hWuVXMdIlL7OiL52fPmlhDifdcElmGE6h8s5Uoq3JVq7aAjocSoGWhRmu6U2x9LdhZhv3ugMlHY
+	WPw3V9i+AN77YPbvfF0Rsa7jIk73WAYtYcRzksYoEMElt8IT8xPYaW/XSHMVzgSJD1nTzNw3wr/
+	8eINNl25fTtoyIZshU0Uxnd6l2U3EfvMDZoS0f0OR3P8Y3NNlWEmUhVjt3fZeAeAhvNeKow0mtp
+	xPZAugGHhNxvmzL3iRKdhfVLL4zOntRRKo45oZVYIv/P0u6lo7gHYFyGyyphNZAGavA08SvrtrO
+	2VyqLpXVTy0tyiwLl2SsXQBl+BN9r+Yg9tSUwBGpGySJA9zAT+sZNooezeskgzrXQcP33G6uAE4
+	JNXdt8F9LoW7DExfPH/8T5nvgzgdEeID1rt0hz2lsjIriLAL1KEADtSA==
+X-Received: by 2002:a05:600c:3541:b0:492:38c9:b265 with SMTP id 5b1f17b1804b1-49238c9b275mr40277555e9.15.1781784986971;
+        Thu, 18 Jun 2026 05:16:26 -0700 (PDT)
+Received: from google.com ([2a00:79e0:288a:8:b8b9:62b8:4f72:45ef])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4922fa47ce3sm265162015e9.6.2026.06.18.05.16.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jun 2026 05:16:26 -0700 (PDT)
+Date: Thu, 18 Jun 2026 14:16:20 +0200
+From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+To: Bryam Vargas <hexlabsecurity@proton.me>
+Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org
+Subject: Re: Landlock: LANDLOCK_ACCESS_FS_IOCTL_DEV bypass via io_uring
+ IORING_OP_URING_CMD
+Message-ID: <ajPhlNSgUcmBoFcM@google.com>
+References: <20260616201633.275067-1-hexlabsecurity@proton.me>
+ <ajJtTHyqWTmX7lHo@google.com>
+ <20260617230237.14718-1-hexlabsecurity@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260528182607.3150386-1-song@kernel.org> <20260528182607.3150386-8-song@kernel.org>
- <20260617-laufbahn-eifrig-charmant-a48f357a0c52@brauner>
-In-Reply-To: <20260617-laufbahn-eifrig-charmant-a48f357a0c52@brauner>
-From: Song Liu <song@kernel.org>
-Date: Thu, 18 Jun 2026 18:56:42 +0800
-X-Gmail-Original-Message-ID: <CAPhsuW7Wn8GYrsrRhEFXQH5buaP+pdTKc0UV8Mn0B3OnNN-44g@mail.gmail.com>
-X-Gm-Features: AVVi8CdMwwBeVWKbgimKMTZIhDQrcn_xHhSmY9XN-Dvu7Mu1bTcCjMCtFLlmpHo
-Message-ID: <CAPhsuW7Wn8GYrsrRhEFXQH5buaP+pdTKc0UV8Mn0B3OnNN-44g@mail.gmail.com>
-Subject: Re: [PATCH v5 7/8] vfs: Replace security_sb_mount/security_move_mount
- with granular hooks
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	selinux@vger.kernel.org, apparmor@lists.ubuntu.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	john.johansen@canonical.com, stephen.smalley.work@gmail.com, 
-	omosnace@redhat.com, mic@digikod.net, gnoack@google.com, 
-	takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp, 
-	herton@canonical.com, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260617230237.14718-1-hexlabsecurity@proton.me>
 
-On Wed, Jun 17, 2026 at 9:53=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Thu, May 28, 2026 at 11:26:06AM -0700, Song Liu wrote:
-[...]
-> >
-> > +     err =3D security_mount_bind(&old_path, path, recurse);
-> > +     if (err)
-> > +             return err;
->
-> This again is racy as it is called outside of the namespace semaphore:
->
->         err =3D security_mount_bind(&old_path, path, recurse);
->         if (err)
->                 return err;
->
->         if (mnt_ns_loop(old_path.dentry))
->                 return -EINVAL;
->
->         LOCK_MOUNT(mp, path);
->         if (IS_ERR(mp.parent))
->                 return PTR_ERR(mp.parent);
->
-> After LOCK_MOUNT @path might point to a completely different mount then
-> the one you performed your security checks on.
+Hello Bryam!
 
-I thought we agreed at LSF/MM/BPF 2026 to add the LSM hooks
-before taking namespace semaphore, so that it is possible for LSMs
-to defend against DoS attacks on namespace semaphore? Did I
-miss/misunderstand something?
+On Wed, Jun 17, 2026 at 11:02:41PM +0000, Bryam Vargas wrote:
+> Thanks Günther, and thanks for filing #64.
+> 
+> Straight to your two questions:
+> 
+> 1. Block: you're right. blkdev_uring_cmd() has a single case, BLOCK_URING_CMD_DISCARD,
+>    and the blkdev.h note that it's a separate number space is fair, so I'm not arguing
+>    it should be a generic ioctl multiplexer. The "others, through other devices" are on
+>    NVMe: the namespace char dev takes NVME_URING_CMD_IO / _IO_VEC, and AFAICT a
+>    write-capable confined task can reach IO passthrough (write, DSM/discard) with no
+>    capability, since nvme_cmd_allowed() only wants FMODE_WRITE there.
+> 
+>    Correction to my own report: I overstated the ceiling. The NVMe admin ops
+>    (format, sanitize, firmware, security-send) sit behind capable(CAP_SYS_ADMIN)
+>    in nvme_cmd_allowed(), so a Landlocked unprivileged task can't reach them. The
+>    A:H / 8.4 figure was wrong; only namespace IO is in scope for a confined task.
+> 
+> 2. Truncate: correct, no sidestep, and none looks possible. I went through every
+>    f_op->uring_cmd provider (block, NVMe, btrfs encoded I/O, FUSE, ublk, sockets, ...)
+>    and none change file size; truncate(2)/ftruncate(2) keep their own hook. Please
+>    ignore the "and truncate where relevant" line in my suggested direction, it was
+>    speculative.
+> 
+> On framing: I'm happy to call this a coverage gap rather than a bypass. IOCTL_DEV was
+> never documented to cover io_uring, so nothing it promised is broken. The one hard fact
+> is the asymmetry: ioctl(2) BLKDISCARD is denied (IOCTL_DEV, and it's not in
+> is_masked_device_ioctl()), the same op via uring_cmd isn't, and SELinux/Smack already
+> hook security_uring_cmd while Landlock doesn't. Whether that's worth a hook or just the
+> doc clarification Mickaël mentioned is your call.
 
-> > +
-> >       if (mnt_ns_loop(old_path.dentry))
-> >               return -EINVAL;
-> >
-[...]
-> >
-> >       err =3D parse_monolithic_mount_data(fc, data);
-> > +     if (!err)
-> > +             err =3D security_mount_remount(fc, path, mnt_flags, flags=
-,
-> > +                                         data);
-> >       if (!err) {
-> >               down_write(&sb->s_umount);
-> >               err =3D -EPERM;
-> > @@ -3708,6 +3724,10 @@ static int do_move_mount_old(const struct path *=
-path, const char *old_name)
-> >       if (err)
-> >               return err;
-> >
-> > +     err =3D security_mount_move(&old_path, path);
-> > +     if (err)
-> > +             return err;
->
-> Placement of this hook suffers from the same issue as the bind mount
-> hook. Here it's worse because the security layer isn't even informed
-> about MOVE_MOUNT_BENEATH which completely alters the mount relationship.
+Agreed, a coverage gap is in my mind the right way to think about it.
 
-Current hook security_move_mount doesn't handle
-MOVE_MOUNT_BENEATH. But we can add mflags to security_mount_move().
-Do we need anything other than mflags?
+I filed this issue about that gap:
+https://github.com/landlock-lsm/linux/issues/65
 
-Thanks,
-Song
+Even though that's technically a feature request, you are quite
+right pointing it out.
+
+As I'm saying on that issue description as well, there are in principle
+multiple ways of blocking such a feature.  It is possible to block it at
+the fine-grained layer in uring_cmd, but maybe a more practical way to
+go about it would be to block the creation of an io_uring itself, since
+most sandboxed processes do not normally make use of that feature.
+
+(IMHO, we have already made a similar mistake in networking, where we
+first built restrictions for individual TCP operations, but left all the
+other protocols unrestricted.  Maybe the better approach is to start
+with the coarser restriction that addresses the majority of use cases
+and then provide more granular controls later.)
+
+I'd be interested to hear people's opinions.
+
+(Mickaël, if you feel this is the wrong approach to frame this as
+feature request, also please speak up.)
+
+
+> If you do want one, I can send an RFC for an all-or-nothing "IOCTL_DEV for any uring_cmd
+> on a device file" hook (cmd_op is a private number space, so porting
+> is_masked_device_ioctl() wouldn't be right). Otherwise I'll drop the provider detail
+> into #64 and leave it at the doc fix.
+
+I'd be happy to review your patches for the issue.  But let's find a
+consensus on the overall approach first -- that will hopefully also save
+you from going to much in circles in the implementation.
+
+Thanks!
+—Günther
