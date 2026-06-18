@@ -1,73 +1,127 @@
-Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFCF123395D
-	for <linux-security-module@vger.kernel.org>; Thu, 18 Jun 2026 01:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4543EBF02
+	for <linux-security-module@vger.kernel.org>; Thu, 18 Jun 2026 10:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781745954; cv=none; b=u+sjzHHuQA0aX3b4XoYT5MVfhHp4QE0j0jtP1B7nB30bJ5wXPKqnVk5A0rQr6XjO7u79UIePZODX/LAJhtvsbd72s6eno/i/kFyNNor6kXKugF3VptNNe1Ul8f9IkdsEuuougjhS8H/rpKj6bwfTn+sQ6bXOo6oEO7gKx8IhfN4=
+	t=1781780219; cv=none; b=p2fAGAsbmb2Q8n13KygivKBG53fkhrWfxnC2PnGeOGWYtXuantj9SF5rR74g58InZEypy9ALjxGkGOKekDdCfswr+3OYTZvO4yxbxnh+/NcjXq7QPzkTkfx/H27rhIDKj6RwFLTShI7NWg5ekbuDFkgKWTiJwQwQp9XK0qz4Sfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781745954; c=relaxed/simple;
-	bh=O7p1A7X5x41GXGfzPlhDFe+3UIbQXqLuJwmu7r/FXcw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A7MNF0DDVA6sxZfXqW613bqK43VBmrk94zDg4UC8OeRqUVf2JudlVA1yTeevTHlML5a0bXyRU5zBX+zgjnM+i2e8rq92VZO9mQrodErDF8No6YuSb61CicSwh373FdoMvwgWL8M2fKuAdT6PiDczHhQ4nCksyx0dj910Rrg/Chg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=YeUMjgq5; arc=none smtp.client-ip=79.135.106.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+	s=arc-20240116; t=1781780219; c=relaxed/simple;
+	bh=qQdotgGscA6opjcuxC4Up5QVUCY1vyFuwJmwatHokyc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=It83Z+j3RVpEZ58sobanI/PW1YwY86gCfyeDnJiIjiSx2n+UZkqBWU81gynDvU+XLXNFB/GyKegc/QB3wmiZFe+tOacYWr5AukXpRSkE22m12IaFd/X4Ni1/czZvNV8VMOgE08anY6OU9Z8rkVXvDuST++xdTTBCIK1Dq9qknZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KausSAjq; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="YeUMjgq5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=edji6ohfindvvaar3ohyzfy2dy.protonmail; t=1781745941; x=1782005141;
-	bh=O7p1A7X5x41GXGfzPlhDFe+3UIbQXqLuJwmu7r/FXcw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=YeUMjgq5RCVdTetuI5yb34xTm4SMkHOuDClbFAfs5Ia6sDybWU4ryD+E3fJfzyyzs
-	 IvMClPTp/YWHfFU5HTpTVf/3jQKYWRwaiTLsEBdmZW7B/UVqm44mJLznK4LqYm5wLm
-	 KTq3KpaOk1F2d5bHhXZBzowUcbN1XKo1k4YsZqFvyD+Nm+QtXsG8E6NvbBnRiG79WL
-	 AgvC8HDQa8bbquptr+yIj7f4RWbjWioZg/Kdi2L2ZA+o+G5736Ee6iCGRKO8s2iKQ4
-	 TIxSV2Mv7SU6q59mBtbNbA0PLtJJCZgsRBW/tSW6Y0yjIUSFSKmcMbanyyJeM8xWk3
-	 lQ3cFAKuVSKtw==
-Date: Thu, 18 Jun 2026 01:25:33 +0000
-To: Matthieu Buffet <matthieu@buffet.re>
-From: Bryam Vargas <hexlabsecurity@proton.me>
-Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Paul Moore <paul@paul-moore.com>, Eric Dumazet <edumazet@google.com>, Neal Cardwell <ncardwell@google.com>, linux-security-module@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/2] landlock: fix TCP Fast Open connection bypass
-Message-ID: <20260618012527.34964-1-hexlabsecurity@proton.me>
-In-Reply-To: <20260617180526.15627-2-matthieu@buffet.re>
-References: <20260617.eemahv8ui7Ee@digikod.net> <20260617180526.15627-1-matthieu@buffet.re> <20260617180526.15627-2-matthieu@buffet.re>
-Feedback-ID: 199661219:user:proton
-X-Pm-Message-ID: 578dcb4dea7ac936c800840fb4f141f9fbb80230
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KausSAjq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 255451F00ACF
+	for <linux-security-module@vger.kernel.org>; Thu, 18 Jun 2026 10:56:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781780216;
+	bh=2E/2JIqLB4ksBgWPBo43Ny8WcobpWESfD8u96j+vkuE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=KausSAjq/gG/n4m9EVaAp11Z/mDN7wDR+FlCTHVF+V5rcL+dtACUywY0Co3uZzKg+
+	 gLB9yfTtjkk5Gjz7Vkd5/SCS7wcwcyLuvZhVopSVRyJXWhsfrC6CM8sxLv5+f106ng
+	 qDcociUXofs++ILwCnPwIVADpqAw+6lJrvBDr/qjDgF7PiIrOK97mESwUmy3uUPDB6
+	 PgDkPCK/89iv/LEEkQIy2W0LyH72Vvr7dggW4d0BT4kKxRWTD0f2dGSTJJpN3yG0kO
+	 4GD+XQZadeP3ucXBc0yzdFeHVlvsaBFDMsP1C9gcr33kyC8dOzhrcgXV6VrLC65bR3
+	 wm8hwJD1A7AjQ==
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-91ae31bbaa9so85952485a.1
+        for <linux-security-module@vger.kernel.org>; Thu, 18 Jun 2026 03:56:56 -0700 (PDT)
+X-Gm-Message-State: AOJu0YzL0cyQh6JxHIrabxg4YGSEGpnLsppHI2IhXjqpTrCKTOCjJHyY
+	2URyjGhVsw/KADOlYwYfu+vtiXnW+2mBb0E76mMCJteXnLRfdPXllr2++/1S6qqQo5GNc0VKZ6l
+	IFZUcGtkqzcMPjhfkR2xui/pKZyp5BH8=
+X-Received: by 2002:a05:620a:1a12:b0:914:cf92:46fb with SMTP id
+ af79cd13be357-91dbc52c23cmr1206914385a.32.1781780215358; Thu, 18 Jun 2026
+ 03:56:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20260528182607.3150386-1-song@kernel.org> <20260528182607.3150386-8-song@kernel.org>
+ <20260617-laufbahn-eifrig-charmant-a48f357a0c52@brauner>
+In-Reply-To: <20260617-laufbahn-eifrig-charmant-a48f357a0c52@brauner>
+From: Song Liu <song@kernel.org>
+Date: Thu, 18 Jun 2026 18:56:42 +0800
+X-Gmail-Original-Message-ID: <CAPhsuW7Wn8GYrsrRhEFXQH5buaP+pdTKc0UV8Mn0B3OnNN-44g@mail.gmail.com>
+X-Gm-Features: AVVi8CdMwwBeVWKbgimKMTZIhDQrcn_xHhSmY9XN-Dvu7Mu1bTcCjMCtFLlmpHo
+Message-ID: <CAPhsuW7Wn8GYrsrRhEFXQH5buaP+pdTKc0UV8Mn0B3OnNN-44g@mail.gmail.com>
+Subject: Re: [PATCH v5 7/8] vfs: Replace security_sb_mount/security_move_mount
+ with granular hooks
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	selinux@vger.kernel.org, apparmor@lists.ubuntu.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	john.johansen@canonical.com, stephen.smalley.work@gmail.com, 
+	omosnace@redhat.com, mic@digikod.net, gnoack@google.com, 
+	takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp, 
+	herton@canonical.com, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Thanks Matthieu, your #41, so no competing patch from me. I built your v0
-(Landlock + MPTCP) and ran an A/B: without it, a confined task with CONNECT=
-_TCP
-denied still reaches the port via sendto(MSG_FASTOPEN); with it, that path =
-is now
-denied too, on IPv4 and IPv6.
+On Wed, Jun 17, 2026 at 9:53=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Thu, May 28, 2026 at 11:26:06AM -0700, Song Liu wrote:
+[...]
+> >
+> > +     err =3D security_mount_bind(&old_path, path, recurse);
+> > +     if (err)
+> > +             return err;
+>
+> This again is racy as it is called outside of the namespace semaphore:
+>
+>         err =3D security_mount_bind(&old_path, path, recurse);
+>         if (err)
+>                 return err;
+>
+>         if (mnt_ns_loop(old_path.dentry))
+>                 return -EINVAL;
+>
+>         LOCK_MOUNT(mp, path);
+>         if (IS_ERR(mp.parent))
+>                 return PTR_ERR(mp.parent);
+>
+> After LOCK_MOUNT @path might point to a completely different mount then
+> the one you performed your security checks on.
 
-Tested-by: Bryam Vargas <hexlabsecurity@proton.me>
+I thought we agreed at LSF/MM/BPF 2026 to add the LSM hooks
+before taking namespace semaphore, so that it is possible for LSMs
+to defend against DoS attacks on namespace semaphore? Did I
+miss/misunderstand something?
 
-One scope note, since you mention MPTCP: an MPTCP socket isn't covered.
-sk_is_tcp() is false for the mptcp parent (sk_protocol is IPPROTO_MPTCP), s=
-o
-neither the new sendmsg hook nor the existing socket_connect one mediates i=
-t. On
-the patched kernel my MPTCP arm still reaches the blocked port via both con=
-nect()
-and MSG_FASTOPEN. If MPTCP is meant to be in scope for CONNECT_TCP, the gua=
-rd
-wants `|| sk->sk_protocol =3D=3D IPPROTO_MPTCP` (not sk_is_mptcp(), which i=
-s the
-subflow flag).
+> > +
+> >       if (mnt_ns_loop(old_path.dentry))
+> >               return -EINVAL;
+> >
+[...]
+> >
+> >       err =3D parse_monolithic_mount_data(fc, data);
+> > +     if (!err)
+> > +             err =3D security_mount_remount(fc, path, mnt_flags, flags=
+,
+> > +                                         data);
+> >       if (!err) {
+> >               down_write(&sb->s_umount);
+> >               err =3D -EPERM;
+> > @@ -3708,6 +3724,10 @@ static int do_move_mount_old(const struct path *=
+path, const char *old_name)
+> >       if (err)
+> >               return err;
+> >
+> > +     err =3D security_mount_move(&old_path, path);
+> > +     if (err)
+> > +             return err;
+>
+> Placement of this hook suffers from the same issue as the bind mount
+> hook. Here it's worse because the security layer isn't even informed
+> about MOVE_MOUNT_BENEATH which completely alters the mount relationship.
 
-Bryam
+Current hook security_move_mount doesn't handle
+MOVE_MOUNT_BENEATH. But we can add mflags to security_mount_move().
+Do we need anything other than mflags?
 
+Thanks,
+Song
