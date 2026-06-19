@@ -1,139 +1,100 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA273148C5
-	for <linux-security-module@vger.kernel.org>; Fri, 19 Jun 2026 06:14:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBF9330666;
+	Fri, 19 Jun 2026 08:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781849677; cv=none; b=peWYqGvNuk6OkdO/W9VdGMfSmPjOdPN+OTc4Su8n+rUnY3393M775OlxGJbGBZ6IBGCGWUTNrPy/JWOVuqHzJ6mU/sf9DV0hjeO1hyoKPcfOp25cjBUMUxX6lx661gE8XAiERlE6Z/lOFaD4c3RW7fA7l5jnN2J9OhE/rNXg8E8=
+	t=1781857300; cv=none; b=nTy0tAP+kCXOhcL2GX3siQnRssKAeBk9UaOXVt+DB2gMKmfnNQITDaYwX/EcnIVGd+ETQURe9rGqU7vLUjiELgRJvcYj3Zi2un12eQv6Dycdmu+qkHQk0vyZgOhIN/UA3jwfS4KQnfBeRAMnFj+ieOrXW4E7ZQ2GXj1Hrn51Wpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781849677; c=relaxed/simple;
-	bh=wRAo93ZUqMz04OP2boe+0dqRxeddM8OJa8v4zeW88Bg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KgWUNjEQ0QbU+x8FFZjNkMxq5U+YAp60xEqFA3dlrdCG+m6WVCdk9RBy4cF+LM+Vk+nEXAjNq/tHdTqO6wIzDbt3H6uHxtqqi+uL8LKXMyp4TsmEVMAEBJYrAq1+g0UYEz7L45EiURc0EUZsUVCR5MT4OV5M8Vu64th7yNF7Dbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FqlH2Mo9; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781857300; c=relaxed/simple;
+	bh=yEZXnBOygzZTsO1oEezaEArAu1JeL5GVJEjxFMQkoek=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fb04ynHLxrpqUtMQBslTXIYJdUVuqwiHSnFzVudvBMMr0wbJX2ORO7y1SfO65eEMLG1XPfjtQyShdOQ+XWTAAovw3Gqp6f/XvbOre3dHe1QRwtvuXRfmDKPtGO8bYtXNTIUI0z2zWaEczil8Q+wXp96ZfEDEGmUmhfnAcL8M7Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JzdX0WKN; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FqlH2Mo9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCFF71F00A3A
-	for <linux-security-module@vger.kernel.org>; Fri, 19 Jun 2026 06:14:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JzdX0WKN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C741E1F000E9;
+	Fri, 19 Jun 2026 08:21:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781849675;
-	bh=uaS3aq1w7tNyZN2i2xHKVcafg5dLA5x8H8lD5mfIIDA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=FqlH2Mo95LuxodL/sUr9qWXO5x73GefOOff774qkhHhgj3PlJA2IWpCLT/OnVlfCN
-	 lgKCOLeoWCjJtkwcPnut/M+p2hMtlwn4HUlaEBNLbwwMtHWdaXztjNUMEgBtzRv6XF
-	 IJYeu7B/QKtfaRha7Vq8lXSm8e0rQr/JbuiXxxv6mSXVz2NxdZHsztwLQG1H5LZLvP
-	 HkDlvTYFf5M4k4VumO5sLikluuLk6EJN4013YJ3VDBhbin9/zfTenZBB4/PqtkxTlc
-	 5afZJ2NfE3f6O1DJ4hD1611H4vVa+gZg+ZPZhxwgW8SZHm7yGPRwP/vLFrfWiF+5sh
-	 3bxpwnqAHy+Rw==
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-91ae31bbaa9so167876185a.1
-        for <linux-security-module@vger.kernel.org>; Thu, 18 Jun 2026 23:14:35 -0700 (PDT)
-X-Gm-Message-State: AOJu0YyOhmgGs9/JskvP+mZlTvrnIAGkr9x+AC0juxBPeHK+AqHIwMh+
-	YZS4BUF2irbPNmyVR9at64BaSB40wEZQz4QoAraZLcnVuuHRNpN6gZUvsRU69H9IG4KAvuELxzc
-	K4vNL25STss9s7jJBAAA1djLc2pPK2X8=
-X-Received: by 2002:a05:620a:4082:b0:915:eec4:1ec8 with SMTP id
- af79cd13be357-920d27aeaa7mr178047085a.18.1781849675053; Thu, 18 Jun 2026
- 23:14:35 -0700 (PDT)
+	s=k20260515; t=1781857298;
+	bh=YfPbTOrWv05eX0Y9Fi5QOnH9uKkPpun6iMLTsu4OXGU=;
+	h=From:To:Cc:Subject:Date;
+	b=JzdX0WKNvKRQbZcSpLVbs+h7M/Kv9ylVyovVo3QRJOs7JKRaRL2P4CYFsNIDpBZp5
+	 wVn1Zuud6fq1yKa9mP7Z/ui0WUVWh/h94maUf2Mre8AC/qXyokp70np0AT0yPNrcGu
+	 X5KIyiwI7RP6HlC17TRc4qxYtI2thl1RuvoHH/qzVpJ7x3yublFOpMdRggKqgeCtHI
+	 hKSBW7A16QSqrFxhzc07vBoDg9vZmfVCp2h6GKMt4cJti6A6NtAwy0xPn53re5921C
+	 n9cf+RxNDa0gEvH6+VgX+1GI6UPM+7a9ork6fQwVpmDHgBkVpEkhFJFfQbjle3EA+p
+	 OY9xPHnZPWv0A==
+From: Arnd Bergmann <arnd@kernel.org>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Tingmao Wang <m@maowtm.org>,
+	Justin Suess <utilityemal77@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] landlock: work around gcc-16 -Wuninitialized warning
+Date: Fri, 19 Jun 2026 10:21:14 +0200
+Message-Id: <20260619082133.3504146-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260528182607.3150386-1-song@kernel.org> <20260528182607.3150386-8-song@kernel.org>
- <20260617-laufbahn-eifrig-charmant-a48f357a0c52@brauner> <CAPhsuW7Wn8GYrsrRhEFXQH5buaP+pdTKc0UV8Mn0B3OnNN-44g@mail.gmail.com>
- <178179134209.111814.12159888808546010170.b4-reply@b4>
-In-Reply-To: <178179134209.111814.12159888808546010170.b4-reply@b4>
-From: Song Liu <song@kernel.org>
-Date: Fri, 19 Jun 2026 14:14:21 +0800
-X-Gmail-Original-Message-ID: <CAPhsuW5CFi6J24NDeennaKnJmqDj5Z6DTAwU++naaohTo9_yPQ@mail.gmail.com>
-X-Gm-Features: AVVi8Cc6mfJ09GK8HpE04iMyTYX7fa7D8MYecMOWIn8bxD1E_fS_6I-twUXEXoY
-Message-ID: <CAPhsuW5CFi6J24NDeennaKnJmqDj5Z6DTAwU++naaohTo9_yPQ@mail.gmail.com>
-Subject: Re: [PATCH v5 7/8] vfs: Replace security_sb_mount/security_move_mount
- with granular hooks
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	selinux@vger.kernel.org, apparmor@lists.ubuntu.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	john.johansen@canonical.com, stephen.smalley.work@gmail.com, 
-	omosnace@redhat.com, mic@digikod.net, gnoack@google.com, 
-	takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp, 
-	herton@canonical.com, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 18, 2026 at 10:04=E2=80=AFPM Christian Brauner <brauner@kernel.=
-org> wrote:
->
-> On 2026-06-18 18:56:42+08:00, Song Liu wrote:
-> > On Wed, Jun 17, 2026 at 9:53=E2=80=AFPM Christian Brauner <brauner@kern=
-el.org> wrote:
-> >
-> > > On Thu, May 28, 2026 at 11:26:06AM -0700, Song Liu wrote:
-> >
-> > [...]
-> >
-> > > >
-> > >
-> > > This again is racy as it is called outside of the namespace semaphore=
-:
-> > >
-> > >         err =3D security_mount_bind(&old_path, path, recurse);
-> > >         if (err)
-> > >                 return err;
-> > >
-> > >         if (mnt_ns_loop(old_path.dentry))
-> > >                 return -EINVAL;
-> > >
-> > >         LOCK_MOUNT(mp, path);
-> > >         if (IS_ERR(mp.parent))
-> > >                 return PTR_ERR(mp.parent);
-> > >
-> > > After LOCK_MOUNT @path might point to a completely different mount th=
-en
-> > > the one you performed your security checks on.
-> >
-> > I thought we agreed at LSF/MM/BPF 2026 to add the LSM hooks
-> > before taking namespace semaphore, so that it is possible for LSMs
-> > to defend against DoS attacks on namespace semaphore? Did I
-> > miss/misunderstand something?
->
-> I think there was a misunderstanding. What I pointed out was that it's a
-> trade-off. If we do call security hooks under the namespace semaphore or
-> mount lock than anything that's called under there must take care to not
-> cause deadlocks - which is especially easy to do with mount lock and
-> even with the namespace semaphore it may get hairy (automounts etc). The
-> dos thing is another worry but if an LSM does stupid things we tell it
-> to not do stupid things and to go away.
->
-> But as the hooks are done right now they are meaningless from a security
-> perspective. You might have a policy that allows mounting on dentry_a
-> and deny mounting on dentry_b: before LOCK_MOUNT*() you may see dentry_a
-> and allow the mount but after LOCK_MOUNT*() someone raced you and shoved
-> a dentry_b mount onto dentry_b and now you allow overmounting dentry_b
-> which your policy didn't allow -> hosed.
+From: Arnd Bergmann <arnd@arndb.de>
 
-So the direction here is to move security_mount_bind() after
-LOCK_MOUNT(mp, path)? This should be easy to fix.
+gcc has a bug with -ftrivial-auto-var-init=pattern that produces a
+warning for correct code that uses sparse bitfields:
 
-> > > Placement of this hook suffers from the same issue as the bind mount
-> > > hook. Here it's worse because the security layer isn't even informed
-> > > about MOVE_MOUNT_BENEATH which completely alters the mount relationsh=
-ip.
-> >
-> > Current hook security_move_mount doesn't handle
-> > MOVE_MOUNT_BENEATH. But we can add mflags to security_mount_move().
-> > Do we need anything other than mflags?
->
-> I think you either need to pass three mounts (source, target, top_mnt)
-> where for non-mount beneath target =3D=3D top_mnt or you need two separat=
-e
-> hooks. Because for MOVE_MOUNT_BENEATH you may want to have a tri-part
-> policy: source, target, top_mnt.
+security/landlock/fs.c: In function 'is_access_to_paths_allowed.isra':
+security/landlock/fs.c:767:28: error: '_layer_masks_child1' is used uninitialized [-Werror=uninitialized]
+  767 |         struct layer_masks _layer_masks_child1, _layer_masks_child2;
+      |                            ^~~~~~~~~~~~~~~~~~~
+security/landlock/fs.c:767:28: note: '_layer_masks_child1' declared here
+  767 |         struct layer_masks _layer_masks_child1, _layer_masks_child2;
+      |                            ^~~~~~~~~~~~~~~~~~~
+security/landlock/fs.c: In function 'hook_unix_find':
+security/landlock/fs.c:1649:28: error: 'layer_masks' is used uninitialized [-Werror=uninitialized]
+ 1649 |         struct layer_masks layer_masks;
+      |                            ^~~~~~~~~~~
+security/landlock/fs.c:1649:28: note: 'layer_masks' declared here
+ 1649 |         struct layer_masks layer_masks;
+      |                            ^~~~~~~~~~~
 
-One hook with (source, target, top_mnt) seems easier here. But let me take =
-a
-closer look at this.
+To work around this, change the definition of struct layer_mask to
+use an explictit padding field. This also avoids the extra attributes
+for aligning the structure.
 
-Thanks,
-Song
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110743
+Fixes: a260c0055665 ("landlock: Add a place for flags to layer rules")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ security/landlock/access.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/security/landlock/access.h b/security/landlock/access.h
+index d926078bf0a5..89ab9fbcebe4 100644
+--- a/security/landlock/access.h
++++ b/security/landlock/access.h
+@@ -81,7 +81,10 @@ struct layer_mask {
+ 	 */
+ 	access_mask_t quiet : 1;
+ #endif /* CONFIG_AUDIT */
+-} __packed __aligned(sizeof(access_mask_t));
++	access_mask_t __pad : ((sizeof(access_mask_t) * 8) -
++				LANDLOCK_NUM_ACCESS_MAX -
++				IS_ENABLED(CONFIG_AUDIT));
++};
+ 
+ /*
+  * Make sure that we don't increase the size of struct layer_mask when storing
+-- 
+2.39.5
+
