@@ -1,100 +1,158 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBF9330666;
-	Fri, 19 Jun 2026 08:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6633CBA34
+	for <linux-security-module@vger.kernel.org>; Fri, 19 Jun 2026 08:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781857300; cv=none; b=nTy0tAP+kCXOhcL2GX3siQnRssKAeBk9UaOXVt+DB2gMKmfnNQITDaYwX/EcnIVGd+ETQURe9rGqU7vLUjiELgRJvcYj3Zi2un12eQv6Dycdmu+qkHQk0vyZgOhIN/UA3jwfS4KQnfBeRAMnFj+ieOrXW4E7ZQ2GXj1Hrn51Wpk=
+	t=1781857976; cv=none; b=Dq9WZEJqzxHETfUm0HreE3q8goRWiAQG19VI9/Qtur9cdIBw9ZCiAPW1oXuV736Mp3JLuPw0HQ3vbTuhRBkP6YYeC4wq1WbQza0GiooM30oNqpyxYX+dnOF0qycOpBHp4shoE9ZuI48JKtIA7N+Yxn6Jdia1bJHjtvdtSkOHXgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781857300; c=relaxed/simple;
-	bh=yEZXnBOygzZTsO1oEezaEArAu1JeL5GVJEjxFMQkoek=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fb04ynHLxrpqUtMQBslTXIYJdUVuqwiHSnFzVudvBMMr0wbJX2ORO7y1SfO65eEMLG1XPfjtQyShdOQ+XWTAAovw3Gqp6f/XvbOre3dHe1QRwtvuXRfmDKPtGO8bYtXNTIUI0z2zWaEczil8Q+wXp96ZfEDEGmUmhfnAcL8M7Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JzdX0WKN; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781857976; c=relaxed/simple;
+	bh=lcghnOgksc6K+V+60sUOKH8n4KczTxPimTMIG8NYUeo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZfXS6FBIN6pQi3lHeIGOVPvU2CWo+O/kJuhkXWBbyQ2QL1I1eHpySmLVv8MUQus0KSRw9P/5MXOZ5HjND7vSTWlBKc3kpgEbYnEcMsm8ItpeMW1V3Akmhn6JRYaR6k6XUgxbLzrT2gyupO5G07ehisQgVpJ5cvnr0PZtRcx28CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Cwv4/6bg; arc=none smtp.client-ip=83.166.143.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JzdX0WKN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C741E1F000E9;
-	Fri, 19 Jun 2026 08:21:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781857298;
-	bh=YfPbTOrWv05eX0Y9Fi5QOnH9uKkPpun6iMLTsu4OXGU=;
-	h=From:To:Cc:Subject:Date;
-	b=JzdX0WKNvKRQbZcSpLVbs+h7M/Kv9ylVyovVo3QRJOs7JKRaRL2P4CYFsNIDpBZp5
-	 wVn1Zuud6fq1yKa9mP7Z/ui0WUVWh/h94maUf2Mre8AC/qXyokp70np0AT0yPNrcGu
-	 X5KIyiwI7RP6HlC17TRc4qxYtI2thl1RuvoHH/qzVpJ7x3yublFOpMdRggKqgeCtHI
-	 hKSBW7A16QSqrFxhzc07vBoDg9vZmfVCp2h6GKMt4cJti6A6NtAwy0xPn53re5921C
-	 n9cf+RxNDa0gEvH6+VgX+1GI6UPM+7a9ork6fQwVpmDHgBkVpEkhFJFfQbjle3EA+p
-	 OY9xPHnZPWv0A==
-From: Arnd Bergmann <arnd@kernel.org>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Tingmao Wang <m@maowtm.org>,
-	Justin Suess <utilityemal77@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] landlock: work around gcc-16 -Wuninitialized warning
-Date: Fri, 19 Jun 2026 10:21:14 +0200
-Message-Id: <20260619082133.3504146-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Cwv4/6bg"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ghW7Q2YfTzZZZ;
+	Fri, 19 Jun 2026 10:32:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1781857970;
+	bh=TINzsjs7sBCgOdj6Zwmh7AnMmqEBiyCV2/FS4lTZiEY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cwv4/6bgV0w/feEyfVInIsWZHiMNedNcv2d3bfpcq/mMGA1b0LXXHaWc9N83g/SUO
+	 pZe2EwU+7TmS7NPTdVj7pvnKTe6P0glLIQhmfGYZh1C4IGuLOIE56fhLMLzOxabgek
+	 /ynttDEvfxJ5t3QAIXciGNd8xN15d+pFdON4IMBk=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ghW7P47gjzp2Z;
+	Fri, 19 Jun 2026 10:32:49 +0200 (CEST)
+Date: Fri, 19 Jun 2026 10:32:45 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Maximilian Heyne <mheyne@amazon.de>
+Cc: stable@vger.kernel.org, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/landlock: explicitly disable audit
+Message-ID: <20260619.Ang7AiGeishu@digikod.net>
+References: <20260529-welsh-nagoya-b4d9ca60@mheyne-amazon>
+ <20260604.Gee4caexei8o@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260604.Gee4caexei8o@digikod.net>
+X-Infomaniak-Routing: alpha
 
-From: Arnd Bergmann <arnd@arndb.de>
+I extended your patch and merged it:
+https://git.kernel.org/mic/c/next&id=0302cd72fe196aee933e3fb76f6d175d1ab0e843
 
-gcc has a bug with -ftrivial-auto-var-init=pattern that produces a
-warning for correct code that uses sparse bitfields:
+Thanks!
 
-security/landlock/fs.c: In function 'is_access_to_paths_allowed.isra':
-security/landlock/fs.c:767:28: error: '_layer_masks_child1' is used uninitialized [-Werror=uninitialized]
-  767 |         struct layer_masks _layer_masks_child1, _layer_masks_child2;
-      |                            ^~~~~~~~~~~~~~~~~~~
-security/landlock/fs.c:767:28: note: '_layer_masks_child1' declared here
-  767 |         struct layer_masks _layer_masks_child1, _layer_masks_child2;
-      |                            ^~~~~~~~~~~~~~~~~~~
-security/landlock/fs.c: In function 'hook_unix_find':
-security/landlock/fs.c:1649:28: error: 'layer_masks' is used uninitialized [-Werror=uninitialized]
- 1649 |         struct layer_masks layer_masks;
-      |                            ^~~~~~~~~~~
-security/landlock/fs.c:1649:28: note: 'layer_masks' declared here
- 1649 |         struct layer_masks layer_masks;
-      |                            ^~~~~~~~~~~
-
-To work around this, change the definition of struct layer_mask to
-use an explictit padding field. This also avoids the extra attributes
-for aligning the structure.
-
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110743
-Fixes: a260c0055665 ("landlock: Add a place for flags to layer rules")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- security/landlock/access.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/security/landlock/access.h b/security/landlock/access.h
-index d926078bf0a5..89ab9fbcebe4 100644
---- a/security/landlock/access.h
-+++ b/security/landlock/access.h
-@@ -81,7 +81,10 @@ struct layer_mask {
- 	 */
- 	access_mask_t quiet : 1;
- #endif /* CONFIG_AUDIT */
--} __packed __aligned(sizeof(access_mask_t));
-+	access_mask_t __pad : ((sizeof(access_mask_t) * 8) -
-+				LANDLOCK_NUM_ACCESS_MAX -
-+				IS_ENABLED(CONFIG_AUDIT));
-+};
- 
- /*
-  * Make sure that we don't increase the size of struct layer_mask when storing
--- 
-2.39.5
-
+On Tue, Jun 09, 2026 at 12:51:03AM +0200, Mickaël Salaün wrote:
+> Thanks for this patch.  I merged a few fixes and I'd be interested to
+> know if this one fix the issue you spotted:
+> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/commit/?h=next&id=d8dfb4c7faa87c3e41a8678f38f136c2c7c036fa
+> 
+> 
+> On Fri, May 29, 2026 at 08:03:41PM +0000, Maximilian Heyne wrote:
+> > I'm seeing sporadic selftest failures, such as
+> > 
+> >   #  RUN           scoped_audit.connect_to_child ...
+> >   # scoped_abstract_unix_test.c:314:connect_to_child:Expected 0 (0) == records.access (8)
+> >   # connect_to_child: Test failed
+> >   #          FAIL  scoped_audit.connect_to_child
+> >   not ok 19 scoped_audit.connect_to_child
+> > 
+> > This seems similar to what commit 3647a4977fb73d ("selftests/landlock:
+> > Drain stale audit records on init") tried to fix. However, the added
+> > drain loop is not effective. When setting the AUDIT_STATUS_PID, the
+> > kauditd_thread is woken up starting to send messages from the hold queue
+> > to the netlink. Depending on scheduling of this kthread not all messages
+> > might be send via the netlink in the 1 us interval.
+> > 
+> > Therefore, instead of trying to drain the queue, let's just disable
+> > audit when running non-audit tests or more precisely disable it after
+> > audit-tests. This way we won't generate any new audit message that could
+> > interfere with the other tests.
+> > 
+> > The comment saying that on process exit audit will be disabled is wrong.
+> > The closed file descriptor just causes an auditd_reset(), not a
+> > disablement. So future messages will be queued in the hold queue.
+> > 
+> > Cc: stable@vger.kernel.org
+> > Fixes: 6a500b22971c ("selftests/landlock: Add tests for audit flags and domain IDs")
+> > Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
+> > ---
+> > 
+> > I've seen the failures on the 6.18 kernels but haven't tested on latest
+> > upstream. However, I still think this is an issue.
+> > 
+> > ---
+> >  tools/testing/selftests/landlock/audit.h | 13 +++++--------
+> >  1 file changed, 5 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/tools/testing/selftests/landlock/audit.h b/tools/testing/selftests/landlock/audit.h
+> > index 834005b2b0f09..7842330875f53 100644
+> > --- a/tools/testing/selftests/landlock/audit.h
+> > +++ b/tools/testing/selftests/landlock/audit.h
+> > @@ -494,10 +494,9 @@ static int audit_init_filter_exe(struct audit_filter *filter, const char *path)
+> >  static int audit_cleanup(int audit_fd, struct audit_filter *filter)
+> 
+> audit_cleanup() should be called for audit_exec tests too.
+> 
+> >  {
+> >  	struct audit_filter new_filter;
+> > +	int err;
+> >  
+> >  	if (audit_fd < 0 || !filter) {
+> > -		int err;
+> > -
+> >  		/*
+> >  		 * Simulates audit_init_with_exe_filter() when called from
+> >  		 * FIXTURE_TEARDOWN_PARENT().
+> > @@ -518,12 +517,10 @@ static int audit_cleanup(int audit_fd, struct audit_filter *filter)
+> >  	audit_filter_exe(audit_fd, filter, AUDIT_DEL_RULE);
+> >  	audit_filter_drop(audit_fd, AUDIT_DEL_RULE);
+> >  
+> > -	/*
+> > -	 * Because audit_cleanup() might not be called by the test auditd
+> > -	 * process, it might not be possible to explicitly set it.  Anyway,
+> > -	 * AUDIT_STATUS_ENABLED will implicitly be set to 0 when the auditd
+> > -	 * process will exit.
+> > -	 */
+> 
+> Please add a comment that explains that the audit state is not restored
+> but just disabled.
+> 
+> > +	err = audit_set_status(audit_fd, AUDIT_STATUS_ENABLED, 0);
+> > +	if (err)
+> > +		return err;
+> > +
+> >  	return close(audit_fd);
+> 
+> FDs should always be closed.
+> 
+> >  }
+> >  
+> > -- 
+> > 2.50.1
+> > 
+> > 
+> > 
+> > 
+> > Amazon Web Services Development Center Germany GmbH
+> > Tamara-Danz-Str. 13
+> > 10243 Berlin
+> > Geschaeftsfuehrung: Christof Hellmis, Andreas Stieger
+> > Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+> > Sitz: Berlin
+> > Ust-ID: DE 365 538 597
+> > 
+> > 
