@@ -1,155 +1,240 @@
-Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
+Received: from pdx-out-010.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-010.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.12.53.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C72A2C325C
-	for <linux-security-module@vger.kernel.org>; Fri, 19 Jun 2026 08:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778413546C6;
+	Fri, 19 Jun 2026 09:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.12.53.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781858122; cv=none; b=B2Ol1RS/11OgBMIxkcwGyukVRTk5JUl3ki5pYh3b/6017hOdfVL9lVqaDDwKJDriCOIVZChT1CeDznk4KXFV82z4S/J9pCpXMZmCX53K+ywJkm8vADeD1owRbZU9hQMhlFUMlLe3dmDhPm4DRyhfiav0Z94cUqhxvozlAqFMzaI=
+	t=1781860177; cv=none; b=f/6X0cjFjBjCxYCybTo3Zd3N/5ISH+/sZvQ6KvYOqWgSdks4FLs/1u2Xg4eVEdD3tO+Hr3kJL6RkIgg6+AQM8PsDjqtf2dNfQ8gemtdCDtN0FJBPcysgJpKTvAyLikaACJ6ODbyRsTXITgTM8y5Mk/eEq7sNoU6nXdDitNj0BoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781858122; c=relaxed/simple;
-	bh=Qc6+P7NMASagmZJH5H42DGf8wKSdnqGf1bK6Uqz8TNE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YKqphXPgY3PLqoLTH8UFsNCjniS6bM/x/FVleJyqKSxIaswYJOsZ+rGNXZxQciYGSdN8kkpO/jn/K2KeKIbn4EI7d6a5+oiJzESBNh7ubANR14PGN/AZNm2SodESl8mtzzCVgalH7hlOdyZVw1v2IasTP3Mv96aP3O5oZu09I8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ZdeHRuLA; arc=none smtp.client-ip=83.166.143.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1781860177; c=relaxed/simple;
+	bh=IvXspg0ZiStH7ZuuaX97arro3mrsjTvqtOgo2aJS8EI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O7Nrp4JzYQl5zVX11OCbVw4+HkSrbGc+LNAzehhKNISGTOOfzhOcje4UYiC0SZyNh//NO3B1Hd5XOwqyTvbP8FdpHlztfwmnIVqxJQSDLFHGaeiomYTo5tFBSpnoDyTK8f5k3qluonuYXmNsrOOI6BEzCdJSstfOWsJXVncpokk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=MdVJuS9x; arc=none smtp.client-ip=52.12.53.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ZdeHRuLA"
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ghWB847xWzd1V;
-	Fri, 19 Jun 2026 10:35:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1781858112;
-	bh=kj8KQV8QbLYa/lU/Tl7Z6AjgYC9dbtpdvn/0ghEKM4U=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ZdeHRuLAxBDFt/UbzVZVpWT/T5b3QLRjpVV/EXKITVCMVoMvkglR+ochylq4asVSh
-	 SbbJ1PIJULoT88hc2Zgyo4HtO8ph/w9P3ZbsNr3I3ApndFGR/B9R1m4bI3rBlJuT6G
-	 TE38/aVdZanQqe6a9Al5VGxu0fRR44srM+Txq7Yg=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ghWB75Ntnzsnw;
-	Fri, 19 Jun 2026 10:35:11 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Bryam Vargas <hexlabsecurity@proton.me>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Justin Suess <utilityemal77@gmail.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Maximilian Heyne <mheyne@amazon.de>,
-	Tingmao Wang <m@maowtm.org>,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [GIT PULL] Landlock update for v7.2-rc1
-Date: Fri, 19 Jun 2026 10:35:04 +0200
-Message-ID: <20260619083504.1779997-1-mic@digikod.net>
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="MdVJuS9x"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
+  t=1781860176; x=1813396176;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=8zt4sD1CkPtrU0rqWyuiTvD/tBylchvCBoRm98EulcM=;
+  b=MdVJuS9xurUFLUi31Hpx7CEZ/GeMr24e7O8C6XaQDNaViXiRb1YSbpGl
+   6HwvgxaThnj7wjOydIO315fgiMLX1gyhn5DfwUFedJSMjftX76lnXkw5C
+   Q/byKcgZT/IcMgX18wf7vDohNcvuyt0BPhZHal3N+FEO/Ng2aVNJW9lc4
+   FOFTpkCKHr2cOKOZYwgYEZXM+4BxCOmGAtb0tH18tqugar10Uw8gsvuCD
+   l5EF8kXMDNjrKL5vqP6EHC2th+jm5w2eIdkMmsGVgUYz0TNjsMuTu7+kD
+   aRRn7HwfVk8OuuNzdY3VJV4oohXm3Te1OyTSqZAPNChoaK155lql8DXwz
+   w==;
+X-CSE-ConnectionGUID: be8TuX0pQUm3CXJHwKI91g==
+X-CSE-MsgGUID: V9l3NlhmS9GT6DYZ8GeGZg==
+X-IronPort-AV: E=Sophos;i="6.24,213,1774310400"; 
+   d="scan'208";a="21954542"
+Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
+  by internal-pdx-out-010.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2026 09:09:33 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [205.251.233.111:25680]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.33.27:2525] with esmtp (Farcaster)
+ id 5d80061e-508b-4894-a701-7c4910170ea3; Fri, 19 Jun 2026 09:09:32 +0000 (UTC)
+X-Farcaster-Flow-ID: 5d80061e-508b-4894-a701-7c4910170ea3
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.37;
+ Fri, 19 Jun 2026 09:09:32 +0000
+Received: from dev-dsk-mheyne-1b-8cc83676.eu-west-1.amazon.com (10.13.235.223)
+ by EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.43;
+ Fri, 19 Jun 2026 09:09:31 +0000
+Date: Fri, 19 Jun 2026 09:09:28 +0000
+From: Maximilian Heyne <mheyne@amazon.de>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+CC: <stable@vger.kernel.org>, =?iso-8859-1?Q?G=FCnther?= Noack
+	<gnoack@google.com>, Shuah Khan <shuah@kernel.org>,
+	<linux-security-module@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] selftests/landlock: explicitly disable audit
+Message-ID: <20260619-hold-nissan-07be06c0@mheyne-amazon>
+References: <20260529-welsh-nagoya-b4d9ca60@mheyne-amazon>
+ <20260604.Gee4caexei8o@digikod.net>
+ <20260619.Ang7AiGeishu@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+In-Reply-To: <20260619.Ang7AiGeishu@digikod.net>
+X-ClientProxiedBy: EX19D042UWA001.ant.amazon.com (10.13.139.92) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Micka=EBl,
 
-This PR adds new Landlock access rights to control UDP bind and
-connect/send operations, and a new "quiet" feature to mute specific
-audit logs (and other future observability events).  A few commits also
-fix Landlock issues.
+On Fri, Jun 19, 2026 at 10:32:45AM +0200, Micka=EBl Sala=FCn wrote:
+> I extended your patch and merged it:
+> https://git.kernel.org/mic/c/next&id=3D0302cd72fe196aee933e3fb76f6d175d1a=
+b0e843
+> =
 
-Please pull these changes for v7.2-rc1 .  These commits merge cleanly
-with your master branch.  Most kernel changes have been tested in the
-latest linux-next releases for some weeks, and I waited a bit more since
-last week to make sure the changes brought by the recently squashed
-fixes are ok.
+> Thanks!
 
-Test coverage for security/landlock is 91.5% of 2351 lines according to
-LLVM 22, and it was 90.9% of 2176 lines before this PR.
+Thank you! Sorry for the late response. Only yesterday I tried the
+patches you pointed me at and they also helped in my setup. I was also
+about to sent a patch regarding filtering out the domain deallocation
+records but that was also covered by you already.
 
-syzkaller changes have been developed to cover these new features:
-https://github.com/google/syzkaller/pull/7493
+> =
 
-Regards,
- Mickaël
+> On Tue, Jun 09, 2026 at 12:51:03AM +0200, Micka=EBl Sala=FCn wrote:
+> > Thanks for this patch.  I merged a few fixes and I'd be interested to
+> > know if this one fix the issue you spotted:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/commit/?h=
+=3Dnext&id=3Dd8dfb4c7faa87c3e41a8678f38f136c2c7c036fa
+> > =
 
---
-The following changes since commit 5d6919055dec134de3c40167a490f33c74c12581:
+> > =
 
-  Linux 7.1-rc3 (2026-05-10 14:08:09 -0700)
+> > On Fri, May 29, 2026 at 08:03:41PM +0000, Maximilian Heyne wrote:
+> > > I'm seeing sporadic selftest failures, such as
+> > > =
 
-are available in the Git repository at:
+> > >   #  RUN           scoped_audit.connect_to_child ...
+> > >   # scoped_abstract_unix_test.c:314:connect_to_child:Expected 0 (0) =
+=3D=3D records.access (8)
+> > >   # connect_to_child: Test failed
+> > >   #          FAIL  scoped_audit.connect_to_child
+> > >   not ok 19 scoped_audit.connect_to_child
+> > > =
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-7.2-rc1
+> > > This seems similar to what commit 3647a4977fb73d ("selftests/landlock:
+> > > Drain stale audit records on init") tried to fix. However, the added
+> > > drain loop is not effective. When setting the AUDIT_STATUS_PID, the
+> > > kauditd_thread is woken up starting to send messages from the hold qu=
+eue
+> > > to the netlink. Depending on scheduling of this kthread not all messa=
+ges
+> > > might be send via the netlink in the 1 us interval.
+> > > =
 
-for you to fetch changes up to 1c236e7fe740a009ad8dd40a5ee0602ec402fffe:
+> > > Therefore, instead of trying to drain the queue, let's just disable
+> > > audit when running non-audit tests or more precisely disable it after
+> > > audit-tests. This way we won't generate any new audit message that co=
+uld
+> > > interfere with the other tests.
+> > > =
 
-  selftests/landlock: Add tests for invalid use of quiet flag (2026-06-14 20:17:25 +0200)
+> > > The comment saying that on process exit audit will be disabled is wro=
+ng.
+> > > The closed file descriptor just causes an auditd_reset(), not a
+> > > disablement. So future messages will be queued in the hold queue.
+> > > =
 
-----------------------------------------------------------------
-Landlock update for v7.2-rc1
+> > > Cc: stable@vger.kernel.org
+> > > Fixes: 6a500b22971c ("selftests/landlock: Add tests for audit flags a=
+nd domain IDs")
+> > > Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
+> > > ---
+> > > =
 
-----------------------------------------------------------------
-Bryam Vargas (2):
-      landlock: Fix LANDLOCK_SCOPE_SIGNAL bypass on the SIGIO path
-      selftests/landlock: Test SCOPE_SIGNAL on the SIGIO/fowner pgid path
+> > > I've seen the failures on the 6.18 kernels but haven't tested on late=
+st
+> > > upstream. However, I still think this is an issue.
+> > > =
 
-Matthieu Buffet (7):
-      landlock: Fix unmarked concurrent access to socket family
-      landlock: Add UDP bind() access control
-      landlock: Add UDP send+connect access control
-      selftests/landlock: Add tests for UDP bind/connect
-      selftests/landlock: Add tests for UDP send
-      samples/landlock: Add sandboxer UDP access control
-      landlock: Add documentation for UDP support
+> > > ---
+> > >  tools/testing/selftests/landlock/audit.h | 13 +++++--------
+> > >  1 file changed, 5 insertions(+), 8 deletions(-)
+> > > =
 
-Maximilian Heyne (1):
-      selftests/landlock: Explicitly disable audit in teardowns
+> > > diff --git a/tools/testing/selftests/landlock/audit.h b/tools/testing=
+/selftests/landlock/audit.h
+> > > index 834005b2b0f09..7842330875f53 100644
+> > > --- a/tools/testing/selftests/landlock/audit.h
+> > > +++ b/tools/testing/selftests/landlock/audit.h
+> > > @@ -494,10 +494,9 @@ static int audit_init_filter_exe(struct audit_fi=
+lter *filter, const char *path)
+> > >  static int audit_cleanup(int audit_fd, struct audit_filter *filter)
+> > =
 
-Mickaël Salaün (5):
-      selftests/landlock: Filter dealloc records in audit_count_records()
-      selftests/landlock: Increase default audit socket timeout
-      landlock: Set audit_net.sk for socket access checks
-      landlock: Account all audit data allocations to user space
-      landlock: Demonstrate best-effort allowed_access filtering
+> > audit_cleanup() should be called for audit_exec tests too.
+> > =
 
-Tingmao Wang (9):
-      landlock: Add a place for flags to layer rules
-      landlock: Add API support and docs for the quiet flags
-      landlock: Suppress logging when quiet flag is present
-      samples/landlock: Add quiet flag support to sandboxer
-      selftests/landlock: Replace hard-coded 16 with a constant
-      selftests/landlock: Add tests for quiet flag with fs rules
-      selftests/landlock: Add tests for quiet flag with net rules
-      selftests/landlock: Add tests for quiet flag with scope
-      selftests/landlock: Add tests for invalid use of quiet flag
+> > >  {
+> > >  	struct audit_filter new_filter;
+> > > +	int err;
+> > >  =
 
- Documentation/admin-guide/LSM/landlock.rst         |   13 +-
- Documentation/userspace-api/landlock.rst           |  145 +-
- include/uapi/linux/landlock.h                      |   97 +-
- samples/landlock/sandboxer.c                       |  175 +-
- security/landlock/access.h                         |   44 +-
- security/landlock/audit.c                          |  292 ++-
- security/landlock/audit.h                          |    3 +-
- security/landlock/domain.c                         |   66 +-
- security/landlock/domain.h                         |   16 +-
- security/landlock/fs.c                             |  171 +-
- security/landlock/fs.h                             |   29 +-
- security/landlock/limits.h                         |    5 +-
- security/landlock/net.c                            |  185 +-
- security/landlock/net.h                            |    5 +-
- security/landlock/ruleset.c                        |   49 +-
- security/landlock/ruleset.h                        |   29 +-
- security/landlock/syscalls.c                       |   73 +-
- security/landlock/task.c                           |   11 +
- tools/testing/selftests/landlock/audit.h           |  140 +-
- tools/testing/selftests/landlock/audit_test.c      |   33 +-
- tools/testing/selftests/landlock/base_test.c       |  122 +-
- tools/testing/selftests/landlock/common.h          |    2 +
- tools/testing/selftests/landlock/fs_test.c         | 2445 +++++++++++++++++++-
- tools/testing/selftests/landlock/net_test.c        | 1392 ++++++++++-
- tools/testing/selftests/landlock/ptrace_test.c     |    1 +
- .../selftests/landlock/scoped_abstract_unix_test.c |   78 +-
- .../selftests/landlock/scoped_signal_test.c        |  182 ++
- 27 files changed, 5368 insertions(+), 435 deletions(-)
+> > >  	if (audit_fd < 0 || !filter) {
+> > > -		int err;
+> > > -
+> > >  		/*
+> > >  		 * Simulates audit_init_with_exe_filter() when called from
+> > >  		 * FIXTURE_TEARDOWN_PARENT().
+> > > @@ -518,12 +517,10 @@ static int audit_cleanup(int audit_fd, struct a=
+udit_filter *filter)
+> > >  	audit_filter_exe(audit_fd, filter, AUDIT_DEL_RULE);
+> > >  	audit_filter_drop(audit_fd, AUDIT_DEL_RULE);
+> > >  =
+
+> > > -	/*
+> > > -	 * Because audit_cleanup() might not be called by the test auditd
+> > > -	 * process, it might not be possible to explicitly set it.  Anyway,
+> > > -	 * AUDIT_STATUS_ENABLED will implicitly be set to 0 when the auditd
+> > > -	 * process will exit.
+> > > -	 */
+> > =
+
+> > Please add a comment that explains that the audit state is not restored
+> > but just disabled.
+> > =
+
+> > > +	err =3D audit_set_status(audit_fd, AUDIT_STATUS_ENABLED, 0);
+> > > +	if (err)
+> > > +		return err;
+> > > +
+> > >  	return close(audit_fd);
+> > =
+
+> > FDs should always be closed.
+> > =
+
+> > >  }
+> > >  =
+
+> > > -- =
+
+> > > 2.50.1
+> > > =
+
+> > > =
+
+> > > =
+
+> > > =
+
+> > > Amazon Web Services Development Center Germany GmbH
+> > > Tamara-Danz-Str. 13
+> > > 10243 Berlin
+> > > Geschaeftsfuehrung: Christof Hellmis, Andreas Stieger
+> > > Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+> > > Sitz: Berlin
+> > > Ust-ID: DE 365 538 597
+> > > =
+
+> > > =
+
+
+
+
+Amazon Web Services Development Center Germany GmbH
+Tamara-Danz-Str. 13
+10243 Berlin
+Geschaeftsfuehrung: Christof Hellmis, Andreas Stieger
+Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+Sitz: Berlin
+Ust-ID: DE 365 538 597
+
