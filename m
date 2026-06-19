@@ -1,56 +1,48 @@
-Received: from confino.investici.org (confino.investici.org [93.190.126.19])
+Received: from mail.networkname.de (mail.networkname.de [85.209.200.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74762382F01;
-	Fri, 19 Jun 2026 13:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.190.126.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DA732BF41
+	for <linux-security-module@vger.kernel.org>; Fri, 19 Jun 2026 17:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.209.200.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781874660; cv=none; b=QQfQcJjG7sQzpl4Nm6zuQL14C6I3ONYWtnrM6AOnMCtnIQMTocdG9zsnzdVubMhPoNc6x8k7b+eJS40EaJ8Lx8Nk00TYrQ5KD68ZNPNKHrDJe6Nq16Ec5fvYH7crET00fXTga7yWw8qrrrjwt8/5AA6EYtobPgmhaefgdiL9/os=
+	t=1781890095; cv=none; b=SR/clCEIfdQsTxIh+FJ1NLuyCmc7aOKjHrA3WVjzqwBMp8n+oLILF2cNS4XJR9ZoDRJMNwOOXsyS3h7cYokBiAs1Efgs4/1XAyWXL+ok7G2I7lwAB0e2sp9TkKband1QyAsJ/B9XV0xodON/VyRQE+XhKA9+vsKvZEjObDh1hNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781874660; c=relaxed/simple;
-	bh=HRdwRR4CSd3817zTzkZ6p9dlpsYCA7qFPjbEh3VTooM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nDBV6PWeVxZaGUEakHEMZP2pe28Abr7j5xp2Iao3aSWQ0XaW2LNZZW5fD/G1fxP1KBjE5FaBjg5prcvMQtCbfQPagdW/FhwOfK1fzvBnK4MV+gFcyR1gXLk+C8YX/VOsBz6YyfP6wRWWkv6tfs4RUDMeWuz/tMcByUWl+b4UnOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=grrlz.net; spf=pass smtp.mailfrom=grrlz.net; dkim=pass (1024-bit key) header.d=grrlz.net header.i=@grrlz.net header.b=Pt4TW7bW; arc=none smtp.client-ip=93.190.126.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=grrlz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grrlz.net
+	s=arc-20240116; t=1781890095; c=relaxed/simple;
+	bh=pXLOXDyktPNZ4j7jvcgylv2u1WSrTZFjQwgcojJTeiE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lCshLpg578bKDVg8rnmzfv8mEbWc8LPZeviL7O3Io2YiWK7pLjt4ro5dV0mUPo4g4uQtG3z6VozSHyuWoklMc5vs56fQdB7fgfmX5fWFnLWSpGdGa0TZXXOEd6KQZR9b0lX4FU//CbnczDCOWEB2ZTT9EPX5Do3QryYhoAMChnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bevuta.com; spf=pass smtp.mailfrom=bevuta.com; dkim=pass (1024-bit key) header.d=bevuta.com header.i=@bevuta.com header.b=OD+ZWYyD; dkim=pass (1024-bit key) header.d=bevuta.com header.i=@bevuta.com header.b=AcWsFlAV; arc=none smtp.client-ip=85.209.200.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bevuta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bevuta.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grrlz.net header.i=@grrlz.net header.b="Pt4TW7bW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grrlz.net;
-	s=stigmate; t=1781874187;
-	bh=nRD4jHbayONtNkiYwwliT2YhCmG0sIGASUm/hwOFQoo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Pt4TW7bWZeEtGE9iFzUis6s7T7pJbz7gfEbIswBcLfSyXB93kFAm51AFBz4MR82Ej
-	 Udk0P8xd8ckinEF7f4hK8+0K1JvmBISROk0rqrjNPqAQcnjVrmD0yS9hRroscCxm/p
-	 BxlpT0EXeD1CwKLaSJb0qheiO0U+Omo+4FqIe3vQ=
-Received: from mx1.investici.org (unknown [127.0.0.1])
-	by confino.investici.org (Postfix) with ESMTP id 4ghd7H4Ph1z11N7;
-	Fri, 19 Jun 2026 13:03:07 +0000 (UTC)
-Received: by mx1.investici.org (Postfix) id 4ghd7G44QHz11N1;
-	Fri, 19 Jun 2026 13:03:06 +0000 (UTC)
-From: Bradley Morgan <include@grrlz.net>
-To: linux-security-module@vger.kernel.org,
-	bpf@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Bradley Morgan <include@grrlz.net>,
-	stable@vger.kernel.org,
-	KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Emil Tsalapatis <emil@etsalapatis.com>,
-	Florent Revest <revest@google.com>,
-	Brendan Jackman <jackmanb@google.com>
-Subject: [PATCH 1/2] bpf: lsm: disable xfrm_decode_session hook attachment
-Date: Fri, 19 Jun 2026 13:03:03 +0000
-Message-ID: <20260619130305.27779-1-include@grrlz.net>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (1024-bit key) header.d=bevuta.com header.i=@bevuta.com header.b="OD+ZWYyD";
+	dkim=pass (1024-bit key) header.d=bevuta.com header.i=@bevuta.com header.b="AcWsFlAV"
+From: Sebastian Bockholt <sebastian.bockholt@bevuta.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bevuta.com; s=default;
+	t=1781889607;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=yIi82l9z0rWRSCMmFnC+HVRZ8DFD0NIqV0m2Y2jpX1s=;
+	b=OD+ZWYyDSP7MKRR5bzi+tUsPmQo6Yw66zS2JhwaZWFAR84kK7guZ1qNurdyfQGdLhEN+B+
+	6gFguz7UaGTqaJZWBOFx4v1cOtZFiLYheaGI6QGFnN6dZUlT7vtz/VZ1Lybp0d+/25bm3H
+	RmO/OOM9519o0RHRt4iBAVfNgeiSrXA=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bevuta.com; s=default;
+	t=1781889605;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=yIi82l9z0rWRSCMmFnC+HVRZ8DFD0NIqV0m2Y2jpX1s=;
+	b=AcWsFlAVnrPpxtGl8Cl+fegjPBrGd0V5bT4NjgMEKCWY2VYFqVWnaUfRAnKud99hoFxVWN
+	x8JjiOkhYf1gOeEM4bkVxD79YLz200K7hM6YEhMeWIdADno63J1ZiqpYHoPDi9Limu95fn
+	ZvciGpUo7SSTMNxp7BjEWxJc6ncoBj4=
+To: linux-security-module@vger.kernel.org
+Cc: serge@hallyn.com,
+	jmorris@namei.org,
+	paul@paul-moore.com,
+	Sebastian Bockholt <sebastian.bockholt@bevuta.com>
+Subject: [PATCH] LSM: check if lsmprop_to_secctx call is supported by LSM
+Date: Fri, 19 Jun 2026 19:19:45 +0200
+Message-ID: <20260619171945.1617498-1-sebastian.bockholt@mail.networkname.de>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -59,34 +51,40 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-BPF LSM programs can currently attach to xfrm_decode_session(). That
-hook may return an error, but security_skb_classify_flow() calls it
-from a void path and triggers BUG_ON() if an error is returned.
+In include/linux/lsm_hook_defs.h, lsmprop_to_secctx is defined with
+a default return value of -EOPNOTSUPP.
+The function bpf_lsm_lsmprop_to_secctx, defined in
+security/bpf/hooks.c, returns the hook's default value. Therefore,
+directly returning the result of the bpf_lsm_lsmprop_to_secctx call
+propagates an unchecked EOPNOTSUPP error.
 
-Disable BPF attachment to the hook to prevent a BPF LSM program from
-turning packet classification into a full panic.
-
-Fixes: 9e4e01dfd325 ("bpf: lsm: Implement attach, detach and execution")
-Cc: stable@vger.kernel.org
-Signed-off-by: Bradley Morgan <include@grrlz.net>
+Signed-off-by: Sebastian Bockholt <sebastian.bockholt@bevuta.com>
 ---
- kernel/bpf/bpf_lsm.c | 3 +++
- 1 file changed, 3 insertions(+)
+ security/security.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-index 564071a92d7d..1433809bb166 100644
---- a/kernel/bpf/bpf_lsm.c
-+++ b/kernel/bpf/bpf_lsm.c
-@@ -51,6 +51,9 @@ BTF_ID(func, bpf_lsm_key_getsecurity)
- #ifdef CONFIG_AUDIT
- BTF_ID(func, bpf_lsm_audit_rule_match)
- #endif
-+#ifdef CONFIG_SECURITY_NETWORK_XFRM
-+BTF_ID(func, bpf_lsm_xfrm_decode_session)
-+#endif
- BTF_ID(func, bpf_lsm_ismaclabel)
- BTF_ID(func, bpf_lsm_file_alloc_security)
- BTF_SET_END(bpf_lsm_disabled_hooks)
+diff --git a/security/security.c b/security/security.c
+index 71aea8fdf014..9c63699d45fc 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -3954,12 +3954,16 @@ EXPORT_SYMBOL(security_secid_to_secctx);
+ int security_lsmprop_to_secctx(struct lsm_prop *prop, struct lsm_context *cp,
+ 			       int lsmid)
+ {
++	int error;
+ 	struct lsm_static_call *scall;
+ 
+ 	lsm_for_each_hook(scall, lsmprop_to_secctx) {
+ 		if (lsmid != LSM_ID_UNDEF && lsmid != scall->hl->lsmid->id)
+ 			continue;
+-		return scall->hl->hook.lsmprop_to_secctx(prop, cp);
++		error = scall->hl->hook.lsmprop_to_secctx(prop, cp);
++		if (error == -EOPNOTSUPP)
++			continue;
++		return error;
+ 	}
+ 	return LSM_RET_DEFAULT(lsmprop_to_secctx);
+ }
 -- 
-2.53.0
+2.54.0
 
