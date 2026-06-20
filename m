@@ -1,63 +1,83 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com [209.85.167.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC14D33F5B8;
-	Fri, 19 Jun 2026 19:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D62F3491D0
+	for <linux-security-module@vger.kernel.org>; Sat, 20 Jun 2026 12:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781897137; cv=none; b=mWs8X+Puta0a4Je3vxtDE+kOFNsA7L4xXXdo33++DGJYy/dqn4gheDhba+NwzNJUT+CoajbKgjFbLeBYRJOb0b0MeXPrK+HxEZWWqAp6tZJAJ+Jytg9ObWP8Ob8AAuojy3c1Awdnjt0i8m1m8gvzNkEo5qkvRgjakRNQRSujci0=
+	t=1781958760; cv=none; b=e18qKAdddmcqGRYssEqEZgFqIFmWOIMF6+pJuyYT68sbwjLAGeF1oidSjX7EleNrhP8V3nvs3NSfYW82/dIi0BROIBskIIx92nfP9T/twXnCXi+WqKx05ZSnnExiDOHmyXR0tvlUASOGiHJHDSuSLhqmmkLXNmPj0sfgqKQxV0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781897137; c=relaxed/simple;
-	bh=s88iTYrCeysaRAi11RQ9BAr1x7dZ5RDz12iV1w2ZDwg=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=B2Eg9d3abFzBIiinUcbE3xQKr5DhUHx9ufldrAw0xm+X6FnLxcId1GO05t3IF6YjUfZzi/O7Byt5b4wX/XickUlJ2JmQ2YYJQADauVvFBYVyQ0DqnPvy4cBmBDQ21sDYwtbFNv5ZsV4BDWT7wVb2Hsg9i/nik2yF7xWeuPqX2Wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HDAJm5SL; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HDAJm5SL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F531F000E9;
-	Fri, 19 Jun 2026 19:25:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781897136;
-	bh=MFi5JsppPFepVZavzIdUWh2Z58kSH7+/Om5iVflS85k=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc;
-	b=HDAJm5SLe9ySb4/hnvR/GLCgTc4uymVpQYQ9HFUUTS3zM+hrnv6zXFAGjqDTHyu1z
-	 JEp2slypV/QPJ3qSZdLV1PcWaiHwHVDX0D2WiYMnDGKajKFbYzeONJL6AUh53/akgH
-	 FxJIX5s5a6+av0f7Y4QmMea1LTXaofodtcenv0RgFzaJq5gtS0oKQA2dMbhQP/d4TC
-	 qdyHe6pCEAtGC2aZUMuv9VnYB8qcHO6yV7vPkMD3T+qVXf+hb39vUPEvkes04sPd3x
-	 3WBF3FKUZWVH67/WrQ0r4SVftXW2S22s54Y6lOaD7VqQqr/UUOeU4rp2QqmBF+kKGL
-	 FwcLcDk47md9w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 93B453AAA0F6;
-	Fri, 19 Jun 2026 19:25:30 +0000 (UTC)
-Subject: Re: [GIT PULL] Landlock update for v7.2-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20260619083504.1779997-1-mic@digikod.net>
-References: <20260619083504.1779997-1-mic@digikod.net>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20260619083504.1779997-1-mic@digikod.net>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-7.2-rc1
-X-PR-Tracked-Commit-Id: 1c236e7fe740a009ad8dd40a5ee0602ec402fffe
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 5e2e14749c3d969e263a879db104db6e9f0eb484
-Message-Id: <178189712925.4037507.3496686316473575263.pr-tracker-bot@kernel.org>
-Date: Fri, 19 Jun 2026 19:25:29 +0000
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, Bryam Vargas <hexlabsecurity@proton.me>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, Justin Suess <utilityemal77@gmail.com>, Matthieu Buffet <matthieu@buffet.re>, Maximilian Heyne <mheyne@amazon.de>, Tingmao Wang <m@maowtm.org>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+	s=arc-20240116; t=1781958760; c=relaxed/simple;
+	bh=tAqNL7klisddfvNENqH4QCJHR/Bwm5FfXTuaiK/Pz+o=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nvyafJSgnGoDAtgZZQnltZMxp/1tzlOCQcxTEhUMlNF89SEcQvklxfqAmsySExOmf6hR0hvX1Hz2t0rzoYmHbH/mgoTvssUffeRM14VrNFrADqEJ7jvXJEgJG9kANKYguXIoIwUSuNtLdotULKXmAbBjxuK0dm1Kx4Us+Jd9alU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-48638069322so4801510b6e.1
+        for <linux-security-module@vger.kernel.org>; Sat, 20 Jun 2026 05:32:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781958758; x=1782563558;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q5VjssJCPf8HLCVe+Cdo0EB7MA7DUqdZ2flkCgo45MA=;
+        b=MY71ItJ4qQ/425J9BYPInnqtXEFy6B/1PQbKJ/AMiV60Y589hVZ5RPRQcbQ3lSgMwr
+         RU/AT9dLptbORnPZSXuAFrrXxabaACH1il8Bnqha3p2aQFV4FW0Tr5/Ag1gpQte7wpL+
+         HQFqZ9oyBdNz44YigAwaOpeoA9tB22Y4XDd2jNxE8ucVs1SABH0TJFFs1SuNoQqJxZeK
+         qg6Xo1/R543ci3pQkzEq0WNtFrELBvB7zXV1JmII/fSAITXybxRDpijG02UMg1E0QuoA
+         2ynYgDRUiM8a5flTUP/8fR2McF883/vnd14q4IVJS3TAvh+x2rWbWexL+gipsLg5W22m
+         SwlA==
+X-Forwarded-Encrypted: i=1; AFNElJ9QseL/VN5ItYdd18TmvawezH4GBZodcdeGmk0dBYURn3bq43X3pEjM8W4XUwGspzzxJkRt7PVPiP47QPhLZbTCbSUQq4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPRx9EeTF39ZEq1w89L/5fJrdCp2FLcqA21TpFwEll6pG2fKrK
+	rqwtM9hw8bU5BGn5oNxQ9QtvV7TTZ7zrWvtqGhlEHeJmXV3Sb9R4UmJvLsxzepZUcmbseFcP2OH
+	ugWB3RGJDKu+N/PaWsa/H10DPODdzPBYB3mqp13/cCtED0vzaDDicOGpImlg=
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6808:244d:b0:48a:dd0e:e5ef with SMTP id
+ 5614622812f47-48add0f2a19mr2169151b6e.7.1781958758543; Sat, 20 Jun 2026
+ 05:32:38 -0700 (PDT)
+Date: Sat, 20 Jun 2026 05:32:38 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6a368866.5c48295d.477b4.001a.GAE@google.com>
+Subject: [syzbot] Monthly tomoyo report (Jun 2026)
+From: syzbot <syzbot+list7dc14b213a3187ae72f0@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	penguin-kernel@I-love.SAKURA.ne.jp, syzkaller-bugs@googlegroups.com, 
+	takedakn@nttdata.co.jp, tomoyo-users_en@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
 
-The pull request you sent on Fri, 19 Jun 2026 10:35:04 +0200:
+Hello tomoyo maintainers/developers,
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-7.2-rc1
+This is a 31-day syzbot report for the tomoyo subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/tomoyo
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/5e2e14749c3d969e263a879db104db6e9f0eb484
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 3 issues are still open and 12 have already been fixed.
 
-Thank you!
+Some of the still happening issues:
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Ref Crashes Repro Title
+<1> 558     Yes   INFO: rcu detected stall in sys_newfstatat (4)
+                  https://syzkaller.appspot.com/bug?extid=1c02a56102605204445c
+<2> 1       No    KMSAN: uninit-value in tomoyo_path_chown (3)
+                  https://syzkaller.appspot.com/bug?extid=eaae8fa60ce81f1e4eeb
+<3> 100     Yes   INFO: rcu detected stall in sys_symlinkat (5)
+                  https://syzkaller.appspot.com/bug?extid=9618c3b34a3062164a21
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
