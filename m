@@ -1,264 +1,482 @@
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com [113.46.200.217])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC312FF66A
-	for <linux-security-module@vger.kernel.org>; Sun, 21 Jun 2026 03:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2034594A;
+	Mon, 22 Jun 2026 02:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782013968; cv=none; b=QnXP8NIMRsjX6ptqQxCkbwkh0Q7fTIiIbKIFjZn1DYhk7+wQmxCNHSKd3nb2pkNXe0Yo1o0Tz6KIu3DNh8Mxsw1f44wDKVjyKA4yXTtOkS7guOXrKeRJydSMMIVj03DsRMg1cMItnVXuCyzJrF0uf8Q5IrqoctPcxwFBeXltFus=
+	t=1782096370; cv=none; b=IXPBCUlKxoXNrU+LjNOmZ8QmqfFWI/lliwqz0Kr9gnvNWemFAWgCnULhZ4LGsq9gVXSsEcmI8fw6PP1xaLv0iLxQsj2O7CPuqirO8MpfVXUsRmzhup9nJi0fUEyw27Wm9oThWP8zoVrBZAn2hrvKBoFBzzAEjRsAmqfAkbnJn34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782013968; c=relaxed/simple;
-	bh=xkaT//ultNEcoRx0cWcNwB199rzihL2ORnVamwFN++g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C+8qv41P3RkEXbcZLFdP/CwBcP6nWkaZO2gTI6rV4zlum9u+4fopZWNUUfbOn7e4buP9trXWhFbKZFw1rAQNpA0C6qqdljlAajIC7i4qcAeAm6nnqfX9LJoBCWK8GV7A/VUlTpX9Cr2zhb445fSkSgpD/yzd50cWtFFpiLpwqAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K4zwELgJ; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1782096370; c=relaxed/simple;
+	bh=AhyD2c3UzQA+9VhQq5JhvSs3tMiFiE1EGvvboQXE35E=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iBwlNrDCowGAvjwdMPd0c/+7XgcQEb8Og9ez5QGLm8I53nFz7U4giO7nglOjcExHJE5Gd13uLmjq9XPu0CDoTRGAqkECFA5nwlgCBgrpy3YCH9rquZkxPcYG7VOPxJkj0MOeMoWJCELUMlMUUiw/gn1iNH/fgV2WG534/vxgl5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=g8kThx69; arc=none smtp.client-ip=113.46.200.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K4zwELgJ"
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-7e8b45dfb3dso38552827b3.3
-        for <linux-security-module@vger.kernel.org>; Sat, 20 Jun 2026 20:52:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782013966; x=1782618766; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HDkGwUuaWFGJQXhEpX2ajKjANBEFh4pT3RuQ4Cg8jG0=;
-        b=K4zwELgJNb8Zqww14R/ShRyRJQsyP7lNWPL994bMueSve6J9Hc4Q5KHLK5dXa6UEHY
-         ikrtzh0Vw4zuIXjOAyY6ESkfomvNGSgtnJ0XO0STBQS2HaZOd77E960kdS+claTq+Dn3
-         OSrNrNQKjBZ6+tSf4itbqvvg0wgrnl3ae9sNRL8O/+22TyGiOpUMqktsRQWMdglP4tiU
-         0VWhsEABcUNtIEPeWiGMTloVDPm96svqwz2stKDtkkix1WpLsZDRpiCuQ8QvuPAqB0lT
-         9LRABf35LD4rxLrefKCj2roNXapID0lw23zG2Ok7JUJxf3SSOfXqB4smB6tOOFJZ2f8X
-         zTLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782013966; x=1782618766;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=HDkGwUuaWFGJQXhEpX2ajKjANBEFh4pT3RuQ4Cg8jG0=;
-        b=R11pAJrvQfSEqslug0fboJ6xA0X5qhaUIHCDnSk/4QyehD4qIw+4XuoOe3+A8oUJ5v
-         SGNnBHitHPKwt+MquC22THXXIby7L2HjHGSQbsiz32UPVNT7bLlWY53Ktw97VCxlUO3K
-         W0rhIYEcv8Q5LQq/P9gONYFAHVN3HOeJtGv0Yw3n79Gn0R8b9GSnbfCmP/aJ6iL/FXte
-         TFOkS3NTiMxeOu5Y8tHr7yfbbxeY3j55W9tTPRSfOyQCK0JBTHHcXbU5wteO5GPYzSxn
-         xfHNvtpGoETkj8IvmFC/fT7dwbVGkFxXLDRdLfvRUCX1l/xD6Dmz0RUYnxBVdNizEiCS
-         orWQ==
-X-Gm-Message-State: AOJu0YzQ+26QYfW89j96nbLVsuDApSyMQAlw1iVjcvlCEUw8TFKzlMeG
-	LGeo/jj76PPUofV42IA/z1frECeMW+eeNCcysG9zCcWPQJSOeEenIzevPjaimw==
-X-Gm-Gg: AfdE7cnXHhHFCgwNciKxrv92galku1tKqthFcWdpHgvyhkxwFpk4NmaRFR3Y9pBQ1q0
-	fUVFnjKawBuVcXl9/I8WlD7l5dgtg/M2kU5NSlLZvV+pVivqDqvdFzLK7jecBoDEfGZ3mzMBMpp
-	nTza//NEEDKKLCmuLZYwNaXVbM5qmceamHAtBaKzEpfD8pXyTCIzB+XKOj8LLocWXSzdVLr6j76
-	OR2biZKQdDR+GSexlPl6E1yHUNsTBcr7GW/DmZoFxuPyJ9a/qkEaAUNcZkB6S73U16TryOq4NBx
-	w9ubPxEnaIHrzuxSmh3EBDA3mqe6f4Dxgimvwv5KnAI1S18twGxX49984GcOSax5kjWEBA+erV1
-	FrNosbQs3GL9zZKem0PhcOqfFabB8C9rMEjct1ovhZoDSTHL51S7r4xoUhEXkXcBhIhcd5eRxeT
-	rjpw/A6P1QYSYmkD9m3sVi9kKAHxhENauAEdfEIFA86SUpjiPtLxzg2STc
-X-Received: by 2002:a05:690c:c4cd:b0:7ec:58dc:2b5a with SMTP id 00721157ae682-80133fc12bemr107899837b3.38.1782013966050;
-        Sat, 20 Jun 2026 20:52:46 -0700 (PDT)
-Received: from zenbox ([2600:1700:18fb:6011:2de9:628a:4b2:9b39])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-8025cf61d36sm17155677b3.11.2026.06.20.20.52.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Jun 2026 20:52:45 -0700 (PDT)
-From: Justin Suess <utilityemal77@gmail.com>
-To: linux-security-module@vger.kernel.org,
-	mic@digikod.net
-Cc: m@maowtm.org,
-	gnoack@google.com,
-	gnoack3000@gmail.com,
-	matthieu@buffet.re,
-	Justin Suess <utilityemal77@gmail.com>
-Subject: [PATCH v9 9/9] landlock: Add KUnit tests for LANDLOCK_ADD_RULE_NO_INHERIT
-Date: Sat, 20 Jun 2026 23:52:22 -0400
-Message-ID: <20260621035223.2651547-10-utilityemal77@gmail.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260621035223.2651547-1-utilityemal77@gmail.com>
-References: <20260621035223.2651547-1-utilityemal77@gmail.com>
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="g8kThx69"
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=eFk0eaBk/s1MTmIsVn9Uxd6DPXCddhIqqvKegTvqQBg=;
+	b=g8kThx69CBiy+NtqVQMCq/d4v+Tr/qM5IwBKT247hbG6WUcjeuo/mZPyqn0ugW6wQjkvZV2lr
+	UeJaGrCY/7Ik+q7L/qabUtJsO6ax5BLRcgT2cVOlKAGjeNYOwOMe3y/GQ961LwQV1x5U/N4EWix
+	YT27ZjPTz1gNTEDv4Lue9XI=
+Received: from mail.maildlp.com (unknown [172.19.162.144])
+	by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4gkC624rvnzcbRd;
+	Mon, 22 Jun 2026 10:37:30 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1102140538;
+	Mon, 22 Jun 2026 10:46:04 +0800 (CST)
+Received: from kwepemq200017.china.huawei.com (7.202.195.228) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 22 Jun 2026 10:46:03 +0800
+Received: from octopus.huawei.com (10.67.174.191) by
+ kwepemq200017.china.huawei.com (7.202.195.228) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 22 Jun 2026 10:46:02 +0800
+From: Cai Xinchen <caixinchen1@huawei.com>
+To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
+	<miklos@szeredi.hu>, <amir73il@gmail.com>, <paul@paul-moore.com>,
+	<jmorris@namei.org>, <serge@hallyn.com>, <stephen.smalley.work@gmail.com>,
+	<omosnace@redhat.com>, <gregkh@linuxfoundation.org>,
+	<bboscaccy@linux.microsoft.com>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-unionfs@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<selinux@vger.kernel.org>, <bpf@vger.kernel.org>, <lujialin4@huawei.com>
+Subject: [stable/linux-6.18.y 2/2] selinux: fix overlayfs mmap() and mprotect() access checks
+Date: Mon, 22 Jun 2026 11:14:16 +0800
+Message-ID: <20260622031416.2663747-3-caixinchen1@huawei.com>
+X-Mailer: git-send-email 2.18.0.huawei.25
+In-Reply-To: <20260622031416.2663747-1-caixinchen1@huawei.com>
+References: <20260622031416.2663747-1-caixinchen1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemq200017.china.huawei.com (7.202.195.228)
 
-Add the landlock_ruleset KUnit suite with three tests for the
-no_inherit handling in landlock_unmask_layers():
+From: Paul Moore <paul@paul-moore.com>
 
-- test_unmask_no_inherit_propagates: a rule with no_inherit unmasks
-  access and sets the no_inherit bit on the layer mask.
-- test_unmask_multilayer_no_inherit: no_inherit on one layer of a
-  multi-layer rule only affects that layer.
-- test_unmask_no_inherit_sequential: applying a descendant rule
-  (no_inherit) followed by an ancestor rule causes the ancestor to be
-  skipped, modeling a path walk.  This exercises the same skip branch
-  that a pre-set no_inherit mask would, via realistic rule application.
+The existing SELinux security model for overlayfs is to allow access if
+the current task is able to access the top level file (the "user" file)
+and the mounter's credentials are sufficient to access the lower
+level file (the "backing" file).  Unfortunately, the current code does
+not properly enforce these access controls for both mmap() and mprotect()
+operations on overlayfs filesystems.
 
-Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+This patch makes use of the newly created security_mmap_backing_file()
+LSM hook to provide the missing backing file enforcement for mmap()
+operations, and leverages the backing file API and new LSM blob to
+provide the necessary information to properly enforce the mprotect()
+access controls.
+
+Cc: stable@vger.kernel.org
+Acked-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Cai Xinchen <caixinchen1@huawei.com>
 ---
+ security/selinux/hooks.c          | 242 ++++++++++++++++++++++--------
+ security/selinux/include/objsec.h |  11 ++
+ 2 files changed, 189 insertions(+), 64 deletions(-)
 
-Notes:
-    Changes since v8:
-    - Reduced from five tests to three, dropping test_unmask_no_inherit_skip
-      and test_unmask_no_inherit_both_set (which set the per-layer no_inherit
-      bit synthetically). Kept test_unmask_no_inherit_propagates,
-      test_unmask_multilayer_no_inherit, and test_unmask_no_inherit_sequential,
-      which exercise the same skip branch through realistic rule application.
-    - Rebased onto mic/next.
-
- security/landlock/ruleset.c | 137 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 137 insertions(+)
-
-diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-index ca7cfa45c90a..144b6fc19f79 100644
---- a/security/landlock/ruleset.c
-+++ b/security/landlock/ruleset.c
-@@ -6,6 +6,7 @@
-  * Copyright © 2018-2020 ANSSI
-  */
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 3da3017ad2ca..f96ee8f372e3 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -1739,49 +1739,72 @@ static inline int file_path_has_perm(const struct cred *cred,
+ static int bpf_fd_pass(const struct file *file, u32 sid);
+ #endif
  
-+#include <kunit/test.h>
- #include <linux/bits.h>
- #include <linux/bug.h>
- #include <linux/cleanup.h>
-@@ -766,3 +767,139 @@ landlock_init_layer_masks(const struct landlock_ruleset *const domain,
+-/* Check whether a task can use an open file descriptor to
+-   access an inode in a given way.  Check access to the
+-   descriptor itself, and then use dentry_has_perm to
+-   check a particular permission to the file.
+-   Access to the descriptor is implicitly granted if it
+-   has the same SID as the process.  If av is zero, then
+-   access to the file is not checked, e.g. for cases
+-   where only the descriptor is affected like seek. */
+-static int file_has_perm(const struct cred *cred,
+-			 struct file *file,
+-			 u32 av)
++static int __file_has_perm(const struct cred *cred, const struct file *file,
++			   u32 av, bool bf_user_file)
++
+ {
+-	struct file_security_struct *fsec = selinux_file(file);
+-	struct inode *inode = file_inode(file);
+ 	struct common_audit_data ad;
+-	u32 sid = cred_sid(cred);
++	struct inode *inode;
++	u32 ssid = cred_sid(cred);
++	u32 tsid_fd;
+ 	int rc;
  
- 	return handled_accesses;
+-	ad.type = LSM_AUDIT_DATA_FILE;
+-	ad.u.file = file;
++	if (bf_user_file) {
++		struct backing_file_security_struct *bfsec;
++		const struct path *path;
+ 
+-	if (sid != fsec->sid) {
+-		rc = avc_has_perm(sid, fsec->sid,
+-				  SECCLASS_FD,
+-				  FD__USE,
+-				  &ad);
++		if (WARN_ON(!(file->f_mode & FMODE_BACKING)))
++			return -EIO;
++
++		bfsec = selinux_backing_file(file);
++		path = backing_file_user_path(file);
++		tsid_fd = bfsec->uf_sid;
++		inode = d_inode(path->dentry);
++
++		ad.type = LSM_AUDIT_DATA_PATH;
++		ad.u.path = *path;
++	} else {
++		struct file_security_struct *fsec = selinux_file(file);
++
++		tsid_fd = fsec->sid;
++		inode = file_inode(file);
++
++		ad.type = LSM_AUDIT_DATA_FILE;
++		ad.u.file = file;
++	}
++
++	if (ssid != tsid_fd) {
++		rc = avc_has_perm(ssid, tsid_fd, SECCLASS_FD, FD__USE, &ad);
+ 		if (rc)
+-			goto out;
++			return rc;
+ 	}
+ 
+ #ifdef CONFIG_BPF_SYSCALL
+-	rc = bpf_fd_pass(file, cred_sid(cred));
++	/* regardless of backing vs user file, use the underlying file here */
++	rc = bpf_fd_pass(file, ssid);
+ 	if (rc)
+ 		return rc;
+ #endif
+ 
+ 	/* av is zero if only checking access to the descriptor. */
+-	rc = 0;
+ 	if (av)
+-		rc = inode_has_perm(cred, inode, av, &ad);
++		return inode_has_perm(cred, inode, av, &ad);
+ 
+-out:
+-	return rc;
++	return 0;
++}
++
++/* Check whether a task can use an open file descriptor to
++   access an inode in a given way.  Check access to the
++   descriptor itself, and then use dentry_has_perm to
++   check a particular permission to the file.
++   Access to the descriptor is implicitly granted if it
++   has the same SID as the process.  If av is zero, then
++   access to the file is not checked, e.g. for cases
++   where only the descriptor is affected like seek. */
++static inline int file_has_perm(const struct cred *cred,
++				const struct file *file, u32 av)
++{
++	return __file_has_perm(cred, file, av, false);
  }
+ 
+ /*
+@@ -3799,6 +3822,17 @@ static int selinux_file_alloc_security(struct file *file)
+ 	return 0;
+ }
+ 
++static int selinux_backing_file_alloc(struct file *backing_file,
++				      const struct file *user_file)
++{
++	struct backing_file_security_struct *bfsec;
 +
-+#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
++	bfsec = selinux_backing_file(backing_file);
++	bfsec->uf_sid = selinux_file(user_file)->sid;
 +
-+/*
-+ * Helper to allocate a rule with @num_layers layers and initialize
-+ * its num_layers field.  Caller must fill in individual layers.
++	return 0;
++}
++
+ /*
+  * Check whether a task has the ioctl permission and cmd
+  * operation to an inode.
+@@ -3916,42 +3950,55 @@ static int selinux_file_ioctl_compat(struct file *file, unsigned int cmd,
+ 
+ static int default_noexec __ro_after_init;
+ 
+-static int file_map_prot_check(struct file *file, unsigned long prot, int shared)
++static int __file_map_prot_check(const struct cred *cred,
++				 const struct file *file, unsigned long prot,
++				 bool shared, bool bf_user_file)
+ {
+-	const struct cred *cred = current_cred();
+-	u32 sid = cred_sid(cred);
+-	int rc = 0;
++	struct inode *inode = NULL;
++	bool prot_exec = prot & PROT_EXEC;
++	bool prot_write = prot & PROT_WRITE;
++
++	if (file) {
++		if (bf_user_file)
++			inode = d_inode(backing_file_user_path(file)->dentry);
++		else
++			inode = file_inode(file);
++	}
++
++	if (default_noexec && prot_exec &&
++	    (!file || IS_PRIVATE(inode) || (!shared && prot_write))) {
++		int rc;
++		u32 sid = cred_sid(cred);
+ 
+-	if (default_noexec &&
+-	    (prot & PROT_EXEC) && (!file || IS_PRIVATE(file_inode(file)) ||
+-				   (!shared && (prot & PROT_WRITE)))) {
+ 		/*
+-		 * We are making executable an anonymous mapping or a
+-		 * private file mapping that will also be writable.
+-		 * This has an additional check.
++		 * We are making executable an anonymous mapping or a private
++		 * file mapping that will also be writable.
+ 		 */
+-		rc = avc_has_perm(sid, sid, SECCLASS_PROCESS,
+-				  PROCESS__EXECMEM, NULL);
++		rc = avc_has_perm(sid, sid, SECCLASS_PROCESS, PROCESS__EXECMEM,
++				  NULL);
+ 		if (rc)
+-			goto error;
++			return rc;
+ 	}
+ 
+ 	if (file) {
+-		/* read access is always possible with a mapping */
++		/* "read" always possible, "write" only if shared */
+ 		u32 av = FILE__READ;
+-
+-		/* write access only matters if the mapping is shared */
+-		if (shared && (prot & PROT_WRITE))
++		if (shared && prot_write)
+ 			av |= FILE__WRITE;
+-
+-		if (prot & PROT_EXEC)
++		if (prot_exec)
+ 			av |= FILE__EXECUTE;
+ 
+-		return file_has_perm(cred, file, av);
++		return __file_has_perm(cred, file, av, bf_user_file);
+ 	}
+ 
+-error:
+-	return rc;
++	return 0;
++}
++
++static inline int file_map_prot_check(const struct cred *cred,
++				      const struct file *file,
++				      unsigned long prot, bool shared)
++{
++	return __file_map_prot_check(cred, file, prot, shared, false);
+ }
+ 
+ static int selinux_mmap_addr(unsigned long addr)
+@@ -3967,36 +4014,80 @@ static int selinux_mmap_addr(unsigned long addr)
+ 	return rc;
+ }
+ 
+-static int selinux_mmap_file(struct file *file,
+-			     unsigned long reqprot __always_unused,
+-			     unsigned long prot, unsigned long flags)
++static int selinux_mmap_file_common(const struct cred *cred, struct file *file,
++				    unsigned long prot, bool shared)
+ {
+-	struct common_audit_data ad;
+-	int rc;
+-
+ 	if (file) {
++		int rc;
++		struct common_audit_data ad;
++
+ 		ad.type = LSM_AUDIT_DATA_FILE;
+ 		ad.u.file = file;
+-		rc = inode_has_perm(current_cred(), file_inode(file),
+-				    FILE__MAP, &ad);
++		rc = inode_has_perm(cred, file_inode(file), FILE__MAP, &ad);
+ 		if (rc)
+ 			return rc;
+ 	}
+ 
+-	return file_map_prot_check(file, prot,
+-				   (flags & MAP_TYPE) == MAP_SHARED);
++	return file_map_prot_check(cred, file, prot, shared);
++}
++
++static int selinux_mmap_file(struct file *file,
++			     unsigned long reqprot __always_unused,
++			     unsigned long prot, unsigned long flags)
++{
++	return selinux_mmap_file_common(current_cred(), file, prot,
++					(flags & MAP_TYPE) == MAP_SHARED);
++}
++
++/**
++ * selinux_mmap_backing_file - Check mmap permissions on a backing file
++ * @vma: memory region
++ * @backing_file: stacked filesystem backing file
++ * @user_file: user visible file
++ *
++ * This is called after selinux_mmap_file() on stacked filesystems, and it
++ * is this function's responsibility to verify access to @backing_file and
++ * setup the SELinux state for possible later use in the mprotect() code path.
++ *
++ * By the time this function is called, mmap() access to @user_file has already
++ * been authorized and @vma->vm_file has been set to point to @backing_file.
++ *
++ * Return zero on success, negative values otherwise.
 + */
-+static struct landlock_rule *alloc_rule(struct kunit *test, u32 num_layers)
++static int selinux_mmap_backing_file(struct vm_area_struct *vma,
++				     struct file *backing_file,
++				     struct file *user_file __always_unused)
 +{
-+	struct landlock_rule *rule;
++	unsigned long prot = 0;
 +
-+	rule = kzalloc(struct_size(rule, layers, num_layers), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_NULL(test, rule);
-+	rule->num_layers = num_layers;
-+	return rule;
-+}
++	/* translate vma->vm_flags perms into PROT perms */
++	if (vma->vm_flags & VM_READ)
++		prot |= PROT_READ;
++	if (vma->vm_flags & VM_WRITE)
++		prot |= PROT_WRITE;
++	if (vma->vm_flags & VM_EXEC)
++		prot |= PROT_EXEC;
 +
-+/*
-+ * Build a layer_masks with the first @num_layers layers' access set to
-+ * @val, and all no_inherit flags cleared.  Layers beyond @num_layers stay
-+ * zeroed, matching what landlock_init_layer_masks() produces for a domain
-+ * with that many layers.
-+ */
-+static void fill_masks(struct layer_masks *masks, access_mask_t val,
-+		       size_t num_layers)
-+{
-+	memset(masks, 0, sizeof(*masks));
-+	for (size_t i = 0; i < num_layers; i++)
-+		masks->layers[i].access = val;
-+}
++	return selinux_mmap_file_common(backing_file->f_cred, backing_file,
++					prot, vma->vm_flags & VM_SHARED);
+ }
+ 
+ static int selinux_file_mprotect(struct vm_area_struct *vma,
+ 				 unsigned long reqprot __always_unused,
+ 				 unsigned long prot)
+ {
++	int rc;
+ 	const struct cred *cred = current_cred();
+ 	u32 sid = cred_sid(cred);
++	const struct file *file = vma->vm_file;
++	bool backing_file;
++	bool shared = vma->vm_flags & VM_SHARED;
 +
-+/* Verify that a rule with no_inherit unmasks access and propagates the flag. */
-+static void test_unmask_no_inherit_propagates(struct kunit *const test)
-+{
-+	struct landlock_rule *rule = alloc_rule(test, 1);
-+	struct layer_masks masks;
-+	const access_mask_t req = BIT_ULL(0) | BIT_ULL(1);
++	/* check if we need to trigger the "backing files are awful" mode */
++	backing_file = file && (file->f_mode & FMODE_BACKING);
+ 
+ 	if (default_noexec &&
+ 	    (prot & PROT_EXEC) && !(vma->vm_flags & VM_EXEC)) {
+-		int rc = 0;
+ 		/*
+ 		 * We don't use the vma_is_initial_heap() helper as it has
+ 		 * a history of problems and is currently broken on systems
+@@ -4010,11 +4101,15 @@ static int selinux_file_mprotect(struct vm_area_struct *vma,
+ 		    vma->vm_end <= vma->vm_mm->brk) {
+ 			rc = avc_has_perm(sid, sid, SECCLASS_PROCESS,
+ 					  PROCESS__EXECHEAP, NULL);
+-		} else if (!vma->vm_file && (vma_is_initial_stack(vma) ||
++			if (rc)
++				return rc;
++		} else if (!file && (vma_is_initial_stack(vma) ||
+ 			    vma_is_stack_for_current(vma))) {
+ 			rc = avc_has_perm(sid, sid, SECCLASS_PROCESS,
+ 					  PROCESS__EXECSTACK, NULL);
+-		} else if (vma->vm_file && vma->anon_vma) {
++			if (rc)
++				return rc;
++		} else if (file && vma->anon_vma) {
+ 			/*
+ 			 * We are making executable a file mapping that has
+ 			 * had some COW done. Since pages might have been
+@@ -4022,13 +4117,29 @@ static int selinux_file_mprotect(struct vm_area_struct *vma,
+ 			 * modified content.  This typically should only
+ 			 * occur for text relocations.
+ 			 */
+-			rc = file_has_perm(cred, vma->vm_file, FILE__EXECMOD);
++			rc = __file_has_perm(cred, file, FILE__EXECMOD,
++					     backing_file);
++			if (rc)
++				return rc;
++			if (backing_file) {
++				rc = file_has_perm(file->f_cred, file,
++						   FILE__EXECMOD);
++				if (rc)
++					return rc;
++			}
+ 		}
++	}
 +
-+	rule->layers[0].level = 1;
-+	rule->layers[0].access = BIT_ULL(0);
-+	rule->layers[0].flags.no_inherit = true;
-+
-+	fill_masks(&masks, req, 1);
-+	landlock_unmask_layers(rule, &masks);
-+
-+	/* access bit 0 should be cleared, bit 1 remains */
-+	KUNIT_EXPECT_EQ(test, (access_mask_t)masks.layers[0].access,
-+			BIT_ULL(1));
-+	KUNIT_EXPECT_TRUE(test, masks.layers[0].no_inherit);
-+	KUNIT_EXPECT_EQ(test, (access_mask_t)masks.layers[1].access, 0);
-+	kfree(rule);
-+}
-+
-+/*
-+ * Verify that no_inherit on layer 1 of a multi-layer rule only affects
-+ * layer 1; layer 2 still contributes normally.
-+ */
-+static void test_unmask_multilayer_no_inherit(struct kunit *const test)
-+{
-+	struct landlock_rule *rule = alloc_rule(test, 2);
-+	struct layer_masks masks;
-+	const access_mask_t req = BIT_ULL(0) | BIT_ULL(1);
-+
-+	rule->layers[0].level = 1;
-+	rule->layers[0].access = BIT_ULL(0);
-+	rule->layers[0].flags.no_inherit = true;
-+
-+	rule->layers[1].level = 2;
-+	rule->layers[1].access = BIT_ULL(1);
-+
-+	fill_masks(&masks, req, 2);
-+	landlock_unmask_layers(rule, &masks);
-+
-+	/* Layer 1: bit 0 cleared, no_inherit set */
-+	KUNIT_EXPECT_EQ(test, (access_mask_t)masks.layers[0].access, BIT_ULL(1));
-+	KUNIT_EXPECT_TRUE(test, masks.layers[0].no_inherit);
-+
-+	/* Layer 2: bit 1 cleared, no_inherit not set */
-+	KUNIT_EXPECT_EQ(test, (access_mask_t)masks.layers[1].access, BIT_ULL(0));
-+	KUNIT_EXPECT_FALSE(test, masks.layers[1].no_inherit);
-+	kfree(rule);
-+}
-+
-+/*
-+ * Verify that when applying two rules sequentially (as happens during
-+ * a path walk), no_inherit from the first rule prevents the second
-+ * rule from contributing to that layer.
-+ */
-+static void test_unmask_no_inherit_sequential(struct kunit *const test)
-+{
-+	struct landlock_rule *rule1 = alloc_rule(test, 1);
-+	struct landlock_rule *rule2 = alloc_rule(test, 1);
-+	struct layer_masks masks;
-+	const access_mask_t req = BIT_ULL(0) | BIT_ULL(1);
-+
-+	/* Rule 1: no_inherit on layer 1, grants access bit 0 */
-+	rule1->layers[0].level = 1;
-+	rule1->layers[0].access = BIT_ULL(0);
-+	rule1->layers[0].flags.no_inherit = true;
-+
-+	/* Rule 2: also on layer 1, grants access bit 1 (ancestor rule) */
-+	rule2->layers[0].level = 1;
-+	rule2->layers[0].access = BIT_ULL(1);
-+
-+	/* Apply rule1 first (descendant), then rule2 (ancestor) */
-+	fill_masks(&masks, req, 1);
-+	landlock_unmask_layers(rule1, &masks);
-+	landlock_unmask_layers(rule2, &masks);
-+
-+	/*
-+	 * Rule2 should be skipped because rule1 set no_inherit.
-+	 * bit 0 cleared by rule1, bit 1 remains because rule2 skipped.
-+	 */
-+	KUNIT_EXPECT_EQ(test, (access_mask_t)masks.layers[0].access, BIT_ULL(1));
-+	KUNIT_EXPECT_TRUE(test, masks.layers[0].no_inherit);
-+	kfree(rule1);
-+	kfree(rule2);
-+}
-+
-+static struct kunit_case test_cases[] = {
-+	/* clang-format off */
-+	KUNIT_CASE(test_unmask_no_inherit_propagates),
-+	KUNIT_CASE(test_unmask_multilayer_no_inherit),
-+	KUNIT_CASE(test_unmask_no_inherit_sequential),
-+	{}
-+	/* clang-format on */
++	rc = __file_map_prot_check(cred, file, prot, shared, backing_file);
++	if (rc)
++		return rc;
++	if (backing_file) {
++		rc = file_map_prot_check(file->f_cred, file, prot, shared);
+ 		if (rc)
+ 			return rc;
+ 	}
+ 
+-	return file_map_prot_check(vma->vm_file, prot, vma->vm_flags&VM_SHARED);
++	return 0;
+ }
+ 
+ static int selinux_file_lock(struct file *file, unsigned int cmd)
+@@ -7140,6 +7251,7 @@ struct lsm_blob_sizes selinux_blob_sizes __ro_after_init = {
+ 	.lbs_cred = sizeof(struct cred_security_struct),
+ 	.lbs_task = sizeof(struct task_security_struct),
+ 	.lbs_file = sizeof(struct file_security_struct),
++	.lbs_backing_file = sizeof(struct backing_file_security_struct),
+ 	.lbs_inode = sizeof(struct inode_security_struct),
+ 	.lbs_ipc = sizeof(struct ipc_security_struct),
+ 	.lbs_key = sizeof(struct key_security_struct),
+@@ -7363,9 +7475,11 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
+ 
+ 	LSM_HOOK_INIT(file_permission, selinux_file_permission),
+ 	LSM_HOOK_INIT(file_alloc_security, selinux_file_alloc_security),
++	LSM_HOOK_INIT(backing_file_alloc, selinux_backing_file_alloc),
+ 	LSM_HOOK_INIT(file_ioctl, selinux_file_ioctl),
+ 	LSM_HOOK_INIT(file_ioctl_compat, selinux_file_ioctl_compat),
+ 	LSM_HOOK_INIT(mmap_file, selinux_mmap_file),
++	LSM_HOOK_INIT(mmap_backing_file, selinux_mmap_backing_file),
+ 	LSM_HOOK_INIT(mmap_addr, selinux_mmap_addr),
+ 	LSM_HOOK_INIT(file_mprotect, selinux_file_mprotect),
+ 	LSM_HOOK_INIT(file_lock, selinux_file_lock),
+diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
+index 816fde5a5896..fcb46793898f 100644
+--- a/security/selinux/include/objsec.h
++++ b/security/selinux/include/objsec.h
+@@ -86,6 +86,10 @@ struct file_security_struct {
+ 	u32 pseqno; /* Policy seqno at the time of file open */
+ };
+ 
++struct backing_file_security_struct {
++	u32 uf_sid; /* associated user file fsec->sid */
 +};
 +
-+static struct kunit_suite test_suite = {
-+	.name = "landlock_ruleset",
-+	.test_cases = test_cases,
-+};
+ struct superblock_security_struct {
+ 	u32 sid; /* SID of file system superblock */
+ 	u32 def_sid; /* default SID for labeling */
+@@ -190,6 +194,13 @@ static inline struct file_security_struct *selinux_file(const struct file *file)
+ 	return file->f_security + selinux_blob_sizes.lbs_file;
+ }
+ 
++static inline struct backing_file_security_struct *
++selinux_backing_file(const struct file *backing_file)
++{
++	void *blob = backing_file_security(backing_file);
++	return blob + selinux_blob_sizes.lbs_backing_file;
++}
 +
-+kunit_test_suite(test_suite);
-+
-+#endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
+ static inline struct inode_security_struct *
+ selinux_inode(const struct inode *inode)
+ {
 -- 
-2.54.0
+2.18.0.huawei.25
 
