@@ -1,500 +1,441 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3CF368D52
-	for <linux-security-module@vger.kernel.org>; Mon, 22 Jun 2026 23:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB35C371898
+	for <linux-security-module@vger.kernel.org>; Mon, 22 Jun 2026 23:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782170877; cv=none; b=D/pBYXrB7QPIPCgEMq/AKghRGDQLIqx6I2PG77nSWwm8vqLdZUYAAgTZ2fv7tKa/KBA9tTpgPot11HBLgrjO7ZGcO2AgPK9rC89mY3JfI4IUN8uh4bqp9G07QmOgMmldKkuaqlkpG9ULU+pq5AC2x2nR4+tCKnO5Qh3mLyyFDuw=
+	t=1782172634; cv=none; b=ta6pRsUIC8Vuax/RMmJh8Odh85tv21NBukal/nEzsuLVISZ5yhleyFkGqBBF6Ec41BaMuMHCw8RkmmxPv8gIr9uu6RJG/fNS5O+nAX9HuiyRQwkd5midyUCX9LYf1dhvNMvUCNcBjhMu9hAIrxvFLJuGHZciL+2KJbQT7QM6HHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782170877; c=relaxed/simple;
-	bh=gqDNwplrgxXzCzBaTTkwHtspJiFTiMNiqIc/Cq5O3Is=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UhwgyRE4+v4xEfiNp0/dshlQggzALP3XIypsih62O6tFP5WLpIiogO8YJYENTtSrGWCewHHHQAvlvzFrQ2p167l/Pn9CgZne/7TZHsZxLElIKUQiLLvo/5ezAyinE2IKI7z3FxZf+NHuXPeExHS4OgDa8MmI400+UabjrEFqQyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VennOvbH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1782172634; c=relaxed/simple;
+	bh=APQyAu8u5IH9CVRpou0XR9SFmkwuafb3rUB0ZW/wfg4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Rzhd75c1LMRgrHG0cKTf5bWaaE2JQeW/WJqwOEUlHJBRKXtFQLiyAQ7TrLOTuTqBTTEMoZkOGKiQsCCHD2hTOt51+Rxe+vVUgx1sPPl8tMvyh4pP9ZqrfsLPQMNiqFQvzJ4e0vSfnE/nEzuJZd6ldsbp6DUne5gr2bOIfOt5qHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EArQ0biK; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VennOvbH"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E7409C2BCF5;
-	Mon, 22 Jun 2026 23:27:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1782170876;
-	bh=gqDNwplrgxXzCzBaTTkwHtspJiFTiMNiqIc/Cq5O3Is=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=VennOvbHRPxdxzQsmEs2TkoRI3QRyf0okOzfFnqCwdELnlkezyXN+8grMtBD+KgOX
-	 HHsybC4B4uC4j1CXJfD5P250ZQOWLBHdzvPhHI2AsCHv1Ce0xzZ+vplYjHrcT7110U
-	 DLv/c+K+uAKqtYcOVnM6yjdHP4Gkw5b+TnILlnT1oErbCosQeoTcvCIvEv7ooBZaSP
-	 CwfwZewR6ZpJpNzBSdh5lFephzdNa4SFi3AqLKGMgYfCXMtSdQ5oelJd1FkaQ5XV5I
-	 VMgY5s7MUw5zxMFjc1j3qNJcXjdFXSJTrq5GT4zbJt5qJA0WESeHVUH4vcgKL+cRcR
-	 AsiSGjwON4+bw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFAE7CDB466;
-	Mon, 22 Jun 2026 23:27:56 +0000 (UTC)
-From: Bryam Vargas via B4 Relay <devnull+hexlabsecurity.proton.me@kernel.org>
-Date: Mon, 22 Jun 2026 18:27:55 -0500
-Subject: [PATCH] tests: add a regression test for the TCP Fast Open
- connect-mediation bypass
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EArQ0biK"
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7e71dd64ea2so2536646a34.3
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Jun 2026 16:57:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1782172631; x=1782777431; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Xre0hTc6txTQLEgTuWM5CYVELF8O6F2bFrxuzUUqLo=;
+        b=EArQ0biKUGHv5IGKPM1wrGTSzDWbilnOwNZZdp0CTBtiNn7F4v0VTAKSBlLCaY5CtW
+         sQvOaTp+TczJCRslPzHlMRGrCDt/2RFTelBqw7UJ9VB6/0BkGQnBbM+UYtLcN3EKVoqA
+         Q8ZHAPMzPnIKhfHlWPVJEN616LmLJWpR7l/KVOM1sRhQR2LRjagawQDsiO9q+0BvcXKQ
+         jYBhQyHG1kDIITD7AfXgtS2tO3bZzV8gYT+dXYd3lE428S7wfZ+HfKYwjON8szBiJZU+
+         3SbZC+tFaX/+7L7J/8qf3MDpii7eznKLzPTuGgbNpZMSUPfocI/rGQV3LuK4OWnN99JE
+         ndyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782172631; x=1782777431;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+Xre0hTc6txTQLEgTuWM5CYVELF8O6F2bFrxuzUUqLo=;
+        b=gLRLGG5Y1GdXdDvx1YmQgqmBowERkMBMNBmomO9EZIXXoezNS5R1Ud09o4pkEvA4dV
+         RivixxW0tQDjrTUI9P/bWRp4P7Mfx1Sd0O62ChVTZ4J8zyGaxt/akRiZkV0bZF+nUKk5
+         MY9Lx/x+UO5FUM7h9gqntBCh5y2HgekMIDbc3F5hQUKSejyDcMl8cze5IaeuHDqSrBsl
+         7ogM1LptORhAZCINdT1g+a2pO75iE3shaOMN0CgUi6BWoyJfVJG3tzIqAqLs8iS0IjLQ
+         LPf4H9apY05iPExzOGhEC7sUfsT5pEYodKua6QiJjeQJp+Vtt32u+/0M7EOCIc1XqBp4
+         Uajw==
+X-Forwarded-Encrypted: i=1; AFNElJ/8onzEzpbxbuM41G5W9dYjgxWgv/dQn9HylCom7VKggVGzYvwFH4/7myAkGWo9ufazaE4UpucdiIzspH54pkUmsdYmHk0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLqYc6OCWA2XL9GY8OrIid07BXn1WUP7grmhFz+73QVRN2WXga
+	lb2FhM+qCm8wZsGspoWfAe+toINwbfFfPndElPhGaXIac3hRn7Ieg/2b
+X-Gm-Gg: AfdE7cmIxXQsIogcmEnf70Gk2pHfRTObem4rL24BQdbzRu36xKj6op9Znb69pS9rtMG
+	3O6ZdpbVncUycJpKIlBerX+gfTpyioCJVpsDdYXCBCN9cnBGPvzhOrabyrj3ZT3axx9ipW5t94u
+	xPTk4G9fz73JztNthyhZLZprawSzHx+pYaO1CHlw+IIozPHo7L4whKxbsgPyJZQjol84XjlcoOF
+	gk5/npAdFH02ISzISJSIC72OeVUHu0RX+9X0SSyZyGcHQ7/JaDEqYg/s7ycZkrreLfvPgBDL8bv
+	4eJg5NE1QrXsai0GARE+/5CV0LXVQvyi32Obk2aByWZjeghvxinOB1y8St0HviM8x0dT78JkYdZ
+	lC+RLeSLS+rti+viRu1TA2S1ixhsCp1AniJn92cvpECtyoccBNslqdKcThTs05upn16BAN6JOQC
+	ZrdIfQadWhtMVHZ66MVoPTOIEPc8++eibicXPi4DQsjtPDp2PsssMmxCts+Sx+FdOMWHz/zqsAE
+	ur3+YE=
+X-Received: by 2002:a05:6830:440c:b0:7e7:868:ded5 with SMTP id 46e09a7af769-7e9799211bdmr289228a34.18.1782172630489;
+        Mon, 22 Jun 2026 16:57:10 -0700 (PDT)
+Received: from localhost ([2a03:2880:10ff:71::])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7e944008fe7sm7895698a34.6.2026.06.22.16.57.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jun 2026 16:57:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260622-b4-disp-220b400d-v1-1-69d8f4ddf57e@proton.me>
-X-B4-Tracking: v=1; b=H4sIAPrEOWoC/x3MMQqAMAxA0atIZgMxVkWvIg62iZpFpQURxLtbH
- N/w/wNJo2mCoXgg6mXJjj2jKgsI27yviibZwMQttczoHYqlE5nJOyLBWrpFmtoHdT3k7Iy62P0
- vx+l9P7QyOU9iAAAA
-To: apparmor@lists.ubuntu.com
-Cc: linux-security-module@vger.kernel.org, 
- John Johansen <john.johansen@canonical.com>, 
- Ryan Lee <ryan.lee@canonical.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1782170874; l=15234;
- i=hexlabsecurity@proton.me; s=proton; h=from:subject:message-id;
- bh=pz34+fbJMtj3MAiEmggC0Gsslhx3MK+XNCLyxbzmgQM=;
- b=r1fC5OJNWG2rbIA3/NySd3Mp3eeyg9iJG+IPkPXxF1LdZ80hwegRoYhamylY2GCMz/T02wPo0
- 8GtNzfmyTlZAJw0k3UTuVrxlvftx5IfUEfBEazVhyXGLTUxYJFd1qhx
-X-Developer-Key: i=hexlabsecurity@proton.me; a=ed25519;
- pk=dmppBMZNLLoPzxHi9l8tZDzEZUunPbgsYqIZYXeUrL0=
-X-Endpoint-Received: by B4 Relay for hexlabsecurity@proton.me/proton with
- auth_id=814
-X-Original-From: Bryam Vargas <hexlabsecurity@proton.me>
-Reply-To: hexlabsecurity@proton.me
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 22 Jun 2026 16:57:08 -0700
+Message-Id: <DJFZGYZFMN73.1799LMXW49WZO@gmail.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <bpf@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <linux-integrity@vger.kernel.org>, <selinux@vger.kernel.org>,
+ <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH bpf-next v3 1/2] bpf: add bpf_init_inode_xattr kfunc for
+ atomic inode labeling
+From: "Alexei Starovoitov" <alexei.starovoitov@gmail.com>
+To: "David Windsor" <dwindsor@gmail.com>, <viro@zeniv.linux.org.uk>,
+ <brauner@kernel.org>, <jack@suse.cz>, <ast@kernel.org>,
+ <daniel@iogearbox.net>, <john.fastabend@gmail.com>, <andrii@kernel.org>,
+ <eddyz87@gmail.com>, <memxor@gmail.com>, <martin.lau@linux.dev>,
+ <song@kernel.org>, <yonghong.song@linux.dev>, <jolsa@kernel.org>,
+ <emil@etsalapatis.com>, <kpsingh@kernel.org>, <mattbobrowski@google.com>,
+ <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
+ <zohar@linux.ibm.com>, <roberto.sassu@huawei.com>,
+ <dmitry.kasatkin@gmail.com>, <eric.snowberg@oracle.com>,
+ <stephen.smalley.work@gmail.com>, <omosnace@redhat.com>,
+ <casey@schaufler-ca.com>, <shuah@kernel.org>
+X-Mailer: aerc
+References: <20260618203411.73917-1-dwindsor@gmail.com>
+ <20260618203411.73917-2-dwindsor@gmail.com>
+In-Reply-To: <20260618203411.73917-2-dwindsor@gmail.com>
 
-From: Bryam Vargas <hexlabsecurity@proton.me>
+On Thu Jun 18, 2026 at 1:34 PM PDT, David Windsor wrote:
+> +
+> +static int __bpf_init_inode_xattr(struct xattr_ctx *xattr_ctx,
+> +				  const char *name__str,
+> +				  const struct bpf_dynptr *value_p)
+> +{
+> +	struct bpf_dynptr_kern *value_ptr =3D (struct bpf_dynptr_kern *)value_p=
+;
+> +	size_t name_len;
+> +	void *xattr_value;
+> +	struct xattr *xattr;
+> +	struct xattr *xattrs;
+> +	int *xattr_count;
+> +	const void *value;
+> +	u32 value_len;
+> +
+> +	if (!xattr_ctx || !name__str)
+> +		return -EINVAL;
+> +
+> +	xattrs =3D xattr_ctx->xattrs;
+> +	xattr_count =3D xattr_ctx->xattr_count;
+> +	if (!xattrs || !xattr_count)
+> +		return -EINVAL;
+> +	if (bpf_xattrs_used(xattr_ctx) >=3D BPF_LSM_INODE_INIT_XATTRS)
+> +		return -ENOSPC;
 
-sendto(MSG_FASTOPEN) performs an implicit connect that the kernel's
-apparmor_socket_sendmsg() did not mediate as a connect, so a profile
-granting inet/inet6 stream send but denying connect was bypassed. Add a
-test that, under such a profile, asserts connect(2) is denied AND
-sendto(MSG_FASTOPEN) is also denied -- the latter requires the kernel fix
-"apparmor: mediate the implicit connect of TCP fast open sendmsg".
+This check is good to have, but it's enough. No need to duplicate it.
+More below.
 
-It exercises both producers the fix guards -- plain TCP (inet/inet6) and
-MPTCP (IPPROTO_MPTCP) -- plus a positive control where connect is allowed.
-The test red-baselines on a vulnerable kernel and skips cleanly when the
-required fine-grained network mediation or TCP Fast Open is unavailable
-(requires_any_of_kernel_features / requires_parser_support, plus a
-tcp_fastopen guard); the MPTCP cases are skipped if MPTCP is disabled.
+> +
+> +	name_len =3D strlen(name__str);
+> +	if (name_len =3D=3D 0 || name_len > XATTR_NAME_MAX)
+> +		return -EINVAL;
+> +	if (strncmp(name__str, XATTR_BPF_LSM_SUFFIX,
+> +		    sizeof(XATTR_BPF_LSM_SUFFIX) - 1))
+> +		return -EPERM;
+> +
+> +	value_len =3D __bpf_dynptr_size(value_ptr);
+> +	if (value_len =3D=3D 0 || value_len > XATTR_SIZE_MAX)
+> +		return -EINVAL;
+> +
+> +	value =3D __bpf_dynptr_data(value_ptr, value_len);
+> +	if (!value)
+> +		return -EINVAL;
+> +
+> +	/* Combine xattr value + name into one allocation. */
+> +	xattr_value =3D kmalloc(value_len + name_len + 1, GFP_KERNEL);
+> +	if (!xattr_value)
+> +		return -ENOMEM;
+> +
+> +	memcpy(xattr_value, value, value_len);
+> +	memcpy(xattr_value + value_len, name__str, name_len);
+> +	((char *)xattr_value)[value_len + name_len] =3D '\0';
+> +
+> +	xattr =3D lsm_get_xattr_slot(xattr_ctx);
+> +	if (!xattr) {
+> +		kfree(xattr_value);
+> +		return -ENOSPC;
+> +	}
+> +
+> +	xattr->value =3D xattr_value;
+> +	xattr->name =3D (const char *)xattr_value + value_len;
+> +	xattr->value_len =3D value_len;
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * bpf_init_inode_xattr - set an xattr on a new inode from inode_init_se=
+curity
+> + * @xattr_ctx: inode_init_security xattr state from the hook context
+> + * @name__str: xattr name (e.g., "bpf.file_label")
+> + * @value_p: dynptr containing the xattr value
+> + *
+> + * Only callable from lsm/inode_init_security programs.
+> + *
+> + * Return: 0 on success, negative error on failure.
+> + */
+> +__bpf_kfunc int bpf_init_inode_xattr(struct xattr_ctx *xattr_ctx,
+> +				     const char *name__str,
+> +				     const struct bpf_dynptr *value_p)
+> +{
+> +	return __bpf_init_inode_xattr(xattr_ctx, name__str, value_p);
+> +}
+> +
+>  __bpf_kfunc_end_defs();
+> =20
+>  BTF_KFUNCS_START(bpf_fs_kfunc_set_ids)
+> @@ -385,13 +477,25 @@ BTF_ID_FLAGS(func, bpf_get_file_xattr, KF_SLEEPABLE=
+)
+>  BTF_ID_FLAGS(func, bpf_set_dentry_xattr, KF_SLEEPABLE)
+>  BTF_ID_FLAGS(func, bpf_remove_dentry_xattr, KF_SLEEPABLE)
+>  BTF_ID_FLAGS(func, bpf_real_inode, KF_SLEEPABLE | KF_RET_NULL)
+> +BTF_ID_FLAGS(func, bpf_init_inode_xattr, KF_SLEEPABLE)
+>  BTF_KFUNCS_END(bpf_fs_kfunc_set_ids)
+> =20
+> +BTF_ID_LIST(bpf_lsm_inode_init_security_btf_ids)
+> +BTF_ID(func, bpf_lsm_inode_init_security)
+> +
+> +BTF_ID_LIST(bpf_init_inode_xattr_btf_ids)
+> +BTF_ID(func, bpf_init_inode_xattr)
+> +
+>  static int bpf_fs_kfuncs_filter(const struct bpf_prog *prog, u32 kfunc_i=
+d)
+>  {
+>  	if (!btf_id_set8_contains(&bpf_fs_kfunc_set_ids, kfunc_id) ||
+> -	    prog->type =3D=3D BPF_PROG_TYPE_LSM)
+> +	    prog->type =3D=3D BPF_PROG_TYPE_LSM) {
+> +		/* bpf_init_inode_xattr only attaches to inode_init_security. */
+> +		if (kfunc_id =3D=3D bpf_init_inode_xattr_btf_ids[0] &&
+> +		    prog->aux->attach_btf_id !=3D bpf_lsm_inode_init_security_btf_ids[=
+0])
+> +			return -EACCES;
 
-Signed-off-by: Bryam Vargas <hexlabsecurity@proton.me>
----
-This is the userspace regression test for the AppArmor TCP Fast Open
-connect-mediation kernel fix posted to linux-security-module:
-  https://lore.kernel.org/all/20260622-b4-disp-aba401c6-v1-1-9d74343c7ced@proton.me/
-It mirrors the SELinux testsuite test ("[PATCH testsuite] tests/inet_socket:
-add tests for TCP Fast Open", Stephen Smalley) and was requested by the
-AppArmor team (Ryan Lee).
+This is unnecessary. Only one hook will have xattr_ctx type.
+The normal verifier type enforcement will do its work.
 
-It covers both producers the kernel fix mediates -- plain TCP (inet/inet6)
-and MPTCP -- plus a positive control. It red-baselines on a vulnerable
-kernel (the fastopen assertions fail) and skips cleanly when TCP Fast Open
-or fine-grained network mediation is unavailable.
----
- tests/regression/apparmor/Makefile                 |   2 +
- tests/regression/apparmor/net_inet_tcp_fastopen.c  | 241 +++++++++++++++++++++
- tests/regression/apparmor/net_inet_tcp_fastopen.sh | 119 ++++++++++
- 3 files changed, 362 insertions(+)
+>  		return 0;
+> +	}
+>  	return -EACCES;
+>  }
+> =20
+> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> index 7719f6528445..f14bfcda78db 100644
+> --- a/include/linux/bpf.h
+> +++ b/include/linux/bpf.h
+> @@ -1752,6 +1752,7 @@ struct bpf_prog_aux {
+>  	u32 real_func_cnt; /* includes hidden progs, only used for JIT and free=
+ing progs */
+>  	u32 func_idx; /* 0 for non-func prog, the index in func array for func =
+prog */
+>  	u32 attach_btf_id; /* in-kernel BTF type id to attach to */
+> +	u32 attach_limit; /* max concurrent attachments (0 =3D unlimited) */
 
-diff --git a/tests/regression/apparmor/Makefile b/tests/regression/apparmor/Makefile
-index 345f39968..18e408f5c 100644
---- a/tests/regression/apparmor/Makefile
-+++ b/tests/regression/apparmor/Makefile
-@@ -151,6 +151,7 @@ SRC=access.c \
-     named_pipe.c \
-     net_inet_rcv.c \
-     net_inet_snd.c \
-+    net_inet_tcp_fastopen.c \
-     net_raw.c \
-     open.c \
-     openat.c \
-@@ -325,6 +326,7 @@ TESTS=aa_exec \
-       namespaces \
-       net_iface \
-       net_inet \
-+      net_inet_tcp_fastopen \
-       net_raw \
-       overlayfs_kernel \
-       open \
-diff --git a/tests/regression/apparmor/net_inet_tcp_fastopen.c b/tests/regression/apparmor/net_inet_tcp_fastopen.c
-new file mode 100644
-index 000000000..cfc1ff9c5
---- /dev/null
-+++ b/tests/regression/apparmor/net_inet_tcp_fastopen.c
-@@ -0,0 +1,241 @@
-+/*
-+ *	Copyright (C) 2026 Canonical, Ltd.
-+ *
-+ *	This program is free software; you can redistribute it and/or
-+ *	modify it under the terms of the GNU General Public License as
-+ *	published by the Free Software Foundation, version 2 of the
-+ *	License.
-+ */
-+
-+/*
-+ * TCP Fast Open connect-mediation bypass regression test.
-+ *
-+ * Under an AppArmor profile that grants inet/inet6 stream "send" but DENIES
-+ * "connect", a plain connect(2) must be refused (EACCES/EPERM). Historically
-+ * the kernel's TFO fast path (sendto(..., MSG_FASTOPEN, ...), which performs
-+ * an implicit connect) only checked the send permission (AA_NET_SEND 0x02)
-+ * and skipped the connect permission (AA_NET_CONNECT 0x40), so a confined
-+ * task could open an outbound connection that connect(2) would have blocked.
-+ * The kernel fix mediates both producers: plain TCP and MPTCP (IPPROTO_MPTCP).
-+ *
-+ * This binary takes a mode and asserts the operation is DENIED:
-+ *   argv[1] = "connect"  -> baseline: connect(2) must be denied
-+ *   argv[1] = "fastopen" -> the bug: sendto(MSG_FASTOPEN) must be denied
-+ *   argv[2] = family: "inet"/"inet6" (TCP) or "minet"/"minet6" (MPTCP)
-+ *   argv[3] = port (the listener port, set up by this same process)
-+ *
-+ * Output contract (parsed by checktestfg in prologue.inc):
-+ *   "PASS\n"  -> the operation was DENIED as required (regression OK)
-+ *   "FAIL ..."-> the operation was ALLOWED (connect bypass) OR a setup error
-+ *
-+ * The .sh runs this with expected outcome "pass"; it also enables TCP Fast
-+ * Open first, so an EOPNOTSUPP here is a real setup error, not a skip.
-+ */
-+
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <errno.h>
-+#include <signal.h>
-+#include <netinet/in.h>
-+#include <netinet/tcp.h>
-+#include <sys/socket.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <arpa/inet.h>
-+
-+#ifndef MSG_FASTOPEN
-+#define MSG_FASTOPEN 0x20000000
-+#endif
-+
-+#ifndef IPPROTO_MPTCP
-+#define IPPROTO_MPTCP 262
-+#endif
-+
-+/* Map a family token to (AF_*, protocol). "minet"/"minet6" select MPTCP.
-+ * Returns 0 on success, -1 on an unknown token.
-+ */
-+static int parse_family(const char *tok, int *family, int *proto)
-+{
-+	*proto = 0;
-+	if (strcmp(tok, "inet") == 0) {
-+		*family = AF_INET;
-+	} else if (strcmp(tok, "inet6") == 0) {
-+		*family = AF_INET6;
-+	} else if (strcmp(tok, "minet") == 0) {
-+		*family = AF_INET;
-+		*proto = IPPROTO_MPTCP;
-+	} else if (strcmp(tok, "minet6") == 0) {
-+		*family = AF_INET6;
-+		*proto = IPPROTO_MPTCP;
-+	} else {
-+		return -1;
-+	}
-+	return 0;
-+}
-+
-+/* Build a loopback sockaddr for the requested family. Returns addrlen. */
-+static socklen_t make_addr(int family, int port, struct sockaddr_storage *ss)
-+{
-+	memset(ss, 0, sizeof(*ss));
-+	if (family == AF_INET) {
-+		struct sockaddr_in *a = (struct sockaddr_in *)ss;
-+
-+		a->sin_family = AF_INET;
-+		a->sin_port = htons(port);
-+		inet_pton(AF_INET, "127.0.0.1", &a->sin_addr);
-+		return sizeof(*a);
-+	}
-+	{
-+		struct sockaddr_in6 *a = (struct sockaddr_in6 *)ss;
-+
-+		a->sin6_family = AF_INET6;
-+		a->sin6_port = htons(port);
-+		inet_pton(AF_INET6, "::1", &a->sin6_addr);
-+		return sizeof(*a);
-+	}
-+}
-+
-+/* Start a plain TCP listener so the connect/TFO target exists. Returns the fd
-+ * or -1. A TCP listener accepts both TCP and MPTCP clients, which keeps the
-+ * test on the client-side mediation under examination. bind/listen perms are
-+ * granted by the profile so this must succeed.
-+ */
-+static int start_listener(int family, int port)
-+{
-+	int s, one = 1;
-+	struct sockaddr_storage ss;
-+	socklen_t len = make_addr(family, port, &ss);
-+
-+	s = socket(family, SOCK_STREAM, 0);
-+	if (s < 0) {
-+		printf("FAIL - listener socket: %m\n");
-+		return -1;
-+	}
-+	(void)setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
-+	/* Enable TFO on the listener (qlen). Best-effort; the mediation check
-+	 * under test happens on the client side. */
-+	(void)setsockopt(s, IPPROTO_TCP, TCP_FASTOPEN, &one, sizeof(one));
-+	if (bind(s, (struct sockaddr *)&ss, len) < 0) {
-+		printf("FAIL - listener bind: %m\n");
-+		close(s);
-+		return -1;
-+	}
-+	if (listen(s, 5) < 0) {
-+		printf("FAIL - listener listen: %m\n");
-+		close(s);
-+		return -1;
-+	}
-+	return s;
-+}
-+
-+/* Returns 1 if the kernel DENIED the operation (EACCES/EPERM) => regression OK.
-+ * Returns 0 if the operation was ALLOWED (connect bypass) => regression FAIL.
-+ * Returns -1 on a setup error.
-+ */
-+static int try_connect(int family, int proto, int port)
-+{
-+	int s, rc;
-+	struct sockaddr_storage ss;
-+	socklen_t len = make_addr(family, port, &ss);
-+
-+	s = socket(family, SOCK_STREAM, proto);
-+	if (s < 0)
-+		return -1;
-+	rc = connect(s, (struct sockaddr *)&ss, len);
-+	if (rc == 0) {
-+		close(s);
-+		return 0;			/* allowed */
-+	}
-+	if (errno == EACCES || errno == EPERM) {
-+		close(s);
-+		return 1;			/* denied by AppArmor */
-+	}
-+	/* ECONNREFUSED/ETIMEDOUT mean it reached the network: mediation did not
-+	 * block it, so count as allowed. */
-+	close(s);
-+	return (errno == ECONNREFUSED || errno == ETIMEDOUT) ? 0 : -1;
-+}
-+
-+static int try_fastopen(int family, int proto, int port)
-+{
-+	int s;
-+	ssize_t rc;
-+	char msg[] = "tfo";
-+	struct sockaddr_storage ss;
-+	socklen_t len = make_addr(family, port, &ss);
-+
-+	s = socket(family, SOCK_STREAM, proto);
-+	if (s < 0)
-+		return -1;
-+
-+	/* The bug: this implicit-connect send must be mediated as a connect. */
-+	rc = sendto(s, msg, sizeof(msg), MSG_FASTOPEN,
-+		    (struct sockaddr *)&ss, len);
-+	if (rc >= 0) {
-+		close(s);
-+		return 0;			/* allowed: connect bypass */
-+	}
-+	if (errno == EACCES || errno == EPERM) {
-+		close(s);
-+		return 1;			/* denied by AppArmor */
-+	}
-+	if (errno == EOPNOTSUPP || errno == EINVAL) {
-+		/* The .sh enabled TCP Fast Open before running, so this is a
-+		 * real setup error, not an expected condition. Fail loudly
-+		 * rather than masking it as a denial. */
-+		close(s);
-+		return -1;
-+	}
-+	close(s);
-+	return (errno == ECONNREFUSED || errno == ETIMEDOUT) ? 0 : -1;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	int family, proto, port, denied, listener;
-+	const char *mode;
-+
-+	if (argc < 4) {
-+		printf("FAIL - usage: %s connect|fastopen inet|inet6|minet|minet6 port\n",
-+		       argv[0]);
-+		return 1;
-+	}
-+	mode = argv[1];
-+	if (parse_family(argv[2], &family, &proto) < 0) {
-+		printf("FAIL - unknown family '%s'\n", argv[2]);
-+		return 1;
-+	}
-+	port = atoi(argv[3]);
-+
-+	signal(SIGPIPE, SIG_IGN);
-+
-+	listener = start_listener(family, port);
-+	if (listener < 0)
-+		return 1;			/* FAIL already printed */
-+
-+	if (strcmp(mode, "connect") == 0) {
-+		denied = try_connect(family, proto, port);
-+	} else if (strcmp(mode, "fastopen") == 0) {
-+		denied = try_fastopen(family, proto, port);
-+	} else {
-+		printf("FAIL - unknown mode '%s'\n", mode);
-+		close(listener);
-+		return 1;
-+	}
-+
-+	close(listener);
-+
-+	if (denied == 1) {
-+		printf("PASS\n");
-+		return 0;
-+	}
-+	if (denied == 0) {
-+		printf("FAIL - %s was ALLOWED despite deny connect "
-+		       "(connect-mediation bypass)\n", mode);
-+		return 1;
-+	}
-+	printf("FAIL - %s setup error: %m\n", mode);
-+	return 1;
-+}
-diff --git a/tests/regression/apparmor/net_inet_tcp_fastopen.sh b/tests/regression/apparmor/net_inet_tcp_fastopen.sh
-new file mode 100755
-index 000000000..76300c53f
---- /dev/null
-+++ b/tests/regression/apparmor/net_inet_tcp_fastopen.sh
-@@ -0,0 +1,119 @@
-+#! /bin/bash
-+#	Copyright (C) 2026 Canonical, Ltd.
-+#
-+#	This program is free software; you can redistribute it and/or
-+#	modify it under the terms of the GNU General Public License as
-+#	published by the Free Software Foundation, version 2 of the
-+#	License.
-+
-+#=NAME net_inet_tcp_fastopen
-+#=DESCRIPTION
-+# Regression test for the TCP Fast Open connect-mediation bypass. Under a
-+# profile that grants inet/inet6 stream "send" but DENIES "connect", a plain
-+# connect(2) is refused, and sendto(..., MSG_FASTOPEN, ...) (which performs an
-+# implicit connect) MUST also be refused -- for both plain TCP and MPTCP. Pre-fix
-+# the TFO path checked only the send permission (AA_NET_SEND 0x02) and skipped
-+# connect (AA_NET_CONNECT 0x40).
-+#=END
-+
-+pwd=`dirname $0`
-+pwd=`cd $pwd ; /bin/pwd`
-+
-+bin=$pwd
-+
-+. "$bin/prologue.inc"
-+
-+# Need fine-grained inet mediation (connect/send are separable only there).
-+requires_any_of_kernel_features network_v8/af_inet network_v9/af_inet
-+requires_parser_support "network (send) ip=::1,"
-+
-+settest net_inet_tcp_fastopen
-+
-+tfo_sysctl=/proc/sys/net/ipv4/tcp_fastopen
-+tfo_saved=""
-+
-+cleanup()
-+{
-+	# restore the original tcp_fastopen value if we changed it
-+	if [ -n "$tfo_saved" ]; then
-+		echo "$tfo_saved" > "$tfo_sysctl" 2>/dev/null || true
-+	fi
-+}
-+do_onexit="cleanup"
-+
-+# The sendto(MSG_FASTOPEN) client path needs the TCP Fast Open client bit
-+# (0x1). Enable it for the run; if it is unavailable (no sysctl, or it cannot
-+# be enabled) the bug cannot be exercised at all, so skip rather than report a
-+# spurious failure.
-+if [ ! -w "$tfo_sysctl" ]; then
-+	echo "    TCP Fast Open sysctl ($tfo_sysctl) not available. Skipping tests ..."
-+	exit 0
-+fi
-+tfo_saved=`cat "$tfo_sysctl"`
-+echo $((tfo_saved | 1)) > "$tfo_sysctl" 2>/dev/null || true
-+if [ $(($(cat "$tfo_sysctl") & 1)) -ne 1 ]; then
-+	echo "    Could not enable the TCP Fast Open client bit. Skipping tests ..."
-+	exit 0
-+fi
-+
-+# add ::1 if not already present (loopback usually has it)
-+ip -6 addr add ::1/128 dev lo 2>/dev/null || true
-+
-+# pick a free port for the listener this binary creates
-+port=4321
-+while lsof -i:$port >/dev/null 2>&1; do
-+	let port=$port+1
-+done
-+
-+# Profile: allow stream send/receive + the perms needed to stand up the
-+# in-process listener (bind/listen/accept), allow setopt/getopt for TFO
-+# sockopts, but explicitly DENY connect on both inet and inet6.
-+gen_send_no_connect()
-+{
-+	genprofile \
-+	  "network;(send,receive,accept,listen,bind);ip=127.0.0.1;port=$port" \
-+	  "network;(send,receive,accept,listen,bind);ip=::1;port=$port" \
-+	  "network;(send,receive);peer=(ip=127.0.0.1)" \
-+	  "network;(send,receive);peer=(ip=::1)" \
-+	  "network;(setopt,getopt);ip=0.0.0.0;port=0" \
-+	  "network;(setopt,getopt);ip=::0;port=0" \
-+	  "qual=deny:network;(connect);ip=127.0.0.1" \
-+	  "qual=deny:network;(connect);ip=::1"
-+}
-+
-+# ---- inet (IPv4) ----
-+gen_send_no_connect
-+# baseline: a normal connect(2) must be denied -> binary prints PASS (denied),
-+# expected outcome 'pass'
-+runchecktest "TFO inet - connect(2) denied" pass connect inet $port
-+# the bug: sendto(MSG_FASTOPEN) must ALSO be denied post-fix
-+runchecktest "TFO inet - sendto(MSG_FASTOPEN) denied" pass fastopen inet $port
-+
-+# ---- inet6 (IPv6) ----
-+gen_send_no_connect
-+runchecktest "TFO inet6 - connect(2) denied" pass connect inet6 $port
-+runchecktest "TFO inet6 - sendto(MSG_FASTOPEN) denied" pass fastopen inet6 $port
-+
-+# ---- MPTCP: the second producer the fix guards (IPPROTO_MPTCP) ----
-+# The deny-connect rule is family/type based, so it covers MPTCP (inet/inet6
-+# stream) too. Only run when MPTCP is enabled.
-+if [ "`cat /proc/sys/net/mptcp/enabled 2>/dev/null`" = "1" ]; then
-+	gen_send_no_connect
-+	runchecktest "TFO MPTCP inet - connect(2) denied" pass connect minet $port
-+	runchecktest "TFO MPTCP inet - sendto(MSG_FASTOPEN) denied" pass fastopen minet $port
-+	gen_send_no_connect
-+	runchecktest "TFO MPTCP inet6 - connect(2) denied" pass connect minet6 $port
-+	runchecktest "TFO MPTCP inet6 - sendto(MSG_FASTOPEN) denied" pass fastopen minet6 $port
-+fi
-+
-+# ---- positive control: when connect IS allowed, both succeed (no false deny) ----
-+genprofile \
-+  "network;(connect,send,receive,accept,listen,bind);ip=127.0.0.1;port=$port" \
-+  "network;(connect,send,receive);peer=(ip=127.0.0.1)" \
-+  "network;(setopt,getopt);ip=0.0.0.0;port=0"
-+# Here the binary's "denied" assertion is FALSE (op allowed), so it prints
-+# FAIL; we expect that, i.e. expected outcome 'fail'.
-+runchecktest "TFO inet - connect allowed (control)" fail connect inet $port
-+runchecktest "TFO inet - fastopen allowed (control)" fail fastopen inet $port
-+
-+exit 0
+no need.
 
----
-base-commit: bdccc1ebd2e1a1b75ceb8f87b23831fe273b9ebb
-change-id: 20260622-b4-disp-220b400d-3d7fd53bce49
+>  	u32 attach_st_ops_member_off;
+>  	u32 ctx_arg_info_size;
+>  	u32 max_rdonly_access;
+> diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
+> index 143775a27a2a..b655c708818e 100644
+> --- a/include/linux/bpf_lsm.h
+> +++ b/include/linux/bpf_lsm.h
+> @@ -19,6 +19,9 @@
+>  #include <linux/lsm_hook_defs.h>
+>  #undef LSM_HOOK
+> =20
+> +/* max bpf xattrs per inode */
+> +#define BPF_LSM_INODE_INIT_XATTRS 4
+> +
+>  struct bpf_storage_blob {
+>  	struct bpf_local_storage __rcu *storage;
+>  };
+> diff --git a/include/linux/evm.h b/include/linux/evm.h
+> index 913f4573b203..0aa151288b36 100644
+> --- a/include/linux/evm.h
+> +++ b/include/linux/evm.h
+> @@ -12,6 +12,8 @@
+>  #include <linux/integrity.h>
+>  #include <linux/xattr.h>
+> =20
+> +struct xattr_ctx;
+> +
+>  #ifdef CONFIG_EVM
+>  extern int evm_set_key(void *key, size_t keylen);
+>  extern enum integrity_status evm_verifyxattr(struct dentry *dentry,
+> @@ -21,8 +23,8 @@ extern enum integrity_status evm_verifyxattr(struct den=
+try *dentry,
+>  int evm_fix_hmac(struct dentry *dentry, const char *xattr_name,
+>  		 const char *xattr_value, size_t xattr_value_len);
+>  int evm_inode_init_security(struct inode *inode, struct inode *dir,
+> -			    const struct qstr *qstr, struct xattr *xattrs,
+> -			    int *xattr_count);
+> +			    const struct qstr *qstr,
+> +			    struct xattr_ctx *xattr_ctx);
+>  extern bool evm_revalidate_status(const char *xattr_name);
+>  extern int evm_protected_xattr_if_enabled(const char *req_xattr_name);
+>  extern int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
+> @@ -63,8 +65,7 @@ static inline int evm_fix_hmac(struct dentry *dentry, c=
+onst char *xattr_name,
+> =20
+>  static inline int evm_inode_init_security(struct inode *inode, struct in=
+ode *dir,
+>  					  const struct qstr *qstr,
+> -					  struct xattr *xattrs,
+> -					  int *xattr_count)
+> +					  struct xattr_ctx *xattr_ctx)
+>  {
+>  	return 0;
+>  }
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.=
+h
+> index 65c9609ec207..f62780fbeb9e 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -116,8 +116,8 @@ LSM_HOOK(int, 0, inode_alloc_security, struct inode *=
+inode)
+>  LSM_HOOK(void, LSM_RET_VOID, inode_free_security, struct inode *inode)
+>  LSM_HOOK(void, LSM_RET_VOID, inode_free_security_rcu, void *inode_securi=
+ty)
+>  LSM_HOOK(int, -EOPNOTSUPP, inode_init_security, struct inode *inode,
+> -	 struct inode *dir, const struct qstr *qstr, struct xattr *xattrs,
+> -	 int *xattr_count)
+> +	 struct inode *dir, const struct qstr *qstr,
+> +	 struct xattr_ctx *xattr_ctx)
+>  LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
+>  	 const struct qstr *name, const struct inode *context_inode)
+>  LSM_HOOK(int, 0, inode_create, struct inode *dir, struct dentry *dentry,
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index b4f8cad53ddb..710e48caaeba 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -200,20 +200,18 @@ extern struct lsm_static_calls_table static_calls_t=
+able __ro_after_init;
+> =20
+>  /**
+>   * lsm_get_xattr_slot - Return the next available slot and increment the=
+ index
+> - * @xattrs: array storing LSM-provided xattrs
+> - * @xattr_count: number of already stored xattrs (updated)
+> + * @ctx: xattr state shared by inode_init_security hooks
+>   *
+> - * Retrieve the first available slot in the @xattrs array to fill with a=
+n xattr,
+> - * and increment @xattr_count.
+> + * Retrieve the first available slot in the @ctx->xattrs array to fill w=
+ith an
+> + * xattr, and increment @ctx->xattr_count.
+>   *
+> - * Return: The slot to fill in @xattrs if non-NULL, NULL otherwise.
+> + * Return: The slot to fill in @ctx->xattrs if non-NULL, NULL otherwise.
+>   */
+> -static inline struct xattr *lsm_get_xattr_slot(struct xattr *xattrs,
+> -					       int *xattr_count)
+> +static inline struct xattr *lsm_get_xattr_slot(struct xattr_ctx *ctx)
+>  {
+> -	if (unlikely(!xattrs))
+> +	if (unlikely(!ctx || !ctx->xattrs || !ctx->xattr_count))
+>  		return NULL;
+> -	return &xattrs[(*xattr_count)++];
+> +	return &ctx->xattrs[(*ctx->xattr_count)++];
+>  }
+> =20
+>  #endif /* ! __LINUX_LSM_HOOKS_H */
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 153e9043058f..1f8e84e7dd7e 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -68,6 +68,11 @@ struct watch;
+>  struct watch_notification;
+>  struct lsm_ctx;
+> =20
+> +struct xattr_ctx {
+> +	struct xattr *xattrs;
+> +	int *xattr_count;
+> +};
+> +
+>  /* Default (no) options for the capable function */
+>  #define CAP_OPT_NONE 0x0
+>  /* If capable should audit the security request */
+> diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+> index 564071a92d7d..86a8e188b900 100644
+> --- a/kernel/bpf/bpf_lsm.c
+> +++ b/kernel/bpf/bpf_lsm.c
+> @@ -113,6 +113,9 @@ void bpf_lsm_find_cgroup_shim(const struct bpf_prog *=
+prog,
+>  }
+>  #endif
+> =20
+> +BTF_ID_LIST_SINGLE(bpf_lsm_inode_init_security_btf_ids, func,
+> +		   bpf_lsm_inode_init_security)
+> +
+>  int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
+>  			const struct bpf_prog *prog)
+>  {
+> @@ -137,6 +140,12 @@ int bpf_lsm_verify_prog(struct bpf_verifier_log *vlo=
+g,
+>  		return -EINVAL;
+>  	}
+> =20
+> +	/* bpf reserves a fixed number of xattr slots for itself.
+> +	 * Set the attach limit so the trampoline rejects excess attaches.
+> +	 */
+> +	if (btf_id =3D=3D bpf_lsm_inode_init_security_btf_ids[0])
+> +		prog->aux->attach_limit =3D BPF_LSM_INODE_INIT_XATTRS;
+> +
+>  	return 0;
+>  }
+> =20
+> @@ -315,6 +324,7 @@ BTF_ID(func, bpf_lsm_inode_create)
+>  BTF_ID(func, bpf_lsm_inode_free_security)
+>  BTF_ID(func, bpf_lsm_inode_getattr)
+>  BTF_ID(func, bpf_lsm_inode_getxattr)
+> +BTF_ID(func, bpf_lsm_inode_init_security)
+>  BTF_ID(func, bpf_lsm_inode_mknod)
+>  BTF_ID(func, bpf_lsm_inode_need_killpriv)
+>  BTF_ID(func, bpf_lsm_inode_post_setxattr)
+> diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
+> index 1a721fc4bef5..b41b02173e24 100644
+> --- a/kernel/bpf/trampoline.c
+> +++ b/kernel/bpf/trampoline.c
+> @@ -859,6 +859,9 @@ static int bpf_trampoline_add_prog(struct bpf_trampol=
+ine *tr,
+>  	}
+>  	if (cnt >=3D BPF_MAX_TRAMP_LINKS)
+>  		return -E2BIG;
+> +	if (node->link->prog->aux->attach_limit &&
+> +	    tr->progs_cnt[kind] >=3D node->link->prog->aux->attach_limit)
+> +		return -E2BIG;
 
-Best regards,
--- 
-bryamzxz <hexlabsecurity@proton.me>
+No need. The check inside kfunc is enough.
 
+>  	if (!hlist_unhashed(&node->tramp_hlist))
+>  		/* prog already linked */
+>  		return -EBUSY;
+> diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
+> index 40efde233f3a..d7c44c5c0e30 100644
+> --- a/security/bpf/hooks.c
+> +++ b/security/bpf/hooks.c
+> @@ -30,6 +30,7 @@ static int __init bpf_lsm_init(void)
+> =20
+>  struct lsm_blob_sizes bpf_lsm_blob_sizes __ro_after_init =3D {
+>  	.lbs_inode =3D sizeof(struct bpf_storage_blob),
+> +	.lbs_xattr_count =3D BPF_LSM_INODE_INIT_XATTRS,
+>  };
+> =20
+>  DEFINE_LSM(bpf) =3D {
+> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/e=
+vm_main.c
+> index b59e3f121b8a..e0a05162accc 100644
+> --- a/security/integrity/evm/evm_main.c
+> +++ b/security/integrity/evm/evm_main.c
+> @@ -1062,14 +1062,16 @@ static int evm_inode_copy_up_xattr(struct dentry =
+*src, const char *name)
+>   * evm_inode_init_security - initializes security.evm HMAC value
+>   */
+>  int evm_inode_init_security(struct inode *inode, struct inode *dir,
+> -			    const struct qstr *qstr, struct xattr *xattrs,
+> -			    int *xattr_count)
+> +			    const struct qstr *qstr,
+> +			    struct xattr_ctx *xattr_ctx)
 
+the rest looks good.
+Pls split the patch. Introduce xattr_ctx first across the LSMs.
+Then another patch with a new kfunc.
+
+pw-bot: cr
