@@ -1,159 +1,129 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F93312826
-	for <linux-security-module@vger.kernel.org>; Tue, 23 Jun 2026 09:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1C5218592;
+	Tue, 23 Jun 2026 13:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782207937; cv=none; b=cr66RlvyEl9YBfSHqSp67GwT8UcdNq1FD8Nt0CGQ7mAkRLVDthGEOVL7JM3L5oxHCIMXuh/FPBMSfNtqpiO71+GCjiquO1a1/BmzeYudqSNu0FDc3t9P+JNtLyQSn8cp7F8SEltq/zPD262VIsR6Osaau4OqcdVLmljvIL63xl0=
+	t=1782220371; cv=none; b=k4+1R4iY9rMclE/9Zw12gbOg/zQnmFcRLBhil5lE8MgEiWcAuLqkfGaUzyPR35mpFAGI04dqsrJ79fOXFDdnlR3F8SJ0EoZIdgR74fmlUmIfGrDOmre88zkcQpasg+91Mrn4SQ/TODHobMCDOnYRGfdgXpvjC4Hk1IHEfFdjijc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782207937; c=relaxed/simple;
-	bh=bUrj5jpB752v6HMszHuNqDo5qMCuJByI7yKMX4H6k1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kg1d4k3sW+Bgh76SBYp5upz4SAKSdrWWr5PPkasWMxLGsv9pdZ7xO87mB5wd1E+UpWQUL/n7q6yeH0iMtfLPlbr6wpwXBNUMmDy/Vzi2dE2EWxpR0nVBAnGtxYnoHNa0TuX0szrDtZypwIJSjArjGXLEWurtRtETTKFetmbQm8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FDGClLqZ; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1782220371; c=relaxed/simple;
+	bh=LuXejG0zn+L5dDE9r+JIoNsNQIfW2IgJExa7sTKqB7Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ALC6IxDqo9hDbg1um8wHC9kpy4kGp5yV1JofRi2Q7mEplEt9e6/EB30mQRx/fwEaQPN+0TXcJt3IB8eGz/Ufn5H9xx4UpzsOrp8kMsa1j2LsXeIWF7JSqCECknUNsE1rkRxpj5DC7jjTw5pQuMRGlW3BnP4yuBBPOPAmf74Kq5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ViufDM0E; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FDGClLqZ"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4924593f45dso37204235e9.1
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Jun 2026 02:45:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1782207934; x=1782812734; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8aAn7vW7HnpPqB5+lrJ5PjRff9Jdkjq/Q3glmHe6HFw=;
-        b=FDGClLqZu/XweS2IPEjW795DtPZle+xwRQa2xvfHyK4aWcrT6+k8E3D+07zejtqhKV
-         zFAuiOiNjHLmVx5IhYn6K6aiD4ABmsRHFSWFXZ5XYDidSI6gjTWkuG2yNYcRbjihW1A+
-         FHD9br6KlBi5u7jqHe1xCqDkkSjjCwITE7UudfacrOq57tkvapVfeSkskIS4/l7L6g1H
-         0EEhhUo8u5N7CQIe4CNB8QPgI5kDSvGn1E24WlZCjjg30c7GGyBSCzXa+H3zdZ7oCs0D
-         oQY8krgEaN5CN5EBL0qzMhOEpnHjAdXfg27hCvXRPrXr9nB3zn+yg2HMt7S1sl9kzc+o
-         8oRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782207934; x=1782812734;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8aAn7vW7HnpPqB5+lrJ5PjRff9Jdkjq/Q3glmHe6HFw=;
-        b=HsGb0IjI/i6yInOgU9Z6CAgrt6ZWf5+LftE4a3YnmxJ0+SyJoPhcNoYWNJQdmDTARg
-         EfehUBrmKb+tbUVR0IWBTiegkVFhXZDa6MlO4yQcOBI/9tRxGsUto/z+cVsrA7IbnahO
-         swxsysZt7bmf98yYbvVTX69PVN8yh4YE3kbuq7lFcBZ/CIza3cfTVZw4bHYFJFDs/0Bo
-         45v+4XwJfRbaVvwjRha8eFP+8enUiRqfIq6TUUnY70O7tkcJXD3DkBMexPbM8kU7tUZm
-         /COFy2l4q3exoKi4W9S3rY886r+fJ1d1jfpVZANjG+CuyazfEKsPAZh+E5blrtCezMMO
-         u9Ew==
-X-Forwarded-Encrypted: i=1; AFNElJ/u2mBC58w2OxC0D/v+V1j6iNEwo0/QpKdgjpY9xRXP08KhpHxbi0cN/fsT+HEslFP0Fl+anKf+XR12sx8wHcICYfkaFUQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRlzFrg+tRjMCRQxL+WHfx0HK+MoTBAYqJgqXceJVJNQoio3EZ
-	c0075MnwHairl1sO7dxYGBlk7kHKwmH9AORn3wp4UlXGpwpDGKxdWFmPrFLi9P0WOP6NTo16Gm/
-	EWlnmNrOo
-X-Gm-Gg: AfdE7cmhKw3WMYabuKhsw2LyA3ZJQ+QQnMpvPyDQapi+CKglb3NUWnNbriLD4cJdPqG
-	6MA6Fj6veKyaX4ptpuWoX7SebfKpERBidBA+8TpJ0f9yVmpN5KyY4/Mlh0KP3QxGlqdON/JD6UU
-	zlmku537O03IalU3cBqw6jIw1BwszXRo8OE34US3cwCw6nSeEIgvdkSwi0k/8WGkq1nBV9IR5Y1
-	p+QJWqRagGyPWlFAz7IDeKXk8I7vndAFMaVGm077B+ZSl4BO4B3vwtmUlCxQ2ld3LJcEv33NjIn
-	GoK4TL3mo16vCa0udJu00oXB2yaF3JtsANLsnzZFc+o3vTOcaaebwcJqQugu6JDiNtUKC/99Xym
-	WlF46cPALzb6PDKbIM6XlnYeG0cdLGBMZGyT6mSrVZkPbQy4ovuZ6SKc9Tep/lZ2iF+Mj1SvXZB
-	X/K1tTzsMmNWLz72Np9LEpSH7oQR3mKLgt/XAiHIXfiGM=
-X-Received: by 2002:a05:600c:8b18:b0:490:e5c1:b8bf with SMTP id 5b1f17b1804b1-4925b38cfa9mr27355855e9.13.1782207933647;
-        Tue, 23 Jun 2026 02:45:33 -0700 (PDT)
-Received: from google.com ([2a00:79e0:288a:8:73a8:ec64:c132:744c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-466643f4d9csm33593205f8f.4.2026.06.23.02.45.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jun 2026 02:45:30 -0700 (PDT)
-Date: Tue, 23 Jun 2026 11:45:24 +0200
-From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: Peng Hao <flyingpenghao@gmail.com>
-Cc: mic@digikod.net, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] landlock: shrink tsync works[] on partial allocation
- failure
-Message-ID: <ajpVtFfp0ZxJUVc6@google.com>
-References: <20260623050127.48247-1-flyingpeng@tencent.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ViufDM0E"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 922CF1F000E9;
+	Tue, 23 Jun 2026 13:12:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782220370;
+	bh=+rzFpQ8O/10QiSxDOc9EPIkCdPQE1on2cJQrgpHbAZE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date;
+	b=ViufDM0EZ7iUxbOYXY2wdI5lAjc9KlTZkhijrIJU9IXCwHIq77eaTYi1q+b++HSJt
+	 jRu44bv9q4fNbTcplpUTdl0GDJZVn840Fzexjq6sM7GPsYSYiTwtSkcLVYnzJSyZXC
+	 XfMSaa+2lXkLKi3I8GME16fOL0/IlJBx82RnEsWbIgLgfIOVvDS8Fqgg/B4uDOaU0P
+	 8Yzb+3txaIfMRxZ3u8Rw2Mf2i/3MpTM5foSzb9RR+Z7S8KQiluZIW5EyK08LEoiVk6
+	 4B8eyMNZnIAxVokQYMJlAOvP7Ap0MNQAr72k2+A6DrfvBqVFG4VbXV4/dMqiiLtFsS
+	 GX+wqSW8Cjyqg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Gary Guo <gary@garyguo.net>, Miguel Ojeda <ojeda@kernel.org>, Gary Guo
+ <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno
+ Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
+ Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman
+ <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, Leon
+ Romanovsky <leon@kernel.org>, Paul Moore <paul@paul-moore.com>, Serge
+ Hallyn <sergeh@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Alexander
+ Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, Daniel Almeida <daniel.almeida@collabora.com>,
+ Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen
+ Boyd <sboyd@kernel.org>, Bjorn
+ Helgaas <bhelgaas@google.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, Boqun Feng <boqun@kernel.org>, Uladzislau
+ Rezki <urezki@gmail.com>, Lorenzo Stoakes <ljs@kernel.org>, Vlastimil
+ Babka <vbabka@kernel.org>, "Liam R. Howlett" <liam@infradead.org>, Igor
+ Korotin <igor.korotin@linux.dev>, Pavel Tikhomirov
+ <ptikhomirov@virtuozzo.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org,
+ driver-core@lists.linux.dev
+Subject: Re: [PATCH v17 03/10] rust: implement `ForeignOwnable` for `Owned`
+In-Reply-To: <DJAGDGPKZ4HX.M47NMAU53PCJ@garyguo.net>
+References: <20260604-unique-ref-v17-0-7b4c3d2930b9@kernel.org>
+ <20260604-unique-ref-v17-3-7b4c3d2930b9@kernel.org>
+ <DJAGDGPKZ4HX.M47NMAU53PCJ@garyguo.net>
+Date: Tue, 23 Jun 2026 15:10:44 +0200
+Message-ID: <87echxpfl7.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260623050127.48247-1-flyingpeng@tencent.com>
+Content-Type: text/plain
 
-Hello Peng!
+"Gary Guo" <gary@garyguo.net> writes:
 
-Thanks for your patch!
+> On Thu Jun 4, 2026 at 9:11 PM BST, Andreas Hindborg wrote:
+>> Implement `ForeignOwnable` for `Owned<T>`. This allows use of `Owned<T>` in
+>> places such as the `XArray`.
+>>
+>> Note that `T` does not need to implement `ForeignOwnable` for `Owned<T>` to
+>> implement `ForeignOwnable`.
+>>
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>> ---
+>>  rust/kernel/owned.rs | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 46 insertions(+)
+>>
+>> diff --git a/rust/kernel/owned.rs b/rust/kernel/owned.rs
+>> index 456e239e906e..5eacdf327d12 100644
+>> --- a/rust/kernel/owned.rs
+>> +++ b/rust/kernel/owned.rs
+>> @@ -15,6 +15,8 @@
+>>      ptr::NonNull, //
+>>  };
+>>  
+>> +use kernel::types::ForeignOwnable;
+>> +
+>>  /// Types that specify their own way of performing allocation and destruction. Typically, this trait
+>>  /// is implemented on types from the C side.
+>>  ///
+>> @@ -108,6 +110,7 @@ pub trait Ownable {
+>>  ///
+>>  /// - Until `T::release` is called, this `Owned<T>` exclusively owns the underlying `T`.
+>>  /// - The `T` value is pinned.
+>> +#[repr(transparent)]
+>
+> AFAIT this `#[repr(transparent)]` isn't actually needed.
 
-On Tue, Jun 23, 2026 at 01:01:27PM +0800, Peng Hao wrote:
-> When the per-slot kzalloc fails mid-loop in tsync_works_grow_by(), the
-> already-enlarged s->works array keeps uninitialized trailing entries.
-> Shrink the array back to its used size on the error path so no waste
-> is carried over: free it outright when nothing has been allocated yet,
-> otherwise try a shrinking krealloc_array() (keep the larger array if
-> the shrink fails, since tsync_works_release() honors s->capacity).
-> 
-> Signed-off-by: Peng Hao <flyingpeng@tencent.com>
-> ---
->  security/landlock/tsync.c | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
-> index c5730bbd..356ce94b 100644
-> --- a/security/landlock/tsync.c
-> +++ b/security/landlock/tsync.c
-> @@ -272,9 +272,23 @@ static int tsync_works_grow_by(struct tsync_works *s, size_t n, gfp_t flags)
->  		work = kzalloc_obj(*work, flags);
->  		if (!work) {
->  			/*
-> -			 * Leave the object in a consistent state,
-> -			 * but return an error.
-> +			 * Leave the object in a consistent state, but return
-> +			 * an error.  Shrink @s->works back to its used size to
-> +			 * avoid carrying uninitialized trailing entries.  A
-> +			 * shrinking krealloc_array() should normally succeed,
-> +			 * but if it does not we simply keep the larger array;
-> +			 * tsync_works_release() iterates only up to capacity.
->  			 */
-> +			if (i == 0) {
-> +				kfree(s->works);
-> +				s->works = NULL;
-> +			} else {
-> +				works = krealloc_array(s->works, i,
-> +						       sizeof(s->works[0]),
-> +						       flags | __GFP_NOWARN);
-> +				if (works)
-> +					s->works = works;
-> +			}
->  			s->capacity = i;
->  			return -ENOMEM;
->  		}
+I'll drop it.
 
-Can you please clarify your motivation for this?
+>
+>>  pub struct Owned<T: Ownable> {
+>>      ptr: NonNull<T>,
+>>  }
+>> @@ -185,3 +188,46 @@ fn drop(&mut self) {
+>>          unsafe { T::release(self.ptr.as_mut()) };
+>>      }
+>>  }
+>> +
+>> +// SAFETY: We derive the pointer to `T` from a valid `T`, so the returned
+>> +// pointer satisfy alignment requirements of `T`.
+>> +unsafe impl<T: Ownable + 'static> ForeignOwnable for Owned<T> {
+>
+> You should drop the `'static` bound and put where bound on the GAT below
+> instead. See how `Box` is doing it.
 
-To paraphrase my understanding
-
-* You are not addressing a logic bug
-
-  The invariant for that data structure is that s->size <= s->capacity
-  and s->capacity <= number of elements in the array <= number of
-  sibling threads.
-
-  If the array is slightly larger than the capacity, that does not break
-  the invariant and should not result in out-of-bounds accesses.
-
-* You are addressing that the array is a bit larger than the capacity
-
-  This is in the case where kzalloc_obj() failed.  We set the capacity
-  to i (making sure that only the objects 0 to i-1 are being looked at),
-  and we return an error.  Sure, the array is overallocated a little
-  bit, but now that we are returning an error, the caller will
-  fast-track to abort the tsync due to ENOMEM and the array does anyway
-  get released very soon now.
+I will take a look.
 
 
-The state where we use slightly more memory (with number of entries <=
-number of sibling threads) is supposed to be very transient.
+Best regards,
+Andreas Hindborg
 
-Is the delay between raising the error and the final kfree() long enough
-that you have seen it cause problems in practice?
 
-Thanks,
-—Günther
