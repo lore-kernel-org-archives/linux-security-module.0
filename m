@@ -1,154 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail-106111.protonmail.ch (mail-106111.protonmail.ch [79.135.106.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897312D7380;
-	Tue, 23 Jun 2026 13:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E898390985;
+	Tue, 23 Jun 2026 17:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782220397; cv=none; b=lbASQqzh+4MWtyElVkgOWEb5Uj5sV3Zh59AUenW/UOQCi2LBNreMwri9cqH7lOj2IV9fmuCPTicazdv7gcc5bXJBnN5KLPaoAYph8D0ZNtaD4vnXhB8NuAI6vsxnbCnYLK7Jb8sqVby8OlQQbXS+4mGfc0C/iLQhVty/7glDJws=
+	t=1782237188; cv=none; b=AFUib98lLY0QncDFGbP1HEaCaUY430mIi2fLx7nW1MQVbOIG7VqY3RAF+iervtpOe2RzcL6/xbwWL3Fz+XHhdq0nLYWA+yAwOBQLqcbVuhCsr1ca7Uv8/MR0G4+lEavQc5ExyIEOlXI9AuDjOYJ7YQ+yfLTIiun/kNrCAgX+I94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782220397; c=relaxed/simple;
-	bh=8dJuTG3moqQRDNLrdEXwt7RTArjTm5ay6yfB3ta92Bo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=eesMmrVbuQswD9mZdBiGdqCufTtaiuKVjrmFVlvg5JF44NwPmCb8VTh3vf1vlr/Kc3AqHFQvpS9yg3buFLdw9NS8zib4WAp0au8Y/n8EQFtG5f0snSSaknfd/jNWU1qxpubCOQYwBYhLp5TUjEid7vx3YIWksQobVdIMBSfdffA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/iifiGe; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1782237188; c=relaxed/simple;
+	bh=E2rm2AmDMNS3fPDLaY+Hd1im7cKJ8qFPnxcfWIeR0r4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z9M3Q3GwUpXJwFi2EWI6vN3EJeIuxJujIfmeZcLNH76J33u15kaaAbrVMr48F9QJN0xiQLjUYXpV4B26XCj1LqbBAgU1j+hFPCmaY8NzKWFzcV//wV5S4xN0pjD/fpV2i/4FX3ePpz4iuztKTETsEh+lpYoZXMnCwK660YvCaNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (2048-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=IUwcPBUm; arc=none smtp.client-ip=79.135.106.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/iifiGe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AF4D1F00A3A;
-	Tue, 23 Jun 2026 13:13:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782220396;
-	bh=g5mc2seyBJ1pVIiIaXg4bERPFOr66pMuwtVwk9IXTQw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date;
-	b=W/iifiGeQ+aI6lAeV71CEqax9mMJWJCFwgoBoQoIXt5uDLfWF2eopH8ndgqr5khmL
-	 ETCbgXqUuQLrRe0nw90m5Y1k/nWjyo/F9LvE0c0A9jPuFsW6g+yW9pteF6cL5KfxKm
-	 6gsTB1cF8sSKT8xWb9CUH7u2G+WpMr5QrWkbkcR/0vltXolw6QZiMIyDgOog42tKMz
-	 +FstpuzGaoX6FoBosQztfPgipJpx2kH42sKLMG8FKKd7zao4S1oih9afeLeAIwUgyI
-	 5IWt+x5Kqr9Gmam/rVWXq/uNF1ViiAoavSb7we+Cbe6vy6rHcUnEUYAx0VyPJTwgEp
-	 X8PyHtZfF+/Ew==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn?= Roy
- Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Trevor
- Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman
- <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, Leon
- Romanovsky <leon@kernel.org>, Paul Moore <paul@paul-moore.com>, Serge
- Hallyn <sergeh@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Alexander
- Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Daniel Almeida <daniel.almeida@collabora.com>,
- Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen
- Boyd <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Krzysztof
- =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Boqun Feng
- <boqun@kernel.org>,
- Uladzislau Rezki <urezki@gmail.com>, Lorenzo Stoakes <ljs@kernel.org>,
- Vlastimil Babka <vbabka@kernel.org>, "Liam R. Howlett"
- <liam@infradead.org>, Igor Korotin <igor.korotin@linux.dev>, Pavel
- Tikhomirov <ptikhomirov@virtuozzo.com>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-block@vger.kernel.org,
- linux-security-module@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-pm@vger.kernel.org, linux-pci@vger.kernel.org,
- driver-core@lists.linux.dev, Asahi Lina <lina+kernel@asahilina.net>,
- Oliver Mangold <oliver.mangold@pm.me>
-Subject: Re: [PATCH v17 02/10] rust: types: Add Ownable/Owned types
-In-Reply-To: <ajE5c-5gZtJRoadx@google.com>
-References: <20260604-unique-ref-v17-0-7b4c3d2930b9@kernel.org>
- <20260604-unique-ref-v17-2-7b4c3d2930b9@kernel.org>
- <ajE5c-5gZtJRoadx@google.com>
-Date: Tue, 23 Jun 2026 15:09:04 +0200
-Message-ID: <87h5mtpfnz.fsf@t14s.mail-host-address-is-not-set>
+	dkim=pass (2048-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="IUwcPBUm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=protonmail; t=1782237176; x=1782496376;
+	bh=s4Is0q7DP6LQ80r/3dZ+cvP75TsKFlNwA4YLWr0Cmjo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:From:To:
+	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=IUwcPBUmckP5rXwZanc2iqSVRvyw2KiD/T2Pka87Rr9k4JwUwaQxuj1ie3YNYlWKu
+	 5SUso8FzI/8S2nwliVNmKyy5T6vNtzQOOJYflWqR4gKYe/zJeoLkX1HssX7w0KrrYT
+	 z5a8Xo2nG83wDO9cxhI9ynMlCnHSVndW/Ik3uZsGUjQPd27/DkqV1pdBnZ3kjyDvuw
+	 hdo6xjK3+Bn32c5Rbvy9noKj25u2gjwfNJsOcGOE2Qoat1hu7dE7fElB44u+harnIi
+	 XQ9bAQvtPyKSzo8iph+srCyfCU2kULocTMHVEXB5Lq44IPfTpcHPWSVdV2JadFB+qu
+	 nf58a6hspOA8w==
+X-Pm-Submission-Id: 4glCMd2JVcz1DDKr
+From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Gary Guo <gary@garyguo.net>,
+	=?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dave Ertman <david.m.ertman@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Serge Hallyn <sergeh@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	=?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Boqun Feng <boqun@kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Lorenzo Stoakes <ljs@kernel.org>,
+	Vlastimil Babka <vbabka@kernel.org>,
+	"Liam R. Howlett" <liam@infradead.org>,
+	Igor Korotin <igor.korotin@linux.dev>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-pm@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	driver-core@lists.linux.dev,
+	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+Subject: Re: [PATCH v17 10/10] rust: page: add `from_raw()`
+Date: Tue, 23 Jun 2026 20:52:41 +0300
+Message-ID: <20260623175243.83672-1-work@onurozkan.dev>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20260604-unique-ref-v17-10-7b4c3d2930b9@kernel.org>
+References: <20260604-unique-ref-v17-0-7b4c3d2930b9@kernel.org> <20260604-unique-ref-v17-10-7b4c3d2930b9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Alice Ryhl <aliceryhl@google.com> writes:
-
-> On Thu, Jun 04, 2026 at 10:11:14PM +0200, Andreas Hindborg wrote:
->> From: Asahi Lina <lina+kernel@asahilina.net>
->> 
->> By analogy to `AlwaysRefCounted` and `ARef`, an `Ownable` type is a
->> (typically C FFI) type that *may* be owned by Rust, but need not be. Unlike
->> `AlwaysRefCounted`, this mechanism expects the reference to be unique
->> within Rust, and does not allow cloning.
->> 
->> Conceptually, this is similar to a `KBox<T>`, except that it delegates
->> resource management to the `T` instead of using a generic allocator.
->> 
->> [ om:
->>   - Split code into separate file and `pub use` it from types.rs.
->>   - Make from_raw() and into_raw() public.
->>   - Remove OwnableMut, and make DerefMut dependent on Unpin instead.
->>   - Usage example/doctest for Ownable/Owned.
->>   - Fixes to documentation and commit message.
->> ]
->> 
->> Link: https://lore.kernel.org/all/20250202-rust-page-v1-1-e3170d7fe55e@asahilina.net/
->> Signed-off-by: Asahi Lina <lina+kernel@asahilina.net>
->> Co-developed-by: Oliver Mangold <oliver.mangold@pm.me>
->> Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
->> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
->> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
->> [ Andreas: Updated documentation, examples, and formatting. Change safety
->>   requirements, safety comments. Use a reference for `release`. ]
->> Reviewed-by: Gary Guo <gary@garyguo.net>
->> Co-developed-by: Andreas Hindborg <a.hindborg@kernel.org>
->> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->
-> Overall looks good to me, but two nits below. With them fixed:
->
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->
->> +pub trait Ownable {
->> +    /// Tear down this `Ownable`.
->> +    ///
->> +    /// Implementers of `Ownable` can use this function to clean up the use of `Self`. This can
->> +    /// include freeing the underlying object.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// Callers must ensure that the caller has exclusive ownership of `T`, and this ownership can
->> +    /// be transferred to the `release` method.
->> +    unsafe fn release(&mut self);
->
-> I'd make this take a raw pointer because the pointer can be freed during
-> the execution of release(), which references don't allow.
-
-Ok.
-
->
->> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
->> index 4329d3c2c2e5..4aec7b699269 100644
->> --- a/rust/kernel/types.rs
->> +++ b/rust/kernel/types.rs
->> @@ -11,6 +11,17 @@
->>  };
->>  use pin_init::{PinInit, Wrapper, Zeroable};
->>  
->> +pub use crate::{
->> +    owned::{
->> +        Ownable,
->> +        Owned, //
->> +    },
->> +    sync::aref::{
->> +        ARef,
->> +        AlwaysRefCounted, //
->> +    }, //
->> +};
->
-> We removed the types::ARef re-export, so you shouldn't add it back.
-
-Looks like a rebase failure, I will remove it.
-
-
-Best regards,
-Andreas Hindborg
-
-
-
+On Thu, 04 Jun 2026 22:11:22 +0200=0D
+Andreas Hindborg <a.hindborg@kernel.org> wrote:=0D
+=0D
+> From: Andreas Hindborg <a.hindborg@samsung.com>=0D
+> =0D
+> Add a method to `Page` that allows construction of an instance from `stru=
+ct=0D
+> page` pointer.=0D
+> =0D
+> Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>=0D
+> ---=0D
+>  rust/kernel/page.rs | 12 ++++++++++++=0D
+>  1 file changed, 12 insertions(+)=0D
+> =0D
+> diff --git a/rust/kernel/page.rs b/rust/kernel/page.rs=0D
+> index 844c75e54134..d56ae597f692 100644=0D
+> --- a/rust/kernel/page.rs=0D
+> +++ b/rust/kernel/page.rs=0D
+> @@ -214,6 +214,18 @@ pub fn nid(&self) -> i32 {=0D
+>          unsafe { bindings::page_to_nid(self.as_ptr()) }=0D
+>      }=0D
+>  =0D
+> +    /// Create a `&Page` from a raw `struct page` pointer.=0D
+> +    ///=0D
+> +    /// # Safety=0D
+> +    ///=0D
+> +    /// `ptr` must be convertible to a shared reference with a lifetime =
+of `'a`.=0D
+> +    #[inline]=0D
+> +    pub unsafe fn from_raw<'a>(ptr: *const bindings::page) -> &'a Self {=
+=0D
+> +        // SAFETY: By function safety requirements, `ptr` is not null an=
+d is convertible to a shared=0D
+> +        // reference.=0D
+> +        unsafe { &*ptr.cast() }=0D
+> +    }=0D
+> +=0D
+>      /// Runs a piece of code with this page mapped to an address.=0D
+>      ///=0D
+>      /// The page is unmapped when this call returns.=0D
+> =0D
+> -- =0D
+> 2.51.2=0D
+> =0D
+> =0D
+=0D
+Reviewed-by: Onur =C3=96zkan <work@onurozkan.dev>=0D
