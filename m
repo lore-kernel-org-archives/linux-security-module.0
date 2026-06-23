@@ -1,140 +1,119 @@
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9044F39E194
-	for <linux-security-module@vger.kernel.org>; Tue, 23 Jun 2026 04:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.222.182
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782187334; cv=pass; b=IsLgbaON4GMUnsg/SeHeYAeekEqA3bQ7aC6AECHlGrS1uFNML2QSKXYBgiUxmEq/XkI5TahT4aW3iTQCZ5DKf7+QizSc8j8Nd7VzJLoFnUwF6dAlLMVvBAz9Yn9wY2vQKPXZErpdqMi/yD72Wxi4BDMg5m0qLWMeKDRM99oFdXc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782187334; c=relaxed/simple;
-	bh=F0wTGQkkGlxpSFeNyjD6eaC/VlWEy1Nj2KPYSgkBaLA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=opIBfsnnzAmGJ2cUPMR7H26K0psyW+5GkMM1lR53Wf/fNQqH98QAeVOL+ZTz/60yUsxIcCwjfJ7toq1gFIasBgz+ERwtIr2dgVMPTtZilhwxOBW1ZPNaq74vPim693M30SAEM+FtfSHxBs+K/+H9h4s+I1AGG/bUqcHLCvGOIo4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kvfEHe85; arc=pass smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225EB1F0E34
+	for <linux-security-module@vger.kernel.org>; Tue, 23 Jun 2026 05:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782190894; cv=none; b=LExA1t7rvzCMjbrD0q1NDfGW6IP5d7+McgR6SeYN356ykXcbxvT+8Ru71HjxboTSj6Hj3MjyT5ve6XZ6PZqEhnW+xTTsyY65bQjpO8De0CR37nv0qWhJQTqveuyPnP7xnTfA0mrQxreMOC+iCvO4L6fYANMQoJJoYiAzcW4ftZw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782190894; c=relaxed/simple;
+	bh=zQk3j3MOtPI2wggepqFvqPFmzcD9ik+C9XfeMfXCUXc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eqhpZUeX+AUCRZ0F3+w3rHzfuuH3H9QaqeL7HWNm6apXJF27DrXGI6+q+gsDBCHuQgXRaV9ep2MHmmsQkSc02DHa6y/y5USSWUt7NPeTndechfh6r9Hmut+9m/iCTRB/fZ8BEsSmD79dlIuy7lsWgsr1IIaW2HrFhIBuWkmFAWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LFt+8rA/; arc=none smtp.client-ip=209.85.216.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kvfEHe85"
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-9159477c893so602282185a.0
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Jun 2026 21:02:09 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1782187328; cv=none;
-        d=google.com; s=arc-20240605;
-        b=bLn7mQTyQpnD+hBqRFLncLrSi6uzxsQk5iPVgHFaswYZBWt9VaAUEnNqZ5JiCGs1Az
-         uD3vV0ETjcJvjlv8h1RQQ0WYPPu5ugdeEur4uPoYXU43hmkdt0wlagNnSLe/ealmaMTt
-         lk1CpFMXO3jfCDUqNfNZUwlCTVG4GAsV5t6nr52asRehJOFtNyIV3yr3/+74tqkqwYW1
-         t7eZe3GLmkiAU/G1AigUNRV9p40Zj7gghFtWd+bFI1twlGri26V07B5Yvm2ogDkW/vB5
-         j42lGMow0u0erVGwECa1j+5E/kXLLd9inKrApDD71IYsyV07JIpmsZH0vKa1XyTPvdZH
-         C17w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=eW8+mqrmr6N7CBulx1m18TzlUYk2VeJ10g5AWzjPQEQ=;
-        fh=5/2QtxkCChsun5qiaFAhI6qEBEteyvxEutPuMvGOKbM=;
-        b=Xzp2ibVF01p6Xg9ywzV9zlk0V2FFfpB8/Q5odl1MYXZ43C+U+BnyaEQMVqFN8G1IHw
-         UZpLLIuba2DUseab9CfHAK6Wq2k73hhtOJKO6B81lzBUZsuadDtDBcB7hmhMwSl6BIrO
-         54+g1SE087ExVgTgRb/EycXZZ6PflWfof/CwhTH9TJzfY4wbDlp5XO8kEfl7wiTfHrrg
-         hFu6SmcRFV+5ZQGaZwEmvJHEURd6J9q/zfzdLN2//a+TTx//f7Lk3/lMHAofuaDRJ2Jp
-         3EgThWfzXxgpn1rsJa7SWOoCdbYYMxu+TAtE6egOKy9EsS/7AwTVTWLLyGoyUn2WFqtF
-         8nNw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LFt+8rA/"
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-36b9033d230so257055a91.1
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Jun 2026 22:01:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782187328; x=1782792128; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eW8+mqrmr6N7CBulx1m18TzlUYk2VeJ10g5AWzjPQEQ=;
-        b=kvfEHe85g9lUYBp4b+HBBNOtnEXPs2FhHtjfbueg3OXE/2zsiVDDCk5Sf2KOR1lxib
-         zIoQxQiskpChFQyo21WNgATlA1ZTx/GP/aSDvLer8bGK1k/DXX2aghlwkYqQv2pFkyFz
-         oked1raJu7gLr0qxR3h80MSU/LFbvjxaK41XdPy0f5iGOahOso5D6brjklO00daNIfq1
-         gIxALTWLg3bznUVXFcT2ZVDOgIwpidNjrhE9Sc+zhNk1C8e6f6KiwIxKTskiB6kpTBMK
-         w1nNx8ay0Yr5pDD5SIS7zDfDIGIW66P2uO5D9Xu05DDJK12HXpSTUlR+6N1r5JyQ9KZc
-         sUcw==
+        d=gmail.com; s=20251104; t=1782190892; x=1782795692; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nIt16tpuFSrj/OzOLf9EO5DDoiuEVcOyrhRMsz3Bs2Q=;
+        b=LFt+8rA/4JzLdagXxENNYVBfnII9l/Iy0vApHH70v743DvkCE8uYRX6v9aN3VDMKSx
+         C8NLd3jJH8ueORNtnCvDw2s3UHwnpuFeA1sTd+25mcS6wDl3ErSn3YLMfVKI4ftThb6U
+         ZZMGDcBaSvh2M2yrc5tqUOCnWgAcR6/FoQrx1k/FQJELih4Y5r6qofHo5FGI14ooOwFZ
+         568Ebq5YVf3NSx81F3+xnx7LP8pI7hyctT+OOX+Bn9Ppnt53c5tCB7H+tOEfhXgTjrIV
+         LVktBSlUrI/y6ughJnQA9/UAG7GeePzrViXlo0L5CV/Adqgbdcj298da1jfJXSiCCAKG
+         g+xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782187328; x=1782792128;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=eW8+mqrmr6N7CBulx1m18TzlUYk2VeJ10g5AWzjPQEQ=;
-        b=Ot4GOhZdNmdJlwuBc8BNhUAxGDyeIaFJqRWtIH6wLRFSV/CW0uc3A3j48lxSulo4BC
-         /hedFcj5yLKkrv6xq2f488MpCd3xpH+dOJwV93x9+AYitpKffU8i+1BpFACaiLsiu8dK
-         XBzbGS4d704Y71QxpG0Z6NZI0MDyL30iCPwm0iKyPatHd5xfOONet32HdUAguaHMEuT2
-         zAwmbhp5A/ZvXOfvxXgFjC/Iwa7CLWoe6q34zcaUWhGwIIRdNz4CP2E+olo68Dk4vKbY
-         o/F2hu1DZ54MDhnOh8OXMM48tqK12TmaxObMl1IzjTULw02Qu2ZJypqbDKDj5WojxrJg
-         fPWw==
-X-Forwarded-Encrypted: i=1; AFNElJ8IBT4z8zD1VATzL0ykoTbsjAw8yVHoPYZjNzt2j5PuTOKvApB5ycT1trPRPr1GYkowO3srx982LQo+jJHh2eQO4F9jQs0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLnql32LKUxViGTfVNKe1Ly/fck2LhEMwkvtm856BrXGT2Sv8H
-	Lc26i68Y3bxO9+k9jPaOGXG6nfRU/2cTmiunt5wHxq+mPCL64Od6JA6yqAVwor/VFvxuWprCCkG
-	ymdxzI4iDPiES1aE03kPmSWH9iyNLPYc=
-X-Gm-Gg: AfdE7clKMXEdyaux5l9TAuV1mK1l8SVfrlGEsACgeck5cTXYRjoQs/ToWuG38cbIhD7
-	KrYs9ZBKvAMMDtIoqQyvU+ovCsN83iw1jIR5p7N0S02voGHxgqe6JW3BSLaXpFKWQjdOsa6Wiw3
-	8UtZqpWOARE6ew2yUMVbv9fyIglUH3hssAES5q2UH8kwzJ8zwzrhe5NNIZ5H5rWZ8+o6/16nWKf
-	QnW4019dDsHYrcwb4xRIx94h1NOTaBOlnclyXO72fmCMRQ4Ixy5xiXlYTIhoRUo4cvwWX6XirCK
-	PQLTjweg7usSoeR552pZzGmgTSLf0eGSEHaBMQ==
-X-Received: by 2002:a05:620a:4808:b0:915:e9c3:f1a0 with SMTP id
- af79cd13be357-9208f05c232mr2733502085a.12.1782187328229; Mon, 22 Jun 2026
- 21:02:08 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1782190892; x=1782795692;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nIt16tpuFSrj/OzOLf9EO5DDoiuEVcOyrhRMsz3Bs2Q=;
+        b=NQ2D0mfkFYOAcNC/JYw/5VDcs8uCinGqRmejbBttCvdBVdNLp0DlM40UkwP01zse3c
+         nVI/jxEbCSOkvlZb2jPXXYgwNJDwTmapPVM8xpWUKI2p0OueH7wNIYVTe3EB1h2bgFgi
+         Ky8c3HACRxZDfTAx+pgPt7DLyBWNS0zPpLYbDZs268LNlJ8j7fK7IODT5LWFeTlYaGVp
+         BY1aJUciTu5EL4VYGhhZraL1HI0zfTIkB+s/BqD2jZjN6BrMBiqgrUo2Gu+EUZWKH/s3
+         b8+JQsAsPCDYAoxAv6Avtbd8b2Wr/C9VD8cc3Sfmni37q3TCcgtudSqYYmLLOC9jHy30
+         7a6A==
+X-Gm-Message-State: AOJu0Yye565Vh7VhNZajtbn+YDjHtdw5EjVwOI44Zt2BrUxc8A+hKRoM
+	9C6eHhqg/Wafuw9u9NfJodr1T53aofWcisUfXWWZWA8nRrEfeD4pBR7i
+X-Gm-Gg: AfdE7cm85T1ash0I2DSA7zzeFmYI55gtNGX+IewG3KIDQ62/+HKNum4D5aGl/jC51ZL
+	xLuCR5F5VbuUvrmROFAVSQ30SRP80VUcQES7Xi4jgi5wXXVJr1MFNc1z0II052UKtCxwqkzJAiP
+	LUuo2ILH3KWf5PfhQjIL2cN6hWQftkk7YX5ToN4GMzdIjd5ILFpi6uDle/g03a/buEoGTog1jyR
+	kQGeIiT/nPVvNGPxxB2Mqf6r+lLjfufh9uc74TuEQ2VN0oDb2mfHMM5xrv4FZyOrX8/QKHyekkp
+	aq6IfRw8PRFzyNINMedqf5M0+hQRNqz5zivxQIEuo76ojECFzptGZKskyKAtv6DLfsXhwWiq+is
+	8eWJEMWyK8CXXobXLLovO1HjhvlCyA3kkpl/48+Y3EPXIywuFBBj9mEn5q8PjQD35F9qjbmAwqG
+	Z8RB6zcGcXMbDI6triYdAUCrk4Umq78cF6jfwZ15Uw/uOetd4kd9KqydSNyK+Q37e9rLc=
+X-Received: by 2002:a17:90b:5103:b0:369:9469:aeba with SMTP id 98e67ed59e1d1-37dcd6cb42cmr1692404a91.1.1782190892191;
+        Mon, 22 Jun 2026 22:01:32 -0700 (PDT)
+Received: from FLYINGPENG-MC2.tencent.com ([43.132.141.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-37d4eede23esm8663656a91.2.2026.06.22.22.01.30
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 22 Jun 2026 22:01:31 -0700 (PDT)
+From: Peng Hao <flyingpenghao@gmail.com>
+X-Google-Original-From: Peng Hao <flyingpeng@tencent.com>
+To: mic@digikod.net,
+	gnoack@google.com
+Cc: linux-security-module@vger.kernel.org
+Subject: [PATCH] landlock: shrink tsync works[] on partial allocation failure
+Date: Tue, 23 Jun 2026 13:01:27 +0800
+Message-ID: <20260623050127.48247-1-flyingpeng@tencent.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260618203411.73917-1-dwindsor@gmail.com> <20260618203411.73917-2-dwindsor@gmail.com>
- <DJFZGYZFMN73.1799LMXW49WZO@gmail.com> <CAEXv5_jVXS4JoExcd71YkXEE2WXPJ0_9STO-uCwgNF+Eia_h5w@mail.gmail.com>
- <CAADnVQJsdrL2RjxM4UE1WyWrT9KsprFP+=xLHRtFhUSccDqQcg@mail.gmail.com>
-In-Reply-To: <CAADnVQJsdrL2RjxM4UE1WyWrT9KsprFP+=xLHRtFhUSccDqQcg@mail.gmail.com>
-From: David Windsor <dwindsor@gmail.com>
-Date: Tue, 23 Jun 2026 00:01:56 -0400
-X-Gm-Features: AVVi8CdBJDCEtsjZ6Cr-k5RWu5qRO4rCaGhk6aOZoAtNJHl7U-y4zrw2gKO9F3E
-Message-ID: <CAEXv5_jTxeTRdWpv71=6k_VTN4ZCes30xPs746Frw96fShfe4w@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 1/2] bpf: add bpf_init_inode_xattr kfunc for
- atomic inode labeling
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, Jiri Olsa <jolsa@kernel.org>, 
-	Emil Tsalapatis <emil@etsalapatis.com>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, dmitry.kasatkin@gmail.com, 
-	eric.snowberg@oracle.com, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Shuah Khan <shuah@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, 
-	linux-integrity <linux-integrity@vger.kernel.org>, selinux@vger.kernel.org, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 22, 2026 at 11:59=E2=80=AFPM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> >
-> > > > diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
-> > > > index 1a721fc4bef5..b41b02173e24 100644
-> > > > --- a/kernel/bpf/trampoline.c
-> > > > +++ b/kernel/bpf/trampoline.c
-> > > > @@ -859,6 +859,9 @@ static int bpf_trampoline_add_prog(struct bpf_t=
-rampoline *tr,
-> > > >       }
-> > > >       if (cnt >=3D BPF_MAX_TRAMP_LINKS)
-> > > >               return -E2BIG;
-> > > > +     if (node->link->prog->aux->attach_limit &&
-> > > > +         tr->progs_cnt[kind] >=3D node->link->prog->aux->attach_li=
-mit)
-> > > > +             return -E2BIG;
-> > >
-> > > No need. The check inside kfunc is enough.
-> > >
-> >
-> > Paul wanted this check because it occurs at bpf prog attach time,
-> > whereas the one in the kfunc is at inode creation time.
->
-> Sorry, we're not adding redundant code to the verifier.
+When the per-slot kzalloc fails mid-loop in tsync_works_grow_by(), the
+already-enlarged s->works array keeps uninitialized trailing entries.
+Shrink the array back to its used size on the error path so no waste
+is carried over: free it outright when nothing has been allocated yet,
+otherwise try a shrinking krealloc_array() (keep the larger array if
+the shrink fails, since tsync_works_release() honors s->capacity).
 
-Thanks, will send v4 soon.
+Signed-off-by: Peng Hao <flyingpeng@tencent.com>
+---
+ security/landlock/tsync.c | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
+index c5730bbd..356ce94b 100644
+--- a/security/landlock/tsync.c
++++ b/security/landlock/tsync.c
+@@ -272,9 +272,23 @@ static int tsync_works_grow_by(struct tsync_works *s, size_t n, gfp_t flags)
+ 		work = kzalloc_obj(*work, flags);
+ 		if (!work) {
+ 			/*
+-			 * Leave the object in a consistent state,
+-			 * but return an error.
++			 * Leave the object in a consistent state, but return
++			 * an error.  Shrink @s->works back to its used size to
++			 * avoid carrying uninitialized trailing entries.  A
++			 * shrinking krealloc_array() should normally succeed,
++			 * but if it does not we simply keep the larger array;
++			 * tsync_works_release() iterates only up to capacity.
+ 			 */
++			if (i == 0) {
++				kfree(s->works);
++				s->works = NULL;
++			} else {
++				works = krealloc_array(s->works, i,
++						       sizeof(s->works[0]),
++						       flags | __GFP_NOWARN);
++				if (works)
++					s->works = works;
++			}
+ 			s->capacity = i;
+ 			return -ENOMEM;
+ 		}
+-- 
+2.43.7
+
