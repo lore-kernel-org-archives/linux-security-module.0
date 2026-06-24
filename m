@@ -1,337 +1,287 @@
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2269230C179
-	for <linux-security-module@vger.kernel.org>; Wed, 24 Jun 2026 00:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D15388E5A
+	for <linux-security-module@vger.kernel.org>; Wed, 24 Jun 2026 07:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782259957; cv=none; b=NrZ2UjCMNSVdeMv8IhfoCc87QXOJZRSdJZ4XpvTBDZnL9tem/vZGzkQhXr+78/gbb14/jWj3zqPg3QS/4F1YHNIoDw52OEnBJ1OCCU5woJeiq9eeL38Fk0M+OEfZUJnaWBT2ffPwqSsFldNWHMYqFyLJT9prfnFt2d3XXQsDl2U=
+	t=1782287550; cv=none; b=IV2fDy58pG6O9OTSNtrIsQRs7WVmZpSHBsRqCxXty98LrUUtuupgllkftGwt0WVC+ARyT7xYVwM3JlbAk9vKL8dCPmiGDV/N8Cqms9HftaClbAY23b6Ugak98foelroutor6AmoY6jKW9H6CI1lQUE/vVnkIicK5lKS9Uct7r58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782259957; c=relaxed/simple;
-	bh=Sy2PS2sfg70bsWbRUrWVtcPFYfjxXLcEupysUZUB9j8=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=rO0KUU3Yy8Og7XedwxWcg8l/7IVAr3phUjBglwCBX62/37ueW/R2ub++Muv0KyD+YwiCkxpyGOwYPyhFWxHP93EKGfn8897hST95dYXSRSsEhDJEXBYzOIetNa06/6W48Zp9EDbiaX57zCYijboaEYWk6pxlKvcL6774TTsdk9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=LVvRIu8k; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1782287550; c=relaxed/simple;
+	bh=BNHbIhI8fYlY3Gz/ljttwoab9P6cOHHKthP5tZ7A4Qk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=YILwzbTiQW6UYLhNHVpFhQrMXd6iRRI/fPkRqz0zxvaWwqONXHREG+IFmfdREK+NpsmcWUrJEBuBGrIoUEM5bUi+vrPL/VWnyZGTl9HFltWE+E78oLPIwIguP4nrgV1XeDLAV8yLmYySC8s2Dtjg8eqNvA9OR8G0uy9+xgvjmuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=huvVevHj; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="LVvRIu8k"
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-9159f631656so53501085a.1
-        for <linux-security-module@vger.kernel.org>; Tue, 23 Jun 2026 17:12:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1782259954; x=1782864754; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C4NCFUP999Ds9RO+xlaZQifH2V/EVBrDecHJD/NPIfk=;
-        b=LVvRIu8kICrDLGZshHGRd4MAaJsBRxTYDK/Ygj0Dqvv7+IYNrzu6ulGyc4QM3yRqTb
-         s4PMF141a3D1pXMsTfcxSYrzGVg1dSgqwjybfw0seG+aklNEyuSluffGN4sEj/UEeQd/
-         27SczJyBVdBSe/55sp4uVLYwtCPh5LloBIURMelh3x4kpXU56ZQC0qQVZvxhjaY2+566
-         dij15g7fS3+ULaRo5TcpepMv8z63wfda5iVoIsMBSpaBcxMT8rS9LNmexYuhGT4tkO/d
-         e0TQE3kZk/oZ063mwlXKOaXj/s6ZSI8XsWjP+MQDxTtsA/y5Z54BCZtXqRXlMGsFLUwK
-         oqgw==
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="huvVevHj"
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id A32EF3F7BD
+	for <linux-security-module@vger.kernel.org>; Wed, 24 Jun 2026 07:52:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20251003; t=1782287540;
+	bh=zyuDThvFKNA9hKZ6doSi/S2ledcLIeUnidYZypZ8L6g=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type;
+	b=huvVevHjaaYDXX1KsksMN+aaDH38fmT/GMgusjAkokzP0qyWDUQxSwpa7h7bA+U4h
+	 BQ3LqHgsMupSdbpjfk+Ivo2ObUohWb52Zmk9BZ1qikHaC6LzGboP+FtJ2rrgPLavhb
+	 ZgyQGCDuDZr792U/hRDoUyzzfeslE89bFw8dftBX4pqoemzpVnIGrfZLW+DISsJiyS
+	 7EvjIzmElXKgwU3jZt5KjkF6DguCHgIjNuuoBvijpSKTS3NIMxHM9rEetd3EKjVv34
+	 LBmSp2P6Y9FnBRh0rrJFlgpANetE+PyVop8vPvz3G9RwPq9gzbV4cs7e9BxX7ET1IG
+	 A3vAjn6pd58GKqJc+Doj5c0XZVc+xFgjtBuQfZuclLOIYfGXp+3rh+RGvmFmNgrZi6
+	 f1k1R+w3WOkEeU1hDx/nqNEV4M0Vv1qGNVirG4lMm+VZN7uMRZM8s9/qBH3NcYsC8N
+	 Y++REVgok1eAqtZdgTUtyTCJoRDQWJteDuuCFcKuYj2P/RG0JHr+baeFzzW7nvd0kI
+	 scTqXM7Na/lY9wziaAUQ+9YeYPurpgq5O+VtAPus8fYz5jTWjEDCWY0Br1HzwjDbAM
+	 kHdmSkidbnH5p7LKgP4NZLaRpTfSNi82CQSdcAudBh0pTC47RMireqYt5o2YyFHf/P
+	 HHOd0z3N/0jFpFnULURog7hI=
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-842446a3851so574584b3a.0
+        for <linux-security-module@vger.kernel.org>; Wed, 24 Jun 2026 00:52:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782259954; x=1782864754;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C4NCFUP999Ds9RO+xlaZQifH2V/EVBrDecHJD/NPIfk=;
-        b=TrSyWvugi0MLLzxytJcgqtRxzVvPihqpZFRVhZI2c5ZJh3N7EH9nPl3cafmB3b6fZ6
-         Q0BZRVWyBgPT4Ln1peibgXIgHoHlQyPtmvGUl+ayMTjYcvBu4zS/7j6vu46yDaF5Y6zS
-         hgqaaknv7BdatNJMAhxmL9nlPOnFjyU84ln+xfi7cXIdOHIllLeXrLsJ13bNbyxKah82
-         clYYMaq66ZKi2APiW6AIjtLSz4TO/PG09T18dIBwHIKqUo8mQz96HKiWOcvtoXq8oqAP
-         lX1vERNO7Q/IuZFNsJdkM0VKDMCfxuDKyIl1V27hk2esqwG5vsboMeiQvFL6n8eg/Wrq
-         ZS1A==
-X-Forwarded-Encrypted: i=1; AFNElJ9oDIt8exHso31GJJLQmqLMPSRRkVmfgo35TfI/ENRLNJLOcjQ2UqUteYbPvsT9tGcxUCmjBPZjBrDxY15cGloo/ZpnEFA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRF6sF20IB6yYlrc0rVOJ2783BcfAuU2hURUhQWg5WsDqkzb66
-	IB5hADZLLOcevjxgISh3i0HfdEtqxgmw6TH958oodvee1FJ420n8X7Z+lK9YoDL9qg==
-X-Gm-Gg: AfdE7cnIv09AwITxTafjFxsaSCM8SPuzSed4zUyOF1jWw7nQ+7FxS7nOz/SiONXqMCh
-	K6nfbf2fyCKoqSQe+nHmprjDWabrlzcHvPcES2zQjVGz21MRZv0mDc4WA7bN25IYnzMhjoKVQXR
-	kSxX9HnfbsxSfYkaeE3N3Vig5UFnGZ6+qVt2C0DxDSlvE61dz763Yw9/Ts7tPAMBt7sDeMvZsiC
-	gc/ky6b4IG7Q9PtWOzX9LHv7H7Fdr10yswu7MfH6+aF6in6dAAHvYRD7xaJH1vx2rurhl+oMTvj
-	zKF+y7t9ATnV+vUPCf8vD2/1pkHensuXOvo9YrlHnhv0SOq3PDKg/ERDSqZv+xSqkd3ki+O4wXX
-	t39jF87Q+iDpl9Yf3ORM3hRwudA5tQSApyDgsZzhYG/KFj68hUPzoI5etLfBHZt0AfcIYRbqZn/
-	36BTFxOJyqoQCUhK7CcP4vJ/FUDis+PY8zvaazu2uHfxaU/trbS9cNJc6gz/BLRvsWSNOw
-X-Received: by 2002:a05:620a:1990:b0:915:e8fc:1396 with SMTP id af79cd13be357-92600e7207cmr879162585a.13.1782259954066;
-        Tue, 23 Jun 2026 17:12:34 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-926005a2530sm401515985a.39.2026.06.23.17.12.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jun 2026 17:12:33 -0700 (PDT)
-Date: Tue, 23 Jun 2026 20:12:32 -0400
-Message-ID: <75d39fd9847cca915d704235264ab474@paul-moore.com>
+        d=1e100.net; s=20251104; t=1782287539; x=1782892339;
+        h=content-transfer-encoding:organization:autocrypt:content-language
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zyuDThvFKNA9hKZ6doSi/S2ledcLIeUnidYZypZ8L6g=;
+        b=nOAEFhYIQcLUKkAw7Iuge7hhWeVQ0neM0125MchGdlUvylhWSU9XGDECV8RyB/h5Wl
+         6HAXSBved9pvIxpnTXMS+Jspft5RvxXpUOxaH1/3aCh/ATHqwArVA1YsqAYuH53MAdxr
+         EBNdEunKIRc+FH+TcFebKKk+4gF2tYB8hOm98hJ+EK4IxRffIY4r0Og68jfTUx75/NEL
+         FH5xR8eAJhPBU7rZWlILjxlyVLuCmHK8+BHKy9+90Wvz6R2oyhsxXfr3vPRYH42GDbk7
+         Ni8/eaSwd9xe2YHPZ/NbEnFAyPjn6z6tZwakVvRRxKYMolkDuCBTyRJHMBlv542dESv+
+         U5NQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/2QOfyaQJJc73KTa8e1wNZNAZ5Y7c6Ja+GP/7ZIjFjzNsji8apXAANVUCKiX2IO+lwvfwHSOTinF09FOxPe9anHkZEz68=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGyCMOLL9MecmEQDMpSRvJZCtpPArG5QXrtys036A9/q9DIPlD
+	lVZzc6zSSQ0h3W9KVX4wCNYqq/k+o6wa9TpiS8R3plHP8v5WVkdOTyqSwB+bExmwyJ8/0lte7lW
+	bUq2rwfmszJCBo9fd8cQ+Ko5JdaELU9i2MOeWk1rO3GMeg0z9ITAVWUWY+Qu7CdTwACrwvGzw1q
+	71zVZgP2Ly7H5Os+nOsg==
+X-Gm-Gg: AfdE7cnxMJKymGGppUexBLuvJBgs3WopsXqitNFwaWFblgzyVg8eSSo7AsQg+G+VwWn
+	02zMJQ1h95ExENMPo3HoJ89ABGEy4sefJ4tFC2CQkf4e9/LQ74ZsNAFrMiOf7U3ZgcnOWpp2c3C
+	3BekjOLHh/2owGO6ylhi877i1s68ljXwQPxz2v8iOmHARLm7sppkaVonfF2fulWyBQIf6h4PoUb
+	Kd2y+NmeRILJKPDbAX//fwTMeIy1a00M8oFbJXwNFtdToIMVmeJ6g5zaSgd3PI5MaJWWAXRyU2G
+	Y3ehdif+nBU02UmXm519/7e/PcAag3AMgfDu96wTuqW4II9zN8fT/3WTKhAzB8Qygd7VXw0uGKa
+	OKslAiykzaWqImTAszTwNrhYScw==
+X-Received: by 2002:a05:6a00:4105:b0:842:74e3:48a9 with SMTP id d2e1a72fcca58-845a26f7998mr3045736b3a.12.1782287539189;
+        Wed, 24 Jun 2026 00:52:19 -0700 (PDT)
+X-Received: by 2002:a05:6a00:4105:b0:842:74e3:48a9 with SMTP id d2e1a72fcca58-845a26f7998mr3045710b3a.12.1782287538784;
+        Wed, 24 Jun 2026 00:52:18 -0700 (PDT)
+Received: from [192.168.192.71] ([50.47.147.90])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-845a41474cfsm1361545b3a.61.2026.06.24.00.52.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Jun 2026 00:52:17 -0700 (PDT)
+Message-ID: <bdb6dcf3-a0c0-45ee-be64-d135c973ec90@canonical.com>
+Date: Wed, 24 Jun 2026 00:52:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20260623_1615/pstg-lib:20260623_1751/pstg-pwork:20260623_1615
-From: Paul Moore <paul@paul-moore.com>
-To: David Windsor <dwindsor@gmail.com>, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, andrii@kernel.org, eddyz87@gmail.com, memxor@gmail.com, martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev, jolsa@kernel.org, emil@etsalapatis.com, kpsingh@kernel.org, mattbobrowski@google.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, stephen.smalley.work@gmail.com, omosnace@redhat.com, casey@schaufler-ca.com, shuah@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org, linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, David Windsor <dwindsor@gmail.com>
-Subject: Re: [PATCH v3 1/2] bpf: add bpf_init_inode_xattr kfunc for atomic  inode labeling
-References: <20260618203411.73917-2-dwindsor@gmail.com>
-In-Reply-To: <20260618203411.73917-2-dwindsor@gmail.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: John Johansen <john.johansen@canonical.com>
+Subject: [GIT PULL] AppArmor updates for 7.2-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKLM <linux-kernel@vger.kernel.org>,
+ "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+ Georgia Garcia <georgia.garcia@canonical.com>
+Content-Language: en-US
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Jun 18, 2026 David Windsor <dwindsor@gmail.com> wrote:
-> 
-> Add bpf_init_inode_xattr() kfunc for BPF LSM programs to atomically set
-> xattrs via the inode_init_security hook using lsm_get_xattr_slot().
-> 
-> The inode_init_security hook previously took the xattr array and count
-> as two separate output parameters (struct xattr *xattrs, int
-> *xattr_count), which BPF programs cannot write to. Pass the xattr state
-> as a single context object (struct xattr_ctx) instead, and have
-> bpf_init_inode_xattr() take that context directly. Update the existing
-> in-tree callers of inode_init_security to take and forward the new
-> xattr_ctx.
-> 
-> A previous attempt [1] required a kmalloc string output protocol for
-> the xattr name. Since commit 6bcdfd2cac55 ("security: Allow all LSMs to
-> provide xattrs for inode_init_security hook") [2], the xattr name is no
-> longer allocated; it is a static constant.
-> 
-> Because we rely on the hook-specific ctx layout, the kfunc is
-> restricted to lsm/inode_init_security. Restrict the xattr names that
-> may be set via this kfunc to the bpf.* namespace.
-> 
-> Link: https://kernsec.org/pipermail/linux-security-module-archive/2022-October/034878.html [1]
-> Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=6bcdfd2cac55 [2]
-> Suggested-by: Song Liu <song@kernel.org>
-> Signed-off-by: David Windsor <dwindsor@gmail.com>
-> ---
->  fs/bpf_fs_kfuncs.c                | 106 +++++++++++++++++++++++++++++-
->  include/linux/bpf.h               |   1 +
->  include/linux/bpf_lsm.h           |   3 +
->  include/linux/evm.h               |   9 +--
->  include/linux/lsm_hook_defs.h     |   4 +-
->  include/linux/lsm_hooks.h         |  16 ++---
->  include/linux/security.h          |   5 ++
->  kernel/bpf/bpf_lsm.c              |  10 +++
->  kernel/bpf/trampoline.c           |   3 +
->  security/bpf/hooks.c              |   1 +
->  security/integrity/evm/evm_main.c |   8 ++-
->  security/security.c               |   7 +-
->  security/selinux/hooks.c          |   4 +-
->  security/smack/smack_lsm.c        |  27 ++++----
->  14 files changed, 166 insertions(+), 38 deletions(-)
+Hi Linus,
 
-I have a few specific comments below, inline with the patch, but I wanted
-to make some general comments too.
+This is another round of bug fixing and some code cleanups, there are no
+new features. I ended up pulling in a few bug fixes late, and gave them
+some extra time to bake.
 
-The kfunc additions really don't belong in the VFS kfunc file, please
-create a LSM kfunc file (call it security/bpf_lsm_kfuncs.c) and add the
-kfunc code to this new file.
+The biggest thing to note is Georgia is being added to help co-maintain
+apparmor.
 
-While moving the kfunc additions to a LSM kfunc file does sort of convert
-the VFS changes into LSM changes, Christian's comment about splitting
-this patch two patches, one with the LSM hook changes and one with the
-BPF additions, is still reasonable and a good suggestion.  I would still
-CC the VFS folks on these patches and I would encourage reviews from the
-VFS folks as there is a VFS component here, albeit a somewhat small one.
+Everything has been merge, build, and regression tested against your tree
+for Monday June 22.
 
-> diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-> index 768aca2dc0f0..7abc3f3d1a67 100644
-> --- a/fs/bpf_fs_kfuncs.c
-> +++ b/fs/bpf_fs_kfuncs.c
-> @@ -10,6 +10,7 @@
->  #include <linux/fsnotify.h>
->  #include <linux/file.h>
->  #include <linux/kernfs.h>
-> +#include <linux/lsm_hooks.h>
->  #include <linux/mm.h>
->  #include <linux/xattr.h>
->  
-> @@ -374,6 +375,97 @@ __bpf_kfunc struct inode *bpf_real_inode(struct dentry *dentry)
->  	return d_real_inode(dentry);
->  }
->  
-> +static int bpf_xattrs_used(const struct xattr_ctx *ctx)
-> +{
-> +	const size_t prefix_len = sizeof(XATTR_BPF_LSM_SUFFIX) - 1;
-> +	int i, n = 0;
-> +
-> +	for (i = 0; i < *ctx->xattr_count; i++) {
-> +		const char *name = ctx->xattrs[i].name;
-> +
-> +		if (name && !strncmp(name, XATTR_BPF_LSM_SUFFIX, prefix_len))
-> +			n++;
-> +	}
-> +	return n;
-> +}
-> +
-> +static int __bpf_init_inode_xattr(struct xattr_ctx *xattr_ctx,
-> +				  const char *name__str,
-> +				  const struct bpf_dynptr *value_p)
-> +{
-> +	struct bpf_dynptr_kern *value_ptr = (struct bpf_dynptr_kern *)value_p;
-> +	size_t name_len;
-> +	void *xattr_value;
-> +	struct xattr *xattr;
-> +	struct xattr *xattrs;
-> +	int *xattr_count;
-> +	const void *value;
-> +	u32 value_len;
-> +
-> +	if (!xattr_ctx || !name__str)
-> +		return -EINVAL;
-> +
-> +	xattrs = xattr_ctx->xattrs;
-> +	xattr_count = xattr_ctx->xattr_count;
 
-I'm not sure why the "xattrs" and "xattrs_count" local variables are
-necessary, especially since they only appear to be used in the sanity
-check below.  I would suggest just using the values in the struct
-directly.
+thanks
+- john
 
-> +	if (!xattrs || !xattr_count)
-> +		return -EINVAL;
-> +	if (bpf_xattrs_used(xattr_ctx) >= BPF_LSM_INODE_INIT_XATTRS)
-> +		return -ENOSPC;
-> +
-> +	name_len = strlen(name__str);
-> +	if (name_len == 0 || name_len > XATTR_NAME_MAX)
-> +		return -EINVAL;
-> +	if (strncmp(name__str, XATTR_BPF_LSM_SUFFIX,
-> +		    sizeof(XATTR_BPF_LSM_SUFFIX) - 1))
-> +		return -EPERM;
-> +
-> +	value_len = __bpf_dynptr_size(value_ptr);
-> +	if (value_len == 0 || value_len > XATTR_SIZE_MAX)
-> +		return -EINVAL;
-> +
-> +	value = __bpf_dynptr_data(value_ptr, value_len);
-> +	if (!value)
-> +		return -EINVAL;
-> +
-> +	/* Combine xattr value + name into one allocation. */
-> +	xattr_value = kmalloc(value_len + name_len + 1, GFP_KERNEL);
-> +	if (!xattr_value)
-> +		return -ENOMEM;
-> +
-> +	memcpy(xattr_value, value, value_len);
-> +	memcpy(xattr_value + value_len, name__str, name_len);
-> +	((char *)xattr_value)[value_len + name_len] = '\0';
-> +
-> +	xattr = lsm_get_xattr_slot(xattr_ctx);
-> +	if (!xattr) {
-> +		kfree(xattr_value);
-> +		return -ENOSPC;
-> +	}
-> +
-> +	xattr->value = xattr_value;
-> +	xattr->name = (const char *)xattr_value + value_len;
-> +	xattr->value_len = value_len;
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * bpf_init_inode_xattr - set an xattr on a new inode from inode_init_security
-> + * @xattr_ctx: inode_init_security xattr state from the hook context
-> + * @name__str: xattr name (e.g., "bpf.file_label")
-> + * @value_p: dynptr containing the xattr value
-> + *
-> + * Only callable from lsm/inode_init_security programs.
-> + *
-> + * Return: 0 on success, negative error on failure.
-> + */
-> +__bpf_kfunc int bpf_init_inode_xattr(struct xattr_ctx *xattr_ctx,
-> +				     const char *name__str,
-> +				     const struct bpf_dynptr *value_p)
-> +{
-> +	return __bpf_init_inode_xattr(xattr_ctx, name__str, value_p);
-> +}
 
-I'm sure there is a reason why you split the code out into
-__bpf_init_inode_xattr() as opposed to just putting it directly in this
-kfunc, can you help me understand?
 
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 153e9043058f..1f8e84e7dd7e 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -68,6 +68,11 @@ struct watch;
->  struct watch_notification;
->  struct lsm_ctx;
->  
-> +struct xattr_ctx {
-> +	struct xattr *xattrs;
-> +	int *xattr_count;
-> +};
+The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e731:
 
-I see the bots already pointed this out, and you acknowledged it, but
-since I'm looking at this I felt obliged to remind you once again about
-the rename to "struct lsm_xattrs" :)
+   Linux 7.1-rc1 (2026-04-26 14:19:00 -0700)
 
-Also, looking at this closer, is there a reason why the "xattr_count"
-field is an integer pointer and not just an integer?  We're passing
-the entire struct by reference to the individual LSMs so we shouldn't
-need this to get an updated count in the caller and having it as a
-regular integer should simplify things slightly (you could also
-make it an unsigned int while you are it).
- 
-> @@ -315,6 +324,7 @@ BTF_ID(func, bpf_lsm_inode_create)
->  BTF_ID(func, bpf_lsm_inode_free_security)
->  BTF_ID(func, bpf_lsm_inode_getattr)
->  BTF_ID(func, bpf_lsm_inode_getxattr)
-> +BTF_ID(func, bpf_lsm_inode_init_security)
->  BTF_ID(func, bpf_lsm_inode_mknod)
->  BTF_ID(func, bpf_lsm_inode_need_killpriv)
->  BTF_ID(func, bpf_lsm_inode_post_setxattr)
-> diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
-> index 1a721fc4bef5..b41b02173e24 100644
-> --- a/kernel/bpf/trampoline.c
-> +++ b/kernel/bpf/trampoline.c
-> @@ -859,6 +859,9 @@ static int bpf_trampoline_add_prog(struct bpf_trampoline *tr,
->  	}
->  	if (cnt >= BPF_MAX_TRAMP_LINKS)
->  		return -E2BIG;
-> +	if (node->link->prog->aux->attach_limit &&
-> +	    tr->progs_cnt[kind] >= node->link->prog->aux->attach_limit)
-> +		return -E2BIG;
+are available in the Git repository at:
 
-Re: Alexei's comments about this - if you look back at my previous
-comments, my concern was around BPF LSMs using too many slots in the
-xattr array and causing issues.  If the BPF folks want to do that check
-in the kfunc located in the LSM framework I'm okay with that; the
-important part is that the BPF LSMs don't use more space than they
-previously requested.
+   git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2026-06-22
 
-> diff --git a/security/security.c b/security/security.c
-> index 71aea8fdf014..8f82a1352356 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1334,6 +1334,7 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
->  {
->  	struct lsm_static_call *scall;
->  	struct xattr *new_xattrs = NULL;
-> +	struct xattr_ctx xattr_ctx;
->  	int ret = -EOPNOTSUPP, xattr_count = 0;
+for you to fetch changes up to 2f6701a5ce6257ae7a64ddc6d89d0a08d2a034f8:
 
-Since we have the xattr array/pointer and count in the new "lsm_xattrs"
-struct, I think we can remove the "new_xattrs" and "xattr_count" local
-variables in favor of the fields in the new struct.
+   apparmor: advertise the tcp fast open fix is applied (2026-06-23 22:15:15 -0700)
 
->  	if (unlikely(IS_PRIVATE(inode)))
-> @@ -1349,10 +1350,12 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
->  		if (!new_xattrs)
->  			return -ENOMEM;
->  	}
-> +	xattr_ctx.xattrs = new_xattrs;
-> +	xattr_ctx.xattr_count = &xattr_count;
->  
->  	lsm_for_each_hook(scall, inode_init_security) {
-> -		ret = scall->hl->hook.inode_init_security(inode, dir, qstr, new_xattrs,
-> -						  &xattr_count);
-> +		ret = scall->hl->hook.inode_init_security(inode, dir, qstr,
-> +							  &xattr_ctx);
->  		if (ret && ret != -EOPNOTSUPP)
->  			goto out;
->  		/*
+----------------------------------------------------------------
+* add Georgia Garcia as co-maintainer of apparmor
 
---
-paul-moore.com
+* Cleanups
+   - replace get_zeroed_page() with kzalloc()
+   - remove unnecessary goto and associated label
+   - change fn_label_build() to return err on failure instead of NULL or err
+   - free rawdata as soon as possible
+   - use explicit instead of implicit flex array in rawdata_f_data
+   - use __label_make_stale in __aa_proxy_redirect
+   - return correct error by propagate -ENOMEM correctly in unpack_table
+   - aa_label_alloc use aa_label_free on alloc failure
+   - add a conditional version of get_newest_label
+
+* Bug Fixes
+   - mediate the implicit connect of TCP fast open sendmsg
+   - fix C23ism of label immediately before a declaration
+   - fix kernel-doc warnings
+   - fix spelling mistakes
+   - fix use-after-free in rawdata dedup loop
+   - Fix inverted comparison in cache_hold_inc()
+   - fix uninitialized pointer passed to audit_log_untrustedstring()
+   - don't audit files pointing to aa_null.dentry
+   - put secmark label after secid lookup
+   - fix aa_getprocattr free procattr leak on format failure
+   - release exe file resources on path failure
+   - fail policy unpack on accept2 allocation failure
+   - Fix return in ns_mkdir_op
+   - remove or add symlinks to rawdata according to export_binary
+   - fix NULL pointer dereference in unpack_pdb
+   - fix potential UAF in aa_replace_profiles
+   - grab ns lock and refresh when looking up changehat child profiles
+   - enable differential encoding
+   - check label build before no_new_privs test
+   - conditionally compile get_loaddata_common_ref()
+   - fix unix socket mediation cache update, and leak
+
+----------------------------------------------------------------
+Andrew Morton (1):
+       security/apparmor/apparmorfs.c: conditionally compile get_loaddata_common_ref()
+
+Bryam Vargas (1):
+       apparmor: mediate the implicit connect of TCP fast open sendmsg
+
+Eduardo Vasconcelos (1):
+       apparmor: Fix inverted comparison in cache_hold_inc()
+
+Georgia Garcia (3):
+       apparmor: fix NULL pointer dereference in unpack_pdb
+       apparmor: remove or add symlinks to rawdata according to export_binary
+       apparmor: don't audit files pointing to aa_null.dentry
+
+Hongling Zeng (1):
+       apparmor: Fix return in ns_mkdir_op
+
+John Johansen (13):
+       apparmor: add Georgia Garcia as co-maintainer of apparmor
+       apparmor: fix shadowing of plabel that prevents cache from being updated
+       apparmor: fix race in unix socket mediation when peer_path is used
+       apparmor: fix refcount leak when updating the sk_ctx
+       apparmor: add a conditional version of get_newest_label
+       apparmor: enable differential encoding
+       apparmor: fix rawdata_f_data implicit flex array
+       apparmor: free rawdata as soon as possible
+       apparmor: change fn_label_build() call to not return NULL
+       apparmor: make fn_label_build() capable of handling not supported
+       apparmor: remove unnecessary goto and associated label
+       apparmor: fix label can not be immediately before a declaration
+       apparmor: advertise the tcp fast open fix is applied
+
+Maciek Borzecki (1):
+       apparmor: fix uninitialised pointer passed to audit_log_untrustedstring()
+
+Maxime Bélair (2):
+       apparmor: propagate -ENOMEM correctly in unpack_table
+       apparmor: fix potential UAF in aa_replace_profiles
+
+Mike Rapoport (Microsoft) (1):
+       apparmor: replace get_zeroed_page() with kzalloc()
+
+Qingshuang Fu (1):
+       security: apparmor: fix two spelling mistakes
+
+Rodrigo Zaiden (1):
+       apparmor: fix kernel-doc warnings
+
+Ruoyu Wang (1):
+       apparmor: check label build before no_new_privs test
+
+Ruslan Valiyev (1):
+       apparmor: fix use-after-free in rawdata dedup loop
+
+Ryan Lee (2):
+       apparmor: use __label_make_stale in __aa_proxy_redirect
+       apparmor: grab ns lock and refresh when looking up changehat child profiles
+
+Zygmunt Krynicki (5):
+       apparmor: aa_label_alloc use aa_label_free on alloc failure
+       apparmor: fail policy unpack on accept2 allocation failure
+       apparmor: release exe file resources on path failure
+       apparmor: aa_getprocattr free procattr leak on format failure
+       apparmor: put secmark label after secid lookup
+
+  MAINTAINERS                               |   1 +
+  security/apparmor/af_unix.c               |  73 +++++++++---------
+  security/apparmor/apparmorfs.c            | 119 ++++++++++++++++++++++--------
+  security/apparmor/domain.c                |  97 ++++++++++++++++--------
+  security/apparmor/file.c                  |  12 +--
+  security/apparmor/include/apparmorfs.h    |  12 +++
+  security/apparmor/include/label.h         |  32 ++++++++
+  security/apparmor/include/lib.h           |  21 +++---
+  security/apparmor/include/policy_unpack.h |  21 +++++-
+  security/apparmor/label.c                 |  26 +++----
+  security/apparmor/lsm.c                   |  20 ++++-
+  security/apparmor/match.c                 |  22 +++---
+  security/apparmor/mount.c                 |  17 ++---
+  security/apparmor/net.c                   |   3 +
+  security/apparmor/policy.c                |  35 ++++++++-
+  security/apparmor/policy_unpack.c         |   6 +-
+  security/apparmor/procattr.c              |   2 +
+  security/apparmor/task.c                  |   2 +-
+  18 files changed, 368 insertions(+), 153 deletions(-)
+
+
