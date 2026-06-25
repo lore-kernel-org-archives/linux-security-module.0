@@ -1,271 +1,200 @@
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C6028E0F;
-	Thu, 25 Jun 2026 20:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782419867; cv=none; b=ob6Zxx+BnBpp+2B4Q8VShkxVolYgOka05giIyNH5K8ovREESqn6vZXkVYoXb0da0PFIPBXiPu10VfiYSWdPj0vElvoitV5Q06gSoTJKTgrlcKdWkK/DrmloHiQNPdUXtpp0e2NvVU2Z9Fsqd2ubD0Df+6OM50S+Bvuv2EsuJAII=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782419867; c=relaxed/simple;
-	bh=ICt9AOGopoDy7ZhCxqi130jOxNAFt494U83cmY16+EM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HpVW0PKeBPEhrIAEqj7uASS+e6VfJXZVNogm9QSap6CgvSaYzmzmPC2n8u6oMJ4Py3kt12EFEbp0edSmqq6t4KDCyNE10T6svrJPO2XRfojkOjDS2S650cTgAI+EFCJMG9Ak3IZY4gy9eCiiETm9WWKhK2Hm3xPkqKxs7Odh67g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=O6lAbtdN; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF40B316192
+	for <linux-security-module@vger.kernel.org>; Thu, 25 Jun 2026 20:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782420038; cv=pass; b=PCWQtDYiOISNsQkVK2vDe1ZPekxrKaU1Y1TQl/x/QduYO1eMHz9q2WTk51rlcZD7k+/cJuCur8FMl9/UZGMtPqC5PnRVvRq5mauRmOByeOAgNvtv/zu4zW3f1t5uhtKjnrNfzsdMRyOU+ol8bBrJ286DtKZkutikYlfjSlo/hPk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782420038; c=relaxed/simple;
+	bh=RyZsVwgwp6SsDCHuEWnfop0rVpAHFJuENw+MxHAhUEc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m/6lIaoi1y3M3FQXrjpiXG4uuMTYdzk2XvuWO71zgmDh0cZGZ+MyNtfbvIbrD9OJHdXz5QpI1BdNR85VsKIB05RbjsY1MmH/EWE4N26vGiALzxwBZdkaKXXmrJfYfxw7E00AeYcc9FOywACShEShIyT1jNPisEWLumB1ncz6IHE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MFsW9Q5c; arc=pass smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="O6lAbtdN"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=2LhGvTHz4loMkIc67sPlEpW4aodz5KDrfueZWiShqqE=; b=O6lAbtdNL9uTsBCbtc4Ndi8Sbv
-	AnaE+XG4Dp+HTGbz97vdcFeYHHFanWyvlgSyQ6AvfyeRmbBVcAnjkxGfTSoG0BIPkbM6RZMvwZkRt
-	By4aAPfWd4X056QRPxG46xPZhXFojKX1pXuFGffFiBJjN5ej2I80ivuVa6cbZMKk+ugQqk1fH6Xid
-	NuBpMbQG+V97sXP3WEvg7iWuTFgmNdH8t5+gDKe12E9Y8gjdPKtoeS/LF0RuQwYly4Vai6fGijPSP
-	c+wk2m7Dh55+xFVQ9x0n/M6HKOIAMRmIwRZhkTpmFtsTbvFxK39xKO3Eh8OVuV66ecvy06+DF11Ju
-	pEulYgFQ==;
-Received: from sslproxy05.your-server.de ([78.46.172.2])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1wcqpL-0007Pn-27;
-	Thu, 25 Jun 2026 22:37:35 +0200
-Received: from localhost ([127.0.0.1])
-	by sslproxy05.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1wcqpL-000DqY-2Z;
-	Thu, 25 Jun 2026 22:37:34 +0200
-Message-ID: <c4dc3117-ad84-4c94-952a-cf0642cb42e7@iogearbox.net>
-Date: Thu, 25 Jun 2026 22:37:34 +0200
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MFsW9Q5c"
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-37d4ab2e7c5so185534a91.2
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Jun 2026 13:40:35 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782420035; cv=none;
+        d=google.com; s=arc-20260327;
+        b=DmwIBFHyS+yvMcDLaYLe9tra3mJ/9th8/AyIxvA9KhjJO88ZgUXjqtEEuBgigOYzKe
+         hrVtX89eUWiZJMi+nNIhzb+iJytr2xBbHJ3GJXwL02L5SA+vBQ9yrcsv7x0fyZMgU+tL
+         wiydrbiMoxaRUvPHCW/8AYW0coTwGW0njRIBk/STXxK6WelnFWmjDyc+cUNDgC3Rv58J
+         w+G1i4Rs0s/27k81MnmjG4N2Z+GOqzC3ZWa20hPf4pNXtyWQm4mfUcwQ3n5ocV4tcLXH
+         p8NvRV8Yo8dFc+vHvrtfwclTZFY2UD5Z/b4YJQ7/IUL/E+GIhMX82Cj1TH18YTPLn0xk
+         tovg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=+yx21f/fYo8TQI0aGf8AWSMgWBwIVqC4ciRZnA/Tpso=;
+        fh=I3AwVGtdQ47fPs9bFfChS1hZ9TysqU6p9EvlzXhjyIE=;
+        b=guaf3F65xFLLul4dRZvZHPlN7aDWyy2SJ6uJIoKXKoH8SSXXTaTpJkntH5txF0DKRO
+         TegCqFhDgGQMKy3arrKrOAqH/pc8+vEx6ZXufWxyKZQS0iqDy+aXTkMN9k81Xh1D3VZ2
+         mBKzH3qNd2flFVhiG5Dv7F4vRNNoV74Ba98CqgNwxXstuGMoavbTH2g0zDyPsXbigrDK
+         A5eX2VVtyen6SZRwIPAB3gpDrWW6l9cy8bia+Nemhn1z8+oxsPFLbXWLXcd4dRMr8fUn
+         O8OzkvbI3A8/U49qVE3j9c7WQndf5zYfM3hovbgxpK1iDUEe76yxOtQ/d+sRYEn8B+0i
+         Gdfw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1782420035; x=1783024835; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+yx21f/fYo8TQI0aGf8AWSMgWBwIVqC4ciRZnA/Tpso=;
+        b=MFsW9Q5cwGycDxFIv1uTpQRDOXbfcxY/EiDTQvSiLgo4ZYkMuB9Pmrc1+YsaqzfH1D
+         9DCVPc+P0+adZtcH0x5OgqmsneY6rOu7C2xAeoz/m5QpVGfAmlgr5Iee/asJtZJjXFAP
+         r2GIk8tOPNWGes2h8n+EIxfyWX9EI6UVGbOzfyCdzq4CverDDtos7ZVd/N+qmyeNUhB6
+         nicRrE0+AYncynkQN7d8+DJlEjFaSRja+6yT8gnVcgP1ncGULueRNJ0sWt3PhrYfNkkv
+         pJZZwkZCknfioGQTu+A6NaXExUgbBzpoRp7vSMmkhMueQW1rgIM/ept+nhUYO7dUyuhF
+         1HBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782420035; x=1783024835;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=+yx21f/fYo8TQI0aGf8AWSMgWBwIVqC4ciRZnA/Tpso=;
+        b=WFFTdW3MS3hY3gkVkFt6tvsJUzpUEDqcoDA6EoMei9EqAW/BWvSGebdvc/Gh7sfl9g
+         Ff9pCg5e0PgskRHkQOVQIMr7XHaYFzKMSyftQky2yOY6mOR36SvySUfEt2EEwhV/I7rK
+         tv+XCaJKmk7/cOTKNQ8JA1x4eH4SlpgBnG6RJPSoiVdOALgguN6jhP73hTKSdlcVrBVs
+         WA66YWKZ/y1ECUu1FoVg4bA4sU4PHmby2KQOJ+sOsX5MeWnUwRm2t/KRRAziCl8NzKrY
+         1zE35LzyPijs85R8VhSWAgxDkLvBXLoXtf1fxk8A1vNYwi992H0Ub3IAZIgY1im1DD1g
+         NzOw==
+X-Forwarded-Encrypted: i=1; AHgh+Rr7RFCyDz5snaVimY8bow9+p5DoT4RXVEG2ePXYmvYQ3TCMSH5tITjMwXjkyTwslnEqXf3lPEWR8JeytbvLJq+rIx8z8qw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWiAZzuYkAz79K5iQ5iN7y1DEdQU2GQH+wJxjTIp9e5ag02CBM
+	ezfle2MaTYDJ1MXRsMKEFXBkgljMmkWm2qYDBGnrBAeaYVXDGdhRG2ZXPCIAfsA1j+MX6F29BY9
+	fioQxrXidBnQfgi2eyWoyZYHg2Vr6kWZopKmXTHf0
+X-Gm-Gg: AfdE7cl6VgjUAJENnuQZ45zOq18ZNLVZ6MdhQTDjPY3yxUYiXxl+13TF17dUjs2EVno
+	RBSljtGMTHYc9YmEAbm9d89tuv7SSqB7tCUlA3F0d9AtrPwUcQuwfq+OlNihgAsl8q3mEERDVaG
+	TrEoHGFls5Y1Ig6WK4m8n+R2hXTdG7pz75ZRQ5iyHVi9BKreD6nIn0hvziQc5AFMNW5OhPJUAYt
+	Qd9UpHKty0SuVX3AZqlpI7yNAsB5nyKfRCKPQN1scbxYy4KDYwH96lgbuKKfENlenPHNGm2
+X-Received: by 2002:a17:90b:5288:b0:35b:8d89:719b with SMTP id
+ 98e67ed59e1d1-37dfa1739fdmr3601231a91.1.1782420034987; Thu, 25 Jun 2026
+ 13:40:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v2 1/5] bpf: Verify signed loader metadata at
- load time
-To: Paul Moore <paul@paul-moore.com>
-Cc: ast@kernel.org, kpsingh@kernel.org,
- James.Bottomley@hansenpartnership.com, bboscaccy@linux.microsoft.com,
- memxor@gmail.com, torvalds@linux-foundation.org, bpf@vger.kernel.org,
- linux-security-module@vger.kernel.org
-References: <20260624140301.93421-1-daniel@iogearbox.net>
- <20260624140301.93421-2-daniel@iogearbox.net>
- <CAHC9VhRar1x7kyjhgdmJ=Mfz4Msarv=wQ1821v723CaVdk1uTA@mail.gmail.com>
- <603d0f6f-bf02-48ec-af90-f16a239bad85@iogearbox.net>
- <CAHC9VhTF6_VaSm0uOjW1eV05CvsaaL+2jimVuPTXHeLGEQcMPg@mail.gmail.com>
-Content-Language: en-US
-From: Daniel Borkmann <daniel@iogearbox.net>
-Autocrypt: addr=daniel@iogearbox.net; keydata=
- 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
-In-Reply-To: <CAHC9VhTF6_VaSm0uOjW1eV05CvsaaL+2jimVuPTXHeLGEQcMPg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: Clear (ClamAV 1.4.3/28042/Thu Jun 25 08:27:10 2026)
+References: <20260618203411.73917-2-dwindsor@gmail.com> <75d39fd9847cca915d704235264ab474@paul-moore.com>
+ <20260625-schnabel-rennmaschine-parieren-bcb352c3cf59@brauner> <CAADnVQKKr5cCYTj8qS7tU-Aeda1iexYUp5aquTjYXMEL656cJQ@mail.gmail.com>
+In-Reply-To: <CAADnVQKKr5cCYTj8qS7tU-Aeda1iexYUp5aquTjYXMEL656cJQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 25 Jun 2026 16:40:21 -0400
+X-Gm-Features: AVVi8CcDIUi3TCDxMODHgBDj-5EqkoBML23qr5aVxuP34LM8Xdw4wwqiCZTY1ss
+Message-ID: <CAHC9VhSXXHGRUmJ4YjQ6uEh6dbq7+h_0TwWiV+W5dUWXCTFcfg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] bpf: add bpf_init_inode_xattr kfunc for atomic
+ inode labeling
+To: David Windsor <dwindsor@gmail.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, Jiri Olsa <jolsa@kernel.org>, 
+	Emil Tsalapatis <emil@etsalapatis.com>, KP Singh <kpsingh@kernel.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, dmitry.kasatkin@gmail.com, 
+	eric.snowberg@oracle.com, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Shuah Khan <shuah@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, 
+	linux-integrity <linux-integrity@vger.kernel.org>, selinux@vger.kernel.org, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/24/26 8:42 PM, Paul Moore wrote:
-> On Wed, Jun 24, 2026 at 11:37 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
->> On 6/24/26 5:12 PM, Paul Moore wrote:
->>> On Wed, Jun 24, 2026 at 10:03 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
->> [...]
->>>>    include/linux/bpf_verifier.h |   1 +
->>>>    kernel/bpf/syscall.c         |  76 +---------------
->>>>    kernel/bpf/verifier.c        | 163 ++++++++++++++++++++++++++++++++++-
->>>>    3 files changed, 165 insertions(+), 75 deletions(-)
->>>
->>> ...
->>>
->>>> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
->>>> index b44106c8ea75..026b61d78bdb 100644
->>>> --- a/kernel/bpf/syscall.c
->>>> +++ b/kernel/bpf/syscall.c
->>>> @@ -3189,10 +3121,6 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, struct bpf_log_at
->>>>           if (err < 0)
->>>>                   goto free_prog;
->>>>
->>>> -       err = security_bpf_prog_load(prog, attr, token, uattr.is_kernel);
->>>> -       if (err)
->>>> -               goto free_prog;
->>>> -
->>>>           /* run eBPF verifier */
->>>>           err = bpf_check(&prog, attr, uattr, attr_log);
->>>>           if (err < 0)
->>>
->>> We must preserve the existing location of the call into the
->>> security_bpf_prog_load() hook as some users rely on this hook being
->>> called *before* the verifier runs.
->>
->> Keep in mind that the verifier /at this point/ of the new location did
->> _not_ verify anything. So there is no heavy-duty work happening yet at
->> security_bpf_prog_load. The work that is done before security_bpf_prog_load
->> is basically setting up the env, initializing the verifier log, and doing
->> the process_fd_array which is resolving the map/BTF objects. But it did
->> not walk any instructions etc, so semantics of the security_bpf_prog_load
->> hook did not change from a user PoV.
-> 
-> There is still a reasonable amount of work between the existing and
-> new call sites, and the existing location outside of bpf_check()
-> offers an additional robustness benefit that future verifier changes
-> are less likely to impact the hook.  If I'm completely honest, I also
-> need to consider the events of the past year and a half; I'm now much
-> less inclined to support LSM hook changes in the BPF subsystem because
-> I'm very concerned about our ability to revert/modify those changes in
-> the future if needed.  That doesn't mean I won't support LSM hook
-> changes in BPF, but such changes are going to need to have a *very*
-> strong advantage from a LSM perspective to offset the risk associated
-> with the current BPF subsystem.
+On Thu, Jun 25, 2026 at 3:58=E2=80=AFPM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+> On Thu, Jun 25, 2026 at 7:23=E2=80=AFAM Christian Brauner <brauner@kernel=
+.org> wrote:
+> > On 2026-06-23 20:12:32-04:00, Paul Moore wrote:
+> > > On Jun 18, 2026 David Windsor <dwindsor@gmail.com> wrote:
+> > >
+> > > > Add bpf_init_inode_xattr() kfunc for BPF LSM programs to atomically=
+ set
+> > > > xattrs via the inode_init_security hook using lsm_get_xattr_slot().
+> > > >
+> > > > The inode_init_security hook previously took the xattr array and co=
+unt
+> > > > as two separate output parameters (struct xattr *xattrs, int
+> > > > *xattr_count), which BPF programs cannot write to. Pass the xattr s=
+tate
+> > > > as a single context object (struct xattr_ctx) instead, and have
+> > > > bpf_init_inode_xattr() take that context directly. Update the exist=
+ing
+> > > > in-tree callers of inode_init_security to take and forward the new
+> > > > xattr_ctx.
+> > > >
+> > > > A previous attempt [1] required a kmalloc string output protocol fo=
+r
+> > > > the xattr name. Since commit 6bcdfd2cac55 ("security: Allow all LSM=
+s to
+> > > > provide xattrs for inode_init_security hook") [2], the xattr name i=
+s no
+> > > > longer allocated; it is a static constant.
+> > > >
+> > > > Because we rely on the hook-specific ctx layout, the kfunc is
+> > > > restricted to lsm/inode_init_security. Restrict the xattr names tha=
+t
+> > > > may be set via this kfunc to the bpf.* namespace.
+> > > >
+> > > > Link: https://kernsec.org/pipermail/linux-security-module-archive/2=
+022-October/034878.html [1]
+> > > > Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linu=
+x.git/commit/?id=3D6bcdfd2cac55 [2]
+> > > > Suggested-by: Song Liu <song@kernel.org>
+> > > > Signed-off-by: David Windsor <dwindsor@gmail.com>
+> > > > ---
+> > > >  fs/bpf_fs_kfuncs.c                | 106 ++++++++++++++++++++++++++=
++++-
+> > > >  include/linux/bpf.h               |   1 +
+> > > >  include/linux/bpf_lsm.h           |   3 +
+> > > >  include/linux/evm.h               |   9 +--
+> > > >  include/linux/lsm_hook_defs.h     |   4 +-
+> > > >  include/linux/lsm_hooks.h         |  16 ++---
+> > > >  include/linux/security.h          |   5 ++
+> > > >  kernel/bpf/bpf_lsm.c              |  10 +++
+> > > >  kernel/bpf/trampoline.c           |   3 +
+> > > >  security/bpf/hooks.c              |   1 +
+> > > >  security/integrity/evm/evm_main.c |   8 ++-
+> > > >  security/security.c               |   7 +-
+> > > >  security/selinux/hooks.c          |   4 +-
+> > > >  security/smack/smack_lsm.c        |  27 ++++----
+> > > >  14 files changed, 166 insertions(+), 38 deletions(-)
+> > >
+> > > I have a few specific comments below, inline with the patch, but I wa=
+nted
+> > > to make some general comments too.
+> > >
+> > > The kfunc additions really don't belong in the VFS kfunc file, please
+> > > create a LSM kfunc file (call it security/bpf_lsm_kfuncs.c) and add t=
+he
+> > > kfunc code to this new file.
+> >
+> > We expose a bunch of VFS heavy operations for various security modules
+> > and this is really not different. For xattrs we have it all centralized
+> > in the VFS and in general all VFS related bpf kfuncs should continue
+> > living there and be registered there. Anything that's just bpf infra
+> > specific can go to security/bpf/kfuncs.c instead. But anyway, it's a bp=
+f
+> > specific helper so it's the bpf maintainer's call.
+>
+> Completely agree. This is vfs related kfunc and has to be
+> in fs/bpf_fs_kfuncs.c to make sure vfs maintainers review it now
+> and all future changes to it.
 
- From where you sit with regards to LSMs that is a natural stance towards
-all kernel code, but coming back to the LSM hook, to me this is way too
-excessive that we should add *yet another* LSM hook. So, just for loading
-a *single* BPF program we would then need to pass through *four* layers of
-LSM hooks:
+*laughs*
 
-   1) security_bpf (cmd=PROG_LOAD): for gating various bpf subcmds
-   2) security_bpf_prog_load: historical admission hook (CAP/token,
-      prog_type, attach point), pre-verification
-   3) security_bpf_prog_verify_signature: newly asked admission hook,
-      same role as 2), plus the BPF signature verdict
-   4) security_bpf_prog: gate handing the prog fd back to userspace,
-      verification done & signature verified
+Okay, then split out the LSM specific stuff into
+security/bpf_lsm_kfuncs.c; all the LSM macros/defines/calls should be
+in the LSM kfuncs file.
 
-The use-cases of 2) and 3) conflate. I strongly prefer to just keep a
-total of 3 LSM hooks (as-is today): 3) makes 2) incoherent given they
-are the /same class/ of hook, that is, access-control admission on the
-load and split only by _what_ they can see. Worse, with the split, for
-a signed BPF program security_bpf_prog_load 2) admits a program whose
-signature has not been checked, so a policy gating at 2) is structurally
-unable to express "admit only verified" and every such policy is forced
-onto 3) *anyway*. In other words, you don't get two complementary hooks,
-but rather, you get one real admission hook aka 3) plus a now-degraded
-/legacy/ hook 2) that can't answer the question operators actually want
-to ask. So, no, we're not adding yet another LSM hook.
-
-> Based on what I see in this patchset, the security_bpf_prog_load()
-> call should remain in the current location.  If you need an additional
-> hook after the bpf_prog_verify_signature() call I'm happy to work with
-> you on that.
-
-See above.
-
-> I also have to bring up the same question I asked back in your v1
-> posting: have you discussed this signature approach with Alexei?  Your
-> patches abandon and remove KP's signature scheme in favor of what is
-> effectively Blaise's signature scheme from last fall; Alexei argued
-> very strongly against these changes in the past.  I'd hate to spend a
-> lot more time reviewing and discussing patches that Alexei is simply
-> going to NACK once again.
-
-I think last time I already stated that this is not "effectively Blaise's
-signature scheme" for couple of reasons: i) we sign over the raw bytes, not
-the derived hash anymore, so the hashing is only used in the context to tie
-the map to the loader program, but not anymore for the signature. ii) its one
-/single scheme/ and not a parallel branch, so the main loader is built upon
-the updated signing scheme rather than having this as an option on the side;
-in other words, this replaces the in-loader check and there's a single
-PKCS#7-over-bytes path, not an 'if (signature_maps_size)' fork; and iii)
-given we expose the verification result in the BPF prog, we also don't need
-a new LSM hook and can just piggy back on the existing security_bpf_prog
-which also has the possibility to still reject late at this point.
-
- From where you started out back then, it was the stance that while the
-original KP approach generically addresses all the use cases for loading
-BPF related to relocations via the lskel loader, Blaise proposed a parallel
-scheme which would only allow static programs (only insns, no maps) which
-is 1% of use cases it covers for the BPF ecosystem and users are stuck on
-figuring out which approach they need to go with. So when I took over the
-BTF series with the extra kfunc that KP proposed, I was mainly looking at
-that series trying to figure out how we can get away without pulling in BTF
-complexity for the signed loader and with a compromise that would potentially
-satisfy all parties under a unified signature scheme and having the kernel
-side (rather than loader side) providing the hard guarantee. So I cannot
-directly speak for Alexei/KP, but I think this proposal should satisfy all
-parties under one roof. I've build out user space tooling in addition to
-test real world BPF program to make sure they work in combination with maps
-and BTF under this scheme as well as map-less BPF programs.
-
->>>> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
->>>> index 2abc79dbf281..9cd2b62da380 100644
->>>> --- a/kernel/bpf/verifier.c
->>>> +++ b/kernel/bpf/verifier.c
->>>> @@ -19758,11 +19895,28 @@ int bpf_check(struct bpf_prog **prog, union bpf_attr *attr, bpfptr_t uattr,
->>>>           ret = bpf_vlog_init(&env->log, attr_log->level, attr_log->ubuf, attr_log->size);
->>>>           if (ret)
->>>>                   goto err_unlock;
->>>> +       if (env->check_signature) {
->>>> +               ret = bpf_prog_calc_tag(env->prog);
->>>> +               if (ret < 0)
->>>> +                       goto skip_full_check;
->>>> +       }
->>>>
->>>>           ret = process_fd_array(env, attr, uattr);
->>>>           if (ret)
->>>>                   goto skip_full_check;
->>>>
->>>> +       if (env->check_signature) {
->>>> +               ret = bpf_prog_verify_signature(env, attr, uattr.is_kernel);
->>>> +               if (ret)
->>>> +                       goto skip_full_check;
->>>> +               signed_map_cnt = env->used_map_cnt;
->>>> +       }
->>>> +
->>>> +       ret = security_bpf_prog_load(env->prog, attr, env->prog->aux->token,
->>>> +                                    uattr.is_kernel);
->>>> +       if (ret)
->>>> +               goto skip_full_check;
->>>
->>> We can always create a new LSM hook for this call site, e.g.
->>> security_bpf_prog_verify_signature(...).
->>>
->>>>           mark_verifier_state_clean(env);
->>>>
->>>>           if (IS_ERR(btf_vmlinux)) {
-> 
-
+--=20
+paul-moore.com
