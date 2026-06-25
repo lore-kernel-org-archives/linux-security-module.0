@@ -1,63 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail-10629.protonmail.ch (mail-10629.protonmail.ch [79.135.106.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3AD29E0E5;
-	Wed, 24 Jun 2026 22:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF3D38236C
+	for <linux-security-module@vger.kernel.org>; Thu, 25 Jun 2026 01:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782339477; cv=none; b=ZpJDmK6afYtmzeKzIwOd5x54zrJWkhBXTB7sk69MlIl4xT3ckpLuFaTKZC7C6nH+4xflFzbuzB74OzmaIUubbIFsJmV+DDTtd+/Q0TWntK92YyW0XJRQXbQq4WCMAS2RdPZnczm5uXj44SEF5gPAsjHVCBBrFwERyd/auY31oxg=
+	t=1782352239; cv=none; b=kL7RiQ6r0ndQMgcumuRZakc8w2klVG3hUv8N9blxCSb9ZJY386PmgisH4DWi/UC7xfwqRzMK/v5llYhLlH+lZYVv1hpblRehEMox/FXxU2OHq67UzU3pWXC6YaVsecPI+63jjtuLO68wT2A732BjHZ/HNCcvb8sVSp+5PGQq8yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782339477; c=relaxed/simple;
-	bh=pGfuyrOqOCsPUWP9qTSF+DBxW4qTMeV6pFZDRCDdb0U=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=JyGfp2MXGMyn8lIkioUMHRr3EBw5iy+zstplqREHMS0JRFQNq/ouS5roilbcPnm35LEZ3yGVEMsc1zqh3Lqki7Z4s4/ny8y7R+uombXYBG/MMB7C4c6XMxZlpMTEFSSbwludcPK9CEQflYTuuSR6/UbYBEAHsc4Eg5nb+G5BHJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RaOvY/Ji; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1782352239; c=relaxed/simple;
+	bh=vkTkC3M6dBTJeFRN/W+c8uQpDh/u3asLmz7tjHfGU94=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Fd5RiJBrsY8UT4JTbMLzcI8y39JrGXIixLbhjjVl1imLgijccJVRXNAqiB3dN6xSSVgpyVptXvrYC8z5pQEYAwTjmdZgHjJpmjPXi5z9ZvswxZ26X6oE1wF42sbZ4e96O2nAoXsub7WME560LZL1KyH6n84rTOjXC0duwqwUh1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=XV1an3xM; arc=none smtp.client-ip=79.135.106.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RaOvY/Ji"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC47E1F000E9;
-	Wed, 24 Jun 2026 22:17:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782339475;
-	bh=VSnq+eVRxBGF8ZCaTZntOpDEPveO8D1NQ/X8C/UhVSQ=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc;
-	b=RaOvY/JiS8jphWfFiHfK9e8PSglOvFyhJfIt8OJXs9KM75WR9iF9YYU97SzTOA934
-	 DilqE9r00zwrBRieogF7jMf5kRBn6zkRhON6gis8ZVLg/Kzd9xLmuROPuUV+6jfFWi
-	 nVeC9Dd4n53IYCsaTESHH5JQc1idNpU+ZqQAoB5gZereCjXbFdOGYYB0oPWbrhHMEN
-	 XLW130rTAV0FQEX3YWqZeA39u65VSWZh4R1xBpodL2gqIa1M4up1LNXeihplMfi2t5
-	 kzR8U+aThjn2DRHTE0iquSwZKVotTPZTpCy707O+0nKn23/ao3ZKseLw90i/eIerYh
-	 GJ0XmI6h5fWZQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 569103AA6A7A;
-	Wed, 24 Jun 2026 22:17:45 +0000 (UTC)
-Subject: Re: [GIT PULL] AppArmor updates for 7.2-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <bdb6dcf3-a0c0-45ee-be64-d135c973ec90@canonical.com>
-References: <bdb6dcf3-a0c0-45ee-be64-d135c973ec90@canonical.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <bdb6dcf3-a0c0-45ee-be64-d135c973ec90@canonical.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2026-06-22
-X-PR-Tracked-Commit-Id: 2f6701a5ce6257ae7a64ddc6d89d0a08d2a034f8
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6535a84bfdc4ab56fc901cbd9bd0d1a22315aa93
-Message-Id: <178233946397.3002918.1827393258923618213.pr-tracker-bot@kernel.org>
-Date: Wed, 24 Jun 2026 22:17:43 +0000
-To: John Johansen <john.johansen@canonical.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKLM <linux-kernel@vger.kernel.org>, "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, Georgia Garcia <georgia.garcia@canonical.com>
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="XV1an3xM"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1782352225; x=1782611425;
+	bh=vkTkC3M6dBTJeFRN/W+c8uQpDh/u3asLmz7tjHfGU94=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=XV1an3xM48qVValXK5urHVqGb+ulhgv5dmqvBzFkAOmRYFZXmzYy+4lawrGQurHo6
+	 VnBbxClJcIXGSbMVyhJbywuuYExO5wB6njhlNhJufj2NhHeTOLiJh81rOO5lXrD/11
+	 s9wAIjWCAnuoVFlSGtaXkyvkBt70IHUkx1NQ8LU08Y6OoG1z/5ZPv42bEcCW0mXw+q
+	 KFyellH0k/5ZJGGovv0EWi8xGQrcsXt4BIsBO4ct+58Sj917DaZsM8wBhS86UajQFH
+	 gA6VGXIPDk5GZXFiBMy3K4KuIL/Hlw3jTRulGkdmBYbikz5LcfH2d4CJ4bFU0qq9kj
+	 S8v8+1CWxOaZQ==
+Date: Thu, 25 Jun 2026 01:50:18 +0000
+To: Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>
+From: Bryam Vargas <hexlabsecurity@proton.me>
+Cc: Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Subject: Re: [PATCH] selinux: check connect-related permissions on TCP Fast Open
+Message-ID: <20260625015012.63752-1-hexlabsecurity@proton.me>
+In-Reply-To: <20260618175513.112443-2-stephen.smalley.work@gmail.com>
+References: <20260618175513.112443-2-stephen.smalley.work@gmail.com>
+Feedback-ID: 199661219:user:proton
+X-Pm-Message-ID: 3e7c70881b92ad9b9437df32e3535b7ab3871750
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Wed, 24 Jun 2026 00:52:16 -0700:
+Tested this on x86-64. I built mainline with and without the patch and ran =
+it
+under a SELinux domain (enforcing) that lacks the tcp_socket connect permis=
+sion.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2026-06-22
+Unpatched, connect(2) is denied but sendto(MSG_FASTOPEN) still reaches the
+listener. With the patch the fastopen send is denied too, and the AVC shows=
+ the
+connect check firing on the sendmsg path. Same for TCP, TCP6 and MPTCP. The
+TCP_FASTOPEN_CONNECT path was already mediated at connect(2), and a domain =
+that
+allows connect is unaffected.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6535a84bfdc4ab56fc901cbd9bd0d1a22315aa93
+A/B logs on request.
 
-Thank you!
+Tested-by: Bryam Vargas <hexlabsecurity@proton.me>
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
