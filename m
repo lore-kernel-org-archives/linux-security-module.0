@@ -1,77 +1,136 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55853F39C1;
-	Fri, 26 Jun 2026 11:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6573E274B;
+	Fri, 26 Jun 2026 11:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782474376; cv=none; b=YF0rNvYU4CGjRKHXuXBIAXRagNMl43LFAOdLnyxuDM/v0+Me7zsYvHIImwSkN6R/7Y7oZrD4iF87NUS0AFou8Aoxmct4xNOYUlmr1jWv1XwK2MqkwRFofWiCUXiI1TjAXYCVhpG1pSMDhV9Wo9qxH1t5+f8yfifVwKkPRmQVw/w=
+	t=1782474902; cv=none; b=fs06KRHzfmkBy+N8ElJLUl+0ZJuzHb93DlmUJtMVZZC8dZjm8McrBRvysFh0LcoEnw5EkrLK9AVzbICHYpuitg2QwzloL2A1IZ/N49rRRuSdDPB/m+yD2qSdpjOz80xGp3xNhtn2jzrZJ8kYjQKDEsAN2GN9mraBvJxpIVCWtiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782474376; c=relaxed/simple;
-	bh=pd20xb3Uvs8FTbSzb1gUYlsZmo1E3h/zsAZn9BTcaKQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dRcghM63NNT183ZrOq8zxsbaawhVG4XwjyJWDDeopLyy1F+A6hiw2GbpOFTo7KKysyTTQzYL4dBviuLs0b5Gq1N5ZSA3EROldMX6hm0FgYsjetaBxkvJcUTewHi0dKmg3fMMAhs5ZRXjPokWmZE1f7YlXHdeWTSQ9Rkd8bGhUy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KO7heSD0; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1782474902; c=relaxed/simple;
+	bh=ognTfAxCvoFUWWNRr5OSlBl7wqX/Y/FRoHPVFZpyGvU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=LNrisiGUxw/3H2j1AIIOCcbtc3ELzyNRD+H9wXGUNsTHO26wEDZ8ZPPj8mWMtdi777wIm0aQWlYmISSrqgQLThRE1aCygjGe6APHixug3S+HZYwKUTezYPKNw7yod9mgrlb4Ja0PDpetsMZfq4gNgIHk5t/UAzWiE+pohmvCjdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BDYJfRsw; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KO7heSD0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D9E81F000E9;
-	Fri, 26 Jun 2026 11:46:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BDYJfRsw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14A8F1F000E9;
+	Fri, 26 Jun 2026 11:54:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782474375;
-	bh=uuT7zEeg0ndGYB6NqxKnvU+pYG3YksFEeHsTzYD3Ehc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=KO7heSD034vhFSOX8UqlE8VIIiV/j+rrJ29rzSZ7q6T3HaFIZ5IsK0Il2JZ9Vrf3i
-	 6MOxnIrCEGQVAqt0WIFfbprNchgOogf43uUqmZ9MPiEhePHq+YK2kssacNt0zAGgCr
-	 p4zB9CSPvaGZ5jbQi9SnOEvczjFWvZ5DY1NU1jpV+oj/m+YZ/Jky7xlfvzOVNWIUhR
-	 g6WXNIyhuUrrgs28jWIy7r6UmGQ1XmB+JkF91yElM+pTtbDe9WUc+0aAaXWB9Ckr+g
-	 8cbOHmlFBPmxgzIcG3mUpP3FWR4WC4MXak3MZ4Jhje0nfVqdGwduHtVIMBPTN12k7p
-	 buvYrqU0E65rw==
-From: cem@kernel.org
-To: linux-fsdevel@vger.kernel.org
-Cc: jack@suze.cz,
-	djwong@kernel.org,
-	hch@lst.de,
-	serge@hallyn.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	Carlos Maiolino <cem@kernel.org>
-Subject: [RFC PATCH 4/4] capability: unexport has_capability_noaudit
-Date: Fri, 26 Jun 2026 13:45:23 +0200
-Message-ID: <20260626114533.102138-5-cem@kernel.org>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260626114533.102138-1-cem@kernel.org>
-References: <20260626114533.102138-1-cem@kernel.org>
+	s=k20260515; t=1782474897;
+	bh=tI6M6Y2nl4r0WViOFml8Atpt2yMNTJUDccu+Knxm3HI=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=BDYJfRswmlllKsddWLlMEwcM95dTkCYCF64HPZ57pBzELZbt6jGAmmwVc66TTM2I8
+	 3Tec5A5eq134VO8x4lpVU2IdVNs67nrqyt8fyg8fE5Bn9XtbdXao0gO113H0vAgkVI
+	 L5lyzQwN4csTXnXlgSWtUH1yP2A6+R08NaiVbghIFZkSxtH8b7Qt7s2GOEcx/R9+ZM
+	 DT76tQavBwrHC9hWkzwi3PM3tRxSffeOFhWE6iibzw3/BDvAO8l6XCA7dNfCbWY66R
+	 vFIHUjkysHLcCL0KtnND/khDEFldMef/K3qxDplJpjerBcOFvJ44cvKG9CvaoPT0xV
+	 Xrc6ROG/EnUew==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+Date: Fri, 26 Jun 2026 13:54:05 +0200
+Subject: [PATCH v19 8/8] rust: page: add `from_raw()`
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20260626-unique-ref-v19-8-2607ca88dfdf@kernel.org>
+References: <20260626-unique-ref-v19-0-2607ca88dfdf@kernel.org>
+In-Reply-To: <20260626-unique-ref-v19-0-2607ca88dfdf@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>, 
+ Vlastimil Babka <vbabka@kernel.org>, "Liam R. Howlett" <liam@infradead.org>, 
+ Uladzislau Rezki <urezki@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+ Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, 
+ Daniel Almeida <daniel.almeida@collabora.com>, 
+ Tamir Duberstein <tamird@kernel.org>, 
+ Alexandre Courbot <acourbot@nvidia.com>, 
+ =?utf-8?q?Onur_=C3=96zkan?= <work@onurozkan.dev>, 
+ Lyude Paul <lyude@redhat.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ =?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, 
+ Todd Kjos <tkjos@android.com>, Christian Brauner <brauner@kernel.org>, 
+ Carlos Llamas <cmllamas@google.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+ Leon Romanovsky <leon@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+ Serge Hallyn <sergeh@kernel.org>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Jan Kara <jack@suse.cz>, Igor Korotin <igor.korotin@linux.dev>, 
+ Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Pavel Tikhomirov <ptikhomirov@virtuozzo.com>, 
+ Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, 
+ Philipp Stanner <phasta@kernel.org>, rust-for-linux@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+ driver-core@lists.linux.dev, linux-block@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-fsdevel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ linux-pci@vger.kernel.org, linux-pwm@vger.kernel.org, 
+ Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: b4 0.16-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1326; i=a.hindborg@kernel.org;
+ h=from:subject:message-id; bh=IpZr4FT6FvBjQrQQDya19Z/r3yR23B/8jNNyN7AG0Ho=;
+ b=owEBbQKS/ZANAwAKAfpQKQiqxb3QAcsmYgBqPmh7a/zRVuwRfdQ6Jwphd9HrB/PVCZ50OLsaK
+ H9dvOcadCOJAjMEAAEKAB0WIQRXitnI2WZ2JirAaob6UCkIqsW90AUCaj5oewAKCRD6UCkIqsW9
+ 0E/AD/9fh1ImpLa0wfs7Sz9/7ZOnEQUUeJqCH7og8Qo4iv0qdA+RBY/oO8FSq5vpQbQ13fY3Ayh
+ DEgavk1z3cPYnuandw1SuuDrLQCxLOeLESl0BDoVxBj/yDzbm7szUpir2LpwCaENUs5GEThvdNZ
+ umvXCC4H0gSO0/hFgyQdrAsF1zYGzD56WcIML0JIjVf99ajYtIrUKOdTbO08ex60k3hewtHYJYe
+ vCz3gIAJNTxGsuumDy/14ym5oK3lmMcSYExXMxewTFyKYmSJRrJ7w8LxyJkvAGMO9gV16Y1BYKC
+ 9A+tHkKCtyz4UPm6VlqNYdQk5VGahhJD2eZM+w9I1FzO58egJeNurQxW5HxgUiMvUoP7CFxyfvm
+ JdZ7qlWp6XAYCVvhOcxzgflQAUlliy3D12W0TdgAT5OXESzE1IcQ/BHtUdXHJtgEIofBOzh2mgo
+ eoDwgwfOXFNDpuiT5TMPQiBC8s9daFRsyQccAlBRfrjfWHBcK9D0fQm2yaZiHL8P7PmcKEY3f/y
+ nL77s9uXC1QKlyBIB323xezmeOacU/pGxOFWljZ1QREEtu0r4u7rznmrDD1WibWb773+RjFKs+m
+ aFKQw3HafY3hrMdsDHOrXjFu150vSQ+BQV9BTq+xWQPW7XYMXFNBqH+Hu/rPL8EXMIg6Du3CrHG
+ wz+vQ055rIQkcfA==
+X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
+ fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-From: Carlos Maiolino <cem@kernel.org>
+From: Andreas Hindborg <a.hindborg@samsung.com>
 
-This has been originally exported to be used in xfs. Givin we are not
-using it anymore, unexport for consistency.
+Add a method to `Page` that allows construction of an instance from `struct
+page` pointer.
 
-Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
+Reviewed-by: Onur Özkan <work@onurozkan.dev>
 ---
- kernel/capability.c | 1 -
- 1 file changed, 1 deletion(-)
+ rust/kernel/page.rs | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/kernel/capability.c b/kernel/capability.c
-index 2c2d1e8300bd..3d0387fb93a3 100644
---- a/kernel/capability.c
-+++ b/kernel/capability.c
-@@ -326,7 +326,6 @@ bool has_capability_noaudit(struct task_struct *t, int cap)
- {
- 	return has_ns_capability_noaudit(t, &init_user_ns, cap);
- }
--EXPORT_SYMBOL(has_capability_noaudit);
+diff --git a/rust/kernel/page.rs b/rust/kernel/page.rs
+index 6dc1c2395acaf..c88fda09ead5a 100644
+--- a/rust/kernel/page.rs
++++ b/rust/kernel/page.rs
+@@ -143,6 +143,20 @@ pub fn nid(&self) -> i32 {
+         unsafe { bindings::page_to_nid(self.as_ptr()) }
+     }
  
- static bool ns_capable_common(struct user_namespace *ns,
- 			      int cap,
++    /// Create a `&Page` from a raw `struct page` pointer.
++    ///
++    /// # Safety
++    ///
++    /// `ptr` must be convertible to a shared reference with a lifetime of `'a`.
++    #[inline]
++    pub unsafe fn from_raw<'a>(ptr: *const bindings::page) -> &'a Self {
++        // INVARIANT: By the function safety requirements, `ptr` refers to a valid `struct page`, so
++        // the returned reference upholds the type invariant of `Page`.
++        // SAFETY: By function safety requirements, `ptr` is not null and is convertible to a shared
++        // reference.
++        unsafe { &*ptr.cast() }
++    }
++
+     /// Runs a piece of code with this page mapped to an address.
+     ///
+     /// The page is unmapped when this call returns.
+
 -- 
-2.54.0
+2.51.2
+
 
