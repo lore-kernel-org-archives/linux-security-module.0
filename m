@@ -1,81 +1,73 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AAF83A759C;
-	Fri, 26 Jun 2026 17:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536D52D0C62;
+	Fri, 26 Jun 2026 17:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782496490; cv=none; b=MMkGV+YjanEHyEv+nmWiCyfsY2M+9hVl2M5lar2nIn8f6sfAWBF82hLcpE2/hE++ORnejI7zGhRPFySIRr8P2l5+vNBeh90QJGKWIuM/ncD/5oD6yZ2HZye62BBP5B7DkRnprR8kGk0Iy2LvhBPZ35/TS+y0iHYRfdU6TUWP6TA=
+	t=1782496504; cv=none; b=a7F0kmEakjm5FZ+A2bvX7/152sbkiCoyNM1BcFFICDvxquUNoTz3GKGCEhNVqKsLDF68KXy37IAPd5N3GReDtvUTVfTu/Afvzb01EVRcokg8n24hhpzJLuAfKxr132T2si2vcylKHy380aq+hm1zBbiM6kWzcoyZHT+oewWLUEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782496490; c=relaxed/simple;
-	bh=ZvifW5GkM3RqyG8r+vlWapDYa4Tif4vyCmX+yNfLQgw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FJiNT7P3IjJAUqA8lSHwnJ/WNmOUPJcUAQ7/UaUPrWT5+XGHyZG8r0VT998VEQeqbjh1VDQ2ZU5e2E0aIZP85jbP1FUTeBnJNBGttgcx6JA3lICGZ9ioal8wyp+CSUjghONV3Ci4UlYjDY9/9veH74qtRPCJgCYF62K423X6Oy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b=PBtjy0cO; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+	s=arc-20240116; t=1782496504; c=relaxed/simple;
+	bh=T2cdVwjSA/aEFAt9j7QFPSkS0pYq1ySBxxls6IxRF1k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Tmmz1i/u3u5onmMBUzJiLR33tuD2MkLvFSlVgdlXWegfsqoKB5vbdwgk4Uqbf/jGp7P/OHoBRv5oO3p97FWJx1gvdalNV4wSLhdFPqNsTtYxO3jC50EOVTJY76LUQ4eFaWirhb+9fQjORxke1zrYJif/tNcxowW0TeJGhy1QuZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PSTXcOuY; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b="PBtjy0cO"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
-	t=1782495994; bh=ZvifW5GkM3RqyG8r+vlWapDYa4Tif4vyCmX+yNfLQgw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PBtjy0cO4GOSYTPW9dQQpAC3jhHDkU0YctCNOMURVw5SK/2U0GdUVl7ALKArQi89g
-	 nyA6z1yCZ+JliCMl328Kq2PVOlz/MIt1pPpTMSh+OdxxFErpm+Jk/Y0wfXavQyc8BQ
-	 4/lyCNcvwVI2/Kv81HwPeumkSbekxubw8vqXt9Fd5mi2+zyR58Vwt6sJyxMFYiiJd+
-	 DzAzhaeFLkR8O4EjZTbj6pr/ybWZPfPb/pSg96IFeWL9w8H1sa4DkAjPzQ6WJrBILJ
-	 XB2uxSldQcDjp4I1gEUKWsdZfMH/GqvUx/oawjX0pYUMZGM9qsLA9TaE5VgtMa8WS1
-	 GWyvAZ7ToPjKQ==
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 611D7ECA; Fri, 26 Jun 2026 12:46:34 -0500 (CDT)
-Date: Fri, 26 Jun 2026 12:46:34 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: cem@kernel.org, linux-fsdevel@vger.kernel.org, jack@suze.cz,
-	djwong@kernel.org, hch@lst.de, serge@hallyn.com,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [RFC PATCH 1/4] capabily: Add new capable_noaudit
-Message-ID: <aj66+o90iNkPfRJ8@mail.hallyn.com>
-References: <20260626114533.102138-1-cem@kernel.org>
- <20260626114533.102138-2-cem@kernel.org>
- <CAHC9VhQNURc=d4AOVDF-z29fjLasCiLf120Y-N3txEBccpkfSA@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PSTXcOuY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A858E1F00A3E;
+	Fri, 26 Jun 2026 17:54:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782496500;
+	bh=MzrOXfZCWqUkkLkuCYOMOg0Gw+ZB191BNbhP43mOt04=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=PSTXcOuYzH5YVSNn2YgtnQ0vo17ttcjpmJMNpZ/BLvCpQV93zcqCB/z7QmzZt614H
+	 Mr2jtJkqFox/rkmq5q0zHWlfvTk+pC5fOVy6/3dyog5goA2OTZrRgpodt+HUtdKmk6
+	 mCBqawAttlPtEyr8fYEQ2MN2+NMXAEY+cyr8oYAJU9np1O8Losm9MOz1JWv8d1gzDS
+	 wSk8vN+DV9QZxu6xxln6zLjF5+uyLXBSO6p3ibbPyyXnOYUj9YgzVp7s7fMwPAFdnJ
+	 Il6AbCsiDgbpTz/GNDdZb4grbGEPumqEvsSTuvjW/j8npH16gQcTqkBaEs+7+M1IF0
+	 AVyvT3k8eKgZQ==
+From: Sasha Levin <sashal@kernel.org>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	miklos@szeredi.hu,
+	amir73il@gmail.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	stephen.smalley.work@gmail.com,
+	omosnace@redhat.com,
+	gregkh@linuxfoundation.org,
+	bboscaccy@linux.microsoft.com,
+	caixinchen1@huawei.com
+Cc: Sasha Levin <sashal@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org,
+	bpf@vger.kernel.org,
+	stable@vger.kernel.org,
+	lujialin4@huawei.com
+Subject: Re: [PATCH v2 stable/linux-6.18.y 0/2] Backport Fix incorrect overlayfs mmap() and mprotect() LSM access controls
+Date: Fri, 26 Jun 2026 13:54:28 -0400
+Message-ID: <stable-reply-item011-lsm-618-20260626@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260626075035.143419-1-caixinchen1@huawei.com>
+References: <20260626075035.143419-1-caixinchen1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhQNURc=d4AOVDF-z29fjLasCiLf120Y-N3txEBccpkfSA@mail.gmail.com>
 
-On Fri, Jun 26, 2026 at 11:31:06AM -0400, Paul Moore wrote:
-> On Fri, Jun 26, 2026 at 7:49 AM <cem@kernel.org> wrote:
-> >
-> > From: Carlos Maiolino <cem@kernel.org>
-> >
-> > In some situations (quota enforcement bypass in this case) we'd like to
-> > check for a specific capability without triggering spurious audit
-> > messages from security modules like selinux.
-> >
-> > Add a new helper so we don't need to use ns_capable_noaudit() directly.
-> >
-> > Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
-> > ---
-> >  include/linux/capability.h |  5 +++++
-> >  kernel/capability.c        | 17 +++++++++++++++++
-> >  2 files changed, 22 insertions(+)
-> 
-> This is Serge's call, not mine, but FWIW, I somewhat prefer to see
-> code use the ns_capable_XXX() variants directly as I like to think it
-> means some thought went into ensuring the capability check is being
-> done in the right namespace.  Yes, we all know that capable() just
-> uses the init namespace, but I like to think that having to type that
-> out in the parameter list might be a good double check ;)
+> [PATCH v2 stable/linux-6.18.y 0/2] Backport Fix incorrect overlayfs
+> mmap() and mprotect() LSM access controls
 
-Hm, yeah, on he one hand it seems like a nice shortcut, but I still
-see people confusing what 'capable' really does, so standardizing on
-ns_capable_noaudit(&init_user_ns, x) might be worthwhile.
+Both patches queued for 6.18, thanks.
 
-(and then patch 3 can go)
+-- 
+Thanks,
+Sasha
