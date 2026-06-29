@@ -1,116 +1,180 @@
-Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com [74.125.82.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E91D37C0FA
-	for <linux-security-module@vger.kernel.org>; Mon, 29 Jun 2026 04:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06DF399899;
+	Mon, 29 Jun 2026 06:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782707976; cv=none; b=gMwHoKy1p/nVMhMxkXOpwNH8/p9OX4fbUXREsUAwLD+I3DcihEeRFOeWtfd+IZceDK67nBt/5AclCVOwPn9TgquBpJK5yN4cq7g3hje36b5r1R8N6tRjuC9+Ueaf9zLzi8YWLrO3LN2eJOYgIjG8ZWeD6zBx4EVH0p7WnfH+5eU=
+	t=1782714960; cv=none; b=cuKM4BvkOzYTaVNhwfdwjjfqScp0XLgeNmNX2TPycLVfZphdarw06q55i45PDEW8P0hzMBjGgct+/iaoyIO3adVYk1vP3jVoPMD+aBoYPerJUl7Rvn//dgN0hvF7CwxJn7FRH3DKFf9B62685xD+Bijl0/fTHhydkdeORdfUg7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782707976; c=relaxed/simple;
-	bh=1eU+2bDqdzNluinyylphYvQVh/IYBb3LxR6xoSyK7UA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N8TuXyCj+dwVL9DqwXs9C66DQ69za4qAH7AKdcOtUPZk/zw6Gpi8EDVNwHaJSTshKGoFDVOE2oIoCh9jT1FIRSZaJjDoocHUph3cpS9Kaxo/J1KpwurVcRlftwqpAMtsmm9q66lu0iHZQEIHQAu75wEcj13fr87Dmhsh9WUUrxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hn+E1MsJ; arc=none smtp.client-ip=74.125.82.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1782714960; c=relaxed/simple;
+	bh=84SgCX4/J8Nm/1TgJIEJEiLJQxKvJ4FTjUDPPwB4Sko=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DfLkXjxuISrP39DD+fsA1gHUY++/kDEfJxL2/dMkr2hKm7MOsrg5ECwzwZDe/61LG0gqjVpXFYY6d2DX8A1onAKGFdwCluz0YZ9HyrTssCUM1m5LFpqtOrPguhxjNs6ekcJ87sJCSQx7CcdKCb/oDrtCOpM3bGqbG+n0TRzNl94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=CZvVKtJ+; arc=none smtp.client-ip=113.46.200.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hn+E1MsJ"
-Received: by mail-dy1-f176.google.com with SMTP id 5a478bee46e88-30c99ccb1afso2693799eec.1
-        for <linux-security-module@vger.kernel.org>; Sun, 28 Jun 2026 21:39:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1782707973; x=1783312773; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tAkDY+MQvqYfr4IaXyrXZrjWk09q7w3/qlUx+mpeOiI=;
-        b=hn+E1MsJrcDHw4L7JMBDRGaEVWJGa0ETOsmQqVkAezoHqRNCzAOGRuGGIvFIzzgKAj
-         5WbmJiHasrXBsw2nHoHF1trp0cS9knpAh085FbvxF1XlG/DPaHrEmcR5qOONpWipekTI
-         b2pmR3DACgvrHz+t5K24F1Klul23PedHMKZDFVxRkjraR01Q2lZwnkB4VEOAS38x302C
-         RZiSAD2L8UPyAhNhq9GeEbgcAxM6bpc8M18GprrNeMR9TQXwcNyYWNbEZe2Iplh0nXwf
-         JkyvAD/bQHrPjowwEaqS8/fiHVxRV9+9F+3y+wWGAbHlMLR/ZbracNqgYEj3tkzGnPPZ
-         Cm5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782707973; x=1783312773;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tAkDY+MQvqYfr4IaXyrXZrjWk09q7w3/qlUx+mpeOiI=;
-        b=d8uRDLQyQh7WcU8HMrZYs4UHGRmPXTfIR6SOZVoW8u1AsR5sLPRIJtPosv4v36GEsh
-         LL+dPVRdrulcSAJlVJzKMcZMUdyb9aye1+sROHBqohpnhQAbNwL0IeBIq2uUWNA200S3
-         jltMvRuTycSjSgsRpcftIcVyrC/fD3XI1tT6ocTVer38M24rk5hKGPc9eR4UsyfAgClQ
-         nu/oey8mPZnGptPHthH4GaQ2MDHWiVpMUqhQiefxiE5UHMW273xhCOLU0d2lPXQriEV5
-         4RutTUBbNeVHoIv3ynAireKrp6SRLlnjFjDGXyJzNhkDqGe+ThGf/qHPybHFeUp/KMf6
-         BPkA==
-X-Forwarded-Encrypted: i=1; AHgh+Rp0PDbwmvWzQo5Xs4J6xERonx++710jQ7SLexuDTci1d4U7NPTWgaDPcsfDSVWfi+OXJUIWwdK2tZdmkhuSAOmBzybnCfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylYX6Krf+lTnd1vBAUfuMtBkeFccV0amNXptywh4ivq5GZl1f0
-	WQ9cIwbUUTLHAOTZTD0DjjgdbmmSlXPcMV74TTgHtgKMeA1Lb6NpyDSw1/ucbq2cGVM=
-X-Gm-Gg: AfdE7ckLCvXb2CsqItyfIaBp8rr1WnGTYLJHwTEGhDCBJ1gp2CBggnAVIaRZON3bI8f
-	f7iRAsPWf2xeYfE5gSwa5LEeEQXIrHAfe8AXVVLUH7TWhSVeivZCjEqJrkK9ojN0pooyRJ0pv+5
-	lwbbg4dlAHuxwCGnH6Rvck0Xq7D7Xdpy2l4EvMtV97YdyLXKsf45Nz/jqH02zE0XVx2u1tmKkYm
-	KbRTnLfO/ZOVTIZnypvV/7Gy3OMYmHAaCP19gJ+ZULAmz2EJkzuqUkBjJxNfVlyUlvwZYTy4TjV
-	i7eRsQxrjtSM9mP/4b44adwugjlXO4EmbnGcsjGLKN2Z2Cv7Nj1HR+ZB9YRs/tfGIBqXW8Lp1XL
-	yLy4zZqz87Jsua92O7XNGcVbOWYn94Q62m2wQwynMpGhNoRYrMX+b8iXOsvGtKWMHRlr1Z2EAEm
-	OmE9FgZuVG2/nt
-X-Received: by 2002:a05:7300:5341:b0:307:d4e7:b177 with SMTP id 5a478bee46e88-30c84f3cb8emr16773092eec.16.1782707972936;
-        Sun, 28 Jun 2026 21:39:32 -0700 (PDT)
-Received: from localhost ([122.172.82.94])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30cac1b9751sm23319860eec.3.2026.06.28.21.39.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Jun 2026 21:39:31 -0700 (PDT)
-Date: Mon, 29 Jun 2026 10:09:29 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Trevor Chan <trev@trevrosa.dev>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org, 
-	ojeda@kernel.org, a.hindborg@kernel.org, paul@paul-moore.com, aliceryhl@google.com, 
-	airlied@gmail.com, simona@ffwll.ch, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	igor.korotin@linux.dev, vireshk@kernel.org, nm@ti.com, sboyd@kernel.org, 
-	m.wilczynski@samsung.com, boqun@kernel.org, gary@garyguo.net, axboe@kernel.dk, 
-	daniel.almeida@collabora.com, shankari.ak0208@gmail.com, lyude@redhat.com, j@jananu.net, 
-	lossin@kernel.org, acourbot@nvidia.com, markus.probst@posteo.de, 
-	driver-core@lists.linux.dev, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	david.m.ertman@intel.com, iweiny@kernel.org, leon@kernel.org, bjorn3_gh@protonmail.com, 
-	tmgross@umich.edu, tamird@kernel.org, work@onurozkan.dev, sergeh@kernel.org, 
-	matthew.brost@intel.com, thomas.hellstrom@linux.intel.com, jack@suse.cz, ljs@kernel.org, 
-	liam@infradead.org, bhelgaas@google.com, kwilczynski@kernel.org, 
-	ptikhomirov@virtuozzo.com
-Subject: Re: [PATCH v7] rust: aref: make `AlwaysRefCounted::inc_ref` an
- associated function
-Message-ID: <xak7wil2w2wdnmkfh4e4ijhlgnudzuh5y3ltlo72454e52tocv@434kdjz2eupv>
-References: <20260628100731.64885-1-trev@trevrosa.dev>
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="CZvVKtJ+"
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=xt8oDi+bI3bYNwgnYXtWn3UN8f+umrwsGOwaJMxCFgk=;
+	b=CZvVKtJ+qfInXDOY1/oQfyXE7Ej1O6niptRYqR2KuJ9VOxK38Qd4y7WV3BnC7gROpF4JhYpa1
+	d0hwW5tXeO+fxv2hUrgN9f4Lz8fkOi6sTDzhuUsXM+K2NTG8k1YC3aKO8vbV4X1SXB6pZ3Jk56a
+	j5dmVmPgyWXAjwQy2kZJp30=
+Received: from mail.maildlp.com (unknown [172.19.162.140])
+	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4gpbsd0rmmz1T564;
+	Mon, 29 Jun 2026 14:27:01 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id D93252025F;
+	Mon, 29 Jun 2026 14:35:48 +0800 (CST)
+Received: from kwepemq200017.china.huawei.com (7.202.195.228) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 29 Jun 2026 14:35:48 +0800
+Received: from octopus.huawei.com (10.67.174.191) by
+ kwepemq200017.china.huawei.com (7.202.195.228) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 29 Jun 2026 14:35:47 +0800
+From: Cai Xinchen <caixinchen1@huawei.com>
+To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
+	<miklos@szeredi.hu>, <amir73il@gmail.com>, <paul@paul-moore.com>,
+	<jmorris@namei.org>, <serge@hallyn.com>, <stephen.smalley.work@gmail.com>,
+	<omosnace@redhat.com>, <gregkh@linuxfoundation.org>, <sashal@kernel.org>,
+	<bboscaccy@linux.microsoft.com>, <caixinchen1@huawei.com>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-unionfs@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<selinux@vger.kernel.org>, <bpf@vger.kernel.org>, <stable@vger.kernel.org>,
+	<lujialin4@huawei.com>
+Subject: [PATCH v3 stable/linux-6.12.y 1/3] fs: constify file ptr in backing_file accessor helpers
+Date: Mon, 29 Jun 2026 15:03:36 +0800
+Message-ID: <20260629070338.578858-2-caixinchen1@huawei.com>
+X-Mailer: git-send-email 2.18.0.huawei.25
+In-Reply-To: <20260629070338.578858-1-caixinchen1@huawei.com>
+References: <20260629070338.578858-1-caixinchen1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260628100731.64885-1-trev@trevrosa.dev>
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemq200017.china.huawei.com (7.202.195.228)
 
-On 28-06-26, 18:07, Trevor Chan wrote:
-> diff --git a/rust/kernel/opp.rs b/rust/kernel/opp.rs
-> index 62e44676125d..84802f22b652 100644
-> --- a/rust/kernel/opp.rs
-> +++ b/rust/kernel/opp.rs
-> @@ -1043,9 +1043,9 @@ unsafe impl Sync for OPP {}
->  /// SAFETY: The type invariants guarantee that [`OPP`] is always refcounted.
->  unsafe impl AlwaysRefCounted for OPP {
->      #[inline]
-> -    fn inc_ref(&self) {
-> +    fn inc_ref(obj: &Self) {
->          // SAFETY: The existence of a shared reference means that the refcount is nonzero.
-> -        unsafe { bindings::dev_pm_opp_get(self.0.get()) };
-> +        unsafe { bindings::dev_pm_opp_get(obj.0.get()) };
->      }
->  
->      #[inline]
+From: Amir Goldstein <amir73il@gmail.com>
 
-For OPP:
+[ Upstream commit 4e301d858af17ae2ce56886296e5458c5a08219a ]
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Add internal helper backing_file_set_user_path() for the only
+two cases that need to modify backing_file fields.
 
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Link: https://lore.kernel.org/20250607115304.2521155-2-amir73il@gmail.com
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Cai Xinchen <caixinchen1@huawei.com>
+---
+ fs/backing-file.c  |  4 ++--
+ fs/file_table.c    | 13 ++++++++-----
+ fs/internal.h      |  1 +
+ include/linux/fs.h |  6 +++---
+ 4 files changed, 14 insertions(+), 10 deletions(-)
+
+diff --git a/fs/backing-file.c b/fs/backing-file.c
+index 09a9be945d45..892361c31c3d 100644
+--- a/fs/backing-file.c
++++ b/fs/backing-file.c
+@@ -41,7 +41,7 @@ struct file *backing_file_open(const struct path *user_path, int flags,
+ 		return f;
+ 
+ 	path_get(user_path);
+-	*backing_file_user_path(f) = *user_path;
++	backing_file_set_user_path(f, user_path);
+ 	error = vfs_open(real_path, f);
+ 	if (error) {
+ 		fput(f);
+@@ -65,7 +65,7 @@ struct file *backing_tmpfile_open(const struct path *user_path, int flags,
+ 		return f;
+ 
+ 	path_get(user_path);
+-	*backing_file_user_path(f) = *user_path;
++	backing_file_set_user_path(f, user_path);
+ 	error = vfs_tmpfile(real_idmap, real_parentpath, f, mode);
+ 	if (error) {
+ 		fput(f);
+diff --git a/fs/file_table.c b/fs/file_table.c
+index 2a08bc93b0b9..75a1908d51a9 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -48,17 +48,20 @@ struct backing_file {
+ 	struct path user_path;
+ };
+ 
+-static inline struct backing_file *backing_file(struct file *f)
+-{
+-	return container_of(f, struct backing_file, file);
+-}
++#define backing_file(f) container_of(f, struct backing_file, file)
+ 
+-struct path *backing_file_user_path(struct file *f)
++struct path *backing_file_user_path(const struct file *f)
+ {
+ 	return &backing_file(f)->user_path;
+ }
+ EXPORT_SYMBOL_GPL(backing_file_user_path);
+ 
++void backing_file_set_user_path(struct file *f, const struct path *path)
++{
++	backing_file(f)->user_path = *path;
++}
++EXPORT_SYMBOL_GPL(backing_file_set_user_path);
++
+ static inline void backing_file_free(struct backing_file *ff)
+ {
+ 	path_put(&ff->user_path);
+diff --git a/fs/internal.h b/fs/internal.h
+index 8c1b7acbbe8f..a4352d333c61 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -100,6 +100,7 @@ extern void chroot_fs_refs(const struct path *, const struct path *);
+ struct file *alloc_empty_file(int flags, const struct cred *cred);
+ struct file *alloc_empty_file_noaccount(int flags, const struct cred *cred);
+ struct file *alloc_empty_backing_file(int flags, const struct cred *cred);
++void backing_file_set_user_path(struct file *f, const struct path *path);
+ 
+ static inline void file_put_write_access(struct file *file)
+ {
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 87720e1b5419..70bbc00a2bd2 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2738,7 +2738,7 @@ struct file *dentry_open(const struct path *path, int flags,
+ 			 const struct cred *creds);
+ struct file *dentry_create(const struct path *path, int flags, umode_t mode,
+ 			   const struct cred *cred);
+-struct path *backing_file_user_path(struct file *f);
++struct path *backing_file_user_path(const struct file *f);
+ 
+ /*
+  * When mmapping a file on a stackable filesystem (e.g., overlayfs), the file
+@@ -2750,14 +2750,14 @@ struct path *backing_file_user_path(struct file *f);
+  * by fstat() on that same fd.
+  */
+ /* Get the path to display in /proc/<pid>/maps */
+-static inline const struct path *file_user_path(struct file *f)
++static inline const struct path *file_user_path(const struct file *f)
+ {
+ 	if (unlikely(f->f_mode & FMODE_BACKING))
+ 		return backing_file_user_path(f);
+ 	return &f->f_path;
+ }
+ /* Get the inode whose inode number to display in /proc/<pid>/maps */
+-static inline const struct inode *file_user_inode(struct file *f)
++static inline const struct inode *file_user_inode(const struct file *f)
+ {
+ 	if (unlikely(f->f_mode & FMODE_BACKING))
+ 		return d_inode(backing_file_user_path(f)->dentry);
 -- 
-viresh
+2.18.0.huawei.25
+
