@@ -1,255 +1,183 @@
-Received: from sonic315-26.consmr.mail.ne1.yahoo.com (sonic315-26.consmr.mail.ne1.yahoo.com [66.163.190.152])
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBFC3C8724
-	for <linux-security-module@vger.kernel.org>; Tue, 30 Jun 2026 16:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.190.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82073E0732
+	for <linux-security-module@vger.kernel.org>; Tue, 30 Jun 2026 18:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782838040; cv=none; b=oioKdKRPGE34UjS/4AVC9MM35sQrgCyVZrXWXBKqpE+wHUpqUFltV19jKz8PQQCMu2VysA8IZFB+KyW6SGzOu5QhhVQMq0L92pBKUSRZDWKqq6TGGF7/esoGB4ABKXcMcLH5g53a8qhKKWrUaP/BzXW1PkGoDUjZ2Ypv8WSS+Ts=
+	t=1782844801; cv=none; b=MyjfQ/C8cw1qhmFgf6FWYTIsKk1jpBqNBsWwCqST+O+gbFxWNz0Y5MYOgZzZZ8B2eKpzCoSrruBf1bAPrVmTso4H8xV/9GYapWskZ0KRx1EwkBaRYUfPjUzUdI8ZIdeKaTe49phjwfE2/ywVNdjMr+45bd8d088Gw+YVnK0wooY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782838040; c=relaxed/simple;
-	bh=wm5DHdFF8D7xpEBn6Vx5ECjIg9+tFlUcBj+FPeN9rzE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dQ/PsvjAAAofLPluUX+N6tuR6YHGojIGeSzKNEVBOd+0GJsDYhFJy38MJ8RKU9FeW3n1jsAKZdnxyVyXkgoxRZP1d7NzXTq7V1KLENG/dn8ys3q3Tw7sH1i1jRJRVltgzX9jaU6eqzZ3SC/FeDunBrfXcgWYUOsFMsxqvvyH0K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=i5UgRVZA; arc=none smtp.client-ip=66.163.190.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1782844801; c=relaxed/simple;
+	bh=S6k+uQwLsBLqS78QaiWexapMR9GFIKsV5VVSUcaj7Js=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C6ocSsowaqGUmLpkUWVGosM1PuL8hbxoDW4Nb9ViLTRI1IXd539OySq/41X+Yn1GNaHn3kcaBAUJ8JOJEaVD6wpyoGJQ9+RWi4H5E15wsdzpp80+Y8SKWqnXlFuWWBY8UZYcnnqIoGDdWPJCB3pvY97/LnSIIXHGk2MeUakkZcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aEQ12RMX; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="i5UgRVZA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1782838037; bh=w+DSqPqb/ApyykNy+dGJ0PSYL1qJiLq86yl+oH/5ZaI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=i5UgRVZAN7Qd31WgDmadnOIVhjXl49bxfxLEw3buG3n3+TctObzngXDwoY4v5Yy9Sibx4L/APIbK+GX22LIMlwE7cIMevHrqtEQUKHWJfnxHwj3xLGSB3N7LyAGfCo1TG+PLblAUmqmPd//BX0Pm/XvKIPMDSsQegI6/Uo50l7qW4va/vHS6xQ7PYQI8WvMln16eK0wnbdoHWCpgGpFFNpb+9s4jwl1wt9TcUqTmHPUhl4YBS60X74hXrZB5wYEdeR006PX6Q5D9CZxBiU8DV1iWfXRQxuoYplGLLVHukD89wztZCTRn1idl7D6QYzaYVBWkS3yZDdlnoIh4pM9jdw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1782838037; bh=QOqjpqQ2iMBUqrngel7+oFVerrt3f2i+qr+5utQ5FiO=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=XYbNZJR7OuuVyXSJiLecwkZ4hrNsrfqJbRAuB9OS1AfHnoDtk8eRlTVVpMQR+QjPiswM5aS5TrBaFAx/Q3bqE5ERzMboQjV4IiyPVZ3Bl3vK0c/brlMnlNAeLZd9NWtrxNMU6L1z1Uv8CQXQTvFnFuUdTE1hX08lP/199ZuVcd9J9hCnQHSlc2XmCCpdAr92W1OF32KaOoSfMYcfFszd3UQ1GyG5Bd+JWX2YW9UgxdYymxwBEILNloDzl5XbEFb2RWPZPkYvfuU1OZJgeslNYbsWzr7S/BlOFwCP5G3lJwc4PKwjlA9Bad3BsSqyLDhlUKl3sQ5HJ5lmrsIe28UUhA==
-X-YMail-OSG: kYOU1U0VM1l0PoIFXNmWEskfLLBzdrB.0sS5aUemQgwXfYfGQtVOXsLVw0xe8Yz
- DURo9KNrBDo1UqIFkcI21mSbocuAv3AmHbyHfq5BFT0V5GlM2MGk.UQT0WuKPH8gwqyQEt9jlLrr
- UEpfjJ4d2rYPP4SudKcl2OijSay6f0EgtyCg.74khC72obh53uCc5FVcONNtgHFQ9QdFEtWobKOO
- lltilzLbybOWkad0275ylqwDAldyls_7OZPMxT.ju4uCi5WTNcLZdwlzfYPwpYA.D__h.eqGiAXk
- TQpy4GWd8dXRxV41Dyxk2zkP_lEz0PjNy32ROn1IyZGzz4HBrLlQihPvmkWhfc_yHX2dZ9Fb5tos
- 7t1V1vOUIKeW17Uiw.6cxJ2Byoip10tEr3ns1CJNDIzNg2Vz3xvDCw_RzoO9wNK4QbJSWHjV8dao
- 5neYQsCB.eoYrwVKKH1FRsA0buardfOf125K.maWi83NtqhtIrrTvBPI4qinchAXlWw9_rxZ9ldF
- ZmEcVpmI.a5pgRsqK5SMG4PFhsK90qPiSEB.y8AVBc_iRAcc1p9Ti5L9lF5Dr1eG5KdjNIJ3VqnF
- cMahnHd_cw5wiDWvUYlLO528hsyhvMlOR4atzagX7nFQhhKJYZ2QAjdVl_8Z2.ns0oEZVMEs8Wo0
- _KRCfbOYLggqra4BHe4rGk90hsdGQnlgk9_8zZTg8M96iwSRkaoDHvfbmYhegBY6tTY8ZanD9FZj
- huxXsCnHMKBEJ0epPpIM80UDN3iDRuqxNE8EEI5Z2T_g4oGmcDsNMm9ImUt5m61COxTgXjy5boNl
- 5SHPUK2bUpz6UVfa.W89tb1fgXYia6BX8Z3ygXBrShHaH3Bl0FWAntURYsb4dYao__abOCcQHf06
- XVMbVKPKYNK_lhjde3ZRwK2Gqg2FZK_Pct5_XTjMpOR4tkjRh8tEBCb68wGkvkhphAxQxqatoNIK
- TYx1U13oXoxe2dum.Sml_kMfHiJBAxEjfO.OoK4dSjVgdpPQRdnz2Z2kJx.yRtNJ87tRZWFtWitH
- nng540l47N0zOsiAClX62zLMuMfrauR_StTobF.5jYgW2t1BX8Jg4SB49cMsReDTDYNeCR79KxRB
- nuYACyLshjOIXeengfHH_crVmOtPcY7c4P0PUQi41sYDL2qe48kKDPcD5yQHc64UzKLoYmYM9aT7
- lYVxTWgJnBMOR8hCKYmGjTfrNHxrJjFYkEFy9Tf09ui3mXXaGJoB9TiNOopovgmLFqQKfGq.SfPB
- F4yR3ia2zuUiNiwJI.L5g089GRrdv_Qhi9sInRy5Tjv6EgNNa3epAVKzgquLukUM.WKo7j.36meC
- X09Ht30rIyi3pVYDDkxNga9vqhMoDd1m8uBgn2oej4Dl_ENpN00vkyFTG9ITmduUWmNtZVSq4ipy
- CgSZ9NYfBFpchNjPXMkNafYZnaRrcV4zSGlqg35JwkmR6uISM9dtrH2wxp50QwxRk6VO9XXzPeMP
- yOg7zUhIXNfNt1u.dn9Z.9RgIu4klSvQM5pa8B9pveiyGWx52CyO3xTpwtnc8eq1wQagEzOTghBh
- ZROqPiuoyFzc.q68GRtWft7d6_TIcmq7UV_oggOvvf9drOT_1ZTdCh9TAMX_.b_9Q018vdu_P45B
- iaKUJb96aa31J_CiMhAJk2q3ZdyEaROuwjX1tMe1XKB7W9d0s7G80VCZ2pmnt65qqgCIXBTzEM1P
- WxnNnq5pnu_O4OSvps1oIvTqZVO.D4u8Kp7G4HqjuZRX7mcbpqNvD7u6ffzGRS6TV.HX5u.lPPuU
- AKGmXNvI2wNCwAnBlykmnPmwEG0Hd5c3T8o6G2uxntmGMz9rzZSW9adIYTsq8CYiIHCzuM9OAqiV
- LHBma9.lnrRp_G8SUz4VDiZh4J6taP.o73xbuDe9S68TCinVs7izhPTb71IUbFl.Xp_lhpvQjcJV
- jUcT1KBjALqYj7iu2ol0GMKlmsNbORm.F7bqVvSk6BPhfB9_gF0A5eZg4DzoNtI3APAIDoNIYxsH
- FcfsWDum3t6lDVmrchuju_fBQTd18.M.9uW1yq1rYzw3erS1ddfhUTXQ1ZtL8MjLbgwnYfUCUyYK
- JlpQo5vJ31kTEl2DW3wp25qm3fA3L0i5XYHkC_h4IWfOl1uY4XW0.05d769ZPO0HS4io9u0zMKMt
- f9fZL3Z27wepbHng.2z496NMaO96ejop3kIIdtFvQMTQWKWPazRZassbz7SxvEBwQPjTIEDysOYM
- yEpjyh01UacOEQRkjmY01w_weFqIL2BFFXoiE2L5YFsf1yzRYHVwtTKEHFcI1k49Ej4Qy.TA0fd9
- Xddod5Rbb8OTMpU0MfH.1RA--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 647a1600-dfb3-4636-ab1c-a14f24ddc600
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Tue, 30 Jun 2026 16:47:17 +0000
-Received: by hermes--production-gq1-6dc558886b-fwhhm (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 1e7fa2098ce22e9ccb82af723c7f96a9;
-          Tue, 30 Jun 2026 16:26:38 +0000 (UTC)
-Message-ID: <a58c016e-8d38-48c0-928b-aa622aa17e2b@schaufler-ca.com>
-Date: Tue, 30 Jun 2026 09:26:36 -0700
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aEQ12RMX"
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-92e5d50b0dbso183237585a.1
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Jun 2026 11:39:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1782844799; x=1783449599; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=KmgV8nCn9sbfqM1ezwxzcVc9Q6Oo1QwQHw5Oa3kbYoo=;
+        b=aEQ12RMXQ+9Hh3F8u82u1VGab0TICtc/2lK+zxraZIDrae+S3v/JtWuYFKJsnzbp3/
+         rTUg5SEbJgZN6xVgrxhrVKZQj4Ogp9uPEb6JZvnnRtpuj2opyz5ULVe6H8+J/JnmjONs
+         /WYbwijD17n+1B77a+eIL4kTFmd2LydZ0hs6TLYwYjcSWFi9k6XXwVYqknEioWyTkfrN
+         eHEbtCkZwVBmFDjIQMKLNDQCFzVck68Uc0xuvcCFtwEObTvpvFRvOekTQswV6P+Ci4Tn
+         l9mhkVkmpB1uIdKzzdMMpKAlmnCMKW0x9Rp/bjthR/8mOFihJiTVI5El7+6ALF3nDnb1
+         5gfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782844799; x=1783449599;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=KmgV8nCn9sbfqM1ezwxzcVc9Q6Oo1QwQHw5Oa3kbYoo=;
+        b=avkpYA1F0NdBhZFNDUdiNqw8Xsoj0FdSCTYb6Iv+jUurkPLf1pX9+10gfKdnYtqCQn
+         uiuFuQMs+04H0t9MjRJyftwzHH3+CxK0fWFmdsTkFFmOaUB13Fmh90SGZzpI4zBDY2Jg
+         dp3YiRByC7hje2koVGgYE/MwRxUg38FcgAV9kfVmgZ7ZySn9mygW0ZYEgcbdaBgsf8J7
+         mqSZ/68gn2LebY3PpVH5bGvmR9yx1dFgt1wr0zr2crscFlhU/GGu1w/Dnp+2unUVQ2FC
+         HwWUHiJvdHFPwnratPvO37re+wH2ZpmaATEsnbKcCbBOZ34nlbK7WdeUCPNE57aWLlaX
+         GKPw==
+X-Forwarded-Encrypted: i=1; AFNElJ9HJftV59cre+KUrqUB50An+zE2Wx/rDaGx1CrHOEhOHkFiLsuLuvmgHYYZ9RZjS155jy3qkeUZDzVG55r+h1Ged0juVtU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKzFExQylYqr6efCtKAWNf6C4NH35IW5/+fh5MI21GSSP6vzcS
+	gJolEmkzeAlEW3ft7ktKy0qJmyAlafDH6OJ9b0OXDRPZ3kKLqogxW0QD
+X-Gm-Gg: AfdE7ckPKdlWOb+P3wfNKjXGTOlcy8gsZUcv9O4dtdLnp3h9s8363X5/fyT7IIL24C/
+	qlHXKGsF5SLDCyBJOBzXYs+vNnmQMv7FV2bRGgElOcJWFeo5sR0UY18M5mVVgf90TK8BXYzYcmU
+	jPMxIBD2hpv8HbOZyMSZseZgUFDE5L8tGwyMfvvSGl/81h4ftSpJfaRNM0HgRWm5oqQkABfURv3
+	UiYZboh+OJCmi5dBJPLUTdJl8x+xIM/ZJMZwAlUhvik1ejRs4gzrPTLG/aKh8Mkf79/JPI5V/3D
+	5S4XrdipGZsqOZWw1gLmDkljKZO5Mk4BNQSqStiLK+QRYv6TamWstUlCReeh3AUHH4EThOmwNsI
+	fxPIdH6tkD6/DUC0KKr7S11zhD1zltpVYmcvwrM2ubu1P3v5LIFt5sep1dAwPXryLvEfPLQJdkp
+	qA5ct4pA7NfeRg3ULUTGfa3TYY2ei1w8lO03w1gzcGupkirDNO+xGx12Ln7Z+hz31IsElLisj6i
+	HfCN4wDFG4nb0A=
+X-Received: by 2002:a05:620a:7088:b0:92e:4773:5a05 with SMTP id af79cd13be357-92e624aa5a7mr812235885a.4.1782844798653;
+        Tue, 30 Jun 2026 11:39:58 -0700 (PDT)
+Received: from battery.lan (pool-138-88-31-60.washdc.fios.verizon.net. [138.88.31.60])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-92e62191b18sm326961285a.18.2026.06.30.11.39.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jun 2026 11:39:58 -0700 (PDT)
+From: David Windsor <dwindsor@gmail.com>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Emil Tsalapatis <emil@etsalapatis.com>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Shuah Khan <shuah@kernel.org>
+Cc: bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	selinux@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	David Windsor <dwindsor@gmail.com>
+Subject: [PATCH v4 bpf-next 0/3] bpf: add bpf_init_inode_xattr kfunc for atomic inode labeling
+Date: Tue, 30 Jun 2026 14:39:52 -0400
+Message-ID: <20260630183956.281293-1-dwindsor@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lsm: cleanup repeated lsm_blob_size_update() calls in
- lsm_prepare()
-To: Matt Bobrowski <mattbobrowski@google.com>,
- linux-security-module@vger.kernel.org
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E . Hallyn" <serge@hallyn.com>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20260629210150.832576-1-mattbobrowski@google.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20260629210150.832576-1-mattbobrowski@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.26086 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Transfer-Encoding: 8bit
 
-On 6/29/2026 2:01 PM, Matt Bobrowski wrote:
-> Centralize the definition of LSM security blob fields using an X-macro
-> (LSM_BLOBS_LIST). This reduces repetitive boilerplate code across
-> struct lsm_blob_sizes, blob size registration in lsm_prepare(), and
-> debug log printing in security_init().
->
-> Signed-off-by: Matt Bobrowski <mattbobrowski@google.com>
-> ---
->  include/linux/lsm_hooks.h | 42 ++++++++++++++++------------
->  security/lsm_init.c       | 59 ++++++++++-----------------------------
->  2 files changed, 38 insertions(+), 63 deletions(-)
->
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index b4f8cad53ddb..0e73b22bdeea 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -98,28 +98,34 @@ struct security_hook_list {
->  	const struct lsm_id *lsmid;
->  } __randomize_layout;
->  
-> +#define LSM_BLOBS_LIST(X) \
-> +	X(cred)          \
-> +	X(file)          \
-> +	X(backing_file)  \
-> +	X(ib)            \
-> +	X(inode)         \
-> +	X(sock)          \
-> +	X(superblock)    \
-> +	X(ipc)           \
-> +	X(key)           \
-> +	X(msg_msg)       \
-> +	X(perf_event)    \
-> +	X(task)          \
-> +	X(tun_dev)       \
-> +	X(xattr_count)   \
-> +	X(bdev)          \
-> +	X(bpf_map)       \
-> +	X(bpf_prog)      \
-> +	X(bpf_token)
-> +
->  /*
->   * Security blob size or offset data.
-> + * Note: lbs_xattr_count is the number of xattr slots in new_xattrs array.
->   */
->  struct lsm_blob_sizes {
-> -	unsigned int lbs_cred;
-> -	unsigned int lbs_file;
-> -	unsigned int lbs_backing_file;
-> -	unsigned int lbs_ib;
-> -	unsigned int lbs_inode;
-> -	unsigned int lbs_sock;
-> -	unsigned int lbs_superblock;
-> -	unsigned int lbs_ipc;
-> -	unsigned int lbs_key;
-> -	unsigned int lbs_msg_msg;
-> -	unsigned int lbs_perf_event;
-> -	unsigned int lbs_task;
-> -	unsigned int lbs_xattr_count; /* num xattr slots in new_xattrs array */
-> -	unsigned int lbs_tun_dev;
-> -	unsigned int lbs_bdev;
-> -	unsigned int lbs_bpf_map;
-> -	unsigned int lbs_bpf_prog;
-> -	unsigned int lbs_bpf_token;
-> +#define LSM_BLOB_SIZE(name) unsigned int lbs_##name;
-> +	LSM_BLOBS_LIST(LSM_BLOB_SIZE);
-> +#undef LSM_BLOB_SIZE
->  };
->  
->  /*
-> diff --git a/security/lsm_init.c b/security/lsm_init.c
-> index 7c0fd17f1601..c256f1c33efa 100644
-> --- a/security/lsm_init.c
-> +++ b/security/lsm_init.c
-> @@ -282,40 +282,24 @@ static void __init lsm_blob_size_update(unsigned int *sz_req,
->   * lsm_prepare - Prepare the LSM framework for a new LSM
->   * @lsm: LSM definition
->   */
-> -static void __init lsm_prepare(struct lsm_info *lsm)
-> +static void __init lsm_prepare(const struct lsm_info *lsm)
+Many in-kernel LSMs (SELinux, Smack, IMA) store security labels in
+extended attributes. For these LSMs, atomic labeling during inode
+creation is critical: if the inode becomes accessible before its xattr
+is set, it is briefly unlabeled, which can disrupt LSMs making policy
+decisions based on file labels.
 
-This is an unrelated change which should be in a separate patch.
+Existing LSMs solve this by setting xattrs directly in the
+inode_init_security hook, which runs before the inode becomes
+accessible. BPF LSM programs currently lack this capability because
+the hook uses an output parameter (xattr_count) that BPF programs
+cannot write to, and existing kfuncs like bpf_set_dentry_xattr
+require a dentry that isn't available until after the inode is
+accessible.
 
->  {
->  	struct lsm_blob_sizes *blobs = lsm->blobs;
->  
->  	if (!blobs)
->  		return;
->  
-> -	/* Register the LSM blob sizes. */
-> -	blobs = lsm->blobs;
-> -	lsm_blob_size_update(&blobs->lbs_cred, &blob_sizes.lbs_cred);
-> -	lsm_blob_size_update(&blobs->lbs_file, &blob_sizes.lbs_file);
-> -	lsm_blob_size_update(&blobs->lbs_backing_file,
-> -			     &blob_sizes.lbs_backing_file);
-> -	lsm_blob_size_update(&blobs->lbs_ib, &blob_sizes.lbs_ib);
-> -	/* inode blob gets an rcu_head in addition to LSM blobs. */
-> +	/* The inode blob (inode->i_security) gets an rcu_head in addition to
-> +	 * LSM blobs.
-> +	 */
+This series introduces the bpf_init_inode_xattr() kfunc, which takes
+the combined inode_init_security xattr context argument to access
+xattrs and xattr_count, and internally writes to xattr_count via
+lsm_get_xattr_slot().
 
-Please retain the comment style of the file. Either
-	/* ... */
-	/*
-	 * ...
-	 */
-but not
-	/* ...
-	 */
+v4:
+  - introduce struct lsm_xattrs in separate patch (Alexei, Paul)
+  - rename struct xattr_ctx to struct lsm_xattrs (Paul)
+  - make lsm_xattrs.xattr_count unsigned int (Paul)
+  - drop new_xattrs/xattr_count locals in
+    security_inode_init_security() (Paul)
+  - fold __bpf_init_inode_xattr() into bpf_init_inode_xattr() (Paul)
+  - drop bpf_fs_kfuncs_filter() attach-point check; rely on verifier
+    type enforcement (Alexei)
+  - drop attach-time cap; enforce slot budget in the kfunc (Alexei)
+  - allocate the combined xattr with GFP_NOFS (sashiko-bot)
+  - replace init_inode_xattr_attach_cap selftest with runtime
+    init_inode_xattr_slot_limit
 
->  	if (blobs->lbs_inode && blob_sizes.lbs_inode == 0)
->  		blob_sizes.lbs_inode = sizeof(struct rcu_head);
+v3:
+  - rename struct lsm_xattr_ctx to struct xattr_ctx (Paul)
+  - increase BPF_LSM_INODE_INIT_XATTRS to 4 (Song)
+  - enforce per-hook attachment cap at attach time to prevent
+    runtime rejection (Paul)
+  - add init_inode_xattr_attach_cap selftest
 
-This is where I dislike the macro approach. While this particular
-exception is easily handled, others may not be. A blob whose size
-isn't represented as an unsigned int (e.g a bool) would not use
-lsm_blob_size_update(). While all of the existing blob sizes are
-unsigned ints, I have considered bools on more than one occasion.
+v2:
+  - pass the xattr state as a combined context object and drop the
+    verifier fixup path (Kumar)
+  - restrict bpf_init_inode_xattr labels to bpf.* namespace (Matt)
+  - cap bpf_init_inode_xattr() at BPF_LSM_INODE_INIT_XATTRS slots per
+    invocation (AI)
 
-> -	lsm_blob_size_update(&blobs->lbs_inode, &blob_sizes.lbs_inode);
-> -	lsm_blob_size_update(&blobs->lbs_ipc, &blob_sizes.lbs_ipc);
-> -	lsm_blob_size_update(&blobs->lbs_key, &blob_sizes.lbs_key);
-> -	lsm_blob_size_update(&blobs->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
-> -	lsm_blob_size_update(&blobs->lbs_perf_event,
-> -			     &blob_sizes.lbs_perf_event);
-> -	lsm_blob_size_update(&blobs->lbs_sock, &blob_sizes.lbs_sock);
-> -	lsm_blob_size_update(&blobs->lbs_superblock,
-> -			     &blob_sizes.lbs_superblock);
-> -	lsm_blob_size_update(&blobs->lbs_task, &blob_sizes.lbs_task);
-> -	lsm_blob_size_update(&blobs->lbs_tun_dev, &blob_sizes.lbs_tun_dev);
-> -	lsm_blob_size_update(&blobs->lbs_xattr_count,
-> -			     &blob_sizes.lbs_xattr_count);
-> -	lsm_blob_size_update(&blobs->lbs_bdev, &blob_sizes.lbs_bdev);
-> -	lsm_blob_size_update(&blobs->lbs_bpf_map, &blob_sizes.lbs_bpf_map);
-> -	lsm_blob_size_update(&blobs->lbs_bpf_prog, &blob_sizes.lbs_bpf_prog);
-> -	lsm_blob_size_update(&blobs->lbs_bpf_token, &blob_sizes.lbs_bpf_token);
-> +
-> +	/* Register the LSM blob sizes. */
-> +#define UPDATE_LSM_BLOB_SIZE(name) \
-> +	lsm_blob_size_update(&blobs->lbs_##name, &blob_sizes.lbs_##name);
-> +	LSM_BLOBS_LIST(UPDATE_LSM_BLOB_SIZE);
-> +#undef UPDATE_LSM_BLOB_SIZE
->  }
->  
->  /**
-> @@ -441,25 +425,10 @@ int __init security_init(void)
->  		lsm_prepare(*lsm);
->  
->  	if (lsm_debug) {
-> -		lsm_pr("blob(cred) size %d\n", blob_sizes.lbs_cred);
-> -		lsm_pr("blob(file) size %d\n", blob_sizes.lbs_file);
-> -		lsm_pr("blob(backing_file) size %d\n",
-> -		       blob_sizes.lbs_backing_file);
-> -		lsm_pr("blob(ib) size %d\n", blob_sizes.lbs_ib);
-> -		lsm_pr("blob(inode) size %d\n", blob_sizes.lbs_inode);
-> -		lsm_pr("blob(ipc) size %d\n", blob_sizes.lbs_ipc);
-> -		lsm_pr("blob(key) size %d\n", blob_sizes.lbs_key);
-> -		lsm_pr("blob(msg_msg)_size %d\n", blob_sizes.lbs_msg_msg);
-> -		lsm_pr("blob(sock) size %d\n", blob_sizes.lbs_sock);
-> -		lsm_pr("blob(superblock) size %d\n", blob_sizes.lbs_superblock);
-> -		lsm_pr("blob(perf_event) size %d\n", blob_sizes.lbs_perf_event);
-> -		lsm_pr("blob(task) size %d\n", blob_sizes.lbs_task);
-> -		lsm_pr("blob(tun_dev) size %d\n", blob_sizes.lbs_tun_dev);
-> -		lsm_pr("blob(xattr) count %d\n", blob_sizes.lbs_xattr_count);
-> -		lsm_pr("blob(bdev) size %d\n", blob_sizes.lbs_bdev);
-> -		lsm_pr("blob(bpf_map) size %d\n", blob_sizes.lbs_bpf_map);
-> -		lsm_pr("blob(bpf_prog) size %d\n", blob_sizes.lbs_bpf_prog);
-> -		lsm_pr("blob(bpf_token) size %d\n", blob_sizes.lbs_bpf_token);
-> +#define PRINT_LSM_BLOB_SIZE(name) \
-> +	lsm_pr("blob(" #name ") size %d\n", blob_sizes.lbs_##name);
-> +		LSM_BLOBS_LIST(PRINT_LSM_BLOB_SIZE);
-> +#undef PRINT_LSM_BLOB_SIZE
->  	}
->  
->  	if (blob_sizes.lbs_file)
+David Windsor (3):
+  security: pass inode_init_security xattrs via struct lsm_xattrs
+  bpf: add bpf_init_inode_xattr kfunc for atomic inode labeling
+  selftests/bpf: add tests for bpf_init_inode_xattr kfunc
+
+ fs/bpf_fs_kfuncs.c                            |  79 +++++++++++
+ include/linux/bpf_lsm.h                       |   3 +
+ include/linux/evm.h                           |   9 +-
+ include/linux/lsm_hook_defs.h                 |   4 +-
+ include/linux/lsm_hooks.h                     |  16 +--
+ include/linux/security.h                      |   5 +
+ kernel/bpf/bpf_lsm.c                          |   1 +
+ security/bpf/hooks.c                          |   1 +
+ security/integrity/evm/evm_main.c             |   8 +-
+ security/security.c                           |  24 ++--
+ security/selinux/hooks.c                      |   4 +-
+ security/smack/smack_lsm.c                    |  27 ++--
+ tools/testing/selftests/bpf/bpf_kfuncs.h      |   5 +
+ .../selftests/bpf/prog_tests/lsm_kfuncs.c     | 129 ++++++++++++++++++
+ .../bpf/progs/test_init_inode_xattr.c         |  31 +++++
+ 15 files changed, 299 insertions(+), 47 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/lsm_kfuncs.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_init_inode_xattr.c
+
+
+base-commit: e771677c937da5808f7b6c1f0e4a97ec1a84f8a8
+-- 
+2.53.0
+
