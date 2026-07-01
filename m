@@ -1,137 +1,139 @@
-Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75BC2D2397
-	for <linux-security-module@vger.kernel.org>; Wed,  1 Jul 2026 18:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782930870; cv=none; b=I++jj4e2CK8eslg1F26zqwvHz1vZ1PL6NsaJCCPhbh0FTUKQHcrfhiwpI9nN92DSjF9eRkv/FwOGRp7+M1qyiOQQXvAHMl1dotJ7v/OcPdgoiTMc9JfT9Z0Vn0tTg6EKUsDn1qPQenGmpYJNTlsPatqHt622WCW2G8K8fniiiRE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782930870; c=relaxed/simple;
-	bh=gPljzWPcgFRN3dCUIqencE0tOGupLA+eutYTLhEDqCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QNjvQxiYenrnVplQIhyfeyucZQuBpaiHBAnBO4XoY3CHx2rKnWNV334nYhOYu9zGpnEarK3qBZRHlGUVqDWt3JjRdyvEx54V6L4Ei4gnhvc94+OzwVAmGmXYYi8yNWhSIlLGkQDq2Nt2xWlreM4Spk7/fCtlgZkfeQHuD6rXAxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=r/Mxdlz0; arc=none smtp.client-ip=185.125.25.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0A134678C
+	for <linux-security-module@vger.kernel.org>; Wed,  1 Jul 2026 18:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.178
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782931102; cv=pass; b=fBIFaA1v/YYiSd0MCAgW3iNOb5h6w50N24b8eXLqbCdT8Q7FF3MJV35Ky+VWnvaIzYmhzNtVqL1hONpJVcu6pEfVcQmTW/jR8vvT6elKDug39QDbh7AzkySo0LODxSlj/sK4NBzrqR90Mh4BrDalkN3DCLlrCDXuhlV8McoR8sM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782931102; c=relaxed/simple;
+	bh=Mnap1+UlUnWBZOkHLxLWqTkUukirAeI9f8hVRIb1NQQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HctzeObpGnim7o+4Hrcgg0xTl5uPtPvm1XKs1GcMjBYQq8veSbSHpl+fefSuyzqG0zrUUSojJPq+haWzsfySOe27QlDKSC4tmP6Ppt+7E63pBIqw28IiosKUPZG4WpztLgiKX/ldF35sh7Eg3XSWLCy+GjQmtrTOwnklNUQTiyQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FGI4z83k; arc=pass smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="r/Mxdlz0"
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gr7vw1pkWzNjf;
-	Wed,  1 Jul 2026 20:34:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1782930859;
-	bh=x9zsCAel8IcUJsxPYBnz+qgLjbdveeYyNWKEwojOYs4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r/Mxdlz0a7Us5BIFnbE3s3+XP2T1MgIX3hXvzNWL9HLlNtOPHneRR2LYr/lnQFy/n
-	 192lggcAC//GVg6gVwY9lznXkSSIMYpDgFNtRdAF32IxwATyBce9T0Os1vFkqDoSQS
-	 jilXyc8fSp2hfYnocXjbTGp5ua/iwfqeIlecLkmI=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4gr7vs5SXZzHyS;
-	Wed,  1 Jul 2026 20:34:17 +0200 (CEST)
-Date: Wed, 1 Jul 2026 20:34:10 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Paul Moore <paul@paul-moore.com>, ast@kernel.org, daniel@iogearbox.net, 
-	kpsingh@kernel.org, john.fastabend@gmail.com
-Cc: Justin Suess <utilityemal77@gmail.com>, andrii@kernel.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, kees@kernel.org, gnoack@google.com, 
-	jack@suse.cz, jmorris@namei.org, serge@hallyn.com, song@kernel.org, 
-	yonghong.song@linux.dev, martin.lau@linux.dev, m@maowtm.org, eddyz87@gmail.com, 
-	sdf@fomichev.me, skhan@linuxfoundation.org, bpf@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Frederick Lawler <fred@cloudflare.com>
-Subject: Re: [RFC PATCH 06/20] bpf: lsm: Add Landlock kfuncs
-Message-ID: <20260701.jei4Paej3zen@digikod.net>
-References: <20260407200157.3874806-1-utilityemal77@gmail.com>
- <20260407200157.3874806-7-utilityemal77@gmail.com>
- <20260701.ze4eph1eKo7a@digikod.net>
- <CAHC9VhRfqSoM89WC6TdQHapUVQe8a18rW2c-F7+tu6EjM9EdCA@mail.gmail.com>
- <akUH13qbsEnJLgQu@zenbox>
- <CAHC9VhSjRcMr9+5dMkep_TPKduYdob-bZ73FLfXd_o2xiWwOSg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FGI4z83k"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2c9cb97e178so11282425ad.3
+        for <linux-security-module@vger.kernel.org>; Wed, 01 Jul 2026 11:38:20 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782931100; cv=none;
+        d=google.com; s=arc-20260327;
+        b=Q73pqEaHQ3M1mC+Js1alMxNjNhZAT/K75AMQdYYvW3jkm4gdBYO+wATXPtNBS1j1wl
+         YUuPTolW+Xv+j6ECT3PaFlnDOCyiWJ/FJTQ2YEMB7HtcaxqStXCl5gcQqHwNhe5iXtRx
+         3oDsMuIxN8BOss0LixgFzV0ojiu7LMkHfRBuX8LccFfb5C7vNnv3r0q6paOWlLC6Wf2a
+         wA4exB55rNLWxVN/MRq7Uk+YYgH720lcurWHzl2Jo7Xte+G07NizWjJ6qpbujxmgRlWZ
+         tMOPslrRWjRYgiEg/obzIzwp0P1FnWvaAOLNdA95EqxG76pKp2on/391xgsMgMAHWiV7
+         nLPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=I2MBQaboQ7ps8knbKKihnH5tB9CDYcCm7037HrSOtgY=;
+        fh=qhNx4kwvuTKYtTPS9hzBBoVTcX55IBjBcmd+iioRHic=;
+        b=SdVoibDE7uS1Mb8+q/ECx9oXN5JWvU5b6OxKmXrWB4Cv01tS0KiJ1ZclPJZnqJSw3P
+         1pYL1bz065YsfoMVLuSgprrHvfuoVjTOc3W8MZHVz5PWCtfBSBWUyTmFnYOU9sqkoj37
+         CfOS8kQERRZU0f4swYt4r33YtdkdWRteRbQtCi7NQQ7PSuqcMP3VUCuNchQosxdnlX46
+         VtRmC2DIUSwgEF1h4B4dCE64GwqqJtYEZNVeEUZEpsTFrnyHfQtfCvhFSX4j0QsubZXk
+         rzwok4hLfVx20rYGuRd+kM9Jn2w6445v0zgxeRc/igk62DkqjSDc3ecYqsME06ZoUgVH
+         sk7A==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1782931100; x=1783535900; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I2MBQaboQ7ps8knbKKihnH5tB9CDYcCm7037HrSOtgY=;
+        b=FGI4z83kN+qAC+C9+mZweeWYl+jCXfzakwgLVz2prRWPIaBY1lJMiknL7SP4ahntMy
+         0+S6YraixQTDa87ytYhqx2+H2QObG18wPGxT2d3GL8PAR/g0+MzcaLssnP2SsjlZMcHD
+         91nEdUg7Nu+ITl7egpXTelR8xCkgATx8Oa9MrGlzgTwd4tayYHmBC0OR9auhc0pC3/9h
+         7tcDmmrfPRm1llaR4LwRc4hMB5/ofd2pPCPXydCaFFCw7R9nIr7o+k7su1AMyOy/+qF3
+         SIrFfdJsd9AkTO/HhJorWHZYXjuTGo2KW6JU53a0W2VuI7mAHhLDZW82XW+5kUXj2bm8
+         tExw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782931100; x=1783535900;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=I2MBQaboQ7ps8knbKKihnH5tB9CDYcCm7037HrSOtgY=;
+        b=mBtgvC++B7iJVp/JEqv93sQCtSIICFH7S9VwGVInPQojsqlmRsZVB5vDN55Q6ZQcsS
+         JDUjdE30ef6ZTK2BPfQpk2CYWx5HC/zSa3JQPeWDYhg1Q/CB1As7npWGeJVJu9uhF1OH
+         GMYEyDnZ7etI1Dee+4qCp5eod6NEoHxkoIsaeNSYrR69nH/xWkUV2GZzqp40ZlCrx03l
+         3w48XrDqwQQpd7vvEymHu98QoePbmXik0l0+47OEpK4GZomZQecpciu/MtQKeYRLVUMW
+         J6NRljhgMBeHEcRcjlCjSLV00D6N4KteFZAHG4JEPLMJ187AtNcTENKUYFwkaGgGd1eH
+         Ojrg==
+X-Forwarded-Encrypted: i=1; AHgh+RoknQPguEymyHyr3LM6FrBIgJQrIyKOUR/Ky/UDjS+l2u4GOG/NgvRfSWeUeUVInLOel7McCmbzjTk/tzoVebmWSz1gkpE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygQuUsanz9dqfZ/DulxlDkBgDprRLv+K+n74OfBFXCt2h+p1XD
+	uRoEnybWXaZVTzwKpdwnkOBSX6dl2qJeOVbrLG7kOWZvBEX97i4aHoptL7foRHt4KwsBeAgGttW
+	ruValWqiU9ti6AFvu0nBMtPcRbd6NGh/nayo9+rU3
+X-Gm-Gg: AfdE7cmEf59IjNNsjpLDUTd48ayCDCWNPI/IT18Ln+TW+C/AvzNw1tBcGW9AXMoIk7i
+	b7OfYtbdnGjQaWY32Rd8U0p+V6WBywIG9EXXLvgsu1kxOFj6sLZ5cznwNS+fx07iCMozwoSQB9n
+	X4iyPhsm/or8f/omWhCoXASkP1f+rLyTadhR+aqfO3UThTF426PbdFY2DYLA3v/UmrPrW2gpiPa
+	V+03oaIjw9ASfHA+IzB5k61mesyKmtmKrCp7mgFRVRE8GgILgTn7XYGbvY2254gaS1iEEYV
+X-Received: by 2002:a17:903:984:b0:2c9:97a9:2095 with SMTP id
+ d9443c01a7336-2ca91229282mr17992775ad.41.1782931100271; Wed, 01 Jul 2026
+ 11:38:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhSjRcMr9+5dMkep_TPKduYdob-bZ73FLfXd_o2xiWwOSg@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+References: <20260407200157.3874806-1-utilityemal77@gmail.com>
+ <20260407200157.3874806-7-utilityemal77@gmail.com> <20260701.ze4eph1eKo7a@digikod.net>
+ <CAHC9VhRfqSoM89WC6TdQHapUVQe8a18rW2c-F7+tu6EjM9EdCA@mail.gmail.com>
+ <akUH13qbsEnJLgQu@zenbox> <CAHC9VhSjRcMr9+5dMkep_TPKduYdob-bZ73FLfXd_o2xiWwOSg@mail.gmail.com>
+ <20260701.jei4Paej3zen@digikod.net>
+In-Reply-To: <20260701.jei4Paej3zen@digikod.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 1 Jul 2026 14:38:08 -0400
+X-Gm-Features: AVVi8Ce6qbJbJWCCH2p0_6_r7A1u2IFyNbmfvgc4fJ4aJEpixSgjGeJjZVE1e9k
+Message-ID: <CAHC9VhRzZVUz8icZ2RD9OVvscJdZW3ivPERJLEkNi5poBeguxw@mail.gmail.com>
+Subject: Re: [RFC PATCH 06/20] bpf: lsm: Add Landlock kfuncs
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: ast@kernel.org, daniel@iogearbox.net, kpsingh@kernel.org, 
+	john.fastabend@gmail.com, Justin Suess <utilityemal77@gmail.com>, andrii@kernel.org, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, kees@kernel.org, 
+	gnoack@google.com, jack@suse.cz, jmorris@namei.org, serge@hallyn.com, 
+	song@kernel.org, yonghong.song@linux.dev, martin.lau@linux.dev, m@maowtm.org, 
+	eddyz87@gmail.com, sdf@fomichev.me, skhan@linuxfoundation.org, 
+	bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Frederick Lawler <fred@cloudflare.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 01, 2026 at 09:28:22AM -0400, Paul Moore wrote:
-> On Wed, Jul 1, 2026 at 8:52 AM Justin Suess <utilityemal77@gmail.com> wrote:
-> > On Wed, Jul 01, 2026 at 08:12:34AM -0400, Paul Moore wrote:
-> > > On Wed, Jul 1, 2026 at 6:59 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > On Tue, Apr 07, 2026 at 04:01:28PM -0400, Justin Suess wrote:
-> > > > > Create 2 kfuncs exposing control over Landlock functionality to BPF
-> > > > > callers. Export an opaque struct bpf_landlock_ruleset preventing callers
-> > > > > from accessing unstable internal Landlock fields.
-> > >
-> > > Generally speaking we don't want to provide APIs, either in-kernel or
-> > > at the userspace/kernel boundary, that are specific to a single LSM,
-> > > see the LSM syscalls or the security_current_getlsmprop_subj()
-> > > function as examples.
+On Wed, Jul 1, 2026 at 2:34=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
+d.net> wrote:
+> On Wed, Jul 01, 2026 at 09:28:22AM -0400, Paul Moore wrote:
+> > On Wed, Jul 1, 2026 at 8:52=E2=80=AFAM Justin Suess <utilityemal77@gmai=
+l.com> wrote:
+> > > On Wed, Jul 01, 2026 at 08:12:34AM -0400, Paul Moore wrote:
+> > > > On Wed, Jul 1, 2026 at 6:59=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mi=
+c@digikod.net> wrote:
+> > > > > On Tue, Apr 07, 2026 at 04:01:28PM -0400, Justin Suess wrote:
+> > > > > > Create 2 kfuncs exposing control over Landlock functionality to=
+ BPF
+> > > > > > callers. Export an opaque struct bpf_landlock_ruleset preventin=
+g callers
+> > > > > > from accessing unstable internal Landlock fields.
+> > > >
+> > > > Generally speaking we don't want to provide APIs, either in-kernel =
+or
+> > > > at the userspace/kernel boundary, that are specific to a single LSM=
+,
+> > > > see the LSM syscalls or the security_current_getlsmprop_subj()
+> > > > function as examples.
+>
+> This patch series is not about the LSM framework, only about Landlock
+> and its specific model and use case.  Landlock using some of the LSM API
+> is not relevant here.
 
-This patch series is not about the LSM framework, only about Landlock
-and its specific model and use case.  Landlock using some of the LSM API
-is not relevant here.
+Based on a quick look the patchset enables BPF programs to call
+directly into Landlock.  For the same reason we discourage other parts
+of the kernel to call directly into individual LSMs, we want to
+discourage BPF programs from calling directly into individual LSMs.
 
-> >
-> > I would raise bpf_ima_file_hash, bpf_ima_inode_hash, as examples of
-> > clear precedence for this. (BPF calling into specific LSM)
-> 
-> The BPF IMA helpers were merged back in the v5.18 timeframe when IMA
-> was still standalone, it wasn't until v6.9 that IMA and EVM became
-> proper LSMs.
-> 
-> > Kfuncs are explicitly marked as not being an ABI, and are more
-> > flexible for later changes / deprecation etc. [1]
-> 
-> The issue isn't so much the kfunc itself, it is what the kfunc
-> *calls*.  From what I saw in the proposed patch, the kfunc calls
-> directly into Landlock instead of passing through the LSM framework,
-> e.g. a function wrapper in security/security.c.
-
-Yes, and I'm OK for this kfunc to call directly into a new public
-Landlock function.  There is no need to create a new class of LSM
-wrapper.
-
-LSM hooks make sense because they are designed for a specific subsystem
-(the caller) and their goal is to return an access decision or to keep
-up-to-date related states, which means that their API is designed for
-the caller, with its own types and specificities, not the other way
-around.  This case is different, the kfunc is strongly typed and tied to
-the Landlock (subsystem) semantic with an API defined by and for
-Landlock.  I don't think a multiplexer would be a good idea.
-
-However, I agree with your layering concern, and it would make more
-sense to move the Landlock-related kfuncs to security/landlock/bpf.c,
-which is also the idiomatic way for subsystems to own their API.
-
-Alexei, KP, what do you think?
-
-> 
-> > LSM framework API can mean a lot of things. I assume you are meaning
-> > like a pseudo-filesystem mounted interface that controls LSM?
-> > Correct me if I'm wrong.
-> 
-> My apologies, I should have been more clear.  When I speak about the
-> "LSM framework", I'm talking about the abstraction layer that provides
-> the interface that the kernel and userspace uses to talk to individual
-> LSMs.  The LSM framework is analogous to the VFS layer/framework in
-> that it provides a single API for a variety of underlying subsystems.
-> While not 100% correct, you can think of it the LSM framework as being
-> the functions/hooks defined in security/security.c.
-
-This abstraction layer is useful and make sense for access control hooks
-but it is not needed in this case, and it would only make the kfunc
-interface more complex for no reason.  If any other kernel subsystem
-wants to add a kfunc, I think it should be reviewed with its purpose in
-mind and a well defined use case.
-
-> 
-> Does that help?
-
-I think Justin is right, and with some minor changes this kfunc should
-be good.
+--=20
+paul-moore.com
