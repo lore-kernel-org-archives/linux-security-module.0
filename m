@@ -1,37 +1,38 @@
 Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB37305685;
-	Thu,  2 Jul 2026 14:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5785F30568C;
+	Thu,  2 Jul 2026 14:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783002977; cv=none; b=oTdCQ+JyQI/EFJ84thyNUt2APt2xU5YHemF2HUa5Qk2dJ8RhW8YzLUWi/fn/qF6xUrNrpA8zFIlBaJXHCc2MS6/8gRQaXHtlo50hp6lcQNbk3H6FnfD/W9D5VbzWpCHD42PtNUbfqJPuESDLPAKWlRxcdLB7GpGL6sBAxIC+NcI=
+	t=1783002977; cv=none; b=IRS4OOsiZVit0gxx6VfeZlxG29Q5h/BbbPoiu/LAMZHBI8JOlyktV9zYD/ueC3i9hdZzWIvkzSBQ46YXZhaStNkce9NkGmEUrKpMZ2mL/FQLfnw+fP11RL7yKAtT0YzSN/Ib/Gnu0qXN+DYTi0xioXAVcNCGQlJD+/t/HVr2usg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1783002977; c=relaxed/simple;
-	bh=sichXbIKtItcMJueXAc/L6cIRbIatK1eR/qGc3xeOg4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B+TxR2bFnSvIC3OJ9voSLe7WIBe4IgNAWNlRRk0fnpTE38MhGsAACh/x/QYZcnXXSrasJU4fGGd9W08s1wQujSGksfc69tWUVsCIJSqt73wRVDKPv185WfkHSvAOgRF3LJd0oMeKi/OJ9oUvTL/xLNqjO32d8tahSynS9aatQWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=W6EZlVsN; arc=none smtp.client-ip=213.133.104.62
+	bh=mdbJfA/x71iPhFEjulmRJ/4tQL8hAfpov8b8NZCtL3w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=eBjcBDSrqwzJN3qVjx96bRNI50so8JzJXlckzbsdYYuinQXAf/Y82y0jKLcP1qULt/u16AI1ypF+/VKM181r2ovaVE8cc/ywN2i/1U+D5ffYJFu99I3Ru3L7Dl+TKrOXzxVE0i5XtViCJPJRFqSIaV9UMkOQL2DftLs6kE08ZIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=K6EPIG9l; arc=none smtp.client-ip=213.133.104.62
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="W6EZlVsN"
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="K6EPIG9l"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=g9lH+y+SJyWprt0A1aCfm2zWvdzI7QMFLygctOP0x2A=; b=W6EZlVsN4o4EdoI7npLCG5p2gO
-	Iu69QBfGq+gPIIo9hkB/U9YQVuMk58Gku/5nVqvD/xFC+z/vzeMj77ye+W3FlfDSPxAv0LRmMR/Fo
-	8CInWgfXqVTJwvElZgls/2wsKeA3bzUbOZ0BZiTqL8HqMcw6hpGTIcccW356hdbzAa9aU7xttqhEf
-	KkIULTpCRhZf0LvfC2c2W408g7JRWJffAnb/qDwOmXZuHYfQpQRsKAIJEk5Jt63ViL+apPd8/ihJO
-	YCgY+dvtw9uyG7f25moZvIVyWOgK3RVD/zkUEHgmenHkaAeHgf681iYOy9donhIiMMSf1D3lDrUiK
-	jcBmiCSw==;
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=elKcgfJ4zEBNUGmdc9hzNVo+7mt2qxmZMdUZb4UuMqk=; b=K6EPIG9lEOz66mTZ9rWYcXKh1Q
+	vJbp8HmKX9DjQCEUy307+KwUL/TVAX810MHX5iHM8szUfQOBaZBcfoKcemiAyOJ252nzI8vgaMZ3f
+	boEP5I7nlLyxsyfgY6Y9kuH0fnJVK7AhMCVZSGQR/2VXUR5gCNI2zmciI585w8PKtyOXDvLJEed4e
+	I4c7/OEasIC5zIO9Yfe0NwNluyqzDE96LoVq/g7wUWvvt9EixtzrildkE5YiHnKHWjdSK8V2iGjBO
+	JWXbMjRFCjG8SkX4u0x+zxgcpl1qnfyqlUhq9nFjxEUoTu9i9OXEuZzFb7aTWvi1OrdiLqBQjtrXo
+	MUMz0MEQ==;
 Received: from localhost ([127.0.0.1])
 	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <daniel@iogearbox.net>)
-	id 1wfIWM-0004qw-1z;
-	Thu, 02 Jul 2026 16:36:06 +0200
+	id 1wfIWN-0004rM-1v;
+	Thu, 02 Jul 2026 16:36:07 +0200
 From: Daniel Borkmann <daniel@iogearbox.net>
 To: ast@kernel.org
 Cc: kpsingh@kernel.org,
@@ -43,10 +44,12 @@ Cc: kpsingh@kernel.org,
 	a.s.protopopov@gmail.com,
 	bpf@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH bpf-next v3 0/6] Verify BPF signed loader at load time
-Date: Thu,  2 Jul 2026 16:35:59 +0200
-Message-ID: <20260702143605.252797-1-daniel@iogearbox.net>
+Subject: [PATCH bpf-next v3 1/6] bpf: Resolve and cache fd_array objects at load time
+Date: Thu,  2 Jul 2026 16:36:00 +0200
+Message-ID: <20260702143605.252797-2-daniel@iogearbox.net>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260702143605.252797-1-daniel@iogearbox.net>
+References: <20260702143605.252797-1-daniel@iogearbox.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -56,80 +59,382 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: Clear (ClamAV 1.4.3/28048/Thu Jul  2 08:25:04 2026)
 
-The BPF signing scheme signs a light skeleton's loader program and lets
-the loader vouch for everything else: bpftool bakes the SHA256 of the
-metadata map into the loader's instructions, signs the instructions, and
-the loader compares the (frozen, exclusive) map against that hash from
-within BPF once it runs. The construction is sound as a trusted hash
-chain, but the kernel itself never attests the metadata, and that split
-has been the recurring objection from the LSM / integrity side since the
-scheme was proposed.
+The fd_array passed to BPF_PROG_LOAD carries the map and module BTF file
+descriptors a program binds. The verifier reads it more than once during
+a load: process_fd_array() walks it to bind the maps and BTFs, and
+check_and_resolve_insns() and the kfunc BTF resolver later read it again
+to resolve the program's BPF_PSEUDO_MAP_IDX and module kfunc refs.
 
-This proposal closes both gaps by having the kernel verify the metadata
-at BPF_PROG_LOAD time, before the LSM admission hook and before the
-verifier, /without/ growing the UAPI. A signed loader binds its metadata
-map(s) through the existing fd_array/fd_array_cnt, and exclusive maps
-are already bound to the loader's digest via excl_prog_hash. When a
-signature is present, the kernel collects the exclusive maps from the
-fd_array and appends their frozen contents to the instructions before
-PKCS#7 verification, so the signature covers ...
+For signed BPF, we need these upfront in memory, thus resolve each fd to
+its object once and cache it by fd_array index, then bind that cached
+object for the rest of the load. env->fd_array becomes a small per-slot
+{map, btf} cache rather than a bpfptr_t; every later reference is then
+an in-bounds lookup of an already-resolved object, and an index outside
+the cache is rejected instead of read from user memory:
 
-    insns || metadata_0 || metadata_1 || [...]
+  - continuous (fd_array_cnt given): the caller declares the length and
+    every entry is resolved and bound up front (used also by signed loader)
 
-... in fd_array order. The in-loader hash check is dropped from the
-gen_loader entirely: generated loaders carry no verification logic
-anymore, and signing or verifying a skeleton becomes an ordinary CMS
-operation over bytes that sit verbatim in the skeleton, reproducible
-offline. A signed program is either BPF_SIG_UNSIGNED or BPF_SIG_VERIFIED
-with nothing in between.
+  - sparse (no fd_array_cnt): left as the legacy path with no fd_array
+    cache; each reference reads its fd from the caller's fd_array and
+    resolves it on the spot. Deduplication in used_maps and the kfunc BTF
+    table keeps this correct, and only unsigned programs use this shape.
 
-There is no new UAPI, we now have a single signature scheme, no LSM
-code reaching into BPF internals, no new LSM hook, and unsigned loads
-are completely unaffected. It is also less complex since the loader
-does not need to deal with BTF, an extra kfunc, etc, as proposed in
-an earlier series [0]. Tested against full BPF CI which came back
-green. For more details and examples, see the documentation patch in
-this series.
+UAPI-wise nothing changes, its just the internals on how BPF processes
+and caches the fd_array favors. Split these into separate helpers for
+continuous versus sparse to make it easier to follow.
 
-  [0] https://lore.kernel.org/bpf/20260522023234.3778588-1-kpsingh@kernel.org/
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Anton Protopopov <a.s.protopopov@gmail.com>
+---
+ include/linux/bpf_verifier.h |  22 +++-
+ kernel/bpf/verifier.c        | 209 ++++++++++++++++++++++++++---------
+ 2 files changed, 179 insertions(+), 52 deletions(-)
 
-v2 -> v3:
-  - Added first commit to cache and work on objects in fd_array
-    which was the most recent issue sashiko rightfully complained
-  - Added more BPF signed_loader selftest coverage to cover that
-    usage of sparse fd_array or map fds gets rejected
-  - I left the security_bpf_prog_load as in v2 given preference
-    from BPF side over adding new hook
-v1 -> v2:
-  - Addressed both sashiko complaints, the TOCTOU bug regarding
-    fd_array processing, as well as exclusive map checking to
-    only allow array maps. The validation is now moved into the
-    verifier before the main verification work happens. This also
-    gives the opportunity to utilize the verifier log.
-
-Daniel Borkmann (6):
-  bpf: Resolve and cache fd_array objects at load time
-  bpf: Verify signed loader metadata at load time
-  libbpf: Drop in-loader metadata check for load-time verification
-  bpftool: Cover loader metadata with the program signature
-  selftests/bpf: Verify load-time signed loader metadata
-  Documentation/bpf: Add BPF signing and enforcement doc
-
- Documentation/bpf/index.rst                   |   1 +
- Documentation/bpf/signing.rst                 | 490 ++++++++++
- include/linux/bpf_verifier.h                  |  23 +-
- kernel/bpf/syscall.c                          |  81 +-
- kernel/bpf/verifier.c                         | 384 ++++++--
- tools/bpf/bpftool/gen.c                       |   2 +
- tools/bpf/bpftool/sign.c                      |  17 +-
- tools/lib/bpf/bpf_gen_internal.h              |   1 -
- tools/lib/bpf/gen_loader.c                    |  76 +-
- tools/lib/bpf/libbpf_internal.h               |   1 -
- tools/lib/bpf/skel_internal.h                 |  27 +-
- .../selftests/bpf/prog_tests/signed_loader.c  | 859 ++++++++++++++----
- 12 files changed, 1569 insertions(+), 393 deletions(-)
- create mode 100644 Documentation/bpf/signing.rst
-
+diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
+index 76b8b7627a10..9f0a4e9a15d7 100644
+--- a/include/linux/bpf_verifier.h
++++ b/include/linux/bpf_verifier.h
+@@ -898,6 +898,14 @@ struct bpf_scc_info {
+ 
+ struct bpf_liveness;
+ 
++struct bpf_fd_array {
++	union {
++		struct bpf_map *map;
++		struct btf *btf;
++		unsigned long val;
++	};
++};
++
+ /* single container for all structs
+  * one verifier_env per bpf_check() call
+  */
+@@ -989,7 +997,19 @@ struct bpf_verifier_env {
+ 	u32 free_list_size;
+ 	u32 explored_states_size;
+ 	u32 num_backedges;
+-	bpfptr_t fd_array;
++	/*
++	 * The program's fd_array comes in two shapes, told apart by whether
++	 * the caller passed fd_array_cnt. They are mutually exclusive:
++	 *  - continuous (fd_array_cnt given): ->fd_array holds every entry
++	 *    resolved to its object up front, indexed by fd_array position,
++	 *    with ->fd_array_cnt slots; ->fd_array_raw is unused.
++	 *  - sparse (no fd_array_cnt): ->fd_array is NULL, and entries are
++	 *    read from ->fd_array_raw (the caller's fd_array) and resolved
++	 *    lazily on first reference.
++	 */
++	struct bpf_fd_array *fd_array;
++	u32 fd_array_cnt;
++	bpfptr_t fd_array_raw;
+ 
+ 	/* bit mask to keep track of whether a register has been accessed
+ 	 * since the last time the function state was printed
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 25aea4271cd0..44bb6ce17a1c 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -2490,6 +2490,79 @@ int bpf_get_kfunc_addr(const struct bpf_prog *prog, u32 func_id,
+ 	return 0;
+ }
+ 
++#define BPF_FD_SLOT_BTF	1UL
++
++static void fd_slot_set_map(struct bpf_fd_array *slot, struct bpf_map *map)
++{
++	slot->val = (unsigned long)map;
++}
++
++static void fd_slot_set_btf(struct bpf_fd_array *slot, struct btf *btf)
++{
++	slot->val = (unsigned long)btf | BPF_FD_SLOT_BTF;
++}
++
++static struct bpf_map *fd_slot_map(struct bpf_fd_array slot)
++{
++	if (slot.val & BPF_FD_SLOT_BTF)
++		return NULL;
++	return (struct bpf_map *)slot.val;
++}
++
++static struct btf *fd_slot_btf(struct bpf_fd_array slot)
++{
++	if (!(slot.val & BPF_FD_SLOT_BTF))
++		return NULL;
++	return (struct btf *)(slot.val & ~BPF_FD_SLOT_BTF);
++}
++
++static struct btf *
++fd_array_get_btf_continuous(struct bpf_verifier_env *env, u32 idx)
++{
++	struct btf *btf;
++
++	if (idx >= env->fd_array_cnt) {
++		verbose(env, "kfunc fd_idx %u out of bounds, fd_array_cnt %u\n",
++			idx, env->fd_array_cnt);
++		return ERR_PTR(-EINVAL);
++	}
++	btf = fd_slot_btf(env->fd_array[idx]);
++	if (!btf) {
++		verbose(env, "kfunc fd_idx %u is not a module BTF\n", idx);
++		return ERR_PTR(-EINVAL);
++	}
++	btf_get(btf);
++	return btf;
++}
++
++static struct btf *
++fd_array_get_btf_sparse(struct bpf_verifier_env *env, u32 idx)
++{
++	struct btf *btf;
++	int btf_fd;
++
++	if (copy_from_bpfptr_offset(&btf_fd, env->fd_array_raw,
++				    (size_t)idx * sizeof(btf_fd), sizeof(btf_fd)))
++		return ERR_PTR(-EFAULT);
++	btf = btf_get_by_fd(btf_fd);
++	if (IS_ERR(btf)) {
++		verbose(env, "invalid module BTF fd specified\n");
++		return btf;
++	}
++	return btf;
++}
++
++static struct btf *fd_array_get_btf(struct bpf_verifier_env *env, u32 idx)
++{
++	if (env->fd_array)
++		return fd_array_get_btf_continuous(env, idx);
++	if (!bpfptr_is_null(env->fd_array_raw))
++		return fd_array_get_btf_sparse(env, idx);
++
++	verbose(env, "kfunc offset > 0 without fd_array is invalid\n");
++	return ERR_PTR(-EPROTO);
++}
++
+ static struct btf *__find_kfunc_desc_btf(struct bpf_verifier_env *env,
+ 					 s16 offset)
+ {
+@@ -2498,7 +2571,6 @@ static struct btf *__find_kfunc_desc_btf(struct bpf_verifier_env *env,
+ 	struct bpf_kfunc_btf *b;
+ 	struct module *mod;
+ 	struct btf *btf;
+-	int btf_fd;
+ 
+ 	tab = env->prog->aux->kfunc_btf_tab;
+ 	b = bsearch(&kf_btf, tab->descs, tab->nr_descs,
+@@ -2509,22 +2581,9 @@ static struct btf *__find_kfunc_desc_btf(struct bpf_verifier_env *env,
+ 			return ERR_PTR(-E2BIG);
+ 		}
+ 
+-		if (bpfptr_is_null(env->fd_array)) {
+-			verbose(env, "kfunc offset > 0 without fd_array is invalid\n");
+-			return ERR_PTR(-EPROTO);
+-		}
+-
+-		if (copy_from_bpfptr_offset(&btf_fd, env->fd_array,
+-					    offset * sizeof(btf_fd),
+-					    sizeof(btf_fd)))
+-			return ERR_PTR(-EFAULT);
+-
+-		btf = btf_get_by_fd(btf_fd);
+-		if (IS_ERR(btf)) {
+-			verbose(env, "invalid module BTF fd specified\n");
++		btf = fd_array_get_btf(env, offset);
++		if (IS_ERR(btf))
+ 			return btf;
+-		}
+-
+ 		if (!btf_is_module(btf)) {
+ 			verbose(env, "BTF fd for kfunc is not a module BTF\n");
+ 			btf_put(btf);
+@@ -17911,6 +17970,44 @@ static int add_used_map(struct bpf_verifier_env *env, int fd)
+ 	return __add_used_map(env, map);
+ }
+ 
++static int fd_array_get_map_idx_continuous(struct bpf_verifier_env *env, u32 idx)
++{
++	struct bpf_map *map;
++
++	if (idx >= env->fd_array_cnt) {
++		verbose(env, "fd_idx %u out of bounds, fd_array_cnt %u\n",
++			idx, env->fd_array_cnt);
++		return -EINVAL;
++	}
++	map = fd_slot_map(env->fd_array[idx]);
++	if (!map) {
++		verbose(env, "fd_idx %u is not a map\n", idx);
++		return -EINVAL;
++	}
++	return __add_used_map(env, map);
++}
++
++static int fd_array_get_map_idx_sparse(struct bpf_verifier_env *env, u32 idx)
++{
++	int fd;
++
++	if (copy_from_bpfptr_offset(&fd, env->fd_array_raw,
++				    (size_t)idx * sizeof(fd), sizeof(fd)))
++		return -EFAULT;
++	return add_used_map(env, fd);
++}
++
++static int fd_array_get_map_idx(struct bpf_verifier_env *env, u32 idx)
++{
++	if (env->fd_array)
++		return fd_array_get_map_idx_continuous(env, idx);
++	if (!bpfptr_is_null(env->fd_array_raw))
++		return fd_array_get_map_idx_sparse(env, idx);
++
++	verbose(env, "fd_idx without fd_array is invalid\n");
++	return -EPROTO;
++}
++
+ static int check_alu_fields(struct bpf_verifier_env *env, struct bpf_insn *insn)
+ {
+ 	u8 class = BPF_CLASS(insn->code);
+@@ -18128,7 +18225,6 @@ static int check_and_resolve_insns(struct bpf_verifier_env *env)
+ 			struct bpf_map *map;
+ 			int map_idx;
+ 			u64 addr;
+-			u32 fd;
+ 
+ 			if (i == insn_cnt - 1 || insn[1].code != 0 ||
+ 			    insn[1].dst_reg != 0 || insn[1].src_reg != 0 ||
+@@ -18180,21 +18276,13 @@ static int check_and_resolve_insns(struct bpf_verifier_env *env)
+ 			switch (insn[0].src_reg) {
+ 			case BPF_PSEUDO_MAP_IDX_VALUE:
+ 			case BPF_PSEUDO_MAP_IDX:
+-				if (bpfptr_is_null(env->fd_array)) {
+-					verbose(env, "fd_idx without fd_array is invalid\n");
+-					return -EPROTO;
+-				}
+-				if (copy_from_bpfptr_offset(&fd, env->fd_array,
+-							    insn[0].imm * sizeof(fd),
+-							    sizeof(fd)))
+-					return -EFAULT;
++				map_idx = fd_array_get_map_idx(env, insn[0].imm);
+ 				break;
+ 			default:
+-				fd = insn[0].imm;
++				map_idx = add_used_map(env, insn[0].imm);
+ 				break;
+ 			}
+ 
+-			map_idx = add_used_map(env, fd);
+ 			if (map_idx < 0)
+ 				return map_idx;
+ 			map = env->used_maps[map_idx];
+@@ -19469,7 +19557,7 @@ struct btf *bpf_get_btf_vmlinux(void)
+  * this case expect that every file descriptor in the array is either a map or
+  * a BTF. Everything else is considered to be trash.
+  */
+-static int add_fd_from_fd_array(struct bpf_verifier_env *env, int fd)
++static int add_fd_from_fd_array(struct bpf_verifier_env *env, u32 idx, int fd)
+ {
+ 	struct bpf_map *map;
+ 	struct btf *btf;
+@@ -19481,51 +19569,69 @@ static int add_fd_from_fd_array(struct bpf_verifier_env *env, int fd)
+ 		err = __add_used_map(env, map);
+ 		if (err < 0)
+ 			return err;
++		fd_slot_set_map(&env->fd_array[idx], map);
+ 		return 0;
+ 	}
+ 
+ 	btf = __btf_get_by_fd(f);
+ 	if (!IS_ERR(btf)) {
+ 		btf_get(btf);
+-		return __add_used_btf(env, btf);
++		err = __add_used_btf(env, btf);
++		if (err < 0)
++			return err;
++		fd_slot_set_btf(&env->fd_array[idx], btf);
++		return 0;
+ 	}
+ 
+ 	verbose(env, "fd %d is not pointing to valid bpf_map or btf\n", fd);
+ 	return PTR_ERR(map);
+ }
+ 
+-static int process_fd_array(struct bpf_verifier_env *env, union bpf_attr *attr, bpfptr_t uattr)
++#define MAX_FD_ARRAY_CNT (MAX_USED_MAPS + MAX_KFUNC_BTFS)
++
++static int process_fd_array_continuous(struct bpf_verifier_env *env,
++				       bpfptr_t fd_array, u32 cnt)
+ {
+-	size_t size = sizeof(int);
+-	int ret;
+-	int fd;
++	int fd, ret;
+ 	u32 i;
+ 
+-	env->fd_array = make_bpfptr(attr->fd_array, uattr.is_kernel);
+-
+-	/*
+-	 * The only difference between old (no fd_array_cnt is given) and new
+-	 * APIs is that in the latter case the fd_array is expected to be
+-	 * continuous and is scanned for map fds right away
+-	 */
+-	if (!attr->fd_array_cnt)
+-		return 0;
+-
+-	/* Check for integer overflow */
+-	if (attr->fd_array_cnt >= (U32_MAX / size)) {
+-		verbose(env, "fd_array_cnt is too big (%u)\n", attr->fd_array_cnt);
+-		return -EINVAL;
++	if (cnt > MAX_FD_ARRAY_CNT) {
++		verbose(env, "fd_array has too many entries (%u, max %u)\n",
++			cnt, MAX_FD_ARRAY_CNT);
++		return -E2BIG;
+ 	}
+ 
+-	for (i = 0; i < attr->fd_array_cnt; i++) {
+-		if (copy_from_bpfptr_offset(&fd, env->fd_array, i * size, size))
++	env->fd_array = kvcalloc(cnt, sizeof(*env->fd_array), GFP_KERNEL);
++	if (!env->fd_array)
++		return -ENOMEM;
++	env->fd_array_cnt = cnt;
++	for (i = 0; i < cnt; i++) {
++		if (copy_from_bpfptr_offset(&fd, fd_array,
++					    (size_t)i * sizeof(fd), sizeof(fd)))
+ 			return -EFAULT;
+-
+-		ret = add_fd_from_fd_array(env, fd);
++		ret = add_fd_from_fd_array(env, i, fd);
+ 		if (ret)
+ 			return ret;
+ 	}
++	return 0;
++}
+ 
++static int process_fd_array(struct bpf_verifier_env *env,
++			    union bpf_attr *attr, bpfptr_t uattr)
++{
++	bpfptr_t fd_array = make_bpfptr(attr->fd_array, uattr.is_kernel);
++
++	if (bpfptr_is_null(fd_array))
++		return 0;
++	/*
++	 * New API: the caller passes fd_array_cnt and a continuous array that
++	 * is resolved and bound up front. Legacy API (no fd_array_cnt): keep
++	 * the caller's array and resolve entries lazily, on first reference.
++	 */
++	if (attr->fd_array_cnt)
++		return process_fd_array_continuous(env, fd_array,
++						   attr->fd_array_cnt);
++	env->fd_array_raw = fd_array;
+ 	return 0;
+ }
+ 
+@@ -20027,6 +20133,7 @@ int bpf_check(struct bpf_prog **prog, union bpf_attr *attr, bpfptr_t uattr,
+ 	bpf_clear_insn_aux_data(env, 0, env->prog->len);
+ 	vfree(env->insn_aux_data);
+ err_free_env:
++	kvfree(env->fd_array);
+ 	bpf_stack_liveness_free(env);
+ 	kvfree(env->cfg.insn_postorder);
+ 	kvfree(env->scc_info);
 -- 
 2.43.0
 
