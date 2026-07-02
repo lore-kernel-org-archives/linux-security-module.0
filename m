@@ -1,122 +1,117 @@
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4C235DA78
-	for <linux-security-module@vger.kernel.org>; Thu,  2 Jul 2026 16:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.181
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783011033; cv=pass; b=QZW/HB9YxKO7cOuWZXvWKCa03yjNBhfywVrMT77Y+HzsjC2b5RFES+4lBX9N1/Pyx6s/Mk0nvbD3t2fTRqnlAYOzXluU7CHspQ7Gs3hfgbyKky4Eg0DZeA2jUQc9UsOE3GibgRPb4Xt8xtFHs1bj0+hY3oj25qnHhFcYU82aGQk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783011033; c=relaxed/simple;
-	bh=MYmrI09amhjLqSAbahgTEWur6GL/kjiiPuUFpLejiQA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k31MaDDzogd+cx4enG4DwspHWLHjrPStDSRjXz0OLg0aarf8l2am9HMHJGL300k1/tOkzu11yivCFvHFf4Av/PViLtzkEmYAMaYuzQXhUuVrXkYbDoDQx98BdOlActZ8SVJ3H0unYckJNO9uoRWVwrdk7YqZXa2cQ+nupxbfbtw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZCGlSf70; arc=pass smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6D13624C5;
+	Thu,  2 Jul 2026 17:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783014288; cv=none; b=JwCFeqfwIBt9LrNniTEKxkrZFl5/xt7lVwXkQtpHt6PU4zUXGApjDCJWn6tkk5ZODF4yuhojkdbF5m/d/wFMs7SC3L2C9oKsSKOqglAg2ZKgH8Oa11gTBV1eEqijsLunBNH2gqeBmJa3UWLg/G3oPMDtliKj3GEUMxxTfqqGM/M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783014288; c=relaxed/simple;
+	bh=qN1BEqviBdra3blN4I5mvv2dJxn54XoSZdBXfNPMcPg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Akb7e9Xar5V/Mg4yG5O7OyslrsQPvejfrgn6GrLYfYEDmxaLF72Scq1IH9kE/GtbPblHdaxlo7lrMItkWvTdMyFfIgMOpkXB7epxRsAFPWKHpcaGZtd5D+pXWW+1frlduyvfF76T7M+8X+7bF7PEsT0wyi4ZU1H13ZQZru/4RcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=is1Nw4CV; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZCGlSf70"
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-845b6d9bf39so866730b3a.1
-        for <linux-security-module@vger.kernel.org>; Thu, 02 Jul 2026 09:50:30 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783011030; cv=none;
-        d=google.com; s=arc-20260327;
-        b=Ie8te2U3DXdgkhO6wWq3qfpFiAvvZ0XKfVtrcdyA7MrLrFJE2hAVt9OnqinKnwckS/
-         70UKzBBZ5pNI2dJZQdMGBMCuL1do5np1btdwUmNatn/x2s8kcBs+ne28epZpMtOL6aly
-         BST3FnF6r2oVVROr8F6vQzZdcRxAIDsYSbBXf3P1Bducjawz4kX9+TqJVb61sQ9THJMb
-         h0Hyh/P+E7nTyNLwFFHvmiToglCnZmE+UNdGnk64GcJrEuuN0PVlxpLMaU2ODHYgA/JF
-         LUlnBTv1O9/+h21Fw7gui7T/RzBvywrVQdynjz/q37awA1hu7b2KSdmlvNw3xtFoqyj5
-         7myA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=MYmrI09amhjLqSAbahgTEWur6GL/kjiiPuUFpLejiQA=;
-        fh=A8m2RFp0N0/ZBkuq7bOuqdleilnh+XhR903PEzKsJsE=;
-        b=jF+GVbls5r0HqIAW8d3gO3xaX/dLHN1R3pAj37kGEo5/yc7ao/QW+8k+KBUCSI1ZmK
-         3r2Fy6skICPKAC4AMSQLeUom70FIabFtaDO59Mdm6bZb8efrDnkrG7Xe/OYNA6SohpOY
-         sYNpL4MpCNtSWEgZ2Vg6U3PGRYaRUS+HG10Cz9Y0/IR9DluQR/XZGLpzYZMO1fg19i6e
-         NAcWg5TVMvhP+tvh7JlJ9UCL4D2Z0GcDzUTcgoKLdtt4nDxlKszMz7aISrN9dyGWf0aP
-         6/RCMDeHem7qTnKju4inRUAbfSHa/v+oktRipGE3E7tUi0MqgVo6Y6LbxLTMf2Jj3nwX
-         Lx5g==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1783011030; x=1783615830; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MYmrI09amhjLqSAbahgTEWur6GL/kjiiPuUFpLejiQA=;
-        b=ZCGlSf70DkuO/WgiLI7FItnXRcJCm75jGa9kUuhvnIfZvledcpXwFBScOWz7QsKgg2
-         REFmG7oqOEBHOqEEZjmeuQ1+mNVdlRCxd2vcES6akNaspsoaSfcpDgBVcLuHwR1y0njB
-         kilhG/OkcAQRxAS9qzmIEcEm1i3ORwmW4tqxSaWFlu9HxyDDKEldvfw+9y1VncC5vkQ8
-         LZwxkdft8tEWaInyfzsjS55eNMiCXUW9kVxcMb6215HZczgMnnl3/yDizZcuCiedMDiC
-         fTFx9N8kSgn67m7YIhlFOmqKlvIvVKbxUu+5Y+r6AYcUIbtVeEKr7caDDB1MU+RiNKD4
-         nWRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783011030; x=1783615830;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=MYmrI09amhjLqSAbahgTEWur6GL/kjiiPuUFpLejiQA=;
-        b=L0Lz2eTqdLBfNUb/uiagQHjf4ocvtCWtc/eSY/apEJH4loKofOE65JNdL1K7t73x6a
-         AekRB+Hh9yB5qU15Xq/84CzyQAMVHYUrtJLUtKeAmA30//iv9+WVkveASpWQdjsXL5mn
-         I37diAaC67oXfAUUP1S9zJxC/HqzCoT6PSLejSRBN5XysEtAiHBjhFUNDhzkff75IWif
-         BMO4KC188+TAX8zl9Jm+y+s2RKcuwZ+2o0BpwNgtK4B5zhzWaMiIOqz5ZTlEIZMVrtCJ
-         5M5W7sh68nWTmtWDbJNlcUC8NTrJ1IAc0+xETPDoDGcZ8nPb3HaeLr4LJn+u227I4S9b
-         SLNQ==
-X-Forwarded-Encrypted: i=1; AHgh+RoaD0MVYuz71UGHcjuFyhuaXgZcOA9JcvZnwhGFELZg+QfRuQk4qPq5zRJDQnaKjaI+QvB8lySk1myNQjBjr+GIf6ljVNk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLgBAtngRRinK//OO7RXWjsP9dhzJC5xFZ37EGEGVnbtLlKhtB
-	k89na8OImUgIUg7cVdVk2J8ewci4bEIk4OlQqA00eNFrPn7vFtVYr7/93LZLbZ2nP8YFtnV5MXJ
-	bGKadYxpPWYCYX7h1ed0zXNUzidjBwAOnUkzi7xAI
-X-Gm-Gg: AfdE7clyY6BnRG/MlJHrrXARJtBGZiQFOHoNtSGNnmoRZUEMtQ5UuFKDB3BTjFUrR1/
-	Y/hfd/vEMielE5mgdsFOnrpFgWzBTQtlT58YJRDwgAN1LcvWJewEnZtyfPf1KyeRqZ4uFobT0We
-	m58O2yBQWoZGCP8vm8oW27Svxv+s/ublMwBUVWAkGfbh4lezlc8uo1SkTcseYKMQKOHl2lh2rTw
-	WFLZOmZH1xmhKPH6yV7ShL2PgY8hTOGRAQr/hFc2sTleIna+TXWHq+w43htOUxs3ntMBeSd
-X-Received: by 2002:a05:6a00:b52:b0:847:84c9:8ff8 with SMTP id
- d2e1a72fcca58-847e18f8fccmr507308b3a.28.1783011029998; Thu, 02 Jul 2026
- 09:50:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="is1Nw4CV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 788841F000E9;
+	Thu,  2 Jul 2026 17:44:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783014287;
+	bh=hABVF4sGpyE3jVKHYv5QCrfL7jA6qp4NE9op0JVv1lU=;
+	h=From:Date:Subject:To:Cc;
+	b=is1Nw4CV7xigjs/lVsqTt/gdZ/Nu/U0Ca+ImhFPR7CD/WXDWKkCTWLxyfUek7kvv/
+	 GoyNdWcNqhUV1fFnWL+TyfTGdtGIMd7FZcYNDSdbMYbYooj1TjNXG3o1oQketvuYQU
+	 nfYO5OWrscjLLH8ulBMlJtaLjQBenpvq8fEJKvOnxIzxSsFpFvlt0M2z+oICSC5YYV
+	 en4+/xB8yp1epLiM2yojpyWaJpJOrdhJZCH9eD4BE5oGyYqb1nJwTFTEH+xGwOicaE
+	 pbXYzQ2TEQC6fMiHBMGzIRBObiSf9jok1mGHt5N2Ni3hmIUfXFjob3vEVp3hYSNqhh
+	 u2AnLpkhsrHYQ==
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 02 Jul 2026 18:37:08 +0100
+Subject: [PATCH v3] hardening: Default randstruct off with rust for better
+ allmodconfig support
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260119091226.3195309-1-caixinchen1@huawei.com>
- <b12a0d60-da15-4ba7-a526-247b5a7d97ad@huawei.com> <CAHC9VhRokERQGaB-1Xf0AoAzmT5tys4d+e4pmVY-W-88GQ8Jpg@mail.gmail.com>
-In-Reply-To: <CAHC9VhRokERQGaB-1Xf0AoAzmT5tys4d+e4pmVY-W-88GQ8Jpg@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 2 Jul 2026 12:50:18 -0400
-X-Gm-Features: AVVi8Ce78ge1QaGCAaHJ8L5bCQ7K5IBd7RNyQ9tApHcRA7928CwqRwIQ4pkgzBo
-Message-ID: <CAHC9VhTQT05+1qYM-8_YTc84Rx2SdZV1iRixeqAywCXf1mMddQ@mail.gmail.com>
-Subject: Re: [PATCH -next] lockdown: Add break in lockdown_write
-To: Xiu Jianfeng <xiujianfeng@huawei.com>, nicolas.bouchinet@oss.cyber.gouv.fr
-Cc: Cai Xinchen <caixinchen1@huawei.com>, jmorris@namei.org, serge@hallyn.com, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260702-rust-reverse-randstruct-dep-v3-1-e4e09c50014e@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAMOhRmoC/5WNSw6CMBQAr0K6tqYf2hRX3sO4gPYBVQPktRAN4
+ e62uHKny0kmMysJgB4CORUrQVh88OOQQB4KYvt66IB6l5gIJjTTTFGcQ6TJBAxAsR5ciDjbSB1
+ MVNWKldZozoUhqTAhtP651y/XD4e5uYGNOZmN3oc44mvfLzx7v50WTjktlYUKwDjm+PkOOMDjO
+ GJH8moRf8REilXSScOEbHRbfcW2bXsDEHid6SYBAAA=
+X-Change-ID: 20260605-rust-reverse-randstruct-dep-5a504c861128
+To: Kees Cook <kees@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+ "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
+ Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>
+Cc: linux-hardening@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.16-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1900; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=qN1BEqviBdra3blN4I5mvv2dJxn54XoSZdBXfNPMcPg=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqRqOKsW4w1g8+CfBlAPqGGVzKCw6/cheOZPJc8
+ ojA0RHNoG+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCakajigAKCRAk1otyXVSH
+ 0EwYB/4hreA5GB5rTEBNmtVZYGByevSJyKCca4iFFdT/Vg8kFPrHPR4fPlPCcoAQiZlb4ye4Kgd
+ oTrdPlejNRejott+60/gxw6Vr5vMaZvlCwSn8DU8/bblryTU1fD+bQeW+ISML/uq/gwizsOyhIq
+ 3wuf3z3wvLAEz6UXD1wkMO1GYQIe08m+Fe0kAU53/T7B83xPlkm+NA0Gzou/jI9M+D+3nKZFMXD
+ uwgaattplCljwYXvpRo8533JRtKE8P0jcjM03RCbmrB7f/s2FpS5yzwS8O7HvrhLzeDpX6Rpqde
+ TrniePFkj2THMUHWSqeScskAEK9shickrDZXgD0LetnVMbAD
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Thu, Jan 22, 2026 at 12:41=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
-rote:
->
-> On Thu, Jan 22, 2026 at 4:31=E2=80=AFAM Xiu Jianfeng <xiujianfeng@huawei.=
-com> wrote:
-> > On 1/19/2026 5:12 PM, Cai Xinchen wrote:
-> > > After the label is matched successful, any other levels judgements
-> > > are meaningless. Therefore, add break to return early
-> > >
-> > > Signed-off-by: Cai Xinchen <caixinchen1@huawei.com>
-> >
-> > Looks good to me, thanks.
-> >
-> > Acked-by: Xiu Jianfeng <xiujianfeng@huawei.com>
-> >
-> > Paul,
-> >
-> > Would you mind if this patch went through the LSM tree? :)
->
-> Assuming Nicolas is okay with that, I can take this through the LSM tree.
+Currently randstruct does not support rust so we have Kconfig dependencies
+which prevent rust being enabled when randstruct is. Unfortunately this
+prevents rust being enabled in allmodconfig, our standard coverage build.
+randstruct gets turned on by default, then the dependency on !RANDSTRUCT
+causes rust to get disabled.
 
-Following up on this as I never saw a response on-list and the patch
-doesn't appear to be in Linus' tree.
+Work around this by disabling randstruct by default if we have a usable
+rust toolchain and rust support for the architecture, circular
+dependencies prevent us directly depending on !RUST. This means we might
+end up with a configuration that disables both rust and randstruct but
+hopefully it's more likely go give the expected result.
 
---=20
-paul-moore.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v3:
+- Rebase onto v7.2-rc1.
+- Link to v2: https://patch.msgid.link/20260605-rust-reverse-randstruct-dep-v2-1-93d38023b6f9@kernel.org
+
+Changes in v2:
+- Add a HAVE_RUST in there too.
+- Link to v1: https://patch.msgid.link/20260605-rust-reverse-randstruct-dep-v1-1-45ce9ee8d0d1@kernel.org
+---
+ security/Kconfig.hardening | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+index 6923036e1a2f..81c81ad983ad 100644
+--- a/security/Kconfig.hardening
++++ b/security/Kconfig.hardening
+@@ -278,7 +278,7 @@ config CC_HAS_RANDSTRUCT
+ 
+ choice
+ 	prompt "Randomize layout of sensitive kernel structures"
+-	default RANDSTRUCT_FULL if COMPILE_TEST && (GCC_PLUGINS || CC_HAS_RANDSTRUCT)
++	default RANDSTRUCT_FULL if !(RUST_IS_AVAILABLE && HAVE_RUST) && COMPILE_TEST && (GCC_PLUGINS || CC_HAS_RANDSTRUCT)
+ 	default RANDSTRUCT_NONE
+ 	help
+ 	  If you enable this, the layouts of structures that are entirely
+
+---
+base-commit: dc59e4fea9d83f03bad6bddf3fa2e52491777482
+change-id: 20260605-rust-reverse-randstruct-dep-5a504c861128
+
+Best regards,
+--  
+Mark Brown <broonie@kernel.org>
+
