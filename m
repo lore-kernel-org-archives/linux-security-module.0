@@ -1,100 +1,105 @@
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741E3433E74
-	for <linux-security-module@vger.kernel.org>; Thu,  2 Jul 2026 14:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9ABA353A78;
+	Thu,  2 Jul 2026 15:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783004378; cv=none; b=OQl2QTfqihhgT4E2z+H8O2pdUplAVl2W2pWtC0a2Wi4zduabSr7v6XbXqQhXOQuhfJzW8D48CvmxZqi8ejSgr/FLIfud5PaD0Pp2sewPMxtBRSXUm3BpCKX9250WcdDJsCVFHKHZ7upeI+wjB6bQQCGpMx1HcdRd5cnwERXF9oY=
+	t=1783005433; cv=none; b=bfkxknweVSBc1rmZ7GSp+RdtZRL4ZnEvtJDhXXWPILL2EDaS4jY/ExMb+1pGl9jcmce/Z/MvCWhQNEjoGC9XYOSQDfMcrDoDKV15ImzFxND8SHHPqY6Q8dR2tU0bgGZcMDgH/dn0YSFyAsXVPGa8jOymfUWd37t8t15PthMUWJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783004378; c=relaxed/simple;
-	bh=TvpB4ituHUE/4G151rVesx7/g7lIOt8ozx/LciKPu58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BiB1Td3u4X67wBsUrjsYmUv2RbEAmHVm/21CNSqaRtZ8FYdFH7q8sJTy1IHOFDicAE7VUQ0Gntxb93D2105rEhAHDRCbfSzQIRi5lwtYgNGJrbfd968ZL7Qek5NuWMSpM8NLcb9Go+6Yvy6t5Kd0NDQ37vioYTj1QljqefKp9IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=sQJF5vlo; arc=none smtp.client-ip=185.125.25.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1783005433; c=relaxed/simple;
+	bh=hKbiKiL9e8lHfZHRP0c5OYEhyFm4H2GpNX8hNWcBMQI=;
+	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
+	 Subject:From:To:Cc:Date; b=aNokjqF9UiEXEbsQHcZX5FkW0tjveeXhO3RIsN652NDepGnx6UDOW0gt9r0J5ACm/x1l/QhJSclPQWBjSYFWzYOw0pE1VjPObv0FfD0wkEwZ/zBSQTupGGXiqZ1g3HC0Uw5XqSe4qZf94Bl8hf5VHdXFsHUvJ26i3WAG6isFU4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iAvsxx8V; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="sQJF5vlo"
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4grg5T6jKLzX2P;
-	Thu,  2 Jul 2026 16:59:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1783004365;
-	bh=ECl3lQKgr0XzjfmQWRB2AMBbtcwDvjdjFf1tBBQFAtM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sQJF5vloPdRpu5S6AD1mT6MdQj9YC4wiDk/PWN0anDxVTtUTwDjG2EVkJBEkzjpp1
-	 jqphKhh8ZQaTAaCJHJkK+UtJ3k0NWBr9Nc1K6df6bWUA3DSvhQIxkSGrMSabcRIqRb
-	 C8z03PgHVhqcpO5z/gPtiWnIOc9Bgyib+qGkj3zI=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4grg5S606NzQTK;
-	Thu,  2 Jul 2026 16:59:24 +0200 (CEST)
-Date: Thu, 2 Jul 2026 16:59:20 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Matthieu Buffet <matthieu@buffet.re>
-Cc: Bryam Vargas <hexlabsecurity@proton.me>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, linux-security-module@vger.kernel.org, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Paul Moore <paul@paul-moore.com>, 
-	Eric Dumazet <edumazet@google.com>, Neal Cardwell <ncardwell@google.com>, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] landlock: fix TCP Fast Open connection bypass
-Message-ID: <20260702.EiNg0kiph4ew@digikod.net>
-References: <c21cf4f3-6c21-4170-b578-13c1bfd48b87@buffet.re>
- <20260701214628.33319-1-matthieu@buffet.re>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iAvsxx8V"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 239671F000E9;
+	Thu,  2 Jul 2026 15:17:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783005432;
+	bh=3PF7E6h1Pq35N0xxTAOqIzPYLKAPO1tm3xl4UMh/84w=;
+	h=In-Reply-To:References:Subject:From:To:Cc:Date;
+	b=iAvsxx8VTtjghXjcsLLPS0OtRdh5Az6HgNxyIEJyOOeDk77CGuCS0F61hSKv7/foU
+	 Ew2vxvk3muAJoQfE3Z60FStAN+tEF5ecdXWJZjG1CR6RdBoNb4RnByKly5odp16FLO
+	 pVkLWgXIzsoYHa9ACPty8CFqMQxR2QBuWDMV8i3iMnQ+MxsSYzZ61UDeHE3XS+Xi41
+	 Ffm3fc8h8JDZJPr0+LL7KbSGZyHqdIM3s3pN+I/wKAkh0IR3oABLz8dEnWg1QUJXR9
+	 oV0Lq3nhj/LijzZgwimoYoZEj+jfTAl+pqwxmK3hYMxIAaBmjMPKNVPvj2XGTMmjZB
+	 PuRnhiV1HNL3A==
+Content-Type: multipart/mixed; boundary="===============6116181899817283224=="
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260701214628.33319-1-matthieu@buffet.re>
-X-Infomaniak-Routing: alpha
+Message-Id: <038b4c7b60a311cb9905bc88e7f27e6846e9578413afa4b902b0684f44dfd980@mail.kernel.org>
+In-Reply-To: <20260702143605.252797-6-daniel@iogearbox.net>
+References: <20260702143605.252797-6-daniel@iogearbox.net>
+Subject: Re: [PATCH bpf-next v3 5/6] selftests/bpf: Verify load-time signed loader metadata
+From: bot+bpf-ci@kernel.org
+To: daniel@iogearbox.net,ast@kernel.org
+Cc: kpsingh@kernel.org,James.Bottomley@hansenpartnership.com,paul@paul-moore.com,bboscaccy@linux.microsoft.com,memxor@gmail.com,torvalds@linux-foundation.org,a.s.protopopov@gmail.com,bpf@vger.kernel.org,linux-security-module@vger.kernel.org,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
+Date: Thu,  2 Jul 2026 15:17:12 +0000 (UTC)
 
-Thanks, applied!
+--===============6116181899817283224==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 01, 2026 at 11:46:27PM +0200, Matthieu Buffet wrote:
-> The documentation of the socket_connect() LSM hook states that it
-> controls connecting a socket to a remote address. It has not been the
-> case since the addition of TCP Fast Open (RFC 7413) support, which allows
-> opening a TCP connection (thus, setting a socket's destination address)
-> via the MSG_FASTOPEN flag passed to sendto()/sendmsg()/sendmmsg(). The
-> problem then got duplicated into MPTCP.
-> 
-> Landlock did not take it into account when its TCP support was added,
-> leaving a bypass of TCP connect policy.
-> 
-> Ideally a call to the LSM hook would be added in the fastopen code path,
-> in order to fix this generically. But connect() hooks are designed to run
-> with the socket locked, unlike sendmsg() hooks.
-> 
-> Closes: https://github.com/landlock-lsm/linux/issues/41
-> Fixes: fff69fb03dde ("landlock: Support network rules with TCP bind and connect")
-> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
-> ---
->  security/landlock/net.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/security/landlock/net.c b/security/landlock/net.c
-> index cbff59ec3aba..46c17116fcf4 100644
-> --- a/security/landlock/net.c
-> +++ b/security/landlock/net.c
-> @@ -351,6 +351,14 @@ static int hook_socket_sendmsg(struct socket *const sock,
->  	access_mask_t access_request;
->  	int ret = 0;
->  
-> +	if ((msg->msg_flags & MSG_FASTOPEN) && address && sk_is_tcp(sock->sk)) {
-> +		ret = current_check_access_socket(
-> +			sock, address, addrlen, LANDLOCK_ACCESS_NET_CONNECT_TCP,
-> +			true);
-> +		if (ret != 0)
-> +			return ret;
-> +	}
+> diff --git a/tools/testing/selftests/bpf/prog_tests/signed_loader.c b/tools/testing/selftests/bpf/prog_tests/signed_loader.c
+> index 5fc417e31fc6..b3ac3d9b0e31 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/signed_loader.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/signed_loader.c
+
+[ ... ]
+
+> @@ -1090,20 +1173,462 @@ static void lsm_signature_verdict(void)
+>  	test_signed_loader_lsm__destroy(lsm);
+>  }
+>
+> +static void signed_module_kfunc_rejected(void)
+> +{
+> +	struct bpf_insn insns[] = {
+> +		BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, BPF_PSEUDO_KFUNC_CALL, 1, 1),
+> +		BPF_MOV64_IMM(BPF_REG_0, 0),
+> +		BPF_EXIT_INSN(),
+> +	};
+> +	char dir_tmpl[] = "/tmp/signed_loader_kfnXXXXXX", *dir;
+> +	int map_fd = -1, prog_fd, err, fds[2];
+> +	struct btf *btf = NULL;
+
+[ ... ]
+
+> +	prog_fd = syscall(__NR_bpf, BPF_PROG_LOAD, &attr,
+> +			  offsetofend(union bpf_attr, keyring_id));
+> +	err = prog_fd < 0 ? -errno : prog_fd;
+> +	if (prog_fd >= 0)
+> +		close(prog_fd);
 > +
->  	if (sk_is_udp(sock->sk))
->  		access_request = LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP;
->  	else
-> -- 
-> 2.47.3
-> 
-> 
+> +	ASSERT_EQ(err, -EACCES, "module kfunc BTF in signed program rejected");
+> +cleanup:
+> +	if (btf)
+> +		btf__free(btf);
+> +	if (map_fd >= 0)
+> +		close(map_fd);
+
+This isn't a bug, but was map_fd meant to be dropped from this test?
+It's initialized to -1 and never changed, so the cleanup branch is
+unreachable. The sibling tests signed_map_by_fd_rejected and
+signed_sparse_fd_array_rejected create and close a map_fd, but
+signed_module_kfunc_rejected only uses BTF fds and never assigns
+map_fd.
+
+> +	run_setup("cleanup", dir);
+> +}
+
+[ ... ]
+
+
+---
+AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
+See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
+
+CI run summary: https://github.com/kernel-patches/bpf/actions/runs/28599478014
+--===============6116181899817283224==--
