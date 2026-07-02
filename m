@@ -1,265 +1,179 @@
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9347030B51A
-	for <linux-security-module@vger.kernel.org>; Thu,  2 Jul 2026 21:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.173
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783026962; cv=pass; b=fw8HAyIV5GTfO4XugLlGQaXmWJhih82Kt0nGt5pDWMfGs7mPUqSBDAJV2Xot62ChNyNSDmcjgfW93+9v4Qz9xh5irP8zKF/XbfSo8ES6Oh4ZntwEram+d7WzjP0Bi6ZZgmz41vHlJVlLfoYZ16qbyd9gYg/s7fg1QooWYJmJyMc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783026962; c=relaxed/simple;
-	bh=CRRyF0ZmV6QAOvLNMyYIyuBjF+4nVnj3WsLLfWhXSYA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ViUnm/hkpbff+SoysFWtCfU2ATkDDvdOLu/KC8c3N/pAIXI6Oiy45OaGKWSx/GPwD5NQ3eTDz+cf9Djj+6X8/zuvkv5whnNOyB44bfxuQoL9ptyv1J6lC3yeNDPl71FTQKTC9iG3rlTlXE6JkWUTkQxCbQEHxteTPYky32eQjeU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QX/foz9D; arc=pass smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B831B3F9FB;
+	Thu,  2 Jul 2026 21:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783027026; cv=none; b=U0Sv9bfMiL96cNOu9tw1OF+XgeL/H7UK4zFm3tkEKhuyqgWnny57uYH4PJ/l9+dMdRyneCT5bd//SlipUoDved0cSpgQnkKrxrjVvS+7BeMYPTL4gcXWDGqmUjTJUgEAv1C1EN/kv2p2Yjh3PQKcwTMABqEeK1ZiWYg1rom5DTA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783027026; c=relaxed/simple;
+	bh=XawzBJW+QEVhyimcAwWarKIl3iK4n81nuEVvzQSJwOU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RY8NNPN3GIKkbD3PtSSGhXw9PGj0dQGFRoh9C0n6bIgd/Ba2McV+qHJ2y7TareZw0X8oDozR+d/gZp6Sc8OPiJvcl0W5zozbeuymSLV5THDcaAuhFnrP3xpWucQZYaWU2EmT9HKZImq5UyeR36bGFHBpc3CCA6i9HS6QY0OaGj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=BjPorjnm; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QX/foz9D"
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-c998fd549a8so1183326a12.2
-        for <linux-security-module@vger.kernel.org>; Thu, 02 Jul 2026 14:16:00 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783026960; cv=none;
-        d=google.com; s=arc-20260327;
-        b=ZxoD+vd/h49mrznNOF3WjIAJK9MM0Xy+x34dySYodYffCfaWMl/CFdSai5CfbC0nWp
-         Oi9XtM701qQ3P7y2lWE2m/dhrUcCXGnGIM2fPEUNEtdZtn0qpQUpYl/wYZpaCpO2FiN+
-         v6Ld9fFX03aa61zTOramJNDCmC1ITKnT6bMP7IW8Rwsba+tOKml6l4QauxtwZouKKCHz
-         jYRkF2MfdZhd4XXNjC3qoQJ6v1g05aH41AuSauXe/HHqmVCDRYiBoecm9b2M2xj21M0u
-         BvDIRqO0OHe2ZScaljOKQLfeG0swNQpc2hCu1Kht6FCOQDF4tMPqy60yltCTb8tazJQN
-         oa1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=6GaLUVyJg238f5zVmM980M/4Qfp3qCHqnZLBBreogGc=;
-        fh=wPCiefjkwYo6UBQUHB+BvdlhlavKyQQ9H0pw3bCsePc=;
-        b=TcPvkII/AL5BH/oqMbNDixMpoQ7c2iwPKGK961IEe5O5tYz5LphQiw1kMc3MVw8l3m
-         blfcuY5St/E+CWhMpNNDKjCVEHJeWZOOzjm86r5IDk6KrYrWvO2VpIbf6EnUHb26/cIq
-         lHikBWjvgageXgQaZfQSRjJHAktFz6mdVSFlV3JJMsRHxxFflflFhIm7Dmd1hfd2/BEd
-         sTPSW3+2nDvgPfzsksSp1b2BCHh5je4qmGPQWxUIHO2Nv2FJxhqtJP40Hs9xBLQOpImD
-         x+DirHOIPcJhgxAswFspRWMboweSstCVCnhxMJES6a9JsQ5tLB5rxWcIc82TJ4shcrmA
-         b79w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1783026960; x=1783631760; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6GaLUVyJg238f5zVmM980M/4Qfp3qCHqnZLBBreogGc=;
-        b=QX/foz9Dfwf8YJvhaPdwQdobvib4EZefg+eN8puFljhDxUZT6eHdAz+VN4Z/Y9FjwP
-         aM9STMkj5nUm7DYi05/Z8cAz7obJ1XtuOTpC2teIm0Msg95UUpapVZbYBLgCJl12GKqs
-         Xzfdsj/7gm96W/m+71sQghhp1/GeOuTWtlyR6hJmaR2I3/WsgkCdBM77ruLJzXgqhcTv
-         dSvvZT/043bXMYbMeh4y75f8NQro2KYvbiopKTo5L+aVcBiDxXM3L4lEOjtZrs6aY2ED
-         fvEpNKy4irGUBC7wbSDl5lywC/bizRhM7NhAt2QWdrS30+RLpKGyR6k1VRgw+cgQaSIe
-         /HMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783026960; x=1783631760;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=6GaLUVyJg238f5zVmM980M/4Qfp3qCHqnZLBBreogGc=;
-        b=AoznvxLF/2NKm92r4+BfDPpXja+/CAwZ3MyXcHSKeceFbKbtQOPMCDalPqYE1ZotWd
-         xnrk2r9VfHddZGpmpyiINCZTQ0MRhDQftAwjFGmCvq8MAk6Uj4euMBTHanvY8ltu1wyj
-         PFa87ueUGyMVTuFovjcgPXqjT+BWfjl1j2lW19WJSCWoam7tdzR5jgE8mtaJRXbD92qS
-         OjFYwghIa3LA/m1Q/Bu8V3+/1BAsHZejnceyuqSJXoupEsTkZzd1T5B6N4zf48r/Ug8r
-         nnd7X2pRGgs0kZ+EWW+YeE7yPF49gSbjauXHbHCIMksRDwH0xR8DrRTUpLZOKpiMrt1r
-         x74A==
-X-Gm-Message-State: AOJu0YwGvwQgNduIT/OikzzTKufNwCozewwmfE0gCFl4cMyAMD40sbWR
-	656aONMzbExLVUpoprwZPJ/pP2eP9p6071sH9kvzM/Lnxs3whVRNS+VhXYYtGDNfRoo3cDFTmKU
-	g09qMvKWrYg7xErZHcTBYKq26TqftoTIso2eHnLmr
-X-Gm-Gg: AfdE7cl3g+xmqgfm2zaqt65rPenV4qoPbJH1jH8ZrujRXhdJW/+wvPrEvtSrT6vh+DO
-	L2fPVEWdgy34heN+DvMM7ebTcoH5szXM39TeI3+SUzGKcJP6YyfN0z57cMCczPaUbrcfz9hEqTl
-	jyZSPt2SdlOTcMJmG5IDg20mbiTmL0u2qgDZ87uEjX9A5ldmb7486aXWJCfez66hks5Il5CIwv8
-	t1DMYlmjHe9hUtHwj1qY0bm4+78qw2Wss7VN63zLZ68M2CM9mAUEdzwIwQoNOIBJi+NNaoh
-X-Received: by 2002:a05:6a21:6086:b0:398:837a:7af0 with SMTP id
- adf61e73a8af0-3bfed362205mr8895796637.30.1783026959543; Thu, 02 Jul 2026
- 14:15:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="BjPorjnm"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=7MrVyOUQ+A2JIaTA8EefePQMTeG/s1iSrjXUbdvwrEA=; b=BjPorjnmXBN07GBx1zL3xPvgJ0
+	8CPMK+iAJPXLnE2qUxMKQx0YFwLLeRNjpgvISMcuOS3jlOJ7DEnotykpxL3xk4/b5/B6eTXNeWL/x
+	ILo8wuNuDKB/cqEpYIZyNR1N4XgXBCH+Gl8TcRv26YRqAndfxu4fqVj6F8zmq1bwgdIIWL4FSAFX2
+	jg9SAYQSzN63qIEtSY9aZzzKTcqLDlf3mfCXyPPrB+baGNe2KbGvgVTdFQD4qtvP+rFqaPeOv9LLo
+	MUrgwS3Rcwfv6egY4Qmkal7j8GM8NePHyQ+KdeA1O1QJqNin1Ppd6+wRccmKmoqbkmK8fXtew8a7F
+	wmvQeTfQ==;
+Received: from sslproxy08.your-server.de ([78.47.166.52])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1wfOmL-0003cR-0F;
+	Thu, 02 Jul 2026 23:17:01 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy08.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1wfOmK-000PAZ-14;
+	Thu, 02 Jul 2026 23:17:00 +0200
+Message-ID: <a430a735-4657-475f-a7e7-64036a540644@iogearbox.net>
+Date: Thu, 2 Jul 2026 23:16:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260629210150.832576-1-mattbobrowski@google.com>
- <dde355196558210f6ca87c1a0745a3a8@paul-moore.com> <akbHgKxaNmRQEfqs@google.com>
-In-Reply-To: <akbHgKxaNmRQEfqs@google.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 2 Jul 2026 17:15:45 -0400
-X-Gm-Features: AVVi8CdMy1cNGEFmQHB4WTGe_AOdq4edMBCkxyD8qbAPpSrz8H3ndpzGD767XUM
-Message-ID: <CAHC9VhQ719M3TQz8LCDSxR1vECx-WmwcPFR+OuuEJ-rcEW+y3g@mail.gmail.com>
-Subject: Re: [PATCH] lsm: cleanup repeated lsm_blob_size_update() calls in lsm_prepare()
-To: Matt Bobrowski <mattbobrowski@google.com>
-Cc: linux-security-module@vger.kernel.org, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v3 1/6] bpf: Resolve and cache fd_array objects
+ at load time
+To: Anton Protopopov <a.s.protopopov@gmail.com>
+Cc: ast@kernel.org, kpsingh@kernel.org,
+ James.Bottomley@hansenpartnership.com, paul@paul-moore.com,
+ bboscaccy@linux.microsoft.com, memxor@gmail.com,
+ torvalds@linux-foundation.org, bpf@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+References: <20260702143605.252797-1-daniel@iogearbox.net>
+ <20260702143605.252797-2-daniel@iogearbox.net>
+ <aka2yR6IUZMAOUwJ@mail.gmail.com>
+Content-Language: en-US
+From: Daniel Borkmann <daniel@iogearbox.net>
+Autocrypt: addr=daniel@iogearbox.net; keydata=
+ xsFNBGNAkI0BEADiPFmKwpD3+vG5nsOznvJgrxUPJhFE46hARXWYbCxLxpbf2nehmtgnYpAN
+ 2HY+OJmdspBntWzGX8lnXF6eFUYLOoQpugoJHbehn9c0Dcictj8tc28MGMzxh4aK02H99KA8
+ VaRBIDhmR7NJxLWAg9PgneTFzl2lRnycv8vSzj35L+W6XT7wDKoV4KtMr3Szu3g68OBbp1TV
+ HbJH8qe2rl2QKOkysTFRXgpu/haWGs1BPpzKH/ua59+lVQt3ZupePpmzBEkevJK3iwR95TYF
+ 06Ltpw9ArW/g3KF0kFUQkGXYXe/icyzHrH1Yxqar/hsJhYImqoGRSKs1VLA5WkRI6KebfpJ+
+ RK7Jxrt02AxZkivjAdIifFvarPPu0ydxxDAmgCq5mYJ5I/+BY0DdCAaZezKQvKw+RUEvXmbL
+ 94IfAwTFA1RAAuZw3Rz5SNVz7p4FzD54G4pWr3mUv7l6dV7W5DnnuohG1x6qCp+/3O619R26
+ 1a7Zh2HlrcNZfUmUUcpaRPP7sPkBBLhJfqjUzc2oHRNpK/1mQ/+mD9CjVFNz9OAGD0xFzNUo
+ yOFu/N8EQfYD9lwntxM0dl+QPjYsH81H6zw6ofq+jVKcEMI/JAgFMU0EnxrtQKH7WXxhO4hx
+ 3DFM7Ui90hbExlFrXELyl/ahlll8gfrXY2cevtQsoJDvQLbv7QARAQABzSZEYW5pZWwgQm9y
+ a21hbm4gPGRhbmllbEBpb2dlYXJib3gubmV0PsLBkQQTAQoAOxYhBCrUdtCTcZyapV2h+93z
+ cY/jfzlXBQJjQJCNAhsDBQkHhM4ACAsJCAcNDAsKBRUKCQgLAh4BAheAAAoJEN3zcY/jfzlX
+ dkUQAIFayRgjML1jnwKs7kvfbRxf11VI57EAG8a0IvxDlNKDcz74mH66HMyhMhPqCPBqphB5
+ ZUjN4N5I7iMYB/oWUeohbuudH4+v6ebzzmgx/EO+jWksP3gBPmBeeaPv7xOvN/pPDSe/0Ywp
+ dHpl3Np2dS6uVOMnyIsvmUGyclqWpJgPoVaXrVGgyuer5RpE/a3HJWlCBvFUnk19pwDMMZ8t
+ 0fk9O47HmGh9Ts3O8pGibfdREcPYeGGqRKRbaXvcRO1g5n5x8cmTm0sQYr2xhB01RJqWrgcj
+ ve1TxcBG/eVMmBJefgCCkSs1suriihfjjLmJDCp9XI/FpXGiVoDS54TTQiKQinqtzP0jv+TH
+ 1Ku+6x7EjLoLH24ISGyHRmtXJrR/1Ou22t0qhCbtcT1gKmDbTj5TcqbnNMGWhRRTxgOCYvG0
+ 0P2U6+wNj3HFZ7DePRNQ08bM38t8MUpQw4Z2SkM+jdqrPC4f/5S8JzodCu4x80YHfcYSt+Jj
+ ipu1Ve5/ftGlrSECvy80ZTKinwxj6lC3tei1bkI8RgWZClRnr06pirlvimJ4R0IghnvifGQb
+ M1HwVbht8oyUEkOtUR0i0DMjk3M2NoZ0A3tTWAlAH8Y3y2H8yzRrKOsIuiyKye9pWZQbCDu4
+ ZDKELR2+8LUh+ja1RVLMvtFxfh07w9Ha46LmRhpCzsFNBGNAkI0BEADJh65bNBGNPLM7cFVS
+ nYG8tqT+hIxtR4Z8HQEGseAbqNDjCpKA8wsxQIp0dpaLyvrx4TAb/vWIlLCxNu8Wv4W1JOST
+ wI+PIUCbO/UFxRy3hTNlb3zzmeKpd0detH49bP/Ag6F7iHTwQQRwEOECKKaOH52tiJeNvvyJ
+ pPKSKRhmUuFKMhyRVK57ryUDgowlG/SPgxK9/Jto1SHS1VfQYKhzMn4pWFu0ILEQ5x8a0RoX
+ k9p9XkwmXRYcENhC1P3nW4q1xHHlCkiqvrjmWSbSVFYRHHkbeUbh6GYuCuhqLe6SEJtqJW2l
+ EVhf5AOp7eguba23h82M8PC4cYFl5moLAaNcPHsdBaQZznZ6NndTtmUENPiQc2EHjHrrZI5l
+ kRx9hvDcV3Xnk7ie0eAZDmDEbMLvI13AvjqoabONZxra5YcPqxV2Biv0OYp+OiqavBwmk48Z
+ P63kTxLddd7qSWbAArBoOd0wxZGZ6mV8Ci/ob8tV4rLSR/UOUi+9QnkxnJor14OfYkJKxot5
+ hWdJ3MYXjmcHjImBWplOyRiB81JbVf567MQlanforHd1r0ITzMHYONmRghrQvzlaMQrs0V0H
+ 5/sIufaiDh7rLeZSimeVyoFvwvQPx5sXhjViaHa+zHZExP9jhS/WWfFE881fNK9qqV8pi+li
+ 2uov8g5yD6hh+EPH6wARAQABwsF8BBgBCgAmFiEEKtR20JNxnJqlXaH73fNxj+N/OVcFAmNA
+ kI0CGwwFCQeEzgAACgkQ3fNxj+N/OVfFMhAA2zXBUzMLWgTm6iHKAPfz3xEmjtwCF2Qv/TT3
+ KqNUfU3/0VN2HjMABNZR+q3apm+jq76y0iWroTun8Lxo7g89/VDPLSCT0Nb7+VSuVR/nXfk8
+ R+OoXQgXFRimYMqtP+LmyYM5V0VsuSsJTSnLbJTyCJVu8lvk3T9B0BywVmSFddumv3/pLZGn
+ 17EoKEWg4lraXjPXnV/zaaLdV5c3Olmnj8vh+14HnU5Cnw/dLS8/e8DHozkhcEftOf+puCIl
+ Awo8txxtLq3H7KtA0c9kbSDpS+z/oT2S+WtRfucI+WN9XhvKmHkDV6+zNSH1FrZbP9FbLtoE
+ T8qBdyk//d0GrGnOrPA3Yyka8epd/bXA0js9EuNknyNsHwaFrW4jpGAaIl62iYgb0jCtmoK/
+ rCsv2dqS6Hi8w0s23IGjz51cdhdHzkFwuc8/WxI1ewacNNtfGnorXMh6N0g7E/r21pPeMDFs
+ rUD9YI1Je/WifL/HbIubHCCdK8/N7rblgUrZJMG3W+7vAvZsOh/6VTZeP4wCe7Gs/cJhE2gI
+ DmGcR+7rQvbFQC4zQxEjo8fNaTwjpzLM9NIp4vG9SDIqAm20MXzLBAeVkofixCsosUWUODxP
+ owLbpg7pFRJGL9YyEHpS7MGPb3jSLzucMAFXgoI8rVqoq6si2sxr2l0VsNH5o3NgoAgJNIg=
+In-Reply-To: <aka2yR6IUZMAOUwJ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: Clear (ClamAV 1.4.3/28048/Thu Jul  2 08:25:04 2026)
 
-On Thu, Jul 2, 2026 at 4:18=E2=80=AFPM Matt Bobrowski <mattbobrowski@google=
-.com> wrote:
-> On Thu, Jul 02, 2026 at 03:15:02PM -0400, Paul Moore wrote:
-> > On Jun 29, 2026 Matt Bobrowski <mattbobrowski@google.com> wrote:
-> > >
-> > > Centralize the definition of LSM security blob fields using an X-macr=
-o
-> > > (LSM_BLOBS_LIST). This reduces repetitive boilerplate code across
-> > > struct lsm_blob_sizes, blob size registration in lsm_prepare(), and
-> > > debug log printing in security_init().
-> > >
-> > > Signed-off-by: Matt Bobrowski <mattbobrowski@google.com>
-> > > ---
-> > >  include/linux/lsm_hooks.h | 42 ++++++++++++++++------------
-> > >  security/lsm_init.c       | 59 ++++++++++---------------------------=
---
-> > >  2 files changed, 38 insertions(+), 63 deletions(-)
-> > >
-> > > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> > > index b4f8cad53ddb..0e73b22bdeea 100644
-> > > --- a/include/linux/lsm_hooks.h
-> > > +++ b/include/linux/lsm_hooks.h
-> > > @@ -98,28 +98,34 @@ struct security_hook_list {
-> > >     const struct lsm_id *lsmid;
-> > >  } __randomize_layout;
-> > >
-> > > +#define LSM_BLOBS_LIST(X) \
-> > > +   X(cred)          \
-> > > +   X(file)          \
-> > > +   X(backing_file)  \
-> > > +   X(ib)            \
-> > > +   X(inode)         \
-> > > +   X(sock)          \
-> > > +   X(superblock)    \
-> > > +   X(ipc)           \
-> > > +   X(key)           \
-> > > +   X(msg_msg)       \
-> > > +   X(perf_event)    \
-> > > +   X(task)          \
-> > > +   X(tun_dev)       \
-> > > +   X(xattr_count)   \
-> > > +   X(bdev)          \
-> > > +   X(bpf_map)       \
-> > > +   X(bpf_prog)      \
-> > > +   X(bpf_token)
-> > > +
-> > >  /*
-> > >   * Security blob size or offset data.
-> > > + * Note: lbs_xattr_count is the number of xattr slots in new_xattrs =
-array.
-> > >   */
-> > >  struct lsm_blob_sizes {
-> > > -   unsigned int lbs_cred;
-> > > -   unsigned int lbs_file;
-> > > -   unsigned int lbs_backing_file;
-> > > -   unsigned int lbs_ib;
-> > > -   unsigned int lbs_inode;
-> > > -   unsigned int lbs_sock;
-> > > -   unsigned int lbs_superblock;
-> > > -   unsigned int lbs_ipc;
-> > > -   unsigned int lbs_key;
-> > > -   unsigned int lbs_msg_msg;
-> > > -   unsigned int lbs_perf_event;
-> > > -   unsigned int lbs_task;
-> > > -   unsigned int lbs_xattr_count; /* num xattr slots in new_xattrs ar=
-ray */
-> > > -   unsigned int lbs_tun_dev;
-> > > -   unsigned int lbs_bdev;
-> > > -   unsigned int lbs_bpf_map;
-> > > -   unsigned int lbs_bpf_prog;
-> > > -   unsigned int lbs_bpf_token;
-> > > +#define LSM_BLOB_SIZE(name) unsigned int lbs_##name;
-> > > +   LSM_BLOBS_LIST(LSM_BLOB_SIZE);
-> > > +#undef LSM_BLOB_SIZE
-> > >  };
-> >
-> > Generally speaking I greatly prefer to see the structure fields typed o=
-ut
-> > as it makes it easier to find them using grep, code indexers, etc.  The=
-re
-> > is a similar argument for the security_init() changes (below).
-> >
-> > > diff --git a/security/lsm_init.c b/security/lsm_init.c
-> > > index 7c0fd17f1601..c256f1c33efa 100644
-> > > --- a/security/lsm_init.c
-> > > +++ b/security/lsm_init.c
-> > > @@ -282,40 +282,24 @@ static void __init lsm_blob_size_update(unsigne=
-d int *sz_req,
-> > >   * lsm_prepare - Prepare the LSM framework for a new LSM
-> > >   * @lsm: LSM definition
-> > >   */
-> > > -static void __init lsm_prepare(struct lsm_info *lsm)
-> > > +static void __init lsm_prepare(const struct lsm_info *lsm)
-> > >  {
-> > >     struct lsm_blob_sizes *blobs =3D lsm->blobs;
-> > >
-> > >     if (!blobs)
-> > >             return;
-> > >
-> > > -   /* Register the LSM blob sizes. */
-> > > -   blobs =3D lsm->blobs;
-> > > -   lsm_blob_size_update(&blobs->lbs_cred, &blob_sizes.lbs_cred);
-> > > -   lsm_blob_size_update(&blobs->lbs_file, &blob_sizes.lbs_file);
-> > > -   lsm_blob_size_update(&blobs->lbs_backing_file,
-> > > -                        &blob_sizes.lbs_backing_file);
-> > > -   lsm_blob_size_update(&blobs->lbs_ib, &blob_sizes.lbs_ib);
-> > > -   /* inode blob gets an rcu_head in addition to LSM blobs. */
-> > > +   /* The inode blob (inode->i_security) gets an rcu_head in additio=
-n to
-> > > +    * LSM blobs.
-> > > +    */
-> > >     if (blobs->lbs_inode && blob_sizes.lbs_inode =3D=3D 0)
-> > >             blob_sizes.lbs_inode =3D sizeof(struct rcu_head);
-> > > -   lsm_blob_size_update(&blobs->lbs_inode, &blob_sizes.lbs_inode);
-> > > -   lsm_blob_size_update(&blobs->lbs_ipc, &blob_sizes.lbs_ipc);
-> > > -   lsm_blob_size_update(&blobs->lbs_key, &blob_sizes.lbs_key);
-> > > -   lsm_blob_size_update(&blobs->lbs_msg_msg, &blob_sizes.lbs_msg_msg=
-);
-> > > -   lsm_blob_size_update(&blobs->lbs_perf_event,
-> > > -                        &blob_sizes.lbs_perf_event);
-> > > -   lsm_blob_size_update(&blobs->lbs_sock, &blob_sizes.lbs_sock);
-> > > -   lsm_blob_size_update(&blobs->lbs_superblock,
-> > > -                        &blob_sizes.lbs_superblock);
-> > > -   lsm_blob_size_update(&blobs->lbs_task, &blob_sizes.lbs_task);
-> > > -   lsm_blob_size_update(&blobs->lbs_tun_dev, &blob_sizes.lbs_tun_dev=
-);
-> > > -   lsm_blob_size_update(&blobs->lbs_xattr_count,
-> > > -                        &blob_sizes.lbs_xattr_count);
-> > > -   lsm_blob_size_update(&blobs->lbs_bdev, &blob_sizes.lbs_bdev);
-> > > -   lsm_blob_size_update(&blobs->lbs_bpf_map, &blob_sizes.lbs_bpf_map=
-);
-> > > -   lsm_blob_size_update(&blobs->lbs_bpf_prog, &blob_sizes.lbs_bpf_pr=
-og);
-> > > -   lsm_blob_size_update(&blobs->lbs_bpf_token, &blob_sizes.lbs_bpf_t=
-oken);
-> > > +
-> > > +   /* Register the LSM blob sizes. */
-> > > +#define UPDATE_LSM_BLOB_SIZE(name) \
-> > > +   lsm_blob_size_update(&blobs->lbs_##name, &blob_sizes.lbs_##name);
-> > > +   LSM_BLOBS_LIST(UPDATE_LSM_BLOB_SIZE);
-> > > +#undef UPDATE_LSM_BLOB_SIZE
-> > >  }
-> >
-> > This is one case where the macro approach *might* have some value, but =
-as
-> > it is the one instance, and multiple sequential blob operations like th=
-is
-> > are going to be *very* limited, I'm not sure there is enough value to
-> > be worth the change.
-> >
-> > I appreciate the initiative to search out areas that you think could us=
-e
-> > improvement, but for the reasons mentioned, I'm not going to merge this
-> > patch.
->
-> That's not a problem. Perhaps you may want to consider only taking the
-> minor cleanup targets the redundant lsm->blobs access within
-> lsm_prepare().
-
-I did think about that, but I ever *so* slightly prefer it the way it
-is now, although as I said this is the one case where there may be
-some value.  If there had been other areas where it was a clear cut
-win I likely would have just accepted this change too, but there
-wasn't (at least not now, and with this revision) so I just decided to
-leave it well enough alone.
-
-However, as I said, thank you taking the initiative on this.
-
---=20
-paul-moore.com
+On 7/2/26 9:06 PM, Anton Protopopov wrote:
+> On 26/07/02 04:36PM, Daniel Borkmann wrote:
+>> The fd_array passed to BPF_PROG_LOAD carries the map and module BTF file
+>> descriptors a program binds. The verifier reads it more than once during
+>> a load: process_fd_array() walks it to bind the maps and BTFs, and
+>> check_and_resolve_insns() and the kfunc BTF resolver later read it again
+>> to resolve the program's BPF_PSEUDO_MAP_IDX and module kfunc refs.
+>>
+>> For signed BPF, we need these upfront in memory, thus resolve each fd to
+>> its object once and cache it by fd_array index, then bind that cached
+>> object for the rest of the load. env->fd_array becomes a small per-slot
+>> {map, btf} cache rather than a bpfptr_t; every later reference is then
+>> an in-bounds lookup of an already-resolved object, and an index outside
+>> the cache is rejected instead of read from user memory:
+>>
+>>    - continuous (fd_array_cnt given): the caller declares the length and
+>>      every entry is resolved and bound up front (used also by signed loader)
+>>
+>>    - sparse (no fd_array_cnt): left as the legacy path with no fd_array
+>>      cache; each reference reads its fd from the caller's fd_array and
+>>      resolves it on the spot. Deduplication in used_maps and the kfunc BTF
+>>      table keeps this correct, and only unsigned programs use this shape.
+>>
+>> UAPI-wise nothing changes, its just the internals on how BPF processes
+>> and caches the fd_array favors. Split these into separate helpers for
+>> continuous versus sparse to make it easier to follow.
+> 
+> Overall looks ok. A few comments below.
+> 
+[...]
+>> -	/* Check for integer overflow */
+>> -	if (attr->fd_array_cnt >= (U32_MAX / size)) {
+>> -		verbose(env, "fd_array_cnt is too big (%u)\n", attr->fd_array_cnt);
+>> -		return -EINVAL;
+>> +	if (cnt > MAX_FD_ARRAY_CNT) {
+> 
+> So, I _think_ I've done the "unlimited" thing because there can be duplicates
+> in fd_array. The limit is actually tracked by __add_{map_btf} So here we hard
+> limit on the size of the fd_array itself. (Even without duplicates, this
+> fd_array can contain, say, MAX_KFUNC_BTFS different maps, which will be in any
+> case rejected by __add_used_map.)
+> 
+>> +		verbose(env, "fd_array has too many entries (%u, max %u)\n",
+>> +			cnt, MAX_FD_ARRAY_CNT);
+>> +		return -E2BIG;
+>>   	}
+>>   
+[...]
+>>   
+>> +static int process_fd_array(struct bpf_verifier_env *env,
+>> +			    union bpf_attr *attr, bpfptr_t uattr)
+>> +{
+>> +	bpfptr_t fd_array = make_bpfptr(attr->fd_array, uattr.is_kernel);
+>> +
+>> +	if (bpfptr_is_null(fd_array))
+>> +		return 0;
+>> +	/*
+>> +	 * New API: the caller passes fd_array_cnt and a continuous array that
+>> +	 * is resolved and bound up front. Legacy API (no fd_array_cnt): keep
+>> +	 * the caller's array and resolve entries lazily, on first reference.
+>> +	 */
+>> +	if (attr->fd_array_cnt)
+>> +		return process_fd_array_continuous(env, fd_array,
+>> +						   attr->fd_array_cnt);
+> 
+> Looks like this returns success in case (!fd_array && attr->fd_array_cnt),
+> which is a misconfiguration and should be rejected.
+Thanks for the review, addressing both in v4!
