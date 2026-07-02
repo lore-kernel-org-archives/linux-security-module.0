@@ -1,86 +1,100 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33C741D777;
-	Thu,  2 Jul 2026 14:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741E3433E74
+	for <linux-security-module@vger.kernel.org>; Thu,  2 Jul 2026 14:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783003867; cv=none; b=SxHxmFieK5ftmiYBMvjRp3e50ISeXqureQopMnFN/brZcFu+WRMMpBwUXzFVnsrvtUt0ZjzXHzxJgqE7zpnXjZfMsuRYo7z968h0yxWpvXxMfJ3gLSkOeZ04LydvrKAV6PVwtuhfIxhAiFmN8r1eXA1MxdP+Ha7jAYxk47YD/Eo=
+	t=1783004378; cv=none; b=OQl2QTfqihhgT4E2z+H8O2pdUplAVl2W2pWtC0a2Wi4zduabSr7v6XbXqQhXOQuhfJzW8D48CvmxZqi8ejSgr/FLIfud5PaD0Pp2sewPMxtBRSXUm3BpCKX9250WcdDJsCVFHKHZ7upeI+wjB6bQQCGpMx1HcdRd5cnwERXF9oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783003867; c=relaxed/simple;
-	bh=+teDQnmp9brRFj1zs6hXifmWQhD2Sv4TNJX11xkWD5I=;
+	s=arc-20240116; t=1783004378; c=relaxed/simple;
+	bh=TvpB4ituHUE/4G151rVesx7/g7lIOt8ozx/LciKPu58=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gfqdnj7Ee//npuYtV9mX+XQfmgz2E6YAeDDftCpB0OEKv3+pqQLYSVUuABhNt5q5wsVOvWfrIC7YTI6pw2Jp1HyXG07IQztYbV/zzrCMu4RUCj3bGSBL8YlPgeHXLLLk90csdqY+BKr+SW9ERODCKIyBWRqHMjYCBtpGSHjq044=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PpywpTRs; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=BiB1Td3u4X67wBsUrjsYmUv2RbEAmHVm/21CNSqaRtZ8FYdFH7q8sJTy1IHOFDicAE7VUQ0Gntxb93D2105rEhAHDRCbfSzQIRi5lwtYgNGJrbfd968ZL7Qek5NuWMSpM8NLcb9Go+6Yvy6t5Kd0NDQ37vioYTj1QljqefKp9IQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=sQJF5vlo; arc=none smtp.client-ip=185.125.25.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PpywpTRs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4605A1F000E9;
-	Thu,  2 Jul 2026 14:51:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783003866;
-	bh=vM9+qGckBI3ZB5sIe3KU97TZcXYa6afqIkCQ42YlBEY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=PpywpTRs6/CjsHQw+HKGTbGzxH2NSJFWzeg86ZIZEVaAxdk5fH1qdBL2YGffGmlai
-	 PrX+VZgWANirK1szWt+Sg2252aGbYE1ITMRCg7yY9qS/FWOq35PZPsHePdVKfvqX/r
-	 QsI8uv619toLrQnZGP0A+IV+dANilKOIa+yCpahetPXiusF5RNIq2SZin8QUFhWO5n
-	 m6ncWyG7+Y8bn8QGkz06LWvrQ/JHlbQnGJUOG0vhXGYNSRxamu5rCcjUnXKMOfb1lx
-	 k9zPUJZ9urfR4+seyBwcaGeRAMsaPhrYWSAjE3NZTDaXueTjG63O2HQTUdHoa+aXbG
-	 5sqR/SO2OUlBQ==
-Date: Thu, 2 Jul 2026 16:51:01 +0200
-From: Carlos Maiolino <cem@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, jack@suze.cz, djwong@kernel.org, 
-	hch@lst.de, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [RFC PATCH 0/4] Introduce capable_noaudit
-Message-ID: <akZ6yxZ0p54l9Dwg@nidhogg.toxiclabs.cc>
-References: <20260626114533.102138-1-cem@kernel.org>
- <20260702-alufelgen-belag-tastatur-b666a49f7fc0@brauner>
- <akYimPrAcHlv7shR@nidhogg.toxiclabs.cc>
- <20260702-fortsetzen-verarbeiten-abfertigung-ead54cb2e597@brauner>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="sQJF5vlo"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4grg5T6jKLzX2P;
+	Thu,  2 Jul 2026 16:59:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1783004365;
+	bh=ECl3lQKgr0XzjfmQWRB2AMBbtcwDvjdjFf1tBBQFAtM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sQJF5vloPdRpu5S6AD1mT6MdQj9YC4wiDk/PWN0anDxVTtUTwDjG2EVkJBEkzjpp1
+	 jqphKhh8ZQaTAaCJHJkK+UtJ3k0NWBr9Nc1K6df6bWUA3DSvhQIxkSGrMSabcRIqRb
+	 C8z03PgHVhqcpO5z/gPtiWnIOc9Bgyib+qGkj3zI=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4grg5S606NzQTK;
+	Thu,  2 Jul 2026 16:59:24 +0200 (CEST)
+Date: Thu, 2 Jul 2026 16:59:20 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Matthieu Buffet <matthieu@buffet.re>
+Cc: Bryam Vargas <hexlabsecurity@proton.me>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, linux-security-module@vger.kernel.org, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Paul Moore <paul@paul-moore.com>, 
+	Eric Dumazet <edumazet@google.com>, Neal Cardwell <ncardwell@google.com>, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] landlock: fix TCP Fast Open connection bypass
+Message-ID: <20260702.EiNg0kiph4ew@digikod.net>
+References: <c21cf4f3-6c21-4170-b578-13c1bfd48b87@buffet.re>
+ <20260701214628.33319-1-matthieu@buffet.re>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260702-fortsetzen-verarbeiten-abfertigung-ead54cb2e597@brauner>
+In-Reply-To: <20260701214628.33319-1-matthieu@buffet.re>
+X-Infomaniak-Routing: alpha
 
-On Thu, Jul 02, 2026 at 03:47:37PM +0200, Christian Brauner wrote:
-> On 2026-07-02 10:35 +0200, Carlos Maiolino wrote:
-> > On Thu, Jul 02, 2026 at 09:41:39AM +0200, Christian Brauner wrote:
-> > > On 2026-06-26 13:45 +0200, cem@kernel.org wrote:
-> > > > From: Carlos Maiolino <cem@kernel.org>
-> > > > 
-> > > > In some cases - filesystems quota specifically here - we'd like to check
-> > > > for effective capabilities without issuing spurious audit messages and
-> > > > without the need to specify a namespace for that.
-> > > > 
-> > > > This series introduce capable_noaudit() which has the same goal as
-> > > > capable() but without firing audit messages.
-> > > > 
-> > > > Also, this updates both generic quota and xfs quota code to use that.
-> > > > 
-> > > > The last patch unexports has_capability_noaudit() which was originally
-> > > > exported to be used in xfs but turns out it does not meet our needs.
-> > > > 
-> > > > Note this is based on top of a current series I have to remove
-> > > > has_capability_noaudit() calls from xfs so the xfs patch won't
-> > > > apply cleanly without that series.
-> > > > 
-> > > > If adding this helper is acceptable, I'll turn this into a non-rfc
-> > > > series with the required changes to apply properly.
-> > > > 
-> > > > Comments? Flames?
-> > > 
-> > > Convert more, please.
-> > > 
-> > 
-> > Convert what? :) more callers from capable() to capable_noaudit()?
+Thanks, applied!
+
+On Wed, Jul 01, 2026 at 11:46:27PM +0200, Matthieu Buffet wrote:
+> The documentation of the socket_connect() LSM hook states that it
+> controls connecting a socket to a remote address. It has not been the
+> case since the addition of TCP Fast Open (RFC 7413) support, which allows
+> opening a TCP connection (thus, setting a socket's destination address)
+> via the MSG_FASTOPEN flag passed to sendto()/sendmsg()/sendmmsg(). The
+> problem then got duplicated into MPTCP.
 > 
-> Yes, there's more code that should use the noaudit variant. Future
-> work...
-
-/me writes to his todo list
+> Landlock did not take it into account when its TCP support was added,
+> leaving a bypass of TCP connect policy.
+> 
+> Ideally a call to the LSM hook would be added in the fastopen code path,
+> in order to fix this generically. But connect() hooks are designed to run
+> with the socket locked, unlike sendmsg() hooks.
+> 
+> Closes: https://github.com/landlock-lsm/linux/issues/41
+> Fixes: fff69fb03dde ("landlock: Support network rules with TCP bind and connect")
+> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
+> ---
+>  security/landlock/net.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/security/landlock/net.c b/security/landlock/net.c
+> index cbff59ec3aba..46c17116fcf4 100644
+> --- a/security/landlock/net.c
+> +++ b/security/landlock/net.c
+> @@ -351,6 +351,14 @@ static int hook_socket_sendmsg(struct socket *const sock,
+>  	access_mask_t access_request;
+>  	int ret = 0;
+>  
+> +	if ((msg->msg_flags & MSG_FASTOPEN) && address && sk_is_tcp(sock->sk)) {
+> +		ret = current_check_access_socket(
+> +			sock, address, addrlen, LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> +			true);
+> +		if (ret != 0)
+> +			return ret;
+> +	}
+> +
+>  	if (sk_is_udp(sock->sk))
+>  		access_request = LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP;
+>  	else
+> -- 
+> 2.47.3
+> 
+> 
