@@ -1,90 +1,218 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D5648A2C3;
-	Thu,  2 Jul 2026 09:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B5447DFB9
+	for <linux-security-module@vger.kernel.org>; Thu,  2 Jul 2026 09:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782985195; cv=none; b=n+bWaPoDn2dstsBE5JaYLt7dNnLpUEXeNNtP2W9iIKR3at4cARSBXAiYdsRUQBeJvZWnr9KaNbCtOiEcbVkt5eOMOdKRACWdbVz6n5jciQsA0PHY22lcPHic4oBDIlz8jk/yFdp1Q49KEghz2rFhSMsTII/1d63+QmPR3QQ3r5s=
+	t=1782986010; cv=none; b=Co1Mp7X1cK/h+y6UuazZzEIbNwy0H6fvClFtMjDSlaTc/G+2vRoDMTD9t3MXcnLTEtI3uQCToUiFQuLf5YIdQpAbe863lThXwfBrFF75ySJTj05E+0GT7sD2zQBmAdq0BJD2q8ySwotTeiau0pBruRFkRMmIKKQbXmYmgysxUX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782985195; c=relaxed/simple;
-	bh=UaC8hQGS+I8KjtWbS7G5GuBhXDcQyxYhmx9kD+nYgFY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gTqb7qLCHfcI75Erd4h2kMCXdgK6XYbt6x9c4iQcCdKJnaXV/oojzfare0fIc4nDMagGZE6mMW+1rhuMM0aljhkPiA/2TKPbKjkbfkfdUt2kOs63Mn3wcxdf0VDIPnGMbYYWazkN+9jntk0KEePhFrOiUYf/rz+qQAHCu6MTHLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oLt8v8fW; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1782986010; c=relaxed/simple;
+	bh=awht1+4TGXpltiUaIUINPh0ni0Ekfg4l4tLYB6CdFL0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kuLc4xlqyF0Zg0cIiyeNAaKyKec2PxdMwEgLGz6CFbMH5GK6vvnWBNobyI811BjTfnC39/HcP937qHgqpJWE602cwnd3M7dPKjS7ClbaYzYxw56CoqsoHfKs4rL4MJBKsczkeCYPGxcNRuxA3KeVDz1CcCJO/aJFMeAY07ZwSUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ZcL5foN3; arc=none smtp.client-ip=83.166.143.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oLt8v8fW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60D291F000E9;
-	Thu,  2 Jul 2026 09:39:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782985193;
-	bh=WYCIRw2VEpiVhadO+aosOWZWEboI4uJ1AJyBmZgZTbw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=oLt8v8fWrK3l+GGt3y8Om0RDM8yLZHu4P3gz4qeMHjD+IYy+nRkb9Tr0EL6uuhAXB
-	 1JxGj3uXU74Ppw5c/PxmFmMJoyBzxS6ZWm7bIJcdSTHSmAAYbos6J2Otdnqni54UEQ
-	 n275uLzeXMeizeBDch/BV1/onNNXd5A6o214xxuDnx3VupuCQ6n81Z5tPSt/sOdu9C
-	 AfFLF6U0d7mQzOb/P86uclT1L8CPM7XfhKJFiiGQ2+qX4Wg7CO8TAKlNTdhMMDrSWC
-	 QvB8oSMSqdGdKbompxDS8sOIA7o8FfSQhl6gmz74cTu+JEDD7TFQmvq/S1cVBYkLm0
-	 K6qW9IkAXBhVg==
-From: cem@kernel.org
-To: cem@kernel.org
-Cc: Jan Kara <jack@suse.cz>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Dave Chinner <david@fromorbit.com>,
-	Eric Sandeen <sandeen@redhat.com>,
-	linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v3 5/5] capability: unexport has_capability_noaudit
-Date: Thu,  2 Jul 2026 11:33:25 +0200
-Message-ID: <20260702093324.127450-11-cem@kernel.org>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260702093324.127450-1-cem@kernel.org>
-References: <20260702093324.127450-1-cem@kernel.org>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ZcL5foN3"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4grXJL4gTkzJvw;
+	Thu,  2 Jul 2026 11:53:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1782986002;
+	bh=w5yKyriWdfqxI/VD/SvKt+YW5stML2iFnEsLvQtXp24=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZcL5foN38QMLyL3T1hITDriaKoSzFVN10GhDAFjokhbfol1Sf74Ukj7bpemF0qDf/
+	 ZJFbrskSmZLVZf2g4DJ5QvpDWrErfZL3HX0Co/c8nfbExTwxarQCgyLgAa+9mo7Piy
+	 ZsFZvlNSUsL6zhq+QIp7voYfeOXU/kXtqQ+vqnE4=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4grXJJ7214z2QG;
+	Thu,  2 Jul 2026 11:53:20 +0200 (CEST)
+Date: Thu, 2 Jul 2026 11:53:19 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>
+Cc: Justin Suess <utilityemal77@gmail.com>, ast@kernel.org, 
+	daniel@iogearbox.net, kpsingh@kernel.org, john.fastabend@gmail.com, andrii@kernel.org, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, kees@kernel.org, gnoack@google.com, 
+	jack@suse.cz, jmorris@namei.org, serge@hallyn.com, song@kernel.org, 
+	yonghong.song@linux.dev, martin.lau@linux.dev, m@maowtm.org, eddyz87@gmail.com, 
+	sdf@fomichev.me, skhan@linuxfoundation.org, bpf@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Frederick Lawler <fred@cloudflare.com>
+Subject: Re: [RFC PATCH 06/20] bpf: lsm: Add Landlock kfuncs
+Message-ID: <20260702.ierahzaiLub3@digikod.net>
+References: <CAHC9VhRfqSoM89WC6TdQHapUVQe8a18rW2c-F7+tu6EjM9EdCA@mail.gmail.com>
+ <akUH13qbsEnJLgQu@zenbox>
+ <CAHC9VhSjRcMr9+5dMkep_TPKduYdob-bZ73FLfXd_o2xiWwOSg@mail.gmail.com>
+ <20260701.jei4Paej3zen@digikod.net>
+ <CAHC9VhRzZVUz8icZ2RD9OVvscJdZW3ivPERJLEkNi5poBeguxw@mail.gmail.com>
+ <20260701.oTeikequi3ee@digikod.net>
+ <akVvkA3kmlv_POsF@zenbox>
+ <CAHC9VhTQtHPFGqu58EaFqMobV3LCcTsdzYfxy568P8mU769TMg@mail.gmail.com>
+ <20260701.aeghohNoe3ek@digikod.net>
+ <CAHC9VhSYJPdn3Y+C1s8VExQ0DhV9Kg-NZiWhhOA657JeHDnzjQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhSYJPdn3Y+C1s8VExQ0DhV9Kg-NZiWhhOA657JeHDnzjQ@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-From: Carlos Maiolino <cem@kernel.org>
+On Wed, Jul 01, 2026 at 07:32:57PM -0400, Paul Moore wrote:
+> On Wed, Jul 1, 2026 at 5:28 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > On Wed, Jul 01, 2026 at 04:02:36PM -0400, Paul Moore wrote:
+> > > On Wed, Jul 1, 2026 at 3:55 PM Justin Suess <utilityemal77@gmail.com> wrote:
+> > > > On Wed, Jul 01, 2026 at 09:49:07PM +0200, Mickaël Salaün wrote:
+> > > > > On Wed, Jul 01, 2026 at 02:38:08PM -0400, Paul Moore wrote:
+> > > > > > On Wed, Jul 1, 2026 at 2:34 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > > > On Wed, Jul 01, 2026 at 09:28:22AM -0400, Paul Moore wrote:
+> > > > > > > > On Wed, Jul 1, 2026 at 8:52 AM Justin Suess <utilityemal77@gmail.com> wrote:
+> > > > > > > > > On Wed, Jul 01, 2026 at 08:12:34AM -0400, Paul Moore wrote:
+> > > > > > > > > > On Wed, Jul 1, 2026 at 6:59 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > > > > > > > On Tue, Apr 07, 2026 at 04:01:28PM -0400, Justin Suess wrote:
+> > > > > > > > > > > > Create 2 kfuncs exposing control over Landlock functionality to BPF
+> > > > > > > > > > > > callers. Export an opaque struct bpf_landlock_ruleset preventing callers
+> > > > > > > > > > > > from accessing unstable internal Landlock fields.
+> > > > > > > > > >
+> > > > > > > > > > Generally speaking we don't want to provide APIs, either in-kernel or
+> > > > > > > > > > at the userspace/kernel boundary, that are specific to a single LSM,
+> > > > > > > > > > see the LSM syscalls or the security_current_getlsmprop_subj()
+> > > > > > > > > > function as examples.
+> > > > > > >
+> > > > > > > This patch series is not about the LSM framework, only about Landlock
+> > > > > > > and its specific model and use case.  Landlock using some of the LSM API
+> > > > > > > is not relevant here.
+> > > > > >
+> > > > > > Based on a quick look the patchset enables BPF programs to call
+> > > > > > directly into Landlock.  For the same reason we discourage other parts
+> > > > > > of the kernel to call directly into individual LSMs, we want to
+> > > > > > discourage BPF programs from calling directly into individual LSMs.
+> > > > >
+> > > > > We're OK for a dedicated kfunc to call directly into Landlock (with a
+> > > > > tailored interface).  Landlock is designed around its syscall interfaces
+> > > > > (well documented, tailored, tested), and this would be a new user of
+> > > > > almost the same UAPI.
+> > > >
+> > > > Paul, Mickaël,
+> > > >
+> > > > I think there's a cleaner way to resolve this.
+> > > >
+> > > > First, walking back my earlier email: I was wrong saying that we need to call
+> > > > into security/security.c to check whether Landlock is enabled. Landlock's
+> > > > init only runs when it's in the active lsm= list, so I can just test
+> > > > landlock_initialized directly. There's no per-invocation reason to route
+> > > > through the LSM framework for that.
+> > >
+> > > The landlock_initialized flag is not really a LSM framework API, that
+> > > is still Landlock specific which is something we try hard to avoid.
+> > >
+> > > > Rather than routing each kfunc *invocation* through a security/security.c
+> > > > wrapper, I think the right place for the framework to be involved is
+> > > > *registration*: have the LSM framework own registration of an LSM's
+> > > > kfunc sets, e.g.
+> > > >
+> > > >     int security_register_lsm_kfunc_set(u64 lsm_id, enum bpf_prog_type type,
+> > > >                                         const struct btf_kfunc_id_set *kset);
+> > >
+> > > That implies a set of LSM kfunc APIs which Alexei has been deadset
+> > > against (see other ongoing threads).
+> > >
+> > > > Each LSM calls this once to register its sets. Because registration goes
+> > > > through the framework, the framework gets to decide whether to actually
+> > > > register them so you could, for example, run an LSM while explicitly
+> > > > opting its BPF kfuncs out. (something that should be done at the LSM
+> > > > framework level).
+> > >
+> > > I'm not opposed to the LSM supporting a set of kfuncs, see my comments
+> > > in other threads, but we should treat these kfuncs just as we treat
+> > > other LSM hooks today because that is what they are: LSM hooks that
+> > > happened to be called from within a BPF program.
+> >
+> > What an LSM hook is or should be is the crux of the misunderstanding.  I
+> > explained my point of view here:
+> > https://lore.kernel.org/all/20260701.jei4Paej3zen@digikod.net/
+> >
+> >   LSM hooks make sense because they are designed for a specific subsystem
+> >   (the caller) and their goal is to return an access decision or to keep
+> >   up-to-date related states, which means that their API is designed for
+> >   the caller, with its own types and specificities, not the other way
+> >   around.  This case is different, the kfunc is strongly typed and tied to
+> >   the Landlock (subsystem) semantic with an API defined by and for
+> >   Landlock.  I don't think a multiplexer would be a good idea.
+> >
+> > I'd try to explain better: in a nutshell, an LSM hook exposes a subset
+> > of the context of the caller, for any access control system to be able
+> > to make a decision.
+> 
+> That is true for some LSM hooks, but not all of them.  LSM hooks are
+> really just another name for the functions that compose parts of the
+> LSM framework API; it isn't always strictly about access control in
+> the kernel.
 
-This has been originally exported to be used in xfs. Giving we are not
-using it anymore, unexport for consistency.
+That's why I wrote "in a nutshell".  Concrete examples and the rationale
+for such hooks would help.
 
-Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Serge E. Hallyn <serge@hallyn.com>
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: Eric Sandeen <sandeen@redhat.com>
-Cc: Dr. Thomas Orgis" <thomas.orgis@uni-hamburg.de>
-Cc: linux-xfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- kernel/capability.c | 1 -
- 1 file changed, 1 deletion(-)
+> We leverage the "hooks" for the LSM syscalls, we've
+> discussed "hooks" for implementing a common LSM namespace API, and
+> there have also been early efforts at LSM policy loading via "hooks".
 
-diff --git a/kernel/capability.c b/kernel/capability.c
-index 2c2d1e8300bd..3d0387fb93a3 100644
---- a/kernel/capability.c
-+++ b/kernel/capability.c
-@@ -326,7 +326,6 @@ bool has_capability_noaudit(struct task_struct *t, int cap)
- {
- 	return has_ns_capability_noaudit(t, &init_user_ns, cap);
- }
--EXPORT_SYMBOL(has_capability_noaudit);
- 
- static bool ns_capable_common(struct user_namespace *ns,
- 			      int cap,
--- 
-2.54.0
+All that is doable, my question is: why a kfunc multiplexer?  What are
+the pros and cons?  I only see disadvantages for now.  Please, convince
+us.
 
+> 
+> > It makes sense to have such dispatcher because the
+> > callees must adapt to the caller's context, and then the API is tailored
+> > to the caller, so even with several consumers, the API would ultimately
+> > be the same.  In the case of this kfunc, the callee is one specific
+> > subsystem that happens to be Landlock.  The caller asks a specific
+> > subsystem to do something specific to this subsystem, not to ask all
+> > potential access control systems to give a generic verdict to grant an
+> > access or not.
+> 
+> > For this kfunc, the caller passes arguments which are
+> > specific to the callee subsystem (e.g. a Landlock ruleset), not the
+> > other way around.  Every LSM has its own configuration, and it doesn't
+> > make sense to somehow wrap these configurations with a common layer/API.
+> 
+> Once again, there have already been discussions about trying to build
+> a common API for that.  I'd rather have us pick that up for an
+> in-kernel/kfunc users than treat Landlock as an exception.  We're
+> trying to get rid of the exceptions in the LSM space.
+
+I understand and I agree about the argument for dispatchers (e.g. access
+control and state hooks) but not for multiplexers (i.e. which would be a
+kfunc in this case).
+
+How would look such multiplexer kfunc?  Something like this?
+
+  union lsm_restrict_arg {
+    struct {
+	    const struct landlock_rulest *ruleset,
+	    int flags,
+    } landlock;
+    ...?
+  };
+
+ int bpf_lsm_restrict_binprm(struct lsm_id target_lsm,
+                             union lsm_restrict_arg multiplexed_generic_argument);
+
+I don't see the point of such multiplexer.  It adds complexity for no
+gain, except maybe to sneak in new features by only extending the
+argument types?  What would be the value for eBPF users?
+
+> 
+> > Why not start with something simple that fits a use case now?  If and
+> > when another LSM will need a kfunc, then we'll have something concrete
+> > to talk about.
+> 
+> I think Casey's reply answers that question rather well.
+
+This was mainly about (access control/security) hooks, not multiplexer
+interfaces.
