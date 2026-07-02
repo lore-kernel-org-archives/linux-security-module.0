@@ -1,122 +1,475 @@
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE24F34D93B
-	for <linux-security-module@vger.kernel.org>; Thu,  2 Jul 2026 18:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.169
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783017395; cv=pass; b=DHulcnMYG2qsZPFNvnXw9pg8YlwiT1RFzvqhYjQP3bhZ8hqql2orTm970k2BjBQ83WFy7bAyMFJWAR1hCNWJF592ZZjG9VZDmniwARlSNlo7KgtbyaKhh9sM6q7wn9xhRWmJ7tET9GmAfpuU6rCJHMrsGOpKhvZcXXr637DFP3s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783017395; c=relaxed/simple;
-	bh=PCLOCX/Eob7+UKaMpmopGS629KwyCWVOuoZRf07w48Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=THT9K4jehb21kffEkCMoxbqvVtZdg2FYMKaWYASuRE+7QEQcK7bOu/0rO2dNciS9WWe4IoaBn+6Ix395cQv0tEGts5/kDVqVvFY01E1NqwWzAZGtbb1ln47Seej2VZrC5lrDm6Dh7monqZTewEXs2kfXCLZ1tuqmO3EldgvV26w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RBNjGbk8; arc=pass smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36AEF353A69
+	for <linux-security-module@vger.kernel.org>; Thu,  2 Jul 2026 18:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783018617; cv=none; b=Y5DYmBXtI/j/FsCMh94Oz4gMGyaGhU4d4zsH46KOCQhZb0j8FOLyiwwVynyf23lfIMDvopMrmjt4XalZIKetRISO+NyIj9U0jNBm58US9kX2ExKauHYlWxcgmGQ8uhm4Cm/b1HYfQO+RtzeO09Fawa/vgGEFrYq8EeXSk6IMSSc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783018617; c=relaxed/simple;
+	bh=BJZSNWe1eKwX18Jr7q8wXyiub+GA47eG9NAgEDCB3nY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bsQ9zSrBcfFKiK+oYJVvijCo2wEZymDx64CyEQf1QGZUUEIvddtiHUxwTsYy70WnbKWEjn0/DPRz9HIqsm6tC5QgLLoRUHndh97Xqp4z1XtSnnDtEZl/w32R2c60s/xfvXosDO516FtcrdFbxJjZ5nb98K+0yC1h0bBjO2hQzio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SoIOemSY; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RBNjGbk8"
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-842338c18e0so1541641b3a.1
-        for <linux-security-module@vger.kernel.org>; Thu, 02 Jul 2026 11:36:33 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783017393; cv=none;
-        d=google.com; s=arc-20260327;
-        b=AjVXXSQbV6+oceNcI4/cHV7RWsq7OX31mOIDRf6hN5CY6XZB/lU8pPiJXsn6EVSk+n
-         Dk2chWXnAOtcSP1+R+brVViPHPaPyiLsFZiFAPg1Uvq2dKkg4kn3SLy4pspqS98t9PKH
-         3QbDSqJZeg1Tk0WGEr+11m+PR8NQH5JwIRWq9VVxM3/Soo04bv+1NHpmrstUQOUPmRLW
-         AAjcu+J+OJjnCaMTvGe8n6iuQl2sjvwH1eEN6Q/y6pL4W+dtvtbvalpAtsNU3L13lghT
-         KDO5AasE0Z5ButPeEZH3rJyMQZ7Cxl4YuvkZ7lxm9/Eno0/cusjaF2RWjYgUABA0Zizm
-         bdPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=NEhwGG3IOip9xw+ht5KLaONZ3M052iL+ytO4+Vh6eQQ=;
-        fh=ojDR6lFZdKSTJhrQN+fiDJ39kCzzpxpmGQZew9QLCjE=;
-        b=amyriYXPDuAxy9/LeNeiiY2ZEeiNXwRQBYV5tAmYHxJUuNlZLlDHAzWkP1EKmE8sAO
-         Cn7zptjgmkD+Y6ocgjtUtafc3p+i1kZpLP32HzAq6h1vtgLbvzbeQNkJdytqOEKk9S5H
-         dZ1V023jUJvoKT1meq4r/HqHHXP/8NNTjGMYwdu3XWPDTP58o4ioG0Cdl9CUMTpt4w0V
-         RLeK9aFUlTNggQaraFpP2J12SYpNBnbUXc90xhfH2+RHTp93BOOOcyUlO6OZ5gDAL4zO
-         gI9zdXZ2Q9AUFO3xbJtVNTsyrmpIqKxOtxx6w8IF7ZTAsyZSM7DfQfOoGn+QeH+HGVGI
-         Ik4w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SoIOemSY"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-46ed4f66256so1842110f8f.3
+        for <linux-security-module@vger.kernel.org>; Thu, 02 Jul 2026 11:56:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1783017393; x=1783622193; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=NEhwGG3IOip9xw+ht5KLaONZ3M052iL+ytO4+Vh6eQQ=;
-        b=RBNjGbk8i5/xgotV+JBaOfWeSOdDiynADhSQxWoRRSQMuxEi3WdOU42fs9vBQhXdhs
-         YhIy2A1PmuBEwa3TBr0qBITZpf0LKvvtbf/eB5s4gWWwd0NYZgDfsAQTQKQ1ELGhODDb
-         phHTdWZlhuflWfxQU/nyzcyD08ql99iy9nv8tzdUXFDpxdkaVaM5DncklG0jbTd8xLuT
-         YxcNAovY2kc/Eegyv7QE76FsbGUFLEGbGtD+CbbAJ5nGuocC4VOrChCE7REe3YMJk21S
-         p4hB62b651Zz2ZgopsmHvXpOjofboKNNRId04EAbAg6tlW9Cme9+Woy+fBfomWyMi/1O
-         5MsA==
+        d=gmail.com; s=20251104; t=1783018613; x=1783623413; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CX7nVHkWBuiGfGJJF12IiaJ3vVDqIFPjV+5xgb28ekA=;
+        b=SoIOemSY9zoimYQGKIdH8y0NWNZgDX8AfUc68VL+oF3K1ZcPgJhZytMXxUhIh5AWwr
+         idBPVmOHTLPW5U6V+ACANcnV23QQJQYTRd6+PAvtCYBr5+44IO8j5kCQyBo2sPfoQvUw
+         p3KBuS6b1Vywc/k0Tj8Ch1z47qZXLybFFvuxdqQa7Py3rIsi10J2eVDZeSIwRdlrwjVS
+         gQQDOyxVLqCNSVr0HRpx/dNvsWCSDTNKN8lG0QZ33fWUnjnNZ3RbMO9i/Zy02MKngwc4
+         /kGmFEPCNRd9/VQ4hSKUnYm/xZlGMAYHVvMCjjxh2PrlOhvtMRgzPHRbP+WWRxDXo119
+         VQxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783017393; x=1783622193;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=NEhwGG3IOip9xw+ht5KLaONZ3M052iL+ytO4+Vh6eQQ=;
-        b=PdkXWBb7iAgURgUIwl/BJeLkOkCzOH6bDgWNGs1yCbo6lH+xM/t7c+DtIQIBFvL93e
-         z0ex9s2MNqWZB3QfHdg5asEtdznn2q3cGSeu1EosF7fjlWnEoJtqcRwhtLTbRWumjQM0
-         sS2T+tghiUOu2OcJ5noiO2gM5UKqA9BtRE8RdaS47gf26a4TUwnRJ/4J9EDMj+5PjlFP
-         Qm6K/+lfgq55P+xfvXWufj51WWpBfqihZz9hxNXLqUmGOeuwSja24vT4P4FFoAffva4n
-         YImvzmxsQlt4c0WI+lDAp29xiEGwVvTItNbUVq4+x33rSHtVr62qwiK6jC4KiFySBwP4
-         cQwQ==
-X-Gm-Message-State: AOJu0Yw0OvQSQjcjOdRewS61/ycUmQ5DtG/acs4i1sTS2KAgqDFuckoK
-	QgoHZWCmnR9i4qH9tx8PbQKzfbXrPmPk9I2QlEhjaJOBWPbpJEsvlWtlVrKVUZce1yKMnSPJxJ4
-	WWifIVAKt+7J8+H7MYFjpl+fxAyzkiWxUfoPkzNC2
-X-Gm-Gg: AfdE7cnTbtdNY1d3wEA2jlucUPe22nOSq2CmEtaW9VbEvUXhe+UMLG+kj2QVT6wjJbo
-	jw1/rRMA+2PuElkqC4c1DqKZiR9tAh5VvsAOOCiApzViV4xLQVzfC0j+lr6+5Aeus8Gpz+fKUlf
-	LfCqJwi6po0zbbBQjUuYRl3PABJfd6JbVX+wr9ZV6VE6UiAtk1h2Z1mNjd1EkKm24A+QbgXJYNU
-	hjpcGl/wxHcCbCY05Rz6+mPOzevSmyLgIPQKJgl/WKjtklvybByYdtY203v7PvKJ/KDovjc
-X-Received: by 2002:aa7:88c9:0:b0:845:dde9:ab62 with SMTP id
- d2e1a72fcca58-847c07a0812mr7482037b3a.19.1783017393051; Thu, 02 Jul 2026
- 11:36:33 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1783018613; x=1783623413;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CX7nVHkWBuiGfGJJF12IiaJ3vVDqIFPjV+5xgb28ekA=;
+        b=QPlm681wEAoqCA/1iq4ZPyGYRv5iv00IqgY7NdWr8tRzLrjI87fEugJLW2LSlEH13L
+         TtDEJ3LkJgO9hFaisp60A4n2kqi3EkXHVyZB2bGiSARaTzl1gmGrY2TRT/xw16Qw5s3f
+         OvRIi43I7Ukmy2l1gLMSQnES1HzrcN20B0f0n+HoPB45kgzDYj2lobD9mzcQlbytQFfL
+         mRqmXHb8/iro+SB6ArxO/iU87PDUj3VFM84znCO2ezab+PTqS/NfxsFgSlT11civ6Oih
+         zuTBeWw+9ONEpnk0sV4QmugmXJ3jYT1yzwOMpChUNc5JJtMXxAWM+HQdDEedAbY3c1rs
+         zWyQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rr4690Ve+cP32h7bPLVe8s0Ah4kozHqm8b6lLqtPfCPXxixuC/ntLBlRCd94YVjvTB01MYUuQ8wPY3R7JS1VYtt1h9UHdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGuRxbya0v2ubHc89OjPvFncT8OtfpKogansY+VV7hVj2S3VHb
+	IFNilh51PGZx31Rt58L//3vsP2Ejf4LaA8pLd/6KLfbyk8BJ6eXYXlRK
+X-Gm-Gg: AfdE7cldstNxlx0foMkLCABZZcQ+Rk2cgDeFZh4lnb/1oOgjh3NgeSMypPmwmDaluoy
+	aWiUd4BtaH26raXdyzbcnZb1I+NuHpNd+hvi8aYX6dFafvdUVbZkmCtEMVnH17DECVAsXbgyqRs
+	tDDiIOC0bcP0fIV2Bi4vhqQjoPMgyAJJ36QJHA/qMU1A1PkZpLFimFxnc3KLuVfaO2dupcDDV2J
+	TSAdBOYY2A6Wm1IOaa9/oiPlDJQo++KkpJy4bj3BkvSMCEuc74rRLQyTlUdwYRgj1Op1cd2FKBG
+	oC0OroVPWV7BwB08devnnXl520M1AU6xYNV821J+McFTd6R8tbiUE3lmu7Th0i67Xh08e1HvYq0
+	ZI+R1bcXeShB86ERIDjR8lgVd0C9RVPXNUGEqd0hJOadeTP6Kb0JRuIKbIXIszCABhe3vboUlh9
+	r+BUxktHiGr3jwSifC6itMAw==
+X-Received: by 2002:adf:ea82:0:b0:475:a4ae:e630 with SMTP id ffacd0b85a97d-4775be03177mr9025805f8f.37.1783018613260;
+        Thu, 02 Jul 2026 11:56:53 -0700 (PDT)
+Received: from mail.gmail.com ([2a04:ee41:4:b2de:1ac0:4dff:fe0f:3782])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-477db8a4a09sm11719540f8f.13.2026.07.02.11.56.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Jul 2026 11:56:52 -0700 (PDT)
+Date: Thu, 2 Jul 2026 19:06:49 +0000
+From: Anton Protopopov <a.s.protopopov@gmail.com>
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: ast@kernel.org, kpsingh@kernel.org,
+	James.Bottomley@hansenpartnership.com, paul@paul-moore.com,
+	bboscaccy@linux.microsoft.com, memxor@gmail.com,
+	torvalds@linux-foundation.org, bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH bpf-next v3 1/6] bpf: Resolve and cache fd_array objects
+ at load time
+Message-ID: <aka2yR6IUZMAOUwJ@mail.gmail.com>
+References: <20260702143605.252797-1-daniel@iogearbox.net>
+ <20260702143605.252797-2-daniel@iogearbox.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260605144325.434436-1-yeoreum.yun@arm.com> <20260605144325.434436-2-yeoreum.yun@arm.com>
-In-Reply-To: <20260605144325.434436-2-yeoreum.yun@arm.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 2 Jul 2026 14:36:21 -0400
-X-Gm-Features: AVVi8CeOOyE2Od7gNJBo3j-LLr7BLyJYgunVuD-VezKTeBhB5ZlmzgqKWCJuEks
-Message-ID: <CAHC9VhQXwXHjKcr0SRNQyzKZgCwG1RLPT6kWDLLwEKExfXzzOw@mail.gmail.com>
-Subject: Re: [PATCH v6 1/4] security: lsm: allow LSMs to register for
- late_initcall_sync init
-To: Yeoreum Yun <yeoreum.yun@arm.com>, zohar@linux.ibm.com
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, roberto.sassu@huaweicloud.com, 
-	noodles@earth.li, jarkko@kernel.org, sudeep.holla@kernel.org, 
-	jmorris@namei.org, serge@hallyn.com, dmitry.kasatkin@gmail.com, 
-	eric.snowberg@oracle.com, jgg@ziepe.ca
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260702143605.252797-2-daniel@iogearbox.net>
 
-On Fri, Jun 5, 2026 at 10:43=E2=80=AFAM Yeoreum Yun <yeoreum.yun@arm.com> w=
-rote:
->
-> There are situations where LSMs have dependencies that might mean they
-> want to be initialised later in the boot process, to ensure those
-> dependencies are available. In particular there are some TPM setups (Arm
-> FF-A devices, SPI attached TPMs) required by IMA which are not
-> guaranteed to be initialised for regular initcall_late.
->
-> Add an initcall_late_sync option that can be used in these situations.
->
-> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+On 26/07/02 04:36PM, Daniel Borkmann wrote:
+> The fd_array passed to BPF_PROG_LOAD carries the map and module BTF file
+> descriptors a program binds. The verifier reads it more than once during
+> a load: process_fd_array() walks it to bind the maps and BTFs, and
+> check_and_resolve_insns() and the kfunc BTF resolver later read it again
+> to resolve the program's BPF_PSEUDO_MAP_IDX and module kfunc refs.
+> 
+> For signed BPF, we need these upfront in memory, thus resolve each fd to
+> its object once and cache it by fd_array index, then bind that cached
+> object for the rest of the load. env->fd_array becomes a small per-slot
+> {map, btf} cache rather than a bpfptr_t; every later reference is then
+> an in-bounds lookup of an already-resolved object, and an index outside
+> the cache is rejected instead of read from user memory:
+> 
+>   - continuous (fd_array_cnt given): the caller declares the length and
+>     every entry is resolved and bound up front (used also by signed loader)
+> 
+>   - sparse (no fd_array_cnt): left as the legacy path with no fd_array
+>     cache; each reference reads its fd from the caller's fd_array and
+>     resolves it on the spot. Deduplication in used_maps and the kfunc BTF
+>     table keeps this correct, and only unsigned programs use this shape.
+> 
+> UAPI-wise nothing changes, its just the internals on how BPF processes
+> and caches the fd_array favors. Split these into separate helpers for
+> continuous versus sparse to make it easier to follow.
+
+Overall looks ok. A few comments below.
+
+> Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+> Cc: Anton Protopopov <a.s.protopopov@gmail.com>
 > ---
->  include/linux/lsm_hooks.h |  2 ++
->  security/lsm_init.c       | 13 +++++++++++--
->  2 files changed, 13 insertions(+), 2 deletions(-)
+>  include/linux/bpf_verifier.h |  22 +++-
+>  kernel/bpf/verifier.c        | 209 ++++++++++++++++++++++++++---------
+>  2 files changed, 179 insertions(+), 52 deletions(-)
+> 
+> diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
+> index 76b8b7627a10..9f0a4e9a15d7 100644
+> --- a/include/linux/bpf_verifier.h
+> +++ b/include/linux/bpf_verifier.h
+> @@ -898,6 +898,14 @@ struct bpf_scc_info {
+>  
+>  struct bpf_liveness;
+>  
+> +struct bpf_fd_array {
+> +	union {
+> +		struct bpf_map *map;
+> +		struct btf *btf;
+> +		unsigned long val;
+> +	};
+> +};
+> +
+>  /* single container for all structs
+>   * one verifier_env per bpf_check() call
+>   */
+> @@ -989,7 +997,19 @@ struct bpf_verifier_env {
+>  	u32 free_list_size;
+>  	u32 explored_states_size;
+>  	u32 num_backedges;
+> -	bpfptr_t fd_array;
+> +	/*
+> +	 * The program's fd_array comes in two shapes, told apart by whether
+> +	 * the caller passed fd_array_cnt. They are mutually exclusive:
+> +	 *  - continuous (fd_array_cnt given): ->fd_array holds every entry
+> +	 *    resolved to its object up front, indexed by fd_array position,
+> +	 *    with ->fd_array_cnt slots; ->fd_array_raw is unused.
+> +	 *  - sparse (no fd_array_cnt): ->fd_array is NULL, and entries are
+> +	 *    read from ->fd_array_raw (the caller's fd_array) and resolved
+> +	 *    lazily on first reference.
+> +	 */
+> +	struct bpf_fd_array *fd_array;
+> +	u32 fd_array_cnt;
+> +	bpfptr_t fd_array_raw;
+>  
+>  	/* bit mask to keep track of whether a register has been accessed
+>  	 * since the last time the function state was printed
+> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> index 25aea4271cd0..44bb6ce17a1c 100644
+> --- a/kernel/bpf/verifier.c
+> +++ b/kernel/bpf/verifier.c
+> @@ -2490,6 +2490,79 @@ int bpf_get_kfunc_addr(const struct bpf_prog *prog, u32 func_id,
+>  	return 0;
+>  }
+>  
+> +#define BPF_FD_SLOT_BTF	1UL
+> +
+> +static void fd_slot_set_map(struct bpf_fd_array *slot, struct bpf_map *map)
+> +{
+> +	slot->val = (unsigned long)map;
+> +}
+> +
+> +static void fd_slot_set_btf(struct bpf_fd_array *slot, struct btf *btf)
+> +{
+> +	slot->val = (unsigned long)btf | BPF_FD_SLOT_BTF;
+> +}
+> +
+> +static struct bpf_map *fd_slot_map(struct bpf_fd_array slot)
+> +{
+> +	if (slot.val & BPF_FD_SLOT_BTF)
+> +		return NULL;
+> +	return (struct bpf_map *)slot.val;
+> +}
+> +
+> +static struct btf *fd_slot_btf(struct bpf_fd_array slot)
+> +{
+> +	if (!(slot.val & BPF_FD_SLOT_BTF))
+> +		return NULL;
+> +	return (struct btf *)(slot.val & ~BPF_FD_SLOT_BTF);
+> +}
+> +
+> +static struct btf *
+> +fd_array_get_btf_continuous(struct bpf_verifier_env *env, u32 idx)
+> +{
+> +	struct btf *btf;
+> +
+> +	if (idx >= env->fd_array_cnt) {
+> +		verbose(env, "kfunc fd_idx %u out of bounds, fd_array_cnt %u\n",
+> +			idx, env->fd_array_cnt);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +	btf = fd_slot_btf(env->fd_array[idx]);
+> +	if (!btf) {
+> +		verbose(env, "kfunc fd_idx %u is not a module BTF\n", idx);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +	btf_get(btf);
+> +	return btf;
+> +}
+> +
+> +static struct btf *
+> +fd_array_get_btf_sparse(struct bpf_verifier_env *env, u32 idx)
+> +{
+> +	struct btf *btf;
+> +	int btf_fd;
+> +
+> +	if (copy_from_bpfptr_offset(&btf_fd, env->fd_array_raw,
+> +				    (size_t)idx * sizeof(btf_fd), sizeof(btf_fd)))
+> +		return ERR_PTR(-EFAULT);
+> +	btf = btf_get_by_fd(btf_fd);
+> +	if (IS_ERR(btf)) {
+> +		verbose(env, "invalid module BTF fd specified\n");
+> +		return btf;
+> +	}
+> +	return btf;
+> +}
+> +
+> +static struct btf *fd_array_get_btf(struct bpf_verifier_env *env, u32 idx)
+> +{
+> +	if (env->fd_array)
+> +		return fd_array_get_btf_continuous(env, idx);
+> +	if (!bpfptr_is_null(env->fd_array_raw))
+> +		return fd_array_get_btf_sparse(env, idx);
+> +
+> +	verbose(env, "kfunc offset > 0 without fd_array is invalid\n");
+> +	return ERR_PTR(-EPROTO);
+> +}
+> +
+>  static struct btf *__find_kfunc_desc_btf(struct bpf_verifier_env *env,
+>  					 s16 offset)
+>  {
+> @@ -2498,7 +2571,6 @@ static struct btf *__find_kfunc_desc_btf(struct bpf_verifier_env *env,
+>  	struct bpf_kfunc_btf *b;
+>  	struct module *mod;
+>  	struct btf *btf;
+> -	int btf_fd;
+>  
+>  	tab = env->prog->aux->kfunc_btf_tab;
+>  	b = bsearch(&kf_btf, tab->descs, tab->nr_descs,
+> @@ -2509,22 +2581,9 @@ static struct btf *__find_kfunc_desc_btf(struct bpf_verifier_env *env,
+>  			return ERR_PTR(-E2BIG);
+>  		}
+>  
+> -		if (bpfptr_is_null(env->fd_array)) {
+> -			verbose(env, "kfunc offset > 0 without fd_array is invalid\n");
+> -			return ERR_PTR(-EPROTO);
+> -		}
+> -
+> -		if (copy_from_bpfptr_offset(&btf_fd, env->fd_array,
+> -					    offset * sizeof(btf_fd),
+> -					    sizeof(btf_fd)))
+> -			return ERR_PTR(-EFAULT);
+> -
+> -		btf = btf_get_by_fd(btf_fd);
+> -		if (IS_ERR(btf)) {
+> -			verbose(env, "invalid module BTF fd specified\n");
+> +		btf = fd_array_get_btf(env, offset);
+> +		if (IS_ERR(btf))
+>  			return btf;
+> -		}
+> -
+>  		if (!btf_is_module(btf)) {
+>  			verbose(env, "BTF fd for kfunc is not a module BTF\n");
+>  			btf_put(btf);
+> @@ -17911,6 +17970,44 @@ static int add_used_map(struct bpf_verifier_env *env, int fd)
+>  	return __add_used_map(env, map);
+>  }
+>  
+> +static int fd_array_get_map_idx_continuous(struct bpf_verifier_env *env, u32 idx)
+> +{
+> +	struct bpf_map *map;
+> +
+> +	if (idx >= env->fd_array_cnt) {
+> +		verbose(env, "fd_idx %u out of bounds, fd_array_cnt %u\n",
+> +			idx, env->fd_array_cnt);
+> +		return -EINVAL;
+> +	}
+> +	map = fd_slot_map(env->fd_array[idx]);
+> +	if (!map) {
+> +		verbose(env, "fd_idx %u is not a map\n", idx);
+> +		return -EINVAL;
+> +	}
+> +	return __add_used_map(env, map);
+> +}
+> +
+> +static int fd_array_get_map_idx_sparse(struct bpf_verifier_env *env, u32 idx)
+> +{
+> +	int fd;
+> +
+> +	if (copy_from_bpfptr_offset(&fd, env->fd_array_raw,
+> +				    (size_t)idx * sizeof(fd), sizeof(fd)))
+> +		return -EFAULT;
+> +	return add_used_map(env, fd);
+> +}
+> +
+> +static int fd_array_get_map_idx(struct bpf_verifier_env *env, u32 idx)
+> +{
+> +	if (env->fd_array)
+> +		return fd_array_get_map_idx_continuous(env, idx);
+> +	if (!bpfptr_is_null(env->fd_array_raw))
+> +		return fd_array_get_map_idx_sparse(env, idx);
+> +
+> +	verbose(env, "fd_idx without fd_array is invalid\n");
+> +	return -EPROTO;
+> +}
+> +
+>  static int check_alu_fields(struct bpf_verifier_env *env, struct bpf_insn *insn)
+>  {
+>  	u8 class = BPF_CLASS(insn->code);
+> @@ -18128,7 +18225,6 @@ static int check_and_resolve_insns(struct bpf_verifier_env *env)
+>  			struct bpf_map *map;
+>  			int map_idx;
+>  			u64 addr;
+> -			u32 fd;
+>  
+>  			if (i == insn_cnt - 1 || insn[1].code != 0 ||
+>  			    insn[1].dst_reg != 0 || insn[1].src_reg != 0 ||
+> @@ -18180,21 +18276,13 @@ static int check_and_resolve_insns(struct bpf_verifier_env *env)
+>  			switch (insn[0].src_reg) {
+>  			case BPF_PSEUDO_MAP_IDX_VALUE:
+>  			case BPF_PSEUDO_MAP_IDX:
+> -				if (bpfptr_is_null(env->fd_array)) {
+> -					verbose(env, "fd_idx without fd_array is invalid\n");
+> -					return -EPROTO;
+> -				}
+> -				if (copy_from_bpfptr_offset(&fd, env->fd_array,
+> -							    insn[0].imm * sizeof(fd),
+> -							    sizeof(fd)))
+> -					return -EFAULT;
+> +				map_idx = fd_array_get_map_idx(env, insn[0].imm);
+>  				break;
+>  			default:
+> -				fd = insn[0].imm;
+> +				map_idx = add_used_map(env, insn[0].imm);
+>  				break;
+>  			}
+>  
+> -			map_idx = add_used_map(env, fd);
+>  			if (map_idx < 0)
+>  				return map_idx;
+>  			map = env->used_maps[map_idx];
+> @@ -19469,7 +19557,7 @@ struct btf *bpf_get_btf_vmlinux(void)
+>   * this case expect that every file descriptor in the array is either a map or
+>   * a BTF. Everything else is considered to be trash.
+>   */
+> -static int add_fd_from_fd_array(struct bpf_verifier_env *env, int fd)
+> +static int add_fd_from_fd_array(struct bpf_verifier_env *env, u32 idx, int fd)
+>  {
+>  	struct bpf_map *map;
+>  	struct btf *btf;
+> @@ -19481,51 +19569,69 @@ static int add_fd_from_fd_array(struct bpf_verifier_env *env, int fd)
+>  		err = __add_used_map(env, map);
+>  		if (err < 0)
+>  			return err;
+> +		fd_slot_set_map(&env->fd_array[idx], map);
+>  		return 0;
+>  	}
+>  
+>  	btf = __btf_get_by_fd(f);
+>  	if (!IS_ERR(btf)) {
+>  		btf_get(btf);
+> -		return __add_used_btf(env, btf);
+> +		err = __add_used_btf(env, btf);
+> +		if (err < 0)
+> +			return err;
+> +		fd_slot_set_btf(&env->fd_array[idx], btf);
+> +		return 0;
+>  	}
+>  
+>  	verbose(env, "fd %d is not pointing to valid bpf_map or btf\n", fd);
+>  	return PTR_ERR(map);
+>  }
+>  
+> -static int process_fd_array(struct bpf_verifier_env *env, union bpf_attr *attr, bpfptr_t uattr)
+> +#define MAX_FD_ARRAY_CNT (MAX_USED_MAPS + MAX_KFUNC_BTFS)
+> +
+> +static int process_fd_array_continuous(struct bpf_verifier_env *env,
+> +				       bpfptr_t fd_array, u32 cnt)
+>  {
+> -	size_t size = sizeof(int);
+> -	int ret;
+> -	int fd;
+> +	int fd, ret;
+>  	u32 i;
+>  
+> -	env->fd_array = make_bpfptr(attr->fd_array, uattr.is_kernel);
+> -
+> -	/*
+> -	 * The only difference between old (no fd_array_cnt is given) and new
+> -	 * APIs is that in the latter case the fd_array is expected to be
+> -	 * continuous and is scanned for map fds right away
+> -	 */
+> -	if (!attr->fd_array_cnt)
+> -		return 0;
+> -
+> -	/* Check for integer overflow */
+> -	if (attr->fd_array_cnt >= (U32_MAX / size)) {
+> -		verbose(env, "fd_array_cnt is too big (%u)\n", attr->fd_array_cnt);
+> -		return -EINVAL;
+> +	if (cnt > MAX_FD_ARRAY_CNT) {
 
-Looks good to me, thanks for working on sorting this out.
+So, I _think_ I've done the "unlimited" thing because there can be duplicates
+in fd_array. The limit is actually tracked by __add_{map_btf} So here we hard
+limit on the size of the fd_array itself. (Even without duplicates, this
+fd_array can contain, say, MAX_KFUNC_BTFS different maps, which will be in any
+case rejected by __add_used_map.)
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+> +		verbose(env, "fd_array has too many entries (%u, max %u)\n",
+> +			cnt, MAX_FD_ARRAY_CNT);
+> +		return -E2BIG;
+>  	}
+>  
+> -	for (i = 0; i < attr->fd_array_cnt; i++) {
+> -		if (copy_from_bpfptr_offset(&fd, env->fd_array, i * size, size))
+> +	env->fd_array = kvcalloc(cnt, sizeof(*env->fd_array), GFP_KERNEL);
+> +	if (!env->fd_array)
+> +		return -ENOMEM;
+> +	env->fd_array_cnt = cnt;
+> +	for (i = 0; i < cnt; i++) {
+> +		if (copy_from_bpfptr_offset(&fd, fd_array,
+> +					    (size_t)i * sizeof(fd), sizeof(fd)))
+>  			return -EFAULT;
+> -
+> -		ret = add_fd_from_fd_array(env, fd);
+> +		ret = add_fd_from_fd_array(env, i, fd);
+>  		if (ret)
+>  			return ret;
+>  	}
+> +	return 0;
+> +}
+>  
+> +static int process_fd_array(struct bpf_verifier_env *env,
+> +			    union bpf_attr *attr, bpfptr_t uattr)
+> +{
+> +	bpfptr_t fd_array = make_bpfptr(attr->fd_array, uattr.is_kernel);
+> +
+> +	if (bpfptr_is_null(fd_array))
+> +		return 0;
+> +	/*
+> +	 * New API: the caller passes fd_array_cnt and a continuous array that
+> +	 * is resolved and bound up front. Legacy API (no fd_array_cnt): keep
+> +	 * the caller's array and resolve entries lazily, on first reference.
+> +	 */
+> +	if (attr->fd_array_cnt)
+> +		return process_fd_array_continuous(env, fd_array,
+> +						   attr->fd_array_cnt);
 
---=20
-paul-moore.com
+Looks like this returns success in case (!fd_array && attr->fd_array_cnt),
+which is a misconfiguration and should be rejected.
+
+> +	env->fd_array_raw = fd_array;
+>  	return 0;
+>  }
+>  
+> @@ -20027,6 +20133,7 @@ int bpf_check(struct bpf_prog **prog, union bpf_attr *attr, bpfptr_t uattr,
+>  	bpf_clear_insn_aux_data(env, 0, env->prog->len);
+>  	vfree(env->insn_aux_data);
+>  err_free_env:
+> +	kvfree(env->fd_array);
+>  	bpf_stack_liveness_free(env);
+>  	kvfree(env->cfg.insn_postorder);
+>  	kvfree(env->scc_info);
+> -- 
+> 2.43.0
+> 
