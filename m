@@ -1,110 +1,84 @@
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33743CF1F5;
-	Fri,  3 Jul 2026 12:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE9A3D9DBF
+	for <linux-security-module@vger.kernel.org>; Fri,  3 Jul 2026 14:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783080630; cv=none; b=AJ29a9xG5eJEY/0HCIl6aQ+ZqOjoR3MZUSXclR80QDtnBPuLNJvd/ZvCSOQm3xcYklzu8JVU4tYnItt3FPCo+3JV92o/T7bh4hFilCYgvM9/tmtZph5GYZv+K10o0fs1EqWN/TQwnUFNXXMye1gKdFb8ehmBBrYbJTk4ZOK5MEo=
+	t=1783088256; cv=none; b=htrOuH3brKI6FUlr2aX4EK/Skdh3L3W2+5cpC4Gs/QVL8XL7UF5vNTS0BJAUfv/HqS+UWB484HBWxLnFQhb0cB+9YWg/gsLLkxqXAACaWTqdpx+CZpdfjR24aVOqSmfJLz1+2KzUuus1iQfh7FmREjKDZzbF1THfceU9okFRdI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783080630; c=relaxed/simple;
-	bh=oy17HZPdJNlh+5IeYqa3gikbqHqLbJ2RB3av78le6ig=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DujNb+OGRtJZn2DaB3cC50f1PLiGtODt+7AmneKfTLrPkyY+9YsB4LvJ+CUNEuAH9mjZlk0PxRc3pIq4UbFRw89S5ohFvksCIYYyI58rv9p8M5zJpf9cPpKdymVPVpQ44CFiMDRx9OF44vNpTsm1AXvIyQW4hxV7rLZex+AWR7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 2846491a76d811f1aa26b74ffac11d73-20260703
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
-	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN, HR_FROM_NAME
-	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
-	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
-	HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED
-	SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD
-	CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU
-	AMN_GOOD, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.12,REQID:9201fb13-3fb1-43b3-8e79-67ad92ea33c9,IP:15,
-	URL:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:40
-X-CID-INFO: VERSION:1.3.12,REQID:9201fb13-3fb1-43b3-8e79-67ad92ea33c9,IP:15,UR
-	L:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:40
-X-CID-META: VersionHash:e7bac3a,CLOUDID:29aae46b6e7b057768350e6a0fb91eaf,BulkI
-	D:260703151457A2XKY1N7,BulkQuantity:2,Recheck:0,SF:17|19|66|78|81|82|102|1
-	27|850|865|898|915,TC:nil,Content:0|15|50,EDM:5,IP:-2,URL:0,File:nil,RT:ni
-	l,Bulk:40,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,B
-	RR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 2846491a76d811f1aa26b74ffac11d73-20260703
-X-User: wangyan01@kylinos.cn
-Received: from localhost.localdomain [(116.128.244.171)] by mailgw.kylinos.cn
-	(envelope-from <wangyan01@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 921031607; Fri, 03 Jul 2026 20:10:18 +0800
-From: Wang Yan <wangyan01@kylinos.cn>
-To: bill.c.roberts@gmail.com
-Cc: casey@schaufler-ca.com,
-	jmorris@namei.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
+	s=arc-20240116; t=1783088256; c=relaxed/simple;
+	bh=om30d7yDWl7g1/H6QiwiuMSQMJOT79jSOXJDR/n/l7k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZfCn8EwThnPwH087/m53EZR/vQO0O95PcmaQz7SQi4QBm/2rI0kRXsESMdvUMFHiq0Bth5pF5rIr3nHdjpADFmT7SYmAmKVXY+BhIW3NUaDD/R9YeIhMtEFdo7MUpVKmpqqYDv3j8236ObBP2ydB9US43uYVdTRGj6+jYUy6sMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=rw8bIqm2; arc=none smtp.client-ip=185.125.25.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="rw8bIqm2"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gsG6T6VzgzKTT;
+	Fri,  3 Jul 2026 16:17:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1783088241;
+	bh=n2NN5qQIx98PNiSneR8W1bI8hrWbrAtI0hhrS+4EJ7Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rw8bIqm23Pp1CPCSUihwIamlACR45pdvpQf8bdw4DvQkesetn2NvOlzsknwg8I/VU
+	 MaMtOBNUeej+xbI1ogk11NcAzMclF1b3JJWStGvep7sQNQbFEfApOzmazPa0sZrc5x
+	 7cU746JotR6P+GTlz96tpGs65HB1wbkhsuR0A7JI=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4gsG6T2KpgzGGW;
+	Fri,  3 Jul 2026 16:17:21 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	linux-security-module@vger.kernel.org,
-	mic@digikod.net,
-	paul@paul-moore.com,
-	serge@hallyn.com,
-	shuah@kernel.org,
-	wangyan01@kylinos.cn
-Subject: [PATCH v2] selftests/lsm: Fix memory leak in attr_lsm_count
-Date: Fri,  3 Jul 2026 20:09:51 +0800
-Message-Id: <20260703120951.1622491-1-wangyan01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <CAFftDdrDgoHCopx9byaupea8GB6P=qSAY==6QQoXSJcJgn_04w@mail.gmail.com>
-References: <CAFftDdrDgoHCopx9byaupea8GB6P=qSAY==6QQoXSJcJgn_04w@mail.gmail.com>
+	Tingmao Wang <m@maowtm.org>,
+	Justin Suess <utilityemal77@gmail.com>
+Subject: [PATCH v1] landlock: Fix kernel-doc for the nested quiet layer flag
+Date: Fri,  3 Jul 2026 16:17:09 +0200
+Message-ID: <20260703141711.2016964-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-The calloc-allocated buffer in attr_lsm_count() is never released on
-any exit path, including both the normal return path and the early
-return when read_sysfs_lsms fails, resulting in a heap memory leak.
+kernel-doc emits "Excess struct member 'quiet' description in
+'landlock_layer'" because "quiet" is a bitfield inside the named nested
+struct "flags", but its inline comment used the bare member name
+"@quiet:", which kernel-doc attributes to the enclosing landlock_layer.
 
-Add free() for the buffer on all return branches to fix the leak.
+Use the canonical dotted notation "@flags.quiet:" so kernel-doc resolves
+the nested member, and include it in the generated documentation.
 
-Fixes: d3d929a8b0cd ("LSM: selftests for Linux Security Module syscalls")
-Signed-off-by: Wang Yan <wangyan01@kylinos.cn>
+Cc: Justin Suess <utilityemal77@gmail.com>
+Cc: Tingmao Wang <m@maowtm.org>
+Fixes: a260c0055665 ("landlock: Add a place for flags to layer rules")
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
- tools/testing/selftests/lsm/common.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ security/landlock/ruleset.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/lsm/common.c b/tools/testing/selftests/lsm/common.c
-index 9ad258912646..927dce4f04cb 100644
---- a/tools/testing/selftests/lsm/common.c
-+++ b/tools/testing/selftests/lsm/common.c
-@@ -76,7 +76,7 @@ int attr_lsm_count(void)
- 		return 0;
- 
- 	if (read_sysfs_lsms(names, sysconf(_SC_PAGESIZE)))
--		return 0;
-+		goto out;
- 
- 	if (strstr(names, "selinux"))
- 		count++;
-@@ -85,5 +85,7 @@ int attr_lsm_count(void)
- 	if (strstr(names, "apparmor"))
- 		count++;
- 
-+out:
-+	free(names);
- 	return count;
- }
+diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+index 61f3c253d5c9..0437adf17428 100644
+--- a/security/landlock/ruleset.h
++++ b/security/landlock/ruleset.h
+@@ -35,8 +35,8 @@ struct landlock_layer {
+ 	 */
+ 	struct {
+ 		/**
+-		 * @quiet: Suppresses denial logs for the object covered by this
+-		 * rule in this domain.  For filesystem rules, this inherits
++		 * @flags.quiet: Suppresses denial logs for the object covered by
++		 * this rule in this domain.  For filesystem rules, this inherits
+ 		 * down the file hierarchy.
+ 		 */
+ 		u8 quiet : 1;
+
+base-commit: dc59e4fea9d83f03bad6bddf3fa2e52491777482
 -- 
-2.25.1
+2.54.0
 
