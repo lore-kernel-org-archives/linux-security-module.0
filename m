@@ -1,162 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56DC7381EBB;
-	Fri,  3 Jul 2026 09:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33743CF1F5;
+	Fri,  3 Jul 2026 12:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783071126; cv=none; b=cIJhCax6Mj3/vWxVNkM3+8b/HtJs9roilF4sbBLaMk+3FrWbKSakv6dMFy/gp+AU0OoskC+qzTMqF+aOdUbTGYQK+vADjVhQq5trEba07VPigWNDiP4RDIJXUyRE4zR58dKbEeABdvZCK/Cy/UmbazdddGYo5mhNiH8VToiazPw=
+	t=1783080630; cv=none; b=AJ29a9xG5eJEY/0HCIl6aQ+ZqOjoR3MZUSXclR80QDtnBPuLNJvd/ZvCSOQm3xcYklzu8JVU4tYnItt3FPCo+3JV92o/T7bh4hFilCYgvM9/tmtZph5GYZv+K10o0fs1EqWN/TQwnUFNXXMye1gKdFb8ehmBBrYbJTk4ZOK5MEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783071126; c=relaxed/simple;
-	bh=n9XJEkc+DowG9Obr4NUQaCy1/3OPEUMahQYjpJe65oU=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=a+zXmJJC5jywlA2hq6mgI5wiagtiNsLpdiEmmgelvtRsT1/Q12ov0PSEu9CC415dXx2DdBXZdXNE58mrnqVb7xF4V2ZjdHcIuik6Mb+qAQsNs/1dI9KiQLZtGoIoNWhnCPTSEEk7Qi3YM2oW8spvrmFiJqkiOtzswNBQ58rrw9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e9MFh+yA; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e9MFh+yA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C19821F000E9;
-	Fri,  3 Jul 2026 09:32:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783071124;
-	bh=ARJjvdhtSZCnWgEd0trqgpLbvyNLpvUgzO6qa5p73UM=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=e9MFh+yABLy2CPe8HOcWFFQvIivncfb0irowyxUQghRkows1pifnaZW05tS6k7K4a
-	 0on7bvVhK5eZSdywVJLzlsMo3wKv8kymFppmegCgr4r0fcB4t/jxZjQHBoyYeX6vSt
-	 vQlDfcpRVWJ5H7pZEx1h2R7LoSK1OA7fhQa6gmfVtuD9zMYmR3Euri9B7ey7Jf14wf
-	 eFKivx9mqjKYdSNG1UXaem/s9lKgeQ9qac7qs8+ac4TKM3lliutOM5FcAZS/9f2uiB
-	 A09lj9LBbVwsyfxrdPvzVbugEZBbE4SIopUb/K9TLBNTuruASCJrDXoE9m5QISPJle
-	 sOc20WO/NzHxg==
+	s=arc-20240116; t=1783080630; c=relaxed/simple;
+	bh=oy17HZPdJNlh+5IeYqa3gikbqHqLbJ2RB3av78le6ig=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=DujNb+OGRtJZn2DaB3cC50f1PLiGtODt+7AmneKfTLrPkyY+9YsB4LvJ+CUNEuAH9mjZlk0PxRc3pIq4UbFRw89S5ohFvksCIYYyI58rv9p8M5zJpf9cPpKdymVPVpQ44CFiMDRx9OF44vNpTsm1AXvIyQW4hxV7rLZex+AWR7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 2846491a76d811f1aa26b74ffac11d73-20260703
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
+	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN, HR_FROM_NAME
+	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
+	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
+	HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED
+	SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD
+	CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU
+	AMN_GOOD, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.12,REQID:9201fb13-3fb1-43b3-8e79-67ad92ea33c9,IP:15,
+	URL:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:40
+X-CID-INFO: VERSION:1.3.12,REQID:9201fb13-3fb1-43b3-8e79-67ad92ea33c9,IP:15,UR
+	L:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:40
+X-CID-META: VersionHash:e7bac3a,CLOUDID:29aae46b6e7b057768350e6a0fb91eaf,BulkI
+	D:260703151457A2XKY1N7,BulkQuantity:2,Recheck:0,SF:17|19|66|78|81|82|102|1
+	27|850|865|898|915,TC:nil,Content:0|15|50,EDM:5,IP:-2,URL:0,File:nil,RT:ni
+	l,Bulk:40,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,B
+	RR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 2846491a76d811f1aa26b74ffac11d73-20260703
+X-User: wangyan01@kylinos.cn
+Received: from localhost.localdomain [(116.128.244.171)] by mailgw.kylinos.cn
+	(envelope-from <wangyan01@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 921031607; Fri, 03 Jul 2026 20:10:18 +0800
+From: Wang Yan <wangyan01@kylinos.cn>
+To: bill.c.roberts@gmail.com
+Cc: casey@schaufler-ca.com,
+	jmorris@namei.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	mic@digikod.net,
+	paul@paul-moore.com,
+	serge@hallyn.com,
+	shuah@kernel.org,
+	wangyan01@kylinos.cn
+Subject: [PATCH v2] selftests/lsm: Fix memory leak in attr_lsm_count
+Date: Fri,  3 Jul 2026 20:09:51 +0800
+Message-Id: <20260703120951.1622491-1-wangyan01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <CAFftDdrDgoHCopx9byaupea8GB6P=qSAY==6QQoXSJcJgn_04w@mail.gmail.com>
+References: <CAFftDdrDgoHCopx9byaupea8GB6P=qSAY==6QQoXSJcJgn_04w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [RFC PATCH 3/3] coredump, net: remove `SOCK_COREDUMP`
-From: Christian Brauner <brauner@kernel.org>
-To: John Ericson <mail@johnericson.me>
-Cc: Christian Brauner <brauner@kernel.org>, 
- John Ericson <John.Ericson@obsidian.systems>, 
- "David S . Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Cong Wang <cwang@multikernel.io>, 
- Kuniyuki Iwashima <kuniyu@google.com>, Simon Horman <horms@kernel.org>, 
- David Rheinsberg <david@readahead.eu>, Andy Lutomirski <luto@kernel.org>, 
- Sergei Zimmerman <sergei@zimmerman.foo>, 
- network dev <netdev@vger.kernel.org>, 
- linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
- =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
- =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
- Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org, 
- LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <7acb650b-a0de-4244-861f-4dda70ca8993@app.fastmail.com>
-References: <20260703073948.2541875-1-John.Ericson@Obsidian.Systems>
- <20260703073948.2541875-4-John.Ericson@Obsidian.Systems>
- <20260703-umgehen-auftun-anlagen-826bf59dfcb5@brauner>
- <7acb650b-a0de-4244-861f-4dda70ca8993@app.fastmail.com>
-Date: Fri, 03 Jul 2026 11:31:58 +0200
-Message-Id: <20260703-karierte-gemolken-restaurant-fb5a0601423c@brauner>
-X-Mailer: b4 0.16-dev-4217c
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4247; i=brauner@kernel.org;
- h=from:subject:message-id; bh=n9XJEkc+DowG9Obr4NUQaCy1/3OPEUMahQYjpJe65oU=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWS5N05I/Hj03KVPvdeemq/pa1qy9dqFSff5HoqKHl3zs
- +pzXeujhI5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJNOkw/C/OeRxxsn6jQbXh
- j2q5vgvxm7pypm/4djB3yZ99ghdX+B5n+GekG3v229WtIfk1AjveWj34nsv+11Wj3WwN25akkyY
- FR7kA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 2026-07-03 05:08 -0400, John Ericson wrote:
-> On Fri, Jul 3, 2026, at 4:11 AM, Christian Brauner wrote:
-> > I don't think dragging the bowels of net/ into fs/coredump.c just for
-> > the sake of getting a purely internal SOCK_COREDUMP flag out of the way
-> > is the right way to go.
-> >
-> > I suspect the saner thing to do would be to introduce a primitive for
-> > connecting to an AF_UNIX path-based socket directly instead of this
-> > weird dance here, no?
-> >
-> > int kernel_unix_connect(const char *path, struct socket *socket, unsigned int o_flags, int type)
-> >
-> > then my kthread changes would collapse this into:
-> >
-> > scoped_with_init_fs()
-> > retval = kernel_unix_connect(path, socket, O_NONBLOCK, SOCK_STREAM);
-> 
-> That works for this case, but the destination I am trying to eventually
-> reach is being allowed (in userspace) to connect to unbound sockets by
-> their fd --- no path, no abstract socket name.
+The calloc-allocated buffer in attr_lsm_count() is never released on
+any exit path, including both the normal return path and the early
+return when read_sysfs_lsms fails, resulting in a heap memory leak.
 
-But these are orthogonal changes. It sill doesn't mean we should sprawl
-net internals over coredump code anymore than we already have to. I'm
-fond of kernel_unix_connect() int dfd, const char *path even would be
-fine.
+Add free() for the buffer on all return branches to fix the leak.
 
->     unix_connectat(int fd, const char *path, struct socket *socket,
->                    unsigned int at_flags, unsigned int o_flags,
->                    int type)
-> 
-> is a mouthful, but it would work. Still, there is a subtlety about the
-> retry logic. When one does something like:
-> 
-> > connect(..."/dev/fd/N",...)
-> 
-> it will repeatedly re-lookup "/dev/fd/N" until the timeout is reached. I
-> consider that pretty terrible --- the rest of the program could race to
-> change what that file descriptor (number) refers to. Therefore, I think
-> table stakes to make a good `unix_connectat` is to make the
-> `AT_EMPTY_PATH` case not re-lookup the socket.
+Fixes: d3d929a8b0cd ("LSM: selftests for Linux Security Module syscalls")
+Signed-off-by: Wang Yan <wangyan01@kylinos.cn>
+---
+ tools/testing/selftests/lsm/common.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-I have no idea how this has any bearong on the three helper split.
-
-> (making a sockfs file descriptor work is separate, I already have the
-> patch for that, I can include it.)
-> 
-> > The two helpers also make no sense to me and force a bunch of cleanup on
-> > the caller as well.
-> 
-> I am fine with `unix_connectat`, but just for reference, me breaking up
-> the steps is because I generally like the decomposition of `fverb`
-> rather than `verbat` system calls, since the latter would typically be
-> used with `openat` or so. It seems the `kernel_*` "syscalls" generally
-> take `struct path` rather than strings, which seems good and in the
-
-There's a time to follow precedence and there's a time to do what the
-maintainability demands. I think here clearly we don't want to pass a
-struct path. That makes no sense because we don't care about using that
-object at all. It's merely an intermediate jumping point. This is
-fundamentally about connecting from the kernel to a specific pathname
-that functions as a socket address. Intermediary objects don't matter
-(yet).
-
-> spirit of that decomposition, but then even `struct path` is overkill to
-> refer to a socket. So putting all that together, the final composition I
-> had was:
-> 
-> 1. string path (from /proc/...) -> `struct path`
-> 2. `struct path` -> `struct sock *`
-> 3. connect to `struct sock *`
-> 
-> So I quite liked those 3 orthogonal knobs, vs an all-singing-all-dancing
-> `unix_connectat`. (I suppose making it `struct socket *` would make it
-> slightly less internals-y?) But again, anything that puts us on track to
-> being able to connect to an unbound socket without procfs is good enough
-> for me.
-
-To me this reads like you're introducing moving parts for the sake of a
-philosophical argument. I couldn't care less about that. What matters is
-maintainability. Having three knobs that introduce potentially three
-separate cleanup requirements and exposing three different objects when
-it's not needed is just a burden.
-
-> 
-> > I'm not sure why we would go on altering all kinds of LSM hooks as well.
-> 
-> That's in the commit message, it is because without `SOCK_COREDUMP`
-> those are all dead code. Instead of removing them in this commit, I can
-> just keep those flags, or remove them in a separate commit. Fine
-
-Do it as a separte commit once we've decided to do this, I think.
+diff --git a/tools/testing/selftests/lsm/common.c b/tools/testing/selftests/lsm/common.c
+index 9ad258912646..927dce4f04cb 100644
+--- a/tools/testing/selftests/lsm/common.c
++++ b/tools/testing/selftests/lsm/common.c
+@@ -76,7 +76,7 @@ int attr_lsm_count(void)
+ 		return 0;
+ 
+ 	if (read_sysfs_lsms(names, sysconf(_SC_PAGESIZE)))
+-		return 0;
++		goto out;
+ 
+ 	if (strstr(names, "selinux"))
+ 		count++;
+@@ -85,5 +85,7 @@ int attr_lsm_count(void)
+ 	if (strstr(names, "apparmor"))
+ 		count++;
+ 
++out:
++	free(names);
+ 	return count;
+ }
+-- 
+2.25.1
 
