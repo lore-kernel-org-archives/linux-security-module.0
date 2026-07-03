@@ -1,96 +1,140 @@
-Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com [74.125.224.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFD139E16C
-	for <linux-security-module@vger.kernel.org>; Fri,  3 Jul 2026 15:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783092488; cv=none; b=stcA3YDHd5WeLGdWeL+4J8TB8ESS7CnDK2kqQfuFe6ggHa+temARE6iEIYdBLCIXR5zkKNujfYhC2v+5zBH5MynAY8gDI19VYTF9z7ibhQ2ylz0U3UP5+4Fee0eHY4LPjb2INWonQh+LIzhkKWCpaHY4gUfw8M0X3RYx6iELfc0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783092488; c=relaxed/simple;
-	bh=rKU9w6uMdwdxWVfNlP3Mm5GV7AB4Y5MS7R2cMjRfQnk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Z7JbdBo2Ry5pQkWluT7VmFimU0jCx0UUZiDiwiq9BXKi4w/tG5GqcoNwMjfrAt79atZERvbsdFIsDClutAM83wT/ssY6PNdy0x1Uv22mL0lWp/35w6lKJH2OeAPN+cKPOg3dcc2/MqnsgxmULj+2jC8DJ8NlnIZJWrKQ+b9TPMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=E/gD2U7I; arc=none smtp.client-ip=84.16.66.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB922868B4
+	for <linux-security-module@vger.kernel.org>; Fri,  3 Jul 2026 17:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783101431; cv=pass; b=Pbw0vmckPLiWnwlrfOcXnMUiFIc7FqHFzs082agYLjIdMPmVE3tWqVOZ37ctB+yNkZqV3AAPSotCK4TFuj/W27Khm5StegrU6ZGUBk5OYzfiPw5ROnFXu02FNb+OvEshB/zYnjh6QGN2pz0FAqd7nWHpquezChctDoG8ozn1znM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783101431; c=relaxed/simple;
+	bh=jYcBMUsEf16lB1gSKJT1q30+H1rv8CvgUFQ3Cpw3r0Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N5W4DtMuEMCCqmILWePwFCkHPNfwdl/4+c2kapxfI4PxwwW6ja5II0jLBTC+R/7DkaRJN9IZrFy0hMYN9r7dZg3Sk6xKc1itM3VHdMMFgqGfr6RcQK7mpJKFmT1wNrlL0AoncpAw6FiykyhucdIStQh5lQRxHfsiKyUZRP1B6b4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oFlfiDqi; arc=pass smtp.client-ip=74.125.224.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="E/gD2U7I"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gsHgw510LzwBK;
-	Fri,  3 Jul 2026 17:27:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1783092476;
-	bh=A88ZN7w7eYWOkzYuzJF4p0R1RwagheMg+dPPbmJ6roI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=E/gD2U7IKzQUp4y5VUIyZo2dh6GbGasG0WZqTOn4kYuXuC5ZbHdHXZxcl+/0BKQnw
-	 hdmu7cJ9TfWXlW0sQA79evLE1P3LSlx4lehAUltniJ8l4UAP0pVB7KwKAueQ2n8xmb
-	 Gk1Rl3uQZ5X/2DpHE/SW+fS0+j4z2AOpxZzfayqQ=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4gsHgv5cx4zsl9;
-	Fri,  3 Jul 2026 17:27:55 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	linux-security-module@vger.kernel.org,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	Matthieu Buffet <matthieu@buffet.re>
-Subject: [PATCH v1] landlock: Harden sock_is_scoped() against file-less sockets
-Date: Fri,  3 Jul 2026 17:27:48 +0200
-Message-ID: <20260703152750.2022878-1-mic@digikod.net>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oFlfiDqi"
+Received: by mail-yx1-f42.google.com with SMTP id 956f58d0204a3-664b3831a20so1051700d50.3
+        for <linux-security-module@vger.kernel.org>; Fri, 03 Jul 2026 10:57:09 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783101429; cv=none;
+        d=google.com; s=arc-20260327;
+        b=TNotXzK7f/YWgzGXOIWq0p3KQUl4H6cmnnPqxOWRgaDSEEptLe7gAtAY1lMPvIOa+m
+         JM13QD52uPgbV6zzeLPrtcBqnAnNf6p+kIb65vDyHQ5kD/J3ugj8g5Bmp+r04xBCMEWR
+         92GD76iJ1QjVeXVFOop9lBbqTXlX7k5ZEFafBnTaYnwxVqbN057fUlTcqG3eci5TfDAs
+         oLiZzPdcEKGPgwRvPlngf9NUkRPwrffQ0gLErbKV780IqSd+mGpBS3X+4f3DosqXsoAU
+         YkajScD9f80D1/rNtbRls+vEiwNgQZm3qQepdLJZ3VIxMG0qgs4XPg+S6K4BzujPuP2d
+         q6Ng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=+wCeRX4PM1cy9pj31y6w69soFSedp2CdjVACBoJy82Y=;
+        fh=Mhr27nDHpRFqG50kz79T21ni0vot+uHqQ6VX3mZi1u0=;
+        b=djflAHiL5otGovGZbH2krV8esp9O+jdBh+tofJVlNYEv10tWmNrcaOSLbw36fQg8xv
+         pSrckP1Q3vzdsTjKAezcJyZPAXLvW/Mj2nJB4ERdIvopvU18n6t9cGb4fwJ3tRoqJVSC
+         8RPZnPGroGfa5gQk2dBbtOpMmEU9+UF3mjavTjkPKJO/v5L0YeDQxLMtv1iJi28Wdpn2
+         AbRuJWnJS0fCWBDzq8jYwd+OjhMo0o+TUZtnEd/DebzSXFLpiiKYVnoJlGAPCM5MZTl+
+         z+D9a9isycqptn4w/gxbsxY7v68XFoFyxJW7GyjLeGBv0MSGOLL3FY6RgoLQq8BZCNnZ
+         8x5g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1783101429; x=1783706229; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+wCeRX4PM1cy9pj31y6w69soFSedp2CdjVACBoJy82Y=;
+        b=oFlfiDqiyIycyNGH+cVcbvmFX/RmhjrH5sPMfRT7k1kn8A/WOwoJgAfGBdX2peGT+F
+         Cwgapy48tixM3/WTyQjHJ9PNKAhiiz1IlBQmwArtP8AHYu7Kacv7j0gw1AFvaYsKiJmf
+         0Csd6PfCuMih79MkIIjVPS3xziiqXSQPxCgczadAOPlrt4XprBXwa9bn9LNy4UuzIpjX
+         GvUkTyMoxaoCUIz4JHZkDvYgu5FJdUfiLNCYIW1UQusCA2K+3Nk9+8DSdT5LsYyEC9NK
+         LrJPrHxNmyT3jLDBM+sLnXQiSESI1I9fMGWPcz0hzQQasGGzujIgLGSWRjq0H8fN1Vf5
+         xbjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783101429; x=1783706229;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=+wCeRX4PM1cy9pj31y6w69soFSedp2CdjVACBoJy82Y=;
+        b=PF+tuUEfMevUaht88B7dPDs/lo6ncVgOIkFGnoSLWmIjpSaYyoJKM8w0tA+fHt0f6D
+         Z0PYMFqpj3zRQxWeJ3KpUMMKrwS7nXAY210W3bwDBJnddDUYZvyZMJtH2sgC1rpMeetK
+         x+KPs4zDb2+2Bep0CqfcOpPmgGAwWT7rM3UDoLxewgl1F3d+eTg2QqP8JLtoUilzBFXi
+         SBrR8AgbywyfaYJO0noqtqB0vsmtydV0b74s1OtOA3OQa729op78Q/a1eVIsKk0kI0q5
+         b3fWnwNihDxSmlWG7fs5mP4ELgV8SCq5EKDwIPrG+hA5IdOuZKDGP2QVqRD8IQoCSBKT
+         yN8Q==
+X-Forwarded-Encrypted: i=1; AHgh+RovQU572vivlvNtSeXW+dMN2GnJHzU9TM+GuDGdcNZpAp3TzdMpIL9MHa+rcaQ49M+Q29DNwZgQ1MR8Nhl841b0w+nyLH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAIKp4nKdy/5+9EsL9+4U3mh6Qo5CuVUdLTEpIhzgo2Ac7Oazg
+	G/xMAYeHm0asrI/Aj/DIkAg0J6VsYhYhpnx1lmf3q/k76ce0nzpdvNb7WFCkQZutQVVYyCB/zbl
+	PeOtYrDh4ZJp+DBTTZQjUdS4JFtCSlKM=
+X-Gm-Gg: AfdE7cnAZbZ8AIcwPbH48bHncCxWieCdC6Ns1ImSdd3vI55UtprQkn0nUiuV3RR2wOC
+	pkvUw9ocBWv9IZRuy9z4DS2ZsrdrBqVWE/IwMU7ghyvNcisBSw94Waj60qxQ62SqtabmNohkFKY
+	pISMAg6Zo1IfomBZE65Koh+pA0NN9sbFnFiNVfPAO+wS6TlDqdx/Wz10JPF7tFofmPQ7Y+F8XEZ
+	rsiIPRrxtGBmPSaNoyO+399RNcJNHVvMAy3wdup/JIrG+vNYn7f4J6JfMOwCXWlkYayG8L9
+X-Received: by 2002:a05:690e:14c6:b0:664:8376:fd42 with SMTP id
+ 956f58d0204a3-66652ea1109mr98370d50.39.1783101428823; Fri, 03 Jul 2026
+ 10:57:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+References: <CAFftDdrDgoHCopx9byaupea8GB6P=qSAY==6QQoXSJcJgn_04w@mail.gmail.com>
+ <20260703120951.1622491-1-wangyan01@kylinos.cn>
+In-Reply-To: <20260703120951.1622491-1-wangyan01@kylinos.cn>
+From: William Roberts <bill.c.roberts@gmail.com>
+Date: Fri, 3 Jul 2026 12:56:58 -0500
+X-Gm-Features: AVVi8CdSPVEbVI_H4mhzLOXB7QTVgXg_PLL4YqyXE43yr2FhcrPKm3ONR_hrQhI
+Message-ID: <CAFftDdp9TF3Jp+4yff9aJLnKBbzSzy6BK=og6+m+CXG9wO=OsQ@mail.gmail.com>
+Subject: Re: [PATCH v2] selftests/lsm: Fix memory leak in attr_lsm_count
+To: Wang Yan <wangyan01@kylinos.cn>
+Cc: casey@schaufler-ca.com, jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	mic@digikod.net, paul@paul-moore.com, serge@hallyn.com, shuah@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-sock_is_scoped() dereferences other->sk_socket->file->f_cred to read the
-peer's Landlock domain when evaluating
-LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET, without first checking that the
-peer has a backing socket and file.  hook_unix_find() performs the same
-dereference for LANDLOCK_ACCESS_FS_RESOLVE_UNIX and does guard it.
-Guard it here too and treat a peer with no backing file, such as a
-kernel socket created by sock_create_kern(), as unscoped.
+On Fri, Jul 3, 2026 at 7:10=E2=80=AFAM Wang Yan <wangyan01@kylinos.cn> wrot=
+e:
+>
+> The calloc-allocated buffer in attr_lsm_count() is never released on
+> any exit path, including both the normal return path and the early
+> return when read_sysfs_lsms fails, resulting in a heap memory leak.
+>
+> Add free() for the buffer on all return branches to fix the leak.
+>
+> Fixes: d3d929a8b0cd ("LSM: selftests for Linux Security Module syscalls")
+> Signed-off-by: Wang Yan <wangyan01@kylinos.cn>
+> ---
+>  tools/testing/selftests/lsm/common.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/lsm/common.c b/tools/testing/selftes=
+ts/lsm/common.c
+> index 9ad258912646..927dce4f04cb 100644
+> --- a/tools/testing/selftests/lsm/common.c
+> +++ b/tools/testing/selftests/lsm/common.c
+> @@ -76,7 +76,7 @@ int attr_lsm_count(void)
+>                 return 0;
+>
+>         if (read_sysfs_lsms(names, sysconf(_SC_PAGESIZE)))
+> -               return 0;
+> +               goto out;
+>
+>         if (strstr(names, "selinux"))
+>                 count++;
+> @@ -85,5 +85,7 @@ int attr_lsm_count(void)
+>         if (strstr(names, "apparmor"))
+>                 count++;
+>
+> +out:
+> +       free(names);
+>         return count;
+>  }
+> --
+> 2.25.1
+>
 
-This is defensive hardening, not a fix for a reachable bug.  The
-unix_stream_connect() and unix_may_send() hooks run with the peer held
-under unix_state_lock() and only after the AF_UNIX core has excluded
-SOCK_DEAD, and no in-tree code binds a file-less AF_UNIX socket to an
-abstract address, so other->sk_socket->file is always valid at these
-call sites today.
-
-Cc: Günther Noack <gnoack@google.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
----
- security/landlock/task.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/security/landlock/task.c b/security/landlock/task.c
-index 7ddf211f75c3..474642edbd59 100644
---- a/security/landlock/task.c
-+++ b/security/landlock/task.c
-@@ -243,6 +243,17 @@ static bool sock_is_scoped(struct sock *const other,
- 
- 	/* The credentials will not change. */
- 	lockdep_assert_held(&unix_sk(other)->lock);
-+
-+	/*
-+	 * A live kernel socket (e.g. from sock_create_kern()) has no backing
-+	 * file, hence no Landlock domain, so treat it as unscoped.  The
-+	 * sk_socket check only guards that dereference; sk_socket is NULL
-+	 * solely for a dead peer, which the caller already excludes under the
-+	 * held lock, so no separate SOCK_DEAD check is needed.
-+	 */
-+	if (unlikely(!other->sk_socket || !other->sk_socket->file))
-+		return false;
-+
- 	dom_other = landlock_cred(other->sk_socket->file->f_cred)->domain;
- 	return domain_is_scoped(domain, dom_other,
- 				LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
-
-base-commit: dc59e4fea9d83f03bad6bddf3fa2e52491777482
--- 
-2.54.0
-
+Reviewed-by: William Roberts <bill.c.roberts@gmail.com>
+Tested-by: William Roberts <bill.c.roberts@gmail.com>
