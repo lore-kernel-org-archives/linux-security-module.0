@@ -1,151 +1,144 @@
-Received: from mail-yx1-f46.google.com (mail-yx1-f46.google.com [74.125.224.46])
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D22E2D6E5A
-	for <linux-security-module@vger.kernel.org>; Fri,  3 Jul 2026 03:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783047708; cv=pass; b=HAjbwDImEqTtDygQVUKadiiQzEjDf0wvalsz00Lnl9zC/gBlzdQpRFfXyRCEwTkiOKXlwjRAFs4Fs3hYEgCoT7LG+JDz0i+wYJCUxkFtkmCUjI710onzNxIslejC3Ll3D31WwBiPNHu8ZnL2L9BR58n0H6W78bN88IlkfNM+dy4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783047708; c=relaxed/simple;
-	bh=hivGL9AEjo2oQ+VmtRa/AUjK5mSGrBhvAddhpm5pdn0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tYHkjIFVgvxrwXnXJAsPAbb4ixcebnPQ36+tue4JFVJ6aBsl4lq5DdhwHLxXkd+9N8vtGWTsm9VHbCq0zyqC29d4a6vw6yDUmT+hMhe3QoYrP7lkXvydSiKbgyyGCFEeSfNP+q0PiFeldWZQkNFIClbL+pfV0PhZi+XFHuG/xPQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JrihwNDt; arc=pass smtp.client-ip=74.125.224.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344A23876C4
+	for <linux-security-module@vger.kernel.org>; Fri,  3 Jul 2026 06:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783061833; cv=none; b=firydsjoqZ0jiV8n+9319zCmXt8oaQbl3jp6v3nWjR3JeNtxRwWYfRStg5bGFZk7YFIUbwg75mnb22uDV6Z3hk/zM+cxC6oB3CgvJATLnCu5O543v9TYJZlhJWLIDNrcN/ZCQcokbjsiVJuX5vlPWReXAEqg9SSHjxmNuH3GRus=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783061833; c=relaxed/simple;
+	bh=nScf5netnt1NjDVQidgpbeNPyFsk+SnFXpkUx7OAXGA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=RhUV+CB+hkNeatIZmwyVDX0+Stt4X/zVfp+/OiCoi+F3MRwtpFMxSXXQ/b6jD/5i3ixfvKEnczzLQxzUS+aIa4eXcl9B8DEDIGoGY6jBdXLFjjA+ZNYkMTnIxsXi0D7S3keJJHbwX1kBzwjC8Nt6Mcc/E6EbTAH+nLuwo9qBQcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c42UBbw2; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JrihwNDt"
-Received: by mail-yx1-f46.google.com with SMTP id 956f58d0204a3-6663b4fe293so82734d50.1
-        for <linux-security-module@vger.kernel.org>; Thu, 02 Jul 2026 20:01:46 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783047705; cv=none;
-        d=google.com; s=arc-20260327;
-        b=qAJOTwAw14eY/mIKWb5YguTHLqFMVX2piBivmRmkQE77A6ic1WZpgOUYHSSOvq9teu
-         aX8aYHeGXkyb+DJzCQ52d2Igr0SIcLiiXHrnCdUcIGLZTSUZXS/QVLC9n17/STe0Actf
-         +2cYl7G4VM7eHRqImDTgaCbdd5lmq8QQZ0j1U1GG4azjY32Mq0TFeFw4WajJOoVjy3YZ
-         cAQzGfc3L7KMyGMxc95SmqUg8lhA9/dHv90IPtmWJ0V3h8aZy1Tqr/2orJoQfWJRu5bD
-         on1oLWm/kg5dnsLX2qg/eMkKt6dT9a/G7c1J5QBpy5j9xgNFVNXab+Rt6DnoJLG3J4VD
-         Y3Lg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=5pNTMkXqJHQWS/3hJYtcFCJwiq85VgF/d51n42Tox34=;
-        fh=EUk/z/rL1i+ZA97LbfBZSL4XB8RzW+pkt15zRSYDM/w=;
-        b=QUXF5RSiDOX4K8ezkfFdil9o+M5OEWNexW8arTMZmcWUDh/7HEZB3qR72oTAHLkYpe
-         FGysQxudAH5mMEI7s/9K69J9n3weJs/XL/SA01a172R2uQyDTxsrUOU4TIxwp4m6Z0AX
-         b4gJcVD5b/wp12XKOzz0VOspet0+5Rc2aaRhbnnK9BsImkS9DBpBaD/u0kmZl5JZBb3t
-         LrPJszoaBrcz50Q5zPM8ZiwLZXxQoakBjARHVj+NBEev4A2syhEb4GNmlkT3H/I9gS37
-         zjYPJEvkALy210TaQROPH65dV8ROArVwSyECgmubf1wE2l4eZzIRop0picSIs59cqMRV
-         8XAQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c42UBbw2"
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-473f4a48e9aso181341f8f.2
+        for <linux-security-module@vger.kernel.org>; Thu, 02 Jul 2026 23:57:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783047705; x=1783652505; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=5pNTMkXqJHQWS/3hJYtcFCJwiq85VgF/d51n42Tox34=;
-        b=JrihwNDtIxP+qKXqOKWiB5eVCobUpVroB+skxXYMg3byWxfvuTA6pflgRHHxWkzvAf
-         iDDA6GXAP5zNQjZdJ2CMCOy8I3Mg/EVloZNo/5OPkMMqmLjPrw/XNVTWvLc1/KNpTRQg
-         wz0YtVPPlWGFiHIqeUPewUbreTGXUFinBoBvI9JgmFt/zttQ4wWO4CNiWuMG81aKGfpU
-         jE6oH18gJAa2yz0j8TCwAFbM2UCHzPVVgVkLSm66Th9n2EcLuiEDZw+B8AR2uOkkQpwZ
-         6khgyrr2NF63lrMVZ03Pjctpru2oORGE1BfVX9ThP9qD9U3E50XEeEJVjr0ZdHcMvKNb
-         BSKA==
+        d=google.com; s=20251104; t=1783061830; x=1783666630; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BhiXOxf+bZWI18LM0Dx3pOu8Mks9Sw1XqPANu+yyKx4=;
+        b=c42UBbw2vIa1ioj39shj824X91NUhmLordhn71LW1QE4VyJ9fy0jvumI9eWCuw4Ov5
+         L+kuway3F7nusP5czEpWDmH91089MjzQ/N2HbLLHkL6RJBDYkzr10pN+SDDCGNQoEk7U
+         2I0wPY3WeY7gT8+x15q7PUQ/sP78AyTA2zoV0EtpvcaqjkJnVwMsHuAQiJmPC9i7b8RH
+         twVKlD+oyroy8NtdofK8ivEv6gxFlXnbKvnd9PGJjnhK004xUjOxSMdDeQ9qvUicZxPB
+         n42mKKjjkEXHdPJQWEIL0T39RFPufhkWRG4sL23LI8fkPPsRlt/Mj3pJq0nzPw1zbwxp
+         3uEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783047705; x=1783652505;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=5pNTMkXqJHQWS/3hJYtcFCJwiq85VgF/d51n42Tox34=;
-        b=fYJAqWQRa7ioBGNY+gv+BZxVba/9M/DqN0pkYWsk5/tIOlf3U0X29+BngCpn2fs+6U
-         k5Ubpb7lsZdSmRqEKMWku+fguPQNHA6+M5MezRb/52x39SUWdS3CbN1HJLs4omdycSiM
-         EKXR8dqaadyGaj6B0eA0rfl+EPceBHD4NVINEiMPvUpSJOMS4zejvVjYPd8lL+x/r6TZ
-         kvENlWyBr0dfqQF5Rqm1eDbPKZkiuZwINHOa//nQ0ebjEdF4pzt7ZKyw0Rm2uKa3QYDh
-         YUHmqdSx++irFWxrWx3aGKWx7eecIExZ6d6mn0Cbi0uMHP83KyrlDIq9/F+mq4+UOeXv
-         5HTA==
-X-Gm-Message-State: AOJu0Yy2Zq21/WMQ3yJQGVb/88+kOj89xPu8SNSoidCzerEbYsf1p+bT
-	IHWqyGqUFIXS796kutJV+RpEpMvPC05FpJN3XF1bO1zI5fDYD2EMOOKkDlhv6x3vr6uIFwqyh+j
-	8exh8C08fYmM+O1Fx6NJvNKDVq4o67xQ=
-X-Gm-Gg: AfdE7cmxGU2dVoJegX6/q2SjJBIdrhDKHUvIC6nBpxqCxsD809zI41l62ZL9wLfIdGX
-	bzuagkJ8W4ll/45MvBCtkRV/vETmJA9bL06g9Ikm1IAGdQh2f4OU7xw748kpqmJeFhQR5l6tpF+
-	t4KX8LCz3+H6CNUWuPHiq/68WRco1x2ePxuIpEPT5p0nQGyU1zq1s3nNIxGn83aYFAlg54Zp5Nh
-	oiBkti57Mbkw+RbKKrBiubDhoD2iLV5ZwaTSg4QI5WLgfC26H0On3Wa7CVrfwnKv6PTJq8=
-X-Received: by 2002:a05:690e:4501:10b0:660:e9ea:17dd with SMTP id
- 956f58d0204a3-66521a0f41fmr6219019d50.28.1783047705519; Thu, 02 Jul 2026
- 20:01:45 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1783061830; x=1783666630;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BhiXOxf+bZWI18LM0Dx3pOu8Mks9Sw1XqPANu+yyKx4=;
+        b=sHCS3dkQ6L2DOCD1oMujSgpFogaUQ9K9JSj3KOo2ML/sryqrbs8CfsUpquT7RbqORt
+         /7LPEBod/If2Fhh0uJjXKpuJEOd3FJrTYv7FHIJl7A/0Kc5AStF+pFM1465V0CTqWdrV
+         BMT+a1IJgn9Yaa/EQzHkejBh7YRJnZC9/zsP4rPM9RswVWbcgWdPCxKhAuZdv63cVuOs
+         UOOtsDORs4KMEm2yl330mYitQdTv21628OMYVMXHpp6GPGl23op1cT+v8wlQmXZIi+uS
+         eYMpixWvaDRO73+conuXdrlYjUQyxmZSt6Gx63cCeOaZzKQlzah3XWP41ZMxp1NfRPHG
+         prFA==
+X-Forwarded-Encrypted: i=1; AFNElJ+KAxSFiKrYOi46qwn5BxZswFV669RSB/9o6HJkG1g5nLAU7aGg6F0ushlctEZZ4fxw8MWC1Xu/bxJdmKg2RJzTw0CuUsU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdeH+J0nVKY4Rjlzgn8G/IM5Wzha0NSgCIq251tsHOw+ISw6VH
+	EJquA4ksX2kMcC6PqrCT0/AK1+goppWEeKwUOws/FCOPnA7aFdAuBY4/2Mdt8NMWRngRqklrTCF
+	YJV+AWsvqVvlCh+R7aA==
+X-Received: from wmdn10.prod.google.com ([2002:a05:600c:294a:b0:493:b4c4:536f])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:5010:b0:493:72d3:4a81 with SMTP id 5b1f17b1804b1-493c2b5161emr120210055e9.16.1783061830358;
+ Thu, 02 Jul 2026 23:57:10 -0700 (PDT)
+Date: Fri, 03 Jul 2026 06:57:00 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260703025247.940055-1-wangyan01@kylinos.cn>
-In-Reply-To: <20260703025247.940055-1-wangyan01@kylinos.cn>
-From: William Roberts <bill.c.roberts@gmail.com>
-Date: Thu, 2 Jul 2026 22:01:34 -0500
-X-Gm-Features: AVVi8CdJqLnqBKgtM-g-1LvQckP-amZ89lu1eWViecYCLlzrwaKA6-ak9naLr9c
-Message-ID: <CAFftDdrDgoHCopx9byaupea8GB6P=qSAY==6QQoXSJcJgn_04w@mail.gmail.com>
-Subject: Re: [PATCH] selftests/lsm: Fix memory leak in attr_lsm_count
-To: Wang Yan <wangyan01@kylinos.cn>
-Cc: linux-security-module@vger.kernel.org, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, shuah@kernel.org, casey@schaufler-ca.com, 
-	mic@digikod.net, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAD1dR2oC/33PTU7DMBAF4KtUXjNoPM6fWXEPxMJ2xqkFrcFOL
+ VCVu+OURYsasXxPmu9pziJzCpzF0+4sEpeQQzzW0D7shNub48QQxpoFIXVIUkPiQywMs8lvwKc
+ wgtTcWETLbFnUs4/EPnxdyJfX35z481Tl+VruQ55j+r7MFrm2/ywUCRI0NtjhQB1j/zzFOL3zo
+ 4sHsWqFbgTqNwRaBaPdgGYgtt2doK5Ci1uCAgTqPZFXqnXk7oTmRqCtL5oqYO/s6JXxesA/wrI sPwkc0nyMAQAA
+X-Change-Id: 20260219-remove-task-euid-19e4b00beebe
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1932; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=nScf5netnt1NjDVQidgpbeNPyFsk+SnFXpkUx7OAXGA=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBqR11ApXczXX2Gek2J+6VC5z6Iuc4bHt3uT0qa3
+ oQletGsubiJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCakddQAAKCRAEWL7uWMY5
+ RnYREACES2fWRH58RUZ8ijCGO0nid0c3qD6986tFCKqRXA2+AKL/DwrN05zSGi/BGr1Q6p9VNLC
+ z6yK0MiUwXmZICs5E4UOKWBAIsAtDmwK6LfhY0ipAnISJwL8AlheQOBdgzBInbzV2/NM0d1VbPw
+ Z/xhGMZtUel0kUJ9DH+Im3mT9xj3TVGD/huCvsbo5sHHH6AI1MJFFJx2pqHErUgCO69nuGG6G4x
+ CCoDwoPGAYVUfxXRylBKOxEzmkSlK75dvX9YicD+GFsFNSR38F2dNlzQdYSy6I2N91gfS94Notl
+ 8Kha95efuMsWSKFmKZeMRUlMFF+eWUNPOB1DNl1t5oY70wcYFefpj0ffrx8gcBs2n1bUNLTOClU
+ 2Ii1YcOEAGsbVxxTljxttKsCT6Q0x6yq+jHtegU1CzCcTcYxZTF/OkylwoZZPWeKH1+/lsqRnja
+ BqRijzyxA/3M5azKjTLdMzERNVIwAddUiD+G7Z9EtzJGr2a72A3qbDXd3heu+5IbOJvgBK1uhRH
+ wXuvvJagFdu7Q7Nihky8l4pWlgDEJtlMGIQ0w7wxAf2ai7dx+fZgmLuEE3hFfBJiMVcC2lRxrbD
+ Dsq+YHG1CvpCCz+g9NRM6qGl0t9Zn7cM/cFc7Fxut8hEG9+5YmlPGyFBEG4QdZagSFBK0VAS4Oh R+wqLG+8mV38XTw==
+X-Mailer: b4 0.14.3
+Message-ID: <20260703-remove-task-euid-v5-0-c90c7e2ddf54@google.com>
+Subject: [PATCH v5 0/2] Delete task_euid()
+From: Alice Ryhl <aliceryhl@google.com>
+To: Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Alex Shi <alexs@kernel.org>, 
+	Yanteng Si <si.yanteng@linux.dev>, Dongliang Mu <dzm91@hust.edu.cn>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Jann Horn <jannh@google.com>, 
+	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, Jul 2, 2026 at 9:53=E2=80=AFPM Wang Yan <wangyan01@kylinos.cn> wrot=
-e:
->
-> The calloc-allocated buffer in attr_lsm_count() is never released on
-> any exit path, including both the normal return path and the early
-> return when read_sysfs_lsms fails, resulting in a heap memory leak.
->
-> Add free() for the buffer on all return branches to fix the leak.
->
-> Fixes: d3d929a8b0cd ("LSM: selftests for Linux Security Module syscalls")
-> Signed-off-by: Wang Yan <wangyan01@kylinos.cn>
-> ---
->  tools/testing/selftests/lsm/common.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/tools/testing/selftests/lsm/common.c b/tools/testing/selftes=
-ts/lsm/common.c
-> index 9ad258912646..4fa8310750a0 100644
-> --- a/tools/testing/selftests/lsm/common.c
-> +++ b/tools/testing/selftests/lsm/common.c
-> @@ -76,6 +76,7 @@ int attr_lsm_count(void)
->                 return 0;
->
->         if (read_sysfs_lsms(names, sysconf(_SC_PAGESIZE)))
-> +               free(names);
->                 return 0;
+The task_euid() method is a very weird method, and Binder was the only
+user. As of commit 65b672152289 ("binder: use current_euid() for
+transaction sender identity") Binder doesn't use task_euid() anymore,
+so we can delete this method.
 
-Did you test this, let alone even compile it? All the C code after
-this return is dead code.
-Please ensure that you test and compile your patches checking for
-warnings. Sending
-untested patches is "spammy".
+My suggestion would be to merge this through the LSM tree.
 
->
->         if (strstr(names, "selinux"))
-> @@ -85,5 +86,6 @@ int attr_lsm_count(void)
->         if (strstr(names, "apparmor"))
->                 count++;
->
-> +       free(names);
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Changes in v5:
+- Rebase on v7.2-rc1.
+- Reword patch 1 commit message to take into account that usage has now
+  been removed from Binder.
+- Pick up Gary's Reviewed-by.
+- Link to v4: https://lore.kernel.org/r/20260529-remove-task-euid-v4-0-07cbdf3af980@google.com
 
-Do this instead:
+Changes in v4:
+- Reword 'euid' -> 'effective UID' in 'Kuid::current_euid()' docs.
+- Link to v3: https://lore.kernel.org/r/20260507-remove-task-euid-v3-0-27f22f335c2c@google.com
 
-         if (read_sysfs_lsms(names, sysconf(_SC_PAGESIZE)))
-             goto out;
-         <existing code>
-out:
-           free(names);
->         return count;
->  }
-> --
-> 2.25.1
->
->
+Changes in v3:
+- Include 'task' clarification commit in series.
+- Rebase and resend.
+- Link to v2: https://lore.kernel.org/r/20260227-remove-task-euid-v2-1-9a9c80a82eb6@google.com
+
+Changes in v2:
+- Update translation as per Alex Shi.
+- Pick up Reviewed-by Gary.
+- Update commit title to use cred: prefix.
+- Link to v1: https://lore.kernel.org/r/20260219-remove-task-euid-v1-1-904060826e07@google.com
+
+---
+Alice Ryhl (1):
+      cred: delete task_euid()
+
+Jann Horn (1):
+      rust: task: clarify comments on task UID accessors
+
+ Documentation/security/credentials.rst                    |  6 ++----
+ Documentation/translations/zh_CN/security/credentials.rst |  4 +---
+ include/linux/cred.h                                      |  1 -
+ rust/helpers/task.c                                       |  5 -----
+ rust/kernel/task.rs                                       | 11 ++---------
+ 5 files changed, 5 insertions(+), 22 deletions(-)
+---
+base-commit: dc59e4fea9d83f03bad6bddf3fa2e52491777482
+change-id: 20260219-remove-task-euid-19e4b00beebe
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
+
