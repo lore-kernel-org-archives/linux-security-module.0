@@ -1,126 +1,102 @@
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F8C3C5DDB
-	for <linux-security-module@vger.kernel.org>; Thu,  2 Jul 2026 22:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE86222652D;
+	Fri,  3 Jul 2026 02:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783031592; cv=none; b=URpbGiXGFagyRm9ZGZTf/sxt+qhb5g4vbXEfMt1BBRC5IVjsfh5dwRm9M0GytQxMZyeR9BGt3qXu28N4okqtTRDw9yQ3zGDXAo2SyCH5T8ekFtl7WubocNba90MCrfSe5rI1FpqUUaiyMG7fPptfQGZVbB5rVdLgpP3OjCB/S8A=
+	t=1783047201; cv=none; b=e5gG3QgfOGQQwXtKus4rDUHnJOE0voHikAuZDKxev/0eXNIZqtEWkpbaCfGXY3QXZDHicVPLpb/DzciThRPNrq3bykcOYOYj+xEwRmimb8L99AR3DGJCzA9QbKfo+GISFIrBKzLxT8xY5HlAYfun5onXKko2wocxv812UaAGsGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783031592; c=relaxed/simple;
-	bh=g2TLxqmYsDcWlbonN1FiCOaGRb1Al5ceMdi+LTYuhG4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=MptreQjR0eKcI+PInXbwWif2I7ZXyp6BHRs5kN1FnWt8IkXwzQfrTH4tBir1dw/TpWc0+FrePRfjEMxeebTu0eH+MvasFoRltDCc0YzUNqQTZMfr6LKmFgZU3b3WDa71IQClRySHYR4ED8gbDGwwFKTFGp9Acsu+5o42y8dOFiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CfX0AKNk; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CfX0AKNk"
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-6a18e363d52so987099eaf.0
-        for <linux-security-module@vger.kernel.org>; Thu, 02 Jul 2026 15:33:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783031587; x=1783636387; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wzsqf9gTGwcZ883+EjWafMl/QLmheDnAUcy/59Dlq2M=;
-        b=CfX0AKNkR98+VtyMs+zHftNOHI6rI+iRuZ33w7BnZMBr1SBYDfAiHi5ilq0HkLdtEt
-         yjb0+ROxMTH7sY4+hZRxKeSOAT+Q3lztQeflQU3+3cIxH59t9x/2im/CeSUIspb5byBq
-         BxpfPJWh8yqYN5lB3ta9ho17myFvpyS36lKsoUXE4iIIkjMHJf54fj1p4TaDj1QJ18cQ
-         cTR0a5teGeD2j8w3sh1iNx79EWRRQ/qKGx8lgRJL7VbKiYC3Ab5Hk4yrmIYP+ACBVEM+
-         8/Ee4YsJPpHKjNhjCQ8jQWOgTc5ooLmfchsVF8+1c1MokUjHNHvN0jl/bqZ2PQCGW8vU
-         Pc9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783031587; x=1783636387;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Wzsqf9gTGwcZ883+EjWafMl/QLmheDnAUcy/59Dlq2M=;
-        b=jqRaZlWJsDqcVhguu0HkL4u/lhoKbl+sd3JaflNCG3YUcxRwB8TDVMYTnUvEi3J+3d
-         AgJ32nH4hzgT8qpQY064PMrf28dlNA/9QzrL6jZyjEJq/uO4++9t6JVLzL3TDIUBDOi8
-         r908/Cy91rzlKHpgSzEOKUg25tUDc9dOkOaEOc/gloa7ewVkSG3p11UV6SnilKyFEg8o
-         fy2ncUy3vp5VYtbr+iS+6Boy1oAE7YRO1yPVgsqM0fYZVVJTs2nqo7KA5pCDRc+x/nEt
-         XxAxRhdUGcPFVAcvhXYS5Yvw9tLJEgK7byGtRY0Wj5WPViHW32hE67nb7gm/bimu0QkI
-         UnQQ==
-X-Forwarded-Encrypted: i=1; AFNElJ9kpZbHwARF0MRNsQKqzXRavoCQ5NEzktIuGsuFCSUdTGEOqo9xX4O/wbJaT3iSXkI62PibefoNd30z5n69YrlR6m4hNJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGX5LLwbkjijUAWGUWjq3b6kpp/wR4oreSb2ILg89QBH2dmXOS
-	82nq7dBJkIXynsX2Fi39mqqR93QqexsdexS2pOxg0OCNVtt5TQ64P4OXDkFTcg==
-X-Gm-Gg: AfdE7ckUlu9I0g+z+TNebUQQS6DNL/f5pDID+ChSuIYRu0aNyezXxhiZKmDOfAbGxEO
-	3WxAk9PTv+R8lt3nPcXjE7mNKdkQuv/3vb0EU/lhOZ0JzfGe55NeINdiWeChE/N2b0kR78m9LL2
-	R0OMKRcsxSxIQY+g2YDgwxr/coTjS2AIUC3hAMBcDDrb8IHTRXMX45/6nAr/Afnfsp6TD9MnkTj
-	Ur7MPD8bXHbYAsfR7XBBg7Rg7JUdz/FgMGqjAcVTU7Qn1AG1jW+27AtvZE/LeGqsgkio/SJOrnI
-	+yrPlA1nv6gLARMbKy0ktUTdHIF4osZmniK8nfp6uI24yGl+moa1O5BS6ISzV4laCRcFQ8449WD
-	sO5S9EOmwa8q3eIbsguRcJ4OPGGKmPFdyPSW2G2V1obFSQU+9F70Kn2kt7bqBtXdBr7F/eYFzXb
-	1bOYWYmEoa6LYM0hMImF7hkIWz1qN0726U7wWFVVR5RqectjoCu22uxWK0NHc3jQm34jsFhVMoQ
-	ReyUw==
-X-Received: by 2002:a05:6820:1b06:b0:6a1:93a5:cd6e with SMTP id 006d021491bc7-6a31d501303mr856042eaf.35.1783031586590;
-        Thu, 02 Jul 2026 15:33:06 -0700 (PDT)
-Received: from localhost ([2a03:2880:10ff:7::])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6a310020e13sm3009434eaf.7.2026.07.02.15.33.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Jul 2026 15:33:05 -0700 (PDT)
+	s=arc-20240116; t=1783047201; c=relaxed/simple;
+	bh=G/8EFE8SdhjI0Args3IgNLWZyySAYBz0qOcz01IX9iE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ec0PkKCjUOOqZ62eXliWVrykNQiRRpptGqgEW+Q7onXoTt3GskWR9Xv4oKrhw3Gq+ZI5cYR1I+D+MJoR9UeWaZe2VHvt1bEcHTl7M9/8j+FAgVYU5yuDZ1zkmkZe299vRUZx/1LhQaQ5z21zgRkC4EUoie4cbFs+Dzfmoo1GaJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 54aec8f4768a11f1aa26b74ffac11d73-20260703
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN
+	HR_FROM_NAME, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
+	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
+	HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED
+	SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.12,REQID:77c21a8a-c6b8-481f-a093-ffa8ceb18592,IP:15,
+	URL:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:40
+X-CID-INFO: VERSION:1.3.12,REQID:77c21a8a-c6b8-481f-a093-ffa8ceb18592,IP:15,UR
+	L:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:40
+X-CID-META: VersionHash:e7bac3a,CLOUDID:ad4301a87f02710f12a5b795d31ae021,BulkI
+	D:26070310505284HWJYM9,BulkQuantity:1,Recheck:0,SF:17|19|66|78|102|127|850
+	|865|898|915,TC:nil,Content:0|15|50,EDM:5,IP:-2,URL:0,File:nil,RT:nil,Bulk
+	:40,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,B
+	RE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 54aec8f4768a11f1aa26b74ffac11d73-20260703
+X-User: wangyan01@kylinos.cn
+Received: from localhost.localdomain [(116.128.244.171)] by mailgw.kylinos.cn
+	(envelope-from <wangyan01@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 174164620; Fri, 03 Jul 2026 10:53:12 +0800
+From: Wang Yan <wangyan01@kylinos.cn>
+To: linux-security-module@vger.kernel.org
+Cc: paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	shuah@kernel.org,
+	casey@schaufler-ca.com,
+	mic@digikod.net,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wang Yan <wangyan01@kylinos.cn>
+Subject: [PATCH] selftests/lsm: Fix memory leak in attr_lsm_count
+Date: Fri,  3 Jul 2026 10:52:47 +0800
+Message-Id: <20260703025247.940055-1-wangyan01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 02 Jul 2026 15:33:04 -0700
-Message-Id: <DJOFY21DYUI4.19WKQ3NPZ4H5R@gmail.com>
-Cc: <ast@kernel.org>, <kpsingh@kernel.org>,
- <James.Bottomley@hansenpartnership.com>, <bboscaccy@linux.microsoft.com>,
- <memxor@gmail.com>, <torvalds@linux-foundation.org>,
- <a.s.protopopov@gmail.com>, <bpf@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH bpf-next v3 2/6] bpf: Verify signed loader metadata at
- load time
-From: "Alexei Starovoitov" <alexei.starovoitov@gmail.com>
-To: "Paul Moore" <paul@paul-moore.com>, "Daniel Borkmann"
- <daniel@iogearbox.net>
-X-Mailer: aerc
-References: <20260702143605.252797-1-daniel@iogearbox.net>
- <20260702143605.252797-3-daniel@iogearbox.net>
- <CAHC9VhQD4RHsGiTMVCCTN+eB71-Ueopke8XghExpNJ2PSNa_jQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhQD4RHsGiTMVCCTN+eB71-Ueopke8XghExpNJ2PSNa_jQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu Jul 2, 2026 at 3:05 PM PDT, Paul Moore wrote:
->
-> As I mentioned previously, the security_bpf_prog_load() hook should
-> not be moved.  Its placement was deliberate, and moving it as you've
-> done in this patch creates a security regression.=20
+The calloc-allocated buffer in attr_lsm_count() is never released on
+any exit path, including both the normal return path and the early
+return when read_sysfs_lsms fails, resulting in a heap memory leak.
 
-not true.
+Add free() for the buffer on all return branches to fix the leak.
 
-> Without this patch,
-> for processes where SELinux is preventing BPF programs from being
-> loaded, it is able to do so before the process allocates a potentially
-> very large chunk of kernel memory, up to one million BPF instructions.
+Fixes: d3d929a8b0cd ("LSM: selftests for Linux Security Module syscalls")
+Signed-off-by: Wang Yan <wangyan01@kylinos.cn>
+---
+ tools/testing/selftests/lsm/common.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-only when signature verification is requested and the hash over insns
-is what your hornet thingy did too.
-So no regression whatsoever. Exact same behavior.
+diff --git a/tools/testing/selftests/lsm/common.c b/tools/testing/selftests/lsm/common.c
+index 9ad258912646..4fa8310750a0 100644
+--- a/tools/testing/selftests/lsm/common.c
++++ b/tools/testing/selftests/lsm/common.c
+@@ -76,6 +76,7 @@ int attr_lsm_count(void)
+ 		return 0;
+ 
+ 	if (read_sysfs_lsms(names, sysconf(_SC_PAGESIZE)))
++		free(names);
+ 		return 0;
+ 
+ 	if (strstr(names, "selinux"))
+@@ -85,5 +86,6 @@ int attr_lsm_count(void)
+ 	if (strstr(names, "apparmor"))
+ 		count++;
+ 
++	free(names);
+ 	return count;
+ }
+-- 
+2.25.1
 
-> With this patch, even in cases where SELinux will prevent the BPF
-> program load operation, it is not able to do so before the process
-> triggers a potential sizable memory allocation, opening the door for a
-> local DoS attack.
-
-Not true either. Worst case is 1M which is 8Mbyte.
-Not even close to anything DoS worthy.
-
-> In an effort to work with you on this, I did bring up two alternative
-> solutions: a new LSM hook for the signature verification, or the use
-> of the existing security_bpf_prog() hook.=20
-
-Sorry we're not going to add new hook because Paul has
-non-technical grudge against bpf.
-
-> While I don't like to do this, you haven't given me much of a choice;
-> the security regression can not be ignored:
->
->  Nacked-by: Paul Moore (don't move bpf_prog_load LSM hook) <paul@paul-moo=
-re.com>
-
-of course. will keep it and let Linus decide during the merge window.
