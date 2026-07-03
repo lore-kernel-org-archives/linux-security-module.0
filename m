@@ -1,54 +1,56 @@
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDD8388379
-	for <linux-security-module@vger.kernel.org>; Fri,  3 Jul 2026 06:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5506E388E74
+	for <linux-security-module@vger.kernel.org>; Fri,  3 Jul 2026 06:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783061835; cv=none; b=cjylrztLD+WxVNpEKXCIoQfdywLIjBNl7+r/9auBv43u8r509MPkrNEXg6/gjCsPfQ8y0G2swibY6CF5GgEXE+q7lioRaS8NLRo3Q+YDl7xTZ1AMQD+9GTT1lDsCUY850oPlJCZic9wlFV5C3dTR3xzUSXZ4Z7ZZCbIZMEgjk54=
+	t=1783061839; cv=none; b=qFKL0ozzo+eTnC3mQUUtkbBYSj1pMcnUTPa0tIi9izzI5jKcpwgoxDJ1H9DkOHaTye8XsrO6XFCckV5VGzKViYQfblgqrptpaVzSQYVQYyinrNRUEoDHKcxnaEpoV+9Z8csxxZKJ4KU6ihDqinqHlICuQQYcyZA4pbITdQLN+U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783061835; c=relaxed/simple;
-	bh=zu+IOxXFKrGNzkLXkE06hfNESRivhLz8Db53LMrXkPs=;
+	s=arc-20240116; t=1783061839; c=relaxed/simple;
+	bh=cv5m+J8quHjxp+RrvQXGI9Lz2h9CwSxAjCeQfqqCtYs=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ot7jcJo+OqtGi4BGouLlIcut6CU3MLfT/PfOaX26TcfO9kS7OGGfwvpP0QxMjf80/Vib6GNx0zAV3mOmGzIaxQf9MElcRvMd84NkD4A7mPQyR8hCy/ayvRHUvaaOqhMnTRxSNFaC/NMafOEZH771/1LHK+y+paI0RORu+aaxo60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r4p+/K1l; arc=none smtp.client-ip=209.85.208.74
+	 To:Cc:Content-Type; b=NbDCI5I8HOEmZTDd13NhjQVgh9WEW9tMxQ/8E5suEYidM51Oajy2RkBBKCDIJtzW+ho/fDXXeVJKPFV0K8lr2DG74y+TeiWOMz7+CNLkDqqbnnfAR/MdVEhVpK4bKN6G6QIiY8dJF5gRVdQvzeQvSKVKJSCbh5eO4Pw1q9mhK2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qt/OSwOH; arc=none smtp.client-ip=209.85.221.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r4p+/K1l"
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-698af52daa4so368910a12.0
-        for <linux-security-module@vger.kernel.org>; Thu, 02 Jul 2026 23:57:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qt/OSwOH"
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-473941177b0so223643f8f.1
+        for <linux-security-module@vger.kernel.org>; Thu, 02 Jul 2026 23:57:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1783061832; x=1783666632; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HujDRhpSl/ullH14BHuwOZTRSH3cQtgUzZVCJi2HQbw=;
-        b=r4p+/K1lHt5gxfQGvRahZzexmXD6fXh2HClpHhUmpT4lvCSCojCnK6Zkgu0jD06844
-         Z/CAthGrhAwAO/J7+JK2IKmATXQoUi2Bm8BfZRW8xtZ1QKp4oAMPXzHwKoMqW7/gfWwW
-         MQzhSMHYRwDaMxciJ3OrOI+Znp/hTQZ7aBmjOH+w2zDPKnNrTc62qryOly5JvSTuVkdr
-         IuwRdnK/zUQRrc2ZW3L5HhTriI3XfowebIWq7bDff1PvyYF8TkJORa1DsiAhDdy6zXUf
-         LKc8rcrK4H5xyGqX6AGcgGea7ohmmHColgM1L1/Wtyi1iKS54L17tbBZXrn5aqeTmHOV
-         KY2w==
+        d=google.com; s=20251104; t=1783061834; x=1783666634; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cW1xgJct4rIUVF64FDKOuE3W1bWWjQIlMxMa9uWaixw=;
+        b=Qt/OSwOHYaSJY00e02WQwwcmZHgOfi0+VqIsHv/cXoVnhbAsIbC+sbA/mwBQVE+jHm
+         RNPSUrzZtk+rafOwAIv7C/VsQPs2HAMrk2ocPkNzPK14rg1mMSzgrHvymIsN35P66rPq
+         nuLhny/NO9AJ8p7DdCsVOylsX77eXwfDE5r+5XGSdjKyRLCWgYDdWi2KnyRrRZGHqOHU
+         gGoTIrusmisfr1E/QBtEw04eLTfgU895XI6H9Fl04HcVqUhRrGDEBJXBo+dUvMhcCtGr
+         Pu1qTadmWGg+B78EqA+tvQF5FvMauslR9p7h04d70umWZ66SN5sDFF+Vney9MFUwOn0B
+         kG9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783061832; x=1783666632;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HujDRhpSl/ullH14BHuwOZTRSH3cQtgUzZVCJi2HQbw=;
-        b=HZN3IFvfFdcdOGGaOoP3+pg3vmzJQV8LkRDUAlQDRGuOaHAPvbMe9Gd/vN6akKprTy
-         Vo5sg4yvNPFe5loZmLK9SmNkPbRGaPdSxVo244ARLtMpo9Q9hFuUlZRDOanbRleVEpNN
-         /X3dbmX2BgSDjPPzOdECXXYdFO/rzDsIaySWZ9uES/y/cn9Imz6JsfRgfOKbzlTQHjcy
-         hgD7rI8JsXrcmisY2PsIVzbQI3WwevLGdn3/BcPkRuorWDPQTVkRboQkx2tOOkj+anwA
-         zZGiOa7MkkiFFmn6kZCsXO5/51rgEHc9vKipHU/yy6g/erJxMGZqM8JjCdKAIfbHkWpK
-         pJtg==
-X-Forwarded-Encrypted: i=1; AHgh+RrECDEOPQvCJC9swsqznjHsDlm4G1WFazFmGKQv+M9lllgBUqOqnX+hMqfwx6olqlVYf9A9+WYUALUQJgtfNoxN+2ZWQm4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHHjvaPo2ewBckh723GbjioR3bUjasknDIbYFApdMQWXp4TS3M
-	whtfpuIpRhcv+lJjCBt2ujwfG7mCBQfTKvYjSxPWTUFKiGodza7mkTCzgGrBo+8fbLziilN36YA
-	uwxxrj3UoZtI23OCN/w==
-X-Received: from edwl16.prod.google.com ([2002:a05:6402:1250:b0:695:64c5:a8b5])
+        d=1e100.net; s=20251104; t=1783061834; x=1783666634;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=cW1xgJct4rIUVF64FDKOuE3W1bWWjQIlMxMa9uWaixw=;
+        b=MW8074v47dIrY2ofZFdtf/iC94DPAvllY5gmb+lHim0VeLolVfLpqu63sOS80pzRIL
+         P/7nhsfZqIIaX++sxWoFjNllc8XObDUAx/oQcQbOrRMJOKglOIbaFW04v+JcdwSrQuFH
+         btvRyjJvdApndBuA8qpKVgFyTpk400xF/bazluotbJuENSYMmV3lnSTDY7iSP0tBFClE
+         ina82CdbV9TkT/tSNmr3d2o8fWtMfoY1em/7uzKuROFsuKuaVxOby4NS/HYx1J12JtfY
+         3ke4f6mYE6PLu4LWMgvGMC78W0oiWYVP1Lunb1ClCRVO/bSYovuNLSggW5/Ips2r9Xb7
+         7ZZA==
+X-Forwarded-Encrypted: i=1; AHgh+RoWusrZIyzqbO6wOTAX3xspVHHbl3uS791j284OtLNFeRKqUucnrT5fZJc0pPMwYywbBYRhOYz5EW9nZ0bd8pcjb+jFQ2I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZdWF839dULkS5sHChUggXv5LSCXWuwMwh581RKo7qgg5SBHXS
+	p6yxe0w5ux7dorOJOiC7pwIGPYsezd9+peKSlzGXRk744/y6ToBKn+VAJVFUqVDQQ0kW1TBv43/
+	OQjEQ7AzvSiaZzoehGw==
+X-Received: from wrxt5.prod.google.com ([2002:a05:6000:1c5:b0:46d:90df:9c14])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6402:2b91:b0:698:81ab:c61a with SMTP id 4fb4d7f45d1cf-6989f37807dmr4111766a12.23.1783061831877;
- Thu, 02 Jul 2026 23:57:11 -0700 (PDT)
-Date: Fri, 03 Jul 2026 06:57:01 +0000
+ 2002:a05:6000:2689:b0:472:55a:ef89 with SMTP id ffacd0b85a97d-47759097f62mr13285700f8f.27.1783061833360;
+ Thu, 02 Jul 2026 23:57:13 -0700 (PDT)
+Date: Fri, 03 Jul 2026 06:57:02 +0000
 In-Reply-To: <20260703-remove-task-euid-v5-0-c90c7e2ddf54@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -58,22 +60,22 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20260703-remove-task-euid-v5-0-c90c7e2ddf54@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2920; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=O6D6AyOElcbWFraYT5ffBZVrvQPqocycYP2c00vbVaM=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBqR11ES7i/LvNhPgiyASlEW4tbM9A5oYhb+1smF
- NYdTM6OPQ2JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCakddRAAKCRAEWL7uWMY5
- RjuXD/9O2+73b1AZgC+/boV6XAffWK+Q84nyvgN9n+B2Ing5nch/7PQPvDnTq/G57xnMu+Rdlf0
- Dt+yFG0pzRQUUDhsKXtMGvBHrLSm96bjOE8e6rLM/bQmntBIv8DCgM/9LiNv+VkgINbbOOF1PZ1
- t/3g33m6NZd5wz/RD3+kkuXMPD+bV/R3Ob1vM1ZFNn1WPZrX3h6nj34znSvhTsZfLNS1W7NkLvj
- o1rRr/pkoxaOn9iVaCOFBg10OKX8dUvBcl5qBj6h8hf+YHNuLTBvNe4THbJTytIszcbyD9fEcBY
- 86yxFuRUdyf4ZcBCyaDzX02sr/u6gaws+XkzMwFjBFbcjylLHp1Jpndg9lZBKnoa00vWTsYu4VL
- 0yhBidBXZlqG/AVRTf+XSTb92JBhpxi17o+8703uBb8zhbaQbuR2l86yiErv5sycx/SG6icaFY1
- W19y1ulbei+jfyxJ9QzqDD0tvLLFy+S6mg0HPfBGsNzisubaBVjcNl4V/NfVssrzAc3NREtOGXd
- XTQZDSz5rZ0rKWSiVnDidWzHyUV3bFv6IaeMbR9rRRlHY3IEoBzOTpH3qTqhSX/PNp3u27ifaIm
- 5RkKkLz0LJpPIkh2FUxZyHxl2wn6nBcZnmSnbf4BnkphUzFqV0VfYPw3IjHBnzsY5scHkrs66Ee 0Zr29taKoZl8ClA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5389; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=k7dZr0CQTzIcUvurCwCdMJZeoApiVYyv+YRvyaWrWfU=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBqR11Fem++4KKosCqI8D8y37ZxeOM4s61nbQk+I
+ RxT/EXjjX+JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCakddRQAKCRAEWL7uWMY5
+ RnmzEACZ/hgyrN3Ua95FLrJ8iWTcluJCg4Kt9ynUR7von/wbqiE7jVMzse6QA/HFqOnxepgKi7j
+ poWLbwm7jnkoigmK5DoFGRlypwdN14RLjomQ7ih38G3QDvO94h7LsCemRZUNbjA+tW7AGnehaPm
+ 8aEIwD7g8Rd3GDrf8tNaA59SCpKauREWe/QqFM1sdpzaIPyRtzVKzq/+LLkYCQ5NgIVa7ojVt4Y
+ ZCCYZ+ZFodAakL1VE1krxN3qRWWMwyAGx9RZ225hueWYODKYN2inKyMzt++uoXGa24ggA1vhGa2
+ 7435pI2XcTGKC+r6njgulMtZUdidFPO2s5/WS6d8cGfcWZxtVtF9oEbmaa6DXANGImUF47comj+
+ BqPrhVccUowl990JVPlgB6eY/wX4aYaz/QewUGueGhqPCHt4cOXZk4ARCmq3xGq2HCFXY+RTZRl
+ MotQ6By/2f1vjd62hM47E8Cqr01WTDV4gVDR3EuJiFKJPzqWEW9VFLTNQIRkjh4KnFrXDZ8h4CG
+ 3/nbTxt0NTDEyFTt743yTY4aJAvMa1EnA0TfnTOuoXv+om2vvoGlzyJPJtbREkXuDvZbgIyH8d5
+ 0vzegkyHdyYsTg1QgcTLBA2PibJk0TgZ5l5Ih6NRoYxjSckojSvYgVBPiqAXR1XNJc5Rx5o+6Lo CLupUn4Rdj6fF7Q==
 X-Mailer: b4 0.14.3
-Message-ID: <20260703-remove-task-euid-v5-1-c90c7e2ddf54@google.com>
-Subject: [PATCH v5 1/2] rust: task: clarify comments on task UID accessors
+Message-ID: <20260703-remove-task-euid-v5-2-c90c7e2ddf54@google.com>
+Subject: [PATCH v5 2/2] cred: delete task_euid()
 From: Alice Ryhl <aliceryhl@google.com>
 To: Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>, 
 	Jonathan Corbet <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -87,77 +89,161 @@ Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>, Gary Guo <ga
 	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
 	Alice Ryhl <aliceryhl@google.com>
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Jann Horn <jannh@google.com>
+task_euid() is a very weird operation. You can see how weird it is by
+grepping for task_euid() - binder is its only user. task_euid() obtains
+the objective effective UID - it looks at the credentials of the task
+for purposes of acting on it as an object, but then accesses the
+effective UID (which the credentials.7 man page describes as "[...] used
+by the kernel to determine the permissions that the process will have
+when accessing shared resources [...]").
 
-Linux has separate subjective and objective task credentials, see the
-comment above `struct cred`. Clarify which accessor functions operate on
-which set of credentials.
+Since usage in Binder has now been removed, get rid of the resulting
+dead code.
 
-Also document that Task::euid() is a very weird operation. You can see how
-weird it is by grepping for task_euid() in the history - binder was its
-only user. Task::euid() obtains the objective effective UID - it looks
-at the credentials of the task for purposes of acting on it as an
-object, but then accesses the effective UID (which the credentials.7 man
-page describes as "[...] used by the kernel to determine the permissions
-that the process will have when accessing shared resources [...]").
+Changes to the zh_CN translation was carried out with the help of
+Gemini and Google Translate, and since adjusted as per Alex Shi's
+feedback.
 
-For context:
-Arguably, binder's use of task_euid() is a theoretical security problem,
-which only has no impact on Android because Android has no setuid binaries
-executable by apps.
-commit 29bc22ac5e5b ("binder: use euid from cred instead of using task")
-originally fixed that by removing that only user of task_euid(), but the
-fix got reverted in commit c21a80ca0684 ("binder: fix test regression
-due to sender_euid change") because some Android test started failing.
-It was since fixed again by commit 65b672152289 ("binder: use
-current_euid() for transaction sender identity"), which uses
-current_euid() instead.
-
-Signed-off-by: Jann Horn <jannh@google.com>
+Suggested-by: Jann Horn <jannh@google.com>
 Reviewed-by: Gary Guo <gary@garyguo.net>
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
-Originally sent as:
-https://lore.kernel.org/r/20260212-rust-uid-v1-1-deff4214c766@google.com
----
- rust/kernel/task.rs | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ Documentation/security/credentials.rst                    |  6 ++----
+ Documentation/translations/zh_CN/security/credentials.rst |  4 +---
+ include/linux/cred.h                                      |  1 -
+ rust/helpers/task.c                                       |  5 -----
+ rust/kernel/task.rs                                       | 10 ----------
+ 5 files changed, 3 insertions(+), 23 deletions(-)
 
+diff --git a/Documentation/security/credentials.rst b/Documentation/securit=
+y/credentials.rst
+index 4996838491b1..a39a2a2f67aa 100644
+--- a/Documentation/security/credentials.rst
++++ b/Documentation/security/credentials.rst
+@@ -393,16 +393,14 @@ the credentials so obtained when they're finished wit=
+h.
+    The result of ``__task_cred()`` should not be passed directly to
+    ``get_cred()`` as this may race with ``commit_cred()``.
+=20
+-There are a couple of convenience functions to access bits of another task=
+'s
+-credentials, hiding the RCU magic from the caller::
++There is a convenience function to access bits of another task's credentia=
+ls,
++hiding the RCU magic from the caller::
+=20
+ 	uid_t task_uid(task)		Task's real UID
+-	uid_t task_euid(task)		Task's effective UID
+=20
+ If the caller is holding the RCU read lock at the time anyway, then::
+=20
+ 	__task_cred(task)->uid
+-	__task_cred(task)->euid
+=20
+ should be used instead.  Similarly, if multiple aspects of a task's creden=
+tials
+ need to be accessed, RCU read lock should be used, ``__task_cred()`` calle=
+d,
+diff --git a/Documentation/translations/zh_CN/security/credentials.rst b/Do=
+cumentation/translations/zh_CN/security/credentials.rst
+index 88fcd9152ffe..20c8696f8198 100644
+--- a/Documentation/translations/zh_CN/security/credentials.rst
++++ b/Documentation/translations/zh_CN/security/credentials.rst
+@@ -337,15 +337,13 @@ const=E6=8C=87=E9=92=88=E4=B8=8A=E6=93=8D=E4=BD=9C=EF=
+=BC=8C=E5=9B=A0=E6=AD=A4=E4=B8=8D=E9=9C=80=E8=A6=81=E8=BF=9B=E8=A1=8C=E7=B1=
+=BB=E5=9E=8B=E8=BD=AC=E6=8D=A2=EF=BC=8C=E4=BD=86=E9=9C=80=E8=A6=81=E4=B8=B4=
+=E6=97=B6=E6=94=BE=E5=BC=83
+    ``__task_cred()`` =E7=9A=84=E7=BB=93=E6=9E=9C=E4=B8=8D=E5=BA=94=E7=9B=
+=B4=E6=8E=A5=E4=BC=A0=E9=80=92=E7=BB=99 ``get_cred()`` =EF=BC=8C
+    =E5=9B=A0=E4=B8=BA=E8=BF=99=E5=8F=AF=E8=83=BD=E4=B8=8E ``commit_cred()`=
+` =E5=8F=91=E7=94=9F=E7=AB=9E=E4=BA=89=E6=9D=A1=E4=BB=B6=E3=80=82
+=20
+-=E8=BF=98=E6=9C=89=E4=B8=80=E4=BA=9B=E6=96=B9=E4=BE=BF=E7=9A=84=E5=87=BD=
+=E6=95=B0=E5=8F=AF=E4=BB=A5=E8=AE=BF=E9=97=AE=E5=8F=A6=E4=B8=80=E4=B8=AA=E4=
+=BB=BB=E5=8A=A1=E5=87=AD=E6=8D=AE=E7=9A=84=E7=89=B9=E5=AE=9A=E9=83=A8=E5=88=
+=86=EF=BC=8C=E5=B0=86RCU=E6=93=8D=E4=BD=9C=E5=AF=B9=E8=B0=83=E7=94=A8=E6=96=
+=B9=E9=9A=90=E8=97=8F=E8=B5=B7=E6=9D=A5::
++=E6=9C=89=E4=B8=80=E4=B8=AA=E6=96=B9=E4=BE=BF=E7=9A=84=E5=87=BD=E6=95=B0=
+=E5=8F=AF=E7=94=A8=E4=BA=8E=E8=AE=BF=E9=97=AE=E5=8F=A6=E4=B8=80=E4=B8=AA=E4=
+=BB=BB=E5=8A=A1=E5=87=AD=E6=8D=AE=E7=9A=84=E7=89=B9=E5=AE=9A=E9=83=A8=E5=88=
+=86=EF=BC=8C=E4=BB=8E=E8=80=8C=E5=AF=B9=E8=B0=83=E7=94=A8=E6=96=B9=E9=9A=90=
+=E8=97=8FRCU=E6=9C=BA=E5=88=B6::
+=20
+ 	uid_t task_uid(task)		Task's real UID
+-	uid_t task_euid(task)		Task's effective UID
+=20
+ =E5=A6=82=E6=9E=9C=E8=B0=83=E7=94=A8=E6=96=B9=E5=9C=A8=E6=AD=A4=E6=97=B6=
+=E5=B7=B2=E7=BB=8F=E6=8C=81=E6=9C=89RCU=E8=AF=BB=E9=94=81=EF=BC=8C=E5=88=99=
+=E5=BA=94=E4=BD=BF=E7=94=A8::
+=20
+ 	__task_cred(task)->uid
+-	__task_cred(task)->euid
+=20
+ =E7=B1=BB=E4=BC=BC=E5=9C=B0=EF=BC=8C=E5=A6=82=E6=9E=9C=E9=9C=80=E8=A6=81=
+=E8=AE=BF=E9=97=AE=E4=BB=BB=E5=8A=A1=E5=87=AD=E6=8D=AE=E7=9A=84=E5=A4=9A=E4=
+=B8=AA=E6=96=B9=E9=9D=A2=EF=BC=8C=E5=BA=94=E4=BD=BF=E7=94=A8RCU=E8=AF=BB=E9=
+=94=81=EF=BC=8C=E8=B0=83=E7=94=A8 ``__task_cred()``
+ =E5=87=BD=E6=95=B0=EF=BC=8C=E5=B0=86=E7=BB=93=E6=9E=9C=E5=AD=98=E5=82=A8=
+=E5=9C=A8=E4=B8=B4=E6=97=B6=E6=8C=87=E9=92=88=E4=B8=AD=EF=BC=8C=E7=84=B6=E5=
+=90=8E=E4=BB=8E=E4=B8=B4=E6=97=B6=E6=8C=87=E9=92=88=E4=B8=AD=E8=B0=83=E7=94=
+=A8=E5=87=AD=E6=8D=AE=E7=9A=84=E5=90=84=E4=B8=AA=E6=96=B9=E9=9D=A2=EF=BC=8C=
+=E6=9C=80=E5=90=8E=E9=87=8A=E6=94=BE=E9=94=81=E3=80=82
+diff --git a/include/linux/cred.h b/include/linux/cred.h
+index c6676265a985..6ef1750c93e2 100644
+--- a/include/linux/cred.h
++++ b/include/linux/cred.h
+@@ -371,7 +371,6 @@ DEFINE_FREE(put_cred, struct cred *, if (!IS_ERR_OR_NUL=
+L(_T)) put_cred(_T))
+ })
+=20
+ #define task_uid(task)		(task_cred_xxx((task), uid))
+-#define task_euid(task)		(task_cred_xxx((task), euid))
+ #define task_ucounts(task)	(task_cred_xxx((task), ucounts))
+=20
+ #define current_cred_xxx(xxx)			\
+diff --git a/rust/helpers/task.c b/rust/helpers/task.c
+index c0e1a06ede78..b46b1433a67e 100644
+--- a/rust/helpers/task.c
++++ b/rust/helpers/task.c
+@@ -28,11 +28,6 @@ __rust_helper kuid_t rust_helper_task_uid(struct task_st=
+ruct *task)
+ 	return task_uid(task);
+ }
+=20
+-__rust_helper kuid_t rust_helper_task_euid(struct task_struct *task)
+-{
+-	return task_euid(task);
+-}
+-
+ #ifndef CONFIG_USER_NS
+ __rust_helper uid_t rust_helper_from_kuid(struct user_namespace *to, kuid_=
+t uid)
+ {
 diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
-index 38273f4eedb5..eabd65bfde12 100644
+index eabd65bfde12..c2b3457b700c 100644
 --- a/rust/kernel/task.rs
 +++ b/rust/kernel/task.rs
-@@ -210,14 +210,17 @@ pub fn pid(&self) -> Pid {
-         unsafe { *ptr::addr_of!((*self.as_ptr()).pid) }
-     }
- 
--    /// Returns the UID of the given task.
-+    /// Returns the objective real UID of the given task.
-     #[inline]
-     pub fn uid(&self) -> Kuid {
-         // SAFETY: It's always safe to call `task_uid` on a valid task.
+@@ -217,16 +217,6 @@ pub fn uid(&self) -> Kuid {
          Kuid::from_raw(unsafe { bindings::task_uid(self.as_ptr()) })
      }
- 
--    /// Returns the effective UID of the given task.
-+    /// Returns the objective effective UID of the given task.
-+    ///
-+    /// You should probably not be using this; the effective UID is normally
-+    /// only relevant in subjective credentials.
+=20
+-    /// Returns the objective effective UID of the given task.
+-    ///
+-    /// You should probably not be using this; the effective UID is normal=
+ly
+-    /// only relevant in subjective credentials.
+-    #[inline]
+-    pub fn euid(&self) -> Kuid {
+-        // SAFETY: It's always safe to call `task_euid` on a valid task.
+-        Kuid::from_raw(unsafe { bindings::task_euid(self.as_ptr()) })
+-    }
+-
+     /// Determines whether the given task has pending signals.
      #[inline]
-     pub fn euid(&self) -> Kuid {
-         // SAFETY: It's always safe to call `task_euid` on a valid task.
-@@ -371,7 +374,7 @@ fn eq(&self, other: &Self) -> bool {
- impl Eq for Task {}
- 
- impl Kuid {
--    /// Get the current euid.
-+    /// Get the current subjective effective UID.
-     #[inline]
-     pub fn current_euid() -> Kuid {
-         // SAFETY: Just an FFI call.
+     pub fn signal_pending(&self) -> bool {
 
--- 
+--=20
 2.55.0.rc0.799.gd6f94ed593-goog
 
