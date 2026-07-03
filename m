@@ -1,159 +1,132 @@
-Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from flow-a4-smtp.messagingengine.com (flow-a4-smtp.messagingengine.com [103.168.172.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FAD13451B0
-	for <linux-security-module@vger.kernel.org>; Fri,  3 Jul 2026 06:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0995235E94E;
+	Fri,  3 Jul 2026 07:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783061858; cv=none; b=fFVQiOvySVOvBhn8UVqa/szqlCHLSE2E5DgaaQ4XVrgHNJ1eLdLYM6z56WPIuE2FQxQphE8GLnPSWwpiPugQ6qJaT1q+lLK03Abz5qkeq9NUrYugeJhrhmxBrpVhpdAohSWkR09tzWobYa/o4cCXHcL4zCkwFiOdcsd2zSxHGvk=
+	t=1783064447; cv=none; b=AM1Xtl3rGaUIXcw0xX2ePyJOprZq+icj0/grQds0BYrghByfmaVu7W7J6jUr9LiU6+UDmUD6pSsSB0XdE7VbWSJPqxqMkj6AuHueP8TzUe2MrIW94cJHS82gXZqQxQz6Y5Xtq24I9Z1pewx8h1bT4fkrKdXWc0rzKnSpi/bwf0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783061858; c=relaxed/simple;
-	bh=/K8f1udQw9YJBO1Ie1ZbJE3mShr1BbOgfVubnfUn+a0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Uj1x3hBAoTQCMT9a12rcWwhYok2bu1Q8QvxAnVMVy3Yc70HSHeatl/8eVFLXOT/pAlQFbSXDPYDGgZde/lzQufo+fE+TpARkz4Y/aj23SGZO3FxhCuWYVhLkoZQBGw6j2E7vxASS1Lo4Q4Nzrlvdf4KcDF2NM5lknWihgg/mYUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fQ5ENlte; arc=none smtp.client-ip=209.85.218.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+	s=arc-20240116; t=1783064447; c=relaxed/simple;
+	bh=UkC/9lWTfRnMfDc3hEZ4ZQ6TREe4LSl4Nhy4369fS4w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M+KzvNKuLayIdf2EhWb3wKen0xj2fEDljh8MHMITLYTuLaSG0ScU0Rom8bpQUOzw+C90exufPp8ZWwmVwtVm6SIzIq4Og4IuYUaS8ylDY5YqHfW9QOYQdr/AIAkqAbP7k9wn1FBAE2gjgmCiF78YjqQZXaypGtoI/POSLZk5uN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=Obsidian.Systems; spf=fail smtp.mailfrom=Obsidian.Systems; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gla0Vxx6; arc=none smtp.client-ip=103.168.172.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=Obsidian.Systems
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=Obsidian.Systems
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fQ5ENlte"
-Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-c08306ae1c3so20324866b.1
-        for <linux-security-module@vger.kernel.org>; Thu, 02 Jul 2026 23:57:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1783061856; x=1783666656; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iGF8vWJ8SJ2AhYQyBR0BCmWZSL8eN4zr4YEd9ugRFUM=;
-        b=fQ5ENlteeHRojCcl7rna3uyXJOUJ+VhtayTgyJQGMkUIRgJ5DJYR4Qn/zrSobfHVWa
-         hNFSBIXt+EVeOzgjilyAUixC0M1e0rT5GyW4Vb0UEGO9F7ONOHKoKRRbte7k67nZ/WPe
-         +6N7uxW3J4K2rSeHu6wjOSP3qcm4ERAe7wBkuFIvIcx1i+5rGO2V5FP8/fedUu8JWYR1
-         9oDya3UVpGf7zS/AQAl9fAGjUgF27rAyodAcmy8U9I4PFZxvGEAGIbCgZ6zoGOfC07tq
-         VF2kA5SpssNHaM++BY1U+HH8GyQXGOnidjgktZuYWjozyRgTsa3B/rx/OL+7KhB47J/V
-         LJeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783061856; x=1783666656;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iGF8vWJ8SJ2AhYQyBR0BCmWZSL8eN4zr4YEd9ugRFUM=;
-        b=fqAn4ti5chVLexQRkXH62rKZW2gScbOsthqk/BOTZwTdDWsX3yAk3+eBI+3domr7Vq
-         Eg9HXs79ljkvv76HjeLfVDO54BUqDTspJi3xlRyR49Edl6p32LxRmTnHi52E6ZTf7nqC
-         jXRoWkjjopZKoTDE0C94yCGFt5Uo/RokOryNda/nhW9/SrYjaIBH62JL8Tqw7e6N9Nqq
-         tbIu3jS7C4hLgl3SUSVrmqpIppz5iIZ3E8kAVIrtrNNi5FDf3dTtjNTah+Oj4kGgirSR
-         8bwcj7kecSX0rfrDcEyr9tfkVMixjFSWjo5b2OHIORkg1JdaKip34D/c9cr0Dq+zqo3N
-         Rvfw==
-X-Forwarded-Encrypted: i=1; AHgh+Ro6aTNrdtBuZ+NYwZkh9XkQH4DRBn3KlzqIOF5+Zii79u3YT9MDr6cZzPxW/2j3+jQrXq5SKBmg/2ig7hF2bHFZRyOnx+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbitL96OFZ1fGF3UOemEsHu2ouHDRsr7UFUcX8y5d2+1NCHXUQ
-	E/+2pPXmTLndukSL4BqOt5r2+DG5IbfYFR2Ryq79POBMpsBlQVxRXUGAFxHHaTeLA5FUK0CtuGV
-	MBdeDjreFdIa9Sm7CpQ==
-X-Received: from ejbjz10.prod.google.com ([2002:a17:906:bb0a:b0:c12:69ca:d115])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:907:e143:b0:c12:3590:2bcd with SMTP id a640c23a62f3a-c12a9db678cmr282670666b.29.1783061855361;
- Thu, 02 Jul 2026 23:57:35 -0700 (PDT)
-Date: Fri, 3 Jul 2026 06:57:34 +0000
-In-Reply-To: <CAHC9VhTfOnOgOzGk9==wJYKx5gAi3Zf3oTwbj183o0_xxrfKag@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gla0Vxx6"
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailflow.phl.internal (Postfix) with ESMTP id F15FC1380251;
+	Fri,  3 Jul 2026 03:40:44 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Fri, 03 Jul 2026 03:40:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1783064444; x=1783071644; bh=JF19NxgcsBPWmdgtIv6gRC0D00KP/jPDp2z
+	ZMrh6occ=; b=gla0Vxx6iOPv/O36Q/Us6WLrK7S/bGvjq85/giQOMStKp3e/lNV
+	JXDqeqwQ/uL0jSlqrrv7dbT1M+T6dgDx1mSy31TJ4Kjvn86F2HP3wlY08HhS7Hno
+	Uu+2O0B6uXD64vXu8j3d7yZNu6LR+so8VNac0r4PPjMnJ/Ar+25JY+PvOW2sUOUW
+	/b239hlvtVMyv55+uoaMNy5O1z685OqyqSQwShiXChq41vBfrPAkQVsEeT1hUSzm
+	4IR/uahtZBUa2yXCHOcfd8moYOqsPusTuG3/3LrlMSIS4MotW8AmH+6ITGWN2POK
+	sTq2mgFxCKBggNr1Be9doXGY3IbtIiaKwoQ==
+X-ME-Sender: <xms:fGdHanMgEqYfwtW0H2zDcLnWh4rTjltpSDg4MyPwctwClb55UTR10g>
+    <xme:fGdHao6AxrfJUJyzvSLrc3emuZ7HRfBbQCqIsBEeC8qBF1itqNky2xUnYdH2s0rzW
+    iYoxu3Qd7342Q3FMaYWr4gf74LJhpr6NViNRU2WPcVoIzss2je1-BA>
+X-ME-Received: <xmr:fGdHarWi2-8yYbXYAlVlT115vGKMgGI5RlCxL9lrhn0WDq1JYGGiZUK0d4Hqagi0ZOtQiAHyGEcJlIUae9qU78kA6pa5NBjKKSO1UA>
+X-ME-Proxy-Cause: dmFkZTFLhFZTXepdBI8JArDFM9cwh0brlSnYnyTwMTy4WTL9VHKS2KqJ4/OOCNxsY3PyEx
+    pF7i4hARtfyCeqKwr/+XN//7HA14+tN/VZ1zp2FiGTNXwg3dJKqBvk52IAYe7+smVprVpH
+    SVDEu6XduEfYHNA/QQaU91XEK6O5UBJqbf0NEFSr5E+fs9xPwiQLUC04NyqQAFgN4E87QP
+    YZ7nRyql+Yoxp4qJSlH0+GqsC5JYMxAwxQkaKyZUenctlaJnEOp0wer6OlSeCeuf7tH3jT
+    W0LTAQxQRcb1mNYS309ntLQKOta8//ALcfjwgQRCWxGhnBapNYmmzJGzHxNLi8dv8WqkkA
+    dSNMI5r8uTc/ySMnND0vhmyEVGknMczHgAPkAp7LkWQ9ZlcSZ0kVV4wL4xRUAPSPnaaP59
+    6ytmj7IxlikiEG9U8cL/XeAnshzXv+edQbYBxT17DoVsMCXSCfhodKfKxPHnR4QQ6X2Xf2
+    16ZLcwRGXSkZhXWTXkPYdavQMMvmTUWgnmlgJdqBSVZ++Ky2VEkC4l6iKdbfmv2mU/PTcj
+    BoLEOBDg+rdxNk63GgilXsv2nJ1Pnn5DB8UPUQAXZ4WkOWu6xHAxNQMflW2o7F4BcPffaE
+    4FYLxw4Y2ToA2I414RjMLjDhaDlP+cCE7+2etAnZ45M1RkTUvESNWHy1uxXA
+X-ME-Proxy: <xmx:fGdHai0dRY4UEVXwrIICxkB_YTzdr3CaRls9u9QR5_V2wkE9Ui78Vw>
+    <xmx:fGdHaqPOfrGBornD5BMNtiecyjfByKIE13VYwOpKmlXlkNbkRB0Nsw>
+    <xmx:fGdHat1EutVp8yqt9s3TF4H_obzsbzF1RwIgr_0tB_zyFXhVCOug9Q>
+    <xmx:fGdHap0oNq-uTfDnLGpwdbjUg2oHU4uZ11hzcpEtoJPbXqh5D4nzZw>
+    <xmx:fGdHan8Mtk4IDdjPPRssDyGN_62niVjiNTqpLsTOw9dR93ZFLpx-lt7E>
+Feedback-ID: i91b946ab:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 3 Jul 2026 03:40:43 -0400 (EDT)
+From: John Ericson <John.Ericson@Obsidian.Systems>
+To: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: John Ericson <mail@JohnEricson.me>,
+	Cong Wang <cwang@multikernel.io>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Simon Horman <horms@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	David Rheinsberg <david@readahead.eu>,
+	Andy Lutomirski <luto@kernel.org>,
+	Sergei Zimmerman <sergei@zimmerman.foo>,
+	netdev@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Paul Moore <paul@paul-moore.com>,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/3] coredump, net: fix layer violation with direct connection
+Date: Fri,  3 Jul 2026 03:39:41 -0400
+Message-ID: <20260703073948.2541875-1-John.Ericson@Obsidian.Systems>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20260529-remove-task-euid-v4-0-07cbdf3af980@google.com>
- <CAHC9VhR5Ca+WyP2OiNGtL1SqHn0SwLe=M9SB8D2bxtdS52quhg@mail.gmail.com>
- <ah51DY5yfaNZejBd@google.com> <CAHC9VhQyNzxJgdMkmEsOeAQ7Wt2L+eW6aNLjeoYmnCQLmcYRnw@mail.gmail.com>
- <CAH5fLghJaFXheAZqKyM9Cdo6iqTw1W=haA79POhmZWEfuKujRA@mail.gmail.com> <CAHC9VhTfOnOgOzGk9==wJYKx5gAi3Zf3oTwbj183o0_xxrfKag@mail.gmail.com>
-Message-ID: <akddXpXia0GI2Xvy@google.com>
-Subject: Re: [PATCH v4 0/2] Delete task_euid()
-From: Alice Ryhl <aliceryhl@google.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Serge Hallyn <sergeh@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>, 
-	Dongliang Mu <dzm91@hust.edu.cn>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Jann Horn <jannh@google.com>, 
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 02, 2026 at 05:12:52PM -0400, Paul Moore wrote:
-> On Wed, Jun 3, 2026 at 1:05=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> =
-wrote:
-> > On Wed, Jun 3, 2026 at 6:05=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
- wrote:
-> > >
-> > > On Tue, Jun 2, 2026 at 2:15=E2=80=AFAM Alice Ryhl <aliceryhl@google.c=
-om> wrote:
-> > > > On Mon, Jun 01, 2026 at 07:13:37PM -0400, Paul Moore wrote:
-> > > > > On Fri, May 29, 2026 at 5:33=E2=80=AFAM Alice Ryhl <aliceryhl@goo=
-gle.com> wrote:
-> > > > > >
-> > > > > > The task_euid() method is a very weird method, and Binder was t=
-he only
-> > > > > > user. As of commit 65b672152289 ("binder: use current_euid() fo=
-r
-> > > > > > transaction sender identity") Binder doesn't use task_euid() an=
-ymore,
-> > > > > > so we can delete this method.
-> > > > >
-> > > > > Given the problems from last time, it seems like it might be prud=
-ent
-> > > > > to let the commit have some time to "breathe" in a proper release=
-, I'd
-> > > > > suggest merging this not for the upcoming v7.2 merge window but
-> > > > > instead waiting for v7.3.
-> > > >
-> > > > Sure, that makes sense. I'll resend after the merge window.
-> > >
-> > > No need to resend if there are no changes (see below), it's in
-> > > patchwork and I'm tracking it so you're all set.  I'll send another
-> > > notice when I merge it.
-> > >
-> > > > > > My suggestion would be to merge this through the LSM tree.
-> > > > >
-> > > > > That's fine with me.  I'd also suggest updating the commit descri=
-ption
-> > > > > in patch 1/2 to indicate that binder is no longer using task_euid=
-();
-> > > > > it currently reads like it is still being used.
-> > > >
-> > > > I guess this occurred because when patch 1 was written, it really *=
-was*
-> > > > still being used.
-> > >
-> > > Yeah, I understand the world has changed since patch 1/2 was written,
-> > > which is okay, we just need to update the commit description ... whic=
-h
-> > > should be a trivial task.
-> > >
-> > > > Perhaps we could pick up only patch 1 now since even
-> > > > if we run into problems and Binder has to go back to using task_eui=
-d(),
-> > > > clarifying the docs is still useful.
-> > >
-> > > I assumed that was one of the reasons for splitting the changes acros=
-s
-> > > two patches (reverting patch 2/2 leaves patch 1/2 intact).
-> > > Regardless, we're at -rc6 and with patch 1/2 being purely a comment
-> > > update I don't see an urgent rush on this, especially considering tha=
-t
-> > > if I did pick it up now, it would be for the v7.2 merge window and th=
-e
-> > > binder/current_euid() change will ship in v7.1.
-> > >
-> > > Let's update the commit description - you've got a couple of weeks to
-> > > do that - and then we'll merge everything once the v7.2 merge window
-> > > closes.
-> >
-> > Sounds good, thanks!
->=20
-> Just wanted to check in and see if this is still on your todo list?
-> No rush, we are only at -rc1, but I was reminded of this while merging
-> other patches and just wanted to check ;)
+From: John Ericson <mail@JohnEricson.me>
 
-Resent!
+In https://lore.kernel.org/all/akWxrjOl4Up02Bvq@pop-os.localdomain/ Cong
+Wang asked about doing things without new syscalls for my fd-based
+connect idea. This got me investigating a few things, all of which I hope to
+submit as patches.
 
-Alice
+This is the first one. I stumbled on `SOCK_COREDUMP` in `af_unix.c`, and
+I realized that this was --- right in the part of the kernel I was
+already looking at --- an excellent example of something that directly
+connecting to a socket could do better. This is not because the
+filesystem would never be involved (the interface in procfs still
+specifies a path) but because the core dumper wants to resolve that path
+differently than the usual way.
+
+The first two commits are refactors that expose/create the necessary
+functionality, and then the last commit actually does the untangling of
+the unix socket implementation and the core dumper. See especially that
+third commit message for details.
+
+I hope this is a compelling use-case for you all, that does not touch
+the UABI yet, but also does just the sort of thing that would be nice to
+expose with a new syscall.
+
+John
+
+John Ericson (3):
+  af_unix: factor out unix_lookup_bsd_path()
+  af_unix: factor out kernel_unix_connect_direct()
+  coredump, net: remove `SOCK_COREDUMP`
+
+ fs/coredump.c                 |  47 +++--
+ include/linux/lsm_hook_defs.h |   3 +-
+ include/linux/net.h           |   1 -
+ include/linux/security.h      |   4 +-
+ include/net/af_unix.h         |   2 +
+ net/unix/af_unix.c            | 335 +++++++++++++++++++++++++---------
+ security/landlock/fs.c        |   7 +-
+ security/security.c           |   5 +-
+ 8 files changed, 287 insertions(+), 117 deletions(-)
+
+-- 
+2.54.0
+
