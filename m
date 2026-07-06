@@ -1,93 +1,107 @@
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D123290AD;
-	Mon,  6 Jul 2026 13:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF8D2E6CB3;
+	Mon,  6 Jul 2026 14:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783346220; cv=none; b=eQp0YR6X5qT6fYA0TBVcmGCohZDwo5FZNrACbUEvTv3zeBo3sVuB78Ywbv2gWqFNsu69fe7V2iMRFz5tB8u7Fq0WVDIbiibh/fm1IAeI5o39k6WLsJINIhHYAu2i+79JNDcWk0g9KhnYLAsjblFj+XadkT82XR+FPzxagntVIso=
+	t=1783349441; cv=none; b=SlAyRUnkTd365GrrgEmW3HfcUzRQ5tCqTehwwMdZ05SsKuv+E3Dn4POKKHVLGq8phrnUelkv5kbqxN2bjXqc2BX8+MxJ916z1deKC9GxJ/9Sc3S0aS+C/VY7WLqNjnrAWHBEVTJ7WQZpkaUEQ/rszVcgkv6+aDXkwLHuhNnPODY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783346220; c=relaxed/simple;
-	bh=x8XtNeRZvgX8/szMrzvnvHxfMPOTfjSDwOCtgahJIjs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DFmg+dSY85GvOk2I6U+t938jnYWd2UoSWCX5HxYWlNdrLv6jJBFDzOHNiWIajIOJxKMQ/ncqeuh0Gyxi/iToXskyUihXRg2ZNMjE4spVdgDZN+ovmX2lkD7HRdHGKL6Pt8z/fvmhBOehxu5dxL/hE+APcNt9vMzmhr5StkXqn1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=MB3JFYXV; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+	s=arc-20240116; t=1783349441; c=relaxed/simple;
+	bh=ieKu7K8zDZFu8U7GJ8elgeK6IfZxq+2RjTiAQTnuSQc=;
+	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
+	 Subject:From:To:Cc:Date; b=rjWG9OS6qASQTcB1c1z7ko1aWllV5U9oFAQ1DQgUhT98GTDpHxv99Pu6EMxt7gme835Lew4Jv1F2YreuYmmhMwCNLqu2NFkehCexXl7BNY4FgQr9gl5UcEAKQDad3mqdJYsrbpu6oLsiZTTF80fp168XcBT2wYwncyZdh8TahYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TtQ8Bxe3; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="MB3JFYXV"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=K91/uupA3BSM2SUVEXpcffcMKiZwTtNrMEHJT3/jLt0=; b=MB3JFYXV1bN6Ly1Gg9Cc9OABU1
-	cUIhM0lukMltUsugoWpbY7Vg8ni2ujZs4wbEKxCyGix0pkLM7/J5f6hWy/sT6Ri97Dgwg7mGANgug
-	gozgTP2h830jMbAjzo0Y/QdldIFCFEmQOLE6iy5dIBwFcM1x89AwcGUB1pWhOWoVUwO4QbtlP9FMy
-	wBq9PzKIQOAy27yjDelwxTW3D2H1/znfo5rLyJyQ9eIaObwryW/CnWLQrKQafY2Dlm1BCwuBpSt/0
-	dg8w3DzpDivvhB/s2ogE8CDckgrE48lIsPNKWQu0b99EVGuRzV5hwSU9d6dSdg9Q5j2+XVSMqnKaI
-	R6TxkpRg==;
-Received: from localhost ([127.0.0.1])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1wgjoY-000E2V-0q;
-	Mon, 06 Jul 2026 15:56:50 +0200
-From: Daniel Borkmann <daniel@iogearbox.net>
-To: ast@kernel.org
-Cc: kpsingh@kernel.org,
-	James.Bottomley@hansenpartnership.com,
-	paul@paul-moore.com,
-	bboscaccy@linux.microsoft.com,
-	memxor@gmail.com,
-	torvalds@linux-foundation.org,
-	a.s.protopopov@gmail.com,
-	bpf@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH bpf-next v4 5/9] bpftool: Check EVP_Digest when computing excl_prog_hash
-Date: Mon,  6 Jul 2026 15:56:40 +0200
-Message-ID: <20260706135644.326006-6-daniel@iogearbox.net>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260706135644.326006-1-daniel@iogearbox.net>
-References: <20260706135644.326006-1-daniel@iogearbox.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TtQ8Bxe3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B00E1F00A3A;
+	Mon,  6 Jul 2026 14:50:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783349439;
+	bh=nVsLK4o5D+Uu2blQLic4sRODZPIdtR/WEcoheXSoNpQ=;
+	h=In-Reply-To:References:Subject:From:To:Cc:Date;
+	b=TtQ8Bxe3FUCFt6hrlZ1S6ve/gZ0Z4xmcF/9zbl3KOBgWNEPWNvBlPrxEU6GhZdirs
+	 hZ+KyE9M3q4Gren9tFQ7Sf6DKlZk8tv9RJktolO/J4Ckm9KROqG6VhiAdTfvzD2wYm
+	 b+1GmdmGYO2YMzcINtmKir+j2GeSw53dTtwAxQhCDojMfQQNuv0+nOMU9hBhAFDr4L
+	 JBoLHXBGOjmbYaVyJ17ojqCU9yb2ATmrHP8hx1khq6uIOT1G5H4oKq23du8obW0aSE
+	 2/S4RKdPOCLwCkVS7OVv3kh8ptd0eaJydCxBJ1nB63RM9+DnBoCWnmeRWhiXeMtqq/
+	 BakQLEr4UkZiQ==
+Content-Type: multipart/mixed; boundary="===============1877324805665347313=="
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: Clear (ClamAV 1.4.3/28052/Mon Jul  6 08:24:35 2026)
+Message-Id: <8094f5297f05b30eaede9fc541afa8103f558773810814b0b791b7bc31d942a2@mail.kernel.org>
+In-Reply-To: <20260706135644.326006-5-daniel@iogearbox.net>
+References: <20260706135644.326006-5-daniel@iogearbox.net>
+Subject: Re: [PATCH bpf-next v4 4/9] libbpf: Drop in-loader metadata check for load-time verification
+From: bot+bpf-ci@kernel.org
+To: daniel@iogearbox.net,ast@kernel.org
+Cc: kpsingh@kernel.org,James.Bottomley@hansenpartnership.com,paul@paul-moore.com,bboscaccy@linux.microsoft.com,memxor@gmail.com,torvalds@linux-foundation.org,a.s.protopopov@gmail.com,bpf@vger.kernel.org,linux-security-module@vger.kernel.org,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
+Date: Mon,  6 Jul 2026 14:50:39 +0000 (UTC)
 
-bpftool_prog_sign() ignores the return value of EVP_Digest(). If the
-digest computation fails (context allocation failure, or a digest
-fetch failure under OpenSSL), EVP_Digest() returns 0 and leaves the
-output buffer untouched, but the function still reports success.
+--===============1877324805665347313==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
-Fixes: 40863f4d6ef2 ("bpftool: Add support for signing BPF programs")
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+> commit eb80a2d94081929e7d91f275cdeda214433dead7
+> Author: Daniel Borkmann <daniel@iogearbox.net>
+> Date:   Mon Jul 6 15:56:39 2026 +0200
+>
+>     libbpf: Drop in-loader metadata check for load-time verification
+>
+>     The signed gen_loader used to police its own metadata map from within
+>     BPF: emit_signature_match() read the kernel-cached map->sha[] back
+>     through hardcoded struct bpf_map offsets and compared it against a hash
+>     that compute_sha_update_offsets() baked into the signed instructions,
+>     after a BPF_OBJ_GET_INFO_BY_FD round-trip to populate map->sha[].
+>
+>     The kernel now verifies the metadata at BPF_PROG_LOAD time by folding
+>     the frozen contents of the loader's exclusive fd_array maps into the
+>     signature, so the loader no longer checks anything itself. Generated
+>     loaders thus carry no verification logic of their own anymore: Nothing
+>     in the signing chain depends on emitted loader bytecode doing the right
+>     thing.
+>
+>     On the loading side, skel_internal.h now sets fd_array_cnt for a signed
+>     load so the kernel scans fd_array for the exclusive metadata map -
+>     still frozen, as the kernel requires - and the BPF_OBJ_GET_INFO_BY_FD
+>     round-trip to populate map->sha[] is gone. The struct bpf_map layout
+>     BUILD_BUG_ON()s on the kernel side are removed as well: they only
+>     pinned the ABI for the in-BPF read of map->sha[] that is no longer
+>     needed. Same for the map->excl member. Note: gen_hash is retained; it
+>     still marks a loader as signed so an untrusted host cannot re-dimension
+>     maps or override initial values now covered by the signature.
+>
+>     Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+
+In reviewing the patch series discussion on lore, Paul Moore raised a
+security concern in v3 about the companion patch that moves the
+security_bpf_prog_load() LSM hook into bpf_check() in verifier.c. He
+noted that the moved hook placement allows processes to allocate kernel
+memory (including bpf_verifier_env via kvzalloc_obj) before SELinux can
+deny the BPF program load operation, creating a potential local DoS
+attack vector where even denied operations trigger sizable allocations.
+
+Paul explicitly Nacked the change with:
+
+    Nacked-by: Paul Moore (don't move bpf_prog_load LSM hook)
+    <paul@paul-moore.com>
+
+Reference:
+https://lore.kernel.org/bpf/CAHC9VhQD4RHsGiTMVCCTN+eB71-Ueopke8XghExpNJ2PSNa_jQ@mail.gmail.com/
+
+Paul did not comment on v4, leaving it unclear whether his concern was
+addressed or if he accepted the change. Has this security regression
+concern been resolved, or does the hook movement remain in the series?
+
+
 ---
- tools/bpf/bpftool/sign.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
+See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
 
-diff --git a/tools/bpf/bpftool/sign.c b/tools/bpf/bpftool/sign.c
-index f9b742f4bb10..1257dba8ef2f 100644
---- a/tools/bpf/bpftool/sign.c
-+++ b/tools/bpf/bpftool/sign.c
-@@ -175,8 +175,11 @@ int bpftool_prog_sign(struct bpf_load_and_run_opts *opts)
- 		goto cleanup;
- 	}
- 
--	EVP_Digest(opts->insns, opts->insns_sz, opts->excl_prog_hash,
--		   &opts->excl_prog_hash_sz, EVP_sha256(), NULL);
-+	if (EVP_Digest(opts->insns, opts->insns_sz, opts->excl_prog_hash,
-+		       &opts->excl_prog_hash_sz, EVP_sha256(), NULL) != 1) {
-+		err = -EIO;
-+		goto cleanup;
-+	}
- 
- 		bd_out = BIO_new(BIO_s_mem());
- 	if (!bd_out) {
--- 
-2.43.0
-
+CI run summary: https://github.com/kernel-patches/bpf/actions/runs/28797884155
+--===============1877324805665347313==--
