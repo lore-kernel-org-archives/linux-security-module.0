@@ -1,38 +1,38 @@
 Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7F2318139;
-	Mon,  6 Jul 2026 13:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D74319617;
+	Mon,  6 Jul 2026 13:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783346218; cv=none; b=mOhZUVY8xcHd0+DmKtUEdUz/ArhyOAZG6AruvFZ2wqTp8I9ucfIFT3EME5eotRKgxgym0/nEAN0DoARiDCddS/Vv2W5JGJTh+pLI8ys/K/IpdwJDj/w65JDyqszAo6RJKWJ9JPIF8jusPhGph55Rn4UNmzhQyvZWlKLAlXetUC4=
+	t=1783346219; cv=none; b=kAR3Xsm1D2bVUWrHHH72P74I5ZssYNmPGW1O4hLW5MeiwufTqRfdLU84+c1gX/JMAz+s3SGOgHd36pWZqQ3bThH86wA0OoXB4NyiQnvIaAD9v8GgjN/LtFrg03uKyNRwJsdNuKrWyhVcV7ZYVliTLEapepNnvxy0y3fNXOVMCO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783346218; c=relaxed/simple;
-	bh=UFbxiwIh7Pum1ruTRscfw2ChPGMZZaqs6k2Ck5/IXD4=;
+	s=arc-20240116; t=1783346219; c=relaxed/simple;
+	bh=p4YIA1KlLHuRKMDQDAPMgcwzb28o5dP//kNOwBs7xT0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ROe8IvI1qXrJZHLfYnetQ3zcJ1bBsqpqkMcgTBzVSAmkCuyd60wWVxcDEoSYk2ky0qeKFt3DEGpg/6xBvi0y294SYh0cVtsI3Ja7bgHYbmE4gQTlGIQleG+Ywn9vshBtMM9n0cBi85AllgrNCHfsZQkzekWcsngmUU2C0HrXBQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=rGoRQqSr; arc=none smtp.client-ip=213.133.104.62
+	 MIME-Version; b=Y/t2+lKs5W4Bm6cTiHJDoz04X553mSPf2Fcbg+mkXBtGzyJvsQB/P58LPPVRiJlPFhgWfoHl7M19hfFEyOE9y3h+mS3ydDYcm2S6dioDE5/N1PRyQp+4IQNjQ8YFWXYyy6VCn+hm+O0o9hhl72Em5ViPXk9ioD+87MjcDCMW72c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=hbtVr5jw; arc=none smtp.client-ip=213.133.104.62
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="rGoRQqSr"
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="hbtVr5jw"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=4hvgjLARvfgl6Sl7hyFS0Danropzx8C4k6aanMJvhu0=; b=rGoRQqSrO2QiCYyhcTVqX6r/ow
-	5eeP1anTdhFRITJaCUT2pBFk7L7p/HoTzMCkylgu5uiCtY7tz4BFXdBm62OrY97Qv5T8KSEt4iS2h
-	bEMiIx0JPkRRkqWAFQmJDnyG0Gc6pyFn8qy91WVFnLIRAjut/nQIxnI3ypyDuqhg5HG0IZqIKu/Pw
-	c4TbdJS2wPfIo+moJzRq/KVZjvMXGbp69bVeoUv0L516+AYj8p5Z0RZ04smcU+EczQlgsSpbMZqeM
-	pTgtkio5qeNYBZtGZXmS701R+16tpX5tGVg7xIQ7CVxqe/GTccVG2P+W5rz7q+P9Po9DNQWsW4DlJ
-	/eAh6O5A==;
+	bh=+M6p20G0RP2AagD7Un6IPaKwJNxDxiZ4QbWTZWXOgUc=; b=hbtVr5jwbDoX7Deseo3Tet3eUv
+	DkKxGxN6wUXLx1E5VM0vcmeLnYQzAnmDBrIY70eizWrqOgIr3uVc/NarFPY2gIA+5AxgQP+2/7HXg
+	ANB9ERGgjOIZy4HXf1lmDDq+oAQitHlT4eflpCM98LDfn+UNTvaYhYEO09oV8qCZlevvd+DL7lwrl
+	D/pSS+G2XFmgU+/NiP6xhMxgkitcHa/iUITj25kex4tp8wb13+gmcfFVHvFPtdYuLmtw01A2DrLfB
+	CG7d/AuuvKeVvBfHjkHvHmwYDUpkhe4L0W925TwgR+JUtK6Wjafhy56N4fGd3YOXmWhd2R24cNHaT
+	K8cYKSnw==;
 Received: from localhost ([127.0.0.1])
 	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <daniel@iogearbox.net>)
-	id 1wgjoa-000E32-1x;
-	Mon, 06 Jul 2026 15:56:52 +0200
+	id 1wgjoX-000E29-1N;
+	Mon, 06 Jul 2026 15:56:49 +0200
 From: Daniel Borkmann <daniel@iogearbox.net>
 To: ast@kernel.org
 Cc: kpsingh@kernel.org,
@@ -44,9 +44,9 @@ Cc: kpsingh@kernel.org,
 	a.s.protopopov@gmail.com,
 	bpf@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH bpf-next v4 8/9] selftests/bpf: Verify load-time signed loader metadata
-Date: Mon,  6 Jul 2026 15:56:43 +0200
-Message-ID: <20260706135644.326006-9-daniel@iogearbox.net>
+Subject: [PATCH bpf-next v4 4/9] libbpf: Drop in-loader metadata check for load-time verification
+Date: Mon,  6 Jul 2026 15:56:39 +0200
+Message-ID: <20260706135644.326006-5-daniel@iogearbox.net>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260706135644.326006-1-daniel@iogearbox.net>
 References: <20260706135644.326006-1-daniel@iogearbox.net>
@@ -59,1322 +59,292 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: Clear (ClamAV 1.4.3/28052/Mon Jul  6 08:24:35 2026)
 
-The signed gen_loader no longer checks its metadata map from within
-BPF; the kernel does it at BPF_PROG_LOAD by folding the loader's frozen
-exclusive fd_array maps into the signature. Exercise that path end to
-end. Extend with more test cases (e.g. map-less program, asserting the
-LSM admission hook observes BPF_SIG_UNSIGNED and BPF_SIG_VERIFIED), and
-retire the subtests that asserted the old in-loader check, which no
-longer exists.
+The signed gen_loader used to police its own metadata map from within
+BPF: emit_signature_match() read the kernel-cached map->sha[] back
+through hardcoded struct bpf_map offsets and compared it against a hash
+that compute_sha_update_offsets() baked into the signed instructions,
+after a BPF_OBJ_GET_INFO_BY_FD round-trip to populate map->sha[].
 
-  # LDLIBS=-static PKG_CONFIG='pkg-config --static' ./vmtest.sh -- ./test_progs -t signed_loader
-  [...]
-  #411/1   signed_loader/loadtime_no_map:OK
-  #411/2   signed_loader/loadtime_with_map:OK
-  #411/3   signed_loader/metadata_match:OK
-  #411/4   signed_loader/signature_enforced:OK
-  #411/5   signed_loader/signed_nonexcl_fd_array_rejected:OK
-  #411/6   signed_loader/signed_unfrozen_fd_array_rejected:OK
-  #411/7   signed_loader/signed_nonarray_fd_array_rejected:OK
-  #411/8   signed_loader/signed_btf_fd_array_rejected:OK
-  #411/9   signed_loader/signed_module_kfunc_rejected:OK
-  #411/10  signed_loader/signature_failure_logs:OK
-  #411/11  signed_loader/signature_too_large:OK
-  #411/12  signed_loader/signature_bad_keyring:OK
-  #411/13  signed_loader/metadata_ctx_max_entries_ignored:OK
-  #411/14  signed_loader/metadata_ctx_initial_value_ignored:OK
-  #411/15  signed_loader/signature_authenticates_insns:OK
-  #411/16  signed_loader/signature_authenticates_metadata:OK
-  #411/17  signed_loader/hash_requires_frozen:OK
-  #411/18  signed_loader/no_update_after_freeze:OK
-  #411/19  signed_loader/freeze_writable_mmap:OK
-  #411/20  signed_loader/no_writable_mmap_frozen:OK
-  #411/21  signed_loader/map_hash_matches_libbpf:OK
-  #411/22  signed_loader/map_hash_multi_element:OK
-  #411/23  signed_loader/map_hash_bad_size:OK
-  #411/24  signed_loader/map_hash_unsupported_type:OK
-  #411/25  signed_loader/lsm_signature_verdict:OK
-  #411/26  signed_loader/signed_no_fd_array:OK
-  #411/27  signed_loader/signed_map_by_fd_rejected:OK
-  #411/28  signed_loader/signed_sparse_fd_array_rejected:OK
-  #411     signed_loader:OK
-  Summary: 1/28 PASSED, 0 SKIPPED, 0 FAILED
+The kernel now verifies the metadata at BPF_PROG_LOAD time by folding
+the frozen contents of the loader's exclusive fd_array maps into the
+signature, so the loader no longer checks anything itself. Generated
+loaders thus carry no verification logic of their own anymore: Nothing
+in the signing chain depends on emitted loader bytecode doing the right
+thing.
+
+On the loading side, skel_internal.h now sets fd_array_cnt for a signed
+load so the kernel scans fd_array for the exclusive metadata map -
+still frozen, as the kernel requires - and the BPF_OBJ_GET_INFO_BY_FD
+round-trip to populate map->sha[] is gone. The struct bpf_map layout
+BUILD_BUG_ON()s on the kernel side are removed as well: they only
+pinned the ABI for the in-BPF read of map->sha[] that is no longer
+needed. Same for the map->excl member. Note: gen_hash is retained; it
+still marks a loader as signed so an untrusted host cannot re-dimension
+maps or override initial values now covered by the signature.
 
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 ---
- .../selftests/bpf/prog_tests/signed_loader.c  | 1004 ++++++++++++++---
- .../selftests/bpf/progs/test_signed_loader.c  |    9 +-
- 2 files changed, 845 insertions(+), 168 deletions(-)
+ include/linux/bpf.h              |  1 -
+ kernel/bpf/syscall.c             |  7 ---
+ tools/lib/bpf/bpf_gen_internal.h |  1 -
+ tools/lib/bpf/gen_loader.c       | 76 +++-----------------------------
+ tools/lib/bpf/libbpf_internal.h  |  1 -
+ tools/lib/bpf/skel_internal.h    | 31 +------------
+ 6 files changed, 9 insertions(+), 108 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/signed_loader.c b/tools/testing/selftests/bpf/prog_tests/signed_loader.c
-index 5fc417e31fc6..56d1f072de4c 100644
---- a/tools/testing/selftests/bpf/prog_tests/signed_loader.c
-+++ b/tools/testing/selftests/bpf/prog_tests/signed_loader.c
-@@ -11,6 +11,8 @@
- #include <linux/keyctl.h>
- #include <linux/bpf.h>
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index ba09795e0bfd..2e0f12fb4cea 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -299,7 +299,6 @@ struct bpf_map_owner {
  
-+#include <bpf/btf.h>
-+
- #include "bpf/libbpf_internal.h" /* for libbpf_sha256() */
- #include "bpf/skel_internal.h"	 /* for loader ctx layout (bpf_loader_ctx etc) */
- 
-@@ -19,8 +21,6 @@
- #include "test_signed_loader_data.skel.h"
- #include "test_signed_loader_lsm.skel.h"
- 
--#define SIG_MATCH_INSNS 33 /* excl (5) + 4 * sha-dword (7) */
+ struct bpf_map {
+ 	u8 sha[SHA256_DIGEST_SIZE];
+-	u32 excl;
+ 	const struct bpf_map_ops *ops;
+ 	struct bpf_map *inner_map_meta;
+ #ifdef CONFIG_SECURITY
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index e898fad01aaf..358f2b0ce2bd 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -1598,13 +1598,6 @@ static int map_create_alloc(union bpf_attr *attr, bpfptr_t uattr, struct bpf_ver
+ 			err = -EFAULT;
+ 			goto free_map;
+ 		}
 -
- enum {
- 	BPF_SIG_UNSIGNED = 0,
- 	BPF_SIG_VERIFIED,
-@@ -35,7 +35,8 @@ enum {
+-		/* See libbpf: emit_signature_match() */
+-		BUILD_BUG_ON(offsetof(struct bpf_map, excl) != SHA256_DIGEST_SIZE);
+-		BUILD_BUG_ON(!__same_type(map->excl, u32));
+-		BUILD_BUG_ON(offsetof(struct bpf_map, sha)  != 0);
+-		BUILD_BUG_ON(!__same_type(map->sha, u8[SHA256_DIGEST_SIZE]));
+-		map->excl = 1;
+ 	} else if (attr->excl_prog_hash_size) {
+ 		bpf_log(log, "Invalid excl_prog_hash_size.\n");
+ 		err = -EINVAL;
+diff --git a/tools/lib/bpf/bpf_gen_internal.h b/tools/lib/bpf/bpf_gen_internal.h
+index 49af4260b8e6..042569187752 100644
+--- a/tools/lib/bpf/bpf_gen_internal.h
++++ b/tools/lib/bpf/bpf_gen_internal.h
+@@ -51,7 +51,6 @@ struct bpf_gen {
+ 	__u32 nr_ksyms;
+ 	int fd_array;
+ 	int nr_fd_array;
+-	int hash_insn_offset[SHA256_DWORD_SIZE];
  };
  
- static int load_loader(const void *insns, __u32 insns_sz, int map_fd,
--		       const void *sig, __u32 sig_sz, __s32 keyring_id)
-+		       const void *sig, __u32 sig_sz, __s32 keyring_id,
-+		       __u32 fd_array_cnt)
+ void bpf_gen__init(struct bpf_gen *gen, int log_level, int nr_progs, int nr_maps);
+diff --git a/tools/lib/bpf/gen_loader.c b/tools/lib/bpf/gen_loader.c
+index c7f2d2ac7bb3..6e3dd5242761 100644
+--- a/tools/lib/bpf/gen_loader.c
++++ b/tools/lib/bpf/gen_loader.c
+@@ -111,7 +111,6 @@ static void emit2(struct bpf_gen *gen, struct bpf_insn insn1, struct bpf_insn in
+ 
+ static int add_data(struct bpf_gen *gen, const void *data, __u32 size);
+ static void emit_sys_close_blob(struct bpf_gen *gen, int blob_off);
+-static void emit_signature_match(struct bpf_gen *gen);
+ 
+ void bpf_gen__init(struct bpf_gen *gen, int log_level, int nr_progs, int nr_maps)
  {
- 	union bpf_attr attr;
- 	int fd;
-@@ -52,6 +53,7 @@ static int load_loader(const void *insns, __u32 insns_sz, int map_fd,
- 		attr.signature_size = sig_sz;
- 		attr.keyring_id = keyring_id;
- 	}
-+	attr.fd_array_cnt = fd_array_cnt;
- 	memcpy(attr.prog_name, "__loader.prog", sizeof("__loader.prog"));
- 	fd = syscall(__NR_bpf, BPF_PROG_LOAD, &attr,
- 		     offsetofend(union bpf_attr, keyring_id));
-@@ -62,14 +64,12 @@ static int run_gen_loader(const void *insns, __u32 insns_sz,
- 			  const void *data, __u32 data_sz,
- 			  const void *excl, __u32 excl_sz,
- 			  const void *sig, __u32 sig_sz,
--			  bool get_hash, void *ctx, __u32 ctx_sz, bool *loader_ran)
-+			  void *ctx, __u32 ctx_sz, bool *loader_ran)
+@@ -154,8 +153,6 @@ void bpf_gen__init(struct bpf_gen *gen, int log_level, int nr_progs, int nr_maps
+ 	/* R7 contains the error code from sys_bpf. Copy it into R0 and exit. */
+ 	emit(gen, BPF_MOV64_REG(BPF_REG_0, BPF_REG_7));
+ 	emit(gen, BPF_EXIT_INSN());
+-	if (OPTS_GET(gen->opts, gen_hash, false))
+-		emit_signature_match(gen);
+ }
+ 
+ static int add_data(struct bpf_gen *gen, const void *data, __u32 size)
+@@ -377,8 +374,6 @@ static void emit_sys_close_blob(struct bpf_gen *gen, int blob_off)
+ 	__emit_sys_close(gen);
+ }
+ 
+-static void compute_sha_update_offsets(struct bpf_gen *gen);
+-
+ int bpf_gen__finish(struct bpf_gen *gen, int nr_progs, int nr_maps)
  {
- 	LIBBPF_OPTS(bpf_map_create_opts, mopts,
- 		    .excl_prog_hash = excl,
- 		    .excl_prog_hash_size = excl_sz);
--	__u8 hbuf[SHA256_DIGEST_LENGTH];
+ 	int i;
+@@ -408,9 +403,6 @@ int bpf_gen__finish(struct bpf_gen *gen, int nr_progs, int nr_maps)
+ 	if (!gen->error) {
+ 		struct gen_loader_opts *opts = gen->opts;
+ 
+-		if (OPTS_GET(opts, gen_hash, false))
+-			compute_sha_update_offsets(gen);
+-
+ 		opts->insns = gen->insn_start;
+ 		opts->insns_sz = gen->insn_cur - gen->insn_start;
+ 		opts->data = gen->data_start;
+@@ -460,22 +452,6 @@ void bpf_gen__free(struct bpf_gen *gen)
+ 	_val;							\
+ })
+ 
+-static void compute_sha_update_offsets(struct bpf_gen *gen)
+-{
+-	__u64 sha[SHA256_DWORD_SIZE];
+-	__u64 sha_dw;
+-	int i;
+-
+-	libbpf_sha256(gen->data_start, gen->data_cur - gen->data_start, (__u8 *)sha);
+-	for (i = 0; i < SHA256_DWORD_SIZE; i++) {
+-		struct bpf_insn *insn =
+-			(struct bpf_insn *)(gen->insn_start + gen->hash_insn_offset[i]);
+-		sha_dw = tgt_endian(sha[i]);
+-		insn[0].imm = (__u32)sha_dw;
+-		insn[1].imm = sha_dw >> 32;
+-	}
+-}
+-
+ void bpf_gen__load_btf(struct bpf_gen *gen, const void *btf_raw_data,
+ 		       __u32 btf_raw_size)
+ {
+@@ -557,8 +533,9 @@ void bpf_gen__map_create(struct bpf_gen *gen,
+ 	 * Conditionally update max_entries from the host-supplied loader
+ 	 * ctx. This sizes the map at runtime, but for a signed loader
+ 	 * (gen_hash) it would let an untrusted host re-dimension the
+-	 * program's maps after emit_signature_match(), outside what the
+-	 * signature attests to. Keep the signer-provided max_entries
++	 * program's maps, outside what the signature attests to: the
++	 * metadata blob is covered by the program signature and verified
++	 * by the kernel at load time. Keep the signer-provided max_entries
+ 	 * baked into the blob in that case.
+ 	 */
+ 	if (map_idx >= 0 && !OPTS_GET(gen->opts, gen_hash, false))
+@@ -596,45 +573,6 @@ void bpf_gen__map_create(struct bpf_gen *gen,
+ 		emit_sys_close_stack(gen, stack_off(inner_map_fd));
+ }
+ 
+-static void emit_signature_match(struct bpf_gen *gen)
+-{
+-	__s64 off;
+-	int i;
+-
+-	/*
+-	 * Reject if the metadata map is not exclusive. Without exclusivity
+-	 * the cached map->sha[] verified above can be stale: another BPF
+-	 * program with map access could have mutated the contents between
+-	 * BPF_OBJ_GET_INFO_BY_FD and loader execution.
+-	 */
+-	emit2(gen, BPF_LD_IMM64_RAW_FULL(BPF_REG_1, BPF_PSEUDO_MAP_IDX,
+-					 0, 0, 0, 0));
+-	emit(gen, BPF_LDX_MEM(BPF_W, BPF_REG_2, BPF_REG_1, SHA256_DIGEST_LENGTH));
+-	off = -(gen->insn_cur - gen->insn_start - gen->cleanup_label) / 8 - 2;
+-	if (is_simm16(off)) {
+-		emit(gen, BPF_MOV64_IMM(BPF_REG_7, -EINVAL));
+-		emit(gen, BPF_JMP_IMM(BPF_JNE, BPF_REG_2, 1, off));
+-	} else {
+-		gen->error = -ERANGE;
+-	}
+-
+-	for (i = 0; i < SHA256_DWORD_SIZE; i++) {
+-		emit2(gen, BPF_LD_IMM64_RAW_FULL(BPF_REG_1, BPF_PSEUDO_MAP_IDX,
+-						 0, 0, 0, 0));
+-		emit(gen, BPF_LDX_MEM(BPF_DW, BPF_REG_2, BPF_REG_1, i * sizeof(__u64)));
+-		gen->hash_insn_offset[i] = gen->insn_cur - gen->insn_start;
+-		emit2(gen, BPF_LD_IMM64_RAW_FULL(BPF_REG_3, 0, 0, 0, 0, 0));
+-
+-		off = -(gen->insn_cur - gen->insn_start - gen->cleanup_label) / 8 - 2;
+-		if (is_simm16(off)) {
+-			emit(gen, BPF_MOV64_IMM(BPF_REG_7, -EINVAL));
+-			emit(gen, BPF_JMP_REG(BPF_JNE, BPF_REG_2, BPF_REG_3, off));
+-		} else {
+-			gen->error = -ERANGE;
+-		}
+-	}
+-}
+-
+ void bpf_gen__record_attach_target(struct bpf_gen *gen, const char *attach_name,
+ 				   enum bpf_attach_type type)
+ {
+@@ -1211,10 +1149,10 @@ void bpf_gen__map_update_elem(struct bpf_gen *gen, int map_idx, void *pvalue,
+ 	 * }
+ 	 *
+ 	 * The runtime initial_value comes from the host-supplied loader
+-	 * ctx and would overwrite the blob value after emit_signature_match()
+-	 * has already validated map->sha[]. For a signed loader (gen_hash)
+-	 * the attested blob value must be authoritative, so skip the override
+-	 * and leave the hashed value in place.
++	 * ctx and would overwrite the blob value that the program signature
++	 * covers and the kernel verifies at load time. For a signed loader
++	 * (gen_hash) the attested blob value must be authoritative, so skip
++	 * the override and leave the signed value in place.
+ 	 */
+ 	if (!OPTS_GET(gen->opts, gen_hash, false)) {
+ 		emit(gen, BPF_LDX_MEM(BPF_DW, BPF_REG_3, BPF_REG_6,
+diff --git a/tools/lib/bpf/libbpf_internal.h b/tools/lib/bpf/libbpf_internal.h
+index 04cd303fb5a8..d5b7db703b3f 100644
+--- a/tools/lib/bpf/libbpf_internal.h
++++ b/tools/lib/bpf/libbpf_internal.h
+@@ -768,7 +768,6 @@ int elf_resolve_pattern_offsets(const char *binary_path, const char *pattern,
+ int probe_fd(int fd);
+ 
+ #define SHA256_DIGEST_LENGTH 32
+-#define SHA256_DWORD_SIZE SHA256_DIGEST_LENGTH / sizeof(__u64)
+ 
+ void libbpf_sha256(const void *data, size_t len, __u8 out[SHA256_DIGEST_LENGTH]);
+ int probe_sys_bpf_ext(void);
+diff --git a/tools/lib/bpf/skel_internal.h b/tools/lib/bpf/skel_internal.h
+index 74503d358bc8..53fee53d36d5 100644
+--- a/tools/lib/bpf/skel_internal.h
++++ b/tools/lib/bpf/skel_internal.h
+@@ -18,10 +18,6 @@
+ #include "bpf.h"
+ #endif
+ 
+-#ifndef SHA256_DIGEST_LENGTH
+-#define SHA256_DIGEST_LENGTH 32
+-#endif
+-
+ #ifndef __NR_bpf
+ # if defined(__mips__) && defined(_ABIO32)
+ #  define __NR_bpf 4355
+@@ -320,25 +316,6 @@ static inline int skel_link_create(int prog_fd, int target_fd,
+ 	return skel_sys_bpf(BPF_LINK_CREATE, &attr, attr_sz);
+ }
+ 
+-static inline int skel_obj_get_info_by_fd(int fd)
+-{
+-	const size_t attr_sz = offsetofend(union bpf_attr, info);
+-	__u8 sha[SHA256_DIGEST_LENGTH];
 -	struct bpf_map_info info;
--	__u32 ilen = sizeof(info), key = 0;
-+	__u32 key = 0;
- 	union bpf_attr attr;
- 	int map_fd, prog_fd, ret;
- 
-@@ -87,15 +87,6 @@ static int run_gen_loader(const void *insns, __u32 insns_sz,
- 		ret = -errno;
- 		goto out_map;
- 	}
--	if (get_hash) {
--		memset(&info, 0, sizeof(info));
--		info.hash = ptr_to_u64(hbuf);
--		info.hash_size = sizeof(hbuf);
--		if (bpf_map_get_info_by_fd(map_fd, &info, &ilen)) {
--			ret = -errno;
--			goto out_map;
--		}
--	}
- 
- 	memset(&attr, 0, sizeof(attr));
- 	attr.prog_type = BPF_PROG_TYPE_SYSCALL;
-@@ -108,6 +99,7 @@ static int run_gen_loader(const void *insns, __u32 insns_sz,
- 		attr.signature = ptr_to_u64(sig);
- 		attr.signature_size = sig_sz;
- 		attr.keyring_id = KEY_SPEC_SESSION_KEYRING;
-+		attr.fd_array_cnt = 1;
- 	}
- 	memcpy(attr.prog_name, "__loader.prog", sizeof("__loader.prog"));
- 	prog_fd = syscall(__NR_bpf, BPF_PROG_LOAD, &attr,
-@@ -236,79 +228,6 @@ static int sign_buf(const char *dir, const void *buf, __u32 len,
- 	return ret;
- }
- 
--static void check_sig_match_shape(const struct bpf_insn *in, int n)
--{
--	int a = -1, cleanup = -1, i, base, t, br[5], nb = 0;
+-	__u32 info_len = sizeof(info);
+-	union bpf_attr attr;
 -
--	/* BPF_PSEUDO_MAP_IDX (the struct bpf_map * form) is used only here. */
--	for (i = 0; i + 1 < n; i++) {
--		if (in[i].code == (BPF_LD | BPF_IMM | BPF_DW) &&
--		    in[i].src_reg == BPF_PSEUDO_MAP_IDX) {
--			a = i;
--			break;
--		}
--	}
--	if (!ASSERT_GE(a, 0, "emit_signature_match present"))
--		return;
--	if (!ASSERT_LE(a + SIG_MATCH_INSNS, n, "block fits in program"))
--		return;
+-	memset(&info, 0, sizeof(info));
+-	info.hash = (long) &sha;
+-	info.hash_size = SHA256_DIGEST_LENGTH;
 -
--	/* excl check: r2 = *(u32 *)(map + 32); if r2 != 1 goto cleanup */
--	ASSERT_EQ(in[a + 2].code, (BPF_LDX | BPF_MEM | BPF_W), "excl load width");
--	ASSERT_EQ(in[a + 2].off, SHA256_DIGEST_LENGTH, "excl field offset");
--	ASSERT_EQ(in[a + 4].code, (BPF_JMP | BPF_JNE | BPF_K), "excl branch op");
--	ASSERT_EQ(in[a + 4].imm, 1, "excl compared to 1");
--	br[nb++] = a + 4;
--
--	/* 4 sha-dword checks: r2 = *(u64 *)(map + i*8); if r2 != r3 goto cleanup */
--	for (i = 0; i < 4; i++) {
--		base = a + 5 + i * 7;
--		ASSERT_EQ(in[base + 2].code, (BPF_LDX | BPF_MEM | BPF_DW), "sha load width");
--		ASSERT_EQ(in[base + 2].off, i * 8, "sha dword offset");
--		ASSERT_EQ(in[base + 3].code, (BPF_LD | BPF_IMM | BPF_DW), "sha imm64 (H_meta)");
--		ASSERT_EQ(in[base + 6].code, (BPF_JMP | BPF_JNE | BPF_X), "sha branch op");
--		br[nb++] = base + 6;
--	}
--
--	/*
--	 * Locate the real cleanup label so we can pin the exact jump target,
--	 * not just "some backward label". bpf_gen__init() emits the cleanup
--	 * block as a prog-fd close loop whose first instruction is the label
--	 * every error branch jumps to.
--	 */
--	for (i = 0; i + 2 < a; i++) {
--		if (in[i].code == (BPF_LDX | BPF_MEM | BPF_W) &&
--		    in[i].dst_reg == BPF_REG_1 && in[i].src_reg == BPF_REG_10 &&
--		    in[i + 1].code == (BPF_JMP | BPF_JSLE | BPF_K) &&
--		    in[i + 1].dst_reg == BPF_REG_1 && in[i + 1].imm == 0 &&
--		    in[i + 1].off == 1 &&
--		    in[i + 2].code == (BPF_JMP | BPF_CALL) &&
--		    in[i + 2].imm == BPF_FUNC_sys_close) {
--			cleanup = i;
--			break;
--		}
--	}
--	if (!ASSERT_GE(cleanup, 0, "cleanup label located"))
--		return;
--	for (i = 0; i < nb; i++) {
--		t = br[i] + 1 + in[br[i]].off;
--		ASSERT_EQ(t, cleanup, "sig-match lands on cleanup");
--	}
--	/*
--	 * Same invariant for every other cleanup-bound jump in the program:
--	 * emit_check_err() is the only source of "if (r7 < 0) goto cleanup",
--	 * so each of those must also resolve exactly to cleanup.
--	 */
--	for (i = 0, t = 0; i < n; i++) {
--		if (in[i].code != (BPF_JMP | BPF_JSLT | BPF_K) ||
--		    in[i].dst_reg != BPF_REG_7 || in[i].imm != 0 || in[i].off >= 0)
--			continue;
--		ASSERT_EQ(i + 1 + in[i].off, cleanup, "err-check lands on cleanup");
--		t++;
--	}
--	ASSERT_GT(t, 0, "found emit_check_err jumps");
+-	memset(&attr, 0, attr_sz);
+-	attr.info.bpf_fd = fd;
+-	attr.info.info = (long) &info;
+-	attr.info.info_len = info_len;
+-	return skel_sys_bpf(BPF_OBJ_GET_INFO_BY_FD, &attr, attr_sz);
 -}
 -
- struct gen_loader_fixture {
- 	struct test_signed_loader *skel;
- 	struct gen_loader_opts gopts;
-@@ -372,16 +291,6 @@ static void gen_loader_fixture_fini(struct gen_loader_fixture *f)
- 	test_signed_loader__destroy(f->skel);
- }
- 
--static void metadata_check_shape(void)
--{
--	struct gen_loader_fixture f;
--
--	if (gen_loader_fixture_init(&f) == 0)
--		check_sig_match_shape((const struct bpf_insn *)f.gopts.insns,
--				      f.gopts.insns_sz / sizeof(struct bpf_insn));
--	gen_loader_fixture_fini(&f);
--}
--
- static void metadata_match(void)
+ static inline int skel_map_freeze(int fd)
  {
- 	struct gen_loader_fixture f;
-@@ -391,94 +300,263 @@ static void metadata_match(void)
- 	if (gen_loader_fixture_init(&f) == 0) {
- 		r = run_gen_loader(f.gopts.insns, f.gopts.insns_sz, f.blob,
- 				   f.data_sz, f.excl, sizeof(f.excl), NULL, 0,
--				   true, f.ctx, f.ctx_sz, &ran);
-+				   f.ctx, f.ctx_sz, &ran);
- 		ASSERT_TRUE(ran, "loader ran");
- 		ASSERT_EQ(r, 0, "honest loader retval");
- 	}
- 	gen_loader_fixture_fini(&f);
- }
- 
--static void metadata_sha_mismatch(void)
-+static void signature_enforced(void)
- {
-+	static const __u8 junk[64] = { 0x30, 0x42, 0x13, 0x37, };
- 	struct gen_loader_fixture f;
--	bool ran;
--	int r;
-+	int fd;
- 
- 	if (gen_loader_fixture_init(&f) == 0) {
- 		/*
--		 * blob[0] lives in the loader's fd_array scratch (first add_data in
--		 * bpf_gen__init); a 0-map program never reads it, so flipping it
--		 * changes only map->sha. The metadata check is the only thing that
--		 * can notice -> isolates emit_signature_match.
-+		 * A present-but-invalid signature (the cert bytes are not a
-+		 * PKCS#7 signature) must be rejected at load: the signature
-+		 * path is honored, not ignored. (The valid path is covered by
-+		 * the signed lskels.) Pin -EBADMSG, the PKCS#7 parse failure:
-+		 * a looser fd < 0 check could also be satisfied by the sparse
-+		 * fd_array rejection (-EACCES) that the loader's map reference
-+		 * would trip even if the signature were silently ignored.
- 		 */
--		f.blob[0] ^= 0xff;
--		r = run_gen_loader(f.gopts.insns, f.gopts.insns_sz, f.blob,
--				   f.data_sz, f.excl, sizeof(f.excl), NULL, 0,
--				   true, f.ctx, f.ctx_sz, &ran);
--		ASSERT_TRUE(ran, "loader ran");
--		ASSERT_EQ(r, -EINVAL, "tampered blob rejected by emit_signature_match");
-+		fd = load_loader(f.gopts.insns, f.gopts.insns_sz, -1, junk,
-+				 sizeof(junk), KEY_SPEC_SESSION_KEYRING, 0);
-+		ASSERT_EQ(fd, -EBADMSG, "invalid signature rejected at load");
- 	}
- 	gen_loader_fixture_fini(&f);
- }
- 
--static void metadata_not_exclusive(void)
-+static void signed_nonexcl_fd_array_rejected(void)
- {
-+	static const __u8 junk[64] = { 0x30, 0x42, 0x13, 0x37, };
- 	struct gen_loader_fixture f;
--	bool ran;
--	int r;
-+	int map_fd, fd;
- 
- 	if (gen_loader_fixture_init(&f) == 0) {
- 		/*
--		 * Correct blob but a non-exclusive metadata map: the verifier does
--		 * not reject (excl_prog_sha unset), so the runtime map->excl == 1
--		 * check in the loader must.
-+		 * A signed program may only bind exclusive maps through fd_array
-+		 * (their contents are folded into the signature). Binding a
-+		 * non-exclusive map is rejected, before the signature is even
-+		 * examined.
- 		 */
--		r = run_gen_loader(f.gopts.insns, f.gopts.insns_sz, f.blob,
--				   f.data_sz, NULL, 0, NULL, 0, true, f.ctx,
--				   f.ctx_sz, &ran);
--		ASSERT_TRUE(ran, "loader ran");
--		ASSERT_EQ(r, -EINVAL, "non-exclusive metadata map rejected");
-+		map_fd = bpf_map_create(BPF_MAP_TYPE_ARRAY, "nonexcl", 4,
-+					f.data_sz, 1, NULL);
-+		if (ASSERT_OK_FD(map_fd, "nonexcl_map")) {
-+			if (ASSERT_OK(bpf_map_freeze(map_fd), "freeze")) {
-+				fd = load_loader(f.gopts.insns, f.gopts.insns_sz,
-+						 map_fd, junk, sizeof(junk),
-+						 KEY_SPEC_SESSION_KEYRING, 1);
-+				ASSERT_EQ(fd, -EPERM,
-+					  "non-exclusive map in signed fd_array rejected");
-+				if (fd >= 0)
-+					close(fd);
-+			}
-+			close(map_fd);
-+		}
- 	}
- 	gen_loader_fixture_fini(&f);
- }
- 
--static void metadata_hash_not_computed(void)
-+static void signed_unfrozen_fd_array_rejected(void)
- {
-+	static const __u8 junk[64] = { 0x30, 0x42, 0x13, 0x37, };
-+	LIBBPF_OPTS(bpf_map_create_opts, mopts);
- 	struct gen_loader_fixture f;
--	bool ran;
--	int r;
-+	__u32 key = 0;
-+	int map_fd, fd;
- 
- 	if (gen_loader_fixture_init(&f) == 0) {
- 		/*
--		 * Correct, exclusive, frozen map, but its hash was never computed
--		 * (no OBJ_GET_INFO_BY_FD), so map->sha stays zero. The loader must
--		 * fail closed rather than treat an unset hash as a match.
-+		 * The metadata map must be frozen before a signed load so the
-+		 * folded bytes cannot change afterwards. Bind an exclusive map
-+		 * with matching contents but skip the freeze: the load must be
-+		 * rejected by the frozen check with -EPERM. The exclusivity
-+		 * check right after it would pass, so the errno uniquely pins
-+		 * the freeze requirement.
- 		 */
--		r = run_gen_loader(f.gopts.insns, f.gopts.insns_sz, f.blob,
--				   f.data_sz, f.excl, sizeof(f.excl), NULL, 0,
--				   false, f.ctx, f.ctx_sz, &ran);
--		ASSERT_TRUE(ran, "loader ran");
--		ASSERT_EQ(r, -EINVAL, "uncomputed metadata hash rejected");
-+		mopts.excl_prog_hash = f.excl;
-+		mopts.excl_prog_hash_size = sizeof(f.excl);
-+		map_fd = bpf_map_create(BPF_MAP_TYPE_ARRAY, "unfrozen", 4,
-+					f.data_sz, 1, &mopts);
-+		if (ASSERT_OK_FD(map_fd, "unfrozen_map")) {
-+			if (ASSERT_OK(bpf_map_update_elem(map_fd, &key, f.blob, 0),
-+				      "update")) {
-+				fd = load_loader(f.gopts.insns, f.gopts.insns_sz,
-+						 map_fd, junk, sizeof(junk),
-+						 KEY_SPEC_SESSION_KEYRING, 1);
-+				ASSERT_EQ(fd, -EPERM,
-+					  "unfrozen map in signed fd_array rejected");
-+				if (fd >= 0)
-+					close(fd);
-+			}
-+			close(map_fd);
-+		}
- 	}
- 	gen_loader_fixture_fini(&f);
- }
- 
--static void signature_enforced(void)
-+static void signed_nonarray_fd_array_rejected(void)
- {
- 	static const __u8 junk[64] = { 0x30, 0x42, 0x13, 0x37, };
-+	LIBBPF_OPTS(bpf_map_create_opts, mopts);
- 	struct gen_loader_fixture f;
-+	int map_fd, fd;
-+
-+	if (gen_loader_fixture_init(&f) == 0) {
-+		/*
-+		 * Only a plain BPF_MAP_TYPE_ARRAY may be folded into the
-+		 * signature. An exclusive map of any other type is rejected
-+		 * (-EINVAL) rather than folded - this is the type gate that
-+		 * keeps arena maps (map_direct_value_addr() returns a user
-+		 * address) and insn-array maps (buffer smaller than value_size)
-+		 * out of the hashed region, where the old code would have
-+		 * memcpy()'d from them. A hash map stands in here: it is
-+		 * exclusive (bound to the loader digest) but not an array.
-+		 */
-+		mopts.excl_prog_hash = f.excl;
-+		mopts.excl_prog_hash_size = sizeof(f.excl);
-+		map_fd = bpf_map_create(BPF_MAP_TYPE_HASH, "excl_hash", 4, 4, 1,
-+					&mopts);
-+		if (ASSERT_OK_FD(map_fd, "excl_hash_map")) {
-+			fd = load_loader(f.gopts.insns, f.gopts.insns_sz, map_fd,
-+					 junk, sizeof(junk),
-+					 KEY_SPEC_SESSION_KEYRING, 1);
-+			ASSERT_EQ(fd, -EINVAL,
-+				  "non-array map in signed fd_array rejected");
-+			if (fd >= 0)
-+				close(fd);
-+			close(map_fd);
-+		}
-+	}
-+	gen_loader_fixture_fini(&f);
-+}
-+
-+static int setup_meta_map(const struct gen_loader_fixture *f);
-+
-+static void signed_btf_fd_array_rejected(void)
-+{
-+	char dir_tmpl[] = "/tmp/signed_loader_btfXXXXXX", *dir = NULL;
-+	__u32 sig_sz = 8192;
-+	int map_fd = -1, prog_fd = -1;
-+	unsigned char *buf = NULL;
-+	struct gen_loader_fixture f;
-+	bool have_fixture = false;
-+	struct btf *btf = NULL;
-+	union bpf_attr attr;
-+	int fds[2];
-+	__u8 sig[8192];
-+
-+	syscall(__NR_request_key, "keyring", "_uid.0", NULL,
-+		KEY_SPEC_SESSION_KEYRING);
-+	dir = mkdtemp(dir_tmpl);
-+	if (!ASSERT_OK_PTR(dir, "mkdtemp"))
-+		return;
-+	if (!ASSERT_OK(run_setup("setup", dir), "verify_sig_setup")) {
-+		rmdir(dir);
-+		return;
-+	}
-+	have_fixture = true;
-+	if (gen_loader_fixture_init(&f) != 0)
-+		goto out;
-+
-+	/*
-+	 * fd_array binds maps and BTFs alike, but only exclusive array maps are
-+	 * folded into the signature. Build an otherwise genuinely signed load -
-+	 * insns || metadata, exclusive frozen map at fd_array[0] - then smuggle
-+	 * an extra BTF into fd_array[1]. A signed program may not bind any BTF,
-+	 * so resolving the fd_array entries rejects the BTF with -EACCES (in
-+	 * __add_used_btf(), before the signature is even verified).
-+	 */
-+	buf = malloc((size_t)f.gopts.insns_sz + f.data_sz);
-+	if (!ASSERT_OK_PTR(buf, "signbuf"))
-+		goto out;
-+	memcpy(buf, f.gopts.insns, f.gopts.insns_sz);
-+	memcpy(buf + f.gopts.insns_sz, f.blob, f.data_sz);
-+	if (!ASSERT_OK(sign_buf(dir, buf, f.gopts.insns_sz + f.data_sz, sig,
-+			       &sig_sz), "sign insns||metadata"))
-+		goto out;
-+
-+	map_fd = setup_meta_map(&f);
-+	if (!ASSERT_OK_FD(map_fd, "meta_map"))
-+		goto out;
-+	btf = btf__new_empty();
-+	if (!ASSERT_OK_PTR(btf, "btf_new_empty"))
-+		goto out;
-+	btf__add_int(btf, "int", 4, BTF_INT_SIGNED);
-+	if (!ASSERT_OK(btf__load_into_kernel(btf), "btf_load"))
-+		goto out;
-+
-+	fds[0] = map_fd;
-+	fds[1] = btf__fd(btf);
-+	memset(&attr, 0, sizeof(attr));
-+	attr.prog_type = BPF_PROG_TYPE_SYSCALL;
-+	attr.insns = ptr_to_u64(f.gopts.insns);
-+	attr.insn_cnt = f.gopts.insns_sz / sizeof(struct bpf_insn);
-+	attr.license = ptr_to_u64("Dual BSD/GPL");
-+	attr.prog_flags = BPF_F_SLEEPABLE;
-+	attr.fd_array = ptr_to_u64(fds);
-+	attr.fd_array_cnt = 2;
-+	attr.signature = ptr_to_u64(sig);
-+	attr.signature_size = sig_sz;
-+	attr.keyring_id = KEY_SPEC_SESSION_KEYRING;
-+	memcpy(attr.prog_name, "__loader.prog", sizeof("__loader.prog"));
-+	prog_fd = syscall(__NR_bpf, BPF_PROG_LOAD, &attr,
-+			  offsetofend(union bpf_attr, keyring_id));
-+	ASSERT_EQ(prog_fd < 0 ? -errno : prog_fd, -EACCES,
-+		  "BTF in signed fd_array rejected");
-+	if (prog_fd >= 0)
-+		close(prog_fd);
-+out:
-+	if (btf)
-+		btf__free(btf);
-+	if (map_fd >= 0)
-+		close(map_fd);
-+	if (have_fixture)
-+		gen_loader_fixture_fini(&f);
-+	if (dir)
-+		run_setup("cleanup", dir);
-+	free(buf);
-+}
-+
-+static void signature_failure_logs(void)
-+{
-+	static const __u8 junk[64] = { 0x30, 0x42, 0x13, 0x37, };
-+	char log_buf[1024] = {};
-+	struct gen_loader_fixture f;
-+	union bpf_attr attr;
- 	int fd;
- 
- 	if (gen_loader_fixture_init(&f) == 0) {
- 		/*
--		 * A present-but-invalid signature (the cert bytes are not a
--		 * PKCS#7 signature) must be rejected at load: the signature
--		 * path is honored, not ignored. (The valid path is covered by
--		 * the signed lskels.)
-+		 * Signature verification now runs inside bpf_check(), so a
-+		 * failure is reported through the verifier log. A present-but-
-+		 * invalid signature is rejected and the log says why.
- 		 */
--		fd = load_loader(f.gopts.insns, f.gopts.insns_sz, -1, junk,
--				 sizeof(junk), KEY_SPEC_SESSION_KEYRING);
-+		memset(&attr, 0, sizeof(attr));
-+		attr.prog_type = BPF_PROG_TYPE_SYSCALL;
-+		attr.insns = ptr_to_u64(f.gopts.insns);
-+		attr.insn_cnt = f.gopts.insns_sz / sizeof(struct bpf_insn);
-+		attr.license = ptr_to_u64("Dual BSD/GPL");
-+		attr.prog_flags = BPF_F_SLEEPABLE;
-+		attr.signature = ptr_to_u64(junk);
-+		attr.signature_size = sizeof(junk);
-+		attr.keyring_id = KEY_SPEC_SESSION_KEYRING;
-+		attr.log_level = 1;
-+		attr.log_buf = ptr_to_u64(log_buf);
-+		attr.log_size = sizeof(log_buf);
-+		memcpy(attr.prog_name, "__loader.prog", sizeof("__loader.prog"));
-+
-+		fd = syscall(__NR_bpf, BPF_PROG_LOAD, &attr,
-+			     offsetofend(union bpf_attr, keyring_id));
- 		ASSERT_LT(fd, 0, "invalid signature rejected at load");
-+		if (fd >= 0)
-+			close(fd);
-+		ASSERT_HAS_SUBSTR(log_buf, "signature verification failed",
-+				  "verifier logs signature failure");
- 	}
- 	gen_loader_fixture_fini(&f);
- }
-@@ -495,7 +573,7 @@ static void signature_too_large(void)
- 		 * is rejected before the buffer is read.
- 		 */
- 		fd = load_loader(f.gopts.insns, f.gopts.insns_sz, -1, junk,
--				 64 << 20, KEY_SPEC_SESSION_KEYRING);
-+				 64 << 20, KEY_SPEC_SESSION_KEYRING, 0);
- 		ASSERT_EQ(fd, -EINVAL, "oversized signature rejected");
- 	}
- 	gen_loader_fixture_fini(&f);
-@@ -515,7 +593,7 @@ static void signature_bad_keyring(void)
- 		 * large positive serial takes the user-keyring path and won't exist.
- 		 */
- 		fd = load_loader(f.gopts.insns, f.gopts.insns_sz, -1, junk,
--				 sizeof(junk), INT_MAX);
-+				 sizeof(junk), INT_MAX, 0);
- 		ASSERT_EQ(fd, -EINVAL, "signature with bad keyring_id rejected");
- 	}
- 	gen_loader_fixture_fini(&f);
-@@ -575,7 +653,7 @@ static void metadata_ctx_max_entries_ignored(void)
- 	memcpy(blob, gopts.data, data_sz);
- 
- 	r = run_gen_loader(gopts.insns, gopts.insns_sz, blob, data_sz,
--			   excl, sizeof(excl), NULL, 0, true, ctx, ctx_sz, &ran);
-+			   excl, sizeof(excl), NULL, 0, ctx, ctx_sz, &ran);
- 	if (!ASSERT_TRUE(ran, "loader ran") ||
- 	    !ASSERT_EQ(r, 0, "loader retval"))
- 		goto free_blob;
-@@ -661,7 +739,7 @@ static void metadata_ctx_initial_value_ignored(void)
- 	memcpy(blob, gopts.data, data_sz);
- 
- 	r = run_gen_loader(gopts.insns, gopts.insns_sz, blob, data_sz,
--			   excl, sizeof(excl), NULL, 0, true, ctx, ctx_sz, &ran);
-+			   excl, sizeof(excl), NULL, 0, ctx, ctx_sz, &ran);
- 	if (!ASSERT_TRUE(ran, "loader ran") ||
- 	    !ASSERT_EQ(r, 0, "loader retval"))
- 		goto free_blob;
-@@ -714,6 +792,7 @@ static void signature_authenticates_insns(void)
- 	__u8 excl[SHA256_DIGEST_LENGTH], sig[8192];
- 	__u32 sig_sz = sizeof(sig), insns_sz, data_sz, ctx_sz;
- 	unsigned char *insns = NULL, *tampered = NULL, *blob = NULL;
-+	unsigned char *signbuf = NULL;
- 	int nr_maps = 0, nr_progs = 0, r;
- 	struct bpf_program *p;
- 	struct bpf_map *m;
-@@ -760,29 +839,141 @@ static void signature_authenticates_insns(void)
- 	memcpy(blob, gopts.data, data_sz);
- 	libbpf_sha256(insns, insns_sz, excl);
- 
--	if (!ASSERT_OK(sign_buf(dir, insns, insns_sz, sig, &sig_sz), "sign-file"))
-+	signbuf = malloc((size_t)insns_sz + data_sz);
-+	if (!ASSERT_OK_PTR(signbuf, "signbuf"))
-+		goto cleanup;
-+	memcpy(signbuf, insns, insns_sz);
-+	memcpy(signbuf + insns_sz, blob, data_sz);
-+	if (!ASSERT_OK(sign_buf(dir, signbuf, insns_sz + data_sz, sig, &sig_sz),
-+		       "sign-file"))
- 		goto cleanup;
- 
- 	memset(ctx, 0, ctx_sz);
- 	((struct bpf_loader_ctx *)ctx)->sz = ctx_sz;
- 	r = run_gen_loader(insns, insns_sz, blob, data_sz, excl, sizeof(excl),
--			   sig, sig_sz, true, ctx, ctx_sz, &ran);
-+			   sig, sig_sz, ctx, ctx_sz, &ran);
- 	ASSERT_TRUE(ran, "valid signature: loader loaded and ran");
- 	ASSERT_EQ(r, 0, "valid signature accepted");
- 	close_loader_ctx_fds(ctx, nr_maps, nr_progs);
- 
- 	memcpy(tampered, insns, insns_sz);
- 	tampered[insns_sz / 2] ^= 0xff;
-+	/*
-+	 * Bind the metadata map to the tampered loader's own digest, so the
-+	 * verifier's exclusive-map check (excl_prog_sha == prog->digest) passes
-+	 * and the signature - verified after the maps are resolved - is what
-+	 * rejects the load. This is the attacker's best case: even after
-+	 * re-binding the exclusive map to their tampered loader, the signature
-+	 * over the original insns || metadata still fails. (Leaving the map
-+	 * bound to the original digest would instead trip the excl check first.)
-+	 */
-+	libbpf_sha256(tampered, insns_sz, excl);
- 	memset(ctx, 0, ctx_sz);
- 	((struct bpf_loader_ctx *)ctx)->sz = ctx_sz;
- 	r = run_gen_loader(tampered, insns_sz, blob, data_sz, excl, sizeof(excl),
--			   sig, sig_sz, true, ctx, ctx_sz, &ran);
-+			   sig, sig_sz, ctx, ctx_sz, &ran);
- 	ASSERT_FALSE(ran, "tampered loader rejected before run");
- 	ASSERT_EQ(r, -EKEYREJECTED, "signature is bound to the instructions");
- cleanup:
- 	free(insns);
- 	free(tampered);
- 	free(blob);
-+	free(signbuf);
-+	free(ctx);
-+	test_signed_loader__destroy(skel);
-+	run_setup("cleanup", dir);
-+}
-+
-+static void signature_authenticates_metadata(void)
-+{
-+	LIBBPF_OPTS(gen_loader_opts, gopts, .gen_hash = true);
-+	char dir_tmpl[] = "/tmp/signed_loaderXXXXXX", *dir;
-+	struct test_signed_loader *skel = NULL;
-+	__u8 excl[SHA256_DIGEST_LENGTH], sig[8192];
-+	__u32 sig_sz = sizeof(sig), insns_sz, data_sz, ctx_sz;
-+	unsigned char *insns = NULL, *blob = NULL;
-+	unsigned char *signbuf = NULL;
-+	int nr_maps = 0, nr_progs = 0, r;
-+	struct bpf_program *p;
-+	struct bpf_map *m;
-+	void *ctx = NULL;
-+	bool ran;
-+
-+	syscall(__NR_request_key, "keyring", "_uid.0", NULL,
-+		KEY_SPEC_SESSION_KEYRING);
-+	dir = mkdtemp(dir_tmpl);
-+	if (!ASSERT_OK_PTR(dir, "mkdtemp"))
-+		return;
-+	if (!ASSERT_OK(run_setup("setup", dir), "verify_sig_setup")) {
-+		rmdir(dir);
-+		return;
-+	}
-+
-+	skel = test_signed_loader__open();
-+	if (!ASSERT_OK_PTR(skel, "skel_open"))
-+		goto cleanup;
-+	if (!ASSERT_OK(bpf_object__gen_loader(skel->obj, &gopts), "gen_loader"))
-+		goto cleanup;
-+	if (!ASSERT_OK(bpf_object__load(skel->obj), "gen_load"))
-+		goto cleanup;
-+
-+	bpf_object__for_each_program(p, skel->obj)
-+		nr_progs++;
-+	bpf_object__for_each_map(m, skel->obj)
-+		nr_maps++;
-+	ctx_sz = sizeof(struct bpf_loader_ctx) +
-+		 nr_maps * sizeof(struct bpf_map_desc) +
-+		 nr_progs * sizeof(struct bpf_prog_desc);
-+	insns_sz = gopts.insns_sz;
-+	data_sz = gopts.data_sz;
-+	ctx = calloc(1, ctx_sz);
-+	insns = malloc(insns_sz);
-+	blob = malloc(data_sz);
-+	if (!ASSERT_OK_PTR(ctx, "ctx") ||
-+	    !ASSERT_OK_PTR(insns, "insns") ||
-+	    !ASSERT_OK_PTR(blob, "blob"))
-+		goto cleanup;
-+	memcpy(insns, gopts.insns, insns_sz);
-+	memcpy(blob, gopts.data, data_sz);
-+	libbpf_sha256(insns, insns_sz, excl);
-+
-+	signbuf = malloc((size_t)insns_sz + data_sz);
-+	if (!ASSERT_OK_PTR(signbuf, "signbuf"))
-+		goto cleanup;
-+	memcpy(signbuf, insns, insns_sz);
-+	memcpy(signbuf + insns_sz, blob, data_sz);
-+	if (!ASSERT_OK(sign_buf(dir, signbuf, insns_sz + data_sz, sig, &sig_sz),
-+		       "sign-file"))
-+		goto cleanup;
-+
-+	memset(ctx, 0, ctx_sz);
-+	((struct bpf_loader_ctx *)ctx)->sz = ctx_sz;
-+	r = run_gen_loader(insns, insns_sz, blob, data_sz, excl, sizeof(excl),
-+			   sig, sig_sz, ctx, ctx_sz, &ran);
-+	ASSERT_TRUE(ran, "valid signature: loader loaded and ran");
-+	ASSERT_EQ(r, 0, "valid signature accepted");
-+	close_loader_ctx_fds(ctx, nr_maps, nr_progs);
-+
-+	/*
-+	 * Tamper the metadata after signing while leaving the instructions
-+	 * and thus the exclusive hash binding untouched: the map freezes
-+	 * fine and excl_prog_sha still matches the loader's digest, so the
-+	 * load reaches signature verification, which folds the live frozen
-+	 * map bytes into the checked payload and must reject the modified
-+	 * blob. A kernel folding anything but the map contents themselves
-+	 * would wrongly accept this load.
-+	 */
-+	blob[data_sz / 2] ^= 0xff;
-+	memset(ctx, 0, ctx_sz);
-+	((struct bpf_loader_ctx *)ctx)->sz = ctx_sz;
-+	r = run_gen_loader(insns, insns_sz, blob, data_sz, excl, sizeof(excl),
-+			   sig, sig_sz, ctx, ctx_sz, &ran);
-+	ASSERT_FALSE(ran, "tampered metadata rejected before run");
-+	ASSERT_EQ(r, -EKEYREJECTED, "signature is bound to the metadata");
-+cleanup:
-+	free(insns);
-+	free(blob);
-+	free(signbuf);
- 	free(ctx);
- 	test_signed_loader__destroy(skel);
- 	run_setup("cleanup", dir);
-@@ -1007,10 +1198,11 @@ static void lsm_signature_verdict(void)
- {
- 	char dir_tmpl[] = "/tmp/signed_loader_lsmXXXXXX", *dir = NULL;
- 	struct test_signed_loader_lsm *lsm = NULL;
-+	__u32 sig_sz = 8192, msig_sz = 8192;
- 	int map_fd = -1, prog_fd = -1;
- 	bool have_fixture = false;
- 	struct gen_loader_fixture f;
--	__u32 sig_sz = 8192;
-+	unsigned char *buf;
- 	__s32 ses_serial;
- 	__u8 sig[8192];
- 
-@@ -1029,7 +1221,7 @@ static void lsm_signature_verdict(void)
- 	if (!ASSERT_OK_FD(map_fd, "meta_map_unsigned"))
+ 	const size_t attr_sz = offsetofend(union bpf_attr, map_fd);
+@@ -384,12 +361,6 @@ static inline int bpf_load_and_run(struct bpf_load_and_run_opts *opts)
+ 		set_err;
  		goto out;
- 	lsm->bss->seen = 0;
--	prog_fd = load_loader(f.gopts.insns, f.gopts.insns_sz, map_fd, NULL, 0, 0);
-+	prog_fd = load_loader(f.gopts.insns, f.gopts.insns_sz, map_fd, NULL, 0, 0, 0);
- 	close(map_fd);
- 	map_fd = -1;
- 	if (!ASSERT_OK_FD(prog_fd, "unsigned loader load"))
-@@ -1062,22 +1254,51 @@ static void lsm_signature_verdict(void)
- 		goto out;
- 	lsm->bss->seen = 0;
- 	prog_fd = load_loader(f.gopts.insns, f.gopts.insns_sz, map_fd, sig,
--			      sig_sz, KEY_SPEC_SESSION_KEYRING);
-+			      sig_sz, KEY_SPEC_SESSION_KEYRING, 0);
- 	close(map_fd);
- 	map_fd = -1;
--	if (!ASSERT_OK_FD(prog_fd, "signed loader load"))
+ 	}
+-	err = skel_obj_get_info_by_fd(map_fd);
+-	if (err < 0) {
+-		opts->errstr = "failed to fetch obj info";
+-		set_err;
 -		goto out;
--	close(prog_fd);
-+	ASSERT_EQ(prog_fd, -EACCES, "unfolded metadata rejected");
-+	if (prog_fd >= 0)
-+		close(prog_fd);
- 	prog_fd = -1;
+-	}
+ #endif
  
- 	ses_serial = syscall(__NR_keyctl, KEYCTL_GET_KEYRING_ID,
- 			     KEY_SPEC_SESSION_KEYRING, 0);
- 	ASSERT_EQ(lsm->bss->seen, 1, "signed: one observed load");
--	ASSERT_EQ(lsm->bss->sig_verdict, BPF_SIG_VERIFIED, "signed verdict");
-+	ASSERT_EQ(lsm->bss->sig_verdict, BPF_SIG_VERIFIED,
-+		  "admission saw a valid signature");
- 	ASSERT_EQ(lsm->bss->sig_keyring_type, BPF_SIG_KEYRING_USER, "signed keyring type");
- 	ASSERT_GT(ses_serial, 0, "session keyring serial resolved");
- 	ASSERT_EQ(lsm->bss->sig_keyring_serial, ses_serial,
- 		  "signed: validated against session keyring");
-+
-+	buf = malloc((size_t)f.gopts.insns_sz + f.data_sz);
-+	if (!ASSERT_OK_PTR(buf, "meta_signbuf"))
-+		goto out;
-+	memcpy(buf, f.gopts.insns, f.gopts.insns_sz);
-+	memcpy(buf + f.gopts.insns_sz, f.blob, f.data_sz);
-+	if (!ASSERT_OK(sign_buf(dir, buf, f.gopts.insns_sz + f.data_sz,
-+				sig, &msig_sz), "sign insns||metadata")) {
-+		free(buf);
-+		goto out;
-+	}
-+	free(buf);
-+
-+	map_fd = setup_meta_map(&f);
-+	if (!ASSERT_OK_FD(map_fd, "meta_map_bound"))
-+		goto out;
-+	lsm->bss->seen = 0;
-+	prog_fd = load_loader(f.gopts.insns, f.gopts.insns_sz, map_fd, sig,
-+			      msig_sz, KEY_SPEC_SESSION_KEYRING, 1);
-+	close(map_fd);
-+	map_fd = -1;
-+	if (!ASSERT_OK_FD(prog_fd, "metadata-bound loader load"))
-+		goto out;
-+	close(prog_fd);
-+	prog_fd = -1;
-+	ASSERT_EQ(lsm->bss->seen, 1, "metadata: one observed load");
-+	ASSERT_EQ(lsm->bss->sig_verdict, BPF_SIG_VERIFIED,
-+		  "metadata-bound verdict");
- out:
- 	if (map_fd >= 0)
- 		close(map_fd);
-@@ -1090,20 +1311,467 @@ static void lsm_signature_verdict(void)
- 	test_signed_loader_lsm__destroy(lsm);
- }
- 
-+/*
-+ * Load-time metadata verification: the kernel folds the frozen metadata map
-+ * into the signature (insns || metadata) and checks it at BPF_PROG_LOAD via
-+ * fd_array_cnt, rather than the loader checking from within BPF. Sign that
-+ * concatenation, hand the kernel the map, and confirm the signed loader loads,
-+ * runs, and installs its target.
-+ */
-+static int loadtime_drive(const char *dir, const void *insns, __u32 insns_sz,
-+			  const void *data, __u32 data_sz, const __u8 *excl,
-+			  void *ctx, __u32 ctx_sz, int *load_ret, bool *ran)
-+{
-+	LIBBPF_OPTS(bpf_map_create_opts, mopts,
-+		    .excl_prog_hash = excl,
-+		    .excl_prog_hash_size = SHA256_DIGEST_LENGTH);
-+	__u32 sig_sz = 8192, key = 0;
-+	unsigned char *buf = NULL;
-+	int map_fd, prog_fd, ret = 0;
-+	union bpf_attr attr;
-+	__u8 sig[8192];
-+
-+	*ran = false;
-+	*load_ret = 0;
-+
-+	/*
-+	 * Metadata map, bound to the loader digest and frozen, exactly as
-+	 * skel_internal.h's bpf_load_and_run() sets it up.
-+	 */
-+	map_fd = bpf_map_create(BPF_MAP_TYPE_ARRAY, "__loader.map", 4,
-+				data_sz, 1, &mopts);
-+	if (map_fd < 0) {
-+		ret = -errno;
-+		goto out_load;
-+	}
-+	if (bpf_map_update_elem(map_fd, &key, data, 0) || bpf_map_freeze(map_fd)) {
-+		ret = -errno;
-+		goto out_load;
-+	}
-+
-+	/* Sign insns || metadata, the same bytes the kernel reconstructs. */
-+	buf = malloc((size_t)insns_sz + data_sz);
-+	if (!buf) {
-+		ret = -ENOMEM;
-+		goto out_load;
-+	}
-+	memcpy(buf, insns, insns_sz);
-+	memcpy(buf + insns_sz, data, data_sz);
-+	ret = sign_buf(dir, buf, insns_sz + data_sz, sig, &sig_sz);
-+	if (ret)
-+		goto out_load;
-+
-+	memset(&attr, 0, sizeof(attr));
-+	attr.prog_type = BPF_PROG_TYPE_SYSCALL;
-+	attr.insns = ptr_to_u64(insns);
-+	attr.insn_cnt = insns_sz / sizeof(struct bpf_insn);
-+	attr.license = ptr_to_u64("Dual BSD/GPL");
-+	attr.prog_flags = BPF_F_SLEEPABLE;
-+	attr.fd_array = ptr_to_u64(&map_fd);
-+	attr.signature = ptr_to_u64(sig);
-+	attr.signature_size = sig_sz;
-+	attr.keyring_id = KEY_SPEC_SESSION_KEYRING;
-+	attr.fd_array_cnt = 1;
-+	memcpy(attr.prog_name, "__loader.prog", sizeof("__loader.prog"));
-+	prog_fd = syscall(__NR_bpf, BPF_PROG_LOAD, &attr,
-+			  offsetofend(union bpf_attr, keyring_id));
-+	if (prog_fd < 0) {
-+		ret = -errno;
-+		goto out_load;
-+	}
-+
-+	memset(&attr, 0, sizeof(attr));
-+	attr.test.prog_fd = prog_fd;
-+	attr.test.ctx_in = ptr_to_u64(ctx);
-+	attr.test.ctx_size_in = ctx_sz;
-+	if (syscall(__NR_bpf, BPF_PROG_RUN, &attr,
-+		    offsetofend(union bpf_attr, test)) < 0) {
-+		ret = -errno;
-+		goto out_prog;
-+	}
-+	*ran = true;
-+	ret = (int)attr.test.retval;
-+out_prog:
-+	close(prog_fd);
-+	goto out_map;
-+out_load:
-+	*load_ret = ret;
-+out_map:
-+	free(buf);
-+	if (map_fd >= 0)
-+		close(map_fd);
-+	return ret;
-+}
-+
-+static void loadtime_verify(struct bpf_object *obj, int expect_maps)
-+{
-+	LIBBPF_OPTS(gen_loader_opts, gopts, .gen_hash = true);
-+	char dir_tmpl[] = "/tmp/signed_loader_ltXXXXXX", *dir = NULL;
-+	int nr_maps = 0, nr_progs = 0, load_ret = 0, r;
-+	__u8 excl[SHA256_DIGEST_LENGTH];
-+	struct bpf_prog_desc *pd;
-+	struct bpf_map_desc *md;
-+	unsigned char *blob = NULL;
-+	struct bpf_program *p;
-+	struct bpf_map *m;
-+	__u32 ctx_sz, data_sz;
-+	void *ctx = NULL;
-+	bool ran = false;
-+
-+	syscall(__NR_request_key, "keyring", "_uid.0", NULL,
-+		KEY_SPEC_SESSION_KEYRING);
-+	dir = mkdtemp(dir_tmpl);
-+	if (!ASSERT_OK_PTR(dir, "mkdtemp"))
-+		return;
-+	if (!ASSERT_OK(run_setup("setup", dir), "verify_sig_setup")) {
-+		rmdir(dir);
-+		return;
-+	}
-+
-+	if (!ASSERT_OK(bpf_object__gen_loader(obj, &gopts), "gen_loader"))
-+		goto out;
-+	if (!ASSERT_OK(bpf_object__load(obj), "gen_load"))
-+		goto out;
-+
-+	bpf_object__for_each_program(p, obj)
-+		nr_progs++;
-+	bpf_object__for_each_map(m, obj)
-+		nr_maps++;
-+	if (!ASSERT_EQ(nr_maps, expect_maps, "fixture map count"))
-+		goto out;
-+
-+	ctx_sz = sizeof(struct bpf_loader_ctx) +
-+		 nr_maps * sizeof(struct bpf_map_desc) +
-+		 nr_progs * sizeof(struct bpf_prog_desc);
-+	ctx = calloc(1, ctx_sz);
-+	if (!ASSERT_OK_PTR(ctx, "ctx_alloc"))
-+		goto out;
-+	((struct bpf_loader_ctx *)ctx)->sz = ctx_sz;
-+
-+	data_sz = gopts.data_sz;
-+	blob = malloc(data_sz);
-+	if (!ASSERT_OK_PTR(blob, "blob_alloc"))
-+		goto out;
-+	memcpy(blob, gopts.data, data_sz);
-+
-+	/* excl_prog_hash = SHA256(loader insns) == the loader's prog->digest. */
-+	libbpf_sha256(gopts.insns, gopts.insns_sz, excl);
-+
-+	r = loadtime_drive(dir, gopts.insns, gopts.insns_sz, blob, data_sz,
-+			   excl, ctx, ctx_sz, &load_ret, &ran);
-+	ASSERT_OK(load_ret, "signed loader loaded (insns || metadata)");
-+	ASSERT_TRUE(ran, "loader ran");
-+	ASSERT_EQ(r, 0, "loader installed its target");
-+
-+	md = (struct bpf_map_desc *)((char *)ctx + sizeof(struct bpf_loader_ctx));
-+	pd = (struct bpf_prog_desc *)(md + nr_maps);
-+	ASSERT_GT(pd[0].prog_fd, 0, "target program installed");
-+	if (nr_maps)
-+		ASSERT_GT(md[0].map_fd, 0, "target map installed");
-+
-+	close_loader_ctx_fds(ctx, nr_maps, nr_progs);
-+out:
-+	free(blob);
-+	free(ctx);
-+	if (dir)
-+		run_setup("cleanup", dir);
-+}
-+
-+static void loadtime_no_map(void)
-+{
-+	struct test_signed_loader *skel = test_signed_loader__open();
-+
-+	if (!ASSERT_OK_PTR(skel, "skel_open"))
-+		return;
-+	loadtime_verify(skel->obj, 0);
-+	test_signed_loader__destroy(skel);
-+}
-+
-+static void loadtime_with_map(void)
-+{
-+	struct test_signed_loader_map *skel = test_signed_loader_map__open();
-+
-+	if (!ASSERT_OK_PTR(skel, "skel_open"))
-+		return;
-+	loadtime_verify(skel->obj, 1);
-+	test_signed_loader_map__destroy(skel);
-+}
-+
-+/*
-+ * A signed program need not bind any map. A plain BPF_PROG_TYPE_SYSCALL
-+ * program with no fd_array is signed over its instructions alone: the kernel
-+ * verifies the signature, folds no metadata, and the program loads. Exercise
-+ * the fd_array == NULL / fd_array_cnt == 0 path, and confirm the signature
-+ * still authenticates the instructions (a tampered copy is rejected).
-+ */
-+static void signed_no_fd_array(void)
-+{
-+	struct bpf_insn insns[] = {
-+		BPF_MOV64_IMM(BPF_REG_0, 0),
-+		BPF_EXIT_INSN(),
-+	};
-+	char dir_tmpl[] = "/tmp/signed_loaderXXXXXX", *dir;
-+	__u32 sig_sz = 8192;
-+	union bpf_attr attr;
-+	__u8 sig[8192];
-+	int prog_fd, err;
-+
-+	syscall(__NR_request_key, "keyring", "_uid.0", NULL,
-+		KEY_SPEC_SESSION_KEYRING);
-+	dir = mkdtemp(dir_tmpl);
-+	if (!ASSERT_OK_PTR(dir, "mkdtemp"))
-+		return;
-+	if (!ASSERT_OK(run_setup("setup", dir), "verify_sig_setup")) {
-+		rmdir(dir);
-+		return;
-+	}
-+
-+	/* No metadata map: the signed payload is the instructions alone. */
-+	if (!ASSERT_OK(sign_buf(dir, insns, sizeof(insns), sig, &sig_sz),
-+		       "sign-file"))
-+		goto cleanup;
-+
-+	memset(&attr, 0, sizeof(attr));
-+	attr.prog_type = BPF_PROG_TYPE_SYSCALL;
-+	attr.insns = ptr_to_u64(insns);
-+	attr.insn_cnt = ARRAY_SIZE(insns);
-+	attr.license = ptr_to_u64("Dual BSD/GPL");
-+	attr.prog_flags = BPF_F_SLEEPABLE;
-+	attr.signature = ptr_to_u64(sig);
-+	attr.signature_size = sig_sz;
-+	attr.keyring_id = KEY_SPEC_SESSION_KEYRING;
-+	/* fd_array and fd_array_cnt deliberately left NULL/0. */
-+	memcpy(attr.prog_name, "signed_nomap", sizeof("signed_nomap"));
-+
-+	prog_fd = syscall(__NR_bpf, BPF_PROG_LOAD, &attr,
-+			  offsetofend(union bpf_attr, keyring_id));
-+	if (!ASSERT_GE(prog_fd, 0, "map-less signed program loaded")) {
-+		if (prog_fd >= 0)
-+			close(prog_fd);
-+		goto cleanup;
-+	}
-+	close(prog_fd);
-+
-+	/* The signature covers the instructions, so tampering must be rejected. */
-+	insns[0].imm = 1;
-+	prog_fd = syscall(__NR_bpf, BPF_PROG_LOAD, &attr,
-+			  offsetofend(union bpf_attr, keyring_id));
-+	err = prog_fd < 0 ? -errno : prog_fd;
-+	ASSERT_EQ(err, -EKEYREJECTED, "tampered map-less program rejected");
-+	if (prog_fd >= 0)
-+		close(prog_fd);
-+cleanup:
-+	run_setup("cleanup", dir);
-+}
-+
-+/*
-+ * A signed program may reach maps only through fd_array indices, so the kernel
-+ * folds (and thus attests) them. A direct BPF_PSEUDO_MAP_FD reference - a raw,
-+ * unfolded fd baked into the signed instructions - is rejected by the verifier.
-+ */
-+static void signed_map_by_fd_rejected(void)
-+{
-+	struct bpf_insn insns[] = {
-+		BPF_LD_MAP_FD(BPF_REG_1, 0),
-+		BPF_MOV64_IMM(BPF_REG_0, 0),
-+		BPF_EXIT_INSN(),
-+	};
-+	char dir_tmpl[] = "/tmp/signed_loaderXXXXXX", *dir;
-+	__u32 sig_sz = 8192;
-+	union bpf_attr attr;
-+	__u8 sig[8192];
-+	int map_fd, prog_fd, err;
-+
-+	map_fd = bpf_map_create(BPF_MAP_TYPE_ARRAY, "sig_mapfd", 4, 4, 1, NULL);
-+	if (!ASSERT_GE(map_fd, 0, "map_create"))
-+		return;
-+	insns[0].imm = map_fd;	/* bake the raw map fd into the ld_imm64 */
-+
-+	syscall(__NR_request_key, "keyring", "_uid.0", NULL,
-+		KEY_SPEC_SESSION_KEYRING);
-+	dir = mkdtemp(dir_tmpl);
-+	if (!ASSERT_OK_PTR(dir, "mkdtemp"))
-+		goto out_map;
-+	if (!ASSERT_OK(run_setup("setup", dir), "verify_sig_setup")) {
-+		rmdir(dir);
-+		goto out_map;
-+	}
-+
-+	/* Sign the instructions, raw map fd and all. */
-+	if (!ASSERT_OK(sign_buf(dir, insns, sizeof(insns), sig, &sig_sz),
-+		       "sign-file"))
-+		goto cleanup;
-+
-+	memset(&attr, 0, sizeof(attr));
-+	attr.prog_type = BPF_PROG_TYPE_SYSCALL;
-+	attr.insns = ptr_to_u64(insns);
-+	attr.insn_cnt = ARRAY_SIZE(insns);
-+	attr.license = ptr_to_u64("Dual BSD/GPL");
-+	attr.prog_flags = BPF_F_SLEEPABLE;
-+	attr.signature = ptr_to_u64(sig);
-+	attr.signature_size = sig_sz;
-+	attr.keyring_id = KEY_SPEC_SESSION_KEYRING;
-+	/* No fd_array: the map is reached by a raw fd in the instructions. */
-+	memcpy(attr.prog_name, "signed_mapfd", sizeof("signed_mapfd"));
-+
-+	prog_fd = syscall(__NR_bpf, BPF_PROG_LOAD, &attr,
-+			  offsetofend(union bpf_attr, keyring_id));
-+	err = prog_fd < 0 ? -errno : prog_fd;
-+	ASSERT_EQ(err, -EINVAL, "signed program referencing a map by fd rejected");
-+	if (prog_fd >= 0)
-+		close(prog_fd);
-+cleanup:
-+	run_setup("cleanup", dir);
-+out_map:
-+	close(map_fd);
-+}
-+
-+/*
-+ * A signed program may reach maps only through the continuous fd_array, so the
-+ * kernel folds (and thus attests) them. Referencing a map by fd_array *index*
-+ * while leaving fd_array_cnt at 0 selects the sparse path, which resolves a map
-+ * the signature never covered; the verifier rejects it up front with -EACCES.
-+ */
-+static void signed_sparse_fd_array_rejected(void)
-+{
-+	struct bpf_insn insns[] = {
-+		BPF_LD_IMM64_RAW(BPF_REG_1, BPF_PSEUDO_MAP_IDX, 0),
-+		BPF_MOV64_IMM(BPF_REG_0, 0),
-+		BPF_EXIT_INSN(),
-+	};
-+	char dir_tmpl[] = "/tmp/signed_loader_spXXXXXX", *dir;
-+	__u32 sig_sz = 8192;
-+	union bpf_attr attr;
-+	__u8 sig[8192];
-+	int map_fd, prog_fd, err;
-+
-+	map_fd = bpf_map_create(BPF_MAP_TYPE_ARRAY, "sig_sparse", 4, 4, 1, NULL);
-+	if (!ASSERT_GE(map_fd, 0, "map_create"))
-+		return;
-+
-+	syscall(__NR_request_key, "keyring", "_uid.0", NULL,
-+		KEY_SPEC_SESSION_KEYRING);
-+	dir = mkdtemp(dir_tmpl);
-+	if (!ASSERT_OK_PTR(dir, "mkdtemp"))
-+		goto out_map;
-+	if (!ASSERT_OK(run_setup("setup", dir), "verify_sig_setup")) {
-+		rmdir(dir);
-+		goto out_map;
-+	}
-+
-+	/* Sign the instructions alone; the sparse map is not folded. */
-+	if (!ASSERT_OK(sign_buf(dir, insns, sizeof(insns), sig, &sig_sz),
-+		       "sign-file"))
-+		goto cleanup;
-+
-+	memset(&attr, 0, sizeof(attr));
-+	attr.prog_type = BPF_PROG_TYPE_SYSCALL;
-+	attr.insns = ptr_to_u64(insns);
-+	attr.insn_cnt = ARRAY_SIZE(insns);
-+	attr.license = ptr_to_u64("Dual BSD/GPL");
-+	attr.prog_flags = BPF_F_SLEEPABLE;
-+	attr.fd_array = ptr_to_u64(&map_fd);
-+	attr.fd_array_cnt = 0; /* sparse: force lazy map resolution */
-+	attr.signature = ptr_to_u64(sig);
-+	attr.signature_size = sig_sz;
-+	attr.keyring_id = KEY_SPEC_SESSION_KEYRING;
-+	memcpy(attr.prog_name, "signed_sparse", sizeof("signed_sparse"));
-+
-+	prog_fd = syscall(__NR_bpf, BPF_PROG_LOAD, &attr,
-+			  offsetofend(union bpf_attr, keyring_id));
-+	err = prog_fd < 0 ? -errno : prog_fd;
-+	ASSERT_EQ(err, -EACCES, "signed program binding a sparse fd_array map rejected");
-+	if (prog_fd >= 0)
-+		close(prog_fd);
-+cleanup:
-+	run_setup("cleanup", dir);
-+out_map:
-+	close(map_fd);
-+}
-+
-+static void signed_module_kfunc_rejected(void)
-+{
-+	struct bpf_insn insns[] = {
-+		BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, BPF_PSEUDO_KFUNC_CALL, 1, 1),
-+		BPF_MOV64_IMM(BPF_REG_0, 0),
-+		BPF_EXIT_INSN(),
-+	};
-+	char dir_tmpl[] = "/tmp/signed_loader_kfnXXXXXX", *dir;
-+	int prog_fd, err, fds[2];
-+	struct btf *btf = NULL;
-+	__u32 sig_sz = 8192;
-+	union bpf_attr attr;
-+	__u8 sig[8192];
-+
-+	syscall(__NR_request_key, "keyring", "_uid.0", NULL,
-+		KEY_SPEC_SESSION_KEYRING);
-+	dir = mkdtemp(dir_tmpl);
-+	if (!ASSERT_OK_PTR(dir, "mkdtemp"))
-+		return;
-+	if (!ASSERT_OK(run_setup("setup", dir), "verify_sig_setup")) {
-+		rmdir(dir);
-+		return;
-+	}
-+	if (!ASSERT_OK(sign_buf(dir, insns, sizeof(insns), sig, &sig_sz),
-+		       "sign-file"))
-+		goto cleanup;
-+	btf = btf__new_empty();
-+	if (!ASSERT_OK_PTR(btf, "btf_new_empty"))
-+		goto cleanup;
-+	btf__add_int(btf, "int", 4, BTF_INT_SIGNED);
-+	if (!ASSERT_OK(btf__load_into_kernel(btf), "btf_load"))
-+		goto cleanup;
-+	fds[0] = -1;
-+	fds[1] = btf__fd(btf);
-+
-+	memset(&attr, 0, sizeof(attr));
-+	attr.prog_type = BPF_PROG_TYPE_SYSCALL;
-+	attr.insns = ptr_to_u64(insns);
-+	attr.insn_cnt = ARRAY_SIZE(insns);
-+	attr.license = ptr_to_u64("Dual BSD/GPL");
-+	attr.prog_flags = BPF_F_SLEEPABLE;
-+	attr.fd_array = ptr_to_u64(fds);
-+	attr.fd_array_cnt = 0; /* sparse: force lazy kfunc BTF resolution */
-+	attr.signature = ptr_to_u64(sig);
-+	attr.signature_size = sig_sz;
-+	attr.keyring_id = KEY_SPEC_SESSION_KEYRING;
-+	memcpy(attr.prog_name, "signed_kfunc", sizeof("signed_kfunc"));
-+
-+	prog_fd = syscall(__NR_bpf, BPF_PROG_LOAD, &attr,
-+			  offsetofend(union bpf_attr, keyring_id));
-+	err = prog_fd < 0 ? -errno : prog_fd;
-+	if (prog_fd >= 0)
-+		close(prog_fd);
-+
-+	ASSERT_EQ(err, -EACCES, "module kfunc BTF in signed program rejected");
-+cleanup:
-+	if (btf)
-+		btf__free(btf);
-+	run_setup("cleanup", dir);
-+}
-+
- void test_signed_loader(void)
- {
--	if (test__start_subtest("metadata_check_shape"))
--		metadata_check_shape();
-+	if (test__start_subtest("loadtime_no_map"))
-+		loadtime_no_map();
-+	if (test__start_subtest("loadtime_with_map"))
-+		loadtime_with_map();
- 	if (test__start_subtest("metadata_match"))
- 		metadata_match();
--	if (test__start_subtest("metadata_sha_mismatch"))
--		metadata_sha_mismatch();
--	if (test__start_subtest("metadata_not_exclusive"))
--		metadata_not_exclusive();
--	if (test__start_subtest("metadata_hash_not_computed"))
--		metadata_hash_not_computed();
- 	if (test__start_subtest("signature_enforced"))
- 		signature_enforced();
-+	if (test__start_subtest("signed_nonexcl_fd_array_rejected"))
-+		signed_nonexcl_fd_array_rejected();
-+	if (test__start_subtest("signed_unfrozen_fd_array_rejected"))
-+		signed_unfrozen_fd_array_rejected();
-+	if (test__start_subtest("signed_nonarray_fd_array_rejected"))
-+		signed_nonarray_fd_array_rejected();
-+	if (test__start_subtest("signed_btf_fd_array_rejected"))
-+		signed_btf_fd_array_rejected();
-+	if (test__start_subtest("signed_module_kfunc_rejected"))
-+		signed_module_kfunc_rejected();
-+	if (test__start_subtest("signature_failure_logs"))
-+		signature_failure_logs();
- 	if (test__start_subtest("signature_too_large"))
- 		signature_too_large();
- 	if (test__start_subtest("signature_bad_keyring"))
-@@ -1114,6 +1782,8 @@ void test_signed_loader(void)
- 		metadata_ctx_initial_value_ignored();
- 	if (test__start_subtest("signature_authenticates_insns"))
- 		signature_authenticates_insns();
-+	if (test__start_subtest("signature_authenticates_metadata"))
-+		signature_authenticates_metadata();
- 	if (test__start_subtest("hash_requires_frozen"))
- 		hash_requires_frozen();
- 	if (test__start_subtest("no_update_after_freeze"))
-@@ -1132,4 +1802,10 @@ void test_signed_loader(void)
- 		map_hash_unsupported_type();
- 	if (test__start_subtest("lsm_signature_verdict"))
- 		lsm_signature_verdict();
-+	if (test__start_subtest("signed_no_fd_array"))
-+		signed_no_fd_array();
-+	if (test__start_subtest("signed_map_by_fd_rejected"))
-+		signed_map_by_fd_rejected();
-+	if (test__start_subtest("signed_sparse_fd_array_rejected"))
-+		signed_sparse_fd_array_rejected();
- }
-diff --git a/tools/testing/selftests/bpf/progs/test_signed_loader.c b/tools/testing/selftests/bpf/progs/test_signed_loader.c
-index d9a4b85f9391..50451a69b99a 100644
---- a/tools/testing/selftests/bpf/progs/test_signed_loader.c
-+++ b/tools/testing/selftests/bpf/progs/test_signed_loader.c
-@@ -4,10 +4,11 @@
- 
- /*
-  * Minimal, map-less program. Driven through libbpf's gen_loader (gen_hash)
-- * by prog_tests/signed_loader.c so the generated light-skeleton loader (with
-- * the emit_signature_match metadata check) can be exercised against good
-- * and tampered metadata. A socket filter needs no load-time attach resolution,
-- * and having no maps keeps the generated loader's ctx trivial (0 maps, 1 prog).
-+ * by prog_tests/signed_loader.c so the generated light-skeleton loader can be
-+ * exercised against good and tampered metadata, which the kernel now verifies
-+ * at load time via the insns||metadata signature. A socket filter needs no
-+ * load-time attach resolution, and having no maps keeps the generated loader's
-+ * ctx trivial (0 maps, 1 prog).
-  */
- SEC("socket")
- int probe(void *ctx)
+ 	memset(&attr, 0, prog_load_attr_sz);
+@@ -400,6 +371,8 @@ static inline int bpf_load_and_run(struct bpf_load_and_run_opts *opts)
+ #ifndef __KERNEL__
+ 	attr.signature = (long) opts->signature;
+ 	attr.signature_size = opts->signature_sz;
++	if (opts->signature)
++		attr.fd_array_cnt = 1;
+ #else
+ 	if (opts->signature || opts->signature_sz)
+ 		pr_warn("signatures are not supported from bpf_preload\n");
 -- 
 2.43.0
 
