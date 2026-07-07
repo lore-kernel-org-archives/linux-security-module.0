@@ -1,71 +1,203 @@
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29F341D4ED
-	for <linux-security-module@vger.kernel.org>; Tue,  7 Jul 2026 13:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783431228; cv=none; b=Ji36xyXvOXEqzk+nVK4HcRh+9ubQvwQovATzo7ZhMjUlVN48MJmjKNw9fZltZjurp8y4qq3zhc1iBtVrJl0/+xwIWEa3B/qNJTfSIxfx5z8j6/0Gt7foJEOFhk4TO8x+xMfrvZWlHbmccOfDndyRgV2+cyWaYb8hzce1+x3PEKw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783431228; c=relaxed/simple;
-	bh=JKtzA7TalV7KpwJrSJ7/1o+/5DMUmjzth8LFEplhCuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qk4Ub/EAdJlv9pfmpXgdwl/WVND+0f5YB8uiZh5JlUWXtCcjIWn+wenwj/bOKnMin8LjoR6lwwpXLORU5aGEwhZIeq9t1CwLudFWbzi3okSR+1HaHo4+zNSXD2umvidh6xSoyHj8dyWBYA2tnrsROrISQA4+f2ZmMiC6WEDbXP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0ZcLvGv7; arc=none smtp.client-ip=185.125.25.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BFD30676E
+	for <linux-security-module@vger.kernel.org>; Tue,  7 Jul 2026 18:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.170
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783450108; cv=pass; b=Wmwbe0Iz3djF0aamZu5I490l1Sjal/1ZWJjYmgSbjx19z8aD8w54JWkhMVwD6ivKDDNEGaY/Sr8WQGsuMPyJK0oBadM4WxM7LNjjB31XvIyAgk2R29khZyaLcJWqaHabFLn0sQl4I0OzrePXfIA/NoPsicBIFxk7W6GtWJmGZLY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783450108; c=relaxed/simple;
+	bh=rtUYFok+ac4p2ylgzUh1Lf6iBK/D4Y6w6h4iMqSOFVc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ls8uCzeIk7dutnhRx4hhFt8L1/SKn7TK5Q+0hvXdVjteckvGXft0ayfrTm2hwMyg+YY0YKYdwOJLs3GlWLHxFH5vp7qcKtx85RIYXuY10v1780+oRZQRw7Zobc7z1X3kT7IEG6yEh8IrYmtFQW4DUBqBkXSj33PfEE43TUZ31GM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SbMX+V34; arc=pass smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0ZcLvGv7"
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gvhy80pf6zqD6;
-	Tue,  7 Jul 2026 15:33:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1783431215;
-	bh=1yDnmyxuj24MmdyOIrVy1yMDkssTMDCJebqy56PKwNA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0ZcLvGv7AeqMYXLKA3ETIu1A8HfoCRwfukKiIvFA5kDDgIN0XA2po+5WxTKlNozXG
-	 6Rd25xf4z1cS+uKAq+uogG1X2Kphp9xGy5C5NCvkWUnSD7Ai/6z18woo3KcfKXGYMc
-	 UKbGYvoXTkntTKoRJSHQ0griMYbFJDnc/jH0QHU8=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4gvhy71L1JzH48;
-	Tue,  7 Jul 2026 15:33:35 +0200 (CEST)
-Date: Tue, 7 Jul 2026 15:33:33 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Doehyun Baek <doehyunbaek@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Subject: Re: [PATCH] Documentation: landlock: Document fs.resolve_unix audit
- blocker
-Message-ID: <20260707.Ahbee1Fah6Ah@digikod.net>
-References: <20260625092819.1870049-1-doehyunbaek@gmail.com>
- <aj0fldJZ2dl0gas1@google.com>
- <CAN-j9UrCAkNgzj+xG8bRaOnducE16_O909Msi3EFVZjEJf9oAw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SbMX+V34"
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-845c92bc464so3406521b3a.2
+        for <linux-security-module@vger.kernel.org>; Tue, 07 Jul 2026 11:48:26 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783450106; cv=none;
+        d=google.com; s=arc-20260327;
+        b=ULhrVVltfzh3CS9Mu7JMJK9LmVaO72ZDWhMbprhwRafOXi/GcmjyBekNKxN8UzmxBK
+         kM1yjwjYwbX/1Dhs7Y0SbC2sxWDAYLICm5hXIMpRuk7GDTQDkzeJs3Z20zykhbBNLky/
+         3aqvwbUQ3Ttvxszbon7Tu+4bRMNT8+xhYE1fpuunIItzGPyipz07OQ4T68JWKSi94Mbf
+         WjRq3+/peTGwsBCV3kWhEH73pEYfUgK+Vdqve5RQM/jIEYtA2mzIvY/1+zS5/fk/+FOe
+         QcAGIXuKkr6e6aoUOUIuVw2Gvy2bxvqoNLQLbGQDpvPQEcaUefaxsWOaOOdADxlTvR2j
+         jUyg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=8I9REEDFjv8luH00AFfyJaYS+M1fVOulSubRZfE4umw=;
+        fh=Aq8pkFtjfGRecoIUjg5v+wNmOk8zEl2g5KJ4FnFZwRM=;
+        b=P9LiO1A/HWQxNA6obIRaB4wUzljbzBuu4SDv/rEwmpFAleBq3R7zLy9fKti689mLe+
+         WuW7Vz7e63EFQdZfn7AFe7oMfPrCYCjsL2ORBw4LInFoyr+MCZ0DCiNnMqxctoIU7AH9
+         o/hAfyPcPgceNBnPVe4UZ77gInSLYINc1sK+ujTIMro9KjFRS8eZvSb5dwTCgfTknkX2
+         16xK/LP8h9Sl8xG6DDx821gxqufLDoh6wTcLO6kaeRbMK1wQrL4igUsYXcdhk/frzZFJ
+         oYVCiaoB+9ddV+Zsku1Lb0rEk3LXoq8jAAOA4RnPUPufLMF3fc2Y+O0Zq5qYcpqK9jL2
+         /0Tw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1783450106; x=1784054906; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=8I9REEDFjv8luH00AFfyJaYS+M1fVOulSubRZfE4umw=;
+        b=SbMX+V34pw/hGfQ0jnLozavu15GqajgcD97kN5tE//24eM2oDng7uW+jrveBE2sbxK
+         tZTPV92Y4ojWtDbDyvUZ9WkdvI83qrY77fq75dG38w28Hsydr5dE4pFB/K/eGOrrXGOZ
+         cCxyQO797x+cLoZVx6j94OupGttLEmYFoGVAmmWGmlUIlPGeNCCOg5u6TA4/jNZNkp5j
+         QYQteDNGQxsejvwn9uedvY9deXsOqzkB5halz9dN0YYkB//9iBbSoiJGQYsTMCHoZqh/
+         rynsuxKD+dwhrX6qImgPC57EIo52r5OPYDMAcAPlNY2TI9KYlL5h1d0JAsSHe+3+xbyv
+         xk2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783450106; x=1784054906;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=8I9REEDFjv8luH00AFfyJaYS+M1fVOulSubRZfE4umw=;
+        b=RjL7/u8+3nd/H/UOwHI301E6fvb1xR9cWmpJe1NVaJ4uAJoZBGUGFjE9QCOi9RJPEZ
+         CmBzScIOlmOfbF5BQb8JY8OIUEXGTQNp9Z8DMb9XimUr4Dlup3TzCYq6WYf0AS3BJkvt
+         KngqLsCHhBKl1rKQm4ZY9KM8M+gFDmD4CXgnnjjuy1GKMcb5voBsGG4j0HJi6+Kz5WRn
+         bwuKbq362XQ4c1bZwx8mp/pzXOKCYFzHO9xdqYnkDo8Jq20pKYxCDphdSg2SPg7syc0R
+         H0O+AFMbcbuN/ubvCWEmUaXNdaAP2OAoqc4NfnTLwzgK9Uq6VdoIcmJLW8JwbkMbalU/
+         4New==
+X-Forwarded-Encrypted: i=1; AHgh+RqzGhaEgDU9u6wFWMyCvTQydHr1oNWqOxyzCelXyHfQB+JARBxLe3tniwyVp16waFersfkpfaZc0h25joPC6MqTyvul/kI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwS64DleeFzEs5TuJF+NTrS5T1jHwnFGEgGXsykulQQpEXV2xgG
+	c/UAHXWWZg0QFz9Et4cK65jQvpsqafT5SZa4MRiBUZ9oilMHyLJJglOlCqVR4v9P703S3zzUx6N
+	O8LVmmBszxT40Kd9e/8F3DK/7K97sFo0+rU1vC6Nr
+X-Gm-Gg: AfdE7cklEXlgM9htSva+hqLctw7wqeAjRO0KgfsE1lWO073YMvxW/vtuofRp7IfGoRu
+	dBVObBCSiTjt+IV9d8gkTZwbuXHmrIJ9lFXDYZymCYgueFd++bAGr3Fw1U4caR6zAgkJdGUEmuH
+	jTnEMaMxma7p4vVTT1GpW62fArcBqmenxL92d4+qREs0BjIoT9kEGiSrdwOUmyQ11aHxZo9CzRI
+	xQiMoGB3Q1TA2OXEvzCqfdBXyxuZ7VEUahgciEcWYt/VcT6UAiAMqbAgTWBbwr+iutU37xG
+X-Received: by 2002:a05:6a00:2e08:b0:845:e04b:565f with SMTP id
+ d2e1a72fcca58-84826cc57damr5655333b3a.14.1783450106203; Tue, 07 Jul 2026
+ 11:48:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAN-j9UrCAkNgzj+xG8bRaOnducE16_O909Msi3EFVZjEJf9oAw@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+References: <20260703102759.9626-1-achillesgaikwad@gmail.com> <20260707152305.15324-1-achillesgaikwad@gmail.com>
+In-Reply-To: <20260707152305.15324-1-achillesgaikwad@gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 7 Jul 2026 14:48:12 -0400
+X-Gm-Features: AVVi8CeBLkSCcvz0jk-hyXd4ntJNDWvRa9ubZXqmixAE9m7kjk45u_XN0jbOBFs
+Message-ID: <CAHC9VhSWWhMjs282cOTT45gn0pa8bDSxD0H24_is7k4tXmGJxQ@mail.gmail.com>
+Subject: Re: [PATCH v2] NFSv4.2: fix nfs4_listxattr size accounting
+To: Achilles Gaikwad <achillesgaikwad@gmail.com>
+Cc: trondmy@kernel.org, anna@kernel.org, stephen.smalley.work@gmail.com, 
+	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-It's applied, thanks!
+On Tue, Jul 7, 2026 at 11:24=E2=80=AFAM Achilles Gaikwad
+<achillesgaikwad@gmail.com> wrote:
+>
+> A call to listxattr() with a buffer size of 0 returns the actual
+> size of the buffer needed for a subsequent call. On an NFSv4.2
+> mount this triggers the following oops:
+>
+>   [  399.768687] BUG: kernel NULL pointer dereference, address: 000000000=
+0000000
+>   [  399.768705] RIP: 0010:_copy_from_pages+0x44/0xe0
+>   [  399.768722] Call Trace:
+>   [  399.768723]  nfs4_xattr_alloc_entry+0x1bf/0x1e0
+>   [  399.768730]  nfs4_xattr_cache_set_list+0x43/0x1f0
+>   [  399.768731]  nfs4_listxattr+0x21f/0x250
+>   [  399.768733]  vfs_listxattr+0x55/0xa0
+>   [  399.768736]  listxattr+0x23/0x160
+>   [  399.768737]  path_listxattrat+0xba/0x1e0
+>   [  399.768739]  do_syscall_64+0xe2/0x680
+>
+> security_inode_listsecurity() (via the xattr_list_one() helper) now
+> decrements the remaining size even when the buffer pointer is NULL, so
+> in the size-query case, 'left' underflows to a huge size_t value. As a
+> result, nfs4_listxattr_nfs4_user() treats the NULL buffer as a real one,
+> leading to a NULL pointer dereference in _copy_from_pages().
+>
+> security_inode_listsecurity() does not return the number of bytes
+> it added to the list, so the code derived it as
+> 'size - error - left'. That is also wrong in the size-query case:
+> the generic_listxattr() contribution is only subtracted from 'left'
+> when a buffer is present. Thus, the query result comes up short by
+> exactly that contribution (e.g., "system.nfs4_acl" on a mount with
+> ACL support), and a caller that allocates the returned size gets
+> -ERANGE on the subsequent call.
+>
+> Declare 'left' as ssize_t, use a scratch copy to measure security
+> hook consumption, and only decrement 'left' if a buffer is present.
+>
+> Fixes: f71ece9712b7 ("security,fs,nfs,net: update security_inode_listsecu=
+rity() interface")
+> Suggested-by: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Achilles Gaikwad <achillesgaikwad@gmail.com>
+> ---
+> Changes in v2:
+>  - Use a scratch variable to track security label size directly,
+>    replacing the old formula that undercounted the size-query case.
+>  - Drop the now-unneeded NULL-buffer special case for
+>    nfs4_listxattr_nfs4_user().
+>  - Retitled from "fix nfs4_listxattr NULL pointer dereference"
+>    (the same accounting bug caused both the oops and the undercount).
+> v1: https://lore.kernel.org/linux-nfs/20260703102759.9626-1-achillesgaikw=
+ad@gmail.com/
+>  fs/nfs/nfs4proc.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
 
-On Tue, Jul 07, 2026 at 11:40:51AM +0200, Doehyun Baek wrote:
-> Hi Mickaël,
-> 
-> Gentle ping on this documentation fix.
-> 
-> Günther reviewed it:
-> 
-> Reviewed-by: Günther Noack <gnoack@google.com>
-> 
-> The patch still applies cleanly. Could this be picked up via the
-> Landlock tree?
-> 
-> Thanks,
-> Doehyun
+[CC'd the LSM and SELinux lists for visibility]
+
+Unfortunately my testing was unsuccessful due to an NFS problem that
+started with the v7.2 merge window that I haven't had the time to
+bisect yet.  Assuming the NFS folks are okay with this change, I
+figure they will want to send it up to Linus via their tree, if not
+let me know and I can send this up via the LSM tree.
+
+Reviewed-by: Paul Moore <paul@paul-moore.com>
+
+> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+> index 1360409d8de9..a3415082d610 100644
+> --- a/fs/nfs/nfs4proc.c
+> +++ b/fs/nfs/nfs4proc.c
+> @@ -10585,7 +10585,8 @@ const struct nfs4_minor_version_ops *nfs_v4_minor=
+_ops[] =3D {
+>  static ssize_t nfs4_listxattr(struct dentry *dentry, char *list, size_t =
+size)
+>  {
+>         ssize_t error, error2, error3;
+> -       size_t left =3D size;
+> +       ssize_t left =3D size;
+> +       ssize_t left2;
+>
+>         error =3D generic_listxattr(dentry, list, left);
+>         if (error < 0)
+> @@ -10595,10 +10596,13 @@ static ssize_t nfs4_listxattr(struct dentry *de=
+ntry, char *list, size_t size)
+>                 left -=3D error;
+>         }
+>
+> -       error2 =3D security_inode_listsecurity(d_inode(dentry), &list, &l=
+eft);
+> +       left2 =3D left;
+> +       error2 =3D security_inode_listsecurity(d_inode(dentry), &list, &l=
+eft2);
+>         if (error2 < 0)
+>                 return error2;
+> -       error2 =3D size - error - left;
+> +       error2 =3D left - left2;
+> +       if (list)
+> +               left -=3D error2;
+>
+>         error3 =3D nfs4_listxattr_nfs4_user(d_inode(dentry), list, left);
+>         if (error3 < 0)
+>
+> base-commit: 6eb8711ece2ce27e52e327a5b7a628ed39b97f45
+> --
+> 2.55.0
+
+--=20
+paul-moore.com
