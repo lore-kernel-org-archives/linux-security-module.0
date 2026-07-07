@@ -1,96 +1,145 @@
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED71319871;
-	Tue,  7 Jul 2026 08:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CA92E2EEE;
+	Tue,  7 Jul 2026 09:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783412609; cv=none; b=ZIYxa86eOdyzGPcAtpaXryKJvh58cS3+hgMJpm+YLamBmyVvAEQRuVvqxfdkzqLlQOtlpCROyA3xFPz/+7agrSDHZ37rXga9njhOooY0PPazQuCbZ4nSAIokCwiwYxRhkbEmysDCtaGncDVa/F3oUfGo2Jv9LsDGwpF54q+DEL8=
+	t=1783416337; cv=none; b=I2wGwsE6G7Asz0UjbvPD8bdRLyJ9aX7qHlawZtFDBrVkWZi/Pc3/AETdNQV3sPhnG0BQXpEnBfRQnLpzTp1IuBlqK2YiO81TTluNVXdHOdTPIiM77jImvyUXrHK8L9pE2z+RHs3A5kZ+K1F6YesXly+366OJGjmYsMGa+bUhO+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783412609; c=relaxed/simple;
-	bh=ICEeEu/xd+EQZVOiv1k5Ewwmsz0+76HXH2PfU8aUhus=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DSW0ICy0OPgrUkrE9SIQGPXMbsKKJvGeD910Dwq5CQS84Imh2LiYHVhCQ+VHL1fUrd60T2LmHYl724/R5z+kP9nz9SPaGhjdt37IUkA12HLIGmy9XtZKG0Jb8PMTUB7rCS5ab6TAl9SyNi6dqOlU8tWp7qwNnuYapQSfprHcYwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=zDlUq9zD; arc=none smtp.client-ip=113.46.200.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+	s=arc-20240116; t=1783416337; c=relaxed/simple;
+	bh=l8zBeiHHt9RNtbBVObyGS4iR7B3WMMT8bULwgsn2SAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D7COoRVaCRtF/2y3F4422l8wbYBzy3KOY6CqAR3gU6NJP9DTdKeUmgunNgMZfYwfO9/SY5PdKkm/VETTFpSHFuWkl+pXfqUygxvwVwaZxeXFGrvk/p43x8YEzF4bTkJe2fKSGW9y2CxkOvMaYVbGvdUXYZxR35fB5tn4Qnt+9Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lsdf7uUC; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="zDlUq9zD"
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=pV+7hqNaCnPM4/BuiWqJrNvn9fiB6+VP409P+EmkCcc=;
-	b=zDlUq9zDJcgY05b5rKCelP2o/9bipFkxjfrTa/vuuUd/bMYz/CkztgyzYC8WOnIX/l4gzfqja
-	33O0YYB7wWmZI2libPB7r6NYkrOBbd66fRE+uSdYk9SQSgtMmV1RJEBT+tesRVpgPPgbWksgZ3z
-	z9JMNz6tNoizNBVQzWeA/40=
-Received: from mail.maildlp.com (unknown [172.19.163.104])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4gvYsp6Hgxz1T4kT;
-	Tue,  7 Jul 2026 16:14:22 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1FF494058C;
-	Tue,  7 Jul 2026 16:23:22 +0800 (CST)
-Received: from kwepemq200017.china.huawei.com (7.202.195.228) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 7 Jul 2026 16:23:21 +0800
-Received: from hulk-vt.huawei.com (10.67.174.72) by
- kwepemq200017.china.huawei.com (7.202.195.228) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 7 Jul 2026 16:23:21 +0800
-From: Cai Xinchen <caixinchen1@huawei.com>
-To: <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
-	<amir73il@gmail.com>, <brauner@kernel.org>, <caixinchen1@huawei.com>
-CC: <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lujialin4@huawei.com>
-Subject: [PATCH v2 -next 0/2] security: Fix call security_backing_file_free second time
-Date: Tue, 7 Jul 2026 08:06:13 +0000
-Message-ID: <20260707080615.1235830-1-caixinchen1@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lsdf7uUC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7BD71F000E9;
+	Tue,  7 Jul 2026 09:25:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783416336;
+	bh=/s6dQCG8Vq9qzFkSO18vHf5c+R2dhjuaEKt5KWL8DuA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=lsdf7uUCABm3bz8vixwqLG3XO8rFvp2hj/PR3FvHClBF58wwlXutRul2MEEU6UJaU
+	 FiS6x4imxyW8nS+tPJksBN/rAo2IeIrNCc7syoSCjqfpFu6B3W6oAWvzeLDT0fSHek
+	 mBXkp436ZSLiSrOObWXIGAmhiPc6xYSHi6yNB2K/tFT+W8hD9JeOFSIq9MBChaA5JT
+	 16DPf7bf1pLs2tc6j/dQtwmK38PkMhdp/o+PygTNjPwwezQ8jOYP5+5jau1yVpo58J
+	 KbyZBjST0s+BqTD8/QIEfx95XBjaFJV18L0oCe55gByuhekcnEaMJer1OolosHzIOp
+	 L5i2OeAMPFThA==
+Date: Tue, 7 Jul 2026 11:25:30 +0200
+From: Carlos Maiolino <cem@kernel.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>, 
+	Eric Sandeen <sandeen@redhat.com>, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, 
+	Serge Hallyn <serge@hallyn.com>
+Subject: Re: [PATCH v3 2/5] capability: Add new capable_noaudit
+Message-ID: <akzF7UJj4xZqVpHO@nidhogg.toxiclabs.cc>
+References: <20260702093324.127450-1-cem@kernel.org>
+ <20260702093324.127450-5-cem@kernel.org>
+ <20260702155605.GE9392@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemq200017.china.huawei.com (7.202.195.228)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260702155605.GE9392@frogsfrogsfrogs>
 
-v2: Move the call_void_hook(backing_file_free, ...) call in
-security_backing_file_free() into the if-statment true block before we
-set the backing file's LSM blob pointer to NULL and free the LSM blob.
+On Thu, Jul 02, 2026 at 08:56:05AM -0700, Darrick J. Wong wrote:
+> On Thu, Jul 02, 2026 at 11:33:19AM +0200, cem@kernel.org wrote:
+> > From: Carlos Maiolino <cem@kernel.org>
+> > 
+> > In some situations (quota enforcement bypass in this case) we'd like to
+> > check for a specific capability without triggering spurious audit
+> > messages from security modules like selinux.
+> > 
+> > Add a new helper so we don't need to use ns_capable_noaudit() directly.
+> > 
+> > V3: remove the extern declaration
+> > 
+> > Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+> > Cc: Jan Kara <jack@suse.cz>
+> > Cc: Darrick J. Wong <djwong@kernel.org>
+> > Cc: Dave Chinner <david@fromorbit.com>
+> > Cc: Eric Sandeen <sandeen@redhat.com>
+> > Cc: Dr. Thomas Orgis" <thomas.orgis@uni-hamburg.de>
+> > Cc: linux-xfs@vger.kernel.org
+> > Cc: linux-fsdevel@vger.kernel.org
+> > Cc: linux-security-module@vger.kernel.org
+> > Cc: linux-kernel@vger.kernel.org
+> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> > ---
+> >  include/linux/capability.h |  5 +++++
+> >  kernel/capability.c        | 17 +++++++++++++++++
+> >  2 files changed, 22 insertions(+)
+> > 
+> > diff --git a/include/linux/capability.h b/include/linux/capability.h
+> > index 37db92b3d6f8..f8532d92fcad 100644
+> > --- a/include/linux/capability.h
+> > +++ b/include/linux/capability.h
+> > @@ -145,6 +145,7 @@ extern bool has_capability_noaudit(struct task_struct *t, int cap);
+> >  extern bool has_ns_capability_noaudit(struct task_struct *t,
+> >  				      struct user_namespace *ns, int cap);
+> >  extern bool capable(int cap);
+> > +bool capable_noaudit(int cap);
+> >  extern bool ns_capable(struct user_namespace *ns, int cap);
+> >  extern bool ns_capable_noaudit(struct user_namespace *ns, int cap);
+> >  extern bool ns_capable_setid(struct user_namespace *ns, int cap);
+> > @@ -167,6 +168,10 @@ static inline bool capable(int cap)
+> >  {
+> >  	return true;
+> >  }
+> > +static inline bool capable_noaudit(int cap)
+> > +{
+> > +	return true;
+> > +}
+> >  static inline bool ns_capable(struct user_namespace *ns, int cap)
+> >  {
+> >  	return true;
+> > diff --git a/kernel/capability.c b/kernel/capability.c
+> > index 829f49ae07b9..2c2d1e8300bd 100644
+> > --- a/kernel/capability.c
+> > +++ b/kernel/capability.c
+> > @@ -416,6 +416,23 @@ bool capable(int cap)
+> >  	return ns_capable(&init_user_ns, cap);
+> >  }
+> >  EXPORT_SYMBOL(capable);
+> > +
+> > +/**
+> > + * capable_noaudit - Determine if the current task has a superior
+> > + * capability in effect (unaudited).
+> > + * @cap: The capability to be tested for
+> > + *
+> > + * This is the same as capable(), except it uses CAP_OPT_NOAUDIT as to prevent
+> > + * issuing spurious audit messages.
+> > + *
+> > + * This sets PF_SUPERPRIV on the task if the capability is available on the
+> > + * assumption that it's about to be used.
+> 
+> Same complaint about the documentation as last time:
+> https://lore.kernel.org/linux-fsdevel/20260626151656.GT6078@frogsfrogsfrogs/
 
-I found the following path:
+Right. I assumed "capability in effect" would suffice that, but I can
+add some extra comment here.
 
-alloc_empty_backing-file
-    init_file(&ff->file, xxx)
-        -> file_ref_init(&f->f_ref, 1); // only 1
-    error = init_backing_file
-        -> security_backing_file_alloc
-        -> rc = call_int_hook(backing_file_alloc, ...)
-           if (unlikely(rc))
-                security_backing_file_free(backing_file); // first call
-    if (unlikely(error)) {
-        fput(&ff->file);
-         -> if (unlikely(file_ref_put(&file->f_ref))) // zero
-                __fput_deferred(file);
-                 -> ____fput -> __fput -> file_free(file);
-                 -> backing_file_free(backing_file(f));
-                 -> security_backing_file_free(&ff->file); // second call
-
-Currently, only SELinux has the lsm backing_file_alloc hook, and it always
-return 0. When security_backing_file_free is called for the first time,
-the blobs pointer is set to NULL. Therefore, double free will not occur in
-the code.
-
-Cai Xinchen (2):
-  security: Delete dumplicate assignment
-  security: Fix call security_backing_file_free second time
-
- security/lsm_init.c | 1 -
- security/security.c | 3 +--
- 2 files changed, 1 insertion(+), 3 deletions(-)
-
--- 
-2.34.1
-
+> 
+> --D
+> 
+> > + */
+> > +bool capable_noaudit(int cap)
+> > +{
+> > +	return ns_capable_noaudit(&init_user_ns, cap);
+> > +}
+> > +EXPORT_SYMBOL(capable_noaudit);
+> >  #endif /* CONFIG_MULTIUSER */
+> >  
+> >  /**
+> > -- 
+> > 2.54.0
+> > 
+> > 
+> 
