@@ -1,197 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486FF388384
-	for <linux-security-module@vger.kernel.org>; Tue,  7 Jul 2026 19:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E5E3A2540
+	for <linux-security-module@vger.kernel.org>; Tue,  7 Jul 2026 19:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783451525; cv=none; b=Mm9NIhTRvawA5MXodmG8Q0dgTRteocclbUhBjY2laRwnZYy/5AyjxK1vW5PBV6kMw4ICj+qbg9Jpv5vTd5evKcfKPi93nyGb2vsc7kAR+agjIn+P0iV1QNSUHfoOhgK/qIdhgqMpaN5BVPWEvDVGyNt1rBarl4Cbo5K2uNva+g0=
+	t=1783451643; cv=none; b=FRNkQJUXi3EVOrpWuHDCtHhvhwZkn1KApWpELdXPsAKgPj0aBh3Edoag711YK5xyi/abHx3PujAwg44x23deXoLIAlWClySX3KedhCB+//2TSJnoZB1cLsDZ/EcI4t8WEmkeMQfEAM7j3TBygDfQ06r5udOZHPeD11JG/Kmm+Oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783451525; c=relaxed/simple;
-	bh=44VKvjn3zH+ed8C5+r9SHoD//b0QOuNFQuKtucXSpd4=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=NZ75Hqa4Yv/PYIXYDM3/Sq6fSO2TM5knms90vP/kJODTakcEzOfqP9lQXXEg6gAZDKDILOEYAlGY0e59yIA2IfgTUY1uIFea0w4y3v9AvMRy5zb6Fr63EYUA3knE8J41kerDk9d7Nf8N0PXSdnQAKGKkVYczhrZYJvkfA7drhr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SInSADQl; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783451643; c=relaxed/simple;
+	bh=Q0yebGwL8eWx1vNOrVrrq1jpOqA3B/QDaiR5qfl5as8=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=CsFbgv8eVh8LJU+KL1Fk0DpFOI6OygIZpUrVIy2bmcB6kzR+d0bKpWSksUUkHr74iQExJFTA0qghJ3vkFQVnNK/fbxUMwyBap57GpSzOJohZUG4iZ6bpxGCBjm4xcfH3iM8fs7Eueqgf9H2nWinxvoDoz9OFwkh9olvx9FAqdik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GRmR70lc; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SInSADQl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D10E61F000E9
-	for <linux-security-module@vger.kernel.org>; Tue,  7 Jul 2026 19:12:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783451523;
-	bh=uZGM/aRa0R9k1x7/pFopPs9j32SFQ8orVX71ypPevUc=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject;
-	b=SInSADQlNKmWOkuoyhHeprlj0YuSey20kZyetiYiLVlTSqMr4nJJdmB8+FA8h5UMk
-	 9jK/QA+2Sdd2/X0BPsXcAgK9oQ6O+I+XGFDZCY032i9J1cr2U385eORy37o7swF6Ag
-	 0OxHMO7+HUwbrv9VFibOdnFk4ri2Bh0nfnw4+1UJgiB1lNZiBJA8AkIXF9VZ/tj4c5
-	 8ohJEcq8bGN2WHXS92fgDIHVEjVVOKcLAwx/wAjEdVVBP/6NpRIjPhN7JtEpvVtdUB
-	 cGh8i7G5G8c6VUazN36IffGNdJT2PJ6rUk3fxnyy6SxlnZiKwwvkXaEuqAUZHx+Cqb
-	 uO7SXhJj8HD+Q==
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfauth.phl.internal (Postfix) with ESMTP id F1FDDF40071;
-	Tue,  7 Jul 2026 15:12:02 -0400 (EDT)
-Received: from phl-imap-04 ([10.202.2.82])
-  by phl-compute-02.internal (MEProxy); Tue, 07 Jul 2026 15:12:02 -0400
-X-ME-Sender: <xms:gk9NakqULcx44AF0MUUWLTahEqp1wakbYAIPOTuVtTxKj404NeOKhw>
-    <xme:gk9NaldzaZ4_g0JruXg9ihGBhBosEudAQsvhpJeJ2l-WQ0RgcBABmORQPFOfAH-Wv
-    LgmiC_bacCvbBLDW_Cx-7JQsd1RwH4fVdCRbkP1uWAP1PtrhLGoJQ>
-X-ME-Proxy-Cause: dmFkZTGRmgKoH5201GbnSTNC/iwOx73IfpeCuhQvzJVJv+PKy6ZL6Vt8UOGq9G/2RHaanH
-    gJQ+GxWCAQI9d+OsxMa5jI7GlQ3ZJ5lCq/t3QzT6Y122OgbHVVr3/SZxZ8tRhUVdQsm6X/
-    COItR+/ReOZoplYSJHeTtBPD/XO9QwB0AY7M8C9Ts3JudJ+KiIS3bi3zH68ivdcqDzljxH
-    q/age6fqtwjZut1LSkAYz7Ak1SK5I7U7dmQp7pqkl+xyZV0eAwLFURVi/hP1tsIog2wXwO
-    LLiLw4cx4XzL85Q2t54Uq2Uw1D2HOPPHY7d6vzF9kb2qxtA0VeY4WwRC24B//lByDOGQf7
-    zEl2/b1G5Dox4JV8KnI3V5godkJSrEugKrn0t+e/RCfwukIR9CDw8Kx8UHM/XEblqLB/9L
-    OB0RMqMBlC8Gjn9K/4RhHEmCDVUqd23Eq0wzfQMetv2l+Fd3woKmqCvxSHN/UAidA6lMj/
-    qVyoWMoFgvLnORE0r+Xe7ah1tW2JSP2gbcPQQV13fgBU6AjUFqVKk6vqBq5pt8jmsReiAH
-    aV45FKVo8SeHLRUFDrhlYZwKpwJfex0RfVX8JoQ75FTT+Zs1DHeMHk6Kmt4J3ddO+uRQpN
-    yJJD5H3q3IUalfhrIH+7TuixH0mvUrWuZ3ETiklzAz4kcR1LIVr1kq+Sll8A
-X-ME-Proxy: <xmx:gk9Navtqi7VuTAQaAzeaStgQYs9mtpD15DU_2vP3AYjcVlwoA0km4Q>
-    <xmx:gk9NavgJR2YNgMvnQKPzVUPnJVbxxqQEkU5-sbjLCWJwtFFt7zYixg>
-    <xmx:gk9Nao_MYDPuc_Zti540RcLV1xL6DyW63rBLbho_SiLr29yUUdsSEg>
-    <xmx:gk9NaquwvOIspOWI-ECROEI2IHy7e_ki8OZ2JUqTjq6txKcP7_8rqw>
-    <xmx:gk9Nakpp82Bv9dwcgja2tvPZzucI3kPCo_TIZtvtMhN-2DhpGaLFWWYx>
-Feedback-ID: i20964851:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id C9605B6006E; Tue,  7 Jul 2026 15:12:02 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GRmR70lc"
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-9217d13c276so1685085a.1
+        for <linux-security-module@vger.kernel.org>; Tue, 07 Jul 2026 12:14:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1783451640; x=1784056440; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SGfDZeEdLGeen0qW0nrFDO6a/FMS/fYRJh5VUHrysIk=;
+        b=GRmR70lczsMV8NilnhewKXlOJqrtkmcEsfcu7rEYi/zAiio08xkrPeUoHb+AtS3hBj
+         nRqAIsGV6+YyHkJdFC3WSFGvSUSaVLzkxykuPo48EOiGPQchnS4bHoZAWl5vtFQOyt7b
+         65IHe3/lIwhc2Q4acrnQNwGT9uoaN03byQY+zthYe92pvfuzZXTzOPDhKrofQy2kMd6L
+         RmQ1p3NCvrEJgPQmvqmSKCr4148hqTcMIHI7vn0fW2QdHoKkzN1UCFj2r6hGSECBzTvj
+         qI9n/CGjHFKLFjc/j6Y3KvEjoZF33Cvkf1RA0x7iDW5ezyuaIZ5rpXbJ4cgP8WVpO3Az
+         bwhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783451640; x=1784056440;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SGfDZeEdLGeen0qW0nrFDO6a/FMS/fYRJh5VUHrysIk=;
+        b=rKGKmeL6OjaTv2lddpZazk+INge3AExgeLBSG+sqRQ9IA+NA9VRm0V1CT7aIn/Plzs
+         co1jh2Ri1v07CxqqOeIzbQrSmZf7LhfPBRSTUlXqr/E/tJY3+3WpxRNZCRv9Yocw2AJJ
+         1KLcwvZdGPmfr9Kgz0sYPntD6rSHBJGIdw9n4aC09kgqX0cvbimwvITXw4dL5JTefSYP
+         09o+0WOTtLGt1kGMY9juVLfGFNlwDyspeevjKKOITq/sm3gNsaup7kY4bqi+cM0Uq+9F
+         kdQxbek9rkpTSMaMrhG3rr/82AFLanuQI5NZf/1rEV1GrBP4NLEg4kcGiimYw9dUR1Xo
+         EHAg==
+X-Forwarded-Encrypted: i=1; AHgh+Rrq7qG4UD8v8m73s0MkgwwUFa7Lh+0eu1XcnHuTZufPmIw46+6TGFEUoBqQ0wyA4ekkpix+GK+AYnEyki8FR5I5Y9xUj/Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfShGb54E7befntvAEywpCmIl+l+kAObECk4VdJ23aAm38VLRg
+	t4IpaAm6P0Osh2F5GRyWP+HoUYDTT+MERv8RFGgWUxXxKw+Qh/oi07Byj8HT4UzpQg==
+X-Gm-Gg: AfdE7ckygtlz3/zzfu7a/PuFqeCBt/pO6Bj3VzzpSSpPPZZzb6Gk/FgPf0lI8dLYqi1
+	itHqAqrYiqTapWghQORTGjA0Q42HrO1F+QRPpYoMABQ0MEQJ8p/cbB+HYVVJEj8VDfnqH1e9peB
+	KEyMO1t24TdCasDPvEEmTQ+mYBD3I3cxQLTgrncsz3nN4c+iimt/WvaTl6mh8lNMo/MJ3Bs7Hpa
+	wJm4vTZnd0xraA/k+p3JwFW5ldgY7WWNSNoHdQUf5Z5Wu/YxBxg8wUPgKiIpKtpjVmg+dXJufAh
+	op7I/+Q5OlZm0tbUJMnfTWbqERnIJTxaCuI2Ew8GRv+z4lMuCu6j/V7Wa4WT1M9SFVj9pNsIynM
+	2FrU9LdQI5gofKG3gtCg00PJ226g+Uac4kopp0Qh7qEsvPgv6o/dPXCiq6imH3H+BOlqtz+97nN
+	l+DLT2/Hb6axWhpXM4s5cEDieMCvcKxE0ZtvtO93u1DLa67/AXRdO4LxeuYA==
+X-Received: by 2002:a05:620a:4515:b0:915:7fe4:cac5 with SMTP id af79cd13be357-92ebb57dfcbmr743131685a.49.1783451640236;
+        Tue, 07 Jul 2026 12:14:00 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-92e90ba4209sm1318251385a.12.2026.07.07.12.13.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jul 2026 12:13:58 -0700 (PDT)
+Date: Tue, 07 Jul 2026 15:13:58 -0400
+Message-ID: <14023e3368d98072f369e6fe1607c7d5@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-ThreadId: Ai_QtJ2nJmQs
-Date: Tue, 07 Jul 2026 15:11:42 -0400
-From: "Anna Schumaker" <anna@kernel.org>
-To: "Paul Moore" <paul@paul-moore.com>,
- "Achilles Gaikwad" <achillesgaikwad@gmail.com>
-Cc: "Trond Myklebust" <trondmy@kernel.org>, stephen.smalley.work@gmail.com,
- linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
- selinux@vger.kernel.org
-Message-Id: <ac4f209c-f465-4938-adae-ecd00ecab175@app.fastmail.com>
-In-Reply-To: 
- <CAHC9VhSWWhMjs282cOTT45gn0pa8bDSxD0H24_is7k4tXmGJxQ@mail.gmail.com>
-References: <20260703102759.9626-1-achillesgaikwad@gmail.com>
- <20260707152305.15324-1-achillesgaikwad@gmail.com>
- <CAHC9VhSWWhMjs282cOTT45gn0pa8bDSxD0H24_is7k4tXmGJxQ@mail.gmail.com>
-Subject: Re: [PATCH v2] NFSv4.2: fix nfs4_listxattr size accounting
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20260707_1504/pstg-lib:20260707_1258/pstg-pwork:20260707_1504
+From: Paul Moore <paul@paul-moore.com>
+To: Wang Yan <wangyan01@kylinos.cn>, bill.c.roberts@gmail.com
+Cc: casey@schaufler-ca.com, jmorris@namei.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-security-module@vger.kernel.org, mic@digikod.net, serge@hallyn.com, shuah@kernel.org, wangyan01@kylinos.cn
+Subject: Re: [PATCH v2] selftests/lsm: Fix memory leak in attr_lsm_count
+References: <20260703120951.1622491-1-wangyan01@kylinos.cn>
+In-Reply-To: <20260703120951.1622491-1-wangyan01@kylinos.cn>
 
+On Jul  3, 2026 Wang Yan <wangyan01@kylinos.cn> wrote:
+> 
+> The calloc-allocated buffer in attr_lsm_count() is never released on
+> any exit path, including both the normal return path and the early
+> return when read_sysfs_lsms fails, resulting in a heap memory leak.
+> 
+> Add free() for the buffer on all return branches to fix the leak.
+> 
+> Fixes: d3d929a8b0cd ("LSM: selftests for Linux Security Module syscalls")
+> Signed-off-by: Wang Yan <wangyan01@kylinos.cn>
+> Reviewed-by: William Roberts <bill.c.roberts@gmail.com>
+> Tested-by: William Roberts <bill.c.roberts@gmail.com>
+> ---
+>  tools/testing/selftests/lsm/common.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
+Merged into lsm/dev, thanks!
 
-On Tue, Jul 7, 2026, at 2:48 PM, Paul Moore wrote:
-> On Tue, Jul 7, 2026 at 11:24=E2=80=AFAM Achilles Gaikwad
-> <achillesgaikwad@gmail.com> wrote:
->>
->> A call to listxattr() with a buffer size of 0 returns the actual
->> size of the buffer needed for a subsequent call. On an NFSv4.2
->> mount this triggers the following oops:
->>
->>   [  399.768687] BUG: kernel NULL pointer dereference, address: 00000=
-00000000000
->>   [  399.768705] RIP: 0010:_copy_from_pages+0x44/0xe0
->>   [  399.768722] Call Trace:
->>   [  399.768723]  nfs4_xattr_alloc_entry+0x1bf/0x1e0
->>   [  399.768730]  nfs4_xattr_cache_set_list+0x43/0x1f0
->>   [  399.768731]  nfs4_listxattr+0x21f/0x250
->>   [  399.768733]  vfs_listxattr+0x55/0xa0
->>   [  399.768736]  listxattr+0x23/0x160
->>   [  399.768737]  path_listxattrat+0xba/0x1e0
->>   [  399.768739]  do_syscall_64+0xe2/0x680
->>
->> security_inode_listsecurity() (via the xattr_list_one() helper) now
->> decrements the remaining size even when the buffer pointer is NULL, so
->> in the size-query case, 'left' underflows to a huge size_t value. As a
->> result, nfs4_listxattr_nfs4_user() treats the NULL buffer as a real o=
-ne,
->> leading to a NULL pointer dereference in _copy_from_pages().
->>
->> security_inode_listsecurity() does not return the number of bytes
->> it added to the list, so the code derived it as
->> 'size - error - left'. That is also wrong in the size-query case:
->> the generic_listxattr() contribution is only subtracted from 'left'
->> when a buffer is present. Thus, the query result comes up short by
->> exactly that contribution (e.g., "system.nfs4_acl" on a mount with
->> ACL support), and a caller that allocates the returned size gets
->> -ERANGE on the subsequent call.
->>
->> Declare 'left' as ssize_t, use a scratch copy to measure security
->> hook consumption, and only decrement 'left' if a buffer is present.
->>
->> Fixes: f71ece9712b7 ("security,fs,nfs,net: update security_inode_list=
-security() interface")
->> Suggested-by: Paul Moore <paul@paul-moore.com>
->> Signed-off-by: Achilles Gaikwad <achillesgaikwad@gmail.com>
->> ---
->> Changes in v2:
->>  - Use a scratch variable to track security label size directly,
->>    replacing the old formula that undercounted the size-query case.
->>  - Drop the now-unneeded NULL-buffer special case for
->>    nfs4_listxattr_nfs4_user().
->>  - Retitled from "fix nfs4_listxattr NULL pointer dereference"
->>    (the same accounting bug caused both the oops and the undercount).
->> v1: https://lore.kernel.org/linux-nfs/20260703102759.9626-1-achillesg=
-aikwad@gmail.com/
->>  fs/nfs/nfs4proc.c | 10 +++++++---
->>  1 file changed, 7 insertions(+), 3 deletions(-)
->
-> [CC'd the LSM and SELinux lists for visibility]
->
-> Unfortunately my testing was unsuccessful due to an NFS problem that
-> started with the v7.2 merge window that I haven't had the time to
-> bisect yet.  Assuming the NFS folks are okay with this change, I
-> figure they will want to send it up to Linus via their tree, if not
-> let me know and I can send this up via the LSM tree.
-
-Yeah, we'll send it through the NFS tree. I'll be curious to hear
-what problem you're hitting, and what patch is the culprit once you
-do that bisect!
-
-Anna
-
->
-> Reviewed-by: Paul Moore <paul@paul-moore.com>
->
->> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
->> index 1360409d8de9..a3415082d610 100644
->> --- a/fs/nfs/nfs4proc.c
->> +++ b/fs/nfs/nfs4proc.c
->> @@ -10585,7 +10585,8 @@ const struct nfs4_minor_version_ops *nfs_v4_m=
-inor_ops[] =3D {
->>  static ssize_t nfs4_listxattr(struct dentry *dentry, char *list, siz=
-e_t size)
->>  {
->>         ssize_t error, error2, error3;
->> -       size_t left =3D size;
->> +       ssize_t left =3D size;
->> +       ssize_t left2;
->>
->>         error =3D generic_listxattr(dentry, list, left);
->>         if (error < 0)
->> @@ -10595,10 +10596,13 @@ static ssize_t nfs4_listxattr(struct dentry=
- *dentry, char *list, size_t size)
->>                 left -=3D error;
->>         }
->>
->> -       error2 =3D security_inode_listsecurity(d_inode(dentry), &list=
-, &left);
->> +       left2 =3D left;
->> +       error2 =3D security_inode_listsecurity(d_inode(dentry), &list=
-, &left2);
->>         if (error2 < 0)
->>                 return error2;
->> -       error2 =3D size - error - left;
->> +       error2 =3D left - left2;
->> +       if (list)
->> +               left -=3D error2;
->>
->>         error3 =3D nfs4_listxattr_nfs4_user(d_inode(dentry), list, le=
-ft);
->>         if (error3 < 0)
->>
->> base-commit: 6eb8711ece2ce27e52e327a5b7a628ed39b97f45
->> --
->> 2.55.0
->
-> --=20
-> paul-moore.com
+--
+paul-moore.com
