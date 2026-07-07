@@ -1,203 +1,118 @@
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BFD30676E
-	for <linux-security-module@vger.kernel.org>; Tue,  7 Jul 2026 18:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.170
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783450108; cv=pass; b=Wmwbe0Iz3djF0aamZu5I490l1Sjal/1ZWJjYmgSbjx19z8aD8w54JWkhMVwD6ivKDDNEGaY/Sr8WQGsuMPyJK0oBadM4WxM7LNjjB31XvIyAgk2R29khZyaLcJWqaHabFLn0sQl4I0OzrePXfIA/NoPsicBIFxk7W6GtWJmGZLY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783450108; c=relaxed/simple;
-	bh=rtUYFok+ac4p2ylgzUh1Lf6iBK/D4Y6w6h4iMqSOFVc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ls8uCzeIk7dutnhRx4hhFt8L1/SKn7TK5Q+0hvXdVjteckvGXft0ayfrTm2hwMyg+YY0YKYdwOJLs3GlWLHxFH5vp7qcKtx85RIYXuY10v1780+oRZQRw7Zobc7z1X3kT7IEG6yEh8IrYmtFQW4DUBqBkXSj33PfEE43TUZ31GM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SbMX+V34; arc=pass smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C77378839
+	for <linux-security-module@vger.kernel.org>; Tue,  7 Jul 2026 19:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783451448; cv=none; b=s9jGD0wTrkK7twZ2K560/fnOmAML5cx4Q9AgxHyxbJLKsxgA+Cd5WhUHLkoKAQrq3UK7dulnPe1BmadSgskDJQcseBgq4NvYjnnW2ZMdg1NYhlHpBYMYl7GC0KChNSYCiaofAYu4PEUVLwot6AkyZ5zKfKNF99IwuH8jVS0NJg8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783451448; c=relaxed/simple;
+	bh=6QIPcqi/hr9Q5Mw00FYk5D293PSOJwYSWX9mfItRy44=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=IeIXavrQ/Pie2URawnz1DZkmzRpa5Kt8YRe9II5pkuYNa54yI5w+Q4MMZhH/gFiXssDdiG8ru74l0GCFjURcdEGnO7GefA/H8obLN3zrAd45sI7cKW6Z1ewH+MAweb9+6DSRP/G+nUyyCQlHcey0mQZqWn7bNYG2JIJVy2dD7YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=c+BA9des; arc=none smtp.client-ip=209.85.219.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SbMX+V34"
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-845c92bc464so3406521b3a.2
-        for <linux-security-module@vger.kernel.org>; Tue, 07 Jul 2026 11:48:26 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783450106; cv=none;
-        d=google.com; s=arc-20260327;
-        b=ULhrVVltfzh3CS9Mu7JMJK9LmVaO72ZDWhMbprhwRafOXi/GcmjyBekNKxN8UzmxBK
-         kM1yjwjYwbX/1Dhs7Y0SbC2sxWDAYLICm5hXIMpRuk7GDTQDkzeJs3Z20zykhbBNLky/
-         3aqvwbUQ3Ttvxszbon7Tu+4bRMNT8+xhYE1fpuunIItzGPyipz07OQ4T68JWKSi94Mbf
-         WjRq3+/peTGwsBCV3kWhEH73pEYfUgK+Vdqve5RQM/jIEYtA2mzIvY/1+zS5/fk/+FOe
-         QcAGIXuKkr6e6aoUOUIuVw2Gvy2bxvqoNLQLbGQDpvPQEcaUefaxsWOaOOdADxlTvR2j
-         jUyg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=8I9REEDFjv8luH00AFfyJaYS+M1fVOulSubRZfE4umw=;
-        fh=Aq8pkFtjfGRecoIUjg5v+wNmOk8zEl2g5KJ4FnFZwRM=;
-        b=P9LiO1A/HWQxNA6obIRaB4wUzljbzBuu4SDv/rEwmpFAleBq3R7zLy9fKti689mLe+
-         WuW7Vz7e63EFQdZfn7AFe7oMfPrCYCjsL2ORBw4LInFoyr+MCZ0DCiNnMqxctoIU7AH9
-         o/hAfyPcPgceNBnPVe4UZ77gInSLYINc1sK+ujTIMro9KjFRS8eZvSb5dwTCgfTknkX2
-         16xK/LP8h9Sl8xG6DDx821gxqufLDoh6wTcLO6kaeRbMK1wQrL4igUsYXcdhk/frzZFJ
-         oYVCiaoB+9ddV+Zsku1Lb0rEk3LXoq8jAAOA4RnPUPufLMF3fc2Y+O0Zq5qYcpqK9jL2
-         /0Tw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="c+BA9des"
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-8eaa7b5e31eso6039846d6.0
+        for <linux-security-module@vger.kernel.org>; Tue, 07 Jul 2026 12:10:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1783450106; x=1784054906; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=8I9REEDFjv8luH00AFfyJaYS+M1fVOulSubRZfE4umw=;
-        b=SbMX+V34pw/hGfQ0jnLozavu15GqajgcD97kN5tE//24eM2oDng7uW+jrveBE2sbxK
-         tZTPV92Y4ojWtDbDyvUZ9WkdvI83qrY77fq75dG38w28Hsydr5dE4pFB/K/eGOrrXGOZ
-         cCxyQO797x+cLoZVx6j94OupGttLEmYFoGVAmmWGmlUIlPGeNCCOg5u6TA4/jNZNkp5j
-         QYQteDNGQxsejvwn9uedvY9deXsOqzkB5halz9dN0YYkB//9iBbSoiJGQYsTMCHoZqh/
-         rynsuxKD+dwhrX6qImgPC57EIo52r5OPYDMAcAPlNY2TI9KYlL5h1d0JAsSHe+3+xbyv
-         xk2g==
+        d=paul-moore.com; s=google; t=1783451446; x=1784056246; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2LUpyADyWOfmSP2Gd0K/OIW0oeVkcwDMQQoPjYwT+FQ=;
+        b=c+BA9des1e1uFnmqACzRnsVP+9gsL0iFDlEeHo5Ts1RVfRBQDtDTENqR8mqNBFQjtb
+         BjW9KVwtSLpakQSpiJ8C3+zMwD35VIFTdTDJyoGxalj2MswXSjTG6WnKquZTUS+bR59R
+         Emtjkol631c5jbD0JWshZ84dOnr8UN2RdPSrKFnUbBj3snPZvFNrw9zfzgE7XFhiHZ17
+         CVLmIZauLKJo7Gic5PSOzGE+urEF9a8p/Yk/ZePgyP4Y3cyiGqL/ZZJPGAzWMJsGlBHr
+         Kt6UmOpaPZBC3qc0PCdxWBlaAzfyAVwPVtLZNOxrdhDZVy1QW3CVR6xypPXyQSxetDMv
+         NN4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783450106; x=1784054906;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=8I9REEDFjv8luH00AFfyJaYS+M1fVOulSubRZfE4umw=;
-        b=RjL7/u8+3nd/H/UOwHI301E6fvb1xR9cWmpJe1NVaJ4uAJoZBGUGFjE9QCOi9RJPEZ
-         CmBzScIOlmOfbF5BQb8JY8OIUEXGTQNp9Z8DMb9XimUr4Dlup3TzCYq6WYf0AS3BJkvt
-         KngqLsCHhBKl1rKQm4ZY9KM8M+gFDmD4CXgnnjjuy1GKMcb5voBsGG4j0HJi6+Kz5WRn
-         bwuKbq362XQ4c1bZwx8mp/pzXOKCYFzHO9xdqYnkDo8Jq20pKYxCDphdSg2SPg7syc0R
-         H0O+AFMbcbuN/ubvCWEmUaXNdaAP2OAoqc4NfnTLwzgK9Uq6VdoIcmJLW8JwbkMbalU/
-         4New==
-X-Forwarded-Encrypted: i=1; AHgh+RqzGhaEgDU9u6wFWMyCvTQydHr1oNWqOxyzCelXyHfQB+JARBxLe3tniwyVp16waFersfkpfaZc0h25joPC6MqTyvul/kI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS64DleeFzEs5TuJF+NTrS5T1jHwnFGEgGXsykulQQpEXV2xgG
-	c/UAHXWWZg0QFz9Et4cK65jQvpsqafT5SZa4MRiBUZ9oilMHyLJJglOlCqVR4v9P703S3zzUx6N
-	O8LVmmBszxT40Kd9e/8F3DK/7K97sFo0+rU1vC6Nr
-X-Gm-Gg: AfdE7cklEXlgM9htSva+hqLctw7wqeAjRO0KgfsE1lWO073YMvxW/vtuofRp7IfGoRu
-	dBVObBCSiTjt+IV9d8gkTZwbuXHmrIJ9lFXDYZymCYgueFd++bAGr3Fw1U4caR6zAgkJdGUEmuH
-	jTnEMaMxma7p4vVTT1GpW62fArcBqmenxL92d4+qREs0BjIoT9kEGiSrdwOUmyQ11aHxZo9CzRI
-	xQiMoGB3Q1TA2OXEvzCqfdBXyxuZ7VEUahgciEcWYt/VcT6UAiAMqbAgTWBbwr+iutU37xG
-X-Received: by 2002:a05:6a00:2e08:b0:845:e04b:565f with SMTP id
- d2e1a72fcca58-84826cc57damr5655333b3a.14.1783450106203; Tue, 07 Jul 2026
- 11:48:26 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1783451446; x=1784056246;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2LUpyADyWOfmSP2Gd0K/OIW0oeVkcwDMQQoPjYwT+FQ=;
+        b=J4DZByUiNxW3W0vvzNAPiBG3hDPC3FSR+grbL4ZSYgsQD1Ule8jUsteA5h/65LZAKp
+         iv0OYqGGoU9DXYnoaRxu6yf+yapFF/t49uzc9tsTnI59Epg+Y76H7TjmETpqw9cEzlDK
+         wpXmBgiCy3QcCgRurU9hbzG/ZGyuBy7Sc3Bg5azSX+i3t4+OezAqdj3HDiYPOxWEzm//
+         6i/B7yajlH+2TJwftfJxQUzLg7k+RaWFx3bQziVW+znXzxpFz+FOq0IsNx7/wmh5+vVh
+         cP7O+YSne2WDgbkBGhGNBgQcrsJcbrIWoYj+LRHs/X6zh0/iSn3oCVvyzvFqcomM4OgC
+         Y9HQ==
+X-Forwarded-Encrypted: i=1; AHgh+RqKSGQHfOA3+MulmLLDSUOSuxIKoXk+Orzq0saaKUdszdjF6NU4oCEzU+hv8RbGeF7nx/QRdt1Jm1n/w9TqiNpLIaSakLo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxtp8uuhd2e+cu9iKZVlDPuvp3eH74LMGk8mJikD4J3qSUhkBsL
+	Cmj4Ey+aZgmbg8q4RUs8VEgpfNWZk6FuP2D7LFwulTUW25wD3SJivV3EkLi9WF2RyA==
+X-Gm-Gg: AfdE7cn/xupx3hu1jTql6T6sISoM+rp1xbYuDKR7paN01Brow4nMisijXzXH14Jr/x4
+	w2DBOGCnNeAFgtE+vGWHVKOb7ST51UcEj9/B988lY84UQt64T+xVVfpCV2r+OfhJWQICbVl7lJ6
+	GDt7lubw4j422t5RNmmlzOj6QMNnsJVzu0TNL2pTnrc6uMWuXfeqNbMgOTTCN+dLLNPsAKuvBQX
+	TmAPr2+ZhB+2lF8FOPZn6twTh1z0UkUPdzSHWm6OxEnivN+5JNUEArJOU7ZdhHVVkapsKWsDHOD
+	ZM2SBsqdKFF45pElbAsiX9TsPRFoa3SoJmlG4vHaa/kxlnlx/MaO4qJ8V1qo1bjU02vLHuL13OI
+	4x4OHfNyR581+RUuXMjK1L/382W3DhRxbtpUbKV3xOhnXUueSjWHpZUXi1q6r4qqENk7guy0hki
+	e5IGC5bvvLjG2s/zYtu8IsJe9YRIRp7JN2kiU02oTdhYaRHv2PwFxE5f/b26p/mKzb5jU/
+X-Received: by 2002:ad4:5dec:0:b0:8f1:4bff:24dd with SMTP id 6a1803df08f44-8fd71be1e1cmr41525216d6.5.1783451445824;
+        Tue, 07 Jul 2026 12:10:45 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8f4724ba6fesm165735406d6.41.2026.07.07.12.10.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jul 2026 12:10:44 -0700 (PDT)
+Date: Tue, 07 Jul 2026 15:10:43 -0400
+Message-ID: <c49545c6c69225bbc7e93cac58d58cd3@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260703102759.9626-1-achillesgaikwad@gmail.com> <20260707152305.15324-1-achillesgaikwad@gmail.com>
-In-Reply-To: <20260707152305.15324-1-achillesgaikwad@gmail.com>
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20260707_1504/pstg-lib:20260707_1258/pstg-pwork:20260707_1504
 From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 7 Jul 2026 14:48:12 -0400
-X-Gm-Features: AVVi8CeBLkSCcvz0jk-hyXd4ntJNDWvRa9ubZXqmixAE9m7kjk45u_XN0jbOBFs
-Message-ID: <CAHC9VhSWWhMjs282cOTT45gn0pa8bDSxD0H24_is7k4tXmGJxQ@mail.gmail.com>
-Subject: Re: [PATCH v2] NFSv4.2: fix nfs4_listxattr size accounting
-To: Achilles Gaikwad <achillesgaikwad@gmail.com>
-Cc: trondmy@kernel.org, anna@kernel.org, stephen.smalley.work@gmail.com, 
-	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To: Alice Ryhl <aliceryhl@google.com>, Serge Hallyn <sergeh@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shuah Khan <skhan@linuxfoundation.org>, Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>, Dongliang Mu <dzm91@hust.edu.cn>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>, "=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jann Horn <jannh@google.com>, linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Subject: Re: [PATCH v5 1/2] rust: task: clarify comments on task UID accessors
+References: <20260703-remove-task-euid-v5-1-c90c7e2ddf54@google.com>
+In-Reply-To: <20260703-remove-task-euid-v5-1-c90c7e2ddf54@google.com>
 
-On Tue, Jul 7, 2026 at 11:24=E2=80=AFAM Achilles Gaikwad
-<achillesgaikwad@gmail.com> wrote:
->
-> A call to listxattr() with a buffer size of 0 returns the actual
-> size of the buffer needed for a subsequent call. On an NFSv4.2
-> mount this triggers the following oops:
->
->   [  399.768687] BUG: kernel NULL pointer dereference, address: 000000000=
-0000000
->   [  399.768705] RIP: 0010:_copy_from_pages+0x44/0xe0
->   [  399.768722] Call Trace:
->   [  399.768723]  nfs4_xattr_alloc_entry+0x1bf/0x1e0
->   [  399.768730]  nfs4_xattr_cache_set_list+0x43/0x1f0
->   [  399.768731]  nfs4_listxattr+0x21f/0x250
->   [  399.768733]  vfs_listxattr+0x55/0xa0
->   [  399.768736]  listxattr+0x23/0x160
->   [  399.768737]  path_listxattrat+0xba/0x1e0
->   [  399.768739]  do_syscall_64+0xe2/0x680
->
-> security_inode_listsecurity() (via the xattr_list_one() helper) now
-> decrements the remaining size even when the buffer pointer is NULL, so
-> in the size-query case, 'left' underflows to a huge size_t value. As a
-> result, nfs4_listxattr_nfs4_user() treats the NULL buffer as a real one,
-> leading to a NULL pointer dereference in _copy_from_pages().
->
-> security_inode_listsecurity() does not return the number of bytes
-> it added to the list, so the code derived it as
-> 'size - error - left'. That is also wrong in the size-query case:
-> the generic_listxattr() contribution is only subtracted from 'left'
-> when a buffer is present. Thus, the query result comes up short by
-> exactly that contribution (e.g., "system.nfs4_acl" on a mount with
-> ACL support), and a caller that allocates the returned size gets
-> -ERANGE on the subsequent call.
->
-> Declare 'left' as ssize_t, use a scratch copy to measure security
-> hook consumption, and only decrement 'left' if a buffer is present.
->
-> Fixes: f71ece9712b7 ("security,fs,nfs,net: update security_inode_listsecu=
-rity() interface")
-> Suggested-by: Paul Moore <paul@paul-moore.com>
-> Signed-off-by: Achilles Gaikwad <achillesgaikwad@gmail.com>
+On Jul  3, 2026 Alice Ryhl <aliceryhl@google.com> wrote:
+> 
+> Linux has separate subjective and objective task credentials, see the
+> comment above `struct cred`. Clarify which accessor functions operate on
+> which set of credentials.
+> 
+> Also document that Task::euid() is a very weird operation. You can see how
+> weird it is by grepping for task_euid() in the history - binder was its
+> only user. Task::euid() obtains the objective effective UID - it looks
+> at the credentials of the task for purposes of acting on it as an
+> object, but then accesses the effective UID (which the credentials.7 man
+> page describes as "[...] used by the kernel to determine the permissions
+> that the process will have when accessing shared resources [...]").
+> 
+> For context:
+> Arguably, binder's use of task_euid() is a theoretical security problem,
+> which only has no impact on Android because Android has no setuid binaries
+> executable by apps.
+> commit 29bc22ac5e5b ("binder: use euid from cred instead of using task")
+> originally fixed that by removing that only user of task_euid(), but the
+> fix got reverted in commit c21a80ca0684 ("binder: fix test regression
+> due to sender_euid change") because some Android test started failing.
+> It was since fixed again by commit 65b672152289 ("binder: use
+> current_euid() for transaction sender identity"), which uses
+> current_euid() instead.
+> 
+> Signed-off-by: Jann Horn <jannh@google.com>
+> Reviewed-by: Gary Guo <gary@garyguo.net>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 > ---
-> Changes in v2:
->  - Use a scratch variable to track security label size directly,
->    replacing the old formula that undercounted the size-query case.
->  - Drop the now-unneeded NULL-buffer special case for
->    nfs4_listxattr_nfs4_user().
->  - Retitled from "fix nfs4_listxattr NULL pointer dereference"
->    (the same accounting bug caused both the oops and the undercount).
-> v1: https://lore.kernel.org/linux-nfs/20260703102759.9626-1-achillesgaikw=
-ad@gmail.com/
->  fs/nfs/nfs4proc.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
+> Originally sent as:
+> https://lore.kernel.org/r/20260212-rust-uid-v1-1-deff4214c766@google.com
+> ---
+>  rust/kernel/task.rs | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
 
-[CC'd the LSM and SELinux lists for visibility]
+Merged into lsm/dev, thanks!
 
-Unfortunately my testing was unsuccessful due to an NFS problem that
-started with the v7.2 merge window that I haven't had the time to
-bisect yet.  Assuming the NFS folks are okay with this change, I
-figure they will want to send it up to Linus via their tree, if not
-let me know and I can send this up via the LSM tree.
-
-Reviewed-by: Paul Moore <paul@paul-moore.com>
-
-> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-> index 1360409d8de9..a3415082d610 100644
-> --- a/fs/nfs/nfs4proc.c
-> +++ b/fs/nfs/nfs4proc.c
-> @@ -10585,7 +10585,8 @@ const struct nfs4_minor_version_ops *nfs_v4_minor=
-_ops[] =3D {
->  static ssize_t nfs4_listxattr(struct dentry *dentry, char *list, size_t =
-size)
->  {
->         ssize_t error, error2, error3;
-> -       size_t left =3D size;
-> +       ssize_t left =3D size;
-> +       ssize_t left2;
->
->         error =3D generic_listxattr(dentry, list, left);
->         if (error < 0)
-> @@ -10595,10 +10596,13 @@ static ssize_t nfs4_listxattr(struct dentry *de=
-ntry, char *list, size_t size)
->                 left -=3D error;
->         }
->
-> -       error2 =3D security_inode_listsecurity(d_inode(dentry), &list, &l=
-eft);
-> +       left2 =3D left;
-> +       error2 =3D security_inode_listsecurity(d_inode(dentry), &list, &l=
-eft2);
->         if (error2 < 0)
->                 return error2;
-> -       error2 =3D size - error - left;
-> +       error2 =3D left - left2;
-> +       if (list)
-> +               left -=3D error2;
->
->         error3 =3D nfs4_listxattr_nfs4_user(d_inode(dentry), list, left);
->         if (error3 < 0)
->
-> base-commit: 6eb8711ece2ce27e52e327a5b7a628ed39b97f45
-> --
-> 2.55.0
-
---=20
+--
 paul-moore.com
