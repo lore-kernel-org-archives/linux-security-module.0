@@ -1,131 +1,125 @@
-Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D1F37E307
-	for <linux-security-module@vger.kernel.org>; Wed,  8 Jul 2026 13:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0781D439333
+	for <linux-security-module@vger.kernel.org>; Wed,  8 Jul 2026 15:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783517997; cv=none; b=S7XhQ3mjpaa0XpTwXOMtFP/G+qHKHZWeGI91b3b72vZTVNYOuWt6TyPv4/IMsTbN06RX3hQivZvi7JzAYHL8tJgIMhGkV974PgrAt9ZLVtzlBGN3cZg5gYXHyIF4ZS7mo3m4pYL758s5g3lsBLSvyVSAJNxiNbDTxKXXJFoDTtM=
+	t=1783524635; cv=none; b=q+JyxVb0Z+pTtWKFfiohruxoi+vmmsec/s8fYymHCVFkJHxwO5CVahQOvHse0DFLcYDabMkkyP6Ks1PyctEUpVtxdTksMkmLM7M0u4QhMTqCq9vdyoc309kR4mJ6++VFksrQI6Nkv3Lri5J8ooiFrhTiBl940P6MoCBQnQ3hJ4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783517997; c=relaxed/simple;
-	bh=EfgRCJzdwKtQeC+ptOLTH1ALZqbkPTSpfIsSP0tHbf8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rZPLeGf3OVt515L1l70QvIpoowFclQCwI3wMg5ubGzC9D5GAdDobXvycHCmjK6WbGdTXN6ADoBiAdMQIgJIc0gNpP5slcT/GLiwFMC0IfrD0AUQON9RCPPepdd85YglPI7qZU2BEvPkVlu4lcj53PvZMOJGckDUEpZz2B3fZIYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j2PvN4cf; arc=none smtp.client-ip=74.125.224.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1783524635; c=relaxed/simple;
+	bh=+K0GWwP++miXZhqrHGIysTUTZCK2YZLuGMHTFRSqh6E=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ulVwWAKEOwf1qYXIiBZ/dR5fU48HN7MA2kJUSaDca5siofZE3p6WTP38mXbXPy9B2azGtv7Lu6FPaNAZbU56J1aSS03WtZsxqNZ4KypiwUX+DOqBkH9drSkq4Je2uqjIkn9zGv7H7n779SfkUz/v15Wr++afP8Tu/EDr+AXsIxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pSARACWj; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j2PvN4cf"
-Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-6626b5ace23so2511589d50.0
-        for <linux-security-module@vger.kernel.org>; Wed, 08 Jul 2026 06:39:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pSARACWj"
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-492488f8583so15622705e9.2
+        for <linux-security-module@vger.kernel.org>; Wed, 08 Jul 2026 08:30:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783517994; x=1784122794; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=dX/On/fEvkz88OtmZnG2fe/TvHSHKMys3RrO8o42iFA=;
-        b=j2PvN4cfQleWmPZo24hnBo4b26LyHX97TDEp2y17NQOl9Cm2W3t7t/dNVXxdHy1eof
-         bMdSQt7vcz3Ne3l3jU5eSVUPkjujKZeoNI7YY3zM6XlPUPn6ia5IJ+0uIfmH2csASFJi
-         3AeRLeXxFHXaUj7G8YKh4TAWiILuSB8AZSKNSgmfV7KGM1caMbbpnDKVadgh5wKaZdFK
-         XMmkJQJFyHlOaSrr0KOefo+PKPqfehIx+2EBGZ2aN6SB4/q10NoAGgZSAUuC+zAgKcCX
-         s7kkAG5fLF19NHc5G6V4Uyxb/AdbuX9jcaKmk0hDSvJGC5SbRHTRyzgnItesnRBLCWuG
-         xFIQ==
+        d=google.com; s=20251104; t=1783524632; x=1784129432; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:from:subject
+         :message-id:references:mime-version:in-reply-to:date:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=7/MSE8rhgIOyORzOhiK3whDWmmMC3npMcCh0YLsq7o8=;
+        b=pSARACWj5iTuDVtxmaqK1m0jD+Tn7auRGpOLmEnpNmOq4WXSx5x8EXn5fzEA2Xbsx8
+         9kAvSNvuKCJQ8wr0ViX05qPZy4fgSY4TkrZ/n+lG3YW8uFAeYS2V1gjT7UTPz0olzNuL
+         EzYSKNIKtKqaqRCTf2dgRzCnNYx4ckJqzNbCdGqdx9y1sQi44KC0dYuYtNEX586lBFFF
+         LwkeFSotW07gxivuvC/JrWRuB96hTX/Sxt/u78y6VKWPeg8AUCR6dtP07igZjT8PaxH0
+         lyUQ8PZweFXyKqWcfAEESX001dyx3p77jM7KU1s+xB9BTRIC1BCwJcZ2KaZy1IL/pVWE
+         waGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783517994; x=1784122794;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+        d=1e100.net; s=20251104; t=1783524632; x=1784129432;
+        h=content-transfer-encoding:content-type:cc:to:from:subject
+         :message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=dX/On/fEvkz88OtmZnG2fe/TvHSHKMys3RrO8o42iFA=;
-        b=hRXb3UnZKfdjstPmOTUmKO4dcyQk1WkMj+KagmoLJGGpEPcEZlRA1naQttk9Ohlr8B
-         RJc2VWkFQeUXUhOn+ZkfkFMkQhy58V5L3+eW1mBkqTvdXnzEWwBNLyKOIOWF68x/snmf
-         sEV03MtVnGp0Z1VlBbbcNYNr2GWaeNldAmEh3JCJblrmkLrFmb9zsOEVvm6VXpRROX5D
-         2UGnWGoGyUWtjMKOagEUiu6yg3+GXooaC1Pyi3OvUGLUcuVJA2C27LihD8QS5QHPZIbI
-         CmVJVh1hNAps1ReMaxHl4RBvXL7KCKRQiuwGc1WfUP5EKWrAg8cfOi9qUMLeqOL1Y2vM
-         hjyw==
-X-Forwarded-Encrypted: i=1; AHgh+Rp42mYMvfPf5bQZEfkpSWLwjWL5rkUcI0610aYXbGfCZUrk0+O1KGNywd7VXdCYdkxO7TzYOmbL7K8yDPOmvmUvNmBSvzI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgJIUdNzTxV9iYAUA7xqIC2v9gBelpUkamOZUOume1bQAoln5Y
-	814kRDBX/m2AMF2JYR6nlDQtIKJrSFQ808wVCYRyP+a/QJYDL97YMo/SMsQPj7n5
-X-Gm-Gg: AfdE7cmfeHrqudZwG4QqzGi2TYPt69+eh9wCJblZRWxXOS7lOHSKr/2b+J8WHDoYCLy
-	/Nfp7sjQ/E24p6HeDTLZus0FD07eDbu3IR9rgrvB/FeP/yQNf3c1B1KBTL1NXKrfl6yxSaSeh+X
-	hev0Vcixzlacke7x7E8heIZOIhHKkqdHwNqlPazTDZqe4L/FO59KAn8CoYX4Irobp106HLI5PlF
-	UviUvrF/MMLgvUFnwVSw0qW9Lr6WsoYkeqQmvo3LdLMwyPRCzzrCP1RHza4L/NUofKjbepS3U+4
-	TsAErej1pFmlv2pzgdqlxTZ2ivkpxZj7Hg8/OI9ANa+7HwU0BtaEcHZiAYfYvCL1s4bR2M/kZ3Q
-	t/EBgA7rKxw378YeV2j6i1T2n9AumJmy6q8e0yFyy/QRPH+FDcXgfdUWBuAmdIwwktzfUELLLOV
-	7KaHQikjhv7eJOmhf8z0A6h/rTP+4qaZ/VxQ4q5mZgXACXX0A=
-X-Received: by 2002:a05:690e:2485:b0:664:dc4d:4f with SMTP id 956f58d0204a3-66788f65f75mr4026641d50.38.1783517993868;
-        Wed, 08 Jul 2026 06:39:53 -0700 (PDT)
-Received: from zenbox ([2600:1700:18fb:6011:717c:ccb8:c362:d995])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-667877a2db1sm2087969d50.6.2026.07.08.06.39.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2026 06:39:53 -0700 (PDT)
-From: Justin Suess <utilityemal77@gmail.com>
-To: mic@digikod.net,
-	linux-security-module@vger.kernel.org
-Cc: gnoack@google.com,
-	Justin Suess <utilityemal77@gmail.com>
-Subject: [PATCH 3/3] landlock: Document LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC
-Date: Wed,  8 Jul 2026 09:39:27 -0400
-Message-ID: <20260708133928.852999-4-utilityemal77@gmail.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260708133928.852999-1-utilityemal77@gmail.com>
-References: <20260708133928.852999-1-utilityemal77@gmail.com>
+        bh=7/MSE8rhgIOyORzOhiK3whDWmmMC3npMcCh0YLsq7o8=;
+        b=Zm83YKZvmsVrYE0IGwfWYHA2hw+qN8aAdJjm06N/36RZYAg+HSpKDSL6F3HQT7iu3r
+         y+mnh1RsX297648a4/qn6xrAr3N4qiuhwUwsBBHTKoeEi/50bMt1k4FiPA1PdLO6C/5A
+         XYOC/iExcYkv5NUZLmuUwGDSGHPlxD+UoaTnI5gXpGsUDcg53z6H48VJorlRgYvpqEXW
+         ZJFPlnMe9PMsIxComUqYatgbHCSIFzj7oFb4Cxkxee7FkHgIlFCHNsoW9VgsxuuJhAmv
+         WicAB7ucKaQcgZbJ1CwwKYN3D2sWN8ZDAXXuzl64sSpUyJz5XZCpGPnOBj57LGmSaKGj
+         nODA==
+X-Gm-Message-State: AOJu0YylbUoHxAS24DUtyQ4l9Wq2uKA/lm06bq+suVuF14O449nFUyuO
+	afBPjnsLWEJzf5i2VggcXYnT5LP+9QUFznBIZOG+Ddfuv7r6a6YX+vZk7jsVzRgbhcc/YkiWarV
+	NVpzgTA==
+X-Received: from wmik2.prod.google.com ([2002:a7b:c402:0:b0:493:bd67:3b3e])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600d:8445:20b0:493:cd3f:d097
+ with SMTP id 5b1f17b1804b1-493e68a0f7bmr25524375e9.12.1783524632096; Wed, 08
+ Jul 2026 08:30:32 -0700 (PDT)
+Date: Wed, 8 Jul 2026 17:30:28 +0200
+In-Reply-To: <20260708110635.2083515-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20260708110635.2083515-1-mic@digikod.net>
+Message-ID: <ak5s9LrUnrxlRjDQ@google.com>
+Subject: Re: [PATCH v1] landlock: Update formatting
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org, 
+	Bart Van Assche <bvanassche@acm.org>, Miguel Ojeda <ojeda@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Document staged no_new_privs on exec, following the same compatibility
-section style as previous ABI additions.
+On Wed, Jul 08, 2026 at 01:06:33PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
+> Following commit 99df2a8eba34 ("clang-format: fix formatting of guard()
+> and scoped_guard() statements"), update scoped_guard() formatting.
+> Also, see the related fix [1].
+>=20
+> Cc: G=C3=BCnther Noack <gnoack@google.com>
+> Cc: Miguel Ojeda <ojeda@kernel.org>
+> Link: https://lore.kernel.org/r/20260708105713.2073335-1-mic@digikod.net =
+[1]
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> ---
+>  security/landlock/task.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/security/landlock/task.c b/security/landlock/task.c
+> index 7ddf211f75c3..360d226d0f51 100644
+> --- a/security/landlock/task.c
+> +++ b/security/landlock/task.c
+> @@ -95,8 +95,7 @@ static int hook_ptrace_access_check(struct task_struct =
+*const child,
+>  	if (!parent_subject)
+>  		return 0;
+> =20
+> -	scoped_guard(rcu)
+> -	{
+> +	scoped_guard(rcu) {
+>  		const struct landlock_ruleset *const child_dom =3D
+>  			landlock_get_task_domain(child);
+>  		err =3D domain_ptrace(parent_subject->domain, child_dom);
+> @@ -370,8 +369,7 @@ static int hook_task_kill(struct task_struct *const p=
+,
+>  	if (!subject)
+>  		return 0;
+> =20
+> -	scoped_guard(rcu)
+> -	{
+> +	scoped_guard(rcu) {
+>  		is_scoped =3D domain_is_scoped(subject->domain,
+>  					     landlock_get_task_domain(p),
+>  					     signal_scope.scope);
+> @@ -422,8 +420,7 @@ static int hook_file_send_sigiotask(struct task_struc=
+t *tsk,
+>  	if (task_tgid(tsk) =3D=3D landlock_file(fown->file)->fown_tg)
+>  		return 0;
+> =20
+> -	scoped_guard(rcu)
+> -	{
+> +	scoped_guard(rcu) {
+>  		is_scoped =3D domain_is_scoped(subject->domain,
+>  					     landlock_get_task_domain(tsk),
+>  					     signal_scope.scope);
+> --=20
+> 2.54.0
 
-Signed-off-by: Justin Suess <utilityemal77@gmail.com>
----
- Documentation/userspace-api/landlock.rst | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-index 5a63d4476c1c..1d779dd7bb5f 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -8,7 +8,7 @@ Landlock: unprivileged access control
- =====================================
- 
- :Author: Mickaël Salaün
--:Date: June 2026
-+:Date: July 2026
- 
- The goal of Landlock is to enable restriction of ambient rights (e.g. global
- filesystem or network access) for a set of processes.  Because Landlock
-@@ -789,6 +789,25 @@ when at least one sys_landlock_add_rule() call is made for it with the
- ``LANDLOCK_ADD_RULE_QUIET`` flag, additional add-rule calls for the same
- object without this flag do not clear it.
- 
-+Staged no_new_privs on exec (ABI < 11)
-+--------------------------------------
-+
-+Starting with the Landlock ABI version 11, it is possible to stage
-+no_new_privs so that it is only set at the next :manpage:`execve(2)` of the
-+calling thread, past its point of no return, using the
-+``LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC`` flag passed to
-+sys_landlock_restrict_self().  This flag may be used with a ``ruleset_fd``
-+value of -1 to stage no_new_privs without enforcing a ruleset, and does not
-+relax the no_new_privs / ``CAP_SYS_ADMIN`` requirement of the system call.
-+This flag does not change how the next :manpage:`execve(2)` itself computes
-+credentials: set-user-ID, set-group-ID and file capabilities are still
-+honored for that execution.  The executed program then runs with
-+no_new_privs set, with its usual effect on subsequent :manpage:`execve(2)`
-+calls.  Staging is per-thread by default: when combined with
-+``LANDLOCK_RESTRICT_SELF_TSYNC``, the staged no_new_privs is propagated to
-+the sibling threads along with the rest of the Landlock configuration, and
-+each thread then sets no_new_privs at its own next :manpage:`execve(2)`.
-+
- .. _kernel_support:
- 
- Kernel support
--- 
-2.54.0
-
+Reviewed-by: G=C3=BCnther Noack <gnoack@google.com>
