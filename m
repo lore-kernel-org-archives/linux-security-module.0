@@ -1,71 +1,72 @@
-Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
+Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD433806AB
-	for <linux-security-module@vger.kernel.org>; Wed,  8 Jul 2026 13:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D1F37E307
+	for <linux-security-module@vger.kernel.org>; Wed,  8 Jul 2026 13:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783517996; cv=none; b=RWPr2VPFyb7WN32hawKGBHluCSEY0AwBH9x4vjjo6FboSviORR5jtdFBZT4wtTD/JenzZZ6vuwckjmoewx88PzgeWI7LQMJmvSgfS9oJKkACYdijGpqZfPjVXOXNFcmSkTr9gBVrvdsUxFRBDe7mloUmYJl40HU4uCax9q+sx30=
+	t=1783517997; cv=none; b=S7XhQ3mjpaa0XpTwXOMtFP/G+qHKHZWeGI91b3b72vZTVNYOuWt6TyPv4/IMsTbN06RX3hQivZvi7JzAYHL8tJgIMhGkV974PgrAt9ZLVtzlBGN3cZg5gYXHyIF4ZS7mo3m4pYL758s5g3lsBLSvyVSAJNxiNbDTxKXXJFoDTtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783517996; c=relaxed/simple;
-	bh=8MU3Jp6AUmrULHOP80o582pPCz4pOQeDRRHtZbJkJWo=;
+	s=arc-20240116; t=1783517997; c=relaxed/simple;
+	bh=EfgRCJzdwKtQeC+ptOLTH1ALZqbkPTSpfIsSP0tHbf8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=njR6AvJudgKoZl5kTkYZAjorDcwOqbWGdEPh41w4QjwuF/pv3f7iBIVLWbpl0eevBQMPsDt8WdyjEU/cC95EbEkpNydsvHh9QiMoxCLSYGfF4UpisBpUPGgtO9qDaSHvhhA8cMTvpxDRyMF7vxZdon+ru1xz3KZ7hHBqjBcdoAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hQvUmSxV; arc=none smtp.client-ip=74.125.224.41
+	 MIME-Version:Content-Type; b=rZPLeGf3OVt515L1l70QvIpoowFclQCwI3wMg5ubGzC9D5GAdDobXvycHCmjK6WbGdTXN6ADoBiAdMQIgJIc0gNpP5slcT/GLiwFMC0IfrD0AUQON9RCPPepdd85YglPI7qZU2BEvPkVlu4lcj53PvZMOJGckDUEpZz2B3fZIYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j2PvN4cf; arc=none smtp.client-ip=74.125.224.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hQvUmSxV"
-Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-667a0f55a59so695634d50.1
-        for <linux-security-module@vger.kernel.org>; Wed, 08 Jul 2026 06:39:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j2PvN4cf"
+Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-6626b5ace23so2511589d50.0
+        for <linux-security-module@vger.kernel.org>; Wed, 08 Jul 2026 06:39:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783517991; x=1784122791; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=tR3/w3lSeZn2HV1NEiBms72YcEYc0KBooH41VLnj+Vo=;
-        b=hQvUmSxVvbynLflnTz7Qew3BpY/YifKZgH1UvO3ug0B08uA9yNaAkoQAAm5wXaOnfB
-         NORdYqbDni4GIzD4+Ca1gPeMG4u4MkCiEMsIfyuQ6WzG28OEsjbB2qs7BsBxfp3egL/R
-         AqnjrTQK3ruooN0TRalmoH1ZhEVDGtdeYJqATdy3o0ZgjJFGukg6QMeuZ6R7QIpYVope
-         /BZ34jcBlZgiZgGyA8dCmXth//V6my6jblb0qHi6Jwt3tTv9NPNvOrlT0NMeZzFCgQt9
-         M2Lhe2kPBh5LAIXsGj3T1JYqGJjSwH/BuPoh0m84xZyn0xV/1A4as1vqrqt3Sva6PiUw
-         PIsQ==
+        d=gmail.com; s=20251104; t=1783517994; x=1784122794; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=dX/On/fEvkz88OtmZnG2fe/TvHSHKMys3RrO8o42iFA=;
+        b=j2PvN4cfQleWmPZo24hnBo4b26LyHX97TDEp2y17NQOl9Cm2W3t7t/dNVXxdHy1eof
+         bMdSQt7vcz3Ne3l3jU5eSVUPkjujKZeoNI7YY3zM6XlPUPn6ia5IJ+0uIfmH2csASFJi
+         3AeRLeXxFHXaUj7G8YKh4TAWiILuSB8AZSKNSgmfV7KGM1caMbbpnDKVadgh5wKaZdFK
+         XMmkJQJFyHlOaSrr0KOefo+PKPqfehIx+2EBGZ2aN6SB4/q10NoAGgZSAUuC+zAgKcCX
+         s7kkAG5fLF19NHc5G6V4Uyxb/AdbuX9jcaKmk0hDSvJGC5SbRHTRyzgnItesnRBLCWuG
+         xFIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783517991; x=1784122791;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=tR3/w3lSeZn2HV1NEiBms72YcEYc0KBooH41VLnj+Vo=;
-        b=giTJvNf6P1P7ao6+d72y1kA5VjYnXeokymAZH602y4RRdrf0jZZjXPFzhkQSeCMbUA
-         b4NqRWgvhJuA/xalfr/G2NEwUak6yinEb2Oizjrn2RrMYFqSof7aJNGV3C3Se54UJptj
-         5i9TuGJWbnWdmzmy/VoRcV7/OfkfnVUj/Ofr1VYGz1o0OG2QuDVvne2hJ8ofpFqKCM4w
-         7NjxVd7Y9NijvTskKc2WwxGAMSXVHs4xwodE84Ipg8/6YPUK+A2ol06GgV1AJdmgOgi4
-         Kb7o8IQ3OgVFv3Ps3HTylFEUpxXFF33XvQMV/58hWk5yT1UBNkC/BAGtNKPA19IUSuEc
-         7Rww==
-X-Forwarded-Encrypted: i=1; AHgh+RqSK4WVr/Qzk3unAVB+kYsE/yqvrV83e3p1qCJ3fZkfocwwWIVAD5c2F+BgbJ/L1b1uEK0FUrxs9OZL38AV7rBdGm5H9XA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFszNfSDEW52ogo3OrycH3mEgNK2TUm1pQjQYRacDbNuQi0DOv
-	UDS52soUGSljUcwIJqXMhr02ivzn4gqXt14GO/zS9ZuBoR0yC/z2wn8z
-X-Gm-Gg: AfdE7cmfanNyuSfmFD9gFeA9o2WjRhF8wxhcf3XLN6CcS2Y4uG+QZYiefra14eF3bVL
-	xkVLnho7WlCE65Xwmhq1YPbmVo/pCop2VElOs/6Q4+IXl6Ru0VuaRFPKLYSJMqF6agXgcmJzUhd
-	w0nkERRSMMkiwVsh43lxFrym7YmWXRzOaHt8OMJbjBDnJPDKf140E6AiudAtMgC3BmNrAXsGzHb
-	VuOjCoqRmTBDfYB5TgV4ZTDxCnRHXnNDFS4K/stdi/NxT5oiZ7SzMVl67bSUewKqBhBvwLT1bqA
-	IAjA8Tk+k6kGBJ15NozinxDuEJI/qwSGZU5cJgq5ohwLglDFNABZA7+Si2a0PrMONhxZQ+2C8jU
-	ATZP301S/xMEvcfoiKwnwy2Nb0sWKr9ou6CU1JVFjYGKn1r5j2PJtEWymwBxREhOD0qRt1EOUnJ
-	RaRGuotHUsN/zkft0/u/3ZuJMZ8KjQjIXYAwkLfTjttQX7tmg=
-X-Received: by 2002:a53:b012:0:b0:667:8c87:25ef with SMTP id 956f58d0204a3-6679f1acdebmr1373545d50.71.1783517991270;
-        Wed, 08 Jul 2026 06:39:51 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1783517994; x=1784122794;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=dX/On/fEvkz88OtmZnG2fe/TvHSHKMys3RrO8o42iFA=;
+        b=hRXb3UnZKfdjstPmOTUmKO4dcyQk1WkMj+KagmoLJGGpEPcEZlRA1naQttk9Ohlr8B
+         RJc2VWkFQeUXUhOn+ZkfkFMkQhy58V5L3+eW1mBkqTvdXnzEWwBNLyKOIOWF68x/snmf
+         sEV03MtVnGp0Z1VlBbbcNYNr2GWaeNldAmEh3JCJblrmkLrFmb9zsOEVvm6VXpRROX5D
+         2UGnWGoGyUWtjMKOagEUiu6yg3+GXooaC1Pyi3OvUGLUcuVJA2C27LihD8QS5QHPZIbI
+         CmVJVh1hNAps1ReMaxHl4RBvXL7KCKRQiuwGc1WfUP5EKWrAg8cfOi9qUMLeqOL1Y2vM
+         hjyw==
+X-Forwarded-Encrypted: i=1; AHgh+Rp42mYMvfPf5bQZEfkpSWLwjWL5rkUcI0610aYXbGfCZUrk0+O1KGNywd7VXdCYdkxO7TzYOmbL7K8yDPOmvmUvNmBSvzI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgJIUdNzTxV9iYAUA7xqIC2v9gBelpUkamOZUOume1bQAoln5Y
+	814kRDBX/m2AMF2JYR6nlDQtIKJrSFQ808wVCYRyP+a/QJYDL97YMo/SMsQPj7n5
+X-Gm-Gg: AfdE7cmfeHrqudZwG4QqzGi2TYPt69+eh9wCJblZRWxXOS7lOHSKr/2b+J8WHDoYCLy
+	/Nfp7sjQ/E24p6HeDTLZus0FD07eDbu3IR9rgrvB/FeP/yQNf3c1B1KBTL1NXKrfl6yxSaSeh+X
+	hev0Vcixzlacke7x7E8heIZOIhHKkqdHwNqlPazTDZqe4L/FO59KAn8CoYX4Irobp106HLI5PlF
+	UviUvrF/MMLgvUFnwVSw0qW9Lr6WsoYkeqQmvo3LdLMwyPRCzzrCP1RHza4L/NUofKjbepS3U+4
+	TsAErej1pFmlv2pzgdqlxTZ2ivkpxZj7Hg8/OI9ANa+7HwU0BtaEcHZiAYfYvCL1s4bR2M/kZ3Q
+	t/EBgA7rKxw378YeV2j6i1T2n9AumJmy6q8e0yFyy/QRPH+FDcXgfdUWBuAmdIwwktzfUELLLOV
+	7KaHQikjhv7eJOmhf8z0A6h/rTP+4qaZ/VxQ4q5mZgXACXX0A=
+X-Received: by 2002:a05:690e:2485:b0:664:dc4d:4f with SMTP id 956f58d0204a3-66788f65f75mr4026641d50.38.1783517993868;
+        Wed, 08 Jul 2026 06:39:53 -0700 (PDT)
 Received: from zenbox ([2600:1700:18fb:6011:717c:ccb8:c362:d995])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-667877a2db1sm2087969d50.6.2026.07.08.06.39.50
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-667877a2db1sm2087969d50.6.2026.07.08.06.39.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2026 06:39:51 -0700 (PDT)
+        Wed, 08 Jul 2026 06:39:53 -0700 (PDT)
 From: Justin Suess <utilityemal77@gmail.com>
 To: mic@digikod.net,
 	linux-security-module@vger.kernel.org
 Cc: gnoack@google.com,
 	Justin Suess <utilityemal77@gmail.com>
-Subject: [PATCH 2/3] selftests/landlock: Test LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC
-Date: Wed,  8 Jul 2026 09:39:26 -0400
-Message-ID: <20260708133928.852999-3-utilityemal77@gmail.com>
+Subject: [PATCH 3/3] landlock: Document LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC
+Date: Wed,  8 Jul 2026 09:39:27 -0400
+Message-ID: <20260708133928.852999-4-utilityemal77@gmail.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260708133928.852999-1-utilityemal77@gmail.com>
 References: <20260708133928.852999-1-utilityemal77@gmail.com>
@@ -75,333 +76,56 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add an nnp_on_exec fixture checking that staging no_new_privs does not
-set it before execve(2) but does set it for the executed program, with
-and without a ruleset, and that LANDLOCK_RESTRICT_SELF_TSYNC propagates
-the staged state to sibling threads.  Also check that the
-no_new_privs/CAP_SYS_ADMIN requirement still applies to stage-only
-calls.
-
-Update the ABI version and last-flag checks accordingly.
+Document staged no_new_privs on exec, following the same compatibility
+section style as previous ABI additions.
 
 Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 ---
- tools/testing/selftests/landlock/base_test.c | 259 ++++++++++++++++++-
- 1 file changed, 255 insertions(+), 4 deletions(-)
+ Documentation/userspace-api/landlock.rst | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
-index cbd3c1669951..55ae26a72752 100644
---- a/tools/testing/selftests/landlock/base_test.c
-+++ b/tools/testing/selftests/landlock/base_test.c
-@@ -11,9 +11,12 @@
- #include <fcntl.h>
- #include <linux/keyctl.h>
- #include <linux/landlock.h>
-+#include <pthread.h>
-+#include <stdlib.h>
- #include <string.h>
- #include <sys/prctl.h>
- #include <sys/socket.h>
-+#include <sys/stat.h>
- #include <sys/types.h>
+diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+index 5a63d4476c1c..1d779dd7bb5f 100644
+--- a/Documentation/userspace-api/landlock.rst
++++ b/Documentation/userspace-api/landlock.rst
+@@ -8,7 +8,7 @@ Landlock: unprivileged access control
+ =====================================
  
- #include "common.h"
-@@ -76,7 +79,7 @@ TEST(abi_version)
- 	const struct landlock_ruleset_attr ruleset_attr = {
- 		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
- 	};
--	ASSERT_EQ(10, landlock_create_ruleset(NULL, 0,
-+	ASSERT_EQ(11, landlock_create_ruleset(NULL, 0,
- 					      LANDLOCK_CREATE_RULESET_VERSION));
+ :Author: Mickaël Salaün
+-:Date: June 2026
++:Date: July 2026
  
- 	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
-@@ -288,7 +291,7 @@ TEST(restrict_self_fd)
- 	EXPECT_EQ(EBADFD, errno);
- }
+ The goal of Landlock is to enable restriction of ambient rights (e.g. global
+ filesystem or network access) for a set of processes.  Because Landlock
+@@ -789,6 +789,25 @@ when at least one sys_landlock_add_rule() call is made for it with the
+ ``LANDLOCK_ADD_RULE_QUIET`` flag, additional add-rule calls for the same
+ object without this flag do not clear it.
  
--TEST(restrict_self_fd_logging_flags)
-+TEST(restrict_self_fd_flags)
- {
- 	int fd;
++Staged no_new_privs on exec (ABI < 11)
++--------------------------------------
++
++Starting with the Landlock ABI version 11, it is possible to stage
++no_new_privs so that it is only set at the next :manpage:`execve(2)` of the
++calling thread, past its point of no return, using the
++``LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC`` flag passed to
++sys_landlock_restrict_self().  This flag may be used with a ``ruleset_fd``
++value of -1 to stage no_new_privs without enforcing a ruleset, and does not
++relax the no_new_privs / ``CAP_SYS_ADMIN`` requirement of the system call.
++This flag does not change how the next :manpage:`execve(2)` itself computes
++credentials: set-user-ID, set-group-ID and file capabilities are still
++honored for that execution.  The executed program then runs with
++no_new_privs set, with its usual effect on subsequent :manpage:`execve(2)`
++calls.  Staging is per-thread by default: when combined with
++``LANDLOCK_RESTRICT_SELF_TSYNC``, the staged no_new_privs is propagated to
++the sibling threads along with the rest of the Landlock configuration, and
++each thread then sets no_new_privs at its own next :manpage:`execve(2)`.
++
+ .. _kernel_support:
  
-@@ -302,11 +305,16 @@ TEST(restrict_self_fd_logging_flags)
- 	EXPECT_EQ(-1, landlock_restrict_self(
- 			      fd, LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF));
- 	EXPECT_EQ(EBADFD, errno);
-+
-+	/* Same for LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC. */
-+	EXPECT_EQ(-1, landlock_restrict_self(
-+			      fd, LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC));
-+	EXPECT_EQ(EBADFD, errno);
- }
- 
--TEST(restrict_self_logging_flags)
-+TEST(restrict_self_flags)
- {
--	const __u32 last_flag = LANDLOCK_RESTRICT_SELF_TSYNC;
-+	const __u32 last_flag = LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC;
- 
- 	/* Tests invalid flag combinations. */
- 
-@@ -349,6 +357,12 @@ TEST(restrict_self_logging_flags)
- 				      LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON));
- 	EXPECT_EQ(EBADF, errno);
- 
-+	EXPECT_EQ(-1,
-+		  landlock_restrict_self(
-+			  -1, LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF |
-+				      LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC));
-+	EXPECT_EQ(EBADF, errno);
-+
- 	/* Tests with an invalid ruleset_fd. */
- 
- 	EXPECT_EQ(-1, landlock_restrict_self(
-@@ -359,6 +373,243 @@ TEST(restrict_self_logging_flags)
- 			     -1, LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF));
- }
- 
-+/*
-+ * Exits with the NoNewPrivs value of the executed shell, as read from
-+ * /proc/self/status, making the staged no_new_privs observable after an
-+ * execve(2).
-+ */
-+static const char nnp_script[] =
-+	"#!/bin/sh\n"
-+	"while read -r label value; do\n"
-+	"	if [ \"$label\" = \"NoNewPrivs:\" ]; then\n"
-+	"		exit \"$value\"\n"
-+	"	fi\n"
-+	"done < /proc/self/status\n"
-+	"exit 42\n";
-+
-+/* Returns the no_new_privs value inherited through fork(2) and execve(2). */
-+static int get_nnp_after_exec(const char *const script_path)
-+{
-+	int status;
-+	const pid_t child = fork();
-+
-+	if (child < 0)
-+		return -errno;
-+
-+	if (child == 0) {
-+		char *const argv[] = { (char *)script_path, NULL };
-+
-+		execve(script_path, argv, NULL);
-+		_exit(127);
-+	}
-+
-+	if (waitpid(child, &status, 0) != child)
-+		return -ECHILD;
-+
-+	if (!WIFEXITED(status))
-+		return -EIO;
-+
-+	return WEXITSTATUS(status);
-+}
-+
-+struct nnp_staging_thread {
-+	const char *script_path;
-+	int ruleset_fd;
-+	__u32 flags;
-+	int restrict_ret;
-+	int restrict_errno;
-+	int open_write_ret;
-+	int open_write_errno;
-+	int nnp_before_exec;
-+	int nnp_after_exec;
-+};
-+
-+/*
-+ * Stages no_new_privs from a sibling thread of the test thread, so that the
-+ * test thread can observe whether LANDLOCK_RESTRICT_SELF_TSYNC propagated the
-+ * staged state.
-+ */
-+static void *stage_nnp_on_exec(void *data)
-+{
-+	struct nnp_staging_thread *const ctx = data;
-+
-+	ctx->restrict_ret = landlock_restrict_self(ctx->ruleset_fd, ctx->flags);
-+	ctx->restrict_errno = errno;
-+
-+	/*
-+	 * Tries to open the script for writing to check that a ruleset passed
-+	 * along LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC is enforced immediately,
-+	 * unlike the staged no_new_privs.
-+	 */
-+	ctx->open_write_ret = open(ctx->script_path, O_WRONLY | O_CLOEXEC);
-+	ctx->open_write_errno = errno;
-+	if (ctx->open_write_ret >= 0)
-+		close(ctx->open_write_ret);
-+
-+	ctx->nnp_before_exec = prctl(PR_GET_NO_NEW_PRIVS, 0, 0, 0, 0);
-+	ctx->nnp_after_exec = get_nnp_after_exec(ctx->script_path);
-+	return NULL;
-+}
-+
-+FIXTURE(nnp_on_exec)
-+{
-+	char script_path[sizeof("/tmp/landlock_nnp_XXXXXX")];
-+};
-+
-+FIXTURE_VARIANT(nnp_on_exec)
-+{
-+	const bool with_ruleset;
-+	const bool tsync;
-+	const bool nnp_before;
-+	const bool cap_sys_admin;
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(nnp_on_exec, no_ruleset) {
-+	/* clang-format on */
-+	.cap_sys_admin = true,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(nnp_on_exec, with_ruleset) {
-+	/* clang-format on */
-+	.with_ruleset = true,
-+	.cap_sys_admin = true,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(nnp_on_exec, no_ruleset_tsync) {
-+	/* clang-format on */
-+	.tsync = true,
-+	.cap_sys_admin = true,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(nnp_on_exec, with_ruleset_tsync) {
-+	/* clang-format on */
-+	.with_ruleset = true,
-+	.tsync = true,
-+	.cap_sys_admin = true,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(nnp_on_exec, nnp_already_set) {
-+	/* clang-format on */
-+	.nnp_before = true,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(nnp_on_exec, nnp_already_set_tsync) {
-+	/* clang-format on */
-+	.nnp_before = true,
-+	.tsync = true,
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(nnp_on_exec, unprivileged) {
-+	/* clang-format on */
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(nnp_on_exec, unprivileged_tsync) {
-+	/* clang-format on */
-+	.tsync = true,
-+};
-+
-+FIXTURE_SETUP(nnp_on_exec)
-+{
-+	int script_fd;
-+
-+	disable_caps(_metadata);
-+
-+	memcpy(self->script_path, "/tmp/landlock_nnp_XXXXXX",
-+	       sizeof(self->script_path));
-+	script_fd = mkstemp(self->script_path);
-+	ASSERT_LE(0, script_fd);
-+	ASSERT_EQ(sizeof(nnp_script) - 1,
-+		  write(script_fd, nnp_script, sizeof(nnp_script) - 1));
-+	ASSERT_EQ(0, fchmod(script_fd, 0700));
-+	ASSERT_EQ(0, close(script_fd));
-+}
-+
-+FIXTURE_TEARDOWN(nnp_on_exec)
-+{
-+	EXPECT_EQ(0, unlink(self->script_path));
-+}
-+
-+TEST_F(nnp_on_exec, staging)
-+{
-+	/* The nnp/CAP_SYS_ADMIN gate applies even to stage-only calls. */
-+	const bool expect_success = variant->nnp_before ||
-+				    variant->cap_sys_admin;
-+	struct nnp_staging_thread staging = {
-+		.script_path = self->script_path,
-+		.ruleset_fd = -1,
-+		.flags = LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC,
-+	};
-+	pthread_t thread;
-+
-+	if (variant->tsync)
-+		staging.flags |= LANDLOCK_RESTRICT_SELF_TSYNC;
-+
-+	if (variant->with_ruleset) {
-+		const struct landlock_ruleset_attr ruleset_attr = {
-+			.handled_access_fs = LANDLOCK_ACCESS_FS_WRITE_FILE,
-+		};
-+
-+		staging.ruleset_fd =
-+			landlock_create_ruleset(&ruleset_attr,
-+						sizeof(ruleset_attr), 0);
-+		ASSERT_LE(0, staging.ruleset_fd);
-+	}
-+
-+	if (variant->nnp_before)
-+		ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
-+	if (variant->cap_sys_admin)
-+		set_cap(_metadata, CAP_SYS_ADMIN);
-+
-+	/* The staging thread inherits no_new_privs and capabilities. */
-+	ASSERT_EQ(0, pthread_create(&thread, NULL, stage_nnp_on_exec,
-+				    &staging));
-+	ASSERT_EQ(0, pthread_join(thread, NULL));
-+
-+	if (variant->cap_sys_admin)
-+		clear_cap(_metadata, CAP_SYS_ADMIN);
-+
-+	if (expect_success) {
-+		EXPECT_EQ(0, staging.restrict_ret);
-+	} else {
-+		EXPECT_EQ(-1, staging.restrict_ret);
-+		EXPECT_EQ(EPERM, staging.restrict_errno);
-+	}
-+
-+	/* A ruleset is enforced immediately, unlike the staged no_new_privs. */
-+	if (variant->with_ruleset) {
-+		EXPECT_EQ(-1, staging.open_write_ret);
-+		EXPECT_EQ(EACCES, staging.open_write_errno);
-+	} else {
-+		EXPECT_LE(0, staging.open_write_ret);
-+	}
-+
-+	/* Staging never sets no_new_privs before the execve(2)... */
-+	EXPECT_EQ(variant->nnp_before, staging.nnp_before_exec);
-+	/* ...but a successful call sets it for the executed program. */
-+	EXPECT_EQ(expect_success, staging.nnp_after_exec);
-+
-+	/*
-+	 * On this sibling thread, the staged state is only visible if it was
-+	 * propagated with LANDLOCK_RESTRICT_SELF_TSYNC, and it is still not
-+	 * set before the execve(2).
-+	 */
-+	EXPECT_EQ(variant->nnp_before,
-+		  prctl(PR_GET_NO_NEW_PRIVS, 0, 0, 0, 0));
-+	EXPECT_EQ((variant->nnp_before || (expect_success && variant->tsync)),
-+		  get_nnp_after_exec(self->script_path));
-+
-+	if (variant->with_ruleset)
-+		EXPECT_EQ(0, close(staging.ruleset_fd));
-+}
-+
- TEST(ruleset_fd_io)
- {
- 	struct landlock_ruleset_attr ruleset_attr = {
+ Kernel support
 -- 
 2.54.0
 
