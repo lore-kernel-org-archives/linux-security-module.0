@@ -1,164 +1,197 @@
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+Received: from mail-yx1-f48.google.com (mail-yx1-f48.google.com [74.125.224.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886234611F4
-	for <linux-security-module@vger.kernel.org>; Wed,  8 Jul 2026 12:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.219.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783515126; cv=pass; b=nxyno4845YAMC4DDQtcf446g6dT5uR4akcFkJG1F1WKVBpL1sxB0VpP9J6E+HDJiw0SbL2S7RFZT0ypDtZ48o/GnJvnD5yh+KePC9rikI9dvE3665WPs4falkGDe0UQT1T6+dL42tPMmRbSgyYX2ntTYLscSu8Oiw3Wx2ksWk9M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783515126; c=relaxed/simple;
-	bh=LMcsBp3I2AM2BUc5Uv9PZXVaMxtMYi04e37upzRhQOQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HYpU/vFdT7SHYU9/yiJdZWalwwtQ1I5Dc+ojMeeSaBaSHFicSqSzjy3JhgYAMbPuPHgMyAolG4DbdDwJLKOHCgz0WApaZDtznVEfVuu5Hh9oVPiSmU1AQOIpBW2LvnetOAH9v/hxNilPjIyBoNDwJb3qUWzJ69PKQVE4t3IJfes=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cJ8YmyNG; arc=pass smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CC937F727
+	for <linux-security-module@vger.kernel.org>; Wed,  8 Jul 2026 13:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783517990; cv=none; b=u6WiclmpJPdvdCxR9iabxVKSJqnKwK/aq4SUMpySlzPXgNLXuuJHykB2/irkzrlRU67u9F5h5Bt0up7c3S+4iW9vrs4IiTMMhXsE7BKKDi7NMASALm23s1g814KRyBv0z9/r1N9gT1PFxR8vynfPUAlKxmBGIIqMRulvd/J0E80=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783517990; c=relaxed/simple;
+	bh=cSEac3BC/5IwZYF129Y2/ZN33jLOvAYQxXnRVkKTb5w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OeVISCN2QDItN7SgLj4R3HvJ0jzq1guKgeFNiZpkZL5JRpQtG1iUnG+NXhTCxdIwd59aA+rN4lvCLg2l0CUTH/N5FENRNCBuYkOnM9OkBXohLtldYVIJlG89tOGZx8OmzXSGXX3Axh8E/l5ofMjuUUtFgVP8p92y540IaERdqWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U5hmdI9U; arc=none smtp.client-ip=74.125.224.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cJ8YmyNG"
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-8f1a8e914a9so4950666d6.1
-        for <linux-security-module@vger.kernel.org>; Wed, 08 Jul 2026 05:52:04 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783515123; cv=none;
-        d=google.com; s=arc-20260327;
-        b=XT7szhBzA5gfvE5J2WdR9NlkL1bahLLBcgPzSFsf6n8IR3FqnmHPaalDwN8LdsFJba
-         6Rq0IsoOMqxHRSI8zeO0Ag4z6Gumoqox/bwLuLWtmlViB3Q/Qapbmqku2r3PGXGlgZy6
-         c198dmCpCgaRzzbVGGBcTF8iajYsj7xDcXvDHtGPns5hJNusSqhmZHNY3byK/g8MfB6V
-         Gm0eC0HES9iV1WEB+PW6/cBJ5gZNnFoUaTfTT99bmHpSEHPYSXr9RGeikULS/3SiiVjj
-         dFIhXifiEx0kNQzu8pNMkHhjwXBg8U9/sSAjlV6dhndfSCipDHDmpqp8SK51w8JA33TS
-         oPEA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=LMcsBp3I2AM2BUc5Uv9PZXVaMxtMYi04e37upzRhQOQ=;
-        fh=xvWbZlXcvtlztSdZ5UypZtnTDzbEnKSyxptn6C5++hU=;
-        b=i+FD0jOhqJCvpXXXNcEsFqqfYeT1DJNn0/fmGmwna073pqwiJCQDlekDlXRg9m398B
-         obC87UvUGt+WL+7khNSAtGAibcNnYLTBJuCC1T64wExa5lSAVPN16s+10HQ64QuyC25a
-         SQVHqBVlsKO7vLpWOM3PUxx4s0XtEEz4974TpgTS9ixbRow32kOxCA/xCB0gSMaM55GE
-         2nzcj5VCXAMT0nYdVoelnjBfAcNJqcAuP/p0+ZAa3cBWusF1S87rgYPanrvoypFoWt4H
-         B05Ees0AlQirzq+yurBcBP/2JSM+dlzHhpdRNPYFrxYzzQ6dzPRJA0NZUTr8Uishky5a
-         H/tA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U5hmdI9U"
+Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-66666bad8beso876064d50.3
+        for <linux-security-module@vger.kernel.org>; Wed, 08 Jul 2026 06:39:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783515123; x=1784119923; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=LMcsBp3I2AM2BUc5Uv9PZXVaMxtMYi04e37upzRhQOQ=;
-        b=cJ8YmyNGzcUVkugDcbDFSV9hG1XDIYcPXiertRg0HgzcUcju9zF9S1QddQvl1IpWUU
-         4k5nyw2V0IVysz1RCrUdJrEDo/h/A2qbnGEkhOL3pMSeZq9aNdhek1gxoF3bPioxNI3d
-         ggeFj1wflW8RofhZngweDB2Ewf+1+x6kpdbS6g61gDANdxSQ8inNYw98Euig7Tflxz79
-         yJ8j6vynosLrChyjPyPwAlM/tzP8CcmxcP2N9+hHViX91g/XicWPJjt9i8qCxLFKR4ur
-         hbNv49Trj68z0qWIkUNyQKuPp7su1TchELfMq/n41YFkTwA8KS5WkUEWYHQo3mp6OZbs
-         /R0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783515123; x=1784119923;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20251104; t=1783517988; x=1784122788; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=LMcsBp3I2AM2BUc5Uv9PZXVaMxtMYi04e37upzRhQOQ=;
-        b=Q45zGzSz3fg0RgX+mM/0rezj4ncwRcCtQ5C+ORYcyyzM2+Ffl1QWPumiZ/Wn4NTEe3
-         3N1qMmFTCEFwVO/TDbJFR5jqeitYF6TS3eOnKeOCAjPrjRyMeK+rVD6EN5OCMGvekP4h
-         YIZ/32imUXTrUJKq9xMuxkv4Q5XbeaEo5J+9PZH5g/3GXI8u/ET12KeP8CU0oNMD/YSm
-         plWqNd2tLlDCLSICu0wS2eX+PxWXwAlvYUlOd6kIz9B1HcXc8q+VP0ADm0MUeY3ITuDf
-         vSezqSkF+Xmq5ZXLJyisDEQpVGEGJEYW6GZfeVhGctPUAMAqQamJmkyy0Xas0eLxg2BG
-         O5tA==
-X-Forwarded-Encrypted: i=1; AHgh+RoJKHU4P+IWG56/gt60wBdSyRpafWn5vU197ouitUkDwBN6zaFIx4OfPT419IM14sUhkHtlJUgY2Vawxc/L4nYJWEbJxtw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGcSnz0ivUargHjmOa2X1XIjuJI83p3Wj+7fKcqNbL7FROBmaa
-	+FOH9bzPSiP+Y3Mh7MMH6G7Yx4M4Lg+ifEOwlC1OPTeygnjI+cxfHYhEcD9SAmMm5zIFEGIsEin
-	V2ZCC6FC5q8BxKZkKXX37Bv7KxNdrVzM=
-X-Gm-Gg: AfdE7ckgy6zNpSDCnLo2VP+KLewZwM5Na9ygdAFaEqV6Uv+s6rFFLBobtNwCmBJqlrw
-	dhRarTkvfzjVfxS+RpQCBmYicp2wbRICDbZNZ0iVbrPRkzRvuGDemIo/xoCUJVrMTwYGjJ5GHFq
-	9AjipRTTNRuCj1zK4ZFLJ7HV0PDYCzk32F0pJ5aDC+fy8usn96OtB9gJXJ8TmSYaYvdk5A64owc
-	MhfvCs5Ux9ZgSsV5bWIMWBKgn/BhBbNvMNa/sK62Dc6fbgIbgFn3j9z1usbIS/fiuI+QyAnTIrI
-	5zuqClOi6tAk69NCcggNDxC42vU=
-X-Received: by 2002:a05:6214:328c:b0:8fd:6df3:b37a with SMTP id
- 6a1803df08f44-8fec361db53mr20328306d6.62.1783515123475; Wed, 08 Jul 2026
- 05:52:03 -0700 (PDT)
+        bh=RNZ4qnzUEsBUz3T3Cfb7/PSgzfan47uROs+sdgCd5Mk=;
+        b=U5hmdI9UT1aMia+cBA8j0R+xswQlUv6W70Qs8ZCOaKB5YUfRtJEjEfkL2/vSb/5pYc
+         kPGip62qiQLhvuKe42xfshinAFDFyApE39zVIa7vhIUvXTxg5EeMRO6iJF3J6GegRMB8
+         yBmQtJmHpq40LUQ/AbUS7/QuUW2Mncqt0qAh560o4QtAv5lMGxGwTJHO8jvHAoVuepb6
+         Jv+uudTSD38EzHl/tASY6DHHlNvNcIxTAqusxte/dL/yKIp63LGrBbvQUFmPZTCd0fKb
+         Arh1SCefcu12yfPceDaO2m9Xpc1VQM0LYrOoeZr7TLNG20lfF7Pk4wjkuaWn3gznq2dE
+         aXEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783517988; x=1784122788;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=RNZ4qnzUEsBUz3T3Cfb7/PSgzfan47uROs+sdgCd5Mk=;
+        b=UfkOCz+dysJj50YxoT0PZxIk+/eXiy6UQXbSL93vuQDaA8aQ1li6lq6VJtId4Wzcq3
+         AfQ8GOPg3fC+tjF3eI1v/twEA6Qfvd+0en4QY2ciGQoGnwI7mfMKAsUp7ZPFuH69cyjk
+         rt5rrKePGsxyJ+Mr3RcPQVroqOM68t8g36TBOPPVfHaoB1YJdI+DuSWQ7wg5NEbNL2xm
+         4vbInsre1Rhkz14f4V+fdjfMyO60Lylrxv7cFCFzvZNC3q18ffUKC/rDYrk8ei1+cTp7
+         G93WCUdfZyR4D1cp43hjv97S/odV66gdFepJMnvEsQaIKjcJil8T4ZE2jiJVTBJSBm7g
+         DYoA==
+X-Forwarded-Encrypted: i=1; AHgh+RpfBSoiSoSbw59KpMbiMA5Fc7N8vVM2xW/ya4dk0iqB8lL4UNBarSgyAi1qtCEFjue9vOhZeZhzFAo4IAqgTt3yu3+7uKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyyq9DXawn+qWrt58K6LFR5v+NzCEW3vjahzGgMRIuX10drIITy
+	FO3k85D5BEItxICtd12nEBVS3WlS4LyQcnPeN7TjQ+5CcPceMjDeVIfY
+X-Gm-Gg: AfdE7ck9nMIDcNxLnK4nVvGq8JS67Z/7bkaRrH6npWQt8wx2fNvjdK5WVeKDHGobYA4
+	rsete/zh+MgC2+et1ngvf4Si/0Id1kusoegz770q0ZfAeH9G+3PxwjqJrKMV+TylMMSWI66R/25
+	ebEyW2Vzp7JfFgLSb7HmRQTvc6BjN2zYie2WJP84YD8DFrcMWSvuAd13rPMwNXv9At8vEE61Lv3
+	CR3g90/JDlQPfpJOmEnOO6dyLaMhjxeGajir9WNlzqOdZlWqAtVuXg8j152X9tjfLcmeMvlxiPR
+	l2bXYLp7OmByQybcmHnJK1NYlwGNlpJfxbdrtsKdrRobneW/SXCLRfPoVZbfDQNpi/rqCbvMKrf
+	4ti7l96bTB/kNJdUE2KYiAqT+oE47rXp2bum18AMwZCeXQG8qmvYl7FN+TQYnh+DSl9Gm1dbosr
+	JkE+0TIZ1KKOFKHE/52AuNar2RDoAGAEhs/JLuPAz1YkgV3jc=
+X-Received: by 2002:a05:690e:1306:b0:65e:c81:3a6c with SMTP id 956f58d0204a3-6679f00f471mr1726182d50.15.1783517987369;
+        Wed, 08 Jul 2026 06:39:47 -0700 (PDT)
+Received: from zenbox ([2600:1700:18fb:6011:717c:ccb8:c362:d995])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-667877a2db1sm2087969d50.6.2026.07.08.06.39.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Jul 2026 06:39:46 -0700 (PDT)
+From: Justin Suess <utilityemal77@gmail.com>
+To: mic@digikod.net,
+	linux-security-module@vger.kernel.org
+Cc: gnoack@google.com,
+	Justin Suess <utilityemal77@gmail.com>
+Subject: [PATCH 0/3] Implement LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC
+Date: Wed,  8 Jul 2026 09:39:24 -0400
+Message-ID: <20260708133928.852999-1-utilityemal77@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260708000956.46138-1-dwindsor@gmail.com> <DJSV0P2OINKE.34OCOC34KFEEF@gmail.com>
-In-Reply-To: <DJSV0P2OINKE.34OCOC34KFEEF@gmail.com>
-From: David Windsor <dwindsor@gmail.com>
-Date: Wed, 8 Jul 2026 08:51:52 -0400
-X-Gm-Features: AVVi8CfU37Brxag2yfG62kEk96iHc-RKohKljtHAIy8Sn1Fk6Gh-XV62bqUwhO4
-Message-ID: <CAEXv5_j96aUkmSEg4brvk2q-A3SyYzXZ7jyutoXfrc-oDykZYQ@mail.gmail.com>
-Subject: Re: [PATCH v5 bpf-next 0/3] bpf: add bpf_init_inode_xattr kfunc for
- atomic inode labeling
-To: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Emil Tsalapatis <emil@etsalapatis.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Shuah Khan <shuah@kernel.org>, bpf@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 7, 2026 at 11:12=E2=80=AFPM Kumar Kartikeya Dwivedi
-<memxor@gmail.com> wrote:
->
-> On Wed Jul 8, 2026 at 2:09 AM CEST, David Windsor wrote:
-> > Many in-kernel LSMs (SELinux, Smack, IMA) store security labels in
-> > extended attributes. For these LSMs, atomic labeling during inode
-> > creation is critical: if the inode becomes accessible before its xattr
-> > is set, it is briefly unlabeled, which can disrupt LSMs making policy
-> > decisions based on file labels.
-> >
-> > Existing LSMs solve this by setting xattrs directly in the
-> > inode_init_security hook, which runs before the inode becomes
-> > accessible. BPF LSM programs currently lack this capability because
-> > the hook uses an output parameter (xattr_count) that BPF programs
-> > cannot write to, and existing kfuncs like bpf_set_dentry_xattr
-> > require a dentry that isn't available until after the inode is
-> > accessible.
-> >
-> > This series introduces the bpf_init_inode_xattr() kfunc, which takes
-> > the combined inode_init_security xattr context argument and claims a
-> > slot in it via the new security_lsmxattr_add() LSM helper.
-> >
->
-> There are various CI failures in newly added tests, I don't think any of =
-them
-> are passing. Please fix before respinning.
->
-> https://github.com/kernel-patches/bpf/pull/12730
->
-> E.g. both test_init_inode_xattr and test_init_inode_xattr_slot do not hav=
-e
-> expected results.
->
+Good morning,
 
-This is happening because the path "/tmp" in bpf ci isn't mounted on
-tmpfs, rather on 9p:
+This series adds a new landlock_restrict_self(2) flag:
+LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC.
 
-[ 5.813072] VFS: Mounted root (9p filesystem) on device 0:22.
-[ 5.924390] vmtest: Mounting tmpfs at /dev/shm
-[ 5.971012] vmtest: Mounting tmpfs at /run
-[ 6.096271] vmtest: Mounting tmpfs at /mnt
+This flag stages a bit in the Landlock credentials indicating that the
+next successful execution will set the no_new_privs attribute while
+committing its new credentials.
 
-... which doesn't call inode_init_security. Changing the test to
-create its file in /dev/shm, which has a real tmpfs, fixes this. We
-can update the test to skip on filesystems where the hook doesn't
-fire.
+Differences from prctl(PR_SET_NO_NEW_PRIVS):
 
-I'll wait to gather feedback from Alexei and Paul before sending v6.
+PR_SET_NO_NEW_PRIVS takes effect immediately: it prevents gaining
+privileges through set-user-ID, set-group-ID and file capabilities
+starting with the very next execve(2).
 
-> pw-bot: cr
->
-> > [...]
+LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC instead only sets the task's
+no_new_privs attribute once the next execve(2) is guaranteed to succeed
+(past its point of no return, in bprm_committing_creds), after any
+privilege gain through set-user-ID, set-group-ID or file capabilities
+has already taken place.  The executed program then runs with
+no_new_privs, so subsequent executions cannot gain privileges.  A
+failed execve(2) leaves no_new_privs untouched.
+
+Use cases:
+
+Enforcing a Landlock ruleset requires that the calling process either
+already has no_new_privs set or possesses CAP_SYS_ADMIN.  This series
+does not grant any exception to this rule; for a caller that already
+has no_new_privs set, the flag is effectively a no-op.  It is therefore
+mostly useful for CAP_SYS_ADMIN callers that need to execute programs
+that legitimately escalate privileges (e.g. transition to another
+user), while ensuring that further executions cannot gain privileges.
+
+Consider a sandbox launcher that depends on a set-user-ID helper, such
+as launching applications through bubblewrap on distributions where
+unprivileged user namespaces are disabled and bwrap is installed
+set-user-ID root.  The launcher cannot set PR_SET_NO_NEW_PRIVS before
+the execution, as that would neuter the very helper it depends on:
+
+  sandbox launcher (CAP_SYS_ADMIN)
+  |
+  | landlock_restrict_self(-1, LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC)
+  V
+  /usr/bin/bwrap (set-user-ID root: honored for this execution;
+  |               no_new_privs set once the execution is past its
+  |               point of no return)
+  V
+  sandboxed application (runs with no_new_privs; cannot gain
+                         privileges through any further execution, and
+                         may enforce its own Landlock ruleset without
+                         CAP_SYS_ADMIN)
+
+This flag also closes a gap for CAP_SYS_ADMIN callers of
+landlock_restrict_self(2) itself.  The no_new_privs/CAP_SYS_ADMIN
+requirement exists to keep set-user-ID programs from running confused
+inside a sandbox they do not expect.  However, a privileged process
+that enforces a domain without setting no_new_privs leaves that hole
+open for all of its descendants: anything running in the domain may
+still execute a set-user-ID binary, which then runs privileged under a
+restricted view of the system.  A privileged process that needs one
+legitimate set-user-ID/set-group-ID transition currently has to choose
+between breaking that transition (setting no_new_privs first) or
+leaving the hole open for the lifetime of the domain.
+LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC allows the one intended transition
+and then closes the hole.
+
+Design:
+
+This flag is implemented simply: a bit is stored in the Landlock
+credential blob (struct landlock_cred_security) indicating whether the
+next execution should set no_new_privs when it commits its new
+credentials.
+
+The bit is not coupled to any ruleset and, like
+LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF, may be passed with no
+ruleset (i.e. ruleset_fd = -1).  It may also be combined with
+LANDLOCK_RESTRICT_SELF_TSYNC to propagate the staged state to sibling
+threads, each thread then setting no_new_privs at its own next
+execve(2).
+
+The staged bit is inherited across fork(2) and persists in the
+credentials until the next successful execution.  To consume it,
+Landlock handles the bprm_committing_creds hook, which runs while the
+credentials of the new program are being committed: if the bit is set,
+task_set_no_new_privs(current) is called and the bit is cleared.
+
+Again, this flag does not bypass the requirement to either have
+CAP_SYS_ADMIN or no_new_privs already set to call
+landlock_restrict_self(2).
+
+The Landlock ABI version is bumped to 11.
+
+Test coverage:
+
+The new nnp_on_exec fixture generates a shell script that reads the
+NoNewPrivs value from /proc/self/status and exits with it.  The
+variants select the conditions under which the flag is tested (with
+and without a ruleset, with and without CAP_SYS_ADMIN/no_new_privs
+already set, with and without TSYNC, etc.), then compare no_new_privs
+before the execution and in the executed script.  The ruleset variants
+also check that a ruleset passed along the flag is enforced
+immediately, unlike the staged no_new_privs.
+
+Justin Suess (3):
+  landlock: Add LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC
+  selftests/landlock: Test LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC
+  landlock: Document LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC
+
+ Documentation/userspace-api/landlock.rst     |  21 +-
+ include/uapi/linux/landlock.h                |  36 ++-
+ security/landlock/cred.c                     |  22 ++
+ security/landlock/cred.h                     |   8 +
+ security/landlock/limits.h                   |   2 +-
+ security/landlock/syscalls.c                 |  54 +++-
+ tools/testing/selftests/landlock/base_test.c | 259 ++++++++++++++++++-
+ 7 files changed, 382 insertions(+), 20 deletions(-)
+
+-- 
+2.54.0
+
