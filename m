@@ -1,155 +1,93 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C202A437877
-	for <linux-security-module@vger.kernel.org>; Wed,  8 Jul 2026 18:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBFF4C8FE0;
+	Wed,  8 Jul 2026 18:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783534413; cv=none; b=VnyKqUfw0R+Na4bfrO3kbJFVmxyvptoEzeK5JZsypLo74SrmaWi9HjQjZAPJLQGSo6xp838maXe5Wq351Gx3OrKwAnge+U0JSGg3Sl9aT2eRqrmwbsWlwoc4Ksdnqn3wPDv30eBqGoib2CmICFFOCMmAHdb1G2UvnmuDNzx0zpk=
+	t=1783535440; cv=none; b=gQlBEIH9gqdksjqguw3dk74aavTAsB/H2GhVnFewAv/bEbGjUljwsGExzJ8MGSYJNjAibKgobk8e/tP30D8R0oUWNPnVix+21Ldpvv0FC0LvtxNm+nwO8wr7dlW06eQVRmaBKd5PHMD3pJxFEUBh7RDvy0FN96ToM8svneKUGLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783534413; c=relaxed/simple;
-	bh=mKB64eFzBwevlbfHP4GHbGCdzZzNbk41FGpjUYsfux4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vEoS86mW1tplmHHNKnN7HFp271uew7huH/A3T2Al2r8nzcOuTrbe3M9gR4BEq4Fsc3lpVvT4eXb8UhLrdUQnwapZ92HlH6NFG5AmhzszJG2pRFROzF23rBSilWffYlFHzJPC6XwXmKt40WbspckTMcgq5EtHjaMec7XjltAurGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NXY/JxGv; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1783535440; c=relaxed/simple;
+	bh=cZh5DVsj/dPA/UKAu+pTws34ASs3e/hIPIj+rrHjBRo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=KhW4IWAyjNcWNQZH996BuzEYJ0ZUIxCzkMoSnlh/E4BNkI1Ngp45OT0tcZSAeb58xCMw39jVF9ewFMfO195GcxIZokScIaVQLtd0F8DOw8v6risaD0TEwwrcJUw+XSCo/ibNg1cL/lZnr+NwrYF6HpS/dCpnJayn3vCQ9A6P/4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HKOeGQYA; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NXY/JxGv"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-47db714766aso84580f8f.0
-        for <linux-security-module@vger.kernel.org>; Wed, 08 Jul 2026 11:13:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1783534407; x=1784139207; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=WEMJWE1zcwQ4UkLGDHzDIo1wA9TMgoKtQk475YCTe6o=;
-        b=NXY/JxGvymDRFrsijRMZ9tHdf1vok229JiWLzBHZwp/af9/Y7FHShzV1p28lfGDO0P
-         Zjbde5zb79XSg/jwyzfbIjMg0JbSsUD456xvuSBgfX9elPAfqtA7LRQ4E5uq5/7exmey
-         EqK3Ef4oiDQgW7SogTWxwIn9DFaDCNwAlfxgMTUAGHE1yhxkzaZ+/aNgxXqr5PJhJTbk
-         YJ3U/xgt0mK8BckXQ4KsDSdGzsNpqaB1DoJXAjYrfk/nUDVL5XmP9eQo6rp9dUT4uRxU
-         WqEtlylEfFx/GQK85wL6RWzG+tt8Cl+7EtXP6XzSYBHRNjkC+HgLsWCbnvW7fF2s9gZo
-         WeaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783534407; x=1784139207;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=WEMJWE1zcwQ4UkLGDHzDIo1wA9TMgoKtQk475YCTe6o=;
-        b=ovqixD/ycEPvSTX8auqBHSnK/CrVnPzaTNhwnnQAm4BWYcliLQ/S0TCQyRPotK4eC6
-         Kx4QSWdeuxx+Azisy79WVD80aOC7S127sjKPdtqYiIMHkWO09vFdgFCW0LE98g2g2KqK
-         jPzXfeiPub3CKDBmw/ZNtiWIxXvgiyB27ZQ01TgZ1Fhkj42BFuv/amXHD+YoZrht33Kk
-         GYhkTOv6EiSK/zCGerkcGP4MZTdYBHAXbcqPVdOQfa5vU2vROrjFKdo6LTEVEn6a+bdy
-         QXuwy+uNXksiBU4x6HCHFyyiCJovHCNSDcTEUCTCweTwyMyCppAIRflYz6wpPdaYA6O1
-         v3kA==
-X-Forwarded-Encrypted: i=1; AHgh+RqFR+RsRP5jCTdYMR25DajYJs+NUXkXgwrzcd84P/10F9t2kQNWehCMRNyEu/+unwaKEaiA8AQ4E5unZAwxfrS2+M3BuXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF56CNncd3TckHNknnLpbnG2ZgKP91Rix2/CNGdBxiKnsh0AWh
-	t241xbLOGOuthmNwfDKWZ3xbTDPiTvGoH2ZiRTuIcFlsQpdFZ3Yi2X1sTbYEbVenyzk=
-X-Gm-Gg: AfdE7cmZOHIGZ4aKJhHUmLGUvqjwDXOCqHNTrK1p7cGKO29J4CAo3LWGhRA5Kg4VxyE
-	y0ggJGQM1GkDLDvj10Uzwn6iZYb47FaP+OUwBSm2Gcb0hRnmN7qwjjKw/NbubKPtiFNtV35ghIa
-	xzIJT/qkiDKeol53N6ZBHG7I/M65oOshHMG5J4JDVdcsjEaIlK1zlYE3yFw9N0cHAL1afBBq7hz
-	VoM5rozmLmEtXxM7KnxRRseU5lwPe2TPCpsId6bD428jjLZx+wmDBjKI/l5eNtDHLjo34fkOnPQ
-	LMQXMQg5o0r4Z9GJa21XjKwsoG4/6oVa2jJnYQr2Miq6izLh7yv08hjqdwpZiuyEJLauILudA8z
-	0oX0U/i/lajxdXMYgxUdFiDLGiB0W6zT8gGWQazkV4eIDBHn0ki2cug7tTr94vAHkwFBPfEPTMG
-	HydLtLPqheIJ/G2JTp57J9THV5rkzpAgRBqHg5Zg==
-X-Received: by 2002:a05:6000:460c:b0:473:c608:eeb5 with SMTP id ffacd0b85a97d-47de9a4f159mr9196162f8f.29.1783534406837;
-        Wed, 08 Jul 2026 11:13:26 -0700 (PDT)
-Received: from localhost.localdomain (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47a9de1d910sm43325516f8f.6.2026.07.08.11.13.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2026 11:13:26 -0700 (PDT)
-Date: Wed, 8 Jul 2026 20:13:23 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>, 
-	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Philipp Reisner <philipp.reisner@linbit.com>, Lars Ellenberg <lars.ellenberg@linbit.com>, 
-	Christoph =?utf-8?Q?B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>, Jens Axboe <axboe@kernel.dk>, Johan Hovold <johan@kernel.org>, 
-	Alex Elder <elder@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Michal Januszewski <spock@gentoo.org>, 
-	Helge Deller <deller@gmx.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, Chuck Lever <cel@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
-	NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, 
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, Mark Fasheh <mark@fasheh.com>, 
-	Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, 
-	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Daniel Gomez <da.gomez@kernel.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Aaron Tomlin <atomlin@atomlin.com>, 
-	Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Nikolay Aleksandrov <razor@blackwall.org>, Ido Schimmel <idosch@nvidia.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Kentaro Takeda <takedakn@nttdata.co.jp>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	drbd-dev@lists.linux.dev, linux-block@vger.kernel.org, greybus-dev@lists.linaro.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org, linux-fbdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	ocfs2-devel@lists.linux.dev, cgroups@vger.kernel.org, linux-modules@vger.kernel.org, 
-	linux-pm@vger.kernel.org, driver-core@lists.linux.dev, bridge@lists.linux.dev, 
-	netdev@vger.kernel.org, keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 1/2] umh, treewide: Explicitly include linux/umh.h where
- needed
-Message-ID: <ak6STbqZd-Q-c56v@localhost.localdomain>
-References: <20260708154510.6794-1-petr.pavlu@suse.com>
- <20260708154510.6794-2-petr.pavlu@suse.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKOeGQYA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD5221F000E9;
+	Wed,  8 Jul 2026 18:30:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783535437;
+	bh=BmLAl7KP6I/cpRymj1fw5zYepPzOB3GSUa3VvQqInLg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc;
+	b=HKOeGQYAzkYBKb/f4u+9J9wFnS0rGLEXyejNw4Yvd0IInUHBF5zTmFX4jdaHDcdh8
+	 cRssy4BevWUl/t1AGA+wlAKrYHBrQFXf/kIef2dfUeDWE2caE53sFf9JW25EbQd84Z
+	 S2pad7Vy12MCWWUdkFI3ZCoP94RwjKPc/7GX6Am4lZZD/gy09Gni8tbRplGwguImcc
+	 HgHfyBLHBnuNdRk2WUQj+til8TxJ+bxlCtl3oe9jQ3x9cG2CzWfhcuWvhK7/++8kpq
+	 ShiXQ57qhXtqdmsqhcPnoQTA6gNMJIN/hEEE+ckOpDxe9g+9HcyOKRrxmTYC8OdsnB
+	 jNAk8GP2nAGcw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 197D73938456;
+	Wed,  8 Jul 2026 18:30:18 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kijzkd5xnaepafl2"
-Content-Disposition: inline
-In-Reply-To: <20260708154510.6794-2-petr.pavlu@suse.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next v6 0/8] Verify BPF signed loader at load time
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <178353541664.3057345.9896047455904217211.git-patchwork-notify@kernel.org>
+Date: Wed, 08 Jul 2026 18:30:16 +0000
+References: <20260708075343.358712-1-daniel@iogearbox.net>
+In-Reply-To: <20260708075343.358712-1-daniel@iogearbox.net>
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: ast@kernel.org, kpsingh@kernel.org, James.Bottomley@hansenpartnership.com,
+ paul@paul-moore.com, bboscaccy@linux.microsoft.com, memxor@gmail.com,
+ torvalds@linux-foundation.org, a.s.protopopov@gmail.com, bpf@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+
+Hello:
+
+This series was applied to bpf/bpf-next.git (master)
+by Kumar Kartikeya Dwivedi <memxor@gmail.com>:
+
+On Wed,  8 Jul 2026 09:53:35 +0200 you wrote:
+> The BPF signing scheme signs a light skeleton's loader program and lets
+> the loader vouch for everything else: bpftool bakes the SHA256 of the
+> metadata map into the loader's instructions, signs the instructions, and
+> the loader compares the (frozen, exclusive) map against that hash from
+> within BPF once it runs. The construction is sound as a trusted hash
+> chain, but the kernel itself never attests the metadata, and that split
+> has been the recurring objection from the LSM / integrity side since the
+> scheme was proposed.
+> 
+> [...]
+
+Here is the summary with links:
+  - [bpf-next,v6,1/8] bpf: Resolve and cache fd_array objects at load time
+    https://git.kernel.org/bpf/bpf-next/c/d5a85392392c
+  - [bpf-next,v6,2/8] bpf: Verify signed loader metadata at load time
+    https://git.kernel.org/bpf/bpf-next/c/b707068e0ed9
+  - [bpf-next,v6,3/8] libbpf: Drop in-loader metadata check for load-time verification
+    https://git.kernel.org/bpf/bpf-next/c/a2d784869a0f
+  - [bpf-next,v6,4/8] bpftool: Check EVP_Digest when computing excl_prog_hash
+    https://git.kernel.org/bpf/bpf-next/c/576bcaa1f5c2
+  - [bpf-next,v6,5/8] bpftool: Cover loader metadata with the program signature
+    https://git.kernel.org/bpf/bpf-next/c/92c7717981bb
+  - [bpf-next,v6,6/8] selftests/bpf: Adjust bpf_map layout in verifier_map_ptr
+    https://git.kernel.org/bpf/bpf-next/c/77e5f3c91453
+  - [bpf-next,v6,7/8] selftests/bpf: Verify load-time signed loader metadata
+    https://git.kernel.org/bpf/bpf-next/c/99b321dde704
+  - [bpf-next,v6,8/8] Documentation/bpf: Add BPF signing and enforcement doc
+    https://git.kernel.org/bpf/bpf-next/c/84c42f515f18
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---kijzkd5xnaepafl2
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/2] umh, treewide: Explicitly include linux/umh.h where
- needed
-MIME-Version: 1.0
-
-Hi Petr.
-
-On Wed, Jul 08, 2026 at 05:44:29PM +0200, Petr Pavlu <petr.pavlu@suse.com> =
-wrote:
-> diff --git a/kernel/cgroup/cgroup-v1.c b/kernel/cgroup/cgroup-v1.c
-> index a4337c9b5287..60eb994c32ae 100644
-> --- a/kernel/cgroup/cgroup-v1.c
-> +++ b/kernel/cgroup/cgroup-v1.c
-> @@ -16,6 +16,7 @@
->  #include <linux/pid_namespace.h>
->  #include <linux/cgroupstats.h>
->  #include <linux/fs_parser.h>
-> +#include <linux/umh.h>
-> =20
->  #include <trace/events/cgroup.h>
-
-There is kmod.h in here too but it's unnecessary, no module lazy loading
-in this code.
-
-Thanks,
-Michal
-
---kijzkd5xnaepafl2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCak6TOhsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMiwyLDIACgkQfj0C55Tb+AgY2gEAgOkCGIEUNQ8/AFfxYtdb
-0XG1ZQXkD0d1Rm0cAq1+u8cBANw3nWI/wHkp5zcHmZWevxdnweU507gsyVTXzMGQ
-ZwsB
-=k+w6
------END PGP SIGNATURE-----
-
---kijzkd5xnaepafl2--
