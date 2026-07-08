@@ -1,132 +1,143 @@
-Received: from mail-wm2-f1.google.com (mail-wm2-f1.google.com [74.125.225.129])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B7534A794
-	for <linux-security-module@vger.kernel.org>; Wed,  8 Jul 2026 03:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7723F58E5;
+	Wed,  8 Jul 2026 07:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783480352; cv=none; b=G4wGC685b/J9ZyDhumuNrbSsstmKiCmsK0wVqwarTYUAJ6N6ABm7+szGXcXy1SqZvgyiMOhLSjTMy/M/+u6vmRCHGdbConoIT7ssx5zycKUrvOIPDNyUxs44Gv8kUZFFsyAU/jk7dlJNnxDGxUSuXvg1hgHJVFysn0ViDKvNzGI=
+	t=1783497242; cv=none; b=jCOSQrLips9XAeNro4XoO8xrr+hgLa/rI9l4pEbpYAr9672if7vNypQheqjgc63cAGyW4csRqXn7Qb30Dd8FnR+sGB+pKVmDidrGJo7LM9dvuuIRdS3euYG548u3DBLyHvc1haePe92T2MeWABi9+1614IFXAE14szqkOxWhtmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783480352; c=relaxed/simple;
-	bh=Pfob3D8mbkTTmUhLmKjlXVr2c00IRc98rAq6J6IGM8w=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=AD2ZZZ4PO7ie4Si9xwcVc1nyq/7uhvEELlY1eDeeJj7lt1j7Lkb9zlk/rBuxKr2lcx1CjHwdE2JOtfWYWqmYdhCajGQ3hNsQybW4zf5fkjnoZJ/IgMv1B/Nws73dEX0WVwStEQCS0jlBiDJdIDqEeE6MgMZf7KOMPO7ffCQcg6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k/Fkq1VY; arc=none smtp.client-ip=74.125.225.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1783497242; c=relaxed/simple;
+	bh=pcDq4NbrjGH+jQFnA9KjaALKY0CKT6ybpFa8Q0UEvlM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BUyVGCeXmx3RZH4CUkBTUq3TQRqpPVYprshYAoQL0sOnzxOwWBPwvfiQAyCGOrYIXnL5+FYKVELnSM3HIcr/s0KkrosrrevFptIMWCq/p8f7J//3TELu4pSTGZnMCBlniP1zzZNwvSALbWjDsL8s7WRyN84iHN3Le58dxWZ8/s4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=O411BCW0; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k/Fkq1VY"
-Received: by mail-wm2-f1.google.com with SMTP id 5b1f17b1804b1-493b829982dso470205e9.0
-        for <linux-security-module@vger.kernel.org>; Tue, 07 Jul 2026 20:12:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783480349; x=1784085149; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-type:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=Pfob3D8mbkTTmUhLmKjlXVr2c00IRc98rAq6J6IGM8w=;
-        b=k/Fkq1VY6aeB5pCEiugfcDxREjIseLxREzoYRra3lE9/nqbw3tzGUDUwgcfTQhdPsO
-         6YRANdwssFS43X6i5wjYdG1mWrE/DRmgirvreyqiSlkwWfdz4a5eCsDpZRC+RTdSPmw0
-         s+W5PsJt+eRo2JyW4vt8cm8j6o18Bwrkmz2tCwBaIMcyksROnhGmOYOIVuwU8XGA3Wqy
-         P9nmOlHdFf5X58K68DiuTgf7FFiW5HMU1uSojZ53q8h1A6VVKcR3ii21saKSMp6KCCIm
-         4KgFIa31hmpuSnLYxbi7pq9tr33pEdk0kCkz2ENTEr0iq5VKs6yKz183SaDGqJl8eQ5U
-         mB8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783480349; x=1784085149;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-type:content-transfer-encoding:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Pfob3D8mbkTTmUhLmKjlXVr2c00IRc98rAq6J6IGM8w=;
-        b=CFee17JmRtt4UQwcVumu6h4TGhzeF60+Hxs18KsquLZEpd9/Xfax+3tF6qMYUb91C1
-         Y1mTFyRD0zPJTt2zUocYtw250tKkPZBw70KURjUbTCrmM9AXYMPSmKdHBSArhTfLLe/t
-         wa/cVvRZTty53f8qLcYW9DBRBFfkRk2+ikcdox5vnYKAVB29IomM577a4pT+TdxzpnO6
-         YvHv53bJOeWma7tWyA7/0SzgK+9ROTGwtaBAkOYf1+W0/pkB4tqyEtWiW3OUMt72r2M8
-         aW8kuCbUNppV2K2rYUxZpIxdk2pkkL0rKzWSjdoiWF7WgS+r8T9p1/9apvvQWZa1q69n
-         gaxg==
-X-Forwarded-Encrypted: i=1; AHgh+Rpw+HxBcpJ7xAkJe62bSmXxhrBUUhJbB0kkELjhsnoYXn7TCqhFshPi1UzEBFxTwrA5HdLrvzQE/jzdy5CljQKmgXl5/zY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze1jUu2FNrPMzdZqc5eiSnOQqeFg9KaUB9n4Yo1W/BMOO+pJvn
-	nbWbqjSiktF2mMutajrnpokr13rsvkeCC404sQKKhEO0UQn1ElUajAu1
-X-Gm-Gg: AfdE7cmWWsH03Ovel14wRNwQUe9PpXfonlDROSdRWUdOwXehQvQD3dhMy/ir+ub14QE
-	CMI2/ZhTEUrPTwjXsk77BdTmVKGg9eQ+Ht08Vo+/2w+66UwdHcN8C2OMMGh8YqAut/isSPo9Vfb
-	HJem9K7M3hLZhq3fAfuYcPu7UWd1qKZvRDi92GzROnb1h1bY2MEeEPBujqmvhx+oyJU1/vd90ic
-	+tkfj6qWKjD4dQZ8NhBtcgLv/4ij1+Jf5++XwnYozKWmgBKLT+ZQakLtKz80JUbTZWs7RiHAxbd
-	YXxwDTD9en3o0/Xz/oFrt9lwbvnKsz1IO4d+3zdPxDqmF8+CmyKLl8nz3ZwrF7Qq0khtqhbwHVg
-	hb9cUNo9U1OHhZYXOLtLrSBUgD9tUSz7nVQ7C3L5vWPQQTLSsnlO70Dpcbdw0slcppd0fd0cRRk
-	cELQPwkwkgnhAXvuD5PcqRXO9Kz77Kk8+AZqFKk85PcXDr5J5np3ZcfBS2JiTe9OoUfWtn/SMVG
-	IAOYA1W8Isq7Y9+Xzzvau21GEdAeSwvoHIiMc+Y87T6cm0dYpiIZJ8=
-X-Received: by 2002:a05:600c:6085:b0:492:454c:347c with SMTP id 5b1f17b1804b1-493e6859969mr4220535e9.7.1783480348874;
-        Tue, 07 Jul 2026 20:12:28 -0700 (PDT)
-Received: from localhost (nat-icclus-192-26-29-3.epfl.ch. [192.26.29.3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493e610532fsm19286465e9.0.2026.07.07.20.12.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jul 2026 20:12:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="O411BCW0"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=Fqx6ojbpajiobyI4Lzc0PA8hQj2/Xu7CNaTSYwlllAI=; b=O411BCW0tMSDGQmnhyTDE9wwHl
+	vAjOfuUfhiKOOdThEe7hMHWHuSaX0TBuNYMVkReDwIfK6QtW727fNtXYqK8oSl9vrBd3bYJiopEth
+	mhurQabhZEvcnn3zS1u8rdS6JYaUB+62RDYcuonYJLfDjXHPUBGnW7uotYQTIKTaaYj8ThgoMId1b
+	zAAzt5PnNX6I9aH479oABwJVlJGXyNfSbkL1wegYVv2MHkDA2YONW3YshSaTNtuBsdeg70kbq0eVl
+	NpgpMMT/GaCU3mVYhlGZhAE+bX3BcZU2SdVwPpaGis2ebSXAqDNDyOlqWIiAuOrP8I6F2ITD18wSm
+	ofX/Aglw==;
+Received: from localhost ([127.0.0.1])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1whN6L-000GeU-1D;
+	Wed, 08 Jul 2026 09:53:49 +0200
+From: Daniel Borkmann <daniel@iogearbox.net>
+To: ast@kernel.org
+Cc: kpsingh@kernel.org,
+	James.Bottomley@hansenpartnership.com,
+	paul@paul-moore.com,
+	bboscaccy@linux.microsoft.com,
+	memxor@gmail.com,
+	torvalds@linux-foundation.org,
+	a.s.protopopov@gmail.com,
+	bpf@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH bpf-next v6 5/8] bpftool: Cover loader metadata with the program signature
+Date: Wed,  8 Jul 2026 09:53:40 +0200
+Message-ID: <20260708075343.358712-6-daniel@iogearbox.net>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260708075343.358712-1-daniel@iogearbox.net>
+References: <20260708075343.358712-1-daniel@iogearbox.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 08 Jul 2026 05:12:28 +0200
-Message-Id: <DJSV0P2OINKE.34OCOC34KFEEF@gmail.com>
-Cc: <bpf@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
- <linux-fsdevel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
- <selinux@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 bpf-next 0/3] bpf: add bpf_init_inode_xattr kfunc for
- atomic inode labeling
-From: "Kumar Kartikeya Dwivedi" <memxor@gmail.com>
-To: "David Windsor" <dwindsor@gmail.com>, "Alexei Starovoitov"
- <ast@kernel.org>, "Daniel Borkmann" <daniel@iogearbox.net>, "Andrii
- Nakryiko" <andrii@kernel.org>, "Martin KaFai Lau" <martin.lau@linux.dev>,
- "Eduard Zingerman" <eddyz87@gmail.com>, "Song Liu" <song@kernel.org>,
- "Yonghong Song" <yonghong.song@linux.dev>, "John Fastabend"
- <john.fastabend@gmail.com>, "KP Singh" <kpsingh@kernel.org>, "Jiri Olsa"
- <jolsa@kernel.org>, "Kumar Kartikeya Dwivedi" <memxor@gmail.com>, "Emil
- Tsalapatis" <emil@etsalapatis.com>, "Matt Bobrowski"
- <mattbobrowski@google.com>, "Paul Moore" <paul@paul-moore.com>, "James
- Morris" <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, "Casey
- Schaufler" <casey@schaufler-ca.com>, "Stephen Smalley"
- <stephen.smalley.work@gmail.com>, "Ondrej Mosnacek" <omosnace@redhat.com>,
- "Mimi Zohar" <zohar@linux.ibm.com>, "Roberto Sassu"
- <roberto.sassu@huawei.com>, "Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>,
- "Eric Snowberg" <eric.snowberg@oracle.com>, "Alexander Viro"
- <viro@zeniv.linux.org.uk>, "Christian Brauner" <brauner@kernel.org>, "Jan
- Kara" <jack@suse.cz>, "Shuah Khan" <shuah@kernel.org>
-X-Mailer: aerc 0.21.0
-References: <20260708000956.46138-1-dwindsor@gmail.com>
-In-Reply-To: <20260708000956.46138-1-dwindsor@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: Clear (ClamAV 1.4.3/28054/Wed Jul  8 08:24:53 2026)
 
-On Wed Jul 8, 2026 at 2:09 AM CEST, David Windsor wrote:
-> Many in-kernel LSMs (SELinux, Smack, IMA) store security labels in
-> extended attributes. For these LSMs, atomic labeling during inode
-> creation is critical: if the inode becomes accessible before its xattr
-> is set, it is briefly unlabeled, which can disrupt LSMs making policy
-> decisions based on file labels.
->
-> Existing LSMs solve this by setting xattrs directly in the
-> inode_init_security hook, which runs before the inode becomes
-> accessible. BPF LSM programs currently lack this capability because
-> the hook uses an output parameter (xattr_count) that BPF programs
-> cannot write to, and existing kfuncs like bpf_set_dentry_xattr
-> require a dentry that isn't available until after the inode is
-> accessible.
->
-> This series introduces the bpf_init_inode_xattr() kfunc, which takes
-> the combined inode_init_security xattr context argument and claims a
-> slot in it via the new security_lsmxattr_add() LSM helper.
->
+bpftool_prog_sign() signed only the loader instructions. The metadata
+blob the loader installs was left to an in-loader hash check, which
+the kernel now performs at load time over insns || metadata.
 
-There are various CI failures in newly added tests, I don't think any of th=
-em
-are passing. Please fix before respinning.
+Sign that same concatenation: pass the metadata blob (gen_loader_opts
+data) through to bpftool_prog_sign() and feed insns || metadata to
+CMS_final(). The excl_prog_hash stays a digest of the instructions
+alone; it binds the metadata map to the loader and is matched against
+prog->digest by the verifier, independent of what the signature covers.
 
-https://github.com/kernel-patches/bpf/pull/12730
+The signed artifact is now plain data: both bytes the signature
+covers are embedded verbatim in the generated skeleton, so signing
+and verifying an lskel is an ordinary CMS operation that a signer or
+auditor can perform (or reproduce) offline, without analyzing loader
+bytecode to establish what the signature actually attests to.
 
-E.g. both test_init_inode_xattr and test_init_inode_xattr_slot do not have
-expected results.
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+---
+ tools/bpf/bpftool/gen.c  |  2 ++
+ tools/bpf/bpftool/sign.c | 17 +++++++++++++++--
+ 2 files changed, 17 insertions(+), 2 deletions(-)
 
-pw-bot: cr
+diff --git a/tools/bpf/bpftool/gen.c b/tools/bpf/bpftool/gen.c
+index 6ae7262ebe0c..a01d06d22d1a 100644
+--- a/tools/bpf/bpftool/gen.c
++++ b/tools/bpf/bpftool/gen.c
+@@ -793,6 +793,8 @@ static int gen_trace(struct bpf_object *obj, const char *obj_name, const char *h
+ 	if (sign_progs) {
+ 		sopts.insns = opts.insns;
+ 		sopts.insns_sz = opts.insns_sz;
++		sopts.data = opts.data;
++		sopts.data_sz = opts.data_sz;
+ 		sopts.excl_prog_hash = prog_sha;
+ 		sopts.excl_prog_hash_sz = sizeof(prog_sha);
+ 		sopts.signature = sig_buf;
+diff --git a/tools/bpf/bpftool/sign.c b/tools/bpf/bpftool/sign.c
+index 1257dba8ef2f..88726a6db6d0 100644
+--- a/tools/bpf/bpftool/sign.c
++++ b/tools/bpf/bpftool/sign.c
+@@ -135,9 +135,21 @@ int bpftool_prog_sign(struct bpf_load_and_run_opts *opts)
+ 	CMS_ContentInfo *cms = NULL;
+ 	long actual_sig_len = 0;
+ 	X509 *x509 = NULL;
++	void *data = NULL;
++	size_t data_sz;
+ 	int err = 0;
+ 
+-	bd_in = BIO_new_mem_buf(opts->insns, opts->insns_sz);
++	data_sz = (size_t)opts->insns_sz + opts->data_sz;
++	data = malloc(data_sz);
++	if (!data) {
++		err = -ENOMEM;
++		goto cleanup;
++	}
++	memcpy(data, opts->insns, opts->insns_sz);
++	if (opts->data_sz)
++		memcpy((char *)data + opts->insns_sz, opts->data, opts->data_sz);
++
++	bd_in = BIO_new_mem_buf(data, data_sz);
+ 	if (!bd_in) {
+ 		err = -ENOMEM;
+ 		goto cleanup;
+@@ -181,7 +193,7 @@ int bpftool_prog_sign(struct bpf_load_and_run_opts *opts)
+ 		goto cleanup;
+ 	}
+ 
+-		bd_out = BIO_new(BIO_s_mem());
++	bd_out = BIO_new(BIO_s_mem());
+ 	if (!bd_out) {
+ 		err = -ENOMEM;
+ 		goto cleanup;
+@@ -215,6 +227,7 @@ int bpftool_prog_sign(struct bpf_load_and_run_opts *opts)
+ 	X509_free(x509);
+ 	EVP_PKEY_free(private_key);
+ 	BIO_free(bd_in);
++	free(data);
+ 	DISPLAY_OSSL_ERR(err < 0);
+ 	return err;
+ }
+-- 
+2.43.0
 
-> [...]
