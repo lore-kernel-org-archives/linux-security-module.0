@@ -1,75 +1,92 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7587A321420;
-	Wed,  8 Jul 2026 08:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A78E422523
+	for <linux-security-module@vger.kernel.org>; Wed,  8 Jul 2026 10:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783500934; cv=none; b=DxAekgwFvA10TW/KJZ5M6TSQWe0pXttPlJbrL/PevFhHtWXmvL8F0sQSrXgnOGJD47sMasiBCNw2ahegYxS/sG8GI1TPg9THARgr9RHTQ0YCbmlU6ucRsMAvlJbsF7flrDhy7Q97rwXopy/lGYVSWM2avzdrQqIM94bLdh+JRbw=
+	t=1783507268; cv=none; b=SVThYAG9n7feIWVIQKi2is3Rm/JjyASG1nNZZa7Lcp0QBUKnYR9olsWrRJDIb32f5xxcqn5lEcIn0/LzqXXaCnFyGcO3V32+XGxJ3GHZmOOgjczu7Hy6vPTfZe5XX1ZzdfiDgwbjwSEklSfIsMYe49vmRICDImXoPu8Fqwc/LwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783500934; c=relaxed/simple;
-	bh=tiol/AHU7dTYi9l5OSJnjc9K7lfvoyYeFZZEeACfITU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dpp1+YLb8SfPRgdNtcgTfER9gXgc43d2Jth+98j2dxuBiyyIiXbexuQAxtGyf83nqjrBIli7jrln7HJg74orvg1yspLw6zdkK+UxEVOL6tSKYDb0D/xDdGgg5zqUqoBvw/1gHErmR5Lo/YxWPMpPzA52SpBb3lCdobzZ2HYI2ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K1QJWMSk; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783507268; c=relaxed/simple;
+	bh=KIPKS9qTYssUK1Pdf4rnW1pNs1gOm+YQLMiuu14W4mY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Epf/a/mL8xLVfwLi6cOg4oenMiWGkj+s06//j1Vq9EQhbfVWeqyCONniJKiPiI6jcbfDeF2o/B/UdH8CeXaDbW2FkWCnYEme5RqFlzscYX3dbCubDLDsXhBLixN+ZPBioARitLHqZcxCD3riv9HxDUWp9nvtAexN0xW83kumqBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=KfPXKnUC; arc=none smtp.client-ip=84.16.66.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K1QJWMSk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 007C81F000E9;
-	Wed,  8 Jul 2026 08:55:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783500931;
-	bh=vUscPJ1RtQkU94EkLuPbqH+MswxqdUl6zLYfaCC135s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=K1QJWMSkDnkJXGNBLPb4fuLsCt+QT0M+xC2hw479J8mTbcCnpBVFtqyyelv2sUUTt
-	 q+OKQsEYcNQY3AfXN4NA8ZY5r1opSqCO7gshwSDB4eDSPOBWq7ShTG6CREqbyZRven
-	 k0a0AkcHJ+qV7aqCpPRkVtz+7zn2yln69IchESH3We6nZTg1TXQ8MRa3NeKdNe+5Zi
-	 quPnYXZctUGwvf6Q5YQLbGlicV5/vzm48btymwAHo5S8hnW+1LZpDD4y1qExILbxyZ
-	 vdFYtcbWWqyY1KcSeoCsDw8mH4lnUOLDpXQ/Fa2EM5trdDhpWhs3ov9qUDA7+sHU2c
-	 NHwu0w2x2Sz0Q==
-Message-ID: <996ce47c-d16c-4063-bd85-8afacc75016b@kernel.org>
-Date: Wed, 8 Jul 2026 09:55:28 +0100
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="KfPXKnUC"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gwF4D66lNzN21;
+	Wed,  8 Jul 2026 12:40:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1783507244;
+	bh=h+szCH3qJjavBjzWpe3u9PkHYRvYTjkN/5nGy0sOvZI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KfPXKnUCFCNh8ENlkTCjQEhAnkBFiBDQSMY7TF6N4sDRhNsBXyjkWvIXRj41n4poQ
+	 AzCyThAcp1BgNH7R6+wbN63bPcK2PKFnEEBpViokSZHxwhOFnJcvdLXTsO4svLkbjr
+	 eH6HoCoHLvLCe6lQwj1qs7tSblD/SG2J6cEHVBkY=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4gwF4D1NTkzNTQ;
+	Wed,  8 Jul 2026 12:40:44 +0200 (CEST)
+Date: Wed, 8 Jul 2026 12:40:42 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Alejandro Colomar <alx.manpages@gmail.com>, Alejandro Colomar <alx@kernel.org>
+Subject: Re: [PATCH] landlock: Documentation wording cleanups
+Message-ID: <20260708.EimaePheb3ji@digikod.net>
+References: <20260516190112.4924-1-gnoack3000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v6 5/8] bpftool: Cover loader metadata with the
- program signature
-To: Daniel Borkmann <daniel@iogearbox.net>, ast@kernel.org
-Cc: kpsingh@kernel.org, James.Bottomley@hansenpartnership.com,
- paul@paul-moore.com, bboscaccy@linux.microsoft.com, memxor@gmail.com,
- torvalds@linux-foundation.org, a.s.protopopov@gmail.com,
- bpf@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20260708075343.358712-1-daniel@iogearbox.net>
- <20260708075343.358712-6-daniel@iogearbox.net>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <20260708075343.358712-6-daniel@iogearbox.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260516190112.4924-1-gnoack3000@gmail.com>
+X-Infomaniak-Routing: alpha
 
-On 08/07/2026 08:53, Daniel Borkmann wrote:
-> bpftool_prog_sign() signed only the loader instructions. The metadata
-> blob the loader installs was left to an in-loader hash check, which
-> the kernel now performs at load time over insns || metadata.
+Thanks, applied!
+
+On Sat, May 16, 2026 at 09:01:12PM +0200, Günther Noack wrote:
+> Documentation cleanups suggested by Alejandro Colomar,
+> which we have also applied in the man pages.
 > 
-> Sign that same concatenation: pass the metadata blob (gen_loader_opts
-> data) through to bpftool_prog_sign() and feed insns || metadata to
-> CMS_final(). The excl_prog_hash stays a digest of the instructions
-> alone; it binds the metadata map to the loader and is matched against
-> prog->digest by the verifier, independent of what the signature covers.
+> Link: https://lore.kernel.org/all/agW4yMK6CinJGqXt@devuan/
+> Suggested-by: Alejandro Colomar <alx@kernel.org>
+> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> ---
+>  include/uapi/linux/landlock.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> The signed artifact is now plain data: both bytes the signature
-> covers are embedded verbatim in the generated skeleton, so signing
-> and verifying an lskel is an ordinary CMS operation that a signer or
-> auditor can perform (or reproduce) offline, without analyzing loader
-> bytecode to establish what the signature actually attests to.
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 10a346e55e95..48c12ddf1108 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -255,16 +255,16 @@ struct landlock_net_port_attr {
+>   *   :manpage:`connect(2)` as well as calls to :manpage:`sendmsg(2)` with an
+>   *   explicit recipient address.
+>   *
+> - *   This access right only applies to connections to UNIX server sockets which
+> + *   This access right applies only to connections to UNIX server sockets which
+>   *   were created outside of the newly created Landlock domain (e.g. from within
+>   *   a parent domain or from an unrestricted process).  Newly created UNIX
+>   *   servers within the same Landlock domain continue to be accessible.  In this
+>   *   regard, %LANDLOCK_ACCESS_FS_RESOLVE_UNIX has the same semantics as the
+>   *   ``LANDLOCK_SCOPE_*`` flags.
+>   *
+> - *   If a resolve attempt is denied, the operation returns an ``EACCES`` error,
+> - *   in line with other filesystem access rights (but different to denials for
+> - *   abstract UNIX domain sockets).
+> + *   If a resolution attempt is denied, the operation returns an ``EACCES``
+> + *   error, in line with other filesystem access rights (but different to
+> + *   denials for abstract UNIX domain sockets).
+>   *
+>   *   This access right is available since the ninth version of the Landlock ABI.
+>   *
+> -- 
+> 2.54.0
 > 
-> Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-
-
-Reviewed-by: Quentin Monnet <qmo@kernel.org>
-
-Thanks!
+> 
