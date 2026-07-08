@@ -1,38 +1,37 @@
 Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7723F58E5;
-	Wed,  8 Jul 2026 07:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C651333ADA3;
+	Wed,  8 Jul 2026 07:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783497242; cv=none; b=jCOSQrLips9XAeNro4XoO8xrr+hgLa/rI9l4pEbpYAr9672if7vNypQheqjgc63cAGyW4csRqXn7Qb30Dd8FnR+sGB+pKVmDidrGJo7LM9dvuuIRdS3euYG548u3DBLyHvc1haePe92T2MeWABi9+1614IFXAE14szqkOxWhtmc=
+	t=1783497244; cv=none; b=V1J3tluqfEwaVNurECUNIOKgbQ/nWbbFwqa4mB1Czs7koJm1O4kRqdygLJth0yH6vmZYhYiV+RLGmJWlGBgc3GWlHICxPHaONA+jsZs2ov4qBbdww1S7cYHoExUS2v6yYZlk0hCX7/w8lofrvCKqr82Iv9gb+CjXXuk/FobfkxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783497242; c=relaxed/simple;
-	bh=pcDq4NbrjGH+jQFnA9KjaALKY0CKT6ybpFa8Q0UEvlM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BUyVGCeXmx3RZH4CUkBTUq3TQRqpPVYprshYAoQL0sOnzxOwWBPwvfiQAyCGOrYIXnL5+FYKVELnSM3HIcr/s0KkrosrrevFptIMWCq/p8f7J//3TELu4pSTGZnMCBlniP1zzZNwvSALbWjDsL8s7WRyN84iHN3Le58dxWZ8/s4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=O411BCW0; arc=none smtp.client-ip=213.133.104.62
+	s=arc-20240116; t=1783497244; c=relaxed/simple;
+	bh=2/yNUmwwR+2SQHktjCvNlwjMUTgiBOKQQ3yCWMXaJmQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UPK1Uf6UMoFYloevaLZ3AZ6FgOJVidBlhcUWrTKym6hZ7dC44AfTsgHM72eNvxopeSnqxctDWiavm8KKlEnlamLIXzqmd21rJYA5Q3c6Wj7h5c7+d/MGcsKHb52jchzg1EoiRmyTF5jQ0oyYb+VQw5ZjqNQm+TpjnFwbNf9hfQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=lLr1bqBB; arc=none smtp.client-ip=213.133.104.62
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="O411BCW0"
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="lLr1bqBB"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=Fqx6ojbpajiobyI4Lzc0PA8hQj2/Xu7CNaTSYwlllAI=; b=O411BCW0tMSDGQmnhyTDE9wwHl
-	vAjOfuUfhiKOOdThEe7hMHWHuSaX0TBuNYMVkReDwIfK6QtW727fNtXYqK8oSl9vrBd3bYJiopEth
-	mhurQabhZEvcnn3zS1u8rdS6JYaUB+62RDYcuonYJLfDjXHPUBGnW7uotYQTIKTaaYj8ThgoMId1b
-	zAAzt5PnNX6I9aH479oABwJVlJGXyNfSbkL1wegYVv2MHkDA2YONW3YshSaTNtuBsdeg70kbq0eVl
-	NpgpMMT/GaCU3mVYhlGZhAE+bX3BcZU2SdVwPpaGis2ebSXAqDNDyOlqWIiAuOrP8I6F2ITD18wSm
-	ofX/Aglw==;
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=S+VBbiZgmHNHD7XrMixAS9CMChRXjnxQoH3cnj6o7zw=; b=lLr1bqBBM6aSfwXPjbVh0HcExv
+	LfEsCaqWc2gAyxS4H+MvGvhCNBjMa0QdU9xenuE4cHsXSCfRZXeuvlQbeRh96nD9NVtVVcY5tT4jN
+	J7a8uyE6eaBbvvEPs8AWXcwfc1C1xunsM2qLzctRsjaLHavOXNpny5g7CHfJRJcknI9j7ee9hrByh
+	/iGDH4FHfFQho0pTqE9HlmtIHPknl7DPEusHQylj+qSlZD1YmSxt7UqT+gSOKUnkbV76XH8PFIQej
+	fUuGJfxE2D0GCCmOQtJ0Tb1fgCtm1vgugIfP9tNYaA1AsQn+dcMe7o92fE93li+GFpm3unqJSLMtn
+	W1+GVdQg==;
 Received: from localhost ([127.0.0.1])
 	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <daniel@iogearbox.net>)
-	id 1whN6L-000GeU-1D;
-	Wed, 08 Jul 2026 09:53:49 +0200
+	id 1whN6G-000Gcs-2c;
+	Wed, 08 Jul 2026 09:53:44 +0200
 From: Daniel Borkmann <daniel@iogearbox.net>
 To: ast@kernel.org
 Cc: kpsingh@kernel.org,
@@ -44,12 +43,10 @@ Cc: kpsingh@kernel.org,
 	a.s.protopopov@gmail.com,
 	bpf@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH bpf-next v6 5/8] bpftool: Cover loader metadata with the program signature
-Date: Wed,  8 Jul 2026 09:53:40 +0200
-Message-ID: <20260708075343.358712-6-daniel@iogearbox.net>
+Subject: [PATCH bpf-next v6 0/8] Verify BPF signed loader at load time
+Date: Wed,  8 Jul 2026 09:53:35 +0200
+Message-ID: <20260708075343.358712-1-daniel@iogearbox.net>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260708075343.358712-1-daniel@iogearbox.net>
-References: <20260708075343.358712-1-daniel@iogearbox.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -59,85 +56,105 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: Clear (ClamAV 1.4.3/28054/Wed Jul  8 08:24:53 2026)
 
-bpftool_prog_sign() signed only the loader instructions. The metadata
-blob the loader installs was left to an in-loader hash check, which
-the kernel now performs at load time over insns || metadata.
+The BPF signing scheme signs a light skeleton's loader program and lets
+the loader vouch for everything else: bpftool bakes the SHA256 of the
+metadata map into the loader's instructions, signs the instructions, and
+the loader compares the (frozen, exclusive) map against that hash from
+within BPF once it runs. The construction is sound as a trusted hash
+chain, but the kernel itself never attests the metadata, and that split
+has been the recurring objection from the LSM / integrity side since the
+scheme was proposed.
 
-Sign that same concatenation: pass the metadata blob (gen_loader_opts
-data) through to bpftool_prog_sign() and feed insns || metadata to
-CMS_final(). The excl_prog_hash stays a digest of the instructions
-alone; it binds the metadata map to the loader and is matched against
-prog->digest by the verifier, independent of what the signature covers.
+This proposal closes both gaps by having the kernel verify the metadata
+at BPF_PROG_LOAD time, before the LSM admission hook and before the
+verifier, /without/ growing the UAPI. A signed loader binds its metadata
+map(s) through the existing fd_array/fd_array_cnt, and exclusive maps
+are already bound to the loader's digest via excl_prog_hash. When a
+signature is present, the kernel collects the exclusive maps from the
+fd_array and appends their frozen contents to the instructions before
+PKCS#7 verification, so the signature covers ...
 
-The signed artifact is now plain data: both bytes the signature
-covers are embedded verbatim in the generated skeleton, so signing
-and verifying an lskel is an ordinary CMS operation that a signer or
-auditor can perform (or reproduce) offline, without analyzing loader
-bytecode to establish what the signature actually attests to.
+    insns || metadata_0 || metadata_1 || [...]
 
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
----
- tools/bpf/bpftool/gen.c  |  2 ++
- tools/bpf/bpftool/sign.c | 17 +++++++++++++++--
- 2 files changed, 17 insertions(+), 2 deletions(-)
+... in fd_array order. The in-loader hash check is dropped from the
+gen_loader entirely: generated loaders carry no verification logic
+anymore, and signing or verifying a skeleton becomes an ordinary CMS
+operation over bytes that sit verbatim in the skeleton, reproducible
+offline. A signed program is either BPF_SIG_UNSIGNED or BPF_SIG_VERIFIED
+with nothing in between.
 
-diff --git a/tools/bpf/bpftool/gen.c b/tools/bpf/bpftool/gen.c
-index 6ae7262ebe0c..a01d06d22d1a 100644
---- a/tools/bpf/bpftool/gen.c
-+++ b/tools/bpf/bpftool/gen.c
-@@ -793,6 +793,8 @@ static int gen_trace(struct bpf_object *obj, const char *obj_name, const char *h
- 	if (sign_progs) {
- 		sopts.insns = opts.insns;
- 		sopts.insns_sz = opts.insns_sz;
-+		sopts.data = opts.data;
-+		sopts.data_sz = opts.data_sz;
- 		sopts.excl_prog_hash = prog_sha;
- 		sopts.excl_prog_hash_sz = sizeof(prog_sha);
- 		sopts.signature = sig_buf;
-diff --git a/tools/bpf/bpftool/sign.c b/tools/bpf/bpftool/sign.c
-index 1257dba8ef2f..88726a6db6d0 100644
---- a/tools/bpf/bpftool/sign.c
-+++ b/tools/bpf/bpftool/sign.c
-@@ -135,9 +135,21 @@ int bpftool_prog_sign(struct bpf_load_and_run_opts *opts)
- 	CMS_ContentInfo *cms = NULL;
- 	long actual_sig_len = 0;
- 	X509 *x509 = NULL;
-+	void *data = NULL;
-+	size_t data_sz;
- 	int err = 0;
- 
--	bd_in = BIO_new_mem_buf(opts->insns, opts->insns_sz);
-+	data_sz = (size_t)opts->insns_sz + opts->data_sz;
-+	data = malloc(data_sz);
-+	if (!data) {
-+		err = -ENOMEM;
-+		goto cleanup;
-+	}
-+	memcpy(data, opts->insns, opts->insns_sz);
-+	if (opts->data_sz)
-+		memcpy((char *)data + opts->insns_sz, opts->data, opts->data_sz);
-+
-+	bd_in = BIO_new_mem_buf(data, data_sz);
- 	if (!bd_in) {
- 		err = -ENOMEM;
- 		goto cleanup;
-@@ -181,7 +193,7 @@ int bpftool_prog_sign(struct bpf_load_and_run_opts *opts)
- 		goto cleanup;
- 	}
- 
--		bd_out = BIO_new(BIO_s_mem());
-+	bd_out = BIO_new(BIO_s_mem());
- 	if (!bd_out) {
- 		err = -ENOMEM;
- 		goto cleanup;
-@@ -215,6 +227,7 @@ int bpftool_prog_sign(struct bpf_load_and_run_opts *opts)
- 	X509_free(x509);
- 	EVP_PKEY_free(private_key);
- 	BIO_free(bd_in);
-+	free(data);
- 	DISPLAY_OSSL_ERR(err < 0);
- 	return err;
- }
+There is no new UAPI, we now have a single signature scheme, no LSM
+code reaching into BPF internals, no new LSM hook, and unsigned loads
+are completely unaffected. It is also less complex since the loader
+does not need to deal with BTF, an extra kfunc, etc, as proposed in
+an earlier series [0]. Tested against full BPF CI which came back
+green. For more details and examples, see the documentation patch in
+this series.
+
+  [0] https://lore.kernel.org/bpf/20260522023234.3778588-1-kpsingh@kernel.org/
+
+v5 -> v6:
+  - Added bpf_map_write_active check to close potential race on
+    arm64 (sashiko)
+  - Rebased & rest stays as-is
+v4 -> v5:
+  - Squashed patch 2/9 and 3/9 together and dropped Nack (Paul)
+  - Added Anton's Acked-by on the fd_array cache patch
+  - Add !attr->signature_size test to reject invalid param
+    and added BPF selftest for this case
+v3 -> v4:
+  - Fix upper limit in MAX_FD_ARRAY_CNT (Anton)
+  - Reject !fd_array && attr->fd_array_cnt (Anton)
+  - Add bpftool patch wrt ignored return value of EVP_Digest() (sashiko)
+  - Fix setting of gen_loader_fixture_init (sashiko)
+  - Fix unused map_fd cleanup branch in selftest (bot+bpf-ci)
+  - Remove now unused map->excl member and adjust selftests
+  - Added more BPF signed_loader corner case selftest coverage
+  - Added Paul's Nack wrt bpf_prog_load LSM hook dispute
+  - Added patch 2 to move bigger allocations below fd_array
+    resolution (Paul)
+v2 -> v3:
+  - Added first commit to cache and work on objects in fd_array
+    which was the most recent issue sashiko rightfully complained
+  - Added more BPF signed_loader selftest coverage to cover that
+    usage of sparse fd_array or map fds gets rejected
+  - I left the security_bpf_prog_load as in v2 given preference
+    from BPF side over adding new hook
+v1 -> v2:
+  - Addressed both sashiko complaints, the TOCTOU bug regarding
+    fd_array processing, as well as exclusive map checking to
+    only allow array maps. The validation is now moved into the
+    verifier before the main verification work happens. This also
+    gives the opportunity to utilize the verifier log.
+
+Daniel Borkmann (8):
+  bpf: Resolve and cache fd_array objects at load time
+  bpf: Verify signed loader metadata at load time
+  libbpf: Drop in-loader metadata check for load-time verification
+  bpftool: Check EVP_Digest when computing excl_prog_hash
+  bpftool: Cover loader metadata with the program signature
+  selftests/bpf: Adjust bpf_map layout in verifier_map_ptr
+  selftests/bpf: Verify load-time signed loader metadata
+  Documentation/bpf: Add BPF signing and enforcement doc
+
+ Documentation/bpf/index.rst                   |    1 +
+ Documentation/bpf/signing.rst                 |  497 ++++++++
+ include/linux/bpf.h                           |    1 -
+ include/linux/bpf_verifier.h                  |   23 +-
+ kernel/bpf/syscall.c                          |   83 +-
+ kernel/bpf/verifier.c                         |  457 ++++++--
+ tools/bpf/bpftool/gen.c                       |    2 +
+ tools/bpf/bpftool/sign.c                      |   24 +-
+ tools/lib/bpf/bpf_gen_internal.h              |    1 -
+ tools/lib/bpf/gen_loader.c                    |   76 +-
+ tools/lib/bpf/libbpf_internal.h               |    1 -
+ tools/lib/bpf/skel_internal.h                 |   31 +-
+ .../selftests/bpf/prog_tests/signed_loader.c  | 1025 ++++++++++++++---
+ .../selftests/bpf/progs/test_signed_loader.c  |    9 +-
+ .../selftests/bpf/progs/verifier_map_ptr.c    |   23 +-
+ 15 files changed, 1815 insertions(+), 439 deletions(-)
+ create mode 100644 Documentation/bpf/signing.rst
+
 -- 
 2.43.0
 
