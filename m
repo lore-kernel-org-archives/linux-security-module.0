@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA93F3EF640;
-	Wed,  8 Jul 2026 08:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7587A321420;
+	Wed,  8 Jul 2026 08:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783500924; cv=none; b=peT35/oVhAlEMM8TOFU5nKVpB6seRA3btpYPeVmIaJ3+8vadiYT9l4D1utoTKHkJC124bmwokRRPUHTmqdn7VvntHXeYtRlJzIMQ4lmaD8fg6LpKpjkhGh46vnvyAekrf3vB+LNHM346bPhJTEmJTb6YUGt0XY719ZizcCmZXpM=
+	t=1783500934; cv=none; b=DxAekgwFvA10TW/KJZ5M6TSQWe0pXttPlJbrL/PevFhHtWXmvL8F0sQSrXgnOGJD47sMasiBCNw2ahegYxS/sG8GI1TPg9THARgr9RHTQ0YCbmlU6ucRsMAvlJbsF7flrDhy7Q97rwXopy/lGYVSWM2avzdrQqIM94bLdh+JRbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783500924; c=relaxed/simple;
-	bh=9abVzmJ9Hgn3wClwuyXO2NX03txga1uhuZaSP/BzjUE=;
+	s=arc-20240116; t=1783500934; c=relaxed/simple;
+	bh=tiol/AHU7dTYi9l5OSJnjc9K7lfvoyYeFZZEeACfITU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=URNCDcsjqH+WQgEA3eYrNyD2DfjOey6gspvyQEudM7mopBF+EbwMvQAureO6/UOjHfqDQE+b8KLRlQcNCu6NGqAVJpzDT1qtvd8tGpkkpj8vktFGDGK+ILVKkpavJ07a1WCgNG+YYu4DwPotg+KeqDicaUrIubyE4+Z8DTWpOJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oj1IusOV; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=dpp1+YLb8SfPRgdNtcgTfER9gXgc43d2Jth+98j2dxuBiyyIiXbexuQAxtGyf83nqjrBIli7jrln7HJg74orvg1yspLw6zdkK+UxEVOL6tSKYDb0D/xDdGgg5zqUqoBvw/1gHErmR5Lo/YxWPMpPzA52SpBb3lCdobzZ2HYI2ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K1QJWMSk; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oj1IusOV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8CF41F000E9;
-	Wed,  8 Jul 2026 08:55:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K1QJWMSk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 007C81F000E9;
+	Wed,  8 Jul 2026 08:55:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783500921;
-	bh=S1n9snT3Hdu1xVNyEtbj9ccblxU1FXZmlHN2Xb7nQc4=;
+	s=k20260515; t=1783500931;
+	bh=vUscPJ1RtQkU94EkLuPbqH+MswxqdUl6zLYfaCC135s=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=oj1IusOVnCXzMts7AijiSaH4y6/eaVR+aeNEv7Bjp5OzyCRDtNamVohyeaXMq4v42
-	 sI6UbzxRuU0tKU9egNvr/c+lkeGFArQvPnzI87Gnxvmy4m6c1ZBlFOzKeQRYkxzDwB
-	 MB9/uhmMa7TVi5V1hdwIHutgGiQJg/eS1vA+Cr9VaoVGtcasbMn4pQ+gwZvsdeVhj6
-	 yxa+gbhENrviKmnraxQw3Fj/RJAwiqKHcSLQt8Wp7VhzgDPMeuOv0Nl4PaZ/ZYdtKW
-	 7jqPjBle5PLlm8ECfGFN1kiwRz/s5+/z+3sRqR0n0x9q0ricl1lFmvNeO0I+aNF4og
-	 Ze3FoBNEq5OcQ==
-Message-ID: <fdea847d-340a-4fcf-9df7-870b8d434d5e@kernel.org>
-Date: Wed, 8 Jul 2026 09:55:18 +0100
+	b=K1QJWMSkDnkJXGNBLPb4fuLsCt+QT0M+xC2hw479J8mTbcCnpBVFtqyyelv2sUUTt
+	 q+OKQsEYcNQY3AfXN4NA8ZY5r1opSqCO7gshwSDB4eDSPOBWq7ShTG6CREqbyZRven
+	 k0a0AkcHJ+qV7aqCpPRkVtz+7zn2yln69IchESH3We6nZTg1TXQ8MRa3NeKdNe+5Zi
+	 quPnYXZctUGwvf6Q5YQLbGlicV5/vzm48btymwAHo5S8hnW+1LZpDD4y1qExILbxyZ
+	 vdFYtcbWWqyY1KcSeoCsDw8mH4lnUOLDpXQ/Fa2EM5trdDhpWhs3ov9qUDA7+sHU2c
+	 NHwu0w2x2Sz0Q==
+Message-ID: <996ce47c-d16c-4063-bd85-8afacc75016b@kernel.org>
+Date: Wed, 8 Jul 2026 09:55:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -35,31 +35,41 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v6 4/8] bpftool: Check EVP_Digest when computing
- excl_prog_hash
+Subject: Re: [PATCH bpf-next v6 5/8] bpftool: Cover loader metadata with the
+ program signature
 To: Daniel Borkmann <daniel@iogearbox.net>, ast@kernel.org
 Cc: kpsingh@kernel.org, James.Bottomley@hansenpartnership.com,
  paul@paul-moore.com, bboscaccy@linux.microsoft.com, memxor@gmail.com,
  torvalds@linux-foundation.org, a.s.protopopov@gmail.com,
  bpf@vger.kernel.org, linux-security-module@vger.kernel.org
 References: <20260708075343.358712-1-daniel@iogearbox.net>
- <20260708075343.358712-5-daniel@iogearbox.net>
+ <20260708075343.358712-6-daniel@iogearbox.net>
 From: Quentin Monnet <qmo@kernel.org>
 Content-Language: en-GB
-In-Reply-To: <20260708075343.358712-5-daniel@iogearbox.net>
+In-Reply-To: <20260708075343.358712-6-daniel@iogearbox.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 08/07/2026 08:53, Daniel Borkmann wrote:
-> bpftool_prog_sign() ignores the return value of EVP_Digest(). If the
-> digest computation fails (context allocation failure, or a digest
-> fetch failure under OpenSSL), EVP_Digest() returns 0 and leaves the
-> output buffer untouched, but the function still reports success.
+> bpftool_prog_sign() signed only the loader instructions. The metadata
+> blob the loader installs was left to an in-loader hash check, which
+> the kernel now performs at load time over insns || metadata.
 > 
-> Fixes: 40863f4d6ef2 ("bpftool: Add support for signing BPF programs")
+> Sign that same concatenation: pass the metadata blob (gen_loader_opts
+> data) through to bpftool_prog_sign() and feed insns || metadata to
+> CMS_final(). The excl_prog_hash stays a digest of the instructions
+> alone; it binds the metadata map to the loader and is matched against
+> prog->digest by the verifier, independent of what the signature covers.
+> 
+> The signed artifact is now plain data: both bytes the signature
+> covers are embedded verbatim in the generated skeleton, so signing
+> and verifying an lskel is an ordinary CMS operation that a signer or
+> auditor can perform (or reproduce) offline, without analyzing loader
+> bytecode to establish what the signature actually attests to.
+> 
 > Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 
 
-Bpftool changes look good to me, thanks for the fix.
-
 Reviewed-by: Quentin Monnet <qmo@kernel.org>
+
+Thanks!
