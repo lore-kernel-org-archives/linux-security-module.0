@@ -1,236 +1,168 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C70836CDF3
-	for <linux-security-module@vger.kernel.org>; Thu,  9 Jul 2026 16:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783615435; cv=none; b=UNlCgn16XGVaiVJFRf6k8tAc0vMGZRzrj2ZfuZKazQ7JIYRo0zX5o3Uwe1avZTW/qHGbiUQ9PsyysQ4u74HRHpj43VJXhxF4FwRu7vfV1dshy8BSwBx3g49d8syT/TDOUDo3mvJMJ+rLIMZfrlhvuk+OKAWIZXRiXpVfioRYKzo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783615435; c=relaxed/simple;
-	bh=SQ7GBMLnXX5I3bFBCOmeZQZl5xHUI3hMGXJu0wAGPhE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:content-type; b=PFAZZ0yaErFeppFT45MoFl98lcRmo5IDs6yAiK6oyIzPNgSjQ+vxuiwEpsJ0TsE6zq4Vv5Hm3Dm4A7R4ydFUHJkxZ38bRxw0gwzvLVbe3G0OR+dlN0bzUIzIFh9DBfboqQyFYLQQ8XqtrMCIBs30crOc6C3c8ykeusMtG+/n7mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GplIoEt+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0379E349AFF
+	for <linux-security-module@vger.kernel.org>; Thu,  9 Jul 2026 19:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783624996; cv=pass; b=U+AukoI5oFYOxEzl/FqIymiGTSgZtUtMcsBTiHdCf5weM+/cCl8F4vm+mcy8sErLoK3xZTFwUrZiPXgs2amF68xKWRM8Ts3o9u4zOCMDUpP0j5UBSuOr1BciBPOJB/rhtcsGigIRP5/nIxaxV/SWsiZXwzMOLMjYLR4WtEmIyRo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783624996; c=relaxed/simple;
+	bh=P3KfzPSkqzrrDnn9/YRCi/E2VWJhiGCYGZ9lMjKrEmo=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ioo7DRLaEa/bzkzh0DdBp0rEFSLIDPZuzt5sDKbT4NecyJ7sIpKMAHIvDqji0sr+NBGmnI4+Ga7QNs+BkNy4+fJq3nAGFMbhGn5m1cA1FYue+YBnz7z5dJfUFsAt3luWH/DY2dRGUJEungdL0VJMHhFMPJnE/s9QR3EUEmkvHdE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=starlabs.systems; spf=pass smtp.mailfrom=starlabs.systems; dkim=pass (2048-bit key) header.d=starlabs-systems.20251104.gappssmtp.com header.i=@starlabs-systems.20251104.gappssmtp.com header.b=ljEtguaU; arc=pass smtp.client-ip=74.125.224.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=starlabs.systems
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starlabs.systems
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GplIoEt+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1783615432;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=N1EhtpTNPWeURbn3yhN8uvjzdNLJOl63hKvo6ZRXyxc=;
-	b=GplIoEt+GuoTp+HqIm13MER9BB204l300P0lle03mt1PoGqsEWWaQaMbQJWibH3e+y20cS
-	Yp7fOlDWucnaQG//qsNJBYe9nbS0qXvLOwu0N8mTvcDlYZHy47wdRy4bNn9sWMhN5q//A0
-	mtBfuKSLWLAHWHv2Vva7IiG5+j20dTE=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-513-7QAmzfxFPCGgsOgKlzBNJg-1; Thu,
- 09 Jul 2026 12:43:49 -0400
-X-MC-Unique: 7QAmzfxFPCGgsOgKlzBNJg-1
-X-Mimecast-MFC-AGG-ID: 7QAmzfxFPCGgsOgKlzBNJg_1783615428
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E4EE2180267E;
-	Thu,  9 Jul 2026 16:43:47 +0000 (UTC)
-Received: from thuth-p1g4.redhat.com (unknown [10.44.50.9])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5FFE1195608A;
-	Thu,  9 Jul 2026 16:43:42 +0000 (UTC)
-From: Thomas Huth <thuth@redhat.com>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	linux-security-module@vger.kernel.org
-Cc: Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rbriggs@redhat.com
-Subject: [PATCH] selftests/landlock: Fix screwed up pointers in the scoped_signal_test
-Date: Thu,  9 Jul 2026 18:43:40 +0200
-Message-ID: <20260709164340.339656-1-thuth@redhat.com>
+	dkim=pass (2048-bit key) header.d=starlabs-systems.20251104.gappssmtp.com header.i=@starlabs-systems.20251104.gappssmtp.com header.b="ljEtguaU"
+Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-664d530fcfdso268742d50.2
+        for <linux-security-module@vger.kernel.org>; Thu, 09 Jul 2026 12:23:13 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783624993; cv=none;
+        d=google.com; s=arc-20260327;
+        b=doPK3zdMjvmS7KtXqTVvj/MHyNnecIWTSvN9omOnvfVsRDJ3q96rMrDDIp4FgXvuT+
+         wab7Dp9oo3MKTayEPO62CN4pimYoRrAa4RrWVp+0xkLJRRHUMe5VqBF+OqijVIR7yYiZ
+         qraEoOA4BegAab8HwyON0fR5aLLK82kEUV3kuxNbCJMMjCefK7olwjPW2lJE4Kr2VDct
+         38xAQgAM5NS11PutSjdMUehOQ4flpIk19euEV8cYp0iy6EzL80ahC6vGnT/FJwXucARl
+         x2s1SGeM2PJFCjZFyoPqr4zoGZXtUSxMiog159peZyJiZIi6IaxiD0qA8slCkWAe8/lA
+         W0dA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:mime-version:dkim-signature;
+        bh=rLKUCgOPdJB6WTWmQJRFGnXb1O7aYuVdA+Enw8Jcsyc=;
+        fh=DU3Zj7ZayLvSas1KOW73cPfwaPvLwGZZ6wGMIGYlPMY=;
+        b=YV86HF+Wqiy1MlaDycMrHx1aHwccjF64yMMt956aPYqndAc/qhFbpdE5hyTWaKK73b
+         wGpPAXgLKxIEih0tzxzfqLjwBM448sQkIPikEgeJBF0uda5VKeYFdNZhA7WJqBl4F1pd
+         CJdKB4GwywyAY1ekcheDbaNsasCvHizXvs6pK7MhkkOSL08UdJr23VEAq8iJZcdswz/l
+         1uMRt4PbISJQZcsT5s5y+fv58w1fJQjSanwgqKSKXbluKlrx1s/AJLGVx4LErMMqqs6h
+         4dubGvRgz/tfSZkfrieOTr8iyKPisCItnK/JpNkWXWDLRXrZ4NBKfoiG4+HrXuAcwoxO
+         EyFw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=starlabs-systems.20251104.gappssmtp.com; s=20251104; t=1783624993; x=1784229793; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:mime-version:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=rLKUCgOPdJB6WTWmQJRFGnXb1O7aYuVdA+Enw8Jcsyc=;
+        b=ljEtguaUrlOSM4IV2SAU7NG/Xt3zC3n3DBjx0i6yZ2ajqin+G58jhYLXbAnGDIWMa8
+         BZ9PpW5dKDglG6fyO8OH39Hy6bbGiA9y8i6Xs/3RveHZ58YG16waIZOMhzsBAevg1k2h
+         xhCNo5pd3NKeud9FQ7AuADR/Qxt7PvlaJ3tVeBVNBNlUwYE6SPzZrlxwbAyV2BzMgoz/
+         Qx9X3jP4MDHbux73mAC5KfL+R2YsT5/LqszTOsBeUemwyP2w6SFjzOa1yxYm8dsGRSoD
+         fp5Knr+JURHaZ22uuuxBUC88zLk0C4G0P7TKWxr6iWD7foxqdKzwjNaPVLva1qgUqiVI
+         WF3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783624993; x=1784229793;
+        h=content-type:cc:to:subject:message-id:date:from:mime-version
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=rLKUCgOPdJB6WTWmQJRFGnXb1O7aYuVdA+Enw8Jcsyc=;
+        b=FKwEclDdmXdB56YHZuCbzG1VaY7af1VF4GdJsjb7WjluNoplZYJXf5AAlqyrwyr39N
+         he3Cx+s27uVKZjYt0nsNuM4xzdVegb0eEu3MNo8szqVl2lYDy8T+rxQKZXL3mWWB13pN
+         WhRSKK11ms3WkWWb3QjHgv9U8I8IsytpfUpD4VmfrH9/aLaq/cLGoTFQPkmY0oCxG952
+         /q4ZBPaqVOLC58KklaMRgN4X2FhqWpiSroEpa/QXzRGMe5nvHxYVMhXtLFnod7wS+Zl9
+         8DXd7dVl9fcpO3nhoawQtJTEOkadrF0GMiGwXypNQqawZPpOWBFynXz5AS5c3KVaoI41
+         JgqQ==
+X-Forwarded-Encrypted: i=1; AHgh+RrjvdBJ0xUNBeuXYGdjB70/dFWooh+EjQGpMGb85eZMh4XuErrrzg5tNd5soc6qc1YAUTPfriCnXq22upADM/i3I/FpQKQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOVart2n/3nVFCyufQ3mr7TlH7rIEzlH6kpdk5RXsZWANWeZv3
+	Lea1iCOE7afWrW7wl1H3thQGjOwbpsbH+igjbEPetOAbeQZjexpEW0HfKfCjHILTQNhThvDsqIX
+	F8peZjKkRjqXyjth3iIydV5/NWyeplsBVfUR46PKa
+X-Gm-Gg: AfdE7clLuKKjEa/outcNIOuJpRN5VJbYqcd6k9VN+sv9hCkDD8xYbEbyWEDOi7gf+36
+	f6XYWJKriQr3U+zp/wa5kEEXXelSb/PyD/KcaaYCwvcJBAqKDufX2zzRg5S+9JpU/4jaKL93sux
+	qcYqIf6wnkhYTlSLcKWZvLArJcR3h98QB9l14rCYaKKVWBvP2j92e4tYC/4JB6RkxLM/16Of+K7
+	oz3gWCsO9Isz6sCbcQ4ghIeEazq1V0wr2GkDdWlKCugG4lvv4HS1kpZsLTy7pwuglbP8YLbKHbP
+	9ZB7YavE9p92CoaAvw4Fz1RDL6Y=
+X-Received: by 2002:a05:690c:6d0c:b0:81e:6f0d:8e05 with SMTP id
+ 00721157ae682-81e6f0d8e5bmr31386797b3.43.1783624992516; Thu, 09 Jul 2026
+ 12:23:12 -0700 (PDT)
+Received: from 77377267392 named unknown by gmailapi.google.com with HTTPREST;
+ Thu, 9 Jul 2026 12:23:11 -0700
+Received: from 77377267392 named unknown by gmailapi.google.com with HTTPREST;
+ Thu, 9 Jul 2026 12:23:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
-X-Mimecast-MFC-PROC-ID: 0yWjmFzrAlaa9RxDZYdJTGdd9lRpc-ZmxhU3ZQKvbjY_1783615428
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+From: Sean Rhodes <sean@starlabs.systems>
+Date: Thu, 9 Jul 2026 12:23:11 -0700
+X-Gm-Features: AUfX_mzVZtqRRkl9fVhuBIBaSxwAAmVa-vH3CHlHUp7UY50ccQrXa49krBcAszw
+Message-ID: <CABtds-0AUr1jD2Sri6ViiFiqyBbjc3-6xeAOr12YLJA9ux-2BA@mail.gmail.com>
+Subject: [PATCH] PM: hibernate: Allow hibernation opt-in when locked down
+To: rafael@kernel.org
+Cc: lenb@kernel.org, pavel@kernel.org, corbet@lwn.net, 
+	skhan@linuxfoundation.org, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, nicolas.bouchinet@oss.cyber.gouv.fr, xiujianfeng@huawei.com, 
+	keescook@chromium.org, linux-pm@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Thomas Huth <thuth@redhat.com>
+Kernel lockdown disables hibernation because the resume image cannot be
+verified before it is restored. On systems where external platform or
+storage policy protects the hibernation image from offline modification,
+users may still need hibernation while lockdown is active.
 
-The scoped_signal_test uses pthread_join(..., (void **)&ret)) in
-a couple of places, i.e. the return value of the thread is stored
-in the shape of a "void *" into the memory location of &ret.
-Pointers are 64-bit on modern computers, but the ret variable is
-declared as a simple "enum thread_return" which is only 32 bits.
-So the pthread_join() will overflow the ret variable by 4 byte.
+Add a hibernate=allow_locked_down command line option to make that opt-in
+explicit. This only bypasses the LOCKDOWN_HIBERNATION gate; nohibernate,
+secretmem and CXL memory restrictions still apply.
 
-The problem is very visible on big endian systems like s390x
-where the test is failing: The least significant byte that carries
-the return code of the thread is not written into the ret variable
-here, but somewhere else in the stack frame, so the comparison
-for the right return code is failing here.
+The kernel does not validate the external policy or authenticate the image
+with this option.
 
-Fix it by getting rid of the enum and defining the THREAD_* constants
-and "ret" variables as proper "void *" pointers. This way we can
-also get rid of some ugly (void *) castings in a couple of spots.
+Build-tested with Fedora config:
+  make O=../linux-lockdown-hibernate-build kernel/power/hibernate.o
 
-Signed-off-by: Thomas Huth <thuth@redhat.com>
+Signed-off-by: Sean Rhodes <sean@starlabs.systems>
 ---
- .../selftests/landlock/scoped_signal_test.c   | 44 +++++++++----------
- 1 file changed, 21 insertions(+), 23 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt | 5 +++++
+ kernel/power/hibernate.c                        | 6 +++++-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/landlock/scoped_signal_test.c b/tools/testing/selftests/landlock/scoped_signal_test.c
-index f24f2c28f62e5..58d25157fe781 100644
---- a/tools/testing/selftests/landlock/scoped_signal_test.c
-+++ b/tools/testing/selftests/landlock/scoped_signal_test.c
-@@ -249,12 +249,10 @@ TEST_F(scoped_domains, check_access_signal)
- 		_metadata->exit_code = KSFT_FAIL;
+diff --git a/Documentation/admin-guide/kernel-parameters.txt
+b/Documentation/admin-guide/kernel-parameters.txt
+index b5493a7f8f22..0d20ad9c7d78 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1967,6 +1967,11 @@ Kernel parameters
+ 		protect_image	Turn on image protection during restoration
+ 				(that will set all pages holding image data
+ 				during restoration read-only).
++		allow_locked_down
++				Allow hibernation even when kernel lockdown would
++				otherwise disable it. The kernel does not verify
++				the hibernation image; only use this when external
++				policy protects the image from offline modification.
+
+ 	hibernate.compressor= 	[HIBERNATION] Compression algorithm to be
+ 				used with hibernation.
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index d2479c69d71a..71232eece9a3 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -41,6 +41,7 @@
+ static int nocompress;
+ static int noresume;
+ static int nohibernate;
++static bool allow_locked_down_hibernation;
+ static int resume_wait;
+ static unsigned int resume_delay;
+ static char resume_file[256] = CONFIG_PM_STD_PARTITION;
+@@ -109,7 +110,8 @@ bool hibernation_in_progress(void)
+ bool hibernation_available(void)
+ {
+ 	return nohibernate == 0 &&
+-		!security_locked_down(LOCKDOWN_HIBERNATION) &&
++		(allow_locked_down_hibernation ||
++		 !security_locked_down(LOCKDOWN_HIBERNATION)) &&
+ 		!secretmem_active() && !cxl_mem_active();
  }
- 
--enum thread_return {
--	THREAD_INVALID = 0,
--	THREAD_SUCCESS = 1,
--	THREAD_ERROR = 2,
--	THREAD_TEST_FAILED = 3,
--};
-+#define THREAD_INVALID		((void *)0)
-+#define THREAD_SUCCESS		((void *)1)
-+#define THREAD_ERROR		((void *)2)
-+#define THREAD_TEST_FAILED	((void *)3)
- 
- static void *thread_sync(void *arg)
- {
-@@ -262,15 +260,15 @@ static void *thread_sync(void *arg)
- 	char buf;
- 
- 	if (read(pipe_read, &buf, 1) != 1)
--		return (void *)THREAD_ERROR;
-+		return THREAD_ERROR;
- 
--	return (void *)THREAD_SUCCESS;
-+	return THREAD_SUCCESS;
- }
- 
- TEST(signal_scoping_thread_before)
- {
- 	pthread_t no_sandbox_thread;
--	enum thread_return ret = THREAD_INVALID;
-+	void *ret = THREAD_INVALID;
- 	int thread_pipe[2];
- 
- 	drop_caps(_metadata);
-@@ -285,7 +283,7 @@ TEST(signal_scoping_thread_before)
- 	EXPECT_EQ(0, pthread_kill(no_sandbox_thread, 0));
- 	EXPECT_EQ(1, write(thread_pipe[1], ".", 1));
- 
--	EXPECT_EQ(0, pthread_join(no_sandbox_thread, (void **)&ret));
-+	EXPECT_EQ(0, pthread_join(no_sandbox_thread, &ret));
- 	EXPECT_EQ(THREAD_SUCCESS, ret);
- 
- 	EXPECT_EQ(0, close(thread_pipe[0]));
-@@ -295,7 +293,7 @@ TEST(signal_scoping_thread_before)
- TEST(signal_scoping_thread_after)
- {
- 	pthread_t scoped_thread;
--	enum thread_return ret = THREAD_INVALID;
-+	void *ret = THREAD_INVALID;
- 	int thread_pipe[2];
- 
- 	drop_caps(_metadata);
-@@ -310,7 +308,7 @@ TEST(signal_scoping_thread_after)
- 	EXPECT_EQ(0, pthread_kill(scoped_thread, 0));
- 	EXPECT_EQ(1, write(thread_pipe[1], ".", 1));
- 
--	EXPECT_EQ(0, pthread_join(scoped_thread, (void **)&ret));
-+	EXPECT_EQ(0, pthread_join(scoped_thread, &ret));
- 	EXPECT_EQ(THREAD_SUCCESS, ret);
- 
- 	EXPECT_EQ(0, close(thread_pipe[0]));
-@@ -327,20 +325,20 @@ void *thread_setuid(void *ptr)
- 	char buf;
- 
- 	if (read(arg->pipe_read, &buf, 1) != 1)
--		return (void *)THREAD_ERROR;
-+		return THREAD_ERROR;
- 
- 	/* libc's setuid() should update all thread's credentials. */
- 	if (getuid() != arg->new_uid)
--		return (void *)THREAD_TEST_FAILED;
-+		return THREAD_TEST_FAILED;
- 
--	return (void *)THREAD_SUCCESS;
-+	return THREAD_SUCCESS;
- }
- 
- TEST(signal_scoping_thread_setuid)
- {
- 	struct thread_setuid_args arg;
- 	pthread_t no_sandbox_thread;
--	enum thread_return ret = THREAD_INVALID;
-+	void *ret = THREAD_INVALID;
- 	int pipe_parent[2];
- 	int prev_uid;
- 
-@@ -367,7 +365,7 @@ TEST(signal_scoping_thread_setuid)
- 	EXPECT_EQ(arg.new_uid, getuid());
- 	EXPECT_EQ(1, write(pipe_parent[1], ".", 1));
- 
--	EXPECT_EQ(0, pthread_join(no_sandbox_thread, (void **)&ret));
-+	EXPECT_EQ(0, pthread_join(no_sandbox_thread, &ret));
- 	EXPECT_EQ(THREAD_SUCCESS, ret);
- 
- 	clear_cap(_metadata, CAP_SETUID);
-@@ -667,20 +665,20 @@ static void *thread_setown_scoped(void *arg)
- 	ruleset_fd =
- 		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
- 	if (ruleset_fd < 0)
--		return (void *)THREAD_ERROR;
-+		return THREAD_ERROR;
- 	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) ||
- 	    landlock_restrict_self(ruleset_fd, 0)) {
- 		close(ruleset_fd);
--		return (void *)THREAD_ERROR;
-+		return THREAD_ERROR;
+
+@@ -1433,6 +1435,8 @@ static int __init hibernate_setup(char *str)
+ 	} else if (IS_ENABLED(CONFIG_STRICT_KERNEL_RWX)
+ 		   && !strncmp(str, "protect_image", 13)) {
+ 		enable_restore_image_protection();
++	} else if (!strncmp(str, "allow_locked_down", 17)) {
++		allow_locked_down_hibernation = true;
  	}
- 	close(ruleset_fd);
- 
- 	/* Makes this process group own the SIGIO source. */
- 	if (fcntl(fd, F_SETSIG, SIGURG) || fcntl(fd, F_SETOWN, -getpgrp()) ||
- 	    fcntl(fd, F_SETFL, O_ASYNC))
--		return (void *)THREAD_ERROR;
-+		return THREAD_ERROR;
- 
--	return (void *)THREAD_SUCCESS;
-+	return THREAD_SUCCESS;
+ 	return 1;
  }
- 
- /*
-@@ -702,7 +700,7 @@ TEST(sigio_to_pgid_self)
- {
- 	int trigger[2];
- 	pthread_t thread;
--	enum thread_return ret = THREAD_INVALID;
-+	void *ret = THREAD_INVALID;
- 	int i;
- 
- 	drop_caps(_metadata);
-@@ -722,7 +720,7 @@ TEST(sigio_to_pgid_self)
- 	 */
- 	ASSERT_EQ(0, pthread_create(&thread, NULL, thread_setown_scoped,
- 				    &trigger[0]));
--	ASSERT_EQ(0, pthread_join(thread, (void **)&ret));
-+	ASSERT_EQ(0, pthread_join(thread, &ret));
- 	ASSERT_EQ(THREAD_SUCCESS, ret);
- 
- 	/* Fans SIGURG out to the process group. */
 -- 
-2.55.0
-
+2.53.0
