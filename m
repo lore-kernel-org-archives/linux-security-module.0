@@ -1,148 +1,236 @@
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553711A6805
-	for <linux-security-module@vger.kernel.org>; Thu,  9 Jul 2026 15:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C70836CDF3
+	for <linux-security-module@vger.kernel.org>; Thu,  9 Jul 2026 16:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783612735; cv=none; b=h+WnE9PZAPY9FUnAie37gy9evxwRKWDzspXpl20XLnlFa6W34Fntw+2PVi39bXYk6XzKNpLMefyR+FeDMc7Vz0H08+9w5MQjbC8vr3KBPmiabK9w1Zb3UxczBrY4jD1hcjA3apPUe0Jknti9K6zoCcW12iBGr/P8ZsB2yNXLhQA=
+	t=1783615435; cv=none; b=UNlCgn16XGVaiVJFRf6k8tAc0vMGZRzrj2ZfuZKazQ7JIYRo0zX5o3Uwe1avZTW/qHGbiUQ9PsyysQ4u74HRHpj43VJXhxF4FwRu7vfV1dshy8BSwBx3g49d8syT/TDOUDo3mvJMJ+rLIMZfrlhvuk+OKAWIZXRiXpVfioRYKzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783612735; c=relaxed/simple;
-	bh=WLMCSNzgVya1yeI6VB6MkC7/cWl4E3NA6H2zOiNlt34=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qxPgAA2Lvca6zo6FTcbLT6L7s7CLvAQ7ImlqmY21fBxWdvkssB8951KQ+aQBMw61Ybwm21llgm2d9KtgPYBnrKgOjoiQGGmhIZ6viwe3G9SHKOYTYiYVVA3+mFQW/qzX0xXGHiJDXTVXKFLxDvVX1REC5wU/bmJ51LPixG86Phg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=UcKgIg2O; arc=none smtp.client-ip=83.166.143.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1783615435; c=relaxed/simple;
+	bh=SQ7GBMLnXX5I3bFBCOmeZQZl5xHUI3hMGXJu0wAGPhE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:content-type; b=PFAZZ0yaErFeppFT45MoFl98lcRmo5IDs6yAiK6oyIzPNgSjQ+vxuiwEpsJ0TsE6zq4Vv5Hm3Dm4A7R4ydFUHJkxZ38bRxw0gwzvLVbe3G0OR+dlN0bzUIzIFh9DBfboqQyFYLQQ8XqtrMCIBs30crOc6C3c8ykeusMtG+/n7mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GplIoEt+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="UcKgIg2O"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gx04p3WYBzCtM;
-	Thu,  9 Jul 2026 17:58:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1783612730;
-	bh=D/YfQO1l9+oQRMO6pfoOvhmNceuKQjV5WSxJDG7oUXo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UcKgIg2OSQGCZaU15LNI14ytZFUzBtCTaHSLuzhFoVoSLELIpHIKmTWBYZUR3UW2+
-	 EaQjuaB1ss7KuBuDX7hMFHhWj+qIsCAdPpf9a3mUYr6XlivQTjd3z5z40oSxf6Llsm
-	 X/uumWaE9Yd8irkRkmX2JcbZ078bT/tyYaHmM2kA=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4gx04m3St2zBWK;
-	Thu,  9 Jul 2026 17:58:48 +0200 (CEST)
-Date: Thu, 9 Jul 2026 17:58:44 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Daniel Durning <danieldurning.work@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Justin Suess <utilityemal77@gmail.com>, Lennart Poettering <lennart@poettering.net>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
-	Shervin Oloumi <enlightened@google.com>, Tingmao Wang <m@maowtm.org>, kernel-team@cloudflare.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GplIoEt+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1783615432;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=N1EhtpTNPWeURbn3yhN8uvjzdNLJOl63hKvo6ZRXyxc=;
+	b=GplIoEt+GuoTp+HqIm13MER9BB204l300P0lle03mt1PoGqsEWWaQaMbQJWibH3e+y20cS
+	Yp7fOlDWucnaQG//qsNJBYe9nbS0qXvLOwu0N8mTvcDlYZHy47wdRy4bNn9sWMhN5q//A0
+	mtBfuKSLWLAHWHv2Vva7IiG5+j20dTE=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-513-7QAmzfxFPCGgsOgKlzBNJg-1; Thu,
+ 09 Jul 2026 12:43:49 -0400
+X-MC-Unique: 7QAmzfxFPCGgsOgKlzBNJg-1
+X-Mimecast-MFC-AGG-ID: 7QAmzfxFPCGgsOgKlzBNJg_1783615428
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E4EE2180267E;
+	Thu,  9 Jul 2026 16:43:47 +0000 (UTC)
+Received: from thuth-p1g4.redhat.com (unknown [10.44.50.9])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5FFE1195608A;
+	Thu,  9 Jul 2026 16:43:42 +0000 (UTC)
+From: Thomas Huth <thuth@redhat.com>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
 	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 1/9] security: add LSM blob and hooks for namespaces
-Message-ID: <20260709.paitheut7Ief@digikod.net>
-References: <3d4fe99cd1665a1be0b36636aeeaf4ab@paul-moore.com>
- <20260709.kaemaiTia6Li@digikod.net>
- <CAHC9VhSVQ0MLwU=C90FmohAThwaQj-mfB7L03fvkB5A0-J2jCg@mail.gmail.com>
+Cc: Shuah Khan <shuah@kernel.org>,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rbriggs@redhat.com
+Subject: [PATCH] selftests/landlock: Fix screwed up pointers in the scoped_signal_test
+Date: Thu,  9 Jul 2026 18:43:40 +0200
+Message-ID: <20260709164340.339656-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Mimecast-MFC-PROC-ID: 0yWjmFzrAlaa9RxDZYdJTGdd9lRpc-ZmxhU3ZQKvbjY_1783615428
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhSVQ0MLwU=C90FmohAThwaQj-mfB7L03fvkB5A0-J2jCg@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+content-type: text/plain; charset="US-ASCII"; x-default=true
 
-On Thu, Jul 09, 2026 at 09:03:58AM -0400, Paul Moore wrote:
-> On Thu, Jul 9, 2026 at 5:12 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > On Wed, Jul 08, 2026 at 11:22:17PM -0400, Paul Moore wrote:
-> > > On May 27, 2026 =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net> wrote:
-> > > >
-> > > > All namespace types now share the same ns_common infrastructure. Extend
-> > > > this to include a security blob so LSMs can start managing namespaces
-> > > > uniformly without having to add one-off hooks or security fields to
-> > > > every individual namespace type.
-> 
-> ...
-> 
-> > > > @@ -91,7 +103,10 @@ int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_ope
-> > > >
-> > > >  void __ns_common_free(struct ns_common *ns)
-> > > >  {
-> > > > -   proc_free_inum(ns->inum);
-> > > > +   security_namespace_free(ns);
-> > > > +
-> > > > +   if (ns->inum > MNT_NS_INO_SPECIAL_MAX)
-> > > > +           proc_free_inum(ns->inum);
-> > >
-> > > The ns->inum check in the if-conditional above isn't quite the same as
-> > > the is_anon_ns() check it replaces in free_mnt_ns().  You touch on this
-> > > a bit in the changelog, but that really should be explained in the
-> > > commit description.
-> > >
-> > > ... or honestly, should that change be a separate patch?
-> >
-> > I think it's fine, but it's Christian's patch, so I'll let him answer
-> > and propose a new commit description.
-> 
-> I don't have a strong opinion on either approach, either a separate
-> patch or doc update, but one of the two needs to happen.
+From: Thomas Huth <thuth@redhat.com>
 
-Noted, I'll follow on this with Christian.
+The scoped_signal_test uses pthread_join(..., (void **)&ret)) in
+a couple of places, i.e. the return value of the thread is stored
+in the shape of a "void *" into the memory location of &ret.
+Pointers are 64-bit on modern computers, but the ret variable is
+declared as a simple "enum thread_return" which is only 32 bits.
+So the pthread_join() will overflow the ret variable by 4 byte.
 
-> 
-> > > > diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
-> > > > index d9d3d5973bf5..0f1b208d8eef 100644
-> > > > --- a/kernel/nsproxy.c
-> > > > +++ b/kernel/nsproxy.c
-> > > > @@ -385,6 +385,12 @@ static int prepare_nsset(unsigned flags, struct nsset *nsset)
-> > > >
-> > > >  static inline int validate_ns(struct nsset *nsset, struct ns_common *ns)
-> > > >  {
-> > > > +   int ret;
-> > > > +
-> > > > +   ret = security_namespace_install(nsset, ns);
-> > > > +   if (ret)
-> > > > +           return ret;
-> > > > +
-> > > >     return ns->ops->install(nsset, ns);
-> > > >  }
-> > >
-> > > In the previous revision to the patchset I asked about a
-> > > security_namespace_switch() hook as we don't know if a namespace is
-> > > actually attached to a process until we get to switch_task_namespaces().
-> > > Perhaps that was answered, but I don't recall reading any mail about that
-> > > and I'm not able to uncover any responses on lore.
-> >
-> > From the cover letter:
-> >
-> >   no security_namespace_switch() post-hook is
-> >   added in this series: such a hook would only serve LSMs that maintain
-> >   per-task state derived from the active namespace set (SELinux-style
-> >   state tracking), and no current LSM (including this series) needs that.
-> >   Landlock enforces at namespace_install() and namespace_init(), before
-> >   the task-to-nsproxy switch.  The hook is left for a separate LSM
-> >   infrastructure proposal once a concrete user emerges.
-> >
-> > This follows the guidance of adding new hooks: there must be at least
-> > one user.
-> 
-> I'm aware of the new hook guidance, I was the one who documented it :)
+The problem is very visible on big endian systems like s390x
+where the test is failing: The least significant byte that carries
+the return code of the thread is not written into the ret variable
+here, but somewhere else in the stack frame, so the comparison
+for the right return code is failing here.
 
-I know.  I guess that means you're ok with that?
+Fix it by getting rid of the enum and defining the THREAD_* constants
+and "ret" variables as proper "void *" pointers. This way we can
+also get rid of some ugly (void *) castings in a couple of spots.
 
-> 
-> In the future, it's both helpful and polite to reply to the email
-> asking the question with your response.  Adding it to the cover letter
-> is fine, but to be perfectly honest, once we get past v1 of a
-> patchset, I don't often read the cover letter very closely unless
-> there is a significant change.  However, I do look back at the
-> previous posting to ensure all the feedback from everyone has been
-> either answered or incorporated into the current revision.
+Signed-off-by: Thomas Huth <thuth@redhat.com>
+---
+ .../selftests/landlock/scoped_signal_test.c   | 44 +++++++++----------
+ 1 file changed, 21 insertions(+), 23 deletions(-)
 
-I forgot to reply to your email, I didn't mean to be impolite, sorry for
-the inconvenience.  It's useful to know that the cover letter is not
-always part of your review process.
+diff --git a/tools/testing/selftests/landlock/scoped_signal_test.c b/tools/testing/selftests/landlock/scoped_signal_test.c
+index f24f2c28f62e5..58d25157fe781 100644
+--- a/tools/testing/selftests/landlock/scoped_signal_test.c
++++ b/tools/testing/selftests/landlock/scoped_signal_test.c
+@@ -249,12 +249,10 @@ TEST_F(scoped_domains, check_access_signal)
+ 		_metadata->exit_code = KSFT_FAIL;
+ }
+ 
+-enum thread_return {
+-	THREAD_INVALID = 0,
+-	THREAD_SUCCESS = 1,
+-	THREAD_ERROR = 2,
+-	THREAD_TEST_FAILED = 3,
+-};
++#define THREAD_INVALID		((void *)0)
++#define THREAD_SUCCESS		((void *)1)
++#define THREAD_ERROR		((void *)2)
++#define THREAD_TEST_FAILED	((void *)3)
+ 
+ static void *thread_sync(void *arg)
+ {
+@@ -262,15 +260,15 @@ static void *thread_sync(void *arg)
+ 	char buf;
+ 
+ 	if (read(pipe_read, &buf, 1) != 1)
+-		return (void *)THREAD_ERROR;
++		return THREAD_ERROR;
+ 
+-	return (void *)THREAD_SUCCESS;
++	return THREAD_SUCCESS;
+ }
+ 
+ TEST(signal_scoping_thread_before)
+ {
+ 	pthread_t no_sandbox_thread;
+-	enum thread_return ret = THREAD_INVALID;
++	void *ret = THREAD_INVALID;
+ 	int thread_pipe[2];
+ 
+ 	drop_caps(_metadata);
+@@ -285,7 +283,7 @@ TEST(signal_scoping_thread_before)
+ 	EXPECT_EQ(0, pthread_kill(no_sandbox_thread, 0));
+ 	EXPECT_EQ(1, write(thread_pipe[1], ".", 1));
+ 
+-	EXPECT_EQ(0, pthread_join(no_sandbox_thread, (void **)&ret));
++	EXPECT_EQ(0, pthread_join(no_sandbox_thread, &ret));
+ 	EXPECT_EQ(THREAD_SUCCESS, ret);
+ 
+ 	EXPECT_EQ(0, close(thread_pipe[0]));
+@@ -295,7 +293,7 @@ TEST(signal_scoping_thread_before)
+ TEST(signal_scoping_thread_after)
+ {
+ 	pthread_t scoped_thread;
+-	enum thread_return ret = THREAD_INVALID;
++	void *ret = THREAD_INVALID;
+ 	int thread_pipe[2];
+ 
+ 	drop_caps(_metadata);
+@@ -310,7 +308,7 @@ TEST(signal_scoping_thread_after)
+ 	EXPECT_EQ(0, pthread_kill(scoped_thread, 0));
+ 	EXPECT_EQ(1, write(thread_pipe[1], ".", 1));
+ 
+-	EXPECT_EQ(0, pthread_join(scoped_thread, (void **)&ret));
++	EXPECT_EQ(0, pthread_join(scoped_thread, &ret));
+ 	EXPECT_EQ(THREAD_SUCCESS, ret);
+ 
+ 	EXPECT_EQ(0, close(thread_pipe[0]));
+@@ -327,20 +325,20 @@ void *thread_setuid(void *ptr)
+ 	char buf;
+ 
+ 	if (read(arg->pipe_read, &buf, 1) != 1)
+-		return (void *)THREAD_ERROR;
++		return THREAD_ERROR;
+ 
+ 	/* libc's setuid() should update all thread's credentials. */
+ 	if (getuid() != arg->new_uid)
+-		return (void *)THREAD_TEST_FAILED;
++		return THREAD_TEST_FAILED;
+ 
+-	return (void *)THREAD_SUCCESS;
++	return THREAD_SUCCESS;
+ }
+ 
+ TEST(signal_scoping_thread_setuid)
+ {
+ 	struct thread_setuid_args arg;
+ 	pthread_t no_sandbox_thread;
+-	enum thread_return ret = THREAD_INVALID;
++	void *ret = THREAD_INVALID;
+ 	int pipe_parent[2];
+ 	int prev_uid;
+ 
+@@ -367,7 +365,7 @@ TEST(signal_scoping_thread_setuid)
+ 	EXPECT_EQ(arg.new_uid, getuid());
+ 	EXPECT_EQ(1, write(pipe_parent[1], ".", 1));
+ 
+-	EXPECT_EQ(0, pthread_join(no_sandbox_thread, (void **)&ret));
++	EXPECT_EQ(0, pthread_join(no_sandbox_thread, &ret));
+ 	EXPECT_EQ(THREAD_SUCCESS, ret);
+ 
+ 	clear_cap(_metadata, CAP_SETUID);
+@@ -667,20 +665,20 @@ static void *thread_setown_scoped(void *arg)
+ 	ruleset_fd =
+ 		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+ 	if (ruleset_fd < 0)
+-		return (void *)THREAD_ERROR;
++		return THREAD_ERROR;
+ 	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) ||
+ 	    landlock_restrict_self(ruleset_fd, 0)) {
+ 		close(ruleset_fd);
+-		return (void *)THREAD_ERROR;
++		return THREAD_ERROR;
+ 	}
+ 	close(ruleset_fd);
+ 
+ 	/* Makes this process group own the SIGIO source. */
+ 	if (fcntl(fd, F_SETSIG, SIGURG) || fcntl(fd, F_SETOWN, -getpgrp()) ||
+ 	    fcntl(fd, F_SETFL, O_ASYNC))
+-		return (void *)THREAD_ERROR;
++		return THREAD_ERROR;
+ 
+-	return (void *)THREAD_SUCCESS;
++	return THREAD_SUCCESS;
+ }
+ 
+ /*
+@@ -702,7 +700,7 @@ TEST(sigio_to_pgid_self)
+ {
+ 	int trigger[2];
+ 	pthread_t thread;
+-	enum thread_return ret = THREAD_INVALID;
++	void *ret = THREAD_INVALID;
+ 	int i;
+ 
+ 	drop_caps(_metadata);
+@@ -722,7 +720,7 @@ TEST(sigio_to_pgid_self)
+ 	 */
+ 	ASSERT_EQ(0, pthread_create(&thread, NULL, thread_setown_scoped,
+ 				    &trigger[0]));
+-	ASSERT_EQ(0, pthread_join(thread, (void **)&ret));
++	ASSERT_EQ(0, pthread_join(thread, &ret));
+ 	ASSERT_EQ(THREAD_SUCCESS, ret);
+ 
+ 	/* Fans SIGURG out to the process group. */
+-- 
+2.55.0
+
