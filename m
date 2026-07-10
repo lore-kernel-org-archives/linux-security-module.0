@@ -1,108 +1,119 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6EA331ECA;
-	Fri, 10 Jul 2026 06:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3CE3EFD24
+	for <linux-security-module@vger.kernel.org>; Fri, 10 Jul 2026 08:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783666528; cv=none; b=O/lq4fXH2ACzy0zzv+aQz1UzPALi4QHrWnhByw9Af5WWkXno5iJP6GkHLddEoMubqDjn8UMUuJ0hcAZafcW+wwLMDj+XWMowIZC2fHYQl1d3kos7P0h+/jte+RK3/K/KS2UIrlLAdQ4K0HBUYiuULOpg90q1qyvd8vaejF9Yau0=
+	t=1783671416; cv=none; b=XiiyAWuWm3+BwIwoqPkDMK9QZTtn67/7JvikyCV1gKvw/NDOscPc1xuVLB3fTG28aqococ24Nb5Jw0RG7lPx1Zx7U3mgxhMZdE1vyMXAqLrRWPbmWKg9Qg6T3RAUhQRf5IpUwa7+Uwu/W5UP25K2FNi4Equ6WZjpYwB+6jULCAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783666528; c=relaxed/simple;
-	bh=TGzD8JAox5ALaaLNKUrnk755zePD2TNWVP4GSkcX3xE=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=iMBtiQQUKjSKltuzS6c3Mq6q1be07JJPaZ47CuCU0GlaN+Cj3TKx8IpMctF6tJM+wkn70le5KMJp6Q6sgsWT5wldy8ZhyxMWjrE3AT/Z322EgkQCrZ+Ay67u+H495BBCAGLYC3N+5RkwwY9anqfKw9o+4sLpeUWisEFFGxoMrd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fzjT/IaZ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783671416; c=relaxed/simple;
+	bh=7KIc5ogxZwWrfJnko7PciiNQQWmWczwA7bDSRUvGObU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:content-type; b=eGnoUyLMK9gYMGsdIIhH4spkHrgC1WCcGRkigabgqbJu7d7gJ9zJsrgDU5yRzim3K0xqeVl+/oqo+6mC9MzJ73myfAZZZ8MSS+aS9pdfNEFab0h1lESCaYVxvQBo87vDYCHAale9Py18hEGqEJ38+tAJJp9+zzWMJagsFiM9zvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jQnj7OhS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fzjT/IaZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA42E1F000E9;
-	Fri, 10 Jul 2026 06:55:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783666527;
-	bh=YWt8ZJ7BRPWlSw3Gxdok+/xV06Xi+OMC4Vy9OibbcNw=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=fzjT/IaZoIAeiTyPEmNqwofnH9a4pGENVOSCChn3dCORPnV0bLeqG4oK3VQWxZQEd
-	 GJFqGVRAVk8/JVgZxsF8/u69kKzY43gU92cvGaqFwxXPjazvyVFG3EeEPEwPwqDvuf
-	 pXLRlkaGVgP49rjd8dVurTgJBAlKN/2qtMJA9FbYZsFtUG/p8eeFcRckZnwz18FIPQ
-	 V3dGN9ul21AoBnp157VD7e9CjhFePDu12OhWjC5+alcal/wWzLeHJSS49hUyyiiWCy
-	 4S6gf90gPRSKNK0RFmXBX5/XIWb3UsOgepTnZqRx6IQAyjNqS0YR5Sg8kI0djoRgDK
-	 UFolkgvHsf1Kw==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jQnj7OhS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1783671413;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=v4vUaGFk2l9Uqurf0ksjXpb4C/iQo+zejwWRDADYgb8=;
+	b=jQnj7OhSBsxCMEu/87UtAg58Wve5abVR6Q+wgwTtv9H/TPTTSyi46gcUszqyB53drP9uie
+	0Ei1IeVBqYDQpcTfh5D4mPhW12OaqTvGzn89saILJy0uipx0FTvDoufaXuPKWOnxnBhRKG
+	2PJIvdkSWOdXHcdKj45kJMV/bCffXPo=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-516-rJpTrNr0MlibO6VsPMNLIg-1; Fri,
+ 10 Jul 2026 04:16:49 -0400
+X-MC-Unique: rJpTrNr0MlibO6VsPMNLIg-1
+X-Mimecast-MFC-AGG-ID: rJpTrNr0MlibO6VsPMNLIg_1783671408
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 13E6A1801BE5;
+	Fri, 10 Jul 2026 08:16:48 +0000 (UTC)
+Received: from thuth-p1g4.redhat.com (unknown [10.44.49.56])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3ACA8180028B;
+	Fri, 10 Jul 2026 08:16:43 +0000 (UTC)
+From: Thomas Huth <thuth@redhat.com>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	linux-security-module@vger.kernel.org
+Cc: Shuah Khan <shuah@kernel.org>,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests/landlock: Skip scoped_signal subtest with MSG_OOB if not available
+Date: Fri, 10 Jul 2026 10:16:42 +0200
+Message-ID: <20260710081642.405916-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Mimecast-MFC-PROC-ID: 2rX6LvzT00P1cKBJY8-0cNeuSl8-IzCiFira8Pj_kfU_1783671408
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 1/9] security: add LSM blob and hooks for namespaces
-From: Christian Brauner <brauner@kernel.org>
-To: =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Paul Moore <paul@paul-moore.com>, 
- Christian Brauner <brauner@kernel.org>, 
- =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
- "Serge E . Hallyn" <serge@hallyn.com>, 
- Daniel Durning <danieldurning.work@gmail.com>, 
- Jonathan Corbet <corbet@lwn.net>, Justin Suess <utilityemal77@gmail.com>, 
- Lennart Poettering <lennart@poettering.net>, 
- Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
- Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
- Shervin Oloumi <enlightened@google.com>, Tingmao Wang <m@maowtm.org>, 
- kernel-team@cloudflare.com, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-In-Reply-To: <20260709.paitheut7Ief@digikod.net>
-References: <3d4fe99cd1665a1be0b36636aeeaf4ab@paul-moore.com>
- <20260709.kaemaiTia6Li@digikod.net>
- <CAHC9VhSVQ0MLwU=C90FmohAThwaQj-mfB7L03fvkB5A0-J2jCg@mail.gmail.com>
- <20260709.paitheut7Ief@digikod.net>
-Date: Fri, 10 Jul 2026 08:55:21 +0200
-Message-Id: <20260710-sardinen-zinken-aerodynamik-8b09dafc60a2@brauner>
-X-Mailer: b4 0.16-dev-4217c
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1785; i=brauner@kernel.org;
- h=from:subject:message-id; bh=TGzD8JAox5ALaaLNKUrnk755zePD2TNWVP4GSkcX3xE=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQFTI/mv/a7iD9rQdRb9X69T7P0Fcp4fnQ1u+7pnfv43
- L2Ta9qWdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEwkloXhN8uCSYbbVv39/3lR
- qsDRngvxIbs4Sy5+Kl65J1mqoLZjQggjwx8l1g/TLJy23BbQL47iu+Rb93rqm4bIJMbYOcqbBHQ
- imAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+content-type: text/plain; charset="US-ASCII"; x-default=true
 
-On 2026-07-09 17:58 +0200, Mickaël Salaün wrote:
-> On Thu, Jul 09, 2026 at 09:03:58AM -0400, Paul Moore wrote:
-> > On Thu, Jul 9, 2026 at 5:12 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > On Wed, Jul 08, 2026 at 11:22:17PM -0400, Paul Moore wrote:
-> > > > On May 27, 2026 =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net> wrote:
-> > > > >
-> > > > > All namespace types now share the same ns_common infrastructure. Extend
-> > > > > this to include a security blob so LSMs can start managing namespaces
-> > > > > uniformly without having to add one-off hooks or security fields to
-> > > > > every individual namespace type.
-> > 
-> > ...
-> > 
-> > > > > @@ -91,7 +103,10 @@ int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_ope
-> > > > >
-> > > > >  void __ns_common_free(struct ns_common *ns)
-> > > > >  {
-> > > > > -   proc_free_inum(ns->inum);
-> > > > > +   security_namespace_free(ns);
-> > > > > +
-> > > > > +   if (ns->inum > MNT_NS_INO_SPECIAL_MAX)
-> > > > > +           proc_free_inum(ns->inum);
-> > > >
-> > > > The ns->inum check in the if-conditional above isn't quite the same as
-> > > > the is_anon_ns() check it replaces in free_mnt_ns().  You touch on this
-> > > > a bit in the changelog, but that really should be explained in the
-> > > > commit description.
-> > > >
-> > > > ... or honestly, should that change be a separate patch?
-> > >
-> > > I think it's fine, but it's Christian's patch, so I'll let him answer
-> > > and propose a new commit description.
-> > 
-> > I don't have a strong opinion on either approach, either a separate
-> > patch or doc update, but one of the two needs to happen.
-> 
-> Noted, I'll follow on this with Christian.
+From: Thomas Huth <thuth@redhat.com>
 
-I think we should add this as a separate patch.
+MSG_OOB might be disabled in the kernel for unix sockets (by not
+selecting CONFIG_AF_UNIX_OOB), and in this case the related tests
+of the scoped_signal_test are currently failing.  Add a runtime
+probe using socketpair() to detect MSG_OOB support and skip the
+test gracefully if it is unavailable.
+
+Signed-off-by: Thomas Huth <thuth@redhat.com>
+---
+ .../selftests/landlock/scoped_signal_test.c   | 21 +++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/tools/testing/selftests/landlock/scoped_signal_test.c b/tools/testing/selftests/landlock/scoped_signal_test.c
+index 58d25157fe781..3cf20d769f2bc 100644
+--- a/tools/testing/selftests/landlock/scoped_signal_test.c
++++ b/tools/testing/selftests/landlock/scoped_signal_test.c
+@@ -398,6 +398,24 @@ static int setup_signal_handler(int signal)
+ 	return sigaction(SIGURG, &sa, NULL);
+ }
+ 
++/*
++ * MSG_OOB might be disabled in the kernel via the CONFIG_AF_UNIX_OOB
++ * switch, so this function can be used for probing for its availability.
++ */
++static bool has_af_unix_oob(void)
++{
++	bool available = false;
++	int sp[2];
++
++	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sp) == 0) {
++		available = (send(sp[0], ".", 1, MSG_OOB) == 1);
++		close(sp[0]);
++		close(sp[1]);
++	}
++
++	return available;
++}
++
+ /* clang-format off */
+ FIXTURE(fown) {};
+ /* clang-format on */
+@@ -460,6 +478,9 @@ TEST_F(fown, sigurg_socket)
+ 	int pipe_parent[2], pipe_child[2];
+ 	pid_t child;
+ 
++	if (!has_af_unix_oob())
++		SKIP(return, "CONFIG_AF_UNIX_OOB / MSG_OOB not available");
++
+ 	memset(&server_address, 0, sizeof(server_address));
+ 	set_unix_address(&server_address, 0);
+ 
+-- 
+2.55.0
 
