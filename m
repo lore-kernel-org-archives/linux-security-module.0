@@ -1,177 +1,108 @@
-Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237233D75BC
-	for <linux-security-module@vger.kernel.org>; Thu,  9 Jul 2026 20:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783629230; cv=pass; b=iZjoM2IsLuhI39bhbuxvg1xt/ilkbCDlA45n4SVB/LpqZbPF0FXEKaP60xQwkutBrXuXxrkxdKRIHS1Pz2eaiJB30pRVv2WoCHxsN9MTcnXuC0I92e7sB+gN5pGrprca7BacpbRDrZvQL22t7bGBZ0xGlJnBHJk3NSAbXoXMF7c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783629230; c=relaxed/simple;
-	bh=jMtcbdMjpbPZxFzIQEO/tWpTrxEOHPXtdEvc/wBne44=;
-	h=In-Reply-To:References:MIME-Version:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=epfBrwIoS0zhMZ0lAggTJ2ZDx0uBF+X3hnsWHL10zbG3nSQ2OJ3/a2Yh6PGAIL81hyLN2I09oO+BoXf4Ug0F6mpWgvz3pPm/mRyPa99uKDL0RxyWzuXUGSBZGfWAP7wTyhHzs6WiGowhyPxRp9rFthOls/Zx+63AbEHbDkm4wOw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=starlabs.systems; spf=pass smtp.mailfrom=starlabs.systems; dkim=pass (2048-bit key) header.d=starlabs-systems.20251104.gappssmtp.com header.i=@starlabs-systems.20251104.gappssmtp.com header.b=bLY2Kmvw; arc=pass smtp.client-ip=74.125.224.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=starlabs.systems
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starlabs.systems
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6EA331ECA;
+	Fri, 10 Jul 2026 06:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783666528; cv=none; b=O/lq4fXH2ACzy0zzv+aQz1UzPALi4QHrWnhByw9Af5WWkXno5iJP6GkHLddEoMubqDjn8UMUuJ0hcAZafcW+wwLMDj+XWMowIZC2fHYQl1d3kos7P0h+/jte+RK3/K/KS2UIrlLAdQ4K0HBUYiuULOpg90q1qyvd8vaejF9Yau0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783666528; c=relaxed/simple;
+	bh=TGzD8JAox5ALaaLNKUrnk755zePD2TNWVP4GSkcX3xE=;
+	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
+	 References:Date:Message-Id; b=iMBtiQQUKjSKltuzS6c3Mq6q1be07JJPaZ47CuCU0GlaN+Cj3TKx8IpMctF6tJM+wkn70le5KMJp6Q6sgsWT5wldy8ZhyxMWjrE3AT/Z322EgkQCrZ+Ay67u+H495BBCAGLYC3N+5RkwwY9anqfKw9o+4sLpeUWisEFFGxoMrd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fzjT/IaZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=starlabs-systems.20251104.gappssmtp.com header.i=@starlabs-systems.20251104.gappssmtp.com header.b="bLY2Kmvw"
-Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-667a0f55a59so328052d50.1
-        for <linux-security-module@vger.kernel.org>; Thu, 09 Jul 2026 13:33:45 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783629224; cv=none;
-        d=google.com; s=arc-20260327;
-        b=fyXkp37tQ0Lg2SG/NtgNYzw3kN0PEHtOiO223tNWAc0LM6Y6S865nw5JeNv3o3ZwcS
-         WuaMDneF5I5LYLEBR0tFg6PFpqIL/vEm/7baJSkh3EupzdJ7H26yA7x23kBZQFLb3pQh
-         K4K0SsYaNVl94jVUBj8CI0wC+4H3n7qJ3RNUZDtJGJ5dtrZ69Ndepl5bn/ml4i7IedTG
-         cF30xAV7034VG11ZEeU87HOrG4j+XnnBToj4FOn1RyAZAxZjBkLWko4FbXL4doLJj1kM
-         eTd5gw2wcGqdsaV0+QX1TggWM3ofmoB9gVNHmgzg9SXBT+ohmx+VcA1EfCMvTLANa9Lh
-         LsLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:mime-version:references
-         :in-reply-to:dkim-signature;
-        bh=jMtcbdMjpbPZxFzIQEO/tWpTrxEOHPXtdEvc/wBne44=;
-        fh=HsCAyaxWwnHJE2Jp1MyP+19oBbwNduD2RLqQ0RblmMM=;
-        b=YgsLKtMTPWI8sITUwjMBjKFd+BI+JQl7qercEvEYFusU+sAKsmxb9yOE+/rQ5oq5ZV
-         q2in/jGcE9lM5tISZ5CAZdJANZJ9zmHUz5+E7qsyjzbzThwyfLyvo4HltBYDRGbvn6yv
-         aWm2RicfyWjahDEp7xy8pPAYyQlI+sK1Notko2ZJ8zO5XJfqlSfrctKe9VmAnmHMibWt
-         Fuq+L3QXmw/on4XQ2qszt2PEYe1jHckSv+DqwAcNyMJAO/9Sf0ywwOE0HWCAsY4FL10i
-         qaVLZKPltU8fZgTH31CMQDCMgR4gRe+h9SoMBusAXxT3Tqu37MsphMRU6o+SU8EP3KZQ
-         mavw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=starlabs-systems.20251104.gappssmtp.com; s=20251104; t=1783629224; x=1784234024; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:mime-version
-         :references:in-reply-to:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=jMtcbdMjpbPZxFzIQEO/tWpTrxEOHPXtdEvc/wBne44=;
-        b=bLY2Kmvw4ctkM0rU8W2rvdL2jujHbmqnZQ1rvtn4RSsR9i02XV+Tzvoon0xxS4ewRI
-         j2nB1jkcEYhYT+T+Ghs4AsXLbrLVydEQyokZWsN+LrBDv31q1tmYu9PJ4OKdYBIsfF5b
-         wfxhq0GdvAtlSD+cmhcQPLgGo63mz3847o/wdpoCqOV7rtEs8siecgdOrf4B9dlYh6BR
-         lQ+676imjyT1+6qJScW3UKGYnoyOQzi10xrb/3NnBPDNLuU5g/hcjWjITOclyhpnbJaT
-         SrGOaYM6W9+HlNmY8Bm7Mqtz5g8l8M3fMD8ufNNH9ni5ZDirp0apHAqkapHbRF5HT8LL
-         8bag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783629224; x=1784234024;
-        h=content-type:cc:to:subject:message-id:date:from:mime-version
-         :references:in-reply-to:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=jMtcbdMjpbPZxFzIQEO/tWpTrxEOHPXtdEvc/wBne44=;
-        b=i/eJqMpvDMQp9QzsXnltMcIp4QhDtXMqRBS/rwGgjvuP48HuvtHeoyGwA4HPIIpl2H
-         YGv+/1pxUjM3XNZDUbBOoqssgkWpFm17N9P/pe84xZyL/KWcrHd8LKJemVQ/qgEzSouq
-         GAssc+zFjGZgf7XU1HAlUsPOoafyyCa8kLMnUVIxc+phZMabyS7/NhgIesWAMYFcHFPu
-         Avhy50K3sRbsOIdclnoM7s4pCbhWJ9g5Wz29QXHUY3mkG/hJdlCG0jlNuxc5mgZCuvjS
-         mW1D2VLenSNTD5Zi1fQR0JsWrWRe8Y7LWRWV7jesAqRtDwCJfTa/BczDsrvf/us7oJGw
-         gyDA==
-X-Forwarded-Encrypted: i=1; AHgh+Rp4RdHKxiXzPX2POph/25Y4aYESZTxRvjAkbWTBn6vG/lLPmOMGxBSZScC7XeVVTeBCGwshlysfWwgDIqDhk2OKAduitiA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpNWXKJv6JS6QfepVxkqqNYpcSCjtVJBxThSbLV5h2J4NXNuOH
-	6TvZsHQQCO7wwD1ekNZSnNmFVRHm7loyWYvXPZCR3L3xQp1Hs5Xpd7p9BHW9n2P9thTjqrH9OaW
-	oI3U3o5H3fxULbADa6LG0yUAjnpcZFwtZ42d3JT6/
-X-Gm-Gg: AfdE7clrlrJnCxujTYLZLMIqjY+Cu9UM3T3M2LsvbXfmgpqOIqBiVifD+Pc3np40uwy
-	d4reDlT2WYdfUZMR//Qn68UpglvsR98NhtBf2+yBeI8PT2edrU1/8MDvqNDjvZO8ajmnACs5H3n
-	aTc6HyD2zDwXLRJ2dUyx17B0MSGetQUvViDn+L7+bUqYZKbXpxHR4zygkk4yCVGCFVwHBKl0s1z
-	dM7uUPWQL2edEoGsGPZBdZqOmrk91XTfvFFC14mrmO13G0TSZKJUFexj2v9J0+/toH6PhS4WU9v
-	pzy3jng8ik8ARuqUTedkVW1twR0=
-X-Received: by 2002:a05:690e:150b:b0:664:ae6d:ad28 with SMTP id
- 956f58d0204a3-6679f15451cmr5789029d50.66.1783629219309; Thu, 09 Jul 2026
- 13:33:39 -0700 (PDT)
-Received: from 77377267392 named unknown by gmailapi.google.com with HTTPREST;
- Thu, 9 Jul 2026 16:33:38 -0400
-Received: from 77377267392 named unknown by gmailapi.google.com with HTTPREST;
- Thu, 9 Jul 2026 16:33:38 -0400
-In-Reply-To: <CABtds-0AUr1jD2Sri6ViiFiqyBbjc3-6xeAOr12YLJA9ux-2BA@mail.gmail.com>
-References: <CABtds-0AUr1jD2Sri6ViiFiqyBbjc3-6xeAOr12YLJA9ux-2BA@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fzjT/IaZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA42E1F000E9;
+	Fri, 10 Jul 2026 06:55:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783666527;
+	bh=YWt8ZJ7BRPWlSw3Gxdok+/xV06Xi+OMC4Vy9OibbcNw=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date;
+	b=fzjT/IaZoIAeiTyPEmNqwofnH9a4pGENVOSCChn3dCORPnV0bLeqG4oK3VQWxZQEd
+	 GJFqGVRAVk8/JVgZxsF8/u69kKzY43gU92cvGaqFwxXPjazvyVFG3EeEPEwPwqDvuf
+	 pXLRlkaGVgP49rjd8dVurTgJBAlKN/2qtMJA9FbYZsFtUG/p8eeFcRckZnwz18FIPQ
+	 V3dGN9ul21AoBnp157VD7e9CjhFePDu12OhWjC5+alcal/wWzLeHJSS49hUyyiiWCy
+	 4S6gf90gPRSKNK0RFmXBX5/XIWb3UsOgepTnZqRx6IQAyjNqS0YR5Sg8kI0djoRgDK
+	 UFolkgvHsf1Kw==
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Sean Rhodes <sean@starlabs.systems>
-Date: Thu, 9 Jul 2026 16:33:38 -0400
-X-Gm-Features: AUfX_myqQ-bWDD15nf3rkjgivCsr_EhsGHyEecNL3wwNc7IvLT4cfvzbzaUymKw
-Message-ID: <CABtds-1d8uYi5YbxgbL5MwZOXTUgBmeLQWiggVhBKtqct5VC-g@mail.gmail.com>
-Subject: Re: [PATCH] PM: hibernate: Allow hibernation opt-in when locked down
-To: rafael@kernel.org
-Cc: lenb@kernel.org, pavel@kernel.org, corbet@lwn.net, 
-	skhan@linuxfoundation.org, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, nicolas.bouchinet@oss.cyber.gouv.fr, xiujianfeng@huawei.com, 
-	keescook@chromium.org, linux-pm@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 1/9] security: add LSM blob and hooks for namespaces
+From: Christian Brauner <brauner@kernel.org>
+To: =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: Paul Moore <paul@paul-moore.com>, 
+ Christian Brauner <brauner@kernel.org>, 
+ =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+ "Serge E . Hallyn" <serge@hallyn.com>, 
+ Daniel Durning <danieldurning.work@gmail.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Justin Suess <utilityemal77@gmail.com>, 
+ Lennart Poettering <lennart@poettering.net>, 
+ Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+ Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
+ Shervin Oloumi <enlightened@google.com>, Tingmao Wang <m@maowtm.org>, 
+ kernel-team@cloudflare.com, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+In-Reply-To: <20260709.paitheut7Ief@digikod.net>
+References: <3d4fe99cd1665a1be0b36636aeeaf4ab@paul-moore.com>
+ <20260709.kaemaiTia6Li@digikod.net>
+ <CAHC9VhSVQ0MLwU=C90FmohAThwaQj-mfB7L03fvkB5A0-J2jCg@mail.gmail.com>
+ <20260709.paitheut7Ief@digikod.net>
+Date: Fri, 10 Jul 2026 08:55:21 +0200
+Message-Id: <20260710-sardinen-zinken-aerodynamik-8b09dafc60a2@brauner>
+X-Mailer: b4 0.16-dev-4217c
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1785; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=TGzD8JAox5ALaaLNKUrnk755zePD2TNWVP4GSkcX3xE=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQFTI/mv/a7iD9rQdRb9X69T7P0Fcp4fnQ1u+7pnfv43
+ L2Ta9qWdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEwkloXhN8uCSYbbVv39/3lR
+ qsDRngvxIbs4Sy5+Kl65J1mqoLZjQggjwx8l1g/TLJy23BbQL47iu+Rb93rqm4bIJMbYOcqbBHQ
+ imAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Please ignore this patch; the approach was wrong.
+On 2026-07-09 17:58 +0200, Mickaël Salaün wrote:
+> On Thu, Jul 09, 2026 at 09:03:58AM -0400, Paul Moore wrote:
+> > On Thu, Jul 9, 2026 at 5:12 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > On Wed, Jul 08, 2026 at 11:22:17PM -0400, Paul Moore wrote:
+> > > > On May 27, 2026 =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net> wrote:
+> > > > >
+> > > > > All namespace types now share the same ns_common infrastructure. Extend
+> > > > > this to include a security blob so LSMs can start managing namespaces
+> > > > > uniformly without having to add one-off hooks or security fields to
+> > > > > every individual namespace type.
+> > 
+> > ...
+> > 
+> > > > > @@ -91,7 +103,10 @@ int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_ope
+> > > > >
+> > > > >  void __ns_common_free(struct ns_common *ns)
+> > > > >  {
+> > > > > -   proc_free_inum(ns->inum);
+> > > > > +   security_namespace_free(ns);
+> > > > > +
+> > > > > +   if (ns->inum > MNT_NS_INO_SPECIAL_MAX)
+> > > > > +           proc_free_inum(ns->inum);
+> > > >
+> > > > The ns->inum check in the if-conditional above isn't quite the same as
+> > > > the is_anon_ns() check it replaces in free_mnt_ns().  You touch on this
+> > > > a bit in the changelog, but that really should be explained in the
+> > > > commit description.
+> > > >
+> > > > ... or honestly, should that change be a separate patch?
+> > >
+> > > I think it's fine, but it's Christian's patch, so I'll let him answer
+> > > and propose a new commit description.
+> > 
+> > I don't have a strong opinion on either approach, either a separate
+> > patch or doc update, but one of the two needs to happen.
+> 
+> Noted, I'll follow on this with Christian.
 
-I'll follow up with a v2.
+I think we should add this as a separate patch.
 
-On Thu, 9 Jul 2026 12:23:11 -0700, Sean Rhodes <sean@starlabs.systems> wrote:
-> Kernel lockdown disables hibernation because the resume image cannot be
-> verified before it is restored. On systems where external platform or
-> storage policy protects the hibernation image from offline modification,
-> users may still need hibernation while lockdown is active.
->
-> Add a hibernate=allow_locked_down command line option to make that opt-in
-> explicit. This only bypasses the LOCKDOWN_HIBERNATION gate; nohibernate,
-> secretmem and CXL memory restrictions still apply.
->
-> The kernel does not validate the external policy or authenticate the image
-> with this option.
->
-> Build-tested with Fedora config:
-> make O=../linux-lockdown-hibernate-build kernel/power/hibernate.o
->
-> Signed-off-by: Sean Rhodes <sean@starlabs.systems>
-> ---
-> Documentation/admin-guide/kernel-parameters.txt | 5 +++++
-> kernel/power/hibernate.c | 6 +++++-
-> 2 files changed, 10 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index b5493a7f8f22..0d20ad9c7d78 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -1967,6 +1967,11 @@ Kernel parameters
-> protect_image Turn on image protection during restoration
-> (that will set all pages holding image data
-> during restoration read-only).
-> + allow_locked_down
-> + Allow hibernation even when kernel lockdown would
-> + otherwise disable it. The kernel does not verify
-> + the hibernation image; only use this when external
-> + policy protects the image from offline modification.
->
-> hibernate.compressor= [HIBERNATION] Compression algorithm to be
-> used with hibernation.
-> diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
-> index d2479c69d71a..71232eece9a3 100644
-> --- a/kernel/power/hibernate.c
-> +++ b/kernel/power/hibernate.c
-> @@ -41,6 +41,7 @@
-> static int nocompress;
-> static int noresume;
-> static int nohibernate;
-> +static bool allow_locked_down_hibernation;
-> static int resume_wait;
-> static unsigned int resume_delay;
-> static char resume_file[256] = CONFIG_PM_STD_PARTITION;
-> @@ -109,7 +110,8 @@ bool hibernation_in_progress(void)
-> bool hibernation_available(void)
-> {
-> return nohibernate == 0 &&
-> - !security_locked_down(LOCKDOWN_HIBERNATION) &&
-> + (allow_locked_down_hibernation ||
-> + !security_locked_down(LOCKDOWN_HIBERNATION)) &&
-> !secretmem_active() && !cxl_mem_active();
-> }
->
-> @@ -1433,6 +1435,8 @@ static int __init hibernate_setup(char *str)
-> } else if (IS_ENABLED(CONFIG_STRICT_KERNEL_RWX)
-> && !strncmp(str, "protect_image", 13)) {
-> enable_restore_image_protection();
-> + } else if (!strncmp(str, "allow_locked_down", 17)) {
-> + allow_locked_down_hibernation = true;
-> }
-> return 1;
-> }
-> --
-> 2.53.0
