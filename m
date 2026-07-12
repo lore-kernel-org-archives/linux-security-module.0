@@ -1,62 +1,64 @@
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D73F2C0F6D
-	for <linux-security-module@vger.kernel.org>; Sun, 12 Jul 2026 01:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835942AD2C
+	for <linux-security-module@vger.kernel.org>; Sun, 12 Jul 2026 01:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783820719; cv=none; b=gnudVLq6iShJrcHDXrfLgZ6DfQFLsSY3KwOJksviRds07N0SgoHNQ5+LD1TyvE44EftHt3Cbz/SCMlSVvNfxxCKFoEvUL/BIoAg/MUHvQMpiKk8wiDDaM+VAuJ1ui8p7UCDiJrfvwFWgxt/ZqAgpvfLed9B14wxiYEcFXu3rpGE=
+	t=1783820721; cv=none; b=K6IIbFRRB4U8hNVKkfMLBsnlFJ7Kh7VAm3IoUBBzHpdiF9TDo62+NB+Zxj5XcaBQVAcsw6isB6ZGpZhRwnWu3wu29Jt4+QVuky81iYqXNjAw8vEFRrZBagXFPJSYlLU2Zu/NeDeKq+jDLTFc30wi7DZ+q4pG8pm4ND9wVyCVQkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783820719; c=relaxed/simple;
-	bh=SiXG3Vl6tdyaZKcYbxpybRYANDdC5zL6iyKWoX1ZfWM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lS3fZVa+3Mz0nSNxHXztFW2H1iSw1HLRNkN5fK9EhXbIlZ3h3FpbnxObFXVVfR3GHiKgplQ5REiNPoOMuMxYfU1zr7g5nxNmhijmDLZLKbtUzS9keRyJqYx2oGVaAtMOLWg2DE+4dB1WXLeu3aIMOgT/1zNsH0YUJrB3qn8QeCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X5aRUcCR; arc=none smtp.client-ip=209.85.222.174
+	s=arc-20240116; t=1783820721; c=relaxed/simple;
+	bh=8zs0bohkqz5AHgWLOAdTFJ4eY64BQy7weh3GYB3lFvs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=admfxjNQ9GDd3b93PNEtKmEiRgD0tN76p8tHBWuXHFQPk+EJBbKbj9Zc3zoZZNMXg/ZiWUsDCjwossKH9DUojAVqjo7o5dgHIS/s/+HdNOqw86+P5Sc/Dx4BnIm3GsAqFjPj/Psn0lA/Pi8fzN1TdVfVIQ9uLK31gKOV3/GEXtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U3H94r7v; arc=none smtp.client-ip=209.85.222.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X5aRUcCR"
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-92e50979c71so207917085a.3
-        for <linux-security-module@vger.kernel.org>; Sat, 11 Jul 2026 18:45:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U3H94r7v"
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-92f03daaa97so9035185a.2
+        for <linux-security-module@vger.kernel.org>; Sat, 11 Jul 2026 18:45:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783820717; x=1784425517; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=uW6fI+83ucGhBzlzhMQZhfNKo2rTn+HYkdwfVzxP5Vg=;
-        b=X5aRUcCRnLVnkImg0aEXL20czK6e+vtn6l9f57H0Gun8KWUxU68QOZeEpIWkMLPwcf
-         vbgpHXFBsjumJZaQ3tCaQDSHB1NIAYl6vLaXhPt1GCTVHJdNO7wsx7ip5qubZ5U8i3F4
-         hEylView1ohjgn3l8TKfTdZPtUpUWdpzdyosJ93W83v41p/P1zel6gdkVW46HB43u00j
-         Z0Ycq1c1yR/Zfb7SEWQppSbF3jPRT369zNjTHVrbhUOhW4vyVxM6vbJ8ZRjSQ2Cdl1xV
-         fm6jMG3RMgg7tQwvWOVoaBVVYxSfIEqAx5j+rntIxg+2E2t8tCHUygWm+wJuBHNqW0iH
-         OVdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783820717; x=1784425517;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1783820718; x=1784425518; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=uW6fI+83ucGhBzlzhMQZhfNKo2rTn+HYkdwfVzxP5Vg=;
-        b=rVDSdL4UFyeDrDgwugMS+g9piwIhVVzt6+tjER796IMcahUHjTgRrCWhquWNPCIfGZ
-         iUIn34U+DxR1ufM3rwNXus35/bX4v+btGCflxyCfE3AH9dJk85e/btDAhJgpIF4WmeWJ
-         Atlc7I2vZ1AQb8ACUvoL6LXvac3ggppH6IhbgopmV6EoDhCcbypei/J1Ae8Kayz4ei/d
-         4SHkoQ0QIY76bUNZBawwoCNjbQ5yLw+O9Mnp2KNgb8l6hNKaW7PvdrLIS61YmJRQA0My
-         fXuTw53efMPXUCyWrFO6ZS08yB90e/QIGq5EfScxo+IlhLsAKNE3842gM4yascUZ1NFC
-         Q8Nw==
-X-Forwarded-Encrypted: i=1; AHgh+RqXxZxvrBHp3hbFyMpijdcvkRJXROjRFaLjsgBl4hWs24y07CIbh0IAsfGgyKqoJ+JFsgUP0qfnD946ObbIuUuPo1ffpHc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbR7L1Ep8IrgYnr9GkcR7QLav61yGF+kje7bOnL3fk3qEUC243
-	TvBpacqzzl2M4a/X4MPvQ26UJz0YmNcyb+Y7poSvWZ5ApWiVWN2fg9L2
-X-Gm-Gg: AfdE7ckZpn3HJJSFeSEynuLKsRV5nPAVzYC1PkjoJcJUsm9Lg3Am4RmjyRr6s8dktim
-	prdLqSL/8oY/F6zfZkcCei3jWIlAyD3Obd52R31qxr/DmpFp5ObonFBeRRkmJokQG2aNAnBuSLF
-	FsMQ6FKzCFEM6xieScGy1VVrMIaq7GjqiQ9qzt7ymkoeRd/2frJ7yzjLTDGcyhRSUF+fI2+xDTy
-	iDXK697pJCxWYjCNsxVzwzimYusiRj+ledYEWisHXmyL3ZXpan+k43FBiI2s4sTdreUkblg9DPz
-	MODXROAdiCdlkaDDkvGUPXTRMtn5OTM4ET7WOPEZ1u7JyXZdcY/8i9iJygnbUms+A5W3cDA0stD
-	V+SbsEZvJYUsCNTCYP1MDpckV8N+1vNluq/I9AT7uu9CqvQz4p+6Vv35xTRcG2/kNYAjYpQ4hEl
-	G2nXBUylKK9Ri9luEbYbeH1Sr5LhreIGrZdHKKXpB7AEgHiGVHJhFkZQ1C6NqyboWcQfjMlGjFs
-	nDAgyYb5Q==
-X-Received: by 2002:a05:620a:2a07:b0:92e:70a4:2c5b with SMTP id af79cd13be357-92ef2d00d41mr475600985a.69.1783820717092;
-        Sat, 11 Jul 2026 18:45:17 -0700 (PDT)
+        bh=suF5ptZtpi7RCzW0/i+xzlbJ6znA4LVm3BIxn07HFo4=;
+        b=U3H94r7vnEmaKwLo1R4SbOPWfwT7K8s1QX79QW9iMTUGT33vLdoYWQS8iMT8uJPKmC
+         wI77md2l6uRBFI7+e2F4xEeBnffxSrdDWwe1neRp0MmG1/bJboBVXl7m+fO/8QJmEbIl
+         o9YtTqdL8/fnzJReH5xgV2IpEFPx72MFT4ROAs21VOUgJkFOadaVUxxs8IktSWcEepVE
+         +bMxJLYY7Sy0G/5sZW2iS1QlF7aEbav494PnoNVkgISiZQnKhSGkWN7t3SoaomQU3lgT
+         pHqJ31Nt1fm5H1B/SPclzNf8sZxRpTADI4AztcMi5GhpmjMG3dZEbmazso97S5A/qG1w
+         FNGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783820718; x=1784425518;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=suF5ptZtpi7RCzW0/i+xzlbJ6znA4LVm3BIxn07HFo4=;
+        b=kIAOIl8Jt3ABpnvottQfBuU/QIbs/vAF6ANTHTjCxjzyKOgJnnEDpAXNHCynEp/9+B
+         8YL85l29XB/XFB/Z5u0fFAis6ZpDK6LJ6Fx6S9QuAvsfVOj0vilalN7hq7S3FfcaLtfI
+         EqzVsyipo0K1tr74lEEdpiyqoj1E9qF662yBkMPqo0qFWdLHCJMIpqZaxHbwHyCaWZEb
+         imoxJT371wJZIQwrQhbtcAeBIXnDsnxS51spLAznGom2eN6kXdnMVtWBfz5vlN2gfLKh
+         v7n9g1G4XWDDtAcuEPigMJdlOes6NIiwu5EPAvHE5yJ2l9/aFexOuX66isaz+XRR0C92
+         83+w==
+X-Forwarded-Encrypted: i=1; AHgh+RrStLI7stGoJVsTLNiOxrdCLAbNNbJcbLvmKNE4k7zeWTQXdXTYc+GDy+32J+0+zakcr+O9wH/ziWuR7QXoh74/1GDtpdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO9n0ss2mYXw3gLrBO+yanrM86w0f+IYxnUh7ead5LX5MQfRA2
+	DIg2IDp8W7QJVOj0YsZyxoHXT8+bavXqDgyeqcodihaXRcPAZ68eGTRz
+X-Gm-Gg: AfdE7cl8UjCxVbaOT1fpjk/aOPRvvOe1wBbtn7c1invqvfyomp82rdxSGKaACuI6ops
+	eVmxw98oiOeAVohHOZafNiyzTwJ6TvaJIPADaQyWl6N0Mab5APFnpsOCC6ea00BJ7Xna6240HOW
+	Pfr1BonaWarfSurt5rJB2K/9MDG2ZOUo72HTfAEAoUmnTuRYEaQQPCp6Npbboj6ecrr/oFz6J/H
+	xM6DDO8R3rtHW+Qsos+Q8J4/yQ6mqTn2t1NRaPq+b1u0SgeAVmIuebQ5R5uIH9MhfHjGe5s1QVy
+	AzamfGel+8SEbZkOAPiA/qGxkqgJqbTpQJs7mURviw/HSK2js6tv78OJOu6tZqzKAIbgZoaTb3H
+	jUTLQF6YVaQU+okrhZFzzbqDCpw8Xhwg4ZBlSnIszw0HhBQ2kOj5knUi98HoqxSE3uv03N948zI
+	nArUu5A9jXboFTk8Vx7wWccagORXqFow/lkxsqdq2WE7sG/rLviZGNg5XGgAsKDRmr6eCjTtwaC
+	r5+LL0yEg==
+X-Received: by 2002:a05:620a:6ccd:b0:92b:980b:e0a9 with SMTP id af79cd13be357-92ef29d2cc4mr535620885a.0.1783820718342;
+        Sat, 11 Jul 2026 18:45:18 -0700 (PDT)
 Received: from server0 (c-68-48-65-54.hsd1.mi.comcast.net. [68.48.65.54])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-92ee5b492ebsm624902185a.9.2026.07.11.18.45.15
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-92ee5b492ebsm624902185a.9.2026.07.11.18.45.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Jul 2026 18:45:16 -0700 (PDT)
+        Sat, 11 Jul 2026 18:45:17 -0700 (PDT)
 From: Michael Bommarito <michael.bommarito@gmail.com>
 To: David Howells <dhowells@redhat.com>,
 	Jarkko Sakkinen <jarkko@kernel.org>
@@ -67,10 +69,12 @@ Cc: Paul Moore <paul@paul-moore.com>,
 	keyrings@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] keys: fix keyring assoc-array out-of-bounds read and index inconsistency
-Date: Sat, 11 Jul 2026 21:44:57 -0400
-Message-ID: <20260712014500.480410-1-michael.bommarito@gmail.com>
+Subject: [PATCH 1/3] keys: fix out-of-bounds read in keyring_get_key_chunk()
+Date: Sat, 11 Jul 2026 21:44:58 -0400
+Message-ID: <20260712014500.480410-2-michael.bommarito@gmail.com>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260712014500.480410-1-michael.bommarito@gmail.com>
+References: <20260712014500.480410-1-michael.bommarito@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -79,39 +83,67 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 
-keyring_get_key_chunk() advances the description read pointer by
-level * sizeof(long) past the inline prefix but only bounds-checks the
-prefix, so once the associative-array walk reaches a description-level
-chunk it reads past the kmemdup(desc, desc_len + 1) description
-allocation.  Reaching that depth needs two keys that collide through the
-hash, x, type and domain_tag chunks, which an unprivileged add_key(2)
-can arrange with a crafted pair of same-type keys.
+For description-level chunks keyring_get_key_chunk() advances the read
+pointer by level * sizeof(long) past the inline prefix but only
+bounds-checks the prefix, so a long enough key description is read past
+its kmemdup(desc, desc_len + 1) allocation.  Compute the full byte
+offset and bounds-check the description against it before reading.
 
-An unprivileged user can thus read up to sizeof(long) bytes past a
-keyring key's description; on kernels built without init-on-alloc the
-same collision, read back with KEYCTL_READ, returns uninitialized kernel
-slab.
+The walk only reaches a description-level chunk when two keys collide
+through the hash, x, type and domain_tag chunks, so this is reached from
+an unprivileged add_key(2) with a crafted pair of same-type keys whose
+index hashes collide; KASAN reports a slab-out-of-bounds read.
 
-Patch 1 is the memory-safety fix and stands alone.  Patches 2 and 3 fix
-two index-key consistency bugs that let the crafted keys collide into a
-single malformed node in the first place, which is what enables the
-KEYCTL_READ disclosure.
+Fixes: f771fde82051 ("keys: Simplify key description management")
+Assisted-by: Claude:claude-opus-4-8
+Signed-off-by: Michael Bommarito <michael.bommarito@gmail.com>
+---
+ security/keys/keyring.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-The KASAN reproduction is on patch 1. Trigger is available off-list.
+KASAN, x86_64: add_key(2) of a crafted hash-colliding "user"-key pair
+(~63-byte descriptions) reports
 
-Michael Bommarito (3):
-  keys: fix out-of-bounds read in keyring_get_key_chunk()
-  keys: make keyring key-chunk byte order agree with
-    keyring_diff_objects()
-  assoc_array: trim the final shortcut word when skip_to_level is
-    chunk-aligned
+  BUG: KASAN: slab-out-of-bounds in keyring_get_key_chunk
+  keyring_get_key_chunk <- assoc_array_insert <- __key_link_begin
+    <- __do_sys_add_key
 
- lib/assoc_array.c       |  2 +-
- security/keys/keyring.c | 15 ++++++++-------
- 2 files changed, 9 insertions(+), 8 deletions(-)
+reading one byte past the description allocation; the same trigger is
+KASAN-clean with this patch.  On a kernel built without init-on-alloc,
+reading the colliding keyring back with KEYCTL_READ returns
+uninitialized slab until patches 2 and 3 are applied too.  Trigger
+available off-list.
 
-
-base-commit: 2c7c88a412aa6d09cd04b414211b4ef8553b5309
---
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index 7a2ee0ded7c93..1739373172ad5 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -270,7 +270,7 @@ static unsigned long keyring_get_key_chunk(const void *data, int level)
+ 	const struct keyring_index_key *index_key = data;
+ 	unsigned long chunk = 0;
+ 	const u8 *d;
+-	int desc_len = index_key->desc_len, n = sizeof(chunk);
++	int desc_len = index_key->desc_len, n = sizeof(chunk), offset;
+ 
+ 	level /= ASSOC_ARRAY_KEY_CHUNK_SIZE;
+ 	switch (level) {
+@@ -284,12 +284,12 @@ static unsigned long keyring_get_key_chunk(const void *data, int level)
+ 		return (unsigned long)index_key->domain_tag;
+ 	default:
+ 		level -= 4;
+-		if (desc_len <= sizeof(index_key->desc))
++		offset = sizeof(index_key->desc) + level * sizeof(long);
++		if (desc_len <= offset)
+ 			return 0;
+ 
+-		d = index_key->description + sizeof(index_key->desc);
+-		d += level * sizeof(long);
+-		desc_len -= sizeof(index_key->desc);
++		d = index_key->description + offset;
++		desc_len -= offset;
+ 		if (desc_len > n)
+ 			desc_len = n;
+ 		do {
+-- 
 2.53.0
 
