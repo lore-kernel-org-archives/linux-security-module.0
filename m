@@ -1,119 +1,153 @@
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1402D9ED1
-	for <linux-security-module@vger.kernel.org>; Sun, 12 Jul 2026 01:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5CA3D994
+	for <linux-security-module@vger.kernel.org>; Sun, 12 Jul 2026 10:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783820726; cv=none; b=O3BjvkIM+R6MlZ+x0ig0n892EmKeiLtcxEIWAsBY+IaQk3HdIsJU9gTmx01LRa/i0yyDRbzmUN0S3j+5SagD/9vhR560Kzvs6dYeh4Orb9zSFJjFOKTnqsZU6cQiMNGjGDeeLvcDthQ+jPPYLiOkvf/ga8CtDYFPLsmIN1hka5E=
+	t=1783851494; cv=none; b=YDqJGhNNga01zSiPQsRKpTNWA6QR6ZmYHuTUrkqYoOrjik3iWlyJf/Dw6MA9vqnXxU9OCrx16rLwcBDjEOjxeOl1CmUABwKl2ZKodcSvvNJyr5JRdNZVil/1qpdcoOci7QDrPQrz/XwvO/PHrcPCYeAVtHO0cdU/x0w+4BeZb5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783820726; c=relaxed/simple;
-	bh=sFy8qILMfAGoiLxPSwx13K37dt1NP2wewudCUNeEkv0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SOcGs+J+Nb8iwvKS1SzJfAy5LTUPKj3srQhTMWDjPx791OFjj6A4G/X5OTuPdWwa+xs0n0oIr8zpY8X6hn2nuuOY7xu+NgvO4K0rvWZbv0ubO3/y12P4A6haS4+Vfp1seRL9nvg//NqDXFkuQxWWYP+EkqeY0Y0h+JLNXj5/z0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j6eyEdDh; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j6eyEdDh"
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-92e6391b114so143721785a.3
-        for <linux-security-module@vger.kernel.org>; Sat, 11 Jul 2026 18:45:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783820721; x=1784425521; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=11Jd0nBMDXDQ7WkO7ZlkesK7aFonenwrJQKgmL3sdEM=;
-        b=j6eyEdDhrRiQENrFujo0j2+rdG4Zn5kBMFrdAyZ53JJUYpa98sKBzSHSUj1AMnMNlW
-         /8rJVoc1tURUkJBHWQSVxmJxnbiFGuRAJuCDWOIRHO2OXuN2zZwSEo2/O1wqOizfa8f1
-         +9Zc+a/NgYroMdw4I1BaUJR5tohhPvlAnhX8BSKl5+sBcg2dgo2yv1hB4jP6MtVKna7N
-         psyNBmBBq8IX9kRuYkFaU6n8VzfByyut704FnphHCT1YKIUWke2ZLNZBKhUNFqnOEj9/
-         wa+2FDJ+JqrfH0Ks2yJVMwOvKbA+5T/lbo+BQc2wOf4Rhka4BJC0kAED/DwsPHFAQJIQ
-         ShRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783820721; x=1784425521;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=11Jd0nBMDXDQ7WkO7ZlkesK7aFonenwrJQKgmL3sdEM=;
-        b=Smzw84jbq+8atmuiUHTqmf16V9KP3wNQV9mwL5Jgvuh7oQkIjB6nxIjUVKIC2+gpTF
-         fdT1a2hBC8ZYPZXsaa2gO3/C2ISs6iDeQZs6ObP8CGsc4TxLhPvFCeL2Zma5Hpa0ootn
-         3B6R5aec5fanVqpuDLES+3qrazXGL0O8ARwxowlKyZm4AmPzUrAiK5zNA0pIX7bv67ej
-         WCktzXHjXQfNHpFOlTrIAu2thWht0CJJd3gRaUdjRInhbjDgLyO6b6crM/bX5GAJECbE
-         lm2OOJNftJVtZqPVZFpLppUf1wa+0F53UtPD0eA6BsJJjeVsVJdvO0wWkbCMNIZRbExZ
-         sizQ==
-X-Forwarded-Encrypted: i=1; AHgh+RoWS8q81iJuYvqZXsoBYk5RByBba39H7PJnZ1XQVc9rY/W86hK8zELZOy5ra0wr/tOPfzWQUZYiHorE3k4sa0ZFtcmmwO0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye4Sj2BVbvmtE9xV51ghEJOaN2+VdJLOBlRmTWW1NSmM0FgHk5
-	IhgLKuUiHJgjThUFouvclWryo5os+gQWX40HZKFDhodXqe0uT0H1Wc11
-X-Gm-Gg: AfdE7cmRBtcwUIO28zVbjyqL+GMGrTMb1qxMFM0OGu+6cZZPxRUFbz6rFIV0Go/JmnR
-	5IQGun5a3TBJd1h7FVYqaVVPT+NNW1CaKYGjdqaq+cXDiwQ3ev9HGfcoFYxlG4/0xfzcv5+TbYL
-	L5k2vLUQ52nvHU+QbN+KdIE+1gR/eWMr9MXetpyRfnbcrWc2814QNuAHhcITOpAACWc0qYezC32
-	uq3WYa9pomf/ArsO0M70KClL4rd5oD1D6QcI5uTqgySbXoLdxsOPmoi8esTDWCZg9TBlDvS4TTq
-	YOFzGjDvjGKxE2rXIDciQp4c5ZxUhsRzCiHnfH28/IId0wDV25UN51u8GrlMmbqqg007vo5FUFq
-	OOMwPukoNYBrnFN3QFYfgeT3jgf4D8uzjZV3HLl49shSPoCGOb836xZn/otvJ1/KUot2KXp7w17
-	bUOaB+a4wsxiNpKxjHrUePYvCn4VCK/HDJ4sR5NZbP4e3CEUOFfa62Pz157fXlMuXHy9b7Jvzw7
-	2ejWa14Xg==
-X-Received: by 2002:a05:620a:404b:b0:92b:6805:9181 with SMTP id af79cd13be357-92ef2c1b30cmr461211285a.73.1783820721153;
-        Sat, 11 Jul 2026 18:45:21 -0700 (PDT)
-Received: from server0 (c-68-48-65-54.hsd1.mi.comcast.net. [68.48.65.54])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-92ee5b492ebsm624902185a.9.2026.07.11.18.45.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Jul 2026 18:45:20 -0700 (PDT)
-From: Michael Bommarito <michael.bommarito@gmail.com>
-To: David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] assoc_array: trim the final shortcut word when skip_to_level is chunk-aligned
-Date: Sat, 11 Jul 2026 21:45:00 -0400
-Message-ID: <20260712014500.480410-4-michael.bommarito@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260712014500.480410-1-michael.bommarito@gmail.com>
-References: <20260712014500.480410-1-michael.bommarito@gmail.com>
+	s=arc-20240116; t=1783851494; c=relaxed/simple;
+	bh=0L4lJQr7AaDt7LGTljafpRpQ9zHO2cbgpwCbYEpqpTw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=li0m8pIFI6m9s6PoQ7QHNV5T52ISRKka3ND0SceMEUBHCbnSPNGgYry+Qd4GwHBmtlAikJV4b79Uiin7sNWyhVEYl2+fgPQmlVaWsT4jKIjM8oXr6ArFKOXRoJSnHt1nQwvdFtHe/KUinQO+shMBwiMlkNms6HFC58S2n3FaqYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 66CAHxhE015325;
+	Sun, 12 Jul 2026 19:17:59 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072072000.v4.enabler.ne.jp [106.72.72.0])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 66CAHxbB015321
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sun, 12 Jul 2026 19:17:59 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <df2830d0-5ae8-4bb9-b11c-6051fc3784ea@I-love.SAKURA.ne.jp>
+Date: Sun, 12 Jul 2026 19:17:59 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH] apparmor: replace decompress_zstd() prototype with its entity
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>,
+        John Johansen <john.johansen@canonical.com>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>
+References: <83eb9325-9688-4a6c-9727-e137df773694@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+In-Reply-To: <83eb9325-9688-4a6c-9727-e137df773694@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav203.rs.sakura.ne.jp
 
-assoc_array_walk() masks off the bits past shortcut->skip_to_level in
-the final word of a shortcut before testing it, gated on
-round_up(sc_level, chunk_size) > skip_to_level.  Once sc_level is
-word-aligned (every word after the first) round_up() is a no-op and the
-guard never fires for the word that contains skip_to_level, so its stale
-high bits leak into the dissimilarity word and can steer the walk down
-the wrong descendant.
+Fix "undefined symbol: decompress_zstd" error caused by decompress_zstd()
+being guarded by CONFIG_SECURITY_APPARMOR_EXPORT_BINARY=y.
 
-Test sc_level + ASSOC_ARRAY_KEY_CHUNK_SIZE > skip_to_level directly; an
-exact-multiple skip_to_level ends on the boundary and stays untrimmed.
-
-Fixes: 3cb989501c26 ("Add a generic associative array implementation.")
-Assisted-by: Claude:claude-opus-4-8
-Signed-off-by: Michael Bommarito <michael.bommarito@gmail.com>
+Reported-by: syzbot+1f14a35d0c73d31555e4@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=1f14a35d0c73d31555e4
+Fixes: 17b5758bf35c ("apparmor: Initial support for compressed policies")
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 ---
- lib/assoc_array.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/apparmor/apparmorfs.c | 72 +++++++++++++++++-----------------
+ 1 file changed, 36 insertions(+), 36 deletions(-)
 
-diff --git a/lib/assoc_array.c b/lib/assoc_array.c
-index bcc6e0a013eb8..1de2c337f8fcf 100644
---- a/lib/assoc_array.c
-+++ b/lib/assoc_array.c
-@@ -255,7 +255,7 @@ assoc_array_walk(const struct assoc_array *array,
- 		sc_segments = shortcut->index_key[sc_level >> ASSOC_ARRAY_KEY_CHUNK_SHIFT];
- 		dissimilarity = segments ^ sc_segments;
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index 2ae9ab94a5a91..152c7967ff1ba 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -483,7 +483,42 @@ static struct aa_loaddata *aa_simple_write_to_buffer(const char __user *userbuf,
  
--		if (round_up(sc_level, ASSOC_ARRAY_KEY_CHUNK_SIZE) > shortcut->skip_to_level) {
-+		if (sc_level + ASSOC_ARRAY_KEY_CHUNK_SIZE > shortcut->skip_to_level) {
- 			/* Trim segments that are beyond the shortcut */
- 			int shift = shortcut->skip_to_level & ASSOC_ARRAY_KEY_CHUNK_MASK;
- 			dissimilarity &= ~(ULONG_MAX << shift);
+ 	return data;
+ }
+-static int decompress_zstd(char *src, size_t slen, char *dst, size_t dlen);
++
++static int decompress_zstd(char *src, size_t slen, char *dst, size_t dlen)
++{
++	if (slen < dlen) {
++		const size_t wksp_len = zstd_dctx_workspace_bound();
++		zstd_dctx *ctx;
++		void *wksp;
++		size_t out_len;
++		int ret = 0;
++
++		wksp = kvzalloc(wksp_len, GFP_KERNEL);
++		if (!wksp) {
++			ret = -ENOMEM;
++			goto cleanup;
++		}
++		ctx = zstd_init_dctx(wksp, wksp_len);
++		if (ctx == NULL) {
++			ret = -ENOMEM;
++			goto cleanup;
++		}
++		out_len = zstd_decompress_dctx(ctx, dst, dlen, src, slen);
++		if (zstd_is_error(out_len)) {
++			ret = -EINVAL;
++			goto cleanup;
++		}
++cleanup:
++		kvfree(wksp);
++		return ret;
++	}
++
++	if (dlen < slen)
++		return -EINVAL;
++	memcpy(dst, src, slen);
++	return 0;
++}
++
+ /**
+  * aa_get_data_from_compressed - common routine for getting compressed policy
+  * from user and get both compressed and uncompressed version.
+@@ -1517,41 +1552,6 @@ SEQ_RAWDATA_FOPS(revision);
+ SEQ_RAWDATA_FOPS(hash);
+ SEQ_RAWDATA_FOPS(compressed_size);
+ 
+-static int decompress_zstd(char *src, size_t slen, char *dst, size_t dlen)
+-{
+-	if (slen < dlen) {
+-		const size_t wksp_len = zstd_dctx_workspace_bound();
+-		zstd_dctx *ctx;
+-		void *wksp;
+-		size_t out_len;
+-		int ret = 0;
+-
+-		wksp = kvzalloc(wksp_len, GFP_KERNEL);
+-		if (!wksp) {
+-			ret = -ENOMEM;
+-			goto cleanup;
+-		}
+-		ctx = zstd_init_dctx(wksp, wksp_len);
+-		if (ctx == NULL) {
+-			ret = -ENOMEM;
+-			goto cleanup;
+-		}
+-		out_len = zstd_decompress_dctx(ctx, dst, dlen, src, slen);
+-		if (zstd_is_error(out_len)) {
+-			ret = -EINVAL;
+-			goto cleanup;
+-		}
+-cleanup:
+-		kvfree(wksp);
+-		return ret;
+-	}
+-
+-	if (dlen < slen)
+-		return -EINVAL;
+-	memcpy(dst, src, slen);
+-	return 0;
+-}
+-
+ static ssize_t rawdata_read(struct file *file, char __user *buf, size_t size,
+ 			    loff_t *ppos)
+ {
 -- 
-2.53.0
+2.52.0
+
 
