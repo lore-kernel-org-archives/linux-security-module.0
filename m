@@ -1,101 +1,158 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC8343DA53;
-	Mon, 13 Jul 2026 14:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CDE3CFF44
+	for <linux-security-module@vger.kernel.org>; Mon, 13 Jul 2026 14:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783951371; cv=none; b=ja41GLR7PZzVLQY/pz1aMGHJSIDNZRD7cCMY4zW2hb87wrKh18CZi3vozMejSKPY1DEu1jr7NQ1MZ17QjVYF8IQVf9v+1HcKBXArisaeGyj6XmDJgid4HLHuuYjpEYCVoHouTpX4ILO3boc4giHIsPMVCWrotqDopBEHlg1B0mc=
+	t=1783951444; cv=none; b=eSe/l0z0aMcFS8BWetDzLStxCdk3agJ4yO9QjPzhhtDqSSnVhN1t5AJ40doF/ORmFQ1P04B37Q3PBH2UzGUzZyWSOF1uVpwbSU28bA6woSohbvOiDkcjFuwl7M1On5UJPGg2/VoSEfb8PLrGr6aqLcFAtZUGWKiW9m2+ZDRjNZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783951371; c=relaxed/simple;
-	bh=XjolIzzY2Tc1xblemFkryo5qNEr23sD2CggZqCpEuZs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lMj1HE3AiZP6iKFLNZeYtT90vK2N+o7gatEAqtqxsjigOxzoWTn2RTCRDBOrHJuA8D8hDzHfaPfNaNEW28o7ZAOxp1G6ibAp4b7VJQyvb38By1pdc9l1gZJb/PV3ghMpkgcnmUld0+g4mHcMSEoszOP6I39zE/FOY0y5DRlba78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UJCjIbUj; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783951444; c=relaxed/simple;
+	bh=CxF2moK+A61fQkhbS3WbbJ+a+YTPNLHUXCeIvc33z/g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NOo5A/RFYWk6dWhvMIaYJLh+RC1fdzvkJU+frDIX1qAN5dSUlazxvdTh4+APYU7KC7cWrrDGik1pGDRJsJuRBZZn5p8twPO/TIHto1tbQJqvfzNdBcSHExiK8Nc+mWkx1cCi5bXlOllc2u7gk4CJSYFXZOEpI5M4RwZuXO0y3sQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=T8UF+O3K; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oJ1G8QTi; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YB/8fcVT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ssZMiUNO; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJCjIbUj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCD491F00A3D;
-	Mon, 13 Jul 2026 14:02:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783951370;
-	bh=XjolIzzY2Tc1xblemFkryo5qNEr23sD2CggZqCpEuZs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=UJCjIbUjk7esa+IkF3hYs9ANTXztF0AUJrCn++Wwd7wKVV1uCxIE1Mi979xhL5hr6
-	 uVOXOI3zXY7VweMm/t0NaX6JGnpyb4objY5O/JqRSn2AWwhU5xbqc8epCIGL6gmnJR
-	 sGr2LhWtxZUlGQ3aQBlGbp8BUQ0avkC5VLPfvuriLNBQv9hmH5h2uEVvHWl/+kT44F
-	 X6mTGGp4WxYimnyf+gpem6CDu3df266cGLEqOFqyXjzWiGyqiNEZ0NI2TFJj13Xg/j
-	 9zEYO7Ei23Nzc2El0x0EssCR9uAB9zpkpxrqLxxil7kmKtsN9LSaQnwNnnUdVdGTf6
-	 0Ny1Jn0DgE2Pg==
-Date: Mon, 13 Jul 2026 15:02:44 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Gary Guo <gary@garyguo.net>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, linux-hardening@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3] hardening: Default randstruct off with rust for
- better allmodconfig support
-Message-ID: <1a9148a3-da1b-4386-97d3-62c55c3e5d96@sirena.org.uk>
-References: <20260702-rust-reverse-randstruct-dep-v3-1-e4e09c50014e@kernel.org>
- <7cdb2407-924c-44a1-8c68-917efadd4e92@sirena.org.uk>
- <DJXHTB615I2J.POTXT6L2LM5K@garyguo.net>
- <CANiq72kNYRBW88VwYyDX8_2b1L7dLv_gDwgE5SruMELR7KPmig@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="T8UF+O3K";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oJ1G8QTi";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YB/8fcVT";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ssZMiUNO"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6CCB777909;
+	Mon, 13 Jul 2026 14:04:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1783951441; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=62lklOTcojfYV6TXEmKMEq8kH2N2t+SFSLC6IHkycTE=;
+	b=T8UF+O3KxjjjbGiJ+9v1QYn+HFOo3VghJiE1gRlD3tiMfuleDJ0FQgDaAEcdjX+8Q6THql
+	kXK2IQt0e6gvyzx8bhaTLUsFXz692VVFhovT0Rn4L0dmBh4ABB4WjEilA+xBTLYsrxYEBc
+	AXjQb8YDe2klVXuwkpkcJ9NLfLIUMio=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1783951441;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=62lklOTcojfYV6TXEmKMEq8kH2N2t+SFSLC6IHkycTE=;
+	b=oJ1G8QTi+QAWY5v8EdiY64beLONUL+BeH6njUVhSH1+IUOCsDe69SW4gNbnfJS2Xfp6JJ1
+	8k4Yjv0nUnMyI7Ag==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="YB/8fcVT";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ssZMiUNO
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1783951440; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=62lklOTcojfYV6TXEmKMEq8kH2N2t+SFSLC6IHkycTE=;
+	b=YB/8fcVT0jn9EeLJ6tgssh4D/muXTLuBB72/FsdwfMkDu1x5ZayvnxXH56DIDxQTGsbtUn
+	6bTFrcR7DetMLgNYGayOZYAA35DRQchfBHJs9E3zP1dAXa1exCaQVCQ76ibLXIjSlHdBTu
+	pgzInPuYEdjVxD9Vnzk0hbtRfqVAbT4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1783951440;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=62lklOTcojfYV6TXEmKMEq8kH2N2t+SFSLC6IHkycTE=;
+	b=ssZMiUNOQ0W4R/OUiXUWzFVNee9MOghtE12gDInBb9HZvFjrSFBCQ1ZYSUB70s3NPPjHoo
+	oyJvZJoLWPq/MQDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E899A779AE;
+	Mon, 13 Jul 2026 14:03:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ChAmNk/wVGoaFAAAD6G6ig
+	(envelope-from <fmancera@suse.de>); Mon, 13 Jul 2026 14:03:59 +0000
+Message-ID: <1647cdf5-4602-4088-a543-d84daec7d788@suse.de>
+Date: Mon, 13 Jul 2026 16:03:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="TEuJpuswX2OaX08Z"
-Content-Disposition: inline
-In-Reply-To: <CANiq72kNYRBW88VwYyDX8_2b1L7dLv_gDwgE5SruMELR7KPmig@mail.gmail.com>
-X-Cookie: Courage is grace under pressure.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/13 RFC net-next] net: cipso: guard IPv4 packet
+ manipulation functions
+To: Paul Moore <paul@paul-moore.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, dsahern@kernel.org, horms@kernel.org,
+ idosch@nvidia.com, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260712013941.4570-1-fmancera@suse.de>
+ <20260712013941.4570-12-fmancera@suse.de>
+ <CAHC9VhTA8Y+BLOcLcv6X9u3nRU=X7NQz-u4kZuVNL-Yz1mWKxw@mail.gmail.com>
+Content-Language: en-US
+From: Fernando Fernandez Mancera <fmancera@suse.de>
+In-Reply-To: <CAHC9VhTA8Y+BLOcLcv6X9u3nRU=X7NQz-u4kZuVNL-Yz1mWKxw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 6CCB777909
+X-Spam-Flag: NO
+X-Spam-Score: -4.51
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
+On 7/12/26 6:22 PM, Paul Moore wrote:
+> On Sat, Jul 11, 2026 at 9:41 PM Fernando Fernandez Mancera
+> <fmancera@suse.de> wrote:
+>>
+>> To enable compiling the network stack without IPv4, the CIPSO functions
+>> that manipulate IPv4 options and generate ICMP errors must be bypassed.
+>>
+>> Ideally, CIPSO should not be compiled when IPv4 is disabled but
+>> currently it is too integrated within netlabel, so let's just bypassed
+>> the relevant functions.
+>>
+>> Signed-off-by: Fernando Fernandez Mancera <fmancera@suse.de>
+>> ---
+>>   net/ipv4/cipso_ipv4.c | 10 ++++++++++
+>>   1 file changed, 10 insertions(+)
+> 
+> I think I would prefer to make CONFIG_NETLABEL dependent on
+> CONFIG_IPV4 at this point in time.  This will keep the code cleaner
+> and allow time to do the proper work of wrapping the CIPSO code with
+> CONFIG_CIPSO (or similar) and making that dependent on CONFIG_IPV4.
+> 
 
---TEuJpuswX2OaX08Z
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fair, that works for me too. I am gonna drop this on the v1.
 
-On Mon, Jul 13, 2026 at 03:58:11PM +0200, Miguel Ojeda wrote:
-> On Mon, Jul 13, 2026 at 3:55=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
-
-> > I thought Miguel wants to add support to properly support RANDSTRUCT wi=
-th Clang?
-
-It would be great to have randstruct support for clang and Rust but we
-do not currently have that support.
-
-> I am happy either way, i.e. whatever the hardening folks prefer, but
-> regardless of what we do, I think recovering the linux-next coverage
-> is a high priority at the moment.
-
-Yeah, when randstruct support is added we can remove all the constraints
-around it and clang/Rust - this patch is about the making the current
-situation work more usefully, it's not intended to be a final state.
-
---TEuJpuswX2OaX08Z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpU8AMACgkQJNaLcl1U
-h9AEnAf8C08rWR2J+LlDhnvdUsW8FfmIZxPHJOOw7aq8rbp79koBHEF7MWL/Rqx0
-dFQr2Hq57OiL4sxSAAs7/xmBWMIOyxg5mRGvTWxrLHThsH8nYy5qALuVzYirwUEi
-YxoByDhn6CNn3gMUyKn0TJz6lcx/6P/KYwlnTQvMab4rlRv/0LkHIJSwzVbh/goS
-DOoxgEQGHUgEw+ukYjhbiYzaYN0RrpCKf5TCJbCpIdNJh+oZeiFwSVqR463XR9Be
-T/m83k1xVt19J+NzKQj35nwLvtBAPHX6cZQMA8s6F7Zl/SRGitPjMMyBiYtLh+8i
-WLZSOowFjWkFfnEPlMM5oeEPzR4fiA==
-=XjjB
------END PGP SIGNATURE-----
-
---TEuJpuswX2OaX08Z--
+Thank you!
+Fernando.
