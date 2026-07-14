@@ -1,137 +1,292 @@
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5DB38BF72
-	for <linux-security-module@vger.kernel.org>; Tue, 14 Jul 2026 11:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB753A453A
+	for <linux-security-module@vger.kernel.org>; Tue, 14 Jul 2026 15:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784030101; cv=none; b=E8nkzQxUwwOrv+ssrlY9ldfB4wKr5oleiVCoFqYl/jb0iMgutOqAE/VvoX4uVKGp1Is/Gn+3f3KTAz/OHsJFSIkyTD6kf2GIBFzs9xrOel8ct55VempLaoUYQaI+60THVCToOAxlb3eNDUP0su2QrUS2zFs0MrsIpFPcqzeHN1Y=
+	t=1784043547; cv=none; b=W/U43eGtsj/UiUzvJNumMCRHUIRbt9PZiTFkgR9Rst6ZTU3ptSwPaIzc+Y/JkVVMnjee9Y05PQCdehMlzh/Sb/eNpxWbAv0ZlPQhW59CDxAtLRMjmSE+B2OgOM4qz912QsJnd6f8k80D+s4wWapEh6mnYxOtwxRRz8c91y+mInw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784030101; c=relaxed/simple;
-	bh=UHv1T3fOghMVYFifd053Xj7nHxiOMCVDbE/j9zIifYE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SRX4h/jAqJrSLwQ2pj/n/LHQDa/AQJZvEmCfNvRlFAItgZNfumegMr4v1WYypBEhRwnnYaoVNf2vsJrrY0vf7cx09WOUljpOoaDM4rtPyGuNIG5IMQrm2glQH0Omz8uXg8C3cdVUz1QXddPXhVee8V5APwiZGnt3EKVuP6bwRgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g+KwXu9m; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784043547; c=relaxed/simple;
+	bh=Hn3a99V0GshSYRRajT1LdTigZCY403M9C6bDrN6U6Xg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aJDH7dCB3A6ACMN8Um/d9+zdDQXo7G3S+jM5Sh4yjlecyrJgvyJV+fd9KywqAijG4JhNqztgBqvySL1lPUIwf3qHfa8xMpszd4ZnuyEktW7jpiqjwzd+yPfLfi8rgZMQ31/ch/XGBM7OXWHowiUn7fprnI6OGbpCvr1G30X0HSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b/Iz6iR1; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g+KwXu9m"
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-902e4af2d9dso7445346d6.0
-        for <linux-security-module@vger.kernel.org>; Tue, 14 Jul 2026 04:54:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b/Iz6iR1"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-493b8d92a4eso68225e9.1
+        for <linux-security-module@vger.kernel.org>; Tue, 14 Jul 2026 08:39:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784030098; x=1784634898; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Vn9mpDo3PjDMuGJGUk3sc9YpQTuMN47dq6Ned6oNhVo=;
-        b=g+KwXu9mLrVue1LvNa/U7KpkwXgik8sQ1yu7xyyUWS5baaMo3+v2qUn2G9L6i4Uehf
-         MMdfnMn7LcDzDONhRoIytX0RMfuyimN1lQ7VA0NT0myW3iViRACxTRCWMSx4RwCBDcGf
-         QAeS9PHT5d6fD79sqzvvyZjxuD9MyXwRoyW84RCpGrVrlJwbriWowBzWt8bDUW79cihS
-         e27uHbZ/2/G/6QoTfxCptX089r3sHiWDmazUpTgbCuhqDcxMwmxaEGg6AjXNbtq3M8Gq
-         V1flFNnqgxZm3ihrFbbYTIyTQiHVtW25sdphOudXUnMrBJTEx3U2zw+5OGU/9Pi+ghIX
-         C9QA==
+        d=google.com; s=20251104; t=1784043543; x=1784648343; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=J01qK8ph2yz3FUSd+RgsaIaOKQH5OUzQg7HSEfuNJTU=;
+        b=b/Iz6iR1FHq27+s0VO9vfu34mL4Xl4LosQVVLFouzfZEtSEi8LB1JKtIguBdLsLaAT
+         kKixynXNbtaFE02UxitLYDmp7o9mmU3tfVcesZnGNpR01c2En6S/jgi4TFbITb5zuSio
+         mUtlN3g08LZSZm0TeR3R/3YuaCWT+U7B/IHTtWbMwHOQGiRNICSb172eg8hYNZ7QIS1T
+         N8d+pcg5vQev+d37yp3bFiOhD1fa7tNqvmrFWo+ixSWEik448k9eJtazTQ5oOhmeIU0A
+         G2iqYXFQyYTsjUONO57oxDDs8ZKjiPSlydad/u1705SZvsOoJLGErE1dzWf8x2k1lokV
+         r/uQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784030098; x=1784634898;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Vn9mpDo3PjDMuGJGUk3sc9YpQTuMN47dq6Ned6oNhVo=;
-        b=oN0KHWNnwneDK/hD7qhxO5RTwIhcSN/rOp2SD4edKgjFfpRXrNCZoDce7KVs+ZA4Cu
-         2nFwg1NqZIxq+eVfWw4vc42j2x9gt3zpfFQPlv+c9U67sRlkgaXXJ5/aCeqExitanWoI
-         y2EznUNvoZB2hm75fU7fgAtUVXYEVQn58thdMLXCpQ1/f/DPIzVChd/FC7sYBZkySn78
-         EqPmyO5eyipQWBN8V5GcDpaM4e1xY1O5XyB+w21PqNzlbYlpKF0+H4jMu5lBKIe9EgY3
-         3JBTFS70jTQ/bsJOTlWlB2OgPSy1n60XyS3XYTnW3ckZLAHsO6PzD5Qn/mb3kLulZT9L
-         mFIQ==
-X-Forwarded-Encrypted: i=1; AHgh+RptUw8z3b+c1EA75MIVqUhTp+xWjIdBJdgr54FMBXdU74rnA5vOje93vp9xL/ouEU4/4gk6b/XlGnSi0JXo6Q5hUffOslE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVIVGpLBlt/G9i6Dc5YLYxA98H2KPvJlk8IVVs8HNvmybqKrvA
-	NxkTObpDtsQEo74Q0fZ/JZvUVk2SGrT6dnIw5QpzQhBSRoykqbm5hP5m
-X-Gm-Gg: AfdE7cmwuo6O8vNdfKPTD5mcDBBpJcGZv2Jveqsff5IK/is5CGMPG7BW6NbYeux98hh
-	Yl26wfmODUqWvcT8a6w3YNddUdxrTrDy0WUQMX9CCIo/TnEI2L0cBYg0doRt0WPol+Ms+mPoanV
-	lj6tRfRLrhc9HpyQ1vZ6ah+dPPmW2R/3OF1LYd6yNc1dyiSZxheukP2rwwc5Mv4W4BMrlkXJTz1
-	jPW6bp2aHHT1XNR2DVw6TVNZVFFVZehvcNBy66yEKgGEyLLEf5Rn7hXXKHP5YVGq0B2iVt3064D
-	PMGZC8jTYhVGykyhAe7PE5aUUelj9PjuK1MMps5TDEqZHTkK1K/alvJwPsEsgdhqIrIcOB9svIY
-	H3ni/HrOdW0sPUjdhtb7Ml4HTbXm2QBh+f/azxHWFY0wQcTHMc6IZ7L8+p70ilLI0AHNa6fD+fG
-	tT8YsqojzBgET4i5hjUromdk9tS88b/x4I68QDdkTHyI9l6PgMIU1s6ikhzoNF2HHeVPS/F8C7n
-	jHREvquVg==
-X-Received: by 2002:a05:6214:2583:b0:8fd:6e22:6634 with SMTP id 6a1803df08f44-904172f8cf4mr150704096d6.32.1784030098556;
-        Tue, 14 Jul 2026 04:54:58 -0700 (PDT)
-Received: from server0 (c-68-48-65-54.hsd1.mi.comcast.net. [68.48.65.54])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ffd80fd492sm185100576d6.34.2026.07.14.04.54.57
+        d=1e100.net; s=20251104; t=1784043543; x=1784648343;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=J01qK8ph2yz3FUSd+RgsaIaOKQH5OUzQg7HSEfuNJTU=;
+        b=Svc9bsXNdOZewk/O9r0rggpAO5j5OLv0f8LPMkEYX3cGgQCnLyfGXLwCMwFz/Su38d
+         gYIM+g8j1ypeC3STOep5rzKwb98cdBp9QZw/tWG5HRJLugqyrId00XoKpST/aUatdcdW
+         SBGL6KOnRe356zuu3TYgheTpQZfRQ9rCOxcrWYTf9CdQV7hMuglgEF2pCc50CVr4GnrV
+         pM1+D9EFj9DLi11gPOjIVZujunDVE23wrVWFHMWSXy7u/Yt77yr+Od45+pMaNChUUNas
+         BeSVCok1cwH0Zo7GiQXwFvaywtdW2pCUfvOxiwQszzayZEU9wIMJMiWM3L2LEAY3hk+l
+         rE/g==
+X-Forwarded-Encrypted: i=1; AHgh+RrCu3sI3kqLoDMF07XemIt0nN0EdXuiygnQ1rrPfoW0XH0J0WvcB5oiOGAtJK1++5MZY+QSbGPfHQ2bKNz6eisBSDjhB5w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy34Fji7mFzITSnvl779bN00ym7hOFBp7ywoYhcd8FNZRSHocnm
+	xSHBReMA9UmFHa4ebf02rz/u1r+yd/6Bmf5Z9nx+ET5xI3D6r9D9vXiOE+lxzpBWjA==
+X-Gm-Gg: AfdE7cmM/mzTNKutjpx6K0L8XELaJaXNVFGAD56LkJ9+PChPBMnFsaT9iCJfdLzQiPK
+	rNEzXFwyBNuGQJNDHLu2NI5PXktQicREhqWoWd3lAYO7XhzDXxF4MQsEEKZQ1Bbpp64gqboK012
+	ClDpFrEJDRauSoQLfZtIzkp6aZhD/wppemZW1jEizgWzoWpbqEbV8udHjWyQqMmz3mIdMQrJSYN
+	Z38zTSYfeEUX94bjYgyrpUpSOdSEXLSpZPiAwDKYI+h8mO2q2NrtHPwGUthPUkz9vnkqN6VIYb7
+	SCsJDmHDg19TTvs4V4RD8VNkHboZdU6u+2RKYNtsKGMpp117c29Omeda9R+/0/8J7KDeYv+FcI4
+	Q/mQy2LWJ1FoCROJfgGoDvx+rRWxxYo07WcV7/vOQltWaU2/2qgw/EEEMJTW1Iku2uIX33jheEr
+	JPT6OBU6fLVrb/pVzV5b/ckIM2PT004/YNWx0jxiSffDBwHEfOEb2Voo/KyfJiQbHS44s8knj9
+X-Received: by 2002:a05:600c:828c:b0:493:b279:6012 with SMTP id 5b1f17b1804b1-4945e2be9femr2073435e9.0.1784043542713;
+        Tue, 14 Jul 2026 08:39:02 -0700 (PDT)
+Received: from localhost ([2a00:79e0:288a:8:84a1:f866:349a:250b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f464caeffsm8522501f8f.36.2026.07.14.08.39.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jul 2026 04:54:58 -0700 (PDT)
-From: Michael Bommarito <michael.bommarito@gmail.com>
-To: David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] assoc_array: trim the final shortcut word using the current chunk end
-Date: Tue, 14 Jul 2026 07:54:51 -0400
-Message-ID: <20260714115451.3773164-4-michael.bommarito@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260714115451.3773164-1-michael.bommarito@gmail.com>
-References: <20260714115451.3773164-1-michael.bommarito@gmail.com>
+        Tue, 14 Jul 2026 08:39:02 -0700 (PDT)
+From: Jann Horn <jannh@google.com>
+Date: Tue, 14 Jul 2026 17:38:07 +0200
+Subject: [PATCH] apparmor: fix cred UAF caused by
+ begin_current_label_crit_section()
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20260714-fix-apparmor-cred-uaf-v1-1-be40e8c83b90@google.com>
+X-B4-Tracking: v=1; b=H4sIAN5XVmoC/yXMQQqEMAyF4atI1ga0DipeRVy0MToZUEuqIoh3n
+ 6rLD977TwiswgGa5ATlXYIsc0SeJkBfO4+M0keDyUyZVfkHBznQem91WhRJucfNDkhU1EzGFbW
+ rIH69chw+3bZ7HTb3Y1rvGFzXH+fPN6t5AAAA
+X-Change-ID: 20260714-fix-apparmor-cred-uaf-cc38ec2b38b7
+To: John Johansen <john.johansen@canonical.com>, 
+ John Johansen <john@apparmor.net>, 
+ Georgia Garcia <georgia.garcia@canonical.com>, apparmor@lists.ubuntu.com, 
+ Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: James Morris <jmorris@namei.org>, 
+ Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, 
+ linux-security-module <linux-security-module@vger.kernel.org>, 
+ kernel list <linux-kernel@vger.kernel.org>, stable@vger.kernel.org, 
+ Jann Horn <jannh@google.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1784043499; l=7433;
+ i=jannh@google.com; s=20240730; h=from:subject:message-id;
+ bh=Hn3a99V0GshSYRRajT1LdTigZCY403M9C6bDrN6U6Xg=;
+ b=ek9GXlKutf3DdPTWJIyyWtUNapXj2tmf0u00pReeaJnFg6apXCXhtVQ1Le/ihIA9Lbny+trOM
+ qUbSL85AurAADcVVB6QDQ3Q/RDJg48BA9OYerWkBkrLig0pjgV0UrGG
+X-Developer-Key: i=jannh@google.com; a=ed25519;
+ pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-assoc_array_walk() masks off the bits past shortcut->skip_to_level in the
-word that contains skip_to_level, gated on
-round_up(sc_level, ASSOC_ARRAY_KEY_CHUNK_SIZE) > skip_to_level.
+AppArmor's begin_current_label_crit_section() is a scary function called
+from lots of LSM hooks (in particular VFS/socket-related ones) that checks
+if the label referenced by the current creds is marked FLAG_STALE, and if
+so, attempts to use aa_replace_current_label() to replace the creds with an
+updated version that uses a new label.
 
-That guard is wrong in two opposite ways:
+The first problem with this is that it would directly lead to UAF of
+`struct cred` if anything in the kernel takes a pointer to the current
+creds and accesses these past a security hook invocation that replaces
+creds, like so:
+```
+const struct cred *cred = current_cred();
+alloc_file_pseudo(...);
+uid_t uid = cred->euid;
+```
+I don't know if anything in the kernel actually does this, but I think it
+is very surprising that this pattern could lead to UAF.
 
- - When sc_level is word-aligned (every word after the first) round_up()
-   is a no-op, so the guard is sc_level > skip_to_level and never fires for
-   the word that holds skip_to_level.  A shortcut that spans more than one
-   word and ends in the middle of its last word leaves that word untrimmed,
-   and its stale high bits leak into the dissimilarity word and can steer
-   the walk down the wrong descendant.
+The second problem is that things go wrong when aa_replace_current_label()
+runs with overridden credentials. aa_replace_current_label() bails out if
+`current_cred() != current_real_cred()` (mirroring the check in
+proc_pid_attr_write()), but this check can't actually reliably detect
+overridden credentials because the overridden creds can be the same as the
+objective creds.
 
- - When sc_level is unaligned (the first word) and skip_to_level sits on
-   the next chunk boundary, sc_level + CHUNK would exceed skip_to_level and
-   fire the trim with shift = skip_to_level & CHUNK_MASK == 0, which clears
-   the whole dissimilarity word and makes a differing shortcut compare
-   equal.
+So in approximately the following scenario, things go wrong:
 
-Use the end of the chunk that contains sc_level instead:
+1. task begins with <creds A> (as both objective and subjective creds),
+   with refcount=2
+2. task grabs an extra reference on <creds A> for overriding
+3. task calls override_creds(<creds A>), which returns a pointer to the old
+   subjective creds (<creds A>)
+4. task enters AppArmor LSM hook
+5. AppArmor checks that objective/subjective creds are equal
+6. AppArmor replaces both cred pointers with <creds B> and drops 2 refs on
+   <creds A>
+7. task leaves AppArmor LSM hook
+8. task calls revert_creds(<creds A>)
+9. now task->cred is <creds A> while task->real_cred is <creds B>, but the
+   task_struct logically holds two references to <creds B>
+10. another task drops the extra reference on <creds A> that was used for
+    overriding, refcount drops to 0
+11. now task->real_cred points to freed creds
 
-	skip_to_level < round_down(sc_level, CHUNK) + CHUNK
+At this point, any access to current_cred() will be UAF.
 
-For an aligned sc_level whose word holds skip_to_level this now fires (the
-first bug); for an unaligned sc_level with skip_to_level on the following
-boundary it does not, so shift is never 0 when the branch runs and the trim
-never clears the whole word.
+I have a test case where I run aa-disable on a profile while a process
+using that profile is blocked on splice() from a FUSE passthrough file into
+a full pipe; after the profile update, the pipe becomes empty, splice()
+resumes, the credentials go out of sync, and a subsequent getuid() syscall
+results in a KASAN UAF splat.
 
-Fixes: 3cb989501c26 ("Add a generic associative array implementation.")
-Assisted-by: Claude:claude-opus-4-8
-Signed-off-by: Michael Bommarito <michael.bommarito@gmail.com>
+To fix this, instead of directly replacing creds, do it via task_work that
+will run at the end of the current syscall. (The point in time at which the
+cred replacement happens should have no correctness impact; it is just a
+performance optimization to avoid unnecessarily touching the refcount of
+the new label.)
+
+Note that AppArmor still performs direct cred replacements in the
+sb_pivotroot LSM hook after this change, and that direct cred replacements
+can still happen in VFS ->write() callbacks via proc_pid_attr_write().
+
+Cc: stable@vger.kernel.org
+Fixes: c75afcd153f6 ("AppArmor: contexts used in attaching policy to system objects")
+Signed-off-by: Jann Horn <jannh@google.com>
 ---
- lib/assoc_array.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/task_work.h        |  1 +
+ kernel/task_work.c               | 14 ++++++++++++++
+ security/apparmor/include/cred.h |  6 +-----
+ security/apparmor/include/task.h |  1 +
+ security/apparmor/task.c         | 29 +++++++++++++++++++++++++++++
+ 5 files changed, 46 insertions(+), 5 deletions(-)
 
-diff --git a/lib/assoc_array.c b/lib/assoc_array.c
-index bcc6e0a013eb8..b6c9723e12ced 100644
---- a/lib/assoc_array.c
-+++ b/lib/assoc_array.c
-@@ -255,7 +255,8 @@ assoc_array_walk(const struct assoc_array *array,
- 		sc_segments = shortcut->index_key[sc_level >> ASSOC_ARRAY_KEY_CHUNK_SHIFT];
- 		dissimilarity = segments ^ sc_segments;
+diff --git a/include/linux/task_work.h b/include/linux/task_work.h
+index 0646804860ff..ce19fc14060c 100644
+--- a/include/linux/task_work.h
++++ b/include/linux/task_work.h
+@@ -33,6 +33,7 @@ struct callback_head *task_work_cancel_match(struct task_struct *task,
+ 	bool (*match)(struct callback_head *, void *data), void *data);
+ struct callback_head *task_work_cancel_func(struct task_struct *, task_work_func_t);
+ bool task_work_cancel(struct task_struct *task, struct callback_head *cb);
++bool task_work_has_func(struct task_struct *task, task_work_func_t func);
+ void task_work_run(void);
  
--		if (round_up(sc_level, ASSOC_ARRAY_KEY_CHUNK_SIZE) > shortcut->skip_to_level) {
-+		if (shortcut->skip_to_level < round_down(sc_level,
-+				ASSOC_ARRAY_KEY_CHUNK_SIZE) + ASSOC_ARRAY_KEY_CHUNK_SIZE) {
- 			/* Trim segments that are beyond the shortcut */
- 			int shift = shortcut->skip_to_level & ASSOC_ARRAY_KEY_CHUNK_MASK;
- 			dissimilarity &= ~(ULONG_MAX << shift);
--- 
-2.53.0
+ static inline void exit_task_work(struct task_struct *task)
+diff --git a/kernel/task_work.c b/kernel/task_work.c
+index 0f7519f8e7c9..f83d1528e0bc 100644
+--- a/kernel/task_work.c
++++ b/kernel/task_work.c
+@@ -189,6 +189,20 @@ bool task_work_cancel(struct task_struct *task, struct callback_head *cb)
+ 	return ret == cb;
+ }
+ 
++bool task_work_has_func(struct task_struct *task, task_work_func_t func)
++{
++	struct callback_head *work;
++
++	if (!task_work_pending(task))
++		return false;
++	guard(raw_spinlock_irqsave)(&task->pi_lock);
++	for (work = READ_ONCE(task->task_works); work; work = READ_ONCE(work->next)) {
++		if (work->func == func)
++			return true;
++	}
++	return false;
++}
++
+ /**
+  * task_work_run - execute the works added by task_work_add()
+  *
+diff --git a/security/apparmor/include/cred.h b/security/apparmor/include/cred.h
+index 2b6098149b15..0e8b67159f56 100644
+--- a/security/apparmor/include/cred.h
++++ b/security/apparmor/include/cred.h
+@@ -222,13 +222,9 @@ static inline struct aa_label *begin_current_label_crit_section(void)
+ {
+ 	struct aa_label *label = aa_current_raw_label();
+ 
+-	might_sleep();
+-
+ 	if (label_is_stale(label)) {
+ 		label = aa_get_newest_label(label);
+-		if (aa_replace_current_label(label) == 0)
+-			/* task cred will keep the reference */
+-			aa_put_label(label);
++		aa_schedule_stale_label_replacement();
+ 	}
+ 
+ 	return label;
+diff --git a/security/apparmor/include/task.h b/security/apparmor/include/task.h
+index b1aaaf60fa8b..4e49a4142777 100644
+--- a/security/apparmor/include/task.h
++++ b/security/apparmor/include/task.h
+@@ -30,6 +30,7 @@ struct aa_task_ctx {
+ };
+ 
+ int aa_replace_current_label(struct aa_label *label);
++void aa_schedule_stale_label_replacement(void);
+ void aa_set_current_onexec(struct aa_label *label, bool stack);
+ int aa_set_current_hat(struct aa_label *label, u64 token);
+ int aa_restore_previous_label(u64 cookie);
+diff --git a/security/apparmor/task.c b/security/apparmor/task.c
+index b9fb3738124e..8e368f6278f5 100644
+--- a/security/apparmor/task.c
++++ b/security/apparmor/task.c
+@@ -14,6 +14,7 @@
+ 
+ #include <linux/gfp.h>
+ #include <linux/ptrace.h>
++#include <linux/task_work.h>
+ 
+ #include "include/path.h"
+ #include "include/audit.h"
+@@ -89,6 +90,34 @@ int aa_replace_current_label(struct aa_label *label)
+ 	return 0;
+ }
+ 
++static void aa_replace_stale_label_tw_func(struct callback_head *tw)
++{
++	struct aa_label *label;
++
++	kfree(tw);
++	label = aa_current_raw_label();
++	if (!label_is_stale(label))
++		return;
++	label = aa_get_newest_label(label);
++	aa_replace_current_label(label);
++	aa_put_label(label);
++}
++
++/* replace the current task's stale label on syscall return */
++void aa_schedule_stale_label_replacement(void)
++{
++	struct callback_head *tw;
++
++	if (task_work_has_func(current, aa_replace_stale_label_tw_func))
++		return;
++	tw = kmalloc_obj(struct callback_head);
++	if (!tw)
++		return;
++	init_task_work(tw, aa_replace_stale_label_tw_func);
++	if (task_work_add(current, tw, TWA_RESUME))
++		kfree(tw);
++}
++
+ 
+ /**
+  * aa_set_current_onexec - set the tasks change_profile to happen onexec
+
+---
+base-commit: 3b029c035b34bbc693405ddf759f0e9b920c27f1
+change-id: 20260714-fix-apparmor-cred-uaf-cc38ec2b38b7
+
+Best regards,
+--  
+Jann Horn <jannh@google.com>
 
