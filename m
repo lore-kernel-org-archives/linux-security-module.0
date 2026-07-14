@@ -1,75 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com [113.46.200.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33EB937A488;
-	Tue, 14 Jul 2026 02:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EEC353A93;
+	Tue, 14 Jul 2026 09:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783995102; cv=none; b=LfGkQD2YqjtcvehViH2oVXs4+GXjdJioBnTJ5Agyl6UsFEYg4SHSbTvv9l93gwYllqzYfKYjEzITP/TlBppCMKplvy2F7VMm4TNlwRKyRHrkA5VIYOfZ6CT5zQ/P4eZ7zNoENgkj0eIC/WQ4dDvcqqVaUowwzMNwNRA4EqHW7bs=
+	t=1784020766; cv=none; b=ITYeiZQtdCoTcCZKcdUdwlnFWMEjrJePFAvGEvaxBO6btoNn6m3swVaeDyK4v9n8XxOpSpYjfEoX1VW646+fU9pC9AC7pwPE7Hux11L30n/BWu0z5ZWlgP7ok6LGKYqUq630Kxsdw/NoFNUP5kelc6i1uUq3qPo7rTOCvsmH2RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783995102; c=relaxed/simple;
-	bh=LH+ncc5W13z4uTGckXw/G1PC1R9Rv+kGZf1Nh/B79v4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=lLzHCbIpbHQ7+hHcQT7J08OawAouPZvbG1cskBiDBEIYICzq4F5r2E6vy3foRTXonZXuh2lsNo9x2BxDafB8otmNqGqqfO3p875jZnS3oml1H39gE5LqKPz/IdwOZiZndT8sJ3qWj//mw3Di2/mMBGMCeUVxX5HCLLGjoDc7Ecw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=2rZEf+jv; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784020766; c=relaxed/simple;
+	bh=PoZsny19t3HXLnadhIjAqcOpnMVaTXtp8camwODkiVI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FnbSuL04JdFddaQQJ6q2CfigguJbNGqZ7wNr/DYu0RQsoK1pxQmV2j/KkAKrOVh0T4imk4ysY/OSXqleRk4ecSmdWsZYOaO9pYhGpQUcsASJHZDHaq5INH3EfkEd6MRy9YMfUaa9eTC3rE62XdEFcn+EDWV7cuXr78eEyOaJzzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=sVLUpkPD; arc=none smtp.client-ip=113.46.200.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="2rZEf+jv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 732601F000E9;
-	Tue, 14 Jul 2026 02:11:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux-foundation.org; s=korg; t=1783995099;
-	bh=UQLpreAualYM+lqCE/YvZ08vdZF7/8FsjDWQ1qmwzXw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=2rZEf+jvnGWLNXCvfUizyWGL0sifgZDbAmWr+FGyJL36Kwx+dQt5hofpFv9PV/zf0
-	 c2OOZEbkGRTCBZGTH+dPrq93nTwxoriNw9yYYceoOnY/KIwP/FlUsnwVCZ8XazhQ+S
-	 9XbMiTOcxp3+Q9Fk6hnrK7PGEeYKQ85Igf9GAy58=
-Date: Mon, 13 Jul 2026 19:11:39 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Michael Bommarito <michael.bommarito@gmail.com>
-Cc: David Howells <dhowells@redhat.com>, Jarkko Sakkinen
- <jarkko@kernel.org>, Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>,
- keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] keys: fix keyring assoc-array out-of-bounds read
- and index inconsistency
-Message-Id: <20260713191139.bd71035dcfda958452cb425b@linux-foundation.org>
-In-Reply-To: <20260712014500.480410-1-michael.bommarito@gmail.com>
-References: <20260712014500.480410-1-michael.bommarito@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="sVLUpkPD"
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=MHEhbSOgQT/iKyz5tYf5hbfXc1knUbfwbScpd4zGG2s=;
+	b=sVLUpkPDv/tc0R5R4DBQzRcaB/ramhEY1AVRioARfsfZkNJdYFP9gGrLDksko8eo5QNNWsu6o
+	4KG9jbqjNK6Qg7Swq/F69rW2vuZHL8+bKhQQoMwPlDNSXrQg1NFgC9/DijJtlsnQENnWb7NanRp
+	hMb+MhcW7qeQUEzpfvAmTUA=
+Received: from mail.maildlp.com (unknown [172.19.162.197])
+	by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4gztmN4XWsz12LCc;
+	Tue, 14 Jul 2026 17:09:40 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 01BD240579;
+	Tue, 14 Jul 2026 17:19:19 +0800 (CST)
+Received: from kwepemq500013.china.huawei.com (7.202.195.103) by
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 14 Jul 2026 17:19:18 +0800
+Received: from dggphis33418.huawei.com (10.244.148.83) by
+ kwepemq500013.china.huawei.com (7.202.195.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 14 Jul 2026 17:19:18 +0800
+From: Gaosheng Cui <cuigaosheng1@huawei.com>
+To: <cuigaosheng1@huawei.com>, <lujialin4@huawei.com>, <zohar@linux.ibm.com>,
+	<roberto.sassu@huawei.com>, <dmitry.kasatkin@gmail.com>,
+	<eric.snowberg@oracle.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
+	<serge@hallyn.com>
+CC: <linux-integrity@vger.kernel.org>, <linux-security-module@vger.kernel.org>
+Subject: [PATCH -next,v2] ima: add cond_resched() in ima_calc_file_hash_tfm loop
+Date: Tue, 14 Jul 2026 17:17:08 +0800
+Message-ID: <20260714091708.2802272-1-cuigaosheng1@huawei.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemq500013.china.huawei.com (7.202.195.103)
 
-On Sat, 11 Jul 2026 21:44:57 -0400 Michael Bommarito <michael.bommarito@gmail.com> wrote:
+When hashing large files, the while loop in ima_calc_file_hash_tfm
+processes PAGE_SIZE chunks without any scheduling point, which can
+cause soft lockup warnings:
+watchdog: BUG: soft lockup - CPU#0 stuck for 50s!
+Call Trace:
+  _sha256_update+0x12d/0x1a0
+  ima_calc_file_hash_tfm+0xfb/0x150
+  ima_calc_file_hash+0x6e/0x160
+  ima_collect_measurement+0x202/0x340
+  process_measurement+0x3a9/0xb30
+  ima_file_check+0x56/0xa0
+  do_open+0x11b/0x250
+  path_openat+0x10b/0x1d0
+  do_filp_open+0xa9/0x150
+  do_sys_openat2+0x223/0x2a0
+  __x64_sys_openat+0x54/0xa0
+  do_syscall_64+0x59/0x110
+  entry_SYSCALL_64_after_hwframe+0x78/0xe2
 
-> keyring_get_key_chunk() advances the description read pointer by
-> level * sizeof(long) past the inline prefix but only bounds-checks the
-> prefix, so once the associative-array walk reaches a description-level
-> chunk it reads past the kmemdup(desc, desc_len + 1) description
-> allocation.  Reaching that depth needs two keys that collide through the
-> hash, x, type and domain_tag chunks, which an unprivileged add_key(2)
-> can arrange with a crafted pair of same-type keys.
-> 
-> An unprivileged user can thus read up to sizeof(long) bytes past a
-> keyring key's description; on kernels built without init-on-alloc the
-> same collision, read back with KEYCTL_READ, returns uninitialized kernel
-> slab.
-> 
-> Patch 1 is the memory-safety fix and stands alone.  Patches 2 and 3 fix
-> two index-key consistency bugs that let the crafted keys collide into a
-> single malformed node in the first place, which is what enables the
-> KEYCTL_READ disclosure.
-> 
-> The KASAN reproduction is on patch 1. Trigger is available off-list.
+Call cond_resched() every 4MB to yield the CPU when needed, rather
+than at every loop iteration, to reduce overhead.
 
-fyi, AI review might have found things, some pre-existing:
-	https://sashiko.dev/#/patchset/20260712014500.480410-1-michael.bommarito@gmail.com
+Fixes: 3323eec921ef ("integrity: IMA as an integrity service provider")
+Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+---
+v2: call cond_resched() every 4MB to yield the CPU when needed
+ security/integrity/ima/ima_crypto.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-David, you might wish to take a look at the first assoc_array.c issue.
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index 0d72b48249ee..aab2349c0c33 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -233,6 +233,9 @@ static int ima_calc_file_hash_tfm(struct file *file,
+ 		rc = crypto_shash_update(shash, rbuf, rbuf_len);
+ 		if (rc)
+ 			break;
++
++		if (IS_ALIGNED(offset, SZ_4M))
++			cond_resched();
+ 	}
+ 	kfree(rbuf);
+ out:
+-- 
+2.43.0
 
