@@ -1,122 +1,112 @@
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD35C3DA5A9;
-	Tue, 14 Jul 2026 09:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7617367F48
+	for <linux-security-module@vger.kernel.org>; Tue, 14 Jul 2026 11:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784021322; cv=none; b=bjos6odAXXi1Ypm6LX5l2w40Wy/K24ZcMNy/Vk/VjliWjF6dNJ0FV+lCcstKa6N8PbL0vNM9jAIPYzqmQvswjrmf6rLWFHLVFCPARbBjDWswdeFcXv2MmTJqZhXSP0G8RyxtQ+aYYfLOxduefKQswjJz4ZEV2Jh0xBsO5+vYr/I=
+	t=1784030098; cv=none; b=MQ0ZlCuIV/FRx+7n9/rr1Hzf+LDxh0XQcM6NLx3E6dwOfwfGfbJevldrMgaBlYjc5Y+9ikbbO5t1wTjL31LktMFOPDZa7i9J9l0iXIhB+vBoltu+kgkkx7DXsSvryMuCNjDS5gQz3fLr2JXx/tTewykJxVPnB6N6lXk+35yMVLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784021322; c=relaxed/simple;
-	bh=gDb3Qs4mn/ESkiDws5e7mffbyctci816Fv9yJ1y74cM=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=qbJDaKhQh8ZZ5CmFJU1oGYgCdj+rwigBDZaJAwpRrBVeKC8yBdyhlHzDBwCe/Ck4Mqryyj4Dovznx8EG/xRKkFm8sRov21jlowfR1hGwZQ80wFXUwtgNmv9qCr2kHqc87J84CI4PciOHgMdIRjeKRMuKngbbwYuQNqOy/QpmG7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=vZENe6dX; arc=none smtp.client-ip=113.46.200.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+	s=arc-20240116; t=1784030098; c=relaxed/simple;
+	bh=4U8q91HPFoRFicOXzoAa63H08lLHbCXfw11y7FazoPI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K4Bjx9bNT48+uZcWC+pilfhMPFbye+y18w6HNRwaQyahn9/q/hgKHEXvpIy70sRu7zd5Kc36YiDWDhCM1qYsOp6NIH5bmIJMoicX7/yHBUg0Vs3aSHsUbfZ7Sx8ca729Nej1fjoZlquAhrZB59xr76VyUjySGLpR5T4i8bKQCgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ojC3dWLT; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="vZENe6dX"
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=b4TVAimaH1L71yw0d948itY0oBJyD19kcO/d3tITGqY=;
-	b=vZENe6dXFIzYBwhWEJXSQ0XHQx6cjaWHXipTXXDfcHiAnZIsXANSW+iolxdBnCbo4ZsiR7Tqg
-	aEKLAf5H+no+9Cc/yGE/mdA35Mfngpy/hla3ikZnYX7MsgVXl8K8E87nvk7XDzG2YaicNWB2dwa
-	WmRaak2RixM8U8ku5l5P+r8=
-Received: from mail.maildlp.com (unknown [172.19.162.140])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4gztzK6Ktcz1T4HL;
-	Tue, 14 Jul 2026 17:19:09 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 240F0203B8;
-	Tue, 14 Jul 2026 17:28:19 +0800 (CST)
-Received: from kwepemq500013.china.huawei.com (7.202.195.103) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 14 Jul 2026 17:28:18 +0800
-Received: from [10.67.110.176] (10.67.110.176) by
- kwepemq500013.china.huawei.com (7.202.195.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 14 Jul 2026 17:28:18 +0800
-Subject: Re: [PATCH -next] ima: add cond_resched() in ima_calc_file_hash_tfm
- loop
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, <lujialin4@huawei.com>,
-	<zohar@linux.ibm.com>, <roberto.sassu@huawei.com>,
-	<dmitry.kasatkin@gmail.com>, <eric.snowberg@oracle.com>,
-	<paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>
-CC: <linux-integrity@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-References: <20260713111022.2418849-1-cuigaosheng1@huawei.com>
- <8c757ecb48c7dd733eb10c3927e9db94cb056fb0.camel@huaweicloud.com>
-From: cuigaosheng <cuigaosheng1@huawei.com>
-Message-ID: <a4368b90-6efc-cf42-0d0d-1a97713b1ade@huawei.com>
-Date: Tue, 14 Jul 2026 17:28:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ojC3dWLT"
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-51c2c8f43aaso37914231cf.1
+        for <linux-security-module@vger.kernel.org>; Tue, 14 Jul 2026 04:54:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784030096; x=1784634896; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=l7ADB8De/whZT8e+EWVqNZCd354WcrnrJ/amnwN8jVI=;
+        b=ojC3dWLTfIAjG8tQjrw+5rUHqwlVF2Wn7EC3GI6jfsOwfBTgQ5o3k317l1coVsTyn+
+         ZM5pwzr9GYSdc3UHrzRMfxnzI9xREvZ5FFY73O+iNZ1y2917uqMi9gK2qk2PXwacz3Bs
+         m1LjVgm9upyxV1xt0EgC4WmtUpdPVfHdC/kKd2V3bLuV/8PTLSzeOlrOtGhpUwuVGH8m
+         YYN1TbD4f2VP5A3YpOJn8c8FavIIUFz21ZZ3Aae/riqy86av7dS+7xyrQkCrBg61Iack
+         2pwPqbPADt3kbaFpBc5FCuaTUmjBBuecAV9pFiyHatiMy72MAq7mhMxvYsJQyQchisuY
+         GslQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784030096; x=1784634896;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=l7ADB8De/whZT8e+EWVqNZCd354WcrnrJ/amnwN8jVI=;
+        b=DZGz9m3q8Diqhja548ZKY2vyp718WKQXfJG/luvZkJhcfJ+hXg7ygnAPH/DyM1VHjs
+         hSt7PC6lQq/zLeBYMFyCDCXYr9u8dr/+TLq3lBnuhueGRK3MGC8PBhFTwHgSHj+4JBzv
+         hQ7k1ui72b1brjX2+iHqyDYehF+D0gRPy+fHqu1ihr4c2RUjCj1Z+G5kS7qZgMgM3QJE
+         +fvKvuWkWkWwEqSnAHkKzDlpbT6tXILohdOtq3/apTJqVsXJO2nOaWZqzQN85I/85pab
+         E5G6DJaiEVhQN2DvxJ/KcCjNxPFgBC+zWbRvGka8as+eo6ODI9ZDawVtbYSnd7k1mSvK
+         jR/w==
+X-Forwarded-Encrypted: i=1; AHgh+Rp9UqMU2wDNzCIaLdLV0Bqig2oMgVcF0hXu9fwKh1qx23jX2gR9iV+MizGPFOF5PIUNQna6w+PgjmWrWCc9kqvXZe/01pY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBniKxkzMw7azC+pV9QUtyj7tTbNIqu5dIQ2rwf5pfbWvtSVqt
+	RZ6jQMNUDgcV95Gc/1xRgfkbdioWkXWAK/Xm3XrdEhs2Hhldli8e6BeE
+X-Gm-Gg: AfdE7cmjv12axfmY1E/Z0/ymK6CdgCY6cS/mlb1JAuDYPYwBjhEyu3AE/R2RAImlCVg
+	hp3kVCzQ78iwNvnRYSCxT2LP2Pg3rHGnR5TZRUbH4Faj9d2yegOqT6z29f5kyFWdOS15G+A4n/+
+	vlpHgIkmeTij3EUvDmiA4EzSmzta38wPZAh/4cMQ9U1158oSsEeU208aSRCDAtYaPOY7c158G3l
+	21qRCHVe2SqUss88eupaAbwgSB9UNC6n32+frm7mjNGNAXhoZlLw76i2od8QA5C8XRSjvUmRgWP
+	17ww71har817MQ3LRK5SwgKOfEeHU5h9+iYT/7GcEbA+nHNKw3rd/ff7YLYL9FxxbrkqaWnGuuX
+	4QkZ9q3dVwt0cD770tAvOBicW89+gUKzJjNYOGMw5EJ9x8n1BY8ZNYKM4DREX3GvrknR/vTVdTd
+	uljv+cHfGrUzFmxpqAF88Hmoi264sDYlQwodg4ioFzweb+aCBTJWXd7dMbYcYR/Kbw6xN3ItdwO
+	UFQX1xStg==
+X-Received: by 2002:ac8:5ad2:0:b0:51c:1967:5098 with SMTP id d75a77b69052e-51cbf147113mr127640941cf.38.1784030095442;
+        Tue, 14 Jul 2026 04:54:55 -0700 (PDT)
+Received: from server0 (c-68-48-65-54.hsd1.mi.comcast.net. [68.48.65.54])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8ffd80fd492sm185100576d6.34.2026.07.14.04.54.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jul 2026 04:54:55 -0700 (PDT)
+From: Michael Bommarito <michael.bommarito@gmail.com>
+To: David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] keys: fix keyring assoc-array out-of-bounds read and index inconsistency
+Date: Tue, 14 Jul 2026 07:54:48 -0400
+Message-ID: <20260714115451.3773164-1-michael.bommarito@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <8c757ecb48c7dd733eb10c3927e9db94cb056fb0.camel@huaweicloud.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemq500013.china.huawei.com (7.202.195.103)
+Content-Transfer-Encoding: 7bit
 
-On 2026/7/13 20:06, Roberto Sassu wrote:
-> On Mon, 2026-07-13 at 11:10 +0000, Gaosheng Cui wrote:
->> When hashing large files, the while loop in ima_calc_file_hash_tfm
->> processes PAGE_SIZE chunks without any scheduling point, which can
->> cause soft lockup warnings:
->> watchdog: BUG: soft lockup - CPU#0 stuck for 50s!
->> Call Trace:
->>    _sha256_update+0x12d/0x1a0
->>    ima_calc_file_hash_tfm+0xfb/0x150
->>    ima_calc_file_hash+0x6e/0x160
->>    ima_collect_measurement+0x202/0x340
->>    process_measurement+0x3a9/0xb30
->>    ima_file_check+0x56/0xa0
->>    do_open+0x11b/0x250
->>    path_openat+0x10b/0x1d0
->>    do_filp_open+0xa9/0x150
->>    do_sys_openat2+0x223/0x2a0
->>    __x64_sys_openat+0x54/0xa0
->>    do_syscall_64+0x59/0x110
->>    entry_SYSCALL_64_after_hwframe+0x78/0xe2
->>
->> Add cond_resched() at the end of each loop iteration to voluntarily
->> yield the CPU when needed.
->>
->> Fixes: 3323eec921ef ("integrity: IMA as an integrity service provider")
->> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
->> ---
->>   security/integrity/ima/ima_crypto.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
->> index 0d72b48249ee..3b7d41a9fd18 100644
->> --- a/security/integrity/ima/ima_crypto.c
->> +++ b/security/integrity/ima/ima_crypto.c
->> @@ -233,6 +233,8 @@ static int ima_calc_file_hash_tfm(struct file *file,
->>   		rc = crypto_shash_update(shash, rbuf, rbuf_len);
->>   		if (rc)
->>   			break;
->> +
->> +		cond_resched();
-> I would recommend not doing at every loop but every 4 MB at least:
->
-> if (IS_ALIGNED(offset, SZ_4M))
->          cond_resched();
->
-> Thanks
->
-> Roberto
+An unprivileged keyring whose keys collide through the description-chunk
+path can drive assoc_array node splitting into an out-of-bounds slot write.
+Patch 1 stops the out-of-bounds read in keyring_get_key_chunk(); patch 2
+makes the chunk byte order agree with keyring_diff_objects(); patch 3 fixes
+the shortcut-walk trim so the walk cannot be steered down the wrong
+descendant.
 
-Thanks,
+v2 changes (patch 3 only; patches 1 and 2 are unchanged):
+As sashiko pointed out, the v1 patch-3 guard (sc_level + CHUNK >
+skip_to_level) fixed the word-aligned leak but wrongly fired for an
+unaligned first word whose skip_to_level sits on the next chunk
+boundary: shift = skip_to_level & CHUNK_MASK is then 0 and the trim clears
+the whole dissimilarity word, making a differing shortcut compare equal.  v2
+keys the trim on the end of the chunk that contains sc_level,
+round_down(sc_level, CHUNK) + CHUNK, which matches a brute-force oracle over
+every sc_level/skip_to_level pair; the original round_up guard and the v1
+guard each disagree with the oracle in one regime.
 
-I've updated to patch v2，call cond_resched() every 4MB.
+v1: https://lore.kernel.org/keyrings/20260712014500.480410-1-michael.bommarito@gmail.com/
 
->>   	}
->>   	kfree(rbuf);
->>   out:
-> .
+Michael Bommarito (3):
+  keys: fix out-of-bounds read in keyring_get_key_chunk()
+  keys: make keyring key-chunk byte order agree with keyring_diff_objects()
+  assoc_array: trim the final shortcut word using the current chunk end
+
+ lib/assoc_array.c       |  3 ++-
+ security/keys/keyring.c | 15 ++++++++-------
+ 2 files changed, 10 insertions(+), 8 deletions(-)
+
+-- 
+2.53.0
