@@ -1,171 +1,138 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E95B331A63
-	for <linux-security-module@vger.kernel.org>; Tue, 14 Jul 2026 22:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23AE42BC31
+	for <linux-security-module@vger.kernel.org>; Wed, 15 Jul 2026 08:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784066446; cv=none; b=MAYKps1zmD0mu80HNA2Xf3dUyCTkLuSQLCQRzbYA1P2zT3XVuCo39akcpJbxcYpinnlPsQ0Wrry/hktu4oxYyPnXP16jNMLL5+9evxA2pYmJoTnTS4Oy/VtozgyJ3JZPzFpVRXMnbD52cRh91XMBSujkoN5ScMD+Tlw1M/NbdGU=
+	t=1784104780; cv=none; b=OtEeJtGUKv1aiEU7gO3+/k5hn1VsManCl2IvNDk8BLBfAVOWKSKTJbGyz+6X+kcOAKM4nXWK/gqvNP1bYu7sMrVeu7E2f98lLGmx30LAv6ggeVZM32A/MJBvz69/FBVdFRwPk56ocjQTvlVF+Vp9wM9yucLbaZp8VDu0kxM+sGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784066446; c=relaxed/simple;
-	bh=CfVJs28W5hxFw8ISq4Xyaqt87hZXNKUuonnOsEGAs38=;
+	s=arc-20240116; t=1784104780; c=relaxed/simple;
+	bh=cEm/qTnAzZOqSTvTREY+WKNkOF2thKgKBFQSaQ9uI4E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 In-Reply-To:Content-Type:Content-Disposition; b=GFy4kP1mgAMeBgbkNAtewHKaa+dtbm2n+t1rOgxMK7/kmDgf9E1OK0CKk/NSGjq35j1RNc9Kl8pcytZwaBlhkB2Y+2baQJcCzDuhGgHLWio1WBv6nFifWgADNYDuyPCK3eik2aTcrTi3L5UAMO0CqGnDbg5qjEIl7sbpilKESmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g032EQb8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=qhgFLIJF9Z7vrWR4E2ibh0bK0+PKK8f5yjdFvnWPVuza3QxRl/2BKtRW7Y+E3VSfOnPGbTnmXfh7B83BtFFaMUfr6h/4pdvteGQcWJ7Dj6oL/RqJ1n/Dmj1QccxpgFq2YOmQKtOxHv4x4b6dpWs59HOoA43Ny8qbDMAsizwGBEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jl/u16MI; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g032EQb8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1784066444;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tLV0uO8G+CcD7BsepUgECb6bFenLBgGo57rW9dKc/SY=;
-	b=g032EQb8arV19z4d03LwviWggMN6KJBAI51TlbygDIbpVOfLaduQBUgMAgxaLJ5rnpDyie
-	rlj7tBUp6APsY8aqt1sZuowqiLjTKh3G51Zl3aGbPyTgTXBk0o2UamFEW/1ZVCkTxJz0+O
-	Kr+LiIET5W/fHuegTY8UyN7XSdQjP00=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-44-a-wLa56ZP72HISr4gaZkUw-1; Tue,
- 14 Jul 2026 18:00:40 -0400
-X-MC-Unique: a-wLa56ZP72HISr4gaZkUw-1
-X-Mimecast-MFC-AGG-ID: a-wLa56ZP72HISr4gaZkUw_1784066438
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B63C61956052;
-	Tue, 14 Jul 2026 22:00:38 +0000 (UTC)
-Received: from smayhew-thinkpadp1gen4i.remote.csb (unknown [10.22.80.112])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2F5CB30003B8;
-	Tue, 14 Jul 2026 22:00:38 +0000 (UTC)
-Received: by smayhew-thinkpadp1gen4i.remote.csb (Postfix, from userid 13752)
-	id 7075D4E1E582; Tue, 14 Jul 2026 18:00:37 -0400 (EDT)
-Date: Tue, 14 Jul 2026 18:00:37 -0400
-From: Scott Mayhew <smayhew@redhat.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-nfs@vger.kernel.org, Anna Schumaker <anna@kernel.org>,
-	jlayton@kernel.org, chuck.lever@oracle.com,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Achilles Gaikwad <achillesgaikwad@gmail.com>,
-	Trond Myklebust <trondmy@kernel.org>,
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v2] NFSv4.2: fix nfs4_listxattr size accounting
-Message-ID: <alaxhbWbFMZyC8VQ@smayhew-thinkpadp1gen4i.remote.csb>
-References: <CAHC9VhSWWhMjs282cOTT45gn0pa8bDSxD0H24_is7k4tXmGJxQ@mail.gmail.com>
- <ac4f209c-f465-4938-adae-ecd00ecab175@app.fastmail.com>
- <CAHC9VhQYjj3--K6KkDJBf6LfXqtj4TPh5LsMBpPYc0-Zz6wTMA@mail.gmail.com>
- <CAEjxPJ7dttPDxQDa_xXFd1H-QT_vkUwjtnH+=3cmG5dhSiaAXw@mail.gmail.com>
- <CAHC9VhSyCuiPBRWz_vUbx7+L5yLiXkjKX+7UyCLr82-_gAj2NQ@mail.gmail.com>
- <CAEjxPJ4+wgUDY3YxajZ=2D3WLzgat_Mqvr05VtJ4KrXW7_kuXA@mail.gmail.com>
- <CAHC9VhSxpAx+G35fbcMjJ1PfqJxDZYpTEu=qpO+0PQe=nkX5-g@mail.gmail.com>
- <CAHC9VhRq+Vth-4D4OHFAY_6hXqmj=MgTc_2G=3Ehr6bAQzp26Q@mail.gmail.com>
- <CAHC9VhQy4LOgQg0mk+s5sjHOzMe1sxPUgJ2W7vRT8ms4znZp+Q@mail.gmail.com>
- <CAHC9VhR+pWFnt=1pBJTky78br7NsfVcZE=V4UkfkfTbMvBo+mQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jl/u16MI"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-493c52cde9eso44376765e9.3
+        for <linux-security-module@vger.kernel.org>; Wed, 15 Jul 2026 01:39:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1784104777; x=1784709577; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=WLOCq+q4901QS8UaLFpDknPRI2/Dvm2Tx9StZNFHsJw=;
+        b=Jl/u16MIA1cRxyenjXQq+4X/jD58eImUwian7eSfQdiizmiRljDAHNpwfalscnCAiM
+         6YgzN0mnp1serutviXLhOpdLnySBk3NLAGpZGUHm+WCpfZEYqFPvXqFMPw4ErZk5E3AY
+         sxHSlLfsd2k7vDD+PytbeKJcTAUTUsWCTyX0o4na0sJxtkHlbrRBLSyla4lkgdvX6uqq
+         mVqfyYBRJTeZCza93pmCFJadiy0N6AvY6VoqBYk7tEupfMDph3gsg/FTQQhLo7MrQoYY
+         3lA806aERwG6sBymkGMSSPK0kjqnKuiOt6buZBjaxwPezXxO//jBrxMFdgHgWGHPB77A
+         aRmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784104777; x=1784709577;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=WLOCq+q4901QS8UaLFpDknPRI2/Dvm2Tx9StZNFHsJw=;
+        b=n/nPUG2GdnuljcRfX0mc+aTUcURVk6UHj4tKvKaK+cPrKD6v0QsWmdOVPXEWxxD/hT
+         //WCNCQN1gcL42f9R+WxJMr5h3i0INZig4fOGTQ/9riBkxpfbV+yjDemILVaVf1Ji3Jq
+         DFpbvL99p3p/9VQqqo9c0bwQkVMzhv+kLKWHIi9Nl+/VUpJ44zfoglf3ZV7aoczKD7dx
+         h5Q7mPt/nqWEke1ynmP1gNoNUBph7I6iw48zrcOade566bmmzvc4k+EW22arBvaYVlF7
+         siGvvVJE8HvGSR2KlKZ7kXn/0bq5DRtz5pg7A+0QDpFM186dfu+lo9SPMnvXOTTDQ+xk
+         CB+A==
+X-Gm-Message-State: AOJu0YzjHslbZYMIaVivYccGUf+pnfMpoe+4XbMR4EzSo/wVBOhyIV+3
+	M5/GrXe++ajsptM4QoeYWDQZA1/usTFH4z9YNcPaIuIAm3/ZZk2yRPtUX9KjnoKWATMJt7TseLx
+	+z+n15rhD
+X-Gm-Gg: AfdE7cmig381scbq39v2QGghOvQO0rKYwgER2+Nr8c8Oo+MiTewN3JdvShKuxevQfYK
+	d9ph2go3EmRrLo++ecf3b6a4sMaDbxZXuuKmcEKzSTmYRxSGo/TeLvQkBDhMM6ojLjTNv2h9hzb
+	AQ2xnxJZHSmEyXXeSIQTDuu4aTrCXmo+TXJM3d34ljuXRDFD4r8z5n491+UhUWsEJPXHgGzXxhN
+	z48JBOZkl/OlNTBCyuGHEKjXlbE5vHf5scVlxwxD0d2ZBOAqG6JUhxVcIkl7hARFQaFscO8ghoN
+	XTlhFjEVoHEy5etf1WkZIQC/kV08nJlsZenMh6+5niEvc0zVOD+hqfkwSpyq4bFPSx+hh4j0wWe
+	+oZCXKKt6iScl7bd1cFpCaCo1PGUQrQNA/6XbU4H5yL5JPp2okzsNsjo1hKJMbuTGFCYevtJWAC
+	lua6a7REP6L2ryGApN6pgbIEKnXLWe8hm6m348Q96E7EU=
+X-Received: by 2002:a05:600c:699a:b0:493:b783:ad59 with SMTP id 5b1f17b1804b1-495389dc078mr58391605e9.14.1784104776541;
+        Wed, 15 Jul 2026 01:39:36 -0700 (PDT)
+Received: from google.com ([2a00:79e0:288a:8:53b8:23d6:e5b4:dc54])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4950a32b9f3sm154561155e9.13.2026.07.15.01.39.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jul 2026 01:39:35 -0700 (PDT)
+Date: Wed, 15 Jul 2026 10:39:29 +0200
+From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+To: Ken Grimes <ken@kengrimes.com>
+Cc: "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	landlock@lists.linux.dev
+Subject: Re: [BUG] Landlock denies LANDLOCK_ACCESS_FS_EXECUTE despite a
+ correctly-anchored PathBeneath rule (contradicts selftest layout1.execute)
+Message-ID: <aldGXyfBQz8GsAMn@google.com>
+References: <P8RYlSi7C7oum2lk1F3PumYSvaUyd0Sn_VwUYAcWwjbQxSt_Rau30Aa1oLIEnLZ2iafcsFmEG5C4LTeBWCyd9vCx94FYeTX_OJdHoERcWSI=@kengrimes.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhR+pWFnt=1pBJTky78br7NsfVcZE=V4UkfkfTbMvBo+mQ@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
-X-Mimecast-MFC-PROC-ID: okbzrpxlNLqE-hGzS5JrgIMX8p8L5IAfFr1qqAchQJ4_1784066438
-X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <P8RYlSi7C7oum2lk1F3PumYSvaUyd0Sn_VwUYAcWwjbQxSt_Rau30Aa1oLIEnLZ2iafcsFmEG5C4LTeBWCyd9vCx94FYeTX_OJdHoERcWSI=@kengrimes.com>
 
-On Tue, 14 Jul 2026, Paul Moore wrote:
+Hello Ken!
 
-> On Fri, Jul 10, 2026 at 6:20=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
-> >
-> > ... and scratch that, the offending commit was that one.
-> >
-> >    commit 01c2305795a3b6b164df48e72b12022a68fd60c1
-> >    Author: Jeff Layton <jlayton@kernel.org>
-> >    Date:   Wed Mar 25 10:40:32 2026 -0400
-> >
-> >    nfsd: add netlink upcall for the nfsd.fh cache
-> >
-> >    Add netlink-based cache upcall support for the expkey (nfsd.fh) cach=
-e,
-> >    following the same pattern as the existing svc_export netlink suppor=
-t.
-> >
-> >    Add expkey to the cache-type enum, a new expkey attribute-set with
-> >    client, fsidtype, fsid, negative, expiry, and path fields, and the
-> >    expkey-get-reqs / expkey-set-reqs operations to the nfsd YAML spec
-> >    and generated headers.
-> >
-> >    Implement nfsd_nl_expkey_get_reqs_dumpit() which snapshots pending
-> >    expkey cache requests and sends each entry's seqno, client name,
-> >    fsidtype, and fsid over netlink.
-> >
-> >    Implement nfsd_nl_expkey_set_reqs_doit() which parses expkey cache
-> >    responses from userspace (client, fsidtype, fsid, expiry, and path
-> >    or negative flag) and updates the cache via svc_expkey_lookup() /
-> >    svc_expkey_update().
-> >
-> >    Wire up the expkey_notify() callback in svc_expkey_cache_template
-> >    so cache misses trigger NFSD_CMD_CACHE_NOTIFY multicast events with
-> >    NFSD_CACHE_TYPE_EXPKEY.
-> >
-> >    Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> >    Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
->=20
-> Playing around with it some this morning on a current Fedora Rawhide
-> system, I can reproduce the problem with a simple command line:
->=20
->  %  mount -t nfs localhost:/mnt/test /mnt/nfs_test
->  mount.nfs: Connection refused for localhost:/mnt/test on /mnt/nfs_test
->=20
-> ... adding an explicit "vers=3D{4,4.1,4.2}" has no effect; versions 2
-> and 3 are no supported on my kernel builds.  There is nothing obvious
-> in dmesg.  I've run with SELinux both in permissive mode and disabled
-> and encountered the same problem.  This doesn't appear to be related
-> to SELinux, it may simply be that we are the first ones to hit this.
->=20
-> As there was some earlier discussion about this being a wonky
-> interaction with userspace, here are some of the relevant packages on
-> my system:
->=20
-> nfs-common-utils-2.9.1-4.rc4.fc45.x86_64
-> nfs-client-utils-2.9.1-4.rc4.fc45.x86_64
-> nfsv4-client-utils-2.9.1-4.rc4.fc45.x86_64
-> nfs-utils-2.9.1-4.rc4.fc45.x86_64
->=20
-> My next step is to try disabling portions of the NFS file handle cache
-> upcall to see if that is the issue, but it would be nice if the NFS
-> devs could take a look at this too.  I'm happy to test things out or
-> answer any questions about my test system.
+(Also adding landlock@lists.linux.dev to CC)
 
-Pardon the dumb question, but are you positive your NFS server is
-running?  No errors from 'systemctl status nfs-server.service' or
-'systemctl status nfs-mountd.service'?  A connection refused error
-typically indicates the server isn't running.
+On Tue, Jul 14, 2026 at 09:07:56PM +0000, Ken Grimes wrote:
+> Hey all, this is my first bug report for linux. The issue was discovered 
+> alongside llm-assisted coding on a downstream project. The 
+> investigation/testing of the bug was a mostly manual process so I could 
+> be sure this was something real. Please let me know if I can provide any
+> further details or assistance. Hope this is helpful, thank you for all of your
+> hard work!
 
-What if you add 'no-netlink=3D1' to the mountd stanza in /etc/nfs.conf and
-restart nfs-server.service?
+Welcome and thanks for reporting your first issue!
 
-FWIW the netlink upcall requires CAP_NET_ADMIN, which is blocked by the
-current selinux-policy on rawhide (and I think it's a dontaudit rule)...
-but you said you've disabled SELinux and reproduced your problem, so I'm
-scratching my head.  Plus the symptom I ran into was the mount command
-hanging, not a 'connection refused' error.  At any rate I filed
-https://github.com/fedora-selinux/selinux-policy/pull/3278 to update the
-selinux-policy (no movement on that yet) and the most recent mountd
-patch improves the fallback to the old proc interface, but I don't think
-it's been added to Fedora yet either.
+I believe the issue you are observing is that the /bin/true program you are
+starting is a dynamically linked executable.  As such, executing it requires
+both the LANDLOCK_ACCESS_FS_EXECUTE right on the binary itself and on
+the system's dynamic loader binary, which usually lives in /lib/ld-linux.so.*
+(but there are symlinks and 32/64-bit differences at play as well, which
+influence the actual final location).
 
--Scott
+You can try this out with the following experiments:
 
->=20
-> --=20
-> paul-moore.com
->=20
+(1) Compile a "true" program statically and try using that:
+
+    $ echo 'int main() { return 0; }' > true.c
+    $ CFLAGS=-static make true
+
+    This can be started with the test you have,
+    unlike the dynamically linked version.
+
+(2) Alternatively, add execute permissions for the dynamic loader:
+
+    Add an additional "path beneath" rule that allow-lists the execution
+    access right on /lib/ld-linux.so.2, /lib64/ld-linux-x86-64.so.2 or
+    wherever else your dynamic loader is.  (You can discover the actual
+    location using "ldd /bin/true".)
+
+With either one of these two changes, your standalone reproducer program
+starts working again.  Or at least it does on my machine.  If it still doesn't
+work on your end that way, please let us know. :)
+
+I admit that we should probably point this out in the Landlock documentation
+for the LANDLOCK_ACCESS_FS_EXECUTE right, as dynamic linking is common and it
+is a potential issue that many people might run into.
+
+For background on the dynamic loading mechanism, see the man page ld.so(8) [1]
+and the LWN article "How programs get run: ELF binaries" [2] (specifically the
+section "Dynamically linked programs").
+
+—Günther
+
+
+[1] https://man7.org/linux/man-pages/man8/ld.so.8.html
+[2] https://lwn.net/Articles/631631/
 
