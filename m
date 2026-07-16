@@ -1,153 +1,226 @@
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-05.mail-europe.com (mail-05.mail-europe.com [85.9.206.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30ACF37757C
-	for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2026 19:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5781348C5C
+	for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2026 20:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.9.206.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784229062; cv=none; b=QcLDr9xbkIIuvVmyO7cA72xKmHHny9Jkilw6Zm1B3z1drKUVFGFR1Tp4Sy/Jd3DTyHo5/6SeeKXfHswcSE2/NSx8NLk2PKIKFJHuTrEOjcVBzDJGQKZ7UQyhqURrMx0c1iu+XMl4KFTjIX07QUxFS11qDlhO7BrAJUKDf05cQtk=
+	t=1784232912; cv=none; b=NaX+vI3EO89057i3XfFE02kyOOcy2ZmdGlWqxC8dWbGPE339tFhFi1QIlYLLnyZS5vpnM4F1RVHucYy+cKnsOcG6ncnberQH/X2lIzOj9a1gJ9DW6zIVOEgloCK2gUF6nSDVoAn1VVRSPpHFD9UURg3pGMJECBNVj5fBNFrE1dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784229062; c=relaxed/simple;
-	bh=6rQO5dLbgGRQ+1ZAuu7llJFe1zRdMpO/COtyJ3jbmRY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OuVVXd2Weyomb9UvqtHa/Q1U/oK03JECqACNZpPlxAR61tLOskli8ehAc40heHdWFKBORXE6TVxDY3rhhYyDFv920jwFZnCrZQZ+4QPhfotqZKopBrjCgbKOuSvVGySkfa84sutdP3yMggivsZS/pGvZn1AgEUKdU2+Li8w/sMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=aL4NfT/w; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	s=arc-20240116; t=1784232912; c=relaxed/simple;
+	bh=8spo3j6W+8H0sPv+ALQUEJdJsCkkbN7yc3jeXC4j5RY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W31WV5ZWEdtr7yrL1rHJvqyjIA0whd8slwth1AbnchXnGqhCwWrJpkZoQJ52zWSpmVvRq9u+2I60zhKFb2610pJKfmt6GE06KzUeG7q9CrMKmKuKq6H+jxZxfLKbJgXdi0QKMf0SjtyiyA/r8fkTg8w4DQKkejsjJGG+kW/kZmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kengrimes.com; spf=pass smtp.mailfrom=kengrimes.com; dkim=pass (2048-bit key) header.d=kengrimes.com header.i=@kengrimes.com header.b=X+15YEN+; arc=none smtp.client-ip=85.9.206.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kengrimes.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kengrimes.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="aL4NfT/w"
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-81e851aebeeso80334397b3.0
-        for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2026 12:11:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1784229060; x=1784833860; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=R6zePSti7ASS1ok69EYQ+PkxSi0XpyrM1Y8fQpPG17Q=;
-        b=aL4NfT/w2DTQM/eRc8mJt1DiZrPKt36EYfo8Vf8TvmSlrntB7TA9Za6CfURrW75Hqs
-         dHnueMjIl+6wRJf4EuwEOvWLxdiKLU3ZUW30rQb3d023/0N5htfodWORkSIVFgCMEf2g
-         xt2DP2eA6kVu8iJOlLj5WaS+JH9m/teMe3Y0VqN3Cu5yXHgkYw4Ek7SSza5eeOXbwDy7
-         AUsEH9Dl7HNYg2KBW7AcBjr/S39Pt9x5t5sWcZddhxpORtd2ouvVU/wLhQrMeqlZv2Gb
-         Bmh03fFkjJcc2Bxjw67RHpclI414TP5QSxlrbppijIcmqnnT40HCZlCtahscI4snjuPG
-         bP4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784229060; x=1784833860;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=R6zePSti7ASS1ok69EYQ+PkxSi0XpyrM1Y8fQpPG17Q=;
-        b=ESAhC3DqubXV06USel9Ah9keJ7dj7jmF+INYpYht/e59kRtM3PTJ+UtvgA7Nig60n3
-         GYnDKe72hhQkvZLGZ5SNBv1LNHkYTmSAYsYI8Kr7MA4QfCtiov1/hwqq1ZjXTGvvTlab
-         Nhu4AUxAEqyc5UwMg9zBg1fHmjHbx1SJpdfZqW30yxb2bKVqc2lNAA0eVz5hCpVMfv2k
-         NruvUPl77xvLjXc1aUMIQ9nUFmQaClC3xN0r3TfgtLdEYZalgVKQXm3C5I9YmEeeOkpQ
-         LGPS2TDo3q+Gv4OvmW5cf8tdA9l95ENT9l8eWx/DRkZ3JKq/ACL21IIx0p5qm7V+qmJD
-         Hv/A==
-X-Forwarded-Encrypted: i=1; AHgh+RrLLjT0AuohQwdQXjfjREi2/YzY3kSt9wEMMHG9m5rx98s/lK8tj+xEdMZWmdCMxNR3Cb+iN8Y6VIP0v1NkOHGzxmNtYIY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAlVlHplTKYkfW+Lt1wU6e7VrFiainKKKtkhPukPZNlPFtNLFs
-	ZTfwTE882lTrzOXAZOLgBc9dZqRbTMwj/Y8iokegyPUUKZKufiYX7KMczbzT4N3gF2w=
-X-Gm-Gg: AfdE7cnZzOAj+2okzqwhLdbKf4AhGZT+rw/Wdqd+vuHerEgZNQJTYGMAGJquzpgAvHW
-	DYAqzUA2Q9cOwTnCHq7xADoiDRuh/X66Bm9OJieULk3YWyaje6L3g0dM7xtJTLBsz0+emB4sWoP
-	EOcbuXk4ASTI2dEhtCj34fjCXSsa/9xHqP5cjlS/AEkL/w68SMHkRlW0XBHek0kkC65bkpeUJq3
-	ro+ObWcWq34Yh4TFNjY85HRjNzSU9iW7PyIaLlJGYdN715MuFYrgUTOq3YMEO8m4bwUkbrybnGx
-	WUSLrJdbjzuh94bCA8rB1UJtBYE0UcFjC5aV6m3Ugu33LBikNXtdMdh8XyBxD4WJJdUwSttydMI
-	642RNiWJrpUO0/n8lkLJt88unic/9sCosGuJFFpabElYh2EKBjO99JcgJ8NhDmw==
-X-Received: by 2002:a05:690c:b89:b0:81e:6c2e:f112 with SMTP id 00721157ae682-81ebb143827mr99516067b3.29.1784229059946;
-        Thu, 16 Jul 2026 12:10:59 -0700 (PDT)
-Received: from [127.0.1.1] ([2a09:bac6:947f:3af::5e:5d])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-81e6c1feb43sm203389297b3.40.2026.07.16.12.10.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jul 2026 12:10:58 -0700 (PDT)
-From: Frederick Lawler <fred@cloudflare.com>
-Date: Thu, 16 Jul 2026 14:10:52 -0500
-Subject: [PATCH] ima: Report errno for failed hash collection to audit
+	dkim=pass (2048-bit key) header.d=kengrimes.com header.i=@kengrimes.com header.b="X+15YEN+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kengrimes.com;
+	s=protonmail3; t=1784232898; x=1784492098;
+	bh=hlIlaGIRAbsk4+mR01t1Wh0yZsocDwo9hxJdVdQSLEo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=X+15YEN+rQP+I9prMidFPLIkWfVSJYc94/Vmkktmy5THBZ8Bw20rPIwBhvh/EdKJF
+	 fwtAHNmpFt6eF9jEOAHDz1gWTEiKmitrvRxpDvYnv9TfcTaQP61i8YW60BF1bNa3dk
+	 GqUq+tWz9WOZ3w6wyA9ZBm/wACq7LgltbWR/H578FuiuQyW+n7tgbYek0XUnnd3Wea
+	 Iv0LnS4LPwrtq7wFb4pp7P5aMOktwXsszI/B33zq8RqEy/7LBFCLTXwv5/MQwd9fKE
+	 dbFrIMRleIJCStpTkltejWShYNFRXIyy03Ch9cJvtDiZZCqAh3FpZlLjRI4ygWHl0f
+	 adLkWVWbtP6aA==
+Date: Thu, 16 Jul 2026 20:14:55 +0000
+To: =?utf-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+From: Ken Grimes <ken@kengrimes.com>
+Cc: "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, landlock@lists.linux.dev
+Subject: Re: [BUG] Landlock denies LANDLOCK_ACCESS_FS_EXECUTE despite a correctly-anchored PathBeneath rule (contradicts selftest layout1.execute)
+Message-ID: <kDUhcqAqpOGRVoTEYarGa-jMnCbwREPlvCWcJ8gmPH7wZ8CHdDWEJ-nL8j0LnjiffeNtG9_kE0XjRsUZ-hHfXZA0m1zpdTofgNXTcqMqBRs=@kengrimes.com>
+In-Reply-To: <20260716.eijohyi0ieZa@digikod.net>
+References: <P8RYlSi7C7oum2lk1F3PumYSvaUyd0Sn_VwUYAcWwjbQxSt_Rau30Aa1oLIEnLZ2iafcsFmEG5C4LTeBWCyd9vCx94FYeTX_OJdHoERcWSI=@kengrimes.com> <aldGXyfBQz8GsAMn@google.com> <20260716.eijohyi0ieZa@digikod.net>
+Feedback-ID: 26299838:user:proton
+X-Pm-Message-ID: 1ba93b729c0aac8aae946e779a0858eb13a4c588
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260716-report-hash-error-v1-1-ac19281112e4@cloudflare.com>
-X-B4-Tracking: v=1; b=H4sIALssWWoC/x3MMQqAMBAF0avI1i4kUSN4FbEQ/ZptjGxEBMndD
- ZavmHkpQQWJhuolxS1J4lFg64qWMB87WNZicsZ501vPijPqxWFOgaEalTtnmtVv8GhBpTsVmzz
- /c5xy/gA2KUeiYwAAAA==
-X-Change-ID: 20260716-report-hash-error-5203d6fe6e4e
-To: Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, 
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-team@cloudflare.com, 
- Frederick Lawler <fred@cloudflare.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2177; i=fred@cloudflare.com;
- h=from:subject:message-id; bh=6rQO5dLbgGRQ+1ZAuu7llJFe1zRdMpO/COtyJ3jbmRY=;
- b=owEBbQKS/ZANAwAKAasltHYDktNtAcsmYgBqWSzBUkGz1q/QWLeGB1fUyWH3Z64mEUvXwOwq4
- rEqWEqSD5iJAjMEAAEKAB0WIQTLNBqMVmu1PHvjOe2rJbR2A5LTbQUCalkswQAKCRCrJbR2A5LT
- bX1kD/0TA2W9QxMW7K02h4WlhGcpConfF15FeMjj9TZ9OPmdJk1Fes35cjdNx9np9ZH09pwiqo6
- a7kOX4Rcku9DkXALke+HytAruvoN6aKsHVsloyD4YUBHzA6dxoKnC8mKabwYk8sV2y+nU2dTFDT
- 2PCFtVKCGA9yrLXi6vXOgl/+7ObSVhJPnB4A3wzamyYw9o43U6pbh6RzHbAMGuEvL1B5PnrGIgT
- Zq0tcPLTJhgK1IC2BBDHNHPvSu7Rylz2YYIMAFcvnxBlrYSADon8/pwksT4KvD5TskblzMbS6Cx
- Ef7QfFtq9+3jN72kdB2n3brzW8lupYhV+cmBSiPBOpqZBwRDfPWCklDe1AXk8KcZxmiKZRDvbk8
- Ox3OJ28L+im7SQ5fg+Za2pnxZzfGr9uBNkePSbYDGxTmF8+W/t2jdLGPK+p2R4XvghMpLTDT2el
- 4DqBpN+FIcEE/7rkuomWimoxHvHb65n7LO3PQATzQdL7VZKIFF7sdjDn6AjBRgyaim/7GBB1K7N
- /v9CfdB5SpphXmglVM8yb3Ll09meRUc2S/OEAQV6LMw0QKXjEsG8e9CxLAgLJBHSAk72sJicq86
- +Jth6lPe39EkCyjsxLQP9EMsoPt4EPxAsJmLt8hUllNMIJcGH2lsX4UTicjv/V2nmWSfl8WgRUs
- dK9Z3IZjEKvyUAA==
-X-Developer-Key: i=fred@cloudflare.com; a=openpgp;
- fpr=CB341A8C566BB53C7BE339EDAB25B4760392D36D
+Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha512; boundary="------2f7f1da9d424bbe2d2614ee39d537deb578b41753b2512c4ba507b9bfce6f796"; charset=utf-8
 
-integrity_audit_msg() wraps integrity_audit_message() such that errno is
-always set to zero. When debugging for failed hashes, it'd be nice to
-understand the corresponding error code with the cause.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------2f7f1da9d424bbe2d2614ee39d537deb578b41753b2512c4ba507b9bfce6f796
+Content-Type: multipart/mixed;boundary=---------------------6df0a0c3e6879956554f423df853ee97
 
-Signed-off-by: Frederick Lawler <fred@cloudflare.com>
----
- security/integrity/ima/ima_api.c          | 6 +++---
- security/integrity/ima/ima_template_lib.c | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+-----------------------6df0a0c3e6879956554f423df853ee97
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;charset=utf-8
 
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index 122d127e108dcca8ddae6575c908144859783fb6..15883e4f077e0aa950f3fdd4b573873929da68aa 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -328,9 +328,9 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
- 
- 		take_dentry_name_snapshot(&filename, file->f_path.dentry);
- 
--		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
--				    filename.name.name, "collect_data",
--				    audit_cause, result, 0);
-+		integrity_audit_message(AUDIT_INTEGRITY_DATA, inode,
-+					filename.name.name, "collect_data",
-+					audit_cause, result, 0, result);
- 
- 		release_dentry_name_snapshot(&filename);
- 	}
-diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-index 8a89236f926c10af0dd2b2ef08fbe59bd8a78b66..6d163312fb4c47ce256766e997aac5f7375088a8 100644
---- a/security/integrity/ima/ima_template_lib.c
-+++ b/security/integrity/ima/ima_template_lib.c
-@@ -390,9 +390,9 @@ int ima_eventdigest_init(struct ima_event_data *event_data,
- 	    ima_hash_algo : HASH_ALGO_SHA1;
- 	result = ima_calc_file_hash(event_data->file, hash_hdr);
- 	if (result) {
--		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
--				    event_data->filename, "collect_data",
--				    "failed", result, 0);
-+		integrity_audit_message(AUDIT_INTEGRITY_DATA, inode,
-+					event_data->filename, "collect_data",
-+					"failed", result, 0, result);
- 		return result;
- 	}
- 	cur_digest = hash_hdr->digest;
+Thanks so much G=C3=BCnther & Micka=C3=ABl for the fast and thorough respo=
+nses, it's very appreciated!
 
----
-base-commit: 1da739feb31b4fecae465ebf87ba44a97e44101b
-change-id: 20260716-report-hash-error-5203d6fe6e4e
+G=C3=BCnther, that's exactly what I found. I went down the path of 2; file=
+-scoped LANDLOCK_ACCESS_FS_EXECUTE grant on dynamic loader, discovered at =
+runtime since the loader's path varies across distros (/lib64/ld-linux-x86=
+-64.so.2 here, but that's obviously not portable).
 
-Best regards,
--- 
-Frederick Lawler <fred@cloudflare.com>
+The fix resolves the target binary's PT_INTERP entry from ELF headers, the=
+n runs the interpreter in its own --list mode (invoked in a privilege-drop=
+ped, sandboxed child) to get the full shared-object closure. Not just the =
+loader itself, but the DT_NEEDED dependencies (/etc/ld.so.cache and /etc/l=
+d.so.preload) when present. I grant Execute|ReadFile on the interpreter an=
+d ReadFile on everything else, each file-scoped instead of directory wide,=
+ so not opening up all of /lib64. Just the files the loader will actually =
+touch for the binary. I reproduced the failure standalone first (execveat =
+under a single rule landlock domain, EACCESS, adding the loader's file as =
+a second rule) before building the real fix, so I feel confident this is w=
+hat you're describing.
+
+Regarding the docs, yes please do add a note about this to LANDLOCK_ACCESS=
+_FS_EXECUTE docs! That would have definitely saved a decent amount of effo=
+rt, and I could see others running into the same issue.
+
+Micka=C3=ABl, thank you! I hadn't looked into the audit log support closel=
+y, I'll be sure to use this instead of building standalone reproductions, =
+very helpful!
+
+Thanks again for the help and all the great work you do.
+
+-Ken
+
+
+On Thursday, July 16th, 2026 at 2:37 AM, Micka=C3=ABl Sala=C3=BCn <mic@dig=
+ikod.net> wrote:
+
+> Hi!
+> =
+
+
+> You should also get a look at the audit logs:
+> https://docs.kernel.org/admin-guide/LSM/landlock.html#audit
+> =
+
+
+>  Micka=C3=ABl
+> =
+
+
+> On Wed, Jul 15, 2026 at 10:39:29AM +0200, G=C3=BCnther Noack wrote:
+> > Hello Ken!
+> >
+> > (Also adding landlock@lists.linux.dev to CC)
+> >
+> > On Tue, Jul 14, 2026 at 09:07:56PM +0000, Ken Grimes wrote:
+> > > Hey all, this is my first bug report for linux. The issue was discov=
+ered =
+
+
+> > > alongside llm-assisted coding on a downstream project. The =
+
+
+> > > investigation/testing of the bug was a mostly manual process so I co=
+uld =
+
+
+> > > be sure this was something real. Please let me know if I can provide=
+ any
+> > > further details or assistance. Hope this is helpful, thank you for a=
+ll of your
+> > > hard work!
+> >
+> > Welcome and thanks for reporting your first issue!
+> >
+> > I believe the issue you are observing is that the /bin/true program yo=
+u are
+> > starting is a dynamically linked executable.  As such, executing it re=
+quires
+> > both the LANDLOCK_ACCESS_FS_EXECUTE right on the binary itself and on
+> > the system's dynamic loader binary, which usually lives in /lib/ld-lin=
+ux.so.*
+> > (but there are symlinks and 32/64-bit differences at play as well, whi=
+ch
+> > influence the actual final location).
+> >
+> > You can try this out with the following experiments:
+> >
+> > (1) Compile a "true" program statically and try using that:
+> >
+> >     $ echo 'int main() { return 0; }' > true.c
+> >     $ CFLAGS=3D-static make true
+> >
+> >     This can be started with the test you have,
+> >     unlike the dynamically linked version.
+> >
+> > (2) Alternatively, add execute permissions for the dynamic loader:
+> >
+> >     Add an additional "path beneath" rule that allow-lists the executi=
+on
+> >     access right on /lib/ld-linux.so.2, /lib64/ld-linux-x86-64.so.2 or
+> >     wherever else your dynamic loader is.  (You can discover the actua=
+l
+> >     location using "ldd /bin/true".)
+> >
+> > With either one of these two changes, your standalone reproducer progr=
+am
+> > starts working again.  Or at least it does on my machine.  If it still=
+ doesn't
+> > work on your end that way, please let us know. :)
+> >
+> > I admit that we should probably point this out in the Landlock documen=
+tation
+> > for the LANDLOCK_ACCESS_FS_EXECUTE right, as dynamic linking is common=
+ and it
+> > is a potential issue that many people might run into.
+> >
+> > For background on the dynamic loading mechanism, see the man page ld.s=
+o(8) [1]
+> > and the LWN article "How programs get run: ELF binaries" [2] (specific=
+ally the
+> > section "Dynamically linked programs").
+> >
+> > =E2=80=94G=C3=BCnther
+> >
+> >
+> > [1] https://man7.org/linux/man-pages/man8/ld.so.8.html
+> > [2] https://lwn.net/Articles/631631/
+> >
+> >
+> =
+
+
+-----------------------6df0a0c3e6879956554f423df853ee97
+Content-Type: application/pgp-keys; filename="publickey - ken@kengrimes.com - 0xEDFCC5BC.asc"; name="publickey - ken@kengrimes.com - 0xEDFCC5BC.asc"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="publickey - ken@kengrimes.com - 0xEDFCC5BC.asc"; name="publickey - ken@kengrimes.com - 0xEDFCC5BC.asc"
+
+LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgp4ak1FWDIvT0xSWUpLd1lCQkFI
+YVJ3OEJBUWRBMGIwS2EwWlVWWEpSenNtNG05bFM5blZ0ODlhM1RKQjMKMU9yVEtSS3lKZ1hOSld0
+bGJrQnJaVzVuY21sdFpYTXVZMjl0SUR4clpXNUFhMlZ1WjNKcGJXVnpMbU52CmJUN0Nqd1FRRmdv
+QUlBVUNYMi9PTFFZTENRY0lBd0lFRlFnS0FnUVdBZ0VBQWhrQkFoc0RBaDRCQUNFSgpFRk0rYjdl
+S1piZ2hGaUVFN2Z6RnZDc2Y0bURSTVBtNVV6NXZ0NHBsdUNGWE1BRCtPNGRCS2RoTGNVWFcKbGx0
+eFp4MXNZNjFnRVVYNEVId0s1UUdHTjg4VHRjVUJBTU9qMDFQclcrZVI2dWhkZ3M4enlDZ1hTa2xl
+CkVNVlplcDBMeTVMWUkwd1B6amdFWDIvT0xSSUtLd1lCQkFHWFZRRUZBUUVIUUxvU2ptbG10Z01j
+akFMUwpLMWE5OEZnWURzRDloK3B0SFBNM05XNmFiaUI3QXdFSUI4SjRCQmdXQ0FBSkJRSmZiODR0
+QWhzTUFDRUoKRUZNK2I3ZUtaYmdoRmlFRTdmekZ2Q3NmNG1EUk1QbTVVejV2dDRwbHVDRlR5QUQv
+UUlvbC9nVUJjZXBlCkVHdjJnZXd3L0hmV0tYY2d2K2VLZ3dib0YvRFpuc2tBLzN0cm56V201QzBp
+S3ovajdJRzFwUFNpZmJKcwp3QzZGR1FxOE80ZVlvSHdGCj1GRlVoCi0tLS0tRU5EIFBHUCBQVUJM
+SUMgS0VZIEJMT0NLLS0tLS0K
+-----------------------6df0a0c3e6879956554f423df853ee97--
+
+--------2f7f1da9d424bbe2d2614ee39d537deb578b41753b2512c4ba507b9bfce6f796
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: ProtonMail
+
+wrsEARYKAG0FgmpZO7AJEFM+b7eKZbghRRQAAAAAABwAIHNhbHRAbm90YXRp
+b25zLm9wZW5wZ3Bqcy5vcmfHBPla/wGR38Zz0/z8o0ubXOCA8FyEEIt8d9ev
+xSZG1xYhBO38xbwrH+Jg0TD5uVM+b7eKZbghAAAAUAD/XxwdjhG0BpoVfIJI
+OmctLe3mZcntuysNS0eKySqk0z4A/R594kkkoCz+8KYGBZoxosUfTY9VO2xJ
+09S5cfd56TQK
+=klzG
+-----END PGP SIGNATURE-----
+
+
+--------2f7f1da9d424bbe2d2614ee39d537deb578b41753b2512c4ba507b9bfce6f796--
 
