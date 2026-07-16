@@ -1,136 +1,117 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740163AA1BF;
-	Thu, 16 Jul 2026 07:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6763164AA
+	for <linux-security-module@vger.kernel.org>; Thu, 16 Jul 2026 09:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784186989; cv=none; b=B95fdjB0y8FcFS3D3XyjLS3kxeVJahCd8hT0SVWqhjLs9XhiqtFb85AD3m80TZRr76aGKDiGVOScEgjaMVr7PDl66TvvUX1D4BwqSgVNBSF/m7hWsxUfTHXZPuSqK5osMaERk8DdUSgPDJBncm3LcxsWFpSTI/EiQM+JBAaFWkQ=
+	t=1784195133; cv=none; b=KglqeOgsPqfKnwuuOZoL4qvcSj2yW5Fi9rEaG9uuAdaXXNoDvOH/XrsprFZZKDCCwXOcWsI6TDCkxddZHONIXUqMDj+U7HeupmYBXMOcb2wfVx5+aavplkqOrqiWTsHI27tgRQuxnq7ZWic7FK5RF8FvsbZOC8AbmYLLGX6I4Gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784186989; c=relaxed/simple;
-	bh=jOspFsn9RWqd4RO+5Lg48YoXIYnKBFJeZ7juQ3BdMvk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qGw6H7NpUB+UCVqwVp+q5YsPwfWS8mjQjWyCG6Wgase7Lhr7OYbsZ7r3vzBbEBih+89WsLAsP61ftQ0bq2EcGovzBdZI8jSuSZha0OnCCpuKye/cFguwIBb+5QEe7bZgjfoa2Akj1kaFQvl7aKdlshyTRA2siS8tDiFvoaotknY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.235])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4h14K33gwjzpTKt;
-	Thu, 16 Jul 2026 15:23:35 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id AE46640577;
-	Thu, 16 Jul 2026 15:29:41 +0800 (CST)
-Received: from [10.45.154.222] (unknown [10.45.154.222])
-	by APP2 (Coremail) with UTF8SMTPA id GxC2BwAXKAZciFhqGmi+AA--.8840S2;
-	Thu, 16 Jul 2026 08:29:41 +0100 (CET)
-Message-ID: <f6ecaaf1-e226-42a5-91f9-37ecce66a5d4@huaweicloud.com>
-Date: Thu, 16 Jul 2026 09:29:30 +0200
+	s=arc-20240116; t=1784195133; c=relaxed/simple;
+	bh=p1pPE/hXcZKUmCtVMu6RptU4ysPrKbiUhXFcrbthNwA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P9/8BmMGf7AToekFNq7SLaBotSv+i9zRrWWAESaDW8ShdhhALDM0swtgzNFBEs6lD8NJI5LvjQz83i7pWT9D3RcKB9iMyYivxSNHPSYE5wwyNtIFXFq2+5tgzMm7HDppKlRBAzb2N0u92Ptf5PdHk2j1WSfPWyDSSeqDNNt1mog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=FSYvKgVE; arc=none smtp.client-ip=84.16.66.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="FSYvKgVE"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4h17Hq3fVVzp8x;
+	Thu, 16 Jul 2026 11:37:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1784194663;
+	bh=W6nIySzRfaoF4uBuUrb2JyD1f2WcDOPGeIAscMQQxwc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FSYvKgVEDQP0AiqgLVsVZkKxKj6v1+k51tneR6xrv4HRVEcrex8OvaMKVNPJhtaH9
+	 R7ZJBONFWFuSnPM/DLFacdCS5BykI/GvG++Uxrh7rwWbm6cuY4OhYcvzwrjUotFZHD
+	 0LONsiJo694rDA4WfvAqFr3Ka1bPNkxEyOLlBdK4=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4h17Hp4hPMzGwh;
+	Thu, 16 Jul 2026 11:37:42 +0200 (CEST)
+Date: Thu, 16 Jul 2026 11:37:41 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: Ken Grimes <ken@kengrimes.com>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, landlock@lists.linux.dev
+Subject: Re: [BUG] Landlock denies LANDLOCK_ACCESS_FS_EXECUTE despite a
+ correctly-anchored PathBeneath rule (contradicts selftest layout1.execute)
+Message-ID: <20260716.eijohyi0ieZa@digikod.net>
+References: <P8RYlSi7C7oum2lk1F3PumYSvaUyd0Sn_VwUYAcWwjbQxSt_Rau30Aa1oLIEnLZ2iafcsFmEG5C4LTeBWCyd9vCx94FYeTX_OJdHoERcWSI=@kengrimes.com>
+ <aldGXyfBQz8GsAMn@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next,v2] ima: add cond_resched() in
- ima_calc_file_hash_tfm loop
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Gaosheng Cui <cuigaosheng1@huawei.com>, lujialin4@huawei.com,
- zohar@linux.ibm.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20260714091708.2802272-1-cuigaosheng1@huawei.com>
- <e6270a062ebfdbc6d9e50ffe80ee5e77b4f0678c.camel@huaweicloud.com>
-Content-Language: en-US
-In-Reply-To: <e6270a062ebfdbc6d9e50ffe80ee5e77b4f0678c.camel@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:GxC2BwAXKAZciFhqGmi+AA--.8840S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJF15Jw13AFyDWF15uw13CFg_yoW8Krykpa
-	9agayvkrWqyryUuFsrKas3tF18C3yxJFy3WrZ5tryUJF90vr1vvry7Ar4YgryfCr1Fyw1r
-	tayqgryDA3Wqy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAQBGpYT0YRDwABsx
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aldGXyfBQz8GsAMn@google.com>
+X-Infomaniak-Routing: alpha
 
-On 7/14/2026 11:26 AM, Roberto Sassu wrote:
-> On Tue, 2026-07-14 at 17:17 +0800, Gaosheng Cui wrote:
->> When hashing large files, the while loop in ima_calc_file_hash_tfm
->> processes PAGE_SIZE chunks without any scheduling point, which can
->> cause soft lockup warnings:
->> watchdog: BUG: soft lockup - CPU#0 stuck for 50s!
->> Call Trace:
->>    _sha256_update+0x12d/0x1a0
->>    ima_calc_file_hash_tfm+0xfb/0x150
->>    ima_calc_file_hash+0x6e/0x160
->>    ima_collect_measurement+0x202/0x340
->>    process_measurement+0x3a9/0xb30
->>    ima_file_check+0x56/0xa0
->>    do_open+0x11b/0x250
->>    path_openat+0x10b/0x1d0
->>    do_filp_open+0xa9/0x150
->>    do_sys_openat2+0x223/0x2a0
->>    __x64_sys_openat+0x54/0xa0
->>    do_syscall_64+0x59/0x110
->>    entry_SYSCALL_64_after_hwframe+0x78/0xe2
->>
->> Call cond_resched() every 4MB to yield the CPU when needed, rather
->> than at every loop iteration, to reduce overhead.
->>
->> Fixes: 3323eec921ef ("integrity: IMA as an integrity service provider")
->> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+Hi!
+
+You should also get a look at the audit logs:
+https://docs.kernel.org/admin-guide/LSM/landlock.html#audit
+
+ Mickaël
+
+On Wed, Jul 15, 2026 at 10:39:29AM +0200, Günther Noack wrote:
+> Hello Ken!
 > 
-> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
-
-Actually, as Sashiko pointed out, alignment does not work well, since 
-__kernel_read() can return fewer than PAGE_SIZE bytes, causing the 
-offset to be always misaligned. Instead, we can keep a variable with the 
-number of bytes read since last cond_resched(), which we reset when we 
-hit 4 MB.
-
-Sashiko also noted that the same mechanism could apply for 
-calc_buffer_shash_tfm(), but we can add it later if we have a warning 
-(note that in this case we already have the buffer, we are not doing
-I/O).
-
-Thanks
-
-Roberto
-
-> Thanks
+> (Also adding landlock@lists.linux.dev to CC)
 > 
-> Roberto
+> On Tue, Jul 14, 2026 at 09:07:56PM +0000, Ken Grimes wrote:
+> > Hey all, this is my first bug report for linux. The issue was discovered 
+> > alongside llm-assisted coding on a downstream project. The 
+> > investigation/testing of the bug was a mostly manual process so I could 
+> > be sure this was something real. Please let me know if I can provide any
+> > further details or assistance. Hope this is helpful, thank you for all of your
+> > hard work!
 > 
->> ---
->> v2: call cond_resched() every 4MB to yield the CPU when needed
->>   security/integrity/ima/ima_crypto.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
->> index 0d72b48249ee..aab2349c0c33 100644
->> --- a/security/integrity/ima/ima_crypto.c
->> +++ b/security/integrity/ima/ima_crypto.c
->> @@ -233,6 +233,9 @@ static int ima_calc_file_hash_tfm(struct file *file,
->>   		rc = crypto_shash_update(shash, rbuf, rbuf_len);
->>   		if (rc)
->>   			break;
->> +
->> +		if (IS_ALIGNED(offset, SZ_4M))
->> +			cond_resched();
->>   	}
->>   	kfree(rbuf);
->>   out:
+> Welcome and thanks for reporting your first issue!
 > 
-
+> I believe the issue you are observing is that the /bin/true program you are
+> starting is a dynamically linked executable.  As such, executing it requires
+> both the LANDLOCK_ACCESS_FS_EXECUTE right on the binary itself and on
+> the system's dynamic loader binary, which usually lives in /lib/ld-linux.so.*
+> (but there are symlinks and 32/64-bit differences at play as well, which
+> influence the actual final location).
+> 
+> You can try this out with the following experiments:
+> 
+> (1) Compile a "true" program statically and try using that:
+> 
+>     $ echo 'int main() { return 0; }' > true.c
+>     $ CFLAGS=-static make true
+> 
+>     This can be started with the test you have,
+>     unlike the dynamically linked version.
+> 
+> (2) Alternatively, add execute permissions for the dynamic loader:
+> 
+>     Add an additional "path beneath" rule that allow-lists the execution
+>     access right on /lib/ld-linux.so.2, /lib64/ld-linux-x86-64.so.2 or
+>     wherever else your dynamic loader is.  (You can discover the actual
+>     location using "ldd /bin/true".)
+> 
+> With either one of these two changes, your standalone reproducer program
+> starts working again.  Or at least it does on my machine.  If it still doesn't
+> work on your end that way, please let us know. :)
+> 
+> I admit that we should probably point this out in the Landlock documentation
+> for the LANDLOCK_ACCESS_FS_EXECUTE right, as dynamic linking is common and it
+> is a potential issue that many people might run into.
+> 
+> For background on the dynamic loading mechanism, see the man page ld.so(8) [1]
+> and the LWN article "How programs get run: ELF binaries" [2] (specifically the
+> section "Dynamically linked programs").
+> 
+> —Günther
+> 
+> 
+> [1] https://man7.org/linux/man-pages/man8/ld.so.8.html
+> [2] https://lwn.net/Articles/631631/
+> 
+> 
