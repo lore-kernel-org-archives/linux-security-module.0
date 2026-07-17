@@ -1,72 +1,76 @@
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+Received: from mail-yx1-f46.google.com (mail-yx1-f46.google.com [74.125.224.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065BB3D953C
-	for <linux-security-module@vger.kernel.org>; Fri, 17 Jul 2026 22:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CCFC3D9680
+	for <linux-security-module@vger.kernel.org>; Fri, 17 Jul 2026 22:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784325812; cv=none; b=Ve2+qRG8I2r2WiCTvg69u7+eFj55eKxcZGttULuJSfyPoDuEbIbDjX/WO8B1Cz+qVL+OfVSu/YfZrchCq9CI7wsSzyeYQGmeYDuI3iXclABnh759gF7jIaUG34Q9VVAgXmyDDefrVuVNuxmCC65rM3jW01Igol6xqFWj2OQkmJA=
+	t=1784325814; cv=none; b=HK+300/XSF+M2+k3qX64MNVpYqTow91qzJAZuQ/nRKN/hIr4x44RLlUJVuRN5rSJUoFUcO6WDkYeJ/4koELcSbg9mIj56hnETRzeKmLQt9WOvMnXb6Vnj5brDLLg9sg7/mS3maHDGpxIa2DzCWOT5VUH+EZcNJHtJa/1ACz+SII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784325812; c=relaxed/simple;
-	bh=MLaA97l8p2IZZ8Xe64yutrw2N77FxczzxEeMgMY7QSw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BRkfhX2d4uI3hxUeUamtRooL+68JoiQixsoc+2z9LujhgHuxuY8aJ6kmGEqFviMN7bDxuLMrC9lJ2EnWDH78hnM49XaA1X/9H+bGgN0vrpXROkBi5xWIr0SslcHXwpxiF5yaXaw1aYUTrtM8xHIsXLEg9Cc7PWupYug9aI2ejFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qB6gBzNz; arc=none smtp.client-ip=209.85.128.173
+	s=arc-20240116; t=1784325814; c=relaxed/simple;
+	bh=Tr06TgVRa+MWduu5HOXY/09bGtYQpJWzDpIVVe7QQeQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LEkZTP9X/6E0QOekJdbma9nPA49vZFsgSZ6NuCan5jbMWcT+w0hw3b5NMZQ3tkrT4jLf0PAx0f0hzZq+J8QNhOLvQkwMg3XVNPqCLgyEYBt7mNkCZQTt+nxgK1BCkIpLqyC+rjcJLTBrsW1GcGb+WUjrbOA1x+9TfDU0RDCOPCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RxLL4M3u; arc=none smtp.client-ip=74.125.224.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qB6gBzNz"
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-81e8fa1b8d6so80196967b3.1
-        for <linux-security-module@vger.kernel.org>; Fri, 17 Jul 2026 15:03:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RxLL4M3u"
+Received: by mail-yx1-f46.google.com with SMTP id 956f58d0204a3-66826484b67so3209616d50.1
+        for <linux-security-module@vger.kernel.org>; Fri, 17 Jul 2026 15:03:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784325810; x=1784930610; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=rkAx80M7CPkgX1m6JU0rx2ViDCFTK6PMOQlfA80wRaY=;
-        b=qB6gBzNzK1GGW7QoLP0/OffnLVcj+zY9JrMBnvkTXiqk7AipnQ+TWY5kHtC7yQrVgS
-         CJLhh3onAHdSRvmLHIjEKX0LzNs2eSFiw4yt5IaXRpDdiSXdteQ27UUf8UIltuZXOarj
-         TRJZ7WidbE77PqewhRk0ZIe8ola6juTk14O3nVb6OHIOarbD9j4RS8tD+zUaJ15hnQgl
-         7U3fNVMiMSRe3t18tkb1+HqjMZ/xqg7ruOzZOhUmYcgU0Qe7Cln2ihwRPBTL/v2moodS
-         HTgk+DDcWrZaTW/Na2BaQO76CN828hKJddLurvlAlRMs1hgL9hQmyZR7EiyN/k3SQoEx
-         3jQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784325810; x=1784930610;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+        d=gmail.com; s=20251104; t=1784325811; x=1784930611; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=rkAx80M7CPkgX1m6JU0rx2ViDCFTK6PMOQlfA80wRaY=;
-        b=Zo9U9ivHAxEdZOWCMcFJN1VNiUQM0LptbR75yDzHbCCWUP/a9v9OLnYKi+8Ss4Vu10
-         f9kWRXRiTzuiYpBxMdveZNQetkrS9zO2U1P8nO5LfeqZWE3SSaVuseI/6LeoAfy+R/UM
-         D8v9T5uK4Bg0uXFFjX7n4HsejjN0H2k8qdUQCjc2i7MiGMCUGZUrt0SJ3l2+g1ikSrdO
-         G9BegQKQj3xPfdXI8PRhvdXCnEWBzU4uaHssyPZJB/CN1w578j115aAQT6mWQL9c6xsA
-         +X5m5NEdJpXeWtBlAXTiM/7TFMgcjPY/tf/uEgVUUIMPzPPS3duE5WAZ/mAJCOGzbrAo
-         RQhA==
-X-Forwarded-Encrypted: i=1; AHgh+RogOmndl4VASNaiohzG4HsH8OLa/1I/r49o/Ci4P8flHPl7jLEarMVpdp+g8nrcogm0SuF0XOsCydmJjJuvzJgYi0Ilyjk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyR29QnHp69LOl8L6LuObXNmezpO0C82/XoBrDJ8KsF49nZH5SW
-	CtgUveVQr+ErYu97Q93HxndtL6PNQse+vOTnNrYR5caBjpUiPG2UQHIT
-X-Gm-Gg: AfdE7clP4rZpNfGjB6Niw9/45I4X+tg+etTHdIYg7quPxcSZxT5vXQqoGCPRMQcQXYM
-	nHlKfCoA3zrsi6iL4IILNvXnNvtP+0VVd38qupwwk8+l3ewcYlfbPCMxR5fK+vVHsSCYkZQ0D91
-	M/Zd5HOXmOU2EZm1ux+hCzSAKrfwYVxT2Lop144URZecvoRF3NJ6OEvxTwCmfE7tajgZmTky//E
-	Tz1+t5AvJwRSwOABjnzN/PRE7+f8K/T9+hDj9XqnLGHTz5T6px6IHNhnjLaU+tCyUfpREXacKKQ
-	bqG4CCpDM+cESBoJf51rk0uJL1ETO/unYAuo0ovIWZ5dxKwfl5kg2f0DcjdQUnzlb+e36brljUo
-	H0qBtn2Tu5X9Js8n/GGbS7cxsmcXiuWAHR3G1FSGP0ca8aGPvPsYV/vX9N7Fq3arjGStgFomVmu
-	jgGynHvKWWhoB/H9imwovXNxWmx1iJobYqj+I=
-X-Received: by 2002:a05:690c:63c6:b0:81e:cf49:99ff with SMTP id 00721157ae682-81ef286ec6emr16513507b3.67.1784325809672;
-        Fri, 17 Jul 2026 15:03:29 -0700 (PDT)
+        bh=Zm+0aM2mDwgivCRHDxKtZ8YT8LqEvq7lvhw4cFbQwWA=;
+        b=RxLL4M3uHQ2Rwux2EmIT0ioElPCFQ4UljaXR5/Ad7uiCxe0HDhxt0KxrYXf6kQiQmc
+         AiNag2rcNQlo3Y104JAQOgl+B4vMr2PJRWN2vdT3bw0zf0F3qcD22UeX121oGcIWt7JR
+         0OyPW2hG6OPxX/qcouIB8j7s7BBP6lGQTrTXw1izy2rFudFROFtS3kFCCeHGJ+ZiXWLd
+         4yDVNK63qxFxNv0/BjWMzR9DDS7X1BZqeHYrc9G3vKphdcSXUQW4V0zQ5iZWCoDfKxNU
+         9ljQnNjQjm8qn88pkJHsWrH9JptlJJHiIEwrtoqUkeigxI6C+pPE9cjcmzfkjOT5EBoP
+         LnNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784325811; x=1784930611;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Zm+0aM2mDwgivCRHDxKtZ8YT8LqEvq7lvhw4cFbQwWA=;
+        b=SSkTBvIaC8BK92c3r12R0gdql0de6DRmcvDDo6IJok+XyNc+1XmFu2XEeLFA2OZ4Fo
+         DIywSS/8rH1jXRy5PZc6uKGjb4p9a485RogsTjIfog9TYCLT9b47MzSVCGNRftZ7u6q4
+         OLo1M8cxKPPtxdYT5MLfmbI8ZV1J+UZ2ulcfdU1H290p5zHo+51HIjqwUfNZfifJMB96
+         9Yo+EVyKExqapL3Hq98g7wzlM3ZaqmUzl9i58y/Kqbx005r0ysOzP+m9iaWQtiaZyNHk
+         iQ+RHaKiG2Nnzy8jJWTMjTPFF/mIjwRM5eX+7t4lj9bcnb6P/8+AE1MzSUb1pv+hMNST
+         Ixkg==
+X-Forwarded-Encrypted: i=1; AHgh+Rr6ESjRJxjZJKPoybAjrLz7zRbQvsmVtwqaw6hi7zsKgiTDemTHGLC0QaeoHwbebUt4qoNgKACQieOS/1up1QfNy731cVM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLpTk9iLwmHKP4skJB9GLPA7gB5T9aWMtLBQP7fKHlVEO3UuzA
+	W/Nz8BWisDPdUCNvgUI35GwSJDNXkRCibldK2lMOE1Az/W0sR8Y2ks2K
+X-Gm-Gg: AfdE7ckkemhy56xW9SjuznR8D75PGzyHeKyUx5nkHJoRQobGhkrAB6R6g40VAvJaG/9
+	d8NgiNJbpGbNAaorhPibFcCdGpP9Uta3deCsR+oJXXR/VkQTQSSEP/bEwc8OKTZdwFMLdfDj1LX
+	k1q4iPw7fBiXsykQW8WSSKKZp497JH3c+WXps9YjDeZfh94fmrroM+DNjylOpr+ziN+xhMQwOeI
+	vFLCOCVMZZD0vmgcutU2yi2VguhBoYB3s4BCzI4zRmtUtgwvJf1hgHeGDqHI+c8VTW9xf0bC0tW
+	OB50KhMxYa1XcLjscq8+MAVFHSYBJTaVtzhiI7Ekc6OmI29rpHzwqtFY6OK8BYgIFgeOIkMIbR4
+	4jOCTz6YAM/jX05PcTPSBEYYFgflfkzOHtKzsZ7e2hDWGBP0tf1bNa0IV06fz1HdigUPeRFtGNj
+	30GrBQ78Apzj5rIgLmfgJPimuB7qUquK1wESg=
+X-Received: by 2002:a53:e035:0:b0:667:e9e1:f971 with SMTP id 956f58d0204a3-6683bb257e8mr1061106d50.4.1784325811088;
+        Fri, 17 Jul 2026 15:03:31 -0700 (PDT)
 Received: from zenbox ([2600:1700:18fb:6011:ee56:9b10:53f4:188])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-81ef401728asm20572037b3.9.2026.07.17.15.03.28
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-81ef401728asm20572037b3.9.2026.07.17.15.03.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jul 2026 15:03:28 -0700 (PDT)
+        Fri, 17 Jul 2026 15:03:30 -0700 (PDT)
 From: Justin Suess <utilityemal77@gmail.com>
 To: gnoack3000@gmail.com,
 	mic@digikod.net
 Cc: linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	Justin Suess <utilityemal77@gmail.com>
-Subject: [PATCH v2 0/3] Implement LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
-Date: Fri, 17 Jul 2026 18:03:16 -0400
-Message-ID: <20260717220320.1030123-1-utilityemal77@gmail.com>
+Subject: [PATCH v2 1/3] landlock: Add LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
+Date: Fri, 17 Jul 2026 18:03:17 -0400
+Message-ID: <20260717220320.1030123-2-utilityemal77@gmail.com>
 X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260717220320.1030123-1-utilityemal77@gmail.com>
+References: <20260717220320.1030123-1-utilityemal77@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -76,98 +80,212 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Howdy
+Add a landlock_restrict_self(2) flag to set the no_new_privs attribute
+of the calling thread atomically with the enforcement of the ruleset:
+no_new_privs is set if and only if the call succeeds.  This removes the
+need for a prior prctl(2) PR_SET_NO_NEW_PRIVS call and guarantees that a
+failed enforcement leaves the attribute unchanged.
 
-This series adds a new landlock_restrict_self(2) flag:
-LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS.
+Because no_new_privs is set by the call itself, the no_new_privs /
+CAP_SYS_ADMIN requirement of landlock_restrict_self(2) is fulfilled by
+construction, and the related EPERM check is skipped.  As a consequence,
+an unprivileged caller passing unknown flags along with this flag gets
+EINVAL instead of EPERM.
 
-This is a redesign of v1 [1], which added
-LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC, a flag staging no_new_privs so that
-it was only set at the next execve(2).  Following Mickaël's feedback,
-[2] the staging mechanism (credential bit and bprm_committing_creds hook)
-is dropped entirely.  The new flag instead sets the no_new_privs
-attribute of the calling thread atomically with the enforcement of the
-ruleset: no_new_privs is set if and only if the
-landlock_restrict_self(2) call succeeds.
+The attribute is only set past the last point of failure, just before
+committing the new credentials.  When combined with
+LANDLOCK_RESTRICT_SELF_TSYNC, no_new_privs is set on the sibling threads
+as well, in their commit phase, with the same atomicity.
 
-Semantics:
+Bump the Landlock ABI version to 11.
 
-A single call replaces the usual prctl(PR_SET_NO_NEW_PRIVS) +
-landlock_restrict_self(2) pair.  Because no_new_privs is set by the
-call itself, the no_new_privs/CAP_SYS_ADMIN precondition is fulfilled
-by construction, so the flag is usable by unprivileged processes.  This
-is safe for the same reason the prctl(2) pair is: the executed programs
-can either gain privileges or be restricted, never both.
+Cc: Mickaël Salaün <mic@digikod.net>
+Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+---
+ include/uapi/linux/landlock.h | 13 +++++++++++++
+ security/landlock/limits.h    |  2 +-
+ security/landlock/syscalls.c  | 28 +++++++++++++++++++++-------
+ security/landlock/tsync.c     |  8 ++++++--
+ security/landlock/tsync.h     |  4 +++-
+ 5 files changed, 44 insertions(+), 11 deletions(-)
 
-The two states cannot diverge.  A failed call (invalid ruleset FD,
-E2BIG, ENOMEM, interrupted TSYNC, ...) leaves no_new_privs unchanged,
-and a successful call never returns without no_new_privs set: the
-attribute is set past the last point of failure, right before
-commit_creds(), which cannot fail.
-
-Combined with LANDLOCK_RESTRICT_SELF_TSYNC, no_new_privs is set on all
-threads with the same guarantee: each sibling thread sets it in the
-commit phase of the TSYNC protocol, after its all-or-nothing barrier,
-so either every thread gets both the domain and no_new_privs, or none
-does.  This also makes it possible to atomically set no_new_privs
-process-wide, which prctl(2) cannot do.
-
-Unlike the v1 flag, this flag requires a ruleset: calls with a
-ruleset_fd of -1 are rejected.  As a consequence of the fulfilled
-precondition, an unprivileged caller passing unknown flag bits together
-with this flag receives EINVAL instead of EPERM; the selftests pin this
-error ordering as well.
-
-The reason why -1 ruleset_fd is rejected is basically then we are
-making a Landlock-flaved prctl(nnp) call that doesn't do anything
-special. It seems better to be able to have the option to define
-behavior later rather than have a useless feature stuck in the
-syscall abi. So we reject the -1 ruleset_fd for now.
-
-The Landlock ABI version is bumped to 11.
-
-Test coverage:
-
-base_test checks that a successful call sets no_new_privs without a
-prior prctl(2) nor CAP_SYS_ADMIN, that a failed call leaves it
-unchanged, that the flag requires a ruleset FD, and the updated
-EPERM/EINVAL ordering.  tsync_test checks that TSYNC sets no_new_privs
-on sibling threads along with the domain.
-
-Changes since v1:
-
-- Renamed LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC to
-  LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS, per Mickaël's feedback.
-- Dropped the staged "on exec" design: removed the credential bit and
-  the bprm_committing_creds hook; no_new_privs is now set atomically
-  with the ruleset enforcement.
-- The flag now fulfills the no_new_privs/CAP_SYS_ADMIN precondition,
-  a significant departure from the v1.
-- The flag now requires a ruleset (no ruleset_fd = -1). Otherwise such
-  a call would just == a vanilla prctl no-new-privs call. This is left
-  in case we want to repurpose it later rather than defining useless
-  redundant behavior.
-
-[1] https://lore.kernel.org/linux-security-module/20260708133928.852999-1-utilityemal77@gmail.com/
-[2] https://lore.kernel.org/linux-security-module/20260709.Eaphooyoh6sh@digikod.net/
-
-Justin Suess (3):
-  landlock: Add LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
-  selftests/landlock: Test LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
-  landlock: Document LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
-
- Documentation/userspace-api/landlock.rst      | 14 +++-
- include/uapi/linux/landlock.h                 | 13 ++++
- security/landlock/limits.h                    |  2 +-
- security/landlock/syscalls.c                  | 28 ++++++--
- security/landlock/tsync.c                     |  8 ++-
- security/landlock/tsync.h                     |  4 +-
- tools/testing/selftests/landlock/base_test.c  | 65 +++++++++++++++++--
- tools/testing/selftests/landlock/tsync_test.c | 33 ++++++++++
- 8 files changed, 150 insertions(+), 17 deletions(-)
-
-
-base-commit: 55f82176ef8dde632ea3eb94a6224950ed809d7c
+diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+index 272f047df438..77820e430ab8 100644
+--- a/include/uapi/linux/landlock.h
++++ b/include/uapi/linux/landlock.h
+@@ -191,12 +191,25 @@ struct landlock_ruleset_attr {
+  *
+  *     If the calling thread is running with no_new_privs, this operation
+  *     enables no_new_privs on the sibling threads as well.
++ *
++ * The following flag ties the no_new_privs attribute to the ruleset
++ * enforcement:
++ *
++ * %LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
++ *     Sets the no_new_privs attribute of the calling thread atomically with
++ *     the enforcement of the ruleset: no_new_privs is set if and only if
++ *     sys_landlock_restrict_self() succeeds.  This removes the need for a
++ *     prior :manpage:`prctl(2)` ``PR_SET_NO_NEW_PRIVS`` call, and with it the
++ *     %CAP_SYS_ADMIN requirement.  This flag requires a ruleset.  When
++ *     combined with %LANDLOCK_RESTRICT_SELF_TSYNC, no_new_privs is set on the
++ *     sibling threads as well.
+  */
+ /* clang-format off */
+ #define LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF		(1U << 0)
+ #define LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON			(1U << 1)
+ #define LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF		(1U << 2)
+ #define LANDLOCK_RESTRICT_SELF_TSYNC				(1U << 3)
++#define LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS			(1U << 4)
+ /* clang-format on */
+ 
+ /**
+diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+index 08d5f2f6d321..1a7c5fb8f6fd 100644
+--- a/security/landlock/limits.h
++++ b/security/landlock/limits.h
+@@ -34,7 +34,7 @@
+ #define LANDLOCK_NUM_ACCESS_MAX \
+ 	MAX(MAX(LANDLOCK_NUM_ACCESS_FS, LANDLOCK_NUM_ACCESS_NET), LANDLOCK_NUM_SCOPE)
+ 
+-#define LANDLOCK_LAST_RESTRICT_SELF	LANDLOCK_RESTRICT_SELF_TSYNC
++#define LANDLOCK_LAST_RESTRICT_SELF	LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
+ #define LANDLOCK_MASK_RESTRICT_SELF	((LANDLOCK_LAST_RESTRICT_SELF << 1) - 1)
+ 
+ /* clang-format on */
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 36b02892c62f..36b8a3fb506f 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -169,7 +169,7 @@ static const struct file_operations ruleset_fops = {
+  * If the change involves a fix that requires userspace awareness, also update
+  * the errata documentation in Documentation/userspace-api/landlock.rst .
+  */
+-const int landlock_abi_version = 10;
++const int landlock_abi_version = 11;
+ 
+ /**
+  * sys_landlock_create_ruleset - Create a new ruleset
+@@ -502,21 +502,28 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
+  *         - %LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON
+  *         - %LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF
+  *         - %LANDLOCK_RESTRICT_SELF_TSYNC
++ *         - %LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
+  *
+  * This system call enforces a Landlock ruleset on the current thread.
+  * Enforcing a ruleset requires that the task has %CAP_SYS_ADMIN in its
+  * namespace or is running with no_new_privs.  This avoids scenarios where
+  * unprivileged tasks can affect the behavior of privileged children.
+  *
++ * With %LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS, the no_new_privs attribute of the
++ * calling thread is set atomically with the enforcement of the ruleset, which
++ * fulfills the above requirement: no_new_privs is set if and only if the call
++ * succeeds.
++ *
+  * Return: 0 on success, or -errno on failure.  Possible returned errors are:
+  *
+  * - %EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
+  * - %EINVAL: @flags contains an unknown bit.
+  * - %EBADF: @ruleset_fd is not a file descriptor for the current thread;
+  * - %EBADFD: @ruleset_fd is not a ruleset file descriptor;
+- * - %EPERM: @ruleset_fd has no read access to the underlying ruleset, or the
+- *   current thread is not running with no_new_privs, or it doesn't have
+- *   %CAP_SYS_ADMIN in its namespace.
++ * - %EPERM: @ruleset_fd has no read access to the underlying ruleset, or
++ *   %LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS is not set while the current thread
++ *   is not running with no_new_privs and doesn't have %CAP_SYS_ADMIN in its
++ *   namespace.
+  * - %E2BIG: The maximum number of stacked rulesets is reached for the current
+  *   thread.
+  *
+@@ -529,6 +536,8 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+ 	struct landlock_ruleset *ruleset __free(landlock_put_ruleset) = NULL;
+ 	struct cred *new_cred;
+ 	struct landlock_cred_security *new_llcred;
++	const bool set_no_new_privs =
++		!!(flags & LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS);
+ 	bool __maybe_unused log_same_exec, log_new_exec, log_subdomains,
+ 		prev_log_subdomains;
+ 
+@@ -537,9 +546,10 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+ 
+ 	/*
+ 	 * Similar checks as for seccomp(2), except that an -EPERM may be
+-	 * returned.
++	 * returned.  LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS fulfills this
++	 * requirement.
+ 	 */
+-	if (!task_no_new_privs(current) &&
++	if (!set_no_new_privs && !task_no_new_privs(current) &&
+ 	    !ns_capable_noaudit(current_user_ns(), CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
+@@ -620,12 +630,16 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+ 
+ 	if (flags & LANDLOCK_RESTRICT_SELF_TSYNC) {
+ 		const int err = landlock_restrict_sibling_threads(
+-			current_cred(), new_cred);
++			current_cred(), new_cred, flags);
+ 		if (err) {
+ 			abort_creds(new_cred);
+ 			return err;
+ 		}
+ 	}
+ 
++	/* Sets no_new_privs past the last point of failure. */
++	if (set_no_new_privs)
++		task_set_no_new_privs(current);
++
+ 	return commit_creds(new_cred);
+ }
+diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
+index c5730bbd9ed3..0b71e158c3f5 100644
+--- a/security/landlock/tsync.c
++++ b/security/landlock/tsync.c
+@@ -17,6 +17,7 @@
+ #include <linux/sched/task.h>
+ #include <linux/slab.h>
+ #include <linux/task_work.h>
++#include <uapi/linux/landlock.h>
+ 
+ #include "cred.h"
+ #include "tsync.h"
+@@ -466,7 +467,8 @@ static void cancel_tsync_works(const struct tsync_works *works,
+  * restrict_sibling_threads - enables a Landlock policy for all sibling threads
+  */
+ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+-				      const struct cred *new_cred)
++				      const struct cred *new_cred,
++				      const u32 restrict_flags)
+ {
+ 	int err;
+ 	struct tsync_shared_context shared_ctx;
+@@ -481,7 +483,9 @@ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+ 	init_completion(&shared_ctx.all_finished);
+ 	shared_ctx.old_cred = old_cred;
+ 	shared_ctx.new_cred = new_cred;
+-	shared_ctx.set_no_new_privs = task_no_new_privs(current);
++	shared_ctx.set_no_new_privs =
++		(restrict_flags & LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS) ||
++		task_no_new_privs(current);
+ 
+ 	/*
+ 	 * Serialize concurrent TSYNC operations to prevent deadlocks when
+diff --git a/security/landlock/tsync.h b/security/landlock/tsync.h
+index ef86bb61c2f6..2ae4f938ca00 100644
+--- a/security/landlock/tsync.h
++++ b/security/landlock/tsync.h
+@@ -9,8 +9,10 @@
+ #define _SECURITY_LANDLOCK_TSYNC_H
+ 
+ #include <linux/cred.h>
++#include <linux/types.h>
+ 
+ int landlock_restrict_sibling_threads(const struct cred *old_cred,
+-				      const struct cred *new_cred);
++				      const struct cred *new_cred,
++				      u32 restrict_flags);
+ 
+ #endif /* _SECURITY_LANDLOCK_TSYNC_H */
 -- 
 2.54.0
 
