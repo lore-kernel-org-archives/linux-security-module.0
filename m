@@ -1,117 +1,191 @@
-Received: from mail-yx1-f48.google.com (mail-yx1-f48.google.com [74.125.224.48])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A3430170F
-	for <linux-security-module@vger.kernel.org>; Sat, 18 Jul 2026 20:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784406930; cv=pass; b=FRdhgBjXKbxxj6rKd4shPYs9yuYGJN8RI4PmDSqHPGtqHoqCBNXNwKWkv2u4TvxUXqjcL0GAChwckSyw6siUd41xnga8fjGbN/M+Qrx3HkDcoXtALAs8YNHZCUjEZGkx2WhyTK6cfpxlQKt42u2MQm9vmbvsdzbcvq9vL5uzrFo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784406930; c=relaxed/simple;
-	bh=L4R3GSXsdF+KHdVEA142jPzPE6lMiiTCY9x+aQGKhtA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WNHbQqE+4E2JMFWUasOK4kskXZsGmarIUjQjEtOjpb3eMZIkEqrUu3PoarViOg3YLyZwVVFT5rQ/cMZyA5nX1solIsg8VX2VFZKCtOJjQA+skCXI018O9jHWl0kKWuOiuFYqz12UtXZQcnHQrvOzfjheEBSggO85XtlfHuvCPqM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qbXWwlwX; arc=pass smtp.client-ip=74.125.224.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D7031282C
+	for <linux-security-module@vger.kernel.org>; Sat, 18 Jul 2026 20:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784408344; cv=none; b=ZD/fD5hKt8QWZkw0tlRokZpfYUTrgyX81e1KOg+nvLVVIYEROJzPOr4KLRy/kfd1MPDqfs7mlPGAEdYi1ZcZK2reeF7AC0g1AClheTP2SZ9CV6vUElnkt6xs4IYuLLkHYxRpweqJnMRybd+2cU7ngmGhGotq5g9o98gSrTh1MMI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784408344; c=relaxed/simple;
+	bh=HqzEZ3bgMLTPXgL/wWvLOLcOK5yTeU+drGBScgleG9A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=chI7etDNdtgGKYUI7tCJB5vFj9HvqqxTk6mNzepSZ40bGwbgZjGcIfiw9LdH7y0hQ8rU1PM2F0MC2CpqhTSUusOQPcV1mqMHRCnp5/lg64cEO0CiBY8xhMO7g1MRQNwH5SHmno19dhAaINxz0c6hfw9DFZawIz/2GhZHpEWU3s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bdhFsyBI; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qbXWwlwX"
-Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-664d530fcfdso12693288d50.2
-        for <linux-security-module@vger.kernel.org>; Sat, 18 Jul 2026 13:35:29 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1784406928; cv=none;
-        d=google.com; s=arc-20260327;
-        b=SvuoagPtZFxYQhkPUYvhn5CqbeNTd8n/hw/72lz21ogadVkPfh90jmxO+3X+Dri65p
-         j8g0r6lnuj2SgABfkm2/qxqSINQlUA0oBGFGHZpzIQmvsTCmKHIS+dkC5vAPqKFc86NE
-         btOJdGaGaR0AgO6s0fU3TRxxQp9z+UQZLEXNbcTUSCwed2wsfZuT6jB+ELweICPYZZv9
-         PbrW6c4uvkLZBCFPiM922pl5x7VRuAFpkLBivCXwrcytEfGw5Su2dnVpEirWxEESrWPq
-         FwmTlyZ3x2kxkq9HoRffACvVaN4z8DkN0kGeqLHlWd0Vn5Bxm4rzvkzxJ55OpTImMuK+
-         LZCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=ANaq4uxSilcneb8rgahEYkQ/Kfssn+e8OiW7uLYST90=;
-        fh=tODD92D26cSmP4fy4yxKuPmOQGAPybu1IgEad9i4Mic=;
-        b=WDMxIl4al13fZK/qeCLg4S+h0QGNOijkKOlNPBBi6vGeukOF0ItI8PQKNR+bdHoUxB
-         aixqVf08Tjc/Kh2RQaJ5TuHch8AfbjtA1+BEKbngKIpqOj0ZyXy4mLyiCfy97zVWktYo
-         X+yH9kAyK9A/y8zTnZeodg07+aOwPB0+PKAlNsnPm2X3r16KvOQveaYJFOT2LKoReIww
-         C0pNagn2UNpny3+5PeZzxbS9mlBzXHaMK5Pp4Dpf7AuKl1KuvljzGEWUztjwDm5UjoVN
-         61w95Lf/YGBVuqPTjfcpRVDusemebNaxYEimRVcg+SZHw8Vs7G9q0lat+q8Aw4rFfSW8
-         Q/4g==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bdhFsyBI"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4921eed3fa2so69194545e9.0
+        for <linux-security-module@vger.kernel.org>; Sat, 18 Jul 2026 13:59:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784406928; x=1785011728; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+        d=gmail.com; s=20251104; t=1784408341; x=1785013141; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=ANaq4uxSilcneb8rgahEYkQ/Kfssn+e8OiW7uLYST90=;
-        b=qbXWwlwXkFBO+XQKdl06XjSeJHinrg2BLUgkGYd0u253dljCMdJuk0j6S7p8faqHSo
-         8SHaAB5EenfyNrt2kl3I0z7az9dAM5kPvimX9mHH8FovlytRgC8B5fO8BTL1GFDXyA/u
-         yxkJuD1iZECUVumBHtjCGmKeutcG5yOxpxviPWYQ0fvg6zPgCN2++QX6Bhm/i0o+o/L3
-         e1NwfxgifUPR1H87sWTKo0hCvNgjCB1sieSibKE3zId7lc8Q4jxhyd3DLOLHQP1Wk7u6
-         gNPKIOzqeQWZxSmqNDVk+z9GBD7vf8gg4ormDSMkg1HDu91HSDNEMpvMKNrQ3evBsmG3
-         Psyw==
+        bh=OfSTmHlc+4PzusgvhlO9OeocHbbw6TEXsXghlFKBcqU=;
+        b=bdhFsyBIPJCSoHN+mvWMmpEFX1DLiJ9Ygx/AihNIWeGbKSwSndGhN0GrL6lwxiUOZv
+         y3mnSDNIGRqwOusGt/18pkEZDHhcs26VGjGAAVtgZY6KJh7pH2oiRomuMsPCBMIvhdcl
+         asb5+4rVqVunaDfhuPo/3Ckdc+LyMVqPvN/iKbIMPvtUcAGBO+WxGVYdAp30LdvFYKVs
+         6V603JXIhHxQcC1FGxS9m8t5XT4qzQPjg4OmCJax8c/b0aXqqJMYnXO1eBnXM7uCWEWJ
+         iVBdfw/Q1O/BvfJ4YWJKe9Fv5PCI6CLk2GPLApOy8p+oTunVi65pVoxAQspuEQC7la6Z
+         5aqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784406928; x=1785011728;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
+        d=1e100.net; s=20251104; t=1784408341; x=1785013141;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=ANaq4uxSilcneb8rgahEYkQ/Kfssn+e8OiW7uLYST90=;
-        b=JnvbmWg3kwcsYaSwax/qktz993Z6nuX3sm9r2z7RFnL9hkmJwCUJ7dZ7dlok6SjlAJ
-         ITRQgwvhIBUgps1eDsG6vt/MJofW+R0j3bImuSwdU2isFfV0BFyRldSLco/4hztr7tsk
-         /81F8ez6VeLK9Ya8lxVaMR8goW3R0ippv6bSqeIfmqilpldnnWQgoualSaATcsVOFM6r
-         dbU60TcnhmwSe+WlqAHsz8IPTsH/IyX819K4Tia67rwnmE+CEagS/wxbXyzMTiZpD9zq
-         Gq63HStYfmvw4A+r/ssqKivnwABkjTMLp1d6Ap6F1WbCzFbVz6mrij3NCZb36k21kxze
-         6Vtw==
-X-Forwarded-Encrypted: i=1; AHgh+RrggEj0P9/IR34Y9HDpCHW0WRcOPYV9fe8c1mp3D/npKklEEZODPwsdzfs6H7l8A/tQmqmtOi+QbDB5bmwvIAbaZgI39CY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjKyhk9U8SNVOEOEg2GKleaFQxqHLsH5gWpuhI3ZkhukF12LKz
-	LJJ3KVhH/yDzzjW2hdBMmp1pB1yXOCpxsUiH+wZeUi7vqfgNK4nTsqjmKK9FXna2QkS1ha9AfO/
-	1M9xwu87xmeBDpIZj8kshei5d/6UpA8s=
-X-Gm-Gg: AfdE7cmsehmPKMLJMPDavJbwjOcoSgaUs9U0/wPso5FituFo5ZFhKlvaQsirbPuflrQ
-	H5gVtsDOFqCzHAKDSeHjKYTbQ0SjYiVvB/8l+5F7+7bht6X8WarGIlKwx7illhK3HMJyiE56e8u
-	Qv9/KtXo8mGBfwR7c5ij8IVi31ro5U06cpQaI1NGKhO/GA5zfiIuUj64Wkpfz5D8Y9p429R5KVv
-	tFkoZD4cKNV4VlIjLQzgBrqUurKwUJsG84kebgUf4nT4ZX21c8XDvfpn4zAii33rbb4l+8DIifx
-	PGXigsBW4jTmn/s=
-X-Received: by 2002:a05:690e:43cf:b0:660:54e4:5db5 with SMTP id
- 956f58d0204a3-6683bcc5c09mr1712064d50.56.1784406928154; Sat, 18 Jul 2026
- 13:35:28 -0700 (PDT)
+        bh=OfSTmHlc+4PzusgvhlO9OeocHbbw6TEXsXghlFKBcqU=;
+        b=Y1lWpYOuALKwv62sDUemu6tIbrX91qm6yHC4uiVbKI32eoGhZQYhEo154ruPzx4yZj
+         umh6imSx7PU7qOxyKCHB3tWEA3NOGfrJZee2VHem52nGZlbJPVF+z7WLL1FlWjDqzsMG
+         jbtcBIWcCtEVY8QqZZAzWGwzuS6+R8xsU999pe0rW4+VKav9veYAE6+Ud7vqwlHo2occ
+         iWVZg/u5p1oDwff403AvSzkTufgPr6UfZMhvADgvXBBlQ9KWnhj/1T0iRt/Fl9V4Kc2E
+         bBH5QMABjcQtu/gMuo48X7OMFL2qa+Cn/b5lbO0YACdkJ0xG0Jgimn0Ehla2ORr4GTV1
+         a/hw==
+X-Forwarded-Encrypted: i=1; AHgh+Rp+F61Wzfw6Ny/5aogoeD+oOObiZGJ7cLXi697oQmgzjBhvtiHGJHhVcDDe/S561NgLGwBk67TGACHyWKelrh+m4yuAOFI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd8YTeM/BisR62KoQlthSUPz2MewJ2m9AOXR8hMyW9RA5oh3pi
+	kzcpK3IQFMVK9V5EwSaiOSjBZOPRQn+qV8ibu5QV4QWuZFCYAb+NvwpR
+X-Gm-Gg: AfdE7clpndr1JUzgVAyxQoDAS+r3qkVPDB1nvDOIFQa1+V+kc3IqyaHrKz2bs0kQlr3
+	ac8yrRAFSeh5LT69eP7elMgAKW56qWGLfJYqzzWeP8zRVW3OG4uwA9J0KVluz0sbb3dZCn5Yw55
+	c8OyMtcduiOmX9UQ/NKA8HbAeQn/V1EqikJVb6bBACSu19u1xTewLNA4F7DrGkh9MCmxXc2EbvR
+	TF+CifTXlnaxzZ74FM3eI/wwSyootyRFak/WYVB5LD1lHyko0DcnWySvSrQo8DT+3wOYlYToQvJ
+	zYDRMo5BCmRJxcYWv9CJQjbc1ftHkRP4RfucZtuH0rAGz+3gqLIgviVIk93ivcK9hhB+ZWsn3Bj
+	ebP/EUE6VK7zRKrRe5/F6TKSW1XUTqb2CBtFe521+pxwDjo400AJ5X74HklHrW8eKKIphAJ25vv
+	h7+pZNvqVxi3gwQsAhOjAyjKiNW8WCLBNFy6uB8jI=
+X-Received: by 2002:a05:600c:b99:b0:495:4cba:e288 with SMTP id 5b1f17b1804b1-4954cbae4cdmr69628505e9.15.1784408340738;
+        Sat, 18 Jul 2026 13:59:00 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f63ed2313sm14322945f8f.23.2026.07.18.13.58.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 Jul 2026 13:58:59 -0700 (PDT)
+Date: Sat, 18 Jul 2026 21:58:55 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: "John Ericson" <mail@johnericson.me>
+Cc: "Kuniyuki Iwashima" <kuniyu@google.com>, "David S . Miller"
+ <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Cong Wang"
+ <cwang@multikernel.io>, "Simon Horman" <horms@kernel.org>, "Christian
+ Brauner" <brauner@kernel.org>, "David Rheinsberg" <david@readahead.eu>,
+ "Andy Lutomirski" <luto@kernel.org>, "Sergei Zimmerman"
+ <sergei@zimmerman.foo>, "network dev" <netdev@vger.kernel.org>,
+ =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, =?UTF-8?B?R8O8?=
+ =?UTF-8?B?bnRoZXI=?= Noack <gnoack@google.com>, "Paul Moore"
+ <paul@paul-moore.com>, linux-security-module@vger.kernel.org, LKML
+ <linux-kernel@vger.kernel.org>
+Subject: Re: unix_stream_connect and socket address resolution
+Message-ID: <20260718215855.07284fb1@pumpkin>
+In-Reply-To: <e6f54c5b-2c92-4772-b2f9-5c21e2ec50a9@app.fastmail.com>
+References: <20260703073948.2541875-1-John.Ericson@Obsidian.Systems>
+	<20260703073948.2541875-3-John.Ericson@Obsidian.Systems>
+	<e6f54c5b-2c92-4772-b2f9-5c21e2ec50a9@app.fastmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260714115451.3773164-1-michael.bommarito@gmail.com>
- <20260714115451.3773164-4-michael.bommarito@gmail.com> <alvIBm3Po_1gX6g_@kernel.org>
- <alvKED66fSFFcl1Z@kernel.org>
-In-Reply-To: <alvKED66fSFFcl1Z@kernel.org>
-From: Michael Bommarito <michael.bommarito@gmail.com>
-Date: Sat, 18 Jul 2026 16:35:17 -0400
-X-Gm-Features: AUfX_myY7jKb26VYe4sNdbzD9c138J4SlvnBQsoBTRGFhUo80gRTiHM4mVVVlu4
-Message-ID: <CAJJ9bXyHopjhwusu=yK5HzrF31N5QX0uU-WTRN0g=aSMc9HJmw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] assoc_array: trim the final shortcut word using
- the current chunk end
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Jul 18, 2026 at 2:46=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org>=
- wrote:
-> Were you able to reproduce this with basic command-line tools? The
-> patches are verifiable by reading the code but asking this just in
-> case if you had a snippet at hand (not interested on complex
-> reproducers).
+On Sat, 18 Jul 2026 15:55:12 -0400
+"John Ericson" <mail@johnericson.me> wrote:
 
-No, it's a little tricky to hit, definitely not just a few keyctl
-commands.  I can send offlist if you'd like but it requires at least
-~50 or so lines of C/python
+> In [1] I observed what I considered some odd behavior in unix_stream_connect():
+> 
+> > I was hoping this was going to be a simple matter of factoring out the
+> > back half of `unix_stream_connect`. No such luck was had, because
+> > actually instead of `unix_stream_connect` looking up the socket from the
+> > VFS once, it does it repeatedly in the same loop that is used to deal
+> > with full listening queues.
+> > 
+> > (This behavior is rather surprising to me, because it would allow a
+> > deleted and recreated socket to be picked up on the next loop iteration.
+> > But, I don't want to make any UAPI-visible changes in this patch series,
+> > so I did not consider changing it.)  
+> 
+> I had said I didn't want to consider changing this yet in my patch
+> series, but based on the feedback I received for a second version of
+> that patch series, I now actually think it is a good idea after all to
+> discuss this first, and see if it should be changed prior to my patch
+> series. (This discussion will inform what the code looks like before I
+> do my v2 patch series, and how big or small that patch series is.)
+> 
+> Here are two scenarios where the current behavior of
+> `unix_stream_connect` is surprising:
+> 
+> File system version:
+> 
+> 1. server binds socket `/foo/bar`
+> 
+> 2. clients fill up the accept queue, begin looping
+> 
+> 3. `mv /foo /foo2; mkdir /foo`
+> 
+> 4. another server binds `/foo/bar`
+> 
+> 5. clients connect to the second server instead
+> 
+> The loop in question is within `unix_stream_connect` itself, not in
+> user code. I consider it very surprising that `/foo/bar` is looked up
+> multiple times during a single system call.
+> 
+> Abstract socket version:
+> 
+> 1. server binds abstract socket `@foo`
+> 
+> 2. clients fill up the accept queue, begin looping
+> 
+> 3. server closes its socket (or exits), releasing the abstract name
+> 
+> 4. another server binds `@foo`
+> 
+> 5. clients connect to the second server instead
+> 
+> For abstract sockets we cannot play tricks with `mv`: the first server
+> does need to relinquish `@foo` itself. But still, the result is the same
+> where a different socket is resolved on the next loop iteration in
+> `unix_stream_connect`. I am not sure it is fair to call this a TOCTOU
+> issue exactly, but it feels very similar to one.
+> 
+> The more natural semantics in my view would be to first resolve the
+> address to a socket, and then loop holding that resolved socket
+> constant. With these semantics:
+> 
+> - In the `mv` case, the retrying clients continue to try connecting to
+>   the original socket, now at `/foo2/bar`.
+> 
+> - In the close case, the retrying clients fail, and do not connect to
+>   any new socket at the same path or abstract name.
+> 
+> What do you all think? Is this better? If so, is this a security fix
+> which can be made unconditionally, or, absent a real concrete attack
+> vector, is this a UAPI-breaking change which is automatically out of
+> scope, and would thus need an explicit opt-in mechanism?
+> 
+> Looking forward to feedback,
 
-PS - I'll send v3 with the nit fixed and carry your tags today/tomorrow
+My $0.02
 
-Thanks,
-Mike
+If you assume that the client isn't responsible for restarting the server,
+then there is no strong timing relation between creating a new server
+(by any means) and the connect request from the client.
+In other words both the above are very similar to the client being
+preempted at the start of the connect() system call.
+
+What you need to do is hard link foo to foo1, create the new
+socket at foo2/bar then mv foo2 to foo so that it is atomic.
+But I suspect hard links to directories aren't allowed any more :-(
+(Creating 'random' hard links to directories used to be 'fun',
+you could get 'find' in a right mess.)
+
+	David
+
+
+> 
+> John
+> 
+> [1]: https://lore.kernel.org/all/20260703073948.2541875-3-John.Ericson@Obsidian.Systems/
+> 
+
