@@ -1,142 +1,113 @@
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A3B369980;
-	Sun, 19 Jul 2026 15:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8D7126BF1
+	for <linux-security-module@vger.kernel.org>; Sun, 19 Jul 2026 16:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784475486; cv=none; b=duz64VsNTmLTvlOM3QBtOnqtgakg9250nY6Xwikcj8b8kgsrYR1YxP9qLH52WLONkxG6SbLI28UKAz4il+92MzuO+XqjOnEAhcqdITNVruLOm/7OrpmO/dExOGViY7KpucNo4B+Z9ivivzIV5yWHrASsg26Mj7E9i3l66b4BTx0=
+	t=1784477719; cv=none; b=XS9pG8SjPIfbimLeyQDHxIeNjEe0b79Hwsvfz2PYhZF0HjlbD5VCzzV9ESycBWHMxG58GaesmA6i5kQbX80KrCDdExHqedqQhIxEb2QFYM3hSxZuNhpzn9vB6lzGQ2XCrRHXkd5NLcSWlxBYsLnqBpq7bCeKGATLYR817logdYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784475486; c=relaxed/simple;
-	bh=Zzq/vOwDQwtCsnJCu7PHP0cxdyQVmVT/+otVGtIG2oY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=ZJO4XIMwRPzU1IuKusNVfJgI6Q1O25A0iMPVZVLmkh97DoXOFAISi61S9C1nkBQ3aeIzqWYcpKX4nyqr2ByCRmt0NoqRhVPYUpjmitKg0AFjYaJyC2Zx6+pNdBzigQb/iPgWutlpBVceXuFM6/J334aFQVFSHsy/sDHKgQzXVuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=johnericson.me; spf=pass smtp.mailfrom=johnericson.me; dkim=pass (2048-bit key) header.d=johnericson.me header.i=@johnericson.me header.b=bXt/XdEk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NzlO/6aO; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=johnericson.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=johnericson.me
+	s=arc-20240116; t=1784477719; c=relaxed/simple;
+	bh=Yvse8VC1UYLx9y86Yf8NbIWA81h7Jj4tNdZnPVJqC/Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GqYQuWZEXCdRBCmIe4Od9gOObLE7hvBXLT8+XIbI32jeqgbLD+UINNcTWgjhFovwcgPBcW9Lwt/XsgQCU8ciI4MbY02atW4eHSeSy9UwfQ2M4llV7fNKOKeH9YMMwj7WwJrg91PDZATOeIKD8XGXE18MSdvybNErK02ehxWK1MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QhdWTf1P; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=johnericson.me header.i=@johnericson.me header.b="bXt/XdEk";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NzlO/6aO"
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 487A81D00014;
-	Sun, 19 Jul 2026 11:38:03 -0400 (EDT)
-Received: from phl-imap-16 ([10.202.2.88])
-  by phl-compute-05.internal (MEProxy); Sun, 19 Jul 2026 11:38:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=johnericson.me;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
-	 t=1784475483; x=1784561883; bh=/0klKgMJWjWTA5IOqL4y9SMRwzyGgO1I
-	TdHgj+RFqUo=; b=bXt/XdEkrVOvAK/VV60T1U0+zQPmS+gnRRfWWiqkTvKQpbEX
-	+LkPxbSMAjv8LIvkEhQc+7g01TVc/akIv5QlGEn/n1wZ3bCvRnFShjlgNzeoeHTd
-	7pmOGekTe+Ac3hSbET2yN0Plw9zuLI5YqC7cV66P+NDrLmOCuuaVQeVbVpBTSNx2
-	pxN195Ie2VMXrgE/RVIlZaEtmcijL606y9AmyrGw36A+dGn5C1HFCvbVezEH6xGX
-	8ICtijuqMgdsUGcvgW5kVDZsVXK9VHjLxZKBNJpK9Dw9jaq9f9ycfJdt3pGjqGVD
-	gn6+7Z/vF13dmwH4FfJSi1fQdySveI+VKQlZSQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784475483; x=
-	1784561883; bh=/0klKgMJWjWTA5IOqL4y9SMRwzyGgO1ITdHgj+RFqUo=; b=N
-	zlO/6aO5ZY3Soy+0/1Z/b0mXxACR3bWeIAJIKMHqVeQIf1XNnvpjKLcnCTb9GgC7
-	5q5sRqXqChUpww2AeQ4LRfoqEyQs8Oo1urRGuU5tJJBpCgeIRnH75ewGu9TWcueh
-	p75ocGHnkCNH1IuZAagOnA+WoMoXHi8zBsK3deyEK/H0JkUQc89RXfLuUVJDAkv8
-	SCdm3QnWY9ZQ8FsU0D7u05Hi2NtmePWrH7AK+zRx4/SFvZD4jQpf4E7nbfR0mXx4
-	I74aTLtp0X/iy1ulb27Q6UqrqNrrgGewkzCp8Ssn2kdNy1zpV1p3qPQWLl7yijUC
-	IBDsJ2F3SQVcg598bFPDw==
-X-ME-Sender: <xms:Wu9cail-Eh1EC_b0cuNd8Lm_FIWY34TLwEbujI8RF1y079Qe-i85fQ>
-    <xme:Wu9cakphk7Ur5eA5iwo65XPp1TbU-h86PC4dPhQSXI66bZLSbt6n4tb5rEiXvq-mr
-    0K8yWOgwilQgv-mdvfW0xHoIElWvawdIv3CM4nyp5Gu_pQu6W0K5Izl>
-X-ME-Proxy-Cause: dmFkZTGytmkIp3YDmkKGkFBaMZag7I5G4FGu7nR72Crousbk4TSMw8VARR+wEIc7VVhwTT
-    KNsixzGOcTif8stQUZVOrlUrikkJUh9WkS8V7EUZd7ab2bA4sW6077Vlm/6Mx/f5ze8AEU
-    aIv/Z4kIuIz3byCkzJq+E4lH+Nayx0EERgvt9YJn7bB29mP7X32bkM2F3jgiMYMf53Boy+
-    kNvRQU4UM4H9PFhHtO/ohToimqc1mdtHeJK4iwNDpc7jL4lmoGpwQESEgTHJHYn25FnndL
-    /6wqPdlk172CBnWG8KFZg/mokaAma0Olm/kwx4NhJ57ktBKJB8BrCiabj1vS+JdTsazRqP
-    yZhTmonOi6Ps88adMIx4SChbuUNA9BgzTv9LhQXcODEeys/ABXazXGM7Qxnxd6qCqjtSPV
-    8WiX4Vl4p5iQdPvFBPv/GdlKdxsHBzXuDU1/1Hot0YWAeRNFXAa0RS/n5a48ArKtzRTlYV
-    znRItKxRorvl6keFk/RNhIizh6LObzznd4/K/m1gIy8wzM1/MWlPTX2rcuzNysVQWEC4T2
-    BbnF+UIKRxwWyRnJA3vKj8Q+VpC0wNpCFQSQ2e7P+qgLQ+qVXkaGOQxN0Q9x62xs8C/X8t
-    BinWO3KaUyUW7uJGLKltgPU4QH19ARr8HgKTuUTeLBb5VtcEopOmAL+gTRMw
-X-ME-Proxy: <xmx:Wu9caiLa-UQSVU9nm1dm6FYoTMBb2erqb-tbYJBoB8xSgQV8Yw1UGw>
-    <xmx:Wu9cai4I3QhnLfTzwo-GSZgToGgFzVdc94DIm0dH8R7QJV-Ha-UnPg>
-    <xmx:Wu9cahbvfBSm8ZEjDRYLjJfGoCehWE_ZvvkhCvwywMyAw4p7ZMVyFQ>
-    <xmx:Wu9capwnYtYDGc2ksSnMLMTVT2MWxzQP5K0Z8Ci2gVVpJMO4BPuv2g>
-    <xmx:W-9car7RnRyQ295EMu1o8QealTMaKNse6o9SDrPG8Iqz2FGobBbIEp8u>
-Feedback-ID: ieb4144f1:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 5B9862CC00A1; Sun, 19 Jul 2026 11:38:02 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QhdWTf1P"
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-92e5d50b0dbso455515985a.1
+        for <linux-security-module@vger.kernel.org>; Sun, 19 Jul 2026 09:15:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784477716; x=1785082516; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=5cILNu4i+m7g0yLV7J3HcTDkOZjWz0qa1KZvBiPAHsc=;
+        b=QhdWTf1PZ5bTH1iQfK/l/BKmidcts0aKyOxHXCEZ5xjmDOjAgi869nDD6nhfPGeAbN
+         qLag9UNy76SSgIATdY6624ngSQ7X2r7S8m/LdxwWpcXtM78EOdnAqScVKN88l8kQaAu2
+         6qCaFwOdHB12lxJiueDITARqWkjJMlpjZbrlx6YkQGh5j9EwxU64m7r0zOsWzt2hxsMO
+         SCvY8xB23t3VGXKu86SR+vnCKkS9sDjXS5DVYlf9lel74o2901/R7a4yML4GrLMbiZxz
+         ASBizNuJk638/S7rwqMd0VLcxfeeB5zSxFoCtOgzmFoimUQpmi5kbXi6cGc2n2XzZhGL
+         8RCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784477716; x=1785082516;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=5cILNu4i+m7g0yLV7J3HcTDkOZjWz0qa1KZvBiPAHsc=;
+        b=XDst8h+3SfK/LyOPUJcP8v5DlBs8kGtH3ngyb1IHORhDdXIAjvBpxUrV/T4G+q0Rtw
+         QO2sbyG2ExwzR1vij71GofsaRVc6nUaPFYNuutcMVZ3nk7iYs5rmhNrQCooZpP1zSkl8
+         sJO/JlAG+u1KiWQ0qZ5O6c9WhaweFtrTEpJ0dbUP0qEDQR0Cv6Vvx3UZ+SB5SbTEUhKY
+         yNZ5acdDJMCQM5QvGufKTw7YCVNLIapVr7jhn6DFX7Y+g8gMkUNmfngQyB/3wYcECChY
+         gtvubFSVBISxzY/bSgRfv2a/ibGSMropmN1G6+wZ6mlvGBx9plrmL7dDg13pC72TX5vy
+         +/aw==
+X-Forwarded-Encrypted: i=1; AHgh+RpzqIy5GHNM79ajAs9V0jYiFPe2wff7nB8n46l6NQDL9AtxeLKmhszRtlHKwl0m/S60I2qxJV2XtA0eIYMtYBeXZwxmNHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN3IjfIz3Xje9If3E/5Kgwrdez/g2pTzzzK7oLrrePlo7NFzLf
+	cSOmUX3qTA93gz+VvhUyimlOqk7RIE4hsZfkRLYRlkSnARQaGt4beYXc
+X-Gm-Gg: AfdE7cmu7ekRLpsf3egE0nY0yOM4/uBK8WLRF8oNKMemjU6kiUCHBydIE1q40sG5UUj
+	cNm3DYP7JHvxHIyyqYSoL40/aKSR9xA40hiS1rrRV1JPWXG0CPscpxZROAixxvkrbP8LNbKEWwq
+	y7BhFuc8gz9CDpyLfgLcfhd7CELABrSxkYyQE2o5Dzkd/fmVysBROnWXwQk/Y+Sv8B467Ct1WO6
+	K6HZt9xP5wUfWYWy2xL+4zzLAF5sPBUoxqMSdHLlJQLyFhxMeRKX7OiDdI7RZdmT2nbBToKo+yh
+	u+k5u27AsPGWDaMB6dPYYQ1PE2Ap3wTjKwbfQFmvhoI558oa2N/3U9pSclN4dj+dooBlWSlaMpl
+	lL4bODZdY0mIgRiYfSRaICvIjxRStqhWoW9a6/N5RbENxQZIfjl9yXaIOUvaKt6tq2koHQZbpbg
+	3Pp2I4UvRTGDaIge0VKmuU0ygtQL1vf1Sfh3K6KQ7w2dHmmP1Ordm/ztxRLoy3+Zgm8v29XubZQ
+	Kx/Mpd2lILNDgNnkv+NqA==
+X-Received: by 2002:a05:620a:2585:b0:92b:6805:917e with SMTP id af79cd13be357-930b41f9bcamr1041279485a.70.1784477716549;
+        Sun, 19 Jul 2026 09:15:16 -0700 (PDT)
+Received: from server0.tail6e7dd.ts.net (c-68-48-65-54.hsd1.mi.comcast.net. [68.48.65.54])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-930b52fe271sm672374185a.16.2026.07.19.09.15.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 19 Jul 2026 09:15:13 -0700 (PDT)
+From: Michael Bommarito <michael.bommarito@gmail.com>
+To: David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] keys: fix keyring assoc-array out-of-bounds read and index inconsistency
+Date: Sun, 19 Jul 2026 12:15:02 -0400
+Message-ID: <20260719161505.2423935-1-michael.bommarito@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AudyXjUgQ8Ew
-Date: Sun, 19 Jul 2026 11:37:41 -0400
-From: "John Ericson" <mail@johnericson.me>
-To: "David Laight" <david.laight.linux@gmail.com>
-Cc: "Kuniyuki Iwashima" <kuniyu@google.com>,
- "David S . Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>, "Cong Wang" <cwang@multikernel.io>,
- "Simon Horman" <horms@kernel.org>, "Christian Brauner" <brauner@kernel.org>,
- "David Rheinsberg" <david@readahead.eu>, "Andy Lutomirski" <luto@kernel.org>,
- "Sergei Zimmerman" <sergei@zimmerman.foo>,
- "network dev" <netdev@vger.kernel.org>,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- "Paul Moore" <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-Message-Id: <85991dc3-6fa5-4466-a0cb-b407291cdb44@app.fastmail.com>
-In-Reply-To: <20260718215855.07284fb1@pumpkin>
-References: <20260703073948.2541875-1-John.Ericson@Obsidian.Systems>
- <20260703073948.2541875-3-John.Ericson@Obsidian.Systems>
- <e6f54c5b-2c92-4772-b2f9-5c21e2ec50a9@app.fastmail.com>
- <20260718215855.07284fb1@pumpkin>
-Subject: Re: unix_stream_connect and socket address resolution
-Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-Hi David,
+An unprivileged keyring whose keys collide through the description-chunk
+path can drive assoc_array node splitting into an out-of-bounds slot write.
+Patch 1 stops the out-of-bounds read in keyring_get_key_chunk(); patch 2
+makes the chunk byte order agree with keyring_diff_objects(); patch 3 fixes
+the shortcut-walk trim so the walk cannot be steered down the wrong
+descendant.
 
-On Sat, Jul 18, 2026, at 4:58 PM, David Laight wrote:
-> My $0.02
+v3 changes (patch 1 only; patches 2 and 3 are unchanged):
+Per Jarkko's review, patch 1 no longer extends the existing
+keyring_get_key_chunk() declaration line; the new offset is declared on its
+own line as unsigned int.  No functional change.
 
-Thanks for weighing in here.
+Patches 2 and 3 are unchanged from v2 and carry Jarkko's Reviewed-by.
 
-> If you assume that the client isn't responsible for restarting the server,
-> then there is no strong timing relation between creating a new server
-> (by any means) and the connect request from the client.
-> In other words both the above are very similar to the client being
-> preempted at the start of the connect() system call.
-> 
-> What you need to do is hard link foo to foo1, create the new
-> socket at foo2/bar then mv foo2 to foo so that it is atomic.
-> But I suspect hard links to directories aren't allowed any more :-(
-> (Creating 'random' hard links to directories used to be 'fun',
-> you could get 'find' in a right mess.)
-> 
-> David
+v2: https://lore.kernel.org/keyrings/20260714115451.3773164-1-michael.bommarito@gmail.com/
+v1: https://lore.kernel.org/keyrings/20260712014500.480410-1-michael.bommarito@gmail.com/
 
-I think I am a little confused by your answer. I am not trying to do
-anything in particular in userland relating to dying and restarting
-servers. Rather, I am wondering why it was decided (long ago, pre the
-current repo's git history) for connect to re-resolve the path every
-loop iteration.
+Michael Bommarito (3):
+  keys: fix out-of-bounds read in keyring_get_key_chunk()
+  keys: make keyring key-chunk byte order agree with
+    keyring_diff_objects()
+  assoc_array: trim the final shortcut word using the current chunk end
 
-I am working on a series of related af_unix refactors, and it would
-simplify things a lot if I could make `unix_stream_connect` just resolve
-the path once before the loop, but I do not know if that is an
-acceptable change in behavior.
+ lib/assoc_array.c       |  3 ++-
+ security/keys/keyring.c | 14 ++++++++------
+ 2 files changed, 10 insertions(+), 7 deletions(-)
 
-I was justifying the change in terms of the resolve-once behavior being
-less surprising in my original email, since that reason stands on its
-own, with or without my other planned work, but the truth is both that
-and the ease of refactoring with that change are my motivations.
 
-Hope that clarifies things,
+base-commit: 2c7c88a412aa6d09cd04b414211b4ef8553b5309
+-- 
+2.53.0
 
-John
