@@ -1,81 +1,80 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500D443991E
-	for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2026 18:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8AB93B9943
+	for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2026 20:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.175
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784572303; cv=pass; b=QL5YbO17BgDU4/5PPbpNPo3pVAEgsWGFQ8/goV4ueC6IFYXIg5fqh2Sk/YDHaNRzuwwwTsY8w4dKPAb+psK1W3SgAhCAn8UmlAlHXY9KZq/O5La3Vuyc4zCTCga1XFeann2EZUxuVGMX7RA7uSRbcsyuB28Cm8crohxvzV9PJeU=
+	t=1784578585; cv=pass; b=c6hMLanaI4h8FRlWLfgKtvJEDgpGbh+9kZrRZlM5AeCh2x9cAqHRlK7Hc1hbg0E3Dfr16CznIMbjAmbtBEUD9AlZaluCIpSqY8uw3khL0ECoaRBWkf/OTJ3zHhX7L0CgPSI0UFsckFFWBo3n1zx9KEoUIz7woPhgLLm/QJ5sw3o=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784572303; c=relaxed/simple;
-	bh=LC7hykOo7NcQDgbbnYkuyatZKfLvtqyYnzCxrtoDhEs=;
+	s=arc-20240116; t=1784578585; c=relaxed/simple;
+	bh=qOEkNLJrOibH57gOt/DIm3R8ct2tEakFik9JpGI7f18=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KOjfUzu+HMi8uLJuO7hxvX8cTnXt4WaOdhtYMwpqiPy+LUIwum3MqwQVRWKOQbVRDMRejrnlH34Lz8xF8YRbNDemvveguWySCoK8p8jnRSldRwjosiVmz//gYAbhSA8DL18iYMbtvJ4zU9+NVbdhcz/Y3avbGtjuh8V/ODDxbbc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SF4oDpAV; arc=pass smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=Np6iZ15f0mZ7swL5PSKiDLeJJY3l5zu+EWdFeMMbqiVopfoPulnAzciJyhO8xRk10V56942SruFujS+N2FNt5aK2SZQe4a9X1KiCQimQkkbtGGmcn99Aqm5WI0uALXxwXEDOHQqc+CdbAxZec1UvECzFNncr2g4C7PHSJDh4ykY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=d2866SVJ; arc=pass smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SF4oDpAV"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2caed617615so115716195ad.3
-        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2026 11:31:42 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1784572301; cv=none;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="d2866SVJ"
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-84a2dcec51cso9688589b3a.3
+        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2026 13:16:15 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1784578569; cv=none;
         d=google.com; s=arc-20260327;
-        b=SZdMIRq3y+C91vAzMghNco7M8Pt43kURtnPc6sJO85aaXp3iqdrFDnfgDYUVjcTAjG
-         ebyjHbR5s3+ZShhPNFVO/f+3Dh/IVXmhYUCq09Lro2kxDQJq0O+1DBfWQvkBZoRPpgkj
-         cfH+y8xKxZQVD0palSYXQTgSDLLzD0qOdSPkQRB4yOMFB3uCu2wHbFgkiskx9FD8rZpY
-         kRzsO3fkW9sBuZvwZMKMDzwJZqi4bto4G6h6n8titsmgX8ZcYpaQeotonF/e+5hAwV+V
-         9HDiUU6BtNEDQ1Bo+s0RDgaAy+mWR5ymTJja5EhDj9NIcHrGx170wAIlR9YnEZLgDk3Q
-         hkdw==
+        b=FEj0VAfiLC+699ED1r4YCsVJGLhIfvOD45y2L6IYYnYFCbfVn2P6ZEFNEsgHkrfUzJ
+         B2mgL7Zjw60xzAFNAmJwVcP9fwgIr2wgZ1UGN0SuFx2gCPvTTtnCnmzSnQCMKSGs8msi
+         n/RL+bkQs5H7RkARcHZcDQihuyFvt5TmFIOTNA6++jqvIfM/ptsMSjHsukt7f/Qn5YeW
+         xkbjDw18PQiUPPpMw0IirI1cfTWqzRozwpxvE1Jn2J6ilMFMXoK71n8OFqkZrcJA56xY
+         Z6RgEKT5BTj8nxd8bwiSkiSBKy/WaoiuVkxUpo2Az/6oZtpTfsxkSgsBeFEbENbMJZeT
+         ntnA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=k3hjzl7jw5v8GiAJW52bFkdiqM0pGI3DopRM+xm9zUM=;
-        fh=2Qj4hgCL5sJZ1VpI64/FoLq7g4GLGs+ZphBjLqr4634=;
-        b=WDAEd1yH2W/wqEZiyA3km3XM8OgCvHWXkAqt5QN1cbvznzju9d7Cx6g+SHxOEsceZK
-         RpQMQIqxXxSWjNOU32r9Y64HN+IYWGdRhbd0hSvBf43CNBMxqtLfBsN581Ugsvsa87+b
-         afJtj26fjzz7CEMmxNID1+pbeQCo0Q/ygp331nqAyl4Lq0dUy6c+fHacqYcWB3DDyL0r
-         kLT/mGZ5F5Xzq7FdmbiqNKinShFcIJEL7U538D+qnz7DaQgJqoLL0FGx1WpHKz0AnDCs
-         s75wcWmmdJp7qXAADmmwhSN0ByyEi4jg43CzZwB9CK+o129Y31giOiDsWRWznfzZjLUd
-         QF/A==;
+        bh=NEIzKGx6nstnSDXiYsrtWuuGIdEs+ij5HpQm4P2etZk=;
+        fh=/Ktv7tjRKuIY+OM4YzQu7QQAhWqAwKNsatCnPxQ7qM8=;
+        b=N9tNcE0tRHg4eQTDFKMSMRbW2sSeUGg0XHa5Cn+epPjG6fE4SXGNEXFxZ8kIfhck1i
+         Y2ayTW52fXnnWjgU7CxHvsKJla40TVQT7ypWIowzLlKRd7Obm83wSXyhZaxAGdsoq3Ga
+         4r9nlQOOYUZh2W5AFRqH7l3vHqm2Hz9W25QA91kv6lJMTFnYMF9o/bsLF2+Fiki5GTIl
+         222rc33SvbWmr3fcT3gpY/iT/hr8bX/GCGIg9xmr16uaz9mgVtoH8AhPZFx4OMSi6E9N
+         OUzfhHaJP4Wm9TkKCA56txHh14KcaS5So82vKgi30PvnVsZ9o+EgYoxjcqIrZxb/NZm9
+         VR2w==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784572301; x=1785177101; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1784578569; x=1785183369; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=k3hjzl7jw5v8GiAJW52bFkdiqM0pGI3DopRM+xm9zUM=;
-        b=SF4oDpAVjRYKdSsd1An806F+kBH3rf003d0u/ZUMNNm7Z3eZ/kHMlpnc10wsos72ad
-         oUVSW/oegIFYOPHJjIelk0S79rBUhoWc1IxaZn/GFnBqExrzXoMic3eoXfLINQQIZ2qz
-         tA9QBh17mfw2HmoEip2+j2tXcSavY9xNk+6qFYmUxbEBLFOg+1y78i/MUQpeItTjTJWm
-         BBeiwakKjw0Otg45hxTUrmXoCmRGjkLygItlPBW01aC3soRn+U1ru7O6dzq3Xij6aWuW
-         HWrIU51Yw4aQ7Wp9fC+8Ioy3i7m2/hJl55Afq+HIz1ohnbQvRwBMYwsoWHSQ62lpQjgx
-         aH+A==
+        bh=NEIzKGx6nstnSDXiYsrtWuuGIdEs+ij5HpQm4P2etZk=;
+        b=d2866SVJs2a0e1lfW2MqZvVhHeHIcHycmtnI65CnmV5ZeaakXFzLdM8aykzl8XCp4r
+         FjIgoqKhSid0Ww300wNhKHUVQRbmt5vyhdjyGdMviHWnGpWlKD632Cn+BMeib6C6LWxu
+         5VF1OoAfbCwtkrxfDTYj1XkpnLVMkWpe3YoGEjDstsJEFzdcsMULJhwhQKwNyQ66OkgV
+         wxxZ3fXTFoneravECaIHMy3fg9WbwXzJbK0co4pRXXXR+ue0ep3EFGwbAXctpImE5eOB
+         lQn0zqJHw2zJRBZHBTCL4C56JbOgGfThb8fVfsLLcdX4fLZAht1e0QHTyJG44uJFYEjm
+         ip9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784572301; x=1785177101;
+        d=1e100.net; s=20251104; t=1784578569; x=1785183369;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=k3hjzl7jw5v8GiAJW52bFkdiqM0pGI3DopRM+xm9zUM=;
-        b=lhQcfXjy1FgPKIdJDA30sdIR3BC0iD7WZPVp/9CU2GDbwbaommTeGArADg14JNKPyj
-         uqL6r4kyFVRjCGlL5DmxWvwF0ZlbQxFNZ4o4xXDCtQtIQTyK3VRbftUvKTC1DO0FX+4f
-         7v9CJFd69bxuGkOjd3Pve5AvUbk8HnJx8R3AoPvdhhFeaBkBT4tFUvv3iUb5tZ6+SHY3
-         ENXUMZ67MLAmg1TXXoCAgrtC2uj4bJ8kflKST9kRgJ7fpAoG6T192yQ/XTQloQ31lVQE
-         pAsh6TW/s2YyXft+dqlBqhrtZW0/r+HpsWHMozSyqUZ5lC77S/ElqSKq81uWkurGFawY
-         lAFA==
-X-Forwarded-Encrypted: i=1; AHgh+RpvyJ9XMZF7tAxVWcbqnGFMbknngKgyAm3MhqhSlMButaqXkZEM+of/ZJlWkASFhLARjLVgszcUwyXKa8N4nwlKhPCl2EA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYXSsFA1FbPo0K7wFucC+81twu2GBtvRTHzZmzig7kBib8qvJj
-	al8jL7Kt/ABFfa3KXeQlWGhigYbbKFECsEAEe9xmX8XFv5FgVaHxUQtBTZN/aBXLFDvytQicnFm
-	Fx/NygrNHTpH9M8dbt0/O9Iwg4kAXIrw=
-X-Gm-Gg: AR+sD1295ZteqEv2DAL1qFg2i+EGnFvMx2tm8XkvDLJ6FF69h05YQ9KOnNpcTUzD1WY
-	DeMIwkqA48Rn+P0mwxnSyl+n14oZboijfaJ2RraraSFd7MG//U53Mca6mkVNkA3YvvxIj8AdsFA
-	65ugN09k9MbsukwEU4T+JdTGN62YX9rHiogw9oRAuwNulYd+/PsgeG6fFeCw3fuvkJRFQ8XGDQC
-	oOxtOTbv2T6nfCPNMiVrb0SFBPC5Y2W0na10oBt0dgEGbql7Zc2fkNwKbZqaTT6qLF77gR6B70e
-	e9zLOy8u76+ZqYg3Ef5zZmSE++Y=
-X-Received: by 2002:a17:902:fc4b:b0:2ca:bf68:2a54 with SMTP id
- d9443c01a7336-2cf349b590bmr166172285ad.22.1784572301567; Mon, 20 Jul 2026
- 11:31:41 -0700 (PDT)
+        bh=NEIzKGx6nstnSDXiYsrtWuuGIdEs+ij5HpQm4P2etZk=;
+        b=UlPfg+aGoiAPEXCsg05+c9AVo76wSz+KFlGuyAqpzsquU+G3iJ0MBnJRSVP5cu19Nv
+         hNpdkTZkBIMBsw7u24DmWqxsV7NZpt5iSqD/B5CKs9uqZAHLctAvLfiftFlkaH0bQ1h6
+         UZ/tRzrcaB42nM3YOKNytUs9oT40cYsuE6DL7aVTqJLX52hvXwf5rN4KSOGgJmbp8QCB
+         9687W1h3PPzN+8AwczauwpYcFh7V9hJuRDSbzPII6MwnK2rLrI26o8ntyEXpz9btUiHt
+         IA3FcsP7YKWZSs/GumfAHpRsp/BARXLv0QZgEgDADR7ljCX0kLQ2LDzgLvnWD6nlyENu
+         wsAQ==
+X-Forwarded-Encrypted: i=1; AHgh+RpghBgQB4LEcfkhB7/tD3Iu1iCS4ngMj+wVT6oY8l/GJKc0cUGaI2tiesnkEjEqLqkrazvq9IMZKs3Jlz48poGTqJP0y2o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIV2KxTGUOfu4YIgxszP1SbRMapoXCmkhHEkg7NHlowsw0P1MU
+	UmcSEbGjE4pz+jBkgTidIffYjyAmMDAcGew1C4V2HbiRT7/Ia62rxp0iBxtzuUJZbRkyGZyjg3q
+	eTOkK/Qyk/bIIpM5BkrmUBLEaX0+8wUWtnh1tWkGJ
+X-Gm-Gg: AfdE7cm5rpbt/+DtEd1cPVsKOqEuMO/b2o1rAlz/5b7eXQeZd7J2sCD4OASFk8mlEqU
+	OmGGhtERM0TMa3cc254gb/LvnUheB60wA2EIe95DgytSKsGsY34gVh5FddGq1pAcwroNsCeBM7j
+	R3knnUW7ERhdeGLI3T+R9MoCU4YqgxGNNceBRjmGAiV73XcuZoat8oWI6s0Uava4VW4tPfi9UxX
+	F24YDBX2pPhDMKN/t2Geelxo4E+MIaMNpBv5MaRaSRv6xHKUwy2iAXLH+ph6Q==
+X-Received: by 2002:a05:6a00:438d:b0:848:68d7:c673 with SMTP id
+ d2e1a72fcca58-84c2948848fmr15306792b3a.47.1784578569285; Mon, 20 Jul 2026
+ 13:16:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -83,19 +82,18 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20260708000956.46138-3-dwindsor@gmail.com> <a3a376bce713ac38ce6746508239c1af@paul-moore.com>
- <CAEXv5_gt7BPWvdR4D1_3XJ0_XpBXWN52jeAOf1K2QJ7LL6CtPQ@mail.gmail.com>
- <DK3LZOFOVG5L.3F34IKOCO1I04@gmail.com> <DK3M1X95Q2FN.26PY131TLPS2O@gmail.com>
-In-Reply-To: <DK3M1X95Q2FN.26PY131TLPS2O@gmail.com>
-From: David Windsor <dwindsor@gmail.com>
-Date: Mon, 20 Jul 2026 14:31:28 -0400
-X-Gm-Features: AUfX_mwvFwr-TgBt_1bjRhuE8WukQ5CZki_9yiHUuJNp8q_cbJ7bjwASItGBHzY
-Message-ID: <CAEXv5_hc9x9XJZr646efGe=HD5Y90FtB1m_xi--0wWuaD18EKw@mail.gmail.com>
+ <CAEXv5_gt7BPWvdR4D1_3XJ0_XpBXWN52jeAOf1K2QJ7LL6CtPQ@mail.gmail.com> <DK3LZOFOVG5L.3F34IKOCO1I04@gmail.com>
+In-Reply-To: <DK3LZOFOVG5L.3F34IKOCO1I04@gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 20 Jul 2026 16:15:56 -0400
+X-Gm-Features: AUfX_mw17rEY5xGffzntET0ex7-B1yqGVCACoJsXOFIbYfGKrVihTs1yl3fAaHM
+Message-ID: <CAHC9VhR8n_TBPGLGq-Pray+mHrUCdcmqGXi9wTXyeGa2Dc4m4g@mail.gmail.com>
 Subject: Re: [PATCH v5 2/3] bpf: add bpf_init_inode_xattr kfunc for atomic
  inode labeling
-To: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Cc: Paul Moore <paul@paul-moore.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+To: David Windsor <dwindsor@gmail.com>, Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
 	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
 	KP Singh <kpsingh@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
 	Emil Tsalapatis <emil@etsalapatis.com>, Matt Bobrowski <mattbobrowski@google.com>, 
@@ -112,54 +110,70 @@ Cc: Paul Moore <paul@paul-moore.com>, Alexei Starovoitov <ast@kernel.org>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 20, 2026 at 2:30=E2=80=AFPM Kumar Kartikeya Dwivedi
+On Mon, Jul 20, 2026 at 2:27=E2=80=AFPM Kumar Kartikeya Dwivedi
 <memxor@gmail.com> wrote:
->
-> On Mon Jul 20, 2026 at 8:27 PM CEST, Kumar Kartikeya Dwivedi wrote:
-> > On Mon Jul 20, 2026 at 8:12 PM CEST, David Windsor wrote:
-> >> On Thu, Jul 16, 2026 at 5:55=E2=80=AFPM Paul Moore <paul@paul-moore.co=
-m> wrote:
-> >>>
-> >>>
-> >>> I'm sorry David, now that I'm seeing this function again, especially
-> >>> with the LSM specific bits extracted into a LSM function, this absolu=
-tely
-> >>> belongs somewhere under security/.  It's only callable from within a
-> >>> BPF LSM callback and all it does outside of some BPF pointer boilerpl=
-ate
-> >>> is call right back into a LSM helper function.
-> >>>
-> >>> If the BPF maintainers aren't willing to accept that, then we will al=
-l
-> >>> need to find another way.
-> >>>
+> On Mon Jul 20, 2026 at 8:12 PM CEST, David Windsor wrote:
+> > On Thu, Jul 16, 2026 at 5:55=E2=80=AFPM Paul Moore <paul@paul-moore.com=
+> wrote:
 > >>
-> >> Where this code lands doesn't matter to me, so I'll stay out of the
-> >> decision of where it lives.
 > >>
-> >> If this kfunc goes to security/, would we also want to move eg
-> >> bpf_set_dentry_xattr similarly?
+> >> I'm sorry David, now that I'm seeing this function again, especially
+> >> with the LSM specific bits extracted into a LSM function, this absolut=
+ely
+> >> belongs somewhere under security/.  It's only callable from within a
+> >> BPF LSM callback and all it does outside of some BPF pointer boilerpla=
+te
+> >> is call right back into a LSM helper function.
 > >>
-> >> I'll roll v6 of this series meanwhile and we'll see what the BPF
-> >> maintainers say.
+> >> If the BPF maintainers aren't willing to accept that, then we will all
+> >> need to find another way.
 > >
-> > I don't think there was any preference expressed from the BPF side. Log=
-ically,
-> > one cannot be faulted for adding a kfunc to set the xattr for inode in =
-the same
-> > file where similar kfuncs to set xattr on other FS objects / entities e=
-xist.
-> >
-> > The question about bpf_set_dentry_xattr is thus valid.
-> >
-> > Anyway, I will leave it to Paul and Christian to decide between themsel=
-ves where
-> > it makes most sense for this one to live.
->
-> Also, perhaps it makes sense to use set/get naming for this one too, to k=
-eep it
-> consistent with other ones?
+> > Where this code lands doesn't matter to me, so I'll stay out of the
+> > decision of where it lives.
 
-I considered that, but we're only allowing one to initialize the xattr
-on the inode here. Once it's been initialized, one uses
-bpf_dentry_set_xattr.
+Yes, you're caught up in some territorial wrangling that goes a fair
+bit beyond what you're looking to accomplish.  My apologies for my
+half of that, it is an unfortunate part of upstream kernel
+development.
+
+> > If this kfunc goes to security/, would we also want to move eg
+> > bpf_set_dentry_xattr similarly?
+> >
+> > I'll roll v6 of this series meanwhile and we'll see what the BPF
+> > maintainers say.
+
+Thanks.  Fortunately, it should be easy enough to move the kfunc
+around, that's likely one of the smaller changes needed in v6.
+
+> I don't think there was any preference expressed from the BPF side.
+
+Look at the second patch in the v4 patchset, you'll see a preference.
+
+> Logically,
+> one cannot be faulted for adding a kfunc to set the xattr for inode in th=
+e same
+> file where similar kfuncs to set xattr on other FS objects / entities exi=
+st.
+
+First off, I can't say that the existing BPF kfuncs intended for use
+within a BPF LSM program are in a good location.  Unlike every other
+LSM which locates its code under security, the BPF LSM devs have
+chosen to locate their associated code all over the place.  Some of
+that happened before I was responsible for the LSM framework, and some
+of that which has happened afterwards has likely intentionally avoided
+traditional LSM review.  Unfortunately, this has muddied things with
+respect to what is possible generally in BPF versus what is possible
+only when the BPF LSM is enabled; we just recently saw where this was
+arguably the root cause of an exploitable vulnerability.
+
+> The question about bpf_set_dentry_xattr is thus valid.
+
+It's a very valid question.  It is my opinion that kfuncs which are
+only intended to be called from within BPF LSMs should be located
+under security/, just like every other LSM.  If there is a kfunc that
+is generally useful from other contexts, that is a different story,
+but in the bpf_set_dentry_xattr() case, it is explicitly only useful
+for setting 'security.bpf.*' xattrs.
+
+--=20
+paul-moore.com
