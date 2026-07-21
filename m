@@ -1,102 +1,124 @@
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286CA3F7AA8
-	for <linux-security-module@vger.kernel.org>; Tue, 21 Jul 2026 01:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D5A2DBF75
+	for <linux-security-module@vger.kernel.org>; Tue, 21 Jul 2026 05:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784598784; cv=none; b=eZ5vqQLXpujacoZAJpMdiBrThKKw5j6SNMQUQFMRWyibRBv7P4jSSuO26utbnI65bwPfTvxBRFyDUSb/OEYRDmTcb6q0+2FSqMlC3W2xcfGC4IQKIvFejt8ZTWK6UvhSn1JAHooQqa5/ZO3OTJhpAt5T+SfKHSRiWF9E+K2lf/s=
+	t=1784612725; cv=none; b=WLJeiI6cssP3MCZUMGd+IG6GbsyxGGoXyueV/3NZrzWMdP2IR+RPQeya2qYi1nVY8yvKhXEi/Nc9zVimTfn3MvKZQA/nkQICIiiINzr+QASCXBncT/mTh/ZeQ+QKcI9Ks8Ju/76b3OA5JYZ4FpC9PKcF6YvBvVZ6HlG5BvwvOMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784598784; c=relaxed/simple;
-	bh=xkgwRc1Um61YBlkY0tDZ6nTEyXfJqlCh34V6nkav8gc=;
-	h=From:To:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=WOayVja39AwvY5adcWtSq1+YQGwkFgYZBijXoBxU+jXzA8s9OYoj2HcI0cLIbcu9ULz2wTyoJbbeVcfXHwxNzGk1pcihjwNvrOUQvrntMZsr3FMquHA+zxuByyR8WEpOJw7lJNnGiIyfjqsVMqYlEi1dnF495wWbLPLjDdxoUVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=cQpkd7oO; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1784612725; c=relaxed/simple;
+	bh=5BhgpjbYv7n6lehcfJMF8RfisXcwZAfesEnS0AHA5bw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BulaBwUJS6wjgzl1RRhD0SNZUPOAnd2mUEKXnxeM5ubycAgd757bkZKBRNgopWEdGuyBgRuXZePRIwJrXQ+uJ/af63bdTrp2DsGwVGI1/Z03rBHqjHpUmeG90Ct0XkosTVhOahoMDhGCtzm4YZL9xeHwfrOzcVqogrbAEHGczRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=niyH+W0o; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="cQpkd7oO"
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-51c2c8f43aaso98808761cf.1
-        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2026 18:53:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="niyH+W0o"
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-84a2dcec51cso10043362b3a.3
+        for <linux-security-module@vger.kernel.org>; Mon, 20 Jul 2026 22:45:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1784598782; x=1785203582; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:subject
-         :user-agent:references:in-reply-to:message-id:date:to:from:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=xkgwRc1Um61YBlkY0tDZ6nTEyXfJqlCh34V6nkav8gc=;
-        b=cQpkd7oOja5LZnhDzNLoRMRxSbOcHJEnJD4Uu3zntgbW16/JMNSkWx+qZzIW1/xoEe
-         xiKh/gI0iLE3TVjdezMAQP4PMGCMtGH1kC7SoJTRX08pmafaZeBvTwYtfDAGCKdzMpRO
-         YoYJ1TjxCnjrFgAfypRtNpMomrOedRn2brbrRS7Ih4+ns6rcAU3zA6FIFy5k6ernwApQ
-         Me5IwgTzJQUZP9/unU3B70oJtQTZLK3ChtbXkPXkgpQxTEYe4G1+gC3zj8kj/tVyrV39
-         olA/NC49fN61iNJYG18gjasEfP+9Lq7SiVymaqVy0ogNLvf7oXEp7QCEx+kaAKVnxwhM
-         tVTw==
+        d=gmail.com; s=20251104; t=1784612724; x=1785217524; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=DUyTzWLCTMDNRWqM9Nwj51oZX76siHgXFAZY7PVYJ6I=;
+        b=niyH+W0oCs7obIekqZcREwbib3WeiSvwm9cdmy+o16MBvpn6i7gu+oCxZU7vYi6WZb
+         dHhzU31UysT4c6zDiFGBa/7as/1c3sE/oTKayW3DMoBDDOa3pcMowTbuHEFTPagU8Ij9
+         yuTZHQKi4krAV1V9eFk9xP/hohACObK+FFZIjmn10SgXKjvjyAMNAbQ38BlLV7BMnP3e
+         VgoC2dSKME/17DebW2KKAqUz/KYSNnUPY/8kLGaelyIerLZ6j7YyBgzqlaRXoKsRMJQe
+         9JhsieoxbtWpgZkmUZT7jQzGUxhHE2vo49yeHqE37Ex/BwvOP4RaU8yeu9eWWsgRZRd3
+         WL9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784598782; x=1785203582;
-        h=content-transfer-encoding:content-type:mime-version:subject
-         :user-agent:references:in-reply-to:message-id:date:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=xkgwRc1Um61YBlkY0tDZ6nTEyXfJqlCh34V6nkav8gc=;
-        b=hplNaTVZqOu6+kJwzeFH9tf7+QJIWNa4mcAPz9xG5/m+5I0Ia6KCQVL1mSWXDQ4cLy
-         mmlJv3SkEajPorCbX5eu5AP9Akhn1p0yL78Xj2CXdaZ65tzhP3XwH7t2JH19wptEGct9
-         U1pAcs7cWqLidRfIAmZkcGb+l8NKe4B9MU4QZ6tPARdtjCDYxd0mDpw1d7nz4NOluk/5
-         p9CpcRJ8IUc0z7Opq6jykx7VXiCRFd19xuIC88qFsrRo51RA2C5LdnjaHLJPVadsERFE
-         S6P1s9ZnHJkU3JDPMDycOWC+9AKJSmLIxCr5hEL2XtyDkZnICJVQ36vM6DQkrAuj8O6z
-         PMvw==
-X-Forwarded-Encrypted: i=1; AHgh+RozJ6a0JzBb1gXrdQkjEKQQ6iTeEz4oCiCA0bSWkZrcyX5BOVHdO2QsTLIaRvRRdO0SwvX78XZaoGDrN0sE2qG/Z6B/FR0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmYHaSmiG9vd1ERLWrxlDeIqR9oXdxmFfCnRZxqWC08usLUsKn
-	Htn1vRrxS+zESiZg3LX+4oqp4IwENkoPKq+/gCmt1Uh/2H/SVmJJJd4tmP7aEJ8Q6FZQyrANDgw
-	WBKJZTQ==
-X-Gm-Gg: AfdE7cmJvv+f35pu4QDqvBLuY3gcf+3jwm+kFkhqIV6EkNs+nrzseWS1BWqUh7pBaLJ
-	i//yMaHMWj+3s0DKszKFQCRKQl+1gdZq1k61BdPGVw4qvWoXU5P/JVulMbIWgude1UwW08UoSMr
-	giT7lZgqfMTGrbb68/sqPMQzJGg9657RMvLx6CcbB6K9zZzp4uebfwJMtht4EBch8BDd8L2rR0p
-	jMqLEBzNPsL7W+vSprUIpQMilva78UjPTYAoxvzIXgdpYAw105yDeKnKlv7lP2bb+TCABxCGF6U
-	IhG3nT0//pWl8WOKvKPbsx3ji3MiDsEDS7h97Ypti12p3kToD2FcvukfWy8TjUAna/3mVNJUI+y
-	w/kvWTbVC9uyr76TZtvL1+neBcJybRH2eEULmBH/tMvDERK+AUBepIjaK1oASlhP8df3+XF+DgX
-	8UzCMTntBIrBpVHgNX65m4h6eLhdpb21qIxV+Yv8+IMr3uW8yj3SQ=
-X-Received: by 2002:a05:622a:1445:b0:51c:f33:9be0 with SMTP id d75a77b69052e-5213daa1d32mr154605771cf.55.1784598781787;
-        Mon, 20 Jul 2026 18:53:01 -0700 (PDT)
-Received: from [192.168.7.16] (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-526be2883d5sm2193821cf.0.2026.07.20.18.53.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Jul 2026 18:53:01 -0700 (PDT)
-From: Paul Moore <paul@paul-moore.com>
-To: John Johansen <john.johansen@canonical.com>, <linux-security-module@vger.kernel.org>
-Date: Mon, 20 Jul 2026 21:53:01 -0400
-Message-ID: <19f82605c48.2843.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-In-Reply-To: <326a6ffc-8cb1-4842-8bf0-74dd58bfdf08@canonical.com>
-References: <20260717215254.383183-2-paul@paul-moore.com>
- <326a6ffc-8cb1-4842-8bf0-74dd58bfdf08@canonical.com>
-User-Agent: AquaMail/1.59.0 (build: 105900627)
-Subject: Re: [PATCH] apparmor: leverage audit_log_n_untrustedstring() when possible
+        d=1e100.net; s=20251104; t=1784612724; x=1785217524;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=DUyTzWLCTMDNRWqM9Nwj51oZX76siHgXFAZY7PVYJ6I=;
+        b=IhxBloDkwYvNyDlIfjLab1xg0tP3hZf6Zhahr8P6IpgVGl2e8k1ZhIEN6SUeCf64lf
+         cN2JXQZ2xykf9C+Yi5wVTKq4PxBeETANhfxGeX2clIJ7D/iu6AAFec8Q7of4K6/KCpN4
+         yzC/NphCL4eVpic7a9O2hs1YE+9C3zjo3GbHeLkGdnrb+f7evVQzbR6xKtYWbc8YNqRY
+         h5zsK1kSqPi/0N4snpleYuKWMffkTx/uWSgN/S3dRfyLCfZwxlf/JT4SbaECWM8CN0t0
+         dy2A4IiKgFp/4uwbGEA71n98VnT6CSUKG2MS0Jm+BJz7pLHlUYYhPqvu83hK369SUQat
+         M4Yg==
+X-Forwarded-Encrypted: i=1; AHgh+RoMN8zuNNvfrLudQGl+2kK/GKwK+SFGOSFLQAWY/f2unH8iEJ6UDDVSmAVSXLvqulfCT0ymaVCtSWrJHGXLYPm6iPD/hxg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl6yl6MtkvnnJxi/9LqVAtHEblLdW4u5c0u4iEISJZVKmhP8MV
+	JpxteF3lEEz/a5vi8m6203WOFD/I/G32SAg+4+KmBG5x6ju8Z6b4u9c=
+X-Gm-Gg: AfdE7cl29GphlWhqNST3ElSf32So8oeYpPMRA7Vi5J1UQufmOtP+u8I4lGhg4WlDeHr
+	Ly+G6wcD+q4ntXnOGjCQebHWJ5W1I6etJeICPQ9UIaYpHMhZkHKSZnOXTicWNrnNIY6EP3KHtyB
+	OQYOKdAEbgZT7r241EQyNCOWDffU//mxs8hl1dzQdksRtuNoP9CKi57tI3PGW+ij1DTSigf/YIV
+	AUQyVvvGX/qYmPzVM/jmdXXEwUpgEIDtjb4KENVKdcK2C1sQo5WBS6H22uOO800PRoknTRTFBcO
+	RZmJHsKtWLmfbfVn2z1T5nWaq8RvrU5N+9sEkZ5dRG5tsy81WI9L5gDaSahLaMNrYSQq91uEgY+
+	BZEVw7vGhs4suUpESTidzSVbLOqj+ZFFOFiBjlq9fH09jUWBbeaJtaG7h00JB225oyDFuOyBc3M
+	cserdvKht2VMwLzQJ/mI3O3Iu9lx6eatc7SuleiQ==
+X-Received: by 2002:a05:6a21:3b89:b0:3c3:64cc:311a with SMTP id adf61e73a8af0-3c3ad64b57emr18830801637.22.1784612723689;
+        Mon, 20 Jul 2026 22:45:23 -0700 (PDT)
+Received: from at-Standard-PC-Q35-ICH9-2009.. ([27.60.20.188])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3142a1bb770sm46620876eec.16.2026.07.20.22.45.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jul 2026 22:45:21 -0700 (PDT)
+From: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
+To: 
+Cc: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andreas Noever <andreas.noever@gmail.com>,
+	Mika Westerberg <westeri@kernel.org>,
+	Yehezkel Bernat <YehezkelShB@gmail.com>,
+	Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v2 0/2] Add Apple T2 NHI device links
+Date: Tue, 21 Jul 2026 01:45:00 -0400
+Message-ID: <20260721054506.11871-1-atharvatiwarilinuxdev@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="us-ascii"
 Content-Transfer-Encoding: 8bit
 
-On July 20, 2026 9:41:05 PM John Johansen <john.johansen@canonical.com> wrote:
-> On 7/17/26 14:52, Paul Moore wrote:
->> Make use of the audit_log_n_untrustedstring() function to simplify the
->> code in aa_label_xaudit().
->>
->> Signed-off-by: Paul Moore <paul@paul-moore.com>
->
-> Acked-by: John Johansen <john.johansen@canonical.com>
->
-> unless you object I will pull this into the apparmor tree
+This series adds a cached flag to detect Apple T2 systems, then uses it
+to create device links for the Thunderbolt NHI.
 
-Please do, that code is up to you and Georgia, not me.
+Changes in v2:
+- Used a less generic name for has_t2_chip
+- Used DMI instead of PCI for has_apple_t2_chip to avoid PCI problems
+- Initialized ret in tb_apple_add_links
 
-Thanks.
->
->>
+Link to v1:
+https://lore.kernel.org/all/20260719180308.1398-1-atharvatiwarilinuxdev@gmail.com/
 
---
-paul-moore.com
+Atharva Tiwari (2):
+  treewide: Add a flag to detect the Apple T2 chip
+  thunderbolt: Add device links for Apple T2 NHI
 
+ arch/x86/kernel/quirks.c                      | 105 ++++++++++++++++++
+ drivers/thunderbolt/tb.c                      |  51 ++++++++-
+ include/linux/platform_data/x86/apple.h       |   5 +
+ security/integrity/platform_certs/load_uefi.c |  38 ++-----
+ 4 files changed, 168 insertions(+), 31 deletions(-)
 
+-- 
+2.43.0
 
