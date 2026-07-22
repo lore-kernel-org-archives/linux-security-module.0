@@ -1,110 +1,102 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20783D3338
-	for <linux-security-module@vger.kernel.org>; Wed, 22 Jul 2026 21:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D5334D382
+	for <linux-security-module@vger.kernel.org>; Wed, 22 Jul 2026 22:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784754742; cv=none; b=c0jmwvqkJju6iKhmKKlWYC7BYlsnDuu4V8WVAAYCu7Esy5AuKKjE/onK0wKGhP923e/6xSlV5cb7QIY8hpjvfGuhNRlF8jeozPO32obkEFzW0R+MVs3m+MVgmdzxw9hhHz17sMIGdhPMQg4sjygcMcH593TNusZqpvqEpoxxEwQ=
+	t=1784760109; cv=none; b=HZQoS8lvacFbxWt60NLTFeQDFX+0s/8BfZ6k/4nEWJZR3dtj/iwZrtYpnRF/A5qmXeaV5KpZaDPtr0Elkt0SdTmsCiyX4gA+/TvZCBQ/tqrx0Dxr8PzVjcQYvsLu4c7J6BgIxcb7V9iW4aPQGrhh26qGAY31a//ZTs1v1qXZ+SI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784754742; c=relaxed/simple;
-	bh=1v6byf3doib7lXScxa29tBKEg951i25yQTkCyjE1yPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gEJYedpijB5m8IWLeUM/grWfV0Ca5RNbihkiWWlStl/bBlk3TR1ATaWpZyoYPua9fe0RL3z8mQ+Oo1pr+rikevfhrEk8DHHU9KxvhUfhCavSjnXzGjy1F5SBsmFbCuN7CTNDOG/rp7ePzPPM9IDaXgF+3++Sul2oEmqetGXW+gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kQuLZ68g; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784760109; c=relaxed/simple;
+	bh=UkvBJigrFJ+NDyBuMETPJybDse5G4X/lKG4s+fW5Bwg=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=aonBLJPQEemQi5ib6kfBD65Hb2Zbp5K4dC8G8T4K+T6XkVcJHb5v+utLJGkI15lIp2Oo4iLZS9u1ZvJpYbKm6x3Baa4MGD0/pj7xhhH8hoVSe8TCDea/GMAPJhW16DXQBTm5i2uATzNrrQOCF99v4EI3BFKUX4oc7KW1ZDpLZVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=hallyn.com; dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b=l1nydvB0; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hallyn.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kQuLZ68g"
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-81ed2a00f12so104398037b3.2
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Jul 2026 14:12:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784754740; x=1785359540; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=P2hAbTXYH7pOCgQd3BSSUl5pvihpdrNJ4HnSdNTSi5I=;
-        b=kQuLZ68gyxWKJQ2gs/HgMp+PJit3Cr0HMKMogYgF5qHjH0nKQvjSAlqLEX4LvFy/AM
-         MQ+L8xJmxIebXpPDA8rqHPtJxb8o3C27zYkxaF+I5DRxTVibotKKia6OB4zFjV5gaEQx
-         zQTBb5VPnhwcFJmR6LG4MzgdFW6yaqLekmlJaqqigcwgvWWn63FX6HnLxxvyyPe3Yp4b
-         tUyptGNNnWgyXuVtl0oOwmihcS4hv/3QPi0Lbkfyl5Mfq7hb9bkEvrN8ewJpd5a+He+8
-         XAZpQHTiY0d+OmlaZT5Hm+21ae6If4I7Upt8wk4kK2VrbrPiXkMzvDMZ1J5qwymIk8YQ
-         4CUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784754740; x=1785359540;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=P2hAbTXYH7pOCgQd3BSSUl5pvihpdrNJ4HnSdNTSi5I=;
-        b=c9CI6ci1YHjae3emMbq0Zp8r4IeoqyLRcJHFfH3bfEWaDs/40xFignnmmL402lInd5
-         t+nwZolSHETC8ZQhhP4KhYlBAFDGfHkr1Bga/RUyXAEmBb5dsjj2BpTEEhsl3lU/QFUW
-         niOLWDJNegSu2exxtQqhxAOZaPpFxzBJl4j4w6MRXXf0RNBhCOalLhS3kIqARCdOcLla
-         ImOD+X2J0zn08p/9riSj1dw+jFIFJNfgbcQjXZxA8XmdID4VoBMw3+5dWnCcbqFGMUxP
-         Ia6mTLfJlHD3G5a8bkoUZgYIoFNTD9BaVZhw0sr49avdJrXHrmq/DFN2SSIXE64FsP7n
-         K+eg==
-X-Forwarded-Encrypted: i=1; AHgh+RpDBAX6a08SmRHpE1H4fcloTrkGh/Ia9vZ7FbmZRXyUybiMg6THLpLg8eDNxA8xvU32Zbizv/tefCrpid+EosIubcBstyY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwHUy+8jwjj5jKly3kLa8DIcZVRiGQbgU3gzRKBl473uZ3yHt3
-	W22lS/y6ISuaZL1wxjvTC2eLWzsM/d6FUGQEnzRJSTtoAYvSk/30FZhs
-X-Gm-Gg: AR+sD12TqXW6Zj7gCt/pYjNfEwExc/y3Cyu8n2tqim2yVb9qzwQgn6tT8gBkn2+iVx9
-	maqf8K4T0Ovx1sCCoOKumHo+syGaAliFL2ObHNaPr6jM6Nwxm2qxK+Vbc1ODcme7movQj/YgXrY
-	VH+goj91sNIJNcltFILZovUp8MMaxTp+itCsCKwSkZ20L5/DQokq3NX8UwBNkURPJr0XoWhplCm
-	3TMc0jbtdsuwSmR00mnLxAgzETiNguRrZ4+qZTX72TV2ZmIDQZqI/xVVkxU4PtOPmG9pRfcVSNm
-	WI/SWmvLeSyie4ElQxuY+Z7HukMbviy3LSrTMaji15iIaAStI1jxjLRyp7OkFmd4PoRWjVZs09W
-	REa0UCVn8UbkY+1P7tpw0guq3kkMXUN2o4SUVeHlj3OSdDmGLDg6P9f3v38lubwpu2/NYI9VUTi
-	uFzYbfZxFkGsNuIV6JrNyk6D9H8BySi34Iup5d
-X-Received: by 2002:a05:690c:2784:b0:7e8:a091:6c4b with SMTP id 00721157ae682-81f4c1c1d2dmr953507b3.24.1784754739786;
-        Wed, 22 Jul 2026 14:12:19 -0700 (PDT)
-Received: from zenbox ([2600:1700:18fb:6011:4392:41cd:1ce2:e391])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-81f3dc4422dsm12662287b3.13.2026.07.22.14.12.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jul 2026 14:12:19 -0700 (PDT)
-Date: Wed, 22 Jul 2026 17:12:18 -0400
-From: Justin Suess <utilityemal77@gmail.com>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Christian Brauner <brauner@kernel.org>, 
-	Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Kees Cook <kees@kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Tingmao Wang <m@maowtm.org>, kernel-team@cloudflare.com, 
-	linux-security-module@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 03/20] landlock: Split struct landlock_domain from
- struct landlock_ruleset
-Message-ID: <amEwEUKyCPNUxITb@zenbox>
-References: <20260722171159.2776765-1-mic@digikod.net>
- <20260722171159.2776765-4-mic@digikod.net>
+	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b="l1nydvB0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
+	t=1784759783; bh=UkvBJigrFJ+NDyBuMETPJybDse5G4X/lKG4s+fW5Bwg=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=l1nydvB0vfaFLRaW50glFBIvAbnBw6F4oIPayYLTdVDT7h7ksi3ndsYBPZHCrfBdO
+	 GvyEeRlAv9UtQ58/7bV8w8eA15HPZPNE8kiyLL30YDvykt/+kD4MbBljk6k17yTGns
+	 3aKL/18xMt66uH484+tGpEXp6p11KWlPoH6BJI3tmIHSCN2Fk3LDkAd0iRvtvPtzfl
+	 CKayK7sGymlVp/58NzSMsuEt5WkDVx0VqZ+QXokHOnWwFz1JJyNir9FGC+49Dk4WdH
+	 QtCSDvHdL9dst9qsKjfuABCEwVcD1B9uZp9pE9WFQ2P6eg2CZG7wODUN2DUxHWxrd1
+	 J8xTFNP2YvA0g==
+Received: from dummy.faircode.eu (unknown [172.56.88.240])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: serge)
+	by mail.hallyn.com (Postfix) with ESMTPSA id 5C359271;
+	Wed, 22 Jul 2026 17:36:21 -0500 (CDT)
+Date: Wed, 22 Jul 2026 17:36:06 -0500
+From: Serge Hallyn <serge@hallyn.com>
+To: Ryan Lee <ryan.lee@canonical.com>
+Cc: Baruch Siach <baruch@tkos.co.il>,
+	John Johansen <john.johansen@canonical.com>,
+	John Johansen <john@apparmor.net>,
+	Georgia Garcia <georgia.garcia@canonical.com>,
+	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
+Message-ID: <48d44625-7fa2-4e1c-8821-4d22208421ea@hallyn.com>
+In-Reply-To: <CAKCV-6vP2FKgTj5PT3xB_TDL+zLk7xYf2BNw6mKXfPb3OO2TWA@mail.gmail.com>
+References: <2ce1d4ec18b2b47ee7ddd9c1ad7be68e185aa69c.1784632742.git.baruch@tkos.co.il> <CAKCV-6vP2FKgTj5PT3xB_TDL+zLk7xYf2BNw6mKXfPb3OO2TWA@mail.gmail.com>
+Subject: Re: [PATCH] apparmor: update website link
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260722171159.2776765-4-mic@digikod.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Correlation-ID: <48d44625-7fa2-4e1c-8821-4d22208421ea@hallyn.com>
 
-On Wed, Jul 22, 2026 at 07:11:35PM +0200, Mickaël Salaün wrote:
-> Switch all domain users to the new struct landlock_domain type
-> introduced by a previous commit, eliminating the conflation between
-> mutable rulesets and immutable domains. landlock_merge_ruleset() now
-> returns and allocates a struct landlock_domain, and the merge and
-> inherit helpers move next to it; the former static insert_rule() is
-> exported as landlock_rule_insert() for its new caller across the
-> translation-unit boundary.
-> 
-Seems a little confusing that we have
+Jul 22, 2026 11:41:27 Ryan Lee <ryan.lee@canonical.com>:
 
-landlock_rule_insert()
+> On Tue, Jul 21, 2026 at 4:40=E2=80=AFAM Baruch Siach <baruch@tkos.co.il> =
+wrote:
+>>
+>> apparmor.wiki.kernel.org redirects to the current website.
 
-and
 
-landlock_insert_rule()
+Sure, but kernel.org seems less likely to go away, and the redirect can
+easily be updated if needed.=C2=A0 Up to John of course, but i would leave =
+it
+as is.
 
-Maybe a rename of one these would be appropriate?
 
-Otherwise looks good :)
 
-Justin
-> [...]
+>> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+>> ---
+>> security/apparmor/Kconfig | 2 +-
+>> 1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
+>> index 1e3bd44643da..472aa38254be 100644
+>> --- a/security/apparmor/Kconfig
+>> +++ b/security/apparmor/Kconfig
+>> @@ -11,7 +11,7 @@ config SECURITY_APPARMOR
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This enables the =
+AppArmor security module.
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Required userspac=
+e tools (if they are not included in your
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 distribution) and=
+ further information may be found at
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 http://apparmor.wiki.k=
+ernel.org
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 https://wiki.apparmor.=
+net
+>>
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 If you are unsure=
+ how to answer this question, answer N.
+>>
+>> --
+>> 2.53.0
+>>
+>>
+>
+> Reviewed-by: Ryan Lee <ryan.lee@canonical.com>
+
