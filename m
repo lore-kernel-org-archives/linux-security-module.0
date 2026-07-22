@@ -1,89 +1,136 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8980046AECC;
-	Wed, 22 Jul 2026 15:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9C93AB466;
+	Wed, 22 Jul 2026 16:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784734253; cv=none; b=fUiUEvNdCyeVKzLSBA3jimW+Hsozwp+FEfz0MNF1GVeSURi2e6VKoihENIrTzIXQ/g25K/cq1bJfg9PyPE6ZNbleLkipXDvQ9sA87U8IQTtEcYJSSK0JNods6Hf91cLIC/PUlx2acxvKkAWjgIn7D4n4Oh/dnB3ZHPqAM2wQ6I8=
+	t=1784736229; cv=none; b=Fvs36IFOu4C/44ux//bK2ZjOsD03KhgJYKuqfCSwEN3SLZMXNVN/UqicmR4SQuAI3ahOHMS/ybUC8XjC5lWyF332fRIjmWGA0ZCqsRDRdhzcwa4dNvvkBzS++nEkhtjS0iq1JTEVjr0942oVJYz2HdbK6NIO9Br9v32lN0+v7a8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784734253; c=relaxed/simple;
-	bh=/oB6i+yzNJPsGBGfPr2Pf9vtp53RzJzYkA4lYcxxRV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=frv9KPrEoPUQFzW5d3TWBrKt82lCC8HZ6dnY7nSLJoPAQ/9cZAnkrtgBYqHRSgZIYq0dOOwq+jOSDZfl6LwQ57oGDQOvzaZX64U9L8LuWPCTVNhOJIbHspowCf3YF81wAnX2EpVxeVI+D+3Fk6Yvbb/03ZEZyuSNNop2MGOVieA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=glZ5dQBp; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784736229; c=relaxed/simple;
+	bh=rU5sRSJCoz6G3n2g1fR9DQWvfHVM6+fAIyg62rOd2K4=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=ITRNrQtXwbD7+hPIOgOHQLzTpATBZ1IrnDXcMNxz7AH0eyVkXvmOLNB1nUtGFvZeS1D+Vuc+ac5BmBCDLGj0/g2H8oq26qmuTEfWFVUhfZYGFamPqeOOn4pSJb0wvlTan6QCo9sQNdbD8bGb97ra2maoxmXb57zo40QfM4WEeGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=johnericson.me; spf=pass smtp.mailfrom=johnericson.me; dkim=pass (2048-bit key) header.d=johnericson.me header.i=@johnericson.me header.b=UhSCho1S; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FF4I4aF6; arc=none smtp.client-ip=202.12.124.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=johnericson.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=johnericson.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="glZ5dQBp"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id AB3481F00A3A;
-	Wed, 22 Jul 2026 15:30:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784734247;
-	bh=aRhMhZuwb/Q7zXP9Xfwf6Ajwa99GR5rC8/Ng6aG/XiQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=glZ5dQBpBCsngZ8COuCdOs9/o3KjWwGmeZ1Z+OcZ80sLv2Ul0D/dzMRZ/SWEFAK5w
-	 j8TWSNX4IGYLZ4eRp+2mfyBf5AvwQz5l+oJQlYLcex5kKz6wWoIUxYzXd1hdpqp9m6
-	 qPKeJ2mSogvkDqCeqFOJEWyE6DZo8p5GFIg6m81NWFtgNTuJ2zKOo5DpywG7sacBx1
-	 rgmRqHQWQKI6+BWrofCq78kgcxmUDvNNJ2na0xv5EsoYAj447syCamjFip4bIQXer1
-	 AfjETCH07dIj/lwkiideg+0zdXvmko3XXAkT06scaYfNsOX7Us+qC5l3HH/sONH2Iu
-	 3jGQoQK18E5uA==
-Date: Wed, 22 Jul 2026 18:30:43 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Michael Bommarito <michael.bommarito@gmail.com>
-Cc: David Howells <dhowells@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] keys: fix keyring assoc-array out-of-bounds read
- and index inconsistency
-Message-ID: <amDiI4jc6fsbUK_X@kernel.org>
-References: <20260719161505.2423935-1-michael.bommarito@gmail.com>
+	dkim=pass (2048-bit key) header.d=johnericson.me header.i=@johnericson.me header.b="UhSCho1S";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FF4I4aF6"
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 029DA7A00B3;
+	Wed, 22 Jul 2026 12:03:46 -0400 (EDT)
+Received: from phl-imap-16 ([10.202.2.88])
+  by phl-compute-05.internal (MEProxy); Wed, 22 Jul 2026 12:03:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=johnericson.me;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
+	 t=1784736226; x=1784822626; bh=rU5sRSJCoz6G3n2g1fR9DQWvfHVM6+fA
+	Iyg62rOd2K4=; b=UhSCho1SKHXc1Fqenq05vR99FgsrCS1fVAbNGZODu+uqG63I
+	IByXIvzp5tP6jEi20UaGgaJlS74iughVONq8XnBFmVp7v8li2VHQ7qZv91HO1+DV
+	a0B3c6wow7rkd+yYuj5g9MkW6v3YqejnOjnPpjR51w7C2FDKP9+2NxOcgqTH02Nx
+	2pOB6xd8DAd4JTG5vr2tkfYCk6ioQH1JyZVhcr0xVZE8I97c/cGu9zkbv9F1CCnY
+	N08ruMvhyPBshfFWceDop7K0MGEDJugZ58ZhxxeXXFTOyXM10uolheORmJ1wAL+K
+	sLqd4n7CvOahpBX1GKOpe1lmwPt8Pqzw2rWj6A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784736226; x=
+	1784822626; bh=rU5sRSJCoz6G3n2g1fR9DQWvfHVM6+fAIyg62rOd2K4=; b=F
+	F4I4aF6xItVSVUVnhw+rlpV751t1owovvYAi2xn4EBu+zejZTrDOvAUPofGBcrQY
+	m+UXD9goqteC90NaMGM85hgV4lFojpTY3TNc8KPTjQyy3YzWg+0RvcFj8t59Yx2h
+	fExebfYf8BEgWfrtNQvRz10qr5qJ3thZMUGg4iZ/oBFhtGcvZkNOilfrFqgPO1Tq
+	p9Txaax6U8FULk4rC9yV5FIVySbxuu3Uj1E6VcP+dfXZgHPBdaBcEQgyGRVGOrDJ
+	qSB+C5iqYUvWbh0yk85zXrlVjgMNG/onCZyyU3yBnVTKCnp6ex6X+zo7IAa6iw1p
+	bSBLuMBKaD7WW87GWYq4A==
+X-ME-Sender: <xms:4elgap26aQsqhWubtXhYb3VWdsKs5YDqbJER8DRTqA2W4IPpvG3XOA>
+    <xme:4elgaq5W-OOBu2JoPgfyR58HDzl9L8Qndiim7mv4vaDFz8Z5ZdEVgLXivQAMIbvo0
+    tl4GOc-qtxoJ2K10PMGGX-Bxx7zhRlGRKWuUeZSsrePpwnfulDXRjg>
+X-ME-Proxy-Cause: dmFkZTGm89tu8D9gX8cvwUODaFhf1vJsL2B3jc3BqvnQ0+Dkr21XKMByXsD2wFcYG9kG9j
+    h8WGXtTEuOxA/27EgFc1GBkdG5kv3l+icyNCOqZoRh0FPvjkHuznLmNUovwR4bDDzl10AA
+    i6iJSVjWtvWz8dqNjEIFuCbgGlhd7751ZiJt92nkDNNN/fBGb0M0RLqPwyT2Wq9LAHDArx
+    fsh8Z//YQCxctsi7KcIBh43Gx4bB8VnVBd3NPMdlBAEzVsLEuBbG4RGfiAaoEvb8WHPaq6
+    BgQHmvogJvf0BXLCNi7ftIz9/wltLkpP50Q+LiSw1YDJflhhadxrqJfPQZQDy8WV60/+Wx
+    H4YNLjhzO6mFX2FpaxEm6HhJQIVAVclR1OTvFoi2Eti+pfWTxDbBF21HYX6IIXbYGgB0AB
+    FatyN6HCz2DqnDSutPovTUT4QW50rPk+4kAH/Ydy+GeXWwEqerNKSP2Q2Wnp7zAlnNH1xw
+    un/50rvh5HNYgBj5oj48ozAkwbfZoV3mYZecH/Y+We9ss8hgvC2k3RQgS6RSmog4V6NQ/K
+    WHlrFea5uJIdT5XyE/4E8EOitsBeqv8BebxiEes4nEsKUZW2jgCFf/4HzT4wi05sWId54P
+    0j1DieL3G8jZolrRTmurYbxiGc+MKtpzX/Ntd0/xq4EEi/4TO/+yE9E397iQ
+X-ME-Proxy: <xmx:4elgakt-HqvS-_awahqElKzvBEEjPyCmN1XStrp0TlyeA62kkXkhbA>
+    <xmx:4elgaoaFes39fl52cdt41L4zwmpEgw6DfhMOSg0egH6XVK4YO5GkrQ>
+    <xmx:4elgak2QmI64H7tNQQe17cwHkg6ZFDQ4O3lEFdRn3Ydr6X7Q8hXk_w>
+    <xmx:4elgauXWTLoRT-wumOjwR44J1Umj7dlDHTwuVQEv9yR7DUvU1tKczw>
+    <xmx:4ulgavH_yLbiA0PYMqaT0yDGWjBXZ2_53pwdGTOS4LV1SUVmZSQGhbCV>
+Feedback-ID: ieb4144f1:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id A16A92CC0088; Wed, 22 Jul 2026 12:03:45 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260719161505.2423935-1-michael.bommarito@gmail.com>
+X-ThreadId: AudyXjUgQ8Ew
+Date: Wed, 22 Jul 2026 12:02:24 -0400
+From: "John Ericson" <mail@johnericson.me>
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
+Cc: "David Laight" <david.laight.linux@gmail.com>,
+ "Kuniyuki Iwashima" <kuniyu@google.com>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>, "Cong Wang" <cwang@multikernel.io>,
+ "Simon Horman" <horms@kernel.org>, "Christian Brauner" <brauner@kernel.org>,
+ "David Rheinsberg" <david@readahead.eu>, "Andy Lutomirski" <luto@kernel.org>,
+ "Sergei Zimmerman" <sergei@zimmerman.foo>,
+ "network dev" <netdev@vger.kernel.org>,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ "Paul Moore" <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+Message-Id: <e4adebd8-181a-47b7-b82b-b6d9baa6b203@app.fastmail.com>
+In-Reply-To: <20260722.bfca37efd700@gnoack.org>
+References: <20260703073948.2541875-1-John.Ericson@Obsidian.Systems>
+ <20260703073948.2541875-3-John.Ericson@Obsidian.Systems>
+ <e6f54c5b-2c92-4772-b2f9-5c21e2ec50a9@app.fastmail.com>
+ <20260718215855.07284fb1@pumpkin>
+ <85991dc3-6fa5-4466-a0cb-b407291cdb44@app.fastmail.com>
+ <9c437c7c-7919-41e2-9161-fc94803a9b34@app.fastmail.com>
+ <20260722.bfca37efd700@gnoack.org>
+Subject: Re: unix_stream_connect and socket address resolution
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 19, 2026 at 12:15:02PM -0400, Michael Bommarito wrote:
-> An unprivileged keyring whose keys collide through the description-chunk
-> path can drive assoc_array node splitting into an out-of-bounds slot write.
-> Patch 1 stops the out-of-bounds read in keyring_get_key_chunk(); patch 2
-> makes the chunk byte order agree with keyring_diff_objects(); patch 3 fixes
-> the shortcut-walk trim so the walk cannot be steered down the wrong
-> descendant.
-> 
-> v3 changes (patch 1 only; patches 2 and 3 are unchanged):
-> Per Jarkko's review, patch 1 no longer extends the existing
-> keyring_get_key_chunk() declaration line; the new offset is declared on its
-> own line as unsigned int.  No functional change.
-> 
-> Patches 2 and 3 are unchanged from v2 and carry Jarkko's Reviewed-by.
-> 
-> v2: https://lore.kernel.org/keyrings/20260714115451.3773164-1-michael.bommarito@gmail.com/
-> v1: https://lore.kernel.org/keyrings/20260712014500.480410-1-michael.bommarito@gmail.com/
-> 
-> Michael Bommarito (3):
->   keys: fix out-of-bounds read in keyring_get_key_chunk()
->   keys: make keyring key-chunk byte order agree with
->     keyring_diff_objects()
->   assoc_array: trim the final shortcut word using the current chunk end
-> 
->  lib/assoc_array.c       |  3 ++-
->  security/keys/keyring.c | 14 ++++++++------
->  2 files changed, 10 insertions(+), 7 deletions(-)
-> 
-> 
-> base-commit: 2c7c88a412aa6d09cd04b414211b4ef8553b5309
-> -- 
-> 2.53.0
-> 
+Thanks G=C3=BCnther!
 
-I'm setting up the testing environment now and hopefully have final
-feedback within let's say "hours" (i.e. I'll do the job, and it takes what
-it takes).
+This example makes sense to me. The behavior still feels a little odd to
+me, but I can understand the practical benefit of what you describe, and
+also why changing it would definitely cause breakage.
 
-BR, Jarkko
+I have one addendum to ask then which is: what if before the loop we
+pre-resolve the parent directory as a concrete `struct path`, and then
+on each iteration of the loop resolve only the final path component to
+the socket itself? (That is a single-component lookup relative to the
+pre-resolved parent, to be clear.)
+
+Per your example, a legitimate server restart recreates the socket inode
+in the same directory, so this still picks up the new socket and
+reconnects, while avoiding the effect where a concurrent
+ancestor-directory rename causes a wildly different socket to be
+resolved. Hopefully this preserves the intended use-case.
+
+Note that this does mean recreating the parent directory itself at the
+same path would no longer be followed, and a rename/unlink of the pinned
+parent would cause the lookup to fail rather than resolve elsewhere.
+That seems like the intended, safer direction to me, but flagging it as
+a deliberate semantic change rather than an accident.
+
+If this sounds like an acceptable middle-ground to everyone, I'd be happ=
+y to implement it.
+
+Cheers,
+
+John
