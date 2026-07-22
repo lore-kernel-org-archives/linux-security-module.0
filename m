@@ -1,99 +1,89 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D7335E1D4
-	for <linux-security-module@vger.kernel.org>; Wed, 22 Jul 2026 15:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8980046AECC;
+	Wed, 22 Jul 2026 15:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784733286; cv=none; b=cIl68bMNQkOAp6JRVqq8k8U+cAaoSKajJSFtWAIEwR+MoU96wcOLa+I6igWeU0GLwwKj2fFv4wL3uzvyycs9WDgf4rHsT4rZpnVyNTEkdUKhHGXXRBUdN4gF8mdZZBLZAkS2c8zt7/4KrgR33RlXpCdqz2szOpkWl1uVynfRrhg=
+	t=1784734253; cv=none; b=fUiUEvNdCyeVKzLSBA3jimW+Hsozwp+FEfz0MNF1GVeSURi2e6VKoihENIrTzIXQ/g25K/cq1bJfg9PyPE6ZNbleLkipXDvQ9sA87U8IQTtEcYJSSK0JNods6Hf91cLIC/PUlx2acxvKkAWjgIn7D4n4Oh/dnB3ZHPqAM2wQ6I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784733286; c=relaxed/simple;
-	bh=uWVSmITDaDOGcqPPhpjJGoP4+QNUe0r27fajCJAPzQs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TAdcPv+Dno0o4T2SyopFGN/W/iQdILksEe+Su8M+eQ/jF5mJ/nYr/Vg7Za8FolAMMsyap+66hd7EPt/PZUpp0a7xTqOUC0ZSDVAIdQd/R5XRCW0jyZNUT7BRirsJuX8O6/LoXSyY3GLRTJ8Yr0nJyqLIkQ+ISb9xgpQGCTt8IaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=fxCdzZoW; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	s=arc-20240116; t=1784734253; c=relaxed/simple;
+	bh=/oB6i+yzNJPsGBGfPr2Pf9vtp53RzJzYkA4lYcxxRV4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=frv9KPrEoPUQFzW5d3TWBrKt82lCC8HZ6dnY7nSLJoPAQ/9cZAnkrtgBYqHRSgZIYq0dOOwq+jOSDZfl6LwQ57oGDQOvzaZX64U9L8LuWPCTVNhOJIbHspowCf3YF81wAnX2EpVxeVI+D+3Fk6Yvbb/03ZEZyuSNNop2MGOVieA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=glZ5dQBp; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="fxCdzZoW"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-c15f020a223so1654433466b.1
-        for <linux-security-module@vger.kernel.org>; Wed, 22 Jul 2026 08:14:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1784733283; x=1785338083; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=FpirftYM/AXiBsGItonV7B2bYW2GExd8EOWH3f0NLiA=;
-        b=fxCdzZoWdUG4G57Mofnwi9oNAOSmdSX7mjpIsvC8qNemRAHmy4YW20SeqrYsfbTlVn
-         x4JfzTbBcpzC799PkZDPK4/q0dZBf/0K7kaCQeCS40SAzZLeqF14HgnZMtLujbkEk8+w
-         /TN2ewClaeGbZ4soujvs10Qnxa3rOE4zBHAkOGn5M6iBY0hlnzFyUjC7+ruV1oy7S+3T
-         4whOdLxWknQR3mQi6DfeoXNYeMXfFewPnLR0MOZItyYvItG14B9EZPQ5irfpaChzMyIO
-         wLsV4dMQkRxcJqpL++i8DZ7ctvZ9sYZ1rP9vfyPSIrPRiB/ztgw+MVidncag3AeeOBHK
-         rBYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784733283; x=1785338083;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=FpirftYM/AXiBsGItonV7B2bYW2GExd8EOWH3f0NLiA=;
-        b=E5k9jK6ikoBOdNiIZbLZhvjlBZwOY6WEtiGQNf44m/fBaFAKJsFX70YPw/ad6dWzqd
-         aV0Dim16tPoPw3PSI28KILzvG0kenoYP1wqvPSDBIS9PFkn1kc99e6HVPVZr/dlc33XK
-         uU7dUVlKezCUkugMg5BbO8unC2X5EpxyhoKc3kOv5jLMl4FChZwDBtn+Kj4tjviZAtEt
-         2kDH5Uk/WwpvZYBoLZsvI9i0pIEaS3d5KNl/RY+MnJAgBr1qhJNSFW1AV5QSAUzJ/aRX
-         YNdLC3+rStBBQoeYcKrUx2SSRo4+gA9UgTJTqzN/kn3CJL8setenQ13eHM87OX5/lrW2
-         YxOQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rrdvx3/dJHOiD5I7bnX+MW07sHSvPHF0tA7z8xrdgAuYWoifz3FGA0MsZD/h2e/eGmAWPa9vxHJGVTiokCxtK3EM/CBV4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5SlqXTfO4OpSs2AY4OtsVVDKSsQ94axe/C0q+EUtfHCHn233R
-	AL3x3y77ZMdKWWvvI2d7+yrKuJZOSXEXxkfWYjBO6snXR31U3hgaWlGjPIfz0unoPzU=
-X-Gm-Gg: AR+sD10DM5TrEH2QnP0HjUQVwzcGzmJvocH3Yt5sqqMvpR4hqnh7lyxP4pbIVpN9TU4
-	iiL7QpJGgaO8ruVWLuexfK82ENsZVcV0Ktmwk3FRjATVQ3FZ6UOKdulupr6JAfRtgs/ds45MxIp
-	BmwbGGmasdh+6X0g8y8E5FLy3Glpob8LYufr9noWkJZ3LYCqqK7twuqTkBFwiwDIHdue+Sxf3Tz
-	V/7kzHgKdqNK4dEh2Kqre06LlpLz/4B7bNjDnKDS4EwYFisOqBvW2iHKfn1z1jYFJGUbEigTlhM
-	vL1rMKI2qWF8yO2pITx8kIL/23KuUk5XKhHvSyNKSJYxKW0PwqMZpIEnfwFwpGv1XuFK3MjzxZd
-	ZwpXJzQ78E6mA67RIrFfBf7r1twng1PGB+josEnFoTmWprzKJz8GWuyeGmOWu6qk=
-X-Received: by 2002:a17:907:3e05:b0:c16:1655:309d with SMTP id a640c23a62f3a-c16b4868dd9mr1149194566b.56.1784733282760;
-        Wed, 22 Jul 2026 08:14:42 -0700 (PDT)
-Received: from DW927H4LGF ([2a09:bac6:37e6:1e5a::306:4])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c1c32f11af2sm122985066b.57.2026.07.22.08.14.41
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 22 Jul 2026 08:14:42 -0700 (PDT)
-From: Oxana Kharitonova <oxana@cloudflare.com>
-To: gnoack@google.com
-Cc: landlock@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	mic@digikod.net,
-	oxana@cloudflare.com,
-	paul@paul-moore.com,
-	serge@hallyn.com,
-	wangyan01@kylinos.cn,
-	webprosto@gmail.com
-Subject: Re: [PATCH 1/6] ipc: Move mqueue fs magic to uapi magic header
-Date: Wed, 22 Jul 2026 16:14:23 +0100
-Message-ID: <20260722151440.51298-1-oxana@cloudflare.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <amC69LnwcgG7xo-5@google.com>
-References: <amC69LnwcgG7xo-5@google.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="glZ5dQBp"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id AB3481F00A3A;
+	Wed, 22 Jul 2026 15:30:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784734247;
+	bh=aRhMhZuwb/Q7zXP9Xfwf6Ajwa99GR5rC8/Ng6aG/XiQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=glZ5dQBpBCsngZ8COuCdOs9/o3KjWwGmeZ1Z+OcZ80sLv2Ul0D/dzMRZ/SWEFAK5w
+	 j8TWSNX4IGYLZ4eRp+2mfyBf5AvwQz5l+oJQlYLcex5kKz6wWoIUxYzXd1hdpqp9m6
+	 qPKeJ2mSogvkDqCeqFOJEWyE6DZo8p5GFIg6m81NWFtgNTuJ2zKOo5DpywG7sacBx1
+	 rgmRqHQWQKI6+BWrofCq78kgcxmUDvNNJ2na0xv5EsoYAj447syCamjFip4bIQXer1
+	 AfjETCH07dIj/lwkiideg+0zdXvmko3XXAkT06scaYfNsOX7Us+qC5l3HH/sONH2Iu
+	 3jGQoQK18E5uA==
+Date: Wed, 22 Jul 2026 18:30:43 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Michael Bommarito <michael.bommarito@gmail.com>
+Cc: David Howells <dhowells@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] keys: fix keyring assoc-array out-of-bounds read
+ and index inconsistency
+Message-ID: <amDiI4jc6fsbUK_X@kernel.org>
+References: <20260719161505.2423935-1-michael.bommarito@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260719161505.2423935-1-michael.bommarito@gmail.com>
 
-On Wed, Jul 22, 2026 at 1:43 PM Günther Noack <gnoack@google.com> wrote:
->
-> Should this live in include/linux/ipc_namespace.h instead?  Or even be
-> exposed as a helper function that lets you check whether an inode is
-> referring to an mqueue?
->
-> —Günther
+On Sun, Jul 19, 2026 at 12:15:02PM -0400, Michael Bommarito wrote:
+> An unprivileged keyring whose keys collide through the description-chunk
+> path can drive assoc_array node splitting into an out-of-bounds slot write.
+> Patch 1 stops the out-of-bounds read in keyring_get_key_chunk(); patch 2
+> makes the chunk byte order agree with keyring_diff_objects(); patch 3 fixes
+> the shortcut-walk trim so the walk cannot be steered down the wrong
+> descendant.
+> 
+> v3 changes (patch 1 only; patches 2 and 3 are unchanged):
+> Per Jarkko's review, patch 1 no longer extends the existing
+> keyring_get_key_chunk() declaration line; the new offset is declared on its
+> own line as unsigned int.  No functional change.
+> 
+> Patches 2 and 3 are unchanged from v2 and carry Jarkko's Reviewed-by.
+> 
+> v2: https://lore.kernel.org/keyrings/20260714115451.3773164-1-michael.bommarito@gmail.com/
+> v1: https://lore.kernel.org/keyrings/20260712014500.480410-1-michael.bommarito@gmail.com/
+> 
+> Michael Bommarito (3):
+>   keys: fix out-of-bounds read in keyring_get_key_chunk()
+>   keys: make keyring key-chunk byte order agree with
+>     keyring_diff_objects()
+>   assoc_array: trim the final shortcut word using the current chunk end
+> 
+>  lib/assoc_array.c       |  3 ++-
+>  security/keys/keyring.c | 14 ++++++++------
+>  2 files changed, 10 insertions(+), 7 deletions(-)
+> 
+> 
+> base-commit: 2c7c88a412aa6d09cd04b414211b4ef8553b5309
+> -- 
+> 2.53.0
+> 
 
-Hi Günther,
+I'm setting up the testing environment now and hopefully have final
+feedback within let's say "hours" (i.e. I'll do the job, and it takes what
+it takes).
 
-Thanks for the feedback. Agree, better to move it. I'll check how to do it
-better and include in v2.
-
+BR, Jarkko
