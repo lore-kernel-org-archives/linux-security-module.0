@@ -1,45 +1,42 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428C74963A4;
-	Thu, 23 Jul 2026 12:53:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7454D9901;
+	Thu, 23 Jul 2026 13:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784811220; cv=none; b=QNuMqtmH6vdu1iDjujXeuryDnSJAnLo+E1kDPDyGV9UaWW1U0b3jWnNXApThPTThetKWwGOfw0qstFurSKso3dpE9YcjAFHGzIGp4i/aEq/egoejupz6LGDxyPNOX5o3pdpvgl8tbhqoTJzALUSe+BB+bS5mktOt2cQSWKZyUkQ=
+	t=1784813391; cv=none; b=PvrIvQcsRYpG1m01+6Pu1mLf6E8QtpMlOUk9AwTX65dUBamS80Zsc0jEuWZnIOuKCF5IRaTzs7GrbmNfLDy7XV48QWWrnCGMg/38mCSskL78vGRDxlER+Y+idVjtb/UMQWawkllj04QpOSVxj4L7dMx9IeoRUgmqxsYT05z+AUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784811220; c=relaxed/simple;
-	bh=oc2M6EYcVNUIkpD5iWq+sL6dRZQbf9v7RACQ+Cpi+bk=;
+	s=arc-20240116; t=1784813391; c=relaxed/simple;
+	bh=Q/g/SVS6Vi1wW3ZBW1eEw+RoaB7Xl/as5+9mEdu2mYE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sdkR6lefVLfzzn4xA/5osU9reMBHEE+1uYrS+Gtf3TiTWMXsM3HZlPgLrnEoHvzwNuhH9PE02ArnKuZEcjgqO2cyiqxfeo2PWeSk/g4TxgrbYSb/qTa9QhhhNwgg8RvwMwcr558mj+09F/KMwM2jRdTGWMruXyN5/ZJsKKpOg7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iW0prEAx; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=INQCeAJ5g2lNKaQMvRnx6wbweCL4YW0nstoarpwJpWpbueh6JpKGpFKgBabROkQH1yRWzjMCHT1TH45jTs1bq9+EuFPPEbF9NZ5vjHGbjt/viN0RG+GGKIOmUbD3xX2FQbEBd7FCVGu3Vpth+lfsKrksbbpurqE8UcV0XAjPmZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b=paHp8U+S; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iW0prEAx"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id E66AE1F000E9;
-	Thu, 23 Jul 2026 12:53:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784811218;
-	bh=FWy5ucjv4A0eiSCew/Vs5Y37WJdHkdrTE/oLjfj5Y00=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=iW0prEAxxChy47+D14/Uq0wuJA0EaiU0z1/8GkzP+oo6YxEUTUEvU6GCfBQLX7YGw
-	 P70FMWHcZ90pnzXIULPZ6dKKGJQsg8UtZS0CA0h+XqAf05uXIZWZvPu3RAHrF9p1Zr
-	 15R34yFx+iWa/o9cs+nlFDkPmUnSST+a2oIj/fpsu8K7s/ouiEzMSmsRSGT5KLq3vy
-	 bcyI0WIa232cyIBh0KFlbUYknvl3ZzXYVplPDULKJezDErT95RlUKira4wACLNlUGI
-	 T1Alpel8TVKpiVUlJcdd5ELDeI6WQ1TuVEPP/5+9vjFeM4DEZSH9PyNfp61ozCQDYl
-	 F51FZ9qzqOG/g==
-Date: Thu, 23 Jul 2026 15:53:33 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Michael Bommarito <michael.bommarito@gmail.com>
-Cc: David Howells <dhowells@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linuxfoundation.org>
-Subject: Re: [PATCH v3 0/3] keys: fix keyring assoc-array out-of-bounds read
- and index inconsistency
-Message-ID: <amINZJVhEBwxEixP@kernel.org>
-References: <20260719161505.2423935-1-michael.bommarito@gmail.com>
- <amDiI4jc6fsbUK_X@kernel.org>
+	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b="paHp8U+S"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
+	t=1784813385; bh=Q/g/SVS6Vi1wW3ZBW1eEw+RoaB7Xl/as5+9mEdu2mYE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=paHp8U+S7A5RFLJ6ePL467CDPO14LXE+QIO/UeHQxQ7SVD+CxJ2RbtEtsHPoQPesN
+	 lReo0cArupueM8HeMNpq89bG9o629wW9TynXT0c/rt5+GVSA8nZ8ZdBSG1ZSdj95LP
+	 8Xgs3aexyDGI1a/lP6ZMhzPJSmeCXnI0bAB+rPoRXFZZ+Pjuwn8A4B6ScvDX+XIsJT
+	 Pkf8Zm++DToeAIAhgqexUhXSaVf+nW4nweGFMFOZZQ6yCKa7Y2Lge8rtUJLiDTaVXf
+	 fbYOJ6SE8WxC514SZ9hcFlbJkrl5PRYQcOpZVtJzwZ2swa62gObuP4OxGMVLSYv2Y3
+	 66vE6BcrEx24Q==
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 54EDB630; Thu, 23 Jul 2026 08:29:45 -0500 (CDT)
+Date: Thu, 23 Jul 2026 08:29:45 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: cem@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, jack@suze.cz, djwong@kernel.org,
+	hch@lst.de, serge@hallyn.com, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [RFC PATCH 3/4] xfs: replace ns_capable_noaudit()
+Message-ID: <amIXSTSc47vQUOgk@mail.hallyn.com>
+References: <20260626114533.102138-1-cem@kernel.org>
+ <20260626114533.102138-4-cem@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -48,56 +45,38 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <amDiI4jc6fsbUK_X@kernel.org>
+In-Reply-To: <20260626114533.102138-4-cem@kernel.org>
 
-On Wed, Jul 22, 2026 at 06:30:43PM +0300, Jarkko Sakkinen wrote:
-> On Sun, Jul 19, 2026 at 12:15:02PM -0400, Michael Bommarito wrote:
-> > An unprivileged keyring whose keys collide through the description-chunk
-> > path can drive assoc_array node splitting into an out-of-bounds slot write.
-> > Patch 1 stops the out-of-bounds read in keyring_get_key_chunk(); patch 2
-> > makes the chunk byte order agree with keyring_diff_objects(); patch 3 fixes
-> > the shortcut-walk trim so the walk cannot be steered down the wrong
-> > descendant.
-> > 
-> > v3 changes (patch 1 only; patches 2 and 3 are unchanged):
-> > Per Jarkko's review, patch 1 no longer extends the existing
-> > keyring_get_key_chunk() declaration line; the new offset is declared on its
-> > own line as unsigned int.  No functional change.
-> > 
-> > Patches 2 and 3 are unchanged from v2 and carry Jarkko's Reviewed-by.
-> > 
-> > v2: https://lore.kernel.org/keyrings/20260714115451.3773164-1-michael.bommarito@gmail.com/
-> > v1: https://lore.kernel.org/keyrings/20260712014500.480410-1-michael.bommarito@gmail.com/
-> > 
-> > Michael Bommarito (3):
-> >   keys: fix out-of-bounds read in keyring_get_key_chunk()
-> >   keys: make keyring key-chunk byte order agree with
-> >     keyring_diff_objects()
-> >   assoc_array: trim the final shortcut word using the current chunk end
-> > 
-> >  lib/assoc_array.c       |  3 ++-
-> >  security/keys/keyring.c | 14 ++++++++------
-> >  2 files changed, 10 insertions(+), 7 deletions(-)
-> > 
-> > 
-> > base-commit: 2c7c88a412aa6d09cd04b414211b4ef8553b5309
-> > -- 
-> > 2.53.0
-> > 
+On Fri, Jun 26, 2026 at 01:45:22PM +0200, cem@kernel.org wrote:
+> From: Carlos Maiolino <cem@kernel.org>
 > 
-> I'm setting up the testing environment now and hopefully have final
-> feedback within let's say "hours" (i.e. I'll do the job, and it takes what
-> it takes).
+> We don't need to use ns_capable_noaudit() as all we care is the initial
+> user namespace, use capable_noaudit() instead.
 
-Good news. I got it tested. I'll push and mirror the patches to
-linux-next. Once they show up there, I'll send a PR to Linus.
+Looks like some of your other xfs fixes conflict with this.  Do
+you mind sending out a new set, and I'll pull them into the caps-next
+branch?
 
+thanks,
+-serge
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Tested-by: Jarkko Sakkinen <jarkko@kernel.org> # Done with the provided
-                                               # reproducer.
-
-Really good work IMHO and also great example of legit use of 
-AI assisted patches in my books. Thank you.
-
-BR, Jarkko
+> Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+> ---
+>  fs/xfs/xfs_trans_dquot.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/xfs/xfs_trans_dquot.c b/fs/xfs/xfs_trans_dquot.c
+> index 50e5b323f7f1..30c2f6ec0aac 100644
+> --- a/fs/xfs/xfs_trans_dquot.c
+> +++ b/fs/xfs/xfs_trans_dquot.c
+> @@ -835,7 +835,7 @@ xfs_trans_dqresv(
+>  	if ((flags & XFS_QMOPT_FORCE_RES) == 0 &&
+>  	    dqp->q_id &&
+>  	    xfs_dquot_is_enforced(dqp) &&
+> -	    !ns_capable_noaudit(&init_user_ns, CAP_SYS_RESOURCE)) {
+> +	    !capable_noaudit(CAP_SYS_RESOURCE)) {
+>  		int		quota_nl;
+>  		bool		fatal;
+>  
+> -- 
+> 2.54.0
