@@ -1,113 +1,94 @@
-Received: from mail.tkos.co.il (unknown [84.110.109.230])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D1A366553
-	for <linux-security-module@vger.kernel.org>; Thu, 23 Jul 2026 16:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.110.109.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B035137BE81
+	for <linux-security-module@vger.kernel.org>; Thu, 23 Jul 2026 16:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784825010; cv=none; b=GF1ve2f6O1LfLtBnRiTvKtS1I1xFE100cLQzVkyjrMRVdWSXejTIpUecxQsqsJZNW+8wm+cUpAKyf5JhQgyuOIt9k+v50aUeLY05gHILvK2U4HKmVbRdCCsOCmxXIePp4th2uzd4QtfzRLT6NfCu20cjhhZN9Rt+hEWmlZNNsEs=
+	t=1784825535; cv=none; b=uipvn5GDVvypUaIn7eDDTDv4G/yb4YCl/1wG9ToqkatfTXII7np7MVs1chpqPMH0S1OwZTO6xDsi34qs3u/vYfkBaLRn9x1U7UiV1Z/I/hO0u4YJzHwFqDGKXIEYBVPzZjULVQJl5M5fsAD0h1tG2ruDPpiuMxYtRruwpAGAgt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784825010; c=relaxed/simple;
-	bh=I28k/tY3toZ2cfyrNFixPWiA0z/gEkxZmD63vJliiUE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Lip0VMtBx9dWNc1kiAH66J8MB+SOsDbFaUQmLQF91kivPIMjevGAgTkV9I5H3E5poInYad9gl4BJQ1keJx8sXUZNWF1ca6kqA5zvgRVRu4yblwUi0Rf32bTGKg0NrTJGhEdEaAwbCW33d9VK4ShcGNisPlZYCK1PQAZUEvSv7iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tkos.co.il; spf=pass smtp.mailfrom=tkos.co.il; dkim=pass (2048-bit key) header.d=tkos.co.il header.i=@tkos.co.il header.b=I01IZZ/S; arc=none smtp.client-ip=84.110.109.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tkos.co.il
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tkos.co.il
+	s=arc-20240116; t=1784825535; c=relaxed/simple;
+	bh=CNBqQ5i3USeINUZTevXgS3UHmdPeBZ7+m559Ksy6TY4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bt7oMEYslHvNiUtsNhQ9dR9q+m1+MFc8SRnqtt0JFd+vcR62VWtDsPIIornDr8yPPSsod2KGoFCpwl6wxBhzL5VqVwK1e4dz07xxvcSuXeC/iQOQEHXjLTMNmm+qULzojybm9jSL20BNSciQef4FOOF1a2AoAUTWfduMvR/15MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JjgvYKiJ; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tkos.co.il header.i=@tkos.co.il header.b="I01IZZ/S"
-Received: from localhost (unknown [10.0.8.2])
-	by mail.tkos.co.il (Postfix) with ESMTP id E387C440CDB;
-	Thu, 23 Jul 2026 19:42:58 +0300 (IDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tkos.co.il;
-	s=default; t=1784824978;
-	bh=I28k/tY3toZ2cfyrNFixPWiA0z/gEkxZmD63vJliiUE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=I01IZZ/S7oTaZvZLduXjY3az2mtAvOOmKiWF3NLgiEUhOpBGWPHo1hAWPQOsXqsvk
-	 byiWDpTrsos5esv297iaoB5/DjOcA+7gBULDvBU4qTBzTpwoFxsSFwsRPBOsloGJKW
-	 lfwSeEW2/BZtQpASTGY3jF6JuusvSj8HHAgiGiXeXx3F6xAq3aZHJWeoiuoC6aPhdN
-	 I3Z/pfwid40EVXWQ0ZJAm7seT1EnFXOHTEON0veofcgnlmswrw/hHuYMdqDVstL4Ue
-	 lvuwjmijee/gA02i2Z3TKdN4lTcOIk9/Q9UtVCB2jcgVNnTVsajJQJ4VRWWtfIwNlK
-	 bvZb8ySh8P33A==
-From: Baruch Siach <baruch@tkos.co.il>
-To: John Johansen <john.johansen@canonical.com>
-Cc: Serge Hallyn <serge@hallyn.com>,  Ryan Lee <ryan.lee@canonical.com>,
-  John Johansen <john@apparmor.net>,  Georgia Garcia
- <georgia.garcia@canonical.com>,  apparmor@lists.ubuntu.com,
-  linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] apparmor: update website link
-In-Reply-To: <ba05df8c-fb79-4a14-a9b9-15e50e7dc4bc@canonical.com> (John
-	Johansen's message of "Wed, 22 Jul 2026 16:53:11 -0700")
-References: <2ce1d4ec18b2b47ee7ddd9c1ad7be68e185aa69c.1784632742.git.baruch@tkos.co.il>
-	<CAKCV-6vP2FKgTj5PT3xB_TDL+zLk7xYf2BNw6mKXfPb3OO2TWA@mail.gmail.com>
-	<48d44625-7fa2-4e1c-8821-4d22208421ea@hallyn.com>
-	<ba05df8c-fb79-4a14-a9b9-15e50e7dc4bc@canonical.com>
-User-Agent: mu4e 1.14.2; emacs 30.2
-Date: Thu, 23 Jul 2026 19:43:20 +0300
-Message-ID: <87bjbxodw7.fsf@tarshish>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JjgvYKiJ"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=y/1wrY/biGMtqyto4+rSf0hY/JbsudHNFQON5x7hgkU=; b=JjgvYKiJLZrEb9BzpMNcpMVK/v
+	Z4AECBoYi2FX+zHX3XmEbE3ed6XnMAyTCS3usG39PBiThaCUhLLmtgdVNEAo8SzZGS7n1Di7PMDHq
+	2z/sAaR3QrMJkCMA20bCR0Tzm5ucvA9ir7RxHjLIq/TQ5YlSVhyKfyBVolEOzRD/4XKOrdmBWIdns
+	w3O2HcuMWhKUgyays754D6+eZOa+L5TXc04qLcFRQKcHaWabat+P2srU1sOS72URCtML2JXbn8jYP
+	dm57NzCMaEOQ0RgWY9xYcddoW8cYvWyVpXdrLmqBvULoKVcOtxnVgm5ick3qVGVgwX/2y7nG4AnZ+
+	6Vvi6Btw==;
+Received: from [50.53.43.113] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1wmweY-0000000Ekas-0flS;
+	Thu, 23 Jul 2026 16:52:10 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-security-module@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Subject: [PATCH] capability: remove non-kernel-doc comments
+Date: Thu, 23 Jul 2026 09:52:09 -0700
+Message-ID: <20260723165209.226050-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi John, Serge,
+Convert 2 "/**" comments to use plain C "/*" comment style to avoid
+kernel-doc warnings:
 
-On Wed, Jul 22 2026, John Johansen wrote:
-> On 7/22/26 15:36, Serge Hallyn wrote:
->> Jul 22, 2026 11:41:27 Ryan Lee <ryan.lee@canonical.com>:
->>=20
->>> On Tue, Jul 21, 2026 at 4:40=E2=80=AFAM Baruch Siach <baruch@tkos.co.il=
-> wrote:
->>>>
->>>> apparmor.wiki.kernel.org redirects to the current website.
->> Sure, but kernel.org seems less likely to go away, and the redirect can
->> easily be updated if needed.=C2=A0 Up to John of course, but i would lea=
-ve it
->> as is.
->
-> I am unsure of the best course, but atm I am inclined to leave it with
-> kernel.org, Like you said the redirect can easily be updated.
+Warning: include/uapi/linux/capability.h:114 expecting prototype for
+ POSIX(). Prototype was for CAP_CHOWN() instead
+Warning: include/uapi/linux/capability.h:175 expecting prototype for
+ Linux(). Prototype was for CAP_SETPCAP() instead
 
-Another problem this patch fixes is the use of unauthenticated
-HTTP. This is less than ideal for a security feature. A MITM attacker
-can easily redirect to somewhere else.
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+---
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
 
-So a patch only switching to HTTPS should be fine, right?
+ include/uapi/linux/capability.h |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-baruch
-
->>>> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
->>>> ---
->>>> security/apparmor/Kconfig | 2 +-
->>>> 1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
->>>> index 1e3bd44643da..472aa38254be 100644
->>>> --- a/security/apparmor/Kconfig
->>>> +++ b/security/apparmor/Kconfig
->>>> @@ -11,7 +11,7 @@ config SECURITY_APPARMOR
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This enables t=
-he AppArmor security module.
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Required users=
-pace tools (if they are not included in your
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 distribution) =
-and further information may be found at
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 http://apparmor.wiki=
-.kernel.org
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 https://wiki.apparmo=
-r.net
->>>>
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 If you are uns=
-ure how to answer this question, answer N.
->>>
->>> Reviewed-by: Ryan Lee <ryan.lee@canonical.com>
-
---=20
-                                                     ~. .~   Tk Open Systems
-=3D}------------------------------------------------ooO--U--Ooo------------=
-{=3D
-   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
+--- linux-next-20260722.orig/include/uapi/linux/capability.h
++++ linux-next-20260722/include/uapi/linux/capability.h
+@@ -104,9 +104,9 @@ struct vfs_ns_cap_data {
+ #endif
+ 
+ 
+-/**
+- ** POSIX-draft defined capabilities.
+- **/
++/*
++ * POSIX-draft defined capabilities.
++ */
+ 
+ /* In a system with the [_POSIX_CHOWN_RESTRICTED] option defined, this
+    overrides the restriction of changing file ownership and group
+@@ -159,9 +159,9 @@ struct vfs_ns_cap_data {
+ #define CAP_SETUID           7
+ 
+ 
+-/**
+- ** Linux-specific capabilities
+- **/
++/*
++ * Linux-specific capabilities
++ */
+ 
+ /* Without VFS support for capabilities:
+  *   Transfer any capability in your permitted set to any pid,
