@@ -1,219 +1,124 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D3A4483AB
-	for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2026 16:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3453AD518;
+	Fri, 24 Jul 2026 20:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784911647; cv=none; b=V52IEnoJY42r3M9dwSLn79sflW77yj3ke6eaZLhaPo3grK3RMcSooQFisSrxeTIFS7RivsGkul1cvpDHJ/UwXTJV9n9K4OK8IUs0bt5ISBc15lgY0tsjCEtk4XIGijl7jLvLaVF2TP4NBsncNHj/51sP04X7YiduWUh3cwT9lvU=
+	t=1784925274; cv=none; b=EO2Q/O5fv9pYZOxYnaqU8Ps9TGhTxJ/LcNbComwigzhNI1NvdN97aHVvJseMeagAsxeF8wATiKu5uKr+ejiUIL9AhCuywRmd6CypFOm8q3AX2us0DinyTAsHfuXB4PXobZbgmDPxHlOuWBIn0bZF1bD0YmVfhd2kTSi3ubWBt4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784911647; c=relaxed/simple;
-	bh=FFFpGIB531o8c167/WQHpfJrFsCnpwaLHErYAnoCO+0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FFIvVcwetN75rUmcSW1s+rg37qVBaa8fuvhlBtTc1yEJDQ860YXnR2YNjvZbUmLdTokcrEkJ2TqXu7E5y6JzfwdmCUc11dMzbLt8Qc9eXjRRQr2Kpqjm4OlkOEhl9bd3AkpSsUYm0YPovZpPZH2zF3GPepPX7qEdA8qqZ9Tqb3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZnS2G3kU; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784925274; c=relaxed/simple;
+	bh=7Q2FunL2zNINppw/onu0/dbeh32KX2022MrWeVX3Pho=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=PrZKSn2PY79ukJF8qY94GnGLdseih45qW/zdZsEAmW4Ypwrdq/dPYS3g/FB30AEBdtdy5kbyzwypcjeE5lVYhfUXOeEPpoF603Y2dA9LQvJbcKYanYjTTFHoLRUfaEMSRMsKZvlv+yTTsG4pXZduUC8ol76go1AN6YnFFtTNYRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=N2RrOABI; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZnS2G3kU"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2caed617615so7980635ad.3
-        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2026 09:47:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784911645; x=1785516445; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=5u91OXTJKFbcF00+Q/uuRlO/lNDvMJ8xKMudAoQ8DSI=;
-        b=ZnS2G3kU8JXYzF7dwokX3zdAS7zVDQONicp0aDUtzst9uqgARTGf6Vxkye1NSibgbM
-         fCnu+/Jzawcq4/utKzpXlzi0LCOWA24UK3OVqpPy71WruK1qV7Fssr3TzzJRaKZyi8uw
-         bhV0e/+VbMWkh5MFqg23A0VLOvSyuDh3XldLIVJ0luGA6VMiFToXXpO2S3I+HZJziGb3
-         bmVBRfcBjrUJysYpWNZJu3w0KwOmfDoS/rmwo4w9JpW8kN+CiJ+eWVDqqsEQqw9D5tCn
-         /dQay/pw157P1yBrbZdUwUx/o/WK6OMRQ1ISkFi7figPThchF/0aBvThivejccYviuFM
-         7/yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784911645; x=1785516445;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=5u91OXTJKFbcF00+Q/uuRlO/lNDvMJ8xKMudAoQ8DSI=;
-        b=EgAjYs4ckg9mFGEgZjnIsNpGYj7OAbzOsySjkMNgExOHRUqpDpOO3Ka/JQZNehBKSp
-         7nOMj68Ytk1unV0dVyULSSskdfQ3c8Gabo+c44fbAtE4QpZ7mF1uLpvfO4J1LJs/K/62
-         Aw63Du1UhhNiSWShRwZ0H86P0FyE1PHsR+pzkLpIUpDLVc5UfKGj4ywaBPsyHAkVF8Vm
-         I6SccYMHoTd+YQpqiQS31PoDNr4z0D8Zr5Mg4Yi3I4Q7JJstG2x5AA09mNqV/jKN3t8y
-         eW58xx7rbr3v+tjYxWc9vT1CfW1YaUNj/MsfeZi5lprIcSHqeJSIWpdteroIW+Z5gyML
-         K2Mw==
-X-Forwarded-Encrypted: i=1; AHgh+RpRd6FyBS5MfLfQqzN272dgQnDWEqQptQ/6yw+dCXdBJ8RLJoWIbjiKFmJguDQoAIqjnYAAmZyinXhNYAW6bYOd8s0dMzA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yznob3cqeEBAvNMu9osLkySRthbOZEHrW6qMsoDwBZvZrSj6sQt
-	K38iNL16TdApCLQD+8LwpaK5vadARV2hVMspoi7DYtWStgQJSJxpSec=
-X-Gm-Gg: AR+sD12lyGP57BIplXxixIwF8JdmPY5kGH2elnsSr7lxsjYKD3WPrUl4/w5aaNc9aKN
-	P27pnRB0WFbSEEHyAAKTxIdDR8HW/38rOPaCzMqV00iZjMUSvbrbGDLRWIbuz0kgAhe49/BvjFT
-	W/OFwx3205qhCYUWI1LFOvwbXpSU1hlk1bIzkkwPtKLph0wkw8CcvOtDTm4YX0wCJvASP/L3/+I
-	qQiF1ekG5+hmvq5Eb/ClH32G3fiMRow9AY5mxCSyBSqw8paLp8QnbspxLcYsOu35WK1Up4+oS79
-	VC8wKru0tCOKTwMz0a04GveuSFAuyDd6Gq/NQqEb7LNdwYpPoZUuZMk58lDykOeDJNH1W0oketF
-	Oz3nmBwsF5UlQdfP17snrm4wZJ2BUZc+iSAH3l7B7BEspCUrKx6LziFcpReYZiusR6S3+d4PQH+
-	gEW6IoYgkV5hu0UtOSDcqycTj5VzWEhYQpDuZwsg==
-X-Received: by 2002:a17:902:ecd0:b0:2c6:9f6a:9f6f with SMTP id d9443c01a7336-2cfa6c66734mr90588615ad.28.1784911645204;
-        Fri, 24 Jul 2026 09:47:25 -0700 (PDT)
-Received: from at-Standard-PC-Q35-ICH9-2009.. ([27.60.19.161])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-314bc548e29sm918244eec.15.2026.07.24.09.47.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jul 2026 09:47:24 -0700 (PDT)
-From: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
-To: 
-Cc: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>,
-	Andre Eikmeyer <andre@negmaster.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andreas Noever <andreas.noever@gmail.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>,
-	Hans de Goede <hansg@kernel.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH v4 2/2] thunderbolt: Add device links for Apple T2 NHI
-Date: Fri, 24 Jul 2026 12:46:37 -0400
-Message-ID: <20260724164641.2239-3-atharvatiwarilinuxdev@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260724164641.2239-1-atharvatiwarilinuxdev@gmail.com>
-References: <20260724164641.2239-1-atharvatiwarilinuxdev@gmail.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="N2RrOABI"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66OHC3ql2430310;
+	Fri, 24 Jul 2026 20:34:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=A3OFwZ
+	M5k45gyysQenFNR0jCkEUqtQzp06ETic4R/0Q=; b=N2RrOABIsDltb4j9siC0OR
+	dbGzx+0wg7OFHx/Z3CAoskT/5y7Qocqw+mR2YqRKOG1aBcnu52Vt7LGB1UPiCYoN
+	hov/35PQikMS5GQhNwe0n2Mg1zC1PqjPGaZ7+Fq4sEj4VniW4PgyZ8mB/NreR7HG
+	TKwUXMYAli/4solOsKUY+2k6Qx2wGyl8CtE5Xi3xHQwAFRCaWqWLmb/WvGcppEU4
+	kzX8/iftdFibKCSL3APwNQ5PK/HLsDimHPCcLtLGwdsh+A7zwy2Cfy8nOFlaRgE8
+	3lpTulgs0CEEgWsJ9VJ31rCHm1H+qPZM+Qi4l2Tz0SVzCO7/AqK02JWvsfki6VZg
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4fm8h51vx3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 Jul 2026 20:34:11 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 66OKJcKL010447;
+	Fri, 24 Jul 2026 20:34:10 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4fgm6wjp87-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 Jul 2026 20:34:10 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 66OKY99c066088
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 24 Jul 2026 20:34:09 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 65DA658065;
+	Fri, 24 Jul 2026 20:34:09 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 970BA58052;
+	Fri, 24 Jul 2026 20:34:08 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.189.235])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 24 Jul 2026 20:34:08 +0000 (GMT)
+Message-ID: <6e6642c14477e409ea34a6090a61cde7f00934fd.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: Report errno for failed hash collection to audit
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Frederick Lawler <fred@cloudflare.com>,
+        Roberto Sassu	
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn"	 <serge@hallyn.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
+In-Reply-To: <20260716-report-hash-error-v1-1-ac19281112e4@cloudflare.com>
+References: <20260716-report-hash-error-v1-1-ac19281112e4@cloudflare.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 24 Jul 2026 16:34:07 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzI0MDE4MSBTYWx0ZWRfX5dmNLBCYnREY
+ fIoYFAy0E86d1AqI11Fq4zr93wlXnDJ1rdMJ60uNVjnSxIrGhoHSYGQ+4Hu0foHqwP+BkgLnKWt
+ 5qAJOGdRLQWYrcuAU+NR7SqNP8J5IpM=
+X-Proofpoint-ORIG-GUID: qTMBVx4-BnUzpNNPBEsjanCteMj253ge
+X-Proofpoint-GUID: 31Lu9-SBWeZ7D4GqfwbYn5ULfTIrnP7n
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzI0MDE4MSBTYWx0ZWRfX1ycBejSc86RK
+ WjRN/ODmHqCCI/HezLka0rYaW0e0H4Yq0dDBK8wQ1exjfDs3WEQxr/18IoWCOZG5WCEC4CBTnw6
+ YhdD2DLk+iVd8qpIDbdjLXEdjmGh1/IiiIFF4cNS9ULyJaJV4/QSDUvmBtatosXyowMRb+adA5w
+ PvJ8dq2axiXDZdkjRQAyC8rFL+8IKQrF6nJuO6NapYJ4gUgj3O9k86pIT2jqerHFszfGJPgTP5u
+ DY5fbYVBgDj9c69v7aS3TY661Lh6Jlgx4lEdecCpaFy8ieT1hojDvflhsopSpk0B5M+KO5I4W0d
+ c56QDr2sJhA9Lt6xsLqP3Qu0yEESe5PLYKscd1vuiq167co6lkqTEvPkbL2FUD1d3fAjiTbABzY
+ 0yXSha2qmbM6PlZhtQ+liI6eIg+2bHosjkryxugUNWabtuZTEPerofyKF3bqF08eP5/gobSFDmw
+ iFVDh336TQypL/HTFRg==
+X-Authority-Analysis: v=2.4 cv=du3rzVg4 c=1 sm=1 tr=0 ts=6a63cc43 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=iQ6ETzBq9ecOQQE5vZCe:22 a=EG7W4yiQAAAA:8
+ a=ed0vf8S_Dfqsh71IS7UA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-24_04,2026-07-24_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 clxscore=1011 malwarescore=0 spamscore=0 impostorscore=0
+ phishscore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607240181
 
-From: Andre Eikmeyer <andre@negmaster.com>
+Hi Frederick,
 
-Icelake Thunderbolt NHI on T2 Macs (2018-2020). The NHI and its
-associated PCIe root ports all sit directly on the root complex
-with no upstream port. Apple's ACPI tables name Thunderbolt root
-ports as TRP0, TRP1, etc. Find them and create device links back
-to the NHI so that PCIe tunnels can be re-established after sleep.
+On Thu, 2026-07-16 at 14:10 -0500, Frederick Lawler wrote:
+> integrity_audit_msg() wraps integrity_audit_message() such that errno is
+> always set to zero. When debugging for failed hashes, it'd be nice to
+> understand the corresponding error code with the cause.
+>=20
+> Signed-off-by: Frederick Lawler <fred@cloudflare.com>
 
-And on other Thunderbolt NHI's, like Titan Ridge, the default method
-is used to add device links.
+This patch looks fine.  Any chance you have time to look at the remaining I=
+MA
+calls to integrity_audit_msg() and fix them as well?
 
-Co-developed-by: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
-Signed-off-by: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
+thanks,
 
-Signed-off-by: Andre Eikmeyer <andre@negmaster.com>
----
- drivers/thunderbolt/tb.c | 58 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 56 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/thunderbolt/tb.c b/drivers/thunderbolt/tb.c
-index c69c323e6952..625451ff3ea0 100644
---- a/drivers/thunderbolt/tb.c
-+++ b/drivers/thunderbolt/tb.c
-@@ -6,9 +6,11 @@
-  * Copyright (C) 2019, Intel Corporation
-  */
- 
-+#include <linux/acpi.h>
- #include <linux/slab.h>
- #include <linux/errno.h>
- #include <linux/delay.h>
-+#include <linux/pci.h>
- #include <linux/pm_runtime.h>
- #include <linux/platform_data/x86/apple.h>
- 
-@@ -3305,21 +3307,73 @@ static const struct tb_cm_ops tb_cm_ops = {
- static bool tb_apple_add_links(struct tb_nhi *nhi)
- {
- 	struct pci_dev *upstream, *pdev;
--	bool ret;
-+	bool ret = false;
- 
- 	if (!x86_apple_machine)
- 		return false;
- 
-+	/* On T2 Macs with Icelake thunderbolt NHI's.
-+	 * the root ports are stored in ACPI as TRP0,
-+	 * TRP1, etc. Find them and create device links
-+	 * so that PCIe tunnels can be re-established after
-+	 * sleep.
-+	 */
-+#if IS_ENABLED(CONFIG_ACPI)
-+	if (has_apple_t2_chip && (nhi->pdev->device == PCI_DEVICE_ID_INTEL_ICL_NHI0 ||
-+				nhi->pdev->device == PCI_DEVICE_ID_INTEL_ICL_NHI1)) {
-+		struct acpi_device *adev;
-+		unsigned int slot, func;
-+		const struct device_link *link;
-+		const char *bid;
-+
-+		for (slot = 0; slot < 32; slot++) {
-+			for (func = 0; func < 8; func++) {
-+				struct pci_dev *current_pdev __free(pci_dev_put) =
-+					pci_get_slot(nhi->pdev->bus, PCI_DEVFN(slot, func));
-+				if (!current_pdev)
-+					continue;
-+
-+				if (!pci_is_pcie(current_pdev) || pci_pcie_type(current_pdev) !=
-+						PCI_EXP_TYPE_ROOT_PORT)
-+					continue;
-+
-+				adev = ACPI_COMPANION(&current_pdev->dev);
-+				if (!adev)
-+					continue;
-+
-+				bid = acpi_device_bid(adev);
-+				if (strncmp(bid, "TRP", 3) != 0)
-+					continue;
-+
-+				link = device_link_add(&current_pdev->dev, &nhi->pdev->dev,
-+						DL_FLAG_AUTOREMOVE_SUPPLIER |
-+						DL_FLAG_PM_RUNTIME);
-+				if (link) {
-+					dev_dbg(&nhi->pdev->dev, "created link from %s\n",
-+						dev_name(&current_pdev->dev));
-+					ret = true;
-+				} else {
-+					dev_warn(&nhi->pdev->dev,
-+						"device link creation from %s failed\n",
-+						dev_name(&current_pdev->dev));
-+				}
-+			}
-+		}
-+		return ret;
-+	}
-+#endif
-+
- 	switch (nhi->pdev->device) {
- 	case PCI_DEVICE_ID_INTEL_LIGHT_RIDGE:
- 	case PCI_DEVICE_ID_INTEL_CACTUS_RIDGE_4C:
- 	case PCI_DEVICE_ID_INTEL_FALCON_RIDGE_2C_NHI:
- 	case PCI_DEVICE_ID_INTEL_FALCON_RIDGE_4C_NHI:
-+	case PCI_DEVICE_ID_INTEL_TITAN_RIDGE_2C_NHI:
-+	case PCI_DEVICE_ID_INTEL_TITAN_RIDGE_4C_NHI:
- 		break;
- 	default:
- 		return false;
- 	}
--
- 	upstream = pci_upstream_bridge(nhi->pdev);
- 	while (upstream) {
- 		if (!pci_is_pcie(upstream))
--- 
-2.43.0
-
+Mimi
