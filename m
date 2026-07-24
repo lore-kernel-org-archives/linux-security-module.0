@@ -1,98 +1,168 @@
-Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E49E1F12F8
-	for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2026 00:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784852707; cv=none; b=KYsHKm+Wa4WHcU4/DkfYIH4FJv92cMRX5cBSm9LpIJO1z2vxwpGmrFE/JypchtIablepFNzPPnpw88ih5j7AxSmaFRcGPFLcjUc1TK1hqwhg6y4/7F0DXuWek9RPipDnf9VAjGB1ACso0xUmqd3JDZNjryQU9t7Y9ImCl6uRIbE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784852707; c=relaxed/simple;
-	bh=ccMcpYHfkbI3aMSX/cRaKf3Pn1l35LkeDuOd1giBR1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S4LPkgVNjtLKZHyhZN1AOz14z1ahUeJXpClxM5HVz04J5P+5PV/LRd/YVG8M+FsRyt1ajZ+wGF5jpJBa+LWf2dSYYP64dTvZSRUibbfOOMb7hM9JZ1z7Xxe7PBTXAEkpvn4FXuKWqHOtkwW1B6tO+IO/wrJ9Jc0xWRaZJWmiIXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fljYUSX0; arc=none smtp.client-ip=74.125.224.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCCB1A681C
+	for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2026 01:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.219.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784857282; cv=pass; b=JqlzGST0e73YyoveKj8t7+ozA4OvODsmN2RvY0ALovskafau4FfvEwVMX7eCvBuP2DIFq9RyrdsyESXaPPgmP4SC/HEX/sOzDDNUnJaN4VviC8Qw7V/VmJ+9lvDnInMp9yT4SdFqH02Pr1NN3utvtoftHSs3IcA9vjNrcpfdRRk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784857282; c=relaxed/simple;
+	bh=VgG1L9n4qkqv88OVPiAOkH5r2fUCEJuZKIZh2co0UY4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sAsRiV5d6WDSkj2THdR2qfNsawxPbZGe/rvTTufoBL/de+wq8tmAe7iT3virTy8uH7aMpQBPXdZUXhMMpXPs/baUKMEkhh6V4NV8C69mdSrVmVDEf+e1Z+GLAisJPcyB3x/o9GmkQs2b1CHjjGILa5HbKDoagvrEWER1RTdAiZA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TkSPxvej; arc=pass smtp.client-ip=209.85.219.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fljYUSX0"
-Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-6681e7911b0so1105142d50.0
-        for <linux-security-module@vger.kernel.org>; Thu, 23 Jul 2026 17:25:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TkSPxvej"
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-8f23e851626so11694286d6.3
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Jul 2026 18:41:20 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1784857279; cv=none;
+        d=google.com; s=arc-20260327;
+        b=RXE8mT00PK839otSCOVmdqIgQiSpzD1RUo9kMI+2kROFWMr+THcmatncsmRhKJAJ+a
+         Lg6oi7t7qR8POcz/gKoUbTH8ght1njJbzV+ZTGsjVUMxDFkof8T7tjSl69mfI8H867J3
+         9+CqPvQ5l3OKU7jk7go8giGfBtkwKSPaQSi+HzNpdiT1y8HE7C1RqWENHJicmdUmNR8a
+         YxNK0qiFkHZCVB7Z/717Ba9gAJZIvaU7xmnKCubQRpry2rEUBMJmlG/8bSr7xS8/2TwB
+         IfEULNQnsdVCK9E1mftCYkTuR3IMjSQQjs4dOk0kHoa0AV3qRlNawk9u653Wkr32AJIR
+         J2uQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=Ejkg2QiGxw6lNSk3SatrnK8cKuk/Z/iPaAUYh7RRVpk=;
+        fh=R30WiSO638NsM6XmODpAL48+WNQxRSL+YuGNQhcU7fQ=;
+        b=NloPSTDafrACRDcsh22V3QmDHls8xvBDZ9+tbyv5MxonrgV6osSN/DoyGq1fhYtY/A
+         ewbnlyyahuhGl9oAG4WlIxzMtaYz5ylCX+YU9gp8qs+TAD2lW881pSvy+qiE/fHvkjsX
+         2KF3ZNgyM9i0ADpVrZC6ajyQhtpARq47mo3Az7teOOokzmyo77l50tOC86DiO7t5+2Cq
+         OxTXLu/ca9heYGsFnBtPS85ZAJUAG4yCRviadddERXs0i8LTOj6lEyP00sN6m50PkMFn
+         ELSQN9njr9IQ9ScWTLJDOm4nvNNdlqYfUz0RWpZSoEHy9j1++YEfXTNKbRsx7tTAHbPr
+         MRIQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784852705; x=1785457505; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+        d=gmail.com; s=20251104; t=1784857279; x=1785462079; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=ccMcpYHfkbI3aMSX/cRaKf3Pn1l35LkeDuOd1giBR1A=;
-        b=fljYUSX09z4UzMcv5DXWsqJKp4vwONhVGB9GdMM705GKvrDU+BMK7bSyF7uvxy1ULr
-         nUIe5Omi6iWK/A1rzlIeJCAxU3KhJeKzh1ajHBM97C7LcZ1vlhSwlKXNl2AH0eXCgC6i
-         doSA2R6reETEhWexf7hgM6SIFBpY4VQybEvOXiU4MSUHfpkTbQXp12ZkA19WvEVu6rMw
-         liQk2986ayZyt14xuvLCRVZAoXpr9340+hItI9TjB/UE5SxhzrYmBBB4SkFA5PKQ/Q4E
-         uS/hK4Yn+y4r3I28a49QK7UjYrnU5pZYphWEtm8uKC6sEdwOLUuK0QY6xY4JyMYXYGpi
-         qkTQ==
+        bh=Ejkg2QiGxw6lNSk3SatrnK8cKuk/Z/iPaAUYh7RRVpk=;
+        b=TkSPxvejqbro1K/uX82Xq1lfAfEBj2NcclfYE7eKvV1W6T0XoATG91PYo2cqDjUB3F
+         z04f+ulHgLIovyxQLxckGgH0lMlWPVhHWsnRyzP0tEsk//D9C4GIlrjrh32D77Ekqf2o
+         AI59ZrCYFx1LeWIpT7mj61vZ4OKBqRew2DFOVzLnx0gbM+t0mJsCbpILJvFqcEUEGnwt
+         0jBrUYlz6OIzH6cPETmIIKTKBEP6+c7cX0L9+aivERUcWtU9K8Xp9CngJ34qgl1q/z9j
+         pRdiu6GuIRDMPkVYzWHd9C/f6XPcMGKK6MBiczQAPXYi5z3TJfSslo/4qWUyZxBPuM5V
+         fU6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784852705; x=1785457505;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
+        d=1e100.net; s=20251104; t=1784857279; x=1785462079;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=ccMcpYHfkbI3aMSX/cRaKf3Pn1l35LkeDuOd1giBR1A=;
-        b=AFkzukUrqEVqabEKFQk+dXLS0Tx1Vf1qihnkR0ue9yQ8gTHzxpY97r+1Us5ca9lOV8
-         ni4LKPBzsdv0F44XQwdX1qK7ieKNPcPryK7SHkXjQacCmOlQLLqjoilTbIqEWAS0L5zQ
-         QXH2ROQ1Lh0AoxjkpL1ynJPkYPbS77zu/qTLtpA3SlZQ76oav4PLUyGzh5pij8F0X1ZO
-         KJRmQgDJ/QaQGtntCPGrXGemNwDVcVmHpdyPyJ9HtLAW+wkamgDq0s9i9i+U+NHAghAO
-         tepK2PivxNo54CN4awuyYrcdC0hVSmmr8efsXcPLGkfjgopmaZRLFMIfucIwebTGIFWP
-         ZMHg==
-X-Forwarded-Encrypted: i=1; AHgh+RqXQHdFnSKnQhOd9R9dwJ4nAteAp5W2KtMJIbWI4z2snHZwbh8jALvzoWFxE3PSg3E9BheopcjpwQAr3BxIfJ8ZZYy70rk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZcQQdgOH5kRjvAiScsjqh5GjV/el+0hfuR4tfWfgoupctuqSl
-	ZZ6LVJ+TnQdalzhpolFcO9ZLe8qeyv+QLZKk1NShyc87aJN78hN8qQsS
-X-Gm-Gg: AR+sD11BiVe0c45cTSpc0jnkOqR8hk5IJx8Zm/Jx9rnQwiTZgruOCaA9i6eJRYFHYqS
-	QGZsL5h8Vf3wlgykIcXBzaVG1dDwm6Z1O4Cd/3S5jJYr5WGKxUIyTzfJ792wlzaIrscu1eeELkj
-	QDXxToLwTwDGXeoGYkBfk5YTiH5RxawSt3aOjxU6SjjiCPTu+SK2yYtjKY6MNUAARzGoRWyofoD
-	TPmx4B/uP42DKaEDOoe77MrK4yUw0Jhp3Zy3vb8+hROLMjz+NUv3Mtu/wIqwPJ5y2+cjqmUIws2
-	Fw5vPtrPwF/NJgNtBu97nyzwZ4gv073Y92lquFp9rdZKqWLTriBrB8Hu+fbptKtPq/OAjj6ugku
-	Nlz8gdy3kaqRJx6HQVCpVwoawba+ic3XzgtemJyDRTkF59uLMSbyq+bZAhDNraEB/CGkVbguwC3
-	k=
-X-Received: by 2002:a05:690e:484d:b0:668:9230:e269 with SMTP id 956f58d0204a3-668a4c60022mr833880d50.41.1784852704908;
-        Thu, 23 Jul 2026 17:25:04 -0700 (PDT)
-Received: from gmail.com ([2804:d45:3612:3b00:e1aa:6f0b:6cfa:c97c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-81f33c627c9sm35847627b3.19.2026.07.23.17.25.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jul 2026 17:25:04 -0700 (PDT)
-Date: Thu, 23 Jul 2026 21:24:59 -0300
-From: Lincoln Wallace <locnnil0@gmail.com>
-To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com, 
-	corbet@lwn.net
-Cc: skhan@linuxfoundation.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	penguin-kernel@i-love.sakura.ne.jp, rdunlap@infradead.org
-Subject: Re: [PATCH 0/2] doc: LSM: update usage document for current LSM
- stacking
-Message-ID: <amKuTh0WV1vhvA93@gmail.com>
-References: <20260714013832.977443-1-locnnil0@gmail.com>
- <d14f03a6-2c48-4f96-8682-29453945b29d@schaufler-ca.com>
+        bh=Ejkg2QiGxw6lNSk3SatrnK8cKuk/Z/iPaAUYh7RRVpk=;
+        b=ORJ/P00wbW3D06rbx7ZzbxE+DiEdoRisU3tm7lP0jG09zQG1t7VSVq7GOhmKjDeoLS
+         68wGZ6iBOhyctn29R7YirV1NSkwIQ1j6FX8yfDvz4psDGdI8EYcLasAVsXNypjf7P84O
+         Jue4CU+XPpOxaV5aSRSn1dthZ9B7S7aPLN20XQHrX1jQorpDZi32diWydhkYhbz71tdA
+         WAHBQLVkslbor/O1dn+TqN8T6rPS8GfCaMYXqnmee1RR6ySERhlv3OwmVlYrrwcO5YE7
+         qB67a4kaTIjjANvoXWbtCUpqIjHz18VoQIDHkYBigc5UElBzJZ3KX6mGVfyfF5262q9Q
+         Y7ig==
+X-Forwarded-Encrypted: i=1; AHgh+RqwSgngUrKT3fiC4AtVzLtYsoEgzoQq0+1G21HrdzQHdxHbzjU9wNZjO7IKyGkOQuUU0BpUwe7kbwBmsGQNdoKuEa3z3ZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHcswpABKdU4wDjSnKpiYNbZ1ScjDQVFS6fvwmolI299kmGO/q
+	fhhOwfrjhHwjc6UnpoDD0sa2dhi787OmgDMhL3y6kd0+bIKoKpqQ8QbCDMaw7KuQx8uMUxNL5lt
+	i7bZ3a7PN6+e/+EL7oxIZZz949qXvnQE=
+X-Gm-Gg: AR+sD13xVhIE/pCBnx4sf8IZ+qVQ97ddPAuZmkUbc2OcZ/uF7T+CoHvqfai7tNhSrnr
+	OYyGgFr6cKS6B0PLZh0DH6nyLazofMlLuL1b6a/3SswKwDRxE/Xp/xQz1xED2hs5GvSSZRur+XZ
+	LOjZ7J3diLmU52kgEIyFQH2AjrFtxVW08y9eH1QIwy5JgFIff7rta/LMYSYAS2jnLC+R3po3Inw
+	CEU6kPPNBNZghCPGes7KcDz+mlH2+z1KIyYI+fx75mDI2nxv93QQFZ8+leOCw12H0alyKZuP0en
+	47OqFNLTWq4rFCle
+X-Received: by 2002:a05:6214:338a:b0:8e0:6b2b:1a9 with SMTP id
+ 6a1803df08f44-907ca5f00c5mr60830756d6.38.1784857279135; Thu, 23 Jul 2026
+ 18:41:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d14f03a6-2c48-4f96-8682-29453945b29d@schaufler-ca.com>
+References: <20260708000956.46138-2-dwindsor@gmail.com> <cb9f84292a7f1d41ff8388d8c0c8c3d0@paul-moore.com>
+ <CAEXv5_i_iHmF8n6Qf1NiVOhm2cCnVLgmwXK-b8M+hvmdO3aQdA@mail.gmail.com> <CAHC9VhQFGQmJ829kAZ7U48kQOyPT-+zixb61VuK3Zn-myV6+vA@mail.gmail.com>
+In-Reply-To: <CAHC9VhQFGQmJ829kAZ7U48kQOyPT-+zixb61VuK3Zn-myV6+vA@mail.gmail.com>
+From: David Windsor <dwindsor@gmail.com>
+Date: Thu, 23 Jul 2026 21:41:07 -0400
+X-Gm-Features: AUfX_mwSCaLmbKkOiyonsmMoEe-BHwDr3PK1QzzhyLZjx1CuuJvM1nFkobHbazY
+Message-ID: <CAEXv5_gMkKNfuxZf1uoUJ+nFAH=oyHpc3iJAVUbP3duyA8AcvQ@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] security: rework inode_init_security xattr handling
+To: Paul Moore <paul@paul-moore.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Emil Tsalapatis <emil@etsalapatis.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Shuah Khan <shuah@kernel.org>, bpf@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 23, 2026 at 10:47:12AM -0700, Casey Schaufler wrote:
-> I've been stewing on this since it came up. We should probably
-> remove the somewhat complicated logic from the Kconfig files if
-> it's not adding value.
+On Mon, Jul 20, 2026 at 4:41=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On Mon, Jul 20, 2026 at 2:06=E2=80=AFPM David Windsor <dwindsor@gmail.com=
+> wrote:
+> > On Thu, Jul 16, 2026 at 5:55=E2=80=AFPM Paul Moore <paul@paul-moore.com=
+> wrote:
+> > >
+>
+> ...
+>
+> > > > +int security_lsmxattr_add(struct lsm_xattrs *xattrs, u64 lsm_id,
+> > > > +                       const char *name, const void *value,
+> > > > +                       size_t value_len)
+> > > > +{
+> > > > +     struct xattr *xattr;
+> > > > +     void *xattr_value;
+> > > > +     size_t name_len;
+> > > > +
+> > > > +     if (!xattrs || !xattrs->xattrs || !name || !value)
+> > > > +             return -EINVAL;
+> > >
+> > > Sashiko raised a good point about xattrs->xattrs being NULL not
+> > > necessarily being a good reason for -EINVAL.  If xattrs is NULL, yes,
+> > > something has gone wrong and -EINVAL seems reasonable, but the
+> > > xattr->xattrs NULL case does seem like it should simply return early
+> > > with a value of 0 (see SELinux's handling of this case as an example)=
+.
+> >
+> > The problem is, SELinux has already set the sid by before calling
+> > lsm_get_xattr_slot, so we do indeed get an in-core label for the inode
+> > before returning early here. Returning early here from BPF would not
+> > mean the same thing: there is no label anywhere, in memory or on disk.
+>
+> It's important to remember that you are not always guaranteed to have
+> an lsm_xattrs buffer, for some filesystems that is going to be normal
+> and expected.  In these instances the 'xattrs->xattrs' value is going
+> to be NULL and each LSM that provides a security_inode_init_security()
+> LSM callback needs to handle that condition gracefully.
+>
+> As you already know, the SELinux approach to this is to set the
+> in-memory inode label, but refrain from setting a presistent label
+> (these filesystems are typically either transient or don't have a
+> mechanism to allow for persistent label storage).  Each BPF program
+> will need to decide how they want to handle this in their
+> security_inode_init_security() callback, but in the
+> security_lsmxattr_add() code where the only purpose is to populate the
+> lsm_xattrs strcut with the persistent BPF label/xattr, there is
+> nothing that can be done, it should simply return early without error.
+>
 
-That seems worth doing, but it looks like a separate change to me.
-The document currently describes behaviour the code does not have,
-and that's worth correcting either way. If the Kconfig is simplified
-later, updating these paragraphs again should be a small part of that
-series.
+Makes sense. If BPF LSMs want to store an in-core label, they could
+just use bpf_inode_storage_get.
 
-Happy to help with the Kconfig cleanup if that would be useful.
-
-Do you see anything in the two patches that needs adjusting as they
-stand?
+> --
+> paul-moore.com
