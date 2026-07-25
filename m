@@ -1,101 +1,124 @@
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4393EDE68
-	for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2026 21:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A368540E8FA;
+	Sat, 25 Jul 2026 20:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784930357; cv=none; b=Bdmtn0pWhgOsFJIa//6g8V0PlGuuzWxHY5x+umDnzi1Nxhokj5PNexgxu8glmilsZFdqsjWMh56nKwYY/ykOZfaG3Seh03fjMQWBlw4F+dRNq4D0rMCfuZJiFFbkFipJ8UmBymUpXk+ni3vhE29xY5zE+ASSnYfXCPc7VWeOifE=
+	t=1785010501; cv=none; b=tkInkUNAYU/6xoxfYvqloOuNugJTcc1mlYg4aGS2RS416TCGvdcdyTMUIV2t3NY8nYQ1ZoR0E7O+AQGhkwSFIS+rtWZ3BvprG/JnbhWuEFR6Y118feEvqGLvwhp0YazHw2cZmD2Kpk16t49uUQMY2JTckwW4IjaBVNKTAD79KwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784930357; c=relaxed/simple;
-	bh=MUIgpz4nKc1Ifj681lvMpsc1P9TZSam1taTTKIN85is=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UW1tXnV0Z/zrYBnWHCCPUD6bSqfpW8rF/sUYpLTjzHmaM2VdnRmM9hMsV+8JdRDcV6fYOgugpyUwqoKu357Lshy3u9hFpilJuqn5y4fWJ7ZPyjJAlFnb20kcUwKjnTDNTcukrzlXcB8icAY7KemmhgeOkr7wmywX43KQNf6qDKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=WLXSrAX3; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	s=arc-20240116; t=1785010501; c=relaxed/simple;
+	bh=Db3f9Hkbr1czRMuS6sEqyNruq5sN9vgK788hDrtE69w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pfmjZ/qT8C+vTXpGa+qwQceAN5G3cLoQmu17WGH7rizOb4UWk85oX2KVsHN9krkqPTsfkqG9i7j6IPOPfqzlDcmfeycNI32LHILL/GAO5+9tDsBNZNg0YDZt2w5yxOQj1ANK93+covYMB0OSRQCh8udqYdA8vYLMHwK0n/nLDSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LOb7WuPP; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="WLXSrAX3"
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-81e6f0b4610so7364287b3.2
-        for <linux-security-module@vger.kernel.org>; Fri, 24 Jul 2026 14:59:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1784930351; x=1785535151; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=1WQ3cIAte29peloA7ilqteMd0LDA6wT2JHU11VjgfUo=;
-        b=WLXSrAX31vIYde8AhuG+OTI1rqdKLnGJMMfYEVG5pmc+4UQ/pZoLokWQom0tebv69G
-         zkapK0dvQOjrYDUzXCx6viwQjpuYizc3r1fsHWWbTcNOYpIxAsEC2LVEAEXxfI3T+t9F
-         XyjVk5OkCIDBBav5XqqFkDNXprt06xHXdp5y6X8yR4KgjBBXkbi6/lBYmFYQTCwtyk9w
-         qsHmGDNBLMVRGNrnXfp7D/qTPcLFYGf2BFZSJFgWvSg6hcHefCs8Li3U9TDoZKTkEkK9
-         1XG7SjOI3m12ltS1updZyEqhDkU6MAVJ8sknQWsoHNJM2/4kvqOWEkgIqjGSyv7M3akh
-         P9bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784930351; x=1785535151;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=1WQ3cIAte29peloA7ilqteMd0LDA6wT2JHU11VjgfUo=;
-        b=JKLpfvhvOzzok8S9JPEkF1DBcoXIiw/K6r3Qv2ksCWCBHtrEidakJjZeYmTfsEgwuD
-         dzIXEG4TDA4uPBQ6mGRXY/Sic+svY1JM3EggGxFtsXGoZQyljZs3jwBNomhgBDhDuheL
-         OfUw4jLHf19Hrl9Ft5SDE/skD7r/bRjFImXbGoGxEL8Dld9on4+pTOkHkqxMXirYqt4c
-         8kG9bdlwg9JykEJHxzQY55QatOQv6Og2DpNol7iimSenzIy2Yt8gFn6j+IJqYu8VQOTQ
-         o70CSzIKVxHE1SXFag22dvhS1H06DPPZCdHUUJ60V1lkzOw/drE73gdE6GpBWKFQj0KR
-         +lxg==
-X-Forwarded-Encrypted: i=1; AHgh+Ro/uwdYnaBtcva+7Lu7jVVdu8kjzSlxVj7CcZD6hEUR97JV5R0INSyD2J9FFTqWStbogHnpP1NPMBKENoHNiWly+cHz0+Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvBvrxoY8OCJewqpwwQHLoHtB6Yj+EXgJeLrYG/vTNXhsJGPjd
-	vED8Izuakdh70Qu40UgUnZ22RdQkw3HKMzLkfNeXS8w6rzvbse4RwZUNU0fdnICnvws=
-X-Gm-Gg: AR+sD13V8IRSEib6JlURJweUOMPOEfJNofBiKD2mgVJZut/YjZZAjb90jHMkVOvQ/Bl
-	lQrduAg2JmsuKUMNyyJAMIhOoTESCyWBTXugmAGITUdrwcwBNVckk65zXEhBpoguTUMkTw0Y0La
-	V4RAMcH6ltDRlu+jYCjl84CeF7/XokzBgbNKB6ycvgh/1UwaLQphUSDEId5h7N8P2rSDaS1dukF
-	ok/G+K22amPFwB5ORcrGgG1bowLBLcop5w+sWRGCqNANizbpXAVVYyC5vmTrDe6kaKWPBMnQtwQ
-	95NRcys6QCFK+3VbUC3dBiGX82wM8TBe+xz92m8pYHd3uxsQ2xeIEfEqlVWXTo3oIWFWKp0OM+4
-	852LXkR0H7PYHdhFTszqqd7OoxGYUVQku7qHRWxhCc2j7Ci8PJezbNNNk
-X-Received: by 2002:a05:690c:6d8b:b0:81e:d032:f3c8 with SMTP id 00721157ae682-81f69e2f265mr799977b3.37.1784930351217;
-        Fri, 24 Jul 2026 14:59:11 -0700 (PDT)
-Received: from CMGLRV3 ([2a09:bac6:947f:3af::5e:5f])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-81f6592eb29sm5818427b3.43.2026.07.24.14.59.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jul 2026 14:59:10 -0700 (PDT)
-Date: Fri, 24 Jul 2026 16:59:08 -0500
-From: Frederick Lawler <fred@cloudflare.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
-Subject: Re: [PATCH] ima: Report errno for failed hash collection to audit
-Message-ID: <lkr72ii6ids4d4izyh6ruqhuxigrvlxsimz4tjwcdhmvz2enhv@3dsebnfscrm4>
-References: <20260716-report-hash-error-v1-1-ac19281112e4@cloudflare.com>
- <6e6642c14477e409ea34a6090a61cde7f00934fd.camel@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LOb7WuPP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 231BC1F000E9;
+	Sat, 25 Jul 2026 20:14:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785010492;
+	bh=RTyMHzE0NoKBxtjm0Pr5tmlD2a81LRHCxcfNNyoc3PI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=LOb7WuPPFMZoBJ8pvZS2vIzbus1m/mggu4XTTwJkwxY0aFDfcnPL3Och1dcPKQTYR
+	 Pr5ZHzRwGWAiUw/MALqbJn2JqH3x9+HFbWPaYYvx4kALhmDdQmGf3kWQ5GfzGppFVR
+	 sBjVV1aJOF7BH+MhXizPMZm5aKBTZVXKMOXNS4zJTJdJQOFwinOY8/htG0C0+XqIr9
+	 z9RgvU2NhvEIaX6nPRDHtIPVZRGJYwQ4wVG7NHyUHjcF2t/dsCywjdNEZEiNke+rKP
+	 5/Z0ZVQ9QeyJzy5ekdC6LWhm8QoYcWvh0xyAp/ps1DfjVQDePQ1sie8Fi5FaSH8eiV
+	 8QNvxS2LPANAA==
+From: Chuck Lever <cel@kernel.org>
+To: Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Anna Schumaker <anna@kernel.org>
+Cc: Achilles Gaikwad <achillesgaikwad@gmail.com>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-nfs@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	selinux@vger.kernel.org
+Subject: Re: [PATCH v2] security,fs,nfs,net: update security_inode_listsecurity() interface
+Date: Sat, 25 Jul 2026 16:14:48 -0400
+Message-ID: <20260725200958.4471-1-cel@kernel.org>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20250428195022.24587-2-stephen.smalley.work@gmail.com>
+References: <20250428195022.24587-2-stephen.smalley.work@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6e6642c14477e409ea34a6090a61cde7f00934fd.camel@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Mimi,
+On Mon, Apr 28, 2025 at 03:50:19PM -0400, Stephen Smalley wrote:
+> Update the security_inode_listsecurity() interface to allow
+> use of the xattr_list_one() helper and update the hook
+> implementations.
 
-On Fri, Jul 24, 2026 at 04:34:07PM -0400, Mimi Zohar wrote:
-> Hi Frederick,
-> 
-> On Thu, 2026-07-16 at 14:10 -0500, Frederick Lawler wrote:
-> > integrity_audit_msg() wraps integrity_audit_message() such that errno is
-> > always set to zero. When debugging for failed hashes, it'd be nice to
-> > understand the corresponding error code with the cause.
-> > 
-> > Signed-off-by: Frederick Lawler <fred@cloudflare.com>
-> 
-> This patch looks fine.  Any chance you have time to look at the remaining IMA
-> calls to integrity_audit_msg() and fix them as well?
+This commit wedges an NFSv4.2 client running fstests.
 
-Not a problem.
+A kdevops fstests run against nfsd-next hangs at generic/086.  The
+client stops making progress and never recovers:
 
-Best,
-Fred
+  watchdog: BUG: soft lockup - CPU#3 stuck for 250s! [086:60396]
+  Comm: 086 Tainted: G  D  L  7.2.0-rc4
+    __pv_queued_spin_lock_slowpath
+    _raw_spin_lock
+    nfs4_xattr_set_listcache [nfsv4]
+    nfs4_xattr_discard_cache [nfsv4]
+    nfs4_xattr_cache_scan [nfsv4]
+    do_shrink_slab
+    drop_caches_sysctl_handler
+
+The D taint says something died earlier.  It did: by the time the
+lockup fires, the client has already taken two dozen NULL pointer
+dereferences, all of them in the same place:
+
+  BUG: kernel NULL pointer dereference, address: 0000000000000000
+  RIP: _copy_from_pages+0x44/0xd0 [sunrpc]
+    nfs4_xattr_cache_list [nfsv4]
+    nfs4_listxattr [nfsv4]
+    vfs_listxattr
+    __x64_sys_listxattr
+
+The two stages are connected.  nfs4_listxattr() declares its
+remaining-size accumulator as an unsigned size_t.  On a size query,
+where listxattr(2) passes a NULL buffer and a length of zero,
+xattr_list_one() decrements that accumulator for the SELinux label
+without regard to the NULL buffer, so it wraps to a very large
+value.  nfs4_xattr_cache_list() then sees a NULL buffer paired with
+a buffer length large enough to pass its own bounds check, and
+copies into it.  The fault happens while the xattr listcache
+spinlock is held.  Task exit does not release spinlocks, so the
+lock is orphaned, and the next shrinker pass spins on it until the
+watchdog fires.
+
+The reproducer is a plain getfattr on a file on an NFSv4.2 mount
+with SELinux enforcing, which is what fstests generic/086 arrives
+at by way of a drop_caches write.  No fstests machinery is needed
+to see the oops.
+
+An audit of the listxattr path pointed here, so I built nfsd-next
+with this commit reverted and reran the full fstests nfs_v42
+section on the same pair of guests.  745 tests, no soft lockup, no
+oops, and generic/086 passes.  The two failures that remain,
+generic/033 and generic/258, are unrelated to xattrs.
+
+I am not proposing the revert as the fix.  Achilles Gaikwad has
+already posted a targeted patch for the accounting itself:
+
+  https://lore.kernel.org/linux-nfs/20260707152305.15324-1-achillesgaikwad@gmail.com/
+
+Whether the right answer is that patch, a change to
+xattr_list_one() so it leaves the remaining size alone when the
+buffer is NULL, or hardening nfs4_xattr_cache_list() against a NULL
+buffer, is for the three of you to settle.  I am reporting the
+severity, because the accounting bug is not confined to a short
+size query: on a filesystem that caches xattrs behind a lock, it
+takes the whole machine down.
+
+I can test whatever you settle on against the same setup.
+
+--
+Chuck Lever
