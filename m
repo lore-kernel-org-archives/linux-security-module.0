@@ -1,72 +1,72 @@
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9563C3F8241
-	for <linux-security-module@vger.kernel.org>; Mon, 27 Jul 2026 23:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8677442901B
+	for <linux-security-module@vger.kernel.org>; Mon, 27 Jul 2026 23:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785193726; cv=none; b=j3shDIrR7H4Q8MpltokssInPBL2kgrHMfJYyBP2PFL+iXwSUKZH2Ix8dC8IaRDqSk5N0pvMZ3wYIpeX9UXsN/atvScXF8aINZXokD6NlorMWvwbyn5D2wsqKzJYziWdVTy0IA96u5FeBq30r5YUhlhN3Y2LxzK6cXIKcZTi3kM8=
+	t=1785193729; cv=none; b=cdOpEV7E/JkNTikzWEUIhmyOoRtDLEYtn+AFn50M6DazGMI94tl2lL62VmxjoBVHkf6i+9l5s7Z+/g/OewRbgdz7hPvQXU65mpkcdSNjct4Eo1Pz3pDbwCFCcUC3RCaHB2X/RnvMVYm6wtY8TPRMJOn35G5mSequbZVeJ8n6Kuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785193726; c=relaxed/simple;
-	bh=O1rV5+A8Iy4Vmlyl5t+KcvFOG45mXBBJOijcHDozpVY=;
+	s=arc-20240116; t=1785193729; c=relaxed/simple;
+	bh=9OzfBB6fq3+FkUEK+HTYHqPle2N3b7d/LwOM77nItTE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a6KCBy+VGEWahWmszzJqhw4kvarMeF1unUk1SlOTRpr9Ke9BfEWTjRxscj/RBqmum7jEE7lcXQoccCkzYp3rSz46eKWxAuw74ZEfpVlOKawyew5x82MuCNTSqTt+H9B+5snm3qBwTAsHpke5D+bsKmoP0wa6D1j23m4CbIlW/dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ILtjgYaU; arc=none smtp.client-ip=209.85.128.177
+	 MIME-Version; b=g5awPD/SQWDJGO9mKM/wI82v2WNeY/XzQIrO5yVJNWG/W33cfIqLg6IIYfHzO1jECGYRhK+dQzu3Fxd0RDxdrb/4CB4KBpZ45nq6z7hCVcU9/cUdHRLHXwZS8V7qcBeQRI6rfVbuo9j2ldpWa/CNOWD/mZqTtQBz/TNgz2AUpxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S9ab4QEm; arc=none smtp.client-ip=209.85.128.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ILtjgYaU"
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-7dbcb505578so29856997b3.3
-        for <linux-security-module@vger.kernel.org>; Mon, 27 Jul 2026 16:08:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S9ab4QEm"
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-81ed000b507so25767377b3.0
+        for <linux-security-module@vger.kernel.org>; Mon, 27 Jul 2026 16:08:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785193723; x=1785798523; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1785193726; x=1785798526; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=GzAMCAgjp9hGIu+mckhxdDFv3Qi0g9QLb7n7aNYS+iE=;
-        b=ILtjgYaUHH1xe9dBKl9ZlkVsVShpMXIoACXwSKwXItQWbVO+dVtsH23vhAyzYWKbCl
-         /z+ZLch+njXTb0MBWGT08HfuLhbEWb63MvAZtMJkwqcoxbLAEWmrLjzMR1H9h4x1lBxw
-         nCO9cEKPqmM0jP1yIOdgoSfTaVTQvuXRUPzrWqWiThOsW6gM2Jiv72FcDErTkRpLD3zQ
-         fr1tnHBwPt8GZaUuu89P768JKiE2q0Jt8MCUdXUXFs253Uwi1U1I5ON98IgVczCa1QgA
-         O9UkTVZPXtX82bs32B2Skkb61KkMI3qEGPHmXN+Qd7r9PJPYgSglgROCG7IWQu5LdLHT
-         26oA==
+        bh=kMVJlMZ5aiYr17VZ8/g7qzvf1FPYL/KyBw/hvOfyKtg=;
+        b=S9ab4QEmN6j1sV4kNZB28qXfDBrBBHpNp1FgcBvtCJ+8DnVYfmcFjWzgYpfOZPD5iG
+         zeck6GkahqX9T+62nOmiWPcIqKG4+yHWq9En77Lj86FbYWArrYP0vUPYKIJuciu2jmnz
+         3R5O3p/pYen9jpc9GOn6ma9fOcj87chXV4mOmbLk0tJNd2qK+75y0MRN2/Dm6Ox0Ajae
+         einnn6kjMPok1fj6BlUdFCEsww5T+y6JLB5cFiCX3//i1QEmI7A/4e/9HpsORex1ghAQ
+         +pT4hXVyD3WOKoEH6/I3PzGDHefTD5NRYLcsdoKOoEW1ThjS5sdyRNpVRxyXGpMYM6d8
+         iWPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785193723; x=1785798523;
+        d=1e100.net; s=20251104; t=1785193726; x=1785798526;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=GzAMCAgjp9hGIu+mckhxdDFv3Qi0g9QLb7n7aNYS+iE=;
-        b=hBf/UrPoBPUXNCHRJsBe7aZktVXizqfVsuA634L4StSBE1BKCaXEXtAYwmttKC4Qi0
-         DytbVO6jD+aYA4VhGhcAaQ3dtwUC0qgInTmHhQJLnVNKnfRhRgZ/wxJ7WKTaaDguFyNl
-         G49VNB8omp22lwWFulLfEWEtrGwvuLw0BsVl23O1w5+SLaHNA2FahhiDj4r/dzJ3JYU9
-         NksF6M8ABm8OQsV0g4Aolq2+Ox5HdqB2YGQZw5UgeMhiKqBxyQkPKGKUI8WKHtUfmpfr
-         YmBmoXB+LzTunKy+/GqW6P2pV5vws+Kr8STZ7Brg3nL/BNy3gazfXQNlCatVjcgQSECs
-         RtuA==
-X-Forwarded-Encrypted: i=1; AHgh+RrescSN/ykIS05z9nw0d2GEx5sk/InS/n7FysJJH+ny6C5r1ipBDbjgmqzUOQiDjKuqtWQU4oWqiDnaMnm+yXNEA/7meEs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykrpeRKns0qXsSQmkTDCrA26j99jcAnWEt2jTC1PnLDIxXog+H
-	VS9IKN9qQYEy4yKxY0P467dki81p+dA7EvWuGSPloPyOs+KbxS3P3uiCYqmAnzWp
-X-Gm-Gg: AR+sD12HPXAg87iUJ4gb9fNEtPpXjCLO2dKAaxrLsu0CNgW6eSAEM4jUL+Ymb4jQlln
-	odn+pf9qWZBpOSchgNWyIMcbUZoJcT4zCVVxfgBH7TJE1TjUSxpifSAROQQNSJ/LEhfBa4v8UYq
-	pHaFznWliNpVpMmvmBSe9zQgCBqxttghMNdjE9ak7Wd7MSyBL9aMJiXxbGTDN3U6eIfrij5Ksli
-	BPv2pu3vpUzGP9L8owrJiCyuhdD/je9Iv+Wd0vfJtBugJ38IOWEFC9Hwxqau1AqVzf3cEkS3vr1
-	NgawnQg4a4VgpfVKkD3DTulGsJrNSvWc/x/lpyblL98bHRHjhCmwoHC7FxfwKjWQZmId2LiVxnX
-	ZRc9a3RnHrizpDOrIFqzZaS/CaxRExET6eTim+b4WljHrqHoUyvUwDJ7Oa+gEsE1xqf+om8191N
-	Cv1lxrB89pq7aeGEYPhg2NJRNYikKNyoy15+d1
-X-Received: by 2002:a05:690c:3604:b0:81e:9ba9:d37a with SMTP id 00721157ae682-81f69e690e0mr36397057b3.50.1785193723450;
-        Mon, 27 Jul 2026 16:08:43 -0700 (PDT)
+        bh=kMVJlMZ5aiYr17VZ8/g7qzvf1FPYL/KyBw/hvOfyKtg=;
+        b=MI111ML1xBrQ6bwkonPrKF5RCg4q4Oo0FCR/hx64RdpRIuhsRDUfJVTcIE+9wO373+
+         Gi4c+ZO31aeehSvbjqUIF3oU9hckcQZuoIeahI3EfEKouDWLqmM6TXNV5QMFXJhbP5Rp
+         HB5HmKwXq2UIf/jtCixUO+m6uBwIf1pwZtzruAx15vpAIWoN9N/KodP8nmucym5tTJih
+         xnjkGnnhxxtX+Au6kt8/X7Y9YEz5HFWDjAkG3Sv8IyOUCDTlJMNKsY1n1zuXYNvHonBO
+         EzdRItbaVP0LO1lcDLwP7C0LhbblXx6Qo4a6v6Xc6K58a22JF9OQl/VbdC8O5rqeYrLE
+         aUlw==
+X-Forwarded-Encrypted: i=1; AHgh+RoC8Rz+mOcuek1XNGWjUv5O81OjMuOLdWCJ37L4dfPirGhCEG4FE9pNKd2r+qb7BbknNF9qpmPMeJLuq/YllWRRaeZTYQo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSK2pfpQudB2eyBk0jb3ZfmtnRPi9y+SGFzWuU1Pf6ctYorYxe
+	HZRGeEkgDR98hb1TUpBkFLNMSdKIEt2cPo0TQOKsIKsgMbC5lKk3J78Z
+X-Gm-Gg: AR+sD13YIY0M6qzJt/ApVy7hfafO11WaadGg5dPrUCNuNEKjqFkv20FQs5zUU4ksmhG
+	BQL+ZFE5UTE/Cy03rL8PSLnFkjnzGiIga4+DHQTuZdBY7jMEnT4kBS9HE00NGH/z4mR+xeeUaDc
+	n23zbLdEyqhrPR0/K09T+QnlvC+u5fuhZkuCFvCcKmqP0McEGeDDzv5ss4WyangUwJzTZ2FRlbU
+	Rtcq8QofF+2IFS5F9meSCbyK6pAPH/AnUdBoQG1HBgzhBIBkOtp0t26U8rtsEHiM0X5kkzMYJsX
+	ZKBycXfHZoOZtdTKiWhcisDtaotyQU6+BuJVZdzWBdEQeF79IuCDB8TPwn+NhQEE6+Se6FcmFgR
+	Qc2Hcg9OSZgWmGHs/Hggv/emxK0laeJqUihJ2SlBI94iavlkjnMRtrkT1CCeqtOLZvA9TlJt1rd
+	I8f5ttPZHWbcSDXQRf1+rBUtagQdCyiztHIYoT
+X-Received: by 2002:a05:690c:3685:b0:81e:4e5d:484a with SMTP id 00721157ae682-81f69cdcbabmr38242427b3.2.1785193726487;
+        Mon, 27 Jul 2026 16:08:46 -0700 (PDT)
 Received: from zenbox ([2600:1700:18fb:6011:732e:7f3e:f365:cf9a])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-81f65931411sm38644837b3.44.2026.07.27.16.08.42
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-81f65931411sm38644837b3.44.2026.07.27.16.08.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jul 2026 16:08:43 -0700 (PDT)
+        Mon, 27 Jul 2026 16:08:46 -0700 (PDT)
 From: Justin Suess <utilityemal77@gmail.com>
 To: gnoack3000@gmail.com,
 	mic@digikod.net
 Cc: linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	Justin Suess <utilityemal77@gmail.com>
-Subject: [PATCH v2 1/6] landlock: Add kern_ipc_perm credential blob structs
-Date: Mon, 27 Jul 2026 19:08:28 -0400
-Message-ID: <20260727230833.138165-2-utilityemal77@gmail.com>
+Subject: [PATCH v2 3/6] landlock: Bump ABI for LANDLOCK_SCOPE_SYSV_MSG_QUEUE
+Date: Mon, 27 Jul 2026 19:08:30 -0400
+Message-ID: <20260727230833.138165-4-utilityemal77@gmail.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260727230833.138165-1-utilityemal77@gmail.com>
 References: <20260727230833.138165-1-utilityemal77@gmail.com>
@@ -78,100 +78,40 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add landlock_kern_ipc_perm_security, tracking ownership of SysV IPC
-objects.
-
-The struct contains the creating task's Landlock credential
-(@owner_subject) and a @kind enum identifying which SysV IPC object
-this blob describes.  The LSM core allocates the IPC blob for every
-kern_ipc_perm regardless of object kind, so the generic
-ipc_permission hook needs to be able to tell which objects it should
-enforce a given scope on.  An enum makes it straightforward to extend
-Landlock to sem and shm scoping later without revisiting the blob
-layout.
-
-Define the size of this struct in the lbs_ipc field for the Landlock
-blob sizes.
+Bump the ABI version for Landlock SysV message queue scoping.
 
 Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 ---
- security/landlock/setup.c |  1 +
- security/landlock/task.h  | 50 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 51 insertions(+)
+ security/landlock/syscalls.c                 | 2 +-
+ tools/testing/selftests/landlock/base_test.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/security/landlock/setup.c b/security/landlock/setup.c
-index 47dac1736f10..44aff2d734e9 100644
---- a/security/landlock/setup.c
-+++ b/security/landlock/setup.c
-@@ -32,6 +32,7 @@ struct lsm_blob_sizes landlock_blob_sizes __ro_after_init = {
- 	.lbs_file = sizeof(struct landlock_file_security),
- 	.lbs_inode = sizeof(struct landlock_inode_security),
- 	.lbs_superblock = sizeof(struct landlock_superblock_security),
-+	.lbs_ipc = sizeof(struct landlock_kern_ipc_perm_security),
- };
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 36b02892c62f..84521a31bf75 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -169,7 +169,7 @@ static const struct file_operations ruleset_fops = {
+  * If the change involves a fix that requires userspace awareness, also update
+  * the errata documentation in Documentation/userspace-api/landlock.rst .
+  */
+-const int landlock_abi_version = 10;
++const int landlock_abi_version = 11;
  
- int landlock_errata __ro_after_init;
-diff --git a/security/landlock/task.h b/security/landlock/task.h
-index 7c00360219a2..0fb82e5e347c 100644
---- a/security/landlock/task.h
-+++ b/security/landlock/task.h
-@@ -9,6 +9,56 @@
- #ifndef _SECURITY_LANDLOCK_TASK_H
- #define _SECURITY_LANDLOCK_TASK_H
+ /**
+  * sys_landlock_create_ruleset - Create a new ruleset
+diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
+index cbd3c1669951..b8b5fa1042ba 100644
+--- a/tools/testing/selftests/landlock/base_test.c
++++ b/tools/testing/selftests/landlock/base_test.c
+@@ -76,7 +76,7 @@ TEST(abi_version)
+ 	const struct landlock_ruleset_attr ruleset_attr = {
+ 		.handled_access_fs = LANDLOCK_ACCESS_FS_READ_FILE,
+ 	};
+-	ASSERT_EQ(10, landlock_create_ruleset(NULL, 0,
++	ASSERT_EQ(11, landlock_create_ruleset(NULL, 0,
+ 					      LANDLOCK_CREATE_RULESET_VERSION));
  
-+#include <linux/ipc.h>
-+#include <linux/types.h>
-+
-+#include "cred.h"
-+#include "setup.h"
-+
-+/**
-+ * enum landlock_sysv_ipc_kind - Kind of SysV IPC object backed by a blob
-+ *
-+ * @LANDLOCK_SYSV_IPC_UNSET: Blob has not been tagged by a Landlock IPC
-+ *	allocation hook.  This is the zero value used for sem and shm
-+ *	objects that Landlock does not currently scope, as well as for
-+ *	any future kind that has not yet been wired up.
-+ * @LANDLOCK_SYSV_IPC_MSG_QUEUE: Blob belongs to a SysV message queue.
-+ */
-+enum landlock_sysv_ipc_kind {
-+	LANDLOCK_SYSV_IPC_UNSET = 0,
-+	LANDLOCK_SYSV_IPC_MSG_QUEUE,
-+};
-+
-+/**
-+ * struct landlock_kern_ipc_perm_security - IPC object security blob
-+ *
-+ * Enable provenance tracking of SysV IPC objects to scope IPC accesses.
-+ * The LSM core allocates a blob for every kern_ipc_perm regardless of the
-+ * underlying object kind (msg queue, semaphore, shared memory), so callers
-+ * that act on a subset of object kinds must consult @kind before
-+ * interpreting @owner_subject.
-+ */
-+struct landlock_kern_ipc_perm_security {
-+	/**
-+	 * @owner_subject: Landlock credential of the task that created the
-+	 * kernel IPC object.  Only meaningful when @kind is not
-+	 * %LANDLOCK_SYSV_IPC_UNSET.
-+	 */
-+	struct landlock_cred_security owner_subject;
-+	/**
-+	 * @kind: Kind of SysV IPC object this blob describes.  Set by the
-+	 * matching alloc hook; %LANDLOCK_SYSV_IPC_UNSET for objects whose
-+	 * kind Landlock does not currently track.
-+	 */
-+	enum landlock_sysv_ipc_kind kind;
-+};
-+
-+static inline struct landlock_kern_ipc_perm_security *
-+landlock_kern_ipc_perm(const struct kern_ipc_perm *const perm)
-+{
-+	return perm->security + landlock_blob_sizes.lbs_ipc;
-+}
-+
- __init void landlock_add_task_hooks(void);
- 
- #endif /* _SECURITY_LANDLOCK_TASK_H */
+ 	ASSERT_EQ(-1, landlock_create_ruleset(&ruleset_attr, 0,
 -- 
 2.54.0
 
