@@ -1,72 +1,72 @@
 Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A830E345CCE
-	for <linux-security-module@vger.kernel.org>; Mon, 27 Jul 2026 23:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83DB3ED109
+	for <linux-security-module@vger.kernel.org>; Mon, 27 Jul 2026 23:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785193732; cv=none; b=Fw+p8sgMD6cQSeIVLDdkPGgLIxQ4PHk+RbIG5wpqrLjG5r20w7FqlGqgvsgga3/ZC5A/IZ24WSq8zAmJxhB1k+Hk8S72H8O60VVp/x6Q4gj+rr255OlSOUzDERoVXiWQHgw4iD2YkBi5b1Xkrw9pqxXNYqiFlMgMXJRVgTngP6A=
+	t=1785193732; cv=none; b=NmUDs+0omzExEWkslmqF+lt8R2vaB5aM5xZv4GKzHLUd6lWYMjhCx2st3qAlGCUbVNjdiSknrt2zq1AiHR+R+H7XbHMbYc8iSQAYgxS2VVOmIXLoQkjhdpNilzWy4u5TPj38b5y2Z0OvYqIAa0xwXKuJuVEo/2OtSHPJ2UXJ6Ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1785193732; c=relaxed/simple;
-	bh=Rlw3TMtjG+DXzcW8sjo+jheuSWMlsqSKVPzs0JsgDPE=;
+	bh=kCiXNdgH77wQYZu6b4KVIwv3eFmTLTCCq+mLw7HjKIA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LqTNE4+8bN4rmOmujPe5L9QHm0s8bDHUemXdwcQIgyxvjCrbsgShlF+1XuUci8s5Q8k0Zdv/ayJllPSQ7jOjMrUGyvBlX+oiax5TJQgBjdX3v5mK1rzd0EFJ5CvTmVG3yb0klMC4RBnjP28NF3wAXPog9krwqiNlFbUK46x4krM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y/SkJd7C; arc=none smtp.client-ip=209.85.128.172
+	 MIME-Version; b=tONDI1rWA+cLPx4thCZkUzw5iLBXPWj0GtAeR6mRobd1doK7RK39X1uxFcwA0xedzMnGfv2FWE20yHwWiv4BGVDKpCKVR5nEXIsVwTY3dL1k87f3R6DZrUu14mrgSeAe65aYuHTN4Zp3zCYhx1rLmo02TjoYUvtswWo7AMA9frQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zy73tIl2; arc=none smtp.client-ip=209.85.128.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y/SkJd7C"
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-81f3b227a4aso41164127b3.1
-        for <linux-security-module@vger.kernel.org>; Mon, 27 Jul 2026 16:08:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zy73tIl2"
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-8111c0c7561so30984967b3.3
+        for <linux-security-module@vger.kernel.org>; Mon, 27 Jul 2026 16:08:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785193730; x=1785798530; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1785193728; x=1785798528; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=nY/xukgSNDJ94ErXRWC/QdmaMAgse9n4lIgbjHfqs/U=;
-        b=Y/SkJd7CZykheJcVRiVYhY4d180GsuRVjIlgi2Qpb2BdE/drJmFKiddt2g0n1ivmXM
-         0rVxApujYGdg1YH8/pDn7I4sMvw5zjt1Zrowm/qJiR4FZBnn8kB1hqdOvjHpmz7PSRXO
-         3GfCjuzzWBBGfR03ETt7aq3yZGlHn0rEgpc2Tqosn/E8zv8MQqdAs3teEh/gq2PPRB3b
-         hAH0X6DYoudxxlj+bDJSpHlcB+UNfESfjad+rWGUPM4gli+rR5XwrquMfpJUBpj5Dwtk
-         +wLZtdusoiAJBxeF54Pq3D2p4K/na0CdLnG5/7oFcEX8VqNl65k6uDd0blEeZmDykGPF
-         kXeA==
+        bh=+9C4SWOs1WBQLQtm2p9OO9AdTM755l1mYDQTVGolQq0=;
+        b=Zy73tIl2jeiPdpK0QbgRHBVaZQRVRvQnaj9C5OXYTfTyFWNgOaJyyUuj291X+Vej3W
+         S60+DcuhXuTw54Qjtiyi3Vr9JrSwY+adLqUM2ieyOfW9KskYlC0OSdhacVLNooj0Dk0J
+         SPPnf0Na5jGwqgc2wrsa8dHZiNL17jDVfgviRjIfnRT6ewuoxxWmiiSNg83LYTqvZ8mq
+         hxS3QBtHgSe0qIhVBQapqQCO9s45s7qaeLQZPB9MhtI6o7mB9G+ZgG9nyhiPaZC3eb6A
+         b/Ovo3IlPrHsrXKg9CV/cwXzj39ZmYesErrTHZnFsHuvb6DZ+WBDLqQyxbtv2KzqlRVI
+         1qyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785193730; x=1785798530;
+        d=1e100.net; s=20251104; t=1785193728; x=1785798528;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=nY/xukgSNDJ94ErXRWC/QdmaMAgse9n4lIgbjHfqs/U=;
-        b=R0QguvqLxXwePBbikBDrPnxO2j4h18JsUl3sZROfo/SKJEBXZwvJibn6sSDZG4Ns0v
-         LufA2LkwR4bWWcmIe1aE3cXN/VTAj+Mxd7pyjDi8hZp6hAD3gpyuCc0UeOlpTzekUxiV
-         pi0ORZTM8Bnf7Ym6I7s+usScczQyOqHc/x8I3utXScVOYcXHrrBlv5iLAVppbAoQ3UKW
-         seZNZaWtmdSEGQB+anCsxApGHjVJjcFEeOmA4OF6PEumkDCimWDWoTd6WUN8oaoFIHSV
-         vZTHYRIrY3bR49cA3pgLCS+RQ5Io51pRjQHeVYImg8jhd+r6nkXBHAIbv63tSkJRa0sL
-         InnA==
-X-Forwarded-Encrypted: i=1; AHgh+RpLEeVJ6ulE99eSSji69iW87TEH9dmXnlM+DAAOj8kiKSBwEZItRk2wsXIsbkYz6VHF4acXv9pLYNtgz2ztcPjNNEwotyA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbN2GoOCZVBV4DvJZEIm4dwyYMItpNv8NBbS6mgRogwvMYbHT4
-	EBLsCUS0yl0b3PhUG60UaqBrH9tM0hTjF8lOiQySTqQfSxRdsb+nUmU0
-X-Gm-Gg: AR+sD10kFpxOt7fXY6c+CP6zQZjDLcNsXEp6UP3Vd7G27CnShGRq77lkvA05ZNKDtPu
-	tx+19hZrNEH+QlxGHFwvaj5kvIQKbAGwIG5AdzrCu3Ld8aFO3SZLzFEqfvEnOKfwjEjvxr/6k+J
-	NYkB1rkCKjAHYHLSUNrh9x5TeWgPgjE66b0eRk90SH81xk9xKFVH4va0UCB2nwFUy9FjA2IUZQC
-	/bxwI0loGGTJM2TVuSIu+sfzuWsokvtM2rdU/f39PINt5rf9oHiO0BAoS0bKY1Yi7WoZagUM6xE
-	8JTSj8wZ7XN6DuH8ggjRlLqTsGUI8x1vhQIlnd073h6NQ1KKfkDiNKjF33wSxLYZkf5ZH6gL1Dm
-	MQdeOL9luDsJpzPz1EGM/pZcYuLd7adsfsdpeD7WHUYvtHI7W8zJ8HQte4YdJqFDfvl0vkYMQDe
-	XEBk0vT3Ynea/ZLnmYsTBdh8qwr57PUORB4nP5ricpUYvQyIk=
-X-Received: by 2002:a05:690c:6287:b0:81d:26f9:bc85 with SMTP id 00721157ae682-81f69dea8b2mr38009537b3.45.1785193729660;
-        Mon, 27 Jul 2026 16:08:49 -0700 (PDT)
+        bh=+9C4SWOs1WBQLQtm2p9OO9AdTM755l1mYDQTVGolQq0=;
+        b=oUlFzNsdwniz1VRdvpy9vwEW6dI+i3Zi7Oj6cFC34qoBcj50HLg4jxHojtD117l3f5
+         2/evGtnINRUtA4HxCM1oa+ApYP/u3xdLbYfjC8JMw9raHHe5z6c9Y83GyohQBdY2fJ9c
+         bj84MtAmJbmMFbW7mtVHg4cAYD5CHpgNehVV9Wm5ITV/vbl9os/GZF7f4dCjLYmpxtVE
+         vfr82c1C3xLswce2o005No9fHWM0PlYuxjs7MOfp3S88u6KtpjFhCahw7a8xOGUuP1o6
+         Lx/qiApp++Om9Q2wmQ8Fi8SCSvz2h5IpmAjPnilK+bbj24N6pxH2Hqn3YjOXSxdAQXAE
+         ezTw==
+X-Forwarded-Encrypted: i=1; AHgh+RpGMgf5NIq5PWFLx3b1LG+QSR1uN+418MI7MMhHRNKvfsWaWpLn30SyDHCke2tSeGcGFU4RtPpn7JE0kneJ3tghb5gDxsU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMbmWk2g+tjChRrPo6/QbFttO9TzJczyFJbO4ba7fxxKdtFL5J
+	j14aimho0onViuDV91g4MjQ0VshBKr7QBQDT9uf511ASVlF5MO3gfs/S
+X-Gm-Gg: AR+sD11IIfz6jGK07KUWQWKeFa8pHGqyjkvpf9sgmp0nad2aS4Srf9OHaA9V6YDLNd5
+	xtZWYpNhUuQmPqLieb7pQwgwwCYwrZ1wHRVcKMNX7sWK0odF6LuL1FbNgJ5lZvtPykXAOZeTqpU
+	7AKaB4CTFl76f3+6JFXz/jlGRlYyYRMhpLgRE3YOUX+9G29MnKtjgNsSrBShIHkJzYXL124XcvC
+	f0ptvQKe2LFMBECuyRR2dFKXl5zdSsFODEkH9lEbq75IKKpJ/sqH0f+TmHtj4Wo2cSaSbMAUqIw
+	j1ckGTvGcUQiJsm62YaXN/AIb8JLZ2nArXpApYYmoAvH756ntATJEGWJPotsfm0dpRPtFpcJymL
+	7UyF7E/8kr/AqWPXat2mu44uzJo+CrvL+kJlKZBXm6G+PiyXFk+k8ghLBPr9HkibPfmSqstnYvn
+	WDydnjqSwy5OLrssDv8NXOQ9Kt56HmW0BNRl9x
+X-Received: by 2002:a05:690c:3389:b0:81e:f5ac:e40 with SMTP id 00721157ae682-81f93966a5dmr7107347b3.20.1785193728403;
+        Mon, 27 Jul 2026 16:08:48 -0700 (PDT)
 Received: from zenbox ([2600:1700:18fb:6011:732e:7f3e:f365:cf9a])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-81f65931411sm38644837b3.44.2026.07.27.16.08.49
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-81f65931411sm38644837b3.44.2026.07.27.16.08.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jul 2026 16:08:49 -0700 (PDT)
+        Mon, 27 Jul 2026 16:08:47 -0700 (PDT)
 From: Justin Suess <utilityemal77@gmail.com>
 To: gnoack3000@gmail.com,
 	mic@digikod.net
 Cc: linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	Justin Suess <utilityemal77@gmail.com>
-Subject: [PATCH v2 5/6] samples/landlock: Support LANDLOCK_SCOPE_SYSV_MSG_QUEUE in sandboxer
-Date: Mon, 27 Jul 2026 19:08:32 -0400
-Message-ID: <20260727230833.138165-6-utilityemal77@gmail.com>
+Subject: [PATCH v2 4/6] selftests/landlock: Test LANDLOCK_SCOPE_SYSV_MSG_QUEUE
+Date: Mon, 27 Jul 2026 19:08:31 -0400
+Message-ID: <20260727230833.138165-5-utilityemal77@gmail.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260727230833.138165-1-utilityemal77@gmail.com>
 References: <20260727230833.138165-1-utilityemal77@gmail.com>
@@ -78,117 +78,317 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add sandboxer support for the new LANDLOCK_SCOPE_SYSV_MSG_QUEUE access
-right: handle it by default, parse it as the "m" token of LL_SCOPED,
-and integrate it with the quiet access rights via the new
-"sysv_msg_queue" LL_QUIET_ACCESS token.
+Add selftests for SysV message queue scoped right.
+
+Use the existing scoped domain harness for msgget, and another fixture
+for testing msgsnd, msgrcv and msgctl.
+
+Pass the msqid around for coverage of non-msgget syscalls, since calling
+msgget while already restricted would fail and prevent testing the
+operation under test.
+
+Denials are checked against -EACCES rather than -EPERM: msgget,
+msgsnd, msgrcv and msgctl(IPC_STAT) all reach the Landlock scope
+check via ipcperms(), whose callers map every non-zero return into
+-EACCES before propagating it to user space.
+
+Track the created msqid in the fixture and remove it from
+FIXTURE_TEARDOWN_PARENT() so that queues are reclaimed even when a
+failed assertion aborts a test, and so that the removal is never
+subject to the scoping under test.
+
+Also add CONFIG_SYSVIPC to the selftest config fragment since the new
+test requires SysV IPC support.
 
 Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 ---
- samples/landlock/sandboxer.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ tools/testing/selftests/landlock/config       |   1 +
+ .../landlock/scoped_sysv_msg_queue_test.c     | 265 ++++++++++++++++++
+ 2 files changed, 266 insertions(+)
+ create mode 100644 tools/testing/selftests/landlock/scoped_sysv_msg_queue_test.c
 
-diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-index ac71019e6212..88acb47765a2 100644
---- a/samples/landlock/sandboxer.c
-+++ b/samples/landlock/sandboxer.c
-@@ -240,10 +240,12 @@ static bool check_ruleset_scope(const char *const env_var,
- 	bool error = false;
- 	bool abstract_scoping = false;
- 	bool signal_scoping = false;
-+	bool sysv_msg_queue_scoping = false;
- 
- 	/* Scoping is not supported by Landlock ABI */
- 	if (!(ruleset_attr->scoped &
--	      (LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET | LANDLOCK_SCOPE_SIGNAL)))
-+	      (LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET | LANDLOCK_SCOPE_SIGNAL |
-+	       LANDLOCK_SCOPE_SYSV_MSG_QUEUE)))
- 		goto out_unset;
- 
- 	env_type_scope = getenv(env_var);
-@@ -260,6 +262,9 @@ static bool check_ruleset_scope(const char *const env_var,
- 		} else if (strcmp("s", ipc_scoping_name) == 0 &&
- 			   !signal_scoping) {
- 			signal_scoping = true;
-+		} else if (strcmp("m", ipc_scoping_name) == 0 &&
-+			   !sysv_msg_queue_scoping) {
-+			sysv_msg_queue_scoping = true;
- 		} else {
- 			fprintf(stderr, "Unknown or duplicate scope \"%s\"\n",
- 				ipc_scoping_name);
-@@ -276,6 +281,8 @@ static bool check_ruleset_scope(const char *const env_var,
- 		ruleset_attr->scoped &= ~LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET;
- 	if (!signal_scoping)
- 		ruleset_attr->scoped &= ~LANDLOCK_SCOPE_SIGNAL;
-+	if (!sysv_msg_queue_scoping)
-+		ruleset_attr->scoped &= ~LANDLOCK_SCOPE_SYSV_MSG_QUEUE;
- 
- 	unsetenv(env_var);
- 	return error;
-@@ -354,6 +361,9 @@ static int add_quiet_access(const char *const env_var,
- 				LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET;
- 		else if (strcmp(str_access, "signal") == 0)
- 			ruleset_attr->quiet_scoped |= LANDLOCK_SCOPE_SIGNAL;
-+		else if (strcmp(str_access, "sysv_msg_queue") == 0)
-+			ruleset_attr->quiet_scoped |=
-+				LANDLOCK_SCOPE_SYSV_MSG_QUEUE;
- 		else {
- 			fprintf(stderr, "Unknown quiet access \"%s\"\n",
- 				str_access);
-@@ -369,7 +379,7 @@ static int add_quiet_access(const char *const env_var,
- 	return 0;
- }
- 
--#define LANDLOCK_ABI_LAST 10
-+#define LANDLOCK_ABI_LAST 11
- 
- #define XSTR(s) #s
- #define STR(s) XSTR(s)
-@@ -400,6 +410,7 @@ static const char help[] =
- 	"* " ENV_SCOPED_NAME ": actions denied on the outside of the landlock domain\n"
- 	"  - \"a\" to restrict opening abstract unix sockets\n"
- 	"  - \"s\" to restrict sending signals\n"
-+	"  - \"m\" to restrict associating with message queues\n"
- 	"\n"
- 	"A sandboxer should not log denied access requests to avoid spamming logs, "
- 	"but to test audit we can set " ENV_FORCE_LOG_NAME "=1\n"
-@@ -416,6 +427,7 @@ static const char help[] =
- 	"  - \"udp_connect\" to quiet udp connect / send denials\n"
- 	"  - \"abstract_unix_socket\" to quiet abstract unix socket denials\n"
- 	"  - \"signal\" to quiet signal denials\n"
-+	"  - \"sysv_msg_queue\" to quiet SysV message queue denials\n"
- 	"\n"
- 	"Example:\n"
- 	ENV_FS_RO_NAME "=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
-@@ -423,7 +435,7 @@ static const char help[] =
- 	ENV_TCP_BIND_NAME "=\"9418\" "
- 	ENV_TCP_CONNECT_NAME "=\"80:443\" "
- 	ENV_UDP_CONNECT_SEND_NAME "=\"53\" "
--	ENV_SCOPED_NAME "=\"a:s\" "
-+	ENV_SCOPED_NAME "=\"a:s:m\" "
- 	"%1$s bash -i\n"
- 	"\n"
- 	"This sandboxer can use Landlock features up to ABI version "
-@@ -447,7 +459,7 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 				      LANDLOCK_ACCESS_NET_BIND_UDP |
- 				      LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP,
- 		.scoped = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
--			  LANDLOCK_SCOPE_SIGNAL,
-+			  LANDLOCK_SCOPE_SIGNAL | LANDLOCK_SCOPE_SYSV_MSG_QUEUE,
- 		.quiet_access_fs = 0,
- 		.quiet_access_net = 0,
- 		.quiet_scoped = 0,
-@@ -546,6 +558,10 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 		/* Removes quiet flags for ABI < 10 later on. */
- 		quiet_supported = false;
- 
-+		__attribute__((fallthrough));
-+	case 10:
-+		/* Removes LANDLOCK_SCOPE_SYSV_MSG_QUEUE for ABI < 11 */
-+		ruleset_attr.scoped &= ~LANDLOCK_SCOPE_SYSV_MSG_QUEUE;
- 		/* Must be printed for any ABI < LANDLOCK_ABI_LAST. */
- 		fprintf(stderr,
- 			"Hint: You should update the running kernel "
+diff --git a/tools/testing/selftests/landlock/config b/tools/testing/selftests/landlock/config
+index 8fe9b461b1fd..8acb03464df4 100644
+--- a/tools/testing/selftests/landlock/config
++++ b/tools/testing/selftests/landlock/config
+@@ -15,5 +15,6 @@ CONFIG_SECURITY=y
+ CONFIG_SECURITY_LANDLOCK=y
+ CONFIG_SHMEM=y
+ CONFIG_SYSFS=y
++CONFIG_SYSVIPC=y
+ CONFIG_TMPFS=y
+ CONFIG_TMPFS_XATTR=y
+diff --git a/tools/testing/selftests/landlock/scoped_sysv_msg_queue_test.c b/tools/testing/selftests/landlock/scoped_sysv_msg_queue_test.c
+new file mode 100644
+index 000000000000..91a560c957e6
+--- /dev/null
++++ b/tools/testing/selftests/landlock/scoped_sysv_msg_queue_test.c
+@@ -0,0 +1,265 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Landlock tests - SysV Message Queue Scoping
++ *
++ */
++
++#define _GNU_SOURCE
++#include <errno.h>
++#include <fcntl.h>
++#include <linux/landlock.h>
++#include <sys/ipc.h>
++#include <sys/msg.h>
++#include <sys/types.h>
++#include <sys/wait.h>
++#include <unistd.h>
++
++#include "common.h"
++#include "scoped_common.h"
++
++/*
++ * Removes the message queue identified by @msqid, ignoring any error since
++ * the caller might no longer have permission to operate on it (for example,
++ * after entering a scoped domain).
++ */
++static void cleanup_msg_queue(int msqid)
++{
++	if (msqid >= 0)
++		msgctl(msqid, IPC_RMID, NULL);
++}
++
++FIXTURE(scoped_domains)
++{
++	int msqid;
++};
++
++#include "scoped_base_variants.h"
++
++FIXTURE_SETUP(scoped_domains)
++{
++	self->msqid = -1;
++	drop_caps(_metadata);
++}
++
++/*
++ * The queue is removed by the (never sandboxed) test harness parent, which
++ * also runs when an assertion aborts the test after the queue got created.
++ */
++FIXTURE_TEARDOWN_PARENT(scoped_domains)
++{
++	cleanup_msg_queue(self->msqid);
++}
++
++/*
++ * Parent creates a SysV message queue, then the child tries to associate
++ * with it via msgget(2).  When the child is in a domain that scopes message
++ * queues and the parent is not in that same scope, the association must be
++ * denied with -EACCES (msgget runs the scope check via ipcperms(), which
++ * masks every denial as -EACCES).
++ */
++TEST_F(scoped_domains, check_access_msg_queue)
++{
++	pid_t child;
++	int status;
++	int pipe_parent[2], pipe_child[2];
++	char buf;
++	key_t key;
++	bool can_associate;
++
++	/*
++	 * The child can associate with the parent's queue unless the child
++	 * is in a scoped domain that does not include the parent (i.e. the
++	 * parent is outside the child's domain).
++	 */
++	can_associate = !variant->domain_child;
++
++	/*
++	 * Picks a per-test key derived from PID to avoid collisions.  Stale
++	 * queues from a previous run are unlikely but handled by removing
++	 * any matching entry before applying any scope.
++	 */
++	key = (key_t)(getpid() & 0x7fffffff);
++	cleanup_msg_queue(msgget(key, 0));
++
++	if (variant->domain_both)
++		create_scoped_domain(_metadata, LANDLOCK_SCOPE_SYSV_MSG_QUEUE);
++
++	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
++	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
++
++	child = fork();
++	ASSERT_LE(0, child);
++	if (child == 0) {
++		int ret;
++
++		EXPECT_EQ(0, close(pipe_child[0]));
++		EXPECT_EQ(0, close(pipe_parent[1]));
++
++		if (variant->domain_child)
++			create_scoped_domain(_metadata,
++					     LANDLOCK_SCOPE_SYSV_MSG_QUEUE);
++
++		/* Signals readiness to the parent. */
++		ASSERT_EQ(1, write(pipe_child[1], ".", 1));
++		EXPECT_EQ(0, close(pipe_child[1]));
++
++		/* Waits for the parent to have created the queue. */
++		ASSERT_EQ(1, read(pipe_parent[0], &buf, 1));
++		EXPECT_EQ(0, close(pipe_parent[0]));
++
++		ret = msgget(key, 0);
++		if (can_associate) {
++			ASSERT_LE(0, ret);
++		} else {
++			ASSERT_EQ(-1, ret);
++			/*
++			 * msgget uses ipcperms(), which masks every LSM
++			 * denial as -EACCES regardless of the value the
++			 * LSM hook returns.
++			 */
++			ASSERT_EQ(EACCES, errno);
++		}
++
++		_exit(_metadata->exit_code);
++		return;
++	}
++	EXPECT_EQ(0, close(pipe_child[1]));
++	EXPECT_EQ(0, close(pipe_parent[0]));
++
++	if (variant->domain_parent)
++		create_scoped_domain(_metadata, LANDLOCK_SCOPE_SYSV_MSG_QUEUE);
++
++	/* Waits for the child to be ready. */
++	ASSERT_EQ(1, read(pipe_child[0], &buf, 1));
++	EXPECT_EQ(0, close(pipe_child[0]));
++
++	self->msqid = msgget(key, IPC_CREAT | IPC_EXCL | 0600);
++	ASSERT_LE(0, self->msqid);
++
++	/* Releases the child. */
++	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
++	EXPECT_EQ(0, close(pipe_parent[1]));
++
++	ASSERT_EQ(child, waitpid(child, &status, 0));
++
++	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
++	    WEXITSTATUS(status) != EXIT_SUCCESS)
++		_metadata->exit_code = KSFT_FAIL;
++}
++
++/*
++ * The msg_queue_associate hook (exercised by msgget(2)) is covered by the
++ * scoped_domains fixture above.  The remaining hooks all funnel through the
++ * same scope check, so it suffices to verify that each operation is denied
++ * when the child is scoped relative to the queue's creator.
++ *
++ * To attribute a denial to the operation under test (and not to a preceding
++ * msgget(2) call), the parent creates the queue and the child inherits the
++ * msqid across fork(2), bypassing msg_queue_associate.
++ */
++enum msg_op {
++	MSG_OP_SND,
++	MSG_OP_RCV,
++	MSG_OP_CTL,
++};
++
++FIXTURE(scoping_msg_ops)
++{
++	int msqid;
++};
++
++FIXTURE_VARIANT(scoping_msg_ops)
++{
++	enum msg_op op;
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(scoping_msg_ops, msgsnd) {
++	/* clang-format on */
++	.op = MSG_OP_SND,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(scoping_msg_ops, msgrcv) {
++	/* clang-format on */
++	.op = MSG_OP_RCV,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(scoping_msg_ops, msgctl) {
++	/* clang-format on */
++	.op = MSG_OP_CTL,
++};
++
++FIXTURE_SETUP(scoping_msg_ops)
++{
++	self->msqid = -1;
++	drop_caps(_metadata);
++}
++
++/* See the scoped_domains teardown comment. */
++FIXTURE_TEARDOWN_PARENT(scoping_msg_ops)
++{
++	cleanup_msg_queue(self->msqid);
++}
++
++TEST_F(scoping_msg_ops, deny_op)
++{
++	struct msgbuf {
++		long mtype;
++		char mtext[1];
++	} msg = { .mtype = 1 };
++	struct msqid_ds ds;
++	pid_t child;
++	int status;
++	int ret = 0;
++
++	/*
++	 * The child inherits the msqid across fork(2), so no key is needed:
++	 * IPC_PRIVATE always creates a new queue and cannot collide with
++	 * queues left over by other processes.
++	 */
++	self->msqid = msgget(IPC_PRIVATE, 0600);
++	ASSERT_LE(0, self->msqid);
++
++	/* Preloads a message so msgrcv(2) would otherwise succeed. */
++	ASSERT_EQ(0, msgsnd(self->msqid, &msg, sizeof(msg.mtext), 0));
++
++	child = fork();
++	ASSERT_LE(0, child);
++	if (child == 0) {
++		create_scoped_domain(_metadata, LANDLOCK_SCOPE_SYSV_MSG_QUEUE);
++
++		switch (variant->op) {
++		case MSG_OP_SND:
++			ret = msgsnd(self->msqid, &msg, sizeof(msg.mtext), 0);
++			break;
++		case MSG_OP_RCV:
++			ret = msgrcv(self->msqid, &msg, sizeof(msg.mtext), 0,
++				     IPC_NOWAIT);
++			break;
++		case MSG_OP_CTL:
++			ret = msgctl(self->msqid, IPC_STAT, &ds);
++			break;
++		}
++		ASSERT_EQ(-1, ret);
++		/*
++		 * msgsnd, msgrcv and msgctl(IPC_STAT) all reach the
++		 * Landlock scope check via ipcperms(), whose callers map
++		 * any non-zero return into -EACCES before propagating it
++		 * to user space.
++		 */
++		ASSERT_EQ(EACCES, errno);
++
++		_exit(_metadata->exit_code);
++		return;
++	}
++
++	ASSERT_EQ(child, waitpid(child, &status, 0));
++
++	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
++	    WEXITSTATUS(status) != EXIT_SUCCESS)
++		_metadata->exit_code = KSFT_FAIL;
++}
++
++TEST_HARNESS_MAIN
 -- 
 2.54.0
 
