@@ -1,368 +1,202 @@
 Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605A93E49C1
-	for <linux-security-module@vger.kernel.org>; Mon, 27 Jul 2026 22:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADF8374E67
+	for <linux-security-module@vger.kernel.org>; Mon, 27 Jul 2026 23:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785190928; cv=none; b=Iu6qb/WweaXK50bqb5XjuyyCNjLOxd3Ldkk6Uuae3cEqLFEJY6z+4SzGrzaYwGb0z3SedHJKsXem99w/hT1iAJQAvKkeBktXbktcHPhAG55DAq+GLGjlNHLayZozJXhAI5Jnq70HVMEttKbj3z6bTmO6AYPilbkvqoKtDzVhX0A=
+	t=1785193724; cv=none; b=sVCH53DGdJ2i92//KNz99H9ajQhzL/3OqL50V5uLHPG5q1Ti+9GezZakZSRdHyo43oZRWUwVhKzCcOlDsI3Rynh5vAQBRd54ayz5ZkApRdrdiBImZ6njwNUyne37szQgtZFOtoanSvZG63RR0n3hYWYMVhf9Vp1GGYIim1OMdv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785190928; c=relaxed/simple;
-	bh=YPTdSzanROZozGe9i9BwE7Cx3am54pJGkD8oBn02IPg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JATL8fjlvFUb4qcIB8iijBjtLL7GUjRpt62f2l2ulfZmpA5ES1Vl76xgAcQhqmoxOs254n7f+rlyOskgoS3qgwgAGXnnTSr2Z46ATW/jpVC/iQkFhqLt2AKG2cF3P5QLMB5n8MSDwqPJBNHbbHeygjtRnpwaskmYm9RVq7XsL/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=BwozebGZ; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	s=arc-20240116; t=1785193724; c=relaxed/simple;
+	bh=Y0k6xLY/0wbkKVSiLRM2fplStSzqiLrFfg+dIaAf/Eg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lPO92j3J0lgFkoMiHBAZVgSipR3oR2sDWXZLM3w0os6FFn1G+O5hrUAcFtFsBa/AJ5sug7gcZHDSwQrxl7BZ8+WUjxvrm3+8+DcTaspfS9+h81Te9UPi5C+WhYGT24bSoY8IcVSE1OpH5FLUEvmSJhXdcNua9g3aVQpD55Hykjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LIn6T5aq; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="BwozebGZ"
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-81dfdbd86d1so30329507b3.1
-        for <linux-security-module@vger.kernel.org>; Mon, 27 Jul 2026 15:22:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LIn6T5aq"
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-81062fdeaf5so6466027b3.0
+        for <linux-security-module@vger.kernel.org>; Mon, 27 Jul 2026 16:08:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1785190923; x=1785795723; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=92Xmg3P+IU8tVnyUZbvpaSDybm+0KynzgduttwHWSVY=;
-        b=BwozebGZZOZIvp9lF/sGltVvuh9F4U+z42k5NWOe4E+iFPgcFiwSUA4+oycUB+Yizd
-         ckHDXkzdOD9muewtWsgm32NDXfuNV5dcESmhK+oW6Fzl1jb/6RpW6If4OrxTAoNmkWtt
-         z2n0jqRdhm/6th7Rzh1hpLiyL5QhlhhNbj6dYZOENsdHn071e4Zb4tNKpYn96/2rf62A
-         xShM5nMaYqtIP01wbSvgBcMjU4uhf6wRTO+6vt+AYrZf2ALXcrdkXMPIsFKEqaa0Jusn
-         6fVPppxliwqS+pV484ziUPqwnMLh8iMGc3lMjiCM1x2b8yr15CquTF8TOHcZ9Wl97Tha
-         we8w==
+        d=gmail.com; s=20251104; t=1785193722; x=1785798522; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=bVwbhzO9gGX5b6tRW7uZkko+4y4EgfjAbaRkkNPkQJQ=;
+        b=LIn6T5aqsDkYhSn/SXHdisoPVC4lm7Mn49yk2Nep3z6H2WytYr2dfcX2HSD2MWAhE2
+         /cnbl+H4Q5CCpHe4NCEcnkTx1B9qtDFJHpezMwHq1ED3FX9lMaKEpJblIWfZkMmYABzG
+         WbmDYQudxf6+sLOO+rZqM5tMFsk18UTaNEzE0+t6JFIWDJ9rgC3rEvzAUTaU20LXE5+t
+         ToyKVZlB/NTdH0u5XTF357+FzY39G39zP+fg9v5IpmtAjlAISMh/Ie2dN1PRvr/WHfuu
+         l6okBg/tiNuHOoj2X6LTXwHRQ2Zq8hP2wD8zpeNEQbRKK4WQZoIV4pnVokgg5SplkRrx
+         9M8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785190923; x=1785795723;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=92Xmg3P+IU8tVnyUZbvpaSDybm+0KynzgduttwHWSVY=;
-        b=rBGP/W/Vt7A0EaIDqqeRdahNvikGK6GF/S8OM+vJt6zyz3ByKfKFoLaS1u/RCnXx1l
-         baeWDiEhwINh/uYg03WjiviLtfWHwFigzIAWgFgFVB7utV60BtzVx8AouRkLAcAHFdOb
-         bwB2NF3BE2nxjXF+ff/kM98oGLSXedoiSwZUUNGDznsaf6TqFmBz5bB/UDFLQIF/iYnQ
-         HHbLSl6P15Vf5ShlDDb4B203HVVjAmItAF/Lj1nIzOmvBL4TAUFaFgZeN70QM8pUriqI
-         t52xvJ3Dp+foxKc/5CPWWA9ANN3BE0Ps1F3n9iJcY2fckxEKGBtEn25EA2bCAMaf8bvD
-         dwOw==
-X-Forwarded-Encrypted: i=1; AHgh+RoeNhhJHv/uiyN1RYsd0TmqoGIl19d7qkmuI2EuIPLeJWs4g2XR8iLifvsQEK6g6WbHInwFu09lKX9WEM87DSOVf6pDt8M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7ub3DhKDNDevmmVHsE/8MxRZlKd44M43Pj+lkSpL7ARHxnyAB
-	q3fEW8A7kFaaZ765+obw38RXWYg8uEt/FtAnAyBmPywTVqUHiPgCCQSUslsvZ4ggFwg=
-X-Gm-Gg: AR+sD12cnhKRE3kx1rsOAOnVOsBBvFA/a/7t8ou2XFc4J1melWkjmbSAh1r9dQ2b+iD
-	bAGzy6CkQPJJKduJPOgFVYEZO2lRmT63a/W+MyNgR11Tzw/XbfHvCL6kOAObfJtzqiQcu5UrGI8
-	cnENwpE2rgZRcSqpsTktbK7Xmy3Gm67E2X6w950Csz1V6YmNZ8uK/1KXSx8lR93yzl0rDeLgbk3
-	GTMk10KEzyIHR5AVQ/nVwDz7KZYZQb1PtYHs5LOnu3+4bq6Y/bgR21y+nY6tE3ZTtjBo60qOVb/
-	Pl82CLRJ72isJa47X5Xgx7O+NkCMvITiAg7x73gWcjbF44MG51RSBHdvNptDuWVDFaaf/IEImK5
-	OSzAd+HnLWCW2a/fY97T+HnrIWl9IhI1MA4Z6lHvvOGTNj2AFIGYKTEjOT8SvEH1buyycXiLP
-X-Received: by 2002:a05:690c:6f0c:b0:81e:776b:ba51 with SMTP id 00721157ae682-81f69e6fc59mr36628687b3.58.1785190923235;
-        Mon, 27 Jul 2026 15:22:03 -0700 (PDT)
-Received: from [127.0.1.1] ([2a09:bac6:947f:3af::5e:7e])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-81f65774b02sm38756017b3.5.2026.07.27.15.22.01
+        d=1e100.net; s=20251104; t=1785193722; x=1785798522;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=bVwbhzO9gGX5b6tRW7uZkko+4y4EgfjAbaRkkNPkQJQ=;
+        b=NJYOrsPyZf6b+EyNRUCdfMnpUQ8IN/3ybb6Xll8/b3ar5JXWqZZkrkcPG835S1q+G2
+         40MqamSelNUXwrrumxWfqprxjD1g1HjZuN7j/KY+TTfchgQMUnD5WK2wAn7dPwtB7/hI
+         qt0a3qHoUu8fnQFaur6XdrwO8/0LgSGEuR0mg9sb8Ky8JQbfap97og7X1dFkp4LFTmyG
+         k8wHrxvw9Gc/oOKNHGqzvC8NnxweTP9f9MIk5QyD0m6pnXSMK9/QPty/lPG+pCxS2eCj
+         JhA7IIIbaGt3l4esvIalbPgkKw93bkuacHyyy9i9DGZnXxT+3GHjiLuS8UqcaK+sZ9Nh
+         Gbzw==
+X-Forwarded-Encrypted: i=1; AHgh+RrsNbS6FXHyDozKDBd+f5ovJ1W7edpWff/9A3BzIKVVjUnVo9xi2o0SJ8JB/K6+ScTbl5jYYJBaw1akW8fOXa3fA0suW4U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNEUD9HWusZ9Ptk7lfjbFs60WQoWy3BaEhCnddVwMabgd0EgJL
+	hroBpJMMgYw1W+xg9urCWJvVs6phiqQnuSctkvm6qDw5o91mcLMrrWDR+OLBobRP
+X-Gm-Gg: AR+sD12ty0WtrW5dgPKeaW8ZKvIpZwvoxmFe1UMakRBXqJB71N1izRG86XQ65Z7zUTn
+	UGq9/r1r+aXqKiAr7tAYqedGDEMMXJHQgoNiLJ8WR2oCBYy1ckr4ZYIyjYS289zxSlz38TpnKmR
+	q6BE0n5XV7149nl1pcou0mf1eaOl9rhTmjN2EoxVzwLkjYOFFGbH4yWSnCR9g7KVnY7tBNXR6P7
+	jTdszByMQmG5EnIfpiwOEZJIXT17XhD0a+SWXo4NaSlwkg5jysqoSQRgiE3A6mysP83xVF/eLE4
+	C8lkW8s/0+uacz4yjwJ1XOWAHSwJBKtw/SeSJSuc6nxsm5P13jmdIy3OxpitShE1gwcLxiqNeXT
+	RLw+Z9oM9A0pQClBosIBfHUIPEot9E1lu83qb7qRc8mHm50uZ5hDivecZthuxqI6eztMTyFpUNZ
+	yDB1xIlJ94/OmrOla3PSbS+LxMxnv33br/K7k8
+X-Received: by 2002:a05:690c:884:b0:81e:d60b:ecc4 with SMTP id 00721157ae682-81f9623961emr3034287b3.17.1785193721741;
+        Mon, 27 Jul 2026 16:08:41 -0700 (PDT)
+Received: from zenbox ([2600:1700:18fb:6011:732e:7f3e:f365:cf9a])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-81f65931411sm38644837b3.44.2026.07.27.16.08.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jul 2026 15:22:02 -0700 (PDT)
-From: Frederick Lawler <fred@cloudflare.com>
-Date: Mon, 27 Jul 2026 17:21:49 -0500
-Subject: [PATCH v2 3/3] integrity: Report error code in
- integrity_audit_message() call sites
+        Mon, 27 Jul 2026 16:08:41 -0700 (PDT)
+From: Justin Suess <utilityemal77@gmail.com>
+To: gnoack3000@gmail.com,
+	mic@digikod.net
+Cc: linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Justin Suess <utilityemal77@gmail.com>
+Subject: [PATCH v2 0/6] landlock: Add scoped access bit for SysV message queues
+Date: Mon, 27 Jul 2026 19:08:27 -0400
+Message-ID: <20260727230833.138165-1-utilityemal77@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260727-report-hash-error-v2-3-30e394f524fc@cloudflare.com>
-References: <20260727-report-hash-error-v2-0-30e394f524fc@cloudflare.com>
-In-Reply-To: <20260727-report-hash-error-v2-0-30e394f524fc@cloudflare.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, 
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-team@cloudflare.com, 
- Frederick Lawler <fred@cloudflare.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10477; i=fred@cloudflare.com;
- h=from:subject:message-id; bh=YPTdSzanROZozGe9i9BwE7Cx3am54pJGkD8oBn02IPg=;
- b=owEBbQKS/ZANAwAKAasltHYDktNtAcsmYgBqZ9oEF3QC4Rn8kbwi4llZPGbFNaZdPYqpWDeSx
- pdDWHIo726JAjMEAAEKAB0WIQTLNBqMVmu1PHvjOe2rJbR2A5LTbQUCamfaBAAKCRCrJbR2A5LT
- bSbSEACJRUS9kJTx+UjeuBvDTszWUmxVPzaF2P0EEsQXres2dc6aWHCXx2U+FX3yeR38fH3FDdC
- nPiKYZbSpoTHd2wz2h6ooBILwGLYoM7XsNXgdDaTsvayGXKxxPdsddi5HbQbkxQQLAs8QxCki+b
- wtZFB0Ov3WFjRLD4IMlt5PPcvEYW9EfbCdlhef5AgjQjyxryrJ4Wynx7tRCnLOShs54AaHuvsq3
- 1pV1/tujQmLVPDHaWVuW97VrorcY39NwEsz6Jjm2EkygE6a1CNuTn5wgoMelM68Wbf9D1/pPQWr
- csgBJ+5WpE7Y4EXFBnZvBHyS5UqAL2Kwc4k93GCKX3U1z4h4NIvWgMZVLmnNGVTqj/gEQtVArKI
- 3i209lR2BfMOq9vujmQh9SIGPg/HAx9k9NJ+XnVd3Q3dT0y+3QCc8hpxZSmPs23FxFG7vfASq+7
- MKGjtCrhhSA1wA6s9VMu6z3PuBWVzbeWjAjs8mQBw5xIZ17rt+ZoTIyx/rCVXliKiVg+we8s2q5
- kXUO0koSq83p3qzYNrEwVcfmXzMbW/xigm4pOkzCv4LkhZCJoZjIimremCCCRLlYDbvz/+NIMsW
- gr8kys7FgSrBa7Qc9gQILYUouF/p1jEZDFcsWil5bdmqKq0X0NLUPfSGC7DUOSaiBkH5GDIKXnX
- +qmxl53owrPyoSw==
-X-Developer-Key: i=fred@cloudflare.com; a=openpgp;
- fpr=CB341A8C566BB53C7BE339EDAB25B4760392D36D
+Content-Transfer-Encoding: 8bit
 
-Most IMA functions return a error code reported with a log message, or
-depend on a error code from a callee in prior code paths. When inspecting
-audit logs, it's not always clear a message was produced in the first
-place because the cause may not expose the underlying reason. Since
-integrity_audit_message() can take a error code, expose these where
-it makes sense.
+This series extends Landlock with a new scoped access right,
+LANDLOCK_SCOPE_SYSV_MSG_QUEUE, allowing a sandboxed process to be
+restricted from interacting with SysV message queues created outside
+of its Landlock domain (or a nested domain).
 
-Signed-off-by: Frederick Lawler <fred@cloudflare.com>
----
- security/integrity/evm/evm_main.c         |  8 ++++----
- security/integrity/ima/ima_api.c          |  8 ++++----
- security/integrity/ima/ima_appraise.c     |  6 +++---
- security/integrity/ima/ima_fs.c           |  2 +-
- security/integrity/ima/ima_init.c         |  2 +-
- security/integrity/ima/ima_main.c         |  6 +++---
- security/integrity/ima/ima_policy.c       | 10 +++++-----
- security/integrity/ima/ima_queue.c        |  2 +-
- security/integrity/ima/ima_template_lib.c |  2 +-
- 9 files changed, 23 insertions(+), 23 deletions(-)
+While use of SysV message queues is less common than other IPC types,
+they are commonly used in older applications which may be vulnerable
+to exploitation, so they are a meaningful attack surface to restrict.
 
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index a32c98089b055fcf84f1a33dd016a51f57693d36..ba5c0dc4a8c131165aee688be68b27462489bd12 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -563,7 +563,7 @@ static int evm_protect_xattr(struct mnt_idmap *idmap,
- 					dentry->d_inode, dentry->d_name.name,
- 					"update_metadata",
- 					integrity_status_msg[evm_status],
--					-EPERM, 0, 0);
-+					-EPERM, 0, -EPERM);
- 	}
- out:
- 	/* Exception if the HMAC is not going to be calculated. */
-@@ -590,7 +590,7 @@ static int evm_protect_xattr(struct mnt_idmap *idmap,
- 					dentry->d_name.name,
- 					"appraise_metadata",
- 					integrity_status_msg[evm_status],
--					-EPERM, 0, 0);
-+					-EPERM, 0, -EPERM);
- 	return evm_status == INTEGRITY_PASS ? 0 : -EPERM;
- }
- 
-@@ -733,7 +733,7 @@ static int evm_inode_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 					dentry->d_name.name,
- 					"appraise_metadata",
- 					integrity_status_msg[evm_status],
--					-EPERM, 0, 0);
-+					-EPERM, 0, -EPERM);
- 	return -EPERM;
- }
- 
-@@ -998,7 +998,7 @@ static int evm_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 				d_backing_inode(dentry), dentry->d_name.name,
- 				"appraise_metadata",
- 				integrity_status_msg[evm_status], -EPERM, 0,
--				0);
-+				-EPERM);
- 	return -EPERM;
- }
- 
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index 8c37dd4c9bb805213fb62e597a70189eca12b897..1c40fea4b9a7d990ffe2c1a5ce54cec94f9cb7ef 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -116,7 +116,7 @@ int ima_store_template(struct ima_template_entry *entry,
- 		if (result < 0) {
- 			integrity_audit_message(AUDIT_INTEGRITY_PCR, inode,
- 						template_name, op, audit_cause,
--						result, 0, 0);
-+						result, 0, result);
- 			return result;
- 		}
- 	}
-@@ -159,7 +159,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
- 		ima_free_template_entry(entry);
- err_out:
- 	integrity_audit_message(AUDIT_INTEGRITY_PCR, inode, filename, op,
--				cause, result, 0, 0);
-+				cause, result, 0, result);
- }
- 
- /**
-@@ -330,7 +330,7 @@ int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file,
- 
- 		integrity_audit_message(AUDIT_INTEGRITY_DATA, inode,
- 					filename.name.name, "collect_data",
--					audit_cause, result, 0, 0);
-+					audit_cause, result, 0, result);
- 
- 		release_dentry_name_snapshot(&filename);
- 	}
-@@ -383,7 +383,7 @@ void ima_store_measurement(struct ima_iint_cache *iint, struct file *file,
- 	result = ima_alloc_init_template(&event_data, &entry, template_desc);
- 	if (result < 0) {
- 		integrity_audit_message(AUDIT_INTEGRITY_PCR, inode, filename,
--					op, audit_cause, result, 0, 0);
-+					op, audit_cause, result, 0, result);
- 		return;
- 	}
- 
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index cc88e3add5b7028d4901e284ef920b324645e719..6c9c1e04669a700c0558639a6f06bd759de60aef 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -559,7 +559,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 		status = INTEGRITY_FAIL;
- 		cause = "unverifiable-signature";
- 		integrity_audit_message(audit_msgno, inode, filename,
--					op, cause, rc, 0, 0);
-+					op, cause, rc, 0, rc);
- 	} else if (status != INTEGRITY_PASS) {
- 		/* Fix mode, but don't replace file signatures. */
- 		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig &&
-@@ -584,7 +584,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 		}
- 
- 		integrity_audit_message(audit_msgno, inode, filename,
--					op, cause, rc, 0, 0);
-+					op, cause, rc, 0, rc);
- 	} else {
- 		ima_cache_flags(iint, func);
- 	}
-@@ -745,7 +745,7 @@ static int validate_hash_algo(struct dentry *dentry,
- 	path = dentry_path(dentry, pathbuf, PATH_MAX);
- 
- 	integrity_audit_message(AUDIT_INTEGRITY_DATA, d_inode(dentry), path,
--				"set_data", errmsg, -EACCES, 0, 0);
-+				"set_data", errmsg, -EACCES, 0, -EACCES);
- 
- 	kfree(pathbuf);
- 
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index a0c1a6dd6a750220b529cc3f77c2ae5673188e11..deadc946af641811928b7e65d53de3515126e85a 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -596,7 +596,7 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
- 		integrity_audit_message(AUDIT_INTEGRITY_STATUS, NULL, NULL,
- 					"policy_update",
- 					"signed policy required",
--					result, 0, 0);
-+					result, 0, result);
- 		result = -EACCES;
- 	} else {
- 		ima_measure_raw_policy(data, datalen);
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index def350f7d6a0c58f119f2c74f26ea365471fb1c7..ca53a19911dab46b7bfd34fba2fc1380da872b14 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -103,7 +103,7 @@ static int __init ima_add_boot_aggregate(void)
- 	return 0;
- err_out:
- 	integrity_audit_message(AUDIT_INTEGRITY_PCR, NULL, filename, op,
--				audit_cause, result, 0, 0);
-+				audit_cause, result, 0, result);
- 	return result;
- }
- 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 22d649fa19b334674b8e81dd537033cebf569699..1d2a2ab2ff89e92f34b58e4b7c651f1d21daf7e2 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -120,7 +120,7 @@ static int mmap_violation_check(enum ima_hooks func, struct file *file,
- 					       filename);
- 		integrity_audit_message(AUDIT_INTEGRITY_DATA, inode, *pathname,
- 					"mmap_file", "mmapped_writers", rc, 0,
--					0);
-+					rc);
- 	}
- 	return rc;
- }
-@@ -467,7 +467,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 
- 		integrity_audit_message(AUDIT_INTEGRITY_DATA, file_inode(file),
- 					pathname, "collect_data",
--					"denied-hash-algorithm", rc, 0, 0);
-+					"denied-hash-algorithm", rc, 0, rc);
- 	}
- out_locked:
- 	if ((mask & MAY_WRITE) && test_bit(IMA_DIGSIG, &iint->atomic_flags) &&
-@@ -581,7 +581,7 @@ static int ima_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
- 	pathname = ima_d_path(&file->f_path, &pathbuf, filename);
- 	integrity_audit_message(AUDIT_INTEGRITY_DATA, inode, pathname,
- 				"collect_data", "failed-mprotect", result, 0,
--				0);
-+				result);
- 	if (pathbuf)
- 		__putname(pathbuf);
- 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 4f0ebc02de4eb4cf48633f3e87362a20ece3a689..3961f0b99d0672efdb4cd225ab86a54c2a75df5b 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -1988,7 +1988,7 @@ ssize_t ima_parse_add_rule(char *rule)
- 	if (!entry) {
- 		integrity_audit_message(AUDIT_INTEGRITY_STATUS, NULL,
- 					NULL, op, "-ENOMEM", -ENOMEM,
--					audit_info, 0);
-+					audit_info, -ENOMEM);
- 		return -ENOMEM;
- 	}
- 
-@@ -1999,7 +1999,7 @@ ssize_t ima_parse_add_rule(char *rule)
- 		ima_free_rule(entry);
- 		integrity_audit_message(AUDIT_INTEGRITY_STATUS, NULL,
- 					NULL, op, "invalid-policy", result,
--					audit_info, 0);
-+					audit_info, result);
- 		return result;
- 	}
- 
-@@ -2417,7 +2417,7 @@ void ima_measure_loaded_policy(void)
- 	rule = kmalloc(rule_len, GFP_KERNEL);
- 	if (!rule) {
- 		integrity_audit_message(AUDIT_INTEGRITY_PCR, NULL, event_name,
--					op, "ENOMEM", result, 0, 0);
-+					op, "ENOMEM", result, 0, result);
- 		return;
- 	}
- 
-@@ -2436,7 +2436,7 @@ void ima_measure_loaded_policy(void)
- 			result = -E2BIG;
- 			integrity_audit_message(AUDIT_INTEGRITY_PCR, NULL,
- 						event_name, op, "rule_length",
--						result, 0, 0);
-+						result, 0, result);
- 			rcu_read_unlock();
- 			goto free_rule;
- 		}
-@@ -2450,7 +2450,7 @@ void ima_measure_loaded_policy(void)
- 	file.buf = kmalloc(file_len, GFP_KERNEL);
- 	if (!file.buf) {
- 		integrity_audit_message(AUDIT_INTEGRITY_PCR, NULL, event_name,
--					op, "ENOMEM", result, 0, 0);
-+					op, "ENOMEM", result, 0, result);
- 		goto free_rule;
- 	}
- 
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index e7b4df6b2ca299c38976012ac6eaaffcc5100e51..3b898930dea66ae6362160d0b47a320e16453280 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -292,7 +292,7 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
- out:
- 	mutex_unlock(&ima_extend_list_mutex);
- 	integrity_audit_message(AUDIT_INTEGRITY_PCR, inode, filename, op,
--				audit_cause, result, audit_info, 0);
-+				audit_cause, result, audit_info, result);
- 	return result;
- }
- 
-diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-index c87dcbe67820266149da6ad7d4f2f7061ff3c5c1..6d163312fb4c47ce256766e997aac5f7375088a8 100644
---- a/security/integrity/ima/ima_template_lib.c
-+++ b/security/integrity/ima/ima_template_lib.c
-@@ -392,7 +392,7 @@ int ima_eventdigest_init(struct ima_event_data *event_data,
- 	if (result) {
- 		integrity_audit_message(AUDIT_INTEGRITY_DATA, inode,
- 					event_data->filename, "collect_data",
--					"failed", result, 0, 0);
-+					"failed", result, 0, result);
- 		return result;
- 	}
- 	cur_digest = hash_hdr->digest;
+Background
+==========
+SysV message queues have no FD or process-local handle.  A msqid is
+valid IPC-namespace-wide and can be obtained without calling
+msgget(), so simply hooking msgget() is insufficient.  Domain
+provenance has to be tracked on the queue itself and checked on
+every operation against it.
 
+Approach
+========
+A new credential blob is attached to each kern_ipc_perm at creation
+time, recording the creating task's Landlock domain and a @kind
+tag identifying the IPC object type.  The @kind tag is required
+because the LSM core allocates an IPC blob for every kern_ipc_perm
+regardless of kind, and the generic ipc_permission hook fires for
+semaphores and shared memory as well as message queues.
+
+The enum also leaves room to extend scoping to sem/shm later
+without changing the blob layout.
+
+Enforcement is done from security_ipc_permission(), which is the
+single choke point for msgget() on an existing queue, msgsnd(),
+msgrcv(), and the msgctl() variants that go through ipcperms()
+(IPC_STAT, MSG_STAT, MSG_STAT_ANY).  msgctl_down() (IPC_RMID and
+IPC_SET) bypasses ipcperms(), so the per-call msg_queue_msgctl
+hook is kept for those cases.  msg_queue_msgctl also covers the
+IPC_INFO / MSG_INFO case where no specific queue exists.
+
+Quirks
+======
+- Denials surface as -EACCES rather than -EPERM because the generic
+  ipcperms() path maps every LSM denial to -EACCES before returning
+  to userspace.  This is documented and the selftests check for
+  -EACCES accordingly.
+- Because there is no persistent handle, a msqid already obtained
+  by a process before it enforces this scope can become unusable
+  once the restriction is in place; this is intentional and
+  documented.
+
+Patch layout
+============
+  1. Add the kern_ipc_perm credential blob and @kind enum.
+  2. Implement LANDLOCK_SCOPE_SYSV_MSG_QUEUE, the ipc_permission
+     hook, and msg_queue_msgctl coverage for IPC_RMID/IPC_SET and
+     IPC_INFO/MSG_INFO.
+  3. Bump the Landlock ABI.
+  4. Selftests covering msgget plus a separate fixture for msgsnd,
+     msgrcv, and msgctl using a pre-created msqid.
+  5. sandboxer sample support for the new scope.
+  6. Documentation updates covering the new scope, the -EACCES
+     return code, and the implications of non-persistent handles.
+
+Test coverage
+=============
+Selftests exercise denial and allow paths for msgget, msgsnd,
+msgrcv, and msgctl(IPC_STAT) across domain boundaries, including
+nested-domain inheritance.  All existing and added tests are
+passing.
+
+Changes since v1
+================
+- Rebased on mic/next.
+- Fixed the kernel-doc Return descriptions of hook_ipc_permission()
+  and hook_msg_queue_msgctl().
+- Renamed the internal audit request type to
+  LANDLOCK_REQUEST_SCOPE_SYSV_MSG_QUEUE for consistency with the
+  UAPI macro and the "scope.sysv_msg_queue" audit blocker string.
+- Integrated the new scope with the sandboxer's quiet access
+  support added in ABI 10 (new "sysv_msg_queue" LL_QUIET_ACCESS
+  token).
+- Selftests: track the created msqid in the fixture and remove it in
+  FIXTURE_TEARDOWN_PARENT() so queues are reclaimed even when a failed
+  assertion aborts a test (and never subject to the scoping under
+  test); use IPC_PRIVATE where the key is not needed.
+- Added CONFIG_SYSVIPC=y to the selftest config fragment.
+- Fixed the patch 6 subject typo (LANDLOCK_SCOPE_SYSV_MESSAGE_QUEUE)
+  and replaced an incorrect ipcperms(3) manpage reference with the
+  kernel helper ipcperms().
+- Reworded the LANDLOCK_SCOPE_SYSV_MSG_QUEUE UAPI comment and the
+  in-code comment explaining the -EACCES mapping.
+
+v1: https://lore.kernel.org/all/20260521160640.1716746-1-utilityemal77@gmail.com/
+
+Kind Regards,
+Justin Suess
+
+Justin Suess (6):
+  landlock: Add kern_ipc_perm credential blob structs
+  landlock: Add LANDLOCK_SCOPE_SYSV_MSG_QUEUE
+  landlock: Bump ABI for LANDLOCK_SCOPE_SYSV_MSG_QUEUE
+  selftests/landlock: Test LANDLOCK_SCOPE_SYSV_MSG_QUEUE
+  samples/landlock: Support LANDLOCK_SCOPE_SYSV_MSG_QUEUE in sandboxer
+  landlock: Document LANDLOCK_SCOPE_SYSV_MSG_QUEUE
+
+ Documentation/admin-guide/LSM/landlock.rst    |   1 +
+ Documentation/userspace-api/landlock.rst      |  30 +-
+ include/uapi/linux/landlock.h                 |   4 +
+ samples/landlock/sandboxer.c                  |  24 +-
+ security/landlock/audit.c                     |   4 +
+ security/landlock/audit.h                     |   1 +
+ security/landlock/limits.h                    |   2 +-
+ security/landlock/setup.c                     |   1 +
+ security/landlock/syscalls.c                  |   2 +-
+ security/landlock/task.c                      | 137 +++++++++
+ security/landlock/task.h                      |  50 ++++
+ tools/testing/selftests/landlock/base_test.c  |   2 +-
+ tools/testing/selftests/landlock/config       |   1 +
+ .../landlock/scoped_sysv_msg_queue_test.c     | 265 ++++++++++++++++++
+ .../testing/selftests/landlock/scoped_test.c  |   2 +-
+ 15 files changed, 517 insertions(+), 9 deletions(-)
+ create mode 100644 tools/testing/selftests/landlock/scoped_sysv_msg_queue_test.c
+
+
+base-commit: 28ca6f6f271d47253c240e64cc88a72c89456d74
 -- 
-2.43.0
+2.54.0
 
