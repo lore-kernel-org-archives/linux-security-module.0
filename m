@@ -1,212 +1,114 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8F01F8755;
-	Tue, 28 Jul 2026 04:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430433AA4EB
+	for <linux-security-module@vger.kernel.org>; Tue, 28 Jul 2026 08:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785214130; cv=none; b=XPLrMne2cOlszuM/phpOkCTN1LL5dJJ/dK8n5JiBAiPUSTwPqZGBB1jaFn/hjsCgmj4BLatnfYzk9TsMv+F9tkBzv9pGhfBHh9+pO5FRN8mqEX012mnVpqOnv2Di9WuF4hqBC/P+J25KrMo5aN8k/eG8APGb+uLxe8S0LJICXN8=
+	t=1785228316; cv=none; b=YLETGim6EVlTsFOywu9nGS5Uzqz7JgTP3iPMH3B/krDUXRZfkECmB+c32W6dXh/Jepkei45lkA2iNr3vh5BnB4vuQ2rbv+SCRemOtuHd7w5ubBwf9OonvCi+xeSb8yMejOjoXOgPMitpvZbHAGEcqlpzkmhQ+8meUDioAsnvAEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785214130; c=relaxed/simple;
-	bh=mVvYjCGpEIs/ZVmt7GUUmpQHRMrA2O2xmFppm7/BzQM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H0NimMHQE2rLId0kWYE1MiXUNynd7VLwqrwQufhaz9GWbUE4Tz/tQDjTK/QHkiUJJTcZ3OBpXRIsYthmP2ycvWcR7HSilR5JqhA+GakqJi2yRiqKWGDMXa15O97CF6Ivbcaxn60WSi1tVtTOfKZDYcCZ3q9aUU60U7dubJE3WCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fOfrZ1zy; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1785228316; c=relaxed/simple;
+	bh=XL7M3CFbRaWzta3d5k/hiLSQfRlVsavebS+3dtJQ8c4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gtdEKWG6asWbZXBxgCTzT0dBXWfj/o7oazDUzPxAWBo6XrGlXSZmbP0E2d6boBhKcpqlzK/ZDpJA99wRq+IPwPL6dqm1hxBWMVIdHc/ZFdX/5ZUs9dHPJ3o5h2aRS9HwjufqqrW1Tl7LGp/P+sYaK65jY8O+VOwehluCzB166sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tTEbz2tq; arc=none smtp.client-ip=209.85.128.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fOfrZ1zy"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1785214129; x=1816750129;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=mVvYjCGpEIs/ZVmt7GUUmpQHRMrA2O2xmFppm7/BzQM=;
-  b=fOfrZ1zyRUvJH9AHhn1qRZdqeypx4LHNxDFjy1DiAn2Acs1nBop2wabX
-   barXrxYI7zFX9dkwRIMIS+nn3HqK5l2mX+pXbIlV8xWgSh8YZlpgI1Rs8
-   Lim+0FpNWaBhQxQfLtyzp6SojjxO3s1rONZmld3Vz5PdFESWRjgbmZzRK
-   pQbamB7ax3V6TKFHE8xtjV44VNbFgsB4UO9zuUA7gXbRWqHeUnliCHnUT
-   DzjNsOhVkmaWn9vurXnftYOG77bA2XpSLm1Rh2WmzYr2luKQoa5uzP8Qq
-   Qorhtd0nKwx++co8IGTQTngoq3nqbLVOEAbfI7J64fArW3zrsXQuCvAb5
-   w==;
-X-CSE-ConnectionGUID: 9GBzbgmaRXmFJ/ACkr32bw==
-X-CSE-MsgGUID: Vzyuq/31RrWQXAVcg5hNnA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11858"; a="85640394"
-X-IronPort-AV: E=Sophos;i="6.25,189,1779174000"; 
-   d="scan'208";a="85640394"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2026 21:48:48 -0700
-X-CSE-ConnectionGUID: bkycI+ykQPqDZtFVL2YxLQ==
-X-CSE-MsgGUID: RgRwljhqQOKJzgjJjvSe0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,189,1779174000"; 
-   d="scan'208";a="297835036"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa001.jf.intel.com with ESMTP; 27 Jul 2026 21:48:42 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 0609699; Tue, 28 Jul 2026 06:48:41 +0200 (CEST)
-Date: Tue, 28 Jul 2026 06:48:41 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
-Cc: Andre Eikmeyer <dev@deq.rocks>, Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andreas Noever <andreas.noever@gmail.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] thunderbolt: Add device links for Apple T2 NHI
-Message-ID: <20260728044841.GP2365036@black.igk.intel.com>
-References: <20260727211807.1223-1-atharvatiwarilinuxdev@gmail.com>
- <20260727211807.1223-3-atharvatiwarilinuxdev@gmail.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tTEbz2tq"
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-493a7fa8481so4167285e9.1
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Jul 2026 01:45:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1785228313; x=1785833113; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:from:subject
+         :message-id:mime-version:date:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=N+ia8UvU2/BvObPDqCGNu1HPWvH+/6chFDg4z2RifV8=;
+        b=tTEbz2tqNsk3L88VU9+DQm6tBnd/MTl4qWAAPCyin2axTxCKMjduGBykVk14y6gd3g
+         kIjTjQdIUqSAOGBKbBpUQoI/1KxfTnE3X0JPhcHsEMfBjUBvqvRA2zf39AbAiyU4f2SE
+         is7DnTEU0HfTbbS1DH4FYG6XJofhbLSCt87zJMbwTg47T0hsmeRZ78n64lPFA7u1aGBp
+         Ng5rwmgnLXtfRVWUQ6bW3OKccr/OU4VnaxiqACCsmFYc7hNQgUSYYpt3IXDez+DMnrQA
+         mQXp84SRBhvtdQuG4+6demy0ieuMCw8uizsQ/tsCdFlJoR7FXcEclDG6zIxy9V8NhdRg
+         4p4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785228313; x=1785833113;
+        h=content-transfer-encoding:content-type:cc:to:from:subject
+         :message-id:mime-version:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=N+ia8UvU2/BvObPDqCGNu1HPWvH+/6chFDg4z2RifV8=;
+        b=FLfa/wzJkotjZqjAkSONDs1MUWnzvOCWJ4vLULKGcUJmY6WGTpFgGHkEh1cMI8h5a3
+         iXR+5oubtHTyosr0yvlOWd5mSedwNSGwaetPzeASfMRzriI88/9ZJerO7FkwhqJTl1wu
+         s0TguRFFq4ycXjv7aUhSnp/NzrgYVTFhC6XUA53H/xpU6uJQbreV3Yfha1beaWcFojzR
+         RP8IGj1leb/6uVQKjP9IpfGtbzZiu79h5YEUKIE2SMkkBUINd99xjde/+1U4MeKIB9Q8
+         9d75H2dYgg8a324s9IZlqd0zGi6mWaphZcb/0BFMs5o5D7whRJyT9vK296ohL8nrhgyl
+         wbxQ==
+X-Gm-Message-State: AOJu0YyPz+9nd5FaEd3tRZc0f5XqhViRSy1hdPm8y/zYQsPJ0W8xEmlu
+	PMommynLh4kwkG9N09D4p2FxtIECWLRUkWFYOpoM9YYPiZraLFh1DaIprBWk8IHGPznKLMqXIhG
+	xDrtVnw==
+X-Received: from wmot19.prod.google.com ([2002:a05:600c:4513:b0:493:fb57:3896])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:474c:b0:495:3c6f:7c18
+ with SMTP id 5b1f17b1804b1-496c641e095mr14838215e9.3.1785228313218; Tue, 28
+ Jul 2026 01:45:13 -0700 (PDT)
+Date: Tue, 28 Jul 2026 10:45:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260727211807.1223-3-atharvatiwarilinuxdev@gmail.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.55.0.229.g6434b31f56-goog
+Message-ID: <20260728084509.218288-1-gnoack@google.com>
+Subject: [PATCH] landlock: Document io_uring credentials management
+From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
+To: "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
+	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 27, 2026 at 05:18:03PM -0400, Atharva Tiwari wrote:
-> Ice Lake Thunderbolt NHI on T2 Macs (2018–2020). The NHI and its
-> associated PCIe Root Ports all sit directly on the Root Complex
-> with no upstream port. Identify the tunneled PCIe Root Ports by
-> their PCI IDs and create device links back to the NHI so that
-> PCIe tunnels can be re-established after sleep.
-> 
-> And on other T2 Thunderbolt NHI's, like Titan Ridge, the default method
-> is used to add device links.
-> 
-> Co-developed-by: Andre Eikmeyer <dev@deq.rocks>
-> Signed-off-by: Andre Eikmeyer <dev@deq.rocks>
-> 
-> Signed-off-by: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
-> ---
->  drivers/thunderbolt/tb.c | 54 ++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 52 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/thunderbolt/tb.c b/drivers/thunderbolt/tb.c
-> index c69c323e6952..9b80e9339728 100644
-> --- a/drivers/thunderbolt/tb.c
-> +++ b/drivers/thunderbolt/tb.c
-> @@ -9,6 +9,7 @@
->  #include <linux/slab.h>
->  #include <linux/errno.h>
->  #include <linux/delay.h>
-> +#include <linux/pci.h>
+io_uring can override credentials (including the Landlock domain) and
+interfere with Landlock domains in ways that may come as a surprise to
+users.  To reduce the incoming questions about that subject, document it
+explicitly as a common surprise.
 
-We should not be calling PCI functions anymore from the SW CM core. We have
-pci.c for that.
+I am intentionally vague about io_uring's credential management, as this is
+better documented by io_uring than in the Landlock documentation.
 
->  #include <linux/pm_runtime.h>
->  #include <linux/platform_data/x86/apple.h>
->  
-> @@ -3305,21 +3306,70 @@ static const struct tb_cm_ops tb_cm_ops = {
->  static bool tb_apple_add_links(struct tb_nhi *nhi)
+Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
+---
+ Documentation/userspace-api/landlock.rst | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-I wonder if we can put this to pci.c, rename it to tb_pci_add_links()
-instead.
+diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/users=
+pace-api/landlock.rst
+index 5a63d4476c1c..dab04f8e4962 100644
+--- a/Documentation/userspace-api/landlock.rst
++++ b/Documentation/userspace-api/landlock.rst
+@@ -675,6 +675,19 @@ fine-grained in the future.  Until then, users are adv=
+ised to establish the
+ guarantees that they need through the file hierarchy, by only allowing the
+ ``LANDLOCK_ACCESS_FS_IOCTL_DEV`` right on files where it is really require=
+d.
+=20
++io_uring
++--------
++
++Operations issued over an ``io_uring`` can be executed with overridden
++credentials (including the Landlock domain), which are either captured at =
+the
++time of request submission, at the time of ``io_uring`` creation, or at th=
+e time
++of registering a personality with the ``io_uring``.
++
++Depending on its configuration, an ``io_uring`` may therefore use a Landlo=
+ck
++domain that differs from the one used by the current thread.  When using
++``io_uring``, it is recommended to double check its credential management =
+so
++that the credentials with the appropriate Landlock domains are used.
++
+ Previous limitations
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=20
+--=20
+2.55.0.229.g6434b31f56-goog
 
->  {
->  	struct pci_dev *upstream, *pdev;
-> -	bool ret;
-> +	bool ret = false;
->  
->  	if (!x86_apple_machine)
->  		return false;
-
-BTW, why you need to differentiate T2 vs. the rest of Apple x86? Don't this
-variable do?
-
->  
-> +	/* On T2 Macs with Ice Lake Thunderbolt NHIs,
-> +	 * identify the tunneled PCIe Root Ports by their PCI IDs
-> +	 * and create device links so that
-> +	 * PCIe tunnels can be re-established after sleep.
-> +	 */
-> +	if (has_apple_t2_chip && (nhi->pdev->device == PCI_DEVICE_ID_INTEL_ICL_NHI0 ||
-> +				nhi->pdev->device == PCI_DEVICE_ID_INTEL_ICL_NHI1)) {
-> +		unsigned int slot, func;
-> +		const struct device_link *link;
-> +
-> +		for (slot = 0; slot < 32; slot++) {
-> +			for (func = 0; func < 8; func++) {
-> +				struct pci_dev *current_pdev __free(pci_dev_put) =
-> +					pci_get_slot(nhi->pdev->bus, PCI_DEVFN(slot, func));
-
-I'm not fan of __free() and the like so let's not use it here.
-
-Also you don't need to scan all the slots. Just look for the tunneled
-downstream ports based on their PCI IDs like we do already.
-
-> +				if (!current_pdev)
-> +					continue;
-> +
-> +				if (!pci_is_pcie(current_pdev) || pci_pcie_type(current_pdev) !=
-> +						PCI_EXP_TYPE_ROOT_PORT)
-> +					continue;
-> +
-> +				switch (current_pdev->device) {
-> +				case 0x8a1d:
-> +				case 0x8a1f:
-> +				case 0x8a21:
-> +				case 0x8a23:
-> +					break;
-> +				default:
-> +					continue;
-> +				}
-> +
-> +				link = device_link_add(&current_pdev->dev, &nhi->pdev->dev,
-> +						DL_FLAG_AUTOREMOVE_SUPPLIER |
-> +						DL_FLAG_PM_RUNTIME);
-> +				if (link) {
-> +					dev_dbg(&nhi->pdev->dev, "created link from %s\n",
-> +						dev_name(&current_pdev->dev));
-> +					ret = true;
-> +				} else {
-> +					dev_warn(&nhi->pdev->dev,
-> +						"device link creation from %s failed\n",
-> +						dev_name(&current_pdev->dev));
-> +				}
-> +			}
-> +		}
-> +		return ret;
-> +	}
-> +
->  	switch (nhi->pdev->device) {
->  	case PCI_DEVICE_ID_INTEL_LIGHT_RIDGE:
->  	case PCI_DEVICE_ID_INTEL_CACTUS_RIDGE_4C:
->  	case PCI_DEVICE_ID_INTEL_FALCON_RIDGE_2C_NHI:
->  	case PCI_DEVICE_ID_INTEL_FALCON_RIDGE_4C_NHI:
-> +	case PCI_DEVICE_ID_INTEL_TITAN_RIDGE_2C_NHI:
-> +	case PCI_DEVICE_ID_INTEL_TITAN_RIDGE_4C_NHI:
->  		break;
->  	default:
->  		return false;
->  	}
-> -
-
-This is unrelated change.
-
->  	upstream = pci_upstream_bridge(nhi->pdev);
->  	while (upstream) {
->  		if (!pci_is_pcie(upstream))
-> -- 
-> 2.43.0
