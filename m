@@ -1,114 +1,156 @@
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430433AA4EB
-	for <linux-security-module@vger.kernel.org>; Tue, 28 Jul 2026 08:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349513AEB40
+	for <linux-security-module@vger.kernel.org>; Tue, 28 Jul 2026 11:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785228316; cv=none; b=YLETGim6EVlTsFOywu9nGS5Uzqz7JgTP3iPMH3B/krDUXRZfkECmB+c32W6dXh/Jepkei45lkA2iNr3vh5BnB4vuQ2rbv+SCRemOtuHd7w5ubBwf9OonvCi+xeSb8yMejOjoXOgPMitpvZbHAGEcqlpzkmhQ+8meUDioAsnvAEw=
+	t=1785236593; cv=none; b=AOcWy/Zhs9RwDaJk4jlvoETQJGJvBp7CkozeZMLiORA3LfqA/RJ67qrCf2xckTKHPqeO1XHj4KFuGtNKX2TsbYiw07nuVcFHyNiMcvs2IhK3Rbv8LPt5Fc/qgjVObycbFUK9vWYLRBvfA0r3vmDOZnokHJNi7ClsjDo3E0J4N64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785228316; c=relaxed/simple;
-	bh=XL7M3CFbRaWzta3d5k/hiLSQfRlVsavebS+3dtJQ8c4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gtdEKWG6asWbZXBxgCTzT0dBXWfj/o7oazDUzPxAWBo6XrGlXSZmbP0E2d6boBhKcpqlzK/ZDpJA99wRq+IPwPL6dqm1hxBWMVIdHc/ZFdX/5ZUs9dHPJ3o5h2aRS9HwjufqqrW1Tl7LGp/P+sYaK65jY8O+VOwehluCzB166sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tTEbz2tq; arc=none smtp.client-ip=209.85.128.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1785236593; c=relaxed/simple;
+	bh=VKaWqklAbWhXNpRX7/mIUhrGKRCxjx1FcoXTh+JQCTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dM4+kvJp6yTSNxjVkuGknMvU3MUEZgV4U4uyORwuuVAUZ9oU59LHsz7nPUoULeb/UvxWStdyNQIxP7Jq+CDW4CS/LOHb2y8t9ef8plhpNj+ABVwlkdoSNnrWqgjeWeiMqG9x4YIAhnonwrvlMFlX6L9gkeLva49dzbpmvbUqOdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=nedNowlX; arc=none smtp.client-ip=84.16.66.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tTEbz2tq"
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-493a7fa8481so4167285e9.1
-        for <linux-security-module@vger.kernel.org>; Tue, 28 Jul 2026 01:45:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1785228313; x=1785833113; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:from:subject
-         :message-id:mime-version:date:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=N+ia8UvU2/BvObPDqCGNu1HPWvH+/6chFDg4z2RifV8=;
-        b=tTEbz2tqNsk3L88VU9+DQm6tBnd/MTl4qWAAPCyin2axTxCKMjduGBykVk14y6gd3g
-         kIjTjQdIUqSAOGBKbBpUQoI/1KxfTnE3X0JPhcHsEMfBjUBvqvRA2zf39AbAiyU4f2SE
-         is7DnTEU0HfTbbS1DH4FYG6XJofhbLSCt87zJMbwTg47T0hsmeRZ78n64lPFA7u1aGBp
-         Ng5rwmgnLXtfRVWUQ6bW3OKccr/OU4VnaxiqACCsmFYc7hNQgUSYYpt3IXDez+DMnrQA
-         mQXp84SRBhvtdQuG4+6demy0ieuMCw8uizsQ/tsCdFlJoR7FXcEclDG6zIxy9V8NhdRg
-         4p4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785228313; x=1785833113;
-        h=content-transfer-encoding:content-type:cc:to:from:subject
-         :message-id:mime-version:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=N+ia8UvU2/BvObPDqCGNu1HPWvH+/6chFDg4z2RifV8=;
-        b=FLfa/wzJkotjZqjAkSONDs1MUWnzvOCWJ4vLULKGcUJmY6WGTpFgGHkEh1cMI8h5a3
-         iXR+5oubtHTyosr0yvlOWd5mSedwNSGwaetPzeASfMRzriI88/9ZJerO7FkwhqJTl1wu
-         s0TguRFFq4ycXjv7aUhSnp/NzrgYVTFhC6XUA53H/xpU6uJQbreV3Yfha1beaWcFojzR
-         RP8IGj1leb/6uVQKjP9IpfGtbzZiu79h5YEUKIE2SMkkBUINd99xjde/+1U4MeKIB9Q8
-         9d75H2dYgg8a324s9IZlqd0zGi6mWaphZcb/0BFMs5o5D7whRJyT9vK296ohL8nrhgyl
-         wbxQ==
-X-Gm-Message-State: AOJu0YyPz+9nd5FaEd3tRZc0f5XqhViRSy1hdPm8y/zYQsPJ0W8xEmlu
-	PMommynLh4kwkG9N09D4p2FxtIECWLRUkWFYOpoM9YYPiZraLFh1DaIprBWk8IHGPznKLMqXIhG
-	xDrtVnw==
-X-Received: from wmot19.prod.google.com ([2002:a05:600c:4513:b0:493:fb57:3896])
- (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:474c:b0:495:3c6f:7c18
- with SMTP id 5b1f17b1804b1-496c641e095mr14838215e9.3.1785228313218; Tue, 28
- Jul 2026 01:45:13 -0700 (PDT)
-Date: Tue, 28 Jul 2026 10:45:09 +0200
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="nedNowlX"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4h8Xcg598kzD2N;
+	Tue, 28 Jul 2026 13:02:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1785236579;
+	bh=0k6vCwS6Nq1mOjqVRjq8Jo8jywrf/uj+ox1pBO72g4M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nedNowlXJBEehf/rxB/GGwW6cUFanrenGshpr5tdp0zWco7ua1l7XwF75K/hVFB8i
+	 qgvNwXXrBq/MjQKyXIFoNfgY5l8nRMWruhfpdNfTkd04dGato77XdiUpPAeOuqfX+E
+	 Xukydta9X+S2JROGm0Zp9vPw6w/HSj4VoSFu5e3I=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4h8Xcf3wdjzvXH;
+	Tue, 28 Jul 2026 13:02:58 +0200 (CEST)
+Date: Tue, 28 Jul 2026 13:02:57 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Oxana Kharitonova <oxana@cloudflare.com>
+Cc: gnoack@google.com, paul@paul-moore.com, serge@hallyn.com, 
+	wangyan01@kylinos.cn, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, landlock@lists.linux.dev, webprosto@gmail.com, 
+	kernel-team@cloudflare.com, Christian Brauner <brauner@kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH 0/6] landlock: Add POSIX message queue scoping
+Message-ID: <20260728.Heephie1tai3@digikod.net>
+References: <20260722122952.42149-1-oxana@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.55.0.229.g6434b31f56-goog
-Message-ID: <20260728084509.218288-1-gnoack@google.com>
-Subject: [PATCH] landlock: Document io_uring credentials management
-From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-To: "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
-Cc: linux-security-module@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
-	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260722122952.42149-1-oxana@cloudflare.com>
+X-Infomaniak-Routing: alpha
 
-io_uring can override credentials (including the Landlock domain) and
-interfere with Landlock domains in ways that may come as a surprise to
-users.  To reduce the incoming questions about that subject, document it
-explicitly as a common surprise.
+Hi Oxana,
 
-I am intentionally vague about io_uring's credential management, as this is
-better documented by io_uring than in the Landlock documentation.
+Thanks for this patch series.  Overall it looks good but you'll find
+some feedback to improve and send a v2, following Günther's and Justin's
+ones.
 
-Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
----
- Documentation/userspace-api/landlock.rst | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+You should also Cc Christian and Al and ask for a review of the
+mqueue-specific patches (e.g. patch 1) for v2.
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/users=
-pace-api/landlock.rst
-index 5a63d4476c1c..dab04f8e4962 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -675,6 +675,19 @@ fine-grained in the future.  Until then, users are adv=
-ised to establish the
- guarantees that they need through the file hierarchy, by only allowing the
- ``LANDLOCK_ACCESS_FS_IOCTL_DEV`` right on files where it is really require=
-d.
-=20
-+io_uring
-+--------
-+
-+Operations issued over an ``io_uring`` can be executed with overridden
-+credentials (including the Landlock domain), which are either captured at =
-the
-+time of request submission, at the time of ``io_uring`` creation, or at th=
-e time
-+of registering a personality with the ``io_uring``.
-+
-+Depending on its configuration, an ``io_uring`` may therefore use a Landlo=
-ck
-+domain that differs from the one used by the current thread.  When using
-+``io_uring``, it is recommended to double check its credential management =
-so
-+that the credentials with the appropriate Landlock domains are used.
-+
- Previous limitations
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=20
---=20
-2.55.0.229.g6434b31f56-goog
+You'll find AI reviews here:
+https://sashiko.dev/#/patchset/20260722122952.42149-1-oxana%40cloudflare.com
 
+A test should create a domain that denies LANDLOCK_ACCESS_FS_READ_FILE
+and make sure the msgqueue scoping control stays the same.
+
+The question about unlinking mqueue is a bit tricky.  I don't think this
+should be restricted by an mqueue scope because that would mean that a
+sandboxed process creating an mqueue would not be able to remove the
+next time the same sandboxed program tries to clean up its files.  So,
+we should check if such file are automatically removed if its creator
+exits.  In any case, this should at least be documented in the user
+documentation.
+
+The user doc should explain this new scope (see previous scope addition
+for examples).
+
+tools/testing/selftests/landlock/config must be updated with
+CONFIG_POSIX_MQUEUE=y
+
+Other questions/comments should either be answered to explain why they
+don't make sense or otherwise be implemented with v2.
+
+
+On Wed, Jul 22, 2026 at 01:29:36PM +0100, Oxana Kharitonova wrote:
+> Hi,
+> 
+> This series adds landlock support for scoping POSIX message queuesi [1].
+
+Nit: Landlock (in all docs, comments, and messages).
+
+>  
+> Landlock already supports scoped IPC restrictions for signals and abstract
+> UNIX sockets. These restrictions make it possible to prevent a sandboxed
+> task from interacting with IPC objects outside of its Landlock domain,
+> while still allowing communication within the same domain or with nested
+> domains.
+>  
+> This series extends the same model to POSIX message queues with a new
+> LANDLOCK_SCOPE_POSIX_MSG_QUEUE scope. When this scope is enforced, a task
+> can only open POSIX message queues that were created by a task in the same
+> landlock domain or in a nested domain.
+>  
+> The implementation tags mqueuefs inodes at creation time with the creator's
+> landlock domain. This domain is kept alive for the lifetime of the inode
+> and is checked when the queue is opened.
+>  
+> The series also exposes the mqueuefs magic number through the shared UAPI
+> magic header, bumps the Landlock ABI, updates documentation, adds sandboxer
+> support, and adds selftests.
+>  
+> The new behavior is:
+>  
+> - a task restricted with LANDLOCK_SCOPE_POSIX_MSG_QUEUE cannot open a queue
+>   created outside of its Landlock scope;
+> - a task can still open a queue created within its own Landlock domain;
+> - queues created outside of any Landlock domain are treated as outside the
+>   scope for a scoped opener.
+> 
+> [1] https://man7.org/linux/man-pages/man7/mq_overview.7.html
+> 
+> Oxana Kharitonova (6):
+>   ipc: Move mqueue fs magic to uapi magic header
+>   landlock: Scope POSIX message queue opens
+>   landlock: Bump ABI for LANDLOCK_SCOPE_POSIX_MSG_QUEUE
+>   selftests/landlock: Test POSIX message queue scoping
+>   samples/landlock: Support POSIX message queue scoping
+>   landlock: Document POSIX message queue scoping
+> 
+>  Documentation/admin-guide/LSM/landlock.rst    |   6 +-
+>  Documentation/userspace-api/landlock.rst      |  11 +-
+>  include/uapi/linux/landlock.h                 |   7 +-
+>  include/uapi/linux/magic.h                    |   2 +
+>  ipc/mqueue.c                                  |   2 +-
+>  samples/landlock/sandboxer.c                  |  16 +-
+>  security/landlock/audit.c                     |   9 +
+>  security/landlock/audit.h                     |   1 +
+>  security/landlock/fs.c                        |  35 +++
+>  security/landlock/fs.h                        |  15 ++
+>  security/landlock/limits.h                    |   2 +-
+>  security/landlock/ruleset.c                   |   1 -
+>  security/landlock/syscalls.c                  |   2 +-
+>  security/landlock/task.c                      |  43 ++++
+>  security/landlock/task.h                      |   4 +
+>  tools/testing/selftests/landlock/base_test.c  |   2 +-
+>  .../landlock/scoped_posix_msg_queue_test.c    | 223 ++++++++++++++++++
+>  .../testing/selftests/landlock/scoped_test.c  |   2 +-
+>  18 files changed, 371 insertions(+), 12 deletions(-)
+>  create mode 100644 tools/testing/selftests/landlock/scoped_posix_msg_queue_test.c
+> 
+> -- 
+> 2.50.1 (Apple Git-155)
+> 
+> 
