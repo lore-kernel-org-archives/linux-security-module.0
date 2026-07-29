@@ -1,106 +1,103 @@
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0723843CE62;
-	Wed, 29 Jul 2026 09:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068443812DD
+	for <linux-security-module@vger.kernel.org>; Wed, 29 Jul 2026 12:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785316054; cv=none; b=pUPtfPL/8nIwnSv8UsnWD2TMHKv0DZPvUaqhuR2yVoxk5iiH02ig+uilZMfQzE7TF9PhMSBHjp1BX2ncoIi5VTAbCYYGPoPR22q+PMUqvaT+tD6QZT973KTCXKVPt6LQAFUhHHnWYnnszWFlgz7tgAlUDYKAPU8jULJ9bsW1SpY=
+	t=1785329028; cv=none; b=K3WjoDvtNv0dLi9MvoRb+8yHia+TND4oW0IdZcJEVoGSnDOCl1/Sws8VSa6UXG0TgqkeEAJAF4xKiuOESEFBaVwsYogWIuQ9FTN99S7T+tzAKRjI3jqDbrWdAtzs4A5qVvRZDendksS94y1zCM+Th4bEToGV236npgJfpxX4p8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785316054; c=relaxed/simple;
-	bh=VY1Q7a8AE13JR0vjd0bxxCh8B/td+JiW29ZH9njvD30=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ja2ZsVK8n7mD+L+fI1QLiJQKGICZIPe3skkStOGHBlEe0Bldl3QY57S92k2YkAiH2Q3vSpIf5BRPnJqJbMFKMxgBi6YMNAEJMEt0hGQEkY2i716JF4MVcHfEa+D6tGhwBuSvCmVOUcZVfKHO85YUXlBylZb0M+WNMa+S5qqhEp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: e9140b4c8b2c11f1aa26b74ffac11d73-20260729
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.12,REQID:2b3a014a-c014-40b6-a511-d57cae50b12c,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:e7bac3a,CLOUDID:ced5380b2f3d349db8f2ebdf3995463c,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|136|850|865|898|915,TC:nil,Content:0
-	|15|50,EDM:-3,IP:nil,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:
-	0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: e9140b4c8b2c11f1aa26b74ffac11d73-20260729
-X-User: heminhong@kylinos.cn
-Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <heminhong@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 969472451; Wed, 29 Jul 2026 17:07:23 +0800
-From: Minhong He <heminhong@kylinos.cn>
-To: Paul Moore <paul@paul-moore.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net v2] netlabel: check register_netdevice_notifier() error in netlbl_unlabel_init()
-Date: Wed, 29 Jul 2026 17:07:16 +0800
-Message-Id: <20260729090716.138608-1-heminhong@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1785329028; c=relaxed/simple;
+	bh=5EHl2dbMLZ3AccGJ8Fu0EBLUJpuZtxxjd0tZw966sh4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jSZrASBl/YdTgwfdfe7Ej0mCY6Ong6lECqFyNL6qUonvql358w5L7gbPEOL+6Ggyn/vss2oS7rR7Zsyrlde4RCAK3onybZzuk/MJ4f9alnctIB4uvGF2sfniF8oatS7FSpAX0bgg2ojtbxo4tjQcTiiboh+mhZPBXXXaqJT7tbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=o7nZvlyx; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o7nZvlyx"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-49553515a8bso11660315e9.1
+        for <linux-security-module@vger.kernel.org>; Wed, 29 Jul 2026 05:43:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785329018; x=1785933818; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=G4/EsKrPykPMUjkQSazyjrWyo/mw3UZZuj2/aHPNW7Q=;
+        b=o7nZvlyx+InGhsM/x/KoPpd5C/Fflnaqz+xEwzPWzpn+X0dp4Ns3u7cGJBwfVnlbBc
+         5OpP2kYwugehz6/5jDfBYByVp+8P3z3a4TpwxzuJlplQAKyOi5JgEW+JX79wkwlc+npM
+         dxTmSGjoLsykbD3enu446x/emTFdJ1TDR7umZ1bg9F2GViHg+MxtIS/hZ6Nq+k425Ti+
+         AiXQczyQNUxnKHnxr4XfNnwSImx2W8eThp5T8Ila0sW1DIwjCs/41U0Tw3K1eRyzzt/u
+         xTJbsaXiY0p50mhXLn5LrQ53NWPffL1jXfTnW5GA2uk8W8tIs4S33deNx9A2QH/YHXe1
+         W1Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785329018; x=1785933818;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=G4/EsKrPykPMUjkQSazyjrWyo/mw3UZZuj2/aHPNW7Q=;
+        b=gT8g4N/KHvwBq74BKOAvFqOwKh0N4gwKJpRKDg1ZD2xP1+rZF9HZGbLh1KusM44/DH
+         jIpZl90T/uIjO2aApjGg97LxMO3OqjvmB/Ug/4umkrIlBL535C2aZaR270l5XmxioWdD
+         XO2vo2cjqO0Hz693EAPaVUBK6UIRycf3LVANswU+o7+EWftuTYXM6g6uV9BJyTxnJz1a
+         VPPtGxTaZ/FXtB+/qanAC1GhvXjqZIjGt7PkBp/fNOPmQ5ygeBM+mx9fBkzigopTUaJw
+         yvEAvlIC+W3zF1vyloyivQMKn1xJLOCa87BGeiZX5VWqRgJTn8dwt2i3N5OvgGNeBbqK
+         mIPg==
+X-Forwarded-Encrypted: i=1; AHgh+RpzYpZPurx8kc1j6zkH9uVBKT4179BsZSqngTMlRlU/vUhr+5hJpM9RBsqCQANDG3ZotAIPChk49kUhD6RmZ4I2RLFP31k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1/f5D3Ctzk1uf7WYLvYKImAi2Pj54PPDiWGJ6QVcM52Ts8mhx
+	aVweWkwDAH8LRIZPPK0/kV3zwlGWbtI5ftRX4YZo2/8FMOETmlG9Vrm5
+X-Gm-Gg: AR+sD130Ic42TqCXzds3t+lpSm+PZW8OTDehxtAM6LLagN3OB7cdM8nkyrDJO9RW+os
+	iPxBZR63KDSlORBniEYpGFhXMiNki8vtBa8000cZPQQvZRu2I8DQ1bNOTCmY1HcBk+rG7Q8z79/
+	+mwItSGBuk3ud1QYMyP60YDHzivOXg/SpRmE2sh1eXFY9ZDQ4G2yxzgjg6rWleoDG1DHbO2QXGj
+	ESWdA4MUZbHENEqkC8OXBzafe2xwhqnyTnJhSH7uo2D9X4tB/rb7YM5VAVWssnhS5N3SA0WzyT1
+	WKCt/6yHTQkN24mxxIljDJdjCGcoqvYMwFHDzWyk00QMpU7E/s1R6vYbQQH5tJ7hCtAyccSN+U0
+	rRePw0sEgdZFQR+G6Uk1VTXEe+YYf8jn4iZbTL/czFgf18qmTX4WMsvkd9NE59e+0/STUTuuIgX
+	XO3SCDKyU679oDkg6/+4X4XEkXx4fxGKEt4sVGkfRWtRVPFvlHJKU0OSc4YoGicsbAjPjWuFQq3
+	/LobR0QqcQoLE1scmIoyg==
+X-Received: by 2002:a05:600c:46cc:b0:492:68bc:3237 with SMTP id 5b1f17b1804b1-496c6586337mr72739245e9.32.1785329017863;
+        Wed, 29 Jul 2026 05:43:37 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c6:647b:ba01:60ae:5bf3:4eae:ab18])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-496c46160dfsm137177215e9.10.2026.07.29.05.43.36
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 29 Jul 2026 05:43:36 -0700 (PDT)
+From: Oxana Kharitonova <webprosto@gmail.com>
+To: mic@digikod.net
+Cc: brauner@kernel.org,
+	gnoack@google.com,
+	kernel-team@cloudflare.com,
+	landlock@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	oxana@cloudflare.com,
+	paul@paul-moore.com,
+	serge@hallyn.com,
+	viro@zeniv.linux.org.uk,
+	wangyan01@kylinos.cn,
+	webprosto@gmail.com
+Subject: Re: [PATCH 0/6] landlock: Add POSIX message queue scoping
+Date: Wed, 29 Jul 2026 13:43:35 +0100
+Message-Id: <20260729124335.3160-1-webprosto@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20260728.Heephie1tai3@digikod.net>
+References: <20260728.Heephie1tai3@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-netlbl_unlabel_init() installs the unlabeled connection hash table and
-registers a netdevice notifier, but ignores notifier registration errors
-and always returns success.
+On Tue, Jul 28, 2026 at 12:03 PM Mickaël Salaün <mic@digikod.net> wrote:
+>
+> Hi Oxana,
+>
+> Thanks for this patch series.  Overall it looks good but you'll find
+> some feedback to improve and send a v2, following Günther's and Justin's
+> ones.
+>
 
-Check the error and unwind the hash table allocation on failure.
+Thank you all for the reviews!
 
-Signed-off-by: Minhong He <heminhong@kylinos.cn>
-Acked-by: Paul Moore <paul@paul-moore.com>
----
-v2:
-- Use rcu_assign_pointer() instead of RCU_INIT_POINTER() when clearing
-  netlbl_unlhsh on notifier registration failure, as suggested by Paul Moore
-v1: https://lore.kernel.org/all/20260728031043.76586-1-heminhong@kylinos.cn/
-
- net/netlabel/netlabel_unlabeled.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
-index 47bae5e48db6..fe1be424601f 100644
---- a/net/netlabel/netlabel_unlabeled.c
-+++ b/net/netlabel/netlabel_unlabeled.c
-@@ -1397,6 +1397,7 @@ static struct notifier_block netlbl_unlhsh_netdev_notifier = {
-  */
- int __init netlbl_unlabel_init(u32 size)
- {
-+	int err;
- 	u32 iter;
- 	struct netlbl_unlhsh_tbl *hsh_tbl;
- 
-@@ -1419,7 +1420,16 @@ int __init netlbl_unlabel_init(u32 size)
- 	rcu_assign_pointer(netlbl_unlhsh, hsh_tbl);
- 	spin_unlock(&netlbl_unlhsh_lock);
- 
--	register_netdevice_notifier(&netlbl_unlhsh_netdev_notifier);
-+	err = register_netdevice_notifier(&netlbl_unlhsh_netdev_notifier);
-+	if (err) {
-+		spin_lock(&netlbl_unlhsh_lock);
-+		rcu_assign_pointer(netlbl_unlhsh, NULL);
-+		spin_unlock(&netlbl_unlhsh_lock);
-+		synchronize_rcu();
-+		kfree(hsh_tbl->tbl);
-+		kfree(hsh_tbl);
-+		return err;
-+	}
- 
- 	return 0;
- }
--- 
-2.25.1
-
+Just a quick heads-up: I'll be on vacation for the next few weeks, but I'll continue working on this once I'm back. Also, any further communication will come from my personal email, as I've left my current job.
