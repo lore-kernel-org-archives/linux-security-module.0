@@ -1,200 +1,254 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB48635C68A
-	for <linux-security-module@vger.kernel.org>; Fri, 31 Jul 2026 21:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.179
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785533299; cv=pass; b=Uqz67mIqxmrtfzvWgAQk4i10JSibpLzwUcdh0WkYbyMu5eR/VFMGMmBy3FhrTBr3fRVU0BTwCGZ92NdYeNuUaO+/juo/qetWU1M7b+7oDPSfXR4DVOM2qsdODQNspz4J8uzTP77aEz3N1mm+HElrI06swKoNMGGRzj1Ma7p4LdQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785533299; c=relaxed/simple;
-	bh=F4F1eQivkcTHEyVnKH9/YEnj3GfxU1bVW4td4NV93ag=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lJV+o3v0gPPYoQK3RD2dhCOj08G4iwYqeh7Qp+gEeU4snhzfJETtHkIZnXOzhxvrIK63OHvkvYF6bXCbo6f/xGyy8/K1ZhwotXkv6xeWDG0P9Z2GcvLiOyIcrZtwO/b13EHlZoaFy5hpUdBLA+9GYExqrXgUPYukoteNEv9LCXI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=EOXyQXAj; arc=pass smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2BD25A645
+	for <linux-security-module@vger.kernel.org>; Fri, 31 Jul 2026 21:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785533325; cv=none; b=oOvDZ6Fpi1brssGt0n8ZQm7Rjd8OuTioFI8OYHaljWjy9mq+dJ06RNYJBRkO2GuGtCFQLH7VCB0lGbKq2TJ+J4mNGh4xZngFvNy9tizddeeWPwR4V/UYztvjdUluI5xrRpEHAk84Z5icHU0UD8+4gSn8FfK1rZQzqmykvjhPvDk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785533325; c=relaxed/simple;
+	bh=B8msuMQAYYvZCb7GgKBIKpOdnZtU3cVRwuQ5FnXv+2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gjH+mdrdc4QJTUHaFIdcY0kKSafAr6MNUzoIiVpk2Dc2vhQ5zDGEyRVphNb3cptIQAcfVsarsI3MXisEOYn2BeORwpa0+uob9HQfs/XcqmewWa2BZ01p/9E09Ua42jMM6lYfIn1+gkGSyY4HcZJnmUjwncK1UtJY6BlOp57gzIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=XMtMZVOL; arc=none smtp.client-ip=83.166.143.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="EOXyQXAj"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-84a4d8fd6ecso1651737b3a.1
-        for <linux-security-module@vger.kernel.org>; Fri, 31 Jul 2026 14:28:17 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1785533297; cv=none;
-        d=google.com; s=arc-20260327;
-        b=hCAQs6YjyAi39GHWZn4CFAI7HTkV9Pke/Xsm4RELp6SniBifQ1lOjtLUFmTuAAaBKb
-         hCanbX9DVUDqKQjnrP36gUTmiOxLeyP7RWvZtH08+6C3Cq+xplOLVKLL4pZ7XVTm1UPI
-         XFzjgo6f1SNTBUeF3x9tfLtnUEHuz+Po4/ySnz56rhUZGw0JbImN2ccPqOBna04CQPft
-         ZKUmT/UA3aVkWzVFAJwTRu4ByyAbA+MLuwwA87FvV9rH/71mTLD0X7GEhVevdMAhS8Ak
-         6h3fBa+tKNzdEehzWHFlIwqdcjU5Nj8OEqFPoOlPHKDM7GtR0FqnEcJowP/tMnw+EABn
-         ukBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Wq25m4uPekD2ZOm9+5jKXB7P9bW7fvfxXLKPmMhnQp4=;
-        fh=GSVbNy25RmIAqImq1dL3F6JqugeboTsowxGnam0dh14=;
-        b=rQoVynnl3Ow870bP7NGZognWRCjnCeuHXIYBbFGXpZ+LNo0VjTu5AkeobMaVUFpeFH
-         ej9GGXbJ99HhW4pK6nCEgEVh62RHHHlM0BCRDSjjn++LYfqhv9fZevUoMLeQOqegStkf
-         HmWqiegZYSZSV4yiAQyMLq9jsDaIdTyaHWuyttNlDHpXIJYzPAz31rFGQbIMvqQ3Y1dW
-         C/Zg5iqok2NpLmQ2a+h8JUvy9lCyiwlMRWIZjA43gCN6B7KOv+cP3f+vJGt9Zvy8kYGg
-         gvrQg40WADyPnIbBFU1KGtzSAAeYsl+EI/l21koLH0XYaTsvLGCaBeRMgV+/p02TJi35
-         Ma5w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1785533297; x=1786138097; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Wq25m4uPekD2ZOm9+5jKXB7P9bW7fvfxXLKPmMhnQp4=;
-        b=EOXyQXAjXYiXTg7a2h2FOgpYSIZfFtPnRTJU7rOTwUgHNhvSzGQ7JD4siSHxKnV+Gr
-         /8h2foihrL3GlqjP6xLeNOxBknhTYVcmPsd1MY5YUzJaIktLaGz1rAmub6+z6LJNymMj
-         zVunaNtyosr6LzxDx47rTlwKnwFwIFTu7BZjxaNJhkLUzxAchS5DNej5JXX1wGlhmri+
-         BqvQPKcqCQf/SNzvp5nkeZvcXlp07lJICgxVpPvDtOMTYV1Rse2xjsQHq6MOo9WJFf9a
-         EP1GuM4Jw4UdNa+VZkcBjuksXxSR74cKj4cCYmKDjwW7vk8VZ8m6LwUyteSjYLsvNT17
-         RM7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785533297; x=1786138097;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Wq25m4uPekD2ZOm9+5jKXB7P9bW7fvfxXLKPmMhnQp4=;
-        b=aFthLk1M/bIKI1MlntseRHXs9vFQ9ge3eJTWWyQvY2MAnsHIPFYvwm0msz/VbSn1HU
-         btCUrNyU7z1MqS2DiwG1KkR67S5dMp0cHYj/TNKNXmp3P36pqLENr5eTwIEDnm2YBvF8
-         bbXLxjkek92AY2NY77izdw43JUEt5+V8QkQHbXZu3KMBDg4OJOMDgsLdVknjyq6lsJfK
-         IZq9febRkRsM1phx2L5c2OrbnKjHMEA+z8pH6kxyfyG9BzzlDOKrKuZf6iudSJFZIoXy
-         +mFT+Ij8eZtIMHEdDhdASkAij+lFGBV8juZ1q7yeEYFltWzq/lu21dUYPrrXfqCeWFfO
-         Whbw==
-X-Forwarded-Encrypted: i=1; AHgh+RoozVwjUIx9FCUFMY3vfjm/j1C/NaOPNq1ueq9TzxN+wWbbCVBA4hJttV1marqVxj2dAmZ2G+of3mN6/B1b9Q7os2tNJ78=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9lsNQmQxgr88rwiRBxoK/apzBuj3ynibAVXrz8z78k6qFcSfe
-	5TpgBbEkx13oqFU98c+is7oul3bToeIGuzsq0NqE38UlcuhpYRq+MxK41+ENPXkRMFKLSYyFqtV
-	P/urnce3u/av18HU3k/NRrdGakYHydpKXPqyRUJAk
-X-Gm-Gg: AR+sD11Q9RKYeJPlfOYSXIdD8jgmGKMfQO/2OUYVKSQfrqsmqUsUzchaVzdahQG44Uu
-	Ztmqum3E7wl7PNsElkJqpS5zd/wBOmlGb/OQbWrzAIcI8f8C5+MKJYq0jPSnw7aNrq1QSqys3Bs
-	Hqo7CBuJK2LXNzlAjTWsbvqOEsiYqPIoEWsnzXg8VxcTBcL23X+1v/DghbZA6Ww4FVfvHPLvijU
-	kujXeUhfZS01fG+473/JXh4MMzTAg8TD6HcdNbPwFLEekvvAeSSWKG6zB8YUxcFMkED5NBodmxX
-	FgSCM+B7NaMMPX0rsnFYqdckh8UHvbgiJoG4sDMMQ9M4
-X-Received: by 2002:a05:6a00:2d25:b0:848:469b:3d19 with SMTP id
- d2e1a72fcca58-84ee4881d3emr990432b3a.29.1785533297083; Fri, 31 Jul 2026
- 14:28:17 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="XMtMZVOL"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hBfMC01h4zfkl;
+	Fri, 31 Jul 2026 23:28:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1785533318;
+	bh=cke+5UBfzcHcPlxUolzeeKyvGKG6W+rSkhQah/BnTfc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XMtMZVOLGDyB11SZveGrXtx1R2YUzkc9L+4MJodPTVIXwidkaA8kktfaZAO8YixfI
+	 oJvZ2HaXeTqHcG+dL7hzrliJN69CxOGxwo+dNEjdVTof9S0NHHy56mp/w95M4HkYlb
+	 fJFHZa0brMTVKRBGaYY9saxXTaonhB4nl5630ncs=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4hBfMB31brzkt9;
+	Fri, 31 Jul 2026 23:28:38 +0200 (CEST)
+Date: Fri, 31 Jul 2026 23:28:37 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Justin Suess <utilityemal77@gmail.com>
+Cc: linux-security-module@vger.kernel.org, gnoack@google.com
+Subject: Re: [PATCH 0/3] Implement LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC
+Message-ID: <20260731.oogh6ieV9Fei@digikod.net>
+References: <20260708133928.852999-1-utilityemal77@gmail.com>
+ <20260709.Eaphooyoh6sh@digikod.net>
+ <ak-d2RiJDubT5SVB@suesslenovo>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260731022047.189137-1-utilityemal77@gmail.com>
- <CAHC9VhSSzNBCSvy4cQHh6OOM4-EvHF+bmrB9=V1y=Lj53RvxQQ@mail.gmail.com> <am0JT2UJQgl0ogwy@zenbox>
-In-Reply-To: <am0JT2UJQgl0ogwy@zenbox>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 31 Jul 2026 17:28:05 -0400
-X-Gm-Features: AUfX_mxWu6YlU6MDspjIcmKDeXRNWi9hfBWLIXfPQTq-XlrvMUKPDsGtSdKCHvg
-Message-ID: <CAHC9VhS-nPeu3Y-cBAmnNyO5Ju8irKm4W9A-Nxu04cRXJrairQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 00/13] BPF interface for applying Landlock rulesets
-To: Justin Suess <utilityemal77@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	kpsingh@kernel.org, mic@digikod.net, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, kees@kernel.org, gnoack@google.com, jack@suse.cz, 
-	song@kernel.org, yonghong.song@linux.dev, martin.lau@linux.dev, m@maowtm.org, 
-	bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ak-d2RiJDubT5SVB@suesslenovo>
+X-Infomaniak-Routing: alpha
 
-On Fri, Jul 31, 2026 at 5:15=E2=80=AFPM Justin Suess <utilityemal77@gmail.c=
-om> wrote:
-> On Fri, Jul 31, 2026 at 04:30:39PM -0400, Paul Moore wrote:
-> > On Thu, Jul 30, 2026 at 10:21=E2=80=AFPM Justin Suess <utilityemal77@gm=
-ail.com> wrote:
-> > >
-> > > Howdy,
-> > >
-> > > This series lets BPF programs apply an existing, userspace-created
-> > > Landlock ruleset to a program during exec.  The goal is unchanged fro=
-m
-> > > the RFC [1]: BPF does not create, inspect, or mutate Landlock policy,
-> > > it only decides whether a ruleset that was already created and
-> > > validated through Landlock's existing userspace API should be applied=
-,
-> > > based on runtime exec context.
-> > >
-> > > Motivation
-> > > ---
-> > > Deploying Landlock today requires the sandboxed program's
-> > > cooperation.  A process can only restrict itself, so applying a
-> > > policy system-wide means wrapping every launch path with a helper
-> > > that calls landlock_restrict_self(2) before exec, and anything
-> > > spawned outside those wrappers runs unconfined.  Supervising exec
-> > > from userspace instead (ptrace, seccomp user notifications) is racy
-> > > and slow.  Meanwhile, the tools that do enforce system-wide policy
-> > > with BPF LSM programs today (container security agents such as
-> > > KubeArmor and Tetragon) end up reimplementing path-based access
-> > > control in BPF, fraught with horrors of path reconstruction, bind
-> > > mounts, rename races, and worse, which is exactly the problem Landloc=
-k
-> > > already solves in the kernel, with maintained and versioned semantics=
-.
-> > >
-> > > This series composes BPF and Landlock along their natural grain.  The
-> > > intended deployment: a supervisor creates one ruleset per policy
-> > > class through the existing syscalls, a syscall BPF program parks
-> > > them in map kptr fields, and an LSM BPF program picks which (if
-> > > any) to apply to an execution based on its runtime context.  The
-> > > policy semantics stay Landlock's; BPF contributes only the
-> > > programmable decision of when and to whom.  Deciding inside the
-> > > exec path closes the race a userspace supervisor cannot: the
-> > > policy is in place before the first instruction of the new program
-> > > runs.
+On Fri, Jul 10, 2026 at 09:56:25AM -0400, Justin Suess wrote:
+> On Thu, Jul 09, 2026 at 12:09:25PM +0200, Mickaël Salaün wrote:
+> > Hi Justin,
+> > 
+> > Thanks for this patch series, I like the underlying idea, but I'm not
+> > convince we should mix NNP and ON_EXEC.  Why not a
+> > LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS flag instead?
+> > 
+> tldr I think your idea is better, see below.
+> > One issue with this NNP_ON_EXEC is that it might be confusing for one
+> > thread to set it and expect the next exec to be NNP, but if the exec is
+> > requested by another thread that would not happen.  With a
+> > LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS flag, we could have an atomic
+> > Landlock and NNP enforcement, which can also be combined with the TSYNC
+> > flag, both useful cases.
 > >
-> > Discretionary models are fun, and useful in certain situations, but
-> > they do have their limitations ;)  To be fair, mandatory models have
-> > their limitations too :)
+> > If we want an enforcement to happen at exec time, we could add a
+> > dedicated flag, similar to the TSYNC one, but I'm not sure it would be
+> > useful for now.
+> > 
+> > On Wed, Jul 08, 2026 at 09:39:24AM -0400, Justin Suess wrote:
+> > > Good morning,
+> > > 
+> > > This series adds a new landlock_restrict_self(2) flag:
+> > > LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC.
+> > > 
+> > > This flag stages a bit in the Landlock credentials indicating that the
+> > > next successful execution will set the no_new_privs attribute while
+> > > committing its new credentials.
+> > > 
+> > > Differences from prctl(PR_SET_NO_NEW_PRIVS):
+> > > 
+> > > PR_SET_NO_NEW_PRIVS takes effect immediately: it prevents gaining
+> > > privileges through set-user-ID, set-group-ID and file capabilities
+> > > starting with the very next execve(2).
+> > > 
+> > > LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC instead only sets the task's
+> > > no_new_privs attribute once the next execve(2) is guaranteed to succeed
+> > > (past its point of no return, in bprm_committing_creds), after any
+> > > privilege gain through set-user-ID, set-group-ID or file capabilities
+> > > has already taken place.  The executed program then runs with
+> > > no_new_privs, so subsequent executions cannot gain privileges.  A
+> > > failed execve(2) leaves no_new_privs untouched.
+> > > 
+> > > Use cases:
+> > > 
+> > > Enforcing a Landlock ruleset requires that the calling process either
+> > > already has no_new_privs set or possesses CAP_SYS_ADMIN.  This series
+> > > does not grant any exception to this rule; for a caller that already
+> > > has no_new_privs set, the flag is effectively a no-op.  It is therefore
+> > > mostly useful for CAP_SYS_ADMIN callers that need to execute programs
+> > > that legitimately escalate privileges (e.g. transition to another
+> > > user), while ensuring that further executions cannot gain privileges.
+> > 
+> > That's a good point, but why not just set NNP for the whole process at
+> > landlock_restrict_self() call time? There is a partial answer below
+> > but...
 > >
->
-> This series does kind of blur the lines between DAC and MAC
-> a little... interesting thought.
->
-> > I've only just barely skimmed some of the patches in this patchset,
-> > and I didn't have a chance to fully read your reply in the previous
-> > revision yet, so I wanted to get you a quick response here ... as
-> > incomplete as it may be.
+> Atomically with respect to the ruleset enforcement I presume?
+> I guess that makes this even easier... just run it at the end after all
+> possible errors in the landlock_restrict_self path.
+> 
+> In this case then, we must consider whether this would be sufficient to
+> serve as a substitute for NNP || cap_sys_admin check.
+> 
+> > > 
+> > > Consider a sandbox launcher that depends on a set-user-ID helper, such
+> > > as launching applications through bubblewrap on distributions where
+> > > unprivileged user namespaces are disabled and bwrap is installed
+> > > set-user-ID root.  The launcher cannot set PR_SET_NO_NEW_PRIVS before
+> > > the execution, as that would neuter the very helper it depends on:
+> > > 
+> > >   sandbox launcher (CAP_SYS_ADMIN)
+> > >   |
+> > >   | landlock_restrict_self(-1, LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC)
+> > >   V
+> > >   /usr/bin/bwrap (set-user-ID root: honored for this execution;
+> > >   |               no_new_privs set once the execution is past its
+> > >   |               point of no return)
+> > 
+> > This should only be allowed if the launcher has CAP_SYS_ADMIN, otherwise
+> > it would be like changing the state of a more privileged process.
+> > Anyway, even with this safeguard, this approach looks risky.
 > >
-> > As you may, or may not have seen, there is currently an ongoing debate
-> > regarding the location of LSM kfuncs that will impact this patchset.
-> > Sadly, we don't appear to be approaching an agreement on this issue
-> > which introduces some additional risk to this patchset.  We'll have to
-> > see how that ends up, but I just wanted you to be aware of the
-> > situation.
-> >
->
-> I'll hold off on further iterations until that's resolved.
->
-> Moving these kfuncs anywhere fortunately amounts to a trivial
-> cut/paste on end anyway.
->
-> > I need to look closer at both the LSM hooks and the BPF kfuncs before
-> > I can really definitively comment on them.  It looks like there has
-> > been some progress towards an LSM agnostic interface, but I'm
-> > concerned more work might be needed.  However, as I said earlier, a
-> > closer examination is needed and perhaps that will reveal something
-> > different.
-> >
-> > It's also worth mentioning that this functionality looks an awful lot
-> > like a call to lsm_set_self_attr(LSM_ATTR_EXEC,
-> > <lsm_ctx:LSM_ID_LANDLOCK>, size, 0) with a lsm_ctx::ctx set to a
-> > policy fd.  Once again, perhaps a closer inspection will reveal that
-> > it is nothing like that, but it kept popping into my head while
-> > reading things so I wanted to mention it, especially as it a lot of
-> > the framework infrastructure already exists.
->
-> They were the direct inspiration for the hooks (and set/getprocattr).
->
-> Main difference being the object in the hook is a trusted kernel pointer
-> rather than a lsm_ctx blob or fd. We can't use an fd here since the
-> sandboxed task and supervisor don't share an fd table.
->
-> I'll wait for your full review, no rush.
+> Yes, and it does have CAP_SYS_ADMIN in this example. It "feels" risky
+> though to mess with further escalations. But if you are CAP_SYS_ADMIN,
+> you can load kernel modules, potentially write to any memory, etc.
+> 
+> So that is less the argument I would make.
+> 
+> I think the main argument that hasn't been highlighted yet against *my
+> proposal* (I like to red team my own proposals) is that this whole
+> thing has nothing to do with Landlock. My feature doesn't touch Landlock
+> rulesets, or anything Landlock specific, so if this were implemented,
+> why not just make it a prctl? Why tie it to an LSM at all?
+> 
+> So I like your proposal better (atomic nnp with Landlock) because it's
+> actually relevant to Landlock rulesets.
+> 
+> The last remaining questions:
+> 
+> 1. Shall the NNP || cap_sys_admin check remain in place for the NNP Landlock flag?
 
-I appreciate your patience, thanks.
+No because the Landlock NNP can only be stronger than the
+always-one-thread NNP.
 
---=20
-paul-moore.com
+> 2. Should we allow enforcement with ruleset_fd being -1 (would basically
+> be equivalent to the prctl version of set no new privs)?
+
+I don't think so, see my other reply.
+
+> 
+> Justin
+> 
+> > >   V
+> > >   sandboxed application (runs with no_new_privs; cannot gain
+> > >                          privileges through any further execution, and
+> > >                          may enforce its own Landlock ruleset without
+> > >                          CAP_SYS_ADMIN)
+> > > 
+> > > This flag also closes a gap for CAP_SYS_ADMIN callers of
+> > > landlock_restrict_self(2) itself.  The no_new_privs/CAP_SYS_ADMIN
+> > > requirement exists to keep set-user-ID programs from running confused
+> > > inside a sandbox they do not expect.  However, a privileged process
+> > > that enforces a domain without setting no_new_privs leaves that hole
+> > > open for all of its descendants: anything running in the domain may
+> > > still execute a set-user-ID binary, which then runs privileged under a
+> > > restricted view of the system.  A privileged process that needs one
+> > > legitimate set-user-ID/set-group-ID transition currently has to choose
+> > > between breaking that transition (setting no_new_privs first) or
+> > > leaving the hole open for the lifetime of the domain.
+> > > LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC allows the one intended transition
+> > > and then closes the hole.
+> > 
+> > In a nutshell, not setting NNP might be risky, even when not strictly
+> > needed.  We might want to update the Landlock doc with that.
+> > 
+> Yes, I  
+
+Something is missing but you sent a dedicated series, so let's continue
+there.
+
+> > > 
+> > > Design:
+> > > 
+> > > This flag is implemented simply: a bit is stored in the Landlock
+> > > credential blob (struct landlock_cred_security) indicating whether the
+> > > next execution should set no_new_privs when it commits its new
+> > > credentials.
+> > 
+> > Also, if we don't have the ON_EXEC part, there is no need to store
+> > anything in the cred.
+> > 
+> > > 
+> > > The bit is not coupled to any ruleset and, like
+> > > LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF, may be passed with no
+> > > ruleset (i.e. ruleset_fd = -1).  It may also be combined with
+> > > LANDLOCK_RESTRICT_SELF_TSYNC to propagate the staged state to sibling
+> > > threads, each thread then setting no_new_privs at its own next
+> > > execve(2).
+> > > 
+> > > The staged bit is inherited across fork(2) and persists in the
+> > > credentials until the next successful execution.  To consume it,
+> > > Landlock handles the bprm_committing_creds hook, which runs while the
+> > > credentials of the new program are being committed: if the bit is set,
+> > > task_set_no_new_privs(current) is called and the bit is cleared.
+> > > 
+> > > Again, this flag does not bypass the requirement to either have
+> > > CAP_SYS_ADMIN or no_new_privs already set to call
+> > > landlock_restrict_self(2).
+> > > 
+> > > The Landlock ABI version is bumped to 11.
+> > > 
+> > > Test coverage:
+> > > 
+> > > The new nnp_on_exec fixture generates a shell script that reads the
+> > > NoNewPrivs value from /proc/self/status and exits with it.  The
+> > > variants select the conditions under which the flag is tested (with
+> > > and without a ruleset, with and without CAP_SYS_ADMIN/no_new_privs
+> > > already set, with and without TSYNC, etc.), then compare no_new_privs
+> > > before the execution and in the executed script.  The ruleset variants
+> > > also check that a ruleset passed along the flag is enforced
+> > > immediately, unlike the staged no_new_privs.
+> > > 
+> > > Justin Suess (3):
+> > >   landlock: Add LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC
+> > >   selftests/landlock: Test LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC
+> > >   landlock: Document LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC
+> > > 
+> > >  Documentation/userspace-api/landlock.rst     |  21 +-
+> > >  include/uapi/linux/landlock.h                |  36 ++-
+> > >  security/landlock/cred.c                     |  22 ++
+> > >  security/landlock/cred.h                     |   8 +
+> > >  security/landlock/limits.h                   |   2 +-
+> > >  security/landlock/syscalls.c                 |  54 +++-
+> > >  tools/testing/selftests/landlock/base_test.c | 259 ++++++++++++++++++-
+> > >  7 files changed, 382 insertions(+), 20 deletions(-)
+> > > 
+> > > -- 
+> > > 2.54.0
+> > > 
+> > > 
+> 
