@@ -1,110 +1,153 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0753C1D62
-	for <linux-security-module@vger.kernel.org>; Fri, 31 Jul 2026 14:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90F642BE93
+	for <linux-security-module@vger.kernel.org>; Fri, 31 Jul 2026 14:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785506768; cv=none; b=eyHW6pPn4j032uhmR2ezOa168qKkJGpQfxQEKISxkYGplq4k7mLNZcS+A7IojBKGFZP8+w4uJrW3cwKVuO+SG+XMy2O/4OSPUHw1cvhiUa2dBH7dEP9zBKeBiq9tQ7a1Z3dSr4F1X+mMsWfCLTzNtyMtxqPVW45kjDNmpJfE8o8=
+	t=1785506979; cv=none; b=aPjpib6XMv8nvCN5hi9O5AZWqxjDeCMwM7v/u9wMhnprR6S/evK4M8j7aXfGP7X4wi5O8eQ6hOgqQ9t+wJIo2u0mQXDKZXErMjxt2NlGWejXA2r5JXXaplOOFycKSwoRcouktTanfIiDjkPuWbeQ3OUbtBlyuCTcUm+eqJMTJ+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785506768; c=relaxed/simple;
-	bh=pebaoiBiCd33GUlPvHrLOPVR4lgaG05Z1buSB4jp1pU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LhvJ77yQQdEmlmdYUTgyUM0B2hO9LoVEJtIRmYTyRYrZR8aEMLZecqyLKlIUNuGjenyeE1HJkrp1AzOGm0Bn1QgTUoqHu5VlnlZNi9F676fqXTaXwZenyP5wyVZXMyCkt8OwQ6AozfpVpzdJXvCfAXgGsqXFMHKASckBJTUzWxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wNmTqM/g; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1785506979; c=relaxed/simple;
+	bh=3EOf2/jCD8AncItiAAHs6oeZqNAYPx5oM9R4lgo8xmE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q4T+7NQks9aYjgmseNdk6NmzAAQ+5HNUPy6Bmy4fquSS/ij2tv3vsWFwzMRokpoeIVGKDYPqcYnHVAAV6r8/Qtv2eB6AAGmicQXrSfAaONdZHU2F1aCfYaSAFLX4dtF8F6EQZSDPEQcOhhD33oxvspBr9enHlT8+0cZ76n3/Uj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mhkWKX5P; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wNmTqM/g"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-c1c4db7ca93so132172766b.2
-        for <linux-security-module@vger.kernel.org>; Fri, 31 Jul 2026 07:06:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mhkWKX5P"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2ccdce28edeso1038405ad.0
+        for <linux-security-module@vger.kernel.org>; Fri, 31 Jul 2026 07:09:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1785506765; x=1786111565; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=cvTAQkXD8rzCP5UeO5VRYWhOmmqEa4G5VYy1rQGI2wo=;
-        b=wNmTqM/gW6Qlmzvj3BYJ4Cfks9OAOe20AP+3QATZvBvhJoBKufP8aHa1zb++JcoldH
-         NHTC3QTDvY5cwZdi5UUZXkUvQNsBBX/5VQrHarf2Lc17ipY6H3f9C4O6YTDcY3BLyx1P
-         tWLRE3nTINTz67O5kOqRcUMHCSXo65ddgWFlILDsya6JNbvkpHQrVYBXY2RbwOKwNVJf
-         zIsyBnCNts+GQEgU5UpQO+e3LTxooqE9UJC0mzCq/jHAmMpwBosemGcyuqY3WZikUSAL
-         bemZqC8F6j+8HxyxWyrXmthZG48oRrlf0fGp6kuw2y5WP1Crv2ngqFl1quD4HkF4DV65
-         DEpw==
+        d=gmail.com; s=20251104; t=1785506977; x=1786111777; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=qfTZLKX5MXlI+65GiAcv4sDb6zyKTd9ns9ffnwjJXko=;
+        b=mhkWKX5PDoWgAmcXfVNp0XUlYz1PPHyqI7gvQ1vZLKrPHmfMAJDHQnoosd+NaU4JR4
+         R1G0fOpNuDGm5Kxx7EOXloQvCxIaBMUVNm18xEocs1JoP/ZgW9yTUybsD1zgb/+6jhd8
+         u30EcU0j1yJ+FJokT7DsaflSDIdy5wKqxPS6YEdADFFmPvrBKNmqxpVphiQ9baOqxdqI
+         7qIiRrP7I5ytwBKZYLJMk9QKpYq7DhVVqJ83xsIbK/3hIq3RAGlOZvqwcgFepYpYP7ax
+         vSt+8eywrUF955DmnPLFeEvwtWd4PQie1pVjKz3GWeudAAgFrDkwARs88dZ7YGprg8vi
+         Otxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785506765; x=1786111565;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=cvTAQkXD8rzCP5UeO5VRYWhOmmqEa4G5VYy1rQGI2wo=;
-        b=AMzSegHoQ26I8rHC5XlTQ794AeT6JkU5qtdT/hR/fPtH256oV08+9C87WpPFK4m0cG
-         2BS/GoHdmHnoJmphPHLCY1jfhl3in7DBV04vu+3Y3dPa25J9XMuOPYYMAYZ8KoVt661e
-         P6jN7dxFAgV9wQgloj1y6/DINA5o1A0IOaVEEJZKURsVtEJSQiOY8M5vP7XjRTpLJvrM
-         /bA7THoHxiUTCiBEl6FjW3MPOkF4VR+WUrel4fFZtIz9XNn649hh4+MrGD61Vm56T273
-         S15a5KboHH9s2grrCI7TaIAw6NC+y9Uk8G4kQZjXkc6UyL4q0AdtaQVtPREW0lR344JL
-         I0og==
-X-Forwarded-Encrypted: i=1; AHgh+Rra5Ot/lVsZU3qGUTifpZApzFq3C0ZaYJWEhFg6wzAz2CtjfzxIX5GZ9WsvMClTvZFevJCFAH+zoNfBjneHbhvX7p+baYU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7iokbObK6NcdWnAblTFlzcDkbbS/zJ3T0CEvGjzRCi+U6/uW0
-	FBYEacfM48Ler8oD5aH/wu955UaYwNOwABn8WV+0pWOC+J6DJOqk1saJKEI+OaOD0g==
-X-Gm-Gg: AR+sD12VKVZOlRvfxQgIOlF/QpcioDMQ2dAPmzSolRShYErNvoNpVSsEoWW6lvpphX2
-	I8tqqYd84A145cQhz3FDjNB6ZLaOtCy4NTE5zU9NU8tIZptemCMRwQSPRpzPPXGp/YgSN8Rytoc
-	sSKlLEhonpfk+zo4pOjMnFc9E+d4W4gsL8PfDPmZ8gQQm6IfyX3Uyd3IvD7k+fi5Q26gcBF30gZ
-	ZBUg0Sjvtb7ZqCea5kTIVWGEH6CcC5wFcwH9VDAOolMkFXWP7qQMZl9fEXwT7BkIoVFuyz1e2ro
-	IY/+id+J0LuL2Ra+csygCl+9VWnaNWTWz4J0I/1iA0YLnO6+G2qZAfhS0Rgpdwi/D1/QMoEXB8T
-	Fk/+cdGsOGLxfhjdc7GNtoogK+2ZwBX0JjM+xIMGr4Fh5ZEmMBz1nQek5zWp/d4Ll4vGk9HCNd/
-	xsM67i7FJjoiatpGRvAUhFSmiVKohkAybvR4GX7QqOy5D41hKIlJWZ4+LA+T5KPEjTTyQ5qWvvT
-	6Ln+9G6RhbDjwuTFS8=
-X-Received: by 2002:a17:907:c305:b0:c1c:22d4:3a9b with SMTP id a640c23a62f3a-c1fd22fb661mr135911266b.43.1785506763877;
-        Fri, 31 Jul 2026 07:06:03 -0700 (PDT)
-Received: from google.com ([2a00:79e0:288a:8:3ba9:7454:5ca0:a791])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c1fd3cc3b64sm154431066b.27.2026.07.31.07.06.02
+        d=1e100.net; s=20251104; t=1785506977; x=1786111777;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=qfTZLKX5MXlI+65GiAcv4sDb6zyKTd9ns9ffnwjJXko=;
+        b=S1CQEc2uQ3qpNJi2OeVD1uM9VWW5v7Sxq3AfjFlhbPEE42NHJ47HZTbXbVTVx9ka6n
+         wuY+GbnZP3NgG6ojdBKcvBZu0PxAoEpjVPvdnRHLmj8IQhqu3hRE8f7PaEvJVJ0jckCf
+         Lqiok/arK5X5f5Iku313RqVFzl3iFhFbFRpxDBuhWryVvw5IvIOr4uc+kLya8MTKJp5X
+         8SOXhcp89Zux2KtIIU2a/RQwTTISZ6wqh7QVVmyxcJHXG4nBZdnXz4CRWP/BHLlzffwJ
+         Sufp/7hOSz0rtvFIDhLm/waM6px5mc+lHDqCdhODgB15aQ+rGcsI4UHHk4I3wiaaM1f+
+         vFEw==
+X-Forwarded-Encrypted: i=1; AHgh+RruIDw3iaa9Z/e5NsReZQXzC6AWftox4VgiTPdOCwEesyYHjAhsdOlVLv8FC3tnCwQGSCWlQ0ej9tEtJ8ILTdZcwYtrFIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxExXsw8rkWCcGRmSKDlmdd2ASmwQbTjZemw697th3MOPsPiUGH
+	fWGpN/WxKeOurNfSv+LOr1RHvNAcxgdxBl5/WvI5f/HuWsR2E6cymnTF
+X-Gm-Gg: AR+sD12LcqyHVjqazFvXApjm1dWYSdJzRUJHhFZXeT3hvo7p+MDocI6dvCB0onR29EF
+	zfpgClkvHez2WiySCfFrU9Ri6CNvPx1Fq+2YkeaUT++zg/6SIQksCVQatbEReaQ6HsywPlGUK0G
+	+UEnP7clLRkuIOYbZFc8NvEJJMfYo4XlNq2eRTlcobNrEJYtmrPCCNCd8Rgv+v67sfY377V/Drm
+	mDmhF6Df7H1O3T1NQ1gzV1JuBhSEtesxaDvKn+qMpaNhPzU88QJSxpcFnH3mnFn0+6aQHHOX3TQ
+	uTa+34YGjl1ieoTJ42UaUPi1RRyblfUvZJpEZ7qj+y43WUFcyFLAvXH953Kbuo6bIZtqjj4xFi7
+	eJQJIjFm00DyQAYjDJ0DYQWMlMZwe3HgVqzDpaBYHqa+q52fZu7UuFdQ2QU3GxYajpp0cwj2/ng
+	X/jXcyG0+fPindFhGgtapBNJRAJqNKl/U8XeG/dFcAvMiPz8Lzc9xl+8dG/7jVvDQIMwUVVI5C9
+	wLN1c8/ODeIN3Uu1T5XDQX0Q9jhEHnjMJZpMGeT9sM7k9l7YgcDFaI=
+X-Received: by 2002:a17:902:f546:b0:2c9:b96a:2855 with SMTP id d9443c01a7336-2d051f078e3mr3246845ad.0.1785506976879;
+        Fri, 31 Jul 2026 07:09:36 -0700 (PDT)
+Received: from localhost.localdomain (45.78.65.84.16clouds.com. [45.78.65.84])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3153ddd7a33sm6268159eec.12.2026.07.31.07.09.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jul 2026 07:06:03 -0700 (PDT)
-Date: Fri, 31 Jul 2026 16:05:57 +0200
-From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-security-module@vger.kernel.org,
+        Fri, 31 Jul 2026 07:09:36 -0700 (PDT)
+From: Chengfeng Ye <nicoyip.dev@gmail.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
 	Paul Moore <paul@paul-moore.com>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Miklos Szeredi <miklos@szeredi.hu>, Serge Hallyn <serge@hallyn.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>
-Subject: Re: [PATCH v4 2/5] landlock: Require LANDLOCK_ACCESS_FS_MAKE_REG for
- whiteout creation
-Message-ID: <amyrxQmn9mTdkhQg@google.com>
-References: <20260724161004.2360749-1-gnoack@google.com>
- <20260724161004.2360749-3-gnoack@google.com>
- <20260731.xieh7eiR8ooD@digikod.net>
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Cc: linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chengfeng Ye <nicoyip.dev@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] KEYS: trusted: Fix TPM teardown ordering
+Date: Fri, 31 Jul 2026 22:09:24 +0800
+Message-ID: <20260731140925.2973492-1-nicoyip.dev@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260731.xieh7eiR8ooD@digikod.net>
 
-On Fri, Jul 31, 2026 at 03:13:24PM +0200, Mickaël Salaün wrote:
-> On Fri, Jul 24, 2026 at 06:10:01PM +0200, Günther Noack wrote:
-> > Suggested-by: Christian Brauner <brauner@kernel.org>
-> > Suggested-by: Mickaël Salaün <mic@digikod.net>
-> 
-> Cc: stable@vger.kernel.org
-> 
-> > Fixes: cb2c7d1a1776 ("landlock: Support filesystem access-control")
-> 
-> Depends-on: 49c9e09d9610 ("landlock: Fix handling of disconnected directories")
-> Depends-on: fe72ce6710cb ("landlock: Add errata documentation section")
-> 
-> > Signed-off-by: Günther Noack <gnoack@google.com>
-> > ---
-> >  include/uapi/linux/landlock.h    |  1 +
-> >  security/landlock/errata/abi-1.h | 26 ++++++++++++++++++++++++++
-> >  security/landlock/fs.c           | 31 ++++++++++++++++++++++++-------
-> >  3 files changed, 51 insertions(+), 7 deletions(-)
+trusted_tpm_exit() drops the TPM chip reference and frees the digest
+array before unregistering the trusted key type. key_type_lookup()
+holds key_types_sem for reading until the key operation finishes, while
+unregister_key_type() takes it for writing. It therefore provides the
+synchronization point that must precede backend teardown.
 
-Thanks, applying this to the next version.
+The current order permits this interleaving:
 
-—Günther
+  CPU 0                              CPU 1
+  trusted_tpm_exit()                 key_type_lookup("trusted")
+    put_device(&chip->dev)             trusted_tpm_seal()
+    kfree(digests)                       pcrlock()
+    unregister_key_type()                  tpm_pcr_extend(..., digests)
+
+CPU 1 can consequently dereference the freed digest array. The chip can
+also be released before callbacks stop using it.
+
+KASAN reported:
+
+  BUG: KASAN: slab-use-after-free in tpm_pcr_extend+0x1f0/0x200
+  Read of size 2 at addr ffff88810872d000 by task poc/89
+  Call Trace:
+    tpm_pcr_extend+0x1f0/0x200
+    pcrlock+0x42/0x70 [trusted]
+    trusted_tpm_seal+0x1b6/0x570 [trusted]
+    trusted_instantiate+0x293/0x340 [trusted]
+    __key_instantiate_and_link+0xb2/0x2b0
+    __key_create_or_update+0x61e/0xb50
+    __do_sys_add_key+0x1b8/0x310
+  Allocated by task 88:
+    __kmalloc_noprof+0x1a7/0x490
+    do_one_initcall+0xa1/0x390
+    do_init_module+0x2df/0x840
+  Freed by task 90:
+    kfree+0x131/0x3c0
+    trusted_tpm_exit+0x59/0xa0 [trusted]
+    __do_sys_delete_module+0x346/0x510
+
+Move unregister_key_type() before releasing either resource. This stops
+new lookups and waits for in-flight key operations to finish before the
+backend state is destroyed.
+
+Fixes: 0b6cf6b97b7e ("tpm: pass an array of tpm_extend_digest structures to tpm_pcr_extend()")
+Cc: stable@vger.kernel.org
+Signed-off-by: Chengfeng Ye <nicoyip.dev@gmail.com>
+---
+ security/keys/trusted-keys/trusted_tpm1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
+index 13513819991e..8f57c6111e7e 100644
+--- a/security/keys/trusted-keys/trusted_tpm1.c
++++ b/security/keys/trusted-keys/trusted_tpm1.c
+@@ -987,9 +987,9 @@ static int __init trusted_tpm_init(void)
+ static void trusted_tpm_exit(void)
+ {
+ 	if (chip) {
++		unregister_key_type(&key_type_trusted);
+ 		put_device(&chip->dev);
+ 		kfree(digests);
+-		unregister_key_type(&key_type_trusted);
+ 	}
+ }
+ 
+-- 
+2.43.0
+
