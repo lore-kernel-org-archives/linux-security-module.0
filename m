@@ -1,64 +1,65 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC337311958
-	for <linux-security-module@vger.kernel.org>; Fri, 31 Jul 2026 02:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C31E30ACF0
+	for <linux-security-module@vger.kernel.org>; Fri, 31 Jul 2026 02:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785464480; cv=none; b=Xjk7802W8Nznh3Hxe3qz+3ugn/bY6iUbNZphLTdt6q+sKlVlW7n0Ig7t/sXd8oRLuse6sMEllFlaXt5uvw+QVrw/u6cnm/idHhVfUr5vDYUD7kfq+fDhEJxH6ABhX+z1ld4M4JwFexXGyemp+7DYIN2xnGMkOahvJewE7xrah5U=
+	t=1785464483; cv=none; b=ipE6u/lH+Q1NfyuOu0XY/74E1NeZXLUeWXZPLUvkxi1otvVFkybgSg+X7mC3RSnaiwfPjh3CNceF7GNaSgnJrcRfrJLgD8YZtRDy9m3VELSEFHg0iPK+tMllk14e7ZDeduF38us3V14sy/0n46L1EAa3Nbx96EHTyQWbpHbXYrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785464480; c=relaxed/simple;
-	bh=zF0tqApE3olWAH+8tKR7/tJlMlF9wC9LvCeUj33ogrE=;
+	s=arc-20240116; t=1785464483; c=relaxed/simple;
+	bh=My+S/AoHnM0sWQ2xfzHcL0mjHYwtuqRDL/YoeC794wY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MzBK97WaXGr9vRCu2ILPdU/V0YfltpS7+VN8lJG3rC7KHxFptwYr5/rxF1IKvxio/hE4Q7ASoY4tSkHYysevP1lNKMo3UFsvQNbE4AGxJWrJQuXxZdU6lAojHwRah2IG+JK5bVRSRnmwvq4NyLAvtNevvVvPqeVzRiL4FWOPDrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P20tIPxW; arc=none smtp.client-ip=209.85.128.176
+	 MIME-Version:Content-Type; b=ma+07FxaD/H8ATT7BuMIxt5W+KSYnS9tEzYU36pZhP54PeHKodiHx7NmCOgcKiuBhqhFhwq5EVEk1cLL7tRtq3GzBtww4aEXyKSrXn4JUs3pt9RAxhTrLKJOM4a0TByRdd5vSBPJoZiWMFKxwHfx9BWquGohHvaLMrzXh5NX0gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a1DwJtRu; arc=none smtp.client-ip=209.85.128.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P20tIPxW"
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-80dc4a68e4aso5772937b3.0
-        for <linux-security-module@vger.kernel.org>; Thu, 30 Jul 2026 19:21:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a1DwJtRu"
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-8114a4542b2so7917537b3.1
+        for <linux-security-module@vger.kernel.org>; Thu, 30 Jul 2026 19:21:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785464476; x=1786069276; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=dtKbTJ5THz2A+MXeqySnkUBiio4mcHLmT5n5t78F/X0=;
-        b=P20tIPxW9iNwVUVyuwRVUOttXxFxiun5NslGeoiklCtpix/JbiGVJUmtBLvFWCWQ4T
-         b/LPj+33jY5vbTp8pjUgKxuuTCniwXtSkxYtFiQLXw+Ap0GbTHG3M7oaeUsidsBqH4OW
-         ZBCGyTHq47pZ4ySL8xJ7wuuaFFJY2FxlCwi+EvIQRbLSQk7CNnt6vD7076PNFJaoj/uJ
-         6kkSD+hwjNkzGc6YOTcs/0Z8vRgDokCO0vgz+0FydaS2S+KahUrIxnW1hyP5tcKGuTl0
-         a+SZPJuoHtbZ00+7sX5+YuJPYKesVCp+vFPs2PmfyH4vPh9X0nkPFd/T4vlEmI6MRmZu
-         3O+g==
+        d=gmail.com; s=20251104; t=1785464478; x=1786069278; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=XvJusACK6JVx1ShSYZD+EOjxsALcCJEGMTDUzMzDD3c=;
+        b=a1DwJtRuTrfBqJIpT7wp4bSk7RCtJIXYYrQVMamrOzMYTTbcdNX4Pz/iB/L0505v/I
+         xf2+zjVBY1gVRicrjaVJNGTolZiHTS3gSpp3ASRd77GUSYpAVcvmTKDrtBR2ND8pEAAj
+         dNiJhesd1Wi5oMiYNsYCDJDzy8mhvswtiyKr0cqrFG1zBtkfMPSxq5r4FsymOZQEVArJ
+         +WqStX3G74jsfik01Uv8IfbeT0Mv7diKahbvxNmHwjK89ztXWL8gq3536RaS9A4iVfm8
+         Ln4g0m1U8yWAQRhl401SCnyuRSzMNOWYJiR7gBlWRB4cTzzOBkOLtWVcJKP/q4RB67LU
+         Q9jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785464476; x=1786069276;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=dtKbTJ5THz2A+MXeqySnkUBiio4mcHLmT5n5t78F/X0=;
-        b=P3UcHJLY/Q2zs87jV8XmB7DUIwUv+yBTf29TLJfAYhDEDSxe2LTGwFXrZxmxdHklN7
-         RwyVw8LkC4zwcQ5QSRkLCONGqEfaua44e7w1si0pUFKx7N0Mmp+XhFl6CkhFYZn7Vv89
-         ML25R8RXXzz4hbJzdwQGoIA3TixIrSnxMBmz71rwlkluM5jeKdRi5snRM8PAslic4o0D
-         EU4beBbPTNOr0oidZ/AoifL4QqEvtDiCCl0lDGbAYvsfBc8uc22YKIiVullNLiGyRAcN
-         re/AU3HK2HF+j2mpkpCle8TrIpUxVxR09EM9FqXDijXxaRtS0YhRhu3qRhme9GpScFqo
-         YfjQ==
-X-Forwarded-Encrypted: i=1; AHgh+RpBFS4Z2Fnobaf25Y4PB5YN11+BrRF56qMAXlAI1lBFl/g2mSOH3GARS2sTVrx93MxZ9XO6JiG8hJuq//Nro8eKdm5FeVE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzmqj1dn0p5qNMkhH3SXLPtFPiamCG/Tsmwt24hZOmVccuXmYbc
-	JriTX6HzEAXsaIyLzM2ah/0El7cMUTuN43dzsNBDWho/vT6Z2pTbU2c6
-X-Gm-Gg: AR+sD10u4fLuiGsJqec2xSf7spVi4vHuMb7cHjHvPEyamWxxbdutq6nCRy9ca892HAj
-	f/fjaqzjLNIevpmNb351lpBZog/Nos2I9mAMlYG7fpt23/NhB+m3phb4rFeZP1EcNY33imSmDxb
-	rxI8eb6GSC576BjLKQ8YTw7MOXLdV573ntgI2p78CCpZ8P1fPWfkwNHiEkwuFgh/Q0rnfi5/R4P
-	K6jtvHMokxmtgp88+zHbJRfF2X37OFze0lC8qbci68j8NHIFNSIlaWQGfibZJ5Je66sFCKiA64t
-	tEHd/W5B/nEnFj1BKt1xS6TQtsYp6BDRonU9cEhqUmvI1clJbkMnOJreUIJGNJ73LvsL4AJlYwP
-	pc9cKVuhm8cjAXdYVOpKeVSUrYfY2EyzI6euk3MjfE8ptdcI4EUWUk76SOSe2h6jzFJf3hFU9Ve
-	0hTLxEgiUrxa8K2ZyGRiv+hEUw4epDGNjXwftk+luXqzJFpXbToMoIDLBLXR5eoT6Q9Asm9j28o
-	pv2UMtuGI6W787YqSBKb/0xA5H/Qp91
-X-Received: by 2002:a05:690c:38a:b0:81f:69e:1c70 with SMTP id 00721157ae682-81fcbb3fcb6mr634587b3.38.1785464476435;
-        Thu, 30 Jul 2026 19:21:16 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1785464478; x=1786069278;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=XvJusACK6JVx1ShSYZD+EOjxsALcCJEGMTDUzMzDD3c=;
+        b=Q/hwSr2GITewsBXMGk2UtiTaUkRCBiNobkCCvgXhnQr+eVQsFoMu6zjyHRAlmAEnEB
+         pptjTxwGRfspzQaJhyg+dKv1CDUXr3hPB7oDulo3Tj3JNHMKFODsxCaBTKKjrjXHZmDS
+         DuA2QSXfuBQRujojZHOfvq0Sgl4iHnHAMXAkHuGnUeNB23ihjuT5RmKFSa334gqo61NH
+         AFZLZSGynzjPi71qpnrUPz0Ek6xHnKcQoFbzXAEqF822a5wJelGQNowc5lA3zxzF0RR4
+         /SLhZgBrj2XQvmQnyeDdgF5G/B/nOm4jh9SvZ4WNTrMxQdh2YjofN+cItYPXnd/yDmrB
+         C5ag==
+X-Forwarded-Encrypted: i=1; AHgh+Rqw9nGAXLDOE/hKfGpuzYj2W+2khfxgyoQB+hHCGEXZOyiihoHKlBFrw7nBHGKZ8/+JFA8Uc9uGB60oxEJdVtrn/JpYASw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKqGoyV/fuJKw29j6W9lVdN+59vVzEKVnX0lVvCWB6ILGIzAMk
+	x7UEutH0zVqzgquevaBUnpkzZp1Z9GfRdN7PekM9n3/niq2ecYOFw36n
+X-Gm-Gg: AR+sD10mN256L5+W2uYCWy0N1V3S4voq1IIsHBg7uMaKskTn8jTCTKGYMwl/ljXPvXj
+	/m+s/7Hb4LfvLyEPHh57UruAAJssVkhvDzvUNaoBXQZ+fpfJqqXesNyHPRYRG5tCG0vQvl8vrYE
+	CW47n5WrrL+u72G+E/nCKubuNQ++MnErBIVwuEziuP2ERgU34qYbzxBLbx5JYpwnP1Ccs0HBMj3
+	Cvuh7AkLy0Pnrg7dFXKLanVnkIJ0Pcm/Fe/n4LQ/9V5NTZd8HTI1K2N+RwV38rs0X5v6d6NT+Py
+	sNO7sO6qK7Orzz0CJQR9NT3KdVbyTCFH99iTwwxUKlA2l0QSqAK6+D8i1SjLfYeZ8RWAwowbDO5
+	xseuPySP8egWh1/w3b0x5SO9dM6ePw2wXAPoBruJFd1nfu1XuIiHwOccwWbwIJpuZIhxFQHsAE8
+	WAu7kN6igYB/wmWopLYl8DQw3m27CsQFyT4wWC0iO/flRtY5r2Dl0y8BOEXWRnMnG6+q86AyAxK
+	Mnjay+OCoLWKqjWronf8A==
+X-Received: by 2002:a05:690c:e3ce:b0:81e:6c2e:f113 with SMTP id 00721157ae682-81fcbb0187dmr690287b3.36.1785464477862;
+        Thu, 30 Jul 2026 19:21:17 -0700 (PDT)
 Received: from zenbox ([2600:1700:18fb:6011:e94:8a83:feea:6720])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-81fb8b26e8bsm20519047b3.47.2026.07.30.19.21.15
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-81fb8b26e8bsm20519047b3.47.2026.07.30.19.21.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jul 2026 19:21:16 -0700 (PDT)
+        Thu, 30 Jul 2026 19:21:17 -0700 (PDT)
 From: Justin Suess <utilityemal77@gmail.com>
 To: ast@kernel.org,
 	daniel@iogearbox.net,
@@ -78,11 +79,10 @@ Cc: gnoack@google.com,
 	bpf@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Justin Suess <utilityemal77@gmail.com>,
-	Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PATCH bpf-next 03/13] lsm: Add LSM hook security_bprm_enforce_policy_kptr
-Date: Thu, 30 Jul 2026 22:20:36 -0400
-Message-ID: <20260731022047.189137-4-utilityemal77@gmail.com>
+	Justin Suess <utilityemal77@gmail.com>
+Subject: [PATCH bpf-next 04/13] landlock: Expose the ruleset fd lookup to the rest of Landlock
+Date: Thu, 30 Jul 2026 22:20:37 -0400
+Message-ID: <20260731022047.189137-5-utilityemal77@gmail.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260731022047.189137-1-utilityemal77@gmail.com>
 References: <20260731022047.189137-1-utilityemal77@gmail.com>
@@ -92,156 +92,72 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add a generic LSM hook enforcing an LSM policy object on the
-credentials prepared for an execution:
+Rename get_ruleset_from_fd() to landlock_get_ruleset_from_fd() and
+give it external linkage within Landlock, declared in ruleset.h next
+to the other ruleset lifetime helpers.
 
-  security_bprm_enforce_policy_kptr(lsmid, bprm, &policy, flags)
+A following commit implements the LSM kfunc policy hooks, which need
+to translate a ruleset fd into a landlock_ruleset reference from
+outside syscalls.c.  No behavioral change.
 
-The policy object is obtained from the owning LSM through
-security_policy_kptr_from_fd(), travels in that LSM's member of
-union lsm_policy_kptr, and is handed back only to that same LSM: the
-shim uses the same targeted dispatch by @lsmid as the policy kptr
-lifetime hooks, and returns -EOPNOTSUPP when no active LSM matches.
-
-This is the first policy operation backed by the BPF-owned LSM
-kfuncs: it lets a sleepable LSM BPF program attached to
-bprm_creds_for_exec() or bprm_creds_from_file() arrange for the
-executed task to start confined by a policy created through the LSM's
-own userspace API, e.g. a Landlock ruleset applied to a binprm.  The
-BPF-facing kfunc keeps the policy pointer strongly BTF-typed all the
-way to the union member the implementing LSM reads back.
-
-The hook contract is LSM agnostic: any LSM with a notion of a
-per-task policy object can implement it, with its own semantics for
-how the policy composes with restrictions the credentials already
-carry and for the meaning of @flags, unsupported values of which it
-must reject with -EINVAL.  Implementations can rely on being called
-only between the preparation and the commitment of the bprm's
-credentials.
-
-Like the policy kptr lifetime hooks, this hook is excluded from the
-"bpf" LSM's attachment points, as the targeted dispatch makes an
-attachment there unreachable.
-
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Mickaël Salaün <mic@digikod.net>
 Signed-off-by: Justin Suess <utilityemal77@gmail.com>
 ---
- include/linux/lsm_hook_defs.h |  2 ++
- include/linux/security.h      | 12 ++++++++++
- kernel/bpf/bpf_lsm.c          |  1 +
- security/security.c           | 41 +++++++++++++++++++++++++++++++++++
- 4 files changed, 56 insertions(+)
+ security/landlock/ruleset.h  | 3 +++
+ security/landlock/syscalls.c | 9 +++++----
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 0800622e317f..a70edbd7b761 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -455,6 +455,8 @@ LSM_HOOK(int, 0, bpf_token_capable, const struct bpf_token *token, int cap)
- LSM_HOOK(int, -EOPNOTSUPP, policy_kptr_from_fd, int fd,
- 	 union lsm_policy_kptr *policy)
- LSM_HOOK(void, LSM_RET_VOID, policy_kptr_put, union lsm_policy_kptr *policy)
-+LSM_HOOK(int, -EOPNOTSUPP, bprm_enforce_policy_kptr, struct linux_binprm *bprm,
-+	 union lsm_policy_kptr *policy, u32 flags)
- #endif /* CONFIG_BPF_SYSCALL */
+diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+index 0437adf17428..b65d1c07e192 100644
+--- a/security/landlock/ruleset.h
++++ b/security/landlock/ruleset.h
+@@ -225,6 +225,9 @@ struct landlock_ruleset *
+ landlock_merge_ruleset(struct landlock_ruleset *const parent,
+ 		       struct landlock_ruleset *const ruleset);
  
- LSM_HOOK(int, 0, locked_down, enum lockdown_reason what)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 5017a335918c..40dfa96b6a71 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -2332,6 +2332,10 @@ extern int security_bpf_token_capable(const struct bpf_token *token, int cap);
- extern int security_policy_kptr_from_fd(u64 lsmid, int fd,
- 					union lsm_policy_kptr *policy);
- extern void security_policy_kptr_put(u64 lsmid, union lsm_policy_kptr *policy);
-+extern int security_bprm_enforce_policy_kptr(u64 lsmid,
-+					     struct linux_binprm *bprm,
-+					     union lsm_policy_kptr *policy,
-+					     u32 flags);
- #else
- static inline int security_bpf(int cmd, union bpf_attr *attr,
- 			       unsigned int size, bool kernel)
-@@ -2396,6 +2400,14 @@ static inline void security_policy_kptr_put(u64 lsmid,
- 					    union lsm_policy_kptr *policy)
++struct landlock_ruleset *landlock_get_ruleset_from_fd(const int fd,
++						      const fmode_t mode);
++
+ const struct landlock_rule *
+ landlock_find_rule(const struct landlock_ruleset *const ruleset,
+ 		   const struct landlock_id id);
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 36b02892c62f..9af2407274b2 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -293,8 +293,8 @@ SYSCALL_DEFINE3(landlock_create_ruleset,
+  * Returns an owned ruleset from a FD. It is thus needed to call
+  * landlock_put_ruleset() on the return value.
+  */
+-static struct landlock_ruleset *get_ruleset_from_fd(const int fd,
+-						    const fmode_t mode)
++struct landlock_ruleset *landlock_get_ruleset_from_fd(const int fd,
++						      const fmode_t mode)
  {
- }
-+
-+static inline int security_bprm_enforce_policy_kptr(u64 lsmid,
-+						    struct linux_binprm *bprm,
-+						    union lsm_policy_kptr *policy,
-+						    u32 flags)
-+{
-+	return -EOPNOTSUPP;
-+}
- #endif /* CONFIG_SECURITY */
- #endif /* CONFIG_BPF_SYSCALL */
+ 	CLASS(fd, ruleset_f)(fd);
+ 	struct landlock_ruleset *ruleset;
+@@ -476,7 +476,7 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
+ 		return -EINVAL;
  
-diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-index e9059d43e92c..d847a180489f 100644
---- a/kernel/bpf/bpf_lsm.c
-+++ b/kernel/bpf/bpf_lsm.c
-@@ -58,6 +58,7 @@ BTF_ID(func, bpf_lsm_ismaclabel)
- BTF_ID(func, bpf_lsm_file_alloc_security)
- BTF_ID(func, bpf_lsm_policy_kptr_from_fd)
- BTF_ID(func, bpf_lsm_policy_kptr_put)
-+BTF_ID(func, bpf_lsm_bprm_enforce_policy_kptr)
- BTF_SET_END(bpf_lsm_disabled_hooks)
+ 	/* Gets and checks the ruleset. */
+-	ruleset = get_ruleset_from_fd(ruleset_fd, FMODE_CAN_WRITE);
++	ruleset = landlock_get_ruleset_from_fd(ruleset_fd, FMODE_CAN_WRITE);
+ 	if (IS_ERR(ruleset))
+ 		return PTR_ERR(ruleset);
  
- /* List of LSM hooks that should operate on 'current' cgroup regardless
-diff --git a/security/security.c b/security/security.c
-index fd535bd00c24..e9d8c9492bdb 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -5506,6 +5506,47 @@ void security_policy_kptr_put(u64 lsmid, union lsm_policy_kptr *policy)
- 	WARN_ON_ONCE(1);
- }
- 
-+/**
-+ * security_bprm_enforce_policy_kptr() - Enforce a policy on exec credentials
-+ * @lsmid: LSM_ID_* value of the LSM owning @policy
-+ * @bprm: execution context providing the prepared credentials to restrict
-+ * @policy: the policy object to enforce, in the member of the LSM
-+ *          identified by @lsmid
-+ * @flags: LSM-specific enforcement flags
-+ *
-+ * Ask the LSM identified by @lsmid to restrict the credentials
-+ * prepared in @bprm with @policy, so that the executed task starts
-+ * confined by it.  @policy must have been obtained from the same LSM
-+ * with security_policy_kptr_from_fd(); the hook borrows the
-+ * reference and the caller remains responsible for releasing it.
-+ * Only the hook implementation of the LSM identified by @lsmid is
-+ * called: an LSM never receives a policy object meant for another LSM.
-+ *
-+ * This hook may only be called from an exec security context where
-+ * @bprm's credentials are prepared but not yet committed, i.e. from a
-+ * bprm_creds_for_exec() or bprm_creds_from_file() hook.
-+ *
-+ * How @policy composes with restrictions the credentials already
-+ * carry is defined by the implementing LSM, as is the meaning of
-+ * @flags, unsupported values of which it must reject with -EINVAL.
-+ *
-+ * Return: Returns 0 on success, -EOPNOTSUPP if the LSM does not
-+ * implement the hook, negative values on other failures.
-+ */
-+int security_bprm_enforce_policy_kptr(u64 lsmid, struct linux_binprm *bprm,
-+				      union lsm_policy_kptr *policy, u32 flags)
-+{
-+	struct lsm_static_call *scall;
-+
-+	lsm_for_each_hook(scall, bprm_enforce_policy_kptr) {
-+		if (scall->hl->lsmid->id != lsmid)
-+			continue;
-+		return scall->hl->hook.bprm_enforce_policy_kptr(bprm, policy,
-+								 flags);
-+	}
-+	return LSM_RET_DEFAULT(bprm_enforce_policy_kptr);
-+}
-+
- /**
-  * security_bpf_map_free() - Free a bpf map's LSM blob
-  * @map: bpf map
+@@ -564,7 +564,8 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+ 	      (flags & ~LANDLOCK_RESTRICT_SELF_TSYNC) ==
+ 		      LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF)) {
+ 		/* Gets and checks the ruleset. */
+-		ruleset = get_ruleset_from_fd(ruleset_fd, FMODE_CAN_READ);
++		ruleset = landlock_get_ruleset_from_fd(ruleset_fd,
++						       FMODE_CAN_READ);
+ 		if (IS_ERR(ruleset))
+ 			return PTR_ERR(ruleset);
+ 	}
 -- 
 2.54.0
 
