@@ -1,43 +1,44 @@
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
+Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8451D95A3
-	for <linux-security-module@vger.kernel.org>; Fri, 31 Jul 2026 21:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4F933F5A7
+	for <linux-security-module@vger.kernel.org>; Fri, 31 Jul 2026 21:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785533686; cv=none; b=EMfMncS4LfHJrqngMJkM3iLdm9cLQMZa9AVlkp/QK4AABa3ispExMm/Yy4/2sGmyIztBZnPblE43tSVaUHXqtEZ+AEAZuvuYYATvEIHvaqiB2rDw3pkzxzKvQpO1EBmzGETYk1yVqMf9Yt4Bh5xgoB0AKdIcm76nQHd7LYuCtvo=
+	t=1785533720; cv=none; b=tHF7I6o7Ly2E2garoKeTwWajZGrR6J2LlQuRB2mBfGk1gejqpRGdulxdDD/ZQ1KKoZzo6WAxR8+PlG6iSkZvLCwxhoxEFsrTmZqipz5+Zoyee5l8cH6PziD5M9gETSyxrTtUIhZqlI7QlQ+bKHXmCk2CyXpnOrWDwsNOFvVdXX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785533686; c=relaxed/simple;
-	bh=Z9smmFIdJb/NlsIgvB64oPHe69DfqN9t2vacH+UEdrs=;
+	s=arc-20240116; t=1785533720; c=relaxed/simple;
+	bh=lRJnPb5IyHrYDhU8eaqQcAyH4c4BsS2t9aS18UJUtJw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W5rzHoPnTiJDCu7BfaTqBR7E9cI2j1i97ZroThFovxj5G2yWERorHGqK4SPWRLV2JYlleFJ4QLIwojTSa6nC9ebzlpp9cpxv2iKT6tvu7D0S+XWd+vsI+wSmnk/SnEcRdj15tc9YgXLen46WHgzXZjjHbTD4eo91IrShXtKOnI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=i7LnutbA; arc=none smtp.client-ip=84.16.66.171
+	 Content-Type:Content-Disposition:In-Reply-To; b=nzG2A++4nkg+LnIs5eSaI1eLSYPmMpLlmnPMmoPni67rZ+9t7R++GAMzpupvRrBdqtbbW09boi71i0xvq9TdN5DFjpVj1pr0tNuK6t3CFxBakPQUzqV4IdH2/FNDBm3LSkfuy1Kg7pP4eCvjpVlX3X02TAkkBq/a4m2CoWieXTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=RGoxttdP; arc=none smtp.client-ip=45.157.188.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="i7LnutbA"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hBfV95t7PzfK1;
-	Fri, 31 Jul 2026 23:34:41 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="RGoxttdP"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hBfLd667Lzg2Z;
+	Fri, 31 Jul 2026 23:28:09 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1785533681;
-	bh=LM0Bvebm34VP2BofcQ7ewRqFDYbMmR5MEaYhV1ZO1vE=;
+	s=20191114; t=1785533289;
+	bh=Jh8yyEG94IUXqQPzVoAP68vvx+qZg88VGYDQYueKAok=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i7LnutbASOfiCP5ObiZfYpEFqYW+Qj1qeWDhAdjNEBUO2otHLGqIQamcB++a10a4I
-	 2PuBbBYL8IRcdpbEnaREu8U1Wph73b5qAWA9M+8uolE4tt60Zwg/gPJ+eY7Pc4BQQx
-	 26vrcZImlT856C9cdOmPCVNiqsG1kDDsdROs+CDI=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4hBfV922sQzW4r;
-	Fri, 31 Jul 2026 23:34:41 +0200 (CEST)
-Date: Fri, 31 Jul 2026 23:34:40 +0200
+	b=RGoxttdPQYlwCMGtM57sU/FVo2GA+9WRlwVVqhNJ4eoM0gCy0TvzQXY/ojbtCFg/Q
+	 xM7TlxjAlC1Kj4H8O5I0QDRpV1RNZDLFgvmQonz/LU+aCQzAtAAinaCbOPej7yL0uR
+	 x/92rqcENta750qzgV5iVNE7ZIT3oMa+xJoDkG0s=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4hBfLd1rgtzs0c;
+	Fri, 31 Jul 2026 23:28:09 +0200 (CEST)
+Date: Fri, 31 Jul 2026 23:27:58 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 To: Justin Suess <utilityemal77@gmail.com>
-Cc: gnoack3000@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] landlock: Document
- LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
-Message-ID: <20260731.zoo0aeZ8iyee@digikod.net>
-References: <20260717220320.1030123-1-utilityemal77@gmail.com>
- <20260717220320.1030123-4-utilityemal77@gmail.com>
+Cc: Simon McVittie <smcv@collabora.com>, 
+	linux-security-module@vger.kernel.org, gnoack@google.com
+Subject: Re: [PATCH 0/3] Implement LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC
+Message-ID: <20260731.saiXaPew4voo@digikod.net>
+References: <20260708133928.852999-1-utilityemal77@gmail.com>
+ <20260709.Eaphooyoh6sh@digikod.net>
+ <ak-EgMPeFtH8MAQP@descent>
+ <alJwpLRgqpKXAutX@suesslenovo>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -47,78 +48,94 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260717220320.1030123-4-utilityemal77@gmail.com>
+In-Reply-To: <alJwpLRgqpKXAutX@suesslenovo>
 X-Infomaniak-Routing: alpha
 
-On Fri, Jul 17, 2026 at 06:03:19PM -0400, Justin Suess wrote:
-> Document atomically setting no_new_privs with ruleset enforcement,
-> following the same compatibility section style as previous ABI
-> additions.
+On Sat, Jul 11, 2026 at 01:00:20PM -0400, Justin Suess wrote:
+> On Thu, Jul 09, 2026 at 12:22:40PM +0100, Simon McVittie wrote:
+> > On Thu, 09 Jul 2026 at 12:09:25 +0200, Mickaël Salaün wrote:
+> > > On Wed, Jul 08, 2026 at 09:39:24AM -0400, Justin Suess wrote:
+> > > > Consider a sandbox launcher that depends on a set-user-ID helper, such
+> > > > as launching applications through bubblewrap on distributions where
+> > > > unprivileged user namespaces are disabled and bwrap is installed
+> > > > set-user-ID root.
+> > 
+> > It's perhaps worth noting that the current version 0.11.2 of bubblewrap
+> > deprecates this mode of use (it will refuse to run while setuid unless
+> > that was explicitly enabled at compile-time), and the next release 0.12.0
+> > will also remove the ability to enable it at compile-time.
+> > 
+> > When bubblewrap was first written, having it be setuid was a necessary
+> > workaround for kernels/distros not letting it do its sandboxing job any
+> > other way; but now that unprivileged user namespaces are more widespread,
+> > its maintainers have come to the conclusion that when it's setuid,
+> > the risk of vulnerabilities that allow a root privilege escalation
+> > (CVE-2020-5291, CVE-2026-41163) is unacceptably high, so being able to
+> > make it setuid is no longer a good trade-off.
+> > 
+> > > > This flag also closes a gap for CAP_SYS_ADMIN callers of
+> > > > landlock_restrict_self(2) itself.  The no_new_privs/CAP_SYS_ADMIN
+> > > > requirement exists to keep set-user-ID programs from running confused
+> > > > inside a sandbox they do not expect.  However, a privileged process
+> > > > that enforces a domain without setting no_new_privs leaves that hole
+> > > > open for all of its descendants
+> > > 
+> > > In a nutshell, not setting NNP might be risky, even when not strictly
+> > > needed.  We might want to update the Landlock doc with that.
+> > 
+> > If the CAP_SYS_ADMIN caller is setuid or setcap, then it has been
+> > granted special privileges by the sysadmin or distro, and part of
+> > the "contract" between the sysadmin/distro and the setuid program is
+> > that setuid/setcap must only be set on executables that have taken
+> > responsibility for ensuring that they can't create insecure situations
+> > (for example bubblewrap always sets PR_SET_NO_NEW_PRIVS, unconditionally,
+> > for this reason).
+> > 
+> > A large part of why bubblewrap no longer supports being setuid is that
+> > its maintainers don't want it to have this heavy responsibility.
+> >
+> Understandable. I guess my usecase proposed was narrower than thought.
+> And we probably want to avoid creating risky confused deputy scenarios.
 > 
-> Signed-off-by: Justin Suess <utilityemal77@gmail.com>
-> ---
->  Documentation/userspace-api/landlock.rst | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
+> So now I'm leaning towards the LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS path,
+> dropping the "ON_EXEC" part as Mickaël proposed.
 > 
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index 5a63d4476c1c..ec87d35f4715 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
-
-The tutorial in this doc should also be updated accordingly, taking into
-account the best-effort approach and then the fallback to calling prctl.
-
-First by updating the restrict_flags content according to the ABI
-version, and then by updating the prctl block with something like this:
-
-  if (!(restrict_flags & LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS) &&
-      prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
-
-The saandboxer sample should also follow the same pattern.
-
-> @@ -8,7 +8,7 @@ Landlock: unprivileged access control
->  =====================================
->  
->  :Author: Mickaël Salaün
-> -:Date: June 2026
-> +:Date: July 2026
->  
->  The goal of Landlock is to enable restriction of ambient rights (e.g. global
->  filesystem or network access) for a set of processes.  Because Landlock
-> @@ -789,6 +789,18 @@ when at least one sys_landlock_add_rule() call is made for it with the
->  ``LANDLOCK_ADD_RULE_QUIET`` flag, additional add-rule calls for the same
->  object without this flag do not clear it.
->  
-> +Atomic no_new_privs (ABI < 11)
-> +------------------------------
-
-You can just drop the "Atomic" in this title.
-
-> +
-> +Starting with the Landlock ABI version 11, sys_landlock_restrict_self()
-> +accepts the ``LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS`` flag, which sets the
-> +no_new_privs attribute of the calling thread atomically with the enforcement
-
-It should be something like "all-or-nothing" instead of atomically, or
-just describe the proprety.
-
-> +of the ruleset: no_new_privs is set if and only if the call succeeds.  This
-> +removes the need for a prior :manpage:`prctl(2)` ``PR_SET_NO_NEW_PRIVS``
-> +call, and with it the ``CAP_SYS_ADMIN`` requirement.  When combined with
-> +``LANDLOCK_RESTRICT_SELF_TSYNC``, no_new_privs is set on all threads of the
-> +process.
-
-One important point of this flag is that the NNP is only set if the
-ruleset enforcement succeed (ordering).
-
-Also, as discussed previously, it should be explicit in the doc that not
-setting no_new_privs is risky even when it is not required, and this
-flag makes it cheap to avoid.
-
-> +
->  .. _kernel_support:
->  
->  Kernel support
-> -- 
-> 2.54.0
+> But I'm struggling to see where the value is added over the prctl call.
+> Sure atomic enforcement with the ruleset is nice, but not a huge value added
+> on it's own.
 > 
+> Perhaps the setting of this bit with a -1 ruleset_fd could enable auditing
+> of the (failed or successful) privilege acquisition for the domain via the
+> fcaps/suid/guid methods w/o setting NNP? (otherwise this would be no
+> different from a Landlock specific prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)
+> call).
+> 
+> And setting it with a non -1 ruleset_fd would set NNP *and* enable the
+> same auditing.
+
+I guess in this context "auditing" means for the caller to know what is
+the origin of the error?
+
+> 
+> That way we are making this a "value-added" flag instead of just a landlock-flavored
+> prctl call.
+> 
+> This would work well with the LANDLOCK_PERM_CAPABILITY_USE proposal,
+> which allows us to audit both methods of acquiring new capabilities.
+> (the clone/unshare path, and the fcaps/setuid/setgid path).
+> 
+> What do you think Mickaël?
+
+I wasn't sure if we should or not artificially restrict the use of this
+new Landlock NNP flag.  Fundamentally, it is not tie to a ruleset,
+and like LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF it could be used with
+ruleset as -1.  However, I don't really see a use case where a program
+would "just" drop NNP and would not be interested to create a (minimal)
+sandbox with Landlock (e.g. at least the scope restrictions).
+
+Anyway, LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF should remain an
+exception (for a good reason), and any other use of -1 as ruleset should
+be well justified.
+
+BTW, if one day we need need to defer this NNP we should also add a new
+dedicated flag for that, so it is not an issue.
