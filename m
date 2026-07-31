@@ -1,153 +1,291 @@
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr2-f0.google.com (mail-wr2-f0.google.com [74.125.225.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1E535C68A
-	for <linux-security-module@vger.kernel.org>; Fri, 31 Jul 2026 21:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF30037E302
+	for <linux-security-module@vger.kernel.org>; Fri, 31 Jul 2026 21:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785533341; cv=none; b=rgcB9YobssxydaZx6+8TdYE8CiogM/VUhRTsEOHOtn4snHLcn0dLy4cL9pcdOXIhvy8GwzZVs7rug246H/OQaUgH6qL9JjxRH0rXElqPVfJUjqpfaNYiD56dssUBlVugUuVLYCE7Uai2bVtT2GpAAxH/5icdmJF6GjiPyQZV7yI=
+	t=1785533371; cv=none; b=HSZ+31KcVBZnZiPiiRhqbxbUUJa8O/TXAF0xRBigcSciywPp84AorJRWl3d5OPwjetL9JSZezJF8m3G+jk3SQkNNlbamRkEqZU47gJku1QAunERjTk5g9I6irwf5zCiMS6gsKomou0P9doas75EgWFOejPQe+5RYEbTLI1OYWfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785533341; c=relaxed/simple;
-	bh=lk9mcOzhOvLveT64rfTMeFBHWLi4O33r5eL7IJNKsOw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hF/eRURVrm3lRWVqW6O5VQ8wzeDzHeAUFRbEzs5w0Kdb54o35F3T6b8M5tCZe63JHcM236X4JQ84iezQtwZ0IUEcl13vgI6RMy3CH1QhOo0iP6aYWrvZ3cYABFyudIo1ES/SSo2HYr8XElI0LAfSUkvgs2tFpwhO0WTUcS3mKGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Q7qs8eCU; arc=none smtp.client-ip=45.157.188.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1785533371; c=relaxed/simple;
+	bh=xgDHCJSJUP076VEAIU5jDFMiES5x72agvJm+Htj+ukQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=LzLWN59FjdjG1sLzQVfanA+FLZDra/RE0M4rCtTKhJwCBF6GJ6h8UdS8fvP6hLX9M0rhH8ljm/vTFHeir2ShUAhzzNYDxyPKybaYEpvbeJMgLaGs2SCB/Ib0vqItqv8o6f4y77/wq1pcE6mZpNooMRQVbWPBs6e/wJzlUgqKiHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oy2yeANA; arc=none smtp.client-ip=74.125.225.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Q7qs8eCU"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hBfMY2CrRzfnR;
-	Fri, 31 Jul 2026 23:28:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1785533337;
-	bh=fmx03uNIRtjM1M+bfrzeMOji2HiOgXjypZd0nPp8hGY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q7qs8eCUwgLwyNGGUghohXJTK7KNN/Ptz83QIfvevsKtTQhbUl5cqJrRZT7TOOdf0
-	 WL7Shnpk9JldCQWbLPuCPJ1llHcXZ0+jYqeETamjFWD4tA72vY0L+77nWQTYDHIEFr
-	 8TPkTK0mdjcTCEqm/nNK5dmWqLp+ArW2oIgaJxb4=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4hBfMX4fn5zllS;
-	Fri, 31 Jul 2026 23:28:56 +0200 (CEST)
-Date: Fri, 31 Jul 2026 23:28:55 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Justin Suess <utilityemal77@gmail.com>
-Cc: gnoack3000@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] Implement LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
-Message-ID: <20260731.at2Zilei1ech@digikod.net>
-References: <20260717220320.1030123-1-utilityemal77@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oy2yeANA"
+Received: by mail-wr2-f0.google.com with SMTP id ffacd0b85a97d-4784b41f3aeso475540f8f.1
+        for <linux-security-module@vger.kernel.org>; Fri, 31 Jul 2026 14:29:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785533368; x=1786138168; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-type:content-transfer-encoding:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=JL8gvuzkxn4fskzyW+z6arqOmzMuXIEuoBq0ytXlQVI=;
+        b=Oy2yeANAjNHNcCOCrKh10I6DYfVZ/M+NgqFtZUitKVzVsH37XgLgYcyimDXfIaFIhh
+         R4ZrYl6oBtYxYE4Vuf+XEAP0y2CY+yNZEzM+nt2W2+oIFvSR8hyAkotTLNQpYy/07dui
+         p/tseISd9LW4fWR260FFW4v/e7eoBGbdHcdzrvPSBy/rSMRMfR/EirRkE0FUGP2MaQFf
+         moQYlCm0x+DUaBDwIgs7ke1S4FtemMmr/t4DK4JlrtJ6muLOIdWzZ01b+h9CORbkkYfG
+         LjP3aL2E+AbWkimzZMJWRrSglRpjfZB+LBtUZwffRw8RlztKh043JX3qAhm8CZK5CRi/
+         I5TQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785533368; x=1786138168;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-type:content-transfer-encoding:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=JL8gvuzkxn4fskzyW+z6arqOmzMuXIEuoBq0ytXlQVI=;
+        b=WjClwtfzfkTN3ntmRqWTOWD9vDOOeYTAzEA34OS1sFZzOI0LAIsg4eZlFd8SagdQ6y
+         T3FOfdnnZwEY8vJRvnIbEcRMu55XdtVJtR0lDLcwEaOnr1lS8G2aPSCTM8I1lJm9OOTR
+         EaFIWLXtdVyhedxwmquMLD9mZXXLJZVvbwhzreNDMD2o+y1asMvq/fxqDj5lRHp+prFO
+         8yh1yosqkRwh4Xm3PYcSaw5RHjQb576cmyVwmaWV1r7X5bfGxQcDh0Cac+u2qOMWgtpS
+         rKHFCxXiwsoHioeWCdQlABGskI5PetPv70+Php5WfqR1O+C/k4hhQzODNHH2wAwrk8kp
+         bo6A==
+X-Forwarded-Encrypted: i=1; AHgh+Rrsq5NZ8OJlK2WfBLd2U+eQxWi3XlfnMi+d17whPDVB5uNMRg3Iiu6O3tYWsUIJxTO3T/pdCSuXZGq2zORD92jZXoY1w+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5Qm/Q47tIJ6arz7YBNA3+dOui7NsgeqXWGhuXOo5dXKd7+dLY
+	t96h9WeOXvNxCPiFAjykIsuX+0bzhzLvu16lMKLumznMAHei7D7bBO5w
+X-Gm-Gg: AR+sD10aWalMD4ektxLEhRnfhiwuXEVVOZ2qGo69SqOh8GmEn8TN9R0lUCpBklQFRxu
+	fsfWXeuTGrrU/ehckVqpj7Kh/RERFe2S6zGG2xO/jY+6gL/EE19tLelxRE0sPnsocacJerTE3xQ
+	FdqH3w/Q42ZusFosrxfFzUtthgJahFPfD2EU4A0MPq4xrDH0CKPB7r4sOii1BEPGKbY5FVOIaU6
+	ZjClx7s82TUBXC4AdneigqC/7HhccdfzzvmwZjknTSvHHsTeyvDzlnG69d2RVP3MpjrE7MBtbLB
+	YYG8rVvf9eRXuutTqaJEtRxEomSlcBTW1RYxMbhBQ3Hk1WEn/F/WnNjE67G/kmft7jEvu3jXPr+
+	5UUl6fEkJoZiczjapowotPfKJU9p0M4WzCZm/AUq5byo+qfldsf4HpvQYvMffIILxllh58GXB+S
+	eatljt+OiQmTCTr62UEJVnbZ0Jp+Zrv/yywX5YWjoLhHJppu105vWvTI+66PGWMziOT7xHpOpQ/
+	2qO5DLVEuYweCck1+tqd7aGNi5XlZskNz2Y9N12G9ITuygvhrqtQ6aM+NGoiYi1bP6KiTjBGdfO
+	MG6GFkK/jYMK84MeTn9Ccbuj9KlY
+X-Received: by 2002:a5d:64e3:0:b0:47f:8e50:93de with SMTP id ffacd0b85a97d-47fd732f9c7mr2389247f8f.54.1785533367982;
+        Fri, 31 Jul 2026 14:29:27 -0700 (PDT)
+Received: from localhost (nat-icclus-192-26-29-3.epfl.ch. [192.26.29.3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fd456a6cbsm9121148f8f.23.2026.07.31.14.29.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Jul 2026 14:29:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260717220320.1030123-1-utilityemal77@gmail.com>
-X-Infomaniak-Routing: alpha
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 31 Jul 2026 23:29:27 +0200
+Message-Id: <DKD2R5268G2C.TPLR4XMTZ91R@gmail.com>
+Cc: "David Windsor" <dwindsor@gmail.com>, "Alexei Starovoitov"
+ <ast@kernel.org>, "Daniel Borkmann" <daniel@iogearbox.net>, "Andrii
+ Nakryiko" <andrii@kernel.org>, "Martin KaFai Lau" <martin.lau@linux.dev>,
+ "Eduard Zingerman" <eddyz87@gmail.com>, "Song Liu" <song@kernel.org>,
+ "Yonghong Song" <yonghong.song@linux.dev>, "John Fastabend"
+ <john.fastabend@gmail.com>, "KP Singh" <kpsingh@kernel.org>, "Jiri Olsa"
+ <jolsa@kernel.org>, "Emil Tsalapatis" <emil@etsalapatis.com>, "James
+ Morris" <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, "Casey
+ Schaufler" <casey@schaufler-ca.com>, "Stephen Smalley"
+ <stephen.smalley.work@gmail.com>, "Ondrej Mosnacek" <omosnace@redhat.com>,
+ "Mimi Zohar" <zohar@linux.ibm.com>, "Roberto Sassu"
+ <roberto.sassu@huawei.com>, "Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>,
+ "Eric Snowberg" <eric.snowberg@oracle.com>, "Alexander Viro"
+ <viro@zeniv.linux.org.uk>, "Christian Brauner" <brauner@kernel.org>, "Jan
+ Kara" <jack@suse.cz>, "Shuah Khan" <shuah@kernel.org>,
+ <bpf@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <linux-fsdevel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
+ <selinux@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 bpf-next 3/4] bpf: add bpf_init_inode_xattr kfunc for
+ atomic inode labeling
+From: "Kumar Kartikeya Dwivedi" <memxor@gmail.com>
+To: "Paul Moore" <paul@paul-moore.com>
+X-Mailer: aerc 0.21.0
+References: <20260730234533.1912709-1-dwindsor@gmail.com>
+ <20260730234533.1912709-4-dwindsor@gmail.com>
+ <CAHC9VhT=m-GtOZx2AHym7uN1CNx94arKBiXeVC7LTEJ-b=1EVQ@mail.gmail.com>
+ <CAEXv5_iiNspub=qE1YW-01sV_bxxFUrrcAR4KV4Ec5i_mePtHw@mail.gmail.com>
+ <CAHC9VhTS7rSnBqg00ZxNkcZyh_=EeJmn_4z3CTCCxreEEDtTtg@mail.gmail.com>
+ <CAEXv5_iHLmzPT3Jj+qZsdt1Nk_5OD4Up3GGV0S9G7KyQshFhDA@mail.gmail.com>
+ <DKCVF3KRQSOJ.1WKITMP369I0R@gmail.com>
+ <CAHC9VhR5yfw+sMfrYpy8Qm2uNoxqsTweh=KhDRZsU1CioHRDDQ@mail.gmail.com>
+ <DKCWFKAD79IU.TMCNT9RUAJAU@gmail.com>
+ <CAHC9VhRQWRKHi-hdtvSnYPD_dqgP7Q8RB_X4PEDLwPUe6EegYA@mail.gmail.com>
+ <DKCYOLBUWJBZ.1N8JAXJ3QJYCE@gmail.com>
+ <CAHC9VhRK38bVU5+rYxwLsvVt0oBBSWs4xKsjexbvc3TuA9LVNQ@mail.gmail.com>
+ <DKCZDM2G8VHO.38SPG4I4JZTJI@gmail.com>
+ <CAHC9VhR3AK4r4_0eqWxDmrA8UKOsbyQh6ZRRie99Pe6cW0EL8Q@mail.gmail.com>
+ <DKD00NYVQQC9.OK8JEWHH1NUV@gmail.com>
+ <CAHC9VhQ5vSr6JK0xtNnP2cre+3bbW9GUT7kXwLAcctwNpPzwrA@mail.gmail.com>
+ <DKD17D5H7N95.2VI5IOQBNTHGX@gmail.com>
+ <CAHC9VhQ24fp7_sy1=NiWkfzPLSM35ugSCOKDKxnm6H9W-pDa6Q@mail.gmail.com>
+In-Reply-To: <CAHC9VhQ24fp7_sy1=NiWkfzPLSM35ugSCOKDKxnm6H9W-pDa6Q@mail.gmail.com>
 
-On Fri, Jul 17, 2026 at 06:03:16PM -0400, Justin Suess wrote:
-> Howdy
-> 
-> This series adds a new landlock_restrict_self(2) flag:
-> LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS.
-> 
-> This is a redesign of v1 [1], which added
-> LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC, a flag staging no_new_privs so that
-> it was only set at the next execve(2).  Following Mickaël's feedback,
-> [2] the staging mechanism (credential bit and bprm_committing_creds hook)
-> is dropped entirely.  The new flag instead sets the no_new_privs
-> attribute of the calling thread atomically with the enforcement of the
-> ruleset: no_new_privs is set if and only if the
-> landlock_restrict_self(2) call succeeds.
-> 
-> Semantics:
-> 
-> A single call replaces the usual prctl(PR_SET_NO_NEW_PRIVS) +
-> landlock_restrict_self(2) pair.  Because no_new_privs is set by the
-> call itself, the no_new_privs/CAP_SYS_ADMIN precondition is fulfilled
-> by construction, so the flag is usable by unprivileged processes.  This
-> is safe for the same reason the prctl(2) pair is: the executed programs
-> can either gain privileges or be restricted, never both.
-> 
-> The two states cannot diverge.  A failed call (invalid ruleset FD,
-> E2BIG, ENOMEM, interrupted TSYNC, ...) leaves no_new_privs unchanged,
-> and a successful call never returns without no_new_privs set: the
-> attribute is set past the last point of failure, right before
-> commit_creds(), which cannot fail.
-> 
-> Combined with LANDLOCK_RESTRICT_SELF_TSYNC, no_new_privs is set on all
-> threads with the same guarantee: each sibling thread sets it in the
-> commit phase of the TSYNC protocol, after its all-or-nothing barrier,
-> so either every thread gets both the domain and no_new_privs, or none
-> does.  This also makes it possible to atomically set no_new_privs
-> process-wide, which prctl(2) cannot do.
-> 
-> Unlike the v1 flag, this flag requires a ruleset: calls with a
-> ruleset_fd of -1 are rejected.  As a consequence of the fulfilled
-> precondition, an unprivileged caller passing unknown flag bits together
-> with this flag receives EINVAL instead of EPERM; the selftests pin this
-> error ordering as well.
-> 
-> The reason why -1 ruleset_fd is rejected is basically then we are
-> making a Landlock-flaved prctl(nnp) call that doesn't do anything
-> special. It seems better to be able to have the option to define
-> behavior later rather than have a useless feature stuck in the
-> syscall abi. So we reject the -1 ruleset_fd for now.
+On Fri Jul 31, 2026 at 10:48 PM CEST, Paul Moore wrote:
+> On Fri, Jul 31, 2026 at 4:16=E2=80=AFPM Kumar Kartikeya Dwivedi
+> <memxor@gmail.com> wrote:
+>> On Fri Jul 31, 2026 at 10:01 PM CEST, Paul Moore wrote:
+>> > On Fri, Jul 31, 2026 at 3:20=E2=80=AFPM Kumar Kartikeya Dwivedi
+>> > <memxor@gmail.com> wrote:
+>> >> On Fri Jul 31, 2026 at 9:05 PM CEST, Paul Moore wrote:
+>> >> > On Fri, Jul 31, 2026 at 2:50=E2=80=AFPM Kumar Kartikeya Dwivedi
+>> >> > <memxor@gmail.com> wrote:
+>> >> >> On Fri Jul 31, 2026 at 8:42 PM CEST, Paul Moore wrote:
+>> >> >> > On Fri, Jul 31, 2026 at 2:18=E2=80=AFPM Kumar Kartikeya Dwivedi
+>> >> >> > <memxor@gmail.com> wrote:
+>> >> >> >> On Fri Jul 31, 2026 at 6:59 PM CEST, Paul Moore wrote:
+>> >> >> >> > On Fri, Jul 31, 2026 at 12:32=E2=80=AFPM Kumar Kartikeya Dwiv=
+edi
+>> >> >> >> > <memxor@gmail.com> wrote:
+>> >> >> >> >> On Fri Jul 31, 2026 at 6:02 PM CEST, Paul Moore wrote:
+>> >> >> >> >> > On Fri, Jul 31, 2026 at 11:44=E2=80=AFAM Kumar Kartikeya D=
+wivedi
+>> >> >> >> >> > <memxor@gmail.com> wrote:
+>> >> >> >> >> >> On Fri Jul 31, 2026 at 5:30 PM CEST, David Windsor wrote:
+>> >> >> >> >> >> > On Fri, Jul 31, 2026 at 11:17=E2=80=AFAM Paul Moore <pa=
+ul@paul-moore.com> wrote:
+>> >> >> >
+>> >> >> > ...
+>> >> >> >
+>> >> >> >> Yes, I understand you feel it should be placed under security/.=
+ You are entitled
+>> >> >> >> to your opinion.
+>> >> >> >>
+>> >> >> >> No, I do not think the newly added kfunc is a big enough layeri=
+ng violation such
+>> >> >> >> that we need to do it ASAP, disregarding everything else outlin=
+ed above. I am
+>> >> >> >> sure you see that too. There are several other instances of sim=
+ilar kfuncs.
+>> >> >> >>
+>> >> >> >> Therefore, please attempt to meet me halfway here.
+>> >> >> >
+>> >> >> > I'm happy to work with you, and/or anyone else, who wants to wor=
+k on
+>> >> >> > finding a way to test kfuncs that live in security/bpf_lsm_kfunc=
+s.c.
+>> >> >>
+>> >> >> Right, and for that file to exist, you need to get everyone (FS, B=
+PF folks) to
+>> >> >> agree on whether placing all such kfuncs there makes sense. It is =
+not for both
+>> >> >> of us to decide on our own. So let's revisit this whole topic once=
+ you've done
+>> >> >> that exercise.
+>> >> >
+>> >> > The kfunc that David has proposed must be located in
+>> >> > security/bpf_lsm_kfuncs.c, similar to the VFS kfuncs and
+>> >> > fs/bpf_fs_kfuncs.c.  If you read David's bpf_init_inode_xattr() kfu=
+nc
+>> >>
+>> >> Sigh.
+>> >>
+>> >> I now went and read the archives, and Christian already told you no b=
+efore [0],
+>> >> which I missed in my first read. So two people whom this code affects=
+ already
+>> >> objected to your proposal.
+>> >
+>> > As mentioned previously, David's kfunc has nothing to do with the VFS.
+>> > Look at the code if you haven't already and you'll see what I mean.
+>> > The only relevance to the VFS is the fact that "inode" and "xattr" are
+>> > used in the name; David's currently proposed kfunc is an LSM kfunc,
+>> > not a VFS kfunc.
+>>
+>> I am sorry, I read it and I don't see why it is an LSM kfunc. It is abso=
+lutely a
+>> VFS kfunc, that is using LSM APIs to some end. The LSM specific bits are=
+ already
+>> in security/.
+>
+> [...]
+>
+>> > If you find yourself required to abide by Christian's comment, despite
+>> > this not being a VFS kfunc, that's fine, but this puts us at a
+>> > stalemate and David will need to find another approach for his work.
+>>
+>> Paul, let me remind you of another email you sent [0], in which you cont=
+radict
+>> yourself. I don't know what caused you to get confused over the month.
+>>
+>> In it, you tell David to move *LSM* bits into security_lsmxattr_add(), w=
+hich has
+>> been done in patch 2. Thus, by your own characterization, it means the r=
+est is
+>> *not LSM* code.
+>>
+>> Quoting you verbatim:
+>> > As I said previously, if you absolutely insist on the kfunc being in
+>> > the VFS kfunc file, the LSM specific bits need to be abstracted out
+>>                         ^^^^^^^^^^^^^^^
+>> > into an LSM function.
+>>
+>> You yourself made the point in that same email that the kfunc can stay i=
+n the
+>> current file once LSM bits were moved out, and your request was honored.
+>>
+>> At this point, anybody reading this thread will only see your position a=
+s a way
+>> to undermine David's work and waste everyone's time, such that you can g=
+rind an
+>> axe against BPF folks. It's a repeating pattern.
+>
+> It seems foolish to speculate on what *everyone* reading this thread
+> might be thinking, but since the discussion has decayed to the point
+> where we are spelunking archives for quotes, let me provide my comment
+> from David's v5 patchset where I explain myself:
+>
+> "I'm sorry David, now that I'm seeing this function again, especially
+> with the LSM specific bits extracted into a LSM function, this absolutely
+> belongs somewhere under security/.  It's only callable from within a
+> BPF LSM callback and all it does outside of some BPF pointer boilerplate
+> is call right back into a LSM helper function."
 
-I think it's the right approach to always require a valid ruleset (see
-my reply on the previous thread), and this should be explained in the
-commit message.  I don't see valid use cases where someone would like to
-set NNP+TSYNC but not add any Landlock restrictions as well.
+I think you keep forgetting that you cannot unilaterally decide this. Both =
+VFS
+and BPF people have told you that it does not make sense. What was clearly =
+LSM
+specific code has been moved under security/ already.
 
-> 
-> The Landlock ABI version is bumped to 11.
-> 
-> Test coverage:
-> 
-> base_test checks that a successful call sets no_new_privs without a
-> prior prctl(2) nor CAP_SYS_ADMIN, that a failed call leaves it
-> unchanged, that the flag requires a ruleset FD, and the updated
-> EPERM/EINVAL ordering.  tsync_test checks that TSYNC sets no_new_privs
-> on sibling threads along with the domain.
-> 
-> Changes since v1:
-> 
-> - Renamed LANDLOCK_RESTRICT_SELF_NNP_ON_EXEC to
->   LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS, per Mickaël's feedback.
-> - Dropped the staged "on exec" design: removed the credential bit and
->   the bprm_committing_creds hook; no_new_privs is now set atomically
->   with the ruleset enforcement.
-> - The flag now fulfills the no_new_privs/CAP_SYS_ADMIN precondition,
->   a significant departure from the v1.
-> - The flag now requires a ruleset (no ruleset_fd = -1). Otherwise such
->   a call would just == a vanilla prctl no-new-privs call. This is left
->   in case we want to repurpose it later rather than defining useless
->   redundant behavior.
-> 
-> [1] https://lore.kernel.org/linux-security-module/20260708133928.852999-1-utilityemal77@gmail.com/
-> [2] https://lore.kernel.org/linux-security-module/20260709.Eaphooyoh6sh@digikod.net/
-> 
-> Justin Suess (3):
->   landlock: Add LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
->   selftests/landlock: Test LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
->   landlock: Document LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
-> 
->  Documentation/userspace-api/landlock.rst      | 14 +++-
->  include/uapi/linux/landlock.h                 | 13 ++++
->  security/landlock/limits.h                    |  2 +-
->  security/landlock/syscalls.c                  | 28 ++++++--
->  security/landlock/tsync.c                     |  8 ++-
->  security/landlock/tsync.h                     |  4 +-
->  tools/testing/selftests/landlock/base_test.c  | 65 +++++++++++++++++--
->  tools/testing/selftests/landlock/tsync_test.c | 33 ++++++++++
->  8 files changed, 150 insertions(+), 17 deletions(-)
-> 
-> 
-> base-commit: 55f82176ef8dde632ea3eb94a6224950ed809d7c
-> -- 
-> 2.54.0
-> 
-> 
+It's all BPF code otherwise, and topical for the VFS subsystem, hence it sh=
+ould
+stay there. That is why it's a VFS kfunc. The rest of the kernel calls LSM =
+APIs
+and hooks, but it does not make them LSM code.
+
+It needs to be reviewed by VFS and BPF maintainers. Yes, it's only called f=
+rom
+BPF LSM callbacks, but plenty of kfuncs for those are already outside secur=
+ity/.
+
+The right way to do address that is to get people who added and maintain th=
+at
+code to agree with you, not take the work of unsuspecting contributors host=
+age
+to meet your goals, and threatening to block their work.
+
+And to set expectations, it is clear people do not agree with your stated m=
+ove.
+When everyone tells you that you are wrong about something, sometimes, it i=
+s
+helpful to revisit your position.
+
+>
+> You are welcome to view that however you like.  I saw the v5 patchset
+> and the nature of the kfunc became painfully obvious to me so I
+> changed my opinion.
+
+I think you have difficulties in recognizing that a piece of code can be
+cross-cutting, and affect several subsystems at once. The code that was cle=
+arly
+belonging to LSMs was already moved in patch 2. The unrelated stuff is wher=
+e it
+has belonged in the past already, so that it can be reviewed by the right f=
+olks.
+
+The best course of action IMO is channeling your version from 1 month ago, =
+where
+you saw things more clearly, and help everyone move forward with this by la=
+nding
+the first two patches once you think they are in good shape. We will then t=
+ake
+the rest through BPF tree. It will be a better, more productive outcome for=
+ everyone.
+
+If you cannot do that, let's agree to disagree and not waste each others' t=
+ime.
+We will work on figuring out some other way to help David.
