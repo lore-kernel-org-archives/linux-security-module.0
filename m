@@ -1,165 +1,201 @@
-Received: from flow-b1-smtp.messagingengine.com (flow-b1-smtp.messagingengine.com [202.12.124.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F4B3546C9;
-	Sun,  2 Aug 2026 10:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.136
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785666029; cv=none; b=JpL6m4XdP5kioPe3q1K0vS+q9IB82QhzR3QD62HMn55WXlJhVEXDMxinzYnjICUI6uOmkkzpmgVZvlquBdTuNfua+DxlWwZnaR61+u+yx8QI0bA0QfQCws7yW7cpo5MRdEjSpSxdrWHbteLdfNa9mmpW1AkM8DrmPUPqj7DQl/c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785666029; c=relaxed/simple;
-	bh=ewrm2hHaY02kNIwQjsetBEkV6GBLfi+fSXJJRLowtZQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EEJonOc30gIBz70+ZfVPUJFpA1BCbpREFNncdSVKX7bQgFU1UCc40pDGR7P7TXRie9FOacZNdcPOgonv4lvParRpbu9ggWXSHU59BQB/H5AMKlB9ONefRZmzb5vsJNManJZyJWeHUtEou/suOZtdMFqMqEvIf1Su+uvw5WXrvMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jaseg.de; spf=pass smtp.mailfrom=jaseg.de; dkim=pass (2048-bit key) header.d=jaseg.de header.i=@jaseg.de header.b=iZwnkVSo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BDnxRYHi; arc=none smtp.client-ip=202.12.124.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jaseg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jaseg.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C7C279DAF
+	for <linux-security-module@vger.kernel.org>; Sun,  2 Aug 2026 14:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.169
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785682009; cv=pass; b=k2ktgn3cS5KkEdZb6g2RYmYYFXaRT5Oo6oXpA3OlSea2YEZquXrt/yXpiu0VGAQ0gpxru829Y2sdLTY2GIyI8j/pLxwOz8OF6EVIcYulUbSD7pWGGp2BJtkQbMfnLjgPSlvwPfQ4d/2c3UR1nrAOKDXHd7L7bMvvpNgi0IYl3Co=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785682009; c=relaxed/simple;
+	bh=3unvZdJ58CLOkAcaen4xGd68kRpfBuVgdyrgLs/h+aE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U4OwTHnJ1kCingDNnbhC4k81pKyqhm0lTHBY49MnjVeetgGZzOWhhKe4VM7M3w5rVTtu3G4uJ7lCEdTAdZVzBdhN/rCT51zEm21aw4Kfqd7U9pJjmgZ5bj1B9YqQax/RzKPfPTro9QU8elL0+fQ208CUIXiszYmFGrCWs6XZOTo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=OHh8o+R/; arc=pass smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jaseg.de header.i=@jaseg.de header.b="iZwnkVSo";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BDnxRYHi"
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailflow.stl.internal (Postfix) with ESMTP id C146E1300093;
-	Sun,  2 Aug 2026 06:20:25 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Sun, 02 Aug 2026 06:20:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaseg.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1785666025;
-	 x=1785673225; bh=UWXStCMoW6WCbh77+QZYpryjqAzaULEhXUbNrcfh4rw=; b=
-	iZwnkVSosBHNE8xpbW2/uRGeqmvdP7MUygil9KGnZUB9Xa9IDAA3U9JSiOogjVZW
-	1tt40D75cLDZGnVWkY/D1TQ9ySN8s8gC0Kt4wucww+TjSW92baCAn0jWAFnOseqf
-	665uGt8+/SISS2/7yCCSd4HUubsKgeQScQ9rwmFmHx/mir4+2gm/5YcCAmvxHtuh
-	4RQl0CiwQCX7bpzunx+GL0QyNagk1fHODyy6Lit3UYDOE2hsEGfw09C78ob6jmzi
-	H5e4opGZuvhLa4uVttC4T19BCT9ek1z/vd8/8VDDMQgBVzk4XjZxDzDCQULOnhwg
-	Mz1ZckZsqogahodGV4DnzA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1785666025; x=
-	1785673225; bh=UWXStCMoW6WCbh77+QZYpryjqAzaULEhXUbNrcfh4rw=; b=B
-	DnxRYHiYO7+nhj2tcTfTdom1aUBnsbDb6AsS19aAl8kFmxkJFcG9td2FJSvD39Ov
-	FVS1gE5m9WqCd5JeQOy0Om5Je52Ch9bb1CLMvR/OHjJJIeTXIbxSQASWE/DyqhI9
-	8wG9ABtJE/f4e9LyB8f37qM5dMQutALMBkK6YWd1r0rUNdfaRIJZ4CctmbHWt88u
-	0P9Wgj9tmgzhDorOx5ORgUByFzJDmgq9/iAQYp69Xf7YPeAQUZE+kJ1fGlI4kUVJ
-	fN379P1wnb8s8FMuviiW7LXoVQ8xol/W6lHsdcYOySxxE+cT9COWm6GMQp4BE+ik
-	SbTHY5w24nMvleifrql1w==
-X-ME-Sender: <xms:6BlvauWuSlb2vA2ojV38iW8G58GBzSEiPw8bC2jhukWRngUmvDPRKw>
-    <xme:6BlvamtkrADkPVjhXoiU00XKp0dJCvTdBxzmBQUXLXuS6uIvo5kqOOcyMkg_xXbW-
-    GpZWa_tTmVxNkdmqVqGSS0ROk9T0d9UuLB23MFnGyO4sgWtwwDZ>
-X-ME-Received: <xmr:6BlvauMvjbDStu_vTDXfjJnxpxBHJLHiN0DbxdfoYoS-y_wwcEeywDcWljp7KkFROVrcEIq_m0YFLptS6UIzHOM>
-X-ME-Proxy-Cause: dmFkZTGkWVqRDKxcHXed4G2Im/dKcKeNjOvDOtoNYff23UD3/wEy+brhhk2RbqYNFArYft
-    yxG2GBFuo/j13wt08UgFKzWNJHXB1MYtyl0OJ+p3c+LmNt9xDuYa0828krvA9AU4dW3MVc
-    Z5n9mgmxq8A45aZYLVP40RS7oHZFHK4FWE7Hl0BBpELs6vISpMoZS716y4r/pXgHw7dGVE
-    HtZba2b+c323q/EucToLYsxPoAnfhDRiAWZPJ7sHTC70DdV/mF+iHA3pcAliftaH98HxlF
-    dWAU7NICZgRrE7g1GmWLChsHoNRsXBqeNgzRXezEKkEnCA25hSbCTGx1gy57PKPdifSkM2
-    1+ciZ2GlZM3GF80LlZuK77cxGBAdgbTWk8lgzFXdVtOY2danDcL3KQC3YDVBYv+d46w1le
-    kGqPJu6c2rOE4768YKbMvJs+9Jg+FP+SBbO1ftDchUC2tp7rAam/eBslVM9sjgVmzu0hC1
-    1IUP9pcqlFQ6gF2IZSlnI9D6R+BByUpikFCkdDbaQQmNibFVbiC/AEi09VwXv7+gdrH1CT
-    aE0mQD3qPQ+8j840mFjrWAmHsPz8NG7CivCMwnImvW95JZUIwrUtLboE28YsF76BJGmPeY
-    mGIb/QFKZI6gXrQsBHX/uuM35J6LeeDUpZn8B7mofvk3AJFfMows3UuAjWFA
-X-ME-Proxy: <xmx:6Blvaurww5cxUbuXjvHc-NXLfEZZhhcv-ak2IEiADLlMH6SivIkRWQ>
-    <xmx:6BlvaouAlqlGvoFhSUugZLwmA1jy3sUUn0WT_H6Y5-aX9y0cU9AKkA>
-    <xmx:6BlvauiSJND0xIkfHxP_JkZ4QPVNk_JsDHQCPGPvYm-1237I_qjUAA>
-    <xmx:6Blvas1Z2x02fdspsIPFFjRYIlBl41Sv55VojK-VZw7_z07Q1H-f2Q>
-    <xmx:6RlvavMS61OqS3oEGaKid47bE1XwBqD-7dwbctrl5oElNq6wolknVEnH>
-Feedback-ID: i60a14417:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 2 Aug 2026 06:20:20 -0400 (EDT)
-Message-ID: <e9523b5a-6623-49ea-9ba3-cddae1a9ce7e@jaseg.de>
-Date: Sun, 2 Aug 2026 12:20:18 +0200
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="OHh8o+R/"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2cca0c5799eso20566575ad.0
+        for <linux-security-module@vger.kernel.org>; Sun, 02 Aug 2026 07:46:47 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1785682007; cv=none;
+        d=google.com; s=arc-20260327;
+        b=TbX5bJ3HJB/Zt+FQvaB0254LIBYGaS/YUBcxFXiLUSDCG9IPAk5LLikKSuUnEtSwzm
+         4b6UtU5NN06dhHcML+KhDXz0Ltwl791HFFgSZYfDxWrak+bT3sOWkaAWEtzMzhmScuhw
+         YleCPDNfoizZ15Y4fAWE+A252kfZIy32W502wscJNQ/guh2cQqoMTeLKCXmq+6zm+G2B
+         hg4WrVgbESI5rrpECFiO5j6i3gw4t0FmjFTULBFvjaU3NyZk7UkS5yBexlEg7yjTHOre
+         qexCNXGoCPYGCWG+GHe/QEeh+Te0vsmt3HQZpYbKM12EwPjDbYsnfODE/o9cMk0AgokE
+         bqzQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=uVSDCq9XMkrzuk5PhsqP7Q4DHzK39AE8ZyylcX501n8=;
+        fh=czP8LuXc/nfLRtlUCFnHZctmXoSGM76RcCUqo0kaI6M=;
+        b=r+F55Ki0NthX9kBE9Gw6cH2fvhMreBsw69ZEu4ptO20blVWPwUiK4dBD3WJRBgNjpj
+         DKTDESoLrRjHjhis36IRyI8JUCAeVMhblB8ufipjLQRCiw4mkF9U1tRwN4qOWh7YjAO1
+         Dk60GVq8JX/PZSGbeLCAXbsKAi4A7hm96QQyBDwjsaJl7O4Tqpzyo/cv9BzSA0tmbM+2
+         fsiJ3BYcROJ2mH7icg2MFTm0QqNVUYsmBdy9cIogWx62nxPqrHVOlIyWpMjouTMw7ku1
+         qNn+oYg9niO48U8jwubvlZCAdGFRMbKd8Hd5L2XAsE4IHVYRT0MQXbEY9yB8zr53/meQ
+         Av0A==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1785682007; x=1786286807; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=uVSDCq9XMkrzuk5PhsqP7Q4DHzK39AE8ZyylcX501n8=;
+        b=OHh8o+R/tCSle6ncNwe5Zl2ZTuRWkRzIVW5FRgDSu9sHRwcfWiw7vF3BdBCSpFujfQ
+         iT6Q0XcNOPQB3QnTAA2NM0OjY2bob8+7mrMzP5QX0xUMkB6HheH18fW5MoiUvK+7OrBE
+         L838tPiITkenCBRZ17LGUNM137tb5BQQiFgTagt+DXHI/y3TTENHznJK1bjVA8rf6wAv
+         s3wLUbgloWCbz0Kz1ydBeXrzQnb2/LD4e7igtByLExt/fvjaBZk8Ch/zFrmu+NatX+2E
+         GkQBz59t47FSYRIFEwDn9LBD66WAhJ2rHZPVJqw4wz6qd6ivtJ3WqRG3OTaWIMM590T1
+         2YDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785682007; x=1786286807;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=uVSDCq9XMkrzuk5PhsqP7Q4DHzK39AE8ZyylcX501n8=;
+        b=ZXl7J6fbpFcCjjML34LsKhcHGzwgu9uPe0wT/2wHZPAj0w6HlKRMnXQiLur8KHXOyX
+         qj7hr0lSaHZpsETyuR/h2Quxm2Y4Xeow7AXe8YQ9i6h3kQ5E2AK6ImbIvqP5pJGhqSiW
+         ds4BG5OqKMIWJNbqnn8uIH4PaUA9p8ecU/mGuUe5h1Guwjf0h8lzD6jElUY8gqrpX0es
+         ZQRRljJMs3ZIqcY7FwwELuLB0nPAOPBqF+bfc+U/9izDVPEA6KW+zJjiSyC3gyFCx8sS
+         rlxigqMYRj714/TZ5l4tgV5UVncsYJTCrWhTz4AC/k/0HOafWMPFmKt1LRhZ0gX6zkey
+         DKUQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rqy1vXtfp5IAA1Ocx+/zaHd07UTDqxUtzYJKVnhQLfgx5UhSd78RXKLWCREPVPc22ItjJ5KJnY4W2gyC7pxcwIDI0rmVv4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4hg9HYz9yUA6HUBd1RQFlpGTDx1h5U4B7Wc0FeSvPB5RqNHIQ
+	21ynxV6AD1n6Hw7QPlvdYKimr41eeJ3+UXXZ+vDg9QEe8pufnp155h7kikafWC/m1dO0LH5E8iR
+	kQes7yZvufyBa2yknqPUmA8Rmjq1gtlyM5XRdk+Pc
+X-Gm-Gg: AR+sD12d4+KyPJR8WuANqnKFza2Z+dkIJHwj+5pbMsgca9KIgbEo3uuDwBVvInlLfzu
+	nPm0Y4C1OzEC+IVzNYQEO0BVXnQRNjrNxFbbKA6GDXuK3d7PdqULrd026r+OOZdZwrajUhhqLEC
+	+pblIa1WE1DrhqUP5BILXeKr9/hZ6mG8y9L+rlr6e7b5YHzEcsoniKzkKN4hPP66aok3i/1nkD6
+	qXr5tyGZDNoddFV49A5+JN8OlSORBztG3W0W92R/PffR7TEnNqg7UMDyBAprdOzjMlWAITj9MOd
+	zKkfDYWx46sMnKEdEuUACWN0sO0ZmcP/70M5Rliq9673
+X-Received: by 2002:a17:903:390c:b0:2ca:ce92:6e44 with SMTP id
+ d9443c01a7336-2d05218984fmr66046745ad.8.1785682007361; Sun, 02 Aug 2026
+ 07:46:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] CRASH_ZEROIZE: Wipe secrets before kdump
-To: Dave Young <ruirui.yang@linux.dev>, Baoquan He <baoquan.he@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport
- <rppt@kernel.org>, Pasha Tatashin <pasha.tatashin@soleen.com>,
- Pratyush Yadav <pratyush@kernel.org>, David Howells <dhowells@redhat.com>,
- Jarkko Sakkinen <jarkko@kernel.org>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Mimi Zohar <zohar@linux.ibm.com>,
- James Bottomley <James.Bottomley@hansenpartnership.com>,
- Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
- Coiby Xu <coxu@redhat.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
- keyrings@vger.kernel.org, linux-mm@kvack.org,
- linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
- Tao Liu <ltao@redhat.com>
-References: <20260731154608.153258-1-linux@jaseg.de>
- <am38qk60mpVFuJRi@MiWiFi-R3L-srv>
- <74625f78-15ea-439f-b9f0-939d2976fa7f@jaseg.de>
- <79610b53-5201-4af3-913a-0c4dcbb6f9d6@linux.dev>
-Content-Language: en-US
-From: =?UTF-8?Q?Jan_Sebastian_G=C3=B6tte?= <contact@jaseg.de>
-In-Reply-To: <79610b53-5201-4af3-913a-0c4dcbb6f9d6@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20260730234533.1912709-1-dwindsor@gmail.com> <20260730234533.1912709-4-dwindsor@gmail.com>
+ <CAHC9VhT=m-GtOZx2AHym7uN1CNx94arKBiXeVC7LTEJ-b=1EVQ@mail.gmail.com>
+ <CAEXv5_iiNspub=qE1YW-01sV_bxxFUrrcAR4KV4Ec5i_mePtHw@mail.gmail.com>
+ <CAHC9VhTS7rSnBqg00ZxNkcZyh_=EeJmn_4z3CTCCxreEEDtTtg@mail.gmail.com>
+ <CAEXv5_iHLmzPT3Jj+qZsdt1Nk_5OD4Up3GGV0S9G7KyQshFhDA@mail.gmail.com>
+ <DKCVF3KRQSOJ.1WKITMP369I0R@gmail.com> <CAHC9VhR5yfw+sMfrYpy8Qm2uNoxqsTweh=KhDRZsU1CioHRDDQ@mail.gmail.com>
+ <DKCWFKAD79IU.TMCNT9RUAJAU@gmail.com> <CAHC9VhRQWRKHi-hdtvSnYPD_dqgP7Q8RB_X4PEDLwPUe6EegYA@mail.gmail.com>
+ <DKCYOLBUWJBZ.1N8JAXJ3QJYCE@gmail.com> <CAHC9VhRK38bVU5+rYxwLsvVt0oBBSWs4xKsjexbvc3TuA9LVNQ@mail.gmail.com>
+ <DKCZDM2G8VHO.38SPG4I4JZTJI@gmail.com> <CAHC9VhR3AK4r4_0eqWxDmrA8UKOsbyQh6ZRRie99Pe6cW0EL8Q@mail.gmail.com>
+ <DKD00NYVQQC9.OK8JEWHH1NUV@gmail.com> <CAHC9VhQ5vSr6JK0xtNnP2cre+3bbW9GUT7kXwLAcctwNpPzwrA@mail.gmail.com>
+ <DKD17D5H7N95.2VI5IOQBNTHGX@gmail.com> <CAHC9VhQ24fp7_sy1=NiWkfzPLSM35ugSCOKDKxnm6H9W-pDa6Q@mail.gmail.com>
+ <DKD2R5268G2C.TPLR4XMTZ91R@gmail.com> <CAHC9VhQNozNGH4o=8D6wxks4deZ2eVOHmxFK=fvjhkCC0JSCkw@mail.gmail.com>
+ <DKD3I17NPS96.3G49BTZ4ZVUVV@gmail.com> <CAHC9VhQmb=v3-T5HZUzfr_me6S7bo6sX0Vs4nDFQZnMe+SQOMQ@mail.gmail.com>
+ <CAEXv5_huGfd7u0tKW5Eq5bSH+rzkB=ThKOTLnfnxepqTmgcUPA@mail.gmail.com>
+In-Reply-To: <CAEXv5_huGfd7u0tKW5Eq5bSH+rzkB=ThKOTLnfnxepqTmgcUPA@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sun, 2 Aug 2026 10:46:37 -0400
+X-Gm-Features: AUfX_mwc3J6rwxlFv-87GN8bK5jLLOa8tHA5WdDBfhjyivOgLNhWYBAg0rZ3uGM
+Message-ID: <CAHC9VhQxeNJ1U_cUX=4mdJT17jG2ZFY27YM2CXK8wcuRPQYtrQ@mail.gmail.com>
+Subject: Re: [PATCH v6 bpf-next 3/4] bpf: add bpf_init_inode_xattr kfunc for
+ atomic inode labeling
+To: David Windsor <dwindsor@gmail.com>
+Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Emil Tsalapatis <emil@etsalapatis.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Shuah Khan <shuah@kernel.org>, bpf@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/2/26 07:08, Dave Young wrote:
-> On 8/2/26 12:31 AM, Jan Sebastian Götte wrote:
->> On 8/1/26 16:03, Baoquan He wrote:
->>> Note that we usually dont' want to run a lot of work after panic and
->>> before jumping into kdump kernel.
->>
->> I understand. For this reason, I think it's best to keep this default-off. As-is, the notifier list call is timed and on the (slow) ARM64 target I'm using, it takes about 3-5 ms to run. I took the "try lock, skip if locked" approach to keep the risk of this code crashing during panic minimal. In my application, the kdump payload is code that then does a full wipe, taking a couple hundred milliseconds.
-> 
-> Not only about the time used, the panicked kernel is not reliable, any more extra logic can make it even not reliable, any pre-kdump extra logic is not a good idea unless it is a must to ensure kdump working.
-> 
-> Cleaning up secret data can be done with makedumpfile + eppic scripts (see the manual of makedumpfile), or it is even possible to do so in kdump kernel with Tao Liu's improvments for makedumpfile previously  (I don't know the status, probably dropped for the time being, but it is possible, cced him).
+On Fri, Jul 31, 2026 at 7:11=E2=80=AFPM David Windsor <dwindsor@gmail.com> =
+wrote:
+> On Fri, Jul 31, 2026 at 6:23=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> > On Fri, Jul 31, 2026 at 6:04=E2=80=AFPM Kumar Kartikeya Dwivedi
+> > <memxor@gmail.com> wrote:
+> > > On Fri Jul 31, 2026 at 11:49 PM CEST, Paul Moore wrote:
+> > > > On Fri, Jul 31, 2026 at 5:29=E2=80=AFPM Kumar Kartikeya Dwivedi
+> > > > <memxor@gmail.com> wrote:
+> > > >> On Fri Jul 31, 2026 at 10:48 PM CEST, Paul Moore wrote:
+> > > >> > On Fri, Jul 31, 2026 at 4:16=E2=80=AFPM Kumar Kartikeya Dwivedi
+> > > >> > <memxor@gmail.com> wrote:
+> > > >> >> On Fri Jul 31, 2026 at 10:01 PM CEST, Paul Moore wrote:
+> > > >> >> > On Fri, Jul 31, 2026 at 3:20=E2=80=AFPM Kumar Kartikeya Dwive=
+di
+> > > >> >> > <memxor@gmail.com> wrote:
+> > > >> >> >> On Fri Jul 31, 2026 at 9:05 PM CEST, Paul Moore wrote:
+> > > >> >> >> > On Fri, Jul 31, 2026 at 2:50=E2=80=AFPM Kumar Kartikeya Dw=
+ivedi
+> > > >> >> >> > <memxor@gmail.com> wrote:
+> > > >> >> >> >> On Fri Jul 31, 2026 at 8:42 PM CEST, Paul Moore wrote:
+> > > >> >> >> >> > On Fri, Jul 31, 2026 at 2:18=E2=80=AFPM Kumar Kartikeya=
+ Dwivedi
+> > > >> >> >> >> > <memxor@gmail.com> wrote:
+> > > >> >> >> >> >> On Fri Jul 31, 2026 at 6:59 PM CEST, Paul Moore wrote:
+> > > >> >> >> >> >> > On Fri, Jul 31, 2026 at 12:32=E2=80=AFPM Kumar Karti=
+keya Dwivedi
+> > > >> >> >> >> >> > <memxor@gmail.com> wrote:
+> > > >> >> >> >> >> >> On Fri Jul 31, 2026 at 6:02 PM CEST, Paul Moore wro=
+te:
+> > > >> >> >> >> >> >> > On Fri, Jul 31, 2026 at 11:44=E2=80=AFAM Kumar Ka=
+rtikeya Dwivedi
+> > > >> >> >> >> >> >> > <memxor@gmail.com> wrote:
+> > > >> >> >> >> >> >> >> On Fri Jul 31, 2026 at 5:30 PM CEST, David Winds=
+or wrote:
+> > > >> >> >> >> >> >> >> > On Fri, Jul 31, 2026 at 11:17=E2=80=AFAM Paul =
+Moore <paul@paul-moore.com> wrote:
+> >
+> > ...
+> >
+> > > As a consequence, everyone suffers because they first need to satisfy=
+ your whims
+> > > on how all code and kfuncs written thus far are wrong, and need to be=
+ moved
+> > > around ASAP, including the one being proposed.
+> >
+> > That's not a reasonble or truthful summary of things, I've only
+> > requested that David locate his proposed kfunc in
+> > security/bpf_lsm_kfuncs.c, I never suggested he move any others.
+>
+> Looking at what's left of the kfunc itself, it's basically nothing.
+> Everything meaningful has been moved into security/ already.
+>
+> Aside from bpf dynptr ops, what's left is:
+>
+> if (!name__str)
+>     return -EINVAL;
+>
+> if (strncmp(name__str, XATTR_BPF_LSM_SUFFIX, sizeof(XATTR_BPF_LSM_SUFFIX)=
+ - 1))
+>     return -EPERM;
+>
+> if (!xattrs->xattrs)
+>     return -EOPNOTSUPP;
+>
+> ... then a call to security_lsmxattr_add. Why not move this chunk into
+> security_lsmxattr_add, and leave the remaining bits, which are pure
+> bpf, in fs/ for now, and litigate the total placement of all of them
+> once v7 lands?
 
-Thank you for the pointer!
+Thanks David, but my comments and decision are based on the kfunc as a
+whole, not necessarily how the work is divided between the kfunc and
+the LSM hook it calls; shuffling bits of code between the two doesn't
+change the character of the function.
 
-There's two scenarios worth considering. First, in the standard scenario 
-where you enable this option, then drop into a standard kdump kernel, I 
-don't think it makes a big difference *when* you do this cleanup since 
-someone is going to have to dereference these pointers. IMHO a good 
-reason to do it in the old kernel is that there, the code knows about 
-the layout of all the data structures. To retroactively do this in the 
-kdump kernel is much more complicated, since there you have to 
-reconstruct the structure layouts from symbols or hardcoded struct 
-layouts, and you have to keep this symbol/layout information perfectly 
-in sync with the running kernel.
-
-The second scenario is what I'm working on here: I'm not using a normal 
-kdump kernel, but instead a custom payload that wipes all RAM from start 
-to end. This payload will wipe all these keys too, but my critical 
-concern is speed: On the embedded SoCs I'm targeting, the full memory 
-wipe takes too long (hundreds of ms) for an HSM application, so I want 
-to do a targeted wipe of just the keys first. The old kernel I think is 
-the natural place to do this. Adding to that, in my scenario the most 
-likely trigger of a panic is not something like memory corruption, but a 
-trigger of the system's tamper alarms, which would leave the old kernel 
-relatively stable during panic.
-
-I can imagine several possible mitigations for the stability concerns 
-beyond the default off config option:
-
-* Since the wipe handlers are all really simple, it would be possible to 
-manually guard every memory access there to ensure they can't fail and 
-that they don't write to sensitive areas like the dump kernel or the 
-remaining panic'ing stack. Doing that would only rely on information 
-(more or less intact stack pointer, kdump kernel area boundaries) that 
-would be necessary for kdump to succeed anyway.
-
-* And/Or I could extend the patchset to include a mechanism similar to 
-that in Bradley Morgan's patchset that catches segfaults during wipe, 
-and then skips the handler causing the fault.
-
-* A last option would be to have the alive kernel prepare some kind of 
-"wipe this first" structure in its memory during normal operation that 
-the dump kernel then can pick up to do the actual dirty work. I disfavor 
-that since it adds double bookkeeping to a lot of places, some of which 
-could be performance critical.
-
-I've also picked up that I should remove the timing logic since that 
-could cause instability.
-
-Thanks,
-Jan Sebastian
+--=20
+paul-moore.com
