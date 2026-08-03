@@ -1,228 +1,175 @@
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2453417340
-	for <linux-security-module@vger.kernel.org>; Mon,  3 Aug 2026 13:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4A026F476
+	for <linux-security-module@vger.kernel.org>; Mon,  3 Aug 2026 22:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785765041; cv=none; b=l371NiTzxyhQyPAtwMUztG6alM7dCQWnowHYr/LlCg3foaJULG2cq2B5xOrOYR3z6iIDDsIuhSNRFEV8xJFkbz+nC6A4MYFXmzDPdOgsgCauKgfyqMi4CDDO7+ZL9HUTjDT3l6MZ7/DkwmV0QOfgrB8XDFHxt/y2zIDRTkl08D8=
+	t=1785796276; cv=none; b=dV2wdJU1FdwzPZ3WYureoHxlS7iSE10nmlRqfh7sWJRywgKp94pH5qhJsXO6be/ffu9vS0spVktAaVcaMxAkXAiOnG2JdXeopf7iAtu7ZMfOcKt0IcsMcbY1fhKdtpHaHygropS3RPCBlg1hRkiBp1LOyd1IPa7ShKR3RcHX6hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785765041; c=relaxed/simple;
-	bh=LPGiLQw5RcBm2gtXtkMBX5n7H0T2a7aVaC8j802eRRs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rLdZ/k/p2ZdzcIMlGiFKxOf6WM7xmP/KfRy7Vxz8r2o7MfphL5bHkDyk+xD8xqB/VIV6CfIOuXZuCbDxxoYhFFQfdNV+FP9GWYXrw4cSQkIhLpG6oR9YKFbSQ8D2FBVR81mJOF41P1jV/MiYK4Onjq/EokyKbGjqbc1e0SqiX/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CbuVOyYF; arc=none smtp.client-ip=209.85.215.180
+	s=arc-20240116; t=1785796276; c=relaxed/simple;
+	bh=OyF12uxUsJ4oS++bL0cvVgZF4MoR38wWKA4onFazqYM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PTOnqurU/i4FGndA9Ts0vU4gkPR8LQxxOW5Re/cj7OwS3xlaWb6HEWil/cIktPKmbLfd3Eh8GAp8wRYg+rnwnPZEDmWwu0LRU/yQTHvN57EjcLYY+0dE8tHOLmjDPCwdMslMXEakBMeqG9ArTtrCRcIsE5Y391r5dYoa8u1+BP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K3OFnuu8; arc=none smtp.client-ip=209.85.128.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CbuVOyYF"
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-ca957432c7fso2267969a12.1
-        for <linux-security-module@vger.kernel.org>; Mon, 03 Aug 2026 06:50:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K3OFnuu8"
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-8200ca16f26so1175757b3.3
+        for <linux-security-module@vger.kernel.org>; Mon, 03 Aug 2026 15:31:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785765039; x=1786369839; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=NQmyofkgF7S5g7WDKL1YdgJcT1PNGV6nNZJ8ZQGA+8A=;
-        b=CbuVOyYFLAxIfg9Vu1OG2XuOE+ahLf8F+i157Bind4CyjVajStxZllaQtuCFnBluZS
-         myRGQZ6YHJgzHPIgtkmJzFuWDp72396+8Dd/ButPHFAF3k4tsY/vy1bL54l9mH+CgFE4
-         cK8R3gEPO/TZomvq1JbNDWxje974hy38U9P/8r+X2UC7kdIPuaxtUtI/27PhB8FKeuQ1
-         AROMCh2NuSTr3cP4D0lCun0eXtnwcdUBrHWe/H6zkzqYXLR0+7h7Pns9TrtxGYpOqAnc
-         L75VnpNkHBvCVTeZGCizSmFHnCMtNiJG2g/6tPLrIOCWPljBhzCzYbDhi/yhtk/ZMVf4
-         VMcw==
+        d=gmail.com; s=20251104; t=1785796274; x=1786401074; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=VixFhYhiyWucYwqK+vkqrLa8QhNCgUSiWRqAtXrr9VM=;
+        b=K3OFnuu8As0jlpfw5ero1U4WobH4hHcxxF1BJz9gkCIQSvAP3alfl3HR3y1SRF0L49
+         V3l9p4Ym4BolxGdXVj0+kFX+33wkIzYfVHNiWBGJSnYXXywf+5fJnVRTUJeaoMC9Z/+x
+         2Wo2yM+cntpTkPJBVWiJYiG2yJt0TJmIp6VrodykHjHYgTwj/rvhifYxwW9fuzszjxPo
+         460NUOrKp7XPXmuE8lZhOZsIAx7gPOJGHWlqhyfeMA8zDr8ra8/1kC59Qtd6ftf7tgP7
+         fmL6tl5n/+tNsbWpdt7YyHk6jhGrIaRJy19RfOwTde82+/chikXqADVsrIf1LARVQ11E
+         fF/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785765039; x=1786369839;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=NQmyofkgF7S5g7WDKL1YdgJcT1PNGV6nNZJ8ZQGA+8A=;
-        b=XaLT6YDM+Fj281+8h85pjqMcHmUiF0QT3ldL9N4Zpe8BDySG3pw5E6GM8KxHNtCZQe
-         JfGNaONHjdyB6EZIOaMbiCRao16J1CzxwH+mF0cqmcG34hIGcxYM6TMlmPo81UH+BLU5
-         2dwZ2Yul1OXQCf85CohS7XOjFBRkHXfsNTPsVMZODf9zNIBxzuUe/kAeaNBBwiPVK/Th
-         9u8nJgmQOsK7idDsWJNAQJPNq+0FHmnNIxvbK3eahIIq5bfo44G4QFuQ5+uL0K75YD8o
-         9IZD3MoPs2PFd+UhFGTdcZ8iQ6qZpE/WCW2wDy5JZwsM8ImcZK6Q3jZT1GR//sgngzwR
-         ifsA==
-X-Forwarded-Encrypted: i=1; AHgh+RpayO2zLi5lPVjq5ZNdTt9n4tXi0Vsijwb8dDWNhb1xfct0fQVLc+Q5vRsWbQ43bwEw6ykkWMRgsl2SkhhGev2buwV+rS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOKCU1CN/HwlICf9PteFLJ4rw9LRptAyKwOLKoawjCLdhr55Ww
-	Pt6h8z5pYAFo+SJd27kfnNy7Cs0HXd0XIUXR09WUmxsvDHBTkKDYwREd
-X-Gm-Gg: AR+sD13An9qEIBxQzupqZ7Ck22ZnBZWtfjZmxJ/45hHP6Lvy4swXqMk48i035+sasuX
-	jiylYhAoTysl6PoTaURn5wCnSWuYg7gVowcDooyBRafGeWEMlJqNMz4BPnCwHiPSw6CMHKT4Ulp
-	CpPNgMQ9La1diA6QUt0Epk/BjUOwZ7XC7TnrCji7D/VIXQxWv2Z8Eb9OHpAEPwt+aco3T2xAV+0
-	d7cQW74OqIJK41hFM2iPIHWMclRqnK3L0R0ncmxtQszS8gpXHhdYpebGgoMMgXoT4TtRUrvCgR6
-	xck9ZXRO/7R9gdV5zCSVaGi2WunBKZavgMYfa3S+yma6KpIc7M3ic9re/WfEGkE3kJeSpqLMgMJ
-	vOKYEHvq5cBn1skJeKXCiw3+2GNBQpy5CZg12oUhrJvInuaK5oqINg7Q1LwPI1tNuFaLMSqdI/z
-	HHR9LrrWb++Qjya7l/KITDLgZAcDLqfKp2IAaOK6P8h9DcBuVS3uoHVMsLOaZi
-X-Received: by 2002:a05:6a21:4e03:b0:3bf:a0e5:99a5 with SMTP id adf61e73a8af0-3c92a7c8caamr10441373637.47.1785765039193;
-        Mon, 03 Aug 2026 06:50:39 -0700 (PDT)
-Received: from [127.0.1.1] ([2804:d45:3612:3b00:fe04:bb65:6aa0:f6e1])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13fab143a7csm28550344c88.4.2026.08.03.06.50.35
+        d=1e100.net; s=20251104; t=1785796274; x=1786401074;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=VixFhYhiyWucYwqK+vkqrLa8QhNCgUSiWRqAtXrr9VM=;
+        b=smtvxrToPUNAxr6wfpwTeKZ4eyRh/riZvmF8Lp9/5P2teMPPJM6t1nC5TUYzNSNnm+
+         hYo+up5VBVg/BQDkA1uka67iedMuch2gSIRSWGW4BgvY71R63wZ3Zsbu3/BVoPfYHJ49
+         dqi7x1sAprnacpqrlBE84c7GOliXItCamnFcecWBA5gyDZU8e6TdChSHiUGNCAhGH8tA
+         lHEfg4qSelfW4KWloYePb2OsyV+AiwJ+eG4/p1LKKjNNhtrNv0ySDtCdahhwTmJuBZ5m
+         e2hkVIXPete+dnSY9NaVg/pmLNlNW72/Mb1yxWkHkvBK/joobls8FIcB+bkNNJd3D6SE
+         aeVw==
+X-Forwarded-Encrypted: i=1; AHgh+Rpy1MDnHsLqzcWLAjzCBrs8SUIgGNQeg2mqesc/AGeGk22JMlII1OMLbDaq/Azcr+OC9N5VY0UPJA6tJIHrARgyeX3o1+0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxF0gcrSTZx7LH2P2sQDjU4LTk4UwPG4KZHoi3PntddKqfLu7p9
+	CoZjKU6JF4+wGZEoPCWkhmNHfuMe/cQJc1m6TOkUF4rnDgj0aHoKN7IO
+X-Gm-Gg: AR+sD10DxM7yykUxWoEUMlF219Mm5hZJPPq4OmEaAcxao2upvsNvAPPWh0oA4dMGbMR
+	16u0fq4NtXlXLZJim+b1l4xBuZrLzFtf+aKzj9yEkAB74QFGk7C8aP7hCE7R3k7pEp0ZtTz54Yd
+	kc3FbaqQcD5bLgtpaHBXHMs8uw2TpwvcE6ZN47cO8RiTzQVvX2mzrauv8cLG+GiECoZj0RJsT4R
+	5g+JNvULCn5ehp4NOY5DIJtyXQxS/EqatWqbuTrkmkSKgST8+DB0/Nc6DWo0CyaOe5gdV96xY2y
+	0GuuLrEFSCXeM6AnX3Z26j8I/EHt3bntLwny7kMQSj37bg4Tn2fA45955emsox8uHnuX7+TumCk
+	N4BxdwrmD+8Xk6oJ6ZM9WiumtL+iTxuYFuVlcZV0xTbuVkaX5554VV6LCWdzuvSsfvMZ6v3HCzj
+	NOG0ladS/Trp1Pu/MC63DyfXqabsNW4aE6/w2U1xY4PXTPAsPdCEro44zpCg8LhIU5vXggcuHx3
+	KlhFllYUkJdB8yyE2xCu9U=
+X-Received: by 2002:a53:c745:0:b0:668:43a3:9db2 with SMTP id 956f58d0204a3-6694f17d897mr10477606d50.32.1785796274214;
+        Mon, 03 Aug 2026 15:31:14 -0700 (PDT)
+Received: from zenbox ([2600:1700:18fb:6011:6253:b407:801c:a745])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6694903782fsm6420774d50.21.2026.08.03.15.31.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Aug 2026 06:50:38 -0700 (PDT)
-From: Lincoln Wallace <locnnil0@gmail.com>
-Date: Mon, 03 Aug 2026 10:50:21 -0300
-Subject: [PATCH v2] ima: fix out-of-bounds read in xattr_verify()
+        Mon, 03 Aug 2026 15:31:13 -0700 (PDT)
+From: Justin Suess <utilityemal77@gmail.com>
+To: gnoack3000@gmail.com,
+	mic@digikod.net
+Cc: linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Justin Suess <utilityemal77@gmail.com>
+Subject: [PATCH v3 0/4] Implement LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
+Date: Mon,  3 Aug 2026 18:31:04 -0400
+Message-ID: <20260803223109.707353-1-utilityemal77@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260803-fix-ima-underflow-v2-1-36eec5e8500e@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/32NSw6CQBBEr0J6bRumwye48h6ERQs90AnMmBlFD
- eHujhzA5atUvdogSlCJcMk2CLJqVO8S0CmDfmI3CuqQGCinKq+pQatv1IXx6QYJdvYvLPLbQEX
- DDVuGtLsHSaXD2XaJJ40PHz7HxWp+6T/batBgwX1Z2lqEKrqOC+t87v0C3b7vX8HJCa6yAAAA
-X-Change-ID: 20260729-fix-ima-underflow-40bd249a9afa
-To: Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, 
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Lincoln Wallace <locnnil0@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5398; i=locnnil0@gmail.com;
- h=from:subject:message-id; bh=LPGiLQw5RcBm2gtXtkMBX5n7H0T2a7aVaC8j802eRRs=;
- b=owEBbQKS/ZANAwAKAWwfHIW6XOyvAcsmYgBqcJyrqtCqE3tE8LgWZFXh5OiNaOiTM/b2Zf8ry
- DhGjqPNKCmJAjMEAAEKAB0WIQTPur+Hzv70Sl/Z3D9sHxyFulzsrwUCanCcqwAKCRBsHxyFulzs
- rxyXD/0RXpcmRO8KQhmkBoM8UPrr8G/ofnGYUJGuYEGIJWNAPU24W1O/+0cQE7AxGZIXs8McpBk
- LQDkQLNVhO78CpT9uOEse3DTJ1cn8TImPTOECvJoo9GYsYUgy7FIXijQLKR+e2Ph2dt0NicXwgG
- X0isx7Y5BDx7ouSMhn486dlDDXRiX2ImmPjO/nwA54wPtygmbCAZsR5juZy1V4OmUo60sH6NEnb
- WE1eoChJnl5djlrYTG1V4NpafLYr9w4NsCxzBaU6nvId+Vd9ncMPmIuie/RH9P4tjnbJxzU2eNF
- oLoA5dJfPtpaBgveThVIII5W8bCY7ZMxM82YmN91SzpxcoO7tig8FogOgbUFV+ZUUdhpq5TVT1G
- evM5w7WwoNp2REPMnKtVafd9PGTvB2A2zYYv9Lw13JNqWR7X6mhRZyz4lJSSF06erDg4bn0i0Sj
- AUTEJJIipkXe67JLuumT0jGLPpLy1BFfKrX0lOG3h8FHIAvLlXMvbeKlbC8eFue2vvWxcKt7O5F
- zGYlKFOGtgJaRLXxAN/GtB4dtaYSX3L1PrhvOHQ/+LQ7pvM5QT9az/PIqVWOdv0sb+fEW7ifC9D
- Bj/kIzoiJ/gmsTJRYCDhpqkgTdYeLd9H8Cyx4a/1QzZUAmQKpDrGrAICG9Md/Nfb75CiCefW/27
- juUvPSWVsKzqw/w==
-X-Developer-Key: i=locnnil0@gmail.com; a=openpgp;
- fpr=CFBABF87CEFEF44A5FD9DC3F6C1F1C85BA5CECAF
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The digest-length check in xattr_verify() mixes int and size_t:
+Howdy
 
-	if (xattr_len - sizeof(xattr_value->type) - hash_start >=
-			iint->ima_hash->length)
+This series adds a new landlock_restrict_self(2) flag:
+LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS.
 
-sizeof() yields size_t, so the usual arithmetic conversions promote
-the whole left-hand side to unsigned 64-bit before the subtraction
-runs. For a truncated xattr this underflows instead of going negative:
-a 1-byte IMA_XATTR_DIGEST_NG xattr (xattr_len == 1, hash_start == 1)
-turns "1 - 1 - 1" into SIZE_MAX, which is trivially >= ima_hash->length.
-The check then passes and the following memcmp() reads
-iint->ima_hash->length bytes starting past the end of the buffer
-vfs_getxattr_alloc() allocated for it.
+The flag sets the no_new_privs attribute of the calling thread only
+once the enforcement of the ruleset succeeded: no_new_privs is set if
+and only if the landlock_restrict_self(2) call succeeds.  Following
+Mickaël's feedback [2] on v2 [1], the "atomic" framing is gone: this is
+an ordering guarantee, not atomicity, and the wording now reflects that
+throughout the series.
 
-Nothing upstream clamps xattr_len back into a safe range first:
-ima_get_hash_algo() only special-cases xattr_len < 2 to pick a default
-algorithm, and evm_verifyxattr() returns INTEGRITY_UNKNOWN rather than
-failing when no HMAC key is loaded, so a truncated security.ima value
-reaches the length check as-is.
+Semantics:
 
-Rewrite the comparison so every operand stays a signed int and no
-implicit conversion to size_t can occur.
+A single call replaces the usual prctl(PR_SET_NO_NEW_PRIVS) +
+landlock_restrict_self(2) pair.  Because no_new_privs is set by the
+call itself, the no_new_privs/CAP_SYS_ADMIN precondition is fulfilled
+by construction, so the flag is usable by unprivileged processes.  This
+is safe for the same reason the prctl(2) pair is: the executed programs
+can either gain privileges or be restricted, never both.
 
-Fixes: 3ea7a56067e6 ("ima: provide hash algo info in the xattr")
-Cc: stable@vger.kernel.org
-Signed-off-by: Lincoln Wallace <locnnil0@gmail.com>
----
-Verified with a differential KASAN boot test: two kernels built from
-this tree differing only in ima_appraise.c (this commit vs. its parent),
-each booted under QEMU. Config: CONFIG_IMA_APPRAISE=y, CONFIG_KASAN=y,
-CONFIG_EVM not set (so evm_verifyxattr() returns INTEGRITY_UNKNOWN and
-appraisal reaches xattr_verify()); booted with
-"ima_policy=appraise_tcb ima_appraise=log".
+The two states cannot diverge.  A failed call (invalid ruleset FD,
+E2BIG, ENOMEM, interrupted TSYNC, ...) leaves no_new_privs unchanged,
+and a successful call never returns without no_new_privs set: the
+attribute is set past the last point of failure, right before
+commit_creds(), which cannot fail.
 
-The victim file must be on a real filesystem (ext4 here), not the
-initramfs, since the default policy carries DONT_APPRAISE rules for
-tmpfs/ramfs. As root:
+Combined with LANDLOCK_RESTRICT_SELF_TSYNC, no_new_privs is set on all
+threads with the same guarantee: each sibling thread sets it in the
+commit phase of the TSYNC protocol, after its all-or-nothing barrier,
+so either every thread gets both the domain and no_new_privs, or none
+does.  This also makes it possible to set no_new_privs process-wide in
+one call, which prctl(2) cannot do.
 
-    unsigned char v = 0x04;              /* IMA_XATTR_DIGEST_NG */
-    setxattr(path, "security.ima", &v, 1, 0);
-    open(path, O_RDONLY);                /* appraisal -> OOB read */
+The flag requires a ruleset: calls with a ruleset_fd of -1 are
+rejected.  Such a call would be nothing more than a Landlock-flavored
+prctl(PR_SET_NO_NEW_PRIVS), and rejecting it keeps the option of giving
+it a meaning later.  As a consequence of the fulfilled precondition, an
+unprivileged caller passing unknown flag bits together with this flag
+receives EINVAL instead of EPERM; the selftests pin this error ordering
+as well.
 
-A 1-byte value passes every gate on the way in: ima_inode_setxattr()
-only rejects zero length and type >= IMA_XATTR_LAST, and
-ima_get_hash_algo() short-circuits xattr_len < 2 to the default
-algorithm (SHA1, length 20) rather than rejecting.
+The Landlock ABI version is bumped to 11.
 
-Before the fix:
+Test coverage:
 
-    BUG: KASAN: slab-out-of-bounds in memcmp+0x226/0x250
-    Read of size 8 at addr ffff8880087a1342 by task ima_poc/74
-    allocated 2-byte region [ffff8880087a1340, ffff8880087a1342)
-    ima_appraise_measurement+0xf49/0x2310
+base_test checks that a successful call sets no_new_privs without a
+prior prctl(2) nor CAP_SYS_ADMIN, that a failed call (invalid ruleset
+FD or layer maximum) leaves it unchanged, that the flag requires a
+ruleset FD, and the updated EPERM/EINVAL ordering.  tsync_test checks
+that TSYNC sets no_new_privs on sibling threads along with the domain,
+and that a TSYNC call failing on the layer maximum leaves it unset on
+every thread.
 
-The allocation is 2 bytes for a 1-byte xattr: vfs_getxattr_alloc()
-does krealloc(..., error + 1, ...) followed by
-memset(value, 0, error + 1), so the buffer is {0x04, 0x00}. The
-xattr therefore contains nothing but the type byte: no algorithm
-byte, no digest.
+Changes since v2:
 
-xattr_verify() nonetheless sets hash_start = 1 for
-IMA_XATTR_DIGEST_NG to step over the algorithm byte, so the memcmp()
-starts at &xattr_value->data[hash_start] = offset 2 of the
-allocation, past the one byte the xattr actually holds, and exactly
-at the end of the allocation. That is the address in the report
-above, and why KASAN records it as 0 bytes to the right of a 2-byte
-region.
+- Reworded "atomically" to the ordering guarantee in the commit
+  messages, kdocs and documentation, per Mickaël's feedback.
+- Explained the valid-ruleset requirement in the first patch's commit
+  message.
+- Ran clang-format on the selftests and added max-layers failure tests
+  checking E2BIG and that no_new_privs stays unset.
+- Mentioned the selftest renames in the commit message.
+- Updated the documentation tutorial (restrict_flags gated on the ABI
+  version, prctl(2) call skipped when the flag is used) and explained
+  that not setting no_new_privs is risky even when it is not required.
+- New patch: the sandboxer sample now uses the flag by default, gated
+  on the ABI version, with a prctl(2) fallback.
 
-After the fix, no KASAN report. Program output:
+Per-patch changelogs are below each patch.
 
-    ima_poc: setxattr OK (1-byte {0x04})
-    ima_poc: read() returned 10 (ok)
+[1] https://lore.kernel.org/linux-security-module/20260717220320.1030123-1-utilityemal77@gmail.com/
+[2] https://lore.kernel.org/linux-security-module/20260731.at2Zilei1ech@digikod.net/
 
-dmesg:
+Justin Suess (4):
+  landlock: Add LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
+  selftests/landlock: Test LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
+  landlock: Document LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
+  samples/landlock: Add LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS to sampler
 
-    audit: type=1800 audit(1785342238.773:2):
-      pid=74 uid=0 auid=4294967295 ses=4294967295 subj=kernel 
-      op=appraise_data cause=invalid-hash comm="ima_poc" 
-      name="/mnt/ext4/victim" dev="vda" ino=13 res=0 errno=0
+ Documentation/userspace-api/landlock.rst      | 47 +++++++--
+ include/uapi/linux/landlock.h                 | 13 +++
+ samples/landlock/sandboxer.c                  | 16 ++-
+ security/landlock/limits.h                    |  2 +-
+ security/landlock/syscalls.c                  | 28 ++++--
+ security/landlock/tsync.c                     |  8 +-
+ security/landlock/tsync.h                     |  4 +-
+ tools/testing/selftests/landlock/base_test.c  | 99 ++++++++++++++++++-
+ tools/testing/selftests/landlock/tsync_test.c | 72 ++++++++++++++
+ 9 files changed, 263 insertions(+), 26 deletions(-)
 
-The audit outcome is unchanged: the truncated xattr is rejected
-either way, and with ima_appraise=log the open is still permitted.
-What changes is that before the fix the rejection happens only after
-memcmp() has read past the end of the allocation.
 
-Found by applying the Squeeze Loop strategy ("The Squeeze
-Loop Strategy: Catching Coherent-and-Wrong Artifacts with an
-Author-Independent Executable Oracle," Fabrice Derepas, Zenodo, DOI
-10.5281/zenodo.21098476, 2026) to this code path with Frama-C/WP
-deductive verification.
----
-Changes in v2:
-- Reword the comment above the bounds check per Mimi's suggestion.
-- Link to v1: https://lore.kernel.org/r/20260729-fix-ima-underflow-v1-1-4ac55f7ee262@gmail.com
----
- security/integrity/ima/ima_appraise.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 18d0d9154317..ced2e131b061 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -274,8 +274,13 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
- 		} else {
- 			set_bit(IMA_DIGSIG, &iint->atomic_flags);
- 		}
--		if (xattr_len - sizeof(xattr_value->type) - hash_start >=
--				iint->ima_hash->length)
-+		/*
-+		 * Use addition, not subtraction: sizeof() forces unsigned
-+		 * math and a short xattr_len would wrap around, bypassing
-+		 * this bounds check.
-+		 */
-+		if (xattr_len >= (int)sizeof(xattr_value->type) + hash_start +
-+				(int)iint->ima_hash->length)
- 			/*
- 			 * xattr length may be longer. md5 hash in previous
- 			 * version occupied 20 bytes in xattr, instead of 16
-
----
-base-commit: fc02acf6ac0ccde0c805c2daa9148683cdd01ba8
-change-id: 20260729-fix-ima-underflow-40bd249a9afa
-
-Best regards,
+base-commit: 308bc78f1e577439ca61ec77842a5a3ba7e8bbce
 -- 
-Lincoln Wallace <locnnil0@gmail.com>
+2.54.0
 
