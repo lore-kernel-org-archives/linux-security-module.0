@@ -1,147 +1,228 @@
-Received: from flow-a4-smtp.messagingengine.com (flow-a4-smtp.messagingengine.com [103.168.172.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEAD345ED5;
-	Mon,  3 Aug 2026 12:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2453417340
+	for <linux-security-module@vger.kernel.org>; Mon,  3 Aug 2026 13:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785761668; cv=none; b=gqXe2q7oeShHbokCFFFWS+dSiQBdj8CQPc5E8CY20ABPXS1odnauvS09rNTMAFmcITrBqyFJdOr/SfGQmUWMIAItT+cfGxwfUHM1uD2SEYYwrPfc23P0l54rZ/tx3ecPo4kzcsMRLR1Leo/2vOPMRfoX8qMfUYb36i41+NzSQJg=
+	t=1785765041; cv=none; b=l371NiTzxyhQyPAtwMUztG6alM7dCQWnowHYr/LlCg3foaJULG2cq2B5xOrOYR3z6iIDDsIuhSNRFEV8xJFkbz+nC6A4MYFXmzDPdOgsgCauKgfyqMi4CDDO7+ZL9HUTjDT3l6MZ7/DkwmV0QOfgrB8XDFHxt/y2zIDRTkl08D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785761668; c=relaxed/simple;
-	bh=vEBjojxZT4Ct4FWOkPtSl/UsjJV83U0kyCzMKx6h/5s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NywHhasirPFB+C6uPyy4XkZbesJTBheYYBHLAAkpAbSFZzvNNdIiQl9xQexRWpbYtwR3b77j+ZM20bUuuBCCnDSyixd3JTX1PJ9wF8bJ1drsI4JQA4VbXd6X4B6xzFRwRKeb8UMJLbJcVyUq51kmOAiNuIum+iMUXs3NmOvqLXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jaseg.de; spf=pass smtp.mailfrom=jaseg.de; dkim=pass (2048-bit key) header.d=jaseg.de header.i=@jaseg.de header.b=E/37XMMJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XFiXArHD; arc=none smtp.client-ip=103.168.172.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jaseg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jaseg.de
+	s=arc-20240116; t=1785765041; c=relaxed/simple;
+	bh=LPGiLQw5RcBm2gtXtkMBX5n7H0T2a7aVaC8j802eRRs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rLdZ/k/p2ZdzcIMlGiFKxOf6WM7xmP/KfRy7Vxz8r2o7MfphL5bHkDyk+xD8xqB/VIV6CfIOuXZuCbDxxoYhFFQfdNV+FP9GWYXrw4cSQkIhLpG6oR9YKFbSQ8D2FBVR81mJOF41P1jV/MiYK4Onjq/EokyKbGjqbc1e0SqiX/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CbuVOyYF; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jaseg.de header.i=@jaseg.de header.b="E/37XMMJ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XFiXArHD"
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailflow.phl.internal (Postfix) with ESMTP id 970111380046;
-	Mon,  3 Aug 2026 08:54:25 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Mon, 03 Aug 2026 08:54:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaseg.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1785761665;
-	 x=1785768865; bh=XdhUY7gIfBKTt39kTsvjcNMlzRZeyYxSvOWiFph/C9I=; b=
-	E/37XMMJ0v1Ud1lWVMQvTpyJCZCOLPVTbuoLeAvRkedhouyV/mlnvFSGw+oaQldM
-	p73GHXwhaKd2DTK07mdTe7wKjvUiFTZ3RLkcX8Pa+qAp+4GDEkJlIhu0CLBT/1Dq
-	Rwg4J/vBB/l6N/VOPRo21re9jKhsgafZirxl6MAj4z2QD9EJAGNn+Ju3cc9DIVMV
-	VHpDEt/LvGTFFVgplQVHIMMziB3f8IWMSXMzOwSm4QzFPbdYI3edHpAMGUXdsnLN
-	yS1Ct3IGugF74exAfxiZQexS3uM1zwnS8MbKrFmsbGIwi5DvWn0zdQvkaCHIEnK4
-	7hJqcH1CBvuoaTEESExJFw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1785761665; x=
-	1785768865; bh=XdhUY7gIfBKTt39kTsvjcNMlzRZeyYxSvOWiFph/C9I=; b=X
-	FiXArHDlNIaYE+MSFFil6OM4ih9Q9ukB8Xg+PtmQChn/juMjJc5C/2TiiQa5rDdQ
-	oji9SOifXAUFhQxCaF9TZXe4d3tJdWpFkRJkXwJUoFA3Q3h9CaaPWuAcoBKMGvNC
-	T9XijdaPf5V8CmiRq3ZnS/+60fkcDV9s12//xkQJenxHiczv+ufSAF/ohVvvdK9s
-	GHRfIJIuS87uOuHA7XRSOEVD0Gzqi9hjRJ6EC1I9JeX0UEgEAloWzvCEbTlnrQSl
-	BnB/vKYF9z0sNpWDGDutmpSRD5Msj6V9xxH7ub3hX6IBXd3AXCvNvkO2QAvMkYTQ
-	dJ0Oy4up4nrGsFmtx2aFw==
-X-ME-Sender: <xms:gY9wap_gyPrNfTOfCdMuF-RTBVYkBSjVwOcJQ2LNvslRQxZCVvhLTQ>
-    <xme:gY9wagfKNF4RQqJ_KVzOwahfzhJ9V1E8SMnCPJza0jrXdz4KYLY5_WmUjuk_5nDYn
-    WNlfBrCYKBNem6pA0jfsdYEO8YIo_PxNOTHP28LMpWsdQIxkYBF6Q>
-X-ME-Received: <xmr:gY9waj7qzG0aTPTP4hskOb8STRqmTH5_15kri37eDl3xAtfKXZb3lLjT_IQ8lvqKdf6xgwCsYfl5xLOUBrcrNvQ>
-X-ME-Proxy-Cause: dmFkZTEAFwn4saL/ueJBGnQZvkKPJZOrxi7Z/2dkwRHayWmHWj9cIIsrRAVO1lPv5iGa2I
-    07a4H2y3pW3KAvHQ432PvCbsVS0IkeXykOQfC9H46EgUO9jcKnIJ7dW4YjzU0Ps4sC4bQo
-    8pzctXin8n+CtzWh+qnXDD5LsdpMGDmzQE7xHuriMeVbPyLI0BTGwLVBkZvM3487FUS5mH
-    ojh/ZlhUAfcD6c7XxMQYSJdd/MJVosZjcqbPVVxLFGJsoN316J5bx9B/ynbhOnU5BJ6bMt
-    UpXH6loyunRrrLxq3Qtdo7N7A6Zfs+5ztQR9/k+CaHMErQU69rWzwbtket9B+FHmEPJmf+
-    m1QBe/Pypl+OospWrYYumCNptZu9SKzBkqfs6a8tBtpO5ASa0CndqsfBSx9nQ5Bis/RX1D
-    KaqdqRod2s8ZM7BFrfCiSfeFbwkKjAZefFu2qSO2YBnUztZxlRWQ711MNeQ+I2zTxNaayR
-    bUPmyHUCEXgi2r1cavn+NNVJCy8obrmR4csBg51STLoI/cHLdDvy4DYyCzKxo1CLi7dVxF
-    oRTnbIHkJIHJDIYxZ19P3h9HrpUIAKmVZFO3YLDrTl+Ohck5MTLywiOvDh3dz53JqxWxko
-    6lKg2tvXK/oMHO/Va5BgR/bc03JkpZhDno+J5C7c5sYZnPqOybQFQpL8cgXA
-X-ME-Proxy: <xmx:gY9wak8h2ozZAE1RgwbftpnqMwtXUE2Rv-DcOVWREgeIuuNJfYikoA>
-    <xmx:gY9walweEINbJmt1TkVmHteWu5WzfoVC2d5d9xFoJXhN9a-Y2AxKHA>
-    <xmx:gY9wajHyXxJkuacXTCzsOmu2QS8sOZOAGqX-K3mWeUnGz35kSZI7RQ>
-    <xmx:gY9wagOkgOrCBKZm5jNSl-r3wKgvHMLaG7_BHtFBrpYb9La7slGhRw>
-    <xmx:gY9wat4FvRzPw34-XxHfeBGXAEHWmgoSE9B7iRFhhjBRP6_-yF9sTjNK>
-Feedback-ID: i60a14417:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 3 Aug 2026 08:54:22 -0400 (EDT)
-Message-ID: <ba907c1c-02e4-41b3-a14c-5535dc1fd09c@jaseg.de>
-Date: Mon, 3 Aug 2026 14:54:20 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CbuVOyYF"
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-ca957432c7fso2267969a12.1
+        for <linux-security-module@vger.kernel.org>; Mon, 03 Aug 2026 06:50:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785765039; x=1786369839; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=NQmyofkgF7S5g7WDKL1YdgJcT1PNGV6nNZJ8ZQGA+8A=;
+        b=CbuVOyYFLAxIfg9Vu1OG2XuOE+ahLf8F+i157Bind4CyjVajStxZllaQtuCFnBluZS
+         myRGQZ6YHJgzHPIgtkmJzFuWDp72396+8Dd/ButPHFAF3k4tsY/vy1bL54l9mH+CgFE4
+         cK8R3gEPO/TZomvq1JbNDWxje974hy38U9P/8r+X2UC7kdIPuaxtUtI/27PhB8FKeuQ1
+         AROMCh2NuSTr3cP4D0lCun0eXtnwcdUBrHWe/H6zkzqYXLR0+7h7Pns9TrtxGYpOqAnc
+         L75VnpNkHBvCVTeZGCizSmFHnCMtNiJG2g/6tPLrIOCWPljBhzCzYbDhi/yhtk/ZMVf4
+         VMcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785765039; x=1786369839;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=NQmyofkgF7S5g7WDKL1YdgJcT1PNGV6nNZJ8ZQGA+8A=;
+        b=XaLT6YDM+Fj281+8h85pjqMcHmUiF0QT3ldL9N4Zpe8BDySG3pw5E6GM8KxHNtCZQe
+         JfGNaONHjdyB6EZIOaMbiCRao16J1CzxwH+mF0cqmcG34hIGcxYM6TMlmPo81UH+BLU5
+         2dwZ2Yul1OXQCf85CohS7XOjFBRkHXfsNTPsVMZODf9zNIBxzuUe/kAeaNBBwiPVK/Th
+         9u8nJgmQOsK7idDsWJNAQJPNq+0FHmnNIxvbK3eahIIq5bfo44G4QFuQ5+uL0K75YD8o
+         9IZD3MoPs2PFd+UhFGTdcZ8iQ6qZpE/WCW2wDy5JZwsM8ImcZK6Q3jZT1GR//sgngzwR
+         ifsA==
+X-Forwarded-Encrypted: i=1; AHgh+RpayO2zLi5lPVjq5ZNdTt9n4tXi0Vsijwb8dDWNhb1xfct0fQVLc+Q5vRsWbQ43bwEw6ykkWMRgsl2SkhhGev2buwV+rS8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOKCU1CN/HwlICf9PteFLJ4rw9LRptAyKwOLKoawjCLdhr55Ww
+	Pt6h8z5pYAFo+SJd27kfnNy7Cs0HXd0XIUXR09WUmxsvDHBTkKDYwREd
+X-Gm-Gg: AR+sD13An9qEIBxQzupqZ7Ck22ZnBZWtfjZmxJ/45hHP6Lvy4swXqMk48i035+sasuX
+	jiylYhAoTysl6PoTaURn5wCnSWuYg7gVowcDooyBRafGeWEMlJqNMz4BPnCwHiPSw6CMHKT4Ulp
+	CpPNgMQ9La1diA6QUt0Epk/BjUOwZ7XC7TnrCji7D/VIXQxWv2Z8Eb9OHpAEPwt+aco3T2xAV+0
+	d7cQW74OqIJK41hFM2iPIHWMclRqnK3L0R0ncmxtQszS8gpXHhdYpebGgoMMgXoT4TtRUrvCgR6
+	xck9ZXRO/7R9gdV5zCSVaGi2WunBKZavgMYfa3S+yma6KpIc7M3ic9re/WfEGkE3kJeSpqLMgMJ
+	vOKYEHvq5cBn1skJeKXCiw3+2GNBQpy5CZg12oUhrJvInuaK5oqINg7Q1LwPI1tNuFaLMSqdI/z
+	HHR9LrrWb++Qjya7l/KITDLgZAcDLqfKp2IAaOK6P8h9DcBuVS3uoHVMsLOaZi
+X-Received: by 2002:a05:6a21:4e03:b0:3bf:a0e5:99a5 with SMTP id adf61e73a8af0-3c92a7c8caamr10441373637.47.1785765039193;
+        Mon, 03 Aug 2026 06:50:39 -0700 (PDT)
+Received: from [127.0.1.1] ([2804:d45:3612:3b00:fe04:bb65:6aa0:f6e1])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13fab143a7csm28550344c88.4.2026.08.03.06.50.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Aug 2026 06:50:38 -0700 (PDT)
+From: Lincoln Wallace <locnnil0@gmail.com>
+Date: Mon, 03 Aug 2026 10:50:21 -0300
+Subject: [PATCH v2] ima: fix out-of-bounds read in xattr_verify()
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] CRASH_ZEROIZE: Wipe secrets before kdump
-To: Dave Young <ruirui.yang@linux.dev>, Baoquan He <baoquan.he@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport
- <rppt@kernel.org>, Pasha Tatashin <pasha.tatashin@soleen.com>,
- Pratyush Yadav <pratyush@kernel.org>, David Howells <dhowells@redhat.com>,
- Jarkko Sakkinen <jarkko@kernel.org>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Mimi Zohar <zohar@linux.ibm.com>,
- James Bottomley <James.Bottomley@hansenpartnership.com>,
- Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
- Coiby Xu <coxu@redhat.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
- keyrings@vger.kernel.org, linux-mm@kvack.org,
- linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
- Tao Liu <ltao@redhat.com>
-References: <20260731154608.153258-1-linux@jaseg.de>
- <am38qk60mpVFuJRi@MiWiFi-R3L-srv>
- <74625f78-15ea-439f-b9f0-939d2976fa7f@jaseg.de>
- <79610b53-5201-4af3-913a-0c4dcbb6f9d6@linux.dev>
- <e9523b5a-6623-49ea-9ba3-cddae1a9ce7e@jaseg.de>
- <ab46b71a-9f8d-48c4-89be-e15ce50aa8c6@linux.dev>
-Content-Language: en-US
-From: =?UTF-8?Q?Jan_Sebastian_G=C3=B6tte?= <contact@jaseg.de>
-In-Reply-To: <ab46b71a-9f8d-48c4-89be-e15ce50aa8c6@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260803-fix-ima-underflow-v2-1-36eec5e8500e@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/32NSw6CQBBEr0J6bRumwye48h6ERQs90AnMmBlFD
+ eHujhzA5atUvdogSlCJcMk2CLJqVO8S0CmDfmI3CuqQGCinKq+pQatv1IXx6QYJdvYvLPLbQEX
+ DDVuGtLsHSaXD2XaJJ40PHz7HxWp+6T/batBgwX1Z2lqEKrqOC+t87v0C3b7vX8HJCa6yAAAA
+X-Change-ID: 20260729-fix-ima-underflow-40bd249a9afa
+To: Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, 
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Lincoln Wallace <locnnil0@gmail.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5398; i=locnnil0@gmail.com;
+ h=from:subject:message-id; bh=LPGiLQw5RcBm2gtXtkMBX5n7H0T2a7aVaC8j802eRRs=;
+ b=owEBbQKS/ZANAwAKAWwfHIW6XOyvAcsmYgBqcJyrqtCqE3tE8LgWZFXh5OiNaOiTM/b2Zf8ry
+ DhGjqPNKCmJAjMEAAEKAB0WIQTPur+Hzv70Sl/Z3D9sHxyFulzsrwUCanCcqwAKCRBsHxyFulzs
+ rxyXD/0RXpcmRO8KQhmkBoM8UPrr8G/ofnGYUJGuYEGIJWNAPU24W1O/+0cQE7AxGZIXs8McpBk
+ LQDkQLNVhO78CpT9uOEse3DTJ1cn8TImPTOECvJoo9GYsYUgy7FIXijQLKR+e2Ph2dt0NicXwgG
+ X0isx7Y5BDx7ouSMhn486dlDDXRiX2ImmPjO/nwA54wPtygmbCAZsR5juZy1V4OmUo60sH6NEnb
+ WE1eoChJnl5djlrYTG1V4NpafLYr9w4NsCxzBaU6nvId+Vd9ncMPmIuie/RH9P4tjnbJxzU2eNF
+ oLoA5dJfPtpaBgveThVIII5W8bCY7ZMxM82YmN91SzpxcoO7tig8FogOgbUFV+ZUUdhpq5TVT1G
+ evM5w7WwoNp2REPMnKtVafd9PGTvB2A2zYYv9Lw13JNqWR7X6mhRZyz4lJSSF06erDg4bn0i0Sj
+ AUTEJJIipkXe67JLuumT0jGLPpLy1BFfKrX0lOG3h8FHIAvLlXMvbeKlbC8eFue2vvWxcKt7O5F
+ zGYlKFOGtgJaRLXxAN/GtB4dtaYSX3L1PrhvOHQ/+LQ7pvM5QT9az/PIqVWOdv0sb+fEW7ifC9D
+ Bj/kIzoiJ/gmsTJRYCDhpqkgTdYeLd9H8Cyx4a/1QzZUAmQKpDrGrAICG9Md/Nfb75CiCefW/27
+ juUvPSWVsKzqw/w==
+X-Developer-Key: i=locnnil0@gmail.com; a=openpgp;
+ fpr=CFBABF87CEFEF44A5FD9DC3F6C1F1C85BA5CECAF
 
-On 8/3/26 14:12, Dave Young wrote:
-> On 8/2/26 6:20 PM, Jan Sebastian Götte wrote:
->> On 8/2/26 07:08, Dave Young wrote:
->>> On 8/2/26 12:31 AM, Jan Sebastian Götte wrote:
->>>> On 8/1/26 16:03, Baoquan He wrote:
->>>>> Note that we usually dont' want to run a lot of work after panic and
->>>>> before jumping into kdump kernel.
->>>>
->>>> I understand. For this reason, I think it's best to keep this default-off. As-is, the notifier list call is timed and on the (slow) ARM64 target I'm using, it takes about 3-5 ms to run. I took the "try lock, skip if locked" approach to keep the risk of this code crashing during panic minimal. In my application, the kdump payload is code that then does a full wipe, taking a couple hundred milliseconds.
->>>
->>> Not only about the time used, the panicked kernel is not reliable, any more extra logic can make it even not reliable, any pre-kdump extra logic is not a good idea unless it is a must to ensure kdump working.
->>>
->>> Cleaning up secret data can be done with makedumpfile + eppic scripts (see the manual of makedumpfile), or it is even possible to do so in kdump kernel with Tao Liu's improvments for makedumpfile previously  (I don't know the status, probably dropped for the time being, but it is possible, cced him).
->>
->> Thank you for the pointer!
->>
->> There's two scenarios worth considering. First, in the standard scenario where you enable this option, then drop into a standard kdump kernel, I don't think it makes a big difference *when* you do this cleanup since someone is going to have to dereference these pointers. IMHO a good reason to do it in the old kernel is that there, the code knows about the layout of all the data structures. To retroactively do this in the kdump kernel is much more complicated, since there you have to reconstruct the structure layouts from symbols or hardcoded struct layouts, and you have to keep this symbol/layout information perfectly in sync with the running kernel.
-> 
-> I know that this is the usual reason people want to do things in 1st
-> kernel :)   Like the crash_kexec_post_notifiers which was introduced for
-> people to use at their own risk.  Is it doable for your case to use
-> crash_kexec_post_notifiers?
+The digest-length check in xattr_verify() mixes int and size_t:
 
-I think there's a few reasons why crash_kexec_post_notifiers isn't what 
-we want here:
+	if (xattr_len - sizeof(xattr_value->type) - hash_start >=
+			iint->ima_hash->length)
 
-1. Enabling/disabling just the key wipe notifiers scattered around the 
-kernel becomes a bit ugly when they're mixed into the same notifier list.
-2. The key wipe should run after other notifiers because by definition 
-it will corrupt data structures so future operations like any crypto 
-operations will fail in interesting ways. Having two separate notifier 
-chains is an easy way to separate them.
-3. For my use case, the stability argument is exactly why I want to run 
-only the wipe, but not crash_kexec_post_notifiers. There are many things 
-in crash_kexec_post_notifiers. They take precious time, and they 
-themselves can cause instability. For example, the remoteproc panic 
-notifier can (intentionally) wait up to several hundred milliseconds, 
-which is too long in my use case.
+sizeof() yields size_t, so the usual arithmetic conversions promote
+the whole left-hand side to unsigned 64-bit before the subtraction
+runs. For a truncated xattr this underflows instead of going negative:
+a 1-byte IMA_XATTR_DIGEST_NG xattr (xattr_len == 1, hash_start == 1)
+turns "1 - 1 - 1" into SIZE_MAX, which is trivially >= ima_hash->length.
+The check then passes and the following memcmp() reads
+iint->ima_hash->length bytes starting past the end of the buffer
+vfs_getxattr_alloc() allocated for it.
 
-Thanks,
-Jan Sebastian
+Nothing upstream clamps xattr_len back into a safe range first:
+ima_get_hash_algo() only special-cases xattr_len < 2 to pick a default
+algorithm, and evm_verifyxattr() returns INTEGRITY_UNKNOWN rather than
+failing when no HMAC key is loaded, so a truncated security.ima value
+reaches the length check as-is.
+
+Rewrite the comparison so every operand stays a signed int and no
+implicit conversion to size_t can occur.
+
+Fixes: 3ea7a56067e6 ("ima: provide hash algo info in the xattr")
+Cc: stable@vger.kernel.org
+Signed-off-by: Lincoln Wallace <locnnil0@gmail.com>
+---
+Verified with a differential KASAN boot test: two kernels built from
+this tree differing only in ima_appraise.c (this commit vs. its parent),
+each booted under QEMU. Config: CONFIG_IMA_APPRAISE=y, CONFIG_KASAN=y,
+CONFIG_EVM not set (so evm_verifyxattr() returns INTEGRITY_UNKNOWN and
+appraisal reaches xattr_verify()); booted with
+"ima_policy=appraise_tcb ima_appraise=log".
+
+The victim file must be on a real filesystem (ext4 here), not the
+initramfs, since the default policy carries DONT_APPRAISE rules for
+tmpfs/ramfs. As root:
+
+    unsigned char v = 0x04;              /* IMA_XATTR_DIGEST_NG */
+    setxattr(path, "security.ima", &v, 1, 0);
+    open(path, O_RDONLY);                /* appraisal -> OOB read */
+
+A 1-byte value passes every gate on the way in: ima_inode_setxattr()
+only rejects zero length and type >= IMA_XATTR_LAST, and
+ima_get_hash_algo() short-circuits xattr_len < 2 to the default
+algorithm (SHA1, length 20) rather than rejecting.
+
+Before the fix:
+
+    BUG: KASAN: slab-out-of-bounds in memcmp+0x226/0x250
+    Read of size 8 at addr ffff8880087a1342 by task ima_poc/74
+    allocated 2-byte region [ffff8880087a1340, ffff8880087a1342)
+    ima_appraise_measurement+0xf49/0x2310
+
+The allocation is 2 bytes for a 1-byte xattr: vfs_getxattr_alloc()
+does krealloc(..., error + 1, ...) followed by
+memset(value, 0, error + 1), so the buffer is {0x04, 0x00}. The
+xattr therefore contains nothing but the type byte: no algorithm
+byte, no digest.
+
+xattr_verify() nonetheless sets hash_start = 1 for
+IMA_XATTR_DIGEST_NG to step over the algorithm byte, so the memcmp()
+starts at &xattr_value->data[hash_start] = offset 2 of the
+allocation, past the one byte the xattr actually holds, and exactly
+at the end of the allocation. That is the address in the report
+above, and why KASAN records it as 0 bytes to the right of a 2-byte
+region.
+
+After the fix, no KASAN report. Program output:
+
+    ima_poc: setxattr OK (1-byte {0x04})
+    ima_poc: read() returned 10 (ok)
+
+dmesg:
+
+    audit: type=1800 audit(1785342238.773:2):
+      pid=74 uid=0 auid=4294967295 ses=4294967295 subj=kernel 
+      op=appraise_data cause=invalid-hash comm="ima_poc" 
+      name="/mnt/ext4/victim" dev="vda" ino=13 res=0 errno=0
+
+The audit outcome is unchanged: the truncated xattr is rejected
+either way, and with ima_appraise=log the open is still permitted.
+What changes is that before the fix the rejection happens only after
+memcmp() has read past the end of the allocation.
+
+Found by applying the Squeeze Loop strategy ("The Squeeze
+Loop Strategy: Catching Coherent-and-Wrong Artifacts with an
+Author-Independent Executable Oracle," Fabrice Derepas, Zenodo, DOI
+10.5281/zenodo.21098476, 2026) to this code path with Frama-C/WP
+deductive verification.
+---
+Changes in v2:
+- Reword the comment above the bounds check per Mimi's suggestion.
+- Link to v1: https://lore.kernel.org/r/20260729-fix-ima-underflow-v1-1-4ac55f7ee262@gmail.com
+---
+ security/integrity/ima/ima_appraise.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 18d0d9154317..ced2e131b061 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -274,8 +274,13 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+ 		} else {
+ 			set_bit(IMA_DIGSIG, &iint->atomic_flags);
+ 		}
+-		if (xattr_len - sizeof(xattr_value->type) - hash_start >=
+-				iint->ima_hash->length)
++		/*
++		 * Use addition, not subtraction: sizeof() forces unsigned
++		 * math and a short xattr_len would wrap around, bypassing
++		 * this bounds check.
++		 */
++		if (xattr_len >= (int)sizeof(xattr_value->type) + hash_start +
++				(int)iint->ima_hash->length)
+ 			/*
+ 			 * xattr length may be longer. md5 hash in previous
+ 			 * version occupied 20 bytes in xattr, instead of 16
+
+---
+base-commit: fc02acf6ac0ccde0c805c2daa9148683cdd01ba8
+change-id: 20260729-fix-ima-underflow-40bd249a9afa
+
+Best regards,
+-- 
+Lincoln Wallace <locnnil0@gmail.com>
+
