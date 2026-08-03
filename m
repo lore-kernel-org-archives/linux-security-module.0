@@ -1,76 +1,48 @@
-Received: from mail-yx1-f48.google.com (mail-yx1-f48.google.com [74.125.224.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAA53546E1
-	for <linux-security-module@vger.kernel.org>; Mon,  3 Aug 2026 22:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FFC381E91;
+	Mon,  3 Aug 2026 23:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785796283; cv=none; b=I8cvkRkr6je+RnlB3l5jikNddrE8EdLHGemEMasqIjIoCDzgbf5+3Rt1n4pFslSV0Slf8DRVfeS73q6FCogn6gi4vCG9Dh3X9R6s9//BVJOI2RmSylykpw7YNGsY0aoHwky7nkWx1nwU8P840ddYdWWciqugkotj/vKkSr7vE1U=
+	t=1785800003; cv=none; b=MyxfyhRSzOkcbibjjPHNikEfzv+Nc3Qe4ZJVkvhg0PT7fBwCauyVLxmCXFG0Gt2V6c42QdLInweE+jeg5aHsZHz6VzBEDsMIzSpx4WrIcIJNsMPt2yw9fSuoQ6isP7uRdwi/iVYsUCoSHIAXsHIz9OWdiujIohztdsGFwCr5nXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785796283; c=relaxed/simple;
-	bh=KP2yf+UiOQ+kZdXdrgDO/YAok+x/uEJ6qSv4gTkthFc=;
+	s=arc-20240116; t=1785800003; c=relaxed/simple;
+	bh=JAN1h6Csz40PXYt8XaCOmNHIWk3zB5rBu2K7NU/Zt6o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TUbrmEZsCYslkHWdCx1FbSJXjkBdR8CH6Aicgf4oBLyZL1Ii0+kqrPujrn7EAfbE9ra1qS63DuE++usTRtKu1cPOFgIhIOIxos2CYtjwoVvn/RN5HExFV0ApDMtk5JbWMPhIMqtHDm9lgipTtvsgrPk+XSSJVZXgzS5SAUzIjjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sqxocZUI; arc=none smtp.client-ip=74.125.224.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 MIME-Version; b=GRYZ18go4fEE8WXQZzs0pUHS2rgfhwA5vyKalys3hA7n3bQ5fhdqWy7+L/W/6m6wGqLDdg+4sU2c7ZkpUb5RUFO/1wPjYL0F2E+lOLRQVmS2lVwr8I9HaxQqzu1z2t4VPRnEVa0dGesHrA/tXldd5jWfHiItgaICaCbGsWo63Qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XtszbGH8; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sqxocZUI"
-Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-6689f36ae56so6167592d50.3
-        for <linux-security-module@vger.kernel.org>; Mon, 03 Aug 2026 15:31:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785796281; x=1786401081; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=2syxNBpEmU6+L0HeNqA4IUUoR9lvooZKJyrfeWUIyKY=;
-        b=sqxocZUIjx5MLzD7xcDtIYQUjgoUVoduLgb08NFCleeycdRHX91PdC96RS0VUah9AL
-         TK5XFpwFlCZvwvLJqf6+EeKf5qVlo/anIfLgDUQd/2lJdkMYpKC6fxGPsRhb5/g6uk6l
-         lkEyMT98SzP8c+za+wzp4Bv7mV2UcwIAp9e50QrLF10pvtfh4k0BgzI8iGh7x9sB0LgZ
-         CtEwryEindbTbgDlyuwzjK3et5VUb0/W+qzDLuTzXBiqIVXX51saIdPYlLcBD6JaalRr
-         XoOXMD2XvEafrF9gOhzNplEZXdg3l/VMBVlmSDjAwwVd6ISPDNPdIQWz1IEI2supksqd
-         Szkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785796281; x=1786401081;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=2syxNBpEmU6+L0HeNqA4IUUoR9lvooZKJyrfeWUIyKY=;
-        b=gEqZluBozQ1H9Q+OnrRUIswmSRu4GuAsXWk+vqpQ5rUrk+anUmzzHkZwWPsZycasEr
-         oYQKu+JQWjirOuvU+QFki9XKztQMlpDneTL2+FvjKWs9F++CCc5uklcpvpii7IbL6ZJu
-         5AgCmgS84x+L+fakVcq4AUcCOMe3P8pddp4udxsAjELu0pVw5hc487sprlqEIb3IA5aL
-         +uJpDxNAMsKt5K1J+vjxFIKg1P+jyM8OusiDfvn1m2uEV92zFej9/EevDPOL83nHLEt0
-         HtssNlDodhs8dFIx1iT04QkhWSsPrwCGz3PObiDLCOOAhUsIYKrfJVwscX95ZfpDJ5Xb
-         0x1Q==
-X-Forwarded-Encrypted: i=1; AHgh+Rrmw1FotCtH//BuCIYsqv8Vgo9JkWJNzYfsHbNm9Fm1hWjLPYuTMr1P5fdyiXTHyTDDhnaR53bsYNgGupogKQXypFJHfMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqHtQjv+H3mfEDURCLTx5Fi5vus9LIm6NCs7obJlMdBYQ+FCfZ
-	QonSePFvJgUZNIkYPXRy6B/FMN3RmkglQA0psUVlto8Lp1CEz9KeAjy1
-X-Gm-Gg: AR+sD11voWwszaiIwrBuZgPXbzzOmUYuFi7HRuBp0iH/H+vlSFF8TWPeZE4U06OaspF
-	j+shfceOuzSnpsjfMy1heXa+EDI/PiUCjcYFe4X0AmksA8QDRfLA8PQRo4wXtv1jEU2U669aJ/4
-	yBjZaB9bZVEW8Lxo545rDD/ifx/KQIbKJjk9FHXEknehUn1MUhJk3J5c15htsJ7x1s17jQdfpB4
-	dQisHOESu790HJLulhqsRcTKuW4pv8iOhqaAfPLA6A8rlFdqjtjkyXOA2/O4mrPxLojm9i6FwYG
-	oUtktoQZ/qaYozuSMQwCWevU3fIqFNyIR8McXFNB/erGMof0y2TuZCPJCnt3DVDJhe8EzfPEdDl
-	sERWsjDppEsiSy743KvUMkFvbaAOG+sXsL3IBwswcM7vCIDi7woCFv3vRZzQB7NfYBRGaSXzmeR
-	Ur9nkRMH8YcNlOSEdlvch6gPDXVQTZso1RW+Eml1QSAIGr/8JtIr0NM7A7nEv1NvCJigtS0GR34
-	5mpzSzp/euwqX5piuCtFZY=
-X-Received: by 2002:a05:690e:440b:b0:667:d82d:d4f3 with SMTP id 956f58d0204a3-6694efcc207mr10221232d50.11.1785796280625;
-        Mon, 03 Aug 2026 15:31:20 -0700 (PDT)
-Received: from zenbox ([2600:1700:18fb:6011:6253:b407:801c:a745])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-6694903782fsm6420774d50.21.2026.08.03.15.31.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Aug 2026 15:31:20 -0700 (PDT)
-From: Justin Suess <utilityemal77@gmail.com>
-To: gnoack3000@gmail.com,
-	mic@digikod.net
-Cc: linux-kernel@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XtszbGH8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E69A1F00A3A;
+	Mon,  3 Aug 2026 23:33:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785800001;
+	bh=52HD5zn7Xy3Fi4ssq2rl+OSECk5ABt1cwC/JC+RryXA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=XtszbGH8RGBGUZqH6qoP1mCKKQ0KAVJGEFPEdeT1TjLMi4u/4nDzZKlAVSEzVWBwd
+	 prGSnUSyhgqRoOaDfe/7a4/SAFHMwXsIEMLIJ+G5vooDUpccpE0gbAG8B3ffhFsTq4
+	 OrdBgx6wI9gPPvnVER4EeSK9mGlhR7xq/HKbnhTGzR0uayfs+gZUyaZ10c/OlSe5LK
+	 8b9T4H+PlMpthe46JZmFaGm33mImyZlgc2dOr2pfYSD5j54SVLvbSNeucjuqgTeDDO
+	 NEIcGfW+RKflNQ+l/zYoIyEhd4SybJZO8L4QGDKGDKBE13X8a7nTfJTABBiT49DyIq
+	 nlmtoBXdvD4ng==
+From: Jakub Kicinski <kuba@kernel.org>
+To: heminhong@kylinos.cn
+Cc: Jakub Kicinski <kuba@kernel.org>,
+	paul@paul-moore.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
-	Justin Suess <utilityemal77@gmail.com>
-Subject: [PATCH v3 4/4] samples/landlock: Add LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS to sampler
-Date: Mon,  3 Aug 2026 18:31:08 -0400
-Message-ID: <20260803223109.707353-5-utilityemal77@gmail.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260803223109.707353-1-utilityemal77@gmail.com>
-References: <20260803223109.707353-1-utilityemal77@gmail.com>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v2] netlabel: check register_netdevice_notifier() error in netlbl_unlabel_init()
+Date: Mon,  3 Aug 2026 16:32:03 -0700
+Message-ID: <20260803233202.2330171-2-kuba@kernel.org>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260729090716.138608-1-heminhong@kylinos.cn>
+References: <20260729090716.138608-1-heminhong@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -79,70 +51,127 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS to the default flag setting.
-Gate the flag on the ABI version, but do not expose any userspace
-control over this flag as it has no practical effect on the resulting
-sandbox.
-
-Signed-off-by: Justin Suess <utilityemal77@gmail.com>
+AI says that this can never fail in practice. Please make that clear
+in the commit message. Take a look at the other comment too, and if
+it's incorrect explain in the commit msg why.
 ---
+This is an AI-generated review of your patch.
 
-Notes:
-    v2->v3:
-    - New patch: use LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS by default in the
-      sandboxer, gated on the ABI version, with a prctl fallback
+netlabel: check register_netdevice_notifier() error in netlbl_unlabel_init()
 
- samples/landlock/sandboxer.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+This makes netlbl_unlabel_init() check the return value of
+register_netdevice_notifier() instead of ignoring it, and on failure it
+clears the netlbl_unlhsh global, waits for a grace period and frees the
+hash table before returning the error.
 
-diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-index ac71019e6212..030583273f3f 100644
---- a/samples/landlock/sandboxer.c
-+++ b/samples/landlock/sandboxer.c
-@@ -369,7 +369,7 @@ static int add_quiet_access(const char *const env_var,
- 	return 0;
- }
- 
--#define LANDLOCK_ABI_LAST 10
-+#define LANDLOCK_ABI_LAST 11
- 
- #define XSTR(s) #s
- #define STR(s) XSTR(s)
-@@ -453,8 +453,9 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 		.quiet_scoped = 0,
- 	};
- 	bool quiet_supported = true;
--	int supported_restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON;
--	int set_restrict_flags = 0;
-+	int supported_restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON |
-+				       LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS;
-+	int set_restrict_flags = LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS;
- 
- 	if (argc < 2) {
- 		fprintf(stderr, help, argv[0]);
-@@ -545,6 +546,12 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 			  LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP);
- 		/* Removes quiet flags for ABI < 10 later on. */
- 		quiet_supported = false;
-+		__attribute__((fallthrough));
-+	case 10:
-+		/* Removes LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS for ABI < 11 */
-+		supported_restrict_flags &=
-+			~LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS;
-+		set_restrict_flags &= ~LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS;
- 
- 		/* Must be printed for any ABI < LANDLOCK_ABI_LAST. */
- 		fprintf(stderr,
-@@ -673,7 +680,8 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 		}
- 	}
- 
--	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
-+	if (!(set_restrict_flags & LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS) &&
-+	    prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
- 		perror("Failed to restrict privileges");
- 		goto err_close_ruleset;
- 	}
+No Link: tags present in the commit header.
+
+> diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
+> index 47bae5e48db6c..fe1be424601f6 100644
+> --- a/net/netlabel/netlabel_unlabeled.c
+> +++ b/net/netlabel/netlabel_unlabeled.c
+
+[ ... ]
+
+> @@ -1419,7 +1420,16 @@ int __init netlbl_unlabel_init(u32 size)
+>  	rcu_assign_pointer(netlbl_unlhsh, hsh_tbl);
+>  	spin_unlock(&netlbl_unlhsh_lock);
+>  
+> -	register_netdevice_notifier(&netlbl_unlhsh_netdev_notifier);
+> +	err = register_netdevice_notifier(&netlbl_unlhsh_netdev_notifier);
+> +	if (err) {
+
+[Severity: Low]
+[Finding: main-1-0]
+[Sources: opus-5]
+Can this branch ever be taken, and can its cleanup ever be observed?
+
+register_netdevice_notifier() in net/core/dev.c only returns the result of
+raw_notifier_chain_register() (-EEXIST for an already registered
+notifier_block, which cannot happen for the single static
+netlbl_unlhsh_netdev_notifier) or an error returned by the per-net
+NETDEV_REGISTER replay.  The replay calls
+netlbl_unlhsh_netdev_handler(), which always ends with:
+
+net/netlabel/netlabel_unlabeled.c:netlbl_unlhsh_netdev_handler() {
+	...
+	return NOTIFY_DONE;
+}
+
+so the replay cannot fail either.
+
+Even if it did, the sole caller turns the new return value into a
+noreturn panic():
+
+net/netlabel/netlabel_kapi.c:netlbl_init() {
+	...
+	ret_val = netlbl_unlabel_init(NETLBL_UNLHSH_BITSIZE);
+	if (ret_val != 0)
+		goto init_failure;
+	...
+init_failure:
+	panic("NetLabel: failed to initialize properly (%d)\n", ret_val);
+}
+
+which means clearing the global, the synchronize_rcu() wait and both
+kfree() calls can never have any observable effect.  The remaining
+behaviour change is that a previously ignored condition now reaches
+panic() during subsys_initcall, which the changelog does not mention.
+Would it be simpler to keep the call unchecked here, or to document the
+panic-on-failure behaviour in the changelog?
+
+> +		spin_lock(&netlbl_unlhsh_lock);
+> +		rcu_assign_pointer(netlbl_unlhsh, NULL);
+> +		spin_unlock(&netlbl_unlhsh_lock);
+> +		synchronize_rcu();
+
+[Severity: Low]
+[Finding: main-2-2]
+[Sources: opus-5]
+Is it safe to publish NULL into netlbl_unlhsh here?
+
+Up to now netlbl_unlhsh is assigned exactly once during __init and is
+never NULL, and every reader in this file dereferences it without a NULL
+check:
+
+net/netlabel/netlabel_unlabeled.c:netlbl_unlhsh_hash() {
+	return ifindex & (netlbl_unlhsh_rcu_deref(netlbl_unlhsh)->size - 1);
+}
+
+net/netlabel/netlabel_unlabeled.c:netlbl_unlhsh_search_iface() {
+	...
+	bkt_list = &netlbl_unlhsh_rcu_deref(netlbl_unlhsh)->tbl[bkt];
+	...
+}
+
+net/netlabel/netlabel_unlabeled.c:netlbl_unlabel_staticlist() {
+	...
+	for (iter_bkt = skip_bkt;
+	     iter_bkt < rcu_dereference(netlbl_unlhsh)->size;
+	     iter_bkt++) {
+		iter_list = &rcu_dereference(netlbl_unlhsh)->tbl[iter_bkt];
+	...
+}
+
+netlbl_unlhsh_search_iface() is reached both from the receive path
+netlbl_unlabel_getattr() and from netlbl_unlhsh_netdev_handler(), and
+the synchronize_rcu() above is a blocking point executed while the
+global is already NULL, so the NULL window is not instantaneous.
+
+Nothing oopses today because netlbl_init() panics right away and the
+netlabel generic netlink families are only registered later by
+netlbl_netlink_init(), so no reader is expected in that window.  If the
+panic is ever relaxed into a graceful failure, which is the direction
+this patch points at, would every unlabeled lookup and netlink dump then
+become a NULL dereference?  Leaving the (empty) table installed on the
+failure path would avoid creating the NULL state at all.
+
+> +		kfree(hsh_tbl->tbl);
+> +		kfree(hsh_tbl);
+> +		return err;
+> +	}
+>  
+>  	return 0;
+>  }
 -- 
-2.54.0
-
+pw-bot: cr
