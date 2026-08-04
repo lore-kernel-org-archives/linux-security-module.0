@@ -1,250 +1,180 @@
-Received: from mail-oi1-f205.google.com (mail-oi1-f205.google.com [209.85.167.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A49246783
-	for <linux-security-module@vger.kernel.org>; Tue,  4 Aug 2026 00:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075DD32B123
+	for <linux-security-module@vger.kernel.org>; Tue,  4 Aug 2026 00:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785802176; cv=none; b=kFYMGzRoMmAJr2io3Cs6s5uZj82p8RqRqsXL41htt/AxhaCbUzboWoFSdfnOwhwp4H7eBG7YWySQpgFnDKZs8SSXiOE1fx4pG3raxdc3K/ByTE+uWUUenlazius/evZ3NspXijbombnuMmV4s5SUGO6k8eT1wzvW9vhwCWvyVMU=
+	t=1785802617; cv=none; b=iMGttvBRIM8Lwyj9lPX/f5gKrmMmgY6wy1qqffj6aNvn/uql5bcl1tJR4j13ysqZvqqxGUswdHEt1zQ2B9VetOqwzkf5ntV5czyi+uVuer5Rr4KSCeMYOAHsbsmSWViXKglXQik/xwduz3mrDjfcNx/T5V/EPZylBPLZmO3LhU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785802176; c=relaxed/simple;
-	bh=71VsQAIVxUGPxHKeP3UBBbp1Lk99gQjrKIOXDWlJvnI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YST6BUMfH48QE1Sh3vPMHqkJeUokG68mE/6lxJ0fQl+KpDX1AZDB//6eSQX0ZQ0LjzIxIHVaNxUOkvL8KhJ6GaAQ+tECQdTSM+G+iQr6yTwp7lMdGcyuQ/OI4JJPGA5RGl6C4LgpGHCy3Q43sLJcHNXO3mOC9408+Puia3/bcu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oi1-f205.google.com with SMTP id 5614622812f47-4a43d32fa9fso5542696b6e.2
-        for <linux-security-module@vger.kernel.org>; Mon, 03 Aug 2026 17:09:34 -0700 (PDT)
+	s=arc-20240116; t=1785802617; c=relaxed/simple;
+	bh=xByEsDq77aq1mjC+sE081lytrYyrGP6yec4SyBZ96/w=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=qvRAj9Mqz792J+J/Gg63Ewrkht1OLqm62P+4ZFV5Mt/V+OR+/hHLfyUUDFScKVeiaDm12BNS5UDK4vy7UDxn86P7neanA1H19Prw4zsTP9KXWl1tiEA6jtesaIvgARtx9OmohL/5g6jvgWOFMr7Artk2waMMoIyvuO4CvWz0jBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ATa1CX6V; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ATa1CX6V"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1785802610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5xAa6RBMhwgEch+Pl7oGtOo9pFaryzhZJe7EILEPh1o=;
+	b=ATa1CX6VTeuaXQhq4NkFx2OFRsqaSJz7rIkcU7YiGSp+l6bnjZOy531wlZA1jNiu7AxDcb
+	ibFx3U9pGJR67JhBMjB+vCZWPxd/yKY7X78YM3KNxaogEMXdD/jo3EfYwTcasQcTa2mZfT
+	41ZFIFzayK5pvsLK97jTC1ETK0md4+E=
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
+ [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-641-SLJ1pvlnNBub8gLpATO8ig-1; Mon, 03 Aug 2026 20:16:43 -0400
+X-MC-Unique: SLJ1pvlnNBub8gLpATO8ig-1
+X-Mimecast-MFC-AGG-ID: SLJ1pvlnNBub8gLpATO8ig_1785802603
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-81e71268bf6so19896747b3.0
+        for <linux-security-module@vger.kernel.org>; Mon, 03 Aug 2026 17:16:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785802174; x=1786406974;
-        h=content-type:to:from:subject:message-id:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=FFUnk8XXN6rMqX/A5gun+tR1e8c+1vrRhURKsjCc+8o=;
-        b=JYjv1ssF/VVxfQIjErCvY0sVfIBaWFxUM9fCzgjLo9jvnJyGMNXSAujsNdg8vNifGt
-         zT9/mVnj7Mp2CrVl1Nm9QP4NP3mmEza5fcKHA+9/G9TWNZR9U8wUVtdoedUM5L/G/v1M
-         /tL/L+Fwpe8vSk2DzXbvt3EG/ElbxrJlY1tgjSYWU3dpRnzqSvy9S6Uv9tTZckMjNqmH
-         AbfDd3gHMc1GnMfYPyUoM9yNSv5gcZg5oWdcT7cQwJ86Bn9TOjeiRzrDUOOXF8Y1T0+V
-         OU3Ri8DgVSt0CiF6YCCwLrC/Pa8NrLor4Ryxo1epH5iYj1Bk5Enk/cisc5aUd2OBphfi
-         FFvg==
-X-Forwarded-Encrypted: i=1; AHgh+Rqaingijq3pFMEkKky968A3yQ/1HxC/SM2+/dCignlyaBY388RR+3/MXZS/AuP9C4lWVIDQxW/GEvr3Oz4PYN3W8vqVWLk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ5jSvvRA1M+Tv0A3kcVNTz6Jq81rgcQDwOlB9gcX8VdXFbV9G
-	KJbgnqhjOqIxXNguzT5Qa5UoZIdyWu1ILQ4SOQGEbSdl8bxbox36qPP605JBBVcCM20+ahcO14F
-	dses0dIv5MpzkGIYEgNYk+gMhPTEJ6iWB99ehY8yfgdj0k8nEhZPV2QC8Nuw=
+        d=1e100.net; s=20251104; t=1785802603; x=1786407403;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=5xAa6RBMhwgEch+Pl7oGtOo9pFaryzhZJe7EILEPh1o=;
+        b=LkPEhfeSwAziqUJ9iKtZnCVnuIra/RgMuCLnv8IMNoGhH5hh2m2Q6T3cXReepRDBN2
+         s+MhXwSTp21xTZFJ6L8u1iCxZjgD8wlWV5C0+417pqTOaM1uvV66HixjgEHKAzUtyARf
+         77TaESoXl2IliBGcxekjLOhX4E0LN9cgfxJki9gLod5C4AlXidYWkHgXw3gcSpsFLLbA
+         9PwKtXdWldEcwc9iqBuUT3KPHej1GNHtQqL/aKm4Nb70G1m1oH8X57sdKPz3TbrmEVyB
+         2k5utpNgo358nl/qABIdMuaVhfY/IqqXxWfDeJWlUyqSpNlXV5fEILMjZlh0kAXQXn+j
+         renw==
+X-Forwarded-Encrypted: i=1; AHgh+RrntuTn0gM2+a/DaZXHKBpotOZs1b9rITmzLvhcib8YqlyOuUkxioT0AVFMMuHECqJQsxBygotLVXMLNQhhc84z/HS7Fng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU1C1annOYSqcONjCRAjkha+c0q2I5XaRSfJIDr2kawd3Pxi0O
+	4KiVn7zd2xkQkGqGtCteqYZQNOxXxjdhJB1vi9op7+LShqODgg6WAlxvg8n1v4Hl9jh+8pNo/Sk
+	329MWcc6epHWZmUq1frPGf1AKBuOO2oder+n76wRUg9/rskWivcLWZvi1RT0AedeIn6h27IYDBm
+	J7CwVJA14SMWAAKLd3N/Finty3yT2PALK7rYtQjRL3nX+MyLDhJ9igN0aW1Tkk
+X-Gm-Gg: AR+sD10SIKSX5IbzOJRRBx3Ro4usyWCoghENvbxRzmHEmXx8XoEIkMYm7+GOiPOvlKS
+	0RXHI6sfVNbvuwuFQsmsBAMSnCBPxg5/tk3yPYjsnqEC6gj3IOfIdRVNKhiuvopBfthDP36yYpi
+	2ShXPnPqISB+KDgC3Wn+R7PbzVwppzrqLejypsDHbrxwIm0d3eNowajCIMVzAJqcKstN2hP/eNE
+	XynkpKgs4xCPc3YyQ==
+X-Received: by 2002:a05:690c:ecf:b0:81e:695b:585c with SMTP id 00721157ae682-81fd49cbfb5mr165889577b3.4.1785802603024;
+        Mon, 03 Aug 2026 17:16:43 -0700 (PDT)
+X-Received: by 2002:a05:690c:ecf:b0:81e:695b:585c with SMTP id
+ 00721157ae682-81fd49cbfb5mr165889257b3.4.1785802602583; Mon, 03 Aug 2026
+ 17:16:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:180d:b0:487:61da:70fb with SMTP id
- 5614622812f47-4af5e1ce58amr20025013b6e.10.1785802173932; Mon, 03 Aug 2026
- 17:09:33 -0700 (PDT)
-Date: Mon, 03 Aug 2026 17:09:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6a712dbd.9511d2ce.1fc5b9.032a.GAE@google.com>
-Subject: [syzbot] [lsm?] memory leak in prepare_creds (7)
-From: syzbot <syzbot+53515d23498d641e21ea@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	paul@paul-moore.com, sergeh@kernel.org, syzkaller-bugs@googlegroups.com
+From: Jiri Vozar <jvozar@redhat.com>
+Date: Tue, 4 Aug 2026 02:16:14 +0200
+X-Gm-Features: AUfX_mzTp9xEoeY1jgKdDtVsQZjCnRf1n_drXzmhsKQh3-QCRgmptscpHaU-KQU
+Message-ID: <CAMgFczCi2Z011dNf84Amc0Q-qnTt0+VUjWY+Y7zPyXdaH35Jvw@mail.gmail.com>
+Subject: Subject: [REGRESSION] selinux: ~90% throughput drop in System V IPC
+ (msg) since commit 7edea6e8c8e8
+To: selinux@vger.kernel.org
+Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Jirka Hladky <jhladky@redhat.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: XVRwP-MfRskfESpQ0lQi3AvQsaUeDQYkG0BZwRmOxqM_1785802603
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi,
 
-syzbot found the following issue on:
+Commit 7edea6e8c8e8 ("selinux: beef up isvalid checks") introduces a new
+loop in mls_level_isvalid() that causes ~89-94% throughput regression in
+System V IPC message queue operations (msgsnd/msgrcv).
 
-HEAD commit:    11028ab62899 Merge tag 'probes-fixes-v7.2-rc5' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=140471b9580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ba7c2d1679fb08a2
-dashboard link: https://syzkaller.appspot.com/bug?extid=53515d23498d641e21ea
-compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1759d9b9580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=122d4aea580000
+The regression affects all architectures (x86_64, aarch64, ppc64le) and
+is independent of SELinux enforcement mode (enforcing vs permissive).
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b677b453b580/disk-11028ab6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/eec6e520d498/vmlinux-11028ab6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/03c59bb4309c/bzImage-11028ab6.xz
+Upstream commit:
+https://github.com/torvalds/linux/commit/7edea6e8c8e8944e060da6b0b81d66db8d=
+5fffcc
+Merge commit:    https://github.com/torvalds/linux/commit/231e9d447ea9
+(selinux-pr-20260615)
+First affected:  v7.2-rc1
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+53515d23498d641e21ea@syzkaller.appspotmail.com
+## Regression data
 
-2026/07/30 13:50:02 executed programs: 5
-BUG: memory leak
-unreferenced object 0xffff88810ab2c540 (size 184):
-  comm "syz-executor", pid 5809, jiffies 4294943975
-  hex dump (first 32 bytes):
-    01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace (crc 706c7ae4):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4597 [inline]
-    slab_alloc_node mm/slub.c:4917 [inline]
-    kmem_cache_alloc_noprof+0x34f/0x440 mm/slub.c:4931
-    prepare_creds+0x22/0x570 kernel/cred.c:185
-    copy_creds+0x44/0x290 kernel/cred.c:286
-    copy_process+0x988/0x2d70 kernel/fork.c:2153
-    kernel_clone+0x101/0x710 kernel/fork.c:2748
-    __do_sys_clone+0x7f/0xb0 kernel/fork.c:2889
-    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-    do_syscall_64+0xf8/0x610 arch/x86/entry/syscall_64.c:94
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Measured with stress-ng msg stressor across multiple machines and
+architectures. The percentage is throughput change vs a v6.12 baseline:
 
-BUG: memory leak
-unreferenced object 0xffff8881021256c0 (size 32):
-  comm "syz-executor", pid 5809, jiffies 4294943975
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    f8 52 0a 00 81 88 ff ff 00 00 00 00 00 00 00 00  .R..............
-  backtrace (crc 9ae86290):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4597 [inline]
-    slab_alloc_node mm/slub.c:4917 [inline]
-    __do_kmalloc_node mm/slub.c:5333 [inline]
-    __kmalloc_noprof+0x3bf/0x550 mm/slub.c:5359
-    _kmalloc_noprof include/linux/slab.h:992 [inline]
-    _kzalloc_noprof include/linux/slab.h:1309 [inline]
-    lsm_blob_alloc+0x4d/0x80 security/security.c:218
-    lsm_cred_alloc security/security.c:235 [inline]
-    security_prepare_creds+0x2d/0x290 security/security.c:2866
-    prepare_creds+0x317/0x570 kernel/cred.c:215
-    copy_creds+0x44/0x290 kernel/cred.c:286
-    copy_process+0x988/0x2d70 kernel/fork.c:2153
-    kernel_clone+0x101/0x710 kernel/fork.c:2748
-    __do_sys_clone+0x7f/0xb0 kernel/fork.c:2889
-    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-    do_syscall_64+0xf8/0x610 arch/x86/entry/syscall_64.c:94
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+  NUMA config | Max drop | Avg drop | Hosts affected
+  ------------|----------|----------|-------------------
+  1 NUMA      |  -94%    |  -91.5%  | aarch64 5/5, ppc64le 3/3, x86_64 6/21
+  2 NUMA      |  -94%    |  -92%    | x86_64 5 hosts
+  4 NUMA      |  -94%    |  -90%    | x86_64 4 hosts
+  8 NUMA      |  -89%    |  -89%    | x86_64 1 host
 
-BUG: memory leak
-unreferenced object 0xffff8881068d2d00 (size 1272):
-  comm "kworker/1:2", pid 2174, jiffies 4294943976
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    28 00 0b 40 00 00 00 00 00 00 00 00 00 00 00 00  (..@............
-  backtrace (crc ff0fde65):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4597 [inline]
-    slab_alloc_node mm/slub.c:4917 [inline]
-    kmem_cache_alloc_noprof+0x34f/0x440 mm/slub.c:4931
-    sk_prot_alloc+0x3e/0x1b0 net/core/sock.c:2246
-    sk_alloc+0x36/0x3d0 net/core/sock.c:2308
-    __vsock_create.constprop.0+0x38/0x2f0 net/vmw_vsock/af_vsock.c:919
-    virtio_transport_recv_listen net/vmw_vsock/virtio_transport_common.c:1721 [inline]
-    virtio_transport_recv_pkt+0x8fa/0x16c0 net/vmw_vsock/virtio_transport_common.c:1847
-    vsock_loopback_work+0x104/0x140 net/vmw_vsock/vsock_loopback.c:142
-    process_one_work+0x277/0x5a0 kernel/workqueue.c:3322
-    process_scheduled_works kernel/workqueue.c:3405 [inline]
-    worker_thread+0x255/0x4a0 kernel/workqueue.c:3486
-    kthread+0x14e/0x1a0 kernel/kthread.c:436
-    ret_from_fork+0x219/0x490 arch/x86/kernel/process.c:158
-    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+Architecture-independent =E2=80=94 confirms the regression is in the kernel=
+ code
+path, not hardware-specific.
 
-BUG: memory leak
-unreferenced object 0xffff8881145bbb60 (size 32):
-  comm "kworker/1:2", pid 2174, jiffies 4294943976
-  hex dump (first 32 bytes):
-    f8 52 0a 00 81 88 ff ff 00 00 00 00 00 00 00 00  .R..............
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace (crc 42a7bc0e):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4597 [inline]
-    slab_alloc_node mm/slub.c:4917 [inline]
-    __do_kmalloc_node mm/slub.c:5333 [inline]
-    __kmalloc_noprof+0x3bf/0x550 mm/slub.c:5359
-    _kmalloc_noprof include/linux/slab.h:992 [inline]
-    _kzalloc_noprof include/linux/slab.h:1309 [inline]
-    lsm_blob_alloc+0x4d/0x80 security/security.c:218
-    lsm_sock_alloc security/security.c:4478 [inline]
-    security_sk_alloc+0x2d/0x290 security/security.c:4494
-    sk_prot_alloc+0x8f/0x1b0 net/core/sock.c:2255
-    sk_alloc+0x36/0x3d0 net/core/sock.c:2308
-    __vsock_create.constprop.0+0x38/0x2f0 net/vmw_vsock/af_vsock.c:919
-    virtio_transport_recv_listen net/vmw_vsock/virtio_transport_common.c:1721 [inline]
-    virtio_transport_recv_pkt+0x8fa/0x16c0 net/vmw_vsock/virtio_transport_common.c:1847
-    vsock_loopback_work+0x104/0x140 net/vmw_vsock/vsock_loopback.c:142
-    process_one_work+0x277/0x5a0 kernel/workqueue.c:3322
-    process_scheduled_works kernel/workqueue.c:3405 [inline]
-    worker_thread+0x255/0x4a0 kernel/workqueue.c:3486
-    kthread+0x14e/0x1a0 kernel/kthread.c:436
-    ret_from_fork+0x219/0x490 arch/x86/kernel/process.c:158
-    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+## Root cause
 
-BUG: memory leak
-unreferenced object 0xffff88811573e0c0 (size 96):
-  comm "kworker/1:2", pid 2174, jiffies 4294943976
-  hex dump (first 32 bytes):
-    00 2d 8d 06 81 88 ff ff 00 00 00 00 00 00 00 00  .-..............
-    00 00 00 00 00 00 00 00 00 00 04 00 00 00 00 00  ................
-  backtrace (crc af6af911):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4597 [inline]
-    slab_alloc_node mm/slub.c:4917 [inline]
-    __kmalloc_cache_noprof+0x356/0x440 mm/slub.c:5485
-    _kmalloc_noprof include/linux/slab.h:988 [inline]
-    _kzalloc_noprof include/linux/slab.h:1309 [inline]
-    virtio_transport_do_socket_init+0x2b/0xf0 net/vmw_vsock/virtio_transport_common.c:1056
-    vsock_assign_transport+0x3a3/0x460 net/vmw_vsock/af_vsock.c:670
-    virtio_transport_recv_listen net/vmw_vsock/virtio_transport_common.c:1737 [inline]
-    virtio_transport_recv_pkt+0x956/0x16c0 net/vmw_vsock/virtio_transport_common.c:1847
-    vsock_loopback_work+0x104/0x140 net/vmw_vsock/vsock_loopback.c:142
-    process_one_work+0x277/0x5a0 kernel/workqueue.c:3322
-    process_scheduled_works kernel/workqueue.c:3405 [inline]
-    worker_thread+0x255/0x4a0 kernel/workqueue.c:3486
-    kthread+0x14e/0x1a0 kernel/kthread.c:436
-    ret_from_fork+0x219/0x490 arch/x86/kernel/process.c:158
-    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+The new loop in security/selinux/ss/mls.c mls_level_isvalid():
 
-BUG: memory leak
-unreferenced object 0xffff8881068d2800 (size 1272):
-  comm "kworker/1:2", pid 2174, jiffies 4294943977
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    28 00 0b 40 00 00 00 00 00 00 00 00 00 00 00 00  (..@............
-  backtrace (crc e503b7a6):
-    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
-    slab_post_alloc_hook mm/slub.c:4597 [inline]
-    slab_alloc_node mm/slub.c:4917 [inline]
-    kmem_cache_alloc_noprof+0x34f/0x440 mm/slub.c:4931
-    sk_prot_alloc+0x3e/0x1b0 net/core/sock.c:2246
-    sk_alloc+0x36/0x3d0 net/core/sock.c:2308
-    __vsock_create.constprop.0+0x38/0x2f0 net/vmw_vsock/af_vsock.c:919
-    virtio_transport_recv_listen net/vmw_vsock/virtio_transport_common.c:1721 [inline]
-    virtio_transport_recv_pkt+0x8fa/0x16c0 net/vmw_vsock/virtio_transport_common.c:1847
-    vsock_loopback_work+0x104/0x140 net/vmw_vsock/vsock_loopback.c:142
-    process_one_work+0x277/0x5a0 kernel/workqueue.c:3322
-    process_scheduled_works kernel/workqueue.c:3405 [inline]
-    worker_thread+0x255/0x4a0 kernel/workqueue.c:3486
-    kthread+0x14e/0x1a0 kernel/kthread.c:436
-    ret_from_fork+0x219/0x490 arch/x86/kernel/process.c:158
-    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+    ebitmap_for_each_positive_bit(&levdatum->level.cat, node, bit) {
+        if (!sym_name(p, SYM_CATS, bit))
+            return false;
+    }
 
-connection error: failed to recv *flatrpc.ExecutorMessageRawT: EOF
+iterates over every set bit in the category bitmap (~1024 bits in
+standard MCS policy with c0.c1023 range). Each iteration calls
+_find_next_bit() + sym_name() (array dereference into
+p->sym_val_to_name[SYM_CATS]).
 
+The function is called on every IPC operation via:
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+    msgsnd() -> security_msg_msg_alloc() -> selinux_msg_msg_alloc_security(=
+)
+      -> security_context_to_sid_core() -> mls_context_isvalid()
+        -> mls_range_isvalid() -> mls_level_isvalid() (x2 per range)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+This adds ~2048 iterations of bitmap scanning + array lookups per IPC
+operation. SELinux permissive mode does not help (~0.6% difference)
+because the overhead is in the validation path, not the enforcement
+decision.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+## Perf profile evidence
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Single-threaded stress-ng --msg 1 -t 60 on x86_64:
+  - Baseline (v6.12): ~67,000 msg ops/sec
+  - Regressed (v7.2-rc4): ~7,400 msg ops/sec (-89%)
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+perf top on the regressed kernel shows _find_next_bit and sym_name
+dominating kernel CPU time during the msg workload.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+## How to reproduce
 
-If you want to undo deduplication, reply with:
-#syz undup
+On any machine with kernel >=3D v7.2 and SELinux enabled:
+
+    # Install stress-ng
+    dnf install -y stress-ng
+
+    # Run the msg stressor
+    stress-ng --msg 1 -t 60 --metrics-brief
+
+    # Compare with SELinux disabled (requires reboot with selinux=3D0):
+    stress-ng --msg 1 -t 60 --metrics-brief
+
+Expected: ~67,000 bogo-ops/sec (as on v6.12)
+Actual:   ~7,400 bogo-ops/sec (on v7.2) =E2=80=94 approximately 89% drop
+
+The regression affects any workload that uses System V IPC message queues
+at high frequency. Other IPC stressors (sem, shm) may also be affected
+to a lesser degree.
+
+## Suggested fix
+
+The ebitmap_for_each_positive_bit loop validates that every category bit
+has a corresponding name in the policy symbol table. This is a property
+of the policy itself and does not change at runtime. The validation
+should be moved to policy load time in
+security/selinux/ss/policydb_validate.c (e.g. in validate_level()) and
+removed from the hot path in mls_level_isvalid().
+
+Thanks,
+Jiri Vozar
+
