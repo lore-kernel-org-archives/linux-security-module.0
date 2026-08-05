@@ -1,131 +1,158 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D353F4DE9
-	for <linux-security-module@vger.kernel.org>; Wed,  5 Aug 2026 22:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.172
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785970331; cv=pass; b=QRAZw+8EbBsAbcDpG+NXT4NGZOloOI57+CZXpMGio/0D7GFLaMxhQVJqBFnCHfAZAH9e50G6Hbfbm1LmiODJd8Ttho4mAp+fvITG+yIpelVHWbwA/qixPnaMtWdOpBvWX5lLV+cHZ4S7kYgiokUT55cGhmyf8YtqDd252kupKiU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785970331; c=relaxed/simple;
-	bh=zW3RxM/rNbqJdWn4Mi6JYrmSdA5p5pUuWesdsgwjB4s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t5tqL0E2bK+k2ujtao4bpEKF7QjOeeMSdZ5UZqjLC4qELFSbURcCyaKRIZkbIcyugyMSFSmHMlt1CT61ImE4fnTUMKmfwGkhNG36Za7ifZEyt7Vh1E/t2/LyRw6cwSoj5KjDlv1KWvwfc8q+KLvL1HhqicguddFujJSk1oBwwrs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=UCx7JuPr; arc=pass smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0864A3F5BC3
+	for <linux-security-module@vger.kernel.org>; Wed,  5 Aug 2026 23:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785971624; cv=none; b=T0H/0hMLEx15BKfsAGZw06qEfyfSXnJwojP1b4rKFyLBbVtHzGFfm3RA5h6yNiLtQn2lL6PDBhD2iicCo9V2BIXADaVwQv3jdk6mRMRyNtCTqjr9c6XWztv3eGY9n0lZhEi+KXYSs69FOmNdyw1wZAy/2FOKxu0PueLndCxpW58=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785971624; c=relaxed/simple;
+	bh=LkM7fYhWWWgeAM3toSceqwVG2Yw0sBxFlU/yKJv2o00=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K1b/rAam+fAPM2VxssM5Uh4/OtXNqe0RvE07CAOkALuNFA+En8J0bbavK1pIDbIIHqRTR8iaDv2DaUaK+lSURI51X+OAKSwi+4nURGTn/wjfg7VRMTNnbU+OUGCEKm1Bq5r+weRK5v34Ehuzgke+aH5YErpfkeKldL5bQnLQwQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=PQ7cWnxd; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="UCx7JuPr"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2cee9b74ee1so13871755ad.3
-        for <linux-security-module@vger.kernel.org>; Wed, 05 Aug 2026 15:52:09 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1785970329; cv=none;
-        d=google.com; s=arc-20260327;
-        b=pugnNiYu0VmEDRQ3SrKSLq8zXAgOpw8UC258YTH2ZfVCiWlbjOgR3hK4iI18Xie8Lx
-         TTt7/zQvxQXCJgAZddzYhil1uhPhGpp2qmYZnwZPm/Cu1EKyGzaPkfKCejlxKDB1z6QL
-         EyeW3UOwqGwXWmffUZK0BnF+uCchKKjjvNnlbXVTTq+sYbFxtehf4EZ5EPGDldqE5NNC
-         BW1/vkh73VdnsuPbkA+/SKR/KDamP3BSKpVKyQafeCC+E9W0NSN1YnqQe6bSYbv/37sb
-         0baj9bWfLxWzipy/PP/E/33VQt6qB+xg4W2JDsQtbVKnGL6FOeeVVWSL7UNAOQtvEyaw
-         7hJw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=UEUgxUIihU95kBMJ6tsYeTw6BnIB/l3iVQ0BO03aWqw=;
-        fh=SfJGis1RbI4YYlJ+pUrc8XM0yEMj8KRFF+j1auPp5pU=;
-        b=nL8F6J2iSchI9emvUA49/EfauHzn20jkg5uXYfSY0nuIFS0518aSpjwLSXysm99SLx
-         XmDP1fETnpPCCTq5K6kgeCMyu5dSR6X+hGXZuoYNkIr8ZHckk2cxLr2CbB6jOUfEzeFe
-         bjHS/gYMJ4x/OrKot0Yh+9WZ4pgoQR7aO1zMnsbvK7Qx/w5HszJGcmM4ABivXUSRRFT+
-         cUFU6Tu/f7m8y0r3F7r9QN1J5WrpRMYSW7vGHz3N/aaSzfGsHQSVrr+uhLh+RUkEwuhy
-         XbFJnaC62mXqS+OIfFTxtQggSV9Gm+94x2PljG+ygDbR770b1UsYV2rp2jCxAaTJ1DHH
-         lQuw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1785970329; x=1786575129; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=UEUgxUIihU95kBMJ6tsYeTw6BnIB/l3iVQ0BO03aWqw=;
-        b=UCx7JuPrEv0HNJwY+yOsUlz3SZtclI/yOGAryYxTj02QCprTHA75pXff2hHW0SHl//
-         cpGQ46LvCwbuCuBm/219MLR/CvMH1/BVJ7NddmWfiyNAuT5ZwaWhD4CORzdxOe/8puzk
-         VEOPAk6Bv8IajkFG0hQxTxiVb7VS6yim6cyy4jSZlA3qkZPCLOBMyrm1DxH2+eobp7bd
-         JgRPC126xCYYhM8i+UDiIqPcFLBgnOM+lzZI9SAyHBiNmU9B+OtQhsFxtmuSLo4+OTDF
-         RyrEkUSr3dnG2iGVXOWyCHpdgQWwhvAwuhq3NIZFcKA3uIWQ34YWLNVhnG0tnbflZNYt
-         SeqQ==
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="PQ7cWnxd"
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 24FE33F98A
+	for <linux-security-module@vger.kernel.org>; Wed,  5 Aug 2026 23:13:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20251003; t=1785971619;
+	bh=nHbFOVIYeLhSKL2+ouvuUKp0EuJiRVqY6uld36J7XZ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=PQ7cWnxdtC7+xGcKOVwIKI5Gvo0MeERWb+Fc2ETpR5EY2eNmjPnovqCCuS5M1f/yA
+	 SQVDwRT9UxLn3aTaKGhCsxgVv3lnMpAFJiGtX4aNRYgPeId/6K6xxfMq6DSTmJWWPs
+	 C8nJEqTF/KdWIfquYxOaC0R7x2trOMTqqvwVP366+rxmGZu3unAeFAc3E/dyeon/Yx
+	 0hpwFeXbAj/NMUDtbunEnXV9xkdYn46wfBVVdLk2LryndKaGFptjcOiz1pEPKlitQr
+	 Xk13OMiYUye0JnZlQ7tIeLuI4w/TUzYYUgDxD4SlqAi7se1TJIOMCSrdZ0dxs6rE0/
+	 ZyTBZyk7G/EdAWUhcpZPdhY1dDVe/vr9ybrOWEOOV/iT0zOcJ1NNg+rtZtPv2tTOTk
+	 VtR4iZ/UsADrRlU0rIyHTtUMDcj19tDAe1wV5Wu19W5LQX55PJJ3LI2lWlmlMJMLkw
+	 OWIOrpurQv9n5mVIrq5diA+fsZWocT17wM7o1xutkxMkOHmoo2GoKxgeTdeF8QmCWb
+	 g6WpR+aDwRQZXmxix973Ux1xzE5D2qKkT5ATZrvVXxdDS2j1ckpGSQ5uR6GWdFpZzK
+	 5KA4tMLB8pVQN6d3DE3oMgO70pAVKwB3PZrAFPZKffU3LRtMADybNc9+5MzFrKJVFc
+	 y8nlhdZzzvvRGJ7YJ/DuevHc=
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-ca8aee88725so2087408a12.3
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Aug 2026 16:13:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785970329; x=1786575129;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=UEUgxUIihU95kBMJ6tsYeTw6BnIB/l3iVQ0BO03aWqw=;
-        b=IXtMSDk063vI5JPjl9x6LU0dsyk+hhH8yIZI+vyl2P4fk5PxLg/Qzrx2tiYRm52XQO
-         YyH8gOHVAprIlbhn5LD5XBKxqtB9AfN3D2TaowN8h7ManRM499rGat4CsTWt8TA8buAQ
-         p928fjypnjfqUFbMuk2aT5hFCLMy0U5MWRV9A5aP2pr64+feP0Hb/48NsIqu6uptxuzf
-         PM/qA78eb1tvZvCYMwtUN4hPnm83L1z9HapglQ2SJibb80sCeY5nobEo8QVPbk639qWL
-         0wsdOYfXVgAKd2nLKobuV67SYZI5o0F4Bo/XGs6uAJCez02oYqMhTPZhsWLOAlUfvDyD
-         uW0g==
-X-Forwarded-Encrypted: i=1; AHgh+RqGlOAR/Ml2GO5ejKjTFmQ//PEpyFHcz5tT7BE0TH51JeukjOtkf3H7mmawjTEwQ8WAx3bz4ZQIJTeKSfP65n12CMikJPQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJTbQUXZGwrMNCfqpjuKiB0sMtds/Dfz3BEcM6VzZlXaYQNam+
-	CkrQzA2ac4QLiQjhIDjc7mNDnwDBR8ZzRuaFzOtTIc/yZ8OU1Wd8ZySFdCBRhPWTSz7pg4VqpPB
-	4C6b+hNnAYjfhIuiaMoiVZd7HUpQ3CZp1LCw0+KtJ
-X-Gm-Gg: AR+sD10ncg2oCIYsMPQi+ALumJTzr4PCt352mMMeLFfPpDk6uSgQdk0320tBMTa/0vW
-	rztt518TVfnkg0vwe0rCjO3z7+fpCqTZ8Q/8zfhTJ/bqGsXdmPQcGLmmke2M0DmZ915CiWXrmZr
-	6WeRNG65pYvSOAig2W3/xTyrv8sDK1s1/WYt1xUT96MSteniIDGaxGx6HHYwYvNWj668RRFou76
-	V21A9rFyff/TmxjHgH9sJ3J9EjJqBZ75cuvvyu3SFdzFTMMEXlxBClS43aZzO22ZzPihaLDHJdZ
-	LcH04dJ1Eu3ORv5VgIo6htm7iTAB8/5E/jJp9DbkXIz/
-X-Received: by 2002:a17:903:2450:b0:2ca:e19c:986 with SMTP id
- d9443c01a7336-2d0ca70e87bmr103149425ad.1.1785970329277; Wed, 05 Aug 2026
- 15:52:09 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1785971617; x=1786576417;
+        h=content-transfer-encoding:content-type:in-reply-to:organization
+         :autocrypt:from:content-language:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=nHbFOVIYeLhSKL2+ouvuUKp0EuJiRVqY6uld36J7XZ0=;
+        b=Va5jgg5Ef9P+PHAldw+4SVs5KPObI2mAkwli2IG3ogPIqNSh9bNBexn8AvoWdLedS8
+         vEZ0DNpNMgKHFWMFkHCUztmisZ8ZimSFxDx4SAVteJyGF3Uj8op9YalFJThe8x+nOECv
+         zg5A4Xm0WeA66jdqWY4/gspaQK00shJyx+XrUB8NQB/dNqnPEYH4JZK6PvZj1YdJfROi
+         IpVLYzKbNFd290up1zqvii3na5OOkqhtuPzck9ofX5Had6QzfwAtWcnZwTT3SIiIhVwz
+         Ge8aKBX/dD6nkrL5KVrpL4N6FiLC+HqoN3WQE+AWOMgNYV7+bBABynGvCdJDnyd4fy9W
+         nOzg==
+X-Forwarded-Encrypted: i=1; AHgh+Rq/6AgggLSawn498LDOezGhWp3cDHwAxa4beHU0xiGd9gIYyPQz4FoIjh/YxCRnAXiWhNC85Df997GTK7FUgc+4xnpGsKo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLNaoePZ1/d3/67Rn3O3FMW4RIC4mSMyMVFPFhO4AlfRXrCI3U
+	6zVY4XW7cgaQEFyOdrgfc/GSuDlT8kxscqpul922eF6uKp7zp/+gDuCnx8MAxuhTL7z5jI26Biq
+	u/Jgorqo2eR4rp4CioYE1u5h1qj9+WWSgb1DwXys+pKywfvVPYZyVWYNrA+4cG2RhduLrMg1wJL
+	23q+zC0cgGAHBNlUbNnQ==
+X-Gm-Gg: AR+sD13uoxNePs6bekYjUssxBPu6GbS4wnGTN1laOVi1xYQ/3P0RbyZc/8rQ65Z50WZ
+	hguTobIANFazZh5wiRzX/fo1VvUEQeRpfQHJ9IXo23p3sZkeNFPdYjd4a4q9p6/hKJx9TuuQGCO
+	6vE2cKZoFJ4Y1jpGo/0Vw6XYT6rMjIM6cm8MrxIUmhWHsR1N1JfQ6BZNLgbM5Z2yt6mvejXSDEu
+	eWmJi12yKYAynv+FWVOpLOa62iWOZRwnZzA1oooBhrv6vqSMyVfu5j9nHHuYc7ZQDKcODiySzTK
+	CDnkJ0B0Qaj46QMsSyo2njT+GLnUNXe9F4utSC+3yQeorcnQsWu373cdCwIse8nLuKZ25euARuF
+	S70XS0EWyk10RCy8=
+X-Received: by 2002:a05:6a00:3ccd:b0:845:c7f1:29fa with SMTP id d2e1a72fcca58-84f2e04a63bmr11049891b3a.30.1785971617352;
+        Wed, 05 Aug 2026 16:13:37 -0700 (PDT)
+X-Received: by 2002:a05:6a00:3ccd:b0:845:c7f1:29fa with SMTP id d2e1a72fcca58-84f2e04a63bmr11049850b3a.30.1785971616953;
+        Wed, 05 Aug 2026 16:13:36 -0700 (PDT)
+Received: from [192.168.192.71] ([50.47.147.90])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-cbe707f037dsm2428288a12.12.2026.08.05.16.13.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Aug 2026 16:13:36 -0700 (PDT)
+Message-ID: <97987e10-07bd-4f06-8b64-e3e076aef33f@canonical.com>
+Date: Wed, 5 Aug 2026 16:13:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260731022047.189137-1-utilityemal77@gmail.com>
- <CAHC9VhSSzNBCSvy4cQHh6OOM4-EvHF+bmrB9=V1y=Lj53RvxQQ@mail.gmail.com> <anOnaGmBTlBW9xwj@zenbox>
-In-Reply-To: <anOnaGmBTlBW9xwj@zenbox>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 5 Aug 2026 18:51:56 -0400
-X-Gm-Features: AUfX_mzPunhiwVEajozDtlbD27VL1S40fcPizXOWOu5cVq-CtR6P_R27IEYpqmY
-Message-ID: <CAHC9VhRBYMaNBPfnV=TK8g-M7H_qsBu=CsVVOwnAzTPAkpAZaA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 00/13] BPF interface for applying Landlock rulesets
-To: Justin Suess <utilityemal77@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	kpsingh@kernel.org, mic@digikod.net, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, kees@kernel.org, gnoack@google.com, jack@suse.cz, 
-	song@kernel.org, yonghong.song@linux.dev, martin.lau@linux.dev, m@maowtm.org, 
-	bpf@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] apparmor: fix cred UAF caused by
+ begin_current_label_crit_section()
+To: Jann Horn <jannh@google.com>, John Johansen <john@apparmor.net>,
+ Georgia Garcia <georgia.garcia@canonical.com>, apparmor@lists.ubuntu.com,
+ Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: James Morris <jmorris@namei.org>, Christian Brauner <brauner@kernel.org>,
+ Al Viro <viro@zeniv.linux.org.uk>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ linux-security-module <linux-security-module@vger.kernel.org>,
+ kernel list <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+References: <20260714-fix-apparmor-cred-uaf-v1-1-be40e8c83b90@google.com>
+ <CAG48ez31uJ1utneG2VepgkpYp-zpmypoBJ5TTXOxiPLrZsXTrQ@mail.gmail.com>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <CAG48ez31uJ1utneG2VepgkpYp-zpmypoBJ5TTXOxiPLrZsXTrQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 5, 2026 at 5:37=E2=80=AFPM Justin Suess <utilityemal77@gmail.co=
-m> wrote:
-> On Fri, Jul 31, 2026 at 04:30:39PM -0400, Paul Moore wrote:
-> > On Thu, Jul 30, 2026 at 10:21=E2=80=AFPM Justin Suess <utilityemal77@gm=
-ail.com> wrote:
-> > [...]
-> > As you may, or may not have seen, there is currently an ongoing debate
-> > regarding the location of LSM kfuncs that will impact this patchset.
-> > Sadly, we don't appear to be approaching an agreement on this issue
-> > which introduces some additional risk to this patchset.  We'll have to
-> > see how that ends up, but I just wanted you to be aware of the
-> > situation.
->
-> Quick aside question: Would security/bpf/ be a better place for these
-> type of kfuncs?
->
-> security/bpf/bpf_lsm_kfuncs.c could be for LSM framework kfuncs,
-> and each LSM could maintain their own security/bpf/<lsm>_kfuncs.c
-> for kfuncs dealing with lsm-specific types.
+On 8/5/26 08:10, Jann Horn wrote:
+> On Tue, Jul 14, 2026 at 5:39 PM Jann Horn <jannh@google.com> wrote:
+>> AppArmor's begin_current_label_crit_section() is a scary function called
+>> from lots of LSM hooks (in particular VFS/socket-related ones) that checks
+>> if the label referenced by the current creds is marked FLAG_STALE, and if
+>> so, attempts to use aa_replace_current_label() to replace the creds with an
+>> updated version that uses a new label.
+> 
+> ping, I've seen no activity on this fix since posting it
 
-This gets back to the other issue in the patchset that we've
-discussed: general LSM interfaces vs Landlock specific interfaces.
-There are plenty of reasons why we don't support the kernel calling
-directly into individual LSMs, and from my perspective this is another
-instance of that.  Here it just happens to be that the kernel caller
-was written in BPF and not C (or Rust for that matter).
+sorry, just swamped and not catching up so far.
 
---=20
-paul-moore.com
+I am looking at it now
+
