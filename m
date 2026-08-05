@@ -1,79 +1,79 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0864A3F5BC3
-	for <linux-security-module@vger.kernel.org>; Wed,  5 Aug 2026 23:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3A9352C54
+	for <linux-security-module@vger.kernel.org>; Wed,  5 Aug 2026 23:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785971624; cv=none; b=T0H/0hMLEx15BKfsAGZw06qEfyfSXnJwojP1b4rKFyLBbVtHzGFfm3RA5h6yNiLtQn2lL6PDBhD2iicCo9V2BIXADaVwQv3jdk6mRMRyNtCTqjr9c6XWztv3eGY9n0lZhEi+KXYSs69FOmNdyw1wZAy/2FOKxu0PueLndCxpW58=
+	t=1785973541; cv=none; b=lfIXYz39SkJWQ4hXm9TgZ5mSUcGwykho2jZGLB7gTKD2fWGboNY46Dg1hwrU10fmEMAYeRvV12fz0TYiHtVy7tq7iNronpzTicP3GUgt9wkQUBo7DsENkZp7x4JVJ1GexzYD6ZxpJ+Fy/3fki9unUtlmuiQWUxy+8LuhYssixcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785971624; c=relaxed/simple;
-	bh=LkM7fYhWWWgeAM3toSceqwVG2Yw0sBxFlU/yKJv2o00=;
+	s=arc-20240116; t=1785973541; c=relaxed/simple;
+	bh=pH7dxdWyKhgYjTxrzmDhqHXUO8kKsgDrXDDIjMYz7XM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K1b/rAam+fAPM2VxssM5Uh4/OtXNqe0RvE07CAOkALuNFA+En8J0bbavK1pIDbIIHqRTR8iaDv2DaUaK+lSURI51X+OAKSwi+4nURGTn/wjfg7VRMTNnbU+OUGCEKm1Bq5r+weRK5v34Ehuzgke+aH5YErpfkeKldL5bQnLQwQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=PQ7cWnxd; arc=none smtp.client-ip=185.125.188.123
+	 In-Reply-To:Content-Type; b=KvaT96ulDc2d7jBtn1KPIviZa5vAxL4aAQVOtaHNzF2rr4HakjqrhWA0wzWBKULoBLb1ciH1nsFrEiMBISSmEzK20gmh0ZqXiKUkOAqUfDWK1DbheBVKJcuWd4aZRkDc0tNs9UZHCQDWct6wcPS9f217//Ag+KyDfvaOjP9iruA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=HCc5+GK1; arc=none smtp.client-ip=185.125.188.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="PQ7cWnxd"
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="HCc5+GK1"
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 24FE33F98A
-	for <linux-security-module@vger.kernel.org>; Wed,  5 Aug 2026 23:13:39 +0000 (UTC)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id A37C03F62F
+	for <linux-security-module@vger.kernel.org>; Wed,  5 Aug 2026 23:45:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1785971619;
-	bh=nHbFOVIYeLhSKL2+ouvuUKp0EuJiRVqY6uld36J7XZ0=;
+	s=20251003; t=1785973536;
+	bh=Xd2gB0iO8ZoT4UtJBbjUQuijskG434Qw0vWALETHor8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=PQ7cWnxdtC7+xGcKOVwIKI5Gvo0MeERWb+Fc2ETpR5EY2eNmjPnovqCCuS5M1f/yA
-	 SQVDwRT9UxLn3aTaKGhCsxgVv3lnMpAFJiGtX4aNRYgPeId/6K6xxfMq6DSTmJWWPs
-	 C8nJEqTF/KdWIfquYxOaC0R7x2trOMTqqvwVP366+rxmGZu3unAeFAc3E/dyeon/Yx
-	 0hpwFeXbAj/NMUDtbunEnXV9xkdYn46wfBVVdLk2LryndKaGFptjcOiz1pEPKlitQr
-	 Xk13OMiYUye0JnZlQ7tIeLuI4w/TUzYYUgDxD4SlqAi7se1TJIOMCSrdZ0dxs6rE0/
-	 ZyTBZyk7G/EdAWUhcpZPdhY1dDVe/vr9ybrOWEOOV/iT0zOcJ1NNg+rtZtPv2tTOTk
-	 VtR4iZ/UsADrRlU0rIyHTtUMDcj19tDAe1wV5Wu19W5LQX55PJJ3LI2lWlmlMJMLkw
-	 OWIOrpurQv9n5mVIrq5diA+fsZWocT17wM7o1xutkxMkOHmoo2GoKxgeTdeF8QmCWb
-	 g6WpR+aDwRQZXmxix973Ux1xzE5D2qKkT5ATZrvVXxdDS2j1ckpGSQ5uR6GWdFpZzK
-	 5KA4tMLB8pVQN6d3DE3oMgO70pAVKwB3PZrAFPZKffU3LRtMADybNc9+5MzFrKJVFc
-	 y8nlhdZzzvvRGJ7YJ/DuevHc=
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-ca8aee88725so2087408a12.3
-        for <linux-security-module@vger.kernel.org>; Wed, 05 Aug 2026 16:13:39 -0700 (PDT)
+	b=HCc5+GK1aNUYWRK42KDZSkULCvxUkmFSGb0im4YrQqf0cu0uLrAsjOe74p1hfyr3m
+	 /ke+D9VJ9FYoChYuTtnLwN1q1eM4tdGPdN91Hx4VylG99YcQsGwaibZFqu6u1M3t90
+	 KbhoPCskp2JL0Rirdu1rIRGe56sI+hDyBGreeQwx6RfDhNsyKwWCsUGnmbxH1eM1CA
+	 uEE0HqhbJPIw85DTlX3TBifSy/aCRHhTOXEwvRNOviXBCGqfkBE4xaPti6tE53rVrP
+	 OLzT0vZye9EuzBjITvDzzhLY00s2p++Oh2VijvhL3pRelN0GWvTVZuGSfL6sioJ5GZ
+	 OuFdWccB6N060NHnTLZtUCs5foF1BnnODOeBmiEupb+KbvGaaODE1JOl63BVEMdBK8
+	 C262aAKaOmRaq8/ISXPSb1bZ4751YMeRzhtk2bw1fv9E4LgGQvDuYNsNbKm0jM6ZeS
+	 L8C5yqiTZ1EJU7mG3Xlm5r2dKw9YS1NsiSj+p0Q0odvs2AnF8nAXJqGZ9+K45UPhIi
+	 C6ZZ0h7f6CBz3O6kM5jkNxSj2h0CYTQQyQzs3/eZx1kH2lhZzYm5TnmOdZmXmwEm/v
+	 qKclvv0qBQw3S4i2BN8eaZUS5TUQiOVQxS8V2/uQHC6oJybiNtpkZKkXP3pe9Biz+A
+	 f4WuTSCnQISi5hx+NLPq7f0g=
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-84e4ef486c7so325096b3a.1
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Aug 2026 16:45:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785971617; x=1786576417;
+        d=1e100.net; s=20251104; t=1785973535; x=1786578335;
         h=content-transfer-encoding:content-type:in-reply-to:organization
          :autocrypt:from:content-language:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=nHbFOVIYeLhSKL2+ouvuUKp0EuJiRVqY6uld36J7XZ0=;
-        b=Va5jgg5Ef9P+PHAldw+4SVs5KPObI2mAkwli2IG3ogPIqNSh9bNBexn8AvoWdLedS8
-         vEZ0DNpNMgKHFWMFkHCUztmisZ8ZimSFxDx4SAVteJyGF3Uj8op9YalFJThe8x+nOECv
-         zg5A4Xm0WeA66jdqWY4/gspaQK00shJyx+XrUB8NQB/dNqnPEYH4JZK6PvZj1YdJfROi
-         IpVLYzKbNFd290up1zqvii3na5OOkqhtuPzck9ofX5Had6QzfwAtWcnZwTT3SIiIhVwz
-         Ge8aKBX/dD6nkrL5KVrpL4N6FiLC+HqoN3WQE+AWOMgNYV7+bBABynGvCdJDnyd4fy9W
-         nOzg==
-X-Forwarded-Encrypted: i=1; AHgh+Rq/6AgggLSawn498LDOezGhWp3cDHwAxa4beHU0xiGd9gIYyPQz4FoIjh/YxCRnAXiWhNC85Df997GTK7FUgc+4xnpGsKo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLNaoePZ1/d3/67Rn3O3FMW4RIC4mSMyMVFPFhO4AlfRXrCI3U
-	6zVY4XW7cgaQEFyOdrgfc/GSuDlT8kxscqpul922eF6uKp7zp/+gDuCnx8MAxuhTL7z5jI26Biq
-	u/Jgorqo2eR4rp4CioYE1u5h1qj9+WWSgb1DwXys+pKywfvVPYZyVWYNrA+4cG2RhduLrMg1wJL
-	23q+zC0cgGAHBNlUbNnQ==
-X-Gm-Gg: AR+sD13uoxNePs6bekYjUssxBPu6GbS4wnGTN1laOVi1xYQ/3P0RbyZc/8rQ65Z50WZ
-	hguTobIANFazZh5wiRzX/fo1VvUEQeRpfQHJ9IXo23p3sZkeNFPdYjd4a4q9p6/hKJx9TuuQGCO
-	6vE2cKZoFJ4Y1jpGo/0Vw6XYT6rMjIM6cm8MrxIUmhWHsR1N1JfQ6BZNLgbM5Z2yt6mvejXSDEu
-	eWmJi12yKYAynv+FWVOpLOa62iWOZRwnZzA1oooBhrv6vqSMyVfu5j9nHHuYc7ZQDKcODiySzTK
-	CDnkJ0B0Qaj46QMsSyo2njT+GLnUNXe9F4utSC+3yQeorcnQsWu373cdCwIse8nLuKZ25euARuF
-	S70XS0EWyk10RCy8=
-X-Received: by 2002:a05:6a00:3ccd:b0:845:c7f1:29fa with SMTP id d2e1a72fcca58-84f2e04a63bmr11049891b3a.30.1785971617352;
-        Wed, 05 Aug 2026 16:13:37 -0700 (PDT)
-X-Received: by 2002:a05:6a00:3ccd:b0:845:c7f1:29fa with SMTP id d2e1a72fcca58-84f2e04a63bmr11049850b3a.30.1785971616953;
-        Wed, 05 Aug 2026 16:13:36 -0700 (PDT)
+        bh=Xd2gB0iO8ZoT4UtJBbjUQuijskG434Qw0vWALETHor8=;
+        b=K1A8bKFDW4zlAWRU+RpzPhgwMVTJKf7UV40yP5u/Bom+OrHdM9ouE6qnBQ4oQy9gRi
+         P9x+0UErb7HVSaG60GwPo8BncrL8R+0BsUnK2g95QbvayxMf6w3zkjHHM1WH9mcSI/Ur
+         ygrCTmI8KTrMBfE9ic2fSuHuxsvNyuPhmDfkl7boSK8Uwv7uiPr14RR4lBt8YrM2hC22
+         azrjJpI3oQmGTof5s3tCgyR202KQS/GzPQORPjuqiDkdHnt8o8HWWnl7dvJNurwAKS35
+         SgzFDrL2YW/XIbF/qhogXZGtoHK9/FOulYF6KoYoLzDPTHowFfbQ7Z2dxM4CgSrLKD/I
+         w5UA==
+X-Forwarded-Encrypted: i=1; AHgh+Ro/YX+HICByPvlpp+uVlqOTfSjZ4hal7ngZylSJTTm6IxCW4PLaKo7HbMz6SyVJhNTfi149sLb7t5/Apc9xn8m2greG8cE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtaBcN7jqHpmlBFGWtGbBOUPdNv4oRCVNnuaQhq/6FkuJrHK1P
+	RBAynN7eLcMoloj2FnHWxji49krh7ajlV+yid7Q8pTQ5gbVVBFZShyfKQUOxizDpKoeOv5LTxhh
+	NS5XuWe9vgE911Z8buH9fiaSadKJDeMQUk4ACqDvnBcQaPpwOAkr0ZsgG5BBLhwySPqjCmiDriZ
+	j/dzg6xARzk/uwmckA5A==
+X-Gm-Gg: AR+sD13lqeNfiGDPLWyNdDhQGyCJRdOXVDJFpka/8fTtV1r+5eaFPOXHUK9MozJyfkG
+	686MLcAKd+x1ogfki7tHqV+Settt82sUiAZ7uLMJ7ixDe5zQA7elvX6NggpkJMtAnid7KlGONm/
+	7puNgP/a1Aynd+hWAbmb5jxjsOVZWh35LsuJ3xnx4/1lF42ODJJqWRqr26jYt5TU+et7BKZHuzi
+	+oKs8cLpERuyoIfK1l9A/cMXAlwmN/6X7bz0aGQdDmBJgmxf8E/wMqtHTJpgPFpCQ/ThV0yoH/J
+	93lNsMMfhat8i5laoyUSrT5c+0+tzQaP8PtUJwc5CWn1tMA21zpfuY1i0DJxpaKoFEjnki6T8lz
+	sTW4Owjg/VZHsGAc=
+X-Received: by 2002:a05:6a00:1c82:b0:84e:242:4bb2 with SMTP id d2e1a72fcca58-84f47d119f4mr254409b3a.4.1785973535042;
+        Wed, 05 Aug 2026 16:45:35 -0700 (PDT)
+X-Received: by 2002:a05:6a00:1c82:b0:84e:242:4bb2 with SMTP id d2e1a72fcca58-84f47d119f4mr254365b3a.4.1785973534645;
+        Wed, 05 Aug 2026 16:45:34 -0700 (PDT)
 Received: from [192.168.192.71] ([50.47.147.90])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-cbe707f037dsm2428288a12.12.2026.08.05.16.13.35
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-84f45bc4c29sm143194b3a.52.2026.08.05.16.45.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Aug 2026 16:13:36 -0700 (PDT)
-Message-ID: <97987e10-07bd-4f06-8b64-e3e076aef33f@canonical.com>
-Date: Wed, 5 Aug 2026 16:13:35 -0700
+        Wed, 05 Aug 2026 16:45:33 -0700 (PDT)
+Message-ID: <075aec24-cb7b-44ea-b3d8-be913a87c958@canonical.com>
+Date: Wed, 5 Aug 2026 16:45:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -81,18 +81,13 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: fix cred UAF caused by
- begin_current_label_crit_section()
-To: Jann Horn <jannh@google.com>, John Johansen <john@apparmor.net>,
- Georgia Garcia <georgia.garcia@canonical.com>, apparmor@lists.ubuntu.com,
- Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: James Morris <jmorris@namei.org>, Christian Brauner <brauner@kernel.org>,
- Al Viro <viro@zeniv.linux.org.uk>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- linux-security-module <linux-security-module@vger.kernel.org>,
- kernel list <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-References: <20260714-fix-apparmor-cred-uaf-v1-1-be40e8c83b90@google.com>
- <CAG48ez31uJ1utneG2VepgkpYp-zpmypoBJ5TTXOxiPLrZsXTrQ@mail.gmail.com>
+Subject: Re: [REGRESSION] apparmor: AF_UNIX datagram send slowdown after
+ 6456ccbd2ff7
+To: Chengfeng Lin <lin2530632123@gmail.com>, georgia.garcia@canonical.com
+Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+ apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, regressions@lists.linux.dev
+References: <CANGjgdnoz4NdqzOV9+SZaYTc+O_GkNNn5NVp+ZpHUQbp5h-QVQ@mail.gmail.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -138,21 +133,86 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <CAG48ez31uJ1utneG2VepgkpYp-zpmypoBJ5TTXOxiPLrZsXTrQ@mail.gmail.com>
+In-Reply-To: <CANGjgdnoz4NdqzOV9+SZaYTc+O_GkNNn5NVp+ZpHUQbp5h-QVQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 8/5/26 08:10, Jann Horn wrote:
-> On Tue, Jul 14, 2026 at 5:39 PM Jann Horn <jannh@google.com> wrote:
->> AppArmor's begin_current_label_crit_section() is a scary function called
->> from lots of LSM hooks (in particular VFS/socket-related ones) that checks
->> if the label referenced by the current creds is marked FLAG_STALE, and if
->> so, attempts to use aa_replace_current_label() to replace the creds with an
->> updated version that uses a new label.
+On 8/5/26 10:33, Chengfeng Lin wrote:
+> Hi John and Georgia,
 > 
-> ping, I've seen no activity on this fix since posting it
+> I found a repeatable AF_UNIX datagram send slowdown caused by the exact source
+> delta of 6456ccbd2ff7 ("apparmor: fix regression in fs based unix sockets when
+> using old abi"). In a bare-metal parent/child/parent test, a standalone
+> sendmmsg() workload was 15.30% slower after the change. An independent larger
+> runner reproduced the slowdown with both sendmmsg() and io_uring SEND, so this
+> is not specific to io_uring.
+> 
+> #regzbot introduced: 6456ccbd2ff7
+> #regzbot title: apparmor AF_UNIX datagram send slowdown
+> 
+> The standalone workload uses socketpair(AF_UNIX, SOCK_DGRAM). Each sendmmsg()
+> call sends 32 messages of 128 bytes. Peer draining and payload validation are
+> outside the timed region. Each point had 3 warm-up rounds followed by 15
+> measured rounds of 65,536 messages.
+> 
+> Because 6456ccbd2ff7 was part of an AppArmor series, I isolated its source
+> delta on one controlled baseline:
+> 
+>    parent 0bfa1c2da7a8: AppArmor topic prefix through 50d56a1a366a
+>    child  30cb02a874b4: parent plus only the exact two-file 6456ccbd2ff7 diff
+> 
+> The child tree matches the same baseline with the AppArmor prefix advanced
+> through 6456ccbd2ff7. I used a fresh boot for each point:
+> 
+>    point       mean ns/message
+>    parent A          343.382
+>    child             395.831
+>    parent B          343.259
+> 
+> The child was 15.295% slower than the parent midpoint. Dropping the first
+> measured round gave 15.289%; parent drift was -0.036%, and the maximum CV was
+> 0.137%. All 45 measured rows passed the payload, length, count, and empty-queue
+> checks.
+> 
+> The machine was an Intel Core i7-12700KF system with 32 GiB RAM. The workload
+> was pinned to P-core CPU 2, with governor and EPP set to performance and Turbo
+> disabled. All three runs used actual preempt=none and reported
+> /proc/self/attr/current as unconfined.
+> 
+> As a separate check, the larger original runner used matched actual
+> preempt=full. Its direct sendmmsg() profile was 14.841% slower, and its
+> io_uring SEND profile was 17.953% slower. I am keeping these results separate
+> from the standalone percentage.
+> 
+> A separate v6.16.12 -> v6.17.13 perf comparison was directionally consistent.
+> The children overhead reported for security_unix_may_send was 0.27% in both
+> v6.16.12 controls and 6.77% at v6.17.13. The latter included the path through
+> apparmor_unix_may_send(), aa_unix_peer_perm(), and unix_peer_perm(). This was
+> a release-endpoint comparison rather than the exact source pair above, so I
+> use it only as supporting path evidence, not as an internal decomposition of
+> the 15.295% slowdown.
+> 
+> I understand that 6456ccbd2ff7 fixes a real old AppArmor policy ABI issue,
+> so I am not suggesting a revert. Would it be possible to retain that fix while
+> avoiding the added cost on this unconfined AF_UNIX datagram send path?
+> 
 
-sorry, just swamped and not catching up so far.
+thanks for the report, we will have to investigate and get back to you on this,
+generally speaking we try to keep the mediation overhead for unconfined tasks
+to a minimum using early bailout and some caching. The referenced commit does
+look to be doing early bailout, so we are going to have to do some analysis, on
+where exactly the overhead is coming from.
 
-I am looking at it now
+I can't promise we can get it back to what it was before but we should be able
+to do better than the current regression.
+
+
+
+
+> Evidence bundle:
+> 
+>    https://github.com/lcf0399/linux-regression-evidence/tree/7b9862c7ac2d5f9622725912d7f0df95011bcbfd/apparmor-af-unix-send-old-abi-6456cc
+> 
+> Thanks,
+> Chengfeng
 
