@@ -1,139 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334284854E0;
-	Thu,  6 Aug 2026 17:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36CF373BE6
+	for <linux-security-module@vger.kernel.org>; Thu,  6 Aug 2026 17:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786036974; cv=none; b=Q2Wn6Hh8QJMzxA7gvZjs6cffEzhyd4OA23i6BCkwZAYZ/J3MmLzRy4P6eipj5w6cHRHRbpJaQK3Hgf7y7PMU81lIx3zOmMMosO/MhL7prd73G3i6eJ0JjdqiuGs/p7q1ZIv84vUmMnjKwqyQz+m930gmomAanDDPB49W6lfjUpk=
+	t=1786038121; cv=none; b=alHrdCLNuxtwtTKWQa/IFZM2brFCdAt9TtX7JXAxbObmQj/PSKUYyF3va0u7Gh+EnPm/Uk+9tEnV20V/V+oDGrUeX6fHRnpKxo29Xr1S3YKVBEDnAJNwKEdFZAVqk7+1Nhi8DJJHRCY2DSsEPljzDoyzyWTX4SMz3vQp5I8VmAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786036974; c=relaxed/simple;
-	bh=OupSiS8rdEeFUUbSoiZuH4UzrsV1SdndjGpPF+Hwi2w=;
+	s=arc-20240116; t=1786038121; c=relaxed/simple;
+	bh=GeScITOVtMDf5mf4JANMPiPfpgf0CTwPjLb72QCr7j8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VIE7u3Io23JAkMjBzs+PQzGNQc8trdE+LDvVb7wDWyD31wr63KlDg5ylx1ish5lXeEjqlKTsIHn4KsueJwVdqQGrrI7clCbqA+AOIw2nGIzMy6G6KelcLATpmqRE4YYPzSSigSEAETyO0uvwC+sN2dCwbnMN8o5lsVRikFVGevA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dqu+D666; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=aIWuCZfiBIumZFmB3jYJtV7siX4ySxulvEHIwnn5RUfu9LCq7otNO7tq9eWRLYxaJd5V8vXlbnH9ooC1dDv7bXGHaWNeTT6gJ/wscd4+rPNojOJr+6EUl5fBEdzccbZKhNNU7MlVWQ2is35UO/gkAGpnSOSJ2EAGy4GOmT7bY9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=KtvCxy04; arc=none smtp.client-ip=84.16.66.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dqu+D666"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C329C1F000E9;
-	Thu,  6 Aug 2026 17:22:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786036969;
-	bh=xAXgtQKqxTESAHA1i+eQyq2LIn+PRu1BkngXMlCIG6U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Dqu+D666rdK+lSHPWAhm/hkGE2wN6H0zntbTQYqaxa5y3lX422aLubf1NM9pamEZu
-	 lhMAUGoXXwc6h9Ul1V8IOFMswugoP2PQIKfo+hcgORIXfgwc44AJM5E77BFRKt8i8d
-	 i3USh/ATUIeifli/nPRg3nFbkcMmeym0hnKUT5sCOBWrK/fXKl/IEiXwTG8mCg2S+o
-	 Fbu00q+LAI9a8ZRbE8hp8GyeXIxqh+hQaQB4g+GG6Pt2BZe4knsDY0Zogkr/VSMgMq
-	 0NmA5Qcck080DaNfRKlrQu6ANhw0KvnhyzpGiwZNs13ubc8LVAuiGMaSJuvD+nXm+O
-	 DLv+izOslgSvg==
-Date: Thu, 6 Aug 2026 12:22:29 -0500
-From: sergeh@kernel.org
-To: cem@kernel.org
-Cc: jack@suse.cz, djwong@kernel.org, hch@lst.de, serge@hallyn.com,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, stable@vger.kernel.org,
-	"Dr. Thomas Orgis" <thomas.orgis@uni-hamburg.de>
-Subject: Re: [PATCH v4 1/5] xfs: fix capability check in xfs
-Message-ID: <anTC1e_zAhKedcpH@AUS2MQ6190Y76.amd.com>
-References: <20260804094602.84766-1-cem@kernel.org>
- <20260804094602.84766-2-cem@kernel.org>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="KtvCxy04"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hGF2q426rzcHT;
+	Thu,  6 Aug 2026 19:41:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1786038115;
+	bh=+jZTnzeU9akkNKo9pqMtKVeMpOAZJe4vlDnDBnjbnok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KtvCxy04K0imZMmIu1vEDVnCr80R52UFIhbuqOqQwCK14GOZkk0CKdlOtdrb8eGxf
+	 NauX+Wf5W6Ps6pJoBwk7QbKWSWqcXYexnJ08iw5i7vqYhC4aEmkwC9uP2074MkJY4i
+	 tkgIDhflXCmROQffL0e5x5TuqFOVGGACgbVsauXM=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4hGF2n6JqWzy72;
+	Thu,  6 Aug 2026 19:41:53 +0200 (CEST)
+Date: Thu, 6 Aug 2026 19:41:49 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Justin Suess <utilityemal77@gmail.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Christian Brauner <brauner@kernel.org>, 
+	Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Kees Cook <kees@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Tingmao Wang <m@maowtm.org>, kernel-team@cloudflare.com, 
+	linux-security-module@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 03/20] landlock: Split struct landlock_domain from
+ struct landlock_ruleset
+Message-ID: <20260806.rooz1ieJahng@digikod.net>
+References: <20260722171159.2776765-1-mic@digikod.net>
+ <20260722171159.2776765-4-mic@digikod.net>
+ <amEwEUKyCPNUxITb@zenbox>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260804094602.84766-2-cem@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <amEwEUKyCPNUxITb@zenbox>
+X-Infomaniak-Routing: alpha
 
-On Tue, Aug 04, 2026 at 11:45:51AM +0200, cem@kernel.org wrote:
-> From: Carlos Maiolino <cem@kernel.org>
+On Wed, Jul 22, 2026 at 05:12:18PM -0400, Justin Suess wrote:
+> On Wed, Jul 22, 2026 at 07:11:35PM +0200, Mickaël Salaün wrote:
+> > Switch all domain users to the new struct landlock_domain type
+> > introduced by a previous commit, eliminating the conflation between
+> > mutable rulesets and immutable domains. landlock_merge_ruleset() now
+> > returns and allocates a struct landlock_domain, and the merge and
+> > inherit helpers move next to it; the former static insert_rule() is
+> > exported as landlock_rule_insert() for its new caller across the
+> > translation-unit boundary.
+> > 
+> Seems a little confusing that we have
 > 
-> An user reported a bug where he managed to evade group's quota
-> by changing a file's gid to a different group id the same user
-> belonged to, even though quotas were enforced on both gids and the
-> file's size was big enough to exceed the quota's hardlimit.
-> 
-> Commit eba0549bc7d1 replaced a capable() call by a
-> has_capability_noaudit() to prevent unnecessary selinux audit messages.
-> Turns out that both calls have slightly different semantics even though
-> their documentation seems similar. Where in a nutshell:
-> 
-> capable() - Tests the task's effective credentials
-> has_ns_capability_noaudit() - Tests the task's real credentials
-> 
-> This most of the time has no practical difference but in some cases like
-> changing attrs (specifically group id in this case) through a NFS client
-> this will allow the quota code to use XFS_QMOPT_FORCE_RES, effectively
-> bypassing quota accounting checks.
-> 
-> Using instead ns_capable_noaudit() should fix this issue and prevent
-> selinux audit messages.
+> landlock_rule_insert()
 
-Hi,
+(the new one)
 
-this makes perfect sense, but since you say "should fix this issue",
-did you have a chance to set up a reproducer, and verify?
-
-> This also fix the remaining calls to has_capability_noaudit()
 > 
-> Fixes: eba0549bc7d1 ("xfs: don't generate selinux audit messages for capability testing")
-> Cc: <stable@vger.kernel.org> # v5.18
-> Reported-by: Dr. Thomas Orgis <thomas.orgis@uni-hamburg.de>
-> Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
-> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-
-Reviewed-by: Serge Hallyn <sergeh@kernel.org>
-
-thanks,
--serge
-
-> ---
->  fs/xfs/xfs_fsmap.c | 2 +-
->  fs/xfs/xfs_ioctl.c | 2 +-
->  fs/xfs/xfs_iops.c  | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
+> and
 > 
-> diff --git a/fs/xfs/xfs_fsmap.c b/fs/xfs/xfs_fsmap.c
-> index b6a3bc9f143c..7c79fbe0a74c 100644
-> --- a/fs/xfs/xfs_fsmap.c
-> +++ b/fs/xfs/xfs_fsmap.c
-> @@ -1175,7 +1175,7 @@ xfs_getfsmap(
->  		return -EINVAL;
->  
->  	use_rmap = xfs_has_rmapbt(mp) &&
-> -		   has_capability_noaudit(current, CAP_SYS_ADMIN);
-> +		   ns_capable_noaudit(&init_user_ns, CAP_SYS_ADMIN);
->  	head->fmh_entries = 0;
->  
->  	/* Set up our device handlers. */
-> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> index 1b53701bebea..1a8af827dde1 100644
-> --- a/fs/xfs/xfs_ioctl.c
-> +++ b/fs/xfs/xfs_ioctl.c
-> @@ -647,7 +647,7 @@ xfs_ioctl_setattr_get_trans(
->  		goto out_error;
->  
->  	error = xfs_trans_alloc_ichange(ip, NULL, NULL, pdqp,
-> -			has_capability_noaudit(current, CAP_FOWNER), &tp);
-> +			ns_capable_noaudit(&init_user_ns, CAP_FOWNER), &tp);
->  	if (error)
->  		goto out_error;
->  
-> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> index 6339f4956ecb..7a8c77fdcf68 100644
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@ -835,7 +835,7 @@ xfs_setattr_nonsize(
->  	}
->  
->  	error = xfs_trans_alloc_ichange(ip, udqp, gdqp, NULL,
-> -			has_capability_noaudit(current, CAP_FOWNER), &tp);
-> +			ns_capable_noaudit(&init_user_ns, CAP_FOWNER), &tp);
->  	if (error)
->  		goto out_dqrele;
->  
-> -- 
-> 2.55.0
+> landlock_insert_rule()
+
+(the existing one)
+
+> 
+> Maybe a rename of one these would be appropriate?
+
+It's indeed confusing...  What about landlock_store_rule()?  I couldn't
+find anything better given the already taken names.
+
+> 
+> Otherwise looks good :)
+> 
+> Justin
+> > [...]
 > 
