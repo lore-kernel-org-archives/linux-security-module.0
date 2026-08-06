@@ -1,364 +1,183 @@
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702C11D86FF
-	for <linux-security-module@vger.kernel.org>; Thu,  6 Aug 2026 00:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A65529898F
+	for <linux-security-module@vger.kernel.org>; Thu,  6 Aug 2026 00:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785974570; cv=none; b=q7oCPSEKM0YD+9YTsI3esPljsKLg8rqLQCgiRVdhYw8/vKpKKcQYtFNvGLbc0ZfJeI0lOFsG9HS9m9UupGPspQOmkJqEnvJBRurpH07Vw8AYXdNb7IkFNP4SyHJkdRveMgRWLVe4mc5F5kaxz6QfrpRM7jlHQcsUlZhNYKyBGZQ=
+	t=1785976340; cv=none; b=o7vfHpujlqqhzv81QnDOb33PqHcVFGlzRpTwlB7D0/VZ6Nt9KBfVRvF1xR6dkdb3jGUwwi5sC0rX0IzINvz/NS3hYGQlObkLFJE1R3utYBNAlaUWq8FTcvsX6OBT7V0VAjjdYhwX+8TuJ7WAokrqlgt5SLRlLs65dHIgx5nzSqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785974570; c=relaxed/simple;
-	bh=32nR9CD3NsD6bY/SW6+OnpnOjqk8Bk5XtdNO924d7NA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aeRENfwsPFanK20ls+cgqpC9AJfe7X447lnNcrB1snT/t9Mw3v2EEasdLCXeqWSLK7Abvz1JHTeBhRfNxOn1Aaan9plZX9+UOu7iDJl8fsnTID+dQR7z2ZoVjveywqnWvgDiaaQBkdqSABhgiTHALwKWLnYGPiglTEHaeKEc1ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=CiG+dD51; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1785976340; c=relaxed/simple;
+	bh=t151uzynxLJ/WULoxogSTwfKcoLQQ946O1PY4MkYhvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KrbdS8w1joDb7uNqUkVuTjahcEG+GsJtAk6KirguniBc32Z01BDFIh74parPOC+aJahJ6cqdSaPqQjYf0Q8tj2CCbkp8W2R6N1FOrdISSISpzYT2eaLhDF0v3NR0jiEay0AIL2tmOFRtL0ssvePchZ1vkcBclBkNMRWdd0mXido=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BEMPPHG0; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="CiG+dD51"
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 33EC63FBF5
-	for <linux-security-module@vger.kernel.org>; Thu,  6 Aug 2026 00:02:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1785974560;
-	bh=uV4/trZsrpkGEepaTlfIF0yIo2zjcaruWrpND/CzTIE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=CiG+dD51gVY2T+NWx/xcJo7bT+aUARIF0a1343v18my2RRwGQqWnU8N1AKg6DmSXg
-	 IQG+QQPRm2RfbxY4NUdD4Xt3omyG1aRlzm9CKatq9QeO2iVP8zh+pWfOXev9UC2Vwa
-	 JdOBlVOVkIgIPkdqmwvg66lcCukkyGmZ70lRSWC2yfK9o/88zTY3qL6E0rNY/kqPEb
-	 qZJNGFCeVj830z7QkugLE7TS27wkOWTP7i2vLWq6R9XnrCoa3KOQ9LLaF02T48Tpaz
-	 S2ifdN1PanGFszEQLaAJsnDnfGTAF6QdZaQCdiP72ccrMpdm6SBQ2QbB7kjVA2pMiX
-	 gAbPeAz7TpgOzfbEy0WMgyuyfJaPQtrFNntTwgsUG3SuGMzg9LXsNA9QD4y0H3gfFH
-	 YzDBPJcGpcfteKPaNk9XEjwfNLvV4XCtRYlr68dnKd3TONyxbr8jeR1IX3Wy9oVAFZ
-	 1or6AcF/YDodvdatT7+//nz+Dw7v/eMJBRdCHN1X4eqKnumQyZuIa1MOT6g6MtaLvv
-	 U7zi+PHbm27WvsNabHISoKMiRQ73U+N5nenBjKmPThF5nCD5hbSOs4jhFnDhwCphA7
-	 qQvThd6N/qdGTMEbezNh+k83bqwF7uQSxz/ulwuzv8Bt97vMn7xQyHQ8mxpeY8OnBy
-	 +6d0n9ZbPYK/ubTUGxcKR7pg=
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-38e1118e4abso2346282a91.0
-        for <linux-security-module@vger.kernel.org>; Wed, 05 Aug 2026 17:02:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BEMPPHG0"
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-81ed2a06b9eso16455667b3.3
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Aug 2026 17:32:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785976338; x=1786581138; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=2F8fXV8jMRshW9OPPH/zGJGmCPAHy4asEUrxhxRVPHU=;
+        b=BEMPPHG0FUMbv/RRb5aI6DnmumArWixc2Swg9aG/1MUqco5RuEbnu48yYX4pUAmbV2
+         nFcr89Tf8y9uUyatESS7SHMOOpcAvp6Lb+beSgTOIAD/a6vI+xEvaKxxq3Cudw2KmQL1
+         4BLuALB0KPmad02yoTcW0/yJ0aV2Xq/t7o9J2SJ9ahF0VYBKXX8lV3ge5FzWayHtMa1h
+         e+MplLNQU8FaTZY5CnqkO07QW2zdwA3ee4ez/54U9yVDuZ/lx0bIamk/iy1t/P5ytMiQ
+         ebWQi1vvbM1p2+iB8tW4iR/+EmfTjlxZZ3wkSP9Ng+nuRUjSDnZMW4vebuQnm8flV8MX
+         jdiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785974559; x=1786579359;
-        h=content-transfer-encoding:content-type:in-reply-to:organization
-         :autocrypt:from:content-language:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=uV4/trZsrpkGEepaTlfIF0yIo2zjcaruWrpND/CzTIE=;
-        b=pqwEeAcmBXWEWtdh6RvFVZOkcmtD2Me1KTCr0txTD88GXGUg+2Lvk7dmFLpx48XYUO
-         Z28NEuQU2+6/hjIBdzNSH6lCjDA4GPty/hjn5zCw8VKmOaWPr9iFpiEyvGdS7j30O1mF
-         QhoADgz8rTqNtYGeMgUYHEL2zR8zzQM5gcBZKSbu9lXIhs4Xr5e20S+1Gt4tijrl7N84
-         CUkouUyTtS+cfjGanrZq6hQQ6AnMh2thRdH4aV6FqaXYW8u+xfA9O4fWmPjCPlObKWFV
-         tDXv+xVrxMtOagE/6yq7GNUBN5JGycCDbOklbjbAIVgk5wcW/E4dX5cmXPem6sZFA/Bi
-         ONqw==
-X-Forwarded-Encrypted: i=1; AHgh+RqH65HJiOsIDWKkAK9e0uheGM7ffKx6ci42B/aA42gm5MSoBr/Q8R8NWmEBNZwtNvYGn1rZhq8nVfOzhnZd/0+4HravnTM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxxc2Yj8/She/k9OEm17u2+etEV7fQkx8m1YdpfNHh7z0Mn8ND1
-	usWeCkNxEHFpqr6tkt2eeMcm4N3TzJCdv6BenSzymAhkev3mUpDCHao6vLNeejxGaOSgoVWvW8w
-	INk0VVSqv78FASZhFZz1+p/7cQ7zESTfqpA1tEpuDRSsvqrtSkEDR55TgVM1XKjzQkrMduJdA6b
-	pIE0wyjzWkx8CyzRfhMQ==
-X-Gm-Gg: AR+sD12nchaid7APShzhj2fxefWebtzU/hBsNBv3Q5MkMvm86Wc9ODRPafdiQTRAOYX
-	lavM7K+J6QaJSAtReSPJ7ARofF9yUUfLSKe07jY4i+ZhraXhDiFXGpCs2K2YR9udWQ7LwJgfmMT
-	VbZkjGVyFZI3N/tDQVb14i2CXvWjC7XzSuyjp08VEHz6JM4bqrt8X6edZr6ZZau8/DMkxN2Ml1m
-	v/IFN7NM4zvLJCcFHwMzO7a/u4mHUjRHZRwAGJ/o+8gWZzNQ1Sz5KO+iREoO184/FBFCvOnZJT9
-	cpznoZ7iVz972G35OtGJjMWJ9eLd9+LzegjFM7AgwPUKlw1xTSnKAa/7V7TpQsQ9Sn3tH7c2Cso
-	AjdEmQJ417gegk8k=
-X-Received: by 2002:a17:90b:4c45:b0:38f:dec8:f7e9 with SMTP id 98e67ed59e1d1-3903c5a79f7mr11062695a91.12.1785974558475;
-        Wed, 05 Aug 2026 17:02:38 -0700 (PDT)
-X-Received: by 2002:a17:90b:4c45:b0:38f:dec8:f7e9 with SMTP id 98e67ed59e1d1-3903c5a79f7mr11062651a91.12.1785974557977;
-        Wed, 05 Aug 2026 17:02:37 -0700 (PDT)
-Received: from [192.168.192.71] ([50.47.147.90])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-39085dbf82csm362966a91.1.2026.08.05.17.02.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Aug 2026 17:02:37 -0700 (PDT)
-Message-ID: <f13d94b4-2bd3-4737-b25f-bd5371189e62@canonical.com>
-Date: Wed, 5 Aug 2026 17:02:36 -0700
+        d=1e100.net; s=20251104; t=1785976338; x=1786581138;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=2F8fXV8jMRshW9OPPH/zGJGmCPAHy4asEUrxhxRVPHU=;
+        b=B5RRmCgubLxP/1Wb5/RgUYOLsVLOFn2rdqPEpK0KKB0yONmz864MyTVQ+1zjkR/rgE
+         ipJ9jzD2BlEs1r+s1wdV+wamKTKeqCqud8Xfj9LxdT00yla+d7FkrmjAisyZKyEJ6Mih
+         wfDLWpqihhUuVa2OXcf8W+SBBhK9KYcqwQRTu++bgaIh2vhcTNt1EiLhFkeKyEpQTCdc
+         +wppT+LqoqbmINr9+jQ7fhNX/vQfWrGmXn0fRQF1AY9PlBjIjdbILVyrN1ZVe7GDVX77
+         /aTHs7ukpLFUOtQFretrPfefRK5yTmurAnVh7/siWsLIQRP9XNbPKGN4E6AYhB6sg4xF
+         pisw==
+X-Forwarded-Encrypted: i=1; AHgh+RoLdoxXVNjU8e2dGaf9IBFc2ZglPYNlwvM9ZA2NTR5GuwX8MclHNeEy9FSEYpGrbgauPOGINRZXuygKHsW73LtDJiCZu5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7u/qwiisAy99uC1+gGHvmdmGBqlsxgasT/gXS8VIKCLVrqpVq
+	x2h6USHjug8Z7jOYQ4HRbgLDR89ptzTMag/47joaWNi4qKRqM8+YMde/cHrqCKhF
+X-Gm-Gg: AR+sD13CmvLRwbljEzm5Pwm1/BStGSSQwbljrlE6VxCO/8nZzrFVMyM9Kl8ziH6v1yk
+	UAg5MYfSKTCZf0jsMn4E2A1gp2z9/cjt+h1jISS3zoIWnMp8zD6hgFLZWMmyvuPTBk2w3y9Uimq
+	9c3/mqa2W/RZXJhRA0x/KKbIrcgwdylfVmFtOAYycoMeRYOIltQBX9+H7xoKUwB26Gi9C4FI/JO
+	V61ByCBw6WEoYccBlHMhMw8mTdLIDzO4UFbW2oIce8BgDFRZmOcYEwrZJTdDROZFsDSjnkDBIhC
+	Xej8lk+IsIIUnckOY38DsG9YHxduxZCTkZp3jFh4cHEwSsYfZGjqAE8Nee2Q2vxaFUZW0BA051k
+	f8MajiWSxncTCbm6nO1t76qbnol45zdYyjFOEDHOyrz7kiikfxfj+I6mvt6q7p+N5kH9TphGRdm
+	yxH+7u/e5aQARhTPmXBoCVktm2DJnMuCspM7BRiaydaKyMLlSTSgTaqbGqh3mMkb/uO0YBeI2Bc
+	7DMtrR+YwSTyLqLCO17PZU=
+X-Received: by 2002:a05:690c:4b86:b0:81d:e7d2:a46d with SMTP id 00721157ae682-8201bc73840mr64948197b3.5.1785976337931;
+        Wed, 05 Aug 2026 17:32:17 -0700 (PDT)
+Received: from zenbox ([2600:1700:18fb:6011:7d5b:ac23:cde9:3664])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-8201341d3d2sm29635727b3.31.2026.08.05.17.32.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Aug 2026 17:32:17 -0700 (PDT)
+Date: Wed, 5 Aug 2026 20:32:16 -0400
+From: Justin Suess <utilityemal77@gmail.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	kpsingh@kernel.org, mic@digikod.net, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	kees@kernel.org, gnoack@google.com, jack@suse.cz, song@kernel.org, 
+	yonghong.song@linux.dev, martin.lau@linux.dev, m@maowtm.org, bpf@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 00/13] BPF interface for applying Landlock
+ rulesets
+Message-ID: <anPAbFzuLOizAhm-@zenbox>
+References: <20260731022047.189137-1-utilityemal77@gmail.com>
+ <CAHC9VhSSzNBCSvy4cQHh6OOM4-EvHF+bmrB9=V1y=Lj53RvxQQ@mail.gmail.com>
+ <anOnaGmBTlBW9xwj@zenbox>
+ <CAHC9VhRBYMaNBPfnV=TK8g-M7H_qsBu=CsVVOwnAzTPAkpAZaA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: fix cred UAF caused by
- begin_current_label_crit_section()
-To: Jann Horn <jannh@google.com>, John Johansen <john@apparmor.net>,
- Georgia Garcia <georgia.garcia@canonical.com>, apparmor@lists.ubuntu.com,
- Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: James Morris <jmorris@namei.org>, Christian Brauner <brauner@kernel.org>,
- Al Viro <viro@zeniv.linux.org.uk>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- linux-security-module <linux-security-module@vger.kernel.org>,
- kernel list <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-References: <20260714-fix-apparmor-cred-uaf-v1-1-be40e8c83b90@google.com>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20260714-fix-apparmor-cred-uaf-v1-1-be40e8c83b90@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhRBYMaNBPfnV=TK8g-M7H_qsBu=CsVVOwnAzTPAkpAZaA@mail.gmail.com>
 
-On 7/14/26 08:38, Jann Horn wrote:
-> AppArmor's begin_current_label_crit_section() is a scary function called
+On Wed, Aug 05, 2026 at 06:51:56PM -0400, Paul Moore wrote:
+> On Wed, Aug 5, 2026 at 5:37 PM Justin Suess <utilityemal77@gmail.com> wrote:
+> > On Fri, Jul 31, 2026 at 04:30:39PM -0400, Paul Moore wrote:
+> > > On Thu, Jul 30, 2026 at 10:21 PM Justin Suess <utilityemal77@gmail.com> wrote:
+> > > [...]
+> > > As you may, or may not have seen, there is currently an ongoing debate
+> > > regarding the location of LSM kfuncs that will impact this patchset.
+> > > Sadly, we don't appear to be approaching an agreement on this issue
+> > > which introduces some additional risk to this patchset.  We'll have to
+> > > see how that ends up, but I just wanted you to be aware of the
+> > > situation.
+> >
+> > Quick aside question: Would security/bpf/ be a better place for these
+> > type of kfuncs?
+> >
+> > security/bpf/bpf_lsm_kfuncs.c could be for LSM framework kfuncs,
+> > and each LSM could maintain their own security/bpf/<lsm>_kfuncs.c
+> > for kfuncs dealing with lsm-specific types.
+> 
+> This gets back to the other issue in the patchset that we've
+> discussed: general LSM interfaces vs Landlock specific interfaces.
+> There are plenty of reasons why we don't support the kernel calling
+> directly into individual LSMs, and from my perspective this is another
 
-yep
+I'm 100% on board with the no calling directly into individual LSMs part.
 
-> from lots of LSM hooks (in particular VFS/socket-related ones) that checks
-> if the label referenced by the current creds is marked FLAG_STALE, and if
-> so, attempts to use aa_replace_current_label() to replace the creds with an
-> updated version that uses a new label.
-> 
-> The first problem with this is that it would directly lead to UAF of
-> `struct cred` if anything in the kernel takes a pointer to the current
-> creds and accesses these past a security hook invocation that replaces
-> creds, like so:
-> ```
-> const struct cred *cred = current_cred();
-> alloc_file_pseudo(...);
-> uid_t uid = cred->euid;
-> ```
-> I don't know if anything in the kernel actually does this, but I think it
-> is very surprising that this pattern could lead to UAF.
-> 
-> The second problem is that things go wrong when aa_replace_current_label()
-> runs with overridden credentials. aa_replace_current_label() bails out if
-> `current_cred() != current_real_cred()` (mirroring the check in
-> proc_pid_attr_write()), but this check can't actually reliably detect
-> overridden credentials because the overridden creds can be the same as the
-> objective creds.
-> 
-> So in approximately the following scenario, things go wrong:
-> 
-> 1. task begins with <creds A> (as both objective and subjective creds),
->     with refcount=2
-> 2. task grabs an extra reference on <creds A> for overriding
-> 3. task calls override_creds(<creds A>), which returns a pointer to the old
->     subjective creds (<creds A>)
-> 4. task enters AppArmor LSM hook
-> 5. AppArmor checks that objective/subjective creds are equal
-> 6. AppArmor replaces both cred pointers with <creds B> and drops 2 refs on
->     <creds A>
-> 7. task leaves AppArmor LSM hook
-> 8. task calls revert_creds(<creds A>)
-> 9. now task->cred is <creds A> while task->real_cred is <creds B>, but the
->     task_struct logically holds two references to <creds B>
-> 10. another task drops the extra reference on <creds A> that was used for
->      overriding, refcount drops to 0
-> 11. now task->real_cred points to freed creds
-> 
-> At this point, any access to current_cred() will be UAF.
-> 
-> I have a test case where I run aa-disable on a profile while a process
-> using that profile is blocked on splice() from a FUSE passthrough file into
-> a full pipe; after the profile update, the pipe becomes empty, splice()
-> resumes, the credentials go out of sync, and a subsequent getuid() syscall
-> results in a KASAN UAF splat.
-> 
-> To fix this, instead of directly replacing creds, do it via task_work that
-> will run at the end of the current syscall. (The point in time at which the
-> cred replacement happens should have no correctness impact; it is just a
-> performance optimization to avoid unnecessarily touching the refcount of
-> the new label.)
+> instance of that.  Here it just happens to be that the kernel caller
+> was written in BPF and not C (or Rust for that matter).
 
-right, we could even be a little looser in the update timing as we don't
-make guarantees around the update timing.> 
-> Note that AppArmor still performs direct cred replacements in the
-> sb_pivotroot LSM hook after this change, and that direct cred replacements
-> can still happen in VFS ->write() callbacks via proc_pid_attr_write().
-> 
-yep, I can take a stab at those
+The intention is the opposite. The point of the separate directory is
+that the kfuncs can never call into an individual LSM, they only get
+the LSM framework API in <linux/security.h>.
 
-> Cc: stable@vger.kernel.org
-> Fixes: c75afcd153f6 ("AppArmor: contexts used in attaching policy to system objects")
-> Signed-off-by: Jann Horn <jannh@google.com>
+Every kfunc is a thin wrapper over the generic policy kptr hooks:
 
-this looks good to me, compiles, and has passed an abbreviated round of
-testing.
+    bpf_landlock_get_ruleset_from_fd()
+      -> security_policy_kptr_from_fd(LSM_ID_LANDLOCK, ...)
+        -> Landlock's hook implementation
 
-Q. What do you think about making the callback_head part of the apparmor
-security task blob. It would increase its size, but allow us to drop
-the alloc/free. Generally profile is generally something that is relatively
-rare, but when it does happen, its is quite common to have all the profiles
-being updated, so a thunder herd type problem.
+So kfunc -> generic lsm hook -> individual LSM, same as any other
+caller in the kernel. There's no build dependency on Landlock either:
+the kfuncs register under CONFIG_BPF_LSM, and if Landlock is compiled
+out or not in the lsm order, the hook dispatch by lsm id misses and
+the call returns -EOPNOTSUPP.
 
-Unless someone else has a reason to carry this, I will pull it into
-apparmor-next today, so we can get some testing in linux-next
+The only Landlock-specific part is what the BPF program sees: the
+kfunc names and the opaque handle (an empty struct
+bpf_landlock_ruleset).
 
-Acked-by: John Johansen <john.johansen@canonical.com>
+Permit me to use SELinux-specific interface through LSM as an example.
 
-> ---
->   include/linux/task_work.h        |  1 +
->   kernel/task_work.c               | 14 ++++++++++++++
->   security/apparmor/include/cred.h |  6 +-----
->   security/apparmor/include/task.h |  1 +
->   security/apparmor/task.c         | 29 +++++++++++++++++++++++++++++
->   5 files changed, 46 insertions(+), 5 deletions(-)
-> 
-> diff --git a/include/linux/task_work.h b/include/linux/task_work.h
-> index 0646804860ff..ce19fc14060c 100644
-> --- a/include/linux/task_work.h
-> +++ b/include/linux/task_work.h
-> @@ -33,6 +33,7 @@ struct callback_head *task_work_cancel_match(struct task_struct *task,
->   	bool (*match)(struct callback_head *, void *data), void *data);
->   struct callback_head *task_work_cancel_func(struct task_struct *, task_work_func_t);
->   bool task_work_cancel(struct task_struct *task, struct callback_head *cb);
-> +bool task_work_has_func(struct task_struct *task, task_work_func_t func);
->   void task_work_run(void);
->   
->   static inline void exit_task_work(struct task_struct *task)
-> diff --git a/kernel/task_work.c b/kernel/task_work.c
-> index 0f7519f8e7c9..f83d1528e0bc 100644
-> --- a/kernel/task_work.c
-> +++ b/kernel/task_work.c
-> @@ -189,6 +189,20 @@ bool task_work_cancel(struct task_struct *task, struct callback_head *cb)
->   	return ret == cb;
->   }
->   
-> +bool task_work_has_func(struct task_struct *task, task_work_func_t func)
-> +{
-> +	struct callback_head *work;
-> +
-> +	if (!task_work_pending(task))
-> +		return false;
-> +	guard(raw_spinlock_irqsave)(&task->pi_lock);
-> +	for (work = READ_ONCE(task->task_works); work; work = READ_ONCE(work->next)) {
-> +		if (work->func == func)
-> +			return true;
-> +	}
-> +	return false;
-> +}
-> +
->   /**
->    * task_work_run - execute the works added by task_work_add()
->    *
-> diff --git a/security/apparmor/include/cred.h b/security/apparmor/include/cred.h
-> index 2b6098149b15..0e8b67159f56 100644
-> --- a/security/apparmor/include/cred.h
-> +++ b/security/apparmor/include/cred.h
-> @@ -222,13 +222,9 @@ static inline struct aa_label *begin_current_label_crit_section(void)
->   {
->   	struct aa_label *label = aa_current_raw_label();
->   
-> -	might_sleep();
-> -
->   	if (label_is_stale(label)) {
->   		label = aa_get_newest_label(label);
-> -		if (aa_replace_current_label(label) == 0)
-> -			/* task cred will keep the reference */
-> -			aa_put_label(label);
-> +		aa_schedule_stale_label_replacement();
->   	}
->   
->   	return label;
-> diff --git a/security/apparmor/include/task.h b/security/apparmor/include/task.h
-> index b1aaaf60fa8b..4e49a4142777 100644
-> --- a/security/apparmor/include/task.h
-> +++ b/security/apparmor/include/task.h
-> @@ -30,6 +30,7 @@ struct aa_task_ctx {
->   };
->   
->   int aa_replace_current_label(struct aa_label *label);
-> +void aa_schedule_stale_label_replacement(void);
->   void aa_set_current_onexec(struct aa_label *label, bool stack);
->   int aa_set_current_hat(struct aa_label *label, u64 token);
->   int aa_restore_previous_label(u64 cookie);
-> diff --git a/security/apparmor/task.c b/security/apparmor/task.c
-> index b9fb3738124e..8e368f6278f5 100644
-> --- a/security/apparmor/task.c
-> +++ b/security/apparmor/task.c
-> @@ -14,6 +14,7 @@
->   
->   #include <linux/gfp.h>
->   #include <linux/ptrace.h>
-> +#include <linux/task_work.h>
->   
->   #include "include/path.h"
->   #include "include/audit.h"
-> @@ -89,6 +90,34 @@ int aa_replace_current_label(struct aa_label *label)
->   	return 0;
->   }
->   
-> +static void aa_replace_stale_label_tw_func(struct callback_head *tw)
-> +{
-> +	struct aa_label *label;
-> +
-> +	kfree(tw);
-> +	label = aa_current_raw_label();
-> +	if (!label_is_stale(label))
-> +		return;
-> +	label = aa_get_newest_label(label);
-> +	aa_replace_current_label(label);
-> +	aa_put_label(label);
-> +}
-> +
-> +/* replace the current task's stale label on syscall return */
-> +void aa_schedule_stale_label_replacement(void)
-> +{
-> +	struct callback_head *tw;
-> +
-> +	if (task_work_has_func(current, aa_replace_stale_label_tw_func))
-> +		return;
-> +	tw = kmalloc_obj(struct callback_head);
-> +	if (!tw)
-> +		return;
-> +	init_task_work(tw, aa_replace_stale_label_tw_func);
-> +	if (task_work_add(current, tw, TWA_RESUME))
-> +		kfree(tw);
-> +}
-> +
->   
->   /**
->    * aa_set_current_onexec - set the tasks change_profile to happen onexec
-> 
-> ---
-> base-commit: 3b029c035b34bbc693405ddf759f0e9b920c27f1
-> change-id: 20260714-fix-apparmor-cred-uaf-cc38ec2b38b7
-> 
-> Best regards,
-> --
-> Jann Horn <jannh@google.com>
-> 
+The existing userspace API already has this exact pattern (partially
+from [1], thanks Casey it was a great talk!):
 
+  ctx->id      = LSM_ID_SELINUX;
+  ctx->flags   = 0;
+  ctx->len     = sizeof(struct lsm_ctx) + ctx_len;  
+  ctx->ctx_len = ctx_len;
+  memcpy(ctx->ctx, "unconfined_u:unconfined_r:foo_t:s0", ctx_len);
+
+  lsm_set_self_attr(LSM_ATTR_EXEC, ctx, ctx->len, 0);
+
+If you think about it; that's what this patch is doing!
+"unconfined_u:unconfined_r:foo_t:s0" is as LSM specific as
+bpf_landlock_ruleset* is.
+
+This is a generic framework syscall, targeted at one LSM by lsm id, carrying
+an LSM-specific payload. Our kptr is basically the lsm_ctx; the
+difference is that the lsm id and payload type move out of runtime
+fields and into the BTF type, so a mismatch fails at program load
+instead of at runtime. Much better for security! (fail fast and fail
+hard)
+
+The verifier is why the lsm id can't stay runtime data the way
+lsm_ctx carries it. Say LSM xyz's policy struct is protected by a
+mutex (the caller must be able to sleep) while LSM abc's is accessed
+under RCU. Those rules are enforced at program load time through the
+KF_* annotations and argument types of the kfunc itself, so a single
+generic policy kfunc can't carry both. Per-LSM kfuncs above the
+generic hooks are what let the verifier *prove* each LSM's objects are
+only accessed in the right context.
+
+Userspace only gets away with the fully generic lsm_ctx because its
+calling context is always the same: syscall context. BPF programs are
+everywhere from syscalls to LSM hooks, so the context requirements
+have to be part of the interface.
+
+So I don't see these kfuncs as a Landlock-specific interface. They're
+the same generic interface the framework already gives userspace,
+with the lsm id and access rules promoted into *types* the verifier
+can check at load time.
+
+Justin
+
+[1] https://static.sched.com/hosted_files/lssna24/1a/2024-04-LSSNA-liblsm.pdf
