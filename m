@@ -1,215 +1,170 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5793E638D
-	for <linux-security-module@vger.kernel.org>; Thu,  6 Aug 2026 08:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786003599; cv=none; b=cnWvxkEpoYhRYnRD5VD+k8nJSPrpp67LkFCVTcqUgYGIh01jQ/BZ2itWua8v47I8vqGhXtquOSkf8UCUsYi81Hk5bcIH1JTkVcXOm9kgTv9YzsYCoaSU++PcsvOH2AoiMrJoO9becvf32TjUyu5/Sqb2GARyFN0Do5jbWGLJFCM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786003599; c=relaxed/simple;
-	bh=74zUSXIOku8e7Nz/XuVtzzTRb6HSIQ9smWHZiwEhVoQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OaYHdkqe1GSYqWK5gvCNTiYWavNxZo9QxRLU/ffAE1lNYaa5aP2722/mP3ErZJRHw5Rhkh81D2D09R20vOv3yQgI58/rcci9QocoaV0AwuYOMMb0s8f1KaNOsgQQNqyoaRwLEvTloFAHnoSyGCVAX2XCRR/om2a4RBSF1FFH+as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=Jci44kHp; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7511B31F989
+	for <linux-security-module@vger.kernel.org>; Thu,  6 Aug 2026 13:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.177
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786021942; cv=pass; b=b3XvAga//8i3V6aL4DwqDyctK+q+trg1xviqm5fWRu7vX0FmgR+1v8XetWlLZbLLHMF7FwOQaf3XMHE2AGyKVlM8CjWK/U1CajldH9F5D0hHa04GBupps0lLqbb6IdvrHOMti0UWye0MIPEqUtUVXnVhmsg/S45Wg+itc25BlxM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786021942; c=relaxed/simple;
+	bh=gTOx7EH1voNp8N7JYu+h59hbOKIzl4POlomWmUZTuaE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vrr0AVb6D2oA0R9MvpBNsEfDfm0rUk4SXCRxG4+RMv3TbwsZhJVvSCOrWrADoP14io0i8mc4Osm2i5tPJ0WPjx+NoXM0t5YdhBEjf24k8Y9ffVsP+7EEfOvjs1GcoRkwSt72AnZANQpY6kHDSYe0BMzkM7L2leba6dC47LZRvY4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mV4iDkzb; arc=pass smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="Jci44kHp"
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 91FCB3F98A
-	for <linux-security-module@vger.kernel.org>; Thu,  6 Aug 2026 08:06:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1786003588;
-	bh=NG2Eh4pZXn9QqZgh2gMs+/otPaFgkRYCIXrVumNaCtk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=Jci44kHpSx69i0yXjQ2p3zKP7QH3f4mFJaetPQ7CHd7XVLDsY5EYlJLBelr/aLM+t
-	 sx/hzSo1fmUCbcotRsCCBojTP/UgffR1SXK1jq19RWkHk717i6uQSXos2pRaFLNRCV
-	 NvQQchLenxpmrx4ONx0OW+1Q5gUnPh9m502JcbO/hiLdCad0aNFU8RfhAkQUFHiju4
-	 Hr2ix9sWhbX0YoZi825+vxxPYAWZAecMKKxADULi1PzL7dhDCguY78cqkrfc+sfAC7
-	 Blr5tAciAVpG9v+pLhgEGphjEDeHu+m5PWN+IlAQRcDqaabxPS1AxtoYe9rmINiJGa
-	 szGvbaBbHN8zajSGZuKoWtkaMnaBRqqgmn00zjfJRV8MLhApJyq9aGsG4sSW7X7eRV
-	 a9BVkFVeQ88X81SVvT09Znddl34P94LdLC0vS1xbwAF9IancxuXQedYTMucUgWGkCs
-	 HVNjBTnG4Xn3Rr8B9o2V6TmpD26+jk4JOr6oqT7ScFNYpuMM707vqhlos1mU+sf+pr
-	 xUexuBgFeCoZK/IChEM8gSlE4Zt5dz2WU1Sw++8cmMkIIIDeeLl+kO3Z/7HtwlfKA6
-	 DWPkS+4HNNhfe2YQEf9hPWkqIWv5lTBOpIrDgpU8rY14myW6R/hOlCes0n/eze0zit
-	 jnJYeJf+zuEU70nnzhQEe4s4=
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-84870e7f498so2165307b3a.3
-        for <linux-security-module@vger.kernel.org>; Thu, 06 Aug 2026 01:06:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mV4iDkzb"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2cede6375caso105935ad.0
+        for <linux-security-module@vger.kernel.org>; Thu, 06 Aug 2026 06:12:16 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1786021934; cv=none;
+        d=google.com; s=arc-20260327;
+        b=jJjEib3yN0GsYk4uLK9mjQ5Fa0R+0Tig9ilnl1d/wbbkip76xF4VWs2MXeAWx4OP1i
+         G0cHoxnWnJMhRrkLlkZLfhaYRpvvSRh5+VhleszCd9XZpx6twzbkeaddjmzfezuqE+7h
+         LAqnmzZI3X5Km8XOEAjmyJXtUq8BXHTuHuf/G4Nczz3X0OlNKNmuRmiEgq+h/sZCpV1Q
+         rgbn7mCjfsD/y3Yy56MAfcSktk09IaKwXQHJCGX2USJ8TuLwBYTjP0CrlUujkd3r9fA7
+         pEkVzMWvP+Y1FjRywI0hsImVBWfgwBkWZzpdqMiDHeVnZyAT6Tq9o7bUaL2lsOnfr4w/
+         crIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=P9/jShmwIMCeTZRK1H99Se78DZXEHSSBV12Fe1ATBL0=;
+        fh=CJxIoEQzJXYON6Ybt0grYiwBLtvMqJohu56GkSbEiec=;
+        b=Uc+R6L+ZYx6zsHdU0LbDvV7TOmIY3L+DmgLIb4NCiUlHxQMOsp/T4SP9LiqYU2DzDy
+         cn2ZoQbgKZLsrB4bEQ0KWUw6GoisAko1bHuGToq3qqYvqvsM/Fg5qFrPm+tGi+UqjQtF
+         GtB2J6/W1eHR3PtdZoykkcYUjLzFg5W7EJ2OoeogifHA20sN6cx8YwEIs2keLQorc57w
+         72CEYVjBAlxXC6nZZ5uXsxkv5FQtP8i6OcWAbZ/hJmUjFhNirIQYHz5rwFT49m1a471J
+         HQTzQlZF02EVkl5I9cXYv8IpM0ervCaNGPi/86317QQCz0WhWm/Xlov+oFjTRluGM8Oh
+         CCNA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1786021934; x=1786626734; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=P9/jShmwIMCeTZRK1H99Se78DZXEHSSBV12Fe1ATBL0=;
+        b=mV4iDkzbg8jIFwoK2W7fjfRIKSpuVpyDrL4qrv2A2N+KVQyTcOzs4hyNMNR072rCdn
+         I13UBVucdxyLx8KPc5stdwL3RQgykvahqjmr3tVLI+x809VOOgsRk0gmWpmKxXd5KiZw
+         WXxT+7wwjtXrlojwu4zQ+NvjfFn6UQOEMt/a01XZFn4tekZaMAv6EEJs6c8Y/B05oIVW
+         MwSHsWWep7jBYV03ZNxFo3cTDEJIX8Tj2JjKsLFTfobGLXUWUlHDa2idVyI0ZtU/1R4+
+         wub/+vK1EMyz2m4O7E7iKZlOYNGVHZ2Ih8eW5lMpwmu23Rl+LVe994G7iTBFCgZ3Zrpt
+         xvrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786003587; x=1786608387;
-        h=content-transfer-encoding:content-type:in-reply-to:organization
-         :autocrypt:from:content-language:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=NG2Eh4pZXn9QqZgh2gMs+/otPaFgkRYCIXrVumNaCtk=;
-        b=hDGfQ3F5hw2UYLZoUI969ubi+G/Ynxf3MvYZEBm9z1ovtna/bTuOlrhVsNaw8pf18E
-         tqQbqs9d1sfLpCjteiksJiLqXTZWxPe1hqmLh3NSHNf23h8UFNnvXnPejjU4SV9m4hxh
-         oRr11FFRoo0lEHA1Zo7IL0nI9vKlLPL78yXmtrctz5BQd02sDy/EVQi4eEVc1ftxjh2l
-         Gf4qc4u7aplCSWnWetzyhnIDLrAMMze2GoKTIZpaJyo9JL8DLQdllu82WQF/DgKod6D+
-         4dclVuAX90WY4IK15H1BffQtXOuT5F24XF4wkmy5TLKc9zNKcO/qJikAw8n7toLltEjU
-         O8Vw==
-X-Forwarded-Encrypted: i=1; AHgh+RpEotCXuvibj16x91rKG+9F4MiKpd+XxLNam1tFczpc+Lm0DTUz8Jul0lI4UClXfw7FzIMeI5wkDQunZQzoEgPEkdgsAc4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqNeu5xW2rQLtDEnPMbudqozT8+Dl3KSiyaqU0gFEtCZl4W+P9
-	mcofUywfNqsJ57EMByQqHCaryfaYeQ53uNSxUsVOtGJu/976olXQybJSX6UL4P6lpLzH5Uce6K1
-	/oJmUQ0LW1ItwVLrthFC+hxryjAY2uPAhyr1UyveH9ZdwKSHNMPopzYo2smlzBX/koEgECkB2yO
-	i/yOXhSTDW7XUweYf2bA==
-X-Gm-Gg: AR+sD10ZyNkX4HODm/hBM5zX+0GtXbkKl1GUQTKZP3gvJi45Fk+0Eeq6eW3FEwPzCJ+
-	WULRuZwzv/PCP4cDl/6LbvmSyoj2WAl49APZLQelMgn57MrEEhSaL3J39zt49tWxoojT6ltls38
-	+eNe44nPujzIxxxiBmKybdO6qcW2Sd4oH7NJnO0x4P/LvVbAIPhmf4ELdXuYFN6d7lxSoIILVpB
-	hMvun/nYLOfQuKTPus5ncVti4wELdj1TbmZEY9qdCdPTnfC7wKnVZ1u/zocFzungQfsklPrOxoA
-	wC61xtt+BfJfRVXXxm6moYnXixTzuvTKiWioe0AHuygKEfHcaa4vBMb1GuHk+hSKEqXtLQNym+C
-	7APSUjR8uyllw5S4=
-X-Received: by 2002:a05:6a00:3012:b0:848:3dae:66e2 with SMTP id d2e1a72fcca58-84f2e05d01emr15540395b3a.26.1786003586782;
-        Thu, 06 Aug 2026 01:06:26 -0700 (PDT)
-X-Received: by 2002:a05:6a00:3012:b0:848:3dae:66e2 with SMTP id d2e1a72fcca58-84f2e05d01emr15540337b3a.26.1786003586352;
-        Thu, 06 Aug 2026 01:06:26 -0700 (PDT)
-Received: from [192.168.192.71] ([50.47.147.90])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-84f45ab011bsm872023b3a.41.2026.08.06.01.06.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Aug 2026 01:06:25 -0700 (PDT)
-Message-ID: <00168bff-3d44-4701-9931-1e02105410ed@canonical.com>
-Date: Thu, 6 Aug 2026 01:06:24 -0700
+        d=1e100.net; s=20251104; t=1786021934; x=1786626734;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=P9/jShmwIMCeTZRK1H99Se78DZXEHSSBV12Fe1ATBL0=;
+        b=Tbah8tlYX2XzT+raToFKYJl7OZDXJ+th8vNLsASTWf62dvARnVsHUig8p8xSrTnqQm
+         QjRe45x4FU/U2R9k99gVihxlsIGdvzEqfYHufeX3lnt40/byh8XlXgKn8NJnkBc9DHU4
+         W/jKFb4IXY+mAD4r5y2dIr+Ue90JHQbhzFUZlmPVPX0/93jgvSsHy8tVIRseWJ8irvfg
+         Bhj+wSaOyKBnuVlymnafD2u/N0mijFNUPo9FCHA678REix1Wryfe0epsO6Hw/IszPN0W
+         HQ5dCtNUs0Gc1qfWViHaHhSibl882QwqMwPVXHAeXgYeMSFm3G8L01A0mhhsfX9/yV+8
+         Kcng==
+X-Forwarded-Encrypted: i=1; AHgh+RrARc2Z4ZxaC88exlkahDEXox9V8g1aciAdcbn2zOY/EXMKPmCw6tz94v+2m0Uem7JyibN0ny2m8u2Wo4mPCY1V3A3mTKk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1jQCZds0vMpawWcVb8SUeueGD95N91Qer+2oy8AfPgkFLCS7t
+	Cu/qHg6Lcrr/FMqqZ4IsF/QTrX+NSEfnIWM5HPnK6+4cG7+7vwuzVmE3+fk4+2+qbvE3qvRLhEH
+	U3v0Zu8xr2BcH1nOmyRDFbu5cQ7QJypMnDsY9Hf2Q
+X-Gm-Gg: AR+sD13n0eiGoQc2fcNaTnFsOvkIe9kl+PC+NIHccpgrQQz+ysf71EKMmW7ZTpmliIK
+	txWQmI+71rKvreb1kKy1eGHPrkIxutJFFOb0UWDXql4ZyUTTQPuQowpxVW6va3x8GBzTXB97J8V
+	NDJQJh5DZrsZ7xa7PmrF9ys+UMNAUkNJaiWVk/c6JowiZrwEEedhNNF/c5wwoSJ7/soQ76NoiG1
+	Z1VOWdQ4CI6Br34SQNaUXeUMhGaUkp+flDAvKB9z8GUCc5fR5emblgWUdB9mi2NVlFn9ECwez03
+	3fHBXCgtjxXAR0ht/h8avLPGONupoWnQ0AmGpcQNvIUCz3HWgfZ1Vw7XqTa4nA1/Xx5ZL+O8x7L
+	Nlorg1wqN3p7p3QSzoW+hAHyOmWi0b2g=
+X-Received: by 2002:a17:902:ce90:b0:2c9:bd54:cf with SMTP id
+ d9443c01a7336-2d0f2a1ac97mr7375425ad.4.1786021933682; Thu, 06 Aug 2026
+ 06:12:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: fix cred UAF caused by
- begin_current_label_crit_section()
-To: Peter Zijlstra <peterz@infradead.org>, Jann Horn <jannh@google.com>
-Cc: John Johansen <john@apparmor.net>,
- Georgia Garcia <georgia.garcia@canonical.com>, apparmor@lists.ubuntu.com,
- Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>,
- James Morris <jmorris@namei.org>, Christian Brauner <brauner@kernel.org>,
- Al Viro <viro@zeniv.linux.org.uk>,
- linux-security-module <linux-security-module@vger.kernel.org>,
- kernel list <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
 References: <20260714-fix-apparmor-cred-uaf-v1-1-be40e8c83b90@google.com>
- <20260806073244.GM49951@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20260806073244.GM49951@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+ <20260806073244.GM49951@noisy.programming.kicks-ass.net> <00168bff-3d44-4701-9931-1e02105410ed@canonical.com>
+In-Reply-To: <00168bff-3d44-4701-9931-1e02105410ed@canonical.com>
+From: Jann Horn <jannh@google.com>
+Date: Thu, 6 Aug 2026 15:11:36 +0200
+X-Gm-Features: AUfX_mwaMKvH8autja6WPUiF9yY0qYb3sB5ZSNxQ5smDHdnj5Wwh-lN0MJH4-ys
+Message-ID: <CAG48ez25v6=GZzK2iNQepDeKpgAEWBPrkovJqzjSiJsOCLNSeQ@mail.gmail.com>
+Subject: Re: [PATCH] apparmor: fix cred UAF caused by begin_current_label_crit_section()
+To: John Johansen <john.johansen@canonical.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: John Johansen <john@apparmor.net>, Georgia Garcia <georgia.garcia@canonical.com>, 
+	apparmor@lists.ubuntu.com, Paul Moore <paul@paul-moore.com>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, James Morris <jmorris@namei.org>, 
+	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	linux-security-module <linux-security-module@vger.kernel.org>, 
+	kernel list <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/6/26 00:32, Peter Zijlstra wrote:
-> On Tue, Jul 14, 2026 at 05:38:07PM +0200, Jann Horn wrote:
-> 
->> diff --git a/include/linux/task_work.h b/include/linux/task_work.h
->> index 0646804860ff..ce19fc14060c 100644
->> --- a/include/linux/task_work.h
->> +++ b/include/linux/task_work.h
->> @@ -33,6 +33,7 @@ struct callback_head *task_work_cancel_match(struct task_struct *task,
->>   	bool (*match)(struct callback_head *, void *data), void *data);
->>   struct callback_head *task_work_cancel_func(struct task_struct *, task_work_func_t);
->>   bool task_work_cancel(struct task_struct *task, struct callback_head *cb);
->> +bool task_work_has_func(struct task_struct *task, task_work_func_t func);
->>   void task_work_run(void);
->>   
->>   static inline void exit_task_work(struct task_struct *task)
->> diff --git a/kernel/task_work.c b/kernel/task_work.c
->> index 0f7519f8e7c9..f83d1528e0bc 100644
->> --- a/kernel/task_work.c
->> +++ b/kernel/task_work.c
->> @@ -189,6 +189,20 @@ bool task_work_cancel(struct task_struct *task, struct callback_head *cb)
->>   	return ret == cb;
->>   }
->>   
->> +bool task_work_has_func(struct task_struct *task, task_work_func_t func)
->> +{
->> +	struct callback_head *work;
->> +
->> +	if (!task_work_pending(task))
->> +		return false;
->> +	guard(raw_spinlock_irqsave)(&task->pi_lock);
->> +	for (work = READ_ONCE(task->task_works); work; work = READ_ONCE(work->next)) {
->> +		if (work->func == func)
->> +			return true;
->> +	}
->> +	return false;
->> +}
->> +
->>   /**
->>    * task_work_run - execute the works added by task_work_add()
->>    *
-> 
-> This thing is quite terrible. And AFAICT the only purpose is to
-> determine if said task already has said function enqueued. Why not add a
-> single bit to struct task_struct for this? I'm sure we have a spare bit
-> somewhere.
-> 
+On Thu, Aug 6, 2026 at 10:06=E2=80=AFAM John Johansen
+<john.johansen@canonical.com> wrote:
+> On 8/6/26 00:32, Peter Zijlstra wrote:
+> > On Tue, Jul 14, 2026 at 05:38:07PM +0200, Jann Horn wrote:
+> >
+> >> diff --git a/include/linux/task_work.h b/include/linux/task_work.h
+> >> index 0646804860ff..ce19fc14060c 100644
+> >> --- a/include/linux/task_work.h
+> >> +++ b/include/linux/task_work.h
+> >> @@ -33,6 +33,7 @@ struct callback_head *task_work_cancel_match(struct =
+task_struct *task,
+> >>      bool (*match)(struct callback_head *, void *data), void *data);
+> >>   struct callback_head *task_work_cancel_func(struct task_struct *, ta=
+sk_work_func_t);
+> >>   bool task_work_cancel(struct task_struct *task, struct callback_head=
+ *cb);
+> >> +bool task_work_has_func(struct task_struct *task, task_work_func_t fu=
+nc);
+> >>   void task_work_run(void);
+> >>
+> >>   static inline void exit_task_work(struct task_struct *task)
+> >> diff --git a/kernel/task_work.c b/kernel/task_work.c
+> >> index 0f7519f8e7c9..f83d1528e0bc 100644
+> >> --- a/kernel/task_work.c
+> >> +++ b/kernel/task_work.c
+> >> @@ -189,6 +189,20 @@ bool task_work_cancel(struct task_struct *task, s=
+truct callback_head *cb)
+> >>      return ret =3D=3D cb;
+> >>   }
+> >>
+> >> +bool task_work_has_func(struct task_struct *task, task_work_func_t fu=
+nc)
+> >> +{
+> >> +    struct callback_head *work;
+> >> +
+> >> +    if (!task_work_pending(task))
+> >> +            return false;
+> >> +    guard(raw_spinlock_irqsave)(&task->pi_lock);
+> >> +    for (work =3D READ_ONCE(task->task_works); work; work =3D READ_ON=
+CE(work->next)) {
+> >> +            if (work->func =3D=3D func)
+> >> +                    return true;
+> >> +    }
+> >> +    return false;
+> >> +}
+> >> +
+> >>   /**
+> >>    * task_work_run - execute the works added by task_work_add()
+> >>    *
+> >
+> > This thing is quite terrible. And AFAICT the only purpose is to
+> > determine if said task already has said function enqueued. Why not add =
+a
+> > single bit to struct task_struct for this? I'm sure we have a spare bit
+> > somewhere.
+> >
+>
+> single bit wouldn't work generically to represent the different functions
+> that could be enqueued but we could stick a flag in the apparmor task
+> security blob, so we could just check if apparmor has enqueued its
+> function.
+>
+> The trade-off is you don't get an admittedly ugly generic fn that someone
+> else could use.
 
-single bit wouldn't work generically to represent the different functions
-that could be enqueued but we could stick a flag in the apparmor task
-security blob, so we could just check if apparmor has enqueued its
-function.
-
-The trade-off is you don't get an admittedly ugly generic fn that someone
-else could use.
-
->> +/* replace the current task's stale label on syscall return */
->> +void aa_schedule_stale_label_replacement(void)
->> +{
->> +	struct callback_head *tw;
->> +
->> +	if (task_work_has_func(current, aa_replace_stale_label_tw_func))
->> +		return;
->> +	tw = kmalloc_obj(struct callback_head);
->> +	if (!tw)
->> +		return;
->> +	init_task_work(tw, aa_replace_stale_label_tw_func);
->> +	if (task_work_add(current, tw, TWA_RESUME))
->> +		kfree(tw);
->> +}
-> 
-
+Yeah, makes sense, I'll rework this to not touch task_work.c and
+instead do something with the apparmor task blob.
