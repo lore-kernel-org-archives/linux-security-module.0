@@ -1,79 +1,79 @@
 Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3A9352C54
-	for <linux-security-module@vger.kernel.org>; Wed,  5 Aug 2026 23:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702C11D86FF
+	for <linux-security-module@vger.kernel.org>; Thu,  6 Aug 2026 00:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785973541; cv=none; b=lfIXYz39SkJWQ4hXm9TgZ5mSUcGwykho2jZGLB7gTKD2fWGboNY46Dg1hwrU10fmEMAYeRvV12fz0TYiHtVy7tq7iNronpzTicP3GUgt9wkQUBo7DsENkZp7x4JVJ1GexzYD6ZxpJ+Fy/3fki9unUtlmuiQWUxy+8LuhYssixcs=
+	t=1785974570; cv=none; b=q7oCPSEKM0YD+9YTsI3esPljsKLg8rqLQCgiRVdhYw8/vKpKKcQYtFNvGLbc0ZfJeI0lOFsG9HS9m9UupGPspQOmkJqEnvJBRurpH07Vw8AYXdNb7IkFNP4SyHJkdRveMgRWLVe4mc5F5kaxz6QfrpRM7jlHQcsUlZhNYKyBGZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785973541; c=relaxed/simple;
-	bh=pH7dxdWyKhgYjTxrzmDhqHXUO8kKsgDrXDDIjMYz7XM=;
+	s=arc-20240116; t=1785974570; c=relaxed/simple;
+	bh=32nR9CD3NsD6bY/SW6+OnpnOjqk8Bk5XtdNO924d7NA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KvaT96ulDc2d7jBtn1KPIviZa5vAxL4aAQVOtaHNzF2rr4HakjqrhWA0wzWBKULoBLb1ciH1nsFrEiMBISSmEzK20gmh0ZqXiKUkOAqUfDWK1DbheBVKJcuWd4aZRkDc0tNs9UZHCQDWct6wcPS9f217//Ag+KyDfvaOjP9iruA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=HCc5+GK1; arc=none smtp.client-ip=185.125.188.122
+	 In-Reply-To:Content-Type; b=aeRENfwsPFanK20ls+cgqpC9AJfe7X447lnNcrB1snT/t9Mw3v2EEasdLCXeqWSLK7Abvz1JHTeBhRfNxOn1Aaan9plZX9+UOu7iDJl8fsnTID+dQR7z2ZoVjveywqnWvgDiaaQBkdqSABhgiTHALwKWLnYGPiglTEHaeKEc1ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=CiG+dD51; arc=none smtp.client-ip=185.125.188.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="HCc5+GK1"
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="CiG+dD51"
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id A37C03F62F
-	for <linux-security-module@vger.kernel.org>; Wed,  5 Aug 2026 23:45:36 +0000 (UTC)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 33EC63FBF5
+	for <linux-security-module@vger.kernel.org>; Thu,  6 Aug 2026 00:02:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1785973536;
-	bh=Xd2gB0iO8ZoT4UtJBbjUQuijskG434Qw0vWALETHor8=;
+	s=20251003; t=1785974560;
+	bh=uV4/trZsrpkGEepaTlfIF0yIo2zjcaruWrpND/CzTIE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=HCc5+GK1aNUYWRK42KDZSkULCvxUkmFSGb0im4YrQqf0cu0uLrAsjOe74p1hfyr3m
-	 /ke+D9VJ9FYoChYuTtnLwN1q1eM4tdGPdN91Hx4VylG99YcQsGwaibZFqu6u1M3t90
-	 KbhoPCskp2JL0Rirdu1rIRGe56sI+hDyBGreeQwx6RfDhNsyKwWCsUGnmbxH1eM1CA
-	 uEE0HqhbJPIw85DTlX3TBifSy/aCRHhTOXEwvRNOviXBCGqfkBE4xaPti6tE53rVrP
-	 OLzT0vZye9EuzBjITvDzzhLY00s2p++Oh2VijvhL3pRelN0GWvTVZuGSfL6sioJ5GZ
-	 OuFdWccB6N060NHnTLZtUCs5foF1BnnODOeBmiEupb+KbvGaaODE1JOl63BVEMdBK8
-	 C262aAKaOmRaq8/ISXPSb1bZ4751YMeRzhtk2bw1fv9E4LgGQvDuYNsNbKm0jM6ZeS
-	 L8C5yqiTZ1EJU7mG3Xlm5r2dKw9YS1NsiSj+p0Q0odvs2AnF8nAXJqGZ9+K45UPhIi
-	 C6ZZ0h7f6CBz3O6kM5jkNxSj2h0CYTQQyQzs3/eZx1kH2lhZzYm5TnmOdZmXmwEm/v
-	 qKclvv0qBQw3S4i2BN8eaZUS5TUQiOVQxS8V2/uQHC6oJybiNtpkZKkXP3pe9Biz+A
-	 f4WuTSCnQISi5hx+NLPq7f0g=
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-84e4ef486c7so325096b3a.1
-        for <linux-security-module@vger.kernel.org>; Wed, 05 Aug 2026 16:45:36 -0700 (PDT)
+	b=CiG+dD51gVY2T+NWx/xcJo7bT+aUARIF0a1343v18my2RRwGQqWnU8N1AKg6DmSXg
+	 IQG+QQPRm2RfbxY4NUdD4Xt3omyG1aRlzm9CKatq9QeO2iVP8zh+pWfOXev9UC2Vwa
+	 JdOBlVOVkIgIPkdqmwvg66lcCukkyGmZ70lRSWC2yfK9o/88zTY3qL6E0rNY/kqPEb
+	 qZJNGFCeVj830z7QkugLE7TS27wkOWTP7i2vLWq6R9XnrCoa3KOQ9LLaF02T48Tpaz
+	 S2ifdN1PanGFszEQLaAJsnDnfGTAF6QdZaQCdiP72ccrMpdm6SBQ2QbB7kjVA2pMiX
+	 gAbPeAz7TpgOzfbEy0WMgyuyfJaPQtrFNntTwgsUG3SuGMzg9LXsNA9QD4y0H3gfFH
+	 YzDBPJcGpcfteKPaNk9XEjwfNLvV4XCtRYlr68dnKd3TONyxbr8jeR1IX3Wy9oVAFZ
+	 1or6AcF/YDodvdatT7+//nz+Dw7v/eMJBRdCHN1X4eqKnumQyZuIa1MOT6g6MtaLvv
+	 U7zi+PHbm27WvsNabHISoKMiRQ73U+N5nenBjKmPThF5nCD5hbSOs4jhFnDhwCphA7
+	 qQvThd6N/qdGTMEbezNh+k83bqwF7uQSxz/ulwuzv8Bt97vMn7xQyHQ8mxpeY8OnBy
+	 +6d0n9ZbPYK/ubTUGxcKR7pg=
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-38e1118e4abso2346282a91.0
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Aug 2026 17:02:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785973535; x=1786578335;
+        d=1e100.net; s=20251104; t=1785974559; x=1786579359;
         h=content-transfer-encoding:content-type:in-reply-to:organization
          :autocrypt:from:content-language:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=Xd2gB0iO8ZoT4UtJBbjUQuijskG434Qw0vWALETHor8=;
-        b=K1A8bKFDW4zlAWRU+RpzPhgwMVTJKf7UV40yP5u/Bom+OrHdM9ouE6qnBQ4oQy9gRi
-         P9x+0UErb7HVSaG60GwPo8BncrL8R+0BsUnK2g95QbvayxMf6w3zkjHHM1WH9mcSI/Ur
-         ygrCTmI8KTrMBfE9ic2fSuHuxsvNyuPhmDfkl7boSK8Uwv7uiPr14RR4lBt8YrM2hC22
-         azrjJpI3oQmGTof5s3tCgyR202KQS/GzPQORPjuqiDkdHnt8o8HWWnl7dvJNurwAKS35
-         SgzFDrL2YW/XIbF/qhogXZGtoHK9/FOulYF6KoYoLzDPTHowFfbQ7Z2dxM4CgSrLKD/I
-         w5UA==
-X-Forwarded-Encrypted: i=1; AHgh+Ro/YX+HICByPvlpp+uVlqOTfSjZ4hal7ngZylSJTTm6IxCW4PLaKo7HbMz6SyVJhNTfi149sLb7t5/Apc9xn8m2greG8cE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtaBcN7jqHpmlBFGWtGbBOUPdNv4oRCVNnuaQhq/6FkuJrHK1P
-	RBAynN7eLcMoloj2FnHWxji49krh7ajlV+yid7Q8pTQ5gbVVBFZShyfKQUOxizDpKoeOv5LTxhh
-	NS5XuWe9vgE911Z8buH9fiaSadKJDeMQUk4ACqDvnBcQaPpwOAkr0ZsgG5BBLhwySPqjCmiDriZ
-	j/dzg6xARzk/uwmckA5A==
-X-Gm-Gg: AR+sD13lqeNfiGDPLWyNdDhQGyCJRdOXVDJFpka/8fTtV1r+5eaFPOXHUK9MozJyfkG
-	686MLcAKd+x1ogfki7tHqV+Settt82sUiAZ7uLMJ7ixDe5zQA7elvX6NggpkJMtAnid7KlGONm/
-	7puNgP/a1Aynd+hWAbmb5jxjsOVZWh35LsuJ3xnx4/1lF42ODJJqWRqr26jYt5TU+et7BKZHuzi
-	+oKs8cLpERuyoIfK1l9A/cMXAlwmN/6X7bz0aGQdDmBJgmxf8E/wMqtHTJpgPFpCQ/ThV0yoH/J
-	93lNsMMfhat8i5laoyUSrT5c+0+tzQaP8PtUJwc5CWn1tMA21zpfuY1i0DJxpaKoFEjnki6T8lz
-	sTW4Owjg/VZHsGAc=
-X-Received: by 2002:a05:6a00:1c82:b0:84e:242:4bb2 with SMTP id d2e1a72fcca58-84f47d119f4mr254409b3a.4.1785973535042;
-        Wed, 05 Aug 2026 16:45:35 -0700 (PDT)
-X-Received: by 2002:a05:6a00:1c82:b0:84e:242:4bb2 with SMTP id d2e1a72fcca58-84f47d119f4mr254365b3a.4.1785973534645;
-        Wed, 05 Aug 2026 16:45:34 -0700 (PDT)
+        bh=uV4/trZsrpkGEepaTlfIF0yIo2zjcaruWrpND/CzTIE=;
+        b=pqwEeAcmBXWEWtdh6RvFVZOkcmtD2Me1KTCr0txTD88GXGUg+2Lvk7dmFLpx48XYUO
+         Z28NEuQU2+6/hjIBdzNSH6lCjDA4GPty/hjn5zCw8VKmOaWPr9iFpiEyvGdS7j30O1mF
+         QhoADgz8rTqNtYGeMgUYHEL2zR8zzQM5gcBZKSbu9lXIhs4Xr5e20S+1Gt4tijrl7N84
+         CUkouUyTtS+cfjGanrZq6hQQ6AnMh2thRdH4aV6FqaXYW8u+xfA9O4fWmPjCPlObKWFV
+         tDXv+xVrxMtOagE/6yq7GNUBN5JGycCDbOklbjbAIVgk5wcW/E4dX5cmXPem6sZFA/Bi
+         ONqw==
+X-Forwarded-Encrypted: i=1; AHgh+RqH65HJiOsIDWKkAK9e0uheGM7ffKx6ci42B/aA42gm5MSoBr/Q8R8NWmEBNZwtNvYGn1rZhq8nVfOzhnZd/0+4HravnTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxxc2Yj8/She/k9OEm17u2+etEV7fQkx8m1YdpfNHh7z0Mn8ND1
+	usWeCkNxEHFpqr6tkt2eeMcm4N3TzJCdv6BenSzymAhkev3mUpDCHao6vLNeejxGaOSgoVWvW8w
+	INk0VVSqv78FASZhFZz1+p/7cQ7zESTfqpA1tEpuDRSsvqrtSkEDR55TgVM1XKjzQkrMduJdA6b
+	pIE0wyjzWkx8CyzRfhMQ==
+X-Gm-Gg: AR+sD12nchaid7APShzhj2fxefWebtzU/hBsNBv3Q5MkMvm86Wc9ODRPafdiQTRAOYX
+	lavM7K+J6QaJSAtReSPJ7ARofF9yUUfLSKe07jY4i+ZhraXhDiFXGpCs2K2YR9udWQ7LwJgfmMT
+	VbZkjGVyFZI3N/tDQVb14i2CXvWjC7XzSuyjp08VEHz6JM4bqrt8X6edZr6ZZau8/DMkxN2Ml1m
+	v/IFN7NM4zvLJCcFHwMzO7a/u4mHUjRHZRwAGJ/o+8gWZzNQ1Sz5KO+iREoO184/FBFCvOnZJT9
+	cpznoZ7iVz972G35OtGJjMWJ9eLd9+LzegjFM7AgwPUKlw1xTSnKAa/7V7TpQsQ9Sn3tH7c2Cso
+	AjdEmQJ417gegk8k=
+X-Received: by 2002:a17:90b:4c45:b0:38f:dec8:f7e9 with SMTP id 98e67ed59e1d1-3903c5a79f7mr11062695a91.12.1785974558475;
+        Wed, 05 Aug 2026 17:02:38 -0700 (PDT)
+X-Received: by 2002:a17:90b:4c45:b0:38f:dec8:f7e9 with SMTP id 98e67ed59e1d1-3903c5a79f7mr11062651a91.12.1785974557977;
+        Wed, 05 Aug 2026 17:02:37 -0700 (PDT)
 Received: from [192.168.192.71] ([50.47.147.90])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-84f45bc4c29sm143194b3a.52.2026.08.05.16.45.33
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-39085dbf82csm362966a91.1.2026.08.05.17.02.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Aug 2026 16:45:33 -0700 (PDT)
-Message-ID: <075aec24-cb7b-44ea-b3d8-be913a87c958@canonical.com>
-Date: Wed, 5 Aug 2026 16:45:32 -0700
+        Wed, 05 Aug 2026 17:02:37 -0700 (PDT)
+Message-ID: <f13d94b4-2bd3-4737-b25f-bd5371189e62@canonical.com>
+Date: Wed, 5 Aug 2026 17:02:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -81,13 +81,17 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] apparmor: AF_UNIX datagram send slowdown after
- 6456ccbd2ff7
-To: Chengfeng Lin <lin2530632123@gmail.com>, georgia.garcia@canonical.com
-Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
- apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, regressions@lists.linux.dev
-References: <CANGjgdnoz4NdqzOV9+SZaYTc+O_GkNNn5NVp+ZpHUQbp5h-QVQ@mail.gmail.com>
+Subject: Re: [PATCH] apparmor: fix cred UAF caused by
+ begin_current_label_crit_section()
+To: Jann Horn <jannh@google.com>, John Johansen <john@apparmor.net>,
+ Georgia Garcia <georgia.garcia@canonical.com>, apparmor@lists.ubuntu.com,
+ Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: James Morris <jmorris@namei.org>, Christian Brauner <brauner@kernel.org>,
+ Al Viro <viro@zeniv.linux.org.uk>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ linux-security-module <linux-security-module@vger.kernel.org>,
+ kernel list <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+References: <20260714-fix-apparmor-cred-uaf-v1-1-be40e8c83b90@google.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -133,86 +137,228 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <CANGjgdnoz4NdqzOV9+SZaYTc+O_GkNNn5NVp+ZpHUQbp5h-QVQ@mail.gmail.com>
+In-Reply-To: <20260714-fix-apparmor-cred-uaf-v1-1-be40e8c83b90@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 8/5/26 10:33, Chengfeng Lin wrote:
-> Hi John and Georgia,
-> 
-> I found a repeatable AF_UNIX datagram send slowdown caused by the exact source
-> delta of 6456ccbd2ff7 ("apparmor: fix regression in fs based unix sockets when
-> using old abi"). In a bare-metal parent/child/parent test, a standalone
-> sendmmsg() workload was 15.30% slower after the change. An independent larger
-> runner reproduced the slowdown with both sendmmsg() and io_uring SEND, so this
-> is not specific to io_uring.
-> 
-> #regzbot introduced: 6456ccbd2ff7
-> #regzbot title: apparmor AF_UNIX datagram send slowdown
-> 
-> The standalone workload uses socketpair(AF_UNIX, SOCK_DGRAM). Each sendmmsg()
-> call sends 32 messages of 128 bytes. Peer draining and payload validation are
-> outside the timed region. Each point had 3 warm-up rounds followed by 15
-> measured rounds of 65,536 messages.
-> 
-> Because 6456ccbd2ff7 was part of an AppArmor series, I isolated its source
-> delta on one controlled baseline:
-> 
->    parent 0bfa1c2da7a8: AppArmor topic prefix through 50d56a1a366a
->    child  30cb02a874b4: parent plus only the exact two-file 6456ccbd2ff7 diff
-> 
-> The child tree matches the same baseline with the AppArmor prefix advanced
-> through 6456ccbd2ff7. I used a fresh boot for each point:
-> 
->    point       mean ns/message
->    parent A          343.382
->    child             395.831
->    parent B          343.259
-> 
-> The child was 15.295% slower than the parent midpoint. Dropping the first
-> measured round gave 15.289%; parent drift was -0.036%, and the maximum CV was
-> 0.137%. All 45 measured rows passed the payload, length, count, and empty-queue
-> checks.
-> 
-> The machine was an Intel Core i7-12700KF system with 32 GiB RAM. The workload
-> was pinned to P-core CPU 2, with governor and EPP set to performance and Turbo
-> disabled. All three runs used actual preempt=none and reported
-> /proc/self/attr/current as unconfined.
-> 
-> As a separate check, the larger original runner used matched actual
-> preempt=full. Its direct sendmmsg() profile was 14.841% slower, and its
-> io_uring SEND profile was 17.953% slower. I am keeping these results separate
-> from the standalone percentage.
-> 
-> A separate v6.16.12 -> v6.17.13 perf comparison was directionally consistent.
-> The children overhead reported for security_unix_may_send was 0.27% in both
-> v6.16.12 controls and 6.77% at v6.17.13. The latter included the path through
-> apparmor_unix_may_send(), aa_unix_peer_perm(), and unix_peer_perm(). This was
-> a release-endpoint comparison rather than the exact source pair above, so I
-> use it only as supporting path evidence, not as an internal decomposition of
-> the 15.295% slowdown.
-> 
-> I understand that 6456ccbd2ff7 fixes a real old AppArmor policy ABI issue,
-> so I am not suggesting a revert. Would it be possible to retain that fix while
-> avoiding the added cost on this unconfined AF_UNIX datagram send path?
-> 
+On 7/14/26 08:38, Jann Horn wrote:
+> AppArmor's begin_current_label_crit_section() is a scary function called
 
-thanks for the report, we will have to investigate and get back to you on this,
-generally speaking we try to keep the mediation overhead for unconfined tasks
-to a minimum using early bailout and some caching. The referenced commit does
-look to be doing early bailout, so we are going to have to do some analysis, on
-where exactly the overhead is coming from.
+yep
 
-I can't promise we can get it back to what it was before but we should be able
-to do better than the current regression.
-
-
-
-
-> Evidence bundle:
+> from lots of LSM hooks (in particular VFS/socket-related ones) that checks
+> if the label referenced by the current creds is marked FLAG_STALE, and if
+> so, attempts to use aa_replace_current_label() to replace the creds with an
+> updated version that uses a new label.
 > 
->    https://github.com/lcf0399/linux-regression-evidence/tree/7b9862c7ac2d5f9622725912d7f0df95011bcbfd/apparmor-af-unix-send-old-abi-6456cc
+> The first problem with this is that it would directly lead to UAF of
+> `struct cred` if anything in the kernel takes a pointer to the current
+> creds and accesses these past a security hook invocation that replaces
+> creds, like so:
+> ```
+> const struct cred *cred = current_cred();
+> alloc_file_pseudo(...);
+> uid_t uid = cred->euid;
+> ```
+> I don't know if anything in the kernel actually does this, but I think it
+> is very surprising that this pattern could lead to UAF.
 > 
-> Thanks,
-> Chengfeng
+> The second problem is that things go wrong when aa_replace_current_label()
+> runs with overridden credentials. aa_replace_current_label() bails out if
+> `current_cred() != current_real_cred()` (mirroring the check in
+> proc_pid_attr_write()), but this check can't actually reliably detect
+> overridden credentials because the overridden creds can be the same as the
+> objective creds.
+> 
+> So in approximately the following scenario, things go wrong:
+> 
+> 1. task begins with <creds A> (as both objective and subjective creds),
+>     with refcount=2
+> 2. task grabs an extra reference on <creds A> for overriding
+> 3. task calls override_creds(<creds A>), which returns a pointer to the old
+>     subjective creds (<creds A>)
+> 4. task enters AppArmor LSM hook
+> 5. AppArmor checks that objective/subjective creds are equal
+> 6. AppArmor replaces both cred pointers with <creds B> and drops 2 refs on
+>     <creds A>
+> 7. task leaves AppArmor LSM hook
+> 8. task calls revert_creds(<creds A>)
+> 9. now task->cred is <creds A> while task->real_cred is <creds B>, but the
+>     task_struct logically holds two references to <creds B>
+> 10. another task drops the extra reference on <creds A> that was used for
+>      overriding, refcount drops to 0
+> 11. now task->real_cred points to freed creds
+> 
+> At this point, any access to current_cred() will be UAF.
+> 
+> I have a test case where I run aa-disable on a profile while a process
+> using that profile is blocked on splice() from a FUSE passthrough file into
+> a full pipe; after the profile update, the pipe becomes empty, splice()
+> resumes, the credentials go out of sync, and a subsequent getuid() syscall
+> results in a KASAN UAF splat.
+> 
+> To fix this, instead of directly replacing creds, do it via task_work that
+> will run at the end of the current syscall. (The point in time at which the
+> cred replacement happens should have no correctness impact; it is just a
+> performance optimization to avoid unnecessarily touching the refcount of
+> the new label.)
+
+right, we could even be a little looser in the update timing as we don't
+make guarantees around the update timing.> 
+> Note that AppArmor still performs direct cred replacements in the
+> sb_pivotroot LSM hook after this change, and that direct cred replacements
+> can still happen in VFS ->write() callbacks via proc_pid_attr_write().
+> 
+yep, I can take a stab at those
+
+> Cc: stable@vger.kernel.org
+> Fixes: c75afcd153f6 ("AppArmor: contexts used in attaching policy to system objects")
+> Signed-off-by: Jann Horn <jannh@google.com>
+
+this looks good to me, compiles, and has passed an abbreviated round of
+testing.
+
+Q. What do you think about making the callback_head part of the apparmor
+security task blob. It would increase its size, but allow us to drop
+the alloc/free. Generally profile is generally something that is relatively
+rare, but when it does happen, its is quite common to have all the profiles
+being updated, so a thunder herd type problem.
+
+Unless someone else has a reason to carry this, I will pull it into
+apparmor-next today, so we can get some testing in linux-next
+
+Acked-by: John Johansen <john.johansen@canonical.com>
+
+> ---
+>   include/linux/task_work.h        |  1 +
+>   kernel/task_work.c               | 14 ++++++++++++++
+>   security/apparmor/include/cred.h |  6 +-----
+>   security/apparmor/include/task.h |  1 +
+>   security/apparmor/task.c         | 29 +++++++++++++++++++++++++++++
+>   5 files changed, 46 insertions(+), 5 deletions(-)
+> 
+> diff --git a/include/linux/task_work.h b/include/linux/task_work.h
+> index 0646804860ff..ce19fc14060c 100644
+> --- a/include/linux/task_work.h
+> +++ b/include/linux/task_work.h
+> @@ -33,6 +33,7 @@ struct callback_head *task_work_cancel_match(struct task_struct *task,
+>   	bool (*match)(struct callback_head *, void *data), void *data);
+>   struct callback_head *task_work_cancel_func(struct task_struct *, task_work_func_t);
+>   bool task_work_cancel(struct task_struct *task, struct callback_head *cb);
+> +bool task_work_has_func(struct task_struct *task, task_work_func_t func);
+>   void task_work_run(void);
+>   
+>   static inline void exit_task_work(struct task_struct *task)
+> diff --git a/kernel/task_work.c b/kernel/task_work.c
+> index 0f7519f8e7c9..f83d1528e0bc 100644
+> --- a/kernel/task_work.c
+> +++ b/kernel/task_work.c
+> @@ -189,6 +189,20 @@ bool task_work_cancel(struct task_struct *task, struct callback_head *cb)
+>   	return ret == cb;
+>   }
+>   
+> +bool task_work_has_func(struct task_struct *task, task_work_func_t func)
+> +{
+> +	struct callback_head *work;
+> +
+> +	if (!task_work_pending(task))
+> +		return false;
+> +	guard(raw_spinlock_irqsave)(&task->pi_lock);
+> +	for (work = READ_ONCE(task->task_works); work; work = READ_ONCE(work->next)) {
+> +		if (work->func == func)
+> +			return true;
+> +	}
+> +	return false;
+> +}
+> +
+>   /**
+>    * task_work_run - execute the works added by task_work_add()
+>    *
+> diff --git a/security/apparmor/include/cred.h b/security/apparmor/include/cred.h
+> index 2b6098149b15..0e8b67159f56 100644
+> --- a/security/apparmor/include/cred.h
+> +++ b/security/apparmor/include/cred.h
+> @@ -222,13 +222,9 @@ static inline struct aa_label *begin_current_label_crit_section(void)
+>   {
+>   	struct aa_label *label = aa_current_raw_label();
+>   
+> -	might_sleep();
+> -
+>   	if (label_is_stale(label)) {
+>   		label = aa_get_newest_label(label);
+> -		if (aa_replace_current_label(label) == 0)
+> -			/* task cred will keep the reference */
+> -			aa_put_label(label);
+> +		aa_schedule_stale_label_replacement();
+>   	}
+>   
+>   	return label;
+> diff --git a/security/apparmor/include/task.h b/security/apparmor/include/task.h
+> index b1aaaf60fa8b..4e49a4142777 100644
+> --- a/security/apparmor/include/task.h
+> +++ b/security/apparmor/include/task.h
+> @@ -30,6 +30,7 @@ struct aa_task_ctx {
+>   };
+>   
+>   int aa_replace_current_label(struct aa_label *label);
+> +void aa_schedule_stale_label_replacement(void);
+>   void aa_set_current_onexec(struct aa_label *label, bool stack);
+>   int aa_set_current_hat(struct aa_label *label, u64 token);
+>   int aa_restore_previous_label(u64 cookie);
+> diff --git a/security/apparmor/task.c b/security/apparmor/task.c
+> index b9fb3738124e..8e368f6278f5 100644
+> --- a/security/apparmor/task.c
+> +++ b/security/apparmor/task.c
+> @@ -14,6 +14,7 @@
+>   
+>   #include <linux/gfp.h>
+>   #include <linux/ptrace.h>
+> +#include <linux/task_work.h>
+>   
+>   #include "include/path.h"
+>   #include "include/audit.h"
+> @@ -89,6 +90,34 @@ int aa_replace_current_label(struct aa_label *label)
+>   	return 0;
+>   }
+>   
+> +static void aa_replace_stale_label_tw_func(struct callback_head *tw)
+> +{
+> +	struct aa_label *label;
+> +
+> +	kfree(tw);
+> +	label = aa_current_raw_label();
+> +	if (!label_is_stale(label))
+> +		return;
+> +	label = aa_get_newest_label(label);
+> +	aa_replace_current_label(label);
+> +	aa_put_label(label);
+> +}
+> +
+> +/* replace the current task's stale label on syscall return */
+> +void aa_schedule_stale_label_replacement(void)
+> +{
+> +	struct callback_head *tw;
+> +
+> +	if (task_work_has_func(current, aa_replace_stale_label_tw_func))
+> +		return;
+> +	tw = kmalloc_obj(struct callback_head);
+> +	if (!tw)
+> +		return;
+> +	init_task_work(tw, aa_replace_stale_label_tw_func);
+> +	if (task_work_add(current, tw, TWA_RESUME))
+> +		kfree(tw);
+> +}
+> +
+>   
+>   /**
+>    * aa_set_current_onexec - set the tasks change_profile to happen onexec
+> 
+> ---
+> base-commit: 3b029c035b34bbc693405ddf759f0e9b920c27f1
+> change-id: 20260714-fix-apparmor-cred-uaf-cc38ec2b38b7
+> 
+> Best regards,
+> --
+> Jann Horn <jannh@google.com>
+> 
 
