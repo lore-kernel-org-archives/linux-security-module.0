@@ -1,296 +1,187 @@
-Received: from mail-oi1-f205.google.com (mail-oi1-f205.google.com [209.85.167.205])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35DAB1E1E16
-	for <linux-security-module@vger.kernel.org>; Sun,  9 Aug 2026 00:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBF5156661
+	for <linux-security-module@vger.kernel.org>; Sun,  9 Aug 2026 11:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786234832; cv=none; b=tSeqqTUNt16PTRnK5Cd2o4kLhfImlq15g30PNZZ+9V5TtCOBBYYP3a6eU2/ipWnhJ9RluTpIwpL9GlTb10Ggnlz97YyLjuwYsTsgDJGJ9bGaRcwexRqvez4zFYKSn63D1uP/dXVXBnDuYmgE6KhwL4uJflJ+rNfo5Fai9JuN76s=
+	t=1786273330; cv=none; b=VsSsCB+k1aYXOYUhQT2PSF1NIZLpI7ZAjoZ0VflNj3VBwv17qkkScpeVj4iXaYv41fx8yc6NLJYrNSDZ7W2WnEy6Xc9M86/iaGCfrlzrFaKbfGLmgjaDyYv+W4Oalb0zUHClWI86YB888JIBvDcHQVShXPglHV09SabHYuNIrW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786234832; c=relaxed/simple;
-	bh=ivoXILn/bOVVyrdWZIYuW9j3P76rlsgPYTO2OZY+LFg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hW1Z1UgluuZd+MyhAuhtE/tFIu7aM826nYPX8tHXOkcyj/gmbf9p+L46uAS7rfhR929Nj5KkIFw/9uoRfzwtfhHqvDABOTk3//GWcQEaM3ZPk3dMeSesfUpIFmjhulNXmcoTQ9Aq7UM3bB4WVwyjEcKGG6mYu7UeyUFyBr4JH5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oi1-f205.google.com with SMTP id 5614622812f47-4ab4ca7ce3fso578410b6e.0
-        for <linux-security-module@vger.kernel.org>; Sat, 08 Aug 2026 17:20:30 -0700 (PDT)
+	s=arc-20240116; t=1786273330; c=relaxed/simple;
+	bh=ywo2uPUsrXTAwO9InRinXm5M+tv6nKvz6B/hC03eifw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FS4SIUuvQIZecYDdF9NLT/Ce4/aKX3AyKneD/dLkgNavkn5mTfj3f8nijg/iz0GAQ45G6BHYsnUHPvvkbapNtYcdO3758pg3tseVq8B4OVz+jblZMFZq6I9cQ+IFlsdENcP53T7v286gIcCHOMjUlloyxo2XBFZpcZR9KKiu5Yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xvz0xoIW; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xvz0xoIW"
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2cc97653887so10437765ad.1
+        for <linux-security-module@vger.kernel.org>; Sun, 09 Aug 2026 04:02:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1786273327; x=1786878127; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=sc5V86l7BdE/6kSiloB+tbkV9FHRrzjo44RFbsUV2/g=;
+        b=Xvz0xoIWRAL+Wc2Va+lLI7kmPCSQcPi7IioXYJh5jdLTS4OOGoLm4UOTEBvCeXWNE+
+         LNxNRYttMozn9H/5h1p3+8L05mremCxaqPeLCT7veIYzl3a4mArWw02iJUUgHP7ZgH/D
+         J/CecEjkj8mNhf2rPRkmGiK2+yPJ7CwtA3DKncRkjmWBBK1Vcpx41UI6WIx36LopCph/
+         uZgUo9lrn8r+iZeEr8H3vyAWVTgvlX3+hxwFAAnVRTvX0zz0WvWbOhi8b/RtLEp33ICE
+         5B9Q0hhwmlZyW20CAcHv4+V9dJNEO/oCIha/WYGfaBWjrurJ5ZBI3MXGavpUTI0/Suvo
+         2Kjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786234829; x=1786839629;
-        h=content-type:to:from:subject:message-id:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=NfypjNMIaYwwS17MrECqzmvkWAUZkC8M/oY73fQWl0U=;
-        b=Hq64U8ZjA8e+b1NuEVeq3UQ/nUn69xaxYui6yaLo6wvjrjcSBMDOQmgvhOyaKvRzej
-         1J7PeS/MuWVrtP89V6iLzG/4o3X4H22Iikh/zdOL8dUUiPBrFe9CIF25GqSy1B6SbrKz
-         BcnhBGJXbbKHY8VKtz9LgUztE07Nr+NDuq+ZYTvShfJaCW//POr2ouXxATKDMmuI5g6s
-         OpstysZ4pigv2SyAb+vBH5MO3m/FkoKVZRWJi1pi5m9P6PMYp1ejzADzSxf7nitDNDrP
-         PQNLTBLC0Cx7b3dUn0ldxK85lJY6u6mt2gZc0nSFBWtpFMBZ1SSoeriJgMS9v5OFJXtl
-         uXwQ==
-X-Forwarded-Encrypted: i=1; AHgh+RpnTbNjTrbrqJT8pRVnybKBKXmcKbW+FBuGPEY+FBsz5mqaOJosauxhgzoUxlZ/Ea95XeS8GlJVxpb2cSNFSlCUyg0xQKk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCBtsqmdjHTSR52JXDsmBd0qvWf6tfGbTbT8dAj7+uM/pW7Exv
-	R7It/LQz2FfB5Spy/OQ/sayV/m5msgCXQQxwPlYc1WTrPrW1WNbvadzm3g7gCFENOGl7u6ZLCti
-	k3cdIS6uv/UwFmPKKQ/u29GK/q4e3UTl027QHeD9YegF1ySST8KLppybwKXc=
+        d=1e100.net; s=20251104; t=1786273327; x=1786878127;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=sc5V86l7BdE/6kSiloB+tbkV9FHRrzjo44RFbsUV2/g=;
+        b=ks73xBrpf91sSsx4B/xHnmsuBJWkRIInULfe62gdu99VMC3L0k5o10LTKFeCUvpte9
+         eWYaCG6wZC6Fo2y9tnTYGKixhtB7PBaRRokzlmQy6bzVX7VHMcm5L9oa5EYF6XapOG3+
+         ABjjiqW5a9CDVv8kmIGSJMVo3pH4fD5G4iFepqD3DRE0ngvWEWDlikVfyO5M8p92kZ/f
+         XCxu0uj8TK8Rtnsb9k6FPfiNIlQF2JnsGjiIroP7PMf0P8KLm9IuhWzxEY/7BQUk7cnr
+         NGQYjIBuEUF8o4KntvB4laqlgcLaSyk3kSMlj7g5fZUcI3/sW85Zuniv9JT22FqptKwo
+         XYhA==
+X-Forwarded-Encrypted: i=1; AHgh+Rq4tjLtmTlWMTeIxM3i1CGyn1RvC/eUwkfb6WRvKUqbkLaEStdeR9R5+aNULq06MKK2fpodeOgXiKqH26cY+FAfy68zfCE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy54v0hbcQbb2OI45JtRpE9np6n4cDLWg9UGKZc2fZUnutup93r
+	4dnZ/RcwifE/fHNbpJ7uFMAdD3EOgDSkuchP2qJwU51gtKTf1RGWPCiS3w1nHA==
+X-Gm-Gg: AR+sD12WkrAV9YcrJopk4P3wb5hpxi+4GMlXs8EEqesfUEl5EcDzU7ix6cfIcF+7OrU
+	noxL42EVOOF/onfhhj8k4xvK6bx1z6fWS4VYOoYLB937r/7rGTU6EajBNPvFVgkk7SvZmCDaTnO
+	Cc0JErdOa+SoNXFHSH3ZGp98SoxEJ0AZ1/yoXvIPC02IbwNdf3cEoTcZ8kpZv58jEmMfkaYXZkx
+	qX1tcVVMjx8UOCO3yitxp9kUm5SkJlKcqRwoV9MHxak7a8wTPis8WviDHadkJEay87zCn+N+NjK
+	393rhLBFzQuyD5B4s/tvvILZdZXbEaKimPDqpspND8n7vuZhrUnF2ziapAqU+5fqy0u7Okaf8QC
+	fL+hKgPAz8o86TC4vciuEzza8aFRcMCeBtmlBMea7ND2P12A0sYpSIer3eNmpjPIQdZAvsgLTwd
+	3h0GZFrjjY7T4xhaUi+ywDGKVvKJumOvpvjFeN/8Hda+/zdeJrPk4q8T3DsrpVOvXF1U/QTcxKx
+	Oe7a6PT+jE2rHg76MumW8NL
+X-Received: by 2002:a17:90b:46:b0:38e:67e1:15b with SMTP id 98e67ed59e1d1-3903c5363a5mr39906893a91.6.1786273327417;
+        Sun, 09 Aug 2026 04:02:07 -0700 (PDT)
+Received: from csl-conti-dell7858.ntu.edu.sg ([155.69.195.57])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-315beb88413sm50247194eec.18.2026.08.09.04.02.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Aug 2026 04:02:06 -0700 (PDT)
+From: Maoyi Xie <maoyixie.tju@gmail.com>
+To: David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: keys: request_key_auth shows a global pid in /proc/keys across pid namespaces
+Date: Sun,  9 Aug 2026 19:02:02 +0800
+Message-Id: <20260809110202.2180410-1-maoyixie.tju@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6808:3508:b0:495:f8a6:81f8 with SMTP id
- 5614622812f47-4afae0db125mr18192441b6e.13.1786234829031; Sat, 08 Aug 2026
- 17:20:29 -0700 (PDT)
-Date: Sat, 08 Aug 2026 17:20:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6a77c7cd.b50370da.49fe0.0031.GAE@google.com>
-Subject: [syzbot] [lsm?] [integrity?] possible deadlock in ima_file_truncate
-From: syzbot <syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com>
-To: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
-	roberto.sassu@huawei.com, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
-	zohar@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hi all,
 
-syzbot found the following issue on:
+I think request_key_auth leaks a global pid into /proc/keys. I would
+appreciate it if you could take a look.
 
-HEAD commit:    c21bb4193868 Merge tag 'for_linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=113c53b9580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=145fa60d73086782
-dashboard link: https://syzkaller.appspot.com/bug?extid=448c2e24b1ceff13ed2a
-compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
+request_key_auth_describe() prints the requestor's pid:
 
-Unfortunately, I don't have any reproducer for this issue yet.
+	if (key_is_positive(key))
+		seq_printf(m, " pid:%d ci:%zu", rka->pid, rka->callout_len);
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/dde4460fa7fd/disk-c21bb419.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e1fe13568a84/vmlinux-c21bb419.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/283184100427/bzImage-c21bb419.xz
+rka->pid is current->pid, captured in request_key_auth_new() when the
+auth key is made. It is a raw pid_t in the init pid namespace. But
+/proc/keys is read by whoever opens it, and their pid namespace can
+differ. The uid and gid on that line already go through seq_user_ns(m).
+The pid does not. So a reader in another pid namespace gets a number
+that means nothing there, or worse lands on a different task.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com
+Not everyone can read the line. The owner uid must map into the reader's
+user namespace, and the reader needs VIEW on the key. The auth key gives
+VIEW to the requestor's own uid and to a possessor. So the reader has to
+be the requestor's uid, in a different pid namespace. That fits a
+sandbox at the same uid, made with unshare, systemd-nspawn or
+bubblewrap. A default Docker container does not hit it, since it hides
+/proc/keys.
 
-======================================================
-WARNING: possible circular locking dependency detected
-syzkaller #0 Not tainted
-------------------------------------------------------
-syz.3.857/8643 is trying to acquire lock:
-ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_reset_action_flags security/integrity/ima/ima_main.c:708 [inline]
-ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_reset_action_flags security/integrity/ima/ima_main.c:697 [inline]
-ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_file_truncate+0xe6/0x190 security/integrity/ima/ima_main.c:723
+I found this with a static check for ids that reach userspace with no
+namespace translation. I reproduced it in a qemu VM on 7.1-rc1 as a
+normal user, no hardware or kernel changes needed. The reproducer calls
+request_key, then reads /proc/keys from a sibling pid namespace. Before
+the patch it reads the requestor's global pid, which does not exist in
+that namespace. After the patch it reads pid 0, since the requestor has
+no pid there. There is no keyrings selftest in the tree, so this is the
+only test.
 
-but task is already holding lock:
-ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: do_open fs/namei.c:4693 [inline]
-ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: path_openat+0x2929/0x4280 fs/namei.c:4863
+I am happy to send a patch. The raw pid_t cannot be translated later. So
+I stored a struct pid and print it with pid_nr_ns, the way the uid is
+already scoped.
 
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #4 (sb_writers#6){.+.+}-{0:0}:
-       lock_acquire kernel/locking/lockdep.c:5868 [inline]
-       lock_acquire+0x1b9/0x370 kernel/locking/lockdep.c:5825
-       percpu_down_read_internal include/linux/percpu-rwsem.h:53 [inline]
-       percpu_down_read_freezable include/linux/percpu-rwsem.h:83 [inline]
-       __sb_start_write include/linux/fs/super.h:19 [inline]
-       sb_start_write include/linux/fs/super.h:125 [inline]
-       mnt_want_write+0x6f/0x410 fs/namespace.c:494
-       open_last_lookups fs/namei.c:4597 [inline]
-       path_openat+0xad9/0x4280 fs/namei.c:4860
-       do_file_open+0x20e/0x430 fs/namei.c:4892
-       file_open_name+0x1c3/0x3e0 fs/open.c:1326
-       filp_open+0x2e/0x50 fs/open.c:1343
-       nvmet_file_ns_enable+0x95/0x420 drivers/nvme/target/io-cmd-file.c:41
-       nvmet_ns_enable+0x35f/0x5d0 drivers/nvme/target/core.c:596
-       nvmet_ns_enable_store+0x11e/0x160 drivers/nvme/target/configfs.c:735
-       flush_write_buffer fs/configfs/file.c:207 [inline]
-       configfs_write_iter+0x302/0x4e0 fs/configfs/file.c:229
-       new_sync_write fs/read_write.c:595 [inline]
-       vfs_write+0x6ac/0x1050 fs/read_write.c:687
-       ksys_write+0x12a/0x250 fs/read_write.c:739
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0x115/0x870 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #3 (&subsys->lock){+.+.}-{4:4}:
-       lock_acquire kernel/locking/lockdep.c:5868 [inline]
-       lock_acquire+0x1b9/0x370 kernel/locking/lockdep.c:5825
-       __mutex_lock_common kernel/locking/mutex.c:646 [inline]
-       __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
-       nvmet_ns_device_path_store+0x57/0x1c0 drivers/nvme/target/configfs.c:536
-       flush_write_buffer fs/configfs/file.c:207 [inline]
-       configfs_write_iter+0x302/0x4e0 fs/configfs/file.c:229
-       new_sync_write fs/read_write.c:595 [inline]
-       vfs_write+0x6ac/0x1050 fs/read_write.c:687
-       ksys_write+0x12a/0x250 fs/read_write.c:739
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0x115/0x870 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (&p->frag_sem){.+.+}-{4:4}:
-       lock_acquire kernel/locking/lockdep.c:5868 [inline]
-       lock_acquire+0x1b9/0x370 kernel/locking/lockdep.c:5825
-       down_read+0x99/0x4c0 kernel/locking/rwsem.c:1574
-       fill_read_buffer fs/configfs/file.c:66 [inline]
-       configfs_read_iter+0x346/0x6f0 fs/configfs/file.c:88
-       __kernel_read+0x397/0xad0 fs/read_write.c:532
-       integrity_kernel_read+0x7e/0xb0 security/integrity/iint.c:28
-       ima_calc_file_hash_tfm+0x25e/0x350 security/integrity/ima/ima_crypto.c:222
-       ima_calc_file_hash+0x1e3/0x380 security/integrity/ima/ima_crypto.c:280
-       ima_collect_measurement+0x94f/0xb30 security/integrity/ima/ima_api.c:300
-       process_measurement+0xdfe/0x2350 security/integrity/ima/ima_main.c:425
-       ima_file_check+0xc3/0x110 security/integrity/ima/ima_main.c:685
-       security_file_post_open+0xc4/0x210 security/security.c:2755
-       do_open fs/namei.c:4702 [inline]
-       path_openat+0x985/0x4280 fs/namei.c:4863
-       do_file_open+0x20e/0x430 fs/namei.c:4892
-       do_sys_openat2+0x10f/0x1e0 fs/open.c:1368
-       do_sys_open fs/open.c:1374 [inline]
-       __do_sys_openat fs/open.c:1390 [inline]
-       __se_sys_openat fs/open.c:1385 [inline]
-       __x64_sys_openat+0x12d/0x210 fs/open.c:1385
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0x115/0x870 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&buffer->mutex){+.+.}-{4:4}:
-       lock_acquire kernel/locking/lockdep.c:5868 [inline]
-       lock_acquire+0x1b9/0x370 kernel/locking/lockdep.c:5825
-       __mutex_lock_common kernel/locking/mutex.c:646 [inline]
-       __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
-       configfs_read_iter+0x79/0x6f0 fs/configfs/file.c:86
-       __kernel_read+0x397/0xad0 fs/read_write.c:532
-       integrity_kernel_read+0x7e/0xb0 security/integrity/iint.c:28
-       ima_calc_file_hash_tfm+0x25e/0x350 security/integrity/ima/ima_crypto.c:222
-       ima_calc_file_hash+0x1e3/0x380 security/integrity/ima/ima_crypto.c:280
-       ima_collect_measurement+0x94f/0xb30 security/integrity/ima/ima_api.c:300
-       process_measurement+0xdfe/0x2350 security/integrity/ima/ima_main.c:425
-       ima_file_check+0xc3/0x110 security/integrity/ima/ima_main.c:685
-       security_file_post_open+0xc4/0x210 security/security.c:2755
-       do_open fs/namei.c:4702 [inline]
-       path_openat+0x985/0x4280 fs/namei.c:4863
-       do_file_open+0x20e/0x430 fs/namei.c:4892
-       do_sys_openat2+0x10f/0x1e0 fs/open.c:1368
-       do_sys_open fs/open.c:1374 [inline]
-       __do_sys_openat fs/open.c:1390 [inline]
-       __se_sys_openat fs/open.c:1385 [inline]
-       __x64_sys_openat+0x12d/0x210 fs/open.c:1385
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0x115/0x870 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}:
-       check_prev_add+0xeb/0xe60 kernel/locking/lockdep.c:3165
-       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
-       validate_chain kernel/locking/lockdep.c:3908 [inline]
-       __lock_acquire+0x136c/0x1a40 kernel/locking/lockdep.c:5237
-       lock_acquire kernel/locking/lockdep.c:5868 [inline]
-       lock_acquire+0x1b9/0x370 kernel/locking/lockdep.c:5825
-       __mutex_lock_common kernel/locking/mutex.c:646 [inline]
-       __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
-       ima_reset_action_flags security/integrity/ima/ima_main.c:708 [inline]
-       ima_reset_action_flags security/integrity/ima/ima_main.c:697 [inline]
-       ima_file_truncate+0xe6/0x190 security/integrity/ima/ima_main.c:723
-       security_file_truncate+0xf9/0x1e0 security/security.c:2771
-       handle_truncate fs/namei.c:4303 [inline]
-       do_open fs/namei.c:4704 [inline]
-       path_openat+0x3584/0x4280 fs/namei.c:4863
-       do_file_open+0x20e/0x430 fs/namei.c:4892
-       do_sys_openat2+0x10f/0x1e0 fs/open.c:1368
-       do_sys_open fs/open.c:1374 [inline]
-       __do_sys_openat fs/open.c:1390 [inline]
-       __se_sys_openat fs/open.c:1385 [inline]
-       __x64_sys_openat+0x12d/0x210 fs/open.c:1385
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0x115/0x870 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &ima_iint_mutex_key[depth] --> &subsys->lock --> sb_writers#6
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(sb_writers#6);
-                               lock(&subsys->lock);
-                               lock(sb_writers#6);
-  lock(&ima_iint_mutex_key[depth]);
-
- *** DEADLOCK ***
-
-1 lock held by syz.3.857/8643:
- #0: ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: do_open fs/namei.c:4693 [inline]
- #0: ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: path_openat+0x2929/0x4280 fs/namei.c:4863
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 8643 Comm: syz.3.857 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/16/2026
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x100/0x190 lib/dump_stack.c:120
- print_circular_bug.cold+0x178/0x1c7 kernel/locking/lockdep.c:2043
- check_noncircular+0x146/0x160 kernel/locking/lockdep.c:2175
- check_prev_add+0xeb/0xe60 kernel/locking/lockdep.c:3165
- check_prevs_add kernel/locking/lockdep.c:3284 [inline]
- validate_chain kernel/locking/lockdep.c:3908 [inline]
- __lock_acquire+0x136c/0x1a40 kernel/locking/lockdep.c:5237
- lock_acquire kernel/locking/lockdep.c:5868 [inline]
- lock_acquire+0x1b9/0x370 kernel/locking/lockdep.c:5825
- __mutex_lock_common kernel/locking/mutex.c:646 [inline]
- __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
- ima_reset_action_flags security/integrity/ima/ima_main.c:708 [inline]
- ima_reset_action_flags security/integrity/ima/ima_main.c:697 [inline]
- ima_file_truncate+0xe6/0x190 security/integrity/ima/ima_main.c:723
- security_file_truncate+0xf9/0x1e0 security/security.c:2771
- handle_truncate fs/namei.c:4303 [inline]
- do_open fs/namei.c:4704 [inline]
- path_openat+0x3584/0x4280 fs/namei.c:4863
- do_file_open+0x20e/0x430 fs/namei.c:4892
- do_sys_openat2+0x10f/0x1e0 fs/open.c:1368
- do_sys_open fs/open.c:1374 [inline]
- __do_sys_openat fs/open.c:1390 [inline]
- __se_sys_openat fs/open.c:1385 [inline]
- __x64_sys_openat+0x12d/0x210 fs/open.c:1385
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0x115/0x870 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f3e7519e0d9
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f3e7611c028 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007f3e75426090 RCX: 00007f3e7519e0d9
-RDX: 0000000000162e02 RSI: 0000200000000080 RDI: ffffffffffffff9c
-RBP: 00007f3e75235024 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f3e75426128 R14: 00007f3e75426090 R15: 00007ffc1113bee8
- </TASK>
-
+Thanks,
+Maoyi
+https://maoyixie.com/
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+diff --git a/include/keys/request_key_auth-type.h b/include/keys/request_key_auth-type.h
+index 01e42ee5f4099..464636278c4f8 100644
+--- a/include/keys/request_key_auth-type.h
++++ b/include/keys/request_key_auth-type.h
+@@ -22,7 +22,7 @@ struct request_key_auth {
+ 	const struct cred	*cred;
+ 	void			*callout_info;
+ 	size_t			callout_len;
+-	pid_t			pid;
++	struct pid		*pid;
+ 	char			op[8];
+ } __randomize_layout;
+ 
+diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
+index 282e09d8fa46c..e8d1037526b19 100644
+--- a/security/keys/request_key_auth.c
++++ b/security/keys/request_key_auth.c
+@@ -13,6 +13,8 @@
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
+ #include "internal.h"
++#include <linux/pid_namespace.h>
++#include <linux/proc_fs.h>
+ #include <keys/request_key_auth-type.h>
+ 
+ static int request_key_auth_preparse(struct key_preparsed_payload *);
+@@ -73,7 +75,10 @@ static void request_key_auth_describe(const struct key *key,
+ 	seq_puts(m, "key:");
+ 	seq_puts(m, key->description);
+ 	if (key_is_positive(key))
+-		seq_printf(m, " pid:%d ci:%zu", rka->pid, rka->callout_len);
++		seq_printf(m, " pid:%d ci:%zu",
++			   pid_nr_ns(rka->pid,
++				     proc_pid_ns(file_inode(m->file)->i_sb)),
++			   rka->callout_len);
+ }
+ 
+ /*
+@@ -113,6 +118,7 @@ static void free_request_key_auth(struct request_key_auth *rka)
+ 	if (rka->cred)
+ 		put_cred(rka->cred);
+ 	kfree(rka->callout_info);
++	put_pid(rka->pid);
+ 	kfree(rka);
+ }
+ 
+@@ -226,14 +232,14 @@ struct key *request_key_auth_new(struct key *target, const char *op,
+ 
+ 		irka = cred->request_key_auth->payload.data[0];
+ 		rka->cred = get_cred(irka->cred);
+-		rka->pid = irka->pid;
++		rka->pid = get_pid(irka->pid);
+ 
+ 		up_read(&cred->request_key_auth->sem);
+ 	}
+ 	else {
+ 		/* it isn't - use this process as the context */
+ 		rka->cred = get_cred(cred);
+-		rka->pid = current->pid;
++		rka->pid = get_pid(task_pid(current));
+ 	}
+ 
+ 	rka->target_key = key_get(target);
