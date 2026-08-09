@@ -1,75 +1,71 @@
-Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
+Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BAD3612CF
-	for <linux-security-module@vger.kernel.org>; Sun,  9 Aug 2026 15:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D37825A321
+	for <linux-security-module@vger.kernel.org>; Sun,  9 Aug 2026 15:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786290360; cv=none; b=vA1DqIPoVcMQCLIPE8fidi7+wJp4bjEEsCE5xoXpjAmXRMjWVfnkaDFV/NmH7/8wBZ8pV2hNDBaMgNfRTSNAHOqM3MOaLkNwPR1Jh4TsTjcF8sEgjxKLDYvCqiEvtlHGGPBdOobVFX/ospw6FttDx351/LmzU7He7FVwo5XVko8=
+	t=1786290809; cv=none; b=pGWsCFM5mNwwIEYUtT8O250lEdP4f4qvHynvCUd6iS+341WbDYf876DJlqEHMZC9Z6B9i7Ajsi5TvhLYsWOpmFYzSsIU/tfaOO3pUv2XMTC5UcPoPpecBGLrmmxf1NuCHtpjOIvxiESZtFAKtkfTwl/1ado/s8K6t/mnGkjFeDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786290360; c=relaxed/simple;
-	bh=9YgdDQB594YhY04UhKjFUKPBBqlh+WnhU+EuLELG1mM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V2DoR73mZH8MeW4HR9YXZqAfbnrfra06q8y0QBUbjhRDORIxgUl1FKYkasKgt3U5lD3bWj5YVMQ0wD4MvC4YAuq4Ou0duRQAiPouATyctW6AnnPwuBreX3PATgoSo2adM1Ls5MyM+cnNIwAS3v6GZ3QwTr3mwD1jVswlgfCClV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gORyc2qm; arc=none smtp.client-ip=74.125.224.50
+	s=arc-20240116; t=1786290809; c=relaxed/simple;
+	bh=lpJX2VvQWds7UaHqHKcqf3BhmVv6eto0XUKo9Ygdsp8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dz6MUzqlVQ5Bf088irf0bjXL5CI1+7tHhfCIvzxE+UUy8hKbhgMSbUQc7UyCB9ULIUIe2cpoHBg8Wm0TNYGabUN++gz25ZtS+g+qIA1wKQ1J62KouPm8eP9OUREXnVuwuPw7EqqovRyveFaa9UFSZTb2iAz3Rs/jnYYjm6njmcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V7S5D6Hc; arc=none smtp.client-ip=74.125.224.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gORyc2qm"
-Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-66807ba2f0fso1652269d50.3
-        for <linux-security-module@vger.kernel.org>; Sun, 09 Aug 2026 08:45:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7S5D6Hc"
+Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-664db84f074so1354617d50.0
+        for <linux-security-module@vger.kernel.org>; Sun, 09 Aug 2026 08:53:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786290358; x=1786895158; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=KdWOIkrtO8O1vO8qraAFeciOWzTCObEsIaLYBRcPpHo=;
-        b=gORyc2qmbXP0g1bSUjkEZFuu/Rp1MT14CSODKxzkB/2TRymuUkMr2dq+aHOJq4c2mI
-         QRuOZIxuoC4HaNtbFVDYT199l74E0sDq70r7+gf/4MDeAadp7Ao58JXG7ZIMwLiacb+4
-         F39sn2ZbuZACP/d3Ms0RD9Erv/rRiTfm9tSQNVRP4Db+5CLkmdjW3OxeVEAQMKiv2Q2L
-         Z2hXeptSTwB4FDcsv1ZhffDJBR4YrfS8ybpFT+Tm4VuMcmv9tSsCM191934wBqbVurKW
-         AQqP6lov9I/j+ql0GY89CzaAG2oVEw3/401lRkyEpiBJ/GeOU9IZIv9ZwQebmpnX7m8O
-         ZPlA==
+        d=gmail.com; s=20251104; t=1786290807; x=1786895607; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=S31dL65i3e1+Hl7HbOOOj3oDI7h8+o5Mt6vOzWfglv8=;
+        b=V7S5D6HcDiJdlLO7VJplPv8BCRrlg+bc/N8icRca2m1VCX2O8MIWqCWxv9lK/o6jBR
+         /W97tEJxggIbhMDscfzyWCqFG6gBfdo+NanifMSuNPcpo4aZ3wyRE4hksDWEBPabWU/r
+         biRtDpUVzUh4jNxgCSTVXZ9HCf7wYhlp02LJJEAqDTmlHMF1I/MLMI0rqVx3HQFGuDrH
+         Uz0e9ZvTULnLkBD0R+oMt/ngIkGOgZrnF4fqYF0//nE44tBAwKmOkVhMD7bkj9LORBmd
+         D0Du0KSQF7yw6rbugydH17B/LCdiW9dTahRJHnxv02uR+tiKCip5ld4ARgVS/lte0eZH
+         zZ4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786290358; x=1786895158;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=KdWOIkrtO8O1vO8qraAFeciOWzTCObEsIaLYBRcPpHo=;
-        b=MqjGV14vcXBHt1O8F59612/yMx0Xuuyvs1eMV1kqeNLTe9CKsrg/vXmJjJim5xiRm0
-         I4+47joJxmefXztcO9QLYrrWHXm0WYUiNDWvwhIIww/kbP1ANuagpsxZkfyrxZhiMHsw
-         w7bkCRwsdgGfLgSMqgNW5GRgSOzZvmAH+nMe5Xx2KuNK3HoD8+VZfavQt6Al4xQwh0eA
-         GejDCxor5ii6V/DOlVJ+stlx+Wq97GJ03nJRU55EMkZqjaoILVKj9dqYLKh/6thgTxn4
-         ybgugwLvnjn2jaHhtmvRnPOXoyrtQ9HTLmARnSvKtsmXeC7D8tbqGHd2sIgeT9meoq8f
-         REBg==
-X-Forwarded-Encrypted: i=1; AHgh+Rqm30pOxl43OFFLjnjsYmXoih9NpWTBGSNTNEh1rFHhZq/Nea6XVxzXpK7YK6adL9efb5UBscAWuf1qilRFdA3TYsS54L4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn7lj8XbRuZShM1A1Zloee8UaOVJQiE3wCv9Ip66uvYkiChk+o
-	utUbomW0emhxK73VaJriuuK298wR6Yje3DLhlQRMXd9L/kuyNM0OQh3/
-X-Gm-Gg: AR+sD12DhCDqLyAy+SBTHcUunAsliBAi3wPfBGarrDe7WJvn2c2yI9Sja1GZBb4yiF2
-	J9j+oEZGcok1wDK3zFSFsO1yXd5VbLPwPMu/KBiE832hhwisN7n0eYuzMDBhqJEBbuyo79T2vHO
-	dFXO6jbgxJ0nGBKV8nqF34UA/QUG2JzdyaJxTifEWA9rhemmw500FESJ8T3G3vnasypjMRi2Siu
-	S9ZkKHUKOIAVJ5nTIQalJi4dg79KPHTB6azs4lSckdWfcVV+bSbdZ71sg9jHgaBRaIIlzX1wnch
-	kEyLEYRNBIEc9HLFYPumwZB3kLwqVZ7bnUujYKbwhlXrbGDEDdPO22eOL9s3V2y3mVTGKragiBe
-	5cZdV82h6JPceaITTxmhVpM8Btmm/xrN/Cv4ekc3MEo4a+XX9fKg74CGucbMrHJkoFxSMVcANlL
-	gLEsqib2s9SFEGuPLK4BLeUgY73y/6liPKl15JJ3rgeVentVS/5gVIzNuXgaG3umNbUYBEvvLXS
-	zNC6R8EgyIHNqa3qOLMOx6TKWOnUn+7gg==
-X-Received: by 2002:a05:690e:1552:10b0:666:541f:6355 with SMTP id 956f58d0204a3-66ad72fa49amr6636286d50.35.1786290357741;
-        Sun, 09 Aug 2026 08:45:57 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1786290807; x=1786895607;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=S31dL65i3e1+Hl7HbOOOj3oDI7h8+o5Mt6vOzWfglv8=;
+        b=MvFI/1KR1y8SczCXyOnxENHPoL4eXA+vqucoCWj0+hEjMywdO/OZYWP48mzarOr4DM
+         ocix3bkG5zgwhUEZzhU/0GCQPu374lzwfLQI9XM0NvegsHvt+eOdHujfCnckYSFr4/Jy
+         XYlgxCYlykNW62rf229o6q9Rok93wvgghc6yvGdLKiLgoL6tnHraJwEPX/D1SLAdN26+
+         tHVb5fa3lgqx5BsoJ8cPALNWT/GYHKvhpY6mCV7S7XU508yJY3BmuOFc/4P+n87B7oz0
+         OAeOguAdSvnAmq7TtSRh+50LVW+KEC3Y5nEjTDcWVmrqZm9ePpieUhBJyLxNLoDscc65
+         Dh2A==
+X-Forwarded-Encrypted: i=1; AHgh+Rq9dKkaIvbleVVa6+YdGHRx8gWLIMFXMEKT/kHBD6IJpVxy7jEVHwLscfF2k849qZSu352qTV+yopXbt2NrJfBelAR4Q20=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxxAXi9ArAMwOdXNkLFmbZtw+f4Ok/Ncd0dXw1kbeeQ0jtMOHm
+	pHUMCmKR+5IXbnIRS2v12EjIhAxJeyblIIoZLVP8DfWsxzLMV8UGd5IG3fIl3+9h
+X-Gm-Gg: AR+sD10XP+vPhLhSWyAgaJtk9Fk69DUCThnzr4lsxtFcoSDsRIeVA+SwPuRU9xsHz+Y
+	nH/YiNT2D5rnxYAjGVK+fLsHpdJ2pb/tbFT+06Zluk0mPD+m3rDigoP9ueWehAK8UAH/JaJk/5E
+	YKz/W3o6b4CAtbRgbPYrmghE/7Y83F6mtuI2/NO2HQmR8WrPsMR8yrkgooMAIbNYuuVuQelX3mP
+	I4ft0MWboBFGJg0yQ0deGNi7wBSH9ngWxU3NXbLhiolJNgLanlB5Ah08RJ4gicgFcoyjOApxGzs
+	f0bPr7jkaauh3oKA+C5dSAn274JBYB3rpvyTQpqiakUHOKDKLKBpnP3u+FwDK+xqmRpmXxwQSN4
+	wgb9gntmC0gMXfq6XHIeWFuU7UmppepaUPwUZeu1OTGfGuY440hGzVjXmbXHOtrNdjsuOrNXu7Z
+	FQdxdrsAHGKdXt90eH++rcDbbcBdXi+WuX1HZzQcAi17dUx26rEziaCsA+aYZ/lEnUZMmaGEgg0
+	/0/AkkQMe0hMdJGKVh7xFg=
+X-Received: by 2002:a05:690c:6209:b0:81e:7d90:5673 with SMTP id 00721157ae682-820224ace00mr223556707b3.26.1786290806951;
+        Sun, 09 Aug 2026 08:53:26 -0700 (PDT)
 Received: from zenbox ([2600:1700:18fb:6011:4665:53b0:3ac9:3545])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-66acacdbea9sm4838001d50.3.2026.08.09.08.45.56
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-823f577ddf8sm41741927b3.30.2026.08.09.08.53.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Aug 2026 08:45:57 -0700 (PDT)
+        Sun, 09 Aug 2026 08:53:26 -0700 (PDT)
+Date: Sun, 9 Aug 2026 11:53:25 -0400
 From: Justin Suess <utilityemal77@gmail.com>
-To: gnoack3000@gmail.com,
-	mic@digikod.net
-Cc: linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Justin Suess <utilityemal77@gmail.com>
-Subject: [PATCH v4 5/5] samples/landlock: Add LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS to sampler
-Date: Sun,  9 Aug 2026 11:45:23 -0400
-Message-ID: <20260809154544.1253100-6-utilityemal77@gmail.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260809154544.1253100-1-utilityemal77@gmail.com>
+To: gnoack3000@gmail.com, mic@digikod.net
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v4 0/5] Implement LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
+Message-ID: <anih6rJdlAuSaW-Q@zenbox>
 References: <20260809154544.1253100-1-utilityemal77@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -77,71 +73,24 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260809154544.1253100-1-utilityemal77@gmail.com>
 
-Add LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS to the default flag setting.
-Gate the flag on the ABI version, but do not expose any userspace
-control over this flag as it has no practical effect on the resulting
-sandbox.
+On Sun, Aug 09, 2026 at 11:45:18AM -0400, Justin Suess wrote:
+> Howdy
+> 
+> This series adds a new landlock_restrict_self(2) flag:
+> LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS.
+>
+gmail for some reason in their infinite wisdom decided to drop my second
+patch 2/5 (the core patch of this series) for seemengly no reason. At
+least they sent me a bounce email...
 
-Signed-off-by: Justin Suess <utilityemal77@gmail.com>
----
+Anyways I'll RESEND the series later and hope I don't get bounced again...
 
-Notes:
-    v3->v4:
-        - No change.
-
- samples/landlock/sandboxer.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
-
-diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-index ac71019e6212..030583273f3f 100644
---- a/samples/landlock/sandboxer.c
-+++ b/samples/landlock/sandboxer.c
-@@ -369,7 +369,7 @@ static int add_quiet_access(const char *const env_var,
- 	return 0;
- }
- 
--#define LANDLOCK_ABI_LAST 10
-+#define LANDLOCK_ABI_LAST 11
- 
- #define XSTR(s) #s
- #define STR(s) XSTR(s)
-@@ -453,8 +453,9 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 		.quiet_scoped = 0,
- 	};
- 	bool quiet_supported = true;
--	int supported_restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON;
--	int set_restrict_flags = 0;
-+	int supported_restrict_flags = LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON |
-+				       LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS;
-+	int set_restrict_flags = LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS;
- 
- 	if (argc < 2) {
- 		fprintf(stderr, help, argv[0]);
-@@ -545,6 +546,12 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 			  LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP);
- 		/* Removes quiet flags for ABI < 10 later on. */
- 		quiet_supported = false;
-+		__attribute__((fallthrough));
-+	case 10:
-+		/* Removes LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS for ABI < 11 */
-+		supported_restrict_flags &=
-+			~LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS;
-+		set_restrict_flags &= ~LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS;
- 
- 		/* Must be printed for any ABI < LANDLOCK_ABI_LAST. */
- 		fprintf(stderr,
-@@ -673,7 +680,8 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 		}
- 	}
- 
--	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
-+	if (!(set_restrict_flags & LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS) &&
-+	    prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
- 		perror("Failed to restrict privileges");
- 		goto err_close_ruleset;
- 	}
--- 
-2.55.0
-
+Justin
+> The flag sets the no_new_privs attribute of the calling thread only
+> once the enforcement of the ruleset succeeded: no_new_privs is set if
+> and only if the landlock_restrict_self(2) call succeeds.
+> 
