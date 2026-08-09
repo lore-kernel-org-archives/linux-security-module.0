@@ -1,207 +1,296 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+Received: from mail-oi1-f205.google.com (mail-oi1-f205.google.com [209.85.167.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4144570C4
-	for <linux-security-module@vger.kernel.org>; Fri,  7 Aug 2026 22:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35DAB1E1E16
+	for <linux-security-module@vger.kernel.org>; Sun,  9 Aug 2026 00:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786140015; cv=none; b=pOBWZG5R8R+vZKi1i0zioZ3xAjq+72aPQb+VczMTbdd4CJJQXKfoqC1FH7wuknWVX3H8lI3nV8nKbYS9BKe5ThFXLo7h0/rBWsFbpuKVDFqjCeuzjH0Yb+1KK+i1pfe5UtT03LT519I0/6dXYdoBJXs5RlElxAH40qRjVtEu0N0=
+	t=1786234832; cv=none; b=tSeqqTUNt16PTRnK5Cd2o4kLhfImlq15g30PNZZ+9V5TtCOBBYYP3a6eU2/ipWnhJ9RluTpIwpL9GlTb10Ggnlz97YyLjuwYsTsgDJGJ9bGaRcwexRqvez4zFYKSn63D1uP/dXVXBnDuYmgE6KhwL4uJflJ+rNfo5Fai9JuN76s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786140015; c=relaxed/simple;
-	bh=nU54FZpSFFu4P2NKSM0v6X4FpyUhXD5t5Vyi5Gc8bR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RiCeBpCqqeseoF2Yhyc9Us732U0ly3/+BnHdtrLPCatvPNI7REycS19eawYfMxy+6C0koAeAVv/rzvs6X6XFEcYdTumM8ANOeCeAiZP6SU0Vgybt8ZW+lsnvcCDnEjHKdWH0rJikcLOyAwsM0rSp2vkDwtXii9BVpfataJqpSD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e6K4QxPa; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e6K4QxPa"
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-80bb41f7f3cso43992497b3.2
-        for <linux-security-module@vger.kernel.org>; Fri, 07 Aug 2026 15:00:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786140012; x=1786744812; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=n/SAijTGHhHzvlBvPCx6AlmHoiuAwRn2jXN8unnNebg=;
-        b=e6K4QxPaPL7ddQfOdqkiVqnY2amb//lhs92Dm1xvhj6krBkHfsOnuc/eIP4UvijX6c
-         xckK9f/7tXOYzufaKcQXS0p5NR1JCSIC6x4D6nx7iQTGbMkk6NsA8R4R/6NqHc3EuNVY
-         kcOLCyikGMiKC5u1iInrygqxbKZJQ5tO9QtE1r67fjFCFuQ84AgFu7yuaCiJi8nJrrVk
-         rxjhmo2B4p8CsxnCvBIdDSIpUHkRRrmAz9q5DpIC0ZloP2394Fa8Bb7XrGbgdMTK8I7V
-         0OuW+SB0e2gaTfA1iTteMwzqsIOXYqzrUTbzaonMAxebZ2yb794a8itm+FdbDyw9DuAy
-         wgrg==
+	s=arc-20240116; t=1786234832; c=relaxed/simple;
+	bh=ivoXILn/bOVVyrdWZIYuW9j3P76rlsgPYTO2OZY+LFg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hW1Z1UgluuZd+MyhAuhtE/tFIu7aM826nYPX8tHXOkcyj/gmbf9p+L46uAS7rfhR929Nj5KkIFw/9uoRfzwtfhHqvDABOTk3//GWcQEaM3ZPk3dMeSesfUpIFmjhulNXmcoTQ9Aq7UM3bB4WVwyjEcKGG6mYu7UeyUFyBr4JH5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oi1-f205.google.com with SMTP id 5614622812f47-4ab4ca7ce3fso578410b6e.0
+        for <linux-security-module@vger.kernel.org>; Sat, 08 Aug 2026 17:20:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786140012; x=1786744812;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=n/SAijTGHhHzvlBvPCx6AlmHoiuAwRn2jXN8unnNebg=;
-        b=S6jp2FWM99o2mbVhGpuDsx4PKBzy+dfCJ6N9I4FxdJ38mLAnGdV6jXjvxUlyycmWZn
-         O+u4m3WoQn12kOtncxVWBt7RURuWJ9AwRN9I2oRjq4ojceKjhIOdYYb3X+q1GjAhaS9q
-         8JRGMV1Fj7w7qpeQxYipfQzaElEItb3PcPEPcCX7mvySw7brUkS7RF9/Hb2gLSjPrwak
-         mVTEMbKKeHGfb7CAMd/mdwCsgXBApSpeGw8hVOV4V623rOyHbbOTiwylRbuSB4N5b6rl
-         amjPhv60UjsiO7jptZPewbfJDJj5rI0YW/EmVa3eCgQuNZgJivxyQdKqAoUzoMKrklx6
-         YBiA==
-X-Forwarded-Encrypted: i=1; AHgh+RqLsWaR6xwBdqdIO3h1yMkpVGDYNytzz9/QC7HUy3IMd0sTC9Q7vzJYw5HuFoimxFRu9oXLJZTItkNBoqcStgfgIL642q0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRUaZTyETIdQeDK3CvUMlneZSt30K21UjqqC8HrzhcnTsGzznR
-	VK6sjZqGU0nOoXTuQLN6F/l/48XTHSxymOUMofFIAb/G55ETAoygY1pq
-X-Gm-Gg: AR+sD12G2vG3Q09rpAzK+0jMc7GEo3IYLYLdDNNB9Gu4H4gYOWd0zn5wqBbsC8fhflo
-	sE6jn22FsMxIZTZ9k+8+0EyKJQHlkl/sr4o2Gvq/t4pGwtgsBJDihdCFBqvcyZDxapoySPAebha
-	KhEwZfNnrA/IgJUwWAstsE80YKUO44DSDOGQBUSsR58Sq/0/IGCTW/7ibsSa9mkiIWvL+5zMdNN
-	3i/StXl+lS3XZR8s6jJb6GvqaEn4oiYD80Fh5KbvTykiBR0xbKDMErH3ku36KgDmbrTT+rFfaZK
-	pDP59PRXJD1jZjYBDAdB0dksvxoRdK5ZOfGhf6LsqV01gzzC1KQWKtSCfK0fcyz5PmjapvMU8yi
-	8GiJRyAmEmcqWLsuXfP6YImO+Q1KQ5Fznml6SvXWZzAOPwLAx7w0pIjLta81jdN2Gll0P99SrtD
-	8Uf6kw9oUBdhfTmPrYlbl2/RPWucprkyzMnKcuyQQ6Nx/2v/ddQVFxwW+My783+12zbWHwE6kne
-	nAO1MaYUvxxxN6U7wGIQs0=
-X-Received: by 2002:a05:690c:9689:b0:80c:3848:bde5 with SMTP id 00721157ae682-82258a8f2dbmr74464677b3.13.1786140012233;
-        Fri, 07 Aug 2026 15:00:12 -0700 (PDT)
-Received: from zenbox ([2600:1700:18fb:6011:30b1:d824:50d0:7b8b])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-823f07a3246sm16925817b3.17.2026.08.07.15.00.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Aug 2026 15:00:11 -0700 (PDT)
-Date: Fri, 7 Aug 2026 18:00:10 -0400
-From: Justin Suess <utilityemal77@gmail.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	kpsingh@kernel.org, mic@digikod.net, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	kees@kernel.org, gnoack@google.com, jack@suse.cz, song@kernel.org, 
-	yonghong.song@linux.dev, martin.lau@linux.dev, m@maowtm.org, bpf@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 00/13] BPF interface for applying Landlock
- rulesets
-Message-ID: <anZIGtlHvTaidOEC@zenbox>
-References: <20260731022047.189137-1-utilityemal77@gmail.com>
- <CAHC9VhSSzNBCSvy4cQHh6OOM4-EvHF+bmrB9=V1y=Lj53RvxQQ@mail.gmail.com>
- <anOnaGmBTlBW9xwj@zenbox>
- <CAHC9VhRBYMaNBPfnV=TK8g-M7H_qsBu=CsVVOwnAzTPAkpAZaA@mail.gmail.com>
- <anPAbFzuLOizAhm-@zenbox>
- <CAHC9VhSJ1q59RUtEEMAmiZLLLi92=XO1tkd9z0fr5T7vuhoy8Q@mail.gmail.com>
+        d=1e100.net; s=20251104; t=1786234829; x=1786839629;
+        h=content-type:to:from:subject:message-id:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=NfypjNMIaYwwS17MrECqzmvkWAUZkC8M/oY73fQWl0U=;
+        b=Hq64U8ZjA8e+b1NuEVeq3UQ/nUn69xaxYui6yaLo6wvjrjcSBMDOQmgvhOyaKvRzej
+         1J7PeS/MuWVrtP89V6iLzG/4o3X4H22Iikh/zdOL8dUUiPBrFe9CIF25GqSy1B6SbrKz
+         BcnhBGJXbbKHY8VKtz9LgUztE07Nr+NDuq+ZYTvShfJaCW//POr2ouXxATKDMmuI5g6s
+         OpstysZ4pigv2SyAb+vBH5MO3m/FkoKVZRWJi1pi5m9P6PMYp1ejzADzSxf7nitDNDrP
+         PQNLTBLC0Cx7b3dUn0ldxK85lJY6u6mt2gZc0nSFBWtpFMBZ1SSoeriJgMS9v5OFJXtl
+         uXwQ==
+X-Forwarded-Encrypted: i=1; AHgh+RpnTbNjTrbrqJT8pRVnybKBKXmcKbW+FBuGPEY+FBsz5mqaOJosauxhgzoUxlZ/Ea95XeS8GlJVxpb2cSNFSlCUyg0xQKk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCBtsqmdjHTSR52JXDsmBd0qvWf6tfGbTbT8dAj7+uM/pW7Exv
+	R7It/LQz2FfB5Spy/OQ/sayV/m5msgCXQQxwPlYc1WTrPrW1WNbvadzm3g7gCFENOGl7u6ZLCti
+	k3cdIS6uv/UwFmPKKQ/u29GK/q4e3UTl027QHeD9YegF1ySST8KLppybwKXc=
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhSJ1q59RUtEEMAmiZLLLi92=XO1tkd9z0fr5T7vuhoy8Q@mail.gmail.com>
+X-Received: by 2002:a05:6808:3508:b0:495:f8a6:81f8 with SMTP id
+ 5614622812f47-4afae0db125mr18192441b6e.13.1786234829031; Sat, 08 Aug 2026
+ 17:20:29 -0700 (PDT)
+Date: Sat, 08 Aug 2026 17:20:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6a77c7cd.b50370da.49fe0.0031.GAE@google.com>
+Subject: [syzbot] [lsm?] [integrity?] possible deadlock in ima_file_truncate
+From: syzbot <syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com>
+To: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
+	roberto.sassu@huawei.com, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 07, 2026 at 04:36:20PM -0400, Paul Moore wrote:
-> On Wed, Aug 5, 2026 at 8:32 PM Justin Suess <utilityemal77@gmail.com> wrote:
-> > On Wed, Aug 05, 2026 at 06:51:56PM -0400, Paul Moore wrote:
-> > > On Wed, Aug 5, 2026 at 5:37 PM Justin Suess <utilityemal77@gmail.com> wrote:
-> > > > On Fri, Jul 31, 2026 at 04:30:39PM -0400, Paul Moore wrote:
-> > > > > On Thu, Jul 30, 2026 at 10:21 PM Justin Suess <utilityemal77@gmail.com> wrote:
-> > > > > [...]
-> > > > > As you may, or may not have seen, there is currently an ongoing debate
-> > > > > regarding the location of LSM kfuncs that will impact this patchset.
-> > > > > Sadly, we don't appear to be approaching an agreement on this issue
-> > > > > which introduces some additional risk to this patchset.  We'll have to
-> > > > > see how that ends up, but I just wanted you to be aware of the
-> > > > > situation.
-> > > >
-> > > > Quick aside question: Would security/bpf/ be a better place for these
-> > > > type of kfuncs?
-> > > >
-> > > > security/bpf/bpf_lsm_kfuncs.c could be for LSM framework kfuncs,
-> > > > and each LSM could maintain their own security/bpf/<lsm>_kfuncs.c
-> > > > for kfuncs dealing with lsm-specific types.
-> > >
-> > > This gets back to the other issue in the patchset that we've
-> > > discussed: general LSM interfaces vs Landlock specific interfaces.
-> > > There are plenty of reasons why we don't support the kernel calling
-> > > directly into individual LSMs, and from my perspective this is another
-> >
-> > I'm 100% on board with the no calling directly into individual LSMs part.
-> >
-> > > instance of that.  Here it just happens to be that the kernel caller
-> > > was written in BPF and not C (or Rust for that matter).
-> >
-> > The intention is the opposite. The point of the separate directory is
-> > that the kfuncs can never call into an individual LSM, they only get
-> > the LSM framework API in <linux/security.h>.
-> >
-> > Every kfunc is a thin wrapper over the generic policy kptr hooks:
-> >
-> >     bpf_landlock_get_ruleset_from_fd()
-> >       -> security_policy_kptr_from_fd(LSM_ID_LANDLOCK, ...)
-> >         -> Landlock's hook implementation
-> >
-> > So kfunc -> generic lsm hook -> individual LSM, same as any other
-> > caller in the kernel.
-> 
-> Not exactly.  That "bpf_*landlock*_XXX" kfuncs are a move away from an
-> LSM agnostic API and not something we currently do in the kernel.
-> Some will, and have, argued that this is more akin to the Landlock
-> syscalls, but I see (at least) two problems with that comparison: the
-> kfuncs being presented aren't syscalls, they are cross-subsystem
-> kernel function calls; the Landlock syscalls were created in a
-I see the argument for normal in-tree kernel interfaces.
+Hello,
 
-Unlike normal kernel interfaces, kfuncs:
+syzbot found the following issue on:
 
-1. Can exist without in-tree callers.
-2. Are explicitly allowed to change or be removed at any time [1].
-3. Can't break builds or other in-tree subsystems when they do.
+HEAD commit:    c21bb4193868 Merge tag 'for_linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=113c53b9580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=145fa60d73086782
+dashboard link: https://syzkaller.appspot.com/bug?extid=448c2e24b1ceff13ed2a
+compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
 
-This isn't hypothetical: the entire KF_KPTR_GET class
-(bpf_task_kptr_get(), bpf_cgroup_kptr_get(), the flag itself) was
-removed and replaced with a better abstraction within about a year
-of introduction.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-If Landlock (or any LSM) dies, there's zero uapi/in-tree cost to
-removing the kfuncs, unlike syscalls which are burned into the uapi
-forever, or ones with in-tree callers where we can break builds.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/dde4460fa7fd/disk-c21bb419.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e1fe13568a84/vmlinux-c21bb419.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/283184100427/bzImage-c21bb419.xz
 
-I argue that the transient, low-commitment nature of kfuncs mitigates
-maintainability issues that arise from lsm-specific interfaces with
-in-tree callers. (which we are both opposed to).
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+448c2e24b1ceff13ed2a@syzkaller.appspotmail.com
 
-> different time, today these would need to be reframed as LSM
-> syscalls*.
->
-LSM-specific interfaces exist both in the LSM syscalls and in my design.
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+syz.3.857/8643 is trying to acquire lock:
+ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_reset_action_flags security/integrity/ima/ima_main.c:708 [inline]
+ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_reset_action_flags security/integrity/ima/ima_main.c:697 [inline]
+ffff888037be2480 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: ima_file_truncate+0xe6/0x190 security/integrity/ima/ima_main.c:723
 
-The only disagreement we have is the abstraction layer that the
-"LSM-specific" part comes into effect.
+but task is already holding lock:
+ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: do_open fs/namei.c:4693 [inline]
+ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: path_openat+0x2929/0x4280 fs/namei.c:4863
 
-1) In the lsm syscalls, it's inside of the lsm_ctx and the LSM_ID.
+which lock already depends on the new lock.
 
-2) In my design for kfuncs, it's in the function signature and the kptr
-types.
 
-It's fine to have binary blobs like lsm_ctx where we always assume
-userspace is untrusted. They can pass garbage through the syscall that
-we have to handle, which is expected.
+the existing dependency chain (in reverse order) is:
 
-BPF and kfuncs are a ring-0, kernel internal interface, trusted after
-verification. You can't cast pointers, or deserialize them from binary blobs
-like lsm_ctx in BPF. The ownership and types of pointers must be verified at
-load time. kfuncs, their annotations, (KF_ACQUIRE/KF_RELEASE) and kptrs are the
-primary interface by which BPF checks correctness.
+-> #4 (sb_writers#6){.+.+}-{0:0}:
+       lock_acquire kernel/locking/lockdep.c:5868 [inline]
+       lock_acquire+0x1b9/0x370 kernel/locking/lockdep.c:5825
+       percpu_down_read_internal include/linux/percpu-rwsem.h:53 [inline]
+       percpu_down_read_freezable include/linux/percpu-rwsem.h:83 [inline]
+       __sb_start_write include/linux/fs/super.h:19 [inline]
+       sb_start_write include/linux/fs/super.h:125 [inline]
+       mnt_want_write+0x6f/0x410 fs/namespace.c:494
+       open_last_lookups fs/namei.c:4597 [inline]
+       path_openat+0xad9/0x4280 fs/namei.c:4860
+       do_file_open+0x20e/0x430 fs/namei.c:4892
+       file_open_name+0x1c3/0x3e0 fs/open.c:1326
+       filp_open+0x2e/0x50 fs/open.c:1343
+       nvmet_file_ns_enable+0x95/0x420 drivers/nvme/target/io-cmd-file.c:41
+       nvmet_ns_enable+0x35f/0x5d0 drivers/nvme/target/core.c:596
+       nvmet_ns_enable_store+0x11e/0x160 drivers/nvme/target/configfs.c:735
+       flush_write_buffer fs/configfs/file.c:207 [inline]
+       configfs_write_iter+0x302/0x4e0 fs/configfs/file.c:229
+       new_sync_write fs/read_write.c:595 [inline]
+       vfs_write+0x6ac/0x1050 fs/read_write.c:687
+       ksys_write+0x12a/0x250 fs/read_write.c:739
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0x115/0x870 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-An LSM-agnostic bpf_lsm_policy_from_fd(lsm_id, fd) multiplexer would
-lock every current and future LSM's policy object into a single set of
-lifetime and context rules, and would move type errors from load time
-to runtime.
+-> #3 (&subsys->lock){+.+.}-{4:4}:
+       lock_acquire kernel/locking/lockdep.c:5868 [inline]
+       lock_acquire+0x1b9/0x370 kernel/locking/lockdep.c:5825
+       __mutex_lock_common kernel/locking/mutex.c:646 [inline]
+       __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
+       nvmet_ns_device_path_store+0x57/0x1c0 drivers/nvme/target/configfs.c:536
+       flush_write_buffer fs/configfs/file.c:207 [inline]
+       configfs_write_iter+0x302/0x4e0 fs/configfs/file.c:229
+       new_sync_write fs/read_write.c:595 [inline]
+       vfs_write+0x6ac/0x1050 fs/read_write.c:687
+       ksys_write+0x12a/0x250 fs/read_write.c:739
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0x115/0x870 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-This would prove to be less maintainable, because the main way of
-ensuring correctness (kfunc signatures + kptr types) would be taken
-away.
+-> #2 (&p->frag_sem){.+.+}-{4:4}:
+       lock_acquire kernel/locking/lockdep.c:5868 [inline]
+       lock_acquire+0x1b9/0x370 kernel/locking/lockdep.c:5825
+       down_read+0x99/0x4c0 kernel/locking/rwsem.c:1574
+       fill_read_buffer fs/configfs/file.c:66 [inline]
+       configfs_read_iter+0x346/0x6f0 fs/configfs/file.c:88
+       __kernel_read+0x397/0xad0 fs/read_write.c:532
+       integrity_kernel_read+0x7e/0xb0 security/integrity/iint.c:28
+       ima_calc_file_hash_tfm+0x25e/0x350 security/integrity/ima/ima_crypto.c:222
+       ima_calc_file_hash+0x1e3/0x380 security/integrity/ima/ima_crypto.c:280
+       ima_collect_measurement+0x94f/0xb30 security/integrity/ima/ima_api.c:300
+       process_measurement+0xdfe/0x2350 security/integrity/ima/ima_main.c:425
+       ima_file_check+0xc3/0x110 security/integrity/ima/ima_main.c:685
+       security_file_post_open+0xc4/0x210 security/security.c:2755
+       do_open fs/namei.c:4702 [inline]
+       path_openat+0x985/0x4280 fs/namei.c:4863
+       do_file_open+0x20e/0x430 fs/namei.c:4892
+       do_sys_openat2+0x10f/0x1e0 fs/open.c:1368
+       do_sys_open fs/open.c:1374 [inline]
+       __do_sys_openat fs/open.c:1390 [inline]
+       __se_sys_openat fs/open.c:1385 [inline]
+       __x64_sys_openat+0x12d/0x210 fs/open.c:1385
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0x115/0x870 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-To avoid strawman style arguments, I ask what you would see as
-an alternative interface?
+-> #1 (&buffer->mutex){+.+.}-{4:4}:
+       lock_acquire kernel/locking/lockdep.c:5868 [inline]
+       lock_acquire+0x1b9/0x370 kernel/locking/lockdep.c:5825
+       __mutex_lock_common kernel/locking/mutex.c:646 [inline]
+       __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
+       configfs_read_iter+0x79/0x6f0 fs/configfs/file.c:86
+       __kernel_read+0x397/0xad0 fs/read_write.c:532
+       integrity_kernel_read+0x7e/0xb0 security/integrity/iint.c:28
+       ima_calc_file_hash_tfm+0x25e/0x350 security/integrity/ima/ima_crypto.c:222
+       ima_calc_file_hash+0x1e3/0x380 security/integrity/ima/ima_crypto.c:280
+       ima_collect_measurement+0x94f/0xb30 security/integrity/ima/ima_api.c:300
+       process_measurement+0xdfe/0x2350 security/integrity/ima/ima_main.c:425
+       ima_file_check+0xc3/0x110 security/integrity/ima/ima_main.c:685
+       security_file_post_open+0xc4/0x210 security/security.c:2755
+       do_open fs/namei.c:4702 [inline]
+       path_openat+0x985/0x4280 fs/namei.c:4863
+       do_file_open+0x20e/0x430 fs/namei.c:4892
+       do_sys_openat2+0x10f/0x1e0 fs/open.c:1368
+       do_sys_open fs/open.c:1374 [inline]
+       __do_sys_openat fs/open.c:1390 [inline]
+       __se_sys_openat fs/open.c:1385 [inline]
+       __x64_sys_openat+0x12d/0x210 fs/open.c:1385
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0x115/0x870 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Justin
+-> #0 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}:
+       check_prev_add+0xeb/0xe60 kernel/locking/lockdep.c:3165
+       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+       validate_chain kernel/locking/lockdep.c:3908 [inline]
+       __lock_acquire+0x136c/0x1a40 kernel/locking/lockdep.c:5237
+       lock_acquire kernel/locking/lockdep.c:5868 [inline]
+       lock_acquire+0x1b9/0x370 kernel/locking/lockdep.c:5825
+       __mutex_lock_common kernel/locking/mutex.c:646 [inline]
+       __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
+       ima_reset_action_flags security/integrity/ima/ima_main.c:708 [inline]
+       ima_reset_action_flags security/integrity/ima/ima_main.c:697 [inline]
+       ima_file_truncate+0xe6/0x190 security/integrity/ima/ima_main.c:723
+       security_file_truncate+0xf9/0x1e0 security/security.c:2771
+       handle_truncate fs/namei.c:4303 [inline]
+       do_open fs/namei.c:4704 [inline]
+       path_openat+0x3584/0x4280 fs/namei.c:4863
+       do_file_open+0x20e/0x430 fs/namei.c:4892
+       do_sys_openat2+0x10f/0x1e0 fs/open.c:1368
+       do_sys_open fs/open.c:1374 [inline]
+       __do_sys_openat fs/open.c:1390 [inline]
+       __se_sys_openat fs/open.c:1385 [inline]
+       __x64_sys_openat+0x12d/0x210 fs/open.c:1385
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0x115/0x870 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-[1] https://docs.kernel.org/bpf/kfuncs.html
+other info that might help us debug this:
 
-> (* To be clear, we're not going to remove the Landlock syscalls for
-> all the obvious reasons, but we're also not going to support APIs like
-> that unless we have throughly exhausted all other options.)
->
+Chain exists of:
+  &ima_iint_mutex_key[depth] --> &subsys->lock --> sb_writers#6
 
-> -- 
-> paul-moore.com
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  rlock(sb_writers#6);
+                               lock(&subsys->lock);
+                               lock(sb_writers#6);
+  lock(&ima_iint_mutex_key[depth]);
+
+ *** DEADLOCK ***
+
+1 lock held by syz.3.857/8643:
+ #0: ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: do_open fs/namei.c:4693 [inline]
+ #0: ffff888035fc0450 (sb_writers#6){.+.+}-{0:0}, at: path_openat+0x2929/0x4280 fs/namei.c:4863
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 8643 Comm: syz.3.857 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/16/2026
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x100/0x190 lib/dump_stack.c:120
+ print_circular_bug.cold+0x178/0x1c7 kernel/locking/lockdep.c:2043
+ check_noncircular+0x146/0x160 kernel/locking/lockdep.c:2175
+ check_prev_add+0xeb/0xe60 kernel/locking/lockdep.c:3165
+ check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+ validate_chain kernel/locking/lockdep.c:3908 [inline]
+ __lock_acquire+0x136c/0x1a40 kernel/locking/lockdep.c:5237
+ lock_acquire kernel/locking/lockdep.c:5868 [inline]
+ lock_acquire+0x1b9/0x370 kernel/locking/lockdep.c:5825
+ __mutex_lock_common kernel/locking/mutex.c:646 [inline]
+ __mutex_lock+0x1a4/0x1bd0 kernel/locking/mutex.c:821
+ ima_reset_action_flags security/integrity/ima/ima_main.c:708 [inline]
+ ima_reset_action_flags security/integrity/ima/ima_main.c:697 [inline]
+ ima_file_truncate+0xe6/0x190 security/integrity/ima/ima_main.c:723
+ security_file_truncate+0xf9/0x1e0 security/security.c:2771
+ handle_truncate fs/namei.c:4303 [inline]
+ do_open fs/namei.c:4704 [inline]
+ path_openat+0x3584/0x4280 fs/namei.c:4863
+ do_file_open+0x20e/0x430 fs/namei.c:4892
+ do_sys_openat2+0x10f/0x1e0 fs/open.c:1368
+ do_sys_open fs/open.c:1374 [inline]
+ __do_sys_openat fs/open.c:1390 [inline]
+ __se_sys_openat fs/open.c:1385 [inline]
+ __x64_sys_openat+0x12d/0x210 fs/open.c:1385
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x115/0x870 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3e7519e0d9
+Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f3e7611c028 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007f3e75426090 RCX: 00007f3e7519e0d9
+RDX: 0000000000162e02 RSI: 0000200000000080 RDI: ffffffffffffff9c
+RBP: 00007f3e75235024 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f3e75426128 R14: 00007f3e75426090 R15: 00007ffc1113bee8
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
