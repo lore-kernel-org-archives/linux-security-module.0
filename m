@@ -1,96 +1,92 @@
-Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D37825A321
-	for <linux-security-module@vger.kernel.org>; Sun,  9 Aug 2026 15:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B33B21256C;
+	Sun,  9 Aug 2026 16:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786290809; cv=none; b=pGWsCFM5mNwwIEYUtT8O250lEdP4f4qvHynvCUd6iS+341WbDYf876DJlqEHMZC9Z6B9i7Ajsi5TvhLYsWOpmFYzSsIU/tfaOO3pUv2XMTC5UcPoPpecBGLrmmxf1NuCHtpjOIvxiESZtFAKtkfTwl/1ado/s8K6t/mnGkjFeDs=
+	t=1786291283; cv=none; b=TtKTMJNNzCZXj01vrL9CAQ64n2Nd5fymB8bctNhMdgx/nCQymaNodZmtyEY7qP0IOukB07DFHut58qMdQqI9CMuiCCiua2vlsKg5q2KyOUp0GRxGciAebqXV2NX3rJfDfbOvN3GggYjh6/ldF7AJxWiuR+9rzqMUhCZQEliWuis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786290809; c=relaxed/simple;
-	bh=lpJX2VvQWds7UaHqHKcqf3BhmVv6eto0XUKo9Ygdsp8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dz6MUzqlVQ5Bf088irf0bjXL5CI1+7tHhfCIvzxE+UUy8hKbhgMSbUQc7UyCB9ULIUIe2cpoHBg8Wm0TNYGabUN++gz25ZtS+g+qIA1wKQ1J62KouPm8eP9OUREXnVuwuPw7EqqovRyveFaa9UFSZTb2iAz3Rs/jnYYjm6njmcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V7S5D6Hc; arc=none smtp.client-ip=74.125.224.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1786291283; c=relaxed/simple;
+	bh=EyEbculfdmcKB1EZX0QglINCttopCIL5evClcdTV5Ik=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VzQsuDKFjqPpH5Fradim9ZAynhbz9dx3cW+qND5CJ5YoYUgWC/2A1SssM2gM3aKGJgI4/m8pMJ7qBHQ6vrKmkXvq6U7/QEA04qqjvxg5xb0CkqyMK9gKkv9jfJnQKSIU/CKksG4uNDQg/E5ZlYoQI29Stbf7LG163bfvomKoWiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=C98RkyLq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dAdmSYUu; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7S5D6Hc"
-Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-664db84f074so1354617d50.0
-        for <linux-security-module@vger.kernel.org>; Sun, 09 Aug 2026 08:53:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786290807; x=1786895607; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=S31dL65i3e1+Hl7HbOOOj3oDI7h8+o5Mt6vOzWfglv8=;
-        b=V7S5D6HcDiJdlLO7VJplPv8BCRrlg+bc/N8icRca2m1VCX2O8MIWqCWxv9lK/o6jBR
-         /W97tEJxggIbhMDscfzyWCqFG6gBfdo+NanifMSuNPcpo4aZ3wyRE4hksDWEBPabWU/r
-         biRtDpUVzUh4jNxgCSTVXZ9HCf7wYhlp02LJJEAqDTmlHMF1I/MLMI0rqVx3HQFGuDrH
-         Uz0e9ZvTULnLkBD0R+oMt/ngIkGOgZrnF4fqYF0//nE44tBAwKmOkVhMD7bkj9LORBmd
-         D0Du0KSQF7yw6rbugydH17B/LCdiW9dTahRJHnxv02uR+tiKCip5ld4ARgVS/lte0eZH
-         zZ4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786290807; x=1786895607;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=S31dL65i3e1+Hl7HbOOOj3oDI7h8+o5Mt6vOzWfglv8=;
-        b=MvFI/1KR1y8SczCXyOnxENHPoL4eXA+vqucoCWj0+hEjMywdO/OZYWP48mzarOr4DM
-         ocix3bkG5zgwhUEZzhU/0GCQPu374lzwfLQI9XM0NvegsHvt+eOdHujfCnckYSFr4/Jy
-         XYlgxCYlykNW62rf229o6q9Rok93wvgghc6yvGdLKiLgoL6tnHraJwEPX/D1SLAdN26+
-         tHVb5fa3lgqx5BsoJ8cPALNWT/GYHKvhpY6mCV7S7XU508yJY3BmuOFc/4P+n87B7oz0
-         OAeOguAdSvnAmq7TtSRh+50LVW+KEC3Y5nEjTDcWVmrqZm9ePpieUhBJyLxNLoDscc65
-         Dh2A==
-X-Forwarded-Encrypted: i=1; AHgh+Rq9dKkaIvbleVVa6+YdGHRx8gWLIMFXMEKT/kHBD6IJpVxy7jEVHwLscfF2k849qZSu352qTV+yopXbt2NrJfBelAR4Q20=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxxAXi9ArAMwOdXNkLFmbZtw+f4Ok/Ncd0dXw1kbeeQ0jtMOHm
-	pHUMCmKR+5IXbnIRS2v12EjIhAxJeyblIIoZLVP8DfWsxzLMV8UGd5IG3fIl3+9h
-X-Gm-Gg: AR+sD10XP+vPhLhSWyAgaJtk9Fk69DUCThnzr4lsxtFcoSDsRIeVA+SwPuRU9xsHz+Y
-	nH/YiNT2D5rnxYAjGVK+fLsHpdJ2pb/tbFT+06Zluk0mPD+m3rDigoP9ueWehAK8UAH/JaJk/5E
-	YKz/W3o6b4CAtbRgbPYrmghE/7Y83F6mtuI2/NO2HQmR8WrPsMR8yrkgooMAIbNYuuVuQelX3mP
-	I4ft0MWboBFGJg0yQ0deGNi7wBSH9ngWxU3NXbLhiolJNgLanlB5Ah08RJ4gicgFcoyjOApxGzs
-	f0bPr7jkaauh3oKA+C5dSAn274JBYB3rpvyTQpqiakUHOKDKLKBpnP3u+FwDK+xqmRpmXxwQSN4
-	wgb9gntmC0gMXfq6XHIeWFuU7UmppepaUPwUZeu1OTGfGuY440hGzVjXmbXHOtrNdjsuOrNXu7Z
-	FQdxdrsAHGKdXt90eH++rcDbbcBdXi+WuX1HZzQcAi17dUx26rEziaCsA+aYZ/lEnUZMmaGEgg0
-	/0/AkkQMe0hMdJGKVh7xFg=
-X-Received: by 2002:a05:690c:6209:b0:81e:7d90:5673 with SMTP id 00721157ae682-820224ace00mr223556707b3.26.1786290806951;
-        Sun, 09 Aug 2026 08:53:26 -0700 (PDT)
-Received: from zenbox ([2600:1700:18fb:6011:4665:53b0:3ac9:3545])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-823f577ddf8sm41741927b3.30.2026.08.09.08.53.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Aug 2026 08:53:26 -0700 (PDT)
-Date: Sun, 9 Aug 2026 11:53:25 -0400
-From: Justin Suess <utilityemal77@gmail.com>
-To: gnoack3000@gmail.com, mic@digikod.net
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v4 0/5] Implement LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS
-Message-ID: <anih6rJdlAuSaW-Q@zenbox>
-References: <20260809154544.1253100-1-utilityemal77@gmail.com>
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="C98RkyLq";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dAdmSYUu"
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 855A0EC00A7;
+	Sun,  9 Aug 2026 12:01:20 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Sun, 09 Aug 2026 12:01:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1786291280;
+	 x=1786377680; bh=EyEbculfdmcKB1EZX0QglINCttopCIL5evClcdTV5Ik=; b=
+	C98RkyLqAeKPffcm3kpuFaGkK2As0WCeiC/o83M7H5cmRV1ZIpOOxkqS0jY43b+7
+	aWBx7yjLDwnX1HmEYrS0FVwsMYXl93JsPzmJ6p88CTiT6t8mfDpzl2uK/v6bEX/e
+	IAqOrfm2QoRGQAIv2T7hoWMnN3okYb/O2UWqvmnhGDSlpc6ojF1qOdbr8PvdXIdN
+	wORLAz/qls2IB54md9ldhC28t8XydQKDlY+Uzx7LoEw0gfcUkHAY1oJ3K1BqONM6
+	eUFNiPZSaVLe5/UyKKiilUaFAO/PVZRCS4f5O8IW/r6dxJCpBgX1upvo0syucobz
+	E2TzKEMkKYsbPxQXSdxEIA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1786291280; x=
+	1786377680; bh=EyEbculfdmcKB1EZX0QglINCttopCIL5evClcdTV5Ik=; b=d
+	AdmSYUuCfDuJBs6e4QGlHWtR07IidkiL+sK7RKv08crXZI4y9NEvIrcscZq+fPtM
+	eM2bH0uns5RvycZeWjwl8QXPEYZez3bhAeECiJr43jpYLeu0Y9ldM1x/geaYCGo5
+	jT1GbLk9I/CC2UUKRiGy4IDsO34m5nx/Xy90cLkRrx6lmBGMEo3h3npgqmCRUa2j
+	ZbmxHdYCr7sHmbXqiJ5PQFIf6lw3u7gYyVp5/tvJ/ZdgiNkwAj7Uo8F+7ko8pjTT
+	ozuvHTXEShg2YHiV0at6odJaqk0s52gcB6C7oELfTWs1IkfausOCyOLgoyxaswhF
+	xc8J5786nwsZw5dLLOqpw==
+X-ME-Sender: <xms:UKR4arQqiSSyijb8ldwiQouMcSGWYN3ZxUtHr84QMnThzsoDK7CVIQ>
+    <xme:UKR4altAsUTHuIW4c-FG0hKGIY5BOvVwnNi6ai97khwcrbLxzf_as6iOa3QWMpnd2
+    nmcGaO2wxaBJS19eDGrAbnPblQSPSbA5qrVgActH5LuizxkRRXEyuP8>
+X-ME-Received: <xmr:UKR4asZwZxOq9kxanDODPN0IaW9w5dLBHPabqKMFS-298lVQ5sXzOIotuqRBHhQXjZeUjqQknL40MdlwFA>
+X-ME-Proxy-Cause: dmFkZTEjx6qIP7eMhzMZphCIXDAnOfYjQaD0F3caSctHdgFSZOEkZD/vXKVMYffUgbhyul
+    QfdhmJHq572x5X/XzXor6K93EqZ8wB5g+VSSl9M2B/USDS32cYmv5HtVlIBB1UeVr5/oWL
+    2ybPhX3wMnA/l87AGx0GJKI0ejSSc8pWgOxwtDSAaH+tEC5L7bFrUSvCfRvonZLbWVrYpi
+    V2KxpCFEsieYDL0zXH7yavTuzUJQgzM3R+A+3rQ0Y44hLZCHVmXr6fCzQtuUWRRqktWtsj
+    dEJdIPQsOYmTuTrTdvVrRVCYAEyPEds4xBjLw7ddKU5iv0C+C/Iv6tehNTnQJCYLFYnpr+
+    gA4sIYyVcc34GoKzjhbbcWSnqIlicaZ4wn+/JiZGgBPngvUWpz4c2zGqzqcn0XuNxqJRK7
+    BkjjJ2m/9+jawGQI69iaGIyyOyHbyx6ezOM6c+HIRmMPzzNYs+gpstM9Uqm3sY5rVK/Zd+
+    hUkgvqF6I24Y+HVUF4Qf2r/yHpINVI1Yi4JAVdCxUioLVs8NXVI8uaARxNL0/dCFilPDrw
+    pBpH7JoF52mqf7G+OjszYT6D7QKr1ppacxqyxxK1+q4tRDlaPFIQ1Sg1f0nfWhD0w6k32V
+    +e41ctHSpWaKyhSuWYuN5/sTQnENPmERc1Fam8rprok9yFuecE0UMefHMiVA
+X-ME-Proxy: <xmx:UKR4arEpVtS35TZLMUJSy6LVTcIxgqFfoEj5etPJ4ZNcisPaUNQYpA>
+    <xmx:UKR4agwhFAg9hq2Lwp4siF4tm7IC8m0TYx7vvdC3qeRHYTiHYjVE2Q>
+    <xmx:UKR4atlJQEn7d8idLWqtzu7OPmsKwZZCO9prG0Y0LodSOhxJjE_IeA>
+    <xmx:UKR4apk2OpvEuP_8yPUUpIAldQ3-5QEvL0cPtWkS4g9h_J3j0AYWGg>
+    <xmx:UKR4aswhYR7eSvUwaTQxP-ocPC0vXSu6HYKz7FcWIGqgVXkAbecElZlH>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 9 Aug 2026 12:01:19 -0400 (EDT)
+Message-ID: <5e6cb8c8-2d83-4190-b83c-148c490adcc8@maowtm.org>
+Date: Sun, 9 Aug 2026 17:01:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260809154544.1253100-1-utilityemal77@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/12] landlock: Rename quiet_masks to quiet_access
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: kernel-team@cloudflare.com, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20260726161400.3010511-1-mic@digikod.net>
+ <20260726161400.3010511-5-mic@digikod.net>
+Content-Language: en-US
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <20260726161400.3010511-5-mic@digikod.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Aug 09, 2026 at 11:45:18AM -0400, Justin Suess wrote:
-> Howdy
-> 
-> This series adds a new landlock_restrict_self(2) flag:
-> LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS.
->
-gmail for some reason in their infinite wisdom decided to drop my second
-patch 2/5 (the core patch of this series) for seemengly no reason. At
-least they sent me a bounce email...
-
-Anyways I'll RESEND the series later and hope I don't get bounced again...
-
-Justin
-> The flag sets the no_new_privs attribute of the calling thread only
-> once the enforcement of the ruleset succeeded: no_new_privs is set if
-> and only if the landlock_restrict_self(2) call succeeds.
-> 
+Reviewed-by: Tingmao Wang <m@maowtm.org>
