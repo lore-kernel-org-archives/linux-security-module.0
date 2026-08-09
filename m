@@ -1,75 +1,84 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBF5156661
-	for <linux-security-module@vger.kernel.org>; Sun,  9 Aug 2026 11:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDCD2BEFF6
+	for <linux-security-module@vger.kernel.org>; Sun,  9 Aug 2026 14:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786273330; cv=none; b=VsSsCB+k1aYXOYUhQT2PSF1NIZLpI7ZAjoZ0VflNj3VBwv17qkkScpeVj4iXaYv41fx8yc6NLJYrNSDZ7W2WnEy6Xc9M86/iaGCfrlzrFaKbfGLmgjaDyYv+W4Oalb0zUHClWI86YB888JIBvDcHQVShXPglHV09SabHYuNIrW4=
+	t=1786285823; cv=none; b=L1oCOT1tt+uG4EaPCCuEghCniu5R4YATDksEgJhyYNY5fCwU8kZYV9uiyy37xwidUKg9QjWC7tT/HLY/JUEuB5fAViYxrNxmr/uDGrF+4brM6PPd/c2SajDUozNEAk3YUDNBPGoPahdcSyPMAmzgpxku9PVrspoIO5kZQ2nR9N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786273330; c=relaxed/simple;
-	bh=ywo2uPUsrXTAwO9InRinXm5M+tv6nKvz6B/hC03eifw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FS4SIUuvQIZecYDdF9NLT/Ce4/aKX3AyKneD/dLkgNavkn5mTfj3f8nijg/iz0GAQ45G6BHYsnUHPvvkbapNtYcdO3758pg3tseVq8B4OVz+jblZMFZq6I9cQ+IFlsdENcP53T7v286gIcCHOMjUlloyxo2XBFZpcZR9KKiu5Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xvz0xoIW; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1786285823; c=relaxed/simple;
+	bh=GgGQjPsX+yQZSZW8eaE9FrEmKScuZDm9zykCeNuo3iE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LMI2k+JgCyER/ZhTFvD9m99vN95EcfT7LPwKNZGRxAKEHmWFU7bstpi5joV3v882EnCvGQJ+yOzSgr2zCZZzRtgI1VBV0bmN9GmA4Dkl10dfmEOjmXh7Id9j6eVZuqMpd+jBoVai300PyfbBEuudEF/FnXCNGooq8e2QQdSsKE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=GGlROlOh; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xvz0xoIW"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2cc97653887so10437765ad.1
-        for <linux-security-module@vger.kernel.org>; Sun, 09 Aug 2026 04:02:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786273327; x=1786878127; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=sc5V86l7BdE/6kSiloB+tbkV9FHRrzjo44RFbsUV2/g=;
-        b=Xvz0xoIWRAL+Wc2Va+lLI7kmPCSQcPi7IioXYJh5jdLTS4OOGoLm4UOTEBvCeXWNE+
-         LNxNRYttMozn9H/5h1p3+8L05mremCxaqPeLCT7veIYzl3a4mArWw02iJUUgHP7ZgH/D
-         J/CecEjkj8mNhf2rPRkmGiK2+yPJ7CwtA3DKncRkjmWBBK1Vcpx41UI6WIx36LopCph/
-         uZgUo9lrn8r+iZeEr8H3vyAWVTgvlX3+hxwFAAnVRTvX0zz0WvWbOhi8b/RtLEp33ICE
-         5B9Q0hhwmlZyW20CAcHv4+V9dJNEO/oCIha/WYGfaBWjrurJ5ZBI3MXGavpUTI0/Suvo
-         2Kjg==
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="GGlROlOh"
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id C9A9A3F290
+	for <linux-security-module@vger.kernel.org>; Sun,  9 Aug 2026 14:30:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20251003; t=1786285811;
+	bh=ryrs5UQkPZgUuMMheNYAMmmTUebD55JOYiWxoS1X3rc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
+	b=GGlROlOhit6K9MnS1hhMqTdjSQeL8SSfaClIf1Koost++xHDRFvIUNaQrnocrc9Ct
+	 xq3yA5sLpjyrPwBMcFmgLIPWiOs7ZmKLYT6I/DebwozQ9FKnkkgSpVX4yfra84m+Ym
+	 nTTLUKolZ+ArDkC5z2ix239doXHoGzz8aoLr1V5eK0saa+vjGrxYuvSlRwH0kiGApI
+	 4am3c2l5JVgl+oj5VQZwX6mcR2BIivhAyTUkuzINCyqyrQI1gZ2+pm5T49VX/cb+sM
+	 HDTgk3oGcgS973DEfGpRsaHHY98huh4vItvsYW0XNX7pqNxNYW8zomiSyRpVecrs/Y
+	 X0SVWKDk2Aa258Dqff9KayrxzY08fw5Qk5b7kctb6kywuzSrWqHEM7kPKzlT8n+Bjk
+	 /Kx2RHQxdkLIcIGQPiyxvu1QPHee8eDAflvSMPH/el3S6RBwsdiueLfZCfb19vE3B7
+	 dac2g2b6mbLT3llmwExEb7yJY1l8rhaZ6r64WYrHYM0We5aYKOHQZgjyw67p1T3r9n
+	 Nmrj7HFgC0gp79K1lm7DMXtDruzvTEcGBF9crvIIzOctNn1AnRhK3wgn7m9aqdWsu5
+	 8OLOsrLAdqw+OvLfxvx6NO0wncRJKkfxrLZ2cmjP2fesb8bEHDn2R37FV9Z6u40vdo
+	 R+HQKgMqNoRmufUlCtswyMMQ=
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4956c1655c3so6035435e9.0
+        for <linux-security-module@vger.kernel.org>; Sun, 09 Aug 2026 07:30:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786273327; x=1786878127;
+        d=1e100.net; s=20251104; t=1786285811; x=1786890611;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=sc5V86l7BdE/6kSiloB+tbkV9FHRrzjo44RFbsUV2/g=;
-        b=ks73xBrpf91sSsx4B/xHnmsuBJWkRIInULfe62gdu99VMC3L0k5o10LTKFeCUvpte9
-         eWYaCG6wZC6Fo2y9tnTYGKixhtB7PBaRRokzlmQy6bzVX7VHMcm5L9oa5EYF6XapOG3+
-         ABjjiqW5a9CDVv8kmIGSJMVo3pH4fD5G4iFepqD3DRE0ngvWEWDlikVfyO5M8p92kZ/f
-         XCxu0uj8TK8Rtnsb9k6FPfiNIlQF2JnsGjiIroP7PMf0P8KLm9IuhWzxEY/7BQUk7cnr
-         NGQYjIBuEUF8o4KntvB4laqlgcLaSyk3kSMlj7g5fZUcI3/sW85Zuniv9JT22FqptKwo
-         XYhA==
-X-Forwarded-Encrypted: i=1; AHgh+Rq4tjLtmTlWMTeIxM3i1CGyn1RvC/eUwkfb6WRvKUqbkLaEStdeR9R5+aNULq06MKK2fpodeOgXiKqH26cY+FAfy68zfCE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy54v0hbcQbb2OI45JtRpE9np6n4cDLWg9UGKZc2fZUnutup93r
-	4dnZ/RcwifE/fHNbpJ7uFMAdD3EOgDSkuchP2qJwU51gtKTf1RGWPCiS3w1nHA==
-X-Gm-Gg: AR+sD12WkrAV9YcrJopk4P3wb5hpxi+4GMlXs8EEqesfUEl5EcDzU7ix6cfIcF+7OrU
-	noxL42EVOOF/onfhhj8k4xvK6bx1z6fWS4VYOoYLB937r/7rGTU6EajBNPvFVgkk7SvZmCDaTnO
-	Cc0JErdOa+SoNXFHSH3ZGp98SoxEJ0AZ1/yoXvIPC02IbwNdf3cEoTcZ8kpZv58jEmMfkaYXZkx
-	qX1tcVVMjx8UOCO3yitxp9kUm5SkJlKcqRwoV9MHxak7a8wTPis8WviDHadkJEay87zCn+N+NjK
-	393rhLBFzQuyD5B4s/tvvILZdZXbEaKimPDqpspND8n7vuZhrUnF2ziapAqU+5fqy0u7Okaf8QC
-	fL+hKgPAz8o86TC4vciuEzza8aFRcMCeBtmlBMea7ND2P12A0sYpSIer3eNmpjPIQdZAvsgLTwd
-	3h0GZFrjjY7T4xhaUi+ywDGKVvKJumOvpvjFeN/8Hda+/zdeJrPk4q8T3DsrpVOvXF1U/QTcxKx
-	Oe7a6PT+jE2rHg76MumW8NL
-X-Received: by 2002:a17:90b:46:b0:38e:67e1:15b with SMTP id 98e67ed59e1d1-3903c5363a5mr39906893a91.6.1786273327417;
-        Sun, 09 Aug 2026 04:02:07 -0700 (PDT)
-Received: from csl-conti-dell7858.ntu.edu.sg ([155.69.195.57])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-315beb88413sm50247194eec.18.2026.08.09.04.02.04
+        bh=ryrs5UQkPZgUuMMheNYAMmmTUebD55JOYiWxoS1X3rc=;
+        b=DFvuonOki7dAiujOW0+VMovcmyfF9kBfqouKsIzVahLt1CScav5c/FcjFewZeIKa4p
+         likBNnuftGy8P9YoeCsCJU+ynLtPST43nxW5oT1eUznXg24OAPTdjKlMJVjKO11R6Ewg
+         tdgIda9OPvdJ9euaFViYDqletSIgpredxuuLEcSXSme+hDTmDpMmpaXqxmBAahUU+GMM
+         hY/BLCZESw1gpzCxCv+OOugtC7kRlYu2a4ef3rZxQEWZzJNI8KHdxlvh7WdUY5MHUreo
+         OMjX301fcTGo08sJy/MP5kkIaGapR5ZWTatUAVMIVvNwuA0pv9KocTvoOWLi3hBbQnjR
+         mtTA==
+X-Forwarded-Encrypted: i=1; AHgh+RpvKz4/NN+hNrH51NlYSo8EiqexiFSMCRNRhk58gcgYRNglDwP1Ky8i3f9pO/0dHNL/RmfWWoyl2tFbbNRd33BW9+uqcDg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0kE/ElsMbaL1JdO2xPpi+U9wUnP5iQxVjnEZmQ374vxLnGmIJ
+	fIqWRx9B/AW26cOI9y/ZJz/HWEJhQpvJD5VwXlovhrdAY1ewzC2q+xFhe3UakbgpK+krQ2ENva2
+	bijRrlpEm3CA1HZSVitkKLwWc3ttCUvyTX+VqCc1yPnH8gTtPncp+crmbpYNztGWVqDqrc0nuMg
+	Tq0iPOmIhogAqDPgbForKNLnjUYA==
+X-Gm-Gg: AR+sD11Rn5llINc2U2qAszKhzuAmveHrWMOFQ4A0YCH4Alr0geKanC4gPYolS7GojOK
+	Y65WdPG7ybp7qws2XaB6TqTbL/0WS3teuxhGc7HdsjniCctQOYsqsPwbFXwIzF65W8CTqhFasd3
+	bvSjotX23GAQzp6xRSzrlaNIV0XhxqpWPUyjE56QmNhxeU6hAeB8fVgD6Cczg+PsTVy1nSFuEQ2
+	Ipxcv+531F9xHPImHnqdUJ0jno/ey1pKoetlbr5965ovbezAWw0UMTwFIx6wma3q4ytfh24U0FC
+	ZYznov7TkK64yxHzBXgLw7QHp6aqfCm4iovKJCVHmK8+WYl9kKEifd+RRKbqfBYvH+ZPmj9mC72
+	MuRXBxCwuTkmhzbHwuEBkbqqcZ6sFJAQUYTl1rQKotLe6rQSCoqzM9JJ7rUR7ATouHkgXfEUCTQ
+	KY54qNi5Gle82YC1v4/amLVTy+
+X-Received: by 2002:a05:600c:3b9b:b0:495:4859:8f9b with SMTP id 5b1f17b1804b1-4994e7ba85fmr470133905e9.9.1786285810731;
+        Sun, 09 Aug 2026 07:30:10 -0700 (PDT)
+X-Received: by 2002:a05:600c:3b9b:b0:495:4859:8f9b with SMTP id 5b1f17b1804b1-4994e7ba85fmr470133295e9.9.1786285810273;
+        Sun, 09 Aug 2026 07:30:10 -0700 (PDT)
+Received: from t-14 (2a01cb0008832300d6ffb79ddafcf3ca.ipv6.abo.wanadoo.fr. [2a01:cb00:883:2300:d6ff:b79d:dafc:f3ca])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4813ccea399sm8659386f8f.13.2026.08.09.07.30.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Aug 2026 04:02:06 -0700 (PDT)
-From: Maoyi Xie <maoyixie.tju@gmail.com>
-To: David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: keys: request_key_auth shows a global pid in /proc/keys across pid namespaces
-Date: Sun,  9 Aug 2026 19:02:02 +0800
-Message-Id: <20260809110202.2180410-1-maoyixie.tju@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Sun, 09 Aug 2026 07:30:09 -0700 (PDT)
+From: Fabrice Derepas <fabrice.derepas@canonical.com>
+To: John Johansen <john.johansen@canonical.com>
+Cc: Fabrice Derepas <fabrice.derepas@canonical.com>,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH] apparmor: fix integer overflow in verify_tags() bounds check
+Date: Sun,  9 Aug 2026 16:29:45 +0200
+Message-ID: <20260809142947.548440-1-fabrice.derepas@canonical.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -78,110 +87,70 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi all,
+verify_tags() validates the tagset table unpacked from a policy blob.
+For each set it reads a count and checks that advancing the index by
+that count stays inside sets.table[]:
 
-I think request_key_auth leaks a global pid into /proc/keys. I would
-appreciate it if you could take a look.
+	u32 cnt = tags->sets.table[i];
 
-request_key_auth_describe() prints the requestor's pid:
+	if (i+cnt >= tags->sets.size) {
 
-	if (key_is_positive(key))
-		seq_printf(m, " pid:%d ci:%zu", rka->pid, rka->callout_len);
+i, cnt and sets.size are all u32, so i+cnt is evaluated modulo 2^32.
+sets.table[] is filled by unpack_tagsets() with aa_unpack_u32(), so
+every entry is a raw unbounded 32-bit word taken from the policy blob,
+and verify_tags() is the function that is supposed to validate it.  A
+count close to U32_MAX makes the sum wrap to a small value, the guard
+passes, and the inner loop then walks sets.table[++i] past the end of
+the kcalloc(size, sizeof(u32)) allocation.
 
-rka->pid is current->pid, captured in request_key_auth_new() when the
-auth key is made. It is a raw pid_t in the init pid namespace. But
-/proc/keys is read by whoever opens it, and their pid namespace can
-differ. The uid and gid on that line already go through seq_user_ns(m).
-The pid does not. So a reader in another pid namespace gets a number
-that means nothing there, or worse lands on a different task.
+Note that sets.size is bounded by 65535, because unpack_tagsets() reads
+it with aa_unpack_array() as a u16, so the wrap cannot be reached by
+growing the table; it is reached purely through the attacker-supplied
+count.
 
-Not everyone can read the line. The owner uid must map into the reader's
-user namespace, and the reader needs VIEW on the key. The auth key gives
-VIEW to the requestor's own uid and to a possessor. So the reader has to
-be the requestor's uid, in a different pid namespace. That fits a
-sandbox at the same uid, made with unshare, systemd-nspawn or
-bubblewrap. A default Docker container does not hit it, since it hides
-/proc/keys.
+With sets.size = 2 and sets.table = { 0, 0xffffffff }:
 
-I found this with a static check for ids that reach userspace with no
-namespace translation. I reproduced it in a qemu VM on 7.1-rc1 as a
-normal user, no hardware or kernel changes needed. The reproducer calls
-request_key, then reads /proc/keys from a sibling pid namespace. Before
-the patch it reads the requestor's global pid, which does not exist in
-that namespace. After the patch it reads pid 0, since the requestor has
-no pid there. There is no keyrings selftest in the tree, so this is the
-only test.
+  i = 0: cnt = 0, guard 0 + 0 >= 2 is false, inner loop does not run
+  i = 1: cnt = 0xffffffff, guard (1 + 0xffffffff) mod 2^32 == 0 >= 2 is
+         false, so the guard is bypassed and the inner loop reads
+         sets.table[2] -- one element past a two element allocation
 
-I am happy to send a patch. The raw pid_t cannot be translated later. So
-I stored a struct pid and print it with pid_nr_ns, the way the uid is
-already scoped.
+The walk continues until an out-of-bounds value happens to be >=
+hdrs.size or the access faults, so a crafted policy yields an
+out-of-bounds read on the policy load path
+(aa_replace_profiles -> aa_unpack -> unpack_policydb -> unpack_tags ->
+verify_tags).  unpack_tags() runs before the perms and DFA tables are
+unpacked, so no other table needs to be well formed to reach it.
 
-Thanks,
-Maoyi
-https://maoyixie.com/
+Policy load is gated by aa_may_manage_policy(), which checks
+CAP_MAC_ADMIN relative to the subject's own user namespace rather than
+the init user namespace, so with the default
+unprivileged_userns_apparmor_policy=1 the path is reachable from an
+unprivileged task in a matched-level nested namespace, not only by a
+globally privileged one.
 
+Perform the addition in u64 so that it cannot wrap, restoring the
+intended i + cnt < sets.size guarantee.
+
+Fixes: 3d28e2397af7 ("apparmor: add support loading per permission tagging")
+Signed-off-by: Fabrice Derepas <fabrice.derepas@canonical.com>
 ---
+ security/apparmor/policy_unpack.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/keys/request_key_auth-type.h b/include/keys/request_key_auth-type.h
-index 01e42ee5f4099..464636278c4f8 100644
---- a/include/keys/request_key_auth-type.h
-+++ b/include/keys/request_key_auth-type.h
-@@ -22,7 +22,7 @@ struct request_key_auth {
- 	const struct cred	*cred;
- 	void			*callout_info;
- 	size_t			callout_len;
--	pid_t			pid;
-+	struct pid		*pid;
- 	char			op[8];
- } __randomize_layout;
+diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+index d9dcff1..15b5e92 100644
+--- a/security/apparmor/policy_unpack.c
++++ b/security/apparmor/policy_unpack.c
+@@ -730,7 +730,7 @@ static bool verify_tags(struct aa_tags_struct *tags, const char **info)
+ 		/* count followed by count indexes into hdrs */
+ 		u32 cnt = tags->sets.table[i];
  
-diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
-index 282e09d8fa46c..e8d1037526b19 100644
---- a/security/keys/request_key_auth.c
-+++ b/security/keys/request_key_auth.c
-@@ -13,6 +13,8 @@
- #include <linux/slab.h>
- #include <linux/uaccess.h>
- #include "internal.h"
-+#include <linux/pid_namespace.h>
-+#include <linux/proc_fs.h>
- #include <keys/request_key_auth-type.h>
- 
- static int request_key_auth_preparse(struct key_preparsed_payload *);
-@@ -73,7 +75,10 @@ static void request_key_auth_describe(const struct key *key,
- 	seq_puts(m, "key:");
- 	seq_puts(m, key->description);
- 	if (key_is_positive(key))
--		seq_printf(m, " pid:%d ci:%zu", rka->pid, rka->callout_len);
-+		seq_printf(m, " pid:%d ci:%zu",
-+			   pid_nr_ns(rka->pid,
-+				     proc_pid_ns(file_inode(m->file)->i_sb)),
-+			   rka->callout_len);
- }
- 
- /*
-@@ -113,6 +118,7 @@ static void free_request_key_auth(struct request_key_auth *rka)
- 	if (rka->cred)
- 		put_cred(rka->cred);
- 	kfree(rka->callout_info);
-+	put_pid(rka->pid);
- 	kfree(rka);
- }
- 
-@@ -226,14 +232,14 @@ struct key *request_key_auth_new(struct key *target, const char *op,
- 
- 		irka = cred->request_key_auth->payload.data[0];
- 		rka->cred = get_cred(irka->cred);
--		rka->pid = irka->pid;
-+		rka->pid = get_pid(irka->pid);
- 
- 		up_read(&cred->request_key_auth->sem);
- 	}
- 	else {
- 		/* it isn't - use this process as the context */
- 		rka->cred = get_cred(cred);
--		rka->pid = current->pid;
-+		rka->pid = get_pid(task_pid(current));
- 	}
- 
- 	rka->target_key = key_get(target);
+-		if (i+cnt >= tags->sets.size) {
++		if ((u64)i + cnt >= tags->sets.size) {
+ 			AA_DEBUG(DEBUG_UNPACK,
+ 				 "tagset too large %d+%d > sets.table[%d]",
+ 				 i, cnt, tags->sets.size);
+-- 
+2.43.0
+
