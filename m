@@ -1,224 +1,138 @@
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9065C42C4F5;
-	Mon, 10 Aug 2026 16:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70EC1442134
+	for <linux-security-module@vger.kernel.org>; Mon, 10 Aug 2026 19:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786380615; cv=none; b=Lsu12KDiTIPpGHPAMi9mDL8DN5tczxjgdSDjinFel/KV12vmJPPSp0PbfRxl9qMdpZ97lRC8tywKiI2oiHD07bDK+zRq2Z6Msb/Ydi8UHPssTAHIh7T6gYFxBO9TQrOHjkrLUbE4p4+NDmnzpTBDJNTg1PnWqFFZfJIv8gJYt6g=
+	t=1786390920; cv=none; b=Jj+g3srINNfkhjoc0FMcY//OvHChBED51OBdj5IF3dDIJIKwry+HeGC++IsecmA46xThLvxSmmskHPO5cuEE4BjV1ra1sgBxRFoKYf73NMwtjbx8FbhMbFHRTURWeBllmdrzLGpEdsezwBNxliBBB0VhqRcI4u5kbQplH3tajN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786380615; c=relaxed/simple;
-	bh=ofImNQ/bBS7l/ykaciyF5yAoq+HZmuR9c38HaYC8tAs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kUvWBDUZyOaBkHyZoexXh//1NeJ9o2g6B8e7SbF9w0KNPIeDQSKyLwr0SXE5epEe31LQ6Gmdtu524zJz0CsF/xDd7/gsBH/4udqiQaNdCvK+SAKACWmnUrTKjKeVd/YeGW6PhFgJKTyZ12ppURssHoSpmu0H0ArvKJNj8kJMnmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=aNxYwP48; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+	s=arc-20240116; t=1786390920; c=relaxed/simple;
+	bh=LOri3CcuBtdSvAEYFeKTd1PeW4G632pF4oItWhfE/Pw=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=blqRAlLXnlBeqknwUxj8vlsIXuqGWnu3slA6jEQT7Fhjm8FLm1pXCd3t3Z85MJ4kgh1MOHGotI4cygkuIYSpRyFq96iklrAnZBKdJwzB76hOGbTv29Rr/At59NAmdrL8GfDysCpz4bl9qrVHMlNTtTqo/DP+QvO+hrrYzFIFE7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dgxzB4zK; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="aNxYwP48"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1786380612;
-	bh=ofImNQ/bBS7l/ykaciyF5yAoq+HZmuR9c38HaYC8tAs=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=aNxYwP48AQNIpO+yXVNGdSq0JaUIEXr4njnAzk4Ryt5ojXuZOfvg7dSiPfobeJHhH
-	 rKmZwaHGR65uG6NdZgRLtjfvlJ2sJmGHaRwr/Jhgi3kHtZdeKvnrSgYkeSuzxtku68
-	 jUWZ0h9t9h5JISxaWjByoIvoLcn6BcB7K3KMgLcE=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4300:d341::8309])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519MLKEM768 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 42F9A1C0138;
-	Mon, 10 Aug 2026 12:50:12 -0400 (EDT)
-Message-ID: <8a5ac8ef55346825f57f8d3966b312f3d1152c2d.camel@HansenPartnership.com>
-Subject: Re: keys: request_key_auth shows a global pid in /proc/keys across
- pid namespaces
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Maoyi Xie <maoyixie.tju@gmail.com>, David Howells <dhowells@redhat.com>,
-  Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
- "Serge E . Hallyn"
-	 <serge@hallyn.com>, keyrings@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 10 Aug 2026 12:50:11 -0400
-In-Reply-To: <20260809110202.2180410-1-maoyixie.tju@gmail.com>
-References: <20260809110202.2180410-1-maoyixie.tju@gmail.com>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNE
- lecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn
- 1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHU
- RfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8
- X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvd
- HRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGw
- MGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAml2ZBI
- FCS3GUMIACgkQgUrkfCFIVNZKjQf/deRzlXZClKxTC/Ee2yEPqqS7mm/INUA49KdQQ5oIhSxkUBy0
- 9J4qjMIo5F8ZFkFTqikBqeL35LKu7O7rn8WETfX8Bxvos3HUsl3jHo34DES4MUFIpoQPgtiLRGwLb
- K0cVCAArR2u2qj4ABmTRrs1I1kvdjEw6gatOuXtEe/j5O2fvfzTq9GBr0Q3n2IAsFXi4hLlx6VPE8
- tyWUZ8BWJKtih3JAeUiXFvASL3McV0rV9RnU0VbjEQEhSE7PMYhWpnDC9AyBb0lXJllQRvC3NSkUB
- 8KVQgNNxRPss0WE/nBoZ4dFA42jTyzTz8lNylxZoAWV7WJb3QxVg4oCodRVrxxrQhSmFtZXMgQm90
- dG9tbGV5IDxqZWpiQGtlcm5lbC5vcmc+iQFVBBMBCAA/AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeA
- QIXgBYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJgS5mYBQkbNYS9AAoJEIFK5HwhSFTWBpwIAL5Bk3
- 5FB34U6iHmDzzgdCbxLTs43T/YQyJpcGIvopBvnI/fDY8oSG6Df64/O6B+1R+A8TDp6ZG5ysUWnCC
- 6GuIaEHemBYkitMPglR6+sGCMQY7O0mlsPvdssvKK1KI9Bno4VU6ogaF2qVzefSqg1Djmf/DcsxWP
- rI/jdJ8FB5AYR2rjIdDFc+zRdAJuavo1/anyY2wgpFh/3R8IOYAEfWV9nGgYkf9+tA4EIn1sxE0I3
- L5oW2N3mbyRrkzuBwO8ztMCwqEPk7moWzhokcZqMXiAIahaZdkashJC+s2X2RZSGCy+g+pvY5NN4B
- BVG5XwLgVBqbHMTcxE0fbmPqz+q6O0LEphbWVzIEJvdHRvbWxleSA8amVqYkBoYW5zZW5wYXJ0bmV
- yc2hpcC5jb20+iQFXBBMBCABBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmODZ5ACGwMFCRs1hL0F
- CwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQgUrkfCFIVNZu0Af/TzvL2/NdgAcw9uN3x60H8
- jc4QUq14VpxcFEFEMpcj1morkX/G93V+56HBBaXZj+yK8PhxIA/SIz+sU7C/0YvKuvzakP8ZX/7WJ
- e32SOUtjfr/VTaqjIBzNj6OxLvZpmNbBw7s6DwhhNpHOWqJ/1ml+PtDRDV71IB58yVqQjp1xlNKVl
- ZppcJ5908EJzsFnRIVjiQiDSKoppqB2BCibBbrWcln7CiWMyOC/cco6SIn6twH+f7+aivJ3xGcOE2
- a9gBKF5rNi9TBoX9oyPmshv/TDmnohsVrH7AYXlGYfZTk15SWEiROh1QX8/uD9wl/gcIv5EDUpT/F
- L2jzOsA5663bw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dgxzB4zK"
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-51c0cea8883so2713331cf.1
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Aug 2026 12:41:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1786390916; x=1786995716; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-type:mime-version:message-id:date:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Vsd1x7Iz/VQJIsN2hgBouGDdRtwtfDh2Zexev25G1Ak=;
+        b=dgxzB4zKI8coAO1aT0pFwxfat56Zm5zt1gevfiFT3TU/hSJDhqFvnzP2B9KbkXTomS
+         cU1Y3PIXTk1EgUa11NJMZcNki/kAQEFPu2l+MugzfiYMkFVbwUvaNcGKdCJ6A9fgg9oi
+         6KVyJ90ygYkML+wsvi5jkO5PyGATs3PuCSPpoiJtbs6s0AXa4mvMqSJVKpGj5PMpNwMb
+         16KiBTwxk27BL9H585nqYDt9vEuVMtbdrRKF8wTdi4SGFlYlKkk9u7blK0sRJHVOxnnu
+         WJdOT2JWiuVyIdl81mw/GIqdJdsV0l4K/SaaWrIhndTJG703QAkFU6ZlW6M05RsbGK15
+         LRhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786390916; x=1786995716;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-type:mime-version:message-id:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Vsd1x7Iz/VQJIsN2hgBouGDdRtwtfDh2Zexev25G1Ak=;
+        b=AKPEwF9KXZl8pXmWNfd/866xfQh6imS0h7o1PlcRaVaRqWsHeo81ufFUd00y/ZMSg4
+         uKRZ8hsIN1T35f2wq8Nk4fpN1YIRjo67YR8Gp6k8s2WfqCosgZR/D1UmYI2VdywjNvAA
+         5dglz+26PN7PnyK8MisZ3J705Vlc9K1a10X0R72SqchoNWBKBMwG++EPtUKmikBnjLVV
+         aZHsaYvSKAqcoqZ9IafakIdnk42F3YAEDZR9VIqtjcClrIQQYV3enoFgRW5nSzF26Dvz
+         GWw5D5yw/IXXCD2w386j6sl83ntadvvdT2yuXHedpfvqclGcQ5WH9PIjwacaKGbhaUR5
+         wGhg==
+X-Forwarded-Encrypted: i=1; AHgh+Rps7gUUAKZj0ZBsC05zTA1raFMYcJ2E+v7diBXNf7ue4HflFQuGwpzLTUYF5lDct3d3H1RDdvOMhigeYZQVXzW/wtZ61hg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxExeZ36qTGxApkZIBQ/iOpPiELzAl8Ydw1oYRKZz3/gYZSR2eX
+	bbCULhAghwhXQtlJcfi6JNTfN1J1lMzPwXOmteYyKxOUMR/QwvYgrUUfw5tX0SiRYkBXKFdm9AF
+	zGMwq/w==
+X-Gm-Gg: AR+sD11XiOZCTecUihPT4TGw/m2ar5l7eP3KYhMsewG26iOVHsy7eu8vPCVkTERFdy8
+	bTlFOVJwzXX5/nsu8ObbBI5XNxAQcXBoaH48lNcImQ+VTNNRBVrXhnx0lMyHYxD8at3ySYXSsJT
+	3kSxCGqdTZnUizPYJyF16gH/P5zOvJKqx3syfRzueOy1lxpkAB9GbdULY0/e94/RTqskFWA+ZCy
+	BGjvA0wapRapW4h5874qfDGGhUEDS2lDrDijS+lx/K1fph1dl4eQRg22W9Nt+9kiAbQtOnjrO5A
+	rlJCFIhxP3z7AzLYFd4KwoRT6ZHmLqKI4z6mSfokpzelTwtbZjzJKfgnYeNcUBNSpB5hAFzt0ue
+	IQ3mMZc4bqC/Wc6E29aU5Ob0uNIFov+qnCih3zgddncshX3R+o/zPPc89yLhWz/NVkX/gNhknSc
+	WT7FSKZJxjx4nHV4GCYFpD+ZA1x+UjYc/nBqYg6DKJIyMvk8JUvI+ye+aUaDtI8c+N4Szi4xY0/
+	Mo9ZkDxMOL9jbTk5LXvGDURKMsj1P+o2Q==
+X-Received: by 2002:ac8:584c:0:b0:516:35fe:5524 with SMTP id d75a77b69052e-52d5139f5a9mr11184741cf.5.1786390915980;
+        Mon, 10 Aug 2026 12:41:55 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-908a91e2cdfsm79012536d6.22.2026.08.10.12.41.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Aug 2026 12:41:55 -0700 (PDT)
+Date: Mon, 10 Aug 2026 15:41:54 -0400
+Message-ID: <2bdf79f45c5eb2ea66d59904418081c5@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20260810_1522/pstg-lib:20260809_1908/pstg-pwork:20260810_1522
+From: Paul Moore <paul@paul-moore.com>
+To: Jann Horn <jannh@google.com>, Serge Hallyn <sergeh@kernel.org>
+Cc: Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, audit@vger.kernel.org, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH] cred: clarify that task_struct::cred is only for the  current task
+References: <20260806-cred-nonrcu-annotation-fix-v1-1-5fd149b2ab54@google.com>
+In-Reply-To: <20260806-cred-nonrcu-annotation-fix-v1-1-5fd149b2ab54@google.com>
 
-On Sun, 2026-08-09 at 19:02 +0800, Maoyi Xie wrote:
-> Hi all,
->=20
-> I think request_key_auth leaks a global pid into /proc/keys. I would
-> appreciate it if you could take a look.
->=20
-> request_key_auth_describe() prints the requestor's pid:
->=20
-> 	if (key_is_positive(key))
-> 		seq_printf(m, " pid:%d ci:%zu", rka->pid, rka-
-> >callout_len);
->=20
-> rka->pid is current->pid, captured in request_key_auth_new() when the
-> auth key is made. It is a raw pid_t in the init pid namespace. But
-> /proc/keys is read by whoever opens it, and their pid namespace can
-> differ. The uid and gid on that line already go through
-> seq_user_ns(m).
-> The pid does not. So a reader in another pid namespace gets a number
-> that means nothing there, or worse lands on a different task.
->=20
-> Not everyone can read the line. The owner uid must map into the
-> reader's
-> user namespace, and the reader needs VIEW on the key. The auth key
-> gives
-> VIEW to the requestor's own uid and to a possessor. So the reader has
-> to
-> be the requestor's uid, in a different pid namespace. That fits a
-> sandbox at the same uid, made with unshare, systemd-nspawn or
-> bubblewrap. A default Docker container does not hit it, since it
-> hides
-> /proc/keys.
->=20
-> I found this with a static check for ids that reach userspace with no
-> namespace translation. I reproduced it in a qemu VM on 7.1-rc1 as a
-> normal user, no hardware or kernel changes needed. The reproducer
-> calls
-> request_key, then reads /proc/keys from a sibling pid namespace.
-> Before
-> the patch it reads the requestor's global pid, which does not exist
-> in
-> that namespace. After the patch it reads pid 0, since the requestor
-> has
-> no pid there. There is no keyrings selftest in the tree, so this is
-> the
-> only test.
->=20
-> I am happy to send a patch. The raw pid_t cannot be translated later.
-> So
-> I stored a struct pid and print it with pid_nr_ns, the way the uid is
-> already scoped.
->=20
-> Thanks,
-> Maoyi
-> https://maoyixie.com/
->=20
+On Aug  6, 2026 Jann Horn <jannh@google.com> wrote:
+> 
+> The `cred` field in task_struct is currently marked as __rcu, but that's
+> not true: It can point to credentials from access_override_creds(), which
+> do not get freed with RCU delay.
+> 
+> What actually protects task_struct::cred is that accessing it is only
+> permitted for the current task (except for setting up a child during fork()
+> or tearing down a dead process).
+> (There is currently code in Smack that violates this rule, but that's a bug
+> and causes UAF, I have sent a separate fix for that.)
+> 
+> Clarify this, remove the __rcu marker, and remove RCU helpers from all
+> accesses to this field.
+> 
+> Signed-off-by: Jann Horn <jannh@google.com>
 > ---
->=20
-> diff --git a/include/keys/request_key_auth-type.h
-> b/include/keys/request_key_auth-type.h
-> index 01e42ee5f4099..464636278c4f8 100644
-> --- a/include/keys/request_key_auth-type.h
-> +++ b/include/keys/request_key_auth-type.h
-> @@ -22,7 +22,7 @@ struct request_key_auth {
-> =C2=A0	const struct cred	*cred;
-> =C2=A0	void			*callout_info;
-> =C2=A0	size_t			callout_len;
-> -	pid_t			pid;
-> +	struct pid		*pid;
-> =C2=A0	char			op[8];
-> =C2=A0} __randomize_layout;
-> =C2=A0
-> diff --git a/security/keys/request_key_auth.c
-> b/security/keys/request_key_auth.c
-> index 282e09d8fa46c..e8d1037526b19 100644
-> --- a/security/keys/request_key_auth.c
-> +++ b/security/keys/request_key_auth.c
-> @@ -13,6 +13,8 @@
-> =C2=A0#include <linux/slab.h>
-> =C2=A0#include <linux/uaccess.h>
-> =C2=A0#include "internal.h"
-> +#include <linux/pid_namespace.h>
-> +#include <linux/proc_fs.h>
-> =C2=A0#include <keys/request_key_auth-type.h>
-> =C2=A0
-> =C2=A0static int request_key_auth_preparse(struct key_preparsed_payload
-> *);
-> @@ -73,7 +75,10 @@ static void request_key_auth_describe(const struct
-> key *key,
-> =C2=A0	seq_puts(m, "key:");
-> =C2=A0	seq_puts(m, key->description);
-> =C2=A0	if (key_is_positive(key))
-> -		seq_printf(m, " pid:%d ci:%zu", rka->pid, rka-
-> >callout_len);
-> +		seq_printf(m, " pid:%d ci:%zu",
-> +			=C2=A0=C2=A0 pid_nr_ns(rka->pid,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0 proc_pid_ns(file_inode(m-
-> >file)->i_sb)),
-> +			=C2=A0=C2=A0 rka->callout_len);
-> =C2=A0}
-> =C2=A0
-> =C2=A0/*
-> @@ -113,6 +118,7 @@ static void free_request_key_auth(struct
-> request_key_auth *rka)
-> =C2=A0	if (rka->cred)
-> =C2=A0		put_cred(rka->cred);
-> =C2=A0	kfree(rka->callout_info);
-> +	put_pid(rka->pid);
-> =C2=A0	kfree(rka);
-> =C2=A0}
-> =C2=A0
-> @@ -226,14 +232,14 @@ struct key *request_key_auth_new(struct key
-> *target, const char *op,
-> =C2=A0
-> =C2=A0		irka =3D cred->request_key_auth->payload.data[0];
-> =C2=A0		rka->cred =3D get_cred(irka->cred);
-> -		rka->pid =3D irka->pid;
-> +		rka->pid =3D get_pid(irka->pid);
-> =C2=A0
-> =C2=A0		up_read(&cred->request_key_auth->sem);
-> =C2=A0	}
-> =C2=A0	else {
-> =C2=A0		/* it isn't - use this process as the context */
-> =C2=A0		rka->cred =3D get_cred(cred);
-> -		rka->pid =3D current->pid;
-> +		rka->pid =3D get_pid(task_pid(current));
+> For context:
+> There have been at least two UAFs of struct cred that I'm aware of, both
+> caused by wrong use of task_struct::cred:
+> 
+>  - https://git.kernel.org/linus/a3727a8bac0a9e77c70820655fd8715523ba3db7
+>  - https://lore.kernel.org/all/20260806-smack-uaf-fix-v1-1-26426d389a26@google.com/
+> ---
+>  include/linux/cred.h  | 17 +++++++++++------
+>  include/linux/sched.h |  8 ++++++--
+>  kernel/auditsc.c      |  5 +++--
+>  kernel/cred.c         |  2 +-
+>  security/lsm_init.c   |  2 +-
+>  5 files changed, 22 insertions(+), 12 deletions(-)
 
-I'm afraid this get_pid/put_pid doesn't look right because what it will
-do is pin the pid in the creator pid namespace.  Unfortunately, some
-keys and keyrings aren't bound to a pid namespace, so if I create a key
-in my user keyring and then enter a new pid namespace, with this change
-it will still show up as the pid number of the init namespace (pinning
-the struct pid there) and vice versa, which still sounds like the wrong
-behaviour.
+This looks good to me, with one small nit below, but as we are at -rc7
+I think this is best kept until after the upcoming merge window so it
+has more than a few days in linux-next.  I'm going to merge this into
+lsm/dev-staging with the expectation of merging it into lsm/dev after
+the upcoming merge window closes.  If anyone wishes to object to this
+patch or add their own review/ACK/test tag before then, please do.
 
-I think if you really want to fix this, you have to keep the pid as is,
-but make sure it always records the pid in the init_pid_ns (i.e. always
-translate back to init_ns) and then translate to the current pid_ns in
-the output generator of /proc/keys.
+Thanks Jann.
 
-Regards,
+> diff --git a/security/lsm_init.c b/security/lsm_init.c
+> index 7c0fd17f1601..1328a2ceef4b 100644
+> --- a/security/lsm_init.c
+> +++ b/security/lsm_init.c
+> @@ -476,7 +476,7 @@ int __init security_init(void)
+>  						    blob_sizes.lbs_inode, 0,
+>  						    SLAB_PANIC, NULL);
+>  
+> -	if (lsm_cred_alloc((struct cred *)unrcu_pointer(current->cred),
+> +	if (lsm_cred_alloc((struct cred *)current->cred,
+>  			   GFP_KERNEL))
 
-James
+Just a FYI, but I pulled the GFP_KERNEL up on the line above while
+merging since it now fits.
 
+--
+paul-moore.com
