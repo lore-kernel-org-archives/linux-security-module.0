@@ -1,138 +1,196 @@
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C7B3DEAE3
-	for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2026 20:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3155B40099C
+	for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2026 20:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786479400; cv=none; b=rKhq/viV2u6wXHJcPMLzhe0AfyKJA8MW83TpVC/Ov4n9SNqV5qbeme42hoPObBqgAIaEPgI4Hi4MYKkRjPMCh5w6kofPPU7p+Wo2W+rYPFogLTB0QYP7zA8i4ua3L4YODGck/d5rNoC/e87HR555P9/fbtDiLDVIIYp5HUax724=
+	t=1786479516; cv=none; b=nrT/HbWC9w6HADJuTxrkGObimdxhUCUQf7qjr0OsyBin0/gODaj4UV18MWIq6ovEl5ym8rYOoB9AgRmROhHxu/WhBWxzhHqTRbC5j9sEwb6YxyMDl82whrwY5RFZA177rrAq88E5xez+4r2SmiOegY0mcIvsH7WTwZR7Qam64kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786479400; c=relaxed/simple;
-	bh=Gs5qktynB3HDXrcuUgXkDPkA6vP85YgVlznC3ykj1ZA=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=BlmVh+xBllxpfzhYNFNgtlFySk5LVDltjJcGccYv4FGCb+KUw18VmgoHKr58B0gAYJOsGB9tGrPplhDt8+V4WT3B/RAFYvrHwUMjxqw1K2en0CwjX/RzqNypAS4ido3s177zfeWSeFKXIdMg1l0xFBBKx4i2nw8nUiLJpwlRcX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=F0mHMS9v; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1786479516; c=relaxed/simple;
+	bh=ccUlQITujjKDxvsizPgp3QY5vJYvUp9kjFimThDnMxk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=koJLAY/crClhn8yLt06z/yKXq09O3XP1SXauZsSbNG4lJyzKTqj7tOHnXGzKKoucA5ZEZuifJrPycEl+m0y5sFUOgSpVRJOfz+QaGbBOgmtNamo8qFauk00upgcWgmF5fTHpmyoVTngvM/5e3t/gfcu2GxLtrix0HP8eiNU1mjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pa7YLGEj; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="F0mHMS9v"
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-8efec2c28f8so1823866d6.2
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2026 13:16:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pa7YLGEj"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-47de008b020so157027f8f.1
+        for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2026 13:18:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1786479397; x=1787084197; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-type:mime-version:message-id:date:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=xH0SwTCGvwIVAyy3MlPE//WhIac69+nmmcFLLqN73Jk=;
-        b=F0mHMS9viwiPwd7gMcx/Lv3zHNyIpx0e7AU5waZ+QLlfHPSplJZq/C19lIA9Iwoh3k
-         Uaiq5PmTULwhJ7sqgwpOlaukxaxUSRW/J+8AJM79bt9VODWEmHPop6cQy2bjPg0CbeqB
-         WCgMIM4OiBCKf6gNkPOoL6XSRm5ZnrFTERIDCB6INW5af8/LxRCay9+ruBFVVFsZct60
-         fgMNIqBtjAPYvqSSVLIXkfH2SrAEDbCOBPutibL4PMMc4Jjl6rsbs6bYv/l0tvw3ecmv
-         34p7tYeXQmmcP7+tUCORbyL5cs0doTsLfyfwzX6cW5yM5dmfW5/psvN8LOegYgCqeOtU
-         Nl7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786479397; x=1787084197;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-type:mime-version:message-id:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20251104; t=1786479511; x=1787084311; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=xH0SwTCGvwIVAyy3MlPE//WhIac69+nmmcFLLqN73Jk=;
-        b=Xfmah2h0DytBRcw+SLfQfHFuHeuX3no1jtH6vi1nOHxWV+LkuXjNmFu3TNKj76Adqi
-         EsC5hk23Asi43+2VcHF8JXq3X2XcZRYKdDT5G3NUuk1hXelu804OzHajMVrHPTfmqp6h
-         80f9xlHSrz1J+T9C4xI3nn8k5h067sFwwurYHStLegPXK5W41rLJH1eFNpjp7ypnVHQd
-         SLB62dE2UjQRCoIGpjY7Xg8qnheWythdlJjAIYr2TE2IzmUZiWH7nY3jTzIEraVYsIKk
-         6eakWAickVl3FIjY+hSCaPvkwfQs7LOYVbjCgplSub/IXA+6d95Xf2GV75JohqsOnYUq
-         E+tw==
-X-Forwarded-Encrypted: i=1; AHgh+Ro8FKbk/ESmzd96QwIlRK9X7d7cvBfMrnsrF+Kiv12CPd7iSfkdUd6Nri+vYE17DHkuhGFKlJfEm6E6BnehWtna24SogSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSIaHEWOd1Qg2u4AZeoNDF8CxEFfLDVMmFshKyUDIAR3U7VUZA
-	C6ja3D4HzllQmwP385VSBeUbmvJigNqnIwOsWSB9SO2wnxX+jpEAcFynjm4LQ7SQ/g==
-X-Gm-Gg: AR+sD11rHmKnZMYxkWJ5URMD7szL82WSuzo+A5JbmWcGAi6Ht1JNFSrAojZjFimMKIQ
-	KzfVW5EhbQAG1Z79mI0VEuRGBbQgayvwRMZ1gW6znSlJJA5DUOcPpei0OfVwJdXc3yebMRyVcv2
-	fXD49x0X3DdQQyrmUQBmd9Esml20XuX6EZZJIzNpKfFMY+nqin258pz9GSTJJkqgU+770sj+hEk
-	AyvGjFwT/bTOvWeEnscj8Fe/nahhrtqYPhA4EOeaOFHkDVzvpcyJLIZCaeSEjXyOVH+hWhP+jEl
-	k+EuWxnMpmWOPJDtDbQa1FMu/xhZrQYK6oxrQ1bzZxphKMJl7xETYiDmQUOVMKOGHfSZWhBCKYk
-	Y1WkIfKfH6/Yt5ugrr45zRYtElBAit9GISx9cVTGOop8tYKujjJCI+fcNMLJPyIGzpfD5IdAFol
-	cejEkkIHEtC69Y7iCMp4wZoWJaMMTB97DRsCf13NGvodMbrZlTe+Mht8GSQlsO03rWCnhH15Uyb
-	2ehR7uOC7fo81cYgTdzp2Fk3vYUCgjbSg==
-X-Received: by 2002:a05:6214:8589:20b0:90a:6c34:ed5d with SMTP id 6a1803df08f44-90a6c34ed7amr22377466d6.13.1786479397190;
-        Tue, 11 Aug 2026 13:16:37 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-90a6c29a1f3sm6900626d6.17.2026.08.11.13.16.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Aug 2026 13:16:36 -0700 (PDT)
-Date: Tue, 11 Aug 2026 16:16:35 -0400
-Message-ID: <5cabf9b33a20f130cedcc423b8b2d151@paul-moore.com>
+        bh=JFLe6tkLYuEC2gnEl/GsgjOSVqwPRw7abghLXfye9/g=;
+        b=Pa7YLGEjq+OIlzTFZMUQczrnv8nhodyrexeB8TosOw5rd2s7hrHMHVv2IxRnKOxePx
+         iHhHvEtRUoR06HeffIfbA0Ffu7+N9K4t0D/dC6xnu+gHofT7gtQJ5iVnjqtTZJ3lNEGE
+         2n/+ciBMi4W3n3MVJz6jXrIBlQubrTfFR7rXzRp9Plqdd9Kk/ub2nnX5WyOzstA/t1YI
+         kR0GvxM1Z/phs/XDzVJEs81p4NjrhUei7611y8D/QTZk1Z+g9SNQ4U+zVR+J8pIS23NP
+         SsT8q8ZWd+UJOgKSnCoe38k2JzvrEemASF53MWxAqvL51fYBLWe6KY4pZYDHyWaGdCIq
+         Wqzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786479511; x=1787084311;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=JFLe6tkLYuEC2gnEl/GsgjOSVqwPRw7abghLXfye9/g=;
+        b=gFqHtrsbPXv8qzbO5295oUZ0M3wdD6wVf/zrcpEVVraT6WvYP79W0VrexzyftAG/vp
+         FOPILw3Ve6Ud0mePF1/0JAG5SxfVCUxoYz1x+UVnBWpLK5PTHxY+Uegs9LyfiWn8vbF7
+         cU2q1pWrFThhTPHe+tAj2vQWIu3dJa9Z9hFrW+nSJaEqxHbMCGt/dhiMkdUgFj4IYyFn
+         zLfn2RTJHUUfbY9ynTfBDw9H6g+HHgk0ayfbLlpLX26zPZM3N7SwJkuvIF5tiwIJbH2v
+         jPpZT4gQ9t++fEENEVDxq1t/flveVCA3uDPttSFHKgYSX7vWg5UThWpZzwsM5G3jyGKB
+         NZZA==
+X-Forwarded-Encrypted: i=1; AHgh+RoLe/4t9Yv33FJNQlsRTC7AGPbAvo4EhAH+Nud7nkY+ZUVII15kmsDjQziWpCLMZaLCWoFvt1/OIkEtY+18vKvpQKAtMpY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7hBkzFr/aKqq6fpOx8LgKzLjzvnfbUXDwz030sJGFM3ljxziI
+	EY7okbz0JqPwkKN4BGTREhSpych0PuhVSpuSoIkIYo4eWcAhk6P+18pW
+X-Gm-Gg: AR+sD10Y8zZucWI/3VFYzHNoR+V509ygmyFSiR0cHM0q6s85XAwxdFRoveid3y4Rf5t
+	8FEKvMCL4PitSFWL6CTe4y+W1KdnujeFbgowYDPzDMaknEvr+0DxzcR18teej7luyW55b9YRgTT
+	SyhNiKz1W/dZI9Dgw5D4/LgKKpBsQ3o0wNmk5eBdRjL2RyKHNQhxxg+FvZYyfwIo3ivXsMhUz9M
+	THivO/CuVh3oXtPglRcsUbsjYQa4JfMXbaU0NhGCN992Wnd2+XDQCd8LTrhwJGb9h003s5T11fV
+	/52r0hMtAlOOz75yPZGFbiXf80VDMbgfy8utSBGY/Ih2UcJosG06gDImeWXPT9R2biRoQ1Meczf
+	0d3neUslOIRa3uGfhhUfeCW/XGHrFfEZgPmweBTRAm8XBOlOTioRcmcHKqs75S6TDGUT3fVFmDD
+	dLPPs7QGavT0iWPZhfc0qklgKc8wh50F5rzRQth89qRQoGjj5PMZYiY8xCSHemQJ3JnjvQI5Zyo
+	J6XAYy8JvD0Tw==
+X-Received: by 2002:a05:6000:430d:b0:47f:e7f9:5251 with SMTP id ffacd0b85a97d-4814ffe28b1mr3367485f8f.3.1786479511163;
+        Tue, 11 Aug 2026 13:18:31 -0700 (PDT)
+Received: from [192.168.2.14] (85-70-151-113.rcd.o2.cz. [85.70.151.113])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48150bf5c5fsm976683f8f.3.2026.08.11.13.18.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Aug 2026 13:18:30 -0700 (PDT)
+Message-ID: <8654c2d4-8d9d-43f5-9256-adf2915209e9@gmail.com>
+Date: Tue, 11 Aug 2026 22:18:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20260811_1529/pstg-lib:20260811_1529/pstg-pwork:20260811_1529
-From: Paul Moore <paul@paul-moore.com>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, Christian Brauner <brauner@kernel.org>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, Daniel Durning <danieldurning.work@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Justin Suess <utilityemal77@gmail.com>, Lennart Poettering <lennart@poettering.net>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Shervin Oloumi <enlightened@google.com>, Tingmao Wang <m@maowtm.org>, kernel-team@cloudflare.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 3/12] security: Add LSM_AUDIT_DATA_NS for namespace  audit records
-References: <20260726161400.3010511-4-mic@digikod.net>
-In-Reply-To: <20260726161400.3010511-4-mic@digikod.net>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 13/13] dm crypt: wipe key material before kdump
+To: =?UTF-8?Q?Jan_Sebastian_G=C3=B6tte?= <linux@jaseg.de>
+Cc: kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+ keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-security-module@vger.kernel.org, linux-crypto@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org,
+ linux-integrity@vger.kernel.org, linux-afs@lists.infradead.org,
+ netdev@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, dm-devel@lists.linux.dev,
+ Andrew Morton <akpm@linux-foundation.org>, Baoquan He
+ <baoquan.he@linux.dev>, Mike Rapoport <rppt@kernel.org>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>,
+ Pratyush Yadav <pratyush@kernel.org>, Dave Young <ruirui.yang@linux.dev>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, Lukas Wunner <lukas@wunner.de>,
+ Ignat Korchagin <ignat@linux.win>, Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>, Keith Busch <kbusch@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, Trond Myklebust <trondmy@kernel.org>,
+ Anna Schumaker <anna@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
+ James Bottomley <James.Bottomley@HansenPartnership.com>,
+ Marc Dionne <marc.dionne@auristor.com>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Eric Biggers <ebiggers@kernel.org>,
+ "Theodore Y. Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ Mikulas Patocka <mpatocka@redhat.com>,
+ Benjamin Marzinski <bmarzins@redhat.com>
+References: <20260811-crash-zeroize-rework-v2-0-9561d13c2340@jaseg.de>
+ <20260811-crash-zeroize-rework-v2-13-9561d13c2340@jaseg.de>
+Content-Language: en-US
+From: Milan Broz <gmazyland@gmail.com>
+Autocrypt: addr=gmazyland@gmail.com; keydata=
+ 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
+In-Reply-To: <20260811-crash-zeroize-rework-v2-13-9561d13c2340@jaseg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Jul 26, 2026 =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net> wrote:
+On 8/11/26 7:53 PM, Jan Sebastian GÃ¶tte wrote:
+> Wipe volume key/iv copies kept by dm-crypt with
+> CONFIG_CRASH_WIPE_SECRETS. The backend tfms are already handled
+> separately.
 > 
-> Add a new LSM audit data type LSM_AUDIT_DATA_NS that logs namespace
-> information in audit records.  Two fields are provided:
+> Add a list tracking struct crypt_config instances when
+> CONFIG_CRASH_WIPE_SECRETS is set. Structs are tracked here to avoid
+> having to enumerate them through some roundabout way before kdump, when
+> we can't safely take locks anymore.
+
+Well, dm-crypt has crypt_wipe_key(), which can be called through a device-mapper message.
+It also sets keys to zero in the crypto API.
+
+Why do we need yet another way to wipe keys here, reimplementing everything twice?
+
+I can imagine an emergency wrapper callback that will suspend dm-crypt and call existing code.
+
+> Use custom wipe handlers even for things like ivs that have existing
+> wipe functions elsewhere because we need to use crash_wipe_memzero
+> instead of memzero_explicit. The crash_wipe helper memzero_explicit's
+> the target buffers and flushes data caches. On ARM64, missing that cache
+> flush could lead to the zeros not being written to DRAM before the kdump
+> code turns off the data caches moments later.
+
+Please no. It looks to me like you are trying to fix this on the wrong layer.
+This way everyone will need their own memzero...
+
+Dunno, but I really do not like dm-crypt becoming completely bloated with code
+that has nothing to do with the original purpose of this driver.
+
+Milan
+
+
 > 
-> - ns_type: the CLONE_NEW* flag identifying the namespace type, logged
->   in hexadecimal.
-> 
-> - ns_id: the unique 64-bit namespace identifier, retrievable from
->   userspace via NS_GET_ID or listns(2).  Unlike the proc inode number
->   (inum), ns_id is never recycled.  For namespace creation denials,
->   ns_id is 0 because the namespace does not exist yet.
-
-Based on the code in this patch, "ns_type" should be "namespace_type"
-and a similar change needs to be done for "ns_id".  Regardless, the
-first three patches look fine to me (I can fixup the above during a
-merge).
-
-As mentioned previously, I want to merge at least the first three
-patches via the LSM tree since we have multiple LSMs which depend on
-these new hooks.  I'm happy to also merge the remaining Landlock
-patches in this patchset via the LSM tree, or you can manage those
-separately; let me know how you would like to proceed with that.
-
-Since we are at -rc7, this is obviously something for after the
-upcoming merge window so I'm going to merge the first three patches
-into the lsm/dev-staging branch now with the understanding that they
-will move over to the lsm/dev branch after the upcoming merge window
-is finished.  If you want me to merge the Landlock patches too, just
-let me know.
-
-> A new audit data type is needed because no existing LSM_AUDIT_DATA_*
-> type carries namespace information.  The closest alternatives (e.g.
-> LSM_AUDIT_DATA_TASK or LSM_AUDIT_DATA_NONE with custom strings) would
-> either lose the namespace type or require ad-hoc formatting that
-> bypasses the structured audit data union.
-> 
-> Cc: Günther Noack <gnoack@google.com>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Reviewed-by: Christian Brauner <brauner@kernel.org>
-> Reviewed-by: Günther Noack <gnoack@google.com>
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Signed-off-by: Jan Sebastian Götte <linux@jaseg.de>
 > ---
-> Changes since v1:
-> https://patch.msgid.link/20260312100444.2609563-3-mic@digikod.net
-> - Replace inum with ns_id in the audit record: ns_id is the stable
->   64-bit namespace identifier (never recycled), accessible to
->   userspace via NS_GET_ID and listns(2) (suggested by Christian
->   Brauner).
-> - Add Reviewed-by: Christian Brauner.
-> - Add Reviewed-by: Günther Noack.
-> ---
->  include/linux/lsm_audit.h | 5 +++++
->  security/lsm_audit.c      | 4 ++++
->  2 files changed, 9 insertions(+)
-
---
-paul-moore.com
+>   drivers/md/dm-crypt.c | 151 ++++++++++++++++++++++++++++++++++++++++++++------
+>   1 file changed, 134 insertions(+), 17 deletions(-)
+> 
