@@ -1,33 +1,33 @@
-Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D6042A143
-	for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2026 09:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441232877C3
+	for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2026 09:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786441448; cv=none; b=dN9OxUqzw7pg/VgQ0kJ1G/7qvTDmGWvbvDIJ6AWagfgENdSHUsIQej0JbVE+6oTZipOlkDBYDeLCgR1zwnF8qCxQViFD+USavAdSHZPC0+659vZWN9/sS7TTyGQpnIvLGqMlXyYLqCi/OwZXQ4NfMMSj5j7TrXMqLx/ssBcb3uU=
+	t=1786441451; cv=none; b=R+K3Sn8Zm5Bzr5ebiSDdKIOttQMqBPkqirUyPxgiWEXHbtpkAPzhzFKSDKTv1J627uVbra9JHbUoegbzw2ra1WcO9WG+aJEhb5zw/LO+MhI6IX2z/Sta5RJ+rycmGXz8cI3Gbjh83KMfp9J7WsvxzW4EOyH9cV0Zjr2JZ1/6NEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786441448; c=relaxed/simple;
-	bh=T2QMKFKbXuJRfAk2UwAjgCvcORAAdKDtgqdwN+1FcqI=;
+	s=arc-20240116; t=1786441451; c=relaxed/simple;
+	bh=poqJ0G0ovgmf08DhEkCYLP/aq8FhL58EgEAugPWozAc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GWtzxBs5HiK2HgaPrPrVT/vxcrRGh9UVNv/9xqykgOZeEHPoNGVMgTLfdCrCxtxNkDWEjTI7BwLyAGGTcZgGPu522NEOgyAc8pMwJyvsV4jakrOuy15xMNxy5hwXdnOA8jjceW//L3nhMTX9tmfiysdtSfvbqT4uo26wN1Cd51I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Y/SMZcjK; arc=none smtp.client-ip=84.16.66.169
+	 MIME-Version:Content-Type; b=IItKpEqR1PSnR9mEjQQbuMkl3hlCyYOp6pbK8wAu8gS1Tqrkmm6H6MxgdU9xQfD9/sHwIUVmzl1JZiblvsBq36Uj5kaQTJ3ZJI0NtQHoltXTJgp8x/7DDfTk4IEV73Lq6KSfXjC1aaXJEnOxnBJcYIzuifFqGLV/4O1xmbHWqBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=qLu71PEJ; arc=none smtp.client-ip=45.157.188.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Y/SMZcjK"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hK6C66lHhzD7x;
-	Tue, 11 Aug 2026 11:44:02 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="qLu71PEJ"
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hK6C34BgyzMqh;
+	Tue, 11 Aug 2026 11:43:59 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1786441442;
-	bh=K6kPh2LOq4mPSyk2s9MsopUPgjvazm42B/psa+TfgEg=;
+	s=20191114; t=1786441439;
+	bh=7IR5/lA7Ns+bZnjEnN4FkoU4CGvXaelN81H2yZyc8LA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Y/SMZcjKnlddYhj7YDyKxqyAFn39ZO4dMWl7l4gHyKZuaEv+R28yI3DAGstyiPnyx
-	 i1zr6/FwG4teaQYKZsgl/fsVZ2FwFtUI6Xs0JNgBoXE7krvpBUnaNnquIBPIndkOo3
-	 FT/tWvdO3SeSa4Vi7DjWSwCUEmM5qGWNp0NV3P7g=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4hK6C55tKkzYsg;
-	Tue, 11 Aug 2026 11:44:01 +0200 (CEST)
+	b=qLu71PEJUgR5qTqjtT9MeSt5DJ67AihYgXPlt7VFayFke4L7vGjiMh5HCEvfR8d8Q
+	 JPCsf+kqq0bJ+NvUnT7TJ284ulWggufSMG467zMrVXfUYIiX8xQ5w1Yqz8+sa/Xx8W
+	 3nhzSJMr750U17puOhj/e6uToemfQhL5Pp+UHwq0=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4hK6C23wlMzMMZ;
+	Tue, 11 Aug 2026 11:43:58 +0200 (CEST)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
 	Steven Rostedt <rostedt@goodmis.org>
@@ -45,9 +45,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	kernel-team@cloudflare.com,
 	linux-security-module@vger.kernel.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v4 09/19] landlock: Add create_domain and free_domain tracepoints
-Date: Tue, 11 Aug 2026 11:43:23 +0200
-Message-ID: <20260811094338.288094-10-mic@digikod.net>
+Subject: [PATCH v4 07/19] landlock: Add create_ruleset and free_ruleset tracepoints
+Date: Tue, 11 Aug 2026 11:43:21 +0200
+Message-ID: <20260811094338.288094-8-mic@digikod.net>
 In-Reply-To: <20260811094338.288094-1-mic@digikod.net>
 References: <20260811094338.288094-1-mic@digikod.net>
 Precedence: bulk
@@ -60,40 +60,44 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Add a landlock_create_domain tracepoint emitted from
-landlock_restrict_self() after the new domain is created, so a consumer
-can correlate the source ruleset with the resulting domain.  The
-flags-only path (ruleset_fd == -1) creates no domain and emits no event.
+Add the first Landlock tracepoints, for ruleset lifecycle:
+landlock_create_ruleset fires from the landlock_create_ruleset() syscall
+handler, and landlock_free_ruleset fires in free_ruleset() before the
+ruleset is freed.
 
-Move the ruleset lock acquisition from landlock_merge_ruleset() to the
-caller so the lock is held across both the merge and the tracepoint
-emission, giving an eBPF program a consistent ruleset snapshot.  Release
-it before the thread-sync: holding ruleset->lock across
-landlock_restrict_sibling_threads() would deadlock a sibling blocked on
-the same lock.  The event therefore fires before the (rare) thread-sync
-failure path; when that path aborts the just-created domain, the
-matching free_domain event fires so the create/free pair stays balanced.
+These tracepoints, and the ones added by the following commits, share a
+common design.  Rather than one polymorphic event distinguished by a
+status field (as audit uses a shared record type with a "status="
+field), each lifecycle transition and denial type gets its own event
+with a type-safe TP_PROTO, giving precise ftrace filtering by event name
+and type-safe eBPF access.  TP_PROTO passes the object pointer and the
+fields are read from it in TP_fast_assign, so an eBPF program reads the
+full object state (rules, access masks, hierarchy) via BTF from a single
+pointer rather than from the flattened TP_STRUCT__entry fields.  The
+whole cost is paid only when a tracer is attached; the static branch is
+not taken otherwise.  Trace fields carry the bare access-right and scope
+names (read_file), reusing the audit name tables; audit prepends the
+category (fs.read_file), which the trace event name already conveys.
+The trace header's DOC comment documents the consistency and locking
+guarantees these events share.
 
-Add a landlock_free_domain tracepoint that fires when a domain's
-hierarchy node is freed.  The hierarchy node is the lifecycle boundary
-because it represents the domain's identity and outlives the domain's
-access masks, which may still be active in descendant domains.
+create_ruleset needs no lock because the ruleset is not yet shared (its
+file descriptor is not yet installed).  The deallocation events use the
+"free_" prefix, not "drop_", because they fire when the object is
+actually freed.
 
-A domain freed without ever being committed to a credential was never
-visible to user space, so free_domain is suppressed for it.  This is
-tracked by a new landlock_log_status value, LANDLOCK_LOG_UNCOMMITTED,
-which is also the zero value so a hierarchy whose initialization failed
-defaults to not observable.  A hierarchy is born UNCOMMITTED and is
-promoted to LANDLOCK_LOG_PENDING (or LANDLOCK_LOG_DISABLED when logging
-is off) right after its create_domain event fires; a thread-sync failure
-does not reset it, so an aborted domain that already emitted
-create_domain still emits the matching free_domain.  Promoting right
-after the event, rather than at commit_creds() time, avoids a race: on a
-successful thread-sync the sibling threads commit the new domain in
-lockstep before landlock_restrict_self() returns, so the shared domain
-may already have moved to LANDLOCK_LOG_RECORDED through a plain store,
-and a late promotion would race that store and could unbalance the
-domain allocation and deallocation audit records.
+Add trace.c, built for CONFIG_TRACEPOINTS, which defines
+CREATE_TRACE_POINTS, and extend CONFIG_SECURITY_LANDLOCK_LOG to also be
+selected by CONFIG_TRACEPOINTS so the common log framework is available
+to a tracepoints-only build.
+
+Add an id field to struct landlock_ruleset, gated on CONFIG_TRACEPOINTS
+and assigned from landlock_get_id_range() at creation.  Only the
+tracepoints consume it (audit identifies domains, not rulesets), so it
+does not exist in an audit-only build.  The Landlock ID is a stable u64
+that names the ruleset across the trace stream and uses the same scheme
+as audit, so a ruleset can be correlated between trace and audit
+records.
 
 Cc: Günther Noack <gnoack@google.com>
 Cc: Justin Suess <utilityemal77@gmail.com>
@@ -104,415 +108,345 @@ Cc: Tingmao Wang <m@maowtm.org>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
 
+Changes since v3:
+https://patch.msgid.link/20260722171159.2776765-9-mic@digikod.net
+- Add clang-format off/on markers around the TRACE_EVENT() macros.
+
 Changes since v2:
-https://patch.msgid.link/20260406143717.1815792-9-mic@digikod.net
-- Renamed the landlock_restrict_self tracepoint to
-  landlock_create_domain and reordered its arguments to (domain,
-  ruleset) for domain-first consistency with the other
-  domain-lifecycle events.
-- Reformat the TRACE_EVENT body (TP_PROTO, TP_STRUCT__entry,
-  TP_fast_assign, TP_printk) to the kernel tracing convention with one
-  field per line and tab-aligned columns (requested by Steven Rostedt).
-- Emit the create_domain creation event under the ruleset lock, just
-  after the merge and before the thread-sync wait, so an observer reads
-  the exact ruleset frozen into the domain and the lock is not held
-  across thread-sync (where a sibling blocked in landlock_add_rule() on
-  the same lock would stall it).
-- Gate free_domain on a new LANDLOCK_LOG_UNCOMMITTED status so a domain
-  freed before its creation event fired emits no free_domain;
-  create_domain marks the domain committed right after emitting the
-  event, so a later thread-sync failure still emits the matching
-  free_domain and the create/free pair stays balanced.
-- Emit free_domain from landlock_trace_free_domain() in a dedicated
-  tracing translation unit, and move the decoupling of the log state and
-  landlock_log_free_domain() from CONFIG_AUDIT to the commit that
-  separates the common log framework from audit.
-- Clarify in the create_domain emission comment that the event fires
-  before the infallible commit_creds().
-- Clarify the free_domain kdoc: the event fires when the hierarchy
-  node's refcount reaches zero, after all child domains release their
-  parent reference (the earlier "all descendants freed" phrasing could
-  be misread).
+https://patch.msgid.link/20260406143717.1815792-7-mic@digikod.net
+- Reformatted TP_STRUCT__entry and TP_fast_assign to kernel tracing
+  convention (requested by Steven Rostedt).
+- Render the handled access masks as symbolic names with
+  __print_flags(), shared with the audit blocker names.
+- Move the id.h declaration guard widening (landlock_init_id,
+  landlock_get_id_range) to the earlier commit that builds id.o under
+  CONFIG_SECURITY_LANDLOCK_LOG, so intermediate patches build without
+  CONFIG_AUDIT.
+- Refine the trace-event consistency-guarantee DOC comment (observable
+  from user space, balanced creation and deallocation events) and
+  document why create_ruleset emits before the file descriptor is
+  installed.
+- Define CREATE_TRACE_POINTS in a dedicated trace.c built for
+  CONFIG_TRACEPOINTS, and extend CONFIG_SECURITY_LANDLOCK_LOG to be
+  selected by CONFIG_TRACEPOINTS here (the first tracepoint consumer),
+  rather than placing CREATE_TRACE_POINTS in the audit and log
+  translation unit.
+- Gate the struct landlock_ruleset id field on CONFIG_TRACEPOINTS (only
+  tracing uses it) instead of CONFIG_SECURITY_LANDLOCK_LOG.
+- Drop Tingmao Wang's Reviewed-by; the patch was reworked.
 
 Changes since v1:
-- New patch.
+- New patch (split from the v1 add_rule_fs tracepoint patch).
 ---
- include/trace/events/landlock.h | 82 +++++++++++++++++++++++++++++++++
- security/landlock/domain.c      | 28 ++++++-----
- security/landlock/domain.h      | 16 ++++++-
- security/landlock/log.c         |  6 ++-
- security/landlock/syscalls.c    | 45 +++++++++++++++++-
- security/landlock/trace.c       | 31 ++++++++++++-
- security/landlock/trace.h       | 28 +++++++++++
- 7 files changed, 219 insertions(+), 17 deletions(-)
- create mode 100644 security/landlock/trace.h
+ MAINTAINERS                     |   1 +
+ include/linux/landlock.h        |   1 +
+ include/trace/events/landlock.h | 143 ++++++++++++++++++++++++++++++++
+ security/landlock/Kconfig       |   2 +-
+ security/landlock/Makefile      |   2 +
+ security/landlock/ruleset.c     |   8 ++
+ security/landlock/ruleset.h     |   9 ++
+ security/landlock/syscalls.c    |  11 +++
+ security/landlock/trace.c       |  17 ++++
+ 9 files changed, 193 insertions(+), 1 deletion(-)
+ create mode 100644 include/trace/events/landlock.h
+ create mode 100644 security/landlock/trace.c
 
-diff --git a/include/trace/events/landlock.h b/include/trace/events/landlock.h
-index b378446e26a5..9f0d0436a8bb 100644
---- a/include/trace/events/landlock.h
-+++ b/include/trace/events/landlock.h
-@@ -16,6 +16,8 @@
- #include <linux/tracepoint.h>
- #include <linux/trace_seq.h>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 61677067199b..95c90073e0bb 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14600,6 +14600,7 @@ F:	Documentation/security/landlock.rst
+ F:	Documentation/userspace-api/landlock.rst
+ F:	fs/ioctl.c
+ F:	include/linux/landlock.h
++F:	include/trace/events/landlock.h
+ F:	include/uapi/linux/landlock.h
+ F:	samples/landlock/
+ F:	security/landlock/
+diff --git a/include/linux/landlock.h b/include/linux/landlock.h
+index cabe6c784833..004cbd0b9298 100644
+--- a/include/linux/landlock.h
++++ b/include/linux/landlock.h
+@@ -9,6 +9,7 @@
+ #ifndef _LINUX_LANDLOCK_H
+ #define _LINUX_LANDLOCK_H
  
-+struct landlock_domain;
-+struct landlock_hierarchy;
- struct landlock_ruleset;
- struct path;
- 
-@@ -290,6 +292,86 @@ TRACE_EVENT(landlock_add_rule_net,
- 		__entry->port)
- );
- 
-+/**
-+ * landlock_create_domain - New domain created
-+ *
-+ * @domain: Newly created domain (never NULL, immutable after creation).
-+ *          @domain->hierarchy->id is its unique ID, shared with the
-+ *          landlock_enforce_domain and landlock_free_domain events;
-+ *          @domain->hierarchy->details holds the requesting process.
-+ * @ruleset: Source ruleset frozen into the domain (never NULL).  The
-+ *           ruleset lock is held across the emission, so a BPF program
-+ *           reading it via BTF sees the exact merged ruleset;
-+ *           @ruleset->id / @ruleset->version identify it.
-+ *
-+ * Emitted by sys_landlock_restrict_self() once, in the requesting
-+ * thread's context, right after the merge and before thread-sync.  The
-+ * flags-only path (ruleset_fd == -1) creates no domain and does not
-+ * emit this event.  Paired with the per-thread landlock_enforce_domain
-+ * (join on @domain->hierarchy->id) and balanced by a matching
-+ * landlock_free_domain event.
-+ */
-+TRACE_EVENT(landlock_create_domain,
-+
-+	TP_PROTO(const struct landlock_domain *domain,
-+		 const struct landlock_ruleset *ruleset),
-+
-+	TP_ARGS(domain, ruleset),
-+
-+	TP_STRUCT__entry(
-+		__field(	__u64,		domain_id	)
-+		__field(	__u64,		parent_id	)
-+		__field(	__u64,		ruleset_id	)
-+		__field(	__u32,		ruleset_version	)
-+	),
-+
-+	TP_fast_assign(
-+		lockdep_assert_held(&ruleset->lock);
-+		__entry->domain_id	= domain->hierarchy->id;
-+		__entry->parent_id	= domain->hierarchy->parent ?
-+					  domain->hierarchy->parent->id : 0;
-+		__entry->ruleset_id	= ruleset->id;
-+		__entry->ruleset_version = ruleset->version;
-+	),
-+
-+	TP_printk("domain=%llx parent=%llx ruleset=%llx.%u",
-+		__entry->domain_id, __entry->parent_id,
-+		__entry->ruleset_id, __entry->ruleset_version)
-+);
-+
-+/**
-+ * landlock_free_domain - Domain freed
-+ *
-+ * @hierarchy: Hierarchy node being freed (never NULL).
-+ *
-+ * Emitted when the hierarchy node's last reference is dropped: its
-+ * refcount reaches zero after all child domains have released their
-+ * parent reference.  A committed domain is
-+ * freed from a kworker via landlock_put_domain_deferred() (the credential
-+ * free path runs in RCU context, where sleeping is forbidden), so the
-+ * current task is not the sandboxed task that triggered the free.  Balanced
-+ * by a matching landlock_create_domain event.
-+ */
-+TRACE_EVENT(landlock_free_domain,
-+
-+	TP_PROTO(const struct landlock_hierarchy *hierarchy),
-+
-+	TP_ARGS(hierarchy),
-+
-+	TP_STRUCT__entry(
-+		__field(	__u64,		domain_id	)
-+		__field(	__u64,		denials		)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->domain_id	= hierarchy->id;
-+		__entry->denials	= atomic64_read(&hierarchy->num_denials);
-+	),
-+
-+	TP_printk("domain=%llx denials=%llu",
-+		__entry->domain_id, __entry->denials)
-+);
-+
- #undef _LANDLOCK_NAME_ENTRY
- 
- #endif /* _TRACE_LANDLOCK_H */
-diff --git a/security/landlock/domain.c b/security/landlock/domain.c
-index d0b35ccce122..7651eee8fe02 100644
---- a/security/landlock/domain.c
-+++ b/security/landlock/domain.c
-@@ -309,31 +309,28 @@ static int merge_ruleset(struct landlock_domain *const dst,
- 	if (WARN_ON_ONCE(!dst || !dst->hierarchy))
- 		return -EINVAL;
- 
--	mutex_lock(&src->lock);
-+	lockdep_assert_held(&src->lock);
- 
- 	/* Stacks the new layer. */
--	if (WARN_ON_ONCE(dst->num_layers < 1)) {
--		err = -EINVAL;
--		goto out_unlock;
--	}
-+	if (WARN_ON_ONCE(dst->num_layers < 1))
-+		return -EINVAL;
-+
- 	dst->handled_masks[dst->num_layers - 1] =
- 		landlock_upgrade_handled_access_masks(src->handled_masks);
- 
- 	/* Merges the @src inode tree. */
- 	err = merge_tree(dst, src, LANDLOCK_KEY_INODE);
- 	if (err)
--		goto out_unlock;
-+		return err;
- 
- #if IS_ENABLED(CONFIG_INET)
- 	/* Merges the @src network port tree. */
- 	err = merge_tree(dst, src, LANDLOCK_KEY_NET_PORT);
- 	if (err)
--		goto out_unlock;
-+		return err;
- #endif /* IS_ENABLED(CONFIG_INET) */
- 
--out_unlock:
--	mutex_unlock(&src->lock);
--	return err;
-+	return 0;
- }
- 
- static int inherit_tree(struct landlock_domain *const parent,
-@@ -415,6 +412,8 @@ static int inherit_ruleset(struct landlock_domain *const parent,
-  * The current task is requesting to be restricted.  The subjective credentials
-  * must not be in an overridden state. cf. landlock_init_hierarchy_log().
-  *
-+ * The caller must hold @ruleset->lock.
-+ *
-  * Return: A new domain merging @parent and @ruleset on success, or ERR_PTR() on
-  * failure.  If @parent is NULL, the new domain duplicates @ruleset.
-  */
-@@ -427,6 +426,7 @@ landlock_merge_ruleset(struct landlock_domain *const parent,
- 	int err;
- 
- 	might_sleep();
-+	lockdep_assert_held(&ruleset->lock);
- 	if (WARN_ON_ONCE(!ruleset))
- 		return ERR_PTR(-EINVAL);
- 
-@@ -575,7 +575,13 @@ int landlock_init_hierarchy_log(struct landlock_hierarchy *const hierarchy)
- 
- 	hierarchy->details = details;
- 	hierarchy->id = landlock_get_id_range(1);
--	hierarchy->log_status = LANDLOCK_LOG_PENDING;
-+	/*
-+	 * The hierarchy is born unobservable: landlock_restrict_self() moves it
-+	 * out of LANDLOCK_LOG_UNCOMMITTED once it has emitted the creation
-+	 * event, so the matching free_domain event fires for it and not for a
-+	 * hierarchy whose creation was never observed.
-+	 */
-+	hierarchy->log_status = LANDLOCK_LOG_UNCOMMITTED;
- 	hierarchy->log_same_exec = true;
- 	hierarchy->log_new_exec = false;
- 	atomic64_set(&hierarchy->num_denials, 0);
-diff --git a/security/landlock/domain.h b/security/landlock/domain.h
-index 1237e3e25240..8351e22016fe 100644
---- a/security/landlock/domain.h
-+++ b/security/landlock/domain.h
-@@ -25,7 +25,21 @@
- #include "ruleset.h"
- 
- enum landlock_log_status {
--	LANDLOCK_LOG_PENDING = 0,
-+	/*
-+	 * Hierarchy whose creation event has not been emitted, so it is not yet
-+	 * observable from user space.  A hierarchy is born in this state (the
-+	 * zero value, so a partially initialized hierarchy defaults to "not
-+	 * observable") and leaves it when landlock_restrict_self() emits its
-+	 * creation event, right after the merge and before the thread-sync
-+	 * wait.  No trace free_domain event (and no audit deallocation record)
-+	 * fires while a hierarchy is in this state, so a hierarchy that never
-+	 * became observable (e.g. its initialization failed) is freed silently.
-+	 * A domain aborted by a thread-sync failure already emitted its
-+	 * creation event, so it is no longer UNCOMMITTED and does fire
-+	 * free_domain.
-+	 */
-+	LANDLOCK_LOG_UNCOMMITTED = 0,
-+	LANDLOCK_LOG_PENDING,
- 	LANDLOCK_LOG_RECORDED,
- 	LANDLOCK_LOG_DISABLED,
- };
-diff --git a/security/landlock/log.c b/security/landlock/log.c
-index f42e6dc4de5c..13033808bdbd 100644
---- a/security/landlock/log.c
-+++ b/security/landlock/log.c
-@@ -17,6 +17,7 @@
- #include "limits.h"
- #include "log.h"
- #include "ruleset.h"
-+#include "trace.h"
- 
- static struct landlock_hierarchy *
- get_hierarchy(const struct landlock_domain *const domain, const size_t layer)
-@@ -550,14 +551,15 @@ void landlock_log_denial(const struct landlock_cred_security *const subject,
-  *
-  * @hierarchy: The domain's hierarchy being deallocated.
-  *
-- * Called in a work queue scheduled by landlock_put_domain_deferred() called by
-- * hook_cred_free().
-+ * Called from landlock_put_domain_deferred() (via a work queue scheduled by
-+ * hook_cred_free()) or directly from landlock_put_domain().
-  */
- void landlock_log_free_domain(const struct landlock_hierarchy *const hierarchy)
- {
- 	if (WARN_ON_ONCE(!hierarchy))
- 		return;
- 
-+	landlock_trace_free_domain(hierarchy);
- 	landlock_audit_free_domain(hierarchy);
- }
- 
-diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-index 7f168802b584..ba4193673c70 100644
---- a/security/landlock/syscalls.c
-+++ b/security/landlock/syscalls.c
-@@ -543,6 +543,7 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
- 		flags)
- {
- 	struct landlock_ruleset *ruleset __free(landlock_put_ruleset) = NULL;
-+	struct landlock_domain *new_dom = NULL;
- 	struct cred *new_cred;
- 	struct landlock_cred_security *new_llcred;
- 	bool __maybe_unused log_same_exec, log_new_exec, log_subdomains,
-@@ -613,18 +614,50 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
- 		 * manipulating the current credentials because they are
- 		 * dedicated per thread.
- 		 */
--		struct landlock_domain *const new_dom =
--			landlock_merge_ruleset(new_llcred->domain, ruleset);
-+		mutex_lock(&ruleset->lock);
-+		new_dom = landlock_merge_ruleset(new_llcred->domain, ruleset);
- 		if (IS_ERR(new_dom)) {
-+			mutex_unlock(&ruleset->lock);
- 			abort_creds(new_cred);
- 			return PTR_ERR(new_dom);
- 		}
-+		/*
-+		 * Emits the domain-creation event while @ruleset->lock is still
-+		 * held, right after the merge, so an eBPF program attached to
-+		 * the tracepoint reads the exact ruleset that was merged into
-+		 * the domain: a consistent snapshot that a concurrent
-+		 * landlock_add_rule() (which holds the same lock) cannot
-+		 * modify.
-+		 *
-+		 * This must come before the thread-sync wait below.  Holding
-+		 * @ruleset->lock across landlock_restrict_sibling_threads()
-+		 * would hang: a sibling thread blocked in landlock_add_rule()
-+		 * on the same @ruleset->lock cannot run the task_work that
-+		 * thread-sync waits for (the lock wait is uninterruptible).
-+		 * Emitting here keeps the lock off the thread-sync path.
-+		 *
-+		 * The trade-off is that the event fires for a domain that a
-+		 * later (rare) thread-sync failure aborts.  That path emits the
-+		 * matching free_domain event so the create/free pair stays
-+		 * balanced (see the thread-sync error path below).
-+		 */
-+		trace_landlock_create_domain(new_dom, ruleset);
-+		mutex_unlock(&ruleset->lock);
- 
- #ifdef CONFIG_SECURITY_LANDLOCK_LOG
- 		new_dom->hierarchy->log_same_exec = log_same_exec;
- 		new_dom->hierarchy->log_new_exec = log_new_exec;
-+		/*
-+		 * The creation event fired above, so move the domain out of
-+		 * LANDLOCK_LOG_UNCOMMITTED: its free_domain event must fire
-+		 * too, even if a thread-sync failure aborts it below.  Audit
-+		 * logging may still be disabled (DISABLED); tracing observes it
-+		 * anyway.
-+		 */
- 		if ((!log_same_exec && !log_new_exec) || !prev_log_subdomains)
- 			new_dom->hierarchy->log_status = LANDLOCK_LOG_DISABLED;
-+		else
-+			new_dom->hierarchy->log_status = LANDLOCK_LOG_PENDING;
- #endif /* CONFIG_SECURITY_LANDLOCK_LOG */
- 
- 		/* Replaces the old (prepared) domain. */
-@@ -640,6 +673,14 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
- 		const int err = landlock_restrict_sibling_threads(
- 			current_cred(), new_cred, flags);
- 		if (err) {
-+			/*
-+			 * Thread-sync failed (rare), so the new domain is
-+			 * aborted instead of committed.  Its creation event
-+			 * already fired above, so the imminent free must emit
-+			 * the matching free_domain event to keep the
-+			 * create/free pair balanced; no special log_status is
-+			 * set here.
-+			 */
- 			abort_creds(new_cred);
- 			return err;
- 		}
-diff --git a/security/landlock/trace.c b/security/landlock/trace.c
-index aeb6eeebe42a..5e6df313c7d2 100644
---- a/security/landlock/trace.c
-+++ b/security/landlock/trace.c
-@@ -6,12 +6,41 @@
-  * Copyright © 2026 Cloudflare, Inc.
-  */
- 
-+#include "trace.h"
-+#include "domain.h"
- #include "ruleset.h"
++#include <linux/types.h>
+ #include <uapi/linux/landlock.h>
  
  /*
-  * Generates the tracepoint definitions in this translation unit.  The trace
-  * event header dereferences the traced objects in TP_fast_assign, so the full
-- * struct definitions (e.g. ruleset.h) must be included before it.
-+ * struct definitions (e.g. ruleset.h, domain.h) must be included before it.
-  */
- #define CREATE_TRACE_POINTS
- #include <trace/events/landlock.h>
+diff --git a/include/trace/events/landlock.h b/include/trace/events/landlock.h
+new file mode 100644
+index 000000000000..02434f770455
+--- /dev/null
++++ b/include/trace/events/landlock.h
+@@ -0,0 +1,143 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright © 2025 Microsoft Corporation
++ * Copyright © 2026 Cloudflare, Inc.
++ */
++
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM landlock
++
++#if !defined(_TRACE_LANDLOCK_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_LANDLOCK_H
++
++#include <linux/landlock.h>
++#include <linux/tracepoint.h>
++
++struct landlock_ruleset;
++
++/* clang-format off */
++
++/* Maps a shared _LANDLOCK_*_NAMES entry to a __print_flags() pair. */
++#define _LANDLOCK_NAME_ENTRY(mask, name) { mask, name }
 +
 +/**
-+ * landlock_trace_free_domain - Emit a tracepoint on domain deallocation
++ * DOC: Landlock trace events
 + *
-+ * @hierarchy: The domain's hierarchy being deallocated.
++ * These guarantees and constraints hold for every Landlock tracepoint.
++ * A new tracepoint must uphold them, and an eBPF consumer can rely on
++ * them.
 + *
-+ * Fires only for a hierarchy whose creation event was emitted, i.e. one that
-+ * left LANDLOCK_LOG_UNCOMMITTED in landlock_restrict_self().  This keeps the
-+ * create/free pair balanced: a hierarchy that never became observable is freed
-+ * silently, while a domain that landlock_restrict_self() created and a
-+ * thread-sync failure then aborted still fires free_domain, because its
-+ * creation event already fired.
++ * Lifecycle consistency
++ * ~~~~~~~~~~~~~~~~~~~~~~
 + *
-+ * Called from landlock_log_free_domain().
++ * Lifecycle events are balanced: a creation event always has a matching
++ * deallocation event and vice versa, so an eBPF program can model object
++ * lifetimes from the trace stream without reconciliation logic.  A creation
++ * event fires while the object is still private to the calling thread
++ * (landlock_create_ruleset fires before the ruleset's file descriptor is
++ * installed, so it cannot race a concurrent :manpage:`close(2)`); if fd
++ * installation later fails and the ruleset is freed, free_ruleset still
++ * fires, keeping the pair balanced.  The domain pair (create_domain and
++ * free_domain) is balanced the same way: create_domain fires when the
++ * domain is created (under the ruleset lock, before thread-sync), and
++ * free_domain fires when it is freed.  A rare thread-sync failure aborts
++ * the just-created domain, which then emits both events (its creation, then
++ * an immediate free).  Denial events fire only for denials that actually
++ * happen.
++ *
++ * Pointer access
++ * ~~~~~~~~~~~~~~
++ *
++ * All pointer arguments in TP_PROTO are guaranteed non-NULL by the
++ * caller, but pointers reached through them may still be NULL (e.g.,
++ * hierarchy->parent at a root domain) and must be checked.  eBPF programs
++ * read these pointers via BTF for richer introspection than the
++ * TP_STRUCT__entry fields, which serve TP_printk display only.
++ *
++ * Mutable object pointers are passed while the caller holds the object's
++ * lock, so TP_fast_assign and a BTF reader see the exact object the event
++ * reports, a snapshot no concurrent writer can change: add_rule holds the
++ * modified ruleset's lock, and create_domain holds the ruleset lock across
++ * the emission (before the thread-sync wait) so the inspected ruleset is
++ * the one merged into the domain.  Objects immutable at the emission site
++ * (a domain after creation, a hierarchy at its last reference) need no
++ * lock.  A few values that no held lock protects are a best-effort
++ * lockless snapshot instead: a task's comm, and the deny_access_net struct
++ * sock (whose network hook holds no socket lock), matching how the sched
++ * and signal trace events sample comm.
 + */
-+void landlock_trace_free_domain(const struct landlock_hierarchy *const hierarchy)
-+{
-+	/*
-+	 * The log_status read is a correctness guard (keep the create/free pair
-+	 * balanced), not a cost guard, so this cold path needs no
-+	 * trace_..._enabled() check: the tracepoint is a static-branch no-op
-+	 * when disabled.  The denial path guards trace_..._enabled() instead
-+	 * because it does expensive __getname()/path work before emitting.
++
++/**
++ * landlock_create_ruleset - New ruleset created
++ *
++ * @ruleset: Newly created ruleset (never NULL); not yet shared via an fd,
++ *           so no lock is needed.
++ *
++ * Emitted by sys_landlock_create_ruleset() while the new ruleset is still
++ * private to the calling thread, before its file descriptor is installed,
++ * so it cannot race a concurrent :manpage:`close(2)`.  Balanced by a
++ * matching landlock_free_ruleset event.
++ */
++TRACE_EVENT(landlock_create_ruleset,
++
++	TP_PROTO(const struct landlock_ruleset *ruleset),
++
++	TP_ARGS(ruleset),
++
++	TP_STRUCT__entry(
++		__field(	__u64,		ruleset_id	)
++		__field(	access_mask_t,	handled_fs	)
++		__field(	access_mask_t,	handled_net	)
++		__field(	access_mask_t,	scoped		)
++	),
++
++	TP_fast_assign(
++		__entry->ruleset_id	= ruleset->id;
++		__entry->handled_fs	= ruleset->handled_masks.fs;
++		__entry->handled_net	= ruleset->handled_masks.net;
++		__entry->scoped		= ruleset->handled_masks.scope;
++	),
++
++	TP_printk("ruleset=%llx handled_fs=%s handled_net=%s scoped=%s",
++		__entry->ruleset_id,
++		__print_flags(__entry->handled_fs, "|", _LANDLOCK_ACCESS_FS_NAMES),
++		__print_flags(__entry->handled_net, "|", _LANDLOCK_ACCESS_NET_NAMES),
++		__print_flags(__entry->scoped, "|", _LANDLOCK_SCOPE_NAMES))
++);
++
++/**
++ * landlock_free_ruleset - Ruleset freed
++ *
++ * @ruleset: Ruleset being freed (never NULL); at its last reference, so no
++ *           lock is needed.
++ *
++ * Emitted when a ruleset's last reference is dropped (typically when
++ * the creating process closes the ruleset file descriptor).  Fires even
++ * when file-descriptor installation failed after creation, keeping the
++ * create/free pair balanced.
++ */
++TRACE_EVENT(landlock_free_ruleset,
++
++	TP_PROTO(const struct landlock_ruleset *ruleset),
++
++	TP_ARGS(ruleset),
++
++	TP_STRUCT__entry(
++		__field(	__u64,		ruleset_id	)
++	),
++
++	TP_fast_assign(
++		__entry->ruleset_id	= ruleset->id;
++	),
++
++	TP_printk("ruleset=%llx", __entry->ruleset_id)
++);
++
++#undef _LANDLOCK_NAME_ENTRY
++
++#endif /* _TRACE_LANDLOCK_H */
++
++/* This part must be outside protection */
++#include <trace/define_trace.h>
++
++/* clang-format on */
+diff --git a/security/landlock/Kconfig b/security/landlock/Kconfig
+index b4e7f0e9ba9b..7aeac29160e8 100644
+--- a/security/landlock/Kconfig
++++ b/security/landlock/Kconfig
+@@ -24,7 +24,7 @@ config SECURITY_LANDLOCK
+ config SECURITY_LANDLOCK_LOG
+ 	bool
+ 	depends on SECURITY_LANDLOCK
+-	default y if AUDIT
++	default y if AUDIT || TRACEPOINTS
+ 
+ config SECURITY_LANDLOCK_KUNIT_TEST
+ 	bool "KUnit tests for Landlock" if !KUNIT_ALL_TESTS
+diff --git a/security/landlock/Makefile b/security/landlock/Makefile
+index 2462e6c5921e..2711f4876939 100644
+--- a/security/landlock/Makefile
++++ b/security/landlock/Makefile
+@@ -18,3 +18,5 @@ landlock-$(CONFIG_SECURITY_LANDLOCK_LOG) += \
+ 	log.o
+ 
+ landlock-$(CONFIG_AUDIT) += audit.o
++
++landlock-$(CONFIG_TRACEPOINTS) += trace.o
+diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+index 2b74542ac3d1..30f3897a56d4 100644
+--- a/security/landlock/ruleset.c
++++ b/security/landlock/ruleset.c
+@@ -23,10 +23,13 @@
+ #include <uapi/linux/landlock.h>
+ 
+ #include "access.h"
++#include "id.h"
+ #include "limits.h"
+ #include "object.h"
+ #include "ruleset.h"
+ 
++#include <trace/events/landlock.h>
++
+ struct landlock_ruleset *
+ landlock_create_ruleset(const access_mask_t fs_access_mask,
+ 			const access_mask_t net_access_mask,
+@@ -50,6 +53,10 @@ landlock_create_ruleset(const access_mask_t fs_access_mask,
+ 	new_ruleset->rules.root_net_port = RB_ROOT;
+ #endif /* IS_ENABLED(CONFIG_INET) */
+ 
++#ifdef CONFIG_TRACEPOINTS
++	new_ruleset->id = landlock_get_id_range(1);
++#endif /* CONFIG_TRACEPOINTS */
++
+ 	/* Should already be checked in landlock_create_ruleset(). */
+ 	if (fs_access_mask) {
+ 		const access_mask_t mask = fs_access_mask &
+@@ -325,6 +332,7 @@ void landlock_free_rules(struct landlock_rules *const rules)
+ static void free_ruleset(struct landlock_ruleset *const ruleset)
+ {
+ 	might_sleep();
++	trace_landlock_free_ruleset(ruleset);
+ 	landlock_free_rules(&ruleset->rules);
+ 	kfree(ruleset);
+ }
+diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+index 3a9fc39e947c..dcc363740b85 100644
+--- a/security/landlock/ruleset.h
++++ b/security/landlock/ruleset.h
+@@ -4,6 +4,7 @@
+  *
+  * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
+  * Copyright © 2018-2020 ANSSI
++ * Copyright © 2026 Cloudflare, Inc.
+  */
+ 
+ #ifndef _SECURITY_LANDLOCK_RULESET_H
+@@ -164,6 +165,14 @@ struct landlock_ruleset {
+ 	 * @usage: Number of file descriptors referencing this ruleset.
+ 	 */
+ 	refcount_t usage;
++
++#ifdef CONFIG_TRACEPOINTS
++	/**
++	 * @id: Unique identifier for this ruleset, used for tracing.
 +	 */
-+	if (READ_ONCE(hierarchy->log_status) != LANDLOCK_LOG_UNCOMMITTED)
-+		trace_landlock_free_domain(hierarchy);
-+}
-diff --git a/security/landlock/trace.h b/security/landlock/trace.h
++	u64 id;
++#endif /* CONFIG_TRACEPOINTS */
++
+ 	/**
+ 	 * @quiet_masks: Stores the quiet flags for an unmerged ruleset.  For a
+ 	 * merged domain, this is stored in each layer's struct
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 37cadb63db9f..7f168802b584 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -38,6 +38,8 @@
+ #include "setup.h"
+ #include "tsync.h"
+ 
++#include <trace/events/landlock.h>
++
+ static bool is_initialized(void)
+ {
+ 	if (likely(landlock_initialized))
+@@ -281,6 +283,15 @@ SYSCALL_DEFINE3(landlock_create_ruleset,
+ 	ruleset->quiet_masks.net = ruleset_attr.quiet_access_net;
+ 	ruleset->quiet_masks.scope = ruleset_attr.quiet_scoped;
+ 
++	/*
++	 * Emits before anon_inode_getfd() installs the file descriptor, while
++	 * the ruleset is still private to this thread: no lock is needed, and
++	 * the event cannot race a concurrent close() freeing the ruleset under
++	 * the tracepoint's BTF read.  This is the last point at which the
++	 * ruleset is guaranteed alive and unshared.
++	 */
++	trace_landlock_create_ruleset(ruleset);
++
+ 	/* Creates anonymous FD referring to the ruleset. */
+ 	ruleset_fd = anon_inode_getfd("[landlock-ruleset]", &ruleset_fops,
+ 				      ruleset, O_RDWR | O_CLOEXEC);
+diff --git a/security/landlock/trace.c b/security/landlock/trace.c
 new file mode 100644
-index 000000000000..59c8ea348625
+index 000000000000..aeb6eeebe42a
 --- /dev/null
-+++ b/security/landlock/trace.h
-@@ -0,0 +1,28 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
++++ b/security/landlock/trace.c
+@@ -0,0 +1,17 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +/*
 + * Landlock - Tracepoint helpers
 + *
@@ -520,26 +454,15 @@ index 000000000000..59c8ea348625
 + * Copyright © 2026 Cloudflare, Inc.
 + */
 +
-+#ifndef _SECURITY_LANDLOCK_TRACE_H
-+#define _SECURITY_LANDLOCK_TRACE_H
++#include "ruleset.h"
 +
-+struct landlock_hierarchy;
-+
-+#ifdef CONFIG_TRACEPOINTS
-+
-+void landlock_trace_free_domain(
-+	const struct landlock_hierarchy *const hierarchy);
-+
-+#else /* CONFIG_TRACEPOINTS */
-+
-+static inline void
-+landlock_trace_free_domain(const struct landlock_hierarchy *const hierarchy)
-+{
-+}
-+
-+#endif /* CONFIG_TRACEPOINTS */
-+
-+#endif /* _SECURITY_LANDLOCK_TRACE_H */
++/*
++ * Generates the tracepoint definitions in this translation unit.  The trace
++ * event header dereferences the traced objects in TP_fast_assign, so the full
++ * struct definitions (e.g. ruleset.h) must be included before it.
++ */
++#define CREATE_TRACE_POINTS
++#include <trace/events/landlock.h>
 -- 
 2.54.0
 
