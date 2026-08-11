@@ -1,33 +1,33 @@
-Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8258F356760
-	for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2026 09:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDDC41DE04
+	for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2026 09:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786441817; cv=none; b=nOC/LyCKpxz6w/2/8PvSuFn7++dUr2V1SNw6HKc56IDIb500P5l0uM5sq4VE1LqXjs/1yILY5LHbL94xPB0TFqgEGsQyXPRNMhV8Jb+w9aF24KCMCh5a3PspihFeFFDh1+ztuHheV8iHvXiFiEgOKUX4lw8Hktyjj3h4elQiGYo=
+	t=1786441819; cv=none; b=Dton3mBBegT7s5DD9/J4udSztlGHPE2CPKrVZMnsdUMLIn7adM7pydpi/Vh/x06g+NTomLbvkD8dVdsCtXZlITOKqGrXWMK5fGEkeQ82dRwwy5yOR6Byrr3ubGMAdg9X11ihCm97eDsLGAlhdZpnNV+Bbyq+EygbX5M4MOS9nCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786441817; c=relaxed/simple;
-	bh=jcdsO2vvNPtcwvMHp9BCWnICXYjh3XyIUjMg5zh77QU=;
+	s=arc-20240116; t=1786441819; c=relaxed/simple;
+	bh=jTujUy+axj5JxEb3LJMxdoJ9szivMFSW2c4Q5MRgFKo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r2pRkWNgMlKfcCv9gK55NkIos0NFmdBe0hZdoidgRq4VkuG/11pbYRaIEuHX6c94zwRjblrCWj6orG/319Lnj1I1jhA0IjWcrbw3ARaAii2El0ibw5p7NsTWedhZjFmIuF/7tB3tzmJdkRTnf/8rpjyAwINM154KPeoy6g/QRyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ZTFZLqWo; arc=none smtp.client-ip=185.125.25.9
+	 MIME-Version:Content-Type; b=cSyGQk9cNTfyX9ouE5O/5Ms+SdB8QEzHvYpS+sijw1IeAXyBSeIgLfWf6i/QWdUf5v9NKvMtBon1iv35uYlnqAwAa9+5FwzGa2/gYoo3u77yF18yNh14To5mBKeL6Dx0sV/F5/LFPnFUhsRNn5a+fuyii2DxeCDkdJ0Y9BUimi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=M/vfn71R; arc=none smtp.client-ip=83.166.143.168
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ZTFZLqWo"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hK6CP55DmzD30;
-	Tue, 11 Aug 2026 11:44:17 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="M/vfn71R"
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hK6C52YTRzKmN;
+	Tue, 11 Aug 2026 11:44:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1786441457;
-	bh=Wd2AyA380QL+OQThpGui5DS9DFgANGZQ8V/XkFORZX8=;
+	s=20191114; t=1786441441;
+	bh=WT0i6rg516uGu2mRuy+KoVmjLzDtwVbS5LfXQ3xAglk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZTFZLqWo7UPUXQ5r1PycYPMtrN7aL4u40X3LTo+u6fA5P00+GaVQw3sC2ZG7WDNh5
-	 rjXE820obYaWH4OZqUBJJ0v69RwgZiMq7At7BNW3SOPoHnzKcre2uv7Z7KPD5A8qMk
-	 zlsItfu+4VhOeedTASJ6HlhBkDH16npgC4v/ctxs=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4hK6CN3jkYzYxK;
-	Tue, 11 Aug 2026 11:44:16 +0200 (CEST)
+	b=M/vfn71RJ1ymynVlIfYaHfvdXddev/jLLQAxGJiPCti3MdXOmMP/I64/Ix9LViulS
+	 dJ1LXomQkLNUaqu4Tv60yUgsodWuORtl1TtnVLj4D3txAWyARS4+2BEI46hx6Bc7nw
+	 buXT++w8sXLfGzHthSXEcHCn8KBd0GN4eZX3+tWc=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4hK6C41GK7zYgn;
+	Tue, 11 Aug 2026 11:44:00 +0200 (CEST)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
 	Steven Rostedt <rostedt@goodmis.org>
@@ -45,9 +45,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	kernel-team@cloudflare.com,
 	linux-security-module@vger.kernel.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v4 17/19] selftests/landlock: Add scope and ptrace tracepoint tests
-Date: Tue, 11 Aug 2026 11:43:31 +0200
-Message-ID: <20260811094338.288094-18-mic@digikod.net>
+Subject: [PATCH v4 08/19] landlock: Add landlock_add_rule_fs and landlock_add_rule_net tracepoints
+Date: Tue, 11 Aug 2026 11:43:22 +0200
+Message-ID: <20260811094338.288094-9-mic@digikod.net>
 In-Reply-To: <20260811094338.288094-1-mic@digikod.net>
 References: <20260811094338.288094-1-mic@digikod.net>
 Precedence: bulk
@@ -60,1262 +60,493 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Add trace tests for the landlock_deny_ptrace,
-landlock_deny_scope_signal, and landlock_deny_scope_abstract_unix_socket
-tracepoints, each placed alongside the functional tests for its
-subsystem, mirroring the audit test layout.
+Add tracepoints for Landlock rule addition, landlock_add_rule_fs for
+filesystem rules and landlock_add_rule_net for network rules, so trace
+consumers can correlate filesystem objects and network ports with their
+rulesets.  Both are emitted under the ruleset lock (asserted in
+TP_fast_assign) so an eBPF program reads the ruleset, including the rule
+just inserted, in a consistent snapshot.
 
-Each tracepoint is exercised by a fixture with three variants that pin
-both branches of the other-party domain field: denied against an
-unsandboxed other party (other-party domain ID 0), denied against a
-sandboxed other party (non-zero ID), and an allowed baseline that
-records no event.  A second fixture per type exercises an alternate LSM
-hook that reaches the same tracepoint with the same other-party domain
-ID, since each denial type can be reached through more than one hook.
+Add a version field to struct landlock_ruleset, gated on
+CONFIG_TRACEPOINTS like the id field and incremented under the ruleset
+lock on each successful landlock_add_rule(2), including when it only
+extends an existing rule's access rights.  It fills the existing 4-byte
+hole after usage, so the struct does not grow.  Pairing the ruleset ID
+with the version lets a later restrict_self event record the exact
+ruleset revision merged into a domain.
 
-The datagram abstract-unix variant does not assert peer_pid, which is 0
-for a datagram peer (no SO_PEERCRED); sun_path is the reliable peer
-identifier.  The ptrace fixtures install a plain domain-creating ruleset
-rather than a dedicated flag, since ptrace denial relies on domain
-ancestry, not on a specific scoped flag.  The fixtures unshare the mount
-namespace and remount / as MS_PRIVATE before mounting tracefs so the
-helper instance is visible only to the test process.
+Resolve the filesystem rule's absolute path with d_absolute_path()
+rather than the d_path() audit uses: d_absolute_path() produces
+namespace-independent paths that do not depend on the tracer's chroot
+state, making trace output deterministic regardless of mount namespace
+configuration.  Distinguish the error cases as "<too_long>"
+(-ENAMETOOLONG) and "<unreachable>" (anonymous files or detached
+mounts).
 
+Also add __trace_print_untrusted_str(), a static inline helper in the
+header guarded by CREATE_TRACE_POINTS: it escapes separators, quotes,
+backslashes, and non-printable bytes via string_escape_mem() so an
+untrusted string (the path here, process names in later denial events)
+cannot inject field separators or control characters into the ftrace
+text output.
+
+Cc: Christian Brauner <brauner@kernel.org>
 Cc: Günther Noack <gnoack@google.com>
+Cc: Justin Suess <utilityemal77@gmail.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: Tingmao Wang <m@maowtm.org>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
 
 Changes since v3:
-https://patch.msgid.link/20260722171159.2776765-19-mic@digikod.net
-- Bind the abstract-unix-socket trace test (deny_scope_unix) with a
-  name containing a space and an embedded NUL followed by an "END"
-  marker, and assert the marker survives: a regression test for the
-  __trace_untrusted_str() escaping (a raw space would break the
-  sun_path field) and its explicit length (strlen() would truncate
-  at the NUL and drop the marker).
-- Merge the trace_unix and trace_unix_dgram fixtures into one
-  trace_unix fixture with a SOCK_STREAM/SOCK_DGRAM variant dimension
-  (variants stream_* and dgram_*), so the stream connect(2) and
-  datagram sendto(2) denial paths share one parametrized
-  deny_scope_unix test (same six cases); peer_pid is asserted only
-  for the stream peer (a datagram peer has no SO_PEERCRED).
+https://patch.msgid.link/20260722171159.2776765-10-mic@digikod.net
+- Adapt to the landlock_rule_insert() -> landlock_store_rule()
+  rename.
+- Move DEFINE_FREE(__putname) from include/linux/fs.h to the Landlock
+  filesystem header, so the series carries no VFS change and merges
+  through the Landlock tree.
+- Fold the untrusted-string escaping helper into this patch as a static
+  inline __trace_print_untrusted_str() in the event header under
+  CREATE_TRACE_POINTS, dropping the standalone patch (reviewed by
+  Tingmao Wang):
+  https://patch.msgid.link/20260722171159.2776765-8-mic@digikod.net
+- Give __trace_print_untrusted_str() an explicit length argument
+  (__get_dynamic_array_len() - 1) instead of strlen(), so an
+  abstract socket name with embedded NUL bytes is escaped in full
+  rather than truncated at the first NUL.
 
 Changes since v2:
-https://patch.msgid.link/20260406143717.1815792-17-mic@digikod.net
-- Tighten the denied-variant event-count assertion from EXPECT_LE to
-  EXPECT_EQ (a single denied operation against a single-layer domain
-  emits exactly one event), for the signal, abstract-unix-socket, and
-  ptrace fixtures.
-- Follow the deny_ptrace printk label rename comm= to the role-prefixed
-  tracee_comm= (the label now matches its sibling tracee_pid= field) in
-  the parsed field name of the ptrace comm assertion (ptrace_test.c).
-- Assert the other party's domain ID in the scope and ptrace trace tests
-  (add the per-layer tracee_domain=/target_domain=/peer_domain= fields
-  to REGEX_DENY_PTRACE, REGEX_DENY_SCOPE_SIGNAL, and
-  REGEX_DENY_SCOPE_ABSTRACT_UNIX_SOCKET, then check them) with three
-  variants per fixture: denied against an unsandboxed other party
-  (domain ID 0),
-  denied against a sandboxed other party (non-zero ID), and an allowed
-  baseline that records no event.
-- Cover the alternate LSM hook that reaches each denial tracepoint and
-  sets the same other-party domain ID: hook_file_send_sigiotask via
-  fcntl(F_SETOWN)+SIGIO (trace_fown), hook_unix_may_send via a datagram
-  sendto (trace_unix_dgram), and a denied hook_ptrace_traceme
-  (trace_ptrace_traceme).
+https://patch.msgid.link/20260406143717.1815792-8-mic@digikod.net
+- Order the add_rule_net tracepoint arguments access_rights before
+  port, matching add_rule_fs.
+- Reformatted TP_STRUCT__entry and TP_fast_assign to kernel tracing
+  convention (requested by Steven Rostedt).
+- Render access_rights as symbolic names with __print_flags(), shared
+  with the audit blocker names, instead of raw hex.
+- Drop the tautological version static assertion (the counter tracks
+  add-rule operations, not rule count) and clarify that @version is
+  incremented on access-right extensions too.
+- Gate the version field and its writer on CONFIG_TRACEPOINTS (only
+  tracing uses it) instead of CONFIG_SECURITY_LANDLOCK_LOG, matching the
+  id field.
+- Adapt rule insertion to the base's quiet flag (landlock_insert_rule()
+  flags argument).
 
 Changes since v1:
-- New patch.
+https://patch.msgid.link/20250523165741.693976-5-mic@digikod.net
+- Added landlock_add_rule_net tracepoint for network rules.
+- Dropped key=inode:0x%lx from add_rule_fs printk, using dev/ino
+  instead.
+- Used ruleset Landlock ID instead of kernel pointer in printk.
+- Differentiated d_absolute_path() error cases (suggested by
+  Tingmao Wang).
+- Moved DEFINE_FREE(__putname) to include/linux/fs.h (noticed by
+  Tingmao Wang).
+- Added version field to struct landlock_ruleset.
+- Added version to add_rule trace events (format:
+  ruleset=<id>.<version>).
+- Added d_absolute_path() vs d_path() rationale to commit message.
 ---
- .../testing/selftests/landlock/ptrace_test.c  | 402 +++++++++++++++++
- .../landlock/scoped_abstract_unix_test.c      | 264 ++++++++++++
- .../selftests/landlock/scoped_signal_test.c   | 404 ++++++++++++++++++
- tools/testing/selftests/landlock/trace.h      |  17 +-
- 4 files changed, 1080 insertions(+), 7 deletions(-)
+ include/trace/events/landlock.h | 163 +++++++++++++++++++++++++++++++-
+ security/landlock/fs.c          |  19 ++++
+ security/landlock/fs.h          |  32 +++++++
+ security/landlock/net.c         |  11 +++
+ security/landlock/ruleset.c     |  13 ++-
+ security/landlock/ruleset.h     |   7 ++
+ 6 files changed, 240 insertions(+), 5 deletions(-)
 
-diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testing/selftests/landlock/ptrace_test.c
-index 4f64c90583cd..2644445a9d02 100644
---- a/tools/testing/selftests/landlock/ptrace_test.c
-+++ b/tools/testing/selftests/landlock/ptrace_test.c
-@@ -11,7 +11,9 @@
- #include <errno.h>
- #include <fcntl.h>
+diff --git a/include/trace/events/landlock.h b/include/trace/events/landlock.h
+index 02434f770455..b378446e26a5 100644
+--- a/include/trace/events/landlock.h
++++ b/include/trace/events/landlock.h
+@@ -11,9 +11,57 @@
+ #define _TRACE_LANDLOCK_H
+ 
  #include <linux/landlock.h>
-+#include <sched.h>
- #include <signal.h>
-+#include <sys/mount.h>
- #include <sys/prctl.h>
- #include <sys/ptrace.h>
- #include <sys/types.h>
-@@ -20,6 +22,7 @@
++#include <linux/string.h>
++#include <linux/string_helpers.h>
+ #include <linux/tracepoint.h>
++#include <linux/trace_seq.h>
  
- #include "audit.h"
- #include "common.h"
-+#include "trace.h"
+ struct landlock_ruleset;
++struct path;
++
++#ifdef CREATE_TRACE_POINTS
++
++/*
++ * Escapes @len bytes of an untrusted string into the trace sequence @p so it
++ * cannot inject field separators or control characters into the ftrace text
++ * output, and can be unambiguously recovered.  Called from the TP_printk() of
++ * the tracepoints that expose paths and process names.  @len is passed by the
++ * caller (rather than derived with strlen()) so a name that is not
++ * NUL-terminated or carries embedded NUL bytes (an abstract socket name) is
++ * escaped in full instead of being truncated at the first NUL.
++ *
++ * Return: a pointer into @p's buffer, or NULL if @src is NULL or the buffer is
++ * exhausted (normal when the trace buffer is full).
++ */
++static inline const char *
++__trace_print_untrusted_str(struct trace_seq *p, const char *src, size_t len)
++{
++	int escaped_size;
++	char *buf;
++	size_t buf_size = seq_buf_get_buf(&p->seq, &buf);
++	const char *ret = trace_seq_buffer_ptr(p);
++
++	/* Buffer exhaustion is normal when the trace buffer is full. */
++	if (!src || buf_size == 0)
++		return NULL;
++
++	escaped_size =
++		string_escape_mem(src, len, buf, buf_size,
++				  ESCAPE_SPACE | ESCAPE_SPECIAL | ESCAPE_NAP |
++					  ESCAPE_APPEND | ESCAPE_OCTAL,
++				  " ='\"\\");
++	if (unlikely(escaped_size >= buf_size)) {
++		/* We need some room for the final '\0'. */
++		seq_buf_set_overflow(&p->seq);
++		p->full = 1;
++		return NULL;
++	}
++	seq_buf_commit(&p->seq, escaped_size);
++	trace_seq_putc(p, 0);
++	return ret;
++}
++
++#endif /* CREATE_TRACE_POINTS */
  
- /* Copied from security/yama/yama_lsm.c */
- #define YAMA_SCOPE_DISABLED 0
-@@ -430,4 +433,403 @@ TEST_F(audit, trace)
- 	EXPECT_EQ(0, records.domain);
+ /* clang-format off */
+ 
+@@ -65,6 +113,14 @@ struct landlock_ruleset;
+  * lockless snapshot instead: a task's comm, and the deny_access_net struct
+  * sock (whose network hook holds no socket lock), matching how the sched
+  * and signal trace events sample comm.
++ *
++ * Field encoding
++ * ~~~~~~~~~~~~~~
++ *
++ * Fields that mirror the Landlock UAPI use the same C types and endianness
++ * (e.g. network ports are __u64 in host endianness, like
++ * landlock_net_port_attr.port).  Per-event details, such as where a value
++ * is byte-swapped, live in the field's own kdoc.
+  */
+ 
+ /**
+@@ -86,6 +142,7 @@ TRACE_EVENT(landlock_create_ruleset,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(	__u64,		ruleset_id	)
++		__field(	__u32,		ruleset_version	)
+ 		__field(	access_mask_t,	handled_fs	)
+ 		__field(	access_mask_t,	handled_net	)
+ 		__field(	access_mask_t,	scoped		)
+@@ -93,13 +150,14 @@ TRACE_EVENT(landlock_create_ruleset,
+ 
+ 	TP_fast_assign(
+ 		__entry->ruleset_id	= ruleset->id;
++		__entry->ruleset_version = ruleset->version;
+ 		__entry->handled_fs	= ruleset->handled_masks.fs;
+ 		__entry->handled_net	= ruleset->handled_masks.net;
+ 		__entry->scoped		= ruleset->handled_masks.scope;
+ 	),
+ 
+-	TP_printk("ruleset=%llx handled_fs=%s handled_net=%s scoped=%s",
+-		__entry->ruleset_id,
++	TP_printk("ruleset=%llx.%u handled_fs=%s handled_net=%s scoped=%s",
++		__entry->ruleset_id, __entry->ruleset_version,
+ 		__print_flags(__entry->handled_fs, "|", _LANDLOCK_ACCESS_FS_NAMES),
+ 		__print_flags(__entry->handled_net, "|", _LANDLOCK_ACCESS_NET_NAMES),
+ 		__print_flags(__entry->scoped, "|", _LANDLOCK_SCOPE_NAMES))
+@@ -124,13 +182,112 @@ TRACE_EVENT(landlock_free_ruleset,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(	__u64,		ruleset_id	)
++		__field(	__u32,		ruleset_version	)
++	),
++
++	TP_fast_assign(
++		__entry->ruleset_id	= ruleset->id;
++		__entry->ruleset_version = ruleset->version;
++	),
++
++	TP_printk("ruleset=%llx.%u",
++		__entry->ruleset_id, __entry->ruleset_version)
++);
++
++/**
++ * landlock_add_rule_fs - Filesystem rule added to a ruleset
++ *
++ * @ruleset: Source ruleset (never NULL).
++ * @access_rights: Effective access mask stored in the rule, not the raw
++ *                 sys_landlock_add_rule() argument (unhandled rights
++ *                 added).
++ * @path: Filesystem path for the rule (never NULL).
++ * @pathname: Resolved absolute path string (never NULL; error placeholder
++ *            on resolution failure).
++ *
++ * Emitted by sys_landlock_add_rule() under the modified ruleset's lock, so
++ * the reported ruleset is a stable snapshot that no concurrent writer can
++ * change.
++ */
++TRACE_EVENT(landlock_add_rule_fs,
++
++	TP_PROTO(const struct landlock_ruleset *ruleset,
++		 access_mask_t access_rights, const struct path *path,
++		 const char *pathname),
++
++	TP_ARGS(ruleset, access_rights, path, pathname),
++
++	TP_STRUCT__entry(
++		__field(	__u64,		ruleset_id	)
++		__field(	__u32,		ruleset_version	)
++		__field(	access_mask_t,	access_rights	)
++		__field(	dev_t,		dev		)
++		__field(	ino_t,		ino		)
++		__string(	pathname,	pathname	)
++	),
++
++	TP_fast_assign(
++		lockdep_assert_held(&ruleset->lock);
++		__entry->ruleset_id	= ruleset->id;
++		__entry->ruleset_version = ruleset->version;
++		__entry->access_rights	= access_rights;
++		__entry->dev		= path->dentry->d_sb->s_dev;
++		/*
++		 * The inode number may not be the user-visible one,
++		 * but it will be the same used by audit.
++		 */
++		__entry->ino		= d_backing_inode(path->dentry)->i_ino;
++		__assign_str(pathname);
++	),
++
++	TP_printk("ruleset=%llx.%u access_rights=%s dev=%u:%u ino=%lu path=%s",
++		__entry->ruleset_id, __entry->ruleset_version,
++		__print_flags(__entry->access_rights, "|", _LANDLOCK_ACCESS_FS_NAMES),
++		MAJOR(__entry->dev), MINOR(__entry->dev), __entry->ino,
++		__trace_print_untrusted_str(p, __get_str(pathname),
++					    __get_dynamic_array_len(pathname) - 1))
++);
++
++/**
++ * landlock_add_rule_net - Network port rule added to a ruleset
++ *
++ * @ruleset: Source ruleset (never NULL).
++ * @access_rights: Effective access mask stored in the rule, not the raw
++ *                 sys_landlock_add_rule() argument (unhandled rights
++ *                 added).
++ * @port: Network port, the landlock_net_port_attr.port UAPI value
++ *        forwarded directly.
++ *
++ * Emitted by sys_landlock_add_rule() under the modified ruleset's lock, so
++ * the reported ruleset is a stable snapshot that no concurrent writer can
++ * change.
++ */
++TRACE_EVENT(landlock_add_rule_net,
++
++	TP_PROTO(const struct landlock_ruleset *ruleset,
++		 access_mask_t access_rights, __u64 port),
++
++	TP_ARGS(ruleset, access_rights, port),
++
++	TP_STRUCT__entry(
++		__field(	__u64,		ruleset_id	)
++		__field(	__u32,		ruleset_version	)
++		__field(	access_mask_t,	access_rights	)
++		__field(	__u64,		port		)
+ 	),
+ 
+ 	TP_fast_assign(
++		lockdep_assert_held(&ruleset->lock);
+ 		__entry->ruleset_id	= ruleset->id;
++		__entry->ruleset_version = ruleset->version;
++		__entry->access_rights	= access_rights;
++		__entry->port		= port;
+ 	),
+ 
+-	TP_printk("ruleset=%llx", __entry->ruleset_id)
++	TP_printk("ruleset=%llx.%u access_rights=%s port=%llu",
++		__entry->ruleset_id, __entry->ruleset_version,
++		__print_flags(__entry->access_rights, "|", _LANDLOCK_ACCESS_NET_NAMES),
++		__entry->port)
+ );
+ 
+ #undef _LANDLOCK_NAME_ENTRY
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index 3ff5fd24378f..3a33e7393e25 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -53,6 +53,8 @@
+ #include "ruleset.h"
+ #include "setup.h"
+ 
++#include <trace/events/landlock.h>
++
+ /* Underlying object management */
+ 
+ static void release_inode(struct landlock_object *const object)
+@@ -347,7 +349,24 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
+ 		return PTR_ERR(id.key.object);
+ 	mutex_lock(&ruleset->lock);
+ 	err = landlock_insert_rule(ruleset, id, access_rights, flags);
++
++	/*
++	 * Emit after the rule insertion succeeds, so every event corresponds to
++	 * a rule that is actually in the ruleset.  The ruleset lock is still
++	 * held for BTF consistency (enforced by lockdep_assert_held in
++	 * TP_fast_assign).
++	 */
++	if (!err && trace_landlock_add_rule_fs_enabled()) {
++		char *buffer __free(__putname) = __getname();
++		const char *pathname =
++			buffer ? resolve_path_for_trace(path, buffer) :
++				 "<no_mem>";
++
++		trace_landlock_add_rule_fs(ruleset, access_rights, path,
++					   pathname);
++	}
+ 	mutex_unlock(&ruleset->lock);
++
+ 	/*
+ 	 * No need to check for an error because landlock_insert_rule()
+ 	 * increments the refcount for the new object if needed.
+diff --git a/security/landlock/fs.h b/security/landlock/fs.h
+index c16f24e30bd5..50b3ddb8ac1c 100644
+--- a/security/landlock/fs.h
++++ b/security/landlock/fs.h
+@@ -11,6 +11,7 @@
+ #define _SECURITY_LANDLOCK_FS_H
+ 
+ #include <linux/build_bug.h>
++#include <linux/cleanup.h>
+ #include <linux/fs.h>
+ #include <linux/init.h>
+ #include <linux/rcupdate.h>
+@@ -20,6 +21,8 @@
+ #include "ruleset.h"
+ #include "setup.h"
+ 
++DEFINE_FREE(__putname, char *, if (_T) __putname(_T))
++
+ /**
+  * struct landlock_inode_security - Inode security blob
+  *
+@@ -153,4 +156,33 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
+ 			    const struct path *const path,
+ 			    access_mask_t access_hierarchy, const u32 flags);
+ 
++/**
++ * resolve_path_for_trace - Resolve a path for tracepoint display
++ *
++ * @path: The path to resolve.
++ * @buf: A buffer of at least PATH_MAX bytes for the resolved path.
++ *
++ * Uses d_absolute_path() to produce a namespace-independent absolute path,
++ * unlike d_path() which resolves relative to the process's chroot.  This
++ * ensures trace output is deterministic regardless of the tracer's mount
++ * namespace.
++ *
++ * Return: A pointer into @buf with the resolved path, or an error string
++ * ("<too_long>", "<unreachable>").
++ */
++static inline const char *resolve_path_for_trace(const struct path *path,
++						 char *buf)
++{
++	const char *p;
++
++	p = d_absolute_path(path, buf, PATH_MAX);
++	if (!IS_ERR_OR_NULL(p))
++		return p;
++
++	if (PTR_ERR(p) == -ENAMETOOLONG)
++		return "<too_long>";
++
++	return "<unreachable>";
++}
++
+ #endif /* _SECURITY_LANDLOCK_FS_H */
+diff --git a/security/landlock/net.c b/security/landlock/net.c
+index e27b3ba15664..ead97fcfdcff 100644
+--- a/security/landlock/net.c
++++ b/security/landlock/net.c
+@@ -20,6 +20,8 @@
+ #include "net.h"
+ #include "ruleset.h"
+ 
++#include <trace/events/landlock.h>
++
+ int landlock_append_net_rule(struct landlock_ruleset *const ruleset,
+ 			     const u16 port, access_mask_t access_rights,
+ 			     const u32 flags)
+@@ -37,6 +39,15 @@ int landlock_append_net_rule(struct landlock_ruleset *const ruleset,
+ 
+ 	mutex_lock(&ruleset->lock);
+ 	err = landlock_insert_rule(ruleset, id, access_rights, flags);
++
++	/*
++	 * Emit after the rule insertion succeeds, so every event corresponds to
++	 * a rule that is actually in the ruleset.  The ruleset lock is still
++	 * held for BTF consistency (enforced by lockdep_assert_held in
++	 * TP_fast_assign).
++	 */
++	if (!err)
++		trace_landlock_add_rule_net(ruleset, access_rights, port);
+ 	mutex_unlock(&ruleset->lock);
+ 
+ 	return err;
+diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+index 30f3897a56d4..0d07707523cd 100644
+--- a/security/landlock/ruleset.c
++++ b/security/landlock/ruleset.c
+@@ -4,6 +4,7 @@
+  *
+  * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
+  * Copyright © 2018-2020 ANSSI
++ * Copyright © 2026 Cloudflare, Inc.
+  */
+ 
+ #include <linux/bits.h>
+@@ -306,11 +307,19 @@ int landlock_insert_rule(struct landlock_ruleset *const ruleset,
+ 			.quiet = !!(flags & LANDLOCK_ADD_RULE_QUIET),
+ 		},
+ 	} };
++	int err;
+ 
+ 	build_check_layer();
+ 	lockdep_assert_held(&ruleset->lock);
+-	return landlock_store_rule(&ruleset->rules, id, &layers,
+-				   ARRAY_SIZE(layers));
++	err = landlock_store_rule(&ruleset->rules, id, &layers,
++				  ARRAY_SIZE(layers));
++
++#ifdef CONFIG_TRACEPOINTS
++	if (!err)
++		ruleset->version++;
++#endif /* CONFIG_TRACEPOINTS */
++
++	return err;
  }
  
-+/* Trace tests */
-+
-+/* clang-format off */
-+FIXTURE(trace_ptrace) {
-+	/* clang-format on */
-+	int tracefs_ok;
-+};
-+
-+FIXTURE_SETUP(trace_ptrace)
-+{
-+	int ret;
-+
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	ASSERT_EQ(0, unshare(CLONE_NEWNS));
-+	ASSERT_EQ(0, mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, NULL));
-+
-+	ret = tracefs_fixture_setup();
-+	if (ret) {
-+		clear_cap(_metadata, CAP_SYS_ADMIN);
-+		self->tracefs_ok = 0;
-+		SKIP(return, "tracefs not available");
-+	}
-+	self->tracefs_ok = 1;
-+
-+	ASSERT_EQ(0, tracefs_enable_event(TRACEFS_DENY_PTRACE_ENABLE, true));
-+	ASSERT_EQ(0, tracefs_clear());
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+}
-+
-+FIXTURE_TEARDOWN(trace_ptrace)
-+{
-+	if (!self->tracefs_ok)
-+		return;
-+
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	tracefs_enable_event(TRACEFS_DENY_PTRACE_ENABLE, false);
-+	tracefs_fixture_teardown();
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+}
-+
-+/* clang-format off */
-+FIXTURE_VARIANT(trace_ptrace)
-+{
-+	/* clang-format on */
-+	bool sandbox;
-+	bool sandbox_target;
-+	int expect_denied;
-+};
-+
-+/* Denied: sandboxed child ptraces unsandboxed parent (tracee_domain=0). */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(trace_ptrace, denied) {
-+	/* clang-format on */
-+	.sandbox = true,
-+	.sandbox_target = false,
-+	.expect_denied = 1,
-+};
-+
-+/*
-+ * Denied: sandboxed child ptraces a sandboxed parent, so the tracee is in a
-+ * domain and tracee_domain= is non-zero.
-+ */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(trace_ptrace, denied_scoped_target) {
-+	/* clang-format on */
-+	.sandbox = true,
-+	.sandbox_target = true,
-+	.expect_denied = 1,
-+};
-+
-+/* Allowed: unsandboxed child uses PTRACE_TRACEME. */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(trace_ptrace, allowed) {
-+	/* clang-format on */
-+	.sandbox = false,
-+	.sandbox_target = false,
-+	.expect_denied = 0,
-+};
-+
-+TEST_F(trace_ptrace, deny_ptrace)
-+{
-+	char *buf, field[64], expected_pid[16];
-+	int count, status;
-+	pid_t child, parent;
-+
-+	if (!self->tracefs_ok)
-+		SKIP(return, "tracefs not available");
-+
-+	parent = getpid();
-+
-+	/*
-+	 * Set a known comm so the denied variant can verify both the trace line
-+	 * task name and the tracee_comm= field.
-+	 */
-+	prctl(PR_SET_NAME, "ll_trace_test");
-+
-+	/*
-+	 * For the non-zero tracee_domain case, sandbox the parent (the tracee)
-+	 * before forking.  The child inherits that domain and adds its own
-+	 * layer, so the child (tracer) is not an ancestor of the tracee and the
-+	 * ptrace is still denied, with tracee_domain= naming the parent's
-+	 * domain.
-+	 */
-+	if (variant->sandbox_target)
-+		create_domain(_metadata);
-+
-+	child = fork();
-+	ASSERT_LE(0, child);
-+
-+	if (child == 0) {
-+		if (variant->sandbox) {
-+			struct landlock_ruleset_attr ruleset_attr = {
-+				.scoped = LANDLOCK_SCOPE_SIGNAL,
-+			};
-+			int ruleset_fd;
-+
-+			/*
-+			 * Any scope creates a domain.  Ptrace denial checks
-+			 * domain ancestry, not specific flags.
-+			 */
-+			ruleset_fd = landlock_create_ruleset(
-+				&ruleset_attr, sizeof(ruleset_attr), 0);
-+			if (ruleset_fd < 0)
-+				_exit(1);
-+
-+			prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-+			if (landlock_restrict_self(ruleset_fd, 0)) {
-+				close(ruleset_fd);
-+				_exit(1);
-+			}
-+			close(ruleset_fd);
-+
-+			/* PTRACE_ATTACH on unsandboxed parent: denied. */
-+			if (ptrace(PTRACE_ATTACH, parent, NULL, NULL) == 0) {
-+				ptrace(PTRACE_DETACH, parent, NULL, NULL);
-+				_exit(2);
-+			}
-+			if (errno != EPERM)
-+				_exit(3);
-+		} else {
-+			/* No sandbox: ptrace should succeed. */
-+			if (ptrace(PTRACE_TRACEME) != 0)
-+				_exit(1);
-+		}
-+
-+		_exit(0);
-+	}
-+
-+	ASSERT_EQ(child, waitpid(child, &status, 0));
-+	ASSERT_TRUE(WIFEXITED(status));
-+	EXPECT_EQ(0, WEXITSTATUS(status));
-+
-+	buf = tracefs_read_buf();
-+	ASSERT_NE(NULL, buf);
-+
-+	count = tracefs_count_matches(buf, REGEX_DENY_PTRACE("ll_trace_test"));
-+	if (variant->expect_denied) {
-+		EXPECT_EQ(variant->expect_denied, count)
-+		{
-+			TH_LOG("Expected deny_ptrace event, got %d\n%s", count,
-+			       buf);
-+		}
-+
-+		/* Verify tracee_pid is the parent's TGID. */
-+		snprintf(expected_pid, sizeof(expected_pid), "%d", parent);
-+		ASSERT_EQ(0, tracefs_extract_field(
-+				     buf, REGEX_DENY_PTRACE("ll_trace_test"),
-+				     "tracee_pid", field, sizeof(field)));
-+		EXPECT_STREQ(expected_pid, field);
-+
-+		/* Verify tracee_comm matches prctl(PR_SET_NAME). */
-+		ASSERT_EQ(0, tracefs_extract_field(
-+				     buf, REGEX_DENY_PTRACE("ll_trace_test"),
-+				     "tracee_comm", field, sizeof(field)));
-+		EXPECT_STREQ("ll_trace_test", field);
-+
-+		/*
-+		 * Verify tracee_domain: 0 when the tracee is unsandboxed,
-+		 * non-zero when the tracee is in a domain.
-+		 */
-+		ASSERT_EQ(0, tracefs_extract_field(
-+				     buf, REGEX_DENY_PTRACE("ll_trace_test"),
-+				     "tracee_domain", field, sizeof(field)));
-+		EXPECT_EQ(variant->sandbox_target, strcmp("0", field) != 0)
-+		{
-+			TH_LOG("Unexpected tracee_domain=%s", field);
-+		}
-+	} else {
-+		EXPECT_EQ(0, count)
-+		{
-+			TH_LOG("Expected 0 deny_ptrace events, got %d\n%s",
-+			       count, buf);
-+		}
-+	}
-+
-+	free(buf);
-+}
-+
-+/* clang-format off */
-+FIXTURE(trace_ptrace_traceme) {
-+	/* clang-format on */
-+	int tracefs_ok;
-+};
-+
-+FIXTURE_SETUP(trace_ptrace_traceme)
-+{
-+	int ret;
-+
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	ASSERT_EQ(0, unshare(CLONE_NEWNS));
-+	ASSERT_EQ(0, mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, NULL));
-+
-+	ret = tracefs_fixture_setup();
-+	if (ret) {
-+		clear_cap(_metadata, CAP_SYS_ADMIN);
-+		self->tracefs_ok = 0;
-+		SKIP(return, "tracefs not available");
-+	}
-+	self->tracefs_ok = 1;
-+
-+	ASSERT_EQ(0, tracefs_enable_event(TRACEFS_DENY_PTRACE_ENABLE, true));
-+	ASSERT_EQ(0, tracefs_clear());
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+}
-+
-+FIXTURE_TEARDOWN(trace_ptrace_traceme)
-+{
-+	if (!self->tracefs_ok)
-+		return;
-+
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	tracefs_enable_event(TRACEFS_DENY_PTRACE_ENABLE, false);
-+	tracefs_fixture_teardown();
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+}
-+
-+/* clang-format off */
-+FIXTURE_VARIANT(trace_ptrace_traceme)
-+{
-+	/* clang-format on */
-+	bool sandbox_tracer;
-+	bool sandbox_tracee;
-+	int expect_denied;
-+};
-+
-+/*
-+ * Denied: a sandboxed tracer cannot trace the unsandboxed child that asked to
-+ * be traced with PTRACE_TRACEME (tracee_domain=0).
-+ */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(trace_ptrace_traceme, denied) {
-+	/* clang-format on */
-+	.sandbox_tracer = true,
-+	.sandbox_tracee = false,
-+	.expect_denied = 1,
-+};
-+
-+/*
-+ * Denied: a sandboxed child in its own domain asks to be traced by a tracer in
-+ * an unrelated domain, so the tracee is in a domain and tracee_domain= is
-+ * non-zero.
-+ */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(trace_ptrace_traceme, denied_scoped_tracee) {
-+	/* clang-format on */
-+	.sandbox_tracer = true,
-+	.sandbox_tracee = true,
-+	.expect_denied = 1,
-+};
-+
-+/* Allowed: unsandboxed child uses PTRACE_TRACEME with an unsandboxed tracer. */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(trace_ptrace_traceme, allowed) {
-+	/* clang-format on */
-+	.sandbox_tracer = false,
-+	.sandbox_tracee = false,
-+	.expect_denied = 0,
-+};
-+
-+TEST_F(trace_ptrace_traceme, deny_ptrace)
-+{
-+	char *buf, field[64], expected_pid[16];
-+	int count, status, sync_pipe[2];
-+	pid_t child;
-+
-+	if (!self->tracefs_ok)
-+		SKIP(return, "tracefs not available");
-+
-+	/*
-+	 * Set a known comm so the denied variant can verify both the trace line
-+	 * task name and the tracee_comm= field.  The tracee is the current
-+	 * (child) task for PTRACE_TRACEME, so the child inherits this name.
-+	 */
-+	prctl(PR_SET_NAME, "ll_trace_test");
-+
-+	ASSERT_EQ(0, pipe2(sync_pipe, O_CLOEXEC));
-+
-+	child = fork();
-+	ASSERT_LE(0, child);
-+
-+	if (child == 0) {
-+		char c;
-+
-+		close(sync_pipe[1]);
-+
-+		/*
-+		 * The tracee is the current task; for the non-zero
-+		 * tracee_domain case it sandboxes itself in its own domain,
-+		 * unrelated to the tracer's domain, so PTRACE_TRACEME is still
-+		 * denied and tracee_domain= names the child's own domain.
-+		 */
-+		if (variant->sandbox_tracee)
-+			create_domain(_metadata);
-+
-+		/* Waits for the tracer (parent) to enter its domain, if any. */
-+		if (read(sync_pipe[0], &c, 1) != 1)
-+			_exit(1);
-+		close(sync_pipe[0]);
-+
-+		if (variant->expect_denied) {
-+			if (ptrace(PTRACE_TRACEME) == 0)
-+				_exit(2);
-+			if (errno != EPERM)
-+				_exit(3);
-+		} else {
-+			if (ptrace(PTRACE_TRACEME) != 0)
-+				_exit(4);
-+			/* Lets the tracer reap the trace-stop and detach. */
-+			raise(SIGSTOP);
-+		}
-+
-+		_exit(0);
-+	}
-+
-+	close(sync_pipe[0]);
-+
-+	/*
-+	 * For a denial, the proposed tracer must be in a domain that is not an
-+	 * ancestor of the tracee's domain.  Sandboxing the parent after the
-+	 * fork gives it a domain unrelated to the child.
-+	 */
-+	if (variant->sandbox_tracer)
-+		create_domain(_metadata);
-+
-+	/* Signals the child that the tracer is in its domain, if any. */
-+	ASSERT_EQ(1, write(sync_pipe[1], ".", 1));
-+	close(sync_pipe[1]);
-+
-+	if (!variant->expect_denied) {
-+		/* PTRACE_TRACEME succeeded: reap the SIGSTOP and detach. */
-+		ASSERT_EQ(child, waitpid(child, &status, WUNTRACED));
-+		ASSERT_TRUE(WIFSTOPPED(status));
-+		ASSERT_EQ(0, ptrace(PTRACE_DETACH, child, NULL, 0));
-+	}
-+
-+	ASSERT_EQ(child, waitpid(child, &status, 0));
-+	ASSERT_TRUE(WIFEXITED(status));
-+	EXPECT_EQ(0, WEXITSTATUS(status));
-+
-+	buf = tracefs_read_buf();
-+	ASSERT_NE(NULL, buf);
-+
-+	count = tracefs_count_matches(buf, REGEX_DENY_PTRACE("ll_trace_test"));
-+	if (variant->expect_denied) {
-+		EXPECT_EQ(variant->expect_denied, count)
-+		{
-+			TH_LOG("Expected deny_ptrace event, got %d\n%s", count,
-+			       buf);
-+		}
-+
-+		/* Verify tracee_pid is the child's TGID (the traced task). */
-+		snprintf(expected_pid, sizeof(expected_pid), "%d", child);
-+		ASSERT_EQ(0, tracefs_extract_field(
-+				     buf, REGEX_DENY_PTRACE("ll_trace_test"),
-+				     "tracee_pid", field, sizeof(field)));
-+		EXPECT_STREQ(expected_pid, field);
-+
-+		/*
-+		 * Verify tracee_domain: 0 when the tracee is unsandboxed,
-+		 * non-zero when the tracee is in a domain.
-+		 */
-+		ASSERT_EQ(0, tracefs_extract_field(
-+				     buf, REGEX_DENY_PTRACE("ll_trace_test"),
-+				     "tracee_domain", field, sizeof(field)));
-+		EXPECT_EQ(variant->sandbox_tracee, strcmp("0", field) != 0)
-+		{
-+			TH_LOG("Unexpected tracee_domain=%s", field);
-+		}
-+	} else {
-+		EXPECT_EQ(0, count)
-+		{
-+			TH_LOG("Expected 0 deny_ptrace events, got %d\n%s",
-+			       count, buf);
-+		}
-+	}
-+
-+	free(buf);
-+}
-+
- TEST_HARNESS_MAIN
-diff --git a/tools/testing/selftests/landlock/scoped_abstract_unix_test.c b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
-index 40fc82fbf01d..6dbe863ea571 100644
---- a/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
-+++ b/tools/testing/selftests/landlock/scoped_abstract_unix_test.c
-@@ -12,6 +12,7 @@
- #include <sched.h>
- #include <signal.h>
- #include <stddef.h>
-+#include <sys/mount.h>
- #include <sys/prctl.h>
- #include <sys/socket.h>
- #include <sys/stat.h>
-@@ -23,6 +24,9 @@
- #include "audit.h"
- #include "common.h"
- #include "scoped_common.h"
-+#include "trace.h"
-+
-+#define TRACE_TASK "scoped_abstract"
+ void landlock_free_rules(struct landlock_rules *const rules)
+diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+index dcc363740b85..b536fa0425b7 100644
+--- a/security/landlock/ruleset.h
++++ b/security/landlock/ruleset.h
+@@ -167,6 +167,13 @@ struct landlock_ruleset {
+ 	refcount_t usage;
  
- /* Number of pending connections queue to be hold. */
- const short backlog = 10;
-@@ -1205,4 +1209,264 @@ TEST(self_connect)
- 		_metadata->exit_code = KSFT_FAIL;
- }
- 
-+/* Trace tests */
-+
-+/* clang-format off */
-+FIXTURE(trace_unix) {
-+	/* clang-format on */
-+	int tracefs_ok;
-+};
-+
-+FIXTURE_SETUP(trace_unix)
-+{
-+	int ret;
-+
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	ASSERT_EQ(0, unshare(CLONE_NEWNS));
-+	ASSERT_EQ(0, mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, NULL));
-+
-+	ret = tracefs_fixture_setup();
-+	if (ret) {
-+		clear_cap(_metadata, CAP_SYS_ADMIN);
-+		self->tracefs_ok = 0;
-+		SKIP(return, "tracefs not available");
-+	}
-+	self->tracefs_ok = 1;
-+
-+	ASSERT_EQ(0, tracefs_enable_event(
-+			     TRACEFS_DENY_SCOPE_ABSTRACT_UNIX_SOCKET_ENABLE,
-+			     true));
-+	ASSERT_EQ(0, tracefs_clear());
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+}
-+
-+FIXTURE_TEARDOWN(trace_unix)
-+{
-+	if (!self->tracefs_ok)
-+		return;
-+
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	tracefs_enable_event(TRACEFS_DENY_SCOPE_ABSTRACT_UNIX_SOCKET_ENABLE,
-+			     false);
-+	tracefs_fixture_teardown();
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+}
-+
-+/* clang-format off */
-+FIXTURE_VARIANT(trace_unix) {
-+	/* clang-format on */
-+	int sock_type; /* SOCK_STREAM (connect) or SOCK_DGRAM (sendto). */
-+	bool sandbox;
-+	bool sandbox_target; /* Peer owned by a domain: peer_domain != 0. */
-+	int expect_denied;
-+};
-+
-+/* clang-format off */
-+
-+/* Stream: sandboxed client connect() to an unsandboxed peer (peer_domain=0). */
-+FIXTURE_VARIANT_ADD(trace_unix, stream_denied) {
-+	.sock_type = SOCK_STREAM, .sandbox = true,
-+	.sandbox_target = false, .expect_denied = 1,
-+};
-+
-+/* Stream: peer socket owned by a domain, so peer_domain != 0. */
-+FIXTURE_VARIANT_ADD(trace_unix, stream_denied_scoped_peer) {
-+	.sock_type = SOCK_STREAM, .sandbox = true,
-+	.sandbox_target = true, .expect_denied = 1,
-+};
-+
-+/* Stream: unsandboxed client, connect() succeeds, no event. */
-+FIXTURE_VARIANT_ADD(trace_unix, stream_allowed) {
-+	.sock_type = SOCK_STREAM, .sandbox = false,
-+	.sandbox_target = false, .expect_denied = 0,
-+};
-+
-+/* Datagram: sandboxed client sendto() an unsandboxed peer (peer_domain=0). */
-+FIXTURE_VARIANT_ADD(trace_unix, dgram_denied) {
-+	.sock_type = SOCK_DGRAM, .sandbox = true,
-+	.sandbox_target = false, .expect_denied = 1,
-+};
-+
-+/* Datagram: peer socket owned by a domain, so peer_domain != 0. */
-+FIXTURE_VARIANT_ADD(trace_unix, dgram_denied_scoped_peer) {
-+	.sock_type = SOCK_DGRAM, .sandbox = true,
-+	.sandbox_target = true, .expect_denied = 1,
-+};
-+
-+/* Datagram: unsandboxed client, sendto() succeeds, no event. */
-+FIXTURE_VARIANT_ADD(trace_unix, dgram_allowed) {
-+	.sock_type = SOCK_DGRAM, .sandbox = false,
-+	.sandbox_target = false, .expect_denied = 0,
-+};
-+
-+/* clang-format on */
-+
-+/*
-+ * A sandboxed thread reaching an abstract unix socket peer through connect(2)
-+ * (stream) or sendto(2) (datagram) is denied and emits
-+ * landlock_deny_scope_abstract_unix_socket.  The abstract name is crafted with
-+ * a space and an embedded NUL followed by an "END" marker to check the
-+ * tracepoint escaping and its length handling (a raw space would break the
-+ * sun_path field regex; strlen() would truncate at the NUL and drop "END").
-+ * peer_pid is only meaningful for a stream peer (a datagram peer has no
-+ * SO_PEERCRED), so it is asserted only there.
-+ */
-+TEST_F(trace_unix, deny_scope_unix)
-+{
-+	struct sockaddr_un addr = {
-+		.sun_family = AF_UNIX,
-+	};
-+	char *buf, field[128], expected_pid[16];
-+	int server_fd, count, status, name_len, addr_len;
-+	pid_t child;
-+
-+	if (!self->tracefs_ok)
-+		SKIP(return, "tracefs not available");
-+
-+	/*
-+	 * For the non-zero peer_domain case, sandbox the parent before it
-+	 * creates the server socket, so the socket carries the parent's domain
-+	 * and peer_domain= is non-zero.
+ #ifdef CONFIG_TRACEPOINTS
++	/**
++	 * @version: Counter incremented on each successful
++	 * landlock_add_rule(2), including when it only extends an existing
++	 * rule's access rights.  Used by tracepoints to correlate a domain with
++	 * the exact ruleset state it was created from.  Protected by @lock.
 +	 */
-+	if (variant->sandbox_target)
-+		create_scoped_domain(_metadata,
-+				     LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
-+
-+	server_fd = socket(AF_UNIX, variant->sock_type | SOCK_CLOEXEC, 0);
-+	ASSERT_LE(0, server_fd);
-+
-+	addr.sun_path[0] = '\0';
-+	name_len = snprintf(addr.sun_path + 1, sizeof(addr.sun_path) - 1,
-+			    "landlock_trace_test_%d ", getpid());
-+	addr.sun_path[1 + name_len] = '\0';
-+	memcpy(addr.sun_path + 1 + name_len + 1, "END", 3);
-+	addr_len =
-+		offsetof(struct sockaddr_un, sun_path) + 1 + name_len + 1 + 3;
-+
-+	ASSERT_EQ(0, bind(server_fd, (struct sockaddr *)&addr, addr_len));
-+	if (variant->sock_type == SOCK_STREAM)
-+		ASSERT_EQ(0, listen(server_fd, 1));
-+
-+	child = fork();
-+	ASSERT_LE(0, child);
-+
-+	if (child == 0) {
-+		int client_fd, ret;
-+
-+		if (variant->sandbox) {
-+			struct landlock_ruleset_attr ruleset_attr = {
-+				.scoped = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET,
-+			};
-+			int ruleset_fd;
-+
-+			ruleset_fd = landlock_create_ruleset(
-+				&ruleset_attr, sizeof(ruleset_attr), 0);
-+			if (ruleset_fd < 0)
-+				_exit(1);
-+
-+			prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-+			if (landlock_restrict_self(ruleset_fd, 0)) {
-+				close(ruleset_fd);
-+				_exit(1);
-+			}
-+			close(ruleset_fd);
-+		}
-+
-+		client_fd =
-+			socket(AF_UNIX, variant->sock_type | SOCK_CLOEXEC, 0);
-+		if (client_fd < 0)
-+			_exit(1);
-+
-+		if (variant->sock_type == SOCK_STREAM)
-+			ret = connect(client_fd, (struct sockaddr *)&addr,
-+				      addr_len);
-+		else
-+			ret = sendto(client_fd, ".", 1, 0,
-+				     (struct sockaddr *)&addr, addr_len);
-+
-+		if (variant->sandbox) {
-+			/* Reaching the peer should be denied. */
-+			if (ret != -1 || errno != EPERM) {
-+				close(client_fd);
-+				_exit(2);
-+			}
-+		} else {
-+			/* No sandbox: stream connect() == 0, sendto() == 1. */
-+			int ok = variant->sock_type == SOCK_STREAM ? 0 : 1;
-+
-+			if (ret != ok) {
-+				close(client_fd);
-+				_exit(2);
-+			}
-+		}
-+		close(client_fd);
-+		_exit(0);
-+	}
-+
-+	ASSERT_EQ(child, waitpid(child, &status, 0));
-+	ASSERT_TRUE(WIFEXITED(status));
-+	EXPECT_EQ(0, WEXITSTATUS(status));
-+	close(server_fd);
-+
-+	buf = tracefs_read_buf();
-+	ASSERT_NE(NULL, buf);
-+
-+	count = tracefs_count_matches(
-+		buf, REGEX_DENY_SCOPE_ABSTRACT_UNIX_SOCKET(TRACE_TASK));
-+	if (!variant->expect_denied) {
-+		EXPECT_EQ(0, count)
-+		{
-+			TH_LOG("Expected 0 deny_scope events, got %d\n%s",
-+			       count, buf);
-+		}
-+		free(buf);
-+		return;
-+	}
-+
-+	EXPECT_EQ(variant->expect_denied, count)
-+	{
-+		TH_LOG("Expected deny_scope_abstract_unix_socket event, "
-+		       "got %d\n%s",
-+		       count, buf);
-+	}
-+
-+	/*
-+	 * sun_path is escaped: a raw space would break this field's [^ ]*$
-+	 * regex, so a successful extract proves the space was escaped, and its
-+	 * full length is honored: the "END" marker after the embedded NUL must
-+	 * survive (strlen() would truncate it at the NUL).
-+	 */
-+	ASSERT_EQ(0, tracefs_extract_field(
-+			     buf,
-+			     REGEX_DENY_SCOPE_ABSTRACT_UNIX_SOCKET(TRACE_TASK),
-+			     "sun_path", field, sizeof(field)));
-+	EXPECT_NE(NULL, strstr(field, "END"))
-+	{
-+		TH_LOG("sun_path truncated or unescaped: %s", field);
-+	}
-+
-+	/* peer_pid is the parent's PID for a stream peer (0 for datagram). */
-+	if (variant->sock_type == SOCK_STREAM) {
-+		snprintf(expected_pid, sizeof(expected_pid), "%d", getpid());
-+		ASSERT_EQ(0, tracefs_extract_field(
-+				     buf,
-+				     REGEX_DENY_SCOPE_ABSTRACT_UNIX_SOCKET(
-+					     TRACE_TASK),
-+				     "peer_pid", field, sizeof(field)));
-+		EXPECT_STREQ(expected_pid, field);
-+	}
-+
-+	/* peer_domain: 0 when the peer is unsandboxed, non-zero otherwise. */
-+	ASSERT_EQ(0, tracefs_extract_field(
-+			     buf,
-+			     REGEX_DENY_SCOPE_ABSTRACT_UNIX_SOCKET(TRACE_TASK),
-+			     "peer_domain", field, sizeof(field)));
-+	EXPECT_EQ(variant->sandbox_target, strcmp("0", field) != 0)
-+	{
-+		TH_LOG("Unexpected peer_domain=%s", field);
-+	}
-+
-+	free(buf);
-+}
-+
- TEST_HARNESS_MAIN
-diff --git a/tools/testing/selftests/landlock/scoped_signal_test.c b/tools/testing/selftests/landlock/scoped_signal_test.c
-index 2d37d0c06c06..259cdcc8aa5c 100644
---- a/tools/testing/selftests/landlock/scoped_signal_test.c
-+++ b/tools/testing/selftests/landlock/scoped_signal_test.c
-@@ -10,7 +10,9 @@
- #include <fcntl.h>
- #include <linux/landlock.h>
- #include <pthread.h>
-+#include <sched.h>
- #include <signal.h>
-+#include <sys/mount.h>
- #include <sys/prctl.h>
- #include <sys/types.h>
- #include <sys/wait.h>
-@@ -18,6 +20,9 @@
- 
- #include "common.h"
- #include "scoped_common.h"
-+#include "trace.h"
-+
-+#define TRACE_TASK "scoped_signal_t"
- 
- /* This variable is used for handling several signals. */
- static volatile sig_atomic_t is_signaled;
-@@ -762,4 +767,403 @@ TEST(sigio_to_pgid_self)
- 	EXPECT_EQ(0, close(trigger[1]));
- }
- 
-+/* Trace tests */
-+
-+/* clang-format off */
-+FIXTURE(trace_signal) {
-+	/* clang-format on */
-+	int tracefs_ok;
-+};
-+
-+FIXTURE_SETUP(trace_signal)
-+{
-+	int ret;
-+
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	ASSERT_EQ(0, unshare(CLONE_NEWNS));
-+	ASSERT_EQ(0, mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, NULL));
-+
-+	ret = tracefs_fixture_setup();
-+	if (ret) {
-+		clear_cap(_metadata, CAP_SYS_ADMIN);
-+		self->tracefs_ok = 0;
-+		SKIP(return, "tracefs not available");
-+	}
-+	self->tracefs_ok = 1;
-+
-+	ASSERT_EQ(0,
-+		  tracefs_enable_event(TRACEFS_DENY_SCOPE_SIGNAL_ENABLE, true));
-+	ASSERT_EQ(0, tracefs_clear());
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+}
-+
-+FIXTURE_TEARDOWN(trace_signal)
-+{
-+	if (!self->tracefs_ok)
-+		return;
-+
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	tracefs_enable_event(TRACEFS_DENY_SCOPE_SIGNAL_ENABLE, false);
-+	tracefs_fixture_teardown();
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+}
-+
-+/* clang-format off */
-+FIXTURE_VARIANT(trace_signal)
-+{
-+	/* clang-format on */
-+	bool sandbox;
-+	bool sandbox_target;
-+	int expect_denied;
-+};
-+
-+/* Denied: sandboxed child signals unsandboxed parent (target_domain=0). */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(trace_signal, denied) {
-+	/* clang-format on */
-+	.sandbox = true,
-+	.sandbox_target = false,
-+	.expect_denied = 1,
-+};
-+
-+/*
-+ * Denied: sandboxed child signals a sandboxed parent, so the target is in a
-+ * domain and target_domain= is non-zero.
-+ */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(trace_signal, denied_scoped_target) {
-+	/* clang-format on */
-+	.sandbox = true,
-+	.sandbox_target = true,
-+	.expect_denied = 1,
-+};
-+
-+/* Allowed: unsandboxed child signals unsandboxed parent. */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(trace_signal, allowed) {
-+	/* clang-format on */
-+	.sandbox = false,
-+	.sandbox_target = false,
-+	.expect_denied = 0,
-+};
-+
-+TEST_F(trace_signal, deny_scope_signal)
-+{
-+	char *buf, field[64], expected_pid[16];
-+	int count, status;
-+	pid_t child;
-+
-+	if (!self->tracefs_ok)
-+		SKIP(return, "tracefs not available");
-+
-+	/*
-+	 * For the non-zero target_domain case, sandbox the parent (the signal
-+	 * target) before forking.  The child inherits that domain and adds its
-+	 * own scoped layer, so the signal is still denied and target_domain=
-+	 * names the parent's domain.
-+	 */
-+	if (variant->sandbox_target)
-+		create_scoped_domain(_metadata, LANDLOCK_SCOPE_SIGNAL);
-+
-+	child = fork();
-+	ASSERT_LE(0, child);
-+
-+	if (child == 0) {
-+		if (variant->sandbox) {
-+			struct landlock_ruleset_attr ruleset_attr = {
-+				.scoped = LANDLOCK_SCOPE_SIGNAL,
-+			};
-+			int ruleset_fd;
-+
-+			ruleset_fd = landlock_create_ruleset(
-+				&ruleset_attr, sizeof(ruleset_attr), 0);
-+			if (ruleset_fd < 0)
-+				_exit(1);
-+
-+			prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-+			if (landlock_restrict_self(ruleset_fd, 0)) {
-+				close(ruleset_fd);
-+				_exit(1);
-+			}
-+			close(ruleset_fd);
-+		}
-+
-+		if (variant->sandbox) {
-+			/* Signal to unsandboxed parent should be denied. */
-+			if (kill(getppid(), 0) == 0)
-+				_exit(2);
-+			if (errno != EPERM)
-+				_exit(3);
-+		} else {
-+			/* No sandbox: kill should succeed. */
-+			if (kill(getppid(), 0) != 0)
-+				_exit(1);
-+		}
-+
-+		_exit(0);
-+	}
-+
-+	ASSERT_EQ(child, waitpid(child, &status, 0));
-+	ASSERT_TRUE(WIFEXITED(status));
-+	EXPECT_EQ(0, WEXITSTATUS(status));
-+
-+	buf = tracefs_read_buf();
-+	ASSERT_NE(NULL, buf);
-+
-+	count = tracefs_count_matches(buf, REGEX_DENY_SCOPE_SIGNAL(TRACE_TASK));
-+	if (variant->expect_denied) {
-+		EXPECT_EQ(variant->expect_denied, count)
-+		{
-+			TH_LOG("Expected deny_scope_signal event, got %d\n%s",
-+			       count, buf);
-+		}
-+
-+		/* Verify target_pid is the parent's PID. */
-+		snprintf(expected_pid, sizeof(expected_pid), "%d", getpid());
-+		ASSERT_EQ(0, tracefs_extract_field(
-+				     buf, REGEX_DENY_SCOPE_SIGNAL(TRACE_TASK),
-+				     "target_pid", field, sizeof(field)));
-+		EXPECT_STREQ(expected_pid, field);
-+
-+		/*
-+		 * Verify target_domain: 0 when the target is unsandboxed,
-+		 * non-zero when the target is in a domain.
-+		 */
-+		ASSERT_EQ(0, tracefs_extract_field(
-+				     buf, REGEX_DENY_SCOPE_SIGNAL(TRACE_TASK),
-+				     "target_domain", field, sizeof(field)));
-+		EXPECT_EQ(variant->sandbox_target, strcmp("0", field) != 0)
-+		{
-+			TH_LOG("Unexpected target_domain=%s", field);
-+		}
-+	} else {
-+		EXPECT_EQ(0, count)
-+		{
-+			TH_LOG("Expected 0 deny_scope_signal events, "
-+			       "got %d\n%s",
-+			       count, buf);
-+		}
-+	}
-+
-+	free(buf);
-+}
-+
-+/*
-+ * Trace test for the asynchronous SIGIO/SIGURG delivery path
-+ * (hook_file_send_sigiotask), which reaches the same landlock_deny_scope_signal
-+ * tracepoint as a synchronous kill(2) but through fcntl(F_SETOWN).
-+ */
-+
-+/* clang-format off */
-+FIXTURE(trace_fown) {
-+	/* clang-format on */
-+	int tracefs_ok;
-+};
-+
-+FIXTURE_SETUP(trace_fown)
-+{
-+	int ret;
-+
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	ASSERT_EQ(0, unshare(CLONE_NEWNS));
-+	ASSERT_EQ(0, mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, NULL));
-+
-+	ret = tracefs_fixture_setup();
-+	if (ret) {
-+		clear_cap(_metadata, CAP_SYS_ADMIN);
-+		self->tracefs_ok = 0;
-+		SKIP(return, "tracefs not available");
-+	}
-+	self->tracefs_ok = 1;
-+
-+	ASSERT_EQ(0,
-+		  tracefs_enable_event(TRACEFS_DENY_SCOPE_SIGNAL_ENABLE, true));
-+	ASSERT_EQ(0, tracefs_clear());
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+}
-+
-+FIXTURE_TEARDOWN(trace_fown)
-+{
-+	if (!self->tracefs_ok)
-+		return;
-+
-+	set_cap(_metadata, CAP_SYS_ADMIN);
-+	tracefs_enable_event(TRACEFS_DENY_SCOPE_SIGNAL_ENABLE, false);
-+	tracefs_fixture_teardown();
-+	clear_cap(_metadata, CAP_SYS_ADMIN);
-+}
-+
-+/* clang-format off */
-+FIXTURE_VARIANT(trace_fown)
-+{
-+	/* clang-format on */
-+	bool sandbox;
-+	bool sandbox_target;
-+	int expect_denied;
-+};
-+
-+/*
-+ * Denied: a sandboxed file owner's SIGURG is delivered to an unsandboxed target
-+ * process (target_domain=0).
-+ */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(trace_fown, denied) {
-+	/* clang-format on */
-+	.sandbox = true,
-+	.sandbox_target = false,
-+	.expect_denied = 1,
-+};
-+
-+/*
-+ * Denied: the SIGURG target sandboxes itself in its own domain, so the target
-+ * is in a domain and target_domain= is non-zero.
-+ */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(trace_fown, denied_scoped_target) {
-+	/* clang-format on */
-+	.sandbox = true,
-+	.sandbox_target = true,
-+	.expect_denied = 1,
-+};
-+
-+/* Allowed: an unsandboxed file owner delivers SIGURG. */
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(trace_fown, allowed) {
-+	/* clang-format on */
-+	.sandbox = false,
-+	.sandbox_target = false,
-+	.expect_denied = 0,
-+};
-+
-+TEST_F(trace_fown, deny_scope_fown)
-+{
-+	int server_socket, recv_socket;
-+	struct service_fixture server_address;
-+	char buffer_parent, field[64], *buf;
-+	int status, count;
-+	int pipe_parent[2], pipe_child[2];
-+	pid_t child;
-+
-+	if (!self->tracefs_ok)
-+		SKIP(return, "tracefs not available");
-+
-+	memset(&server_address, 0, sizeof(server_address));
-+	set_unix_address(&server_address, 0);
-+
-+	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
-+	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
-+
-+	child = fork();
-+	ASSERT_LE(0, child);
-+	if (child == 0) {
-+		int client_socket;
-+		char buffer_child;
-+
-+		EXPECT_EQ(0, close(pipe_parent[1]));
-+		EXPECT_EQ(0, close(pipe_child[0]));
-+
-+		ASSERT_EQ(0, setup_signal_handler(SIGURG));
-+		client_socket = socket(AF_UNIX, SOCK_STREAM, 0);
-+		ASSERT_LE(0, client_socket);
-+
-+		/*
-+		 * The SIGURG target is this child; for the non-zero
-+		 * target_domain case it sandboxes itself in its own domain,
-+		 * unrelated to the file owner's domain.
-+		 */
-+		if (variant->sandbox_target)
-+			create_scoped_domain(_metadata, LANDLOCK_SCOPE_SIGNAL);
-+
-+		/* Waits for the parent to listen. */
-+		ASSERT_EQ(1, read(pipe_parent[0], &buffer_child, 1));
-+		ASSERT_EQ(0, connect(client_socket, &server_address.unix_addr,
-+				     server_address.unix_addr_len));
-+
-+		/*
-+		 * Waits for the parent to accept the connection, sandbox
-+		 * itself, and call fcntl(F_SETOWN).
-+		 */
-+		ASSERT_EQ(1, read(pipe_parent[0], &buffer_child, 1));
-+		/* Triggers the asynchronous SIGURG to this file owner. */
-+		ASSERT_EQ(1, send(client_socket, ".", 1, MSG_OOB));
-+		EXPECT_EQ(0, close(client_socket));
-+		ASSERT_EQ(1, write(pipe_child[1], ".", 1));
-+		EXPECT_EQ(0, close(pipe_child[1]));
-+
-+		_exit(0);
-+		return;
-+	}
-+	EXPECT_EQ(0, close(pipe_parent[0]));
-+	EXPECT_EQ(0, close(pipe_child[1]));
-+
-+	server_socket = socket(AF_UNIX, SOCK_STREAM, 0);
-+	ASSERT_LE(0, server_socket);
-+	ASSERT_EQ(0, bind(server_socket, &server_address.unix_addr,
-+			  server_address.unix_addr_len));
-+	ASSERT_EQ(0, listen(server_socket, backlog));
-+	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
-+
-+	recv_socket = accept(server_socket, NULL, NULL);
-+	ASSERT_LE(0, recv_socket);
-+
-+	/*
-+	 * The file owner is the denying subject; its domain is captured at
-+	 * fcntl(F_SETOWN) time, so sandbox it before setting the owner.
-+	 */
-+	if (variant->sandbox)
-+		create_scoped_domain(_metadata, LANDLOCK_SCOPE_SIGNAL);
-+
-+	/*
-+	 * Sets the child to receive SIGURG for MSG_OOB.  This uncommon use is a
-+	 * valid attack scenario which also simplifies this test.
-+	 */
-+	ASSERT_EQ(0, fcntl(recv_socket, F_SETOWN, child));
-+
-+	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
-+
-+	/* Waits for the child to send MSG_OOB. */
-+	ASSERT_EQ(1, read(pipe_child[0], &buffer_parent, 1));
-+	EXPECT_EQ(0, close(pipe_child[0]));
-+	ASSERT_EQ(1, recv(recv_socket, &buffer_parent, 1, MSG_OOB));
-+	EXPECT_EQ(0, close(recv_socket));
-+	EXPECT_EQ(0, close(server_socket));
-+
-+	ASSERT_EQ(child, waitpid(child, &status, 0));
-+	ASSERT_TRUE(WIFEXITED(status));
-+	EXPECT_EQ(0, WEXITSTATUS(status));
-+
-+	buf = tracefs_read_buf();
-+	ASSERT_NE(NULL, buf);
-+
-+	count = tracefs_count_matches(buf, REGEX_DENY_SCOPE_SIGNAL(TRACE_TASK));
-+	if (variant->expect_denied) {
-+		EXPECT_EQ(variant->expect_denied, count)
-+		{
-+			TH_LOG("Expected deny_scope_signal event, got %d\n%s",
-+			       count, buf);
-+		}
-+
-+		/*
-+		 * Verify target_domain: 0 when the target is unsandboxed,
-+		 * non-zero when the target is in a domain.
-+		 */
-+		ASSERT_EQ(0, tracefs_extract_field(
-+				     buf, REGEX_DENY_SCOPE_SIGNAL(TRACE_TASK),
-+				     "target_domain", field, sizeof(field)));
-+		EXPECT_EQ(variant->sandbox_target, strcmp("0", field) != 0)
-+		{
-+			TH_LOG("Unexpected target_domain=%s", field);
-+		}
-+	} else {
-+		EXPECT_EQ(0, count)
-+		{
-+			TH_LOG("Expected 0 deny_scope_signal events, "
-+			       "got %d\n%s",
-+			       count, buf);
-+		}
-+	}
-+
-+	free(buf);
-+}
-+
- TEST_HARNESS_MAIN
-diff --git a/tools/testing/selftests/landlock/trace.h b/tools/testing/selftests/landlock/trace.h
-index aa35d8ad166e..4c82ecffc235 100644
---- a/tools/testing/selftests/landlock/trace.h
-+++ b/tools/testing/selftests/landlock/trace.h
-@@ -146,13 +146,14 @@
- 	"sport=[0-9]\\+ "            \
- 	"dport=[0-9]\\+$"
- 
--#define REGEX_DENY_PTRACE(task)  \
--	TRACE_PREFIX(task)       \
--	"landlock_deny_ptrace: " \
--	"domain=[0-9a-f]\\+ "    \
--	"same_exec=[01] "        \
--	"logged=[01] "           \
--	"tracee_pid=[0-9]\\+ "   \
-+#define REGEX_DENY_PTRACE(task)      \
-+	TRACE_PREFIX(task)           \
-+	"landlock_deny_ptrace: "     \
-+	"domain=[0-9a-f]\\+ "        \
-+	"same_exec=[01] "            \
-+	"logged=[01] "               \
-+	"tracee_domain=[0-9a-f]\\+ " \
-+	"tracee_pid=[0-9]\\+ "       \
- 	"tracee_comm=[^ ]*$"
- 
- #define REGEX_DENY_SCOPE_SIGNAL(task)  \
-@@ -161,6 +162,7 @@
- 	"domain=[0-9a-f]\\+ "          \
- 	"same_exec=[01] "              \
- 	"logged=[01] "                 \
-+	"target_domain=[0-9a-f]\\+ "   \
- 	"target_pid=[0-9]\\+ "         \
- 	"target_comm=[^ ]*$"
- 
-@@ -170,6 +172,7 @@
- 	"domain=[0-9a-f]\\+ "                        \
- 	"same_exec=[01] "                            \
- 	"logged=[01] "                               \
-+	"peer_domain=[0-9a-f]\\+ "                   \
- 	"peer_pid=[0-9]\\+ "                         \
- 	"sun_path=[^ ]*$"
- 
++	u32 version;
+ 	/**
+ 	 * @id: Unique identifier for this ruleset, used for tracing.
+ 	 */
 -- 
 2.54.0
 
