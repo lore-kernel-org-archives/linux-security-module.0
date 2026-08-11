@@ -1,121 +1,165 @@
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7920A3A1D02;
-	Tue, 11 Aug 2026 15:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F29459AF9
+	for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2026 17:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786461509; cv=none; b=Mo6xgOuqinKvHkBkvgd2Mv9QttDamjPJz7l0b/OX6K7oaXxnFPxWYu6P+Q6doF5nzT8b48W7lZrNzY+LjtxqVRe96112YDvpal549J6jg46l4Rqo5kqx4oVCBrm7vXlgGO8Gbu++9Y8hncwe60zcK39p4qmrMgT1+USojdiw5XY=
+	t=1786469884; cv=none; b=YkIZ8bCZ6Gwuq56x5SkBRboLLdfb32+YBQfbAdJpoXmM1zcca98vLtnTfkhPQumRSfPtwWWAsZNCvD1Nk3iUtJTQvmogd2NHNCIAx6OTmhrKjGJaZ45+KXWxG8RcNVxnOZ3kcDqcTByslJgtYjFNX1kMtbB9F7xk2bjGSk2hz0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786461509; c=relaxed/simple;
-	bh=nA081lS8SUA3FGC3ZwZ3fJouVMjlByIMsOjNjQf/ybA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=edrd1xkA6UUJHpEx5RGRi0j53TpecvhuxwYwLrVIGwtAOhj6GJj4gbMCH+lMBypYUBPG+n6vKqoIOUXWUuJjHtBrkUc6N7A9bUCYawBDKTkvnAoxx9iTyGaKtYLZztHryGeyBdwyQV6QHWbVvl6elvxSo0WFVXScdx/kDjCR/1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jaseg.de; spf=pass smtp.mailfrom=jaseg.de; dkim=pass (2048-bit key) header.d=jaseg.de header.i=@jaseg.de header.b=OkSvpkPh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=K7EYS0G1; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jaseg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jaseg.de
+	s=arc-20240116; t=1786469884; c=relaxed/simple;
+	bh=Wx+Lw1mWnP0vMT3xO2mP96AGSIGJljennZAA0N/aXaM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Gs+/ekJ2IbJtsmwML4/1ZkMmVGLr/MRx9lEqZ8ZG6X6q2N7IfzPBrXcYBN4klbweANHhqJeKAXiVGYFi2kqSvgrLrzq8VsngFDCU/7p/MwYaguW8hylh1ZKd8n89u/0QKomqmnhNyBVHrynq/6UPRRJ2H1J9+rl8g9JE7IEJT7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EEFd0FjT; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jaseg.de header.i=@jaseg.de header.b="OkSvpkPh";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="K7EYS0G1"
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfout.stl.internal (Postfix) with ESMTP id 760E61D000BB;
-	Tue, 11 Aug 2026 11:18:27 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Tue, 11 Aug 2026 11:18:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaseg.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1786461507;
-	 x=1786547907; bh=OYPUQb/d6rtWx5BnQSf1H4D0Q28bEWH3XYlE6Uyuoic=; b=
-	OkSvpkPhbeHTAcVVg3AmAySuMVjgbNxxP3uxRdiYbHOs0sF4N+a8Af6lAxFCeciR
-	wu6W98srl03o966LRpvbI6dXSTGyGUKoSH9Y7Stw1DKpCMR9RxqjavChHm+KjXFo
-	HdfIM30xNhBumZ6uCBmCcrYpGY+l5/7810NNJyhF3BGmxL1lrZtOeKonJ+1wzcB7
-	s/ay0dAEsspgDynnSUtwLp0+ll47MBUwqMaPCF3KSiG/NdOif9ore4nEx791Ncx3
-	mZ7aSLIWKituUM+M+I6aIpZ6SXy3EMWP/aXfv3QcjU/ZV1teoFbN40ySm+jxVkVV
-	NXzA+JB9bOPj9CP4X6RXRA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1786461507; x=
-	1786547907; bh=OYPUQb/d6rtWx5BnQSf1H4D0Q28bEWH3XYlE6Uyuoic=; b=K
-	7EYS0G1lPTQBmRCSdTNJOn8V508rTAsyzavsErMabjLIuEeivNIa/cqFtZ2NhCSi
-	06tIuA/GUidsVD11tCw/cnEAOYYz5qD4eQDlSLz3MXU7u28No+8A5KW6GTAdgZxe
-	8UE3x3OmeXuAMl0+g9Pf+C9L45OaANZh2ZSPScpgJ+L+iytQsEwOQ8eAQPHF/omx
-	lE7/486UaaN9pafGgEWlh2ESxFlJX9IsXeLhlQ0H4XutFOEnZkTK3YZlPY3345VJ
-	oeyleDy2R/rfNccKfgHcDSvUXuWBpKMLltMe8DmDyXGPr5kIFu+h81M3Ns0ywPL7
-	LTO8VhPNp68qXdpbXR+uQ==
-X-ME-Sender: <xms:Qz17akNPKX0OxXUkX1v7c9E3foI3R4NvivvqsYZJFT_4Ws3bWA6fJA>
-    <xme:Qz17ag9pk2xjG7J96KVZf5zkj8tEVtb8vY74IejtVoAFBUalsf2wZ8ieNJZWHHQBj
-    1wpsQarDLl-j9vt9ZLNoYLKCItpbjSUYJjIfdZ45urV06pGF9hYkA>
-X-ME-Received: <xmr:Qz17amGeuxr-y1203H5JfCm9H1ybIkO-QP8IXdfM7CI2D5NDnceA0S5_S4XSNmkVbjPGlCXm6TRtuIXXF2_8dPA>
-X-ME-Proxy-Cause: dmFkZTF9j4zAQxgbDG6gVbK/YuBSXn93w2o9WEbs1onJj5cVOHO1pJhDTQ7y5iCIxOZoeF
-    5+I77TJ2q++EwNWn730g/SqLCLX95BvKYwbzlqmG1X/+4y8w91l6MhhT1PBBsFE916FBkC
-    eUTPrh+Cbys+pDTrOqP/ZYKd9/VSruWA9j7Vn7zpnccy569U7/91s2bm4HKduRAEQiFr6G
-    LlKkJuihRtitGPyGZ/V/0MHI+BV+QUg7oHhPAQpBps0ZQskM/gymw8HIzF/g10QzEKnIYr
-    8+9p32zu+31L87XjHlPumT0bweAGh0Q+CYtqHJI39sg8VIK/g7XAaJO7GPyYCN6yVvSlEp
-    +xCE/iNAcn6yMJBzM69r3T47jHjAoywMYYVC7b1VgjOa6y+ZPPdfN1LSfuo0jRcQ9wJFx2
-    tlfQpNVfP3L9jbccbsRn1bszPrjwPJ0qAGL4vdXI0Wjju1tyABeE29/Xef7VSI4NChBWtD
-    +8jn/VO89qL+8/PqPqrmXe1kj0MFtaCcw0SujK/0eWXXEuXVNzmk5UQf6hgyt0uzjwncGx
-    LbmGYIwgeoTZ96EBNn+cLMMWkv/fm50MKCPh+c+ycpCd1LmrC9fgKKrHr0vyzzWBX7UpPc
-    S4M/ldAkobWur3AQRmWXOta0YaeTvjNdmpGY6bvGsL1Odth3CPuzsDmdf6DA
-X-ME-Proxy: <xmx:Qz17avilC9RkdUNWDSCNJGi12eX60AeuuWcBlZJzevlRiWdcMyk60A>
-    <xmx:Qz17ars8LVp4tWPWLkPwJ6iUYxgYXYeI3C6o3iMRNQY2WbpYWUj8sw>
-    <xmx:Qz17aqtjr5K1fhAJJgNik7GOu9eqjPAWnvirmFZSrV45y-Gi1YMEzg>
-    <xmx:Qz17aoFVKytuSbZCAmGDTrBfz584_Nr1FfuHvokU4MOaN1bjXwok7A>
-    <xmx:Qz17ah3dJfPjGwQr7etU-s3avOcsTH9tdae6n2ZEYT8_t7rGW_RBJG8S>
-Feedback-ID: i60a14417:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Aug 2026 11:18:25 -0400 (EDT)
-Message-ID: <69d508db-93c1-4dac-afe3-3e3fdfb5271f@jaseg.de>
-Date: Tue, 11 Aug 2026 17:18:24 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EEFd0FjT"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-49554ebb87dso331385e9.3
+        for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2026 10:38:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1786469880; x=1787074680; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=J040IJ4YuazKH3F6B7O8n/Q7U453GJeDkkhgsQhCUds=;
+        b=EEFd0FjTDluKEVPlVwGBFbxvzM+/hOlL6RKB62cwdvVjumPkV5SSbyVdYdmTHBSJpw
+         BJb8NTxYHPe9pgQqMk9MCX9kuLC8wAamHab2deFpx/CSRKpNRlIEDQtOnl4+Uee+VM6t
+         oUip7vPp+ZNI9aAyD05oBOkwfnqVUnylwsTgMTeFwoU+kTUzmHpOSB7MLOQs84bVYzwm
+         LMN1JrcDNoRMBQ3Kp8j143zfFy8bKQBPn7zK/ChUCZQnq6HevzFX/fk/P4vF/Xg60rAD
+         PbcjbkE8TzvyUiJc1o0BAlMy08KFKxEKe01MIoAuhEP/6F/bRoRO0WgB0WIFNdYKIMIc
+         M8Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786469880; x=1787074680;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=J040IJ4YuazKH3F6B7O8n/Q7U453GJeDkkhgsQhCUds=;
+        b=oZkWnKEtB/LT2+DT3i/R25j+6gilNCr5gMnod9IcVcHT5e/y3HYXvo2V+1jjzyhPTu
+         l/x3/kzIjyf1CdNsUa3AM7CK96q+ZxLwYZk9z3h0kfo6AUA6Z1ZGTmYl2eTC0s3Q8bN/
+         UM/5cNBEkuCMUWcv7SqMOc3oodHOkB/FuueAhn/MBuLiNmHIALUoAUu1jo3MvW0I373z
+         t+CBFn3c5P/4zOcOr6cU3YqDsi7PjJMGDvVzqU+ndMU+3ua2XRdN5nruG9tr0HnhoHgr
+         7xaM/nXYTT6Z/czN9t7XcYCREKU+M0e5VT7P/lb6ovVhWlhvcKeZmxqW+ghlVWM09pxb
+         rZ5w==
+X-Forwarded-Encrypted: i=1; AHgh+Ro4x0e2WPgdK1gz2RhjDASE12XRCXraqx+/n+YTtO6GUQccJv1vfWtuplIyNKYaMwI+OsUnI2OhSv+0Kc4Yz4H2k3grW5E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDo2igRkK3h2onQ5ERoGwlBMlOF/BdgKbYevia6qxTRJl8+hVc
+	KNzPxHImfwrfkgcl7X6PLADucgPIiRlMNEGSjE7yZXh8228FiKggFQCE
+X-Gm-Gg: AR+sD13iI/+H97MXq6TyM9h0Kcy8Zlllfego8vNvMKl4jvEirSkkVP7qPPd492T7jT3
+	trckSafKQFq27mPMCu/L4hLyRzb7gI5I3ueFVN1e4BfMLPLDqqIXHicSH0C7kMq5cDtgtSohvsd
+	OuKAso8rhrxAhbmX65yoQYM1eWsSAoOzd2i5otYnsVDL1Qs/M4UBaVV2rJZ9IAo3rgRisNQVBnF
+	cdjY9io3l3fCqb32j5AJx1CSCkbTTYy6So1w5R0REOpZ8GC7v/kAPKeWnE0zUy2lQJy0c1JgNZd
+	sZj+0WH3Ozxqwkb1RWVa27ycSNsG10EIBE239WwxCx8N9kB3DMu2WsDA7Iq3AZK/8OwJpTvuDQ3
+	WB71gRmupydi/eltPRvTXrb/sc7mV8ycM0xP/95QiY7VTMvxrdG356rxFD0VS4z6N3zlN4keJoO
+	S1lTun1ghNd0DXogPZy2OzShnypOKlMgC+Xv0UD9mvlrvaUePKbD3ZSVGL1/1b5jzQ1eQET9Hcc
+	MXPF95Rogxi/eow38OqdDCV+KZysMP3cRX7xVUbay8TXKEec5XVIjqSypIEnpAa8K9RBFxhNloX
+	8HnQVjR5iwXSwcZ/4xvabq+wMS94SgBDLAToWum2s0my95WiC8BGwHVCN6pskT3IUquH
+X-Received: by 2002:a05:600c:4ecc:b0:493:cefc:d113 with SMTP id 5b1f17b1804b1-499784297e8mr70560745e9.5.1786469880221;
+        Tue, 11 Aug 2026 10:38:00 -0700 (PDT)
+Received: from localhost.localdomain (dynamic-2a02-3100-a133-e401-bc8e-d36c-2d08-c5e0.310.pool.telefonica.de. [2a02:3100:a133:e401:bc8e:d36c:2d08:c5e0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4997aabf134sm7815485e9.12.2026.08.11.10.37.59
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 11 Aug 2026 10:37:59 -0700 (PDT)
+From: Karl Mehltretter <kmehltretter@gmail.com>
+To: David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Karl Mehltretter <kmehltretter@gmail.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] keys: fix lost wakeup when reaping a dead key type
+Date: Tue, 11 Aug 2026 19:37:53 +0200
+Message-Id: <20260811173753.67616-1-kmehltretter@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] mm/secretmem: zeroize secret pages before kdump
-To: "David Hildenbrand (Arm)" <david@kernel.org>,
- =?UTF-8?Q?Jan_Sebastian_G=C3=B6tte?= <linux@jaseg.de>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kexec@lists.infradead.org, keyrings@vger.kernel.org, linux-mm@kvack.org,
- linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org
-References: <20260731162739.158320-1-linux@jaseg.de>
- <20260731162739.158320-4-linux@jaseg.de>
- <70c578dc-769f-465f-a146-4a4695f747c1@kernel.org>
- <adcafa9f-2365-484b-b31e-19006833efaa@jaseg.de>
- <8bb53d9a-8870-410c-9a41-f8b536ef0780@kernel.org>
-Content-Language: en-US
-From: =?UTF-8?Q?Jan_Sebastian_G=C3=B6tte?= <contact@jaseg.de>
-In-Reply-To: <8bb53d9a-8870-410c-9a41-f8b536ef0780@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 8/11/26 17:14, David Hildenbrand (Arm) wrote:
-> On 8/11/26 17:05, Jan Sebastian Götte wrote:
->> On 8/11/26 16:53, David Hildenbrand (Arm) wrote:
->>> On 7/31/26 18:27, Jan Sebastian Götte wrote:
->>>> Register a CRASH_ZEROIZE notifier that wipes secretmem folios. As a
->>>> result, when CONFIG_CRASH_ZEROIZE is set, secretmem areas will be
->>>> cleared before the kdump kernel is kexec'ed.
->>>
->>> Are you actually using secretmem in your use case? I heard some rumors that
->>> secretmem isn't used all that much in practice :)
->>
->> I'm aware nobody is really using secretmem. I decided to build this on top of
->> secretmem because it's an existing API that actually kind of fits the use case.
->> While I could have added a new API just for this (marking userspace memory as
->> wipe-on-crash), making it part of secretmem instead gives some additional
->> defense-in-depth protection for both users who only need wiping, and for users
->> who only want secretmem's additional protection against kernel memory read
->> primitives so I think everyone wins here.
-> 
-> What I was thinking when I looked at patch #3+#4: 50% of the users you add are
-> irrelevant in practice.
-> 
-> Or are you saying that you are going to start using secretmem for your use case?
+key_garbage_collector() clears KEY_GC_REAPING_KEYTYPE and calls
+wake_up_bit() after reaping a dead key type. wake_up_bit() uses a
+lockless waitqueue check and requires a full barrier after the clear.
 
-I'm in fact going to start using secretmem.
+The existing smp_mb() is before clear_bit(), so the GC can see an empty
+waitqueue while unregister_key_type() still sees the bit set. The final
+wakeup can then be lost, leaving module unload stuck in wait_on_bit().
+
+Use clear_and_wake_up_bit(). Its clear_bit_unlock() preserves the
+ordering of the completed GC work, and its smp_mb__after_atomic()
+orders the clear before the waitqueue check.
+
+Fixes: 0c061b5707ab ("KEYS: Correctly destroy key payloads when their keytype is removed")
+Assisted-by: Claude:claude-fable-5
+Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
+---
+LKMM (herdtools7 7.58). LKMM has no clear_bit*() primitives, so these
+tests abstract the bit clear as a store while preserving the ordering
+relevant to this race. The fixed test models clear_bit_unlock() with
+smp_store_release() and smp_mb__after_atomic() with smp_mb().
+
+  C keys-gc-buggy
+  { flag=1; }
+  P0(int *flag, int *wq)
+  {
+  	int r0;
+  	smp_mb();
+  	WRITE_ONCE(*flag, 0);
+  	r0 = READ_ONCE(*wq);
+  }
+  P1(int *flag, int *wq)
+  {
+  	int r1;
+  	WRITE_ONCE(*wq, 1);
+  	smp_mb();
+  	r1 = READ_ONCE(*flag);
+  }
+  exists (0:r0=0 /\ 1:r1=1)
+
+  C keys-gc-fixed
+  { flag=1; }
+  P0(int *flag, int *wq)
+  {
+  	int r0;
+  	smp_store_release(flag, 0);
+  	smp_mb();
+  	r0 = READ_ONCE(*wq);
+  }
+  P1(int *flag, int *wq)
+  {
+  	int r1;
+  	WRITE_ONCE(*wq, 1);
+  	smp_mb();
+  	r1 = READ_ONCE(*flag);
+  }
+  exists (0:r0=0 /\ 1:r1=1)
+
+  herd7 -conf linux-kernel.cfg keys-gc-buggy.litmus
+  herd7 -conf linux-kernel.cfg keys-gc-fixed.litmus
+
+  pre-fix: Sometimes
+  fixed:   Never
+
+ security/keys/gc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/security/keys/gc.c b/security/keys/gc.c
+index 748e83818a760..eda445f815d47 100644
+--- a/security/keys/gc.c
++++ b/security/keys/gc.c
+@@ -318,9 +318,7 @@ static void key_garbage_collector(struct work_struct *work)
+
+ 	if (unlikely(gc_state & KEY_GC_REAPING_DEAD_3)) {
+ 		kdebug("dead wake");
+-		smp_mb();
+-		clear_bit(KEY_GC_REAPING_KEYTYPE, &key_gc_flags);
+-		wake_up_bit(&key_gc_flags, KEY_GC_REAPING_KEYTYPE);
++		clear_and_wake_up_bit(KEY_GC_REAPING_KEYTYPE, &key_gc_flags);
+ 	}
+
+ 	if (gc_state & KEY_GC_REAP_AGAIN)
+--
+2.53.0
