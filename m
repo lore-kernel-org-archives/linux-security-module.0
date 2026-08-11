@@ -1,33 +1,33 @@
-Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDAB42AF89
-	for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2026 09:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A777E41F349
+	for <linux-security-module@vger.kernel.org>; Tue, 11 Aug 2026 09:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786441455; cv=none; b=KyOlJSSuqWulJWVA21Vvzbg3SLQ5/5fvYVBf2fpmWGGSPxekB2QQWdmH+INsEB4NCKdB0mDK8q9KiP5KVeM1lXzqfTp0JeNxYNdkB9IkiteV4PCCgyevyLmUei4Ups2MGPwq7/QsFSNODSCRFe9ywxdJQdCAV76UuGfwb8H7Ifw=
+	t=1786441455; cv=none; b=P5+a/p4Li42N2ZiKspfPat3qwt4Cy7rc+zw0eS/DJG4W+mJHrKPEnGkE9wbVUMFIWlJgwqa5WHs/b0pHehPXekbv+WC0ySlDHLuP7YjgNxJ90xaulU1mMlUWzAnu5+s3CjSjQ+wWZhKJ3RFv4Tt7+ot6Vd90IcW8toP9N5COuQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1786441455; c=relaxed/simple;
-	bh=bpkH3kGewaHCBQWP27bJXH/RQSzRX69ExaQh4aIF9PM=;
+	bh=kLqHSHrBqou5E0860a5PfzdR5XbbXMWKhJvQ2wZLMtY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lSMErnv3JmAM/YZtpU4lk3s5LCoE3B4p40wCOmxNRv7fqpn80n/DJRuMZNIkMK3ZuJIGKVuRuWKEozEw2JuYYEXxMCF8gJenaWGfVgXGMoagI6l4q80OXJMUoeYv0FYdw83pa6gGCmz0MfymqrKpd+0i+2fUmgRqGaoJaTVLMI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=CWUIDbAE; arc=none smtp.client-ip=45.157.188.11
+	 MIME-Version:Content-Type; b=TsMmJ88BL9N/6jy/nz/+DSgFRTWljwbR7OtaeHW/l9RErXS1cdvb806UgxEhUCdPnNajQ+iHEBWg7DrrggfbPxx80pWKHvrC/HDHkzzyBfXHZYEAExPoWqsnYWMslk7gqhfb3Usl6GpIsvSQHU37UtE9BM/zzuy1wXmxHq5QVsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=TL50zToc; arc=none smtp.client-ip=45.157.188.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="CWUIDbAE"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hK6CF67lGzDKx;
-	Tue, 11 Aug 2026 11:44:09 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="TL50zToc"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hK6C90bQKzCVZ;
+	Tue, 11 Aug 2026 11:44:05 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1786441449;
-	bh=mSO66pHv0ep1hDxYgjQ4twuRLzaLLQwlo46XPR3HRPg=;
+	s=20191114; t=1786441444;
+	bh=ncMwcN5p33PdM1URvZzQ3n41peLKTOh0s0DZMahOZc8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CWUIDbAEVIMVxCMaepeUmFpDHzZw7Bx0eqqjvuxeB5Wax5vieSrKYIOkQB/glJunN
-	 cYkRiXY1HnsBtlOnmOiV0TKudALYvhYaU5OgGS9ZuCWY8TDmAjAXdB+L83QuVcajdq
-	 LRfjFII3axSAxMXdUABbfZsQ1nr73DZsquyNzJUQ=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4hK6CD6wqvzwb6;
-	Tue, 11 Aug 2026 11:44:08 +0200 (CEST)
+	b=TL50zToc4RQP5vqUJr+HVROaJ8ugCB5yojbkiJAjApHedsoYX3VLgC1cLLNsZHZRz
+	 h5nfa1IBXB6hOsv9Q04dhuDw1AvmfMN1ZBZR/+YCjCNZuTPsEmg6wscZ/pluTpiBu7
+	 wEM06UOgcsE1S9UqdtUkzmXpRTgjUeHQQcPPTt8g=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4hK6C73SnBzPst;
+	Tue, 11 Aug 2026 11:44:03 +0200 (CEST)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
 	Steven Rostedt <rostedt@goodmis.org>
@@ -45,9 +45,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	kernel-team@cloudflare.com,
 	linux-security-module@vger.kernel.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v4 13/19] landlock: Add tracepoints for ptrace and scope denials
-Date: Tue, 11 Aug 2026 11:43:27 +0200
-Message-ID: <20260811094338.288094-14-mic@digikod.net>
+Subject: [PATCH v4 10/19] landlock: Add landlock_enforce_domain tracepoint
+Date: Tue, 11 Aug 2026 11:43:24 +0200
+Message-ID: <20260811094338.288094-11-mic@digikod.net>
 In-Reply-To: <20260811094338.288094-1-mic@digikod.net>
 References: <20260811094338.288094-1-mic@digikod.net>
 Precedence: bulk
@@ -60,51 +60,35 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Scope and ptrace denials follow a different code path (a domain
-hierarchy check) than access-right denials, so they need dedicated
-tracepoints with type-specific TP_PROTO arguments.  Complete the denial
-coverage with:
-- landlock_deny_ptrace: ptrace access denied by a domain hierarchy
-  mismatch.
-- landlock_deny_scope_signal: signal delivery denied by
-  LANDLOCK_SCOPE_SIGNAL.
-- landlock_deny_scope_abstract_unix_socket: abstract unix socket access
-  denied by LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET.
+The landlock_create_domain event records that a domain was created,
+once, before thread-sync.  It cannot tell which threads end up enforcing
+it: a successful landlock_restrict_self(2) with
+LANDLOCK_RESTRICT_SELF_TSYNC applies the domain to the caller and every
+eligible sibling.  Creation (the operation) and enforcement (the
+per-thread outcome) are distinct.
 
-TP_PROTO passes the raw kernel object (struct task_struct or struct
-sock) for eBPF BTF access; the comm and sun_path string fields use
-__print_untrusted_str() because they hold untrusted input.  Unlike the
-deny_access events, these omit the blockers field: each maps to exactly
-one denial type named by the event, so the bitmask would always be zero.
-Like the deny_access events they carry same_exec and logged.
+Add landlock_enforce_domain(domain, complete, process_wide), emitted
+once per thread the domain is applied to, strictly after that thread's
+commit_creds(), so it fires only for a thread that is enforcing the
+domain, never speculatively; an aborted operation emits none.  The
+lifecycle now reads create -> enforce* -> free.
 
-Audit logs the task-targeted denials with generic field names (opid,
-ocomm), but a strongly typed trace event can use role-prefixed names
-(tracee_pid/tracee_comm, target_pid/target_comm) that match the mainline
-task-name convention (sched_process_fork's parent_comm/child_comm) and
-say whose name each field holds; a bare comm= would collide across
-events.  The abstract-unix-socket event reports peer_pid instead, a
-tracepoint-only field with no audit counterpart.
+The two booleans name properties, not the implementation:
+- complete: marks the single event that concludes the operation.  It
+  names the outcome, the set is now enforced, not which thread
+  finishes, which the contract leaves unspecified.
+- process_wide: means every eligible thread of the process is
+  covered.  It is set race-free by either establishing path,
+  thread-sync or a single-threaded process, so
+  complete && process_wide is the whole-process-enforced guarantee.
 
-A scope or ptrace verdict compares the subject domain against the other
-party's domain, so each event also reports that other party's Landlock
-domain (tracee_domain=, target_domain=, or peer_domain=); the subject
-domain= alone does not let a consumer redo domain_is_scoped() or
-domain_ptrace().  It is reported as a scalar ID rather than a domain
-pointer: a domain object is immutable, but the other task can replace
-its credential and free the domain that credential referenced, so a
-stored foreign pointer could dangle before the event is consumed.  The
-scalar ID also honors the tracepoint no-nullable-pointer rule, since the
-other party is frequently unsandboxed.  Passing the foreign domain
-hierarchy object so an eBPF consumer could walk the other party's
-ancestry live would lengthen the RCU section on the shared denial path
-and needs a deferred refcount put, so it is left as a future
-enhancement.  The relational domain-ID field (tracee_domain,
-target_domain, or peer_domain) is trace-only and is not added to audit
-records, so audit's denial format is unchanged by this series.
+The requesting thread and source ruleset are not repeated here: they are
+on create_domain (joined via domain->hierarchy->id) and on the immutable
+domain->hierarchy->details.  Source ruleset means the ruleset_id and
+ruleset_version recorded on create_domain, not the ruleset object, which
+the caller may close before enforcement.
 
 Cc: Günther Noack <gnoack@google.com>
-Cc: Justin Suess <utilityemal77@gmail.com>
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Steven Rostedt <rostedt@goodmis.org>
@@ -113,547 +97,174 @@ Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
 
 Changes since v3:
-https://patch.msgid.link/20260722171159.2776765-15-mic@digikod.net
-- Pass the escaped string length to __trace_untrusted_str()
-  (__get_dynamic_array_len() - 1) at the sun_path and comm call
-  sites, matching the helper's new signature; this escapes an
-  abstract socket name with embedded NUL bytes in full instead of
-  truncating it at the first NUL.
-- Follow the __trace_untrusted_str -> __trace_print_untrusted_str
-  rename at the tracee_comm/target_comm/sun_path call sites.
+https://patch.msgid.link/20260722171159.2776765-12-mic@digikod.net
+- Rebased onto landlock-next: emit the enforce_domain tracepoint
+  alongside the new LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS handling in
+  landlock_restrict_self().
+- Add a no_new_privs field to landlock_enforce_domain recording the
+  thread's no_new_privs state (task_no_new_privs() at emission, for
+  both the caller and TSYNC-swept siblings), so consumers see whether
+  the domain is backed by no_new_privs or by CAP_SYS_ADMIN.  The raw
+  restrict_self flags stay unexposed here (readable via the
+  syscall-entry tracepoint).
 
 Changes since v2:
-https://patch.msgid.link/20260406143717.1815792-13-mic@digikod.net
-- Reformatted TRACE_EVENT bodies to the kernel tracing convention with
-  one field per line and tab-aligned columns (requested by Steven
-  Rostedt).
-- Replaced the log_same_exec and log_new_exec fields with the single
-  logged boolean, matching the deny_access events.
-- Assert unix_state_lock(peer) in the abstract-unix-socket event (held
-  by the caller) and document why unix_sk(peer)->addr is stable.
-  Document peer_pid as a best-effort READ_ONCE read: its canonical lock
-  is sk->sk_peer_lock, not unix_state_lock, but the target peer's
-  peercred is not updated concurrently in these hooks, and it is 0 for a
-  datagram peer.
-- Renamed the deny_ptrace and deny_scope_signal printk label comm= to
-  the role-prefixed tracee_comm= and target_comm=, matching each event's
-  sibling *_pid field and the sched_process_fork task-name convention;
-  label equals field so it works directly as an ftrace filter.
-- Record the other party's Landlock domain as a verdict-time scalar ID
-  (tracee_domain=/target_domain=/peer_domain=, 0 when unsandboxed) so a
-  trace consumer can reproduce a relational scope or ptrace verdict; the
-  ID is captured under the RCU read lock or the unix socket lock, and
-  audit records are unchanged.
-- Turn the request-type switch default in landlock_trace_denial() into a
-  WARN_ONCE() canary reporting the offending type, now that this patch
-  completes the switch with the ptrace and scope cases (the default is
-  unreachable once every request type is handled).
-
-Changes since v1:
 - New patch.
 ---
- include/trace/events/landlock.h | 198 ++++++++++++++++++++++++++++++++
- security/landlock/log.h         |   9 ++
- security/landlock/task.c        |  52 +++++++--
- security/landlock/trace.c       |  22 ++++
- 4 files changed, 274 insertions(+), 7 deletions(-)
+ include/trace/events/landlock.h | 60 +++++++++++++++++++++++++++++++++
+ security/landlock/syscalls.c    | 14 +++++++-
+ security/landlock/tsync.c       | 16 +++++++++
+ 3 files changed, 89 insertions(+), 1 deletion(-)
 
 diff --git a/include/trace/events/landlock.h b/include/trace/events/landlock.h
-index 86ad04a01ed4..f82588f6f90e 100644
+index 9f0d0436a8bb..43bf126eb449 100644
 --- a/include/trace/events/landlock.h
 +++ b/include/trace/events/landlock.h
-@@ -15,6 +15,7 @@
- #include <linux/string_helpers.h>
- #include <linux/tracepoint.h>
- #include <linux/trace_seq.h>
-+#include <net/af_unix.h>
- 
- struct dentry;
- struct landlock_domain;
-@@ -23,6 +24,7 @@ struct landlock_rule;
- struct landlock_ruleset;
- struct path;
- struct sock;
-+struct task_struct;
- 
- #ifdef CREATE_TRACE_POINTS
- 
-@@ -151,6 +153,18 @@ static inline const char *__trace_landlock_print_layers(
-  * A new tracepoint must uphold them, and an eBPF consumer can rely on
-  * them.
-  *
-+ * Decision context
-+ * ~~~~~~~~~~~~~~~~
-+ *
-+ * A denial event, together with the lifecycle events, exposes the full
-+ * set of inputs the verdict consumed, so a consumer that tracked domain
-+ * creation (landlock_create_ruleset, landlock_create_domain) can verify
-+ * or reproduce the Landlock decision rather than merely observe it
-+ * happened.  In who/what/why terms: who is the denying domain (the domain
-+ * field, always the subject that enforced the policy, never the current
-+ * task), what is the operation and its object, and why is every other
-+ * input the verdict weighed.
-+ *
-  * Lifecycle consistency
-  * ~~~~~~~~~~~~~~~~~~~~~~
-  *
-@@ -219,6 +233,18 @@ static inline const char *__trace_landlock_print_layers(
-  * log flags.  Denial events order their fields as domain, same_exec,
-  * logged, then blockers (deny_access events only), then the type-specific
-  * object fields, then any variable-length field.
-+ *
-+ * Relational referents
-+ * ~~~~~~~~~~~~~~~~~~~~~
-+ *
-+ * A scope or ptrace verdict compares two domains, so the other party's
-+ * domain is part of the decision context.  It is exposed as a scalar
-+ * domain ID (0 when that party is unsandboxed): target_domain (signal),
-+ * peer_domain (abstract unix socket), tracee_domain (ptrace).  With both
-+ * IDs in the stream, a consumer that tracked domain creation can relate
-+ * the two parties without kernel-internal state.  The ID is a scalar
-+ * snapshot, not a live domain pointer that could dangle: an optional
-+ * relational referent is a scalar (0 sentinel), not a nullable pointer.
-  */
- 
- /*
-@@ -757,6 +783,178 @@ TRACE_EVENT(landlock_deny_access_net,
- 		__entry->sport, __entry->dport)
+@@ -339,6 +339,66 @@ TRACE_EVENT(landlock_create_domain,
+ 		__entry->ruleset_id, __entry->ruleset_version)
  );
  
 +/**
-+ * landlock_deny_ptrace - Ptrace access denied by a Landlock domain
++ * landlock_enforce_domain - Domain enforced on a thread
 + *
-+ * @hierarchy: Denying domain's hierarchy node (never NULL); its id is the
-+ *             domain field.
-+ * @same_exec: Whether the current task entered the denying domain itself.
-+ * @logged: The domain's audit-logging decision for this denial.
-+ * @tracee_domain_id: The tracee's Landlock domain ID, or 0 if the tracee
-+ *                    is unsandboxed.
-+ * @tracee: The target task ptrace acted on (never NULL).  tracee_pid is
-+ *          the init-namespace TGID (like audit's opid).
++ * @domain: Domain now enforced on the current thread (never NULL,
++ *          immutable; read locklessly).  Correlate to
++ *          landlock_create_domain via @domain->hierarchy->id for the
++ *          source ruleset and requesting thread, or read
++ *          @domain->hierarchy->details for the requesting process.
++ * @complete: Set on the single event that concludes the operation, after
++ *            all its other enforcements; filter on it for one event per
++ *            operation.
++ * @process_wide: The enforcement covers every eligible (non-exiting)
++ *                thread of the process: set when the caller used
++ *                %LANDLOCK_RESTRICT_SELF_TSYNC or the process is
++ *                single-threaded.  A lone thread whose group still
++ *                holds a zombie leader is not counted single-threaded,
++ *                so process_wide == 0 never proves the opposite.
++ * @no_new_privs: The enforcing thread's no_new_privs state at
++ *                enforcement time: 1 if set (by a prior
++ *                :manpage:`prctl(2)` %PR_SET_NO_NEW_PRIVS or by
++ *                %LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS), 0 if the domain
++ *                was enforced with %CAP_SYS_ADMIN instead.
 + *
-+ * Emitted when a Landlock domain denies a ptrace operation.
++ * Emitted for each thread sys_landlock_restrict_self() enforces the
++ * domain on, in that thread's own context, right after its
++ * commit_creds(), so it fires only once the thread is irreversibly
++ * enforcing the domain (aborted operations emit none).  Not
++ * balanced; every enforcement falls between the domain's
++ * landlock_create_domain and landlock_free_domain events.
++ *
++ * @complete == 1 && @process_wide == 1 means the whole process is
++ * sandboxed by @domain, durably (Landlock domains are monotonic and
++ * inherited on :manpage:`clone(2)`).
 + */
-+TRACE_EVENT(landlock_deny_ptrace,
++TRACE_EVENT(landlock_enforce_domain,
 +
-+	TP_PROTO(const struct landlock_hierarchy *hierarchy, bool same_exec,
-+		 bool logged, u64 tracee_domain_id,
-+		 const struct task_struct *tracee),
++	TP_PROTO(const struct landlock_domain *domain, bool complete,
++		 bool process_wide, bool no_new_privs),
 +
-+	TP_ARGS(hierarchy, same_exec, logged, tracee_domain_id, tracee),
++	TP_ARGS(domain, complete, process_wide, no_new_privs),
 +
 +	TP_STRUCT__entry(
 +		__field(	__u64,		domain_id	)
-+		__field(	bool,		same_exec	)
-+		__field(	bool,		logged		)
-+		__field(	__u64,		tracee_domain_id)
-+		__field(	pid_t,		tracee_pid	)
-+		__string(	tracee_comm,	tracee->comm	)
++		__field(	bool,		complete	)
++		__field(	bool,		process_wide	)
++		__field(	bool,		no_new_privs	)
 +	),
 +
 +	TP_fast_assign(
-+		__entry->domain_id	= hierarchy->id;
-+		__entry->same_exec	= same_exec;
-+		__entry->logged		= logged;
-+		__entry->tracee_domain_id = tracee_domain_id;
-+		__entry->tracee_pid	= task_tgid_nr((struct task_struct *)tracee);
-+		__assign_str(tracee_comm);
++		__entry->domain_id	= domain->hierarchy->id;
++		__entry->complete	= complete;
++		__entry->process_wide	= process_wide;
++		__entry->no_new_privs	= no_new_privs;
 +	),
 +
-+	TP_printk("domain=%llx same_exec=%d logged=%d tracee_domain=%llx tracee_pid=%d tracee_comm=%s",
-+		__entry->domain_id, __entry->same_exec, __entry->logged,
-+		__entry->tracee_domain_id, __entry->tracee_pid,
-+		__trace_print_untrusted_str(p, __get_str(tracee_comm),
-+					    __get_dynamic_array_len(tracee_comm) - 1))
++	TP_printk("domain=%llx complete=%d process_wide=%d no_new_privs=%d",
++		__entry->domain_id, __entry->complete, __entry->process_wide,
++		__entry->no_new_privs)
 +);
 +
-+/**
-+ * landlock_deny_scope_signal - Signal delivery denied by
-+ *                               LANDLOCK_SCOPE_SIGNAL
-+ *
-+ * @hierarchy: Denying domain's hierarchy node (never NULL); its id is the
-+ *             domain field.
-+ * @same_exec: Whether the current task entered the denying domain itself.
-+ * @logged: The domain's audit-logging decision for this denial.
-+ * @target_domain_id: The target's Landlock domain ID, or 0 if the target
-+ *                    is unsandboxed.
-+ * @target: The task the signal was aimed at (never NULL).  target_pid is
-+ *          the init-namespace TGID (like audit's opid).
-+ *
-+ * Emitted when a Landlock domain denies signal delivery to a scoped-out
-+ * target.
-+ */
-+TRACE_EVENT(landlock_deny_scope_signal,
-+
-+	TP_PROTO(const struct landlock_hierarchy *hierarchy, bool same_exec,
-+		 bool logged, u64 target_domain_id,
-+		 const struct task_struct *target),
-+
-+	TP_ARGS(hierarchy, same_exec, logged, target_domain_id, target),
-+
-+	TP_STRUCT__entry(
-+		__field(	__u64,		domain_id	)
-+		__field(	bool,		same_exec	)
-+		__field(	bool,		logged		)
-+		__field(	__u64,		target_domain_id)
-+		__field(	pid_t,		target_pid	)
-+		__string(	target_comm,	target->comm	)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->domain_id	= hierarchy->id;
-+		__entry->same_exec	= same_exec;
-+		__entry->logged		= logged;
-+		__entry->target_domain_id = target_domain_id;
-+		__entry->target_pid	= task_tgid_nr((struct task_struct *)target);
-+		__assign_str(target_comm);
-+	),
-+
-+	TP_printk("domain=%llx same_exec=%d logged=%d target_domain=%llx target_pid=%d target_comm=%s",
-+		__entry->domain_id, __entry->same_exec, __entry->logged,
-+		__entry->target_domain_id, __entry->target_pid,
-+		__trace_print_untrusted_str(p, __get_str(target_comm),
-+					    __get_dynamic_array_len(target_comm) - 1))
-+);
-+
-+/**
-+ * landlock_deny_scope_abstract_unix_socket - Abstract unix socket access
-+ *     denied by LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET
-+ *
-+ * @hierarchy: Denying domain's hierarchy node (never NULL); its id is the
-+ *             domain field.
-+ * @same_exec: Whether the current task entered the denying domain itself.
-+ * @logged: The domain's audit-logging decision for this denial.
-+ * @peer_domain_id: The peer's Landlock domain ID, or 0 if the peer is
-+ *                  unsandboxed.
-+ * @peer: Peer socket (never NULL).  peer_pid is best-effort: it is 0 for
-+ *        a datagram peer (no SO_PEERCRED), so sun_path is the reliable
-+ *        peer identifier.
-+ *
-+ * Emitted when a Landlock domain denies access to a scoped-out abstract
-+ * unix socket.
-+ */
-+TRACE_EVENT(landlock_deny_scope_abstract_unix_socket,
-+
-+	TP_PROTO(const struct landlock_hierarchy *hierarchy, bool same_exec,
-+		 bool logged, u64 peer_domain_id, const struct sock *peer),
-+
-+	TP_ARGS(hierarchy, same_exec, logged, peer_domain_id, peer),
-+
-+	TP_STRUCT__entry(
-+		__field(	__u64,		domain_id	)
-+		__field(	bool,		same_exec	)
-+		__field(	bool,		logged		)
-+		__field(	__u64,		peer_domain_id	)
-+		__field(	pid_t,		peer_pid	)
-+		/*
-+		 * Abstract socket names are untrusted binary data from
-+		 * user space.  Use __string_len because abstract names
-+		 * are not NUL-terminated; their length is determined by
-+		 * addr->len.  unix_sk(peer)->addr is stable here because
-+		 * the caller (hook_unix_stream_connect or
-+		 * hook_unix_may_send) holds unix_state_lock(peer).
-+		 */
-+		__string_len(	sun_path,
-+				unix_sk(peer)->addr ?
-+					unix_sk(peer)->addr->name->sun_path + 1 :
-+					"",
-+				unix_sk(peer)->addr ?
-+					unix_sk(peer)->addr->len -
-+						offsetof(struct sockaddr_un,
-+							 sun_path) - 1 :
-+					0)
-+	),
-+
-+	TP_fast_assign(
-+		struct pid *peer_pid;
-+
-+		lockdep_assert_held(&unix_sk(peer)->lock);
-+		__entry->domain_id	= hierarchy->id;
-+		__entry->same_exec	= same_exec;
-+		__entry->logged		= logged;
-+		__entry->peer_domain_id	= peer_domain_id;
-+		/*
-+		 * Best-effort (0 for a datagram peer).  sk_peer_pid is
-+		 * canonically guarded by sk->sk_peer_lock, but the target
-+		 * peer's peercred is set once and not updated concurrently in
-+		 * these hooks, so this READ_ONCE() is safe; sun_path is the
-+		 * reliable identifier.
-+		 */
-+		peer_pid		= READ_ONCE(peer->sk_peer_pid);
-+		__entry->peer_pid	= peer_pid ? pid_nr(peer_pid) : 0;
-+		__assign_str(sun_path);
-+	),
-+
-+	TP_printk("domain=%llx same_exec=%d logged=%d peer_domain=%llx peer_pid=%d sun_path=%s",
-+		__entry->domain_id, __entry->same_exec, __entry->logged,
-+		__entry->peer_domain_id, __entry->peer_pid,
-+		__trace_print_untrusted_str(p, __get_str(sun_path),
-+					    __get_dynamic_array_len(sun_path) - 1))
-+);
-+
- #undef _LANDLOCK_NAME_ENTRY
- 
- #endif /* _TRACE_LANDLOCK_H */
-diff --git a/security/landlock/log.h b/security/landlock/log.h
-index 25afc17cf055..e0a6e44f3ddd 100644
---- a/security/landlock/log.h
-+++ b/security/landlock/log.h
-@@ -3,6 +3,7 @@
-  * Landlock - Log helpers
+ /**
+  * landlock_free_domain - Domain freed
   *
-  * Copyright © 2023-2025 Microsoft Corporation
-+ * Copyright © 2026 Cloudflare, Inc.
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index ba4193673c70..1d02d57f4c48 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -22,6 +22,7 @@
+ #include <linux/mount.h>
+ #include <linux/path.h>
+ #include <linux/sched.h>
++#include <linux/sched/signal.h>
+ #include <linux/security.h>
+ #include <linux/stddef.h>
+ #include <linux/syscalls.h>
+@@ -546,6 +547,7 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+ 	struct landlock_domain *new_dom = NULL;
+ 	struct cred *new_cred;
+ 	struct landlock_cred_security *new_llcred;
++	bool process_wide;
+ 	bool __maybe_unused log_same_exec, log_new_exec, log_subdomains,
+ 		prev_log_subdomains;
+ 
+@@ -690,5 +692,15 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+ 	if (flags & LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS)
+ 		task_set_no_new_privs(current);
+ 
+-	return commit_creds(new_cred);
++	/* Whole process: thread-sync swept siblings, or single-threaded. */
++	process_wide = (flags & LANDLOCK_RESTRICT_SELF_TSYNC) ||
++		       get_nr_threads(current) == 1;
++	commit_creds(new_cred);
++
++	/* The caller commits last, so its event concludes the operation. */
++	if (ruleset)
++		trace_landlock_enforce_domain(new_dom, true, process_wide,
++					      task_no_new_privs(current));
++
++	return 0;
+ }
+diff --git a/security/landlock/tsync.c b/security/landlock/tsync.c
+index 0b71e158c3f5..cfa73a2a67ca 100644
+--- a/security/landlock/tsync.c
++++ b/security/landlock/tsync.c
+@@ -22,6 +22,8 @@
+ #include "cred.h"
+ #include "tsync.h"
+ 
++#include <trace/events/landlock.h>
++
+ /*
+  * Shared state between multiple threads which are enforcing Landlock rulesets
+  * in lockstep with each other.
+@@ -79,6 +81,8 @@ struct tsync_work {
   */
+ static void restrict_one_thread(struct tsync_shared_context *ctx)
+ {
++	const struct landlock_domain *new_dom =
++		landlock_cred(ctx->new_cred)->domain;
+ 	int err;
+ 	struct cred *cred = NULL;
  
- #ifndef _SECURITY_LANDLOCK_LOG_H
-@@ -50,6 +51,14 @@ struct landlock_request {
- 	const access_mask_t all_existing_optional_access;
- 	deny_masks_t deny_masks;
- 	optional_access_t quiet_optional_accesses;
-+
+@@ -147,6 +151,18 @@ static void restrict_one_thread(struct tsync_shared_context *ctx)
+ 
+ 	commit_creds(cred);
+ 
 +	/*
-+	 * Other-party domain ID for a relational (scope/ptrace) denial, or 0 if
-+	 * that party is unsandboxed.  An ID, not a pointer: the other task can
-+	 * replace its credential and free the domain it referenced.  Trace path
-+	 * only; audit ignores it.
++	 * Emitted strictly after commit_creds() and before the out: label, so
++	 * it fires only for a thread now enforcing new_dom, and every
++	 * non-concluding (complete == false) event happens-before the
++	 * operation's single concluding one.  Skipped on the flags-only path,
++	 * where old_cred and new_cred carry the same domain.  A sibling never
++	 * concludes the operation and its enforcement is always process-wide.
 +	 */
-+	u64 other_domain_id;
- };
- 
- #ifdef CONFIG_SECURITY_LANDLOCK_LOG
-diff --git a/security/landlock/task.c b/security/landlock/task.c
-index bb119f198f72..4491ce31ae04 100644
---- a/security/landlock/task.c
-+++ b/security/landlock/task.c
-@@ -88,6 +88,7 @@ static int hook_ptrace_access_check(struct task_struct *const child,
- 				    const unsigned int mode)
- {
- 	const struct landlock_cred_security *parent_subject;
-+	u64 tracee_domain_id = 0;
- 	int err;
- 
- 	/* Quick return for non-landlocked tasks. */
-@@ -99,6 +100,10 @@ static int hook_ptrace_access_check(struct task_struct *const child,
- 		const struct landlock_domain *const child_dom =
- 			landlock_get_task_domain(child);
- 		err = domain_ptrace(parent_subject->domain, child_dom);
-+#ifdef CONFIG_SECURITY_LANDLOCK_LOG
-+		if (child_dom)
-+			tracee_domain_id = child_dom->hierarchy->id;
-+#endif /* CONFIG_SECURITY_LANDLOCK_LOG */
- 	}
- 
- 	if (!err)
-@@ -116,6 +121,7 @@ static int hook_ptrace_access_check(struct task_struct *const child,
- 				.u.tsk = child,
- 			},
- 			.layer_plus_one = parent_subject->domain->num_layers,
-+			.other_domain_id = tracee_domain_id,
- 		});
- 
- 	return err;
-@@ -136,6 +142,7 @@ static int hook_ptrace_traceme(struct task_struct *const parent)
- {
- 	const struct landlock_cred_security *parent_subject;
- 	const struct landlock_domain *child_dom;
-+	u64 tracee_domain_id = 0;
- 	int err;
- 
- 	child_dom = landlock_get_current_domain();
-@@ -147,6 +154,12 @@ static int hook_ptrace_traceme(struct task_struct *const parent)
- 	if (!err)
- 		return 0;
- 
-+#ifdef CONFIG_SECURITY_LANDLOCK_LOG
-+	/* The tracee is the current task; its domain is stable here. */
-+	if (child_dom)
-+		tracee_domain_id = child_dom->hierarchy->id;
-+#endif /* CONFIG_SECURITY_LANDLOCK_LOG */
++	if (new_dom != landlock_cred(ctx->old_cred)->domain)
++		trace_landlock_enforce_domain(new_dom, false, true,
++					      task_no_new_privs(current));
 +
- 	/*
- 	 * For the ptrace_traceme case, we log the domain which is the cause of
- 	 * the denial, which means the parent domain instead of the current
-@@ -161,6 +174,7 @@ static int hook_ptrace_traceme(struct task_struct *const parent)
- 			.u.tsk = current,
- 		},
- 		.layer_plus_one = parent_subject->domain->num_layers,
-+		.other_domain_id = tracee_domain_id,
- 	});
- 	return err;
- }
-@@ -236,7 +250,8 @@ static bool domain_is_scoped(const struct landlock_domain *const client,
- }
- 
- static bool sock_is_scoped(struct sock *const other,
--			   const struct landlock_domain *const domain)
-+			   const struct landlock_domain *const domain,
-+			   u64 *const peer_domain_id)
- {
- 	const struct landlock_domain *dom_other;
- 
-@@ -254,6 +269,9 @@ static bool sock_is_scoped(struct sock *const other,
- 		return false;
- 
- 	dom_other = landlock_cred(other->sk_socket->file->f_cred)->domain;
-+#ifdef CONFIG_SECURITY_LANDLOCK_LOG
-+	*peer_domain_id = dom_other ? dom_other->hierarchy->id : 0;
-+#endif /* CONFIG_SECURITY_LANDLOCK_LOG */
- 	return domain_is_scoped(domain, dom_other,
- 				LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET);
- }
-@@ -281,6 +299,7 @@ static int hook_unix_stream_connect(struct sock *const sock,
- 				    struct sock *const newsk)
- {
- 	size_t handle_layer;
-+	u64 peer_domain_id = 0;
- 	const struct landlock_cred_security *const subject =
- 		landlock_get_applicable_subject(current_cred(), unix_scope,
- 						&handle_layer);
-@@ -292,7 +311,7 @@ static int hook_unix_stream_connect(struct sock *const sock,
- 	if (!is_abstract_socket(other))
- 		return 0;
- 
--	if (!sock_is_scoped(other, subject->domain))
-+	if (!sock_is_scoped(other, subject->domain, &peer_domain_id))
- 		return 0;
- 
- 	landlock_log_denial(subject, &(struct landlock_request) {
-@@ -304,6 +323,7 @@ static int hook_unix_stream_connect(struct sock *const sock,
- 			},
- 		},
- 		.layer_plus_one = handle_layer + 1,
-+		.other_domain_id = peer_domain_id,
- 	});
- 	return -EPERM;
- }
-@@ -312,6 +332,7 @@ static int hook_unix_may_send(struct socket *const sock,
- 			      struct socket *const other)
- {
- 	size_t handle_layer;
-+	u64 peer_domain_id = 0;
- 	const struct landlock_cred_security *const subject =
- 		landlock_get_applicable_subject(current_cred(), unix_scope,
- 						&handle_layer);
-@@ -329,7 +350,7 @@ static int hook_unix_may_send(struct socket *const sock,
- 	if (!is_abstract_socket(other->sk))
- 		return 0;
- 
--	if (!sock_is_scoped(other->sk, subject->domain))
-+	if (!sock_is_scoped(other->sk, subject->domain, &peer_domain_id))
- 		return 0;
- 
- 	landlock_log_denial(subject, &(struct landlock_request) {
-@@ -341,6 +362,7 @@ static int hook_unix_may_send(struct socket *const sock,
- 			},
- 		},
- 		.layer_plus_one = handle_layer + 1,
-+		.other_domain_id = peer_domain_id,
- 	});
- 	return -EPERM;
- }
-@@ -355,6 +377,7 @@ static int hook_task_kill(struct task_struct *const p,
- {
- 	bool is_scoped;
- 	size_t handle_layer;
-+	u64 target_domain_id = 0;
- 	const struct landlock_cred_security *subject;
- 
- 	if (!cred) {
-@@ -381,9 +404,15 @@ static int hook_task_kill(struct task_struct *const p,
- 		return 0;
- 
- 	scoped_guard(rcu) {
--		is_scoped = domain_is_scoped(subject->domain,
--					     landlock_get_task_domain(p),
-+		const struct landlock_domain *const other =
-+			landlock_get_task_domain(p);
-+
-+		is_scoped = domain_is_scoped(subject->domain, other,
- 					     signal_scope.scope);
-+#ifdef CONFIG_SECURITY_LANDLOCK_LOG
-+		if (other)
-+			target_domain_id = other->hierarchy->id;
-+#endif /* CONFIG_SECURITY_LANDLOCK_LOG */
- 	}
- 
- 	if (!is_scoped)
-@@ -396,6 +425,7 @@ static int hook_task_kill(struct task_struct *const p,
- 			.u.tsk = p,
- 		},
- 		.layer_plus_one = handle_layer + 1,
-+		.other_domain_id = target_domain_id,
- 	});
- 	return -EPERM;
- }
-@@ -405,6 +435,7 @@ static int hook_file_send_sigiotask(struct task_struct *tsk,
- {
- 	const struct landlock_cred_security *subject;
- 	bool is_scoped = false;
-+	u64 target_domain_id = 0;
- 
- 	/* Lock already held by send_sigio() and send_sigurg(). */
- 	lockdep_assert_held(&fown->lock);
-@@ -432,9 +463,15 @@ static int hook_file_send_sigiotask(struct task_struct *tsk,
- 		return 0;
- 
- 	scoped_guard(rcu) {
--		is_scoped = domain_is_scoped(subject->domain,
--					     landlock_get_task_domain(tsk),
-+		const struct landlock_domain *const other =
-+			landlock_get_task_domain(tsk);
-+
-+		is_scoped = domain_is_scoped(subject->domain, other,
- 					     signal_scope.scope);
-+#ifdef CONFIG_SECURITY_LANDLOCK_LOG
-+		if (other)
-+			target_domain_id = other->hierarchy->id;
-+#endif /* CONFIG_SECURITY_LANDLOCK_LOG */
- 	}
- 
- 	if (!is_scoped)
-@@ -449,6 +486,7 @@ static int hook_file_send_sigiotask(struct task_struct *tsk,
- #ifdef CONFIG_SECURITY_LANDLOCK_LOG
- 		.layer_plus_one = landlock_file(fown->file)->fown_layer + 1,
- #endif /* CONFIG_SECURITY_LANDLOCK_LOG */
-+		.other_domain_id = target_domain_id,
- 	});
- 	return -EPERM;
- }
-diff --git a/security/landlock/trace.c b/security/landlock/trace.c
-index 4c4229d4ffdf..2ea7aac8d75d 100644
---- a/security/landlock/trace.c
-+++ b/security/landlock/trace.c
-@@ -157,7 +157,29 @@ void landlock_trace_denial(
- 				ntohs(request->audit.u.net->sport),
- 				ntohs(request->audit.u.net->dport));
- 		break;
-+	case LANDLOCK_REQUEST_PTRACE:
-+		if (trace_landlock_deny_ptrace_enabled())
-+			trace_landlock_deny_ptrace(youngest_denied, same_exec,
-+						   logged,
-+						   request->other_domain_id,
-+						   request->audit.u.tsk);
-+		break;
-+	case LANDLOCK_REQUEST_SCOPE_SIGNAL:
-+		if (trace_landlock_deny_scope_signal_enabled())
-+			trace_landlock_deny_scope_signal(
-+				youngest_denied, same_exec, logged,
-+				request->other_domain_id, request->audit.u.tsk);
-+		break;
-+	case LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET:
-+		if (trace_landlock_deny_scope_abstract_unix_socket_enabled())
-+			trace_landlock_deny_scope_abstract_unix_socket(
-+				youngest_denied, same_exec, logged,
-+				request->other_domain_id,
-+				request->audit.u.net->sk);
-+		break;
- 	default:
-+		WARN_ONCE(1, "Unhandled Landlock request type %d",
-+			  request->type);
- 		break;
- 	}
- }
+ out:
+ 	/* Notify the calling thread once all threads are done */
+ 	if (atomic_dec_return(&ctx->num_unfinished) == 0)
 -- 
 2.54.0
 
