@@ -1,107 +1,140 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.cs.umu.se (mail.cs.umu.se [130.239.40.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177823F9F5B;
-	Tue, 11 Aug 2026 20:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D915337F725;
+	Wed, 12 Aug 2026 08:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.239.40.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786480988; cv=none; b=X9uL+++FWvp05XhbAwR/4wwwymoUplR6MkY425yLnkPSpnMIOGgXmhsrA4VJyrX45GNFdgZuiQyOEGuzVXTflXUiZXJpPWpD/j8SQQpkVctSwKE+XrzZ+Q0eLUuOIZQwYxTc40l+OS5sk83oLP9a5SlzLcPz4SEyY6waOwIrf1k=
+	t=1786522306; cv=none; b=L0eeEv1QqVVNCvoFeXLN/YJpW7RmpUIO3mcYmkDaf1jY4C/KoMoNa/TSrWWf7A8G93ZERYjTqE/WbP/RSm2fPU3+MJlVkFoqyXV1ULH6Pd6LkJLsPWmWiJFZ2Fe5wVvabkgaNKn2QubgHbNZXpmtHqMRCefmHuLiaV4F763x6jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786480988; c=relaxed/simple;
-	bh=HNWrA4Npyus9iEe5/qKE4hOoR7Pg96iHGa2EDjt2768=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uV2hskp5fWV5zMc0nYGid3L8r8bN+0DTxnBYhz4/oGKW1o0fUZfW078ggnsheVXU0j9+CWQ36YGbd9vXPi98G5xdmQh7CImMHGGmwL7JCBhOpoicLLSh+eVN5anJYsvzv6qP5DQBF5WXI4PMo2Z5m9tgbz6IbxP6DcumrwDnnik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YXLgdApM; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786522306; c=relaxed/simple;
+	bh=xW9ZMoYBeKafn0p84RZA5pYECw33ih6ciERBSSF4w3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Bsk+cazv+p5jNyG9h7aLBZP0TVrM08P0euv4CVjlY+mRUExYFbXX5W8jDOvZ/AlSrFK/6vAMOFbkECABq4d1WTqXi3abGO2YNWfletoMjKqm8dE/0iQ2tDJCM8964gBdkit5ensA1Aj2C86Rya3Vbdp8mjR0WBFd0bD55FdHCXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.umu.se; spf=pass smtp.mailfrom=cs.umu.se; dkim=pass (2048-bit key) header.d=cs.umu.se header.i=@cs.umu.se header.b=KmCW2S4h; dkim=pass (2048-bit key) header.d=cs.umu.se header.i=@cs.umu.se header.b=mW/+IxEt; arc=none smtp.client-ip=130.239.40.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.umu.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cs.umu.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YXLgdApM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 049C71F000E9;
-	Tue, 11 Aug 2026 20:43:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786480986;
-	bh=tmqgrBJxUvss5ev2qg4hR/y+Shhz4DNLrdh9R3vpGbM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=YXLgdApMQVjB8O5UsuRCftLgsXmP3cSJYvwGgrqZ6b+hB2edLW/uSBh3oj2DAKDLB
-	 6IioToKp+fdIkMueq1I/JRHsiwugXBDmJ97vp4UxyiCAtTlbgjkSl4kj3fA2aKAij5
-	 Qgg6Hbg7EYU+2aNCB4H6ya401I1ujfkQIF2fhblv0bLnVJ432LahjN1sFPCZeRdz14
-	 Cw5oUW8a78hswG6XALU3IdgCkVcHjig6EUfeU9hkjUA2GGFHo2hnqTAj7OaCds1AU4
-	 UNwXanpKaMexoPY5I1l0K/a0V8GThMm0LE5dEKAkZ0GBpRhjDX5FR/2e1tnXNyczMQ
-	 ftS06T2V5gAHQ==
-Date: Tue, 11 Aug 2026 13:41:01 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Jan Sebastian =?iso-8859-1?Q?G=F6tte?= <contact@jaseg.de>
-Cc: Jan Sebastian =?iso-8859-1?Q?G=F6tte?= <linux@jaseg.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <baoquan.he@linux.dev>, Mike Rapoport <rppt@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Dave Young <ruirui.yang@linux.dev>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Lukas Wunner <lukas@wunner.de>, Ignat Korchagin <ignat@linux.win>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Benjamin Marzinski <bmarzins@redhat.com>, kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mm@kvack.org, keyrings@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
-	linux-afs@lists.infradead.org, netdev@vger.kernel.org,
-	linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	dm-devel@lists.linux.dev
-Subject: Re: [PATCH v2 00/13] CRASH_WIPE_SECRETS: Wipe secrets before kdump
- (was: CRASH_ZEROIZE)
-Message-ID: <20260811204101.GA1905@sol>
-References: <20260811-crash-zeroize-rework-v2-0-9561d13c2340@jaseg.de>
- <20260811182012.GB2895176@google.com>
- <d242ab53-a39e-421d-ac39-4bee49be6ac0@jaseg.de>
+	dkim=pass (2048-bit key) header.d=cs.umu.se header.i=@cs.umu.se header.b="KmCW2S4h";
+	dkim=pass (2048-bit key) header.d=cs.umu.se header.i=@cs.umu.se header.b="mW/+IxEt"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cs.umu.se; s=dkim;
+	t=1786521783; bh=xRGQdgSKljfrW4uvKs52zlEfeenXY3xamy4HFZTkOiY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=KmCW2S4hLvAIum0K/ZYTBR6L1snTXXHXZYlMcMfkA5eBqw+0+nvdlbq5OnF5PlayD
+	 e8COC5UnUY9iQfDMAxNwkILRJA8OtCQLaN1GwhI2OwAFRDQPFdvFBRUB2+3Uy2U6HP
+	 0MVyStU/GcstrM6rqqqtpGiwBg31w/0Yk8VZ8+IP2W/o9+4Qi5hl69PuwEyJrUOCEd
+	 6CQCIRaEsT3TZ1QgZd02e2QpPxDEDk2z3oOJ4BFjZGcUyQF2ODqf5ZkVk3zeGgJNGE
+	 6Tsey2g6BFWHDeqzgIqh7Ve6pFNfRFJXYRzFmNgrqWwGXU4PwXN9QXK9QWmycShdlY
+	 ay90pQ34Hl+WA==
+Received: from localhost (localhost [127.0.0.1])
+	by amavisd-new (Postfix) with ESMTP id 4hKgw75kBcz3D;
+	Wed, 12 Aug 2026 10:03:03 +0200 (CEST)
+X-Virus-Scanned: Debian amavis at cs.umu.se
+Received: from mail.cs.umu.se ([127.0.0.1])
+ by localhost (mail-vm2.cs.umu.se [127.0.0.1]) (amavis, port 10024) with LMTP
+ id ovcg_ptwD5Ke; Wed, 12 Aug 2026 10:03:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cs.umu.se; s=dkim;
+	t=1786521781; bh=xRGQdgSKljfrW4uvKs52zlEfeenXY3xamy4HFZTkOiY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mW/+IxEt229eYM3zXro57LrT/UPqM/tTtqkzsEoG9wiFgPp7BAeyUOJLCuehaqs0p
+	 qBSKf9OSFZHqH46gCxxmDw8IfXyBMcOEmNzaFQHMC54CrKOkQHFDwjektYnBLd/K+8
+	 QtU0Q7/VR2D2SBAuY9T0Phs77Cb1LoHTmek4h3tKVBxuAgvymU4TZ3fDFmCo5P2Izh
+	 WCOyNTcvPLD5kou+pZgs3ejM6piXG8AamT/AjWI8jFM3dYxsZpkMedWnDbufgfOFlu
+	 I4OOFHivkvU4MSoYBuI68UCnUXzwEARjOvNa4cMwJ5EMoY7osboDsMXb3XhGwPa0n4
+	 KeNgc0N3qcPug==
+Received: from cs.umu.se (luna.cs.umu.se [IPv6:2001:6b0:e:4036::88])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mattiasa)
+	by mail.cs.umu.se (Postfix) with ESMTPSA id 4hKgw52Znhz2k;
+	Wed, 12 Aug 2026 10:03:01 +0200 (CEST)
+Date: Wed, 12 Aug 2026 10:03:00 +0200
+From: Mattias =?iso-8859-1?Q?=C5sander?= <mattiasa@cs.umu.se>
+To: Ryan Lee <ryan.lee@canonical.com>,
+	John Johansen <john.johansen@canonical.com>
+Cc: regressions@lists.linux.dev, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stric@cs.umu.se
+Subject: [REGRESSION] Apparmor deadlock in 6.12.101 in complain mode
+Message-ID: <anwotItY2-0WMbfn@cs.umu.se>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d242ab53-a39e-421d-ac39-4bee49be6ac0@jaseg.de>
 
-On Tue, Aug 11, 2026 at 09:38:20PM +0200, Jan Sebastian Götte wrote:
-> > Could you perhaps narrow the scope to one or two things that actually
-> > are useful and can reasonably be supported for the application?  For
-> > example, secretmem seems to be the only thing you mentioned that you're
-> > actually planning to use.
-> 
-> I'm open to whittling down the scope of this series. In my use case I need
-> at least secretmem as well as dm-crypt, which then pulls in the crypto tfm
-> stuff. Personally, I could live without the other bits, I just thought
-> they'd be easy enough to include.
+Hello
 
-Please do reduce the scope.
+With the 6.12.101 kernel on debian13 we suddenly got frequent deadlocks in apparmor for our Apache webservers.
 
-Note that even if dm-crypt is in scope, "crypto: api - wipe tfm contexts
-before kdump" is neither required nor sufficient.  For one, dm-crypt has
-its own copy of the key.  The wiping should be done by the kernel
-feature(s) that need it, as they know what actually needs to be wiped,
-and they can do so without the bottleneck of a new global list.
+It appears to be caused by the commit "apparmor: grab ns lock and refresh when looking up changehat child profiles"
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=32e92764d6f8d251c1bca62be33793287b453a81
 
-- Eric
+As of that commit the function change_hat() now takes the ns->lock mutex, and later with the lock held it calls a function that also takes the same namespace lock, causing a deadlock.
+
+So, security/apparmor/domain.c:change_hat() calls security/apparmor/domain.c:build_change_hat(), and in complain-mode that calls security/apparmor/policy.c:aa_new_learning_profile(),
+which also tries to takes the profile->ns->lock mutex.
+
+###########
+INFO: task /usr/sbin/apach:125024 blocked for more than 120 seconds.
+      Not tainted 6.12.101+deb13-amd64 #1 Debian 6.12.101-1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:/usr/sbin/apach state:D stack:0     pid:125024 tgid:125024 ppid:2366   flags:0x00004006
+Call Trace:
+ <TASK>
+ __schedule+0x505/0xc00
+ schedule+0x27/0xc0
+ schedule_preempt_disabled+0x15/0x30
+ __mutex_lock.constprop.0+0x41b/0x720
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ aa_new_learning_profile+0x149/0x1e0
+ build_change_hat+0x28b/0x3a0
+ change_hat.isra.0+0x60e/0xd90
+ aa_change_hat+0x301/0x620
+ aa_setprocattr_changehat+0xf8/0x230
+ do_setattr+0x2d1/0x380
+ proc_pid_attr_write+0xe0/0x150
+ vfs_write+0xf5/0x440
+ ? __pte_offset_map+0x1b/0x180
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ? mutex_lock+0x12/0x30
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ksys_write+0x6d/0xf0
+ do_syscall_64+0x87/0x1b0
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ? __count_memcg_events+0x53/0xf0
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ? count_memcg_events.constprop.0+0x1a/0x30
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ? handle_mm_fault+0x1bb/0x2c0
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ? do_user_addr_fault+0x36c/0x620
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ? arch_exit_to_user_mode_prepare.isra.0+0x16/0xa0
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+RIP: 0033:0x7f4719c279ee
+RSP: 002b:00007ffdb983ec48 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f4719b15c00 RCX: 00007f4719c279ee
+RDX: 00000000000000d3 RSI: 00005610b4669ce0 RDI: 000000000000008c
+RBP: 00005610b4669ce0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000000000d3
+R13: 00005610b4669ce0 R14: 00007f4719a8c660 R15: 00007f4719acd054
+ </TASK>
+###########
+
+
+Some more background on how the issue gets triggered for us:
+We run apache with MPM-prefork and apparmor has it in complain-mode, and a bunch of different vhosts configured with their own profiles in /etc/apparmor.d/apache2.d/,
+everything is fine as long as you call a vhost with a matching apparmor profile, but calling it with a hostname that does not have a explicit profile (ex the ip-address) causes an immediate deadlock.
+So with ex a vhost as "SiteName example.org":
+curl http://example.org <- works, no issues
+curl http://127.0.0.1 <- deadlock
+
+A quick workaround for our issue in Apache is to define AADefaultHatName globally so that it avoids the aa_new_learning_profile code-path,
+we have it set to "AADefaultHatName DEFAULT_URI" as that hat/profile was available by default in the shipped /etc/apparmor.d/usr.sbin.apache2 ruleset in debian13.
+
+Best Regards
+//Mattias
