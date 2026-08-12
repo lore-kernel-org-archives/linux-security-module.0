@@ -1,155 +1,126 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A975374A16
-	for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2026 14:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3ED468C05
+	for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2026 14:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786544339; cv=none; b=sKbmfr44As1XA3J+kXML+7vZAsaDwjSRQffg6nK3c+Z860hW0XfxK+xelQxHGC4IpESSHEHIDydlP9I86hVttBLsYCGhL3N/Y39X3fgvr2cLM+gqxYKnD26i0K9jCbN78gQ2pL21/XXuUf9Uicv4R6VbwZyP/TubAodrT1iqJaI=
+	t=1786546321; cv=none; b=GY8DW3hIQ71FD0PJScdTdq4DMah2OEXxM1v3xx6YcNAHRfJsV5WguzjXmqkB8R99iUWKktKME4Lh2Z8dhcg/frlg7RyfOns6g3deWu0qqGBClDYlkNx4uygRSzRRO5nQW2SOxwycrNvFq3ddjgWV5ILQ1OrWOZO03h5L5xbotsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786544339; c=relaxed/simple;
-	bh=cO4Pj9HJvXCrtKDWlg8BCMRgxRtBdS4Ni/h9SSOUwWU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hHJQ657P1z5gmU8ltYp6A0nG2X730PZVNdQ8PHfrGSjcf6U5YY6WsIcDSUmD7HAJ18Dt7RtwcbqvG36XLOGMYrM4N2K5f0N4r4/74cKfcC4l/VSZPOqcIaKc3KuN+LAUJkV5/fF6y/PxZ8/QzgT021YyZ2wngcWNZWRt/uWITWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=CSkouF3c; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1786546321; c=relaxed/simple;
+	bh=Y11hNluv2icyTm8lnL/Bn2Xr3Nk5hYxyS/uz2OwDTlE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=g2WrHn3RrjiDuaNrAo3PASNdz1YVJeiJZYVZ9+4dqEfXRFNxiwSWZDRVpgwLG8NSHCHL9re8YJqI9/pZyxge39VP91Hw1PbBHzKBlyrRi/k4vjfX+MDc7NNIND445349P48/FJjBKOnyubWRA+rZdbrcNHLKkb8jM3Bjp96pE8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bIpNDwDa; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="CSkouF3c"
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id E21CF3FB57
-	for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2026 14:18:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1786544334;
-	bh=ziTqEENmhcZwJoI7CW+xasRu/XWt1NvwONmfzBdAPeA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=CSkouF3cwL8xsterUNLCTdLVv69S3SY6bCVZ40y/hbDr8GTsqMinjtXkf5rrSxENs
-	 kKnEbFxgq4LCUaam2s5qvPO9Dx63n39wDHFB0LqBYk6xMTLBfgnx3hZV/ahDnXZc+b
-	 WY5jXtnsSKd//pJJpnqDeQGMFHDtQx4rMoT48pL3dmkXA16u7RJxBbdahhfwoeeeH9
-	 SEk5Yggq/7wtpW4t9gYJJaVr0vAAVg1ZRBWLUUyJh1YnqIoS9ijUfNG4xlgdWhvxPz
-	 CA//8n0ORpSL2C3k+ivuXruVKQ9yVCOKSCdQNQjU0HgRAqkoJVS0eAmvoBUKUSEAf/
-	 tZd7/wFX6afpo2mY4FpITDEHZI4+05BW9Z6l19r/Q6FiKHov7XYbwQpqWCahR8kRoA
-	 BFbwLDmlEcG5SzPpQjMddQaDV54l0v7jtuX6o/QxcXnVvrWRHFRhy+QVizyqpdNSbe
-	 hxvCfUElJlTk3UkzF4/ZyIg+E8739kp6BXUovyfEsrc4ey5QaYhRE/KmiLkQbdzS12
-	 R74Dx+6ke7hZhfaixIYqEVOwZJxWNljS7kRenknM+z5dybqf5exkINJSaUjzZTnyun
-	 hmdyHA0cJlpd8iIW5zBdmNvdjwTn99hBPSnLjhPPQ6FVuFMnmHW4V+YKXNGaDd3r+d
-	 lHcAf1lwZFnlh9qiF75mbFmA=
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4955843c6cdso9533015e9.1
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2026 07:18:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bIpNDwDa"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-498012a61f6so59525e9.0
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2026 07:51:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1786546313; x=1787151113; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=XFEQDpKGBGfe2eFcLfrei3wf2IxikY9MSg+V8LKW8dU=;
+        b=bIpNDwDaNoDqkoC3l8CEzoYUDyT3Q0MvK3PidvJvVtkbnSvlh1vf4QQaKNYrQpJvvQ
+         rL5bw+ymA9ZUwWOyDUcyuMjvtqjwc+sCkuhZAIlLVH9wHS+bJT3j7GMzdZmUeGhNzerZ
+         VxjKcsm6mOy/EksYQUK61FsZFyh0sdCo1I4IEce/Ncaw479U6l1TGrpzK9QOInzjUj/L
+         /4n47azrAuS6vCopKJ9K/5DqRuQWVr6lhaASh64QB/V98CN8Tts1kVRKl27niuuRB+cP
+         IpbjGeI4YcmASQRCkaMwDaA/1zfu323zYP35tfgaTdtBerL2ADV5RkfQDeh4vCS+A/hr
+         rBbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786544334; x=1787149134;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=ziTqEENmhcZwJoI7CW+xasRu/XWt1NvwONmfzBdAPeA=;
-        b=CDTSbpvGNGgS8kKuDSDNhA5RiT6bq2tfuXg/2lD6i90lNZsM0rvAIpff4NcBKYZd6O
-         Rml/WlC2uhxM4fyN1fIOiAlDGkaRUTS341IEeBD1nII3CaAUi2IOoFfHmL214mX3E9z5
-         eRuQKRnlB2SKaygHDnQyQvo5scwupQoUmSYBYzktHN2ZRHvAqL9sswm4j5mc21SHsAkk
-         cPa0xFMBgOhccUkuplAFiK9bfNY9TXkcwjqol1YnZLU8QJBfdE1yuZXoenkjBTgkoxjt
-         5rP/F9arbWNkg6YrkvAAFnuUSZHV1JFHgEvKoh/vloiL30IWfiU+a1BywXM1albxot52
-         vOdw==
-X-Forwarded-Encrypted: i=1; AHgh+RqQ8oOHw9Ec62q89FiE+A3W3v4Ta19uLR+T++OxYcv7azYcE7NbVAfv5Cm5h3PyhBOXfpyoIiSkpCUTguADArcIVmx86xc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyQeHPQnK/c2mV8cE++4zMW5LWToi80l1n8FPhuL83BJVRc5+r
-	6biRoGbg3OkjYT6/OC7Jx/cxbKYvJAv/zNZBo8CpNKDJsaDQrtEvQv64rMNC4BT55rJ63VYnZ+6
-	3oyhgIX5Jxv0SlW8/59CbZLvbVOucDpLZ60vGnhwQ6HSgEiGDNXr/xTnA0Jf9GozRtmqkWBPrI7
-	tF6wAehK9cudcWp8T9ug==
-X-Gm-Gg: AR+sD13q+YAuGGx32mVlq3sYXex+a5hOmeIYYSBJeyl8w+pphb6rlx887qlgZ9Jp+6+
-	rlwiXx+1Ahc5+Szxl1AycI+Y0VluzQ9mKUSE2cKICR/3Q7WuQsyXWOXpmS2gB1GZeFnhy/vF+Lv
-	N5QZUYdZuD2NgaCIReMObKzn7uPr2XvMcq6PeNrnxWj2sNmHXMU7WLjOmT4R8BMbGcgCliFSmwq
-	iDuuCP09E5FP3mivjxOMogNJH1WNj/dJl5vBvAFROUVQNhWlorHP3YETmLozfzpS5aNOiannazj
-	3rb3XvOTM2pkNotKH6udwar0zLuXfsQVZEZKyHwE9AUGw1C57SqGZNLOHmQiGJVfdN0wyDjNuIy
-	CfrvaZF1BcnasphVIZiqcBEWx4iWNjauu7axPGVfSC44F81Hz3sZWDJl05C0TRbkciHiRDgoEQX
-	ZjoSkaEZ1Y5kOQTng1foQKT9p9
-X-Received: by 2002:a05:600c:35c1:b0:499:811b:dfed with SMTP id 5b1f17b1804b1-499811be003mr10736385e9.5.1786544334101;
-        Wed, 12 Aug 2026 07:18:54 -0700 (PDT)
-X-Received: by 2002:a05:600c:35c1:b0:499:811b:dfed with SMTP id 5b1f17b1804b1-499811be003mr10735465e9.5.1786544333585;
-        Wed, 12 Aug 2026 07:18:53 -0700 (PDT)
-Received: from t-14 (2a01cb00088323003ba1cc9bdc9c322c.ipv6.abo.wanadoo.fr. [2a01:cb00:883:2300:3ba1:cc9b:dc9c:322c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4997c8fa1c7sm71800405e9.0.2026.08.12.07.18.52
+        d=1e100.net; s=20251104; t=1786546313; x=1787151113;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=XFEQDpKGBGfe2eFcLfrei3wf2IxikY9MSg+V8LKW8dU=;
+        b=dUyWFrrLZZgAc0NxmSU1LjmXR5wV10x8dmnZTzkelnQ9LX7GX19uQgNiNHy374vv2H
+         jAwKlRi5tYUSnNfYeetiyj3HsaWy9vIfbQc5ZRZAGvxrHBXnmJjqypGkTz3JEv3kp+Ib
+         kLhrm9WNDynnh5dCdedITmECfhi/YbVlfEK0xk/Mkl7iLgHP2eYxcECXBPPlvRuSXfqJ
+         slqM1aSiVaH9jXoaTw4ESwRn3tw7izln7zsUYFS6Iwi0pFASFZaLzhJQ8ttki3Ajisg/
+         yyU9oQ1G6nBEfm1v2+S8AJKyZq8G93MJ8wTozyE0btu04jiNNW7txuHF7aPaml6k54DL
+         84sw==
+X-Forwarded-Encrypted: i=1; AHgh+RomJ1kxDeaxrIGtjwhgCtxIYHLYlMxRnxzM9uVuOSZMe2iQxf0vTva+0G1HSuATSBopt3HcWplupcE7SX25ZNuR+WGcUgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCYgfFctL07OIcvH1xDnE/0yaVgxIgrDhT/eSU1UhYCCr0NspA
+	ZPqZEFyRxRRlZ7H9WLTosmCWUQenNOMOlUaRzZ+DvYc07p23brz9YisoOXTvxxOWHdr0P/IaKtl
+	eRh/BDAnX
+X-Gm-Gg: AR+sD10WjudRMCmQDsX7rwnEJSA9Nun9spV+0P91yBH7yGvb+zId53/DF1cjw7g385K
+	+AV3F+7UlODU6db2t3z7dsDnlA74ERoG4UpEfnS9v9mJhNsTmjxs25QGiADh+ty5NjREXz+s+SU
+	KdWgqUr0IBKcsryJC1XOHYqJW/DWiKKTq5EL0/76ZoUbhecx5Olb74Crd4MqqssvloZhv1wtdH4
+	FQ9kq2NKpt0JEzakqxW14YkIA82nc9RoXGWssYCNmCJUlRWR7/4coDmUFT+QiySmbml/yEl6BB7
+	FBFiMUsLzUysIHCYNo3JDkcG2oFOcR7f13dlAnoBWoFE9yuvkevT8tUOazw+ENWGN1zfxynzeMZ
+	1E1879Iuqh3TRvO3d/R3aZke12VRhBSxuxfZ23XX5YBBfimBD1dtijJ/95+bv1ZmFkJ6HW8SbaF
+	3jcNFlQ3ks8RI+n/lFFYkCfxLXOD+MafQVsUF8GsFVeF9bplFrMKqJu4fVezavHXIR0/WmlWK+v
+	/7akSdfVniGMTlaPVyzYVsKTVh2C3VbxOv6LologVbciqU4v+DMW66TRcJi
+X-Received: by 2002:a05:600c:a210:b0:495:51b1:3b7c with SMTP id 5b1f17b1804b1-4997ae8fa87mr1131525e9.8.1786546312851;
+        Wed, 12 Aug 2026 07:51:52 -0700 (PDT)
+Received: from localhost ([2a00:79e0:288a:8:d358:790c:76c6:1a58])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48150d4e3f5sm7852708f8f.22.2026.08.12.07.51.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Aug 2026 07:18:53 -0700 (PDT)
-From: Fabrice Derepas <fabrice.derepas@canonical.com>
-To: Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: Fabrice Derepas <fabrice.derepas@canonical.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ima: reject a kexec buffer whose declared size exceeds the buffer
-Date: Wed, 12 Aug 2026 16:18:40 +0200
-Message-ID: <20260812141842.2319635-1-fabrice.derepas@canonical.com>
-X-Mailer: git-send-email 2.53.0
+        Wed, 12 Aug 2026 07:51:51 -0700 (PDT)
+From: Jann Horn <jannh@google.com>
+Date: Wed, 12 Aug 2026 16:51:46 +0200
+Subject: [PATCH] cred: remove RCU initializer for init_task.cred
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260812-task-cred-fixup-v1-1-318440888adc@google.com>
+X-B4-Tracking: v=1; b=H4sIAIGIfGoC/yXMSwqDQBCE4atIr9OgI4rkKsHFPEptA0amnRAQ7
+ +5olh9F/TspokDpWewU8RWVz5JRPQryk11GsIRsMqVpy64yvFl9s48IPMgvrWzQ+CY4tLZ2lF9
+ rRB7u4qv/W5Ob4bcrQ8dxAnvxW6VzAAAA
+X-Change-ID: 20260812-task-cred-fixup-2e5c5dbe6a3b
+To: Paul Moore <paul@paul-moore.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>, 
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel test robot <lkp@intel.com>, Jann Horn <jannh@google.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1786546307; l=1236;
+ i=jannh@google.com; s=20240730; h=from:subject:message-id;
+ bh=Y11hNluv2icyTm8lnL/Bn2Xr3Nk5hYxyS/uz2OwDTlE=;
+ b=iin2C2yYQ5icjSiLi/dBPRCgsywT3zE78fmJNMR5iknlWOt7ts2xtWfrUVm/Moc11GnsHrCwd
+ pm7bN3axQGsD7sevRgPL73yTDOYXXsnc4uOXvaXDEo4Br5f2oHErHs6
+X-Developer-Key: i=jannh@google.com; a=ed25519;
+ pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-ima_restore_measurement_list() parses the measurement list persisted across
-kexec.  It computes the parse end directly from the blob:
+sparse noticed that an RCU initializer was left behind for init_task.cred,
+which is no longer marked __rcu. Fix it up.
 
-	bufendp = buf + khdr->buffer_size;
-
-khdr->buffer_size is a u64 read straight from the persisted buffer.  The
-only length checks in the function are size >= sizeof(*khdr), version == 1
-and count -- none relates buffer_size to size, the actual buffer size the
-caller (ima_load_kexec_buffer()) obtained from the ima-kexec-buffer region.
-ima_parse_buf() bounds every field read to bufendp, so a blob whose
-internal buffer_size exceeds the real size makes the parse loop read past
-the end of the buffer (CWE-125).
-
-The buffer's memory range is validated against addressable RAM by
-commit cbf9c4b9617b ("of: check previous kernel's ima-kexec-buffer
-against memory bounds") and commit c5489d04337b ("x86/kexec: add a
-sanity check on previous kernel's ima kexec buffer"), but the blob's
-own declared size is never clamped to it.  Reject a buffer_size larger
-than size before the loop.
-
-This is on the boot-time kexec-restore path (__init) and the buffer comes
-from the previous kernel, so triggering it requires control of the
-persisted buffer; it is an out-of-bounds read only.
-
-Fixes: 94c3aac567a9 ("ima: on soft reboot, restore the measurement list")
-Assisted-by: copilot-cli:claude-opus-4-6 frama-c
-Signed-off-by: Fabrice Derepas <fabrice.derepas@canonical.com>
+Fixes: a4229a2a16a8 ("cred: clarify that task_struct::cred is only for the current task")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202608121153.nzs6HZg7-lkp@intel.com/
+Signed-off-by: Jann Horn <jannh@google.com>
 ---
-Tested under KASAN (CONFIG_KASAN_GENERIC, x86-64) with a KUnit case that calls
-ima_restore_measurement_list() on a 24-byte buffer whose header declares
-buffer_size = 0x1000.  On an unpatched kernel this takes a slab-out-of-bounds
-read of size 4 in ima_parse_buf() from ima_restore_measurement_list(); with
-this patch the buffer is rejected and the case passes with no KASAN report.
-The test is not included here (there is no upstream IMA KUnit suite yet); I'm
-happy to submit it separately if useful.
+maybe squash this into the original commit, if that is a thing you do on
+the dev-staging branch?
+---
+ init/init_task.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- security/integrity/ima/ima_template.c | 5 +++++
- 1 file changed, 5 insertions(+)
+diff --git a/init/init_task.c b/init/init_task.c
+index b67ef6040a65..6529b002135b 100644
+--- a/init/init_task.c
++++ b/init/init_task.c
+@@ -159,7 +159,7 @@ struct task_struct init_task __aligned(L1_CACHE_BYTES) = {
+ 	.sibling	= LIST_HEAD_INIT(init_task.sibling),
+ 	.group_leader	= &init_task,
+ 	RCU_POINTER_INITIALIZER(real_cred, &init_cred),
+-	RCU_POINTER_INITIALIZER(cred, &init_cred),
++	.cred		= &init_cred,
+ 	.comm		= INIT_TASK_COMM,
+ 	.thread		= INIT_THREAD,
+ 	.fs		= &init_fs,
 
-diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-index 7034573..2467cae 100644
---- a/security/integrity/ima/ima_template.c
-+++ b/security/integrity/ima/ima_template.c
-@@ -450,6 +450,11 @@ int ima_restore_measurement_list(loff_t size, void *buf)
- 		return -EINVAL;
- 	}
- 
-+	if (khdr->buffer_size > size) {
-+		pr_err("attempting to restore a corrupted measurement list");
-+		return -EINVAL;
-+	}
-+
- 	bitmap_zero(hdr_mask, HDR__LAST);
- 	bitmap_set(hdr_mask, HDR_PCR, 1);
- 	bitmap_set(hdr_mask, HDR_DIGEST, 1);
-base-commit: f5bbbfec59b4e2fb7520a91de3df8a6174325d6a
--- 
-2.53.0
+---
+base-commit: 1f2f7a1fd1fc34e757107e3a3849f8d22b14cc6b
+change-id: 20260812-task-cred-fixup-2e5c5dbe6a3b
+
+Best regards,
+--  
+Jann Horn <jannh@google.com>
 
