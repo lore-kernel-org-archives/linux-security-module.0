@@ -1,160 +1,123 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831A047B40D
-	for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2026 15:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C923644A2
+	for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2026 15:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.45
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786549480; cv=pass; b=SwhkfQsT6VFL9TV9kSEOc/KkwvrBAY0L9bYeUuc4eFqJReVp/JsTdvNd9QF3voJ+3qW28cPWSILkMQQfpbod6vMaqdaEreFrTHZAnoVcBh6Rdh63li5I9UKWKdNr2/0FX4PdKcmpQqeUu48xZmyXCp4PmYe7R24XVG9zUPSGL4w=
+	t=1786549727; cv=pass; b=khD3BV+Zw7qxwYlD2olcZTp0eSmQCyCtJ+apMFdh3Ckok/D+47CRTFRu+qhdfQ3k21zrUrZ2rRf+4CK3vGPp9xI6MLc9kc12KRDVKkrmNh5wXy5gQ8mrYwmmJnZgncs/Fwa68gPmzpmDwjszcjkfSWcV0BM1Vp/OmC1HJDxNK/I=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786549480; c=relaxed/simple;
-	bh=/IeII68tNcQyIIr8PeEhC3EiDZx+rpE15xSusoJdc5E=;
+	s=arc-20240116; t=1786549727; c=relaxed/simple;
+	bh=UgtgITgYKhS1xqPKan1gxyBvaq09W0rkp1tX0VdRW+M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jvwcNNr66Wn2R0E+nmMH1uDger0w56QfK2hq/2GCs2gPInUnbsa2ECxiFHY0QZ3fuIsTdgeIbK29LuPsanAydHINfiqY5/c9pMkm/PPVYmK9+22YMdQLAvCsCHNKLak4ktbJfuHxcZR9Ttrl57JxPDDMjxARX7wvtiEY2uf6ctw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fQ3Wx++p; arc=pass smtp.client-ip=209.85.214.181
+	 To:Cc:Content-Type; b=VlUzSx+RbMGpIlnroNJ4X1s25bJU26LOWSpovmrLy7+zlfngVjZWfEMvm3fqczn96gQ3GHlA6MG9ByyPdoW9t7hlESWw1XtVOSp4WNNMVkppLZo8R2d9wnaiFM/QJEL2ui6DvEeWJtasLJz10gu8qD+H0TEViWyc+8dNMVZlW7w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ezidMC36; arc=pass smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fQ3Wx++p"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2cace91f112so14532345ad.0
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2026 08:44:38 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1786549478; cv=none;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ezidMC36"
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-383b4a3755fso1270928a91.3
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2026 08:48:45 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1786549725; cv=none;
         d=google.com; s=arc-20260327;
-        b=Hh0rV3LE6NelQrHG/CYptGBTYsZEzqd6IaupvrP6jf1YhElhu64jqWrU1R/nN+zRv8
-         k7T5jtbhkg3fEWQuUcPiIgMMstKjhbGYWvMnoj4Pt+nBlCbmDePV5m65J7Jhjsv9xW3R
-         AtGUhdt7CMcTXyrwLXaYy4iyIqJ7eL5Z9lBh78fxUgR077TgXOlqTyI/yeVCroIwR7bL
-         P8MjsGGd/GpFHxQZH2DOSnP+gSPe8g0WGLQHDC7kBoUJ6j0w2+o5cEUgmYd9SX6M4PBy
-         w33H1TFkhnD3axLHTyR35CC7+YJjA1K/rWHVwUpLLQBklq8lX6O6/QcVaKBuD9eazI5n
-         do/g==
+        b=LIxM0Y34jfcAQU4htA51YCv6+gFMkigdGd/y1gis0og3C859Ieu7i4daLzOLg2W5FD
+         nPVMOZETuM1MtSasdO/cDolb6Ekxh53aVqtyW2bwS4O/sixOV4c1qvInAFcGuMQHZ0NP
+         F9j+CREzkTk8iq5B0RmRVS6Wrqi9W6rcsc4wHRnFoQsDwNj0j0OyP6WaBQaQLOEkWprM
+         eucyJ77D4Q/hm2RiAeBXgAGfgveV8UEaWx2O/Ze1BRlFArPHsg3PkjnYXzLZhrJNR6Ke
+         hjS2PjXS7ajJU8m4MdjqhsrAg1BGogd9aYWOvUmoFCs/WgWsMRtF2zZ97j/CepmuapdR
+         01yg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=s1IWDnG3AF52MXJuclYMYHc+IQmTD43ohn2LvgapWrc=;
-        fh=s4vlcuDvzXZEwwRTZu14ArRAqpHauiRBHc7jbPAIbXs=;
-        b=ZlpcauRfvGzXy6/51tijPRT6byasKmdZJv7BmpJhfdarYKy5tc3zvcXTvyRD6tK4X8
-         z5bZpt8ReBkOSlMjunCbJBFvwVgeahAMdU3fL9PSwaGimETHU6zgIL4QzYxHxkpfArM9
-         z2Ux1kUvf3iKr8Qk1WLQmQ0FY6cPZeXhpKKHZlpqbWNUwNHVLXfZ3szcCpoHU2TmICZs
-         jlKSb6H6N+yxMjWhrZH+U8q7FpJpskHnc46uDj+bqVRhuYQGMEUQ1WY0J+ZohTBPxXyU
-         SQaBO/ip6P1YTKEMVniNSJlyQm/EpUa9Te7L/mFonV+2t/PJogLc4IAI86WwwAz70Qm5
-         HqQw==;
+        bh=D3F8NRGb65pipeRw5fWHUERkQPAz8qMmvRqCUJVoevQ=;
+        fh=wngi2PAPpFm98GNEkBiXnTRpOXun+RyC4c7QOsGhegk=;
+        b=Y+cx6eT0FdFaKxfrw/aOs6B4jzg5MPN6T4tqnbE2e12wOqxXtgLTozBY02dzW75Odh
+         6uDnh/Xufno2eWMXbVqrOcaaUS12p1GkV0G+tnQb44CHpkP0YlgnKhqDkNi+bR61Yx8/
+         lg3rIiuG7vtUIlsvwaBM9ADmHX6401oriPl3wgnma0E07MiFpMjqbZIANkkatoxw22lk
+         6pN4zGYpoJ3iB79CoIDGW+PZITaaAMMFww6LPgTG3OuB3zXlqUYhRWTKo6i21is1ZJN6
+         Uc8E5MM7QS5x6PAa4gH5R5qFKRWFtRNzMGBENMvYdNoLWY+G+jSQx/gLt7AEhdplbADY
+         kXOg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1786549478; x=1787154278; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1786549725; x=1787154525; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=s1IWDnG3AF52MXJuclYMYHc+IQmTD43ohn2LvgapWrc=;
-        b=fQ3Wx++pKT3wCst4Hb0bcoiH3pYGN9sbXz5tjnke6dH3EVT19Ewls3USSY1jTjNr8E
-         pGP4umrfgQhAKsMJQXsCtzXaZE30JkxavfyYd4+Rj3c2OboHhwEcdtIBc7GZuNI/lTys
-         heaS2J+odmMIY4h8lsHUlb1Z4U4/Tuvlg0gXtFxlEd+Ejfof0ih5Tq3y7apM0ez/9ixF
-         jDcCd9UyG4jhqpU3w+IIk4Ry/FWlkY8EEiosg5F3SWD8jbRAIqIDw2a7enAU2S61fNNE
-         QJ/vWkZn6PI4YjlzxbGXtFguixw6neTgUItoO8HPmW4psh2qUW3p6QLeOciowQ8Rs0SY
-         xDhA==
+        bh=D3F8NRGb65pipeRw5fWHUERkQPAz8qMmvRqCUJVoevQ=;
+        b=ezidMC36NdvSEo7hoEoGTrFrYyLk6Gb9Hlm9Y+4U4yHHfWFAWDsHsJZPvdSP1NnJ7q
+         FPoQmBtPwF0vrhmztRPFbX7KQqVhJFSlK2n4CI7jshiG+gNytHNVJ6sZSvfZ+m6W5YPW
+         6ekkNO4jIOp+5PAa1empqRueMm/OUoahJtab3lZei2OVySho9TIqtqKvRu0v6WnuXxtW
+         cRoUJByQJ2gjIxEMkz2K7lHIo5WNYVawL8W4IHNC4SR15vLM14dW2E+UiYbynat+vgmT
+         yLdrLjwsVkfS9mUQ+bZrp54vGtW5rsVb0El+sXS8NIpYy0s12DcYhkIK1rZmPO23FG34
+         Ud/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786549478; x=1787154278;
+        d=1e100.net; s=20251104; t=1786549725; x=1787154525;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=s1IWDnG3AF52MXJuclYMYHc+IQmTD43ohn2LvgapWrc=;
-        b=rYhWj1MMdffjpAoHD55b96I3h8Ow/cZXPCHMBHXBWhzAEoH3Lvc3lvNJXFVe9979OV
-         av7C6phphBPXfeeWyXNZRkLj7t+wCpnYWC+TKksFtbx/3c/fifdpsFbOp2hFwkxfzBGn
-         wTAo4JqDIXUcZhS7yCpX444udAjM6k7JMpn2XpVsPIumD2oCbt4cOsQtrzafyGLCU5DD
-         6zel7tNf7WXCb6H7Wdy0W43QCVfcqghWhHiUz2STLJAmxsMzB5e7IV/Itv6K7g9WiKkB
-         ZlAWchP8xOdIteM9YPjq+6HjNGxy1vgBNgJ5Om6pSmjhxu62dRUWWUKWfbBCQYMuyj0v
-         l2tA==
-X-Forwarded-Encrypted: i=1; AHgh+RragaS5IkRY/Hpr5F6AGZliQpGpCBEC1PapCyTPSSd85DjeT6Qg6jzAzP/n42WICV+/LOoB5amK0A+Bw76obH073z8Yr/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxathhpUqzMDn8LbBpWMTpby2hTkQu6s2G048tZp8CuBdvwyl/D
-	H9tBbWFgKF7byPpQq0Xqw/+a+OPVcv0wXzeY0Q/b14CAig/Z/d1SpCbKHtKPX0Nfwk10rOO7TYa
-	l0xBCDKK8dI9gAjEYEOXlklJvINI9shJYuJADXLSa
-X-Gm-Gg: AR+sD11UbwlhzwieSdfKJjPEDoVMtbO0YZOhZ69i+Gt1LP29Ukhi7a/TstnRxLXwDI6
-	Q9T5MQ0B3AQoHoY8Ak+ZU4CRpSKc/LBk77NqbZFk0p4YaWM7da2mlMMkhcbp4SY3yeu2kCKCcAL
-	3AJ6NOrTe1w5HOmNlygS+38tEL6zFTjbLMpychXbqElsZz72a3KhmWgYh13OGqc4dLHd5ndZsQA
-	fNyu9tPcboOefGHpf0IIxKA2uDuHoxhBDtZ3f6Ppg+mO8xZQFLL2jjo0E7NkEKYAL6YkcHk9CeI
-	om15ECBzIiop5VBxh3n5a6/cRDm7PtRrBCnJaVBmjpML
-X-Received: by 2002:a17:903:230b:b0:2ca:d975:5bbd with SMTP id
- d9443c01a7336-2d3455ffabcmr66794735ad.20.1786549477549; Wed, 12 Aug 2026
- 08:44:37 -0700 (PDT)
+        bh=D3F8NRGb65pipeRw5fWHUERkQPAz8qMmvRqCUJVoevQ=;
+        b=Q83CjbbJxiHs8UnPmMQ82192l3q02j1WBVIqM5XtVlHWKHvIlIHVWdLnKTy20mKxo3
+         xxV3kLQH+l7W1V1vL7fnzwx+OenNZ6KXT9u51zREKgpg2ZPVtNDsmWO7AH7oo5idCuDW
+         g/EvzAMO0WZaB+6Nz6mhs8kJNbNyIm7M14Bd7IpSNTVsqK/AeR/gjaE+mPcwOPXovgFC
+         nCEKEvUp9egcLg3DYBACVpfqK5Su7ZmKRqyx6OovddnufSKbXTUg7AvmnVTJeMSJ4R9V
+         Pqk7dk1fh9RO5frUv/s/WRC6brDl6l1oU5TApmj0Rk90bnHcKMHGlwTVAQrqdXFg2lnW
+         22OA==
+X-Forwarded-Encrypted: i=1; AHgh+Rocr+dCzhuc/UUTF7FOx8u9oJmhpLoUoe+VLgEQq0KV0nNkQBTq6PctDB2dWzVotM3ntHThP5zqsFJunUdqf9hJs5rsbqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz22U+i7M/kW+wU/jYm+/earOlVoRAEcn+9OR+XW3oWFcXE/t6n
+	OVSaA2s2tAXbLWS7T4bdy8kIUiXOfr0PxLEPYOvyT+PJmZFhXTJYaQvmWbERal/KCCx+JDLWJ76
+	ivobBY5lHSzZV3bIVCd/gNLfDfW3wkcwuEvSYXu03
+X-Gm-Gg: AR+sD12uMK002tuMTrCHkRinLKm8xVgN4yhl+bWY8qp0uC7UfjLjqsnS1W1r3lyehtj
+	dljHKHl4zcYBrEozU5l0R4Uwdwzd7vQ30c8vU34+0fRTbo2ChXPSnxLbNue8vrheCD4Uln0pHuI
+	OozK3js4ukILzNd+qoFuXS5hyLFIoA0xafExu42bnlel2+L7/IIUGEIYGHWTIrG6keawu5Xho8q
+	WQlxfCFDJ2Cbpsuar3Zuasiovw4VBqll4ntjHZJFUCI+h0RCy873QnmjR938cqIhmHsKcGIixMl
+	AOp2oSVYItO8Wy/yJ38ZrDDez7MM6Z2LLl1xDtoRwyZnMacgZNAKOrk=
+X-Received: by 2002:a17:90b:3b81:b0:390:b41a:b92b with SMTP id
+ 98e67ed59e1d1-393011b1a14mr5958793a91.4.1786549725014; Wed, 12 Aug 2026
+ 08:48:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260806-cred-nonrcu-annotation-fix-v1-1-5fd149b2ab54@google.com>
- <2bdf79f45c5eb2ea66d59904418081c5@paul-moore.com> <anyKVxRCiWy/g0Cn@mail.hallyn.com>
-In-Reply-To: <anyKVxRCiWy/g0Cn@mail.hallyn.com>
+References: <20260812-task-cred-fixup-v1-1-318440888adc@google.com>
+In-Reply-To: <20260812-task-cred-fixup-v1-1-318440888adc@google.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 12 Aug 2026 11:44:25 -0400
-X-Gm-Features: AUfX_mz1CYC-wzRPK5n3KTtv131zQRSOinsU2x1ZkDohfDgiuhfc7o6Q6fO3Nrw
-Message-ID: <CAHC9VhSv-+BgaOzfw7=86cWgnPkD_KD88NKk=j-fY=K_85wTxQ@mail.gmail.com>
-Subject: Re: [PATCH] cred: clarify that task_struct::cred is only for the
- current task
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Jann Horn <jannh@google.com>, Serge Hallyn <sergeh@kernel.org>, Eric Paris <eparis@redhat.com>, 
-	James Morris <jmorris@namei.org>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, audit@vger.kernel.org
+Date: Wed, 12 Aug 2026 11:48:32 -0400
+X-Gm-Features: AUfX_mz5j0aFj-skG_fpX816RZDZ5GqUc1dgCp27wLePUCz5GyndP2yGyOqpg80
+Message-ID: <CAHC9VhTBCwEAx8SfTYygTDu_Uoz768ZrABzb-8cgwf4e=KMGfQ@mail.gmail.com>
+Subject: Re: [PATCH] cred: remove RCU initializer for init_task.cred
+To: Jann Horn <jannh@google.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 12, 2026 at 10:59=E2=80=AFAM Serge E. Hallyn <serge@hallyn.com>=
- wrote:
-> On Mon, Aug 10, 2026 at 03:41:54PM -0400, Paul Moore wrote:
-> > On Aug  6, 2026 Jann Horn <jannh@google.com> wrote:
-> > >
-> > > The `cred` field in task_struct is currently marked as __rcu, but tha=
-t's
-> > > not true: It can point to credentials from access_override_creds(), w=
-hich
-> > > do not get freed with RCU delay.
-> > >
-> > > What actually protects task_struct::cred is that accessing it is only
-> > > permitted for the current task (except for setting up a child during =
-fork()
-> > > or tearing down a dead process).
-> > > (There is currently code in Smack that violates this rule, but that's=
- a bug
-> > > and causes UAF, I have sent a separate fix for that.)
-> > >
-> > > Clarify this, remove the __rcu marker, and remove RCU helpers from al=
-l
-> > > accesses to this field.
-> > >
-> > > Signed-off-by: Jann Horn <jannh@google.com>
-> > > ---
-> > > For context:
-> > > There have been at least two UAFs of struct cred that I'm aware of, b=
-oth
-> > > caused by wrong use of task_struct::cred:
-> > >
-> > >  - https://git.kernel.org/linus/a3727a8bac0a9e77c70820655fd8715523ba3=
-db7
-> > >  - https://lore.kernel.org/all/20260806-smack-uaf-fix-v1-1-26426d389a=
-26@google.com/
-> > > ---
-> > >  include/linux/cred.h  | 17 +++++++++++------
-> > >  include/linux/sched.h |  8 ++++++--
-> > >  kernel/auditsc.c      |  5 +++--
-> > >  kernel/cred.c         |  2 +-
-> > >  security/lsm_init.c   |  2 +-
-> > >  5 files changed, 22 insertions(+), 12 deletions(-)
-> >
-> > This looks good to me, with one small nit below, but as we are at -rc7
-> > I think this is best kept until after the upcoming merge window so it
-> > has more than a few days in linux-next.  I'm going to merge this into
-> > lsm/dev-staging with the expectation of merging it into lsm/dev after
-> > the upcoming merge window closes.  If anyone wishes to object to this
-> > patch or add their own review/ACK/test tag before then, please do.
-> >
-> > Thanks Jann.
-> >
+On Wed, Aug 12, 2026 at 10:51=E2=80=AFAM Jann Horn <jannh@google.com> wrote=
+:
 >
-> Thanks.  FWIW I did also look at this closely.
+> sparse noticed that an RCU initializer was left behind for init_task.cred=
+,
+> which is no longer marked __rcu. Fix it up.
 >
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> Fixes: a4229a2a16a8 ("cred: clarify that task_struct::cred is only for th=
+e current task")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202608121153.nzs6HZg7-lkp@i=
+ntel.com/
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+> maybe squash this into the original commit, if that is a thing you do on
+> the dev-staging branch?
 
-Updated, thanks.
+Yep, I'll go ahead and do that.  The lsm/dev-staging branch isn't a
+stable/reliable branch like some of the others, it can change
+frequently; see the doc below if you are interested.
+
+https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#dev-stagi=
+ng-branch
 
 --=20
 paul-moore.com
