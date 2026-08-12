@@ -1,126 +1,115 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3ED468C05
-	for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2026 14:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2EC372B50;
+	Wed, 12 Aug 2026 15:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786546321; cv=none; b=GY8DW3hIQ71FD0PJScdTdq4DMah2OEXxM1v3xx6YcNAHRfJsV5WguzjXmqkB8R99iUWKktKME4Lh2Z8dhcg/frlg7RyfOns6g3deWu0qqGBClDYlkNx4uygRSzRRO5nQW2SOxwycrNvFq3ddjgWV5ILQ1OrWOZO03h5L5xbotsk=
+	t=1786547117; cv=none; b=d6/VcLj1wjQNXv/2UXJSZJW5Vm+julT3ZriWAEy+j0vLkhHwMeaEZW/9R6NEQM/sXy98EYP86AegKgyvHrNOsd8QcJTU5ox6mXpFzu4/ePBHFlC7JIGu1nAM9w+dHBI0HiP+P1B3pYzfQGMG5yCMOZQcZ4KgLIrkCGAawaZo6t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786546321; c=relaxed/simple;
-	bh=Y11hNluv2icyTm8lnL/Bn2Xr3Nk5hYxyS/uz2OwDTlE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=g2WrHn3RrjiDuaNrAo3PASNdz1YVJeiJZYVZ9+4dqEfXRFNxiwSWZDRVpgwLG8NSHCHL9re8YJqI9/pZyxge39VP91Hw1PbBHzKBlyrRi/k4vjfX+MDc7NNIND445349P48/FJjBKOnyubWRA+rZdbrcNHLKkb8jM3Bjp96pE8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bIpNDwDa; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1786547117; c=relaxed/simple;
+	bh=NBrKaFEIxE5Z6Dx6ESMvW7CYI2E30pWd0pCH+p0OAr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bv6KKQHX1HVHl7EQY3L8u5siQ4JBF8N8uogi+bE0SpsRUM7aEHcqOebhHDvb4/vuhmpe32KpfmDH7QbR1F1Y2V1RyF33AOLQI9gmXTBhb1yRExXlEcIKyZQstwOiWgbhREqQ63I4zUwjihnbmNNm6/pqpeUBWqHjsEeOR+MG9z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com; spf=unknown smtp.mailfrom=mail.hallyn.com; dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b=XvVWRqIc; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=tempfail smtp.mailfrom=mail.hallyn.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bIpNDwDa"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-498012a61f6so59525e9.0
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2026 07:51:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1786546313; x=1787151113; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=XFEQDpKGBGfe2eFcLfrei3wf2IxikY9MSg+V8LKW8dU=;
-        b=bIpNDwDaNoDqkoC3l8CEzoYUDyT3Q0MvK3PidvJvVtkbnSvlh1vf4QQaKNYrQpJvvQ
-         rL5bw+ymA9ZUwWOyDUcyuMjvtqjwc+sCkuhZAIlLVH9wHS+bJT3j7GMzdZmUeGhNzerZ
-         VxjKcsm6mOy/EksYQUK61FsZFyh0sdCo1I4IEce/Ncaw479U6l1TGrpzK9QOInzjUj/L
-         /4n47azrAuS6vCopKJ9K/5DqRuQWVr6lhaASh64QB/V98CN8Tts1kVRKl27niuuRB+cP
-         IpbjGeI4YcmASQRCkaMwDaA/1zfu323zYP35tfgaTdtBerL2ADV5RkfQDeh4vCS+A/hr
-         rBbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786546313; x=1787151113;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=XFEQDpKGBGfe2eFcLfrei3wf2IxikY9MSg+V8LKW8dU=;
-        b=dUyWFrrLZZgAc0NxmSU1LjmXR5wV10x8dmnZTzkelnQ9LX7GX19uQgNiNHy374vv2H
-         jAwKlRi5tYUSnNfYeetiyj3HsaWy9vIfbQc5ZRZAGvxrHBXnmJjqypGkTz3JEv3kp+Ib
-         kLhrm9WNDynnh5dCdedITmECfhi/YbVlfEK0xk/Mkl7iLgHP2eYxcECXBPPlvRuSXfqJ
-         slqM1aSiVaH9jXoaTw4ESwRn3tw7izln7zsUYFS6Iwi0pFASFZaLzhJQ8ttki3Ajisg/
-         yyU9oQ1G6nBEfm1v2+S8AJKyZq8G93MJ8wTozyE0btu04jiNNW7txuHF7aPaml6k54DL
-         84sw==
-X-Forwarded-Encrypted: i=1; AHgh+RomJ1kxDeaxrIGtjwhgCtxIYHLYlMxRnxzM9uVuOSZMe2iQxf0vTva+0G1HSuATSBopt3HcWplupcE7SX25ZNuR+WGcUgs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCYgfFctL07OIcvH1xDnE/0yaVgxIgrDhT/eSU1UhYCCr0NspA
-	ZPqZEFyRxRRlZ7H9WLTosmCWUQenNOMOlUaRzZ+DvYc07p23brz9YisoOXTvxxOWHdr0P/IaKtl
-	eRh/BDAnX
-X-Gm-Gg: AR+sD10WjudRMCmQDsX7rwnEJSA9Nun9spV+0P91yBH7yGvb+zId53/DF1cjw7g385K
-	+AV3F+7UlODU6db2t3z7dsDnlA74ERoG4UpEfnS9v9mJhNsTmjxs25QGiADh+ty5NjREXz+s+SU
-	KdWgqUr0IBKcsryJC1XOHYqJW/DWiKKTq5EL0/76ZoUbhecx5Olb74Crd4MqqssvloZhv1wtdH4
-	FQ9kq2NKpt0JEzakqxW14YkIA82nc9RoXGWssYCNmCJUlRWR7/4coDmUFT+QiySmbml/yEl6BB7
-	FBFiMUsLzUysIHCYNo3JDkcG2oFOcR7f13dlAnoBWoFE9yuvkevT8tUOazw+ENWGN1zfxynzeMZ
-	1E1879Iuqh3TRvO3d/R3aZke12VRhBSxuxfZ23XX5YBBfimBD1dtijJ/95+bv1ZmFkJ6HW8SbaF
-	3jcNFlQ3ks8RI+n/lFFYkCfxLXOD+MafQVsUF8GsFVeF9bplFrMKqJu4fVezavHXIR0/WmlWK+v
-	/7akSdfVniGMTlaPVyzYVsKTVh2C3VbxOv6LologVbciqU4v+DMW66TRcJi
-X-Received: by 2002:a05:600c:a210:b0:495:51b1:3b7c with SMTP id 5b1f17b1804b1-4997ae8fa87mr1131525e9.8.1786546312851;
-        Wed, 12 Aug 2026 07:51:52 -0700 (PDT)
-Received: from localhost ([2a00:79e0:288a:8:d358:790c:76c6:1a58])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48150d4e3f5sm7852708f8f.22.2026.08.12.07.51.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Aug 2026 07:51:51 -0700 (PDT)
-From: Jann Horn <jannh@google.com>
-Date: Wed, 12 Aug 2026 16:51:46 +0200
-Subject: [PATCH] cred: remove RCU initializer for init_task.cred
+	dkim=pass (2048-bit key) header.d=hallyn.com header.i=@hallyn.com header.b="XvVWRqIc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=hallyn.com; s=mail;
+	t=1786546776; bh=NBrKaFEIxE5Z6Dx6ESMvW7CYI2E30pWd0pCH+p0OAr8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XvVWRqIcVj4l+Hn25LZ7coTRxql9Rtobc3U5wAwcRR1IqqqqArLi0iRsfecPdkaAB
+	 d09zSdibBmakYiCqJc8O8smWI9awXM2guC5a5E0QJTJo/Mqes47gXVrBmiV2IbOxxM
+	 SD8me3GQTbcaXg+n+WRbA5jgBDNyILelFXbWSNocXzZWsrrINTikHNen+VGH+vZEfN
+	 wEH9I65iWPQbLIoTimsK83i7ESW2hsxCVSVKTt8nuw4r5r6z3TG6nG7ItrzdrT3fIR
+	 wBaDgK6hKoQe1ft61TBks5xZY5mGnqOXiZO2htAW07BaAS6L+uhouGIDjPgO0lIN+q
+	 k+rUNZpSLpYJQ==
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 1B51FCAB; Wed, 12 Aug 2026 09:59:35 -0500 (CDT)
+Date: Wed, 12 Aug 2026 09:59:35 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Jann Horn <jannh@google.com>, Serge Hallyn <sergeh@kernel.org>,
+	Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	audit@vger.kernel.org
+Subject: Re: [PATCH] cred: clarify that task_struct::cred is only for the
+ current task
+Message-ID: <anyKVxRCiWy/g0Cn@mail.hallyn.com>
+References: <20260806-cred-nonrcu-annotation-fix-v1-1-5fd149b2ab54@google.com>
+ <2bdf79f45c5eb2ea66d59904418081c5@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260812-task-cred-fixup-v1-1-318440888adc@google.com>
-X-B4-Tracking: v=1; b=H4sIAIGIfGoC/yXMSwqDQBCE4atIr9OgI4rkKsHFPEptA0amnRAQ7
- +5olh9F/TspokDpWewU8RWVz5JRPQryk11GsIRsMqVpy64yvFl9s48IPMgvrWzQ+CY4tLZ2lF9
- rRB7u4qv/W5Ob4bcrQ8dxAnvxW6VzAAAA
-X-Change-ID: 20260812-task-cred-fixup-2e5c5dbe6a3b
-To: Paul Moore <paul@paul-moore.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, 
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel test robot <lkp@intel.com>, Jann Horn <jannh@google.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1786546307; l=1236;
- i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=Y11hNluv2icyTm8lnL/Bn2Xr3Nk5hYxyS/uz2OwDTlE=;
- b=iin2C2yYQ5icjSiLi/dBPRCgsywT3zE78fmJNMR5iknlWOt7ts2xtWfrUVm/Moc11GnsHrCwd
- pm7bN3axQGsD7sevRgPL73yTDOYXXsnc4uOXvaXDEo4Br5f2oHErHs6
-X-Developer-Key: i=jannh@google.com; a=ed25519;
- pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2bdf79f45c5eb2ea66d59904418081c5@paul-moore.com>
 
-sparse noticed that an RCU initializer was left behind for init_task.cred,
-which is no longer marked __rcu. Fix it up.
+On Mon, Aug 10, 2026 at 03:41:54PM -0400, Paul Moore wrote:
+> On Aug  6, 2026 Jann Horn <jannh@google.com> wrote:
+> > 
+> > The `cred` field in task_struct is currently marked as __rcu, but that's
+> > not true: It can point to credentials from access_override_creds(), which
+> > do not get freed with RCU delay.
+> > 
+> > What actually protects task_struct::cred is that accessing it is only
+> > permitted for the current task (except for setting up a child during fork()
+> > or tearing down a dead process).
+> > (There is currently code in Smack that violates this rule, but that's a bug
+> > and causes UAF, I have sent a separate fix for that.)
+> > 
+> > Clarify this, remove the __rcu marker, and remove RCU helpers from all
+> > accesses to this field.
+> > 
+> > Signed-off-by: Jann Horn <jannh@google.com>
+> > ---
+> > For context:
+> > There have been at least two UAFs of struct cred that I'm aware of, both
+> > caused by wrong use of task_struct::cred:
+> > 
+> >  - https://git.kernel.org/linus/a3727a8bac0a9e77c70820655fd8715523ba3db7
+> >  - https://lore.kernel.org/all/20260806-smack-uaf-fix-v1-1-26426d389a26@google.com/
+> > ---
+> >  include/linux/cred.h  | 17 +++++++++++------
+> >  include/linux/sched.h |  8 ++++++--
+> >  kernel/auditsc.c      |  5 +++--
+> >  kernel/cred.c         |  2 +-
+> >  security/lsm_init.c   |  2 +-
+> >  5 files changed, 22 insertions(+), 12 deletions(-)
+> 
+> This looks good to me, with one small nit below, but as we are at -rc7
+> I think this is best kept until after the upcoming merge window so it
+> has more than a few days in linux-next.  I'm going to merge this into
+> lsm/dev-staging with the expectation of merging it into lsm/dev after
+> the upcoming merge window closes.  If anyone wishes to object to this
+> patch or add their own review/ACK/test tag before then, please do.
+> 
+> Thanks Jann.
+> 
 
-Fixes: a4229a2a16a8 ("cred: clarify that task_struct::cred is only for the current task")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202608121153.nzs6HZg7-lkp@intel.com/
-Signed-off-by: Jann Horn <jannh@google.com>
----
-maybe squash this into the original commit, if that is a thing you do on
-the dev-staging branch?
----
- init/init_task.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks.  FWIW I did also look at this closely.
 
-diff --git a/init/init_task.c b/init/init_task.c
-index b67ef6040a65..6529b002135b 100644
---- a/init/init_task.c
-+++ b/init/init_task.c
-@@ -159,7 +159,7 @@ struct task_struct init_task __aligned(L1_CACHE_BYTES) = {
- 	.sibling	= LIST_HEAD_INIT(init_task.sibling),
- 	.group_leader	= &init_task,
- 	RCU_POINTER_INITIALIZER(real_cred, &init_cred),
--	RCU_POINTER_INITIALIZER(cred, &init_cred),
-+	.cred		= &init_cred,
- 	.comm		= INIT_TASK_COMM,
- 	.thread		= INIT_THREAD,
- 	.fs		= &init_fs,
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
----
-base-commit: 1f2f7a1fd1fc34e757107e3a3849f8d22b14cc6b
-change-id: 20260812-task-cred-fixup-2e5c5dbe6a3b
-
-Best regards,
---  
-Jann Horn <jannh@google.com>
-
+> > diff --git a/security/lsm_init.c b/security/lsm_init.c
+> > index 7c0fd17f1601..1328a2ceef4b 100644
+> > --- a/security/lsm_init.c
+> > +++ b/security/lsm_init.c
+> > @@ -476,7 +476,7 @@ int __init security_init(void)
+> >  						    blob_sizes.lbs_inode, 0,
+> >  						    SLAB_PANIC, NULL);
+> >  
+> > -	if (lsm_cred_alloc((struct cred *)unrcu_pointer(current->cred),
+> > +	if (lsm_cred_alloc((struct cred *)current->cred,
+> >  			   GFP_KERNEL))
+> 
+> Just a FYI, but I pulled the GFP_KERNEL up on the line above while
+> merging since it now fits.
+> 
+> --
+> paul-moore.com
