@@ -1,184 +1,601 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFE6329C60
-	for <linux-security-module@vger.kernel.org>; Thu, 13 Aug 2026 06:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BC730F924
+	for <linux-security-module@vger.kernel.org>; Thu, 13 Aug 2026 09:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786601429; cv=none; b=r+n9zTDvH1xF11dz+T9ct3Qtw4uuod2RfwMtMoTOJY1JrmYJQLLedhdJNEzKqsQ762dFdmKlMsxV/Euv9HyItw9fSjtIkYse+A8/zwnoPKxMrSwzd41HHuwPOd3L1AgNJ87Gk3GOaBUPI8qvdKOsq7nISxMvvdlMh82KQjVGz9A=
+	t=1786613527; cv=none; b=dklubGubpiKM+P7MZo/ZYTE+7RneRfHMFFNn0aQWGtCBLZtS+IOgcliKaXl6wH+Z42cTZz1oyIjqWhZf6Ylqvp/d0Q+Yp0vuEZSNFIMTngNkKKqrBJZIXTDkC7l/OEnu1jK+4vC9IDHeLiYeIHQrwr5NeuO2j5hT3X0BkJHyVgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786601429; c=relaxed/simple;
-	bh=7WEh5O5bExfXu8mXQ1B7pKZcn7Iuz4j6v61TvONpq3I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oQmIWS4gaZAw9/pWtKKvvH4/HYYng/LViS38X5fTCF5vlRsnpcT9Cvpb46PdJxpb3LwGOaHbcqc7vCC1BkZqf/af+7alGlv9XSET5u9y9Y8YwsIhPrd86DRD90NNjpbYj9kiemNLmg+VAaB/WpCGUOHYFkhtGPAJTlZIyt/3FZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M6vxQUIE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1786613527; c=relaxed/simple;
+	bh=nxscKfFWfXDMGn+b7q4pwCLxnNnf33Bh42eUMeS1NW4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=oI9iIu4T5VHDgcNk5tMT4XSQ4fBJeSWcIr4eroch6QfGyGaz6hMiRndv0ns7jzTAKm1nEAOCPbikWQ6l+JX9KCoeY4ncDa2iPBmxj18Qetev+DNlU7s3CxhagvVZ6Drq5TbStHDHE8YEcxj84bVAWlkxyqyaBECgWQC2CU0NK1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ieam7ohz; arc=none smtp.client-ip=209.85.128.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M6vxQUIE"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1786601427;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=d9+13YGpGqP8LzpQBtciWgZWdxF7wOy5ADfzqZPo8FI=;
-	b=M6vxQUIEFenao35nQ4f68TFjRmXEoWTlnWzjX8f9vS6vvgDYrU8ENn5DwLGj37HJY87INM
-	rgYkeGgHj1MxxbHwNvD0fUa82XPduVG/oHo4xf8oVqWoPiKMH7DvyJi4m+INmVRJbMjCtt
-	4hnGmGsTfOhN2upsIwUnOO4uwTU/wEE=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-547-Ex_Si6cxN1eeKiy4aCrIAQ-1; Thu, 13 Aug 2026 02:10:25 -0400
-X-MC-Unique: Ex_Si6cxN1eeKiy4aCrIAQ-1
-X-Mimecast-MFC-AGG-ID: Ex_Si6cxN1eeKiy4aCrIAQ_1786601425
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-495689bfcc8so9828915e9.1
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Aug 2026 23:10:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ieam7ohz"
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4997d718093so10398675e9.0
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Aug 2026 02:32:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1786613523; x=1787218323; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:from:subject
+         :message-id:mime-version:date:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=+7OE74L8wdLrWG3pK5ad9rzTa+QLkXh62kwGN8iQF4A=;
+        b=Ieam7ohzkyqFeW4HzUolGU8sLB0rnWdo5eHpYipNwvVzwmgUpJEG33s2AP4rs0+Yk3
+         sHSP31mOYvQxqfV6nJmMroEO84PXjxbIjfi2TFocaAsS6TO3TTgQNVGadRFCAxLtaKpO
+         OLExzzuy9sbFvRMXBo//g0v680qhW6Fd0NhXEDrYHMYGpTuPYRhVP5NgTAP3RbY3J9Vn
+         dPO1xBvotflVJ5AiTO2auROu2ygye2Q1vhUfTnO4/Yx59IvrhlKc3WZtTqG2xGk+2IlN
+         1Q3pB7Cp38MPPitcBaKGWdnwMypZ3TL9dbYyPTqbcuvdimI16ed99H7hdJeK40QO/fOv
+         mzEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786601424; x=1787206224;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=d9+13YGpGqP8LzpQBtciWgZWdxF7wOy5ADfzqZPo8FI=;
-        b=inE78yhRZfoUmcdnWwDiJuVtl+Fad2ZJR+0H1GxctSo9B6L7wyQM4Qc76BMFi4DJ6O
-         dYvJUDxRMeFkETecd2/d4WO7Y6OKT/ufEw9ayBZsjgIkzpS/wUMLeqqhFuf5iaLuDmNi
-         5Na3X1ZQhCeJZh35XsVia8pLbnu/Vg+kSq3FoxZv34JGCTgfG9i/qgOINFYI1PHo3v0R
-         +NMyXs1uu1I2xpMgwHaz4NRYhuJ4StvSq3NafyeVuKOLjyUlkOExN1gyV72/JE3HinLy
-         82tb3Bim9TSxc01QTM4y3R6DNknr/juXhpe13fCHTAfFFUI1wTcJGSQUIpmTrFTBp1iC
-         FTJw==
-X-Forwarded-Encrypted: i=1; AHgh+Rpcat22nwuXBByzhg3FCg5RNJnq5FdWkvdZRpP801joYIGIWuJ/Yo56kdBSfWPDj4QBJWOZLkQC4ok6d6wFr/GcDnhU9HQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcXT08S6AJqQycjjPFyAqbM3Wdn12UQvIYi/rGEXt9WXf7xzrt
-	rM4NUJObGs51OTM/8Bo9MmdOk5zSe7RQl7J40CPk3knhvOrVW/HJVrGatDBnqpY7vWHFbKMPdOd
-	RhECpfSa1s4GAqv2VUR2+B1hZTqn4gle8uBTjDkEaa19giEV8tKrWUikbYQlnP3v1VoFk4uZQNf
-	/SiA==
-X-Gm-Gg: AR+sD123ACR8cZz6rYGTPYcy9+E7Ptl/UI8RfqzUiQL+LCUHrHMhmJDW3+GE5HaRkQk
-	xwDzmTxJJfKrcdrnTgzYJqpmqXEMpB0CC7Jue07287jI2rolpvbFdjMeBB82a0FngmAihs6mig0
-	4lt3DUPeNoUM/DB0dDNEc88kOw4sDSK43JgF6ibnqfHSTZ1Ov8WDg7V6kPEz8MzGAv21pBzbH2w
-	Y9tLRdr4YcZL9epJO6GLfK28fBjtMRxfuFEB6FwGsYsbjHeuZPLHaCBstBjcrMTI8j+xJdNJCwF
-	agktSNnvq+hq1l3ntoqp55jIC5D8azefqoMP536QM5CCuouDbT/xQ9pzuJhfXgapdBCMXhd6
-X-Received: by 2002:a05:600c:46cf:b0:499:4d4a:4990 with SMTP id 5b1f17b1804b1-4998219d44cmr27408975e9.3.1786601424481;
-        Wed, 12 Aug 2026 23:10:24 -0700 (PDT)
-X-Received: by 2002:a05:600c:46cf:b0:499:4d4a:4990 with SMTP id 5b1f17b1804b1-4998219d44cmr27408475e9.3.1786601424085;
-        Wed, 12 Aug 2026 23:10:24 -0700 (PDT)
-Received: from [192.168.0.9] ([47.64.115.27])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49981b0f6b1sm39407845e9.4.2026.08.12.23.10.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Aug 2026 23:10:22 -0700 (PDT)
-Message-ID: <fdd88f0f-ec72-4640-919b-3e6d3a3c9434@redhat.com>
-Date: Thu, 13 Aug 2026 08:10:21 +0200
+        d=1e100.net; s=20251104; t=1786613523; x=1787218323;
+        h=content-transfer-encoding:content-type:cc:to:from:subject
+         :message-id:mime-version:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=+7OE74L8wdLrWG3pK5ad9rzTa+QLkXh62kwGN8iQF4A=;
+        b=Biz1XaOru3Y8dPsJGcUKmo0Ld+BNJPjJKMdtJG5HLGGUJzPDerSsKsfU6s2ECfocQ8
+         DfD/t31Cr5Uu+ab5Rm0c5pX6ucVLESmNOOKG+b8IbSJNmfXXKf5wShVOgHAox1gVA4tW
+         ifSejLLHvN0sGM1ay5HZOueCSum7NOMpvtpLNWPfp4c68+N9uYU/XetOXrMjCCys9OxU
+         HfoDxy5M7kUZG/uRhE/OFgAs6rkYg08KqpfKUbha/vWoVALztdc0yCozKWoRffJrVOw/
+         /B24QL7g3CJExzDl4vXksytwNnWTOkTkbibjDG0rCPayPCUdKGNWygXDpDgc/8Ebbhxz
+         G7tA==
+X-Gm-Message-State: AOJu0YyGaFJMLNvcRzchnFByXEiUKFgrqSz9lShFhIPo++rt/M8rxLY+
+	hKHz3eMYpbkW1a5hrIgX9CqOApl3rFFtXOoh0eSAPiMwZRv31LB3tOhpyHCKSheRLvNLoebTeym
+	azhzvjA==
+X-Received: from wrzt13.prod.google.com ([2002:adf:e10d:0:b0:47f:526e:950c])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:620f:b0:495:3da3:beb
+ with SMTP id 5b1f17b1804b1-4998218eb09mr58477595e9.10.1786613522979; Thu, 13
+ Aug 2026 02:32:02 -0700 (PDT)
+Date: Thu, 13 Aug 2026 11:31:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] lib/crypto: Provide a function for zeroizing
- hmac_sha1_ctx
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, Ard Biesheuvel <ardb@kernel.org>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>,
- James Bottomley <James.Bottomley@hansenpartnership.com>,
- Jarkko Sakkinen <jarkko@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
- David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
- linux-security-module@vger.kernel.org
-References: <20260812163336.3103835-1-thuth@redhat.com>
- <20260813022757.GB28329@sol>
-From: Thomas Huth <thuth@redhat.com>
-Autocrypt: addr=thuth@redhat.com; keydata=
- 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
-In-Reply-To: <20260813022757.GB28329@sol>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: iAr0SsL-6nxaIHVg-UI-ATv0CQSamKxTVuhmv-A11Wo_1786601425
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.55.0.699.gb54405d56f-goog
+Message-ID: <20260813093157.1436894-1-gnoack@google.com>
+Subject: [PATCH v6 0/6] landlock: Restrict whiteout object creation
+From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
+To: "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, Christian Brauner <brauner@kernel.org>
+Cc: linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, Serge Hallyn <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 13/08/2026 04.27, Eric Biggers wrote:
-> On Wed, Aug 12, 2026 at 06:33:33PM +0200, Thomas Huth wrote:
->> It's maybe not worth the effort for hmac_sha1_ctx right now (since there
->> is only one spot that forgot to zeroize the structure in case of errors),
->> but offering a function for zeroizing the data via __cleanup might help to
->> get future code into the proper shape right from the start. Thus let's
->> introduce a hmac_sha1_zeroize_ctx() function now and use it in the
->> appropriate spots.
->>
->> Thomas Huth (3):
->>    crypto: Provide a wrapper for zeroizing hmac_sha1_ctx
-> 
-> Subject prefix should be "lib/crypto: sha1:"
-> 
->>    security: keys: trusted: always clear the hmac_sha1_ctx before
->>      returning
->>    lib/crypto: sha1: Use hmac_sha1_zeroize_ctx() instead of
->>      memzero_explicit()
->>
->>   include/crypto/sha1.h                     | 17 +++++++++++++++++
->>   lib/crypto/sha1.c                         |  2 +-
->>   security/keys/trusted-keys/trusted_tpm1.c |  2 +-
->>   3 files changed, 19 insertions(+), 2 deletions(-)
-> 
-> As you probably know, SHA-1 is a bit outdated.  Will these be coming for
-> SHA-2 as well?  It would be nice to introduce all the APIs at the same
-> time so that we can make sure they're consistent.  I would actually
-> prioritize that over introducing callers of them right now, as that can
-> be done later and often requires acks from other maintainers (and they
-> can go through other trees as well).
-Yes, makes sense. I've got a patch for HMAC-SHA2 ready, too, but the patch 
-that is using it on the calling site has a conflict with the smb patch that 
-I already sent out, so I wanted to wait a little bit til that is merged:
+Hello!
 
-  https://lore.kernel.org/lkml/20260812130152.2861834-2-thuth@redhat.com/
+As discussed in [1], the renameat2() syscall's RENAME_WHITEOUT flag allows
+the creation of chardev directory entries with major=3Dminor=3D0 as "whiteo=
+ut
+objects" in the location of the rename source file [2].
 
-... but if you're fine with a series that introduces the zeroization 
-functions first, without immediately introducing callers, I'm happy to 
-assemble such a patch series first!
+This functionality is available even without having any OverlayFS mounted
+and can be invoked with the regular renameat2(2) syscall [3].
 
-  Thomas
+In V1 [5], it was discussed that whiteout objects are not the same as chara=
+cter
+devices, and should therefore be treated differently.  After considering a =
+new
+access right in V2 and V3, we eventually settled on guarding it with the
+existing LANDLOCK_ACCESS_FS_MAKE_REG access right and introducing a new err=
+atum
+[6].
+
+V6 addresses the remaining review feedback: the V4 feedback on the selftest=
+s
+in patches 3/5 and 4/5, and the V5 remarks on the get_dentry_access() helpe=
+r.
+
+Motivation
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+The RENAME_WHITEOUT flag side-steps all of the existing Landlock access
+rights, which are designed to restrict the creation of directory entries.
+It is desirable to restrict that.
+
+This patch set fixes that by adding a check in Landlock's path_rename and
+path_mknod hooks.  Where we previously treated whiteout creation like the
+creation of a character device, we now guard it with
+LANDLOCK_ACCESS_FS_MAKE_REG and add an erratum to probe for that.
+
+
+[1] https://lore.kernel.org/all/adUBCQXrt7kmgqJT@google.com/
+[2] https://docs.kernel.org/filesystems/overlayfs.html#whiteouts-and-opaque=
+-directories
+[3] https://man7.org/linux/man-pages/man2/renameat2.2.html#DESCRIPTION
+[4] https://codesearch.debian.net/search?q=3Drename.*RENAME_WHITEOUT&litera=
+l=3D0
+[5] https://lore.kernel.org/all/20260411090944.3131168-2-gnoack@google.com/
+[6] https://lore.kernel.org/all/20260720.chow9ohYie5b@digikod.net/
+
+Changelog
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+v6:
+ - Smaller code changes:
+   - get_dentry_access(): Drop the incorrect __attribute_const__ and use a
+     local inode variable
+ - Fix a LANDLOCK_ACCESS_FS_MAKE_REG typo in the commit message of patch 2/=
+5
+ - Tests, addressing the remaining v4 feedback on patch 3/5:
+   - Add rename_whiteout_allowed: RENAME_WHITEOUT works when MAKE_REG is
+     granted, and the whiteout object shows up in the source location
+   - Add rename_whiteout_reparenting: the MAKE_REG right for the created
+     whiteout object is required in the source directory of the rename
+   - Add rename_whiteout_exchange: RENAME_EXCHANGE of an existing whiteout
+     object requires MAKE_REG in the directory which the whiteout moves int=
+o
+   - Add audit test make_whiteout: denied whiteout creation is logged with
+     blockers=3Dfs.make_reg instead of fs.make_char
+ - Tests, addressing the v4 feedback on patch 4/5:
+   - Rework the OverlayFS rename test to rename a FIFO which originates
+     from the lower layer, instead of preparing it in the upper layer with
+     unlink() and mknod().  The unlink() had already created the whiteout
+     in the upper layer before Landlock was enforced
+   - Check that the whiteout object in the upper layer did not exist before
+     the rename
+ - Verified that the new tests fail on a kernel which lacks the fix from
+   patch 2/5
+
+v5:
+ - Erratum: Clarify that this is about mknod(2) only
+ - Add Cc stable@vger.kernel.org and Depends-on lines
+ - Smaller code changes
+   - Use dev_t where appropriate
+   - Introduce get_dentry_access() helper
+   - Use get_mode_access(S_IFCHR | WHITEOUT_MODE, WHITEOUT_DEV)
+     to calculate the required access right for the created whiteout object
+ - Tests:
+   - rename_whiteout_denied: move a FIFO
+     - otherwise, the test succeeded without the change
+   - make_whiteout: drop set_cap(CAP_MKNOD) (not needed)
+ - This is an intermediary state: It incorporates feedback to 2/5 and some =
+3/5
+   feedback from v4, but not the 4/5 feedback yet.
+ - https://lore.kernel.org/all/20260731154353.1790268-1-gnoack@google.com/
+
+v4:
+ - Guard it with LANDLOCK_ACCESS_FS_MAKE_REG as discussed.
+ - Selftests and documentation.
+ - https://lore.kernel.org/all/20260724161004.2360749-1-gnoack@google.com/
+
+v3:
+ - Do LANDLOCK_ACCESS_FS_MAKE_WHITEOUT check as part of
+   current_check_refer_path().
+ - https://lore.kernel.org/all/20260610092318.3868884-1-gnoack@google.com/
+
+v2:
+ - Introduce LANDLOCK_ACCESS_FS_MAKE_WHITEOUT access right
+   and guard it with that.
+ - Bump ABI version
+ - https://lore.kernel.org/all/20260513160552.4022649-1-gnoack@google.com/
+
+v1:
+ - initial version
+   https://lore.kernel.org/all/20260411090944.3131168-2-gnoack@google.com/
+
+
+G=C3=BCnther Noack (6):
+  selftests/landlock: Use an actual chardev for MAKE_CHAR audit test
+  landlock: Require LANDLOCK_ACCESS_FS_MAKE_REG for whiteout creation
+  selftests/landlock: Add tests for whiteout object creation
+  selftests/landlock: Add audit test for whiteout object creation
+  selftests/landlock: Test whiteout object behaviour in OverlayFS
+    renames
+  landlock: Link the erratum documentation for whiteout objects
+
+ Documentation/userspace-api/landlock.rst   |   3 +
+ include/uapi/linux/landlock.h              |   1 +
+ security/landlock/errata/abi-1.h           |  23 ++
+ security/landlock/fs.c                     |  41 +++-
+ tools/testing/selftests/landlock/fs_test.c | 253 ++++++++++++++++++++-
+ 5 files changed, 309 insertions(+), 12 deletions(-)
+
+Range-diff against v5:
+1:  d1a8a84d92e0 =3D 1:  49a6fa0831e8 selftests/landlock: Use an actual cha=
+rdev for MAKE_CHAR audit test
+2:  9fe2edf17413 ! 2:  a29c7919a412 landlock: Require LANDLOCK_ACCESS_FS_MA=
+KE_REG for whiteout creation
+    @@ Commit message
+         For the mknod(2) case, introduce a Landlock erratum.  The creation=
+ of
+         whiteout objects through mknod(2) was previously guarded using
+         LANDLOCK_ACCESS_FS_MAKE_CHAR, and it is now guarded using
+    -    LANDLOCK_ACCESS_MAKE_REG.
+    +    LANDLOCK_ACCESS_FS_MAKE_REG.
+    =20
+         For the renameat2(2) case, fix a bug: Before this commit, renameat=
+2(2)
+         with RENAME_WHITEOUT would create a directory entry even when all
+    @@ security/landlock/fs.c: static __attribute_const__ access_mask_t get=
+_mode_access
+      	}
+      }
+     =20
+    -+static __attribute_const__ access_mask_t
+    -+get_dentry_access(const struct dentry *const dentry)
+    ++static access_mask_t get_dentry_access(const struct dentry *const den=
+try)
+     +{
+    -+	return get_mode_access(d_backing_inode(dentry)->i_mode,
+    -+			       d_backing_inode(dentry)->i_rdev);
+    ++	const struct inode *const inode =3D d_backing_inode(dentry);
+    ++
+    ++	return get_mode_access(inode->i_mode, inode->i_rdev);
+     +}
+     +
+      static access_mask_t maybe_remove(const struct dentry *const dentry)
+3:  d23ea62b3325 ! 3:  0711d9e709fb selftests/landlock: Add tests for white=
+out object creation
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F_FORK(layout1, ren=
+ame_file)
+     +				TMP_DIR "/s3d1/s3d2/s3d3/f2", RENAME_WHITEOUT));
+     +	EXPECT_EQ(EACCES, errno);
+     +}
+    ++
+    ++static bool is_whiteout(const char *const path)
+    ++{
+    ++	struct stat st;
+    ++
+    ++	if (stat(path, &st) =3D=3D -1)
+    ++		return false;
+    ++
+    ++	return S_ISCHR(st.st_mode) && st.st_rdev =3D=3D makedev(0, 0);
+    ++}
+    ++
+    ++static bool is_fifo(const char *const path)
+    ++{
+    ++	struct stat st;
+    ++
+    ++	return stat(path, &st) =3D=3D 0 && S_ISFIFO(st.st_mode);
+    ++}
+    ++
+    ++TEST_F_FORK(layout1, rename_whiteout_allowed)
+    ++{
+    ++	const struct rule rules[] =3D {
+    ++		{
+    ++			.path =3D dir_s3d3,
+    ++			.access =3D LANDLOCK_ACCESS_FS_MAKE_REG,
+    ++		},
+    ++		{},
+    ++	};
+    ++
+    ++	/* The affected file is a FIFO. */
+    ++	ASSERT_EQ(0, unlink(file1_s3d3));
+    ++	ASSERT_EQ(0, mknod(file1_s3d3, S_IFIFO | 0600, 0));
+    ++
+    ++	/* Allow MAKE_REG below dir_s3d3. */
+    ++	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_MAKE_REG, rules);
+    ++
+    ++	/*
+    ++	 * Rename a file with RENAME_WHITEOUT within the same directory.
+    ++	 * Allowed, because MAKE_REG is granted for the whiteout object whic=
+h
+    ++	 * gets created in the source location.
+    ++	 */
+    ++	EXPECT_EQ(0, renameat2(AT_FDCWD, file1_s3d3, AT_FDCWD,
+    ++			       TMP_DIR "/s3d1/s3d2/s3d3/f2", RENAME_WHITEOUT));
+    ++
+    ++	/* A whiteout object took the place of the moved FIFO. */
+    ++	EXPECT_TRUE(is_whiteout(file1_s3d3));
+    ++	EXPECT_TRUE(is_fifo(TMP_DIR "/s3d1/s3d2/s3d3/f2"));
+    ++}
+    ++
+    ++TEST_F_FORK(layout1, rename_whiteout_reparenting)
+    ++{
+    ++	const struct rule rules[] =3D {
+    ++		{
+    ++			.path =3D dir_s3d2,
+    ++			.access =3D LANDLOCK_ACCESS_FS_REFER,
+    ++		},
+    ++		{
+    ++			.path =3D dir_s3d3,
+    ++			.access =3D LANDLOCK_ACCESS_FS_MAKE_REG,
+    ++		},
+    ++		{},
+    ++	};
+    ++
+    ++	/* The moved files are FIFOs. */
+    ++	ASSERT_EQ(0, unlink(file1_s3d3));
+    ++	ASSERT_EQ(0, mknod(file1_s3d3, S_IFIFO | 0600, 0));
+    ++	ASSERT_EQ(0, unlink(file1_s3d4));
+    ++	ASSERT_EQ(0, mknod(file1_s3d4, S_IFIFO | 0600, 0));
+    ++
+    ++	/* Allow REFER below dir_s3d2, but MAKE_REG only below dir_s3d3. */
+    ++	enforce_fs(_metadata,
+    ++		   LANDLOCK_ACCESS_FS_MAKE_REG | LANDLOCK_ACCESS_FS_REFER,
+    ++		   rules);
+    ++
+    ++	/*
+    ++	 * The whiteout object is created in the source directory: Moving th=
+e
+    ++	 * FIFO out of dir_s3d4 is denied because MAKE_REG is not granted
+    ++	 * there, even though it is granted in the destination directory
+    ++	 * dir_s3d3.
+    ++	 */
+    ++	EXPECT_EQ(-1, renameat2(AT_FDCWD, file1_s3d4, AT_FDCWD,
+    ++				TMP_DIR "/s3d1/s3d2/s3d3/f2", RENAME_WHITEOUT));
+    ++	EXPECT_EQ(EACCES, errno);
+    ++
+    ++	/*
+    ++	 * Moving the FIFO out of dir_s3d3 is allowed, because MAKE_REG is
+    ++	 * granted there for the created whiteout object.
+    ++	 */
+    ++	EXPECT_EQ(0, renameat2(AT_FDCWD, file1_s3d3, AT_FDCWD,
+    ++			       TMP_DIR "/s3d1/s3d2/s3d4/f2", RENAME_WHITEOUT));
+    ++
+    ++	/* A whiteout object took the place of the moved FIFO. */
+    ++	EXPECT_TRUE(is_whiteout(file1_s3d3));
+    ++	EXPECT_TRUE(is_fifo(TMP_DIR "/s3d1/s3d2/s3d4/f2"));
+    ++}
+    ++
+    ++TEST_F_FORK(layout1, rename_whiteout_exchange)
+    ++{
+    ++	const char *const whiteout_s3d3 =3D TMP_DIR "/s3d1/s3d2/s3d3/f2";
+    ++	const struct rule rules[] =3D {
+    ++		{
+    ++			.path =3D dir_s3d2,
+    ++			.access =3D LANDLOCK_ACCESS_FS_REFER,
+    ++		},
+    ++		{
+    ++			.path =3D dir_s3d3,
+    ++			.access =3D LANDLOCK_ACCESS_FS_MAKE_REG,
+    ++		},
+    ++		{},
+    ++	};
+    ++
+    ++	/* The exchanged files are FIFOs and an existing whiteout object. */
+    ++	ASSERT_EQ(0, unlink(file1_s3d3));
+    ++	ASSERT_EQ(0, mknod(file1_s3d3, S_IFIFO | 0600, 0));
+    ++	ASSERT_EQ(0, mknod(whiteout_s3d3, S_IFCHR | 0600, makedev(0, 0)));
+    ++	ASSERT_EQ(0, unlink(file1_s3d4));
+    ++	ASSERT_EQ(0, mknod(file1_s3d4, S_IFIFO | 0600, 0));
+    ++
+    ++	/* Allow REFER below dir_s3d2, but MAKE_REG only below dir_s3d3. */
+    ++	enforce_fs(_metadata,
+    ++		   LANDLOCK_ACCESS_FS_MAKE_REG | LANDLOCK_ACCESS_FS_REFER,
+    ++		   rules);
+    ++
+    ++	/*
+    ++	 * With RENAME_EXCHANGE, the whiteout object moves into the source
+    ++	 * directory of the rename: Exchanging the FIFO in dir_s3d4 with the
+    ++	 * whiteout object is denied because MAKE_REG is not granted in
+    ++	 * dir_s3d4, even though it is granted in the whiteout object's own
+    ++	 * directory dir_s3d3.
+    ++	 */
+    ++	EXPECT_EQ(-1, renameat2(AT_FDCWD, file1_s3d4, AT_FDCWD, whiteout_s3d=
+3,
+    ++				RENAME_EXCHANGE));
+    ++	EXPECT_EQ(EACCES, errno);
+    ++
+    ++	/*
+    ++	 * Exchanging the FIFO in dir_s3d3 with the whiteout object is
+    ++	 * allowed, because MAKE_REG is granted in the directory into which
+    ++	 * the whiteout object moves.
+    ++	 */
+    ++	EXPECT_EQ(0, renameat2(AT_FDCWD, file1_s3d3, AT_FDCWD, whiteout_s3d3=
+,
+    ++			       RENAME_EXCHANGE));
+    ++
+    ++	/* The FIFO and the whiteout object swapped places. */
+    ++	EXPECT_TRUE(is_whiteout(file1_s3d3));
+    ++	EXPECT_TRUE(is_fifo(whiteout_s3d3));
+    ++}
+     +
+      TEST_F_FORK(layout1, rename_dir)
+      {
+    @@ tools/testing/selftests/landlock/fs_test.c: TEST_F_FORK(layout1, mak=
+e_char)
+     =20
+     +TEST_F_FORK(layout1, make_whiteout)
+     +{
+    -+	/* Creates a whiteout object (creation guarded by MAKE_REG). */
+    ++	/*
+    ++	 * Creates a whiteout object (creation guarded by MAKE_REG).
+    ++	 *
+    ++	 * Contrary to the other character devices, this does not require
+    ++	 * CAP_MKNOD, cf. vfs_mknod().
+    ++	 */
+     +	test_make_file(_metadata, LANDLOCK_ACCESS_FS_MAKE_REG, S_IFCHR,
+     +		       makedev(0, 0));
+     +}
+-:  ------------ > 4:  f61b6ddb635e selftests/landlock: Add audit test for =
+whiteout object creation
+4:  10ed1d74636d ! 5:  4862aead03f2 selftests/landlock: Test whiteout objec=
+t behaviour in OverlayFS renames
+    @@ Metadata
+      ## Commit message ##
+         selftests/landlock: Test whiteout object behaviour in OverlayFS re=
+names
+    =20
+    -    Even though OverlayFS uses vfs_rename() with RENAME_WHITEOUT, and =
+even
+    -    though RENAME_WHITEOUT requires LANDLOCK_ACCESS_FS_MAKE_REG, a pro=
+cess
+    -    that renames non-regular files in an OverlayFS can do so without
+    -    having the LANDLOCK_ACCESS_FS_MAKE_REG right in that location.
+    +    Even though OverlayFS uses vfs_rename() with RENAME_WHITEOUT on it=
+s backing
+    +    directories, and even though RENAME_WHITEOUT requires
+    +    LANDLOCK_ACCESS_FS_MAKE_REG, a process that renames non-regular fi=
+les in an
+    +    OverlayFS can do so without having the LANDLOCK_ACCESS_FS_MAKE_REG=
+ right in
+    +    that location.
+    =20
+    -    This works, and is supposed to work, because OverlayFS uses the
+    -    credentials determined at mount time for the internal vfs_rename()
+    -    operation.  The rename happens with the credentials of the user wh=
+o
+    -    mounted the OverlayFS.
+    +    This works, and is supposed to work, because the changes to the ba=
+cking
+    +    directories are done by OverlayFS, not by the originator task that=
+ did the
+    +    original rename() on the OverlayFS mount.  Therefore, the changes =
+done to
+    +    backing directories are not subject to the originator task's crede=
+ntials.
+    =20
+         Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
+    =20
+      ## tools/testing/selftests/landlock/fs_test.c ##
+    +@@ tools/testing/selftests/landlock/fs_test.c: static bool is_fifo(con=
+st char *const path)
+    + 	return stat(path, &st) =3D=3D 0 && S_ISFIFO(st.st_mode);
+    + }
+    +=20
+    ++static bool is_missing(const char *const path)
+    ++{
+    ++	struct stat st;
+    ++
+    ++	return stat(path, &st) =3D=3D -1 && errno =3D=3D ENOENT;
+    ++}
+    ++
+    + TEST_F_FORK(layout1, rename_whiteout_allowed)
+    + {
+    + 	const struct rule rules[] =3D {
+    +@@ tools/testing/selftests/landlock/fs_test.c: static const char lower=
+_fo1[] =3D LOWER_DATA "/fo1";
+    + static const char lower_do1[] =3D LOWER_DATA "/do1";
+    + static const char lower_do1_fo2[] =3D LOWER_DATA "/do1/fo2";
+    + static const char lower_do1_fl3[] =3D LOWER_DATA "/do1/fl3";
+    ++/* lower_pl1 is a FIFO and is deliberately not in the lists below. */
+    ++static const char lower_pl1[] =3D LOWER_DATA "/pl1";
+    +=20
+    + static const char (*lower_base_files[])[] =3D {
+    + 	&lower_fl1,
+    +@@ tools/testing/selftests/landlock/fs_test.c: static const char (*upp=
+er_sub_files[])[] =3D {
+    + #define MERGE_BASE TMP_DIR "/merge"
+    + #define MERGE_DATA MERGE_BASE "/data"
+    + static const char merge_fl1[] =3D MERGE_DATA "/fl1";
+    ++/* merge_pl1 is a FIFO and is deliberately not in the lists below. */
+    ++static const char merge_pl1[] =3D MERGE_DATA "/pl1";
+    + static const char merge_dl1[] =3D MERGE_DATA "/dl1";
+    + static const char merge_dl1_fl2[] =3D MERGE_DATA "/dl1/fl2";
+    + static const char merge_fu1[] =3D MERGE_DATA "/fu1";
+    +@@ tools/testing/selftests/landlock/fs_test.c: static const char (*mer=
+ge_sub_files[])[] =3D {
+    +  * =E2=94=82=C2=A0=C2=A0     =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=
+=E2=94=80 fl3
+    +  * =E2=94=82=C2=A0=C2=A0     =E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=
+=E2=94=80 fo2
+    +  * =E2=94=82=C2=A0=C2=A0     =E2=94=9C=E2=94=80=E2=94=80 fl1
+    +- * =E2=94=82=C2=A0=C2=A0     =E2=94=94=E2=94=80=E2=94=80 fo1
+    ++ * =E2=94=82=C2=A0=C2=A0     =E2=94=9C=E2=94=80=E2=94=80 fo1
+    ++ * =E2=94=82=C2=A0=C2=A0     =E2=94=94=E2=94=80=E2=94=80 pl1 [FIFO]
+    +  * =E2=94=9C=E2=94=80=E2=94=80 merge
+    +  * =E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=E2=94=80 data
+    +  * =E2=94=82=C2=A0=C2=A0     =E2=94=9C=E2=94=80=E2=94=80 dl1
+    +@@ tools/testing/selftests/landlock/fs_test.c: static const char (*mer=
+ge_sub_files[])[] =3D {
+    +  * =E2=94=82=C2=A0=C2=A0     =E2=94=82=C2=A0=C2=A0 =E2=94=94=E2=94=80=
+=E2=94=80 fu2
+    +  * =E2=94=82=C2=A0=C2=A0     =E2=94=9C=E2=94=80=E2=94=80 fl1
+    +  * =E2=94=82=C2=A0=C2=A0     =E2=94=9C=E2=94=80=E2=94=80 fo1
+    +- * =E2=94=82=C2=A0=C2=A0     =E2=94=94=E2=94=80=E2=94=80 fu1
+    ++ * =E2=94=82=C2=A0=C2=A0     =E2=94=9C=E2=94=80=E2=94=80 fu1
+    ++ * =E2=94=82=C2=A0=C2=A0     =E2=94=94=E2=94=80=E2=94=80 pl1 [FIFO]
+    +  * =E2=94=94=E2=94=80=E2=94=80 upper
+    +  *     =E2=94=9C=E2=94=80=E2=94=80 data
+    +  *     =E2=94=82=C2=A0=C2=A0 =E2=94=9C=E2=94=80=E2=94=80 do1
+    +@@ tools/testing/selftests/landlock/fs_test.c: FIXTURE_SETUP(layout2_o=
+verlay)
+    + 	create_file(_metadata, lower_fo1);
+    + 	create_file(_metadata, lower_do1_fo2);
+    + 	create_file(_metadata, lower_do1_fl3);
+    ++	ASSERT_EQ(0, mknod(lower_pl1, S_IFIFO | 0600, 0));
+    +=20
+    + 	create_directory(_metadata, UPPER_BASE);
+    + 	set_cap(_metadata, CAP_SYS_ADMIN);
+    +@@ tools/testing/selftests/landlock/fs_test.c: FIXTURE_TEARDOWN_PARENT=
+(layout2_overlay)
+    + 	EXPECT_EQ(0, remove_path(lower_fl1));
+    + 	EXPECT_EQ(0, remove_path(lower_do1_fo2));
+    + 	EXPECT_EQ(0, remove_path(lower_fo1));
+    ++	EXPECT_EQ(0, remove_path(lower_pl1));
+    +=20
+    + 	/* umount(LOWER_BASE)) is handled by namespace lifetime. */
+    + 	EXPECT_EQ(0, remove_path(LOWER_BASE));
+     @@ tools/testing/selftests/landlock/fs_test.c: TEST_F_FORK(layout2_ove=
+rlay, same_content_different_file)
+      	}
+      }
+     =20
+     +TEST_F_FORK(layout2_overlay, rename_in_overlay_without_make_reg)
+     +{
+    -+	struct stat st;
+    -+	const char *merge_fl1_renamed =3D MERGE_DATA "/fl1_renamed";
+    ++	const char *const merge_pl1_renamed =3D MERGE_DATA "/pl1_renamed";
+     +
+     +	if (self->skip_test)
+     +		SKIP(return, "overlayfs is not supported (test)");
+     +
+     +	/*
+    -+	 * In this test, merge_fl1 is a FIFO file.  MAKE_REG is restricted, =
+but
+    -+	 * MAKE_FIFO is allowed.  Despite MAKE_REG being restricted, the ren=
+ame
+    -+	 * on the OverlayFS works and creates a whiteout file in the underly=
+ing
+    -+	 * upper file system.
+    ++	 * merge_pl1 is a FIFO which only exists in the lower layer.  Before
+    ++	 * the rename, the upper layer has no entry under this name.
+     +	 */
+    -+	ASSERT_EQ(0, unlink(merge_fl1));
+    -+	ASSERT_EQ(0, mknod(merge_fl1, S_IFIFO, 0));
+    ++	ASSERT_TRUE(is_fifo(merge_pl1));
+    ++	ASSERT_TRUE(is_missing(UPPER_DATA "/pl1"));
+    ++
+    ++	/* MAKE_REG is restricted, but MAKE_FIFO is not. */
+     +	enforce_fs(_metadata, LANDLOCK_ACCESS_FS_MAKE_REG, NULL);
+     +
+     +	/*
+    -+	 * Execute a regular file rename within OverlayFS.
+    -+	 * merge_fl1 originates from lower layer, so this triggers a copy-up
+    -+	 * and creation of a whiteout in the upper layer.
+    ++	 * Rename the FIFO through OverlayFS.  merge_pl1 originates from the
+    ++	 * lower layer, so this triggers a copy-up and creates the whiteout =
+in
+    ++	 * the upper layer to hide the lower layer FIFO file.  Even though
+    ++	 * MAKE_REG is restricted, the rename on the OverlayFS works.
+     +	 */
+    -+	EXPECT_EQ(0, rename(merge_fl1, merge_fl1_renamed));
+    ++	EXPECT_EQ(0, rename(merge_pl1, merge_pl1_renamed));
+     +
+     +	/* Check that the rename worked. */
+    -+	EXPECT_EQ(0, stat(merge_fl1_renamed, &st));
+    -+	EXPECT_EQ(-1, stat(merge_fl1, &st));
+    -+	EXPECT_EQ(ENOENT, errno);
+    ++	EXPECT_TRUE(is_fifo(merge_pl1_renamed));
+    ++	EXPECT_TRUE(is_missing(merge_pl1));
+     +
+     +	/*
+    -+	 * Check that the whiteout object on the underlying "upper" filesyst=
+em
+    -+	 * exists after the rename.  This is OK because it was done with the
+    -+	 * credentials of the OverlayFS.
+    ++	 * Check that the whiteout object was created on the underlying "upp=
+er"
+    ++	 * filesystem during the rename.  This is OK because the whiteout ob=
+ject
+    ++	 * was created by OverlayFS, not by the calling task.
+     +	 */
+    -+	EXPECT_EQ(0, stat(UPPER_DATA "/fl1", &st));
+    -+	EXPECT_TRUE(S_ISCHR(st.st_mode));
+    -+	EXPECT_EQ(0, st.st_rdev);
+    ++	EXPECT_TRUE(is_whiteout(UPPER_DATA "/pl1"));
+     +}
+     +
+      FIXTURE(layout3_fs)
+5:  35651219395c =3D 6:  4a53acb99752 landlock: Link the erratum documentat=
+ion for whiteout objects
+--=20
+2.55.0.699.gb54405d56f-goog
 
