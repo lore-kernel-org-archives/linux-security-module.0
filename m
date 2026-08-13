@@ -1,99 +1,113 @@
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE64039DBCC
-	for <linux-security-module@vger.kernel.org>; Thu, 13 Aug 2026 09:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80022BE639
+	for <linux-security-module@vger.kernel.org>; Thu, 13 Aug 2026 11:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786613552; cv=none; b=G70p5a8mewK9Z5oxO1p//TIafx40IOqIem/LUii0hfS6EQTAwR/CCNMmkKgxsp1cPZVZIAgqCmkL3tBpMC0zZ0jmCAOGtSY4npAS6S7NDMzUqLHF6how2J5MfjBmAqBwX4G/mT0g57IpHMDjjPlbaBD+f986xL9i82gQFACbuZk=
+	t=1786622090; cv=none; b=YRx2dc+0EWZ0b2dm9tkzHdx85nyQZh5tGdx7GzrLfoUzMFyRW13KBFBzsK490Z5mN17Z0p7BE0ts9vkdE4tiB3UinSvRPgEYDmGdTxHH/oA4ovI9hcYdQVpopmeXj8uxU+LMlL1yhfALSPiigYP8viZMi5+DY7lHdb/oUt7KFZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786613552; c=relaxed/simple;
-	bh=uCnHqo8RAzz5qBgEQC0Ub6+nD0dja3CQWWOGLumKKTg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=KE6HStkMKmb+iVVzg02hDaMmn+tIsP6H7x793dKPKUOPDv4sXpPQ+bMnn/CvbhVvQ3ADgLe8q3Bw9tdCThkak4+rNtjjiDiYSlsV+51C7HtyJYv4xtm8loW24RCaiRK3srxY/PVZSWWK9hGD2kHPDFagc7DD/MUCDnFN8pELf+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hGZ9/Yk5; arc=none smtp.client-ip=209.85.128.71
+	s=arc-20240116; t=1786622090; c=relaxed/simple;
+	bh=XK3M6kvlpK9SihF76trD/P7PCReSKfJ/TbsCxbrATSk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qjmkONqTakH7Kfb0fUgp94ruXuDE6q/Z1Kl0sG+Rnc0/cXPiiRKZN3FiHZ5GtukHTMfg3PJPe+/Ex6AsOw6jI1wYiQEOkev/tKS/KO5/L19y/+7wGDRJk76Wa0agMTAmPRn6tFTY6mxpWlF4GTpOkMLC7gUnUy17WFDuM+VPRkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WobqiIh5; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hGZ9/Yk5"
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-49953abe51fso4249395e9.1
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Aug 2026 02:32:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WobqiIh5"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-49553515a8bso28914725e9.1
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Aug 2026 04:54:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1786613549; x=1787218349; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:from:subject
-         :message-id:references:mime-version:in-reply-to:date:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=T09DsPeM2axLCSsVFFbln0Ie4x8Y1xtvaYU7qZUmf9M=;
-        b=hGZ9/Yk5mN/zozmHLbmpp1VFRN5/FAQUdc35/M+vS6Sozd/rebhUjVsAX8P6kqnq4h
-         a3rRrpTrnUELayQj9BBneAt3P8LRW31kfQ7ld2Vr327/2ltDovFxgkkXsUNXjRxbM3Nu
-         mTX8Qm7zX8fhR5AgRZ8yaY9Cc7OBmGfGPNcIP0i3PqidPSuqpKmJ6l91v1atRzrJ2LnJ
-         oWwvma8sIlkYtYOP1EQRRg2PRiVS6/1az1hKQA1dUCaqBDJtVUniqhcfHPAeMcqUjW2w
-         paubaqa7WE2MLApL9DMZUYaPQ3KUR/ZlJ99Sm5RGgvjzacCbZy+C4IejulR012zjdWcM
-         OmbA==
+        d=google.com; s=20251104; t=1786622087; x=1787226887; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=uW1K/+Wxt7hUgt/RNFv7qiVm6hp7QCcrKF60FziImg8=;
+        b=WobqiIh5QUPU3hIi9um2DcTDwAgwEn44vQHgB7SWbHmKf3b7+cGD4d2T8Z0sIo/y9H
+         m0RdW3wdGz8n9WTvo58nhFsFmVlK38WMq17j8TW5NxpiVXypVpbhYc3Xs6HGpuLN3j9S
+         Eixw6m8uOvG7LV3TPQRVWuz2PS6/2uc21JCSVbKZhZ8J5qf+nmN+5/RdIXhGi0hkWUc5
+         HycLgAkwbHaZkveDh/y8JcHr/jJ+VxTwD1Rco/MBz12iZvabuipH9lEjbxkPgCKuPyHB
+         VuVL8puZtcTD1+mKyFnW0sEt0whO5MCdCgl24sZ69/E+xVtDfJuAZhgQzwMLm/NFHycO
+         Fx/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786613549; x=1787218349;
-        h=content-transfer-encoding:content-type:cc:to:from:subject
-         :message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=T09DsPeM2axLCSsVFFbln0Ie4x8Y1xtvaYU7qZUmf9M=;
-        b=ockbsANKJM5USGKjbGJTAFIFhp0yxq57YFBvT8G28ehvKN8IFC8JimsZlLeOgP6poB
-         s33lUfvFZChXxhO804DgdFpQHYwxgsRoyMElLTVDLDzfvoGQ3gTP0dNcavJm+8z4o/l0
-         oTwAx5byaBT5b6DD2LmSX/QPwirhUBZYrsJCsqmmkKAB6Ey7C3j1ZRizTXkolW98Y4Pv
-         PVJ58fJpFZfleXlcwCwPm+B5HT8BscBTXWkqDDrlkxHA00TycLzTa4lSOe+yEd6l/eZE
-         3Zlhr+IH2L7TZzgRDEcbsctgqmPajuEaZbxrnbMJ82lSFckRfh1hFNwp+iGeY+stpqZF
-         dbBw==
-X-Gm-Message-State: AOJu0YwTgNzXFTzsPcX6HypNPihjn0t6EvLhSkVIhnQKN/xKM3wvj6ai
-	DXMKWxx5ukht0uoVyG6ABbqfdCtYnRy7Lz1dnMhHXV2qrQNGpcfJD1Y/w9ozegProcFZmhY9fgg
-	j79QO8Q==
-X-Received: from wrrs18.prod.google.com ([2002:a5d:4252:0:b0:462:7ef4:d3a6])
- (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:3b19:b0:499:737c:ce4c
- with SMTP id 5b1f17b1804b1-499821c5a76mr52313295e9.6.1786613548826; Thu, 13
- Aug 2026 02:32:28 -0700 (PDT)
-Date: Thu, 13 Aug 2026 11:31:57 +0200
-In-Reply-To: <20260813093157.1436894-1-gnoack@google.com>
+        d=1e100.net; s=20251104; t=1786622087; x=1787226887;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=uW1K/+Wxt7hUgt/RNFv7qiVm6hp7QCcrKF60FziImg8=;
+        b=ev3wNAweh23MHuCd/z4EzKvOfc0kV8oUX7LyEsmkRFd5gOXG6XVcZYIPZK7U61urHg
+         pZgyUnanxSRz50MrY97/s7J1IIQwjlWtpCOi7DXhMd1DhGA7C5nnRGSIjx/KU2IIZivp
+         agK10HiSG2N6Kh/OW4WboTDspV+ofvF2kj5dGfyNGN97HZ1HRE+h0E3RsTe34emhe4xY
+         X+YCYEnriwrXmlBD8QX2c7YgpSLLNMCKZs12kKdvkM9LidSu2Dy8FUQ7W/h8jPx3MImh
+         RvVt6kxzWqlscdn7hOusLxOuoDUYXRVU1/jajGwZudWG9nLkp0FdH+OsBidioqQDWDhQ
+         Qa5g==
+X-Gm-Message-State: AOJu0YywYezuf4VX3gmhmDDDeabcXlex4uQm1xrnpgcILtbEAF1r7l5S
+	SGFAIcuamWae8iamUVge1RMDCLyJrDuLJkTRl1KJf0cKWi1nPrk1h42olCSN2G3/pg==
+X-Gm-Gg: AR+sD10sCzxiRH9XtinCe3CD5l4UJ9pQt0ZUiBymmVssihtpFPXXv/ygHp013tKJUpq
+	AmbMG2L+lg9uLO7dF+MasWk7C/jR8BbhomGcyy0BlI2OwBzEORmEIpfQzrNaoojAWTK/Oyu0xVP
+	ZoMVVbwoxVLyhEfgSc0pnWRS890h1My6ZvTYuOV3zb7Yn5QA0sn+L1rGtykeQZavvc/MBssXaf9
+	FFvMenQXyFiNssAJ6qgHRQudhz1jfWMJJjaa4iqUQQ4jZO1VtAKFns01nEgmfnjYpOt/WJ/emEc
+	1BFfEzqNvlZjUBuSGPIdpcDk7u4ujQRRrfunit38CYmYhj/xn0gCcLZiuxWKbsObokwhsMwSoJ5
+	FosHONkHFU0Bj3CJmwyo/chuCNPSqwQAQ3LkXxK1yMFAO3pT7nztSZEPTi8Fucm/VJ23iuTwxJG
+	SrrPlPGlqK4BjwAah6NorszALIHQJrgaqltkjRdylOGL9TeEhLzk2sTSA6S6OA/i+preP81oMgO
+	m9DUMHDjugr1/KAYRU=
+X-Received: by 2002:a05:600c:1da8:b0:499:726b:7375 with SMTP id 5b1f17b1804b1-499821c3119mr77486355e9.14.1786622086484;
+        Thu, 13 Aug 2026 04:54:46 -0700 (PDT)
+Received: from google.com ([2a00:79e0:288a:8:d644:bd86:b547:1b3f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4815a5af19fsm5808593f8f.24.2026.08.13.04.54.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Aug 2026 04:54:46 -0700 (PDT)
+Date: Thu, 13 Aug 2026 13:54:40 +0200
+From: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	Christian Brauner <brauner@kernel.org>
+Cc: linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Miklos Szeredi <miklos@szeredi.hu>, Serge Hallyn <serge@hallyn.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: Re: [PATCH v6 3/6] selftests/landlock: Add tests for whiteout object
+ creation
+Message-ID: <an2wgGdmYzrulP-c@google.com>
+References: <20260813093157.1436894-1-gnoack@google.com>
+ <20260813093157.1436894-4-gnoack@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20260813093157.1436894-1-gnoack@google.com>
-X-Mailer: git-send-email 2.55.0.699.gb54405d56f-goog
-Message-ID: <20260813093157.1436894-7-gnoack@google.com>
-Subject: [PATCH v6 6/6] landlock: Link the erratum documentation for whiteout objects
-From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-To: "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, Christian Brauner <brauner@kernel.org>
-Cc: linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, Serge Hallyn <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260813093157.1436894-4-gnoack@google.com>
 
-The documentation embeds the canonical erratum documentation from the
-header file, which is already a self-contained description of the issue.
+On Thu, Aug 13, 2026 at 11:31:54AM +0200, Günther Noack wrote:
+> Add a test to check that whiteout object creation is guarded by
+> LANDLOCK_ACCESS_FS_MAKE_REG, in the cases where these are created from
+> userspace:
+> 
+> * Conventional creation with mknod()
+> * Linking or renaming an existing whiteout object
+> * renameat2() with RENAME_WHITEOUT,
+>   which creates a new whiteout object in the source location
 
-Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
----
- Documentation/userspace-api/landlock.rst | 3 +++
- 1 file changed, 3 insertions(+)
+I forgot to update this commit message; this should say:
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/users=
-pace-api/landlock.rst
-index 5a63d4476c1c..df996ccaee34 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -556,6 +556,9 @@ in the running kernel.
- .. kernel-doc:: security/landlock/errata/abi-1.h
-     :doc: erratum_3
-=20
-+.. kernel-doc:: security/landlock/errata/abi-1.h
-+    :doc: erratum_4
-+
- How to check for errata
- ~~~~~~~~~~~~~~~~~~~~~~~
-=20
---=20
-2.55.0.699.gb54405d56f-goog
+```
+Add tests to check that whiteout object creation is guarded by
+LANDLOCK_ACCESS_FS_MAKE_REG, in the cases where these are created from
+userspace:
 
+* Conventional creation with mknod()
+* Linking or renaming an existing whiteout object
+* renameat2() with RENAME_WHITEOUT,
+  which creates a new whiteout object in the source location
+* renameat2() with RENAME_EXCHANGE,
+  with one of the renamed objects being a whiteout object
+```
+
+Please feel free to update it when picking up the change.
+
+—Günther
